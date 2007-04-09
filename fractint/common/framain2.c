@@ -349,10 +349,10 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				saveticks = g_save_time*60*1000; /* in milliseconds */
 				finishrow = -1;
 				}
-			browsing = FALSE;      /* regenerate image, turn off browsing */
+			g_browsing = FALSE;      /* regenerate image, turn off g_browsing */
 			/*rb*/
 			name_stack_ptr = -1;   /* reset pointer */
-			browsename[0] = '\0';  /* null */
+			g_browse_name[0] = '\0';  /* null */
 			if (viewwindow && (evolving & EVOLVE_FIELD_MAP) && (calc_status != CALCSTAT_COMPLETED))
 			{
 				/* generate a set of images with varied parameters on each one */
@@ -479,12 +479,12 @@ done:
 			}
 		}
 #ifndef XFRACT
-		boxcount = 0;                     /* no zoom box yet  */
+		g_box_count = 0;                     /* no zoom box yet  */
 		zwidth = 0;
 #else
 		if (!XZoomWaiting)
 		{
-			boxcount = 0;                 /* no zoom box yet  */
+			g_box_count = 0;                 /* no zoom box yet  */
 			zwidth = 0;
 		}
 #endif
@@ -529,7 +529,7 @@ resumeloop:                             /* return here on failed overlays */
 				}
 				else      /* wait for a real keystroke */
 				{
-					if (autobrowse && !no_sub_images)
+					if (g_auto_browse && !no_sub_images)
 					{
 						kbdchar = 'l';
 					}
@@ -675,7 +675,7 @@ static int look(char *stacked)
 	case FIK_ENTER:
 	case FIK_ENTER_2:
 		g_show_file = 0;       /* trigger load */
-		browsing = TRUE;    /* but don't ask for the file name as it's
+		g_browsing = TRUE;    /* but don't ask for the file name as it's
 							* just been selected */
 		if (name_stack_ptr == 15)
 		{					/* about to run off the end of the file
@@ -689,13 +689,13 @@ static int look(char *stacked)
 			name_stack_ptr = 14;
 		}
 		name_stack_ptr++;
-		strcpy(file_name_stack[name_stack_ptr], browsename);
+		strcpy(file_name_stack[name_stack_ptr], g_browse_name);
 		/*
-		splitpath(browsename, NULL, NULL, fname, ext);
+		splitpath(g_browse_name, NULL, NULL, fname, ext);
 		splitpath(g_read_name, drive, dir, NULL, NULL);
 		makepath(g_read_name, drive, dir, fname, ext);
 		*/
-		merge_pathnames(g_read_name, browsename, 2);
+		merge_pathnames(g_read_name, g_browse_name, 2);
 		if (g_ask_video)
 		{
 				driver_stack_screen();   /* save graphics image */
@@ -706,7 +706,7 @@ static int look(char *stacked)
 	case '\\':
 		if (name_stack_ptr >= 1)
 		{
-			/* go back one file if somewhere to go (ie. browsing) */
+			/* go back one file if somewhere to go (ie. g_browsing) */
 			name_stack_ptr--;
 			while (file_name_stack[name_stack_ptr][0] == '\0'
 					&& name_stack_ptr >= 0)
@@ -717,9 +717,9 @@ static int look(char *stacked)
 			{
 				break;
 			}
-			strcpy(browsename, file_name_stack[name_stack_ptr]);
-			merge_pathnames(g_read_name, browsename, 2);
-			browsing = TRUE;
+			strcpy(g_browse_name, file_name_stack[name_stack_ptr]);
+			merge_pathnames(g_read_name, g_browse_name, 2);
+			g_browsing = TRUE;
 			g_show_file = 0;
 			if (g_ask_video)
 			{
@@ -728,21 +728,21 @@ static int look(char *stacked)
 			}
 			return 1;
 		}                   /* otherwise fall through and turn off
-							* browsing */
+							* g_browsing */
 	case FIK_ESC:
 	case 'l':              /* turn it off */
 	case 'L':
-		browsing = FALSE;
+		g_browsing = FALSE;
 		helpmode = oldhelpmode;
 		break;
 
 	case 's':
-		browsing = FALSE;
+		g_browsing = FALSE;
 		helpmode = oldhelpmode;
 		savetodisk(g_save_name);
 		break;
 
-	default:               /* or no files found, leave the state of browsing alone */
+	default:               /* or no files found, leave the state of g_browsing alone */
 		break;
 	}
 
@@ -764,7 +764,7 @@ static int handle_fractal_type(int *frommandel)
 		g_save_release = g_release;
 		g_no_magnitude_calculation = FALSE;
 		g_use_old_periodicity = FALSE;
-		bad_outside = 0;
+		g_bad_outside = 0;
 		ldcheck = 0;
 		set_current_params();
 		odpx = odpy = newodpx = newodpy = 0;
@@ -1113,7 +1113,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		yy3rd = yymin;
 		if (usr_distest == 0
 			&& g_user_biomorph != -1
-			&& bitshift != 29)
+			&& g_bit_shift != 29)
 		{
 			xxmin *= 3.0;
 			xxmax *= 3.0;
@@ -1199,7 +1199,7 @@ static int handle_history(char *stacked, int kbdchar)
 {
 	if (name_stack_ptr >= 1)
 	{
-		/* go back one file if somewhere to go (ie. browsing) */
+		/* go back one file if somewhere to go (ie. g_browsing) */
 		name_stack_ptr--;
 		while (file_name_stack[name_stack_ptr][0] == '\0'
 			&& name_stack_ptr >= 0)
@@ -1210,14 +1210,14 @@ static int handle_history(char *stacked, int kbdchar)
 		{
 			return 0;
 		}
-		strcpy(browsename, file_name_stack[name_stack_ptr]);
+		strcpy(g_browse_name, file_name_stack[name_stack_ptr]);
 		/*
-		splitpath(browsename, NULL, NULL, fname, ext);
+		splitpath(g_browse_name, NULL, NULL, fname, ext);
 		splitpath(g_read_name, drive, dir, NULL, NULL);
 		makepath(g_read_name, drive, dir, fname, ext);
 		*/
-		merge_pathnames(g_read_name, browsename, 2);
-		browsing = TRUE;
+		merge_pathnames(g_read_name, g_browse_name, 2);
+		g_browsing = TRUE;
 		no_sub_images = FALSE;
 		g_show_file = 0;
 		if (g_ask_video)
@@ -1353,9 +1353,9 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 {
 	comparegif = 0;
 	*frommandel = 0;
-	if (browsing)
+	if (g_browsing)
 	{
-		browsing = FALSE;
+		g_browsing = FALSE;
 	}
 	if (kbdchar == 'r')
 	{
@@ -1392,7 +1392,7 @@ static int handle_look_for_files(char *stacked)
 {
 	if ((zwidth != 0) || driver_diskp())
 	{
-		browsing = FALSE;
+		g_browsing = FALSE;
 		driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or disk video */
 	}
 	else if (look(stacked))
@@ -1432,7 +1432,7 @@ static void handle_zoom_skew(int negative)
 {
 	if (negative)
 	{
-		if (boxcount && (g_current_fractal_specific->flags & NOROTATE) == 0)
+		if (g_box_count && (g_current_fractal_specific->flags & NOROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_HOME);
 			zskew -= 0.02*i;
@@ -1444,7 +1444,7 @@ static void handle_zoom_skew(int negative)
 	}
 	else
 	{
-		if (boxcount && (g_current_fractal_specific->flags & NOROTATE) == 0)
+		if (g_box_count && (g_current_fractal_specific->flags & NOROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_END);
 			zskew += 0.02*i;
@@ -1498,7 +1498,7 @@ static int handle_video_mode(int kbdchar, int *kbdmore)
 
 static void handle_z_rotate(int increase)
 {
-	if (boxcount && (g_current_fractal_specific->flags & NOROTATE) == 0)
+	if (g_box_count && (g_current_fractal_specific->flags & NOROTATE) == 0)
 	{
 		if (increase)
 		{
@@ -1515,11 +1515,11 @@ static void handle_box_color(int increase)
 {
 	if (increase)
 	{
-		boxcolor += key_count(FIK_CTL_INSERT);
+		g_box_color += key_count(FIK_CTL_INSERT);
 	}
 	else
 	{
-		boxcolor -= key_count(FIK_CTL_DEL);
+		g_box_color -= key_count(FIK_CTL_DEL);
 	}
 }
 
@@ -1536,7 +1536,7 @@ static void handle_zoom_resize(int zoom_in)
 				zrotate = 0;
 				zbx = zby = 0.0;
 				find_special_colors();
-				boxcolor = g_color_bright;
+				g_box_color = g_color_bright;
 				px = py = gridsz/2;
 				moveboxf(0.0, 0.0); /* force scrolling */
 			}
@@ -1549,7 +1549,7 @@ static void handle_zoom_resize(int zoom_in)
 	else
 	{
 		/* zoom out */
-		if (boxcount)
+		if (g_box_count)
 		{
 			if (zwidth >= 0.999 && zdepth >= 0.999) /* end zoombox */
 			{
@@ -1565,7 +1565,7 @@ static void handle_zoom_resize(int zoom_in)
 
 static void handle_zoom_stretch(int narrower)
 {
-	if (boxcount)
+	if (g_box_count)
 	{
 		chgboxi(0, narrower ?
 			-2*key_count(FIK_CTL_PAGE_UP) : 2*key_count(FIK_CTL_PAGE_DOWN));
@@ -1819,7 +1819,7 @@ static void handle_evolver_move_selection(int *kbdchar)
 {
 	/* borrow ctrl cursor keys for moving selection box */
 	/* in evolver mode */
-	if (boxcount)
+	if (g_box_count)
 	{
 		int grout;
 		if (evolving & EVOLVE_FIELD_MAP)
@@ -1913,7 +1913,7 @@ static void handle_evolver_zoom(int zoom_in)
 				zskew = zrotate = 0;
 				zbx = zby = 0;
 				find_special_colors();
-				boxcolor = g_color_bright;
+				g_box_color = g_color_bright;
 				if (evolving & EVOLVE_FIELD_MAP) /*rb*/
 				{
 					/* set screen view params back (previously changed to allow
@@ -1934,7 +1934,7 @@ static void handle_evolver_zoom(int zoom_in)
 	}
 	else
 	{
-		if (boxcount)
+		if (g_box_count)
 		{
 			if (zwidth >= 0.999 && zdepth >= 0.999) /* end zoombox */
 			{
@@ -2187,9 +2187,9 @@ static int call_line3d(BYTE *pixels, int linelen)
 
 static void note_zoom()
 {
-	if (boxcount)  /* save zoombox stuff in mem before encode (mem reused) */
+	if (g_box_count)  /* save zoombox stuff in mem before encode (mem reused) */
 	{
-		savezoom = (char *)malloc((long)(5*boxcount));
+		savezoom = (char *)malloc((long)(5*g_box_count));
 		if (savezoom == NULL)
 		{
 			clear_zoombox(); /* not enuf mem so clear the box */
@@ -2197,20 +2197,20 @@ static void note_zoom()
 		else
 		{
 			reset_zoom_corners(); /* reset these to overall image, not box */
-			memcpy(savezoom, boxx, boxcount*2);
-			memcpy(savezoom + boxcount*2, boxy, boxcount*2);
-			memcpy(savezoom + boxcount*4, boxvalues, boxcount);
+			memcpy(savezoom, g_box_x, g_box_count*2);
+			memcpy(savezoom + g_box_count*2, g_box_y, g_box_count*2);
+			memcpy(savezoom + g_box_count*4, g_box_values, g_box_count);
 		}
 	}
 }
 
 static void restore_zoom()
 {
-	if (boxcount)  /* restore zoombox arrays */
+	if (g_box_count)  /* restore zoombox arrays */
 	{
-		memcpy(boxx, savezoom, boxcount*2);
-		memcpy(boxy, savezoom + boxcount*2, boxcount*2);
-		memcpy(boxvalues, savezoom + boxcount*4, boxcount);
+		memcpy(g_box_x, savezoom, g_box_count*2);
+		memcpy(g_box_y, savezoom + g_box_count*2, g_box_count*2);
+		memcpy(g_box_values, savezoom + g_box_count*4, g_box_count);
 		free(savezoom);
 		drawbox(1); /* get the xxmin etc variables recalc'd by redisplaying */
 		}
@@ -2262,7 +2262,7 @@ static void move_zoombox(int keynum)
 			keynum = driver_key_pressed();         /* next pending key */
 		}
 	}
-	if (boxcount)
+	if (g_box_count)
 	{
 		/*
 		if (horizontal != 0)

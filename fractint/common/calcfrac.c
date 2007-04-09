@@ -124,8 +124,8 @@ _LCMPLX g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
 int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
 int g_periodicity_check;
 /* next has a skip bit for each s_max_block unit;
-	1st pass sets bit  [1]... off only if block's contents guessed;
-	at end of 1st pass [0]... bits are set if any surrounding block not guessed;
+	1st pass sets bit  [1]... off only if g_block's contents guessed;
+	at end of 1st pass [0]... bits are set if any surrounding g_block not guessed;
 	bits are numbered [..][y/16 + 1][x + 1]&(1<<(y&15)) */
 typedef int (*TPREFIX)[2][MAX_Y_BLOCK][MAX_X_BLOCK];
 /* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
@@ -663,7 +663,7 @@ int calculate_fractal(void)
 			SetupLogTable();
 		}
 	}
-	g_magnitude_limit = 4L << bitshift;                 /* CALCMAND magnitude limit */
+	g_magnitude_limit = 4L << g_bit_shift;                 /* CALCMAND magnitude limit */
 
 	g_atan_colors = (g_save_release > 2002) ? colors : 180;
 
@@ -1306,7 +1306,7 @@ static int diffusion_engine(void)
 	/* a square with sides like 2 ** n */
 	int rem_x, rem_y; /* what is left on the last tile to draw */
 	int dif_offset; /* offset for adjusting looked-up values */
-	int sqsz;  /* size of the block being filled */
+	int sqsz;  /* size of the g_block being filled */
 	int colo, rowo; /* original col and row */
 	int s = 1 << (g_bits/2); /* size of the square */
 
@@ -2995,59 +2995,59 @@ static void decomposition(void)
 			if (g_decomposition[0] >= 16)
 			{
 				temp <<= 1;
-				if (multiply(g_new_z_l.x, ltan22_5, bitshift) < g_new_z_l.y)
+				if (multiply(g_new_z_l.x, ltan22_5, g_bit_shift) < g_new_z_l.y)
 				{
 					++temp;
 					lalt = g_new_z_l;
-					g_new_z_l.x = multiply(lalt.x, lcos45, bitshift) +
-						multiply(lalt.y, lsin45, bitshift);
-					g_new_z_l.y = multiply(lalt.x, lsin45, bitshift) -
-						multiply(lalt.y, lcos45, bitshift);
+					g_new_z_l.x = multiply(lalt.x, lcos45, g_bit_shift) +
+						multiply(lalt.y, lsin45, g_bit_shift);
+					g_new_z_l.y = multiply(lalt.x, lsin45, g_bit_shift) -
+						multiply(lalt.y, lcos45, g_bit_shift);
 				}
 
 				if (g_decomposition[0] >= 32)
 				{
 					temp <<= 1;
-					if (multiply(g_new_z_l.x, ltan11_25, bitshift) < g_new_z_l.y)
+					if (multiply(g_new_z_l.x, ltan11_25, g_bit_shift) < g_new_z_l.y)
 					{
 						++temp;
 						lalt = g_new_z_l;
-						g_new_z_l.x = multiply(lalt.x, lcos22_5, bitshift) +
-							multiply(lalt.y, lsin22_5, bitshift);
-						g_new_z_l.y = multiply(lalt.x, lsin22_5, bitshift) -
-							multiply(lalt.y, lcos22_5, bitshift);
+						g_new_z_l.x = multiply(lalt.x, lcos22_5, g_bit_shift) +
+							multiply(lalt.y, lsin22_5, g_bit_shift);
+						g_new_z_l.y = multiply(lalt.x, lsin22_5, g_bit_shift) -
+							multiply(lalt.y, lcos22_5, g_bit_shift);
 					}
 
 					if (g_decomposition[0] >= 64)
 					{
 						temp <<= 1;
-						if (multiply(g_new_z_l.x, ltan5_625, bitshift) < g_new_z_l.y)
+						if (multiply(g_new_z_l.x, ltan5_625, g_bit_shift) < g_new_z_l.y)
 						{
 							++temp;
 							lalt = g_new_z_l;
-							g_new_z_l.x = multiply(lalt.x, lcos11_25, bitshift) +
-								multiply(lalt.y, lsin11_25, bitshift);
-							g_new_z_l.y = multiply(lalt.x, lsin11_25, bitshift) -
-								multiply(lalt.y, lcos11_25, bitshift);
+							g_new_z_l.x = multiply(lalt.x, lcos11_25, g_bit_shift) +
+								multiply(lalt.y, lsin11_25, g_bit_shift);
+							g_new_z_l.y = multiply(lalt.x, lsin11_25, g_bit_shift) -
+								multiply(lalt.y, lcos11_25, g_bit_shift);
 						}
 
 						if (g_decomposition[0] >= 128)
 						{
 							temp <<= 1;
-							if (multiply(g_new_z_l.x, ltan2_8125, bitshift) < g_new_z_l.y)
+							if (multiply(g_new_z_l.x, ltan2_8125, g_bit_shift) < g_new_z_l.y)
 							{
 								++temp;
 								lalt = g_new_z_l;
-								g_new_z_l.x = multiply(lalt.x, lcos5_625, bitshift) +
-									multiply(lalt.y, lsin5_625, bitshift);
-								g_new_z_l.y = multiply(lalt.x, lsin5_625, bitshift) -
-									multiply(lalt.y, lcos5_625, bitshift);
+								g_new_z_l.x = multiply(lalt.x, lcos5_625, g_bit_shift) +
+									multiply(lalt.y, lsin5_625, g_bit_shift);
+								g_new_z_l.y = multiply(lalt.x, lsin5_625, g_bit_shift) -
+									multiply(lalt.y, lcos5_625, g_bit_shift);
 							}
 
 							if (g_decomposition[0] == 256)
 							{
 								temp <<= 1;
-								if (multiply(g_new_z_l.x, ltan1_4063, bitshift) < g_new_z_l.y)
+								if (multiply(g_new_z_l.x, ltan1_4063, g_bit_shift) < g_new_z_l.y)
 								{
 									if ((g_new_z_l.x*ltan1_4063 < g_new_z_l.y))
 									{
@@ -3778,7 +3778,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	int ylessblock, ylesshalf, yplushalf, yplusblock;
 	int     c21, c31, c41;         /* cxy is the color of pixel at (x, y) */
 	int c12, c22, c32, c42;         /* where c22 is the topleft corner of */
-	int c13, c23, c33;             /* the block being handled in current */
+	int c13, c23, c33;             /* the g_block being handled in current */
 	int     c24,    c44;         /* iteration                          */
 	int guessed23, guessed32, guessed33, guessed12, guessed13;
 	int prev11, fix21, fix31;
@@ -3864,7 +3864,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			c44 = s_bottom_guess ? c42 : -1;
 		}
 
-		/* guess or calc the remaining 3 quarters of current block */
+		/* guess or calc the remaining 3 quarters of current g_block */
 		guessed23 = guessed32 = guessed33 = 1;
 		c23 = c32 = c33 = c22;
 		if (yplushalf > g_y_stop)
@@ -3910,7 +3910,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			break;
 		}
 
-		if (firstpass) /* note whether any of block's contents were calculated */
+		if (firstpass) /* note whether any of g_block's contents were calculated */
 			if (guessed23 == 0 || guessed32 == 0 || guessed33 == 0)
 			{
 				*pfxptr |= pfxmask;
@@ -3918,7 +3918,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 
 		if (s_half_block > 1)  /* not last pass, check if something to display */
 		{
-			if (firstpass)  /* display guessed corners, fill in block */
+			if (firstpass)  /* display guessed corners, fill in g_block */
 			{
 				if (s_guess_plot)
 				{
@@ -3956,7 +3956,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			}
 		}
 
-		/* check if some calcs in this block mean earlier guesses need fixing */
+		/* check if some calcs in this g_block mean earlier guesses need fixing */
 		fix21 = ((c22 != c12 || c22 != c32)
 			&& c21 == c22 && c21 == c31 && c21 == prev11
 			&& y > 0

@@ -86,7 +86,7 @@ static void get_mnemonic(int code, char *mnemonic)
 }
 #undef stop
 
-char busy = 0;
+char g_busy = 0;
 static FILE *fpss = NULL;
 static long starttick;
 static long ticks;
@@ -137,7 +137,7 @@ int slideshw()
 	char buffer[81];
 	if (calcwait)
 	{
-		if (calc_status == CALCSTAT_IN_PROGRESS || busy) /* restart timer - process not done */
+		if (calc_status == CALCSTAT_IN_PROGRESS || g_busy) /* restart timer - process not done */
 		{
 			return 0; /* wait for calc to finish before reading more keystrokes */
 		}

@@ -603,7 +603,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 	s_wbdata.len = 0; /* force first parm to start on new line */
 
-	/* Using near string boxx for buffer after saving to extraseg */
+	/* Using near string g_box_x for buffer after saving to extraseg */
 
 	if (colorsonly)
 	{
@@ -2471,15 +2471,15 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 				exit(1);
 				}
 
-			while (1)                       /* process each information block */
+			while (1)                       /* process each information g_block */
 			{
 				memset(temp, 0, 10);
-				if (fread(temp, 1, 1, in) != 1)    /* read the block identifier */
+				if (fread(temp, 1, 1, in) != 1)    /* read the g_block identifier */
 				{
 					inputerrorflag = 3;
 				}
 
-				if (temp[0] == 0x2c)           /* image descriptor block */
+				if (temp[0] == 0x2c)           /* image descriptor g_block */
 				{
 					if (fread(&temp[1], 9, 1, in) != 1)    /* read the Image Descriptor */
 					{
@@ -2523,7 +2523,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						{
 							break;
 						}
-						if (fread(temp, 1, 1, in) != 1)    /* block size */
+						if (fread(temp, 1, 1, in) != 1)    /* g_block size */
 						{
 							inputerrorflag = 7;
 						}
@@ -2536,7 +2536,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						{
 							break;
 						}
-						if (fread(temp, i, 1, in) != 1)    /* LZH data block */
+						if (fread(temp, i, 1, in) != 1)    /* LZH data g_block */
 						{
 							inputerrorflag = 8;
 						}
@@ -2547,10 +2547,10 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 					}
 				}
 
-				if (temp[0] == 0x21)           /* extension block */
+				if (temp[0] == 0x21)           /* extension g_block */
 				{
 					/* (read, but only copy this if it's the last time through) */
-					if (fread(&temp[2], 1, 1, in) != 1)    /* read the block type */
+					if (fread(&temp[2], 1, 1, in) != 1)    /* read the g_block type */
 					{
 						inputerrorflag = 9;
 					}
@@ -2567,7 +2567,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						{
 							break;
 						}
-						if (fread(temp, 1, 1, in) != 1)    /* block size */
+						if (fread(temp, 1, 1, in) != 1)    /* g_block size */
 						{
 							inputerrorflag = 10;
 						}
@@ -2583,7 +2583,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						{
 							break;
 						}
-						if (fread(temp, i, 1, in) != 1)    /* data block */
+						if (fread(temp, i, 1, in) != 1)    /* data g_block */
 						{
 							inputerrorflag = 11;
 						}

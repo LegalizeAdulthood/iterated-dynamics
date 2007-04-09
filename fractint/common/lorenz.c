@@ -323,7 +323,7 @@ int orbit_3d_setup(void)
 		param[2] = s_max_hits;
 
 		setup_convert_to_screen(&s_cvt);
-		/* Note: using bitshift of 21 for affine, 24 otherwise */
+		/* Note: using g_bit_shift of 21 for affine, 24 otherwise */
 
 		s_lcvt.a = (long) (s_cvt.a*(1L << 21));
 		s_lcvt.b = (long) (s_cvt.b*(1L << 21));
@@ -385,9 +385,9 @@ lrwalk:
 	}
 
 	/* precalculations for speed */
-	s_l_adt = multiply(s_l_a, s_l_dt, bitshift);
-	s_l_bdt = multiply(s_l_b, s_l_dt, bitshift);
-	s_l_cdt = multiply(s_l_c, s_l_dt, bitshift);
+	s_l_adt = multiply(s_l_a, s_l_dt, g_bit_shift);
+	s_l_bdt = multiply(s_l_b, s_l_dt, g_bit_shift);
+	s_l_cdt = multiply(s_l_c, s_l_dt, g_bit_shift);
 	return 1;
 }
 
@@ -828,14 +828,14 @@ int Linverse_julia_orbit()
 	/*
 	* Next, find its pixel position
 	*
-	* Note: had to use a bitshift of 21 for this operation because
-	* otherwise the values of s_lcvt were truncated.  Used bitshift
+	* Note: had to use a g_bit_shift of 21 for this operation because
+	* otherwise the values of s_lcvt were truncated.  Used g_bit_shift
 	* of 24 otherwise, for increased precision.
 	*/
-	newcol = (int) ((multiply(s_lcvt.a, g_new_z_l.x >> (bitshift - 21), 21) +
-			multiply(s_lcvt.b, g_new_z_l.y >> (bitshift - 21), 21) + s_lcvt.e) >> 21);
-	newrow = (int) ((multiply(s_lcvt.c, g_new_z_l.x >> (bitshift - 21), 21) +
-			multiply(s_lcvt.d, g_new_z_l.y >> (bitshift - 21), 21) + s_lcvt.f) >> 21);
+	newcol = (int) ((multiply(s_lcvt.a, g_new_z_l.x >> (g_bit_shift - 21), 21) +
+			multiply(s_lcvt.b, g_new_z_l.y >> (g_bit_shift - 21), 21) + s_lcvt.e) >> 21);
+	newrow = (int) ((multiply(s_lcvt.c, g_new_z_l.x >> (g_bit_shift - 21), 21) +
+			multiply(s_lcvt.d, g_new_z_l.y >> (g_bit_shift - 21), 21) + s_lcvt.f) >> 21);
 
 	if (newcol < 1 || newcol >= xdots || newrow < 1 || newrow >= ydots)
 	{
@@ -925,11 +925,11 @@ int Linverse_julia_orbit()
 
 int lorenz_3d_orbit(long *l_x, long *l_y, long *l_z)
 {
-	s_l_xdt = multiply(*l_x, s_l_dt, bitshift);
-	s_l_ydt = multiply(*l_y, s_l_dt, bitshift);
-	s_l_dx  = -multiply(s_l_adt, *l_x, bitshift) + multiply(s_l_adt, *l_y, bitshift);
-	s_l_dy  =  multiply(s_l_bdt, *l_x, bitshift) -s_l_ydt -multiply(*l_z, s_l_xdt, bitshift);
-	s_l_dz  = -multiply(s_l_cdt, *l_z, bitshift) + multiply(*l_x, s_l_ydt, bitshift);
+	s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
+	s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
+	s_l_dx  = -multiply(s_l_adt, *l_x, g_bit_shift) + multiply(s_l_adt, *l_y, g_bit_shift);
+	s_l_dy  =  multiply(s_l_bdt, *l_x, g_bit_shift) -s_l_ydt -multiply(*l_z, s_l_xdt, g_bit_shift);
+	s_l_dz  = -multiply(s_l_cdt, *l_z, g_bit_shift) + multiply(*l_x, s_l_ydt, g_bit_shift);
 
 	*l_x += s_l_dx;
 	*l_y += s_l_dy;
@@ -1035,10 +1035,10 @@ int henon_orbit(long *l_x, long *l_y, long *l_z)
 {
 	long newx, newy;
 	*l_z = *l_x; /* for warning only */
-	newx = multiply(*l_x, *l_x, bitshift);
-	newx = multiply(newx, s_l_a, bitshift);
+	newx = multiply(*l_x, *l_x, g_bit_shift);
+	newx = multiply(newx, s_l_a, g_bit_shift);
 	newx  = fudge + *l_y - newx;
-	newy  = multiply(s_l_b, *l_x, bitshift);
+	newy  = multiply(s_l_b, *l_x, g_bit_shift);
 	*l_x = newx;
 	*l_y = newy;
 	return 0;
@@ -1084,13 +1084,13 @@ int gingerbread_orbit_fp(double *x, double *y, double *z)
 
 int rossler_orbit(long *l_x, long *l_y, long *l_z)
 {
-	s_l_xdt = multiply(*l_x, s_l_dt, bitshift);
-	s_l_ydt = multiply(*l_y, s_l_dt, bitshift);
+	s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
+	s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
 
-	s_l_dx  = -s_l_ydt - multiply(*l_z, s_l_dt, bitshift);
-	s_l_dy  =  s_l_xdt + multiply(*l_y, s_l_adt, bitshift);
-	s_l_dz  =  s_l_bdt + multiply(*l_z, s_l_xdt, bitshift)
-						- multiply(*l_z, s_l_cdt, bitshift);
+	s_l_dx  = -s_l_ydt - multiply(*l_z, s_l_dt, g_bit_shift);
+	s_l_dy  =  s_l_xdt + multiply(*l_y, s_l_adt, g_bit_shift);
+	s_l_dz  =  s_l_bdt + multiply(*l_z, s_l_xdt, g_bit_shift)
+						- multiply(*l_z, s_l_cdt, g_bit_shift);
 
 	*l_x += s_l_dx;
 	*l_y += s_l_dy;
@@ -1139,9 +1139,9 @@ int kam_torus_orbit(long *r, long *s, long *z)
 			return 1;
 		}
 	}
-	srr = (*s)-multiply((*r), (*r), bitshift);
-	(*s) = multiply((*r), s_l_sinx, bitshift) + multiply(srr, s_l_cosx, bitshift);
-	(*r) = multiply((*r), s_l_cosx, bitshift)-multiply(srr, s_l_sinx, bitshift);
+	srr = (*s)-multiply((*r), (*r), g_bit_shift);
+	(*s) = multiply((*r), s_l_sinx, g_bit_shift) + multiply(srr, s_l_cosx, g_bit_shift);
+	(*r) = multiply((*r), s_l_cosx, g_bit_shift)-multiply(srr, s_l_sinx, g_bit_shift);
 	return 0;
 }
 
@@ -1583,8 +1583,8 @@ int orbit_2d()
 			}
 		}
 
-		col = (int) ((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
-		row = (int) ((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
+		col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
+		row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
 		if (overflow)
 		{
 			overflow = 0;
@@ -2525,10 +2525,10 @@ static int ifs_2d(void)
 		}
 		/* calculate image of last point under selected iterated function */
 		lfptr = localifs + k*IFSPARM; /* point to first parm in row */
-		newx = multiply(lfptr[0], x, bitshift) +
-				multiply(lfptr[1], y, bitshift) + lfptr[4];
-		newy = multiply(lfptr[2], x, bitshift) +
-				multiply(lfptr[3], y, bitshift) + lfptr[5];
+		newx = multiply(lfptr[0], x, g_bit_shift) +
+				multiply(lfptr[1], y, g_bit_shift) + lfptr[4];
+		newy = multiply(lfptr[2], x, g_bit_shift) +
+				multiply(lfptr[3], y, g_bit_shift) + lfptr[5];
 		x = newx;
 		y = newy;
 		if (fp)
@@ -2537,8 +2537,8 @@ static int ifs_2d(void)
 		}
 
 		/* plot if inside window */
-		col = (int) ((multiply(cvt.a, x, bitshift) + multiply(cvt.b, y, bitshift) + cvt.e) >> bitshift);
-		row = (int) ((multiply(cvt.c, x, bitshift) + multiply(cvt.d, y, bitshift) + cvt.f) >> bitshift);
+		col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
+		row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
 		if (col >= 0 && col < xdots && row >= 0 && row < ydots)
 		{
 			/* color is count of hits on this pixel */
@@ -2639,15 +2639,15 @@ static int ifs_3d_long(void)
 		lfptr = localifs + k*IFS3DPARM; /* point to first parm in row */
 
 		/* calculate image of last point under selected iterated function */
-		newx = multiply(lfptr[0], inf.orbit[0], bitshift) +
-				multiply(lfptr[1], inf.orbit[1], bitshift) +
-				multiply(lfptr[2], inf.orbit[2], bitshift) + lfptr[9];
-		newy = multiply(lfptr[3], inf.orbit[0], bitshift) +
-				multiply(lfptr[4], inf.orbit[1], bitshift) +
-				multiply(lfptr[5], inf.orbit[2], bitshift) + lfptr[10];
-		newz = multiply(lfptr[6], inf.orbit[0], bitshift) +
-				multiply(lfptr[7], inf.orbit[1], bitshift) +
-				multiply(lfptr[8], inf.orbit[2], bitshift) + lfptr[11];
+		newx = multiply(lfptr[0], inf.orbit[0], g_bit_shift) +
+				multiply(lfptr[1], inf.orbit[1], g_bit_shift) +
+				multiply(lfptr[2], inf.orbit[2], g_bit_shift) + lfptr[9];
+		newy = multiply(lfptr[3], inf.orbit[0], g_bit_shift) +
+				multiply(lfptr[4], inf.orbit[1], g_bit_shift) +
+				multiply(lfptr[5], inf.orbit[2], g_bit_shift) + lfptr[10];
+		newz = multiply(lfptr[6], inf.orbit[0], g_bit_shift) +
+				multiply(lfptr[7], inf.orbit[1], g_bit_shift) +
+				multiply(lfptr[8], inf.orbit[2], g_bit_shift) + lfptr[11];
 
 		inf.orbit[0] = newx;
 		inf.orbit[1] = newy;
@@ -2783,10 +2783,10 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 	}
 
 	/* 3D VIEWING TRANSFORM */
-	longvmult(inf->orbit, inf->longmat, inf->viewvect, bitshift);
+	longvmult(inf->orbit, inf->longmat, inf->viewvect, g_bit_shift);
 	if (s_real_time)
 	{
-		longvmult(inf->orbit, inf->longmat1, inf->viewvect1, bitshift);
+		longvmult(inf->orbit, inf->longmat1, inf->viewvect1, g_bit_shift);
 	}
 
 	if (g_color_iter <= s_waste) /* waste this many points to find minz and maxz */
@@ -2885,22 +2885,22 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 		}
 		else
 		{
-			longpersp(inf->viewvect, inf->iview, bitshift);
+			longpersp(inf->viewvect, inf->iview, g_bit_shift);
 			if (s_real_time)
 			{
-				longpersp(inf->viewvect1, inf->iview, bitshift);
+				longpersp(inf->viewvect1, inf->iview, g_bit_shift);
 			}
 		}
 	}
 
 	/* work out the screen positions */
-	inf->row = (int) (((multiply(inf->cvt.c, inf->viewvect[0], bitshift) +
-			multiply(inf->cvt.d, inf->viewvect[1], bitshift) + inf->cvt.f)
-			>> bitshift)
+	inf->row = (int) (((multiply(inf->cvt.c, inf->viewvect[0], g_bit_shift) +
+			multiply(inf->cvt.d, inf->viewvect[1], g_bit_shift) + inf->cvt.f)
+			>> g_bit_shift)
 		+ g_yy_adjust);
-	inf->col = (int) (((multiply(inf->cvt.a, inf->viewvect[0], bitshift) +
-			multiply(inf->cvt.b, inf->viewvect[1], bitshift) + inf->cvt.e)
-			>> bitshift)
+	inf->col = (int) (((multiply(inf->cvt.a, inf->viewvect[0], g_bit_shift) +
+			multiply(inf->cvt.b, inf->viewvect[1], g_bit_shift) + inf->cvt.e)
+			>> g_bit_shift)
 		+ g_xx_adjust);
 	if (inf->col < 0 || inf->col >= xdots || inf->row < 0 || inf->row >= ydots)
 	{
@@ -2910,13 +2910,13 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 	}
 	if (s_real_time)
 	{
-		inf->row1 = (int) (((multiply(inf->cvt.c, inf->viewvect1[0], bitshift) +
-						multiply(inf->cvt.d, inf->viewvect1[1], bitshift) +
-						inf->cvt.f) >> bitshift)
+		inf->row1 = (int) (((multiply(inf->cvt.c, inf->viewvect1[0], g_bit_shift) +
+						multiply(inf->cvt.d, inf->viewvect1[1], g_bit_shift) +
+						inf->cvt.f) >> g_bit_shift)
 						+ g_yy_adjust1);
-		inf->col1 = (int) (((multiply(inf->cvt.a, inf->viewvect1[0], bitshift) +
-						multiply(inf->cvt.b, inf->viewvect1[1], bitshift) +
-						inf->cvt.e) >> bitshift)
+		inf->col1 = (int) (((multiply(inf->cvt.a, inf->viewvect1[0], g_bit_shift) +
+						multiply(inf->cvt.b, inf->viewvect1[1], g_bit_shift) +
+						inf->cvt.e) >> g_bit_shift)
 						+ g_xx_adjust1);
 		if (inf->col1 < 0 || inf->col1 >= xdots || inf->row1 < 0 || inf->row1 >= ydots)
 		{

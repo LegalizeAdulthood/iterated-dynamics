@@ -1025,7 +1025,7 @@ char GreyFile[] = "altern.map";
 int starfield(void)
 {
 	int c;
-	busy = 1;
+	g_busy = 1;
 	if (starfield_values[0] <   1.0)
 	{
 		starfield_values[0] =   1.0;
@@ -1058,7 +1058,7 @@ int starfield(void)
 	if (ValidateLuts(GreyFile) != 0)
 	{
 		stopmsg(0, "Unable to load ALTERN.MAP");
-		busy = 0;
+		g_busy = 0;
 		return -1;
 		}
 	spindac(0, 1);                 /* load it, but don't spin */
@@ -1069,7 +1069,7 @@ int starfield(void)
 			if (driver_key_pressed())
 			{
 				driver_buzzer(BUZZER_INTERRUPT);
-				busy = 0;
+				g_busy = 0;
 				return 1;
 				}
 			c = getcolor(g_col, g_row);
@@ -1081,7 +1081,7 @@ int starfield(void)
 		}
 	}
 	driver_buzzer(BUZZER_COMPLETE);
-	busy = 0;
+	g_busy = 0;
 	return 0;
 }
 
@@ -1152,10 +1152,10 @@ int get_rds_params(void)
 		ret = 0;
 
 		k = 0;
-		uvalues[k].uval.ival = AutoStereo_depth;
+		uvalues[k].uval.ival = g_auto_stereo_depth;
 		uvalues[k++].type = 'i';
 
-		uvalues[k].uval.dval = AutoStereo_width;
+		uvalues[k].uval.dval = g_auto_stereo_width;
 		uvalues[k++].type = 'f';
 
 		uvalues[k].uval.ch.val = g_grayscale_depth;
@@ -1212,8 +1212,8 @@ int get_rds_params(void)
 		else
 		{
 			k = 0;
-			AutoStereo_depth = uvalues[k++].uval.ival;
-			AutoStereo_width = uvalues[k++].uval.dval;
+			g_auto_stereo_depth = uvalues[k++].uval.ival;
+			g_auto_stereo_width = uvalues[k++].uval.dval;
 			g_grayscale_depth = uvalues[k++].uval.ch.val;
 			calibrate        = (char)uvalues[k++].uval.ch.val;
 			image_map        = (char)uvalues[k++].uval.ch.val;
@@ -1742,7 +1742,7 @@ retry_dir:
 			}
 		}
 	}
-	makepath(browsename, "", "", fname, ext);
+	makepath(g_browse_name, "", "", fname, ext);
 	return 0;
 }
 
@@ -2524,13 +2524,13 @@ int get_browse_params()
 	double old_toosmall;
 	char old_browsemask[FILE_MAX_FNAME];
 
-	old_autobrowse     = autobrowse;
-	old_brwschecktype  = brwschecktype;
-	old_brwscheckparms = brwscheckparms;
+	old_autobrowse     = g_auto_browse;
+	old_brwschecktype  = g_browse_check_type;
+	old_brwscheckparms = g_browse_check_parameters;
 	old_doublecaution  = doublecaution;
 	old_minbox         = minbox;
 	old_toosmall       = toosmall;
-	strcpy(old_browsemask, browsemask);
+	strcpy(old_browsemask, g_browse_mask);
 
 get_brws_restart:
 	/* fill up the previous values arrays */
@@ -2538,7 +2538,7 @@ get_brws_restart:
 
 	choices[++k] = "Autobrowsing? (y/n)";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = autobrowse;
+	uvalues[k].uval.ch.val = g_auto_browse;
 
 	choices[++k] = "Ask about GIF video mode? (y/n)";
 	uvalues[k].type = 'y';
@@ -2546,11 +2546,11 @@ get_brws_restart:
 
 	choices[++k] = "Check fractal type? (y/n)";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = brwschecktype;
+	uvalues[k].uval.ch.val = g_browse_check_type;
 
 	choices[++k] = "Check fractal parameters (y/n)";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = brwscheckparms;
+	uvalues[k].uval.ch.val = g_browse_check_parameters;
 
 	choices[++k] = "Confirm file deletes (y/n)";
 	uvalues[k].type='y';
@@ -2565,7 +2565,7 @@ get_brws_restart:
 	uvalues[k].uval.ival = minbox;
 	choices[++k] = "Browse search filename mask ";
 	uvalues[k].type = 's';
-	strcpy(uvalues[k].uval.sval, browsemask);
+	strcpy(uvalues[k].uval.sval, g_browse_mask);
 
 	choices[++k] = "";
 	uvalues[k].type = '*';
@@ -2585,26 +2585,26 @@ get_brws_restart:
 	if (i == FIK_F4)
 	{
 		toosmall = 6;
-		autobrowse = FALSE;
+		g_auto_browse = FALSE;
 		g_ask_video = TRUE;
-		brwscheckparms = TRUE;
-		brwschecktype  = TRUE;
+		g_browse_check_parameters = TRUE;
+		g_browse_check_type  = TRUE;
 		doublecaution  = TRUE;
 		minbox = 3;
-		strcpy(browsemask, "*.gif");
+		strcpy(g_browse_mask, "*.gif");
 		goto get_brws_restart;
 		}
 
 	/* now check out the results (*hopefully* in the same order <grin>) */
 	k = -1;
 
-	autobrowse = uvalues[++k].uval.ch.val;
+	g_auto_browse = uvalues[++k].uval.ch.val;
 
 	g_ask_video = uvalues[++k].uval.ch.val;
 
-	brwschecktype = (char)uvalues[++k].uval.ch.val;
+	g_browse_check_type = (char)uvalues[++k].uval.ch.val;
 
-	brwscheckparms = (char)uvalues[++k].uval.ch.val;
+	g_browse_check_parameters = (char)uvalues[++k].uval.ch.val;
 
 	doublecaution = uvalues[++k].uval.ch.val;
 
@@ -2624,21 +2624,21 @@ get_brws_restart:
 		minbox = 10;
 	}
 
-	strcpy(browsemask, uvalues[++k].uval.sval);
+	strcpy(g_browse_mask, uvalues[++k].uval.sval);
 
 	i = 0;
-	if (autobrowse != old_autobrowse ||
-			brwschecktype != old_brwschecktype ||
-			brwscheckparms != old_brwscheckparms ||
+	if (g_auto_browse != old_autobrowse ||
+			g_browse_check_type != old_brwschecktype ||
+			g_browse_check_parameters != old_brwscheckparms ||
 			doublecaution != old_doublecaution ||
 			toosmall != old_toosmall ||
 			minbox != old_minbox ||
-			!stricmp(browsemask, old_browsemask))
+			!stricmp(g_browse_mask, old_browsemask))
 		i = -3;
 
 	if (evolving)  /* can't browse */
 	{
-		autobrowse = 0;
+		g_auto_browse = 0;
 		i = 0;
 	}
 

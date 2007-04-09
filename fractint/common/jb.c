@@ -95,9 +95,9 @@ int julibrot_setup(void)
 		}
 		if (g_fractal_specific[g_new_orbit_type].isinteger > 1)
 		{
-			bitshift = g_fractal_specific[g_new_orbit_type].isinteger;
+			g_bit_shift = g_fractal_specific[g_new_orbit_type].isinteger;
 		}
-		s_fg = (double) (1L << bitshift);
+		s_fg = (double) (1L << g_bit_shift);
 		s_fg16 = (double) (1L << 16);
 		jxmin = (long) (xxmin*s_fg);
 		jxmax = (long) (xxmax*s_fg);
@@ -162,19 +162,19 @@ int julibrot_per_pixel(void)
 {
 	s_jx = multiply(s_per->x - s_x_pixel, s_init_z, 16);
 	s_jx = divide(s_jx, s_dist, 16) - s_x_pixel;
-	s_jx = multiply(s_jx << (bitshift - 16), s_x_per_inch, bitshift);
+	s_jx = multiply(s_jx << (g_bit_shift - 16), s_x_per_inch, g_bit_shift);
 	s_jx += s_x_offset;
 	s_djx = divide(s_depth, s_dist, 16);
-	s_djx = multiply(s_djx, s_per->x - s_x_pixel, 16) << (bitshift - 16);
-	s_djx = multiply(s_djx, s_x_per_inch, bitshift) / g_z_dots;
+	s_djx = multiply(s_djx, s_per->x - s_x_pixel, 16) << (g_bit_shift - 16);
+	s_djx = multiply(s_djx, s_x_per_inch, g_bit_shift) / g_z_dots;
 
 	s_jy = multiply(s_per->y - s_y_pixel, s_init_z, 16);
 	s_jy = divide(s_jy, s_dist, 16) - s_y_pixel;
-	s_jy = multiply(s_jy << (bitshift - 16), s_y_per_inch, bitshift);
+	s_jy = multiply(s_jy << (g_bit_shift - 16), s_y_per_inch, g_bit_shift);
 	s_jy += s_y_offset;
 	s_djy = divide(s_depth, s_dist, 16);
-	s_djy = multiply(s_djy, s_per->y - s_y_pixel, 16) << (bitshift - 16);
-	s_djy = multiply(s_djy, s_y_per_inch, bitshift) / g_z_dots;
+	s_djy = multiply(s_djy, s_per->y - s_y_pixel, 16) << (g_bit_shift - 16);
+	s_djy = multiply(s_djy, s_y_per_inch, g_bit_shift) / g_z_dots;
 
 	return 1;
 }
@@ -227,8 +227,8 @@ static int z_line(long x, long y)
 		{
 			return -1;
 		}
-		g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, bitshift);
-		g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, bitshift);
+		g_temp_sqr_x_l = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
+		g_temp_sqr_y_l = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
 		for (n = 0; n < maxit; n++)
 		{
 			if (g_fractal_specific[g_new_orbit_type].orbitcalc())

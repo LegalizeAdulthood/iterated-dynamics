@@ -388,11 +388,11 @@ init_restart:
 		xx3rd = xxmin; yy3rd = yymin;
 	}
 
-	/* set up bitshift for integer math */
-	bitshift = FUDGE_FACTOR2; /* by default, the smaller shift */
+	/* set up g_bit_shift for integer math */
+	g_bit_shift = FUDGE_FACTOR2; /* by default, the smaller shift */
 	if (integerfractal > 1)  /* use specific override from table */
 	{
-		bitshift = integerfractal;
+		g_bit_shift = integerfractal;
 	}
 	if (integerfractal == 0)  /* float? */
 	{
@@ -401,12 +401,12 @@ init_restart:
 		{
 			if (g_fractal_specific[i].isinteger > 1) /* specific shift? */
 			{
-				bitshift = g_fractal_specific[i].isinteger;
+				g_bit_shift = g_fractal_specific[i].isinteger;
 			}
 		}
 		else
 		{
-			bitshift = 16;  /* to allow larger corners */
+			g_bit_shift = 16;  /* to allow larger corners */
 		}
 	}
 /* We want this code if we're using the assembler calculate_mandelbrot */
@@ -422,10 +422,10 @@ init_restart:
 		&& g_debug_flag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
 		&& g_proximity <= 2.0                       /* and g_proximity not too large */
 		&& g_bail_out_test == Mod)                     /* and bailout test = mod */
-			bitshift = FUDGE_FACTOR;                  /* use the larger bitshift */
+			g_bit_shift = FUDGE_FACTOR;                  /* use the larger g_bit_shift */
 		}
 
-	fudge = 1L << bitshift;
+	fudge = 1L << g_bit_shift;
 
 	l_at_rad = fudge/32768L;
 	f_at_rad = 1.0/32768L;
@@ -1061,11 +1061,11 @@ static void _fastcall adjust_to_limits(double expand)
 		{
 			limit = 1023.99;
 		}
-		if (bitshift >= 24)
+		if (g_bit_shift >= 24)
 		{
 			limit = 31.99;
 		}
-		if (bitshift >= 29)
+		if (g_bit_shift >= 29)
 		{
 			limit = 3.99;
 		}
@@ -1250,7 +1250,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 
 	Since the info required for resume can get rather large for some types,
 	it is not stored directly in save_info.  Instead, memory is dynamically
-	allocated as required, and stored in .fra files as a separate block.
+	allocated as required, and stored in .fra files as a separate g_block.
 	To save info for later resume, an engine routine can use:
 		alloc_resume(maxsize, version)
 			Maxsize must be >= max bytes subsequently saved + 2; over-allocation
@@ -1892,10 +1892,10 @@ void get_julia_attractor(double real, double imag)
 	g_temp_sqr_x_l = (long)g_temp_sqr_x;
 	g_temp_sqr_y_l = (long)g_temp_sqr_y;
 
-	g_old_z_l.x = g_old_z_l.x << bitshift;
-	g_old_z_l.y = g_old_z_l.y << bitshift;
-	g_temp_sqr_x_l = g_temp_sqr_x_l << bitshift;
-	g_temp_sqr_y_l = g_temp_sqr_y_l << bitshift;
+	g_old_z_l.x = g_old_z_l.x << g_bit_shift;
+	g_old_z_l.y = g_old_z_l.y << g_bit_shift;
+	g_temp_sqr_x_l = g_temp_sqr_x_l << g_bit_shift;
+	g_temp_sqr_y_l = g_temp_sqr_y_l << g_bit_shift;
 
 	if (maxit < 500)         /* we're going to try at least this hard */
 	{

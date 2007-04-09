@@ -379,7 +379,7 @@ code386bit:
 		shl		ebp, FUDGE_FACTOR_BITS-1
 		mov		ecx, FUDGE_FACTOR_BITS-16
 
-kloop386_16:   ; ecx=bitshift-16, ebp=overflow.mask
+kloop386_16:   ; ecx=g_bit_shift-16, ebp=overflow.mask
 
 		mov		ebx, esi					; compute (x *	x)
 		imul	ebx, ebx					;	...

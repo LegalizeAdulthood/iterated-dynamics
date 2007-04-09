@@ -31,7 +31,7 @@ BIGNUMBER FORMAT:
 The following is a discription of the bignumber format and associated
 variables.  The number is stored in reverse order (Least Significant Byte,
 LSB, stored first in memory, Most Significant Byte, MSB, stored last).
-Each '_' below represents a block of memory used for arithmetic (1 block =
+Each '_' below represents a g_block of memory used for arithmetic (1 g_block =
 4 bytes on 386+, 2 bytes on 286-).  All lengths are given in bytes.
 
 LSB                                MSB

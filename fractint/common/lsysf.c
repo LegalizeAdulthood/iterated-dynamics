@@ -25,8 +25,8 @@ struct lsys_cmd
 	char ch;
 };
 
-#define sins_f ((LDBL *) boxy)
-#define coss_f ((LDBL *) boxy + 50)
+#define sins_f ((LDBL *) g_box_y)
+#define coss_f ((LDBL *) g_box_y + 50)
 
 static struct lsys_cmd *_fastcall find_size(struct lsys_cmd *, struct lsys_turtle_state_fp *, struct lsys_cmd **, int);
 

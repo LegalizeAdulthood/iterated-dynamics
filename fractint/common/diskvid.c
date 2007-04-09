@@ -44,7 +44,7 @@ static struct cache		/* structure of each cache entry */
 static struct cache *s_cache_start = NULL;
 static long s_high_offset;           /* highwater mark of writes */
 static long s_seek_offset;           /* what we'll get next if we don't seek */
-static long s_cur_offset;            /* offset of last block referenced */
+static long s_cur_offset;            /* offset of last g_block referenced */
 static int s_cur_row;
 static long s_cur_row_base;
 static unsigned int s_hash_ptr[HASH_SIZE] = { 0 };
@@ -504,11 +504,11 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 		}
 		s_cache_lru->lru = 0;
 	}
-	if (s_cache_lru->dirty) /* must write this block before reusing it */
+	if (s_cache_lru->dirty) /* must write this g_block before reusing it */
 	{
 		write_cache_lru();
 	}
-	/* remove block at s_cache_lru from its hash chain */
+	/* remove g_block at s_cache_lru from its hash chain */
 	fwd_link = &s_hash_ptr[(((unsigned short)s_cache_lru->offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
 	tbloffset = (int) ((char *)s_cache_lru - (char *)s_cache_start);
 	while (*fwd_link != tbloffset)
@@ -516,7 +516,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 		fwd_link = &((struct cache *)((char *)s_cache_start + *fwd_link))->hashlink;
 	}
 	*fwd_link = s_cache_lru->hashlink;
-	/* load block */
+	/* load g_block */
 	s_cache_lru->dirty  = 0;
 	s_cache_lru->lru    = 1;
 	s_cache_lru->offset = offset;
@@ -573,7 +573,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 			break;
 		}
 	}
-	/* add new block to its hash chain */
+	/* add new g_block to its hash chain */
 	fwd_link = &s_hash_ptr[(((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
 	s_cache_lru->hashlink = *fwd_link;
 	*fwd_link = (int) ((char *)s_cache_lru - (char *)s_cache_start);

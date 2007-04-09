@@ -16,8 +16,8 @@ struct lsys_cmd
 	char ch;
 };
 
-#define sins ((long *) boxy)
-#define coss ((long *) boxy + 50) /* 50 after the start of sins */
+#define sins ((long *) g_box_y)
+#define coss ((long *) g_box_y + 50) /* 50 after the start of sins */
 
 int g_max_angle;
 

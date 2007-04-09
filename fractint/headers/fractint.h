@@ -395,7 +395,7 @@ typedef    struct fractal_info FRACTAL_INFO;
 #endif
 struct fractal_info         /*  for saving data in GIF file     */
 {
-    char  info_id[8];       /* Unique identifier for info block */
+    char  info_id[8];       /* Unique identifier for info g_block */
     short iterationsold;    /* Pre version 18.24 */
     short fractal_type;     /* 0=Mandelbrot 1=Julia 2= ... */
     double xmin;
@@ -870,7 +870,7 @@ extern struct fractalspecificstuff *g_current_fractal_specific;
 #endif
 
 #ifndef lsqr
-#define lsqr(x) (multiply((x), (x), bitshift))
+#define lsqr(x) (multiply((x), (x), g_bit_shift))
 #endif
 
 #define CMPLXmod(z)     (sqr((z).x)+sqr((z).y))

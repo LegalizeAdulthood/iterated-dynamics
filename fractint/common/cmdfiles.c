@@ -262,7 +262,7 @@ int command_files(int argc, char **argv)
 						&& tempstring[4] >= '0' && tempstring[4] <= '9')
 					{
 						strcpy(g_read_name, curarg);
-						extract_filename(browsename, g_read_name);
+						extract_filename(g_browse_name, g_read_name);
 						g_show_file = 0;
 						curarg[0] = 0;
 					}
@@ -1049,7 +1049,7 @@ static int filename_arg(const cmd_context *context)
 	}
 	else
 	{
-		extract_filename(browsename, g_read_name);
+		extract_filename(g_browse_name, g_read_name);
 	}
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
@@ -2983,7 +2983,7 @@ static int monitor_width_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	AutoStereo_width  = context->floatval[0];
+	g_auto_stereo_width  = context->floatval[0];
 	return COMMAND_3D_PARAM;
 }
 

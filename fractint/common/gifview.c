@@ -24,7 +24,7 @@ static void close_file(void);
 static FILE *fpin = NULL;       /* FILE pointer           */
 unsigned int height;
 unsigned numcolors;
-int bad_code_count = 0;         /* needed by decoder module */
+int g_bad_code_count = 0;         /* needed by decoder module */
 
 static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);
@@ -300,7 +300,7 @@ int gifview()
 			{
 				calc_status = CALCSTAT_PARAMS_CHANGED;
 			}
-			busy = 1;      /* for slideshow CALCWAIT */
+			g_busy = 1;      /* for slideshow CALCWAIT */
 			/*
 			* Call decoder(width) via timer.
 			* Width is limited to DECODERLINE_WIDTH.
@@ -310,7 +310,7 @@ int gifview()
 				width = min(width, DECODERLINE_WIDTH);
 			}
 			status = timer(TIMER_DECODER, NULL, width);
-			busy = 0;      /* for slideshow CALCWAIT */
+			g_busy = 0;      /* for slideshow CALCWAIT */
 			if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{
 				calctime = timer_interval; /* note how long it took */
@@ -324,7 +324,7 @@ int gifview()
 					calc_status = CALCSTAT_COMPLETED; /* complete */
 				}
 			}
-			/* Hey! the decoder doesn't read the last (0-length) block!! */
+			/* Hey! the decoder doesn't read the last (0-length) g_block!! */
 			if (get_byte() != 0)
 			{
 				status = -1;

@@ -46,9 +46,9 @@ struct MP *MPsub386(struct MP x, struct MP y)
 
 struct MP *MPabs(struct MP x)
 {
-	Ans = x;
-	Ans.Exp &= 0x7fff;
-	return &Ans;
+	g_ans = x;
+	g_ans.Exp &= 0x7fff;
+	return &g_ans;
 }
 
 struct MPC MPCsqr(struct MPC x)
@@ -403,15 +403,15 @@ long lsqrt(long f)
 		f *= 2;
 	}
 
-	y0 = a + multiply(b, f,  bitshift);         /* Newton's approximation */
+	y0 = a + multiply(b, f,  g_bit_shift);         /* Newton's approximation */
 
-	z  = y0 + divide (f, y0, bitshift);
-	y0 = (z >> 2) + divide(f, z,  bitshift);
+	z  = y0 + divide (f, y0, g_bit_shift);
+	y0 = (z >> 2) + divide(f, z,  g_bit_shift);
 
 	if (N % 2)
 	{
 		N++;
-		y0 = multiply(c, y0, bitshift);
+		y0 = multiply(c, y0, g_bit_shift);
 	}
 	N /= 2;
 	return (N >= 0) ? (y0 << N) : (y0 >> -N); /* correct for shift above */
@@ -424,17 +424,17 @@ LCMPLX ComplexSqrtLong(long x, long y)
 	LCMPLX    result;
 
 #ifndef LONGSQRT
-	mag       = sqrt(sqrt(((double) multiply(x, x, bitshift))/fudge +
-						((double) multiply(y, y, bitshift))/ fudge));
+	mag       = sqrt(sqrt(((double) multiply(x, x, g_bit_shift))/fudge +
+						((double) multiply(y, y, g_bit_shift))/ fudge));
 	maglong   = (long)(mag*fudge);
 #else
-	maglong   = lsqrt(lsqrt(multiply(x, x, bitshift) + multiply(y, y, bitshift)));
+	maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift) + multiply(y, y, g_bit_shift)));
 #endif
 	theta     = atan2((double) y/fudge, (double) x/fudge)/2;
 	thetalong = (long)(theta*SinCosFudge);
 	SinCos086(thetalong, &result.y, &result.x);
-	result.x  = multiply(result.x << (bitshift - 16), maglong, bitshift);
-	result.y  = multiply(result.y << (bitshift - 16), maglong, bitshift);
+	result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);
+	result.y  = multiply(result.y << (g_bit_shift - 16), maglong, g_bit_shift);
 	return result;
 }
 
@@ -654,11 +654,11 @@ long ExpFloat14(long xx)
 {
 	static float fLogTwo = 0.6931472f;
 	int f;
-	long Ans;
+	long g_ans;
 
 	f = 23 - (int)RegFloat2Fg(RegDivFloat(xx, *(long*)&fLogTwo), 0);
-	Ans = ExpFudged(RegFloat2Fg(xx, 16), f);
-	return RegFg2Float(Ans, (char)f);
+	g_ans = ExpFudged(RegFloat2Fg(xx, 16), f);
+	return RegFg2Float(g_ans, (char)f);
 }
 
 double TwoPi;
@@ -908,11 +908,11 @@ d2MP086     PROC     uses si di, x:QWORD
 	rcr   ax, 1
 
 StoreAns:
-	mov   Ans.Exp, si
-	mov   word ptr Ans.Mant + 2, dx
-	mov   word ptr Ans.Mant, ax
+	mov   g_ans.Exp, si
+	mov   word ptr g_ans.Mant + 2, dx
+	mov   word ptr g_ans.Mant, ax
 
-	lea   ax, Ans
+	lea   ax, g_ans
 	mov   dx, ds
 	ret
 d2MP086     ENDP
@@ -922,8 +922,8 @@ struct MP *d2MP086(double x)
 	/* TODO: implement */
 	if (0.0 == x)
 	{
-		Ans.Exp = 0;
-		Ans.Mant = 0;
+		g_ans.Exp = 0;
+		g_ans.Mant = 0;
 	}
 	else
 	{
@@ -956,12 +956,12 @@ struct MP *d2MP086(double x)
 			rcr   dx, 1
 			rcr   ax, 1
 
-			mov   Ans.Exp, esi
-			mov   word ptr Ans.Mant + 2, dx
-			mov   word ptr Ans.Mant, ax
+			mov   g_ans.Exp, esi
+			mov   word ptr g_ans.Mant + 2, dx
+			mov   word ptr g_ans.Mant, ax
 		}
 	}
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -1101,11 +1101,11 @@ BitScanRight:
 	jmp   Overflow
 
 StoreAns:
-	mov   Ans.Exp, si
-	mov   WORD PTR Ans.Mant + 2, dx
-	mov   WORD PTR Ans.Mant, ax
+	mov   g_ans.Exp, si
+	mov   WORD PTR g_ans.Mant + 2, dx
+	mov   WORD PTR g_ans.Mant, ax
 
-	lea   ax, Ans
+	lea   ax, g_ans
 	mov   dx, ds
 	ret
 MPadd086    ENDP
@@ -1116,7 +1116,7 @@ struct MP *MPadd086(struct MP x, struct MP y)
 #if defined(_WIN32)
 	_ASSERTE(0 && "MPadd086 called.");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -1219,11 +1219,11 @@ Overflow:
 ZeroAns:
 	xor   ax, ax
 	xor   dx, dx
-	mov   Ans.Exp, dx
+	mov   g_ans.Exp, dx
 	jmp   StoreMant
 
 NoOverflow:
-	mov   Ans.Exp, ax
+	mov   g_ans.Exp, ax
 
 	mov   dx, WORD PTR [xMant + 2]
 	mov   ax, WORD PTR [xMant]
@@ -1240,7 +1240,7 @@ NoOverflow:
 
 	shr   dx, 1
 	rcr   ax, 1
-	add   Ans.Exp, 1
+	add   g_ans.Exp, 1
 	jo    Overflow
 
 Divide:
@@ -1285,12 +1285,12 @@ RemReallyNeg:
 
 	shl   ax, 1
 	rcl   dx, 1
-	dec   Ans.Exp
+	dec   g_ans.Exp
 
 StoreMant:
-	mov   WORD PTR Ans.Mant, ax
-	mov   WORD PTR Ans.Mant + 2, dx
-	lea   ax, Ans
+	mov   WORD PTR g_ans.Mant, ax
+	mov   WORD PTR g_ans.Mant + 2, dx
+	lea   ax, g_ans
 	mov   dx, ds
 	ret
 MPdiv086    ENDP
@@ -1301,7 +1301,7 @@ struct MP *MPdiv086(struct MP x, struct MP y)
 #if defined(_WIN32)
 	_ASSERTE(0 && "MPdiv086 called.");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -1329,11 +1329,11 @@ Overflow:
 ZeroAns:
 	xor   ax, ax
 	xor   dx, dx
-	mov   Ans.Exp, ax
+	mov   g_ans.Exp, ax
 	jmp   StoreMant
 
 NoOverflow:
-	mov   Ans.Exp, ax
+	mov   g_ans.Exp, ax
 
 	mov   si, word ptr [xMant + 2]
 	mov   bx, word ptr [xMant]
@@ -1385,14 +1385,14 @@ NoOverflow:
 	shl   di, 1
 	rcl   ax, 1
 	rcl   dx, 1
-	sub   Ans.Exp, 1
+	sub   g_ans.Exp, 1
 	jo    Overflow
 
 StoreMant:
-	mov   word ptr Ans.Mant + 2, dx
-	mov   word ptr Ans.Mant, ax
+	mov   word ptr g_ans.Mant + 2, dx
+	mov   word ptr g_ans.Mant, ax
 
-	lea   ax, Ans
+	lea   ax, g_ans
 	mov   dx, ds
 	ret
 MPmul086    ENDP
@@ -1427,11 +1427,11 @@ struct MP *MPmul086(struct MP x, struct MP y)
 	ZeroAns:
 		xor   ax, ax
 		xor   dx, dx
-		mov   Ans.Exp, eax
+		mov   g_ans.Exp, eax
 		jmp   StoreMant
 
 	NoOverflow:
-		mov   Ans.Exp, eax
+		mov   g_ans.Exp, eax
 
 		mov   si, word ptr [x.Mant + 2]
 		mov   bx, word ptr [x.Mant]
@@ -1483,15 +1483,15 @@ struct MP *MPmul086(struct MP x, struct MP y)
 		shl   di, 1
 		rcl   ax, 1
 		rcl   dx, 1
-		sub   Ans.Exp, 1
+		sub   g_ans.Exp, 1
 		jo    Overflow
 
 	StoreMant:
-		mov   word ptr Ans.Mant + 2, dx
-		mov   word ptr Ans.Mant, ax
+		mov   word ptr g_ans.Mant + 2, dx
+		mov   word ptr g_ans.Mant, ax
 	}
 
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -1523,10 +1523,10 @@ NonZero:
 	rcr   edx, 1
 
 StoreAns:
-	mov   Ans.Exp, si
-	mov   Ans.Mant, edx
+	mov   g_ans.Exp, si
+	mov   g_ans.Mant, edx
 
-	lea   ax, Ans
+	lea   ax, g_ans
 	mov   dx, ds
 .8086
 	ret
@@ -1538,7 +1538,7 @@ struct MP *d2MP386(double x)
 #if defined(_WIN32)
 	_ASSERTE(0 && "d2MP386 called.");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -1728,11 +1728,11 @@ BitScanRight:
 	jmp   Overflow
 
 StoreAns:
-	mov   Ans.Exp, si
-	mov   WORD PTR Ans.Mant + 2, dx
-	mov   WORD PTR Ans.Mant, ax
+	mov   g_ans.Exp, si
+	mov   WORD PTR g_ans.Mant + 2, dx
+	mov   WORD PTR g_ans.Mant, ax
 
-	lea   ax, Ans
+	lea   ax, g_ans
 	mov   dx, ds
 	ret
 MPadd086    ENDP
@@ -1743,7 +1743,7 @@ struct MP *MPadd(struct MP x, struct MP y)
 #if defined(_WIN32)
 	_ASSERTE(0 && "MPadd called.");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -1830,10 +1830,10 @@ SubtractNumbers:
 	jo    Overflow
 
 StoreAns:
-	mov   Ans.Exp, si
-	mov   Ans.Mant, eax
+	mov   g_ans.Exp, si
+	mov   g_ans.Mant, eax
 
-	lea   ax, Ans
+	lea   ax, g_ans
 	mov   dx, ds
 .8086
 	ret
@@ -1845,7 +1845,7 @@ struct MP *MPadd386(struct MP x, struct MP y)
 #if defined(_WIN32)
 	_ASSERTE(0 && "MPadd386 called.");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -1934,11 +1934,11 @@ Overflow:
 
 ZeroAns:
 	xor   eax, eax
-	mov   Ans.Exp, ax
+	mov   g_ans.Exp, ax
 	jmp   StoreMant
 
 NoOverflow:
-	mov   Ans.Exp, ax
+	mov   g_ans.Exp, ax
 
 	xor   eax, eax
 	mov   edx, xMant
@@ -1954,15 +1954,15 @@ NoOverflow:
 
 	shr   edx, 1
 	rcr   eax, 1
-	add   Ans.Exp, 1
+	add   g_ans.Exp, 1
 	jo    Overflow
 
 Divide:
 	div   ecx
 
 StoreMant:
-	mov   Ans.Mant, eax
-	lea   ax, Ans
+	mov   g_ans.Mant, eax
+	lea   ax, g_ans
 	mov   dx, ds
 .8086
 	ret
@@ -1974,7 +1974,7 @@ struct MP *MPdiv386(struct MP x, struct MP y)
 #if defined(_WIN32)
 	_ASSERTE(0 && "MPdiv386 called.");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -2003,11 +2003,11 @@ Overflow:
 
 ZeroAns:
 	xor   edx, edx
-	mov   Ans.Exp, dx
+	mov   g_ans.Exp, dx
 	jmp   StoreMant
 
 NoOverflow:
-	mov   Ans.Exp, ax
+	mov   g_ans.Exp, ax
 
 	mov   eax, xMant
 	mov   edx, yMant
@@ -2023,12 +2023,12 @@ NoOverflow:
 	js    StoreMant
 
 	shld  edx, eax, 1
-	sub   Ans.Exp, 1
+	sub   g_ans.Exp, 1
 	jo    Overflow
 
 StoreMant:
-	mov   Ans.Mant, edx
-	lea   ax, Ans
+	mov   g_ans.Mant, edx
+	lea   ax, g_ans
 	mov   dx, ds
 .8086
 	ret
@@ -2040,7 +2040,7 @@ struct MP *MPmul386(struct MP x, struct MP y)
 #if defined(_WIN32)
 	_ASSERTE(0 && "MPmul386 called.");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -2093,10 +2093,10 @@ BitScanRight:
 	jns   BitScanRight
 
 ExitFg2MP:
-	mov   Ans.Exp, cx
-	mov   WORD PTR Ans.Mant + 2, dx
-	mov   WORD PTR Ans.Mant, ax
-	lea   ax, Ans
+	mov   g_ans.Exp, cx
+	mov   WORD PTR g_ans.Mant + 2, dx
+	mov   WORD PTR g_ans.Mant, ax
+	lea   ax, g_ans
 	mov   dx, ds
 	ret
 fg2MP086    ENDP
@@ -2106,7 +2106,7 @@ struct MP *fg2MP086(long x, int fg)
 #if defined(_WIN32)
 	_ASSERTE(0 && "fg2MP086 called");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 /*
@@ -2136,10 +2136,10 @@ BitScanRight:
 	shl   edx, cl
 
 StoreAns:
-	mov   Ans.Exp, bx
-	mov   Ans.Mant, edx
+	mov   g_ans.Exp, bx
+	mov   g_ans.Mant, edx
 .8086
-	lea   ax, Ans
+	lea   ax, g_ans
 	mov   dx, ds
 	ret
 fg2MP386    ENDP
@@ -2149,7 +2149,7 @@ struct MP *fg2MP386(long x, int fg)
 #if defined(_WIN32)
 	_ASSERTE(0 && "fg2MP386 called");
 #endif
-	return &Ans;
+	return &g_ans;
 }
 
 struct MP *fg2MP(long x, int fg)

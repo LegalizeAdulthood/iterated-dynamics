@@ -143,7 +143,7 @@
 #define TITLE   "FRACTINT"
 #define TITLE_LEN (8)
 #define NEWC(class_)	((class_ *) malloc(sizeof(class_)))
-#define DELETE(block)	(free(block), block = NULL)  /* just for warning */
+#define DELETE(g_block)	(free(g_block), g_block = NULL)  /* just for warning */
 
 #ifdef XFRACT
 int g_edit_pal_cursor = 0;
@@ -1947,7 +1947,7 @@ static void pal_table_undo(pal_table *me)
 
 	pos = ftell(me->undo_file);
 	pal_table_undo_process(me, -1);
-	fseek(me->undo_file, pos, SEEK_SET);   /* go to start of me block */
+	fseek(me->undo_file, pos, SEEK_SET);   /* go to start of me g_block */
 	++me->num_redo;
 }
 

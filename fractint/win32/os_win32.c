@@ -109,9 +109,9 @@ typedef enum
 
 /* Global variables (yuck!) */
 int MPOverflow = 0;
-struct MP Ans = { 0 };
+struct MP g_ans = { 0 };
 int g_and_color;
-BYTE block[4096] = { 0 };
+BYTE g_block[4096] = { 0 };
 int g_checked_vvs = 0;
 int g_color_dark = 0;		/* darkest color in palette */
 int g_color_bright = 0;		/* brightest color in palette */

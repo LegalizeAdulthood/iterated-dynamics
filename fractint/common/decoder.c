@@ -89,10 +89,10 @@ static short curr_size;         /* The current code size */
 /* The following static variables are used
  * for seperating out codes
  */
-static short navail_bytes;      /* # bytes left in block */
+static short navail_bytes;      /* # bytes left in g_block */
 static short nbits_left;        /* # bits left in current byte */
-static BYTE *byte_buff;         /* Current block, reuse shared mem */
-static BYTE *pbytes;            /* Pointer to next byte in block */
+static BYTE *byte_buff;         /* Current g_block, reuse shared mem */
+static BYTE *pbytes;            /* Pointer to next byte in g_block */
 
 static short code_mask[13] =
 {
@@ -106,7 +106,7 @@ static short code_mask[13] =
 };
 
 /***** External Variables ***********************************************/
-/* extern short bad_code_count;
+/* extern short g_bad_code_count;
  *
  * This value is the only other global required by the using program, and
  * is incremented each time an out of range code is read by the decoder.
@@ -275,7 +275,7 @@ short decoder(short linewidth)
 			{
 				if (code > slot)
 				{
-					++bad_code_count;
+					++g_bad_code_count;
 					c = slot;
 				}
 				code = old_code;
@@ -408,7 +408,7 @@ static short get_next_code()
 		if (navail_bytes <= 0)
 		{
 
-			/* Out of bytes in current block, so read next block */
+			/* Out of bytes in current g_block, so read next g_block */
 			pbytes = byte_buff;
 			navail_bytes = (short) get_byte();
 			if (navail_bytes < 0)
@@ -431,7 +431,7 @@ static short get_next_code()
 		if (navail_bytes <= 0)
 		{
 
-			/* Out of bytes in current block, so read next block */
+			/* Out of bytes in current g_block, so read next g_block */
 			pbytes = byte_buff;
 			navail_bytes = (short) get_byte();
 			if (navail_bytes < 0)

@@ -12,9 +12,9 @@
 
 #define PIXELROUND 0.00001
 
-int boxx[NUM_BOXES] = { 0 };
-int boxy[NUM_BOXES] = { 0 };
-int boxvalues[NUM_BOXES] = { 0 };
+int g_box_x[NUM_BOXES] = { 0 };
+int g_box_y[NUM_BOXES] = { 0 };
+int g_box_values[NUM_BOXES] = { 0 };
 
 static void _fastcall zmo_calc(double, double, double *, double *, double);
 static void _fastcall zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
@@ -40,38 +40,38 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 	restore_stack(saved);
 }
 
-int boxcolor;
+int g_box_color;
 
 #ifndef XFRACT
 void dispbox(void)
 {
 	int i;
-	int boxc = (colors-1)&boxcolor;
-	unsigned char *values = (unsigned char *)boxvalues;
+	int boxc = (colors-1)&g_box_color;
+	unsigned char *values = (unsigned char *)g_box_values;
 	int rgb[3];
-	for (i = 0; i < boxcount; i++)
+	for (i = 0; i < g_box_count; i++)
 	{
 		if (g_is_true_color && g_true_mode)
 		{
-			driver_get_truecolor(boxx[i]-sxoffs, boxy[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], NULL);
-			driver_put_truecolor(boxx[i]-sxoffs, boxy[i]-syoffs,
+			driver_get_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, &rgb[0], &rgb[1], &rgb[2], NULL);
+			driver_put_truecolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs,
 				rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
 		}
 		else
-			values[i] = (unsigned char)getcolor(boxx[i]-sxoffs, boxy[i]-syoffs);
+			values[i] = (unsigned char)getcolor(g_box_x[i]-sxoffs, g_box_y[i]-syoffs);
 	}
 /* There is an interaction between getcolor and g_put_color, so separate them */
 	if (!(g_is_true_color && g_true_mode)) /* don't need this for truecolor with truemode set */
 	{
-		for (i = 0; i < boxcount; i++)
+		for (i = 0; i < g_box_count; i++)
 		{
 			if (colors == 2)
 			{
-				g_put_color(boxx[i]-sxoffs, boxy[i]-syoffs, (1 - values[i]));
+				g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, (1 - values[i]));
 			}
 			else
 			{
-				g_put_color(boxx[i]-sxoffs, boxy[i]-syoffs, boxc);
+				g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, boxc);
 			}
 		}
 	}
@@ -86,10 +86,10 @@ void clearbox(void)
 	}
 	else
 	{
-		unsigned char *values = (unsigned char *)boxvalues;
-		for (i = 0; i < boxcount; i++)
+		unsigned char *values = (unsigned char *)g_box_values;
+		for (i = 0; i < g_box_count; i++)
 		{
-			g_put_color(boxx[i]-sxoffs, boxy[i]-syoffs, values[i]);
+			g_put_color(g_box_x[i]-sxoffs, g_box_y[i]-syoffs, values[i]);
 		}
 	}
 }
@@ -104,10 +104,10 @@ void drawbox(int drawit)
 	int saved = 0;
 	if (zwidth == 0)  /* no box to draw */
 	{
-		if (boxcount != 0)  /* remove the old box from display */
+		if (g_box_count != 0)  /* remove the old box from display */
 		{
 			clearbox();
-			boxcount = 0;
+			g_box_count = 0;
 		}
 		reset_zoom_corners();
 		return;
@@ -196,10 +196,10 @@ void drawbox(int drawit)
 	tr.x   = (int)(ftemp1*(dxsize + PIXELROUND));
 	tr.y   = (int)(ftemp2*(dysize + PIXELROUND));
 
-	if (boxcount != 0)  /* remove the old box from display */
+	if (g_box_count != 0)  /* remove the old box from display */
 	{
 		clearbox();
-		boxcount = 0;
+		g_box_count = 0;
 	}
 
 	if (drawit)  /* caller wants box drawn as well as co-ords calc'd */
@@ -211,15 +211,15 @@ void drawbox(int drawit)
 		drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y); /* top & bottom lines */
 		drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y); /* left & right lines */
 #else
-		boxx[0] = tl.x + sxoffs;
-		boxy[0] = tl.y + syoffs;
-		boxx[1] = tr.x + sxoffs;
-		boxy[1] = tr.y + syoffs;
-		boxx[2] = br.x + sxoffs;
-		boxy[2] = br.y + syoffs;
-		boxx[3] = bl.x + sxoffs;
-		boxy[3] = bl.y + syoffs;
-		boxcount = 1;
+		g_box_x[0] = tl.x + sxoffs;
+		g_box_y[0] = tl.y + syoffs;
+		g_box_x[1] = tr.x + sxoffs;
+		g_box_y[1] = tr.y + syoffs;
+		g_box_x[2] = br.x + sxoffs;
+		g_box_y[2] = br.y + syoffs;
+		g_box_x[3] = bl.x + sxoffs;
+		g_box_y[3] = bl.y + syoffs;
+		g_box_count = 1;
 #endif
 		dispbox();
 		}
@@ -304,16 +304,16 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 void _fastcall addbox(struct coords point)
 {
 #if defined(_WIN32)
-	_ASSERTE(boxcount < NUM_BOXES);
+	_ASSERTE(g_box_count < NUM_BOXES);
 #endif
 	point.x += sxoffs;
 	point.y += syoffs;
 	if (point.x >= 0 && point.x < sxdots &&
 		point.y >= 0 && point.y < sydots)
 		{
-		boxx[boxcount] = point.x;
-		boxy[boxcount] = point.y;
-		++boxcount;
+		g_box_x[g_box_count] = point.x;
+		g_box_y[g_box_count] = point.y;
+		++g_box_count;
 		}
 	}
 

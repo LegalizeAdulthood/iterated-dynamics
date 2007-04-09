@@ -27,8 +27,8 @@
 #include "helpdefs.h"
 
 char stereomapname[FILE_MAX_DIR + 1] = {""};
-int AutoStereo_depth = 100;
-double AutoStereo_width = 10;
+int g_auto_stereo_depth = 100;
+double g_auto_stereo_width = 10;
 int g_grayscale_depth = 0; /* flag to use gray value rather than color number */
 char calibrate = 1;             /* add calibration bars to image */
 char image_map = 0;
@@ -261,14 +261,14 @@ int do_AutoStereo(void)
 	}
 
 	/* empircally determined adjustment to make WIDTH scale correctly */
-	WIDTH = AutoStereo_width*.67;
+	WIDTH = g_auto_stereo_width*.67;
 	if (WIDTH < 1)
 	{
 		WIDTH = 1;
 	}
 	GROUND = xdots / 8;
-	REVERSE = (AutoStereo_depth < 0) ? 1 : 0;
-	DEPTH = ((long) xdots*(long) AutoStereo_depth) / 4000L;
+	REVERSE = (g_auto_stereo_depth < 0) ? 1 : 0;
+	DEPTH = ((long) xdots*(long) g_auto_stereo_depth) / 4000L;
 	DEPTH = labs(DEPTH) + 1;
 	if (get_min_max())
 	{
