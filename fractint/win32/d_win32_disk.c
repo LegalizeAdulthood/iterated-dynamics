@@ -76,7 +76,7 @@ static t_linereader win32_line_reader;
 /*                                      16 = Chips&Tech SuperVGA*256    */
 /*         int     xdots;          number of dots across the screen     */
 /*         int     ydots;          number of dots down the screen       */
-/*         int     colors;         number of colors available           */
+/*         int     g_colors;         number of g_colors available           */
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
 	{ name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
@@ -368,7 +368,7 @@ disk_read_palette(Driver *drv)
 *	None.
 *
 * Side effects:
-*	Changes the displayed colors.
+*	Changes the displayed g_colors.
 *
 *----------------------------------------------------------------------
 */
@@ -649,7 +649,7 @@ disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_good_mode = 1;
 	if (dotmode != 0)
 	{
-		g_and_color = colors-1;
+		g_and_color = g_colors-1;
 		g_box_count = 0;
 		g_dac_learn = 1;
 		g_dac_count = g_cycle_limit;
@@ -964,9 +964,9 @@ disk_put_char_attr(Driver *drv, int char_attr)
 static int
 disk_validate_mode(Driver *drv, VIDEOINFO *mode)
 {
-	/* allow modes of any size with 256 colors and dotmode = 19
+	/* allow modes of any size with 256 g_colors and dotmode = 19
 	   ax/bx/cx/dx must be zero. */
-	return (mode->colors == 256) &&
+	return (mode->g_colors == 256) &&
 		(mode->videomodeax == 0) &&
 		(mode->videomodebx == 0) &&
 		(mode->videomodecx == 0) &&

@@ -247,23 +247,23 @@ static void lsysf_draw_f(struct lsys_turtle_state_fp *cmd)
 
 static void lsysf_draw_c(struct lsys_turtle_state_fp *cmd)
 {
-	cmd->curcolor = (char)(((int) cmd->parm.n) % colors);
+	cmd->curcolor = (char)(((int) cmd->parm.n) % g_colors);
 }
 
 static void lsysf_draw_gt(struct lsys_turtle_state_fp *cmd)
 {
 	cmd->curcolor = (char)(cmd->curcolor - cmd->parm.n);
-	cmd->curcolor %= colors;
+	cmd->curcolor %= g_colors;
 	if (cmd->curcolor == 0)
 	{
-		cmd->curcolor = (char)(colors-1);
+		cmd->curcolor = (char)(g_colors-1);
 	}
 }
 
 static void lsysf_draw_lt(struct lsys_turtle_state_fp *cmd)
 {
 	cmd->curcolor = (char)(cmd->curcolor + cmd->parm.n);
-	cmd->curcolor %= colors;
+	cmd->curcolor %= g_colors;
 	if (cmd->curcolor == 0)
 	{
 		cmd->curcolor = 1;

@@ -3064,8 +3064,8 @@ restart_1:
 		choices[k++] = "make a surface grid";
 		choices[k++] = "just draw the points";
 		choices[k++] = "connect the dots (wire frame)";
-		choices[k++] = "surface fill (colors interpolated)";
-		choices[k++] = "surface fill (colors not interpolated)";
+		choices[k++] = "surface fill (g_colors interpolated)";
+		choices[k++] = "surface fill (g_colors not interpolated)";
 		choices[k++] = "solid fill (bars up from \"ground\")";
 		if (SPHERE)
 		{
@@ -3562,7 +3562,7 @@ void setbailoutformula(enum bailouts test)
 		{
 			g_bail_out_fp = (int (*)(void))bail_out_mod_fp;
 		}
-		if (cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
+		if (g_cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
 			g_bail_out_l = (int (*)(void))asm386lMODbailout;
 		}
@@ -3582,7 +3582,7 @@ void setbailoutformula(enum bailouts test)
 		{
 			g_bail_out_fp = (int (*)(void))bail_out_real_fp;
 		}
-		if (cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
+		if (g_cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
 			g_bail_out_l = (int (*)(void))asm386lREALbailout;
 		}
@@ -3602,7 +3602,7 @@ void setbailoutformula(enum bailouts test)
 		{
 			g_bail_out_fp = (int (*)(void))bail_out_imag_fp;
 		}
-		if (cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
+		if (g_cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
 			g_bail_out_l = (int (*)(void))asm386lIMAGbailout;
 		}
@@ -3622,7 +3622,7 @@ void setbailoutformula(enum bailouts test)
 		{
 			g_bail_out_fp = (int (*)(void))bail_out_or_fp;
 		}
-		if (cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
+		if (g_cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
 			g_bail_out_l = (int (*)(void))asm386lORbailout;
 		}
@@ -3642,7 +3642,7 @@ void setbailoutformula(enum bailouts test)
 		{
 			g_bail_out_fp = (int (*)(void))bail_out_and_fp;
 		}
-		if (cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
+		if (g_cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
 			g_bail_out_l = (int (*)(void))asm386lANDbailout;
 		}
@@ -3662,7 +3662,7 @@ void setbailoutformula(enum bailouts test)
 		{
 			g_bail_out_fp = (int (*)(void))bail_out_manhattan_fp;
 		}
-		if (cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
+		if (g_cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
 			g_bail_out_l = (int (*)(void))asm386lMANHbailout;
 		}
@@ -3682,7 +3682,7 @@ void setbailoutformula(enum bailouts test)
 		{
 			g_bail_out_fp = (int (*)(void))bail_out_manhattan_r_fp;
 		}
-		if (cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
+		if (g_cpu >= 386 && g_debug_flag != DEBUGFLAG_CPU_8088)    /* Fast 386 math */
 		{
 			g_bail_out_l = (int (*)(void))asm386lMANRbailout;
 		}

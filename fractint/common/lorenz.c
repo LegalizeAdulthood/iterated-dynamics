@@ -316,9 +316,9 @@ int orbit_3d_setup(void)
 		{
 			s_max_hits = 1;
 		}
-		else if (s_max_hits >= colors)
+		else if (s_max_hits >= g_colors)
 		{
-			s_max_hits = colors - 1;
+			s_max_hits = g_colors - 1;
 		}
 		param[2] = s_max_hits;
 
@@ -509,9 +509,9 @@ int orbit_3d_setup_fp()
 		{
 			s_max_hits = 1;
 		}
-		else if (s_max_hits >= colors)
+		else if (s_max_hits >= g_colors)
 		{
-			s_max_hits = colors - 1;
+			s_max_hits = g_colors - 1;
 		}
 		param[2] = s_max_hits;
 
@@ -750,13 +750,13 @@ int Minverse_julia_orbit()
 			g_new_z.y = leftright*g_new_z.y;
 			break;
 		}
-		if (color < colors-1)
+		if (color < g_colors-1)
 		{
 			g_put_color(newcol, newrow, color + 1);
 		}
 		break;
 	case random_walk:
-		if (color < colors-1)
+		if (color < g_colors-1)
 		{
 			g_put_color(newcol, newrow, color + 1);
 		}
@@ -914,7 +914,7 @@ int Linverse_julia_orbit()
 		random_len--;
 		/* fall through */
 	case random_walk:
-		if (color < colors-1)
+		if (color < g_colors-1)
 		{
 			g_put_color(newcol, newrow, color + 1);
 		}
@@ -1438,9 +1438,9 @@ int orbit_2d_fp()
 			break;
 		}
 		if (++count > 1000)
-		{        /* time to switch colors? */
+		{        /* time to switch g_colors? */
 			count = 0;
-			if (++color >= colors)   /* another color to switch to? */
+			if (++color >= g_colors)   /* another color to switch to? */
 			{
 				color = 1;  /* (don't use the background color) */
 			}
@@ -1458,18 +1458,18 @@ int orbit_2d_fp()
 			{
 				if (oldcol != -1 && s_connect)
 				{
-					driver_draw_line(col, row, oldcol, oldrow, color % colors);
+					driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
 				}
 				else
 				{
-					(*g_plot_color)(col, row, color % colors);
+					(*g_plot_color)(col, row, color % g_colors);
 				}
 			}
 			else
 			{
 				/* should this be using plot_hist()? */
 				color = getcolor(col, row) + 1;
-				if (color < colors) /* color sticks on last value */
+				if (color < g_colors) /* color sticks on last value */
 				{
 					(*g_plot_color)(col, row, color);
 				}
@@ -1537,7 +1537,7 @@ int orbit_2d()
 	}
 
 	color = (g_inside > 0) ? g_inside : 2;
-	if (color >= colors)
+	if (color >= g_colors)
 	{
 		color = 1;
 	}
@@ -1575,9 +1575,9 @@ int orbit_2d()
 			break;
 		}
 		if (++count > 1000)
-		{        /* time to switch colors? */
+		{        /* time to switch g_colors? */
 			count = 0;
-			if (++color >= colors)   /* another color to switch to? */
+			if (++color >= g_colors)   /* another color to switch to? */
 			{
 				color = 1;  /* (don't use the background color) */
 			}
@@ -1601,11 +1601,11 @@ int orbit_2d()
 			}
 			if (oldcol != -1 && s_connect)
 			{
-				driver_draw_line(col, row, oldcol, oldrow, color % colors);
+				driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
 			}
 			else if (!start)
 			{
-				(*g_plot_color)(col, row, color % colors);
+				(*g_plot_color)(col, row, color % g_colors);
 			}
 			oldcol = col;
 			oldrow = row;
@@ -1652,7 +1652,7 @@ static int orbit_3d_calc(void)
 
 	oldcol1 = oldrow1 = oldcol = oldrow = -1;
 	color = 2;
-	if (color >= colors)
+	if (color >= g_colors)
 	{
 		color = 1;
 	}
@@ -1675,9 +1675,9 @@ static int orbit_3d_calc(void)
 	{
 		/* calc goes here */
 		if (++count > 1000)
-		{        /* time to switch colors? */
+		{        /* time to switch g_colors? */
 			count = 0;
-			if (++color >= colors)   /* another color to switch to? */
+			if (++color >= g_colors)   /* another color to switch to? */
 			{
 				color = 1;        /* (don't use the background color) */
 			}
@@ -1712,11 +1712,11 @@ static int orbit_3d_calc(void)
 				}
 				if (oldcol != -1 && s_connect)
 				{
-					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color % colors);
+					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color % g_colors);
 				}
 				else
 				{
-					(*g_plot_color)(inf.col, inf.row, color % colors);
+					(*g_plot_color)(inf.col, inf.row, color % g_colors);
 				}
 			}
 			else if (inf.col == -2)
@@ -1733,11 +1733,11 @@ static int orbit_3d_calc(void)
 				{
 					if (oldcol1 != -1 && s_connect)
 					{
-						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color % colors);
+						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color % g_colors);
 					}
 					else
 					{
-						(*g_plot_color)(inf.col1, inf.row1, color % colors);
+						(*g_plot_color)(inf.col1, inf.row1, color % g_colors);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -1773,7 +1773,7 @@ static int orbit_3d_calc_fp(void)
 	oldcol = oldrow = -1;
 	oldcol1 = oldrow1 = -1;
 	color = 2;
-	if (color >= colors)
+	if (color >= g_colors)
 	{
 		color = 1;
 	}
@@ -1795,9 +1795,9 @@ static int orbit_3d_calc_fp(void)
 	{
 		/* calc goes here */
 		if (++count > 1000)
-		{        /* time to switch colors? */
+		{        /* time to switch g_colors? */
 			count = 0;
-			if (++color >= colors)   /* another color to switch to? */
+			if (++color >= g_colors)   /* another color to switch to? */
 			{
 				color = 1;        /* (don't use the background color) */
 			}
@@ -1830,11 +1830,11 @@ static int orbit_3d_calc_fp(void)
 				}
 				if (oldcol != -1 && s_connect)
 				{
-					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color % colors);
+					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color % g_colors);
 				}
 				else
 				{
-					(*g_plot_color)(inf.col, inf.row, color % colors);
+					(*g_plot_color)(inf.col, inf.row, color % g_colors);
 				}
 			}
 			else if (inf.col == -2)
@@ -1851,11 +1851,11 @@ static int orbit_3d_calc_fp(void)
 				{
 					if (oldcol1 != -1 && s_connect)
 					{
-						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color % colors);
+						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color % g_colors);
 					}
 					else
 					{
-						(*g_plot_color)(inf.col1, inf.row1, color % colors);
+						(*g_plot_color)(inf.col1, inf.row1, color % g_colors);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -1954,7 +1954,7 @@ int dynamic_2d_fp()
 
 	count = 0;
 	color = (g_inside > 0) ? g_inside : 1;
-	if (color >= colors)
+	if (color >= g_colors)
 	{
 		color = 1;
 	}
@@ -2012,7 +2012,7 @@ int dynamic_2d_fp()
 		}
 		oldcol = -1;
 
-		if (++color >= colors)   /* another color to switch to? */
+		if (++color >= g_colors)   /* another color to switch to? */
 		{
 			color = 1;    /* (don't use the background color) */
 		}
@@ -2040,11 +2040,11 @@ int dynamic_2d_fp()
 				{
 					if (oldcol != -1 && s_connect)
 					{
-						driver_draw_line(col, row, oldcol, oldrow, color % colors);
+						driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
 					}
 					else if (count > 0 || fractype != MANDELCLOUD)
 					{
-						(*g_plot_color)(col, row, color % colors);
+						(*g_plot_color)(col, row, color % g_colors);
 					}
 				}
 				oldcol = col;
@@ -2204,7 +2204,7 @@ int plotorbits2dfloat(void)
 	else  /* inside <= 0 */
 	{
 		s_o_color++;
-		if (s_o_color >= colors) /* another color to switch to? */
+		if (s_o_color >= g_colors) /* another color to switch to? */
 		{
 			s_o_color = 1;    /* (don't use the background color) */
 		}
@@ -2239,7 +2239,7 @@ int plotorbits2dfloat(void)
 				sound_tone((int) (*soundvar*100 + g_base_hertz));
 			}
 
-			(*g_plot_color)(col, row, s_o_color % colors);
+			(*g_plot_color)(col, row, s_o_color % g_colors);
 		}
 		else
 		{             /* off screen, don't continue unless periodicity=0 */
@@ -2401,13 +2401,13 @@ static int ifs_3d_float(void)
 				}
 				if (color_method)
 				{
-					color = (k % colors) + 1;
+					color = (k % g_colors) + 1;
 				}
 				else
 				{
 					color = getcolor(inf.col, inf.row) + 1;
 				}
-				if (color < colors) /* color sticks on last value */
+				if (color < g_colors) /* color sticks on last value */
 				{
 					(*g_plot_color)(inf.col, inf.row, color);
 				}
@@ -2424,13 +2424,13 @@ static int ifs_3d_float(void)
 				{
 					if (color_method)
 					{
-						color = (k % colors) + 1;
+						color = (k % g_colors) + 1;
 					}
 					else
 					{
 						color = getcolor(inf.col1, inf.row1) + 1;
 					}
-					if (color < colors) /* color sticks on last value */
+					if (color < g_colors) /* color sticks on last value */
 					{
 						(*g_plot_color)(inf.col1, inf.row1, color);
 					}
@@ -2544,13 +2544,13 @@ static int ifs_2d(void)
 			/* color is count of hits on this pixel */
 			if (color_method)
 			{
-				color = (k % colors) + 1;
+				color = (k % g_colors) + 1;
 			}
 			else
 			{
 				color = getcolor(col, row) + 1;
 			}
-			if (color < colors) /* color sticks on last value */
+			if (color < g_colors) /* color sticks on last value */
 			{
 				(*g_plot_color)(col, row, color);
 			}
@@ -2672,13 +2672,13 @@ static int ifs_3d_long(void)
 				}
 				if (color_method)
 				{
-					color = (k % colors) + 1;
+					color = (k % g_colors) + 1;
 				}
 				else
 				{
 					color = getcolor(inf.col, inf.row) + 1;
 				}
-				if (color < colors) /* color sticks on last value */
+				if (color < g_colors) /* color sticks on last value */
 				{
 					(*g_plot_color)(inf.col, inf.row, color);
 				}
@@ -2691,13 +2691,13 @@ static int ifs_3d_long(void)
 				{
 					if (color_method)
 					{
-						color = (k % colors) + 1;
+						color = (k % g_colors) + 1;
 					}
 					else
 					{
 						color = getcolor(inf.col1, inf.row1) + 1;
 					}
-					if (color < colors) /* color sticks on last value */
+					if (color < g_colors) /* color sticks on last value */
 					{
 						(*g_plot_color)(inf.col1, inf.row1, color);
 					}
@@ -3055,7 +3055,7 @@ static FILE *open_orbit_save(void)
 static void _fastcall plot_hist(int x, int y, int color)
 {
 	color = getcolor(x, y) + 1;
-	if (color >= colors)
+	if (color >= g_colors)
 	{
 		color = 1;
 	}

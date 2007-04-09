@@ -273,7 +273,7 @@ static double fmod_test(void)
 	with the color. The routine does write the line using symmetry
 	in all cases, however the symmetry logic assumes that the line
 	is one color; it is not general enough to handle a row of
-	pixels of different colors.
+	pixels of different g_colors.
 */
 static void sym_fill_line(int row, int left, int right, BYTE *str)
 {
@@ -562,9 +562,9 @@ int calculate_fractal(void)
 	g_parameter2.x  = param[2];
 	g_parameter2.y  = param[3];
 
-	if (g_log_palette_flag && colors < 16)
+	if (g_log_palette_flag && g_colors < 16)
 	{
-		stopmsg(0, "Need at least 16 colors to use logmap");
+		stopmsg(0, "Need at least 16 g_colors to use logmap");
 		g_log_palette_flag = LOGPALETTE_NONE;
 	}
 
@@ -647,7 +647,7 @@ int calculate_fractal(void)
 					LogTable[l++] = (BYTE)(k + flip);
 					if (++m >= altern)
 					{
-						flip ^= 1;            /* Alternate colors */
+						flip ^= 1;            /* Alternate g_colors */
 						m = 0;
 					}
 				}
@@ -665,13 +665,13 @@ int calculate_fractal(void)
 	}
 	g_magnitude_limit = 4L << g_bit_shift;                 /* CALCMAND magnitude limit */
 
-	g_atan_colors = (g_save_release > 2002) ? colors : 180;
+	g_atan_colors = (g_save_release > 2002) ? g_colors : 180;
 
 	/* ORBIT stuff */
 	g_show_orbit = g_start_show_orbit;
 	g_orbit_index = 0;
 	g_orbit_color = 15;
-	if (colors < 16)
+	if (g_colors < 16)
 	{
 		g_orbit_color = 1;
 	}
@@ -733,7 +733,7 @@ int calculate_fractal(void)
 		g_init_orbit_l.x = (long)(g_initial_orbit_z.x*fudge);
 		g_init_orbit_l.y = (long)(g_initial_orbit_z.y*fudge);
 	}
-	g_resuming = (calc_status == CALCSTAT_RESUMABLE);
+	g_resuming = (g_calculation_status == CALCSTAT_RESUMABLE);
 	if (!g_resuming) /* free resume_info memory if any is hanging around */
 	{
 		end_resume();
@@ -743,7 +743,7 @@ int calculate_fractal(void)
 			resave_flag = RESAVE_NO;
 			started_resaves = FALSE;
 		}
-		calctime = 0;
+		g_calculation_time = 0;
 	}
 
 	if (g_current_fractal_specific->calculate_type != standard_fractal
@@ -758,7 +758,7 @@ int calculate_fractal(void)
 		s_iy_start = s_ix_start = g_yy_start = g_xx_start = g_yy_begin = g_xx_begin = 0;
 		g_y_stop = g_yy_stop = ydots -1;
 		g_x_stop = g_xx_stop = xdots -1;
-		calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
+		g_calculation_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
 		g_distance_test = 0; /* only standard escape time engine supports distest */
 		/* per_image routine is run here */
 		if (g_current_fractal_specific->per_image())
@@ -771,14 +771,14 @@ int calculate_fractal(void)
 		}
 		if (check_key())
 		{
-			if (calc_status == CALCSTAT_IN_PROGRESS) /* calctype didn't set this itself, */
+			if (g_calculation_status == CALCSTAT_IN_PROGRESS) /* calctype didn't set this itself, */
 			{
-				calc_status = CALCSTAT_NON_RESUMABLE;   /* so mark it interrupted, non-resumable */
+				g_calculation_status = CALCSTAT_NON_RESUMABLE;   /* so mark it interrupted, non-resumable */
 			}
 		}
 		else
 		{
-			calc_status = CALCSTAT_COMPLETED; /* no key, so assume it completed */
+			g_calculation_status = CALCSTAT_COMPLETED; /* no key, so assume it completed */
 		}
 	}
 	else /* standard escape-time engine */
@@ -792,7 +792,7 @@ int calculate_fractal(void)
 				stdcalcmode = 'g';
 				g_three_pass = 1;
 				timer(TIMER_ENGINE, (int(*)())perform_work_list);
-				if (calc_status == CALCSTAT_COMPLETED)
+				if (g_calculation_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
 					stdcalcmode = (xdots >= 640) ? '2' : '1';
@@ -813,7 +813,7 @@ int calculate_fractal(void)
 			timer(TIMER_ENGINE, (int(*)())perform_work_list);
 		}
 	}
-	calctime += timer_interval;
+	g_calculation_time += timer_interval;
 
 	if (LogTable && !Log_Calc)
 	{
@@ -837,7 +837,7 @@ int calculate_fractal(void)
 	{
 		disk_end();
 	}
-	return (calc_status == CALCSTAT_COMPLETED) ? 0 : -1;
+	return (g_calculation_status == CALCSTAT_COMPLETED) ? 0 : -1;
 }
 
 /* locate alternate math record */
@@ -955,7 +955,7 @@ static void perform_work_list()
 		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
 
 		g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
-		if (g_distance_test != 1 || colors == 2) /* not doing regular outside colors */
+		if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside g_colors */
 		{
 			if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
 			{
@@ -1016,7 +1016,7 @@ static void perform_work_list()
 			g_work_list[i] = g_work_list[i + 1];
 		}
 
-		calc_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
+		g_calculation_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
 
 		g_current_fractal_specific->per_image();
 		if (g_show_dot >= 0)
@@ -1025,17 +1025,17 @@ static void perform_work_list()
 			switch (g_auto_show_dot)
 			{
 			case 'd':
-				s_show_dot_color = g_color_dark % colors;
+				s_show_dot_color = g_color_dark % g_colors;
 				break;
 			case 'm':
-				s_show_dot_color = g_color_medium % colors;
+				s_show_dot_color = g_color_medium % g_colors;
 				break;
 			case 'b':
 			case 'a':
-				s_show_dot_color = g_color_bright % colors;
+				s_show_dot_color = g_color_bright % g_colors;
 				break;
 			default:
-				s_show_dot_color = g_show_dot % colors;
+				s_show_dot_color = g_show_dot % g_colors;
 				break;
 			}
 			if (g_size_dot <= 0)
@@ -1174,7 +1174,7 @@ static void perform_work_list()
 	}
 	else
 	{
-		calc_status = CALCSTAT_COMPLETED; /* completed */
+		g_calculation_status = CALCSTAT_COMPLETED; /* completed */
 	}
 	if (sv_orbitcalc != NULL)
 	{
@@ -1851,11 +1851,11 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 				&& (g_real_color_iter < maxit || (g_inside < 0 && g_color_iter == maxit)))
 			g_color_iter = logtablecalc(g_color_iter);
 		g_color = abs((int)g_color_iter);
-		if (g_color_iter >= colors)  /* don't use color 0 unless from inside/outside */
+		if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
 		{
 			if (g_save_release <= 1950)
 			{
-				if (colors < 16)
+				if (g_colors < 16)
 				{
 					g_color &= g_and_color;
 				}
@@ -1866,7 +1866,7 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 			}
 			else
 			{
-				g_color = (colors < 16) ?
+				g_color = (g_colors < 16) ?
 					(int)(g_color_iter & g_and_color)
 					: (int)(((g_color_iter - 1) % g_and_color) + 1);
 			}
@@ -1913,11 +1913,11 @@ int calculate_mandelbrot_fp(void)
 				&& (g_real_color_iter < maxit || (g_inside < 0 && g_color_iter == maxit)))
 			g_color_iter = logtablecalc(g_color_iter);
 		g_color = abs((int)g_color_iter);
-		if (g_color_iter >= colors)  /* don't use color 0 unless from inside/outside */
+		if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
 		{
 			if (g_save_release <= 1950)
 			{
-				if (colors < 16)
+				if (g_colors < 16)
 				{
 					g_color &= g_and_color;
 				}
@@ -1928,7 +1928,7 @@ int calculate_mandelbrot_fp(void)
 			}
 			else
 			{
-				g_color = (colors < 16) ?
+				g_color = (g_colors < 16) ?
 					(int)(g_color_iter & g_and_color)
 					: (int)(((g_color_iter - 1) % g_and_color) + 1);
 			}
@@ -2072,7 +2072,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			if (g_use_old_distance_test)
 			{
 				g_rq_limit = s_rq_limit_save;
-				if (g_distance_test != 1 || colors == 2) /* not doing regular outside colors */
+				if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside g_colors */
 					if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
 					{
 						g_rq_limit = DEM_BAILOUT;
@@ -2668,14 +2668,14 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 		else if (g_outside == FMOD)
 		{
-			g_color_iter = (long)(memvalue*colors / g_proximity);
+			g_color_iter = (long)(memvalue*g_colors / g_proximity);
 		}
 		else if (g_outside == TDIS)
 		{
 			g_color_iter = (long)(totaldist);
 		}
 
-		/* eliminate negative colors & wrap arounds */
+		/* eliminate negative g_colors & wrap arounds */
 		if ((g_color_iter <= 0 || g_color_iter > maxit) && g_outside != FMOD)
 		{
 			g_color_iter = (g_save_release < 1961) ? 0 : 1;
@@ -2704,7 +2704,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			g_color_iter = -g_distance_test;       /* show boundary as specified color */
 			goto plot_pixel;       /* no further adjustments apply */
 		}
-		if (colors == 2)
+		if (g_colors == 2)
 		{
 			g_color_iter = !g_inside;   /* the only useful distest 2 color use */
 			goto plot_pixel;       /* no further adjustments apply */
@@ -2814,7 +2814,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == FMODI)
 		{
-			g_color_iter = (long)(memvalue*colors / g_proximity);
+			g_color_iter = (long)(memvalue*g_colors / g_proximity);
 		}
 		else if (g_inside == ATANI)          /* "atan" */
 		{
@@ -2855,11 +2855,11 @@ plot_inside: /* we're "inside" */
 
 plot_pixel:
 	g_color = abs((int)g_color_iter);
-	if (g_color_iter >= colors)  /* don't use color 0 unless from inside/outside */
+	if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
 	{
 		if (g_save_release <= 1950)
 		{
-			if (colors < 16)
+			if (g_colors < 16)
 			{
 				g_color &= g_and_color;
 			}
@@ -2870,7 +2870,7 @@ plot_pixel:
 		}
 		else
 		{
-			g_color = (colors < 16) ?
+			g_color = (g_colors < 16) ?
 				(int)(g_color_iter & g_and_color)
 				: (int)(((g_color_iter - 1) % g_and_color) + 1);
 		}
@@ -3164,7 +3164,7 @@ static void decomposition(void)
 	if (g_decomposition[0] == 2 && g_save_release >= 1827)
 	{
 		g_color_iter = (save_temp & 2) ? 1 : 0;
-		if (colors == 2)
+		if (g_colors == 2)
 		{
 			g_color_iter++;
 		}
@@ -3173,7 +3173,7 @@ static void decomposition(void)
 	{
 		g_color_iter &= 1;
 	}
-	if (colors > g_decomposition[0])
+	if (g_colors > g_decomposition[0])
 	{
 		g_color_iter++;
 	}
@@ -3271,9 +3271,9 @@ static int _fastcall potential(double mag, long iterations)
 
 	l_pot = (long) pot*256;
 	i_pot = (int) (l_pot >> 8);
-	if (i_pot >= colors)
+	if (i_pot >= g_colors)
 	{
-		i_pot = colors - 1;
+		i_pot = g_colors - 1;
 		l_pot = 255;
 	}
 
@@ -3319,9 +3319,9 @@ static int boundary_trace_main(void)
 		stopmsg(0, "Boundary tracing cannot be used with inside=0 or outside=0");
 		return -1;
 	}
-	if (colors < 16)
+	if (g_colors < 16)
 	{
-		stopmsg(0, "Boundary tracing cannot be used with < 16 colors");
+		stopmsg(0, "Boundary tracing cannot be used with < 16 g_colors");
 		return -1;
 	}
 
@@ -4553,7 +4553,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 struct tess  /* one of these per box to be done gets stacked */
 {
 	int x1, x2, y1, y2;      /* left/right top/bottom x/y coords  */
-	int top, bot, lft, rgt;  /* edge colors, -1 mixed, -2 unknown */
+	int top, bot, lft, rgt;  /* edge g_colors, -1 mixed, -2 unknown */
 };
 
 static int tesseral(void)
@@ -4706,7 +4706,7 @@ static int tesseral(void)
 			{
 				if (g_fill_color > 0)
 				{
-					tp->top = g_fill_color % colors;
+					tp->top = g_fill_color % g_colors;
 				}
 				if (s_guess_plot || (j = tp->x2 - tp->x1 - 1) < 2)  /* paint dots */
 				{

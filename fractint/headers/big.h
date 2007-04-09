@@ -134,7 +134,7 @@ typedef struct BNComplex  _BNCMPLX;
 
 /* globals */
 extern int fpu;
-extern int cpu;
+extern int g_cpu;
 
 extern int bf_math;
 

@@ -91,8 +91,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	xxmax        = read_info.xmax;
 	yymin        = read_info.ymin;
 	yymax        = read_info.ymax;
-	param[0]     = read_info.creal;
-	param[1]     = read_info.cimag;
+	param[0]     = read_info.g_c_real;
+	param[1]     = read_info.g_c_imag;
 	g_save_release = 1100; /* unless we find out better later on */
 
 	g_invert = 0;
@@ -107,7 +107,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		potparam[2]   = read_info.potential[2];
 		if (*g_make_par == '\0')
 		{
-			colors = read_info.colors;
+			g_colors = read_info.g_colors;
 		}
 		g_potential_flag = (potparam[0] != 0.0);
 		g_random_flag         = read_info.random_flag;
@@ -160,17 +160,17 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_outside      = read_info.outside;
 	}
 
-	calc_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
+	g_calculation_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
 	xx3rd = xxmin;
 	yy3rd = yymin;
 	usr_distest = 0;
-	calctime = 0;
+	g_calculation_time = 0;
 	if (read_info.version > 3)
 	{
 		g_save_release = 1400;
 		xx3rd       = read_info.x3rd;
 		yy3rd       = read_info.y3rd;
-		calc_status = read_info.calc_status;
+		g_calculation_status = read_info.g_calculation_status;
 		usr_stdcalcmode = read_info.stdcalcmode;
 		g_three_pass = 0;
 		if (usr_stdcalcmode == 127)
@@ -181,7 +181,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		usr_distest     = read_info.distestold;
 		usr_floatflag   = (char)read_info.float_flag;
 		g_bail_out     = read_info.bailoutold;
-		calctime    = read_info.calctime;
+		g_calculation_time    = read_info.g_calculation_time;
 		trigndx[0]  = read_info.trigndx[0];
 		trigndx[1]  = read_info.trigndx[1];
 		trigndx[2]  = read_info.trigndx[2];
@@ -441,7 +441,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (g_display_3d)
 	{
-		calc_status = CALCSTAT_PARAMS_CHANGED;
+		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		fractype = PLASMA;
 		g_current_fractal_specific = &g_fractal_specific[fractype];
 		param[0] = 0;
@@ -533,9 +533,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			evolver_info.ecount = evolver_info.mutate[NUMGENES - 4];
 		}
 		if (evolver_info.ecount != evolver_info.gridsz*evolver_info.gridsz
-				&& calc_status != CALCSTAT_COMPLETED)
+				&& g_calculation_status != CALCSTAT_COMPLETED)
 		{
-			calc_status = CALCSTAT_RESUMABLE;
+			g_calculation_status = CALCSTAT_RESUMABLE;
 			if (evolve_handle == NULL)
 			{
 				evolve_handle = malloc(sizeof(resume_e_info));
@@ -566,7 +566,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 				free(evolve_handle);
 				evolve_handle = NULL;
 			}
-			calc_status = CALCSTAT_COMPLETED;
+			g_calculation_status = CALCSTAT_COMPLETED;
 		}
 		paramrangex  = evolver_info.paramrangex;
 		paramrangey  = evolver_info.paramrangey;
@@ -824,7 +824,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					resume_info_blk->resume_data = malloc(data_len);
 					if (resume_info_blk->resume_data == 0)
 					{
-						info->calc_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
+						info->g_calculation_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
 					}
 					else
 					{
@@ -958,8 +958,8 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	info->ymax = 1;
 	info->x3rd = -1;
 	info->y3rd = -1;
-	info->creal = 0;
-	info->cimag = 0;
+	info->g_c_real = 0;
+	info->g_c_imag = 0;
 	info->videomodeax = 255;
 	info->videomodebx = 255;
 	info->videomodecx = 255;
@@ -967,7 +967,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	info->dotmode = 0;
 	info->xdots = (short)filexdots;
 	info->ydots = (short)fileydots;
-	info->colors = (short)filecolors;
+	info->g_colors = (short)filecolors;
 	info->version = 0; /* this forces lots more init at calling end too */
 
 	/* zero means we won */
@@ -1362,9 +1362,9 @@ int fgetwindow(void)
 	bf_math = BIGFLT;
 	if (!oldbf_math)
 	{
-		int oldcalc_status = calc_status; /* kludge because next sets it = 0 */
+		int oldcalc_status = g_calculation_status; /* kludge because next sets it = 0 */
 		fractal_float_to_bf();
-		calc_status = oldcalc_status;
+		g_calculation_status = oldcalc_status;
 	}
 	saved = save_stack();
 	bt_a = alloc_stack(rbflength + 2);
@@ -2062,8 +2062,8 @@ static char paramsOK(struct fractal_info *info)
 	}
 	/* parameters are in range? */
 	return
-		(fabs(info->creal - param[0]) < MINDIF &&
-		fabs(info->cimag - param[1]) < MINDIF &&
+		(fabs(info->g_c_real - param[0]) < MINDIF &&
+		fabs(info->g_c_imag - param[1]) < MINDIF &&
 		fabs(tmpparm3 - param[2]) < MINDIF &&
 		fabs(tmpparm4 - param[3]) < MINDIF &&
 		fabs(tmpparm5 - param[4]) < MINDIF &&

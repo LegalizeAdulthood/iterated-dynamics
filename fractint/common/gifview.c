@@ -147,7 +147,7 @@ int gifview()
 	}
 	numcolors = 1 << planes;
 
-	if (g_dither_flag && numcolors > 2 && colors == 2 && g_out_line == out_line)
+	if (g_dither_flag && numcolors > 2 && g_colors == 2 && g_out_line == out_line)
 	{
 			g_out_line = out_line_dither;
 	}
@@ -169,7 +169,7 @@ int gifview()
 			}
 		}
 	}
-	g_color_state = COLORSTATE_UNKNOWN; /* colors aren't default and not a known .map file */
+	g_color_state = COLORSTATE_UNKNOWN; /* g_colors aren't default and not a known .map file */
 
 	/* don't read if glasses */
 	if (g_display_3d && mapset && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
@@ -296,9 +296,9 @@ int gifview()
 			/* initialize the row count for write-lines */
 			g_row_count = 0;
 
-			if (calc_status == CALCSTAT_IN_PROGRESS) /* should never be so, but make sure */
+			if (g_calculation_status == CALCSTAT_IN_PROGRESS) /* should never be so, but make sure */
 			{
-				calc_status = CALCSTAT_PARAMS_CHANGED;
+				g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 			}
 			g_busy = 1;      /* for slideshow CALCWAIT */
 			/*
@@ -311,17 +311,17 @@ int gifview()
 			}
 			status = timer(TIMER_DECODER, NULL, width);
 			g_busy = 0;      /* for slideshow CALCWAIT */
-			if (calc_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
+			if (g_calculation_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{
-				calctime = timer_interval; /* note how long it took */
+				g_calculation_time = timer_interval; /* note how long it took */
 				if (driver_key_pressed() != 0)
 				{
-					calc_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
+					g_calculation_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
 					finished = 1;
 				}
 				else
 				{
-					calc_status = CALCSTAT_COMPLETED; /* complete */
+					g_calculation_status = CALCSTAT_COMPLETED; /* complete */
 				}
 			}
 			/* Hey! the decoder doesn't read the last (0-length) g_block!! */
@@ -453,7 +453,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 		{
 			sleep_ms(g_orbit_delay);
 		}
-		sound_tone((int)((int)(*pixels++)*3000/colors + g_base_hertz));
+		sound_tone((int)((int)(*pixels++)*3000/g_colors + g_base_hertz));
 		if (driver_key_pressed())
 		{
 		driver_mute();

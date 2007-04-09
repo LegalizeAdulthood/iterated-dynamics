@@ -1267,7 +1267,7 @@ int popcorn_old_orbit_fp(void)
 	g_new_z.y = g_old_z.y - g_parameter.x*g_sin_x;
 	if (g_plot_color == noplot)
 	{
-		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % colors);
+		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
 		g_old_z = g_new_z;
 	}
 	else
@@ -1309,7 +1309,7 @@ int popcorn_orbit_fp(void)
 	*/
 	if (g_plot_color == noplot)
 	{
-		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % colors);
+		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
 		g_old_z = g_new_z;
 	}
 	/* else */
@@ -1351,7 +1351,7 @@ int popcorn_old_orbit(void)
 	g_new_z_l.y = g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift);
 	if (g_plot_color == noplot)
 	{
-		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % colors);
+		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
 	}
 	else
@@ -1392,7 +1392,7 @@ int popcorn_orbit(void)
 	g_new_z_l.y = g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift);
 	if (g_plot_color == noplot)
 	{
-		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % colors);
+		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
 	}
 	/* else */
@@ -1438,7 +1438,7 @@ int popcorn_fn_orbit_fp(void)
 
 	if (g_plot_color == noplot)
 	{
-		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % colors);
+		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
 		g_old_z = g_new_z;
 	}
 
@@ -1492,7 +1492,7 @@ int popcorn_fn_orbit(void)
 
 	if (g_plot_color == noplot)
 	{
-		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % colors);
+		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
 	}
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
@@ -2531,7 +2531,7 @@ int circle_orbit_fp(void)
 {
 	long i;
 	i = (long)(param[0]*(g_temp_sqr_x + g_temp_sqr_y));
-	g_color_iter = i % colors;
+	g_color_iter = i % g_colors;
 	return 1;
 }
 
@@ -2541,7 +2541,7 @@ int circle_orbit(void)
 	long i;
 	i = multiply(g_parameter_l.x, (g_temp_sqr_x_l + g_temp_sqr_y_l), g_bit_shift);
 	i = i >> g_bit_shift;
-	g_color_iter = i % colors);
+	g_color_iter = i % g_colors);
 	return 1;
 }
 */

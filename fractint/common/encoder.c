@@ -215,11 +215,11 @@ restart:
 		{
 			if ((j & 4) == 0)
 			{
-				if (++outcolor1 >= colors)
+				if (++outcolor1 >= g_colors)
 				{
 					outcolor1 = 0;
 				}
-				if (++outcolor2 >= colors)
+				if (++outcolor2 >= g_colors)
 				{
 					outcolor2 = 0;
 				}
@@ -304,18 +304,18 @@ int encoder()
 
 #ifndef XFRACT
 	bitsperpixel = 0;            /* calculate bits / pixel */
-	for (i = colors; i >= 2; i /= 2)
+	for (i = g_colors; i >= 2; i /= 2)
 	{
 		bitsperpixel++;
 	}
 
 	startbits = bitsperpixel + 1; /* start coding with this many bits */
-	if (colors == 2)
+	if (g_colors == 2)
 	{
 		startbits++;              /* B&W Klooge */
 	}
 #else
-	if (colors == 2)
+	if (g_colors == 2)
 	{
 		bitsperpixel = 1;
 		startbits = 3;
@@ -344,7 +344,7 @@ int encoder()
 	if (save16bit)
 	{
 		/* g_potential_16bit info is stored as: file:    double width rows, right side
-		* of row is low 8 bits diskvid: ydots rows of colors followed by ydots
+		* of row is low 8 bits diskvid: ydots rows of g_colors followed by ydots
 		* rows of low 8 bits decoder: returns (row of color info then row of
 		* low 8 bits)*ydots */
 		rowlimit <<= 1;
@@ -399,16 +399,16 @@ int encoder()
 	}
 
 #ifndef XFRACT
-	if (colors == 256)
+	if (g_colors == 256)
 	{                            /* write out the 256-color palette */
 		if (g_got_real_dac)
 		{                         /* got a DAC - must be a VGA */
-			if (!shftwrite((BYTE *) g_dac_box, colors))
+			if (!shftwrite((BYTE *) g_dac_box, g_colors))
 			{
 				goto oops;
 			}
 #else
-	if (colors > 2)
+	if (g_colors > 2)
 	{
 		if (g_got_real_dac || fake_lut)
 		{                         /* got a DAC - must be a VGA */
@@ -429,33 +429,33 @@ int encoder()
 			}
 		}
 	}
-	if (colors == 2)
+	if (g_colors == 2)
 	{                            /* write out the B&W palette */
-		if (!shftwrite((BYTE *)paletteBW, colors))
+		if (!shftwrite((BYTE *)paletteBW, g_colors))
 		{
 			goto oops;
 		}
 	}
 #ifndef XFRACT
-	if (colors == 4)
+	if (g_colors == 4)
 	{                            /* write out the CGA palette */
-		if (!shftwrite((BYTE *)paletteCGA, colors))
+		if (!shftwrite((BYTE *)paletteCGA, g_colors))
 		{
 			goto oops;
 		}
 	}
-	if (colors == 16)
+	if (g_colors == 16)
 	{                            /* Either EGA or VGA */
 		if (g_got_real_dac)
 		{
-			if (!shftwrite((BYTE *) g_dac_box, colors))
+			if (!shftwrite((BYTE *) g_dac_box, g_colors))
 			{
 				goto oops;
 			}
 		}
 		else
 		{                         /* no DAC - must be an EGA */
-			if (!shftwrite((BYTE *)paletteEGA, colors))
+			if (!shftwrite((BYTE *)paletteEGA, g_colors))
 			{
 				goto oops;
 			}
@@ -513,10 +513,10 @@ int encoder()
 		/* loadfile.c has notes about extension g_block structure */
 		if (interrupted)
 		{
-			save_info.calc_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
+			save_info.g_calculation_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
 		}
 		save_info.tot_extend_len = 0;
-		if (g_resume_info != NULL && save_info.calc_status == CALCSTAT_RESUMABLE)
+		if (g_resume_info != NULL && save_info.g_calculation_status == CALCSTAT_RESUMABLE)
 		{
 			/* resume info g_block, 002 */
 			save_info.tot_extend_len += extend_blk_len(g_resume_length);
@@ -569,7 +569,7 @@ int encoder()
 			struct evolution_info esave_info;
 			int i;
 			struct evolution_info resume_e_info;
-			if (evolve_handle == NULL || calc_status == CALCSTAT_COMPLETED)
+			if (evolve_handle == NULL || g_calculation_status == CALCSTAT_COMPLETED)
 			{
 				esave_info.paramrangex     = paramrangex;
 				esave_info.paramrangey     = paramrangey;
@@ -686,8 +686,8 @@ oops:
 	return 1;
 }
 
-/* TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. */
-/* shift IBM colors to GIF */
+/* TODO: should we be doing this?  We need to store full g_colors, not the VGA truncated business. */
+/* shift IBM g_colors to GIF */
 static int _fastcall shftwrite(BYTE *color, int numcolors)
 {
 	BYTE thiscolor;
@@ -800,8 +800,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->xmax = xxmax;
 	save_info->ymin = yymin;
 	save_info->ymax = yymax;
-	save_info->creal = param[0];
-	save_info->cimag = param[1];
+	save_info->g_c_real = param[0];
+	save_info->g_c_imag = param[1];
 	save_info->videomodeax = (short) g_video_entry.videomodeax;
 	save_info->videomodebx = (short) g_video_entry.videomodebx;
 	save_info->videomodecx = (short) g_video_entry.videomodecx;
@@ -809,7 +809,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->dotmode = (short) (g_video_entry.dotmode % 100);
 	save_info->xdots = (short) g_video_entry.xdots;
 	save_info->ydots = (short) g_video_entry.ydots;
-	save_info->colors = (short) g_video_entry.colors;
+	save_info->g_colors = (short) g_video_entry.g_colors;
 	save_info->parm3 = 0;        /* pre version == 7 fields */
 	save_info->parm4 = 0;
 	save_info->dparm3 = param[2];
@@ -854,13 +854,13 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->outside = (short) g_outside;
 	save_info->x3rd = xx3rd;
 	save_info->y3rd = yy3rd;
-	save_info->calc_status = (short) calc_status;
+	save_info->g_calculation_status = (short) g_calculation_status;
 	save_info->stdcalcmode = (char) ((g_three_pass && stdcalcmode == '3') ? 127 : stdcalcmode);
 	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;
 	save_info->float_flag = g_float_flag;
 	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? (short) g_bail_out : 0;
 
-	save_info->calctime = calctime;
+	save_info->g_calculation_time = g_calculation_time;
 	save_info->trigndx[0] = trigndx[0];
 	save_info->trigndx[1] = trigndx[1];
 	save_info->trigndx[2] = trigndx[2];
@@ -1041,16 +1041,16 @@ static int compress(int rowlimit)
 	char accum_stack[256];
 	accum = accum_stack;
 
-	outcolor1 = 0;               /* use these colors to show progress */
+	outcolor1 = 0;               /* use these g_colors to show progress */
 	outcolor2 = 1;               /* (this has nothing to do with GIF) */
 
-	if (colors > 2)
+	if (g_colors > 2)
 	{
 		outcolor1 = 2;
 		outcolor2 = 3;
 	}
 	if (((++numsaves) & 1) == 0)
-	{                            /* reverse the colors on alt saves */
+	{                            /* reverse the g_colors on alt saves */
 		i = outcolor1;
 		outcolor1 = outcolor2;
 		outcolor2 = i;
@@ -1151,11 +1151,11 @@ nomatch:
 			{
 				if ((ydot & 4) == 0)
 				{
-					if (++outcolor1 >= colors)
+					if (++outcolor1 >= g_colors)
 					{
 						outcolor1 = 0;
 					}
-					if (++outcolor2 >= colors)
+					if (++outcolor2 >= g_colors)
 					{
 						outcolor2 = 0;
 					}

@@ -69,7 +69,7 @@ main()
 				exit(1);
 			}
 			printf("row %2d col %2d iter %8ld          \n", j, i, iter);
-			/* map iterations to colors */
+			/* map iterations to g_colors */
 			rgbmap(maxiter, iter, &red, &green, &blue);
 			fwrite(&blue, 1, 1, fpout);
 			fwrite(&green, 1, 1, fpout);

@@ -77,11 +77,11 @@ void calc_lengths(void)
 #ifdef USE_BIGNUM_C_CODE
 	bnstep = 2;
 #else /* use 80x86 asm code */
-	if (cpu >= 386)
+	if (g_cpu >= 386)
 	{
 		bnstep = 4;
 	}
-	else /* cpu <= 286 */
+	else /* g_cpu <= 286 */
 	{
 		bnstep = 2;
 	}

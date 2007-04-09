@@ -69,7 +69,7 @@ struct tagGDIDriver
 /*                                      16 = Chips&Tech SuperVGA*256    */
 /*         int     xdots;          number of dots across the screen     */
 /*         int     ydots;          number of dots down the screen       */
-/*         int     colors;         number of colors available           */
+/*         int     g_colors;         number of g_colors available           */
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
 	{ name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
@@ -406,7 +406,7 @@ gdi_read_palette(Driver *drv)
 *	None.
 *
 * Side effects:
-*	Changes the displayed colors.
+*	Changes the displayed g_colors.
 *
 *----------------------------------------------------------------------
 */
@@ -645,7 +645,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 	g_good_mode = 1;
 	if (dotmode != 0)
 	{
-		g_and_color = colors-1;
+		g_and_color = g_colors-1;
 		g_box_count = 0;
 		g_dac_learn = 1;
 		g_dac_count = g_cycle_limit;
@@ -861,11 +861,11 @@ gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
 	int width, height;
 	gdi_get_max_screen(drv, &width, &height);
 
-	/* allow modes <= size of screen with 256 colors and dotmode = 19
+	/* allow modes <= size of screen with 256 g_colors and dotmode = 19
 	   ax/bx/cx/dx must be zero. */
 	return (mode->xdots <= width) &&
 		(mode->ydots <= height) &&
-		(mode->colors == 256) &&
+		(mode->g_colors == 256) &&
 		(mode->videomodeax == 0) &&
 		(mode->videomodebx == 0) &&
 		(mode->videomodecx == 0) &&

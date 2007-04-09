@@ -609,7 +609,7 @@ void wintext_paintscreen(WinText *me,
 	the following convoluted code minimizes the number of
 	discrete calls to the Windows interface by locating
 	'strings' of screen locations with common foreground
-	and background colors
+	and background g_colors
 	*/
 	for (j = ymin; j <= ymax; j++)
 	{

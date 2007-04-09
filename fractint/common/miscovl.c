@@ -111,7 +111,7 @@ void make_batch_file()
 	oldhelpmode = helpmode;
 	helpmode = HELPPARMFILE;
 
-	maxcolor = colors;
+	maxcolor = g_colors;
 	strcpy(colorspec, "y");
 #ifndef XFRACT
 	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode))
@@ -147,7 +147,7 @@ void make_batch_file()
 			maxcolor = 256;
 		}
 		if (g_color_state == COLORSTATE_DEFAULT)
-		{                         /* default colors */
+		{                         /* default g_colors */
 			if (g_map_dac_box)
 			{
 				colorspec[0] = '@';
@@ -155,11 +155,11 @@ void make_batch_file()
 			}
 		}
 		else if (g_color_state == COLORSTATE_MAP)
-		{                         /* colors match g_color_file */
+		{                         /* g_colors match g_color_file */
 			colorspec[0] = '@';
 			sptr = g_color_file;
 		}
-		else                      /* colors match no .map that we know of */
+		else                      /* g_colors match no .map that we know of */
 		{
 			strcpy (colorspec, "y");
 		}
@@ -230,12 +230,12 @@ prompt_user:
 		if (g_got_real_dac || (g_is_true_color && !g_true_mode) || fake_lut)
 #endif
 		{
-			choices[promptnum] = "Record colors?";
+			choices[promptnum] = "Record g_colors?";
 			paramvalues[promptnum].type = 0x100 + 13;
 			paramvalues[promptnum++].uval.sbuf = colorspec;
 			choices[promptnum] = "    (no | yes | only for full info | @filename to point to a map file)";
 			paramvalues[promptnum++].type = '*';
-			choices[promptnum] = "# of colors";
+			choices[promptnum] = "# of g_colors";
 			maxcolorindex = promptnum;
 			paramvalues[promptnum].type = 'i';
 			paramvalues[promptnum++].uval.ival = maxcolor;
@@ -1421,12 +1421,12 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		if (g_record_colors == 'c' && *colorinf == '@')
 		{
 			put_parm_line();
-			put_parm("; colors=");
+			put_parm("; g_colors=");
 			put_parm(colorinf);
 			put_parm_line();
 		}
 docolors:
-		put_parm(" colors=");
+		put_parm(" g_colors=");
 		if (g_record_colors != 'c' && g_record_colors != 'y' && *colorinf == '@')
 		{
 			put_parm(colorinf);
@@ -2072,7 +2072,7 @@ int select_video_mode(int curmode)
 	if (curmode < 0)
 	{
 		g_video_entry.videomodeax = 19;  /* vga */
-		g_video_entry.colors = 256;
+		g_video_entry.g_colors = 256;
 	}
 	else
 	{
@@ -2082,7 +2082,7 @@ int select_video_mode(int curmode)
 	for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
 	{
 		if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax &&
-			g_video_entry.colors      == g_video_table[entnums[i]].colors &&
+			g_video_entry.g_colors      == g_video_table[entnums[i]].g_colors &&
 			(curmode < 0 ||
 			memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
 		{
@@ -2171,7 +2171,7 @@ void format_vid_table(int choice, char *buf)
 	if (truecolorbits == 0)
 	{
 		sprintf(local_buf, "%s%3d",  /* 47 chars */
-			buf, g_video_entry.colors);
+			buf, g_video_entry.g_colors);
 	}
 	else
 	{
@@ -2312,7 +2312,7 @@ static void update_fractint_cfg()
 			truecolorbits = vident.dotmode/1000;
 			if (truecolorbits == 0)
 			{
-				sprintf(colorsbuf, "%3d", vident.colors);
+				sprintf(colorsbuf, "%3d", vident.g_colors);
 			}
 			else
 			{
@@ -2674,8 +2674,8 @@ void flip_image(int key)
 
 	/* fractal must be rotate-able and be finished */
 	if ((g_current_fractal_specific->flags&NOROTATE) != 0
-			|| calc_status == CALCSTAT_IN_PROGRESS
-			|| calc_status == CALCSTAT_RESUMABLE)
+			|| g_calculation_status == CALCSTAT_IN_PROGRESS
+			|| g_calculation_status == CALCSTAT_RESUMABLE)
 		return;
 	if (bf_math)
 	{
@@ -2783,7 +2783,7 @@ void flip_image(int key)
 		break;
 	}
 	reset_zoom_corners();
-	calc_status = CALCSTAT_PARAMS_CHANGED;
+	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 static char *expand_var(char *var, char *buf)
 {
@@ -2840,9 +2840,9 @@ static char *expand_var(char *var, char *buf)
 		strcat(out, ", ");
 		strcat(out, &str[20]);
 	}
-	else if (strcmp(var, "calctime") == 0)
+	else if (strcmp(var, "g_calculation_time") == 0)
 	{
-		get_calculation_time(buf, calctime);
+		get_calculation_time(buf, g_calculation_time);
 		out = buf;
 	}
 	else if (strcmp(var, "version") == 0)  /* 4 chars */

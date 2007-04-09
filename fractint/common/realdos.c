@@ -1145,7 +1145,7 @@ top:
 		nextleft += 2;
 		choicekey[nextleft] = 13; /* enter */
 		attributes[nextleft] = MENU_ITEM;
-		choices[nextleft] = (calc_status == CALCSTAT_RESUMABLE) ?
+		choices[nextleft] = (g_calculation_status == CALCSTAT_RESUMABLE) ?
 			"continue calculation        " :
 			"return to image             ";
 
@@ -1345,9 +1345,9 @@ top:
 	choices[nextright] = "restart "FRACTINT"        <ins> ";
 
 #ifdef XFRACT
-	if (fullmenu && (g_got_real_dac || fake_lut) && colors >= 16)
+	if (fullmenu && (g_got_real_dac || fake_lut) && g_colors >= 16)
 #else
-	if (fullmenu && g_got_real_dac && colors >= 16)
+	if (fullmenu && g_got_real_dac && g_colors >= 16)
 #endif
 	{
 		nextright += 2;
@@ -1364,7 +1364,7 @@ top:
 		attributes[nextright] = MENU_ITEM;
 		choices[nextright] = "rotate palette      <+>, <->  ";
 
-		if (colors > 16)
+		if (g_colors > 16)
 		{
 			nextright += 2;
 			choicekey[nextright] = 'e';
@@ -1495,13 +1495,13 @@ static int menu_checkkey(int curkey, int choice)
 				return -testkey;
 			}
 		}
-		if (g_got_real_dac && colors >= 16)
+		if (g_got_real_dac && g_colors >= 16)
 		{
 			if (strchr("c+-", testkey))
 			{
 				return -testkey;
 			}
-			if (colors > 16
+			if (g_colors > 16
 					&& (testkey == 'a' || (testkey == 'e')))
 			{
 				return -testkey;
@@ -1885,7 +1885,7 @@ void load_fractint_config(void)
 	VIDEOINFO vident;
 	int linenum;
 	long xdots, ydots;
-	int i, j, keynum, ax, bx, cx, dx, dotmode, colors;
+	int i, j, keynum, ax, bx, cx, dx, dotmode, g_colors;
 	char *fields[11];
 	int textsafe2;
 	char tempstring[150];
@@ -1917,7 +1917,7 @@ void load_fractint_config(void)
 		tempstring[120] = 0;
 		tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
 		i = j = -1;
-		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
+		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, g_colors, comments, driver */
 		while (1)
 		{
 			if (tempstring[++i] < ' ')
@@ -1945,25 +1945,25 @@ void load_fractint_config(void)
 		dotmode     = atoi(fields[5]);
 		xdots       = atol(fields[6]);
 		ydots       = atol(fields[7]);
-		colors      = atoi(fields[8]);
-		if (colors == 4 && strchr(strlwr(fields[8]), 'g'))
+		g_colors      = atoi(fields[8]);
+		if (g_colors == 4 && strchr(strlwr(fields[8]), 'g'))
 		{
-			colors = 256;
+			g_colors = 256;
 			truecolorbits = 4; /* 32 bits */
 		}
-		else if (colors == 16 && strchr(fields[8], 'm'))
+		else if (g_colors == 16 && strchr(fields[8], 'm'))
 		{
-			colors = 256;
+			g_colors = 256;
 			truecolorbits = 3; /* 24 bits */
 		}
-		else if (colors == 64 && strchr(fields[8], 'k'))
+		else if (g_colors == 64 && strchr(fields[8], 'k'))
 		{
-			colors = 256;
+			g_colors = 256;
 			truecolorbits = 2; /* 16 bits */
 		}
-		else if (colors == 32 && strchr(fields[8], 'k'))
+		else if (g_colors == 32 && strchr(fields[8], 'k'))
 		{
-			colors = 256;
+			g_colors = 256;
 			truecolorbits = 1; /* 15 bits */
 		}
 		else
@@ -1979,8 +1979,8 @@ void load_fractint_config(void)
 				textsafe2 < 0 || textsafe2 > 4 ||
 				xdots < MINPIXELS || xdots > MAXPIXELS ||
 				ydots < MINPIXELS || ydots > MAXPIXELS ||
-				(colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
-				colors != 256)
+				(g_colors != 0 && g_colors != 2 && g_colors != 4 && g_colors != 16 &&
+				g_colors != 256)
 			)
 		{
 			goto bad_fractint_cfg;
@@ -1999,7 +1999,7 @@ void load_fractint_config(void)
 		vident.dotmode     = truecolorbits*1000 + textsafe2*100 + dotmode;
 		vident.xdots       = (short)xdots;
 		vident.ydots       = (short)ydots;
-		vident.colors      = colors;
+		vident.g_colors      = g_colors;
 
 		/* if valid, add to supported modes */
 		vident.driver = driver_find_by_name(fields[10]);
@@ -2013,7 +2013,7 @@ void load_fractint_config(void)
 				for (m = 0; m < g_video_table_len; m++)
 				{
 					VIDEOINFO *mode = &g_video_table[m];
-					if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
+					if ((mode->driver == vident.driver) && (mode->g_colors == vident.g_colors) &&
 						(mode->xdots == vident.xdots) && (mode->ydots == vident.ydots) &&
 						(mode->dotmode == vident.dotmode))
 					{
