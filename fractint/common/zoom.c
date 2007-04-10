@@ -776,7 +776,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	if (listfull != 0)
 	{
-		if (stopmsg(STOPMSG_CANCEL,
+		if (stop_message(STOPMSG_CANCEL,
 				"Tables full, can't pan current image.\n"
 				"Cancel resumes old image, continue pans and calculates a new one."))
 		{

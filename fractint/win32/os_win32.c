@@ -372,13 +372,13 @@ static void fill_dta()
 }
 #undef DTA_FLAG
 
-/* fr_findfirst
+/* fr_find_first
  *
  * Fill in DTA.filename, DTA.path and DTA.attribute for the first file
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
-int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
+int fr_find_first(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
 {
 	if (s_find_context != INVALID_HANDLE_VALUE)
 	{
@@ -407,12 +407,12 @@ int fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fil
 	return 0;
 }
 
-/* fr_findnext
+/* fr_find_next
  *
- * Find the next file matching the wildcard search begun by fr_findfirst.
+ * Find the next file matching the wildcard search begun by fr_find_first.
  * Fill in DTA.filename, DTA.path, and DTA.attribute
  */
-int fr_findnext()
+int fr_find_next()
 {
 	BOOL result = FALSE;
 	_ASSERTE(INVALID_HANDLE_VALUE != s_find_context);
@@ -574,7 +574,7 @@ void initasmvars(void)
 	g_fpu = 487;
 }
 
-int isadirectory(char *s)
+int is_a_directory(char *s)
 {
 	return PathIsDirectory(s);
 }
@@ -767,7 +767,7 @@ int expand_dirname(char *dirname, char *drive)
 			strcpy(dirname, absolute);
 		}
 	}
-	fix_dirname(dirname);
+	fix_dir_name(dirname);
 
 	return 0;
 }
@@ -776,7 +776,7 @@ int abortmsg(char *file, unsigned int line, int flags, char *msg)
 {
 	char buffer[3*80];
 	sprintf(buffer, "%s(%d):\n%s", file, line, msg);
-	return stopmsg(flags, buffer);
+	return stop_message(flags, buffer);
 }
 
 /* ods

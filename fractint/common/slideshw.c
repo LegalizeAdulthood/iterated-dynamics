@@ -123,10 +123,10 @@ static void message(int secs, char *buf)
 	char nearbuf[41] = { 0 };
 	strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
 	showtempmsg_txt(0, 0, 7, secs, nearbuf);
-	if (showtempmsg(nearbuf) == 0)
+	if (show_temp_message(nearbuf) == 0)
 	{
 		sleep_secs(secs);
-		cleartempmsg();
+		clear_temp_message();
 	}
 }
 
@@ -426,5 +426,5 @@ static void slideshowerr(char *msg)
 	char msgbuf[300] = { "Slideshow error:\n" };
 	stopslideshow();
 	strcat(msgbuf, msg);
-	stopmsg(0, msgbuf);
+	stop_message(0, msgbuf);
 }

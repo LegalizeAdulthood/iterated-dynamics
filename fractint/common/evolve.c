@@ -80,11 +80,11 @@ void varytrig(GENEBASE gene[], int randval, int i);
 void varybotest(GENEBASE gene[], int randval, int i);
 void varyinv(GENEBASE gene[], int randval, int i);
 int explore_check(void);
-void spiralmap(int);
+void spiral_map(int);
 static void set_random(int);
 void set_mutation_level(int);
-void SetupParamBox(void);
-void ReleaseParamBox(void);
+void setup_parameter_box(void);
+void release_parameter_box(void);
 
 GENEBASE g_genes[NUMGENES] =
 {
@@ -270,7 +270,7 @@ void varybotest(GENEBASE gene[], int randval, int i)
 	{
 		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 7, gene[i].mutate)];
 		/* move this next bit to varybot where it belongs */
-		setbailoutformula(g_bail_out_test);
+		set_bail_out_formula(g_bail_out_test);
 	}
 	return;
 }
@@ -372,7 +372,7 @@ choose_vars_restart:
 	choices[++k]= "Press F4 to randomize all";
 	uvalues[k].type = '*';
 
-	i = fullscreen_prompt("Variable tweak central 2 of 2", k + 1, choices, uvalues, 28, NULL);
+	i = full_screen_prompt("Variable tweak central 2 of 2", k + 1, choices, uvalues, 28, NULL);
 
 	switch (i)
 	{
@@ -528,7 +528,7 @@ choose_vars_restart:
 	choices[++k]= "Press F6 for second page"; /* F5 gets eaten */
 	uvalues[k].type = '*';
 
-	i = fullscreen_prompt("Variable tweak central 1 of 2", k + 1, choices, uvalues, 92, NULL);
+	i = full_screen_prompt("Variable tweak central 1 of 2", k + 1, choices, uvalues, 92, NULL);
 
 	switch (i)
 	{
@@ -602,7 +602,7 @@ void set_mutation_level(int strength)
 	return;
 }
 
-int get_evolve_Parms(void)
+int get_evolve_parameters(void)
 {
 	char *choices[20];
 	int oldhelpmode;
@@ -695,7 +695,7 @@ get_evol_restart:
 	uvalues[k].type = '*';
 	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
 	g_help_mode = HELPEVOL;
-	i = fullscreen_prompt("Evolution Mode Options", k + 1, choices, uvalues, 255, NULL);
+	i = full_screen_prompt("Evolution Mode Options", k + 1, choices, uvalues, 255, NULL);
 	g_help_mode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
@@ -713,7 +713,7 @@ get_evol_restart:
 
 	if (i == FIK_F4)
 	{
-		set_current_params();
+		set_current_parameters();
 		g_fiddle_factor = 1;
 		g_fiddle_reduction = 1.0;
 		goto get_evol_restart;
@@ -823,7 +823,7 @@ get_evol_restart:
 	if (j == FIK_F6)
 	{
 		old_variations = get_variations();
-		set_current_params();
+		set_current_parameters();
 		if (old_variations > 0)
 		{
 			g_view_window = 1;
@@ -836,7 +836,7 @@ get_evol_restart:
 	return i;
 }
 
-void SetupParamBox(void)
+void setup_parameter_box(void)
 {
 	int vidsize;
 	g_parameter_box_count = 0;
@@ -850,7 +850,7 @@ void SetupParamBox(void)
 	}
 	if (!prmbox)
 	{
-		texttempmsg("Sorry...can't allocate mem for parmbox");
+		text_temp_message("Sorry...can't allocate mem for parmbox");
 		g_evolving = EVOLVE_NONE;
 	}
 	g_parameter_box_count = 0;
@@ -863,11 +863,11 @@ void SetupParamBox(void)
 	}
 	if (!imgbox)
 	{
-		texttempmsg("Sorry...can't allocate mem for imagebox");
+		text_temp_message("Sorry...can't allocate mem for imagebox");
 	}
 }
 
-void ReleaseParamBox(void)
+void release_parameter_box(void)
 {
 	if (prmbox)
 	{
@@ -881,7 +881,7 @@ void ReleaseParamBox(void)
 	}
 }
 
-void set_current_params(void)
+void set_current_parameters(void)
 {
 	g_parameter_range_x = g_current_fractal_specific->x_max - g_current_fractal_specific->x_min;
 	g_parameter_offset_x = g_new_parameter_offset_x = - (g_parameter_range_x / 2);
@@ -890,7 +890,7 @@ void set_current_params(void)
 	return;
 }
 
-void fiddleparms(GENEBASE gene[], int ecount)
+void fiddle_parameters(GENEBASE gene[], int ecount)
 {
 	/* call with px, py ... parameter set co-ords*/
 	/* set random seed then call rnd enough times to get to px, py */
@@ -932,8 +932,8 @@ static void set_random(int ecount)
 {
 	/* This must be called with ecount set correctly for the spiral map. */
 	/* Call this routine to set the random # to the proper value */
-	/* if it may have changed, before fiddleparms() is called. */
-	/* Now called by fiddleparms(). */
+	/* if it may have changed, before fiddle_parameters() is called. */
+	/* Now called by fiddle_parameters(). */
 	int index, i;
 
 	srand(g_this_generation_random_seed);
@@ -964,7 +964,7 @@ int explore_check(void)
 	return nonrandom;
 }
 
-void drawparmbox(int mode)
+void draw_parameter_box(int mode)
 {
 	/* draws parameter zoom box in evolver mode */
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
@@ -1056,7 +1056,7 @@ void set_evolve_ranges(void)
 	return;
 }
 
-void spiralmap(int count)
+void spiral_map(int count)
 {
 	/* maps out a clockwise spiral for a prettier and possibly   */
 	/* more intuitively useful order of drawing the sub images.  */
@@ -1112,7 +1112,7 @@ void spiralmap(int count)
 	}
 }
 
-int unspiralmap(void)
+int unspiral_map(void)
 {
 	/* unmaps the clockwise spiral */
 	/* All this malarky is to allow selecting different subimages */
@@ -1129,7 +1129,7 @@ int unspiralmap(void)
 		ecountbox[px][py] = 0;  /* we know the first one, do the rest */
 		for (i = 1; i < gridsqr; i++)
 		{
-			spiralmap(i);
+			spiral_map(i);
 			ecountbox[px][py] = i;
 		}
 		oldgridsz = g_grid_size;

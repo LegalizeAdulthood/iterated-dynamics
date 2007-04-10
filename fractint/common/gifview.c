@@ -79,7 +79,7 @@ int gifview()
 	{
 		char msg[100];
 		sprintf(msg, "Stack free in gifview: %d", stackavail());
-		stopmsg(0, msg);
+		stop_message(0, msg);
 	}
 #endif
 
@@ -93,7 +93,7 @@ int gifview()
 
 	/* Open the file */
 	strcpy(temp1, (g_out_line == outline_stereo) ? g_stereo_map_name : g_read_name);
-	if (has_ext(temp1) == NULL)
+	if (has_extension(temp1) == NULL)
 	{
 		strcat(temp1, DEFAULTFRACTALTYPE);
 		fpin = fopen(temp1, "rb");
@@ -174,7 +174,7 @@ int gifview()
 	/* don't read if glasses */
 	if (g_display_3d && g_map_set && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
 	{
-		ValidateLuts(g_map_name);  /* read the palette file */
+		validate_luts(g_map_name);  /* read the palette file */
 		spindac(0, 1); /* load it, but don't spin */
 	}
 	if (g_dac_box[0][0] != 255)
@@ -187,8 +187,8 @@ int gifview()
 		char ext[FILE_MAX_EXT];
 		char tmpname[15];
 		char msg[40];
-		splitpath(temp1, NULL, NULL, fname, ext);
-		makepath(tmpname, NULL, NULL, fname, ext);
+		split_path(temp1, NULL, NULL, fname, ext);
+		make_path(tmpname, NULL, NULL, fname, ext);
 		sprintf(msg, "restoring %s", tmpname);
 		disk_video_status(1, msg);
 	}
@@ -505,14 +505,16 @@ int sound_line(BYTE *pixels, int linelen)
 	return ret;
 }
 
-int pot_line(BYTE *pixels, int linelen)
+int potential_line(BYTE *pixels, int linelen)
 {
 	int row, col, saverowcount;
 	if (g_row_count == 0)
+	{
 		if (disk_start_potential() < 0)
 		{
 			return -1;
 		}
+	}
 	saverowcount = g_row_count;
 	row = (g_row_count >>= 1);
 	if ((saverowcount & 1) != 0) /* odd line */

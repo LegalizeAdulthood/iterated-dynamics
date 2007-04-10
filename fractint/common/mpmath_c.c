@@ -665,7 +665,7 @@ double TwoPi;
 _CMPLX temp, BaseLog;
 _CMPLX cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
 
-int ComplexNewtonSetup(void)
+int complex_newton_setup(void)
 {
 	g_threshold = .001;
 	g_periodicity_check = 0;
@@ -682,7 +682,7 @@ int ComplexNewtonSetup(void)
 	return 1;
 }
 
-int ComplexNewton(void)
+int complex_newton(void)
 {
 	_CMPLX cd1;
 
@@ -717,7 +717,7 @@ int ComplexNewton(void)
 	return 0;
 }
 
-int ComplexBasin(void)
+int complex_basin(void)
 {
 	_CMPLX cd1;
 	double mod;
@@ -788,7 +788,7 @@ int ComplexBasin(void)
  * 1 in Distribution*(1-Probability/Range*con) + 1 chance of getting a
  * Gaussian; otherwise you just get offset.
  */
-int GausianNumber(int Probability, int Range)
+int gaussian_number(int Probability, int Range)
 {
 	int n, r;
 	long Accum = 0, p;

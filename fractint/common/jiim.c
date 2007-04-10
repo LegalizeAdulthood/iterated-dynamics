@@ -267,7 +267,7 @@ int Init_Queue(unsigned long request)
 {
 	if (driver_diskp())
 	{
-		stopmsg(0, "Don't try this in disk video mode, kids...\n");
+		stop_message(0, "Don't try this in disk video mode, kids...\n");
 		ListSize = 0;
 		return 0;
 	}
@@ -801,7 +801,7 @@ void Jiim(int which)         /* called by fractint */
 					if (windows == 0 && show_numbers == 0)
 					{
 						cursor_hide();
-						cleartempmsg();
+						clear_temp_message();
 						cursor_show();
 					}
 					break;
@@ -918,7 +918,7 @@ void Jiim(int which)         /* called by fractint */
 					str[40] = 0;
 					cursor_hide();
 					actively_computing = 1;
-					showtempmsg(str);
+					show_temp_message(str);
 					cursor_show();
 				}
 				else
@@ -1300,7 +1300,7 @@ finish:
 	}
 	else
 	{
-		cleartempmsg();
+		clear_temp_message();
 	}
 	if (file != NULL)
 	{

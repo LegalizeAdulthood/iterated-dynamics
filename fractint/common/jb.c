@@ -63,7 +63,7 @@ int julibrot_setup(void)
 #ifndef XFRACT
 	if (g_colors < 255)
 	{
-		stopmsg(0, "Sorry, but Julibrots require a 256-color video mode");
+		stop_message(0, "Sorry, but Julibrots require a 256-color video mode");
 		return 0;
 	}
 #endif
@@ -91,7 +91,7 @@ int julibrot_setup(void)
 		long jxmin, jxmax, jymin, jymax, mxmax, mymax;
 		if (g_fractal_specific[g_new_orbit_type].isinteger == 0)
 		{
-			stopmsg(0, "Julibrot orbit type isinteger mismatch");
+			stop_message(0, "Julibrot orbit type isinteger mismatch");
 		}
 		if (g_fractal_specific[g_new_orbit_type].isinteger > 1)
 		{
@@ -144,7 +144,7 @@ int julibrot_setup(void)
 	}
 	if (g_save_dac != SAVEDAC_YES)
 	{
-		if (ValidateLuts(mapname) != 0)
+		if (validate_luts(mapname) != 0)
 		{
 			return 0;
 		}
@@ -390,7 +390,7 @@ static int z_line_fp(double x, double y)
 	return 0;
 }
 
-int std_4d_fractal(void)
+int standard_4d_fractal(void)
 {
 	long x, y;
 	int xdot, ydot;
@@ -440,7 +440,7 @@ int std_4d_fractal(void)
 	return 0;
 }
 
-int std_4d_fractal_fp(void)
+int standard_4d_fractal_fp(void)
 {
 	double x, y;
 	int xdot, ydot;

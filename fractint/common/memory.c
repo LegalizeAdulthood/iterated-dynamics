@@ -108,7 +108,7 @@ static void WhichDiskError(int I_O)
 	sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
 	if (DEBUGFLAG_MEMORY == g_debug_flag)
 	{
-		if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
+		if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
 		{
 			goodbye(); /* bailout if ESC */
 		}
@@ -130,7 +130,7 @@ static void DisplayError(int stored_at, long howmuch)
 	sprintf(buf, "Allocating %ld Bytes of %s memory failed.\n"
 		"Alternate disk space is also insufficient. Goodbye",
 		howmuch, memstr[stored_at]);
-	stopmsg(0, buf);
+	stop_message(0, buf);
 }
 
 static int check_for_mem(int stored_at, long howmuch)
@@ -195,32 +195,32 @@ static int CheckBounds (long start, long length, U16 handle)
 {
 	if (handletable[handle].Nowhere.size - start - length < 0)
 	{
-		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Memory reference out of bounds.");
+		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Memory reference out of bounds.");
 		DisplayHandle(handle);
 		return 1;
 	}
 	if (length > (long)USHRT_MAX)
 	{
-		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Tried to move > 65,535 bytes.");
+		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Tried to move > 65,535 bytes.");
 		DisplayHandle(handle);
 		return 1;
 	}
 	if (handletable[handle].Nowhere.stored_at == DISK &&
 			(stackavail() <= DISKWRITELEN))
 	{
-		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Stack space insufficient for disk memory.");
+		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Stack space insufficient for disk memory.");
 		DisplayHandle(handle);
 		return 1;
 	}
 	if (length <= 0)
 	{
-		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Zero or negative length.");
+		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Zero or negative length.");
 		DisplayHandle(handle);
 		return 1;
 	}
 	if (start < 0)
 	{
-		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Negative offset.");
+		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Negative offset.");
 		DisplayHandle(handle);
 		return 1;
 	}
@@ -233,7 +233,7 @@ void DisplayMemory(void)
 	extern unsigned long get_disk_space(void);
 
 	sprintf(buf, "disk=%lu", get_disk_space());
-	stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
+	stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
 }
 
 void DisplayHandle (U16 handle)
@@ -242,7 +242,7 @@ void DisplayHandle (U16 handle)
 
 	sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
 			handletable[handle].Nowhere.size);
-	if (stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
+	if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
 	{
 		goodbye(); /* bailout if ESC, it's messy, but should work */
 	}
@@ -265,7 +265,7 @@ void ExitCheck(void)
 	U16 i;
 	if (numTOTALhandles != 0)
 	{
-		stopmsg(0, "Error - not all memory released, I'll get it.");
+		stop_message(0, "Error - not all memory released, I'll get it.");
 		for (i = 1; i < MAXHANDLES; i++)
 		{
 			if (handletable[i].Nowhere.stored_at != NOWHERE)
@@ -273,7 +273,7 @@ void ExitCheck(void)
 				char buf[MSGLEN];
 				sprintf(buf, "Memory type %s still allocated.  Handle = %i.",
 				memstr[handletable[i].Nowhere.stored_at], i);
-				stopmsg(0, (char *)buf);
+				stop_message(0, (char *)buf);
 				MemoryRelease(i);
 			}
 		}
@@ -387,7 +387,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		char buf[MSGLEN];
 		sprintf(buf, "Asked for %s, allocated %lu bytes of %s, handle = %u.",
 			memstr[stored_at], toallocate, memstr[use_this_type], handle);
-		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, (char *)buf);
+		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, (char *)buf);
 		DisplayMemory();
 	}
 

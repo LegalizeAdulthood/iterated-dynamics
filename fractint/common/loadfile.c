@@ -65,7 +65,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		g_view_window = 0;
 	}
-	if (has_ext(g_read_name) == NULL)
+	if (has_extension(g_read_name) == NULL)
 	{
 		strcat(g_read_name, ".gif");
 	}
@@ -75,7 +75,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		/* didn't find a useable file */
 		sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_name);
-		stopmsg(0, msg);
+		stop_message(0, msg);
 		return -1;
 	}
 
@@ -99,9 +99,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (read_info.version > 0)
 	{
 		g_parameters[2]      = read_info.parm3;
-		roundfloatd(&g_parameters[2]);
+		round_float_d(&g_parameters[2]);
 		g_parameters[3]      = read_info.parm4;
-		roundfloatd(&g_parameters[3]);
+		round_float_d(&g_parameters[3]);
 		g_potential_parameter[0]   = read_info.potential[0];
 		g_potential_parameter[1]   = read_info.potential[1];
 		g_potential_parameter[2]   = read_info.potential[2];
@@ -331,7 +331,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		g_bail_out_test = Mod;
 	}
-	setbailoutformula(g_bail_out_test);
+	set_bail_out_formula(g_bail_out_test);
 
 	if (read_info.version > 9)
 	{
@@ -408,7 +408,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_init_mode = g_adapter;          /* use previous adapter mode for overlays */
 		if (g_file_x_dots > g_x_dots || g_file_y_dots > g_y_dots)
 		{
-			stopmsg(0, "Can't overlay with a larger image");
+			stop_message(0, "Can't overlay with a larger image");
 			g_init_mode = -1;
 			return -1;
 		}
@@ -447,7 +447,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_parameters[0] = 0;
 		if (!g_initialize_batch)
 		{
-			if (get_3d_params() < 0)
+			if (get_3d_parameters() < 0)
 			{
 				g_init_mode = -1;
 				return -1;
@@ -1295,7 +1295,7 @@ static int fix_period_bof(void)
 
 #define MAX_WINDOWS_OPEN 450
 
-struct window  /* for fgetwindow on screen browser */
+struct window  /* for look_get_window on screen browser */
 {
 	struct coords itl; /* screen coordinates */
 	struct coords ibl;
@@ -1330,8 +1330,8 @@ static bf_t   bt_a, bt_b, bt_c, bt_d, bt_e, bt_f;
 static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
 int oldbf_math;
 
-/* fgetwindow reads all .GIF files and draws window outlines on the screen */
-int fgetwindow(void)
+/* look_get_window reads all .GIF files and draws window outlines on the screen */
+int look_get_window(void)
 {
 	struct affine stack_cvt;
 	struct fractal_info read_info;
@@ -1417,10 +1417,10 @@ rescan:  /* entry for changed browse parms */
 	toggle = 0;
 	wincount = 0;
 	g_no_sub_images = FALSE;
-	splitpath(g_read_name, drive, dir, NULL, NULL);
-	splitpath(g_browse_mask, NULL, NULL, fname, ext);
-	makepath(tmpmask, drive, dir, fname, ext);
-	done = (vid_too_big == 2) || no_memory || fr_findfirst(tmpmask);
+	split_path(g_read_name, drive, dir, NULL, NULL);
+	split_path(g_browse_mask, NULL, NULL, fname, ext);
+	make_path(tmpmask, drive, dir, fname, ext);
+	done = (vid_too_big == 2) || no_memory || fr_find_first(tmpmask);
 								/* draw all visible windows */
 	while (!done)
 	{
@@ -1429,8 +1429,8 @@ rescan:  /* entry for changed browse parms */
 			driver_get_key();
 			break;
 		}
-		splitpath(DTA.filename, NULL, NULL, fname, ext);
-		makepath(tmpmask, drive, dir, fname, ext);
+		split_path(DTA.filename, NULL, NULL, fname, ext);
+		make_path(tmpmask, drive, dir, fname, ext);
 		if (!find_fractal_info(tmpmask, &read_info, &resume_info_blk, &formula_info,
 				&ranges_info, &mp_info, &evolver_info, &orbits_info)
 			&& (typeOK(&read_info, &formula_info) || !g_browse_check_type)
@@ -1464,20 +1464,20 @@ rescan:  /* entry for changed browse parms */
 			free(mp_info.apm_data);
 		}
 
-		done = (fr_findnext() || wincount >= MAX_WINDOWS_OPEN);
+		done = (fr_find_next() || wincount >= MAX_WINDOWS_OPEN);
 	}
 
 	if (no_memory)
 	{
-		texttempmsg("Sorry...not enough memory to browse."); /* doesn't work if NO memory available, go figure */
+		text_temp_message("Sorry...not enough memory to browse."); /* doesn't work if NO memory available, go figure */
 	}
 	if (wincount >= MAX_WINDOWS_OPEN)
 	{ /* hard code message at MAX_WINDOWS_OPEN = 450 */
-		texttempmsg("Sorry...no more space, 450 displayed.");
+		text_temp_message("Sorry...no more space, 450 displayed.");
 	}
 	if (vid_too_big == 2)
 	{
-		texttempmsg("Xdots + Ydots > 4096.");
+		text_temp_message("Xdots + Ydots > 4096.");
 	}
 	c = 0;
 	if (wincount)
@@ -1488,7 +1488,7 @@ rescan:  /* entry for changed browse parms */
 		memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
 		memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
 		memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
-		showtempmsg(winlist.name);
+		show_temp_message(winlist.name);
 		while (!done)  /* on exit done = 1 for quick exit,
 						done = 2 for erase boxes and  exit
 						done = 3 for rescan
@@ -1524,7 +1524,7 @@ rescan:  /* entry for changed browse parms */
 			case FIK_LEFT_ARROW:
 			case FIK_DOWN_ARROW:
 			case FIK_UP_ARROW:
-				cleartempmsg();
+				clear_temp_message();
 				drawindow(color_of_box, &winlist); /* dim last window */
 				if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
 				{
@@ -1546,7 +1546,7 @@ rescan:  /* entry for changed browse parms */
 				memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
 				memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
 				memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
-				showtempmsg(winlist.name);
+				show_temp_message(winlist.name);
 				break;
 #ifndef XFRACT
 			case FIK_CTL_INSERT:
@@ -1589,15 +1589,15 @@ rescan:  /* entry for changed browse parms */
 				break;
 
 			case 'D': /* delete file */
-				cleartempmsg();
+				clear_temp_message();
 				_snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
-				showtempmsg(mesg);
+				show_temp_message(mesg);
 				driver_wait_key_pressed(0);
-				cleartempmsg();
+				clear_temp_message();
 				c = driver_get_key();
 				if (c == 'Y' && g_double_caution)
 				{
-					texttempmsg("ARE YOU SURE???? (Y/N)");
+					text_temp_message("ARE YOU SURE???? (Y/N)");
 					if (driver_get_key() != 'Y')
 					{
 						c = 'N';
@@ -1605,9 +1605,9 @@ rescan:  /* entry for changed browse parms */
 				}
 				if (c == 'Y')
 				{
-					splitpath(g_read_name, drive, dir, NULL, NULL);
-					splitpath(winlist.name, NULL, NULL, fname, ext);
-					makepath(tmpmask, drive, dir, fname, ext);
+					split_path(g_read_name, drive, dir, NULL, NULL);
+					split_path(winlist.name, NULL, NULL, fname, ext);
+					make_path(tmpmask, drive, dir, fname, ext);
 					if (!unlink(tmpmask))
 					{
 						/* do a rescan */
@@ -1619,23 +1619,23 @@ rescan:  /* entry for changed browse parms */
 					}
 					else if (errno == EACCES)
 					{
-						texttempmsg("Sorry...it's a read only file, can't del");
-						showtempmsg(winlist.name);
+						text_temp_message("Sorry...it's a read only file, can't del");
+						show_temp_message(winlist.name);
 						break;
 					}
 				}
-				texttempmsg("file not deleted (phew!)");
-				showtempmsg(winlist.name);
+				text_temp_message("file not deleted (phew!)");
+				show_temp_message(winlist.name);
 				break;
 
 			case 'R':
-				cleartempmsg();
+				clear_temp_message();
 				driver_stack_screen();
 				newname[0] = 0;
 				strcpy(mesg, "Enter the new filename for ");
-				splitpath(g_read_name, drive, dir, NULL, NULL);
-				splitpath(winlist.name, NULL, NULL, fname, ext);
-				makepath(tmpmask, drive, dir, fname, ext);
+				split_path(g_read_name, drive, dir, NULL, NULL);
+				split_path(winlist.name, NULL, NULL, fname, ext);
+				make_path(tmpmask, drive, dir, fname, ext);
 				strcpy(newname, tmpmask);
 				strcat(mesg, tmpmask);
 				i = field_prompt(mesg, NULL, newname, 60, NULL);
@@ -1646,12 +1646,12 @@ rescan:  /* entry for changed browse parms */
 					{
 						if (errno == EACCES)
 						{
-							texttempmsg("Sorry....can't rename");
+							text_temp_message("Sorry....can't rename");
 						}
 						else
 						{
-							splitpath(newname, NULL, NULL, fname, ext);
-							makepath(tmpmask, NULL, NULL, fname, ext);
+							split_path(newname, NULL, NULL, fname, ext);
+							make_path(tmpmask, NULL, NULL, fname, ext);
 							strcpy(oldname, winlist.name);
 							check_history(oldname, tmpmask);
 							strcpy(winlist.name, tmpmask);
@@ -1659,15 +1659,15 @@ rescan:  /* entry for changed browse parms */
 					}
 				}
 				browse_windows[index] = winlist;
-				showtempmsg(winlist.name);
+				show_temp_message(winlist.name);
 				break;
 
 			case FIK_CTL_B:
-				cleartempmsg();
+				clear_temp_message();
 				driver_stack_screen();
-				done = abs(get_browse_params());
+				done = abs(get_browse_parameters());
 				driver_unstack_screen();
-				showtempmsg(winlist.name);
+				show_temp_message(winlist.name);
 				break;
 
 			case 's': /* save image with boxes */
@@ -1686,7 +1686,7 @@ rescan:  /* entry for changed browse parms */
 		} /*while*/
 
 		/* now clean up memory (and the screen if necessary) */
-		cleartempmsg();
+		clear_temp_message();
 		if (done >= 1 && done < 4)
 		{
 			for (index = wincount-1; index >= 0; index--) /* don't need index, reuse it */
@@ -1716,7 +1716,7 @@ rescan:  /* entry for changed browse parms */
 	else
 	{
 		driver_buzzer(BUZZER_INTERRUPT); /*no suitable files in directory! */
-		texttempmsg("Sorry.. I can't find anything");
+		text_temp_message("Sorry.. I can't find anything");
 		g_no_sub_images = TRUE;
 	}
 
@@ -2038,9 +2038,9 @@ static char paramsOK(struct fractal_info *info)
 	else
 	{
 		tmpparm3 = info->parm3;
-		roundfloatd(&tmpparm3);
+		round_float_d(&tmpparm3);
 		tmpparm4 = info->parm4;
-		roundfloatd(&tmpparm4);
+		round_float_d(&tmpparm4);
 	}
 	if (info->version > 8)
 	{
@@ -2141,7 +2141,7 @@ int i;
 static void bfsetup_convert_to_screen(void)
 {
 	/* setup_convert_to_screen() in LORENZ.C, converted to bf_math */
-	/* Call only from within fgetwindow() */
+	/* Call only from within look_get_window() */
 	bf_t   bt_det, bt_xd, bt_yd, bt_tmp1, bt_tmp2;
 	bf_t   bt_inter1, bt_inter2;
 	int saved;

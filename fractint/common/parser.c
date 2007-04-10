@@ -406,15 +406,15 @@ static void lStkFunct(void (*fct)(void))   /* call lStk via dStk */
 
 /* Random number code, MCP 11-21-91 */
 
-unsigned long NewRandNum(void)
+unsigned long new_random_number(void)
 {
 	return RandNum = ((RandNum << 15) + rand15()) ^ RandNum;
 }
 
 void lRandom(void)
 {
-	v[7].a.l.x = NewRandNum() >> (32 - g_bit_shift);
-	v[7].a.l.y = NewRandNum() >> (32 - g_bit_shift);
+	v[7].a.l.x = new_random_number() >> (32 - g_bit_shift);
+	v[7].a.l.y = new_random_number() >> (32 - g_bit_shift);
 }
 
 void dRandom(void)
@@ -423,8 +423,8 @@ void dRandom(void)
 
 	/* Use the same algorithm as for fixed math so that they will generate
           the same fractals when the srand() function is used. */
-	x = NewRandNum() >> (32 - g_bit_shift);
-	y = NewRandNum() >> (32 - g_bit_shift);
+	x = new_random_number() >> (32 - g_bit_shift);
+	y = new_random_number() >> (32 - g_bit_shift);
 	v[7].a.d.x = ((double)x / (1L << g_bit_shift));
 	v[7].a.d.y = ((double)y / (1L << g_bit_shift));
 
@@ -437,8 +437,8 @@ void mRandom(void)
 
 	/* Use the same algorithm as for fixed math so that they will generate
 		the same fractals when the srand() function is used. */
-	x = NewRandNum() >> (32 - g_bit_shift);
-	y = NewRandNum() >> (32 - g_bit_shift);
+	x = new_random_number() >> (32 - g_bit_shift);
+	y = new_random_number() >> (32 - g_bit_shift);
 	v[7].a.m.x = *fg2MP(x, g_bit_shift);
 	v[7].a.m.y = *fg2MP(y, g_bit_shift);
 }
@@ -458,9 +458,9 @@ void SetRandFnct(void)
 	SetRandom = 1;
 
 	/* Clear out the seed */
-	NewRandNum();
-	NewRandNum();
-	NewRandNum();
+	new_random_number();
+	new_random_number();
+	new_random_number();
 }
 
 void RandomSeed(void)
@@ -471,9 +471,9 @@ void RandomSeed(void)
 	time(&ltime);
 	srand((unsigned int)ltime);
 
-	NewRandNum();
-	NewRandNum();
-	NewRandNum();
+	new_random_number();
+	new_random_number();
+	new_random_number();
 	Randomized = 1;
 }
 
@@ -2046,7 +2046,7 @@ void StkJumpLabel(void)
 }
 
 
-unsigned SkipWhiteSpace(char *str)
+static unsigned count_white_space(char *str)
 {
 	unsigned n, done;
 
@@ -2077,7 +2077,7 @@ static int isconst_pair(char *Str)
 	}
 	if (Str[n] == ',')
 	{
-		j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
+		j = n + count_white_space(&Str[n + 1]) + 1;
 		if (isdigit(Str[j])
 			|| (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
 			|| Str[j] == '.')
@@ -2177,7 +2177,7 @@ struct ConstArg *isconst(char *Str, int Len)
 		}
 		if (Str[n] == ',')
 		{
-			j = n + SkipWhiteSpace(&Str[n + 1]) + 1;
+			j = n + count_white_space(&Str[n + 1]) + 1;
 			if (isdigit(Str[j])
 				|| (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
 				|| Str[j] == '.')
@@ -2371,7 +2371,7 @@ void (*isfunct(char *Str, int Len))(void)
 	unsigned n;
 	int functnum;    /* TIW 04-22-91 */
 
-	n = SkipWhiteSpace(&Str[Len]);
+	n = count_white_space(&Str[Len]);
 	if (Str[Len + n] == '(')
 	{
 		for (n = 0; n < sizeof(FnctList) / sizeof(struct FNCT_LIST); n++)
@@ -2468,7 +2468,7 @@ static int ParseStr(char *Str, int pass)
 	jump_index = 0;
 	if (!g_type_specific_work_area)
 	{
-		stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+		stop_message(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 		return 1;
 	}
 	switch (MathType)
@@ -2647,7 +2647,7 @@ static int ParseStr(char *Str, int pass)
 		v[g_parser_vsp].s = Constants[g_parser_vsp];
 		v[g_parser_vsp].len = (int) strlen(Constants[g_parser_vsp]);
 	}
-	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	const_pi = atan(1.0)*4;
 	const_e  = exp(1.0);
 	v[7].a.d.x = v[7].a.d.y = 0.0;
@@ -3872,7 +3872,7 @@ int frm_get_param_stuff(char *Name)
 	}
 	if (find_file_item(g_formula_filename, Name, &entry_file, ITEMTYPE_FORMULA))
 	{
-		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+		stop_message(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 0;
 	}
 	do
@@ -3883,7 +3883,7 @@ int frm_get_param_stuff(char *Name)
 
 	if (c != '{')
 	{
-		stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
+		stop_message(0, ParseErrs(PE_UNEXPECTED_EOF));
 		fclose(entry_file);
 		return 0;
 	}
@@ -3979,10 +3979,10 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 		switch (c)
 		{
 		case EOF: case '\032':
-			stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
+			stop_message(0, ParseErrs(PE_UNEXPECTED_EOF));
 			return 0;
 		case '\r': case '\n':
-			stopmsg(0, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+			stop_message(0, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
 			return 0;
 		case ' ': case '\t':
 			at_end_of_name = 1;
@@ -4012,7 +4012,7 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 			msgbuf[j + k + 2] = (char) getc(open_file);
 		}
 		msgbuf[j + k + 2] = (char) 0;
-		stopmsg(STOPMSG_FIXED_FONT, msgbuf);
+		stop_message(STOPMSG_FIXED_FONT, msgbuf);
 		return 0;
 	}
 		/* get symmetry */
@@ -4027,13 +4027,13 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 			switch (c)
 			{
 			case EOF: case '\032':
-				stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
+				stop_message(0, ParseErrs(PE_UNEXPECTED_EOF));
 				return 0;
 			case '\r': case '\n':
-				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+				stop_message(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
 				return 0;
 			case '{':
-				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
+				stop_message(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
 				return 0;
 			case ' ': case '\t':
 				break;
@@ -4064,7 +4064,7 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 			strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
 			strcat(msgbuf, ":\n   ");
 			strcat(msgbuf, sym_buf);
-			stopmsg(STOPMSG_FIXED_FONT, msgbuf);
+			stop_message(STOPMSG_FIXED_FONT, msgbuf);
 			free(msgbuf);
 		}
 	}
@@ -4077,10 +4077,10 @@ int frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 			switch (c)
 			{
 			case EOF: case '\032':
-				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
+				stop_message(STOPMSG_FIXED_FONT, ParseErrs(PE_UNEXPECTED_EOF));
 				return 0;
 			case '\r': case '\n':
-				stopmsg(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+				stop_message(STOPMSG_FIXED_FONT, ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
 				return 0;
 			case '{':
 				done = 1;
@@ -4158,13 +4158,13 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 		frmgettoken(File, &temp_tok);
 		if (temp_tok.token_type == NOT_A_TOKEN)
 		{
-			stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
+			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
 			fseek(File, filepos, SEEK_SET);
 			return NULL;
 		}
 		else if (temp_tok.token_type == END_OF_FORMULA)
 		{
-			stopmsg(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
+			stop_message(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
 			fseek(File, filepos, SEEK_SET);
 			return NULL;
 		}
@@ -4186,7 +4186,7 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 		switch (temp_tok.token_type)
 		{
 		case NOT_A_TOKEN:
-			stopmsg(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
+			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
 			fseek(File, filepos, SEEK_SET);
 			return NULL;
 		case END_OF_FORMULA:
@@ -4210,7 +4210,7 @@ static char *PrepareFormula(FILE *File, int from_prompts1c)
 
 
 /* sprintf(debugmsg, "Chars in formula per g_box_x is %u.\n", strlen(FormulaStr));
-	stopmsg(0, debugmsg);
+	stop_message(0, debugmsg);
 */
 	return FormulaStr;
 }
@@ -4243,7 +4243,7 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 	/* TW 5-31-94 add search for FRM files in directory */
 	if (find_file_item(g_formula_filename, Name, &entry_file, ITEMTYPE_FORMULA))
 	{
-		stopmsg(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+		stop_message(0, ParseErrs(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 1;
 	}
 
@@ -4261,7 +4261,7 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 		{
 			if (uses_jump == 1 && fill_jump_struct() == 1)
 			{
-				stopmsg(0, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
+				stop_message(0, ParseErrs(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
 				return 1;
 			}
 
@@ -4458,7 +4458,7 @@ void frm_error(FILE *open_file, long begin_frm)
 			}
 			else if (i == EOF || i == '}')
 			{
-				stopmsg(0, "Unexpected EOF or end-of-formula in error function.\n");
+				stop_message(0, "Unexpected EOF or end-of-formula in error function.\n");
 				fseek (open_file, errors[j].error_pos, SEEK_SET);
 				frmgettoken(open_file, &tok); /*reset file to end of error token */
 				return;
@@ -4467,7 +4467,7 @@ void frm_error(FILE *open_file, long begin_frm)
 		sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, ParseErrs(errors[j].error_number));
 		i = (int) strlen(msgbuf);
 		/* sprintf(debugmsg, "msgbuf is: %s\n and i is %d\n", msgbuf, i);
-		stopmsg (0, debugmsg);
+		stop_message (0, debugmsg);
 		*/
 		fseek(open_file, errors[j].start_pos, SEEK_SET);
 		statement_len = token_count = 0;
@@ -4477,21 +4477,21 @@ void frm_error(FILE *open_file, long begin_frm)
 			filepos = ftell (open_file);
 			if (filepos == errors[j].error_pos)
 			{
-				/* stopmsg(0, "About to get error token\n"); */
+				/* stop_message(0, "About to get error token\n"); */
 				chars_to_error = statement_len;
 				frmgettoken(open_file, &tok);
 				chars_in_error = (int) strlen(tok.token_str);
 				statement_len += chars_in_error;
 				token_count++;
 				/* sprintf(debugmsg, "Error is %s\nChars in error is %d\nChars to error is %d\n", tok.token_str, chars_in_error, chars_to_error);
-				stopmsg (0, debugmsg);
+				stop_message (0, debugmsg);
 				*/
 			}
 			else
 			{
 				frmgettoken(open_file, &tok);
 				/* sprintf(debugmsg, "Just got %s\n", tok.token_str);
-				stopmsg (0, debugmsg);
+				stop_message (0, debugmsg);
 				*/
 				statement_len += (int) strlen(tok.token_str);
 				token_count++;
@@ -4513,7 +4513,7 @@ void frm_error(FILE *open_file, long begin_frm)
 		{
 			while (chars_to_error + chars_in_error > 74)
 			{
-				/* stopmsg(0, "chars in error less than 74, but late in line"); */
+				/* stop_message(0, "chars in error less than 74, but late in line"); */
 				frmgettoken(open_file, &tok);
 				chars_to_error -= (int) strlen(tok.token_str);
 				token_count--;
@@ -4525,12 +4525,12 @@ void frm_error(FILE *open_file, long begin_frm)
 			chars_to_error = 0;
 			token_count = 1;
 		}
-		/* stopmsg(0, "Back to beginning of statement to build msgbuf"); */
+		/* stop_message(0, "Back to beginning of statement to build msgbuf"); */
 		while ((int) strlen(&msgbuf[i]) <= 74 && token_count--)
 		{
 			frmgettoken (open_file, &tok);
 			strcat (msgbuf, tok.token_str);
-			/* stopmsg(0, &msgbuf[i]); */
+			/* stop_message(0, &msgbuf[i]); */
 		}
 		fseek (open_file, errors[j].error_pos, SEEK_SET);
 		frmgettoken (open_file, &tok);
@@ -4545,7 +4545,7 @@ void frm_error(FILE *open_file, long begin_frm)
 			strcat (msgbuf, " ");
 		}
 		/* sprintf(debugmsg, "Going into final line, chars in error is %d", chars_in_error);
-		stopmsg(0, debugmsg);
+		stop_message(0, debugmsg);
 		*/
 		if (errors[j].error_number == PE_TOKEN_TOO_LONG)
 		{
@@ -4557,17 +4557,17 @@ void frm_error(FILE *open_file, long begin_frm)
 		}
 		strcat (msgbuf, "\n");
 	}
-	stopmsg (8, msgbuf);
+	stop_message (8, msgbuf);
 	return;
 }
 
 void display_var_list()
 {
 	struct var_list_st *p;
-	stopmsg(0, "List of user defined variables:\n");
+	stop_message(0, "List of user defined variables:\n");
 	for (p = var_list; p; p = p->next_item)
 	{
-		stopmsg(0, p->name);
+		stop_message(0, p->name);
 	}
 
 }
@@ -4576,17 +4576,17 @@ void display_const_lists()
 {
 	struct const_list_st *p;
 	char msgbuf[800];
-	stopmsg (0, "Complex constants are:");
+	stop_message (0, "Complex constants are:");
 	for (p = complx_list; p; p = p->next_item)
 	{
 		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
-		stopmsg(0, msgbuf);
+		stop_message(0, msgbuf);
 	}
-	stopmsg (0, "Real constants are:");
+	stop_message (0, "Real constants are:");
 	for (p = real_list; p; p = p->next_item)
 	{
 		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
-		stopmsg(0, msgbuf);
+		stop_message(0, msgbuf);
 	}
 }
 
@@ -4707,7 +4707,7 @@ void count_lists()
 		real_count++;
 	}
 /*   sprintf(msgbuf, "Number of vars is %d\nNumber of complx is %d\nNumber of real is %d\n", var_count, complx_count, real_count);
-	stopmsg(0, msgbuf);
+	stop_message(0, msgbuf);
 */
 }
 
@@ -4742,7 +4742,7 @@ int frm_prescan(FILE *open_file)
 	int waiting_for_endif = 0;
 	int max_parens = sizeof(long)*8;
 /* char debugmsg[800];
-	stopmsg (0, "Entering prescan");
+	stop_message (0, "Entering prescan");
 */
 
 	disable_fastparser = 0;
@@ -4770,12 +4770,12 @@ int frm_prescan(FILE *open_file)
 */    filepos = ftell (open_file);
 		frmgettoken (open_file, &this_token);
 /*    strcat(msgbuf, this_token.token_str);
-		stopmsg (0, msgbuf);
+		stop_message (0, msgbuf);
 		sprintf (debugmsg, "Errors structure\n0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
 			errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
 			errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
 			errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
-		stopmsg (0, debugmsg);
+		stop_message (0, debugmsg);
 */
 		chars_in_formula += (int) strlen(this_token.token_str);
 		switch (this_token.token_type)
@@ -4785,7 +4785,7 @@ int frm_prescan(FILE *open_file)
 			switch (this_token.token_id)
 			{
 			case END_OF_FILE:
-				stopmsg(0, ParseErrs(PE_UNEXPECTED_EOF));
+				stop_message(0, ParseErrs(PE_UNEXPECTED_EOF));
 				fseek(open_file, orig_pos, SEEK_SET);
 				return 0;
 			case ILLEGAL_CHARACTER:
@@ -4861,7 +4861,7 @@ int frm_prescan(FILE *open_file)
 				}
 				break;
 			default:
-				stopmsg(0, "Unexpected arrival at default case in prescan()");
+				stop_message(0, "Unexpected arrival at default case in prescan()");
 				fseek(open_file, orig_pos, SEEK_SET);
 				return 0;
 			}
@@ -4967,7 +4967,7 @@ int frm_prescan(FILE *open_file)
 			var_list = add_var_to_list (var_list, this_token);
 			if (var_list == NULL)
 			{
-				stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				stop_message(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();
@@ -5009,7 +5009,7 @@ int frm_prescan(FILE *open_file)
 			real_list = add_const_to_list (real_list, this_token);
 			if (real_list == NULL)
 			{
-				stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				stop_message(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();
@@ -5036,7 +5036,7 @@ int frm_prescan(FILE *open_file)
 			complx_list = add_const_to_list (complx_list, this_token);
 			if (complx_list == NULL)
 			{
-				stopmsg(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				stop_message(0, ParseErrs(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();
@@ -5518,7 +5518,7 @@ int frm_prescan(FILE *open_file)
 			errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
 			errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
 			errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
-		stopmsg (0, debugmsg);
+		stop_message (0, debugmsg);
 */    frm_error(open_file, orig_pos);
 		fseek(open_file, orig_pos, SEEK_SET);
 		return 0;
@@ -5530,7 +5530,7 @@ int frm_prescan(FILE *open_file)
 */   count_lists();
 
 /* sprintf(debugmsg, "Chars in formula per prescan() is %u.\n", chars_in_formula);
-	stopmsg(0, debugmsg);
+	stop_message(0, debugmsg);
 */ return 1;
 }
 

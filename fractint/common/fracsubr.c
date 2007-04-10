@@ -129,7 +129,7 @@ void fill_lx_array(void)
 void fractal_float_to_bf(void)
 {
 	int i;
-	init_bf_dec(getprecdbl(CURRENTREZ));
+	init_bf_dec(get_precision_dbl(CURRENTREZ));
 	floattobf(bfxmin, g_xx_min);
 	floattobf(bfxmax, g_xx_max);
 	floattobf(bfymin, g_yy_min);
@@ -207,7 +207,7 @@ void calculate_fractal_initialize(void)
 	/* switch back to double when zooming out if using arbitrary precision */
 	if (bf_math)
 	{
-		gotprec = getprecbf(CURRENTREZ);
+		gotprec = get_precision_bf(CURRENTREZ);
 		if ((gotprec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || g_math_tolerance[1] >= 1.0)
 		{
 			corners_bf_to_float();
@@ -549,7 +549,7 @@ expand_retry:
 				{
 				if (tries > 1)
 				{
-					stopmsg(0, "precision-detection error");
+					stop_message(0, "precision-detection error");
 				}
 				/* Previously there were four tests of distortions in the
 					zoom box used to detect precision limitations. In some
@@ -688,12 +688,12 @@ void adjust_corner_bf(void)
 
 	/* While we're at it, let's adjust the Xmagfactor as well */
 	/* use bftemp, bftemp2 as bfXctr, bfYctr */
-	cvtcentermagbf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
+	convert_center_mag_bf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	ftemp = fabs(Xmagfactor);
 	if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1 + g_aspect_drift))
 		{
 		Xmagfactor = sign(Xmagfactor);
-		cvtcornersbf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
+		convert_corners_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
 		}
 
 	/* ftemp = fabs(g_xx_3rd-g_xx_min); */
@@ -761,12 +761,12 @@ void adjust_corner(void)
 	if (!g_integer_fractal)
 	{
 		/* While we're at it, let's adjust the Xmagfactor as well */
-		cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 		ftemp = fabs(Xmagfactor);
 		if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1 + g_aspect_drift))
 		{
 			Xmagfactor = sign(Xmagfactor);
-			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+			convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 		}
 	}
 
@@ -1340,7 +1340,7 @@ int alloc_resume(int alloclen, int version)
 	g_resume_info = malloc(s_resume_info_length);
 	if (g_resume_info == NULL)
 	{
-		stopmsg(0, "Warning - insufficient free memory to save status.\n"
+		stop_message(0, "Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
 		g_calculation_status = CALCSTAT_NON_RESUMABLE;
 		s_resume_info_length = 0;
@@ -1457,7 +1457,7 @@ static void sleep_ms_old(long ms)
 			goto sleepexit;
 		}
 		/* g_calibrate, assume slow computer first */
-		showtempmsg("Calibrating timer");
+		show_temp_message("Calibrating timer");
 		do
 		{
 			scalems *= 2;
@@ -1472,7 +1472,7 @@ static void sleep_ms_old(long ms)
 			if (driver_key_pressed())
 			{
 				scalems = 0L;
-				cleartempmsg();
+				clear_temp_message();
 				goto sleepexit;
 			}
 			elapsed = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
@@ -1492,7 +1492,7 @@ static void sleep_ms_old(long ms)
 			elapsed = (i == 0) ? 1 : i;
 		}
 		scalems = (long)((float)SLEEPINIT/(float)(elapsed)*scalems);
-		cleartempmsg();
+		clear_temp_message();
 	}
 	if (ms > 10L*SLEEPINIT)  /* using ftime is probably more accurate */
 	{
@@ -1599,11 +1599,11 @@ static int sound_open(void)
 		snd_fp = fopen(soundname, "w");
 		if (snd_fp == NULL)
 		{
-			stopmsg(0, "Can't open SOUND*.TXT");
+			stop_message(0, "Can't open SOUND*.TXT");
 		}
 		else
 		{
-			updatesavename(soundname);
+			update_save_name(soundname);
 		}
 	}
 	return snd_fp != NULL;

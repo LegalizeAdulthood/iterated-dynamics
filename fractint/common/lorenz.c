@@ -339,7 +339,7 @@ int orbit_3d_setup(void)
 		case breadth_first:
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
-				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
+				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = random_walk;
 				goto lrwalk;
 			}
@@ -349,7 +349,7 @@ int orbit_3d_setup(void)
 		case depth_first:
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
-				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
+				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = random_walk;
 				goto lrwalk;
 			}
@@ -524,7 +524,7 @@ int orbit_3d_setup_fp()
 		case breadth_first:
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
-				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
+				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = random_walk;
 				goto rwalk;
 			}
@@ -534,7 +534,7 @@ int orbit_3d_setup_fp()
 		case depth_first:                      /* depth first (choose direction) */
 			if (Init_Queue((long)32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
-				stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
+				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = random_walk;
 				goto rwalk;
 			}
@@ -1663,7 +1663,7 @@ static int orbit_3d_calc(void)
 
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
-		notdiskmsg();
+		not_disk_message();
 	}
 
 	fp = open_orbit_save();
@@ -1783,7 +1783,7 @@ static int orbit_3d_calc_fp(void)
 
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
-		notdiskmsg();
+		not_disk_message();
 	}
 
 	fp = open_orbit_save();
@@ -2273,12 +2273,12 @@ int funny_glasses_call(int (*calc)(void))
 		if (g_glasses_type == STEREO_PHOTO)   /* photographer's mode */
 		{
 				int i;
-				stopmsg(STOPMSG_INFO_ONLY,
+				stop_message(STOPMSG_INFO_ONLY,
 				"First image (left eye) is ready.  Hit any key to see it, \n"
 				"then hit <s> to save, hit any other key to create second image.");
 				for (i = driver_get_key(); i == 's' || i == 'S'; i = driver_get_key())
 				{
-					savetodisk(g_save_name);
+					save_to_disk(g_save_name);
 				}
 				/* is there a better way to clear the screen in graphics mode? */
 				driver_set_video_mode(&g_video_entry);
@@ -2299,7 +2299,7 @@ int funny_glasses_call(int (*calc)(void))
 		}
 		if (g_glasses_type == STEREO_PHOTO) /* photographer's mode */
 		{
-				stopmsg(STOPMSG_INFO_ONLY, "Second image (right eye) is ready");
+				stop_message(STOPMSG_INFO_ONLY, "Second image (right eye) is ready");
 		}
 	}
 done:
@@ -2336,7 +2336,7 @@ static int ifs_3d_float(void)
 	color_method = (int) g_parameters[0];
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
-		notdiskmsg();
+		not_disk_message();
 	}
 
 	inf.orbit[0] = 0;
@@ -2451,13 +2451,13 @@ static int ifs_3d_float(void)
 
 int ifs()                       /* front-end for ifs_2d and ifs_3d */
 {
-	if (g_ifs_definition == NULL && ifsload() < 0)
+	if (g_ifs_definition == NULL && ifs_load() < 0)
 	{
 		return -1;
 	}
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
-		notdiskmsg();
+		not_disk_message();
 	}
 	return (g_ifs_type == IFSTYPE_2D) ? ifs_2d() : ifs_3d();
 }
@@ -2486,7 +2486,7 @@ static int ifs_2d(void)
 	localifs = (long *) malloc(g_num_affine*IFSPARM*sizeof(long));
 	if (localifs == NULL)
 	{
-		stopmsg(0, g_insufficient_ifs_memory);
+		stop_message(0, g_insufficient_ifs_memory);
 		return -1;
 	}
 
@@ -2587,7 +2587,7 @@ static int ifs_3d_long(void)
 	localifs = (long *) malloc(g_num_affine*IFS3DPARM*sizeof(long));
 	if (localifs == NULL)
 	{
-		stopmsg(0, g_insufficient_ifs_memory);
+		stop_message(0, g_insufficient_ifs_memory);
 		return -1;
 	}
 

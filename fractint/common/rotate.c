@@ -322,7 +322,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			break;
 		case 'd':                      /* load g_colors from "default.map" */
 		case 'D':
-			if (ValidateLuts("default") != 0)
+			if (validate_luts("default") != 0)
 			{
 				break;
 			}
@@ -331,7 +331,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			break;
 		case 'a':                      /* load g_colors from "altern.map" */
 		case 'A':
-			if (ValidateLuts("altern") != 0)
+			if (validate_luts("altern") != 0)
 			{
 				break;
 			}
@@ -503,7 +503,7 @@ void save_palette()
 		{
 			strcat(temp1, ".map");
 		}
-		merge_pathnames(palname, temp1, 2);
+		merge_path_names(palname, temp1, 2);
 		dacfile = fopen(palname, "w");
 		if (dacfile == NULL)
 		{
@@ -540,15 +540,15 @@ int load_palette(void)
 	strcpy(filename, g_map_name);
 	driver_stack_screen();
 	g_help_mode = HELPCOLORMAP;
-	i = getafilename("Select a MAP File", mapmask, filename);
+	i = get_a_filename("Select a MAP File", mapmask, filename);
 	driver_unstack_screen();
 	if (i >= 0)
 	{
-		if (ValidateLuts(filename) == 0)
+		if (validate_luts(filename) == 0)
 		{
 			memcpy(g_old_dac_box, g_dac_box, 256*3);
 		}
-		merge_pathnames(g_map_name, filename, 0);
+		merge_path_names(g_map_name, filename, 0);
 	}
 	g_help_mode = oldhelpmode;
 	return i;

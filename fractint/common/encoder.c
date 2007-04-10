@@ -94,7 +94,7 @@ restart:
 		strcpy(openfiletype, ".pot");
 	}
 
-	period = has_ext(openfile);
+	period = has_extension(openfile);
 	if (period != NULL)
 	{
 		strcpy(openfiletype, period);
@@ -102,7 +102,7 @@ restart:
 	}
 	if (g_resave_flag != RESAVE_YES)
 	{
-		updatesavename(filename); /* for next time */
+		update_save_name(filename); /* for next time */
 	}
 
 	strcat(openfile, openfiletype);
@@ -122,14 +122,14 @@ restart:
 			}
 			if (g_started_resaves == FALSE)
 			{                      /* first save of a savetime set */
-				updatesavename(filename);
+				update_save_name(filename);
 				goto restart;
 			}
 		}
 		if (access(openfile, 2) != 0)
 		{
 			sprintf(tmpmsg, "Can't write %s", openfile);
-			stopmsg(0, tmpmsg);
+			stop_message(0, tmpmsg);
 			return -1;
 		}
 		newfile = 0;
@@ -151,7 +151,7 @@ restart:
 	if (g_outfile == NULL)
 	{
 		sprintf(tmpmsg, "Can't create %s", tmpfile);
-		stopmsg(0, tmpmsg);
+		stop_message(0, tmpmsg);
 		return -1;
 	}
 
@@ -194,7 +194,7 @@ restart:
 			strcat(buf, "retain the original file,\ncontinue to replace original with new partial image.");
 		}
 		interrupted = 1;
-		if (stopmsg(STOPMSG_CANCEL, buf) < 0)
+		if (stop_message(STOPMSG_CANCEL, buf) < 0)
 		{
 			interrupted = -1;
 			unlink(tmpfile);
@@ -239,7 +239,7 @@ restart:
 
 	if (interrupted)
 	{
-		texttempmsg(" *interrupted* save ");
+		text_temp_message(" *interrupted* save ");
 		if (g_initialize_batch >= INITBATCH_NORMAL)
 		{
 			g_initialize_batch = INITBATCH_BAILOUT_ERROR;         /* if batch mode, set error level */
@@ -253,7 +253,7 @@ restart:
 		{
 			extract_filename(tmpfile, openfile);
 			sprintf(tmpmsg, " File saved as %s ", tmpfile);
-			texttempmsg(tmpmsg);
+			text_temp_message(tmpmsg);
 		}
 	}
 	if (g_save_time < 0)
@@ -272,7 +272,7 @@ enum tag_save_format
 typedef enum tag_save_format e_save_format;
 
 /* TODO: implement PNG case */
-int savetodisk(char *filename)
+int save_to_disk(char *filename)
 {
 	e_save_format format = SAVEFORMAT_GIF;
 
@@ -682,7 +682,7 @@ int encoder()
 
 oops:
 	fflush(g_outfile);
-	stopmsg(0, "Error Writing to disk (Disk full?)");
+	stop_message(0, "Error Writing to disk (Disk full?)");
 	return 1;
 }
 

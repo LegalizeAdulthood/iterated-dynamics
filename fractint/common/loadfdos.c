@@ -319,7 +319,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 
 		oldhelpmode = g_help_mode;
 		g_help_mode = HELPLOADFILE;
-		i = fullscreen_choice(0, (char *) g_stack,
+		i = full_screen_choice(0, (char *) g_stack,
 			"key...name......................err...xdot..ydot.clr.comment..................",
 			temp1, g_video_table_len, NULL, attributes,
 			1, 13, 78, 0, format_item, NULL, NULL, check_modekey);
@@ -501,7 +501,7 @@ int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formu
 	if (*g_make_par && !g_fast_restore && !g_initialize_batch &&
 			(fabs(g_final_aspect_ratio - g_screen_aspect_ratio) > .00001 || g_view_x_dots != 0))
 	{
-		stopmsg(STOPMSG_NO_BUZZER,
+		stop_message(STOPMSG_NO_BUZZER,
 			"Warning: <V>iew parameters are being set to non-standard values.\n"
 			"Remember to reset them when finished with this image!");
 	}

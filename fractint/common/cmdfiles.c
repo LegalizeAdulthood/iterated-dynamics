@@ -134,9 +134,9 @@ BYTE	g_text_colors[]=
 		BLUE*16 + WHITE,      /* C_PROMPT_LO       prompt/choice text */
 		BLUE*16 + L_WHITE,    /* C_PROMPT_MED      prompt/choice hdg2/... */
 		BLUE*16 + YELLOW,     /* C_PROMPT_HI       prompt/choice hdg/cur/... */
-		GREEN*16 + L_WHITE,   /* C_PROMPT_INPUT    fullscreen_prompt input */
-		CYAN*16 + L_WHITE,    /* C_PROMPT_CHOOSE   fullscreen_prompt choice */
-		MAGENTA*16 + L_WHITE, /* C_CHOICE_CURRENT  fullscreen_choice input */
+		GREEN*16 + L_WHITE,   /* C_PROMPT_INPUT    full_screen_prompt input */
+		CYAN*16 + L_WHITE,    /* C_PROMPT_CHOOSE   full_screen_prompt choice */
+		MAGENTA*16 + L_WHITE, /* C_CHOICE_CURRENT  full_screen_choice input */
 		BLACK*16 + WHITE,     /* C_CHOICE_SP_INSTR speed key bar & instr */
 		BLACK*16 + L_MAGENTA, /* C_CHOICE_SP_KEYIN speed key value */
 		WHITE*16 + BLUE,      /* C_GENERAL_HI      tab, thinking, IFS */
@@ -247,7 +247,7 @@ int command_files(int argc, char **argv)
 			if (strchr(curarg, '=') == NULL)  /* not xxx = yyy, so check for gif */
 			{
 				strcpy(tempstring, curarg);
-				if (has_ext(curarg) == NULL)
+				if (has_extension(curarg) == NULL)
 				{
 					strcat(tempstring, ".gif");
 				}
@@ -280,7 +280,7 @@ int command_files(int argc, char **argv)
 			if (sptr != NULL)  /* @filename/setname? */
 			{
 				*sptr = 0;
-				if (merge_pathnames(g_command_file, &curarg[1], 0) < 0)
+				if (merge_path_names(g_command_file, &curarg[1], 0) < 0)
 				{
 					init_msg("", g_command_file, 0);
 				}
@@ -320,7 +320,7 @@ int command_files(int argc, char **argv)
 		char msg[MSGLEN];
 		sprintf(msg, "command_files colorpreloaded %d showfile %d g_save_dac %d",
 		g_color_preloaded, g_show_file, g_save_dac);
-		stopmsg(0, msg);
+		stop_message(0, msg);
 	}
 	*/
 	/* PAR reads a file and sets color */
@@ -347,7 +347,7 @@ int load_commands(FILE *infile)
 		char msg[MSGLEN];
 		sprintf(msg, "load commands colorpreloaded %d showfile %d g_save_dac %d",
 		g_color_preloaded, g_show_file, g_save_dac);
-		stopmsg(0, msg);
+		stop_message(0, msg);
 	}
 	*/
 
@@ -369,10 +369,10 @@ static void initialize_variables_once()              /* once per run init */
 	}
 	if (p != NULL)
 	{
-		if (isadirectory(p) != 0)
+		if (is_a_directory(p) != 0)
 		{
 			strcpy(g_temp_dir, p);
-			fix_dirname(g_temp_dir);
+			fix_dir_name(g_temp_dir);
 		}
 	}
 	else
@@ -520,7 +520,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_old_demm_colors = 0;
 	g_bail_out_test    = Mod;
 	g_bail_out_fp  = (int (*)(void))bail_out_mod_fp;
-	g_bail_out_l   = (int (*)(void))asmlMODbailout;
+	g_bail_out_l   = (int (*)(void))bail_out_mod_l_asm;
 	g_bail_out_bn = (int (*)(void))bail_out_mod_bn;
 	g_bail_out_bf = (int (*)(void))bail_out_mod_bf;
 
@@ -1038,7 +1038,7 @@ static int filename_arg(const cmd_context *context)
 		return bad_arg(context->curarg);
 	}
 
-	existdir = merge_pathnames(g_read_name, context->value, context->mode);
+	existdir = merge_path_names(g_read_name, context->value, context->mode);
 	if (existdir == 0)
 	{
 		g_show_file = 0;
@@ -1086,7 +1086,7 @@ static int map_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	existdir = merge_pathnames(g_map_name, context->value, context->mode);
+	existdir = merge_path_names(g_map_name, context->value, context->mode);
 	if (existdir > 0)
 	{
 		return COMMAND_OK;    /* got a directory */
@@ -1096,7 +1096,7 @@ static int map_arg(const cmd_context *context)
 		init_msg(context->variable, context->value, context->mode);
 		return COMMAND_OK;
 	}
-	SetColorPaletteName(g_map_name);
+	set_color_palette_name(g_map_name);
 	return COMMAND_OK;
 }
 
@@ -1199,7 +1199,7 @@ static int auto_key_arg(const cmd_context *context)
 
 static int auto_key_name_arg(const cmd_context *context)
 {
-	if (merge_pathnames(g_autokey_name, context->value, context->mode) < 0)
+	if (merge_path_names(g_autokey_name, context->value, context->mode) < 0)
 	{
 		init_msg(context->variable, context->value, context->mode);
 	}
@@ -1244,7 +1244,7 @@ static int type_arg(const cmd_context *context)
 	}
 	if (s_initial_parameters == 0)
 	{
-		load_params(g_fractal_type);
+		load_parameters(g_fractal_type);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -1482,7 +1482,7 @@ static int ranges_arg(const cmd_context *context)
 	g_ranges = (int *)malloc(sizeof(int)*entries);
 	if (g_ranges == NULL)
 	{
-		stopmsg(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
+		stop_message(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
 		return -1;
 	}
 	g_ranges_length = entries;
@@ -1501,7 +1501,7 @@ static int save_name_arg(const cmd_context *context)
 	}
 	if (g_command_initialize || context->mode == CMDFILE_AT_AFTER_STARTUP)
 	{
-		if (merge_pathnames(g_save_name, context->value, context->mode) < 0)
+		if (merge_path_names(g_save_name, context->value, context->mode) < 0)
 		{
 			init_msg(context->variable, context->value, context->mode);
 		}
@@ -1542,12 +1542,12 @@ static int temp_dir_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	if (isadirectory(context->value) == 0)
+	if (is_a_directory(context->value) == 0)
 	{
 		return bad_arg(context->curarg);
 	}
 	strcpy(g_temp_dir, context->value);
-	fix_dirname(g_temp_dir);
+	fix_dir_name(g_temp_dir);
 	return COMMAND_OK;
 }
 
@@ -1557,12 +1557,12 @@ static int work_dir_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	if (isadirectory(context->value) == 0)
+	if (is_a_directory(context->value) == 0)
 	{
 		return bad_arg(context->curarg);
 	}
 	strcpy(g_work_dir, context->value);
-	fix_dirname(g_work_dir);
+	fix_dir_name(g_work_dir);
 	return COMMAND_OK;
 }
 
@@ -1845,7 +1845,7 @@ static int corners_arg(const cmd_context *context)
 		/* now that all the corners have been read in, get a more */
 		/* accurate value for dec and do it all again             */
 
-		dec = getprecbf_mag();
+		dec = get_precision_mag_bf();
 		if (dec < 0)
 		{
 			return bad_arg(context->curarg);     /* ie: Magnification is +-1.#INF */
@@ -2037,7 +2037,7 @@ static int center_mag_arg(const cmd_context *context)
 			Skew = context->floatval[5];
 		}
 		/* calculate bounds */
-		cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+		convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 		return COMMAND_FRACTAL_PARAM;
 	}
 	else  /* use arbitrary precision */
@@ -2087,7 +2087,7 @@ static int center_mag_arg(const cmd_context *context)
 			Skew = context->floatval[5];
 		}
 		/* calculate bounds */
-		cvtcornersbf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
+		convert_corners_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
 		corners_bf_to_float();
 		restore_stack(saved);
 		return COMMAND_FRACTAL_PARAM;
@@ -2152,13 +2152,13 @@ static int fast_restore_arg(const cmd_context *context)
 static int organize_formula_dir_arg(const cmd_context *context)
 {
 	if ((context->valuelen > (FILE_MAX_DIR-1))
-		|| (isadirectory(context->value) == 0))
+		|| (is_a_directory(context->value) == 0))
 	{
 		return bad_arg(context->curarg);
 	}
 	g_organize_formula_search = TRUE;
 	strcpy(g_organize_formula_dir, context->value);
-	fix_dirname(g_organize_formula_dir);
+	fix_dir_name(g_organize_formula_dir);
 	return COMMAND_OK;
 }
 
@@ -2208,7 +2208,7 @@ static int bail_out_test_arg(const cmd_context *context)
 	if (named_value(args, NUM_OF(args), context->value, &value))
 	{
 		g_bail_out_test = (enum bailouts) value;
-		setbailoutformula(g_bail_out_test);
+		set_bail_out_formula(g_bail_out_test);
 		return COMMAND_FRACTAL_PARAM;
 	}
 
@@ -2616,7 +2616,7 @@ static int formula_file_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	if (merge_pathnames(g_formula_filename, context->value, context->mode) < 0)
+	if (merge_path_names(g_formula_filename, context->value, context->mode) < 0)
 	{
 		init_msg(context->variable, context->value, context->mode);
 	}
@@ -2639,7 +2639,7 @@ static int l_file_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	if (merge_pathnames(g_l_system_filename, context->value, context->mode) < 0)
+	if (merge_path_names(g_l_system_filename, context->value, context->mode) < 0)
 	{
 		init_msg(context->variable, context->value, context->mode);
 	}
@@ -2663,7 +2663,7 @@ static int ifs_file_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	existdir = merge_pathnames(g_ifs_filename, context->value, context->mode);
+	existdir = merge_path_names(g_ifs_filename, context->value, context->mode);
 	if (existdir == 0)
 	{
 		reset_ifs_definition();
@@ -2692,7 +2692,7 @@ static int parm_file_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	if (merge_pathnames(g_command_file, context->value, context->mode) < 0)
+	if (merge_path_names(g_command_file, context->value, context->mode) < 0)
 	{
 		init_msg(context->variable, context->value, context->mode);
 	}
@@ -3585,11 +3585,11 @@ static int parse_colors(char *value)
 	int i, j, k;
 	if (*value == '@')
 	{
-		if (merge_pathnames(g_map_name, &value[1], 3) < 0)
+		if (merge_path_names(g_map_name, &value[1], 3) < 0)
 		{
 			init_msg("", &value[1], 3);
 		}
-		if ((int)strlen(value) > FILE_MAX_PATH || ValidateLuts(g_map_name) != 0)
+		if ((int)strlen(value) > FILE_MAX_PATH || validate_luts(g_map_name) != 0)
 		{
 			goto badcolor;
 		}
@@ -3599,7 +3599,7 @@ static int parse_colors(char *value)
 		}
 		else
 		{
-			if (merge_pathnames(g_color_file, &value[1], 3) < 0)
+			if (merge_path_names(g_color_file, &value[1], 3) < 0)
 			{
 				init_msg("", &value[1], 3);
 			}
@@ -3723,7 +3723,7 @@ static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 			"(see the Startup Help screens or documentation for a complete\n"
 			" argument list with descriptions)");
 	}
-	stopmsg(0, msg);
+	stop_message(0, msg);
 	if (g_initialize_batch)
 	{
 		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED;
@@ -3829,7 +3829,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        1 sstools.ini                    */
 /*        2 <@> command after startup      */
 /*        3 command line @filename/setname */
-/* this is like stopmsg() but can be used in command_files()      */
+/* this is like stop_message() but can be used in command_files()      */
 /* call with NULL for badfilename to get pause for driver_get_key() */
 int init_msg(const char *cmdstr, char *badfilename, int mode)
 {
@@ -3880,7 +3880,7 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 	}
 	else if (badfilename)
 	{
-		stopmsg(0, msg);
+		stop_message(0, msg);
 	}
 	return 0;
 }

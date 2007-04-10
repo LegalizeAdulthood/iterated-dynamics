@@ -58,17 +58,17 @@ void intro(void)
 	}
 	authors[j + 1] = i;
 
-	helptitle();
+	help_title();
 #define END_MAIN_AUTHOR 5
 	toprow = END_MAIN_AUTHOR + 1;
 #ifndef XFRACT
 	botrow = 21;
 #else
 	botrow = 20;
-	putstringcenter(21, 0, 80, C_TITLE,
+	put_string_center(21, 0, 80, C_TITLE,
 	"Unix/X port of fractint by Ken Shirriff");
 #endif
-	putstringcenter(1, 0, 80, C_TITLE, PRESS_ENTER);
+	put_string_center(1, 0, 80, C_TITLE, PRESS_ENTER);
 	driver_put_string(2, 0, C_CONTRIB, screen_text);
 	driver_set_attr(2, 0, C_AUTHDIV1, 80);
 	driver_set_attr(END_MAIN_AUTHOR, 0, C_AUTHDIV1, 80);

@@ -27,7 +27,7 @@ int FLambdaFPFractal(void)
 }
 
 
-int asmlMODbailout(void)
+int bail_out_mod_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -42,7 +42,7 @@ int asmlMODbailout(void)
 	return 0;
 }
 
-int asmlREALbailout(void)
+int bail_out_real_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -55,7 +55,7 @@ int asmlREALbailout(void)
 	return 0;
 }
 
-int asmlIMAGbailout(void)
+int bail_out_imag_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -68,7 +68,7 @@ int asmlIMAGbailout(void)
 	return 0;
 }
 
-int asmlORbailout(void)
+int bail_out_or_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -81,7 +81,7 @@ int asmlORbailout(void)
 	return 0;
 }
 
-int asmlANDbailout(void)
+int bail_out_and_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -94,7 +94,7 @@ int asmlANDbailout(void)
 	return 0;
 }
 
-int asmlMANHbailout(void)
+int bail_out_manhattan_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -107,7 +107,7 @@ int asmlMANHbailout(void)
 	return 0;
 }
 
-int asmlMANRbailout(void)
+int bail_out_manhattan_r_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -214,7 +214,7 @@ int asm386lMANRbailout(void)
 }
 
 /*
-asmfpMODbailout proc near uses si di
+bail_out_mod_fp_asm proc near uses si di
 		fld     qword ptr new + 8
 		fmul    st, st                   ; ny2
 		fst     g_temp_sqr_y
@@ -238,9 +238,9 @@ asmfpMODbailout proc near uses si di
 bailout:
 		mov     ax, 1
 		ret
-asmfpMODbailout endp
+bail_out_mod_fp_asm endp
 */
-int asmfpMODbailout(void)
+int bail_out_mod_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -257,7 +257,7 @@ int asmfpMODbailout(void)
 }
 
 /*
-asmfpREALbailout proc near uses si di
+bail_out_real_fp_asm proc near uses si di
 		fld     qword ptr new
 		fmul    st, st                   ; nx2
 		fst     g_temp_sqr_x
@@ -281,9 +281,9 @@ asmfpREALbailout proc near uses si di
 bailout:
 		mov     ax, 1
 		ret
-asmfpREALbailout endp
+bail_out_real_fp_asm endp
 */
-int asmfpREALbailout(void)
+int bail_out_real_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -298,7 +298,7 @@ int asmfpREALbailout(void)
 }
 
 /*
-asmfpIMAGbailout proc near uses si di
+bail_out_imag_fp_asm proc near uses si di
 		fld     qword ptr new + 8
 		fmul    st, st                   ; ny2
 		fst     g_temp_sqr_y
@@ -322,9 +322,9 @@ asmfpIMAGbailout proc near uses si di
 bailout:
 		mov     ax, 1
 		ret
-asmfpIMAGbailout endp
+bail_out_imag_fp_asm endp
 */
-int asmfpIMAGbailout(void)
+int bail_out_imag_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -339,7 +339,7 @@ int asmfpIMAGbailout(void)
 }
 
 /*
-asmfpORbailout proc near uses si di
+bail_out_or_fp_asm proc near uses si di
 		fld     qword ptr new + 8
 		fmul    st, st                   ; ny2
 		fst     g_temp_sqr_y
@@ -370,9 +370,9 @@ bailoutp:
 bailout:
 		mov     ax, 1
 		ret
-asmfpORbailout endp
+bail_out_or_fp_asm endp
 */
-int asmfpORbailout(void)
+int bail_out_or_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -387,7 +387,7 @@ int asmfpORbailout(void)
 }
 
 /*
-asmfpANDbailout proc near uses si di
+bail_out_and_fp_asm proc near uses si di
 		fld     qword ptr new + 8
 		fmul    st, st                   ; ny2
 		fst     g_temp_sqr_y
@@ -420,9 +420,9 @@ nobailout:
 bailout:
 		mov     ax, 1
 		ret
-asmfpANDbailout endp
+bail_out_and_fp_asm endp
 */
-int asmfpANDbailout(void)
+int bail_out_and_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -437,7 +437,7 @@ int asmfpANDbailout(void)
 }
 
 /*
-asmfpMANHbailout proc near uses si di
+bail_out_manhattan_fp_asm proc near uses si di
 		fld     qword ptr new + 8
 		fld     st
 		fmul    st, st                   ; ny2 ny
@@ -473,9 +473,9 @@ nobailout:
 bailout:
 		mov     ax, 1
 		ret
-asmfpMANHbailout endp
+bail_out_manhattan_fp_asm endp
 */
-int asmfpMANHbailout(void)
+int bail_out_manhattan_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -490,7 +490,7 @@ int asmfpMANHbailout(void)
 }
 
 /*
-asmfpMANRbailout proc near uses si di
+bail_out_manhattan_r_fp_asm proc near uses si di
 		fld     qword ptr new + 8
 		fld     st
 		fmul    st, st                   ; ny2 ny
@@ -523,9 +523,9 @@ nobailout:
 bailout:
 		mov     ax, 1
 		ret
-asmfpMANRbailout endp
+bail_out_manhattan_r_fp_asm endp
 */
-int asmfpMANRbailout(void)
+int bail_out_manhattan_r_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);

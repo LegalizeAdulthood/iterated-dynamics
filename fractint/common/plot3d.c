@@ -207,7 +207,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 
 #endif
 
-void _fastcall plot3dsuperimpose16(int x, int y, int color)
+void _fastcall plot_3d_superimpose_16(int x, int y, int color)
 {
 	int tmp;
 
@@ -248,7 +248,7 @@ void _fastcall plot3dsuperimpose16(int x, int y, int color)
 }
 
 
-void _fastcall plot3dsuperimpose256(int x, int y, int color)
+void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 {
 	int tmp;
 	BYTE t_c;
@@ -308,7 +308,7 @@ void _fastcall plot3dsuperimpose256(int x, int y, int color)
 	}
 }
 
-void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
+void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 {
 	int tmp;
 	BYTE t_c;
@@ -366,7 +366,7 @@ void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
 		}
 }
 
-void _fastcall plot3dalternate(int x, int y, int color)
+void _fastcall plot_3d_alternate(int x, int y, int color)
 {
 	BYTE t_c;
 
@@ -467,17 +467,17 @@ void plot_setup()
 	switch (g_glasses_type)
 	{
 	case STEREO_ALTERNATE:
-		g_standard_plot = plot3dalternate;
+		g_standard_plot = plot_3d_alternate;
 		break;
 
 	case STEREO_SUPERIMPOSE:
 		if (g_colors == 256)
 		{
-			g_standard_plot = (g_fractal_type != IFS3D) ? plot3dsuperimpose256 : plotIFS3dsuperimpose256;
+			g_standard_plot = (g_fractal_type != IFS3D) ? plot_3d_superimpose_256 : plot_ifs_3d_superimpose_256;
 		}
 		else
 		{
-			g_standard_plot = plot3dsuperimpose16;
+			g_standard_plot = plot_3d_superimpose_16;
 		}
 		break;
 
@@ -546,7 +546,7 @@ void plot_setup()
 
 	if (g_map_set)
 	{
-		ValidateLuts(g_map_name); /* read the palette file */
+		validate_luts(g_map_name); /* read the palette file */
 		if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
 		{
 			if (g_glasses_type == STEREO_SUPERIMPOSE && g_colors < 256)

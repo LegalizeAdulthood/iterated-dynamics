@@ -270,7 +270,7 @@ int get_toggles()
 
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELPXOPTS;
-	i = fullscreen_prompt("Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, NULL);
+	i = full_screen_prompt("Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, NULL);
 	g_help_mode = oldhelpmode;
 	if (i < 0)
 	{
@@ -551,7 +551,7 @@ int get_toggles2()
 
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELPYOPTS;
-	i = fullscreen_prompt("Extended Options\n"
+	i = full_screen_prompt("Extended Options\n"
 		"(not all combinations make sense)",
 		k + 1, choices, uvalues, 0, NULL);
 	g_help_mode = oldhelpmode;
@@ -707,7 +707,7 @@ pass_option_restart:
 
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELPPOPTS;
-	i = fullscreen_prompt("Passes Options\n"
+	i = full_screen_prompt("Passes Options\n"
 		"(not all combinations make sense)\n"
 		"(Press "FK_F2" for corner parameters)\n"
 		"(Press "FK_F6" for calculation parameters)", k + 1, choices, uvalues, 0x44, NULL);
@@ -890,7 +890,7 @@ get_view_restart:
 
 	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
 	g_help_mode = HELPVIEW;
-	i = fullscreen_prompt("View Window Options", k + 1, choices, uvalues, 16, NULL);
+	i = full_screen_prompt("View Window Options", k + 1, choices, uvalues, 16, NULL);
 	g_help_mode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
@@ -977,14 +977,14 @@ get_view_restart:
 }
 
 /*
-	get_cmd_string() is called from FRACTINT.C whenever the 'g' key
+	get_command_string() is called from FRACTINT.C whenever the 'g' key
 	is pressed.  Return codes are:
 		-1  routine was ESCAPEd - no need to re-generate the image.
 			0  parameter changed, no need to regenerate
 		>0  parameter changed, regenerate
 */
 
-int get_cmd_string()
+int get_command_string()
 {
 	int oldhelpmode;
 	int i;
@@ -1055,9 +1055,9 @@ int starfield(void)
 	g_gaussian_constant  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
 	g_gaussian_slope = (int)(starfield_values[2]);
 
-	if (ValidateLuts(g_grey_file) != 0)
+	if (validate_luts(g_grey_file) != 0)
 	{
-		stopmsg(0, "Unable to load ALTERN.MAP");
+		stop_message(0, "Unable to load ALTERN.MAP");
 		g_busy = 0;
 		return -1;
 		}
@@ -1077,7 +1077,7 @@ int starfield(void)
 			{
 				c = g_colors-1;
 			}
-			g_put_color(g_col, g_row, GausianNumber(c, g_colors));
+			g_put_color(g_col, g_row, gaussian_number(c, g_colors));
 		}
 	}
 	driver_buzzer(BUZZER_COMPLETE);
@@ -1099,7 +1099,7 @@ int get_starfield_params(void)
 
 	if (g_colors < 255)
 	{
-		stopmsg(0, "starfield requires 256 color mode");
+		stop_message(0, "starfield requires 256 color mode");
 		return -1;
 	}
 	for (i = 0; i < 3; i++)
@@ -1110,7 +1110,7 @@ int get_starfield_params(void)
 	driver_stack_screen();
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELPSTARFLD;
-	i = fullscreen_prompt("Starfield Parameters", 3, starfield_prompts, uvalues, 0, NULL);
+	i = full_screen_prompt("Starfield Parameters", 3, starfield_prompts, uvalues, 0, NULL);
 	g_help_mode = oldhelpmode;
 	driver_unstack_screen();
 	if (i < 0)
@@ -1127,7 +1127,7 @@ int get_starfield_params(void)
 
 static char *masks[] = {"*.pot", "*.gif"};
 
-int get_rds_params(void)
+int get_random_dot_stereogram_parameters(void)
 {
 	char rds6[60];
 	char *stereobars[] = {"none", "middle", "top"};
@@ -1202,7 +1202,7 @@ int get_rds_params(void)
 			*g_stereo_map_name = 0;
 		oldhelpmode = g_help_mode;
 		g_help_mode = HELPRDS;
-		i = fullscreen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, NULL);
+		i = full_screen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, NULL);
 		g_help_mode = oldhelpmode;
 		if (i < 0)
 		{
@@ -1227,7 +1227,7 @@ int get_rds_params(void)
 			}
 			if (g_image_map && !reuse)
 			{
-				if (getafilename("Select an Imagemap File", masks[1], g_stereo_map_name))
+				if (get_a_filename("Select an Imagemap File", masks[1], g_stereo_map_name))
 				{
 					continue;
 				}
@@ -1259,7 +1259,7 @@ int get_a_number(double *x, double *y)
 	uvalues[k].type = 'd';
 	uvalues[k].uval.dval = *y;
 
-	i = fullscreen_prompt("Set Cursor Coordinates", k + 1, choices, uvalues, 25, NULL);
+	i = full_screen_prompt("Set Cursor Coordinates", k + 1, choices, uvalues, 25, NULL);
 	if (i < 0)
 	{
 		driver_unstack_screen();
@@ -1318,7 +1318,7 @@ void goodbye(void)                  /* we done.  Bail out */
 	{
 		free(g_evolve_handle);
 	}
-	ReleaseParamBox();
+	release_parameter_box();
 	history_free();
 	if (g_ifs_definition != NULL)
 	{
@@ -1430,7 +1430,7 @@ int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 
 
 static int speedstate;
-int getafilename(char *hdg, char *file_template, char *flname)
+int get_a_filename(char *hdg, char *file_template, char *flname)
 {
 	int rds;  /* if getting an RDS image map */
 	char instr[80];
@@ -1473,8 +1473,8 @@ restart:  /* return here if template or directory changes */
 	{
 		strcpy(flname, DOTSLASH);
 	}
-	splitpath(flname , drive, dir, fname, ext);
-	makepath(filename, ""   , "" , fname, ext);
+	split_path(flname , drive, dir, fname, ext);
+	make_path(filename, ""   , "" , fname, ext);
 	retried = 0;
 
 retry_dir:
@@ -1483,14 +1483,14 @@ retry_dir:
 		strcpy(dir, ".");
 	}
 	expand_dirname(dir, drive);
-	makepath(tmpmask, drive, dir, "", "");
-	fix_dirname(tmpmask);
+	make_path(tmpmask, drive, dir, "", "");
+	fix_dir_name(tmpmask);
 	if (retried == 0 && strcmp(dir, SLASH) && strcmp(dir, DOTSLASH))
 	{
 		j = (int) strlen(tmpmask) - 1;
 		tmpmask[j] = 0; /* strip trailing \ */
 		if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
-			|| fr_findfirst(tmpmask) != 0
+			|| fr_find_first(tmpmask) != 0
 			|| (DTA.attribute & SUBDIR) == 0)
 		{
 			strcpy(dir, DOTSLASH);
@@ -1502,7 +1502,7 @@ retry_dir:
 	if (file_template[0])
 	{
 		numtemplates = 1;
-		splitpath(file_template, NULL, NULL, fname, ext);
+		split_path(file_template, NULL, NULL, fname, ext);
 	}
 	else
 	{
@@ -1514,7 +1514,7 @@ retry_dir:
 	j = 0;
 	masklen = (int) strlen(tmpmask);
 	strcat(tmpmask, "*.*");
-	out = fr_findfirst(tmpmask);
+	out = fr_find_first(tmpmask);
 	while (out == 0 && filecount < MAXNUMFILES)
 	{
 		if ((DTA.attribute & SUBDIR) && strcmp(DTA.filename, "."))
@@ -1533,12 +1533,12 @@ retry_dir:
 				notroot = 1;
 			}
 		}
-		out = fr_findnext();
+		out = fr_find_next();
 	}
 	tmpmask[masklen] = 0;
 	if (file_template[0])
 	{
-		makepath(tmpmask, drive, dir, fname, ext);
+		make_path(tmpmask, drive, dir, fname, ext);
 	}
 	do
 	{
@@ -1546,18 +1546,18 @@ retry_dir:
 		{
 			strcpy(&(tmpmask[masklen]), masks[j]);
 		}
-		out = fr_findfirst(tmpmask);
+		out = fr_find_first(tmpmask);
 		while (out == 0 && filecount < MAXNUMFILES)
 		{
 			if (!(DTA.attribute & SUBDIR))
 			{
 				if (rds)
 				{
-					putstringcenter(2, 0, 80, C_GENERAL_INPUT, DTA.filename);
+					put_string_center(2, 0, 80, C_GENERAL_INPUT, DTA.filename);
 
-					splitpath(DTA.filename, NULL, NULL, fname, ext);
+					split_path(DTA.filename, NULL, NULL, fname, ext);
 					/* just using speedstr as a handy buffer */
-					makepath(speedstr, drive, dir, fname, ext);
+					make_path(speedstr, drive, dir, fname, ext);
 					strncpy(choices[++filecount]->name, DTA.filename, 13);
 					choices[filecount]->type = 0;
 				}
@@ -1568,7 +1568,7 @@ retry_dir:
 					strcpy(choices[filecount]->full_name, DTA.filename);
 				}
 			}
-			out = fr_findnext();
+			out = fr_find_next();
 		}
 	}
 	while (++j < numtemplates);
@@ -1591,9 +1591,9 @@ retry_dir:
 	}
 	if (notroot == 0 && dir[0] && dir[0] != SLASHC) /* must be in root directory */
 	{
-		splitpath(tmpmask, drive, dir, fname, ext);
+		split_path(tmpmask, drive, dir, fname, ext);
 		strcpy(dir, SLASH);
-		makepath(tmpmask, drive, dir, fname, ext);
+		make_path(tmpmask, drive, dir, fname, ext);
 	}
 	if (numtemplates > 1)
 	{
@@ -1618,7 +1618,7 @@ retry_dir:
 	}
 
 
-	i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+	i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
 		temp1, NULL, instr, filecount, (char **) choices,
 		attributes, 5, 99, 12, i, NULL, speedstr, filename_speedstr, check_f6_key);
 	if (i == -FIK_F4)
@@ -1637,8 +1637,8 @@ retry_dir:
 		{
 			strcpy(dir, g_fract_dir2);
 		}
-		fix_dirname(dir);
-		makepath(flname, drive, dir, "", "");
+		fix_dir_name(dir);
+		make_path(flname, drive, dir, "", "");
 		lastdir = 1 - lastdir;
 		goto restart;
 	}
@@ -1676,18 +1676,18 @@ retry_dir:
 			{
 				strcat(dir, choices[i]->full_name);
 			}
-			fix_dirname(dir);
-			makepath(flname, drive, dir, "", "");
+			fix_dir_name(dir);
+			make_path(flname, drive, dir, "", "");
 			goto restart;
 		}
-		splitpath(choices[i]->full_name, NULL, NULL, fname, ext);
-		makepath(flname, drive, dir, fname, ext);
+		split_path(choices[i]->full_name, NULL, NULL, fname, ext);
+		make_path(flname, drive, dir, fname, ext);
 	}
 	else
 	{
 		if (speedstate == SEARCHPATH
 			&& strchr(speedstr, '*') == 0 && strchr(speedstr, '?') == 0
-			&& ((fr_findfirst(speedstr) == 0
+			&& ((fr_find_first(speedstr) == 0
 			&& (DTA.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) /* it is a directory */
 		{
 			speedstate = TEMPLATE;
@@ -1702,7 +1702,7 @@ retry_dir:
 			char dir1[FILE_MAX_DIR];
 			char fname1[FILE_MAX_FNAME];
 			char ext1[FILE_MAX_EXT];
-			splitpath(speedstr, drive1, dir1, fname1, ext1);
+			split_path(speedstr, drive1, dir1, fname1, ext1);
 			if (drive1[0])
 			{
 				strcpy(drive, drive1);
@@ -1711,15 +1711,15 @@ retry_dir:
 			{
 				strcpy(dir, dir1);
 			}
-			makepath(flname, drive, dir, fname1, ext1);
+			make_path(flname, drive, dir, fname1, ext1);
 			if (strchr(fname1, '*') || strchr(fname1, '?') ||
 				strchr(ext1,   '*') || strchr(ext1,   '?'))
 			{
-				makepath(file_template, "", "", fname1, ext1);
+				make_path(file_template, "", "", fname1, ext1);
 			}
-			else if (isadirectory(flname))
+			else if (is_a_directory(flname))
 			{
-				fix_dirname(flname);
+				fix_dir_name(flname);
 			}
 			goto restart;
 		}
@@ -1736,13 +1736,13 @@ retry_dir:
 				strcpy(flname, speedstr);
 				if (strchr(speedstr, SLASHC) == NULL)
 				{
-					splitpath(speedstr, NULL, NULL, fname, ext);
-					makepath(flname, drive, dir, fname, ext);
+					split_path(speedstr, NULL, NULL, fname, ext);
+					make_path(flname, drive, dir, fname, ext);
 				}
 			}
 		}
 	}
-	makepath(g_browse_name, "", "", fname, ext);
+	make_path(g_browse_name, "", "", fname, ext);
 	return 0;
 }
 
@@ -1751,7 +1751,7 @@ retry_dir:
 #endif
 
 static int check_f6_key(int curkey, int choice)
-{ /* choice is dummy used by other routines called by fullscreen_choice() */
+{ /* choice is dummy used by other routines called by full_screen_choice() */
 	choice = 0; /* to suppress warning only */
 	if (curkey == FIK_F6)
 	{
@@ -1790,7 +1790,7 @@ static int filename_speedstr(int row, int col, int vid,
 }
 
 #if !defined(_WIN32)
-int isadirectory(char *s)
+int is_a_directory(char *s)
 {
 	int len;
 	char sv;
@@ -1830,7 +1830,7 @@ int isadirectory(char *s)
 	}
 	return 0;
 #else
-	if (fr_findfirst(s) != 0) /* couldn't find it */
+	if (fr_find_first(s) != 0) /* couldn't find it */
 	{
 		/* any better ideas?? */
 		if (sv == SLASHC) /* we'll guess it is a directory */
@@ -1844,7 +1844,7 @@ int isadirectory(char *s)
 		{
 			/* strip trailing slash and try again */
 			s[len-1] = 0;
-			if (fr_findfirst(s) != 0) /* couldn't find it */
+			if (fr_find_first(s) != 0) /* couldn't find it */
 				return 0;
 			else if ((DTA.attribute & SUBDIR) != 0)
 				return 1;   /* we're SURE it's a directory */
@@ -1861,7 +1861,7 @@ int isadirectory(char *s)
 
 #ifndef XFRACT  /* This routine moved to unix.c so we can use it in hc.c */
 
-int splitpath(char *file_template, char *drive, char *dir, char *fname, char *ext)
+int split_path(char *file_template, char *drive, char *dir, char *fname, char *ext)
 {
 	int length;
 	int len;
@@ -1976,7 +1976,7 @@ int splitpath(char *file_template, char *drive, char *dir, char *fname, char *ex
 }
 #endif
 
-int makepath(char *template_str, char *drive, char *dir, char *fname, char *ext)
+int make_path(char *template_str, char *drive, char *dir, char *fname, char *ext)
 {
 	if (template_str)
 	{
@@ -2009,7 +2009,7 @@ int makepath(char *template_str, char *drive, char *dir, char *fname, char *ext)
 
 
 /* fix up directory names */
-void fix_dirname(char *dirname)
+void fix_dir_name(char *dirname)
 {
 	int length = (int) strlen(dirname); /* index of last character */
 
@@ -2064,7 +2064,7 @@ int cmpdbl(double old, double new)
 	/* change the old value with the same torture the new value had */
 	val.type = 'd'; /* most values on this screen are type d */
 	val.uval.dval = old;
-	prompt_valuestring(buf, &val);   /* convert "old" to string */
+	prompt_value_string(buf, &val);   /* convert "old" to string */
 
 	old = atof(buf);                /* convert back */
 	return fabs(old-new) < DBL_EPSILON?0:1;  /* zero if same */
@@ -2102,7 +2102,7 @@ gc_loop:
 	{
 		cmag = 0;
 	}
-	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
 	nump = -1;
 	if (cmag)
@@ -2176,7 +2176,7 @@ gc_loop:
 
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELPCOORDS;
-	prompt_ret = fullscreen_prompt("Image Coordinates", nump + 1, prompts, values, 0x90, NULL);
+	prompt_ret = full_screen_prompt("Image Coordinates", nump + 1, prompts, values, 0x90, NULL);
 	g_help_mode = oldhelpmode;
 
 	if (prompt_ret < 0)
@@ -2224,7 +2224,7 @@ gc_loop:
 			{
 				Xmagfactor = 1;
 			}
-			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+			convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 		}
 	}
 
@@ -2262,7 +2262,7 @@ gc_loop:
 	{
 		if (!g_use_center_mag)
 		{
-			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+			convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 			g_use_center_mag = TRUE;
 		}
 		else
@@ -2305,8 +2305,8 @@ static int get_screen_corners(void)
 	oldhelpmode = g_help_mode;
 	ousemag = g_use_center_mag;
 
-	svxxmin = g_xx_min;  /* save these for later since cvtcorners modifies them */
-	svxxmax = g_xx_max;  /* and we need to set them for cvtcentermag to work */
+	svxxmin = g_xx_min;  /* save these for later since convert_corners modifies them */
+	svxxmax = g_xx_max;  /* and we need to set them for convert_center_mag to work */
 	svxx3rd = g_xx_3rd;
 	svyymin = g_yy_min;
 	svyymax = g_yy_max;
@@ -2336,7 +2336,7 @@ gsc_loop:
 		values[i].type = 'd'; /* most values on this screen are type d */
 	}
 	cmag = g_use_center_mag;
-	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
 	nump = -1;
 	if (cmag)
@@ -2391,7 +2391,7 @@ gsc_loop:
 
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELPSCRNCOORDS;
-	prompt_ret = fullscreen_prompt("Screen Coordinates", nump + 1, prompts, values, 0x90, NULL);
+	prompt_ret = full_screen_prompt("Screen Coordinates", nump + 1, prompts, values, 0x90, NULL);
 	g_help_mode = oldhelpmode;
 
 	if (prompt_ret < 0)
@@ -2446,7 +2446,7 @@ gsc_loop:
 			{
 				Xmagfactor = 1;
 			}
-			cvtcorners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+			convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 			/* set screen corners */
 			g_orbit_x_min = g_xx_min; g_orbit_x_max = g_xx_max;
 			g_orbit_y_min = g_yy_min; g_orbit_y_max = g_yy_max;
@@ -2475,7 +2475,7 @@ gsc_loop:
 	{
 		if (!g_use_center_mag)
 		{
-			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+			convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 			g_use_center_mag = TRUE;
 		}
 		else
@@ -2513,7 +2513,7 @@ gsc_loop:
 /* get browse parameters , called from fractint.c and loadfile.c
 	returns 3 if anything changes.  code pinched from get_view_params */
 
-int get_browse_params()
+int get_browse_parameters()
 {
 	char *choices[10];
 	int oldhelpmode;
@@ -2575,7 +2575,7 @@ get_brws_restart:
 
 	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
 	g_help_mode = HELPBRWSPARMS;
-	i = fullscreen_prompt("Browse ('L'ook) Mode Options", k + 1, choices, uvalues, 16, NULL);
+	i = full_screen_prompt("Browse ('L'ook) Mode Options", k + 1, choices, uvalues, 16, NULL);
 	g_help_mode = oldhelpmode;     /* re-enable HELP */
 	if (i < 0)
 	{
@@ -2664,7 +2664,7 @@ get_brws_restart:
 /* copies the proposed new filename to the fullpath variable */
 /* does not copy directories for PAR files (modes 2 and 3)   */
 /* attempts to extract directory and test for existence (modes 0 and 1) */
-int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
+int merge_path_names(char *oldfullpath, char *newfilename, int mode)
 {
 	int isadir = 0;
 	int isafile = 0;
@@ -2685,10 +2685,10 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 	{
 		isafile = 1;
 	}
-	isadir = isadirectory(newfilename);
+	isadir = is_a_directory(newfilename);
 	if (isadir != 0)
 	{
-		fix_dirname(newfilename);
+		fix_dir_name(newfilename);
 	}
 #if 0
 	/* if slash by itself, it's a directory */
@@ -2748,11 +2748,11 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 	/* check existence */
 	if (isadir == 0 || isafile == 1)
 	{
-		if (fr_findfirst(newfilename) == 0)
+		if (fr_find_first(newfilename) == 0)
 		{
 			if (DTA.attribute & SUBDIR) /* exists and is dir */
 			{
-				fix_dirname(newfilename);  /* add trailing slash */
+				fix_dir_name(newfilename);  /* add trailing slash */
 				isadir = 1;
 				isafile = 0;
 			}
@@ -2761,8 +2761,8 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 		}
 	}
 
-	splitpath(newfilename, drive, dir, fname, ext);
-	splitpath(oldfullpath, drive1, dir1, fname1, ext1);
+	split_path(newfilename, drive, dir, fname, ext);
+	split_path(oldfullpath, drive1, dir1, fname1, ext1);
 	if ((int) strlen(drive) != 0 && GETPATH)
 	{
 		strcpy(drive1, drive);
@@ -2781,7 +2781,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 	}
 	if (isadir == 0 && isafile == 0 && GETPATH)
 	{
-		makepath(oldfullpath, drive1, dir1, NULL, NULL);
+		make_path(oldfullpath, drive1, dir1, NULL, NULL);
 		len = (int) strlen(oldfullpath);
 		if (len > 0)
 		{
@@ -2799,7 +2799,7 @@ int merge_pathnames(char *oldfullpath, char *newfilename, int mode)
 			oldfullpath[len-1] = save;
 		}
 	}
-	makepath(oldfullpath, drive1, dir1, fname1, ext1);
+	make_path(oldfullpath, drive1, dir1, fname1, ext1);
 	return isadir;
 }
 
@@ -2808,18 +2808,18 @@ void extract_filename(char *target, char *source)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
-	splitpath(source, NULL, NULL, fname, ext);
-	makepath(target, "", "", fname, ext);
+	split_path(source, NULL, NULL, fname, ext);
+	make_path(target, "", "", fname, ext);
 }
 
 /* tells if filename has extension */
 /* returns pointer to period or NULL */
-char *has_ext(char *source)
+char *has_extension(char *source)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
 	char *ret = NULL;
-	splitpath(source, NULL, NULL, fname, ext);
+	split_path(source, NULL, NULL, fname, ext);
 	if (ext != NULL)
 	{
 		if (*ext != 0)
@@ -2862,7 +2862,7 @@ int integer_unsupported(void)
 	if (g_fractal_type != last_fractype)
 	{
 		last_fractype = g_fractal_type;
-		stopmsg(0, "This integer fractal type is unimplemented;\n"
+		stop_message(0, "This integer fractal type is unimplemented;\n"
 			"Use float=yes or the <X> screen to get a real image.");
 	}
 
