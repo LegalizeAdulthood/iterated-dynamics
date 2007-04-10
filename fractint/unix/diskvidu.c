@@ -55,10 +55,10 @@ int disk_start_potential()
    if (g_dot_mode == 11) /* ditch the original disk file */
       disk_end();
    else
-      showtempmsg("clearing 16bit pot work area");
+      show_temp_message("clearing 16bit pot work area");
    headerlength = g_disk_targa = 0;
    i = disk_start_common(g_screen_width,g_screen_height<<1,g_colors);
-   cleartempmsg();
+   clear_temp_message();
    g_disk_16bit = 1;
    return (i);
    }
@@ -86,7 +86,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
       disk_end();
    if (g_dot_mode == 11) { /* otherwise, real screen also in use, don't hit it */
       char buf[20];
-      helptitle();
+      help_title();
       setattr(1,0,C_DVID_BKGRD,24*80);	/* init rest to background */
       for (i = 0; i < BOXDEPTH; ++i)
 	 setattr(BOXROW+i,BOXCOL,C_DVID_LO,BOXWIDTH);  /* init box */

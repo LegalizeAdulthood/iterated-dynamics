@@ -385,9 +385,9 @@ int fd;
 /*
  *----------------------------------------------------------------------
  *
- * splitpath --
+ * split_path --
  *
- *      This is the splitpath code from prompts.c
+ *      This is the split_path code from prompts.c
  *
  * Results:
  *      Returns drive, dir, base, and extension.
@@ -398,7 +398,7 @@ int fd;
  *----------------------------------------------------------------------
  */
 int
-splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
+split_path(char *template,char *drive,char *dir,char *fname,char *ext)
 {
    int length;
    int len;
@@ -490,7 +490,7 @@ splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 int
 _splitpath(char *template,char *drive,char *dir,char *fname,char *ext)
 {
-    return splitpath(template,drive,dir,fname,ext);
+    return split_path(template,drive,dir,fname,ext);
 }
 
 /* This ftime simulation routine is from Frank Chen */
@@ -573,13 +573,13 @@ static char searchdir[FILE_MAX_DIR];
 static char searchname[FILE_MAX_PATH];
 static char searchext[FILE_MAX_EXT];
 static DIR *currdir = NULL;
-int  fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
+int  fr_find_first(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
 {
      if (currdir != NULL) {
          closedir(currdir);
          currdir = NULL;
      }
-     splitpath(path,NULL,searchdir,searchname,searchext);
+     split_path(path,NULL,searchdir,searchname,searchext);
      if (searchdir[0]=='\0') {
          currdir = opendir(".");
      } else {
@@ -588,11 +588,11 @@ int  fr_findfirst(char *path)       /* Find 1st file (or subdir) meeting path/fi
      if (currdir==NULL) {
          return -1;
      } else {
-         return fr_findnext();
+         return fr_find_next();
      }
 }
 
-int  fr_findnext()              /* Find next file (or subdir) meeting above path/filespec */
+int  fr_find_next()              /* Find next file (or subdir) meeting above path/filespec */
 {
 #ifdef DIRENT
      struct dirent *dirEntry;
@@ -610,7 +610,7 @@ int  fr_findnext()              /* Find next file (or subdir) meeting above path
              currdir = NULL;
              return -1;
          } else if (dirEntry->d_ino != 0) {
-             splitpath(dirEntry->d_name,NULL,NULL,thisname,thisext);
+             split_path(dirEntry->d_name,NULL,NULL,thisname,thisext);
              /* strncpy(DTA.filename,dirEntry->d_name,13); */
              /* DTA.filename[12]='\0'; */
              strcpy(tmpname,searchdir);
