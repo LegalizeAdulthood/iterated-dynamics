@@ -845,13 +845,13 @@ void stackscreen()
    if (++screenctr) { /* already have some stacked */
          static char msg[]={"stackscreen overflow"};
       if ((i = screenctr - 1) >= MAXSCREENS) { /* bug, missing unstack? */
-         stopmsg(1,msg);
+         stop_message(1,msg);
          exit(1);
          }
       if ((ptr = (savescreen[i] = (BYTE *)malloc(sizeof(int *)))))
          savecurses((WINDOW **)ptr);
       else {
-         stopmsg(1,msg);
+         stop_message(1,msg);
          exit(1);
         }
       setclear();
