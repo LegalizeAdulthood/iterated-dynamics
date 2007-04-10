@@ -249,7 +249,7 @@ static int _fastcall read_l_system_file(char *str)
 	if (err)
 	{
 		msgbuf[strlen(msgbuf)-1] = 0; /* strip trailing \n */
-		stopmsg(0, msgbuf);
+		stop_message(0, msgbuf);
 		return -1;
 	}
 	*rulind = NULL;
@@ -320,7 +320,7 @@ int l_system(void)
 
 	if (stackoflow)
 	{
-		stopmsg(0, "insufficient memory, try a lower order");
+		stop_message(0, "insufficient memory, try a lower order");
 	}
 	else if (g_overflow)
 	{

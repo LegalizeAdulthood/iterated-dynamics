@@ -41,7 +41,7 @@
 
 /* Routines in this module      */
 
-int prompt_valuestring(char *buf, struct fullscreenvalues *val);
+int prompt_value_string(char *buf, struct fullscreenvalues *val);
 static  int input_field_list(int attr, char *fld, int vlen, char **list, int llen,
 							int row, int col, int (*checkkey)(int));
 static  int select_fracttype(int t);
@@ -69,13 +69,13 @@ int g_julibrot;   /* flag for julibrot */
 
 int promptfkeys;
 
-	/* These need to be global because F6 exits fullscreen_prompt() */
+	/* These need to be global because F6 exits full_screen_prompt() */
 int scroll_row_status;    /* will be set to first line of extra info to
                              be displayed (0 = top line) */
 int scroll_column_status; /* will be set to first column of extra info to
                              be displayed (0 = leftmost column)*/
 
-int fullscreen_prompt(/* full-screen prompting routine */
+int full_screen_prompt(/* full-screen prompting routine */
 		char *hdg,          /* heading, lines separated by \n */
 		int numprompts,         /* there are this many prompts (max) */
 		char **prompts,     /* array of prompting pointers */
@@ -186,7 +186,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 
 
 
-	helptitle();                        /* clear screen, display title line  */
+	help_title();                        /* clear screen, display title line  */
 	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  /* init rest of screen to background */
 
 
@@ -322,7 +322,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 			{
 				maxpromptwidth = j;
 			}
-			j = prompt_valuestring(buf, &values[i]);
+			j = prompt_value_string(buf, &values[i]);
 			if (j > maxfldwidth)
 			{
 				maxfldwidth = j;
@@ -455,16 +455,16 @@ int fullscreen_prompt(/* full-screen prompting routine */
 	for (i = 0; i < numprompts; i++)
 	{
 		driver_put_string(promptrow + i, promptcol, C_PROMPT_LO, prompts[i]);
-		prompt_valuestring(buf, &values[i]);
+		prompt_value_string(buf, &values[i]);
 		driver_put_string(promptrow + i, valuecol, C_PROMPT_LO, buf);
 	}
 
 
 	if (!anyinput)
 	{
-		putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(instrrow++, 0, 80, C_PROMPT_BKGRD,
 		"No changeable parameters;");
-		putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(instrrow, 0, 80, C_PROMPT_BKGRD,
 		(g_help_mode > 0) ? "Press ENTER to exit, ESC to back out, "FK_F1" for help" : "Press ENTER to exit");
 		driver_hide_text_cursor();
 		g_text_cbase = 2;
@@ -580,10 +580,10 @@ int fullscreen_prompt(/* full-screen prompting routine */
 	/* display footing */
 	if (numprompts > 1)
 	{
-		putstringcenter(instrrow++, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(instrrow++, 0, 80, C_PROMPT_BKGRD,
 			"Use " UPARR1 " and " DNARR1 " to select values to change");
 	}
-	putstringcenter(instrrow + 1, 0, 80, C_PROMPT_BKGRD,
+	put_string_center(instrrow + 1, 0, 80, C_PROMPT_BKGRD,
 		(g_help_mode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
 	done = 0;
@@ -610,10 +610,10 @@ int fullscreen_prompt(/* full-screen prompting routine */
 		}
 
 		curtype = values[curchoice].type;
-		curlen = prompt_valuestring(buf, &values[curchoice]);
+		curlen = prompt_value_string(buf, &values[curchoice]);
 		if (!rewrite_extrainfo)
 		{
-			putstringcenter(instrrow, 0, 80, C_PROMPT_BKGRD,
+			put_string_center(instrrow, 0, 80, C_PROMPT_BKGRD,
 				(curtype == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
 		}
 		else
@@ -670,7 +670,7 @@ int fullscreen_prompt(/* full-screen prompting routine */
 				break;
 			case 'f':
 				values[curchoice].uval.dval = atof(buf);
-				roundfloatd(&values[curchoice].uval.dval);
+				round_float_d(&values[curchoice].uval.dval);
 				break;
 			case 'i':
 				values[curchoice].uval.ival = atoi(buf);
@@ -811,7 +811,7 @@ fullscreen_exit:
 	return done;
 }
 
-int prompt_valuestring(char *buf, struct fullscreenvalues *val)
+int prompt_value_string(char *buf, struct fullscreenvalues *val)
 {  /* format value into buf, return field width */
 	int i, ret;
 	switch (val->type)
@@ -1060,7 +1060,7 @@ static void clear_line(int row, int start, int stop, int color) /* clear part of
 
 /* --------------------------------------------------------------------- */
 
-int get_fracttype()             /* prompt for and select fractal type */
+int get_fractal_type()             /* prompt for and select fractal type */
 {
 	int done, i, oldfractype, t;
 	done = -1;
@@ -1098,7 +1098,7 @@ struct FT_CHOICE
 		};
 static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
 
-static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
+static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
                                    /* so that storage gets freed up      */
 {
 	int oldhelpmode;
@@ -1157,7 +1157,7 @@ static int select_fracttype(int t) /* subrtn of get_fracttype, separated */
 	}
 
 	tname[0] = 0;
-	done = fullscreen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
+	done = full_screen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
 		g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
 		NULL, "Press "FK_F2" for a description of the highlighted type", numtypes,
 		(char **)choices, attributes, 0, 0, 0, j, NULL, tname, NULL, sel_fractype_help);
@@ -1271,7 +1271,7 @@ sel_type_restart:
 	}
 	set_default_parms();
 
-	if (get_fract_params(0) < 0)
+	if (get_fractal_parameters(0) < 0)
 	{
 		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA ||
 				g_fractal_type == IFS || g_fractal_type == IFS3D ||
@@ -1317,9 +1317,9 @@ void set_default_parms()
 		g_parameters[i] = g_current_fractal_specific->paramvalue[i];
 		if (g_fractal_type != CELLULAR && g_fractal_type != FROTH && g_fractal_type != FROTHFP &&
 				g_fractal_type != ANT)
-			roundfloatd(&g_parameters[i]); /* don't round cellular, frothybasin or ant */
+			round_float_d(&g_parameters[i]); /* don't round cellular, frothybasin or ant */
 	}
-	extra = find_extra_param(g_fractal_type);
+	extra = find_extra_parameter(g_fractal_type);
 	if (extra > -1)
 	{
 		for (i = 0; i < MAXPARAMS-4; i++)
@@ -1454,7 +1454,7 @@ struct trig_funct_lst trigfn[] =
 const int g_num_trig_fn = NUMTRIGFN;
 
 /* --------------------------------------------------------------------- */
-int get_fract_params(int caller)        /* prompt for type-specific parms */
+int get_fractal_parameters(int caller)        /* prompt for type-specific parms */
 {
 	char *v0 = "From cx (real part)";
 	char *v1 = "From cy (imaginary part)";
@@ -1885,7 +1885,7 @@ gfp_top:
 /*      && (g_display_3d > 0 || promptnum == 0)) */
 		&& (g_display_3d > 0))
 	{
-		stopmsg(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
+		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
 		goto gfp_exit;
 	}
 	if (g_julibrot)
@@ -1910,7 +1910,7 @@ gfp_top:
 	{
 		oldhelpmode = g_help_mode;
 		g_help_mode = g_current_fractal_specific->helptext;
-		i = fullscreen_prompt(msg, promptnum, choices, paramvalues, fkeymask, g_text_stack);
+		i = full_screen_prompt(msg, promptnum, choices, paramvalues, fkeymask, g_text_stack);
 		g_help_mode = oldhelpmode;
 		if (i < 0)
 		{
@@ -1986,7 +1986,7 @@ gfp_top:
 	{
 		g_bail_out_test = Mod;
 	}
-	setbailoutformula(g_bail_out_test);
+	set_bail_out_formula(g_bail_out_test);
 
 	if (i)
 	{
@@ -2047,7 +2047,7 @@ gfp_exit:
 	return ret;
 }
 
-int find_extra_param(int type)
+int find_extra_parameter(int type)
 {
 	int i, ret, curtyp;
 	ret = -1;
@@ -2068,7 +2068,7 @@ int find_extra_param(int type)
 	return ret;
 }
 
-void load_params(int g_fractal_type)
+void load_parameters(int g_fractal_type)
 {
 	int i, extra;
 	for (i = 0; i < 4; ++i)
@@ -2076,10 +2076,10 @@ void load_params(int g_fractal_type)
 		g_parameters[i] = g_fractal_specific[g_fractal_type].paramvalue[i];
 		if (g_fractal_type != CELLULAR && g_fractal_type != ANT)
 		{
-			roundfloatd(&g_parameters[i]); /* don't round cellular or ant */
+			round_float_d(&g_parameters[i]); /* don't round cellular or ant */
 		}
 	}
-	extra = find_extra_param(g_fractal_type);
+	extra = find_extra_parameter(g_fractal_type);
 	if (extra > -1)
 	{
 		for (i = 0; i < MAXPARAMS-4; i++)
@@ -2135,10 +2135,10 @@ long get_file_entry(int type, char *title, char *fmask,
 			{
 				char message[256];
 				sprintf(message, "Can't find %s", filename);
-				stopmsg(0, message);
+				stop_message(0, message);
 			}
 			sprintf(buf, "Select %s File", title);
-			if (getafilename(buf, fmask, filename) < 0)
+			if (get_a_filename(buf, fmask, filename) < 0)
 			{
 				return -1;
 			}
@@ -2151,7 +2151,7 @@ long get_file_entry(int type, char *title, char *fmask,
 		if (entry_pointer == -2)
 		{
 			newfile = 1; /* go to file list, */
-			continue;    /* back to getafilename */
+			continue;    /* back to get_a_filename */
 		}
 		if (entry_pointer == -1)
 		{
@@ -2172,7 +2172,7 @@ long get_file_entry(int type, char *title, char *fmask,
 			}
 			break;
 		case GETFILE_IFS:
-			if (ifsload() == 0)
+			if (ifs_load() == 0)
 			{
 				g_fractal_type = (g_ifs_type == IFSTYPE_2D) ? IFS : IFS3D;
 				g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
@@ -2186,16 +2186,11 @@ long get_file_entry(int type, char *title, char *fmask,
 	}
 }
 
-struct entryinfo
-{
-	char name[ITEMNAMELEN + 2];
-	long point; /* points to the (or the { following the name */
-	};
 static struct entryinfo **gfe_choices; /* for format_getparm_line */
 static char *gfe_title;
 
 /* skip to next non-white space character and return it */
-int skip_white_space(FILE *infile, long *file_offset)
+static int skip_white_space(FILE *infile, long *file_offset)
 {
 	int c;
 	do
@@ -2355,7 +2350,7 @@ top:
 					if (++numentries >= MAXENTRIES)
 					{
 						sprintf(buf, "Too many entries in file, first %ld used", MAXENTRIES);
-						stopmsg(0, buf);
+						stop_message(0, buf);
 						break;
 					}
 				}
@@ -2401,12 +2396,12 @@ retry:
 	}
 
 	numentries = 0;
-	helptitle(); /* to display a clue when file big and next is slow */
+	help_title(); /* to display a clue when file big and next is slow */
 
 	numentries = scan_entries(gfe_file, &storage[0], NULL);
 	if (numentries == 0)
 	{
-		stopmsg(0, "File doesn't contain any valid entries");
+		stop_message(0, "File doesn't contain any valid entries");
 		fclose(gfe_file);
 		return -2; /* back to file list */
 	}
@@ -2433,7 +2428,7 @@ retry:
 		colwidth = 76;
 	}
 
-	i = fullscreen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
+	i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
 		temp1, NULL, instr, numentries, (char **) choices,
 		attributes, boxwidth, boxdepth, colwidth, 0,
 		formatitem, buf, NULL, check_gfe_key);
@@ -2529,7 +2524,7 @@ static int check_gfe_key(int curkey, int choice)
 		strcat(infhdg, " file entry:\n\n");
 		/* ... instead, call help with buffer?  heading added */
 		driver_stack_screen();
-		helptitle();
+		help_title();
 		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
 
 		g_text_cbase = 0;
@@ -2837,7 +2832,7 @@ static void format_parmfile_line(int choice, char *buf)
 
 /* --------------------------------------------------------------------- */
 
-int get_fract3d_params() /* prompt for 3D fractal parameters */
+int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 {
 	int i, k, ret, oldhelpmode;
 	struct fullscreenvalues uvalues[20];
@@ -2871,7 +2866,7 @@ int get_fract3d_params() /* prompt for 3D fractal parameters */
 
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELP3DFRACT;
-	i = fullscreen_prompt("3D Parameters", k, ifs3d_prompts, uvalues, 0, NULL);
+	i = full_screen_prompt("3D Parameters", k, ifs3d_prompts, uvalues, 0, NULL);
 	g_help_mode = oldhelpmode;
 	if (i < 0)
 	{
@@ -2907,7 +2902,7 @@ get_f3d_exit:
 /* --------------------------------------------------------------------- */
 /* These macros streamline the "save near space" campaign */
 
-int get_3d_params()     /* prompt for 3D parameters */
+int get_3d_parameters()     /* prompt for 3D parameters */
 {
 	char *choices[11];
 	int attributes[21];
@@ -2969,7 +2964,7 @@ restart_1:
 	uvalues[k].type = 'y';
 	uvalues[k].uval.ch.val = g_raytrace_brief;
 
-	check_writefile(g_ray_name, ".ray");
+	check_write_file(g_ray_name, ".ray");
 	prompts3d[++k] = "    Output File Name";
 	uvalues[k].type = 's';
 	strcpy(uvalues[k].uval.sval, g_ray_name);
@@ -2985,7 +2980,7 @@ restart_1:
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELP3DMODE;
 
-	k = fullscreen_prompt("3D Mode Selection", k + 1, prompts3d, uvalues, 0, NULL);
+	k = full_screen_prompt("3D Mode Selection", k + 1, prompts3d, uvalues, 0, NULL);
 	g_help_mode = oldhelpmode;
 	if (k < 0)
 	{
@@ -3005,7 +3000,7 @@ restart_1:
 	k++;
 	if (g_raytrace_output == RAYTRACE_POVRAY)
 	{
-		stopmsg(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
+		stop_message(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
 		"the online documentation.");
 	}
 	g_raytrace_brief = uvalues[k++].uval.ch.val;
@@ -3081,7 +3076,7 @@ restart_1:
 			attributes[i] = 1;
 		}
 		g_help_mode = HELP3DFILL;
-		i = fullscreen_choice(CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
+		i = full_screen_choice(CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
 										0, 0, 0, FILLTYPE + 1, NULL, NULL, NULL, NULL);
 		g_help_mode = oldhelpmode;
 		if (i < 0)
@@ -3198,7 +3193,7 @@ restart_1:
 	}
 
 	g_help_mode = HELP3DPARMS;
-	k = fullscreen_prompt(s, k, prompts3d, uvalues, 0, NULL);
+	k = full_screen_prompt(s, k, prompts3d, uvalues, 0, NULL);
 	g_help_mode = oldhelpmode;
 	if (k < 0)
 	{
@@ -3293,7 +3288,7 @@ static int get_light_params()
 
 		if (!g_targa_overlay)
 		{
-			check_writefile(g_light_name, ".tga");
+			check_write_file(g_light_name, ".tga");
 		}
 		prompts3d[++k] = "Targa File Name  (Assume .tga)";
 		uvalues[k].type = 's';
@@ -3324,7 +3319,7 @@ static int get_light_params()
 
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELP3DLIGHT;
-	k = fullscreen_prompt("Light Source Parameters", k, prompts3d, uvalues, 0, NULL);
+	k = full_screen_prompt("Light Source Parameters", k, prompts3d, uvalues, 0, NULL);
 	g_help_mode = oldhelpmode;
 	if (k < 0)
 	{
@@ -3399,7 +3394,7 @@ static int check_mapfile()
 	}
 	else
 	{
-		merge_pathnames(temp1, funnyglasses_map_name, 0);
+		merge_path_names(temp1, funnyglasses_map_name, 0);
 	}
 
 	while (1)
@@ -3423,7 +3418,7 @@ static int check_mapfile()
 			}
 		}
 		memcpy(g_old_dac_box, g_dac_box, 256*3); /* save the DAC */
-		i = ValidateLuts(temp1);
+		i = validate_luts(temp1);
 		memcpy(g_dac_box, g_old_dac_box, 256*3); /* restore the DAC */
 		if (i != 0)  /* Oops, somethings wrong */
 		{
@@ -3431,7 +3426,7 @@ static int check_mapfile()
 			continue;
 		}
 		g_map_set = TRUE;
-		merge_pathnames(g_map_name, temp1, 0);
+		merge_path_names(g_map_name, temp1, 0);
 		break;
 	}
 	return 0;
@@ -3524,7 +3519,7 @@ static int get_funny_glasses_params()
 
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELP3DGLASSES;
-	k = fullscreen_prompt("Funny Glasses Parameters", k + 1, prompts3d, uvalues, 0, NULL);
+	k = full_screen_prompt("Funny Glasses Parameters", k + 1, prompts3d, uvalues, 0, NULL);
 	g_help_mode = oldhelpmode;
 	if (k < 0)
 	{
@@ -3548,7 +3543,7 @@ static int get_funny_glasses_params()
 	return 0;
 }
 
-void setbailoutformula(enum bailouts test)
+void set_bail_out_formula(enum bailouts test)
 {
 	switch (test)
 	{
@@ -3556,7 +3551,7 @@ void setbailoutformula(enum bailouts test)
 	default:
 		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
-			g_bail_out_fp = (int (*)(void))asmfpMODbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_mod_fp_asm;
 		}
 		else
 		{
@@ -3568,7 +3563,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_l = (int (*)(void))asmlMODbailout;
+			g_bail_out_l = (int (*)(void))bail_out_mod_l_asm;
 		}
 		g_bail_out_bn = (int (*)(void))bail_out_mod_bn;
 		g_bail_out_bf = (int (*)(void))bail_out_mod_bf;
@@ -3576,7 +3571,7 @@ void setbailoutformula(enum bailouts test)
 	case Real:
 		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
-			g_bail_out_fp = (int (*)(void))asmfpREALbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_real_fp_asm;
 		}
 		else
 		{
@@ -3588,7 +3583,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_l = (int (*)(void))asmlREALbailout;
+			g_bail_out_l = (int (*)(void))bail_out_real_l_asm;
 		}
 		g_bail_out_bn = (int (*)(void))bail_out_real_bn;
 		g_bail_out_bf = (int (*)(void))bail_out_real_bf;
@@ -3596,7 +3591,7 @@ void setbailoutformula(enum bailouts test)
 	case Imag:
 		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
-			g_bail_out_fp = (int (*)(void))asmfpIMAGbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_imag_fp_asm;
 		}
 		else
 		{
@@ -3608,7 +3603,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_l = (int (*)(void))asmlIMAGbailout;
+			g_bail_out_l = (int (*)(void))bail_out_imag_l_asm;
 		}
 		g_bail_out_bn = (int (*)(void))bail_out_imag_bn;
 		g_bail_out_bf = (int (*)(void))bail_out_imag_bf;
@@ -3616,7 +3611,7 @@ void setbailoutformula(enum bailouts test)
 	case Or:
 		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
-			g_bail_out_fp = (int (*)(void))asmfpORbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_or_fp_asm;
 		}
 		else
 		{
@@ -3628,7 +3623,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_l = (int (*)(void))asmlORbailout;
+			g_bail_out_l = (int (*)(void))bail_out_or_l_asm;
 		}
 		g_bail_out_bn = (int (*)(void))bail_out_or_bn;
 		g_bail_out_bf = (int (*)(void))bail_out_or_bf;
@@ -3636,7 +3631,7 @@ void setbailoutformula(enum bailouts test)
 	case And:
 		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
-			g_bail_out_fp = (int (*)(void))asmfpANDbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_and_fp_asm;
 		}
 		else
 		{
@@ -3648,7 +3643,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_l = (int (*)(void))asmlANDbailout;
+			g_bail_out_l = (int (*)(void))bail_out_and_l_asm;
 		}
 		g_bail_out_bn = (int (*)(void))bail_out_and_bn;
 		g_bail_out_bf = (int (*)(void))bail_out_and_bf;
@@ -3656,7 +3651,7 @@ void setbailoutformula(enum bailouts test)
 	case Manh:
 		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
-			g_bail_out_fp = (int (*)(void))asmfpMANHbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_manhattan_fp_asm;
 		}
 		else
 		{
@@ -3668,7 +3663,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_l = (int (*)(void))asmlMANHbailout;
+			g_bail_out_l = (int (*)(void))bail_out_manhattan_l_asm;
 		}
 		g_bail_out_bn = (int (*)(void))bail_out_manhattan_bn;
 		g_bail_out_bf = (int (*)(void))bail_out_manhattan_bf;
@@ -3676,7 +3671,7 @@ void setbailoutformula(enum bailouts test)
 	case Manr:
 		if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)     /* Fast 287 math */
 		{
-			g_bail_out_fp = (int (*)(void))asmfpMANRbailout;
+			g_bail_out_fp = (int (*)(void))bail_out_manhattan_r_fp_asm;
 		}
 		else
 		{
@@ -3688,7 +3683,7 @@ void setbailoutformula(enum bailouts test)
 		}
 		else
 		{
-			g_bail_out_l = (int (*)(void))asmlMANRbailout;
+			g_bail_out_l = (int (*)(void))bail_out_manhattan_r_l_asm;
 		}
 		g_bail_out_bn = (int (*)(void))bail_out_manhattan_r_bn;
 		g_bail_out_bf = (int (*)(void))bail_out_manhattan_r_bf;

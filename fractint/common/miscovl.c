@@ -40,7 +40,7 @@ static void put_parm();
 
 static void put_parm_line(void);
 static int getprec(double, double, double);
-int getprecbf(int);
+int get_precision_bf(int);
 static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(char *keyword, char *fname);
@@ -262,7 +262,7 @@ prompt_user:
 		paramvalues[promptnum++].uval.sbuf = vidmde;
 #endif
 
-		if (fullscreen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, NULL) < 0)
+		if (full_screen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, NULL) < 0)
 		{
 			break;
 		}
@@ -274,7 +274,7 @@ prompt_user:
 		}
 
 		strcpy(g_command_file, inpcommandfile);
-		if (has_ext(g_command_file) == NULL)
+		if (has_extension(g_command_file) == NULL)
 		{
 			strcat(g_command_file, ".par");   /* default extension .par */
 		}
@@ -330,7 +330,7 @@ prompt_user:
 			if (pxdots == 0 && (xm > 1 || ym > 1))
 			{
 				/* no corresponding video mode! */
-				stopmsg(0, "Invalid video mode entry!");
+				stop_message(0, "Invalid video mode entry!");
 				goto prompt_user;
 			}
 #endif
@@ -338,7 +338,7 @@ prompt_user:
 			/* bounds range on xm, ym */
 			if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
 			{
-				stopmsg(0, "X and Y components must be 1 to 36");
+				stop_message(0, "X and Y components must be 1 to 36");
 				goto prompt_user;
 			}
 
@@ -347,7 +347,7 @@ prompt_user:
 			xtotal *= pxdots;  ytotal *= pydots;
 			if (xtotal > 65535L || ytotal > 65535L)
 			{
-				stopmsg(0, "Total resolution (X or Y) cannot exceed 65535");
+				stop_message(0, "Total resolution (X or Y) cannot exceed 65535");
 				goto prompt_user;
 			}
 		}
@@ -365,7 +365,7 @@ skip_UI:
 			if (access(g_command_file, 6))
 			{
 				sprintf(buf, "Can't write %s", g_command_file);
-				stopmsg(0, buf);
+				stop_message(0, buf);
 				continue;
 			}
 			i = (int) strlen(outname);
@@ -383,7 +383,7 @@ skip_UI:
 		if (parmfile == NULL)
 		{
 			sprintf(buf, "Can't create %s", outname);
-			stopmsg(0, buf);
+			stop_message(0, buf);
 			if (gotinfile)
 			{
 				fclose(infile);
@@ -402,7 +402,7 @@ skip_UI:
 					_snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
 						g_command_name, (*g_make_par == 0) ?
 						"... Replacing ..." : "Continue to replace it, Cancel to back out");
-					if (stopmsg(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
+					if (stop_message(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
 					{                /* cancel */
 						fclose(infile);
 						fclose(parmfile);
@@ -674,7 +674,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			put_parm(" miim=%s/%s", g_jiim_method[g_major_method], g_jiim_left_right[g_minor_method]);
 		}
 
-		showtrig(buf); /* this function is in miscres.c */
+		show_trig(buf); /* this function is in miscres.c */
 		if (buf[0])
 		{
 			put_parm(buf);
@@ -695,15 +695,15 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			if (bf_math)
 			{
 				int digits;
-				cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-				digits = getprecbf(MAXREZ);
+				convert_center_mag_bf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+				digits = get_precision_bf(MAXREZ);
 				put_parm(" center-mag=");
 				put_bf(0, bfXctr, digits);
 				put_bf(1, bfYctr, digits);
 			}
 			else /* !bf_math */
 			{
-				cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+				convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 				put_parm(" center-mag=");
 				/* convert 1000 fudged long to double, 1000/1<<24 = 6e-5 */
 				put_parm(g_delta_min_fp > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", Xctr, Yctr);
@@ -760,7 +760,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			if (bf_math)
 			{
 				int digits;
-				digits = getprecbf(MAXREZ);
+				digits = get_precision_bf(MAXREZ);
 				put_bf(0, bfxmin, digits);
 				put_bf(1, bfxmax, digits);
 				put_bf(1, bfymin, digits);
@@ -1054,7 +1054,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		{
 			if (g_force_symmetry == FORCESYMMETRY_SEARCH && ii == 1 && jj == 1)
 			{
-				stopmsg(0, "Regenerate before <b> to get correct symmetry");
+				stop_message(0, "Regenerate before <b> to get correct symmetry");
 			}
 			put_parm(" symmetry=");
 			if (g_force_symmetry == XAXIS)
@@ -1567,7 +1567,7 @@ docolors:
 static void put_filename(char *keyword, char *fname)
 {
 	char *p;
-	if (*fname && !endswithslash(fname))
+	if (*fname && !ends_with_slash(fname))
 	{
 		p = strrchr(fname, SLASHC);
 		if (p != NULL)
@@ -1656,7 +1656,7 @@ static void put_parm_line()
 	strcpy(s_wbdata.buf, s_wbdata.buf + len);
 }
 
-int getprecbf_mag()
+int get_precision_mag_bf()
 {
 	double Xmagfactor, Rotation, Skew;
 	LDBL Magnification;
@@ -1667,7 +1667,7 @@ int getprecbf_mag()
 	bXctr            = alloc_stack(bflength + 2);
 	bYctr            = alloc_stack(bflength + 2);
 	/* this is just to find Magnification */
-	cvtcentermagbf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+	convert_center_mag_bf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	restore_stack(saved);
 
 	/* I don't know if this is portable, but something needs to */
@@ -1725,7 +1725,7 @@ static int getprec(double a, double b, double c)
 /* This function calculates the precision needed to distiguish adjacent
 	pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
-int getprecbf(int rezflag)
+int get_precision_bf(int rezflag)
 {
 	bf_t del1, del2, one, bfxxdel, bfxxdel2, bfyydel, bfyydel2;
 	int digits, dec;
@@ -1782,7 +1782,7 @@ int getprecbf(int rezflag)
 	}
 	digits = max(digits, 3);
 	restore_stack(saved);
-	dec = getprecbf_mag();
+	dec = get_precision_mag_bf();
 	return max(digits, dec);
 }
 
@@ -1793,7 +1793,7 @@ int getprecbf(int rezflag)
 /* This function calculates the precision needed to distiguish adjacent
 	pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
-int getprecdbl(int rezflag)
+int get_precision_dbl(int rezflag)
 {
 	LDBL del1, del2, xdel, xdel2, ydel, ydel2;
 	int digits;
@@ -1821,7 +1821,7 @@ int getprecdbl(int rezflag)
 	if (del1 == 0)
 	{
 #ifdef DEBUG
-		showcornersdbl("getprecdbl");
+		showcornersdbl("get_precision_dbl");
 #endif
 		return -1;
 	}
@@ -2092,7 +2092,7 @@ int select_video_mode(int curmode)
 	modes_changed = 0;
 	g_tab_mode = 0;
 	g_help_mode = HELPVIDSEL;
-	i = fullscreen_choice(CHOICE_HELP,
+	i = full_screen_choice(CHOICE_HELP,
 		"Select Video Mode",
 		"key...name.......................xdot..ydot.colr.driver......comment......",
 		NULL, g_video_table_len, NULL, attributes,
@@ -2103,7 +2103,7 @@ int select_video_mode(int curmode)
 	{
 		/* update fractint.cfg for new key assignments */
 		if (modes_changed && g_bad_config == 0 &&
-			stopmsg(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
+			stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
 				"Save new function key assignments or cancel changes?") == 0)
 		{
 			update_fractint_cfg();
@@ -2191,7 +2191,7 @@ static int check_modekey(int curkey, int choice)
 	{
 		if (g_bad_config)
 		{
-			stopmsg(0, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
+			stop_message(0, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
 		}
 		else
 		{
@@ -2260,7 +2260,7 @@ static void update_fractint_cfg()
 	if (access(cfgname, 6))
 	{
 		sprintf(buf, "Can't write %s", cfgname);
-		stopmsg(0, buf);
+		stop_message(0, buf);
 		return;
 		}
 	strcpy(outname, cfgname);
@@ -2272,7 +2272,7 @@ static void update_fractint_cfg()
 	if (outfile == NULL)
 	{
 		sprintf(buf, "Can't create %s", outname);
-		stopmsg(0, buf);
+		stop_message(0, buf);
 		return;
 		}
 	cfgfile = fopen(cfgname, "r");
@@ -2672,7 +2672,7 @@ void flip_image(int key)
 		return;
 	if (bf_math)
 	{
-		clear_zoombox(); /* clear, don't copy, the zoombox */
+		clear_zoom_box(); /* clear, don't copy, the zoombox */
 	}
 	ixhalf = g_x_dots / 2;
 	iyhalf = g_y_dots / 2;
@@ -2869,7 +2869,7 @@ static char *expand_var(char *var, char *buf)
 	{
 		char buff[80];
 		_snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
-		stopmsg(0, buff);
+		stop_message(0, buff);
 		out = "";
 	}
 	return out;

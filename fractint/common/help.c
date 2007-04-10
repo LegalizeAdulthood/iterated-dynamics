@@ -369,10 +369,10 @@ static void display_page(char *title, char *text, unsigned text_len,
 {
 	char temp[9];
 
-	helptitle();
+	help_title();
 	helpinstr();
 	driver_set_attr(2, 0, C_HELP_BODY, 80*22);
-	putstringcenter(1, 0, 80, C_HELP_HDG, title);
+	put_string_center(1, 0, 80, C_HELP_HDG, title);
 	sprintf(temp, "%2d of %d", page + 1, num_pages);
 #if !defined(XFRACT) && !defined(_WIN32)
 	driver_put_string(1, 79 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR, temp);
@@ -1290,23 +1290,23 @@ static int print_doc_msg_func(int pnum, int num_pages)
 	if (pnum == -1)    /* successful completion */
 	{
 		driver_buzzer(BUZZER_COMPLETE);
-		putstringcenter(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
+		put_string_center(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
 		driver_get_key();
 		return 0;
 	}
 	else if (pnum == -2)   /* aborted */
 	{
 		driver_buzzer(BUZZER_INTERRUPT);
-		putstringcenter(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
+		put_string_center(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
 		driver_get_key();
 		return 0;
 	}
 	else if (pnum == 0)   /* initialization */
 	{
-		helptitle();
+		help_title();
 		printinstr();
 		driver_set_attr(2, 0, C_HELP_BODY, 80*22);
-		putstringcenter(1, 0, 80, C_HELP_HDG, "Generating FRACTINT.DOC");
+		put_string_center(1, 0, 80, C_HELP_HDG, "Generating FRACTINT.DOC");
 
 		driver_put_string(7, 30, C_HELP_BODY, "Completed:");
 
@@ -1342,7 +1342,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 	{
 		sprintf(buffer, "\n*** aborted\n");
 	}
-	stopmsg(0, buffer);
+	stop_message(0, buffer);
 	return result;
 }
 
@@ -1423,8 +1423,8 @@ ErrorAbort:
 
 	if (msg != NULL)
 	{
-		helptitle();
-		stopmsg(STOPMSG_NO_STACK, msg);
+		help_title();
+		stop_message(STOPMSG_NO_STACK, msg);
 	}
 	else if (msg_func != NULL)
 	{
@@ -1471,7 +1471,7 @@ int init_help(void)
 					{
 						fclose(help_file);
 						help_file = NULL;
-						stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.EXE!\n");
+						stop_message(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.EXE!\n");
 					}
 					else
 					{
@@ -1481,12 +1481,12 @@ int init_help(void)
 			}
 			else
 			{
-				stopmsg(STOPMSG_NO_STACK, "Help system was unable to open FRACTINT.EXE!\n");
+				stop_message(STOPMSG_NO_STACK, "Help system was unable to open FRACTINT.EXE!\n");
 			}
 		}
 		else
 		{
-			stopmsg(STOPMSG_NO_STACK, "Help system couldn't find FRACTINT.EXE!\n");
+			stop_message(STOPMSG_NO_STACK, "Help system couldn't find FRACTINT.EXE!\n");
 		}
 	}
 #endif
@@ -1504,12 +1504,12 @@ int init_help(void)
 				if (hs.sig != HELP_SIG)
 				{
 					fclose(help_file);
-					stopmsg(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
+					stop_message(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
 				}
 				else if (hs.version != FIHELP_VERSION)
 				{
 					fclose(help_file);
-					stopmsg(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");
+					stop_message(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");
 				}
 				else
 				{
@@ -1527,7 +1527,7 @@ int init_help(void)
 #else
 			{"Couldn't find fractint.hlp; set FRACTDIR to proper directory with setenv.\n"};
 #endif
-		stopmsg(STOPMSG_NO_STACK, msg);
+		stop_message(STOPMSG_NO_STACK, msg);
 	}
 
 	help_seek(0L);
@@ -1552,7 +1552,7 @@ int init_help(void)
 	{
 		fclose(help_file);
 		help_file = NULL;
-		stopmsg(STOPMSG_NO_STACK, "Not enough memory for help system!\n");
+		stop_message(STOPMSG_NO_STACK, "Not enough memory for help system!\n");
 
 		return -2;
 	}

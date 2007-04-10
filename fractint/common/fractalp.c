@@ -1019,7 +1019,7 @@ struct fractalspecificstuff g_fractal_specific[] =
 		HT_NEWTCMPLX, HF_COMPLEXNEWT, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		ComplexNewton, other_julia_per_pixel_fp, ComplexNewtonSetup,
+		complex_newton, other_julia_per_pixel_fp, complex_newton_setup,
 			standard_fractal,
 		BAILOUT_NONE
 	},
@@ -1031,7 +1031,7 @@ struct fractalspecificstuff g_fractal_specific[] =
 		HT_NEWTCMPLX, HF_COMPLEXNEWT, WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		ComplexBasin, other_julia_per_pixel_fp, ComplexNewtonSetup,
+		complex_basin, other_julia_per_pixel_fp, complex_newton_setup,
 			standard_fractal,
 		BAILOUT_NONE
 	},
@@ -1193,7 +1193,7 @@ struct fractalspecificstuff g_fractal_specific[] =
 		HT_JULIBROT, -1, NOGUESS | NOTRACE | NOROTATE | NORESUME | WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, NOFRACTAL, JULIBROTFP, NOSYM,
-		julia_orbit, julibrot_per_pixel, julibrot_setup, std_4d_fractal,
+		julia_orbit, julibrot_per_pixel, julibrot_setup, standard_4d_fractal,
 		BAILOUT_STANDARD
 	},
 
@@ -1644,7 +1644,7 @@ struct fractalspecificstuff g_fractal_specific[] =
 		HT_LYAPUNOV, HT_LYAPUNOV, WINFRAC,
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
-		bifurcation_lambda, NULL, lya_setup, lyapunov,
+		bifurcation_lambda, NULL, lyapunov_setup, lyapunov,
 		BAILOUT_NONE
 	},
 
@@ -1882,7 +1882,7 @@ struct fractalspecificstuff g_fractal_specific[] =
 		HT_JULIBROT, -1, NOGUESS | NOTRACE | NOROTATE | NORESUME | WINFRAC,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, JULIBROT, NOSYM,
-		julia_orbit_fp, julibrot_per_pixel_fp, julibrot_setup, std_4d_fractal_fp,
+		julia_orbit_fp, julibrot_per_pixel_fp, julibrot_setup, standard_4d_fractal_fp,
 		BAILOUT_STANDARD
 	},
 
@@ -2336,7 +2336,7 @@ int type_has_parameter(int type, int parm, char *buf)
 	}
 	else if (parm >= 4 && parm < MAXPARAMS)
 	{
-		extra = find_extra_param(type);
+		extra = find_extra_parameter(type);
 		if (extra > -1)
 		{
 			ret = g_more_parameters[extra].parameters[parm-4];

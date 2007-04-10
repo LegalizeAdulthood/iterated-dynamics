@@ -26,7 +26,7 @@ extern void set_default_parms(void);
 /*  windos -- C file prototypes */
 
 extern void debugmessage(char *, char *);
-extern int stopmsg(int , char far *);
+extern int stop_message(int , char far *);
 extern int  farread(int, VOIDPTR, unsigned);
 extern int  farwrite(int, VOIDPTR, unsigned);
 extern void far_memcpy(void far *, void far *, int);
@@ -61,11 +61,11 @@ extern void winfract_help(void);
 
 extern void movecursor(int, int);
 extern void setattr(int, int, int, int);
-extern int  putstringcenter(int, int, int, int, char far *);
+extern int  put_string_center(int, int, int, int, char far *);
 extern void putstring(int, int, int, unsigned char far *);
 extern int  strncasecmp(char far *,char far *,int);
 extern int  input_field(int, int, char *, int, int, int, int (*)(int) );
-extern void helptitle(void);
+extern void help_title(void);
 extern void stackscreen(void);
 extern void unstackscreen(void);
 extern void discardscreen(void);
@@ -76,8 +76,6 @@ extern void fractint_help(void);
 extern int getakeynohelp(void);
 extern int win_make_batch_file(void);
 extern int fractint_getkeypress(int);
-extern int savegraphics(void);
-extern int restoregraphics(void);
 
 extern int main_menu(int);
 
@@ -90,8 +88,8 @@ extern void win_savedac(void);
 
 extern void rotate(int);
 extern void find_special_colors(void);
-extern int showtempmsg(char far *);
-extern void cleartempmsg(void);
+extern int show_temp_message(char far *);
+extern void clear_temp_message(void);
 extern void freetempmsg(void);
 extern int disk_from_memory(long, int, void far *);
 extern int disk_to_memory(long, int, void far *);
@@ -108,13 +106,11 @@ extern int intro_overlay(void);
 extern int rotate_overlay(void);
 extern int printer_overlay(void);
 extern int disk_start_potential(void);
-//extern void SetTgaColors(void);
 extern int disk_start(void);
 extern void disk_end(void);
-extern int disk_start_targa(FILE *,int);
 extern void disk_write_targa(unsigned int,unsigned int,BYTE,BYTE,BYTE);
 extern void disk_read_targa(unsigned int,unsigned int,BYTE *,BYTE *,BYTE *);
-extern int SetColorPaletteName(char *);
+extern int set_color_palette_name(char *);
 extern BYTE far *findfont(int);
 extern long cdecl readticker(void);
 extern void EndTGA(void);
@@ -125,7 +121,7 @@ extern void dispbox(void);
 extern void clearbox(void);
 extern void _fastcall addbox(struct coords);
 extern void _fastcall drawlines(struct coords, struct coords, int, int);
-extern int showvidlength(void);
+extern int show_vid_length(void);
 
 extern int get_sound_params(void);
 extern int soundon(int);

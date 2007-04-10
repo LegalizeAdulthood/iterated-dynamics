@@ -121,7 +121,7 @@ static int get_min_max(void)
 		}
 		if (yd == 20)
 		{
-			showtempmsg("Getting min and max");
+			show_temp_message("Getting min and max");
 		}
 		for (xd = 0; xd < g_x_dots; xd++)
 		{
@@ -136,7 +136,7 @@ static int get_min_max(void)
 			}
 		}
 	}
-	cleartempmsg();
+	clear_temp_message();
 	return 0;
 }
 
@@ -254,7 +254,7 @@ int do_AutoStereo(void)
 
 	if (g_x_dots > OLDMAXPIXELS)
 	{
-		stopmsg(0, "Stereo not allowed with resolution > 2048 pixels wide");
+		stop_message(0, "Stereo not allowed with resolution > 2048 pixels wide");
 		driver_buzzer(BUZZER_INTERRUPT);
 		ret = 1;
 		goto exit_stereo;
@@ -351,7 +351,7 @@ int do_AutoStereo(void)
 			break;
 		case 's':
 		case 'S':
-			savetodisk(g_save_name);
+			save_to_disk(g_save_name);
 			break;
 		default:
 			if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */

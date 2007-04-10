@@ -401,7 +401,7 @@ int plasma(void)
 
 	if (g_colors < 4)
 	{
-		stopmsg(0,
+		stop_message(0,
 		"Plasma Clouds can currently only be run in a 4-or-more-color video\n"
 		"mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
 		"640x350x16 mode]).");
@@ -643,7 +643,7 @@ int diffusion(void)
 
 	if (driver_diskp())
 	{
-		notdiskmsg();
+		not_disk_message();
 	}
 
 	x = y = -1;
@@ -978,7 +978,7 @@ int bifurcation(void)
 	s_verhulst_array = (int *) malloc(array_size);
 	if (s_verhulst_array == NULL)
 	{
-		stopmsg(0, "Insufficient free memory for calculation.");
+		stop_message(0, "Insufficient free memory for calculation.");
 		return -1;
 	}
 
@@ -1469,7 +1469,7 @@ int lyapunov(void)
 }
 
 
-int lya_setup(void)
+int lyapunov_setup(void)
 {
 	/* This routine sets up the sequence for forcing the Rate parameter
 		to vary between the two values.  It fills the array lyaRxy[] and
@@ -1547,7 +1547,7 @@ int lya_setup(void)
 		}
 	if (g_inside < 0)
 	{
-		stopmsg(0, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
+		stop_message(0, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
 		g_inside = 1;
 		}
 	if (g_user_standard_calculation_mode == 'o')  /* Oops, lyapunov type */
@@ -1659,31 +1659,31 @@ static void abort_cellular(int err, int t)
 		{
 			char msg[30];
 			sprintf(msg, "Bad t=%d, aborting\n", t);
-			stopmsg(0, msg);
+			stop_message(0, msg);
 		}
 		break;
 	case BAD_MEM:
-		stopmsg(0, "Insufficient free memory for calculation");
+		stop_message(0, "Insufficient free memory for calculation");
 		break;
 	case STRING1:
-		stopmsg(0, "String can be a maximum of 16 digits");
+		stop_message(0, "String can be a maximum of 16 digits");
 		break;
 	case STRING2:
 		{
 			static char msg[] = {"Make string of 0's through  's" };
 			msg[27] = (char)(k_1 + 48); /* turn into a character value */
-			stopmsg(0, msg);
+			stop_message(0, msg);
 		}
 		break;
 	case TABLEK:
 		{
 			static char msg[] = {"Make Rule with 0's through  's" };
 			msg[27] = (char)(k_1 + 48); /* turn into a character value */
-			stopmsg(0, msg);
+			stop_message(0, msg);
 		}
 		break;
 	case TYPEKR:
-		stopmsg(0, "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
+		stop_message(0, "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
 		break;
 	case RULELENGTH:
 		{
@@ -1698,11 +1698,11 @@ static void abort_cellular(int err, int t)
 				msg[13] = (char)(i + 48);
 				msg[14] = (char)((rule_digits % 10) + 48);
 			}
-			stopmsg(0, msg);
+			stop_message(0, msg);
 		}
 		break;
 	case INTERUPT:
-		stopmsg(0, "Interrupted, can't resume");
+		stop_message(0, "Interrupted, can't resume");
 		break;
 	case CELLULAR_DONE:
 		break;
@@ -2172,7 +2172,7 @@ static void set_froth_palette(void)
 		{
 			mapname = (fsp->attractors == 6) ? "froth616.map" : "froth316.map";
 		}
-		if (ValidateLuts(mapname) != 0)
+		if (validate_luts(mapname) != 0)
 		{
 			return;
 		}
@@ -2195,7 +2195,7 @@ int froth_setup(void)
 	}
 	if (fsp == NULL)
 	{
-		stopmsg(0, "Sorry, not enough memory to run the frothybasin fractal type");
+		stop_message(0, "Sorry, not enough memory to run the frothybasin fractal type");
 		return 0;
 	}
 

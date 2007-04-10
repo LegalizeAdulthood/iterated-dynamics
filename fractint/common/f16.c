@@ -49,7 +49,7 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
 	FILE *fp;
 
 	strcpy(filename, fname);
-	if (has_ext(filename) == NULL)
+	if (has_extension(filename) == NULL)
 	{
 		strcat(filename, ".TGA");
 	}

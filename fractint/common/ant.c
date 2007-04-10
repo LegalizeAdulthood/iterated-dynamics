@@ -53,7 +53,7 @@ static void set_wait(long *wait)
 			strcat(msg, " ");
 		}
 		msg[15] = '\0';
-		showtempmsg(msg);
+		show_temp_message(msg);
 		kbdchar = driver_get_key();
 		switch (kbdchar)
 		{
@@ -74,7 +74,7 @@ static void set_wait(long *wait)
 			*wait -= 10;
 			break;
 		default:
-			cleartempmsg();
+			clear_temp_message();
 			return;
 		}
 		if (*wait < 0)

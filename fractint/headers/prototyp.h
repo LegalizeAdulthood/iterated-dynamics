@@ -69,13 +69,13 @@ extern void cdecl FPUcplxexp387(_CMPLX *, _CMPLX *);
 
 /*  fracsuba -- assembler file prototypes */
 
-extern int asmlMODbailout(void);
-extern int asmlREALbailout(void);
-extern int asmlIMAGbailout(void);
-extern int asmlORbailout(void);
-extern int asmlANDbailout(void);
-extern int asmlMANHbailout(void);
-extern int asmlMANRbailout(void);
+extern int bail_out_mod_l_asm(void);
+extern int bail_out_real_l_asm(void);
+extern int bail_out_imag_l_asm(void);
+extern int bail_out_or_l_asm(void);
+extern int bail_out_and_l_asm(void);
+extern int bail_out_manhattan_l_asm(void);
+extern int bail_out_manhattan_r_l_asm(void);
 extern int asm386lMODbailout(void);
 extern int asm386lREALbailout(void);
 extern int asm386lIMAGbailout(void);
@@ -88,13 +88,13 @@ extern int FJuliafpFractal(void);
 extern int FBarnsley1FPFractal(void);
 extern int FBarnsley2FPFractal(void);
 extern int FLambdaFPFractal(void);
-extern int asmfpMODbailout(void);
-extern int asmfpREALbailout(void);
-extern int asmfpIMAGbailout(void);
-extern int asmfpORbailout(void);
-extern int asmfpANDbailout(void);
-extern int asmfpMANHbailout(void);
-extern int asmfpMANRbailout(void);
+extern int bail_out_mod_fp_asm(void);
+extern int bail_out_real_fp_asm(void);
+extern int bail_out_imag_fp_asm(void);
+extern int bail_out_or_fp_asm(void);
+extern int bail_out_and_fp_asm(void);
+extern int bail_out_manhattan_fp_asm(void);
+extern int bail_out_manhattan_r_fp_asm(void);
 
 /* history -- C file prototypes */
 
@@ -159,8 +159,6 @@ extern int longvmult(LVECTOR, LMATRIX, LVECTOR, int);
 
 /*  biginit -- C file prototypes */
 
-/* CAE removed static functions from header 28 Jan 95  */
-
 void free_bf_vars(void);
 bn_t alloc_stack(size_t size);
 int save_stack(void);
@@ -168,7 +166,6 @@ void restore_stack(int old_offset);
 void init_bf_dec(int dec);
 void init_bf_length(int bnl);
 void init_big_pi(void);
-
 
 /*  calcfrac -- C file prototypes */
 
@@ -196,7 +193,7 @@ extern int bifurcation_stewart_trig_fp(void);
 extern int bifurcation_stewart_trig(void);
 extern int popcorn(void);
 extern int lyapunov(void);
-extern int lya_setup(void);
+extern int lyapunov_setup(void);
 extern int cellular(void);
 extern int cellular_setup(void);
 extern int froth_calc(void);
@@ -261,7 +258,7 @@ extern void displayc(int, int, int, int, int);
 
 /*  encoder -- C file prototypes */
 
-extern int savetodisk(char *);
+extern int save_to_disk(char *);
 extern int encoder(void);
 extern int _fastcall new_to_old(int new_fractype);
 
@@ -269,17 +266,17 @@ extern int _fastcall new_to_old(int new_fractype);
 
 extern  void param_history(int);
 extern  int get_variations(void);
-extern  int get_evolve_Parms(void);
-extern  void set_current_params(void);
-extern  void fiddleparms(GENEBASE gene[], int ecount);
+extern  int get_evolve_parameters(void);
+extern  void set_current_parameters(void);
+extern  void fiddle_parameters(GENEBASE gene[], int ecount);
 extern  void set_evolve_ranges(void);
 extern  void set_mutation_level(int);
-extern  void drawparmbox(int);
-extern  void spiralmap(int);
-extern  int unspiralmap(void);
+extern  void draw_parameter_box(int);
+extern  void spiral_map(int);
+extern  int unspiral_map(void);
 extern  int explore_check(void);
-extern  void SetupParamBox(void);
-extern  void ReleaseParamBox(void);
+extern  void setup_parameter_box(void);
+extern  void release_parameter_box(void);
 
 /*  f16 -- C file prototypes */
 
@@ -520,7 +517,7 @@ extern int check_key(void);
 extern int cmp_line(BYTE *, int);
 extern int key_count(int);
 extern int main_menu_switch(int *, int *, int *, char *, int);
-extern int pot_line(BYTE *, int);
+extern int potential_line(BYTE *, int);
 extern int sound_line(BYTE *, int);
 #if !defined(XFRACT)
 #if !defined(_WIN32)
@@ -535,12 +532,12 @@ extern int timer(int, int (*subrtn)(), ...);
 extern int timer();
 #endif
 
-extern void clear_zoombox(void);
+extern void clear_zoom_box(void);
 extern void flip_image(int kbdchar);
 #ifndef WINFRACT
 extern void reset_zoom_corners(void);
 #endif
-extern void setup287code(void);
+extern void setup_287_code(void);
 
 /*  frasetup -- C file prototypes */
 
@@ -610,13 +607,11 @@ extern void intro(void);
 /*  jb -- C file prototypes */
 
 extern int julibrot_setup(void);
-extern int JulibrotfpSetup(void);
+extern int julibrot_setup_fp(void);
 extern int julibrot_per_pixel(void);
 extern int julibrot_per_pixel_fp(void);
-extern int zline(long, long);
-extern int zlinefp(double, double);
-extern int std_4d_fractal(void);
-extern int std_4d_fractal_fp(void);
+extern int standard_4d_fractal(void);
+extern int standard_4d_fractal_fp(void);
 
 /*  jiim -- C file prototypes */
 
@@ -642,7 +637,7 @@ extern int    EnQueueFloat    (float,  float);
 
 extern int line3d(BYTE *, unsigned int);
 extern int _fastcall targa_color(int, int, int);
-extern int startdisk1(char *, FILE *, int);
+extern int start_disk1(char *, FILE *, int);
 
 /*  loadfdos -- C file prototypes */
 #ifndef WINFRACT
@@ -653,7 +648,7 @@ extern int get_video_mode(struct fractal_info *, struct ext_blk_formula_info *);
 extern int read_overlay(void);
 extern void set_if_old_bif(void);
 extern void set_function_parm_defaults(void);
-extern int fgetwindow(void);
+extern int look_get_window(void);
 extern void backwards_v18(void);
 extern void backwards_v19(void);
 extern void backwards_v20(void);
@@ -662,8 +657,8 @@ extern int check_back(void);
 /*  loadmap -- C file prototypes */
 
 //extern void SetTgaColors(void);
-extern int ValidateLuts(char *);
-extern int SetColorPaletteName(char *);
+extern int validate_luts(char *);
+extern int set_color_palette_name(char *);
 
 /*  lorenz -- C file prototypes */
 
@@ -699,7 +694,7 @@ extern int orbit_3d_fp(void);
 extern int orbit_3d(void);
 extern int icon_orbit_fp(double *, double *, double *);  /* dmf */
 extern int latoo_orbit_fp(double *, double *, double *);  /* hb */
-extern int  setup_convert_to_screen(struct affine *);
+extern int setup_convert_to_screen(struct affine *);
 extern int plotorbits2dsetup(void);
 extern int plotorbits2dfloat(void);
 
@@ -721,9 +716,9 @@ extern void edit_text_colors(void);
 extern int select_video_mode(int);
 extern void format_vid_table(int choice, char *buf);
 extern void make_mig(unsigned int, unsigned int);
-extern int getprecdbl(int);
-extern int getprecbf(int);
-extern int getprecbf_mag(void);
+extern int get_precision_dbl(int);
+extern int get_precision_bf(int);
+extern int get_precision_mag_bf(void);
 extern void parse_comments(char *value);
 extern void init_comments(void);
 extern void write_batch_parms(char *, int, int, int, int);
@@ -733,25 +728,25 @@ extern void expand_comments(char *, char *);
 
 extern void restore_active_ovly(void);
 extern void findpath(char *, char *);
-extern void notdiskmsg(void);
-extern void cvtcentermag(double *, double *, LDBL *, double *, double *, double *);
-extern void cvtcorners(double, double, LDBL, double, double, double);
-extern void cvtcentermagbf(bf_t, bf_t, LDBL *, double *, double *, double *);
-extern void cvtcornersbf(bf_t, bf_t, LDBL, double, double, double);
-extern void updatesavename(char *);
-extern int check_writefile(char *, char *);
+extern void not_disk_message(void);
+extern void convert_center_mag(double *, double *, LDBL *, double *, double *, double *);
+extern void convert_corners(double, double, LDBL, double, double, double);
+extern void convert_center_mag_bf(bf_t, bf_t, LDBL *, double *, double *, double *);
+extern void convert_corners_bf(bf_t, bf_t, LDBL, double, double, double);
+extern void update_save_name(char *);
+extern int check_write_file(char *, char *);
 extern int check_key(void);
-extern void showtrig(char *);
+extern void show_trig(char *);
 extern int set_trig_array(int, const char *);
 extern void set_trig_pointers(int);
 extern int tab_display(void);
-extern int endswithslash(char *);
-extern int ifsload(void);
+extern int ends_with_slash(char *);
+extern int ifs_load(void);
 extern int find_file_item(char *, char *, FILE **, int);
 extern int file_gets(char *, int, FILE *);
-extern void roundfloatd(double *);
+extern void round_float_d(double *);
 extern void fix_inversion(double *);
-extern int ungetakey(int);
+extern int unget_a_key(int);
 extern void get_calculation_time(char *, long);
 
 /*  mpmath_c -- C file prototypes */
@@ -775,10 +770,10 @@ extern _CMPLX ComplexPower(_CMPLX, _CMPLX);
 extern void SetupLogTable(void);
 extern long logtablecalc(long);
 extern long ExpFloat14(long);
-extern int ComplexNewtonSetup(void);
-extern int ComplexNewton(void);
-extern int ComplexBasin(void);
-extern int GausianNumber(int, int);
+extern int complex_newton_setup(void);
+extern int complex_newton(void);
+extern int complex_basin(void);
+extern int gaussian_number(int, int);
 extern void Arcsinz(_CMPLX z, _CMPLX *rz);
 extern void Arccosz(_CMPLX z, _CMPLX *rz);
 extern void Arcsinhz(_CMPLX z, _CMPLX *rz);
@@ -792,13 +787,7 @@ extern double _cos(double);
 
 /*  parser -- C file prototypes */
 
-struct fls { /* function, load, store pointers  CAE fp */
-   void (*function)(void);
-   union Arg *operand;
-};
-
-extern unsigned int SkipWhiteSpace(char *);
-extern unsigned long NewRandNum(void);
+extern unsigned long new_random_number(void);
 extern void lRandom(void);
 extern void dRandom(void);
 extern void mRandom(void);
@@ -984,30 +973,25 @@ extern int fill_if_group(int endif_index, JUMP_PTRS_ST *jump_data);
 /*  plot3d -- C file prototypes */
 
 extern void cdecl draw_line(int, int, int, int, int);
-extern void _fastcall plot3dsuperimpose16(int, int, int);
-extern void _fastcall plot3dsuperimpose256(int, int, int);
-extern void _fastcall plotIFS3dsuperimpose256(int, int, int);
-extern void _fastcall plot3dalternate(int, int, int);
+extern void _fastcall plot_3d_superimpose_16(int, int, int);
+extern void _fastcall plot_3d_superimpose_256(int, int, int);
+extern void _fastcall plot_ifs_3d_superimpose_256(int, int, int);
+extern void _fastcall plot_3d_alternate(int, int, int);
 extern void plot_setup(void);
-
-/*  printer -- C file prototypes */
-
-extern void Print_Screen(void);
 
 /*  prompts1 -- C file prototypes */
 
-extern int fullscreen_prompt(char far*, int, char **, struct fullscreenvalues *, int, char *);
+extern int full_screen_prompt(char far*, int, char **, struct fullscreenvalues *, int, char *);
 extern long get_file_entry(int, char *, char *, char *, char *);
-extern int get_fracttype(void);
-extern int get_fract_params(int);
-extern int get_fract3d_params(void);
-extern int get_3d_params(void);
-extern int prompt_valuestring(char *buf, struct fullscreenvalues *val);
-extern void setbailoutformula(enum bailouts);
-extern int find_extra_param(int);
-extern void load_params(int g_fractal_type);
+extern int get_fractal_type(void);
+extern int get_fractal_parameters(int);
+extern int get_fractal_3d_parameters(void);
+extern int get_3d_parameters(void);
+extern int prompt_value_string(char *buf, struct fullscreenvalues *val);
+extern void set_bail_out_formula(enum bailouts);
+extern int find_extra_parameter(int);
+extern void load_parameters(int g_fractal_type);
 extern int check_orbit_name(char *);
-struct entryinfo;
 extern int scan_entries(FILE *infile, struct entryinfo *choices, char *itemname);
 
 /*  prompts2 -- C file prototypes */
@@ -1019,44 +1003,44 @@ extern int get_view_params(void);
 extern int get_starfield_params(void);
 extern int get_commands(void);
 extern void goodbye(void);
-extern int isadirectory(char *s);
-extern int getafilename(char *, char *, char *);
-extern int splitpath(char *file_template, char *drive, char *dir, char *fname, char *ext);
-extern int makepath(char *file_template, char *drive, char *dir, char *fname, char *ext);
-extern int fr_findfirst(char *path);
-extern int fr_findnext(void);
+extern int is_a_directory(char *s);
+extern int get_a_filename(char *, char *, char *);
+extern int split_path(char *file_template, char *drive, char *dir, char *fname, char *ext);
+extern int make_path(char *file_template, char *drive, char *dir, char *fname, char *ext);
+extern int fr_find_first(char *path);
+extern int fr_find_next(void);
 extern void shell_sort(void *, int n, unsigned, int (__cdecl *fct)(VOIDPTR, VOIDPTR));
-extern void fix_dirname(char *dirname);
-extern int merge_pathnames(char *, char *, int);
-extern int get_browse_params(void);
-extern int get_cmd_string(void);
-extern int get_rds_params(void);
+extern void fix_dir_name(char *dirname);
+extern int merge_path_names(char *, char *, int);
+extern int get_browse_parameters(void);
+extern int get_command_string(void);
+extern int get_random_dot_stereogram_parameters(void);
 extern int starfield(void);
 extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);
 extern int dir_remove(char *, char *);
 extern FILE *dir_fopen(char *, char *, char *);
 extern void extract_filename(char *, char *);
-extern char *has_ext(char *source);
+extern char *has_extension(char *source);
 extern int integer_unsupported(void);
 
 /*  realdos -- C file prototypes */
 
-extern int showvidlength(void);
-extern int stopmsg(int, char *);
-extern void blankrows(int, int, int);
-extern int texttempmsg(char *);
-extern int fullscreen_choice(int options, char *hdg, char *hdg2,
+extern int show_vid_length(void);
+extern int stop_message(int, char *);
+extern void blank_rows(int, int, int);
+extern int text_temp_message(char *);
+extern int full_screen_choice(int options, char *hdg, char *hdg2,
 							 char *instr, int numchoices, char **choices, int *attributes,
 							 int boxwidth, int boxdepth, int colwidth, int current,
 							 void (*formatitem)(int, char *), char *speedstring,
 							 int (*speedprompt)(int, int, int, char *, int),
 							 int (*checkkey)(int, int));
 #if !defined(WINFRACT)
-extern int showtempmsg(char *);
-extern void cleartempmsg(void);
-extern void helptitle(void);
-extern int putstringcenter(int, int, int, int, char *);
+extern int show_temp_message(char *);
+extern void clear_temp_message(void);
+extern void help_title(void);
+extern int put_string_center(int, int, int, int, char *);
 #ifndef XFRACT /* Unix should have this in string.h */
 extern int strncasecmp(char *, char *, int);
 #endif
@@ -1064,9 +1048,6 @@ extern int main_menu(int);
 extern int input_field(int, int, char *, int, int, int, int (*)(int));
 extern int field_prompt(char *, char *, char *, int, int (*)(int));
 extern int thinking(int, char *);
-extern int savegraphics(void);
-extern int restoregraphics(void);
-extern void discardgraphics(void);
 extern void load_fractint_config(void);
 extern int check_vidmode_key(int, int);
 extern int check_vidmode_keyname(char *);

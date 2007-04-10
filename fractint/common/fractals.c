@@ -384,13 +384,13 @@ static int bail_out_halley_mpc(void)
 #endif
 
 #if defined(XFRACT)
-int asmlMODbailout(void) { return 0; }
-int asmlREALbailout(void) { return 0; }
-int asmlIMAGbailout(void) { return 0; }
-int asmlORbailout(void) { return 0; }
-int asmlANDbailout(void) { return 0; }
-int asmlMANHbailout(void) { return 0; }
-int asmlMANRbailout(void) { return 0; }
+int bail_out_mod_l_asm(void) { return 0; }
+int bail_out_real_l_asm(void) { return 0; }
+int bail_out_imag_l_asm(void) { return 0; }
+int bail_out_or_l_asm(void) { return 0; }
+int bail_out_and_l_asm(void) { return 0; }
+int bail_out_manhattan_l_asm(void) { return 0; }
+int bail_out_manhattan_r_l_asm(void) { return 0; }
 int asm386lMODbailout(void) { return 0; }
 int asm386lREALbailout(void) { return 0; }
 int asm386lIMAGbailout(void) { return 0; }
@@ -398,13 +398,13 @@ int asm386lORbailout(void) { return 0; }
 int asm386lANDbailout(void) { return 0; }
 int asm386lMANHbailout(void) { return 0; }
 int asm386lMANRbailout(void) { return 0; }
-int asmfpMODbailout(void) { return 0; }
-int asmfpREALbailout(void) { return 0; }
-int asmfpIMAGbailout(void) { return 0; }
-int asmfpORbailout(void) { return 0; }
-int asmfpANDbailout(void) { return 0; }
-int asmfpMANHbailout(void) { return 0; }
-int asmfpMANRbailout(void) { return 0; }
+int bail_out_mod_fp_asm(void) { return 0; }
+int bail_out_real_fp_asm(void) { return 0; }
+int bail_out_imag_fp_asm(void) { return 0; }
+int bail_out_or_fp_asm(void) { return 0; }
+int bail_out_and_fp_asm(void) { return 0; }
+int bail_out_manhattan_fp_asm(void) { return 0; }
+int bail_out_manhattan_r_fp_asm(void) { return 0; }
 #endif
 
 /* -------------------------------------------------------------------- */

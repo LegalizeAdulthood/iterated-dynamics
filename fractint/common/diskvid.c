@@ -80,11 +80,11 @@ int disk_start_potential()
 	}
 	else
 	{
-		showtempmsg("clearing 16bit pot work area");
+		show_temp_message("clearing 16bit pot work area");
 	}
 	s_header_length = s_disk_targa = 0;
 	i = disk_start_common(g_screen_width, g_screen_height << 1, g_colors);
-	cleartempmsg();
+	clear_temp_message();
 	if (i == 0)
 	{
 		g_disk_16bit = 1;
@@ -126,7 +126,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	if (driver_diskp()) /* otherwise, real screen also in use, don't hit it */
 	{
 		char buf[128];
-		helptitle();
+		help_title();
 		driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  /* init rest to background */
 		for (i = 0; i < BOX_DEPTH; ++i)
 		{
@@ -202,7 +202,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	s_memory_buffer = (BYTE *)malloc((long)BLOCK_LEN);
 	if (s_cache_start == NULL || s_memory_buffer == NULL)
 	{
-		stopmsg(0, "*** insufficient free memory for cache buffers ***");
+		stop_message(0, "*** insufficient free memory for cache buffers ***");
 		return -1;
 	}
 	if (driver_diskp())
@@ -259,7 +259,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	}
 	if (s_disk_video_handle == 0)
 	{
-		stopmsg(0, "*** insufficient free memory/disk space ***");
+		stop_message(0, "*** insufficient free memory/disk space ***");
 		g_good_mode = 0;
 		s_row_size = 0;
 		return -1;
@@ -286,7 +286,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			if (driver_key_pressed())           /* user interrupt */
 			{
 				/* esc to cancel, else continue */
-				if (stopmsg(STOPMSG_CANCEL, "Disk Video initialization interrupted:\n"))
+				if (stop_message(STOPMSG_CANCEL, "Disk Video initialization interrupted:\n"))
 				{
 					disk_end();
 					g_good_mode = 0;

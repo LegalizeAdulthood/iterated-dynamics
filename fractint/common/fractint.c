@@ -184,10 +184,10 @@ void check_samename(void)
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
 	char path[FILE_MAX_PATH];
-	splitpath(g_save_name, drive, dir, fname, ext);
+	split_path(g_save_name, drive, dir, fname, ext);
 	if (strcmp(fname, "fract001"))
 	{
-		makepath(path, drive, dir, fname, "gif");
+		make_path(path, drive, dir, fname, "gif");
 		if (access(path, 0) == 0)
 		{
 			exit(0);
@@ -208,7 +208,7 @@ char g_exe_path[FILE_MAX_PATH] = { 0 };
 
 static void set_exe_path(char *path)
 {
-	splitpath(path, NULL, g_exe_path, NULL, NULL);
+	split_path(path, NULL, g_exe_path, NULL, NULL);
 	if (g_exe_path[0] != SLASHC)
 	{
 		/* relative path */
@@ -338,7 +338,7 @@ restart:   /* insert key re-starts here */
 
 	if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
 	{
-		setup287code();
+		setup_287_code();
 	}
 	adapter_detect();                    /* check what video is really present */
 
@@ -406,7 +406,7 @@ restorestart:
 				hdg = "Select File to Restore";
 				g_help_mode = HELPSAVEREST;
 			}
-			if (g_show_file < 0 && getafilename(hdg, g_gif_mask, g_read_name) < 0)
+			if (g_show_file < 0 && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
 			{
 				g_show_file = 1;               /* cancelled */
 				g_init_mode = -1;
@@ -565,7 +565,7 @@ imagestart:                             /* calc/display a new image */
 				if (kbdchar == 't')  /* set fractal type */
 				{
 					g_julibrot = FALSE;
-					get_fracttype();
+					get_fractal_type();
 					goto imagestart;
 				}
 				if (kbdchar == 'x')  /* generic toggle switch */
@@ -580,7 +580,7 @@ imagestart:                             /* calc/display a new image */
 				}
 				if (kbdchar == 'z')  /* type specific parms */
 				{
-					get_fract_params(1);
+					get_fractal_parameters(1);
 					goto imagestart;
 				}
 				if (kbdchar == 'v')  /* view parameters */
@@ -590,7 +590,7 @@ imagestart:                             /* calc/display a new image */
 				}
 				if (kbdchar == 2)  /* ctrl B = browse parms*/
 				{
-					get_browse_params();
+					get_browse_parameters();
 					goto imagestart;
 				}
 				if (kbdchar == 6)  /* ctrl f = sound parms*/
@@ -605,12 +605,12 @@ imagestart:                             /* calc/display a new image */
 				}
 				if (kbdchar == 'i')  /* set 3d fractal parms */
 				{
-					get_fract3d_params(); /* get the parameters */
+					get_fractal_3d_parameters(); /* get the parameters */
 					goto imagestart;
 				}
 				if (kbdchar == 'g')
 				{
-					get_cmd_string(); /* get command string */
+					get_command_string(); /* get command string */
 					goto imagestart;
 				}
 		/* buzzer(2); */                          /* unrecognized key */

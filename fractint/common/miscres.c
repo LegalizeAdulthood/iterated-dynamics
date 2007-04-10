@@ -39,8 +39,8 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 	char ext[FILE_MAX_EXT];
 	char temp_path[FILE_MAX_PATH];
 
-	splitpath(filename , NULL, NULL, fname, ext);
-	makepath(temp_path, ""   , "" , fname, ext);
+	split_path(filename , NULL, NULL, fname, ext);
+	make_path(temp_path, ""   , "" , fname, ext);
 
 	if (g_check_current_dir != 0 && access(temp_path, 0) == 0)   /* file exists */
 	{
@@ -59,8 +59,8 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 		}
 		else
 		{
-		splitpath(temp_path , NULL, NULL, fname, ext);
-		makepath(temp_path, ""   , "" , fname, ext);
+		split_path(temp_path , NULL, NULL, fname, ext);
+		make_path(temp_path, ""   , "" , fname, ext);
 		}
 	}
 	fullpathname[0] = 0;                         /* indicate none found */
@@ -80,9 +80,9 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 #endif
 
 
-void notdiskmsg()
+void not_disk_message()
 {
-	stopmsg(0,
+	stop_message(0,
 		"This type may be slow using a real-disk based 'video' mode, but may not \n"
 		"be too bad if you have enough expanded or extended memory. Press <Esc> to \n"
 		"abort if it appears that your disk drive is working too hard.");
@@ -180,7 +180,7 @@ zoom box.  Same goes for the Skew angles
 #pragma optimize("", off)
 #endif
 
-void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
+void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
 	double Width, Height;
 	double a, b; /* bottom, left, diagonal */
@@ -254,7 +254,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 		tymin = g_yy_min;
 		tymax = g_yy_max;
 		ty3rd = g_yy_3rd;
-		cvtcorners(*Xctr, *Yctr, *Magnification, *Xmagfactor, *Rotation, *Skew);
+		convert_corners(*Xctr, *Yctr, *Magnification, *Xmagfactor, *Rotation, *Skew);
 		error = sqr(txmin - g_xx_min) +
 			sqr(txmax - g_xx_max) +
 			sqr(tx3rd - g_xx_3rd) +
@@ -263,7 +263,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 			sqr(ty3rd - g_yy_3rd);
 		if (error > .001)
 		{
-			showcornersdbl("cvtcentermag problem");
+			showcornersdbl("convert_center_mag problem");
 		}
 		g_xx_min = txmin;
 		g_xx_max = txmax;
@@ -278,7 +278,7 @@ void cvtcentermag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagf
 
 
 /* convert center/mag to corners */
-void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
+void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
 	double x, y;
 	double h, w; /* half height, width */
@@ -336,7 +336,7 @@ void cvtcorners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor,
 }
 
 /* convert corners to center/mag using bf */
-void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
+void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
 	/* needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits */
 	LDBL Width, Height;
@@ -454,7 +454,7 @@ void cvtcentermagbf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfacto
 
 
 /* convert center/mag to corners using bf */
-void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
+void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
 	LDBL x, y;
 	LDBL h, w; /* half height, width */
@@ -546,7 +546,7 @@ void cvtcornersbf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, d
 #pragma optimize("", on)
 #endif
 
-void updatesavename(char *filename) /* go to the next file name */
+void update_save_name(char *filename) /* go to the next file name */
 {
 	char *save, *hold;
 	char drive[FILE_MAX_DRIVE];
@@ -554,7 +554,7 @@ void updatesavename(char *filename) /* go to the next file name */
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
 
-	splitpath(filename , drive, dir, fname, ext);
+	split_path(filename , drive, dir, fname, ext);
 
 	hold = fname + strlen(fname) - 1; /* start at the end */
 	while (hold >= fname && (*hold == ' ' || isdigit(*hold))) /* skip backwards */
@@ -585,10 +585,10 @@ void updatesavename(char *filename) /* go to the next file name */
 		save = hold;
 	}
 	sprintf(save, "%ld", atol(hold) + 1); /* increment the number */
-	makepath(filename, drive, dir, fname, ext);
+	make_path(filename, drive, dir, fname, ext);
 }
 
-int check_writefile(char *name, char *ext)
+int check_write_file(char *name, char *ext)
 {
 	/* after v16 release, change encoder.c to also use this routine */
 	char openfile[FILE_MAX_DIR];
@@ -608,7 +608,7 @@ nextname:
 		}
 	}
 #endif
-	period = has_ext(openfile);
+	period = has_extension(openfile);
 	if (period != NULL)
 	{
 		strcpy(opentype, period);
@@ -623,7 +623,7 @@ nextname:
 	/* file already exists */
 	if (!g_fractal_overwrite)
 	{
-		updatesavename(name);
+		update_save_name(name);
 		goto nextname;
 	}
 	return 1;
@@ -650,7 +650,7 @@ void (*dtrig3)(void) = dStkCosh;
 
 /* struct trig_funct_lst trigfn[]  was moved to prompts1.c */
 
-void showtrig(char *buf) /* return display form of active trig functions */
+void show_trig(char *buf) /* return display form of active trig functions */
 {
 	char tmpbuf[30];
 	*buf = 0; /* null string if none */
@@ -812,11 +812,11 @@ int tab_display_2(char *msg)
 	extern long g_bn_max_stack, maxstack, startstack;
 	int row, key = 0;
 
-	helptitle();
+	help_title();
 	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
 
 	row = 1;
-	putstringcenter(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
+	put_string_center(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
 	write_row(++row, "Version %d patch %d", g_release, g_patch_level);
 	write_row(++row, "%ld of %ld bignum memory used", g_bn_max_stack, maxstack);
@@ -882,7 +882,7 @@ int tab_display_2(char *msg)
 */
 	write_row(row++, "g_minimum_stack_available %d g_limit2_l %ld g_use_grid %d",
 		g_minimum_stack_available, g_limit2_l, g_use_grid);
-	putstringcenter(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
+	put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 
 	/* display keycodes while waiting for ESC, BACKSPACE or TAB */
@@ -939,7 +939,7 @@ int tab_display()       /* display the status of the current image */
 top:
 	k = 0; /* initialize here so parameter line displays correctly on return
 				from control-tab */
-	helptitle();
+	help_title();
 	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
 	s_row = 2;
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");
@@ -1042,7 +1042,7 @@ top:
 	}
 	else
 	{
-		sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(CURRENTREZ)*/);
+		sprintf(msg, "(%-d decimals)", g_decimals /*get_precision_bf(CURRENTREZ)*/);
 		driver_put_string(s_row, 45, C_GENERAL_HI, "Arbitrary precision ");
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
@@ -1183,7 +1183,7 @@ top:
 			int truncate, truncaterow;
 			dec = min(320, g_decimals);
 			adjust_corner_bf(); /* make bottom left exact if very near exact */
-			cvtcentermagbf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+			convert_center_mag_bf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 			/* find alignment information */
 			msg[0] = 0;
 			truncate = 0;
@@ -1238,7 +1238,7 @@ top:
 				sprintf(msg, "%20.16f  %20.16f", g_xx_3rd, g_yy_3rd);
 				driver_put_string(-1, 17, C_GENERAL_HI, msg);
 			}
-			cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+			convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 			driver_put_string(s_row += 2, 2, C_GENERAL_MED, "Ctr");
 			sprintf(msg, "%20.16f %20.16f  ", Xctr, Yctr);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
@@ -1334,7 +1334,7 @@ top:
 		++s_row;
 	}
 	/*waitforkey:*/
-	putstringcenter(/*s_row*/24, 0, 80, C_GENERAL_LO, spressanykey);
+	put_string_center(/*s_row*/24, 0, 80, C_GENERAL_LO, spressanykey);
 	driver_hide_text_cursor();
 #ifdef XFRACT
 	while (driver_key_pressed())
@@ -1375,7 +1375,7 @@ static void area(void)
 	long cnt = 0;
 	if (g_inside < 0)
 	{
-		stopmsg(0, "Need solid inside to compute area");
+		stop_message(0, "Need solid inside to compute area");
 		return;
 	}
 	for (y = 0; y < g_y_dots; y++)
@@ -1399,10 +1399,10 @@ static void area(void)
 	sprintf(buf, "%s%ld inside pixels of %ld%s%f",
 			msg, cnt, (long)g_x_dots*(long)g_y_dots, ".  Total area ",
 			cnt/((float)g_x_dots*(float)g_y_dots)*(g_xx_max-g_xx_min)*(g_yy_max-g_yy_min));
-	stopmsg(STOPMSG_NO_BUZZER, buf);
+	stop_message(STOPMSG_NO_BUZZER, buf);
 }
 
-int endswithslash(char *fl)
+int ends_with_slash(char *fl)
 {
 	int len;
 	len = (int) strlen(fl);
@@ -1445,7 +1445,7 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
 
 char g_insufficient_ifs_memory[] = {"Insufficient memory for IFS"};
 int g_num_affine;
-int ifsload()                   /* read in IFS parameters */
+int ifs_load()                   /* read in IFS parameters */
 {
 	int i;
 	FILE *ifsfile;
@@ -1499,7 +1499,7 @@ int ifsload()                   /* read in IFS parameters */
 		}
 		if (++i >= NUMIFS*rowsize)
 		{
-				stopmsg(0, "IFS definition has too many lines");
+				stop_message(0, "IFS definition has too many lines");
 				ret = -1;
 				break;
 		}
@@ -1525,12 +1525,12 @@ int ifsload()                   /* read in IFS parameters */
 
 	if ((i % rowsize) != 0 || *bufptr != '}')
 	{
-		stopmsg(0, "invalid IFS definition");
+		stop_message(0, "invalid IFS definition");
 		ret = -1;
 		}
 	if (i == 0 && ret == 0)
 	{
-		stopmsg(0, "Empty IFS definition");
+		stop_message(0, "Empty IFS definition");
 		ret = -1;
 		}
 	fclose(ifsfile);
@@ -1541,7 +1541,7 @@ int ifsload()                   /* read in IFS parameters */
 		if ((g_ifs_definition = (float *)malloc(
 								(long)((NUMIFS + 1)*IFS3DPARM*sizeof(float)))) == NULL)
 		{
-			stopmsg(0, g_insufficient_ifs_memory);
+			stop_message(0, g_insufficient_ifs_memory);
 			ret = -1;
 		}
 		else
@@ -1570,8 +1570,8 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 	char defaultextension[5];
 
 
-	splitpath(filename, drive, dir, fname, ext);
-	makepath(fullpath, "", "", fname, ext);
+	split_path(filename, drive, dir, fname, ext);
+	make_path(fullpath, "", "", fname, ext);
 	if (stricmp(filename, g_command_file))
 	{
 		infile = fopen(filename, "rb");
@@ -1590,7 +1590,7 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 
 		if (!found && g_check_current_dir)
 		{
-			makepath(fullpath, "", DOTSLASH, fname, ext);
+			make_path(fullpath, "", DOTSLASH, fname, ext);
 			infile = fopen(fullpath, "rb");
 			if (infile != NULL)
 			{
@@ -1615,27 +1615,27 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".frm");
-		splitpath(g_search_for.frm, drive, dir, NULL, NULL);
+		split_path(g_search_for.frm, drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_L_SYSTEM:
 		strcpy(parsearchname, "lsys:");
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".l");
-		splitpath(g_search_for.lsys, drive, dir, NULL, NULL);
+		split_path(g_search_for.lsys, drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_IFS:
 		strcpy(parsearchname, "ifs:");
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".ifs");
-		splitpath(g_search_for.ifs, drive, dir, NULL, NULL);
+		split_path(g_search_for.ifs, drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_PARAMETER:
 		strcpy(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".par");
-		splitpath(g_search_for.par, drive, dir, NULL, NULL);
+		split_path(g_search_for.par, drive, dir, NULL, NULL);
 		break;
 	}
 
@@ -1659,7 +1659,7 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 
 	if (!found)
 	{
-		makepath(fullpath, drive, dir, fname, ext);
+		make_path(fullpath, drive, dir, fname, ext);
 		infile = fopen(fullpath, "rb");
 		if (infile != NULL)
 		{
@@ -1679,20 +1679,20 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 	if (!found)  /* search for file */
 	{
 		int out;
-		makepath(fullpath, drive, dir, "*", defaultextension);
-		out = fr_findfirst(fullpath);
+		make_path(fullpath, drive, dir, "*", defaultextension);
+		out = fr_find_first(fullpath);
 		while (out == 0)
 		{
 			char msg[200];
 			DTA.filename[FILE_MAX_FNAME + FILE_MAX_EXT-2] = 0;
 			sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
-			showtempmsg(msg);
+			show_temp_message(msg);
 			if (!(DTA.attribute & SUBDIR) &&
 				strcmp(DTA.filename, ".")&&
 				strcmp(DTA.filename, ".."))
 			{
-				splitpath(DTA.filename, NULL, NULL, fname, ext);
-				makepath(fullpath, drive, dir, fname, ext);
+				split_path(DTA.filename, NULL, NULL, fname, ext);
+				make_path(fullpath, drive, dir, fname, ext);
 				infile = fopen(fullpath, "rb");
 				if (infile != NULL)
 				{
@@ -1709,14 +1709,14 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 					}
 				}
 			}
-			out = fr_findnext();
+			out = fr_find_next();
 		}
-		cleartempmsg();
+		clear_temp_message();
 	}
 
 	if (!found && g_organize_formula_search && itemtype == 1)
 	{
-		splitpath(g_organize_formula_dir, drive, dir, NULL, NULL);
+		split_path(g_organize_formula_dir, drive, dir, NULL, NULL);
 		fname[0] = '_';
 		fname[1] = (char) 0;
 		if (isalpha(itemname[0]))
@@ -1745,7 +1745,7 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 		{
 			strcat(fname, "chr");
 		}
-		makepath(fullpath, drive, dir, fname, defaultextension);
+		make_path(fullpath, drive, dir, fname, defaultextension);
 		infile = fopen(fullpath, "rb");
 		if (infile != NULL)
 		{
@@ -1765,7 +1765,7 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 	if (!found)
 	{
 		sprintf(fullpath, "'%s' file entry item not found", itemname);
-		stopmsg(0, fullpath);
+		stop_message(0, fullpath);
 		return -1;
 	}
 	/* found file */
@@ -1833,7 +1833,7 @@ int _cdecl _matherr(struct exception *except)
 		{
 			if (DEBUGFLAG_SHOW_MATH_ERRORS == g_debug_flag || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
 			{
-				stopmsg(0, "Math error, but we'll try to keep going");
+				stop_message(0, "Math error, but we'll try to keep going");
 			}
 		}
 		if (fp == NULL)
@@ -1898,7 +1898,7 @@ int _cdecl _matherr(struct exception *except)
 #endif
 #endif
 
-void roundfloatd(double *x) /* make double converted from float look ok */
+void round_float_d(double *x) /* make double converted from float look ok */
 {
 	char buf[30];
 	sprintf(buf, "%-10.7g", *x);

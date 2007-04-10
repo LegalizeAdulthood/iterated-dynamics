@@ -28,7 +28,7 @@ static int menu_checkkey(int curkey, int choice);
 int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
 int g_patch_level = 9;	/* patchlevel for DOS version */
 
-/* int stopmsg(flags, message) displays message and waits for a key:
+/* int stop_message(flags, message) displays message and waits for a key:
 	message should be a max of 9 lines with \n's separating them;
 	no leading or trailing \n's in message;
 	no line longer than 76 chars for best appearance;
@@ -43,7 +43,7 @@ int g_patch_level = 9;	/* patchlevel for DOS version */
 		&8 for Fractint for Windows & parser - use a fixed pitch font
 		&16 for info only message (green box instead of red in DOS vsn)
 */
-int stopmsg (int flags, char *msg)
+int stop_message (int flags, char *msg)
 {
 	int ret, toprow, color, savelookatmouse;
 	static unsigned char batchmode = 0;
@@ -52,11 +52,11 @@ int stopmsg (int flags, char *msg)
 		static FILE *fp = NULL;
 		if (fp == NULL && g_initialize_batch == INITBATCH_NONE)
 		{
-			fp = dir_fopen(g_work_dir, "stopmsg.txt", "w");
+			fp = dir_fopen(g_work_dir, "stop_message.txt", "w");
 		}
 		else
 		{
-			fp = dir_fopen(g_work_dir, "stopmsg.txt", "a");
+			fp = dir_fopen(g_work_dir, "stop_message.txt", "a");
 		}
 		if (fp != NULL)
 		{
@@ -72,7 +72,7 @@ int stopmsg (int flags, char *msg)
 	if (g_initialize_batch >= INITBATCH_NORMAL || batchmode)  /* in batch mode */
 	{
 		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; /* used to set errorlevel */
-		batchmode = 1; /* fixes *second* stopmsg in batch mode bug */
+		batchmode = 1; /* fixes *second* stop_message in batch mode bug */
 		return -1;
 		}
 	ret = 0;
@@ -80,7 +80,7 @@ int stopmsg (int flags, char *msg)
 	g_look_at_mouse = -FIK_ENTER;
 	if ((flags & STOPMSG_NO_STACK))
 	{
-		blankrows(toprow = 12, 10, 7);
+		blank_rows(toprow = 12, 10, 7);
 	}
 	else
 	{
@@ -117,7 +117,7 @@ int stopmsg (int flags, char *msg)
 	}
 	if ((flags & STOPMSG_NO_STACK))
 	{
-		blankrows(toprow, 10, 7);
+		blank_rows(toprow, 10, 7);
 	}
 	else
 	{
@@ -131,20 +131,20 @@ int stopmsg (int flags, char *msg)
 static BYTE *temptextsave = 0;
 static int  textxdots, textydots;
 
-/* texttempmsg(msg) displays a text message of up to 40 characters, waits
+/* text_temp_message(msg) displays a text message of up to 40 characters, waits
 		for a key press, restores the prior display, and returns (without
 		eating the key).
 		It works in almost any video mode - does nothing in some very odd cases
 		(HCGA hi-res with old bios), or when there isn't 10k of temp mem free. */
-int texttempmsg(char *msgparm)
+int text_temp_message(char *msgparm)
 {
-	if (showtempmsg(msgparm))
+	if (show_temp_message(msgparm))
 	{
 		return -1;
 	}
 
 	driver_wait_key_pressed(0); /* wait for a keystroke but don't eat it */
-	cleartempmsg();
+	clear_temp_message();
 	return 0;
 }
 
@@ -157,7 +157,7 @@ void freetempmsg()
 	}
 }
 
-int showtempmsg(char *msgparm)
+int show_temp_message(char *msgparm)
 {
 	static long size = 0;
 	char msg[41];
@@ -218,7 +218,7 @@ int showtempmsg(char *msgparm)
 	return 0;
 }
 
-void cleartempmsg()
+void clear_temp_message()
 {
 	int i;
 	int save_sxoffs, save_syoffs;
@@ -245,7 +245,7 @@ void cleartempmsg()
 	}
 }
 
-void blankrows(int row, int rows, int attr)
+void blank_rows(int row, int rows, int attr)
 {
 	char buf[81];
 	memset(buf, ' ', 80);
@@ -254,7 +254,7 @@ void blankrows(int row, int rows, int attr)
 		driver_put_string(row++, 0, attr, buf);
 }
 
-void helptitle()
+void help_title()
 {
 	char msg[MSGLEN], buf[MSGLEN];
 	driver_set_clear(); /* clear the screen */
@@ -275,7 +275,7 @@ void helptitle()
 		sprintf(buf, ".%d", g_patch_level);
 		strcat(msg, buf);
 		}
-	putstringcenter(0, 0, 80, C_TITLE, msg);
+	put_string_center(0, 0, 80, C_TITLE, msg);
 
 /* uncomment next for production executable: */
 #if defined(PRODUCTION) || defined(XFRACT)
@@ -299,16 +299,16 @@ void helptitle()
 
 void footer_msg(int *i, int options, char *speedstring)
 {
-	putstringcenter((*i)++, 0, 80, C_PROMPT_BKGRD,
+	put_string_center((*i)++, 0, 80, C_PROMPT_BKGRD,
 		(speedstring) ? "Use the cursor keys or type a value to make a selection"
 		: "Use the cursor keys to highlight your selection");
-	putstringcenter(*(i++), 0, 80, C_PROMPT_BKGRD,
+	put_string_center(*(i++), 0, 80, C_PROMPT_BKGRD,
 			(options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or "FK_F1" for help"
 		: ((options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
 		: "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
-int putstringcenter(int row, int col, int width, int attr, char *msg)
+int put_string_center(int row, int col, int width, int attr, char *msg)
 {
 	char buf[81];
 	int i, j, k;
@@ -353,7 +353,7 @@ char g_speed_prompt[]="Speed key string";
 	char is a dot or last char is a slash */
 static int isadirname(char *name)
 {
-	if (*name == '.' || endswithslash(name))
+	if (*name == '.' || ends_with_slash(name))
 	{
 		return 1;
 	}
@@ -459,7 +459,7 @@ void process_speedstring(char    *speedstring,
 }
 
 
-int fullscreen_choice(
+int full_screen_choice(
 	int options,					/* &2 use menu coloring scheme            */
 									/* &4 include F1 for help in instructions */
 									/* &8 add caller's instr after normal set */
@@ -684,7 +684,7 @@ int fullscreen_choice(
 	topleftrow = 3 + titlelines + i;        /* row of topleft choice */
 
 	/* now set up the overall display */
-	helptitle();                            /* clear, display title line */
+	help_title();                            /* clear, display title line */
 	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      /* init rest to background */
 	for (i = topleftrow - 1 - titlelines; i < topleftrow + boxdepth + 1; ++i)
 	{
@@ -729,11 +729,11 @@ int fullscreen_choice(
 			if (buf[j] == '\n')
 			{
 				buf[j] = 0;
-				putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
+				put_string_center(i++, 0, 80, C_PROMPT_BKGRD, buf);
 				j = -1;
 			}
 		}
-		putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
+		put_string_center(i, 0, 80, C_PROMPT_BKGRD, buf);
 	}
 
 	boxitems = boxwidth*boxdepth;
@@ -1397,7 +1397,7 @@ top:
 		{
 			nextleft = nextright + 1;
 		}
-		i = fullscreen_choice(CHOICE_MENU | CHOICE_CRUNCH,
+		i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH,
 			"MAIN MENU",
 			NULL, NULL, nextleft, (char **) choices, attributes,
 			2, nextleft/2, 29, 0, NULL, NULL, NULL, menu_checkkey);
@@ -1422,13 +1422,13 @@ top:
 	}
 	if (i == FIK_ESC)             /* escape from menu exits Fractint */
 	{
-		helptitle();
+		help_title();
 		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
 		for (i = 9; i <= 11; ++i)
 		{
 			driver_set_attr(i, 18, C_GENERAL_INPUT, 40);
 		}
-		putstringcenter(10, 18, 40, C_GENERAL_INPUT,
+		put_string_center(10, 18, 40, C_GENERAL_INPUT,
 #ifdef XFRACT
 			"Exit from Xfractint (y/n)? y"
 #else
@@ -1459,7 +1459,7 @@ top:
 }
 
 static int menu_checkkey(int curkey, int choice)
-{ /* choice is dummy used by other routines called by fullscreen_choice() */
+{ /* choice is dummy used by other routines called by full_screen_choice() */
 	int testkey;
 	testkey = choice; /* for warning only */
 	testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey + ('a'-'A') : curkey;
@@ -1697,7 +1697,7 @@ int input_field(
 				{
 					if ((options & INPUTFIELD_DOUBLE) == 0)
 					{
-						roundfloatd(&tmpd);
+						round_float_d(&tmpd);
 					}
 					sprintf(tmpfld, "%.15g", tmpd);
 					tmpfld[len-1] = 0; /* safety, field should be long enough */
@@ -1727,7 +1727,7 @@ int field_prompt(
 	int promptcol;
 	int i, j;
 	char buf[81];
-	helptitle();                           /* clear screen, display title */
+	help_title();                           /* clear screen, display title */
 	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);     /* init rest to background */
 	charptr = hdg;                         /* count title lines, find widest */
 	i = boxwidth = 0;
@@ -1778,13 +1778,13 @@ int field_prompt(
 			if (buf[j] == '\n')
 			{
 				buf[j] = 0;
-				putstringcenter(i++, 0, 80, C_PROMPT_BKGRD, buf);
+				put_string_center(i++, 0, 80, C_PROMPT_BKGRD, buf);
 				j = -1;
 				}
-		putstringcenter(i, 0, 80, C_PROMPT_BKGRD, buf);
+		put_string_center(i, 0, 80, C_PROMPT_BKGRD, buf);
 		}
 	else                                   /* default instructions */
-		putstringcenter(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
+		put_string_center(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
 	return input_field(0, C_PROMPT_INPUT, fld, len,
 				titlerow + titlelines + 1, promptcol, checkkey);
 }
@@ -1818,7 +1818,7 @@ int thinking(int options, char *msg)
 	{
 		driver_stack_screen();
 		thinkstate = 0;
-		helptitle();
+		help_title();
 		strcpy(buf, "  ");
 		strcat(buf, msg);
 		strcat(buf, "    ");
@@ -1837,8 +1837,6 @@ int thinking(int options, char *msg)
 	return driver_key_pressed();
 }
 
-
-/* savegraphics/restoregraphics: video.asm subroutines */
 
 unsigned long swaptotlen;
 unsigned long swapoffset;
@@ -1861,7 +1859,7 @@ void discardgraphics() /* release expanded/extended memory if any in use */
 /*VIDEOINFO *g_video_table;  /* temporarily loaded fractint.cfg info */
 int g_video_table_len;                 /* number of entries in above           */
 
-int showvidlength()
+int show_vid_length()
 {
 	int sz;
 	sz = (sizeof(VIDEOINFO) + sizeof(int))*MAXVIDEOMODES;
@@ -2042,7 +2040,7 @@ bad_fractint_cfg:
 
 void bad_fractint_cfg_msg()
 {
-	stopmsg(0,
+	stop_message(0,
 		"File FRACTINT.CFG is missing or invalid.\n"
 		"See Hardware Support and Video Modes in the full documentation for help.\n"
 		"I will continue with only the built-in video modes available.");

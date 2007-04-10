@@ -380,12 +380,12 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 	{
 		if (s_save_dots == NULL)
 		{
-			stopmsg(0, "s_save_dots NULL");
+			stop_message(0, "s_save_dots NULL");
 			exit(0);
 		}
 		if (s_fill_buffer == NULL)
 		{
-			stopmsg(0, "s_fill_buffer NULL");
+			stop_message(0, "s_fill_buffer NULL");
 			exit(0);
 		}
 	}
@@ -528,8 +528,8 @@ int calculate_fractal(void)
 	}
 	if (g_true_color)
 	{
-		check_writefile(g_light_name, ".tga");
-		if (startdisk1(g_light_name, NULL, 0) == 0)
+		check_write_file(g_light_name, ".tga");
+		if (start_disk1(g_light_name, NULL, 0) == 0)
 		{
 			/* Have to force passes = 1 */
 			g_user_standard_calculation_mode = g_standard_calculation_mode = '1';
@@ -564,7 +564,7 @@ int calculate_fractal(void)
 
 	if (g_log_palette_flag && g_colors < 16)
 	{
-		stopmsg(0, "Need at least 16 g_colors to use logmap");
+		stop_message(0, "Need at least 16 g_colors to use logmap");
 		g_log_palette_flag = LOGPALETTE_NONE;
 	}
 
@@ -613,11 +613,11 @@ int calculate_fractal(void)
 		{
 			if (g_ranges_length || g_log_dynamic_calculate == LOGDYNAMIC_TABLE)
 			{
-				stopmsg(0, "Insufficient memory for logmap/ranges with this maxiter");
+				stop_message(0, "Insufficient memory for logmap/ranges with this maxiter");
 			}
 			else
 			{
-				stopmsg(0, "Insufficient memory for logTable, using on-the-fly routine");
+				stop_message(0, "Insufficient memory for logTable, using on-the-fly routine");
 				g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;
 				g_log_calculation = 1; /* calculate on the fly */
 				SetupLogTable();
@@ -739,7 +739,7 @@ int calculate_fractal(void)
 		end_resume();
 		if (g_resave_flag)
 		{
-			updatesavename(g_save_name); /* do the pending increment */
+			update_save_name(g_save_name); /* do the pending increment */
 			g_resave_flag = RESAVE_NO;
 			g_started_resaves = FALSE;
 		}
@@ -1695,7 +1695,7 @@ static int draw_function_orbits(void)
 
 	angle = g_xx_begin;  /* save angle in x parameter */
 
-	cvtcentermag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	if (Rotation <= 0)
 	{
 		Rotation += 360;
@@ -3316,12 +3316,12 @@ static int boundary_trace_main(void)
 	int right, left, length;
 	if (g_inside == 0 || g_outside == 0)
 	{
-		stopmsg(0, "Boundary tracing cannot be used with inside=0 or outside=0");
+		stop_message(0, "Boundary tracing cannot be used with inside=0 or outside=0");
 		return -1;
 	}
 	if (g_colors < 16)
 	{
-		stopmsg(0, "Boundary tracing cannot be used with < 16 g_colors");
+		stop_message(0, "Boundary tracing cannot be used with < 16 g_colors");
 		return -1;
 	}
 

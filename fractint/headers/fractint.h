@@ -234,7 +234,7 @@ typedef BYTE BOOLEAN;
 #define BUZZER_INTERRUPT 1
 #define BUZZER_ERROR 2
 
-/* stopmsg() flags */
+/* stop_message() flags */
 #define STOPMSG_NO_STACK	1
 #define STOPMSG_CANCEL		2
 #define STOPMSG_NO_BUZZER	4
@@ -258,7 +258,7 @@ typedef BYTE BOOLEAN;
 #define SLIDES_PLAY		1
 #define SLIDES_RECORD	2
 
-/* fullscreen_choice options */
+/* full_screen_choice options */
 #define CHOICE_RETURN_KEY	1
 #define CHOICE_MENU			2
 #define CHOICE_HELP			4
@@ -1414,8 +1414,6 @@ typedef struct baseunit    GENEBASE;
 
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
 
-#endif
-
 
 #if _MSC_VER == 800
 #ifndef FIXTAN_DEFINED
@@ -1426,4 +1424,19 @@ double fixtan( double x );
 #define tan fixtan
 #define FIXTAN_DEFINED
 #endif
+#endif
+
+/* function, load, store pointers  CAE fp */
+struct fls 
+{ 
+   void (*function)(void);
+   union Arg *operand;
+};
+
+struct entryinfo
+{
+	char name[ITEMNAMELEN + 2];
+	long point; /* points to the (or the { following the name */
+};
+
 #endif

@@ -19,7 +19,7 @@
 /* Revision history:  */
 
 /* 15 Mar 1997 TIW  */
-/*    Fixed if/else bug, replaced stopmsg with pstopmsg */
+/*    Fixed if/else bug, replaced stop_message with pstopmsg */
 
 /* 09 Mar 1997 TIW/GGM  */
 /*    Added support for if/else */
@@ -77,7 +77,7 @@
 /*    Function fStkStoClr2 now emitted for sto, clr with 2 on stack.    */
 /*       "     fStkZero added to support new 'zero' function in v18    */
 /*    Added optimization for x^2 -> sqr(x).                            */
-/*    Changed "stopmsg" to "DBUGMSG" and made all macros upper case.   */
+/*    Changed "stop_message" to "DBUGMSG" and made all macros upper case.   */
 /*       (g_debug_flag = 324 now needed for debug msgs to print.)           */
 
 /* 12 July 1993 (for v18.1) by CAE to fix optimizer bug  */
@@ -268,28 +268,28 @@ int pstopmsg(int x, char *msg)
 	return x; /* just to quiet warnings */
 }
 
-#define stopmsg pstopmsg
+#define stop_message pstopmsg
 
-#define DBUGMSG(y) if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag) stopmsg(0, (y))
+#define DBUGMSG(y) if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag) stop_message(0, (y))
 #define DBUGMSG1(y, p) \
 		if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag){ \
 			sprintf(cDbgMsg, (y), (p)); \
-			stopmsg(0, cDbgMsg); \
+			stop_message(0, cDbgMsg); \
 		}
 #define DBUGMSG2(y, p, q) \
 		if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag){ \
 			sprintf(cDbgMsg, (y), (p), (q)); \
-			stopmsg(0, cDbgMsg); \
+			stop_message(0, cDbgMsg); \
 		}
 #define DBUGMSG3(y, p, q, r) \
 		if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r)); \
-			stopmsg(0, cDbgMsg); \
+			stop_message(0, cDbgMsg); \
 		}
 #define DBUGMSG4(y, p, q, r, s) \
 		if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r), (s)); \
-			stopmsg(0, cDbgMsg); \
+			stop_message(0, cDbgMsg); \
 		}
 #define FNAME(a, b, c, d, e, f) a, b, c, d, e, f    /* use the function name string */
 #else
@@ -494,7 +494,7 @@ static int CvtFptr(void (* ffptr)(void), int MinStk, int FreeStk,
 			|| (MinStk != 0 && MinStk != 2 && MinStk != 4))
 	{
 awful_error:
-		stopmsg (0, "FATAL INTERNAL PARSER ERROR!");
+		stop_message (0, "FATAL INTERNAL PARSER ERROR!");
 		return 0;  /* put out dire message and revert to old parser  */
 	}
 
@@ -1534,7 +1534,7 @@ int CvtStk()  /* convert the array of ptrs  */
 		if (!fnfound)
 		{
 			/* return success so old code will be used  */
-			/* stopmsg(0, "Fast 387 parser failed, reverting to slower code.");*/
+			/* stop_message(0, "Fast 387 parser failed, reverting to slower code.");*/
 			return 1;  /* this should only happen if random numbers are used  */
 		}
 	} /* end for  */

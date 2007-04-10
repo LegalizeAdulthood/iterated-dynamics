@@ -11,7 +11,7 @@
 
 #define dac ((Palettetype *)g_dac_box)
 
-int ValidateLuts(char *fn)
+int validate_luts(char *fn)
 {
 	FILE *f;
 	unsigned        r, g, b, index;
@@ -22,11 +22,11 @@ int ValidateLuts(char *fn)
 	strcpy(temp, g_map_name);
 	strcpy(temp_fn, fn);
 #ifdef XFRACT
-	merge_pathnames(temp, temp_fn, 3);
+	merge_path_names(temp, temp_fn, 3);
 #else
-	merge_pathnames(temp, temp_fn, 0);
+	merge_path_names(temp, temp_fn, 0);
 #endif
-	if (has_ext(temp) == NULL) /* Did name have an extension? */
+	if (has_extension(temp) == NULL) /* Did name have an extension? */
 	{
 		strcat(temp, ".map");  /* No? Then add .map */
 	}
@@ -35,7 +35,7 @@ int ValidateLuts(char *fn)
 	if (f == NULL)
 	{
 		sprintf(line, "Could not load color map %s", fn);
-		stopmsg(0, line);
+		stop_message(0, line);
 		return 1;
 	}
 	for (index = 0; index < 256; index++)
@@ -64,9 +64,9 @@ int ValidateLuts(char *fn)
 
 /***************************************************************************/
 
-int SetColorPaletteName(char * fn)
+int set_color_palette_name(char * fn)
 {
-	if (ValidateLuts(fn) != 0)
+	if (validate_luts(fn) != 0)
 	{
 		return 1;
 	}
@@ -75,7 +75,7 @@ int SetColorPaletteName(char * fn)
 		g_map_dac_box = (char *) malloc(768L);
 		if (g_map_dac_box == NULL)
 		{
-			stopmsg(0, "Insufficient memory for color map.");
+			stop_message(0, "Insufficient memory for color map.");
 			return 1;
 		}
 	}

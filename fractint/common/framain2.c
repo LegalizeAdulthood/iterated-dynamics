@@ -115,7 +115,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					}
 					else
 					{
-						stopmsg(0, "That video mode is not available with your adapter.");
+						stop_message(0, "That video mode is not available with your adapter.");
 						g_ask_video = TRUE;
 					}
 					g_init_mode = -1;
@@ -147,7 +147,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				{
 					/* disk video, setvideomode via bios didn't get it right, so: */
 #if !defined(XFRACT) && !defined(_WIN32)
-					ValidateLuts("default"); /* read the default palette file */
+					validate_luts("default"); /* read the default palette file */
 #endif
 				}
 				g_color_state = COLORSTATE_DEFAULT;
@@ -177,7 +177,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				}
 				if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
 				{
-					stopmsg(0, "View window too large; using full screen.");
+					stop_message(0, "View window too large; using full screen.");
 					g_view_window = 0;
 					g_x_dots = g_view_x_dots = g_screen_width;
 					g_y_dots = g_view_y_dots = g_screen_height;
@@ -187,14 +187,14 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					&& !(g_evolving & EVOLVE_FIELD_MAP))
 				{	/* so ssg works */
 					/* but no check if in evolve mode to allow lots of small views*/
-					stopmsg(0, "View window too small; using full screen.");
+					stop_message(0, "View window too small; using full screen.");
 					g_view_window = 0;
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
 				}
 				if ((g_evolving & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & INFCALC))
 				{
-					stopmsg(0, "Fractal doesn't terminate! switching off evolution.");
+					stop_message(0, "Fractal doesn't terminate! switching off evolution.");
 					g_evolving &= ~EVOLVE_FIELD_MAP;
 					g_view_window = FALSE;
 					g_x_dots = g_screen_width;
@@ -248,11 +248,11 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					g_init_mode = -1;
 					g_calculation_status = CALCSTAT_RESUMABLE;         /* "resume" without 16-bit */
 					driver_set_for_text();
-					get_fracttype();
+					get_fractal_type();
 					/* goto imagestart; */
 					return IMAGESTART;
 				}
-				g_out_line = pot_line;
+				g_out_line = potential_line;
 			}
 			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !g_evolving) /* regular gif/fra input file */
 			{
@@ -268,7 +268,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				{
 					char msg[MSGLEN];
 					sprintf(msg, "floatflag=%d", g_user_float_flag);
-					stopmsg(STOPMSG_NO_BUZZER, (char *)msg);
+					stop_message(STOPMSG_NO_BUZZER, (char *)msg);
 				}
 				i = funny_glasses_call(gifview);
 			}
@@ -294,7 +294,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 					{
 						driver_get_key();
 					}
-					texttempmsg("*** load incomplete ***");
+					text_temp_message("*** load incomplete ***");
 				}
 			}
 		}
@@ -411,11 +411,11 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 				gridsqr = g_grid_size*g_grid_size;
 				while (ecount < gridsqr)
 				{
-					spiralmap(ecount); /* sets px & py */
+					spiral_map(ecount); /* sets px & py */
 					g_sx_offset = tmpxdots*px;
 					g_sy_offset = tmpydots*py;
 					param_history(1); /* restore old history */
-					fiddleparms(g_genes, ecount);
+					fiddle_parameters(g_genes, ecount);
 					calculate_fractal_initialize();
 					if (calculate_fractal() == -1)
 					{
@@ -464,9 +464,9 @@ done:
 
 				/* set up for 1st selected image, this reuses px and py */
 				px = py = g_grid_size/2;
-				unspiralmap(); /* first time called, w/above line sets up array */
+				unspiral_map(); /* first time called, w/above line sets up array */
 				param_history(1); /* restore old history */
-				fiddleparms(g_genes, 0);
+				fiddle_parameters(g_genes, 0);
 			}
 			/* end of evolution loop */
 			else
@@ -676,7 +676,7 @@ static int look(char *stacked)
 	int oldhelpmode;
 	oldhelpmode = g_help_mode;
 	g_help_mode = HELPBROWSE;
-	switch (fgetwindow())
+	switch (look_get_window())
 	{
 	case FIK_ENTER:
 	case FIK_ENTER_2:
@@ -697,11 +697,11 @@ static int look(char *stacked)
 		g_name_stack_ptr++;
 		strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_name);
 		/*
-		splitpath(g_browse_name, NULL, NULL, fname, ext);
-		splitpath(g_read_name, drive, dir, NULL, NULL);
-		makepath(g_read_name, drive, dir, fname, ext);
+		split_path(g_browse_name, NULL, NULL, fname, ext);
+		split_path(g_read_name, drive, dir, NULL, NULL);
+		make_path(g_read_name, drive, dir, fname, ext);
 		*/
-		merge_pathnames(g_read_name, g_browse_name, 2);
+		merge_path_names(g_read_name, g_browse_name, 2);
 		if (g_ask_video)
 		{
 				driver_stack_screen();   /* save graphics image */
@@ -724,7 +724,7 @@ static int look(char *stacked)
 				break;
 			}
 			strcpy(g_browse_name, g_file_name_stack[g_name_stack_ptr]);
-			merge_pathnames(g_read_name, g_browse_name, 2);
+			merge_path_names(g_read_name, g_browse_name, 2);
 			g_browsing = TRUE;
 			g_show_file = 0;
 			if (g_ask_video)
@@ -745,7 +745,7 @@ static int look(char *stacked)
 	case 's':
 		g_browsing = FALSE;
 		g_help_mode = oldhelpmode;
-		savetodisk(g_save_name);
+		save_to_disk(g_save_name);
 		break;
 
 	default:               /* or no files found, leave the state of g_browsing alone */
@@ -760,9 +760,9 @@ static int handle_fractal_type(int *frommandel)
 	int i;
 
 	g_julibrot = FALSE;
-	clear_zoombox();
+	clear_zoom_box();
 	driver_stack_screen();
-	i = get_fracttype();
+	i = get_fractal_type();
 	if (i >= 0)
 	{
 		driver_discard_screen();
@@ -772,7 +772,7 @@ static int handle_fractal_type(int *frommandel)
 		g_use_old_periodicity = FALSE;
 		g_bad_outside = 0;
 		g_use_old_complex_power = TRUE;
-		set_current_params();
+		set_current_parameters();
 		g_discrete_parameter_offset_x = g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_x = g_new_discrete_parameter_offset_y = 0;
 		g_fiddle_factor = 1;           /* reset param evolution stuff */
 		g_set_orbit_corners = 0;
@@ -796,7 +796,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 {
 	int i;
 	*old_maxit = g_max_iteration;
-	clear_zoombox();
+	clear_zoom_box();
 	if (g_from_text_flag == 1)
 	{
 		g_from_text_flag = 0;
@@ -810,12 +810,12 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	case 'x':		i = get_toggles();			break;
 	case 'y':		i = get_toggles2();			break;
 	case 'p':		i = passes_options();		break;
-	case 'z':		i = get_fract_params(1);	break;
+	case 'z':		i = get_fractal_parameters(1);	break;
 	case 'v':		i = get_view_params();		break;
-	case FIK_CTL_B:	i = get_browse_params();	break;
+	case FIK_CTL_B:	i = get_browse_parameters();	break;
 
 	case FIK_CTL_E:
-		i = get_evolve_Parms();
+		i = get_evolve_parameters();
 		if (i > 0)
 		{
 			g_start_show_orbit = 0;
@@ -827,7 +827,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	case FIK_CTL_F:	i = get_sound_params(); break;
 
 	default:
-		i = get_cmd_string();
+		i = get_command_string();
 		break;
 	}
 	driver_unstack_screen();
@@ -865,7 +865,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 static void handle_evolver_options(int kbdchar, int *kbdmore)
 {
 	int i;
-	clear_zoombox();
+	clear_zoom_box();
 	if (g_from_text_flag == 1)
 	{
 		g_from_text_flag = 0;
@@ -879,15 +879,15 @@ static void handle_evolver_options(int kbdchar, int *kbdmore)
 	case 'x': i = get_toggles(); break;
 	case 'y': i = get_toggles2(); break;
 	case 'p': i = passes_options(); break;
-	case 'z': i = get_fract_params(1); break;
+	case 'z': i = get_fractal_parameters(1); break;
 
 	case FIK_CTL_E:
 	case FIK_SPACE:
-		i = get_evolve_Parms();
+		i = get_evolve_parameters();
 		break;
 
 	default:
-		i = get_cmd_string();
+		i = get_command_string();
 		break;
 	}
 	driver_unstack_screen();
@@ -963,7 +963,7 @@ static int handle_ant(void)
 	int oldtype, err, i;
 	double oldparm[MAXPARAMS];
 
-	clear_zoombox();
+	clear_zoom_box();
 	oldtype = g_fractal_type;
 	for (i = 0; i < MAXPARAMS; i++)
 	{
@@ -973,14 +973,14 @@ static int handle_ant(void)
 	{
 		g_fractal_type = ANT;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-		load_params(g_fractal_type);
+		load_parameters(g_fractal_type);
 	}
 	if (!g_from_text_flag)
 	{
 		driver_stack_screen();
 	}
 	g_from_text_flag = 0;
-	err = get_fract_params(2);
+	err = get_fractal_parameters(2);
 	if (err >= 0)
 	{
 		driver_unstack_screen();
@@ -1006,7 +1006,7 @@ static int handle_recalc(int (*continue_check)(void), int (*recalc_check)(void))
 #if defined(_WIN32)
 	_ASSERTE(continue_check && recalc_check);
 #endif
-	clear_zoombox();
+	clear_zoom_box();
 	if ((*continue_check)() >= 0)
 	{
 		if ((*recalc_check)() >= 0)
@@ -1020,7 +1020,7 @@ static int handle_recalc(int (*continue_check)(void), int (*recalc_check)(void))
 
 static void handle_3d_params(int *kbdmore)
 {
-	if (get_fract3d_params() >= 0)    /* get the parameters */
+	if (get_fractal_3d_parameters() >= 0)    /* get the parameters */
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		*kbdmore = 0;    /* time to redraw */
@@ -1037,7 +1037,7 @@ static void handle_orbits(void)
 		&& !bf_math /* for now no arbitrary precision support */
 		&& !(g_is_true_color && g_true_mode))
 	{
-		clear_zoombox();
+		clear_zoom_box();
 		Jiim(ORBIT);
 	}
 }
@@ -1083,7 +1083,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		int key;
 		g_has_inverse = (g_fractal_type == MANDEL || g_fractal_type == MANDELFP)
 			&& (bf_math == 0) ? TRUE : FALSE;
-		clear_zoombox();
+		clear_zoom_box();
 		Jiim(JIIM);
 		key = driver_get_key();    /* flush keyboard buffer */
 		if (key != FIK_SPACE)
@@ -1191,7 +1191,7 @@ static void handle_inverse_julia_toggle(int *kbdmore)
 #if 0
 	else if (g_fractal_type == MANDEL || g_fractal_type == MANDELFP)
 	{
-		clear_zoombox();
+		clear_zoom_box();
 		Jiim(JIIM);
 	}
 #endif
@@ -1218,11 +1218,11 @@ static int handle_history(char *stacked, int kbdchar)
 		}
 		strcpy(g_browse_name, g_file_name_stack[g_name_stack_ptr]);
 		/*
-		splitpath(g_browse_name, NULL, NULL, fname, ext);
-		splitpath(g_read_name, drive, dir, NULL, NULL);
-		makepath(g_read_name, drive, dir, fname, ext);
+		split_path(g_browse_name, NULL, NULL, fname, ext);
+		split_path(g_read_name, drive, dir, NULL, NULL);
+		make_path(g_read_name, drive, dir, fname, ext);
 		*/
-		merge_pathnames(g_read_name, g_browse_name, 2);
+		merge_path_names(g_read_name, g_browse_name, 2);
 		g_browsing = TRUE;
 		g_no_sub_images = FALSE;
 		g_show_file = 0;
@@ -1264,7 +1264,7 @@ static int handle_history(char *stacked, int kbdchar)
 
 static int handle_color_cycling(int kbdchar)
 {
-	clear_zoombox();
+	clear_zoom_box();
 	memcpy(g_old_dac_box, g_dac_box, 256*3);
 	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
 	if (memcmp(g_old_dac_box, g_dac_box, 256*3))
@@ -1290,7 +1290,7 @@ static int handle_color_editing(int *kbdmore)
 			return CONTINUE;
 		}
 	}
-	clear_zoombox();
+	clear_zoom_box();
 	if (g_dac_box[0][0] != 255
 		&& g_colors >= 16
 		&& !driver_diskp())
@@ -1316,7 +1316,7 @@ static int handle_save_to_disk(void)
 		return CONTINUE;  /* disk video and targa, nothing to save */
 	}
 	note_zoom();
-	savetodisk(g_save_name);
+	save_to_disk(g_save_name);
 	restore_zoom();
 	return CONTINUE;
 }
@@ -1341,13 +1341,13 @@ static int handle_evolver_save_to_disk(void)
 	g_y_dots = g_screen_height; /* for full screen save and pointer move stuff */
 	px = py = g_grid_size / 2;
 	param_history(1); /* restore old history */
-	fiddleparms(g_genes, 0);
-	drawparmbox(1);
-	savetodisk(g_save_name);
+	fiddle_parameters(g_genes, 0);
+	draw_parameter_box(1);
+	save_to_disk(g_save_name);
 	px = oldpx;
 	py = oldpy;
 	param_history(1); /* restore old history */
-	fiddleparms(g_genes, unspiralmap());
+	fiddle_parameters(g_genes, unspiral_map());
 	g_sx_offset = oldsxoffs;
 	g_sy_offset = oldsyoffs;
 	g_x_dots = oldxdots;
@@ -1386,7 +1386,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 	*stacked = g_overlay_3d ? 0 : 1;
 	if (g_resave_flag)
 	{
-		updatesavename(g_save_name);      /* do the pending increment */
+		update_save_name(g_save_name);      /* do the pending increment */
 		g_resave_flag = RESAVE_NO;
 		g_started_resaves = FALSE;
 	}
@@ -1644,7 +1644,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 
 	case 'k':                    /* ^s is irritating, give user a single key */
 	case FIK_CTL_S:                     /* ^s RDS */
-		return handle_recalc(get_rds_params, do_AutoStereo);
+		return handle_recalc(get_random_dot_stereogram_parameters, do_AutoStereo);
 
 	case 'a':                    /* starfield parms               */
 		return handle_recalc(get_starfield_params, starfield);
@@ -1689,7 +1689,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 #ifdef XFRACT
 	case FIK_F3:                     /* 3D overlay                   */
 #endif
-		clear_zoombox();
+		clear_zoom_box();
 		g_overlay_3d = 1;
 		/* fall through */
 
@@ -1869,11 +1869,11 @@ static void handle_evolver_move_selection(int *kbdchar)
 			g_sy_offset = py*(int)(g_dy_size + 1 + grout);
 
 			param_history(1); /* restore old history */
-			fiddleparms(g_genes, unspiralmap()); /* change all parameters */
+			fiddle_parameters(g_genes, unspiral_map()); /* change all parameters */
 						/* to values appropriate to the image selected */
 			set_evolve_ranges();
 			chgboxi(0, 0);
-			drawparmbox(0);
+			draw_parameter_box(0);
 		}
 	}
 	else                       /* if no zoombox, scroll by arrows */
@@ -1893,7 +1893,7 @@ static void handle_evolver_param_zoom(int zoom_out)
 			{
 				g_parameter_zoom = 1.0;
 			}
-			drawparmbox(0);
+			draw_parameter_box(0);
 			set_evolve_ranges();
 		}
 		else
@@ -1903,7 +1903,7 @@ static void handle_evolver_param_zoom(int zoom_out)
 			{
 				g_parameter_zoom = (double) g_grid_size/2.0;
 			}
-			drawparmbox(0);
+			draw_parameter_box(0);
 			set_evolve_ranges();
 		}
 	}
@@ -1929,8 +1929,8 @@ static void handle_evolver_zoom(int zoom_in)
 					int grout = !((g_evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
 					g_sx_offset = px*(int) (g_dx_size + 1 + grout);
 					g_sy_offset = py*(int) (g_dy_size + 1 + grout);
-					SetupParamBox();
-					drawparmbox(0);
+					setup_parameter_box();
+					draw_parameter_box(0);
 				}
 				moveboxf(0.0, 0.0); /* force scrolling */
 			}
@@ -1949,8 +1949,8 @@ static void handle_evolver_zoom(int zoom_in)
 				g_z_width = 0;
 				if (g_evolving & EVOLVE_FIELD_MAP)
 				{
-					drawparmbox(1); /* clear boxes off screen */
-					ReleaseParamBox();
+					draw_parameter_box(1); /* clear boxes off screen */
+					release_parameter_box();
 				}
 			}
 			else
@@ -2201,7 +2201,7 @@ static void note_zoom()
 		savezoom = (char *)malloc((long)(5*g_box_count));
 		if (savezoom == NULL)
 		{
-			clear_zoombox(); /* not enuf mem so clear the box */
+			clear_zoom_box(); /* not enuf mem so clear the box */
 		}
 		else
 		{
@@ -2338,7 +2338,7 @@ static void cmp_line_cleanup(void)
 	fclose(cmp_fp);
 }
 
-void clear_zoombox()
+void clear_zoom_box()
 {
 	g_z_width = 0;
 	drawbox(0);
@@ -2365,11 +2365,11 @@ void reset_zoom_corners()
 }
 
 /*
-	Function setup287code is called by main() when a 287
+	Function setup_287_code is called by main() when a 287
 	or better g_fpu is detected.
 */
 #define ORBPTR(x) g_fractal_specific[x].orbitcalc
-void setup287code()
+void setup_287_code()
 {
 	ORBPTR(MANDELFP)       = ORBPTR(JULIAFP)      = FJuliafpFractal;
 	ORBPTR(BARNSLEYM1FP)   = ORBPTR(BARNSLEYJ1FP) = FBarnsley1FPFractal;

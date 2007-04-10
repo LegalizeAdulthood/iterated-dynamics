@@ -51,7 +51,7 @@ struct minmax
 /* routines in this module */
 int line3d(BYTE *, unsigned);
 int _fastcall targa_color(int, int, int);
-int startdisk1(char *, FILE *, int);
+int start_disk1(char *, FILE *, int);
 
 /* global variables defined here */
 void (_fastcall *g_standard_plot)(int x, int y, int color) = NULL;
@@ -772,7 +772,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 				{
 					if (g_debug_flag)
 					{
-						stopmsg(0, "debug, cur.color=bad");
+						stop_message(0, "debug, cur.color=bad");
 					}
 					f_cur.color = (float) s_bad.color;
 					cur.color = s_bad.color;
@@ -806,7 +806,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 							/* this shouldn't happen */
 							if (g_debug_flag)
 							{
-								stopmsg(0, "debug, normal vector err2");
+								stop_message(0, "debug, normal vector err2");
 								/* use next instead if you ever need details:
 								* static char tmp[] = {"debug, vector err"};
 								* char msg[200]; #ifndef XFRACT
@@ -817,7 +817,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 								* s_f_last_row[col].y, s_f_last_row[col].color,
 								* s_f_last_row[col-1].x,
 								* s_f_last_row[col-1].y, s_f_last_row[col-1].color);
-								* stopmsg(0, msg); */
+								* stop_message(0, msg); */
 							}
 							f_cur.color = (float) g_colors;
 							cur.color = g_colors;
@@ -1541,7 +1541,7 @@ static void file_error(char *filename, int code)
 		sprintf(msgbuf, "OOPS, can't handle this type of file.\n");
 		break;
 	}
-	stopmsg(0, msgbuf);
+	stop_message(0, msgbuf);
 	return;
 }
 
@@ -1562,7 +1562,7 @@ static void file_error(char *filename, int code)
 /*                                                                      */
 /* **********************************************************************/
 
-int startdisk1(char *file_name2, FILE *Source, int overlay)
+int start_disk1(char *file_name2, FILE *Source, int overlay)
 {
 	int i, j, k, inc;
 	FILE *fps;
@@ -1724,7 +1724,7 @@ static int targa_validate(char *file_name)
 	rewind(fp);
 
 	/* Now that we know its a good file, create a working copy */
-	if (startdisk1(s_targa_temp, fp, 1))
+	if (start_disk1(s_targa_temp, fp, 1))
 	{
 		return -1;
 	}
@@ -1904,7 +1904,7 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 static int _fastcall raytrace_header(void)
 {
 	/* Open the ray tracing output file */
-	check_writefile(g_ray_name, ".ray");
+	check_write_file(g_ray_name, ".ray");
 	s_raytrace_file = fopen(g_ray_name, "w");
 	if (s_raytrace_file == NULL)
 	{
@@ -2470,8 +2470,8 @@ static int first_time(int linelen, VECTOR v)
 		}
 		else
 		{
-			check_writefile(g_light_name, ".tga");
-			if (startdisk1(g_light_name, NULL, 0))   /* Open new file */
+			check_write_file(g_light_name, ".tga");
+			if (start_disk1(g_light_name, NULL, 0))   /* Open new file */
 			{
 				return -1;
 			}
@@ -2890,7 +2890,7 @@ static int line_3d_mem(void)
 			static struct minmax *got_mem = NULL;
 			if (2222 == g_debug_flag)
 			{
-				stopmsg(0, "malloc minmax");
+				stop_message(0, "malloc minmax");
 			}
 			/* not using extra segment so decrement check_extra */
 			check_extra -= sizeof(struct minmax)*g_y_dots;
@@ -2919,7 +2919,7 @@ static int line_3d_mem(void)
 	{
 		char tmpmsg[70];
 		sprintf(tmpmsg, "used %ld of extra segment", check_extra);
-		stopmsg(STOPMSG_NO_BUZZER, tmpmsg);
+		stop_message(STOPMSG_NO_BUZZER, tmpmsg);
 	}
 	return 0;
 }
