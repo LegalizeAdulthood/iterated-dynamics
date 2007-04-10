@@ -128,7 +128,7 @@ int g_periodicity_check;
 	at end of 1st pass [0]... bits are set if any surrounding g_block not guessed;
 	bits are numbered [..][y/16 + 1][x + 1]&(1<<(y&15)) */
 typedef int (*TPREFIX)[2][MAX_Y_BLOCK][MAX_X_BLOCK];
-/* size of next puts a limit of MAXPIXELS pixels across on solid guessing logic */
+/* size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic */
 BYTE g_stack[4096];              /* common temp, two put_line calls */
 /* For periodicity testing, only in standard_fractal() */
 int g_next_saved_incr;
@@ -822,7 +822,7 @@ int calculate_fractal(void)
 	}
 	if (g_type_specific_work_area)
 	{
-		free_workarea();
+		free_work_area();
 	}
 
 	if (g_current_fractal_specific->calculate_type == froth_calc)
@@ -2554,7 +2554,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				if (caught_a_cycle)
 				{
 #ifdef NUMSAVED
-					char msg[MSGLEN];
+					char msg[MESSAGE_LEN];
 					static FILE *fp = NULL;
 					static char c;
 					if (fp == NULL)
@@ -4031,7 +4031,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 		j = y + i + s_half_block;
 		if (j <= g_y_stop)
 		{
-			put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLDMAXPIXELS]);
+			put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLD_MAX_PIXELS]);
 		}
 		if (driver_key_pressed())
 		{
@@ -4048,9 +4048,9 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 				j = g_x_stop-(i-g_xx_start);
 				g_stack[i] = g_stack[j];
 				g_stack[j] = (BYTE)color;
-				j += OLDMAXPIXELS;
-				color = g_stack[i + OLDMAXPIXELS];
-				g_stack[i + OLDMAXPIXELS] = g_stack[j];
+				j += OLD_MAX_PIXELS;
+				color = g_stack[i + OLD_MAX_PIXELS];
+				g_stack[i + OLD_MAX_PIXELS] = g_stack[j];
 				g_stack[j] = (BYTE)color;
 			}
 		}
@@ -4064,7 +4064,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			j = g_yy_stop-(y + i + s_half_block-g_yy_start);
 			if (j > g_y_stop && j < g_y_dots)
 			{
-				put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLDMAXPIXELS]);
+				put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLD_MAX_PIXELS]);
 			}
 			if (driver_key_pressed())
 			{
@@ -4096,7 +4096,7 @@ static void _fastcall plot_block(int buildrow, int x, int y, int color)
 		{
 			for (i = x; i < xlim; ++i)
 			{
-				g_stack[i + OLDMAXPIXELS] = (BYTE)color;
+				g_stack[i + OLD_MAX_PIXELS] = (BYTE)color;
 			}
 		}
 		if (x >= g_xx_start) /* when x reduced for alignment, paint those dots too */
@@ -4728,16 +4728,16 @@ static int tesseral(void)
 				}
 				else  /* use put_line for speed */
 				{
-					memset(&g_stack[OLDMAXPIXELS], tp->top, j);
+					memset(&g_stack[OLD_MAX_PIXELS], tp->top, j);
 					for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
 					{
-						put_line(g_row, tp->x1 + 1, tp->x2-1, &g_stack[OLDMAXPIXELS]);
+						put_line(g_row, tp->x1 + 1, tp->x2-1, &g_stack[OLD_MAX_PIXELS]);
 						if (g_plot_color != g_put_color) /* symmetry */
 						{
 							j = g_yy_stop-(g_row-g_yy_start);
 							if (j > g_y_stop && j < g_y_dots)
 							{
-								put_line(j, tp->x1 + 1, tp->x2-1, &g_stack[OLDMAXPIXELS]);
+								put_line(j, tp->x1 + 1, tp->x2-1, &g_stack[OLD_MAX_PIXELS]);
 							}
 						}
 						if (++i > 25)

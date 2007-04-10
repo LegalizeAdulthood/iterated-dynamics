@@ -132,17 +132,17 @@ handle_special_keys(int ch)
 	{
 		if (ch == FIK_ESC)
 		{
-			stopslideshow();
+			stop_slide_show();
 			ch = 0;
 		}
 		else if (!ch)
 		{
-			ch = slideshw();
+			ch = slide_show();
 		}
 	}
 	else if ((SLIDES_RECORD == g_slides) && ch)
 	{
-		recordshw(ch);
+		record_show(ch);
 	}
 
 	if (FIK_F1 == ch && g_help_mode && !inside_help)
@@ -251,7 +251,7 @@ static void center_windows(GDIDriver *di, BOOL center_x, BOOL center_y)
 *----------------------------------------------------------------------
 */
 static void
-gdi_terminate(Driver *drv)
+gdi_terminate(driver *drv)
 {
 	DI(di);
 	ODS("gdi_terminate");
@@ -261,7 +261,7 @@ gdi_terminate(Driver *drv)
 }
 
 static void
-gdi_get_max_screen(Driver *drv, int *g_x_max, int *g_y_max)
+gdi_get_max_screen(driver *drv, int *g_x_max, int *g_y_max)
 {
 	RECT desktop;
 	GetClientRect(GetDesktopWindow(), &desktop);
@@ -294,7 +294,7 @@ gdi_get_max_screen(Driver *drv, int *g_x_max, int *g_y_max)
 *----------------------------------------------------------------------
 */
 static int
-gdi_init(Driver *drv, int *argc, char **argv)
+gdi_init(driver *drv, int *argc, char **argv)
 {
 	LPCSTR title = "FractInt for Windows";
 	DI(di);
@@ -352,7 +352,7 @@ gdi_init(Driver *drv, int *argc, char **argv)
  * If yes, resize internal buffers and return 1.
  */
 static int
-gdi_resize(Driver *drv)
+gdi_resize(driver *drv)
 {
 	DI(di);
 	int width, height;
@@ -389,7 +389,7 @@ gdi_resize(Driver *drv)
 *----------------------------------------------------------------------
 */
 static int
-gdi_read_palette(Driver *drv)
+gdi_read_palette(driver *drv)
 {
 	DI(di);
 	return plot_read_palette(&di->plot);
@@ -411,7 +411,7 @@ gdi_read_palette(Driver *drv)
 *----------------------------------------------------------------------
 */
 static int
-gdi_write_palette(Driver *drv)
+gdi_write_palette(driver *drv)
 {
 	DI(di);
 	return plot_write_palette(&di->plot);
@@ -433,7 +433,7 @@ gdi_write_palette(Driver *drv)
 *----------------------------------------------------------------------
 */
 static void
-gdi_schedule_alarm(Driver *drv, int soon)
+gdi_schedule_alarm(driver *drv, int soon)
 {
 	DI(di);
 	soon = (soon ? 1 : DRAW_INTERVAL)*1000;
@@ -463,7 +463,7 @@ gdi_schedule_alarm(Driver *drv, int soon)
 *----------------------------------------------------------------------
 */
 static void
-gdi_write_pixel(Driver *drv, int x, int y, int color)
+gdi_write_pixel(driver *drv, int x, int y, int color)
 {
 	DI(di);
 	plot_write_pixel(&di->plot, x, y, color);
@@ -485,7 +485,7 @@ gdi_write_pixel(Driver *drv, int x, int y, int color)
 *----------------------------------------------------------------------
 */
 static int
-gdi_read_pixel(Driver *drv, int x, int y)
+gdi_read_pixel(driver *drv, int x, int y)
 {
 	DI(di);
 	return plot_read_pixel(&di->plot, x, y);
@@ -507,7 +507,7 @@ gdi_read_pixel(Driver *drv, int x, int y)
 *----------------------------------------------------------------------
 */
 static void
-gdi_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
+gdi_write_span(driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 	DI(di);
 	plot_write_span(&di->plot, x, y, lastx, pixels);
@@ -529,21 +529,21 @@ gdi_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 *----------------------------------------------------------------------
 */
 static void
-gdi_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
+gdi_read_span(driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 	DI(di);
 	plot_read_span(&di->plot, y, x, lastx, pixels);
 }
 
 static void
-gdi_set_line_mode(Driver *drv, int mode)
+gdi_set_line_mode(driver *drv, int mode)
 {
 	DI(di);
 	plot_set_line_mode(&di->plot, mode);
 }
 
 static void
-gdi_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
+gdi_draw_line(driver *drv, int x1, int y1, int x2, int y2, int color)
 {
 	DI(di);
 	plot_draw_line(&di->plot, x1, y1, x2, y2, color);
@@ -565,7 +565,7 @@ gdi_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
 *----------------------------------------------------------------------
 */
 static void
-gdi_redraw(Driver *drv)
+gdi_redraw(driver *drv)
 {
 	DI(di);
 	ODS("gdi_redraw");
@@ -581,7 +581,7 @@ gdi_redraw(Driver *drv)
 }
 
 static void
-gdi_window(Driver *drv)
+gdi_window(driver *drv)
 {
 	DI(di);
 	int width;
@@ -597,7 +597,7 @@ gdi_window(Driver *drv)
 }
 
 static void
-gdi_set_for_text(Driver *drv)
+gdi_set_for_text(driver *drv)
 {
 	DI(di);
 	di->text_not_graphics = TRUE;
@@ -605,7 +605,7 @@ gdi_set_for_text(Driver *drv)
 }
 
 static void
-gdi_set_for_graphics(Driver *drv)
+gdi_set_for_graphics(driver *drv)
 {
 	DI(di);
 	di->text_not_graphics = FALSE;
@@ -616,7 +616,7 @@ gdi_set_for_graphics(Driver *drv)
 /* gdi_set_clear
 */
 static void
-gdi_set_clear(Driver *drv)
+gdi_set_clear(driver *drv)
 {
 	DI(di);
 	if (di->text_not_graphics)
@@ -632,7 +632,7 @@ gdi_set_clear(Driver *drv)
 /* gdi_set_video_mode
 */
 static void
-gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
+gdi_set_video_mode(driver *drv, VIDEOINFO *mode)
 {
 	extern void set_normal_dot(void);
 	extern void set_normal_line(void);
@@ -670,7 +670,7 @@ gdi_set_video_mode(Driver *drv, VIDEOINFO *mode)
 }
 
 static void
-gdi_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+gdi_put_string(driver *drv, int row, int col, int attr, const char *msg)
 {
 	DI(di);
 	_ASSERTE(di->text_not_graphics);
@@ -696,7 +696,7 @@ gdi_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 *       Scroll the screen up (from toprow to botrow)
 */
 static void
-gdi_scroll_up(Driver *drv, int top, int bot)
+gdi_scroll_up(driver *drv, int top, int bot)
 {
 	DI(di);
 	_ASSERTE(di->text_not_graphics);
@@ -704,7 +704,7 @@ gdi_scroll_up(Driver *drv, int top, int bot)
 }
 
 static void
-gdi_move_cursor(Driver *drv, int row, int col)
+gdi_move_cursor(driver *drv, int row, int col)
 {
 	DI(di);
 
@@ -728,7 +728,7 @@ gdi_move_cursor(Driver *drv, int row, int col)
 }
 
 static void
-gdi_set_attr(Driver *drv, int row, int col, int attr, int count)
+gdi_set_attr(driver *drv, int row, int col, int attr, int count)
 {
 	DI(di);
 
@@ -749,7 +749,7 @@ gdi_set_attr(Driver *drv, int row, int col, int attr, int count)
 * windows.
 */
 static void
-gdi_stack_screen(Driver *drv)
+gdi_stack_screen(driver *drv)
 {
 	DI(di);
 
@@ -779,7 +779,7 @@ gdi_stack_screen(Driver *drv)
 }
 
 static void
-gdi_unstack_screen(Driver *drv)
+gdi_unstack_screen(driver *drv)
 {
 	DI(di);
 
@@ -802,7 +802,7 @@ gdi_unstack_screen(Driver *drv)
 }
 
 static void
-gdi_discard_screen(Driver *drv)
+gdi_discard_screen(driver *drv)
 {
 	DI(di);
 
@@ -822,7 +822,7 @@ gdi_discard_screen(Driver *drv)
 }
 
 static int
-gdi_init_fm(Driver *drv)
+gdi_init_fm(driver *drv)
 {
 	ODS("gdi_init_fm");
 	_ASSERTE(0 && "gdi_init_fm called");
@@ -830,33 +830,33 @@ gdi_init_fm(Driver *drv)
 }
 
 static void
-gdi_buzzer(Driver *drv, int kind)
+gdi_buzzer(driver *drv, int kind)
 {
 	ODS1("gdi_buzzer %d", kind);
 	MessageBeep(MB_OK);
 }
 
 static int
-gdi_sound_on(Driver *drv, int freq)
+gdi_sound_on(driver *drv, int freq)
 {
 	ODS1("gdi_sound_on %d", freq);
 	return 0;
 }
 
 static void
-gdi_sound_off(Driver *drv)
+gdi_sound_off(driver *drv)
 {
 	ODS("gdi_sound_off");
 }
 
 static void
-gdi_mute(Driver *drv)
+gdi_mute(driver *drv)
 {
 	ODS("gdi_mute");
 }
 
 static int
-gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
+gdi_validate_mode(driver *drv, VIDEOINFO *mode)
 {
 	int width, height;
 	gdi_get_max_screen(drv, &width, &height);
@@ -874,7 +874,7 @@ gdi_validate_mode(Driver *drv, VIDEOINFO *mode)
 }
 
 static void
-gdi_pause(Driver *drv)
+gdi_pause(driver *drv)
 {
 	DI(di);
 	if (di->base.wintext.hWndCopy)
@@ -888,7 +888,7 @@ gdi_pause(Driver *drv)
 }
 
 static void
-gdi_resume(Driver *drv)
+gdi_resume(driver *drv)
 {
 	DI(di);
 	if (!di->base.wintext.hWndCopy)
@@ -901,7 +901,7 @@ gdi_resume(Driver *drv)
 }
 
 static void
-gdi_display_string(Driver *drv, int x, int y, int fg, int bg, const char *text)
+gdi_display_string(driver *drv, int x, int y, int fg, int bg, const char *text)
 {
 	DI(di);
 	_ASSERTE(!di->text_not_graphics);
@@ -909,21 +909,21 @@ gdi_display_string(Driver *drv, int x, int y, int fg, int bg, const char *text)
 }
 
 static void
-gdi_save_graphics(Driver *drv)
+gdi_save_graphics(driver *drv)
 {
 	DI(di);
 	plot_save_graphics(&di->plot);
 }
 
 static void
-gdi_restore_graphics(Driver *drv)
+gdi_restore_graphics(driver *drv)
 {
 	DI(di);
 	plot_restore_graphics(&di->plot);
 }
 
 static void
-gdi_flush(Driver *drv)
+gdi_flush(driver *drv)
 {
 	DI(di);
 	plot_flush(&di->plot);
@@ -980,4 +980,4 @@ static GDIDriver gdi_driver_info =
 	TRUE				/* text_not_graphics */
 };
 
-Driver *gdi_driver = &gdi_driver_info.base.pub;
+driver *gdi_driver = &gdi_driver_info.base.pub;

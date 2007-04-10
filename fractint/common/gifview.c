@@ -56,8 +56,8 @@ int get_bytes(BYTE *where, int how_many)
  * The g_skip_x_dots and g_skip_y_dots logic assumes that the buffer holds one line.
  */
 
-BYTE g_decoder_line[MAXPIXELS + 1]; /* write-line routines use this */
-#define DECODERLINE_WIDTH MAXPIXELS
+BYTE g_decoder_line[MAX_PIXELS + 1]; /* write-line routines use this */
+#define DECODERLINE_WIDTH MAX_PIXELS
 
 BYTE *decoderline1;
 static char *ditherbuf = NULL;
@@ -92,7 +92,7 @@ int gifview()
 	colcount = g_row_count = 0;
 
 	/* Open the file */
-	strcpy(temp1, (g_out_line == outline_stereo) ? g_stereo_map_name : g_read_name);
+	strcpy(temp1, (g_out_line == out_line_stereo) ? g_stereo_map_name : g_read_name);
 	if (has_extension(temp1) == NULL)
 	{
 		strcat(temp1, DEFAULTFRACTALTYPE);
@@ -103,7 +103,7 @@ int gifview()
 		}
 		else
 		{
-			strcpy(temp1, (g_out_line == outline_stereo) ? g_stereo_map_name : g_read_name);
+			strcpy(temp1, (g_out_line == out_line_stereo) ? g_stereo_map_name : g_read_name);
 			strcat(temp1, ALTERNATEFRACTALTYPE);
 		}
 	}

@@ -213,7 +213,7 @@ static char s_halley_name[] = "*halley";
 /* use next to cast orbitcalcs() that have arguments */
 #define VF int(*)(void)
 
-struct fractalspecificstuff g_fractal_specific[] =
+struct fractal_specific_stuff g_fractal_specific[] =
 {
 	/*
 	{
@@ -1065,7 +1065,7 @@ struct fractalspecificstuff g_fractal_specific[] =
 		HT_FORMULA, -2, WINFRAC | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, NOFRACTAL, NOFRACTAL, FFORMULA, SETUP_SYM,
-		Formula, form_per_pixel, intFormulaSetup, standard_fractal,
+		Formula, form_per_pixel, formula_setup_int, standard_fractal,
 		0
 	},
 
@@ -1076,7 +1076,7 @@ struct fractalspecificstuff g_fractal_specific[] =
 		HT_FORMULA, -2, WINFRAC | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, NOFRACTAL, NOFRACTAL, FORMULA, SETUP_SYM,
-		Formula, form_per_pixel, fpFormulaSetup, standard_fractal,
+		Formula, form_per_pixel, formula_setup_fp, standard_fractal,
 		0
 	},
 
@@ -2334,7 +2334,7 @@ int type_has_parameter(int type, int parm, char *buf)
 	{
 		ret = g_fractal_specific[type].parameters[parm];
 	}
-	else if (parm >= 4 && parm < MAXPARAMS)
+	else if (parm >= 4 && parm < MAX_PARAMETERS)
 	{
 		extra = find_extra_parameter(type);
 		if (extra > -1)

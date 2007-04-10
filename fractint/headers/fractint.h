@@ -328,55 +328,55 @@ names. So for now humor us and let's keep the names short.
 #define FILE_MAX_FNAME  64       /* max length of filename       */
 #define FILE_MAX_EXT    64       /* max length of extension      */
 
-#define MAXMAXLINELENGTH  128   /* upper limit for g_max_line_length for PARs */
-#define MINMAXLINELENGTH  40    /* lower limit for g_max_line_length for PARs */
+#define MAX_MAX_LINE_LENGTH  128   /* upper limit for g_max_line_length for PARs */
+#define MIN_MAX_LINE_LENGTH  40    /* lower limit for g_max_line_length for PARs */
 
-#define MSGLEN 80               /* handy buffer size for messages */
-#define MAXCMT 57               /* length of par comments       */
-#define MAXPARAMS 10            /* maximum number of parameters */
-#define MAXPIXELS   32767       /* Maximum pixel count across/down the screen */
-#define OLDMAXPIXELS 2048       /* Limit of some old fixed arrays */
-#define MINPIXELS 10            /* Minimum pixel count across/down the screen */
-#define DEFAULTASPECT 0.75f		/* Assumed overall screen dimensions, y/x  */
-#define DEFAULTASPECTDRIFT 0.02f /* drift of < 2% is forced to 0% */
+#define MESSAGE_LEN 80               /* handy buffer size for messages */
+#define MAX_COMMENT 57               /* length of par comments       */
+#define MAX_PARAMETERS 10            /* maximum number of parameters */
+#define MAX_PIXELS   32767       /* Maximum pixel count across/down the screen */
+#define OLD_MAX_PIXELS 2048       /* Limit of some old fixed arrays */
+#define MIN_PIXELS 10            /* Minimum pixel count across/down the screen */
+#define DEFAULT_ASPECT_RATIO 0.75f		/* Assumed overall screen dimensions, y/x  */
+#define DEFAULT_ASPECT_DRIFT 0.02f /* drift of < 2% is forced to 0% */
 
-typedef struct tagDriver Driver;
+typedef struct tag_driver driver;
 
-struct videoinfo
+struct video_info
 {              /* All we need to know about a Video Adapter */
-    char    name[26];       /* Adapter name (IBM EGA, etc)          */
-    char    comment[26];    /* Comments (UNTESTED, etc)             */
-    int     keynum;         /* key number used to invoked this mode */
-                            /* 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
-    int     videomodeax;    /* begin with INT 10H, AX=(this)        */
-    int     videomodebx;    /*              ...and BX=(this)        */
-    int     videomodecx;    /*              ...and CX=(this)        */
-    int     videomodedx;    /*              ...and DX=(this)        */
-                            /* NOTE:  IF AX==BX==CX==0, SEE BELOW   */
-    int     dotmode;        /* video access method used by asm code */
-                            /*      1 == BIOS 10H, AH=12,13 (SLOW)  */
-                            /*      2 == access like EGA/VGA        */
-                            /*      3 == access like MCGA           */
-                            /*      4 == Tseng-like  SuperVGA*256   */
-                            /*      5 == P'dise-like SuperVGA*256   */
-                            /*      6 == Vega-like   SuperVGA*256   */
-                            /*      7 == "Tweaked" IBM-VGA ...*256  */
-                            /*      8 == "Tweaked" SuperVGA ...*256 */
-                            /*      9 == Targa Format               */
-                            /*      10 = Hercules                   */
-                            /*      11 = "disk video" (no screen)   */
-                            /*      12 = 8514/A                     */
-                            /*      13 = CGA 320x200x4, 640x200x2   */
-                            /*      14 = Tandy 1000                 */
-                            /*      15 = TRIDENT  SuperVGA*256      */
-                            /*      16 = Chips&Tech SuperVGA*256    */
-    int     x_dots;          /* number of dots across the screen     */
-    int     y_dots;          /* number of dots down the screen       */
-    int     colors;         /* number of g_colors available           */
-	Driver *driver;
+	char    name[26];       /* Adapter name (IBM EGA, etc)          */
+	char    comment[26];    /* Comments (UNTESTED, etc)             */
+	int     keynum;         /* key number used to invoked this mode */
+							/* 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
+	int     videomodeax;    /* begin with INT 10H, AX=(this)        */
+	int     videomodebx;    /*              ...and BX=(this)        */
+	int     videomodecx;    /*              ...and CX=(this)        */
+	int     videomodedx;    /*              ...and DX=(this)        */
+							/* NOTE:  IF AX==BX==CX==0, SEE BELOW   */
+	int     dotmode;        /* video access method used by asm code */
+							/*      1 == BIOS 10H, AH=12,13 (SLOW)  */
+							/*      2 == access like EGA/VGA        */
+							/*      3 == access like MCGA           */
+							/*      4 == Tseng-like  SuperVGA*256   */
+							/*      5 == P'dise-like SuperVGA*256   */
+							/*      6 == Vega-like   SuperVGA*256   */
+							/*      7 == "Tweaked" IBM-VGA ...*256  */
+							/*      8 == "Tweaked" SuperVGA ...*256 */
+							/*      9 == Targa Format               */
+							/*      10 = Hercules                   */
+							/*      11 = "disk video" (no screen)   */
+							/*      12 = 8514/A                     */
+							/*      13 = CGA 320x200x4, 640x200x2   */
+							/*      14 = Tandy 1000                 */
+							/*      15 = TRIDENT  SuperVGA*256      */
+							/*      16 = Chips&Tech SuperVGA*256    */
+	int     x_dots;          /* number of dots across the screen     */
+	int     y_dots;          /* number of dots down the screen       */
+	int     colors;         /* number of g_colors available           */
+	driver *driver;
 };
 
-typedef struct videoinfo VIDEOINFO;
+typedef struct video_info VIDEOINFO;
 #define INFO_ID         "Fractal"
 typedef    struct fractal_info FRACTAL_INFO;
 
@@ -402,127 +402,127 @@ typedef    struct fractal_info FRACTAL_INFO;
 #endif
 struct fractal_info         /*  for saving data in GIF file     */
 {
-    char  info_id[8];       /* Unique identifier for info g_block */
-    short iterationsold;    /* Pre version 18.24 */
-    short fractal_type;     /* 0=Mandelbrot 1=Julia 2= ... */
-    double x_min;
-    double x_max;
-    double y_min;
-    double y_max;
-    double c_real;
-    double c_imag;
-    short videomodeax;
-    short videomodebx;
-    short videomodecx;
-    short videomodedx;
-    short dotmode;
-    short x_dots;
-    short y_dots;
-    short colors;
-    short version;          /* used to be 'future[0]' */
-    float parm3;
-    float parm4;
-    float potential[3];
-    short random_seed;
-    short random_flag;
-    short biomorph;
-    short inside;
-    short logmapold;
-    float invert[3];
-    short decomposition[2];
-    short symmetry;
-                        /* version 2 stuff */
-    short init_3d[16];
-    short previewfactor;
-    short xtrans;
-    short ytrans;
-    short red_crop_left;
-    short red_crop_right;
-    short blue_crop_left;
-    short blue_crop_right;
-    short red_bright;
-    short blue_bright;
-    short xadjust;
-    short eyeseparation;
-    short glassestype;
-                        /* version 3 stuff, release 13 */
-    short outside;
-                        /* version 4 stuff, release 14 */
-    double x_3rd;          /* 3rd corner */
-    double y_3rd;
-    char stdcalcmode;     /* 1/2/g/b */
-    char use_initial_orbit_z;    /* init Mandelbrot orbit flag */
-    short calculation_status;    /* resumable, finished, etc */
-    long tot_extend_len;  /* total length of extension blocks in .gif file */
-    short distestold;
-    short float_flag;
-    short bailoutold;
-    long calculation_time;
-    BYTE trig_index[4];      /* which trig functions selected */
-    short finattract;
-    double initial_orbit_z[2];  /* init Mandelbrot orbit values */
-    short periodicity;    /* periodicity checking */
-                        /* version 5 stuff, release 15 */
-    short potential_16bit;       /* save 16 bit continuous potential info */
-    float faspectratio;   /* g_final_aspect_ratio, y/x */
-    short system;         /* 0 for dos, 1 for windows */
-    short release;        /* release number, with 2 decimals implied */
-    short flag3d;         /* stored only for now, for future use */
-    short transparent[2];
-    short ambient;
-    short haze;
-    short randomize;
-                        /* version 6 stuff, release 15.x */
-    short rotate_lo;
-    short rotate_hi;
-    short distance_test_width;
-                        /* version 7 stuff, release 16 */
-    double dparm3;
-    double dparm4;
-                        /* version 8 stuff, release 17 */
-    short fill_color;
-                        /* version 9 stuff, release 18 */
-    double mxmaxfp;
-    double mxminfp;
-    double mymaxfp;
-    double myminfp;
-    short zdots;
-    float originfp;
-    float depthfp;
-    float heightfp;
-    float widthfp;
-    float screen_distance_fp;
-    float eyesfp;
-    short orbittype;
-    short juli3Dmode;
-    short max_fn;
-    short inversejulia;
-    double dparm5;
-    double dparm6;
-    double dparm7;
-    double dparm8;
-    double dparm9;
-    double dparm10;
-                        /* version 10 stuff, release 19 */
-    long bail_out;
-    short bailoutest;
-    long iterations;
-    short bf_math;
-    short bflength;
-    short yadjust;        /* yikes! we left this out ages ago! */
-    short old_demm_colors;
-    long logmap;
-    long distance_test;
-    double dinvert[3];
-    short logcalc;
-    short stop_pass;
-    short quick_calculate;
-    double proximity;
-    short no_bof;
-    long orbit_interval;
-    short orbit_delay;
-    double math_tolerance[2];
-    short future[7];     /* for stuff we haven't thought of yet */
+	char  info_id[8];       /* Unique identifier for info g_block */
+	short iterationsold;    /* Pre version 18.24 */
+	short fractal_type;     /* 0=Mandelbrot 1=Julia 2= ... */
+	double x_min;
+	double x_max;
+	double y_min;
+	double y_max;
+	double c_real;
+	double c_imag;
+	short videomodeax;
+	short videomodebx;
+	short videomodecx;
+	short videomodedx;
+	short dotmode;
+	short x_dots;
+	short y_dots;
+	short colors;
+	short version;          /* used to be 'future[0]' */
+	float parm3;
+	float parm4;
+	float potential[3];
+	short random_seed;
+	short random_flag;
+	short biomorph;
+	short inside;
+	short logmapold;
+	float invert[3];
+	short decomposition[2];
+	short symmetry;
+						/* version 2 stuff */
+	short init_3d[16];
+	short previewfactor;
+	short xtrans;
+	short ytrans;
+	short red_crop_left;
+	short red_crop_right;
+	short blue_crop_left;
+	short blue_crop_right;
+	short red_bright;
+	short blue_bright;
+	short xadjust;
+	short eyeseparation;
+	short glassestype;
+						/* version 3 stuff, release 13 */
+	short outside;
+						/* version 4 stuff, release 14 */
+	double x_3rd;          /* 3rd corner */
+	double y_3rd;
+	char stdcalcmode;     /* 1/2/g/b */
+	char use_initial_orbit_z;    /* init Mandelbrot orbit flag */
+	short calculation_status;    /* resumable, finished, etc */
+	long tot_extend_len;  /* total length of extension blocks in .gif file */
+	short distestold;
+	short float_flag;
+	short bailoutold;
+	long calculation_time;
+	BYTE trig_index[4];      /* which trig functions selected */
+	short finattract;
+	double initial_orbit_z[2];  /* init Mandelbrot orbit values */
+	short periodicity;    /* periodicity checking */
+						/* version 5 stuff, release 15 */
+	short potential_16bit;       /* save 16 bit continuous potential info */
+	float faspectratio;   /* g_final_aspect_ratio, y/x */
+	short system;         /* 0 for dos, 1 for windows */
+	short release;        /* release number, with 2 decimals implied */
+	short flag3d;         /* stored only for now, for future use */
+	short transparent[2];
+	short ambient;
+	short haze;
+	short randomize;
+						/* version 6 stuff, release 15.x */
+	short rotate_lo;
+	short rotate_hi;
+	short distance_test_width;
+						/* version 7 stuff, release 16 */
+	double dparm3;
+	double dparm4;
+						/* version 8 stuff, release 17 */
+	short fill_color;
+						/* version 9 stuff, release 18 */
+	double mxmaxfp;
+	double mxminfp;
+	double mymaxfp;
+	double myminfp;
+	short zdots;
+	float originfp;
+	float depthfp;
+	float heightfp;
+	float widthfp;
+	float screen_distance_fp;
+	float eyesfp;
+	short orbittype;
+	short juli3Dmode;
+	short max_fn;
+	short inversejulia;
+	double dparm5;
+	double dparm6;
+	double dparm7;
+	double dparm8;
+	double dparm9;
+	double dparm10;
+						/* version 10 stuff, release 19 */
+	long bail_out;
+	short bailoutest;
+	long iterations;
+	short bf_math;
+	short bflength;
+	short yadjust;        /* yikes! we left this out ages ago! */
+	short old_demm_colors;
+	long logmap;
+	long distance_test;
+	double dinvert[3];
+	short logcalc;
+	short stop_pass;
+	short quick_calculate;
+	double proximity;
+	short no_bof;
+	long orbit_interval;
+	short orbit_delay;
+	double math_tolerance[2];
+	short future[7];     /* for stuff we haven't thought of yet */
 };
 #if defined(_WIN32)
 #pragma pack(pop)
@@ -531,131 +531,131 @@ struct fractal_info         /*  for saving data in GIF file     */
 #define ITEMNAMELEN 18   /* max length of names in .frm/.l/.ifs/.fc */
 struct history_info
 {
-    short fractal_type;
-    double x_min;
-    double x_max;
-    double y_min;
-    double y_max;
-    double c_real;
-    double c_imag;
-    double potential[3];
-    short random_seed;
-    short random_flag;
-    short biomorph;
-    short inside;
-    long logmap;
-    double invert[3];
-    short decomposition;
-    short symmetry;
-    short init_3d[16];
-    short previewfactor;
-    short xtrans;
-    short ytrans;
-    short red_crop_left;
-    short red_crop_right;
-    short blue_crop_left;
-    short blue_crop_right;
-    short red_bright;
-    short blue_bright;
-    short xadjust;
-    short eyeseparation;
-    short glassestype;
-    short outside;
-    double x_3rd;
-    double y_3rd;
-    long distance_test;
-    short bailoutold;
-    BYTE trig_index[4];
-    short finattract;
-    double initial_orbit_z[2];
-    short periodicity;
-    short potential_16bit;
-    short release;
-    short save_release;
-    short flag3d;
-    short transparent[2];
-    short ambient;
-    short haze;
-    short randomize;
-    short rotate_lo;
-    short rotate_hi;
-    short distance_test_width;
-    double dparm3;
-    double dparm4;
-    short fill_color;
-    double mxmaxfp;
-    double mxminfp;
-    double mymaxfp;
-    double myminfp;
-    short zdots;
-    float originfp;
-    float depthfp;
-    float heightfp;
-    float widthfp;
-    float screen_distance_fp;
-    float eyesfp;
-    short orbittype;
-    short juli3Dmode;
-    short major_method;
-    short minor_method;
-    double dparm5;
-    double dparm6;
-    double dparm7;
-    double dparm8;
-    double dparm9;
-    double dparm10;
-    long bail_out;
-    short bailoutest;
-    long iterations;
-    short bf_math;
-    short bflength;
-    short yadjust;
-    short old_demm_colors;
-    char filename[FILE_MAX_PATH];
-    char itemname[ITEMNAMELEN+1];
-    unsigned char dac[256][3];
-    char  max_fn;
-    char stdcalcmode;
-    char three_pass;
-    char use_initial_orbit_z;
-    short logcalc;
-    short stop_pass;
-    short ismand;
-    double proximity;
-    short no_bof;
-    double math_tolerance[2];
-    short orbit_delay;
-    long orbit_interval;
-    double oxmin;
-    double oxmax;
-    double oymin;
-    double oymax;
-    double ox3rd;
-    double oy3rd;
-    short keep_scrn_coords;
-    char drawmode;
+	short fractal_type;
+	double x_min;
+	double x_max;
+	double y_min;
+	double y_max;
+	double c_real;
+	double c_imag;
+	double potential[3];
+	short random_seed;
+	short random_flag;
+	short biomorph;
+	short inside;
+	long logmap;
+	double invert[3];
+	short decomposition;
+	short symmetry;
+	short init_3d[16];
+	short previewfactor;
+	short xtrans;
+	short ytrans;
+	short red_crop_left;
+	short red_crop_right;
+	short blue_crop_left;
+	short blue_crop_right;
+	short red_bright;
+	short blue_bright;
+	short xadjust;
+	short eyeseparation;
+	short glassestype;
+	short outside;
+	double x_3rd;
+	double y_3rd;
+	long distance_test;
+	short bailoutold;
+	BYTE trig_index[4];
+	short finattract;
+	double initial_orbit_z[2];
+	short periodicity;
+	short potential_16bit;
+	short release;
+	short save_release;
+	short flag3d;
+	short transparent[2];
+	short ambient;
+	short haze;
+	short randomize;
+	short rotate_lo;
+	short rotate_hi;
+	short distance_test_width;
+	double dparm3;
+	double dparm4;
+	short fill_color;
+	double mxmaxfp;
+	double mxminfp;
+	double mymaxfp;
+	double myminfp;
+	short zdots;
+	float originfp;
+	float depthfp;
+	float heightfp;
+	float widthfp;
+	float screen_distance_fp;
+	float eyesfp;
+	short orbittype;
+	short juli3Dmode;
+	short major_method;
+	short minor_method;
+	double dparm5;
+	double dparm6;
+	double dparm7;
+	double dparm8;
+	double dparm9;
+	double dparm10;
+	long bail_out;
+	short bailoutest;
+	long iterations;
+	short bf_math;
+	short bflength;
+	short yadjust;
+	short old_demm_colors;
+	char filename[FILE_MAX_PATH];
+	char itemname[ITEMNAMELEN+1];
+	unsigned char dac[256][3];
+	char  max_fn;
+	char stdcalcmode;
+	char three_pass;
+	char use_initial_orbit_z;
+	short logcalc;
+	short stop_pass;
+	short ismand;
+	double proximity;
+	short no_bof;
+	double math_tolerance[2];
+	short orbit_delay;
+	long orbit_interval;
+	double oxmin;
+	double oxmax;
+	double oymin;
+	double oymax;
+	double ox3rd;
+	double oy3rd;
+	short keep_scrn_coords;
+	char drawmode;
 };
 
 typedef struct history_info HISTORY;
 
 struct formula_info         /*  for saving formula data in GIF file     */
 {
-    char  form_name[40];
-    short uses_p1;
-    short uses_p2;
-    short uses_p3;
-    short uses_is_mand;
-    short ismand;
-    short uses_p4;
-    short uses_p5;
-    short future[6];       /* for stuff we haven't thought of, yet */
+	char  form_name[40];
+	short uses_p1;
+	short uses_p2;
+	short uses_p3;
+	short uses_is_mand;
+	short ismand;
+	short uses_p4;
+	short uses_p5;
+	short future[6];       /* for stuff we haven't thought of, yet */
 };
 
 enum stored_at_values
 {
-   NOWHERE,
-   MEMORY,
-   DISK
+	NOWHERE,
+	MEMORY,
+	DISK
 };
 
 #define NUMGENES 21
@@ -676,25 +676,25 @@ typedef    struct evolution_info EVOLUTION_INFO;
 
 struct evolution_info      /* for saving evolution data in a GIF file */
 {
-   short evolving;
-   short gridsz;
-   unsigned short this_generation_random_seed;
-   double fiddle_factor;
-   double parameter_range_x;
-   double parameter_range_y;
-   double opx;
-   double opy;
-   short odpx;
-   short odpy;
-   short px;
-   short py;
-   short sxoffs;
-   short syoffs;
-   short x_dots;
-   short y_dots;
-   short mutate[NUMGENES];
-   short ecount; /* count of how many images have been calc'ed so far */
-   short future[68 - NUMGENES];      /* total of 200 bytes */
+	short evolving;
+	short gridsz;
+	unsigned short this_generation_random_seed;
+	double fiddle_factor;
+	double parameter_range_x;
+	double parameter_range_y;
+	double opx;
+	double opy;
+	short odpx;
+	short odpy;
+	short px;
+	short py;
+	short sxoffs;
+	short syoffs;
+	short x_dots;
+	short y_dots;
+	short mutate[NUMGENES];
+	short ecount; /* count of how many images have been calc'ed so far */
+	short future[68 - NUMGENES];      /* total of 200 bytes */
 };
 
 
@@ -714,16 +714,16 @@ typedef    struct orbits_info ORBITS_INFO;
 
 struct orbits_info      /* for saving orbits data in a GIF file */
 {
-   double oxmin;
-   double oxmax;
-   double oymin;
-   double oymax;
-   double ox3rd;
-   double oy3rd;
-   short keep_scrn_coords;
-   char drawmode;
-   char dummy; /* need an even number of bytes */
-   short future[74];      /* total of 200 bytes */
+	double oxmin;
+	double oxmax;
+	double oymin;
+	double oymax;
+	double ox3rd;
+	double oy3rd;
+	short keep_scrn_coords;
+	char drawmode;
+	char dummy; /* need an even number of bytes */
+	short future[74];      /* total of 200 bytes */
 };
 
 #define MAXVIDEOMODES 300       /* maximum entries in fractint.cfg        */
@@ -742,56 +742,56 @@ extern  double   g_attractor_radius_fp;      /* finite attractor radius  */
 
 struct tag_more_parameters
 {
-   int      type;                       /* index in fractalname of the fractal */
-   char     *parameters[MAXPARAMS-4];    /* name of the parameters */
-   double   paramvalue[MAXPARAMS-4];    /* default parameter values */
+	int      type;                       /* index in fractalname of the fractal */
+	char     *parameters[MAX_PARAMETERS-4];    /* name of the parameters */
+	double   paramvalue[MAX_PARAMETERS-4];    /* default parameter values */
 };
 typedef struct tag_more_parameters more_parameters;
 
-struct fractalspecificstuff
+struct fractal_specific_stuff
 {
-   char  *name;                         /* name of the fractal */
-                                        /* (leading "*" supresses name display) */
-   char  *parameters[4];                 /* name of the parameters */
-   double paramvalue[4];                /* default parameter values */
-   int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
-   int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
-   unsigned flags;                      /* constraints, bits defined below */
-   float x_min;                          /* default XMIN corner */
-   float x_max;                          /* default XMAX corner */
-   float y_min;                          /* default YMIN corner */
-   float y_max;                          /* default YMAX corner */
-   int   isinteger;                     /* 1 if g_integer_fractal, 0 otherwise */
-   int   tojulia;                       /* mandel-to-julia switch */
-   int   tomandel;                      /* julia-to-mandel switch */
-   int   tofloat;                       /* integer-to-floating switch */
-   int   symmetry;                      /* applicable symmetry logic
-                                           0 = no symmetry
-                                          -1 = y-axis symmetry (If No Params)
-                                           1 = y-axis symmetry
-                                          -2 = x-axis symmetry (No Parms)
-                                           2 = x-axis symmetry
-                                          -3 = y-axis AND x-axis (No Parms)
-                                           3 = y-axis AND x-axis symmetry
-                                          -4 = polar symmetry (No Parms)
-                                           4 = polar symmetry
-                                           5 = PI (sin/cos) symmetry
-                                           6 = NEWTON (power) symmetry
-                                                                */
-   int (*orbitcalc)(void);      /* function that calculates one orbit */
-   int (*per_pixel)(void);      /* once-per-pixel init */
-   int (*per_image)(void);      /* once-per-image setup */
-   int (*calculate_type)(void);       /* name of main fractal function */
-   int orbit_bailout;           /* usual bailout value for orbit calc */
+	char  *name;                         /* name of the fractal */
+										/* (leading "*" supresses name display) */
+	char  *parameters[4];                 /* name of the parameters */
+	double paramvalue[4];                /* default parameter values */
+	int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
+	int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
+	unsigned flags;                      /* constraints, bits defined below */
+	float x_min;                          /* default XMIN corner */
+	float x_max;                          /* default XMAX corner */
+	float y_min;                          /* default YMIN corner */
+	float y_max;                          /* default YMAX corner */
+	int   isinteger;                     /* 1 if g_integer_fractal, 0 otherwise */
+	int   tojulia;                       /* mandel-to-julia switch */
+	int   tomandel;                      /* julia-to-mandel switch */
+	int   tofloat;                       /* integer-to-floating switch */
+	int   symmetry;                      /* applicable symmetry logic
+										   0 = no symmetry
+										  -1 = y-axis symmetry (If No Params)
+										   1 = y-axis symmetry
+										  -2 = x-axis symmetry (No Parms)
+										   2 = x-axis symmetry
+										  -3 = y-axis AND x-axis (No Parms)
+										   3 = y-axis AND x-axis symmetry
+										  -4 = polar symmetry (No Parms)
+										   4 = polar symmetry
+										   5 = PI (sin/cos) symmetry
+										   6 = NEWTON (power) symmetry
+																*/
+	int (*orbitcalc)(void);      /* function that calculates one orbit */
+	int (*per_pixel)(void);      /* once-per-pixel init */
+	int (*per_image)(void);      /* once-per-image setup */
+	int (*calculate_type)(void);       /* name of main fractal function */
+	int orbit_bailout;           /* usual bailout value for orbit calc */
 };
 
 struct tag_alternate_math_info
 {
-   int type;                    /* index in fractalname of the fractal */
-   int math;                    /* kind of math used */
-   int (*orbitcalc)(void);      /* function that calculates one orbit */
-   int (*per_pixel)(void);      /* once-per-pixel init */
-   int (*per_image)(void);      /* once-per-image setup */
+	int type;                    /* index in fractalname of the fractal */
+	int math;                    /* kind of math used */
+	int (*orbitcalc)(void);      /* function that calculates one orbit */
+	int (*per_pixel)(void);      /* once-per-pixel init */
+	int (*per_image)(void);      /* once-per-image setup */
 };
 
 typedef struct tag_alternate_math_info alternate_math;
@@ -865,8 +865,8 @@ enum Minor  {left_first, right_first};
 #define EVOLVE_PARM_BOX		128
 
 
-extern struct fractalspecificstuff g_fractal_specific[];
-extern struct fractalspecificstuff *g_current_fractal_specific;
+extern struct fractal_specific_stuff g_fractal_specific[];
+extern struct fractal_specific_stuff *g_current_fractal_specific;
 
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"
@@ -1031,30 +1031,23 @@ typedef struct workliststuff        WORKLIST;
 
 #define MAXCALCWORK 12
 
-struct coords {
+struct coords
+{
 	int x, y;
 };
 
-struct dblcoords {
+struct dblcoords
+{
 	double x, y;
 };
 
-extern BYTE g_trig_index[];
-extern void (*ltrig0)(void), (*ltrig1)(void), (*ltrig2)(void), (*ltrig3)(void);
-extern void (*dtrig0)(void), (*dtrig1)(void), (*dtrig2)(void), (*dtrig3)(void);
-
 struct trig_funct_lst
 {
-    char *name;
-    void (*lfunct)(void);
-    void (*dfunct)(void);
-    void (*mfunct)(void);
-} ;
-extern struct trig_funct_lst trigfn[];
-
-/* function prototypes */
-
-extern  void   (_fastcall *plot)(int, int, int);
+	char *name;
+	void (*lfunct)(void);
+	void (*dfunct)(void);
+	void (*mfunct)(void);
+};
 
 /* for overlay return stack */
 
@@ -1227,39 +1220,30 @@ extern  void   (_fastcall *plot)(int, int, int);
 #define C_PRIMARY         g_text_colors[29]
 #define C_CONTRIB         g_text_colors[30]
 
-/* structure for xmmmoveextended parameter */
-struct XMM_Move
-  {
-    unsigned long   Length;
-    unsigned int    SourceHandle;
-    unsigned long   SourceOffset;
-    unsigned int    DestHandle;
-    unsigned long   DestOffset;
-  };
-
 /* structure passed to fullscreen_prompts */
-struct fullscreenvalues
+struct full_screen_values
 {
-   int type;   /* 'd' for double, 'f' for float, 's' for string,   */
-               /* 'D' for integer in double, '*' for comment */
-               /* 'i' for integer, 'y' for yes=1 no=0              */
-               /* 0x100+n for string of length n                   */
-               /* 'l' for one of a list of strings                 */
-               /* 'L' for long */
-   union
-   {
-      double dval;      /* when type 'd' or 'f'  */
-      int    ival;      /* when type is 'i'      */
-      long   Lval;      /* when type is 'L'      */
-      char   sval[16];  /* when type is 's'      */
-      char  *sbuf;  /* when type is 0x100+n  */
-      struct {          /* when type is 'l'      */
-         int  val;      /*   selected choice     */
-         int  vlen;     /*   char len per choice */
-         char **list;   /*   list of values      */
-         int  llen;     /*   number of values    */
-      } ch;
-   } uval;
+	int type;   /* 'd' for double, 'f' for float, 's' for string,   */
+			   /* 'D' for integer in double, '*' for comment */
+			   /* 'i' for integer, 'y' for yes=1 no=0              */
+			   /* 0x100+n for string of length n                   */
+			   /* 'l' for one of a list of strings                 */
+			   /* 'L' for long */
+	union
+	{
+		double dval;      /* when type 'd' or 'f'  */
+		int    ival;      /* when type is 'i'      */
+		long   Lval;      /* when type is 'L'      */
+		char   sval[16];  /* when type is 's'      */
+		char  *sbuf;  /* when type is 0x100+n  */
+		struct
+		{          /* when type is 'l'      */
+			 int  val;      /*   selected choice     */
+			 int  vlen;     /*   char len per choice */
+			 char **list;   /*   list of values      */
+			 int  llen;     /*   number of values    */
+		} ch;
+	} uval;
 };
 
 #define   FILEATTR       0x37      /* File attributes; select all but volume labels */
@@ -1281,25 +1265,27 @@ extern struct DIR_SEARCH DTA;   /* Disk Transfer Area */
 
 typedef struct palett
 {
-   BYTE red;
-   BYTE green;
-   BYTE blue;
+	BYTE red;
+	BYTE green;
+	BYTE blue;
 }
 Palettetype;
 
 #define MAX_JUMPS 200  /* size of JUMP_CONTROL array */
 
-typedef struct frm_jmpptrs_st {
-   int      JumpOpPtr;
-   int      JumpLodPtr;
-   int      JumpStoPtr;
+typedef struct frm_jmpptrs_st
+{
+	int      JumpOpPtr;
+	int      JumpLodPtr;
+	int      JumpStoPtr;
 } JUMP_PTRS_ST;
 
 
-typedef struct frm_jump_st {
-   int      type;
-   JUMP_PTRS_ST ptrs;
-   int      DestJumpIndex;
+typedef struct frm_jump_st
+{
+	int      type;
+	JUMP_PTRS_ST ptrs;
+	int      DestJumpIndex;
 } JUMP_CONTROL_ST;
 
 #if defined(_WIN32)
@@ -1381,33 +1367,35 @@ struct ext_blk_orbits_info
 #pragma pack(pop)
 #endif
 
-struct search_path {
-   char par[FILE_MAX_PATH];
-   char frm[FILE_MAX_PATH];
-   char ifs[FILE_MAX_PATH];
-   char lsys[FILE_MAX_PATH];
+struct search_path
+{
+	char par[FILE_MAX_PATH];
+	char frm[FILE_MAX_PATH];
+	char ifs[FILE_MAX_PATH];
+	char lsys[FILE_MAX_PATH];
 } ;
 
 struct affine
 {
-   /* weird order so a,b,e and c,d,f are vectors */
-   double a;
-   double b;
-   double e;
-   double c;
-   double d;
-   double f;
+	/* weird order so a,b,e and c,d,f are vectors */
+	double a;
+	double b;
+	double e;
+	double c;
+	double d;
+	double f;
 };
 
-struct baseunit { /* smallest part of a fractint 'gene' */
-   void *addr               ; /* address of variable to be referenced */
-   void (*varyfunc)(struct baseunit*,int,int); /* pointer to func used to vary it */
-                              /* takes random number and pointer to var*/
-   int mutate ;  /* flag to switch on variation of this variable */
-                  /* 0 for no mutation, 1 for x axis, 2 for y axis */
-                  /* in steady field maps, either x or y=yes in random modes*/ 
-   char name[16]; /* name of variable (for menu ) */
-   char level;    /* mutation level at which this should become active */
+struct baseunit  /* smallest part of a fractint 'gene' */
+{
+	void *addr               ; /* address of variable to be referenced */
+	void (*varyfunc)(struct baseunit*,int,int); /* pointer to func used to vary it */
+							  /* takes random number and pointer to var*/
+	int mutate ;  /* flag to switch on variation of this variable */
+				  /* 0 for no mutation, 1 for x axis, 2 for y axis */
+				  /* in steady field maps, either x or y=yes in random modes*/ 
+	char name[16]; /* name of variable (for menu ) */
+	char level;    /* mutation level at which this should become active */
 };
 
 typedef struct baseunit    GENEBASE;
@@ -1429,8 +1417,8 @@ double fixtan( double x );
 /* function, load, store pointers  CAE fp */
 struct fls 
 { 
-   void (*function)(void);
-   union Arg *operand;
+	void (*function)(void);
+	union Arg *operand;
 };
 
 struct entryinfo

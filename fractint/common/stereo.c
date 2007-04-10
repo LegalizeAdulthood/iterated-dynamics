@@ -164,7 +164,7 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 	*bars = 1 - *bars;
 }
 
-int outline_stereo(BYTE *pixels, int linelen)
+int out_line_stereo(BYTE *pixels, int linelen)
 {
 	int i, j, x, s;
 	int *same = _alloca(sizeof(int)*g_x_dots);
@@ -227,7 +227,7 @@ int outline_stereo(BYTE *pixels, int linelen)
 		Convert current image into Auto Stereo Picture
 **************************************************************************/
 
-int do_AutoStereo(void)
+int auto_stereo(void)
 {
 	struct static_vars v;
 	BYTE savedacbox[256*3];
@@ -252,7 +252,7 @@ int do_AutoStereo(void)
 	driver_save_graphics();                      /* save graphics image */
 	memcpy(savedacbox, g_dac_box, 256*3);  /* save g_colors */
 
-	if (g_x_dots > OLDMAXPIXELS)
+	if (g_x_dots > OLD_MAX_PIXELS)
 	{
 		stop_message(0, "Stereo not allowed with resolution > 2048 pixels wide");
 		driver_buzzer(BUZZER_INTERRUPT);
@@ -292,7 +292,7 @@ int do_AutoStereo(void)
 	Y = 0;
 	if (g_image_map)
 	{
-		g_out_line = outline_stereo;
+		g_out_line = out_line_stereo;
 		while ((Y) < g_y_dots)
 		{
 			if (gifview())
@@ -315,7 +315,7 @@ int do_AutoStereo(void)
 			{
 				buf[i] = (unsigned char)(rand() % g_colors);
 			}
-			outline_stereo(buf, g_x_dots);
+			out_line_stereo(buf, g_x_dots);
 		}
 	}
 

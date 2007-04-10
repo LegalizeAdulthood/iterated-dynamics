@@ -1296,7 +1296,7 @@ finish:
 		g_dy_size = g_y_dots - 1;
 		g_sx_offset = 0;
 		g_sy_offset = 0;
-		freetempmsg();
+		free_temp_message();
 	}
 	else
 	{

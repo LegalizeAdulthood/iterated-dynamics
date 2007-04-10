@@ -232,7 +232,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			}
 			else if (g_file_type >= 1)         /* old .tga format input file */
 			{
-				g_out_line = outlin16;
+				g_out_line = out_line_16;
 			}
 			else if (g_compare_gif)            /* debug 50 */
 			{
@@ -266,7 +266,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			{
 				if (2224 == g_debug_flag)
 				{
-					char msg[MSGLEN];
+					char msg[MESSAGE_LEN];
 					sprintf(msg, "floatflag=%d", g_user_float_flag);
 					stop_message(STOPMSG_NO_BUZZER, (char *)msg);
 				}
@@ -274,7 +274,7 @@ int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
 			}
 			else
 			{
-				i = funny_glasses_call(tgaview);
+				i = funny_glasses_call(tga_view);
 			}
 			if (g_out_line_cleanup)              /* cleanup routine defined? */
 			{
@@ -570,7 +570,7 @@ resumeloop:                             /* return here on failed overlays */
 #endif
 						if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH ||
 							kbdchar == 'h' || kbdchar == 8 ||
-							check_vidmode_key(0, kbdchar) >= 0)
+							check_video_mode_key(0, kbdchar) >= 0)
 						{
 							driver_discard_screen();
 						}
@@ -661,7 +661,7 @@ resumeloop:                             /* return here on failed overlays */
 			}
 			if (g_zoom_off == TRUE && *kbdmore == 1) /* draw/clear a zoom box? */
 			{
-				drawbox(1);
+				zoom_box_draw(1);
 			}
 			if (driver_resize())
 			{
@@ -961,11 +961,11 @@ static int handle_toggle_float(void)
 static int handle_ant(void)
 {
 	int oldtype, err, i;
-	double oldparm[MAXPARAMS];
+	double oldparm[MAX_PARAMETERS];
 
 	clear_zoom_box();
 	oldtype = g_fractal_type;
-	for (i = 0; i < MAXPARAMS; i++)
+	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
 		oldparm[i] = g_parameters[i];
 	}
@@ -994,7 +994,7 @@ static int handle_ant(void)
 		driver_unstack_screen();
 	}
 	g_fractal_type = oldtype;
-	for (i = 0; i < MAXPARAMS; i++)
+	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
 		g_parameters[i] = oldparm[i];
 	}
@@ -1430,7 +1430,7 @@ static void handle_zoom_out(int *kbdmore)
 	{
 		init_pan_or_recalc(1);
 		*kbdmore = 0;
-		zoomout();                /* calc corners for zooming out */
+		zoom_box_out();                /* calc corners for zooming out */
 	}
 }
 
@@ -1466,7 +1466,7 @@ static void handle_select_video(int *kbdchar)
 {
 	driver_stack_screen();
 	*kbdchar = select_video_mode(g_adapter);
-	if (check_vidmode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
+	if (check_video_mode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
 	{
 		driver_discard_screen();
 	}
@@ -1488,7 +1488,7 @@ static void handle_mutation_level(int forward, int amount, int *kbdmore)
 
 static int handle_video_mode(int kbdchar, int *kbdmore)
 {
-	int k = check_vidmode_key(0, kbdchar);
+	int k = check_video_mode_key(0, kbdchar);
 	if (k >= 0)
 	{
 		g_adapter = k;
@@ -1545,11 +1545,11 @@ static void handle_zoom_resize(int zoom_in)
 				find_special_colors();
 				g_box_color = g_color_bright;
 				px = py = g_grid_size/2;
-				moveboxf(0.0, 0.0); /* force scrolling */
+				zoom_box_move(0.0, 0.0); /* force scrolling */
 			}
 			else
 			{
-				resizebox(-key_count(FIK_PAGE_UP));
+				zoom_box_resize(-key_count(FIK_PAGE_UP));
 			}
 		}
 	}
@@ -1564,7 +1564,7 @@ static void handle_zoom_resize(int zoom_in)
 			}
 			else
 			{
-				resizebox(key_count(FIK_PAGE_DOWN));
+				zoom_box_resize(key_count(FIK_PAGE_DOWN));
 			}
 		}
 	}
@@ -1574,7 +1574,7 @@ static void handle_zoom_stretch(int narrower)
 {
 	if (g_box_count)
 	{
-		chgboxi(0, narrower ?
+		zoom_box_change_i(0, narrower ?
 			-2*key_count(FIK_CTL_PAGE_UP) : 2*key_count(FIK_CTL_PAGE_DOWN));
 	}
 }
@@ -1644,7 +1644,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked,
 
 	case 'k':                    /* ^s is irritating, give user a single key */
 	case FIK_CTL_S:                     /* ^s RDS */
-		return handle_recalc(get_random_dot_stereogram_parameters, do_AutoStereo);
+		return handle_recalc(get_random_dot_stereogram_parameters, auto_stereo);
 
 	case 'a':                    /* starfield parms               */
 		return handle_recalc(get_starfield_params, starfield);
@@ -1872,7 +1872,7 @@ static void handle_evolver_move_selection(int *kbdchar)
 			fiddle_parameters(g_genes, unspiral_map()); /* change all parameters */
 						/* to values appropriate to the image selected */
 			set_evolve_ranges();
-			chgboxi(0, 0);
+			zoom_box_change_i(0, 0);
 			draw_parameter_box(0);
 		}
 	}
@@ -1932,11 +1932,11 @@ static void handle_evolver_zoom(int zoom_in)
 					setup_parameter_box();
 					draw_parameter_box(0);
 				}
-				moveboxf(0.0, 0.0); /* force scrolling */
+				zoom_box_move(0.0, 0.0); /* force scrolling */
 			}
 			else
 			{
-				resizebox(-key_count(FIK_PAGE_UP));
+				zoom_box_resize(-key_count(FIK_PAGE_UP));
 			}
 		}
 	}
@@ -1955,7 +1955,7 @@ static void handle_evolver_zoom(int zoom_in)
 			}
 			else
 			{
-				resizebox(key_count(FIK_PAGE_DOWN));
+				zoom_box_resize(key_count(FIK_PAGE_DOWN));
 			}
 		}
 	}
@@ -1999,7 +1999,7 @@ static void handle_evolver_grid_size(int decrement, int *kbdmore)
 	}
 	else
 	{
-		if (g_grid_size < g_screen_width/(MINPIXELS << 1))
+		if (g_grid_size < g_screen_width/(MIN_PIXELS << 1))
 		{
 			g_grid_size += 2;
 			*kbdmore = 0;
@@ -2221,7 +2221,7 @@ static void restore_zoom()
 		memcpy(g_box_y, savezoom + g_box_count*2, g_box_count*2);
 		memcpy(g_box_values, savezoom + g_box_count*4, g_box_count);
 		free(savezoom);
-		drawbox(1); /* get the g_xx_min etc variables recalc'd by redisplaying */
+		zoom_box_draw(1); /* get the g_xx_min etc variables recalc'd by redisplaying */
 		}
 }
 
@@ -2273,7 +2273,7 @@ static void move_zoombox(int keynum)
 	}
 	if (g_box_count)
 	{
-		moveboxf((double)horizontal/g_dx_size, (double)vertical/g_dy_size);
+		zoom_box_move((double)horizontal/g_dx_size, (double)vertical/g_dy_size);
 	}
 }
 
@@ -2341,7 +2341,7 @@ static void cmp_line_cleanup(void)
 void clear_zoom_box()
 {
 	g_z_width = 0;
-	drawbox(0);
+	zoom_box_draw(0);
 	reset_zoom_corners();
 }
 

@@ -148,7 +148,7 @@ int text_temp_message(char *msgparm)
 	return 0;
 }
 
-void freetempmsg()
+void free_temp_message()
 {
 	if (temptextsave != NULL)
 	{
@@ -190,7 +190,7 @@ int show_temp_message(char *msgparm)
 	{
 		if (size != (long) textxdots*textydots)
 		{
-			freetempmsg();
+			free_temp_message();
 		}
 	}
 	size = (long) textxdots*textydots;
@@ -235,7 +235,7 @@ void clear_temp_message()
 		{
 			put_line(i, 0, textxdots-1, &temptextsave[i*textxdots]);
 		}
-		if (g_using_jiim == 0)  /* jiim frees memory with freetempmsg() */
+		if (g_using_jiim == 0)  /* jiim frees memory with free_temp_message() */
 		{
 			free(temptextsave);
 			temptextsave = NULL;
@@ -256,7 +256,7 @@ void blank_rows(int row, int rows, int attr)
 
 void help_title()
 {
-	char msg[MSGLEN], buf[MSGLEN];
+	char msg[MESSAGE_LEN], buf[MESSAGE_LEN];
 	driver_set_clear(); /* clear the screen */
 #ifdef XFRACT
 	strcpy(msg,"X");
@@ -1513,7 +1513,7 @@ static int menu_checkkey(int curkey, int choice)
 			return -testkey;
 		}
 	}
-	if (check_vidmode_key(0, testkey) >= 0)
+	if (check_video_mode_key(0, testkey) >= 0)
 	{
 		return -testkey;
 	}
@@ -1870,7 +1870,7 @@ int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
 
 /* load_fractint_config
  *
- * Reads fractint.cfg, loading videoinfo entries into g_video_table.
+ * Reads fractint.cfg, loading video_info entries into g_video_table.
  * Sets the number of entries, sets g_video_table_len.
  * Past g_video_table, g_cfg_line_nums are stored for update_fractint_cfg.
  * If fractint.cfg is not found or invalid, issues a message
@@ -1975,8 +1975,8 @@ void load_fractint_config(void)
 				keynum < 0 ||
 				dotmode < 0 || dotmode > 30 ||
 				textsafe2 < 0 || textsafe2 > 4 ||
-				g_x_dots < MINPIXELS || g_x_dots > MAXPIXELS ||
-				g_y_dots < MINPIXELS || g_y_dots > MAXPIXELS ||
+				g_x_dots < MIN_PIXELS || g_x_dots > MAX_PIXELS ||
+				g_y_dots < MIN_PIXELS || g_y_dots > MAX_PIXELS ||
 				(g_colors != 0 && g_colors != 2 && g_colors != 4 && g_colors != 16 &&
 				g_colors != 256)
 			)
@@ -2047,7 +2047,7 @@ void bad_fractint_cfg_msg()
 	g_bad_config = 1; /* bad, message issued */
 }
 
-int check_vidmode_key(int option, int k)
+int check_video_mode_key(int option, int k)
 {
 	int i;
 	/* returns g_video_table entry number if the passed keystroke is a  */
@@ -2133,7 +2133,7 @@ int check_vidmode_keyname(char *kname)
 	return i;
 }
 
-void vidmode_keyname(int k, char *buf)
+void video_mode_key_name(int k, char *buf)
 {
 	/* set buffer to name of passed key number */
 	*buf = 0;

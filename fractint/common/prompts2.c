@@ -97,7 +97,7 @@ int get_toggles()
 	int oldhelpmode;
 	char prevsavename[FILE_MAX_DIR + 1];
 	char *savenameptr;
-	struct fullscreenvalues uvalues[25];
+	struct full_screen_values uvalues[25];
 	int i, j, k;
 	char old_usr_stdcalcmode;
 	long old_maxit, old_logflag;
@@ -480,7 +480,7 @@ int get_toggles2()
 	char *choices[18];
 	int oldhelpmode;
 
-	struct fullscreenvalues uvalues[23];
+	struct full_screen_values uvalues[23];
 	int i, j, k;
 
 	int old_rotate_lo, old_rotate_hi;
@@ -665,7 +665,7 @@ int passes_options(void)
 	int oldhelpmode;
 	char *passcalcmodes[] = {"rect", "line"};
 
-	struct fullscreenvalues uvalues[25];
+	struct full_screen_values uvalues[25];
 	int i, j, k;
 	int ret;
 
@@ -822,7 +822,7 @@ int get_view_params()
 {
 	char *choices[16];
 	int oldhelpmode;
-	struct fullscreenvalues uvalues[25];
+	struct full_screen_values uvalues[25];
 	int i, k;
 	float old_viewreduction, old_aspectratio;
 	int old_viewwindow, old_viewxdots, old_viewydots, old_sxdots, old_sydots;
@@ -956,7 +956,7 @@ get_view_restart:
 
 		if (g_final_aspect_ratio != old_aspectratio && g_view_crop)
 		{
-			aspectratio_crop(old_aspectratio, g_final_aspect_ratio);
+			aspect_ratio_crop(old_aspectratio, g_final_aspect_ratio);
 		}
 	}
 	else
@@ -1087,7 +1087,7 @@ int starfield(void)
 
 int get_starfield_params(void)
 {
-	struct fullscreenvalues uvalues[3];
+	struct full_screen_values uvalues[3];
 	int oldhelpmode;
 	int i;
 	char *starfield_prompts[3] =
@@ -1131,7 +1131,7 @@ int get_random_dot_stereogram_parameters(void)
 {
 	char rds6[60];
 	char *stereobars[] = {"none", "middle", "top"};
-	struct fullscreenvalues uvalues[7];
+	struct full_screen_values uvalues[7];
 	char *rds_prompts[7] =
 	{
 		"Depth Effect (negative reverses front and back)",
@@ -1243,7 +1243,7 @@ int get_a_number(double *x, double *y)
 {
 	char *choices[2];
 
-	struct fullscreenvalues uvalues[2];
+	struct full_screen_values uvalues[2];
 	int i, k;
 
 	driver_stack_screen();
@@ -1346,7 +1346,7 @@ void goodbye(void)                  /* we done.  Bail out */
 		driver_move_cursor(6, 0);
 		discardgraphics(); /* if any emm/xmm tied up there, release it */
 	}
-	stopslideshow();
+	stop_slide_show();
 	end_help();
 	ret = 0;
 	if (g_initialize_batch == INITBATCH_BAILOUT_ERROR) /* exit with error code for batch file */
@@ -2059,7 +2059,7 @@ FILE *dir_fopen(char *dir, char *filename, char *mode)
 int cmpdbl(double old, double new)
 {
 	char buf[81];
-	struct fullscreenvalues val;
+	struct full_screen_values val;
 
 	/* change the old value with the same torture the new value had */
 	val.type = 'd'; /* most values on this screen are type d */
@@ -2072,7 +2072,7 @@ int cmpdbl(double old, double new)
 
 int get_corners()
 {
-	struct fullscreenvalues values[15];
+	struct full_screen_values values[15];
 	char *prompts[15];
 	char xprompt[] = "          X";
 	char yprompt[] = "          Y";
@@ -2196,7 +2196,7 @@ gc_loop:
 		g_yy_max         = g_current_fractal_specific->y_max;
 		if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 		{
-			aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
+			aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 		}
 		if (bf_math != 0)
 		{
@@ -2287,7 +2287,7 @@ gc_loop:
 
 static int get_screen_corners(void)
 {
-	struct fullscreenvalues values[15];
+	struct full_screen_values values[15];
 	char *prompts[15];
 	char xprompt[] = "          X";
 	char yprompt[] = "          Y";
@@ -2418,7 +2418,7 @@ gsc_loop:
 		g_xx_3rd = g_orbit_x_3rd; g_yy_3rd = g_orbit_y_3rd;
 		if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 		{
-			aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
+			aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 		}
 
 		g_orbit_x_min = g_xx_min; g_orbit_x_max = g_xx_max;
@@ -2517,7 +2517,7 @@ int get_browse_parameters()
 {
 	char *choices[10];
 	int oldhelpmode;
-	struct fullscreenvalues uvalues[25];
+	struct full_screen_values uvalues[25];
 	int i, k;
 	int old_autobrowse, old_brwschecktype, old_brwscheckparms, old_doublecaution;
 	int old_minbox;

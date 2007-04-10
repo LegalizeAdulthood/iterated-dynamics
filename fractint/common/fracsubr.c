@@ -137,7 +137,7 @@ void fractal_float_to_bf(void)
 	floattobf(bfx3rd, g_xx_3rd);
 	floattobf(bfy3rd, g_yy_3rd);
 
-	for (i = 0; i < MAXPARAMS; i++)
+	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
 		if (type_has_parameter(g_fractal_type, i, NULL))
 		{

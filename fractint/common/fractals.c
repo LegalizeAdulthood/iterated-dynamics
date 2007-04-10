@@ -3517,7 +3517,7 @@ int mandelbrot_mix4_orbit_fp(void) /* from formula by Jim Muth */
  * the screen coordinates (col, row) at the current zoom corners
  * settings. The functions come in two flavors. One looks up the pixel
  * values using the precalculated grid arrays g_x0, g_x1, g_y0, and g_y1,
- * which has a speed advantage but is limited to MAXPIXELS image
+ * which has a speed advantage but is limited to MAX_PIXELS image
  * dimensions. The other calculates the complex coordinates at a
  * cost of two additions and two multiplications for each component,
  * but works at any resolution.

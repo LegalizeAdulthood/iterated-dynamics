@@ -43,7 +43,7 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 int g_box_color;
 
 #ifndef XFRACT
-void dispbox(void)
+void display_box(void)
 {
 	int i;
 	int boxc = (g_colors-1)&g_box_color;
@@ -77,12 +77,12 @@ void dispbox(void)
 	}
 }
 
-void clearbox(void)
+void clear_box(void)
 {
 	int i;
 	if (g_is_true_color && g_true_mode)
 	{
-		dispbox();
+		display_box();
 	}
 	else
 	{
@@ -95,7 +95,7 @@ void clearbox(void)
 }
 #endif
 
-void drawbox(int drawit)
+void zoom_box_draw(int drawit)
 {
 	struct coords tl, bl, tr, br; /* dot addr of topleft, botleft, etc */
 	double tmpx, tmpy, dx, dy, rotcos, rotsin, ftemp1, ftemp2;
@@ -106,7 +106,7 @@ void drawbox(int drawit)
 	{
 		if (g_box_count != 0)  /* remove the old box from display */
 		{
-			clearbox();
+			clear_box();
 			g_box_count = 0;
 		}
 		reset_zoom_corners();
@@ -198,7 +198,7 @@ void drawbox(int drawit)
 
 	if (g_box_count != 0)  /* remove the old box from display */
 	{
-		clearbox();
+		clear_box();
 		g_box_count = 0;
 	}
 
@@ -206,10 +206,10 @@ void drawbox(int drawit)
 	{
 #ifndef XFRACT
 		/* build the list of zoom box pixels */
-		addbox(tl); addbox(tr);               /* corner pixels */
-		addbox(bl); addbox(br);
-		drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y); /* top & bottom lines */
-		drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y); /* left & right lines */
+		add_box(tl); add_box(tr);               /* corner pixels */
+		add_box(bl); add_box(br);
+		draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y); /* top & bottom lines */
+		draw_lines(tl, bl, tr.x-tl.x, tr.y-tl.y); /* left & right lines */
 #else
 		g_box_x[0] = tl.x + g_sx_offset;
 		g_box_y[0] = tl.y + g_sy_offset;
@@ -221,11 +221,11 @@ void drawbox(int drawit)
 		g_box_y[3] = bl.y + g_sy_offset;
 		g_box_count = 1;
 #endif
-		dispbox();
+		display_box();
 		}
 	}
 
-void _fastcall drawlines(struct coords fr, struct coords to,
+void _fastcall draw_lines(struct coords fr, struct coords to,
 						int dx, int dy)
 {
 	int xincr, yincr, ctr;
@@ -261,8 +261,8 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 				line1.y += yincr;
 				line2.y += yincr;
 			}
-			addbox(line1);
-			addbox(line2);
+			add_box(line1);
+			add_box(line2);
 			}
 	}
 
@@ -295,13 +295,13 @@ void _fastcall drawlines(struct coords fr, struct coords to,
 				line1.x += xincr;
 				line2.x += xincr;
 			}
-			addbox(line1);
-			addbox(line2);
+			add_box(line1);
+			add_box(line2);
 		}
 	}
 }
 
-void _fastcall addbox(struct coords point)
+void _fastcall add_box(struct coords point)
 {
 #if defined(_WIN32)
 	_ASSERTE(g_box_count < NUM_BOXES);
@@ -317,7 +317,7 @@ void _fastcall addbox(struct coords point)
 		}
 	}
 
-void moveboxf(double dx, double dy)
+void zoom_box_move(double dx, double dy)
 {   int align, row, col;
 	align = check_pan();
 	if (dx != 0.0)
@@ -387,10 +387,10 @@ static void _fastcall chgboxf(double dwidth, double ddepth)
 		ddepth = 0.05-g_z_depth;
 	}
 	g_z_depth += ddepth;
-	moveboxf(dwidth/-2, ddepth/-2); /* keep it centered & check limits */
+	zoom_box_move(dwidth/-2, ddepth/-2); /* keep it centered & check limits */
 }
 
-void resizebox(int steps)
+void zoom_box_resize(int steps)
 {
 	double deltax, deltay;
 	if (g_z_depth*g_screen_aspect_ratio > g_z_width)  /* box larger on y axis */
@@ -406,7 +406,7 @@ void resizebox(int steps)
 	chgboxf(deltax, deltay);
 }
 
-void chgboxi(int dw, int dd)
+void zoom_box_change_i(int dw, int dd)
 {   /* change size by pixels */
 	chgboxf((double)dw/g_dx_size, (double)dd/g_dy_size );
 	}
@@ -568,7 +568,7 @@ void zoomoutdbl(void) /* for ctl-enter, calc corners for zooming out */
 	zmo_calc(g_sx_3rd-savxxmin, g_sy_3rd-savyymax, &g_xx_3rd, &g_yy_3rd, ftemp);
 }
 
-void zoomout(void) /* for ctl-enter, calc corners for zooming out */
+void zoom_box_out(void) /* for ctl-enter, calc corners for zooming out */
 {
 	if (bf_math)
 	{
@@ -584,7 +584,7 @@ void zoomout(void) /* for ctl-enter, calc corners for zooming out */
 #pragma optimize("e", on)  /* back to normal */
 #endif
 
-void aspectratio_crop(float oldaspect, float newaspect)
+void aspect_ratio_crop(float oldaspect, float newaspect)
 {
 	double ftemp, xmargin, ymargin;
 	if (newaspect > oldaspect)  /* new ratio is taller, crop x */
@@ -721,7 +721,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	if (g_zbx == 0.0 && g_zby == 0.0)
 	{
-		clearbox();
+		clear_box();
 		return 0; /* box is full screen, leave g_calculation_status as is */
 	}
 	col = (int)(g_zbx*(g_dx_size + PIXELROUND)); /* calc dest col, row of topleft pixel */
@@ -781,7 +781,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 				"Cancel resumes old image, continue pans and calculates a new one."))
 		{
 			g_z_width = 0; /* cancel the zoombox */
-			drawbox(1);
+			zoom_box_draw(1);
 		}
 		else
 		{
@@ -791,7 +791,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	/* now we're committed */
 	g_calculation_status = CALCSTAT_RESUMABLE;
-	clearbox();
+	clear_box();
 	if (row > 0) /* move image up */
 	{
 		for (y = 0; y < g_y_dots; ++y)

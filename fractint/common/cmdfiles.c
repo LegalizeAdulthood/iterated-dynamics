@@ -89,8 +89,8 @@ int		g_true_color = 0;              /* escape time truecolor flag */
 int		g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
 char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or g_colors=@filename */
 int		g_function_preloaded; /* if function loaded for new bifs, JCO 7/5/92 */
-float   g_screen_aspect_ratio = DEFAULTASPECT;   /* aspect ratio of the screen */
-float   g_aspect_drift = DEFAULTASPECTDRIFT;  /* how much drift is allowed and */
+float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;   /* aspect ratio of the screen */
+float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  /* how much drift is allowed and */
 								/* still forced to g_screen_aspect_ratio  */
 int		g_fast_restore = 0;          /* 1 - reset viewwindows prior to a restore
 								and do not display warnings when video
@@ -106,14 +106,14 @@ int     g_log_automatic_flag = FALSE;  /* auto calculate logmap */
 int     g_no_bof = FALSE; /* Flag to make inside=bof options not duplicate bof images */
 int		g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
 int		g_command_initialize = TRUE;               /* first time into command_files? */
-struct fractalspecificstuff *g_current_fractal_specific = NULL;
+struct fractal_specific_stuff *g_current_fractal_specific = NULL;
 char	g_formula_filename[FILE_MAX_PATH]; /* file to find (type=)formulas in */
 char	g_formula_name[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
 char	g_l_system_filename[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
 char	g_l_system_name[ITEMNAMELEN + 1];       /* Name of L-System */
 char	g_command_file[FILE_MAX_PATH]; /* file to find command sets in */
 char	g_command_name[ITEMNAMELEN + 1]; /* Name of Command set */
-char	g_command_comment[4][MAXCMT];    /* comments for command set */
+char	g_command_comment[4][MAX_COMMENT];    /* comments for command set */
 char	g_ifs_filename[FILE_MAX_PATH]; /* file to find (type=)IFS in */
 char	g_ifs_name[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
 struct search_path g_search_for;
@@ -317,7 +317,7 @@ int command_files(int argc, char **argv)
 	}
 	/*
 	{
-		char msg[MSGLEN];
+		char msg[MESSAGE_LEN];
 		sprintf(msg, "command_files colorpreloaded %d showfile %d g_save_dac %d",
 		g_color_preloaded, g_show_file, g_save_dac);
 		stop_message(0, msg);
@@ -344,7 +344,7 @@ int load_commands(FILE *infile)
 	ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
 	/*
 	{
-		char msg[MSGLEN];
+		char msg[MESSAGE_LEN];
 		sprintf(msg, "load commands colorpreloaded %d showfile %d g_save_dac %d",
 		g_color_preloaded, g_show_file, g_save_dac);
 		stop_message(0, msg);
@@ -463,7 +463,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_bail_out = 0;                         /* no user-entered bailout */
 	g_no_bof = FALSE;  /* use normal bof initialization to make bof images */
 	g_use_initial_orbit_z = 0;
-	for (i = 0; i < MAXPARAMS; i++)
+	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
 		g_parameters[i] = 0.0;     /* initial parameter values */
 	}
@@ -674,9 +674,9 @@ static int next_command(char *cmdbuf, int maxlen,
 					}
 					if (*lineptr)
 					{
-						if ((int)strlen(lineptr) >= MAXCMT)
+						if ((int)strlen(lineptr) >= MAX_COMMENT)
 						{
-							*(lineptr + MAXCMT-1) = 0;
+							*(lineptr + MAX_COMMENT-1) = 0;
 						}
 						for (i = 0; i < 4; i++)
 						{
@@ -1121,7 +1121,7 @@ static int record_colors_arg(const cmd_context *context)
 
 static int max_line_length_arg(const cmd_context *context)
 {
-	if (context->numval < MINMAXLINELENGTH || context->numval > MAXMAXLINELENGTH)
+	if (context->numval < MIN_MAX_LINE_LENGTH || context->numval > MAX_MAX_LINE_LENGTH)
 	{
 		return bad_arg(context->curarg);
 	}
@@ -1603,18 +1603,18 @@ static int params_arg(const cmd_context *context)
 {
 	int k;
 
-	if (context->totparms != context->floatparms || context->totparms > MAXPARAMS)
+	if (context->totparms != context->floatparms || context->totparms > MAX_PARAMETERS)
 	{
 		return bad_arg(context->curarg);
 	}
 	s_initial_parameters = 1;
-	for (k = 0; k < MAXPARAMS; ++k)
+	for (k = 0; k < MAX_PARAMETERS; ++k)
 	{
 		g_parameters[k] = (k < context->totparms) ? context->floatval[k] : 0.0;
 	}
 	if (bf_math)
 	{
-		for (k = 0; k < MAXPARAMS; k++)
+		for (k = 0; k < MAX_PARAMETERS; k++)
 		{
 			floattobf(bfparms[k], g_parameters[k]);
 		}
@@ -1813,7 +1813,7 @@ static int corners_arg(const cmd_context *context)
 		if (old_bf_math == 0)
 		{
 			int k;
-			for (k = 0; k < MAXPARAMS; k++)
+			for (k = 0; k < MAX_PARAMETERS; k++)
 			{
 				floattobf(bfparms[k], g_parameters[k]);
 			}
@@ -1859,7 +1859,7 @@ static int corners_arg(const cmd_context *context)
 
 			/* now get parameters and corners all over again at new
 			decimal setting */
-			for (k = 0; k < MAXPARAMS; k++)
+			for (k = 0; k < MAX_PARAMETERS; k++)
 			{
 				floattobf(bfparms[k], g_parameters[k]);
 			}
@@ -2053,7 +2053,7 @@ static int center_mag_arg(const cmd_context *context)
 		if (old_bf_math == 0)
 		{
 			int k;
-			for (k = 0; k < MAXPARAMS; k++)
+			for (k = 0; k < MAX_PARAMETERS; k++)
 			{
 				floattobf(bfparms[k], g_parameters[k]);
 			}

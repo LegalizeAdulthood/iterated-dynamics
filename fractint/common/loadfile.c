@@ -1703,7 +1703,7 @@ rescan:  /* entry for changed browse parms */
 					/* Turn all boxes off */
 					drawindow(g_color_bright, &winlist);
 #else
-					clearbox();
+					clear_box();
 #endif
 				}
 			}
@@ -1749,12 +1749,12 @@ static void drawindow(int colour, struct window *info)
 		/* big enough on screen to show up as a box so draw it */
 		/* corner pixels */
 #ifndef XFRACT
-		addbox(info->itl);
-		addbox(info->itr);
-		addbox(info->ibl);
-		addbox(info->ibr);
-		drawlines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); /* top & bottom lines */
-		drawlines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); /* left & right lines */
+		add_box(info->itl);
+		add_box(info->itr);
+		add_box(info->ibl);
+		add_box(info->ibr);
+		draw_lines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); /* top & bottom lines */
+		draw_lines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); /* left & right lines */
 #else
 		g_box_x[0] = info->itl.x + g_sx_offset;
 		g_box_y[0] = info->itl.y + g_sy_offset;
@@ -1766,7 +1766,7 @@ static void drawindow(int colour, struct window *info)
 		g_box_y[3] = info->ibl.y + g_sy_offset;
 		g_box_count = 4;
 #endif
-		dispbox();
+		display_box();
 	}
 	else  /* draw crosshairs */
 	{
@@ -1780,9 +1780,9 @@ static void drawindow(int colour, struct window *info)
 		itr.y = info->itl.y;
 		ibl.y = info->itl.y - cross_size;
 		ibl.x = info->itl.x;
-		drawlines(info->itl, itr, ibl.x-itr.x, 0); /* top & bottom lines */
-		drawlines(info->itl, ibl, 0, itr.y-ibl.y); /* left & right lines */
-		dispbox();
+		draw_lines(info->itl, itr, ibl.x-itr.x, 0); /* top & bottom lines */
+		draw_lines(info->itl, ibl, 0, itr.y-ibl.y); /* left & right lines */
+		display_box();
 #endif
 	}
 }
