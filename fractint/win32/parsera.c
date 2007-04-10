@@ -126,6 +126,8 @@ FN(StoMod2)
 FN(StoSqr)
 FN(StoSqr0)
 
+#undef FN
+
 int fform_per_pixel(void)
 {
 	_ASSERTE(0 && "fform_per_pixel called.");

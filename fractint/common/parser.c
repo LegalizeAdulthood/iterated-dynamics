@@ -221,23 +221,35 @@ unsigned int chars_in_formula;
 
 #if !defined(XFRACT)
 #define ChkLongDenom(denom)\
-	if ((denom == 0 || g_overflow) && g_save_release > 1920) {\
-		g_overflow = 1; \
-		return; \
-	}\
-	else if (denom == 0)\
-		return
+	do \
+	{ \
+		if ((denom == 0 || g_overflow) && g_save_release > 1920) \
+		{\
+			g_overflow = 1; \
+			return; \
+		}\
+		else if (denom == 0) \
+		{ \
+			return; \
+		} \
+	} \
+	while (0)
+
 #endif
 
 #define ChkFloatDenom(denom)\
-	if (fabs(denom) <= DBL_MIN)		\
-	{								\
-		if (g_save_release > 1920)	\
-		{							\
-			g_overflow = 1;			\
-		}							\
-		return;						\
-	}
+	do \
+	{ \
+		if (fabs(denom) <= DBL_MIN)		\
+		{								\
+			if (g_save_release > 1920)	\
+			{							\
+				g_overflow = 1;			\
+			}							\
+			return;						\
+		} \
+	} \
+	while (0)
 
 #define LastSqr v[4].a
 

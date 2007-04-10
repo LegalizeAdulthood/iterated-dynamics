@@ -880,7 +880,6 @@ extern struct fractal_specific_stuff *g_current_fractal_specific;
 #define lsqr(x) (multiply((x), (x), g_bit_shift))
 #endif
 
-#define CMPLXmod(z)     (sqr((z).x)+sqr((z).y))
 #define CMPLXconj(z)    ((z).y =  -((z).y))
 #define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))

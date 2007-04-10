@@ -142,8 +142,21 @@ long ExpFloat14(long x);
 #define fLog14(x, z) (void)((*(long*)&z) = \
         RegFg2Float(LogFloat14(*(long*)&x), 16))
 #define fExp14(x, z) (void)((*(long*)&z) = ExpFloat14(*(long*)&x));
-#define fPow14(x, y, z) fLog14(x, z); fMul16(z, y, z); fExp14(z, z)
-#define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
+#define fPow14(x, y, z)		\
+	do						\
+	{						\
+		fLog14(x, z);		\
+		fMul16(z, y, z);	\
+		fExp14(z, z);		\
+	} while (0)
+#define fSqrt14(x, z)		\
+	do						\
+	{						\
+		fLog14(x, z);		\
+		fShift(z, -1, z);	\
+		fExp14(z, z);		\
+	}						\
+	while (0)
 
 struct fComplex {
    float x, y, mod;
