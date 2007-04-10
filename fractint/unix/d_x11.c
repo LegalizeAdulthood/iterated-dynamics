@@ -65,7 +65,7 @@ enum
 typedef struct tagDriverX11 DriverX11;
 struct tagDriverX11
 {
-	Driver pub;
+	driver pub;
 	int onroot;				/* = 0; */
 	int fullscreen;			/* = 0; */
 	int sharecolor;			/* = 0; */
@@ -175,12 +175,12 @@ extern int (*dotread)(int, int); 	/* read-a-dot routine */
 extern void (*linewrite)();		/* write-a-line routine */
 extern void (*lineread)();		/* read-a-line routine */
 
-static void x11_terminate(Driver *drv);
-static void x11_flush(Driver *drv);
-static int x11_write_palette(Driver *drv);
-static void x11_redraw(Driver *drv);
-static int x11_resize(Driver *drv);
-static void x11_set_for_graphics(Driver *drv);
+static void x11_terminate(driver *drv);
+static void x11_flush(driver *drv);
+static int x11_write_palette(driver *drv);
+static void x11_redraw(driver *drv);
+static int x11_resize(driver *drv);
+static void x11_set_for_graphics(driver *drv);
 
 static const VIDEOINFO x11_info =
 {
@@ -646,7 +646,7 @@ xcmapstuff(DriverX11 *di)
 }
 
 static int
-x11_start_video(Driver *drv)
+x11_start_video(driver *drv)
 {
 	DIX11(drv);
 	clearXwindow(di);
@@ -654,7 +654,7 @@ x11_start_video(Driver *drv)
 }
 
 static int
-x11_end_video(Driver *drv)
+x11_end_video(driver *drv)
 {
 	return 0;				/* set flag: video ended */
 }
@@ -1592,7 +1592,7 @@ load_font(DriverX11 *di)
  *----------------------------------------------------------------------
  */
 static BYTE *
-find_font(Driver *drv, int parm)
+find_font(driver *drv, int parm)
 {
 	DIX11(drv);
 
@@ -1688,7 +1688,7 @@ find_font(Driver *drv, int parm)
  *----------------------------------------------------------------------
  */
 static void
-x11_flush(Driver *drv)
+x11_flush(driver *drv)
 {
 	DIX11(drv);
 	XSync(di->Xdp, False);
@@ -1709,7 +1709,7 @@ x11_flush(Driver *drv)
  *----------------------------------------------------------------------
  */
 static int
-x11_init(Driver *drv, int *argc, char **argv)
+x11_init(driver *drv, int *argc, char **argv)
 {
 	DIX11(drv);
 	/*
@@ -1782,7 +1782,7 @@ x11_init(Driver *drv, int *argc, char **argv)
 	return 1;
 }
 
-static int x11_validate_mode(Driver *drv, VIDEOINFO *mode)
+static int x11_validate_mode(driver *drv, VIDEOINFO *mode)
 {
 	return 0;
 }
@@ -1802,17 +1802,17 @@ static int x11_validate_mode(Driver *drv, VIDEOINFO *mode)
  *----------------------------------------------------------------------
  */
 static void
-x11_terminate(Driver *drv)
+x11_terminate(driver *drv)
 {
 	DIX11(drv);
 	doneXwindow(di);
 }
 
-static void x11_pause(Driver *drv)
+static void x11_pause(driver *drv)
 {
 }
 
-static void x11_resume(Driver *drv)
+static void x11_resume(driver *drv)
 {
 }
 
@@ -1832,7 +1832,7 @@ static void x11_resume(Driver *drv)
  *----------------------------------------------------------------------
  */
 static void
-x11_schedule_alarm(Driver *drv, int soon)
+x11_schedule_alarm(driver *drv, int soon)
 {
 	DIX11(drv);
 
@@ -1869,7 +1869,7 @@ x11_schedule_alarm(Driver *drv, int soon)
  *----------------------------------------------------------------------
  */
 static void
-x11_window(Driver *drv)
+x11_window(driver *drv)
 {
 	XSetWindowAttributes Xwatt;
 	XGCValues Xgcvals;
@@ -1986,7 +1986,7 @@ x11_window(Driver *drv)
  *----------------------------------------------------------------------
  */
 static int
-x11_resize(Driver *drv)
+x11_resize(driver *drv)
 {
 	DIX11(drv);
 	static int oldx = -1, oldy = -1;
@@ -2064,7 +2064,7 @@ x11_resize(Driver *drv)
  *----------------------------------------------------------------------
  */
 static void
-x11_redraw(Driver *drv)
+x11_redraw(driver *drv)
 {
 	DIX11(drv);
 	if (di->alarmon)
@@ -2097,7 +2097,7 @@ x11_redraw(Driver *drv)
  *----------------------------------------------------------------------
  */
 static int
-x11_read_palette(Driver *drv)
+x11_read_palette(driver *drv)
 {
 	DIX11(drv);
 	int i;
@@ -2130,7 +2130,7 @@ x11_read_palette(Driver *drv)
  *----------------------------------------------------------------------
  */
 static int
-x11_write_palette(Driver *drv)
+x11_write_palette(driver *drv)
 {
 	DIX11(drv);
 	int i;
@@ -2217,7 +2217,7 @@ x11_write_palette(Driver *drv)
  *----------------------------------------------------------------------
  */
 static int
-x11_read_pixel(Driver *drv, int x, int y)
+x11_read_pixel(driver *drv, int x, int y)
 {
 	DIX11(drv);
 	if (di->fake_lut)
@@ -2255,7 +2255,7 @@ x11_read_pixel(Driver *drv, int x, int y)
  *----------------------------------------------------------------------
  */
 static void 
-x11_write_pixel(Driver *drv, int x, int y, int color)
+x11_write_pixel(driver *drv, int x, int y, int color)
 {
 	DIX11(drv);
 #ifdef DEBUG /* Debugging checks */
@@ -2307,7 +2307,7 @@ x11_write_pixel(Driver *drv, int x, int y, int color)
  *----------------------------------------------------------------------
  */
 static void
-x11_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
+x11_read_span(driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx-x+1;
@@ -2333,7 +2333,7 @@ x11_read_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
  *----------------------------------------------------------------------
  */
 static void
-x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
+x11_write_span(driver *drv, int y, int x, int lastx, BYTE *pixels)
 {
 	int width;
 	int i;
@@ -2387,12 +2387,12 @@ x11_write_span(Driver *drv, int y, int x, int lastx, BYTE *pixels)
 #endif
 }
 
-static void x11_get_truecolor(Driver *drv,
+static void x11_get_truecolor(driver *drv,
 		int x, int y, int *r, int *g, int *b, int *a)
 {
 }
 
-static void x11_put_truecolor(Driver *drv,
+static void x11_put_truecolor(driver *drv,
 		int x, int y, int r, int g, int b, int a)
 {
 }
@@ -2413,7 +2413,7 @@ static void x11_put_truecolor(Driver *drv,
  *----------------------------------------------------------------------
  */
 static void
-x11_set_line_mode(Driver *drv, int mode)
+x11_set_line_mode(driver *drv, int mode)
 {
 	DIX11(drv);
 	di->xlastcolor = -1;
@@ -2447,22 +2447,22 @@ x11_set_line_mode(Driver *drv, int mode)
  *----------------------------------------------------------------------
  */
 static void
-x11_draw_line(Driver *drv, int x1, int y1, int x2, int y2, int color)
+x11_draw_line(driver *drv, int x1, int y1, int x2, int y2, int color)
 {
 	DIX11(drv);
 	XDrawLine(di->Xdp, di->Xw, di->Xgc, x1, y1, x2, y2);
 }
 
-static void x11_display_string(Driver *drv,
+static void x11_display_string(driver *drv,
 		int x, int y, int fg, int bg, const char *text)
 {
 }
 
-static void x11_save_graphics(Driver *drv)
+static void x11_save_graphics(driver *drv)
 {
 }
 
-static void x11_restore_graphics(Driver *drv)
+static void x11_restore_graphics(driver *drv)
 {
 }
 
@@ -2483,7 +2483,7 @@ static void x11_restore_graphics(Driver *drv)
  *----------------------------------------------------------------------
  */
 static int
-x11_get_key(Driver *drv)
+x11_get_key(driver *drv)
 {
 	int block = 1;
 	static int skipcount = 0;
@@ -2537,22 +2537,22 @@ x11_get_key(Driver *drv)
 	return 0;
 }
 
-static int x11_key_cursor(Driver *drv, int row, int col)
+static int x11_key_cursor(driver *drv, int row, int col)
 {
 	return 0;
 }
 
-static int x11_key_pressed(Driver *drv)
+static int x11_key_pressed(driver *drv)
 {
 	return 0;
 }
 
-static int x11_wait_key_pressed(Driver *drv, int timeout)
+static int x11_wait_key_pressed(driver *drv, int timeout)
 {
 	return 0;
 }
 
-static void x11_unget_key(Driver *drv, int key)
+static void x11_unget_key(driver *drv, int key)
 {
 }
 
@@ -2572,7 +2572,7 @@ static void x11_unget_key(Driver *drv, int key)
  *----------------------------------------------------------------------
  */
 static void
-x11_shell(Driver *drv)
+x11_shell(driver *drv)
 {
 	DIX11(drv);
 	SignalHandler sigint;
@@ -2634,7 +2634,7 @@ x11_shell(Driver *drv)
 ; table.  We use mode 19 for the X window.
 */
 static void
-x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
+x11_set_video_mode(driver *drv, VIDEOINFO *mode)
 {
 	if (g_disk_flag)
 	{
@@ -2672,7 +2672,7 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 }
 
 static void
-x11_put_string(Driver *drv, int row, int col, int attr, const char *msg)
+x11_put_string(driver *drv, int row, int col, int attr, const char *msg)
 {
 	DIX11(drv);
 	int r, c;
@@ -2715,7 +2715,7 @@ x11_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 
 
 static void
-x11_set_for_text(Driver *drv)
+x11_set_for_text(driver *drv)
 {
 	DIX11(drv);
 	if (! di->font_info)
@@ -2730,7 +2730,7 @@ x11_set_for_text(Driver *drv)
 }
 
 static void
-x11_set_for_graphics(Driver *drv)
+x11_set_for_graphics(driver *drv)
 {
 	DIX11(drv);
 	/* unmap text screen child window */
@@ -2741,7 +2741,7 @@ x11_set_for_graphics(Driver *drv)
 }
 
 static void
-x11_set_clear(Driver *drv)
+x11_set_clear(driver *drv)
 {
 	DIX11(drv);
 	erase_text_screen(di);
@@ -2749,21 +2749,21 @@ x11_set_clear(Driver *drv)
 }
 
 static void
-x11_move_cursor(Driver *drv, int row, int col)
+x11_move_cursor(driver *drv, int row, int col)
 {
 	/* draw reverse video text cursor at new position */
 	fprintf(stderr, "x11_move_cursor(%d,%d)\n", row, col);
 }
 
 static void
-x11_hide_text_cursor(Driver *drv)
+x11_hide_text_cursor(driver *drv)
 {
 	/* erase cursor if currently drawn */
 	fprintf(stderr, "x11_hide_text_cursor\n");
 }
 
 static void
-x11_set_attr(Driver *drv, int row, int col, int attr, int count)
+x11_set_attr(driver *drv, int row, int col, int attr, int count)
 {
 	DIX11(drv);
 	int i = col;
@@ -2785,7 +2785,7 @@ x11_set_attr(Driver *drv, int row, int col, int attr, int count)
 }
 
 static void
-x11_scroll_up(Driver *drv, int top, int bot)
+x11_scroll_up(driver *drv, int top, int bot)
 {
 	DIX11(drv);
 	int r, c;
@@ -2808,73 +2808,73 @@ x11_scroll_up(Driver *drv, int top, int bot)
 }
 
 static void
-x11_stack_screen(Driver *drv)
+x11_stack_screen(driver *drv)
 {
 	fprintf(stderr, "x11_stack_screen\n");
 }
 
 static void
-x11_unstack_screen(Driver *drv)
+x11_unstack_screen(driver *drv)
 {
 	fprintf(stderr, "x11_unstack_screen\n");
 }
 
 static void
-x11_discard_screen(Driver *drv)
+x11_discard_screen(driver *drv)
 {
 	fprintf(stderr, "x11_discard_screen\n");
 }
 
 static int
-x11_init_fm(Driver *drv)
+x11_init_fm(driver *drv)
 {
 	return 0;
 }
 
 static void
-x11_buzzer(Driver *drv, int kind)
+x11_buzzer(driver *drv, int kind)
 {
 	fprintf(stderr, "x11_buzzer(%d)\n", kind);
 }
 
 static int
-x11_sound_on(Driver *drv, int freq)
+x11_sound_on(driver *drv, int freq)
 {
 	fprintf(stderr, "x11_sound_on(%d)\n", freq);
 	return 0;
 }
 
 static void
-x11_sound_off(Driver *drv)
+x11_sound_off(driver *drv)
 {
 	fprintf(stderr, "x11_sound_off\n");
 }
 
 static void
-x11_mute(Driver *drv)
+x11_mute(driver *drv)
 {
 }
 
 static int
-x11_diskp(Driver *drv)
+x11_diskp(driver *drv)
 {
 	return 0;
 }
 
-static int x11_get_char_attr(Driver *drv)
+static int x11_get_char_attr(driver *drv)
 {
 	return 0;
 }
 
-static void x11_put_char_attr(Driver *drv, int char_attr)
+static void x11_put_char_attr(driver *drv, int char_attr)
 {
 }
 
-static void x11_delay(Driver *drv, int ms)
+static void x11_delay(driver *drv, int ms)
 {
 }
 
-static void x11_get_max_screen(Driver *drv, int *width, int *height)
+static void x11_get_max_screen(driver *drv, int *width, int *height)
 {
 	DIX11(di);
 
@@ -2882,18 +2882,18 @@ static void x11_get_max_screen(Driver *drv, int *width, int *height)
 	*height = di->Xsc->height;
 }
 
-static void x11_set_keyboard_timeout(Driver *drv, int ms)
+static void x11_set_keyboard_timeout(driver *drv, int ms)
 {
 	DIX11(di);
 	di->keyboard_timeout = ms;
 }
 
-static int x11_get_char_attr_rowcol(Driver *drv, int row, int col)
+static int x11_get_char_attr_rowcol(driver *drv, int row, int col)
 {
 	return 0;
 }
 
-static void x11_put_char_attr_rowcol(Driver *drv, int row, int col,
+static void x11_put_char_attr_rowcol(driver *drv, int row, int col,
 	int char_attr)
 {
 }
@@ -2957,4 +2957,4 @@ static DriverX11 x11_driver_info =
 	0						/* keyboard timeout */
 };
 
-Driver *x11_driver = &x11_driver_info.pub;
+driver *x11_driver = &x11_driver_info.pub;
