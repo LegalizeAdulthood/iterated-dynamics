@@ -3761,6 +3761,7 @@ static int solid_guess(void)
 }
 
 #define calcadot(c, x, y) \
+	do \
 	{ \
 		g_col = x; \
 		g_row = y; \
@@ -3769,7 +3770,8 @@ static int solid_guess(void)
 		{ \
 			return -1; \
 		} \
-	}
+	} \
+	while (0)
 
 static int _fastcall guess_row(int firstpass, int y, int blocksize)
 {

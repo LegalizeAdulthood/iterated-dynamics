@@ -72,7 +72,8 @@ extern enum MATH_TYPE MathType;
 /* the following are declared 4 dimensional as an experiment */
 /* changeing declarations to _CMPLX and _LCMPLX restores the code */
 /* to 2D */
-union Arg {
+union Arg
+{
    _CMPLX     d;
    struct MPC m;
    _LCMPLX    l;
@@ -81,7 +82,8 @@ union Arg {
    _LHCMPLX   lh; */
 };
 
-struct ConstArg {
+struct ConstArg
+{
    char *s;
    int len;
    union Arg a;
@@ -107,112 +109,249 @@ extern void (*g_trig3_d)(void);
 /* -------------------------------------------------------------------- */
 #if !defined(XFRACT)
 
-#define CMPLXmod(z)       (sqr((z).x)+sqr((z).y))
-#define CMPLXconj(z)    ((z).y =  -((z).y))
+#define CMPLXmod(z)       (sqr((z).x) + sqr((z).y))
+#define CMPLXconj(z)    ((z).y = -((z).y))
 #define LCMPLXmod(z)       (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
 
 
-#define LCMPLXtrig0(arg, out) Arg1->l = (arg); g_trig0_l(); (out)=Arg1->l
-#define LCMPLXtrig1(arg, out) Arg1->l = (arg); g_trig1_l(); (out)=Arg1->l
-#define LCMPLXtrig2(arg, out) Arg1->l = (arg); g_trig2_l(); (out)=Arg1->l
-#define LCMPLXtrig3(arg, out) Arg1->l = (arg); g_trig3_l(); (out)=Arg1->l
+#define LCMPLXtrig0(arg, out) do { Arg1->l = (arg); g_trig0_l(); (out)=Arg1->l; } while (0)
+#define LCMPLXtrig1(arg, out) do { Arg1->l = (arg); g_trig1_l(); (out)=Arg1->l; } while (0)
+#define LCMPLXtrig2(arg, out) do { Arg1->l = (arg); g_trig2_l(); (out)=Arg1->l; } while (0)
+#define LCMPLXtrig3(arg, out) do { Arg1->l = (arg); g_trig3_l(); (out)=Arg1->l; } while (0)
 
 #endif /* XFRACT */
 
-#define  CMPLXtrig0(arg, out) Arg1->d = (arg); g_trig0_d(); (out)=Arg1->d
-#define  CMPLXtrig1(arg, out) Arg1->d = (arg); g_trig1_d(); (out)=Arg1->d
-#define  CMPLXtrig2(arg, out) Arg1->d = (arg); g_trig2_d(); (out)=Arg1->d
-#define  CMPLXtrig3(arg, out) Arg1->d = (arg); g_trig3_d(); (out)=Arg1->d
+#define  CMPLXtrig0(arg, out) do { Arg1->d = (arg); g_trig0_d(); (out)=Arg1->d; } while (0)
+#define  CMPLXtrig1(arg, out) do { Arg1->d = (arg); g_trig1_d(); (out)=Arg1->d; } while (0)
+#define  CMPLXtrig2(arg, out) do { Arg1->d = (arg); g_trig2_d(); (out)=Arg1->d; } while (0)
+#define  CMPLXtrig3(arg, out) do { Arg1->d = (arg); g_trig3_d(); (out)=Arg1->d; } while (0)
 
 #if !defined(XFRACT)
 
-#define LCMPLXsin(arg, out)   Arg1->l = (arg); lStkSin();  (out) = Arg1->l
-#define LCMPLXcos(arg, out)   Arg1->l = (arg); lStkCos();  (out) = Arg1->l
-#define LCMPLXsinh(arg, out)  Arg1->l = (arg); lStkSinh(); (out) = Arg1->l
-#define LCMPLXcosh(arg, out)  Arg1->l = (arg); lStkCosh(); (out) = Arg1->l
-#define LCMPLXlog(arg, out)   Arg1->l = (arg); lStkLog();  (out) = Arg1->l
-#define LCMPLXexp(arg, out)   Arg1->l = (arg); lStkExp();  (out) = Arg1->l
-/*
-#define LCMPLXsqr(arg, out)   Arg1->l = (arg); lStkSqr();  (out) = Arg1->l
-*/
-#define LCMPLXsqr(arg, out)   \
-   (out).x = lsqr((arg).x) - lsqr((arg).y);\
-   (out).y = multiply((arg).x, (arg).y, g_bit_shift_minus_1)
-#define LCMPLXsqr_old(out)       \
-   (out).y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1);\
-   (out).x = g_temp_sqr_x_l - g_temp_sqr_y_l
+#define LCMPLXsin(arg, out)   do { Arg1->l = (arg); lStkSin();  (out) = Arg1->l; } while (0)
+#define LCMPLXcos(arg, out)   do { Arg1->l = (arg); lStkCos();  (out) = Arg1->l; } while (0)
+#define LCMPLXsinh(arg, out)  do { Arg1->l = (arg); lStkSinh(); (out) = Arg1->l; } while (0)
+#define LCMPLXcosh(arg, out)  do { Arg1->l = (arg); lStkCosh(); (out) = Arg1->l; } while (0)
+#define LCMPLXlog(arg, out)   do { Arg1->l = (arg); lStkLog();  (out) = Arg1->l; } while (0)
+#define LCMPLXexp(arg, out)   do { Arg1->l = (arg); lStkExp();  (out) = Arg1->l; } while (0)
 
-#define LCMPLXpwr(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
-         lStkPwr(); Arg1++; Arg2++; (out) = Arg2->l
-#define LCMPLXmult(arg1, arg2, out)    Arg2->l = (arg1); Arg1->l = (arg2);\
-         lStkMul(); Arg1++; Arg2++; (out) = Arg2->l
-#define LCMPLXadd(arg1, arg2, out)    \
-    (out).x = (arg1).x + (arg2).x; (out).y = (arg1).y + (arg2).y
-#define LCMPLXsub(arg1, arg2, out)    \
-    (out).x = (arg1).x - (arg2).x; (out).y = (arg1).y - (arg2).y
+#define LCMPLXsqr(arg, out)											\
+	do																\
+	{																\
+		(out).x = lsqr((arg).x) - lsqr((arg).y);					\
+		(out).y = multiply((arg).x, (arg).y, g_bit_shift_minus_1);	\
+	}																\
+	while (0)
 
-#define LCMPLXtimesreal(arg, real, out)   \
-    ((out).x = multiply((arg).x, (real), g_bit_shift), \
-     (out).y = multiply((arg).y, (real), g_bit_shift))
+#define LCMPLXsqr_old(out)													\
+	do																		\
+	{																		\
+		(out).y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1);	\
+		(out).x = g_temp_sqr_x_l - g_temp_sqr_y_l;							\
+	}																		\
+	while (0)
 
-#define LCMPLXrecip(arg, out)							\
-	{													\
-		long denom;										\
-		denom = lsqr((arg).x) + lsqr((arg).y);			\
-		if (denom == 0L)								\
-		{												\
-			g_overflow = 1;								\
-		}												\
-		else											\
-		{												\
+#define LCMPLXpwr(arg1, arg2, out)	\
+	do								\
+	{								\
+		Arg2->l = (arg1);			\
+		Arg1->l = (arg2);			\
+		lStkPwr();					\
+		Arg1++;						\
+		Arg2++;						\
+		(out) = Arg2->l;			\
+	}								\
+	while (0)
+
+#define LCMPLXmult(arg1, arg2, out)	\
+	do								\
+	{								\
+		Arg2->l = (arg1);			\
+		Arg1->l = (arg2);			\
+		lStkMul();					\
+		Arg1++;						\
+		Arg2++;						\
+		(out) = Arg2->l;			\
+	}								\
+	while (0)
+
+#define LCMPLXadd(arg1, arg2, out)		\
+	do									\
+	{									\
+		(out).x = (arg1).x + (arg2).x;	\
+		(out).y = (arg1).y + (arg2).y;	\
+	}									\
+	while (0)
+
+#define LCMPLXsub(arg1, arg2, out)		\
+	do									\
+	{									\
+		(out).x = (arg1).x - (arg2).x;	\
+		(out).y = (arg1).y - (arg2).y;	\
+	}									\
+	while (0)
+
+#define LCMPLXtimesreal(arg, real, out)						\
+	do														\
+	{														\
+		(out).x = multiply((arg).x, (real), g_bit_shift);	\
+		(out).y = multiply((arg).y, (real), g_bit_shift);	\
+	}														\
+	while (0)
+
+#define LCMPLXrecip(arg, out)								\
+	do														\
+	{														\
+		long denom;											\
+		denom = lsqr((arg).x) + lsqr((arg).y);				\
+		if (denom == 0L)									\
+		{													\
+			g_overflow = 1;									\
+		}													\
+		else												\
+		{													\
 			(out).x = divide((arg).x, denom, g_bit_shift);	\
-			(out).y = -divide((arg).y, denom, g_bit_shift);\
-		}												\
-	}
+			(out).y = -divide((arg).y, denom, g_bit_shift);	\
+		}													\
+	}														\
+	while (0)
 
 #endif /* XFRACT */
 
-#define CMPLXsin(arg, out)    (Arg1->d = (arg), dStkSin(),  (out) = Arg1->d)
-#define CMPLXcos(arg, out)    (Arg1->d = (arg), dStkCos(),  (out) = Arg1->d)
-#define CMPLXsinh(arg, out)   (Arg1->d = (arg), dStkSinh(), (out) = Arg1->d)
-#define CMPLXcosh(arg, out)   (Arg1->d = (arg), dStkCosh(), (out) = Arg1->d)
-#define CMPLXlog(arg, out)    (Arg1->d = (arg), dStkLog(),  (out) = Arg1->d)
+#define CMPLXsin(arg, out)	\
+	do						\
+	{						\
+		Arg1->d = (arg);	\
+		dStkSin();			\
+		(out) = Arg1->d;	\
+	}						\
+	while (0)
+
+#define CMPLXcos(arg, out)	\
+	do						\
+	{						\
+		Arg1->d = (arg);	\
+		dStkCos();			\
+		(out) = Arg1->d;	\
+	}						\
+	while (0)
+
+#define CMPLXsinh(arg, out)	\
+	do						\
+	{						\
+		Arg1->d = (arg);	\
+		dStkSinh();			\
+		(out) = Arg1->d;	\
+	}						\
+	while (0)
+
+#define CMPLXcosh(arg, out)	\
+	do						\
+	{						\
+		Arg1->d = (arg);	\
+		dStkCosh();			\
+		(out) = Arg1->d;	\
+	}						\
+	while (0)
+
+#define CMPLXlog(arg, out)	\
+	do						\
+	{						\
+		Arg1->d = (arg);	\
+		dStkLog();			\
+		(out) = Arg1->d;	\
+	}						\
+	while (0)
+
 #define CMPLXexp(arg, out)    (FPUcplxexp(&(arg), &(out)))
-/*
-#define CMPLXsqr(arg, out)    (Arg1->d = (arg), dStkSqr(),  (out) = Arg1->d)
-*/
-#define CMPLXsqr(arg, out)    \
-   (out).x = sqr((arg).x) - sqr((arg).y);\
-   (out).y = ((arg).x+(arg).x) * (arg).y
-#define CMPLXsqr_old(out)       \
-   (out).y = (g_old_z.x+g_old_z.x) * g_old_z.y;\
-   (out).x = g_temp_sqr_x - g_temp_sqr_y
+#define CMPLXsqr(arg, out)						\
+	do											\
+	{											\
+		(out).x = sqr((arg).x) - sqr((arg).y);	\
+		(out).y = ((arg).x+(arg).x) * (arg).y;	\
+	}											\
+	while (0)
+
+#define CMPLXsqr_old(out)							\
+	do												\
+	{												\
+		(out).y = (g_old_z.x+g_old_z.x) * g_old_z.y;\
+		(out).x = g_temp_sqr_x - g_temp_sqr_y;		\
+	}												\
+	while (0)
 
 #define CMPLXpwr(arg1, arg2, out)   (out)= ComplexPower((arg1), (arg2))
-#define CMPLXmult1(arg1, arg2, out)    Arg2->d = (arg1); Arg1->d = (arg2);\
-         dStkMul(); Arg1++; Arg2++; (out) = Arg2->d
-#define CMPLXmult(arg1, arg2, out)  \
-        {\
-           _CMPLX TmP;\
-           TmP.x = (arg1).x*(arg2).x - (arg1).y*(arg2).y;\
-           TmP.y = (arg1).x*(arg2).y + (arg1).y*(arg2).x;\
-           (out) = TmP;\
-         }
-#define CMPLXadd(arg1, arg2, out)    \
-    (out).x = (arg1).x + (arg2).x; (out).y = (arg1).y + (arg2).y
-#define CMPLXsub(arg1, arg2, out)    \
-    (out).x = (arg1).x - (arg2).x; (out).y = (arg1).y - (arg2).y
-#define CMPLXtimesreal(arg, real, out)   \
-    (out).x = (arg).x*(real);\
-    (out).y = (arg).y*(real)
 
-#define CMPLXrecip(arg, out)    \
-   { double denom; denom = sqr((arg).x) + sqr((arg).y);\
-     if(denom==0.0) {(out).x = 1.0e10;(out).y = 1.0e10;}else\
-    { (out).x =  (arg).x/denom;\
-     (out).y = -(arg).y/denom;}}
+#define CMPLXmult1(arg1, arg2, out)	\
+	do								\
+	{								\
+		Arg2->d = (arg1);			\
+		Arg1->d = (arg2);			\
+		dStkMul();					\
+		Arg1++;						\
+		Arg2++;						\
+		(out) = Arg2->d;			\
+	}								\
+	while (0)
 
-#define CMPLXneg(arg, out)  (out).x = -(arg).x; (out).y = -(arg).y
+#define CMPLXmult(arg1, arg2, out)						\
+	do													\
+	{													\
+		_CMPLX TmP;										\
+		TmP.x = (arg1).x*(arg2).x - (arg1).y*(arg2).y;	\
+		TmP.y = (arg1).x*(arg2).y + (arg1).y*(arg2).x;	\
+		(out) = TmP;									\
+	}													\
+	while (0)
+
+#define CMPLXadd(arg1, arg2, out)		\
+	do									\
+	{									\
+		(out).x = (arg1).x + (arg2).x;	\
+		(out).y = (arg1).y + (arg2).y;	\
+	}									\
+	while (0)
+
+#define CMPLXsub(arg1, arg2, out)		\
+	do									\
+	{									\
+		(out).x = (arg1).x - (arg2).x;	\
+		(out).y = (arg1).y - (arg2).y;	\
+	}									\
+	while (0)
+
+#define CMPLXtimesreal(arg, real, out)	\
+	do									\
+	{									\
+		(out).x = (arg).x*(real);		\
+		(out).y = (arg).y*(real);		\
+	}									\
+	while (0)
+
+#define CMPLXrecip(arg, out)						\
+	do												\
+	{												\
+		double denom = sqr((arg).x) + sqr((arg).y);	\
+		if (denom == 0.0)							\
+		{											\
+			(out).x = 1.0e10;						\
+			(out).y = 1.0e10;						\
+		}											\
+		else										\
+		{											\
+			(out).x =  (arg).x/denom;				\
+			(out).y = -(arg).y/denom;				\
+		}											\
+	}												\
+	while (0)
+
+#define CMPLXneg(arg, out)  \
+	do						\
+	{						\
+		(out).x = -(arg).x;	\
+		(out).y = -(arg).y; \
+	}						\
+	while (0)
 
 #endif

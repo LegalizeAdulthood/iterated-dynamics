@@ -262,77 +262,119 @@ int bail_out_manhattan_r_fp(void)
 	return 0;
 }
 
-#define BAIL_OUT_TRIG_FP()		\
-	if (fabs(g_old_z.y) >= g_rq_limit2)	\
-	{							\
-		return 1;				\
-	}
+#define BAIL_OUT_TRIG_FP()						\
+	do											\
+	{											\
+		if (fabs(g_old_z.y) >= g_rq_limit2)		\
+		{										\
+			return 1;							\
+		}										\
+	}											\
+	while (0)
 
-#define BAIL_OUT_TRIG_LONG()			\
-	if (labs(g_old_z_l.y) >= g_limit2_l)	\
-	{								\
-		return 1;					\
-	}
+#define BAIL_OUT_TRIG_LONG()					\
+	do											\
+	{											\
+		if (labs(g_old_z_l.y) >= g_limit2_l)	\
+		{										\
+			return 1;							\
+		}										\
+	}											\
+	while (0)
 
-#define BAIL_OUT_TRIG_XY_LONG()									\
-	if (labs(g_old_z_l.x) >= g_limit2_l || labs(g_old_z_l.y) >= g_limit2_l)	\
-	{														\
-		return 1;											\
-	}
+#define BAIL_OUT_TRIG_XY_LONG()					\
+	do											\
+	{											\
+		if (labs(g_old_z_l.x) >= g_limit2_l		\
+			|| labs(g_old_z_l.y) >= g_limit2_l)	\
+		{										\
+			return 1;							\
+		}										\
+	}											\
+	while (0)
 
-#define BAIL_OUT_TRIG_XY_FP()							\
-	if (fabs(g_old_z.x) >= g_rq_limit2 || fabs(g_old_z.y) >= g_rq_limit2)	\
-	{													\
-		return 1;										\
-	}
+#define BAIL_OUT_TRIG_XY_FP()					\
+	do											\
+	{											\
+		if (fabs(g_old_z.x) >= g_rq_limit2		\
+			|| fabs(g_old_z.y) >= g_rq_limit2)	\
+		{										\
+			return 1;							\
+		}										\
+	}											\
+	while (0)
 
-#define BAIL_OUT_TRIG_H_FP()		\
-	if (fabs(g_old_z.x) >= g_rq_limit2)	\
-	{							\
-		return 1;				\
-	}
-
-#define BAIL_OUT_TRIG_H_LONG()  \
-	if (labs(g_old_z_l.x) >= g_limit2_l) \
-	{ \
-		return 1; \
-	}
-
-#define BAIL_OUT_TRIG16(_x)  \
-	if (labs(_x) > TRIG_LIMIT_16) \
-	{ \
-		return 1; \
-	}
-
-#define BAIL_OUT_EXP_OLD_FP()	\
-	if (fabs(g_old_z.y) >= 1.0e8)	\
-	{							\
-		return 1;				\
-	}							\
-	if (fabs(g_old_z.x) >= 6.4e2)	\
-	{							\
-		return 1;				\
-	}
-
-#define BAIL_OUT_EXP_FP()		\
-	if (fabs(g_old_z.y) >= 1.0e3)	\
-	{							\
-		return 1;				\
-	}							\
-	if (fabs(g_old_z.x) >= 8)		\
-	{							\
-		return 1;				\
-	}
-
-#define BAIL_OUT_EXP_LONG()					\
-	if (labs(g_old_z_l.y) >= (1000L << g_bit_shift))\
+#define BAIL_OUT_TRIG_H_FP()				\
+	do										\
 	{										\
-		return 1;							\
+		if (fabs(g_old_z.x) >= g_rq_limit2)	\
+		{									\
+			return 1;						\
+		}									\
 	}										\
-	if (labs(g_old_z_l.x) >=    (8L << g_bit_shift))\
-	{										\
-		return 1;							\
-	}
+	while (0)
+
+#define BAIL_OUT_TRIG_H_LONG()					\
+	do											\
+	{											\
+		if (labs(g_old_z_l.x) >= g_limit2_l)	\
+		{										\
+			return 1;							\
+		}										\
+	}											\
+	while (0)
+
+#define BAIL_OUT_TRIG16(_x)				\
+	do									\
+	{									\
+		if (labs(_x) > TRIG_LIMIT_16)	\
+		{								\
+			return 1;					\
+		}								\
+	}									\
+	while (0)
+
+#define BAIL_OUT_EXP_OLD_FP()			\
+	do									\
+	{									\
+		if (fabs(g_old_z.y) >= 1.0e8)	\
+		{								\
+			return 1;					\
+		}								\
+		if (fabs(g_old_z.x) >= 6.4e2)	\
+		{								\
+			return 1;					\
+		}								\
+	}									\
+	while (0)
+
+#define BAIL_OUT_EXP_FP()				\
+	do									\
+	{									\
+		if (fabs(g_old_z.y) >= 1.0e3)	\
+		{								\
+			return 1;					\
+		}								\
+		if (fabs(g_old_z.x) >= 8)		\
+		{								\
+			return 1;					\
+		}								\
+	}									\
+	while (0)
+
+#define BAIL_OUT_EXP_LONG()									\
+	do														\
+	{														\
+		if (labs(g_old_z_l.y) >= (1000L << g_bit_shift))	\
+		{													\
+			return 1;										\
+		}													\
+		if (labs(g_old_z_l.x) >= (8L << g_bit_shift))		\
+		{													\
+			return 1;										\
+		}													\
+	}														\
+	while (0)
 
 #if 0
 /* this define uses usual trig instead of fast trig */
@@ -345,15 +387,19 @@ int bail_out_manhattan_r_fp(void)
 	*(pcoshx) = cosh(*(px));
 #endif
 
-#define TRIG_ARG_L(_x)    \
-	if (labs(_x) > TRIG_LIMIT_16)\
-	{\
-		double tmp = (_x); \
-		tmp /= g_fudge; \
-		tmp = fmod(tmp, g_two_pi); \
-		tmp *= g_fudge; \
-		(_x) = (long) tmp; \
-	}\
+#define TRIG_ARG_L(_x)					\
+	do									\
+	{									\
+		if (labs(_x) > TRIG_LIMIT_16)	\
+		{								\
+			double tmp = (_x);			\
+			tmp /= g_fudge;				\
+			tmp = fmod(tmp, g_two_pi);	\
+			tmp *= g_fudge;				\
+			(_x) = (long) tmp;			\
+		}								\
+	}									\
+	while (0)
 
 static int bail_out_halley(void)
 {
@@ -1456,13 +1502,17 @@ int popcorn_fn_orbit_fp(void)
 	return 0;
 }
 
-#define FIX_OVERFLOW(arg_) \
-	if (g_overflow)  \
-	{ \
-		(arg_).x = g_fudge; \
-		(arg_).y = 0; \
-		g_overflow = 0; \
-	}
+#define FIX_OVERFLOW(arg_)		\
+	do							\
+	{							\
+		if (g_overflow)			\
+		{						\
+			(arg_).x = g_fudge; \
+			(arg_).y = 0;		\
+			g_overflow = 0;		\
+		}						\
+	}							\
+	while (0)
 
 int popcorn_fn_orbit(void)
 {

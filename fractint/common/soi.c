@@ -385,9 +385,13 @@ static void put_box(int x1, int y1, int x2, int y2, int color)
 /* compute coefficients of Newton polynomial (b0, .., b2) from
 	(x0, w0), .., (x2, w2). */
 #define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
-	b0 = w0; \
-	b1 = (w1-w0)/(LDBL)(x1-x0); \
-	b2 = ((w2-w1)/(LDBL)(x2-x1)-b1)/(x2-x0)
+	do													\
+	{													\
+		b0 = w0;										\
+		b1 = (w1-w0)/(LDBL)(x1-x0);						\
+		b2 = ((w2-w1)/(LDBL)(x2-x1)-b1)/(x2-x0);		\
+	}													\
+	while (0)
 
 /* evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t */
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
@@ -444,18 +448,22 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 	under DOS is extremely limited.
 */
 
-#define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
-	ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
-	zre1 = (ZRE1); zim1 = (ZIM1); \
-	zre2 = (ZRE2); zim2 = (ZIM2); \
-	zre3 = (ZRE3); zim3 = (ZIM3); \
-	zre4 = (ZRE4); zim4 = (ZIM4); \
-	zre5 = (ZRE5); zim5 = (ZIM5); \
-	zre6 = (ZRE6); zim6 = (ZIM6); \
-	zre7 = (ZRE7); zim7 = (ZIM7); \
-	zre8 = (ZRE8); zim8 = (ZIM8); \
-	zre9 = (ZRE9); zim9 = (ZIM9); \
-	status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER))
+#define RHOMBUS(CRE1, CRE2, CIM1, CIM2,X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
+				ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
+	do \
+	{ \
+		zre1 = (ZRE1); zim1 = (ZIM1); \
+		zre2 = (ZRE2); zim2 = (ZIM2); \
+		zre3 = (ZRE3); zim3 = (ZIM3); \
+		zre4 = (ZRE4); zim4 = (ZIM4); \
+		zre5 = (ZRE5); zim5 = (ZIM5); \
+		zre6 = (ZRE6); zim6 = (ZIM6); \
+		zre7 = (ZRE7); zim7 = (ZIM7); \
+		zre8 = (ZRE8); zim8 = (ZIM8); \
+		zre9 = (ZRE9); zim9 = (ZIM9); \
+		status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)); \
+	} \
+	while (0)
 
 static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 				int x1, int x2, int y1, int y2, long iter)
