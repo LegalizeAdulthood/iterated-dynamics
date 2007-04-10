@@ -58,7 +58,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 
-struct videoinfo g_video_entry;
+struct video_info g_video_entry;
 int g_help_mode;
 
 long g_timer_start, g_timer_interval;        /* timer(...) start & total */
@@ -98,7 +98,7 @@ LDBL    g_delta_x2_fp;
 LDBL	g_delta_y2_fp;         /* screen pixel increments  */
 long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot    */
 double  g_delta_min_fp;                /* same as a double         */
-double  g_parameters[MAXPARAMS];       /* parameters               */
+double  g_parameters[MAX_PARAMETERS];       /* parameters               */
 double  g_potential_parameter[3];            /* three potential parameters*/
 long    g_fudge;                  /* 2**fudgefactor           */
 long    g_attractor_radius_l;               /* finite attractor radius  */
@@ -503,7 +503,7 @@ imagestart:                             /* calc/display a new image */
 		{
 			kbdchar = select_video_mode(-1);
 		}
-		g_adapter = check_vidmode_key(0, kbdchar);
+		g_adapter = check_video_mode_key(0, kbdchar);
 		if (g_adapter >= 0)
 		{
 			break;                                 /* got a video mode now */

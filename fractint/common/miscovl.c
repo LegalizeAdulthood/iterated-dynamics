@@ -51,7 +51,7 @@ static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2);
 static void update_fractint_cfg(void);
 static void strip_zeros(char *buf);
 
-char par_comment[4][MAXCMT];
+char par_comment[4][MAX_COMMENT];
 
 /* JIIM */
 
@@ -89,8 +89,8 @@ void make_batch_file()
 
 	int i, j;
 	char inpcommandfile[80], inpcommandname[ITEMNAMELEN + 1];
-	char inpcomment[4][MAXCMT];
-	struct fullscreenvalues paramvalues[18];
+	char inpcomment[4][MAX_COMMENT];
+	struct full_screen_values paramvalues[18];
 	char *choices[MAXPROMPTS];
 	int gotinfile;
 	char outname[FILE_MAX_PATH + 1], buf[256], buf2[128];
@@ -201,28 +201,28 @@ void make_batch_file()
 		goto skip_UI;
 	}
 
-	vidmode_keyname(g_video_entry.keynum, vidmde);
+	video_mode_key_name(g_video_entry.keynum, vidmde);
 	while (1)
 	{
 prompt_user:
 		promptnum = 0;
 		choices[promptnum] = "Parameter file";
-		paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
 		paramvalues[promptnum++].uval.sbuf = inpcommandfile;
 		choices[promptnum] = "Name";
 		paramvalues[promptnum].type = 0x100 + ITEMNAMELEN;
 		paramvalues[promptnum++].uval.sbuf = inpcommandname;
 		choices[promptnum] = "Main comment";
-		paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
 		paramvalues[promptnum++].uval.sbuf = inpcomment[0];
 		choices[promptnum] = "Second comment";
-		paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
 		paramvalues[promptnum++].uval.sbuf = inpcomment[1];
 		choices[promptnum] = "Third comment";
-		paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
 		paramvalues[promptnum++].uval.sbuf = inpcomment[2];
 		choices[promptnum] = "Fourth comment";
-		paramvalues[promptnum].type = 0x100 + MAXCMT - 1;
+		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
 		paramvalues[promptnum++].uval.sbuf = inpcomment[3];
 #ifndef XFRACT
 		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
@@ -281,7 +281,7 @@ prompt_user:
 		strcpy(g_command_name, inpcommandname);
 		for (i = 0; i < 4; i++)
 		{
-			strncpy(g_command_comment[i], inpcomment[i], MAXCMT);
+			strncpy(g_command_comment[i], inpcomment[i], MAX_COMMENT);
 		}
 #ifndef XFRACT
 		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
@@ -300,8 +300,8 @@ prompt_user:
 			int newmaxlinelength;
 			newmaxlinelength = paramvalues[promptnum-3].uval.ival;
 			if (g_max_line_length != newmaxlinelength &&
-					newmaxlinelength >= MINMAXLINELENGTH &&
-					newmaxlinelength <= MAXMAXLINELENGTH)
+					newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
+					newmaxlinelength <= MAX_MAX_LINE_LENGTH)
 				g_max_line_length = newmaxlinelength;
 		}
 		xm = paramvalues[promptnum++].uval.ival;
@@ -319,7 +319,7 @@ prompt_user:
 			i = check_vidmode_keyname(vidmde);
 			if (i > 0)
 			{
-				i = check_vidmode_key(0, i);
+				i = check_video_mode_key(0, i);
 				if (i >= 0)
 				{
 					/* get the resolution of this video mode */
@@ -788,7 +788,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 			}
 		}
 
-		for (i = (MAXPARAMS-1); i >= 0; --i)
+		for (i = (MAX_PARAMETERS-1); i >= 0; --i)
 		{
 			if (type_has_parameter((g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
 					? g_new_orbit_type : g_fractal_type, i, NULL))
@@ -1723,7 +1723,7 @@ static int getprec(double a, double b, double c)
 }
 
 /* This function calculates the precision needed to distiguish adjacent
-	pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
+	pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
 int get_precision_bf(int rezflag)
 {
@@ -1740,7 +1740,7 @@ int get_precision_bf(int rezflag)
 	bfyydel   = alloc_stack(bflength + 2);
 	bfyydel2  = alloc_stack(bflength + 2);
 	floattobf(one, 1.0);
-	rez = (rezflag == MAXREZ) ? (OLDMAXPIXELS - 1) : (g_x_dots - 1);
+	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
 
 	/* bfxxdel = (bfxmax - bfx3rd)/(g_x_dots-1) */
 	sub_bf(bfxxdel, bfxmax, bfx3rd);
@@ -1791,7 +1791,7 @@ int get_precision_bf(int rezflag)
 #endif
 
 /* This function calculates the precision needed to distiguish adjacent
-	pixels at Fractint's maximum resolution of MAXPIXELS by MAXPIXELS
+	pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
 int get_precision_dbl(int rezflag)
 {
@@ -1799,7 +1799,7 @@ int get_precision_dbl(int rezflag)
 	int digits;
 	LDBL rez;
 
-	rez = (rezflag == MAXREZ) ? (OLDMAXPIXELS -1) : (g_x_dots-1);
+	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS -1) : (g_x_dots-1);
 
 	xdel =  ((LDBL)g_xx_max - (LDBL)g_xx_3rd)/rez;
 	ydel2 = ((LDBL)g_yy_3rd - (LDBL)g_yy_min)/rez;
@@ -1821,7 +1821,7 @@ int get_precision_dbl(int rezflag)
 	if (del1 == 0)
 	{
 #ifdef DEBUG
-		showcornersdbl("get_precision_dbl");
+		show_corners_dbl("get_precision_dbl");
 #endif
 		return -1;
 	}
@@ -2138,7 +2138,7 @@ int select_video_mode(int curmode)
 	{
 		memcpy((char *)&g_video_table[MAXVIDEOMODES-1],
 					(char *)&g_video_entry, sizeof(*g_video_table));
-		ret = 1400; /* special value for check_vidmode_key */
+		ret = 1400; /* special value for check_video_mode_key */
 	}
 
 	/* update fractint.cfg for new key assignments */
@@ -2157,7 +2157,7 @@ void format_vid_table(int choice, char *buf)
 	int truecolorbits;
 	memcpy((char *)&g_video_entry, (char *)&g_video_table[entsptr[choice]],
 		sizeof(g_video_entry));
-	vidmode_keyname(g_video_entry.keynum, kname);
+	video_mode_key_name(g_video_entry.keynum, kname);
 	sprintf(buf, "%-5s %-25s %5d %5d ",  /* 44 chars */
 		kname, g_video_entry.name, g_video_entry.x_dots, g_video_entry.y_dots);
 	truecolorbits = g_video_entry.dotmode/1000;
@@ -2179,7 +2179,7 @@ void format_vid_table(int choice, char *buf)
 static int check_modekey(int curkey, int choice)
 {
 	int i, j, k, ret;
-	i = check_vidmode_key(1, curkey);
+	i = check_video_mode_key(1, curkey);
 	if (i >= 0)
 	{
 		return -1-i;
@@ -2253,7 +2253,7 @@ static void update_fractint_cfg()
 	char cfgname[100], outname[100], buf[121], kname[5];
 	FILE *cfgfile, *outfile;
 	int i, j, linenum, nextlinenum, nextmode;
-	struct videoinfo vident;
+	struct video_info vident;
 
 	findpath("fractint.cfg", cfgname);
 
@@ -2288,7 +2288,7 @@ static void update_fractint_cfg()
 		{
 			memcpy((char *)&vident, (char *)&g_video_table[nextmode],
 					sizeof(g_video_entry));
-			vidmode_keyname(vident.keynum, kname);
+			video_mode_key_name(vident.keynum, kname);
 			strcpy(buf, vident.name);
 			i = (int) strlen(buf);
 			while (i && buf[i-1] == ' ') /* strip trailing spaces to compress */
@@ -2861,7 +2861,7 @@ static char *expand_var(char *var, char *buf)
 	else if (strcmp(var, "vidkey") == 0)   /* 2 to 3 chars */
 	{
 		char vidmde[5];
-		vidmode_keyname(g_video_entry.keynum, vidmde);
+		video_mode_key_name(g_video_entry.keynum, vidmde);
 		sprintf(buf, "%s", vidmde);
 		out = buf;
 	}
@@ -2886,7 +2886,7 @@ void expand_comments(char *target, char *source)
 	char c, oldc, varname[MAXVNAME];
 	i = j = k = 0;
 	c = oldc = 0;
-	while (i < MAXCMT && j < MAXCMT && (c = *(source + i++)) != '\0')
+	while (i < MAX_COMMENT && j < MAX_COMMENT && (c = *(source + i++)) != '\0')
 	{
 		if (c == '\\' && oldc != '\\')
 		{
@@ -2917,7 +2917,7 @@ void expand_comments(char *target, char *source)
 			char *varstr;
 			varname[k] = 0;
 			varstr = expand_var(varname, buf);
-			strncpy(target + j, varstr, MAXCMT-j-1);
+			strncpy(target + j, varstr, MAX_COMMENT-j-1);
 			j += (int) strlen(varstr);
 		}
 		else if (c == esc_char && escape != 0 && oldc != '\\')
@@ -2932,7 +2932,7 @@ void expand_comments(char *target, char *source)
 	}
 	if (*source != '\0')
 	{
-		*(target + min(j, MAXCMT-1)) = '\0';
+		*(target + min(j, MAX_COMMENT-1)) = '\0';
 	}
 }
 
@@ -2956,7 +2956,7 @@ void parse_comments(char *value)
 				save = *next;
 				*next = '\0';
 			}
-			strncpy(par_comment[i], value, MAXCMT);
+			strncpy(par_comment[i], value, MAX_COMMENT);
 		}
 		if (next == NULL)
 		{

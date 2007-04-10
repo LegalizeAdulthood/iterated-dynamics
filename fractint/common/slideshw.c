@@ -131,7 +131,7 @@ static void message(int secs, char *buf)
 }
 
 /* this routine reads the file g_autokey_name and returns keystrokes */
-int slideshw()
+int slide_show()
 {
 	int out, err, i;
 	char buffer[81];
@@ -144,9 +144,9 @@ int slideshw()
 		calcwait = 0;
 	}
 	if (fpss == NULL)   /* open files first time through */
-		if (startslideshow() == 0)
+		if (start_slide_show() == 0)
 			{
-			stopslideshow();
+			stop_slide_show();
 			return 0;
 			}
 
@@ -191,7 +191,7 @@ start:
 	switch (out)
 	{
 	case EOF:
-		stopslideshow();
+		stop_slide_show();
 		return 0;
 	case '\"':        /* begin quoted string */
 		quotes = 1;
@@ -318,7 +318,7 @@ start:
 	}
 	if (out == -12345)
 	{
-		char msg[MSGLEN];
+		char msg[MESSAGE_LEN];
 		sprintf(msg, "Can't understand %s", buffer);
 		slideshowerr(msg);
 		out = 0;
@@ -327,7 +327,7 @@ start:
 }
 
 int
-startslideshow()
+start_slide_show()
 {
 	fpss = fopen(g_autokey_name, "r");
 	if (fpss == NULL)
@@ -341,7 +341,7 @@ startslideshow()
 	return g_slides;
 }
 
-void stopslideshow()
+void stop_slide_show()
 {
 	if (fpss)
 	{
@@ -351,7 +351,7 @@ void stopslideshow()
 	g_slides = SLIDES_OFF;
 }
 
-void recordshw(int key)
+void record_show(int key)
 {
 	char mn[MAX_MNEMONIC];
 	float dt;
@@ -397,10 +397,10 @@ void recordshw(int key)
 		{
 			fprintf(fpss, "%s", mn);
 		}
-		else if (check_vidmode_key(0, key) >= 0)
+		else if (check_video_mode_key(0, key) >= 0)
 		{
 			char buf[10];
-			vidmode_keyname(key, buf);
+			video_mode_key_name(key, buf);
 			fprintf(fpss, buf);
 		}
 		else /* not ASCII and not FN key */
@@ -424,7 +424,7 @@ static void sleep_secs(int secs)
 static void slideshowerr(char *msg)
 {
 	char msgbuf[300] = { "Slideshow error:\n" };
-	stopslideshow();
+	stop_slide_show();
 	strcat(msgbuf, msg);
 	stop_message(0, msgbuf);
 }

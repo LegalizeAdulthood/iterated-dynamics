@@ -321,7 +321,7 @@ int get_the_rest(void)
 	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
 	int i, k, num, numtrig;
 	char *choices[20];
-	struct fullscreenvalues uvalues[20];
+	struct full_screen_values uvalues[20];
 
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
@@ -332,7 +332,7 @@ int get_the_rest(void)
 choose_vars_restart:
 
 	k = -1;
-	for (num = MAXPARAMS; num < (NUMGENES - 5); num++)
+	for (num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
 	{
 		choices[++k] = g_genes[num].name;
 		uvalues[k].type = 'l';
@@ -377,19 +377,19 @@ choose_vars_restart:
 	switch (i)
 	{
 	case FIK_F2: /* set all off */
-		for (num = MAXPARAMS; num < NUMGENES; num++)
+		for (num = MAX_PARAMETERS; num < NUMGENES; num++)
 		{
 			g_genes[num].mutate = VARYINT_NONE;
 		}
 		goto choose_vars_restart;
 	case FIK_F3: /* set all on..alternate x and y for field map */
-		for (num = MAXPARAMS; num < NUMGENES; num ++)
+		for (num = MAX_PARAMETERS; num < NUMGENES; num ++)
 		{
 			g_genes[num].mutate = (char)((num % 2) + 1);
 		}
 		goto choose_vars_restart;
 	case FIK_F4: /* Randomize all */
-		for (num = MAXPARAMS; num < NUMGENES; num ++)
+		for (num = MAX_PARAMETERS; num < NUMGENES; num ++)
 		{
 			g_genes[num].mutate = (char)(rand() % 6);
 		}
@@ -402,7 +402,7 @@ choose_vars_restart:
 
 	/* read out values */
 	k = -1;
-	for (num = MAXPARAMS; num < (NUMGENES - 5); num++)
+	for (num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
 	{
 		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
 	}
@@ -426,9 +426,9 @@ int get_variations(void)
 	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
 	int i, k, num, numparams;
 	char *choices[20];
-	struct fullscreenvalues uvalues[20];
+	struct full_screen_values uvalues[20];
 	int firstparm = 0;
-	int lastparm  = MAXPARAMS;
+	int lastparm  = MAX_PARAMETERS;
 	int chngd = -1;
 
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
@@ -533,19 +533,19 @@ choose_vars_restart:
 	switch (i)
 	{
 	case FIK_F2: /* set all off */
-		for (num = 0; num < MAXPARAMS; num++)
+		for (num = 0; num < MAX_PARAMETERS; num++)
 		{
 			g_genes[num].mutate = VARYINT_NONE;
 		}
 		goto choose_vars_restart;
 	case FIK_F3: /* set all on..alternate x and y for field map */
-		for (num = 0; num < MAXPARAMS; num ++)
+		for (num = 0; num < MAX_PARAMETERS; num ++)
 		{
 			g_genes[num].mutate = (char)((num % 2) + 1);
 		}
 		goto choose_vars_restart;
 	case FIK_F4: /* Randomize all */
-		for (num = 0; num < MAXPARAMS; num ++)
+		for (num = 0; num < MAX_PARAMETERS; num ++)
 		{
 			g_genes[num].mutate = (char)(rand() % 6);
 		}
@@ -606,7 +606,7 @@ int get_evolve_parameters(void)
 {
 	char *choices[20];
 	int oldhelpmode;
-	struct fullscreenvalues uvalues[20];
+	struct full_screen_values uvalues[20];
 	int i, j, k, tmp;
 	int old_evolving, old_gridsz;
 	int old_variations = 0;
@@ -754,7 +754,7 @@ get_evol_restart:
 	}
 
 	g_grid_size = uvalues[++k].uval.ival;
-	tmp = g_screen_width / (MINPIXELS << 1);
+	tmp = g_screen_width / (MIN_PIXELS << 1);
 	/* (g_screen_width / 20), max # of subimages @ 20 pixels per subimage */
 	/* MAXGRIDSZ == 1024 / 20 == 51 */
 	if (g_grid_size > MAXGRIDSZ)
@@ -982,7 +982,7 @@ void draw_parameter_box(int mode)
 		memcpy(&imgbox[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
 		memcpy(&imgbox[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
 		memcpy(&imgbox[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
-		clearbox(); /* to avoid probs when one box overlaps the other */
+		clear_box(); /* to avoid probs when one box overlaps the other */
 	}
 	if (g_parameter_box_count != 0)   /* clear last parmbox */
 	{
@@ -990,7 +990,7 @@ void draw_parameter_box(int mode)
 		memcpy(&g_box_x[0], &prmbox[0], g_box_count*sizeof(g_box_x[0]));
 		memcpy(&g_box_y[0], &prmbox[g_box_count], g_box_count*sizeof(g_box_y[0]));
 		memcpy(&g_box_values[0], &prmbox[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
-		clearbox();
+		clear_box();
 	}
 
 	if (mode == 1)
@@ -1007,9 +1007,9 @@ void draw_parameter_box(int mode)
 	br.x = tr.x = ((px +1 + (int)g_parameter_zoom)*(int)(g_dx_size + 1 + grout))-g_sx_offset;
 	br.y = bl.y = ((py +1 + (int)g_parameter_zoom)*(int)(g_dy_size + 1 + grout))-g_sy_offset;
 #ifndef XFRACT
-	addbox(br); addbox(tr); addbox(bl); addbox(tl);
-	drawlines(tl, tr, bl.x-tl.x, bl.y-tl.y);
-	drawlines(tl, bl, tr.x-tl.x, tr.y-tl.y);
+	add_box(br); add_box(tr); add_box(bl); add_box(tl);
+	draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y);
+	draw_lines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
 	g_box_x[0] = tl.x + g_sx_offset;
 	g_box_y[0] = tl.y + g_sy_offset;
@@ -1023,7 +1023,7 @@ void draw_parameter_box(int mode)
 #endif
 	if (g_box_count)
 	{
-		dispbox();
+		display_box();
 		/* stash pixel values for later */
 		memcpy(&prmbox[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
 		memcpy(&prmbox[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
@@ -1037,7 +1037,7 @@ void draw_parameter_box(int mode)
 		memcpy(&g_box_x[0], &imgbox[0], g_box_count*sizeof(g_box_x[0]));
 		memcpy(&g_box_y[0], &imgbox[g_box_count], g_box_count*sizeof(g_box_y[0]));
 		memcpy(&g_box_values[0], &imgbox[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
-		dispbox();
+		display_box();
 	}
 	return;
 }

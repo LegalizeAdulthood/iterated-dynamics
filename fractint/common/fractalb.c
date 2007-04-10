@@ -35,7 +35,7 @@ void show_var_bn(char *s, bn_t n)
 		stop_message(0, (char *)msg);
 	}
 
-void showcornersdbl(char *s)
+void show_corners_dbl(char *s)
 {
 	char msg[400];
 	sprintf(msg, "%s\n"
@@ -215,7 +215,7 @@ void showaspect(char *s)
 }
 
 /* compare a double and bignumber */
-void comparevalues(char *s, LDBL x, bn_t bnx)
+void compare_values(char *s, LDBL x, bn_t bnx)
 {
 	int dec = 40;
 	char msg[100], msg1[100];
@@ -227,7 +227,7 @@ void comparevalues(char *s, LDBL x, bn_t bnx)
 	}
 }
 /* compare a double and bignumber */
-void comparevaluesbf(char *s, LDBL x, bf_t bfx)
+void compare_values_bf(char *s, LDBL x, bf_t bfx)
 {
 	int dec = 40;
 	char msg[300], msg1[300];
@@ -267,7 +267,7 @@ void corners_bf_to_float(void)
 		g_xx_3rd = (double)bftofloat(bfx3rd);
 		g_yy_3rd = (double)bftofloat(bfy3rd);
 	}
-	for (i = 0; i < MAXPARAMS; i++)
+	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
 		if (type_has_parameter(g_fractal_type, i, NULL))
 		{

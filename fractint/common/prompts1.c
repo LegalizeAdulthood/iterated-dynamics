@@ -41,7 +41,7 @@
 
 /* Routines in this module      */
 
-int prompt_value_string(char *buf, struct fullscreenvalues *val);
+int prompt_value_string(char *buf, struct full_screen_values *val);
 static  int input_field_list(int attr, char *fld, int vlen, char **list, int llen,
 							int row, int col, int (*checkkey)(int));
 static  int select_fracttype(int t);
@@ -79,7 +79,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 		char *hdg,          /* heading, lines separated by \n */
 		int numprompts,         /* there are this many prompts (max) */
 		char **prompts,     /* array of prompting pointers */
-		struct fullscreenvalues *values, /* array of values */
+		struct full_screen_values *values, /* array of values */
 		int fkeymask,           /* bit n on if Fn to cause return */
 		char *extrainfo     /* extra info box to display, \n separated */
 )
@@ -811,7 +811,7 @@ fullscreen_exit:
 	return done;
 }
 
-int prompt_value_string(char *buf, struct fullscreenvalues *val)
+int prompt_value_string(char *buf, struct full_screen_values *val)
 {  /* format value into buf, return field width */
 	int i, ret;
 	switch (val->type)
@@ -1310,7 +1310,7 @@ void set_default_parms()
 
 	if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 	{
-		aspectratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
+		aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 	}
 	for (i = 0; i < 4; i++)
 	{
@@ -1322,7 +1322,7 @@ void set_default_parms()
 	extra = find_extra_parameter(g_fractal_type);
 	if (extra > -1)
 	{
-		for (i = 0; i < MAXPARAMS-4; i++)
+		for (i = 0; i < MAX_PARAMETERS-4; i++)
 		{
 			g_parameters[i + 4] = g_more_parameters[extra].paramvalue[i];
 		}
@@ -1463,7 +1463,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	char *juliorbitname = NULL;
 	int i, j, k;
 	int curtype, numparams, numtrig;
-	struct fullscreenvalues paramvalues[30];
+	struct full_screen_values paramvalues[30];
 	char *choices[30];
 	long oldbailout = 0L;
 	int promptnum;
@@ -1472,7 +1472,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	char bailoutmsg[50];
 	int ret = 0;
 	int oldhelpmode;
-	char parmprompt[MAXPARAMS][55];
+	char parmprompt[MAX_PARAMETERS][55];
 	static char *trg[] =
 	{
 		"First Function", "Second Function", "Third Function", "Fourth Function"
@@ -1484,11 +1484,11 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	static /* Can't initialize aggregates on the stack */
 #endif
 	char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
-	struct fractalspecificstuff *jborbit = NULL;
-	struct fractalspecificstuff *savespecific;
+	struct fractal_specific_stuff *jborbit = NULL;
+	struct fractal_specific_stuff *savespecific;
 	int firstparm = 0;
-	int lastparm  = MAXPARAMS;
-	double oldparam[MAXPARAMS];
+	int lastparm  = MAX_PARAMETERS;
+	double oldparam[MAX_PARAMETERS];
 	int fkeymask = 0x40;
 	oldbailout = g_bail_out;
 	if (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
@@ -2082,7 +2082,7 @@ void load_parameters(int g_fractal_type)
 	extra = find_extra_parameter(g_fractal_type);
 	if (extra > -1)
 	{
-		for (i = 0; i < MAXPARAMS-4; i++)
+		for (i = 0; i < MAX_PARAMETERS-4; i++)
 		{
 			g_parameters[i + 4] = g_more_parameters[extra].paramvalue[i];
 		}
@@ -2835,7 +2835,7 @@ static void format_parmfile_line(int choice, char *buf)
 int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 {
 	int i, k, ret, oldhelpmode;
-	struct fullscreenvalues uvalues[20];
+	struct full_screen_values uvalues[20];
 	char *ifs3d_prompts[7] =
 	{
 		"X-axis rotation in degrees",
@@ -2909,7 +2909,7 @@ int get_3d_parameters()     /* prompt for 3D parameters */
 	int sphere;
 	char *s;
 	char *prompts3d[21];
-	struct fullscreenvalues uvalues[21];
+	struct full_screen_values uvalues[21];
 	int i, k;
 	int oldhelpmode;
 
@@ -3245,7 +3245,7 @@ return 0;
 static int get_light_params()
 {
 	char *prompts3d[13];
-	struct fullscreenvalues uvalues[13];
+	struct full_screen_values uvalues[13];
 
 	int k;
 	int oldhelpmode;
@@ -3436,7 +3436,7 @@ static int get_funny_glasses_params()
 {
 	char *prompts3d[10];
 
-	struct fullscreenvalues uvalues[10];
+	struct full_screen_values uvalues[10];
 
 	int k;
 	int oldhelpmode;

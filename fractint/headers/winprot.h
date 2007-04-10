@@ -43,8 +43,8 @@ extern void end_wait(void);
 
 extern int get_video_mode(struct fractal_info *,struct ext_blk_formula_info *);
 extern int check_vidmode_keyname(char *);
-extern void vidmode_keyname(int, char *);
-extern int check_vidmode_key(int, int);
+extern void video_mode_key_name(int, char *);
+extern int check_video_mode_key(int, int);
 extern void put_line(int, int, int, BYTE *);
 extern void get_line(int, int, int, BYTE *);
 extern void restoredac(void);
@@ -90,12 +90,12 @@ extern void rotate(int);
 extern void find_special_colors(void);
 extern int show_temp_message(char far *);
 extern void clear_temp_message(void);
-extern void freetempmsg(void);
+extern void free_temp_message(void);
 extern int disk_from_memory(long, int, void far *);
 extern int disk_to_memory(long, int, void far *);
 extern int _fastcall disk_start_common(long, long, int);
 extern long cdecl normalize(char far *);
-extern void drawbox(int);
+extern void zoom_box_draw(int);
 
 extern void farmessage(unsigned char far *);
 extern void setvideomode(int, int, int, int);
@@ -113,14 +113,14 @@ extern void disk_read_targa(unsigned int,unsigned int,BYTE *,BYTE *,BYTE *);
 extern int set_color_palette_name(char *);
 extern BYTE far *findfont(int);
 extern long cdecl readticker(void);
-extern void EndTGA(void);
+extern void tga_end(void);
 
 extern int key_count(int);
 
-extern void dispbox(void);
-extern void clearbox(void);
-extern void _fastcall addbox(struct coords);
-extern void _fastcall drawlines(struct coords, struct coords, int, int);
+extern void display_box(void);
+extern void clear_box(void);
+extern void _fastcall add_box(struct coords);
+extern void _fastcall draw_lines(struct coords, struct coords, int, int);
 extern int show_vid_length(void);
 
 extern int get_sound_params(void);
@@ -132,8 +132,8 @@ extern void mute(void);
 extern void disk_video_status(int, char far *);
 extern int tovideotable(void);
 extern void TranspPerPixel(void);
-extern void stopslideshow(void);
-extern void aspectratio_crop(float, float);
+extern void stop_slide_show(void);
+extern void aspect_ratio_crop(float, float);
 extern void setvideotext(void);
 
 /* added for Win32 port */

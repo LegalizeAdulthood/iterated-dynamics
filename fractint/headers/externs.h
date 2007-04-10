@@ -6,6 +6,9 @@
 #define DEBUG 1
 #endif
 
+extern BYTE g_trig_index[];
+extern struct trig_funct_lst trigfn[];
+extern  void   (_fastcall *plot)(int, int, int);
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int					g_adapter;							/* index into g_video_table[] */
@@ -82,7 +85,7 @@ extern int					g_color_state;
 extern int					g_color_bright;					/* brightest color in palette */
 extern int					g_color_dark;						/* darkest color in palette */
 extern int					g_color_medium;					/* nearest to medbright grey in palette */
-extern char					g_command_comment[4][MAXCMT];
+extern char					g_command_comment[4][MAX_COMMENT];
 extern char					g_command_file[FILE_MAX_PATH];
 extern char					g_command_name[ITEMNAMELEN + 1];
 extern int					g_compare_gif;
@@ -275,6 +278,18 @@ extern long					*g_y0_l;
 extern long					*g_y1_l;
 extern long					(_fastcall *g_ly_pixel)(void); /* set in FRACTALS.C */
 extern long					g_attractor_radius_l;
+extern void					(*g_trig0_l)(void);
+extern void					(*g_trig1_l)(void);
+extern void					(*g_trig2_l)(void);
+extern void					(*g_trig3_l)(void);
+extern void					(*g_trig0_d)(void);
+extern void					(*g_trig1_d)(void);
+extern void					(*g_trig2_d)(void);
+extern void					(*g_trig3_d)(void);
+extern void					(*g_trig0_m)(void);
+extern void					(*g_trig1_m)(void);
+extern void					(*g_trig2_m)(void);
+extern void					(*g_trig3_m)(void);
 extern double				g_magnitude;
 extern unsigned long		g_magnitude_limit;
 extern enum Major			g_major_method;
@@ -529,7 +544,7 @@ extern long					g_user_distance_test;
 extern char					g_user_float_flag;
 extern int					g_user_periodicity_check;
 extern char					g_user_standard_calculation_mode;
-extern struct videoinfo		g_video_entry;
+extern struct video_info		g_video_entry;
 extern VIDEOINFO			g_video_table[];
 extern int					g_video_table_len;
 extern int					g_video_type;						/* video adapter type */

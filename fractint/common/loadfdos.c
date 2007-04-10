@@ -96,7 +96,7 @@ static void format_vid_inf(int i, char *err, char *buf)
 	char kname[5];
 	memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
 				sizeof(g_video_entry));
-	vidmode_keyname(g_video_entry.keynum, kname);
+	video_mode_key_name(g_video_entry.keynum, kname);
 	sprintf(buf, "%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
 			kname, g_video_entry.name, err,
 			g_video_entry.x_dots, g_video_entry.y_dots,
@@ -546,7 +546,7 @@ static int check_modekey(int curkey, int choice)
 {
 	int i;
 	i = choice; /* avoid warning */
-	i = check_vidmode_key(0, curkey);
+	i = check_video_mode_key(0, curkey);
 	return (i >= 0) ? -100-i : 0;
 }
 #endif

@@ -18,7 +18,7 @@ static FILE *fptarga = NULL;            /* FILE pointer           */
 
 /* Main entry decoder */
 int
-tgaview()
+tga_view()
 {
 	int i;
 	int cs;
@@ -55,7 +55,7 @@ tgaview()
 
 /* Outline function for 16 bit data with 8 bit g_fudge */
 int
-outlin16(BYTE *buffer, int linelen)
+out_line_16(BYTE *buffer, int linelen)
 {
 	int i;
 	U16 *buf;

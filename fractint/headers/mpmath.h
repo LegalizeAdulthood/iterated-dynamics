@@ -92,14 +92,14 @@ extern union Arg *Arg1, *Arg2;
 extern void lStkSin(void), lStkCos(void), lStkSinh(void), lStkCosh(void), lStkLog(void), lStkExp(void), lStkSqr(void);
 extern void dStkSin(void), dStkCos(void), dStkSinh(void), dStkCosh(void), dStkLog(void), dStkExp(void), dStkSqr(void);
 
-extern void (*ltrig0)(void);
-extern void (*ltrig1)(void);
-extern void (*ltrig2)(void);
-extern void (*ltrig3)(void);
-extern void (*dtrig0)(void);
-extern void (*dtrig1)(void);
-extern void (*dtrig2)(void);
-extern void (*dtrig3)(void);
+extern void (*g_trig0_l)(void);
+extern void (*g_trig1_l)(void);
+extern void (*g_trig2_l)(void);
+extern void (*g_trig3_l)(void);
+extern void (*g_trig0_d)(void);
+extern void (*g_trig1_d)(void);
+extern void (*g_trig2_d)(void);
+extern void (*g_trig3_d)(void);
 
 /* -------------------------------------------------------------------- */
 /*   The following #defines allow the complex transcendental functions  */
@@ -113,17 +113,17 @@ extern void (*dtrig3)(void);
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
 
 
-#define LCMPLXtrig0(arg, out) Arg1->l = (arg); ltrig0(); (out)=Arg1->l
-#define LCMPLXtrig1(arg, out) Arg1->l = (arg); ltrig1(); (out)=Arg1->l
-#define LCMPLXtrig2(arg, out) Arg1->l = (arg); ltrig2(); (out)=Arg1->l
-#define LCMPLXtrig3(arg, out) Arg1->l = (arg); ltrig3(); (out)=Arg1->l
+#define LCMPLXtrig0(arg, out) Arg1->l = (arg); g_trig0_l(); (out)=Arg1->l
+#define LCMPLXtrig1(arg, out) Arg1->l = (arg); g_trig1_l(); (out)=Arg1->l
+#define LCMPLXtrig2(arg, out) Arg1->l = (arg); g_trig2_l(); (out)=Arg1->l
+#define LCMPLXtrig3(arg, out) Arg1->l = (arg); g_trig3_l(); (out)=Arg1->l
 
 #endif /* XFRACT */
 
-#define  CMPLXtrig0(arg, out) Arg1->d = (arg); dtrig0(); (out)=Arg1->d
-#define  CMPLXtrig1(arg, out) Arg1->d = (arg); dtrig1(); (out)=Arg1->d
-#define  CMPLXtrig2(arg, out) Arg1->d = (arg); dtrig2(); (out)=Arg1->d
-#define  CMPLXtrig3(arg, out) Arg1->d = (arg); dtrig3(); (out)=Arg1->d
+#define  CMPLXtrig0(arg, out) Arg1->d = (arg); g_trig0_d(); (out)=Arg1->d
+#define  CMPLXtrig1(arg, out) Arg1->d = (arg); g_trig1_d(); (out)=Arg1->d
+#define  CMPLXtrig2(arg, out) Arg1->d = (arg); g_trig2_d(); (out)=Arg1->d
+#define  CMPLXtrig3(arg, out) Arg1->d = (arg); g_trig3_d(); (out)=Arg1->d
 
 #if !defined(XFRACT)
 

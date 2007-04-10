@@ -2088,7 +2088,7 @@ static int isconst_pair(char *Str)
 	return answer;
 }
 
-struct ConstArg *isconst(char *Str, int Len)
+struct ConstArg *is_constant(char *Str, int Len)
 {
 	_CMPLX z;
 	unsigned n, j;
@@ -2331,10 +2331,10 @@ char *OPList[] =
 };
 
 
-void NotAFnct(void)
+void not_a_function(void)
 {
 }
-void FnctNotFound(void)
+void function_not_found(void)
 {
 }
 
@@ -2363,9 +2363,9 @@ int whichfn(char *s, int len)
 }
 
 #if !defined(XFRACT)
-void (*isfunct(char *Str, int Len))(void)
+t_function *is_function(char *Str, int Len)
 #else
-void (*isfunct(char *Str, int Len))(void)
+void (*is_function(char *Str, int Len))(void)
 #endif
 {
 	unsigned n;
@@ -2393,9 +2393,9 @@ void (*isfunct(char *Str, int Len))(void)
 				}
 			}
 		}
-		return FnctNotFound;
+		return function_not_found;
 	}
-	return NotAFnct;
+	return not_a_function;
 }
 
 void RecSortPrec(void)
@@ -2494,10 +2494,10 @@ static int ParseStr(char *Str, int pass)
 		StkReal = dStkReal;
 		StkImag = dStkImag;
 		StkConj = dStkConj;
-		StkTrig0 = dtrig0;   /* TIW 03-30-91 */
-		StkTrig1 = dtrig1;   /* TIW 03-30-91 */
-		StkTrig2 = dtrig2;   /* TIW 03-30-91 */
-		StkTrig3 = dtrig3;   /* TIW 03-30-91 */
+		StkTrig0 = g_trig0_d;   /* TIW 03-30-91 */
+		StkTrig1 = g_trig1_d;   /* TIW 03-30-91 */
+		StkTrig2 = g_trig2_d;   /* TIW 03-30-91 */
+		StkTrig3 = g_trig3_d;   /* TIW 03-30-91 */
 		StkFlip = dStkFlip;
 		StkTan = dStkTan;    /* TIW 04-22-91 */
 		StkTanh = dStkTanh;  /* TIW 04-22-91 */
@@ -2550,10 +2550,10 @@ static int ParseStr(char *Str, int pass)
 		StkReal = mStkReal;
 		StkImag = mStkImag;
 		StkConj = mStkConj;
-		StkTrig0 = mtrig0;  /* TIW 03-30-91 */
-		StkTrig1 = mtrig1;  /* TIW 03-30-91 */
-		StkTrig2 = mtrig2;  /* TIW 03-30-91 */
-		StkTrig3 = mtrig3;  /* TIW 03-30-91 */
+		StkTrig0 = g_trig0_m;  /* TIW 03-30-91 */
+		StkTrig1 = g_trig1_m;  /* TIW 03-30-91 */
+		StkTrig2 = g_trig2_m;  /* TIW 03-30-91 */
+		StkTrig3 = g_trig3_m;  /* TIW 03-30-91 */
 		StkFlip = mStkFlip;
 		StkTan  = mStkTan;  /* TIW 04-22-91 */
 		StkTanh  = mStkTanh; /* TIW 04-22-91 */
@@ -2606,10 +2606,10 @@ static int ParseStr(char *Str, int pass)
 		StkReal = lStkReal;
 		StkImag = lStkImag;
 		StkConj = lStkConj;
-		StkTrig0 = ltrig0;   /* TIW 03-30-91 */
-		StkTrig1 = ltrig1;   /* TIW 03-30-91 */
-		StkTrig2 = ltrig2;   /* TIW 03-30-91 */
-		StkTrig3 = ltrig3;   /* TIW 03-30-91 */
+		StkTrig0 = g_trig0_l;   /* TIW 03-30-91 */
+		StkTrig1 = g_trig1_l;   /* TIW 03-30-91 */
+		StkTrig2 = g_trig2_l;   /* TIW 03-30-91 */
+		StkTrig3 = g_trig3_l;   /* TIW 03-30-91 */
 		StkFlip = lStkFlip;
 		StkTan  = lStkTan;   /* TIW 04-22-91 */
 		StkTanh  = lStkTanh; /* TIW 04-22-91 */
@@ -2935,15 +2935,15 @@ static int ParseStr(char *Str, int pass)
 			}
 			else
 			{
-				o[g_posp].f = isfunct(&Str[InitN], Len);
-				if (o[g_posp].f != NotAFnct)
+				o[g_posp].f = is_function(&Str[InitN], Len);
+				if (o[g_posp].f != not_a_function)
 				{
 					o[g_posp++].p = 1 - (paren + Equals)*15;
 					ExpectingArg = 1;
 				}
 				else
 				{
-					c = isconst(&Str[InitN], Len);
+					c = is_constant(&Str[InitN], Len);
 					Load[g_lod_ptr++] = &(c->a);
 					o[g_posp].f = StkLod;
 					o[g_posp++].p = 1 - (paren + Equals)*15;
@@ -4278,7 +4278,7 @@ int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred 
 }
 
 
-int fpFormulaSetup(void)
+int formula_setup_fp(void)
 {
 
 	int RunFormRes;              /* CAE fp */
@@ -4315,7 +4315,7 @@ int fpFormulaSetup(void)
 #endif
 }
 
-int intFormulaSetup(void)
+int formula_setup_int(void)
 {
 #if defined(XFRACT) || defined(_WIN32)
 	return integer_unsupported();
@@ -4371,7 +4371,7 @@ static void parser_allocate(void)
 		g_formula_max_ops and g_formula_max_args. */
 	for (pass = 0; pass < 2; pass++)
 	{
-		free_workarea();
+		free_work_area();
 		if (pass == 0)
 		{
 			g_formula_max_ops = 2300; /* this value uses up about 64K memory */
@@ -4407,7 +4407,7 @@ static void parser_allocate(void)
 	g_uses_p1 = g_uses_p2 = g_uses_p3 = g_uses_p4 = g_uses_p5 = 0;
 }
 
-void free_workarea()
+void free_work_area()
 {
 	if (g_type_specific_work_area)
 	{

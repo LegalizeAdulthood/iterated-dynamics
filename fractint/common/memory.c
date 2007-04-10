@@ -71,11 +71,11 @@ static U16 next_handle(void);
 static int CheckBounds (long start, long length, U16 handle);
 static void WhichDiskError(int);
 static void DisplayError(int stored_at, long howmuch);
+static void DisplayHandle (U16 handle);
+static void DisplayMemory(void);
 
 /* Routines in this module, visible to outside routines */
 
-void DisplayMemory(void);
-void DisplayHandle (U16 handle);
 int MemoryType (U16 handle);
 void InitMemory(void);
 void ExitCheck(void);
@@ -97,7 +97,7 @@ static void WhichDiskError(int I_O)
 {
 	/* Set I_O == 1 after a file create, I_O == 2 after a file set value */
 	/* Set I_O == 3 after a file write, I_O == 4 after a file read */
-	char buf[MSGLEN];
+	char buf[MESSAGE_LEN];
 	char *pats[4] =
 	{
 		"Create file error %d:  %s",
@@ -126,7 +126,7 @@ static void DisplayError(int stored_at, long howmuch)
 /* memory type cannot be allocated due to insufficient memory, AND there */
 /* is also insufficient disk space to use as memory. */
 
-	char buf[MSGLEN*2];
+	char buf[MESSAGE_LEN*2];
 	sprintf(buf, "Allocating %ld Bytes of %s memory failed.\n"
 		"Alternate disk space is also insufficient. Goodbye",
 		howmuch, memstr[stored_at]);
@@ -229,7 +229,7 @@ static int CheckBounds (long start, long length, U16 handle)
 
 void DisplayMemory(void)
 {
-	char buf[MSGLEN];
+	char buf[MESSAGE_LEN];
 	extern unsigned long get_disk_space(void);
 
 	sprintf(buf, "disk=%lu", get_disk_space());
@@ -238,7 +238,7 @@ void DisplayMemory(void)
 
 void DisplayHandle (U16 handle)
 {
-	char buf[MSGLEN];
+	char buf[MESSAGE_LEN];
 
 	sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
 			handletable[handle].Nowhere.size);
@@ -270,7 +270,7 @@ void ExitCheck(void)
 		{
 			if (handletable[i].Nowhere.stored_at != NOWHERE)
 			{
-				char buf[MSGLEN];
+				char buf[MESSAGE_LEN];
 				sprintf(buf, "Memory type %s still allocated.  Handle = %i.",
 				memstr[handletable[i].Nowhere.stored_at], i);
 				stop_message(0, (char *)buf);
@@ -384,7 +384,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
 	if (stored_at != use_this_type && DEBUGFLAG_MEMORY == g_debug_flag)
 	{
-		char buf[MSGLEN];
+		char buf[MESSAGE_LEN];
 		sprintf(buf, "Asked for %s, allocated %lu bytes of %s, handle = %u.",
 			memstr[stored_at], toallocate, memstr[use_this_type], handle);
 		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, (char *)buf);

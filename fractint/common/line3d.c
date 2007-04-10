@@ -199,7 +199,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 		{
 			return err;
 		}
-		if (g_x_dots > OLDMAXPIXELS)
+		if (g_x_dots > OLD_MAX_PIXELS)
 		{
 			return -1;
 		}
@@ -2896,7 +2896,7 @@ static int line_3d_mem(void)
 			check_extra -= sizeof(struct minmax)*g_y_dots;
 			if (got_mem == NULL)
 			{
-				got_mem = (struct minmax *) (malloc(OLDMAXPIXELS*sizeof(struct minmax)));
+				got_mem = (struct minmax *) (malloc(OLD_MAX_PIXELS*sizeof(struct minmax)));
 			}
 			if (got_mem)
 			{

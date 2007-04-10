@@ -195,7 +195,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		*Xctr = (g_xx_min + g_xx_max)/2.0;
 		*Yctr = (g_yy_min + g_yy_max)/2.0;
 		*Magnification  = 2.0/Height;
-		*Xmagfactor =  Height / (DEFAULTASPECT*Width);
+		*Xmagfactor =  Height / (DEFAULT_ASPECT_RATIO*Width);
 		*Rotation = 0.0;
 		*Skew = 0.0;
 		}
@@ -227,7 +227,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		Height = b*sin(tmpa);
 
 		*Magnification  = 2.0/Height; /* 1/(h/2) */
-		*Xmagfactor = Height / (DEFAULTASPECT*a);
+		*Xmagfactor = Height / (DEFAULT_ASPECT_RATIO*a);
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
@@ -263,7 +263,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 			sqr(ty3rd - g_yy_3rd);
 		if (error > .001)
 		{
-			showcornersdbl("convert_center_mag problem");
+			show_corners_dbl("convert_center_mag problem");
 		}
 		g_xx_min = txmin;
 		g_xx_max = txmax;
@@ -290,7 +290,7 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	}
 
 	h = (double)(1/Magnification);
-	w = h / (DEFAULTASPECT*Xmagfactor);
+	w = h / (DEFAULT_ASPECT_RATIO*Xmagfactor);
 
 	if (Rotation == 0.0 && Skew == 0.0)
 		{ /* simple, faster case */
@@ -370,7 +370,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		add_bf(Yctr, bfymin, bfymax);
 		half_a_bf(Yctr);
 		*Magnification  = 2/Height;
-		*Xmagfactor =  (double)(Height / (DEFAULTASPECT*Width));
+		*Xmagfactor =  (double)(Height / (DEFAULT_ASPECT_RATIO*Width));
 		*Rotation = 0.0;
 		*Skew = 0.0;
 	}
@@ -432,7 +432,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 
 		Height = b*sin(tmpa);
 		*Magnification  = 2/Height; /* 1/(h/2) */
-		*Xmagfactor = (double)(Height / (DEFAULTASPECT*a));
+		*Xmagfactor = (double)(Height / (DEFAULT_ASPECT_RATIO*a));
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
@@ -475,7 +475,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 
 	h = 1/Magnification;
 	floattobf(bfh, h);
-	w = h / (DEFAULTASPECT*Xmagfactor);
+	w = h / (DEFAULT_ASPECT_RATIO*Xmagfactor);
 	floattobf(bfw, w);
 
 	if (Rotation == 0.0 && Skew == 0.0)
@@ -634,19 +634,19 @@ nextname:
 
 BYTE g_trig_index[] = {SIN, SQR, SINH, COSH};
 #if !defined(XFRACT)
-void (*ltrig0)(void) = lStkSin;
-void (*ltrig1)(void) = lStkSqr;
-void (*ltrig2)(void) = lStkSinh;
-void (*ltrig3)(void) = lStkCosh;
-void (*mtrig0)(void) = mStkSin;
-void (*mtrig1)(void) = mStkSqr;
-void (*mtrig2)(void) = mStkSinh;
-void (*mtrig3)(void) = mStkCosh;
+void (*g_trig0_l)(void) = lStkSin;
+void (*g_trig1_l)(void) = lStkSqr;
+void (*g_trig2_l)(void) = lStkSinh;
+void (*g_trig3_l)(void) = lStkCosh;
+void (*g_trig0_m)(void) = mStkSin;
+void (*g_trig1_m)(void) = mStkSqr;
+void (*g_trig2_m)(void) = mStkSinh;
+void (*g_trig3_m)(void) = mStkCosh;
 #endif
-void (*dtrig0)(void) = dStkSin;
-void (*dtrig1)(void) = dStkSqr;
-void (*dtrig2)(void) = dStkSinh;
-void (*dtrig3)(void) = dStkCosh;
+void (*g_trig0_d)(void) = dStkSin;
+void (*g_trig1_d)(void) = dStkSqr;
+void (*g_trig2_d)(void) = dStkSinh;
+void (*g_trig3_d)(void) = dStkCosh;
 
 /* struct trig_funct_lst trigfn[]  was moved to prompts1.c */
 
@@ -727,31 +727,31 @@ void set_trig_pointers(int which)
 	{
 	case 0:
 #if !defined(XFRACT) && !defined(_WIN32)
-		ltrig0 = trigfn[g_trig_index[0]].lfunct;
-		mtrig0 = trigfn[g_trig_index[0]].mfunct;
+		g_trig0_l = trigfn[g_trig_index[0]].lfunct;
+		g_trig0_m = trigfn[g_trig_index[0]].mfunct;
 #endif
-		dtrig0 = trigfn[g_trig_index[0]].dfunct;
+		g_trig0_d = trigfn[g_trig_index[0]].dfunct;
 		break;
 	case 1:
 #if !defined(XFRACT) && !defined(_WIN32)
-		ltrig1 = trigfn[g_trig_index[1]].lfunct;
-		mtrig1 = trigfn[g_trig_index[1]].mfunct;
+		g_trig1_l = trigfn[g_trig_index[1]].lfunct;
+		g_trig1_m = trigfn[g_trig_index[1]].mfunct;
 #endif
-		dtrig1 = trigfn[g_trig_index[1]].dfunct;
+		g_trig1_d = trigfn[g_trig_index[1]].dfunct;
 		break;
 	case 2:
 #if !defined(XFRACT) && !defined(_WIN32)
-		ltrig2 = trigfn[g_trig_index[2]].lfunct;
-		mtrig2 = trigfn[g_trig_index[2]].mfunct;
+		g_trig2_l = trigfn[g_trig_index[2]].lfunct;
+		g_trig2_m = trigfn[g_trig_index[2]].mfunct;
 #endif
-		dtrig2 = trigfn[g_trig_index[2]].dfunct;
+		g_trig2_d = trigfn[g_trig_index[2]].dfunct;
 		break;
 	case 3:
 #if !defined(XFRACT) && !defined(_WIN32)
-		ltrig3 = trigfn[g_trig_index[3]].lfunct;
-		mtrig3 = trigfn[g_trig_index[3]].mfunct;
+		g_trig3_l = trigfn[g_trig_index[3]].lfunct;
+		g_trig3_m = trigfn[g_trig_index[3]].mfunct;
 #endif
-		dtrig3 = trigfn[g_trig_index[3]].dfunct;
+		g_trig3_d = trigfn[g_trig_index[3]].dfunct;
 		break;
 	default: /* do 'em all */
 		for (i = 0; i < 4; i++)
@@ -839,7 +839,7 @@ int tab_display_2(char *msg)
 	show_str_var("lightname",   g_light_name,   &row, msg);
 	show_str_var("map",         g_map_name,     &row, msg);
 	write_row(row++, "Sizeof g_fractal_specific array %d",
-		g_num_fractal_types*(int)sizeof(struct fractalspecificstuff));
+		g_num_fractal_types*(int)sizeof(struct fractal_specific_stuff));
 	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
@@ -927,7 +927,7 @@ int tab_display()       /* display the status of the current image */
 	}
 	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
 	{
-		for (i = 0; i < MAXPARAMS; i += 2)
+		for (i = 0; i < MAX_PARAMETERS; i += 2)
 		{
 			if (!parameter_not_used(i))
 			{
@@ -1166,7 +1166,7 @@ top:
 	{
 		++s_row;
 	}
-	_snprintf(msg, NUM_OF(msg), "Driver: %s, %s", g_driver->name, g_driver->description);
+	_snprintf(msg, NUM_OF(msg), "driver: %s, %s", g_driver->name, g_driver->description);
 	driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
 	if (g_video_entry.x_dots && bf_math == 0)
 	{
@@ -1263,7 +1263,7 @@ top:
 
 	if (type_has_parameter(g_fractal_type, 0, msg) || hasformparam)
 	{
-		for (i = 0; i < MAXPARAMS; i++)
+		for (i = 0; i < MAX_PARAMETERS; i++)
 		{
 			int col;
 			char p[50];
