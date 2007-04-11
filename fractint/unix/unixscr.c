@@ -75,8 +75,6 @@ extern VIDEOINFO x11_video_table[];
 
 extern unsigned char dacbox[256][3];
 
-extern void drawbox();
-
 extern void fpe_handler();
 
 extern WINDOW *curwin;
@@ -2227,7 +2225,7 @@ static void OnButtonPress(XEvent *xevent,
 	}
 	XSetFunction(Xdp, Xgc, xlastfcn);
 	XZoomWaiting = 1;
-	drawbox(0);
+	zoom_box_draw(0);
 }
 
 static int OnConfigureNotify(int *drawn)

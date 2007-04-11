@@ -219,24 +219,24 @@ int block;
     }
     curkey = xgetkey(0);
     if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
-	stopslideshow();
+	stop_slide_show();
 	return 0;
     }
 
     if (curkey==0 && g_slides==SLIDES_PLAY) {
-	curkey = slideshw();
+	curkey = slide_show();
     }
 
     if (curkey==0 && block) {
 	curkey = xgetkey(1);
 	if (g_slides==SLIDES_PLAY && curkey == FIK_ESC) {
-	    stopslideshow();
+	    stop_slide_show();
 	    return 0;
 	}
     }
 
     if (curkey && g_slides==SLIDES_RECORD) {
-	recordshw(curkey);
+	record_show(curkey);
     }
 
     return curkey;

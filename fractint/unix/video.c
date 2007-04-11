@@ -521,7 +521,7 @@ findfont (fontparm)
  */
 
 void
-dispbox (void)
+display_box(void)
 {
   if (g_box_count)
     {
@@ -536,9 +536,9 @@ dispbox (void)
 }
 
 void
-clearbox (void)
+clear_box(void)
 {
-  dispbox ();
+  display_box();
 }
 
 int
