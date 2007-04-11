@@ -41,9 +41,9 @@ static void julman()
 
 /* routines in this module      */
 
-int main_menu_switch(int*, int*, int*, char*, int);
-int evolver_menu_switch(int*, int*, int*, char*);
-int big_while_loop(int *kbdmore, char *stacked, int resumeflag);
+int main_menu_switch(int*, int*, int*, int *stacked, int);
+int evolver_menu_switch(int*, int*, int*, int *stacked);
+int big_while_loop(int *kbdmore, int *stacked, int resumeflag);
 static void move_zoombox(int);
 char g_from_text_flag = 0;         /* = 1 if we're in graphics mode */
 static int call_line3d(BYTE *pixels, int linelen);
@@ -57,7 +57,7 @@ char g_standard_calculation_mode_old;
 static char *savezoom;
 void (*g_out_line_cleanup)(void);
 
-int big_while_loop(int *kbdmore, char *stacked, int resumeflag)
+int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 {
 	int     frommandel;                  /* if julia entered from mandel */
 	int     axmode = 0; /* video mode (BIOS ##)    */
@@ -671,7 +671,7 @@ resumeloop:                             /* return here on failed overlays */
 	}
 }
 
-static int look(char *stacked)
+static int look(int *stacked)
 {
 	int oldhelpmode;
 	oldhelpmode = g_help_mode;
@@ -1201,7 +1201,7 @@ static void handle_inverse_julia_toggle(int *kbdmore)
 	}
 }
 
-static int handle_history(char *stacked, int kbdchar)
+static int handle_history(int *stacked, int kbdchar)
 {
 	if (g_name_stack_ptr >= 1)
 	{
@@ -1355,7 +1355,7 @@ static int handle_evolver_save_to_disk(void)
 	return CONTINUE;
 }
 
-static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
+static int handle_restore_from(int *frommandel, int kbdchar, int *stacked)
 {
 	g_compare_gif = 0;
 	*frommandel = 0;
@@ -1394,7 +1394,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, char *stacked)
 	return RESTORESTART;
 }
 
-static int handle_look_for_files(char *stacked)
+static int handle_look_for_files(int *stacked)
 {
 	if ((g_z_width != 0) || driver_diskp())
 	{
@@ -1585,7 +1585,7 @@ static int handle_restart(void)
 	return RESTART;
 }
 
-int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked, int axmode)
+int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, int *stacked, int axmode)
 {
 	long old_maxit;
 
@@ -1793,7 +1793,7 @@ static void handle_evolver_exit(int *kbdmore)
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
-static int handle_evolver_history(char *stacked, int *kbdchar)
+static int handle_evolver_history(int *stacked, int *kbdchar)
 {
 	if (g_max_history > 0 && bf_math == 0)
 	{
@@ -2035,7 +2035,7 @@ static void handle_mutation_off(int *kbdmore)
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
-int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, char *stacked)
+int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, int *stacked)
 {
 	switch (*kbdchar)
 	{

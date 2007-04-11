@@ -512,11 +512,11 @@ extern int elapsed_time(int);
 
 /*  framain2 -- C file prototypes */
 
-extern int big_while_loop(int *, char *, int);
+extern int big_while_loop(int *kbd_more, int *stacked, int resume_flag);
 extern int check_key(void);
 extern int cmp_line(BYTE *, int);
 extern int key_count(int);
-extern int main_menu_switch(int *, int *, int *, char *, int);
+extern int main_menu_switch(int *, int *, int *, int *, int);
 extern int potential_line(BYTE *, int);
 extern int sound_line(BYTE *, int);
 #if !defined(XFRACT)
