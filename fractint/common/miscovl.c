@@ -55,7 +55,7 @@ char par_comment[4][MAX_COMMENT];
 
 /* JIIM */
 
-FILE *parmfile;
+static FILE *parmfile;
 
 #define PAR_KEY(x)  (x < 10 ? '0' + x : 'a' - 10 + x)
 
