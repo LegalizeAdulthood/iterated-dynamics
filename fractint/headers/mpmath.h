@@ -107,7 +107,6 @@ extern void (*g_trig3_d)(void);
 /*   The following #defines allow the complex transcendental functions  */
 /*   in parser.c to be used here thus avoiding duplicated code.         */
 /* -------------------------------------------------------------------- */
-#if !defined(XFRACT)
 
 #define CMPLXmod(z)       (sqr((z).x) + sqr((z).y))
 #define CMPLXconj(z)    ((z).y = -((z).y))
@@ -120,14 +119,10 @@ extern void (*g_trig3_d)(void);
 #define LCMPLXtrig2(arg, out) do { Arg1->l = (arg); g_trig2_l(); (out)=Arg1->l; } while (0)
 #define LCMPLXtrig3(arg, out) do { Arg1->l = (arg); g_trig3_l(); (out)=Arg1->l; } while (0)
 
-#endif /* XFRACT */
-
 #define  CMPLXtrig0(arg, out) do { Arg1->d = (arg); g_trig0_d(); (out)=Arg1->d; } while (0)
 #define  CMPLXtrig1(arg, out) do { Arg1->d = (arg); g_trig1_d(); (out)=Arg1->d; } while (0)
 #define  CMPLXtrig2(arg, out) do { Arg1->d = (arg); g_trig2_d(); (out)=Arg1->d; } while (0)
 #define  CMPLXtrig3(arg, out) do { Arg1->d = (arg); g_trig3_d(); (out)=Arg1->d; } while (0)
-
-#if !defined(XFRACT)
 
 #define LCMPLXsin(arg, out)   do { Arg1->l = (arg); lStkSin();  (out) = Arg1->l; } while (0)
 #define LCMPLXcos(arg, out)   do { Arg1->l = (arg); lStkCos();  (out) = Arg1->l; } while (0)
@@ -216,8 +211,6 @@ extern void (*g_trig3_d)(void);
 		}													\
 	}														\
 	while (0)
-
-#endif /* XFRACT */
 
 #define CMPLXsin(arg, out)	\
 	do						\

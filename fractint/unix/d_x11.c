@@ -50,7 +50,6 @@ extern int slowdisplay;
 extern	int	inside_help;
 extern VIDEOINFO x11_video_table[];
 
-extern void drawbox();
 extern void fpe_handler();
 
 typedef unsigned long XPixel;
@@ -1277,7 +1276,7 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 	}
 	XSetFunction(di->Xdp, di->Xgc, di->xlastfcn);
 	di->XZoomWaiting = 1;
-	drawbox(0);
+	zoom_box_draw(0);
 }
 
 static void
