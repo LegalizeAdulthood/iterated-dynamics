@@ -255,11 +255,6 @@ static void set_cpu_fpu(void)
 	{
 		g_fpu = 0;
 	}
-
-	if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
-	{
-		setup_287_code();
-	}
 }
 
 static void main_restart(int argc, char *argv[], int *stacked)

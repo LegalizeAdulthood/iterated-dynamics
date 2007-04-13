@@ -332,7 +332,7 @@ struct fractal_specific_stuff g_fractal_specific[] =
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LAMBDACOS, MANOWAR */
+	{ /* LAMBDACOS, MANOWARFP */
 	s_manowar_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
