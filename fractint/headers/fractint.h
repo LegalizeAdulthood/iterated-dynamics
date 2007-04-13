@@ -847,7 +847,6 @@ enum Minor  {left_first, right_first};
 #define  TRIG2       0x80
 #define  TRIG3       0xC0
 #define  TRIG4      0x100
-#define  WINFRAC    0x200    /* supported in WinFrac                */
 #define  PARMS3D    0x400    /* uses 3d parameters                  */
 #define  OKJB       0x800    /* works with Julibrot                 */
 #define  MORE      0x1000    /* more than 4 parms                   */
