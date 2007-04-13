@@ -1,4 +1,4 @@
-/* Unixscr.c
+/* d_x11.c
  * This file contains routines for the Unix port of fractint.
  * It uses the current window for text and creates an X window for graphics.
  *

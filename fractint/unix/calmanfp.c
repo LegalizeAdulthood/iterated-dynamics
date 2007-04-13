@@ -12,7 +12,7 @@
 
 static int inside_color, periodicity_color;
 
-void calcmandfpasmstart(void)
+void calculate_mandelbrot_start_fp_asm(void)
 {
     if (g_inside<0)
     {

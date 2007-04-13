@@ -8,8 +8,8 @@
 #include "port.h"
 
 int
-calcmandasm(void)
+calculate_mandelbrot_asm(void)
 {
-    printf("Warning: called calcmandasm\n");
+    printf("Warning: called calculate_mandelbrot_asm\n");
     return(0);
 }
