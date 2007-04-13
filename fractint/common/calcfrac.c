@@ -1845,7 +1845,7 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 	/* setup values from array to avoid using es reg in calcmand.asm */
 	g_initial_x_l = g_lx_pixel();
 	g_initial_y_l = g_ly_pixel();
-	if (calcmandasm() >= 0)
+	if (calculate_mandelbrot_asm() >= 0)
 	{
 		if ((g_log_table || g_log_calculation) /* map color, but not if maxit & adjusted for inside, etc */
 				&& (g_real_color_iter < g_max_iteration || (g_inside < 0 && g_color_iter == g_max_iteration)))

@@ -29,14 +29,14 @@ extern int get_corners(void);
 
 /*  calcmand -- assembler file prototypes */
 
-extern long cdecl calcmandasm(void);
+extern long cdecl calculate_mandelbrot_asm(void);
 
 /*  calmanfp -- assembler file prototypes */
 
-extern void cdecl calcmandfpasmstart(void);
+extern void cdecl calculate_mandelbrot_start_fp_asm(void);
 /* extern long  cdecl g_calculate_mandelbrot_asm_fp(void); */
-extern long  cdecl calcmandfpasm_287(void);
-extern long  cdecl calcmandfpasm_87(void);
+extern long  cdecl calculate_mandelbrot_fp_287_asm(void);
+extern long  cdecl calculate_mandelbrot_fp_87_asm(void);
 
 /*  fpu087 -- assembler file prototypes */
 

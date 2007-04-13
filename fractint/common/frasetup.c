@@ -16,7 +16,7 @@
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 #endif
 
-extern long calcmandfpasm_c(void);
+extern long calculate_mandelbrot_fp_asm(void);
 
 /* -------------------------------------------------------------------- */
 /*              Setup (once per fractal image) routines                 */
@@ -263,31 +263,31 @@ int mandelbrot_setup_fp(void)
 #if !defined(XFRACT)
 			if (g_cpu >= 386 && g_fpu >= 387)
 			{
-				calcmandfpasmstart_p5();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
+				calculate_mandelbrot_fp_p5_asm_start();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_p5_asm;
 			}
 			else if (g_cpu == 286 && g_fpu >= 287)
 			{
-				calcmandfpasmstart();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_287;
+				calculate_mandelbrot_start_fp_asm();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_287_asm;
 			}
 			else
 			{
-				calcmandfpasmstart();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_87;
+				calculate_mandelbrot_start_fp_asm();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_87_asm;
 			}
 #else
 #ifdef NASM
 			if (g_fpu == -1)
 			{
-				calcmandfpasmstart_p5();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
+				calculate_mandelbrot_fp_p5_asm_start();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_p5_asm;
 			}
 			else
 #endif
 			{
-				calcmandfpasmstart();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_c;
+				calculate_mandelbrot_start_fp_asm();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_asm;
 			}
 #endif
 		}
@@ -410,31 +410,31 @@ int julia_setup_fp(void)
 #if !defined(XFRACT)
 			if (g_cpu >= 386 && g_fpu >= 387)
 			{
-				calcmandfpasmstart_p5();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
+				calculate_mandelbrot_fp_p5_asm_start();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_p5_asm;
 			}
 			else if (g_cpu == 286 && g_fpu >= 287)
 			{
-				calcmandfpasmstart();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_287;
+				calculate_mandelbrot_start_fp_asm();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_287_asm;
 			}
 			else
 			{
-				calcmandfpasmstart();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_87;
+				calculate_mandelbrot_start_fp_asm();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_87_asm;
 			}
 #else
 #ifdef NASM
 			if (g_fpu == -1)
 			{
-				calcmandfpasmstart_p5();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_p5;
+				calculate_mandelbrot_fp_p5_asm_start();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_p5_asm;
 			}
 			else
 #endif
 			{
-				calcmandfpasmstart();
-				g_calculate_mandelbrot_asm_fp = (long (*)(void))calcmandfpasm_c;
+				calculate_mandelbrot_start_fp_asm();
+				g_calculate_mandelbrot_asm_fp = (long (*)(void))calculate_mandelbrot_fp_asm;
 			}
 #endif
 		}
