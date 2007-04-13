@@ -5,8 +5,8 @@
 
 /*  calmanp5 -- assembler file prototypes */
 
-extern long cdecl calcmandfpasm_p5(void);
-extern void cdecl calcmandfpasmstart_p5(void);
+extern long cdecl calculate_mandelbrot_fp_p5_asm(void);
+extern void cdecl calculate_mandelbrot_fp_p5_asm_start(void);
 
 /*  wgeneral -- assembler file prototypes */
 
