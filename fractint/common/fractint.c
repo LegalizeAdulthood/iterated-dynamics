@@ -231,6 +231,37 @@ static void set_exe_path(char *path)
 	}
 }
 
+static void set_cpu_fpu(void)
+{
+	if (DEBUGFLAG_CPU_8088 == g_debug_flag)
+	{
+		g_cpu =  86; /* for testing purposes */
+	}
+	if (DEBUGFLAG_X_FPU_287 == g_debug_flag && g_fpu >= 287)
+	{
+		g_fpu = 287; /* for testing purposes */
+		g_cpu = 286;
+	}
+	if (DEBUGFLAG_FPU_87 == g_debug_flag && g_fpu >=  87)
+	{
+		g_fpu =  87; /* for testing purposes */
+		g_cpu =  86;
+	}
+	if (DEBUGFLAG_NO_FPU == g_debug_flag)
+	{
+		g_fpu =   0; /* for testing purposes */
+	}
+	if (getenv("NO87"))
+	{
+		g_fpu = 0;
+	}
+
+	if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
+	{
+		setup_287_code();
+	}
+}
+
 static void main_restart(int argc, char *argv[], int *stacked)
 {
 #if defined(_WIN32)
@@ -275,33 +306,8 @@ static void main_restart(int argc, char *argv[], int *stacked)
 	driver_window();
 	memcpy(g_old_dac_box, g_dac_box, 256*3);      /* save in case g_colors= present */
 
-	if (DEBUGFLAG_CPU_8088 == g_debug_flag)
-	{
-		g_cpu =  86; /* for testing purposes */
-	}
-	if (DEBUGFLAG_X_FPU_287 == g_debug_flag && g_fpu >= 287)
-	{
-		g_fpu = 287; /* for testing purposes */
-		g_cpu = 286;
-	}
-	if (DEBUGFLAG_FPU_87 == g_debug_flag && g_fpu >=  87)
-	{
-		g_fpu =  87; /* for testing purposes */
-		g_cpu =  86;
-	}
-	if (DEBUGFLAG_NO_FPU == g_debug_flag)
-	{
-		g_fpu =   0; /* for testing purposes */
-	}
-	if (getenv("NO87"))
-	{
-		g_fpu = 0;
-	}
+	set_cpu_fpu();
 
-	if (g_fpu >= 287 && g_debug_flag != DEBUGFLAG_FAST_287_MATH)   /* Fast 287 math */
-	{
-		setup_287_code();
-	}
 	adapter_detect();                    /* check what video is really present */
 
 	driver_set_for_text();                      /* switch to text mode */
