@@ -407,8 +407,8 @@ extern U16					prefix[];
 #endif
 extern int					g_preview;
 extern int					g_preview_factor;
-extern int					px;
-extern int					py;
+extern int					g_px;
+extern int					g_py;
 extern int					g_parameter_box_count;
 extern int					g_pseudo_x;
 extern int					g_pseudo_y;
@@ -544,7 +544,7 @@ extern long					g_user_distance_test;
 extern char					g_user_float_flag;
 extern int					g_user_periodicity_check;
 extern char					g_user_standard_calculation_mode;
-extern struct video_info		g_video_entry;
+extern struct video_info	g_video_entry;
 extern VIDEOINFO			g_video_table[];
 extern int					g_video_table_len;
 extern int					g_video_type;						/* video adapter type */
