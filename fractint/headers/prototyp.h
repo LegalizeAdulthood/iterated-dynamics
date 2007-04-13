@@ -537,7 +537,6 @@ extern void flip_image(int kbdchar);
 #ifndef WINFRACT
 extern void reset_zoom_corners(void);
 #endif
-extern void setup_287_code(void);
 
 /*  frasetup -- C file prototypes */
 

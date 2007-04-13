@@ -1,32 +1,6 @@
 #include "port.h"
 #include "prototyp.h"
 
-int FManOWarfpFractal(void)
-{
-	return man_o_war_orbit_fp();
-}
-
-int FJuliafpFractal(void)
-{
-	return julia_orbit_fp();
-}
-
-int FBarnsley1FPFractal(void)
-{
-	return barnsley1_orbit_fp();
-}
-
-int FBarnsley2FPFractal(void)
-{
-	return barnsley2_orbit_fp();
-}
-
-int FLambdaFPFractal(void)
-{
-	return lambda_orbit_fp();
-}
-
-
 int bail_out_mod_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);

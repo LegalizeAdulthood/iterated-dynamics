@@ -2364,20 +2364,6 @@ void reset_zoom_corners()
 	}
 }
 
-/*
-	Function setup_287_code is called by main() when a 287
-	or better g_fpu is detected.
-*/
-#define ORBPTR(x) g_fractal_specific[x].orbitcalc
-void setup_287_code()
-{
-	ORBPTR(MANDELFP)       = ORBPTR(JULIAFP)      = FJuliafpFractal;
-	ORBPTR(BARNSLEYM1FP)   = ORBPTR(BARNSLEYJ1FP) = FBarnsley1FPFractal;
-	ORBPTR(BARNSLEYM2FP)   = ORBPTR(BARNSLEYJ2FP) = FBarnsley2FPFractal;
-	ORBPTR(MANOWARFP)      = ORBPTR(MANOWARJFP)   = FManOWarfpFractal;
-	ORBPTR(MANDELLAMBDAFP) = ORBPTR(LAMBDAFP)     = FLambdaFPFractal;
-}
-
 /* read keystrokes while = specified key, return 1 + count;       */
 /* used to catch up when moving zoombox is slower than keyboard */
 int key_count(int keynum)
