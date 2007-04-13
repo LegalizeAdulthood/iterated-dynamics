@@ -574,8 +574,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_parameter_offset_y = g_new_parameter_offset_y = evolver_info.opy;
 		g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x = (char) evolver_info.odpx;
 		g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y = (char) evolver_info.odpy;
-		px           = evolver_info.px;
-		py           = evolver_info.py;
+		g_px           = evolver_info.px;
+		g_py           = evolver_info.py;
 		g_sx_offset       = evolver_info.sxoffs;
 		g_sy_offset       = evolver_info.syoffs;
 		g_x_dots        = evolver_info.x_dots;

@@ -368,8 +368,8 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 					g_parameter_offset_y = g_new_parameter_offset_y = resume_e_info.opy;
 					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x = (char)resume_e_info.odpx;
 					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y = (char)resume_e_info.odpy;
-					px           = resume_e_info.px;
-					py           = resume_e_info.py;
+					g_px           = resume_e_info.px;
+					g_py           = resume_e_info.py;
 					g_sx_offset       = resume_e_info.sxoffs;
 					g_sy_offset       = resume_e_info.syoffs;
 					g_x_dots        = resume_e_info.x_dots;
@@ -389,7 +389,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 				else
 				{ /* not resuming, start from the beginning */
 					int mid = g_grid_size / 2;
-					if ((px != mid) || (py != mid))
+					if ((g_px != mid) || (g_py != mid))
 					{
 						g_this_generation_random_seed = (unsigned int)clock_ticks(); /* time for new set */
 					}
@@ -412,8 +412,8 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 				while (ecount < gridsqr)
 				{
 					spiral_map(ecount); /* sets px & py */
-					g_sx_offset = tmpxdots*px;
-					g_sy_offset = tmpydots*py;
+					g_sx_offset = tmpxdots*g_px;
+					g_sy_offset = tmpydots*g_py;
 					param_history(1); /* restore old history */
 					fiddle_parameters(g_genes, ecount);
 					calculate_fractal_initialize();
@@ -445,8 +445,8 @@ done:
 					resume_e_info.opy             = g_parameter_offset_y;
 					resume_e_info.odpx            = (short) g_discrete_parameter_offset_x;
 					resume_e_info.odpy            = (short) g_discrete_parameter_offset_y;
-					resume_e_info.px              = (short) px;
-					resume_e_info.py              = (short) py;
+					resume_e_info.px              = (short) g_px;
+					resume_e_info.py              = (short) g_py;
 					resume_e_info.sxoffs          = (short) g_sx_offset;
 					resume_e_info.syoffs          = (short) g_sy_offset;
 					resume_e_info.x_dots           = (short) g_x_dots;
@@ -463,7 +463,7 @@ done:
 				g_y_dots = g_screen_height; /* otherwise save only saves a sub image and boxes get clipped */
 
 				/* set up for 1st selected image, this reuses px and py */
-				px = py = g_grid_size/2;
+				g_px = g_py = g_grid_size/2;
 				unspiral_map(); /* first time called, w/above line sets up array */
 				param_history(1); /* restore old history */
 				fiddle_parameters(g_genes, 0);
@@ -1334,18 +1334,18 @@ static int handle_evolver_save_to_disk(void)
 	oldsyoffs = g_sy_offset;
 	oldxdots = g_x_dots;
 	oldydots = g_y_dots;
-	oldpx = px;
-	oldpy = py;
+	oldpx = g_px;
+	oldpy = g_py;
 	g_sx_offset = g_sy_offset = 0;
 	g_x_dots = g_screen_width;
 	g_y_dots = g_screen_height; /* for full screen save and pointer move stuff */
-	px = py = g_grid_size / 2;
+	g_px = g_py = g_grid_size / 2;
 	param_history(1); /* restore old history */
 	fiddle_parameters(g_genes, 0);
 	draw_parameter_box(1);
 	save_to_disk(g_save_name);
-	px = oldpx;
-	py = oldpy;
+	g_px = oldpx;
+	g_py = oldpy;
 	param_history(1); /* restore old history */
 	fiddle_parameters(g_genes, unspiral_map());
 	g_sx_offset = oldsxoffs;
@@ -1544,7 +1544,7 @@ static void handle_zoom_resize(int zoom_in)
 				g_zbx = g_zby = 0.0;
 				find_special_colors();
 				g_box_color = g_color_bright;
-				px = py = g_grid_size/2;
+				g_px = g_py = g_grid_size/2;
 				zoom_box_move(0.0, 0.0); /* force scrolling */
 			}
 			else
@@ -1834,39 +1834,39 @@ static void handle_evolver_move_selection(int *kbdchar)
 		{
 			if (*kbdchar == FIK_CTL_LEFT_ARROW)
 			{
-				px--;
+				g_px--;
 			}
 			if (*kbdchar == FIK_CTL_RIGHT_ARROW)
 			{
-				px++;
+				g_px++;
 			}
 			if (*kbdchar == FIK_CTL_UP_ARROW)
 			{
-				py--;
+				g_py--;
 			}
 			if (*kbdchar == FIK_CTL_DOWN_ARROW)
 			{
-				py++;
+				g_py++;
 			}
-			if (px < 0)
+			if (g_px < 0)
 			{
-				px = g_grid_size-1;
+				g_px = g_grid_size-1;
 			}
-			if (px > (g_grid_size-1))
+			if (g_px > (g_grid_size-1))
 			{
-				px = 0;
+				g_px = 0;
 			}
-			if (py < 0)
+			if (g_py < 0)
 			{
-				py = g_grid_size-1;
+				g_py = g_grid_size-1;
 			}
-			if (py > (g_grid_size-1))
+			if (g_py > (g_grid_size-1))
 			{
-				py = 0;
+				g_py = 0;
 			}
 			grout = !((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-			g_sx_offset = px*(int)(g_dx_size + 1 + grout);
-			g_sy_offset = py*(int)(g_dy_size + 1 + grout);
+			g_sx_offset = g_px*(int)(g_dx_size + 1 + grout);
+			g_sy_offset = g_py*(int)(g_dy_size + 1 + grout);
 
 			param_history(1); /* restore old history */
 			fiddle_parameters(g_genes, unspiral_map()); /* change all parameters */
@@ -1927,8 +1927,8 @@ static void handle_evolver_zoom(int zoom_in)
 					/* set screen view params back (previously changed to allow
 					   full screen saves in g_view_window mode) */
 					int grout = !((g_evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
-					g_sx_offset = px*(int) (g_dx_size + 1 + grout);
-					g_sy_offset = py*(int) (g_dy_size + 1 + grout);
+					g_sx_offset = g_px*(int) (g_dx_size + 1 + grout);
+					g_sy_offset = g_py*(int) (g_dy_size + 1 + grout);
 					setup_parameter_box();
 					draw_parameter_box(0);
 				}

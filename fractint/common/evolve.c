@@ -12,11 +12,11 @@
 #define VARYINT_RANDOM			5
 #define VARYINT_RANDOM_WEIGHTED	6
 
-/* px and py are coordinates in the parameter grid (small images on screen) */
+/* g_px and g_py are coordinates in the parameter grid (small images on screen) */
 /* g_evolving = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size) */
-int px, py, g_evolving, g_grid_size;
-#define MAXGRIDSZ 51  /* This is arbitrary, = 1024/20 */
-static int ecountbox[MAXGRIDSZ][MAXGRIDSZ];
+int g_px, g_py, g_evolving, g_grid_size;
+#define MAX_GRID_SIZE 51  /* This is arbitrary, = 1024/20 */
+static int ecountbox[MAX_GRID_SIZE][MAX_GRID_SIZE];
 
 unsigned int g_this_generation_random_seed;
 /* used to replay random sequences to obtain correct values when selecting a
@@ -30,7 +30,7 @@ char g_discrete_parameter_offset_x, g_discrete_parameter_offset_y, g_new_discret
 /* used for things like inside or outside types, bailout tests, trig fn etc */
 /* variation factors, g_parameter_offset_x, g_parameter_offset_y, g_parameter_range_x/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
 	for smooth variation across screen. g_parameter_offset_x = offset param x, g_delta_parameter_image_x = delta param
-	per image, g_parameter_range_x = variation across grid of param ...likewise for py */
+	per image, g_parameter_range_x = variation across grid of param ...likewise for g_py */
 /* g_fiddle_factor is amount of random mutation used in random modes ,
 	g_fiddle_reduction is used to decrease g_fiddle_factor from one generation to the
 	next to eventually produce a stable population */
@@ -168,23 +168,23 @@ void param_history(int mode)
 
 void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 {
-	int lclpy = g_grid_size - py - 1;
+	int lclpy = g_grid_size - g_py - 1;
 	switch (gene[i].mutate)
 	{
 	default:
 	case VARYINT_NONE:
 		break;
 	case VARYINT_WITH_X:
-		*(double *)gene[i].addr = px*g_delta_parameter_image_x + g_parameter_offset_x; /*paramspace x coord*per view delta px + offset */
+		*(double *)gene[i].addr = g_px*g_delta_parameter_image_x + g_parameter_offset_x; /*paramspace x coord*per view delta g_px + offset */
 		break;
 	case VARYINT_WITH_Y:
 		*(double *)gene[i].addr = lclpy*g_delta_parameter_image_y + g_parameter_offset_y; /*same for y */
 		break;
 	case VARYINT_WITH_X_PLUS_Y:
-		*(double *)gene[i].addr = px*g_delta_parameter_image_x + g_parameter_offset_x +(lclpy*g_delta_parameter_image_y) + g_parameter_offset_y; /*and x + y */
+		*(double *)gene[i].addr = g_px*g_delta_parameter_image_x + g_parameter_offset_x +(lclpy*g_delta_parameter_image_y) + g_parameter_offset_y; /*and x + y */
 		break;
 	case VARYINT_WITH_X_MINUS_Y:
-		*(double *)gene[i].addr = (px*g_delta_parameter_image_x + g_parameter_offset_x)-(lclpy*g_delta_parameter_image_y + g_parameter_offset_y); /*and x-y*/
+		*(double *)gene[i].addr = (g_px*g_delta_parameter_image_x + g_parameter_offset_x)-(lclpy*g_delta_parameter_image_y + g_parameter_offset_y); /*and x-y*/
 		break;
 	case VARYINT_RANDOM:
 		*(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor;
@@ -192,7 +192,7 @@ void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
 			int mid = g_grid_size /2;
-			double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
+			double radius =  sqrt(sqr(g_px - mid) + sqr(lclpy - mid));
 			*(double *)gene[i].addr += ((((double)randval / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius;
 		}
 		break;
@@ -203,23 +203,23 @@ return;
 static int varyint(int randvalue, int limit, int mode)
 {
 	int ret = 0;
-	int lclpy = g_grid_size - py - 1;
+	int lclpy = g_grid_size - g_py - 1;
 	switch (mode)
 	{
 	default:
 	case VARYINT_NONE:
 		break;
 	case VARYINT_WITH_X: /* vary with x */
-		ret = (g_discrete_parameter_offset_x + px) % limit;
+		ret = (g_discrete_parameter_offset_x + g_px) % limit;
 		break;
 	case VARYINT_WITH_Y: /* vary with y */
 		ret = (g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
 	case VARYINT_WITH_X_PLUS_Y: /* vary with x + y */
-		ret = (g_discrete_parameter_offset_x + px + g_discrete_parameter_offset_y + lclpy) % limit;
+		ret = (g_discrete_parameter_offset_x + g_px + g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
 	case VARYINT_WITH_X_MINUS_Y: /* vary with x-y */
-		ret = (g_discrete_parameter_offset_x + px)-(g_discrete_parameter_offset_y + lclpy) % limit;
+		ret = (g_discrete_parameter_offset_x + g_px)-(g_discrete_parameter_offset_y + lclpy) % limit;
 		break;
 	case VARYINT_RANDOM: /* random mutation */
 		ret = randvalue % limit;
@@ -227,7 +227,7 @@ static int varyint(int randvalue, int limit, int mode)
 	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
 			int mid = g_grid_size /2;
-			double radius =  sqrt(sqr(px - mid) + sqr(lclpy - mid));
+			double radius =  sqrt(sqr(g_px - mid) + sqr(lclpy - mid));
 			ret = (int)((((randvalue / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius);
 			ret %= limit;
 		}
@@ -756,10 +756,10 @@ get_evol_restart:
 	g_grid_size = uvalues[++k].uval.ival;
 	tmp = g_screen_width / (MIN_PIXELS << 1);
 	/* (g_screen_width / 20), max # of subimages @ 20 pixels per subimage */
-	/* MAXGRIDSZ == 1024 / 20 == 51 */
-	if (g_grid_size > MAXGRIDSZ)
+	/* MAX_GRID_SIZE == 1024 / 20 == 51 */
+	if (g_grid_size > MAX_GRID_SIZE)
 	{
-		g_grid_size = MAXGRIDSZ;
+		g_grid_size = MAX_GRID_SIZE;
 	}
 	if (g_grid_size > tmp)
 	{
@@ -892,8 +892,8 @@ void set_current_parameters(void)
 
 void fiddle_parameters(GENEBASE gene[], int ecount)
 {
-	/* call with px, py ... parameter set co-ords*/
-	/* set random seed then call rnd enough times to get to px, py */
+	/* call with g_px, g_py ... parameter set co-ords*/
+	/* set random seed then call rnd enough times to get to g_px, g_py */
 	/* 5/2/96 adding in indirection */
 	/* 26/2/96 adding in multiple methods and field map */
 	/* 29/4/96 going for proper handling of the whole gene array */
@@ -915,7 +915,7 @@ void fiddle_parameters(GENEBASE gene[], int ecount)
 	the variables referenced in the gene array and call the functions required
 	to vary them, aren't pointers marvellous! */
 
-	if ((px == g_grid_size / 2) && (py == g_grid_size / 2)) /* return if middle image */
+	if ((g_px == g_grid_size / 2) && (g_py == g_grid_size / 2)) /* return if middle image */
 	{
 		return;
 	}
@@ -1002,10 +1002,10 @@ void draw_parameter_box(int mode)
 
 	g_box_count = 0;
 	/*draw larger box to show parm zooming range */
-	tl.x = bl.x = ((px -(int)g_parameter_zoom)*(int)(g_dx_size + 1 + grout))-g_sx_offset-1;
-	tl.y = tr.y = ((py -(int)g_parameter_zoom)*(int)(g_dy_size + 1 + grout))-g_sy_offset-1;
-	br.x = tr.x = ((px +1 + (int)g_parameter_zoom)*(int)(g_dx_size + 1 + grout))-g_sx_offset;
-	br.y = bl.y = ((py +1 + (int)g_parameter_zoom)*(int)(g_dy_size + 1 + grout))-g_sy_offset;
+	tl.x = bl.x = ((g_px -(int)g_parameter_zoom)*(int)(g_dx_size + 1 + grout))-g_sx_offset-1;
+	tl.y = tr.y = ((g_py -(int)g_parameter_zoom)*(int)(g_dy_size + 1 + grout))-g_sy_offset-1;
+	br.x = tr.x = ((g_px +1 + (int)g_parameter_zoom)*(int)(g_dx_size + 1 + grout))-g_sx_offset;
+	br.y = bl.y = ((g_py +1 + (int)g_parameter_zoom)*(int)(g_dy_size + 1 + grout))-g_sy_offset;
 #ifndef XFRACT
 	add_box(br); add_box(tr); add_box(bl); add_box(tl);
 	draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y);
@@ -1044,14 +1044,14 @@ void draw_parameter_box(int mode)
 
 void set_evolve_ranges(void)
 {
-	int lclpy = g_grid_size - py - 1;
+	int lclpy = g_grid_size - g_py - 1;
 	/* set up ranges and offsets for parameter explorer/evolver */
 	g_parameter_range_x = g_delta_parameter_image_x*(g_parameter_zoom*2.0);
 	g_parameter_range_y = g_delta_parameter_image_y*(g_parameter_zoom*2.0);
-	g_new_parameter_offset_x = g_parameter_offset_x + (((double)px-g_parameter_zoom)*g_delta_parameter_image_x);
+	g_new_parameter_offset_x = g_parameter_offset_x + (((double)g_px-g_parameter_zoom)*g_delta_parameter_image_x);
 	g_new_parameter_offset_y = g_parameter_offset_y + (((double)lclpy-g_parameter_zoom)*g_delta_parameter_image_y);
 
-	g_new_discrete_parameter_offset_x = (char)(g_discrete_parameter_offset_x + (px-g_grid_size/2));
+	g_new_discrete_parameter_offset_x = (char)(g_discrete_parameter_offset_x + (g_px-g_grid_size/2));
 	g_new_discrete_parameter_offset_y = (char)(g_discrete_parameter_offset_y + (lclpy-g_grid_size/2));
 	return;
 }
@@ -1067,14 +1067,14 @@ void spiral_map(int count)
 	mid = g_grid_size / 2;
 	if (count == 0)  /* start in the middle */
 	{
-		px = py = mid;
+		g_px = g_py = mid;
 		return;
 	}
 	for (offset = 1; offset <= mid; offset ++)
 	{
 		/* first do the top row */
-		py = (mid - offset);
-		for (px = (mid - offset) + 1; px <mid + offset; px++)
+		g_py = (mid - offset);
+		for (g_px = (mid - offset) + 1; g_px <mid + offset; g_px++)
 		{
 			i++;
 			if (i == count)
@@ -1083,7 +1083,7 @@ void spiral_map(int count)
 			}
 		}
 		/* then do the right hand column */
-		for (; py < mid + offset; py++)
+		for (; g_py < mid + offset; g_py++)
 		{
 			i++;
 			if (i == count)
@@ -1092,7 +1092,7 @@ void spiral_map(int count)
 			}
 		}
 		/* then reverse along the bottom row */
-		for (; px > mid - offset; px--)
+		for (; g_px > mid - offset; g_px--)
 		{
 			i++;
 			if (i == count)
@@ -1101,7 +1101,7 @@ void spiral_map(int count)
 			}
 		}
 		/* then up the left to finish */
-		for (; py >= mid - offset; py--)
+		for (; g_py >= mid - offset; g_py--)
 		{
 			i++;
 			if (i == count)
@@ -1116,25 +1116,25 @@ int unspiral_map(void)
 {
 	/* unmaps the clockwise spiral */
 	/* All this malarky is to allow selecting different subimages */
-	/* Returns the count from the center subimage to the current px & py */
+	/* Returns the count from the center subimage to the current g_px & g_py */
 	int mid;
 	static int oldgridsz = 0;
 
 	mid = g_grid_size / 2;
-	if ((px == mid && py == mid) || (oldgridsz != g_grid_size))
+	if ((g_px == mid && g_py == mid) || (oldgridsz != g_grid_size))
 	{
 		int i, gridsqr;
 		/* set up array and return */
 		gridsqr = g_grid_size*g_grid_size;
-		ecountbox[px][py] = 0;  /* we know the first one, do the rest */
+		ecountbox[g_px][g_py] = 0;  /* we know the first one, do the rest */
 		for (i = 1; i < gridsqr; i++)
 		{
 			spiral_map(i);
-			ecountbox[px][py] = i;
+			ecountbox[g_px][g_py] = i;
 		}
 		oldgridsz = g_grid_size;
-		px = py = mid;
+		g_px = g_py = mid;
 		return 0;
 	}
-	return ecountbox[px][py];
+	return ecountbox[g_px][g_py];
 }

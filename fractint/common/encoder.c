@@ -577,8 +577,8 @@ int encoder()
 				esave_info.opy             = g_parameter_offset_y;
 				esave_info.odpx            = (short)g_discrete_parameter_offset_x;
 				esave_info.odpy            = (short)g_discrete_parameter_offset_y;
-				esave_info.px              = (short)px;
-				esave_info.py              = (short)py;
+				esave_info.px              = (short) g_px;
+				esave_info.py              = (short) g_py;
 				esave_info.sxoffs          = (short)g_sx_offset;
 				esave_info.syoffs          = (short)g_sy_offset;
 				esave_info.x_dots           = (short)g_x_dots;
