@@ -27,24 +27,9 @@ extern HINSTANCE g_instance;
 #define DI(name_) Win32BaseDriver *name_ = (Win32BaseDriver *) drv
 
 int g_look_at_mouse = LOOK_MOUSE_NONE;
-static int previous_look_mouse = LOOK_MOUSE_NONE;
-static int mousetime = 0;				/* time of last mouseread call */
-static int mlbtimer = 0;				/* time of left button 1st click */
-static int mrbtimer = 0;				/* time of right button 1st click */
-static int mhtimer = 0;					/* time of last horiz move */
-static int mvtimer = 0;					/* time of last vert  move */
-static int mhmickeys = 0;				/* pending horiz movement */
-static int mvmickeys = 0;				/* pending vert  movement */
-static int mbstatus = 0;				/* status of mouse buttons: MOUSE_CLICK_{NONE, LEFT, RIGHT} */
-static int mbclicks = 0;				/* had 1 click so far? &1 mlb, &2 mrb */
-#define MOUSE_CLICK_NONE 0
-#define MOUSE_CLICK_LEFT 1
-#define MOUSE_CLICK_RIGHT 2
-int mouse_x = 0;
-int mouse_y = 0;
 
 /* timed save variables, handled by readmouse: */
-static int savechktime = 0;				/* time of last autosave check */
+static int s_save_check_time = 0;			/* time of last autosave check */
 long g_save_base = 0;						/* base clock ticks */
 long g_save_ticks = 0;						/* save after this many ticks */
 int g_finish_row = 0;						/* save when this row is finished */
@@ -60,9 +45,9 @@ int handle_timed_save(int ch)
 
 	/* now check for automatic/periodic saving... */
 	ticker = readticker();
-	if (g_save_ticks && (ticker != savechktime))
+	if (g_save_ticks && (ticker != s_save_check_time))
 	{
-		savechktime = ticker;
+		s_save_check_time = ticker;
 		ticker -= g_save_base;
 		if (ticker > g_save_ticks)
 		{

@@ -1,15 +1,14 @@
 #include "port.h"
 #include "prototyp.h"
 
-long cdecl calcmandfpasm_p5(void)
+long cdecl calculate_mandelbrot_fp_p5_asm(void)
 {
 	/* TODO: optimize for pentium? */
-	extern long cdecl calcmandfpasm_c();
-	return calcmandfpasm_c();
+	extern long cdecl calculate_mandelbrot_fp_asm();
+	return calculate_mandelbrot_fp_asm();
 }
 
-void cdecl calcmandfpasmstart_p5(void)
+void cdecl calculate_mandelbrot_fp_p5_asm_start(void)
 {
 	/* TODO: optimize for pentium? */
 }
-
