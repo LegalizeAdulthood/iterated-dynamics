@@ -240,7 +240,7 @@ extern bn_t unsafe_ln_bn(bn_t r, bn_t n);
 extern bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n);
 extern bn_t unsafe_atan_bn(bn_t r, bn_t n);
 extern bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx);
-extern int convert_bn(bn_t new,bn_t old,int newbnlength,int newintlength,int oldbnlength,int oldintlength);
+extern int convert_bn(bn_t result,bn_t old,int newbnlength,int newintlength,int oldbnlength,int oldintlength);
 
     /* "safe" versions */
 extern bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2);
@@ -307,7 +307,7 @@ extern bf_t sincos_bf(bf_t s, bf_t c, bf_t n);
 extern bf_t atan_bf(bf_t r, bf_t n);
 extern bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx);
 extern int is_bf_zero(bf_t n);
-extern int convert_bf(bf_t new, bf_t old, int newbflength, int oldbflength);
+extern int convert_bf(bf_t result, bf_t old, int newbflength, int oldbflength);
 
 extern LDBL extract_value(LDBL f, LDBL b, int *exp_ptr);
 extern LDBL scale_value( LDBL f, LDBL b , int n );
