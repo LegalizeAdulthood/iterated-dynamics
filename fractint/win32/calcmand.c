@@ -38,13 +38,22 @@ static int savedincr = 0;
 static int period = 0;
 
 long cdecl
-calcmandasm(void)
+calculate_mandelbrot_asm(void)
 {
 	return integer_unsupported();
 }
 
-static long cdecl
-calc_mand_floating_point(void)
+/*
+	The following code are all experimental versions of the assembly code
+	that is not currently used.
+*/
+
+/*
+	calculate_mandelbrot_asm1
+
+	This is a C translation of the 16-bit assembly code.
+*/
+static long cdecl calculate_mandelbrot_asm1(void)
 {
 	long cx;
 	long savedand;
@@ -227,8 +236,12 @@ pop_stack:
 	return g_color_iter;
 }
 
-static long cdecl
-calc_mand_assembly(void)
+/*
+	calculate_mandelbrot_asm2
+
+	This is an __asm {} block version of the 16-bit assembly code.
+*/
+static long cdecl calculate_mandelbrot_asm2(void)
 {
 	__asm
 	{
