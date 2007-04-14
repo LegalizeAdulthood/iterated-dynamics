@@ -551,17 +551,17 @@ void plot_setup()
 		{
 			if (g_glasses_type == STEREO_SUPERIMPOSE && g_colors < 256)
 			{
-				g_dac_box[PAL_RED  ][0] = 63;
+				g_dac_box[PAL_RED  ][0] = COLOR_CHANNEL_MAX;
 				g_dac_box[PAL_RED  ][1] =  0;
 				g_dac_box[PAL_RED  ][2] =  0;
 
 				g_dac_box[PAL_BLUE ][0] =  0;
 				g_dac_box[PAL_BLUE ][1] =  0;
-				g_dac_box[PAL_BLUE ][2] = 63;
+				g_dac_box[PAL_BLUE ][2] = COLOR_CHANNEL_MAX;
 
-				g_dac_box[PAL_MAGENTA][0] = 63;
+				g_dac_box[PAL_MAGENTA][0] = COLOR_CHANNEL_MAX;
 				g_dac_box[PAL_MAGENTA][1] =    0;
-				g_dac_box[PAL_MAGENTA][2] = 63;
+				g_dac_box[PAL_MAGENTA][2] = COLOR_CHANNEL_MAX;
 			}
 			for (i = 0; i < 256; i++)
 			{
