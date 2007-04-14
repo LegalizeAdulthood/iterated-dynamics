@@ -154,8 +154,8 @@ check_arg(Win32DiskDriver *di, char *arg)
 *
 *----------------------------------------------------------------------
 */
-static void
-initdacbox()
+/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
+static void initdacbox()
 {
 	int i;
 	for (i = 0; i < 256; i++)

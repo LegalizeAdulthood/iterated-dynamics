@@ -174,9 +174,9 @@ typedef struct
  */
 static void set_pal(int pal, int r, int g, int b)
 {
-	g_dac_box[pal][0] = (BYTE)r;
-	g_dac_box[pal][1] = (BYTE)g;
-	g_dac_box[pal][2] = (BYTE)b;
+	g_dac_box[pal][0] = (BYTE) r;
+	g_dac_box[pal][1] = (BYTE) g;
+	g_dac_box[pal][2] = (BYTE) b;
 	spindac(0, 1);
 }
 
@@ -478,9 +478,9 @@ static void pal_range_to_negative(PALENTRY pal[], int first, int how_many)
 
 	for (curr = &pal[first]; how_many > 0; how_many--, curr++)
 	{
-		curr->red   = (BYTE)(63 - curr->red);
-		curr->green = (BYTE)(63 - curr->green);
-		curr->blue  = (BYTE)(63 - curr->blue);
+		curr->red   = (BYTE) (COLOR_CHANNEL_MAX - curr->red);
+		curr->green = (BYTE) (COLOR_CHANNEL_MAX - curr->green);
+		curr->blue  = (BYTE) (COLOR_CHANNEL_MAX - curr->blue);
 	}
 }
 
@@ -1242,12 +1242,12 @@ static int color_editor_edit(color_editor *me)
 		switch (key)
 		{
 		case FIK_PAGE_UP:
-			if (me->val < 63)
+			if (me->val < COLOR_CHANNEL_MAX)
 			{
 				me->val += 5;
-				if (me->val > 63)
+				if (me->val > COLOR_CHANNEL_MAX)
 				{
-					me->val = 63;
+					me->val = COLOR_CHANNEL_MAX;
 				}
 				color_editor_draw(me);
 				me->change(me, me->info);
@@ -1262,12 +1262,12 @@ static int color_editor_edit(color_editor *me)
 				driver_get_key();
 				++diff;
 			}
-			if (me->val < 63)
+			if (me->val < COLOR_CHANNEL_MAX)
 			{
 				me->val += diff;
-				if (me->val > 63)
+				if (me->val > COLOR_CHANNEL_MAX)
 				{
-					me->val = 63;
+					me->val = COLOR_CHANNEL_MAX;
 				}
 				color_editor_draw(me);
 				me->change(me, me->info);
@@ -1318,9 +1318,9 @@ static int color_editor_edit(color_editor *me)
 		case '8':
 		case '9':
 			me->val = (key - '0')*10;
-			if (me->val > 63)
+			if (me->val > COLOR_CHANNEL_MAX)
 			{
-				me->val = 63;
+				me->val = COLOR_CHANNEL_MAX;
 			}
 			color_editor_draw(me);
 			me->change(me, me->info);
@@ -2512,7 +2512,7 @@ static void pal_table_update_dac(pal_table *me)
 
 		if (me->freestyle)
 		{
-			pal_table_put_band(me, (PALENTRY *)g_dac_box);   /* apply band to g_dac_box */
+			pal_table_put_band(me, (PALENTRY *) g_dac_box);   /* apply band to g_dac_box */
 		}
 	}
 
@@ -3349,11 +3349,11 @@ static void pal_table_process(pal_table *me)
 
 	get_pal_range(0, g_colors, me->pal);
 
-	/* Make sure all palette entries are 0-63 */
+	/* Make sure all palette entries are 0-COLOR_CHANNEL_MAX */
 
 	for (ctr = 0; ctr < 768; ctr++)
 	{
-		((char *)me->pal)[ctr] &= 63;
+		((char *)me->pal)[ctr] &= COLOR_CHANNEL_MAX;
 	}
 
 	pal_table_update_dac(me);

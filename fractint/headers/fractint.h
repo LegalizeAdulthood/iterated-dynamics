@@ -28,6 +28,8 @@ typedef BYTE BOOLEAN;
 #define TRIG_LIMIT_16 (8L << 16)		/* domain limit of fast trig functions */
 #define NUM_BOXES 4096
 
+#define COLOR_CHANNEL_MAX 63
+
 /* g_note_attenuation values */
 #define ATTENUATE_NONE		0
 #define ATTENUATE_LOW		1

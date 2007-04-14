@@ -386,18 +386,15 @@ static int out_line_dither(BYTE *pixels, int linelen)
 	nexterr = (rand()&0x1f)-16;
 	for (i = 0; i < linelen; i++)
 	{
-#ifdef __SVR4
-		brt = (int)((g_dac_box[pixels[i]][0]*5 + g_dac_box[pixels[i]][1]*9 +
-				g_dac_box[pixels[i]][2]*2)) >> 4; /* brightness from 0 to 63 */
-#else
-		brt = (g_dac_box[pixels[i]][0]*5 + g_dac_box[pixels[i]][1]*9 +
-				g_dac_box[pixels[i]][2]*2) >> 4; /* brightness from 0 to 63 */
-#endif
+		/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
+		brt = (g_dac_box[pixels[i]][0]*5 +
+			   g_dac_box[pixels[i]][1]*9 +
+			   g_dac_box[pixels[i]][2]*2) >> 4; /* brightness from 0 to COLOR_CHANNEL_MAX */
 		brt += nexterr;
-		if (brt > 32)
+		if (brt > (COLOR_CHANNEL_MAX + 1)/2)
 		{
 			pixels[i] = 1;
-			err = brt-63;
+			err = brt - COLOR_CHANNEL_MAX;
 		}
 		else
 		{

@@ -36,14 +36,14 @@ The four routines are:
 
  int readvideopalette() read the contents of the adapter's video
                  palette into the 'BYTE dacbox[256][3]' array
-                 (up to 256 R/G/B triplets, each with values from 0 to 63).
+                 (up to 256 R/G/B triplets, each with values from 0 to COLOR_CHANNEL_MAX).
                  Set dacbox[0][0] = 255 if there is no such palette.
                  Return a -1 if you want the normal internal EGA/VGA
                  routines to handle this function.
 
  int writevideopalette() write the contents of the adapter's video
                  palette from the 'BYTE dacbox[256][3]' array
-                 (up to 256 R/G/B triplets, each with values from 0 to 63).
+                 (up to 256 R/G/B triplets, each with values from 0 to COLOR_CHANNEL_MAX).
                  Return a -1 if you want the normal internal EGA/VGA
                  routines to handle this function.
 

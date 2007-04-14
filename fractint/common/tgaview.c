@@ -17,8 +17,7 @@
 static FILE *fptarga = NULL;            /* FILE pointer           */
 
 /* Main entry decoder */
-int
-tga_view()
+int tga_view()
 {
 	int i;
 	int cs;

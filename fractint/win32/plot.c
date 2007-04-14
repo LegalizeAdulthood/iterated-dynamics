@@ -226,8 +226,8 @@ init_clut(BYTE clut[256][3])
 		clut[i][2] = (((i + 2) & 3))*16 + 15;
 	}
 	clut[0][0] = clut[0][1] = clut[0][2] = 0;
-	clut[1][0] = clut[1][1] = clut[1][2] = 63;
-	clut[2][0] = 47; clut[2][1] = clut[2][2] = 63;
+	clut[1][0] = clut[1][1] = clut[1][2] = COLOR_CHANNEL_MAX;
+	clut[2][0] = 3*COLOR_CHANNEL_MAX/4; clut[2][1] = clut[2][2] = COLOR_CHANNEL_MAX;
 }
 
 int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
@@ -438,6 +438,7 @@ int plot_write_palette(Plot *me)
 		me->clut[i][1] = g_dac_box[i][1];
 		me->clut[i][2] = g_dac_box[i][2];
 
+		/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 		me->bmi.bmiColors[i].rgbRed = g_dac_box[i][0]*4;
 		me->bmi.bmiColors[i].rgbGreen = g_dac_box[i][1]*4;
 		me->bmi.bmiColors[i].rgbBlue = g_dac_box[i][2]*4;
@@ -476,23 +477,24 @@ void plot_redraw(Plot *me)
 	InvalidateRect(me->window, NULL, FALSE);
 }
 
-void plot_display_string(Plot *me, int x, int y, int fg, int bg, const char *text)
+void plot_display_string(Plot *me, int start_x, int start_y, int fg, int bg, const char *text)
 {
 	while (*text)
 	{
 		int row;
+		int char_x = start_x;
 		for (row = 0; row < 8; row++)
 		{
-			int x1 = x;
+			int x = char_x;
 			int col = 8;
 			BYTE pixel = g_font_8x8[row][*text];
 			while (col-- > 0)
 			{
 				int color = (pixel & (1 << col)) ? fg : bg;
-				plot_write_pixel(me, x1++, y + row, color);
+				plot_write_pixel(me, x++, start_y + row, color);
 			}
 		}
-		x += 8;
+		char_x += 8;
 		text++;
 	}
 }
