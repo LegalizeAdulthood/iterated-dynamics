@@ -570,12 +570,12 @@ done:
 	return n;
 }
 
-#define dac ((Palettetype *)g_dac_box)
+#define dac ((Palettetype *) g_dac_box)
 static void set_plasma_palette()
 {
-	static Palettetype Red    = { 63, 0, 0 };
-	static Palettetype Green  = { 0, 63, 0 };
-	static Palettetype Blue   = { 0,  0, 63 };
+	static Palettetype Red    = { COLOR_CHANNEL_MAX, 0, 0 };
+	static Palettetype Green  = { 0, COLOR_CHANNEL_MAX, 0 };
+	static Palettetype Blue   = { 0,  0, COLOR_CHANNEL_MAX };
 	int i;
 
 	if (g_map_dac_box || g_color_preloaded) /* map= specified  */

@@ -52,22 +52,37 @@ static int startbits;
 
 static BYTE paletteBW[] =
 {                               /* B&W palette */
-	0, 0, 0, 63, 63, 63,
+	0, 0, 0, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX,
 };
 
 #ifndef XFRACT
 static BYTE paletteCGA[] =
 {                               /* 4-color (CGA) palette  */
-	0, 0, 0, 21, 63, 63, 63, 21, 63, 63, 63, 63,
+	0, 0, 0,
+	COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX,
+	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX,
+	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX
 };
 #endif
 
 static BYTE paletteEGA[] =
 {                               /* 16-color (EGA/CGA) pal */
-	0, 0, 0, 0, 0, 42, 0, 42, 0, 0, 42, 42,
-	42, 0, 0, 42, 0, 42, 42, 21, 0, 42, 42, 42,
-	21, 21, 21, 21, 21, 63, 21, 63, 21, 21, 63, 63,
-	63, 21, 21, 63, 21, 63, 63, 63, 21, 63, 63, 63,
+	0, 0, 0,
+	0, 0, 2*COLOR_CHANNEL_MAX/3,
+	0, 2*COLOR_CHANNEL_MAX/3, 0,
+	0, 2*COLOR_CHANNEL_MAX/3, 2*COLOR_CHANNEL_MAX/3,
+	2*COLOR_CHANNEL_MAX/3, 0, 0,
+	2*COLOR_CHANNEL_MAX/3, 0, 2*COLOR_CHANNEL_MAX/3,
+	2*COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX/3, 0,
+	2*COLOR_CHANNEL_MAX/3, 2*COLOR_CHANNEL_MAX/3, 2*COLOR_CHANNEL_MAX/3,
+	COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX/3,
+	COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX,
+	COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX/3,
+	COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX,
+	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX/3,
+	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX/3, COLOR_CHANNEL_MAX,
+	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX/3,
+	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX
 };
 
 static int gif_savetodisk(char *filename)      /* save-to-disk routine */
@@ -344,7 +359,7 @@ int encoder()
 	if (save16bit)
 	{
 		/* g_potential_16bit info is stored as: file:    double width rows, right side
-		* of row is low 8 bits diskvid: g_y_dots rows of g_colors followed by g_y_dots
+		* of row is low 8 bits diskvid: g_y_dots rows of colors followed by g_y_dots
 		* rows of low 8 bits decoder: returns (row of color info then row of
 		* low 8 bits)*g_y_dots */
 		rowlimit <<= 1;
@@ -686,8 +701,8 @@ oops:
 	return 1;
 }
 
-/* TODO: should we be doing this?  We need to store full g_colors, not the VGA truncated business. */
-/* shift IBM g_colors to GIF */
+/* TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. */
+/* shift IBM colors to GIF */
 static int _fastcall shftwrite(BYTE *color, int g_num_colors)
 {
 	BYTE thiscolor;
@@ -1041,7 +1056,7 @@ static int compress(int rowlimit)
 	char accum_stack[256];
 	accum = accum_stack;
 
-	outcolor1 = 0;               /* use these g_colors to show progress */
+	outcolor1 = 0;               /* use these colors to show progress */
 	outcolor2 = 1;               /* (this has nothing to do with GIF) */
 
 	if (g_colors > 2)
@@ -1050,7 +1065,7 @@ static int compress(int rowlimit)
 		outcolor2 = 3;
 	}
 	if (((++numsaves) & 1) == 0)
-	{                            /* reverse the g_colors on alt saves */
+	{                            /* reverse the colors on alt saves */
 		i = outcolor1;
 		outcolor1 = outcolor2;
 		outcolor2 = i;

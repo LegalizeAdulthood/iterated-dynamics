@@ -3655,17 +3655,17 @@ static int parse_colors(char *value)
 					{
 						k -= ('_'-36);
 					}
-					g_dac_box[i][j] = (BYTE)k;
+					g_dac_box[i][j] = (BYTE) k;
 					if (smooth)
 					{
 						int spread = smooth + 1;
 						int start = i - spread;
 						int cnum = 0;
-						if ((k - (int)g_dac_box[start][j]) == 0)
+						if ((k - (int) g_dac_box[start][j]) == 0)
 						{
 							while (++cnum < spread)
 							{
-								g_dac_box[start + cnum][j] = (BYTE)k;
+								g_dac_box[start + cnum][j] = (BYTE) k;
 							}
 						}
 						else
@@ -3673,10 +3673,10 @@ static int parse_colors(char *value)
 							while (++cnum < spread)
 							{
 								g_dac_box[start + cnum][j] =
-									(BYTE)((cnum *g_dac_box[i][j]
-									+ (i-(start + cnum))*g_dac_box[start][j]
-									+ spread/2)
-									/ (BYTE) spread);
+									(BYTE) ((cnum*g_dac_box[i][j]
+												+ (i - (start + cnum))*g_dac_box[start][j]
+												+ spread/2)
+											/ (BYTE) spread);
 							}
 						}
 					}
@@ -3691,7 +3691,7 @@ static int parse_colors(char *value)
 		}
 		while (i < 256)   /* zap unset entries */
 		{
-			g_dac_box[i][0] = g_dac_box[i][1] = g_dac_box[i][2] = 40;
+			g_dac_box[i][0] = g_dac_box[i][1] = g_dac_box[i][2] = 63*COLOR_CHANNEL_MAX/100;
 			++i;
 		}
 		g_color_state = COLORSTATE_UNKNOWN;

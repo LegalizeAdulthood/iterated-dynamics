@@ -14,7 +14,10 @@
 
 /* g_px and g_py are coordinates in the parameter grid (small images on screen) */
 /* g_evolving = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size) */
-int g_px, g_py, g_evolving, g_grid_size;
+int g_px;
+int g_py;
+int g_evolving;
+int g_grid_size;
 #define MAX_GRID_SIZE 51  /* This is arbitrary, = 1024/20 */
 static int ecountbox[MAX_GRID_SIZE][MAX_GRID_SIZE];
 
@@ -22,10 +25,21 @@ unsigned int g_this_generation_random_seed;
 /* used to replay random sequences to obtain correct values when selecting a
 	seed image for next generation */
 
-double g_parameter_offset_x, g_parameter_offset_y, g_new_parameter_offset_x, g_new_parameter_offset_y, g_parameter_range_x, g_parameter_range_y, g_delta_parameter_image_x, g_delta_parameter_image_y, g_fiddle_factor;
+double g_parameter_offset_x;
+double g_parameter_offset_y;
+double g_new_parameter_offset_x;
+double g_new_parameter_offset_y;
+double g_parameter_range_x;
+double g_parameter_range_y;
+double g_delta_parameter_image_x;
+double g_delta_parameter_image_y;
+double g_fiddle_factor;
 double g_fiddle_reduction;
 double g_parameter_zoom;
-char g_discrete_parameter_offset_x, g_discrete_parameter_offset_y, g_new_discrete_parameter_offset_x, g_new_discrete_parameter_offset_y;
+char g_discrete_parameter_offset_x;
+char g_discrete_parameter_offset_y;
+char g_new_discrete_parameter_offset_x;
+char g_new_discrete_parameter_offset_y;
 /* offset for discrete parameters x and y..*/
 /* used for things like inside or outside types, bailout tests, trig fn etc */
 /* variation factors, g_parameter_offset_x, g_parameter_offset_y, g_parameter_range_x/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
@@ -34,10 +48,10 @@ char g_discrete_parameter_offset_x, g_discrete_parameter_offset_y, g_new_discret
 /* g_fiddle_factor is amount of random mutation used in random modes ,
 	g_fiddle_reduction is used to decrease g_fiddle_factor from one generation to the
 	next to eventually produce a stable population */
+int g_parameter_box_count = 0;
 
 static int *prmbox = NULL;
 static int *imgbox = NULL;
-int g_parameter_box_count = 0;
 static int imgboxcount;
 
 struct phistory_info      /* for saving evolution data of center image */
@@ -64,9 +78,7 @@ struct phistory_info      /* for saving evolution data of center image */
 	BYTE trigndx3;
 	int bailoutest;
 };
-
 typedef struct phistory_info    PARAMHIST;
-
 static PARAMHIST oldhistory = { 0 };
 
 void param_history(int mode);

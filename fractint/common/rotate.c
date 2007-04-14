@@ -19,13 +19,13 @@ static void set_palette2(BYTE start[3], BYTE finish[3]);
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3]);
 
 static int paused;                      /* rotate-is-paused flag */
-static BYTE Red[3]    = {63, 0, 0};     /* for shifted-Fkeys */
-static BYTE Green[3]  = { 0,63, 0};
-static BYTE Blue[3]   = { 0, 0,63};
+static BYTE Red[3]    = {COLOR_CHANNEL_MAX, 0, 0};     /* for shifted-Fkeys */
+static BYTE Green[3]  = { 0,COLOR_CHANNEL_MAX, 0};
+static BYTE Blue[3]   = { 0, 0,COLOR_CHANNEL_MAX};
 static BYTE Black[3]  = { 0, 0, 0};
-static BYTE White[3]  = {63,63,63};
-static BYTE Yellow[3] = {63,63, 0};
-static BYTE Brown[3]  = {31,31, 0};
+static BYTE White[3]  = {COLOR_CHANNEL_MAX,COLOR_CHANNEL_MAX,COLOR_CHANNEL_MAX};
+static BYTE Yellow[3] = {COLOR_CHANNEL_MAX,COLOR_CHANNEL_MAX, 0};
+static BYTE Brown[3]  = {COLOR_CHANNEL_MAX/2,COLOR_CHANNEL_MAX/2, 0};
 
 char mapmask[13] = {"*.map"};
 
@@ -106,6 +106,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 					}
 					if (++incr > fstep)  /* time to randomize */
 					{
+						/* TODO: revirew for case when COLOR_CHANNEL_MAX != 63 */
 						incr = 1;
 						fstep = ((fsteps[fkey-1]* (rand15() >> 8)) >> 6) + 1;
 						fromred   = g_dac_box[last][0];
@@ -115,6 +116,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 						togreen   = rand15() >> 9;
 						toblue    = rand15() >> 9;
 					}
+					/* TODO: revirew for case when COLOR_CHANNEL_MAX != 63 */
 					g_dac_box[jstep][0] = (BYTE)(fromred   + (((tored    - fromred)*incr)/fstep));
 					g_dac_box[jstep][1] = (BYTE)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
 					g_dac_box[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue)*incr)/fstep));
@@ -277,10 +279,10 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			}
 			for (i = 1; i < 256; i++)
 			{
-				g_dac_box[i][changecolor] = (BYTE)(g_dac_box[i][changecolor] + changedirection);
-				if (g_dac_box[i][changecolor] == 64)
+				g_dac_box[i][changecolor] = (BYTE) (g_dac_box[i][changecolor] + changedirection);
+				if (g_dac_box[i][changecolor] == COLOR_CHANNEL_MAX+1)
 				{
-					g_dac_box[i][changecolor] = 63;
+					g_dac_box[i][changecolor] = COLOR_CHANNEL_MAX;
 				}
 				if (g_dac_box[i][changecolor] == 255)
 				{
@@ -418,9 +420,9 @@ static void pauserotate()               /* pause-the-rotate routine */
 		olddac1 = g_dac_box[0][1];
 		olddac2 = g_dac_box[0][2];
 		g_dac_count = 256;
-		g_dac_box[0][0] = 48;
-		g_dac_box[0][1] = 48;
-		g_dac_box[0][2] = 48;
+		g_dac_box[0][0] = 3*COLOR_CHANNEL_MAX/4;
+		g_dac_box[0][1] = 3*COLOR_CHANNEL_MAX/4;
+		g_dac_box[0][2] = 3*COLOR_CHANNEL_MAX/4;
 		spindac(0, 1);                     /* show white border */
 		if (driver_diskp())
 		{
@@ -441,6 +443,7 @@ static void pauserotate()               /* pause-the-rotate routine */
 	}
 }
 
+/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
 	int i, j;
@@ -454,6 +457,7 @@ static void set_palette(BYTE start[3], BYTE finish[3])
 	}
 }
 
+/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette2(BYTE start[3], BYTE finish[3])
 {
 	int i, j;
@@ -468,6 +472,7 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 	}
 }
 
+/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
 	int i, j;
@@ -517,6 +522,7 @@ void save_palette()
 			for (i = 0; i < 256; i++)
 #endif
 			{
+				/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 				fprintf(dacfile, "%3d %3d %3d\n",
 						g_dac_box[i][0] << 2,
 						g_dac_box[i][1] << 2,

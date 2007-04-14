@@ -703,6 +703,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 				{
 					break;
 				}
+				/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
 				g_dac_box[i][j] = (BYTE)(k >> 2);
 			}
 			if (k < 0)
