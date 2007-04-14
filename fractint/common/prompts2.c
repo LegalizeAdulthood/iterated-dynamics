@@ -1305,6 +1305,7 @@ void goodbye(void)                  /* we done.  Bail out */
 	char goodbyemessage[40] = "   Thank You for using "FRACTINT;
 	int ret;
 
+	line_3d_free();
 	if (g_map_dac_box)
 	{
 		free(g_map_dac_box);

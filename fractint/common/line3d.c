@@ -229,6 +229,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 		for (col = 0; col < (int) linelen; col++)
 		{
 			int color_num = pixels[col];
+			/* TODO: the following does not work when COLOR_CHANNEL_MAX != 63 */
 			/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
 			int pal = ((int) g_dac_box[color_num][0]*77 +
 					(int) g_dac_box[color_num][1]*151 +
@@ -1434,6 +1435,7 @@ int _fastcall targa_color(int x, int y, int color)
 	switch (g_true_mode)
 	{
 	case TRUEMODE_DEFAULT:
+		/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
 		RGB[0] = (BYTE)(g_dac_box[s_real_color][0] << 2); /* Move color space to */
 		RGB[1] = (BYTE)(g_dac_box[s_real_color][1] << 2); /* 256 color primaries */
 		RGB[2] = (BYTE)(g_dac_box[s_real_color][2] << 2); /* from 64 g_colors */
@@ -2061,7 +2063,7 @@ static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct
 		for (i = 0; i <= 2; i++)
 		{
 			c[i] = (float) (g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
-				/ (3*63);
+				/ (3*COLOR_CHANNEL_MAX);
 		}
 	}
 
@@ -2832,51 +2834,43 @@ static int first_time(int linelen, VECTOR v)
 	return 0;
 } /* end of once-per-image intializations */
 
+/*
+	line_3d_mem
+
+	Allocate buffers needed, depending on the pixel dimensions of the
+	vide mode.
+*/
 static int line_3d_mem(void)
 {
-	/*********************************************************************/
-	/*  Memory allocation - assumptions - a 64K segment starting at      */
-	/*  extraseg has been grabbed. It may have other purposes elsewhere, */
-	/*  but it is assumed that it is totally free for use here. Our      */
-	/*  strategy is to assign all the pointers needed here to various*/
-	/*  spots in the extra segment, depending on the pixel dimensions of */
-	/*  the video mode, and check whether we have run out. There is      */
-	/*  basically one case where the extra segment is not big enough     */
-	/*  -- SPHERE mode with a fill type that uses put_a_triangle() (array  */
-	/*  s_minmax_x) at the largest legal resolution of MAXPIXELSxMAXPIXELS */
-	/*  or thereabouts. In that case we use farmemalloc to grab memory   */
-	/*  for s_minmax_x. This memory is never freed.                        */
-	/*********************************************************************/
-	long check_extra;  /* keep track ofd extraseg array use */
-
 	/* s_last_row stores the previous row of the original GIF image for
 		the purpose of filling in gaps with triangle procedure */
-	/* first 8k of extraseg now used in decoder TW 3/95 */
-	/* TODO: allocate real memory, not reuse shared segment */
 	s_last_row = (struct point *) malloc(sizeof(struct point)*g_x_dots);
+	s_f_last_row = (struct f_point *) malloc(sizeof(struct f_point)*g_y_dots);
+	if (!s_last_row || !s_f_last_row)
+	{
+		return TRUE;
+	}
 
-	check_extra = sizeof(struct point)*g_x_dots;
 	if (SPHERE)
 	{
-		s_sin_theta_array = (float *) (s_last_row + g_x_dots);
-		check_extra += sizeof(*s_sin_theta_array)*g_x_dots;
-		s_cos_theta_array = (float *) (s_sin_theta_array + g_x_dots);
-		check_extra += sizeof(*s_cos_theta_array)*g_x_dots;
-		s_f_last_row = (struct f_point *) (s_cos_theta_array + g_x_dots);
+		s_sin_theta_array = (float *) malloc(sizeof(float)*g_x_dots);
+		s_cos_theta_array = (float *) malloc(sizeof(float)*g_x_dots);
+		if (!s_sin_theta_array || !s_cos_theta_array)
+		{
+			return TRUE;
+		}
 	}
-	else
-	{
-		s_f_last_row = (struct f_point *) (s_last_row + g_x_dots);
-	}
-	check_extra += sizeof(*s_f_last_row)*(g_x_dots);
+
 	if (g_potential_16bit)
 	{
-		s_fraction = (BYTE *) (s_f_last_row + g_x_dots);
-		check_extra += sizeof(*s_fraction)*g_x_dots;
+		s_fraction = (BYTE *) malloc(sizeof(BYTE)*g_x_dots);
+		if (!s_fraction)
+		{
+			return TRUE;
+		}
 	}
-	s_minmax_x = (struct minmax *) NULL;
+	s_minmax_x = NULL;
 
-	/* TODO: clean up leftover extra segment business */
 	/* these fill types call put_a_triangle which uses s_minmax_x */
 	if (FILLTYPE == FILLTYPE_FILL_GOURAUD
 		|| FILLTYPE == FILLTYPE_FILL_FLAT
@@ -2884,42 +2878,47 @@ static int line_3d_mem(void)
 		|| FILLTYPE == FILLTYPE_LIGHT_AFTER)
 	{
 		/* end of arrays if we use extra segement */
-		check_extra += sizeof(struct minmax)*g_y_dots;
-		if (check_extra > (1L << 16))     /* run out of extra segment? */
+		s_minmax_x = (struct minmax *) malloc(sizeof(struct minmax)*g_y_dots);
+		if (!s_minmax_x)
 		{
-			static struct minmax *got_mem = NULL;
-			if (2222 == g_debug_flag)
-			{
-				stop_message(0, "malloc minmax");
-			}
-			/* not using extra segment so decrement check_extra */
-			check_extra -= sizeof(struct minmax)*g_y_dots;
-			if (got_mem == NULL)
-			{
-				got_mem = (struct minmax *) (malloc(OLD_MAX_PIXELS*sizeof(struct minmax)));
-			}
-			if (got_mem)
-			{
-				s_minmax_x = got_mem;
-			}
-			else
-			{
-				return -1;
-			}
-		}
-		else /* ok to use extra segment */
-		{
-			s_minmax_x = g_potential_16bit ?
-				(struct minmax *) (s_fraction + g_x_dots)
-				: (struct minmax *) (s_f_last_row + g_x_dots);
+			return TRUE;
 		}
 	}
-	/* TODO: get rid of extra segment business */
-	if (2222 == g_debug_flag || check_extra > (1L << 16))
+
+	/* no errors, got all memroy */
+	return FALSE;
+}
+
+void line_3d_free(void)
+{
+	if (s_last_row)
 	{
-		char tmpmsg[70];
-		sprintf(tmpmsg, "used %ld of extra segment", check_extra);
-		stop_message(STOPMSG_NO_BUZZER, tmpmsg);
+		free(s_last_row);
+		s_last_row = NULL;
 	}
-	return 0;
+	if (s_f_last_row)
+	{
+		free(s_f_last_row);
+		s_f_last_row = NULL;
+	}
+	if (s_sin_theta_array)
+	{
+		free(s_sin_theta_array);
+		s_sin_theta_array = NULL;
+	}
+	if (s_cos_theta_array)
+	{
+		free(s_cos_theta_array);
+		s_cos_theta_array = NULL;
+	}
+	if (s_fraction)
+	{
+		free(s_fraction);
+		s_fraction = NULL;
+	}
+	if (s_minmax_x)
+	{
+		free(s_minmax_x);
+		s_minmax_x = NULL;
+	}
 }
