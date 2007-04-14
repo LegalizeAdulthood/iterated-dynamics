@@ -632,6 +632,7 @@ extern int    EnQueueFloat(float,  float);
 extern int line3d(BYTE *, unsigned int);
 extern int _fastcall targa_color(int, int, int);
 extern int start_disk1(char *, FILE *, int);
+extern void line_3d_free(void);
 
 /*  loadfdos -- C file prototypes */
 #ifndef WINFRACT
