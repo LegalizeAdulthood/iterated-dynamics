@@ -40,7 +40,7 @@ void calculate_mandelbrot_start_fp_asm(void)
    of the x and y values.  This is experimental. */
 #define USE_NEW 0
 
-long calcmandfpasm_c(void)
+long calculate_mandelbrot_fp_asm(void)
 {
     long cx;
     long savedand;
