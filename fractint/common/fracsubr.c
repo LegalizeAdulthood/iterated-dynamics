@@ -1000,8 +1000,9 @@ static int _fastcall ratio_bad(double actual, double desired)
    ftemp = 0;
    if (desired != 0 && debugflag != 3400) {
       ftemp = actual / desired;
-      if (ftemp < (1.0-tol) || ftemp > (1.0+tol))
-         return(1);
+      if(integerfractal || (curfractalspecific->flags & BF_MATH))
+         if (ftemp < (1.0-tol) || ftemp > (1.0+tol))
+            return(1);
    }
    return(0);
 }
