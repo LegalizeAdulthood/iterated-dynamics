@@ -357,24 +357,24 @@ static WIN32_FIND_DATA s_find_data = { 0 };
 
 /* fill_dta
  *
- * Use data in s_find_data to fill in DTA.filename, DTA.attribute and DTA.path
+ * Use data in s_find_data to fill in g_dta.filename, g_dta.attribute and g_dta.path
  */
 #define DTA_FLAG(find_flag_, dta_flag_) \
 	((s_find_data.dwFileAttributes & find_flag_) ? dta_flag_ : 0)
 
 static void fill_dta()
 {
-	_snprintf(DTA.path, NUM_OF(DTA.path), "%s%s", s_find_base, s_find_data.cFileName);
-	DTA.attribute = DTA_FLAG(FILE_ATTRIBUTE_DIRECTORY, SUBDIR) |
+	_snprintf(g_dta.path, NUM_OF(g_dta.path), "%s%s", s_find_base, s_find_data.cFileName);
+	g_dta.attribute = DTA_FLAG(FILE_ATTRIBUTE_DIRECTORY, SUBDIR) |
 		DTA_FLAG(FILE_ATTRIBUTE_SYSTEM, SYSTEM) |
 		DTA_FLAG(FILE_ATTRIBUTE_HIDDEN, HIDDEN);
-	strcpy(DTA.filename, s_find_data.cFileName);
+	strcpy(g_dta.filename, s_find_data.cFileName);
 }
 #undef DTA_FLAG
 
 /* fr_find_first
  *
- * Fill in DTA.filename, DTA.path and DTA.attribute for the first file
+ * Fill in g_dta.filename, g_dta.path and g_dta.attribute for the first file
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
@@ -410,7 +410,7 @@ int fr_find_first(char *path)       /* Find 1st file (or subdir) meeting path/fi
 /* fr_find_next
  *
  * Find the next file matching the wildcard search begun by fr_find_first.
- * Fill in DTA.filename, DTA.path, and DTA.attribute
+ * Fill in g_dta.filename, g_dta.path, and g_dta.attribute
  */
 int fr_find_next()
 {

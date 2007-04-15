@@ -15,6 +15,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 #include "WinText.h"
 #include "frame.h"
@@ -77,7 +78,7 @@ int handle_timed_save(int ch)
  * First, do some slideshow processing.  Then handle F1 and TAB display.
  *
  * Because we want context sensitive help to work everywhere, with the
- * help to display indicated by a non-zero value in g_help_mode, we need
+ * help to display indicated by a non-zero value, we need
  * to trap the F1 key at a very low level.  The same is true of the
  * TAB display.
  *
@@ -119,7 +120,7 @@ handle_special_keys(int ch)
 		}
 	}
 
-	if (FIK_F1 == ch && g_help_mode && !inside_help)
+	if (FIK_F1 == ch && get_help_mode() && !inside_help)
 	{
 		inside_help = 1;
 		help(0);

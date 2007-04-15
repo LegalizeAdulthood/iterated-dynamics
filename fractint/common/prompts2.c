@@ -52,6 +52,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 /* Routines in this module      */
 
@@ -70,9 +71,7 @@ static  int get_screen_corners(void);
 #define   SUBDIR         16
 #define   MAXNUMFILES    2977L
 
-struct DIR_SEARCH DTA;          /* Allocate DTA and define structure */
-
-char commandmask[13] = {"*.par"};
+struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
 
 /* --------------------------------------------------------------------- */
 /*
@@ -94,7 +93,6 @@ char commandmask[13] = {"*.par"};
 int get_toggles()
 {
 	char *choices[20];
-	int oldhelpmode;
 	char prevsavename[FILE_MAX_DIR + 1];
 	char *savenameptr;
 	struct full_screen_values uvalues[25];
@@ -268,10 +266,7 @@ int get_toggles()
 	uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up JCO */
 	uvalues[k].uval.dval = old_closeprox = g_proximity;
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPXOPTS;
-	i = full_screen_prompt("Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, NULL);
-	g_help_mode = oldhelpmode;
+	i = full_screen_prompt_help(HELPXOPTS, "Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, NULL);
 	if (i < 0)
 	{
 		return -1;
@@ -478,7 +473,6 @@ int get_toggles()
 int get_toggles2()
 {
 	char *choices[18];
-	int oldhelpmode;
 
 	struct full_screen_values uvalues[23];
 	int i, j, k;
@@ -549,16 +543,13 @@ int get_toggles2()
 	uvalues[k].type = 'i';
 	uvalues[k].uval.ival = old_rotate_hi = g_rotate_hi;
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPYOPTS;
-	i = full_screen_prompt("Extended Options\n"
+	i = full_screen_prompt_help(HELPYOPTS, "Extended Options\n"
 		"(not all combinations make sense)",
 		k + 1, choices, uvalues, 0, NULL);
-	g_help_mode = oldhelpmode;
 	if (i < 0)
 	{
 		return -1;
-		}
+	}
 
 	/* now check out the results (*hopefully* in the same order <grin>) */
 	k = -1;
@@ -662,7 +653,6 @@ int get_toggles2()
 int passes_options(void)
 {
 	char *choices[20];
-	int oldhelpmode;
 	char *passcalcmodes[] = {"rect", "line"};
 
 	struct full_screen_values uvalues[25];
@@ -705,17 +695,14 @@ pass_option_restart:
 	uvalues[k].uval.ch.val = g_orbit_draw_mode;
 	old_drawmode = g_orbit_draw_mode;
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPPOPTS;
-	i = full_screen_prompt("Passes Options\n"
+	i = full_screen_prompt_help(HELPPOPTS, "Passes Options\n"
 		"(not all combinations make sense)\n"
 		"(Press "FK_F2" for corner parameters)\n"
 		"(Press "FK_F6" for calculation parameters)", k + 1, choices, uvalues, 0x44, NULL);
-	g_help_mode = oldhelpmode;
 	if (i < 0)
 	{
 		return -1;
-		}
+	}
 
 	/* now check out the results (*hopefully* in the same order <grin>) */
 	k = -1;
@@ -821,7 +808,6 @@ pass_option_restart:
 int get_view_params()
 {
 	char *choices[16];
-	int oldhelpmode;
 	struct full_screen_values uvalues[25];
 	int i, k;
 	float old_viewreduction, old_aspectratio;
@@ -888,10 +874,7 @@ get_view_restart:
 		uvalues[k].type = '*';
 	}
 
-	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
-	g_help_mode = HELPVIEW;
-	i = full_screen_prompt("View Window Options", k + 1, choices, uvalues, 16, NULL);
-	g_help_mode = oldhelpmode;     /* re-enable HELP */
+	i = full_screen_prompt_help(HELPVIEW, "View Window Options", k + 1, choices, uvalues, 16, NULL);
 	if (i < 0)
 	{
 		return -1;
@@ -986,14 +969,10 @@ get_view_restart:
 
 int get_command_string()
 {
-	int oldhelpmode;
 	int i;
 	static char cmdbuf[61];
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPCOMMANDS;
-	i = field_prompt("Enter command string to use.", NULL, cmdbuf, 60, NULL);
-	g_help_mode = oldhelpmode;
+	i = field_prompt_help(HELPCOMMANDS, "Enter command string to use.", NULL, cmdbuf, 60, NULL);
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
@@ -1088,7 +1067,6 @@ int starfield(void)
 int get_starfield_params(void)
 {
 	struct full_screen_values uvalues[3];
-	int oldhelpmode;
 	int i;
 	char *starfield_prompts[3] =
 	{
@@ -1108,10 +1086,7 @@ int get_starfield_params(void)
 		uvalues[i].type = 'f';
 	}
 	driver_stack_screen();
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPSTARFLD;
-	i = full_screen_prompt("Starfield Parameters", 3, starfield_prompts, uvalues, 0, NULL);
-	g_help_mode = oldhelpmode;
+	i = full_screen_prompt_help(HELPSTARFLD, "Starfield Parameters", 3, starfield_prompts, uvalues, 0, NULL);
 	driver_unstack_screen();
 	if (i < 0)
 	{
@@ -1142,7 +1117,6 @@ int get_random_dot_stereogram_parameters(void)
 		"  If yes, use current image map name? (see below)",
 		rds6
 	};
-	int oldhelpmode;
 	int i, k;
 	int ret;
 	static char reuse = 0;
@@ -1199,16 +1173,15 @@ int get_random_dot_stereogram_parameters(void)
 			strcat(rds6, "]");
 		}
 		else
+		{
 			*g_stereo_map_name = 0;
-		oldhelpmode = g_help_mode;
-		g_help_mode = HELPRDS;
-		i = full_screen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, NULL);
-		g_help_mode = oldhelpmode;
+		}
+		i = full_screen_prompt_help(HELPRDS, "Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, NULL);
 		if (i < 0)
 		{
 			ret = -1;
 			break;
-			}
+		}
 		else
 		{
 			k = 0;
@@ -1283,18 +1256,20 @@ int get_commands()              /* execute commands from file */
 	int ret;
 	FILE *parmfile;
 	long point;
-	int oldhelpmode;
+	static char commandmask[13] = {"*.par"};
+
 	ret = 0;
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPPARMFILE;
-	if ((point = get_file_entry(GETFILE_PARAMETER, "Parameter Set",
-								commandmask, g_command_file, g_command_name)) >= 0
-		&& (parmfile = fopen(g_command_file, "rb")) != NULL)
+	point = get_file_entry_help(HELPPARMFILE, GETFILE_PARAMETER, "Parameter Set",
+		commandmask, g_command_file, g_command_name);
+	if (point >= 0)
 	{
-		fseek(parmfile, point, SEEK_SET);
-		ret = load_commands(parmfile);
+		parmfile = fopen(g_command_file, "rb");
+		if (parmfile != NULL)
+		{
+			fseek(parmfile, point, SEEK_SET);
+			ret = load_commands(parmfile);
+		}
 	}
-	g_help_mode = oldhelpmode;
 	return ret;
 }
 
@@ -1329,7 +1304,6 @@ void goodbye(void)                  /* we done.  Bail out */
 	free_grid_pointers();
 	free_ant_storage();
 	disk_end();
-	discardgraphics();
 	ExitCheck();
 #ifdef WINFRACT
 	return;
@@ -1345,7 +1319,6 @@ void goodbye(void)                  /* we done.  Bail out */
 	if (*g_make_par != 0)
 	{
 		driver_move_cursor(6, 0);
-		discardgraphics(); /* if any emm/xmm tied up there, release it */
 	}
 	stop_slide_show();
 	end_help();
@@ -1492,7 +1465,7 @@ retry_dir:
 		tmpmask[j] = 0; /* strip trailing \ */
 		if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
 			|| fr_find_first(tmpmask) != 0
-			|| (DTA.attribute & SUBDIR) == 0)
+			|| (g_dta.attribute & SUBDIR) == 0)
 		{
 			strcpy(dir, DOTSLASH);
 			++retried;
@@ -1518,18 +1491,18 @@ retry_dir:
 	out = fr_find_first(tmpmask);
 	while (out == 0 && filecount < MAXNUMFILES)
 	{
-		if ((DTA.attribute & SUBDIR) && strcmp(DTA.filename, "."))
+		if ((g_dta.attribute & SUBDIR) && strcmp(g_dta.filename, "."))
 		{
-			if (strcmp(DTA.filename, ".."))
+			if (strcmp(g_dta.filename, ".."))
 			{
-				strcat(DTA.filename, SLASH);
+				strcat(g_dta.filename, SLASH);
 			}
-			strncpy(choices[++filecount]->name, DTA.filename, 13);
+			strncpy(choices[++filecount]->name, g_dta.filename, 13);
 			choices[filecount]->name[12] = 0;
 			choices[filecount]->type = 1;
-			strcpy(choices[filecount]->full_name, DTA.filename);
+			strcpy(choices[filecount]->full_name, g_dta.filename);
 			dircount++;
-			if (strcmp(DTA.filename, "..") == 0)
+			if (strcmp(g_dta.filename, "..") == 0)
 			{
 				notroot = 1;
 			}
@@ -1550,23 +1523,23 @@ retry_dir:
 		out = fr_find_first(tmpmask);
 		while (out == 0 && filecount < MAXNUMFILES)
 		{
-			if (!(DTA.attribute & SUBDIR))
+			if (!(g_dta.attribute & SUBDIR))
 			{
 				if (rds)
 				{
-					put_string_center(2, 0, 80, C_GENERAL_INPUT, DTA.filename);
+					put_string_center(2, 0, 80, C_GENERAL_INPUT, g_dta.filename);
 
-					split_path(DTA.filename, NULL, NULL, fname, ext);
+					split_path(g_dta.filename, NULL, NULL, fname, ext);
 					/* just using speedstr as a handy buffer */
 					make_path(speedstr, drive, dir, fname, ext);
-					strncpy(choices[++filecount]->name, DTA.filename, 13);
+					strncpy(choices[++filecount]->name, g_dta.filename, 13);
 					choices[filecount]->type = 0;
 				}
 				else
 				{
-					strncpy(choices[++filecount]->name, DTA.filename, 13);
+					strncpy(choices[++filecount]->name, g_dta.filename, 13);
 					choices[filecount]->type = 0;
-					strcpy(choices[filecount]->full_name, DTA.filename);
+					strcpy(choices[filecount]->full_name, g_dta.filename);
 				}
 			}
 			out = fr_find_next();
@@ -1689,7 +1662,7 @@ retry_dir:
 		if (speedstate == SEARCHPATH
 			&& strchr(speedstr, '*') == 0 && strchr(speedstr, '?') == 0
 			&& ((fr_find_first(speedstr) == 0
-			&& (DTA.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) /* it is a directory */
+			&& (g_dta.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) /* it is a directory */
 		{
 			speedstate = TEMPLATE;
 		}
@@ -1784,7 +1757,7 @@ static int filename_speedstr(int row, int col, int vid,
 	else
 	{
 		speedstate = MATCHING;
-		prompt = g_speed_prompt;
+		prompt = "Speed key string";
 	}
 	driver_put_string(row, col, vid, prompt);
 	return (int) strlen(prompt);
@@ -1839,7 +1812,7 @@ int is_a_directory(char *s)
 		else
 			return 0;  /* no slashes - we'll guess it's a file */
 	}
-	else if ((DTA.attribute & SUBDIR) != 0)
+	else if ((g_dta.attribute & SUBDIR) != 0)
 	{
 		if (sv == SLASHC)
 		{
@@ -1847,7 +1820,7 @@ int is_a_directory(char *s)
 			s[len-1] = 0;
 			if (fr_find_first(s) != 0) /* couldn't find it */
 				return 0;
-			else if ((DTA.attribute & SUBDIR) != 0)
+			else if ((g_dta.attribute & SUBDIR) != 0)
 				return 1;   /* we're SURE it's a directory */
 			else
 				return 0;
@@ -2025,7 +1998,7 @@ void fix_dir_name(char *dirname)
 	strcat(dirname, SLASH);
 }
 
-static void dir_name(char *target, char *dir, char *name)
+static void dir_name(char *target, const char *dir, const char *name)
 {
 	*target = 0;
 	if (*dir != 0)
@@ -2044,7 +2017,7 @@ int dir_remove(char *dir, char *filename)
 }
 
 /* fopens file in dir directory */
-FILE *dir_fopen(char *dir, char *filename, char *mode)
+FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 {
 	char tmp[FILE_MAX_PATH];
 	dir_name(tmp, dir, filename);
@@ -2085,9 +2058,7 @@ int get_corners()
 	double Xmagfactor, Rotation, Skew;
 	BYTE ousemag;
 	double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
-	int oldhelpmode;
 
-	oldhelpmode = g_help_mode;
 	ousemag = g_use_center_mag;
 	oxxmin = g_xx_min;
 	oxxmax = g_xx_max;
@@ -2178,11 +2149,7 @@ gc_loop:
 	prompts[++nump]= "Press "FK_F4" to reset to type default values";
 	values[nump].type = '*';
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPCOORDS;
-	prompt_ret = full_screen_prompt("Image Coordinates", nump + 1, prompts, values, 0x90, NULL);
-	g_help_mode = oldhelpmode;
-
+	prompt_ret = full_screen_prompt_help(HELPCOORDS, "Image Coordinates", nump + 1, prompts, values, 0x90, NULL);
 	if (prompt_ret < 0)
 	{
 		g_use_center_mag = ousemag;
@@ -2310,9 +2277,7 @@ static int get_screen_corners(void)
 	BYTE ousemag;
 	double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
 	double svxxmin, svxxmax, svyymin, svyymax, svxx3rd, svyy3rd;
-	int oldhelpmode;
 
-	oldhelpmode = g_help_mode;
 	ousemag = g_use_center_mag;
 
 	svxxmin = g_xx_min;  /* save these for later since convert_corners modifies them */
@@ -2405,11 +2370,8 @@ gsc_loop:
 	prompts[++nump]= "Press "FK_F4" to reset to type default values";
 	values[nump].type = '*';
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPSCRNCOORDS;
-	prompt_ret = full_screen_prompt("Screen Coordinates", nump + 1, prompts, values, 0x90, NULL);
-	g_help_mode = oldhelpmode;
-
+	prompt_ret = full_screen_prompt_help(HELPSCRNCOORDS, "Screen Coordinates",
+		nump + 1, prompts, values, 0x90, NULL);
 	if (prompt_ret < 0)
 	{
 		g_use_center_mag = ousemag;
@@ -2556,7 +2518,6 @@ gsc_loop:
 int get_browse_parameters()
 {
 	char *choices[10];
-	int oldhelpmode;
 	struct full_screen_values uvalues[25];
 	int i, k;
 	int old_autobrowse, old_brwschecktype, old_brwscheckparms, old_doublecaution;
@@ -2613,10 +2574,8 @@ get_brws_restart:
 	choices[++k] = "Press "FK_F4" to reset browse parameters to defaults.";
 	uvalues[k].type = '*';
 
-	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
-	g_help_mode = HELPBRWSPARMS;
-	i = full_screen_prompt("Browse ('L'ook) Mode Options", k + 1, choices, uvalues, 16, NULL);
-	g_help_mode = oldhelpmode;     /* re-enable HELP */
+	i = full_screen_prompt_help(HELPBRWSPARMS, "Browse ('L'ook) Mode Options",
+		k + 1, choices, uvalues, 16, NULL);
 	if (i < 0)
 	{
 		return 0;
@@ -2790,7 +2749,7 @@ int merge_path_names(char *oldfullpath, char *newfilename, int mode)
 	{
 		if (fr_find_first(newfilename) == 0)
 		{
-			if (DTA.attribute & SUBDIR) /* exists and is dir */
+			if (g_dta.attribute & SUBDIR) /* exists and is dir */
 			{
 				fix_dir_name(newfilename);  /* add trailing slash */
 				isadir = 1;

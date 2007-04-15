@@ -688,6 +688,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\fihelp.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\fmath.h"
 				>
 			</File>

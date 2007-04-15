@@ -12,6 +12,7 @@
 #include "helpdefs.h"
 #include "targa_lc.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 #define BLOCKTYPE_MAIN_INFO		1
 #define BLOCKTYPE_RESUME_INFO	2
@@ -1359,6 +1360,7 @@ int look_get_window(void)
 	U32 blinks;
 #endif
 
+	push_help_mode(HELPBROWSE);
 	oldbf_math = bf_math;
 	bf_math = BIGFLT;
 	if (!oldbf_math)
@@ -1430,17 +1432,17 @@ rescan:  /* entry for changed browse parms */
 			driver_get_key();
 			break;
 		}
-		split_path(DTA.filename, NULL, NULL, fname, ext);
+		split_path(g_dta.filename, NULL, NULL, fname, ext);
 		make_path(tmpmask, drive, dir, fname, ext);
 		if (!find_fractal_info(tmpmask, &read_info, &resume_info_blk, &formula_info,
 				&ranges_info, &mp_info, &evolver_info, &orbits_info)
 			&& (typeOK(&read_info, &formula_info) || !g_browse_check_type)
 			&& (paramsOK(&read_info) || !g_browse_check_parameters)
-			&& stricmp(g_browse_name, DTA.filename)
+			&& stricmp(g_browse_name, g_dta.filename)
 			&& evolver_info.got_data != 1
 			&& is_visible_window(&winlist, &read_info, &mp_info))
 		{
-			strcpy(winlist.name, DTA.filename);
+			strcpy(winlist.name, g_dta.filename);
 			drawindow(color_of_box, &winlist);
 			g_box_count <<= 1; /*g_box_count*2;*/ /* double for byte count */
 			winlist.box_count = g_box_count;
@@ -1731,6 +1733,7 @@ rescan:  /* entry for changed browse parms */
 	}
 	bf_math = oldbf_math;
 	g_float_flag = g_user_float_flag;
+	pop_help_mode();
 
 	return c;
 }

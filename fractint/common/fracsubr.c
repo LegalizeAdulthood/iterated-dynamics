@@ -22,6 +22,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 #if defined(_WIN32)
 #define ftimex ftime
@@ -664,11 +665,7 @@ static double _fastcall fudge_to_double(long l)
 	char buf[30];
 	double d;
 	sprintf(buf, "%.9g", (double)l / g_fudge);
-#ifndef XFRACT
 	sscanf(buf, "%lg", &d);
-#else
-	sscanf(buf, "%lf", &d);
-#endif
 	return d;
 }
 
@@ -1443,13 +1440,12 @@ void end_resume(void)
 static void sleep_ms_old(long ms)
 {
 	static long scalems = 0L;
-	int savehelpmode, savetabmode;
+	int savetabmode;
 	struct timebx t1, t2;
 #define SLEEPINIT 250 /* milliseconds for calibration */
 	savetabmode  = g_tab_mode;
-	savehelpmode = g_help_mode;
+	push_help_mode(-1);
 	g_tab_mode  = 0;
-	g_help_mode = -1;
 	if (scalems == 0L) /* g_calibrate */
 	{
 		/* selects a value of scalems that makes the units
@@ -1524,7 +1520,7 @@ static void sleep_ms_old(long ms)
 	}
 sleepexit:
 	g_tab_mode  = savetabmode;
-	g_help_mode = savehelpmode;
+	pop_help_mode();
 }
 
 static void sleep_ms_new(long ms)

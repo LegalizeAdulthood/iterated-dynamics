@@ -972,7 +972,8 @@ extern void plot_setup(void);
 
 /*  prompts1 -- C file prototypes */
 
-extern int full_screen_prompt(char far*, int, char **, struct full_screen_values *, int, char *);
+extern int full_screen_prompt(char *hdg, int numprompts, char **prompts,
+	struct full_screen_values *values, int fkeymask, char *extrainfo);
 extern long get_file_entry(int, char *, char *, char *, char *);
 extern int get_fractal_type(void);
 extern int get_fractal_parameters(int);
@@ -1010,7 +1011,7 @@ extern int starfield(void);
 extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);
 extern int dir_remove(char *, char *);
-extern FILE *dir_fopen(char *, char *, char *);
+extern FILE *dir_fopen(const char *, const char *, const char *);
 extern void extract_filename(char *, char *);
 extern char *has_extension(char *source);
 extern int integer_unsupported(void);
@@ -1022,6 +1023,12 @@ extern int stop_message(int, char *);
 extern void blank_rows(int, int, int);
 extern int text_temp_message(char *);
 extern int full_screen_choice(int options, char *hdg, char *hdg2,
+							 char *instr, int numchoices, char **choices, int *attributes,
+							 int boxwidth, int boxdepth, int colwidth, int current,
+							 void (*formatitem)(int, char *), char *speedstring,
+							 int (*speedprompt)(int, int, int, char *, int),
+							 int (*checkkey)(int, int));
+extern int full_screen_choice_help(int help_mode, int options, char *hdg, char *hdg2,
 							 char *instr, int numchoices, char **choices, int *attributes,
 							 int boxwidth, int boxdepth, int colwidth, int current,
 							 void (*formatitem)(int, char *), char *speedstring,

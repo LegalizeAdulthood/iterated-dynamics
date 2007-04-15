@@ -25,6 +25,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 /* routines in this module      */
 
@@ -1006,7 +1007,7 @@ top:
 		driver_put_string(-1, -1, C_GENERAL_HI, " (Batch mode)");
 	}
 
-	if (g_help_mode == HELPCYCLING)
+	if (get_help_mode() == HELPCYCLING)
 	{
 		driver_put_string(s_row + 1, 45, C_GENERAL_HI, "You are in color-cycling mode");
 	}
@@ -1684,14 +1685,14 @@ int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
 		while (out == 0)
 		{
 			char msg[200];
-			DTA.filename[FILE_MAX_FNAME + FILE_MAX_EXT-2] = 0;
-			sprintf(msg, "Searching %13s for %s      ", DTA.filename, itemname);
+			g_dta.filename[FILE_MAX_FNAME + FILE_MAX_EXT-2] = 0;
+			sprintf(msg, "Searching %13s for %s      ", g_dta.filename, itemname);
 			show_temp_message(msg);
-			if (!(DTA.attribute & SUBDIR) &&
-				strcmp(DTA.filename, ".")&&
-				strcmp(DTA.filename, ".."))
+			if (!(g_dta.attribute & SUBDIR) &&
+				strcmp(g_dta.filename, ".")&&
+				strcmp(g_dta.filename, ".."))
 			{
-				split_path(DTA.filename, NULL, NULL, fname, ext);
+				split_path(g_dta.filename, NULL, NULL, fname, ext);
 				make_path(fullpath, drive, dir, fname, ext);
 				infile = fopen(fullpath, "rb");
 				if (infile != NULL)

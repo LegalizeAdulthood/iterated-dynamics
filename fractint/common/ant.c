@@ -22,6 +22,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 #define RANDOM(n)       ((int)((long)((long)rand()*(long)(n)) >> 15)) /* Generate Random
                                                                          * Number 0 <= r < n */
@@ -422,7 +423,7 @@ void free_ant_storage(void)
 int ant(void)
 {
 	int maxants, type, i;
-	int oldhelpmode, rule_len;
+	int rule_len;
 	long maxpts, wait;
 	char rule[MAX_ANTS];
 
@@ -482,8 +483,7 @@ int ant(void)
 	}
 	s_incy[2][0] = g_y_dots - 1;      /* wrap from the bottom of the screen to the
 									* top */
-	oldhelpmode = g_help_mode;
-	g_help_mode = ANTCOMMANDS;
+	push_help_mode(ANTCOMMANDS);
 	maxpts = (long) g_parameters[1];
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
@@ -540,6 +540,6 @@ int ant(void)
 		turk_mite2(maxants, rule_len, rule, maxpts, wait);
 		break;
 	}
-	g_help_mode = oldhelpmode;
+	pop_help_mode();
 	return 0;
 }

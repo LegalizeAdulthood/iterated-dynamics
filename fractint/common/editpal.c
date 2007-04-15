@@ -125,6 +125,8 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "helpdefs.h"
+#include "fihelp.h"
 
 /*
  * misc. #defines
@@ -3422,6 +3424,8 @@ void palette_edit(void)       /* called by fractint */
 		return; /* prevents crash when physical screen is too small */
 	}
 
+	push_help_mode(HELPXHAIR);
+
 	g_plot_color = g_put_color;
 
 	g_line_buffer = malloc(max(g_screen_width, g_screen_height));
@@ -3444,4 +3448,6 @@ void palette_edit(void)       /* called by fractint */
 	g_sx_offset = oldsxoffs;
 	g_sy_offset = oldsyoffs;
 	DELETE(g_line_buffer);
+
+	pop_help_mode();
 }
