@@ -86,7 +86,7 @@ static int set_pixel_buff(BYTE *, BYTE *, unsigned);
 static void set_upr_lwr(void);
 static int _fastcall end_object(int);
 static int _fastcall off_screen(struct point);
-static int _fastcall out_triangle(struct f_point, struct f_point, struct f_point, int, int, int);
+static int _fastcall out_triangle(const struct f_point, const struct f_point, const struct f_point, int, int, int);
 static int _fastcall raytrace_header(void);
 static int _fastcall start_object(void);
 static void corners(MATRIX, int, double *, double *, double *, double *, double *, double *);
@@ -106,19 +106,26 @@ static void file_error(char *filename, int code);
 
 /* static variables */
 static double s_r_scale = 0.0;			/* surface roughness factor */
-static long s_x_center = 0, s_y_center = 0; /* circle center */
-static double s_scale_x = 0.0, s_scale_y = 0.0, s_scale_z = 0.0; /* scale factors */
+static long s_x_center = 0;
+static long s_y_center = 0; /* circle center */
+static double s_scale_x = 0.0;
+static double s_scale_y = 0.0;
+static double s_scale_z = 0.0; /* scale factors */
 static double s_radius = 0.0;			/* radius values */
 static double s_radius_factor = 0.0;	/* for intermediate calculation */
 static LMATRIX s_lm;					/* "" */
 static LVECTOR s_lview;					/* for perspective views */
 static double s_z_cutoff = 0.0;			/* perspective backside cutoff value */
 static float s_two_cos_delta_phi = 0.0;
-static float s_cos_phi, s_sin_phi;		/* precalculated sin/cos of longitude */
-static float s_old_cos_phi1, s_old_sin_phi1;
-static float s_old_cos_phi2, s_old_sin_phi2;
+static float s_cos_phi;
+static float s_sin_phi;		/* precalculated sin/cos of longitude */
+static float s_old_cos_phi1;
+static float s_old_sin_phi1;
+static float s_old_cos_phi2;
+static float s_old_sin_phi2;
 static BYTE *s_fraction = NULL;			/* float version of pixels array */
-static float s_min_xyz[3], s_max_xyz[3];	/* For Raytrace output */
+static float s_min_xyz[3];
+static float s_max_xyz[3];	/* For Raytrace output */
 static int s_line_length;
 static int s_targa_header_len = 18;			/* Size of current Targa-24 header */
 static FILE *s_raytrace_file = NULL;
@@ -138,7 +145,10 @@ static float *s_sin_theta_array;			/* all sine thetas go here  */
 static float *s_cos_theta_array;			/* all cosine thetas go here */
 static double s_r_scale_r;					/* precalculation factor */
 static int s_persp;						/* flag for indicating perspective transformations */
-static struct point s_p1, s_p2, s_p3;
+static struct point s_p1;
+static struct point s_p2;
+static struct point s_p1;
+static struct point s_p3;
 static struct f_point s_f_bad;			/* out of range value */
 static struct point s_bad;				/* out of range value */
 static long s_num_tris;					/* number of triangles output to ray trace file */
@@ -150,15 +160,594 @@ static char s_targa_temp[14] = "fractemp.tga";
 static struct point *s_last_row = NULL;	/* this array remembers the previous line */
 static struct minmax *s_minmax_x;			/* array of min and max x values used in triangle fill */
 
+static int line3d_init(unsigned linelen,
+					   int *tout, int *xcenter0, int *ycenter0, VECTOR cross_avg, VECTOR v)
+{
+	int err = first_time(linelen, v);
+	if (err != 0)
+	{
+		return err;
+	}
+	if (g_x_dots > OLD_MAX_PIXELS)
+	{
+		return -1;
+	}
+	*tout = 0;
+	cross_avg[0] = 0;
+	cross_avg[1] = 0;
+	cross_avg[2] = 0;
+	s_x_center = g_x_dots/2 + g_x_shift;
+	s_y_center = g_y_dots/2 - g_y_shift;
+	*xcenter0 = (int) s_x_center;
+	*ycenter0 = (int) s_y_center;
+	return 0;
+}
+
+static int line3d_sphere(int col, int xcenter0, int ycenter0,
+						 struct point *cur, struct f_point *f_cur, double *r, LVECTOR lv, VECTOR v)
+{
+	float cos_theta = s_sin_theta_array[col];
+	float sin_theta = s_cos_theta_array[col];    /* precalculated sin/cos of latitude */
+
+	if (s_sin_phi < 0 && !(g_raytrace_output || FILLTYPE < FILLTYPE_POINTS))
+	{
+		*cur = s_bad;
+		*f_cur = s_f_bad;
+		return 1;
+	}
+	/************************************************************/
+	/* KEEP THIS FOR DOCS - original formula --                 */
+	/* if (s_r_scale < 0.0)                                         */
+	/* r = 1.0 + ((double)cur.color/(double)s_z_coord)*s_r_scale;       */
+	/* else                                                     */
+	/* r = 1.0-s_r_scale + ((double)cur.color/(double)s_z_coord)*s_r_scale;*/
+	/* s_radius = (double)g_y_dots/2;                                     */
+	/* r = r*s_radius;                                                 */
+	/* cur.x = g_x_dots/2 + s_scale_x*r*sin_theta*s_aspect + xup ;         */
+	/* cur.y = g_y_dots/2 + s_scale_y*r*cos_theta*s_cos_phi - yup ;         */
+	/************************************************************/
+
+	if (s_r_scale < 0.0)
+	{
+		*r = s_radius + s_radius_factor*f_cur->color*cos_theta;
+	}
+	else if (s_r_scale > 0.0)
+	{
+		*r = s_radius - s_r_scale_r + s_radius_factor*(double) f_cur->color*cos_theta;
+	}
+	else
+	{
+		*r = s_radius;
+	}
+	/* Allow Ray trace to go through so display ok */
+	if (s_persp || g_raytrace_output)
+	{  /* mrr how do lv[] and cur and f_cur all relate */
+		/* NOTE: g_fudge was pre-calculated above in r and s_radius */
+		/* (almost) guarantee negative */
+		lv[2] = (long) (-s_radius - (*r)*cos_theta*s_sin_phi);     /* z */
+		if ((lv[2] > s_z_cutoff) && !FILLTYPE < FILLTYPE_POINTS)
+		{
+			*cur = s_bad;
+			*f_cur = s_f_bad;
+			return 1;
+		}
+		lv[0] = (long) (s_x_center + sin_theta*s_scale_x*(*r));  /* x */
+		lv[1] = (long) (s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r)); /* y */
+
+		if ((FILLTYPE >= FILLTYPE_LIGHT_BEFORE) || g_raytrace_output)
+		{     /* calculate illumination normal before s_persp */
+			double r0 = (*r)/65536L;
+			f_cur->x = (float) (xcenter0 + sin_theta*s_scale_x*r0);
+			f_cur->y = (float) (ycenter0 + cos_theta*s_cos_phi*s_scale_y*r0);
+			f_cur->color = (float) (-r0*cos_theta*s_sin_phi);
+		}
+		if (!(g_user_float_flag || g_raytrace_output))
+		{
+			if (longpersp(lv, s_lview, 16) == -1)
+			{
+				*cur = s_bad;
+				*f_cur = s_f_bad;
+				return 1;
+			}
+			cur->x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
+			cur->y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
+		}
+		if (g_user_float_flag || g_overflow || g_raytrace_output)
+		{
+			v[0] = lv[0];
+			v[1] = lv[1];
+			v[2] = lv[2];
+			v[0] /= g_fudge;
+			v[1] /= g_fudge;
+			v[2] /= g_fudge;
+			perspective(v);
+			cur->x = (int) (v[0] + .5 + g_xx_adjust);
+			cur->y = (int) (v[1] + .5 + g_yy_adjust);
+		}
+	}
+	/* mrr Not sure how this an 3rd if above relate */
+	else if (!(s_persp && g_raytrace_output))
+	{
+		/* mrr Why the xx- and g_yy_adjust here and not above? */
+		f_cur->x = (float) (s_x_center + sin_theta*s_scale_x*(*r) + g_xx_adjust);
+		f_cur->y = (float) (s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r) + g_yy_adjust);
+		cur->x = (int) f_cur->x;
+		cur->y = (int) f_cur->y;
+		if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE || g_raytrace_output)        /* mrr why do we do this for filltype > 5? */
+		{
+			f_cur->color = (float) (-(*r)*cos_theta*s_sin_phi*s_scale_z);
+		}
+		v[0] = v[1] = v[2] = 0;  /* MRR Why do we do this? */
+	}
+	return 0;
+}
+
+static int line3d_non_sphere(int col,
+	struct f_point *f_cur, struct point *cur, LVECTOR lv0, LVECTOR lv, VECTOR v, float *f_water)
+{
+	if (!g_user_float_flag && !g_raytrace_output)
+	{
+		/* flag to save vector before perspective */
+		/* in longvmultpersp calculation */
+		lv0[0] = (FILLTYPE >= FILLTYPE_LIGHT_BEFORE) ? 1 : 0;   
+
+		/* use 32-bit multiply math to snap this out */
+		lv[0] = col;
+		lv[0] = lv[0] << 16;
+		lv[1] = g_current_row;
+		lv[1] = lv[1] << 16;
+		if (g_file_type || g_potential_16bit) /* don't truncate fractional part */
+		{
+			lv[2] = (long) (f_cur->color*65536.0);
+		}
+		else
+			/* there IS no fractional part here! */
+		{
+			lv[2] = (long) f_cur->color;
+			lv[2] = lv[2] << 16;
+		}
+
+		if (longvmultpersp(lv, s_lm, lv0, lv, s_lview, 16) == -1)
+		{
+			*cur = s_bad;
+			*f_cur = s_f_bad;
+			return 1;
+		}
+
+		cur->x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
+		cur->y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
+		if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE && !g_overflow)
+		{
+			f_cur->x = (float) lv0[0];
+			f_cur->x /= 65536.0f;
+			f_cur->y = (float) lv0[1];
+			f_cur->y /= 65536.0f;
+			f_cur->color = (float) lv0[2];
+			f_cur->color /= 65536.0f;
+		}
+	}
+
+	if (g_user_float_flag || g_overflow || g_raytrace_output)
+		/* do in float if integer math overflowed or doing Ray trace */
+	{
+		/* slow float version for comparison */
+		v[0] = col;
+		v[1] = g_current_row;
+		v[2] = f_cur->color;      /* Actually the z value */
+
+		mult_vec(v, s_m);     /* matrix*vector routine */
+
+		if (FILLTYPE > FILLTYPE_FILL_BARS || g_raytrace_output)
+		{
+			f_cur->x = (float) v[0];
+			f_cur->y = (float) v[1];
+			f_cur->color = (float) v[2];
+
+			if (g_raytrace_output == RAYTRACE_ACROSPIN)
+			{
+				f_cur->x = f_cur->x*(2.0f/g_x_dots) - 1.0f;
+				f_cur->y = f_cur->y*(2.0f/g_y_dots) - 1.0f;
+				f_cur->color = -f_cur->color*(2.0f/g_num_colors) - 1.0f;
+			}
+		}
+
+		if (s_persp && !g_raytrace_output)
+		{
+			perspective(v);
+		}
+		cur->x = (int) (v[0] + g_xx_adjust + .5);
+		cur->y = (int) (v[1] + g_yy_adjust + .5);
+
+		v[0] = 0;
+		v[1] = 0;
+		v[2] = WATERLINE;
+		mult_vec(v, s_m);
+		*f_water = (float) v[2];
+	}
+
+	return 0;
+}
+
+static void line3d_raytrace(int col, int next,
+							const struct point *old, const struct point *cur,
+							const struct f_point *f_old, const struct f_point *f_cur,
+							float f_water, int last_dot,
+							int *tout)
+{
+	if (col && g_current_row &&
+		old->x > BAD_CHECK &&
+		old->x < (g_x_dots - BAD_CHECK) &&
+		s_last_row[col].x > BAD_CHECK &&
+		s_last_row[col].y > BAD_CHECK &&
+		s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
+		s_last_row[col].y < (g_y_dots - BAD_CHECK))
+	{
+		/* Get rid of all the triangles in the plane at the base of
+		* the object */
+
+		if (f_cur->color == f_water &&
+			s_f_last_row[col].color == f_water &&
+			s_f_last_row[next].color == f_water)
+		{
+			return;
+		}
+
+		if (g_raytrace_output != RAYTRACE_ACROSPIN)    /* Output the vertex info */
+		{
+			out_triangle(*f_cur, *f_old, s_f_last_row[col],
+				cur->color, old->color, s_last_row[col].color);
+		}
+
+		*tout = 1;
+
+		driver_draw_line(old->x, old->y, cur->x, cur->y, old->color);
+		driver_draw_line(old->x, old->y, s_last_row[col].x,
+			s_last_row[col].y, old->color);
+		driver_draw_line(s_last_row[col].x, s_last_row[col].y,
+			cur->x, cur->y, cur->color);
+		s_num_tris++;
+	}
+
+	if (col < last_dot && g_current_row &&
+		s_last_row[col].x > BAD_CHECK &&
+		s_last_row[col].y > BAD_CHECK &&
+		s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
+		s_last_row[col].y < (g_y_dots - BAD_CHECK) &&
+		s_last_row[next].x > BAD_CHECK &&
+		s_last_row[next].y > BAD_CHECK &&
+		s_last_row[next].x < (g_x_dots - BAD_CHECK) &&
+		s_last_row[next].y < (g_y_dots - BAD_CHECK))
+	{
+		/* Get rid of all the triangles in the plane at the base of
+		* the object */
+
+		if (f_cur->color == f_water &&
+			s_f_last_row[col].color == f_water &&
+			s_f_last_row[next].color == f_water)
+		{
+			return;
+		}
+
+		if (g_raytrace_output != RAYTRACE_ACROSPIN)    /* Output the vertex info */
+		{
+			out_triangle(*f_cur, s_f_last_row[col], s_f_last_row[next],
+					cur->color, s_last_row[col].color, s_last_row[next].color);
+		}
+		*tout = 1;
+
+		driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur->x, cur->y,
+			cur->color);
+		driver_draw_line(s_last_row[next].x, s_last_row[next].y, cur->x, cur->y,
+			cur->color);
+		driver_draw_line(s_last_row[next].x, s_last_row[next].y, s_last_row[col].x,
+			s_last_row[col].y, s_last_row[col].color);
+		s_num_tris++;
+	}
+
+	if (g_raytrace_output == RAYTRACE_ACROSPIN)       /* Output vertex info for Acrospin */
+	{
+		fprintf(s_raytrace_file, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
+			f_cur->x, f_cur->y, f_cur->color, RO, CO);
+		if (CO > CO_MAX)
+		{
+			CO_MAX = CO;
+		}
+		CO++;
+	}
+}
+
+static void line3d_fill_surface_grid(int col, const struct point *old, const struct point *cur)
+{
+	if (col &&
+		old->x > BAD_CHECK &&
+		old->x < (g_x_dots - BAD_CHECK))
+	{
+		driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
+	}
+	if (g_current_row &&
+		s_last_row[col].x > BAD_CHECK &&
+		s_last_row[col].y > BAD_CHECK &&
+		s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
+		s_last_row[col].y < (g_y_dots - BAD_CHECK))
+	{
+		driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur->x,
+			cur->y, cur->color);
+	}
+}
+
+static void line3d_fill_points(const struct point *cur)
+{
+	(*g_plot_color)(cur->x, cur->y, cur->color);
+}
+
+/* connect-a-dot */
+static void line3d_fill_wire_frame(int col, const struct point *old, const struct point *cur)
+{
+	if ((old->x < g_x_dots) && (col) &&
+		old->x > BAD_CHECK &&
+		old->y > BAD_CHECK)      /* Don't draw from old to cur on col 0 */
+	{
+		driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
+	}
+}
+
+static void line3d_fill_gouraud_flat(int col, int next, int last_dot, const struct point *old, const struct point *cur, const struct point *old_last)
+{
+	/*************************************************************/
+	/* "triangle fill" - consider four points: current point,    */
+	/* previous point same row, point opposite current point in  */
+	/* previous row, point after current point in previous row.  */
+	/* The object is to fill all points inside the two triangles.*/
+	/*                                                           */
+	/* s_last_row[col].x/y___ s_last_row[next]                         */
+	/* /        1                 /                              */
+	/* /                1         /                              */
+	/* /                       1  /                              */
+	/* oldrow/col ________ trow/col                              */
+	/*************************************************************/
+	if (g_current_row && !col)
+	{
+		put_a_triangle(s_last_row[next], s_last_row[col], *cur, cur->color);
+	}
+	if (g_current_row && col)  /* skip first row and first column */
+	{
+		if (col == 1)
+		{
+			put_a_triangle(s_last_row[col], *old_last, *old, old->color);
+		}
+		if (col < last_dot)
+		{
+			put_a_triangle(s_last_row[next], s_last_row[col], *cur, cur->color);
+		}
+		put_a_triangle(*old, s_last_row[col], *cur, cur->color);
+	}
+}
+
+static void line3d_fill_bars(int col,
+	struct point *old, struct point *cur, struct f_point *f_cur,
+	LVECTOR lv, LVECTOR lv0)
+{
+	if (SPHERE)
+	{
+		if (s_persp)
+		{
+			old->x = (int) (s_x_center >> 16);
+			old->y = (int) (s_y_center >> 16);
+		}
+		else
+		{
+			old->x = (int) s_x_center;
+			old->y = (int) s_y_center;
+		}
+	}
+	else
+	{
+		lv[0] = col;
+		lv[1] = g_current_row;
+		lv[2] = 0;
+		/* apply g_fudge bit shift for integer math */
+		lv[0] = lv[0] << 16;
+		lv[1] = lv[1] << 16;
+		/* Since 0, unnecessary lv[2] = lv[2] << 16; */
+
+		if (longvmultpersp(lv, s_lm, lv0, lv, s_lview, 16))
+		{
+			*cur = s_bad;
+			*f_cur = s_f_bad;
+			return;
+		}
+
+		/* Round and g_fudge back to original  */
+		old->x = (int) ((lv[0] + 32768L) >> 16);
+		old->y = (int) ((lv[1] + 32768L) >> 16);
+	}
+	if (old->x < 0)
+	{
+		old->x = 0;
+	}
+	else if (old->x >= g_x_dots)
+	{
+		old->x = g_x_dots - 1;
+	}
+	if (old->y < 0)
+	{
+		old->y = 0;
+	}
+	else if (old->y >= g_y_dots)
+	{
+		old->y = g_y_dots - 1;
+	}
+	driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
+}
+
+static void line3d_fill_light(int col, int next, int last_dot, int cross_not_init,
+							  VECTOR v1, VECTOR v2,
+							  const struct point *old, const struct f_point *f_old,
+							  struct point *cur, struct f_point *f_cur,
+							  VECTOR cross_avg)
+{
+	/* light-source modulated fill */
+	if (g_current_row && col)  /* skip first row and first column */
+	{
+		if (f_cur->color < BAD_CHECK || f_old->color < BAD_CHECK ||
+			s_f_last_row[col].color < BAD_CHECK)
+		{
+			return;
+		}
+
+		v1[0] = f_cur->x - f_old->x;
+		v1[1] = f_cur->y - f_old->y;
+		v1[2] = f_cur->color - f_old->color;
+
+		v2[0] = s_f_last_row[col].x - f_cur->x;
+		v2[1] = s_f_last_row[col].y - f_cur->y;
+		v2[2] = s_f_last_row[col].color - f_cur->color;
+
+		cross_product(v1, v2, g_cross);
+
+		/* normalize cross - and check if non-zero */
+		if (normalize_vector(g_cross))
+		{
+			if (g_debug_flag)
+			{
+				stop_message(0, "debug, cur->color=bad");
+			}
+			f_cur->color = (float) s_bad.color;
+			cur->color = s_bad.color;
+		}
+		else
+		{
+			static VECTOR tmpcross;
+
+			/* line-wise averaging scheme */
+			if (LIGHTAVG > 0)
+			{
+				if (cross_not_init)
+				{
+					/* initialize array of old normal vectors */
+					cross_avg[0] = g_cross[0];
+					cross_avg[1] = g_cross[1];
+					cross_avg[2] = g_cross[2];
+					cross_not_init = 0;
+				}
+				tmpcross[0] = (cross_avg[0]*LIGHTAVG + g_cross[0]) /
+					(LIGHTAVG + 1);
+				tmpcross[1] = (cross_avg[1]*LIGHTAVG + g_cross[1]) /
+					(LIGHTAVG + 1);
+				tmpcross[2] = (cross_avg[2]*LIGHTAVG + g_cross[2]) /
+					(LIGHTAVG + 1);
+				g_cross[0] = tmpcross[0];
+				g_cross[1] = tmpcross[1];
+				g_cross[2] = tmpcross[2];
+				if (normalize_vector(g_cross))
+				{
+					/* this shouldn't happen */
+					if (g_debug_flag)
+					{
+						stop_message(0, "debug, normal vector err2");
+						/* use next instead if you ever need details:
+						* static char tmp[] = {"debug, vector err"};
+						* char msg[200]; #ifndef XFRACT
+						* sprintf(msg, "%s\n%f %f %f\n%f %f %f\n%f %f
+						* %f", #else sprintf(msg, "%s\n%f %f %f\n%f %f
+						* %f\n%f %f %f", #endif tmp, f_cur.x, f_cur.y,
+						* f_cur.color, s_f_last_row[col].x,
+						* s_f_last_row[col].y, s_f_last_row[col].color,
+						* s_f_last_row[col-1].x,
+						* s_f_last_row[col-1].y, s_f_last_row[col-1].color);
+						* stop_message(0, msg); */
+					}
+					f_cur->color = (float) g_colors;
+					cur->color = g_colors;
+				}
+			}
+			cross_avg[0] = tmpcross[0];
+			cross_avg[1] = tmpcross[1];
+			cross_avg[2] = tmpcross[2];
+
+			/* dot product of unit vectors is cos of angle between */
+			/* we will use this value to shade surface */
+
+			cur->color = (int) (1 + (g_colors - 2) *
+				(1.0 - dot_product(g_cross, s_light_direction)));
+		}
+		/* if g_colors out of range, set them to min or max color index
+		* but avoid background index. This makes g_colors "opaque" so
+		* SOMETHING plots. These conditions shouldn't happen but just
+		* in case                                        */
+		if (cur->color < 1)       /* prevent transparent g_colors */
+		{
+			cur->color = 1; /* avoid background */
+		}
+		if (cur->color > g_colors - 1)
+		{
+			cur->color = g_colors - 1;
+		}
+
+		/* why "col < 2"? So we have sufficient geometry for the fill */
+		/* algorithm, which needs previous point in same row to have  */
+		/* already been calculated (variable old)                 */
+		/* fix ragged left margin in preview */
+		if (col == 1 && g_current_row > 1)
+		{
+			put_a_triangle(s_last_row[next], s_last_row[col], *cur, cur->color);
+		}
+
+		if (col < 2 || g_current_row < 2)       /* don't have valid g_colors yet */
+		{
+			return;
+		}
+
+		if (col < last_dot)
+		{
+			put_a_triangle(s_last_row[next], s_last_row[col], *cur, cur->color);
+		}
+		put_a_triangle(*old, s_last_row[col], *cur, cur->color);
+		assert(g_standard_plot);
+		g_plot_color = g_standard_plot;
+	}
+}
+
+static void line3d_fill(int col, int next, int last_dot, int cross_not_init,
+						const struct point *old_last,
+						struct point *old, struct point *cur,
+						struct f_point *f_old, struct f_point *f_cur,
+						LVECTOR lv, LVECTOR lv0, VECTOR v1, VECTOR v2, VECTOR cross_avg)
+{
+	switch (FILLTYPE)
+	{
+	case FILLTYPE_SURFACE_GRID:
+		line3d_fill_surface_grid(col, old, cur);
+		break;
+
+	case FILLTYPE_POINTS:
+		line3d_fill_points(cur);
+		break;
+	case FILLTYPE_WIRE_FRAME:
+		line3d_fill_wire_frame(col, old, cur);
+		break;
+	case FILLTYPE_FILL_GOURAUD:		
+	case FILLTYPE_FILL_FLAT:
+		line3d_fill_gouraud_flat(col, next, last_dot, old, cur, old_last);
+		break;
+	case FILLTYPE_FILL_BARS:
+		line3d_fill_bars(col, old, cur, f_cur, lv, lv0);
+		break;
+	case FILLTYPE_LIGHT_BEFORE:
+	case FILLTYPE_LIGHT_AFTER:
+		line3d_fill_light(col, next, last_dot, cross_not_init, 
+			v1, v2, old, f_old, cur, f_cur, cross_avg);
+		break;
+	}
+}
+
 int line3d(BYTE *pixels, unsigned linelen)
 {
 	int tout;                    /* triangle has been sent to ray trace file */
 	float f_water = 0.0f;        /* transformed WATERLINE for ray trace files */
-	double r0;
 	int xcenter0 = 0;
 	int ycenter0 = 0;      /* Unfudged versions */
 	double r;                    /* sphere radius */
-	float cos_theta, sin_theta;    /* precalculated sin/cos of latitude */
 	int next;                    /* used by preview and grid */
 	int col;                     /* current column (original GIF) */
 	struct point cur;            /* current pixels */
@@ -173,7 +762,7 @@ int line3d(BYTE *pixels, unsigned linelen)
 	LVECTOR lv0;                 /* long equivalent of v */
 	int last_dot;
 	long g_fudge;
-	static struct point s_old_last = { 0, 0, 0 }; /* old pixels */
+	static struct point old_last = { 0, 0, 0 }; /* old pixels */
 
 	g_fudge = 1L << 16;
 	g_plot_color = (g_transparent[0] || g_transparent[1]) ? transparent_clip_color : clip_color;
@@ -194,23 +783,11 @@ int line3d(BYTE *pixels, unsigned linelen)
 	/************************************************************************/
 	if (g_row_count++ == 0)
 	{
-		int err = first_time(linelen, v);
-		if (err != 0)
+		int error = line3d_init(linelen, &tout, &xcenter0, &ycenter0, cross_avg, v);
+		if (error)
 		{
-			return err;
+			return error;
 		}
-		if (g_x_dots > OLD_MAX_PIXELS)
-		{
-			return -1;
-		}
-		tout = 0;
-		cross_avg[0] = 0;
-		cross_avg[1] = 0;
-		cross_avg[2] = 0;
-		s_x_center = g_x_dots/2 + g_x_shift;
-		s_y_center = g_y_dots/2 - g_y_shift;
-		xcenter0 = (int) s_x_center;
-		ycenter0 = (int) s_y_center;
 	}
 	/* make sure these pixel coordinates are out of range */
 	old = s_bad;
@@ -337,181 +914,17 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 		if (SPHERE)            /* sphere case */
 		{
-			sin_theta = s_sin_theta_array[col];
-			cos_theta = s_cos_theta_array[col];
-
-			if (s_sin_phi < 0 && !(g_raytrace_output || FILLTYPE < FILLTYPE_POINTS))
+			if (line3d_sphere(col, xcenter0, ycenter0, &cur, &f_cur, &r, lv, v))
 			{
-				cur = s_bad;
-				f_cur = s_f_bad;
-				goto loopbottom; /* another goto ! */
-			}
-			/************************************************************/
-			/* KEEP THIS FOR DOCS - original formula --                 */
-			/* if (s_r_scale < 0.0)                                         */
-			/* r = 1.0 + ((double)cur.color/(double)s_z_coord)*s_r_scale;       */
-			/* else                                                     */
-			/* r = 1.0-s_r_scale + ((double)cur.color/(double)s_z_coord)*s_r_scale;*/
-			/* s_radius = (double)g_y_dots/2;                                     */
-			/* r = r*s_radius;                                                 */
-			/* cur.x = g_x_dots/2 + s_scale_x*r*sin_theta*s_aspect + xup ;         */
-			/* cur.y = g_y_dots/2 + s_scale_y*r*cos_theta*s_cos_phi - yup ;         */
-			/************************************************************/
-
-			if (s_r_scale < 0.0)
-			{
-				r = s_radius + s_radius_factor*(double) f_cur.color*cos_theta;
-			}
-			else if (s_r_scale > 0.0)
-			{
-				r = s_radius - s_r_scale_r + s_radius_factor*(double) f_cur.color*cos_theta;
-			}
-			else
-			{
-				r = s_radius;
-			}
-			/* Allow Ray trace to go through so display ok */
-			if (s_persp || g_raytrace_output)
-			{  /* mrr how do lv[] and cur and f_cur all relate */
-				/* NOTE: g_fudge was pre-calculated above in r and s_radius */
-				/* (almost) guarantee negative */
-				lv[2] = (long) (-s_radius - r*cos_theta*s_sin_phi);     /* z */
-				if ((lv[2] > s_z_cutoff) && !FILLTYPE < FILLTYPE_POINTS)
-				{
-					cur = s_bad;
-					f_cur = s_f_bad;
-					goto loopbottom;      /* another goto ! */
-				}
-				lv[0] = (long) (s_x_center + sin_theta*s_scale_x*r);  /* x */
-				lv[1] = (long) (s_y_center + cos_theta*s_cos_phi*s_scale_y*r); /* y */
-
-				if ((FILLTYPE >= FILLTYPE_LIGHT_BEFORE) || g_raytrace_output)
-				{     /* calculate illumination normal before s_persp */
-					r0 = r/65536L;
-					f_cur.x = (float) (xcenter0 + sin_theta*s_scale_x*r0);
-					f_cur.y = (float) (ycenter0 + cos_theta*s_cos_phi*s_scale_y*r0);
-					f_cur.color = (float) (-r0*cos_theta*s_sin_phi);
-				}
-				if (!(g_user_float_flag || g_raytrace_output))
-				{
-					if (longpersp(lv, s_lview, 16) == -1)
-					{
-						cur = s_bad;
-						f_cur = s_f_bad;
-						goto loopbottom;   /* another goto ! */
-					}
-					cur.x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
-					cur.y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
-				}
-				if (g_user_float_flag || g_overflow || g_raytrace_output)
-				{
-					v[0] = lv[0];
-					v[1] = lv[1];
-					v[2] = lv[2];
-					v[0] /= g_fudge;
-					v[1] /= g_fudge;
-					v[2] /= g_fudge;
-					perspective(v);
-					cur.x = (int) (v[0] + .5 + g_xx_adjust);
-					cur.y = (int) (v[1] + .5 + g_yy_adjust);
-				}
-			}
-			/* mrr Not sure how this an 3rd if above relate */
-			else if (!(s_persp && g_raytrace_output))
-			{
-				/* mrr Why the xx- and g_yy_adjust here and not above? */
-				f_cur.x = (float) (s_x_center + sin_theta*s_scale_x*r + g_xx_adjust);
-				f_cur.y = (float) (s_y_center + cos_theta*s_cos_phi*s_scale_y*r + g_yy_adjust);
-				cur.x = (int) f_cur.x;
-				cur.y = (int) f_cur.y;
-				if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE || g_raytrace_output)        /* mrr why do we do this for filltype > 5? */
-				{
-					f_cur.color = (float) (-r*cos_theta*s_sin_phi*s_scale_z);
-				}
-				v[0] = v[1] = v[2] = 0;  /* MRR Why do we do this? */
+				goto loopbottom;
 			}
 		}
 		else
 			/* non-sphere 3D */
 		{
-			if (!g_user_float_flag && !g_raytrace_output)
+			if (line3d_non_sphere(col, &f_cur, &cur, lv0, lv, v, &f_water))
 			{
-				/* flag to save vector before perspective */
-				/* in longvmultpersp calculation */
-				lv0[0] = (FILLTYPE >= FILLTYPE_LIGHT_BEFORE) ? 1 : 0;   
-
-				/* use 32-bit multiply math to snap this out */
-				lv[0] = col;
-				lv[0] = lv[0] << 16;
-				lv[1] = g_current_row;
-				lv[1] = lv[1] << 16;
-				if (g_file_type || g_potential_16bit) /* don't truncate fractional part */
-				{
-					lv[2] = (long) (f_cur.color*65536.0);
-				}
-				else
-					/* there IS no fractional part here! */
-				{
-					lv[2] = (long) f_cur.color;
-					lv[2] = lv[2] << 16;
-				}
-
-				if (longvmultpersp(lv, s_lm, lv0, lv, s_lview, 16) == -1)
-				{
-					cur = s_bad;
-					f_cur = s_f_bad;
-					goto loopbottom;
-				}
-
-				cur.x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
-				cur.y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
-				if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE && !g_overflow)
-				{
-					f_cur.x = (float) lv0[0];
-					f_cur.x /= 65536.0f;
-					f_cur.y = (float) lv0[1];
-					f_cur.y /= 65536.0f;
-					f_cur.color = (float) lv0[2];
-					f_cur.color /= 65536.0f;
-				}
-			}
-
-			if (g_user_float_flag || g_overflow || g_raytrace_output)
-				/* do in float if integer math overflowed or doing Ray trace */
-			{
-				/* slow float version for comparison */
-				v[0] = col;
-				v[1] = g_current_row;
-				v[2] = f_cur.color;      /* Actually the z value */
-
-				mult_vec(v, s_m);     /* matrix*vector routine */
-
-				if (FILLTYPE > FILLTYPE_FILL_BARS || g_raytrace_output)
-				{
-					f_cur.x = (float) v[0];
-					f_cur.y = (float) v[1];
-					f_cur.color = (float) v[2];
-
-					if (g_raytrace_output == RAYTRACE_ACROSPIN)
-					{
-						f_cur.x = f_cur.x*(2.0f/g_x_dots) - 1.0f;
-						f_cur.y = f_cur.y*(2.0f/g_y_dots) - 1.0f;
-						f_cur.color = -f_cur.color*(2.0f/g_num_colors) - 1.0f;
-					}
-				}
-
-				if (s_persp && !g_raytrace_output)
-				{
-					perspective(v);
-				}
-				cur.x = (int) (v[0] + g_xx_adjust + .5);
-				cur.y = (int) (v[1] + g_yy_adjust + .5);
-
-				v[0] = 0;
-				v[1] = 0;
-				v[2] = WATERLINE;
-				mult_vec(v, s_m);
-				f_water = (float) v[2];
+				goto loopbottom;
 			}
 		}
 
@@ -545,338 +958,19 @@ int line3d(BYTE *pixels, unsigned linelen)
 
 		if (g_raytrace_output)
 		{
-			if (col && g_current_row &&
-				old.x > BAD_CHECK &&
-				old.x < (g_x_dots - BAD_CHECK) &&
-				s_last_row[col].x > BAD_CHECK &&
-				s_last_row[col].y > BAD_CHECK &&
-				s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
-				s_last_row[col].y < (g_y_dots - BAD_CHECK))
-			{
-				/* Get rid of all the triangles in the plane at the base of
-				* the object */
-
-				if (f_cur.color == f_water &&
-					s_f_last_row[col].color == f_water &&
-					s_f_last_row[next].color == f_water)
-				{
-					goto loopbottom;
-				}
-
-				if (g_raytrace_output != RAYTRACE_ACROSPIN)    /* Output the vertex info */
-				{
-					out_triangle(f_cur, f_old, s_f_last_row[col],
-						cur.color, old.color, s_last_row[col].color);
-				}
-
-				tout = 1;
-
-				driver_draw_line(old.x, old.y, cur.x, cur.y, old.color);
-				driver_draw_line(old.x, old.y, s_last_row[col].x,
-					s_last_row[col].y, old.color);
-				driver_draw_line(s_last_row[col].x, s_last_row[col].y,
-					cur.x, cur.y, cur.color);
-				s_num_tris++;
-			}
-
-			if (col < last_dot && g_current_row &&
-				s_last_row[col].x > BAD_CHECK &&
-				s_last_row[col].y > BAD_CHECK &&
-				s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
-				s_last_row[col].y < (g_y_dots - BAD_CHECK) &&
-				s_last_row[next].x > BAD_CHECK &&
-				s_last_row[next].y > BAD_CHECK &&
-				s_last_row[next].x < (g_x_dots - BAD_CHECK) &&
-				s_last_row[next].y < (g_y_dots - BAD_CHECK))
-			{
-				/* Get rid of all the triangles in the plane at the base of
-				* the object */
-
-				if (f_cur.color == f_water &&
-					s_f_last_row[col].color == f_water &&
-					s_f_last_row[next].color == f_water)
-				{
-					goto loopbottom;
-				}
-
-				if (g_raytrace_output != RAYTRACE_ACROSPIN)    /* Output the vertex info */
-				{
-					out_triangle(f_cur, s_f_last_row[col], s_f_last_row[next],
-							cur.color, s_last_row[col].color, s_last_row[next].color);
-				}
-				tout = 1;
-
-				driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur.x, cur.y,
-					cur.color);
-				driver_draw_line(s_last_row[next].x, s_last_row[next].y, cur.x, cur.y,
-					cur.color);
-				driver_draw_line(s_last_row[next].x, s_last_row[next].y, s_last_row[col].x,
-					s_last_row[col].y, s_last_row[col].color);
-				s_num_tris++;
-			}
-
-			if (g_raytrace_output == RAYTRACE_ACROSPIN)       /* Output vertex info for Acrospin */
-			{
-				fprintf(s_raytrace_file, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
-					f_cur.x, f_cur.y, f_cur.color, RO, CO);
-				if (CO > CO_MAX)
-				{
-					CO_MAX = CO;
-				}
-				CO++;
-			}
+			line3d_raytrace(col, next, &old, &cur, &f_old, &f_cur, f_water, last_dot, &tout);
 			goto loopbottom;
 		}
 
-		switch (FILLTYPE)
-		{
-		case FILLTYPE_SURFACE_GRID:
-			if (col &&
-				old.x > BAD_CHECK &&
-				old.x < (g_x_dots - BAD_CHECK))
-			{
-				driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
-			}
-			if (g_current_row &&
-				s_last_row[col].x > BAD_CHECK &&
-				s_last_row[col].y > BAD_CHECK &&
-				s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
-				s_last_row[col].y < (g_y_dots - BAD_CHECK))
-			{
-				driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur.x,
-					cur.y, cur.color);
-			}
-			break;
-
-		case FILLTYPE_POINTS:
-			(*g_plot_color)(cur.x, cur.y, cur.color);
-			break;
-
-		case FILLTYPE_WIRE_FRAME:                /* connect-a-dot */
-			if ((old.x < g_x_dots) && (col) &&
-				old.x > BAD_CHECK &&
-				old.y > BAD_CHECK)      /* Don't draw from old to cur on col 0 */
-			{
-				driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
-			}
-			break;
-
-		case FILLTYPE_FILL_GOURAUD:                /* with interpolation */
-		case FILLTYPE_FILL_FLAT:                /* no interpolation */
-			/*************************************************************/
-			/* "triangle fill" - consider four points: current point,    */
-			/* previous point same row, point opposite current point in  */
-			/* previous row, point after current point in previous row.  */
-			/* The object is to fill all points inside the two triangles.*/
-			/*                                                           */
-			/* s_last_row[col].x/y___ s_last_row[next]                         */
-			/* /        1                 /                              */
-			/* /                1         /                              */
-			/* /                       1  /                              */
-			/* oldrow/col ________ trow/col                              */
-			/*************************************************************/
-			if (g_current_row && !col)
-			{
-				put_a_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
-			}
-			if (g_current_row && col)  /* skip first row and first column */
-			{
-				if (col == 1)
-				{
-					put_a_triangle(s_last_row[col], s_old_last, old, old.color);
-				}
-				if (col < last_dot)
-				{
-					put_a_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
-				}
-				put_a_triangle(old, s_last_row[col], cur, cur.color);
-			}
-			break;
-
-		case FILLTYPE_FILL_BARS:                /* "solid fill" */
-			if (SPHERE)
-			{
-				if (s_persp)
-				{
-					old.x = (int) (s_x_center >> 16);
-					old.y = (int) (s_y_center >> 16);
-				}
-				else
-				{
-					old.x = (int) s_x_center;
-					old.y = (int) s_y_center;
-				}
-			}
-			else
-			{
-				lv[0] = col;
-				lv[1] = g_current_row;
-				lv[2] = 0;
-				/* apply g_fudge bit shift for integer math */
-				lv[0] = lv[0] << 16;
-				lv[1] = lv[1] << 16;
-				/* Since 0, unnecessary lv[2] = lv[2] << 16; */
-
-				if (longvmultpersp(lv, s_lm, lv0, lv, s_lview, 16))
-				{
-					cur = s_bad;
-					f_cur = s_f_bad;
-					goto loopbottom;      /* another goto ! */
-				}
-
-				/* Round and g_fudge back to original  */
-				old.x = (int) ((lv[0] + 32768L) >> 16);
-				old.y = (int) ((lv[1] + 32768L) >> 16);
-			}
-			if (old.x < 0)
-			{
-				old.x = 0;
-			}
-			else if (old.x >= g_x_dots)
-			{
-				old.x = g_x_dots - 1;
-			}
-			if (old.y < 0)
-			{
-				old.y = 0;
-			}
-			else if (old.y >= g_y_dots)
-			{
-				old.y = g_y_dots - 1;
-			}
-			driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
-			break;
-
-		case FILLTYPE_LIGHT_BEFORE:
-		case FILLTYPE_LIGHT_AFTER:
-			/* light-source modulated fill */
-			if (g_current_row && col)  /* skip first row and first column */
-			{
-				if (f_cur.color < BAD_CHECK || f_old.color < BAD_CHECK ||
-					s_f_last_row[col].color < BAD_CHECK)
-				{
-					break;
-				}
-
-				v1[0] = f_cur.x - f_old.x;
-				v1[1] = f_cur.y - f_old.y;
-				v1[2] = f_cur.color - f_old.color;
-
-				v2[0] = s_f_last_row[col].x - f_cur.x;
-				v2[1] = s_f_last_row[col].y - f_cur.y;
-				v2[2] = s_f_last_row[col].color - f_cur.color;
-
-				cross_product(v1, v2, g_cross);
-
-				/* normalize cross - and check if non-zero */
-				if (normalize_vector(g_cross))
-				{
-					if (g_debug_flag)
-					{
-						stop_message(0, "debug, cur.color=bad");
-					}
-					f_cur.color = (float) s_bad.color;
-					cur.color = s_bad.color;
-				}
-				else
-				{
-					static VECTOR tmpcross;
-
-					/* line-wise averaging scheme */
-					if (LIGHTAVG > 0)
-					{
-						if (cross_not_init)
-						{
-							/* initialize array of old normal vectors */
-							cross_avg[0] = g_cross[0];
-							cross_avg[1] = g_cross[1];
-							cross_avg[2] = g_cross[2];
-							cross_not_init = 0;
-						}
-						tmpcross[0] = (cross_avg[0]*LIGHTAVG + g_cross[0]) /
-							(LIGHTAVG + 1);
-						tmpcross[1] = (cross_avg[1]*LIGHTAVG + g_cross[1]) /
-							(LIGHTAVG + 1);
-						tmpcross[2] = (cross_avg[2]*LIGHTAVG + g_cross[2]) /
-							(LIGHTAVG + 1);
-						g_cross[0] = tmpcross[0];
-						g_cross[1] = tmpcross[1];
-						g_cross[2] = tmpcross[2];
-						if (normalize_vector(g_cross))
-						{
-							/* this shouldn't happen */
-							if (g_debug_flag)
-							{
-								stop_message(0, "debug, normal vector err2");
-								/* use next instead if you ever need details:
-								* static char tmp[] = {"debug, vector err"};
-								* char msg[200]; #ifndef XFRACT
-								* sprintf(msg, "%s\n%f %f %f\n%f %f %f\n%f %f
-								* %f", #else sprintf(msg, "%s\n%f %f %f\n%f %f
-								* %f\n%f %f %f", #endif tmp, f_cur.x, f_cur.y,
-								* f_cur.color, s_f_last_row[col].x,
-								* s_f_last_row[col].y, s_f_last_row[col].color,
-								* s_f_last_row[col-1].x,
-								* s_f_last_row[col-1].y, s_f_last_row[col-1].color);
-								* stop_message(0, msg); */
-							}
-							f_cur.color = (float) g_colors;
-							cur.color = g_colors;
-						}
-					}
-					cross_avg[0] = tmpcross[0];
-					cross_avg[1] = tmpcross[1];
-					cross_avg[2] = tmpcross[2];
-
-					/* dot product of unit vectors is cos of angle between */
-					/* we will use this value to shade surface */
-
-					cur.color = (int) (1 + (g_colors - 2) *
-						(1.0 - dot_product(g_cross, s_light_direction)));
-				}
-				/* if g_colors out of range, set them to min or max color index
-				* but avoid background index. This makes g_colors "opaque" so
-				* SOMETHING plots. These conditions shouldn't happen but just
-				* in case                                        */
-				if (cur.color < 1)       /* prevent transparent g_colors */
-				{
-					cur.color = 1; /* avoid background */
-				}
-				if (cur.color > g_colors - 1)
-				{
-					cur.color = g_colors - 1;
-				}
-
-				/* why "col < 2"? So we have sufficient geometry for the fill */
-				/* algorithm, which needs previous point in same row to have  */
-				/* already been calculated (variable old)                 */
-				/* fix ragged left margin in preview */
-				if (col == 1 && g_current_row > 1)
-				{
-					put_a_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
-				}
-
-				if (col < 2 || g_current_row < 2)       /* don't have valid g_colors yet */
-				{
-					break;
-				}
-
-				if (col < last_dot)
-				{
-					put_a_triangle(s_last_row[next], s_last_row[col], cur, cur.color);
-				}
-				put_a_triangle(old, s_last_row[col], cur, cur.color);
-				assert(g_standard_plot);
-				g_plot_color = g_standard_plot;
-			}
-			break;
-		}                      /* End of CASE statement for fill type  */
+		line3d_fill(col, next, last_dot, cross_not_init,
+			&old_last, &old, &cur, &f_old, &f_cur,
+			lv, lv0, v1, v2, cross_avg);
 
 loopbottom:
 		if (g_raytrace_output || (FILLTYPE != FILLTYPE_POINTS && FILLTYPE != FILLTYPE_FILL_BARS))
 		{
 			/* for triangle and grid fill purposes */
-			s_old_last = s_last_row[col];
+			old_last = s_last_row[col];
 			old = s_last_row[col] = cur;
 
 			/* for illumination model purposes */
@@ -2040,7 +2134,10 @@ static int _fastcall raytrace_header(void)
 /*                                                                  */
 /********************************************************************/
 
-static int _fastcall out_triangle(struct f_point pt1, struct f_point pt2, struct f_point pt3, int c1, int c2, int c3)
+static int _fastcall out_triangle(const struct f_point pt1,
+								  const struct f_point pt2,
+								  const struct f_point pt3,
+								  int c1, int c2, int c3)
 {
 	int i, j;
 	float c[3];
