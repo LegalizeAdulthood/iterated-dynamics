@@ -687,8 +687,8 @@ static void trigdetails(char *buf)
 		{
 			sprintf(tmpbuf, "/%s", trigfn[g_trig_index[i]].name);
 			strcat(buf, tmpbuf);
-			}
 		}
+	}
 }
 
 /* set array of trig function indices according to "function=" command */

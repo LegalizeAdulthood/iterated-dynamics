@@ -202,26 +202,16 @@ void rotate(int direction)      /* rotate-the-palette routine */
 #else
 			switch (kbdchar)
 			{
-			case FIK_F1:
-				fkey = 1; break;
-			case FIK_F2:
-				fkey = 2; break;
-			case FIK_F3:
-				fkey = 3; break;
-			case FIK_F4:
-				fkey = 4; break;
-			case FIK_F5:
-				fkey = 5; break;
-			case FIK_F6:
-				fkey = 6; break;
-			case FIK_F7:
-				fkey = 7; break;
-			case FIK_F8:
-				fkey = 8; break;
-			case FIK_F9:
-				fkey = 9; break;
-			case FIK_F10:
-				fkey = 10; break;
+			case FIK_F1: fkey = 1; break;
+			case FIK_F2: fkey = 2; break;
+			case FIK_F3: fkey = 3; break;
+			case FIK_F4: fkey = 4; break;
+			case FIK_F5: fkey = 5; break;
+			case FIK_F6: fkey = 6; break;
+			case FIK_F7: fkey = 7; break;
+			case FIK_F8: fkey = 8; break;
+			case FIK_F9: fkey = 9; break;
+			case FIK_F10: fkey = 10; break;
 			}
 #endif
 			fstep = 1;

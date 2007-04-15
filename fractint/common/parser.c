@@ -2728,11 +2728,15 @@ static int ParseStr(char *Str, int pass)
 		v[6].a.l.y = 0L;
 		v[8].a.l.x = (long)(g_parameters[4]*fg);
 		v[8].a.l.y = (long)(g_parameters[5]*fg);
-		v[11].a.l.x = g_x_dots; v[11].a.l.x <<= g_bit_shift;
-		v[11].a.l.y = g_y_dots; v[11].a.l.y <<= g_bit_shift;
-		v[12].a.l.x = g_max_iteration; v[12].a.l.x <<= g_bit_shift;
+		v[11].a.l.x = g_x_dots;
+		v[11].a.l.x <<= g_bit_shift;
+		v[11].a.l.y = g_y_dots;
+		v[11].a.l.y <<= g_bit_shift;
+		v[12].a.l.x = g_max_iteration;
+		v[12].a.l.x <<= g_bit_shift;
 		v[12].a.l.y = 0L;
-		v[13].a.l.x = g_is_mand; v[13].a.l.x <<= g_bit_shift;
+		v[13].a.l.x = g_is_mand;
+		v[13].a.l.x <<= g_bit_shift;
 		v[13].a.l.y = 0L;
 		v[14].a.l.x = (long)(v[14].a.d.x*fg);
 		v[14].a.l.y = (long)(v[14].a.d.y*fg);
@@ -3088,8 +3092,10 @@ int form_per_pixel(void)
 	case L_MATH:
 		v[9].a.l.x = (long) (((g_row + g_col)&1)*fg);
 		v[9].a.l.y = 0L;
-		v[10].a.l.x = g_col;   v[10].a.l.x <<= g_bit_shift;
-		v[10].a.l.y = g_row;   v[10].a.l.y <<= g_bit_shift;
+		v[10].a.l.x = g_col;
+		v[10].a.l.x <<= g_bit_shift;
+		v[10].a.l.y = g_row;
+		v[10].a.l.y <<= g_bit_shift;
 		break;
 #endif
 	}
@@ -3274,8 +3280,7 @@ int fill_jump_struct(void)
 
 	while (i > 0)
 	{
-		i--;
-		i = fill_if_group(i, jump_data);
+		i = fill_if_group(i-1, jump_data);
 	}
 	return i < 0 ? 1 : 0;
 }
@@ -4778,17 +4783,8 @@ int frm_prescan(FILE *open_file)
 
 	while (!done)
 	{
-/*    char msgbuf[80] = "Just got ";
-*/    filepos = ftell (open_file);
+		filepos = ftell (open_file);
 		frmgettoken (open_file, &this_token);
-/*    strcat(msgbuf, this_token.token_str);
-		stop_message (0, msgbuf);
-		sprintf (debugmsg, "Errors structure\n0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
-			errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
-			errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
-			errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
-		stop_message (0, debugmsg);
-*/
 		chars_in_formula += (int) strlen(this_token.token_str);
 		switch (this_token.token_type)
 		{

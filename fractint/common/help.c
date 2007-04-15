@@ -1084,9 +1084,9 @@ typedef struct PRINT_DOC_INFO
 void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg);
 
 static void printerc(PRINT_DOC_INFO *info, int c, int n)
-	{
+{
 	while (n-- > 0)
-		{
+	{
 		if (c == ' ')
 		{
 			++info->spaces;

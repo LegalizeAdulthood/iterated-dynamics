@@ -393,7 +393,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 					{
 						g_this_generation_random_seed = (unsigned int)clock_ticks(); /* time for new set */
 					}
-					param_history(0); /* save old history */
+					save_parameter_history();
 					ecount = 0;
 					g_fiddle_factor = g_fiddle_factor*g_fiddle_reduction;
 					g_parameter_offset_x = g_new_parameter_offset_x;
@@ -414,7 +414,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 					spiral_map(ecount); /* sets px & py */
 					g_sx_offset = tmpxdots*g_px;
 					g_sy_offset = tmpydots*g_py;
-					param_history(1); /* restore old history */
+					restore_parameter_history();
 					fiddle_parameters(g_genes, ecount);
 					calculate_fractal_initialize();
 					if (calculate_fractal() == -1)
@@ -465,7 +465,7 @@ done:
 				/* set up for 1st selected image, this reuses px and py */
 				g_px = g_py = g_grid_size/2;
 				unspiral_map(); /* first time called, w/above line sets up array */
-				param_history(1); /* restore old history */
+				restore_parameter_history();
 				fiddle_parameters(g_genes, 0);
 			}
 			/* end of evolution loop */
@@ -605,12 +605,6 @@ resumeloop:                             /* return here on failed overlays */
 				}
 				else if (g_initialize_batch == INITBATCH_NORMAL || g_initialize_batch == INITBATCH_BAILOUT_INTERRUPTED) /* save-to-disk */
 				{
-/*
-					while (driver_key_pressed())
-					{
-						driver_get_key();
-					}
-*/
 					kbdchar = (DEBUGFLAG_COMPARE_RESTORED == g_debug_flag) ? 'r' : 's';
 					if (g_initialize_batch == INITBATCH_NORMAL)
 					{
@@ -776,7 +770,7 @@ static int handle_fractal_type(int *frommandel)
 		g_discrete_parameter_offset_x = g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_x = g_new_discrete_parameter_offset_y = 0;
 		g_fiddle_factor = 1;           /* reset param evolution stuff */
 		g_set_orbit_corners = 0;
-		param_history(0); /* save history */
+		save_parameter_history();
 		if (i == 0)
 		{
 			g_init_mode = g_adapter;
@@ -856,7 +850,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	else if (i > 0)
 	{              /* time to redraw? */
 		g_quick_calculate = FALSE;
-		param_history(0); /* save history */
+		save_parameter_history();
 		*kbdmore = 0;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
@@ -897,7 +891,7 @@ static void handle_evolver_options(int kbdchar, int *kbdmore)
 	}
 	if (i > COMMAND_OK)              /* time to redraw? */
 	{
-		param_history(0); /* save history */
+		save_parameter_history();
 		*kbdmore = 0;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
@@ -1340,13 +1334,13 @@ static int handle_evolver_save_to_disk(void)
 	g_x_dots = g_screen_width;
 	g_y_dots = g_screen_height; /* for full screen save and pointer move stuff */
 	g_px = g_py = g_grid_size / 2;
-	param_history(1); /* restore old history */
+	restore_parameter_history();
 	fiddle_parameters(g_genes, 0);
 	draw_parameter_box(1);
 	save_to_disk(g_save_name);
 	g_px = oldpx;
 	g_py = oldpy;
-	param_history(1); /* restore old history */
+	restore_parameter_history();
 	fiddle_parameters(g_genes, unspiral_map());
 	g_sx_offset = oldsxoffs;
 	g_sy_offset = oldsyoffs;
@@ -1481,7 +1475,14 @@ static void handle_mutation_level(int forward, int amount, int *kbdmore)
 	g_view_window = TRUE;
 	g_evolving = EVOLVE_FIELD_MAP;
 	set_mutation_level(amount);
-	param_history(forward); /* save parameter history */
+	if (forward)
+	{
+		restore_parameter_history();
+	}
+	else
+	{
+		save_parameter_history();
+	}
 	*kbdmore = 0;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
@@ -1788,7 +1789,7 @@ static void handle_evolver_exit(int *kbdmore)
 {
 	g_evolving = EVOLVE_NONE;
 	g_view_window = FALSE;
-	param_history(0); /* save history */
+	save_parameter_history();
 	*kbdmore = 0;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
@@ -1868,7 +1869,7 @@ static void handle_evolver_move_selection(int *kbdchar)
 			g_sx_offset = g_px*(int)(g_dx_size + 1 + grout);
 			g_sy_offset = g_py*(int)(g_dy_size + 1 + grout);
 
-			param_history(1); /* restore old history */
+			restore_parameter_history();
 			fiddle_parameters(g_genes, unspiral_map()); /* change all parameters */
 						/* to values appropriate to the image selected */
 			set_evolve_ranges();
@@ -2367,12 +2368,13 @@ void reset_zoom_corners()
 /* read keystrokes while = specified key, return 1 + count;       */
 /* used to catch up when moving zoombox is slower than keyboard */
 int key_count(int keynum)
-{  int ctr;
+{
+	int ctr;
 	ctr = 1;
 	while (driver_key_pressed() == keynum)
 	{
 		driver_get_key();
 		++ctr;
-		}
+	}
 	return ctr;
 }

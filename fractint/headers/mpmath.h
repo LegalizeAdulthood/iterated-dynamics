@@ -58,16 +58,21 @@ enum MATH_TYPE { D_MATH};
 #endif
 extern enum MATH_TYPE MathType;
 
-#define fDiv(x, y, z) (void)((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
-#define fMul16(x, y, z) (void)((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
-#define fShift(x, Shift, z) (void)((*(long*)&z) = \
-   RegSftFloat(*(long*)&x, Shift))
-#define Fg2Float(x, f, z) (void)((*(long*)&z) = RegFg2Float(x, f))
-#define Float2Fg(x, f) RegFloat2Fg(*(long*)&x, f)
-#define fLog14(x, z) (void)((*(long*)&z) = \
-        RegFg2Float(LogFloat14(*(long*)&x), 16))
-#define fExp14(x, z) (void)((*(long*)&z) = ExpFloat14(*(long*)&x));
-#define fSqrt14(x, z) fLog14(x, z); fShift(z, -1, z); fExp14(z, z)
+#define fDiv(x, y, z)		(void) ((*(long *) &z) = RegDivFloat(*(long *) &x, *(long *) &y))
+#define fMul16(x, y, z)		(void) ((*(long *) &z) = r16Mul(*(long *) &x, *(long *) &y))
+#define fShift(x, Shift, z)	(void) ((*(long *) &z) = RegSftFloat(*(long *) &x, Shift))
+#define Fg2Float(x, f, z)	(void) ((*(long *) &z) = RegFg2Float(x, f))
+#define Float2Fg(x, f)		RegFloat2Fg(*(long *) &x, f)
+#define fLog14(x, z)		(void) ((*(long *) &z) = RegFg2Float(LogFloat14(*(long *) &x), 16))
+#define fExp14(x, z)		(void) ((*(long *) &z) = ExpFloat14(*(long *) &x));
+#define fSqrt14(x, z)		\
+	do						\
+	{						\
+		fLog14(x, z);		\
+		fShift(z, -1, z);	\
+		fExp14(z, z);		\
+	}						\
+	while (0)
 
 /* the following are declared 4 dimensional as an experiment */
 /* changeing declarations to _CMPLX and _LCMPLX restores the code */
@@ -91,8 +96,20 @@ struct ConstArg
 
 extern union Arg *Arg1, *Arg2;
 
-extern void lStkSin(void), lStkCos(void), lStkSinh(void), lStkCosh(void), lStkLog(void), lStkExp(void), lStkSqr(void);
-extern void dStkSin(void), dStkCos(void), dStkSinh(void), dStkCosh(void), dStkLog(void), dStkExp(void), dStkSqr(void);
+extern void lStkSin(void);
+extern void lStkCos(void);
+extern void lStkSinh(void);
+extern void lStkCosh(void);
+extern void lStkLog(void);
+extern void lStkExp(void);
+extern void lStkSqr(void);
+extern void dStkSin(void);
+extern void dStkCos(void);
+extern void dStkSinh(void);
+extern void dStkCosh(void);
+extern void dStkLog(void);
+extern void dStkExp(void);
+extern void dStkSqr(void);
 
 extern void (*g_trig0_l)(void);
 extern void (*g_trig1_l)(void);
@@ -108,10 +125,10 @@ extern void (*g_trig3_d)(void);
 /*   in parser.c to be used here thus avoiding duplicated code.         */
 /* -------------------------------------------------------------------- */
 
-#define CMPLXmod(z)       (sqr((z).x) + sqr((z).y))
-#define CMPLXconj(z)    ((z).y = -((z).y))
-#define LCMPLXmod(z)       (lsqr((z).x)+lsqr((z).y))
-#define LCMPLXconj(z)   ((z).y =  -((z).y))
+#define CMPLXmod(z)		(sqr((z).x) + sqr((z).y))
+#define CMPLXconj(z)	((z).y = -((z).y))
+#define LCMPLXmod(z)	(lsqr((z).x)+lsqr((z).y))
+#define LCMPLXconj(z)	((z).y =  -((z).y))
 
 
 #define LCMPLXtrig0(arg, out) do { Arg1->l = (arg); g_trig0_l(); (out)=Arg1->l; } while (0)

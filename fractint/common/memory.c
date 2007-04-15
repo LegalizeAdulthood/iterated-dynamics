@@ -185,9 +185,11 @@ static U16 next_handle()
 {
 	U16 counter = 1; /* don't use handle 0 */
 
-	while (handletable[counter].Nowhere.stored_at != NOWHERE &&
-			counter < MAXHANDLES)
+	while (handletable[counter].Nowhere.stored_at != NOWHERE
+		&& counter < MAXHANDLES)
+	{
 		counter++;
+	}
 	return counter;
 }
 

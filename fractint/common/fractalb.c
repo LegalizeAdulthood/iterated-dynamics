@@ -195,7 +195,7 @@ void showaspect(char *s)
 {
 	bf_t bt1, bt2, aspect;
 	char msg[100], str[100];
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	bt1    = alloc_stack(rbflength + 2);
 	bt2    = alloc_stack(rbflength + 2);
 	aspect = alloc_stack(rbflength + 2);
@@ -537,7 +537,7 @@ int mandelbrot_setup_bn()
 {
 	/* this should be set up dynamically based on corners */
 	bn_t bntemp1, bntemp2;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	bntemp1 = alloc_stack(bnlength);
 	bntemp2 = alloc_stack(bnlength);
 
@@ -635,7 +635,7 @@ int mandelbrot_setup_bf()
 {
 	/* this should be set up dynamically based on corners */
 	bf_t bftemp1, bftemp2;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	bftemp1 = alloc_stack(bflength + 2);
 	bftemp2 = alloc_stack(bflength + 2);
 
@@ -897,7 +897,7 @@ int julia_orbit_bf()
 int julia_z_power_orbit_bn()
 {
 	_BNCMPLX parm2;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 
 	parm2.x = alloc_stack(bnlength);
 	parm2.y = alloc_stack(bnlength);
@@ -914,7 +914,7 @@ int julia_z_power_orbit_bn()
 int julia_z_power_orbit_bf()
 {
 	_BFCMPLX parm2;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 
 	parm2.x = alloc_stack(bflength + 2);
 	parm2.y = alloc_stack(bflength + 2);
@@ -949,7 +949,9 @@ julia_orbit_bn()
 	*/
 
 	oldbnlength = bnlength;
-	bnlength = rlength; sub_a_bn(bntmpsqrx, bntmpsqry); bnlength = oldbnlength;
+	bnlength = rlength;
+	sub_a_bn(bntmpsqrx, bntmpsqry);
+	bnlength = oldbnlength;
 
 	/*
 	* Now that bntmpsqry has been sutracted from bntmpsqrx, we need to treat
@@ -965,7 +967,9 @@ julia_orbit_bn()
 	* Double bnold.x*bnold.y by shifting bits, including one of those bits
 	* calculated in the previous mult_bn().  Therefore, use rlength.
 	*/
-	bnlength = rlength; double_a_bn(bntmp); bnlength = oldbnlength;
+	bnlength = rlength;
+	double_a_bn(bntmp);
+	bnlength = oldbnlength;
 
 	/* Convert back to a single width bignumber and add bnparm.y */
 	add_bn(bnnew.y, bntmp + shiftfactor, bnparm.y);
@@ -1027,7 +1031,7 @@ _BFCMPLX *complex_log_bf(_BFCMPLX *t, _BFCMPLX *s)
 _BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
 {
 	bf_t tmp1;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	tmp1 = alloc_stack(rbflength + 2);
 	mult_bf(t->x, x->x, y->x);
 	mult_bf(t->y, x->y, y->y);
@@ -1044,7 +1048,7 @@ _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
 {
 	_BFCMPLX tmp;
 	bf_t e2x, siny, cosy;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	e2x  = alloc_stack(rbflength + 2);
 	siny = alloc_stack(rbflength + 2);
 	cosy = alloc_stack(rbflength + 2);
@@ -1083,7 +1087,7 @@ _BNCMPLX *complex_log_bn(_BNCMPLX *t, _BNCMPLX *s)
 _BNCMPLX *complex_multiply_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
 {
 	bn_t tmp1;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	tmp1 = alloc_stack(rlength);
 	mult_bn(t->x, x->x, y->x);
 	mult_bn(t->y, x->y, y->y);
@@ -1101,7 +1105,7 @@ _BNCMPLX *complex_power_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
 {
 	_BNCMPLX tmp;
 	bn_t e2x, siny, cosy;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	e2x  = alloc_stack(bnlength);
 	siny = alloc_stack(bnlength);
 	cosy = alloc_stack(bnlength);

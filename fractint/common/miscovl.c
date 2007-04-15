@@ -343,8 +343,10 @@ prompt_user:
 			}
 
 			/* another sanity check: total resolution cannot exceed 65535 */
-			xtotal = xm;  ytotal = ym;
-			xtotal *= pxdots;  ytotal *= pydots;
+			xtotal = xm;
+			ytotal = ym;
+			xtotal *= pxdots;
+			ytotal *= pydots;
 			if (xtotal > 65535L || ytotal > 65535L)
 			{
 				stop_message(0, "Total resolution (X or Y) cannot exceed 65535");
@@ -2266,7 +2268,9 @@ static void update_fractint_cfg()
 	strcpy(outname, cfgname);
 	i = (int) strlen(outname);
 	while (--i >= 0 && outname[i] != SLASHC)
-	outname[i] = 0;
+	{
+		outname[i] = 0;
+	}
 	strcat(outname, "fractint.tmp");
 	outfile = fopen(outname, "w");
 	if (outfile == NULL)
@@ -2274,7 +2278,7 @@ static void update_fractint_cfg()
 		sprintf(buf, "Can't create %s", outname);
 		stop_message(0, buf);
 		return;
-		}
+	}
 	cfgfile = fopen(cfgname, "r");
 
 	linenum = nextmode = 0;
@@ -2300,7 +2304,7 @@ static void update_fractint_cfg()
 			{
 				buf[i++] = '\t';
 				j += 8;
-				}
+			}
 			buf[i] = 0;
 			truecolorbits = vident.dotmode/1000;
 			if (truecolorbits == 0)

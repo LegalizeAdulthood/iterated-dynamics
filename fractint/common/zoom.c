@@ -26,7 +26,7 @@ static void _fastcall move_row(int fromrow, int torow, int col);
 void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
 	bf_t btmp1, btmp2 , btmp3;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	btmp1 = alloc_stack(rbflength + 2);
 	btmp2 = alloc_stack(rbflength + 2);
 	btmp3 = alloc_stack(rbflength + 2);
@@ -422,7 +422,7 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 {
 	bf_t btmp1, btmp2, btmp3, btmp4, btempx, btempy ;
 	bf_t btmp2a, btmp4a;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 
 	btmp1  = alloc_stack(rbflength + 2);
 	btmp2  = alloc_stack(rbflength + 2);
@@ -530,15 +530,19 @@ void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
 	copy_bf(bfplotmy2, tmp3);
 
 	/* savxxmin = g_xx_min; savyymax = g_yy_max; */
-	copy_bf(savbfxmin, bfxmin); copy_bf(savbfymax, bfymax);
+	copy_bf(savbfxmin, bfxmin); 
+	copy_bf(savbfymax, bfymax);
 
-	sub_bf(tmp1, bfsxmin, savbfxmin); sub_bf(tmp2, bfsymax, savbfymax);
+	sub_bf(tmp1, bfsxmin, savbfxmin);
+	sub_bf(tmp2, bfsymax, savbfymax);
 	zmo_calcbf(tmp1, tmp2, bfxmin, bfymax, bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
-	sub_bf(tmp1, bfsxmax, savbfxmin); sub_bf(tmp2, bfsymin, savbfymax);
+	sub_bf(tmp1, bfsxmax, savbfxmin);
+	sub_bf(tmp2, bfsymin, savbfymax);
 	zmo_calcbf(tmp1, tmp2, bfxmax, bfymin, bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
-	sub_bf(tmp1, bfsx3rd, savbfxmin); sub_bf(tmp2, bfsy3rd, savbfymax);
+	sub_bf(tmp1, bfsx3rd, savbfxmin);
+	sub_bf(tmp2, bfsy3rd, savbfymax);
 	zmo_calcbf(tmp1, tmp2, bfx3rd, bfy3rd, bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
 	restore_stack(saved);
@@ -838,7 +842,9 @@ static void _fastcall restart_window(int wknum)
 	}
 	memset(g_stack, 0, g_x_dots); /* use g_stack as a temp for the row; clear it */
 	while (yfrom <= yto)
-		put_line(yfrom++, xfrom, xto, (BYTE *)g_stack);
+	{
+		put_line(yfrom++, xfrom, xto, (BYTE *) g_stack);
+	}
 	g_work_list[wknum].sym = g_work_list[wknum].pass = 0;
 	g_work_list[wknum].yy_begin = g_work_list[wknum].yy_start;
 	g_work_list[wknum].xx_begin = g_work_list[wknum].xx_start;

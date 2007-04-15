@@ -1203,8 +1203,8 @@ static int diffusion_scan(void)
 	if (diffusion_engine() == -1)
 	{
 		work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
-			(int)(g_diffusion_counter >> 16),            /* high, */
-			(int)(g_diffusion_counter & 0xffff),         /* low order words */
+			(int) (g_diffusion_counter >> 16),            /* high, */
+			(int) (g_diffusion_counter & 0xffff),         /* low order words */
 			s_work_sym);
 		return -1;
 	}
@@ -1396,7 +1396,7 @@ static int diffusion_engine(void)
 		/* with progressive filling :    */
 		while (g_diffusion_counter < (g_diffusion_limit >> 1))
 		{
-			sqsz = 1 << ((int)(g_bits-(int)(log(g_diffusion_counter + 0.5)/log2 )-1)/2 );
+			sqsz = 1 << ((int) (g_bits - (int) (log(g_diffusion_counter + 0.5)/log2 )-1)/2 );
 			count_to_int(dif_offset, g_diffusion_counter, &colo, &rowo);
 
 			i = 0;
@@ -1704,8 +1704,8 @@ static int draw_function_orbits(void)
 	while (angle < Rotation)
 	{
 		theta = (double)angle*factor;
-		g_col = (int)(xfactor + (Xctr + Xmagfactor*cos(theta)));
-		g_row = (int)(yfactor + (Yctr + Xmagfactor*sin(theta)));
+		g_col = (int) (xfactor + (Xctr + Xmagfactor*cos(theta)));
+		g_row = (int) (yfactor + (Yctr + Xmagfactor*sin(theta)));
 		if (plotorbits2dfloat() == -1)
 		{
 			work_list_add(angle, 0, 0, 0, 0, 0, 0, s_work_sym);
@@ -1866,9 +1866,9 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 			}
 			else
 			{
-				g_color = (g_colors < 16) ?
-					(int)(g_color_iter & g_and_color)
-					: (int)(((g_color_iter - 1) % g_and_color) + 1);
+				g_color = (g_colors < 16)
+					? (int) (g_color_iter & g_and_color)
+					: (int) (((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
 		if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
@@ -1928,9 +1928,9 @@ int calculate_mandelbrot_fp(void)
 			}
 			else
 			{
-				g_color = (g_colors < 16) ?
-					(int)(g_color_iter & g_and_color)
-					: (int)(((g_color_iter - 1) % g_and_color) + 1);
+				g_color = (g_colors < 16)
+					? (int) (g_color_iter & g_and_color)
+					: (int) (((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
 		if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
@@ -2288,7 +2288,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 					}
 					{
 						int tmpcolor;
-						tmpcolor = (int)(((g_color_iter - 1) % g_and_color) + 1);
+						tmpcolor = (int) (((g_color_iter - 1) % g_and_color) + 1);
 						tantable[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
 					}
 				}
@@ -2870,9 +2870,9 @@ plot_pixel:
 		}
 		else
 		{
-			g_color = (g_colors < 16) ?
-				(int)(g_color_iter & g_and_color)
-				: (int)(((g_color_iter - 1) % g_and_color) + 1);
+			g_color = (g_colors < 16)
+				? (int) (g_color_iter & g_and_color)
+				: (int) (((g_color_iter - 1) % g_and_color) + 1);
 		}
 	}
 	if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
@@ -3820,7 +3820,9 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 				/*
 				if (s_half_block == 1)
 				{
-					(*g_plot_color)(x + 1, y, 0); (*g_plot_color)(x, y + 1, 0); (*g_plot_color)(x + 1, y + 1, 0);
+					(*g_plot_color)(x + 1, y, 0);
+					(*g_plot_color)(x, y + 1, 0);
+					(*g_plot_color)(x + 1, y + 1, 0);
 				}
 				*/
 				x += s_max_block;
@@ -4515,11 +4517,11 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		{
 			sub_bf(bft1, bfxmax, bfxmin);
 			abs_a_bf(bft1);
-			s_pixel_pi = (int)((PI/(double)bftofloat(bft1)*g_x_dots)); /* PI in pixels */
+			s_pixel_pi = (int) ((PI/(double)bftofloat(bft1)*g_x_dots)); /* PI in pixels */
 		}
 		else
 		{
-			s_pixel_pi = (int)((PI/fabs(g_xx_max-g_xx_min))*g_x_dots); /* PI in pixels */
+			s_pixel_pi = (int) ((PI/fabs(g_xx_max-g_xx_min))*g_x_dots); /* PI in pixels */
 		}
 
 		g_x_stop = g_xx_start + s_pixel_pi-1;
@@ -4859,10 +4861,12 @@ static int _fastcall tesseral_check_column(int x, int y1, int y2)
 	int i;
 	i = getcolor(x, ++y1);
 	while (--y2 > y1)
+	{
 		if (getcolor(x, y2) != i)
 		{
 			return -1;
 		}
+	}
 	return i;
 }
 

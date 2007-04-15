@@ -503,8 +503,8 @@ void plot_setup()
 	}
 	assert(g_standard_plot);
 
-	g_x_shift1 = g_x_shift = (int)((XSHIFT*(double)g_x_dots)/100);
-	g_y_shift1 = g_y_shift = (int)((YSHIFT*(double)g_y_dots)/100);
+	g_x_shift1 = g_x_shift = (int) ((XSHIFT*(double) g_x_dots)/100);
+	g_y_shift1 = g_y_shift = (int) ((YSHIFT*(double) g_y_dots)/100);
 
 	if (g_glasses_type)
 	{
@@ -518,10 +518,10 @@ void plot_setup()
 		switch (g_which_image)
 		{
 		case WHICHIMAGE_RED:
-			g_x_shift  += (int)((g_eye_separation* (double)g_x_dots)/200);
-			g_xx_adjust = (int)(((g_x_trans + g_x_adjust)* (double)g_x_dots)/100);
-			g_x_shift1 -= (int)((g_eye_separation* (double)g_x_dots)/200);
-			g_xx_adjust1 = (int)(((g_x_trans-g_x_adjust)* (double)g_x_dots)/100);
+			g_x_shift  += (int) ((g_eye_separation*(double) g_x_dots)/200);
+			g_xx_adjust = (int) (((g_x_trans + g_x_adjust)*(double) g_x_dots)/100);
+			g_x_shift1 -= (int) ((g_eye_separation*(double) g_x_dots)/200);
+			g_xx_adjust1 = (int) (((g_x_trans-g_x_adjust)*(double) g_x_dots)/100);
 			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2 - g_x_dots;
@@ -529,8 +529,8 @@ void plot_setup()
 			break;
 
 		case WHICHIMAGE_BLUE:
-			g_x_shift  -= (int)((g_eye_separation* (double)g_x_dots)/200);
-			g_xx_adjust = (int)(((g_x_trans-g_x_adjust)* (double)g_x_dots)/100);
+			g_x_shift  -= (int) ((g_eye_separation* (double)g_x_dots)/200);
+			g_xx_adjust = (int) (((g_x_trans-g_x_adjust)* (double)g_x_dots)/100);
 			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2;
@@ -540,9 +540,9 @@ void plot_setup()
 	}
 	else
 	{
-		g_xx_adjust = (int)((g_x_trans* (double)g_x_dots)/100);
+		g_xx_adjust = (int) ((g_x_trans* (double)g_x_dots)/100);
 	}
-	g_yy_adjust = (int)(-(g_y_trans* (double)g_y_dots)/100);
+	g_yy_adjust = (int) (-(g_y_trans* (double)g_y_dots)/100);
 
 	if (g_map_set)
 	{

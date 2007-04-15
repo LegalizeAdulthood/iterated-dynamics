@@ -385,7 +385,8 @@ init_restart:
 			g_yy_max = g_yy_min;
 			g_yy_min = ftemp;
 		}
-		g_xx_3rd = g_xx_min; g_yy_3rd = g_yy_min;
+		g_xx_3rd = g_xx_min;
+		g_yy_3rd = g_yy_min;
 	}
 
 	/* set up g_bit_shift for integer math */
@@ -681,7 +682,7 @@ void adjust_corner_bf(void)
 
 	bf_t bftemp, bftemp2;
 	bf_t btmp1;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	bftemp  = alloc_stack(rbflength + 2);
 	bftemp2 = alloc_stack(rbflength + 2);
 	btmp1  =  alloc_stack(rbflength + 2);
@@ -810,7 +811,7 @@ static void _fastcall adjust_to_limits_bf(double expand)
 	bf_t bcenterx, bcentery, badjx, badjy, btmp1, btmp2;
 	bf_t bexpand;
 	int i;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	bcornerx[0] = alloc_stack(rbflength + 2);
 	bcornerx[1] = alloc_stack(rbflength + 2);
 	bcornerx[2] = alloc_stack(rbflength + 2);
@@ -919,10 +920,12 @@ static void _fastcall adjust_to_limits_bf(double expand)
 
 	/* get min/max x/y values */
 	/* lowx = highx = cornerx[0]; */
-	copy_bf(blowx, bcornerx[0]); copy_bf(bhighx, bcornerx[0]);
+	copy_bf(blowx, bcornerx[0]);
+	copy_bf(bhighx, bcornerx[0]);
 
 	/* lowy = highy = cornery[0]; */
-	copy_bf(blowy, bcornery[0]); copy_bf(bhighy, bcornery[0]);
+	copy_bf(blowy, bcornery[0]);
+	copy_bf(bhighy, bcornery[0]);
 
 	for (i = 1; i < 4; ++i)
 	{
@@ -985,7 +988,8 @@ static void _fastcall adjust_to_limits_bf(double expand)
 
 	/* if any corner has x or y past limit, move the image */
 	/* adjx = adjy = 0; */
-	clear_bf(badjx); clear_bf(badjy);
+	clear_bf(badjx);
+	clear_bf(badjy);
 
 	for (i = 0; i < 4; ++i)
 	{
@@ -1203,7 +1207,7 @@ static void _fastcall smallest_add(double *num)
 static void _fastcall smallest_add_bf(bf_t num)
 {
 	bf_t btmp1;
-	int saved; saved = save_stack();
+	int saved = save_stack();
 	btmp1 = alloc_stack(bflength + 2);
 	mult_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
 	add_a_bf(num, btmp1);
@@ -1475,7 +1479,7 @@ static void sleep_ms_old(long ms)
 				clear_temp_message();
 				goto sleepexit;
 			}
-			elapsed = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
+			elapsed = (int) (t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
 		}
 		while (elapsed < SLEEPINIT);
 		/* once more to see if faster (eg multi-tasking) */
@@ -1486,7 +1490,7 @@ static void sleep_ms_old(long ms)
 		while (t2.time == t1.time && t2.millitm == t1.millitm);
 		sleep_ms_old(10L*SLEEPINIT);
 		ftimex(&t2);
-		i = (int)(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
+		i = (int) (t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
 		if (i < elapsed)
 		{
 			elapsed = (i == 0) ? 1 : i;
@@ -1662,12 +1666,14 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	{
 		return;
 	}
-	i = (int)(dy*g_plot_mx1 - dx*g_plot_mx2); i += g_sx_offset;
+	i = (int) (dy*g_plot_mx1 - dx*g_plot_mx2);
+	i += g_sx_offset;
 	if (i < 0 || i >= g_screen_width)
 	{
 		return;
 	}
-	j = (int)(dx*g_plot_my1 - dy*g_plot_my2); j += g_sy_offset;
+	j = (int) (dx*g_plot_my1 - dy*g_plot_my2);
+	j += g_sy_offset;
 	if (j < 0 || j >= g_screen_height)
 	{
 		return;
@@ -1904,10 +1910,12 @@ void get_julia_attractor(double real, double imag)
 	g_color_iter = 0;
 	g_overflow = 0;
 	while (++g_color_iter < g_max_iteration)
+	{
 		if (g_current_fractal_specific->orbitcalc() || g_overflow)
 		{
 			break;
 		}
+	}
 	if (g_color_iter >= g_max_iteration)      /* if orbit stays in the lake */
 	{
 		if (g_integer_fractal)   /* remember where it went to */

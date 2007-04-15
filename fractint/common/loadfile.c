@@ -608,7 +608,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 				g_genes[i].mutate = (int) evolver_info.mutate[i-4];
 			}
 		}
-		param_history(0); /* store history */
+		save_parameter_history();
 	}
 	else
 	{
@@ -1005,7 +1005,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 		fseek(fp, (long)len, SEEK_CUR);
 		*data_len += len;
 		*block_len += len + 1;
-		}
+	}
 }
 
 

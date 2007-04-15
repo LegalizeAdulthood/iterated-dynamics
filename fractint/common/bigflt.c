@@ -630,7 +630,7 @@ bf_t exp_bf(bf_t r, bf_t n)
 		return r;
 	}
 
-/* use Taylor Series (very slow convergence) */
+	/* use Taylor Series (very slow convergence) */
 	inttobf(r, 1); /* start with r = 1.0 */
 	copy_bf(bftmp2, r);
 	while (1)
