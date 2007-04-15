@@ -212,7 +212,7 @@ short decoder(short linewidth)
 	* push that on the stack too, and then start unstacking each character
 	* for output in the correct order.  Special handling is included for the
 	* clear code, and the whole thing ends when we get an ending code. */
-	while ((c = get_next_code()) != ending)
+	for (c = get_next_code(); c != ending; c = get_next_code())
 	{
 
 		/* If we had a file error, return without completing the decode */

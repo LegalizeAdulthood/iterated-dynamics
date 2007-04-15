@@ -869,19 +869,23 @@ void Jiim(int which)         /* called by fractint */
 				/* keep cursor in logical screen */
 				if (g_col >= g_x_dots)
 				{
-					g_col = g_x_dots -1; exact = 0;
+					g_col = g_x_dots -1;
+					exact = 0;
 				}
 				if (g_row >= g_y_dots)
 				{
-					g_row = g_y_dots -1; exact = 0;
+					g_row = g_y_dots -1;
+					exact = 0;
 				}
 				if (g_col < 0)
 				{
-					g_col = 0; exact = 0;
+					g_col = 0;
+					exact = 0;
 				}
 				if (g_row < 0)
 				{
-					g_row = 0; exact = 0;
+					g_row = 0;
+					exact = 0;
 				}
 
 				cursor_set_position(g_col, g_row);
@@ -1184,8 +1188,10 @@ void Jiim(int which)         /* called by fractint */
 				color = (int)iter % g_colors;
 				if (g_integer_fractal)
 				{
-					g_old_z.x = g_old_z_l.x; g_old_z.x /= g_fudge;
-					g_old_z.y = g_old_z_l.y; g_old_z.y /= g_fudge;
+					g_old_z.x = g_old_z_l.x;
+					g_old_z.x /= g_fudge;
+					g_old_z.y = g_old_z_l.y;
+					g_old_z.y /= g_fudge;
 				}
 				x = (int)((g_old_z.x - g_initial_z.x)*xfactor*3*zoom + xoff);
 				y = (int)((g_old_z.y - g_initial_z.y)*yfactor*3*zoom + yoff);

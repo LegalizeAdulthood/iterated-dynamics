@@ -50,11 +50,11 @@ char g_new_discrete_parameter_offset_y;
 	next to eventually produce a stable population */
 int g_parameter_box_count = 0;
 
-static int *prmbox = NULL;
-static int *imgbox = NULL;
-static int imgboxcount;
+static int *s_parameter_box = NULL;
+static int *s_image_box = NULL;
+static int s_image_box_count;
 
-struct phistory_info      /* for saving evolution data of center image */
+struct parameter_history_info      /* for saving evolution data of center image */
 {
 	double param0;
 	double param1;
@@ -78,19 +78,18 @@ struct phistory_info      /* for saving evolution data of center image */
 	BYTE trigndx3;
 	int bailoutest;
 };
-typedef struct phistory_info    PARAMHIST;
-static PARAMHIST oldhistory = { 0 };
+typedef struct parameter_history_info    PARAMETER_HISTORY;
+static PARAMETER_HISTORY s_old_history = { 0 };
 
-void param_history(int mode);
-void varydbl(GENEBASE gene[], int randval, int i);
-static int varyint(int randvalue, int limit, int mode);
-static int wrapped_positive_varyint(int randvalue, int limit, int mode);
-void varyinside(GENEBASE gene[], int randval, int i);
-void varyoutside(GENEBASE gene[], int randval, int i);
-void varypwr2(GENEBASE gene[], int randval, int i);
-void varytrig(GENEBASE gene[], int randval, int i);
-void varybotest(GENEBASE gene[], int randval, int i);
-void varyinv(GENEBASE gene[], int randval, int i);
+void vary_double(GENEBASE gene[], int randval, int i);
+static int vary_int(int randvalue, int limit, int mode);
+static int wrapped_positive_vary_int(int randvalue, int limit, int mode);
+void vary_inside(GENEBASE gene[], int randval, int i);
+void vary_outside(GENEBASE gene[], int randval, int i);
+void vary_power2(GENEBASE gene[], int randval, int i);
+void vary_trig(GENEBASE gene[], int randval, int i);
+void vary_bail_out_test(GENEBASE gene[], int randval, int i);
+void vary_invert(GENEBASE gene[], int randval, int i);
 int explore_check(void);
 void spiral_map(int);
 static void set_random(int);
@@ -100,85 +99,81 @@ void release_parameter_box(void);
 
 GENEBASE g_genes[NUMGENES] =
 {
-	{ &g_parameters[0],   varydbl,     5, "Param 1 real", 1 },
-	{ &g_parameters[1],   varydbl,     5, "Param 1 imag", 1 },
-	{ &g_parameters[2],   varydbl,     0, "Param 2 real", 1 },
-	{ &g_parameters[3],   varydbl,     0, "Param 2 imag", 1 },
-	{ &g_parameters[4],   varydbl,     0, "Param 3 real", 1 },
-	{ &g_parameters[5],   varydbl,     0, "Param 3 imag", 1 },
-	{ &g_parameters[6],   varydbl,     0, "Param 4 real", 1 },
-	{ &g_parameters[7],   varydbl,     0, "Param 4 imag", 1 },
-	{ &g_parameters[8],   varydbl,     0, "Param 5 real", 1 },
-	{ &g_parameters[9],   varydbl,     0, "Param 5 imag", 1 },
-	{ &g_inside,     varyinside,  0, "inside color", 2 },
-	{ &g_outside,    varyoutside, 0, "outside color", 3 },
-	{ &g_decomposition[0],  varypwr2,    0, "decomposition", 4 },
-	{ &g_inversion[0], varyinv,    0, "invert radius", 7 },
-	{ &g_inversion[1], varyinv,    0, "invert center x", 7 },
-	{ &g_inversion[2], varyinv,    0, "invert center y", 7 },
-	{ &g_trig_index[0], varytrig,    0, "trig function 1", 5 },
-	{ &g_trig_index[1], varytrig,    0, "trig fn 2", 5 },
-	{ &g_trig_index[2], varytrig,    0, "trig fn 3", 5 },
-	{ &g_trig_index[3], varytrig,    0, "trig fn 4", 5 },
-	{ &g_bail_out_test, varybotest,  0, "bailout test", 6 }
+	{ &g_parameters[0],		vary_double,		5, "Param 1 real", 1 },
+	{ &g_parameters[1],		vary_double,		5, "Param 1 imag", 1 },
+	{ &g_parameters[2],		vary_double,		0, "Param 2 real", 1 },
+	{ &g_parameters[3],		vary_double,		0, "Param 2 imag", 1 },
+	{ &g_parameters[4],		vary_double,		0, "Param 3 real", 1 },
+	{ &g_parameters[5],		vary_double,		0, "Param 3 imag", 1 },
+	{ &g_parameters[6],		vary_double,		0, "Param 4 real", 1 },
+	{ &g_parameters[7],		vary_double,		0, "Param 4 imag", 1 },
+	{ &g_parameters[8],		vary_double,		0, "Param 5 real", 1 },
+	{ &g_parameters[9],		vary_double,		0, "Param 5 imag", 1 },
+	{ &g_inside,			vary_inside,		0, "inside color", 2 },
+	{ &g_outside,			vary_outside,		0, "outside color", 3 },
+	{ &g_decomposition[0],	vary_power2,		0, "decomposition", 4 },
+	{ &g_inversion[0],		vary_invert,		0, "invert radius", 7 },
+	{ &g_inversion[1],		vary_invert,		0, "invert center x", 7 },
+	{ &g_inversion[2],		vary_invert,		0, "invert center y", 7 },
+	{ &g_trig_index[0],		vary_trig,			0, "trig function 1", 5 },
+	{ &g_trig_index[1],		vary_trig,			0, "trig fn 2", 5 },
+	{ &g_trig_index[2],		vary_trig,			0, "trig fn 3", 5 },
+	{ &g_trig_index[3],		vary_trig,			0, "trig fn 4", 5 },
+	{ &g_bail_out_test,		vary_bail_out_test,	0, "bailout test", 6 }
 };
 
-void param_history(int mode)
-{ /* mode = 0 for save old history,
-     mode = 1 for restore old history */
-	if (mode == 0)  /* save the old parameter history */
-	{
-		oldhistory.param0 = g_parameters[0];
-		oldhistory.param1 = g_parameters[1];
-		oldhistory.param2 = g_parameters[2];
-		oldhistory.param3 = g_parameters[3];
-		oldhistory.param4 = g_parameters[4];
-		oldhistory.param5 = g_parameters[5];
-		oldhistory.param6 = g_parameters[6];
-		oldhistory.param7 = g_parameters[7];
-		oldhistory.param8 = g_parameters[8];
-		oldhistory.param9 = g_parameters[9];
-		oldhistory.inside = g_inside;
-		oldhistory.outside = g_outside;
-		oldhistory.decomp0 = g_decomposition[0];
-		oldhistory.invert0 = g_inversion[0];
-		oldhistory.invert1 = g_inversion[1];
-		oldhistory.invert2 = g_inversion[2];
-		oldhistory.trigndx0 = g_trig_index[0];
-		oldhistory.trigndx1 = g_trig_index[1];
-		oldhistory.trigndx2 = g_trig_index[2];
-		oldhistory.trigndx3 = g_trig_index[3];
-		oldhistory.bailoutest = g_bail_out_test;
-	}
-
-	if (mode == 1)  /* restore the old parameter history */
-	{
-		g_parameters[0] = oldhistory.param0;
-		g_parameters[1] = oldhistory.param1;
-		g_parameters[2] = oldhistory.param2;
-		g_parameters[3] = oldhistory.param3;
-		g_parameters[4] = oldhistory.param4;
-		g_parameters[5] = oldhistory.param5;
-		g_parameters[6] = oldhistory.param6;
-		g_parameters[7] = oldhistory.param7;
-		g_parameters[8] = oldhistory.param8;
-		g_parameters[9] = oldhistory.param9;
-		g_inside = oldhistory.inside;
-		g_outside = oldhistory.outside;
-		g_decomposition[0] = oldhistory.decomp0;
-		g_inversion[0] = oldhistory.invert0;
-		g_inversion[1] = oldhistory.invert1;
-		g_inversion[2] = oldhistory.invert2;
-		g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
-		g_trig_index[0] = oldhistory.trigndx0;
-		g_trig_index[1] = oldhistory.trigndx1;
-		g_trig_index[2] = oldhistory.trigndx2;
-		g_trig_index[3] = oldhistory.trigndx3;
-		g_bail_out_test = oldhistory.bailoutest;
-	}
+void restore_parameter_history(void)
+{
+	g_parameters[0] = s_old_history.param0;
+	g_parameters[1] = s_old_history.param1;
+	g_parameters[2] = s_old_history.param2;
+	g_parameters[3] = s_old_history.param3;
+	g_parameters[4] = s_old_history.param4;
+	g_parameters[5] = s_old_history.param5;
+	g_parameters[6] = s_old_history.param6;
+	g_parameters[7] = s_old_history.param7;
+	g_parameters[8] = s_old_history.param8;
+	g_parameters[9] = s_old_history.param9;
+	g_inside = s_old_history.inside;
+	g_outside = s_old_history.outside;
+	g_decomposition[0] = s_old_history.decomp0;
+	g_inversion[0] = s_old_history.invert0;
+	g_inversion[1] = s_old_history.invert1;
+	g_inversion[2] = s_old_history.invert2;
+	g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
+	g_trig_index[0] = s_old_history.trigndx0;
+	g_trig_index[1] = s_old_history.trigndx1;
+	g_trig_index[2] = s_old_history.trigndx2;
+	g_trig_index[3] = s_old_history.trigndx3;
+	g_bail_out_test = s_old_history.bailoutest;
 }
 
-void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
+void save_parameter_history(void)
+{
+	s_old_history.param0 = g_parameters[0];
+	s_old_history.param1 = g_parameters[1];
+	s_old_history.param2 = g_parameters[2];
+	s_old_history.param3 = g_parameters[3];
+	s_old_history.param4 = g_parameters[4];
+	s_old_history.param5 = g_parameters[5];
+	s_old_history.param6 = g_parameters[6];
+	s_old_history.param7 = g_parameters[7];
+	s_old_history.param8 = g_parameters[8];
+	s_old_history.param9 = g_parameters[9];
+	s_old_history.inside = g_inside;
+	s_old_history.outside = g_outside;
+	s_old_history.decomp0 = g_decomposition[0];
+	s_old_history.invert0 = g_inversion[0];
+	s_old_history.invert1 = g_inversion[1];
+	s_old_history.invert2 = g_inversion[2];
+	s_old_history.trigndx0 = g_trig_index[0];
+	s_old_history.trigndx1 = g_trig_index[1];
+	s_old_history.trigndx2 = g_trig_index[2];
+	s_old_history.trigndx3 = g_trig_index[3];
+	s_old_history.bailoutest = g_bail_out_test;
+}
+
+void vary_double(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 {
 	int lclpy = g_grid_size - g_py - 1;
 	switch (gene[i].mutate)
@@ -212,7 +207,7 @@ void varydbl(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 return;
 }
 
-static int varyint(int randvalue, int limit, int mode)
+static int vary_int(int randvalue, int limit, int mode)
 {
 	int ret = 0;
 	int lclpy = g_grid_size - g_py - 1;
@@ -248,74 +243,74 @@ static int varyint(int randvalue, int limit, int mode)
 	return ret;
 }
 
-static int wrapped_positive_varyint(int randvalue, int limit, int mode)
+static int wrapped_positive_vary_int(int randvalue, int limit, int mode)
 {
 	int i;
-	i = varyint(randvalue, limit, mode);
+	i = vary_int(randvalue, limit, mode);
 	return (i < 0) ? (limit + i) : i;
 }
 
-void varyinside(GENEBASE gene[], int randval, int i)
+void vary_inside(GENEBASE gene[], int randval, int i)
 {
 	int choices[9] = {-59, -60, -61, -100, -101, -102, -103, -104, -1};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
 	}
 	return;
 }
 
-void varyoutside(GENEBASE gene[], int randval, int i)
+void vary_outside(GENEBASE gene[], int randval, int i)
 {
 	int choices[8] = {-1, -2, -3, -4, -5, -6, -7, -8};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 8, gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 8, gene[i].mutate)];
 	}
 	return;
 }
 
-void varybotest(GENEBASE gene[], int randval, int i)
+void vary_bail_out_test(GENEBASE gene[], int randval, int i)
 {
 	int choices[7] = {Mod, Real, Imag, Or, And, Manh, Manr};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 7, gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 7, gene[i].mutate)];
 		/* move this next bit to varybot where it belongs */
 		set_bail_out_formula(g_bail_out_test);
 	}
 	return;
 }
 
-void varypwr2(GENEBASE gene[], int randval, int i)
+void vary_power2(GENEBASE gene[], int randval, int i)
 {
 	int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
 	if (gene[i].mutate)
 	{
-		*(int*)gene[i].addr = choices[wrapped_positive_varyint(randval, 9, gene[i].mutate)];
+		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];
 	}
 	return;
 }
 
-void varytrig(GENEBASE gene[], int randval, int i)
+void vary_trig(GENEBASE gene[], int randval, int i)
 {
 	if (gene[i].mutate)
 	{
 		/* Changed following to BYTE since trigfn is an array of BYTEs and if one */
 		/* of the functions isn't varied, it's value was being zeroed by the high */
 		/* BYTE of the preceeding function.  JCO  2 MAY 2001 */
-		*(BYTE *) gene[i].addr = (BYTE) wrapped_positive_varyint(randval, g_num_trig_fn, gene[i].mutate);
+		*(BYTE *) gene[i].addr = (BYTE) wrapped_positive_vary_int(randval, g_num_trig_fn, gene[i].mutate);
 	}
 	/* replaced '30' with g_num_trig_fn, set in prompts1.c */
 	set_trig_pointers(5); /*set all trig ptrs up*/
 	return;
 }
 
-void varyinv(GENEBASE gene[], int randval, int i)
+void vary_invert(GENEBASE gene[], int randval, int i)
 {
 	if (gene[i].mutate)
 	{
-		varydbl(gene, randval, i);
+		vary_double(gene, randval, i);
 	}
 	g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
 }
@@ -824,7 +819,7 @@ get_evol_restart:
 
 	if (g_evolving && !old_evolving)
 	{
-		param_history(0); /* save old history */
+		save_parameter_history();
 	}
 
 	if (!g_evolving && (g_evolving == old_evolving))
@@ -856,11 +851,11 @@ void setup_parameter_box(void)
 	/* need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values */
 	vidsize = (g_x_dots + g_y_dots)*4*sizeof(int);
 	vidsize += g_x_dots + g_y_dots + 2;
-	if (!prmbox)
+	if (!s_parameter_box)
 	{
-		prmbox = (int *) malloc(vidsize);
+		s_parameter_box = (int *) malloc(vidsize);
 	}
-	if (!prmbox)
+	if (!s_parameter_box)
 	{
 		text_temp_message("Sorry...can't allocate mem for parmbox");
 		g_evolving = EVOLVE_NONE;
@@ -869,11 +864,11 @@ void setup_parameter_box(void)
 
 	/* vidsize = (vidsize / g_grid_size) + 3 ; */ /* allocate less mem for smaller box */
 	/* taken out above as *all* pixels get plotted in small boxes */
-	if (!imgbox)
+	if (!s_image_box)
 	{
-		imgbox = (int *) malloc(vidsize);
+		s_image_box = (int *) malloc(vidsize);
 	}
-	if (!imgbox)
+	if (!s_image_box)
 	{
 		text_temp_message("Sorry...can't allocate mem for imagebox");
 	}
@@ -881,15 +876,15 @@ void setup_parameter_box(void)
 
 void release_parameter_box(void)
 {
-	if (prmbox)
+	if (s_parameter_box)
 	{
-		free(prmbox);
-		prmbox = NULL;
+		free(s_parameter_box);
+		s_parameter_box = NULL;
 	}
-	if (imgbox)
+	if (s_image_box)
 	{
-		free(imgbox);
-		imgbox = NULL;
+		free(s_image_box);
+		s_image_box = NULL;
 	}
 }
 
@@ -987,27 +982,27 @@ void draw_parameter_box(int mode)
 		return; /* don't draw if not asked to! */
 	}
 	grout = !((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-	imgboxcount = g_box_count;
+	s_image_box_count = g_box_count;
 	if (g_box_count)
 	{
 		/* stash normal zoombox pixels */
-		memcpy(&imgbox[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(&imgbox[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
-		memcpy(&imgbox[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
+		memcpy(&s_image_box[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(&s_image_box[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
+		memcpy(&s_image_box[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
 		clear_box(); /* to avoid probs when one box overlaps the other */
 	}
 	if (g_parameter_box_count != 0)   /* clear last parmbox */
 	{
 		g_box_count = g_parameter_box_count;
-		memcpy(&g_box_x[0], &prmbox[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(&g_box_y[0], &prmbox[g_box_count], g_box_count*sizeof(g_box_y[0]));
-		memcpy(&g_box_values[0], &prmbox[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
+		memcpy(&g_box_x[0], &s_parameter_box[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(&g_box_y[0], &s_parameter_box[g_box_count], g_box_count*sizeof(g_box_y[0]));
+		memcpy(&g_box_values[0], &s_parameter_box[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
 		clear_box();
 	}
 
 	if (mode == 1)
 	{
-		g_box_count = imgboxcount;
+		g_box_count = s_image_box_count;
 		g_parameter_box_count = 0;
 		return;
 	}
@@ -1019,7 +1014,10 @@ void draw_parameter_box(int mode)
 	br.x = tr.x = ((g_px +1 + (int)g_parameter_zoom)*(int)(g_dx_size + 1 + grout))-g_sx_offset;
 	br.y = bl.y = ((g_py +1 + (int)g_parameter_zoom)*(int)(g_dy_size + 1 + grout))-g_sy_offset;
 #ifndef XFRACT
-	add_box(br); add_box(tr); add_box(bl); add_box(tl);
+	add_box(br);
+	add_box(tr);
+	add_box(bl);
+	add_box(tl);
 	draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y);
 	draw_lines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
@@ -1037,18 +1035,18 @@ void draw_parameter_box(int mode)
 	{
 		display_box();
 		/* stash pixel values for later */
-		memcpy(&prmbox[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(&prmbox[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
-		memcpy(&prmbox[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
+		memcpy(&s_parameter_box[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(&s_parameter_box[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
+		memcpy(&s_parameter_box[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
 	}
 	g_parameter_box_count = g_box_count;
-	g_box_count = imgboxcount;
-	if (imgboxcount)
+	g_box_count = s_image_box_count;
+	if (s_image_box_count)
 	{
 		/* and move back old values so that everything can proceed as normal */
-		memcpy(&g_box_x[0], &imgbox[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(&g_box_y[0], &imgbox[g_box_count], g_box_count*sizeof(g_box_y[0]));
-		memcpy(&g_box_values[0], &imgbox[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
+		memcpy(&g_box_x[0], &s_image_box[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(&g_box_y[0], &s_image_box[g_box_count], g_box_count*sizeof(g_box_y[0]));
+		memcpy(&g_box_values[0], &s_image_box[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
 		display_box();
 	}
 	return;

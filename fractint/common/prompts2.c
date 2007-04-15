@@ -2089,9 +2089,12 @@ int get_corners()
 
 	oldhelpmode = g_help_mode;
 	ousemag = g_use_center_mag;
-	oxxmin = g_xx_min; oxxmax = g_xx_max;
-	oyymin = g_yy_min; oyymax = g_yy_max;
-	oxx3rd = g_xx_3rd; oyy3rd = g_yy_3rd;
+	oxxmin = g_xx_min;
+	oxxmax = g_xx_max;
+	oyymin = g_yy_min;
+	oyymax = g_yy_max;
+	oxx3rd = g_xx_3rd;
+	oyy3rd = g_yy_3rd;
 
 gc_loop:
 	for (i = 0; i < 15; ++i)
@@ -2183,9 +2186,12 @@ gc_loop:
 	if (prompt_ret < 0)
 	{
 		g_use_center_mag = ousemag;
-		g_xx_min = oxxmin; g_xx_max = oxxmax;
-		g_yy_min = oyymin; g_yy_max = oyymax;
-		g_xx_3rd = oxx3rd; g_yy_3rd = oyy3rd;
+		g_xx_min = oxxmin;
+		g_xx_max = oxxmax;
+		g_yy_min = oyymin;
+		g_yy_max = oyymax;
+		g_xx_3rd = oxx3rd;
+		g_yy_3rd = oyy3rd;
 		return -1;
 	}
 
@@ -2277,9 +2283,12 @@ gc_loop:
 		!cmpdbl(oyymax, g_yy_max) && !cmpdbl(oxx3rd, g_xx_3rd) && !cmpdbl(oyy3rd, g_yy_3rd))
 	{
 		/* no change, restore values to avoid drift */
-		g_xx_min = oxxmin; g_xx_max = oxxmax;
-		g_yy_min = oyymin; g_yy_max = oyymax;
-		g_xx_3rd = oxx3rd; g_yy_3rd = oyy3rd;
+		g_xx_min = oxxmin;
+		g_xx_max = oxxmax;
+		g_yy_min = oyymin;
+		g_yy_max = oyymax;
+		g_xx_3rd = oxx3rd;
+		g_yy_3rd = oyy3rd;
 		return 0;
 	}
 	else
@@ -2323,13 +2332,19 @@ static int get_screen_corners(void)
 		g_orbit_y_3rd = g_yy_3rd;
 	}
 
-	oxxmin = g_orbit_x_min; oxxmax = g_orbit_x_max;
-	oyymin = g_orbit_y_min; oyymax = g_orbit_y_max;
-	oxx3rd = g_orbit_x_3rd; oyy3rd = g_orbit_y_3rd;
+	oxxmin = g_orbit_x_min;
+	oxxmax = g_orbit_x_max;
+	oyymin = g_orbit_y_min;
+	oyymax = g_orbit_y_max;
+	oxx3rd = g_orbit_x_3rd;
+	oyy3rd = g_orbit_y_3rd;
 
-	g_xx_min = g_orbit_x_min; g_xx_max = g_orbit_x_max;
-	g_yy_min = g_orbit_y_min; g_yy_max = g_orbit_y_max;
-	g_xx_3rd = g_orbit_x_3rd; g_yy_3rd = g_orbit_y_3rd;
+	g_xx_min = g_orbit_x_min;
+	g_xx_max = g_orbit_x_max;
+	g_yy_min = g_orbit_y_min;
+	g_yy_max = g_orbit_y_max;
+	g_xx_3rd = g_orbit_x_3rd;
+	g_yy_3rd = g_orbit_y_3rd;
 
 gsc_loop:
 	for (i = 0; i < 15; ++i)
@@ -2398,33 +2413,45 @@ gsc_loop:
 	if (prompt_ret < 0)
 	{
 		g_use_center_mag = ousemag;
-		g_orbit_x_min = oxxmin; g_orbit_x_max = oxxmax;
-		g_orbit_y_min = oyymin; g_orbit_y_max = oyymax;
-		g_orbit_x_3rd = oxx3rd; g_orbit_y_3rd = oyy3rd;
+		g_orbit_x_min = oxxmin;
+		g_orbit_x_max = oxxmax;
+		g_orbit_y_min = oyymin;
+		g_orbit_y_max = oyymax;
+		g_orbit_x_3rd = oxx3rd;
+		g_orbit_y_3rd = oyy3rd;
 		/* restore corners */
-		g_xx_min = svxxmin; g_xx_max = svxxmax;
-		g_yy_min = svyymin; g_yy_max = svyymax;
-		g_xx_3rd = svxx3rd; g_yy_3rd = svyy3rd;
+		g_xx_min = svxxmin;
+		g_xx_max = svxxmax;
+		g_yy_min = svyymin;
+		g_yy_max = svyymax;
+		g_xx_3rd = svxx3rd;
+		g_yy_3rd = svyy3rd;
 		return -1;
 		}
 
 	if (prompt_ret == FIK_F4)  /* reset to type defaults */
 	{
 		g_orbit_x_3rd = g_orbit_x_min = g_current_fractal_specific->x_min;
-		g_orbit_x_max         = g_current_fractal_specific->x_max;
+		g_orbit_x_max = g_current_fractal_specific->x_max;
 		g_orbit_y_3rd = g_orbit_y_min = g_current_fractal_specific->y_min;
-		g_orbit_y_max         = g_current_fractal_specific->y_max;
-		g_xx_min = g_orbit_x_min; g_xx_max = g_orbit_x_max;
-		g_yy_min = g_orbit_y_min; g_yy_max = g_orbit_y_max;
-		g_xx_3rd = g_orbit_x_3rd; g_yy_3rd = g_orbit_y_3rd;
+		g_orbit_y_max = g_current_fractal_specific->y_max;
+		g_xx_min = g_orbit_x_min;
+		g_xx_max = g_orbit_x_max;
+		g_yy_min = g_orbit_y_min;
+		g_yy_max = g_orbit_y_max;
+		g_xx_3rd = g_orbit_x_3rd;
+		g_yy_3rd = g_orbit_y_3rd;
 		if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 		{
 			aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 		}
 
-		g_orbit_x_min = g_xx_min; g_orbit_x_max = g_xx_max;
-		g_orbit_y_min = g_yy_min; g_orbit_y_max = g_yy_max;
-		g_orbit_x_3rd = g_xx_min; g_orbit_y_3rd = g_yy_min;
+		g_orbit_x_min = g_xx_min;
+		g_orbit_x_max = g_xx_max;
+		g_orbit_y_min = g_yy_min;
+		g_orbit_y_max = g_yy_max;
+		g_orbit_x_3rd = g_xx_min;
+		g_orbit_y_3rd = g_yy_min;
 		goto gsc_loop;
 		}
 
@@ -2449,9 +2476,12 @@ gsc_loop:
 			}
 			convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 			/* set screen corners */
-			g_orbit_x_min = g_xx_min; g_orbit_x_max = g_xx_max;
-			g_orbit_y_min = g_yy_min; g_orbit_y_max = g_yy_max;
-			g_orbit_x_3rd = g_xx_3rd; g_orbit_y_3rd = g_yy_3rd;
+			g_orbit_x_min = g_xx_min;
+			g_orbit_x_max = g_xx_max;
+			g_orbit_y_min = g_yy_min;
+			g_orbit_y_max = g_yy_max;
+			g_orbit_x_3rd = g_xx_3rd;
+			g_orbit_y_3rd = g_yy_3rd;
 		}
 	}
 	else
@@ -2490,13 +2520,19 @@ gsc_loop:
 		!cmpdbl(oyymax, g_orbit_y_max) && !cmpdbl(oxx3rd, g_orbit_x_3rd) && !cmpdbl(oyy3rd, g_orbit_y_3rd))
 	{
 		/* no change, restore values to avoid drift */
-		g_orbit_x_min = oxxmin; g_orbit_x_max = oxxmax;
-		g_orbit_y_min = oyymin; g_orbit_y_max = oyymax;
-		g_orbit_x_3rd = oxx3rd; g_orbit_y_3rd = oyy3rd;
+		g_orbit_x_min = oxxmin;
+		g_orbit_x_max = oxxmax;
+		g_orbit_y_min = oyymin;
+		g_orbit_y_max = oyymax;
+		g_orbit_x_3rd = oxx3rd;
+		g_orbit_y_3rd = oyy3rd;
 		/* restore corners */
-		g_xx_min = svxxmin; g_xx_max = svxxmax;
-		g_yy_min = svyymin; g_yy_max = svyymax;
-		g_xx_3rd = svxx3rd; g_yy_3rd = svyy3rd;
+		g_xx_min = svxxmin;
+		g_xx_max = svxxmax;
+		g_yy_min = svyymin;
+		g_yy_max = svyymax;
+		g_xx_3rd = svxx3rd;
+		g_yy_3rd = svyy3rd;
 		return 0;
 	}
 	else
@@ -2504,9 +2540,12 @@ gsc_loop:
 		g_set_orbit_corners = 1;
 		g_keep_screen_coords = 1;
 		/* restore corners */
-		g_xx_min = svxxmin; g_xx_max = svxxmax;
-		g_yy_min = svyymin; g_yy_max = svyymax;
-		g_xx_3rd = svxx3rd; g_yy_3rd = svyy3rd;
+		g_xx_min = svxxmin;
+		g_xx_max = svxxmax;
+		g_yy_min = svyymin;
+		g_yy_max = svyymax;
+		g_xx_3rd = svxx3rd;
+		g_yy_3rd = svyy3rd;
 		return 1;
 	}
 }

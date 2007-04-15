@@ -165,48 +165,48 @@ static void init_bf_2(void)
 
 	if (bf_math == BIGNUM)
 	{
-	bnxmin     = bnroot + ptr; ptr += bnlength;
-	bnxmax     = bnroot + ptr; ptr += bnlength;
-	bnymin     = bnroot + ptr; ptr += bnlength;
-	bnymax     = bnroot + ptr; ptr += bnlength;
-	bnx3rd     = bnroot + ptr; ptr += bnlength;
-	bny3rd     = bnroot + ptr; ptr += bnlength;
-	bnxdel     = bnroot + ptr; ptr += bnlength;
-	bnydel     = bnroot + ptr; ptr += bnlength;
-	bnxdel2    = bnroot + ptr; ptr += bnlength;
-	bnydel2    = bnroot + ptr; ptr += bnlength;
-	bnold.x    = bnroot + ptr; ptr += rlength;
-	bnold.y    = bnroot + ptr; ptr += rlength;
-	bnnew.x    = bnroot + ptr; ptr += rlength;
-	bnnew.y    = bnroot + ptr; ptr += rlength;
-	bnsaved.x  = bnroot + ptr; ptr += bnlength;
-	bnsaved.y  = bnroot + ptr; ptr += bnlength;
-	bnclosenuff = bnroot + ptr; ptr += bnlength;
-	bnparm.x   = bnroot + ptr; ptr += bnlength;
-	bnparm.y   = bnroot + ptr; ptr += bnlength;
-	bntmpsqrx  = bnroot + ptr; ptr += rlength;
-	bntmpsqry  = bnroot + ptr; ptr += rlength;
-	bntmp      = bnroot + ptr; ptr += rlength;
+		bnxmin     = bnroot + ptr; ptr += bnlength;
+		bnxmax     = bnroot + ptr; ptr += bnlength;
+		bnymin     = bnroot + ptr; ptr += bnlength;
+		bnymax     = bnroot + ptr; ptr += bnlength;
+		bnx3rd     = bnroot + ptr; ptr += bnlength;
+		bny3rd     = bnroot + ptr; ptr += bnlength;
+		bnxdel     = bnroot + ptr; ptr += bnlength;
+		bnydel     = bnroot + ptr; ptr += bnlength;
+		bnxdel2    = bnroot + ptr; ptr += bnlength;
+		bnydel2    = bnroot + ptr; ptr += bnlength;
+		bnold.x    = bnroot + ptr; ptr += rlength;
+		bnold.y    = bnroot + ptr; ptr += rlength;
+		bnnew.x    = bnroot + ptr; ptr += rlength;
+		bnnew.y    = bnroot + ptr; ptr += rlength;
+		bnsaved.x  = bnroot + ptr; ptr += bnlength;
+		bnsaved.y  = bnroot + ptr; ptr += bnlength;
+		bnclosenuff = bnroot + ptr; ptr += bnlength;
+		bnparm.x   = bnroot + ptr; ptr += bnlength;
+		bnparm.y   = bnroot + ptr; ptr += bnlength;
+		bntmpsqrx  = bnroot + ptr; ptr += rlength;
+		bntmpsqry  = bnroot + ptr; ptr += rlength;
+		bntmp      = bnroot + ptr; ptr += rlength;
 	}
 	if (bf_math == BIGFLT)
 	{
-	bfxdel     = bnroot + ptr; ptr += bflength + 2;
-	bfydel     = bnroot + ptr; ptr += bflength + 2;
-	bfxdel2    = bnroot + ptr; ptr += bflength + 2;
-	bfydel2    = bnroot + ptr; ptr += bflength + 2;
-	bfold.x    = bnroot + ptr; ptr += rbflength + 2;
-	bfold.y    = bnroot + ptr; ptr += rbflength + 2;
-	bfnew.x    = bnroot + ptr; ptr += rbflength + 2;
-	bfnew.y    = bnroot + ptr; ptr += rbflength + 2;
-	bfsaved.x  = bnroot + ptr; ptr += bflength + 2;
-	bfsaved.y  = bnroot + ptr; ptr += bflength + 2;
-	bfclosenuff = bnroot + ptr; ptr += bflength + 2;
-	bfparm.x   = bnroot + ptr; ptr += bflength + 2;
-	bfparm.y   = bnroot + ptr; ptr += bflength + 2;
-	bftmpsqrx  = bnroot + ptr; ptr += rbflength + 2;
-	bftmpsqry  = bnroot + ptr; ptr += rbflength + 2;
-	big_pi     = bnroot + ptr; ptr += bflength + 2;
-	bftmp      = bnroot + ptr; ptr += rbflength + 2;
+		bfxdel     = bnroot + ptr; ptr += bflength + 2;
+		bfydel     = bnroot + ptr; ptr += bflength + 2;
+		bfxdel2    = bnroot + ptr; ptr += bflength + 2;
+		bfydel2    = bnroot + ptr; ptr += bflength + 2;
+		bfold.x    = bnroot + ptr; ptr += rbflength + 2;
+		bfold.y    = bnroot + ptr; ptr += rbflength + 2;
+		bfnew.x    = bnroot + ptr; ptr += rbflength + 2;
+		bfnew.y    = bnroot + ptr; ptr += rbflength + 2;
+		bfsaved.x  = bnroot + ptr; ptr += bflength + 2;
+		bfsaved.y  = bnroot + ptr; ptr += bflength + 2;
+		bfclosenuff = bnroot + ptr; ptr += bflength + 2;
+		bfparm.x   = bnroot + ptr; ptr += bflength + 2;
+		bfparm.y   = bnroot + ptr; ptr += bflength + 2;
+		bftmpsqrx  = bnroot + ptr; ptr += rbflength + 2;
+		bftmpsqry  = bnroot + ptr; ptr += rbflength + 2;
+		big_pi     = bnroot + ptr; ptr += bflength + 2;
+		bftmp      = bnroot + ptr; ptr += rbflength + 2;
 	}
 	bf10tmp    = bnroot + ptr; ptr += bfdecimals + 4;
 

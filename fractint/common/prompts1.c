@@ -421,7 +421,8 @@ int full_screen_prompt(/* full-screen prompting routine */
 #define S5 "+" /* ul corner */
 #define S6 "+" /* ur corner */
 #endif
-		memset(buf, S1, 80); buf[boxwidth-2] = 0;
+		memset(buf, S1, 80);
+		buf[boxwidth-2] = 0;
 		g_text_cbase = boxcol + 1;
 		driver_put_string(extrarow, 0, C_PROMPT_BKGRD, buf);
 		driver_put_string(extrarow + extralines-1, 0, C_PROMPT_BKGRD, buf);
@@ -688,7 +689,8 @@ int full_screen_prompt(/* full-screen prompting routine */
 
 		driver_put_string(promptrow + curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
 		j = (int) strlen(buf);
-		memset(&buf[j], ' ', 80-j); buf[curlen] = 0;
+		memset(&buf[j], ' ', 80-j);
+		buf[curlen] = 0;
 		driver_put_string(promptrow + curchoice, valuecol, C_PROMPT_LO,  buf);
 
 		switch (i)
@@ -2697,7 +2699,7 @@ static void load_entry_text(
 	{
 		comment = linelen = i = c = 0;
 
-			/* skip line up to startcol */
+		/* skip line up to startcol */
 		while (i++ < startcol && (c = fgetc(entfile)) != EOF && c != '\032')
 		{
 			if (c == ';')
@@ -2743,7 +2745,7 @@ static void load_entry_text(
 			}
 		}
 
-			/*process rest of line into buf */
+		/*process rest of line into buf */
 		while ((c = fgetc(entfile)) != EOF && c != '\032')
 		{
 			if (c == ';')

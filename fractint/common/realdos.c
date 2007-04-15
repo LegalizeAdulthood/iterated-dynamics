@@ -251,7 +251,9 @@ void blank_rows(int row, int rows, int attr)
 	memset(buf, ' ', 80);
 	buf[80] = 0;
 	while (--rows >= 0)
+	{
 		driver_put_string(row++, 0, attr, buf);
+	}
 }
 
 void help_title()
@@ -388,7 +390,9 @@ void show_speedstring(int speedrow,
 		strcpy(buf, speedstring);
 		i = (int) strlen(buf);
 		while (i < 30)
+		{
 			buf[i++] = ' ';
+		}
 		buf[i] = 0;
 		driver_put_string(speedrow, 16 + j, C_CHOICE_SP_INSTR, " ");
 		driver_put_string(speedrow, 17 + j, C_CHOICE_SP_KEYIN, buf);
@@ -424,7 +428,7 @@ void process_speedstring(char    *speedstring,
 	{
 		*pcurrent = 0;
 		while (*pcurrent < numchoices
-		&& (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0)
+			&& (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0)
 		{
 			if (comp_result < 0 && !is_unsorted)
 			{
@@ -1546,7 +1550,9 @@ int input_field(
 		strcpy(buf, fld);
 		i = (int) strlen(buf);
 		while (i < len)
+		{
 			buf[i++] = ' ';
+		}
 		buf[len] = 0;
 		if (display)  /* display current value */
 		{

@@ -259,7 +259,8 @@ extern int _fastcall new_to_old(int new_fractype);
 
 /*  evolve -- C file prototypes */
 
-extern  void param_history(int);
+extern void save_parameter_history(void);
+extern void restore_parameter_history(void);
 extern  int get_variations(void);
 extern  int get_evolve_parameters(void);
 extern  void set_current_parameters(void);

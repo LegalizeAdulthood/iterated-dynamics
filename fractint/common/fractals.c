@@ -2194,8 +2194,10 @@ static int try_float_fractal(int (*fpFractal)(void))
 {
 	g_overflow = 0;
 	/* g_old_z_l had better not be changed! */
-	g_old_z.x = g_old_z_l.x; g_old_z.x /= g_fudge;
-	g_old_z.y = g_old_z_l.y; g_old_z.y /= g_fudge;
+	g_old_z.x = g_old_z_l.x;
+	g_old_z.x /= g_fudge;
+	g_old_z.y = g_old_z_l.y;
+	g_old_z.y /= g_fudge;
 	g_temp_sqr_x = sqr(g_old_z.x);
 	g_temp_sqr_y = sqr(g_old_z.y);
 	fpFractal();
@@ -2607,7 +2609,8 @@ void invert_z(_CMPLX *z)
 {
 	z->x = g_dx_pixel();
 	z->y = g_dy_pixel();
-	z->x -= g_f_x_center; z->y -= g_f_y_center;  /* Normalize values to center of circle */
+	z->x -= g_f_x_center;
+	z->y -= g_f_y_center;  /* Normalize values to center of circle */
 
 	g_temp_sqr_x = sqr(z->x) + sqr(z->y);  /* Get old radius */
 	g_temp_sqr_x = (fabs(g_temp_sqr_x) > FLT_MIN) ? (g_f_radius / g_temp_sqr_x) : FLT_MAX;

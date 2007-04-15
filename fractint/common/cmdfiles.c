@@ -480,8 +480,10 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_pseudo_y = 0;
 	g_distance_test_width = 71;
 	g_force_symmetry = FORCESYMMETRY_NONE;                 /* symmetry not forced */
-	g_xx_3rd = g_xx_min = -2.5; g_xx_max = 1.5;   /* initial corner values  */
-	g_yy_3rd = g_yy_min = -1.5; g_yy_max = 1.5;   /* initial corner values  */
+	g_xx_3rd = g_xx_min = -2.5;
+	g_xx_max = 1.5;						/* initial corner values  */
+	g_yy_3rd = g_yy_min = -1.5;
+	g_yy_max = 1.5;						/* initial corner values  */
 	bf_math = 0;
 	g_potential_16bit = g_potential_flag = FALSE;
 	g_log_palette_flag = LOGPALETTE_NONE;                         /* no logarithmic palette */

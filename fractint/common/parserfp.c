@@ -577,7 +577,6 @@ awful_error:
 	/* ******************************************************************** */
 	if (ffptr == fStkLod)  /* about to add Lod to the array  */
 	{
-
 		if (prevfptr == fStkLod && Load[g_lod_ptr-1] == Load[g_lod_ptr])
 		{
 			/* previous non-adjust operator was Lod of same operand  */
@@ -607,7 +606,7 @@ awful_error:
 		}
 		else if (prevfptr == fStkSto2
 				&& Store[g_store_ptr-1] == Load[g_lod_ptr])
-				{
+		{
 			/* store, load of same value  */
 			/* only one operand on stack here when prev oper is Sto2  */
 			DBUGMSG("*sto2 (lod) -> (*stodup)");
@@ -618,8 +617,8 @@ awful_error:
 		/*  use the rounded value that was stored here, while the next  */
 		/*  operator uses the more accurate internal value.  */
 		else if (prevfptr == fStkStoClr2
-					&& Store[g_store_ptr-1] == Load[g_lod_ptr])
-					{
+				&& Store[g_store_ptr-1] == Load[g_lod_ptr])
+		{
 			/* store, clear, load same value found  */
 			/* only one operand was on stack so this is safe  */
 			DBUGMSG("*StoClr2 (Lod) -> (*Sto2)");
@@ -1392,8 +1391,7 @@ int fpfill_jump_struct(void)
 
 	while (i > 0)
 	{
-		i--;
-		i = fill_if_group(i, jump_data);
+		i = fill_if_group(i-1, jump_data);
 	}
 	return i < 0 ? 1 : 0;
 }
