@@ -1226,9 +1226,12 @@ static int _fastcall ratio_bad(double actual, double desired)
 	if (desired != 0 && g_debug_flag != DEBUGFLAG_NO_INT_TO_FLOAT)
 	{
 		ftemp = actual / desired;
-		if (ftemp < (1.0-tol) || ftemp > (1.0 + tol))
+		if(integerfractal || (curfractalspecific->flags & BF_MATH))
 		{
+			if (ftemp < (1.0-tol) || ftemp > (1.0 + tol))
+			{
 			return 1;
+			}
 		}
 	}
 	return 0;
