@@ -69,7 +69,6 @@ extern void help_title(void);
 extern void stackscreen(void);
 extern void unstackscreen(void);
 extern void discardscreen(void);
-extern void discardgraphics(void);
 extern int load_palette(void);
 extern void save_palette(void);
 extern void fractint_help(void);

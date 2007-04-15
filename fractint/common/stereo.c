@@ -25,6 +25,7 @@
 #include "prototyp.h"
 #include "drivers.h"
 #include "helpdefs.h"
+#include "fihelp.h"
 
 char g_stereo_map_name[FILE_MAX_DIR + 1] = {""};
 int g_auto_stereo_depth = 100;
@@ -231,7 +232,7 @@ int auto_stereo(void)
 {
 	struct static_vars v;
 	BYTE savedacbox[256*3];
-	int oldhelpmode, ret = 0;
+	int ret = 0;
 	int i, j, done;
 	int bars, ct, kbdchar, barwidth;
 	time_t ltime;
@@ -247,8 +248,7 @@ int auto_stereo(void)
 	time(&ltime);
 	srand((unsigned int)ltime);
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = RDSKEYS;
+	push_help_mode(RDSKEYS);
 	driver_save_graphics();                      /* save graphics image */
 	memcpy(savedacbox, g_dac_box, 256*3);  /* save g_colors */
 
@@ -366,7 +366,7 @@ int auto_stereo(void)
 	}
 
 exit_stereo:
-	g_help_mode = oldhelpmode;
+	pop_help_mode();
 	driver_restore_graphics();
 	memcpy(g_dac_box, savedacbox, 256*3);
 	spindac(0, 1);

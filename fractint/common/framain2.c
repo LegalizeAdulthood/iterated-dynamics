@@ -18,6 +18,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 #if 0
 /* makes a handly list of jul-man pairs, not for release */
@@ -667,9 +668,6 @@ resumeloop:                             /* return here on failed overlays */
 
 static int look(int *stacked)
 {
-	int oldhelpmode;
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPBROWSE;
 	switch (look_get_window())
 	{
 	case FIK_ENTER:
@@ -733,12 +731,10 @@ static int look(int *stacked)
 	case 'l':              /* turn it off */
 	case 'L':
 		g_browsing = FALSE;
-		g_help_mode = oldhelpmode;
 		break;
 
 	case 's':
 		g_browsing = FALSE;
-		g_help_mode = oldhelpmode;
 		save_to_disk(g_save_name);
 		break;
 
@@ -1289,11 +1285,8 @@ static int handle_color_editing(int *kbdmore)
 		&& g_colors >= 16
 		&& !driver_diskp())
 	{
-		int oldhelpmode = g_help_mode;
 		memcpy(g_old_dac_box, g_dac_box, 256*3);
-		g_help_mode = HELPXHAIR;
 		palette_edit();
-		g_help_mode = oldhelpmode;
 		if (memcmp(g_old_dac_box, g_dac_box, 256*3))
 		{
 			g_color_state = COLORSTATE_UNKNOWN;

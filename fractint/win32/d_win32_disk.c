@@ -14,6 +14,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 #include "WinText.h"
 #include "frame.h"
@@ -172,7 +173,7 @@ static void initdacbox()
 /* handle_help_tab
  *
  * Because we want context sensitive help to work everywhere, with the
- * help to display indicated by a non-zero value in g_help_mode, we need
+ * help to display indicated by a non-zero value, we need
  * to trap the F1 key at a very low level.  The same is true of the
  * TAB display.
  *
@@ -185,7 +186,7 @@ handle_help_tab(int ch)
 {
 	static int inside_help = 0;
 
-	if (FIK_F1 == ch && g_help_mode && !inside_help)
+	if (FIK_F1 == ch && get_help_mode() && !inside_help)
 	{
 		inside_help = 1;
 		help(0);

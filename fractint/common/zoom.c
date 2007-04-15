@@ -15,21 +15,21 @@
 int g_box_x[NUM_BOXES] = { 0 };
 int g_box_y[NUM_BOXES] = { 0 };
 int g_box_values[NUM_BOXES] = { 0 };
+int g_box_color;
 
 static void _fastcall zmo_calc(double, double, double *, double *, double);
 static void _fastcall zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
 static int  check_pan(void);
-static void fix_worklist(void);
+static void fix_work_list(void);
 static void _fastcall move_row(int fromrow, int torow, int col);
 
 /* big number declarations */
-void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
+static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
-	bf_t btmp1, btmp2 , btmp3;
+	bf_t btmp1 = alloc_stack(rbflength + 2);
+	bf_t btmp2 = alloc_stack(rbflength + 2);
+	bf_t btmp3 = alloc_stack(rbflength + 2);
 	int saved = save_stack();
-	btmp1 = alloc_stack(rbflength + 2);
-	btmp2 = alloc_stack(rbflength + 2);
-	btmp3 = alloc_stack(rbflength + 2);
 
 	/* use target as temporary variable */
 	floattobf(btmp3, p2);
@@ -39,8 +39,6 @@ void calc_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 	add_a_bf(target, p1);
 	restore_stack(saved);
 }
-
-int g_box_color;
 
 #ifndef XFRACT
 void display_box(void)
@@ -60,7 +58,7 @@ void display_box(void)
 		else
 			values[i] = (unsigned char)getcolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset);
 	}
-/* There is an interaction between getcolor and g_put_color, so separate them */
+	/* There is an interaction between getcolor and g_put_color, so separate them */
 	if (!(g_is_true_color && g_true_mode)) /* don't need this for truecolor with truemode set */
 	{
 		for (i = 0; i < g_box_count; i++)
@@ -158,8 +156,8 @@ void zoom_box_draw(int drawit)
 	g_yy_max  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
-		calc_corner(bfxmin, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calc_corner(bfymax, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(bfxmin, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(bfymax, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
 	}
 
 	/* calc co-ords of bottom right */
@@ -171,8 +169,8 @@ void zoom_box_draw(int drawit)
 	g_yy_min  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
-		calc_corner(bfxmax, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calc_corner(bfymin, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(bfxmax, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(bfymin, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
 	}
 	/* do the same for botleft & topright */
 	tmpx = g_z_width/-2 - fxadj;
@@ -187,8 +185,8 @@ void zoom_box_draw(int drawit)
 	g_yy_3rd  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (bf_math)
 	{
-		calc_corner(bfx3rd, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calc_corner(bfy3rd, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(bfx3rd, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(bfy3rd, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
 		restore_stack(saved);
 	}
 	ftemp1 = g_zbx + g_z_width - dx + fxadj;
@@ -310,12 +308,12 @@ void _fastcall add_box(struct coords point)
 	point.y += g_sy_offset;
 	if (point.x >= 0 && point.x < g_screen_width &&
 		point.y >= 0 && point.y < g_screen_height)
-		{
+	{
 		g_box_x[g_box_count] = point.x;
 		g_box_y[g_box_count] = point.y;
 		++g_box_count;
-		}
 	}
+}
 
 void zoom_box_move(double dx, double dy)
 {   int align, row, col;
@@ -408,13 +406,8 @@ void zoom_box_resize(int steps)
 
 void zoom_box_change_i(int dw, int dd)
 {   /* change size by pixels */
-	chgboxf((double)dw/g_dx_size, (double)dd/g_dy_size );
-	}
-#ifdef C6
-#pragma optimize("e", off)  /* MSC 6.00A messes up next rtn with "e" on */
-#endif
-
-extern void show_three_bf();
+	chgboxf((double) dw/g_dx_size, (double) dd/g_dy_size );
+}
 
 static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	bf_t bfnewx, bf_t bfnewy, bf_t bfplotmx1, bf_t bfplotmx2, bf_t bfplotmy1,
@@ -450,9 +443,7 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	/* *newx = g_sx_min + tempx*(g_sx_max-g_sx_3rd)/ftemp + tempy*(g_sx_3rd-g_sx_min)/ftemp; */
 	sub_bf(btmp1, bfsxmax, bfsx3rd);
 	mult_bf(btmp2, btempx, btmp1);
-	/* show_three_bf("fact1", btempx, "fact2", btmp1, "prod ", btmp2, 70); */
 	div_bf(btmp2a, btmp2, bfftemp);
-	/* show_three_bf("num  ", btmp2, "denom", bfftemp, "quot ", btmp2a, 70); */
 	sub_bf(btmp3, bfsx3rd, bfsxmin);
 	mult_bf(btmp4, btempy, btmp3);
 	div_bf(btmp4a, btmp4, bfftemp);
@@ -484,7 +475,7 @@ static void _fastcall zmo_calc(double dx, double dy, double *newx, double *newy,
 	*newy = g_sy_max + tempy*(g_sy_3rd-g_sy_max)/ftemp + tempx*(g_sy_min-g_sy_3rd)/ftemp;
 }
 
-void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
+static void zoom_out_bf(void) /* for ctl-enter, calc corners for zooming out */
 {
 	/* (g_xx_min, g_yy_max), etc, are already set to zoombox corners;
 	(g_sx_min, g_sy_max), etc, are still the screen's corners;
@@ -548,7 +539,7 @@ void zoomoutbf(void) /* for ctl-enter, calc corners for zooming out */
 	restore_stack(saved);
 }
 
-void zoomoutdbl(void) /* for ctl-enter, calc corners for zooming out */
+static void zoom_out_double(void) /* for ctl-enter, calc corners for zooming out */
 {
 	/* (g_xx_min, g_yy_max), etc, are already set to zoombox corners;
 		(g_sx_min, g_sy_max), etc, are still the screen's corners;
@@ -576,17 +567,13 @@ void zoom_box_out(void) /* for ctl-enter, calc corners for zooming out */
 {
 	if (bf_math)
 	{
-		zoomoutbf();
+		zoom_out_bf();
 	}
 	else
 	{
-		zoomoutdbl();
+		zoom_out_double();
 	}
 }
-
-#ifdef C6
-#pragma optimize("e", on)  /* back to normal */
-#endif
 
 void aspect_ratio_crop(float oldaspect, float newaspect)
 {
@@ -614,7 +601,8 @@ void aspect_ratio_crop(float oldaspect, float newaspect)
 }
 
 static int check_pan(void) /* return 0 if can't, alignment requirement if can */
-{   int i, j;
+{
+	int i, j;
 	if ((g_calculation_status != CALCSTAT_RESUMABLE && g_calculation_status != CALCSTAT_COMPLETED) || g_evolving)
 	{
 		return 0; /* not resumable, not complete */
@@ -810,11 +798,11 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 			move_row(y + row, y, col);
 		}
 	}
-	fix_worklist(); /* fixup any out of bounds g_work_list entries */
+	fix_work_list(); /* fixup any out of bounds g_work_list entries */
 	alloc_resume(sizeof(g_work_list) + 20, 2); /* post the new g_work_list */
 	put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
 	return 0;
-	}
+}
 
 static void _fastcall restart_window(int wknum)
 /* force a g_work_list entry to restart */
@@ -850,7 +838,7 @@ static void _fastcall restart_window(int wknum)
 	g_work_list[wknum].xx_begin = g_work_list[wknum].xx_start;
 }
 
-static void fix_worklist(void) /* fix out of bounds and symmetry related stuff */
+static void fix_work_list(void) /* fix out of bounds and symmetry related stuff */
 {   int i, j, k;
 	WORKLIST *wk;
 	for (i = 0; i < g_num_work_list; ++i)

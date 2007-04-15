@@ -26,6 +26,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 /* routines in this module      */
 
@@ -100,7 +101,6 @@ void make_batch_file()
 	int maxcolor;
 	int maxcolorindex = 0;
 	char *sptr = NULL, *sptr2;
-	int oldhelpmode;
 
 	if (g_make_par[1] == 0) /* makepar map case */
 	{
@@ -108,8 +108,7 @@ void make_batch_file()
 	}
 
 	driver_stack_screen();
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPPARMFILE;
+	push_help_mode(HELPPARMFILE);
 
 	maxcolor = g_colors;
 	strcpy(colorspec, "y");
@@ -572,7 +571,7 @@ skip_UI:
 		}
 		break;
 	}
-	g_help_mode = oldhelpmode;
+	pop_help_mode();
 	driver_unstack_screen();
 }
 
@@ -2051,7 +2050,7 @@ int select_video_mode(int curmode)
 	int attributes[MAXVIDEOMODES];
 	int i, k, ret;
 #ifndef XFRACT
-	int oldtabmode, oldhelpmode;
+	int oldtabmode;
 #endif
 
 	for (i = 0; i < g_video_table_len; ++i)  /* init tables */
@@ -2090,17 +2089,14 @@ int select_video_mode(int curmode)
 	}
 
 	oldtabmode = g_tab_mode;
-	oldhelpmode = g_help_mode;
 	modes_changed = 0;
 	g_tab_mode = 0;
-	g_help_mode = HELPVIDSEL;
-	i = full_screen_choice(CHOICE_HELP,
+	i = full_screen_choice_help(HELPVIDSEL, CHOICE_HELP,
 		"Select Video Mode",
 		"key...name.......................xdot..ydot.colr.driver......comment......",
 		NULL, g_video_table_len, NULL, attributes,
 		1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
 	g_tab_mode = oldtabmode;
-	g_help_mode = oldhelpmode;
 	if (i == -1)
 	{
 		/* update fractint.cfg for new key assignments */

@@ -1261,8 +1261,6 @@ struct DIR_SEARCH				/* Allocate	DTA	and	define structure */
 	char filename[FILE_MAX_PATH];	/* Filename	and	extension */
 };
 
-extern struct DIR_SEARCH DTA;   /* Disk Transfer Area */
-
 typedef struct palett
 {
 	BYTE red;

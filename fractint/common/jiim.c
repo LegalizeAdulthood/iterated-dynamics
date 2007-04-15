@@ -34,7 +34,7 @@
  *                           of Dan Farmer's ideas like circles and lines
  *                           connecting orbits points.
  *        12-18-93      TIW  Removed use of float only for orbits, fixed a
- *                           g_help_mode bug.
+ *                           help mode bug.
  *
  */
 
@@ -52,6 +52,7 @@
 #include "helpdefs.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
@@ -516,7 +517,6 @@ void Jiim(int which)         /* called by fractint */
 {
 	struct affine cvt;
 	int exact = 0;
-	int oldhelpmode;
 	int count = 0;            /* coloring julia */
 	static int mode = 0;      /* point, circle, ... */
 	int oldlookatmouse = g_look_at_mouse;
@@ -545,14 +545,13 @@ void Jiim(int which)         /* called by fractint */
 	{
 		return;
 	}
-	oldhelpmode = g_help_mode;
 	if (which == JIIM)
 	{
-		g_help_mode = HELP_JIIM;
+		push_help_mode(HELP_JIIM);
 	}
 	else
 	{
-		g_help_mode = HELP_ORBITS;
+		push_help_mode(HELP_ORBITS);
 		g_has_inverse = 1;
 	}
 	oldsxoffs = g_sx_offset;
@@ -1289,7 +1288,7 @@ finish:
 	g_using_jiim = 0;
 	g_calculate_type = oldcalctype;
 	g_debug_flag = old_debugflag; /* yo Chuck! */
-	g_help_mode = oldhelpmode;
+	pop_help_mode();
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
 		g_view_window = g_view_x_dots = g_view_y_dots = 0;

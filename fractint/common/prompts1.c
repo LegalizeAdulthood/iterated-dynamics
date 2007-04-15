@@ -21,6 +21,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "fihelp.h"
 
 #ifdef __hpux
 #include <sys/param.h>
@@ -34,20 +35,27 @@
 #include "drivers.h"
 
 /* Routines used in prompts2.c */
+char g_glasses1_map[] = "glasses1.map";
+char g_map_name[FILE_MAX_DIR] = "";
+int  g_map_set = FALSE;
+int g_julibrot;   /* flag for julibrot */
 
-	int prompt_checkkey(int curkey);
-	int prompt_checkkey_scroll(int curkey);
-	long get_file_entry(int, char *, char *, char *, char *);
+long get_file_entry(int, char *, char *, char *, char *);
+int prompt_value_string(char *buf, struct full_screen_values *val);
+void set_default_parms(void);
+
+static char funnyglasses_map_name[16];
+static char ifsmask[13]     = {"*.ifs"};
+static char formmask[13]    = {"*.frm"};
+static char lsysmask[13]    = {"*.l"};
 
 /* Routines in this module      */
 
-int prompt_value_string(char *buf, struct full_screen_values *val);
+static int select_type_params(int newfractype, int oldfractype);
 static  int input_field_list(int attr, char *fld, int vlen, char **list, int llen,
 							int row, int col, int (*checkkey)(int));
 static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
-		int select_type_params(int newfractype, int oldfractype);
-		void set_default_parms(void);
 static  long gfe_choose_entry(int, char *, char *, char *);
 static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
@@ -55,15 +63,9 @@ static  void format_parmfile_line(int, char *);
 static  int get_light_params(void);
 static  int check_mapfile(void);
 static  int get_funny_glasses_params(void);
+static int prompt_checkkey(int curkey);
+static int prompt_checkkey_scroll(int curkey);
 
-static char funnyglasses_map_name[16];
-char ifsmask[13]     = {"*.ifs"};
-char formmask[13]    = {"*.frm"};
-char lsysmask[13]    = {"*.l"};
-char g_glasses1_map[] = "glasses1.map";
-char g_map_name[FILE_MAX_DIR] = "";
-int  g_map_set = FALSE;
-int g_julibrot;   /* flag for julibrot */
 
 /* --------------------------------------------------------------------- */
 
@@ -466,7 +468,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 		put_string_center(instrrow++, 0, 80, C_PROMPT_BKGRD,
 		"No changeable parameters;");
 		put_string_center(instrrow, 0, 80, C_PROMPT_BKGRD,
-		(g_help_mode > 0) ? "Press ENTER to exit, ESC to back out, "FK_F1" for help" : "Press ENTER to exit");
+		(get_help_mode() > 0) ? "Press ENTER to exit, ESC to back out, "FK_F1" for help" : "Press ENTER to exit");
 		driver_hide_text_cursor();
 		g_text_cbase = 2;
 		while (1)
@@ -585,7 +587,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 			"Use " UPARR1 " and " DNARR1 " to select values to change");
 	}
 	put_string_center(instrrow + 1, 0, 80, C_PROMPT_BKGRD,
-		(g_help_mode > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
+		(get_help_mode() > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
 	done = 0;
 	while (values[curchoice].type == '*')
@@ -1103,7 +1105,6 @@ static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
 static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
                                    /* so that storage gets freed up      */
 {
-	int oldhelpmode;
 	int numtypes, done;
 	int i, j;
 #define MAXFTYPES 200
@@ -1123,8 +1124,7 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	ft_choices = &choices[0];
 
 	/* setup context sensitive help */
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELPFRACTALS;
+	push_help_mode(HELPFRACTALS);
 	if (t == IFS3D)
 	{
 		t = IFS;
@@ -1146,7 +1146,7 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 		strcpy(choices[++j]->name, g_fractal_specific[i].name);
 		choices[j]->name[14] = 0; /* safety */
 		choices[j]->num = i;      /* remember where the real item is */
-		}
+	}
 	numtypes = j + 1;
 	shell_sort(&choices, numtypes, sizeof(struct FT_CHOICE *), lccompare); /* sort list */
 	j = 0;
@@ -1180,110 +1180,127 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 		}
 	}
 
-
-	g_help_mode = oldhelpmode;
+	pop_help_mode();
 	return done;
 }
 
 static int sel_fractype_help(int curkey, int choice)
 {
-	int oldhelpmode;
 	if (curkey == FIK_F2)
 	{
-		oldhelpmode = g_help_mode;
-		g_help_mode = g_fractal_specific[(*(ft_choices + choice))->num].helptext;
+		push_help_mode(g_fractal_specific[(*(ft_choices + choice))->num].helptext);
 		help(0);
-		g_help_mode = oldhelpmode;
-		}
+		pop_help_mode();
+	}
 	return 0;
 }
 
-int select_type_params(/* prompt for new fractal type parameters */
-		int newfractype,        /* new fractal type */
-		int oldfractype         /* previous fractal type */
-)
+static void set_trig_array_bifurcation(int oldfractype, int old_float_type, int old_int_type, char *value)
 {
-	int ret, oldhelpmode;
+	/* Added the following to accommodate fn bifurcations.  JCO 7/2/92 */
+	if (!((oldfractype == old_float_type) || (oldfractype == old_int_type)))
+	{
+		set_trig_array(0, value);
+	}
+}
 
-	oldhelpmode = g_help_mode;
+static void set_trig_array_ident(int old_type, int old_float_type, int old_int_type)
+{
+	set_trig_array_bifurcation(old_type, old_float_type, old_int_type, "ident");
+}
+
+static void set_trig_array_sin(int old_type, int old_float_type, int old_int_type)
+{
+	set_trig_array_bifurcation(old_type, old_float_type, old_int_type, "sin");
+}
+
+/*
+	prompt for new fractal type parameters
+
+*/
+static int select_type_params(int newfractype,		/* new fractal type */
+		int oldfractype)					/* previous fractal type */
+{
 sel_type_restart:
-	ret = 0;
 	g_fractal_type = newfractype;
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 
-	if (g_fractal_type == LSYSTEM)
+	switch (g_fractal_type)
 	{
-		g_help_mode = HT_LSYS;
-		if (get_file_entry(GETFILE_L_SYSTEM, "L-System", lsysmask, g_l_system_filename, g_l_system_name) < 0)
+	case LSYSTEM:
+		if (get_file_entry_help(HT_LSYS, GETFILE_L_SYSTEM,
+			"L-System", lsysmask, g_l_system_filename, g_l_system_name))
 		{
-			ret = 1;
-			goto sel_type_exit;
-			}
+			return 1;
 		}
-	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
-	{
-		g_help_mode = HT_FORMULA;
-		if (get_file_entry(GETFILE_FORMULA, "Formula", formmask, g_formula_filename, g_formula_name) < 0)
-		{
-			ret = 1;
-			goto sel_type_exit;
-			}
-		}
-	if (g_fractal_type == IFS || g_fractal_type == IFS3D)
-	{
-		g_help_mode = HT_IFS;
-		if (get_file_entry(GETFILE_IFS, "IFS", ifsmask, g_ifs_filename, g_ifs_name) < 0)
-		{
-		ret = 1;
-		goto sel_type_exit;
-		}
-		}
+		break;
 
-/* Added the following to accommodate fn bifurcations.  JCO 7/2/92 */
-	if (((g_fractal_type == BIFURCATION) || (g_fractal_type == LBIFURCATION)) &&
-			!((oldfractype == BIFURCATION) || (oldfractype == LBIFURCATION)))
-		set_trig_array(0, "ident");
-	if (((g_fractal_type == BIFSTEWART) || (g_fractal_type == LBIFSTEWART)) &&
-			!((oldfractype == BIFSTEWART) || (oldfractype == LBIFSTEWART)))
-		set_trig_array(0, "ident");
-	if (((g_fractal_type == BIFLAMBDA) || (g_fractal_type == LBIFLAMBDA)) &&
-			!((oldfractype == BIFLAMBDA) || (oldfractype == LBIFLAMBDA)))
-		set_trig_array(0, "ident");
-	if (((g_fractal_type == BIFEQSINPI) || (g_fractal_type == LBIFEQSINPI)) &&
-			!((oldfractype == BIFEQSINPI) || (oldfractype == LBIFEQSINPI)))
-		set_trig_array(0, "sin");
-	if (((g_fractal_type == BIFADSINPI) || (g_fractal_type == LBIFADSINPI)) &&
-			!((oldfractype == BIFADSINPI) || (oldfractype == LBIFADSINPI)))
-		set_trig_array(0, "sin");
+	case FORMULA:
+	case FFORMULA:
+		if (get_file_entry_help(HT_FORMULA, GETFILE_FORMULA,
+			"Formula", formmask, g_formula_filename, g_formula_name))
+		{
+			return 1;
+		}
+		break;
+
+	case IFS:
+	case IFS3D:
+		if (get_file_entry_help(HT_IFS, GETFILE_IFS,
+			"IFS", ifsmask, g_ifs_filename, g_ifs_name))
+		{
+			return 1;
+		}
+		break;
+
+	case BIFURCATION:
+	case LBIFURCATION:		set_trig_array_ident(oldfractype, BIFURCATION, LBIFURCATION); break;
+	case BIFSTEWART:
+	case LBIFSTEWART:		set_trig_array_ident(oldfractype, BIFSTEWART, LBIFSTEWART); break;
+	case BIFLAMBDA:
+	case LBIFLAMBDA:		set_trig_array_ident(oldfractype, BIFLAMBDA, LBIFLAMBDA); break;
+	case BIFEQSINPI:
+	case LBIFEQSINPI:		set_trig_array_sin(oldfractype, BIFEQSINPI, LBIFEQSINPI); break;
+	case BIFADSINPI:
+	case LBIFADSINPI:		set_trig_array_sin(oldfractype, BIFADSINPI, LBIFADSINPI); break;
 
 	/*
 	* Next assumes that user going between popcorn and popcornjul
 	* might not want to change function variables
 	*/
-	if (((g_fractal_type    == FPPOPCORN) || (g_fractal_type    == LPOPCORN) ||
-			(g_fractal_type    == FPPOPCORNJUL) || (g_fractal_type    == LPOPCORNJUL)) &&
-			!((oldfractype == FPPOPCORN) || (oldfractype == LPOPCORN) ||
+	case FPPOPCORN:
+	case LPOPCORN:
+	case FPPOPCORNJUL:
+	case LPOPCORNJUL:
+		if (!((oldfractype == FPPOPCORN) || (oldfractype == LPOPCORN) ||
 			(oldfractype == FPPOPCORNJUL) || (oldfractype == LPOPCORNJUL)))
-		set_function_parm_defaults();
+		{
+			set_function_parm_defaults();
+		}
+		break;
 
 	/* set LATOO function defaults */
-	if (g_fractal_type == LATOO && oldfractype != LATOO)
-	{
-		set_function_parm_defaults();
+	case LATOO:
+		if (oldfractype != LATOO)
+		{
+			set_function_parm_defaults();
+		}
+		break;
 	}
+
 	set_default_parms();
 
 	if (get_fractal_parameters(0) < 0)
 	{
 		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA ||
-				g_fractal_type == IFS || g_fractal_type == IFS3D ||
-				g_fractal_type == LSYSTEM)
+			g_fractal_type == IFS || g_fractal_type == IFS3D ||
+			g_fractal_type == LSYSTEM)
 		{
 			goto sel_type_restart;
 		}
 		else
 		{
-			ret = 1;
+			return 1;
 		}
 	}
 	else
@@ -1295,9 +1312,7 @@ sel_type_restart:
 		}
 	}
 
-sel_type_exit:
-	g_help_mode = oldhelpmode;
-	return ret;
+	return FALSE;
 }
 
 void set_default_parms()
@@ -1473,7 +1488,6 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	char *type_name, *tmpptr;
 	char bailoutmsg[50];
 	int ret = 0;
-	int oldhelpmode;
 	char parmprompt[MAX_PARAMETERS][55];
 	static char *trg[] =
 	{
@@ -1910,10 +1924,8 @@ gfp_top:
 	scroll_column_status = 0;
 	while (1)
 	{
-		oldhelpmode = g_help_mode;
-		g_help_mode = g_current_fractal_specific->helptext;
-		i = full_screen_prompt(msg, promptnum, choices, paramvalues, fkeymask, g_text_stack);
-		g_help_mode = oldhelpmode;
+		i = full_screen_prompt_help(g_current_fractal_specific->helptext, msg,
+			promptnum, choices, paramvalues, fkeymask, g_text_stack);
 		if (i < 0)
 		{
 			if (g_julibrot)
@@ -2836,7 +2848,7 @@ static void format_parmfile_line(int choice, char *buf)
 
 int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 {
-	int i, k, ret, oldhelpmode;
+	int i, k, ret;
 	struct full_screen_values uvalues[20];
 	char *ifs3d_prompts[7] =
 	{
@@ -2866,10 +2878,8 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 	uvalues[k].type = 'i';
 	uvalues[k++].uval.ival = g_glasses_type;
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELP3DFRACT;
-	i = full_screen_prompt("3D Parameters", k, ifs3d_prompts, uvalues, 0, NULL);
-	g_help_mode = oldhelpmode;
+	i = full_screen_prompt_help(HELP3DFRACT, "3D Parameters",
+		k, ifs3d_prompts, uvalues, 0, NULL);
 	if (i < 0)
 	{
 		ret = -1;
@@ -2913,7 +2923,6 @@ int get_3d_parameters()     /* prompt for 3D parameters */
 	char *prompts3d[21];
 	struct full_screen_values uvalues[21];
 	int i, k;
-	int oldhelpmode;
 
 #ifdef WINFRACT
 	{
@@ -2979,11 +2988,7 @@ restart_1:
 	uvalues[k].type = 'y';
 	uvalues[k].uval.ch.val = g_grayscale_depth;
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELP3DMODE;
-
-	k = full_screen_prompt("3D Mode Selection", k + 1, prompts3d, uvalues, 0, NULL);
-	g_help_mode = oldhelpmode;
+	k = full_screen_prompt_help(HELP3DMODE, "3D Mode Selection", k + 1, prompts3d, uvalues, 0, NULL);
 	if (k < 0)
 	{
 		return -1;
@@ -3077,10 +3082,8 @@ restart_1:
 		{
 			attributes[i] = 1;
 		}
-		g_help_mode = HELP3DFILL;
-		i = full_screen_choice(CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
+		i = full_screen_choice_help(HELP3DFILL, CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
 										0, 0, 0, FILLTYPE + 1, NULL, NULL, NULL, NULL);
-		g_help_mode = oldhelpmode;
 		if (i < 0)
 		{
 			goto restart_1;
@@ -3194,9 +3197,7 @@ restart_1:
 			"Pre-rotation Z axis is coming at you out of the screen!";
 	}
 
-	g_help_mode = HELP3DPARMS;
-	k = full_screen_prompt(s, k, prompts3d, uvalues, 0, NULL);
-	g_help_mode = oldhelpmode;
+	k = full_screen_prompt_help(HELP3DPARMS, s, k, prompts3d, uvalues, 0, NULL);
 	if (k < 0)
 	{
 		goto restart_1;
@@ -3248,12 +3249,9 @@ static int get_light_params()
 {
 	char *prompts3d[13];
 	struct full_screen_values uvalues[13];
-
 	int k;
-	int oldhelpmode;
 
 	/* defaults go here */
-
 	k = -1;
 
 	if (ILLUMINE || g_raytrace_output)
@@ -3319,10 +3317,7 @@ static int get_light_params()
 
 	prompts3d[++k] = "";
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELP3DLIGHT;
-	k = full_screen_prompt("Light Source Parameters", k, prompts3d, uvalues, 0, NULL);
-	g_help_mode = oldhelpmode;
+	k = full_screen_prompt_help(HELP3DLIGHT, "Light Source Parameters", k, prompts3d, uvalues, 0, NULL);
 	if (k < 0)
 	{
 		return -1;
@@ -3378,7 +3373,7 @@ static int get_light_params()
 static int check_mapfile()
 {
 	int askflag = 0;
-	int i, oldhelpmode;
+	int i;
 	char temp1[256];
 
 	if (g_dont_read_color)
@@ -3403,12 +3398,9 @@ static int check_mapfile()
 	{
 		if (askflag)
 		{
-			oldhelpmode = g_help_mode;
-			g_help_mode = -1;
-			i = field_prompt("Enter name of .MAP file to use,\n"
+			i = field_prompt_help(-1, "Enter name of .MAP file to use,\n"
 				"or '*' to use palette from the image to be loaded.",
 				NULL, temp1, 60, NULL);
-			g_help_mode = oldhelpmode;
 			if (i < 0)
 			{
 				return -1;
@@ -3437,11 +3429,8 @@ static int check_mapfile()
 static int get_funny_glasses_params()
 {
 	char *prompts3d[10];
-
 	struct full_screen_values uvalues[10];
-
 	int k;
-	int oldhelpmode;
 
 	/* defaults */
 	if (ZVIEWER == 0)
@@ -3519,10 +3508,7 @@ static int get_funny_glasses_params()
 		strcpy(uvalues[k].uval.sval, funnyglasses_map_name);
 	}
 
-	oldhelpmode = g_help_mode;
-	g_help_mode = HELP3DGLASSES;
-	k = full_screen_prompt("Funny Glasses Parameters", k + 1, prompts3d, uvalues, 0, NULL);
-	g_help_mode = oldhelpmode;
+	k = full_screen_prompt_help(HELP3DGLASSES, "Funny Glasses Parameters", k + 1, prompts3d, uvalues, 0, NULL);
 	if (k < 0)
 	{
 		return -1;

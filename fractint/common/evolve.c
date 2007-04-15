@@ -3,6 +3,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "fihelp.h"
 
 #define VARYINT_NONE			0
 #define VARYINT_WITH_X			1
@@ -612,7 +613,6 @@ void set_mutation_level(int strength)
 int get_evolve_parameters(void)
 {
 	char *choices[20];
-	int oldhelpmode;
 	struct full_screen_values uvalues[20];
 	int i, j, k, tmp;
 	int old_evolving, old_gridsz;
@@ -700,10 +700,7 @@ get_evol_restart:
 
 	choices[++k]= "Press F6 to control which parameters are varied";
 	uvalues[k].type = '*';
-	oldhelpmode = g_help_mode;     /* this prevents HELP from activating */
-	g_help_mode = HELPEVOL;
-	i = full_screen_prompt("Evolution Mode Options", k + 1, choices, uvalues, 255, NULL);
-	g_help_mode = oldhelpmode;     /* re-enable HELP */
+	i = full_screen_prompt_help(HELPEVOL, "Evolution Mode Options", k + 1, choices, uvalues, 255, NULL);
 	if (i < 0)
 	{
 		/* in case this point has been reached after calling sub menu with F6 */
@@ -1128,10 +1125,10 @@ int unspiral_map(void)
 	/* All this malarky is to allow selecting different subimages */
 	/* Returns the count from the center subimage to the current g_px & g_py */
 	int mid;
-	static int oldgridsz = 0;
+	static int last_grid_size = 0;
 
 	mid = g_grid_size / 2;
-	if ((g_px == mid && g_py == mid) || (oldgridsz != g_grid_size))
+	if ((g_px == mid && g_py == mid) || (last_grid_size != g_grid_size))
 	{
 		int i, gridsqr;
 		/* set up array and return */
@@ -1142,8 +1139,9 @@ int unspiral_map(void)
 			spiral_map(i);
 			ecountbox[g_px][g_py] = i;
 		}
-		oldgridsz = g_grid_size;
-		g_px = g_py = mid;
+		last_grid_size = g_grid_size;
+		g_px = mid;
+		g_py = mid;
 		return 0;
 	}
 	return ecountbox[g_px][g_py];

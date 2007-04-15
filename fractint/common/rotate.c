@@ -10,6 +10,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 /* routines in this module      */
 
@@ -35,7 +36,6 @@ void rotate(int direction)      /* rotate-the-palette routine */
 	int fkey, step, fstep, istep, jstep, oldstep;
 	int incr, fromred = 0, fromblue = 0, fromgreen = 0, tored = 0, toblue = 0, togreen = 0;
 	int i, changecolor, changedirection;
-	int oldhelpmode;
 	int rotate_max, rotate_size;
 
 	static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
@@ -51,8 +51,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		return;
 	}
 
-	oldhelpmode = g_help_mode;              /* save the old help mode       */
-	g_help_mode = HELPCYCLING;              /* new help mode                */
+	push_help_mode(HELPCYCLING);
 
 	paused = 0;                          /* not paused                   */
 	fkey = 0;                            /* no random coloring           */
@@ -391,7 +390,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		}
 	}
 
-	g_help_mode = oldhelpmode;              /* return to previous help mode */
+	pop_help_mode();
 }
 
 static void pauserotate()               /* pause-the-rotate routine */
@@ -483,14 +482,12 @@ void save_palette()
 {
 	char palname[FILE_MAX_PATH];
 	FILE *dacfile;
-	int i, oldhelpmode;
+	int i;
 	char temp1[256] = { 0 };
 
 	strcpy(palname, g_map_name);
-	oldhelpmode = g_help_mode;
 	driver_stack_screen();
-	g_help_mode = HELPCOLORMAP;
-	i = field_prompt("Name of map file to write", NULL, temp1, 60, NULL);
+	i = field_prompt_help(HELPCOLORMAP, "Name of map file to write", NULL, temp1, 60, NULL);
 	driver_unstack_screen();
 	if (i != -1 && temp1[0])
 	{
@@ -524,19 +521,17 @@ void save_palette()
 		}
 		fclose(dacfile);
 	}
-	g_help_mode = oldhelpmode;
 }
 
 
 int load_palette(void)
 {
-	int i, oldhelpmode;
+	int i;
 	char filename[FILE_MAX_PATH];
-	oldhelpmode = g_help_mode;
+	
 	strcpy(filename, g_map_name);
 	driver_stack_screen();
-	g_help_mode = HELPCOLORMAP;
-	i = get_a_filename("Select a MAP File", mapmask, filename);
+	i = get_a_filename_help(HELPCOLORMAP, "Select a MAP File", mapmask, filename);
 	driver_unstack_screen();
 	if (i >= 0)
 	{
@@ -546,6 +541,5 @@ int load_palette(void)
 		}
 		merge_path_names(g_map_name, filename, 0);
 	}
-	g_help_mode = oldhelpmode;
 	return i;
 }

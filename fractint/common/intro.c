@@ -13,6 +13,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 /* stuff from fractint */
 
@@ -34,11 +35,9 @@ void intro(void)
 	char credits[32768];
 	char screen_text[32768];
 	int       oldlookatmouse;
-	int       oldhelpmode;
 
 	g_timer_start -= clock_ticks();                /* "time out" during help */
 	oldlookatmouse = g_look_at_mouse;
-	oldhelpmode = g_help_mode;
 	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* de-activate full mouse checking */
 
 	i = 32767 + read_help_topic(INTRO_AUTHORS, 0, 32767, screen_text);
@@ -89,7 +88,7 @@ void intro(void)
 	credits[authors[i + 1]] = oldchar;
 	delaymax = 10;
 	driver_hide_text_cursor();
-	g_help_mode = HELPMENU;
+	push_help_mode(HELPMENU);
 	while (! driver_key_pressed())
 	{
 #ifdef XFRACT
@@ -127,6 +126,6 @@ void intro(void)
 	}
 
 	g_look_at_mouse = oldlookatmouse;                /* restore the mouse-checking */
-	g_help_mode = oldhelpmode;
+	pop_help_mode();
 	return;
 }

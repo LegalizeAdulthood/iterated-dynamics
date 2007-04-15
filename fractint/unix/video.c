@@ -887,6 +887,4 @@ void discardscreen()
 #endif
       }
    }
-   else
-      discardgraphics();
 }

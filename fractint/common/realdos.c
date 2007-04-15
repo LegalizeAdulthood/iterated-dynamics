@@ -1,7 +1,7 @@
 /*
 		Miscellaneous C routines used only in DOS Fractint.
 */
-
+#include <assert.h>
 #include <string.h>
 #ifndef XFRACT
 #include <io.h>
@@ -18,15 +18,28 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
-
-static int menu_checkkey(int curkey, int choice);
+#include "fihelp.h"
 
 /* uncomment following for production version */
 /*
 #define PRODUCTION
 */
+#define MENU_HDG 3
+#define MENU_ITEM 1
+
+#define SWAPBLKLEN 4096 /* must be a power of 2 */
+
+BYTE g_suffix[10000];
 int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
-int g_patch_level = 9;	/* patchlevel for DOS version */
+int g_patch_level = 9;	/* patchlevel for this version */
+int g_video_table_len;                 /* number of entries in above           */
+int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
+
+static BYTE *s_temp_text_save = 0;
+static int s_text_x_dots = 0;
+static int s_text_y_dots = 0;
+static int s_full_menu = 0;
+static int menu_check_key(int curkey, int choice);
 
 /* int stop_message(flags, message) displays message and waits for a key:
 	message should be a max of 9 lines with \n's separating them;
@@ -43,14 +56,14 @@ int g_patch_level = 9;	/* patchlevel for DOS version */
 		&8 for Fractint for Windows & parser - use a fixed pitch font
 		&16 for info only message (green box instead of red in DOS vsn)
 */
-int stop_message (int flags, char *msg)
+int stop_message(int flags, char *msg)
 {
 	int ret, toprow, color, savelookatmouse;
 	static unsigned char batchmode = 0;
 	if (g_debug_flag || g_initialize_batch >= INITBATCH_NORMAL)
 	{
-		static FILE *fp = NULL;
-		if (fp == NULL && g_initialize_batch == INITBATCH_NONE)
+		FILE *fp = NULL;
+		if (g_initialize_batch == INITBATCH_NONE)
 		{
 			fp = dir_fopen(g_work_dir, "stop_message.txt", "w");
 		}
@@ -61,8 +74,8 @@ int stop_message (int flags, char *msg)
 		if (fp != NULL)
 		{
 			fprintf(fp, "%s\n", msg);
+			fclose(fp);
 		}
-		fclose(fp);
 	}
 	if (g_command_initialize)  /* & command_files hasn't finished 1st try */
 	{
@@ -74,7 +87,7 @@ int stop_message (int flags, char *msg)
 		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; /* used to set errorlevel */
 		batchmode = 1; /* fixes *second* stop_message in batch mode bug */
 		return -1;
-		}
+	}
 	ret = 0;
 	savelookatmouse = g_look_at_mouse;
 	g_look_at_mouse = -FIK_ENTER;
@@ -87,7 +100,7 @@ int stop_message (int flags, char *msg)
 		driver_stack_screen();
 		toprow = 4;
 		driver_move_cursor(4, 0);
-		}
+	}
 	g_text_cbase = 2; /* left margin is 2 */
 	driver_put_string(toprow, 0, 7, msg);
 	if (flags & STOPMSG_CANCEL)
@@ -95,7 +108,9 @@ int stop_message (int flags, char *msg)
 		driver_put_string(g_text_row + 2, 0, 7, "Escape to cancel, any other key to continue...");
 	}
 	else
+	{
 		driver_put_string(g_text_row + 2, 0, 7, "Any key to continue...");
+	}
 	g_text_cbase = 0; /* back to full line */
 	color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
 	driver_set_attr(toprow, 0, color, (g_text_row + 1-toprow)*80);
@@ -128,9 +143,6 @@ int stop_message (int flags, char *msg)
 }
 
 
-static BYTE *temptextsave = 0;
-static int  textxdots, textydots;
-
 /* text_temp_message(msg) displays a text message of up to 40 characters, waits
 		for a key press, restores the prior display, and returns (without
 		eating the key).
@@ -148,12 +160,12 @@ int text_temp_message(char *msgparm)
 	return 0;
 }
 
-void free_temp_message()
+void free_temp_message(void)
 {
-	if (temptextsave != NULL)
+	if (s_temp_text_save != NULL)
 	{
-		free(temptextsave);
-		temptextsave = NULL;
+		free(s_temp_text_save);
+		s_temp_text_save = NULL;
 	}
 }
 
@@ -182,31 +194,31 @@ int show_temp_message(char *msgparm)
 
 	xrepeat = (g_screen_width >= 640) ? 2 : 1;
 	yrepeat = (g_screen_height >= 300) ? 2 : 1;
-	textxdots = (int) strlen(msg)*xrepeat*8;
-	textydots = yrepeat*8;
+	s_text_x_dots = (int) strlen(msg)*xrepeat*8;
+	s_text_y_dots = yrepeat*8;
 
 	/* worst case needs 10k */
-	if (temptextsave != NULL)
+	if (s_temp_text_save != NULL)
 	{
-		if (size != (long) textxdots*textydots)
+		if (size != (long) s_text_x_dots*s_text_y_dots)
 		{
 			free_temp_message();
 		}
 	}
-	size = (long) textxdots*textydots;
+	size = (long) s_text_x_dots*s_text_y_dots;
 	save_sxoffs = g_sx_offset;
 	save_syoffs = g_sy_offset;
 	g_sx_offset = g_sy_offset = 0;
-	if (temptextsave == NULL) /* only save screen first time called */
+	if (s_temp_text_save == NULL) /* only save screen first time called */
 	{
-		temptextsave = malloc(textxdots*textydots);
-		if (temptextsave == NULL)
+		s_temp_text_save = malloc(s_text_x_dots*s_text_y_dots);
+		if (s_temp_text_save == NULL)
 		{
 			return -1; /* sorry, message not displayed */
 		}
-		for (i = 0; i < textydots; ++i)
+		for (i = 0; i < s_text_y_dots; ++i)
 		{
-			get_line(i, 0, textxdots-1, &temptextsave[i*textxdots]);
+			get_line(i, 0, s_text_x_dots-1, &s_temp_text_save[i*s_text_x_dots]);
 		}
 	}
 
@@ -218,7 +230,7 @@ int show_temp_message(char *msgparm)
 	return 0;
 }
 
-void clear_temp_message()
+void clear_temp_message(void)
 {
 	int i;
 	int save_sxoffs, save_syoffs;
@@ -226,19 +238,19 @@ void clear_temp_message()
 	{
 		disk_video_status(0, "");
 	}
-	else if (temptextsave != NULL)
+	else if (s_temp_text_save != NULL)
 	{
 		save_sxoffs = g_sx_offset;
 		save_syoffs = g_sy_offset;
 		g_sx_offset = g_sy_offset = 0;
-		for (i = 0; i < textydots; ++i)
+		for (i = 0; i < s_text_y_dots; ++i)
 		{
-			put_line(i, 0, textxdots-1, &temptextsave[i*textxdots]);
+			put_line(i, 0, s_text_x_dots-1, &s_temp_text_save[i*s_text_x_dots]);
 		}
 		if (g_using_jiim == 0)  /* jiim frees memory with free_temp_message() */
 		{
-			free(temptextsave);
-			temptextsave = NULL;
+			free(s_temp_text_save);
+			s_temp_text_save = NULL;
 		}
 		g_sx_offset = save_sxoffs;
 		g_sy_offset = save_syoffs;
@@ -256,7 +268,7 @@ void blank_rows(int row, int rows, int attr)
 	}
 }
 
-void help_title()
+void help_title(void)
 {
 	char msg[MESSAGE_LEN], buf[MESSAGE_LEN];
 	driver_set_clear(); /* clear the screen */
@@ -271,12 +283,12 @@ void help_title()
 	{
 		sprintf(buf, "%01d", g_release % 10);
 		strcat(msg, buf);
-		}
+	}
 	if (g_patch_level)
 	{
 		sprintf(buf, ".%d", g_patch_level);
 		strcat(msg, buf);
-		}
+	}
 	put_string_center(0, 0, 80, C_TITLE, msg);
 
 /* uncomment next for production executable: */
@@ -349,11 +361,9 @@ int put_string_center(int row, int col, int width, int attr, char *msg)
 
 /* ------------------------------------------------------------------------ */
 
-char g_speed_prompt[]="Speed key string";
-
 /* For file list purposes only, it's a directory name if first
 	char is a dot or last char is a slash */
-static int isadirname(char *name)
+static int is_a_dir_name(char *name)
 {
 	if (*name == '.' || ends_with_slash(name))
 	{
@@ -365,7 +375,7 @@ static int isadirname(char *name)
 	}
 }
 
-void show_speedstring(int speedrow,
+static void show_speed_string(int speedrow,
 					char *speedstring,
 					int (*speedprompt)(int, int, int, char *, int))
 {
@@ -384,8 +394,8 @@ void show_speedstring(int speedrow,
 		}
 		else
 		{
-			driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, g_speed_prompt);
-			j = sizeof(g_speed_prompt)-1;
+			driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, "Speed key string");
+			j = sizeof("Speed key string")-1;
 		}
 		strcpy(buf, speedstring);
 		i = (int) strlen(buf);
@@ -404,7 +414,7 @@ void show_speedstring(int speedrow,
 	}
 }
 
-void process_speedstring(char    *speedstring,
+static void process_speed_string(char    *speedstring,
 								char **choices,         /* array of choice strings                */
 								int       curkey,
 								int      *pcurrent,
@@ -516,9 +526,11 @@ int full_screen_choice(
 		current = 0;
 		if (options & CHOICE_NOT_SORTED)
 		{
-			while (current < numchoices && (k = strncasecmp(speedstring, choices[current], i)) != 0)
+			k = strncasecmp(speedstring, choices[current], i);
+			while (current < numchoices && k != 0)
 			{
 				++current;
+				k = strncasecmp(speedstring, choices[current], i);
 			}
 			if (k != 0)
 			{
@@ -527,9 +539,11 @@ int full_screen_choice(
 		}
 		else
 		{
-			while (current < numchoices && (k = strncasecmp(speedstring, choices[current], i)) > 0)
+			k = strncasecmp(speedstring, choices[current], i);
+			while (current < numchoices && k > 0)
 			{
 				++current;
+				k = strncasecmp(speedstring, choices[current], i);
 			}
 			if (k < 0 && current > 0)  /* oops - overshot */
 			{
@@ -820,7 +834,7 @@ int full_screen_choice(
 
 		if (speedstring)                     /* show speedstring if any */
 		{
-			show_speedstring(speedrow, speedstring, speedprompt);
+			show_speed_string(speedrow, speedstring, speedprompt);
 		}
 		else
 		{
@@ -885,7 +899,7 @@ int full_screen_choice(
 					{
 						newcurrent = (newcurrent % boxwidth) - boxwidth;
 					}
-					else if (!isadirname(choices[newcurrent]))
+					else if (!is_a_dir_name(choices[newcurrent]))
 					{
 						if (current != newcurrent)
 						{
@@ -912,7 +926,7 @@ int full_screen_choice(
 						newcurrent = (numchoices - current) % boxwidth;
 						newcurrent =  numchoices + (newcurrent ? boxwidth - newcurrent: 0);
 					}
-					else if (!isadirname(choices[newcurrent]))
+					else if (!is_a_dir_name(choices[newcurrent]))
 					{
 						if (current != newcurrent)
 						{
@@ -938,7 +952,7 @@ int full_screen_choice(
 					{
 						newcurrent = -1;
 					}
-					else if (!isadirname(choices[newcurrent]))
+					else if (!is_a_dir_name(choices[newcurrent]))
 					{
 						if (current != newcurrent)
 						{
@@ -964,7 +978,7 @@ int full_screen_choice(
 					{
 						newcurrent = numchoices;
 					}
-					else if (!isadirname(choices[newcurrent]))
+					else if (!is_a_dir_name(choices[newcurrent]))
 					{
 						if (current != newcurrent)
 						{
@@ -1004,7 +1018,7 @@ int full_screen_choice(
 				int newcurrent;
 				for (newcurrent = 0; newcurrent < numchoices; ++newcurrent)
 				{
-					if (!isadirname(choices[newcurrent]))
+					if (!is_a_dir_name(choices[newcurrent]))
 					{
 						current = newcurrent - 1;
 						break;  /* breaks the for loop */
@@ -1023,7 +1037,7 @@ int full_screen_choice(
 				int newcurrent;
 				for (newcurrent = numchoices - 1; newcurrent >= 0; --newcurrent)
 				{
-					if (!isadirname(choices[newcurrent]))
+					if (!is_a_dir_name(choices[newcurrent]))
 					{
 						current = newcurrent + 1;
 						break;  /* breaks the for loop */
@@ -1047,7 +1061,7 @@ int full_screen_choice(
 			ret = -1;
 			if (speedstring)
 			{
-				process_speedstring(speedstring, choices, curkey, &current,
+				process_speed_string(speedstring, choices, curkey, &current,
 						numchoices, options & CHOICE_NOT_SORTED);
 			}
 			break;
@@ -1097,6 +1111,21 @@ fs_choice_end:
 	return ret;
 }
 
+int full_screen_choice_help(int help_mode, 	int options, char *hdg, char *hdg2,
+	char *instr, int numchoices, char **choices, int *attributes,
+	int boxwidth, int boxdepth, int colwidth, int current,
+	void (*formatitem)(int, char*), char *speedstring,
+	int (*speedprompt)(int, int, int, char *, int), int (*checkkey)(int, int))
+{
+	int result;
+	push_help_mode(help_mode);
+	result = full_screen_choice(options, hdg, hdg2, instr,
+		numchoices, choices, attributes, boxwidth, boxdepth, colwidth,
+		current, formatitem, speedstring, speedprompt, checkkey);
+	pop_help_mode();
+	return result;
+}
+
 #ifndef XFRACT
 /* case independent version of strncmp */
 int strncasecmp(char *s, char *t, int ct)
@@ -1112,10 +1141,6 @@ int strncasecmp(char *s, char *t, int ct)
 }
 #endif
 
-static int menutype;
-#define MENU_HDG 3
-#define MENU_ITEM 1
-
 int main_menu(int fullmenu)
 {
 	char *choices[44]; /* 2 columns*22 rows */
@@ -1128,7 +1153,7 @@ int main_menu(int fullmenu)
 	oldtabmode = g_tab_mode;
 
 top:
-	menutype = fullmenu;
+	s_full_menu = fullmenu;
 	g_tab_mode = 0;
 	showjuliatoggle = 0;
 	for (i = 0; i < 44; ++i)
@@ -1393,18 +1418,18 @@ top:
 	choices[nextright] = "stereogram             <ctl-s>";
 
 	i = driver_key_pressed() ? driver_get_key() : 0;
-	if (menu_checkkey(i, 0) == 0)
+	if (menu_check_key(i, 0) == 0)
 	{
-		g_help_mode = HELPMAIN;         /* switch help modes */
 		nextleft += 2;
 		if (nextleft < nextright)
 		{
 			nextleft = nextright + 1;
 		}
+		set_help_mode(HELPMAIN);
 		i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH,
 			"MAIN MENU",
 			NULL, NULL, nextleft, (char **) choices, attributes,
-			2, nextleft/2, 29, 0, NULL, NULL, NULL, menu_checkkey);
+			2, nextleft/2, 29, 0, NULL, NULL, NULL, menu_check_key);
 		if (i == -1)     /* escape */
 		{
 			i = FIK_ESC;
@@ -1418,7 +1443,7 @@ top:
 			i = choicekey[i];
 			if (-10 == i)
 			{
-				g_help_mode = HELPZOOM;
+				set_help_mode(HELPZOOM);
 				help(0);
 				i = 0;
 			}
@@ -1462,7 +1487,7 @@ top:
 	return i;
 }
 
-static int menu_checkkey(int curkey, int choice)
+static int menu_check_key(int curkey, int choice)
 { /* choice is dummy used by other routines called by full_screen_choice() */
 	int testkey;
 	testkey = choice; /* for warning only */
@@ -1483,7 +1508,7 @@ static int menu_checkkey(int curkey, int choice)
 	{
 		return -testkey;
 	}
-	if (menutype)
+	if (s_full_menu)
 	{
 		if (strchr("\\sobpkrh", testkey) || testkey == FIK_TAB
 		|| testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
@@ -1817,9 +1842,9 @@ int thinking(int options, char *msg)
 		{
 			thinkstate = -1;
 			driver_unstack_screen();
-			}
-		return 0;
 		}
+		return 0;
+	}
 	if (thinkstate < 0)
 	{
 		driver_stack_screen();
@@ -1831,7 +1856,7 @@ int thinking(int options, char *msg)
 		driver_put_string(4, 10, C_GENERAL_HI, buf);
 		thinkcol = g_text_col - 3;
 		count = 0;
-		}
+	}
 	if ((count++) < 100)
 	{
 		return 0;
@@ -1843,36 +1868,10 @@ int thinking(int options, char *msg)
 	return driver_key_pressed();
 }
 
-
-unsigned long swaptotlen;
-unsigned long swapoffset;
-BYTE *swapvidbuf;
-int swaplength;
-
-#define SWAPBLKLEN 4096 /* must be a power of 2 */
-U16 memhandle = 0;
-
-BYTE g_suffix[10000];
-
-void discardgraphics() /* release expanded/extended memory if any in use */
-{
-#ifndef XFRACT
-	MemoryRelease(memhandle);
-	memhandle = 0;
-#endif
-}
-
-/*VIDEOINFO *g_video_table;  /* temporarily loaded fractint.cfg info */
-int g_video_table_len;                 /* number of entries in above           */
-
 int show_vid_length()
 {
-	int sz;
-	sz = (sizeof(VIDEOINFO) + sizeof(int))*MAXVIDEOMODES;
-	return sz;
+	return (sizeof(VIDEOINFO) + sizeof(int))*MAXVIDEOMODES;
 }
-
-int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
 
 /* load_fractint_config
  *
@@ -1934,9 +1933,7 @@ void load_fractint_config(void)
 			}
 			else if (tempstring[i] == ',' && ++j < 11)
 			{
-#if defined(_WIN32)
-				_ASSERTE(j >= 0 && j < 11);
-#endif
+				assert(j >= 0 && j < 11);
 				fields[j] = &tempstring[i + 1]; /* remember start of next field */
 				tempstring[i] = 0;   /* make field a separate string */
 			}
@@ -1978,14 +1975,13 @@ void load_fractint_config(void)
 		textsafe2   = dotmode / 100;
 		dotmode    %= 100;
 		if (j < 9 ||
-				keynum < 0 ||
-				dotmode < 0 || dotmode > 30 ||
-				textsafe2 < 0 || textsafe2 > 4 ||
-				g_x_dots < MIN_PIXELS || g_x_dots > MAX_PIXELS ||
-				g_y_dots < MIN_PIXELS || g_y_dots > MAX_PIXELS ||
-				(g_colors != 0 && g_colors != 2 && g_colors != 4 && g_colors != 16 &&
-				g_colors != 256)
-			)
+			keynum < 0 ||
+			dotmode < 0 || dotmode > 30 ||
+			textsafe2 < 0 || textsafe2 > 4 ||
+			g_x_dots < MIN_PIXELS || g_x_dots > MAX_PIXELS ||
+			g_y_dots < MIN_PIXELS || g_y_dots > MAX_PIXELS ||
+			(g_colors != 0 && g_colors != 2 && g_colors != 4 && g_colors != 16 &&
+				g_colors != 256))
 		{
 			goto bad_fractint_cfg;
 		}
@@ -2059,7 +2055,9 @@ int check_video_mode_key(int option, int k)
 	/* returns g_video_table entry number if the passed keystroke is a  */
 	/* function key currently assigned to a video mode, -1 otherwise */
 	if (k == 1400)              /* special value from select_vid_mode  */
+	{
 		return MAXVIDEOMODES-1; /* for last entry with no key assigned */
+	}
 	if (k != 0)
 	{
 		if (option == 0)  /* check resident video mode table */
@@ -2093,17 +2091,17 @@ int check_vidmode_keyname(char *kname)
 	keyset = 1058;
 	if (*kname == 'S' || *kname == 's')
 	{
-		keyset = 1083;
+		keyset = FIK_SF1 - 1;
 		++kname;
 	}
 	else if (*kname == 'C' || *kname == 'c')
 	{
-		keyset = 1093;
+		keyset = FIK_CTL_F1 - 1;
 		++kname;
 	}
 	else if (*kname == 'A' || *kname == 'a')
 	{
-		keyset = 1103;
+		keyset = FIK_ALT_F1 - 1;
 		++kname;
 	}
 	if (*kname != 'F' && *kname != 'f')
@@ -2149,19 +2147,21 @@ void video_mode_key_name(int k, char *buf)
 		{
 			*(buf++) = 'A';
 			k -= 1103;
-			}
+		}
 		else if (k > 1093)
 		{
 			*(buf++) = 'C';
 			k -= 1093;
-			}
+		}
 		else if (k > 1083)
 		{
 			*(buf++) = 'S';
 			k -= 1083;
-			}
-		else
-			k -= 1058;
-		sprintf(buf, "F%d", k);
 		}
+		else
+		{
+			k -= 1058;
+		}
+		sprintf(buf, "F%d", k);
+	}
 }

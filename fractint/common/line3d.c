@@ -645,17 +645,6 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 					if (g_debug_flag)
 					{
 						stop_message(0, "debug, normal vector err2");
-						/* use next instead if you ever need details:
-						* static char tmp[] = {"debug, vector err"};
-						* char msg[200]; #ifndef XFRACT
-						* sprintf(msg, "%s\n%f %f %f\n%f %f %f\n%f %f
-						* %f", #else sprintf(msg, "%s\n%f %f %f\n%f %f
-						* %f\n%f %f %f", #endif tmp, f_cur.x, f_cur.y,
-						* f_cur.color, s_f_last_row[col].x,
-						* s_f_last_row[col].y, s_f_last_row[col].color,
-						* s_f_last_row[col-1].x,
-						* s_f_last_row[col-1].y, s_f_last_row[col-1].color);
-						* stop_message(0, msg); */
 					}
 					f_cur->color = (float) g_colors;
 					cur->color = g_colors;

@@ -57,9 +57,9 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
 
 struct video_info g_video_entry;
-int g_help_mode;
 
 long g_timer_start, g_timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
@@ -359,17 +359,17 @@ static int main_restore_restart(int *stacked, int *resume_flag)
 			if (g_overlay_3d)
 			{
 				hdg = "Select File for 3D Overlay";
-				g_help_mode = HELP3DOVLY;
+				set_help_mode(HELP3DOVLY);
 			}
 			else if (g_display_3d)
 			{
 				hdg = "Select File for 3D Transform";
-				g_help_mode = HELP3D;
+				set_help_mode(HELP3D);
 			}
 			else
 			{
 				hdg = "Select File to Restore";
-				g_help_mode = HELPSAVEREST;
+				set_help_mode(HELPSAVEREST);
 			}
 			if (g_show_file < 0 && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
 			{
@@ -385,7 +385,7 @@ static int main_restore_restart(int *stacked, int *resume_flag)
 		g_evolving = EVOLVE_NONE;
 		g_view_window = 0;
 		g_show_file = 1;
-		g_help_mode = -1;
+		set_help_mode(-1);
 		g_tab_mode = 1;
 		if (stacked)
 		{
@@ -400,7 +400,7 @@ static int main_restore_restart(int *stacked, int *resume_flag)
 		g_show_file = g_browsing ? 1 : -1;
 	}
 
-	g_help_mode = HELPMENU;                 /* now use this help mode */
+	set_help_mode(HELPMENU);                 /* now use this help mode */
 	g_tab_mode = 1;
 	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
 
@@ -583,7 +583,7 @@ static int main_image_start(int *stacked, int *kbdchar, int *resumeflag)
 	}
 
 	g_zoom_off = TRUE;                 /* zooming is enabled */
-	g_help_mode = HELPMAIN;         /* now use this help mode */
+	set_help_mode(HELPMAIN);         /* now use this help mode */
 	*resumeflag = 0;  /* allows taking goto inside big_while_loop() */
 
 	return 0;
