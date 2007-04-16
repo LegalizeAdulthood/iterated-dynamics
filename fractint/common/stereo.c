@@ -34,61 +34,36 @@ int g_grayscale_depth = 0; /* flag to use gray value rather than color number */
 char g_calibrate = 1;             /* add calibration bars to image */
 char g_image_map = 0;
 
-/* this structure permits variables to be temporarily static and visible
-	to routines in this file without permanently hogging memory */
-
-static struct static_vars
-{
-	long avg;
-	long avgct;
-	long depth;
-	int barheight;
-	int ground;
-	int maxcc;
-	int maxc;
-	int minc;
-	int reverse;
-	int sep;
-	double width;
-	int x1;
-	int x2;
-	int xcen;
-	int y;
-	int y1;
-	int y2;
-	int ycen;
-	BYTE *save_dac;
-} *pv;
-
-#define AVG         (pv->avg)
-#define AVGCT       (pv->avgct)
-#define DEPTH       (pv->depth)
-#define BARHEIGHT   (pv->barheight)
-#define GROUND      (pv->ground)
-#define MAXCC       (pv->maxcc)
-#define MAXC        (pv->maxc)
-#define MINC        (pv->minc)
-#define REVERSE     (pv->reverse)
-#define SEP         (pv->sep)
-#define WIDTH       (pv->width)
-#define X1          (pv->x1)
-#define X2          (pv->x2)
-#define Y           (pv->y)
-#define Y1          (pv->y1)
-#define Y2          (pv->y2)
-#define XCEN        (pv->xcen)
-#define YCEN        (pv->ycen)
+static long s_average;
+static long s_average_count;
+static long s_depth;
+static int s_bar_height;
+static int s_ground;
+static int s_max_cc;
+static int s_max_c;
+static int s_min_c;
+static int s_reverse;
+static int s_separation;
+static double s_width;
+static int s_x1;
+static int s_x2;
+static int s_x_center;
+static int s_y;
+static int s_y1;
+static int s_y2;
+static int s_y_center;
+static BYTE s_save_dac[256][3];
 
 /*
 	The getdepth() function allows using the grayscale value of the color
-	as DEPTH, rather than the color number. Maybe I got a little too
+	as s_depth, rather than the color number. Maybe I got a little too
 	sophisticated trying to avoid a divide, so the comment tells what all
 	the multiplies and shifts are trying to do. The result should be from
 	0 to 255.
 */
 
-typedef BYTE (*DACBOX)[256][3];
-#define dac   (*((DACBOX)(pv->save_dac)))
+typedef BYTE *DACBOX[256][3];
+#define dac   (*((DACBOX) s_save_dac))
 
 static int getdepth(int xd, int yd)
 {
@@ -97,9 +72,9 @@ static int getdepth(int xd, int yd)
 	if (g_grayscale_depth)
 	{
 		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-		pal = ((int) dac[pal][0]*77 +
-				(int) dac[pal][1]*151 +
-				(int) dac[pal][2]*28);
+		pal = ((int) s_save_dac[pal][0]*77 +
+				(int) s_save_dac[pal][1]*151 +
+				(int) s_save_dac[pal][2]*28);
 		pal >>= 6;
 	}
 	return pal;
@@ -112,8 +87,8 @@ static int getdepth(int xd, int yd)
 static int get_min_max(void)
 {
 	int xd, yd, ldepth;
-	MINC = g_colors;
-	MAXC = 0;
+	s_min_c = g_colors;
+	s_max_c = 0;
 	for (yd = 0; yd < g_y_dots; yd++)
 	{
 		if (driver_key_pressed())
@@ -127,13 +102,13 @@ static int get_min_max(void)
 		for (xd = 0; xd < g_x_dots; xd++)
 		{
 			ldepth = getdepth(xd, yd);
-			if (ldepth < MINC)
+			if (ldepth < s_min_c)
 			{
-				MINC = ldepth;
+				s_min_c = ldepth;
 			}
-			if (ldepth > MAXC)
+			if (ldepth > s_max_c)
 			{
-				MAXC = ldepth;
+				s_max_c = ldepth;
 			}
 		}
 	}
@@ -146,19 +121,19 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 	int i, j, ct;
 	find_special_colors();
 	ct = 0;
-	for (i = XCEN; i < (XCEN) + barwidth; i++)
+	for (i = s_x_center; i < (s_x_center) + barwidth; i++)
 	{
-		for (j = YCEN; j < (YCEN) + BARHEIGHT; j++)
+		for (j = s_y_center; j < (s_y_center) + s_bar_height; j++)
 		{
 			if (*bars)
 			{
-				g_put_color(i + (int)(AVG), j , g_color_bright);
-				g_put_color(i - (int)(AVG), j , g_color_bright);
+				g_put_color(i + (int) s_average, j , g_color_bright);
+				g_put_color(i - (int) s_average, j , g_color_bright);
 			}
 			else
 			{
-				g_put_color(i + (int)(AVG), j, colour[ct++]);
-				g_put_color(i - (int)(AVG), j, colour[ct++]);
+				g_put_color(i + (int) s_average, j, colour[ct++]);
+				g_put_color(i - (int) s_average, j, colour[ct++]);
 			}
 		}
 	}
@@ -170,7 +145,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 	int i, j, x, s;
 	int *same = _alloca(sizeof(int)*g_x_dots);
 	int *colour = _alloca(sizeof(int)*g_x_dots);
-	if ((Y) >= g_y_dots)
+	if ((s_y) >= g_y_dots)
 	{
 		return 1;
 	}
@@ -181,19 +156,19 @@ int out_line_stereo(BYTE *pixels, int linelen)
 	}
 	for (x = 0; x < g_x_dots; ++x)
 	{
-		SEP = REVERSE
-			? (GROUND - (int) (DEPTH*(getdepth(x, Y) - MINC) / MAXCC))
-			: (GROUND - (int) (DEPTH*(MAXCC - (getdepth(x, Y) - MINC)) / MAXCC));
-		SEP =  (int)((SEP*10.0) / WIDTH);        /* adjust for media WIDTH */
+		s_separation = s_reverse
+			? (s_ground - (int) (s_depth*(getdepth(x, s_y) - s_min_c) / s_max_cc))
+			: (s_ground - (int) (s_depth*(s_max_cc - (getdepth(x, s_y) - s_min_c)) / s_max_cc));
+		s_separation =  (int) ((s_separation*10.0) / s_width);        /* adjust for media s_width */
 
 		/* get average value under calibration bars */
-		if (X1 <= x && x <= X2 && Y1 <= Y && Y <= Y2)
+		if (s_x1 <= x && x <= s_x2 && s_y1 <= s_y && s_y <= s_y2)
 		{
-			AVG += SEP;
-			(AVGCT)++;
+			s_average += s_separation;
+			(s_average_count)++;
 		}
-		i = x - (SEP + (SEP & Y & 1)) / 2;
-		j = i + SEP;
+		i = x - (s_separation + (s_separation & s_y & 1)) / 2;
+		j = i + s_separation;
 		if (0 <= i && j < g_x_dots)
 		{
 			/* there are cases where next never terminates so we timeout */
@@ -217,9 +192,9 @@ int out_line_stereo(BYTE *pixels, int linelen)
 	for (x = g_x_dots - 1; x >= 0; x--)
 	{
 		colour[x] = (same[x] == x) ? (int) pixels[x % linelen] : colour[same[x]];
-		g_put_color(x, Y, colour[x]);
+		g_put_color(x, s_y, colour[x]);
 	}
-	(Y)++;
+	(s_y)++;
 	return 0;
 }
 
@@ -230,27 +205,21 @@ int out_line_stereo(BYTE *pixels, int linelen)
 
 int auto_stereo(void)
 {
-	struct static_vars v;
-	BYTE savedacbox[256*3];
 	int ret = 0;
 	int i, j, done;
 	int bars, ct, kbdchar, barwidth;
 	time_t ltime;
 	unsigned char *buf = (unsigned char *)g_decoder_line;
-	/* following two lines re-use existing arrays in Fractint */
 	int *same = _alloca(sizeof(int)*g_x_dots);
 	int *colour = _alloca(sizeof(int)*g_x_dots);
 
-	pv = &v;   /* set static vars to stack structure */
-	pv->save_dac = savedacbox;
-
 	/* Use the current time to randomize the random number sequence. */
 	time(&ltime);
-	srand((unsigned int)ltime);
+	srand((unsigned int) ltime);
 
 	push_help_mode(RDSKEYS);
 	driver_save_graphics();                      /* save graphics image */
-	memcpy(savedacbox, g_dac_box, 256*3);  /* save g_colors */
+	memcpy(s_save_dac, g_dac_box, 256*3);  /* save g_colors */
 
 	if (g_x_dots > OLD_MAX_PIXELS)
 	{
@@ -260,40 +229,40 @@ int auto_stereo(void)
 		goto exit_stereo;
 	}
 
-	/* empircally determined adjustment to make WIDTH scale correctly */
-	WIDTH = g_auto_stereo_width*.67;
-	if (WIDTH < 1)
+	/* empircally determined adjustment to make s_width scale correctly */
+	s_width = g_auto_stereo_width*.67;
+	if (s_width < 1)
 	{
-		WIDTH = 1;
+		s_width = 1;
 	}
-	GROUND = g_x_dots / 8;
-	REVERSE = (g_auto_stereo_depth < 0) ? 1 : 0;
-	DEPTH = ((long) g_x_dots*(long) g_auto_stereo_depth) / 4000L;
-	DEPTH = labs(DEPTH) + 1;
+	s_ground = g_x_dots / 8;
+	s_reverse = (g_auto_stereo_depth < 0) ? 1 : 0;
+	s_depth = ((long) g_x_dots*(long) g_auto_stereo_depth) / 4000L;
+	s_depth = labs(s_depth) + 1;
 	if (get_min_max())
 	{
 		driver_buzzer(BUZZER_INTERRUPT);
 		ret = 1;
 		goto exit_stereo;
 	}
-	MAXCC = MAXC - MINC + 1;
-	AVG = AVGCT = 0L;
+	s_max_cc = s_max_c - s_min_c + 1;
+	s_average = s_average_count = 0L;
 	barwidth  = 1 + g_x_dots / 200;
-	BARHEIGHT = 1 + g_y_dots / 20;
-	XCEN = g_x_dots/2;
-	YCEN = (g_calibrate > 1) ? BARHEIGHT/2 : g_y_dots/2;
+	s_bar_height = 1 + g_y_dots / 20;
+	s_x_center = g_x_dots/2;
+	s_y_center = (g_calibrate > 1) ? s_bar_height/2 : g_y_dots/2;
 
 	/* box to average for calibration bars */
-	X1 = XCEN - g_x_dots/16;
-	X2 = XCEN + g_x_dots/16;
-	Y1 = YCEN - BARHEIGHT/2;
-	Y2 = YCEN + BARHEIGHT/2;
+	s_x1 = s_x_center - g_x_dots/16;
+	s_x2 = s_x_center + g_x_dots/16;
+	s_y1 = s_y_center - s_bar_height/2;
+	s_y2 = s_y_center + s_bar_height/2;
 
-	Y = 0;
+	s_y = 0;
 	if (g_image_map)
 	{
 		g_out_line = out_line_stereo;
-		while ((Y) < g_y_dots)
+		while ((s_y) < g_y_dots)
 		{
 			if (gifview())
 			{
@@ -304,7 +273,7 @@ int auto_stereo(void)
 	}
 	else
 	{
-		while (Y < g_y_dots)
+		while (s_y < g_y_dots)
 		{
 			if (driver_key_pressed())
 			{
@@ -320,15 +289,14 @@ int auto_stereo(void)
 	}
 
 	find_special_colors();
-	AVG /= AVGCT;
-	AVG /= 2;
+	s_average /= 2*s_average_count;
 	ct = 0;
-	for (i = XCEN; i < XCEN + barwidth; i++)
+	for (i = s_x_center; i < s_x_center + barwidth; i++)
 	{
-		for (j = YCEN; j < YCEN + BARHEIGHT; j++)
+		for (j = s_y_center; j < s_y_center + s_bar_height; j++)
 		{
-			colour[ct++] = getcolor(i + (int)(AVG), j);
-			colour[ct++] = getcolor(i - (int)(AVG), j);
+			colour[ct++] = getcolor(i + (int) s_average, j);
+			colour[ct++] = getcolor(i - (int) s_average, j);
 		}
 	}
 	bars = g_calibrate ? 1 : 0;
@@ -368,7 +336,7 @@ int auto_stereo(void)
 exit_stereo:
 	pop_help_mode();
 	driver_restore_graphics();
-	memcpy(g_dac_box, savedacbox, 256*3);
+	memcpy(g_dac_box, s_save_dac, 256*3);
 	spindac(0, 1);
 	return ret;
 }

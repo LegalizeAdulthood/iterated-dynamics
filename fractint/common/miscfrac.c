@@ -30,21 +30,27 @@ static U16 s_max_plasma;
 static int *s_verhulst_array;
 static unsigned long s_filter_cycles;
 static unsigned int s_half_time_check;
-static long   lPopulation, lRate;
-static double Population;
-static double Rate;
-static int    mono, outside_x;
-static long   LPI;
-static  long    lBif_closenuf, lBif_savedpop;   /* poss future use  */
-static  double   Bif_closenuf,  Bif_savedpop;
-static  int      Bif_savedinc;
-static  long     Bif_savedand;
-static long beta;
-static int lyaLength, lyaSeedOK;
-static int lyaRxy[34];
-static BYTE *cell_array[2];
-static S16 r, k_1, rule_digits;
-static int lstscreenflag;
+static long s_population_l;
+static long s_rate_l;
+static double s_population;
+static double s_rate;
+static int s_mono;
+static int s_outside_x;
+static long s_pi_l;
+static long s_bifurcation_close_enough_l;
+static long s_bifurcation_saved_population_l; /* poss future use */
+static double s_bifurcation_close_enough;
+static double s_bifurcation_saved_population;
+static int s_bifurcation_saved_increment;
+static long s_bifurcation_saved_mask;
+static long s_beta;
+static int s_lyapunov_length;
+static int s_lyapunov_r_xy[34];
+static BYTE *s_cell_array[2];
+static S16 s_r;
+static S16 s_k_1;
+static S16 s_rule_digits;
+static int s_last_screen_flag;
 
 /* routines local to this module */
 static void set_plasma_palette(void);
@@ -53,7 +59,7 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2);
 static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur);
 static void verhulst(void);
 static void bifurcation_period_init(void);
-static int  _fastcall bifurcation_periodic(long);
+static int _fastcall bifurcation_periodic(long);
 static void set_cellular_palette(void);
 static int lyapunov_cycles(long, double, double);
 
@@ -188,7 +194,7 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 	/* pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); */
 	pseudorandom = pseudorandom*s_recur1;
 	pseudorandom = pseudorandom >> s_shift_value;
-	pseudorandom = (((S32)s_get_pixels(xa, ya) + (S32)s_get_pixels(xb, yb) + 1) >> 1) + pseudorandom;
+	pseudorandom = (((S32) s_get_pixels(xa, ya) + (S32) s_get_pixels(xb, yb) + 1)/2) + pseudorandom;
 	if (s_max_plasma == 0)
 	{
 		if (pseudorandom >= s_plasma_colors)
@@ -226,21 +232,13 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 
 	static struct sub subx, suby;
 
-	/*
-	s_recur1 = 1;
-	for (i = 1; i <= recur; i++)
-	{
-		s_recur1 = s_recur1*2;
-	}
-	s_recur1 = 320/s_recur1;
-	*/
-	s_recur1 = (int)(320L >> recur);
+	s_recur1 = (int) (320L >> recur);
 	suby.t = 2;
 	ny   = suby.v[0] = y2;
 	ny1 = suby.v[2] = y1;
 	suby.r[0] = suby.r[2] = 0;
 	suby.r[1] = 1;
-	y = suby.v[1] = (ny1 + ny) >> 1;
+	y = suby.v[1] = (ny1 + ny)/2;
 
 	while (suby.t >= 1)
 	{
@@ -261,12 +259,11 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 			/*     4.  Set new mid point recursion level     */
 			/*     5.  New mid point value is average        */
 			/*            of largest and smallest            */
-
 			suby.t++;
 			ny1  = suby.v[suby.t] = suby.v[suby.t-1];
 			ny   = suby.v[suby.t-2];
 			suby.r[suby.t] = suby.r[suby.t-1];
-			y    = suby.v[suby.t-1]   = (ny1 + ny) >> 1;
+			y    = suby.v[suby.t-1]   = (ny1 + ny)/2;
 			suby.r[suby.t-1]   = (BYTE)(max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
 		}
 		subx.t = 2;
@@ -274,7 +271,7 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 		nx1 = subx.v[2] = x1;
 		subx.r[0] = subx.r[2] = 0;
 		subx.r[1] = 1;
-		x = subx.v[1] = (nx1 + nx) >> 1;
+		x = subx.v[1] = (nx1 + nx)/2;
 
 		while (subx.t >= 1)
 		{
@@ -284,7 +281,7 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 				nx1  = subx.v[subx.t] = subx.v[subx.t-1];
 				nx   = subx.v[subx.t-2];
 				subx.r[subx.t] = subx.r[subx.t-1];
-				x    = subx.v[subx.t-1]   = (nx1 + nx) >> 1;
+				x    = subx.v[subx.t-1]   = (nx1 + nx)/2;
 				subx.r[subx.t-1]   = (BYTE)(max(subx.r[subx.t],
 				subx.r[subx.t-2]) + 1);
 			}
@@ -315,7 +312,7 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 						i = adjust(nx1, ny1, nx1, y , nx1, ny);
 				}
 				v += i;
-				g_plot_color(x, y, (U16)((v + 2) >> 2));
+				g_plot_color(x, y, (U16)((v + 2)/4));
 			}
 
 			if (subx.r[subx.t-1] == (BYTE)recur)
@@ -351,8 +348,8 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 	s_recur_level++;
 	s_recur1 = (int)(320L >> s_recur_level);
 
-	x = (x1 + x2) >> 1;
-	y = (y1 + y2) >> 1;
+	x = (x1 + x2)/2;
+	y = (y1 + y2)/2;
 	v = s_get_pixels(x, y1);
 	if (v == 0)
 	{
@@ -380,7 +377,7 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 
 	if (s_get_pixels(x, y) == 0)
 	{
-		g_plot_color(x, y, (U16)((i + 2) >> 2));
+		g_plot_color(x, y, (U16)((i + 2)/4));
 	}
 
 	subdivide(x1, y1, x , y);
@@ -512,7 +509,7 @@ int plasma(void)
 		s_plasma_colors = min(g_colors, g_max_colors);
 		for (n = 0; n < 4; n++)
 		{
-			rnd[n] = (U16)(1 + (((rand15()/s_plasma_colors)*(s_plasma_colors-1)) >> (s_shift_value-11)));
+			rnd[n] = (U16) (1 + (((rand15()/s_plasma_colors)*(s_plasma_colors-1)) >> (s_shift_value-11)));
 		}
 	}
 	else
@@ -570,50 +567,31 @@ done:
 	return n;
 }
 
-#define dac ((Palettetype *) g_dac_box)
 static void set_plasma_palette()
 {
-	static Palettetype Red    = { COLOR_CHANNEL_MAX, 0, 0 };
-	static Palettetype Green  = { 0, COLOR_CHANNEL_MAX, 0 };
-	static Palettetype Blue   = { 0,  0, COLOR_CHANNEL_MAX };
-	int i;
-
-	if (g_map_dac_box || g_color_preloaded) /* map= specified  */
+	if (!g_map_dac_box && !g_color_preloaded) /* map= not specified  */
 	{
-		return;
+		BYTE red[3]		= { COLOR_CHANNEL_MAX, 0, 0 };
+		BYTE green[3]	= { 0, COLOR_CHANNEL_MAX, 0 };
+		BYTE blue[3]	= { 0,  0, COLOR_CHANNEL_MAX };
+		BYTE black[3]	= { 0, 0, 0 };
+		int i, j;
+
+		for (j = 0; j < 3; j++)
+		{
+			g_dac_box[0][j] = black[j];
+		}
+		for (i = 1; i <= 85; i++)
+		{
+			for (j = 0; j < 3; j++)
+			{
+				g_dac_box[i][j]			= (BYTE) ((i*green[j] + (86 - i)*blue[j])/85);
+				g_dac_box[i + 85][j]    = (BYTE) ((i*red[j]   + (86 - i)*green[j])/85);
+				g_dac_box[i + 170][j]	= (BYTE) ((i*blue[j]  + (86 - i)*red[j])/85);
+			}
+		}
+		spindac(0, 1);
 	}
-
-	dac[0].red  = 0 ;
-	dac[0].green = 0 ;
-	dac[0].blue = 0 ;
-	for (i = 1; i <= 85; i++)
-	{
-#ifdef __SVR4
-		dac[i].red       = (BYTE)((i*(int)Green.red   + (86-i)*(int)Blue.red)/85);
-		dac[i].green     = (BYTE)((i*(int)Green.green + (86-i)*(int)Blue.green)/85);
-		dac[i].blue      = (BYTE)((i*(int)Green.blue  + (86-i)*(int)Blue.blue)/85);
-
-		dac[i + 85].red    = (BYTE)((i*(int)Red.red   + (86-i)*(int)Green.red)/85);
-		dac[i + 85].green  = (BYTE)((i*(int)Red.green + (86-i)*(int)Green.green)/85);
-		dac[i + 85].blue   = (BYTE)((i*(int)Red.blue  + (86-i)*(int)Green.blue)/85);
-
-		dac[i + 170].red   = (BYTE)((i*(int)Blue.red   + (86-i)*(int)Red.red)/85);
-		dac[i + 170].green = (BYTE)((i*(int)Blue.green + (86-i)*(int)Red.green)/85);
-		dac[i + 170].blue  = (BYTE)((i*(int)Blue.blue  + (86-i)*(int)Red.blue)/85);
-#else
-		dac[i].red       = (BYTE)((i*Green.red   + (86-i)*Blue.red)/85);
-		dac[i].green     = (BYTE)((i*Green.green + (86-i)*Blue.green)/85);
-		dac[i].blue      = (BYTE)((i*Green.blue  + (86-i)*Blue.blue)/85);
-
-		dac[i + 85].red    = (BYTE)((i*Red.red   + (86-i)*Green.red)/85);
-		dac[i + 85].green  = (BYTE)((i*Red.green + (86-i)*Green.green)/85);
-		dac[i + 85].blue   = (BYTE)((i*Red.blue  + (86-i)*Green.blue)/85);
-		dac[i + 170].red   = (BYTE)((i*Blue.red   + (86-i)*Red.red)/85);
-		dac[i + 170].green = (BYTE)((i*Blue.green + (86-i)*Red.green)/85);
-		dac[i + 170].blue  = (BYTE)((i*Blue.blue  + (86-i)*Red.blue)/85);
-#endif
-	}
-	spindac(0, 1);
 }
 
 /***************** standalone engine for "diffusion" ********************/
@@ -753,8 +731,8 @@ int diffusion(void)
 			FPUsincos(&angle, &sine, &cosine);
 			x = (int)(cosine*(g_x_max-g_x_min) + g_x_dots);
 			y = (int)(sine  *(g_y_max-g_y_min) + g_y_dots);
-			x = x >> 1; /* divide by 2 */
-			y = y >> 1;
+			x /= 2;
+			y /= 2;
 			break;
 		case DIFFUSION_LINE: /* Release new point on the line g_y_min somewhere between g_x_min
 					and g_x_max */
@@ -767,8 +745,8 @@ int diffusion(void)
 			FPUsincos(&angle, &sine, &cosine);
 			x = (int)(cosine*radius + g_x_dots);
 			y = (int)(sine  *radius + g_y_dots);
-			x = x >> 1;
-			y = y >> 1;
+			x /= 2;
+			y /= 2;
 			break;
 		}
 
@@ -949,9 +927,9 @@ int diffusion(void)
 
 /* Bifurcation "orbitcalc" routines get called once per screen */
 /* pixel column.  They should calculate the next generation    */
-/* from the doubles Rate & Population (or the longs lRate &    */
-/* lPopulation if they use integer math), placing the result   */
-/* back in Population (or lPopulation).  They should return 0  */
+/* from the doubles s_rate & s_population (or the longs s_rate_l &    */
+/* s_population_l if they use integer math), placing the result   */
+/* back in s_population (or s_population_l).  They should return 0  */
 /* if all is ok, or any non-zero value if calculation bailout  */
 /* is desirable (eg in case of errors, or the series tending   */
 /* to infinity).                Have fun !                     */
@@ -982,28 +960,28 @@ int bifurcation(void)
 		return -1;
 	}
 
-	LPI = (long)(PI*g_fudge);
+	s_pi_l = (long)(PI*g_fudge);
 
 	for (row = 0; row <= g_y_stop; row++) /* should be g_y_stop */
 	{
 		s_verhulst_array[row] = 0;
 	}
 
-	mono = 0;
+	s_mono = 0;
 	if (g_colors == 2)
 	{
-		mono = 1;
+		s_mono = 1;
 	}
-	if (mono)
+	if (s_mono)
 	{
 		if (g_inside)
 		{
-			outside_x = 0;
+			s_outside_x = 0;
 			g_inside = 1;
 		}
 		else
 		{
-			outside_x = 1;
+			s_outside_x = 1;
 		}
 	}
 
@@ -1036,11 +1014,11 @@ int bifurcation(void)
 
 		if (g_integer_fractal)
 		{
-			lRate = g_x_min + column*g_delta_x;
+			s_rate_l = g_x_min + column*g_delta_x;
 		}
 		else
 		{
-			Rate = (double)(g_xx_min + column*g_delta_x_fp);
+			s_rate = (double)(g_xx_min + column*g_delta_x_fp);
 		}
 		verhulst();        /* calculate array once per column */
 
@@ -1048,13 +1026,13 @@ int bifurcation(void)
 		{
 			int color;
 			color = s_verhulst_array[row];
-			if (color && mono)
+			if (color && s_mono)
 			{
 				color = g_inside;
 			}
-			else if ((!color) && mono)
+			else if ((!color) && s_mono)
 			{
-				color = outside_x;
+				color = s_outside_x;
 			}
 			else if (color >= g_colors)
 			{
@@ -1076,11 +1054,11 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 	if (g_integer_fractal)
 	{
-		lPopulation = (g_parameter.y == 0) ? (long)(SEED*g_fudge) : (long)(g_parameter.y*g_fudge);
+		s_population_l = (g_parameter.y == 0) ? (long)(SEED*g_fudge) : (long)(g_parameter.y*g_fudge);
 	}
 	else
 	{
-		Population = (g_parameter.y == 0) ? SEED : g_parameter.y;
+		s_population = (g_parameter.y == 0) ? SEED : g_parameter.y;
 	}
 
 	errors = g_overflow = FALSE;
@@ -1135,8 +1113,8 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = g_integer_fractal
-			? (g_y_stop - (int)((lPopulation - g_initial_z_l.y) / g_delta_y))
-			: (g_y_stop - (int)((Population - g_initial_z.y) / g_delta_y_fp));
+			? (g_y_stop - (int)((s_population_l - g_initial_z_l.y) / g_delta_y))
+			: (g_y_stop - (int)((s_population - g_initial_z.y) / g_delta_y_fp));
 
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)g_y_stop) /* JCO 6/6/92 */
@@ -1154,51 +1132,51 @@ static void verhulst(void)          /* P. F. Verhulst (1845) */
 
 static void bifurcation_period_init()
 {
-	Bif_savedinc = 1;
-	Bif_savedand = 1;
+	s_bifurcation_saved_increment = 1;
+	s_bifurcation_saved_mask = 1;
 	if (g_integer_fractal)
 	{
-		lBif_savedpop = -1;
-		lBif_closenuf = g_delta_y / 8;
+		s_bifurcation_saved_population_l = -1;
+		s_bifurcation_close_enough_l = g_delta_y / 8;
 	}
 	else
 	{
-		Bif_savedpop = -1.0;
-		Bif_closenuf = (double) g_delta_y_fp / 8.0;
+		s_bifurcation_saved_population = -1.0;
+		s_bifurcation_close_enough = (double) g_delta_y_fp / 8.0;
 	}
 }
 
-static int _fastcall bifurcation_periodic(long time)  /* Bifurcation Population Periodicity Check */
+static int _fastcall bifurcation_periodic(long time)  /* Bifurcation s_population Periodicity Check */
 /* Returns : 1 if periodicity found, else 0 */
 {
-	if ((time & Bif_savedand) == 0)      /* time to save a new value */
+	if ((time & s_bifurcation_saved_mask) == 0)      /* time to save a new value */
 	{
 		if (g_integer_fractal)
 		{
-			lBif_savedpop = lPopulation;
+			s_bifurcation_saved_population_l = s_population_l;
 		}
 		else                   
 		{
-			Bif_savedpop =  Population;
+			s_bifurcation_saved_population =  s_population;
 		}
-		if (--Bif_savedinc == 0)
+		if (--s_bifurcation_saved_increment == 0)
 		{
-			Bif_savedand = (Bif_savedand << 1) + 1;
-			Bif_savedinc = 4;
+			s_bifurcation_saved_mask = (s_bifurcation_saved_mask << 1) + 1;
+			s_bifurcation_saved_increment = 4;
 		}
 	}
 	else                         /* check against an old save */
 	{
 		if (g_integer_fractal)
 		{
-			if (labs(lBif_savedpop-lPopulation) <= lBif_closenuf)
+			if (labs(s_bifurcation_saved_population_l-s_population_l) <= s_bifurcation_close_enough_l)
 			{
 				return 1;
 			}
 		}
 		else
 		{
-			if (fabs(Bif_savedpop-Population) <= Bif_closenuf)
+			if (fabs(s_bifurcation_saved_population-s_population) <= s_bifurcation_close_enough)
 			{
 				return 1;
 			}
@@ -1214,115 +1192,115 @@ static int _fastcall bifurcation_periodic(long time)  /* Bifurcation Population 
 /**********************************************************************/
 int bifurcation_lambda() /* Used by lyanupov */
 {
-	Population = Rate*Population*(1 - Population);
-	return fabs(Population) > BIG;
+	s_population = s_rate*s_population*(1 - s_population);
+	return fabs(s_population) > BIG;
 }
 
 /* Modified formulas below to generalize bifurcations. JCO 7/3/92 */
 
 int bifurcation_verhulst_trig_fp()
 {
-/*  Population = Pop + Rate*fn(Pop)*(1 - fn(Pop)) */
-	g_temp_z.x = Population;
+/*  s_population = Pop + s_rate*fn(Pop)*(1 - fn(Pop)) */
+	g_temp_z.x = s_population;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
-	Population += Rate*g_temp_z.x*(1 - g_temp_z.x);
-	return fabs(Population) > BIG;
+	s_population += s_rate*g_temp_z.x*(1 - g_temp_z.x);
+	return fabs(s_population) > BIG;
 }
 
 int bifurcation_verhulst_trig()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = lPopulation;
+	g_tmp_z_l.x = s_population_l;
 	g_tmp_z_l.y = 0;
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
 	g_tmp_z_l.y = g_tmp_z_l.x - multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
-	lPopulation += multiply(lRate, g_tmp_z_l.y, g_bit_shift);
+	s_population_l += multiply(s_rate_l, g_tmp_z_l.y, g_bit_shift);
 #endif
 	return g_overflow;
 }
 
 int bifurcation_stewart_trig_fp()
 {
-/*  Population = (Rate*fn(Population)*fn(Population)) - 1.0 */
-	g_temp_z.x = Population;
+/*  s_population = (s_rate*fn(s_population)*fn(s_population)) - 1.0 */
+	g_temp_z.x = s_population;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
-	Population = (Rate*g_temp_z.x*g_temp_z.x) - 1.0;
-	return fabs(Population) > BIG;
+	s_population = (s_rate*g_temp_z.x*g_temp_z.x) - 1.0;
+	return fabs(s_population) > BIG;
 }
 
 int bifurcation_stewart_trig()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = lPopulation;
+	g_tmp_z_l.x = s_population_l;
 	g_tmp_z_l.y = 0;
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
-	lPopulation = multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
-	lPopulation = multiply(lPopulation, lRate,      g_bit_shift);
-	lPopulation -= g_fudge;
+	s_population_l = multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
+	s_population_l = multiply(s_population_l, s_rate_l,      g_bit_shift);
+	s_population_l -= g_fudge;
 #endif
 	return g_overflow;
 }
 
 int bifurcation_set_trig_pi_fp()
 {
-	g_temp_z.x = Population*PI;
+	g_temp_z.x = s_population*PI;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
-	Population = Rate*g_temp_z.x;
-	return fabs(Population) > BIG;
+	s_population = s_rate*g_temp_z.x;
+	return fabs(s_population) > BIG;
 }
 
 int bifurcation_set_trig_pi()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = multiply(lPopulation, LPI, g_bit_shift);
+	g_tmp_z_l.x = multiply(s_population_l, s_pi_l, g_bit_shift);
 	g_tmp_z_l.y = 0;
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
-	lPopulation = multiply(lRate, g_tmp_z_l.x, g_bit_shift);
+	s_population_l = multiply(s_rate_l, g_tmp_z_l.x, g_bit_shift);
 #endif
 	return g_overflow;
 }
 
 int bifurcation_add_trig_pi_fp()
 {
-	g_temp_z.x = Population*PI;
+	g_temp_z.x = s_population*PI;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
-	Population += Rate*g_temp_z.x;
-	return fabs(Population) > BIG;
+	s_population += s_rate*g_temp_z.x;
+	return fabs(s_population) > BIG;
 }
 
 int bifurcation_add_trig_pi()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = multiply(lPopulation, LPI, g_bit_shift);
+	g_tmp_z_l.x = multiply(s_population_l, s_pi_l, g_bit_shift);
 	g_tmp_z_l.y = 0;
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
-	lPopulation += multiply(lRate, g_tmp_z_l.x, g_bit_shift);
+	s_population_l += multiply(s_rate_l, g_tmp_z_l.x, g_bit_shift);
 #endif
 	return g_overflow;
 }
 
 int bifurcation_lambda_trig_fp()
 {
-	/* Population = Rate*fn(Population)*(1 - fn(Population)) */
-	g_temp_z.x = Population;
+	/* s_population = s_rate*fn(s_population)*(1 - fn(s_population)) */
+	g_temp_z.x = s_population;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
-	Population = Rate*g_temp_z.x*(1 - g_temp_z.x);
-	return fabs(Population) > BIG;
+	s_population = s_rate*g_temp_z.x*(1 - g_temp_z.x);
+	return fabs(s_population) > BIG;
 }
 
 int bifurcation_lambda_trig()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = lPopulation;
+	g_tmp_z_l.x = s_population_l;
 	g_tmp_z_l.y = 0;
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
 	g_tmp_z_l.y = g_tmp_z_l.x - multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
-	lPopulation = multiply(lRate, g_tmp_z_l.y, g_bit_shift);
+	s_population_l = multiply(s_rate_l, g_tmp_z_l.y, g_bit_shift);
 #endif
 	return g_overflow;
 }
@@ -1330,23 +1308,23 @@ int bifurcation_lambda_trig()
 
 int bifurcation_may_fp()
 {
-	/* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
+	/* X = (lambda * X) / (1 + X)^s_beta, from R.May as described in Pickover,
 				Computers, Pattern, Chaos, and Beauty, page 153 */
-	g_temp_z.x = 1.0 + Population;
-	g_temp_z.x = pow(g_temp_z.x, -beta); /* pow in math.h included with mpmath.h */
-	Population = (Rate*Population)*g_temp_z.x;
-	return fabs(Population) > BIG;
+	g_temp_z.x = 1.0 + s_population;
+	g_temp_z.x = pow(g_temp_z.x, -s_beta); /* pow in math.h included with mpmath.h */
+	s_population = (s_rate*s_population)*g_temp_z.x;
+	return fabs(s_population) > BIG;
 }
 
 int bifurcation_may()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = lPopulation + g_fudge;
+	g_tmp_z_l.x = s_population_l + g_fudge;
 	g_tmp_z_l.y = 0;
-	g_parameter2_l.x = beta*g_fudge;
+	g_parameter2_l.x = s_beta*g_fudge;
 	LCMPLXpwr(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);
-	lPopulation = multiply(lRate, lPopulation, g_bit_shift);
-	lPopulation = divide(lPopulation, g_tmp_z_l.x, g_bit_shift);
+	s_population_l = multiply(s_rate_l, s_population_l, g_bit_shift);
+	s_population_l = divide(s_population_l, g_tmp_z_l.x, g_bit_shift);
 #endif
 	return g_overflow;
 }
@@ -1354,12 +1332,12 @@ int bifurcation_may()
 int bifurcation_may_setup()
 {
 
-	beta = (long)g_parameters[2];
-	if (beta < 2)
+	s_beta = (long)g_parameters[2];
+	if (s_beta < 2)
 	{
-		beta = 2;
+		s_beta = 2;
 	}
-	g_parameters[2] = (double)beta;
+	g_parameters[2] = (double)s_beta;
 
 	timer(TIMER_ENGINE, g_current_fractal_specific->calculate_type);
 	return 0;
@@ -1428,18 +1406,18 @@ int lyapunov(void)
 	g_overflow = FALSE;
 	if (g_parameters[1] == 1)
 	{
-		Population = (1.0 + rand())/(2.0 + RAND_MAX);
+		s_population = (1.0 + rand())/(2.0 + RAND_MAX);
 	}
 	else if (g_parameters[1] == 0)
 	{
-		if (fabs(Population) > BIG || Population == 0 || Population == 1)
+		if (fabs(s_population) > BIG || s_population == 0 || s_population == 1)
 		{
-			Population = (1.0 + rand())/(2.0 + RAND_MAX);
+			s_population = (1.0 + rand())/(2.0 + RAND_MAX);
 		}
 	}
 	else
 	{
-		Population = g_parameters[1];
+		s_population = g_parameters[1];
 	}
 	(*g_plot_color)(g_col, g_row, 1);
 	if (g_invert)
@@ -1469,9 +1447,9 @@ int lyapunov(void)
 
 int lyapunov_setup(void)
 {
-	/* This routine sets up the sequence for forcing the Rate parameter
-		to vary between the two values.  It fills the array lyaRxy[] and
-		sets lyaLength to the length of the sequence.
+	/* This routine sets up the sequence for forcing the s_rate parameter
+		to vary between the two values.  It fills the array s_lyapunov_r_xy[] and
+		sets s_lyapunov_length to the length of the sequence.
 
 		The sequence is coded in the bit pattern in an integer.
 		Briefly, the sequence starts with an A the leading zero bits
@@ -1505,8 +1483,7 @@ int lyapunov_setup(void)
 	{
 		s_filter_cycles = g_max_iteration/2;
 	}
-	lyaSeedOK = (g_parameters[1] > 0) && (g_parameters[1] <= 1) && (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL);
-	lyaLength = 1;
+	s_lyapunov_length = 1;
 
 	i = (long)g_parameters[0];
 #if !defined(XFRACT)
@@ -1515,7 +1492,7 @@ int lyapunov_setup(void)
 		i &= 0x0FFFFL;
 	}
 #endif
-	lyaRxy[0] = 1;
+	s_lyapunov_r_xy[0] = 1;
 	for (t = 31; t >= 0; t--)
 	{
 		if (i & (1 << t))
@@ -1525,14 +1502,14 @@ int lyapunov_setup(void)
 	}
 	for (; t >= 0; t--)
 	{
-		lyaRxy[lyaLength++] = (i & (1 << t)) != 0;
+		s_lyapunov_r_xy[s_lyapunov_length++] = (i & (1 << t)) != 0;
 	}
-	lyaRxy[lyaLength++] = 0;
+	s_lyapunov_r_xy[s_lyapunov_length++] = 0;
 	if (g_save_release < 1732)              /* swap axes prior to 1732 */
 	{
-		for (t = lyaLength; t >= 0; t--)
+		for (t = s_lyapunov_length; t >= 0; t--)
 		{
-				lyaRxy[t] = !lyaRxy[t];
+				s_lyapunov_r_xy[t] = !s_lyapunov_r_xy[t];
 		}
 	}
 	if (g_save_release < 1731)  /* ignore inside=, g_standard_calculation_mode */
@@ -1567,9 +1544,9 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 	lnadjust = 0;
 	for (i = 0; i < filter_cycles; i++)
 	{
-		for (count = 0; count < lyaLength; count++)
+		for (count = 0; count < s_lyapunov_length; count++)
 		{
-			Rate = lyaRxy[count] ? a : b;
+			s_rate = s_lyapunov_r_xy[count] ? a : b;
 			if (g_current_fractal_specific->orbitcalc())
 			{
 				g_overflow = TRUE;
@@ -1579,15 +1556,15 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 	}
 	for (i = 0; i < g_max_iteration/2; i++)
 	{
-		for (count = 0; count < lyaLength; count++)
+		for (count = 0; count < s_lyapunov_length; count++)
 		{
-			Rate = lyaRxy[count] ? a : b;
+			s_rate = s_lyapunov_r_xy[count] ? a : b;
 			if (g_current_fractal_specific->orbitcalc())
 			{
 				g_overflow = TRUE;
 				goto jumpout;
 			}
-			temp = fabs(Rate-2.0*Rate*Population);
+			temp = fabs(s_rate-2.0*s_rate*s_population);
 			total *= temp;
 			if (total == 0)
 			{
@@ -1616,8 +1593,8 @@ jumpout:
 	else
 	{
 		lyap = g_log_palette_flag
-			? -temp/((double) lyaLength*i)
-			: 1 - exp(temp/((double) lyaLength*i));
+			? -temp/((double) s_lyapunov_length*i)
+			: 1 - exp(temp/((double) s_lyapunov_length*i));
 		color = 1 + (int)(lyap*(g_colors-1));
 	}
 	return color;
@@ -1631,7 +1608,7 @@ jumpout:
 	Changed prompts and error messages
 	Added CA types
 	Set the palette to some standard? CA g_colors
-	Changed *cell_array to near and used dstack so put_line and get_line
+	Changed *s_cell_array to near and used dstack so put_line and get_line
 		could be used all the time
 	Made space bar generate next screen
 	Increased string/rule size to 16 digits and added CA types 9/20/92
@@ -1669,14 +1646,14 @@ static void abort_cellular(int err, int t)
 	case STRING2:
 		{
 			static char msg[] = {"Make string of 0's through  's" };
-			msg[27] = (char)(k_1 + 48); /* turn into a character value */
+			msg[27] = (char)(s_k_1 + 48); /* turn into a character value */
 			stop_message(0, msg);
 		}
 		break;
 	case TABLEK:
 		{
 			static char msg[] = {"Make Rule with 0's through  's" };
-			msg[27] = (char)(k_1 + 48); /* turn into a character value */
+			msg[27] = (char)(s_k_1 + 48); /* turn into a character value */
 			stop_message(0, msg);
 		}
 		break;
@@ -1686,15 +1663,15 @@ static void abort_cellular(int err, int t)
 	case RULELENGTH:
 		{
 			static char msg[] = {"Rule must be    digits long" };
-			i = rule_digits / 10;
+			i = s_rule_digits / 10;
 			if (i == 0)
 			{
-				msg[14] = (char)(rule_digits + 48);
+				msg[14] = (char)(s_rule_digits + 48);
 			}
 			else
 			{
 				msg[13] = (char)(i + 48);
-				msg[14] = (char)((rule_digits % 10) + 48);
+				msg[14] = (char)((s_rule_digits % 10) + 48);
 			}
 			stop_message(0, msg);
 		}
@@ -1705,13 +1682,13 @@ static void abort_cellular(int err, int t)
 	case CELLULAR_DONE:
 		break;
 	}
-	if (cell_array[0] != NULL)
+	if (s_cell_array[0] != NULL)
 	{
-		free((char *)cell_array[0]);
+		free((char *)s_cell_array[0]);
 	}
-	if (cell_array[1] != NULL)
+	if (s_cell_array[1] != NULL)
 	{
-		free((char *)cell_array[1]);
+		free((char *)s_cell_array[1]);
 	}
 }
 
@@ -1757,10 +1734,10 @@ int cellular()
 		/* break; */
 	}
 
-	r = (S16)(kr % 10); /* Number of nearest neighbors to sum */
+	s_r = (S16)(kr % 10); /* Number of nearest neighbors to sum */
 	k = (U16)(kr / 10); /* Number of different states, k = 3 has states 0, 1, 2 */
-	k_1 = (S16)(k - 1); /* Highest state value, k = 3 has highest state value of 2 */
-	rule_digits = (S16)((r*2 + 1)*k_1 + 1); /* Number of digits in the rule */
+	s_k_1 = (S16)(k - 1); /* Highest state value, k = 3 has highest state value of 2 */
+	s_rule_digits = (S16)((s_r*2 + 1)*s_k_1 + 1); /* Number of digits in the rule */
 
 	if ((!g_random_flag) && randparam == -1)
 	{
@@ -1784,7 +1761,7 @@ int cellular()
 		for (i = 0; i < (U16)t; i++)  /* center initial string in array */
 		{
 			init_string[i + t2] = (U16)(buf[i] - 48); /* change character to number */
-			if (init_string[i + t2] > (U16)k_1)
+			if (init_string[i + t2] > (U16)s_k_1)
 			{
 				abort_cellular(STRING2, 0);
 				return -1;
@@ -1816,28 +1793,28 @@ int cellular()
 	if (n == 0)  /* calculate a random rule */
 	{
 		n = rand() % (int)k;
-		for (i = 1; i < (U16)rule_digits; i++)
+		for (i = 1; i < (U16)s_rule_digits; i++)
 		{
 			n *= 10;
 			n += rand() % (int)k;
 		}
 		g_parameters[1] = n;
 	}
-	sprintf(buf, "%.*g", rule_digits , n);
+	sprintf(buf, "%.*g", s_rule_digits , n);
 	t = (S16)strlen(buf);
-	if (rule_digits < t || t < 0)  /* leading 0s could make t smaller */
+	if (s_rule_digits < t || t < 0)  /* leading 0s could make t smaller */
 	{
 		abort_cellular(RULELENGTH, 0);
 		return -1;
 	}
-	for (i = 0; i < (U16)rule_digits; i++) /* zero the table */
+	for (i = 0; i < (U16)s_rule_digits; i++) /* zero the table */
 	{
 		cell_table[i] = 0;
 	}
 	for (i = 0; i < (U16)t; i++)  /* reverse order */
 	{
 		cell_table[i] = (U16)(buf[t-i-1] - 48); /* change character to number */
-		if (cell_table[i] > (U16)k_1)
+		if (cell_table[i] > (U16)s_k_1)
 		{
 			abort_cellular(TABLEK, 0);
 			return -1;
@@ -1846,9 +1823,9 @@ int cellular()
 
 
 	start_row = 0;
-	cell_array[0] = (BYTE *)malloc(g_x_stop + 1);
-	cell_array[1] = (BYTE *)malloc(g_x_stop + 1);
-	if (cell_array[0] == NULL || cell_array[1] == NULL)
+	s_cell_array[0] = (BYTE *)malloc(g_x_stop + 1);
+	s_cell_array[1] = (BYTE *)malloc(g_x_stop + 1);
+	if (s_cell_array[0] == NULL || s_cell_array[1] == NULL)
 	{
 		abort_cellular(BAD_MEM, 0);
 		return -1;
@@ -1858,18 +1835,18 @@ int cellular()
 	/* 0 to stop on next screen */
 	filled = 0;
 	notfilled = (S16)(1-filled);
-	if (g_resuming && !g_next_screen_flag && !lstscreenflag)
+	if (g_resuming && !g_next_screen_flag && !s_last_screen_flag)
 	{
 		start_resume();
 		get_resume(sizeof(start_row), &start_row, 0);
 		end_resume();
-		get_line(start_row, 0, g_x_stop, cell_array[filled]);
+		get_line(start_row, 0, g_x_stop, s_cell_array[filled]);
 	}
-	else if (g_next_screen_flag && !lstscreenflag)
+	else if (g_next_screen_flag && !s_last_screen_flag)
 	{
 		start_resume();
 		end_resume();
-		get_line(g_y_stop, 0, g_x_stop, cell_array[filled]);
+		get_line(g_y_stop, 0, g_x_stop, s_cell_array[filled]);
 		g_parameters[3] += g_y_stop + 1;
 		start_row = -1; /* after 1st iteration its = 0 */
 	}
@@ -1879,30 +1856,30 @@ int cellular()
 		{
 			for (g_col = 0; g_col <= g_x_stop; g_col++)
 			{
-				cell_array[filled][g_col] = (BYTE)(rand() % (int)k);
+				s_cell_array[filled][g_col] = (BYTE)(rand() % (int)k);
 			}
 		} /* end of if random */
 		else
 		{
 			for (g_col = 0; g_col <= g_x_stop; g_col++)  /* Clear from end to end */
 			{
-				cell_array[filled][g_col] = 0;
+				s_cell_array[filled][g_col] = 0;
 			}
 			i = 0;
 			for (g_col = (g_x_stop-16)/2; g_col < (g_x_stop + 16)/2; g_col++)  /* insert initial */
 			{
-				cell_array[filled][g_col] = (BYTE)init_string[i++];    /* string */
+				s_cell_array[filled][g_col] = (BYTE)init_string[i++];    /* string */
 			}
 		} /* end of if not random */
-		lstscreenflag = (lnnmbr != 0) ? 1 : 0;
-		put_line(start_row, 0, g_x_stop, cell_array[filled]);
+		s_last_screen_flag = (lnnmbr != 0) ? 1 : 0;
+		put_line(start_row, 0, g_x_stop, s_cell_array[filled]);
 	}
 	start_row++;
 
 	/* This section calculates the starting line when it is not zero */
 	/* This section can't be resumed since no screen output is generated */
 	/* calculates the (lnnmbr - 1) generation */
-	if (lstscreenflag)  /* line number != 0 & not resuming & not continuing */
+	if (s_last_screen_flag)  /* line number != 0 & not resuming & not continuing */
 	{
 		U32 big_row;
 		for (big_row = (U32)start_row; big_row < lnnmbr; big_row++)
@@ -1911,50 +1888,50 @@ int cellular()
 			if (g_random_flag || randparam == 0 || randparam == -1)
 			{
 				/* Use a random border */
-				for (i = 0; i <= (U16)r; i++)
+				for (i = 0; i <= (U16) s_r; i++)
 				{
-						cell_array[notfilled][i] = (BYTE)(rand() % (int)k);
-						cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % (int)k);
+						s_cell_array[notfilled][i] = (BYTE)(rand() % (int)k);
+						s_cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % (int)k);
 				}
 			}
 			else
 			{
 				/* Use a zero border */
-				for (i = 0; i <= (U16)r; i++)
+				for (i = 0; i <= (U16) s_r; i++)
 				{
-					cell_array[notfilled][i] = 0;
-					cell_array[notfilled][g_x_stop-i] = 0;
+					s_cell_array[notfilled][i] = 0;
+					s_cell_array[notfilled][g_x_stop-i] = 0;
 				}
 			}
 
 			t = 0; /* do first cell */
-			for (twor = (U16)(r + r), i = 0; i <= twor; i++)
+			for (twor = (U16) (s_r + s_r), i = 0; i <= twor; i++)
 			{
-				t = (S16)(t + (S16)cell_array[filled][i]);
+				t = (S16)(t + (S16)s_cell_array[filled][i]);
 			}
-			if (t > rule_digits || t < 0)
+			if (t > s_rule_digits || t < 0)
 			{
 				thinking(0, NULL);
 				abort_cellular(BAD_T, t);
 				return -1;
 			}
-			cell_array[notfilled][r] = (BYTE)cell_table[t];
+			s_cell_array[notfilled][s_r] = (BYTE)cell_table[t];
 
 			/* use a rolling sum in t */
-			for (g_col = r + 1; g_col < g_x_stop-r; g_col++)  /* now do the rest */
+			for (g_col = s_r + 1; g_col < g_x_stop - s_r; g_col++)  /* now do the rest */
 			{
-				t = (S16)(t + cell_array[filled][g_col + r] - cell_array[filled][g_col-r-1]);
-				if (t > rule_digits || t < 0)
+				t = (S16)(t + s_cell_array[filled][g_col + s_r] - s_cell_array[filled][g_col - s_r - 1]);
+				if (t > s_rule_digits || t < 0)
 				{
 					thinking(0, NULL);
 					abort_cellular(BAD_T, t);
 					return -1;
 				}
-				cell_array[notfilled][g_col] = (BYTE)cell_table[t];
+				s_cell_array[notfilled][g_col] = (BYTE) cell_table[t];
 			}
 
 			filled = notfilled;
-			notfilled = (S16)(1-filled);
+			notfilled = (S16)(1 - filled);
 			if (driver_key_pressed())
 			{
 				thinking(0, NULL);
@@ -1964,7 +1941,7 @@ int cellular()
 		}
 		start_row = 0;
 		thinking(0, NULL);
-		lstscreenflag = 0;
+		s_last_screen_flag = 0;
 	}
 
 /* This section does all the work */
@@ -1974,51 +1951,51 @@ contloop:
 		if (g_random_flag || randparam == 0 || randparam == -1)
 		{
 			/* Use a random border */
-			for (i = 0; i <= (U16)r; i++)
+			for (i = 0; i <= (U16) s_r; i++)
 			{
-				cell_array[notfilled][i] = (BYTE)(rand() % (int)k);
-				cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % (int)k);
+				s_cell_array[notfilled][i] = (BYTE)(rand() % (int)k);
+				s_cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % (int)k);
 			}
 		}
 		else
 		{
 			/* Use a zero border */
-			for (i = 0; i <= (U16)r; i++)
+			for (i = 0; i <= (U16) s_r; i++)
 			{
-				cell_array[notfilled][i] = 0;
-				cell_array[notfilled][g_x_stop-i] = 0;
+				s_cell_array[notfilled][i] = 0;
+				s_cell_array[notfilled][g_x_stop-i] = 0;
 			}
 		}
 
 		t = 0; /* do first cell */
-		for (twor = (U16)(r + r), i = 0; i <= twor; i++)
+		for (twor = (U16) (s_r + s_r), i = 0; i <= twor; i++)
 		{
-			t = (S16)(t + (S16)cell_array[filled][i]);
+			t = (S16)(t + (S16)s_cell_array[filled][i]);
 		}
-		if (t > rule_digits || t < 0)
+		if (t > s_rule_digits || t < 0)
 		{
 			thinking(0, NULL);
 			abort_cellular(BAD_T, t);
 			return -1;
 		}
-		cell_array[notfilled][r] = (BYTE)cell_table[t];
+		s_cell_array[notfilled][s_r] = (BYTE)cell_table[t];
 
 		/* use a rolling sum in t */
-		for (g_col = r + 1; g_col < g_x_stop-r; g_col++)  /* now do the rest */
+		for (g_col = s_r + 1; g_col < g_x_stop - s_r; g_col++)  /* now do the rest */
 		{
-			t = (S16)(t + cell_array[filled][g_col + r] - cell_array[filled][g_col-r-1]);
-			if (t > rule_digits || t < 0)
+			t = (S16)(t + s_cell_array[filled][g_col + s_r] - s_cell_array[filled][g_col - s_r - 1]);
+			if (t > s_rule_digits || t < 0)
 			{
 				thinking(0, NULL);
 				abort_cellular(BAD_T, t);
 				return -1;
 			}
-			cell_array[notfilled][g_col] = (BYTE)cell_table[t];
+			s_cell_array[notfilled][g_col] = (BYTE)cell_table[t];
 		}
 
 		filled = notfilled;
 		notfilled = (S16)(1-filled);
-		put_line(g_row, 0, g_x_stop, cell_array[filled]);
+		put_line(g_row, 0, g_x_stop, s_cell_array[filled]);
 		if (driver_key_pressed())
 		{
 			abort_cellular(CELLULAR_DONE, 0);
@@ -2049,42 +2026,29 @@ int cellular_setup(void)
 
 static void set_cellular_palette()
 {
-	static Palettetype Red    = { 42, 0, 0 };
-	static Palettetype Green  = { 10, 35, 10 };
-	static Palettetype Blue   = { 13, 12, 29 };
-	static Palettetype Yellow = { 60, 58, 18 };
-	static Palettetype Brown  = { 42, 21, 0 };
-
-	if (g_map_dac_box && g_color_state != COLORSTATE_DEFAULT) /* map= specified  */
+	/* map= not specified  */
+	if (!g_map_dac_box || g_color_state == COLORSTATE_DEFAULT)
 	{
-		return;
+		BYTE red[3]		= { 42, 0, 0 };
+		BYTE green[3]	= { 10, 35, 10 };
+		BYTE blue[3]	= { 13, 12, 29 };
+		BYTE yellow[3]	= { 60, 58, 18 };
+		BYTE brown[3]	= { 42, 21, 0 };
+		BYTE black[3]	= { 0, 0, 0 };
+		int j;
+
+		for (j = 0; j < 3; j++)
+		{
+			g_dac_box[0][j] = black[j];
+			g_dac_box[1][j] = red[j];
+			g_dac_box[2][j] = green[j];
+			g_dac_box[3][j] = blue[j];
+			g_dac_box[4][j] = yellow[j];
+			g_dac_box[5][j] = brown[j];
+		}
+
+		spindac(0, 1);
 	}
-
-	dac[0].red  = 0 ;
-	dac[0].green = 0 ;
-	dac[0].blue = 0 ;
-
-	dac[1].red    = Red.red;
-	dac[1].green = Red.green;
-	dac[1].blue  = Red.blue;
-
-	dac[2].red   = Green.red;
-	dac[2].green = Green.green;
-	dac[2].blue  = Green.blue;
-
-	dac[3].red   = Blue.red;
-	dac[3].green = Blue.green;
-	dac[3].blue  = Blue.blue;
-
-	dac[4].red   = Yellow.red;
-	dac[4].green = Yellow.green;
-	dac[4].blue  = Yellow.blue;
-
-	dac[5].red   = Brown.red;
-	dac[5].green = Brown.green;
-	dac[5].blue  = Brown.blue;
-
-	spindac(0, 1);
 }
 
 /* frothy basin routines */
@@ -2154,14 +2118,10 @@ struct froth_struct *fsp = NULL; /* froth_struct pointer */
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_froth_palette(void)
 {
-	char *mapname;
+	if ((g_color_state == COLORSTATE_DEFAULT) && (g_colors >= 16))
+	{
+		char *mapname;
 
-	if (g_color_state != COLORSTATE_DEFAULT) /* 0 means g_dac_box matches default */
-	{
-		return;
-	}
-	if (g_colors >= 16)
-	{
 		if (g_colors >= 256)
 		{
 			mapname = (fsp->attractors == 6) ? "froth6.map" : "froth3.map";
