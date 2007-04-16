@@ -14,6 +14,88 @@
 #include "targa_lc.h"
 #include "drivers.h"
 
+#define RANDOM(x)  (rand() % (x))
+
+/* for diffusion type */
+#define DIFFUSION_CENTRAL	0
+#define DIFFUSION_LINE		1
+#define DIFFUSION_SQUARE	2
+
+/* for bifurcation type: */
+#define DEFAULT_FILTER 1000     /* "Beauty of Fractals" recommends using 5000
+								(p.25), but that seems unnecessary. Can
+								override this value with a nonzero param1 */
+#define SEED 0.66               /* starting value for population */
+
+/* cellular type */
+#define BAD_T         1
+#define BAD_MEM       2
+#define STRING1       3
+#define STRING2       4
+#define TABLEK        5
+#define TYPEKR        6
+#define RULELENGTH    7
+#define INTERUPT      8
+#define CELLULAR_DONE 10
+
+/* frothy basin type */
+#define FROTH_BITSHIFT      28
+#define FROTH_D_TO_L(x)     ((long)((x)*(1L << FROTH_BITSHIFT)))
+#define FROTH_CLOSE         1e-6      /* seems like a good value */
+#define FROTH_LCLOSE        FROTH_D_TO_L(FROTH_CLOSE)
+#define SQRT3               1.732050807568877193
+#define FROTH_SLOPE         SQRT3
+#define FROTH_LSLOPE        FROTH_D_TO_L(FROTH_SLOPE)
+#define FROTH_CRITICAL_A    1.028713768218725  /* 1.0287137682187249127 */
+#define froth_top_x_mapping(x)  ((x)*(x)-(x)-3*s_frothy_data.f.a*s_frothy_data.f.a/4)
+
+
+struct froth_double_struct
+{
+	double a;
+	double halfa;
+	double top_x1;
+	double top_x2;
+	double top_x3;
+	double top_x4;
+	double left_x1;
+	double left_x2;
+	double left_x3;
+	double left_x4;
+	double right_x1;
+	double right_x2;
+	double right_x3;
+	double right_x4;
+	};
+
+struct froth_long_struct
+{
+	long a;
+	long halfa;
+	long top_x1;
+	long top_x2;
+	long top_x3;
+	long top_x4;
+	long left_x1;
+	long left_x2;
+	long left_x3;
+	long left_x4;
+	long right_x1;
+	long right_x2;
+	long right_x3;
+	long right_x4;
+	};
+
+struct froth_struct
+{
+	int repeat_mapping;
+	int altcolor;
+	int attractors;
+	int shades;
+	struct froth_double_struct f;
+	struct froth_long_struct l;
+};
+
 typedef void (_fastcall *PLOT)(int, int, int);
 
 /* global data */
@@ -51,6 +133,7 @@ static S16 s_r;
 static S16 s_k_1;
 static S16 s_rule_digits;
 static int s_last_screen_flag;
+static struct froth_struct s_frothy_data = { 0 };
 
 /* routines local to this module */
 static void set_plasma_palette(void);
@@ -596,12 +679,6 @@ static void set_plasma_palette()
 
 /***************** standalone engine for "diffusion" ********************/
 
-#define RANDOM(x)  (rand() % (x))
-
-#define DIFFUSION_CENTRAL	0
-#define DIFFUSION_LINE	1
-#define DIFFUSION_SQUARE	2
-
 int diffusion(void)
 {
 	int g_x_max, g_y_max, g_x_min, g_y_min;     /* Current maximum coordinates */
@@ -611,9 +688,7 @@ int diffusion(void)
 					/*                             2 = square cavity     */
 	int colorshift; /* If zero, select g_colors at random, otherwise shift */
 					/* the color every colorshift points */
-
 	int colorcount, currentcolor;
-
 	int i;
 	double cosine, sine, angle;
 	int x, y;
@@ -628,9 +703,9 @@ int diffusion(void)
 	g_bit_shift = 16;
 	g_fudge = 1L << 16;
 
-	border = (int)g_parameters[0];
-	mode = (int)g_parameters[1];
-	colorshift = (int)g_parameters[2];
+	border = (int) g_parameters[0];
+	mode = (int) g_parameters[1];
+	colorshift = (int) g_parameters[2];
 
 	colorcount = colorshift; /* Counts down from colorshift */
 	currentcolor = 1;  /* Start at color 1 (color 0 is probably invisible)*/
@@ -676,13 +751,13 @@ int diffusion(void)
 		start_resume();
 		if (mode != DIFFUSION_SQUARE)
 		{
-			get_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min, sizeof(g_y_max), &g_y_max,
-				sizeof(g_y_min), &g_y_min, 0);
+			get_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min,
+				sizeof(g_y_max), &g_y_max, sizeof(g_y_min), &g_y_min, 0);
 		}
 		else
 		{
-			get_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min, sizeof(g_y_max), &g_y_max,
-				sizeof(radius), &radius, 0);
+			get_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min,
+				sizeof(g_y_max), &g_y_max, sizeof(radius), &radius, 0);
 		}
 		end_resume();
 	}
@@ -935,12 +1010,6 @@ int diffusion(void)
 /* to infinity).                Have fun !                     */
 /***************************************************************/
 
-#define DEFAULTFILTER 1000     /* "Beauty of Fractals" recommends using 5000
-								(p.25), but that seems unnecessary. Can
-								override this value with a nonzero param1 */
-
-#define SEED 0.66               /* starting value for population */
-
 int bifurcation(void)
 {
 	unsigned long array_size;
@@ -985,7 +1054,7 @@ int bifurcation(void)
 		}
 	}
 
-	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULTFILTER : (long)g_parameter.x;
+	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULT_FILTER : (long)g_parameter.x;
 	s_half_time_check = FALSE;
 	if (g_periodicity_check && (unsigned long)g_max_iteration < s_filter_cycles)
 	{
@@ -1146,8 +1215,9 @@ static void bifurcation_period_init()
 	}
 }
 
-static int _fastcall bifurcation_periodic(long time)  /* Bifurcation s_population Periodicity Check */
+/* Bifurcation s_population Periodicity Check */
 /* Returns : 1 if periodicity found, else 0 */
+static int _fastcall bifurcation_periodic(long time)
 {
 	if ((time & s_bifurcation_saved_mask) == 0)      /* time to save a new value */
 	{
@@ -1196,11 +1266,8 @@ int bifurcation_lambda() /* Used by lyanupov */
 	return fabs(s_population) > BIG;
 }
 
-/* Modified formulas below to generalize bifurcations. JCO 7/3/92 */
-
 int bifurcation_verhulst_trig_fp()
 {
-/*  s_population = Pop + s_rate*fn(Pop)*(1 - fn(Pop)) */
 	g_temp_z.x = s_population;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
@@ -1222,7 +1289,6 @@ int bifurcation_verhulst_trig()
 
 int bifurcation_stewart_trig_fp()
 {
-/*  s_population = (s_rate*fn(s_population)*fn(s_population)) - 1.0 */
 	g_temp_z.x = s_population;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
@@ -1343,13 +1409,7 @@ int bifurcation_may_setup()
 	return 0;
 }
 
-/* Here Endeth the Generalised Bifurcation Fractal Engine   */
-
-/* END Phil Wilson's Code (modified slightly by Kev Allen et. al. !) */
-
-
 /******************* standalone engine for "popcorn" ********************/
-
 int popcorn()   /* subset of std engine */
 {
 	int start_row;
@@ -1394,7 +1454,6 @@ int popcorn()   /* subset of std engine */
 /***    1732: the infamous axis swap: (b, a)->(x, y),                     ***/
 /***            the order parameter becomes a long int                  ***/
 /**************************************************************************/
-
 int lyapunov(void)
 {
 	double a, b;
@@ -1402,7 +1461,7 @@ int lyapunov(void)
 	if (driver_key_pressed())
 	{
 		return -1;
-		}
+	}
 	g_overflow = FALSE;
 	if (g_parameters[1] == 1)
 	{
@@ -1447,7 +1506,8 @@ int lyapunov(void)
 
 int lyapunov_setup(void)
 {
-	/* This routine sets up the sequence for forcing the s_rate parameter
+	/*
+		This routine sets up the sequence for forcing the s_rate parameter
 		to vary between the two values.  It fills the array s_lyapunov_r_xy[] and
 		sets s_lyapunov_length to the length of the sequence.
 
@@ -1473,8 +1533,7 @@ int lyapunov_setup(void)
 					6       aaabb (this is a duplicate of 4, a rotated inverse)
 					7       aaaab
 					8       aabbbb  etc.
-			*/
-
+	*/
 	long i;
 	int t;
 
@@ -1519,17 +1578,17 @@ int lyapunov_setup(void)
 		{
 			g_inside = 0;
 		}
-		}
+	}
 	if (g_inside < 0)
 	{
 		stop_message(0, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
 		g_inside = 1;
-		}
+	}
 	if (g_user_standard_calculation_mode == 'o')  /* Oops, lyapunov type */
 	{
 		g_user_standard_calculation_mode = '1';  /* doesn't use new & breaks orbits */
 		g_standard_calculation_mode = '1';
-		}
+	}
 	return 1;
 }
 
@@ -1613,18 +1672,6 @@ jumpout:
 	Made space bar generate next screen
 	Increased string/rule size to 16 digits and added CA types 9/20/92
 */
-
-#define BAD_T         1
-#define BAD_MEM       2
-#define STRING1       3
-#define STRING2       4
-#define TABLEK        5
-#define TYPEKR        6
-#define RULELENGTH    7
-#define INTERUPT      8
-
-#define CELLULAR_DONE 10
-
 static void abort_cellular(int err, int t)
 {
 	int i;
@@ -1670,8 +1717,8 @@ static void abort_cellular(int err, int t)
 			}
 			else
 			{
-				msg[13] = (char)(i + 48);
-				msg[14] = (char)((s_rule_digits % 10) + 48);
+				msg[13] = (char) (i + 48);
+				msg[14] = (char) ((s_rule_digits % 10) + 48);
 			}
 			stop_message(0, msg);
 		}
@@ -1684,11 +1731,11 @@ static void abort_cellular(int err, int t)
 	}
 	if (s_cell_array[0] != NULL)
 	{
-		free((char *)s_cell_array[0]);
+		free((char *) s_cell_array[0]);
 	}
 	if (s_cell_array[1] != NULL)
 	{
-		free((char *)s_cell_array[1]);
+		free((char *) s_cell_array[1]);
 	}
 }
 
@@ -1821,7 +1868,6 @@ int cellular()
 		}
 	}
 
-
 	start_row = 0;
 	s_cell_array[0] = (BYTE *)malloc(g_x_stop + 1);
 	s_cell_array[1] = (BYTE *)malloc(g_x_stop + 1);
@@ -1944,8 +1990,8 @@ int cellular()
 		s_last_screen_flag = 0;
 	}
 
-/* This section does all the work */
 contloop:
+	/* This section does all the work */
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		if (g_random_flag || randparam == 0 || randparam == -1)
@@ -2053,68 +2099,6 @@ static void set_cellular_palette()
 
 /* frothy basin routines */
 
-#define FROTH_BITSHIFT      28
-#define FROTH_D_TO_L(x)     ((long)((x)*(1L << FROTH_BITSHIFT)))
-#define FROTH_CLOSE         1e-6      /* seems like a good value */
-#define FROTH_LCLOSE        FROTH_D_TO_L(FROTH_CLOSE)
-#define SQRT3               1.732050807568877193
-#define FROTH_SLOPE         SQRT3
-#define FROTH_LSLOPE        FROTH_D_TO_L(FROTH_SLOPE)
-#define FROTH_CRITICAL_A    1.028713768218725  /* 1.0287137682187249127 */
-#define froth_top_x_mapping(x)  ((x)*(x)-(x)-3*fsp->fl.f.a*fsp->fl.f.a/4)
-
-
-struct froth_double_struct
-{
-	double a;
-	double halfa;
-	double top_x1;
-	double top_x2;
-	double top_x3;
-	double top_x4;
-	double left_x1;
-	double left_x2;
-	double left_x3;
-	double left_x4;
-	double right_x1;
-	double right_x2;
-	double right_x3;
-	double right_x4;
-	};
-
-struct froth_long_struct
-{
-	long a;
-	long halfa;
-	long top_x1;
-	long top_x2;
-	long top_x3;
-	long top_x4;
-	long left_x1;
-	long left_x2;
-	long left_x3;
-	long left_x4;
-	long right_x1;
-	long right_x2;
-	long right_x3;
-	long right_x4;
-	};
-
-struct froth_struct
-{
-	int repeat_mapping;
-	int altcolor;
-	int attractors;
-	int shades;
-	union  /* This was made into a union to save 56 malloc()'ed bytes. */
-	{
-		struct froth_double_struct f;
-		struct froth_long_struct l;
-		} fl;
-	};
-
-struct froth_struct *fsp = NULL; /* froth_struct pointer */
-
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_froth_palette(void)
 {
@@ -2124,11 +2108,11 @@ static void set_froth_palette(void)
 
 		if (g_colors >= 256)
 		{
-			mapname = (fsp->attractors == 6) ? "froth6.map" : "froth3.map";
+			mapname = (s_frothy_data.attractors == 6) ? "froth6.map" : "froth3.map";
 		}
 		else /* g_colors >= 16 */
 		{
-			mapname = (fsp->attractors == 6) ? "froth616.map" : "froth316.map";
+			mapname = (s_frothy_data.attractors == 6) ? "froth616.map" : "froth316.map";
 		}
 		if (validate_luts(mapname) != 0)
 		{
@@ -2146,46 +2130,35 @@ int froth_setup(void)
 	sin_theta = SQRT3/2; /* sin(2*PI/3) */
 	cos_theta = -0.5;    /* cos(2*PI/3) */
 
-	/* check for NULL as safety net */
-	if (fsp == NULL)
-	{
-		fsp = (struct froth_struct *)malloc(sizeof (struct froth_struct));
-	}
-	if (fsp == NULL)
-	{
-		stop_message(0, "Sorry, not enough memory to run the frothybasin fractal type");
-		return 0;
-	}
-
 	/* for the all important backwards compatibility */
 	if (g_save_release <= 1821)   /* book version is 18.21 */
 	{
 		/* use old release parameters */
 
-		fsp->repeat_mapping = ((int)g_parameters[0] == 6 || (int)g_parameters[0] == 2); /* map 1 or 2 times (3 or 6 basins)  */
-		fsp->altcolor = (int)g_parameters[1];
+		s_frothy_data.repeat_mapping = ((int)g_parameters[0] == 6 || (int)g_parameters[0] == 2); /* map 1 or 2 times (3 or 6 basins)  */
+		s_frothy_data.altcolor = (int)g_parameters[1];
 		g_parameters[2] = 0; /* throw away any value used prior to 18.20 */
 
-		fsp->attractors = !fsp->repeat_mapping ? 3 : 6;
+		s_frothy_data.attractors = !s_frothy_data.repeat_mapping ? 3 : 6;
 
 		/* use old values */                /* old names */
-		fsp->fl.f.a = 1.02871376822;          /* A     */
-		fsp->fl.f.halfa = fsp->fl.f.a/2;      /* A/2   */
+		s_frothy_data.f.a = 1.02871376822;          /* A     */
+		s_frothy_data.f.halfa = s_frothy_data.f.a/2;      /* A/2   */
 
-		fsp->fl.f.top_x1 = -1.04368901270;    /* X1MIN */
-		fsp->fl.f.top_x2 =  1.33928675524;    /* X1MAX */
-		fsp->fl.f.top_x3 = -0.339286755220;   /* XMIDT */
-		fsp->fl.f.top_x4 = -0.339286755220;   /* XMIDT */
+		s_frothy_data.f.top_x1 = -1.04368901270;    /* X1MIN */
+		s_frothy_data.f.top_x2 =  1.33928675524;    /* X1MAX */
+		s_frothy_data.f.top_x3 = -0.339286755220;   /* XMIDT */
+		s_frothy_data.f.top_x4 = -0.339286755220;   /* XMIDT */
 
-		fsp->fl.f.left_x1 =  0.07639837810;   /* X3MAX2 */
-		fsp->fl.f.left_x2 = -1.11508950586;   /* X2MIN2 */
-		fsp->fl.f.left_x3 = -0.27580275066;   /* XMIDL  */
-		fsp->fl.f.left_x4 = -0.27580275066;   /* XMIDL  */
+		s_frothy_data.f.left_x1 =  0.07639837810;   /* X3MAX2 */
+		s_frothy_data.f.left_x2 = -1.11508950586;   /* X2MIN2 */
+		s_frothy_data.f.left_x3 = -0.27580275066;   /* XMIDL  */
+		s_frothy_data.f.left_x4 = -0.27580275066;   /* XMIDL  */
 
-		fsp->fl.f.right_x1 =  0.96729063460;  /* X2MAX1 */
-		fsp->fl.f.right_x2 = -0.22419724936;  /* X3MIN1 */
-		fsp->fl.f.right_x3 =  0.61508950585;  /* XMIDR  */
-		fsp->fl.f.right_x4 =  0.61508950585;  /* XMIDR  */
+		s_frothy_data.f.right_x1 =  0.96729063460;  /* X2MAX1 */
+		s_frothy_data.f.right_x2 = -0.22419724936;  /* X3MIN1 */
+		s_frothy_data.f.right_x3 =  0.61508950585;  /* XMIDR  */
+		s_frothy_data.f.right_x4 =  0.61508950585;  /* XMIDR  */
 
 	}
 	else /* use new code */
@@ -2194,42 +2167,42 @@ int froth_setup(void)
 		{
 			g_parameters[0] = 1;
 		}
-		fsp->repeat_mapping = (int)g_parameters[0] == 2;
+		s_frothy_data.repeat_mapping = (int)g_parameters[0] == 2;
 		if (g_parameters[1] != 0)
 		{
 			g_parameters[1] = 1;
 		}
-		fsp->altcolor = (int)g_parameters[1];
-		fsp->fl.f.a = g_parameters[2];
+		s_frothy_data.altcolor = (int)g_parameters[1];
+		s_frothy_data.f.a = g_parameters[2];
 
-		fsp->attractors = fabs(fsp->fl.f.a) <= FROTH_CRITICAL_A ? (!fsp->repeat_mapping ? 3 : 6)
-																: (!fsp->repeat_mapping ? 2 : 3);
+		s_frothy_data.attractors = fabs(s_frothy_data.f.a) <= FROTH_CRITICAL_A ? (!s_frothy_data.repeat_mapping ? 3 : 6)
+																: (!s_frothy_data.repeat_mapping ? 2 : 3);
 
 		/* new improved values */
 		/* 0.5 is the value that causes the mapping to reach a minimum */
 		x0 = 0.5;
 		/* a/2 is the value that causes the y value to be invariant over the mappings */
-		y0 = fsp->fl.f.halfa = fsp->fl.f.a/2;
-		fsp->fl.f.top_x1 = froth_top_x_mapping(x0);
-		fsp->fl.f.top_x2 = froth_top_x_mapping(fsp->fl.f.top_x1);
-		fsp->fl.f.top_x3 = froth_top_x_mapping(fsp->fl.f.top_x2);
-		fsp->fl.f.top_x4 = froth_top_x_mapping(fsp->fl.f.top_x3);
+		y0 = s_frothy_data.f.halfa = s_frothy_data.f.a/2;
+		s_frothy_data.f.top_x1 = froth_top_x_mapping(x0);
+		s_frothy_data.f.top_x2 = froth_top_x_mapping(s_frothy_data.f.top_x1);
+		s_frothy_data.f.top_x3 = froth_top_x_mapping(s_frothy_data.f.top_x2);
+		s_frothy_data.f.top_x4 = froth_top_x_mapping(s_frothy_data.f.top_x3);
 
 		/* rotate 120 degrees counter-clock-wise */
-		fsp->fl.f.left_x1 = fsp->fl.f.top_x1*cos_theta - y0*sin_theta;
-		fsp->fl.f.left_x2 = fsp->fl.f.top_x2*cos_theta - y0*sin_theta;
-		fsp->fl.f.left_x3 = fsp->fl.f.top_x3*cos_theta - y0*sin_theta;
-		fsp->fl.f.left_x4 = fsp->fl.f.top_x4*cos_theta - y0*sin_theta;
+		s_frothy_data.f.left_x1 = s_frothy_data.f.top_x1*cos_theta - y0*sin_theta;
+		s_frothy_data.f.left_x2 = s_frothy_data.f.top_x2*cos_theta - y0*sin_theta;
+		s_frothy_data.f.left_x3 = s_frothy_data.f.top_x3*cos_theta - y0*sin_theta;
+		s_frothy_data.f.left_x4 = s_frothy_data.f.top_x4*cos_theta - y0*sin_theta;
 
 		/* rotate 120 degrees clock-wise */
-		fsp->fl.f.right_x1 = fsp->fl.f.top_x1*cos_theta + y0*sin_theta;
-		fsp->fl.f.right_x2 = fsp->fl.f.top_x2*cos_theta + y0*sin_theta;
-		fsp->fl.f.right_x3 = fsp->fl.f.top_x3*cos_theta + y0*sin_theta;
-		fsp->fl.f.right_x4 = fsp->fl.f.top_x4*cos_theta + y0*sin_theta;
+		s_frothy_data.f.right_x1 = s_frothy_data.f.top_x1*cos_theta + y0*sin_theta;
+		s_frothy_data.f.right_x2 = s_frothy_data.f.top_x2*cos_theta + y0*sin_theta;
+		s_frothy_data.f.right_x3 = s_frothy_data.f.top_x3*cos_theta + y0*sin_theta;
+		s_frothy_data.f.right_x4 = s_frothy_data.f.top_x4*cos_theta + y0*sin_theta;
 	}
 
 	/* if 2 attractors, use same shades as 3 attractors */
-	fsp->shades = (g_colors-1) / max(3, fsp->attractors);
+	s_frothy_data.shades = (g_colors-1) / max(3, s_frothy_data.attractors);
 
 	/* g_rq_limit needs to be at least sq(1 + sqrt(1 + sq(a))), */
 	/* which is never bigger than 6.93..., so we'll call it 7.0 */
@@ -2239,45 +2212,34 @@ int froth_setup(void)
 	}
 	set_froth_palette();
 	/* make the best of the .map situation */
-	g_orbit_color = fsp->attractors != 6 && g_colors >= 16 ? (fsp->shades << 1) + 1 : g_colors-1;
+	g_orbit_color = s_frothy_data.attractors != 6 && g_colors >= 16 ? (s_frothy_data.shades << 1) + 1 : g_colors-1;
 
 	if (g_integer_fractal)
 	{
 		struct froth_long_struct tmp_l;
 
-		tmp_l.a        = FROTH_D_TO_L(fsp->fl.f.a);
-		tmp_l.halfa    = FROTH_D_TO_L(fsp->fl.f.halfa);
+		tmp_l.a        = FROTH_D_TO_L(s_frothy_data.f.a);
+		tmp_l.halfa    = FROTH_D_TO_L(s_frothy_data.f.halfa);
 
-		tmp_l.top_x1   = FROTH_D_TO_L(fsp->fl.f.top_x1);
-		tmp_l.top_x2   = FROTH_D_TO_L(fsp->fl.f.top_x2);
-		tmp_l.top_x3   = FROTH_D_TO_L(fsp->fl.f.top_x3);
-		tmp_l.top_x4   = FROTH_D_TO_L(fsp->fl.f.top_x4);
+		tmp_l.top_x1   = FROTH_D_TO_L(s_frothy_data.f.top_x1);
+		tmp_l.top_x2   = FROTH_D_TO_L(s_frothy_data.f.top_x2);
+		tmp_l.top_x3   = FROTH_D_TO_L(s_frothy_data.f.top_x3);
+		tmp_l.top_x4   = FROTH_D_TO_L(s_frothy_data.f.top_x4);
 
-		tmp_l.left_x1  = FROTH_D_TO_L(fsp->fl.f.left_x1);
-		tmp_l.left_x2  = FROTH_D_TO_L(fsp->fl.f.left_x2);
-		tmp_l.left_x3  = FROTH_D_TO_L(fsp->fl.f.left_x3);
-		tmp_l.left_x4  = FROTH_D_TO_L(fsp->fl.f.left_x4);
+		tmp_l.left_x1  = FROTH_D_TO_L(s_frothy_data.f.left_x1);
+		tmp_l.left_x2  = FROTH_D_TO_L(s_frothy_data.f.left_x2);
+		tmp_l.left_x3  = FROTH_D_TO_L(s_frothy_data.f.left_x3);
+		tmp_l.left_x4  = FROTH_D_TO_L(s_frothy_data.f.left_x4);
 
-		tmp_l.right_x1 = FROTH_D_TO_L(fsp->fl.f.right_x1);
-		tmp_l.right_x2 = FROTH_D_TO_L(fsp->fl.f.right_x2);
-		tmp_l.right_x3 = FROTH_D_TO_L(fsp->fl.f.right_x3);
-		tmp_l.right_x4 = FROTH_D_TO_L(fsp->fl.f.right_x4);
+		tmp_l.right_x1 = FROTH_D_TO_L(s_frothy_data.f.right_x1);
+		tmp_l.right_x2 = FROTH_D_TO_L(s_frothy_data.f.right_x2);
+		tmp_l.right_x3 = FROTH_D_TO_L(s_frothy_data.f.right_x3);
+		tmp_l.right_x4 = FROTH_D_TO_L(s_frothy_data.f.right_x4);
 
-		fsp->fl.l = tmp_l;
+		s_frothy_data.l = tmp_l;
 	}
 	return 1;
 }
-
-void froth_cleanup(void)
-{
-	if (fsp != NULL)
-	{
-		free(fsp);
-	}
-	/* set to NULL as a flag that froth_cleanup() has been called */
-	fsp = NULL;
-}
-
 
 /* Froth Fractal type */
 int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
@@ -2287,11 +2249,6 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	if (check_key())
 	{
 		return -1;
-	}
-
-	if (fsp == NULL)
-	{ /* error occured allocating memory for fsp */
-		return 0;
 	}
 
 	g_orbit_index = 0;
@@ -2324,13 +2281,13 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
-			g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - fsp->fl.f.a*g_old_z.y;
-			g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - fsp->fl.f.a*g_old_z.x;
+			g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y;
+			g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - s_frothy_data.f.a*g_old_z.x;
 			g_old_z.x = g_new_z.x;
-			if (fsp->repeat_mapping)
+			if (s_frothy_data.repeat_mapping)
 			{
-				g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - fsp->fl.f.a*g_old_z.y;
-				g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - fsp->fl.f.a*g_old_z.x;
+				g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y;
+				g_old_z.y += (g_old_z.x + g_old_z.x)*g_old_z.y - s_frothy_data.f.a*g_old_z.x;
 				g_old_z.x = g_new_z.x;
 			}
 
@@ -2345,61 +2302,61 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				plot_orbit(g_old_z.x, g_old_z.y, -1);
 			}
 
-			if (fabs(fsp->fl.f.halfa-g_old_z.y) < FROTH_CLOSE
-					&& g_old_z.x >= fsp->fl.f.top_x1 && g_old_z.x <= fsp->fl.f.top_x2)
+			if (fabs(s_frothy_data.f.halfa-g_old_z.y) < FROTH_CLOSE
+					&& g_old_z.x >= s_frothy_data.f.top_x1 && g_old_z.x <= s_frothy_data.f.top_x2)
 			{
-				if ((!fsp->repeat_mapping && fsp->attractors == 2)
-					|| (fsp->repeat_mapping && fsp->attractors == 3))
+				if ((!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
+					|| (s_frothy_data.repeat_mapping && s_frothy_data.attractors == 3))
 				{
 					found_attractor = 1;
 				}
-				else if (g_old_z.x <= fsp->fl.f.top_x3)
+				else if (g_old_z.x <= s_frothy_data.f.top_x3)
 				{
 					found_attractor = 1;
 				}
-				else if (g_old_z.x >= fsp->fl.f.top_x4)
+				else if (g_old_z.x >= s_frothy_data.f.top_x4)
 				{
-					found_attractor = !fsp->repeat_mapping ? 1 : 2;
+					found_attractor = !s_frothy_data.repeat_mapping ? 1 : 2;
 				}
 			}
-			else if (fabs(FROTH_SLOPE*g_old_z.x - fsp->fl.f.a - g_old_z.y) < FROTH_CLOSE
-						&& g_old_z.x <= fsp->fl.f.right_x1 && g_old_z.x >= fsp->fl.f.right_x2)
+			else if (fabs(FROTH_SLOPE*g_old_z.x - s_frothy_data.f.a - g_old_z.y) < FROTH_CLOSE
+						&& g_old_z.x <= s_frothy_data.f.right_x1 && g_old_z.x >= s_frothy_data.f.right_x2)
 			{
-				if (!fsp->repeat_mapping && fsp->attractors == 2)
+				if (!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
 				{
 					found_attractor = 2;
 				}
-				else if (fsp->repeat_mapping && fsp->attractors == 3)
+				else if (s_frothy_data.repeat_mapping && s_frothy_data.attractors == 3)
 				{
 					found_attractor = 3;
 				}
-				else if (g_old_z.x >= fsp->fl.f.right_x3)
+				else if (g_old_z.x >= s_frothy_data.f.right_x3)
 				{
-					found_attractor = !fsp->repeat_mapping ? 2 : 4;
+					found_attractor = !s_frothy_data.repeat_mapping ? 2 : 4;
 				}
-				else if (g_old_z.x <= fsp->fl.f.right_x4)
+				else if (g_old_z.x <= s_frothy_data.f.right_x4)
 				{
-					found_attractor = !fsp->repeat_mapping ? 3 : 6;
+					found_attractor = !s_frothy_data.repeat_mapping ? 3 : 6;
 				}
 			}
-			else if (fabs(-FROTH_SLOPE*g_old_z.x - fsp->fl.f.a - g_old_z.y) < FROTH_CLOSE
-						&& g_old_z.x <= fsp->fl.f.left_x1 && g_old_z.x >= fsp->fl.f.left_x2)
+			else if (fabs(-FROTH_SLOPE*g_old_z.x - s_frothy_data.f.a - g_old_z.y) < FROTH_CLOSE
+						&& g_old_z.x <= s_frothy_data.f.left_x1 && g_old_z.x >= s_frothy_data.f.left_x2)
 			{
-				if (!fsp->repeat_mapping && fsp->attractors == 2)
+				if (!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
 				{
 					found_attractor = 2;
 				}
-				else if (fsp->repeat_mapping && fsp->attractors == 3)
+				else if (s_frothy_data.repeat_mapping && s_frothy_data.attractors == 3)
 				{
 					found_attractor = 2;
 				}
-				else if (g_old_z.x >= fsp->fl.f.left_x3)
+				else if (g_old_z.x >= s_frothy_data.f.left_x3)
 				{
-					found_attractor = !fsp->repeat_mapping ? 3 : 5;
+					found_attractor = !s_frothy_data.repeat_mapping ? 3 : 5;
 				}
-				else if (g_old_z.x <= fsp->fl.f.left_x4)
+				else if (g_old_z.x <= s_frothy_data.f.left_x4)
 				{
-					found_attractor = !fsp->repeat_mapping ? 2 : 3;
+					found_attractor = !s_frothy_data.repeat_mapping ? 2 : 3;
 				}
 			}
 		}
@@ -2430,10 +2387,10 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 
 			/* simple formula: z = z^2 + conj(z*(-1 + ai)) */
 			/* but it's the attractor that makes this so interesting */
-			g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, g_bit_shift);
-			g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, g_bit_shift);
+			g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift);
+			g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift);
 			g_old_z_l.x = g_new_z_l.x;
-			if (fsp->repeat_mapping)
+			if (s_frothy_data.repeat_mapping)
 			{
 				g_temp_sqr_x_l = lsqr(g_old_z_l.x);
 				g_temp_sqr_y_l = lsqr(g_old_z_l.y);
@@ -2442,8 +2399,8 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				{
 					break;
 				}
-				g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, g_bit_shift);
-				g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, g_bit_shift);
+				g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift);
+				g_old_z_l.y += (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift);
 				g_old_z_l.x = g_new_z_l.x;
 			}
 			g_color_iter++;
@@ -2457,60 +2414,60 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 				plot_orbit_i(g_old_z_l.x, g_old_z_l.y, -1);
 			}
 
-			if (labs(fsp->fl.l.halfa-g_old_z_l.y) < FROTH_LCLOSE
-				&& g_old_z_l.x > fsp->fl.l.top_x1 && g_old_z_l.x < fsp->fl.l.top_x2)
+			if (labs(s_frothy_data.l.halfa-g_old_z_l.y) < FROTH_LCLOSE
+				&& g_old_z_l.x > s_frothy_data.l.top_x1 && g_old_z_l.x < s_frothy_data.l.top_x2)
 			{
-				if ((!fsp->repeat_mapping && fsp->attractors == 2)
-					|| (fsp->repeat_mapping && fsp->attractors == 3))
+				if ((!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
+					|| (s_frothy_data.repeat_mapping && s_frothy_data.attractors == 3))
 				{
 					found_attractor = 1;
 				}
-				else if (g_old_z_l.x <= fsp->fl.l.top_x3)
+				else if (g_old_z_l.x <= s_frothy_data.l.top_x3)
 				{
 					found_attractor = 1;
 				}
-				else if (g_old_z_l.x >= fsp->fl.l.top_x4)
+				else if (g_old_z_l.x >= s_frothy_data.l.top_x4)
 				{
-					found_attractor = !fsp->repeat_mapping ? 1 : 2;
+					found_attractor = !s_frothy_data.repeat_mapping ? 1 : 2;
 				}
 			}
-			else if (labs(multiply(FROTH_LSLOPE, g_old_z_l.x, g_bit_shift)-fsp->fl.l.a-g_old_z_l.y) < FROTH_LCLOSE
-						&& g_old_z_l.x <= fsp->fl.l.right_x1 && g_old_z_l.x >= fsp->fl.l.right_x2)
+			else if (labs(multiply(FROTH_LSLOPE, g_old_z_l.x, g_bit_shift)-s_frothy_data.l.a-g_old_z_l.y) < FROTH_LCLOSE
+						&& g_old_z_l.x <= s_frothy_data.l.right_x1 && g_old_z_l.x >= s_frothy_data.l.right_x2)
 			{
-				if (!fsp->repeat_mapping && fsp->attractors == 2)
+				if (!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
 				{
 					found_attractor = 2;
 				}
-				else if (fsp->repeat_mapping && fsp->attractors == 3)
+				else if (s_frothy_data.repeat_mapping && s_frothy_data.attractors == 3)
 				{
 					found_attractor = 3;
 				}
-				else if (g_old_z_l.x >= fsp->fl.l.right_x3)
+				else if (g_old_z_l.x >= s_frothy_data.l.right_x3)
 				{
-					found_attractor = !fsp->repeat_mapping ? 2 : 4;
+					found_attractor = !s_frothy_data.repeat_mapping ? 2 : 4;
 				}
-				else if (g_old_z_l.x <= fsp->fl.l.right_x4)
+				else if (g_old_z_l.x <= s_frothy_data.l.right_x4)
 				{
-					found_attractor = !fsp->repeat_mapping ? 3 : 6;
+					found_attractor = !s_frothy_data.repeat_mapping ? 3 : 6;
 				}
 			}
-			else if (labs(multiply(-FROTH_LSLOPE, g_old_z_l.x, g_bit_shift)-fsp->fl.l.a-g_old_z_l.y) < FROTH_LCLOSE)
+			else if (labs(multiply(-FROTH_LSLOPE, g_old_z_l.x, g_bit_shift)-s_frothy_data.l.a-g_old_z_l.y) < FROTH_LCLOSE)
 			{
-				if (!fsp->repeat_mapping && fsp->attractors == 2)
+				if (!s_frothy_data.repeat_mapping && s_frothy_data.attractors == 2)
 				{
 					found_attractor = 2;
 				}
-				else if (fsp->repeat_mapping && fsp->attractors == 3)
+				else if (s_frothy_data.repeat_mapping && s_frothy_data.attractors == 3)
 				{
 					found_attractor = 2;
 				}
-				else if (g_old_z_l.x >= fsp->fl.l.left_x3)
+				else if (g_old_z_l.x >= s_frothy_data.l.left_x3)
 				{
-					found_attractor = !fsp->repeat_mapping ? 3 : 5;
+					found_attractor = !s_frothy_data.repeat_mapping ? 3 : 5;
 				}
-				else if (g_old_z_l.x <= fsp->fl.l.left_x4)
+				else if (g_old_z_l.x <= s_frothy_data.l.left_x4)
 				{
-					found_attractor = !fsp->repeat_mapping ? 2 : 3;
+					found_attractor = !s_frothy_data.repeat_mapping ? 2 : 3;
 				}
 			}
 		}
@@ -2538,22 +2495,22 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	{
 		if (g_colors >= 256)
 		{
-			if (!fsp->altcolor)
+			if (!s_frothy_data.altcolor)
 			{
-				if (g_color_iter > fsp->shades)
+				if (g_color_iter > s_frothy_data.shades)
 				{
-					g_color_iter = fsp->shades;
+					g_color_iter = s_frothy_data.shades;
 				}
 			}
 			else
 			{
-				g_color_iter = fsp->shades*g_color_iter / g_max_iteration;
+				g_color_iter = s_frothy_data.shades*g_color_iter / g_max_iteration;
 			}
 			if (g_color_iter == 0)
 			{
 				g_color_iter = 1;
 			}
-			g_color_iter += fsp->shades*(found_attractor-1);
+			g_color_iter += s_frothy_data.shades*(found_attractor-1);
 		}
 		else if (g_colors >= 16)
 		{ /* only alternate coloring scheme available for 16 g_colors */
@@ -2563,7 +2520,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 			/* Since their are only a few possiblities, just handle each case. */
 			/* This is a mostly guess work here. */
 			lshade = (g_color_iter << 16)/g_max_iteration;
-			if (fsp->attractors != 6) /* either 2 or 3 attractors */
+			if (s_frothy_data.attractors != 6) /* either 2 or 3 attractors */
 			{
 				if (lshade < 2622)       /* 0.04 */
 				{
@@ -2641,13 +2598,13 @@ int froth_per_orbit(void)
 {
 	if (!g_integer_fractal) /* fp mode */
 	{
-		g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - fsp->fl.f.a*g_old_z.y;
-		g_new_z.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;
-		if (fsp->repeat_mapping)
+		g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_frothy_data.f.a*g_old_z.y;
+		g_new_z.y = 2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y;
+		if (s_frothy_data.repeat_mapping)
 		{
 			g_old_z = g_new_z;
-			g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - fsp->fl.f.a*g_old_z.y;
-			g_new_z.y = 2.0*g_old_z.x*g_old_z.y - fsp->fl.f.a*g_old_z.x + g_old_z.y;
+			g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_frothy_data.f.a*g_old_z.y;
+			g_new_z.y = 2.0*g_old_z.x*g_old_z.y - s_frothy_data.f.a*g_old_z.x + g_old_z.y;
 		}
 
 		g_temp_sqr_x = sqr(g_new_z.x);
@@ -2660,9 +2617,9 @@ int froth_per_orbit(void)
 	}
 	else  /* integer mode */
 	{
-		g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, g_bit_shift);
-		g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, g_bit_shift);
-		if (fsp->repeat_mapping)
+		g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift);
+		g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift);
+		if (s_frothy_data.repeat_mapping)
 		{
 			g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 			g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -2671,8 +2628,8 @@ int froth_per_orbit(void)
 				return 1;
 			}
 			g_old_z_l = g_new_z_l;
-			g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(fsp->fl.l.a, g_old_z_l.y, g_bit_shift);
-			g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(fsp->fl.l.a, g_old_z_l.x, g_bit_shift);
+			g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l - g_old_z_l.x - multiply(s_frothy_data.l.a, g_old_z_l.y, g_bit_shift);
+			g_new_z_l.y = g_old_z_l.y + (multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift) << 1) - multiply(s_frothy_data.l.a, g_old_z_l.x, g_bit_shift);
 		}
 		g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 		g_temp_sqr_y_l = lsqr(g_new_z_l.y);

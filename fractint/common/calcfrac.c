@@ -825,10 +825,6 @@ int calculate_fractal(void)
 		free_work_area();
 	}
 
-	if (g_current_fractal_specific->calculate_type == froth_calc)
-	{
-		froth_cleanup();
-	}
 	if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) /* close sound write file */
 	{
 		sound_close();

@@ -703,8 +703,6 @@ extern int l_load(void);
 
 /*  miscfrac -- C file prototypes */
 
-extern void froth_cleanup(void);
-
 /*  miscovl -- C file prototypes */
 
 extern void make_batch_file(void);
