@@ -1315,9 +1315,4 @@ finish:
 	}
 	show_numbers = 0;
 	driver_unget_key(kbdchar);
-
-	if (g_current_fractal_specific->calculate_type == froth_calc)
-	{
-		froth_cleanup();
-	}
 }
