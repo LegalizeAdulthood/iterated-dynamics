@@ -53,8 +53,7 @@ int tga_view()
 }
 
 /* Outline function for 16 bit data with 8 bit g_fudge */
-int
-out_line_16(BYTE *buffer, int linelen)
+int out_line_16(BYTE *buffer, int linelen)
 {
 	int i;
 	U16 *buf;
