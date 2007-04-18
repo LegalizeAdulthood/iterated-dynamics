@@ -6,30 +6,36 @@
 #include <assert.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+}
 
 /* Use these palette indices for red/blue - same on ega/vga */
 #define PAL_BLUE    1
 #define PAL_RED 2
 #define PAL_MAGENTA 3
 
-int g_which_image;
-int g_xx_adjust1;
-int g_yy_adjust1;
-int g_eye_separation = 0;
-int g_glasses_type = STEREO_NONE;
-int g_x_shift1;
-int g_y_shift1;
-int g_x_trans = 0;
-int g_y_trans = 0;
-int g_red_crop_left   = 4;
-int g_red_crop_right  = 0;
-int g_blue_crop_left  = 0;
-int g_blue_crop_right = 4;
-int g_red_bright      = 80;
-int g_blue_bright     = 100;
+extern "C"
+{
+	int g_which_image;
+	int g_xx_adjust1;
+	int g_yy_adjust1;
+	int g_eye_separation = 0;
+	int g_glasses_type = STEREO_NONE;
+	int g_x_shift1;
+	int g_y_shift1;
+	int g_x_trans = 0;
+	int g_y_trans = 0;
+	int g_red_crop_left   = 4;
+	int g_red_crop_right  = 0;
+	int g_blue_crop_left  = 0;
+	int g_blue_crop_right = 4;
+	int g_red_bright      = 80;
+	int g_blue_bright     = 100;
+}
 
 static int s_red_local_left;
 static int s_red_local_right;
@@ -38,7 +44,7 @@ static int s_blue_local_right;
 static BYTE s_targa_red;
 
 /* Bresenham's algorithm for drawing line */
-void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
+extern "C" void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 
 {               /* uses Bresenham algorithm to draw a line */
 	int dX, dY;                     /* vector components */
