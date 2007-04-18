@@ -567,7 +567,7 @@ int encoder()
 			}
 		}
 		/* Extended parameters g_block 005 */
-		if (bf_math)
+		if (g_bf_math)
 		{
 			save_info.tot_extend_len += extend_blk_len(22*(bflength + 2));
 			/* note: this assumes variables allocated in order starting with
@@ -919,7 +919,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->bailoutest = (short) g_bail_out_test;
 	save_info->iterations = g_max_iteration;
 	save_info->bflength = (short) bnlength;
-	save_info->bf_math = (short) bf_math;
+	save_info->bf_math = (short) g_bf_math;
 	save_info->old_demm_colors = (short) g_old_demm_colors;
 	save_info->logmap = g_log_palette_flag;
 	save_info->distance_test = g_distance_test;

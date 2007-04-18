@@ -22,7 +22,7 @@
 int     g_stop_pass = 0;             /* stop at this guessing pass early */
 int     g_pseudo_x = 0;              /* g_x_dots to use for video independence */
 int     g_pseudo_y = 0;              /* g_y_dots to use for video independence */
-int     g_bf_digits = 0;             /* digits to use (force) for bf_math */
+int     g_bf_digits = 0;             /* digits to use (force) for g_bf_math */
 int     g_show_dot = -1;             /* color to show crawling graphics cursor */
 int     g_size_dot;                /* size of dot crawling cursor */
 char    g_record_colors;           /* default PAR color-writing method */
@@ -484,7 +484,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_xx_max = 1.5;						/* initial corner values  */
 	g_yy_3rd = g_yy_min = -1.5;
 	g_yy_max = 1.5;						/* initial corner values  */
-	bf_math = 0;
+	g_bf_math = 0;
 	g_potential_16bit = g_potential_flag = FALSE;
 	g_log_palette_flag = LOGPALETTE_NONE;                         /* no logarithmic palette */
 	set_trig_array(0, "sin");             /* trigfn defaults */
@@ -1614,7 +1614,7 @@ static int params_arg(const cmd_context *context)
 	{
 		g_parameters[k] = (k < context->totparms) ? context->floatval[k] : 0.0;
 	}
-	if (bf_math)
+	if (g_bf_math)
 	{
 		for (k = 0; k < MAX_PARAMETERS; k++)
 		{
@@ -1807,8 +1807,8 @@ static int corners_arg(const cmd_context *context)
 	{
 		int old_bf_math;
 
-		old_bf_math = bf_math;
-		if (!bf_math || dec > g_decimals)
+		old_bf_math = g_bf_math;
+		if (!g_bf_math || dec > g_decimals)
 		{
 			init_bf_dec(dec);
 		}
@@ -2047,8 +2047,8 @@ static int center_mag_arg(const cmd_context *context)
 		int old_bf_math;
 		int saved;
 		s_init_corners = 1;
-		old_bf_math = bf_math;
-		if (!bf_math || dec > g_decimals)
+		old_bf_math = g_bf_math;
+		if (!g_bf_math || dec > g_decimals)
 		{
 			init_bf_dec(dec);
 		}

@@ -130,13 +130,13 @@ static void init_bf_2(void)
 	i = find_alternate_math(g_fractal_type, BIGNUM);
 	if (i > -1)
 	{
-		bf_math = g_alternate_math[i].math;
+		g_bf_math = g_alternate_math[i].math;
 	}
 	else
 	{
 		i = find_alternate_math(g_fractal_type, BIGFLT);
 		/* 1 => maybe called from cmdfiles.c and g_fractal_type not set */
-		bf_math = (i > -1) ? g_alternate_math[i].math : 1;
+		g_bf_math = (i > -1) ? g_alternate_math[i].math : 1;
 	}
 	g_float_flag = TRUE;
 
@@ -163,7 +163,7 @@ static void init_bf_2(void)
 	bntmpcpy1  = bnroot + ptr; ptr += (rlength*2);
 	bntmpcpy2  = bnroot + ptr; ptr += (rlength*2);
 
-	if (bf_math == BIGNUM)
+	if (g_bf_math == BIGNUM)
 	{
 		bnxmin     = bnroot + ptr; ptr += bnlength;
 		bnxmax     = bnroot + ptr; ptr += bnlength;
@@ -188,7 +188,7 @@ static void init_bf_2(void)
 		bntmpsqry  = bnroot + ptr; ptr += rlength;
 		bntmp      = bnroot + ptr; ptr += rlength;
 	}
-	if (bf_math == BIGFLT)
+	if (g_bf_math == BIGFLT)
 	{
 		bfxdel     = bnroot + ptr; ptr += bflength + 2;
 		bfydel     = bnroot + ptr; ptr += bflength + 2;
@@ -337,7 +337,7 @@ static int restore_bf_vars(void)
 /* free corners and parameters save memory */
 void free_bf_vars()
 {
-	g_bf_save_len = bf_math = 0;
+	g_bf_save_len = g_bf_math = 0;
 	bnstep = bnlength = intlength = rlength = padding = shiftfactor = g_decimals = 0;
 	bflength = rbflength = bfdecimals = 0;
 }
@@ -349,9 +349,9 @@ void free_bf_vars()
 bn_t alloc_stack(size_t size)
 {
 	long stack_addr;
-	if (bf_math == 0)
+	if (g_bf_math == 0)
 	{
-		stop_message(0, "alloc_stack called with bf_math == 0");
+		stop_message(0, "alloc_stack called with g_bf_math == 0");
 		return 0;
 	}
 	stack_addr = (long)((stack_ptr-bnroot) + size); /* +ENDVID, part of bnroot */

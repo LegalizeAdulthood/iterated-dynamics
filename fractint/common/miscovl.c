@@ -596,7 +596,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 	bf_t bfXctr = NULL, bfYctr = NULL;
 	int saved;
 	saved = save_stack();
-	if (bf_math)
+	if (g_bf_math)
 	{
 		bfXctr = alloc_stack(bflength + 2);
 		bfYctr = alloc_stack(bflength + 2);
@@ -693,7 +693,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 
 		if (g_use_center_mag)
 		{
-			if (bf_math)
+			if (g_bf_math)
 			{
 				int digits;
 				convert_center_mag_bf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -702,7 +702,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 				put_bf(0, bfXctr, digits);
 				put_bf(1, bfYctr, digits);
 			}
-			else /* !bf_math */
+			else /* !g_bf_math */
 			{
 				convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 				put_parm(" center-mag=");
@@ -758,7 +758,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int
 		else /* not usemag */
 		{
 			put_parm(" corners=");
-			if (bf_math)
+			if (g_bf_math)
 			{
 				int digits;
 				digits = get_precision_bf(MAXREZ);
@@ -2670,7 +2670,7 @@ void flip_image(int key)
 			|| g_calculation_status == CALCSTAT_IN_PROGRESS
 			|| g_calculation_status == CALCSTAT_RESUMABLE)
 		return;
-	if (bf_math)
+	if (g_bf_math)
 	{
 		clear_zoom_box(); /* clear, don't copy, the zoombox */
 	}
@@ -2698,7 +2698,7 @@ void flip_image(int key)
 		g_sy_min = g_yy_3rd;
 		g_sx_3rd = g_xx_max;
 		g_sy_3rd = g_yy_min;
-		if (bf_math)
+		if (g_bf_math)
 		{
 			add_bf(bfsxmin, bfxmax, bfxmin); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
 			sub_a_bf(bfsxmin, bfx3rd);
@@ -2730,7 +2730,7 @@ void flip_image(int key)
 		g_sy_min = g_yy_max + g_yy_min - g_yy_3rd;
 		g_sx_3rd = g_xx_min;
 		g_sy_3rd = g_yy_max;
-		if (bf_math)
+		if (g_bf_math)
 		{
 			copy_bf(bfsxmin, bfx3rd);        /* g_sx_min = g_xx_3rd; */
 			copy_bf(bfsymax, bfy3rd);        /* g_sy_max = g_yy_3rd; */
@@ -2762,7 +2762,7 @@ void flip_image(int key)
 		g_sy_min = g_yy_max;
 		g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd;
 		g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd;
-		if (bf_math)
+		if (g_bf_math)
 		{
 			copy_bf(bfsxmin, bfxmax);        /* g_sx_min = g_xx_max; */
 			copy_bf(bfsymax, bfymin);        /* g_sy_max = g_yy_min; */
