@@ -610,27 +610,27 @@
 				Name="fractal specific"
 				>
 				<File
-					RelativePath=".\common\ant.c"
+					RelativePath=".\common\ant.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\jb.c"
+					RelativePath=".\common\jb.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\lorenz.c"
+					RelativePath=".\common\lorenz.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\lsys.c"
+					RelativePath=".\common\lsys.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\lsysf.c"
+					RelativePath=".\common\lsysf.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\miscfrac.c"
+					RelativePath=".\common\miscfrac.cpp"
 					>
 				</File>
 			</Filter>

@@ -5,11 +5,15 @@
 */
 #include <assert.h>
 #include <string.h>
+
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+}
 
 /* orbitcalc is declared with no arguments so jump through hoops here */
 #define LORBIT(x, y, z) \
@@ -69,13 +73,21 @@ struct threed_vt_inf_fp /* data used by 3d view transform subroutine */
 };
 
 /* global data provided by this module */
-long g_max_count;
-enum Major g_major_method;
-enum Minor g_minor_method;
-int g_keep_screen_coords = 0;
-int g_set_orbit_corners = 0;
-long g_orbit_interval;
-double g_orbit_x_min, g_orbit_y_min, g_orbit_x_max, g_orbit_y_max, g_orbit_x_3rd, g_orbit_y_3rd;
+extern "C"
+{
+	long g_max_count;
+	enum Major g_major_method;
+	enum Minor g_minor_method;
+	int g_keep_screen_coords = 0;
+	int g_set_orbit_corners = 0;
+	long g_orbit_interval;
+	double g_orbit_x_min;
+	double g_orbit_y_min;
+	double g_orbit_x_max;
+	double g_orbit_y_max;
+	double g_orbit_x_3rd;
+	double g_orbit_y_3rd;
+}
 
 /* local data in this module */
 static struct affine s_o_cvt;
@@ -203,8 +215,7 @@ The same technique can be applied to the second set of equations:
 
 		-  Sylvie
 */
-
-int setup_convert_to_screen(struct affine *scrn_cnvt)
+extern "C" int setup_convert_to_screen(struct affine *scrn_cnvt)
 {
 	double det, xd, yd;
 
@@ -254,7 +265,7 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 /*   setup functions - put in g_fractal_specific[g_fractal_type].per_image */
 /******************************************************************/
 
-int orbit_3d_setup(void)
+extern "C" int orbit_3d_setup(void)
 {
 	g_max_count = 0L;
 	s_connect = 1;
@@ -394,7 +405,7 @@ lrwalk:
 #define COSB   s_dx
 #define SINABC s_dy
 
-int orbit_3d_setup_fp()
+extern "C" int orbit_3d_setup_fp()
 {
 	g_max_count = 0L;
 	s_connect = 1;
@@ -587,7 +598,7 @@ rwalk:
 /* Integrated with Lorenz by Tim Wegner 7/20/92 */
 /* Add Modified Inverse Iteration Method, 11/92 by Michael Snyder  */
 
-int Minverse_julia_orbit()
+extern "C" int Minverse_julia_orbit()
 {
 	static int   random_dir = 0, random_len = 0;
 	int    newrow, newcol;
@@ -767,7 +778,7 @@ int Minverse_julia_orbit()
 	return 1;
 }
 
-int Linverse_julia_orbit()
+extern "C" int Linverse_julia_orbit()
 {
 	static int   random_dir = 0, random_len = 0;
 	int    newrow, newcol;
@@ -923,7 +934,7 @@ int Linverse_julia_orbit()
 	return 1;
 }
 
-int lorenz_3d_orbit(long *l_x, long *l_y, long *l_z)
+extern "C" int lorenz_3d_orbit(long *l_x, long *l_y, long *l_z)
 {
 	s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
 	s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
@@ -937,7 +948,7 @@ int lorenz_3d_orbit(long *l_x, long *l_y, long *l_z)
 	return 0;
 }
 
-int lorenz_3d_orbit_fp(double *x, double *y, double *z)
+extern "C" int lorenz_3d_orbit_fp(double *x, double *y, double *z)
 {
 	s_xdt = (*x)*s_dt;
 	s_ydt = (*y)*s_dt;
@@ -954,7 +965,7 @@ int lorenz_3d_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int lorenz_3d1_orbit_fp(double *x, double *y, double *z)
+extern "C" int lorenz_3d1_orbit_fp(double *x, double *y, double *z)
 {
 	double norm;
 
@@ -975,7 +986,7 @@ int lorenz_3d1_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
+extern "C" int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
 {
 	double norm;
 
@@ -999,7 +1010,7 @@ int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
+extern "C" int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
 {
 	s_xdt = (*x)*s_dt;
 	s_ydt = (*y)*s_dt;
@@ -1020,7 +1031,7 @@ int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int henon_orbit_fp(double *x, double *y, double *z)
+extern "C" int henon_orbit_fp(double *x, double *y, double *z)
 {
 	double newx, newy;
 	*z = *x; /* for warning only */
@@ -1031,7 +1042,7 @@ int henon_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int henon_orbit(long *l_x, long *l_y, long *l_z)
+extern "C" int henon_orbit(long *l_x, long *l_y, long *l_z)
 {
 	long newx, newy;
 	*l_z = *l_x; /* for warning only */
@@ -1044,7 +1055,7 @@ int henon_orbit(long *l_x, long *l_y, long *l_z)
 	return 0;
 }
 
-int rossler_orbit_fp(double *x, double *y, double *z)
+extern "C" int rossler_orbit_fp(double *x, double *y, double *z)
 {
 	s_xdt = (*x)*s_dt;
 	s_ydt = (*y)*s_dt;
@@ -1059,7 +1070,7 @@ int rossler_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int pickover_orbit_fp(double *x, double *y, double *z)
+extern "C" int pickover_orbit_fp(double *x, double *y, double *z)
 {
 	double newx, newy, newz;
 	newx = sin(s_a*(*y)) - (*z)*cos(s_b*(*x));
@@ -1072,7 +1083,7 @@ int pickover_orbit_fp(double *x, double *y, double *z)
 }
 
 /* page 149 "Science of Fractal Images" */
-int gingerbread_orbit_fp(double *x, double *y, double *z)
+extern "C" int gingerbread_orbit_fp(double *x, double *y, double *z)
 {
 	double newx;
 	*z = *x; /* for warning only */
@@ -1082,7 +1093,7 @@ int gingerbread_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int rossler_orbit(long *l_x, long *l_y, long *l_z)
+extern "C" int rossler_orbit(long *l_x, long *l_y, long *l_z)
 {
 	s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
 	s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
@@ -1105,7 +1116,7 @@ int rossler_orbit(long *l_x, long *l_y, long *l_z)
 /* a      = Angle */
 
 
-int kam_torus_orbit_fp(double *r, double *s, double *z)
+extern "C" int kam_torus_orbit_fp(double *r, double *s, double *z)
 {
 	double srr;
 	if (s_t++ >= s_l_d)
@@ -1125,7 +1136,7 @@ int kam_torus_orbit_fp(double *r, double *s, double *z)
 	return 0;
 }
 
-int kam_torus_orbit(long *r, long *s, long *z)
+extern "C" int kam_torus_orbit(long *r, long *s, long *z)
 {
 	long srr;
 	if (s_t++ >= s_l_d)
@@ -1145,7 +1156,7 @@ int kam_torus_orbit(long *r, long *s, long *z)
 	return 0;
 }
 
-int hopalong_2d_orbit_fp(double *x, double *y, double *z)
+extern "C" int hopalong_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
@@ -1182,19 +1193,19 @@ static int orbit_aux(double (*fn)(double x), double *x, double *y, double *z)
 }
 
 /* from Michael Peters and HOP */
-int chip_2d_orbit_fp(double *x, double *y, double *z)
+extern "C" int chip_2d_orbit_fp(double *x, double *y, double *z)
 {
 	return orbit_aux(cos_sqr, x, y, z);
 }
 
 /* from Michael Peters and HOP */
-int quadrup_two_2d_orbit_fp(double *x, double *y, double *z)
+extern "C" int quadrup_two_2d_orbit_fp(double *x, double *y, double *z)
 {
 	return orbit_aux(sin, x, y, z);
 }
 
 /* from Michael Peters and HOP */
-int three_ply_2d_orbit_fp(double *x, double *y, double *z)
+extern "C" int three_ply_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
@@ -1204,7 +1215,7 @@ int three_ply_2d_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int martin_2d_orbit_fp(double *x, double *y, double *z)
+extern "C" int martin_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x;  /* for warning only */
@@ -1214,7 +1225,7 @@ int martin_2d_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int mandel_cloud_orbit_fp(double *x, double *y, double *z)
+extern "C" int mandel_cloud_orbit_fp(double *x, double *y, double *z)
 {
 	double newx, newy, x2, y2;
 #ifndef XFRACT
@@ -1233,7 +1244,7 @@ int mandel_cloud_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-int dynamic_orbit_fp(double *x, double *y, double *z)
+extern "C" int dynamic_orbit_fp(double *x, double *y, double *z)
 {
 	_CMPLX cp, tmp;
 	double newx, newy;
@@ -1264,7 +1275,7 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 #define OMEGA   g_parameters[4]
 #define DEGREE  g_parameters[5]
 
-int icon_orbit_fp(double *x, double *y, double *z)
+extern "C" int icon_orbit_fp(double *x, double *y, double *z)
 {
 
 	double oldx, oldy, zzbar, zreal, zimag, za, zb, zn, p;
@@ -1305,7 +1316,7 @@ int icon_orbit_fp(double *x, double *y, double *z)
 #define PAR_C   g_parameters[2]
 #define PAR_D   g_parameters[3]
 
-int latoo_orbit_fp(double *x, double *y, double *z)
+extern "C" int latoo_orbit_fp(double *x, double *y, double *z)
 {
 
 	double xold, yold, tmp;
@@ -1347,7 +1358,7 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 /*   Main fractal engines - put in g_fractal_specific[g_fractal_type].calculate_type */
 /**********************************************************************/
 
-int inverse_julia_per_image()
+extern "C" int inverse_julia_per_image()
 {
 	int color = 0;
 
@@ -1370,7 +1381,7 @@ int inverse_julia_per_image()
 	return 0;
 }
 
-int orbit_2d_fp()
+extern "C" int orbit_2d_fp()
 {
 	FILE *fp;
 	double *soundvar;
@@ -1503,7 +1514,7 @@ int orbit_2d_fp()
 	return ret;
 }
 
-int orbit_2d()
+extern "C" int orbit_2d()
 {
 	FILE *fp;
 	long *soundvar;
@@ -1874,7 +1885,7 @@ static int orbit_3d_calc_fp(void)
 	return ret;
 }
 
-int dynamic_2d_setup_fp()
+extern "C" int dynamic_2d_setup_fp()
 {
 	s_connect = 0;
 	s_euler = 0;
@@ -1917,7 +1928,7 @@ int dynamic_2d_setup_fp()
  * of parameter1 pixels.  maxit differential equation steps are taken, with
  * a step size of parameter2.
  */
-int dynamic_2d_fp()
+extern "C" int dynamic_2d_fp()
 {
 	FILE *fp;
 	double *soundvar = NULL;
@@ -2076,7 +2087,7 @@ int dynamic_2d_fp()
 	return ret;
 }
 
-int setup_orbits_to_screen(struct affine *scrn_cnvt)
+extern "C" int setup_orbits_to_screen(struct affine *scrn_cnvt)
 {
 	double det, xd, yd;
 
@@ -2102,7 +2113,7 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
 	return 0;
 }
 
-int plotorbits2dsetup(void)
+extern "C" int plotorbits2dsetup(void)
 {
 
 #ifndef XFRACT
@@ -2152,7 +2163,7 @@ int plotorbits2dsetup(void)
 	return 1;
 }
 
-int plotorbits2dfloat(void)
+extern "C" int plotorbits2dfloat(void)
 {
 	double *soundvar = NULL;
 	double x, y, z;
@@ -2254,7 +2265,7 @@ int plotorbits2dfloat(void)
 
 /* this function's only purpose is to manage funnyglasses related */
 /* stuff so the code is not duplicated for ifs_3d() and lorenz3d() */
-int funny_glasses_call(int (*calc)(void))
+extern "C" int funny_glasses_call(int (*calc)(void))
 {
 	int status;
 	status = 0;
@@ -2449,7 +2460,7 @@ static int ifs_3d_float(void)
 	return ret;
 }
 
-int ifs()                       /* front-end for ifs_2d and ifs_3d */
+extern "C" int ifs()                       /* front-end for ifs_2d and ifs_3d */
 {
 	if (g_ifs_definition == NULL && ifs_load() < 0)
 	{
@@ -2728,14 +2739,14 @@ static void setup_matrix(MATRIX doublemat)
 
 }
 
-int orbit_3d_fp()
+extern "C" int orbit_3d_fp()
 {
 	g_display_3d = -1;
 	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(orbit_3d_calc_fp);
 }
 
-int orbit_3d()
+extern "C" int orbit_3d()
 {
 	g_display_3d = -1;
 	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
