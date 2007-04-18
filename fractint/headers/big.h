@@ -51,11 +51,11 @@
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
 
-/* values that bf_math can hold, */
-/* 0 = bf_math is not being used */
-/* 1 = bf_math is being used     */
-#define BIGNUM 1  /* bf_math is being used with bn_t numbers */
-#define BIGFLT 2  /* bf_math is being used with bf_t numbers */
+/* values that g_bf_math can hold, */
+/* 0 = g_bf_math is not being used */
+/* 1 = g_bf_math is being used     */
+#define BIGNUM 1  /* g_bf_math is being used with bn_t numbers */
+#define BIGFLT 2  /* g_bf_math is being used with bf_t numbers */
 
 
 /* use this for dynamic allocation */
@@ -136,7 +136,7 @@ typedef struct BNComplex  _BNCMPLX;
 extern int g_fpu;
 extern int g_cpu;
 
-extern int bf_math;
+extern int g_bf_math;
 
 extern int bnstep, intlength;
 extern int bnlength, rlength,   padding,   g_decimals,   shiftfactor;
