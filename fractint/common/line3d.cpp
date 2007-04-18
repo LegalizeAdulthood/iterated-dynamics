@@ -12,9 +12,12 @@
 #include <limits.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+}
 
 #define FILEERROR_NONE				0
 #define FILEERROR_OPEN				1
@@ -54,28 +57,31 @@ int _fastcall targa_color(int, int, int);
 int start_disk1(char *, FILE *, int);
 
 /* global variables defined here */
-void (_fastcall *g_standard_plot)(int x, int y, int color) = NULL;
-int g_ambient = 0;
-int g_randomize = 0;
-int g_haze = 0;
-char g_light_name[FILE_MAX_PATH] = "fract001";
-int g_targa_overlay = 0;
-BYTE g_back_color[3] = { 0, 0, 0 };
-char g_ray_name[FILE_MAX_PATH] = "fract001";
-int g_preview = 0;
-int g_show_box = 0;
-int g_preview_factor = 20;
-int g_x_adjust = 0;
-int g_y_adjust = 0;
-int g_xx_adjust = 0;
-int g_yy_adjust = 0;
-int g_x_shift = 0;
-int g_y_shift;
-int g_bad_value = -10000; /* set bad values to this */
-int g_raytrace_output = RAYTRACE_NONE;        /* Flag to generate Ray trace compatible files in 3d */
-int g_raytrace_brief = 0;      /* 1 = short ray trace files */
-VECTOR g_view;                /* position of observer for perspective */
-VECTOR g_cross;
+extern "C" 
+{
+	void (_fastcall *g_standard_plot)(int x, int y, int color) = NULL;
+	int g_ambient = 0;
+	int g_randomize = 0;
+	int g_haze = 0;
+	char g_light_name[FILE_MAX_PATH] = "fract001";
+	int g_targa_overlay = 0;
+	BYTE g_back_color[3] = { 0, 0, 0 };
+	char g_ray_name[FILE_MAX_PATH] = "fract001";
+	int g_preview = 0;
+	int g_show_box = 0;
+	int g_preview_factor = 20;
+	int g_x_adjust = 0;
+	int g_y_adjust = 0;
+	int g_xx_adjust = 0;
+	int g_yy_adjust = 0;
+	int g_x_shift = 0;
+	int g_y_shift;
+	int g_bad_value = -10000; /* set bad values to this */
+	int g_raytrace_output = RAYTRACE_NONE;        /* Flag to generate Ray trace compatible files in 3d */
+	int g_raytrace_brief = 0;      /* 1 = short ray trace files */
+	VECTOR g_view;                /* position of observer for perspective */
+	VECTOR g_cross;
+}
 
 static int targa_validate(char *);
 static int first_time(int, VECTOR);
@@ -147,7 +153,6 @@ static double s_r_scale_r;					/* precalculation factor */
 static int s_persp;						/* flag for indicating perspective transformations */
 static struct point s_p1;
 static struct point s_p2;
-static struct point s_p1;
 static struct point s_p3;
 static struct f_point s_f_bad;			/* out of range value */
 static struct point s_bad;				/* out of range value */
@@ -225,7 +230,8 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		/* NOTE: g_fudge was pre-calculated above in r and s_radius */
 		/* (almost) guarantee negative */
 		lv[2] = (long) (-s_radius - (*r)*cos_theta*s_sin_phi);     /* z */
-		if ((lv[2] > s_z_cutoff) && !FILLTYPE < FILLTYPE_POINTS)
+		// TODO: what should this really be?  !FILLTYPE < FILLTYPE_POINTS
+		if ((lv[2] > s_z_cutoff) && FILLTYPE < FILLTYPE_POINTS)
 		{
 			*cur = s_bad;
 			*f_cur = s_f_bad;
@@ -2975,7 +2981,7 @@ static int line_3d_mem(void)
 	return FALSE;
 }
 
-void line_3d_free(void)
+extern "C" void line_3d_free(void)
 {
 	if (s_last_row)
 	{
