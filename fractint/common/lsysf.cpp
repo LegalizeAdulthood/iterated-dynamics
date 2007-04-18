@@ -4,10 +4,13 @@
 #endif
 
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "lsys.h"
 #include "drivers.h"
+}
 
 #ifdef max
 #undef max
@@ -360,7 +363,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 	return command;
 }
 
-int _fastcall
+extern "C" int _fastcall
 lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
 {
 	float horiz, vert;
@@ -403,7 +406,7 @@ lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, stru
 	return 1;
 }
 
-struct lsys_cmd *_fastcall
+extern "C" struct lsys_cmd *_fastcall
 draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
 {
 	struct lsys_cmd **rulind;
@@ -493,26 +496,26 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 	return command;
 }
 
-struct lsys_cmd *
+extern "C" struct lsys_cmd *
 lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 {
 	struct lsys_cmd *ret;
 	struct lsys_cmd *doub;
 	int max = 10;
 	int n = 0;
-	void (*f)();
+	void (*f)(lsys_turtle_state_fp *);
 	long num;
 	int ptype;
 	double PI180 = PI / 180.0;
 
-	void (*plus)() = (is_pow2(ts->max_angle)) ? lsysf_plus_pow2 : lsysf_plus;
-	void (*minus)() = (is_pow2(ts->max_angle)) ? lsysf_minus_pow2 : lsysf_minus;
-	void (*pipe)() = (is_pow2(ts->max_angle)) ? lsysf_pipe_pow2 : lsysf_pipe;
+	void (*plus)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_plus_pow2 : lsysf_plus;
+	void (*minus)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_minus_pow2 : lsysf_minus;
+	void (*pipe)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_pipe_pow2 : lsysf_pipe;
 
-	void (*slash)() =  lsysf_slash;
-	void (*bslash)() = lsysf_backslash;
-	void (*at)() =     lsysf_at;
-	void (*dogf)() =   lsysf_size_gf;
+	void (*slash)(lsys_turtle_state_fp *) =  lsysf_slash;
+	void (*bslash)(lsys_turtle_state_fp *) = lsysf_backslash;
+	void (*at)(lsys_turtle_state_fp *) =     lsysf_at;
+	void (*dogf)(lsys_turtle_state_fp *) =   lsysf_size_gf;
 
 	ret = (struct lsys_cmd *) malloc((long) max*sizeof(struct lsys_cmd));
 	if (ret == NULL)
@@ -588,26 +591,26 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	return doub;
 }
 
-struct lsys_cmd *
+extern "C" struct lsys_cmd *
 lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 {
 	struct lsys_cmd *ret;
 	struct lsys_cmd *doub;
 	int max = 10;
 	int n = 0;
-	void (*f)();
+	void (*f)(lsys_turtle_state_fp *);
 	LDBL num;
 	int ptype;
 	LDBL PI180 = PI / 180.0;
 
-	void (*plus)() = (is_pow2(ts->max_angle)) ? lsysf_plus_pow2 : lsysf_plus;
-	void (*minus)() = (is_pow2(ts->max_angle)) ? lsysf_minus_pow2 : lsysf_minus;
-	void (*pipe)() = (is_pow2(ts->max_angle)) ? lsysf_pipe_pow2 : lsysf_pipe;
+	void (*plus)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_plus_pow2 : lsysf_plus;
+	void (*minus)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_minus_pow2 : lsysf_minus;
+	void (*pipe)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_pipe_pow2 : lsysf_pipe;
 
-	void (*slash)() =  lsysf_slash;
-	void (*bslash)() = lsysf_backslash;
-	void (*at)() =     lsysf_at;
-	void (*drawg)() =  lsysf_draw_g;
+	void (*slash)(lsys_turtle_state_fp *) =  lsysf_slash;
+	void (*bslash)(lsys_turtle_state_fp *) = lsysf_backslash;
+	void (*at)(lsys_turtle_state_fp *) =     lsysf_at;
+	void (*drawg)(lsys_turtle_state_fp *) =  lsysf_draw_g;
 
 	ret = (struct lsys_cmd *) malloc((long) max*sizeof(struct lsys_cmd));
 	if (ret == NULL)
@@ -686,7 +689,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	return doub;
 }
 
-void _fastcall lsysf_sin_cos(void)
+extern "C" void _fastcall lsysf_sin_cos(void)
 {
 	LDBL locaspect;
 	LDBL TWOPI = 2.0*PI;

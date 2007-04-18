@@ -17,12 +17,16 @@
  * 12 Apr 95 TW    Added maxants range check.
  */
 #include <string.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+/* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
 #define RANDOM(n)       ((int)((long)((long)rand()*(long)(n)) >> 15)) /* Generate Random
                                                                          * Number 0 <= r < n */
@@ -411,7 +415,7 @@ exit_ant:
 	return;
 }
 
-void free_ant_storage(void)
+extern "C" void free_ant_storage(void)
 {
 	if (s_incx[0])
 	{
@@ -420,7 +424,7 @@ void free_ant_storage(void)
 	}
 }
 
-int ant(void)
+extern "C" int ant(void)
 {
 	int maxants, type, i;
 	int rule_len;

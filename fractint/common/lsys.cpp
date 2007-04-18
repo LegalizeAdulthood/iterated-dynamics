@@ -4,10 +4,13 @@
 #endif
 
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "lsys.h"
 #include "drivers.h"
+}
 
 struct lsys_cmd
 {
@@ -19,7 +22,10 @@ struct lsys_cmd
 #define sins ((long *) g_box_y)
 #define coss ((long *) g_box_y + 50) /* 50 after the start of sins */
 
-int g_max_angle;
+extern "C"
+{
+	int g_max_angle;
+}
 
 static char *ruleptrs[MAXRULES];
 static struct lsys_cmd *rules2[MAXRULES];
@@ -51,12 +57,12 @@ static void lsysi_draw_c(struct lsys_turtle_state *cmd);
 static void lsysi_draw_gt(struct lsys_turtle_state *cmd);
 static void lsysi_draw_lt(struct lsys_turtle_state *cmd);
 
-int _fastcall is_pow2(int n)
+extern "C" int _fastcall is_pow2(int n)
 {
 	return n == (n & -n);
 }
 
-LDBL _fastcall get_number(char **str)
+extern "C" LDBL _fastcall get_number(char **str)
 {
 	char numstr[30];
 	LDBL ret;
@@ -256,7 +262,7 @@ static int _fastcall read_l_system_file(char *str)
 	return 0;
 }
 
-int l_system(void)
+extern "C" int l_system(void)
 {
 	int order;
 	char **rulesc;
@@ -368,7 +374,7 @@ int l_system(void)
 	return 0;
 }
 
-int l_load(void)
+extern "C" int l_load(void)
 {
 	if (read_l_system_file(g_l_system_name))  /* error occurred */
 	{
@@ -925,17 +931,17 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 	struct lsys_cmd *doub;
 	int maxval = 10;
 	int n = 0;
-	void (*f)();
+	void (*f)(lsys_turtle_state *);
 	long num;
 
-	void (*plus)() = (is_pow2(ts->max_angle)) ? lsysi_plus_pow2 : lsysi_plus;
-	void (*minus)() = (is_pow2(ts->max_angle)) ? lsysi_minus_pow2 : lsysi_minus;
-	void (*pipe)() = (is_pow2(ts->max_angle)) ? lsysi_pipe_pow2 : lsysi_pipe;
+	void (*plus)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_plus_pow2 : lsysi_plus;
+	void (*minus)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_minus_pow2 : lsysi_minus;
+	void (*pipe)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_pipe_pow2 : lsysi_pipe;
 
-	void (*slash)() =  lsysi_slash;
-	void (*bslash)() = lsysi_backslash;
-	void (*at)() =     lsysi_at;
-	void (*dogf)() =   lsysi_size_gf;
+	void (*slash)(lsys_turtle_state *) =  lsysi_slash;
+	void (*bslash)(lsys_turtle_state *) = lsysi_backslash;
+	void (*at)(lsys_turtle_state *) =     lsysi_at;
+	void (*dogf)(lsys_turtle_state *) =   lsysi_size_gf;
 
 	ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
 	if (ret == NULL)
@@ -1013,17 +1019,17 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 	struct lsys_cmd *doub;
 	int maxval = 10;
 	int n = 0;
-	void (*f)();
+	void (*f)(lsys_turtle_state *);
 	long num;
 
-	void (*plus)() = (is_pow2(ts->max_angle)) ? lsysi_plus_pow2 : lsysi_plus;
-	void (*minus)() = (is_pow2(ts->max_angle)) ? lsysi_minus_pow2 : lsysi_minus;
-	void (*pipe)() = (is_pow2(ts->max_angle)) ? lsysi_pipe_pow2 : lsysi_pipe;
+	void (*plus)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_plus_pow2 : lsysi_plus;
+	void (*minus)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_minus_pow2 : lsysi_minus;
+	void (*pipe)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_pipe_pow2 : lsysi_pipe;
 
-	void (*slash)() =  lsysi_slash;
-	void (*bslash)() = lsysi_backslash;
-	void (*at)() =     lsysi_at;
-	void (*drawg)() =  lsysi_draw_g;
+	void (*slash)(lsys_turtle_state *) =  lsysi_slash;
+	void (*bslash)(lsys_turtle_state *) = lsysi_backslash;
+	void (*at)(lsys_turtle_state *) =     lsysi_at;
+	void (*drawg)(lsys_turtle_state *) =  lsysi_draw_g;
 
 	ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
 	if (ret == NULL)
