@@ -824,7 +824,7 @@ int tab_display_2(char *msg)
 	write_row(++row, "   %ld used for bignum globals", startstack);
 	write_row(++row, "   %ld stack used == %ld variables of length %d",
 			g_bn_max_stack-startstack, (long)((g_bn_max_stack-startstack)/(rbflength + 2)), rbflength + 2);
-	if (bf_math)
+	if (g_bf_math)
 	{
 		write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
 	}
@@ -920,7 +920,7 @@ int tab_display()       /* display the status of the current image */
 		g_calculation_time += (clock_ticks() - g_timer_start) / (CLK_TCK/100);
 	}
 	driver_stack_screen();
-	if (bf_math)
+	if (g_bf_math)
 	{
 		saved = save_stack();
 		bfXctr = alloc_stack(bflength + 2);
@@ -1012,7 +1012,7 @@ top:
 		driver_put_string(s_row + 1, 45, C_GENERAL_HI, "You are in color-cycling mode");
 	}
 	++s_row;
-	/* if (bf_math == 0) */
+	/* if (g_bf_math == 0) */
 	++s_row;
 
 	i = j = 0;
@@ -1028,7 +1028,7 @@ top:
 		j = (g_user_float_flag) ? 1 : 2;
 	}
 
-	if (bf_math == 0)
+	if (g_bf_math == 0)
 	{
 		if (j)
 		{
@@ -1163,13 +1163,13 @@ top:
 	}
 
 	++s_row;
-	if (bf_math == 0)
+	if (g_bf_math == 0)
 	{
 		++s_row;
 	}
 	_snprintf(msg, NUM_OF(msg), "driver: %s, %s", g_driver->name, g_driver->description);
 	driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
-	if (g_video_entry.x_dots && bf_math == 0)
+	if (g_video_entry.x_dots && g_bf_math == 0)
 	{
 		sprintf(msg, "Video: %dx%dx%d %s %s",
 				g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,
@@ -1179,7 +1179,7 @@ top:
 	if (!(g_current_fractal_specific->flags&NOZOOM))
 	{
 		adjust_corner(); /* make bottom left exact if very near exact */
-		if (bf_math)
+		if (g_bf_math)
 		{
 			int truncate, truncaterow;
 			dec = min(320, g_decimals);
@@ -1360,7 +1360,7 @@ top:
 	}
 	driver_unstack_screen();
 	g_timer_start = clock_ticks(); /* tab display was "time out" */
-	if (bf_math)
+	if (g_bf_math)
 	{
 		restore_stack(saved);
 	}

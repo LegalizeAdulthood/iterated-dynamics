@@ -318,7 +318,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 		g_sy_max = g_yy_max;
 		g_sy_3rd = g_yy_3rd;
 
-		if (bf_math)
+		if (g_bf_math)
 		{
 			copy_bf(bfsxmin, bfxmin);
 			copy_bf(bfsxmax, bfxmax);
@@ -1024,7 +1024,7 @@ static void handle_orbits(void)
 			|| g_fractal_specific[g_fractal_type].calculate_type == froth_calc)
 		&& (g_fractal_specific[g_fractal_type].isinteger == FALSE
 			|| g_fractal_specific[g_fractal_type].tofloat != NOFRACTAL)
-		&& !bf_math /* for now no arbitrary precision support */
+		&& !g_bf_math /* for now no arbitrary precision support */
 		&& !(g_is_true_color && g_true_mode))
 	{
 		clear_zoom_box();
@@ -1037,7 +1037,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 	static double  jxxmin, jxxmax, jyymin, jyymax; /* "Julia mode" entry point */
 	static double  jxx3rd, jyy3rd;
 
-	if (bf_math || g_evolving)
+	if (g_bf_math || g_evolving)
 	{
 		return;
 	}
@@ -1072,7 +1072,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		/* switch to corresponding Julia set */
 		int key;
 		g_has_inverse = (g_fractal_type == MANDEL || g_fractal_type == MANDELFP)
-			&& (bf_math == 0) ? TRUE : FALSE;
+			&& (g_bf_math == 0) ? TRUE : FALSE;
 		clear_zoom_box();
 		Jiim(JIIM);
 		key = driver_get_key();    /* flush keyboard buffer */
@@ -1223,7 +1223,7 @@ static int handle_history(int *stacked, int kbdchar)
 		}
 		return RESTORESTART;
 	}
-	else if (g_max_history > 0 && bf_math == 0)
+	else if (g_max_history > 0 && g_bf_math == 0)
 	{
 		if (kbdchar == '\\' || kbdchar == 'h')
 		{
@@ -1789,7 +1789,7 @@ static void handle_evolver_exit(int *kbdmore)
 
 static int handle_evolver_history(int *stacked, int *kbdchar)
 {
-	if (g_max_history > 0 && bf_math == 0)
+	if (g_max_history > 0 && g_bf_math == 0)
 	{
 		if (*kbdchar == '\\' || *kbdchar == 'h')
 		{
@@ -2347,7 +2347,7 @@ void reset_zoom_corners()
 	g_yy_max = g_sy_max;
 	g_yy_min = g_sy_min;
 	g_yy_3rd = g_sy_3rd;
-	if (bf_math)
+	if (g_bf_math)
 	{
 		copy_bf(bfxmin, bfsxmin);
 		copy_bf(bfxmax, bfsxmax);

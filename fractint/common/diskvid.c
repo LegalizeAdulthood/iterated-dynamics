@@ -166,7 +166,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			--s_pixel_shift;
 		}
 	}
-	s_time_to_display = bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
+	s_time_to_display = g_bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
 
 	/* allocate cache: try for the max; leave FREEMEMk free if we can get
 		that much or more; if we can't get that much leave 1/2 of whatever
@@ -352,7 +352,7 @@ int disk_read(int col, int row)
 					(row >= g_screen_height) ? row-g_screen_height : row); /* adjust when potfile */
 			disk_video_status(0, buf);
 		}
-		s_time_to_display = bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
+		s_time_to_display = g_bf_math ? 10 : 1000;  /* time-to-g_driver-status counter */
 	}
 	if (row != s_cur_row) /* try to avoid ghastly code generated for multiply */
 	{

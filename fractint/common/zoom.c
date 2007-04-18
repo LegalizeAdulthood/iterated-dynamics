@@ -110,7 +110,7 @@ void zoom_box_draw(int drawit)
 		reset_zoom_corners();
 		return;
 	}
-	if (bf_math)
+	if (g_bf_math)
 	{
 		saved = save_stack();
 		bffxwidth = alloc_stack(rbflength + 2);
@@ -130,7 +130,7 @@ void zoom_box_draw(int drawit)
 	fyskew  = g_sy_min-g_sy_3rd;
 	fxadj   = g_z_width*g_z_skew;
 
-	if (bf_math)
+	if (g_bf_math)
 	{
 		/* do some calcs just once here to reduce fp work a bit */
 		sub_bf(bffxwidth, bfsxmax, bfsx3rd);
@@ -154,7 +154,7 @@ void zoom_box_draw(int drawit)
 	tl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 	g_xx_min  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
 	g_yy_max  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
-	if (bf_math)
+	if (g_bf_math)
 	{
 		calculate_corner(bfxmin, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
 		calculate_corner(bfymax, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
@@ -167,7 +167,7 @@ void zoom_box_draw(int drawit)
 	br.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 	g_xx_max  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
 	g_yy_min  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
-	if (bf_math)
+	if (g_bf_math)
 	{
 		calculate_corner(bfxmax, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
 		calculate_corner(bfymin, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
@@ -183,7 +183,7 @@ void zoom_box_draw(int drawit)
 	bl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
 	g_xx_3rd  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
 	g_yy_3rd  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
-	if (bf_math)
+	if (g_bf_math)
 	{
 		calculate_corner(bfx3rd, bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
 		calculate_corner(bfy3rd, bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
@@ -565,7 +565,7 @@ static void zoom_out_double(void) /* for ctl-enter, calc corners for zooming out
 
 void zoom_box_out(void) /* for ctl-enter, calc corners for zooming out */
 {
-	if (bf_math)
+	if (g_bf_math)
 	{
 		zoom_out_bf();
 	}

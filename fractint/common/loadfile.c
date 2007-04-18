@@ -512,14 +512,14 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (mp_info.got_data == 1)
 	{
-		bf_math = 1;
+		g_bf_math = 1;
 		init_bf_length(read_info.bflength);
 		memcpy((char *) bfxmin, mp_info.apm_data, mp_info.length);
 		free(mp_info.apm_data);
 	}
 	else
 	{
-		bf_math = 0;
+		g_bf_math = 0;
 	}
 
 	if (evolver_info.got_data == 1)
@@ -1361,8 +1361,8 @@ int look_get_window(void)
 #endif
 
 	push_help_mode(HELPBROWSE);
-	oldbf_math = bf_math;
-	bf_math = BIGFLT;
+	oldbf_math = g_bf_math;
+	g_bf_math = BIGFLT;
 	if (!oldbf_math)
 	{
 		int oldcalc_status = g_calculation_status; /* kludge because next sets it = 0 */
@@ -1731,7 +1731,7 @@ rescan:  /* entry for changed browse parms */
 	{
 		free_bf_vars();
 	}
-	bf_math = oldbf_math;
+	g_bf_math = oldbf_math;
 	g_float_flag = g_user_float_flag;
 	pop_help_mode();
 

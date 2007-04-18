@@ -2172,7 +2172,7 @@ gc_loop:
 		{
 			aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
 		}
-		if (bf_math != 0)
+		if (g_bf_math != 0)
 		{
 			fractal_float_to_bf();
 		}
