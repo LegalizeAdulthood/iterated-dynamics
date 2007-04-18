@@ -13,12 +13,6 @@ extern void cdecl calculate_mandelbrot_fp_p5_asm_start(void);
 extern long cdecl multiply(long, long, int);
 extern long cdecl divide(long, long, int);
 
-/*  dialog -- C file prototypes */
-
-extern void PrintFile(void);
-extern int Win_OpenFile(unsigned char *);
-extern Win_SaveFile(unsigned char *);
-
 /*  prompts1 -- C file prototypes */
 
 extern void set_default_parms(void);
