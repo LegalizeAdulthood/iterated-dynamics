@@ -18,11 +18,14 @@
 #include <time.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
 #if defined(_WIN32)
 #define ftimex ftime
@@ -36,8 +39,11 @@
 #define MAX_Y_BLOCK 7    /* must match calcfrac.c */
 #define MAX_X_BLOCK 202  /* must match calcfrac.c */
 
-int g_resume_length = 0;				/* length of resume info */
-int g_use_grid = FALSE;
+extern "C"
+{
+	int g_resume_length = 0;				/* length of resume info */
+	int g_use_grid = FALSE;
+}
 
 static int s_tab_or_help = 0;			/* kludge for sound and tab or help key press */
 static int s_resume_offset;				/* offset in resume info gets */
@@ -56,7 +62,7 @@ static void   _fastcall adjust_to_limits_bf(double);
 static void   _fastcall smallest_add_bf(bf_t);
 static int sound_open(void);
 
-void free_grid_pointers()
+extern "C" void free_grid_pointers()
 {
 	if (g_x0)
 	{
@@ -70,7 +76,7 @@ void free_grid_pointers()
 	}
 }
 
-void set_grid_pointers()
+extern "C" void set_grid_pointers()
 {
 	free_grid_pointers();
 	g_x0 = (double *) malloc(sizeof(double)*(2*g_x_dots + 2*g_y_dots));
@@ -84,7 +90,7 @@ void set_grid_pointers()
 	set_pixel_calc_functions();
 }
 
-void fill_dx_array(void)
+extern "C" void fill_dx_array(void)
 {
 	int i;
 	if (g_use_grid)
@@ -104,7 +110,8 @@ void fill_dx_array(void)
 		}
 	}
 }
-void fill_lx_array(void)
+
+extern "C" void fill_lx_array(void)
 {
 	int i;
 	/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
@@ -127,7 +134,7 @@ void fill_lx_array(void)
 	}
 }
 
-void fractal_float_to_bf(void)
+extern "C" void fractal_float_to_bf(void)
 {
 	int i;
 	init_bf_dec(get_precision_dbl(CURRENTREZ));
@@ -157,7 +164,7 @@ void fractal_float_to_bf(void)
 #endif
 
 /* initialize a *pile* of stuff for fractal calculation */
-void calculate_fractal_initialize(void)
+extern "C" void calculate_fractal_initialize(void)
 {
 	int tries = 0;
 	int i, gotprec;
@@ -192,13 +199,13 @@ void calculate_fractal_initialize(void)
 		int tofloat = g_current_fractal_specific->tofloat;
 		if (tofloat == NOFRACTAL)
 		{
-			bf_math = 0;
+			g_bf_math = 0;
 		}
 		else if (!(g_fractal_specific[tofloat].flags & BF_MATH))
 		{
-			bf_math = 0;
+			g_bf_math = 0;
 		}
-		else if (bf_math)
+		else if (g_bf_math)
 		{
 			g_fractal_type = tofloat;
 			g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
@@ -206,13 +213,13 @@ void calculate_fractal_initialize(void)
 	}
 
 	/* switch back to double when zooming out if using arbitrary precision */
-	if (bf_math)
+	if (g_bf_math)
 	{
 		gotprec = get_precision_bf(CURRENTREZ);
 		if ((gotprec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || g_math_tolerance[1] >= 1.0)
 		{
 			corners_bf_to_float();
-			bf_math = 0;
+			g_bf_math = 0;
 		}
 		else
 		{
@@ -251,7 +258,7 @@ void calculate_fractal_initialize(void)
 	{
 		free_bf_vars();
 	}
-	g_float_flag = bf_math ? TRUE : g_user_float_flag;
+	g_float_flag = g_bf_math ? TRUE : g_user_float_flag;
 	if (g_calculation_status == CALCSTAT_RESUMABLE)  /* on resume, ensure g_float_flag correct */
 	{
 		g_float_flag = g_current_fractal_specific->isinteger ? FALSE : TRUE;
@@ -411,7 +418,7 @@ init_restart:
 			g_bit_shift = 16;  /* to allow larger corners */
 		}
 	}
-/* We want this code if we're using the assembler calculate_mandelbrot */
+	/* We want this code if we're using the assembler calculate_mandelbrot */
 	if (g_fractal_type == MANDEL || g_fractal_type == JULIA)  /* adust shift bits if.. */
 	{
 		if (!g_potential_flag                            /* not using potential */
@@ -433,7 +440,7 @@ init_restart:
 	g_attractor_radius_fp = 1.0/32768L;
 
 	/* now setup arrays of real coordinates corresponding to each pixel */
-	if (bf_math)
+	if (g_bf_math)
 	{
 		adjust_to_limits_bf(1.0); /* make sure all corners in valid range */
 	}
@@ -464,10 +471,10 @@ init_restart:
 	}
 
 	/* skip this if plasma to avoid 3d problems */
-	/* skip if bf_math to avoid extraseg conflict with g_x0 arrays */
+	/* skip if g_bf_math to avoid extraseg conflict with g_x0 arrays */
 	/* skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance */
 	/* is set.  These types don't auto switch between float and integer math */
-	if (g_fractal_type != PLASMA && bf_math == 0
+	if (g_fractal_type != PLASMA && g_bf_math == 0
 		&& g_fractal_type != IFS && g_fractal_type != IFS3D && g_fractal_type != LSYSTEM)
 	{
 		if (g_integer_fractal && !g_invert && g_use_grid)
@@ -537,7 +544,7 @@ expand_retry:
 				dy0 = (double)(dy0 - (double)g_delta_y_fp);
 				dx1 = (double)(dx1 + (double)g_delta_x2_fp);
 			}
-			if (bf_math == 0) /* redundant test, leave for now */
+			if (g_bf_math == 0) /* redundant test, leave for now */
 			{
 				double testx_try, testx_exact;
 				double testy_try, testy_exact;
@@ -591,7 +598,7 @@ expand_retry:
 					goto expand_retry;
 				} /* end if ratio_bad etc. */
 				} /* end if tries < 2 */
-			} /* end if bf_math == 0 */
+			} /* end if g_bf_math == 0 */
 
 			/* if long double available, this is more accurate */
 			fill_dx_array();       /* fill up the x, y grids */
@@ -635,7 +642,7 @@ expand_retry:
 		g_plot_my1 = (double)(-g_delta_y2_fp*g_dx_size*g_dy_size/ftemp);
 		g_plot_my2 = (g_xx_max-g_xx_3rd)*g_dy_size / ftemp;
 	}
-	if (bf_math == 0)
+	if (g_bf_math == 0)
 	{
 		free_bf_vars();
 	}
@@ -669,7 +676,7 @@ static double _fastcall fudge_to_double(long l)
 	return d;
 }
 
-void adjust_corner_bf(void)
+extern "C" void adjust_corner_bf(void)
 {
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
@@ -689,10 +696,10 @@ void adjust_corner_bf(void)
 	convert_center_mag_bf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	ftemp = fabs(Xmagfactor);
 	if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1 + g_aspect_drift))
-		{
+	{
 		Xmagfactor = sign(Xmagfactor);
 		convert_corners_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
-		}
+	}
 
 	/* ftemp = fabs(g_xx_3rd-g_xx_min); */
 	abs_a_bf(sub_bf(bftemp, bfx3rd, bfxmin));
@@ -748,7 +755,7 @@ void adjust_corner_bf(void)
 	restore_stack(saved);
 }
 
-void adjust_corner(void)
+extern "C" void adjust_corner(void)
 {
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
@@ -1299,7 +1306,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 	*/
 
 #ifndef USE_VARARGS
-int put_resume(int len, ...)
+extern "C" int put_resume(int len, ...)
 #else
 int put_resume(va_alist)
 va_dcl
@@ -1333,12 +1340,12 @@ va_dcl
 	return 0;
 }
 
-int alloc_resume(int alloclen, int version)
+extern "C" int alloc_resume(int alloclen, int version)
 { /* WARNING! if alloclen > 4096B, problems may occur with GIF save/restore */
 	end_resume();
 
 	s_resume_info_length = alloclen*alloclen;
-	g_resume_info = malloc(s_resume_info_length);
+	g_resume_info = (char *) malloc(s_resume_info_length);
 	if (g_resume_info == NULL)
 	{
 		stop_message(0, "Warning - insufficient free memory to save status.\n"
@@ -1354,7 +1361,7 @@ int alloc_resume(int alloclen, int version)
 }
 
 #ifndef USE_VARARGS
-int get_resume(int len, ...)
+extern "C" int get_resume(int len, ...)
 #else
 int get_resume(va_alist)
 va_dcl
@@ -1390,7 +1397,7 @@ va_dcl
 	return 0;
 }
 
-int start_resume(void)
+extern "C" int start_resume(void)
 {
 	int version;
 	if (g_resume_info == NULL)
@@ -1402,7 +1409,7 @@ int start_resume(void)
 	return version;
 }
 
-void end_resume(void)
+extern "C" void end_resume(void)
 {
 	if (g_resume_info != NULL) /* free the prior area if there is one */
 	{
@@ -1537,7 +1544,7 @@ static void sleep_ms_new(long ms)
 	}
 }
 
-void sleep_ms(long ms)
+extern "C" void sleep_ms(long ms)
 {
 	if (DEBUGFLAG_OLD_TIMER == g_debug_flag)
 	{
@@ -1555,7 +1562,7 @@ void sleep_ms(long ms)
 */
 #define MAX_INDEX 2
 static uclock_t next_time[MAX_INDEX];
-void wait_until(int index, uclock_t wait_time)
+extern "C" void wait_until(int index, uclock_t wait_time)
 {
 	if (DEBUGFLAG_OLD_TIMER == g_debug_flag)
 	{
@@ -1575,7 +1582,7 @@ void wait_until(int index, uclock_t wait_time)
 	}
 }
 
-void reset_clock(void)
+extern "C" void reset_clock(void)
 {
 	int i;
 	restart_uclock();
@@ -1613,7 +1620,7 @@ static int sound_open(void)
 	This routine plays a tone in the speaker and optionally writes a file
 	if the g_orbit_save variable is turned on
 */
-void sound_tone(int tone)
+extern "C" void sound_tone(int tone)
 {
 	if ((g_orbit_save & ORBITSAVE_SOUND) != 0)
 	{
@@ -1637,7 +1644,7 @@ void sound_tone(int tone)
 	}
 }
 
-void sound_write_time(void)
+extern "C" void sound_write_time(void)
 {
 	if (sound_open())
 	{
@@ -1645,7 +1652,7 @@ void sound_write_time(void)
 	}
 }
 
-void sound_close(void)
+extern "C" void sound_close(void)
 {
 	if (snd_fp)
 	{
@@ -1729,17 +1736,17 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	/* placing sleep_ms here delays each dot */
 }
 
-void plot_orbit_i(long ix, long iy, int color)
+extern "C" void plot_orbit_i(long ix, long iy, int color)
 {
 	plot_orbit_d((double)ix/g_fudge-g_xx_min, (double)iy/g_fudge-g_yy_max, color);
 }
 
-void plot_orbit(double real, double imag, int color)
+extern "C" void plot_orbit(double real, double imag, int color)
 {
 	plot_orbit_d(real-g_xx_min, imag-g_yy_max, color);
 }
 
-void orbit_scrub(void)
+extern "C" void orbit_scrub(void)
 {
 	int i, j, c;
 	int save_sxoffs, save_syoffs;
@@ -1759,7 +1766,7 @@ void orbit_scrub(void)
 }
 
 
-int work_list_add(int xfrom, int xto, int xbegin,
+extern "C" int work_list_add(int xfrom, int xto, int xbegin,
 	int yfrom, int yto, int ybegin,
 	int pass, int sym)
 {
@@ -1833,7 +1840,7 @@ static int _fastcall work_list_combine(void) /* look for 2 entries which can fre
 	return 0; /* nothing combined */
 }
 
-void work_list_tidy(void) /* combine mergeable entries, resort */
+extern "C" void work_list_tidy(void) /* combine mergeable entries, resort */
 {
 	int i, j;
 	WORKLIST tempwork;
@@ -1863,7 +1870,7 @@ void work_list_tidy(void) /* combine mergeable entries, resort */
 	}
 }
 
-void get_julia_attractor(double real, double imag)
+extern "C" void get_julia_attractor(double real, double imag)
 {
 	_LCMPLX lresult;
 	_CMPLX result;
@@ -1964,7 +1971,7 @@ void get_julia_attractor(double real, double imag)
 }
 
 
-int solid_guess_block_size(void) /* used by solidguessing and by zoom panning */
+extern "C" int solid_guess_block_size(void) /* used by solidguessing and by zoom panning */
 {
 	int blocksize, i;
 	/* blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >= 1200 */

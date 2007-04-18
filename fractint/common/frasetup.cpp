@@ -7,22 +7,25 @@
 #endif
 
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+}
 
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 #endif
 
-extern long calculate_mandelbrot_fp_asm(void);
+extern "C" long calculate_mandelbrot_fp_asm(void);
 
 /* -------------------------------------------------------------------- */
 /*              Setup (once per fractal image) routines                 */
 /* -------------------------------------------------------------------- */
 
-int mandelbrot_setup(void)           /* Mandelbrot Routine */
+extern "C" int mandelbrot_setup(void)           /* Mandelbrot Routine */
 {
 	if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
@@ -216,7 +219,7 @@ int unity_setup(void)
 
 int mandelbrot_setup_fp(void)
 {
-	bf_math = 0;
+	g_bf_math = 0;
 	g_c_exp = (int)g_parameters[2];
 	g_power.x = g_parameters[2] - 1.0;
 	g_power.y = g_parameters[3];
