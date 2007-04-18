@@ -4,29 +4,32 @@
 
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include <string.h>
+
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+}
 
-static HISTORY *history = NULL;		/* history storage */
+static HISTORY *s_history = NULL;		/* history storage */
+static int s_history_index = -1;			/* user pointer into history tbl  */
+static int s_save_index = 0;				/* save ptr into history tbl      */
+static int s_history_flag;				/* are we backing off in history? */
 
-static int historyptr = -1;			/* user pointer into history tbl  */
-static int saveptr = 0;				/* save ptr into history tbl      */
-static int historyflag;				/* are we backing off in history? */
-
-void _fastcall history_save_info(void)
+extern "C" void _fastcall history_save_info(void)
 {
 	HISTORY current = { 0 };
 	HISTORY last;
 
-	if (g_max_history <= 0 || bf_math || !history)
+	if (g_max_history <= 0 || g_bf_math || !s_history)
 	{
 		return;
 	}
 #if defined(_WIN32)
-	_ASSERTE(saveptr >= 0 && saveptr < g_max_history);
+	_ASSERTE(s_save_index >= 0 && s_save_index < g_max_history);
 #endif
-	last = history[saveptr];
+	last = s_history[s_save_index];
 
 	memset((void *) &current, 0, sizeof(HISTORY));
 	current.fractal_type		= (short) g_fractal_type;
@@ -171,47 +174,47 @@ void _fastcall history_save_info(void)
 		*(current.itemname) = 0;
 		break;
 	}
-	if (historyptr == -1)        /* initialize the history file */
+	if (s_history_index == -1)        /* initialize the history file */
 	{
 		int i;
 		for (i = 0; i < g_max_history; i++)
 		{
-			history[i] = current;
+			s_history[i] = current;
 		}
-		historyflag = saveptr = historyptr = 0;   /* initialize history ptr */
+		s_history_flag = s_save_index = s_history_index = 0;   /* initialize history ptr */
 	}
-	else if (historyflag == 1)
+	else if (s_history_flag == 1)
 	{
-		historyflag = 0;   /* coming from user history command, don't save */
+		s_history_flag = 0;   /* coming from user history command, don't save */
 	}
 	else if (memcmp(&current, &last, sizeof(HISTORY)))
 	{
-		if (++saveptr >= g_max_history)  /* back to beginning of circular buffer */
+		if (++s_save_index >= g_max_history)  /* back to beginning of circular buffer */
 		{
-			saveptr = 0;
+			s_save_index = 0;
 		}
-		if (++historyptr >= g_max_history)  /* move user pointer in parallel */
+		if (++s_history_index >= g_max_history)  /* move user pointer in parallel */
 		{
-			historyptr = 0;
+			s_history_index = 0;
 		}
 #if defined(_WIN32)
-		_ASSERTE(saveptr >= 0 && saveptr < g_max_history);
+		_ASSERTE(s_save_index >= 0 && s_save_index < g_max_history);
 #endif
-		history[saveptr] = current;
+		s_history[s_save_index] = current;
 	}
 }
 
-void _fastcall history_restore_info(void)
+extern "C" void _fastcall history_restore_info(void)
 {
 	HISTORY last;
-	if (g_max_history <= 0 || bf_math || history == 0)
+	if (g_max_history <= 0 || g_bf_math || !s_history)
 	{
 		return;
 	}
 #if defined(_WIN32)
-	_ASSERTE(historyptr >= 0 && historyptr < g_max_history);
+	_ASSERTE(s_history_index >= 0 && s_history_index < g_max_history);
 #endif
-	last = history[historyptr];
+	last = s_history[s_history_index];
 
 	g_invert				= 0;
 	g_calculation_status				= CALCSTAT_PARAMS_CHANGED;
@@ -380,12 +383,12 @@ void _fastcall history_restore_info(void)
 	}
 }
 
-void history_allocate(void)
+extern "C" void history_allocate(void)
 {
 	while (g_max_history > 0) /* decrease history if necessary */
 	{
-		history = (HISTORY *) malloc(sizeof(HISTORY)*g_max_history);
-		if (history)
+		s_history = (HISTORY *) malloc(sizeof(HISTORY)*g_max_history);
+		if (s_history)
 		{
 			break;
 		}
@@ -393,30 +396,30 @@ void history_allocate(void)
 	}
 }
 
-void history_free(void)
+extern "C" void history_free(void)
 {
-	if (history != NULL)
+	if (s_history != NULL)
 	{
-		free(history);
+		free(s_history);
 	}
 }
 
-void history_back(void)
+extern "C" void history_back(void)
 {
-	--historyptr;
-	if (historyptr <= 0)
+	--s_history_index;
+	if (s_history_index <= 0)
 	{
-		historyptr = g_max_history - 1;
+		s_history_index = g_max_history - 1;
 	}
-	historyflag = 1;
+	s_history_flag = 1;
 }
 
-void history_forward(void)
+extern "C" void history_forward(void)
 {
-	++historyptr;
-	if (historyptr >= g_max_history)
+	++s_history_index;
+	if (s_history_index >= g_max_history)
 	{
-		historyptr = 0;
+		s_history_index = 0;
 	}
-	historyflag = 1;
+	s_history_flag = 1;
 }

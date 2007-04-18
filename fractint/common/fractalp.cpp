@@ -7,10 +7,13 @@
 /* includes needed for g_fractal_specific */
 
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+}
 
 /* functions defined elswhere needed for g_fractal_specific */
 /* moved to prototyp.h */
@@ -101,7 +104,7 @@ static char s_imag_relaxation_coefficient[] = {"Imag Relaxation coefficient"};
 #define BAILOUT_STANDARD		4
 #define BAILOUT_NONE			0
 
-more_parameters g_more_parameters[] =
+extern "C" more_parameters g_more_parameters[] =
 {
 	{ICON             , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
 	{ICON3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
@@ -121,7 +124,7 @@ more_parameters g_more_parameters[] =
 /*
 	type  math orbitcalc fnct per_pixel fnct per_image fnct
 	|-----|----|--------------|--------------|--------------| */
-alternate_math g_alternate_math[] =
+extern "C" alternate_math g_alternate_math[] =
 {
 #define USEBN
 #ifdef USEBN
@@ -132,7 +135,7 @@ alternate_math g_alternate_math[] =
 	{ MANDELFP,	BIGFLT, julia_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf },
 #endif
 	/*
-	NOTE: The default precision for bf_math=BIGNUM is not high enough
+	NOTE: The default precision for g_bf_math=BIGNUM is not high enough
 	for julia_z_power_orbit_bn.  If you want to test BIGNUM (1) instead
 	of the usual BIGFLT (2), then set bfdigits on the command to
 	increase the precision.
@@ -140,7 +143,7 @@ alternate_math g_alternate_math[] =
 	{ FPJULIAZPOWER,  BIGFLT, julia_z_power_orbit_bf, julia_per_pixel_bf, mandelbrot_setup_bf },
 	{ FPMANDELZPOWER, BIGFLT, julia_z_power_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf }
 };
-int g_alternate_math_len = NUM_OF(g_alternate_math);
+extern "C" int g_alternate_math_len = NUM_OF(g_alternate_math);
 
 /* These are only needed for types with both integer and float variations */
 static char s_barnsleyj1_name[] = "*barnsleyj1";
@@ -213,7 +216,7 @@ static char s_halley_name[] = "*halley";
 /* use next to cast orbitcalcs() that have arguments */
 #define VF int(*)(void)
 
-struct fractal_specific_stuff g_fractal_specific[] =
+extern "C" struct fractal_specific_stuff g_fractal_specific[] =
 {
 	/*
 	{ [OLDTYPEINDEX, ]NEWTYPEINDEX
@@ -2263,14 +2266,14 @@ struct fractal_specific_stuff g_fractal_specific[] =
 	}
 };
 
-int g_num_fractal_types = NUM_OF(g_fractal_specific)-1;
+extern "C" int g_num_fractal_types = NUM_OF(g_fractal_specific)-1;
 
 /*
  *  Returns 1 if the formula parameter is not used in the current
  *  formula.  If the parameter is used, or not a formula fractal,
  *  a 0 is returned.  Note: this routine only works for formula types.
  */
-int parameter_not_used(int parm)
+extern "C" int parameter_not_used(int parm)
 {
 	int ret = 0;
 
@@ -2325,7 +2328,7 @@ int parameter_not_used(int parm)
  *  Pass in NULL for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
-int type_has_parameter(int type, int parm, char *buf)
+extern "C" int type_has_parameter(int type, int parm, char *buf)
 {
 	int extra;
 	char *ret = NULL;

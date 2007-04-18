@@ -20,11 +20,14 @@
 #include <time.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "targa_lc.h"
 #include "drivers.h"
+}
 
 #define SHOWDOT_SAVE    1
 #define SHOWDOT_RESTORE 2
@@ -575,7 +578,7 @@ int calculate_fractal(void)
 	}
 	else
 	{
-		g_next_saved_incr = (int)log10(g_max_iteration); /* works better than log() */
+		g_next_saved_incr = (int) log10((double) g_max_iteration); /* works better than log() */
 		if (g_next_saved_incr < 4)
 		{
 			g_next_saved_incr = 4; /* maintains image with low iterations */
@@ -864,7 +867,7 @@ static void perform_work_list()
 	int (*sv_per_image)(void) = NULL;  /* once-per-image setup */
 	int i, alt;
 
-	alt = find_alternate_math(g_fractal_type, bf_math);
+	alt = find_alternate_math(g_fractal_type, g_bf_math);
 	if (alt > -1)
 	{
 		sv_orbitcalc = g_current_fractal_specific->orbitcalc;
@@ -876,7 +879,7 @@ static void perform_work_list()
 	}
 	else
 	{
-		bf_math = 0;
+		g_bf_math = 0;
 	}
 
 	if (g_potential_flag && g_potential_16bit)
@@ -1192,7 +1195,8 @@ static int diffusion_scan(void)
 	/* fit any 32 bit architecture, the maxinum limit for this case would  */
 	/* be 65536x65536 (HB) */
 
-	g_bits = (unsigned) (min (log (g_y_stop-s_iy_start + 1), log(g_x_stop-s_ix_start + 1) )/log2 );
+	g_bits = (unsigned) (min(log((double) (g_y_stop - s_iy_start + 1)),
+							 log((double) (g_x_stop - s_ix_start + 1)))/log2);
 	g_bits <<= 1; /* double for two axes */
 	g_diffusion_limit = 1l << g_bits;
 
@@ -1306,8 +1310,8 @@ static int diffusion_engine(void)
 	int colo, rowo; /* original col and row */
 	int s = 1 << (g_bits/2); /* size of the square */
 
-	nx = (int) floor((g_x_stop-s_ix_start + 1)/s );
-	ny = (int) floor((g_y_stop-s_iy_start + 1)/s );
+	nx = (int) floor((double) (g_x_stop-s_ix_start + 1)/s );
+	ny = (int) floor((double) (g_y_stop-s_iy_start + 1)/s );
 
 	rem_x = (g_x_stop-s_ix_start + 1) - nx*s;
 	rem_y = (g_y_stop-s_iy_start + 1) - ny*s;
@@ -2045,18 +2049,18 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 #ifdef NUMSAVED
 		savedz[zctr++] = saved;
 #endif
-		if (bf_math)
+		if (g_bf_math)
 		{
 			if (g_decimals > 200)
 			{
 				g_input_counter = -1;
 			}
-			if (bf_math == BIGNUM)
+			if (g_bf_math == BIGNUM)
 			{
 				clear_bn(bnsaved.x);
 				clear_bn(bnsaved.y);
 			}
-			else if (bf_math == BIGFLT)
+			else if (g_bf_math == BIGFLT)
 			{
 				clear_bf(bfsaved.x);
 				clear_bf(bfsaved.y);
@@ -2133,11 +2137,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			g_old_z.x = ((double)g_old_z_l.x) / g_fudge;
 			g_old_z.y = ((double)g_old_z_l.y) / g_fudge;
 		}
-		else if (bf_math == BIGNUM)
+		else if (g_bf_math == BIGNUM)
 		{
 			g_old_z = complex_bn_to_float(&bnold);
 		}
-		else if (bf_math == BIGFLT)
+		else if (g_bf_math == BIGFLT)
 		{
 			g_old_z = complex_bf_to_float(&bfold);
 		}
@@ -2222,11 +2226,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		{
 			if (!g_integer_fractal)
 			{
-				if (bf_math == BIGNUM)
+				if (g_bf_math == BIGNUM)
 				{
 					g_new_z = complex_bn_to_float(&bnnew);
 				}
-				else if (bf_math == BIGFLT)
+				else if (g_bf_math == BIGFLT)
 				{
 					g_new_z = complex_bf_to_float(&bfnew);
 				}
@@ -2239,11 +2243,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 		}
 		if (g_inside < -1)
 		{
-			if (bf_math == BIGNUM)
+			if (g_bf_math == BIGNUM)
 			{
 				g_new_z = complex_bn_to_float(&bnnew);
 			}
-			else if (bf_math == BIGFLT)
+			else if (g_bf_math == BIGFLT)
 			{
 				g_new_z = complex_bf_to_float(&bfnew);
 			}
@@ -2358,11 +2362,11 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 
 		if (g_outside == TDIS || g_outside == FMOD)
 		{
-			if (bf_math == BIGNUM)
+			if (g_bf_math == BIGNUM)
 			{
 				g_new_z = complex_bn_to_float(&bnnew);
 			}
-			else if (bf_math == BIGFLT)
+			else if (g_bf_math == BIGFLT)
 			{
 				g_new_z = complex_bf_to_float(&bfnew);
 			}
@@ -2460,12 +2464,12 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				{
 					lsaved = g_new_z_l; /* integer fractals */
 				}
-				else if (bf_math == BIGNUM)
+				else if (g_bf_math == BIGNUM)
 				{
 					copy_bn(bnsaved.x, bnnew.x);
 					copy_bn(bnsaved.y, bnnew.y);
 				}
-				else if (bf_math == BIGFLT)
+				else if (g_bf_math == BIGFLT)
 				{
 					copy_bf(bfsaved.x, bfnew.x);
 					copy_bf(bfsaved.y, bfnew.y);
@@ -2499,7 +2503,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 						}
 					}
 				}
-				else if (bf_math == BIGNUM)
+				else if (g_bf_math == BIGNUM)
 				{
 					if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.x, bnnew.x)), bnclosenuff) < 0)
 					{
@@ -2509,7 +2513,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 						}
 					}
 				}
-				else if (bf_math == BIGFLT)
+				else if (g_bf_math == BIGFLT)
 				{
 					if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.x, bfnew.x)), bfclosenuff) < 0)
 					{
@@ -2604,12 +2608,12 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 		}
-		else if (bf_math == BIGNUM)
+		else if (g_bf_math == BIGNUM)
 		{
 			g_new_z.x = (double)bntofloat(bnnew.x);
 			g_new_z.y = (double)bntofloat(bnnew.y);
 		}
-		else if (bf_math == BIGFLT)
+		else if (g_bf_math == BIGFLT)
 		{
 			g_new_z.x = (double)bftofloat(bfnew.x);
 			g_new_z.y = (double)bftofloat(bfnew.y);
@@ -2636,7 +2640,7 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 		}
-		else if (bf_math == 1)
+		else if (g_bf_math == 1)
 		{
 			g_new_z.x = (double)bntofloat(bnnew.x);
 			g_new_z.y = (double)bntofloat(bnnew.y);
@@ -3300,8 +3304,8 @@ Guenther's code.  I've noted these places with the initials DG.
                                         Wesley Loewer 3/8/92
 *********************************************************************/
 #define bkcolor 0  /* I have some ideas for the future with this. -Wes */
-#define advance_match()     coming_from = ((s_going_to = (s_going_to - 1) & 0x03) - 1) & 0x03
-#define advance_no_match()  s_going_to = (s_going_to + 1) & 0x03
+#define advance_match()     coming_from = (direction) (((s_going_to = (direction) ((s_going_to - 1) & 0x03)) - 1) & 0x03)
+#define advance_no_match()  s_going_to = (direction) ((s_going_to + 1) & 0x03)
 
 static int boundary_trace_main(void)
 {
@@ -4265,7 +4269,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	/* NOTE: 16-bit potential disables symmetry */
 	/* also any decomp= option and any inversion not about the origin */
 	/* also any rotation other than 180deg and any off-axis stretch */
-	if (bf_math)
+	if (g_bf_math)
 	{
 		if (cmp_bf(bfxmin, bfx3rd) || cmp_bf(bfymin, bfy3rd))
 		{
@@ -4329,7 +4333,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		parmszero = (parmszero && g_parameter2.x == 0.0 && g_parameter2.y == 0.0);
 	}
 	xaxis_row = yaxis_col = -1;
-	if (bf_math)
+	if (g_bf_math)
 	{
 		saved = save_stack();
 		bft1    = alloc_stack(rbflength + 2);
@@ -4343,7 +4347,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	}
 	if (xaxis_on_screen) /* axis is on screen */
 	{
-		if (bf_math)
+		if (g_bf_math)
 		{
 			/* ftemp = -g_yy_max / (g_yy_min-g_yy_max); */
 			sub_bf(bft1, bfymin, bfymax);
@@ -4366,7 +4370,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	}
 	if (yaxis_on_screen) /* axis is on screen */
 	{
-		if (bf_math)
+		if (g_bf_math)
 		{
 			/* ftemp = -g_xx_min / (g_xx_max-g_xx_min); */
 			sub_bf(bft1, bfxmax, bfxmin);
@@ -4478,7 +4482,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			break;
 		}
 	case PI_SYM:                      /* PI symmetry */
-		if (bf_math)
+		if (g_bf_math)
 		{
 			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, bfxmax, bfxmin))) < PI/4)
 			{
@@ -4509,7 +4513,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			g_y_stop = g_yy_stop; /* in case first split worked */
 			s_work_sym = 0x30;  /* don't mark pisym as ysym, just do it unmarked */
 		}
-		if (bf_math)
+		if (g_bf_math)
 		{
 			sub_bf(bft1, bfxmax, bfxmin);
 			abs_a_bf(bft1);
@@ -4537,7 +4541,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	default:                  /* no symmetry */
 		break;
 	}
-	if (bf_math)
+	if (g_bf_math)
 	{
 		restore_stack(saved);
 	}
