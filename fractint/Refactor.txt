@@ -1,0 +1,182 @@
+==== line3d.c:
+= procedures
+	int line3d(BYTE *pixels, unsigned linelen);
+	int targa_color(int x, int y, int color);
+	int startdisk1(char *File_Name2, FILE *Source, int overlay);
+	
+= data
+	int (*g_standard_plot)(int x, int y, int color);
+	int g_ambient
+	int g_randomize
+	int g_haze
+	char g_light_name[]
+	int g_targa_overlay
+	BYTE g_back_color[]
+	char g_ray_name[]
+	int g_preview
+	int g_show_box
+	int g_preview_factor
+	int g_x_adjust
+	int g_y_adjust
+	int g_xx_adjust
+	int g_yy_adjust
+	int g_x_shift
+	int g_y_shift
+	int g_bad_value
+	int g_raytrace_output
+	int g_raytrace_brief
+	VECTOR g_view
+	VECTOR g_cross
+
+==== 3d.c:
+= procedures
+	void identity(MATRIX m)
+	void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
+	void scale(double sx, double sy, double sz, MATRIX m)
+	void xrot(double theta, MATRIX m)
+	void yrot(double theta, MATRIX m)
+	void zrot(double theta, MATRIX m)
+	void trans(double tx, double ty, double tz, MATRIX m)
+	int cross_product(VECTOR v, VECTOR w, VECTOR cross)
+	int normalize_vector(VECTOR v)
+	int vmult(VECTOR s, MATRIX m, VECTOR t)
+	void mult_vec(VECTOR s, MATRIX m)
+	int perspective(VECTOR v)
+	int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0, LVECTOR t, LVECTOR lview, int bitshift)
+	int longpersp(LVECTOR lv, LVECTOR lview, int bitshift)
+	int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bitshift)
+
+= data
+
+==== plot3d.c
+= procedures
+	void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
+	void _fastcall plot3dsuperimpose16(int x, int y, int color)
+	void _fastcall plot3dsuperimpose256(int x, int y, int color)
+	void _fastcall plotIFS3dsuperimpose256(int x, int y, int color)
+	void _fastcall plot3dalternate(int x, int y, int color)
+	void _fastcall plot3dcrosseyedA(int x, int y, int color)
+	void _fastcall plot3dcrosseyedB(int x, int y, int color)
+	void _fastcall plot3dcrosseyedC(int x, int y, int color)
+	void plot_setup()
+
+= data
+	int g_which_image;
+	int g_xx_adjust1;
+	int g_yy_adjust1;
+	int g_eye_separation = 0;
+	int g_glasses_type = STEREO_NONE;
+	int g_x_shift1;
+	int g_y_shift1;
+	int g_x_trans = 0;
+	int g_y_trans = 0;
+	int g_red_crop_left   = 4;
+	int g_red_crop_right  = 0;
+	int g_blue_crop_left  = 0;
+	int g_blue_crop_right = 4;
+	int g_red_bright      = 80;
+	int g_blue_bright     = 100;
+
+==== ant.c
+= procedures
+	void free_ant_storage(void)
+	int ant(void)
+	
+= data
+
+==== jb.c
+= procedures
+	int julibrot_setup(void)
+	int julibrot_per_pixel(void)
+	int julibrot_per_pixel_fp(void)
+	int std_4d_fractal(void)
+	int std_4d_fractal_fp(void)
+	
+= data
+	double g_m_x_min_fp = -.83;
+	double g_m_y_min_fp = -.25;
+	double g_m_x_max_fp = -.83;
+	double g_m_y_max_fp =  .25;
+	int g_z_dots = 128;
+	float g_origin_fp  = 8.0f;
+	float g_height_fp  = 7.0f;
+	float g_width_fp   = 10.0f;
+	float g_dist_fp    = 24.0f;
+	float g_eyes_fp    = 2.5f;
+	float g_depth_fp   = 8.0f;
+	int g_juli_3D_mode = JULI3DMODE_MONOCULAR;
+	int g_new_orbit_type = JULIA;
+
+==== lorenz.c
+= procedures
+	int setup_convert_to_screen(struct affine *scrn_cnvt)
+	int orbit_3d_setup(void)
+	int orbit_3d_setup_fp()
+	int Minverse_julia_orbit()
+	int Linverse_julia_orbit()
+	int lorenz_3d_orbit(long *l_x, long *l_y, long *l_z)
+	int lorenz_3d_orbit_fp(double *x, double *y, double *z)
+	int lorenz_3d1_orbit_fp(double *x, double *y, double *z)
+	int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
+	int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
+	int henon_orbit_fp(double *x, double *y, double *z)
+	int henon_orbit(long *l_x, long *l_y, long *l_z)
+	int rossler_orbit_fp(double *x, double *y, double *z)
+	int pickover_orbit_fp(double *x, double *y, double *z)
+	int gingerbread_orbit_fp(double *x, double *y, double *z)
+	int rossler_orbit(long *l_x, long *l_y, long *l_z)
+	int kam_torus_orbit_fp(double *r, double *s, double *z)
+	int kam_torus_orbit(long *r, long *s, long *z)
+	int hopalong_2d_orbit_fp(double *x, double *y, double *z)
+	int chip_2d_orbit_fp(double *x, double *y, double *z)
+	int quadrup_two_2d_orbit_fp(double *x, double *y, double *z)
+	int three_ply_2d_orbit_fp(double *x, double *y, double *z)
+	int martin_2d_orbit_fp(double *x, double *y, double *z)
+	int mandel_cloud_orbit_fp(double *x, double *y, double *z)
+	int dynamic_orbit_fp(double *x, double *y, double *z)
+	int icon_orbit_fp(double *x, double *y, double *z)
+	int latoo_orbit_fp(double *x, double *y, double *z)
+	int inverse_julia_per_image()
+	int orbit_2d_fp()
+	int orbit_2d()
+	int dynamic_2d_setup_fp()
+	int dynamic_2d_fp()
+
+= data
+	long g_max_count;
+	enum Major g_major_method;
+	enum Minor g_minor_method;
+	int g_keep_screen_coords = 0;
+	int g_set_orbit_corners = 0;
+	long g_orbit_interval;
+	double g_orbit_x_min
+	double g_orbit_y_min
+	double g_orbit_x_max
+	double g_orbit_y_max
+	double g_orbit_x_3rd
+	double g_orbit_y_3rd
+
+==== lsys.c:
+= procedures
+	int _fastcall is_pow2(int n)
+	LDBL _fastcall get_number(char **str)
+	int l_system(void)
+	int l_load(void)
+
+= data
+	int g_max_angle;
+
+==== lsysf.c:
+= procedures
+	int _fastcall lsysf_find_scale(struct lsys_cmd *command,
+		struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
+	struct lsys_cmd *_fastcall draw_lsysf(struct lsys_cmd *command,
+		struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
+	struct lsys_cmd *lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
+	struct lsys_cmd *lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
+	void _fastcall lsysf_sin_cos(void)
+
+==== miscfrac.c:
+= procedures
+
+= data
