@@ -51,127 +51,154 @@
 		If included separately from prototyp.h, big.h includes cmplx.h
 		and biginit.h; and mpmath.h includes cmplx.h
 	*/
-
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
-struct video_info g_video_entry;
+extern "C"
+{
+	struct video_info g_video_entry;
+	long g_timer_start;
+	long g_timer_interval;        /* timer(...) start & total */
+	int     g_adapter;                /* Video Adapter chosen from list in ...h */
+	char *g_fract_dir1 = "";
+	char *g_fract_dir2 = "";
+	/*
+		the following variables are out here only so
+		that the calculate_fractal() and assembler routines can get at them easily
+	*/
+	int     g_dot_mode;                /* video access method      */
+	int     textsafe2;              /* textsafe override from g_video_table */
+	int     g_ok_to_print;              /* 0 if printf() won't work */
+	int     g_screen_width;
+	int		g_screen_height;          /* # of dots on the physical screen    */
+	int     g_sx_offset;
+	int		g_sy_offset;          /* physical top left of logical screen */
+	int     g_x_dots;
+	int		g_y_dots;           /* # of dots on the logical screen     */
+	double  g_dx_size;
+	double	g_dy_size;         /* g_x_dots-1, g_y_dots-1         */
+	int     g_colors = 256;           /* maximum g_colors available */
+	long    g_max_iteration;                  /* try this many iterations */
+	int     g_box_count;               /* 0 if no zoom-box yet     */
+	int     g_z_rotate;                /* zoombox rotation         */
+	double  g_zbx;
+	double	g_zby;                /* topleft of zoombox       */
+	double  g_z_width;
+	double	g_z_depth;
+	double	g_z_skew;    /* zoombox size & shape     */
+	int     g_fractal_type;               /* if == 0, use Mandelbrot  */
+	char    g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
+	long    g_c_real;
+	long	g_c_imag;           /* real, imag'ry parts of C */
+	long    g_delta_x;
+	long	g_delta_y;             /* screen pixel increments  */
+	long    g_delta_x2;
+	long	g_delta_y2;           /* screen pixel increments  */
+	LDBL    g_delta_x_fp;
+	LDBL	g_delta_y_fp;           /* screen pixel increments  */
+	LDBL    g_delta_x2_fp;
+	LDBL	g_delta_y2_fp;         /* screen pixel increments  */
+	long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot    */
+	double  g_delta_min_fp;                /* same as a double         */
+	double  g_parameters[MAX_PARAMETERS];       /* parameters               */
+	double  g_potential_parameter[3];            /* three potential parameters*/
+	long    g_fudge;                  /* 2**fudgefactor           */
+	long    g_attractor_radius_l;               /* finite attractor radius  */
+	double  g_attractor_radius_fp;               /* finite attractor radius  */
+	int     g_bit_shift;               /* fudgefactor              */
 
-long g_timer_start, g_timer_interval;        /* timer(...) start & total */
-int     g_adapter;                /* Video Adapter chosen from list in ...h */
-char *g_fract_dir1="", *g_fract_dir2="";
-
-/*
-	the following variables are out here only so
-	that the calculate_fractal() and assembler routines can get at them easily
-*/
-int     g_dot_mode;                /* video access method      */
-int     textsafe2;              /* textsafe override from g_video_table */
-int     g_ok_to_print;              /* 0 if printf() won't work */
-int     g_screen_width, g_screen_height;          /* # of dots on the physical screen    */
-int     g_sx_offset, g_sy_offset;          /* physical top left of logical screen */
-int     g_x_dots, g_y_dots;           /* # of dots on the logical screen     */
-double  g_dx_size;
-double	g_dy_size;         /* g_x_dots-1, g_y_dots-1         */
-int     g_colors = 256;           /* maximum g_colors available */
-long    g_max_iteration;                  /* try this many iterations */
-int     g_box_count;               /* 0 if no zoom-box yet     */
-int     g_z_rotate;                /* zoombox rotation         */
-double  g_zbx, g_zby;                /* topleft of zoombox       */
-double  g_z_width, g_z_depth, g_z_skew;    /* zoombox size & shape     */
-
-int     g_fractal_type;               /* if == 0, use Mandelbrot  */
-char    g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
-long    g_c_real;
-long	g_c_imag;           /* real, imag'ry parts of C */
-long    g_delta_x;
-long	g_delta_y;             /* screen pixel increments  */
-long    g_delta_x2;
-long	g_delta_y2;           /* screen pixel increments  */
-LDBL    g_delta_x_fp;
-LDBL	g_delta_y_fp;           /* screen pixel increments  */
-LDBL    g_delta_x2_fp;
-LDBL	g_delta_y2_fp;         /* screen pixel increments  */
-long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot    */
-double  g_delta_min_fp;                /* same as a double         */
-double  g_parameters[MAX_PARAMETERS];       /* parameters               */
-double  g_potential_parameter[3];            /* three potential parameters*/
-long    g_fudge;                  /* 2**fudgefactor           */
-long    g_attractor_radius_l;               /* finite attractor radius  */
-double  g_attractor_radius_fp;               /* finite attractor radius  */
-int     g_bit_shift;               /* fudgefactor              */
-
-int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
-int g_has_inverse = 0;
-/* note that integer grid is set when g_integer_fractal && !invert;    */
-/* otherwise the floating point grid is set; never both at once     */
-long    *g_x0_l, *g_y0_l;     /* x, y grid                */
-long    *g_x1_l, *g_y1_l;     /* adjustment for rotate    */
-/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
-/* they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  */
-double *g_x0, *g_y0;      /* floating pt equivs */
-double *g_x1, *g_y1;
-int     g_integer_fractal;         /* TRUE if fractal uses integer math */
-
-/* usr_xxx is what the user wants, vs what we may be forced to do */
-char    g_user_standard_calculation_mode;
-int     g_user_periodicity_check;
-long    g_user_distance_test;
-char    g_user_float_flag;
-
-int     g_view_window;             /* 0 for full screen, 1 for window */
-float   g_view_reduction;          /* window auto-sizing */
-int     g_view_crop;               /* nonzero to crop default coords */
-float   g_final_aspect_ratio;       /* for view shape and rotation */
-int     g_view_x_dots, g_view_y_dots;    /* explicit view sizing */
-
-int g_max_history = 10;
-
-/* variables defined by the command line/files processor */
-int     g_compare_gif = 0;                   /* compare two gif files flag */
-int     g_timed_save = 0;                    /* when doing a timed save */
-int     g_resave_flag = RESAVE_NO;                  /* tells encoder not to incr filename */
-int     g_started_resaves = FALSE;              /* but incr on first resave */
-int     g_save_system;                    /* from and for save files */
-int     g_tab_mode = 1;                    /* tab display enabled */
-
-/* for historical reasons (before rotation):         */
-/*    top    left  corner of screen is (g_xx_min, g_yy_max) */
-/*    bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) */
-/*    bottom right corner of screen is (g_xx_max, g_yy_min) */
-double  g_xx_min, g_xx_max, g_yy_min, g_yy_max, g_xx_3rd, g_yy_3rd; /* selected screen corners  */
-long    g_x_min, g_x_max, g_y_min, g_y_max, g_x_3rd, g_y_3rd;  /* integer equivs           */
-double  g_sx_min, g_sx_max, g_sy_min, g_sy_max, g_sx_3rd, g_sy_3rd; /* displayed screen corners */
-double  g_plot_mx1, g_plot_mx2, g_plot_my1, g_plot_my2;     /* real->screen multipliers */
-
-int g_calculation_status = CALCSTAT_NO_FRACTAL;
-					  /* -1 no fractal                   */
-                      /*  0 parms changed, recalc reqd   */
-                      /*  1 actively calculating         */
-                      /*  2 interrupted, resumable       */
-                      /*  3 interrupted, not resumable   */
-                      /*  4 completed                    */
-long g_calculation_time;
-
-int g_max_colors;                         /* maximum palette size */
-int        g_zoom_off;                     /* = 0 when zoom is disabled    */
-int        g_save_dac;                     /* save-the-Video DAC flag      */
-int g_browsing;                 /* browse mode flag */
-char g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while g_browsing */
-int g_name_stack_ptr ;
-double g_too_small;
-int  g_cross_hair_box_size;
-int g_no_sub_images;
-int g_auto_browse, g_double_caution;
-char g_browse_check_parameters, g_browse_check_type;
-char g_browse_mask[FILE_MAX_FNAME];
-int g_scale_map[12] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; /*RB, array for mapping notes to a (user defined) scale */
-char g_exe_path[FILE_MAX_PATH] = { 0 };
-
+	int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
+	int g_has_inverse = 0;
+	/* note that integer grid is set when g_integer_fractal && !invert;    */
+	/* otherwise the floating point grid is set; never both at once     */
+	long    *g_x0_l;
+	long	*g_y0_l;     /* x, y grid                */
+	long    *g_x1_l;
+	long	*g_y1_l;     /* adjustment for rotate    */
+	/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
+	/* they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  */
+	double	*g_x0;
+	double	*g_y0;      /* floating pt equivs */
+	double	*g_x1;
+	double	*g_y1;
+	int     g_integer_fractal;         /* TRUE if fractal uses integer math */
+	/* usr_xxx is what the user wants, vs what we may be forced to do */
+	char    g_user_standard_calculation_mode;
+	int     g_user_periodicity_check;
+	long    g_user_distance_test;
+	char    g_user_float_flag;
+	int     g_view_window;             /* 0 for full screen, 1 for window */
+	float   g_view_reduction;          /* window auto-sizing */
+	int     g_view_crop;               /* nonzero to crop default coords */
+	float   g_final_aspect_ratio;       /* for view shape and rotation */
+	int     g_view_x_dots;
+	int		g_view_y_dots;    /* explicit view sizing */
+	int		g_max_history = 10;
+	/* variables defined by the command line/files processor */
+	int     g_compare_gif = 0;                   /* compare two gif files flag */
+	int     g_timed_save = 0;                    /* when doing a timed save */
+	int     g_resave_flag = RESAVE_NO;                  /* tells encoder not to incr filename */
+	int     g_started_resaves = FALSE;              /* but incr on first resave */
+	int     g_save_system;                    /* from and for save files */
+	int     g_tab_mode = 1;                    /* tab display enabled */
+	/* for historical reasons (before rotation):         */
+	/*    top    left  corner of screen is (g_xx_min, g_yy_max) */
+	/*    bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) */
+	/*    bottom right corner of screen is (g_xx_max, g_yy_min) */
+	double  g_xx_min;
+	double	g_xx_max;
+	double	g_yy_min;
+	double	g_yy_max;
+	double	g_xx_3rd;
+	double	g_yy_3rd; /* selected screen corners  */
+	long    g_x_min;
+	long	g_x_max;
+	long	g_y_min;
+	long	g_y_max;
+	long	g_x_3rd;
+	long	g_y_3rd;  /* integer equivs           */
+	double  g_sx_min;
+	double	g_sx_max;
+	double	g_sy_min;
+	double	g_sy_max;
+	double	g_sx_3rd;
+	double	g_sy_3rd; /* displayed screen corners */
+	double  g_plot_mx1;
+	double	g_plot_mx2;
+	double	g_plot_my1;
+	double	g_plot_my2;     /* real->screen multipliers */
+	int		g_calculation_status = CALCSTAT_NO_FRACTAL;
+						  /* -1 no fractal                   */
+						  /*  0 parms changed, recalc reqd   */
+						  /*  1 actively calculating         */
+						  /*  2 interrupted, resumable       */
+						  /*  3 interrupted, not resumable   */
+						  /*  4 completed                    */
+	long	g_calculation_time;
+	int		g_max_colors;                         /* maximum palette size */
+	int		g_zoom_off;                     /* = 0 when zoom is disabled    */
+	int		g_save_dac;                     /* save-the-Video DAC flag      */
+	int		g_browsing;                 /* browse mode flag */
+	char	g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while g_browsing */
+	int		g_name_stack_ptr;
+	double	g_too_small;
+	int		g_cross_hair_box_size;
+	int		g_no_sub_images;
+	int		g_auto_browse;
+	int		g_double_caution;
+	char	g_browse_check_parameters;
+	char	g_browse_check_type;
+	char	g_browse_mask[FILE_MAX_FNAME];
+	int		g_scale_map[12] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }; /*RB, array for mapping notes to a (user defined) scale */
+	char	g_exe_path[FILE_MAX_PATH] = { 0 };
+}
 
 #define RESTART           1
 #define IMAGESTART        2

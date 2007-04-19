@@ -46,6 +46,8 @@
 #include <direct.h>
 #endif
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -53,6 +55,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
 /* Routines in this module      */
 
@@ -71,7 +74,10 @@ static  int get_screen_corners(void);
 #define   SUBDIR         16
 #define   MAXNUMFILES    2977L
 
-struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
+extern "C"
+{
+	struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
+}
 
 /* --------------------------------------------------------------------- */
 /*
@@ -2030,7 +2036,7 @@ FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 	in the value, so will it twill test as "different" even though it
 	is not
 */
-int cmpdbl(double old, double new)
+int cmpdbl(double old, double new_value)
 {
 	char buf[81];
 	struct full_screen_values val;
@@ -2041,7 +2047,7 @@ int cmpdbl(double old, double new)
 	prompt_value_string(buf, &val);   /* convert "old" to string */
 
 	old = atof(buf);                /* convert back */
-	return fabs(old-new) < DBL_EPSILON?0:1;  /* zero if same */
+	return fabs(old-new_value) < DBL_EPSILON?0:1;  /* zero if same */
 }
 
 int get_corners()
@@ -2834,7 +2840,7 @@ char *has_extension(char *source)
 void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, VOIDPTR arg2))
 {
 	int gap, i, j;
-	void *temp;
+	char *temp;
 	char *v;
 	v = (char *)v1;
 	for (gap = n/2; gap > 0; gap /= 2)

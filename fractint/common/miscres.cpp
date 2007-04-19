@@ -19,6 +19,8 @@
 #include <varargs.h>
 #endif
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -26,7 +28,9 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
+extern "C" long g_bn_max_stack, maxstack, startstack;
 /* routines in this module      */
 
 static  void trigdetails(char *);
@@ -810,7 +814,6 @@ write_row(int row, const char *format, ...)
 
 int tab_display_2(char *msg)
 {
-	extern long g_bn_max_stack, maxstack, startstack;
 	int row, key = 0;
 
 	help_title();

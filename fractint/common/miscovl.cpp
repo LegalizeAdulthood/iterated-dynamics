@@ -20,6 +20,8 @@
 #include <varargs.h>
 #endif
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -27,6 +29,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
 /* routines in this module      */
 
@@ -2246,7 +2249,6 @@ static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
 
 static void update_fractint_cfg()
 {
-	extern int g_cfg_line_nums[];
 #ifndef XFRACT
 	char cfgname[100], outname[100], buf[121], kname[5];
 	FILE *cfgfile, *outfile;

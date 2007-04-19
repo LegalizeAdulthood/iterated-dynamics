@@ -69,6 +69,7 @@ extern long					(*g_calculate_mandelbrot_asm_fp)(void);
 extern int					(*g_calculate_type)(void);
 extern int					g_calculation_status;
 extern char					g_calibrate;
+extern int					g_cfg_line_nums[];
 extern int					g_check_current_dir;
 extern int					g_checked_vvs;
 extern long					g_c_imag;

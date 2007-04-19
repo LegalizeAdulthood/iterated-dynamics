@@ -46,6 +46,8 @@
 #include <varargs.h>
 #endif
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -53,6 +55,7 @@
 #include "fractype.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
@@ -65,19 +68,23 @@
 #define SECRETMODE_ZIGZAG				8
 #define SECRETMODE_RANDOM_RUN			9
 
-int show_numbers = 0;              /* toggle for display of coords */
+static int show_numbers = 0;              /* toggle for display of coords */
 static char *rect_buff = NULL;
-FILE *file;
-int windows = 0;               /* windows management system */
+static FILE *file;
+static int windows = 0;               /* windows management system */
 
-int xc, yc;                       /* corners of the window */
-int xd, yd;                       /* dots in the window    */
-double g_julia_c_x = BIG;
-double g_julia_c_y = BIG;
+static int xc, yc;                       /* corners of the window */
+static int xd, yd;                       /* dots in the window    */
+
+extern "C"
+{
+	double g_julia_c_x = BIG;
+	double g_julia_c_y = BIG;
+}
 
 /* circle routines from Dr. Dobbs June 1990 */
-int xbase, ybase;
-unsigned int xAspect, yAspect;
+static int xbase, ybase;
+static unsigned int xAspect, yAspect;
 
 void SetAspect(double aspect)
 {
@@ -470,7 +477,7 @@ static void SaveRect(int x, int y, int width, int height)
 	{
 		return;
 	}
-	rect_buff = malloc(width*height);
+	rect_buff = (char *) malloc(width*height);
 	if (rect_buff != NULL)
 	{
 		char *buff = rect_buff;
@@ -559,7 +566,7 @@ void Jiim(int which)         /* called by fractint */
 	oldcalctype = g_calculate_type;
 	show_numbers = 0;
 	g_using_jiim = 1;
-	g_line_buffer = malloc(max(g_screen_width, g_screen_height));
+	g_line_buffer = (BYTE *) malloc(max(g_screen_width, g_screen_height));
 	aspect = ((double)g_x_dots*3)/((double)g_y_dots*4);  /* assumes 4:3 */
 	actively_computing = 1;
 	SetAspect(aspect);
