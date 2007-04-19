@@ -1,17 +1,18 @@
 /** loadmap.c **/
+#include <string.h>
 
-
-#include        <string.h>
-
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+}
 
 /***************************************************************************/
 
 #define dac ((Palettetype *)g_dac_box)
 
-int validate_luts(char *fn)
+extern "C" int validate_luts(char *fn)
 {
 	FILE *f;
 	unsigned        r, g, b, index;
@@ -64,7 +65,7 @@ int validate_luts(char *fn)
 
 /***************************************************************************/
 
-int set_color_palette_name(char * fn)
+extern "C" int set_color_palette_name(char * fn)
 {
 	if (validate_luts(fn) != 0)
 	{
@@ -72,7 +73,7 @@ int set_color_palette_name(char * fn)
 	}
 	if (g_map_dac_box == NULL)
 	{
-		g_map_dac_box = (char *) malloc(768L);
+		g_map_dac_box = (BYTE *) malloc(256*3*sizeof(BYTE));
 		if (g_map_dac_box == NULL)
 		{
 			stop_message(0, "Insufficient memory for color map.");

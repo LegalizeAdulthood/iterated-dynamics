@@ -11,11 +11,14 @@
 
 #include <string.h>
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"
 #include "drivers.h"
+}
 
 #define BOX_ROW   6
 #define BOX_COL   11
@@ -28,7 +31,10 @@
 #define FREE_MEM  33     /* try to leave this much memory unallocated */
 #define HASH_SIZE 1024   /* power of 2, near CACHE_MAX/(BLOCK_LEN + 8) */
 
-int g_disk_16bit = 0;         /* storing 16 bit values for continuous potential */
+extern "C"
+{
+	int g_disk_16bit = 0;         /* storing 16 bit values for continuous potential */
+}
 
 static int s_time_to_display;
 static FILE *s_file = NULL;
@@ -65,13 +71,13 @@ static void _fastcall  mem_putc(BYTE);
 static BYTE  mem_getc(void);
 static void _fastcall  mem_seek(long);
 
-int disk_start()
+extern "C" int disk_start()
 {
 	s_header_length = s_disk_targa = 0;
 	return disk_start_common(g_screen_width, g_screen_height, g_colors);
 }
 
-int disk_start_potential()
+extern "C" int disk_start_potential()
 {
 	int i;
 	if (driver_diskp())			/* ditch the original disk file */
@@ -93,7 +99,7 @@ int disk_start_potential()
 	return i;
 }
 
-int disk_start_targa(FILE *targafp, int overhead)
+extern "C" int disk_start_targa(FILE *targafp, int overhead)
 {
 	int i;
 	if (driver_diskp())	/* ditch the original file, make just the targa */
@@ -110,7 +116,7 @@ int disk_start_targa(FILE *targafp, int overhead)
 	return i;
 }
 
-int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
+extern "C" int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 {
 	int i, freemem;
 	long memorysize, offset;
@@ -183,7 +189,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		{
 			longtmp = ((int)cache_size < freemem) ?
 				(long)cache_size << 11 : (long)(cache_size + freemem) << 10;
-			tempfar = malloc(longtmp);
+			tempfar = (BYTE *) malloc(longtmp);
 			if (tempfar != NULL)
 			{
 				free(tempfar);
@@ -339,7 +345,7 @@ void disk_end()
 	g_disk_flag = s_row_size = g_disk_16bit = 0;
 }
 
-int disk_read(int col, int row)
+extern "C" int disk_read(int col, int row)
 {
 	int col_subscr;
 	long offset;
@@ -376,7 +382,7 @@ int disk_read(int col, int row)
 	return s_cur_cache->pixel[col_subscr];
 }
 
-int disk_from_memory(long offset, int size, void *dest)
+extern "C" int disk_from_memory(long offset, int size, void *dest)
 {
 	int col_subscr = (int) (offset & (BLOCK_LEN - 1));
 	if (col_subscr + size > BLOCK_LEN)            /* access violates  a */
@@ -393,7 +399,7 @@ int disk_from_memory(long offset, int size, void *dest)
 }
 
 
-void disk_read_targa(unsigned int col, unsigned int row,
+extern "C" void disk_read_targa(unsigned int col, unsigned int row,
 					BYTE *red, BYTE *green, BYTE *blue)
 {
 	col *= 3;
@@ -402,7 +408,7 @@ void disk_read_targa(unsigned int col, unsigned int row,
 	*red   = (BYTE)disk_read(col + 1, row);
 }
 
-void disk_write(int col, int row, int color)
+extern "C" void disk_write(int col, int row, int color)
 {
 	int col_subscr;
 	long offset;
@@ -443,7 +449,7 @@ void disk_write(int col, int row, int color)
 	}
 }
 
-int disk_to_memory(long offset, int size, void *src)
+extern "C" int disk_to_memory(long offset, int size, void *src)
 {
 	int col_subscr =  (int)(offset & (BLOCK_LEN - 1));
 
@@ -462,7 +468,7 @@ int disk_to_memory(long offset, int size, void *src)
 	return 1;
 }
 
-void disk_write_targa(unsigned int col, unsigned int row,
+extern "C" void disk_write_targa(unsigned int col, unsigned int row,
 					BYTE red, BYTE green, BYTE blue)
 {
 	disk_write(col *= 3, row, blue);
@@ -743,7 +749,7 @@ static void _fastcall mem_putc(BYTE c)     /* memory get_char */
 }
 
 
-void disk_video_status(int line, char *msg)
+extern "C" void disk_video_status(int line, char *msg)
 {
 	char buf[41];
 	int attrib;

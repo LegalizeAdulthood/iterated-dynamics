@@ -1,9 +1,13 @@
 #include <string.h>
+
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+}
 
 #define VARYINT_NONE			0
 #define VARYINT_WITH_X			1
@@ -13,44 +17,46 @@
 #define VARYINT_RANDOM			5
 #define VARYINT_RANDOM_WEIGHTED	6
 
+#define MAX_GRID_SIZE 51  /* This is arbitrary, = 1024/20 */
+
 /* g_px and g_py are coordinates in the parameter grid (small images on screen) */
 /* g_evolving = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size) */
-int g_px;
-int g_py;
-int g_evolving;
-int g_grid_size;
-#define MAX_GRID_SIZE 51  /* This is arbitrary, = 1024/20 */
+extern "C"
+{
+	int g_px;
+	int g_py;
+	int g_evolving;
+	int g_grid_size;
+	unsigned int g_this_generation_random_seed;
+	/* used to replay random sequences to obtain correct values when selecting a
+		seed image for next generation */
+	double g_parameter_offset_x;
+	double g_parameter_offset_y;
+	double g_new_parameter_offset_x;
+	double g_new_parameter_offset_y;
+	double g_parameter_range_x;
+	double g_parameter_range_y;
+	double g_delta_parameter_image_x;
+	double g_delta_parameter_image_y;
+	double g_fiddle_factor;
+	double g_fiddle_reduction;
+	double g_parameter_zoom;
+	char g_discrete_parameter_offset_x;
+	char g_discrete_parameter_offset_y;
+	char g_new_discrete_parameter_offset_x;
+	char g_new_discrete_parameter_offset_y;
+	/* offset for discrete parameters x and y..*/
+	/* used for things like inside or outside types, bailout tests, trig fn etc */
+	/* variation factors, g_parameter_offset_x, g_parameter_offset_y, g_parameter_range_x/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
+		for smooth variation across screen. g_parameter_offset_x = offset param x, g_delta_parameter_image_x = delta param
+		per image, g_parameter_range_x = variation across grid of param ...likewise for g_py */
+	/* g_fiddle_factor is amount of random mutation used in random modes ,
+		g_fiddle_reduction is used to decrease g_fiddle_factor from one generation to the
+		next to eventually produce a stable population */
+	int g_parameter_box_count = 0;
+}
+
 static int ecountbox[MAX_GRID_SIZE][MAX_GRID_SIZE];
-
-unsigned int g_this_generation_random_seed;
-/* used to replay random sequences to obtain correct values when selecting a
-	seed image for next generation */
-
-double g_parameter_offset_x;
-double g_parameter_offset_y;
-double g_new_parameter_offset_x;
-double g_new_parameter_offset_y;
-double g_parameter_range_x;
-double g_parameter_range_y;
-double g_delta_parameter_image_x;
-double g_delta_parameter_image_y;
-double g_fiddle_factor;
-double g_fiddle_reduction;
-double g_parameter_zoom;
-char g_discrete_parameter_offset_x;
-char g_discrete_parameter_offset_y;
-char g_new_discrete_parameter_offset_x;
-char g_new_discrete_parameter_offset_y;
-/* offset for discrete parameters x and y..*/
-/* used for things like inside or outside types, bailout tests, trig fn etc */
-/* variation factors, g_parameter_offset_x, g_parameter_offset_y, g_parameter_range_x/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
-	for smooth variation across screen. g_parameter_offset_x = offset param x, g_delta_parameter_image_x = delta param
-	per image, g_parameter_range_x = variation across grid of param ...likewise for g_py */
-/* g_fiddle_factor is amount of random mutation used in random modes ,
-	g_fiddle_reduction is used to decrease g_fiddle_factor from one generation to the
-	next to eventually produce a stable population */
-int g_parameter_box_count = 0;
-
 static int *s_parameter_box = NULL;
 static int *s_image_box = NULL;
 static int s_image_box_count;
@@ -98,7 +104,7 @@ void set_mutation_level(int);
 void setup_parameter_box(void);
 void release_parameter_box(void);
 
-GENEBASE g_genes[NUMGENES] =
+extern "C" GENEBASE g_genes[NUMGENES] =
 {
 	{ &g_parameters[0],		vary_double,		5, "Param 1 real", 1 },
 	{ &g_parameters[1],		vary_double,		5, "Param 1 imag", 1 },
@@ -123,7 +129,7 @@ GENEBASE g_genes[NUMGENES] =
 	{ &g_bail_out_test,		vary_bail_out_test,	0, "bailout test", 6 }
 };
 
-void restore_parameter_history(void)
+extern "C" void restore_parameter_history(void)
 {
 	g_parameters[0] = s_old_history.param0;
 	g_parameters[1] = s_old_history.param1;
@@ -146,10 +152,10 @@ void restore_parameter_history(void)
 	g_trig_index[1] = s_old_history.trigndx1;
 	g_trig_index[2] = s_old_history.trigndx2;
 	g_trig_index[3] = s_old_history.trigndx3;
-	g_bail_out_test = s_old_history.bailoutest;
+	g_bail_out_test = (bailouts) s_old_history.bailoutest;
 }
 
-void save_parameter_history(void)
+extern "C" void save_parameter_history(void)
 {
 	s_old_history.param0 = g_parameters[0];
 	s_old_history.param1 = g_parameters[1];
@@ -174,7 +180,7 @@ void save_parameter_history(void)
 	s_old_history.bailoutest = g_bail_out_test;
 }
 
-void vary_double(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
+static void vary_double(GENEBASE gene[], int randval, int i) /* routine to vary doubles */
 {
 	int lclpy = g_grid_size - g_py - 1;
 	switch (gene[i].mutate)
@@ -200,7 +206,7 @@ void vary_double(GENEBASE gene[], int randval, int i) /* routine to vary doubles
 	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
 			int mid = g_grid_size /2;
-			double radius =  sqrt(sqr(g_px - mid) + sqr(lclpy - mid));
+			double radius =  sqrt((double) (sqr(g_px - mid) + sqr(lclpy - mid)));
 			*(double *)gene[i].addr += ((((double)randval / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius;
 		}
 		break;
@@ -235,7 +241,7 @@ static int vary_int(int randvalue, int limit, int mode)
 	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
 			int mid = g_grid_size /2;
-			double radius =  sqrt(sqr(g_px - mid) + sqr(lclpy - mid));
+			double radius =  sqrt((double) (sqr(g_px - mid) + sqr(lclpy - mid)));
 			ret = (int)((((randvalue / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius);
 			ret %= limit;
 		}
@@ -251,7 +257,7 @@ static int wrapped_positive_vary_int(int randvalue, int limit, int mode)
 	return (i < 0) ? (limit + i) : i;
 }
 
-void vary_inside(GENEBASE gene[], int randval, int i)
+static void vary_inside(GENEBASE gene[], int randval, int i)
 {
 	int choices[9] = {-59, -60, -61, -100, -101, -102, -103, -104, -1};
 	if (gene[i].mutate)
@@ -261,7 +267,7 @@ void vary_inside(GENEBASE gene[], int randval, int i)
 	return;
 }
 
-void vary_outside(GENEBASE gene[], int randval, int i)
+static void vary_outside(GENEBASE gene[], int randval, int i)
 {
 	int choices[8] = {-1, -2, -3, -4, -5, -6, -7, -8};
 	if (gene[i].mutate)
@@ -271,7 +277,7 @@ void vary_outside(GENEBASE gene[], int randval, int i)
 	return;
 }
 
-void vary_bail_out_test(GENEBASE gene[], int randval, int i)
+static void vary_bail_out_test(GENEBASE gene[], int randval, int i)
 {
 	int choices[7] = {Mod, Real, Imag, Or, And, Manh, Manr};
 	if (gene[i].mutate)
@@ -283,7 +289,7 @@ void vary_bail_out_test(GENEBASE gene[], int randval, int i)
 	return;
 }
 
-void vary_power2(GENEBASE gene[], int randval, int i)
+static void vary_power2(GENEBASE gene[], int randval, int i)
 {
 	int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
 	if (gene[i].mutate)
@@ -293,7 +299,7 @@ void vary_power2(GENEBASE gene[], int randval, int i)
 	return;
 }
 
-void vary_trig(GENEBASE gene[], int randval, int i)
+static void vary_trig(GENEBASE gene[], int randval, int i)
 {
 	if (gene[i].mutate)
 	{
@@ -307,7 +313,7 @@ void vary_trig(GENEBASE gene[], int randval, int i)
 	return;
 }
 
-void vary_invert(GENEBASE gene[], int randval, int i)
+static void vary_invert(GENEBASE gene[], int randval, int i)
 {
 	if (gene[i].mutate)
 	{
@@ -324,7 +330,7 @@ void vary_invert(GENEBASE gene[], int randval, int i)
 		0  minor variable changed.  No need to re-generate the image.
 		1  major parms changed.  Re-generate the images.
 */
-int get_the_rest(void)
+static int get_the_rest(void)
 {
 	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
 	int i, k, num, numtrig;
@@ -338,7 +344,6 @@ int get_the_rest(void)
 	}
 
 choose_vars_restart:
-
 	k = -1;
 	for (num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
 	{
@@ -429,7 +434,7 @@ choose_vars_restart:
 	return 1; /* if you were here, you want to regenerate */
 }
 
-int get_variations(void)
+static int get_variations(void)
 {
 	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
 	int i, k, num, numparams;
@@ -597,7 +602,7 @@ choose_vars_restart:
 	return 1; /* if you were here, you want to regenerate */
 }
 
-void set_mutation_level(int strength)
+extern "C" void set_mutation_level(int strength)
 {
 	/* scan through the gene array turning on random variation for all parms that */
 	/* are suitable for this level of mutation */
@@ -610,7 +615,7 @@ void set_mutation_level(int strength)
 	return;
 }
 
-int get_evolve_parameters(void)
+extern "C" int get_evolve_parameters(void)
 {
 	char *choices[20];
 	struct full_screen_values uvalues[20];
@@ -629,7 +634,6 @@ int get_evolve_parameters(void)
 	old_fiddlefactor  = g_fiddle_factor;
 
 get_evol_restart:
-
 	if ((g_evolving & EVOLVE_RAND_WALK) || (g_evolving & EVOLVE_RAND_PARAM))
 	{
 		/* adjust field param to make some sense when changing from random modes*/
@@ -840,7 +844,7 @@ get_evol_restart:
 	return i;
 }
 
-void setup_parameter_box(void)
+extern "C" void setup_parameter_box(void)
 {
 	int vidsize;
 	g_parameter_box_count = 0;
@@ -871,7 +875,7 @@ void setup_parameter_box(void)
 	}
 }
 
-void release_parameter_box(void)
+extern "C" void release_parameter_box(void)
 {
 	if (s_parameter_box)
 	{
@@ -885,7 +889,7 @@ void release_parameter_box(void)
 	}
 }
 
-void set_current_parameters(void)
+extern "C" void set_current_parameters(void)
 {
 	g_parameter_range_x = g_current_fractal_specific->x_max - g_current_fractal_specific->x_min;
 	g_parameter_offset_x = g_new_parameter_offset_x = - (g_parameter_range_x / 2);
@@ -894,7 +898,7 @@ void set_current_parameters(void)
 	return;
 }
 
-void fiddle_parameters(GENEBASE gene[], int ecount)
+extern "C" void fiddle_parameters(GENEBASE gene[], int ecount)
 {
 	/* call with g_px, g_py ... parameter set co-ords*/
 	/* set random seed then call rnd enough times to get to g_px, g_py */
@@ -950,7 +954,7 @@ static void set_random(int ecount)
 	}
 }
 
-int explore_check(void)
+static int explore_check(void)
 {
 	/* checks through gene array to see if any of the parameters are set to */
 	/* one of the non random variation modes. Used to see if g_parameter_zoom box is */
@@ -968,7 +972,7 @@ int explore_check(void)
 	return nonrandom;
 }
 
-void draw_parameter_box(int mode)
+extern "C" void draw_parameter_box(int mode)
 {
 	/* draws parameter zoom box in evolver mode */
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
@@ -1049,7 +1053,7 @@ void draw_parameter_box(int mode)
 	return;
 }
 
-void set_evolve_ranges(void)
+extern "C" void set_evolve_ranges(void)
 {
 	int lclpy = g_grid_size - g_py - 1;
 	/* set up ranges and offsets for parameter explorer/evolver */
@@ -1063,7 +1067,7 @@ void set_evolve_ranges(void)
 	return;
 }
 
-void spiral_map(int count)
+extern "C" void spiral_map(int count)
 {
 	/* maps out a clockwise spiral for a prettier and possibly   */
 	/* more intuitively useful order of drawing the sub images.  */
@@ -1119,7 +1123,7 @@ void spiral_map(int count)
 	}
 }
 
-int unspiral_map(void)
+extern "C" int unspiral_map(void)
 {
 	/* unmaps the clockwise spiral */
 	/* All this malarky is to allow selecting different subimages */

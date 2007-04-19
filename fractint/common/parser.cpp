@@ -27,17 +27,17 @@
 #include <ctype.h>
 #include <time.h>
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+}
 
 #ifdef WATCH_MP
 double x1, y1, x2, y2;
 #endif
-
-enum MATH_TYPE MathType = D_MATH;
-/* moved _LCMPLX and union ARg to mpmath.h -6-20-90 TIW */
 
 #define MAX_OPS 250
 #define MAX_ARGS 100
@@ -46,7 +46,13 @@ enum MATH_TYPE MathType = D_MATH;
 unsigned g_formula_max_ops  = MAX_OPS;
 unsigned g_formula_max_args = MAX_ARGS;
 
-unsigned long number_of_ops, number_of_loads, number_of_stores, number_of_jumps;
+static enum MATH_TYPE MathType = D_MATH;
+/* moved _LCMPLX and union ARg to mpmath.h -6-20-90 TIW */
+
+static unsigned long number_of_ops;
+static unsigned long number_of_loads;
+static unsigned long number_of_stores;
+static unsigned long number_of_jumps;
 
 struct PEND_OP
 {
@@ -215,7 +221,8 @@ static int ShiftBack;     /* TIW 06-18-90 */
 static int SetRandom;     /* MCP 11-21-91 */
 static int Randomized;
 static unsigned long RandNum;
-short g_uses_p1, g_uses_p2, g_uses_p3, g_uses_p4, g_uses_p5, uses_jump;
+short g_uses_p1, g_uses_p2, g_uses_p3, g_uses_p4, g_uses_p5;
+int uses_jump;
 short g_uses_is_mand;
 unsigned int chars_in_formula;
 

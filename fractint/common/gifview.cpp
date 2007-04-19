@@ -12,35 +12,41 @@
  */
 
 #include <string.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+extern "C"
+{
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-
-static void close_file(void);
+}
 
 #define MAXCOLORS       256
 
+extern "C"
+{
+	unsigned int g_height;
+	unsigned g_num_colors;
+	int g_bad_code_count = 0;         /* needed by decoder module */
+}
+
 static FILE *fpin = NULL;       /* FILE pointer           */
-unsigned int g_height;
-unsigned g_num_colors;
-int g_bad_code_count = 0;         /* needed by decoder module */
-
-static int out_line_dither(BYTE *, int);
-static int out_line_migs(BYTE *, int);
-static int out_line_too_wide(BYTE *, int);
 static int colcount; /* keeps track of current column for wide images */
-
 static unsigned int gifview_image_top;    /* (for migs) */
 static unsigned int gifview_image_left;   /* (for migs) */
 static unsigned int gifview_image_twidth; /* (for migs) */
 
-int get_byte()
+static void close_file(void);
+static int out_line_dither(BYTE *, int);
+static int out_line_migs(BYTE *, int);
+static int out_line_too_wide(BYTE *, int);
+
+extern "C" int get_byte()
 {
 	return getc(fpin); /* EOF is -1, as desired */
 }
 
-int get_bytes(BYTE *where, int how_many)
+extern "C" int get_bytes(BYTE *where, int how_many)
 {
 	return (int) fread((char *)where, 1, how_many, fpin); /* EOF is -1, as desired */
 }
@@ -59,12 +65,10 @@ int get_bytes(BYTE *where, int how_many)
 BYTE g_decoder_line[MAX_PIXELS + 1]; /* write-line routines use this */
 #define DECODERLINE_WIDTH MAX_PIXELS
 
-BYTE *decoderline1;
 static char *ditherbuf = NULL;
 
 /* Main entry decoder */
-
-int gifview()
+extern "C" int gifview()
 {
 	BYTE buffer[16];
 	unsigned top, left, width, finished;
@@ -72,16 +76,6 @@ int gifview()
 	BYTE byte_buf[257]; /* for decoder */
 	int status;
 	int i, j, k, planes;
-	BYTE linebuf[DECODERLINE_WIDTH];
-	decoderline1 = linebuf;
-
-#if 0
-	{
-		char msg[100];
-		sprintf(msg, "Stack free in gifview: %d", stackavail());
-		stop_message(0, msg);
-	}
-#endif
 
 	/* using stack for decoder byte buf rather than static mem */
 	set_byte_buff(byte_buf);
@@ -379,7 +373,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
 	int i, nexterr, brt, err;
 	if (ditherbuf == NULL)
 	{
-		ditherbuf = malloc(linelen + 1);
+		ditherbuf = (char *) malloc(linelen + 1);
 	}
 	memset(ditherbuf, 0, linelen + 1);
 
@@ -460,7 +454,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 	return 0;
 }
 
-int sound_line(BYTE *pixels, int linelen)
+extern "C" int sound_line(BYTE *pixels, int linelen)
 {
 	/* int twidth = gifview_image_twidth; */
 	int twidth = g_x_dots;
@@ -502,7 +496,7 @@ int sound_line(BYTE *pixels, int linelen)
 	return ret;
 }
 
-int potential_line(BYTE *pixels, int linelen)
+extern "C" int potential_line(BYTE *pixels, int linelen)
 {
 	int row, col, saverowcount;
 	if (g_row_count == 0)
