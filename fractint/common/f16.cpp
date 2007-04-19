@@ -24,10 +24,14 @@
 
 #include <string.h>
 #include <ctype.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+extern "C"
+{
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "targa_lc.h"
+}
 
 #ifdef XFRACT
 char g_rle_buffer[258];    /* RLE-state variables */
@@ -42,7 +46,7 @@ static int state, count, bufp;
 ** _must_ allocate 256 bytes for this purpose before calling.
 */
 
-FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
+extern "C" FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
 {
 	char filename[64];
 	U8 header[HEADERSIZE];
@@ -77,7 +81,7 @@ FILE *t16_open(char *fname, int *hs, int *vs, int *csize, U8 *cp)
 	return fp;
 }
 
-int t16_getline(FILE *fp, int hs, U16 *data)
+extern "C" int t16_getline(FILE *fp, int hs, U16 *data)
 {
 	int i;
 
@@ -112,4 +116,3 @@ int t16_getline(FILE *fp, int hs, U16 *data)
 	}
 	return 0;
 }
-

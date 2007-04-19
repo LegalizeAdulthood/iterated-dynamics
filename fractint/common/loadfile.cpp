@@ -5,7 +5,10 @@
 #include <string.h>
 #include <time.h>
 #include <errno.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+extern "C"
+{
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -13,6 +16,7 @@
 #include "targa_lc.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
 #define BLOCKTYPE_MAIN_INFO		1
 #define BLOCKTYPE_RESUME_INFO	2
@@ -37,16 +41,19 @@ static void backwardscompat(struct fractal_info *info);
 static int fix_bof(void);
 static int fix_period_bof(void);
 
-int g_file_type;
-int g_loaded_3d;
-static FILE *fp;
-int g_file_y_dots, g_file_x_dots, g_file_colors;
-float g_file_aspect_ratio;
-short g_skip_x_dots, g_skip_y_dots;      /* for decoder, when reducing image */
-int g_bad_outside = 0;
-int g_use_old_complex_power = FALSE;
+extern "C"
+{
+	int g_file_type;
+	int g_loaded_3d;
+	static FILE *fp;
+	int g_file_y_dots, g_file_x_dots, g_file_colors;
+	float g_file_aspect_ratio;
+	short g_skip_x_dots, g_skip_y_dots;      /* for decoder, when reducing image */
+	int g_bad_outside = 0;
+	int g_use_old_complex_power = FALSE;
+}
 
-int read_overlay()      /* read overlay/3D files, if reqr'd */
+extern "C" int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
 	struct fractal_info read_info;
 	char oldfloatflag;
@@ -264,8 +271,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_new_orbit_type = read_info.orbittype    ;
 		g_juli_3d_mode   = read_info.juli3Dmode   ;
 		g_max_fn    =   (char)read_info.max_fn          ;
-		g_major_method = (enum Major)read_info.inversejulia >> 8;
-		g_minor_method = (enum Minor)read_info.inversejulia & 255;
+		g_major_method = (enum Major) (read_info.inversejulia >> 8);
+		g_minor_method = (enum Minor) (read_info.inversejulia & 255);
 		g_parameters[4] = read_info.dparm5;
 		g_parameters[5] = read_info.dparm6;
 		g_parameters[6] = read_info.dparm7;
@@ -823,7 +830,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					break;
 				case BLOCKTYPE_RESUME_INFO: /* resume info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					resume_info_blk->resume_data = malloc(data_len);
+					resume_info_blk->resume_data = (char *) malloc(data_len);
 					if (resume_info_blk->resume_data == 0)
 					{
 						info->calculation_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
@@ -1111,7 +1118,7 @@ static void backwardscompat(struct fractal_info *info)
 }
 
 /* switch old bifurcation fractal types to new generalizations */
-void set_if_old_bif(void)
+extern "C" void set_if_old_bif(void)
 {
 	/* set functions if not set already, may need to check 'g_function_preloaded'
 		before calling this routine.  JCO 7/5/92 */
@@ -1137,7 +1144,7 @@ void set_if_old_bif(void)
 }
 
 /* miscellaneous function variable defaults */
-void set_function_parm_defaults(void)
+extern "C" void set_function_parm_defaults(void)
 {
 	switch (g_fractal_type)
 	{
@@ -1159,7 +1166,7 @@ void set_function_parm_defaults(void)
 	}
 }
 
-void backwards_v18(void)
+extern "C" void backwards_v18(void)
 {
 	if (!g_function_preloaded)
 	{
@@ -1177,7 +1184,7 @@ void backwards_v18(void)
 	}
 }
 
-void backwards_v19(void)
+extern "C" void backwards_v19(void)
 {
 	if (g_fractal_type == MARKSJULIA && g_save_release < 1825)
 	{
@@ -1210,7 +1217,7 @@ void backwards_v19(void)
 	g_use_old_distance_test = (g_save_release < 1827 && g_distance_test) ? TRUE : FALSE; /* use old distest code */
 }
 
-void backwards_v20(void)
+extern "C" void backwards_v20(void)
 {
 	/* Fractype == FP type is not seen from PAR file ????? */
 	g_bad_outside = ((g_fractal_type == MANDELFP || g_fractal_type == JULIAFP
@@ -1230,7 +1237,7 @@ void backwards_v20(void)
 	}
 }
 
-int check_back(void)
+extern "C" int check_back(void)
 {
 	/*
 		put the features that need to save the value in g_save_release for backwards
@@ -1333,7 +1340,7 @@ static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
 int oldbf_math;
 
 /* look_get_window reads all .GIF files and draws window outlines on the screen */
-int look_get_window(void)
+extern "C" int look_get_window(void)
 {
 	struct affine stack_cvt;
 	struct fractal_info read_info;

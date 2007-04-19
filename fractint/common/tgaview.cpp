@@ -7,17 +7,19 @@
 	file (.pot) in version 15.  Delete this code after a few more revs.
 */
 
-
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "targa_lc.h"
 #include "drivers.h"
+}
 
 static FILE *fptarga = NULL;            /* FILE pointer           */
 
 /* Main entry decoder */
-int tga_view()
+extern "C" int tga_view()
 {
 	int i;
 	int cs;
@@ -34,7 +36,7 @@ int tga_view()
 	for (i = 0; i < (int)g_height; ++i)
 	{
 		t16_getline(fptarga, width, (U16 *)g_box_x);
-		if ((*g_out_line)((void *)g_box_x, width))
+		if ((*g_out_line)((BYTE *)g_box_x, width))
 		{
 			fclose(fptarga);
 			fptarga = NULL;
@@ -53,7 +55,7 @@ int tga_view()
 }
 
 /* Outline function for 16 bit data with 8 bit g_fudge */
-int out_line_16(BYTE *buffer, int linelen)
+extern "C" int out_line_16(BYTE *buffer, int linelen)
 {
 	int i;
 	U16 *buf;

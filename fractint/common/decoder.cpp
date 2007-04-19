@@ -40,31 +40,14 @@
  */
 
 
-/***** Application Includes *********************************************/
-  /* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+}
 
-/***** Application Function Prototypes **********************************/
-static short get_next_code(void);
-
-/* extern short out_line(pixels, linelen)
- *     UBYTE pixels[];
- *     short linelen;
- *
- *   - This function takes a full line of pixels (one byte per pixel) and
- * displays them (or does whatever your program wants with them...).  It
- * should return zero, or negative if an error or some other event occurs
- * which would require aborting the decode process...  Note that the length
- * passed will almost always be equal to the line length passed to the
- * decoder function, with the sole exception occurring when an ending code
- * occurs in an odd place in the GIF file...  In any case, linelen will be
- * equal to the number of pixels passed...
- */
-int (*g_out_line) (BYTE *, int) = out_line;
-
-/***** Local Static Variables *******************************************/
 /* Various error codes used by decoder
  * and my own routines...   It's okay
  * for you to define whatever you want,
@@ -84,6 +67,27 @@ int (*g_out_line) (BYTE *, int) = out_line;
 #define NOPE 0
 #define YUP -1
 
+/* extern short out_line(pixels, linelen)
+ *     UBYTE pixels[];
+ *     short linelen;
+ *
+ *   - This function takes a full line of pixels (one byte per pixel) and
+ * displays them (or does whatever your program wants with them...).  It
+ * should return zero, or negative if an error or some other event occurs
+ * which would require aborting the decode process...  Note that the length
+ * passed will almost always be equal to the line length passed to the
+ * decoder function, with the sole exception occurring when an ending code
+ * occurs in an odd place in the GIF file...  In any case, linelen will be
+ * equal to the number of pixels passed...
+ */
+extern "C"
+{
+	int (*g_out_line) (BYTE *, int) = out_line;
+	short g_size_of_string[MAX_CODES + 1];  /* size of string list */
+}
+
+
+/***** Local Static Variables *******************************************/
 static short curr_size;         /* The current code size */
 
 /* The following static variables are used
@@ -93,7 +97,6 @@ static short navail_bytes;      /* # bytes left in g_block */
 static short nbits_left;        /* # bits left in current byte */
 static BYTE *byte_buff;         /* Current g_block, reuse shared mem */
 static BYTE *pbytes;            /* Pointer to next byte in g_block */
-
 static short code_mask[13] =
 {
 	0,
@@ -149,9 +152,9 @@ static short code_mask[13] =
  *
  */
 
-short g_size_of_string[MAX_CODES + 1];  /* size of string list */
+static short get_next_code(void);
 
-short decoder(short linewidth)
+extern "C" short decoder(short linewidth)
 {
 	U16 prefix[MAX_CODES + 1];     /* Prefix linked list */
 	BYTE *sp;
@@ -453,7 +456,7 @@ static short get_next_code()
 }
 
 /* called in parent reoutine to set byte_buff */
-void set_byte_buff(BYTE *ptr)
+extern "C" void set_byte_buff(BYTE *ptr)
 {
 	byte_buff = ptr;
 }

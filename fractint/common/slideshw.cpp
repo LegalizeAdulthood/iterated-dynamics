@@ -10,10 +10,13 @@
 #include <conio.h>
 #endif
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+}
 
 static void sleep_secs(int);
 static int  showtempmsg_txt(int, int, int, int, char *);

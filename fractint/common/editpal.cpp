@@ -121,12 +121,15 @@
 #include <varargs.h>
 #endif
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+}
 
 /*
  * misc. #defines
@@ -147,12 +150,15 @@
 #define NEWC(class_)	((class_ *) malloc(sizeof(class_)))
 #define DELETE(g_block)	(free(g_block), g_block = NULL)  /* just for warning */
 
+extern "C"
+{
 #ifdef XFRACT
 int g_edit_pal_cursor = 0;
 #endif
 char g_screen_file[] = "FRACTINT.$$1";  /* file where screen portion is stored */
 BYTE     *g_line_buffer;   /* must be alloced!!! */
 int g_using_jiim = 0;
+}
 
 static char s_undo_file[] = "FRACTINT.$$2";  /* file where undo list is stored */
 static BYTE		s_fg_color,
@@ -166,9 +172,7 @@ static float    s_gamma_val = 1;
  */
 typedef struct
 {
-	BYTE red,
-		green,
-		blue;
+	BYTE red, green, blue;
 } PALENTRY;
 
 /*
@@ -405,11 +409,11 @@ static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, 
 		else
 		{
 			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-				(int) (p1->red   + pow(curr/(double)(num-1), s_gamma_val)*num*rm));
+				(int) (p1->red   + pow(curr/(double)(num-1), (double) s_gamma_val)*num*rm));
 			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-				(int) (p1->green + pow(curr/(double)(num-1), s_gamma_val)*num*gm));
+				(int) (p1->green + pow(curr/(double)(num-1), (double) s_gamma_val)*num*gm));
 			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-				(int) (p1->blue  + pow(curr/(double)(num-1), s_gamma_val)*num*bm));
+				(int) (p1->blue  + pow(curr/(double)(num-1), (double) s_gamma_val)*num*bm));
 		}
 	}
 }
@@ -582,7 +586,7 @@ static void cursor_restore(void);
 
 static cursor *s_the_cursor = NULL;
 
-BOOLEAN cursor_new(void)
+extern "C" BOOLEAN cursor_new(void)
 {
 	if (s_the_cursor != NULL)
 	{
@@ -600,7 +604,7 @@ BOOLEAN cursor_new(void)
 	return TRUE;
 }
 
-void cursor_destroy(void)
+extern "C" void cursor_destroy(void)
 {
 	if (s_the_cursor != NULL)
 	{
@@ -642,7 +646,7 @@ static void cursor_restore(void)
 	put_row(s_the_cursor->x + 2,             s_the_cursor->y,  CURSOR_SIZE, s_the_cursor->r);
 }
 
-void cursor_set_position(int x, int y)
+extern "C" void cursor_set_position(int x, int y)
 {
 	if (!s_the_cursor->hidden)
 	{
@@ -659,7 +663,7 @@ void cursor_set_position(int x, int y)
 	}
 }
 
-void cursor_move(int xoff, int yoff)
+extern "C" void cursor_move(int xoff, int yoff)
 {
 	if (!s_the_cursor->hidden)
 	{
@@ -693,17 +697,17 @@ void cursor_move(int xoff, int yoff)
 	}
 }
 
-int cursor_get_x(void)
+extern "C" int cursor_get_x(void)
 {
 	return s_the_cursor->x;
 }
 
-int cursor_get_y(void)
+extern "C" int cursor_get_y(void)
 {
 	return s_the_cursor->y;
 }
 
-void cursor_hide(void)
+extern "C" void cursor_hide(void)
 {
 	if (s_the_cursor->hidden++ == 0)
 	{
@@ -711,7 +715,7 @@ void cursor_hide(void)
 	}
 }
 
-void cursor_show(void)
+extern "C" void cursor_show(void)
 {
 	if (--s_the_cursor->hidden == 0)
 	{
@@ -733,7 +737,7 @@ void cursor_end_mouse_tracking()
 #endif
 
 /* See if the cursor should blink yet, and blink it if so */
-void cursor_check_blink(void)
+extern "C" void cursor_check_blink(void)
 {
 	long tick;
 	tick = readticker();
@@ -753,7 +757,7 @@ void cursor_check_blink(void)
 	}
 }
 
-int cursor_wait_key(void)   /* blink cursor while waiting for a key */
+extern "C" int cursor_wait_key(void)   /* blink cursor while waiting for a key */
 {
 	while (!driver_wait_key_pressed(1))
 	{
@@ -785,7 +789,6 @@ typedef struct tag_move_box move_box;
 static void     move_box_draw     (move_box *me);
 static void     move_box_erase    (move_box *me);
 static void     move_box_move     (move_box *me, int key);
-
 static move_box *move_box_new  (int x, int y, int csize, int base_width,
 									int base_depth);
 static void     move_box_destroy    (move_box *me);
@@ -795,7 +798,6 @@ static BOOLEAN  move_box_should_hide (move_box *me);
 static int      move_box_x          (move_box *me);
 static int      move_box_y          (move_box *me);
 static int      move_box_csize      (move_box *me);
-
 static void     move_box_set_position     (move_box *me, int x, int y);
 static void     move_box_set_csize   (move_box *me, int csize);
 
@@ -810,14 +812,13 @@ static move_box *move_box_new(int x, int y, int csize, int base_width, int base_
 	me->base_depth  = base_depth;
 	me->moved       = FALSE;
 	me->should_hide = FALSE;
-	me->t           = malloc(g_screen_width);
-	me->b           = malloc(g_screen_width);
-	me->l           = malloc(g_screen_height);
-	me->r           = malloc(g_screen_height);
+	me->t           = (char *) malloc(g_screen_width);
+	me->b           = (char *) malloc(g_screen_width);
+	me->l           = (char *) malloc(g_screen_height);
+	me->r           = (char *) malloc(g_screen_height);
 
 	return me;
 }
-
 
 static void move_box_destroy(move_box *me)
 {
@@ -828,12 +829,10 @@ static void move_box_destroy(move_box *me)
 	DELETE(me);
 }
 
-
 static BOOLEAN move_box_moved(move_box *me)
 {
 	return me->moved;
 }
-
 
 static BOOLEAN move_box_should_hide(move_box *me)
 {
@@ -855,19 +854,16 @@ static int move_box_csize(move_box *me)
 	return me->csize;
 }
 
-
 static void move_box_set_position(move_box *me, int x, int y)
 {
 	me->x = x;
 	me->y = y;
 }
 
-
 static void move_box_set_csize(move_box *me, int csize)
 {
 	me->csize = csize;
 }
-
 
 static void move_box_draw(move_box *me)  /* private */
 {
@@ -890,7 +886,6 @@ static void move_box_draw(move_box *me)  /* private */
 	vertical_dotted_line(x + width-1, y, depth);
 }
 
-
 static void move_box_erase(move_box *me)   /* private */
 {
 	int width = me->base_width + me->csize*16 + 1,
@@ -902,7 +897,6 @@ static void move_box_erase(move_box *me)   /* private */
 	put_row(me->x, me->y,         width, me->t);
 	put_row(me->x, me->y + depth-1, width, me->b);
 }
-
 
 #define BOX_INC     1
 #define CSIZE_INC   2
@@ -975,7 +969,6 @@ static void move_box_move(move_box *me, int key)
 		move_box_draw(me);
 	}
 }
-
 
 static BOOLEAN move_box_process(move_box *me)
 {
@@ -1080,8 +1073,6 @@ static BOOLEAN move_box_process(move_box *me)
 	return (BOOLEAN)((key == FIK_ESC) ? FALSE : TRUE);
 }
 
-
-
 /*
  * Class:     color_editor
  *
@@ -1174,7 +1165,6 @@ static void color_editor_destroy(color_editor *me)
 	DELETE(me);
 }
 
-
 static void color_editor_draw(color_editor *me)
 {
 	if (me->hidden)
@@ -1187,37 +1177,31 @@ static void color_editor_draw(color_editor *me)
 	cursor_show();
 }
 
-
 static void color_editor_set_position(color_editor *me, int x, int y)
 {
 	me->x = x;
 	me->y = y;
 }
 
-
 static void color_editor_set_value(color_editor *me, int val)
 {
 	me->val = val;
 }
-
 
 static int color_editor_get_value(color_editor *me)
 {
 	return me->val;
 }
 
-
 static void color_editor_set_done(color_editor *me, BOOLEAN done)
 {
 	me->done = done;
 }
 
-
 static void color_editor_set_hidden(color_editor *me, BOOLEAN hidden)
 {
 	me->hidden = hidden;
 }
-
 
 static int color_editor_edit(color_editor *me)
 {
@@ -1347,8 +1331,6 @@ static int color_editor_edit(color_editor *me)
 	return key;
 }
 
-
-
 /*
  * Class:     rgb_editor
  *
@@ -1376,7 +1358,6 @@ typedef struct tag_rgb_editor rgb_editor;
 
 static void      rgb_editor_other_key (int key, color_editor *ceditor, VOIDPTR info);
 static void      rgb_editor_change    (color_editor *ceditor, VOIDPTR info);
-
 #ifndef XFRACT
 static rgb_editor *rgb_editor_new(int x, int y,
 						void (*other_key)(int, rgb_editor*, void*),
@@ -1386,7 +1367,6 @@ static rgb_editor *rgb_editor_new(int x, int y,
 						void (*other_key)(),
 						void (*change)(), VOIDPTR info);
 #endif
-
 static void     rgb_editor_destroy  (rgb_editor *me);
 static void     rgb_editor_set_position   (rgb_editor *me, int x, int y);
 static void     rgb_editor_set_done  (rgb_editor *me, BOOLEAN done);
@@ -1400,7 +1380,6 @@ static PALENTRY rgb_editor_get_rgb   (rgb_editor *me);
 
 #define RGB_EDITOR_WIDTH 62
 #define RGB_EDITOR_DEPTH (1 + 1 + COLOR_EDITOR_DEPTH*3-2 + 2)
-
 #define RGB_EDITOR_BOX_WIDTH (RGB_EDITOR_WIDTH - (2 + COLOR_EDITOR_WIDTH + 1 + 2))
 #define RGB_EDITOR_BOX_DEPTH (RGB_EDITOR_DEPTH - 4)
 
@@ -1435,7 +1414,6 @@ static rgb_editor *rgb_editor_new(int x, int y, void (*other_key)(),
 	return me;
 }
 
-
 static void rgb_editor_destroy(rgb_editor *me)
 {
 	color_editor_destroy(me->color[0]);
@@ -1444,12 +1422,10 @@ static void rgb_editor_destroy(rgb_editor *me)
 	DELETE(me);
 }
 
-
 static void rgb_editor_set_done(rgb_editor *me, BOOLEAN done)
 {
 	me->done = done;
 }
-
 
 static void rgb_editor_set_hidden(rgb_editor *me, BOOLEAN hidden)
 {
@@ -1458,7 +1434,6 @@ static void rgb_editor_set_hidden(rgb_editor *me, BOOLEAN hidden)
 	color_editor_set_hidden(me->color[1], hidden);
 	color_editor_set_hidden(me->color[2], hidden);
 }
-
 
 static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /* private */
 {
@@ -1536,7 +1511,6 @@ static void rgb_editor_change(color_editor *ceditor, VOIDPTR info) /* private */
 	me->change(me, me->info);
 }
 
-
 static void rgb_editor_set_position(rgb_editor *me, int x, int y)
 {
 	me->x = x;
@@ -1546,7 +1520,6 @@ static void rgb_editor_set_position(rgb_editor *me, int x, int y)
 	color_editor_set_position(me->color[1], x + 2, y + 2 + COLOR_EDITOR_DEPTH-1);
 	color_editor_set_position(me->color[2], x + 2, y + 2 + COLOR_EDITOR_DEPTH-1 + COLOR_EDITOR_DEPTH-1);
 }
-
 
 static void rgb_editor_blank_sample_box(rgb_editor *me)
 {
@@ -1559,7 +1532,6 @@ static void rgb_editor_blank_sample_box(rgb_editor *me)
 	fill_rectangle(me->x + 2 + COLOR_EDITOR_WIDTH + 1 + 1, me->y + 2 + 1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
 	cursor_show();
 }
-
 
 static void rgb_editor_update(rgb_editor *me)
 {
@@ -1599,7 +1571,6 @@ static void rgb_editor_update(rgb_editor *me)
 	cursor_show();
 }
 
-
 static void rgb_editor_draw(rgb_editor *me)
 {
 	if (me->hidden)
@@ -1614,7 +1585,6 @@ static void rgb_editor_draw(rgb_editor *me)
 	rgb_editor_update(me);
 	cursor_show();
 }
-
 
 static int rgb_editor_edit(rgb_editor *me)
 {
@@ -1644,7 +1614,6 @@ static int rgb_editor_edit(rgb_editor *me)
 	return key;
 }
 
-
 static void rgb_editor_set_rgb(rgb_editor *me, int pal, PALENTRY *rgb)
 {
 	me->pal = pal;
@@ -1652,7 +1621,6 @@ static void rgb_editor_set_rgb(rgb_editor *me, int pal, PALENTRY *rgb)
 	color_editor_set_value(me->color[1], rgb->green);
 	color_editor_set_value(me->color[2], rgb->blue);
 }
-
 
 static PALENTRY rgb_editor_get_rgb(rgb_editor *me)
 {
@@ -1665,8 +1633,6 @@ static PALENTRY rgb_editor_get_rgb(rgb_editor *me)
 	return pal;
 }
 
-
-
 /*
  * Class:     pal_table
  *
@@ -1676,16 +1642,6 @@ static PALENTRY rgb_editor_get_rgb(rgb_editor *me)
  *            mode, (Z)oom option, (H)ide palette, rotation, etc.
  *
  */
-
-/*
-enum stored_at_values
-	{
-	NOWHERE,
-	DISK,
-	MEMORY
-	} ;
-*/
-
 /*
 
 Modes:
@@ -1695,7 +1651,6 @@ Modes:
 	S(t)ripe mode: "T", " "
 
 */
-
 #define EXCLUDE_NONE	0
 #define EXCLUDE_CURRENT	1
 #define EXCLUDE_RANGE	2
@@ -1756,10 +1711,8 @@ static void      pal_table_process   (pal_table *me);
 static void      pal_table_set_hidden (pal_table *me, BOOLEAN hidden);
 static void      pal_table_hide      (pal_table *me, rgb_editor *rgb, BOOLEAN hidden);
 
-
 #define PALTABLE_PALX (1)
 #define PALTABLE_PALY (2 + RGB_EDITOR_DEPTH + 2)
-
 #define UNDO_DATA        (1)
 #define UNDO_DATA_SINGLE (2)
 #define UNDO_ROTATE      (3)
@@ -1798,10 +1751,7 @@ static void pal_table_put_band(pal_table *me, PALENTRY *pal)
 
 }
 
-
 /* - Undo.Redo code - */
-
-
 static void pal_table_save_undo_data(pal_table *me, int first, int last)
 {
 	int num;
@@ -1837,12 +1787,11 @@ static void pal_table_save_undo_data(pal_table *me, int first, int last)
 	me->num_redo = 0;
 }
 
-
 static void pal_table_save_undo_rotate(pal_table *me, int dir, int first, int last)
 {
 	if (me->undo_file == NULL)
 	{
-		return ;
+		return;
 	}
 
 #ifdef DEBUG_UNDO
@@ -1858,7 +1807,6 @@ static void pal_table_save_undo_rotate(pal_table *me, int dir, int first, int la
 
 	me->num_redo = 0;
 }
-
 
 static void pal_table_undo_process(pal_table *me, int delta)   /* undo/redo common code */
 {              /* delta = -1 for undo, +1 for redo */
@@ -1928,7 +1876,6 @@ static void pal_table_undo_process(pal_table *me, int delta)   /* undo/redo comm
 	getw(me->undo_file);  /* read size */
 }
 
-
 static void pal_table_undo(pal_table *me)
 {
 	int  size;
@@ -1953,7 +1900,6 @@ static void pal_table_undo(pal_table *me)
 	++me->num_redo;
 }
 
-
 static void pal_table_redo(pal_table *me)
 {
 	if (me->num_redo <= 0)
@@ -1970,10 +1916,6 @@ static void pal_table_redo(pal_table *me)
 
 	--me->num_redo;
 }
-
-
-/* - everything else - */
-
 
 #define STATUS_LEN (4)
 
@@ -2010,7 +1952,6 @@ static void pal_table_draw_status(pal_table *me, BOOLEAN stripe_mode)
 	}
 }
 
-
 static void pal_table_highlight_pal(pal_table *me, int pnum, int color)
 {
 	int x    = me->x + PALTABLE_PALX + (pnum % 16)*me->csize,
@@ -2035,7 +1976,6 @@ static void pal_table_highlight_pal(pal_table *me, int pnum, int color)
 
 	cursor_show();
 }
-
 
 static void pal_table_draw(pal_table *me)
 {
@@ -3428,7 +3368,7 @@ void palette_edit(void)       /* called by fractint */
 
 	g_plot_color = g_put_color;
 
-	g_line_buffer = malloc(max(g_screen_width, g_screen_height));
+	g_line_buffer = (BYTE *) malloc(max(g_screen_width, g_screen_height));
 
 	g_look_at_mouse = LOOK_MOUSE_ZOOM_BOX;
 	g_sx_offset = g_sy_offset = 0;

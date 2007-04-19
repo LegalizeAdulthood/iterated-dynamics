@@ -30,11 +30,15 @@
 */
 
 #include <string.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+extern "C"
+{
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+}
 
 /* routines in this module      */
 
@@ -50,7 +54,7 @@ struct vidinf
 {
 	int entnum;     /* g_video_entry subscript */
 	unsigned flags; /* flags for sort's compare, defined below */
-	};
+};
 /* defines for flags; done this way instead of bit union to ensure ordering;
 	these bits represent the sort sequence for video mode list */
 #define VI_EXACT 0x8000 /* unless the one and only exact match */
@@ -117,7 +121,7 @@ static double vid_aspect(int tryxdots, int tryydots)
 static struct vidinf *vidptr;
 #endif
 
-int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
+extern "C" int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	struct vidinf vid[MAXVIDEOMODES];
 	int i, j;

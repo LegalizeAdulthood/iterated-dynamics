@@ -5,12 +5,15 @@
 #include <string.h>
 #include <time.h>
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
 /* routines in this module      */
 
@@ -28,9 +31,9 @@ static BYTE White[3]  = {COLOR_CHANNEL_MAX,COLOR_CHANNEL_MAX,COLOR_CHANNEL_MAX};
 static BYTE Yellow[3] = {COLOR_CHANNEL_MAX,COLOR_CHANNEL_MAX, 0};
 static BYTE Brown[3]  = {COLOR_CHANNEL_MAX/2,COLOR_CHANNEL_MAX/2, 0};
 
-char mapmask[13] = {"*.map"};
+static char mapmask[13] = {"*.map"};
 
-void rotate(int direction)      /* rotate-the-palette routine */
+extern "C" void rotate(int direction)      /* rotate-the-palette routine */
 {
 	int  kbdchar, more, last, next;
 	int fkey, step, fstep, istep, jstep, oldstep;
@@ -477,8 +480,7 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 	}
 }
 
-
-void save_palette()
+extern "C" void save_palette()
 {
 	char palname[FILE_MAX_PATH];
 	FILE *dacfile;
@@ -523,8 +525,7 @@ void save_palette()
 	}
 }
 
-
-int load_palette(void)
+extern "C" int load_palette(void)
 {
 	int i;
 	char filename[FILE_MAX_PATH];

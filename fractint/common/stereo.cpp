@@ -19,13 +19,17 @@
 
 #include <string.h>
 #include <time.h>
+#include <malloc.h>
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+}
 
 char g_stereo_map_name[FILE_MAX_DIR + 1] = {""};
 int g_auto_stereo_depth = 100;
@@ -143,8 +147,8 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 int out_line_stereo(BYTE *pixels, int linelen)
 {
 	int i, j, x, s;
-	int *same = _alloca(sizeof(int)*g_x_dots);
-	int *colour = _alloca(sizeof(int)*g_x_dots);
+	int *same = (int *) _alloca(sizeof(int)*g_x_dots);
+	int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
 	if ((s_y) >= g_y_dots)
 	{
 		return 1;
@@ -210,8 +214,8 @@ int auto_stereo(void)
 	int bars, ct, kbdchar, barwidth;
 	time_t ltime;
 	unsigned char *buf = (unsigned char *)g_decoder_line;
-	int *same = _alloca(sizeof(int)*g_x_dots);
-	int *colour = _alloca(sizeof(int)*g_x_dots);
+	int *same = (int *) _alloca(sizeof(int)*g_x_dots);
+	int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
 
 	/* Use the current time to randomize the random number sequence. */
 	time(&ltime);
