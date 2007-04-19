@@ -25,11 +25,15 @@
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+extern "C"
+{
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
+}
 
 #define MAX_HIST           16        /* number of pages we'll remember */
 #define ACTION_CALL         0        /* values returned by help_topic() */
@@ -89,12 +93,10 @@ static int s_max_pages;					/* max # of pages in any topic */
 static int s_num_label;					/* number of labels */
 static int s_num_topic;					/* number of topics */
 static int s_curr_hist = 0;				/* current pos in history */
-
 /* these items alloc'ed in init_help... */
 static long      *s_topic_offset;        /* 4*s_num_topic */
 static LABEL     *s_label;               /* 4*s_num_label */
 static HIST      *s_hist;                /* 6*MAX_HIST (96 bytes) */
-
 /* these items alloc'ed only while help is active... */
 static char       *s_buffer;           /* MAX_PAGE_SIZE (2048 bytes) */
 static LINK       *s_link_table;       /* 10*s_max_links */
@@ -776,7 +778,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 	return action;
 }
 
-int help(int action)
+extern "C" int help(int action)
 {
 	HIST      curr;
 	int       oldlookatmouse;
@@ -980,14 +982,14 @@ static int find_file(char *filename, char *path)
 }
 
 static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
-	{
+{
 	static int  curr_topic = -1;
 	static long curr_base;
 	static int  curr_len;
 	int         read_len;
 
 	if (topic != curr_topic)
-		{
+	{
 		int t;
 		char ch;
 
@@ -1015,30 +1017,28 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
 		}
 		fread(&curr_len, sizeof(int), 1, s_help_file); /* read topic len */
 		curr_base += sizeof(int);
-		}
+	}
 
 	read_len = (off + len > curr_len) ? curr_len - off : len;
 
 	if (read_len > 0)
-		{
+	{
 		help_seek(curr_base + off);
 		fread(buf, sizeof(char), read_len, s_help_file);
-		}
-
-	return curr_len - (off + len) ;
 	}
 
-int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
+	return curr_len - (off + len) ;
+}
+
+extern "C" int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
 	/*
 	* reads text from a help topic.  Returns number of bytes from (off + len)
 	* to end of topic.  On "EOF" returns a negative number representing
 	* number of bytes not read.
 	*/
 {
-	int ret;
-	ret = _read_help_topic(s_label[label_num].topic_num,
+	return _read_help_topic(s_label[label_num].topic_num,
 				s_label[label_num].topic_off + off, len, buf);
-	return ret ;
 }
 
 #define PRINT_BUFFER_SIZE  (32767)       /* max. size of help topic in doc. */
@@ -1065,12 +1065,8 @@ typedef struct PRINT_DOC_INFO
 	char      id[81];        /* s_buffer to store id in */
 	char      title[81];     /* s_buffer to store title in */
 
-#if !defined(XFRACT) && !defined(_WIN32)
 	int     (*msg_func)(int pnum, int num_page);
-#else
-	int     (*msg_func)();
 	int pnum;
-#endif
 
 	FILE     *file;          /* file to sent output to */
 	int       margin;        /* indent text by this much */
@@ -1325,7 +1321,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 	return 1;   /* AOK -- continue */
 }
 
-int makedoc_msg_func(int pnum, int num_pages)
+extern "C" int makedoc_msg_func(int pnum, int num_pages)
 {
 	char s_buffer[80] = "";
 	int result = 0;
@@ -1343,7 +1339,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 	return result;
 }
 
-void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg)
+extern "C" void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg)
 {
 	PRINT_DOC_INFO info;
 	int            success   = 0;
@@ -1429,7 +1425,7 @@ ErrorAbort:
 	}
 }
 
-int init_help(void)
+extern "C" int init_help(void)
 {
 	struct help_sig_info hs = { 0 };
 	char path[FILE_MAX_PATH + 1];
@@ -1578,7 +1574,7 @@ void end_help(void)
 static int s_help_mode_stack[10] = { 0 };
 static int s_help_mode_stack_top = 0;
 
-void push_help_mode(int new_mode)
+extern "C" void push_help_mode(int new_mode)
 {
 	assert(s_help_mode_stack_top < NUM_OF(s_help_mode_stack));
 	s_help_mode_stack[s_help_mode_stack_top] = s_help_mode;
@@ -1586,24 +1582,24 @@ void push_help_mode(int new_mode)
 	s_help_mode = new_mode;
 }
 
-void pop_help_mode(void)
+extern "C" void pop_help_mode(void)
 {
 	assert(s_help_mode_stack_top > 0);
 	s_help_mode_stack_top--;
 	s_help_mode = s_help_mode_stack[s_help_mode_stack_top];
 }
 
-void set_help_mode(int new_mode)
+extern "C" void set_help_mode(int new_mode)
 {
 	s_help_mode = new_mode;
 }
 
-int get_help_mode(void)
+extern "C" int get_help_mode(void)
 {
 	return s_help_mode;
 }
 
-int full_screen_prompt_help(int help_mode, char *hdg, int numprompts, char **prompts,
+extern "C" int full_screen_prompt_help(int help_mode, char *hdg, int numprompts, char **prompts,
 	struct full_screen_values *values, int fkeymask, char *extrainfo)
 {
 	int result;
@@ -1613,7 +1609,7 @@ int full_screen_prompt_help(int help_mode, char *hdg, int numprompts, char **pro
 	return result;
 }
 
-int field_prompt_help(int help_mode,
+extern "C" int field_prompt_help(int help_mode,
 	char *hdg, char *instr, char *fld, int len, int (*checkkey)(int))
 {
 	int result;
@@ -1623,7 +1619,7 @@ int field_prompt_help(int help_mode,
 	return result;
 }
 
-long get_file_entry_help(int help_mode,
+extern "C" long get_file_entry_help(int help_mode,
 	int type, char *title, char *fmask, char *filename, char *entryname)
 {
 	int result;
@@ -1633,7 +1629,7 @@ long get_file_entry_help(int help_mode,
 	return result;
 }
 
-int get_a_filename_help(int help_mode, char *hdg, char *file_template, char *flname)
+extern "C" int get_a_filename_help(int help_mode, char *hdg, char *file_template, char *flname)
 {
 	int result;
 	push_help_mode(help_mode);

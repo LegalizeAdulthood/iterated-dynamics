@@ -5,17 +5,23 @@
 
 #include <string.h>
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+}
 
 #define PIXELROUND 0.00001
 
-int g_box_x[NUM_BOXES] = { 0 };
-int g_box_y[NUM_BOXES] = { 0 };
-int g_box_values[NUM_BOXES] = { 0 };
-int g_box_color;
+extern "C"
+{
+	int g_box_x[NUM_BOXES] = { 0 };
+	int g_box_y[NUM_BOXES] = { 0 };
+	int g_box_values[NUM_BOXES] = { 0 };
+	int g_box_color;
+}
 
 static void _fastcall zmo_calc(double, double, double *, double *, double);
 static void _fastcall zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);

@@ -1056,75 +1056,51 @@
 				Name="ui"
 				>
 				<File
-					RelativePath=".\common\font8x8.c"
+					RelativePath=".\common\font8x8.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\fractint.c"
+					RelativePath=".\common\fractint.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\framain2.c"
+					RelativePath=".\common\framain2.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\help.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions="SRCDIR=&quot;&quot;.&quot;&quot;;TEST"
-						/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							PreprocessorDefinitions="SRCDIR=&quot;&quot;.&quot;&quot;"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\common\intro.c"
+					RelativePath=".\common\help.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\jiim.c"
+					RelativePath=".\common\intro.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\miscovl.c"
+					RelativePath=".\common\jiim.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\miscres.c"
-					>
-					<FileConfiguration
-						Name="Debug|Win32"
-						>
-						<Tool
-							Name="VCCLCompilerTool"
-							GeneratePreprocessedFile="0"
-						/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\common\prompts1.c"
+					RelativePath=".\common\miscovl.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\prompts2.c"
+					RelativePath=".\common\miscres.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\realdos.c"
+					RelativePath=".\common\prompts1.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\zoom.c"
+					RelativePath=".\common\prompts2.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\realdos.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\zoom.cpp"
 					>
 				</File>
 			</Filter>

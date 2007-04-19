@@ -16,12 +16,16 @@
 #endif
 #endif
 
+extern "C"
+{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+#include "drivers.h"
+}
 
 #ifdef __hpux
 #include <sys/param.h>
@@ -32,14 +36,16 @@
 #include <sys/param.h>
 #define getwd(a) getcwd(a, MAXPATHLEN)
 #endif
-#include "drivers.h"
+
+extern "C"
+{
+	char g_glasses1_map[] = "glasses1.map";
+	char g_map_name[FILE_MAX_DIR] = "";
+	int  g_map_set = FALSE;
+	int g_julibrot;   /* flag for julibrot */
+}
 
 /* Routines used in prompts2.c */
-char g_glasses1_map[] = "glasses1.map";
-char g_map_name[FILE_MAX_DIR] = "";
-int  g_map_set = FALSE;
-int g_julibrot;   /* flag for julibrot */
-
 long get_file_entry(int, char *, char *, char *, char *);
 int prompt_value_string(char *buf, struct full_screen_values *val);
 void set_default_parms(void);

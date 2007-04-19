@@ -12,13 +12,16 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-  /* see Fractint.c for a description of the "include"  hierarchy */
+extern "C"
+{
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+}
 
 /* uncomment following for production version */
 /*
@@ -29,11 +32,14 @@
 
 #define SWAPBLKLEN 4096 /* must be a power of 2 */
 
-BYTE g_suffix[10000];
-int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
-int g_patch_level = 9;	/* patchlevel for this version */
-int g_video_table_len;                 /* number of entries in above           */
-int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
+extern "C"
+{
+	BYTE g_suffix[10000];
+	int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
+	int g_patch_level = 9;	/* patchlevel for this version */
+	int g_video_table_len;                 /* number of entries in above           */
+	int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
+}
 
 static BYTE *s_temp_text_save = 0;
 static int s_text_x_dots = 0;
@@ -211,7 +217,7 @@ int show_temp_message(char *msgparm)
 	g_sx_offset = g_sy_offset = 0;
 	if (s_temp_text_save == NULL) /* only save screen first time called */
 	{
-		s_temp_text_save = malloc(s_text_x_dots*s_text_y_dots);
+		s_temp_text_save = (BYTE *) malloc(s_text_x_dots*s_text_y_dots);
 		if (s_temp_text_save == NULL)
 		{
 			return -1; /* sorry, message not displayed */
