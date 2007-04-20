@@ -508,11 +508,11 @@ void SetupLogTable(void)
 			{
 				lf = g_max_log_table_size - 1;
 			}
-			mlf = (g_colors - (lf ? 2 : 1 ))/log(g_max_log_table_size - lf);
+			mlf = (g_colors - (lf ? 2 : 1 ))/log((double) (g_max_log_table_size - lf));
 		}
 		else if (g_log_palette_flag == LOGPALETTE_OLD)  /* old log function */
 		{
-			mlf = (g_colors - 1)/log(g_max_log_table_size);
+			mlf = (g_colors - 1)/log((double) g_max_log_table_size);
 		}
 		else if (g_log_palette_flag <= -2)  /* sqrt function */
 		{
@@ -521,7 +521,7 @@ void SetupLogTable(void)
 			{
 				lf = g_max_log_table_size - 1;
 			}
-			mlf = (g_colors - 2)/sqrt(g_max_log_table_size - lf);
+			mlf = (g_colors - 2)/sqrt((double) (g_max_log_table_size - lf));
 		}
 	}
 
@@ -635,18 +635,18 @@ long logtablecalc(long citer)
 		{
 			ret = 1;
 		}
-		else if ((citer - lf)/log(citer - lf) <= mlf)
+		else if ((citer - lf)/log((double) (citer - lf)) <= mlf)
 		{
 			ret = (g_save_release < 2002) ? ((long) (citer - lf + (lf ? 1 : 0))) : ((long) (citer - lf));
 		}
 		else
 		{
-			ret = (long)(mlf*log(citer - lf)) + 1;
+			ret = (long)(mlf*log((double) (citer - lf))) + 1;
 		}
 	}
 	else if (g_log_palette_flag == LOGPALETTE_OLD)  /* old log function */
 	{
-		ret = (citer == 0) ? 1 : (long)(mlf*log(citer)) + 1;
+		ret = (citer == 0) ? 1 : (long)(mlf*log(static_cast<double>(citer))) + 1;
 	}
 	else if (g_log_palette_flag <= -2)  /* sqrt function */
 	{
@@ -660,7 +660,7 @@ long logtablecalc(long citer)
 		}
 		else
 		{
-			ret = (long)(mlf*sqrt(citer - lf)) + 1;
+			ret = (long)(mlf*sqrt(static_cast<double>(citer - lf))) + 1;
 		}
 	}
 	return ret;
