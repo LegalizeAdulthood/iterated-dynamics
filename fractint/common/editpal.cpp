@@ -1084,13 +1084,8 @@ struct tag_color_editor
 	int       val;
 	BOOLEAN   done;
 	BOOLEAN   hidden;
-#ifndef XFRACT
 	void    (*other_key)(int key, color_editor *ce, VOIDPTR info);
 	void    (*change)(color_editor *ce, VOIDPTR info);
-#else
-	void    (*other_key)();
-	void    (*change)();
-#endif
 	void     *info;
 
 };
