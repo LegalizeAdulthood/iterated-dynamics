@@ -342,7 +342,7 @@ names. So for now humor us and let's keep the names short.
 #define DEFAULT_ASPECT_RATIO 0.75f		/* Assumed overall screen dimensions, y/x  */
 #define DEFAULT_ASPECT_DRIFT 0.02f /* drift of < 2% is forced to 0% */
 
-typedef struct tag_driver Driver;
+typedef struct tag_Driver Driver;
 
 struct video_info
 {              /* All we need to know about a Video Adapter */
