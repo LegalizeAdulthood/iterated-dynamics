@@ -9,9 +9,12 @@
 #include <windows.h>
 #include <windowsx.h>
 
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
+}
 
 #include "plot.h"
 #include "ods.h"
@@ -22,8 +25,7 @@
 static Plot *s_plot = NULL;
 static LPCSTR s_window_class = "FractIntPlot";
 
-static void
-plot_set_dirty_region(Plot *me, int g_x_min, int g_y_min, int g_x_max, int g_y_max)
+static void plot_set_dirty_region(Plot *me, int g_x_min, int g_y_min, int g_x_max, int g_y_max)
 {
 	RECT *r = &me->dirty_region;
 
@@ -68,8 +70,7 @@ plot_set_dirty_region(Plot *me, int g_x_min, int g_y_min, int g_x_max, int g_y_m
  * Resize the pixel array to g_screen_width by g_screen_height and initialize it to zero.
  * Any existing pixel array is freed.
  */
-static void
-init_pixels(Plot *me)
+static void init_pixels(Plot *me)
 {
 	if (me->pixels != NULL)
 	{
@@ -215,8 +216,7 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
 *
 *----------------------------------------------------------------------
 */
-static void
-init_clut(BYTE clut[256][3])
+static void init_clut(BYTE clut[256][3])
 {
 	int i;
 	for (i = 0; i < 256; i++)
@@ -248,7 +248,7 @@ int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
 		wc.hInstance = me->instance;
 		wc.hIcon = NULL;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = GetStockObject(BLACK_BRUSH);
+		wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
 		wc.lpszMenuName =  me->title;
 		wc.lpszClassName = s_window_class;
 
@@ -300,6 +300,7 @@ static void plot_create_backing_store(Plot *me)
 	SelectObject(me->memory_dc, (HGDIOBJ) me->font);
 	SetBkMode(me->memory_dc, OPAQUE);
 }
+
 void plot_window(Plot *me, HWND parent)
 {
 	if (NULL == me->window)
@@ -503,7 +504,7 @@ void plot_save_graphics(Plot *me)
 {
 	if (NULL == me->saved_pixels)
 	{
-		me->saved_pixels = malloc(me->pixels_len);
+		me->saved_pixels = (BYTE *) malloc(me->pixels_len);
 		memset(me->saved_pixels, 0, me->pixels_len);
 	}
 	memcpy(me->saved_pixels, me->pixels, me->pixels_len);

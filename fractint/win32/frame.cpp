@@ -3,12 +3,16 @@
 #include <windows.h>
 #include <windowsx.h>
 
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
+#include "drivers.h"
+}
+
 #include "wintext.h"
 #include "frame.h"
-#include "drivers.h"
 
 #define FRAME_TIMER_ID 2
 
@@ -79,7 +83,7 @@ static int frame_add_key_press(unsigned int key)
 	return g_frame.keypress_count == KEYBUFMAX;
 }
 
-static int mod_key(int modifier, int code, int fik, int *j)
+static int mod_key(int modifier, int code, int fik, unsigned int *j)
 {
 	SHORT state = GetKeyState(modifier);
 	if ((state & 0x8000) != 0)

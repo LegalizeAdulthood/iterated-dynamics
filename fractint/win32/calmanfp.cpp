@@ -4,16 +4,18 @@
  * This file Copyright 1992 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
-
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "externs.h"
 #include "drivers.h"
+}
 
 static int inside_color, periodicity_color;
 
-void calculate_mandelbrot_start_fp_asm(void)
+extern "C" void calculate_mandelbrot_start_fp_asm(void)
 {
 	inside_color = (g_inside < 0) ? g_max_iteration : g_inside;
 	periodicity_color = (g_periodicity_check < 0) ? 7 : inside_color;
@@ -26,7 +28,7 @@ void calculate_mandelbrot_start_fp_asm(void)
 	of the x and y values.  This is experimental. */
 #define USE_NEW 0
 
-long calculate_mandelbrot_fp_asm(void)
+extern "C" long calculate_mandelbrot_fp_asm(void)
 {
 	long cx;
 	long savedand;
@@ -250,12 +252,12 @@ over_bailout_87:
 	goto pop_stack;
 }
 
-long cdecl calculate_mandelbrot_fp_287_asm(void)
+extern "C" long cdecl calculate_mandelbrot_fp_287_asm(void)
 {
 	return calculate_mandelbrot_fp_asm();
 }
 
-long cdecl calculate_mandelbrot_fp_87_asm(void)
+extern "C" long cdecl calculate_mandelbrot_fp_87_asm(void)
 {
 	return calculate_mandelbrot_fp_asm();
 }

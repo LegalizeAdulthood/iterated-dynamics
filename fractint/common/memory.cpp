@@ -13,9 +13,12 @@
 #include <ctype.h>
 #include <errno.h>
 
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+}
 
 /* Memory allocation routines. */
 
@@ -76,14 +79,14 @@ static void DisplayMemory(void);
 
 /* Routines in this module, visible to outside routines */
 
-int MemoryType (U16 handle);
-void InitMemory(void);
-void ExitCheck(void);
-U16 MemoryAlloc(U16 size, long count, int stored_at);
-void MemoryRelease(U16 handle);
-int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-int SetMemory(int value, U16 size, long count, long offset, U16 handle);
+extern "C" int MemoryType (U16 handle);
+extern "C" void InitMemory(void);
+extern "C" void ExitCheck(void);
+extern "C" U16 MemoryAlloc(U16 size, long count, int stored_at);
+extern "C" void MemoryRelease(U16 handle);
+extern "C" int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+extern "C" int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+extern "C" int SetMemory(int value, U16 size, long count, long offset, U16 handle);
 
 /* Memory handling support routines */
 
@@ -115,7 +118,7 @@ static void WhichDiskError(int I_O)
 	}
 }
 
-int MemoryType(U16 handle)
+extern "C" int MemoryType(U16 handle)
 {
 	return handletable[handle].Nowhere.stored_at;
 }
@@ -229,7 +232,7 @@ static int CheckBounds (long start, long length, U16 handle)
 	return 0;
 }
 
-void DisplayMemory(void)
+static void DisplayMemory(void)
 {
 	char buf[MESSAGE_LEN];
 	extern unsigned long get_disk_space(void);
@@ -238,7 +241,7 @@ void DisplayMemory(void)
 	stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
 }
 
-void DisplayHandle (U16 handle)
+static void DisplayHandle(U16 handle)
 {
 	char buf[MESSAGE_LEN];
 
@@ -250,7 +253,7 @@ void DisplayHandle (U16 handle)
 	}
 }
 
-void InitMemory(void)
+extern "C" void InitMemory(void)
 {
 	int counter;
 
@@ -262,7 +265,7 @@ void InitMemory(void)
 	}
 }
 
-void ExitCheck(void)
+extern "C" void ExitCheck(void)
 {
 	U16 i;
 	if (numTOTALhandles != 0)
@@ -285,7 +288,7 @@ void ExitCheck(void)
 /* * * * * */
 /* Memory handling routines */
 
-U16 MemoryAlloc(U16 size, long count, int stored_at)
+extern "C" U16 MemoryAlloc(U16 size, long count, int stored_at)
 {
 /* Returns handle number if successful, 0 or NULL if failure */
 	U16 handle = 0;
@@ -403,7 +406,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 	}
 }
 
-void MemoryRelease(U16 handle)
+extern "C" void MemoryRelease(U16 handle)
 {
 	switch (handletable[handle].Nowhere.stored_at)
 	{
@@ -432,13 +435,14 @@ void MemoryRelease(U16 handle)
 	} /* end of switch */
 }
 
-int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
-{ /* buffer is a pointer to local memory */
-/* Always start moving from the beginning of buffer */
-/* offset is the number of units from the start of the allocated "Memory" */
-/* to start moving the contents of buffer to */
-/* size is the size of the unit, count is the number of units to move */
-/* Returns TRUE if successful, FALSE if failure */
+extern "C" int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
+{
+	/* buffer is a pointer to local memory */
+	/* Always start moving from the beginning of buffer */
+	/* offset is the number of units from the start of the allocated "Memory" */
+	/* to start moving the contents of buffer to */
+	/* size is the size of the unit, count is the number of units to move */
+	/* Returns TRUE if successful, FALSE if failure */
 	BYTE diskbuf[DISKWRITELEN];
 	long start; /* offset to first location to move to */
 	long tomove; /* number of bytes to move */
@@ -503,11 +507,12 @@ diskerror:
 	return success;
 }
 
-int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
-{ /* buffer points is the location to move the data to */
-/* offset is the number of units from the beginning of buffer to start moving */
-/* size is the size of the unit, count is the number of units to move */
-/* Returns TRUE if successful, FALSE if failure */
+extern "C" int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
+{
+	/* buffer points is the location to move the data to */
+	/* offset is the number of units from the beginning of buffer to start moving */
+	/* size is the size of the unit, count is the number of units to move */
+	/* Returns TRUE if successful, FALSE if failure */
 	BYTE diskbuf[DISKWRITELEN];
 	long start; /* first location to move */
 	long tomove; /* number of bytes to move */
@@ -574,11 +579,12 @@ diskerror:
 	return success;
 }
 
-int SetMemory(int value, U16 size, long count, long offset, U16 handle)
-{ /* value is the value to set memory to */
-/* offset is the number of units from the start of allocated memory */
-/* size is the size of the unit, count is the number of units to set */
-/* Returns TRUE if successful, FALSE if failure */
+extern "C" int SetMemory(int value, U16 size, long count, long offset, U16 handle)
+{
+	/* value is the value to set memory to */
+	/* offset is the number of units from the start of allocated memory */
+	/* size is the size of the unit, count is the number of units to set */
+	/* Returns TRUE if successful, FALSE if failure */
 	BYTE diskbuf[DISKWRITELEN];
 	long start; /* first location to set */
 	long tomove; /* number of bytes to set */

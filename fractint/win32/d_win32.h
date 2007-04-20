@@ -26,7 +26,6 @@ struct tagWin32BaseDriver
 };
 
 extern void win32_shell(driver *drv);
-extern int win32_key_pressed(drv);
 extern void win32_terminate(driver *drv);
 extern int win32_init(driver *drv, int *argc, char **argv);
 extern int win32_key_pressed(driver *drv);

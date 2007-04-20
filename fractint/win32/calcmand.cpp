@@ -8,11 +8,14 @@
 #define STRICT
 #include <windows.h>
 
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "externs.h"
 #include "drivers.h"
+}
 
 #define FUDGE_FACTOR_BITS 29
 #define FUDGE_FACTOR ((1L << FUDGE_FACTOR_BITS)-1)
@@ -21,7 +24,7 @@
 #define KEYPRESSDELAY 32767
 #define ABS(x) ((x) < 0?-(x):(x))
 
-extern int g_atan_colors;
+extern "C" int g_atan_colors;
 
 static int inside_color;
 static int periodicity_color;
@@ -37,8 +40,7 @@ static int savedand = 0;
 static int savedincr = 0;
 static int period = 0;
 
-long cdecl
-calculate_mandelbrot_asm(void)
+extern "C" long cdecl calculate_mandelbrot_asm(void)
 {
 	return integer_unsupported();
 }
@@ -174,7 +176,7 @@ static long cdecl calculate_mandelbrot_asm1(void)
 				}
 				else if (g_outside == ATAN)
 				{
-					g_color_iter = (long) fabs(atan2(g_new_z_l.y, g_new_z_l.x)*g_atan_colors/PI);
+					g_color_iter = (long) fabs(atan2((double) g_new_z_l.y, (double) g_new_z_l.x)*g_atan_colors/PI);
 				}
 				/* check_color */
 				if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != FMOD)
