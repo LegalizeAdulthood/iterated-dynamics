@@ -1336,7 +1336,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 	return result;
 }
 
-void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg)
+void print_document(const char *outfname, int (*msg_func)(int, int), int save_extraseg)
 {
 	PRINT_DOC_INFO info;
 	int            success   = 0;

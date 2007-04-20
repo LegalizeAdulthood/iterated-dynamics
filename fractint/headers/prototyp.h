@@ -591,7 +591,7 @@ extern int process_document(PD_FUNC, PD_FUNC, VOIDPTR);
 extern int help(int);
 extern int read_help_topic(int, int, int, VOIDPTR);
 extern int makedoc_msg_func(int, int);
-extern void print_document(char *, int (*)(int, int), int);
+extern void print_document(const char *, int (*)(int, int), int);
 extern int init_help(void);
 extern void end_help(void);
 
