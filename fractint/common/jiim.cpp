@@ -46,8 +46,6 @@
 #include <varargs.h>
 #endif
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -55,7 +53,6 @@ extern "C"
 #include "fractype.h"
 #include "drivers.h"
 #include "fihelp.h"
-}
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
@@ -76,11 +73,8 @@ static int windows = 0;               /* windows management system */
 static int xc, yc;                       /* corners of the window */
 static int xd, yd;                       /* dots in the window    */
 
-extern "C"
-{
-	double g_julia_c_x = BIG;
-	double g_julia_c_y = BIG;
-}
+double g_julia_c_x = BIG;
+double g_julia_c_y = BIG;
 
 /* circle routines from Dr. Dobbs June 1990 */
 static int xbase, ybase;

@@ -8,14 +8,11 @@
 #include <limits.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "targa_lc.h"
 #include "drivers.h"
-}
 
 #define RANDOM(x)  (rand() % (x))
 
@@ -152,7 +149,7 @@ static int lyapunov_cycles(long, double, double);
 
 /***************** standalone engine for "test" ********************/
 
-extern "C" int test(void)
+int test(void)
 {
 	int startrow, startpass, numpasses;
 	startrow = startpass = 0;
@@ -473,7 +470,7 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 	s_recur_level--;
 }
 
-extern "C" int plasma(void)
+int plasma(void)
 {
 	int i, k, n;
 	U16 rnd[4];
@@ -681,7 +678,7 @@ static void set_plasma_palette()
 
 /***************** standalone engine for "diffusion" ********************/
 
-extern "C" int diffusion(void)
+int diffusion(void)
 {
 	int g_x_max, g_y_max, g_x_min, g_y_min;     /* Current maximum coordinates */
 	int border;   /* Distance between release point and fractal */
@@ -1012,7 +1009,7 @@ extern "C" int diffusion(void)
 /* to infinity).                Have fun !                     */
 /***************************************************************/
 
-extern "C" int bifurcation(void)
+int bifurcation(void)
 {
 	unsigned long array_size;
 	int row, column;
@@ -1262,13 +1259,13 @@ static int _fastcall bifurcation_periodic(long time)
 /* The following are Bifurcation "orbitcalc" routines...              */
 /*                                                                                                    */
 /**********************************************************************/
-extern "C" int bifurcation_lambda() /* Used by lyanupov */
+int bifurcation_lambda() /* Used by lyanupov */
 {
 	s_population = s_rate*s_population*(1 - s_population);
 	return fabs(s_population) > BIG;
 }
 
-extern "C" int bifurcation_verhulst_trig_fp()
+int bifurcation_verhulst_trig_fp()
 {
 	g_temp_z.x = s_population;
 	g_temp_z.y = 0;
@@ -1277,7 +1274,7 @@ extern "C" int bifurcation_verhulst_trig_fp()
 	return fabs(s_population) > BIG;
 }
 
-extern "C" int bifurcation_verhulst_trig()
+int bifurcation_verhulst_trig()
 {
 #if !defined(XFRACT)
 	g_tmp_z_l.x = s_population_l;
@@ -1289,7 +1286,7 @@ extern "C" int bifurcation_verhulst_trig()
 	return g_overflow;
 }
 
-extern "C" int bifurcation_stewart_trig_fp()
+int bifurcation_stewart_trig_fp()
 {
 	g_temp_z.x = s_population;
 	g_temp_z.y = 0;
@@ -1298,7 +1295,7 @@ extern "C" int bifurcation_stewart_trig_fp()
 	return fabs(s_population) > BIG;
 }
 
-extern "C" int bifurcation_stewart_trig()
+int bifurcation_stewart_trig()
 {
 #if !defined(XFRACT)
 	g_tmp_z_l.x = s_population_l;
@@ -1311,7 +1308,7 @@ extern "C" int bifurcation_stewart_trig()
 	return g_overflow;
 }
 
-extern "C" int bifurcation_set_trig_pi_fp()
+int bifurcation_set_trig_pi_fp()
 {
 	g_temp_z.x = s_population*PI;
 	g_temp_z.y = 0;
@@ -1320,7 +1317,7 @@ extern "C" int bifurcation_set_trig_pi_fp()
 	return fabs(s_population) > BIG;
 }
 
-extern "C" int bifurcation_set_trig_pi()
+int bifurcation_set_trig_pi()
 {
 #if !defined(XFRACT)
 	g_tmp_z_l.x = multiply(s_population_l, s_pi_l, g_bit_shift);
@@ -1331,7 +1328,7 @@ extern "C" int bifurcation_set_trig_pi()
 	return g_overflow;
 }
 
-extern "C" int bifurcation_add_trig_pi_fp()
+int bifurcation_add_trig_pi_fp()
 {
 	g_temp_z.x = s_population*PI;
 	g_temp_z.y = 0;
@@ -1340,7 +1337,7 @@ extern "C" int bifurcation_add_trig_pi_fp()
 	return fabs(s_population) > BIG;
 }
 
-extern "C" int bifurcation_add_trig_pi()
+int bifurcation_add_trig_pi()
 {
 #if !defined(XFRACT)
 	g_tmp_z_l.x = multiply(s_population_l, s_pi_l, g_bit_shift);
@@ -1351,7 +1348,7 @@ extern "C" int bifurcation_add_trig_pi()
 	return g_overflow;
 }
 
-extern "C" int bifurcation_lambda_trig_fp()
+int bifurcation_lambda_trig_fp()
 {
 	/* s_population = s_rate*fn(s_population)*(1 - fn(s_population)) */
 	g_temp_z.x = s_population;
@@ -1361,7 +1358,7 @@ extern "C" int bifurcation_lambda_trig_fp()
 	return fabs(s_population) > BIG;
 }
 
-extern "C" int bifurcation_lambda_trig()
+int bifurcation_lambda_trig()
 {
 #if !defined(XFRACT)
 	g_tmp_z_l.x = s_population_l;
@@ -1373,7 +1370,7 @@ extern "C" int bifurcation_lambda_trig()
 	return g_overflow;
 }
 
-extern "C" int bifurcation_may_fp()
+int bifurcation_may_fp()
 {
 	/* X = (lambda * X) / (1 + X)^s_beta, from R.May as described in Pickover,
 				Computers, Pattern, Chaos, and Beauty, page 153 */
@@ -1383,7 +1380,7 @@ extern "C" int bifurcation_may_fp()
 	return fabs(s_population) > BIG;
 }
 
-extern "C" int bifurcation_may()
+int bifurcation_may()
 {
 #if !defined(XFRACT)
 	g_tmp_z_l.x = s_population_l + g_fudge;
@@ -1396,7 +1393,7 @@ extern "C" int bifurcation_may()
 	return g_overflow;
 }
 
-extern "C" int bifurcation_may_setup()
+int bifurcation_may_setup()
 {
 
 	s_beta = (long)g_parameters[2];
@@ -1411,7 +1408,7 @@ extern "C" int bifurcation_may_setup()
 }
 
 /******************* standalone engine for "popcorn" ********************/
-extern "C" int popcorn()   /* subset of std engine */
+int popcorn()   /* subset of std engine */
 {
 	int start_row;
 	start_row = 0;
@@ -1455,7 +1452,7 @@ extern "C" int popcorn()   /* subset of std engine */
 /***    1732: the infamous axis swap: (b, a)->(x, y),                     ***/
 /***            the order parameter becomes a long int                  ***/
 /**************************************************************************/
-extern "C" int lyapunov(void)
+int lyapunov(void)
 {
 	double a, b;
 
@@ -1504,7 +1501,7 @@ extern "C" int lyapunov(void)
 	return g_color;
 }
 
-extern "C" int lyapunov_setup(void)
+int lyapunov_setup(void)
 {
 	/*
 		This routine sets up the sequence for forcing the s_rate parameter
@@ -1739,7 +1736,7 @@ static void abort_cellular(int err, int t)
 	}
 }
 
-extern "C" int cellular()
+int cellular()
 {
 	S16 start_row;
 	S16 filled, notfilled;
@@ -2060,7 +2057,7 @@ contloop:
 	return 1;
 }
 
-extern "C" int cellular_setup(void)
+int cellular_setup(void)
 {
 	if (!g_resuming)
 	{
@@ -2123,7 +2120,7 @@ static void set_froth_palette(void)
 	}
 }
 
-extern "C" int froth_setup(void)
+int froth_setup(void)
 {
 	double sin_theta, cos_theta, x0, y0;
 
@@ -2242,7 +2239,7 @@ extern "C" int froth_setup(void)
 }
 
 /* Froth Fractal type */
-extern "C" int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
+int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 {
 	int found_attractor = 0;
 
@@ -2575,7 +2572,7 @@ extern "C" int froth_calc(void)   /* per pixel 1/2/g, called with row & col set 
 	attractor that makes the frothybasin type so unique, it is worth
 	putting in as a stand-alone.
 */
-extern "C" int froth_per_pixel(void)
+int froth_per_pixel(void)
 {
 	if (!g_integer_fractal) /* fp mode */
 	{
@@ -2594,7 +2591,7 @@ extern "C" int froth_per_pixel(void)
 	return 0;
 }
 
-extern "C" int froth_per_orbit(void)
+int froth_per_orbit(void)
 {
 	if (!g_integer_fractal) /* fp mode */
 	{

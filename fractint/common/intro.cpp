@@ -8,15 +8,12 @@
 
 #include <time.h>
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-}
 
 /* stuff from fractint */
 
@@ -24,7 +21,7 @@ extern "C"
 extern int slowdisplay;
 #endif
 
-extern "C" void intro(void)
+void intro(void)
 {
 	/* following overlayed data safe if "putstrings" are resident */
 #ifdef XFRACT

@@ -11,8 +11,6 @@
 #include <shlwapi.h>
 #include <dbghelp.h>
 
-extern "C"
-{
 #include "port.h"
 #include "cmplx.h"
 #include "fractint.h"
@@ -22,7 +20,6 @@ extern "C"
 #include "helpdefs.h"
 #include "frame.h"
 #include "mpmath.h"
-}
 
 /* External declarations */
 extern void check_samename(void);
@@ -110,59 +107,56 @@ typedef enum
 	FE_VIDEO_CF12
 } fractint_event;
 
-extern "C"
-{
-	/* Global variables (yuck!) */
-	int g_overflow_mp = 0;
-	struct MP g_ans = { 0 };
-	int g_and_color;
-	BYTE g_block[4096] = { 0 };
-	int g_checked_vvs = 0;
-	int g_color_dark = 0;		/* darkest color in palette */
-	int g_color_bright = 0;		/* brightest color in palette */
-	int g_color_medium = 0;		/* nearest to medbright grey in palette
-					   Zoom-Box values (2K x 2K screens max) */
-	int g_cpu, g_fpu;                        /* g_cpu, g_fpu flags */
-	unsigned char g_dac_box[256][3] = { 0 };
-	int g_dac_learn = 0;
-	int dacnorm = 0;
-	int g_dac_count = 0;
-	int g_disk_flag = 0;
-	int g_disk_targa = FALSE;
-	int DivideOverflow = 0;
-	int fake_lut = 0;
-	int g_fm_attack = 0;
-	int g_fm_decay = 0;
-	int g_fm_release = 0;
-	int g_fm_sustain = 0;
-	int g_fm_volume = 0;
-	int g_fm_wave_type = 0;
-	int g_good_mode = 0;
-	int g_got_real_dac = 0;
-	int g_note_attenuation = ATTENUATE_NONE;
-	int g_is_true_color = 0;
-	long g_initial_x_l = 0;
-	long g_initial_y_l = 0;
-	BYTE g_old_dac_box[256][3] = { 0 };
-	int g_overflow = 0;
-	int g_polyphony = 0;
-	char g_rle_buffer[258] = { 0 };
-	int g_row_count = 0;
-	unsigned int g_string_location[10*1024] = { 0 };
-	int g_text_cbase = 0;
-	int g_text_col = 0;
-	int g_text_rbase = 0;
-	int g_text_row = 0;
-	char g_text_stack[4096] = { 0 };
-	/* g_video_table
-	 *
-	 *  |--Adapter/Mode-Name------|-------Comments-----------|
-	 *  |------INT 10H------|Dot-|--Resolution---|
-	 *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
-	 */
-	VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
-	int g_vx_dots = 0;
-}
+/* Global variables (yuck!) */
+int g_overflow_mp = 0;
+struct MP g_ans = { 0 };
+int g_and_color;
+BYTE g_block[4096] = { 0 };
+int g_checked_vvs = 0;
+int g_color_dark = 0;		/* darkest color in palette */
+int g_color_bright = 0;		/* brightest color in palette */
+int g_color_medium = 0;		/* nearest to medbright grey in palette
+				   Zoom-Box values (2K x 2K screens max) */
+int g_cpu, g_fpu;                        /* g_cpu, g_fpu flags */
+unsigned char g_dac_box[256][3] = { 0 };
+int g_dac_learn = 0;
+int dacnorm = 0;
+int g_dac_count = 0;
+int g_disk_flag = 0;
+int g_disk_targa = FALSE;
+int DivideOverflow = 0;
+int fake_lut = 0;
+int g_fm_attack = 0;
+int g_fm_decay = 0;
+int g_fm_release = 0;
+int g_fm_sustain = 0;
+int g_fm_volume = 0;
+int g_fm_wave_type = 0;
+int g_good_mode = 0;
+int g_got_real_dac = 0;
+int g_note_attenuation = ATTENUATE_NONE;
+int g_is_true_color = 0;
+long g_initial_x_l = 0;
+long g_initial_y_l = 0;
+BYTE g_old_dac_box[256][3] = { 0 };
+int g_overflow = 0;
+int g_polyphony = 0;
+char g_rle_buffer[258] = { 0 };
+int g_row_count = 0;
+unsigned int g_string_location[10*1024] = { 0 };
+int g_text_cbase = 0;
+int g_text_col = 0;
+int g_text_rbase = 0;
+int g_text_row = 0;
+char g_text_stack[4096] = { 0 };
+/* g_video_table
+ *
+ *  |--Adapter/Mode-Name------|-------Comments-----------|
+ *  |------INT 10H------|Dot-|--Resolution---|
+ *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
+ */
+VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
+int g_vx_dots = 0;
 
 /* Global functions
  *
@@ -238,7 +232,7 @@ static fractint_event keyboard_event(int key)
 static char *g_tos = NULL;
 #define WIN32_STACK_SIZE 1024*1024
 /* Return available stack space ... shouldn't be needed in Win32, should it? */
-extern "C" long stackavail()
+long stackavail()
 {
 	char junk;
 	return WIN32_STACK_SIZE - (long) (((char *) g_tos) - &junk);
@@ -251,7 +245,7 @@ extern "C" long stackavail()
 ;
 ;       z = divide(x, y, n);       z = x / y;
 */
-extern "C" long divide(long x, long y, int n)
+long divide(long x, long y, int n)
 {
 	return (long) (((float) x) / ((float) y)*(float) (1 << n));
 }
@@ -273,7 +267,7 @@ extern "C" long divide(long x, long y, int n)
  * Note that we fake integer multiplication with floating point
  * multiplication.
  */
-extern "C" long multiply(long x, long y, int n)
+long multiply(long x, long y, int n)
 {
 	register long l;
 	l = (long) (((float) x)*((float) y)/(float) (1 << n));
@@ -290,7 +284,7 @@ extern "C" long multiply(long x, long y, int n)
 ;       Find the darkest and brightest g_colors in palette, and a medium
 ;       color which is reasonably bright and reasonably grey.
 */
-extern "C" void find_special_colors(void)
+void find_special_colors(void)
 {
 	int maxb = 0;
 	int minb = 9999;
@@ -383,7 +377,7 @@ static void fill_dta()
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
-extern "C" int fr_find_first(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
+int fr_find_first(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
 {
 	if (s_find_context != INVALID_HANDLE_VALUE)
 	{
@@ -417,7 +411,7 @@ extern "C" int fr_find_first(char *path)       /* Find 1st file (or subdir) meet
  * Find the next file matching the wildcard search begun by fr_find_first.
  * Fill in g_dta.filename, g_dta.path, and g_dta.attribute
  */
-extern "C" int fr_find_next()
+int fr_find_next()
 {
 	BOOL result = FALSE;
 	_ASSERTE(INVALID_HANDLE_VALUE != s_find_context);
@@ -434,7 +428,7 @@ extern "C" int fr_find_next()
 	return 0;
 }
 
-extern "C" int get_sound_params(void)
+int get_sound_params(void)
 {
 	/* TODO */
 	_ASSERTE(FALSE);
@@ -444,7 +438,7 @@ extern "C" int get_sound_params(void)
 /*
 ; long readticker() returns current bios ticker value
 */
-extern "C" long readticker(void)
+long readticker(void)
 {
 	return (long) GetTickCount();
 }
@@ -455,7 +449,7 @@ extern "C" long readticker(void)
 ;       Rotate the MCGA/VGA DAC in the (plus or minus) "direction"
 ;       in "rstep" increments - or, if "direction" is 0, just replace it.
 */
-extern "C" void spindac(int dir, int inc)
+void spindac(int dir, int inc)
 {
 	if (g_colors < 16)
 	{
@@ -524,7 +518,7 @@ extern "C" void spindac(int dir, int inc)
 ;       video adapter installed.
 ;       and fills in a few bank-switching routines.
 */
-extern "C" void adapter_detect(void)
+void adapter_detect(void)
 {
 	static int done_detect = 0;
 
@@ -539,7 +533,7 @@ extern "C" void adapter_detect(void)
 ; ********* Function gettruecolor(xdot, ydot, &red, &green, &blue) **************
 ;       Return the color on the screen at the (xdot, ydot) point
 */
-extern "C" void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
+void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
 {
 	/* TODO */
 	_ASSERTE(FALSE);
@@ -553,7 +547,7 @@ extern "C" void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue
 
 ;       Home the cursor (called before printfs)
 */
-extern "C" void home(void)
+void home(void)
 {
 	driver_move_cursor(0, 0);
 	g_text_row = 0;
@@ -563,7 +557,7 @@ extern "C" void home(void)
 /*
 ; ****************** Function initasmvars() *****************************
 */
-extern "C" void initasmvars(void)
+void initasmvars(void)
 {
 	if (g_cpu != 0)
 	{
@@ -578,7 +572,7 @@ extern "C" void initasmvars(void)
 	g_fpu = 487;
 }
 
-extern "C" int is_a_directory(char *s)
+int is_a_directory(char *s)
 {
 	return PathIsDirectory(s);
 }
@@ -587,7 +581,7 @@ extern "C" int is_a_directory(char *s)
 ; ******* Function puttruecolor(xdot, ydot, red, green, blue) *************
 ;       write the color on the screen at the (xdot, ydot) point
 */
-extern "C" void puttruecolor(int xdot, int ydot, int red, int green, int blue)
+void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 {
 	/* TODO */
 	_ASSERTE(FALSE);
@@ -596,7 +590,7 @@ extern "C" void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 /* tenths of millisecond timewr routine */
 /* static struct timeval tv_start; */
 
-extern "C" void restart_uclock(void)
+void restart_uclock(void)
 {
 	/* TODO */
 }
@@ -612,7 +606,7 @@ extern "C" void restart_uclock(void)
 **  a number of seconds.
 */
 typedef unsigned long uclock_t;
-extern "C" uclock_t usec_clock(void)
+uclock_t usec_clock(void)
 {
 	uclock_t result = 0;
 	/* TODO */
@@ -621,7 +615,7 @@ extern "C" uclock_t usec_clock(void)
 	return result;
 }
 
-extern "C" void showfreemem(void)
+void showfreemem(void)
 {
 	/* TODO */
 	_ASSERTE(FALSE);
@@ -733,7 +727,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 /*
  * This routine returns a key, ignoring F1
  */
-extern "C" int getakeynohelp(void)
+int getakeynohelp(void)
 {
 	int ch;
 	do
@@ -745,7 +739,7 @@ extern "C" int getakeynohelp(void)
 }
 
 /* converts relative path to absolute path */
-extern "C" int expand_dirname(char *dirname, char *drive)
+int expand_dirname(char *dirname, char *drive)
 {
 	char relative[MAX_PATH];
 	char absolute[MAX_PATH];
@@ -776,7 +770,7 @@ extern "C" int expand_dirname(char *dirname, char *drive)
 	return 0;
 }
 
-extern "C" int abort_message(char *file, unsigned int line, int flags, char *msg)
+int abort_message(char *file, unsigned int line, int flags, char *msg)
 {
 	char buffer[3*80];
 	sprintf(buffer, "%s(%d):\n%s", file, line, msg);
@@ -810,7 +804,7 @@ void ods(const char *file, unsigned int line, const char *format, ...)
 ;       Called by the GIF decoder
 */
 
-extern "C" void get_line(int row, int startcol, int stopcol, BYTE *pixels)
+void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
 	if (startcol + g_sx_offset >= g_screen_width || row + g_sy_offset >= g_screen_height)
 	{
@@ -829,7 +823,7 @@ extern "C" void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 ;       Called by the GIF decoder
 */
 
-extern "C" void put_line(int row, int startcol, int stopcol, BYTE *pixels)
+void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
 	if (startcol + g_sx_offset >= g_screen_width || row + g_sy_offset > g_screen_height)
 	{
@@ -844,7 +838,7 @@ extern "C" void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 ;
 ;       These routines are called by out_line(), put_line() and get_line().
 */
-extern "C" void normaline(int y, int x, int lastx, BYTE *pixels)
+void normaline(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx - x + 1;
@@ -855,7 +849,7 @@ extern "C" void normaline(int y, int x, int lastx, BYTE *pixels)
 	}
 }
 
-extern "C" void normalineread(int y, int x, int lastx, BYTE *pixels)
+void normalineread(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx - x + 1;
@@ -914,7 +908,7 @@ static int nullread(int a, int b)
 }
 
 /* from video.asm */
-extern "C" void setnullvideo(void)
+void setnullvideo(void)
 {
 	_ASSERTE(0 && "setnullvideo called");
 	dotwrite = nullwrite;
@@ -926,7 +920,7 @@ extern "C" void setnullvideo(void)
 
 ;       Return the color on the screen at the (xdot, ydot) point
 */
-extern "C" int getcolor(int xdot, int ydot)
+int getcolor(int xdot, int ydot)
 {
 	int x1, y1;
 	x1 = xdot + g_sx_offset;
@@ -946,7 +940,7 @@ extern "C" int getcolor(int xdot, int ydot)
 
 ;       write the color on the screen at the (xdot, ydot) point
 */
-extern "C" void putcolor_a(int xdot, int ydot, int color)
+void putcolor_a(int xdot, int ydot, int color)
 {
 	int x1 = xdot + g_sx_offset;
 	int y1 = ydot + g_sy_offset;
@@ -963,7 +957,7 @@ extern "C" void putcolor_a(int xdot, int ydot, int color)
 ;       entire line of pixels to the screen (0 <= xdot < g_x_dots) at a clip
 ;       Called by the GIF decoder
 */
-extern "C" int out_line(BYTE *pixels, int linelen)
+int out_line(BYTE *pixels, int linelen)
 {
 	_ASSERTE(_CrtCheckMemory());
 	if (g_row_count + g_sy_offset >= g_screen_height)
@@ -976,7 +970,7 @@ extern "C" int out_line(BYTE *pixels, int linelen)
 	return 0;
 }
 
-extern "C" void init_failure(const char *message)
+void init_failure(const char *message)
 {
 	MessageBox(NULL, message, "FractInt: Fatal Error", MB_OK);
 }

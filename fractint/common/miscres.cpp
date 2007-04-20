@@ -19,8 +19,6 @@
 #include <varargs.h>
 #endif
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -28,9 +26,10 @@ extern "C"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-}
 
-extern "C" long g_bn_max_stack, maxstack, startstack;
+extern long g_bn_max_stack;
+extern long maxstack;
+extern long startstack;
 /* routines in this module      */
 
 static  void trigdetails(char *);

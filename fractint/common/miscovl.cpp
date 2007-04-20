@@ -20,8 +20,6 @@
 #include <varargs.h>
 #endif
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -29,7 +27,6 @@ extern "C"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-}
 
 /* routines in this module      */
 

@@ -8,14 +8,11 @@
 #include <io.h>
 #endif
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
-}
 
 static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE *color, int g_num_colors);
@@ -291,7 +288,7 @@ enum tag_save_format
 typedef enum tag_save_format e_save_format;
 
 /* TODO: implement PNG case */
-extern "C" int save_to_disk(char *filename)
+int save_to_disk(char *filename)
 {
 	e_save_format format = SAVEFORMAT_GIF;
 
@@ -305,7 +302,7 @@ extern "C" int save_to_disk(char *filename)
 	}
 }
 
-extern "C" int encoder()
+int encoder()
 {
 	int i, width, rowlimit, interrupted;
 	BYTE bitsperpixel, x;

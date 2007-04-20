@@ -54,19 +54,15 @@ ROTZ(i) =           cosi  sini    0     0
 
                       --  Tim Wegner  April 22, 1989
 */
-
-
 #include <string.h>
+
 /* see Fractint.c for a description of the "include"  hierarchy */
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
-}
 
 /* initialize a matrix and set to identity matrix
 	(all 0's, 1's on diagonal) */
-extern "C" void identity(MATRIX m)
+void identity(MATRIX m)
 {
 	int i, j;
 	for (i = 0; i < CMAX; i++)
@@ -79,7 +75,7 @@ extern "C" void identity(MATRIX m)
 }
 
 /* Multiply two matrices */
-extern "C" void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
+void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 {
 	/* result stored in MATRIX new to avoid problems
 		in case parameter mat3 == mat2 or mat 1 */
@@ -99,7 +95,7 @@ extern "C" void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 }
 
 /* multiply a matrix by a scalar */
-extern "C" void scale(double sx, double sy, double sz, MATRIX m)
+void scale(double sx, double sy, double sz, MATRIX m)
 {
 	MATRIX scale;
 	identity(scale);
@@ -110,7 +106,7 @@ extern "C" void scale(double sx, double sy, double sz, MATRIX m)
 }
 
 /* rotate about X axis  */
-extern "C" void xrot(double theta, MATRIX m)
+void xrot(double theta, MATRIX m)
 {
 	MATRIX rot;
 	double sintheta, costheta;
@@ -125,7 +121,7 @@ extern "C" void xrot(double theta, MATRIX m)
 }
 
 /* rotate about Y axis  */
-extern "C" void yrot(double theta, MATRIX m)
+void yrot(double theta, MATRIX m)
 {
 	MATRIX rot;
 	double sintheta, costheta;
@@ -140,7 +136,7 @@ extern "C" void yrot(double theta, MATRIX m)
 }
 
 /* rotate about Z axis  */
-extern "C" void zrot(double theta, MATRIX m)
+void zrot(double theta, MATRIX m)
 {
 	MATRIX rot;
 	double sintheta, costheta;
@@ -155,7 +151,7 @@ extern "C" void zrot(double theta, MATRIX m)
 }
 
 /* translate  */
-extern "C" void trans(double tx, double ty, double tz, MATRIX m)
+void trans(double tx, double ty, double tz, MATRIX m)
 {
 	MATRIX trans;
 	identity(trans);
@@ -166,7 +162,7 @@ extern "C" void trans(double tx, double ty, double tz, MATRIX m)
 }
 
 /* cross product  - useful because cross is perpendicular to v and w */
-extern "C" int cross_product(VECTOR v, VECTOR w, VECTOR cross)
+int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 {
 	VECTOR tmp;
 	tmp[0] =  v[1]*w[2] - w[1]*v[2];
@@ -194,7 +190,7 @@ int icross_product(IVECTOR v, IVECTOR w, IVECTOR cross)
 ***/
 
 /* normalize a vector to length 1 */
-extern "C" int normalize_vector(VECTOR v)
+int normalize_vector(VECTOR v)
 {
 	double vlength;
 	vlength = dot_product(v, v);
@@ -218,7 +214,7 @@ extern "C" int normalize_vector(VECTOR v)
 
 /* multiply source vector s by matrix m, result in target t */
 /* used to apply transformations to a vector */
-extern "C" int vmult(VECTOR s, MATRIX m, VECTOR t)
+int vmult(VECTOR s, MATRIX m, VECTOR t)
 {
 	VECTOR tmp;
 	int i, j;
@@ -241,7 +237,7 @@ extern "C" int vmult(VECTOR s, MATRIX m, VECTOR t)
 /* use with a function pointer in line3d.c */
 /* must coordinate calling conventions with */
 /* mult_vec in general.asm */
-extern "C" void mult_vec(VECTOR s, MATRIX m)
+void mult_vec(VECTOR s, MATRIX m)
 {
 	VECTOR tmp;
 	int i, j;
@@ -260,7 +256,7 @@ extern "C" void mult_vec(VECTOR s, MATRIX m)
 }
 
 /* perspective projection of vector v with respect to viewpont vector view */
-extern "C" int perspective(VECTOR v)
+int perspective(VECTOR v)
 {
 	double denom;
 	denom = g_view[2] - v[2];
@@ -281,7 +277,7 @@ extern "C" int perspective(VECTOR v)
 }
 
 /* long version of vmult and perspective combined for speed */
-extern "C" int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
+int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 							  LVECTOR t, LVECTOR lview, int bit_shift)
 {
 	/* s: source vector */
@@ -356,7 +352,7 @@ extern "C" int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 
 /* Long version of perspective. Because of use of fixed point math, there
 	is danger of overflow and underflow */
-extern "C" int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
+int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
 {
 	LVECTOR tmpview;
 	long denom;
@@ -387,7 +383,7 @@ extern "C" int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
 	return g_overflow;
 }
 
-extern "C" int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
+int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
 {
 	LVECTOR tmp;
 	int i, j, k;

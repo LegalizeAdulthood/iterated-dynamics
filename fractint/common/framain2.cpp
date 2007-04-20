@@ -13,8 +13,6 @@
 
 #include <ctype.h>
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -22,7 +20,6 @@ extern "C"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-}
 
 #if 0
 /* makes a handly list of jul-man pairs, not for release */
@@ -44,13 +41,10 @@ static void julman()
 }
 #endif
 
-extern "C"
-{
-	char g_from_text_flag = 0;         /* = 1 if we're in graphics mode */
-	void *g_evolve_handle = NULL;
-	char g_standard_calculation_mode_old;
-	void (*g_out_line_cleanup)(void);
-}
+char g_from_text_flag = 0;         /* = 1 if we're in graphics mode */
+void *g_evolve_handle = NULL;
+char g_standard_calculation_mode_old;
+void (*g_out_line_cleanup)(void);
 
 /* routines in this module      */
 
@@ -66,7 +60,7 @@ static  void cmp_line_cleanup(void);
 
 static char *savezoom;
 
-extern "C" int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
+int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 {
 	int     frommandel;                  /* if julia entered from mandel */
 	int     axmode = 0; /* video mode (BIOS ##)    */
@@ -1587,7 +1581,7 @@ static int handle_restart(void)
 	return RESTART;
 }
 
-extern "C" int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, int *stacked, int axmode)
+int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, int *stacked, int axmode)
 {
 	long old_maxit;
 
@@ -2340,14 +2334,14 @@ static void cmp_line_cleanup(void)
 	fclose(cmp_fp);
 }
 
-extern "C" void clear_zoom_box()
+void clear_zoom_box()
 {
 	g_z_width = 0;
 	zoom_box_draw(0);
 	reset_zoom_corners();
 }
 
-extern "C" void reset_zoom_corners()
+void reset_zoom_corners()
 {
 	g_xx_min = g_sx_min;
 	g_xx_max = g_sx_max;
@@ -2368,7 +2362,7 @@ extern "C" void reset_zoom_corners()
 
 /* read keystrokes while = specified key, return 1 + count;       */
 /* used to catch up when moving zoombox is slower than keyboard */
-extern "C" int key_count(int keynum)
+int key_count(int keynum)
 {
 	int ctr;
 	ctr = 1;

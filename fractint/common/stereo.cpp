@@ -16,20 +16,16 @@
 
 		(TW is Tim Wegner, PDL is Paul de Leeuw)
 */
-
 #include <string.h>
 #include <time.h>
 #include <malloc.h>
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
 #include "helpdefs.h"
 #include "fihelp.h"
-}
 
 char g_stereo_map_name[FILE_MAX_DIR + 1] = {""};
 int g_auto_stereo_depth = 100;
