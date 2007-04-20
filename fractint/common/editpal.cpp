@@ -1328,28 +1328,17 @@ struct tag_rgb_editor
 	BOOLEAN   done;
 	BOOLEAN   hidden;
 	color_editor  *color[3];        /* color editors 0 = r, 1 = g, 2 = b */
-#ifndef XFRACT
 	void    (*other_key)(int key, struct tag_rgb_editor *e, VOIDPTR info);
 	void    (*change)(struct tag_rgb_editor *e, VOIDPTR info);
-#else
-	void    (*other_key)();
-	void    (*change)();
-#endif
 	void     *info;
 };
 typedef struct tag_rgb_editor rgb_editor;
 
 static void      rgb_editor_other_key (int key, color_editor *ceditor, VOIDPTR info);
 static void      rgb_editor_change    (color_editor *ceditor, VOIDPTR info);
-#ifndef XFRACT
 static rgb_editor *rgb_editor_new(int x, int y,
 						void (*other_key)(int, rgb_editor*, void*),
 						void (*change)(rgb_editor*, void*), VOIDPTR info);
-#else
-static rgb_editor *rgb_editor_new(int x, int y,
-						void (*other_key)(),
-						void (*change)(), VOIDPTR info);
-#endif
 static void     rgb_editor_destroy  (rgb_editor *me);
 static void     rgb_editor_set_position   (rgb_editor *me, int x, int y);
 static void     rgb_editor_set_done  (rgb_editor *me, BOOLEAN done);
@@ -1368,13 +1357,8 @@ static PALENTRY rgb_editor_get_rgb   (rgb_editor *me);
 
 
 
-#ifndef XFRACT
 static rgb_editor *rgb_editor_new(int x, int y, void (*other_key)(int, rgb_editor*, void*),
 									void (*change)(rgb_editor*, void*), VOIDPTR info)
-#else
-static rgb_editor *rgb_editor_new(int x, int y, void (*other_key)(),
-									void (*change)(), VOIDPTR info)
-#endif
 {
 	rgb_editor      *me     = NEWC(rgb_editor);
 	static char letter[] = "RGB";
