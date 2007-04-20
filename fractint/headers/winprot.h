@@ -105,7 +105,6 @@ extern void disk_write_targa(unsigned int,unsigned int,BYTE,BYTE,BYTE);
 extern void disk_read_targa(unsigned int,unsigned int,BYTE *,BYTE *,BYTE *);
 extern int set_color_palette_name(char *);
 extern BYTE far *findfont(int);
-extern long cdecl readticker(void);
 extern void tga_end(void);
 
 extern int key_count(int);

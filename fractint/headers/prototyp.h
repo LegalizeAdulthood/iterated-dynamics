@@ -27,6 +27,8 @@ extern int get_corners(void);
 #include "dosprot.h"
 #endif
 
+extern long readticker(void);
+
 /*  calcmand -- assembler file prototypes */
 
 extern long cdecl calculate_mandelbrot_asm(void);
