@@ -1,10 +1,7 @@
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
-}
 
-extern "C" int bail_out_mod_l_asm(void)
+int bail_out_mod_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -19,7 +16,7 @@ extern "C" int bail_out_mod_l_asm(void)
 	return 0;
 }
 
-extern "C" int bail_out_real_l_asm(void)
+int bail_out_real_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -32,7 +29,7 @@ extern "C" int bail_out_real_l_asm(void)
 	return 0;
 }
 
-extern "C" int bail_out_imag_l_asm(void)
+int bail_out_imag_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -45,7 +42,7 @@ extern "C" int bail_out_imag_l_asm(void)
 	return 0;
 }
 
-extern "C" int bail_out_or_l_asm(void)
+int bail_out_or_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -58,7 +55,7 @@ extern "C" int bail_out_or_l_asm(void)
 	return 0;
 }
 
-extern "C" int bail_out_and_l_asm(void)
+int bail_out_and_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -71,7 +68,7 @@ extern "C" int bail_out_and_l_asm(void)
 	return 0;
 }
 
-extern "C" int bail_out_manhattan_l_asm(void)
+int bail_out_manhattan_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -84,7 +81,7 @@ extern "C" int bail_out_manhattan_l_asm(void)
 	return 0;
 }
 
-extern "C" int bail_out_manhattan_r_l_asm(void)
+int bail_out_manhattan_r_l_asm(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -97,7 +94,7 @@ extern "C" int bail_out_manhattan_r_l_asm(void)
 	return 0;
 }
 
-extern "C" int asm386lMODbailout(void)
+int asm386lMODbailout(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -112,7 +109,7 @@ extern "C" int asm386lMODbailout(void)
 	return 0;
 }
 
-extern "C" int asm386lREALbailout(void)
+int asm386lREALbailout(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -125,7 +122,7 @@ extern "C" int asm386lREALbailout(void)
 	return 0;
 }
 
-extern "C" int asm386lIMAGbailout(void)
+int asm386lIMAGbailout(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -138,7 +135,7 @@ extern "C" int asm386lIMAGbailout(void)
 	return 0;
 }
 
-extern "C" int asm386lORbailout(void)
+int asm386lORbailout(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -151,7 +148,7 @@ extern "C" int asm386lORbailout(void)
 	return 0;
 }
 
-extern "C" int asm386lANDbailout(void)
+int asm386lANDbailout(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -164,7 +161,7 @@ extern "C" int asm386lANDbailout(void)
 	return 0;
 }
 
-extern "C" int asm386lMANHbailout(void)
+int asm386lMANHbailout(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -177,7 +174,7 @@ extern "C" int asm386lMANHbailout(void)
 	return 0;
 }
 
-extern "C" int asm386lMANRbailout(void)
+int asm386lMANRbailout(void)
 {
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
@@ -217,7 +214,7 @@ bailout:
 		ret
 bail_out_mod_fp_asm endp
 */
-extern "C" int bail_out_mod_fp_asm(void)
+int bail_out_mod_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -260,7 +257,7 @@ bailout:
 		ret
 bail_out_real_fp_asm endp
 */
-extern "C" int bail_out_real_fp_asm(void)
+int bail_out_real_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -301,7 +298,7 @@ bailout:
 		ret
 bail_out_imag_fp_asm endp
 */
-extern "C" int bail_out_imag_fp_asm(void)
+int bail_out_imag_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -349,7 +346,7 @@ bailout:
 		ret
 bail_out_or_fp_asm endp
 */
-extern "C" int bail_out_or_fp_asm(void)
+int bail_out_or_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -399,7 +396,7 @@ bailout:
 		ret
 bail_out_and_fp_asm endp
 */
-extern "C" int bail_out_and_fp_asm(void)
+int bail_out_and_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -452,7 +449,7 @@ bailout:
 		ret
 bail_out_manhattan_fp_asm endp
 */
-extern "C" int bail_out_manhattan_fp_asm(void)
+int bail_out_manhattan_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);
@@ -502,7 +499,7 @@ bailout:
 		ret
 bail_out_manhattan_r_fp_asm endp
 */
-extern "C" int bail_out_manhattan_r_fp_asm(void)
+int bail_out_manhattan_r_fp_asm(void)
 {
 	/* TODO: verify this code is correct */
 	g_temp_sqr_x = sqr(g_new_z.x);

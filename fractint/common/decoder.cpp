@@ -41,12 +41,9 @@
 
 
 /* see Fractint.c for a description of the "include"  hierarchy */
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-}
 
 /* Various error codes used by decoder
  * and my own routines...   It's okay
@@ -80,11 +77,8 @@ extern "C"
  * occurs in an odd place in the GIF file...  In any case, linelen will be
  * equal to the number of pixels passed...
  */
-extern "C"
-{
-	int (*g_out_line) (BYTE *, int) = out_line;
-	short g_size_of_string[MAX_CODES + 1];  /* size of string list */
-}
+int (*g_out_line) (BYTE *, int) = out_line;
+short g_size_of_string[MAX_CODES + 1];  /* size of string list */
 
 
 /***** Local Static Variables *******************************************/
@@ -154,7 +148,7 @@ static short code_mask[13] =
 
 static short get_next_code(void);
 
-extern "C" short decoder(short linewidth)
+short decoder(short linewidth)
 {
 	U16 prefix[MAX_CODES + 1];     /* Prefix linked list */
 	BYTE *sp;
@@ -456,7 +450,7 @@ static short get_next_code()
 }
 
 /* called in parent reoutine to set byte_buff */
-extern "C" void set_byte_buff(BYTE *ptr)
+void set_byte_buff(BYTE *ptr)
 {
 	byte_buff = ptr;
 }

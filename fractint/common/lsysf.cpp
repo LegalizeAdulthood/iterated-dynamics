@@ -4,13 +4,10 @@
 #endif
 
 /* see Fractint.c for a description of the "include"  hierarchy */
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "lsys.h"
 #include "drivers.h"
-}
 
 #ifdef max
 #undef max
@@ -363,7 +360,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 	return command;
 }
 
-extern "C" int _fastcall
+int _fastcall
 lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
 {
 	float horiz, vert;
@@ -406,7 +403,7 @@ lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, stru
 	return 1;
 }
 
-extern "C" struct lsys_cmd *_fastcall
+struct lsys_cmd *_fastcall
 draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
 {
 	struct lsys_cmd **rulind;
@@ -496,7 +493,7 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 	return command;
 }
 
-extern "C" struct lsys_cmd *
+struct lsys_cmd *
 lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 {
 	struct lsys_cmd *ret;
@@ -591,7 +588,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	return doub;
 }
 
-extern "C" struct lsys_cmd *
+struct lsys_cmd *
 lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 {
 	struct lsys_cmd *ret;
@@ -689,7 +686,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	return doub;
 }
 
-extern "C" void _fastcall lsysf_sin_cos(void)
+void _fastcall lsysf_sin_cos(void)
 {
 	LDBL locaspect;
 	LDBL TWOPI = 2.0*PI;

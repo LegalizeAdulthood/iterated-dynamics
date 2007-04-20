@@ -1,30 +1,24 @@
 /* see Fractint.c for a description of the "include"  hierarchy */
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
 #include "drivers.h"
-}
 
 /* these need to be accessed elsewhere for saving data */
-extern "C"
-{
-	double g_m_x_min_fp = -.83;
-	double g_m_y_min_fp = -.25;
-	double g_m_x_max_fp = -.83;
-	double g_m_y_max_fp =  .25;
-	int g_z_dots = 128;
-	float g_origin_fp  = 8.0f;
-	float g_height_fp  = 7.0f;
-	float g_width_fp   = 10.0f;
-	float g_screen_distance_fp    = 24.0f;
-	float g_eyes_fp    = 2.5f;
-	float g_depth_fp   = 8.0f;
-	int g_juli_3d_mode = JULI3DMODE_MONOCULAR;
-	int g_new_orbit_type = JULIA;
-}
+double g_m_x_min_fp = -.83;
+double g_m_y_min_fp = -.25;
+double g_m_x_max_fp = -.83;
+double g_m_y_max_fp =  .25;
+int g_z_dots = 128;
+float g_origin_fp  = 8.0f;
+float g_height_fp  = 7.0f;
+float g_width_fp   = 10.0f;
+float g_screen_distance_fp    = 24.0f;
+float g_eyes_fp    = 2.5f;
+float g_depth_fp   = 8.0f;
+int g_juli_3d_mode = JULI3DMODE_MONOCULAR;
+int g_new_orbit_type = JULIA;
 
 struct perspective
 {
@@ -58,7 +52,7 @@ static long s_width, s_dist, s_depth, s_br_ratio;
 static long s_eyes;
 #endif
 
-extern "C" int julibrot_setup(void)
+int julibrot_setup(void)
 {
 #ifndef XFRACT
 	long origin;
@@ -164,7 +158,7 @@ extern "C" int julibrot_setup(void)
 }
 
 
-extern "C" int julibrot_per_pixel(void)
+int julibrot_per_pixel(void)
 {
 	s_jx = multiply(s_per->x - s_x_pixel, s_init_z, 16);
 	s_jx = divide(s_jx, s_dist, 16) - s_x_pixel;
@@ -185,7 +179,7 @@ extern "C" int julibrot_per_pixel(void)
 	return 1;
 }
 
-extern "C" int julibrot_per_pixel_fp(void)
+int julibrot_per_pixel_fp(void)
 {
 	s_jx_fp = ((s_per_fp->x - s_x_pixel_fp)*s_init_z_fp / g_screen_distance_fp - s_x_pixel_fp)*s_x_per_inch_fp;
 	s_jx_fp += s_x_offset_fp;
@@ -396,7 +390,7 @@ static int z_line_fp(double x, double y)
 	return 0;
 }
 
-extern "C" int standard_4d_fractal(void)
+int standard_4d_fractal(void)
 {
 	long x, y;
 	int xdot, ydot;
@@ -446,7 +440,7 @@ extern "C" int standard_4d_fractal(void)
 	return 0;
 }
 
-extern "C" int standard_4d_fractal_fp(void)
+int standard_4d_fractal_fp(void)
 {
 	double x, y;
 	int xdot, ydot;

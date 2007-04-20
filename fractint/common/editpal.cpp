@@ -121,15 +121,12 @@
 #include <varargs.h>
 #endif
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
 #include "helpdefs.h"
 #include "fihelp.h"
-}
 
 /*
  * misc. #defines
@@ -150,15 +147,12 @@ extern "C"
 #define NEWC(class_)	((class_ *) malloc(sizeof(class_)))
 #define DELETE(g_block)	(free(g_block), g_block = NULL)  /* just for warning */
 
-extern "C"
-{
 #ifdef XFRACT
 int g_edit_pal_cursor = 0;
 #endif
 char g_screen_file[] = "FRACTINT.$$1";  /* file where screen portion is stored */
 BYTE     *g_line_buffer;   /* must be alloced!!! */
 int g_using_jiim = 0;
-}
 
 static char s_undo_file[] = "FRACTINT.$$2";  /* file where undo list is stored */
 static BYTE		s_fg_color,
@@ -586,7 +580,7 @@ static void cursor_restore(void);
 
 static cursor *s_the_cursor = NULL;
 
-extern "C" BOOLEAN cursor_new(void)
+BOOLEAN cursor_new(void)
 {
 	if (s_the_cursor != NULL)
 	{
@@ -604,7 +598,7 @@ extern "C" BOOLEAN cursor_new(void)
 	return TRUE;
 }
 
-extern "C" void cursor_destroy(void)
+void cursor_destroy(void)
 {
 	if (s_the_cursor != NULL)
 	{
@@ -646,7 +640,7 @@ static void cursor_restore(void)
 	put_row(s_the_cursor->x + 2,             s_the_cursor->y,  CURSOR_SIZE, s_the_cursor->r);
 }
 
-extern "C" void cursor_set_position(int x, int y)
+void cursor_set_position(int x, int y)
 {
 	if (!s_the_cursor->hidden)
 	{
@@ -663,7 +657,7 @@ extern "C" void cursor_set_position(int x, int y)
 	}
 }
 
-extern "C" void cursor_move(int xoff, int yoff)
+void cursor_move(int xoff, int yoff)
 {
 	if (!s_the_cursor->hidden)
 	{
@@ -697,17 +691,17 @@ extern "C" void cursor_move(int xoff, int yoff)
 	}
 }
 
-extern "C" int cursor_get_x(void)
+int cursor_get_x(void)
 {
 	return s_the_cursor->x;
 }
 
-extern "C" int cursor_get_y(void)
+int cursor_get_y(void)
 {
 	return s_the_cursor->y;
 }
 
-extern "C" void cursor_hide(void)
+void cursor_hide(void)
 {
 	if (s_the_cursor->hidden++ == 0)
 	{
@@ -715,7 +709,7 @@ extern "C" void cursor_hide(void)
 	}
 }
 
-extern "C" void cursor_show(void)
+void cursor_show(void)
 {
 	if (--s_the_cursor->hidden == 0)
 	{
@@ -737,7 +731,7 @@ void cursor_end_mouse_tracking()
 #endif
 
 /* See if the cursor should blink yet, and blink it if so */
-extern "C" void cursor_check_blink(void)
+void cursor_check_blink(void)
 {
 	long tick;
 	tick = readticker();
@@ -757,7 +751,7 @@ extern "C" void cursor_check_blink(void)
 	}
 }
 
-extern "C" int cursor_wait_key(void)   /* blink cursor while waiting for a key */
+int cursor_wait_key(void)   /* blink cursor while waiting for a key */
 {
 	while (!driver_wait_key_pressed(1))
 	{

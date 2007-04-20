@@ -7,19 +7,16 @@
 	file (.pot) in version 15.  Delete this code after a few more revs.
 */
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "targa_lc.h"
 #include "drivers.h"
-}
 
 static FILE *fptarga = NULL;            /* FILE pointer           */
 
 /* Main entry decoder */
-extern "C" int tga_view()
+int tga_view()
 {
 	int i;
 	int cs;
@@ -55,7 +52,7 @@ extern "C" int tga_view()
 }
 
 /* Outline function for 16 bit data with 8 bit g_fudge */
-extern "C" int out_line_16(BYTE *buffer, int linelen)
+int out_line_16(BYTE *buffer, int linelen)
 {
 	int i;
 	U16 *buf;

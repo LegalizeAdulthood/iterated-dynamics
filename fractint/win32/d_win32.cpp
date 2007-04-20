@@ -10,15 +10,12 @@
 #define STRICT
 #include <windows.h>
 
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-}
 
 #include "WinText.h"
 #include "frame.h"
@@ -32,17 +29,14 @@ extern HINSTANCE g_instance;
 
 int g_look_at_mouse = LOOK_MOUSE_NONE;
 
-extern "C"
-{
-	long g_save_base = 0;						/* base clock ticks */
-	long g_save_ticks = 0;						/* save after this many ticks */
-	int g_finish_row = 0;						/* save when this row is finished */
-}
+long g_save_base = 0;						/* base clock ticks */
+long g_save_ticks = 0;						/* save after this many ticks */
+int g_finish_row = 0;						/* save when this row is finished */
 
 /* timed save variables, handled by readmouse: */
 static int s_save_check_time = 0;			/* time of last autosave check */
 
-extern "C" int handle_timed_save(int ch)
+int handle_timed_save(int ch)
 {
 	int ticker;
 

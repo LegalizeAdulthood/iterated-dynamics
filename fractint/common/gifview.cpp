@@ -13,22 +13,16 @@
 
 #include <string.h>
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-}
 
 #define MAXCOLORS       256
 
-extern "C"
-{
-	unsigned int g_height;
-	unsigned g_num_colors;
-	int g_bad_code_count = 0;         /* needed by decoder module */
-}
+unsigned int g_height;
+unsigned g_num_colors;
+int g_bad_code_count = 0;         /* needed by decoder module */
 
 static FILE *fpin = NULL;       /* FILE pointer           */
 static int colcount; /* keeps track of current column for wide images */
@@ -41,12 +35,12 @@ static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);
 static int out_line_too_wide(BYTE *, int);
 
-extern "C" int get_byte()
+int get_byte()
 {
 	return getc(fpin); /* EOF is -1, as desired */
 }
 
-extern "C" int get_bytes(BYTE *where, int how_many)
+int get_bytes(BYTE *where, int how_many)
 {
 	return (int) fread((char *)where, 1, how_many, fpin); /* EOF is -1, as desired */
 }
@@ -68,7 +62,7 @@ BYTE g_decoder_line[MAX_PIXELS + 1]; /* write-line routines use this */
 static char *ditherbuf = NULL;
 
 /* Main entry decoder */
-extern "C" int gifview()
+int gifview()
 {
 	BYTE buffer[16];
 	unsigned top, left, width, finished;
@@ -454,7 +448,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 	return 0;
 }
 
-extern "C" int sound_line(BYTE *pixels, int linelen)
+int sound_line(BYTE *pixels, int linelen)
 {
 	/* int twidth = gifview_image_twidth; */
 	int twidth = g_x_dots;
@@ -496,7 +490,7 @@ extern "C" int sound_line(BYTE *pixels, int linelen)
 	return ret;
 }
 
-extern "C" int potential_line(BYTE *pixels, int linelen)
+int potential_line(BYTE *pixels, int linelen)
 {
 	int row, col, saverowcount;
 	if (g_row_count == 0)

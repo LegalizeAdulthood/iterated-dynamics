@@ -17,12 +17,9 @@
 #include <malloc.h>
 #endif
 
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-}
 
 #define DBLS LDBL
 #define FABS(x)  fabsl(x)
@@ -39,21 +36,18 @@ extern "C"
 #define EVERY 15
 #define BASIN_COLOR 0
 
-extern "C"
-{
-	int g_rhombus_stack[10];
-	int rhombus_depth;
-	int g_max_rhombus_depth;
-	int g_minimum_stack_available;
-	/* int g_minimum_stack = 1700; */ /* need this much stack to recurse */
-	int g_minimum_stack = 2200; /* and this much stack to not crash when <tab> is pressed */
-}
+int g_rhombus_stack[10];
+int rhombus_depth;
+int g_max_rhombus_depth;
+int g_minimum_stack_available;
+/* int g_minimum_stack = 1700; */ /* need this much stack to recurse */
+int g_minimum_stack = 2200; /* and this much stack to not crash when <tab> is pressed */
 
 static DBLS twidth;
 static DBLS equal;
 static char baxinxx = FALSE;
 
-extern "C" long iteration(register DBLS cr, register DBLS ci,
+long iteration(register DBLS cr, register DBLS ci,
 				register DBLS re, register DBLS im,
 				long start)
 {
@@ -1120,7 +1114,7 @@ rhombus_done:
 	return status;
 }
 
-extern "C" void soi_long_double(void)
+void soi_long_double(void)
 {
 	int status;
 	DBLS tolerance = 0.1;

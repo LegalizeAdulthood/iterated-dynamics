@@ -1,18 +1,15 @@
 /** loadmap.c **/
 #include <string.h>
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
-}
 
 /***************************************************************************/
 
 #define dac ((Palettetype *)g_dac_box)
 
-extern "C" int validate_luts(char *fn)
+int validate_luts(char *fn)
 {
 	FILE *f;
 	unsigned        r, g, b, index;
@@ -65,7 +62,7 @@ extern "C" int validate_luts(char *fn)
 
 /***************************************************************************/
 
-extern "C" int set_color_palette_name(char * fn)
+int set_color_palette_name(char * fn)
 {
 	if (validate_luts(fn) != 0)
 	{

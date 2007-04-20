@@ -46,8 +46,6 @@
 #include <direct.h>
 #endif
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -55,7 +53,6 @@ extern "C"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-}
 
 /* Routines in this module      */
 
@@ -74,10 +71,7 @@ static  int get_screen_corners(void);
 #define   SUBDIR         16
 #define   MAXNUMFILES    2977L
 
-extern "C"
-{
-	struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
-}
+struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
 
 /* --------------------------------------------------------------------- */
 /*

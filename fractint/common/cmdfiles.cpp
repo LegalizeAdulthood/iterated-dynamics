@@ -11,159 +11,153 @@
 #endif
 
 /* see Fractint.c for a description of the "include"  hierarchy */
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
-}
 
 #define INIT_GIF87      0       /* Turn on GIF 89a processing  */
 #define NON_NUMERIC -32767
 
-extern "C"
+/* variables defined by the command line/files processor */
+int     g_stop_pass = 0;             /* stop at this guessing pass early */
+int     g_pseudo_x = 0;              /* g_x_dots to use for video independence */
+int     g_pseudo_y = 0;              /* g_y_dots to use for video independence */
+int     g_bf_digits = 0;             /* digits to use (force) for g_bf_math */
+int     g_show_dot = -1;             /* color to show crawling graphics cursor */
+int     g_size_dot;                /* size of dot crawling cursor */
+char    g_record_colors;           /* default PAR color-writing method */
+char    g_auto_show_dot = 0;          /* dark, medium, bright */
+char    g_start_show_orbit = 0;      /* show orbits on at start of fractal */
+char    g_read_name[FILE_MAX_PATH]; /* name of fractal input file */
+char    g_temp_dir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
+char    g_work_dir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
+char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
+char    g_gif_mask[FILE_MAX_PATH] = {""};
+char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
+char    g_autokey_name[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
+int     g_potential_flag = FALSE;              /* continuous potential enabled? */
+int     g_potential_16bit;               /* store 16 bit continuous potential values */
+int     g_gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
+int     g_dither_flag;            /* 1 if want to dither GIFs */
+int     g_ask_video;               /* flag for video prompting */
+int		g_float_flag;
+int     g_biomorph;               /* flag for g_biomorph */
+int     g_user_biomorph;
+int     g_force_symmetry;          /* force symmetry */
+int     g_show_file;               /* zero if file display pending */
+int     g_random_flag, g_random_seed;           /* Random number seeding flag and value */
+int     g_decomposition[2];              /* Decomposition coloring */
+long    g_distance_test;
+int     g_distance_test_width;
+int		g_fractal_overwrite = FALSE;	/* 0 if file overwrite not allowed */
+int     g_sound_flags;              /* sound control bitfield... see sound.c for useage*/
+int     g_base_hertz;              /* sound=x/y/x hertz value */
+int     g_debug_flag;              /* internal use only - you didn't see this */
+int     g_timer_flag;              /* you didn't see this, either */
+int     g_cycle_limit;             /* color-rotator upper limit */
+int     g_inside;                 /* inside color: 1=blue     */
+int     g_fill_color;              /* fillcolor: -1=normal     */
+int     g_outside;                /* outside color    */
+int     g_finite_attractor;             /* finite attractor logic */
+int     g_display_3d;              /* 3D display flag: 0 = OFF */
+int     g_overlay_3d;              /* 3D overlay flag: 0 = OFF */
+int     g_init_3d[20];             /* '3d=nn/nn/nn/...' values */
+int     g_check_current_dir;            /* flag to check current dir for files */
+int     g_initialize_batch = 0;			/* 1 if batch run (no kbd)  */
+int     g_save_time;           /* autosave minutes         */
+_CMPLX  g_initial_orbit_z;              /* initial orbitvalue */
+char    g_use_initial_orbit_z;           /* flag for g_initial_orbit_z */
+int     g_init_mode;               /* initial video mode       */
+int     g_initial_cycle_limit;         /* initial cycle limit      */
+int		g_use_center_mag;                 /* use center-mag corners   */
+long    g_bail_out;                /* user input bailout value */
+enum bailouts g_bail_out_test;       /* test used for determining bailout */
+double  g_inversion[3];           /* radius, xcenter, ycenter */
+int     g_rotate_lo, g_rotate_hi;    /* cycling color range      */
+int		*g_ranges;                /* iter->color ranges mapping */
+int     g_ranges_length = 0;          /* size of ranges array     */
+BYTE	*g_map_dac_box = NULL;     /* map= (default g_colors)    */
+int     g_color_state;				/* 0, g_dac_box matches default (bios or map=) */
+									/* 1, g_dac_box matches no known defined map   */
+									/* 2, g_dac_box matches the g_color_file map      */
+int     g_color_preloaded;         /* if g_dac_box preloaded for next mode select */
+int     g_save_release;           /* release creating PAR file*/
+int		g_dont_read_color = FALSE;        /* flag for reading color from GIF */
+double  g_math_tolerance[2] = {.05, .05};  /* For math transition */
+int		g_targa_output = 0;              /* 3D fullcolor flag */
+int		g_true_color = 0;              /* escape time truecolor flag */
+int		g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
+char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or g_colors=@filename */
+int		g_function_preloaded; /* if function loaded for new bifs, JCO 7/5/92 */
+float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;   /* aspect ratio of the screen */
+float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  /* how much drift is allowed and */
+								/* still forced to g_screen_aspect_ratio  */
+int		g_fast_restore = 0;          /* 1 - reset viewwindows prior to a restore
+								and do not display warnings when video
+								mode changes during restore */
+int		g_organize_formula_search = FALSE;            /* 1 - user has specified a directory for
+									Orgform formula compilation files */
+int     g_orbit_save = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
+int		g_orbit_delay;                /* clock ticks delating orbit release */
+int     g_transparent[2];         /* transparency min/max values */
+long    g_log_palette_flag;                /* Logarithmic palette flag: 0 = no */
+int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;   /* calculate logmap on-the-fly */
+int     g_log_automatic_flag = FALSE;  /* auto calculate logmap */
+int     g_no_bof = FALSE; /* Flag to make inside=bof options not duplicate bof images */
+int		g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
+int		g_command_initialize = TRUE;               /* first time into command_files? */
+struct fractal_specific_stuff *g_current_fractal_specific = NULL;
+char	g_formula_filename[FILE_MAX_PATH]; /* file to find (type=)formulas in */
+char	g_formula_name[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
+char	g_l_system_filename[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
+char	g_l_system_name[ITEMNAMELEN + 1];       /* Name of L-System */
+char	g_command_file[FILE_MAX_PATH]; /* file to find command sets in */
+char	g_command_name[ITEMNAMELEN + 1]; /* Name of Command set */
+char	g_command_comment[4][MAX_COMMENT];    /* comments for command set */
+char	g_ifs_filename[FILE_MAX_PATH]; /* file to find (type=)IFS in */
+char	g_ifs_name[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
+struct search_path g_search_for;
+float	*g_ifs_definition = NULL;     /* ifs parameters */
+int		g_ifs_type;                  /* 0 = 2d, 1 = 3d */
+int		g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
+BYTE	g_text_colors[]=
 {
-	/* variables defined by the command line/files processor */
-	int     g_stop_pass = 0;             /* stop at this guessing pass early */
-	int     g_pseudo_x = 0;              /* g_x_dots to use for video independence */
-	int     g_pseudo_y = 0;              /* g_y_dots to use for video independence */
-	int     g_bf_digits = 0;             /* digits to use (force) for g_bf_math */
-	int     g_show_dot = -1;             /* color to show crawling graphics cursor */
-	int     g_size_dot;                /* size of dot crawling cursor */
-	char    g_record_colors;           /* default PAR color-writing method */
-	char    g_auto_show_dot = 0;          /* dark, medium, bright */
-	char    g_start_show_orbit = 0;      /* show orbits on at start of fractal */
-	char    g_read_name[FILE_MAX_PATH]; /* name of fractal input file */
-	char    g_temp_dir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
-	char    g_work_dir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
-	char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
-	char    g_gif_mask[FILE_MAX_PATH] = {""};
-	char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
-	char    g_autokey_name[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
-	int     g_potential_flag = FALSE;              /* continuous potential enabled? */
-	int     g_potential_16bit;               /* store 16 bit continuous potential values */
-	int     g_gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
-	int     g_dither_flag;            /* 1 if want to dither GIFs */
-	int     g_ask_video;               /* flag for video prompting */
-	int		g_float_flag;
-	int     g_biomorph;               /* flag for g_biomorph */
-	int     g_user_biomorph;
-	int     g_force_symmetry;          /* force symmetry */
-	int     g_show_file;               /* zero if file display pending */
-	int     g_random_flag, g_random_seed;           /* Random number seeding flag and value */
-	int     g_decomposition[2];              /* Decomposition coloring */
-	long    g_distance_test;
-	int     g_distance_test_width;
-	int		g_fractal_overwrite = FALSE;	/* 0 if file overwrite not allowed */
-	int     g_sound_flags;              /* sound control bitfield... see sound.c for useage*/
-	int     g_base_hertz;              /* sound=x/y/x hertz value */
-	int     g_debug_flag;              /* internal use only - you didn't see this */
-	int     g_timer_flag;              /* you didn't see this, either */
-	int     g_cycle_limit;             /* color-rotator upper limit */
-	int     g_inside;                 /* inside color: 1=blue     */
-	int     g_fill_color;              /* fillcolor: -1=normal     */
-	int     g_outside;                /* outside color    */
-	int     g_finite_attractor;             /* finite attractor logic */
-	int     g_display_3d;              /* 3D display flag: 0 = OFF */
-	int     g_overlay_3d;              /* 3D overlay flag: 0 = OFF */
-	int     g_init_3d[20];             /* '3d=nn/nn/nn/...' values */
-	int     g_check_current_dir;            /* flag to check current dir for files */
-	int     g_initialize_batch = 0;			/* 1 if batch run (no kbd)  */
-	int     g_save_time;           /* autosave minutes         */
-	_CMPLX  g_initial_orbit_z;              /* initial orbitvalue */
-	char    g_use_initial_orbit_z;           /* flag for g_initial_orbit_z */
-	int     g_init_mode;               /* initial video mode       */
-	int     g_initial_cycle_limit;         /* initial cycle limit      */
-	int		g_use_center_mag;                 /* use center-mag corners   */
-	long    g_bail_out;                /* user input bailout value */
-	enum bailouts g_bail_out_test;       /* test used for determining bailout */
-	double  g_inversion[3];           /* radius, xcenter, ycenter */
-	int     g_rotate_lo, g_rotate_hi;    /* cycling color range      */
-	int		*g_ranges;                /* iter->color ranges mapping */
-	int     g_ranges_length = 0;          /* size of ranges array     */
-	BYTE	*g_map_dac_box = NULL;     /* map= (default g_colors)    */
-	int     g_color_state;				/* 0, g_dac_box matches default (bios or map=) */
-										/* 1, g_dac_box matches no known defined map   */
-										/* 2, g_dac_box matches the g_color_file map      */
-	int     g_color_preloaded;         /* if g_dac_box preloaded for next mode select */
-	int     g_save_release;           /* release creating PAR file*/
-	int		g_dont_read_color = FALSE;        /* flag for reading color from GIF */
-	double  g_math_tolerance[2] = {.05, .05};  /* For math transition */
-	int		g_targa_output = 0;              /* 3D fullcolor flag */
-	int		g_true_color = 0;              /* escape time truecolor flag */
-	int		g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
-	char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or g_colors=@filename */
-	int		g_function_preloaded; /* if function loaded for new bifs, JCO 7/5/92 */
-	float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;   /* aspect ratio of the screen */
-	float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  /* how much drift is allowed and */
-									/* still forced to g_screen_aspect_ratio  */
-	int		g_fast_restore = 0;          /* 1 - reset viewwindows prior to a restore
-									and do not display warnings when video
-									mode changes during restore */
-	int		g_organize_formula_search = FALSE;            /* 1 - user has specified a directory for
-										Orgform formula compilation files */
-	int     g_orbit_save = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
-	int		g_orbit_delay;                /* clock ticks delating orbit release */
-	int     g_transparent[2];         /* transparency min/max values */
-	long    g_log_palette_flag;                /* Logarithmic palette flag: 0 = no */
-	int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;   /* calculate logmap on-the-fly */
-	int     g_log_automatic_flag = FALSE;  /* auto calculate logmap */
-	int     g_no_bof = FALSE; /* Flag to make inside=bof options not duplicate bof images */
-	int		g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
-	int		g_command_initialize = TRUE;               /* first time into command_files? */
-	struct fractal_specific_stuff *g_current_fractal_specific = NULL;
-	char	g_formula_filename[FILE_MAX_PATH]; /* file to find (type=)formulas in */
-	char	g_formula_name[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
-	char	g_l_system_filename[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
-	char	g_l_system_name[ITEMNAMELEN + 1];       /* Name of L-System */
-	char	g_command_file[FILE_MAX_PATH]; /* file to find command sets in */
-	char	g_command_name[ITEMNAMELEN + 1]; /* Name of Command set */
-	char	g_command_comment[4][MAX_COMMENT];    /* comments for command set */
-	char	g_ifs_filename[FILE_MAX_PATH]; /* file to find (type=)IFS in */
-	char	g_ifs_name[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
-	struct search_path g_search_for;
-	float	*g_ifs_definition = NULL;     /* ifs parameters */
-	int		g_ifs_type;                  /* 0 = 2d, 1 = 3d */
-	int		g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
-	BYTE	g_text_colors[]=
-	{
-			BLUE*16 + L_WHITE,    /* C_TITLE           title background */
-			BLUE*16 + L_GREEN,    /* C_TITLE_DEV       development vsn foreground */
-			GREEN*16 + YELLOW,    /* C_HELP_HDG        help page title line */
-			WHITE*16 + BLACK,     /* C_HELP_BODY       help page body */
-			GREEN*16 + GRAY,      /* C_HELP_INSTR      help page instr at bottom */
-			WHITE*16 + BLUE,      /* C_HELP_LINK       help page links */
-			CYAN*16 + BLUE,       /* C_HELP_CURLINK    help page current link */
-			WHITE*16 + GRAY,      /* C_PROMPT_BKGRD    prompt/choice background */
-			WHITE*16 + BLACK,     /* C_PROMPT_TEXT     prompt/choice extra info */
-			BLUE*16 + WHITE,      /* C_PROMPT_LO       prompt/choice text */
-			BLUE*16 + L_WHITE,    /* C_PROMPT_MED      prompt/choice hdg2/... */
-			BLUE*16 + YELLOW,     /* C_PROMPT_HI       prompt/choice hdg/cur/... */
-			GREEN*16 + L_WHITE,   /* C_PROMPT_INPUT    full_screen_prompt input */
-			CYAN*16 + L_WHITE,    /* C_PROMPT_CHOOSE   full_screen_prompt choice */
-			MAGENTA*16 + L_WHITE, /* C_CHOICE_CURRENT  full_screen_choice input */
-			BLACK*16 + WHITE,     /* C_CHOICE_SP_INSTR speed key bar & instr */
-			BLACK*16 + L_MAGENTA, /* C_CHOICE_SP_KEYIN speed key value */
-			WHITE*16 + BLUE,      /* C_GENERAL_HI      tab, thinking, IFS */
-			WHITE*16 + BLACK,     /* C_GENERAL_MED */
-			WHITE*16 + GRAY,      /* C_GENERAL_LO */
-			BLACK*16 + L_WHITE,   /* C_GENERAL_INPUT */
-			WHITE*16 + BLACK,     /* C_DVID_BKGRD      disk video */
-			BLACK*16 + YELLOW,    /* C_DVID_HI */
-			BLACK*16 + L_WHITE,   /* C_DVID_LO */
-			RED*16 + L_WHITE,     /* C_STOP_ERR        stop message, error */
-			GREEN*16 + BLACK,     /* C_STOP_INFO       stop message, info */
-			BLUE*16 + WHITE,      /* C_TITLE_LOW       bottom lines of title screen */
-			GREEN*16 + BLACK,     /* C_AUTHDIV1        title screen dividers */
-			GREEN*16 + GRAY,      /* C_AUTHDIV2        title screen dividers */
-			BLACK*16 + L_WHITE,   /* C_PRIMARY         primary authors */
-			BLACK*16 + WHITE      /* C_CONTRIB         contributing authors */
-	};
-	char	g_make_par[] =          "makepar";
-}
+		BLUE*16 + L_WHITE,    /* C_TITLE           title background */
+		BLUE*16 + L_GREEN,    /* C_TITLE_DEV       development vsn foreground */
+		GREEN*16 + YELLOW,    /* C_HELP_HDG        help page title line */
+		WHITE*16 + BLACK,     /* C_HELP_BODY       help page body */
+		GREEN*16 + GRAY,      /* C_HELP_INSTR      help page instr at bottom */
+		WHITE*16 + BLUE,      /* C_HELP_LINK       help page links */
+		CYAN*16 + BLUE,       /* C_HELP_CURLINK    help page current link */
+		WHITE*16 + GRAY,      /* C_PROMPT_BKGRD    prompt/choice background */
+		WHITE*16 + BLACK,     /* C_PROMPT_TEXT     prompt/choice extra info */
+		BLUE*16 + WHITE,      /* C_PROMPT_LO       prompt/choice text */
+		BLUE*16 + L_WHITE,    /* C_PROMPT_MED      prompt/choice hdg2/... */
+		BLUE*16 + YELLOW,     /* C_PROMPT_HI       prompt/choice hdg/cur/... */
+		GREEN*16 + L_WHITE,   /* C_PROMPT_INPUT    full_screen_prompt input */
+		CYAN*16 + L_WHITE,    /* C_PROMPT_CHOOSE   full_screen_prompt choice */
+		MAGENTA*16 + L_WHITE, /* C_CHOICE_CURRENT  full_screen_choice input */
+		BLACK*16 + WHITE,     /* C_CHOICE_SP_INSTR speed key bar & instr */
+		BLACK*16 + L_MAGENTA, /* C_CHOICE_SP_KEYIN speed key value */
+		WHITE*16 + BLUE,      /* C_GENERAL_HI      tab, thinking, IFS */
+		WHITE*16 + BLACK,     /* C_GENERAL_MED */
+		WHITE*16 + GRAY,      /* C_GENERAL_LO */
+		BLACK*16 + L_WHITE,   /* C_GENERAL_INPUT */
+		WHITE*16 + BLACK,     /* C_DVID_BKGRD      disk video */
+		BLACK*16 + YELLOW,    /* C_DVID_HI */
+		BLACK*16 + L_WHITE,   /* C_DVID_LO */
+		RED*16 + L_WHITE,     /* C_STOP_ERR        stop message, error */
+		GREEN*16 + BLACK,     /* C_STOP_INFO       stop message, info */
+		BLUE*16 + WHITE,      /* C_TITLE_LOW       bottom lines of title screen */
+		GREEN*16 + BLACK,     /* C_AUTHDIV1        title screen dividers */
+		GREEN*16 + GRAY,      /* C_AUTHDIV2        title screen dividers */
+		BLACK*16 + L_WHITE,   /* C_PRIMARY         primary authors */
+		BLACK*16 + WHITE      /* C_CONTRIB         contributing authors */
+};
+char	g_make_par[] =          "makepar";
 
-extern "C" int  process_command(char *, int);
+int  process_command(char *, int);
 
 static int s_init_random_seed;
 static int s_init_corners;
@@ -193,7 +187,7 @@ static int is_a_big_float(char *str);
 /* get_power_10(x) returns the magnitude of x.  This rounds               */
 /* a little so 9.95 rounds to 10, but we're using a binary base anyway, */
 /* so there's nothing magic about changing to the next power of 10.     */
-extern "C" int get_power_10(LDBL x)
+int get_power_10(LDBL x)
 {
 	char string[11]; /* space for "+x.xe-xxxx" */
 	int p;
@@ -207,7 +201,7 @@ extern "C" int get_power_10(LDBL x)
 	return p;
 }
 
-extern "C" int command_files(int argc, char **argv)
+int command_files(int argc, char **argv)
 {
 	int     i;
 	char    curarg[141];
@@ -339,7 +333,7 @@ extern "C" int command_files(int argc, char **argv)
 	return 0;
 }
 
-extern "C" int load_commands(FILE *infile)
+int load_commands(FILE *infile)
 {
 	/* when called, file is open in binary mode, positioned at the */
 	/* '(' or '{' following the desired parameter set's name       */
@@ -3167,7 +3161,7 @@ static int cur_dir_arg(const cmd_context *context)
 		| 8 means reset specified
 */
 
-extern "C" int process_command(char *curarg, int mode) /* process a single argument */
+int process_command(char *curarg, int mode) /* process a single argument */
 {
 	cmd_context context;
 	char    variable[21];                /* variable name goes here   */
@@ -3736,7 +3730,7 @@ static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 	}
 }
 
-extern "C" void set_3d_defaults()
+void set_3d_defaults()
 {
 	ROUGH     = 30;
 	WATERLINE = 0;
@@ -3797,7 +3791,7 @@ static int get_bf(bf_t bf, char *curarg)
 
 /* Get length of current args */
 /* TODO: this shouldn't modify the curarg! */
-extern "C" int get_curarg_len(char *curarg)
+int get_curarg_len(char *curarg)
 {
 	int len;
 	char *s;
@@ -3815,7 +3809,7 @@ extern "C" int get_curarg_len(char *curarg)
 }
 
 /* Get max length of current args */
-extern "C" int get_max_curarg_len(char *floatvalstr[], int totparms)
+int get_max_curarg_len(char *floatvalstr[], int totparms)
 {
 	int i, tmp, max_str;
 	max_str = 0;
@@ -3836,7 +3830,7 @@ extern "C" int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        3 command line @filename/setname */
 /* this is like stop_message() but can be used in command_files()      */
 /* call with NULL for badfilename to get pause for driver_get_key() */
-extern "C" int init_msg(const char *cmdstr, char *badfilename, int mode)
+int init_msg(const char *cmdstr, char *badfilename, int mode)
 {
 	char *modestr[4] =
 		{"command line", "sstools.ini", "PAR file", "PAR file"};
@@ -3891,7 +3885,7 @@ extern "C" int init_msg(const char *cmdstr, char *badfilename, int mode)
 }
 
 /* defer pause until after parsing so we know if in batch mode */
-extern "C" void pause_error(int action)
+void pause_error(int action)
 {
 	static int needpause = PAUSE_ERROR_NO_BATCH;
 	switch (action)

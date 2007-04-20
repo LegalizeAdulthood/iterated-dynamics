@@ -13,12 +13,9 @@
 #include <ctype.h>
 #include <errno.h>
 
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-}
 
 /* Memory allocation routines. */
 
@@ -79,14 +76,14 @@ static void DisplayMemory(void);
 
 /* Routines in this module, visible to outside routines */
 
-extern "C" int MemoryType (U16 handle);
-extern "C" void InitMemory(void);
-extern "C" void ExitCheck(void);
-extern "C" U16 MemoryAlloc(U16 size, long count, int stored_at);
-extern "C" void MemoryRelease(U16 handle);
-extern "C" int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-extern "C" int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-extern "C" int SetMemory(int value, U16 size, long count, long offset, U16 handle);
+int MemoryType (U16 handle);
+void InitMemory(void);
+void ExitCheck(void);
+U16 MemoryAlloc(U16 size, long count, int stored_at);
+void MemoryRelease(U16 handle);
+int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+int SetMemory(int value, U16 size, long count, long offset, U16 handle);
 
 /* Memory handling support routines */
 
@@ -118,7 +115,7 @@ static void WhichDiskError(int I_O)
 	}
 }
 
-extern "C" int MemoryType(U16 handle)
+int MemoryType(U16 handle)
 {
 	return handletable[handle].Nowhere.stored_at;
 }
@@ -253,7 +250,7 @@ static void DisplayHandle(U16 handle)
 	}
 }
 
-extern "C" void InitMemory(void)
+void InitMemory(void)
 {
 	int counter;
 
@@ -265,7 +262,7 @@ extern "C" void InitMemory(void)
 	}
 }
 
-extern "C" void ExitCheck(void)
+void ExitCheck(void)
 {
 	U16 i;
 	if (numTOTALhandles != 0)
@@ -288,7 +285,7 @@ extern "C" void ExitCheck(void)
 /* * * * * */
 /* Memory handling routines */
 
-extern "C" U16 MemoryAlloc(U16 size, long count, int stored_at)
+U16 MemoryAlloc(U16 size, long count, int stored_at)
 {
 /* Returns handle number if successful, 0 or NULL if failure */
 	U16 handle = 0;
@@ -406,7 +403,7 @@ extern "C" U16 MemoryAlloc(U16 size, long count, int stored_at)
 	}
 }
 
-extern "C" void MemoryRelease(U16 handle)
+void MemoryRelease(U16 handle)
 {
 	switch (handletable[handle].Nowhere.stored_at)
 	{
@@ -435,7 +432,7 @@ extern "C" void MemoryRelease(U16 handle)
 	} /* end of switch */
 }
 
-extern "C" int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
+int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 {
 	/* buffer is a pointer to local memory */
 	/* Always start moving from the beginning of buffer */
@@ -507,7 +504,7 @@ diskerror:
 	return success;
 }
 
-extern "C" int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
+int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 {
 	/* buffer points is the location to move the data to */
 	/* offset is the number of units from the beginning of buffer to start moving */
@@ -579,7 +576,7 @@ diskerror:
 	return success;
 }
 
-extern "C" int SetMemory(int value, U16 size, long count, long offset, U16 handle)
+int SetMemory(int value, U16 size, long count, long offset, U16 handle)
 {
 	/* value is the value to set memory to */
 	/* offset is the number of units from the start of allocated memory */

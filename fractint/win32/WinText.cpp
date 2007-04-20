@@ -9,12 +9,9 @@
 #include <windows.h>
 #include <windowsx.h>
 
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
-}
 
 #include "WinText.h"
 #include "ods.h"

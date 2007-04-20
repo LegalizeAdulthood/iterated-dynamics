@@ -10,15 +10,12 @@
 #define STRICT
 #include <windows.h>
 
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-}
 
 #include "WinText.h"
 #include "frame.h"

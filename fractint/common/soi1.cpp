@@ -16,12 +16,10 @@
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
-extern "C"
-{
+
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-}
 
 #define DBLS double
 #define FABS(x)  fabs(x)
@@ -30,11 +28,11 @@ extern "C"
 #define EVERY 15
 #define BASIN_COLOR 0
 
-extern "C" int g_rhombus_stack[10];
-extern "C" int rhombus_depth;
-extern "C" int g_max_rhombus_depth;
-extern "C" int g_minimum_stack_available;
-extern "C" int g_minimum_stack; /* need this much stack to recurse */
+extern int g_rhombus_stack[10];
+extern int rhombus_depth;
+extern int g_max_rhombus_depth;
+extern int g_minimum_stack_available;
+extern int g_minimum_stack; /* need this much stack to recurse */
 
 static DBLS twidth;
 static DBLS equal;
@@ -963,7 +961,7 @@ rhombus_done:
 	return status;
 }
 
-extern "C" void soi(void)
+void soi(void)
 {
 	int status;
 	DBLS tolerance = 0.1;

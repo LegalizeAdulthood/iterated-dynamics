@@ -31,14 +31,11 @@
 
 #include <string.h>
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fihelp.h"
-}
 
 /* routines in this module      */
 
@@ -121,7 +118,7 @@ static double vid_aspect(int tryxdots, int tryydots)
 static struct vidinf *vidptr;
 #endif
 
-extern "C" int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
+int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	struct vidinf vid[MAXVIDEOMODES];
 	int i, j;

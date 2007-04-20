@@ -20,14 +20,11 @@
 #include <time.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "targa_lc.h"
 #include "drivers.h"
-}
 
 #define SHOWDOT_SAVE    1
 #define SHOWDOT_RESTORE 2

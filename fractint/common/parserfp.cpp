@@ -108,15 +108,12 @@
 #include <ctype.h>
 #include <time.h>
 
-extern "C"
-{
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
-}
 
 /* global data  */
-extern "C" struct fls *g_function_load_store_pointers = (struct fls *)0;
+struct fls *g_function_load_store_pointers = (struct fls *)0;
 
 #if !defined(XFRACT)
 
@@ -124,7 +121,7 @@ extern "C" struct fls *g_function_load_store_pointers = (struct fls *)0;
 	PARSER.C and other parser modules */
 
 extern union Arg *Arg1, *Arg2;
-extern "C" double _1_, _2_;
+extern double _1_, _2_;
 extern union Arg s[20], **Store, **Load;
 extern int OpPtr;
 extern struct ConstArg *v;
@@ -161,63 +158,63 @@ OLD_FN  dStkOne;
 
 typedef void (NEW_FN)(void);  /* new 387-only ASM functions  */
 
-extern "C" NEW_FN  fStkPull2;  /* pull up g_fpu stack from 2 to 4  */
-extern "C" NEW_FN  fStkPush2;  /* push down g_fpu stack from 8 to 6  */
-extern "C" NEW_FN  fStkPush2a;  /* push down g_fpu stack from 6 to 4  */
-extern "C" NEW_FN  fStkPush4;  /* push down g_fpu stack from 8 to 4  */
-extern "C" NEW_FN  fStkLodDup;  /* lod, dup  */
-extern "C" NEW_FN  fStkLodSqr;  /* lod, sqr, dont save magnitude(i.e. lastsqr)  */
-extern "C" NEW_FN  fStkLodSqr2;  /* lod, sqr, save lastsqr  */
-extern "C" NEW_FN  fStkStoDup;  /* store, duplicate  */
-extern "C" NEW_FN  fStkStoSqr;  /* store, sqr, save lastsqr  */
-extern "C" NEW_FN  fStkStoSqr0;  /* store, sqr, dont save lastsqr  */
-extern "C" NEW_FN  fStkLodDbl;  /* load, double  */
-extern "C" NEW_FN  fStkStoDbl;  /* store, double  */
-extern "C" NEW_FN  fStkReal2;  /* fast ver. of real  */
-extern "C" NEW_FN  fStkSqr;  /* sqr, save magnitude in lastsqr  */
-extern "C" NEW_FN  fStkSqr0;  /* sqr, no save magnitude  */
-extern "C" NEW_FN  fStkClr1;  /* clear g_fpu  */
-extern "C" NEW_FN  fStkClr2;  /* test stack top, clear g_fpu  */
-extern "C" NEW_FN  fStkStoClr1;  /* store, clr1  */
-extern "C" NEW_FN  fStkAdd, fStkSub;
-extern "C" NEW_FN  fStkSto, fStkSto2;  /* fast ver. of sto  */
-extern "C" NEW_FN  fStkLod, fStkEndInit;
-extern "C" NEW_FN  fStkMod, fStkMod2;  /* faster mod  */
-extern "C" NEW_FN  fStkLodMod2, fStkStoMod2;
-extern "C" NEW_FN  fStkLTE, fStkLodLTEMul, fStkLTE2, fStkLodLTE;
-extern "C" NEW_FN  fStkLodLTE2, fStkLodLTEAnd2;
-extern "C" NEW_FN  fStkLT, fStkLodLTMul, fStkLT2, fStkLodLT;
-extern "C" NEW_FN  fStkLodLT2;
-extern "C" NEW_FN  fStkGTE, fStkLodGTE, fStkLodGTE2;
-extern "C" NEW_FN  fStkGT, fStkGT2, fStkLodGT, fStkLodGT2;
-extern "C" NEW_FN  fStkEQ, fStkLodEQ, fStkNE, fStkLodNE;
-extern "C" NEW_FN  fStkAND, fStkANDClr2, fStkOR, fStkORClr2;
-extern "C" NEW_FN  fStkSin, fStkSinh, fStkCos, fStkCosh, fStkCosXX;
-extern "C" NEW_FN  fStkTan, fStkTanh, fStkCoTan, fStkCoTanh;
-extern "C" NEW_FN  fStkLog, fStkExp, fStkPwr;
-extern "C" NEW_FN  fStkMul, fStkDiv;
-extern "C" NEW_FN  fStkFlip, fStkReal, fStkImag, fStkRealFlip, fStkImagFlip;
-extern "C" NEW_FN  fStkConj, fStkNeg, fStkAbs, fStkRecip;
-extern "C" NEW_FN  fStkLodReal, fStkLodRealC, fStkLodImag;
-extern "C" NEW_FN  fStkLodRealFlip, fStkLodRealAbs;
-extern "C" NEW_FN  fStkLodRealMul, fStkLodRealAdd, fStkLodRealSub, fStkLodRealPwr;
-extern "C" NEW_FN  fStkLodImagMul, fStkLodImagAdd, fStkLodImagSub;  /* CAE 4Dec93  */
-extern "C" NEW_FN  fStkLodImagFlip, fStkLodImagAbs;
-extern "C" NEW_FN  fStkLodConj;
-extern "C" NEW_FN  fStkLodAdd, fStkLodSub, fStkLodSubMod, fStkLodMul;
-extern "C" NEW_FN  fStkPLodAdd, fStkPLodSub;  /* push-lod-add/sub  */
-extern "C" NEW_FN  fStkIdent;
-extern "C" NEW_FN  fStkStoClr2;  /* store, clear stack by popping  */
-extern "C" NEW_FN  fStkZero;  /* to support new parser fn.  */
-extern "C" NEW_FN  fStkDbl;  /* double the stack top  CAE 31OCT93  */
-extern "C" NEW_FN  fStkOne, fStkSqr3;  /* sqr3 is sqr/mag of a real  CAE 09NOV93  */
-extern "C" NEW_FN  fStkSqrt;
-extern "C" NEW_FN  fStkASin, fStkACos, fStkASinh, fStkACosh;
-extern "C" NEW_FN  fStkATanh, fStkATan;
-extern "C" NEW_FN  fStkCAbs;
-extern "C" NEW_FN  fStkFloor, fStkCeil, fStkTrunc, fStkRound; /* rounding functions */
-extern "C" NEW_FN  fStkJump, fStkJumpOnTrue, fStkJumpOnFalse, fStkJumpLabel; /* flow */
-extern "C" NEW_FN  fStkOne;   /* to support new parser fn.  */
+NEW_FN  fStkPull2;  /* pull up g_fpu stack from 2 to 4  */
+NEW_FN  fStkPush2;  /* push down g_fpu stack from 8 to 6  */
+NEW_FN  fStkPush2a;  /* push down g_fpu stack from 6 to 4  */
+NEW_FN  fStkPush4;  /* push down g_fpu stack from 8 to 4  */
+NEW_FN  fStkLodDup;  /* lod, dup  */
+NEW_FN  fStkLodSqr;  /* lod, sqr, dont save magnitude(i.e. lastsqr)  */
+NEW_FN  fStkLodSqr2;  /* lod, sqr, save lastsqr  */
+NEW_FN  fStkStoDup;  /* store, duplicate  */
+NEW_FN  fStkStoSqr;  /* store, sqr, save lastsqr  */
+NEW_FN  fStkStoSqr0;  /* store, sqr, dont save lastsqr  */
+NEW_FN  fStkLodDbl;  /* load, double  */
+NEW_FN  fStkStoDbl;  /* store, double  */
+NEW_FN  fStkReal2;  /* fast ver. of real  */
+NEW_FN  fStkSqr;  /* sqr, save magnitude in lastsqr  */
+NEW_FN  fStkSqr0;  /* sqr, no save magnitude  */
+NEW_FN  fStkClr1;  /* clear g_fpu  */
+NEW_FN  fStkClr2;  /* test stack top, clear g_fpu  */
+NEW_FN  fStkStoClr1;  /* store, clr1  */
+NEW_FN  fStkAdd, fStkSub;
+NEW_FN  fStkSto, fStkSto2;  /* fast ver. of sto  */
+NEW_FN  fStkLod, fStkEndInit;
+NEW_FN  fStkMod, fStkMod2;  /* faster mod  */
+NEW_FN  fStkLodMod2, fStkStoMod2;
+NEW_FN  fStkLTE, fStkLodLTEMul, fStkLTE2, fStkLodLTE;
+NEW_FN  fStkLodLTE2, fStkLodLTEAnd2;
+NEW_FN  fStkLT, fStkLodLTMul, fStkLT2, fStkLodLT;
+NEW_FN  fStkLodLT2;
+NEW_FN  fStkGTE, fStkLodGTE, fStkLodGTE2;
+NEW_FN  fStkGT, fStkGT2, fStkLodGT, fStkLodGT2;
+NEW_FN  fStkEQ, fStkLodEQ, fStkNE, fStkLodNE;
+NEW_FN  fStkAND, fStkANDClr2, fStkOR, fStkORClr2;
+NEW_FN  fStkSin, fStkSinh, fStkCos, fStkCosh, fStkCosXX;
+NEW_FN  fStkTan, fStkTanh, fStkCoTan, fStkCoTanh;
+NEW_FN  fStkLog, fStkExp, fStkPwr;
+NEW_FN  fStkMul, fStkDiv;
+NEW_FN  fStkFlip, fStkReal, fStkImag, fStkRealFlip, fStkImagFlip;
+NEW_FN  fStkConj, fStkNeg, fStkAbs, fStkRecip;
+NEW_FN  fStkLodReal, fStkLodRealC, fStkLodImag;
+NEW_FN  fStkLodRealFlip, fStkLodRealAbs;
+NEW_FN  fStkLodRealMul, fStkLodRealAdd, fStkLodRealSub, fStkLodRealPwr;
+NEW_FN  fStkLodImagMul, fStkLodImagAdd, fStkLodImagSub;  /* CAE 4Dec93  */
+NEW_FN  fStkLodImagFlip, fStkLodImagAbs;
+NEW_FN  fStkLodConj;
+NEW_FN  fStkLodAdd, fStkLodSub, fStkLodSubMod, fStkLodMul;
+NEW_FN  fStkPLodAdd, fStkPLodSub;  /* push-lod-add/sub  */
+NEW_FN  fStkIdent;
+NEW_FN  fStkStoClr2;  /* store, clear stack by popping  */
+NEW_FN  fStkZero;  /* to support new parser fn.  */
+NEW_FN  fStkDbl;  /* double the stack top  CAE 31OCT93  */
+NEW_FN  fStkOne, fStkSqr3;  /* sqr3 is sqr/mag of a real  CAE 09NOV93  */
+NEW_FN  fStkSqrt;
+NEW_FN  fStkASin, fStkACos, fStkASinh, fStkACosh;
+NEW_FN  fStkATanh, fStkATan;
+NEW_FN  fStkCAbs;
+NEW_FN  fStkFloor, fStkCeil, fStkTrunc, fStkRound; /* rounding functions */
+NEW_FN  fStkJump, fStkJumpOnTrue, fStkJumpOnFalse, fStkJumpLabel; /* flow */
+NEW_FN  fStkOne;   /* to support new parser fn.  */
 
 /* check to see if a const is being loaded  */
 /* the really awful hack below gets the first char of the name  */
@@ -1396,9 +1393,9 @@ int fpfill_jump_struct(void)
 	return i < 0 ? 1 : 0;
 }
 
-extern "C" int fform_per_pixel(void);       /* these fns are in parsera.asm  */
-extern "C" int BadFormula(void);
-extern "C" void Img_Setup(void);
+int fform_per_pixel(void);       /* these fns are in parsera.asm  */
+int BadFormula(void);
+void Img_Setup(void);
 
 int CvtStk()  /* convert the array of ptrs  */
 {

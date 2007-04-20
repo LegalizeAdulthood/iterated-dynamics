@@ -4,13 +4,10 @@
 #endif
 
 /* see Fractint.c for a description of the "include"  hierarchy */
-extern "C"
-{
 #include "port.h"
 #include "prototyp.h"
 #include "lsys.h"
 #include "drivers.h"
-}
 
 struct lsys_cmd
 {
@@ -22,10 +19,7 @@ struct lsys_cmd
 #define sins ((long *) g_box_y)
 #define coss ((long *) g_box_y + 50) /* 50 after the start of sins */
 
-extern "C"
-{
-	int g_max_angle;
-}
+int g_max_angle;
 
 static char *ruleptrs[MAXRULES];
 static struct lsys_cmd *rules2[MAXRULES];
@@ -57,12 +51,12 @@ static void lsysi_draw_c(struct lsys_turtle_state *cmd);
 static void lsysi_draw_gt(struct lsys_turtle_state *cmd);
 static void lsysi_draw_lt(struct lsys_turtle_state *cmd);
 
-extern "C" int _fastcall is_pow2(int n)
+int _fastcall is_pow2(int n)
 {
 	return n == (n & -n);
 }
 
-extern "C" LDBL _fastcall get_number(char **str)
+LDBL _fastcall get_number(char **str)
 {
 	char numstr[30];
 	LDBL ret;
@@ -262,7 +256,7 @@ static int _fastcall read_l_system_file(char *str)
 	return 0;
 }
 
-extern "C" int l_system(void)
+int l_system(void)
 {
 	int order;
 	char **rulesc;
@@ -374,7 +368,7 @@ extern "C" int l_system(void)
 	return 0;
 }
 
-extern "C" int l_load(void)
+int l_load(void)
 {
 	if (read_l_system_file(g_l_system_name))  /* error occurred */
 	{
