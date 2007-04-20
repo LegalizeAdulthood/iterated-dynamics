@@ -952,27 +952,27 @@
 				Name="math"
 				>
 				<File
-					RelativePath=".\common\bigflt.c"
+					RelativePath=".\common\bigflt.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\biginit.c"
+					RelativePath=".\common\biginit.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\bignum.c"
+					RelativePath=".\common\bignum.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\bignumc.c"
+					RelativePath=".\common\bignumc.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\hcmplx.c"
+					RelativePath=".\common\hcmplx.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\mpmath_c.c"
+					RelativePath=".\common\mpmath_c.cpp"
 					>
 				</File>
 			</Filter>
