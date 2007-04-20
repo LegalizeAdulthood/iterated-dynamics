@@ -6,19 +6,19 @@
 #include "cmplx.h"
 #include "drivers.h"
 
-extern driver *x11_driver;
-extern driver *gdi_driver;
-extern driver *disk_driver;
+extern Driver *x11_driver;
+extern Driver *gdi_driver;
+extern Driver *disk_driver;
 
 /* list of drivers that are supported by source code in fractint */
 /* default driver is first one in the list that initializes. */
 #define MAX_DRIVERS 10
 static int num_drivers = 0;
-static driver *s_available[MAX_DRIVERS];
+static Driver *s_available[MAX_DRIVERS];
 
-driver *g_driver = NULL;
+Driver *g_driver = NULL;
 
-static int load_driver(driver *drv, int *argc, char **argv)
+static int load_driver(Driver *drv, int *argc, char **argv)
 {
 	if (drv && drv->init)
 	{
@@ -64,7 +64,7 @@ int init_drivers(int *argc, char **argv)
  *
  * a driver uses this to inform the system of an available video mode
  */
-void add_video_mode(driver *drv, VIDEOINFO *mode)
+void add_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 #if defined(_WIN32)
 	_ASSERTE(g_video_table_len < MAXVIDEOMODES);
@@ -91,7 +91,7 @@ void close_drivers(void)
 	g_driver = NULL;
 }
 
-driver *driver_find_by_name(const char *name)
+Driver *driver_find_by_name(const char *name)
 {
 	int i;
 
