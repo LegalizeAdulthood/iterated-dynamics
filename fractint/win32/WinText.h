@@ -12,8 +12,8 @@ struct tagWinText
 	int showing_cursor;
 
 	/* Local copy of the "screen" characters and attributes */
-	unsigned char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-	unsigned char attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
+	char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
+	char attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
 	int buffer_init;     /* zero if 'screen' is uninitialized */
 
 	/* font information */

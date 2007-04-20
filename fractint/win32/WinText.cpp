@@ -9,9 +9,12 @@
 #include <windows.h>
 #include <windowsx.h>
 
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
+}
 
 #include "WinText.h"
 #include "ods.h"
@@ -111,12 +114,9 @@ long FAR PASCAL wintext_proc(HANDLE, UINT, WPARAM, LPARAM);
 */
 
 /* function prototypes */
-
 static LRESULT CALLBACK wintext_proc(HWND, UINT, WPARAM, LPARAM);
-
 static LPCSTR s_window_class = "FractIntText";
 static WinText *g_me = NULL;
-
 
 /* EGA/VGA 16-color palette (which doesn't match Windows palette exactly) */
 /*
@@ -205,7 +205,7 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
 		wc.hInstance = hInstance;
 		wc.hIcon = NULL;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = GetStockObject(BLACK_BRUSH);
+		wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
 		wc.lpszMenuName =  me->title_text;
 		wc.lpszClassName = s_window_class;
 
@@ -214,9 +214,9 @@ BOOL wintext_initialize(WinText *me, HINSTANCE hInstance, HWND hWndParent, LPCST
 
 	/* set up the font characteristics */
 	me->char_font = OEM_FIXED_FONT;
-	me->hFont = GetStockObject(me->char_font);
+	me->hFont = static_cast<HFONT>(::GetStockObject(me->char_font));
 	hDC = GetDC(hWndParent);
-	hOldFont = SelectObject(hDC, me->hFont);
+	hOldFont = static_cast<HFONT>(::SelectObject(hDC, me->hFont));
 	GetTextMetrics(hDC, &TextMetric);
 	SelectObject(hDC, hOldFont);
 	ReleaseDC(hWndParent, hDC);
@@ -518,10 +518,10 @@ void wintext_scroll_up(WinText *me, int top, int bot)
 	int row;
 	for (row = top; row < bot; row++)
 	{
-		unsigned char *chars = &me->chars[row][0];
-		unsigned char *attrs = &me->attrs[row][0];
-		unsigned char *next_chars = &me->chars[row + 1][0];
-		unsigned char *next_attrs = &me->attrs[row + 1][0];
+		char *chars = &me->chars[row][0];
+		char *attrs = &me->attrs[row][0];
+		char *next_chars = &me->chars[row + 1][0];
+		char *next_attrs = &me->attrs[row + 1][0];
 		int col;
 
 		for (col = 0; col < WINTEXT_MAX_COL; col++)

@@ -219,51 +219,19 @@
 			Name="win32"
 			>
 			<File
-				RelativePath=".\win32\calcmand.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\win32\calmanfp.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\win32\calmanp5.c"
+				RelativePath=".\win32\calcmand.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\win32\d_win32.c"
+				RelativePath=".\win32\calmanfp.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\win32\calmanp5.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\win32\d_win32.cpp"
 				>
 			</File>
 			<File
@@ -271,52 +239,20 @@
 				>
 			</File>
 			<File
-				RelativePath=".\win32\d_win32_disk.c"
+				RelativePath=".\win32\d_win32_disk.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\win32\d_win32_gdi.c"
+				RelativePath=".\win32\d_win32_gdi.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\win32\fpu087.c"
+				RelativePath=".\win32\fpu087.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\win32\fracsuba.c"
+				RelativePath=".\win32\fracsuba.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\win32\FractInt.ico"
@@ -327,7 +263,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\win32\frame.c"
+				RelativePath=".\win32\frame.cpp"
 				>
 			</File>
 			<File
@@ -339,15 +275,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\win32\os_win32.c"
+				RelativePath=".\win32\os_win32.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\win32\parsera.c"
+				RelativePath=".\win32\parsera.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\win32\plot.c"
+				RelativePath=".\win32\plot.cpp"
 				>
 			</File>
 			<File
@@ -359,7 +295,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\win32\WinText.c"
+				RelativePath=".\win32\WinText.cpp"
 				>
 			</File>
 		</Filter>
@@ -1044,11 +980,11 @@
 				Name="plumbing"
 				>
 				<File
-					RelativePath=".\common\drivers.c"
+					RelativePath=".\common\drivers.cpp"
 					>
 				</File>
 				<File
-					RelativePath=".\common\memory.c"
+					RelativePath=".\common\memory.cpp"
 					>
 				</File>
 			</Filter>

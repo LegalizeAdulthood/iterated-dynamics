@@ -5,9 +5,11 @@
  * fractint license conditions, blah blah blah.
  */
 
-
+extern "C"
+{
 #include "port.h"
 #include "prototyp.h"
+}
 
 /*
  *----------------------------------------------------------------------
@@ -21,16 +23,18 @@
  *----------------------------------------------------------------------
  */
 
-double _2_ = 2.0;
-double _1_ = 1.0;
-double PointFive = 0.5;
+extern "C"
+{
+	double _2_ = 2.0;
+	double _1_ = 1.0;
+}
 
-void FPUaptan387(double *y, double *x, double *atan)
+extern "C" void FPUaptan387(double *y, double *x, double *atan)
 {
 	*atan = atan2(*y, *x);
 }
 
-void FPUcplxmul(_CMPLX *x, _CMPLX *y, _CMPLX *z)
+extern "C" void FPUcplxmul(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
 	double tx;
 	tx = x->x*y->x - x->y*y->y;
@@ -38,7 +42,7 @@ void FPUcplxmul(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 	z->x = tx;
 }
 
-void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
+extern "C" void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
 	double mod, tx, yxmod, yymod;
 	mod = y->x*y->x + y->y*y->y;
@@ -53,19 +57,19 @@ void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 	z->x = tx;
 }
 
-void FPUsincos(double *Angle, double *Sin, double *Cos)
+extern "C" void FPUsincos(double *Angle, double *Sin, double *Cos)
 {
 	*Sin = sin(*Angle);
 	*Cos = cos(*Angle);
 }
 
-void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
+extern "C" void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
 {
 	*Sinh = sinh(*Angle);
 	*Cosh = cosh(*Angle);
 }
 
-void FPUcplxlog(_CMPLX *x, _CMPLX *z)
+extern "C" void FPUcplxlog(_CMPLX *x, _CMPLX *z)
 {
 	double mod, zx, zy;
 	mod = sqrt(x->x*x->x + x->y*x->y);
@@ -76,7 +80,7 @@ void FPUcplxlog(_CMPLX *x, _CMPLX *z)
 	z->y = zy;
 }
 
-void FPUcplxexp387(_CMPLX *x, _CMPLX *z)
+extern "C" void FPUcplxexp387(_CMPLX *x, _CMPLX *z)
 {
 	double pow, y;
 	y = x->y;
@@ -86,7 +90,7 @@ void FPUcplxexp387(_CMPLX *x, _CMPLX *z)
 }
 
 /* Integer Routines */
-void SinCos086(long x, long *sinx, long *cosx)
+extern "C" void SinCos086(long x, long *sinx, long *cosx)
 {
 	double a;
 	a = x/(double)(1 << 16);
@@ -94,7 +98,7 @@ void SinCos086(long x, long *sinx, long *cosx)
 	*cosx = (long) (cos(a)*(double) (1 << 16));
 }
 
-void SinhCosh086(long x, long *sinx, long *cosx)
+extern "C" void SinhCosh086(long x, long *sinx, long *cosx)
 {
 	double a;
 	a = x / (double) (1 << 16);
@@ -102,7 +106,7 @@ void SinhCosh086(long x, long *sinx, long *cosx)
 	*cosx = (long) (cosh(a)*(double) (1 << 16));
 }
 
-long Exp086(long x)
+extern "C" long Exp086(long x)
 {
 	return (long) (exp((double) x / (double) (1 << 16))*(double) (1 << 16));
 }
@@ -113,26 +117,26 @@ long Exp086(long x)
 /*
  * Input is a 16 bit offset number.  Output is shifted by Fudge.
  */
-unsigned long ExpFudged(long x, int Fudge)
+extern "C" unsigned long ExpFudged(long x, int Fudge)
 {
 	return (long) (exp((double) x / (double) (1 << 16))*(double) (1 << Fudge));
 }
 
 /* This multiplies two e/m numbers and returns an e/m number. */
-long r16Mul(long x, long y)
+extern "C" long r16Mul(long x, long y)
 {
 	float f = em2float(x)*em2float(y);
 	return float2em(f);
 }
 
 /* This takes an exp/mant number and returns a shift-16 number */
-long LogFloat14(unsigned long x)
+extern "C" long LogFloat14(unsigned long x)
 {
 	return (long) log((double) em2float(x))*(1 << 16);
 }
 
 /* This divides two e/m numbers and returns an e/m number. */
-long RegDivFloat(long x, long y)
+extern "C" long RegDivFloat(long x, long y)
 {
 	float f = em2float(x)/em2float(y);
 	return float2em(f);
@@ -144,7 +148,7 @@ long RegDivFloat(long x, long y)
  * Instead of using exp/mant format, we'll just use floats.
  * Note: If sizeof(float) != sizeof(long), we're hosed.
  */
-long RegFg2Float(long x, int FudgeFact)
+extern "C" long RegFg2Float(long x, int FudgeFact)
 {
 	float f = (float) x / (float) (1 << FudgeFact);
 	return float2em(f);
@@ -153,12 +157,12 @@ long RegFg2Float(long x, int FudgeFact)
 /*
  * This converts em to shifted integer format.
  */
-long RegFloat2Fg(long x, int Fudge)
+extern "C" long RegFloat2Fg(long x, int Fudge)
 {
 	return (long) (em2float(x)*(float) (1 << Fudge));
 }
 
-long RegSftFloat(long x, int Shift)
+extern "C" long RegSftFloat(long x, int Shift)
 {
 	float f;
 	f = em2float(x);
