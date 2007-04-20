@@ -1121,15 +1121,9 @@ static int  color_editor_edit    (color_editor *);
 
 
 
-#ifndef XFRACT
 static color_editor *color_editor_new(int x, int y, char letter,
 					void (*other_key)(int, color_editor*, VOIDPTR),
 					void (*change)(color_editor*, VOIDPTR), VOIDPTR info)
-#else
-static color_editor *color_editor_new(int x, int y, char letter,
-					void (*other_key)(),
-					void (*change)(), VOIDPTR info)
-#endif
 {
 	color_editor *me = NEWC(color_editor);
 
