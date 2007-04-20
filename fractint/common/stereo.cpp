@@ -18,7 +18,6 @@
 */
 #include <string.h>
 #include <time.h>
-#include <malloc.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
@@ -26,6 +25,8 @@
 #include "drivers.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+
+#include <malloc.h>
 
 char g_stereo_map_name[FILE_MAX_DIR + 1] = {""};
 int g_auto_stereo_depth = 100;
