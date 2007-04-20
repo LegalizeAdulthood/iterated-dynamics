@@ -194,7 +194,7 @@ static void flush_output(void)
 *
 *----------------------------------------------------------------------
 */
-void win32_terminate(driver *drv)
+void win32_terminate(Driver *drv)
 {
 	DI(di);
 	ODS("win32_terminate");
@@ -228,7 +228,7 @@ void win32_terminate(driver *drv)
 *
 *----------------------------------------------------------------------
 */
-int win32_init(driver *drv, int *argc, char **argv)
+int win32_init(Driver *drv, int *argc, char **argv)
 {
 	LPCSTR title = "FractInt for Windows";
 	DI(di);
@@ -253,7 +253,7 @@ int win32_init(driver *drv, int *argc, char **argv)
  * message pump, stash it in the one key buffer for later use by
  * get_key.
  */
-int win32_key_pressed(driver *drv)
+int win32_key_pressed(Driver *drv)
 {
 	DI(di);
 	int ch = di->key_buffer;
@@ -275,7 +275,7 @@ int win32_key_pressed(driver *drv)
  * Unread a key!  The key buffer is only one character deep, so we
  * assert if its already full.  This should never happen in real life :-).
  */
-void win32_unget_key(driver *drv, int key)
+void win32_unget_key(Driver *drv, int key)
 {
 	DI(di);
 	_ASSERTE(0 == di->key_buffer);
@@ -289,7 +289,7 @@ void win32_unget_key(driver *drv, int key)
  * If we get it, pass it off to handle tab and help displays.  If those
  * displays ate the key, then get another one.
  */
-int win32_get_key(driver *drv)
+int win32_get_key(Driver *drv)
 {
 	DI(di);
 	int ch;
@@ -326,7 +326,7 @@ int win32_get_key(driver *drv)
 *
 *----------------------------------------------------------------------
 */
-void win32_shell(driver *drv)
+void win32_shell(Driver *drv)
 {
 	DI(di);
 	STARTUPINFO si =
@@ -352,7 +352,7 @@ void win32_shell(driver *drv)
 	}
 }
 
-void win32_hide_text_cursor(driver *drv)
+void win32_hide_text_cursor(Driver *drv)
 {
 	DI(di);
 	if (TRUE == di->cursor_shown)
@@ -365,7 +365,7 @@ void win32_hide_text_cursor(driver *drv)
 
 /* win32_set_video_mode
 */
-void win32_set_video_mode(driver *drv, VIDEOINFO *mode)
+void win32_set_video_mode(Driver *drv, VIDEOINFO *mode)
 {
 	extern void set_normal_dot(void);
 	extern void set_normal_line(void);
@@ -401,7 +401,7 @@ void win32_set_video_mode(driver *drv, VIDEOINFO *mode)
 	driver_set_clear();
 }
 
-void win32_put_string(driver *drv, int row, int col, int attr, const char *msg)
+void win32_put_string(Driver *drv, int row, int col, int attr, const char *msg)
 {
 	DI(di);
 	if (-1 != row)
@@ -425,14 +425,14 @@ void win32_put_string(driver *drv, int row, int col, int attr, const char *msg)
 *
 *       Scroll the screen up (from toprow to botrow)
 */
-void win32_scroll_up(driver *drv, int top, int bot)
+void win32_scroll_up(Driver *drv, int top, int bot)
 {
 	DI(di);
 
 	wintext_scroll_up(&di->wintext, top, bot);
 }
 
-void win32_move_cursor(driver *drv, int row, int col)
+void win32_move_cursor(Driver *drv, int row, int col)
 {
 	DI(di);
 
@@ -452,7 +452,7 @@ void win32_move_cursor(driver *drv, int row, int col)
 	di->cursor_shown = TRUE;
 }
 
-void win32_set_attr(driver *drv, int row, int col, int attr, int count)
+void win32_set_attr(Driver *drv, int row, int col, int attr, int count)
 {
 	DI(di);
 
@@ -471,7 +471,7 @@ void win32_set_attr(driver *drv, int row, int col, int attr, int count)
 * Implement stack and unstack window functions by using multiple curses
 * windows.
 */
-void win32_stack_screen(driver *drv)
+void win32_stack_screen(Driver *drv)
 {
 	DI(di);
 
@@ -498,7 +498,7 @@ void win32_stack_screen(driver *drv)
 	}
 }
 
-void win32_unstack_screen(driver *drv)
+void win32_unstack_screen(Driver *drv)
 {
 	DI(di);
 
@@ -519,7 +519,7 @@ void win32_unstack_screen(driver *drv)
 	}
 }
 
-void win32_discard_screen(driver *drv)
+void win32_discard_screen(Driver *drv)
 {
 	DI(di);
 
@@ -538,40 +538,40 @@ void win32_discard_screen(driver *drv)
 	}
 }
 
-int win32_init_fm(driver *drv)
+int win32_init_fm(Driver *drv)
 {
 	ODS("win32_init_fm");
 	return 0;
 }
 
-void win32_buzzer(driver *drv, int kind)
+void win32_buzzer(Driver *drv, int kind)
 {
 	ODS1("win32_buzzer %d", kind);
 	MessageBeep(MB_OK);
 }
 
-int win32_sound_on(driver *drv, int freq)
+int win32_sound_on(Driver *drv, int freq)
 {
 	ODS1("win32_sound_on %d", freq);
 	return 0;
 }
 
-void win32_sound_off(driver *drv)
+void win32_sound_off(Driver *drv)
 {
 	ODS("win32_sound_off");
 }
 
-void win32_mute(driver *drv)
+void win32_mute(Driver *drv)
 {
 	ODS("win32_mute");
 }
 
-int win32_diskp(driver *drv)
+int win32_diskp(Driver *drv)
 {
 	return 0;
 }
 
-int win32_key_cursor(driver *drv, int row, int col)
+int win32_key_cursor(Driver *drv, int row, int col)
 {
 	DI(di);
 	int result;
@@ -607,7 +607,7 @@ int win32_key_cursor(driver *drv, int row, int col)
 	return result;
 }
 
-int win32_wait_key_pressed(driver *drv, int timeout)
+int win32_wait_key_pressed(Driver *drv, int timeout)
 {
 	int count = 10;
 	while (!driver_key_pressed())
@@ -622,31 +622,31 @@ int win32_wait_key_pressed(driver *drv, int timeout)
 	return driver_key_pressed();
 }
 
-int win32_get_char_attr(driver *drv)
+int win32_get_char_attr(Driver *drv)
 {
 	DI(di);
 	return wintext_get_char_attr(&di->wintext, g_text_row, g_text_col);
 }
 
-void win32_put_char_attr(driver *drv, int char_attr)
+void win32_put_char_attr(Driver *drv, int char_attr)
 {
 	DI(di);
 	wintext_put_char_attr(&di->wintext, g_text_row, g_text_col, char_attr);
 }
 
-int win32_get_char_attr_rowcol(driver *drv, int row, int col)
+int win32_get_char_attr_rowcol(Driver *drv, int row, int col)
 {
 	DI(di);
 	return wintext_get_char_attr(&di->wintext, row, col);
 }
 
-void win32_put_char_attr_rowcol(driver *drv, int row, int col, int char_attr)
+void win32_put_char_attr_rowcol(Driver *drv, int row, int col, int char_attr)
 {
 	DI(di);
 	wintext_put_char_attr(&di->wintext, row, col, char_attr);
 }
 
-void win32_delay(driver *drv, int ms)
+void win32_delay(Driver *drv, int ms)
 {
 	DI(di);
 
@@ -657,17 +657,17 @@ void win32_delay(driver *drv, int ms)
 	}
 }
 
-void win32_get_truecolor(driver *drv, int x, int y, int *r, int *g, int *b, int *a)
+void win32_get_truecolor(Driver *drv, int x, int y, int *r, int *g, int *b, int *a)
 {
 	_ASSERTE(0 && "win32_get_truecolor called.");
 }
 
-void win32_put_truecolor(driver *drv, int x, int y, int r, int g, int b, int a)
+void win32_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a)
 {
 	_ASSERTE(0 && "win32_put_truecolor called.");
 }
 
-void win32_set_keyboard_timeout(driver *drv, int ms)
+void win32_set_keyboard_timeout(Driver *drv, int ms)
 {
 	frame_set_keyboard_timeout(ms);
 }
