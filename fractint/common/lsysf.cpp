@@ -545,11 +545,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 			num = 3;
 			break;
 		}
-#if defined(XFRACT)
-		ret[n].f = (void (*)())f;
-#else
 		ret[n].f = (void (*)(struct lsys_turtle_state_fp *))f;
-#endif
 		if (ptype == 4)
 		{
 			ret[n].parm.n = num;
@@ -643,11 +639,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 			num = 3;
 			break;
 		}
-#if defined(XFRACT)
-		ret[n].f = (void (*)())f;
-#else
 		ret[n].f = (void (*)(struct lsys_turtle_state_fp *))f;
-#endif
 		if (ptype == 4)
 		{
 			ret[n].parm.n = (long)num;
