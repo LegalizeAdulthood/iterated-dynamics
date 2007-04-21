@@ -3488,7 +3488,7 @@ int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 }
 
 
-void print_document(char *fname)
+void print_document(const char *fname)
 {
 	PRINT_DOC_INFO info;
 
@@ -3620,7 +3620,7 @@ void report_stats(void)
  */
 
 
-void add_hlp_to_exe(char *hlp_fname, char *exe_fname)
+void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 {
 	int                  exe,   /* handles */
 								hlp;
