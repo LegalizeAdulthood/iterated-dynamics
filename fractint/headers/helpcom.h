@@ -172,14 +172,14 @@ int
 getint(char *ptr)
 {
 	int s;
-	bcopy(ptr, &s, sizeof(int));
+	memcpy(&s, ptr, sizeof(int));
 	return s;
 }
 
 /* Set an int to an unaligned pointer */
 void setint(char *ptr, int n)
 {
-	bcopy(&n, ptr, sizeof(int));
+	memcpy(ptr, &n, sizeof(int));
 }
 #endif
 
