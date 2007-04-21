@@ -82,16 +82,16 @@ struct parameter_history_info      /* for saving evolution data of center image 
 typedef struct parameter_history_info    PARAMETER_HISTORY;
 static PARAMETER_HISTORY s_old_history = { 0 };
 
-void vary_double(GENEBASE gene[], int randval, int i);
+static void vary_double(GENEBASE gene[], int randval, int i);
 static int vary_int(int randvalue, int limit, int mode);
 static int wrapped_positive_vary_int(int randvalue, int limit, int mode);
-void vary_inside(GENEBASE gene[], int randval, int i);
-void vary_outside(GENEBASE gene[], int randval, int i);
-void vary_power2(GENEBASE gene[], int randval, int i);
-void vary_trig(GENEBASE gene[], int randval, int i);
-void vary_bail_out_test(GENEBASE gene[], int randval, int i);
-void vary_invert(GENEBASE gene[], int randval, int i);
-int explore_check(void);
+static void vary_inside(GENEBASE gene[], int randval, int i);
+static void vary_outside(GENEBASE gene[], int randval, int i);
+static void vary_power2(GENEBASE gene[], int randval, int i);
+static void vary_trig(GENEBASE gene[], int randval, int i);
+static void vary_bail_out_test(GENEBASE gene[], int randval, int i);
+static void vary_invert(GENEBASE gene[], int randval, int i);
+static int explore_check(void);
 void spiral_map(int);
 static void set_random(int);
 void set_mutation_level(int);
