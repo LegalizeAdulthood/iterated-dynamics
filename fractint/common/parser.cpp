@@ -43,7 +43,7 @@ double x1, y1, x2, y2;
 unsigned g_formula_max_ops  = MAX_OPS;
 unsigned g_formula_max_args = MAX_ARGS;
 
-static enum MATH_TYPE MathType = D_MATH;
+enum MATH_TYPE MathType = D_MATH;
 /* moved _LCMPLX and union ARg to mpmath.h -6-20-90 TIW */
 
 static unsigned long number_of_ops;
