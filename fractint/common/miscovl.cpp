@@ -30,7 +30,7 @@
 
 /* routines in this module      */
 
-void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int i, int j);
+void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i, int j);
 void expand_comments(char *target, char *source);
 
 #ifndef USE_VARARGS
@@ -585,7 +585,7 @@ static struct write_batch_data /* buffer for parms to break lines nicely */
 	char buf[10000];
 } s_wbdata;
 
-void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
+void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
 {
 	int i, j, k;
 	double Xctr, Yctr;
