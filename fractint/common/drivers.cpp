@@ -4,6 +4,7 @@
 #include "prototyp.h"
 #include "externs.h"
 #include "cmplx.h"
+#include "fractint.h"
 #include "drivers.h"
 
 extern Driver *x11_driver;
