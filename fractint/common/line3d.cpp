@@ -2930,8 +2930,8 @@ static int line_3d_mem(void)
 {
 	/* s_last_row stores the previous row of the original GIF image for
 		the purpose of filling in gaps with triangle procedure */
-	s_last_row = (struct point *) malloc(sizeof(struct point)*g_x_dots);
-	s_f_last_row = (struct f_point *) malloc(sizeof(struct f_point)*g_y_dots);
+	s_last_row = new point[g_x_dots];
+	s_f_last_row = new f_point[g_y_dots];
 	if (!s_last_row || !s_f_last_row)
 	{
 		return TRUE;
@@ -2939,8 +2939,8 @@ static int line_3d_mem(void)
 
 	if (SPHERE)
 	{
-		s_sin_theta_array = (float *) malloc(sizeof(float)*g_x_dots);
-		s_cos_theta_array = (float *) malloc(sizeof(float)*g_x_dots);
+		s_sin_theta_array = new float[g_x_dots];
+		s_cos_theta_array = new float[g_x_dots];
 		if (!s_sin_theta_array || !s_cos_theta_array)
 		{
 			return TRUE;
@@ -2949,7 +2949,7 @@ static int line_3d_mem(void)
 
 	if (g_potential_16bit)
 	{
-		s_fraction = (BYTE *) malloc(sizeof(BYTE)*g_x_dots);
+		s_fraction = new BYTE[g_x_dots];
 		if (!s_fraction)
 		{
 			return TRUE;
@@ -2964,7 +2964,7 @@ static int line_3d_mem(void)
 		|| FILLTYPE == FILLTYPE_LIGHT_AFTER)
 	{
 		/* end of arrays if we use extra segement */
-		s_minmax_x = (struct minmax *) malloc(sizeof(struct minmax)*g_y_dots);
+		s_minmax_x = new minmax[g_y_dots];
 		if (!s_minmax_x)
 		{
 			return TRUE;
@@ -2979,32 +2979,32 @@ void line_3d_free(void)
 {
 	if (s_last_row)
 	{
-		free(s_last_row);
+		delete[] s_last_row;
 		s_last_row = NULL;
 	}
 	if (s_f_last_row)
 	{
-		free(s_f_last_row);
+		delete[] s_f_last_row;
 		s_f_last_row = NULL;
 	}
 	if (s_sin_theta_array)
 	{
-		free(s_sin_theta_array);
+		delete[] s_sin_theta_array;
 		s_sin_theta_array = NULL;
 	}
 	if (s_cos_theta_array)
 	{
-		free(s_cos_theta_array);
+		delete[] s_cos_theta_array;
 		s_cos_theta_array = NULL;
 	}
 	if (s_fraction)
 	{
-		free(s_fraction);
+		delete[] s_fraction;
 		s_fraction = NULL;
 	}
 	if (s_minmax_x)
 	{
-		free(s_minmax_x);
+		delete[] s_minmax_x;
 		s_minmax_x = NULL;
 	}
 }
