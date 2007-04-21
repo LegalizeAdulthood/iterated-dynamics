@@ -967,11 +967,7 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 			num = 3;
 		break;
 		}
-#if defined(XFRACT)
-		ret[n].f = (void (*)())f;
-#else
 		ret[n].f = (void (*)(struct lsys_turtle_state *))f;
-#endif
 		ret[n].n = num;
 		if (++n == maxval)
 		{
@@ -1058,11 +1054,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 			num = 3;
 		break;
 		}
-#ifdef XFRACT
-		ret[n].f = (void (*)())f;
-#else
 		ret[n].f = (void (*)(struct lsys_turtle_state *))f;
-#endif
 		ret[n].n = num;
 		if (++n == maxval)
 		{
