@@ -2101,7 +2101,7 @@ static void set_froth_palette(void)
 {
 	if ((g_color_state == COLORSTATE_DEFAULT) && (g_colors >= 16))
 	{
-		char *mapname;
+		const char *mapname;
 
 		if (g_colors >= 256)
 		{
