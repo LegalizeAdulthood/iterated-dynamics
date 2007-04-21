@@ -20,17 +20,17 @@ extern void set_default_parms(void);
 /*  windos -- C file prototypes */
 
 extern void debugmessage(char *, char *);
-extern int stop_message(int , char far *);
+extern int stop_message(int , char *);
 extern int  farread(int, VOIDPTR, unsigned);
 extern int  farwrite(int, VOIDPTR, unsigned);
-extern void far_memcpy(void far *, void far *, int);
-extern void far_memset(void far *, int , int);
+extern void far_memcpy(void *, void *, int);
+extern void far_memset(void *, int , int);
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void putcolor_a (int, int, int);
 extern void spindac(int, int);
 extern void buzzer (int);
-extern int thinking(int, char far *);
+extern int thinking(int, char *);
 extern void CalibrateDelay(void);
 extern void start_wait(void);
 extern void end_wait(void);
@@ -55,9 +55,8 @@ extern void winfract_help(void);
 
 extern void movecursor(int, int);
 extern void setattr(int, int, int, int);
-extern int  put_string_center(int, int, int, int, char far *);
-extern void putstring(int, int, int, unsigned char far *);
-extern int  strncasecmp(char far *,char far *,int);
+extern void putstring(int, int, int, unsigned char *);
+extern int  strncasecmp(char *,char *,int);
 extern int  input_field(int, int, char *, int, int, int, int (*)(int) );
 extern void help_title(void);
 extern void stackscreen(void);
@@ -81,16 +80,16 @@ extern void win_savedac(void);
 
 extern void rotate(int);
 extern void find_special_colors(void);
-extern int show_temp_message(char far *);
+extern int show_temp_message(char *);
 extern void clear_temp_message(void);
 extern void free_temp_message(void);
-extern int disk_from_memory(long, int, void far *);
-extern int disk_to_memory(long, int, void far *);
+extern int disk_from_memory(long, int, void *);
+extern int disk_to_memory(long, int, void *);
 extern int _fastcall disk_start_common(long, long, int);
-extern long cdecl normalize(char far *);
+extern long cdecl normalize(char *);
 extern void zoom_box_draw(int);
 
-extern void farmessage(unsigned char far *);
+extern void farmessage(unsigned char *);
 extern void setvideomode(int, int, int, int);
 extern int fromvideotable(void);
 extern void home(void);
@@ -104,7 +103,7 @@ extern void disk_end(void);
 extern void disk_write_targa(unsigned int,unsigned int,BYTE,BYTE,BYTE);
 extern void disk_read_targa(unsigned int,unsigned int,BYTE *,BYTE *,BYTE *);
 extern int set_color_palette_name(char *);
-extern BYTE far *findfont(int);
+extern BYTE *findfont(int);
 extern void tga_end(void);
 
 extern int key_count(int);
@@ -121,7 +120,7 @@ extern void soundoff(void);
 extern int initfm(void);
 extern void mute(void);
 
-extern void disk_video_status(int, char far *);
+extern void disk_video_status(int, char *);
 extern int tovideotable(void);
 extern void TranspPerPixel(void);
 extern void stop_slide_show(void);
