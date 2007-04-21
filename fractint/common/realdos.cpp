@@ -323,7 +323,7 @@ void footer_msg(int *i, int options, char *speedstring)
 		: "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
-int put_string_center(int row, int col, int width, int attr, char *msg)
+int put_string_center(int row, int col, int width, int attr, const char *msg)
 {
 	char buf[81];
 	int i, j, k;

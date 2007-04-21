@@ -1038,7 +1038,7 @@ extern int full_screen_choice_help(int help_mode, int options, char *hdg, char *
 extern int show_temp_message(char *);
 extern void clear_temp_message(void);
 extern void help_title(void);
-extern int put_string_center(int, int, int, int, char *);
+extern int put_string_center(int, int, int, int, const char *);
 #ifndef XFRACT /* Unix should have this in string.h */
 extern int strncasecmp(char *, char *, int);
 #endif

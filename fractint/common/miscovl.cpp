@@ -34,7 +34,7 @@ void write_batch_parms(char *colorinf, int colorsonly, int maxcolor, int i, int 
 void expand_comments(char *target, char *source);
 
 #ifndef USE_VARARGS
-static void put_parm(char *parm, ...);
+static void put_parm(const char *parm, ...);
 #else
 static void put_parm();
 #endif
@@ -1584,7 +1584,7 @@ static void put_filename(char *keyword, char *fname)
 }
 
 #ifndef USE_VARARGS
-static void put_parm(char *parm, ...)
+static void put_parm(const char *parm, ...)
 #else
 static void put_parm(va_alist)
 va_dcl
@@ -1596,10 +1596,10 @@ va_dcl
 #ifndef USE_VARARGS
 	va_start(args, parm);
 #else
-	char *parm;
+	const char *parm;
 
 	va_start(args);
-	parm = va_arg(args, char *);
+	parm = va_arg(args, const char *);
 #endif
 	if (*parm == ' '             /* starting a new parm */
 			&& s_wbdata.len == 0)       /* skip leading space */
