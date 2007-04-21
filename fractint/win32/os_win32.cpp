@@ -26,10 +26,10 @@ extern void check_samename(void);
 
 HINSTANCE g_instance = NULL;
 
-static void (*dotwrite)(int, int, int) = NULL;
-static int (*dotread)(int, int) = NULL;
-static void (*linewrite)(int, int, int, BYTE *) = NULL;
-static void (*lineread)(int, int, int, BYTE *) = NULL;
+static void (*s_dot_write)(int, int, int) = NULL;
+static int (*s_dot_read)(int, int) = NULL;
+static void (*s_line_write)(int, int, int, BYTE *) = NULL;
+static void (*s_line_read)(int, int, int, BYTE *) = NULL;
 
 typedef enum
 {
@@ -810,8 +810,8 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 	{
 		return;
 	}
-	_ASSERTE(lineread);
-	(*lineread)(row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
+	_ASSERTE(s_line_read);
+	(*s_line_read)(row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
 }
 
 /*
@@ -829,8 +829,8 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 	{
 		return;
 	}
-	_ASSERTE(linewrite);
-	(*linewrite)(row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
+	_ASSERTE(s_line_write);
+	(*s_line_write)(row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
 }
 
 /*
@@ -838,33 +838,33 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 ;
 ;       These routines are called by out_line(), put_line() and get_line().
 */
-void normaline(int y, int x, int lastx, BYTE *pixels)
+static void normal_line_write(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx - x + 1;
-	_ASSERTE(dotwrite);
+	_ASSERTE(s_dot_write);
 	for (i = 0; i < width; i++)
 	{
-		(*dotwrite)(x + i, y, pixels[i]);
+		(*s_dot_write)(x + i, y, pixels[i]);
 	}
 }
 
-void normalineread(int y, int x, int lastx, BYTE *pixels)
+static void normal_line_read(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx - x + 1;
-	_ASSERTE(dotread);
+	_ASSERTE(s_dot_read);
 	for (i = 0; i < width; i++)
 	{
-		pixels[i] = (*dotread)(x + i, y);
+		pixels[i] = (*s_dot_read)(x + i, y);
 	}
 }
 
 #if defined(USE_DRIVER_FUNCTIONS)
 void set_normal_dot(void)
 {
-	dotwrite = driver_write_pixel;
-	dotread = driver_read_pixel;
+	s_dot_write = driver_write_pixel;
+	s_dot_read = driver_read_pixel;
 }
 #else
 static void driver_dot_write(int x, int y, int color)
@@ -879,21 +879,21 @@ static int driver_dot_read(int x, int y)
 
 void set_normal_dot(void)
 {
-	dotwrite = driver_dot_write;
-	dotread = driver_dot_read;
+	s_dot_write = driver_dot_write;
+	s_dot_read = driver_dot_read;
 }
 #endif
 
 void set_disk_dot(void)
 {
-	dotwrite = disk_write;
-	dotread = disk_read;
+	s_dot_write = disk_write;
+	s_dot_read = disk_read;
 }
 
 void set_normal_line(void)
 {
-	lineread = normalineread;
-	linewrite = normaline;
+	s_line_read = normal_line_read;
+	s_line_write = normal_line_write;
 }
 
 static void nullwrite(int a, int b, int c)
@@ -911,8 +911,8 @@ static int nullread(int a, int b)
 void setnullvideo(void)
 {
 	_ASSERTE(0 && "setnullvideo called");
-	dotwrite = nullwrite;
-	dotread = nullread;
+	s_dot_write = nullwrite;
+	s_dot_read = nullread;
 }
 
 /*
@@ -931,8 +931,8 @@ int getcolor(int xdot, int ydot)
 	{
 		return 0;
 	}
-	_ASSERTE(dotread);
-	return (*dotread)(x1, y1);
+	_ASSERTE(s_dot_read);
+	return (*s_dot_read)(x1, y1);
 }
 
 /*
@@ -946,8 +946,8 @@ void putcolor_a(int xdot, int ydot, int color)
 	int y1 = ydot + g_sy_offset;
 	_ASSERTE(x1 >= 0 && x1 <= g_screen_width);
 	_ASSERTE(y1 >= 0 && y1 <= g_screen_height);
-	_ASSERTE(dotwrite);
-	(*dotwrite)(x1, y1, color & g_and_color);
+	_ASSERTE(s_dot_write);
+	(*s_dot_write)(x1, y1, color & g_and_color);
 }
 
 /*
@@ -964,8 +964,8 @@ int out_line(BYTE *pixels, int linelen)
 	{
 		return 0;
 	}
-	_ASSERTE(linewrite);
-	(*linewrite)(g_row_count + g_sy_offset, g_sx_offset, linelen + g_sx_offset - 1, pixels);
+	_ASSERTE(s_line_write);
+	(*s_line_write)(g_row_count + g_sy_offset, g_sx_offset, linelen + g_sx_offset - 1, pixels);
 	g_row_count++;
 	return 0;
 }
