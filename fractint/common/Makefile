@@ -1,19 +1,62 @@
 SHELL=/bin/sh
 
-OBJS = \
-3d.o ant.o bigflt.o  biginit.o bignum.o bignumc.o calcfrac.o \
-cmdfiles.o decoder.o drivers.o editpal.o encoder.o \
-evolve.o f16.o fracsubr.o fractalb.o fractalp.o fractals.o \
-fractint.o framain2.o frasetup.o gifview.o hcmplx.o help.o history.o \
-intro.o jb.o jiim.o line3d.o loadfdos.o loadfile.o loadmap.o lorenz.o \
-lsys.o lsysf.o memory.o miscfrac.o miscovl.o miscres.o mpmath_c.o parser.o \
-parserfp.o plot3d.o prompts1.o prompts2.o \
-realdos.o rotate.o slideshw.o soi.o soi1.o stereo.o testpt.o tgaview.o \
-zoom.o
+SRCS = \
+    3d.cpp \
+    ant.cpp \
+    calcfrac.cpp \
+    cmdfiles.cpp \
+    decoder.cpp \
+    diskvid.cpp \
+    drivers.cpp \
+    editpal.cpp \
+    encoder.cpp \
+    evolve.cpp \
+    f16.cpp \
+    font8x8.cpp \
+    fracsubr.cpp \
+    fractalb.cpp \
+    fractalp.cpp \
+    fractals.cpp \
+    fractint.cpp \
+    framain2.cpp \
+    frasetup.cpp \
+    gifview.cpp \
+    help.cpp \
+    history.cpp \
+    intro.cpp \
+    jb.cpp \
+    jiim.cpp \
+    line3d.cpp \
+    loadfdos.cpp \
+    loadfile.cpp \
+    loadmap.cpp \
+    lorenz.cpp \
+    lsys.cpp \
+    lsysf.cpp \
+    memory.cpp \
+    miscfrac.cpp \
+    miscovl.cpp \
+    miscres.cpp \
+    parser.cpp \
+    parserfp.cpp \
+    plot3d.cpp \
+    prompts1.cpp \
+    prompts2.cpp \
+    realdos.cpp \
+    rotate.cpp \
+    slideshw.cpp \
+    soi.cpp \
+    soi1.cpp \
+    stereo.cpp \
+    testpt.cpp \
+    tgaview.cpp \
+    zoom.cpp
+
+OBJS = $(SRCS:.cpp=.o)
 
 #Need to prevent lex from doing fractint.l -> fractint.c
 .SUFFIXES:
-.SUFFIXES: .o .c .s .h .asm
+.SUFFIXES: .o .s .h .asm .cpp
 
 all: $(OBJS)
 
@@ -27,13 +70,14 @@ depend:
 	gccmakedep -- $(CFLAGS) -- $(OBJS:.o=.c)
 #	makedepend $(CFLAGS) $(OBJS:.o=.c)
 
-fractint.o: fractint.c
-	$(CC) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c fractint.c
-
-help.o: help.c
-	$(CC) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c help.c
+fractint.o: fractint.cpp
+help.o: help.cpp
+	$(CC) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c $<
 
 copy: $(FILES)
 	mv $(FILES) backup
+
+.cpp.o:
+	$(CXX) -c $(CFLAGS) $<
 
 # DO NOT DELETE
