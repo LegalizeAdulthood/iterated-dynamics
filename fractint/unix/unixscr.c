@@ -40,10 +40,12 @@
 #endif
 
 #include <fcntl.h>
+
 #include "helpdefs.h"
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"
+#include "fihelp.h"
 
 #ifdef LINUX
 #ifndef FNDELAY
@@ -1081,7 +1083,7 @@ BYTE *pixels;
 	{
 		XPutPixel(Ximage, x+i, y, FAKE_LUT(pixline[i]));
 	}
-	if (fastmode == 1 && g_help_mode != HELPXHAIR)
+	if (fastmode == 1 && get_help_mode() != HELPXHAIR)
 	{
 		if (!alarmon)
 		{
@@ -1166,7 +1168,7 @@ int x, y, color;
 		xlastcolor = color;
 	}
 	XPutPixel(Ximage, x, y, FAKE_LUT(pixtab[color]));
-	if (fastmode == 1 && g_help_mode != HELPXHAIR)
+	if (fastmode == 1 && get_help_mode() != HELPXHAIR)
 	{
 		if (!alarmon)
 		{

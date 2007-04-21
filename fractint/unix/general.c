@@ -19,6 +19,8 @@
 
 #include "port.h"
 #include "prototyp.h"
+#include "fihelp.h"
+
 int g_overflow = 0;
 
 int boxx[2304], boxy[1024];
@@ -129,13 +131,13 @@ int keybuffer = 0;
 int getkeynowait(void);
 int getkeyint(int);
 
-int
-keypressed(void) {
+int keypressed(void)
+{
     int ch;
     ch = getkeynowait();
     if (!ch) return 0;
     keybuffer = ch;
-    if (ch==FIK_F1 && g_help_mode) {
+    if (ch==FIK_F1 && get_help_mode()) {
 	keybuffer = 0;
 	inside_help = 1;
 	help(0);
