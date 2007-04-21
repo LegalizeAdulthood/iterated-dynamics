@@ -1357,7 +1357,7 @@ int create_table(void)
 			curr += len;
 			*curr++ = CMD_LINK;
 
-			delete(title[lnum]);
+			free(title[lnum]);
 
 			if ( c < cols-1 )
 				put_spaces( width-len );
