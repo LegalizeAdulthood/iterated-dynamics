@@ -654,8 +654,7 @@ extern int check_back(void);
 
 /*  loadmap -- C file prototypes */
 
-//extern void SetTgaColors(void);
-extern int validate_luts(char *);
+extern int validate_luts(const char *);
 extern int set_color_palette_name(char *);
 
 /*  lorenz -- C file prototypes */
@@ -717,7 +716,7 @@ extern int get_precision_bf(int);
 extern int get_precision_mag_bf(void);
 extern void parse_comments(char *value);
 extern void init_comments(void);
-extern void write_batch_parms(char *, int, int, int, int);
+extern void write_batch_parms(const char *, int, int, int, int);
 extern void expand_comments(char *, char *);
 
 /*  miscres -- C file prototypes */
