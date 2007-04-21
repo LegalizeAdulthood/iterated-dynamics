@@ -697,7 +697,14 @@ void Jiim(int which)         /* called by fractint */
 	{
 		int dcol, drow;
 
-		actively_computing ? cursor_check_blink() : cursor_wait_key();
+		if (actively_computing)
+		{
+				cursor_check_blink();
+		}
+		else
+		{
+				cursor_wait_key();
+		}
 		if (driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
 		{
 			first_time = 0;
