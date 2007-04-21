@@ -3682,7 +3682,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 }
 
 
-void delete_hlp_from_exe(char *exe_fname)
+void delete_hlp_from_exe(const char *exe_fname)
 {
 	int   exe;   /* file handle */
 	struct help_sig_info hs;
