@@ -91,8 +91,8 @@
 
 #ifdef XFRACT
 #ifndef HAVESTRI
-extern int stricmp(char *, char *);
-extern int strnicmp(char *, char *, int);
+extern int stricmp(const char *, const char *);
+extern int strnicmp(const char *, char const *, int);
 #endif
 extern int filelength(int);
 extern int _splitpath(char *,char *,char *,char *,char *);
