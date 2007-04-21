@@ -468,7 +468,9 @@ int full_screen_prompt(/* full-screen prompting routine */
 		put_string_center(instrrow++, 0, 80, C_PROMPT_BKGRD,
 		"No changeable parameters;");
 		put_string_center(instrrow, 0, 80, C_PROMPT_BKGRD,
-		(get_help_mode() > 0) ? "Press ENTER to exit, ESC to back out, "FK_F1" for help" : "Press ENTER to exit");
+			(get_help_mode() > 0)
+				? "Press ENTER to exit, ESC to back out, "FK_F1" for help"
+				: "Press ENTER to exit");
 		driver_hide_text_cursor();
 		g_text_cbase = 2;
 		while (1)
