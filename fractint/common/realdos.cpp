@@ -1144,7 +1144,7 @@ int strncasecmp(char *s, char *t, int ct)
 
 int main_menu(int fullmenu)
 {
-	char *choices[44]; /* 2 columns*22 rows */
+	const char *choices[44]; /* 2 columns*22 rows */
 	int attributes[44];
 	int choicekey[44];
 	int i;
