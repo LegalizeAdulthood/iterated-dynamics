@@ -15,9 +15,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <X11/Xatom.h>
+#include <X11/Xutil.h>
 #include <signal.h>
 #include <sys/types.h>
 #ifdef _AIX
@@ -31,6 +33,7 @@
 #ifdef __hpux
 #include <sys/file.h>
 #endif
+#include <sys/wait.h>
 
 #include "helpdefs.h"
 #include "port.h"
@@ -52,7 +55,7 @@ extern int slowdisplay;
 extern	int	inside_help;
 extern VIDEOINFO x11_video_table[];
 
-extern void fpe_handler();
+extern void fpe_handler(int);
 
 typedef unsigned long XPixel;
 
@@ -171,10 +174,10 @@ extern void cursor_set_position();
 #define FONT "-*-*-medium-r-*-*-9-*-*-*-*-*-iso8859-*"
 #define DRAW_INTERVAL 6
 
-extern void (*dotwrite)(int, int, int);	/* write-a-dot routine */
-extern int (*dotread)(int, int); 	/* read-a-dot routine */
-extern void (*linewrite)();		/* write-a-line routine */
-extern void (*lineread)();		/* read-a-line routine */
+extern void (*dot_write)(int, int, int);	/* write-a-dot routine */
+extern int (*dot_read)(int, int); 	/* read-a-dot routine */
+extern void (*line_write)(int, int, int, BYTE *);	/* write-a-line routine */
+extern void (*line_read)(int, int, int, BYTE *);	/* read-a-line routine */
 
 static void x11_terminate(Driver *drv);
 static void x11_flush(Driver *drv);
@@ -384,9 +387,7 @@ erase_text_screen(DriverX11 *di)
  *
  *----------------------------------------------------------------------
  */
-static int errhand(dp, xe)
-Display *dp;
-XErrorEvent *xe;
+static int errhand(Display *dp, XErrorEvent *xe)
 {
 	char buf[200];
 	fflush(stdout);
@@ -426,13 +427,12 @@ continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 }
 #endif
 
-static void
-select_visual(DriverX11 *di)
+static void select_visual(DriverX11 *di)
 {
 	di->Xvi = XDefaultVisualOfScreen(di->Xsc);
 	di->Xdepth = DefaultDepth(di->Xdp, di->Xdscreen);
 
-	switch (di->Xvi->class)
+	switch (di->Xvi->c_class)
 	{
 	case StaticGray:
 	case StaticColor:
@@ -1211,12 +1211,12 @@ ev_button_press(DriverX11 *di, XEvent *xevent)
 			if (ABS(bandx1-bandx0)*g_final_aspect_ratio > ABS(bandy1-bandy0))
 			{
 				bandy1 = SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*
-					g_final_aspect_ratio + bandy0;
+					static_cast<int>(g_final_aspect_ratio) + bandy0;
 			}
 			else
 			{
 				bandx1 = SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/
-					g_final_aspect_ratio + bandx0;
+					static_cast<int>(g_final_aspect_ratio) + bandx0;
 			}
 
 			if (!banding)
@@ -1338,8 +1338,7 @@ ev_motion_notify(DriverX11 *di, XEvent *xevent)
  *
  *----------------------------------------------------------------------
  */
-static int
-handle_events(DriverX11 *di)
+static void handle_events(DriverX11 *di)
 {
 	XEvent xevent;
 
@@ -1385,7 +1384,7 @@ handle_events(DriverX11 *di)
 		{
 			if (di->dx > 0)
 			{
-	di->xbufkey = mousefkey[di->button_num][0]; /* right */
+di->xbufkey = mousefkey[di->button_num][0]; /* right */
 	di->dx--;
 			}
 			else if (di->dx < 0)
@@ -2032,7 +2031,7 @@ x11_resize(Driver *drv)
 			x11_terminate(drv);
 			exit(-1);
 		}
-		di->Ximage->data = malloc(di->Ximage->bytes_per_line * di->Ximage->height);
+		di->Ximage->data = (char *) malloc(di->Ximage->bytes_per_line * di->Ximage->height);
 		if (di->Ximage->data == NULL)
 		{
 			fprintf(stderr, "Malloc failed: %d\n", di->Ximage->bytes_per_line *
@@ -2652,10 +2651,10 @@ x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 		break;
 
 	case 19: /* X window */
-		dotwrite = driver_write_pixel;
-		dotread = driver_read_pixel;
-		lineread = driver_read_span;
-		linewrite = driver_write_span;
+		dot_write = driver_write_pixel;
+		dot_read = driver_read_pixel;
+		line_read = driver_read_span;
+		line_write = driver_write_span;
 		x11_start_video(drv);
 		x11_set_for_graphics(drv);
 		break;

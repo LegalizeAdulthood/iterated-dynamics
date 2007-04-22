@@ -65,6 +65,8 @@
 
 #define MSCALE 1
 
+extern void delay(int);
+
 /* Check if there is a character waiting for us.  */
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int) iocount)
 
@@ -77,7 +79,7 @@ extern VIDEOINFO x11_video_table[];
 
 extern unsigned char dacbox[256][3];
 
-extern void fpe_handler();
+extern void fpe_handler(int);
 
 extern WINDOW *curwin;
 
@@ -162,8 +164,7 @@ static int mousefkey[4][4] /* [button][dir] */ = {
 *
 *----------------------------------------------------------------------
 */
-int
-unixarg(int argc, char **argv, int *i)
+int unixarg(int argc, char **argv, int *i)
 {
 	if (strcmp(argv[*i], "-display") == 0 && (*i)+1 < argc)
 	{
@@ -248,8 +249,7 @@ unixarg(int argc, char **argv, int *i)
 *
 *----------------------------------------------------------------------
 */
-void
-UnixInit()
+void UnixInit()
 {
 	/*
 	* Check a bunch of important conditions
@@ -313,8 +313,7 @@ UnixInit()
 *----------------------------------------------------------------------
 */
 
-void
-UnixDone()
+void UnixDone()
 {
 	if (!unixDisk)
 	{
@@ -345,9 +344,7 @@ UnixDone()
 *
 *----------------------------------------------------------------------
 */
-static int errhand(dp, xe)
-Display *dp;
-XErrorEvent *xe;
+static int errhand(Display *dp, XErrorEvent *xe)
 {
 	char buf[200];
 	fflush(stdout);
@@ -376,13 +373,7 @@ XErrorEvent *xe;
 *
 *----------------------------------------------------------------------
 */
-static void
-continue_hdl(sig, code, scp, addr)
-int sig, code;
-
-struct sigcontext *scp;
-char *addr;
-
+static void continue_hdl(int sig, int code, struct sigcontext *scp, char *addr)
 {
 	int i;
 	char out[20];
@@ -423,13 +414,12 @@ static int cyclic[][3] = {
 	{3, 5, 7}, {3, 7, 5}, {5, 3, 7}, {5, 7, 3}, {7, 3, 5}, {7, 5, 3}
 };
 
-static void
-select_visual(void)
+static void select_visual(void)
 {
 	Xvi = XDefaultVisualOfScreen(Xsc);
 	Xdepth = DefaultDepth(Xdp, Xdscreen);
 
-	switch (Xvi->class)
+	switch (Xvi->c_class)
 	{
 	case StaticGray:
 	case StaticColor:
@@ -480,8 +470,7 @@ select_visual(void)
 *----------------------------------------------------------------------
 */
 
-void
-initUnixWindow()
+void initUnixWindow()
 {
 	XSetWindowAttributes Xwatt;
 	XGCValues Xgcvals;
@@ -662,8 +651,7 @@ initUnixWindow()
 *
 *----------------------------------------------------------------------
 */
-static void
-doneXwindow()
+static void doneXwindow()
 {
 	if (Xdp == NULL)
 	{
@@ -704,8 +692,7 @@ doneXwindow()
 *
 *----------------------------------------------------------------------
 */
-static void
-clearXwindow()
+static void clearXwindow()
 {
 	int i;
 	if (fake_lut)
@@ -781,8 +768,7 @@ clearXwindow()
 *
 *----------------------------------------------------------------------
 */
-static void
-initdacbox()
+static void initdacbox()
 {
 	int i, j, k, s0, sp;
 
@@ -849,8 +835,7 @@ int endvideo()
 *
 *----------------------------------------------------------------------
 */
-int
-resizeWindow()
+int resizeWindow()
 {
 	static int oldx = -1, oldy = -1;
 	int junki;
@@ -918,7 +903,7 @@ resizeWindow()
 			UnixDone();
 			exit(-1);
 		}
-		Ximage->data = malloc(Ximage->bytes_per_line * Ximage->height);
+		Ximage->data = (char *) malloc(Ximage->bytes_per_line * Ximage->height);
 		if (Ximage->data == NULL)
 		{
 			fprintf(stderr, "Malloc failed: %d\n", Ximage->bytes_per_line *
@@ -949,8 +934,7 @@ resizeWindow()
 *
 *----------------------------------------------------------------------
 */
-static int
-xcmapstuff()
+static int xcmapstuff()
 {
 	int ncells, i, powr;
 
@@ -1034,9 +1018,8 @@ xcmapstuff()
 
 	return g_colors;
 }
+
 /*
-*----------------------------------------------------------------------
-*
 * writevideoline --
 *
 *	Write a line of pixels to the screen.
@@ -1046,13 +1029,8 @@ xcmapstuff()
 *
 * Side effects:
 *	Draws pixels.
-*
-*----------------------------------------------------------------------
 */
-void
-writevideoline(y, x, lastx, pixels)
-int x, y, lastx;
-BYTE *pixels;
+void writevideoline(int x, int y, int lastx, BYTE *pixels)
 {
 	int width;
 	int i;
@@ -1121,10 +1099,7 @@ BYTE *pixels;
 *
 *----------------------------------------------------------------------
 */
-void
-readvideoline(y, x, lastx, pixels)
-int x, y, lastx;
-BYTE *pixels;
+void readvideoline(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx-x+1;
@@ -1149,8 +1124,7 @@ BYTE *pixels;
 *
 *----------------------------------------------------------------------
 */
-void writevideo(x, y, color)
-int x, y, color;
+void writevideo(int x, int y, int color)
 {
 #ifdef DEBUG /* Debugging checks */
 	if (color >= g_colors || color < 0)
@@ -1366,9 +1340,7 @@ int writevideopalette()
 *
 *----------------------------------------------------------------------
 */
-void
-setlinemode(mode)
-int mode;
+void setlinemode(int mode)
 {
 	if (unixDisk) return;
 	xlastcolor = -1;
@@ -1401,9 +1373,7 @@ int mode;
 *
 *----------------------------------------------------------------------
 */
-void
-drawline(x1, y1, x2, y2)
-int x1, y1, x2, y2;
+void drawline(int x1, int y1, int x2, int y2)
 {
 	if (!unixDisk)
 	{
@@ -1425,8 +1395,7 @@ int x1, y1, x2, y2;
 *
 *----------------------------------------------------------------------
 */
-void
-xsync()
+void xsync()
 {
 	if (!unixDisk)
 	{
@@ -1448,8 +1417,7 @@ xsync()
 *
 *----------------------------------------------------------------------
 */
-static int
-getachar()
+static int getachar()
 {
 	if (simple_input)
 	{
@@ -1489,9 +1457,7 @@ static int xbufkey = 0;		/* Buffered X key */
 *
 *----------------------------------------------------------------------
 */
-int
-xgetkey(block)
-int block;
+int xgetkey(int block)
 {
 	static int skipcount = 0;
 	int ch;
@@ -1575,9 +1541,7 @@ int block;
 *
 *----------------------------------------------------------------------
 */
-static int
-translatekey(ch)
-int ch;
+static int translatekey(int ch)
 {
 	if (ch >= 'a' && ch <= 'z')
 	{
@@ -1686,8 +1650,7 @@ int ch;
 *
 *----------------------------------------------------------------------
 */
-static int
-handleesc()
+static int handleesc()
 {
 	int ch1, ch2, ch3;
 	if (simple_input)
@@ -2163,12 +2126,12 @@ static void OnButtonPress(XEvent *xevent,
 				ABS(*bandy1-*bandy0))
 			{
 				*bandy1 = SIGN(*bandy1-*bandy0)*ABS(*bandx1-*bandx0)*
-					g_final_aspect_ratio + *bandy0;
+					static_cast<int>(g_final_aspect_ratio) + *bandy0;
 			}
 			else
 			{
 				*bandx1 = SIGN(*bandx1-*bandx0)*ABS(*bandy1-*bandy0)/
-					g_final_aspect_ratio + *bandx0;
+					static_cast<int>(g_final_aspect_ratio) + *bandx0;
 			}
 			if (!banding)
 			{
@@ -2291,8 +2254,7 @@ static void OnExpose(XExposeEvent *xexpose)
 *
 *----------------------------------------------------------------------
 */
-static void
-xhandleevents()
+static void xhandleevents()
 {
 	XEvent xevent;
 	int drawn;
@@ -2395,10 +2357,7 @@ xhandleevents()
 *
 *----------------------------------------------------------------------
 */
-static Window
-pr_dwmroot(dpy, pwin)
-Display *dpy;
-Window  pwin;
+static Window pr_dwmroot(Display *dpy, Window pwin)
 {
 	/* search for DEC Window Manager root */
 	XWindowAttributes pxwa, cxwa;
@@ -2448,8 +2407,7 @@ Window  pwin;
 *
 *----------------------------------------------------------------------
 */
-static Window
-FindRootWindow()
+static Window FindRootWindow()
 {
 	int i;
 	w_root = RootWindow(dpy, scr);
@@ -2495,8 +2453,7 @@ FindRootWindow()
 *
 *----------------------------------------------------------------------
 */
-static void
-RemoveRootPixmap()
+static void RemoveRootPixmap()
 {
 	Atom prop, type;
 	int format;
@@ -2531,8 +2488,7 @@ static unsigned char *fontPtr = NULL;
 *
 *----------------------------------------------------------------------
 */
-unsigned char *
-xgetfont()
+unsigned char *xgetfont()
 {
 	XFontStruct *font_info;
 	XImage *font_image;
@@ -2631,8 +2587,7 @@ xgetfont()
 *----------------------------------------------------------------------
 */
 #define SHELL "/bin/csh"
-void
-shell_to_dos()
+void shell_to_dos()
 {
 	SignalHandler sigint;
 	char *shell;
@@ -2713,9 +2668,7 @@ shell_to_dos()
 *----------------------------------------------------------------------
 */
 #define DRAW_INTERVAL 6
-void
-schedulealarm(soon)
-int soon;
+void schedulealarm(int soon)
 {
 	if (!fastmode) return;
 	signal(SIGALRM, (SignalHandler) setredrawscreen);
@@ -2745,8 +2698,7 @@ int soon;
 *
 *----------------------------------------------------------------------
 */
-static void
-setredrawscreen()
+static void setredrawscreen()
 {
 	doredraw = 1;
 }
@@ -2766,8 +2718,7 @@ setredrawscreen()
 *
 *----------------------------------------------------------------------
 */
-void
-redrawscreen()
+void redrawscreen()
 {
 	if (alarmon)
 	{

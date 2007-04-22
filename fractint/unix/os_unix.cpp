@@ -10,11 +10,9 @@
 /* Global variables (yuck!) */
 int MPOverflow = 0;
 struct MP Ans = { 0 };
-int g_and_color;
 BYTE block[4096] = { 0 };
 int g_checked_vvs = 0;
 int g_cpu, g_fpu;                        /* cpu, fpu flags */
-unsigned char g_dac_box[256][3];
 static char extrasegment[0x18000] = { 0 };
 void *extraseg = &extrasegment[0];
 int g_fm_attack = 0;
@@ -28,7 +26,6 @@ long g_initial_x_l = 0;
 long g_initial_y_l = 0;
 BYTE g_old_dac_box[256][3];
 int g_polyphony = 0;
-char g_rle_buffer[258] = { 0 };
 long g_save_base = 0;				/* base clock ticks */ 
 long g_save_ticks = 0;				/* save after this many ticks */ 
 unsigned int strlocn[10*1024] = { 0 };

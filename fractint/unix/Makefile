@@ -1,23 +1,29 @@
 SHELL=/bin/sh
 
+SRCS = \
+    calcmand.cpp \
+    calmanfp.cpp \
+    d_x11.cpp \
+    diskvidu.cpp \
+    fpu087.cpp \
+    fracsuba.cpp \
+    general.cpp \
+    os_unix.cpp \
+    unix.cpp \
+    unixscr.cpp \
+    video.cpp
+
 ifeq ($(AS),/usr/bin/nasm)
-
-OBJS = \
-calcmand.o calmanfp.o diskvidu.o fpu087.o fracsuba.o general.o \
-unix.o unixscr.o video.o \
-calmanfx.o d_x11.o od_unix.o
-
+ASMOBJS = calmanfx.o
 else
-
-OBJS = \
-calcmand.o calmanfp.o diskvidu.o fpu087.o fracsuba.o general.o \
-unix.o unixscr.o video.o d_x11.o os_unix.o
-
+ASMOBJS =
 endif
+
+OBJS = $(SRCS:.cpp=.o) $(ASMOBJS)
 
 #Need to prevent lex from doing fractint.l -> fractint.c
 .SUFFIXES:
-.SUFFIXES: .o .c .s .h .asm
+.SUFFIXES: .o .cpp .s .h .asm
 
 all: $(OBJS)
 
@@ -28,17 +34,21 @@ clean:
 	rm -f $(OBJS)
 
 depend:
-	makedepend $(CFLAGS)
+	gccmakedep -- $(CFLAGS) -- $(SRCS)
+#       makedepend $(CFLAGS) $(SRCS)
 
 ifeq ($(AS),/usr/bin/nasm)
 calmanfx.o: calmanfx.asm
 	$(AS) $(AFLAGS) calmanfx.asm
 endif
 
-unix.o: unix.c
-	$(CC) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c unix.c
+unix.o: unix.cpp
+	$(CXX) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c $<
+
+.cpp.o:
+	$(CXX) $(CFLAGS) -c $<
 
 copy: $(FILES)
 	mv $(FILES) backup
 
-# DO NOT DELETE THIS LINE -- make depend depends on it.
+# DO NOT DELETE

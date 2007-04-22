@@ -101,8 +101,7 @@ void SinhCosh086(long x, long *sinx, long *cosx)
     *cosx = (long) (cosh(a)*(double)(1<<16));
 }
 
-long Exp086(x)
-long x;
+long Exp086(long x)
 {
     return (long) (exp((double)x/(double)(1<<16))*(double)(1<<16));
 }
@@ -113,16 +112,13 @@ long x;
 /*
  * Input is a 16 bit offset number.  Output is shifted by Fudge.
  */
-unsigned long ExpFudged(x, Fudge)
-long x;
-int Fudge;
+unsigned long ExpFudged(long x, int Fudge)
 {
     return (long) (exp((double)x/(double)(1<<16))*(double)(1<<Fudge));
 }
 
 /* This multiplies two e/m numbers and returns an e/m number. */
-long r16Mul(x,y)
-long x,y;
+long r16Mul(long x, long y)
 {
     float f;
     f = em2float(x)*em2float(y);
@@ -130,15 +126,13 @@ long x,y;
 }
 
 /* This takes an exp/mant number and returns a shift-16 number */
-long LogFloat14(x)
-unsigned long x;
+long LogFloat14(unsigned long x)
 {
-    return log((double)em2float(x))*(1<<16);
+    return ((long) log((double) em2float(x)))*(1 << 16);
 }
 
 /* This divides two e/m numbers and returns an e/m number. */
-long RegDivFloat(x,y)
-long x,y;
+long RegDivFloat(long x, long y)
 {
     float f;
     f = em2float(x)/em2float(y);
@@ -146,14 +140,12 @@ long x,y;
 }
 
 /*
- * This routine on the IBM converts shifted integer x,FudgeFact to 
+ * This routine on the IBM converts shifted integer x,FudgeFact to
  * the 4 byte number: exp,mant,mant,mant
  * Instead of using exp/mant format, we'll just use floats.
  * Note: If sizeof(float) != sizeof(long), we're hosed.
  */
-long RegFg2Float(x,FudgeFact)
-long x;
-int FudgeFact;
+long RegFg2Float(long x, int FudgeFact)
 {
     float f;
     long l;
@@ -165,16 +157,12 @@ int FudgeFact;
 /*
  * This converts em to shifted integer format.
  */
-long RegFloat2Fg(x,Fudge)
-long x;
-int Fudge;
+long RegFloat2Fg(long x, int Fudge)
 {
-    return em2float(x)*(float)(1<<Fudge);
+    return (long) (em2float(x)*(float) (1 << Fudge));
 }
 
-long RegSftFloat(x, Shift)
-long x;
-int Shift;
+long RegSftFloat(long x, int Shift)
 {
     float f;
     f = em2float(x);
