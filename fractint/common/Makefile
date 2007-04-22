@@ -3,6 +3,10 @@ SHELL=/bin/sh
 SRCS = \
     3d.cpp \
     ant.cpp \
+    bigflt.cpp \
+    biginit.cpp \
+    bignum.cpp \
+    bignumc.cpp \
     calcfrac.cpp \
     cmdfiles.cpp \
     decoder.cpp \
@@ -21,6 +25,7 @@ SRCS = \
     framain2.cpp \
     frasetup.cpp \
     gifview.cpp \
+    hcmplx.cpp \
     help.cpp \
     history.cpp \
     intro.cpp \
@@ -37,6 +42,7 @@ SRCS = \
     miscfrac.cpp \
     miscovl.cpp \
     miscres.cpp \
+    mpmath_c.cpp \
     parser.cpp \
     parserfp.cpp \
     plot3d.cpp \
@@ -67,8 +73,8 @@ clean:
 	rm -f $(OBJS)
 
 depend:
-	gccmakedep -- $(CFLAGS) -- $(OBJS:.o=.c)
-#	makedepend $(CFLAGS) $(OBJS:.o=.c)
+	gccmakedep -- $(CFLAGS) -- $(SRCS)
+#	makedepend $(CFLAGS) $(SRCS)
 
 fractint.o: fractint.cpp
 help.o: help.cpp
