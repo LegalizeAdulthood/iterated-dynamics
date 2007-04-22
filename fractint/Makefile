@@ -234,11 +234,11 @@ endif
 
 DEPFLAGS = -Y -I.$(HFD) $(DEFINES) -DBIG_ANSI_C -DLINUX
 
-HOBJS = $(DOSHELPDIR)/hc.o unix.o
+HOBJS = hc.o unix.o
 
 #Need to prevent lex from doing fractint.l -> fractint.c
 .SUFFIXES:
-.SUFFIXES: .o .c .s .h .asm
+.SUFFIXES: .o .cpp .s .h .asm
 
 xfractint: fractint.hlp .WAIT
 	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
@@ -246,7 +246,7 @@ xfractint: fractint.hlp .WAIT
 	          "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "AS=${AS}" "AFLAGS=${AFLAGS}" "HFD=.${HFD}"
-	$(CC) -o xfractint $(CFLAGS) $(OBJS) $(U_OBJS) $(LIBS)
+	$(CXX) -o xfractint $(CFLAGS) $(OBJS) $(U_OBJS) $(LIBS)
 #	strip xfractint
 
 tar:	$(FILES)
@@ -325,10 +325,16 @@ doc: hc $(DOSHELPDIR)/$(HELPFILES)
 	./hc /p
 
 hc:	$(HOBJS)
-	$(CC) -o hc $(CFLAGS) $(HOBJS)
+	$(CXX) -o hc $(CFLAGS) $(HOBJS)
 
-unix.o: $(UDIR)/unix.c
-	$(CC) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c $(UDIR)/unix.c
+.cpp.o:
+	$(CXX) -c $(CFLAGS) $<
+
+hc.o: $(DOSHELPDIR)/hc.cpp
+	$(CXX) $(CFLAGS) -c $<
+
+unix.o: $(UDIR)/unix.cpp
+	$(CXX) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c $<
 
 copy: $(FILES)
 	mv $(FILES) backup
