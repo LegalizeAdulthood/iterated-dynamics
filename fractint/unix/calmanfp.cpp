@@ -10,6 +10,9 @@
 #include "fractype.h"
 #include "externs.h"
 
+extern int getakey();
+extern int keypressed();
+
 static int inside_color, periodicity_color;
 
 void calculate_mandelbrot_start_fp_asm(void)
