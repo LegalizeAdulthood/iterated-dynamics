@@ -896,23 +896,23 @@ void set_normal_line(void)
 	s_line_write = normal_line_write;
 }
 
-static void nullwrite(int a, int b, int c)
+static void null_write(int a, int b, int c)
 {
 	_ASSERTE(FALSE);
 }
 
-static int nullread(int a, int b)
+static int null_read(int a, int b)
 {
 	_ASSERTE(FALSE);
 	return 0;
 }
 
 /* from video.asm */
-void setnullvideo(void)
+void set_null_video(void)
 {
 	_ASSERTE(0 && "setnullvideo called");
-	s_dot_write = nullwrite;
-	s_dot_read = nullread;
+	s_dot_write = null_write;
+	s_dot_read = null_read;
 }
 
 /*
