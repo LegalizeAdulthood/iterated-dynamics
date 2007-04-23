@@ -144,7 +144,7 @@ int get_toggles()
 	uvalues[k].type = 'L';
 	uvalues[k].uval.Lval = old_maxit = g_max_iteration;
 
-	choices[++k] = "Inside Color (0-# of g_colors, if Inside=numb)";
+	choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
 	uvalues[k].type = 'i';
 	if (g_inside >= 0)
 	{
@@ -182,7 +182,7 @@ int get_toggles()
 		uvalues[k].uval.ch.val = 9;
 	old_inside = g_inside;
 
-	choices[++k] = "Outside Color (0-# of g_colors, if Outside=numb)";
+	choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
 	uvalues[k].type = 'i';
 	if (g_outside >= 0)
 	{
