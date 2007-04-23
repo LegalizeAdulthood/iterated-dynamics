@@ -17,7 +17,7 @@ extern int disk_start(void);
 extern int wait_key_pressed(int);
 extern int get_a_key();
 
-int fake_lut = 0;
+int g_fake_lut = 0;
 int g_is_true_color = 0;
 int g_dac_learn = 0;
 int dacnorm = 0;
@@ -615,7 +615,7 @@ void find_special_colors(void)
 		return;
 	}
 
-	if (!(g_got_real_dac || fake_lut))
+	if (!(g_got_real_dac || g_fake_lut))
 	{
 		return;
 	}

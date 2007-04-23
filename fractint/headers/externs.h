@@ -600,7 +600,7 @@ extern double				g_z_width;
 extern int					g_zoom_off;
 
 #ifdef XFRACT
-extern  int					fake_lut;
+extern  int					g_fake_lut;
 #endif
 
 #endif
