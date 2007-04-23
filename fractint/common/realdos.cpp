@@ -711,7 +711,7 @@ int full_screen_choice(
 	}
 	if (hdg)
 	{
-		g_text_cbase = (80 - titlewidth) / 2;   /* set left margin for putstring */
+		g_text_cbase = (80 - titlewidth) / 2;   /* set left margin for driver_put_string */
 		g_text_cbase -= (90 - titlewidth) / 20; /* put heading into box */
 		driver_put_string(topleftrow - titlelines - 1, 0, C_PROMPT_HI, hdg);
 		g_text_cbase = 0;
@@ -1798,7 +1798,7 @@ int field_prompt(
 	{
 		driver_set_attr(titlerow + i, j, C_PROMPT_LO, boxwidth);
 	}
-	g_text_cbase = titlecol;                  /* set left margin for putstring */
+	g_text_cbase = titlecol;                  /* set left margin for driver_put_string */
 	driver_put_string(titlerow, 0, C_PROMPT_HI, hdg); /* display heading */
 	g_text_cbase = 0;
 	i = titlerow + titlelines + 4;

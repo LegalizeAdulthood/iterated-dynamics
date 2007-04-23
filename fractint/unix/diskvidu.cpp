@@ -96,21 +96,21 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 		{
 			set_attribute(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);  /* init box */
 		}
-		put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "'Disk-Video' mode");
-		put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, "Screen resolution: ");
+		driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "'Disk-Video' mode");
+		driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, "Screen resolution: ");
 		sprintf(buf, "%d x %d", g_screen_width, g_screen_height);
-		put_string(-1, -1, C_DVID_LO, buf);
+		driver_put_string(-1, -1, C_DVID_LO, buf);
 		if (g_disk_targa)
 		{
-			put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
+			driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
 		}
 		else
 		{
-			put_string(-1, -1, C_DVID_LO, "  Colors: ");
+			driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
 			sprintf(buf, "%d", colors);
-			put_string(-1, -1, C_DVID_LO, buf);
+			driver_put_string(-1, -1, C_DVID_LO, buf);
 		}
-		put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, "Status:");
+		driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, "Status:");
 		disk_video_status(0, "clearing the 'screen'");
 	}
 	s_time_to_display = TIMETODISPLAY;  /* time-to-display-status counter */
@@ -225,6 +225,6 @@ void disk_video_status(int line, char *msg)
 		line -= 100;
 		attrib = C_STOP_ERR;
 	}
-	put_string(BOX_ROW + 8 + line, BOX_COL + 12, attrib, buf);
+	driver_put_string(BOX_ROW + 8 + line, BOX_COL + 12, attrib, buf);
 	move_cursor(25, 80);
 }

@@ -296,8 +296,8 @@ static void color_link(LINK *link, int color)
 }
 
 /* #define PUT_KEY(name, descrip)
-		putstring(-1, -1, C_HELP_INSTR_KEYS, name),
-		putstring(-1, -1, C_HELP_INSTR, " "descrip"  ")
+		driver_put_string(-1, -1, C_HELP_INSTR_KEYS, name),
+		driver_put_string(-1, -1, C_HELP_INSTR, " "descrip"  ")
 */
 #if defined(_WIN32)
 #define PUT_KEY(name_, desc_) put_key(name_, desc_)

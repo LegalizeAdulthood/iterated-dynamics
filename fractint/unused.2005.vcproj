@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="unused"
 	ProjectGUID="{110FB3C3-5D32-432C-B555-F22DD7283CA4}"
+	RootNamespace="unused"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -640,7 +641,7 @@
 			Name="unix"
 			>
 			<File
-				RelativePath="unix\calcmand.c"
+				RelativePath=".\unix\calcmand.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -660,7 +661,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="unix\calmanfp.c"
+				RelativePath=".\unix\calmanfp.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -700,7 +701,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\unix\d_x11.c"
+				RelativePath=".\unix\d_x11.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -720,7 +721,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="unix\diskvidu.c"
+				RelativePath=".\unix\diskvidu.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -740,7 +741,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="unix\fpu087.c"
+				RelativePath=".\unix\fpu087.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -760,7 +761,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="unix\fracsuba.c"
+				RelativePath=".\unix\fracsuba.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -780,7 +781,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="unix\general.c"
+				RelativePath=".\unix\general.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -800,7 +801,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\unix\os_unix.c"
+				RelativePath=".\unix\os_unix.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -820,7 +821,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="unix\unix.c"
+				RelativePath=".\unix\unix.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -840,7 +841,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="unix\unixscr.c"
+				RelativePath=".\unix\unixscr.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -860,7 +861,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="unix\video.c"
+				RelativePath=".\unix\video.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
