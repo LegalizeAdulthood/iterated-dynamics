@@ -89,15 +89,15 @@ int g_virtual_screens = 0;
 /* converts relative path to absolute path */
 int expand_dirname(char *dirname, char *drive)
 {
-  return -1;
+	return -1;
 }
 
 unsigned long get_disk_space(void)
 {
-    struct statfs space;
+	struct statfs space;
 	if (!statfs(".", &space))
-    {
-	    return 0;
+	{
+		return 0;
 	}
 
 	return space.f_bavail != -1 ? space.f_bavail*512 : 0;

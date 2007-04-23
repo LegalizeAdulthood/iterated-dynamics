@@ -113,7 +113,8 @@ typedef unsigned long XPixel;
 
 static XPixel cmap_pixtab[256]; /* for faking a LUTs on non-LUT visuals */
 static int cmap_pixtab_alloced;
-static unsigned long do_fake_lut(int idx) {
+static unsigned long do_fake_lut(int idx)
+{
 	return g_fake_lut ? cmap_pixtab[idx] : idx;
 }
 #define FAKE_LUT(idx_) do_fake_lut(idx_)
@@ -2409,7 +2410,6 @@ static void xhandleevents()
 			}
 		}
 	}
-
 }
 
 #define w_root Xroot
