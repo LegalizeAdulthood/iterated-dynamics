@@ -10,14 +10,13 @@
  * This file contains Unix versions of the routines in video.asm
  * Copyright 1992 Ken Shirriff
  */
+WINDOW *g_current_window;
 
-extern unsigned char *xgetfont (void);
+extern unsigned char *x_get_font(void);
 extern int disk_start(void);
-extern int waitkeypressed (int);
+extern int wait_key_pressed(int);
 extern int getakey();
 extern void delay(int);
-
-WINDOW *curwin;
 
 int fake_lut = 0;
 int g_is_true_color = 0;
@@ -136,9 +135,9 @@ static void normal_line_write(int, int, int, BYTE *);
 
 void put_prompt(void)
 {
-	wclear(curwin);		/* ???? */
+	wclear(g_current_window);		/* ???? */
 	driver_put_string(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
-	wrefresh(curwin);
+	wrefresh(g_current_window);
 	return;
 }
 
@@ -188,7 +187,7 @@ void setvideomode(int ax, int bx, int cx, int dx)
 	{
 	case 0:			/* text */
 		clear();
-		wrefresh(curwin);
+		wrefresh(g_current_window);
 		break;
 	case 11:
 		disk_start();
@@ -272,7 +271,7 @@ void move_cursor(int row, int col)
 	{
 		g_text_col = col;
 	}
-	wmove(curwin, row, col);
+	wmove(g_current_window, row, col);
 }
 
 /*
@@ -283,8 +282,8 @@ void move_cursor(int row, int col)
 int keycursor(int row, int col)
 {
 	move_cursor(row, col);
-	wrefresh(curwin);
-	waitkeypressed(0);
+	wrefresh(g_current_window);
+	wait_key_pressed(0);
 	return getakey();
 }
 
@@ -319,10 +318,10 @@ void put_string(int row, int col, int attr, char *msg)
 
 	if (attr & INVERSE || attr & BRIGHT)
 	{
-		wstandout(curwin);
+		wstandout(g_current_window);
 		so = 1;
 	}
-	wmove(curwin, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
+	wmove(g_current_window, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
 	while (1)
 	{
 		if (*msg == '\0')
@@ -333,7 +332,7 @@ void put_string(int row, int col, int attr, char *msg)
 		{
 			g_text_col = 0;
 			g_text_row++;
-			wmove(curwin, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
+			wmove(g_current_window, g_text_row + g_text_rbase, g_text_col + g_text_cbase);
 		}
 		else
 		{
@@ -341,24 +340,24 @@ void put_string(int row, int col, int attr, char *msg)
 			ptr = strchr(msg, '\n');
 			if (ptr == NULL)
 			{
-				waddstr(curwin, msg);
+				waddstr(g_current_window, msg);
 				break;
 			}
 			else
 			{
-				waddch(curwin, *msg);
+				waddch(g_current_window, *msg);
 			}
 		}
 		msg++;
 	}
 	if (so)
 	{
-		wstandend(curwin);
+		wstandend(g_current_window);
 	}
 
-	wrefresh(curwin);
+	wrefresh(g_current_window);
 	fflush(stdout);
-	getyx(curwin, g_text_row, g_text_col);
+	getyx(g_current_window, g_text_row, g_text_col);
 	g_text_row -= g_text_rbase;
 	g_text_col -= g_text_cbase;
 }
@@ -382,7 +381,7 @@ void set_attribute(int row, int col, int attr, int count)
 */
 void home(void)
 {
-	wmove(curwin, 0, 0);
+	wmove(g_current_window, 0, 0);
 	g_text_row = 0;
 	g_text_col = 0;
 }
@@ -395,11 +394,11 @@ void home(void)
 */
 void scrollup(int top, int bot)
 {
-	wmove(curwin, top, 0);
-	wdeleteln(curwin);
-	wmove(curwin, bot, 0);
-	winsertln(curwin);
-	wrefresh(curwin);
+	wmove(g_current_window, top, 0);
+	wdeleteln(g_current_window);
+	wmove(g_current_window, bot, 0);
+	winsertln(g_current_window);
+	wrefresh(g_current_window);
 }
 
 /*
@@ -464,8 +463,8 @@ void setfortext(void)
 
 void setclear(void)
 {
-	wclear(curwin);
-	wrefresh(curwin);
+	wclear(g_current_window);
+	wrefresh(g_current_window);
 }
 
 void setforgraphics()
@@ -487,7 +486,7 @@ BYTE *findfont(int fontparm)
 {
 	if (fontTab == NULL)
 	{
-		fontTab = xgetfont();
+		fontTab = x_get_font();
 	}
 	return (BYTE *) fontTab;
 }
@@ -758,18 +757,18 @@ void swapnormwrite(void)
  */
 void savecurses(WINDOW **ptr)
 {
-	ptr[0] = curwin;
-	curwin = newwin(0, 0, 0, 0);
-	touchwin(curwin);
-	wrefresh(curwin);
+	ptr[0] = g_current_window;
+	g_current_window = newwin(0, 0, 0, 0);
+	touchwin(g_current_window);
+	wrefresh(g_current_window);
 }
 
 void restorecurses(WINDOW **ptr)
 {
-	delwin(curwin);
-	curwin = ptr[0];
-	touchwin(curwin);
-	wrefresh(curwin);
+	delwin(g_current_window);
+	g_current_window = ptr[0];
+	touchwin(g_current_window);
+	wrefresh(g_current_window);
 }
 
 /* Moved the following from realdos.c to more cleanly separate the XFRACT

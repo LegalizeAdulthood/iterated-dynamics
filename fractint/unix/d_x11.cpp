@@ -1548,7 +1548,7 @@ static void load_font(DriverX11 *di)
 /*
  *----------------------------------------------------------------------
  *
- * xgetfont --
+ * find_font --
  *
  *	Get an 8x8 font.
  *
@@ -2771,9 +2771,24 @@ static int x11_init_fm(Driver *drv)
 	return 0;
 }
 
-static void x11_buzzer(Driver *drv, int kind)
+/*
+	Sound a tone based on the value of the parameter
+
+       0 = normal completion of task
+       1 = interrupted task
+       2 = error contition
+*/
+static void x11_buzzer(Driver *drv, int buzzer_type)
 {
-	fprintf(stderr, "x11_buzzer(%d)\n", kind);
+	if ((g_sound_flags & 7) != 0)
+	{
+		printf("\007");
+		fflush(stdout);
+	}
+	if (buzzer_type == 0)
+	{
+		redrawscreen();
+	}
 }
 
 static int x11_sound_on(Driver *drv, int freq)
