@@ -479,7 +479,7 @@ int full_screen_choice(
 									/* &4 include F1 for help in instructions */
 									/* &8 add caller's instr after normal set */
 									/* &16 menu items up one line             */
-	char *hdg,						/* heading info, \n delimited             */
+	const char *hdg,				/* heading info, \n delimited             */
 	char *hdg2,						/* column heading or NULL                 */
 	char *instr,					/* instructions, \n delimited, or NULL    */
 	int numchoices,					/* How many choices in list               */
@@ -510,7 +510,7 @@ int full_screen_choice(
 	int curkey, increment, rev_increment = 0;
 	int redisplay;
 	int i, j, k = 0;
-	char *charptr;
+	const char *charptr;
 	char buf[81];
 	char curitem[81];
 	char *itemptr;
@@ -1112,8 +1112,8 @@ fs_choice_end:
 	return ret;
 }
 
-int full_screen_choice_help(int help_mode, 	int options, char *hdg, char *hdg2,
-	char *instr, int numchoices, char **choices, int *attributes,
+int full_screen_choice_help(int help_mode, int options, const char *hdg,
+	char *hdg2, char *instr, int numchoices, char **choices, int *attributes,
 	int boxwidth, int boxdepth, int colwidth, int current,
 	void (*formatitem)(int, char*), char *speedstring,
 	int (*speedprompt)(int, int, int, char *, int), int (*checkkey)(int, int))
