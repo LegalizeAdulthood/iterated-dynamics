@@ -436,9 +436,9 @@ int get_sound_params(void)
 }
 
 /*
-; long readticker() returns current bios ticker value
+; long read_ticker() returns current bios ticker value
 */
-long readticker(void)
+long read_ticker(void)
 {
 	return (long) GetTickCount();
 }

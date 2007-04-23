@@ -348,7 +348,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 			if (g_save_time != 0          /* autosave and resumable? */
 					&& (g_current_fractal_specific->flags&NORESUME) == 0)
 			{
-				g_save_base = readticker(); /* calc's start time */
+				g_save_base = read_ticker(); /* calc's start time */
 				g_save_ticks = g_save_time*60*1000; /* in milliseconds */
 				g_finish_row = -1;
 				}

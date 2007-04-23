@@ -734,7 +734,7 @@ void cursor_end_mouse_tracking()
 void cursor_check_blink(void)
 {
 	long tick;
-	tick = readticker();
+	tick = read_ticker();
 
 	if ((tick - s_the_cursor->last_blink) > CURSOR_BLINK_RATE)
 	{
@@ -2788,10 +2788,10 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 				while (!driver_key_pressed())
 				{
-					tick = readticker();
+					tick = read_ticker();
 					pal_table_rotate(me, dir, g_rotate_lo, g_rotate_hi);
 					diff += dir;
-					while (readticker() == tick)   /* wait until a tick passes */
+					while (read_ticker() == tick)   /* wait until a tick passes */
 					{
 					}
 				}
