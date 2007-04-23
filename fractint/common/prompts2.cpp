@@ -161,25 +161,45 @@ int get_toggles()
 	uvalues[k].uval.ch.llen = sizeof(insidemodes)/sizeof(*insidemodes);
 	uvalues[k].uval.ch.list = insidemodes;
 	if (g_inside >= 0)  /* numb */
+	{
 		uvalues[k].uval.ch.val = 0;
+	}
 	else if (g_inside == -1)  /* maxiter */
+	{
 		uvalues[k].uval.ch.val = 1;
+	}
 	else if (g_inside == ZMAG)
+	{
 		uvalues[k].uval.ch.val = 2;
+	}
 	else if (g_inside == BOF60)
+	{
 		uvalues[k].uval.ch.val = 3;
+	}
 	else if (g_inside == BOF61)
+	{
 		uvalues[k].uval.ch.val = 4;
+	}
 	else if (g_inside == EPSCROSS)
+	{
 		uvalues[k].uval.ch.val = 5;
+	}
 	else if (g_inside == STARTRAIL)
+	{
 		uvalues[k].uval.ch.val = 6;
+	}
 	else if (g_inside == PERIOD)
+	{
 		uvalues[k].uval.ch.val = 7;
+	}
 	else if (g_inside == ATANI)
+	{
 		uvalues[k].uval.ch.val = 8;
+	}
 	else if (g_inside == FMODI)
+	{
 		uvalues[k].uval.ch.val = 9;
+	}
 	old_inside = g_inside;
 
 	choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
@@ -199,9 +219,13 @@ int get_toggles()
 	uvalues[k].uval.ch.llen = sizeof(outsidemodes)/sizeof(*outsidemodes);
 	uvalues[k].uval.ch.list = outsidemodes;
 	if (g_outside >= 0)  /* numb */
+	{
 		uvalues[k].uval.ch.val = 0;
+	}
 	else
+	{
 		uvalues[k].uval.ch.val = -g_outside;
+	}
 	old_outside = g_outside;
 
 	choices[++k] = "Savename (.GIF implied)";
@@ -1379,7 +1403,9 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 				j += (i = j);
 			}
 			else
+			{
 				j = ir + 1;
+			}
 		}
 		*((char **)(ra + i*sz)) = rra;
 	}
@@ -1808,9 +1834,13 @@ int is_a_directory(char *s)
 	{
 		/* any better ideas?? */
 		if (sv == SLASHC) /* we'll guess it is a directory */
+		{
 			return 1;
+		}
 		else
+		{
 			return 0;  /* no slashes - we'll guess it's a file */
+		}
 	}
 	else if ((g_dta.attribute & SUBDIR) != 0)
 	{
@@ -1819,14 +1849,22 @@ int is_a_directory(char *s)
 			/* strip trailing slash and try again */
 			s[len-1] = 0;
 			if (fr_find_first(s) != 0) /* couldn't find it */
+			{
 				return 0;
+			}
 			else if ((g_dta.attribute & SUBDIR) != 0)
+			{
 				return 1;   /* we're SURE it's a directory */
+			}
 			else
+			{
 				return 0;
+			}
 		}
 		else
+		{
 			return 1;   /* we're SURE it's a directory */
+		}
 	}
 	return 0;
 #endif
@@ -2259,7 +2297,9 @@ gc_loop:
 		return 0;
 	}
 	else
+	{
 		return 1;
+	}
 }
 
 static int get_screen_corners(void)
@@ -2756,7 +2796,9 @@ int merge_path_names(char *oldfullpath, char *newfilename, int mode)
 				isafile = 0;
 			}
 			else
+			{
 				isafile = 1;
+			}
 		}
 	}
 

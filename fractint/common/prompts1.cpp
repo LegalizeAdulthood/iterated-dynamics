@@ -336,7 +336,8 @@ int full_screen_prompt(/* full-screen prompting routine */
 	{
 		boxwidth = maxcomment;
 	}
-	if ((boxwidth += 4) > 80)
+	boxwidth += 4;
+	if (boxwidth > 80)
 	{
 		boxwidth = 80;
 	}

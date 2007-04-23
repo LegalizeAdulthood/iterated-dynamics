@@ -619,7 +619,8 @@ static int command_file(FILE *handle, int mode)
 		{
 			break;
 		}
-		if ((i = process_command(cmdbuf, mode)) < 0)
+		i = process_command(cmdbuf, mode);
+		if (i < 0)
 		{
 			break;
 		}
@@ -1457,7 +1458,8 @@ static int ranges_arg(const cmd_context *context)
 	g_log_palette_flag = LOGPALETTE_NONE; /* ranges overrides logmap */
 	while (i < context->totparms)
 	{
-		if ((j = context->intval[i++]) < 0) /* striping */
+		j = context->intval[i++];
+		if (j < 0) /* striping */
 		{
 			j = -j;
 			if (j < 1 || j >= 16384 || i >= context->totparms)
@@ -3630,7 +3632,8 @@ static int parse_colors(char *value)
 			{
 				for (j = 0; j < 3; ++j)
 				{
-					if ((k = *(value++)) < '0')
+					k = *(value++);
+					if (k < '0')
 					{
 						goto badcolor;
 					}

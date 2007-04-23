@@ -1541,8 +1541,8 @@ int ifs_load()                   /* read in IFS parameters */
 	if (ret == 0)
 	{
 		g_num_affine = i/rowsize;
-		if ((g_ifs_definition = (float *)malloc(
-								(long)((NUMIFS + 1)*IFS3DPARM*sizeof(float)))) == NULL)
+		g_ifs_definition = (float *) malloc((long) ((NUMIFS + 1)*IFS3DPARM*sizeof(float)));
+		if (g_ifs_definition == NULL)
 		{
 			stop_message(0, g_insufficient_ifs_memory);
 			ret = -1;

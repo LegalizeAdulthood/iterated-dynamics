@@ -238,53 +238,53 @@ start:
 		out = atoi(buffer);
 	}
 	else if (strcmp((char *)buffer, "MESSAGE") == 0)
+	{
+		int secs;
+		out = 0;
+		if (fscanf(fpss, "%d", &secs) != 1)
 		{
-			int secs;
-			out = 0;
-			if (fscanf(fpss, "%d", &secs) != 1)
-			{
-				slideshowerr("MESSAGE needs argument");
-			}
-			else
-			{
-				int len;
-				char buf[41];
-				buf[40] = 0;
-				fgets(buf, 40, fpss);
-				len = (int) strlen(buf);
-				buf[len-1] = 0; /* zap newline */
-				message(secs, (char *)buf);
-			}
-			out = 0;
+			slideshowerr("MESSAGE needs argument");
 		}
+		else
+		{
+			int len;
+			char buf[41];
+			buf[40] = 0;
+			fgets(buf, 40, fpss);
+			len = (int) strlen(buf);
+			buf[len-1] = 0; /* zap newline */
+			message(secs, (char *)buf);
+		}
+		out = 0;
+	}
 	else if (strcmp((char *)buffer, "GOTO") == 0)
+	{
+		if (fscanf(fpss, "%s", buffer) != 1)
 		{
-			if (fscanf(fpss, "%s", buffer) != 1)
-			{
-				slideshowerr("GOTO needs target");
-				out = 0;
-			}
-			else
-			{
-				char buffer1[80];
-				rewind(fpss);
-				strcat(buffer, ":");
-				do
-				{
-					err = fscanf(fpss, "%s", buffer1);
-				}
-				while (err == 1 && strcmp(buffer1, buffer) != 0);
-				if (feof(fpss))
-				{
-					slideshowerr("GOTO target not found");
-					return 0;
-				}
-				goto start;
-			}
+			slideshowerr("GOTO needs target");
+			out = 0;
 		}
+		else
+		{
+			char buffer1[80];
+			rewind(fpss);
+			strcat(buffer, ":");
+			do
+			{
+				err = fscanf(fpss, "%s", buffer1);
+			}
+			while (err == 1 && strcmp(buffer1, buffer) != 0);
+			if (feof(fpss))
+			{
+				slideshowerr("GOTO target not found");
+				return 0;
+			}
+			goto start;
+		}
+	}
 	else if ((i = get_scancode(buffer)) > 0)
 	{
-			out = i;
+		out = i;
 	}
 	else if (strcmp("WAIT", (char *)buffer) == 0)
 	{
