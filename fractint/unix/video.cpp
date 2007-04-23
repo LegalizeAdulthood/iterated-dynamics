@@ -82,8 +82,8 @@ int g_text_type = 1;		/* current mode's type of text:
 				   0  = real text, mode 3 (or 7)
 				   1  = 640x200x2, mode 6
 				   2  = some other mode, graphics */
-int g_text_row = 0;		/* for putstring(-1,...) */
-int g_text_col = 0;		/* for putstring(..,-1,...) */
+int g_text_row = 0;		/* for put_string(-1,...) */
+int g_text_col = 0;		/* for put_string(..,-1,...) */
 int g_text_rbase = 0;		/* g_text_row is relative to this */
 int g_text_cbase = 0;		/* g_text_col is relative to this */
 
@@ -135,7 +135,7 @@ static void normal_line_write(int, int, int, BYTE *);
 void put_prompt(void)
 {
 	wclear(curwin);		/* ???? */
-	putstring(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
+	put_string(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
 	wrefresh(curwin);
 	return;
 }
@@ -248,11 +248,11 @@ void putcolor_a(int xdot, int ydot, int color)
 }
 
 /*
-; **************** Function movecursor(row, col)  **********************
+; **************** Function move_cursor(row, col)  **********************
 
 ;       Move the cursor (called before printfs)
 */
-void movecursor(int row, int col)
+void move_cursor(int row, int col)
 {
 	if (row == -1)
 	{
@@ -280,7 +280,7 @@ void movecursor(int row, int col)
 */
 int keycursor(int row, int col)
 {
-	movecursor(row, col);
+	move_cursor(row, col);
 	wrefresh(curwin);
 	waitkeypressed(0);
 	return getakey();
@@ -288,7 +288,7 @@ int keycursor(int row, int col)
 
 /*
 ; PUTSTR.asm puts a string directly to video display memory. Called from C by:
-;    putstring(row, col, attr, string) where
+;    put_string(row, col, attr, string) where
 ;         row, col = row and column to start printing.
 ;         attr = color attribute.
 ;         string = far pointer to the null terminated string to print.
@@ -302,14 +302,18 @@ int keycursor(int row, int col)
 ;       fix to avoid scrolling when last posn chgd;
 ;       divider removed;  newline ctl chars;  PB  9-25-90
 */
-void putstring(int row, int col, int attr, char *msg)
+void put_string(int row, int col, int attr, char *msg)
 {
 	int so = 0;
 
 	if (row != -1)
+	{
 		g_text_row = row;
+	}
 	if (col != -1)
+	{
 		g_text_col = col;
+	}
 
 	if (attr & INVERSE || attr & BRIGHT)
 	{
@@ -320,7 +324,9 @@ void putstring(int row, int col, int attr, char *msg)
 	while (1)
 	{
 		if (*msg == '\0')
+		{
 			break;
+		}
 		if (*msg == '\n')
 		{
 			g_text_col = 0;
@@ -356,15 +362,15 @@ void putstring(int row, int col, int attr, char *msg)
 }
 
 /*
-; setattr(row, col, attr, count) where
+; set_attribute(row, col, attr, count) where
 ;         row, col = row and column to start printing.
 ;         attr = color attribute.
 ;         count = number of characters to set
 ;         This routine works only in real color text mode.
 */
-void setattr(int row, int col, int attr, int count)
+void set_attribute(int row, int col, int attr, int count)
 {
-	movecursor(row, col);
+	move_cursor(row, col);
 }
 
 /*
@@ -407,9 +413,13 @@ void spindac(int dir, int inc)
 	unsigned char *dacbot;
 	int len;
 	if (g_colors < 16)
+	{
 		return;
+	}
 	if (g_is_true_color && g_true_mode)
+	{
 		return;
+	}
 	if (dir != 0 && g_rotate_lo < g_colors && g_rotate_lo < g_rotate_hi)
 	{
 		top = g_rotate_hi > g_colors ? g_colors - 1 : g_rotate_hi;
@@ -539,7 +549,9 @@ int done_detect = 0;
 void adapter_detect(void)
 {
 	if (done_detect)
+	{
 		return;
+	}
 	done_detect = 1;
 	textsafe = 2;
 	if (g_colors == 2)
@@ -604,7 +616,9 @@ void find_special_colors(void)
 	}
 
 	if (!(g_got_real_dac || fake_lut))
+	{
 		return;
+	}
 
 	for (i = 0; i < g_colors; i++)
 	{
@@ -832,7 +846,7 @@ void unstackscreen()
 	{
 		setforgraphics();
 	}
-	movecursor(-1, -1);
+	move_cursor(-1, -1);
 #endif
 }
 

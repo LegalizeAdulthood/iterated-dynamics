@@ -13,28 +13,29 @@
 extern int getakey();
 extern int keypressed();
 
-static int inside_color, periodicity_color;
+static int s_inside_color = 0;
+static int s_periodicity_color = 0;
 
 void calculate_mandelbrot_start_fp_asm(void)
 {
-    if (g_inside<0)
-    {
-		inside_color = g_max_iteration;
-    }
-    else
-    {
-		inside_color = g_inside;
-    }
+	if (g_inside < 0)
+	{
+		s_inside_color = g_max_iteration;
+	}
+	else
+	{
+		s_inside_color = g_inside;
+	}
 
-    if (g_periodicity_check < 0)
-    {
-		periodicity_color = 7;
-    }
-    else
-    {
-		periodicity_color = inside_color;
-    }
-    g_old_color_iter = 0;
+	if (g_periodicity_check < 0)
+	{
+		s_periodicity_color = 7;
+	}
+	else
+	{
+		s_periodicity_color = s_inside_color;
+	}
+	g_old_color_iter = 0;
 }
 
 #define ABS(x) ((x)<0?-(x):(x))
@@ -45,24 +46,24 @@ void calculate_mandelbrot_start_fp_asm(void)
 
 long calculate_mandelbrot_fp_asm(void)
 {
-    long cx;
-    long savedand;
-    int savedincr;
-    long tmpfsd;
+	long cx;
+	long savedand;
+	int savedincr;
+	long tmpfsd;
 #if USE_NEW
-    double x,y,x2, y2, xy, Cx, Cy, savedmag;
+	double x,y,x2, y2, xy, Cx, Cy, savedmag;
 #else
-    double x,y,x2, y2, xy, Cx, Cy, savedx, savedy;
+	double x,y,x2, y2, xy, Cx, Cy, savedx, savedy;
 #endif
 
-    if (g_periodicity_check==0)
-    {
+	if (g_periodicity_check == 0)
+	{
 		g_old_color_iter = 0;      /* don't check periodicity */
-    }
+	}
 	else if (g_reset_periodicity != 0)
-    {
+	{
 		g_old_color_iter = g_max_iteration - 255;
-    }
+	}
 
 	tmpfsd = g_max_iteration - g_first_saved_and;
 	if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
@@ -70,25 +71,25 @@ long calculate_mandelbrot_fp_asm(void)
 		g_old_color_iter = tmpfsd; /* but matches the code in StandardFractal() */
 	}
 
-    /* initparms */
+	/* initparms */
 #if USE_NEW
-    savedmag = 0;
+	savedmag = 0;
 #else
-    savedx = 0;
-    savedy = 0;
+	savedx = 0;
+	savedy = 0;
 #endif
-    g_orbit_index = 0;
-    savedand = g_first_saved_and;
-    savedincr = 1;             /* start checking the very first time */
-    g_input_counter--;                /* Only check the keyboard sometimes */
-    if (g_input_counter<0)
-    {
+	g_orbit_index = 0;
+	savedand = g_first_saved_and;
+	savedincr = 1;             /* start checking the very first time */
+	g_input_counter--;                /* Only check the keyboard sometimes */
+	if (g_input_counter < 0)
+	{
 		int key;
 		g_input_counter = 1000;
 		key = keypressed();
 		if (key)
 		{
-			if (key=='o' || key=='O')
+			if (key == 'o' || key == 'O')
 			{
 				getakey();
 				g_show_orbit = 1-g_show_orbit;
@@ -101,17 +102,17 @@ long calculate_mandelbrot_fp_asm(void)
 		}
 	}
 
-    cx = g_max_iteration;
-    if (g_fractal_type != JULIAFP && g_fractal_type != JULIA)
-    {
+	cx = g_max_iteration;
+	if (g_fractal_type != JULIAFP && g_fractal_type != JULIA)
+	{
 		/* Mandelbrot_87 */
 		Cx = g_initial_z.x;
 		Cy = g_initial_z.y;
 		x = g_parameter.x+Cx;
 		y = g_parameter.y+Cy;
-    }
+	}
 	else
-    {
+	{
 		/* dojulia_87 */
 		Cx = g_parameter.x;
 		Cy = g_parameter.y;
@@ -122,14 +123,14 @@ long calculate_mandelbrot_fp_asm(void)
 		 xy = x*y;
 		x = x2-y2+Cx;
 		y = 2*xy+Cy;
-    }
-    x2 = x*x;
-    y2 = y*y;
-    xy = x*y;
+	}
+	x2 = x*x;
+	y2 = y*y;
+	xy = x*y;
 
-    /* top_of_cs_loop_87 */
-    while (--cx > 0)
-    {
+	/* top_of_cs_loop_87 */
+	while (--cx > 0)
+	{
 		x = x2-y2+Cx;
 		y = 2*xy+Cy;
 		x2 = x*x;
@@ -137,15 +138,15 @@ long calculate_mandelbrot_fp_asm(void)
 		xy = x*y;
 		g_magnitude = x2+y2;
 
-        if (g_magnitude >= g_rq_limit)
-        {
-            goto over_bailout_87;
-        }
+		if (g_magnitude >= g_rq_limit)
+		{
+			goto over_bailout_87;
+		}
 
 		/* no_save_new_xy_87 */
-		if (cx<g_old_color_iter)
+		if (cx < g_old_color_iter)
 		{  /* check periodicity */
-			if (((g_max_iteration - cx) & savedand)==0)
+			if (((g_max_iteration - cx) & savedand) == 0)
 			{
 #if USE_NEW
 				savedmag = g_magnitude;
@@ -154,25 +155,26 @@ long calculate_mandelbrot_fp_asm(void)
 				savedy = y;
 #endif
 				savedincr--;
-				if (savedincr==0)
+				if (savedincr == 0)
 				{
 					savedand = (savedand<<1) + 1;
 					savedincr = g_next_saved_incr;
-                }
-            }
+				}
+			}
 			else
-            {
+			{
 #if USE_NEW
-				if (ABS(g_magnitude-savedmag)<closenuff)
+				if (ABS(g_magnitude-savedmag) < closenuff)
 				{
 #else
-				if (ABS(savedx-x)<g_close_enough && ABS(savedy-y)<g_close_enough)
+				if ((ABS(savedx-x) < g_close_enough)
+					&& (ABS(savedy-y) < g_close_enough))
 				{
 #endif
 					g_old_color_iter = g_max_iteration;
 					g_real_color_iter = g_max_iteration;
 					g_input_counter = g_input_counter-(g_max_iteration-cx);
-					g_color_iter = periodicity_color;
+					g_color_iter = s_periodicity_color;
 					goto pop_stack;
 				}
 			}
@@ -183,77 +185,79 @@ long calculate_mandelbrot_fp_asm(void)
 			plot_orbit(x,y,-1);
 		}
 		/* no_show_orbit_87 */
-    }
+	}
 	/* while (--cx > 0) */
 
-    /* reached maxit */
+	/* reached maxit */
 	/* check periodicity immediately next time, remember we count down from maxit */
 	g_old_color_iter = g_max_iteration;
 	g_input_counter -= g_max_iteration;
-    g_real_color_iter = g_max_iteration;
+	g_real_color_iter = g_max_iteration;
 
-    g_color_iter = inside_color;
+	g_color_iter = s_inside_color;
 
 pop_stack:
-
-    if (g_orbit_index)
-    {
+	if (g_orbit_index)
+	{
 		orbit_scrub();
-    }
+	}
 
-    return g_color_iter;
+	return g_color_iter;
 
 over_bailout_87:
-
-	if (g_outside<=-2)
+	if (g_outside <= -2)
 	{
-	    g_new_z.x = x;
-	    g_new_z.y = y;
+		g_new_z.x = x;
+		g_new_z.y = y;
 	}
-    if (cx-10>0)
-    {
+	if (cx - 10 > 0)
+	{
 		g_old_color_iter = cx-10;
-    }
+	}
 	else
-    {
+	{
 		g_old_color_iter = 0;
-    }
-    g_color_iter = g_real_color_iter = g_max_iteration-cx;
-    if (g_color_iter==0) g_color_iter = 1;
-    g_input_counter -= g_real_color_iter;
-    if (g_outside==-1)
-    {
-    }
-	else if (g_outside>-2)
-    {
+	}
+	g_color_iter = g_real_color_iter = g_max_iteration-cx;
+	if (g_color_iter == 0)
+	{
+		g_color_iter = 1;
+	}
+	g_input_counter -= g_real_color_iter;
+	if (g_outside == -1)
+	{
+	}
+	else if (g_outside > -2)
+	{
 		g_color_iter = g_outside;
-    }
+	}
 	else
-    {
+	{
 		/* special_outside */
-		if (g_outside==REAL)
+		if (g_outside == REAL)
 		{
 			g_color_iter += (long)g_new_z.x + 7;
 		}
-		else if (g_outside==IMAG)
+		else if (g_outside == IMAG)
 		{
 			g_color_iter += (long)g_new_z.y + 7;
 		}
-		else if (g_outside==MULT && g_new_z.y!=0.0)
+		else if ((g_outside == MULT) && (g_new_z.y != 0.0))
 		{
 			  g_color_iter = (long)((double)g_color_iter * (g_new_z.x/g_new_z.y));
 		}
-		else if (g_outside==SUM)
+		else if (g_outside == SUM)
 		{
 			g_color_iter +=  (long)(g_new_z.x + g_new_z.y);
 		}
-		else if (g_outside==ATAN)
+		else if (g_outside == ATAN)
 		{
 			g_color_iter = (long)fabs(atan2(g_new_z.y,g_new_z.x)*g_atan_colors/PI);
-        }
+		}
 		/* check_color */
-		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside!=FMOD)
-        {
+		if (((g_color_iter <= 0) || (g_color_iter > g_max_iteration))
+			&& g_outside != FMOD)
+		{
 			if (g_save_release < 1961)
 			{
 				g_color_iter = 0;
@@ -265,5 +269,5 @@ over_bailout_87:
 		}
 	}
 
-    goto pop_stack;
+	goto pop_stack;
 }
