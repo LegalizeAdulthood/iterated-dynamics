@@ -80,7 +80,7 @@ extern unsigned char dacbox[256][3];
 
 extern void fpe_handler(int);
 
-extern WINDOW *curwin;
+extern WINDOW *g_current_window;
 
 static int onroot = 0;
 static int fullscreen = 0;
@@ -265,7 +265,7 @@ void UnixInit()
 	}
 
 	initscr();
-	curwin = stdscr;
+	g_current_window = stdscr;
 	cbreak();
 	noecho();
 
@@ -2549,7 +2549,7 @@ static unsigned char *fontPtr = NULL;
 /*
 *----------------------------------------------------------------------
 *
-* xgetfont --
+* x_get_font --
 *
 *	Get an 8x8 font.
 *
@@ -2561,7 +2561,7 @@ static unsigned char *fontPtr = NULL;
 *
 *----------------------------------------------------------------------
 */
-unsigned char *xgetfont()
+unsigned char *x_get_font()
 {
 	XFontStruct *font_info;
 	XImage *font_image;
@@ -2718,7 +2718,7 @@ void shell_to_dos()
 	/* Go back to curses mode */
 
 	initscr();
-	curwin = stdscr;
+	g_current_window = stdscr;
 	cbreak();
 	noecho();
 	if (!simple_input)
