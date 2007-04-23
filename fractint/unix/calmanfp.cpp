@@ -10,7 +10,7 @@
 #include "fractype.h"
 #include "externs.h"
 
-extern int getakey();
+extern int get_a_key();
 extern int keypressed();
 
 static int s_inside_color = 0;
@@ -91,7 +91,7 @@ long calculate_mandelbrot_fp_asm(void)
 		{
 			if (key == 'o' || key == 'O')
 			{
-				getakey();
+				get_a_key();
 				g_show_orbit = 1-g_show_orbit;
 			}
 			else

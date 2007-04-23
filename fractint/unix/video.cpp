@@ -15,8 +15,7 @@ WINDOW *g_current_window;
 extern unsigned char *x_get_font(void);
 extern int disk_start(void);
 extern int wait_key_pressed(int);
-extern int getakey();
-extern void delay(int);
+extern int get_a_key();
 
 int fake_lut = 0;
 int g_is_true_color = 0;
@@ -284,7 +283,7 @@ int keycursor(int row, int col)
 	move_cursor(row, col);
 	wrefresh(g_current_window);
 	wait_key_pressed(0);
-	return getakey();
+	return get_a_key();
 }
 
 /*
@@ -446,7 +445,7 @@ void spindac(int dir, int inc)
 		}
 	}
 	writevideopalette();
-	delay(g_colors - g_dac_count - 1);
+	driver_delay(g_colors - g_dac_count - 1);
 }
 
 /*
@@ -670,7 +669,7 @@ void find_special_colors(void)
 */
 char get_a_char(void)
 {
-	return (char) getakey();
+	return (char) get_a_key();
 }
 
 void put_a_char(int ch)

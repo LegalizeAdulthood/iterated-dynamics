@@ -2822,6 +2822,14 @@ static void x11_put_char_attr(Driver *drv, int char_attr)
 
 static void x11_delay(Driver *drv, int ms)
 {
+	static struct timeval delay;
+	delay.tv_sec = ms/1000;
+	delay.tv_usec = (ms % 1000)*1000;
+#if defined( __SVR4) || defined(LINUX)
+	(void) select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &delay);
+#else
+	(void) select(0, (int *) 0, (int *) 0, (int *) 0, &delay);
+#endif
 }
 
 static void x11_get_max_screen(Driver *drv, int *width, int *height)
