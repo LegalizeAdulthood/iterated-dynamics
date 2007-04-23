@@ -11,6 +11,6 @@
 int
 calculate_mandelbrot_asm(void)
 {
-    printf("Warning: called calculate_mandelbrot_asm\n");
-    return(0);
+	printf("Warning: called calculate_mandelbrot_asm\n");
+	return(0);
 }
