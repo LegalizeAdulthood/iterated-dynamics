@@ -3182,7 +3182,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 		else if (*argptr == '=')
 		{
 			/* don't convert g_colors=value or comment=value */
-			if ((strncmp(curarg, "g_colors=", 7) == 0) || (strncmp(curarg, "comment", 7) == 0))
+			if ((strncmp(curarg, "colors=", 7) == 0) || (strncmp(curarg, "comment", 7) == 0))
 			{
 				break;
 			}
@@ -3336,13 +3336,13 @@ int process_command(char *curarg, int mode) /* process a single argument */
 		command_processor processors[] =
 		{
 			{ "batch",		batch_arg },
-			{ "g_max_history", max_history_arg },
+			{ "maxhistory", max_history_arg },
 			{ "adapter",	adapter_arg },
 			{ "afi",		ignore_arg }, /* 8514 API no longer used; silently gobble any argument */
 			{ "textsafe",	text_safe_arg },
 			{ "vesadetect", gobble_flag_arg },
 			{ "biospalette", gobble_flag_arg },
-			{ "g_fpu",		fpu_arg },
+			{ "fpu",		fpu_arg },
 			{ "exitnoask",	exit_no_ask_arg },
 			{ "makedoc",	make_doc_arg },
 			{ "makepar",	make_par_arg }
@@ -3361,9 +3361,9 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "filename",		filename_arg },			/* filename=?     */
 			{ "video",			video_arg },			/* video=? */
  			{ "map",			map_arg },				/* map=, set default g_colors */
-			{ "g_colors",			colors_arg },			/* g_colors=, set current g_colors */
+			{ "colors",			colors_arg },			/* colors=, set current g_colors */
 			{ "recordcolors",	record_colors_arg },	/* recordcolors= */
-			{ "g_max_line_length",	max_line_length_arg },	/* g_max_line_length= */
+			{ "maxlinelength",	max_line_length_arg },	/* maxlinelength= */
 			{ "comment",		parse_arg },			/* comment= */
 			{ "tplus",			gobble_flag_arg },		/* tplus no longer used */
 			{ "noninterlaced",	gobble_flag_arg },		/* noninterlaced no longer used */
@@ -3395,7 +3395,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "ranges",			ranges_arg },
 			{ "savename", 		save_name_arg },		/* savename=? */
 			{ "tweaklzw", 		ignore_arg },			/* tweaklzw=? */
-			{ "g_minimum_stack", 		min_stack_arg },		/* g_minimum_stack=? */
+			{ "minstack", 		min_stack_arg },		/* minstack=? */
 			{ "mathtolerance", 	math_tolerance_arg },	/* mathtolerance=? */
 			{ "tempdir", 		temp_dir_arg },			/* tempdir=? */
 			{ "workdir", 		work_dir_arg },			/* workdir=? */
@@ -3444,7 +3444,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "hertz", 			hertz_arg },			/* Hertz=? */
 			{ "volume", 		volume_arg },			/* Volume =? */
 			{ "attenuate", 		attenuate_arg },
-			{ "g_polyphony", 		polyphony_arg },
+			{ "polyphony", 		polyphony_arg },
 			{ "wavetype", 		wave_type_arg },		/* wavetype = ? */
 			{ "attack", 		attack_arg },			/* attack = ? */
 			{ "decay", 			decay_arg },			/* decay = ? */

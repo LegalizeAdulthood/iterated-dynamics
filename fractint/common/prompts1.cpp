@@ -3069,8 +3069,8 @@ restart_1:
 		choices[k++] = "make a surface grid";
 		choices[k++] = "just draw the points";
 		choices[k++] = "connect the dots (wire frame)";
-		choices[k++] = "surface fill (g_colors interpolated)";
-		choices[k++] = "surface fill (g_colors not interpolated)";
+		choices[k++] = "surface fill (colors interpolated)";
+		choices[k++] = "surface fill (colors not interpolated)";
 		choices[k++] = "solid fill (bars up from \"ground\")";
 		if (SPHERE)
 		{

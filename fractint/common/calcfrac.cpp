@@ -564,7 +564,7 @@ int calculate_fractal(void)
 
 	if (g_log_palette_flag && g_colors < 16)
 	{
-		stop_message(0, "Need at least 16 g_colors to use logmap");
+		stop_message(0, "Need at least 16 colors to use logmap");
 		g_log_palette_flag = LOGPALETTE_NONE;
 	}
 
@@ -3318,7 +3318,7 @@ static int boundary_trace_main(void)
 	}
 	if (g_colors < 16)
 	{
-		stop_message(0, "Boundary tracing cannot be used with < 16 g_colors");
+		stop_message(0, "Boundary tracing cannot be used with < 16 colors");
 		return -1;
 	}
 
