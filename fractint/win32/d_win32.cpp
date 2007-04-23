@@ -46,7 +46,7 @@ int handle_timed_save(int ch)
 	}
 
 	/* now check for automatic/periodic saving... */
-	ticker = readticker();
+	ticker = read_ticker();
 	if (g_save_ticks && (ticker != s_save_check_time))
 	{
 		s_save_check_time = ticker;
@@ -151,12 +151,12 @@ static void flush_output(void)
 		if (!start)
 		{
 			time(&start);
-			last = readticker();
+			last = read_ticker();
 		}
 		else
 		{
 			time_t now = time(NULL);
-			long now_ticks = readticker();
+			long now_ticks = read_ticker();
 			if (now > start)
 			{
 				ticks_per_second = (now_ticks - last)/((long) (now - start));
@@ -165,7 +165,7 @@ static void flush_output(void)
 	}
 	else
 	{
-		long now = readticker();
+		long now = read_ticker();
 		if ((now - last)*frames_per_second > ticks_per_second)
 		{
 			driver_flush();

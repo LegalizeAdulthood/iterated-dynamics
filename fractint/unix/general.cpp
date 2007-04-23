@@ -261,9 +261,9 @@ int getkeyint(int block)
 }
 
 /*
-; long readticker() returns current bios ticker value
+; long read_ticker() returns current bios ticker value
 */
-long readticker(void)
+long read_ticker(void)
 {
 	return clock_ticks();
 }
