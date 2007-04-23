@@ -20,15 +20,13 @@ extern int get_a_key();
 int g_fake_lut = 0;
 int g_is_true_color = 0;
 int g_dac_learn = 0;
-int dacnorm = 0;
 int g_dac_count = 0;
-int ShadowColors;
 int g_good_mode = 0;		/* if non-zero, OK to read/write pixels */
-void (*dot_write)(int, int, int);
+void (*g_dot_write)(int, int, int);
 				/* write-a-dot routine */
-int (*dot_read)(int, int);	/* read-a-dot routine */
-void (*line_write)(int, int, int, BYTE *);		/* write-a-line routine */
-void (*line_read)(int, int, int, BYTE *);		/* read-a-line routine */
+int (*g_dot_read)(int, int);	/* read-a-dot routine */
+void (*g_line_write)(int, int, int, BYTE *);		/* write-a-line routine */
+void (*g_line_read)(int, int, int, BYTE *);		/* read-a-line routine */
 int g_and_color = 0;		/* "and" value used for color selection */
 int g_disk_flag = 0;		/* disk video active flag */
 
@@ -125,8 +123,8 @@ static int null_read(int a, int b)
 
 void set_null_video(void)
 {
-	dot_write = null_write;
-	dot_read = null_read;
+	g_dot_write = null_write;
+	g_dot_read = null_read;
 }
 
 static void normal_line_read(int, int, int, BYTE *);
@@ -190,17 +188,17 @@ void setvideomode(int ax, int bx, int cx, int dx)
 		break;
 	case 11:
 		disk_start();
-		dot_write = disk_write;
-		dot_read = disk_read;
-		line_read = normal_line_read;
-		line_write = normal_line_write;
+		g_dot_write = disk_write;
+		g_dot_read = disk_read;
+		g_line_read = normal_line_read;
+		g_line_write = normal_line_write;
 		break;
 	case 19:			/* X window */
 		put_prompt();
-		dot_write = writevideo;
-		dot_read = readvideo;
-		line_read = readvideoline;
-		line_write = writevideoline;
+		g_dot_write = writevideo;
+		g_dot_read = readvideo;
+		g_line_read = readvideoline;
+		g_line_write = writevideoline;
 		videoflag = 1;
 		startvideo();
 		setforgraphics();
@@ -234,7 +232,7 @@ int getcolor(int xdot, int ydot)
 	{
 		return 0;
 	}
-	return dot_read(x1, y1);
+	return g_dot_read(x1, y1);
 }
 
 /*
@@ -244,7 +242,7 @@ int getcolor(int xdot, int ydot)
 */
 void putcolor_a(int xdot, int ydot, int color)
 {
-	dot_write(xdot + g_sx_offset, ydot + g_sy_offset, color & g_and_color);
+	g_dot_write(xdot + g_sx_offset, ydot + g_sy_offset, color & g_and_color);
 }
 
 /*
@@ -575,7 +573,7 @@ static void normal_line_write(int y, int x, int lastx, BYTE *pixels)
 	width = lastx - x + 1;
 	for (i = 0; i < width; i++)
 	{
-		dot_write(x + i, y, pixels[i]);
+		g_dot_write(x + i, y, pixels[i]);
 	}
 }
 
@@ -585,7 +583,7 @@ static void normal_line_read(int y, int x, int lastx, BYTE *pixels)
 	width = lastx - x + 1;
 	for (i = 0; i < width; i++)
 	{
-		pixels[i] = dot_read(x + i, y);
+		pixels[i] = g_dot_read(x + i, y);
 	}
 }
 
@@ -692,7 +690,7 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 	{
 		return;
 	}
-	line_read(row + g_sy_offset, startcol + g_sx_offset,
+	g_line_read(row + g_sy_offset, startcol + g_sx_offset,
 		stopcol + g_sx_offset, pixels);
 }
 
@@ -711,7 +709,7 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 	{
 		return;
 	}
-	line_write(row + g_sy_offset, startcol + g_sx_offset,
+	g_line_write(row + g_sy_offset, startcol + g_sx_offset,
 		stopcol + g_sx_offset, pixels);
 }
 
@@ -728,7 +726,7 @@ int out_line(BYTE *pixels, int linelen)
 	{
 		return 0;
 	}
-	line_write(g_row_count + g_sy_offset, g_sx_offset,
+	g_line_write(g_row_count + g_sy_offset, g_sx_offset,
 		linelen + g_sx_offset - 1, pixels);
 	g_row_count++;
 	return 0;
