@@ -308,11 +308,11 @@ int memicmp(const char *s1, const char *s2, int n)
  */
 void findpath(const char *filename, char *fullpathname)
 {
-    int fd;
-    char *fractdir;
+	int fd;
+	char *fractdir;
 
-    if (filename[0] == '/')
-    {
+	if (filename[0] == '/')
+	{
 		strcpy(fullpathname, filename);
 		fd = open(fullpathname, O_RDONLY);
 		if (fd != -1)
@@ -320,10 +320,10 @@ void findpath(const char *filename, char *fullpathname)
 			close(fd);
 			return;
 		}
-    }
-    fractdir = getenv("FRACTDIR");
-    if (fractdir != NULL)
-    {
+	}
+	fractdir = getenv("FRACTDIR");
+	if (fractdir != NULL)
+	{
 		strcpy(fullpathname, fractdir);
 		strcat(fullpathname, "/");
 		strcat(fullpathname, filename);
@@ -333,25 +333,25 @@ void findpath(const char *filename, char *fullpathname)
 			close(fd);
 			return;
 		}
-    }
-    strcpy(fullpathname, SRCDIR);
-    strcat(fullpathname, "/");
-    strcat(fullpathname, filename);
-    fd = open(fullpathname, O_RDONLY);
-    if (fd != -1)
-    {
+	}
+	strcpy(fullpathname, SRCDIR);
+	strcat(fullpathname, "/");
+	strcat(fullpathname, filename);
+	fd = open(fullpathname, O_RDONLY);
+	if (fd != -1)
+	{
 		close(fd);
 		return;
-    }
-    strcpy(fullpathname, "./");
-    strcat(fullpathname, filename);
-    fd = open(fullpathname, O_RDONLY);
-    if (fd != -1)
-    {
+	}
+	strcpy(fullpathname, "./");
+	strcat(fullpathname, filename);
+	fd = open(fullpathname, O_RDONLY);
+	if (fd != -1)
+	{
 		close(fd);
 		return;
-    }
-    fullpathname=NULL;
+	}
+	fullpathname=NULL;
 }
 
 /*
@@ -532,7 +532,7 @@ int split_path(const char *file_template,
 int _splitpath(char *file_template,
 	char *drive, char *dir, char *fname, char *ext)
 {
-    return split_path(file_template, drive, dir, fname, ext);
+	return split_path(file_template, drive, dir, fname, ext);
 }
 
 /* This ftime simulation routine is from Frank Chen */
@@ -579,7 +579,7 @@ void mute(void)
 
 int initfm(void)
 {
-  return 0;
+	return 0;
 }
 
 /* tenths of millisecond timewr routine */
@@ -648,41 +648,41 @@ int fr_find_first(char *path)
 int fr_find_next()
 {
 #ifdef DIRENT
-     struct dirent *dirEntry;
+	struct dirent *dirEntry;
 #else
-     struct direct *dirEntry;
+	struct direct *dirEntry;
 #endif
-     struct stat sbuf;
-     char thisname[FILE_MAX_PATH];
-     char tmpname[FILE_MAX_PATH];
-     char thisext[FILE_MAX_EXT];
-     while (1)
-     {
-         dirEntry = readdir(currdir);
-         if (dirEntry == NULL)
-         {
-             closedir(currdir);
-             currdir = NULL;
-             return -1;
-         }
-         else if (dirEntry->d_ino != 0)
-         {
-             split_path(dirEntry->d_name, NULL, NULL, thisname, thisext);
-             strcpy(tmpname, searchdir);
-             strcat(tmpname, dirEntry->d_name);
-             stat(tmpname, &sbuf);
-             if ((sbuf.st_mode&S_IFMT) == S_IFREG &&
-                 (searchname[0] == '*' || strcmp(searchname, thisname) == 0) &&
-                 (searchext[0] == '*' || strcmp(searchext, thisext) == 0))
-			 {
-                 return 0;
-             }
-			 else if (((sbuf.st_mode&S_IFMT) == S_IFDIR) &&
-                 ((searchname[0] == '*' || searchext[0] == '*') ||
-                 (strcmp(searchname, thisname) == 0)))
-			 {
-                 return 0;
-             }
-         }
-     }
+	struct stat sbuf;
+	char thisname[FILE_MAX_PATH];
+	char tmpname[FILE_MAX_PATH];
+	char thisext[FILE_MAX_EXT];
+	while (1)
+	{
+		dirEntry = readdir(currdir);
+		if (dirEntry == NULL)
+		{
+		 closedir(currdir);
+		 currdir = NULL;
+		 return -1;
+		}
+		else if (dirEntry->d_ino != 0)
+		{
+			split_path(dirEntry->d_name, NULL, NULL, thisname, thisext);
+			strcpy(tmpname, searchdir);
+			strcat(tmpname, dirEntry->d_name);
+			stat(tmpname, &sbuf);
+			if ((sbuf.st_mode&S_IFMT) == S_IFREG &&
+				(searchname[0] == '*' || strcmp(searchname, thisname) == 0) &&
+				(searchext[0] == '*' || strcmp(searchext, thisext) == 0))
+			{
+				return 0;
+			}
+			else if (((sbuf.st_mode&S_IFMT) == S_IFDIR) &&
+				((searchname[0] == '*' || searchext[0] == '*') ||
+				(strcmp(searchname, thisname) == 0)))
+			{
+				return 0;
+			}
+		}
+	}
 }
