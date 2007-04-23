@@ -125,7 +125,6 @@ int g_dac_count = 0;
 int g_disk_flag = 0;
 int g_disk_targa = FALSE;
 int DivideOverflow = 0;
-int fake_lut = 0;
 int g_fm_attack = 0;
 int g_fm_decay = 0;
 int g_fm_release = 0;
@@ -304,7 +303,7 @@ void find_special_colors(void)
 		return;
 	}
 
-	if (!(g_got_real_dac || fake_lut))
+	if (!g_got_real_dac)
 	{
 		return;
 	}

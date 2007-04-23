@@ -426,7 +426,7 @@ int encoder()
 #else
 	if (g_colors > 2)
 	{
-		if (g_got_real_dac || fake_lut)
+		if (g_got_real_dac || g_fake_lut)
 		{                         /* got a DAC - must be a VGA */
 			if (!shftwrite((BYTE *) g_dac_box, 256))
 			{

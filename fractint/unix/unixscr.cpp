@@ -114,7 +114,7 @@ typedef unsigned long XPixel;
 static XPixel cmap_pixtab[256]; /* for faking a LUTs on non-LUT visuals */
 static int cmap_pixtab_alloced;
 static unsigned long do_fake_lut(int idx) {
-	return fake_lut ? cmap_pixtab[idx] : idx;
+	return g_fake_lut ? cmap_pixtab[idx] : idx;
 }
 #define FAKE_LUT(idx_) do_fake_lut(idx_)
 
@@ -424,7 +424,7 @@ static void select_visual(void)
 	case StaticColor:
 		g_colors = 1 << Xdepth;
 		g_got_real_dac = 0;
-		fake_lut = 0;
+		g_fake_lut = 0;
 		g_is_true_color = 0;
 		break;
 
@@ -432,7 +432,7 @@ static void select_visual(void)
 	case PseudoColor:
 		g_colors = 1 << Xdepth;
 		g_got_real_dac = 1;
-		fake_lut = 0;
+		g_fake_lut = 0;
 		g_is_true_color = 0;
 		break;
 
@@ -440,7 +440,7 @@ static void select_visual(void)
 	case DirectColor:
 		g_colors = 256;
 		g_got_real_dac = 0;
-		fake_lut = 1;
+		g_fake_lut = 1;
 		g_is_true_color = 0;
 		break;
 
@@ -499,7 +499,7 @@ void initUnixWindow()
 	{
 		int offx, offy;
 		fastmode = 0;
-		fake_lut = 0;
+		g_fake_lut = 0;
 		g_is_true_color = 0;
 		g_got_real_dac = 1;
 		g_colors = 256;
@@ -699,7 +699,7 @@ static void doneXwindow()
 static void clearXwindow()
 {
 	int i;
-	if (fake_lut)
+	if (g_fake_lut)
 	{
 		int j;
 		for (j = 0; j < Ximage->height; j++)
@@ -982,7 +982,7 @@ static int xcmapstuff()
 	if (!g_got_real_dac)
 	{
 		Xcmap = DefaultColormapOfScreen(Xsc);
-		if (fake_lut)
+		if (g_fake_lut)
 		{
 			writevideopalette();
 		}
@@ -1218,7 +1218,7 @@ int readvideo(int x, int y)
 		fprintf(stderr, "Bad coord %d %d\n", x, y);
 	}
 #endif
-	if (fake_lut)
+	if (g_fake_lut)
 	{
 		int i;
 		XPixel pixel = XGetPixel(Ximage, x, y);
@@ -1291,9 +1291,9 @@ int writevideopalette()
 
 	if (!g_got_real_dac)
 	{
-		if (fake_lut)
+		if (g_fake_lut)
 		{
-			/* !g_got_real_dac, fake_lut => truecolor, directcolor displays */
+			/* !g_got_real_dac, g_fake_lut => truecolor, directcolor displays */
 			static unsigned char last_dac[256][3];
 			static int last_dac_inited = False;
 
@@ -1329,7 +1329,7 @@ int writevideopalette()
 		}
 		else
 		{
-			/* !g_got_real_dac, !fake_lut => static color, static gray displays */
+			/* !g_got_real_dac, !g_fake_lut => static color, static gray displays */
 			assert(1);
 		}
 	}
