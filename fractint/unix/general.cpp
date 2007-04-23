@@ -40,7 +40,7 @@ int inside_help = 0;
 
 extern int g_slides;	/* 1 for playback */
 
-int getakey(void);
+int get_a_key(void);
 
 /*
 ; ****************** Function initasmvars() *****************************
@@ -106,10 +106,10 @@ long divide(long x, long y, int n)
 }
 
 /*
-; ****************** Function getakey() *****************************
+; ****************** Function get_a_key() *****************************
 ; **************** Function keypressed() ****************************
 
-;       'getakey()' gets a key from either a "normal" or an enhanced
+;       'get_a_key()' gets a key from either a "normal" or an enhanced
 ;       keyboard.   Returns either the vanilla ASCII code for regular
 ;       keys, or 1000+(the scan code) for special keys (like F1, etc)
 ;       Use of this routine permits the Control-Up/Down arrow keys on
@@ -119,8 +119,8 @@ long divide(long x, long y, int n)
 ;       SCANCHEK utility
 ;
 ;       'keypressed()' returns a zero if no keypress is outstanding,
-;       and the value that 'getakey()' will return if one is.  Note
-;       that you must still call 'getakey()' to flush the character.
+;       and the value that 'get_a_key()' will return if one is.  Note
+;       that you must still call 'get_a_key()' to flush the character.
 ;       As a sidebar function, calls 'help()' if appropriate, or
 ;       'tab_display()' if appropriate.
 ;       Think of 'keypressed()' as a super-'kbhit()'.
@@ -182,7 +182,7 @@ int getakeynohelp(void)
 	int ch;
 	while (1)
 	{
-		ch = getakey();
+		ch = get_a_key();
 		if (ch != FIK_F1)
 		{
 			break;
@@ -194,7 +194,7 @@ int getakeynohelp(void)
 /*
 * This routine returns a keypress
 */
-int getakey(void)
+int get_a_key(void)
 {
 	int ch;
 
@@ -258,23 +258,6 @@ int getkeyint(int block)
 	}
 
 	return curkey;
-}
-
-/*
-; ***************** Function delay(int delaytime) ************************
-;
-;       performs a delay loop for 'delaytime' milliseconds
-*/
-void delay(int delaytime)
-{
-	static struct timeval delay;
-	delay.tv_sec = delaytime/1000;
-	delay.tv_usec = (delaytime%1000)*1000;
-#if defined( __SVR4) || defined(LINUX)
-	(void) select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &delay);
-#else
-	(void) select(0, (int *) 0, (int *) 0, (int *) 0, &delay);
-#endif
 }
 
 /*
