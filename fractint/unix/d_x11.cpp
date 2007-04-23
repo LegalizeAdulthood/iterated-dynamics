@@ -90,7 +90,7 @@ struct tagDriverX11
 	int ipixtab[256];
 	XPixel cmap_pixtab[256]; /* for faking a LUTs on non-LUT visuals */
 	int cmap_pixtab_alloced;
-	int g_fake_lut;
+	int fake_lut;
 
 	int fastmode; /* = 0; */ /* Don't draw pixels 1 at a time */
 	int alarmon; /* = 0; */ /* 1 if the refresh alarm is on */
