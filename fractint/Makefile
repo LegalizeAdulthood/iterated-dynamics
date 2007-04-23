@@ -219,7 +219,7 @@ ifeq ($(AS),/usr/bin/nasm)
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
-$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
+$(UDIR)/general.o $(UDIR)/unix.o \
 $(UDIR)/unixscr.o $(UDIR)/video.o \
 $(UDIR)/calmanfx.o $(UDIR)/d_x11.o $(UDIR)/os_unix.o
 
@@ -227,7 +227,7 @@ else
 
 U_OBJS = \
 $(UDIR)/calcmand.o $(UDIR)/calmanfp.o $(UDIR)/diskvidu.o $(UDIR)/fpu087.o \
-$(UDIR)/fracsuba.o $(UDIR)/general.o $(UDIR)/unix.o \
+$(UDIR)/general.o $(UDIR)/unix.o \
 $(UDIR)/unixscr.o $(UDIR)/video.o $(UDIR)/d_x11.o $(UDIR)/os_unix.o
 
 endif

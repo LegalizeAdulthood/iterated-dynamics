@@ -6,7 +6,6 @@ SRCS = \
     d_x11.cpp \
     diskvidu.cpp \
     fpu087.cpp \
-    fracsuba.cpp \
     general.cpp \
     os_unix.cpp \
     unix.cpp \
