@@ -671,19 +671,19 @@ static void getDouble(double *dst, unsigned char **src, int dir)
 		{
 			int s=0;
 			f = *dst;
-			if (f<0)
+			if (f < 0)
 			{
 				s = 0x80;
 				f = -f;
 			}
 			e = static_cast<int>(log(f)/log(2.));
 			f = f/pow(2., (double)e) - 1;
-			if (f<0)
+			if (f < 0)
 			{
 				e--;
 				f = (f+1)*2-1;
 			}
-			else if (f>=1)
+			else if (f >= 1)
 			{
 				e++;
 				f = (f+1)/2-1;
@@ -722,7 +722,10 @@ static void getFloat(float *dst, unsigned char **src, int dir)
 	{
 		for (i = 0; i < 4; i++)
 		{
-			if ((*src)[i] != 0) break;
+			if ((*src)[i] != 0)
+			{
+				break;
+			}
 		}
 		if (i == 4)
 		{
@@ -755,19 +758,19 @@ static void getFloat(float *dst, unsigned char **src, int dir)
 		{
 			int s=0;
 			f = *dst;
-			if (f<0)
+			if (f < 0)
 			{
 				s = 0x80;
 				f = -f;
 			}
 			e = static_cast<int>(log(f)/log(2.));
 			f = f/pow(2., (double)e) - 1;
-			if (f<0)
+			if (f < 0)
 			{
 				e--;
 				f = (f+1)*2-1;
 			}
-			else if (f>=1)
+			else if (f >= 1)
 			{
 				e++;
 				f = (f+1)/2-1;

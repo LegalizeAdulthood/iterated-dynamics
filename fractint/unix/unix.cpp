@@ -311,7 +311,7 @@ void findpath(const char *filename, char *fullpathname)
     int fd;
     char *fractdir;
 
-    if (filename[0]=='/')
+    if (filename[0] == '/')
     {
 		strcpy(fullpathname, filename);
 		fd = open(fullpathname, O_RDONLY);
@@ -437,7 +437,8 @@ int split_path(const char *file_template,
 		ext[0]   = 0;
 	}
 
-	if ((length = strlen(file_template)) == 0)
+	length = strlen(file_template);
+	if (length == 0)
 	{
 		return 0;
 	}
@@ -540,7 +541,7 @@ void ftimex(struct timebx *tp)
 	struct timeval  timep;
 	struct timezone timezp;
 
-	if ( gettimeofday(&timep, &timezp) != 0)
+	if (gettimeofday(&timep, &timezp) != 0)
 	{
 		perror("error in gettimeofday");
 		exit(0);
@@ -625,7 +626,7 @@ int fr_find_first(char *path)
 		currdir = NULL;
 	}
 	split_path(path, NULL, searchdir, searchname, searchext);
-	if (searchdir[0]=='\0')
+	if (searchdir[0] == '\0')
 	{
 		currdir = opendir(".");
 	}
@@ -633,7 +634,7 @@ int fr_find_first(char *path)
 	{
 		currdir = opendir(searchdir);
 	}
-	if (currdir==NULL)
+	if (currdir == NULL)
 	{
 		return -1;
 	}
@@ -670,15 +671,15 @@ int fr_find_next()
              strcpy(tmpname, searchdir);
              strcat(tmpname, dirEntry->d_name);
              stat(tmpname, &sbuf);
-             if ((sbuf.st_mode&S_IFMT)==S_IFREG &&
-                 (searchname[0]=='*' || strcmp(searchname, thisname)==0) &&
-                 (searchext[0]=='*' || strcmp(searchext, thisext)==0))
+             if ((sbuf.st_mode&S_IFMT) == S_IFREG &&
+                 (searchname[0] == '*' || strcmp(searchname, thisname) == 0) &&
+                 (searchext[0] == '*' || strcmp(searchext, thisext) == 0))
 			 {
                  return 0;
              }
-			 else if (((sbuf.st_mode&S_IFMT)==S_IFDIR) &&
-                 ((searchname[0]=='*' || searchext[0]=='*') ||
-                 (strcmp(searchname, thisname)==0)))
+			 else if (((sbuf.st_mode&S_IFMT) == S_IFDIR) &&
+                 ((searchname[0] == '*' || searchext[0] == '*') ||
+                 (strcmp(searchname, thisname) == 0)))
 			 {
                  return 0;
              }

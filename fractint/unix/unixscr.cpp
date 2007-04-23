@@ -12,7 +12,6 @@
 * Some of the zoombox code is from Bill Broadley.
 * David Sanderson straightened out a bunch of include file problems.
 */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -451,7 +450,9 @@ static void select_visual(void)
 		break;
 	}
 	if (g_colors > 256)
+	{
 		g_colors = 256;
+	}
 }
 
 /*
@@ -615,7 +616,10 @@ void initUnixWindow()
 			Xgc = XCreateGC(Xdp, Xw, 0, &Xgcvals);
 		}
 		g_colors = xcmapstuff();
-		if (g_rotate_hi == 255) g_rotate_hi = g_colors-1;
+		if (g_rotate_hi == 255)
+		{
+			g_rotate_hi = g_colors - 1;
+		}
 
 		XSetWMNormalHints(Xdp, Xw, size_hints);
 
@@ -699,8 +703,12 @@ static void clearXwindow()
 	{
 		int j;
 		for (j = 0; j < Ximage->height; j++)
+		{
 			for (i = 0; i < Ximage->width; i++)
+			{
 				XPutPixel(Ximage, i, j, cmap_pixtab[pixtab[0]]);
+			}
+		}
 	}
 	else if (pixtab[0] != 0)
 	{
@@ -784,7 +792,14 @@ static void initdacbox()
 			for (j = 0; j < 3; j++)
 			{
 				k = (i*(cyclic[sp][j])) & 127;
-				if (k < 64) g_dac_box[i][j] = k; else g_dac_box[i][j] = (127 - k);
+				if (k < 64)
+				{
+					g_dac_box[i][j] = k;
+				}
+				else
+				{
+					g_dac_box[i][j] = (127 - k);
+				}
 			}
 		}
 	}
@@ -801,10 +816,15 @@ static void initdacbox()
 		g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
 	}
 	if (s0)
+	{
 		for (i = 0; i < 256; i++)
+		{
 			for (j = 0; j < 3; j++)
+			{
 				g_dac_box[i][j] = 63 - g_dac_box[i][j];
-
+			}
+		}
+	}
 }
 
 
@@ -844,13 +864,19 @@ int resizeWindow()
 	unsigned int width, height;
 	int Xmwidth, Xpad;
 
-	if (unixDisk) return 0;
+	if (unixDisk)
+	{
+		return 0;
+	}
 	if (resize_flag)
 	{
 		Window root, parent, *children;
 		resize_flag = 0;
 		XQueryTree(Xdp, Xw, &root, &parent, &children, &junkui);
-		if (!parent) return 0;
+		if (!parent)
+		{
+			return 0;
+		}
 		XGetGeometry(Xdp, parent, &root, &junki, &junki,
 			&width, &height, &junkui, &junkui);
 		XResizeWindow(Xdp, Xw, width, height);
@@ -875,9 +901,13 @@ int resizeWindow()
 		g_final_aspect_ratio = g_screen_aspect_ratio;
 		Xpad = 8;  /* default, unless changed below */
 		if (Xdepth == 1)
+		{
 			Xmwidth = 1 + g_screen_width/8;
+		}
 		else if (Xdepth <= 8)
+		{
 			Xmwidth = g_screen_width;
+		}
 		else if (Xdepth <= 16)
 		{  /* 15 or 16 bpp */
 			Xmwidth = 2*g_screen_width;
@@ -894,7 +924,9 @@ int resizeWindow()
 		}
 		pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
 		if (Ximage != NULL)
+		{
 			XDestroyImage(Ximage);
+		}
 		Ximage = XCreateImage(Xdp, Xvi, Xdepth, ZPixmap, 0, NULL, g_screen_width,
 			g_screen_height, Xpad, Xmwidth);
 		if (Ximage == NULL)
@@ -951,7 +983,9 @@ static int xcmapstuff()
 	{
 		Xcmap = DefaultColormapOfScreen(Xsc);
 		if (fake_lut)
+		{
 			writevideopalette();
+		}
 	}
 	else if (sharecolor)
 	{
@@ -969,7 +1003,9 @@ static int xcmapstuff()
 		{
 			ncells = 1 << powr;
 			if (ncells > g_colors)
+			{
 				continue;
+			}
 			if (XAllocColorCells(Xdp, Xcmap, False, NULL, 0, pixtab,
 				(unsigned int) ncells))
 			{
@@ -1187,8 +1223,12 @@ int readvideo(int x, int y)
 		int i;
 		XPixel pixel = XGetPixel(Ximage, x, y);
 		for (i = 0; i < g_colors; i++)
+		{
 			if (cmap_pixtab[i] == pixel)
+			{
 				return i;
+			}
+		}
 		return 0;
 	}
 	else
@@ -1216,7 +1256,10 @@ int readvideopalette()
 {
 
 	int i;
-	if (g_got_real_dac == 0 && g_is_true_color && g_true_mode) return -1;
+	if (g_got_real_dac == 0 && g_is_true_color && g_true_mode)
+	{
+		return -1;
+	}
 	for (i = 0; i < g_colors; i++)
 	{
 		g_dac_box[i][0] = cols[i].red/1024;
@@ -1266,12 +1309,6 @@ int writevideopalette()
 					cols[i].green = g_dac_box[i][1]*1024;
 					cols[i].blue = g_dac_box[i][2]*1024;
 
-					/* This seems not to work in truecolor modes, so commented out!
-					if (cmap_pixtab_alloced)
-					{
-					XFreeColors(Xdp, Xcmap, cmap_pixtab + i, 1, None);
-					}
-					*/
 					if (XAllocColor(Xdp, Xcmap, &cols[i]))
 					{
 						cmap_pixtab[i] = cols[i].pixel;
@@ -1342,7 +1379,10 @@ int writevideopalette()
 */
 void setlinemode(int mode)
 {
-	if (unixDisk) return;
+	if (unixDisk)
+	{
+		return;
+	}
 	xlastcolor = -1;
 	if (mode == 0)
 	{
@@ -1485,7 +1525,10 @@ int xgetkey(int block)
 
 		/* Don't check X events every time, since that is expensive */
 		skipcount++;
-		if (block == 0 && skipcount < 25) break;
+		if (block == 0 && skipcount < 25)
+		{
+			break;
+		}
 		skipcount = 0;
 
 		if (!unixDisk)
@@ -1506,7 +1549,10 @@ int xgetkey(int block)
 				return translatekey(ch);
 			}
 		}
-		if (!block) break;
+		if (!block)
+		{
+			break;
+		}
 		FD_ZERO(&reads);
 		FD_SET(0, &reads);
 		if (unixDisk)
@@ -1682,21 +1728,30 @@ static int handleesc()
 	case 'd':
 		return FIK_HOME;
 	}
-	if (ch1 != '[') return FIK_ESC;
+	if (ch1 != '[')
+	{
+		return FIK_ESC;
+	}
 	ch1 = getachar();
 	if (ch1 == -1)
 	{
 		delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 		ch1 = getachar();
 	}
-	if (ch1 == -1 || !isdigit(ch1)) return FIK_ESC;
+	if (ch1 == -1 || !isdigit(ch1))
+	{
+		return FIK_ESC;
+	}
 	ch2 = getachar();
 	if (ch2 == -1)
 	{
 		delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 		ch2 = getachar();
 	}
-	if (ch2 == -1) return FIK_ESC;
+	if (ch2 == -1)
+	{
+		return FIK_ESC;
+	}
 	if (isdigit(ch2))
 	{
 		ch3 = getachar();
@@ -1705,7 +1760,10 @@ static int handleesc()
 			delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 			ch3 = getachar();
 		}
-		if (ch3 != '~') return FIK_ESC;
+		if (ch3 != '~')
+		{
+			return FIK_ESC;
+		}
 		ch2 = (ch2-'0')*10+ch3-'0';
 	}
 	else if (ch3 != '~')
@@ -2002,12 +2060,18 @@ static void OnKeyPress(XKeyEvent *xkey, int *ctl_mode, int *shift_mode)
 	case XK_KP_0:
 		step = 0;
 		initdacbox();
-		if (drawing_or_drawn) xbufkey = 'D';
+		if (drawing_or_drawn)
+		{
+			xbufkey = 'D';
+		}
 		return;
 	case XK_exclam:
 		step = (step & 126) + 1 - (step & 1);
 		initdacbox();
-		if (drawing_or_drawn) xbufkey = 'D';
+		if (drawing_or_drawn)
+		{
+			xbufkey = 'D';
+		}
 		return;
 	case XK_greater:
 		step = (step+2) % 50;
@@ -2017,17 +2081,26 @@ static void OnKeyPress(XKeyEvent *xkey, int *ctl_mode, int *shift_mode)
 	case XK_less:
 		step = (step+48) % 50;
 		initdacbox();
-		if (drawing_or_drawn) xbufkey = 'D';
+		if (drawing_or_drawn)
+		{
+			xbufkey = 'D';
+		}
 		return;
 	case XK_parenright:
 		step = (step+12) % 50;
 		initdacbox();
-		if (drawing_or_drawn) xbufkey = 'D';
+		if (drawing_or_drawn)
+		{
+			xbufkey = 'D';
+		}
 		return;
 	case XK_parenleft:
 		step = (step+38) % 50;
 		initdacbox();
-		if (drawing_or_drawn) xbufkey = 'D';
+		if (drawing_or_drawn)
+		{
+			xbufkey = 'D';
+		}
 		return;
 	case XK_equal:
 	case XK_KP_Equal:
@@ -2122,8 +2195,8 @@ static void OnButtonPress(XEvent *xevent,
 			}
 			*bandx1 = xevent->xmotion.x;
 			*bandy1 = xevent->xmotion.y;
-			if (ABS(*bandx1-*bandx0)*g_final_aspect_ratio >
-				ABS(*bandy1-*bandy0))
+			if (ABS(*bandx1 - *bandx0)*g_final_aspect_ratio >
+				ABS(*bandy1 - *bandy0))
 			{
 				*bandy1 = SIGN(*bandy1-*bandy0)*ABS(*bandx1-*bandx0)*
 					static_cast<int>(g_final_aspect_ratio) + *bandy0;
@@ -2138,8 +2211,8 @@ static void OnButtonPress(XEvent *xevent,
 				/* Don't start rubber-banding until the mouse
 				gets moved.  Otherwise a click messes up the
 				window */
-				if (ABS(*bandx1-*bandx0) > 10 ||
-					ABS(*bandy1-*bandy0) > 10)
+				if (ABS(*bandx1 - *bandx0) > 10 ||
+					ABS(*bandy1 - *bandy0) > 10)
 				{
 					banding = 1;
 					XSetForeground(Xdp, Xgc, g_colors-1);
@@ -2462,8 +2535,8 @@ static void RemoveRootPixmap()
 
 	prop = XInternAtom(Xdp, "_XSETROOT_ID", False);
 	if (XGetWindowProperty(Xdp, Xroot, prop, (long) 0, (long) 1, 1, AnyPropertyType,
-		&type, &format, &nitems, &after, (unsigned char **) &pm) ==
-		Success && nitems == 1)
+			&type, &format, &nitems, &after, (unsigned char **) &pm) == Success
+		&& nitems == 1)
 	{
 		if (type == XA_PIXMAP && format == 32 && after == 0)
 		{
@@ -2516,7 +2589,10 @@ unsigned char *xgetfont()
 		sleep(2);
 		font_info = XLoadQueryFont(Xdp, "6x12");
 	}
-	if (font_info == NULL) return NULL;
+	if (font_info == NULL)
+	{
+		return NULL;
+	}
 	width = font_info->max_bounds.width;
 	if (font_info->max_bounds.width > 8 ||
 		font_info->max_bounds.width != font_info->min_bounds.width)
@@ -2633,7 +2709,10 @@ void shell_to_dos()
 	while (1)
 	{
 		donepid = wait(0);
-		if (donepid < 0 || donepid == pid) break;
+		if (donepid < 0 || donepid == pid)
+		{
+			break;
+		}
 	}
 
 	/* Go back to curses mode */
@@ -2670,7 +2749,10 @@ void shell_to_dos()
 #define DRAW_INTERVAL 6
 void schedulealarm(int soon)
 {
-	if (!fastmode) return;
+	if (!fastmode)
+	{
+		return;
+	}
 	signal(SIGALRM, (SignalHandler) setredrawscreen);
 	if (soon)
 	{
@@ -2731,8 +2813,9 @@ void redrawscreen()
 	}
 	doredraw = 0;
 	if (!unixDisk)
-		XSelectInput(Xdp, Xw, KeyPressMask|KeyReleaseMask|ExposureMask|
-		ButtonPressMask|ButtonReleaseMask|
-		PointerMotionMask|StructureNotifyMask);
+	{
+		XSelectInput(Xdp, Xw, KeyPressMask | KeyReleaseMask | ExposureMask
+			| ButtonPressMask | ButtonReleaseMask
+			| PointerMotionMask | StructureNotifyMask);
+	}
 }
-
