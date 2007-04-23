@@ -47,17 +47,7 @@ extern void winfract_help(void);
 
 /*  windos2 -- C file prototypes */
 
-extern void movecursor(int, int);
-extern void setattr(int, int, int, int);
-extern void putstring(int, int, int, unsigned char *);
 extern int  strncasecmp(char *,char *,int);
-extern int  input_field(int, int, char *, int, int, int, int (*)(int) );
-extern void help_title(void);
-extern void stackscreen(void);
-extern void unstackscreen(void);
-extern void discardscreen(void);
-extern int load_palette(void);
-extern void save_palette(void);
 extern void fractint_help(void);
 extern int getakeynohelp(void);
 extern int win_make_batch_file(void);

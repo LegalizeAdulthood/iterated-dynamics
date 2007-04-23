@@ -82,8 +82,8 @@ int g_text_type = 1;		/* current mode's type of text:
 				   0  = real text, mode 3 (or 7)
 				   1  = 640x200x2, mode 6
 				   2  = some other mode, graphics */
-int g_text_row = 0;		/* for put_string(-1,...) */
-int g_text_col = 0;		/* for put_string(..,-1,...) */
+int g_text_row = 0;		/* for driver_put_string(-1,...) */
+int g_text_col = 0;		/* for driver_put_string(..,-1,...) */
 int g_text_rbase = 0;		/* g_text_row is relative to this */
 int g_text_cbase = 0;		/* g_text_col is relative to this */
 
@@ -135,7 +135,7 @@ static void normal_line_write(int, int, int, BYTE *);
 void put_prompt(void)
 {
 	wclear(curwin);		/* ???? */
-	put_string(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
+	driver_put_string(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
 	wrefresh(curwin);
 	return;
 }
@@ -288,7 +288,7 @@ int keycursor(int row, int col)
 
 /*
 ; PUTSTR.asm puts a string directly to video display memory. Called from C by:
-;    put_string(row, col, attr, string) where
+;    driver_put_string(row, col, attr, string) where
 ;         row, col = row and column to start printing.
 ;         attr = color attribute.
 ;         string = far pointer to the null terminated string to print.

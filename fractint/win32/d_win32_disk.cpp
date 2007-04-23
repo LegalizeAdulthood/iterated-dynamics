@@ -648,7 +648,7 @@ void disk_set_video_mode(Driver *drv, VIDEOINFO *mode)
 
 /*
 ; PUTSTR.asm puts a string directly to video display memory. Called from C by:
-;    putstring(row, col, attr, string) where
+;    driver_put_string(row, col, attr, string) where
 ;         row, col = row and column to start printing.
 ;         attr = color attribute.
 ;         string = pointer to the null terminated string to print.

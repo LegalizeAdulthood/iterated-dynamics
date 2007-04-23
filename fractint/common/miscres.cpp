@@ -92,11 +92,11 @@ void not_disk_message()
 		"abort if it appears that your disk drive is working too hard.");
 }
 
-/* Wrapping version of putstring for long numbers                         */
+/* Wrapping version of driver_put_string for long numbers                         */
 /* row     -- pointer to row variable, internally incremented if needed   */
 /* col1    -- starting column                                             */
 /* col2    -- last column                                                 */
-/* color   -- attribute (same as for putstring)                           */
+/* color   -- attribute (same as for driver_put_string)                           */
 /* maxrow -- max number of rows to write                                 */
 /* returns 0 if success, 1 if hit maxrow before done                      */
 int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow)
