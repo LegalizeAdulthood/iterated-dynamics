@@ -45,6 +45,7 @@
 #include "prototyp.h"
 #include "externs.h"
 #include "fihelp.h"
+#include "drivers.h"
 
 #ifdef LINUX
 #ifndef FNDELAY
@@ -64,7 +65,6 @@
 
 #define MSCALE 1
 
-extern void delay(int);
 
 /* Check if there is a character waiting for us.  */
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int) iocount)
@@ -1708,7 +1708,7 @@ static int handleesc()
 	ch1 = getachar();
 	if (ch1 == -1)
 	{
-		delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+		driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 		ch1 = getachar();
 	}
 	if (ch1 == -1)
@@ -1735,7 +1735,7 @@ static int handleesc()
 	ch1 = getachar();
 	if (ch1 == -1)
 	{
-		delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+		driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 		ch1 = getachar();
 	}
 	if (ch1 == -1 || !isdigit(ch1))
@@ -1745,7 +1745,7 @@ static int handleesc()
 	ch2 = getachar();
 	if (ch2 == -1)
 	{
-		delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+		driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 		ch2 = getachar();
 	}
 	if (ch2 == -1)
@@ -1757,7 +1757,7 @@ static int handleesc()
 		ch3 = getachar();
 		if (ch3 == -1)
 		{
-			delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+			driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 			ch3 = getachar();
 		}
 		if (ch3 != '~')
@@ -1806,7 +1806,7 @@ static int handleesc()
 	ch1 = getachar();
 	if (ch1 == -1)
 	{
-		delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+		driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 		ch1 = getachar();
 	}
 	if (ch1 != '[')
@@ -1816,7 +1816,7 @@ static int handleesc()
 	ch1 = getachar();
 	if (ch1 == -1)
 	{
-		delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+		driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 		ch1 = getachar();
 	}
 	if (ch1 == -1)
@@ -1839,7 +1839,7 @@ static int handleesc()
 	ch2 = getachar();
 	if (ch2 == -1)
 	{
-		delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+		driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 		ch2 = getachar();
 	}
 	if (ch2 == '~')
@@ -1867,7 +1867,7 @@ static int handleesc()
 		ch3 = getachar();
 		if (ch3 == -1)
 		{
-			delay(250); /* Wait 1/4 sec to see if a control sequence follows */
+			driver_delay(250); /* Wait 1/4 sec to see if a control sequence follows */
 			ch3 = getachar();
 		}
 		if (ch3 != '~')
