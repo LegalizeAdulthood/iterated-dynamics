@@ -234,7 +234,7 @@ prompt_user:
 			paramvalues[promptnum++].uval.sbuf = colorspec;
 			choices[promptnum] = "    (no | yes | only for full info | @filename to point to a map file)";
 			paramvalues[promptnum++].type = '*';
-			choices[promptnum] = "# of g_colors";
+			choices[promptnum] = "# of colors";
 			maxcolorindex = promptnum;
 			paramvalues[promptnum].type = 'i';
 			paramvalues[promptnum++].uval.ival = maxcolor;
