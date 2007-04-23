@@ -1433,7 +1433,7 @@ docolors:
 #ifdef XFRACT
 			if (fake_lut && !g_true_mode) /* stupid kludge JCO 6/23/2001  */
 			{
-				loaddac();
+				load_dac();
 			}
 #endif
 			while (1)

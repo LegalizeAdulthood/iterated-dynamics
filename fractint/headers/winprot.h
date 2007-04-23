@@ -8,11 +8,6 @@
 extern long cdecl calculate_mandelbrot_fp_p5_asm(void);
 extern void cdecl calculate_mandelbrot_fp_p5_asm_start(void);
 
-/*  wgeneral -- assembler file prototypes */
-
-extern long cdecl multiply(long, long, int);
-extern long cdecl divide(long, long, int);
-
 /*  prompts1 -- C file prototypes */
 
 extern void set_default_parms(void);
@@ -28,8 +23,7 @@ extern void far_memset(void *, int , int);
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void putcolor_a (int, int, int);
-extern void spindac(int, int);
-extern void buzzer (int);
+extern void buzzer(int);
 extern int thinking(int, char *);
 extern void CalibrateDelay(void);
 extern void start_wait(void);
@@ -130,7 +124,6 @@ extern void setvideotext(void);
 /* added for Win32 port */
 extern void gettruecolor(int, int, int*, int*, int*);
 extern void puttruecolor(int, int, int, int, int);
-extern void setnullvideo(void);
 extern void delay(int);
 extern void initasmvars(void);
 extern void adapter_detect(void);

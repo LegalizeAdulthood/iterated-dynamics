@@ -10,6 +10,12 @@
 #include "externs.h"
 
 extern int get_corners(void);
+extern int getakeynohelp(void);
+extern void set_null_video(void);
+extern void spindac(int, int);
+extern void adapter_detect(void);
+extern int get_sound_params(void);
+extern void initasmvars(void);
 
 /* maintain the common prototypes in this file
  * split the dos/win/unix prototypes into separate files.
@@ -27,6 +33,11 @@ extern int get_corners(void);
 #include "dosprot.h"
 #endif
 
+extern long cdecl divide(long, long, int);
+extern long cdecl multiply(long, long, int);
+extern void put_line(int, int, int, BYTE *);
+extern void get_line(int, int, int, BYTE *);
+extern void find_special_colors(void);
 extern long readticker(void);
 
 /*  calcmand -- assembler file prototypes */
@@ -263,7 +274,6 @@ extern int _fastcall new_to_old(int new_fractype);
 
 extern void save_parameter_history(void);
 extern void restore_parameter_history(void);
-extern  int get_variations(void);
 extern  int get_evolve_parameters(void);
 extern  void set_current_parameters(void);
 extern  void fiddle_parameters(GENEBASE gene[], int ecount);
@@ -272,7 +282,6 @@ extern  void set_mutation_level(int);
 extern  void draw_parameter_box(int);
 extern  void spiral_map(int);
 extern  int unspiral_map(void);
-extern  int explore_check(void);
 extern  void setup_parameter_box(void);
 extern  void release_parameter_box(void);
 
@@ -722,7 +731,7 @@ extern void expand_comments(char *, char *);
 /*  miscres -- C file prototypes */
 
 extern void restore_active_ovly(void);
-extern void findpath(char *, char *);
+extern void findpath(const char *, char *);
 extern void not_disk_message(void);
 extern void convert_center_mag(double *, double *, LDBL *, double *, double *, double *);
 extern void convert_corners(double, double, LDBL, double, double, double);
@@ -1021,19 +1030,19 @@ extern int show_vid_length(void);
 extern int stop_message(int, char *);
 extern void blank_rows(int, int, int);
 extern int text_temp_message(char *);
-extern int full_screen_choice(int options, char *hdg, char *hdg2,
-							 char *instr, int numchoices, char **choices, int *attributes,
-							 int boxwidth, int boxdepth, int colwidth, int current,
-							 void (*formatitem)(int, char *), char *speedstring,
-							 int (*speedprompt)(int, int, int, char *, int),
-							 int (*checkkey)(int, int));
-extern int full_screen_choice_help(int help_mode, int options, char *hdg, char *hdg2,
-							 char *instr, int numchoices, char **choices, int *attributes,
-							 int boxwidth, int boxdepth, int colwidth, int current,
-							 void (*formatitem)(int, char *), char *speedstring,
-							 int (*speedprompt)(int, int, int, char *, int),
-							 int (*checkkey)(int, int));
-#if !defined(WINFRACT)
+extern int full_screen_choice(int options, const char *hdg, char *hdg2,
+	char *instr, int numchoices, char **choices, int *attributes,
+	int boxwidth, int boxdepth, int colwidth, int current,
+	void (*formatitem)(int, char *), char *speedstring,
+	int (*speedprompt)(int, int, int, char *, int),
+	int (*checkkey)(int, int));
+extern int full_screen_choice_help(int help_mode, int options,
+	const char *hdg, char *hdg2, char *instr, int numchoices,
+	char **choices, int *attributes, int boxwidth, int boxdepth,
+	int colwidth, int current, void (*formatitem)(int, char *),
+	char *speedstring, int (*speedprompt)(int, int, int, char *, int),
+	int (*checkkey)(int, int));
+
 extern int show_temp_message(char *);
 extern void clear_temp_message(void);
 extern void help_title(void);
@@ -1050,7 +1059,7 @@ extern int check_video_mode_key(int, int);
 extern int check_vidmode_keyname(char *);
 extern void video_mode_key_name(int, char *);
 extern void free_temp_message(void);
-#endif
+
 extern void load_video_table(int);
 extern void bad_fractint_cfg_msg(void);
 

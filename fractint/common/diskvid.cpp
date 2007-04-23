@@ -99,7 +99,7 @@ int disk_start_targa(FILE *targafp, int overhead)
 	if (driver_diskp())	/* ditch the original file, make just the targa */
 	{
 		disk_end();      /* close the 'screen' */
-		setnullvideo(); /* set readdot and writedot routines to do nothing */
+		set_null_video(); /* set readdot and writedot routines to do nothing */
 	}
 	s_header_length = overhead;
 	s_file = targafp;

@@ -36,8 +36,8 @@ static  void trigdetails(char *);
 static void area(void);
 
 #ifndef XFRACT
-
-void findpath(char *filename, char *fullpathname) /* return full pathnames */
+/* return full pathnames */
+void findpath(const char *filename, const char *fullpathname)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
@@ -63,8 +63,8 @@ void findpath(char *filename, char *fullpathname) /* return full pathnames */
 		}
 		else
 		{
-		split_path(temp_path , NULL, NULL, fname, ext);
-		make_path(temp_path, ""   , "" , fname, ext);
+			split_path(temp_path , NULL, NULL, fname, ext);
+			make_path(temp_path, ""   , "" , fname, ext);
 		}
 	}
 	fullpathname[0] = 0;                         /* indicate none found */

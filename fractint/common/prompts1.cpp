@@ -1162,7 +1162,8 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 
 	tname[0] = 0;
 	done = full_screen_choice(CHOICE_HELP | CHOICE_INSTRUCTIONS,
-		g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type",
+		(g_julibrot ?
+			"Select Orbit Algorithm for Julibrot" : "Select a Fractal Type"),
 		NULL, "Press "FK_F2" for a description of the highlighted type", numtypes,
 		(char **)choices, attributes, 0, 0, 0, j, NULL, tname, NULL, sel_fractype_help);
 	if (done >= 0)

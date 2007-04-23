@@ -4,8 +4,6 @@
 /* This file contains prototypes for unix/linux specific functions. */
 
 
-
-
 /*  calmanp5 -- assembler file prototypes */
 
 extern long  cdecl calcmandfpasm_c(void);
@@ -27,8 +25,8 @@ extern void decode_orbits_info(struct orbits_info *, int);
  */
 extern long clock_ticks(void);
 #ifndef HAVESTRI
-extern int stricmp(char *, char *);
-extern int strnicmp(char *, char *, int);
+extern int stricmp(const char *, const char *);
+extern int strnicmp(const char *, const char *, int);
 #endif
 #if !defined(_WIN32)
 extern int memicmp(char *, char *, int);
@@ -89,8 +87,8 @@ void schedulealarm(int soon);
 /*
  *   video.c -- C file prototypes
  */
-extern void putprompt(void);
-extern void loaddac(void);
+extern void put_prompt(void);
+extern void load_dac(void);
 extern void putcolor_a(int, int, int);
 extern int  out_line(BYTE *, int);
 extern int  getcolor(int, int);
