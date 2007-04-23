@@ -1005,7 +1005,7 @@ extern int get_commands(void);
 extern void goodbye(void);
 extern int is_a_directory(char *s);
 extern int get_a_filename(char *, char *, char *);
-extern int split_path(char *file_template, char *drive, char *dir, char *fname, char *ext);
+extern int split_path(const char *file_template, char *drive, char *dir, char *fname, char *ext);
 extern int make_path(char *file_template, char *drive, char *dir, char *fname, char *ext);
 extern int fr_find_first(char *path);
 extern int fr_find_next(void);

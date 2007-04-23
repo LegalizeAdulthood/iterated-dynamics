@@ -1835,12 +1835,12 @@ int is_a_directory(char *s)
 
 #ifndef XFRACT  /* This routine moved to unix.c so we can use it in hc.c */
 
-int split_path(char *file_template, char *drive, char *dir, char *fname, char *ext)
+int split_path(const char *file_template, char *drive, char *dir, char *fname, char *ext)
 {
 	int length;
 	int len;
 	int offset;
-	char *tmp;
+	const char *tmp;
 	if (drive)
 	{
 		drive[0] = 0;
