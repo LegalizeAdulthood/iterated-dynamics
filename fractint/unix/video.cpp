@@ -1,8 +1,10 @@
 #include <curses.h>
 #include <string.h>
+
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"
+#include "drivers.h"
 
 /*
  * This file contains Unix versions of the routines in video.asm
