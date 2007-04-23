@@ -229,7 +229,7 @@ prompt_user:
 		if (g_got_real_dac || (g_is_true_color && !g_true_mode) || g_fake_lut)
 #endif
 		{
-			choices[promptnum] = "Record g_colors?";
+			choices[promptnum] = "Record colors?";
 			paramvalues[promptnum].type = 0x100 + 13;
 			paramvalues[promptnum++].uval.sbuf = colorspec;
 			choices[promptnum] = "    (no | yes | only for full info | @filename to point to a map file)";
@@ -1309,7 +1309,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 
 		if (g_polyphony != 0)
 		{
-			put_parm(" g_polyphony=%d", g_polyphony + 1);
+			put_parm(" polyphony=%d", g_polyphony + 1);
 		}
 
 		if (g_fm_wave_type != 0)
@@ -1415,12 +1415,12 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		if (g_record_colors == 'c' && *colorinf == '@')
 		{
 			put_parm_line();
-			put_parm("; g_colors=");
+			put_parm("; colors=");
 			put_parm(colorinf);
 			put_parm_line();
 		}
 docolors:
-		put_parm(" g_colors=");
+		put_parm(" colors=");
 		if (g_record_colors != 'c' && g_record_colors != 'y' && *colorinf == '@')
 		{
 			put_parm(colorinf);
@@ -2832,7 +2832,7 @@ static char *expand_var(char *var, char *buf)
 		strcat(out, ", ");
 		strcat(out, &str[20]);
 	}
-	else if (strcmp(var, "g_calculation_time") == 0)
+	else if (strcmp(var, "calctime") == 0)
 	{
 		get_calculation_time(buf, g_calculation_time);
 		out = buf;
@@ -2847,12 +2847,12 @@ static char *expand_var(char *var, char *buf)
 		sprintf(buf, "%d", g_patch_level);
 		out = buf;
 	}
-	else if (strcmp(var, "g_x_dots") == 0)   /* 2 to 4 chars */
+	else if (strcmp(var, "xdots") == 0)   /* 2 to 4 chars */
 	{
 		sprintf(buf, "%d", g_x_dots);
 		out = buf;
 	}
-	else if (strcmp(var, "g_y_dots") == 0)   /* 2 to 4 chars */
+	else if (strcmp(var, "ydots") == 0)   /* 2 to 4 chars */
 	{
 		sprintf(buf, "%d", g_y_dots);
 		out = buf;

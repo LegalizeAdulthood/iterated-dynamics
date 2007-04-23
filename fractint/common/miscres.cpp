@@ -1116,7 +1116,7 @@ top:
 		else
 		if (g_got_status != GOT_STATUS_3D)
 		{
-			sprintf(msg, "Working on g_block (y, x) [%d, %d]...[%d, %d], ",
+			sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
 					g_yy_start, g_xx_start, g_yy_stop, g_xx_stop);
 			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
 			if (g_got_status == GOT_STATUS_BOUNDARY_TRACE || g_got_status == GOT_STATUS_TESSERAL)  /* btm or tesseral */
