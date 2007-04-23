@@ -37,7 +37,7 @@ static void area(void);
 
 #ifndef XFRACT
 /* return full pathnames */
-void findpath(const char *filename, const char *fullpathname)
+void findpath(const char *filename, char *fullpathname)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
