@@ -174,10 +174,10 @@ extern void cursor_set_position();
 #define FONT "-*-*-medium-r-*-*-9-*-*-*-*-*-iso8859-*"
 #define DRAW_INTERVAL 6
 
-extern void (*dot_write)(int, int, int);	/* write-a-dot routine */
-extern int (*dot_read)(int, int); 	/* read-a-dot routine */
-extern void (*line_write)(int, int, int, BYTE *);	/* write-a-line routine */
-extern void (*line_read)(int, int, int, BYTE *);	/* read-a-line routine */
+extern void (*g_dot_write)(int, int, int);	/* write-a-dot routine */
+extern int (*g_dot_read)(int, int); 	/* read-a-dot routine */
+extern void (*g_line_write)(int, int, int, BYTE *);	/* write-a-line routine */
+extern void (*g_line_read)(int, int, int, BYTE *);	/* read-a-line routine */
 
 static void x11_terminate(Driver *drv);
 static void x11_flush(Driver *drv);
@@ -2604,10 +2604,10 @@ static void x11_set_video_mode(Driver *drv, VIDEOINFO *mode)
 		break;
 
 	case 19: /* X window */
-		dot_write = driver_write_pixel;
-		dot_read = driver_read_pixel;
-		line_read = driver_read_span;
-		line_write = driver_write_span;
+		g_dot_write = driver_write_pixel;
+		g_dot_read = driver_read_pixel;
+		g_line_read = driver_read_span;
+		g_line_write = driver_write_span;
 		x11_start_video(drv);
 		x11_set_for_graphics(drv);
 		break;
