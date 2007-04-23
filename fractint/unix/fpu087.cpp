@@ -24,84 +24,84 @@ double PointFive = 0.5;
 
 void FPUaptan387(double *y, double *x, double *atan)
 {
-    *atan = atan2(*y, *x);
+	*atan = atan2(*y, *x);
 }
 
 void FPUcplxmul(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
-    double tx;
-    tx = x->x * y->x - x->y * y->y;
-    z->y = x->x * y->y + x->y * y->x;
-    z->x = tx;
+	double tx;
+	tx = x->x * y->x - x->y * y->y;
+	z->y = x->x * y->y + x->y * y->x;
+	z->x = tx;
 }
 
 void FPUcplxdiv(_CMPLX *x, _CMPLX *y, _CMPLX *z)
 {
-    double mod, tx, yxmod, yymod;
-    mod = y->x * y->x + y->y * y->y;
-    if (mod == 0)
+	double mod, tx, yxmod, yymod;
+	mod = y->x * y->x + y->y * y->y;
+	if (mod == 0)
 	{
 		DivideOverflow++;
-    }
-    yxmod = y->x/mod;
-    yymod = - y->y/mod;
-    tx = x->x * yxmod - x->y * yymod;
-    z->y = x->x * yymod + x->y * yxmod;
-    z->x = tx;
+	}
+	yxmod = y->x/mod;
+	yymod = - y->y/mod;
+	tx = x->x * yxmod - x->y * yymod;
+	z->y = x->x * yymod + x->y * yxmod;
+	z->x = tx;
 }
 
 void FPUsincos(double *Angle, double *Sin, double *Cos)
 {
-    *Sin = sin(*Angle);
-    *Cos = cos(*Angle);
+	*Sin = sin(*Angle);
+	*Cos = cos(*Angle);
 }
 
 void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
 {
-    *Sinh = sinh(*Angle);
-    *Cosh = cosh(*Angle);
+	*Sinh = sinh(*Angle);
+	*Cosh = cosh(*Angle);
 }
 
 void FPUcplxlog(_CMPLX *x, _CMPLX *z)
 {
-    double mod, zx, zy;
-    mod = sqrt(x->x*x->x + x->y*x->y);
-    zx = log(mod);
-    zy = atan2(x->y, x->x);
+	double mod, zx, zy;
+	mod = sqrt(x->x*x->x + x->y*x->y);
+	zx = log(mod);
+	zy = atan2(x->y, x->x);
 
-    z->x = zx;
-    z->y = zy;
+	z->x = zx;
+	z->y = zy;
 }
 
 void FPUcplxexp387(_CMPLX *x, _CMPLX *z)
 {
-    double pow, y;
-    y = x->y;
-    pow = exp(x->x);
-    z->x = pow*cos(y);
-    z->y = pow*sin(y);
+	double pow, y;
+	y = x->y;
+	pow = exp(x->x);
+	z->x = pow*cos(y);
+	z->y = pow*sin(y);
 }
 
 /* Integer Routines */
 void SinCos086(long x, long *sinx, long *cosx)
 {
-    double a;
-    a = x/(double)(1 << 16);
-    *sinx = (long) (sin(a)*(double)(1 << 16));
-    *cosx = (long) (cos(a)*(double)(1 << 16));
+	double a;
+	a = x/(double)(1 << 16);
+	*sinx = (long) (sin(a)*(double)(1 << 16));
+	*cosx = (long) (cos(a)*(double)(1 << 16));
 }
 
 void SinhCosh086(long x, long *sinx, long *cosx)
 {
-    double a;
-    a = x/(double)(1 << 16);
-    *sinx = (long) (sinh(a)*(double)(1 << 16));
-    *cosx = (long) (cosh(a)*(double)(1 << 16));
+	double a;
+	a = x/(double)(1 << 16);
+	*sinx = (long) (sinh(a)*(double)(1 << 16));
+	*cosx = (long) (cosh(a)*(double)(1 << 16));
 }
 
 long Exp086(long x)
 {
-    return (long) (exp((double)x/(double)(1 << 16))*(double)(1 << 16));
+	return (long) (exp((double)x/(double)(1 << 16))*(double)(1 << 16));
 }
 
 #define em2float(l) (*(float *)&(l))
@@ -112,29 +112,29 @@ long Exp086(long x)
  */
 unsigned long ExpFudged(long x, int Fudge)
 {
-    return (long) (exp((double)x/(double)(1 << 16))*(double)(1 << Fudge));
+	return (long) (exp((double)x/(double)(1 << 16))*(double)(1 << Fudge));
 }
 
 /* This multiplies two e/m numbers and returns an e/m number. */
 long r16Mul(long x, long y)
 {
-    float f;
-    f = em2float(x)*em2float(y);
-    return float2em(f);
+	float f;
+	f = em2float(x)*em2float(y);
+	return float2em(f);
 }
 
 /* This takes an exp/mant number and returns a shift-16 number */
 long LogFloat14(unsigned long x)
 {
-    return ((long) log((double) em2float(x)))*(1 << 16);
+	return ((long) log((double) em2float(x)))*(1 << 16);
 }
 
 /* This divides two e/m numbers and returns an e/m number. */
 long RegDivFloat(long x, long y)
 {
-    float f;
-    f = em2float(x)/em2float(y);
-    return float2em(f);
+	float f;
+	f = em2float(x)/em2float(y);
+	return float2em(f);
 }
 
 /*
@@ -145,11 +145,11 @@ long RegDivFloat(long x, long y)
  */
 long RegFg2Float(long x, int FudgeFact)
 {
-    float f;
-    long l;
-    f = x/(float)(1 << FudgeFact);
-    l = float2em(f);
-    return l;
+	float f;
+	long l;
+	f = x/(float)(1 << FudgeFact);
+	l = float2em(f);
+	return l;
 }
 
 /*
@@ -157,20 +157,20 @@ long RegFg2Float(long x, int FudgeFact)
  */
 long RegFloat2Fg(long x, int Fudge)
 {
-    return (long) (em2float(x)*(float) (1 << Fudge));
+	return (long) (em2float(x)*(float) (1 << Fudge));
 }
 
 long RegSftFloat(long x, int Shift)
 {
-    float f;
-    f = em2float(x);
-    if (Shift > 0)
+	float f;
+	f = em2float(x);
+	if (Shift > 0)
 	{
 		f *= (1 << Shift);
-    }
+	}
 	else
 	{
 		f /= (1 << Shift);
-    }
-    return float2em(f);
+	}
+	return float2em(f);
 }
