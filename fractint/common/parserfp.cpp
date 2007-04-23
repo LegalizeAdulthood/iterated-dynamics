@@ -865,7 +865,7 @@ awful_error:
 			}
 			else if (FNPTR(cvtptrx-1) == fStkLodReal
 					|| FNPTR(cvtptrx-1) == fStkLodRealC)
-					{
+			{
 				/* lodreal *?push?? (*?lodmul)  */
 				otemp = OPPTR(cvtptrx-1);  /* save previous fn's operand  */
 				FNPTR(cvtptrx-1) = fStkLod;  /* prev fn = lod  */

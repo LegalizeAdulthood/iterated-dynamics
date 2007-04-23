@@ -522,8 +522,9 @@ int full_screen_choice(
 	g_look_at_mouse = LOOK_MOUSE_NONE;
 	ret = -1;
 	/* preset current to passed string */
-	if (speedstring && (i = (int) strlen(speedstring)) > 0)
+	if (speedstring && *speedstring)
 	{
+		i = (int) strlen(speedstring);
 		current = 0;
 		if (options & CHOICE_NOT_SORTED)
 		{
@@ -631,7 +632,8 @@ int full_screen_choice(
 	{
 		++reqdrows;   /* a row for speedkey prompt */
 	}
-	if (boxdepth > (i = 25 - reqdrows)) /* limit the depth to max */
+	i = 25 - reqdrows;
+	if (boxdepth > i) /* limit the depth to max */
 	{
 		boxdepth = i;
 	}
@@ -657,16 +659,6 @@ int full_screen_choice(
 			}
 		}
 	}
-#if 0
-	if ((i = 77 / boxwidth - colwidth) > 3) /* spaces to add @ left each choice */
-	{
-		i = 3;
-	}
-	if (i == 0)
-	{
-		i = 1;
-	}
-#else
 	i = (80 / boxwidth - colwidth) / 2 - 1;
 	if (i == 0) /* to allow wider prompts */
 	{
@@ -680,7 +672,6 @@ int full_screen_choice(
 	{
 		i = 3;
 	}
-#endif
 	j = boxwidth*(colwidth += i) + i;     /* overall width of box */
 	if (j < titlewidth + 2)
 	{
@@ -1807,16 +1798,20 @@ int field_prompt(
 		charptr = instr;
 		j = -1;
 		while ((buf[++j] = *(charptr++)) != 0)
+		{
 			if (buf[j] == '\n')
 			{
 				buf[j] = 0;
 				put_string_center(i++, 0, 80, C_PROMPT_BKGRD, buf);
 				j = -1;
-				}
-		put_string_center(i, 0, 80, C_PROMPT_BKGRD, buf);
+			}
 		}
+		put_string_center(i, 0, 80, C_PROMPT_BKGRD, buf);
+	}
 	else                                   /* default instructions */
+	{
 		put_string_center(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
+	}
 	return input_field(0, C_PROMPT_INPUT, fld, len,
 				titlerow + titlelines + 1, promptcol, checkkey);
 }

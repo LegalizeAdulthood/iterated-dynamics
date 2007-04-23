@@ -2184,10 +2184,12 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 				}
 			}
 			else if (g_save_release > 1950)
+			{
 				if (max(fabs(deriv.x), fabs(deriv.y)) > s_dem_too_big)
 				{
 					break;
 				}
+			}
 			/* if above exit taken, the later test vs s_dem_delta will place this
 				point on the boundary, because mag(g_old_z) < bailout just now */
 
@@ -2214,11 +2216,12 @@ int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set
 			}
 			g_old_z = g_new_z;
 		}
-
 		/* the usual case */
 		else if ((g_current_fractal_specific->orbitcalc() && g_inside != STARTRAIL)
 				|| g_overflow)
+		{
 			break;
+		}
 		if (g_show_orbit)
 		{
 			if (!g_integer_fractal)
@@ -4293,7 +4296,9 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	}
 	else if (g_outside == REAL || g_outside == IMAG || g_outside == MULT || g_outside == SUM
 			|| g_outside == ATAN || g_bail_out_test == Manr || g_outside == FMOD)
+	{
 		return;
+	}
 	else if (g_inside == FMODI || g_outside == TDIS)
 	{
 		return;
@@ -4709,7 +4714,8 @@ static int tesseral(void)
 				{
 					tp->top = g_fill_color % g_colors;
 				}
-				if (s_guess_plot || (j = tp->x2 - tp->x1 - 1) < 2)  /* paint dots */
+				j = tp->x2 - tp->x1 - 1;
+				if (s_guess_plot || j < 2)  /* paint dots */
 				{
 					for (g_col = tp->x1 + 1; g_col < tp->x2; g_col++)
 					{
@@ -5059,9 +5065,15 @@ void _fastcall symPIplot2J(int x, int y, int color)
 	while (x <= g_xx_stop)
 	{
 		g_put_color(x, y, color);
-		if ((i = g_yy_stop-(y-g_yy_start)) > g_y_stop && i < g_y_dots
-				&& (j = g_xx_stop-(x-g_xx_start)) < g_x_dots)
-			g_put_color(j, i, color);
+		i = g_yy_stop - (y - g_yy_start);
+		if (i > g_y_stop && i < g_y_dots)
+		{
+			j = g_xx_stop - (x - g_xx_start);
+			if (j < g_x_dots)
+			{
+				g_put_color(j, i, color);
+			}
+		}
 		x += s_pixel_pi;
 	}
 }
@@ -5117,12 +5129,16 @@ void _fastcall symplot2Y(int x, int y, int color)
 /* Symmetry plot for Origin Symmetry */
 void _fastcall symplot2J(int x, int y, int color)
 {
-	int i, j;
+	int i;
 	g_put_color(x, y, color);
-	if ((i = g_yy_stop-(y-g_yy_start)) > g_y_stop && i < g_y_dots
-		&& (j = g_xx_stop-(x-g_xx_start)) < g_x_dots)
+	i = g_yy_stop-(y-g_yy_start);
+	if (i > g_y_stop && i < g_y_dots)
 	{
-		g_put_color(j, i, color);
+		int j = g_xx_stop-(x-g_xx_start);
+		if (j < g_x_dots)
+		{
+			g_put_color(j, i, color);
+		}
 	}
 }
 

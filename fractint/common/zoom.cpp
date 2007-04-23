@@ -56,7 +56,9 @@ void display_box(void)
 				rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
 		}
 		else
+		{
 			values[i] = (unsigned char)getcolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset);
+		}
 	}
 	/* There is an interaction between getcolor and g_put_color, so separate them */
 	if (!(g_is_true_color && g_true_mode)) /* don't need this for truecolor with truemode set */
@@ -320,7 +322,8 @@ void zoom_box_move(double dx, double dy)
 	align = check_pan();
 	if (dx != 0.0)
 	{
-		if ((g_zbx += dx) + g_z_width/2 < 0)  /* center must stay onscreen */
+		g_zbx += dx;
+		if (g_zbx + g_z_width/2 < 0)  /* center must stay onscreen */
 		{
 			g_zbx = g_z_width/-2;
 		}
@@ -864,8 +867,8 @@ static void fix_work_list(void) /* fix out of bounds and symmetry related stuff 
 			}
 			else  /* xaxis symmetry */
 			{
-				if ((j = wk->yy_stop + wk->yy_start) > 0
-						&& g_num_work_list < MAXCALCWORK)  /* split the sym part */
+				j = wk->yy_stop + wk->yy_start;
+				if (j > 0 && g_num_work_list < MAXCALCWORK)  /* split the sym part */
 				{
 					g_work_list[g_num_work_list] = g_work_list[i];
 					g_work_list[g_num_work_list].yy_start = 0;
@@ -873,7 +876,9 @@ static void fix_work_list(void) /* fix out of bounds and symmetry related stuff 
 					wk->yy_start = j + 1;
 				}
 				else
+				{
 					wk->yy_start = 0;
+				}
 				restart_window(i); /* restart the no-longer sym part */
 			}
 		}
@@ -907,8 +912,8 @@ static void fix_work_list(void) /* fix out of bounds and symmetry related stuff 
 				wk->xx_start = 0;
 			else  /* yaxis symmetry */
 			{
-				if ((j = wk->xx_stop + wk->xx_start) > 0
-					&& g_num_work_list < MAXCALCWORK)  /* split the sym part */
+				j = wk->xx_stop + wk->xx_start;
+				if (j > 0 && g_num_work_list < MAXCALCWORK)  /* split the sym part */
 				{
 					g_work_list[g_num_work_list] = g_work_list[i];
 					g_work_list[g_num_work_list].xx_start = 0;
@@ -916,7 +921,9 @@ static void fix_work_list(void) /* fix out of bounds and symmetry related stuff 
 					wk->xx_start = j + 1;
 				}
 				else
+				{
 					wk->xx_start = 0;
+				}
 				restart_window(i); /* restart the no-longer sym part */
 			}
 		}

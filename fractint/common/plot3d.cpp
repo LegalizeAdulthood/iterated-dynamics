@@ -347,6 +347,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 		}
 	}
 	else if (g_which_image == WHICHIMAGE_BLUE)
+	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			color = color <<4;
@@ -364,6 +365,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 				}
 			}
 		}
+	}
 }
 
 void _fastcall plot_3d_alternate(int x, int y, int color)

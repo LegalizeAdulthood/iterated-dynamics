@@ -650,7 +650,8 @@ expand_retry:
 
 static long _fastcall fudge_to_long(double d)
 {
-	if ((d *= g_fudge) > 0)
+	d *= g_fudge;
+	if (d > 0)
 	{
 		d += 0.5;
 	}
@@ -1166,21 +1167,37 @@ static void _fastcall adjust_to_limits(double expand)
 
 	for (i = 0; i < 4; ++i)
 	{
-		if (cornerx[i] > limit && (ftemp = cornerx[i] - limit) > adjx)
+		if (cornerx[i] > limit)
 		{
-			adjx = ftemp;
+			ftemp = cornerx[i] - limit;
+			if (ftemp > adjx)
+			{
+				adjx = ftemp;
+			}
 		}
-		if (cornerx[i] < -limit && (ftemp = cornerx[i] + limit) < adjx)
+		else if (cornerx[i] < -limit)
 		{
-			adjx = ftemp;
+			ftemp = cornerx[i] + limit;
+			if (ftemp < adjx)
+			{
+				adjx = ftemp;
+			}
 		}
-		if (cornery[i] > limit     && (ftemp = cornery[i] - limit) > adjy)
+		if (cornery[i] > limit)
 		{
-			adjy = ftemp;
+			ftemp = cornery[i] - limit;
+			if (ftemp > adjy)
+			{
+				adjy = ftemp;
+			}
 		}
-		if (cornery[i] < -limit && (ftemp = cornery[i] + limit) < adjy)
+		else if (cornery[i] < -limit)
 		{
-			adjy = ftemp;
+			ftemp = cornery[i] + limit;
+			if (ftemp < adjy)
+			{
+				adjy = ftemp;
+			}
 		}
 	}
 	if (g_calculation_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (g_z_width == 1.0))

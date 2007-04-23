@@ -1483,7 +1483,8 @@ docolors:
 				scanc = curc;
 				while (scanc < maxcolor)  /* scan while same diff to next */
 				{
-					if ((i = scanc - curc) > 3) /* check spans up to 4 steps */
+					i = scanc - curc;
+					if (i > 3) /* check spans up to 4 steps */
 					{
 						i = 3;
 					}
