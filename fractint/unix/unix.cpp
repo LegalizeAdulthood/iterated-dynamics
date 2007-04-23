@@ -412,7 +412,7 @@ int filelength(int fd)
  *
  *----------------------------------------------------------------------
  */
-int split_path(char *file_template,
+int split_path(const char *file_template,
 	char *drive, char *dir, char *fname, char *ext)
 {
 	int length;
