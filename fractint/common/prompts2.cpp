@@ -836,9 +836,9 @@ int get_view_params()
 	int i, k;
 	float old_viewreduction, old_aspectratio;
 	int old_viewwindow, old_viewxdots, old_viewydots, old_sxdots, old_sydots;
-	int g_x_max, g_y_max;
+	int x_max, y_max;
 
-	driver_get_max_screen(&g_x_max, &g_y_max);
+	driver_get_max_screen(x_max, y_max);
 
 	old_viewwindow    = g_view_window;
 	old_viewreduction = g_view_reduction;
@@ -931,17 +931,17 @@ get_view_restart:
 	{
 		g_screen_width = uvalues[++k].uval.ival;
 		g_screen_height = uvalues[++k].uval.ival;
-		if ((g_x_max != -1) && (g_screen_width > g_x_max))
+		if ((x_max != -1) && (g_screen_width > x_max))
 		{
-			g_screen_width = (int) g_x_max;
+			g_screen_width = (int) x_max;
 		}
 		if (g_screen_width < 2)
 		{
 			g_screen_width = 2;
 		}
-		if ((g_y_max != -1) && (g_screen_height > g_y_max))
+		if ((y_max != -1) && (g_screen_height > y_max))
 		{
-			g_screen_height = g_y_max;
+			g_screen_height = y_max;
 		}
 		if (g_screen_height < 2)
 		{
@@ -1355,7 +1355,7 @@ void goodbye(void)                  /* we done.  Bail out */
 	{
 		ret = 1;
 	}
-	close_drivers();
+	DriverManager::close_drivers();
 #if defined(_WIN32)
 	_CrtDumpMemoryLeaks();
 #endif

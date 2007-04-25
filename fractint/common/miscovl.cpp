@@ -2171,7 +2171,7 @@ void format_vid_table(int choice, char *buf)
 			buf, truecolor_bits_text(truecolorbits));
 	}
 	sprintf(buf, "%s %.12s %.12s",  /* 74 chars */
-		local_buf, g_video_entry.driver->name, g_video_entry.comment);
+		local_buf, g_video_entry.driver->name(), g_video_entry.comment);
 }
 
 #ifndef XFRACT
