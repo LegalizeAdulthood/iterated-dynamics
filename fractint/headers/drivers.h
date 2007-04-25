@@ -74,6 +74,23 @@ public:
 	/* refresh alarm */					virtual void schedule_alarm(int secs) = 0;
 };
 
+class BaseDriver : public AbstractDriver
+{
+public:
+	BaseDriver(const char *name, const char *description)
+		: m_name(name),
+		m_description(description)
+	{
+	}
+
+	virtual const char *name() const		{ return m_name; }
+	virtual const char *description() const	{ return m_description; }
+
+private:
+	const char *m_name;
+	const char *m_description;
+};
+
 class DriverManager
 {
 public:
