@@ -178,7 +178,7 @@ void driver_read_span(int y, int x, int lastx, BYTE *pixels)
 	s_current->read_span(y, x, lastx, pixels);
 }
 
-void driver_write_span(int y, int x, int lastx, BYTE *pixels)
+void driver_write_span(int y, int x, int lastx, const BYTE *pixels)
 {
 	s_current->write_span(y, x, lastx, pixels);
 }
