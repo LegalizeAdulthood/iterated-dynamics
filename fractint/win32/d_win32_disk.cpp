@@ -68,21 +68,9 @@ public:
 	/* restore graphics */				virtual void restore_graphics();
 	/* poll or block for a key */		virtual int get_key();
 										virtual void unget_key(int key);
-										virtual int key_cursor(int row, int col);
 										virtual int key_pressed();
-										virtual int wait_key_pressed(int timeout);
-										virtual void set_keyboard_timeout(int ms);
 	/* set for text mode & save gfx */	virtual void set_for_text();
 	/* restores graphics and data */	virtual void set_for_graphics();
-	/* clears text screen */			virtual void set_clear();
-	/* text screen functions */			virtual void move_cursor(int row, int col);
-										virtual void hide_text_cursor();
-										virtual void put_string(int row, int col, int attr, const char *text);
-										virtual void set_attr(int row, int col, int attr, int count);
-										virtual void scroll_up(int top, int bottom);
-										virtual void stack_screen();
-										virtual void unstack_screen();
-										virtual void discard_screen();
 
 	/* returns true if disk video */	virtual int diskp();
 
@@ -674,101 +662,8 @@ void Win32DiskDriver::set_video_mode(const VIDEOINFO &mode)
 	set_normal_line();
 }
 
-/*
-; PUTSTR.asm puts a string directly to video display memory. Called from C by:
-;    put_string(row, col, attr, string) where
-;         row, col = row and column to start printing.
-;         attr = color attribute.
-;         string = pointer to the null terminated string to print.
-;    Written for the A86 assembler (which has much less 'red tape' than MASM)
-;    by Bob Montgomery, Orlando, Fla.             7-11-88
-;    Adapted for MASM 5.1 by Tim Wegner          12-11-89
-;    Furthur mucked up to handle graphics
-;       video modes by Bert Tyler                 1-07-90
-;    Reworked for:  row, col update/inherit;
-;       620x200x2 inverse video;  ptr to string;
-;       fix to avoid scrolling when last posn chgd;
-;       divider removed;  newline ctl chars;  PB  9-25-90
-*/
-void Win32DiskDriver::put_string(int row, int col, int attr, const char *msg)
-{
-	if (-1 != row)
-	{
-		g_text_row = row;
-	}
-	if (-1 != col)
-	{
-		g_text_col = col;
-	}
-	{
-		int abs_row = g_text_rbase + g_text_row;
-		int abs_col = g_text_cbase + g_text_col;
-		_ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
-		_ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
-		wintext_putstring(&m_wintext, abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
-	}
-}
-
-void Win32DiskDriver::set_clear()
-{
-	wintext_clear(&m_wintext);
-}
-
-/************** Function scrollup(toprow, botrow) ******************
-*
-*       Scroll the screen up (from toprow to botrow)
-*/
-void Win32DiskDriver::scroll_up(int top, int bot)
-{
-	ODS2("disk_scroll_up %d, %d", top, bot);
-	wintext_scroll_up(&m_wintext, top, bot);
-}
-
 void Win32DiskDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
-}
-
-void Win32DiskDriver::move_cursor(int row, int col)
-{
-	ODS2("disk_move_cursor %d,%d", row, col);
-
-	if (row != -1)
-	{
-		m_cursor_row = row;
-		g_text_row = row;
-	}
-	if (col != -1)
-	{
-		m_cursor_col = col;
-		g_text_col = col;
-	}
-	row = m_cursor_row;
-	col = m_cursor_col;
-	wintext_cursor(&m_wintext, g_text_cbase + col, g_text_rbase + row, 1);
-	m_cursor_shown = TRUE;
-}
-
-void Win32DiskDriver::set_attr(int row, int col, int attr, int count)
-{
-	if (-1 != row)
-	{
-		g_text_row = row;
-	}
-	if (-1 != col)
-	{
-		g_text_col = col;
-	}
-	wintext_set_attr(&m_wintext, g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
-}
-
-void Win32DiskDriver::hide_text_cursor()
-{
-	if (TRUE == m_cursor_shown)
-	{
-		m_cursor_shown = FALSE;
-		wintext_hide_cursor(&m_wintext);
-	}
-	ODS("disk_hide_text_cursor");
 }
 
 void Win32DiskDriver::set_for_text()
@@ -780,121 +675,9 @@ void Win32DiskDriver::set_for_graphics()
 	hide_text_cursor();
 }
 
-/*
-* Implement stack and unstack window functions by using multiple curses
-* windows.
-*/
-void Win32DiskDriver::stack_screen()
-{
-	ODS("disk_stack_screen");
-
-	m_saved_cursor[m_screen_count + 1] = g_text_row*80 + g_text_col;
-	if (++m_screen_count)
-	{
-		/* already have some stacked */
-		int i = m_screen_count - 1;
-
-		_ASSERTE(i < WIN32_MAXSCREENS);
-		if (i >= WIN32_MAXSCREENS)
-		{
-			/* bug, missing unstack? */
-			stop_message(STOPMSG_NO_STACK, "stackscreen overflow");
-			exit(1);
-		}
-		m_saved_screens[i] = wintext_screen_get(&m_wintext);
-		set_clear();
-	}
-	else
-	{
-		set_for_text();
-	}
-}
-
-void Win32DiskDriver::unstack_screen()
-{
-	ODS("disk_unstack_screen");
-	_ASSERTE(m_screen_count >= 0);
-	g_text_row = m_saved_cursor[m_screen_count] / 80;
-	g_text_col = m_saved_cursor[m_screen_count] % 80;
-	if (--m_screen_count >= 0)
-	{ /* unstack */
-		wintext_screen_set(&m_wintext, m_saved_screens[m_screen_count]);
-		free(m_saved_screens[m_screen_count]);
-		m_saved_screens[m_screen_count] = NULL;
-	}
-	else
-	{
-		set_for_graphics();
-	}
-	move_cursor(-1, -1);
-}
-
-void Win32DiskDriver::discard_screen()
-{
-	_ASSERTE(m_screen_count > 0);
-	if (--m_screen_count >= 0)
-	{ /* unstack */
-		if (m_saved_screens[m_screen_count])
-		{
-			free(m_saved_screens[m_screen_count]);
-			m_saved_screens[m_screen_count] = NULL;
-		}
-	}
-}
-
 int Win32DiskDriver::diskp()
 {
 	return 1;
-}
-
-int Win32DiskDriver::key_cursor(int row, int col)
-{
-	int result;
-
-	ODS2("disk_key_cursor %d,%d", row, col);
-	if (-1 != row)
-	{
-		m_cursor_row = row;
-		g_text_row = row;
-	}
-	if (-1 != col)
-	{
-		m_cursor_col = col;
-		g_text_col = col;
-	}
-
-	col = m_cursor_col;
-	row = m_cursor_row;
-
-	if (key_pressed())
-	{
-		result = get_key();
-	}
-	else
-	{
-		m_cursor_shown = TRUE;
-		wintext_cursor(&m_wintext, col, row, 1);
-		result = get_key();
-		hide_text_cursor();
-		m_cursor_shown = FALSE;
-	}
-
-	return result;
-}
-
-int Win32DiskDriver::wait_key_pressed(int timeout)
-{
-	int count = 10;
-	while (!key_pressed())
-	{
-		Sleep(25);
-		if (timeout && (--count == 0))
-		{
-			break;
-		}
-	}
-
-	return key_pressed();
 }
 
 int Win32DiskDriver::validate_mode(const VIDEOINFO &mode)
@@ -951,10 +734,6 @@ void Win32DiskDriver::get_max_screen(int &x_max, int &y_max) const
 {
 	x_max = -1;
 	y_max = -1;
-}
-
-void Win32DiskDriver::set_keyboard_timeout(int ms)
-{
 }
 
 void Win32DiskDriver::flush()
