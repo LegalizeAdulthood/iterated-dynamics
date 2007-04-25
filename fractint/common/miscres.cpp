@@ -865,7 +865,7 @@ int tab_display_2(char *msg)
 	write_row(row++, "g_x_dots %d g_y_dots %d g_screen_width %d g_screen_height %d", g_x_dots, g_y_dots, g_screen_width, g_screen_height);
 */
 	write_row(row++, "%dx%d dm=%d %s (%s)", g_x_dots, g_y_dots, g_dot_mode,
-		g_driver->name, g_driver->description);
+		driver_name(), driver_description());
 	write_row(row++, "g_xx_start %d g_xx_stop %d g_yy_start %d g_yy_stop %d %s g_uses_is_mand %d",
 		g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -1169,7 +1169,7 @@ top:
 	{
 		++s_row;
 	}
-	_snprintf(msg, NUM_OF(msg), "driver: %s, %s", g_driver->name, g_driver->description);
+	_snprintf(msg, NUM_OF(msg), "driver: %s, %s", driver_name(), driver_description());
 	driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
 	if (g_video_entry.x_dots && g_bf_math == 0)
 	{

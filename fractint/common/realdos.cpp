@@ -1998,10 +1998,10 @@ void load_fractint_config(void)
 		vident.colors      = g_colors;
 
 		/* if valid, add to supported modes */
-		vident.driver = driver_find_by_name(fields[10]);
+		vident.driver = DriverManager::find_by_name(fields[10]);
 		if (vident.driver != NULL)
 		{
-			if (vident.driver->validate_mode(vident.driver, &vident))
+			if (vident.driver->validate_mode(vident))
 			{
 				/* look for a synonym mode and if found, overwite its key */
 				int m;
@@ -2024,7 +2024,7 @@ void load_fractint_config(void)
 				/* no synonym found, append it to current list of video modes */
 				if (FALSE == synonym_found)
 				{
-					add_video_mode(vident.driver, &vident);
+					add_video_mode(vident.driver, vident);
 				}
 			}
 		}

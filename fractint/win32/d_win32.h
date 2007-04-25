@@ -2,60 +2,107 @@
 
 #define WIN32_MAXSCREENS 10
 
-typedef struct tagWin32BaseDriver Win32BaseDriver;
-struct tagWin32BaseDriver
+class Win32BaseDriver : public AbstractDriver
 {
-	Driver pub;
+public:
+	Win32BaseDriver(const char *name, const char *description);
 
-	Frame frame;
-	WinText wintext;
+	/* name of driver */				virtual const char *name() const		{ return m_name; }
+	/* driver description */			virtual const char *description() const { return m_description; }
+	/* initialize the driver */			virtual int initialize(int *argc, char **argv);
+	/* shutdown the driver */			virtual void terminate();
+
+	/* pause this driver */				virtual void pause() = 0;
+	/* resume this driver */			virtual void resume() = 0;
+
+	/* validate a fractint.cfg mode */	virtual int validate_mode(const VIDEOINFO &mode) = 0;
+										virtual void set_video_mode(const VIDEOINFO &mode);
+	/* find max screen extents */		virtual void get_max_screen(int &x_max, int &y_max) const = 0;
+
+	/* creates a window */				virtual void window() = 0;
+	/* handles window resize.  */		virtual int resize() = 0;
+	/* redraws the screen */			virtual void redraw() = 0;
+
+	/* read palette into g_dac_box */	virtual int read_palette() = 0;
+	/* write g_dac_box into palette */	virtual int write_palette() = 0;
+
+	/* reads a single pixel */			virtual int read_pixel(int x, int y) = 0;
+	/* writes a single pixel */			virtual void write_pixel(int x, int y, int color) = 0;
+	/* reads a span of pixel */			virtual void read_span(int y, int x, int lastx, BYTE *pixels) = 0;
+	/* writes a span of pixels */		virtual void write_span(int y, int x, int lastx, const BYTE *pixels) = 0;
+										virtual void get_truecolor(int x, int y, int &r, int &g, int &b, int &a) = 0;
+										virtual void put_truecolor(int x, int y, int r, int g, int b, int a) = 0;
+	/* set copy/xor line */				virtual void set_line_mode(int mode) = 0;
+	/* draw line */						virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;
+	/* draw string in graphics mode */	virtual void display_string(int x, int y, int fg, int bg, const char *text) = 0;
+	/* save graphics */					virtual void save_graphics() = 0;
+	/* restore graphics */				virtual void restore_graphics() = 0;
+	/* poll or block for a key */		virtual int get_key();
+										virtual void unget_key(int key);
+										virtual int key_cursor(int row, int col);
+										virtual int key_pressed();
+										virtual int wait_key_pressed(int timeout);
+										virtual void set_keyboard_timeout(int ms);
+	/* invoke a command shell */		virtual void shell();
+	/* set for text mode & save gfx */	virtual void set_for_text() = 0;
+	/* restores graphics and data */	virtual void set_for_graphics() = 0;
+	/* clears text screen */			virtual void set_clear() = 0;
+	/* text screen functions */			virtual void move_cursor(int row, int col);
+										virtual void hide_text_cursor();
+										virtual void put_string(int row, int col, int attr, const char *text);
+										virtual void set_attr(int row, int col, int attr, int count);
+										virtual void scroll_up(int top, int bottom);
+										virtual void stack_screen();
+										virtual void unstack_screen();
+										virtual void discard_screen();
+										virtual int get_char_attr();
+										virtual void put_char_attr(int char_attr);
+										virtual int get_char_attr_rowcol(int row, int col);
+										virtual void put_char_attr_rowcol(int row, int col, int char_attr);
+
+	/* sound routines */				virtual int init_fm();
+										virtual void buzzer(int kind);
+										virtual int sound_on(int frequency);
+										virtual void sound_off();
+										virtual void mute();
+
+	/* returns true if disk video */	virtual int diskp();
+
+										virtual void delay(int ms);
+										virtual void flush() = 0;
+	/* refresh alarm */					virtual void schedule_alarm(int secs) = 0;
+
+protected:
+	Frame m_frame;
+	WinText m_wintext;
 
 	/* key_buffer
 	*
 	* When we peeked ahead and saw a keypress, stash it here for later
 	* feeding to our caller.
 	*/
-	int key_buffer;
+	int m_key_buffer;
 
-	int screen_count;
-	BYTE *saved_screens[WIN32_MAXSCREENS];
-	int saved_cursor[WIN32_MAXSCREENS+1];
-	BOOL cursor_shown;
-	int cursor_row;
-	int cursor_col;
+	int m_screen_count;
+	BYTE *m_saved_screens[WIN32_MAXSCREENS];
+	int m_saved_cursor[WIN32_MAXSCREENS+1];
+	bool m_cursor_shown;
+	int m_cursor_row;
+	int m_cursor_col;
+
+private:
+	void flush_output();
+	int handle_timed_save(int ch);
+	int handle_special_keys(int ch);
+
+	const char *m_name;
+	const char *m_description;
+
+	bool m_inside_help;
+	int m_save_check_time;				/* time of last autosave check */
+
+	time_t m_start;
+	long m_ticks_per_second;
+	long m_last;
+	static const long m_frames_per_second = 10;
 };
-
-extern void win32_shell(Driver *drv);
-extern void win32_terminate(Driver *drv);
-extern int win32_init(Driver *drv, int *argc, char **argv);
-extern int win32_key_pressed(Driver *drv);
-extern void win32_unget_key(Driver *drv, int key);
-extern int win32_get_key(Driver *drv);
-extern void win32_shell(Driver *drv);
-extern void win32_hide_text_cursor(Driver *drv);
-extern void win32_set_video_mode(Driver *drv, VIDEOINFO *mode);
-extern void win32_put_string(Driver *drv, int row, int col, int attr, const char *msg);
-extern void win32_scroll_up(Driver *drv, int top, int bot);
-extern void win32_move_cursor(Driver *drv, int row, int col);
-extern void win32_set_attr(Driver *drv, int row, int col, int attr, int count);
-extern void win32_stack_screen(Driver *drv);
-extern void win32_unstack_screen(Driver *drv);
-extern void win32_discard_screen(Driver *drv);
-extern int win32_init_fm(Driver *drv);
-extern void win32_buzzer(Driver *drv, int kind);
-extern int win32_sound_on(Driver *drv, int freq);
-extern void win32_sound_off(Driver *drv);
-extern void win32_mute(Driver *drv);
-extern int win32_diskp(Driver *drv);
-extern int win32_key_cursor(Driver *drv, int row, int col);
-extern int win32_wait_key_pressed(Driver *drv, int timeout);
-extern int win32_get_char_attr(Driver *drv);
-extern void win32_put_char_attr(Driver *drv, int char_attr);
-extern int win32_get_char_attr_rowcol(Driver *drv, int row, int col);
-extern void win32_put_char_attr_rowcol(Driver *drv, int row, int col, int char_attr);
-extern void win32_delay(Driver *drv, int ms);
-extern void win32_get_truecolor(Driver *drv, int x, int y, int *r, int *g, int *b, int *a);
-extern void win32_put_truecolor(Driver *drv, int x, int y, int r, int g, int b, int a);
-extern void win32_set_keyboard_timeout(Driver *drv, int ms);
-
-#define WIN32_DRIVER_STRUCT(base_, desc_) STD_DRIVER_STRUCT(base_, desc_)

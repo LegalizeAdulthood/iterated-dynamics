@@ -2286,7 +2286,7 @@ int funny_glasses_call(int (*calc)(void))
 					save_to_disk(g_save_name);
 				}
 				/* is there a better way to clear the screen in graphics mode? */
-				driver_set_video_mode(&g_video_entry);
+				driver_set_video_mode(g_video_entry);
 		}
 		g_which_image = WHICHIMAGE_BLUE;
 		if (g_current_fractal_specific->flags & INFCALC)

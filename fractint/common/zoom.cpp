@@ -51,7 +51,8 @@ void display_box(void)
 	{
 		if (g_is_true_color && g_true_mode)
 		{
-			driver_get_truecolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, &rgb[0], &rgb[1], &rgb[2], NULL);
+			int alpha = 0;
+			driver_get_truecolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, rgb[0], rgb[1], rgb[2], alpha);
 			driver_put_truecolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset,
 				rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
 		}
