@@ -438,6 +438,11 @@ void Win32BaseDriver::move_cursor(int row, int col)
 	m_cursor_shown = TRUE;
 }
 
+void Win32BaseDriver::set_clear()
+{
+	wintext_clear(&m_wintext);
+}
+
 void Win32BaseDriver::set_attr(int row, int col, int attr, int count)
 {
 	if (-1 != row)
@@ -626,16 +631,6 @@ void Win32BaseDriver::delay(int ms)
 	{
 		Sleep(ms);
 	}
-}
-
-void Win32BaseDriver::get_truecolor(int x, int y, int &r, int &g, int &b, int &a)
-{
-	_ASSERTE(0 && "win32_get_truecolor called.");
-}
-
-void Win32BaseDriver::put_truecolor(int x, int y, int r, int g, int b, int a)
-{
-	_ASSERTE(0 && "win32_put_truecolor called.");
 }
 
 void Win32BaseDriver::set_keyboard_timeout(int ms)
