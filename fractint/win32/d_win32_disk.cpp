@@ -66,9 +66,6 @@ public:
 	/* draw string in graphics mode */	virtual void display_string(int x, int y, int fg, int bg, const char *text);
 	/* save graphics */					virtual void save_graphics();
 	/* restore graphics */				virtual void restore_graphics();
-	/* poll or block for a key */		virtual int get_key();
-										virtual void unget_key(int key);
-										virtual int key_pressed();
 	/* set for text mode & save gfx */	virtual void set_for_text();
 	/* restores graphics and data */	virtual void set_for_graphics();
 
@@ -552,69 +549,6 @@ void Win32DiskDriver::redraw()
 {
 	ODS("disk_redraw");
 	wintext_paintscreen(&m_wintext, 0, 80, 0, 25);
-}
-
-/* key_pressed
- *
- * Return 0 if no key has been pressed, or the FIK value if it has.
- * get_key() must still be called to eat the key; this routine
- * only peeks ahead.
- *
- * When a keystroke has been found by the underlying wintext_xxx
- * message pump, stash it in the one key buffer for later use by
- * get_key.
- */
-int Win32DiskDriver::key_pressed()
-{
-	int ch = m_key_buffer;
-	if (ch)
-	{
-		return ch;
-	}
-	ch = frame_get_key_press(0);
-	ch = handle_help_tab(ch);
-	m_key_buffer = ch;
-
-	return ch;
-}
-
-/* unget_key
- *
- * Unread a key!  The key buffer is only one character deep, so we
- * assert if its already full.  This should never happen in real life :-).
- */
-void Win32DiskDriver::unget_key(int key)
-{
-	_ASSERTE(0 == m_key_buffer);
-	m_key_buffer = key;
-}
-
-/* get_key
- *
- * Get a keystroke, blocking if necessary.  First, check the key buffer
- * and if that's empty ask the wintext window to pump a keystroke for us.
- * If we get it, pass it off to handle tab and help displays.  If those
- * displays ate the key, then get another one.
- */
-int Win32DiskDriver::get_key()
-{
-	int ch;
-
-	do
-	{
-		if (m_key_buffer)
-		{
-			ch = m_key_buffer;
-			m_key_buffer = 0;
-		}
-		else
-		{
-			ch = handle_help_tab(frame_get_key_press(1));
-		}
-	}
-	while (ch == 0);
-
-	return ch;
 }
 
 void Win32DiskDriver::window()
