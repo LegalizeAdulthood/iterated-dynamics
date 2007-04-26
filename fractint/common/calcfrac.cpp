@@ -126,7 +126,7 @@ int g_periodicity_check;
 /* next has a skip bit for each s_max_block unit;
 	1st pass sets bit  [1]... off only if g_block's contents guessed;
 	at end of 1st pass [0]... bits are set if any surrounding g_block not guessed;
-	bits are numbered [..][y/16 + 1][x + 1]&(1<<(y&15)) */
+	bits are numbered [..][y/16 + 1][x + 1] & (1<<(y&15)) */
 typedef int (*TPREFIX)[2][MAX_Y_BLOCK][MAX_X_BLOCK];
 /* size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic */
 BYTE g_stack[4096];              /* common temp, two put_line calls */
@@ -3811,7 +3811,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 
 	for (x = s_ix_start; x <= g_x_stop; )  /* increment at end, or when doing continue */
 	{
-		if ((x&(s_max_block-1)) == 0)  /* time for skip flag stuff */
+		if ((x & (s_max_block-1)) == 0)  /* time for skip flag stuff */
 		{
 			++pfxptr;
 			if (firstpass == 0 && (*pfxptr&pfxmask) == 0)  /* check for fast skip */

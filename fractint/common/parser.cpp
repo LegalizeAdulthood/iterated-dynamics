@@ -3082,7 +3082,7 @@ int form_per_pixel(void)
 
 #if !defined(XFRACT)
 	case M_MATH:
-		if ((g_row + g_col)&1)
+		if ((g_row + g_col) & 1)
 		{
 			v[9].a.m = g_one_mpc;
 		}
@@ -3094,7 +3094,7 @@ int form_per_pixel(void)
 		v[10].a.m = cmplx2MPC(v[10].a.d);
 		break;
 	case L_MATH:
-		v[9].a.l.x = (long) (((g_row + g_col)&1)*fg);
+		v[9].a.l.x = (long) (((g_row + g_col) & 1)*fg);
 		v[9].a.l.y = 0L;
 		v[10].a.l.x = g_col;
 		v[10].a.l.x <<= g_bit_shift;

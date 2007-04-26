@@ -1055,7 +1055,7 @@ top:
 
 	if (g_calculation_status == CALCSTAT_IN_PROGRESS || g_calculation_status == CALCSTAT_RESUMABLE)
 	{
-		if (g_current_fractal_specific->flags&NORESUME)
+		if (g_current_fractal_specific->flags & NORESUME)
 		{
 			driver_put_string(s_row++, 2, C_GENERAL_HI,
 				"Note: can't resume this type after interrupts other than <tab> and <F1>");

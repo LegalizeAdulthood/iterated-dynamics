@@ -213,7 +213,7 @@ static U16 rand16(void)
 	U16 value;
 	value = (U16)rand15();
 	value <<= 1;
-	value = (U16)(value + (rand15()&1));
+	value = (U16)(value + (rand15() & 1));
 	if (value < 1)
 	{
 		value = 1;
