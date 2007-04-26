@@ -2,13 +2,11 @@
 
 #define WIN32_MAXSCREENS 10
 
-class Win32BaseDriver : public AbstractDriver
+class Win32BaseDriver : public NamedDriver
 {
 public:
 	Win32BaseDriver(const char *name, const char *description);
 
-	/* name of driver */				virtual const char *name() const		{ return m_name; }
-	/* driver description */			virtual const char *description() const { return m_description; }
 	/* initialize the driver */			virtual int initialize(int *argc, char **argv);
 	/* shutdown the driver */			virtual void terminate();
 
@@ -67,9 +65,6 @@ private:
 	void flush_output();
 	int handle_timed_save(int ch);
 	int handle_special_keys(int ch);
-
-	const char *m_name;
-	const char *m_description;
 
 	bool m_inside_help;
 	int m_save_check_time;				/* time of last autosave check */

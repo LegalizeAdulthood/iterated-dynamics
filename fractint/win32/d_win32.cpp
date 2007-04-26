@@ -31,8 +31,7 @@ long g_save_ticks = 0;						/* save after this many ticks */
 int g_finish_row = 0;						/* save when this row is finished */
 
 Win32BaseDriver::Win32BaseDriver(const char *name, const char *description)
-		: m_name(name),
-		m_description(description),
+		: NamedDriver(name, description),
 		m_frame(),
 		m_wintext(),
 		m_key_buffer(0),

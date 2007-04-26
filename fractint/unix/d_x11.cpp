@@ -66,7 +66,7 @@ enum
 	MOUSE_SCALE = 1
 };
 
-class X11Driver : public BaseDriver
+class X11Driver : public NamedDriver
 {
 public:
 	X11Driver(const char *name, const char *description);
@@ -2901,7 +2901,7 @@ void X11Driver::put_char_attr_rowcol(int row, int col, int char_attr)
 static X11Driver x11_driver_info("x11", "An X Window System driver");
 
 X11Driver::X11Driver(const char *name, const char *description)
-	: BaseDriver(name, description),
+	: NamedDriver(name, description),
 	m_on_root(0),
 	m_fullscreen(0),
 	m_sharecolor(0),
