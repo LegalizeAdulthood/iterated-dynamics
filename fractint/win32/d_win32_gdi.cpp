@@ -218,8 +218,8 @@ void GDIDriver::show_hide_windows(HWND show, HWND hide)
 
 void GDIDriver::max_size(int &width, int &height, bool &center_x, bool &center_y)
 {
-	width = m_wintext.max_width;
-	height = m_wintext.max_height;
+	width = m_wintext.m_max_width;
+	height = m_wintext.m_max_height;
 	if (g_video_table[g_adapter].x_dots > width)
 	{
 		width = g_video_table[g_adapter].x_dots;
@@ -238,26 +238,26 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
 	if (center_x)
 	{
-		plot_pos.x = (g_frame.width - m_plot.width)/2;
+		plot_pos.x = (g_frame.m_width - m_plot.width())/2;
 	}
 	else
 	{
-		text_pos.x = (g_frame.width - m_wintext.max_width)/2;
+		text_pos.x = (g_frame.m_width - m_wintext.m_max_width)/2;
 	}
 
 	if (center_y)
 	{
-		plot_pos.y = (g_frame.height - m_plot.height)/2;
+		plot_pos.y = (g_frame.m_height - m_plot.height())/2;
 	}
 	else
 	{
-		text_pos.y = (g_frame.height - m_wintext.max_height)/2;
+		text_pos.y = (g_frame.m_height - m_wintext.m_max_height)/2;
 	}
 
-	BOOL status = SetWindowPos(m_plot.window, NULL,
+	BOOL status = SetWindowPos(m_plot.window(), NULL,
 		plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	_ASSERTE(status);
-	status = SetWindowPos(m_wintext.hWndCopy, NULL,
+	status = SetWindowPos(m_wintext.m_window, NULL,
 		text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	_ASSERTE(status);
 }
@@ -285,7 +285,7 @@ void GDIDriver::terminate()
 {
 	ODS("gdi_terminate");
 
-	plot_terminate(&m_plot);
+	m_plot.terminate();
 	Win32BaseDriver::terminate();
 }
 
@@ -325,7 +325,7 @@ int GDIDriver::initialize(int *argc, char **argv)
 		return FALSE;
 	}
 
-	plot_init(&m_plot, g_instance, "Plot");
+	m_plot.initialize(g_instance, "Plot");
 
 	/* filter out driver arguments */
 	for (int i = 0; i < *argc; i++)
@@ -369,16 +369,16 @@ int GDIDriver::resize()
 	bool center_graphics_x, center_graphics_y;
 
 	max_size(width, height, center_graphics_x, center_graphics_y);
-	if ((g_video_table[g_adapter].x_dots == m_plot.width)
-		&& (g_video_table[g_adapter].y_dots == m_plot.height)
-		&& (width == g_frame.width)
-		&& (height == g_frame.height))
+	if ((g_video_table[g_adapter].x_dots == m_plot.width())
+		&& (g_video_table[g_adapter].y_dots == m_plot.height())
+		&& (width == g_frame.m_width)
+		&& (height == g_frame.m_height))
 	{
 		return 0;
 	}
 
 	frame_resize(width, height);
-	plot_resize(&m_plot);
+	m_plot.resize();
 	center_windows(center_graphics_x, center_graphics_y);
 	return 1;
 }
@@ -400,7 +400,7 @@ int GDIDriver::resize()
 */
 int GDIDriver::read_palette()
 {
-	return plot_read_palette(&m_plot);
+	return m_plot.read_palette();
 }
 
 /*
@@ -420,7 +420,7 @@ int GDIDriver::read_palette()
 */
 int GDIDriver::write_palette()
 {
-	return plot_write_palette(&m_plot);
+	return m_plot.write_palette();
 }
 
 /*
@@ -447,7 +447,7 @@ void GDIDriver::schedule_alarm(int soon)
 	}
 	else
 	{
-		plot_schedule_alarm(&m_plot, soon);
+		m_plot.schedule_alarm(soon);
 	}
 }
 
@@ -468,7 +468,7 @@ void GDIDriver::schedule_alarm(int soon)
 */
 void GDIDriver::write_pixel(int x, int y, int color)
 {
-	plot_write_pixel(&m_plot, x, y, color);
+	m_plot.write_pixel(x, y, color);
 }
 
 /*
@@ -488,7 +488,7 @@ void GDIDriver::write_pixel(int x, int y, int color)
 */
 int GDIDriver::read_pixel(int x, int y)
 {
-	return plot_read_pixel(&m_plot, x, y);
+	return m_plot.read_pixel(x, y);
 }
 
 /*
@@ -508,7 +508,7 @@ int GDIDriver::read_pixel(int x, int y)
 */
 void GDIDriver::write_span(int y, int x, int lastx, const BYTE *pixels)
 {
-	plot_write_span(&m_plot, x, y, lastx, pixels);
+	m_plot.write_span(x, y, lastx, pixels);
 }
 
 /*
@@ -528,17 +528,17 @@ void GDIDriver::write_span(int y, int x, int lastx, const BYTE *pixels)
 */
 void GDIDriver::read_span(int y, int x, int lastx, BYTE *pixels)
 {
-	plot_read_span(&m_plot, y, x, lastx, pixels);
+	m_plot.read_span(y, x, lastx, pixels);
 }
 
 void GDIDriver::set_line_mode(int mode)
 {
-	plot_set_line_mode(&m_plot, mode);
+	m_plot.set_line_mode(mode);
 }
 
 void GDIDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-	plot_draw_line(&m_plot, x1, y1, x2, y2, color);
+	m_plot.draw_line(x1, y1, x2, y2, color);
 }
 
 /*
@@ -565,7 +565,7 @@ void GDIDriver::redraw()
 	}
 	else
 	{
-		plot_redraw(&m_plot);
+		m_plot.redraw();
 	}
 	frame_pump_messages(FALSE);
 }
@@ -578,22 +578,22 @@ void GDIDriver::window()
 
 	max_size(width, height, center_x, center_y);
 	frame_window(width, height);
-	m_wintext.hWndParent = g_frame.window;
+	m_wintext.m_parent_window = g_frame.m_window;
 	wintext_texton(&m_wintext);
-	plot_window(&m_plot, g_frame.window);
+	m_plot.window(g_frame.m_window);
 	center_windows(center_x, center_y);
 }
 
 void GDIDriver::set_for_text()
 {
 	m_text_not_graphics = true;
-	show_hide_windows(m_wintext.hWndCopy, m_plot.window);
+	show_hide_windows(m_wintext.m_window, m_plot.window());
 }
 
 void GDIDriver::set_for_graphics()
 {
 	m_text_not_graphics = false;
-	show_hide_windows(m_plot.window, m_wintext.hWndCopy);
+	show_hide_windows(m_plot.window(), m_wintext.m_window);
 	Win32BaseDriver::hide_text_cursor();
 }
 
@@ -607,7 +607,7 @@ void GDIDriver::set_clear()
 	}
 	else
 	{
-		plot_clear(&m_plot);
+		m_plot.clear();
 	}
 }
 
@@ -635,7 +635,7 @@ void GDIDriver::set_video_mode(const VIDEOINFO &mode)
 	}
 
 	resize();
-	plot_clear(&m_plot);
+	m_plot.clear();
 
 	if (g_disk_flag)
 	{
@@ -668,46 +668,46 @@ int GDIDriver::validate_mode(const VIDEOINFO &mode)
 
 void GDIDriver::pause()
 {
-	if (m_wintext.hWndCopy)
+	if (m_wintext.m_window)
 	{
-		ShowWindow(m_wintext.hWndCopy, SW_HIDE);
+		ShowWindow(m_wintext.m_window, SW_HIDE);
 	}
-	if (m_plot.window)
+	if (m_plot.window())
 	{
-		ShowWindow(m_plot.window, SW_HIDE);
+		ShowWindow(m_plot.window(), SW_HIDE);
 	}
 }
 
 void GDIDriver::resume()
 {
-	if (!m_wintext.hWndCopy)
+	if (!m_wintext.m_window)
 	{
 		window();
 	}
 
-	ShowWindow(m_wintext.hWndCopy, SW_NORMAL);
+	ShowWindow(m_wintext.m_window, SW_NORMAL);
 	wintext_resume(&m_wintext);
 }
 
 void GDIDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
 	_ASSERTE(!m_text_not_graphics);
-	plot_display_string(&m_plot, x, y, fg, bg, text);
+	m_plot.display_string(x, y, fg, bg, text);
 }
 
 void GDIDriver::save_graphics()
 {
-	plot_save_graphics(&m_plot);
+	m_plot.save_graphics();
 }
 
 void GDIDriver::restore_graphics()
 {
-	plot_restore_graphics(&m_plot);
+	m_plot.restore_graphics();
 }
 
 void GDIDriver::flush()
 {
-	plot_flush(&m_plot);
+	m_plot.flush();
 }
 
 static GDIDriver gdi_driver_info("gdi", "A GDI driver for 32-bit Windows.");

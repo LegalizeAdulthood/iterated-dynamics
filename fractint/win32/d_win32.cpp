@@ -513,6 +513,7 @@ void Win32BaseDriver::discard_screen()
 			free(m_saved_screens[m_screen_count]);
 			m_saved_screens[m_screen_count] = NULL;
 		}
+		set_clear();
 	}
 	else
 	{
