@@ -378,7 +378,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 
 	/* my mind is STILL fried - lower indices = darker g_colors is EASIER! */
 	color = g_colors - color;
-	if ((g_which_image == WHICHIMAGE_RED) && !((x + y)&1)) /* - lower half palette */
+	if ((g_which_image == WHICHIMAGE_RED) && !((x + y) & 1)) /* - lower half palette */
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
@@ -396,7 +396,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 			}
 		}
 	}
-	else if ((g_which_image == WHICHIMAGE_BLUE) && ((x + y)&1)) /* - upper half palette */
+	else if ((g_which_image == WHICHIMAGE_BLUE) && ((x + y) & 1)) /* - upper half palette */
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{

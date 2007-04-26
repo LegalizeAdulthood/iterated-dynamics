@@ -630,7 +630,7 @@ int newton2_orbit(void)
 				if (distance(g_roots[i], g_old_z) < g_threshold)
 				{
 					tmpcolor = (g_basin == 2) ?
-						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);
+						(1 + (i & 7) + ((g_color_iter & 1) << 3)) : (1 + i);
 					break;
 				}
 			}
@@ -683,7 +683,7 @@ int newton_orbit_mpc(void)
 				if (pMPcmp(MPdistance(g_roots_mpc[i], mpcold), g_threshold_mp) < 0)
 				{
 					tmpcolor = (g_basin == 2) ?
-						(1 + (i&7) + ((g_color_iter&1) << 3)) : (1 + i);
+						(1 + (i & 7) + ((g_color_iter & 1) << 3)) : (1 + i);
 					break;
 				}
 			}

@@ -346,13 +346,13 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 		else
 		{                            /* draw an image */
 			if (g_save_time != 0          /* autosave and resumable? */
-					&& (g_current_fractal_specific->flags&NORESUME) == 0)
+				&& (g_current_fractal_specific->flags & NORESUME) == 0)
 			{
 				g_save_base = read_ticker(); /* calc's start time */
 				g_save_ticks = g_save_time*60*1000; /* in milliseconds */
 				g_finish_row = -1;
-				}
-			g_browsing = FALSE;      /* regenerate image, turn off g_browsing */
+			}
+			g_browsing = FALSE;      /* regenerate image, turn off browsing */
 			/*rb*/
 			g_name_stack_ptr = -1;   /* reset pointer */
 			g_browse_name[0] = '\0';  /* null */
@@ -706,7 +706,7 @@ static int look(int *stacked)
 	case '\\':
 		if (g_name_stack_ptr >= 1)
 		{
-			/* go back one file if somewhere to go (ie. g_browsing) */
+			/* go back one file if somewhere to go (ie. browsing) */
 			g_name_stack_ptr--;
 			while (g_file_name_stack[g_name_stack_ptr][0] == '\0'
 					&& g_name_stack_ptr >= 0)
@@ -728,7 +728,7 @@ static int look(int *stacked)
 			}
 			return 1;
 		}                   /* otherwise fall through and turn off
-							* g_browsing */
+							* browsing */
 	case FIK_ESC:
 	case 'l':              /* turn it off */
 	case 'L':
@@ -740,7 +740,7 @@ static int look(int *stacked)
 		save_to_disk(g_save_name);
 		break;
 
-	default:               /* or no files found, leave the state of g_browsing alone */
+	default:               /* or no files found, leave the state of browsing alone */
 		break;
 	}
 
@@ -1197,7 +1197,7 @@ static int handle_history(int *stacked, int kbdchar)
 {
 	if (g_name_stack_ptr >= 1)
 	{
-		/* go back one file if somewhere to go (ie. g_browsing) */
+		/* go back one file if somewhere to go (ie. browsing) */
 		g_name_stack_ptr--;
 		while (g_file_name_stack[g_name_stack_ptr][0] == '\0'
 			&& g_name_stack_ptr >= 0)

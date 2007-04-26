@@ -211,7 +211,7 @@ static void init_bf_2(void)
 	bf10tmp    = bnroot + ptr; ptr += bfdecimals + 4;
 
 	/* ptr needs to be 16-bit aligned on some systems */
-	ptr = (ptr + 1)&~1;
+	ptr = (ptr + 1) & ~1;
 
 	stack_ptr  = bnroot + ptr;
 	startstack = ptr;
