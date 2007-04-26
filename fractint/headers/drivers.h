@@ -74,10 +74,10 @@ public:
 	/* refresh alarm */					virtual void schedule_alarm(int secs) = 0;
 };
 
-class BaseDriver : public AbstractDriver
+class NamedDriver : public AbstractDriver
 {
 public:
-	BaseDriver(const char *name, const char *description)
+	NamedDriver(const char *name, const char *description)
 		: m_name(name),
 		m_description(description)
 	{
