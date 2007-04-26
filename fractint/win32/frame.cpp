@@ -47,12 +47,12 @@ static void frame_OnClose(HWND window)
 
 static void frame_OnSetFocus(HWND window, HWND old_focus)
 {
-	g_frame.has_focus = TRUE;
+	g_frame.m_has_focus = TRUE;
 }
 
 static void frame_OnKillFocus(HWND window, HWND old_focus)
 {
-	g_frame.has_focus = FALSE;
+	g_frame.m_has_focus = FALSE;
 }
 
 static void frame_OnPaint(HWND window)
@@ -64,20 +64,20 @@ static void frame_OnPaint(HWND window)
 
 static int frame_add_key_press(unsigned int key)
 {
-	if (g_frame.keypress_count >= KEYBUFMAX)
+	if (g_frame.m_keypress_count >= KEYBUFMAX)
 	{
-		_ASSERTE(g_frame.keypress_count < KEYBUFMAX);
+		_ASSERTE(g_frame.m_keypress_count < KEYBUFMAX);
 		/* no room */
 		return 1;
 	}
 
-	g_frame.keypress_buffer[g_frame.keypress_head] = key;
-	if (++g_frame.keypress_head >= KEYBUFMAX)
+	g_frame.m_keypress_buffer[g_frame.m_keypress_head] = key;
+	if (++g_frame.m_keypress_head >= KEYBUFMAX)
 	{
-		g_frame.keypress_head = 0;
+		g_frame.m_keypress_head = 0;
 	}
-	g_frame.keypress_count++;
-	return g_frame.keypress_count == KEYBUFMAX;
+	g_frame.m_keypress_count++;
+	return g_frame.m_keypress_count == KEYBUFMAX;
 }
 
 static int mod_key(int modifier, int code, int fik, unsigned int *j)
@@ -183,17 +183,17 @@ static void frame_OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 
 static void frame_OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
 {
-	info->ptMaxSize.x = g_frame.nc_width;
-	info->ptMaxSize.y = g_frame.nc_height;
+	info->ptMaxSize.x = g_frame.m_nc_width;
+	info->ptMaxSize.y = g_frame.m_nc_height;
 	info->ptMaxTrackSize = info->ptMaxSize;
 	info->ptMinTrackSize = info->ptMaxSize;
 }
 
 static void frame_OnTimer(HWND window, UINT id)
 {
-	_ASSERTE(g_frame.window == window);
+	_ASSERTE(g_frame.m_window == window);
 	_ASSERTE(FRAME_TIMER_ID == id);
-	g_frame.timed_out = TRUE;
+	g_frame.m_timed_out = TRUE;
 	KillTimer(window, FRAME_TIMER_ID);
 }
 
@@ -207,36 +207,36 @@ static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 		return;
 	}
 
-	g_frame.delta_x = x - g_frame.start_x;
-	g_frame.delta_y = y - g_frame.start_y;
+	g_frame.m_delta_x = x - g_frame.m_start_x;
+	g_frame.m_delta_y = y - g_frame.m_start_y;
 
 	/* ignore small movements */
-	if ((abs(g_frame.delta_x) > (GraphSens + JitterMickeys))
-			|| (abs(g_frame.delta_y) > (GraphSens + JitterMickeys)))
+	if ((abs(g_frame.m_delta_x) > (GraphSens + JitterMickeys))
+			|| (abs(g_frame.m_delta_y) > (GraphSens + JitterMickeys)))
 	{
-		g_frame.start_x = x;
-		g_frame.start_y = y;
-		if (abs(g_frame.delta_x) > abs(g_frame.delta_y))
+		g_frame.m_start_x = x;
+		g_frame.m_start_y = y;
+		if (abs(g_frame.m_delta_x) > abs(g_frame.m_delta_y))
 		{
 			/* x-axis changes more */
-			key_index = (g_frame.delta_x > 0) ? 0 : 1;
+			key_index = (g_frame.m_delta_x > 0) ? 0 : 1;
 		}
 		else
 		{
 			/* y-axis changes more */
-			key_index = (g_frame.delta_y > 0) ? 2 : 3;
+			key_index = (g_frame.m_delta_y > 0) ? 2 : 3;
 		}
 
 		/* synthesize keystroke */
-		if (g_frame.button_down[BUTTON_LEFT])
+		if (g_frame.m_button_down[BUTTON_LEFT])
 		{
 			key_index += 4;
 		}
-		else if (g_frame.button_down[BUTTON_RIGHT])
+		else if (g_frame.m_button_down[BUTTON_RIGHT])
 		{
 			key_index += 8;
 		}
-		else if (g_frame.button_down[BUTTON_MIDDLE])
+		else if (g_frame.m_button_down[BUTTON_MIDDLE])
 		{
 			key_index += 12;
 		}
@@ -251,7 +251,7 @@ static void frame_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 
 static void frame_OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
-	g_frame.button_down[BUTTON_LEFT] = TRUE;
+	g_frame.m_button_down[BUTTON_LEFT] = TRUE;
 	if (doubleClick && (LOOK_MOUSE_NONE != g_look_at_mouse))
 	{
 		frame_add_key_press(FIK_ENTER);
@@ -260,12 +260,12 @@ static void frame_OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UI
 
 static void frame_OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	g_frame.button_down[BUTTON_LEFT] = FALSE;
+	g_frame.m_button_down[BUTTON_LEFT] = FALSE;
 }
 
 static void frame_OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
-	g_frame.button_down[BUTTON_RIGHT] = TRUE;
+	g_frame.m_button_down[BUTTON_RIGHT] = TRUE;
 	if (doubleClick && (LOOK_MOUSE_NONE != g_look_at_mouse))
 	{
 		frame_add_key_press(FIK_CTL_ENTER);
@@ -274,17 +274,17 @@ static void frame_OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, U
 
 static void frame_OnRightButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	g_frame.button_down[BUTTON_RIGHT] = FALSE;
+	g_frame.m_button_down[BUTTON_RIGHT] = FALSE;
 }
 
 static void frame_OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
-	g_frame.button_down[BUTTON_MIDDLE] = TRUE;
+	g_frame.m_button_down[BUTTON_MIDDLE] = TRUE;
 }
 
 static void frame_OnMiddleButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	g_frame.button_down[BUTTON_MIDDLE] = FALSE;
+	g_frame.m_button_down[BUTTON_MIDDLE] = FALSE;
 }
 
 LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -323,33 +323,33 @@ void frame_init(HINSTANCE instance, LPCSTR title)
 	status = GetClassInfo(instance, windowClass, &wc);
 	if (!status)
 	{
-		g_frame.instance = instance;
-		strcpy(g_frame.title, title);
+		g_frame.m_instance = instance;
+		strcpy(g_frame.m_title, title);
 
 		wc.style = CS_DBLCLKS;
 		wc.lpfnWndProc = frame_proc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
-		wc.hInstance = g_frame.instance;
+		wc.hInstance = g_frame.m_instance;
 		wc.hIcon = NULL;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = (HBRUSH) (COLOR_BACKGROUND + 1);
-		wc.lpszMenuName = g_frame.title;
+		wc.lpszMenuName = g_frame.m_title;
 		wc.lpszClassName = windowClass;
 
 		status = RegisterClass(&wc);
 	}
 
-	g_frame.keypress_count = 0;
-	g_frame.keypress_head  = 0;
-	g_frame.keypress_tail  = 0;
+	g_frame.m_keypress_count = 0;
+	g_frame.m_keypress_head  = 0;
+	g_frame.m_keypress_tail  = 0;
 }
 
 int frame_pump_messages(int waitflag)
 {
 	MSG msg;
 	BOOL quitting = FALSE;
-	g_frame.timed_out = FALSE;
+	g_frame.m_timed_out = FALSE;
 
 	while (!quitting)
 	{
@@ -357,10 +357,10 @@ int frame_pump_messages(int waitflag)
 		{
 			/* no messages waiting */
 			if (!waitflag
-				|| (g_frame.keypress_count != 0)
-				|| (waitflag && g_frame.timed_out))
+				|| (g_frame.m_keypress_count != 0)
+				|| (waitflag && g_frame.m_timed_out))
 			{
-				return (g_frame.keypress_count > 0) ? 1 : 0;
+				return (g_frame.m_keypress_count > 0) ? 1 : 0;
 			}
 		}
 
@@ -384,71 +384,71 @@ int frame_pump_messages(int waitflag)
 		goodbye();
 	}
 
-	return g_frame.keypress_count == 0 ? 0 : 1;
+	return g_frame.m_keypress_count == 0 ? 0 : 1;
 }
 
 int frame_get_key_press(int wait_for_key)
 {
 	int i;
 
-	if (g_look_at_mouse != g_frame.look_mouse)
+	if (g_look_at_mouse != g_frame.m_look_mouse)
 	{
-		g_frame.look_mouse = g_look_at_mouse;
-		g_frame.delta_x = 0;
-		g_frame.delta_y = 0;
-		g_frame.start_x = -1;
-		g_frame.start_y = -1;
-		g_frame.button_down[BUTTON_LEFT] = FALSE;
-		g_frame.button_down[BUTTON_MIDDLE] = FALSE;
-		g_frame.button_down[BUTTON_RIGHT] = FALSE;
+		g_frame.m_look_mouse = g_look_at_mouse;
+		g_frame.m_delta_x = 0;
+		g_frame.m_delta_y = 0;
+		g_frame.m_start_x = -1;
+		g_frame.m_start_y = -1;
+		g_frame.m_button_down[BUTTON_LEFT] = FALSE;
+		g_frame.m_button_down[BUTTON_MIDDLE] = FALSE;
+		g_frame.m_button_down[BUTTON_RIGHT] = FALSE;
 	}
 
 	frame_pump_messages(wait_for_key);
-	if (wait_for_key && g_frame.timed_out)
+	if (wait_for_key && g_frame.m_timed_out)
 	{
 		return 0;
 	}
 
-	if (g_frame.keypress_count == 0)
+	if (g_frame.m_keypress_count == 0)
 	{
 		_ASSERTE(wait_for_key == 0);
 		return 0;
 	}
 
-	i = g_frame.keypress_buffer[g_frame.keypress_tail];
+	i = g_frame.m_keypress_buffer[g_frame.m_keypress_tail];
 
-	if (++g_frame.keypress_tail >= KEYBUFMAX)
+	if (++g_frame.m_keypress_tail >= KEYBUFMAX)
 	{
-		g_frame.keypress_tail = 0;
+		g_frame.m_keypress_tail = 0;
 	}
-	g_frame.keypress_count--;
+	g_frame.m_keypress_count--;
 	return i;
 }
 
 static void frame_adjust_size(int width, int height)
 {
-	g_frame.width = width;
-	g_frame.nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
-	g_frame.height = height;
-	g_frame.nc_height = height +
+	g_frame.m_width = width;
+	g_frame.m_nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
+	g_frame.m_height = height;
+	g_frame.m_nc_height = height +
 		GetSystemMetrics(SM_CYFRAME)*2 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
 void frame_window(int width, int height)
 {
-	if (NULL == g_frame.window)
+	if (NULL == g_frame.m_window)
 	{
 		frame_adjust_size(width, height);
-		g_frame.window = CreateWindow("FractintFrame",
-			g_frame.title,
+		g_frame.m_window = CreateWindow("FractintFrame",
+			g_frame.m_title,
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,               /* default horizontal position */
 			CW_USEDEFAULT,               /* default vertical position */
-			g_frame.nc_width,
-			g_frame.nc_height,
-			NULL, NULL, g_frame.instance,
+			g_frame.m_nc_width,
+			g_frame.m_nc_height,
+			NULL, NULL, g_frame.m_instance,
 			NULL);
-		ShowWindow(g_frame.window, SW_SHOWNORMAL);
+		ShowWindow(g_frame.m_window, SW_SHOWNORMAL);
 	}
 	else
 	{
@@ -461,8 +461,8 @@ void frame_resize(int width, int height)
 	BOOL status;
 
 	frame_adjust_size(width, height);
-	status = SetWindowPos(g_frame.window, NULL,
-		0, 0, g_frame.nc_width, g_frame.nc_height,
+	status = SetWindowPos(g_frame.m_window, NULL,
+		0, 0, g_frame.m_nc_width, g_frame.m_nc_height,
 		SWP_NOZORDER | SWP_NOMOVE);
 	_ASSERTE(status);
 
@@ -470,7 +470,7 @@ void frame_resize(int width, int height)
 
 void frame_set_keyboard_timeout(int ms)
 {
-	UINT_PTR result = SetTimer(g_frame.window, FRAME_TIMER_ID, ms, NULL);
+	UINT_PTR result = SetTimer(g_frame.m_window, FRAME_TIMER_ID, ms, NULL);
 	if (!result)
 	{
 		DWORD error = GetLastError();

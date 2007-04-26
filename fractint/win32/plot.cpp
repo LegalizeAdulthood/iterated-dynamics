@@ -22,42 +22,40 @@
 static Plot *s_plot = NULL;
 static LPCSTR s_window_class = "FractIntPlot";
 
-static void plot_set_dirty_region(Plot *me, int g_x_min, int g_y_min, int g_x_max, int g_y_max)
+void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
 {
-	RECT *r = &me->dirty_region;
-
-	_ASSERTE(g_x_min < g_x_max);
-	_ASSERTE(g_y_min < g_y_max);
-	_ASSERTE((r->left <= r->right) && (r->top <= r->bottom));
-	if (r->left < 0)
+	_ASSERTE(x_min < x_max);
+	_ASSERTE(y_min < y_max);
+	_ASSERTE((m_dirty_region.left <= m_dirty_region.right) && (m_dirty_region.top <= m_dirty_region.bottom));
+	if (m_dirty_region.left < 0)
 	{
-		r->left = g_x_min;
-		r->right = g_x_max;
-		r->top = g_y_min;
-		r->bottom = g_y_max;
-		me->dirty = TRUE;
+		m_dirty_region.left = x_min;
+		m_dirty_region.right = x_max;
+		m_dirty_region.top = y_min;
+		m_dirty_region.bottom = y_max;
+		m_dirty = TRUE;
 	}
 	else
 	{
-		if (g_x_min < r->left)
+		if (x_min < m_dirty_region.left)
 		{
-			r->left = g_x_min;
-			me->dirty = TRUE;
+			m_dirty_region.left = x_min;
+			m_dirty = TRUE;
 		}
-		if (g_x_max > r->right)
+		if (x_max > m_dirty_region.right)
 		{
-			r->right = g_x_max;
-			me->dirty = TRUE;
+			m_dirty_region.right = x_max;
+			m_dirty = TRUE;
 		}
-		if (g_y_min < r->top)
+		if (y_min < m_dirty_region.top)
 		{
-			r->top = g_y_min;
-			me->dirty = TRUE;
+			m_dirty_region.top = y_min;
+			m_dirty = TRUE;
 		}
-		if (g_y_max > r->bottom)
+		if (y_max > m_dirty_region.bottom)
 		{
-			r->bottom = g_y_max;
-			me->dirty = TRUE;
+			m_dirty_region.bottom = y_max;
+			m_dirty = TRUE;
 		}
 	}
 }
@@ -67,37 +65,37 @@ static void plot_set_dirty_region(Plot *me, int g_x_min, int g_y_min, int g_x_ma
  * Resize the pixel array to g_screen_width by g_screen_height and initialize it to zero.
  * Any existing pixel array is freed.
  */
-static void init_pixels(Plot *me)
+void Plot::init_pixels()
 {
-	if (me->pixels != NULL)
+	if (m_pixels != NULL)
 	{
-		free(me->pixels);
-		me->pixels = NULL;
+		::free(m_pixels);
+		m_pixels = NULL;
 	}
-	if (me->saved_pixels != NULL)
+	if (m_saved_pixels != NULL)
 	{
-		free(me->saved_pixels);
-		me->saved_pixels = NULL;
+		::free(m_saved_pixels);
+		m_saved_pixels = NULL;
 	}
-	me->width = g_screen_width;
-	me->height = g_screen_height;
-	me->row_len = me->width*sizeof(me->pixels[0]);
-	me->row_len = ((me->row_len + 3)/4)*4;
-	me->pixels_len = me->row_len*me->height;
-	_ASSERTE(me->pixels_len > 0);
-	me->pixels = (BYTE *) malloc(me->pixels_len);
-	memset(me->pixels, 0, me->pixels_len);
-	me->dirty = FALSE;
+	m_width = g_screen_width;
+	m_height = g_screen_height;
+	m_row_len = m_width*sizeof(m_pixels[0]);
+	m_row_len = ((m_row_len + 3)/4)*4;
+	m_pixels_len = m_row_len*m_height;
+	_ASSERTE(m_pixels_len > 0);
+	m_pixels = (BYTE *) ::malloc(m_pixels_len);
+	memset(m_pixels, 0, m_pixels_len);
+	m_dirty = FALSE;
 	{
 		RECT dirty_rect = { -1, -1, -1, -1 };
-		me->dirty_region = dirty_rect;
+		m_dirty_region = dirty_rect;
 	}
 	{
-		BITMAPINFOHEADER *h = &me->bmi.bmiHeader;
+		BITMAPINFOHEADER *h = &m_bmi.bmiHeader;
 
-		h->biSize = sizeof(me->bmi.bmiHeader);
-		h->biWidth = me->width;
-		h->biHeight = me->height;
+		h->biSize = sizeof(m_bmi.bmiHeader);
+		h->biWidth = m_width;
+		h->biHeight = m_height;
 		h->biPlanes = 1;
 		h->biBitCount = 8;
 		h->biCompression = BI_RGB;
@@ -106,10 +104,10 @@ static void init_pixels(Plot *me)
 	}
 }
 
-static void plot_OnPaint(HWND window)
+void Plot::OnPaint(HWND window)
 {
 	PAINTSTRUCT ps;
-	HDC dc = BeginPaint(window, &ps);
+	HDC dc = ::BeginPaint(window, &ps);
 	RECT *r = &ps.rcPaint;
 	int width = r->right - r->left;
 	int height = r->bottom - r->top;
@@ -119,73 +117,73 @@ static void plot_OnPaint(HWND window)
 	{
 		DWORD status;
 #if 0
-		status = StretchDIBits(dc,
+		status = ::StretchDIBits(dc,
 			r->left, r->top, width, height,
 			r->left, r->top, width, height,
 			s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
 #if 0
-		status = StretchBlt(dc, 0, 0, s_plot->width, s_plot->height,
+		status = ::StretchBlt(dc, 0, 0, s_plot->width, s_plot->height,
 			s_plot->memory_dc, 0, 0, s_plot->width, s_plot->height, SRCCOPY);
 #else
-		status = StretchDIBits(dc,
-			0, 0, s_plot->width, s_plot->height,
-			0, 0, s_plot->width, s_plot->height,
-			s_plot->pixels, &s_plot->bmi, DIB_RGB_COLORS, SRCCOPY);
+		status = ::StretchDIBits(dc,
+			0, 0, s_plot->m_width, s_plot->m_height,
+			0, 0, s_plot->m_width, s_plot->m_height,
+			s_plot->m_pixels, &s_plot->m_bmi, DIB_RGB_COLORS, SRCCOPY);
 #endif
 #endif
 		_ASSERTE(status != GDI_ERROR);
 	}
-	EndPaint(window, &ps);
+	::EndPaint(window, &ps);
 }
 
 /* forward all mouse events to the frame */
-static void plot_OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
+void Plot::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
 {
 	FORWARD_WM_LBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
 }
-static void plot_OnLeftButtonUp(HWND hwnd, int x, int y, int keyFlags)
+void Plot::OnLeftButtonUp(HWND hwnd, int x, int y, int keyFlags)
 {
 	FORWARD_WM_LBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
 }
-static void plot_OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
+void Plot::OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
 {
 	FORWARD_WM_MBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
 }
-static void plot_OnMiddleButtonUp(HWND hwnd, int x, int y, int keyFlags)
+void Plot::OnMiddleButtonUp(HWND hwnd, int x, int y, int keyFlags)
 {
 	FORWARD_WM_MBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
 }
-static void plot_OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
+void Plot::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
 {
 	FORWARD_WM_RBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
 }
-static void plot_OnRightButtonUp(HWND hwnd, int x, int y, int keyFlags)
+void Plot::OnRightButtonUp(HWND hwnd, int x, int y, int keyFlags)
 {
 	FORWARD_WM_RBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
 }
-static void plot_OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
+void Plot::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	FORWARD_WM_MOUSEMOVE(hwnd, x, y, keyFlags, frame_proc);
 }
 
-static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
+LRESULT CALLBACK Plot::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
 	_ASSERTE(s_plot != NULL);
 	switch (message)
 	{
-	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, plot_OnPaint);					break;
-	case WM_MOUSEMOVE:		HANDLE_WM_MOUSEMOVE(window, wp, lp, plot_OnMouseMove);			break;
-	case WM_LBUTTONDOWN:	HANDLE_WM_LBUTTONDOWN(window, wp, lp, plot_OnLeftButtonDown);	break;
-	case WM_LBUTTONUP:		HANDLE_WM_LBUTTONUP(window, wp, lp, plot_OnLeftButtonUp);		break;
-	case WM_LBUTTONDBLCLK:	HANDLE_WM_LBUTTONDBLCLK(window, wp, lp, plot_OnLeftButtonDown);	break;
-	case WM_MBUTTONDOWN:	HANDLE_WM_MBUTTONDOWN(window, wp, lp, plot_OnMiddleButtonDown);	break;
-	case WM_MBUTTONUP:		HANDLE_WM_MBUTTONUP(window, wp, lp, plot_OnMiddleButtonUp);		break;
-	case WM_RBUTTONDOWN:	HANDLE_WM_RBUTTONDOWN(window, wp, lp, plot_OnRightButtonDown);	break;
-	case WM_RBUTTONUP:		HANDLE_WM_RBUTTONUP(window, wp, lp, plot_OnRightButtonUp);		break;
-	case WM_RBUTTONDBLCLK:	HANDLE_WM_RBUTTONDBLCLK(window, wp, lp, plot_OnRightButtonDown); break;
+	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, Plot::OnPaint);					break;
+	case WM_MOUSEMOVE:		HANDLE_WM_MOUSEMOVE(window, wp, lp, Plot::OnMouseMove);			break;
+	case WM_LBUTTONDOWN:	HANDLE_WM_LBUTTONDOWN(window, wp, lp, Plot::OnLeftButtonDown);	break;
+	case WM_LBUTTONUP:		HANDLE_WM_LBUTTONUP(window, wp, lp, Plot::OnLeftButtonUp);		break;
+	case WM_LBUTTONDBLCLK:	HANDLE_WM_LBUTTONDBLCLK(window, wp, lp, Plot::OnLeftButtonDown);	break;
+	case WM_MBUTTONDOWN:	HANDLE_WM_MBUTTONDOWN(window, wp, lp, Plot::OnMiddleButtonDown);	break;
+	case WM_MBUTTONUP:		HANDLE_WM_MBUTTONUP(window, wp, lp, Plot::OnMiddleButtonUp);		break;
+	case WM_RBUTTONDOWN:	HANDLE_WM_RBUTTONDOWN(window, wp, lp, Plot::OnRightButtonDown);	break;
+	case WM_RBUTTONUP:		HANDLE_WM_RBUTTONUP(window, wp, lp, Plot::OnRightButtonUp);		break;
+	case WM_RBUTTONDBLCLK:	HANDLE_WM_RBUTTONDBLCLK(window, wp, lp, Plot::OnRightButtonDown); break;
 
-	default: return DefWindowProc(window, message, wp, lp);
+	default: return ::DefWindowProc(window, message, wp, lp);
 	}
 
 	return 0;
@@ -227,188 +225,188 @@ static void init_clut(BYTE clut[256][3])
 	clut[2][0] = 3*COLOR_CHANNEL_MAX/4; clut[2][1] = clut[2][2] = COLOR_CHANNEL_MAX;
 }
 
-int plot_init(Plot *me, HINSTANCE instance, LPCSTR title)
+int Plot::initialize(HINSTANCE instance, LPCSTR title)
 {
 	WNDCLASS  wc;
 	int result;
 
-	me->instance = instance;
-	strcpy(me->title, title);
+	m_instance = instance;
+	::strcpy(m_title, title);
 
-	result = GetClassInfo(me->instance, s_window_class, &wc);
+	result = ::GetClassInfo(m_instance, s_window_class, &wc);
 	if (!result)
 	{
 		wc.style = CS_DBLCLKS;
-		wc.lpfnWndProc = plot_proc;
+		wc.lpfnWndProc = proc;
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
-		wc.hInstance = me->instance;
+		wc.hInstance = m_instance;
 		wc.hIcon = NULL;
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
-		wc.lpszMenuName =  me->title;
+		wc.lpszMenuName =  m_title;
 		wc.lpszClassName = s_window_class;
 
-		result = RegisterClass(&wc);
+		result = ::RegisterClass(&wc);
 	}
 
 	return result;
 }
 
-void plot_terminate(Plot *me)
+void Plot::terminate()
 {
-	if (me->pixels)
+	if (m_pixels)
 	{
-		free(me->pixels);
-		me->pixels = NULL;
+		::free(m_pixels);
+		m_pixels = NULL;
 	}
-	if (me->saved_pixels)
+	if (m_saved_pixels)
 	{
-		free(me->saved_pixels);
-		me->saved_pixels = NULL;
+		::free(m_saved_pixels);
+		m_saved_pixels = NULL;
 	}
 
 	{
-		HBITMAP rendering = (HBITMAP) SelectObject(me->memory_dc, (HGDIOBJ) me->backup);
-		_ASSERTE(rendering == me->rendering);
+		HBITMAP rendering = static_cast<HBITMAP>(::SelectObject(m_memory_dc, static_cast<HGDIOBJ>(m_backup)));
+		_ASSERTE(rendering == m_rendering);
 	}
-	DeleteObject(me->rendering);
-	DeleteDC(me->memory_dc);
-	DestroyWindow(me->window);
+	::DeleteObject(m_rendering);
+	::DeleteDC(m_memory_dc);
+	::DestroyWindow(m_window);
 }
 
-static void plot_create_backing_store(Plot *me)
+void Plot::create_backing_store()
 {
 	{
-		HDC dc = GetDC(me->window);
-		me->memory_dc = CreateCompatibleDC(dc);
-		_ASSERTE(me->memory_dc);
-		ReleaseDC(me->window, dc);
+		HDC dc = ::GetDC(m_window);
+		m_memory_dc = ::CreateCompatibleDC(dc);
+		_ASSERTE(m_memory_dc);
+		::ReleaseDC(m_window, dc);
 	}
 
-	me->rendering = CreateCompatibleBitmap(me->memory_dc, me->width, me->height);
-	_ASSERTE(me->rendering);
-	me->backup = (HBITMAP) SelectObject(me->memory_dc, (HGDIOBJ) me->rendering);
+	m_rendering = ::CreateCompatibleBitmap(m_memory_dc, m_width, m_height);
+	_ASSERTE(m_rendering);
+	m_backup = static_cast<HBITMAP>(::SelectObject(m_memory_dc, static_cast<HGDIOBJ>(m_rendering)));
 
-	me->font = CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
+	m_font = ::CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
 		OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
 		DEFAULT_PITCH | FF_MODERN, "Courier");
-	_ASSERTE(me->font);
-	SelectObject(me->memory_dc, (HGDIOBJ) me->font);
-	SetBkMode(me->memory_dc, OPAQUE);
+	_ASSERTE(m_font);
+	::SelectObject(m_memory_dc, static_cast<HGDIOBJ>(m_font));
+	::SetBkMode(m_memory_dc, OPAQUE);
 }
 
-void plot_window(Plot *me, HWND parent)
+void Plot::window(HWND parent)
 {
-	if (NULL == me->window)
+	if (NULL == m_window)
 	{
-		init_pixels(me);
-		s_plot = me;
-		me->parent = parent;
-		me->window = CreateWindow(s_window_class,
-			me->title,
+		init_pixels();
+		s_plot = this;
+		m_parent = parent;
+		m_window = ::CreateWindow(s_window_class,
+			m_title,
 			parent ? WS_CHILD : WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,               /* default horizontal position */
 			CW_USEDEFAULT,               /* default vertical position */
-			me->width,
-			me->height,
-			parent, NULL, me->instance,
+			m_width,
+			m_height,
+			parent, NULL, m_instance,
 			NULL);
 
-		plot_create_backing_store(me);
+		create_backing_store();
 	}
 }
 
-void plot_write_pixel(Plot *me, int x, int y, int color)
+void Plot::write_pixel(int x, int y, int color)
 {
-	_ASSERTE(me->pixels);
-	_ASSERTE(x >= 0 && x < me->width);
-	_ASSERTE(y >= 0 && y < me->height);
-	me->pixels[(me->height - y - 1)*me->row_len + x] = (BYTE) (color & 0xFF);
-	plot_set_dirty_region(me, x, y, x + 1, y + 1);
+	_ASSERTE(m_pixels);
+	_ASSERTE(x >= 0 && x < m_width);
+	_ASSERTE(y >= 0 && y < m_height);
+	m_pixels[(m_height - y - 1)*m_row_len + x] = (BYTE) (color & 0xFF);
+	set_dirty_region(x, y, x + 1, y + 1);
 }
 
-int plot_read_pixel(Plot *me, int x, int y)
+int Plot::read_pixel(int x, int y)
 {
-	_ASSERTE(me->pixels);
-	_ASSERTE(x >= 0 && x < me->width);
-	_ASSERTE(y >= 0 && y < me->height);
-	return (int) me->pixels[(me->height - 1 - y)*me->row_len + x];
+	_ASSERTE(m_pixels);
+	_ASSERTE(x >= 0 && x < m_width);
+	_ASSERTE(y >= 0 && y < m_height);
+	return (int) m_pixels[(m_height - 1 - y)*m_row_len + x];
 }
 
-void plot_write_span(Plot *me, int y, int x, int lastx, const BYTE *pixels)
+void Plot::write_span(int y, int x, int lastx, const BYTE *pixels)
 {
 	int i;
 	int width = lastx-x + 1;
 
 	for (i = 0; i < width; i++)
 	{
-		plot_write_pixel(me, x + i, y, pixels[i]);
+		write_pixel(x + i, y, pixels[i]);
 	}
-	plot_set_dirty_region(me, x, y, lastx + 1, y + 1);
+	set_dirty_region(x, y, lastx + 1, y + 1);
 }
 
-void plot_flush(Plot *me)
+void Plot::flush()
 {
-	if (me->dirty)
+	if (m_dirty)
 	{
 		RECT r = { -1, -1, -1, -1 };
 #if 0
-		InvalidateRect(me->window, &me->dirty_region, FALSE);
+		::InvalidateRect(m_window, &m_dirty_region, FALSE);
 #else
 #if 0
 		DWORD status;
-		status = StretchDIBits(me->memory_dc,
-			0, 0, me->width, me->width,
-			0, 0, me->width, me->height,
-			me->pixels, &me->bmi, DIB_RGB_COLORS, SRCCOPY);
+		status = ::StretchDIBits(m_memory_dc,
+			0, 0, m_width, m_width,
+			0, 0, m_width, m_height,
+			m_pixels, &m_bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
-		InvalidateRect(me->window, NULL, FALSE);
+		::InvalidateRect(m_window, NULL, FALSE);
 #endif
 #endif
-		me->dirty = FALSE;
-		me->dirty_region = r;
+		m_dirty = FALSE;
+		m_dirty_region = r;
 	}
 }
 
-void plot_read_span(Plot *me, int y, int x, int lastx, BYTE *pixels)
+void Plot::read_span(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 
-	plot_flush(me);
+	flush();
 	width = lastx - x + 1;
 	for (i = 0; i < width; i++)
 	{
-		pixels[i] = plot_read_pixel(me, x + i, y);
+		pixels[i] = read_pixel(x + i, y);
 	}
 }
 
-void plot_set_line_mode(Plot *me, int mode)
+void Plot::set_line_mode(int mode)
 {
 }
 
-void plot_draw_line(Plot *me, int x1, int y1, int x2, int y2, int color)
+void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-	draw_line(x1, y1, x2, y2, color);
+	::draw_line(x1, y1, x2, y2, color);
 }
 
-int plot_resize(Plot *me)
+int Plot::resize()
 {
 	BOOL status;
 
-	if ((g_screen_width == me->width) && (g_screen_height == me->height))
+	if ((g_screen_width == m_width) && (g_screen_height == m_height))
 	{
 		return 0;
 	}
 
-	init_pixels(me);
-	status = SetWindowPos(me->window, NULL, 0, 0, me->width, me->height, SWP_NOZORDER | SWP_NOMOVE);
+	init_pixels();
+	status = ::SetWindowPos(m_window, NULL, 0, 0, m_width, m_height, SWP_NOZORDER | SWP_NOMOVE);
 	_ASSERTE(status);
 
 	return !0;
 }
 
-int plot_read_palette(Plot *me)
+int Plot::read_palette()
 {
 	int i;
 
@@ -419,42 +417,42 @@ int plot_read_palette(Plot *me)
 
 	for (i = 0; i < 256; i++)
 	{
-		g_dac_box[i][0] = me->clut[i][0];
-		g_dac_box[i][1] = me->clut[i][1];
-		g_dac_box[i][2] = me->clut[i][2];
+		g_dac_box[i][0] = m_clut[i][0];
+		g_dac_box[i][1] = m_clut[i][1];
+		g_dac_box[i][2] = m_clut[i][2];
 	}
 	return 0;
 }
 
-int plot_write_palette(Plot *me)
+int Plot::write_palette()
 {
 	int i;
 
 	for (i = 0; i < 256; i++)
 	{
-		me->clut[i][0] = g_dac_box[i][0];
-		me->clut[i][1] = g_dac_box[i][1];
-		me->clut[i][2] = g_dac_box[i][2];
+		m_clut[i][0] = g_dac_box[i][0];
+		m_clut[i][1] = g_dac_box[i][1];
+		m_clut[i][2] = g_dac_box[i][2];
 
 		/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
-		me->bmi.bmiColors[i].rgbRed = g_dac_box[i][0]*4;
-		me->bmi.bmiColors[i].rgbGreen = g_dac_box[i][1]*4;
-		me->bmi.bmiColors[i].rgbBlue = g_dac_box[i][2]*4;
+		m_bmi.bmiColors[i].rgbRed = g_dac_box[i][0]*4;
+		m_bmi.bmiColors[i].rgbGreen = g_dac_box[i][1]*4;
+		m_bmi.bmiColors[i].rgbBlue = g_dac_box[i][2]*4;
 	}
-	plot_redraw(me);
+	redraw();
 
 	return 0;
 }
 
-static VOID CALLBACK redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
+static VOID CALLBACK redraw_window(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
-	InvalidateRect(window, NULL, FALSE);
-	KillTimer(window, PLOT_TIMER_ID);
+	::InvalidateRect(window, NULL, FALSE);
+	::KillTimer(window, PLOT_TIMER_ID);
 }
 
-void plot_schedule_alarm(Plot *me, int delay)
+void Plot::schedule_alarm(int delay)
 {
-	UINT_PTR result = SetTimer(me->window, PLOT_TIMER_ID, delay, redraw);
+	UINT_PTR result = ::SetTimer(m_window, PLOT_TIMER_ID, delay, redraw_window);
 	if (!result)
 	{
 		DWORD error = GetLastError();
@@ -462,20 +460,20 @@ void plot_schedule_alarm(Plot *me, int delay)
 	}
 }
 
-void plot_clear(Plot *me)
+void Plot::clear()
 {
-	RECT r = { 0, 0, me->width, me->height };
-	me->dirty_region = r;
-	me->dirty = TRUE;
-	memset(me->pixels, 0, me->pixels_len);
+	RECT r = { 0, 0, m_width, m_height };
+	m_dirty_region = r;
+	m_dirty = TRUE;
+	::memset(m_pixels, 0, m_pixels_len);
 }
 
-void plot_redraw(Plot *me)
+void Plot::redraw()
 {
-	InvalidateRect(me->window, NULL, FALSE);
+	::InvalidateRect(m_window, NULL, FALSE);
 }
 
-void plot_display_string(Plot *me, int start_x, int start_y, int fg, int bg, const char *text)
+void Plot::display_string(int start_x, int start_y, int fg, int bg, const char *text)
 {
 	while (*text)
 	{
@@ -489,7 +487,7 @@ void plot_display_string(Plot *me, int start_x, int start_y, int fg, int bg, con
 			while (col-- > 0)
 			{
 				int color = (pixel & (1 << col)) ? fg : bg;
-				plot_write_pixel(me, x++, start_y + row, color);
+				write_pixel(x++, start_y + row, color);
 			}
 		}
 		char_x += 8;
@@ -497,19 +495,19 @@ void plot_display_string(Plot *me, int start_x, int start_y, int fg, int bg, con
 	}
 }
 
-void plot_save_graphics(Plot *me)
+void Plot::save_graphics()
 {
-	if (NULL == me->saved_pixels)
+	if (NULL == m_saved_pixels)
 	{
-		me->saved_pixels = (BYTE *) malloc(me->pixels_len);
-		memset(me->saved_pixels, 0, me->pixels_len);
+		m_saved_pixels = (BYTE *) ::malloc(m_pixels_len);
+		::memset(m_saved_pixels, 0, m_pixels_len);
 	}
-	memcpy(me->saved_pixels, me->pixels, me->pixels_len);
+	::memcpy(m_saved_pixels, m_pixels, m_pixels_len);
 }
 
-void plot_restore_graphics(Plot *me)
+void Plot::restore_graphics()
 {
-	_ASSERTE(me->saved_pixels);
-	memcpy(me->pixels, me->saved_pixels, me->pixels_len);
-	plot_redraw(me);
+	_ASSERTE(m_saved_pixels);
+	::memcpy(m_pixels, m_saved_pixels, m_pixels_len);
+	redraw();
 }

@@ -7,31 +7,31 @@
 #define BUTTON_RIGHT 1
 #define BUTTON_MIDDLE 2
 
-typedef struct tagFrame Frame;
-struct tagFrame
+class Frame
 {
-	HINSTANCE instance;
-	HWND window;
-	char title[80];
-	int width;
-	int height;
-	int nc_width;
-	int nc_height;
-	HWND child;
-	BOOL has_focus;
-	BOOL timed_out;
+public:
+	HINSTANCE m_instance;
+	HWND m_window;
+	char m_title[80];
+	int m_width;
+	int m_height;
+	int m_nc_width;
+	int m_nc_height;
+	HWND m_child;
+	BOOL m_has_focus;
+	BOOL m_timed_out;
 
 	/* the keypress buffer */
-	unsigned int  keypress_count;
-	unsigned int  keypress_head;
-	unsigned int  keypress_tail;
-	unsigned int  keypress_buffer[KEYBUFMAX];
+	unsigned int m_keypress_count;
+	unsigned int m_keypress_head;
+	unsigned int m_keypress_tail;
+	unsigned int m_keypress_buffer[KEYBUFMAX];
 
 	/* mouse data */
-	BOOL button_down[3];
-	int start_x, start_y;
-	int delta_x, delta_y;
-	int look_mouse;
+	BOOL m_button_down[3];
+	int m_start_x, m_start_y;
+	int m_delta_x, m_delta_y;
+	int m_look_mouse;
 };
 
 extern Frame g_frame;

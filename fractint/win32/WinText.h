@@ -5,45 +5,45 @@
 #define WINTEXT_MAX_COL 80
 #define WINTEXT_MAX_ROW 25
 
-struct tagWinText
+class WinText
 {
-	int textmode;
-	int AltF4hit;
-	int showing_cursor;
+public:
+	int m_text_mode;
+	int m_alt_f4_hit;
+	int m_showing_cursor;
 
 	/* Local copy of the "screen" characters and attributes */
-	char chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-	char attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
-	int buffer_init;     /* zero if 'screen' is uninitialized */
+	char m_chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
+	char m_attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];
+	int m_buffer_init;     /* zero if 'screen' is uninitialized */
 
 	/* font information */
 
-	HFONT hFont;
-	int char_font;
-	int char_width;
-	int char_height;
-	int char_xchars;
-	int char_ychars;
-	int max_width;
-	int max_height;
+	HFONT m_font;
+	int m_char_font;
+	int m_char_width;
+	int m_char_height;
+	int m_char_xchars;
+	int m_char_ychars;
+	int m_max_width;
+	int m_max_height;
 
 	/* "cursor" variables (AKA the "caret" in Window-Speak) */
-	int cursor_x;
-	int cursor_y;
-	int cursor_type;
-	int cursor_owned;
-	HBITMAP bitmap[3];
-	short cursor_pattern[3][40];
+	int m_cursor_x;
+	int m_cursor_y;
+	int m_cursor_type;
+	int m_cursor_owned;
+	HBITMAP m_bitmap[3];
+	short m_cursor_pattern[3][40];
 
-	char title_text[128];         /* title-bar text */
+	char m_title_text[128];			/* title-bar text */
 
 	/* a few Windows variables we need to remember globally */
 
-	HWND hWndCopy;                /* a Global copy of hWnd */
-	HWND hWndParent;              /* a Global copy of hWnd's Parent */
-	HINSTANCE hInstance;             /* a global copy of hInstance */
+	HWND m_window;					/* a Global copy of hWnd */
+	HWND m_parent_window;				/* a Global copy of hWnd's Parent */
+	HINSTANCE m_instance;			/* a global copy of hInstance */
 };
-typedef struct tagWinText WinText;
 
 extern void			wintext_clear(WinText *);
 extern void			wintext_cursor(WinText *, int, int, int);
