@@ -6,29 +6,46 @@ class Halley
 public:
 	Halley()
 		: m_a_plus_1_degree(0),
-		m_a_plus_1(0),
-		m_a_plus_1_mp(),
-		m_a_plus_1_degree_mp(),
-		m_new_mpc(),
-		m_old_mpc()
+		m_a_plus_1(0)
 	{
 	}
 	~Halley()
 	{
 	}
 
-	int setup();
-	int orbit_fp();
-	int per_pixel();
-	int orbit_mpc();
-	int per_pixel_mpc();
+	virtual int setup();
+	virtual int orbit();
+	virtual int per_pixel();
+
+protected:
+	int					m_a_plus_1_degree;
+	int					m_a_plus_1;
 
 private:
 	int bail_out();
-	int bail_out_mpc();
+};
 
-	int					m_a_plus_1_degree;
-	int					m_a_plus_1;
+class HalleyMP : public Halley
+{
+public:
+	HalleyMP() : Halley(),
+		m_a_plus_1_mp(),
+		m_a_plus_1_degree_mp(),
+		m_new_mpc(),
+		m_old_mpc()
+	{
+	}
+	virtual ~HalleyMP()
+	{
+	}
+
+	virtual int setup();
+	virtual int orbit();
+	virtual int per_pixel();
+
+private:
+	int bail_out();
+
 	struct MP m_a_plus_1_mp;
 	struct MP m_a_plus_1_degree_mp;
 	struct MPC m_new_mpc;

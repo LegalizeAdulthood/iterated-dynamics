@@ -12,6 +12,7 @@ extern struct MPC mpcnew;
 #endif
 
 static Halley s_halley;
+static HalleyMP s_halley_mp;
 
 static double modulus(const _CMPLX &z)
 {
@@ -30,17 +31,17 @@ int halley_per_pixel()
 
 int halley_orbit_fp()
 {
-	return s_halley.orbit_fp();
+	return s_halley.orbit();
 }
 
 int halley_per_pixel_mpc()
 {
-	return s_halley.per_pixel_mpc();
+	return s_halley_mp.per_pixel();
 }
 
 int halley_orbit_mpc()
 {
-	return s_halley.orbit_mpc();
+	return s_halley_mp.orbit();
 }
 
 int Halley::setup()
@@ -63,19 +64,6 @@ int Halley::setup()
 	m_a_plus_1 = g_degree + 1; /* a + 1 */
 	m_a_plus_1_degree = m_a_plus_1*g_degree;
 
-#if !defined(XFRACT)
-	if (g_fractal_type == MPHALLEY)
-	{
-		setMPfunctions();
-		m_a_plus_1_mp = *pd2MP((double) m_a_plus_1);
-		m_a_plus_1_degree_mp = *pd2MP((double) m_a_plus_1_degree);
-		g_temp_parameter_mpc.x = *pd2MP(g_parameter.y);
-		g_temp_parameter_mpc.y = *pd2MP(g_parameter2.y);
-		g_parameter2_x_mp = *pd2MP(g_parameter2.x);
-		g_one_mp        = *pd2MP(1.0);
-	}
-#endif
-
 	g_symmetry = (g_degree % 2) ? XAXIS : XYAXIS;   /* odd, even */
 	return 1;
 }
@@ -90,9 +78,7 @@ int Halley::bail_out()
 	return 0;
 }
 
-#define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
-
-int Halley::bail_out_mpc()
+int HalleyMP::bail_out()
 {
 #if !defined(XFRACT)
 	static struct MP mptmpbailout;
@@ -106,7 +92,7 @@ int Halley::bail_out_mpc()
 	return 0;
 }
 
-int Halley::orbit_fp()
+int Halley::orbit()
 {
 	/*  X(X^a - 1) = 0, Halley Map */
 	/*  a = g_parameter.x = degree, relaxation coeff. = g_parameter.y, epsilon = g_parameter2.x  */
@@ -149,7 +135,27 @@ int Halley::orbit_fp()
 	return bail_out();
 }
 
-int Halley::orbit_mpc()
+int HalleyMP::setup()
+{
+	Halley::setup();
+
+#if !defined(XFRACT)
+	if (g_fractal_type == MPHALLEY)
+	{
+		setMPfunctions();
+		m_a_plus_1_mp = *pd2MP((double) m_a_plus_1);
+		m_a_plus_1_degree_mp = *pd2MP((double) m_a_plus_1_degree);
+		g_temp_parameter_mpc.x = *pd2MP(g_parameter.y);
+		g_temp_parameter_mpc.y = *pd2MP(g_parameter2.y);
+		g_parameter2_x_mp = *pd2MP(g_parameter2.x);
+		g_one_mp        = *pd2MP(1.0);
+	}
+#endif
+
+	return 1;
+}
+
+int HalleyMP::orbit()
 {
 #if !defined(XFRACT)
 	/*  X(X^a - 1) = 0, Halley Map */
@@ -198,25 +204,15 @@ int Halley::orbit_mpc()
 	mpcHalnumer2 = MPCdiv(mpcFX, mpctmp);
 
 	mpctmp   =  MPCmul(g_temp_parameter_mpc, mpcHalnumer2);  /* g_temp_parameter_mpc is relaxation coef. */
-#if 0
-	mpctmp.x = *pMPmul(mptmpparmy, mpcHalnumer2.x); /* mptmpparmy is */
-	mpctmp.y = *pMPmul(mptmpparmy, mpcHalnumer2.y); /* relaxation coef. */
-
-	s_halley.new_mpc.x = *pMPsub(s_halley.old_mpc.x, mpctmp.x);
-	s_halley.new_mpc.y = *pMPsub(s_halley.old_mpc.y, mpctmp.y);
-
-	g_new_z.x = *pMP2d(s_halley.new_mpc.x);
-	g_new_z.y = *pMP2d(s_halley.new_mpc.y);
-#endif
 	mpcnew = MPCsub(mpcold, mpctmp);
 	g_new_z    = MPC2cmplx(mpcnew);
-	return bail_out_mpc() || g_overflow_mp;
+	return bail_out() || g_overflow_mp;
 #else
 	return 0;
 #endif
 }
 
-int Halley::per_pixel_mpc()
+int HalleyMP::per_pixel()
 {
 #if !defined(XFRACT)
 	/* MPC halley */
