@@ -92,11 +92,11 @@ int Halley::bail_out()
 	return 0;
 }
 
-#if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
 
 int Halley::bail_out_mpc()
 {
+#if !defined(XFRACT)
 	static struct MP mptmpbailout;
 	mptmpbailout = *MPabs(*pMPsub(MPCmod(m_new_mpc), MPCmod(m_old_mpc)));
 	if (pMPcmp(mptmpbailout, g_parameter2_x_mp) < 0)
@@ -104,9 +104,9 @@ int Halley::bail_out_mpc()
 		return 1;
 	}
 	m_old_mpc = m_new_mpc;
+#endif
 	return 0;
 }
-#endif
 
 int Halley::orbit_fp()
 {
