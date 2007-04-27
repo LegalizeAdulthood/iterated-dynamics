@@ -679,59 +679,8 @@ long ExpFloat14(long xx)
 
 double TwoPi;
 _CMPLX temp, BaseLog;
-_CMPLX cdegree = { 3.0, 0.0 }, croot   = { 1.0, 0.0 };
-
-int complex_newton_setup(void)
-{
-	g_threshold = .001;
-	g_periodicity_check = 0;
-	if (g_parameters[0] != 0.0 || g_parameters[1] != 0.0 || g_parameters[2] != 0.0 ||
-		g_parameters[3] != 0.0)
-		{
-		croot.x = g_parameters[2];
-		croot.y = g_parameters[3];
-		cdegree.x = g_parameters[0];
-		cdegree.y = g_parameters[1];
-		FPUcplxlog(&croot, &BaseLog);
-		TwoPi = asin(1.0)*4;
-	}
-	return 1;
-}
-
-int complex_newton(void)
-{
-	_CMPLX cd1;
-
-	/* new = ((cdegree-1)*old**cdegree) + croot
-				----------------------------------
-                 cdegree*old**(cdegree-1)         */
-
-	cd1.x = cdegree.x - 1.0;
-	cd1.y = cdegree.y;
-
-	temp = ComplexPower(g_old_z, cd1);
-	FPUcplxmul(&temp, &g_old_z, &g_new_z);
-
-	g_temp_z.x = g_new_z.x - croot.x;
-	g_temp_z.y = g_new_z.y - croot.y;
-	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < g_threshold)
-	{
-		return 1;
-	}
-
-	FPUcplxmul(&g_new_z, &cd1, &g_temp_z);
-	g_temp_z.x += croot.x;
-	g_temp_z.y += croot.y;
-
-	FPUcplxmul(&temp, &cdegree, &cd1);
-	FPUcplxdiv(&g_temp_z, &cd1, &g_old_z);
-	if (g_overflow)
-	{
-		return 1;
-	}
-	g_new_z = g_old_z;
-	return 0;
-}
+_CMPLX cdegree = { 3.0, 0.0 };
+_CMPLX croot   = { 1.0, 0.0 };
 
 int complex_basin(void)
 {

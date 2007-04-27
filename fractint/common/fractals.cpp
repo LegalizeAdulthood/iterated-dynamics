@@ -55,12 +55,7 @@
 
 #define modulus(z)			(sqr((z).x) + sqr((z).y))
 #define conjugate(pz)		((pz)->y = - (pz)->y)
-#define distance(z1, z2)	(sqr((z1).x-(z2).x) + sqr((z1).y-(z2).y))
 #define pMPsqr(z)			(*pMPmul((z), (z)))
-#define MPdistance(z1, z2)	(*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
-							/* Distance of complex z from unit circle */
-#define DIST1(z)			(((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y))
-#define LDIST1(z)			(lsqr((((z).x)-g_fudge)) + lsqr(((z).y)))
 
 static double _fastcall dx_pixel_calc(void);
 static double _fastcall dy_pixel_calc(void);
@@ -82,7 +77,6 @@ int g_root = 0;
 int g_degree = 0;
 int g_basin = 0;
 double g_root_over_degree = 0.0;
-double g_degree_minus_1_over_degree = 0.0;
 double g_threshold = 0.0;
 _CMPLX g_coefficient = { 0.0, 0.0 };
 _CMPLX  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
@@ -143,7 +137,13 @@ static long s_cos_y_l = 0;
 static long s_sin_y_l = 0;
 static double s_xt;
 static double s_yt;
-static double s_t2;
+
+#if !defined(XFRACT)
+struct MP g_root_over_degree_mp, g_degree_minus_1_over_degree_mp, g_threshold_mp;
+struct MP g_one_mp;
+struct MPC mpcold, mpcnew;
+struct MP g_parameter2_x_mp;
+#endif
 
 void magnet2_precalculate_fp(void) /* precalculation for Magnet2 (M & J) for speed */
 {
@@ -453,15 +453,15 @@ void complex_power(_CMPLX *base, int exp, _CMPLX *result)
 	exp >>= 1;
 	while (exp)
 	{
-		s_t2 = s_xt*s_xt - s_yt*s_yt;
+		double temp = s_xt*s_xt - s_yt*s_yt;
 		s_yt = 2*s_xt*s_yt;
-		s_xt = s_t2;
+		s_xt = temp;
 
 		if (exp & 1)
 		{
-				s_t2 = s_xt*result->x - s_yt*result->y;
+				temp = s_xt*result->x - s_yt*result->y;
 				result->y = result->y*s_xt + s_yt*result->x;
-				result->x = s_t2;
+				result->x = temp;
 		}
 		exp >>= 1;
 	}
@@ -563,122 +563,6 @@ z_to_the_z(_CMPLX *z, _CMPLX *out)
 }
 #endif
 #endif
-
-int complex_multiply(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz)
-{
-	pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
-	pz->y = arg1.x*arg2.y + arg1.y*arg2.x;
-	return 0;
-}
-
-int newton2_orbit(void)
-{
-	static char start = 1;
-	if (start)
-	{
-		start = 0;
-	}
-	complex_power(&g_old_z, g_degree-1, &g_temp_z);
-	complex_multiply(g_temp_z, g_old_z, &g_new_z);
-
-	if (DIST1(g_new_z) < g_threshold)
-	{
-		if (g_fractal_type == NEWTBASIN || g_fractal_type == MPNEWTBASIN)
-		{
-			long tmpcolor;
-			int i;
-			tmpcolor = -1;
-			/* this code determines which degree-th root of root the
-				Newton formula converges to. The roots of a 1 are
-				distributed on a circle of radius 1 about the origin. */
-			for (i = 0; i < g_degree; i++)
-			{
-				/* color in alternating shades with iteration according to
-					which root of 1 it converged to */
-				if (distance(g_roots[i], g_old_z) < g_threshold)
-				{
-					tmpcolor = (g_basin == 2) ?
-						(1 + (i & 7) + ((g_color_iter & 1) << 3)) : (1 + i);
-					break;
-				}
-			}
-			g_color_iter = (tmpcolor == -1) ? g_max_color : tmpcolor;
-		}
-		return 1;
-	}
-	g_new_z.x = g_degree_minus_1_over_degree*g_new_z.x + g_root_over_degree;
-	g_new_z.y *= g_degree_minus_1_over_degree;
-
-	/* Watch for divide underflow */
-	s_t2 = g_temp_z.x*g_temp_z.x + g_temp_z.y*g_temp_z.y;
-	if (s_t2 < FLT_MIN)
-	{
-		return 1;
-	}
-	else
-	{
-		s_t2 = 1.0 / s_t2;
-		g_old_z.x = s_t2*(g_new_z.x*g_temp_z.x + g_new_z.y*g_temp_z.y);
-		g_old_z.y = s_t2*(g_new_z.y*g_temp_z.x - g_new_z.x*g_temp_z.y);
-	}
-	return 0;
-}
-
-#if !defined(XFRACT)
-struct MP g_root_over_degree_mp, g_degree_minus_1_over_degree_mp, g_threshold_mp;
-struct MP g_one_mp;
-struct MPC mpcold, mpcnew;
-struct MPC mpctmp, mpctmp1;
-struct MP g_parameter2_x_mp;
-#endif
-
-int newton_orbit_mpc(void)
-{
-#if !defined(XFRACT)
-	g_overflow_mp = 0;
-	mpctmp   = MPCpow(mpcold, g_degree-1);
-
-	mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
-	mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
-	mpctmp1.x = *pMPsub(mpcnew.x, g_one_mpc.x);
-	mpctmp1.y = *pMPsub(mpcnew.y, g_one_mpc.y);
-	if (pMPcmp(MPCmod(mpctmp1), g_threshold_mp)< 0)
-	{
-		if (g_fractal_type == MPNEWTBASIN)
-		{
-			long tmpcolor;
-			int i;
-			tmpcolor = -1;
-			for (i = 0; i < g_degree; i++)
-			{
-				if (pMPcmp(MPdistance(g_roots_mpc[i], mpcold), g_threshold_mp) < 0)
-				{
-					tmpcolor = (g_basin == 2) ?
-						(1 + (i & 7) + ((g_color_iter & 1) << 3)) : (1 + i);
-					break;
-				}
-			}
-			g_color_iter = (tmpcolor == -1) ? g_max_color : tmpcolor;
-		}
-		return 1;
-	}
-
-	{
-		struct MP mpt2;
-		mpcnew.x = *pMPadd(*pMPmul(g_degree_minus_1_over_degree_mp, mpcnew.x), g_root_over_degree_mp);
-		mpcnew.y = *pMPmul(mpcnew.y, g_degree_minus_1_over_degree_mp);
-		mpt2 = MPCmod(mpctmp);
-		mpt2 = *pMPdiv(g_one_mp, mpt2);
-		mpcold.x = *pMPmul(mpt2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
-		mpcold.y = *pMPmul(mpt2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
-	}
-	g_new_z.x = *pMP2d(mpcold.x);
-	g_new_z.y = *pMP2d(mpcold.y);
-	return g_overflow_mp;
-#else
-	return 0;
-#endif
-}
 
 int barnsley1_orbit(void)
 {

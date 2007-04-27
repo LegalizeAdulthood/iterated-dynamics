@@ -139,7 +139,6 @@ extern struct MP * fg2MP(long, int); /* Convert fudged to type MP */
 
 /*  newton -- assembler file prototypes */
 
-extern int cdecl    newton2_orbit(void);
 extern void cdecl   invert_z(_CMPLX *);
 
 /*  tplus_a -- assembler file prototypes */
@@ -344,7 +343,6 @@ extern void magnet2_precalculate_fp(void);
 extern void complex_power(_CMPLX *, int, _CMPLX *);
 extern int complex_power_l(_LCMPLX *, int, _LCMPLX *, int);
 extern int lcomplex_mult(_LCMPLX, _LCMPLX, _LCMPLX *, int);
-extern int newton_orbit_mpc(void);
 extern int barnsley1_orbit(void);
 extern int barnsley1_orbit_fp(void);
 extern int barnsley2_orbit(void);
@@ -547,7 +545,6 @@ extern int volterra_lotka_setup(void);
 extern int mandelbrot_setup(void);
 extern int mandelbrot_setup_fp(void);
 extern int julia_setup(void);
-extern int newton_setup(void);
 extern int stand_alone_setup(void);
 extern int unity_setup(void);
 extern int julia_setup_fp(void);
@@ -770,8 +767,6 @@ extern _CMPLX ComplexPower(_CMPLX, _CMPLX);
 extern void SetupLogTable(void);
 extern long logtablecalc(long);
 extern long ExpFloat14(long);
-extern int complex_newton_setup(void);
-extern int complex_newton(void);
 extern int complex_basin(void);
 extern int gaussian_number(int, int);
 extern void Arcsinz(_CMPLX z, _CMPLX *rz);
