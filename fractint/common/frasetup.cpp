@@ -1202,43 +1202,6 @@ int sierpinski_setup_fp(void)
 	return 1;
 }
 
-int halley_setup(void)
-{
-	/* Halley */
-	g_periodicity_check = 0;
-
-	g_fractal_type = g_user_float_flag ? HALLEY : MPHALLEY;
-
-	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-
-	g_degree = (int)g_parameter.x;
-	if (g_degree < 2)
-	{
-		g_degree = 2;
-	}
-	g_parameters[0] = (double)g_degree;
-
-	/*  precalculated values */
-	g_a_plus_1 = g_degree + 1; /* a + 1 */
-	g_a_plus_1_degree = g_a_plus_1*g_degree;
-
-#if !defined(XFRACT)
-	if (g_fractal_type == MPHALLEY)
-	{
-		setMPfunctions();
-		g_a_plus_1_mp = *pd2MP((double)g_a_plus_1);
-		g_a_plus_1_degree_mp = *pd2MP((double)g_a_plus_1_degree);
-		g_temp_parameter_mpc.x = *pd2MP(g_parameter.y);
-		g_temp_parameter_mpc.y = *pd2MP(g_parameter2.y);
-		g_parameter2_x_mp = *pd2MP(g_parameter2.x);
-		g_one_mp        = *pd2MP(1.0);
-	}
-#endif
-
-	g_symmetry = (g_degree % 2) ? XAXIS : XYAXIS;   /* odd, even */
-	return 1;
-}
-
 int phoenix_setup(void)
 {
 	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
