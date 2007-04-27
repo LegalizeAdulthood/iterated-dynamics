@@ -13,6 +13,9 @@ public:
 		m_old_mpc()
 	{
 	}
+	~Halley()
+	{
+	}
 
 	int setup();
 	int orbit_fp();

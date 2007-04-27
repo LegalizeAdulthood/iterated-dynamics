@@ -9,6 +9,9 @@ public:
 		m_degree_minus_1_over_degree(0.0)
 	{
 	}
+	virtual ~Newton()
+	{
+	}
 	int setup();
 	virtual int orbit();
 
