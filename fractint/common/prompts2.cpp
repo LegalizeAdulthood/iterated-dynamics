@@ -53,6 +53,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "busy.h"
 
 /* Routines in this module      */
 
@@ -1028,7 +1029,7 @@ char g_grey_file[] = "altern.map";
 int starfield(void)
 {
 	int c;
-	g_busy = 1;
+	BusyMarker marker;
 	if (starfield_values[0] <   1.0)
 	{
 		starfield_values[0] =   1.0;
@@ -1061,9 +1062,8 @@ int starfield(void)
 	if (validate_luts(g_grey_file) != 0)
 	{
 		stop_message(0, "Unable to load ALTERN.MAP");
-		g_busy = 0;
 		return -1;
-		}
+	}
 	spindac(0, 1);                 /* load it, but don't spin */
 	for (g_row = 0; g_row < g_y_dots; g_row++)
 	{
@@ -1072,9 +1072,8 @@ int starfield(void)
 			if (driver_key_pressed())
 			{
 				driver_buzzer(BUZZER_INTERRUPT);
-				g_busy = 0;
 				return 1;
-				}
+			}
 			c = getcolor(g_col, g_row);
 			if (c == g_inside)
 			{
@@ -1084,7 +1083,6 @@ int starfield(void)
 		}
 	}
 	driver_buzzer(BUZZER_COMPLETE);
-	g_busy = 0;
 	return 0;
 }
 

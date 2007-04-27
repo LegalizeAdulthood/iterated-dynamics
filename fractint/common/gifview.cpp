@@ -17,6 +17,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "busy.h"
 
 #define MAXCOLORS       256
 
@@ -288,7 +289,6 @@ int gifview()
 			{
 				g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 			}
-			g_busy = 1;      /* for slideshow CALCWAIT */
 			/*
 			* Call decoder(width) via timer.
 			* Width is limited to DECODERLINE_WIDTH.
@@ -297,8 +297,10 @@ int gifview()
 			{
 				width = min(width, DECODERLINE_WIDTH);
 			}
-			status = timer(TIMER_DECODER, NULL, width);
-			g_busy = 0;      /* for slideshow CALCWAIT */
+			{
+				BusyMarker marker;
+				status = timer(TIMER_DECODER, NULL, width);
+			}
 			if (g_calculation_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{
 				g_calculation_time = g_timer_interval; /* note how long it took */

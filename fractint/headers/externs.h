@@ -61,7 +61,6 @@ extern char					g_browse_name[];
 extern int					g_browsing;
 extern char					g_browse_check_parameters;
 extern char					g_browse_check_type;
-extern char					g_busy;
 extern long					g_calculation_time;
 extern long					(*g_calculate_mandelbrot_asm_fp)(void);
 extern int					(*g_calculate_type)(void);

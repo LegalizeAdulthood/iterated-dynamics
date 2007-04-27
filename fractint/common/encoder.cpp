@@ -13,6 +13,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "busy.h"
 
 static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE *color, int g_num_colors);
@@ -188,12 +189,12 @@ restart:
 	}
 #endif
 
-	g_busy = 1;
-
-	/* invoke encoder() via timer */
-	interrupted = (g_debug_flag == DEBUGFLAG_TIME_ENCODER) ? timer(TIMER_ENCODER, NULL) : encoder();
-
-	g_busy = 0;
+	{
+		BusyMarker marker;
+		/* invoke encoder() via timer */
+		interrupted = (g_debug_flag == DEBUGFLAG_TIME_ENCODER)
+			? timer(TIMER_ENCODER, NULL) : encoder();
+	}
 
 	fclose(g_outfile);
 
