@@ -86,7 +86,7 @@ static void get_mnemonic(int code, char *mnemonic)
 }
 #undef stop
 
-char g_busy = 0;
+bool g_busy = false;
 static FILE *fpss = NULL;
 static long starttick;
 static long ticks;
