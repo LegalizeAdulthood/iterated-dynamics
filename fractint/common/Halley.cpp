@@ -23,16 +23,6 @@ int halley_setup()
 	return s_halley.setup();
 }
 
-int bail_out_halley()
-{
-	return s_halley.bail_out();
-}
-
-int bail_out_halley_mpc()
-{
-	return s_halley.bail_out_mpc();
-}
-
 int halley_per_pixel()
 {
 	return s_halley.per_pixel();
@@ -156,7 +146,7 @@ int Halley::orbit_fp()
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
 	g_new_z.x = g_old_z.x - Halnumer2.x;
 	g_new_z.y = g_old_z.y - Halnumer2.y;
-	return bail_out_halley();
+	return bail_out();
 }
 
 int Halley::orbit_mpc()
@@ -220,7 +210,7 @@ int Halley::orbit_mpc()
 #endif
 	mpcnew = MPCsub(mpcold, mpctmp);
 	g_new_z    = MPC2cmplx(mpcnew);
-	return bail_out_halley_mpc() || g_overflow_mp;
+	return bail_out_mpc() || g_overflow_mp;
 #else
 	return 0;
 #endif

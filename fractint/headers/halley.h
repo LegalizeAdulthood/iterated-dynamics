@@ -22,10 +22,11 @@ public:
 	int per_pixel();
 	int orbit_mpc();
 	int per_pixel_mpc();
+
+private:
 	int bail_out();
 	int bail_out_mpc();
 
-private:
 	int					m_a_plus_1_degree;
 	int					m_a_plus_1;
 	struct MP m_a_plus_1_mp;
