@@ -96,7 +96,7 @@ int Halley::bail_out()
 
 int Halley::bail_out_mpc()
 {
-#if !defined(XFRACT)
+//#if !defined(XFRACT)
 	static struct MP mptmpbailout;
 	mptmpbailout = *MPabs(*pMPsub(MPCmod(m_new_mpc), MPCmod(m_old_mpc)));
 	if (pMPcmp(mptmpbailout, g_parameter2_x_mp) < 0)
@@ -104,7 +104,7 @@ int Halley::bail_out_mpc()
 		return 1;
 	}
 	m_old_mpc = m_new_mpc;
-#endif
+//#endif
 	return 0;
 }
 
