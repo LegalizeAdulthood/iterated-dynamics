@@ -76,7 +76,6 @@ int g_max_color = 0;
 int g_root = 0;
 int g_degree = 0;
 int g_basin = 0;
-double g_root_over_degree = 0.0;
 double g_threshold = 0.0;
 _CMPLX g_coefficient = { 0.0, 0.0 };
 _CMPLX  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
@@ -139,7 +138,7 @@ static double s_xt;
 static double s_yt;
 
 #if !defined(XFRACT)
-struct MP g_root_over_degree_mp, g_degree_minus_1_over_degree_mp, g_threshold_mp;
+struct MP g_threshold_mp;
 struct MP g_one_mp;
 struct MPC mpcold, mpcnew;
 struct MP g_parameter2_x_mp;
