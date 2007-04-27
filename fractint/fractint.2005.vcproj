@@ -573,6 +573,10 @@
 					RelativePath=".\common\miscfrac.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\common\Newton.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="i/o"
@@ -1098,6 +1102,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\mpmath.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\newton.h"
 				>
 			</File>
 			<File

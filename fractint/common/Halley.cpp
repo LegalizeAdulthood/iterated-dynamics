@@ -8,6 +8,11 @@
 
 #define modulus(z)			(sqr((z).x) + sqr((z).y))
 
+#if !defined(XFRACT)
+extern struct MPC mpcold;
+extern struct MPC mpcnew;
+#endif
+
 static Halley s_halley;
 
 int halley_setup()
@@ -98,12 +103,12 @@ int Halley::bail_out_mpc()
 {
 #if !defined(XFRACT)
 	static struct MP mptmpbailout;
-	mptmpbailout = *MPabs(*pMPsub(MPCmod(m_new_mpc), MPCmod(m_old_mpc)));
+	mptmpbailout = *MPabs(*pMPsub(MPCmod(mpcnew), MPCmod(mpcold)));
 	if (pMPcmp(mptmpbailout, g_parameter2_x_mp) < 0)
 	{
 		return 1;
 	}
-	m_old_mpc = m_new_mpc;
+	mpcold = mpcnew;
 #endif
 	return 0;
 }
@@ -164,22 +169,22 @@ int Halley::orbit_mpc()
 	struct MPC mpcHalnumer2, mpcHaldenom, mpctmp;
 
 	g_overflow_mp = 0;
-	mpcXtoAlessOne.x = m_old_mpc.x;
-	mpcXtoAlessOne.y = m_old_mpc.y;
+	mpcXtoAlessOne.x = mpcold.x;
+	mpcXtoAlessOne.y = mpcold.y;
 	for (ihal = 2; ihal < g_degree; ihal++)
 	{
-		mpctmp.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, m_old_mpc.x), *pMPmul(mpcXtoAlessOne.y, m_old_mpc.y));
-		mpctmp.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, m_old_mpc.y), *pMPmul(mpcXtoAlessOne.y, m_old_mpc.x));
+		mpctmp.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, mpcold.x), *pMPmul(mpcXtoAlessOne.y, mpcold.y));
+		mpctmp.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, mpcold.y), *pMPmul(mpcXtoAlessOne.y, mpcold.x));
 		mpcXtoAlessOne.x = mpctmp.x;
 		mpcXtoAlessOne.y = mpctmp.y;
 	}
-	mpcXtoA.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, m_old_mpc.x), *pMPmul(mpcXtoAlessOne.y, m_old_mpc.y));
-	mpcXtoA.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, m_old_mpc.y), *pMPmul(mpcXtoAlessOne.y, m_old_mpc.x));
-	mpcXtoAplusOne.x = *pMPsub(*pMPmul(mpcXtoA.x, m_old_mpc.x), *pMPmul(mpcXtoA.y, m_old_mpc.y));
-	mpcXtoAplusOne.y = *pMPadd(*pMPmul(mpcXtoA.x, m_old_mpc.y), *pMPmul(mpcXtoA.y, m_old_mpc.x));
+	mpcXtoA.x = *pMPsub(*pMPmul(mpcXtoAlessOne.x, mpcold.x), *pMPmul(mpcXtoAlessOne.y, mpcold.y));
+	mpcXtoA.y = *pMPadd(*pMPmul(mpcXtoAlessOne.x, mpcold.y), *pMPmul(mpcXtoAlessOne.y, mpcold.x));
+	mpcXtoAplusOne.x = *pMPsub(*pMPmul(mpcXtoA.x, mpcold.x), *pMPmul(mpcXtoA.y, mpcold.y));
+	mpcXtoAplusOne.y = *pMPadd(*pMPmul(mpcXtoA.x, mpcold.y), *pMPmul(mpcXtoA.y, mpcold.x));
 
-	mpcFX.x = *pMPsub(mpcXtoAplusOne.x, m_old_mpc.x);
-	mpcFX.y = *pMPsub(mpcXtoAplusOne.y, m_old_mpc.y); /* FX = X^(a + 1) - X  = F */
+	mpcFX.x = *pMPsub(mpcXtoAplusOne.x, mpcold.x);
+	mpcFX.y = *pMPsub(mpcXtoAplusOne.y, mpcold.y); /* FX = X^(a + 1) - X  = F */
 
 	mpcF2prime.x = *pMPmul(m_a_plus_1_degree_mp, mpcXtoAlessOne.x); /* g_a_plus_1_degree_mp in setup */
 	mpcF2prime.y = *pMPmul(m_a_plus_1_degree_mp, mpcXtoAlessOne.y);        /* F" */
@@ -210,8 +215,8 @@ int Halley::orbit_mpc()
 	g_new_z.x = *pMP2d(s_halley.new_mpc.x);
 	g_new_z.y = *pMP2d(s_halley.new_mpc.y);
 #endif
-	m_new_mpc = MPCsub(m_old_mpc, mpctmp);
-	g_new_z    = MPC2cmplx(m_new_mpc);
+	mpcnew = MPCsub(mpcold, mpctmp);
+	g_new_z    = MPC2cmplx(mpcnew);
 	return bail_out_halley_mpc() || g_overflow_mp;
 #else
 	return 0;
@@ -235,8 +240,8 @@ int Halley::per_pixel_mpc()
 		}
 	}
 
-	m_old_mpc.x = *pd2MP(g_initial_z.x);
-	m_old_mpc.y = *pd2MP(g_initial_z.y);
+	mpcold.x = *pd2MP(g_initial_z.x);
+	mpcold.y = *pd2MP(g_initial_z.y);
 
 	return 0;
 #else
