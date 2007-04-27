@@ -6,14 +6,17 @@
 #include "fractype.h"
 #include "halley.h"
 
-#define modulus(z)			(sqr((z).x) + sqr((z).y))
-
 #if !defined(XFRACT)
 extern struct MPC mpcold;
 extern struct MPC mpcnew;
 #endif
 
 static Halley s_halley;
+
+static double modulus(const _CMPLX &z)
+{
+	return sqr(z.x) + sqr(z.y);
+}
 
 int halley_setup()
 {

@@ -4,21 +4,12 @@
 #include "prototyp.h"
 #include "externs.h"
 #include "fractype.h"
+#include "mpmath.h"
 #include "newton.h"
-
-#define pMPsqr(z)			(*pMPmul((z), (z)))
-#define distance(z1, z2)	(sqr((z1).x-(z2).x) + sqr((z1).y-(z2).y))
-#define DIST1(z)			(((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y))
-#define LDIST1(z)			(lsqr((((z).x)-g_fudge)) + lsqr(((z).y)))
-#define MPdistance(z1, z2)	(*pMPadd(pMPsqr(*pMPsub((z1).x, (z2).x)), pMPsqr(*pMPsub((z1).y, (z2).y))))
-							/* Distance of complex z from unit circle */
-
-double g_degree_minus_1_over_degree = 0.0;
 
 #if !defined(XFRACT)
 static struct MPC mpctmp, mpctmp1;
 extern struct MPC mpcold, mpcnew;
-extern int         (*pMPcmp)(struct MP , struct MP );
 #endif
 
 extern double TwoPi;
@@ -26,16 +17,47 @@ extern _CMPLX temp, BaseLog;
 extern _CMPLX cdegree;
 extern _CMPLX croot;
 
+static Newton s_newton;
+static NewtonMPC s_newton_mpc;
+static NewtonComplex s_newton_complex;
+
+static struct MP pMPsqr(struct MP &z)
+{
+	return *pMPmul(z, z);
+}
+
+static double distance(const _CMPLX &z1, const _CMPLX &z2)
+{
+	return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
+}
+
+static double distance_from_1(const _CMPLX &z)
+{
+	return (((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y));
+}
+
+static struct MP operator-(const struct MP &left, const struct MP &right)
+{
+	return *pMPsub(left, right);
+}
+
+static struct MP operator+(const struct MP &left, const struct MP &right)
+{
+	return *pMPadd(left, right);
+}
+
+static struct MP MPCdistance(const struct MPC &z1, const struct MPC &z2)
+{
+	 return pMPsqr(z1.x - z2.x) + pMPsqr(z1.y - z2.y);
+							/* Distance of complex z from unit circle */
+}
+
 static int complex_multiply(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz)
 {
 	pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
 	pz->y = arg1.x*arg2.y + arg1.y*arg2.x;
 	return 0;
 }
-
-static Newton s_newton;
-static NewtonMPC s_newton_mpc;
-static NewtonComplex s_newton_complex;
 
 int newton_setup()
 {
@@ -83,11 +105,11 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 		{
 			if (g_fractal_type == NEWTON)
 			{
-					g_fractal_type = MPNEWTON;
+				g_fractal_type = MPNEWTON;
 			}
 			else if (g_fractal_type == NEWTBASIN)
 			{
-					g_fractal_type = MPNEWTBASIN;
+				g_fractal_type = MPNEWTBASIN;
 			}
 		}
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
@@ -113,15 +135,15 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 	g_root = 1;
 
 	/* precalculated values */
-	g_root_over_degree       = (double)g_root / (double)g_degree;
-	g_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
+	m_root_over_degree       = (double)g_root / (double)g_degree;
+	m_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
 	g_max_color     = 0;
 	g_threshold    = .3*PI/g_degree; /* less than half distance between roots */
 #if !defined(XFRACT)
 	if (g_fractal_type == MPNEWTON || g_fractal_type == MPNEWTBASIN)
 	{
-		g_root_over_degree_mp			= *pd2MP(g_root_over_degree);
-		g_degree_minus_1_over_degree_mp	= *pd2MP(g_degree_minus_1_over_degree);
+		m_root_over_degree_mp			= *pd2MP(m_root_over_degree);
+		m_degree_minus_1_over_degree_mp	= *pd2MP(m_degree_minus_1_over_degree);
 		g_threshold_mp					= *pd2MP(g_threshold);
 		g_one_mp						= *pd2MP(1.0);
 	}
@@ -204,7 +226,7 @@ int Newton::orbit()
 	complex_power(&g_old_z, g_degree-1, &g_temp_z);
 	complex_multiply(g_temp_z, g_old_z, &g_new_z);
 
-	if (DIST1(g_new_z) < g_threshold)
+	if (distance_from_1(g_new_z) < g_threshold)
 	{
 		if (g_fractal_type == NEWTBASIN || g_fractal_type == MPNEWTBASIN)
 		{
@@ -229,8 +251,8 @@ int Newton::orbit()
 		}
 		return 1;
 	}
-	g_new_z.x = g_degree_minus_1_over_degree*g_new_z.x + g_root_over_degree;
-	g_new_z.y *= g_degree_minus_1_over_degree;
+	g_new_z.x = m_degree_minus_1_over_degree*g_new_z.x + m_root_over_degree;
+	g_new_z.y *= m_degree_minus_1_over_degree;
 
 	/* Watch for divide underflow */
 	double s_t2 = g_temp_z.x*g_temp_z.x + g_temp_z.y*g_temp_z.y;
@@ -266,7 +288,7 @@ int NewtonMPC::orbit()
 			tmpcolor = -1;
 			for (i = 0; i < g_degree; i++)
 			{
-				if (pMPcmp(MPdistance(g_roots_mpc[i], mpcold), g_threshold_mp) < 0)
+				if (pMPcmp(MPCdistance(g_roots_mpc[i], mpcold), g_threshold_mp) < 0)
 				{
 					tmpcolor = (g_basin == 2) ?
 						(1 + (i & 7) + ((g_color_iter & 1) << 3)) : (1 + i);
@@ -280,8 +302,8 @@ int NewtonMPC::orbit()
 
 	{
 		struct MP mpt2;
-		mpcnew.x = *pMPadd(*pMPmul(g_degree_minus_1_over_degree_mp, mpcnew.x), g_root_over_degree_mp);
-		mpcnew.y = *pMPmul(mpcnew.y, g_degree_minus_1_over_degree_mp);
+		mpcnew.x = *pMPadd(*pMPmul(m_degree_minus_1_over_degree_mp, mpcnew.x), m_root_over_degree_mp);
+		mpcnew.y = *pMPmul(mpcnew.y, m_degree_minus_1_over_degree_mp);
 		mpt2 = MPCmod(mpctmp);
 		mpt2 = *pMPdiv(g_one_mp, mpt2);
 		mpcold.x = *pMPmul(mpt2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
@@ -297,7 +319,7 @@ int NewtonMPC::orbit()
 
 int NewtonComplex::setup()
 {
-	g_threshold = .001;
+	g_threshold = 0.001;
 	g_periodicity_check = 0;
 	if (g_parameters[0] != 0.0 || g_parameters[1] != 0.0 || g_parameters[2] != 0.0 ||
 		g_parameters[3] != 0.0)
