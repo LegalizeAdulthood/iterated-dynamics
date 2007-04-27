@@ -21,11 +21,6 @@ static Newton s_newton;
 static NewtonMPC s_newton_mpc;
 static NewtonComplex s_newton_complex;
 
-static struct MP pMPsqr(struct MP &z)
-{
-	return *pMPmul(z, z);
-}
-
 static double distance(const _CMPLX &z1, const _CMPLX &z2)
 {
 	return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
@@ -34,6 +29,12 @@ static double distance(const _CMPLX &z1, const _CMPLX &z2)
 static double distance_from_1(const _CMPLX &z)
 {
 	return (((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y));
+}
+
+#if !defined(XFRACT)
+static struct MP pMPsqr(struct MP &z)
+{
+	return *pMPmul(z, z);
 }
 
 static struct MP operator-(const struct MP &left, const struct MP &right)
@@ -51,6 +52,7 @@ static struct MP MPCdistance(const struct MPC &z1, const struct MPC &z2)
 	 return pMPsqr(z1.x - z2.x) + pMPsqr(z1.y - z2.y);
 							/* Distance of complex z from unit circle */
 }
+#endif
 
 static int complex_multiply(_CMPLX arg1, _CMPLX arg2, _CMPLX *pz)
 {
