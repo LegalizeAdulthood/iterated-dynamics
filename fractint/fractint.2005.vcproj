@@ -550,6 +550,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\Halley.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\jb.cpp"
 					>
 				</File>
@@ -1078,6 +1082,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\fractype.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\halley.h"
 				>
 			</File>
 			<File

@@ -11,6 +11,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+#include "halley.h"
 
 /* functions defined elswhere needed for g_fractal_specific */
 /* moved to prototyp.h */
