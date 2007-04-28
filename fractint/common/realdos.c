@@ -25,7 +25,7 @@ static int menu_checkkey(int curkey,int choice);
 #define PRODUCTION
 */
 int release=2004;  /* this has 2 implied decimals; increment it every synch */
-int patchlevel=4; /* patchlevel for DOS version */
+int patchlevel=5; /* patchlevel for DOS version */
 
 /* fullscreen_choice options */
 #define CHOICERETURNKEY 1

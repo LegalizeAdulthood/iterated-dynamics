@@ -526,15 +526,15 @@ SUMMARY OF FRACTAL TYPES
     Five parameters: real, imaginary portions of p1, shift value,
                      fn1 and fn2.
                      
-{=HT_MANDELBROTMIX4 mandelbrotmix4}
-~Label=HF_MANDELBROTMIX4
-    From a Jim Muth favorite FOTD formula
-      a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
-      g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
-      k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
-      z=k*((a*(z^b))+(d*(z^f)))+c
-    Parameters: see above, sixth parameter used for bailout
-    
+;{=HT_MANDELBROTMIX4 mandelbrotmix4}
+;~Label=HF_MANDELBROTMIX4
+;    From a Jim Muth favorite FOTD formula
+;      a=real(p1), b=imag(p1), d=real(p2), f=imag(p2),
+;      g=1/f, h=1/d, j=1/(f-b), z=(-a*b*g*h)^j,
+;      k=real(p3)+1, l=imag(p3)+100, c=fn1(pixel):
+;      z=k*((a*(z^b))+(d*(z^f)))+c
+;    Parameters: see above, sixth parameter used for bailout
+;
 {=HT_MANDELCLOUD mandelcloud}
 ~Label=HF_MANDELCLOUD
     Displays orbits of Mandelbrot set:
