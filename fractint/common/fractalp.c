@@ -2292,7 +2292,7 @@ struct fractalspecificstuff far fractalspecific[]=
       (VF)latoofloatorbit, NULL, orbit3dfloatsetup, orbit2dfloat,
       NOBAILOUT
    },
-
+#if 0
    {
    "mandelbrotmix4",
       {p1real, p1imag, p2real, p2imag},
@@ -2303,7 +2303,7 @@ struct fractalspecificstuff far fractalspecific[]=
       MandelbrotMix4fpFractal, MandelbrotMix4fp_per_pixel, MandelbrotMix4Setup, StandardFractal,
       STDBAILOUT
    },
-
+#endif
    {
       NULL,            /* marks the END of the list */
       {NULL, NULL, NULL, NULL},
