@@ -278,7 +278,7 @@ static void set_cpu_fpu(void)
 	}
 }
 
-static void main_restart(int argc, char *argv[], int *stacked)
+static void main_restart(int argc, char *argv[], int &stacked)
 {
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
@@ -355,10 +355,10 @@ static void main_restart(int argc, char *argv[], int *stacked)
 	{
 		set_if_old_bif();
 	}
-	*stacked = 0;
+	stacked = 0;
 }
 
-static int main_restore_restart(int *stacked, int *resume_flag)
+static int main_restore_restart(int &stacked, int &resume_flag)
 {
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
@@ -412,7 +412,7 @@ static int main_restore_restart(int *stacked, int *resume_flag)
 		{
 			driver_discard_screen();
 			driver_set_for_text();
-			*stacked = 0;
+			stacked = 0;
 		}
 		if (read_overlay() == 0)       /* read hdr, get video mode */
 		{
@@ -435,7 +435,7 @@ static int main_restore_restart(int *stacked, int *resume_flag)
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
-		*resume_flag = 1;
+		resume_flag = 1;
 		return TRUE;
 	}
 
@@ -443,16 +443,16 @@ static int main_restore_restart(int *stacked, int *resume_flag)
 	return FALSE;
 }
 
-static int main_image_start(int *stacked, int *kbdchar, int *resumeflag)
+static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 {
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
 #endif
 
-	if (*stacked)
+	if (stacked)
 	{
 		driver_discard_screen();
-		*stacked = 0;
+		stacked = 0;
 	}
 #ifdef XFRACT
 	g_user_float_flag = 1;
@@ -483,27 +483,27 @@ static int main_image_start(int *stacked, int *kbdchar, int *resumeflag)
 			g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; /* exit with error condition set */
 			goodbye();
 		}
-		*kbdchar = main_menu(0);
-		if (*kbdchar == FIK_INSERT) /* restart pgm on Insert Key  */
+		kbdchar = main_menu(0);
+		if (kbdchar == FIK_INSERT) /* restart pgm on Insert Key  */
 		{
 			return RESTART;
 		}
-		if (*kbdchar == FIK_DELETE)                    /* select video mode list */
+		if (kbdchar == FIK_DELETE)                    /* select video mode list */
 		{
-			*kbdchar = select_video_mode(-1);
+			kbdchar = select_video_mode(-1);
 		}
-		g_adapter = check_video_mode_key(0, *kbdchar);
+		g_adapter = check_video_mode_key(0, kbdchar);
 		if (g_adapter >= 0)
 		{
 			break;                                 /* got a video mode now */
 		}
 #ifndef XFRACT
-		if ('A' <= *kbdchar && *kbdchar <= 'Z')
+		if ('A' <= kbdchar && kbdchar <= 'Z')
 		{
-			*kbdchar = tolower(*kbdchar);
+			kbdchar = tolower(kbdchar);
 		}
 #endif
-		if (*kbdchar == 'd')  /* shell to DOS */
+		if (kbdchar == 'd')  /* shell to DOS */
 		{
 			driver_set_clear();
 #if !defined(_WIN32)
@@ -519,25 +519,25 @@ static int main_image_start(int *stacked, int *kbdchar, int *resumeflag)
 		}
 
 #ifndef XFRACT
-		if (*kbdchar == '@' || *kbdchar == '2')  /* execute commands */
+		if (kbdchar == '@' || kbdchar == '2')  /* execute commands */
 #else
-		if (*kbdchar == FIK_F2 || *kbdchar == '@')  /* We mapped @ to F2 */
+		if (kbdchar == FIK_F2 || kbdchar == '@')  /* We mapped @ to F2 */
 #endif
 		{
 			if ((get_commands() & COMMAND_3D_YES) == 0)
 			{
 				return IMAGESTART;
 			}
-			*kbdchar = '3';                         /* 3d=y so fall thru '3' code */
+			kbdchar = '3';                         /* 3d=y so fall thru '3' code */
 		}
 #ifndef XFRACT
-		if (*kbdchar == 'r' || *kbdchar == '3' || *kbdchar == '#')
+		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
 #else
-		if (*kbdchar == 'r' || *kbdchar == '3' || *kbdchar == FIK_F3)
+		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3)
 #endif
 		{
 			g_display_3d = 0;
-			if (*kbdchar == '3' || *kbdchar == '#' || *kbdchar == FIK_F3)
+			if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
 			{
 				g_display_3d = 1;
 			}
@@ -549,53 +549,53 @@ static int main_image_start(int *stacked, int *kbdchar, int *resumeflag)
 			g_show_file = -1;
 			return RESTORESTART;
 		}
-		if (*kbdchar == 't')  /* set fractal type */
+		if (kbdchar == 't')  /* set fractal type */
 		{
 			g_julibrot = FALSE;
 			get_fractal_type();
 			return IMAGESTART;
 		}
-		if (*kbdchar == 'x')  /* generic toggle switch */
+		if (kbdchar == 'x')  /* generic toggle switch */
 		{
 			get_toggles();
 			return IMAGESTART;
 		}
-		if (*kbdchar == 'y')  /* generic toggle switch */
+		if (kbdchar == 'y')  /* generic toggle switch */
 		{
 			get_toggles2();
 			return IMAGESTART;
 		}
-		if (*kbdchar == 'z')  /* type specific parms */
+		if (kbdchar == 'z')  /* type specific parms */
 		{
 			get_fractal_parameters(1);
 			return IMAGESTART;
 		}
-		if (*kbdchar == 'v')  /* view parameters */
+		if (kbdchar == 'v')  /* view parameters */
 		{
 			get_view_params();
 			return IMAGESTART;
 		}
-		if (*kbdchar == 2)  /* ctrl B = browse parms*/
+		if (kbdchar == FIK_CTL_B)  /* ctrl B = browse parms*/
 		{
 			get_browse_parameters();
 			return IMAGESTART;
 		}
-		if (*kbdchar == 6)  /* ctrl f = sound parms*/
+		if (kbdchar == FIK_CTL_F)  /* ctrl f = sound parms*/
 		{
 			get_sound_params();
 			return IMAGESTART;
 		}
-		if (*kbdchar == 'f')  /* floating pt toggle */
+		if (kbdchar == 'f')  /* floating pt toggle */
 		{
 			g_user_float_flag = (g_user_float_flag == 0) ? 1 : 0;
 			return IMAGESTART;
 		}
-		if (*kbdchar == 'i')  /* set 3d fractal parms */
+		if (kbdchar == 'i')  /* set 3d fractal parms */
 		{
 			get_fractal_3d_parameters(); /* get the parameters */
 			return IMAGESTART;
 		}
-		if (*kbdchar == 'g')
+		if (kbdchar == 'g')
 		{
 			get_command_string(); /* get command string */
 			return IMAGESTART;
@@ -605,7 +605,7 @@ static int main_image_start(int *stacked, int *kbdchar, int *resumeflag)
 
 	g_zoom_off = TRUE;                 /* zooming is enabled */
 	set_help_mode(HELPMAIN);         /* now use this help mode */
-	*resumeflag = 0;  /* allows taking goto inside big_while_loop() */
+	resumeflag = 0;  /* allows taking goto inside big_while_loop() */
 
 	return 0;
 }
@@ -648,18 +648,18 @@ int main(int argc, char **argv)
 
 /*********************************************************************************************/
 restart:   /* insert key re-starts here */
-	main_restart(argc, argv, &stacked);
+	main_restart(argc, argv, stacked);
 
 /*********************************************************************************************/
 restorestart:
-	if (main_restore_restart(&stacked, &resumeflag))
+	if (main_restore_restart(stacked, resumeflag))
 	{
 		goto resumeloop;
 	}
 
 /*********************************************************************************************/
 imagestart:                             /* calc/display a new image */
-	switch (main_image_start(&stacked, &kbdchar, &resumeflag))
+	switch (main_image_start(stacked, kbdchar, resumeflag))
 	{
 	case RESTART:		goto restart;
 	case RESTORESTART:	goto restorestart;

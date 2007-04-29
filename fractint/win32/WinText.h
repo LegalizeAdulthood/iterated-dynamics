@@ -25,8 +25,9 @@ public:
 	void schedule_alarm(int delay);
 	int get_char_attr(int row, int col);
 	void put_char_attr(int row, int col, int char_attr);
-	void set_focus(void);
-	void kill_focus(void);
+	void set_focus();
+	void kill_focus();
+	void pause();
 	void resume();
 
 	int max_width() const	{ return m_max_width; }
