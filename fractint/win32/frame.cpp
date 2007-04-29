@@ -79,7 +79,7 @@ private:
 	unsigned int m_keypress_buffer[KEYBUFMAX];
 
 	/* mouse data */
-	BOOL m_button_down[3];
+	bool m_button_down[3];
 	int m_start_x, m_start_y;
 	int m_delta_x, m_delta_y;
 	int m_look_mouse;
@@ -112,10 +112,9 @@ FrameImpl::FrameImpl() :
 	{
 		m_title[i] = 0;
 	}
-	for (int i = 0; i < NUM_OF(m_button_down); i++)
-	{
-		m_button_down[i] = 0;
-	}
+	m_button_down[BUTTON_LEFT] = false;
+	m_button_down[BUTTON_MIDDLE] = false;
+	m_button_down[BUTTON_RIGHT] = false;
 	for (int i = 0; i < NUM_OF(m_keypress_buffer); i++)
 	{
 		m_keypress_buffer[i] = 0;
@@ -299,10 +298,16 @@ void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	int key_index;
 
-	return;
-
 	/* if we're mouse snooping and there's a button down, then record delta movement */
-	if (LOOK_MOUSE_NONE == s_frame->m_look_mouse)
+	if ((LOOK_MOUSE_NONE == s_frame->m_look_mouse)
+		|| (s_frame->m_look_mouse < 0))
+	{
+		return;
+	}
+
+	if (!s_frame->m_button_down[BUTTON_LEFT]
+		&& !s_frame->m_button_down[BUTTON_MIDDLE]
+		&& !s_frame->m_button_down[BUTTON_RIGHT])
 	{
 		return;
 	}
@@ -351,21 +356,25 @@ void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 
 void FrameImpl::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
-	s_frame->m_button_down[BUTTON_LEFT] = TRUE;
+	s_frame->m_button_down[BUTTON_LEFT] = true;
 	if (doubleClick && (LOOK_MOUSE_NONE != s_frame->m_look_mouse))
 	{
 		s_frame->add_key_press(FIK_ENTER);
+	}
+	if (s_frame->m_look_mouse < 0)
+	{
+		s_frame->add_key_press(-s_frame->m_look_mouse);
 	}
 }
 
 void FrameImpl::OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	s_frame->m_button_down[BUTTON_LEFT] = FALSE;
+	s_frame->m_button_down[BUTTON_LEFT] = false;
 }
 
 void FrameImpl::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
-	s_frame->m_button_down[BUTTON_RIGHT] = TRUE;
+	s_frame->m_button_down[BUTTON_RIGHT] = true;
 	if (doubleClick && (LOOK_MOUSE_NONE != s_frame->m_look_mouse))
 	{
 		s_frame->add_key_press(FIK_CTL_ENTER);
@@ -374,17 +383,17 @@ void FrameImpl::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UIN
 
 void FrameImpl::OnRightButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	s_frame->m_button_down[BUTTON_RIGHT] = FALSE;
+	s_frame->m_button_down[BUTTON_RIGHT] = false;
 }
 
 void FrameImpl::OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
-	s_frame->m_button_down[BUTTON_MIDDLE] = TRUE;
+	s_frame->m_button_down[BUTTON_MIDDLE] = true;
 }
 
 void FrameImpl::OnMiddleButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	s_frame->m_button_down[BUTTON_MIDDLE] = FALSE;
+	s_frame->m_button_down[BUTTON_MIDDLE] = false;
 }
 
 LRESULT CALLBACK FrameImpl::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -496,9 +505,9 @@ void FrameImpl::set_mouse_mode(int new_mode)
 		m_delta_y = 0;
 		m_start_x = -1;
 		m_start_y = -1;
-		m_button_down[BUTTON_LEFT] = FALSE;
-		m_button_down[BUTTON_MIDDLE] = FALSE;
-		m_button_down[BUTTON_RIGHT] = FALSE;
+		m_button_down[BUTTON_LEFT] = false;
+		m_button_down[BUTTON_MIDDLE] = false;
+		m_button_down[BUTTON_RIGHT] = false;
 	}
 }
 
