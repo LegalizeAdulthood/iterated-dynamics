@@ -2150,7 +2150,7 @@ static void OnMotionNotify(XEvent *xevent, int *bnum, int *dx, int *dy, int *las
 			*bnum = 0;
 		}
 
-		if (g_look_at_mouse == LOOK_MOUSE_ZOOM_BOX && *bnum != 0)
+		if (driver_get_mouse_mode() == LOOK_MOUSE_ZOOM_BOX && *bnum != 0)
 		{
 			*dx += (xevent->xmotion.x-*lastx)/MSCALE;
 			*dy += (xevent->xmotion.y-*lasty)/MSCALE;
@@ -2171,7 +2171,7 @@ static void OnButtonPress(XEvent *xevent,
 {
 	int done = 0;
 	int banding = 0;
-	if (g_look_at_mouse == LOOK_MOUSE_ZOOM_BOX || g_zoom_off == FALSE)
+	if (driver_get_mouse_mode() == LOOK_MOUSE_ZOOM_BOX || g_zoom_off == FALSE)
 	{
 		*lastx = xevent->xbutton.x;
 		*lasty = xevent->xbutton.y;
@@ -2380,7 +2380,7 @@ static void xhandleevents()
 		}  /* End switch */
 	}  /* End while */
 
-	if (!xbufkey && g_edit_pal_cursor && !inside_help && g_look_at_mouse == LOOK_MOUSE_ZOOM_BOX &&
+	if (!xbufkey && g_edit_pal_cursor && !inside_help && driver_get_mouse_mode() == LOOK_MOUSE_ZOOM_BOX &&
 		(dx != 0 || dy != 0))
 	{
 		if (ABS(dx) > ABS(dy))

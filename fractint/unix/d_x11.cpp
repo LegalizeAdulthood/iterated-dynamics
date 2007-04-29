@@ -52,7 +52,7 @@
 #include <assert.h>
 
 extern int slowdisplay;
-extern	int	inside_help;
+extern int inside_help;
 extern VIDEOINFO x11_video_table[];
 
 extern void fpe_handler(int);
@@ -126,6 +126,15 @@ public:
 	virtual int write_palette();
 	virtual int read_palette();
 	virtual void redraw();
+	virtual void set_mouse_mode(int new_mode)
+	{
+		m_look_at_mouse = new_mode;
+	}
+
+	virtual int get_mouse_mode() const
+	{
+		return m_look_at_mouse;
+	}
 
 private:
 	unsigned long do_fake_lut(int idx);
@@ -154,6 +163,7 @@ private:
 	void RemoveRootPixmap();
 	void load_font();
 
+	int m_look_at_mouse;
 	int m_on_root;				/* = 0; */
 	int m_fullscreen;			/* = 0; */
 	int m_sharecolor;			/* = 0; */
@@ -1222,9 +1232,12 @@ void X11Driver::ev_button_press(XEvent *xevent)
 {
 	int done = 0;
 	int banding = 0;
-	int bandx0, bandy0, bandx1, bandy1;
+	int bandx0;
+	int bandy0;
+	int bandx1;
+	int bandy1;
 
-	if (g_look_at_mouse == 3 || g_zoom_off == 0)
+	if (m_look_at_mouse == LOOK_MOUSE_ZOOM_BOX || g_zoom_off == 0)
 	{
 		m_last_x = xevent->xbutton.x;
 		m_last_y = xevent->xbutton.y;
@@ -1351,7 +1364,7 @@ void X11Driver::ev_motion_notify(XEvent *xevent)
 			m_button_num = 0;
 		}
 
-		if (g_look_at_mouse == 3 && m_button_num != 0)
+		if (m_look_at_mouse == LOOK_MOUSE_ZOOM_BOX && m_button_num != 0)
 		{
 			m_dx += (xevent->xmotion.x-m_last_x)/MOUSE_SCALE;
 			m_dy += (xevent->xmotion.y-m_last_y)/MOUSE_SCALE;
@@ -1420,7 +1433,7 @@ void X11Driver::handle_events()
 	}
 
 	if (!m_xbufkey && g_edit_pal_cursor && !inside_help
-		&& g_look_at_mouse == 3 && (m_dx != 0 || m_dy != 0))
+		&& m_look_at_mouse == LOOK_MOUSE_ZOOM_BOX && (m_dx != 0 || m_dy != 0))
 	{
 		if (ABS(m_dx) > ABS(m_dy))
 		{
@@ -2902,6 +2915,7 @@ static X11Driver x11_driver_info("x11", "An X Window System driver");
 
 X11Driver::X11Driver(const char *name, const char *description)
 	: NamedDriver(name, description),
+	m_look_at_mouse(LOOK_MOUSE_NONE),
 	m_on_root(0),
 	m_fullscreen(0),
 	m_sharecolor(0),
