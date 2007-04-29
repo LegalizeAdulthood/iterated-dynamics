@@ -218,7 +218,7 @@ int auto_stereo()
 	time(&ltime);
 	srand((unsigned int) ltime);
 
-	push_help_mode(RDSKEYS);
+	HelpModeSaver saved_help(RDSKEYS);
 	driver_save_graphics();                      /* save graphics image */
 	memcpy(s_save_dac, g_dac_box, 256*3);  /* save g_colors */
 
@@ -335,7 +335,6 @@ int auto_stereo()
 	}
 
 exit_stereo:
-	pop_help_mode();
 	driver_restore_graphics();
 	memcpy(g_dac_box, s_save_dac, 256*3);
 	spindac(0, 1);

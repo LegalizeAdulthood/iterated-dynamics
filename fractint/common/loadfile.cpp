@@ -1361,7 +1361,7 @@ int look_get_window()
 	U32 blinks;
 #endif
 
-	push_help_mode(HELPBROWSE);
+	HelpModeSaver saved_help(HELPBROWSE);
 	oldbf_math = g_bf_math;
 	g_bf_math = BIGFLT;
 	if (!oldbf_math)
@@ -1734,7 +1734,6 @@ rescan:  /* entry for changed browse parms */
 	}
 	g_bf_math = oldbf_math;
 	g_float_flag = g_user_float_flag;
-	pop_help_mode();
 
 	return c;
 }

@@ -390,3 +390,13 @@ void driver_flush()
 {
 	s_current->flush();
 }
+
+void driver_set_mouse_mode(int new_mode)
+{
+	s_current->set_mouse_mode(new_mode);
+}
+
+int driver_get_mouse_mode()
+{
+	return s_current->get_mouse_mode();
+}

@@ -262,7 +262,6 @@ extern long					g_log_palette_flag;
 extern BYTE					*g_log_table;
 extern _LCMPLX				g_old_z_l;
 extern _LCMPLX				*g_long_parameter;
-extern int					g_look_at_mouse;
 extern _LCMPLX				g_parameter2_l;
 extern _LCMPLX				g_parameter_l;
 extern long					g_temp_sqr_x_l;

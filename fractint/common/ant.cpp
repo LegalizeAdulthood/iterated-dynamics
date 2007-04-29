@@ -484,7 +484,7 @@ int ant()
 	}
 	s_incy[2][0] = g_y_dots - 1;      /* wrap from the bottom of the screen to the
 									* top */
-	push_help_mode(ANTCOMMANDS);
+	HelpModeSaver saved_help(ANTCOMMANDS);
 	maxpts = (long) g_parameters[1];
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
@@ -541,6 +541,5 @@ int ant()
 		turk_mite2(maxants, rule_len, rule, maxpts, wait);
 		break;
 	}
-	pop_help_mode();
 	return 0;
 }

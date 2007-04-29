@@ -72,6 +72,9 @@ public:
 										virtual void delay(int ms) = 0;
 										virtual void flush() = 0;
 	/* refresh alarm */					virtual void schedule_alarm(int secs) = 0;
+
+										virtual void set_mouse_mode(int mode) = 0;
+										virtual int get_mouse_mode() const = 0;
 };
 
 class NamedDriver : public AbstractDriver
@@ -183,5 +186,24 @@ extern void driver_set_keyboard_timeout(int ms);
 extern void driver_flush();
 extern int driver_get_char_attr_rowcol(int row, int col);
 extern void driver_put_char_attr_rowcol(int row, int col, int char_attr);
+extern void driver_set_mouse_mode(int mode);
+extern int driver_get_mouse_mode();
+
+class MouseModeSaver
+{
+public:
+	MouseModeSaver(int new_mode) :
+		m_old_mode(driver_get_mouse_mode())
+	{
+		driver_set_mouse_mode(new_mode);
+	}
+	~MouseModeSaver()
+	{
+		driver_set_mouse_mode(m_old_mode);
+	}
+
+private:
+	int m_old_mode;
+};
 
 #endif /* DRIVERS_H */

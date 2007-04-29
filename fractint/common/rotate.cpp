@@ -51,7 +51,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		return;
 	}
 
-	push_help_mode(HELPCYCLING);
+	HelpModeSaver saved_help(HELPCYCLING);
 
 	paused = 0;                          /* not paused                   */
 	fkey = 0;                            /* no random coloring           */
@@ -389,8 +389,6 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			break;
 		}
 	}
-
-	pop_help_mode();
 }
 
 static void pauserotate()               /* pause-the-rotate routine */

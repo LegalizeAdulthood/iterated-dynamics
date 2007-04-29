@@ -223,7 +223,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 		g_save_dac = (g_save_dac == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES;
 		if (g_initialize_batch == INITBATCH_NONE)
 		{
-			g_look_at_mouse = -FIK_PAGE_UP;        /* mouse left button == pgup */
+			driver_set_mouse_mode(-FIK_PAGE_UP);        /* mouse left button == pgup */
 		}
 
 		if (g_show_file == 0)
@@ -531,7 +531,7 @@ resumeloop:                             /* return here on failed overlays */
 			}
 			else if (g_initialize_batch == INITBATCH_NONE)      /* not batch mode */
 			{
-				g_look_at_mouse = (g_z_width == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX;
+				driver_set_mouse_mode((g_z_width == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX);
 				if (g_calculation_status == CALCSTAT_RESUMABLE && g_z_width == 0 && !driver_key_pressed())
 				{
 					kbdchar = FIK_ENTER ;  /* no visible reason to stop, continue */

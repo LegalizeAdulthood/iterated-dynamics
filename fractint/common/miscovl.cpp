@@ -108,7 +108,7 @@ void make_batch_file()
 	}
 
 	driver_stack_screen();
-	push_help_mode(HELPPARMFILE);
+	HelpModeSaver saved_help(HELPPARMFILE);
 
 	maxcolor = g_colors;
 	strcpy(colorspec, "y");
@@ -571,7 +571,6 @@ skip_UI:
 		}
 		break;
 	}
-	pop_help_mode();
 	driver_unstack_screen();
 }
 
@@ -1914,15 +1913,14 @@ static void put_bf(int slash, bf_t r, int prec)
 
 void edit_text_colors()
 {
-	int	save_debugflag, 	save_lookatmouse;
+	int	save_debugflag;
 	int	row, col, bkgrd;
 	int	rowf, colf, rowt, colt;
 	int	i, j, k;
 
 	save_debugflag = g_debug_flag;
-	save_lookatmouse = g_look_at_mouse;
 	g_debug_flag =	0;	 /*	don't get called recursively */
-	g_look_at_mouse	= LOOK_MOUSE_TEXT; /* text mouse sensitivity */
+	MouseModeSaver saved_mouse(LOOK_MOUSE_TEXT); /* text mouse sensitivity */
 	row	= col =	bkgrd =	rowt = rowf	= colt = colf =	0;
 
 	while (1)
@@ -1950,7 +1948,6 @@ void edit_text_colors()
 		{
 		case FIK_ESC:
 			g_debug_flag =	save_debugflag;
-			g_look_at_mouse	= save_lookatmouse;
 			driver_hide_text_cursor();
 			return;
 		case '/':

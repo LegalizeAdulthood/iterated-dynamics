@@ -32,6 +32,8 @@ public:
 	int pump_messages(int waitflag);
 	void resize(int width, int height);
 	void set_keyboard_timeout(int ms);
+	void set_mouse_mode(int new_mode);
+	int get_mouse_mode() const { return m_look_mouse; }
 
 	HWND window() const	{ return m_window; }
 	int width() const	{ return m_width; }
@@ -297,8 +299,10 @@ void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	int key_index;
 
+	return;
+
 	/* if we're mouse snooping and there's a button down, then record delta movement */
-	if (LOOK_MOUSE_NONE == g_look_at_mouse)
+	if (LOOK_MOUSE_NONE == s_frame->m_look_mouse)
 	{
 		return;
 	}
@@ -348,7 +352,7 @@ void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 void FrameImpl::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	s_frame->m_button_down[BUTTON_LEFT] = TRUE;
-	if (doubleClick && (LOOK_MOUSE_NONE != g_look_at_mouse))
+	if (doubleClick && (LOOK_MOUSE_NONE != s_frame->m_look_mouse))
 	{
 		s_frame->add_key_press(FIK_ENTER);
 	}
@@ -362,7 +366,7 @@ void FrameImpl::OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 void FrameImpl::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	s_frame->m_button_down[BUTTON_RIGHT] = TRUE;
-	if (doubleClick && (LOOK_MOUSE_NONE != g_look_at_mouse))
+	if (doubleClick && (LOOK_MOUSE_NONE != s_frame->m_look_mouse))
 	{
 		s_frame->add_key_press(FIK_CTL_ENTER);
 	}
@@ -483,13 +487,11 @@ int FrameImpl::pump_messages(int waitflag)
 	return m_keypress_count == 0 ? 0 : 1;
 }
 
-int FrameImpl::get_key_press(int wait_for_key)
+void FrameImpl::set_mouse_mode(int new_mode)
 {
-	int i;
-
-	if (g_look_at_mouse != m_look_mouse)
+	if (new_mode != m_look_mouse)
 	{
-		m_look_mouse = g_look_at_mouse;
+		m_look_mouse = new_mode;
 		m_delta_x = 0;
 		m_delta_y = 0;
 		m_start_x = -1;
@@ -498,6 +500,11 @@ int FrameImpl::get_key_press(int wait_for_key)
 		m_button_down[BUTTON_MIDDLE] = FALSE;
 		m_button_down[BUTTON_RIGHT] = FALSE;
 	}
+}
+
+int FrameImpl::get_key_press(int wait_for_key)
+{
+	int i;
 
 	pump_messages(wait_for_key);
 	if (wait_for_key && m_timed_out)
@@ -625,4 +632,14 @@ int Frame::height() const
 LRESULT CALLBACK Frame::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
 	return FrameImpl::proc(window, message, wp, lp);
+}
+
+void Frame::set_mouse_mode(int new_mode)
+{
+	s_impl.set_mouse_mode(new_mode);
+}
+
+int Frame::get_mouse_mode() const
+{
+	return s_impl.get_mouse_mode();
 }

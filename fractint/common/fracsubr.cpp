@@ -1462,7 +1462,7 @@ static void sleep_ms_old(long ms)
 	struct timebx t1, t2;
 #define SLEEPINIT 250 /* milliseconds for calibration */
 	savetabmode  = g_tab_mode;
-	push_help_mode(-1);
+	HelpModeSaver saved_help(-1);
 	g_tab_mode  = 0;
 	if (scalems == 0L) /* g_calibrate */
 	{
@@ -1538,7 +1538,6 @@ static void sleep_ms_old(long ms)
 	}
 sleepexit:
 	g_tab_mode  = savetabmode;
-	pop_help_mode();
 }
 
 static void sleep_ms_new(long ms)
