@@ -613,8 +613,8 @@ void GDIDriver::set_clear()
 */
 void GDIDriver::set_video_mode(const VIDEOINFO &mode)
 {
-	extern void set_normal_dot(void);
-	extern void set_normal_line(void);
+	extern void set_normal_dot();
+	extern void set_normal_line();
 
 	/* initially, set the virtual line to be the scan line length */
 	g_vx_dots = g_screen_width;

@@ -67,18 +67,18 @@ union mem handletable[MAXHANDLES];
 /* Routines in this module */
 static int _fastcall  CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
-static U16 next_handle(void);
+static U16 next_handle();
 static int CheckBounds (long start, long length, U16 handle);
 static void WhichDiskError(int);
 static void DisplayError(int stored_at, long howmuch);
 static void DisplayHandle (U16 handle);
-static void DisplayMemory(void);
+static void DisplayMemory();
 
 /* Routines in this module, visible to outside routines */
 
 int MemoryType (U16 handle);
-void InitMemory(void);
-void ExitCheck(void);
+void InitMemory();
+void ExitCheck();
 U16 MemoryAlloc(U16 size, long count, int stored_at);
 void MemoryRelease(U16 handle);
 int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
@@ -229,10 +229,10 @@ static int CheckBounds (long start, long length, U16 handle)
 	return 0;
 }
 
-static void DisplayMemory(void)
+static void DisplayMemory()
 {
 	char buf[MESSAGE_LEN];
-	extern unsigned long get_disk_space(void);
+	extern unsigned long get_disk_space();
 
 	sprintf(buf, "disk=%lu", get_disk_space());
 	stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
@@ -250,7 +250,7 @@ static void DisplayHandle(U16 handle)
 	}
 }
 
-void InitMemory(void)
+void InitMemory()
 {
 	int counter;
 
@@ -262,7 +262,7 @@ void InitMemory(void)
 	}
 }
 
-void ExitCheck(void)
+void ExitCheck()
 {
 	U16 i;
 	if (numTOTALhandles != 0)

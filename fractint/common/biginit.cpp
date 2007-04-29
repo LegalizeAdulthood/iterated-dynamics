@@ -66,12 +66,12 @@ bf_t bf10tmp = BIG_NULL;                                              /* dec + 4
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
 
-static int save_bf_vars(void);
-static int restore_bf_vars(void);
+static int save_bf_vars();
+static int restore_bf_vars();
 
 /*********************************************************************/
 /* given bnlength, calc_lengths will calculate all the other lengths */
-void calc_lengths(void)
+void calc_lengths()
 {
 #if 0
 #ifdef USE_BIGNUM_C_CODE
@@ -115,7 +115,7 @@ long startstack = 0;
 long maxstack = 0;
 int g_bf_save_len = 0;
 
-static void init_bf_2(void)
+static void init_bf_2()
 {
 	int i;
 	long ptr;
@@ -278,7 +278,7 @@ static void init_bf_2(void)
 /**********************************************************/
 /* save current corners and parameters to start of bnroot */
 /* to preserve values across calls to init_bf()           */
-static int save_bf_vars(void)
+static int save_bf_vars()
 {
 	int ret;
 	unsigned int mem;
@@ -301,7 +301,7 @@ static int save_bf_vars(void)
 
 /************************************************************************/
 /* copy current corners and parameters from save location               */
-static int restore_bf_vars(void)
+static int restore_bf_vars()
 {
 	bf_t ptr;
 	int i;
@@ -372,7 +372,7 @@ bn_t alloc_stack(size_t size)
 
 /************************************************************************/
 /* Returns stack pointer offset so it can be saved.                            */
-int save_stack(void)
+int save_stack()
 {
 	return (int) (stack_ptr - bnroot);
 }
@@ -454,7 +454,7 @@ void init_bf_length(int bnl)
 }
 
 
-void init_big_pi(void)
+void init_big_pi()
 {
 	/* What, don't you recognize the first 700 digits of pi, */
 	/* in base 256, in reverse order?                        */

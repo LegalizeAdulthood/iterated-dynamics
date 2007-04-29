@@ -39,7 +39,7 @@ static void put_parm(const char *parm, ...);
 static void put_parm();
 #endif
 
-static void put_parm_line(void);
+static void put_parm_line();
 static int getprec(double, double, double);
 int get_precision_bf(int);
 static void put_float(int, double, int);
@@ -49,7 +49,7 @@ static void put_filename(char *keyword, char *fname);
 static int check_modekey(int curkey, int choice);
 #endif
 static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2);
-static void update_fractint_cfg(void);
+static void update_fractint_cfg();
 static void strip_zeros(char *buf);
 
 char par_comment[4][MAX_COMMENT];

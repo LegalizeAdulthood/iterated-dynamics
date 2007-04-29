@@ -52,7 +52,7 @@ static long s_width, s_dist, s_depth, s_br_ratio;
 static long s_eyes;
 #endif
 
-int julibrot_setup(void)
+int julibrot_setup()
 {
 #ifndef XFRACT
 	long origin;
@@ -158,7 +158,7 @@ int julibrot_setup(void)
 }
 
 
-int julibrot_per_pixel(void)
+int julibrot_per_pixel()
 {
 	s_jx = multiply(s_per->x - s_x_pixel, s_init_z, 16);
 	s_jx = divide(s_jx, s_dist, 16) - s_x_pixel;
@@ -179,7 +179,7 @@ int julibrot_per_pixel(void)
 	return 1;
 }
 
-int julibrot_per_pixel_fp(void)
+int julibrot_per_pixel_fp()
 {
 	s_jx_fp = ((s_per_fp->x - s_x_pixel_fp)*s_init_z_fp / g_screen_distance_fp - s_x_pixel_fp)*s_x_per_inch_fp;
 	s_jx_fp += s_x_offset_fp;
@@ -390,7 +390,7 @@ static int z_line_fp(double x, double y)
 	return 0;
 }
 
-int standard_4d_fractal(void)
+int standard_4d_fractal()
 {
 	long x, y;
 	int xdot, ydot;
@@ -440,7 +440,7 @@ int standard_4d_fractal(void)
 	return 0;
 }
 
-int standard_4d_fractal_fp(void)
+int standard_4d_fractal_fp()
 {
 	double x, y;
 	int xdot, ydot;

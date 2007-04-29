@@ -21,7 +21,7 @@
 extern int slowdisplay;
 #endif
 
-void intro(void)
+void intro()
 {
 	/* following overlayed data safe if "putstrings" are resident */
 #ifdef XFRACT

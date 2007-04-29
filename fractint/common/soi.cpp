@@ -1114,7 +1114,7 @@ rhombus_done:
 	return status;
 }
 
-void soi_long_double(void)
+void soi_long_double()
 {
 	int status;
 	DBLS tolerance = 0.1;

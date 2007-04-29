@@ -255,7 +255,7 @@ void show_var_bf(char *s, bf_t n)
 
 #endif
 
-void corners_bf_to_float(void)
+void corners_bf_to_float()
 {
 	int i;
 	if (g_bf_math)
@@ -806,7 +806,7 @@ int mandelbrot_per_pixel_bf()
 	return 1;                  /* 1st iteration has been done */
 }
 
-int julia_per_pixel_bn(void)
+int julia_per_pixel_bn()
 {
 	/* old.x = g_xx_min + col*delx + row*g_delta_x2 */
 	mult_bn_int(bnold.x, bnxdel, (U16)g_col);
@@ -833,7 +833,7 @@ int julia_per_pixel_bn(void)
 	return 1;                  /* 1st iteration has been done */
 }
 
-int julia_per_pixel_bf(void)
+int julia_per_pixel_bf()
 {
 	/* old.x = g_xx_min + col*delx + row*g_delta_x2 */
 	mult_bf_int(bfold.x, bfxdel, (U16)g_col);

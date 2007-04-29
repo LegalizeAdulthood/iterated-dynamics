@@ -76,12 +76,12 @@ int newton_orbit_mpc()
 	return s_newton_mpc.orbit();
 }
 
-int complex_newton_setup(void)
+int complex_newton_setup()
 {
 	return s_newton_complex.setup();
 }
 
-int complex_newton(void)
+int complex_newton()
 {
 	return s_newton_complex.orbit();
 }

@@ -16,7 +16,7 @@ extern int keypressed();
 static int s_inside_color = 0;
 static int s_periodicity_color = 0;
 
-void calculate_mandelbrot_start_fp_asm(void)
+void calculate_mandelbrot_start_fp_asm()
 {
 	if (g_inside < 0)
 	{
@@ -44,7 +44,7 @@ void calculate_mandelbrot_start_fp_asm(void)
    of the x and y values.  This is experimental. */
 #define USE_NEW 0
 
-long calculate_mandelbrot_fp_asm(void)
+long calculate_mandelbrot_fp_asm()
 {
 	long cx;
 	long savedand;

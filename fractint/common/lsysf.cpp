@@ -678,7 +678,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	return doub;
 }
 
-void _fastcall lsysf_sin_cos(void)
+void _fastcall lsysf_sin_cos()
 {
 	LDBL locaspect;
 	LDBL TWOPI = 2.0*PI;

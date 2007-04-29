@@ -59,7 +59,7 @@
 
 static  int check_f6_key(int curkey, int choice);
 static  int filename_speedstr(int, int, int, char *, int);
-static  int get_screen_corners(void);
+static  int get_screen_corners();
 
 /* speed key state values */
 #define MATCHING         0      /* string matches list - speed key mode */
@@ -675,7 +675,7 @@ int get_toggles2()
      passes_options invoked by <p> key
 */
 
-int passes_options(void)
+int passes_options()
 {
 	char *choices[20];
 	char *passcalcmodes[] = {"rect", "line"};
@@ -1026,7 +1026,7 @@ double starfield_values[4] =
 
 char g_grey_file[] = "altern.map";
 
-int starfield(void)
+int starfield()
 {
 	int c;
 	BusyMarker marker;
@@ -1086,7 +1086,7 @@ int starfield(void)
 	return 0;
 }
 
-int get_starfield_params(void)
+int get_starfield_params()
 {
 	struct full_screen_values uvalues[3];
 	int i;
@@ -1124,7 +1124,7 @@ int get_starfield_params(void)
 
 static char *masks[] = {"*.pot", "*.gif"};
 
-int get_random_dot_stereogram_parameters(void)
+int get_random_dot_stereogram_parameters()
 {
 	char rds6[60];
 	char *stereobars[] = {"none", "middle", "top"};
@@ -1297,7 +1297,7 @@ int get_commands()              /* execute commands from file */
 
 /* --------------------------------------------------------------------- */
 
-void goodbye(void)                  /* we done.  Bail out */
+void goodbye()                  /* we done.  Bail out */
 {
 	char goodbyemessage[40] = "   Thank You for using "FRACTINT;
 	int ret;
@@ -2300,7 +2300,7 @@ gc_loop:
 	}
 }
 
-static int get_screen_corners(void)
+static int get_screen_corners()
 {
 	struct full_screen_values values[15];
 	char *prompts[15];
@@ -2895,7 +2895,7 @@ void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 	}
 }
 
-int integer_unsupported(void)
+int integer_unsupported()
 {
 	static int last_fractype = -1;
 	if (g_fractal_type != last_fractype)

@@ -60,9 +60,9 @@ static BYTE *s_memory_buffer_ptr;
 
 static void _fastcall  find_load_cache(long);
 static struct cache *_fastcall  find_cache(long);
-static void  write_cache_lru(void);
+static void  write_cache_lru();
 static void _fastcall  mem_putc(BYTE);
-static BYTE  mem_getc(void);
+static BYTE  mem_getc();
 static void _fastcall  mem_seek(long);
 
 int disk_start()

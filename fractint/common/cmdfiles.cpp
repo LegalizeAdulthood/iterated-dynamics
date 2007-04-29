@@ -167,11 +167,11 @@ static int  command_file(FILE *, int);
 static int  next_command(char *, int, FILE *, char *, int *, int);
 static int  next_line(FILE *, char *, int);
 static void arg_error(const char *);
-static void initialize_variables_once(void);
-static void initialize_variables_restart(void);
-static void initialize_variables_fractal(void);
-static void initialize_variables_3d(void);
-static void reset_ifs_definition(void);
+static void initialize_variables_once();
+static void initialize_variables_restart();
+static void initialize_variables_fractal();
+static void initialize_variables_3d();
+static void reset_ifs_definition();
 static void parse_text_colors(char *value);
 static int  parse_colors(char *value);
 static int  get_bf(bf_t, char *);
@@ -518,10 +518,10 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 
 	g_old_demm_colors = 0;
 	g_bail_out_test    = Mod;
-	g_bail_out_fp  = (int (*)(void))bail_out_mod_fp;
-	g_bail_out_l   = (int (*)(void))bail_out_mod_l_asm;
-	g_bail_out_bn = (int (*)(void))bail_out_mod_bn;
-	g_bail_out_bf = (int (*)(void))bail_out_mod_bf;
+	g_bail_out_fp  = (int (*)())bail_out_mod_fp;
+	g_bail_out_l   = (int (*)())bail_out_mod_l_asm;
+	g_bail_out_bn = (int (*)())bail_out_mod_bn;
+	g_bail_out_bf = (int (*)())bail_out_mod_bf;
 
 	g_function_preloaded = FALSE; /* for old bifs  JCO 7/5/92 */
 	g_m_x_min_fp = -.83;

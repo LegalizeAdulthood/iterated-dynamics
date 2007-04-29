@@ -111,15 +111,15 @@ static long s_l_orbit;
 static long s_l_sinx, s_l_cosx;
 
 /* local routines in this module */
-static int  ifs_2d(void);
-static int  ifs_3d(void);
-static int  ifs_3d_long(void);
-static int  ifs_3d_float(void);
+static int  ifs_2d();
+static int  ifs_3d();
+static int  ifs_3d_long();
+static int  ifs_3d_float();
 static int  l_setup_convert_to_screen(struct l_affine *);
 static void setup_matrix(MATRIX);
 static int  threed_view_trans(struct threed_vt_inf *inf);
 static int  threed_view_trans_fp(struct threed_vt_inf_fp *inf);
-static FILE *open_orbit_save(void);
+static FILE *open_orbit_save();
 static void _fastcall plot_hist(int x, int y, int color);
 
 /******************************************************************/
@@ -259,7 +259,7 @@ static int l_setup_convert_to_screen(struct l_affine *l_cvt)
 /*   setup functions - put in g_fractal_specific[g_fractal_type].per_image */
 /******************************************************************/
 
-int orbit_3d_setup(void)
+int orbit_3d_setup()
 {
 	g_max_count = 0L;
 	s_connect = 1;
@@ -1642,7 +1642,7 @@ int orbit_2d()
 	return ret;
 }
 
-static int orbit_3d_calc(void)
+static int orbit_3d_calc()
 {
 	FILE *fp;
 	unsigned long count;
@@ -1762,7 +1762,7 @@ static int orbit_3d_calc(void)
 }
 
 
-static int orbit_3d_calc_fp(void)
+static int orbit_3d_calc_fp()
 {
 	FILE *fp;
 	unsigned long count;
@@ -2107,7 +2107,7 @@ int setup_orbits_to_screen(struct affine *scrn_cnvt)
 	return 0;
 }
 
-int plotorbits2dsetup(void)
+int plotorbits2dsetup()
 {
 
 #ifndef XFRACT
@@ -2157,7 +2157,7 @@ int plotorbits2dsetup(void)
 	return 1;
 }
 
-int plotorbits2dfloat(void)
+int plotorbits2dfloat()
 {
 	double *soundvar = NULL;
 	double x, y, z;
@@ -2259,7 +2259,7 @@ int plotorbits2dfloat(void)
 
 /* this function's only purpose is to manage funnyglasses related */
 /* stuff so the code is not duplicated for ifs_3d() and lorenz3d() */
-int funny_glasses_call(int (*calc)(void))
+int funny_glasses_call(int (*calc)())
 {
 	int status;
 	status = 0;
@@ -2320,7 +2320,7 @@ done:
 }
 
 /* double version - mainly for testing */
-static int ifs_3d_float(void)
+static int ifs_3d_float()
 {
 	int color_method;
 	FILE *fp;
@@ -2469,7 +2469,7 @@ int ifs()                       /* front-end for ifs_2d and ifs_3d */
 
 
 /* IFS logic shamelessly converted to integer math */
-static int ifs_2d(void)
+static int ifs_2d()
 {
 	int color_method;
 	FILE *fp;
@@ -2573,7 +2573,7 @@ static int ifs_2d(void)
 	return ret;
 }
 
-static int ifs_3d_long(void)
+static int ifs_3d_long()
 {
 	int color_method;
 	FILE *fp;
@@ -2747,7 +2747,7 @@ int orbit_3d()
 	return funny_glasses_call(orbit_3d_calc);
 }
 
-static int ifs_3d(void)
+static int ifs_3d()
 {
 	g_display_3d = -1;
 
@@ -3042,7 +3042,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 	return 1;
 }
 
-static FILE *open_orbit_save(void)
+static FILE *open_orbit_save()
 {
 	FILE *fp = NULL;
 	if (g_orbit_save & ORBITSAVE_RAW)

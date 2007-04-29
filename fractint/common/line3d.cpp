@@ -80,19 +80,19 @@ VECTOR g_cross;
 static int targa_validate(char *);
 static int first_time(int, VECTOR);
 static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
-static int line_3d_mem(void);
+static int line_3d_mem();
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static int set_pixel_buff(BYTE *, BYTE *, unsigned);
-static void set_upr_lwr(void);
+static void set_upr_lwr();
 static int _fastcall end_object(int);
 static int _fastcall off_screen(struct point);
 static int _fastcall out_triangle(const struct f_point, const struct f_point, const struct f_point, int, int, int);
-static int _fastcall raytrace_header(void);
-static int _fastcall start_object(void);
+static int _fastcall raytrace_header();
+static int _fastcall start_object();
 static void corners(MATRIX, int, double *, double *, double *, double *, double *, double *);
 static void draw_light_box(double *, double *, MATRIX);
 static void draw_rect(VECTOR, VECTOR, VECTOR, VECTOR, int, int);
-static void line3d_cleanup(void);
+static void line3d_cleanup();
 static void _fastcall clip_color(int, int, int);
 static void _fastcall interp_color(int, int, int);
 static void _fastcall put_a_triangle(struct point, struct point, struct point, int);
@@ -1986,7 +1986,7 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 /*                                                                  */
 /********************************************************************/
 
-static int _fastcall raytrace_header(void)
+static int _fastcall raytrace_header()
 {
 	/* Open the ray tracing output file */
 	check_write_file(g_ray_name, ".ray");
@@ -2340,7 +2340,7 @@ static void _fastcall triangle_bounds(float pt_t[3][3])
 /*                                                                  */
 /********************************************************************/
 
-static int _fastcall start_object(void)
+static int _fastcall start_object()
 {
 	if (g_raytrace_output != RAYTRACE_POVRAY)
 	{
@@ -2413,7 +2413,7 @@ static int _fastcall end_object(int triout)
 	return 0;
 }
 
-static void line3d_cleanup(void)
+static void line3d_cleanup()
 {
 	int i, j;
 	if (g_raytrace_output && s_raytrace_file)
@@ -2490,7 +2490,7 @@ static void line3d_cleanup(void)
 	s_targa_safe = 0;
 }
 
-static void set_upr_lwr(void)
+static void set_upr_lwr()
 {
 	s_targa_size[0] = (BYTE)(g_x_dots & 0xff);
 	s_targa_size[1] = (BYTE)(g_x_dots >> 8);
@@ -2926,7 +2926,7 @@ static int first_time(int linelen, VECTOR v)
 	Allocate buffers needed, depending on the pixel dimensions of the
 	vide mode.
 */
-static int line_3d_mem(void)
+static int line_3d_mem()
 {
 	/* s_last_row stores the previous row of the original GIF image for
 		the purpose of filling in gaps with triangle procedure */
@@ -2975,7 +2975,7 @@ static int line_3d_mem(void)
 	return FALSE;
 }
 
-void line_3d_free(void)
+void line_3d_free()
 {
 	if (s_last_row)
 	{

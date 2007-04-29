@@ -199,7 +199,7 @@ char	g_exe_path[FILE_MAX_PATH] = { 0 };
 #define RESTORESTART      3
 #define CONTINUE          4
 
-void check_same_name(void)
+void check_same_name()
 {
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
@@ -252,7 +252,7 @@ static void set_exe_path(char *path)
 	}
 }
 
-static void set_cpu_fpu(void)
+static void set_cpu_fpu()
 {
 	if (DEBUGFLAG_CPU_8088 == g_debug_flag)
 	{
@@ -749,7 +749,7 @@ va_dcl
 	switch (timertype)
 	{
 	case TIMER_ENGINE:
-		out = (*(int(*)(void))subrtn)();
+		out = (*(int(*)())subrtn)();
 		break;
 	case TIMER_DECODER:
 		i = va_arg(arg_marker, int);

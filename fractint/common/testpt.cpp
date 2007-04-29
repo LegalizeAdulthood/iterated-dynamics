@@ -20,7 +20,7 @@ The sample code below is a straightforward Mandelbrot routine.
 
 */
 
-int  driver_get_key(void);
+int  driver_get_key();
 
 int test_start()     /* this routine is called just before the fractal starts */
 {

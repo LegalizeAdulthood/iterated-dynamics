@@ -531,7 +531,7 @@ void Jiim(int which)         /* called by fractint */
 	float zoom;
 	int oldsxoffs, oldsyoffs;
 	int savehasinverse;
-	int (*oldcalctype)(void);
+	int (*oldcalctype)();
 	int old_x, old_y;
 	double aspect;
 	static int randir = 0;

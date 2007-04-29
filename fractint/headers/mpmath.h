@@ -58,13 +58,13 @@ enum MATH_TYPE { D_MATH};
 #endif
 extern enum MATH_TYPE MathType;
 
-#define fDiv(x, y, z)		(void) ((*(long *) &z) = RegDivFloat(*(long *) &x, *(long *) &y))
-#define fMul16(x, y, z)		(void) ((*(long *) &z) = r16Mul(*(long *) &x, *(long *) &y))
-#define fShift(x, Shift, z)	(void) ((*(long *) &z) = RegSftFloat(*(long *) &x, Shift))
-#define Fg2Float(x, f, z)	(void) ((*(long *) &z) = RegFg2Float(x, f))
+#define fDiv(x, y, z)		((*(long *) &z) = RegDivFloat(*(long *) &x, *(long *) &y))
+#define fMul16(x, y, z)		((*(long *) &z) = r16Mul(*(long *) &x, *(long *) &y))
+#define fShift(x, Shift, z)	((*(long *) &z) = RegSftFloat(*(long *) &x, Shift))
+#define Fg2Float(x, f, z)	((*(long *) &z) = RegFg2Float(x, f))
 #define Float2Fg(x, f)		RegFloat2Fg(*(long *) &x, f)
-#define fLog14(x, z)		(void) ((*(long *) &z) = RegFg2Float(LogFloat14(*(long *) &x), 16))
-#define fExp14(x, z)		(void) ((*(long *) &z) = ExpFloat14(*(long *) &x));
+#define fLog14(x, z)		((*(long *) &z) = RegFg2Float(LogFloat14(*(long *) &x), 16))
+#define fExp14(x, z)		((*(long *) &z) = ExpFloat14(*(long *) &x));
 #define fSqrt14(x, z)		\
 	do						\
 	{						\
@@ -96,29 +96,29 @@ struct ConstArg
 
 extern union Arg *Arg1, *Arg2;
 
-extern void lStkSin(void);
-extern void lStkCos(void);
-extern void lStkSinh(void);
-extern void lStkCosh(void);
-extern void lStkLog(void);
-extern void lStkExp(void);
-extern void lStkSqr(void);
-extern void dStkSin(void);
-extern void dStkCos(void);
-extern void dStkSinh(void);
-extern void dStkCosh(void);
-extern void dStkLog(void);
-extern void dStkExp(void);
-extern void dStkSqr(void);
+extern void lStkSin();
+extern void lStkCos();
+extern void lStkSinh();
+extern void lStkCosh();
+extern void lStkLog();
+extern void lStkExp();
+extern void lStkSqr();
+extern void dStkSin();
+extern void dStkCos();
+extern void dStkSinh();
+extern void dStkCosh();
+extern void dStkLog();
+extern void dStkExp();
+extern void dStkSqr();
 
-extern void (*g_trig0_l)(void);
-extern void (*g_trig1_l)(void);
-extern void (*g_trig2_l)(void);
-extern void (*g_trig3_l)(void);
-extern void (*g_trig0_d)(void);
-extern void (*g_trig1_d)(void);
-extern void (*g_trig2_d)(void);
-extern void (*g_trig3_d)(void);
+extern void (*g_trig0_l)();
+extern void (*g_trig1_l)();
+extern void (*g_trig2_l)();
+extern void (*g_trig3_l)();
+extern void (*g_trig0_d)();
+extern void (*g_trig1_d)();
+extern void (*g_trig2_d)();
+extern void (*g_trig3_d)();
 
 /* -------------------------------------------------------------------- */
 /*   The following #defines allow the complex transcendental functions  */

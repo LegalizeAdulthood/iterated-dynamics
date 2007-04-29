@@ -40,13 +40,13 @@ int inside_help = 0;
 
 extern int g_slides;	/* 1 for playback */
 
-int get_a_key(void);
+int get_a_key();
 
 /*
 ; ****************** Function initasmvars() *****************************
 */
 void
-initasmvars(void)
+initasmvars()
 {
 	if (cpu != 0)
 	{
@@ -127,10 +127,10 @@ long divide(long x, long y, int n)
 */
 int keybuffer = 0;
 
-int getkeynowait(void);
+int getkeynowait();
 int getkeyint(int);
 
-int keypressed(void)
+int keypressed()
 {
 	int ch;
 	ch = getkeynowait();
@@ -177,7 +177,7 @@ int wait_key_pressed(int timeout)
 /*
  * This routine returns a key, ignoring F1
  */
-int getakeynohelp(void)
+int getakeynohelp()
 {
 	int ch;
 	while (1)
@@ -194,7 +194,7 @@ int getakeynohelp(void)
 /*
 * This routine returns a keypress
 */
-int get_a_key(void)
+int get_a_key()
 {
 	int ch;
 
@@ -209,7 +209,7 @@ int get_a_key(void)
 /*
  * This routine returns the current key, or 0.
  */
-int getkeynowait(void)
+int getkeynowait()
 {
 	return getkeyint(0);
 }
@@ -263,7 +263,7 @@ int getkeyint(int block)
 /*
 ; long read_ticker() returns current bios ticker value
 */
-long read_ticker(void)
+long read_ticker()
 {
 	return clock_ticks();
 }

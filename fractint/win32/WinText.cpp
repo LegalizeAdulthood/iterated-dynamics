@@ -420,12 +420,12 @@ void WinText::OnKillFocus(HWND window, HWND old_focus)
 	}
 }
 
-void WinText::set_focus(void)
+void WinText::set_focus()
 {
 	OnSetFocus(NULL, NULL);
 }
 
-void WinText::kill_focus(void)
+void WinText::kill_focus()
 {
 	OnKillFocus(NULL, NULL);
 }

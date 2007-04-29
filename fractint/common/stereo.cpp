@@ -85,7 +85,7 @@ static int getdepth(int xd, int yd)
 	Get min and max DEPTH value in picture
 */
 
-static int get_min_max(void)
+static int get_min_max()
 {
 	int xd, yd, ldepth;
 	s_min_c = g_colors;
@@ -204,7 +204,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 		Convert current image into Auto Stereo Picture
 **************************************************************************/
 
-int auto_stereo(void)
+int auto_stereo()
 {
 	int ret = 0;
 	int i, j, done;

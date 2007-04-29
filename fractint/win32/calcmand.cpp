@@ -37,7 +37,7 @@ static int savedand = 0;
 static int savedincr = 0;
 static int period = 0;
 
-long cdecl calculate_mandelbrot_asm(void)
+long cdecl calculate_mandelbrot_asm()
 {
 	return integer_unsupported();
 }
@@ -52,7 +52,7 @@ long cdecl calculate_mandelbrot_asm(void)
 
 	This is a C translation of the 16-bit assembly code.
 */
-static long cdecl calculate_mandelbrot_asm1(void)
+static long cdecl calculate_mandelbrot_asm1()
 {
 	g_old_color_iter = (g_periodicity_check == 0) ? 0 : (g_max_iteration - 250);
 	long tmpfsd = g_max_iteration - g_first_saved_and;
@@ -241,7 +241,7 @@ pop_stack:
 
 	This is an __asm {} block version of the 16-bit assembly code.
 */
-static long cdecl calculate_mandelbrot_asm2(void)
+static long cdecl calculate_mandelbrot_asm2()
 {
 	__asm
 	{

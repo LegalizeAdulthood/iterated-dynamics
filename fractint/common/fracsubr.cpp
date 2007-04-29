@@ -51,10 +51,10 @@ static void   _fastcall adjust_to_limits(double);
 static void   _fastcall smallest_add(double *);
 static int    _fastcall ratio_bad(double, double);
 static void   _fastcall plot_orbit_d(double, double, int);
-static int    _fastcall work_list_combine(void);
+static int    _fastcall work_list_combine();
 static void   _fastcall adjust_to_limits_bf(double);
 static void   _fastcall smallest_add_bf(bf_t);
-static int sound_open(void);
+static int sound_open();
 
 void free_grid_pointers()
 {
@@ -84,7 +84,7 @@ void set_grid_pointers()
 	set_pixel_calc_functions();
 }
 
-void fill_dx_array(void)
+void fill_dx_array()
 {
 	int i;
 	if (g_use_grid)
@@ -105,7 +105,7 @@ void fill_dx_array(void)
 	}
 }
 
-void fill_lx_array(void)
+void fill_lx_array()
 {
 	int i;
 	/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
@@ -128,7 +128,7 @@ void fill_lx_array(void)
 	}
 }
 
-void fractal_float_to_bf(void)
+void fractal_float_to_bf()
 {
 	int i;
 	init_bf_dec(get_precision_dbl(CURRENTREZ));
@@ -158,7 +158,7 @@ void fractal_float_to_bf(void)
 #endif
 
 /* initialize a *pile* of stuff for fractal calculation */
-void calculate_fractal_initialize(void)
+void calculate_fractal_initialize()
 {
 	int tries = 0;
 	int i, gotprec;
@@ -671,7 +671,7 @@ static double _fastcall fudge_to_double(long l)
 	return d;
 }
 
-void adjust_corner_bf(void)
+void adjust_corner_bf()
 {
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
@@ -750,7 +750,7 @@ void adjust_corner_bf(void)
 	restore_stack(saved);
 }
 
-void adjust_corner(void)
+void adjust_corner()
 {
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
@@ -1408,7 +1408,7 @@ va_dcl
 	return 0;
 }
 
-int start_resume(void)
+int start_resume()
 {
 	int version;
 	if (g_resume_info == NULL)
@@ -1420,7 +1420,7 @@ int start_resume(void)
 	return version;
 }
 
-void end_resume(void)
+void end_resume()
 {
 	if (g_resume_info != NULL) /* free the prior area if there is one */
 	{
@@ -1593,7 +1593,7 @@ void wait_until(int index, uclock_t wait_time)
 	}
 }
 
-void reset_clock(void)
+void reset_clock()
 {
 	int i;
 	restart_uclock();
@@ -1609,7 +1609,7 @@ void reset_clock(void)
 static FILE *snd_fp = NULL;
 
 /* open sound file */
-static int sound_open(void)
+static int sound_open()
 {
 	static char soundname[] = {"sound001.txt"};
 	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && snd_fp == NULL)
@@ -1655,7 +1655,7 @@ void sound_tone(int tone)
 	}
 }
 
-void sound_write_time(void)
+void sound_write_time()
 {
 	if (sound_open())
 	{
@@ -1663,7 +1663,7 @@ void sound_write_time(void)
 	}
 }
 
-void sound_close(void)
+void sound_close()
 {
 	if (snd_fp)
 	{
@@ -1757,7 +1757,7 @@ void plot_orbit(double real, double imag, int color)
 	plot_orbit_d(real-g_xx_min, imag-g_yy_max, color);
 }
 
-void orbit_scrub(void)
+void orbit_scrub()
 {
 	int i, j, c;
 	int save_sxoffs, save_syoffs;
@@ -1798,7 +1798,7 @@ int work_list_add(int xfrom, int xto, int xbegin,
 	return 0;
 }
 
-static int _fastcall work_list_combine(void) /* look for 2 entries which can freely merge */
+static int _fastcall work_list_combine() /* look for 2 entries which can freely merge */
 {
 	int i, j;
 	for (i = 0; i < g_num_work_list; ++i)
@@ -1851,7 +1851,7 @@ static int _fastcall work_list_combine(void) /* look for 2 entries which can fre
 	return 0; /* nothing combined */
 }
 
-void work_list_tidy(void) /* combine mergeable entries, resort */
+void work_list_tidy() /* combine mergeable entries, resort */
 {
 	int i, j;
 	WORKLIST tempwork;
@@ -1982,7 +1982,7 @@ void get_julia_attractor(double real, double imag)
 }
 
 
-int solid_guess_block_size(void) /* used by solidguessing and by zoom panning */
+int solid_guess_block_size() /* used by solidguessing and by zoom panning */
 {
 	int blocksize, i;
 	/* blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >= 1200 */

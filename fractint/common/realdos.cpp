@@ -161,7 +161,7 @@ int text_temp_message(char *msgparm)
 	return 0;
 }
 
-void free_temp_message(void)
+void free_temp_message()
 {
 	if (s_temp_text_save != NULL)
 	{
@@ -231,7 +231,7 @@ int show_temp_message(char *msgparm)
 	return 0;
 }
 
-void clear_temp_message(void)
+void clear_temp_message()
 {
 	int i;
 	int save_sxoffs, save_syoffs;
@@ -269,7 +269,7 @@ void blank_rows(int row, int rows, int attr)
 	}
 }
 
-void help_title(void)
+void help_title()
 {
 	char msg[MESSAGE_LEN], buf[MESSAGE_LEN];
 	driver_set_clear(); /* clear the screen */
@@ -1878,7 +1878,7 @@ int show_vid_length()
  * (first time the problem occurs only, and only if options is
  * zero) and uses the hard-coded table.
  */
-void load_fractint_config(void)
+void load_fractint_config()
 {
 	FILE *cfgfile;
 	VIDEOINFO vident;

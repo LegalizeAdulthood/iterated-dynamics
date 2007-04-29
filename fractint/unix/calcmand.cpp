@@ -9,7 +9,7 @@
 #include "port.h"
 
 int
-calculate_mandelbrot_asm(void)
+calculate_mandelbrot_asm()
 {
 	printf("Warning: called calculate_mandelbrot_asm\n");
 	return(0);

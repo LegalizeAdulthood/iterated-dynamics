@@ -961,7 +961,7 @@ rhombus_done:
 	return status;
 }
 
-void soi(void)
+void soi()
 {
 	int status;
 	DBLS tolerance = 0.1;

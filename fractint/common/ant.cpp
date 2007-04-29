@@ -412,7 +412,7 @@ exit_ant:
 	return;
 }
 
-void free_ant_storage(void)
+void free_ant_storage()
 {
 	if (s_incx[0])
 	{
@@ -421,7 +421,7 @@ void free_ant_storage(void)
 	}
 }
 
-int ant(void)
+int ant()
 {
 	int maxants, type, i;
 	int rule_len;

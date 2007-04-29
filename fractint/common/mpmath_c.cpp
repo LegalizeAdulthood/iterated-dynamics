@@ -178,7 +178,7 @@ struct MP  *(*pd2MP)(double x)                 = d2MP086 ;
 double *(*pMP2d)(struct MP m)                  = MP2d086 ;
 /* struct MP  *(*pfg2MP)(long x, int fg)          = fg2MP086; */
 
-void setMPfunctions(void)
+void setMPfunctions()
 {
 	if (g_cpu >= 386)
 	{
@@ -493,7 +493,7 @@ static unsigned long lf;
 	g_log_palette_flag < -1  -- use quadratic palettes based on square roots && compress
 */
 
-void SetupLogTable(void)
+void SetupLogTable()
 {
 	float l, f, c, m;
 	unsigned long prev, limit, sptop;
@@ -682,7 +682,7 @@ _CMPLX temp, BaseLog;
 _CMPLX cdegree = { 3.0, 0.0 };
 _CMPLX croot   = { 1.0, 0.0 };
 
-int complex_basin(void)
+int complex_basin()
 {
 	_CMPLX cd1;
 	double mod;

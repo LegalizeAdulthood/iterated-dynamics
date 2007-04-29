@@ -560,7 +560,7 @@ unsigned short _rotl(unsigned short num, short bits)
 }
 
 /* sound.c file prototypes */
-int get_sound_params(void)
+int get_sound_params()
 {
 	return 0;
 }
@@ -569,15 +569,15 @@ void soundon(int i)
 {
 }
 
-void soundoff(void)
+void soundoff()
 {
 }
 
-void mute(void)
+void mute()
 {
 }
 
-int initfm(void)
+int initfm()
 {
 	return 0;
 }
@@ -585,13 +585,13 @@ int initfm(void)
 /* tenths of millisecond timewr routine */
 static struct timeval tv_start;
 
-void restart_uclock(void)
+void restart_uclock()
 {
 	gettimeofday(&tv_start, NULL);
 }
 
 typedef unsigned long uclock_t;
-uclock_t usec_clock(void)
+uclock_t usec_clock()
 {
 	uclock_t result;
 

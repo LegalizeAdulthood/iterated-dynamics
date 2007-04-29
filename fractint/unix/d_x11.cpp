@@ -1174,7 +1174,7 @@ void X11Driver::ev_key_release(XKeyEvent *xevent)
 {
 	char buffer[1];
 	KeySym keysym;
-	(void) XLookupString(xevent, buffer, 1, &keysym, NULL);
+	() XLookupString(xevent, buffer, 1, &keysym, NULL);
 	switch (keysym)
 	{
 	case XK_Control_L:
@@ -2869,9 +2869,9 @@ void X11Driver::delay(int ms)
 	delay.tv_sec = ms/1000;
 	delay.tv_usec = (ms % 1000)*1000;
 #if defined( __SVR4) || defined(LINUX)
-	(void) select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &delay);
+	() select(0, (fd_set *) 0, (fd_set *) 0, (fd_set *) 0, &delay);
 #else
-	(void) select(0, (int *) 0, (int *) 0, (int *) 0, &delay);
+	() select(0, (int *) 0, (int *) 0, (int *) 0, &delay);
 #endif
 }
 
