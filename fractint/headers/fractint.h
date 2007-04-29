@@ -780,10 +780,10 @@ struct fractal_specific_stuff
 										   5 = PI (sin/cos) symmetry
 										   6 = NEWTON (power) symmetry
 																*/
-	int (*orbitcalc)(void);      /* function that calculates one orbit */
-	int (*per_pixel)(void);      /* once-per-pixel init */
-	int (*per_image)(void);      /* once-per-image setup */
-	int (*calculate_type)(void);       /* name of main fractal function */
+	int (*orbitcalc)();      /* function that calculates one orbit */
+	int (*per_pixel)();      /* once-per-pixel init */
+	int (*per_image)();      /* once-per-image setup */
+	int (*calculate_type)();       /* name of main fractal function */
 	int orbit_bailout;           /* usual bailout value for orbit calc */
 };
 
@@ -791,9 +791,9 @@ struct tag_alternate_math_info
 {
 	int type;                    /* index in fractalname of the fractal */
 	int math;                    /* kind of math used */
-	int (*orbitcalc)(void);      /* function that calculates one orbit */
-	int (*per_pixel)(void);      /* once-per-pixel init */
-	int (*per_image)(void);      /* once-per-image setup */
+	int (*orbitcalc)();      /* function that calculates one orbit */
+	int (*per_pixel)();      /* once-per-pixel init */
+	int (*per_image)();      /* once-per-image setup */
 };
 
 typedef struct tag_alternate_math_info alternate_math;
@@ -1044,9 +1044,9 @@ struct dblcoords
 struct trig_funct_lst
 {
 	char *name;
-	void (*lfunct)(void);
-	void (*dfunct)(void);
-	void (*mfunct)(void);
+	void (*lfunct)();
+	void (*dfunct)();
+	void (*mfunct)();
 };
 
 /* for overlay return stack */
@@ -1415,7 +1415,7 @@ double fixtan( double x );
 /* function, load, store pointers  CAE fp */
 struct fls 
 { 
-	void (*function)(void);
+	void (*function)();
 	union Arg *operand;
 };
 

@@ -22,7 +22,7 @@
 #include "mpmath.h"
 
 /* External declarations */
-extern void check_samename(void);
+extern void check_samename();
 
 HINSTANCE g_instance = NULL;
 
@@ -282,7 +282,7 @@ long multiply(long x, long y, int n)
 ;       Find the darkest and brightest g_colors in palette, and a medium
 ;       color which is reasonably bright and reasonably grey.
 */
-void find_special_colors(void)
+void find_special_colors()
 {
 	int maxb = 0;
 	int minb = 9999;
@@ -426,7 +426,7 @@ int fr_find_next()
 	return 0;
 }
 
-int get_sound_params(void)
+int get_sound_params()
 {
 	/* TODO */
 	_ASSERTE(FALSE);
@@ -436,7 +436,7 @@ int get_sound_params(void)
 /*
 ; long read_ticker() returns current bios ticker value
 */
-long read_ticker(void)
+long read_ticker()
 {
 	return (long) GetTickCount();
 }
@@ -516,7 +516,7 @@ void spindac(int dir, int inc)
 ;       video adapter installed.
 ;       and fills in a few bank-switching routines.
 */
-void adapter_detect(void)
+void adapter_detect()
 {
 	static int done_detect = 0;
 
@@ -545,7 +545,7 @@ void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
 
 ;       Home the cursor (called before printfs)
 */
-void home(void)
+void home()
 {
 	driver_move_cursor(0, 0);
 	g_text_row = 0;
@@ -555,7 +555,7 @@ void home(void)
 /*
 ; ****************** Function initasmvars() *****************************
 */
-void initasmvars(void)
+void initasmvars()
 {
 	if (g_cpu != 0)
 	{
@@ -588,7 +588,7 @@ void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 /* tenths of millisecond timewr routine */
 /* static struct timeval tv_start; */
 
-void restart_uclock(void)
+void restart_uclock()
 {
 	/* TODO */
 }
@@ -604,7 +604,7 @@ void restart_uclock(void)
 **  a number of seconds.
 */
 typedef unsigned long uclock_t;
-uclock_t usec_clock(void)
+uclock_t usec_clock()
 {
 	uclock_t result = 0;
 	/* TODO */
@@ -613,13 +613,13 @@ uclock_t usec_clock(void)
 	return result;
 }
 
-void showfreemem(void)
+void showfreemem()
 {
 	/* TODO */
 	_ASSERTE(FALSE);
 }
 
-unsigned long get_disk_space(void)
+unsigned long get_disk_space()
 {
 	ULARGE_INTEGER space;
 	unsigned long result = 0;
@@ -725,7 +725,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 /*
  * This routine returns a key, ignoring F1
  */
-int getakeynohelp(void)
+int getakeynohelp()
 {
 	int ch;
 	do
@@ -859,7 +859,7 @@ static void normal_line_read(int y, int x, int lastx, BYTE *pixels)
 }
 
 #if defined(USE_DRIVER_FUNCTIONS)
-void set_normal_dot(void)
+void set_normal_dot()
 {
 	s_dot_write = driver_write_pixel;
 	s_dot_read = driver_read_pixel;
@@ -875,20 +875,20 @@ static int driver_dot_read(int x, int y)
 	return driver_read_pixel(x, y);
 }
 
-void set_normal_dot(void)
+void set_normal_dot()
 {
 	s_dot_write = driver_dot_write;
 	s_dot_read = driver_dot_read;
 }
 #endif
 
-void set_disk_dot(void)
+void set_disk_dot()
 {
 	s_dot_write = disk_write;
 	s_dot_read = disk_read;
 }
 
-void set_normal_line(void)
+void set_normal_line()
 {
 	s_line_read = normal_line_read;
 	s_line_write = normal_line_write;
@@ -906,7 +906,7 @@ static int null_read(int a, int b)
 }
 
 /* from video.asm */
-void set_null_video(void)
+void set_null_video()
 {
 	_ASSERTE(0 && "setnullvideo called");
 	s_dot_write = null_write;

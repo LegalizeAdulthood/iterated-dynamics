@@ -213,7 +213,7 @@ static char s_frothybasin_name[] = "*frothybasin";
 static char s_halley_name[] = "*halley";
 
 /* use next to cast orbitcalcs() that have arguments */
-#define VF int(*)(void)
+#define VF int(*)()
 
 struct fractal_specific_stuff g_fractal_specific[] =
 {

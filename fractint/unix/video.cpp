@@ -12,8 +12,8 @@
  */
 WINDOW *g_current_window;
 
-extern unsigned char *x_get_font(void);
-extern int disk_start(void);
+extern unsigned char *x_get_font();
+extern int disk_start();
 extern int wait_key_pressed(int);
 extern int get_a_key();
 
@@ -32,7 +32,7 @@ int g_disk_flag = 0;		/* disk video active flag */
 
 int videoflag = 0;		/* special "your-own-video" flag */
 
-void (*swapsetup) (void) = NULL;	/* setfortext/graphics setup routine */
+void (*swapsetup) () = NULL;	/* setfortext/graphics setup routine */
 int g_color_dark = 0;		/* darkest color in palette */
 int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
@@ -121,7 +121,7 @@ static int null_read(int a, int b)
 	return 0;
 }
 
-void set_null_video(void)
+void set_null_video()
 {
 	g_dot_write = null_write;
 	g_dot_read = null_read;
@@ -130,7 +130,7 @@ void set_null_video(void)
 static void normal_line_read(int, int, int, BYTE *);
 static void normal_line_write(int, int, int, BYTE *);
 
-void put_prompt(void)
+void put_prompt()
 {
 	wclear(g_current_window);		/* ???? */
 	driver_put_string(0, 0, 0, "Press operation key, or <Esc> to return to Main Menu");
@@ -143,13 +143,13 @@ void put_prompt(void)
 
 ;       Sets video to text mode, using setvideomode to do the work.
 */
-void set_video_text(void)
+void set_video_text()
 {
 	g_dot_mode = 0;
 	setvideomode(3, 0, 0, 0);
 }
 
-void load_dac(void)
+void load_dac()
 {
 	readvideopalette();
 }
@@ -376,7 +376,7 @@ void set_attribute(int row, int col, int attr, int count)
 
 ;       Home the cursor (called before printfs)
 */
-void home(void)
+void home()
 {
 	wmove(g_current_window, 0, 0);
 	g_text_row = 0;
@@ -454,11 +454,11 @@ void spindac(int dir, int inc)
 ;       setforgraphics() restores the graphics mode and data
 ;       setclear() clears the screen after setfortext()
 */
-void setfortext(void)
+void setfortext()
 {
 }
 
-void setclear(void)
+void setclear()
 {
 	wclear(g_current_window);
 	wrefresh(g_current_window);
@@ -498,7 +498,7 @@ BYTE *findfont(int fontparm)
  * Instead of using this box save/restore technique, we'll put the corners
  * in g_box_x[0],g_box_y[0],1,2,3 and then use xor.
  */
-void display_box(void)
+void display_box()
 {
 	if (g_box_count)
 	{
@@ -512,12 +512,12 @@ void display_box(void)
 	}
 }
 
-void clear_box(void)
+void clear_box()
 {
 	display_box();
 }
 
-int CheckForTPlus(void)
+int CheckForTPlus()
 {
 	return 0;
 }
@@ -530,7 +530,7 @@ int ShadowVideo(int on)
 	return 0;
 }
 
-int SetupShadowVideo(void)
+int SetupShadowVideo()
 {
 	return 0;
 }
@@ -544,7 +544,7 @@ int SetupShadowVideo(void)
 */
 int done_detect = 0;
 
-void adapter_detect(void)
+void adapter_detect()
 {
 	if (done_detect)
 	{
@@ -593,7 +593,7 @@ static void normal_line_read(int y, int x, int lastx, BYTE *pixels)
 ;       Find the darkest and brightest colors in palette, and a medium
 ;       color which is reasonably bright and reasonably grey.
 */
-void find_special_colors(void)
+void find_special_colors()
 {
 	int maxb = 0;
 	int minb = 9999;
@@ -665,7 +665,7 @@ void find_special_colors(void)
 ;       Get and put character and attribute at cursor
 ;       Hi nybble=character, low nybble attribute. Text mode only
 */
-char get_a_char(void)
+char get_a_char()
 {
 	return (char) get_a_key();
 }
@@ -740,11 +740,11 @@ void movewords(int len, BYTE *fromptr, BYTE *toptr)
 	bcopy(fromptr, toptr, len);
 }
 
-void swapnormread(void)
+void swapnormread()
 {
 }
 
-void swapnormwrite(void)
+void swapnormwrite()
 {
 }
 

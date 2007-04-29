@@ -12,7 +12,7 @@
 
 static int inside_color, periodicity_color;
 
-void calculate_mandelbrot_start_fp_asm(void)
+void calculate_mandelbrot_start_fp_asm()
 {
 	inside_color = (g_inside < 0) ? g_max_iteration : g_inside;
 	periodicity_color = (g_periodicity_check < 0) ? 7 : inside_color;
@@ -25,7 +25,7 @@ void calculate_mandelbrot_start_fp_asm(void)
 	of the x and y values.  This is experimental. */
 #define USE_NEW 0
 
-long calculate_mandelbrot_fp_asm(void)
+long calculate_mandelbrot_fp_asm()
 {
 #if USE_NEW
 	double savedmag;
@@ -252,12 +252,12 @@ over_bailout_87:
 	goto pop_stack;
 }
 
-long cdecl calculate_mandelbrot_fp_287_asm(void)
+long cdecl calculate_mandelbrot_fp_287_asm()
 {
 	return calculate_mandelbrot_fp_asm();
 }
 
-long cdecl calculate_mandelbrot_fp_87_asm(void)
+long cdecl calculate_mandelbrot_fp_87_asm()
 {
 	return calculate_mandelbrot_fp_asm();
 }

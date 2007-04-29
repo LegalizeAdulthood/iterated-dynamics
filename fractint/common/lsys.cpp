@@ -26,17 +26,17 @@ static struct lsys_cmd *rules2[MAXRULES];
 static char loaded = 0;
 
 static int _fastcall read_l_system_file(char *);
-static void _fastcall free_rules_mem(void);
+static void _fastcall free_rules_mem();
 static int _fastcall rule_present(char symbol);
 static int _fastcall save_rule(char *, char **);
 static int _fastcall append_rule(char *rule, int index);
-static void free_l_cmds(void);
+static void free_l_cmds();
 static struct lsys_cmd *_fastcall find_size(struct lsys_cmd *, struct lsys_turtle_state *, struct lsys_cmd **, int);
 static struct lsys_cmd *draw_lsysi(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cmd **rules, int depth);
 static int lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cmd **rules, int depth);
 static struct lsys_cmd *lsysi_size_transform(char *s, struct lsys_turtle_state *ts);
 static struct lsys_cmd *lsysi_draw_transform(char *s, struct lsys_turtle_state *ts);
-static void _fastcall lsysi_sin_cos(void);
+static void _fastcall lsysi_sin_cos();
 static void lsysi_slash(struct lsys_turtle_state *cmd);
 static void lsysi_backslash(struct lsys_turtle_state *cmd);
 static void lsysi_at(struct lsys_turtle_state *cmd);
@@ -256,7 +256,7 @@ static int _fastcall read_l_system_file(char *str)
 	return 0;
 }
 
-int l_system(void)
+int l_system()
 {
 	int order;
 	char **rulesc;
@@ -368,7 +368,7 @@ int l_system(void)
 	return 0;
 }
 
-int l_load(void)
+int l_load()
 {
 	if (read_l_system_file(g_l_system_name))  /* error occurred */
 	{
@@ -380,7 +380,7 @@ int l_load(void)
 	return 0;
 }
 
-static void _fastcall free_rules_mem(void)
+static void _fastcall free_rules_mem()
 {
 	int i;
 	for (i = 0; i < MAXRULES; ++i)
@@ -452,7 +452,7 @@ static int _fastcall append_rule(char *rule, int index)
 	return 0;
 }
 
-static void free_l_cmds(void)
+static void free_l_cmds()
 {
 	struct lsys_cmd **sc = rules2;
 
@@ -1089,7 +1089,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 	return doub;
 }
 
-static void _fastcall lsysi_sin_cos(void)
+static void _fastcall lsysi_sin_cos()
 {
 	double locaspect;
 	double TWOPI = 2.0*PI;

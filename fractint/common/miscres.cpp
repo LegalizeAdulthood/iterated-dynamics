@@ -33,7 +33,7 @@ extern long startstack;
 /* routines in this module      */
 
 static  void trigdetails(char *);
-static void area(void);
+static void area();
 
 #ifndef XFRACT
 /* return full pathnames */
@@ -638,19 +638,19 @@ nextname:
 
 BYTE g_trig_index[] = {SIN, SQR, SINH, COSH};
 #if !defined(XFRACT)
-void (*g_trig0_l)(void) = lStkSin;
-void (*g_trig1_l)(void) = lStkSqr;
-void (*g_trig2_l)(void) = lStkSinh;
-void (*g_trig3_l)(void) = lStkCosh;
-void (*g_trig0_m)(void) = mStkSin;
-void (*g_trig1_m)(void) = mStkSqr;
-void (*g_trig2_m)(void) = mStkSinh;
-void (*g_trig3_m)(void) = mStkCosh;
+void (*g_trig0_l)() = lStkSin;
+void (*g_trig1_l)() = lStkSqr;
+void (*g_trig2_l)() = lStkSinh;
+void (*g_trig3_l)() = lStkCosh;
+void (*g_trig0_m)() = mStkSin;
+void (*g_trig1_m)() = mStkSqr;
+void (*g_trig2_m)() = mStkSinh;
+void (*g_trig3_m)() = mStkCosh;
 #endif
-void (*g_trig0_d)(void) = dStkSin;
-void (*g_trig1_d)(void) = dStkSqr;
-void (*g_trig2_d)(void) = dStkSinh;
-void (*g_trig3_d)(void) = dStkCosh;
+void (*g_trig0_d)() = dStkSin;
+void (*g_trig1_d)() = dStkSqr;
+void (*g_trig2_d)() = dStkSinh;
+void (*g_trig3_d)() = dStkCosh;
 
 /* struct trig_funct_lst trigfn[]  was moved to prompts1.c */
 
@@ -1369,7 +1369,7 @@ top:
 	return 0;
 }
 
-static void area(void)
+static void area()
 {
 	/* apologies to UNIX folks, we PC guys have to save near space */
 	char *msg;

@@ -70,6 +70,6 @@ extern struct lsys_cmd * _fastcall draw_lsysf(struct lsys_cmd *command,struct ls
 extern int _fastcall lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth);
 extern struct lsys_cmd *lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts);
 extern struct lsys_cmd *lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts);
-extern void _fastcall lsysf_sin_cos(void);
+extern void _fastcall lsysf_sin_cos();
 
 #endif

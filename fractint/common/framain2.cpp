@@ -44,7 +44,7 @@ static void julman()
 char g_from_text_flag = 0;         /* = 1 if we're in graphics mode */
 void *g_evolve_handle = NULL;
 char g_standard_calculation_mode_old;
-void (*g_out_line_cleanup)(void);
+void (*g_out_line_cleanup)();
 
 /* routines in this module      */
 
@@ -53,10 +53,10 @@ int evolver_menu_switch(int*, int*, int*, int *stacked);
 int big_while_loop(int *kbdmore, int *stacked, int resumeflag);
 static void move_zoombox(int);
 static int call_line3d(BYTE *pixels, int linelen);
-static  void note_zoom(void);
-static  void restore_zoom(void);
+static  void note_zoom();
+static  void restore_zoom();
 static  void move_zoombox(int keynum);
-static  void cmp_line_cleanup(void);
+static  void cmp_line_cleanup();
 
 static char *savezoom;
 
@@ -936,7 +936,7 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 	return FALSE;
 }
 
-static int handle_toggle_float(void)
+static int handle_toggle_float()
 {
 	if (g_user_float_flag == 0)
 	{
@@ -950,7 +950,7 @@ static int handle_toggle_float(void)
 	return IMAGESTART;
 }
 
-static int handle_ant(void)
+static int handle_ant()
 {
 	int oldtype, err, i;
 	double oldparm[MAX_PARAMETERS];
@@ -993,7 +993,7 @@ static int handle_ant(void)
 	return (err >= 0) ? CONTINUE : 0;
 }
 
-static int handle_recalc(int (*continue_check)(void), int (*recalc_check)(void))
+static int handle_recalc(int (*continue_check)(), int (*recalc_check)())
 {
 #if defined(_WIN32)
 	_ASSERTE(continue_check && recalc_check);
@@ -1019,7 +1019,7 @@ static void handle_3d_params(int *kbdmore)
 	}
 }
 
-static void handle_orbits(void)
+static void handle_orbits()
 {
 	/* must use standard fractal and have a float variant */
 	if ((g_fractal_specific[g_fractal_type].calculate_type == standard_fractal
@@ -1298,7 +1298,7 @@ static int handle_color_editing(int *kbdmore)
 	return CONTINUE;
 }
 
-static int handle_save_to_disk(void)
+static int handle_save_to_disk()
 {
 	if (driver_diskp() && g_disk_targa)
 	{
@@ -1310,7 +1310,7 @@ static int handle_save_to_disk(void)
 	return CONTINUE;
 }
 
-static int handle_evolver_save_to_disk(void)
+static int handle_evolver_save_to_disk()
 {
 	int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
 
@@ -1575,7 +1575,7 @@ static void handle_zoom_stretch(int narrower)
 	}
 }
 
-static int handle_restart(void)
+static int handle_restart()
 {
 	driver_set_for_text();           /* force text mode */
 	return RESTART;
@@ -2319,7 +2319,7 @@ int cmp_line(BYTE *pixels, int linelen)
 	return 0;
 }
 
-static void cmp_line_cleanup(void)
+static void cmp_line_cleanup()
 {
 	char *timestring;
 	time_t ltime;

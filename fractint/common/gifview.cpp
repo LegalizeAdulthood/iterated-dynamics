@@ -31,7 +31,7 @@ static unsigned int gifview_image_top;    /* (for migs) */
 static unsigned int gifview_image_left;   /* (for migs) */
 static unsigned int gifview_image_twidth; /* (for migs) */
 
-static void close_file(void);
+static void close_file();
 static int out_line_dither(BYTE *, int);
 static int out_line_migs(BYTE *, int);
 static int out_line_too_wide(BYTE *, int);

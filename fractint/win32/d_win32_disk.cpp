@@ -32,8 +32,8 @@ typedef void t_linereader(int y, int x, int lastx, BYTE *pixels);
 
 extern HINSTANCE g_instance;
 
-extern void set_normal_line(void);
-extern void set_disk_dot(void);
+extern void set_normal_line();
+extern void set_disk_dot();
 
 class Win32DiskDriver : public Win32BaseDriver
 {

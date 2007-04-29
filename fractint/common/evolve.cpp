@@ -91,12 +91,12 @@ static void vary_power2(GENEBASE gene[], int randval, int i);
 static void vary_trig(GENEBASE gene[], int randval, int i);
 static void vary_bail_out_test(GENEBASE gene[], int randval, int i);
 static void vary_invert(GENEBASE gene[], int randval, int i);
-static int explore_check(void);
+static int explore_check();
 void spiral_map(int);
 static void set_random(int);
 void set_mutation_level(int);
-void setup_parameter_box(void);
-void release_parameter_box(void);
+void setup_parameter_box();
+void release_parameter_box();
 
 GENEBASE g_genes[NUMGENES] =
 {
@@ -123,7 +123,7 @@ GENEBASE g_genes[NUMGENES] =
 	{ &g_bail_out_test,		vary_bail_out_test,	0, "bailout test", 6 }
 };
 
-void restore_parameter_history(void)
+void restore_parameter_history()
 {
 	g_parameters[0] = s_old_history.param0;
 	g_parameters[1] = s_old_history.param1;
@@ -149,7 +149,7 @@ void restore_parameter_history(void)
 	g_bail_out_test = (bailouts) s_old_history.bailoutest;
 }
 
-void save_parameter_history(void)
+void save_parameter_history()
 {
 	s_old_history.param0 = g_parameters[0];
 	s_old_history.param1 = g_parameters[1];
@@ -324,7 +324,7 @@ static void vary_invert(GENEBASE gene[], int randval, int i)
 		0  minor variable changed.  No need to re-generate the image.
 		1  major parms changed.  Re-generate the images.
 */
-static int get_the_rest(void)
+static int get_the_rest()
 {
 	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
 	int i, k, num, numtrig;
@@ -428,7 +428,7 @@ choose_vars_restart:
 	return 1; /* if you were here, you want to regenerate */
 }
 
-static int get_variations(void)
+static int get_variations()
 {
 	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
 	int i, k, num, numparams;
@@ -609,7 +609,7 @@ void set_mutation_level(int strength)
 	return;
 }
 
-int get_evolve_parameters(void)
+int get_evolve_parameters()
 {
 	char *choices[20];
 	struct full_screen_values uvalues[20];
@@ -838,7 +838,7 @@ get_evol_restart:
 	return i;
 }
 
-void setup_parameter_box(void)
+void setup_parameter_box()
 {
 	int vidsize;
 	g_parameter_box_count = 0;
@@ -869,7 +869,7 @@ void setup_parameter_box(void)
 	}
 }
 
-void release_parameter_box(void)
+void release_parameter_box()
 {
 	if (s_parameter_box)
 	{
@@ -883,7 +883,7 @@ void release_parameter_box(void)
 	}
 }
 
-void set_current_parameters(void)
+void set_current_parameters()
 {
 	g_parameter_range_x = g_current_fractal_specific->x_max - g_current_fractal_specific->x_min;
 	g_parameter_offset_x = g_new_parameter_offset_x = - (g_parameter_range_x / 2);
@@ -948,7 +948,7 @@ static void set_random(int ecount)
 	}
 }
 
-static int explore_check(void)
+static int explore_check()
 {
 	/* checks through gene array to see if any of the parameters are set to */
 	/* one of the non random variation modes. Used to see if g_parameter_zoom box is */
@@ -1047,7 +1047,7 @@ void draw_parameter_box(int mode)
 	return;
 }
 
-void set_evolve_ranges(void)
+void set_evolve_ranges()
 {
 	int lclpy = g_grid_size - g_py - 1;
 	/* set up ranges and offsets for parameter explorer/evolver */
@@ -1117,7 +1117,7 @@ void spiral_map(int count)
 	}
 }
 
-int unspiral_map(void)
+int unspiral_map()
 {
 	/* unmaps the clockwise spiral */
 	/* All this malarky is to allow selecting different subimages */

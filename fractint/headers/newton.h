@@ -37,10 +37,10 @@ public:
 	int orbit();
 };
 
-extern int cdecl    newton2_orbit(void);
-extern int newton_orbit_mpc(void);
-extern int newton_setup(void);
-extern int complex_newton_setup(void);
-extern int complex_newton(void);
+extern int cdecl    newton2_orbit();
+extern int newton_orbit_mpc();
+extern int newton_setup();
+extern int complex_newton_setup();
+extern int complex_newton();
 
 #endif

@@ -120,28 +120,28 @@ long LogFloat14(unsigned long x);
 unsigned long ExpFudged(long x, int Fudge);
 long ExpFloat14(long x);
 
-#define fAdd(x, y, z) (void)((*(long*)&z) = RegAddFloat(*(long*)&x, *(long*)&y))
-#define fMul(x, y, z) (void)((*(long*)&z) = RegMulFloat(*(long*)&x, *(long*)&y))
-#define fDiv(x, y, z) (void)((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
-#define fSub(x, y, z) (void)((*(long*)&z) = RegSubFloat(*(long*)&x, *(long*)&y))
-#define fMul16(x, y, z) (void)((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
-#define fSqr16(x, z) (void)((*(long*)&z) = r16Sqr(*(long*)&x))
-#define fSqr(x, z) (void)((*(long*)&z) = RegSqrFloat(*(long*)&x))
-#define fShift(x, Shift, z) (void)((*(long*)&z) = \
+#define fAdd(x, y, z) ()((*(long*)&z) = RegAddFloat(*(long*)&x, *(long*)&y))
+#define fMul(x, y, z) ()((*(long*)&z) = RegMulFloat(*(long*)&x, *(long*)&y))
+#define fDiv(x, y, z) ()((*(long*)&z) = RegDivFloat(*(long*)&x, *(long*)&y))
+#define fSub(x, y, z) ()((*(long*)&z) = RegSubFloat(*(long*)&x, *(long*)&y))
+#define fMul16(x, y, z) ()((*(long*)&z) = r16Mul(*(long*)&x, *(long*)&y))
+#define fSqr16(x, z) ()((*(long*)&z) = r16Sqr(*(long*)&x))
+#define fSqr(x, z) ()((*(long*)&z) = RegSqrFloat(*(long*)&x))
+#define fShift(x, Shift, z) ()((*(long*)&z) = \
    RegSftFloat(*(long*)&x, Shift))
-#define Fg2Float(x, f, z) (void)((*(long*)&z) = RegFg2Float(x, f))
+#define Fg2Float(x, f, z) ()((*(long*)&z) = RegFg2Float(x, f))
 #define Float2Fg(x, f) RegFloat2Fg(*(long*)&x, f)
-#define fSin12(x, z) (void)((*(long*)&z) = \
+#define fSin12(x, z) ()((*(long*)&z) = \
    RegFg2Float((long)sin13(Float2Fg(x, 13)), 13))
-#define fCos12(x, z) (void)((*(long*)&z) = \
+#define fCos12(x, z) ()((*(long*)&z) = \
    RegFg2Float((long)cos13(Float2Fg(x, 13)), 13))
-#define fSinh12(x, z) (void)((*(long*)&z) = \
+#define fSinh12(x, z) ()((*(long*)&z) = \
    RegFg2Float(sinh13(Float2Fg(x, 13)), 13))
-#define fCosh12(x, z) (void)((*(long*)&z) = \
+#define fCosh12(x, z) ()((*(long*)&z) = \
    RegFg2Float(cosh13(Float2Fg(x, 13)), 13))
-#define fLog14(x, z) (void)((*(long*)&z) = \
+#define fLog14(x, z) ()((*(long*)&z) = \
         RegFg2Float(LogFloat14(*(long*)&x), 16))
-#define fExp14(x, z) (void)((*(long*)&z) = ExpFloat14(*(long*)&x));
+#define fExp14(x, z) ()((*(long*)&z) = ExpFloat14(*(long*)&x));
 #define fPow14(x, y, z)		\
 	do						\
 	{						\

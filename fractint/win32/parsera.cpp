@@ -3,7 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-#define FN(name_) void fStk##name_(void) { _ASSERTE(0 && "Called " #name_); }
+#define FN(name_) void fStk##name_() { _ASSERTE(0 && "Called " #name_); }
 
 FN(Abs)
 FN(ACos)
@@ -128,7 +128,7 @@ FN(StoSqr0)
 
 #undef FN
 
-int fform_per_pixel(void)
+int fform_per_pixel()
 {
 	_ASSERTE(0 && "fform_per_pixel called.");
 	return 0;
@@ -177,7 +177,7 @@ past_loop:
 	ret                              ; return AX unmodified
 _fFormula          endp
 */
-int fFormula(void)
+int fFormula()
 {
 	_ASSERTE(0 && "fFormula called.");
 	return 0;
@@ -212,7 +212,7 @@ _Img_Setup         proc far
 	ret
 _Img_Setup         endp
 */
-void Img_Setup(void)
+void Img_Setup()
 {
 	_ASSERTE(0 && "Img_Setup called.");
 }

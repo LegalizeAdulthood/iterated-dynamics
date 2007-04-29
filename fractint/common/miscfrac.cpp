@@ -136,20 +136,20 @@ static int s_last_screen_flag;
 static struct froth_struct s_frothy_data = { 0 };
 
 /* routines local to this module */
-static void set_plasma_palette(void);
+static void set_plasma_palette();
 static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb);
 static void _fastcall subdivide(int x1, int y1, int x2, int y2);
 static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur);
-static void verhulst(void);
-static void bifurcation_period_init(void);
+static void verhulst();
+static void bifurcation_period_init();
 static int _fastcall bifurcation_periodic(long);
-static void set_cellular_palette(void);
+static void set_cellular_palette();
 static int lyapunov_cycles(long, double, double);
 
 
 /***************** standalone engine for "test" ********************/
 
-int test(void)
+int test()
 {
 	int startrow, startpass, numpasses;
 	startrow = startpass = 0;
@@ -208,7 +208,7 @@ int test(void)
 /***************** standalone engine for "plasma" ********************/
 
 /* returns a random 16 bit value that is never 0 */
-static U16 rand16(void)
+static U16 rand16()
 {
 	U16 value;
 	value = (U16)rand15();
@@ -470,7 +470,7 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 	s_recur_level--;
 }
 
-int plasma(void)
+int plasma()
 {
 	int i, k, n;
 	U16 rnd[4];
@@ -678,7 +678,7 @@ static void set_plasma_palette()
 
 /***************** standalone engine for "diffusion" ********************/
 
-int diffusion(void)
+int diffusion()
 {
 	int g_x_max, g_y_max, g_x_min, g_y_min;     /* Current maximum coordinates */
 	int border;   /* Distance between release point and fractal */
@@ -1009,7 +1009,7 @@ int diffusion(void)
 /* to infinity).                Have fun !                     */
 /***************************************************************/
 
-int bifurcation(void)
+int bifurcation()
 {
 	unsigned long array_size;
 	int row, column;
@@ -1115,7 +1115,7 @@ int bifurcation(void)
 	return 0;
 }
 
-static void verhulst(void)          /* P. F. Verhulst (1845) */
+static void verhulst()          /* P. F. Verhulst (1845) */
 {
 	unsigned int pixel_row, errors;
 	unsigned long counter;
@@ -1452,7 +1452,7 @@ int popcorn()   /* subset of std engine */
 /***    1732: the infamous axis swap: (b, a)->(x, y),                     ***/
 /***            the order parameter becomes a long int                  ***/
 /**************************************************************************/
-int lyapunov(void)
+int lyapunov()
 {
 	double a, b;
 
@@ -1501,7 +1501,7 @@ int lyapunov(void)
 	return g_color;
 }
 
-int lyapunov_setup(void)
+int lyapunov_setup()
 {
 	/*
 		This routine sets up the sequence for forcing the s_rate parameter
@@ -2057,7 +2057,7 @@ contloop:
 	return 1;
 }
 
-int cellular_setup(void)
+int cellular_setup()
 {
 	if (!g_resuming)
 	{
@@ -2097,7 +2097,7 @@ static void set_cellular_palette()
 /* frothy basin routines */
 
 /* color maps which attempt to replicate the images of James Alexander. */
-static void set_froth_palette(void)
+static void set_froth_palette()
 {
 	if ((g_color_state == COLORSTATE_DEFAULT) && (g_colors >= 16))
 	{
@@ -2120,7 +2120,7 @@ static void set_froth_palette(void)
 	}
 }
 
-int froth_setup(void)
+int froth_setup()
 {
 	double sin_theta, cos_theta, x0, y0;
 
@@ -2239,7 +2239,7 @@ int froth_setup(void)
 }
 
 /* Froth Fractal type */
-int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
+int froth_calc()   /* per pixel 1/2/g, called with row & col set */
 {
 	int found_attractor = 0;
 
@@ -2572,7 +2572,7 @@ int froth_calc(void)   /* per pixel 1/2/g, called with row & col set */
 	attractor that makes the frothybasin type so unique, it is worth
 	putting in as a stand-alone.
 */
-int froth_per_pixel(void)
+int froth_per_pixel()
 {
 	if (!g_integer_fractal) /* fp mode */
 	{
@@ -2591,7 +2591,7 @@ int froth_per_pixel(void)
 	return 0;
 }
 
-int froth_per_orbit(void)
+int froth_per_orbit()
 {
 	if (!g_integer_fractal) /* fp mode */
 	{

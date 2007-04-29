@@ -574,13 +574,13 @@ struct tag_cursor
 typedef struct tag_cursor cursor;
 
 /* private: */
-static void cursor_draw(void);
-static void cursor_save(void);
-static void cursor_restore(void);
+static void cursor_draw();
+static void cursor_save();
+static void cursor_restore();
 
 static cursor *s_the_cursor = NULL;
 
-BOOLEAN cursor_new(void)
+BOOLEAN cursor_new()
 {
 	if (s_the_cursor != NULL)
 	{
@@ -598,7 +598,7 @@ BOOLEAN cursor_new(void)
 	return TRUE;
 }
 
-void cursor_destroy(void)
+void cursor_destroy()
 {
 	if (s_the_cursor != NULL)
 	{
@@ -608,7 +608,7 @@ void cursor_destroy(void)
 	s_the_cursor = NULL;
 }
 
-static void cursor_draw(void)
+static void cursor_draw()
 {
 	int color;
 
@@ -622,7 +622,7 @@ static void cursor_draw(void)
 	horizontal_line(s_the_cursor->x + 2,             s_the_cursor->y, CURSOR_SIZE, color);
 }
 
-static void cursor_save(void)
+static void cursor_save()
 {
 	vertical_get_row(s_the_cursor->x, s_the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, s_the_cursor->t);
 	vertical_get_row(s_the_cursor->x, s_the_cursor->y + 2,             CURSOR_SIZE, s_the_cursor->b);
@@ -631,7 +631,7 @@ static void cursor_save(void)
 	get_row(s_the_cursor->x + 2,             s_the_cursor->y,  CURSOR_SIZE, s_the_cursor->r);
 }
 
-static void cursor_restore(void)
+static void cursor_restore()
 {
 	vertical_put_row(s_the_cursor->x, s_the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, s_the_cursor->t);
 	vertical_put_row(s_the_cursor->x, s_the_cursor->y + 2,             CURSOR_SIZE, s_the_cursor->b);
@@ -691,17 +691,17 @@ void cursor_move(int xoff, int yoff)
 	}
 }
 
-int cursor_get_x(void)
+int cursor_get_x()
 {
 	return s_the_cursor->x;
 }
 
-int cursor_get_y(void)
+int cursor_get_y()
 {
 	return s_the_cursor->y;
 }
 
-void cursor_hide(void)
+void cursor_hide()
 {
 	if (s_the_cursor->hidden++ == 0)
 	{
@@ -709,7 +709,7 @@ void cursor_hide(void)
 	}
 }
 
-void cursor_show(void)
+void cursor_show()
 {
 	if (--s_the_cursor->hidden == 0)
 	{
@@ -731,7 +731,7 @@ void cursor_end_mouse_tracking()
 #endif
 
 /* See if the cursor should blink yet, and blink it if so */
-void cursor_check_blink(void)
+void cursor_check_blink()
 {
 	long tick;
 	tick = read_ticker();
@@ -751,7 +751,7 @@ void cursor_check_blink(void)
 	}
 }
 
-int cursor_wait_key(void)   /* blink cursor while waiting for a key */
+int cursor_wait_key()   /* blink cursor while waiting for a key */
 {
 	while (!driver_wait_key_pressed(1))
 	{
@@ -1672,7 +1672,7 @@ static void    pal_table_undo_process (pal_table *me, int delta);
 static void    pal_table_undo        (pal_table *me);
 static void    pal_table_redo        (pal_table *me);
 static void    pal_table_change      (rgb_editor *rgb, VOIDPTR info);
-static pal_table *pal_table_new(void);
+static pal_table *pal_table_new();
 static void      pal_table_destroy   (pal_table *me);
 static void      pal_table_process   (pal_table *me);
 static void      pal_table_set_hidden (pal_table *me, BOOLEAN hidden);
@@ -3104,7 +3104,7 @@ static void pal_table_make_default_palettes(pal_table *me)  /* creates default F
 
 
 
-static pal_table *pal_table_new(void)
+static pal_table *pal_table_new()
 {
 	pal_table     *me = NEWC(pal_table);
 	int           csize;
@@ -3319,7 +3319,7 @@ static void pal_table_process(pal_table *me)
 
 
 
-void palette_edit(void)       /* called by fractint */
+void palette_edit()       /* called by fractint */
 {
 	int       oldlookatmouse = g_look_at_mouse;
 	int       oldsxoffs      = g_sx_offset;

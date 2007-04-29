@@ -14,7 +14,7 @@
 
 /* routines in this module      */
 
-static void pauserotate(void);
+static void pauserotate();
 static void set_palette(BYTE start[3], BYTE finish[3]);
 static void set_palette2(BYTE start[3], BYTE finish[3]);
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3]);
@@ -522,7 +522,7 @@ void save_palette()
 	}
 }
 
-int load_palette(void)
+int load_palette()
 {
 	int i;
 	char filename[FILE_MAX_PATH];

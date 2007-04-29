@@ -77,8 +77,8 @@ int g_no_magnitude_calculation = FALSE;
 int g_use_old_periodicity = FALSE;
 int g_use_old_distance_test = FALSE;
 int g_old_demm_colors = FALSE;
-int (*g_calculate_type)(void) = NULL;
-int (*g_calculate_type_temp)(void);
+int (*g_calculate_type)() = NULL;
+int (*g_calculate_type_temp)();
 int g_quick_calculate = FALSE;
 double g_proximity = 0.01;
 double g_close_enough;
@@ -134,33 +134,33 @@ BYTE g_stack[4096];              /* common temp, two put_line calls */
 int g_next_saved_incr;
 int g_first_saved_and;
 int g_atan_colors = 180;
-long (*g_calculate_mandelbrot_asm_fp)(void);
+long (*g_calculate_mandelbrot_asm_fp)();
 
 /* routines in this module      */
-static void perform_work_list(void);
-static int  one_or_two_pass(void);
+static void perform_work_list();
+static int  one_or_two_pass();
 static int  _fastcall standard_calculate(int);
 static int  _fastcall potential(double, long);
-static void decomposition(void);
-static int  boundary_trace_main(void);
-static void step_col_row(void);
-static int  solid_guess(void);
+static void decomposition();
+static int  boundary_trace_main();
+static void step_col_row();
+static int  solid_guess();
 static int  _fastcall guess_row(int, int, int);
 static void _fastcall plot_block(int, int, int, int);
 static void _fastcall setsymmetry(int, int);
 static int  _fastcall x_symmetry_split(int, int);
 static int  _fastcall y_symmetry_split(int, int);
 static void _fastcall put_truecolor_disk(int, int, int);
-static int diffusion_engine(void);
-static int draw_orbits(void);
-static int tesseral(void);
+static int diffusion_engine();
+static int draw_orbits();
+static int tesseral();
 static int _fastcall tesseral_check_column(int, int, int);
 static int _fastcall tesseral_check_row(int, int, int);
 static int _fastcall tesseral_column(int, int, int);
 static int _fastcall tesseral_row(int, int, int);
-static int diffusion_scan(void);
+static int diffusion_scan();
 /* added for testing automatic_log_map() */
-static long automatic_log_map(void);
+static long automatic_log_map();
 
 /* lookup tables to avoid too much bit fiddling : */
 static char s_diffusion_la[] =
@@ -223,7 +223,7 @@ static int s_show_dot_width = 0;
 	methods are not used - in these cases a normal
 	modulus test is used
 */
-static double fmod_test(void)
+static double fmod_test()
 {
 	double result;
 	if (g_inside == FMODI && g_save_release <= 2000) /* for backwards compatibility */
@@ -458,7 +458,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 	}
 }
 
-static int calculate_type_show_dot(void)
+static int calculate_type_show_dot()
 {
 	int out, startx, starty, stopx, stopy, direction, width;
 	direction = JUST_A_POINT;
@@ -513,7 +513,7 @@ static int calculate_type_show_dot(void)
 }
 
 /******* calculate_fractal - the top level routine for generating an image *******/
-int calculate_fractal(void)
+int calculate_fractal()
 {
 	g_math_error_count = 0;
 	g_num_attractors = 0;          /* default to no known finite attractors  */
@@ -859,9 +859,9 @@ int find_alternate_math(int type, int math)
 
 static void perform_work_list()
 {
-	int (*sv_orbitcalc)(void) = NULL;  /* function that calculates one orbit */
-	int (*sv_per_pixel)(void) = NULL;  /* once-per-pixel init */
-	int (*sv_per_image)(void) = NULL;  /* once-per-image setup */
+	int (*sv_orbitcalc)() = NULL;  /* function that calculates one orbit */
+	int (*sv_per_pixel)() = NULL;  /* once-per-pixel init */
+	int (*sv_per_image)() = NULL;  /* once-per-image setup */
 	int i, alt;
 
 	alt = find_alternate_math(g_fractal_type, g_bf_math);
@@ -1180,7 +1180,7 @@ static void perform_work_list()
 	}
 }
 
-static int diffusion_scan(void)
+static int diffusion_scan()
 {
 	double log2;
 
@@ -1294,7 +1294,7 @@ static int diffusion_block_lim(int row, int col, int sqsz)
 	return FALSE;
 }
 
-static int diffusion_engine(void)
+static int diffusion_engine()
 {
 	double log2 = (double) log (2.0);
 	int i, j;
@@ -1539,7 +1539,7 @@ static int draw_rectangle_orbits()
 	return 0;
 }
 
-static int draw_line_orbits(void)
+static int draw_line_orbits()
 {
 	int dX, dY;                     /* vector components */
 	int final,                      /* final row or column number */
@@ -1679,7 +1679,7 @@ static int draw_line_orbits(void)
 }
 
 /* TODO: this code does not yet work??? */
-static int draw_function_orbits(void)
+static int draw_function_orbits()
 {
 	double Xctr, Yctr;
 	LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
@@ -1713,7 +1713,7 @@ static int draw_function_orbits(void)
 	return 0;
 }
 
-static int draw_orbits(void)
+static int draw_orbits()
 {
 	g_got_status = GOT_STATUS_ORBITS; /* for <tab> screen */
 	g_total_passes = 1;
@@ -1737,7 +1737,7 @@ static int draw_orbits(void)
 	return 0;
 }
 
-static int one_or_two_pass(void)
+static int one_or_two_pass()
 {
 	int i;
 
@@ -1837,7 +1837,7 @@ static int _fastcall standard_calculate(int passnum)
 }
 
 
-int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called with row & col set */
+int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with row & col set */
 {
 	/* setup values from array to avoid using es reg in calcmand.asm */
 	g_initial_x_l = g_lx_pixel();
@@ -1889,7 +1889,7 @@ int calculate_mandelbrot(void)              /* fast per pixel 1/2/b/g, called wi
 /* can also handle invert, any g_rq_limit, g_potential_flag, zmag, epsilon cross,     */
 /* and all the current outside options    -Wes Loewer 11/03/91          */
 /************************************************************************/
-int calculate_mandelbrot_fp(void)
+int calculate_mandelbrot_fp()
 {
 	if (g_invert)
 	{
@@ -1954,7 +1954,7 @@ int calculate_mandelbrot_fp(void)
 #if 0
 #define MINSAVEDAND 3   /* if not defined, old method used */
 #endif
-int standard_fractal(void)       /* per pixel 1/2/b/g, called with row & col set */
+int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 {
 #ifdef NUMSAVED
 	_CMPLX savedz[NUMSAVED];
@@ -2903,7 +2903,7 @@ plot_pixel:
 #define lcos45 lsin45
 
 /**************** standardfractal doodad subroutines *********************/
-static void decomposition(void)
+static void decomposition()
 {
 	/* static double cos45     = 0.70710678118654750; */ /* cos 45  degrees */
 	static double sin45     = 0.70710678118654750; /* sin 45     degrees */
@@ -3307,7 +3307,7 @@ Guenther's code.  I've noted these places with the initials DG.
 #define advance_match()     coming_from = (direction) (((s_going_to = (direction) ((s_going_to - 1) & 0x03)) - 1) & 0x03)
 #define advance_no_match()  s_going_to = (direction) ((s_going_to + 1) & 0x03)
 
-static int boundary_trace_main(void)
+static int boundary_trace_main()
 {
 	enum direction coming_from;
 	unsigned int match_found, continue_loop;
@@ -3572,7 +3572,7 @@ static void step_col_row()
 	faster, but is also more accurate. Harrumph!
 */
 
-static int solid_guess(void)
+static int solid_guess()
 {
 	int i, x, y, xlim, ylim, blocksize;
 	unsigned int *pfxp0, *pfxp1;
@@ -4562,7 +4562,7 @@ struct tess  /* one of these per box to be done gets stacked */
 	int top, bot, lft, rgt;  /* edge g_colors, -1 mixed, -2 unknown */
 };
 
-static int tesseral(void)
+static int tesseral()
 {
 	struct tess *tp;
 
@@ -4937,7 +4937,7 @@ static int _fastcall tesseral_row(int x1, int x2, int y)
 /* added for testing automatic_log_map() */ /* CAE 9211 fixed missing comment */
 /* insert at end of CALCFRAC.C */
 
-static long automatic_log_map(void)   /*RB*/
+static long automatic_log_map()   /*RB*/
 {  /* calculate round screen edges to avoid wasted colours in logmap */
 	long mincolour;
 	int lag;

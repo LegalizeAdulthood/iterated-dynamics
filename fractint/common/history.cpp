@@ -14,7 +14,7 @@ static int s_history_index = -1;			/* user pointer into history tbl  */
 static int s_save_index = 0;				/* save ptr into history tbl      */
 static int s_history_flag;				/* are we backing off in history? */
 
-void _fastcall history_save_info(void)
+void _fastcall history_save_info()
 {
 	HISTORY current = { 0 };
 	HISTORY last;
@@ -201,7 +201,7 @@ void _fastcall history_save_info(void)
 	}
 }
 
-void _fastcall history_restore_info(void)
+void _fastcall history_restore_info()
 {
 	HISTORY last;
 	if (g_max_history <= 0 || g_bf_math || !s_history)
@@ -380,7 +380,7 @@ void _fastcall history_restore_info(void)
 	}
 }
 
-void history_allocate(void)
+void history_allocate()
 {
 	while (g_max_history > 0) /* decrease history if necessary */
 	{
@@ -393,7 +393,7 @@ void history_allocate(void)
 	}
 }
 
-void history_free(void)
+void history_free()
 {
 	if (s_history != NULL)
 	{
@@ -401,7 +401,7 @@ void history_free(void)
 	}
 }
 
-void history_back(void)
+void history_back()
 {
 	--s_history_index;
 	if (s_history_index <= 0)
@@ -411,7 +411,7 @@ void history_back(void)
 	s_history_flag = 1;
 }
 
-void history_forward(void)
+void history_forward()
 {
 	++s_history_index;
 	if (s_history_index >= g_max_history)

@@ -34,10 +34,10 @@ extern int					g_bad_code_count;
 extern int					g_bad_outside;
 extern int					g_bad_value;
 extern long					g_bail_out;
-extern int					(*g_bail_out_fp)(void);
-extern int					(*g_bail_out_l)(void);
-extern int					(*g_bail_out_bn)(void);
-extern int					(*g_bail_out_bf)(void);
+extern int					(*g_bail_out_fp)();
+extern int					(*g_bail_out_l)();
+extern int					(*g_bail_out_bn)();
+extern int					(*g_bail_out_bf)();
 extern enum bailouts		g_bail_out_test;
 extern int					g_base_hertz;
 extern int					g_basin;
@@ -62,8 +62,8 @@ extern int					g_browsing;
 extern char					g_browse_check_parameters;
 extern char					g_browse_check_type;
 extern long					g_calculation_time;
-extern long					(*g_calculate_mandelbrot_asm_fp)(void);
-extern int					(*g_calculate_type)(void);
+extern long					(*g_calculate_mandelbrot_asm_fp)();
+extern int					(*g_calculate_type)();
 extern int					g_calculation_status;
 extern char					g_calibrate;
 extern int					g_cfg_line_nums[];
@@ -135,11 +135,11 @@ extern struct DIR_SEARCH	g_dta;   /* Disk Transfer Area */
 extern BYTE					g_stack[];
 extern double				*g_x0;
 extern double				*g_x1;
-extern double				(_fastcall *g_dx_pixel)(void); /* set in FRACTALS.C */
+extern double				(_fastcall *g_dx_pixel)(); /* set in FRACTALS.C */
 extern double				g_dx_size;
 extern double				*g_y0;
 extern double				*g_y1;
-extern double				(_fastcall *g_dy_pixel)(void); /* set in FRACTALS.C */
+extern double				(_fastcall *g_dy_pixel)(); /* set in FRACTALS.C */
 extern double				g_dy_size;
 extern int					g_escape_exit_flag;
 extern char					g_exe_path[];
@@ -270,23 +270,23 @@ extern long					g_temp_sqr_y_l;
 extern _LCMPLX				g_tmp_z_l;
 extern long					*g_x0_l;
 extern long					*g_x1_l;
-extern long					(_fastcall *g_lx_pixel)(void); /* set in FRACTALS.C */
+extern long					(_fastcall *g_lx_pixel)(); /* set in FRACTALS.C */
 extern long					*g_y0_l;
 extern long					*g_y1_l;
-extern long					(_fastcall *g_ly_pixel)(void); /* set in FRACTALS.C */
+extern long					(_fastcall *g_ly_pixel)(); /* set in FRACTALS.C */
 extern long					g_attractor_radius_l;
-extern void					(*g_trig0_l)(void);
-extern void					(*g_trig1_l)(void);
-extern void					(*g_trig2_l)(void);
-extern void					(*g_trig3_l)(void);
-extern void					(*g_trig0_d)(void);
-extern void					(*g_trig1_d)(void);
-extern void					(*g_trig2_d)(void);
-extern void					(*g_trig3_d)(void);
-extern void					(*g_trig0_m)(void);
-extern void					(*g_trig1_m)(void);
-extern void					(*g_trig2_m)(void);
-extern void					(*g_trig3_m)(void);
+extern void					(*g_trig0_l)();
+extern void					(*g_trig1_l)();
+extern void					(*g_trig2_l)();
+extern void					(*g_trig3_l)();
+extern void					(*g_trig0_d)();
+extern void					(*g_trig1_d)();
+extern void					(*g_trig2_d)();
+extern void					(*g_trig3_d)();
+extern void					(*g_trig0_m)();
+extern void					(*g_trig1_m)();
+extern void					(*g_trig2_m)();
+extern void					(*g_trig3_m)();
 extern double				g_magnitude;
 extern unsigned long		g_magnitude_limit;
 extern enum Major			g_major_method;
@@ -364,7 +364,7 @@ extern char					g_organize_formula_dir[];
 extern int					g_organize_formula_search;
 extern float				g_origin_fp;
 extern int					(*g_out_line) (BYTE *, int);
-extern void					(*g_out_line_cleanup)(void);
+extern void					(*g_out_line_cleanup)();
 extern int					g_outside;
 extern int					g_overflow;
 extern int					g_overlay_3d;

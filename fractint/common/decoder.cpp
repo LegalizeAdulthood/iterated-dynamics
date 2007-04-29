@@ -146,7 +146,7 @@ static short code_mask[13] =
  *
  */
 
-static short get_next_code(void);
+static short get_next_code();
 
 short decoder(short linewidth)
 {
