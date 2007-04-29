@@ -47,6 +47,9 @@ public:
 
 										virtual void delay(int ms);
 
+										virtual void set_mouse_mode(int new_mode);
+										virtual int get_mouse_mode() const;
+
 protected:
 	Frame m_frame;
 	WinText m_wintext;

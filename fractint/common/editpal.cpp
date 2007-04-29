@@ -3321,7 +3321,6 @@ static void pal_table_process(pal_table *me)
 
 void palette_edit()       /* called by fractint */
 {
-	int       oldlookatmouse = g_look_at_mouse;
 	int       oldsxoffs      = g_sx_offset;
 	int       oldsyoffs      = g_sy_offset;
 	pal_table *pt;
@@ -3331,13 +3330,13 @@ void palette_edit()       /* called by fractint */
 		return; /* prevents crash when physical screen is too small */
 	}
 
-	push_help_mode(HELPXHAIR);
+	HelpModeSaver saved_help(HELPXHAIR);
+	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
 	g_plot_color = g_put_color;
 
 	g_line_buffer = (BYTE *) malloc(max(g_screen_width, g_screen_height));
 
-	g_look_at_mouse = LOOK_MOUSE_ZOOM_BOX;
 	g_sx_offset = g_sy_offset = 0;
 
 	s_reserve_colors = TRUE;
@@ -3351,10 +3350,7 @@ void palette_edit()       /* called by fractint */
 	pal_table_destroy(pt);
 	cursor_destroy();
 
-	g_look_at_mouse = oldlookatmouse;
 	g_sx_offset = oldsxoffs;
 	g_sy_offset = oldsyoffs;
 	DELETE(g_line_buffer);
-
-	pop_help_mode();
 }

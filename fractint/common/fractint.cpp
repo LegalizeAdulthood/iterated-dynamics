@@ -369,7 +369,7 @@ static int main_restore_restart(int &stacked, int &resume_flag)
 		memcpy(g_dac_box, g_old_dac_box, 256*3);   /* restore in case g_colors= present */
 	}
 
-	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
+	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
 
 	while (g_show_file <= 0)              /* image is to be loaded */
 	{
@@ -423,7 +423,7 @@ static int main_restore_restart(int &stacked, int &resume_flag)
 
 	set_help_mode(HELPMENU);                 /* now use this help mode */
 	g_tab_mode = 1;
-	g_look_at_mouse = LOOK_MOUSE_NONE;                     /* ignore mouse */
+	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
 
 	if (((g_overlay_3d && !g_initialize_batch) || stacked) && g_init_mode < 0)        /* overlay command failed */
 	{
@@ -469,7 +469,7 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 
 	if (g_initialize_batch == INITBATCH_NONE)
 	{
-		g_look_at_mouse = -FIK_PAGE_UP;           /* just mouse left button, == pgup */
+		driver_set_mouse_mode(-FIK_PAGE_UP);           /* just mouse left button, == pgup */
 	}
 
 	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */

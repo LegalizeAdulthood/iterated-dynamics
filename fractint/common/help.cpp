@@ -778,7 +778,6 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 int help(int action)
 {
 	HIST      curr;
-	int       oldlookatmouse;
 	int       oldhelpmode;
 	int       flags;
 	HIST      next;
@@ -804,8 +803,7 @@ int help(int action)
 		return 0;
 	}
 
-	oldlookatmouse = g_look_at_mouse;
-	g_look_at_mouse = LOOK_MOUSE_NONE;
+	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
 	g_timer_start -= clock_ticks();
 	driver_stack_screen();
 
@@ -924,7 +922,6 @@ int help(int action)
 	free(s_page_table);
 
 	driver_unstack_screen();
-	g_look_at_mouse = oldlookatmouse;
 	s_help_mode = oldhelpmode;
 	g_timer_start += clock_ticks();
 

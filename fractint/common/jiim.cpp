@@ -520,7 +520,6 @@ void Jiim(int which)         /* called by fractint */
 	int exact = 0;
 	int count = 0;            /* coloring julia */
 	static int mode = 0;      /* point, circle, ... */
-	int oldlookatmouse = g_look_at_mouse;
 	double cr, ci, r;
 	int xfactor, yfactor;             /* aspect ratio          */
 	int xoff, yoff;                   /* center of the window  */
@@ -546,13 +545,9 @@ void Jiim(int which)         /* called by fractint */
 	{
 		return;
 	}
-	if (which == JIIM)
+	HelpModeSaver saved_help(JIIM == which ? HELP_JIIM : HELP_ORBITS);
+	if (which != JIIM)
 	{
-		push_help_mode(HELP_JIIM);
-	}
-	else
-	{
-		push_help_mode(HELP_ORBITS);
 		g_has_inverse = 1;
 	}
 	oldsxoffs = g_sx_offset;
@@ -564,7 +559,7 @@ void Jiim(int which)         /* called by fractint */
 	aspect = ((double)g_x_dots*3)/((double)g_y_dots*4);  /* assumes 4:3 */
 	actively_computing = 1;
 	SetAspect(aspect);
-	g_look_at_mouse = LOOK_MOUSE_ZOOM_BOX;
+	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
 	if (which == ORBIT)
 	{
@@ -1292,11 +1287,9 @@ finish:
 		rect_buff = NULL;
 	}
 
-	g_look_at_mouse = oldlookatmouse;
 	g_using_jiim = 0;
 	g_calculate_type = oldcalctype;
 	g_debug_flag = old_debugflag; /* yo Chuck! */
-	pop_help_mode();
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
 		g_view_window = g_view_x_dots = g_view_y_dots = 0;

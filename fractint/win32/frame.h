@@ -19,6 +19,8 @@ public:
 	int pump_messages(int waitflag);
 	void resize(int width, int height);
 	void set_keyboard_timeout(int ms);
+	void set_mouse_mode(int new_mode);
+	int get_mouse_mode() const;
 
 	HWND window() const;
 	int width() const;

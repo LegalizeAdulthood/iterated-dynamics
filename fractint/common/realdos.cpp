@@ -59,7 +59,7 @@ static int menu_check_key(int curkey, int choice);
 */
 int stop_message(int flags, char *msg)
 {
-	int ret, toprow, color, savelookatmouse;
+	int ret, toprow, color;
 	static unsigned char batchmode = 0;
 	if (g_debug_flag || g_initialize_batch >= INITBATCH_NORMAL)
 	{
@@ -90,8 +90,7 @@ int stop_message(int flags, char *msg)
 		return -1;
 	}
 	ret = 0;
-	savelookatmouse = g_look_at_mouse;
-	g_look_at_mouse = -FIK_ENTER;
+	MouseModeSaver saved_mouse(-FIK_ENTER);
 	if ((flags & STOPMSG_NO_STACK))
 	{
 		blank_rows(toprow = 12, 10, 7);
@@ -139,7 +138,6 @@ int stop_message(int flags, char *msg)
 	{
 		driver_unstack_screen();
 	}
-	g_look_at_mouse = savelookatmouse;
 	return ret;
 }
 
@@ -514,12 +512,11 @@ int full_screen_choice(
 	char buf[81];
 	char curitem[81];
 	char *itemptr;
-	int ret, savelookatmouse;
+	int ret;
 	int scrunch;  /* scrunch up a line */
 
 	scrunch = (options & CHOICE_CRUNCH) ? 1 : 0;
-	savelookatmouse = g_look_at_mouse;
-	g_look_at_mouse = LOOK_MOUSE_NONE;
+	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
 	ret = -1;
 	/* preset current to passed string */
 	if (speedstring && *speedstring)
@@ -1099,7 +1096,6 @@ int full_screen_choice(
 	}
 
 fs_choice_end:
-	g_look_at_mouse = savelookatmouse;
 	return ret;
 }
 
@@ -1110,11 +1106,10 @@ int full_screen_choice_help(int help_mode, int options, const char *hdg,
 	int (*speedprompt)(int, int, int, char *, int), int (*checkkey)(int, int))
 {
 	int result;
-	push_help_mode(help_mode);
+	HelpModeSaver saved_help(help_mode);
 	result = full_screen_choice(options, hdg, hdg2, instr,
 		numchoices, choices, attributes, boxwidth, boxdepth, colwidth,
 		current, formatitem, speedstring, speedprompt, checkkey);
-	pop_help_mode();
 	return result;
 }
 
@@ -1555,9 +1550,9 @@ int input_field(
 	char buf[81];
 	int insert, started, offset, curkey, display;
 	int i, j;
-	int ret, savelookatmouse;
-	savelookatmouse = g_look_at_mouse;
-	g_look_at_mouse = LOOK_MOUSE_NONE;
+	int ret;
+
+	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
 	ret = -1;
 	strcpy(savefld, fld);
 	insert = started = offset = 0;
@@ -1733,7 +1728,6 @@ int input_field(
 	}
 
 inpfld_end:
-	g_look_at_mouse = savelookatmouse;
 	return ret;
 }
 

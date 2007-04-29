@@ -97,7 +97,6 @@ int full_screen_prompt(/* full-screen prompting routine */
 	int curchoice = 0;
 	int done, i, j;
 	int anyinput;
-	int savelookatmouse;
 	int curtype, curlen;
 	char buf[81];
 
@@ -111,8 +110,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 	int rewrite_extrainfo = 0;     /* if 1: rewrite extrainfo to text box   */
 	char blanks[78];               /* used to clear text box                */
 
-	savelookatmouse = g_look_at_mouse;
-	g_look_at_mouse = LOOK_MOUSE_NONE;
+	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
 	promptfkeys = fkeymask;
 	memset(blanks, ' ', 77);   /* initialize string of blanks */
 	blanks[77] = (char) 0;
@@ -809,7 +807,6 @@ int full_screen_prompt(/* full-screen prompting routine */
 
 fullscreen_exit:
 	driver_hide_text_cursor();
-	g_look_at_mouse = savelookatmouse;
 	if (scroll_file)
 	{
 		fclose(scroll_file);
@@ -954,9 +951,9 @@ static int input_field_list(
 	char buf[81];
 	int curkey;
 	int i, j;
-	int ret, savelookatmouse;
-	savelookatmouse = g_look_at_mouse;
-	g_look_at_mouse = LOOK_MOUSE_NONE;
+	int ret;
+
+	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
 	for (initval = 0; initval < llen; ++initval)
 	{
 		if (strcmp(fld, list[initval]) == 0)
@@ -1035,7 +1032,6 @@ static int input_field_list(
 
 inpfldl_end:
 	strcpy(fld, list[curval]);
-	g_look_at_mouse = savelookatmouse;
 	return ret;
 }
 
@@ -1127,7 +1123,7 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	ft_choices = &choices[0];
 
 	/* setup context sensitive help */
-	push_help_mode(HELPFRACTALS);
+	HelpModeSaver saved_help(HELPFRACTALS);
 	if (t == IFS3D)
 	{
 		t = IFS;
@@ -1184,7 +1180,6 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 		}
 	}
 
-	pop_help_mode();
 	return done;
 }
 
@@ -1192,9 +1187,8 @@ static int sel_fractype_help(int curkey, int choice)
 {
 	if (curkey == FIK_F2)
 	{
-		push_help_mode(g_fractal_specific[(*(ft_choices + choice))->num].helptext);
+		HelpModeSaver saved_help(g_fractal_specific[(*(ft_choices + choice))->num].helptext);
 		help(0);
-		pop_help_mode();
 	}
 	return 0;
 }

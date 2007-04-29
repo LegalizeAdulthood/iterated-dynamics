@@ -25,7 +25,6 @@
 
 extern HINSTANCE g_instance;
 
-int g_look_at_mouse = LOOK_MOUSE_NONE;
 long g_save_base = 0;						/* base clock ticks */
 long g_save_ticks = 0;						/* save after this many ticks */
 int g_finish_row = 0;						/* save when this row is finished */
@@ -649,4 +648,14 @@ void Win32BaseDriver::pause()
 void Win32BaseDriver::resume()
 {
 	m_wintext.resume();
+}
+
+void Win32BaseDriver::set_mouse_mode(int new_mode)
+{
+	m_frame.set_mouse_mode(new_mode);
+}
+
+int Win32BaseDriver::get_mouse_mode() const
+{
+	return m_frame.get_mouse_mode();
 }
