@@ -27,14 +27,11 @@ void calculate_mandelbrot_start_fp_asm(void)
 
 long calculate_mandelbrot_fp_asm(void)
 {
-	long cx;
-	long savedand;
-	int savedincr;
-	long tmpfsd;
 #if USE_NEW
-	double x, y, x2, y2, xy, Cx, Cy, savedmag;
+	double savedmag;
 #else
-	double x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
+	double savedx;
+	double savedy;
 #endif
 
 	if (g_periodicity_check == 0)
@@ -46,10 +43,12 @@ long calculate_mandelbrot_fp_asm(void)
 		g_old_color_iter = g_max_iteration - 255;
 	}
 
-	tmpfsd = g_max_iteration - g_first_saved_and;
-	if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
 	{
-		g_old_color_iter = tmpfsd; /* but matches the code in standard_fractal() */
+		long tmpfsd = g_max_iteration - g_first_saved_and;
+		if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
+		{
+			g_old_color_iter = tmpfsd; /* but matches the code in standard_fractal() */
+		}
 	}
 
 	/* initparms */
@@ -60,14 +59,13 @@ long calculate_mandelbrot_fp_asm(void)
 	savedy = 0;
 #endif
 	g_orbit_index = 0;
-	savedand = g_first_saved_and;
-	savedincr = 1;             /* start checking the very first time */
+	long savedand = g_first_saved_and;
+	int savedincr = 1;             /* start checking the very first time */
 	g_input_counter--;                /* Only check the keyboard sometimes */
 	if (g_input_counter < 0)
 	{
-		int key;
 		g_input_counter = 1000;
-		key = driver_key_pressed();
+		int key = driver_key_pressed();
 		if (key)
 		{
 			if (key == 'o' || key == 'O')
@@ -83,7 +81,14 @@ long calculate_mandelbrot_fp_asm(void)
 		}
 	}
 
-	cx = g_max_iteration;
+	long cx = g_max_iteration;
+	double x;
+	double y;
+	double x2;
+	double y2;
+	double xy;
+	double Cx;
+	double Cy;
 	if (g_fractal_type != JULIAFP && g_fractal_type != JULIA)
 	{
 		/* Mandelbrot_87 */
@@ -146,12 +151,10 @@ long calculate_mandelbrot_fp_asm(void)
 			{
 #if USE_NEW
 				if (ABS(g_magnitude-savedmag) < g_close_enough)
-				{
 #else
 				if (ABS(savedx-x) < g_close_enough && ABS(savedy-y) < g_close_enough)
-				{
 #endif
-/*		    g_old_color_iter = 65535;  */
+				{
 					g_old_color_iter = g_max_iteration;
 					g_real_color_iter = g_max_iteration;
 					g_input_counter = g_input_counter-(g_max_iteration-cx);

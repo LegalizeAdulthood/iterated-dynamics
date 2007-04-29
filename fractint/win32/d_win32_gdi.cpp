@@ -218,8 +218,7 @@ void GDIDriver::show_hide_windows(HWND show, HWND hide)
 
 void GDIDriver::max_size(int &width, int &height, bool &center_x, bool &center_y)
 {
-	width = m_wintext.m_max_width;
-	height = m_wintext.m_max_height;
+	Win32BaseDriver::max_size(width, height, center_x, center_y);
 	if (g_video_table[g_adapter].x_dots > width)
 	{
 		width = g_video_table[g_adapter].x_dots;
@@ -238,26 +237,26 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 
 	if (center_x)
 	{
-		plot_pos.x = (g_frame.m_width - m_plot.width())/2;
+		plot_pos.x = (m_frame.width() - m_plot.width())/2;
 	}
 	else
 	{
-		text_pos.x = (g_frame.m_width - m_wintext.m_max_width)/2;
+		text_pos.x = (m_frame.width() - m_wintext.max_width())/2;
 	}
 
 	if (center_y)
 	{
-		plot_pos.y = (g_frame.m_height - m_plot.height())/2;
+		plot_pos.y = (m_frame.height() - m_plot.height())/2;
 	}
 	else
 	{
-		text_pos.y = (g_frame.m_height - m_wintext.m_max_height)/2;
+		text_pos.y = (m_frame.height() - m_wintext.max_height())/2;
 	}
 
 	BOOL status = SetWindowPos(m_plot.window(), NULL,
 		plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	_ASSERTE(status);
-	status = SetWindowPos(m_wintext.m_window, NULL,
+	status = SetWindowPos(m_wintext.window(), NULL,
 		text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	_ASSERTE(status);
 }
@@ -371,13 +370,13 @@ int GDIDriver::resize()
 	max_size(width, height, center_graphics_x, center_graphics_y);
 	if ((g_video_table[g_adapter].x_dots == m_plot.width())
 		&& (g_video_table[g_adapter].y_dots == m_plot.height())
-		&& (width == g_frame.m_width)
-		&& (height == g_frame.m_height))
+		&& (width == m_frame.width())
+		&& (height == m_frame.height()))
 	{
 		return 0;
 	}
 
-	frame_resize(width, height);
+	m_frame.resize(width, height);
 	m_plot.resize();
 	center_windows(center_graphics_x, center_graphics_y);
 	return 1;
@@ -443,7 +442,7 @@ void GDIDriver::schedule_alarm(int soon)
 	soon = (soon ? 1 : DRAW_INTERVAL)*1000;
 	if (m_text_not_graphics)
 	{
-		wintext_schedule_alarm(&m_wintext, soon);
+		m_wintext.schedule_alarm(soon);
 	}
 	else
 	{
@@ -561,13 +560,13 @@ void GDIDriver::redraw()
 	ODS("gdi_redraw");
 	if (m_text_not_graphics)
 	{
-		wintext_paintscreen(&m_wintext, 0, 80, 0, 25);
+		m_wintext.paintscreen(0, 80, 0, 25);
 	}
 	else
 	{
 		m_plot.redraw();
 	}
-	frame_pump_messages(FALSE);
+	m_frame.pump_messages(FALSE);
 }
 
 void GDIDriver::window()
@@ -577,23 +576,22 @@ void GDIDriver::window()
 	bool center_x, center_y;
 
 	max_size(width, height, center_x, center_y);
-	frame_window(width, height);
-	m_wintext.m_parent_window = g_frame.m_window;
-	wintext_texton(&m_wintext);
-	m_plot.window(g_frame.m_window);
+	m_frame.create(width, height);
+	m_wintext.create(m_frame.window());
+	m_plot.create(m_frame.window());
 	center_windows(center_x, center_y);
 }
 
 void GDIDriver::set_for_text()
 {
 	m_text_not_graphics = true;
-	show_hide_windows(m_wintext.m_window, m_plot.window());
+	show_hide_windows(m_wintext.window(), m_plot.window());
 }
 
 void GDIDriver::set_for_graphics()
 {
 	m_text_not_graphics = false;
-	show_hide_windows(m_plot.window(), m_wintext.m_window);
+	show_hide_windows(m_plot.window(), m_wintext.window());
 	Win32BaseDriver::hide_text_cursor();
 }
 
@@ -603,7 +601,7 @@ void GDIDriver::set_clear()
 {
 	if (m_text_not_graphics)
 	{
-		wintext_clear(&m_wintext);
+		Win32BaseDriver::set_clear();
 	}
 	else
 	{
@@ -668,10 +666,6 @@ int GDIDriver::validate_mode(const VIDEOINFO &mode)
 
 void GDIDriver::pause()
 {
-	if (m_wintext.m_window)
-	{
-		ShowWindow(m_wintext.m_window, SW_HIDE);
-	}
 	if (m_plot.window())
 	{
 		ShowWindow(m_plot.window(), SW_HIDE);
@@ -680,13 +674,13 @@ void GDIDriver::pause()
 
 void GDIDriver::resume()
 {
-	if (!m_wintext.m_window)
+	if (!m_wintext.window())
 	{
 		window();
 	}
 
-	ShowWindow(m_wintext.m_window, SW_NORMAL);
-	wintext_resume(&m_wintext);
+	ShowWindow(m_wintext.window(), SW_NORMAL);
+	m_wintext.resume();
 }
 
 void GDIDriver::display_string(int x, int y, int fg, int bg, const char *text)

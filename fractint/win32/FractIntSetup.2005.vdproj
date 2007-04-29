@@ -303,12 +303,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7AC5F16062B340A8A5C0CA1F29427529"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_803C18405986425B9310B94F654833EC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1600,26 +1594,6 @@
             "TargetName" = "8:fract196.frm"
             "Tag" = "8:"
             "Folder" = "8:_BDB98DCABC7743F5B0346DA482AD44D2"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7AC5F16062B340A8A5C0CA1F29427529"
-            {
-            "SourcePath" = "8:..\\extra\\makecfg.zip"
-            "TargetName" = "8:makecfg.zip"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"

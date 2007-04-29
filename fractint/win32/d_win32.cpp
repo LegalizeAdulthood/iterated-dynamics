@@ -31,41 +31,47 @@ long g_save_ticks = 0;						/* save after this many ticks */
 int g_finish_row = 0;						/* save when this row is finished */
 
 Win32BaseDriver::Win32BaseDriver(const char *name, const char *description)
-		: NamedDriver(name, description),
-		m_frame(),
-		m_wintext(),
-		m_key_buffer(0),
-		m_screen_count(0),
-		m_cursor_shown(false),
-		m_cursor_row(0),
-		m_cursor_col(0),
-		m_inside_help(0),
-		m_save_check_time(0),
-		m_start(0),
-		m_last(0),
-		m_ticks_per_second(0)
+	: NamedDriver(name, description),
+	m_frame(),
+	m_wintext(),
+	m_key_buffer(0),
+	m_screen_count(0),
+	m_cursor_shown(false),
+	m_cursor_row(0),
+	m_cursor_col(0),
+	m_inside_help(0),
+	m_save_check_time(0),
+	m_start(0),
+	m_last(0),
+	m_ticks_per_second(0)
+{
+	for (int i = 0; i < WIN32_MAXSCREENS; i++)
 	{
-		for (int i = 0; i < WIN32_MAXSCREENS; i++)
-		{
-			m_saved_screens[i] = NULL;
-		}
-		for (int i = 0; i < WIN32_MAXSCREENS + 1; i++)
-		{
-			m_saved_cursor[i] = 0;
-		}
+		m_saved_screens[i] = NULL;
 	}
+	for (int i = 0; i < WIN32_MAXSCREENS + 1; i++)
+	{
+		m_saved_cursor[i] = 0;
+	}
+}
+
+void Win32BaseDriver::max_size(int &width, int &height, bool &center_x, bool &center_y)
+{
+	width = m_wintext.max_width();
+	height = m_wintext.max_height();
+	center_x = FALSE;
+	center_y = FALSE;
+}
 
 int Win32BaseDriver::handle_timed_save(int ch)
 {
-	int ticker;
-
 	if (ch != 0)
 	{
 		return ch;
 	}
 
 	/* now check for automatic/periodic saving... */
-	ticker = read_ticker();
+	int ticker = read_ticker();
 	if (g_save_ticks && (ticker != m_save_check_time))
 	{
 		m_save_check_time = ticker;
@@ -181,7 +187,7 @@ void Win32BaseDriver::flush_output()
 		if ((now - m_last)*m_frames_per_second > m_ticks_per_second)
 		{
 			flush();
-			frame_pump_messages(FALSE);
+			m_frame.pump_messages(FALSE);
 			m_last = now;
 		}
 	}
@@ -208,16 +214,13 @@ void Win32BaseDriver::flush_output()
 */
 void Win32BaseDriver::terminate()
 {
-	wintext_destroy(&m_wintext);
+	m_wintext.destroy();
+	for (int i = 0; i < NUM_OF(m_saved_screens); i++)
 	{
-		int i;
-		for (i = 0; i < NUM_OF(m_saved_screens); i++)
+		if (NULL != m_saved_screens[i])
 		{
-			if (NULL != m_saved_screens[i])
-			{
-				free(m_saved_screens[i]);
-				m_saved_screens[i] = NULL;
-			}
+			free(m_saved_screens[i]);
+			m_saved_screens[i] = NULL;
 		}
 	}
 }
@@ -241,8 +244,8 @@ int Win32BaseDriver::initialize(int *argc, char **argv)
 	LPCSTR title = "FractInt for Windows";
 
 	ODS("win32_init");
-	frame_init(g_instance, title);
-	if (!wintext_initialize(&m_wintext, g_instance, NULL, "Text"))
+	m_frame.init(g_instance, title);
+	if (!m_wintext.initialize(g_instance, NULL, "Text"))
 	{
 		return FALSE;
 	}
@@ -269,7 +272,7 @@ int Win32BaseDriver::key_pressed()
 		return ch;
 	}
 	flush_output();
-	ch = handle_special_keys(frame_get_key_press(0));
+	ch = handle_special_keys(m_frame.get_key_press(0));
 	_ASSERTE(m_key_buffer == 0);
 	m_key_buffer = ch;
 
@@ -307,7 +310,7 @@ int Win32BaseDriver::get_key()
 		}
 		else
 		{
-			ch = handle_special_keys(frame_get_key_press(1));
+			ch = handle_special_keys(m_frame.get_key_press(1));
 		}
 	}
 	while (ch == 0);
@@ -337,7 +340,7 @@ void Win32BaseDriver::shell()
 		DWORD status = WaitForSingleObject(pi.hProcess, 1000);
 		while (WAIT_TIMEOUT == status)
 		{
-			frame_pump_messages(0);
+			m_frame.pump_messages(0);
 			status = WaitForSingleObject(pi.hProcess, 1000);
 		}
 		CloseHandle(pi.hProcess);
@@ -349,7 +352,7 @@ void Win32BaseDriver::hide_text_cursor()
 	if (TRUE == m_cursor_shown)
 	{
 		m_cursor_shown = FALSE;
-		wintext_hide_cursor(&m_wintext);
+		m_wintext.hide_cursor();
 	}
 	ODS("win32_hide_text_cursor");
 }
@@ -406,7 +409,7 @@ void Win32BaseDriver::put_string(int row, int col, int attr, const char *msg)
 		int abs_col = g_text_cbase + g_text_col;
 		_ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
 		_ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
-		wintext_putstring(&m_wintext, abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
+		m_wintext.putstring(abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
 	}
 }
 
@@ -416,7 +419,7 @@ void Win32BaseDriver::put_string(int row, int col, int attr, const char *msg)
 */
 void Win32BaseDriver::scroll_up(int top, int bot)
 {
-	wintext_scroll_up(&m_wintext, top, bot);
+	m_wintext.scroll_up(top, bot);
 }
 
 void Win32BaseDriver::move_cursor(int row, int col)
@@ -433,13 +436,13 @@ void Win32BaseDriver::move_cursor(int row, int col)
 	}
 	row = m_cursor_row;
 	col = m_cursor_col;
-	wintext_cursor(&m_wintext, g_text_cbase + col, g_text_rbase + row, 1);
+	m_wintext.cursor(g_text_cbase + col, g_text_rbase + row, 1);
 	m_cursor_shown = TRUE;
 }
 
 void Win32BaseDriver::set_clear()
 {
-	wintext_clear(&m_wintext);
+	m_wintext.clear();
 }
 
 void Win32BaseDriver::set_attr(int row, int col, int attr, int count)
@@ -452,7 +455,7 @@ void Win32BaseDriver::set_attr(int row, int col, int attr, int count)
 	{
 		g_text_col = col;
 	}
-	wintext_set_attr(&m_wintext, g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
+	m_wintext.set_attr(g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
 }
 
 /*
@@ -461,8 +464,9 @@ void Win32BaseDriver::set_attr(int row, int col, int attr, int count)
 */
 void Win32BaseDriver::stack_screen()
 {
-	m_saved_cursor[m_screen_count + 1] = g_text_row*80 + g_text_col;
-	if (++m_screen_count)
+	m_screen_count++;
+	m_saved_cursor[m_screen_count] = g_text_row*80 + g_text_col;
+	if (m_screen_count)
 	{
 		/* already have some stacked */
 		int i = m_screen_count - 1;
@@ -474,14 +478,13 @@ void Win32BaseDriver::stack_screen()
 			stop_message(STOPMSG_NO_STACK, "stackscreen overflow");
 			exit(1);
 		}
-		m_saved_screens[i] = wintext_screen_get(&m_wintext);
-		set_clear();
+		m_saved_screens[i] = m_wintext.screen_get();
 	}
 	else
 	{
 		set_for_text();
-		set_clear();
 	}
+	set_clear();
 }
 
 void Win32BaseDriver::unstack_screen()
@@ -492,7 +495,7 @@ void Win32BaseDriver::unstack_screen()
 	if (--m_screen_count >= 0)
 	{
 		/* unstack */
-		wintext_screen_set(&m_wintext, m_saved_screens[m_screen_count]);
+		m_wintext.screen_set(m_saved_screens[m_screen_count]);
 		free(m_saved_screens[m_screen_count]);
 		m_saved_screens[m_screen_count] = NULL;
 		move_cursor(-1, -1);
@@ -580,7 +583,7 @@ int Win32BaseDriver::key_cursor(int row, int col)
 	else
 	{
 		m_cursor_shown = TRUE;
-		wintext_cursor(&m_wintext, col, row, 1);
+		m_wintext.cursor(col, row, 1);
 		result = get_key();
 		hide_text_cursor();
 		m_cursor_shown = FALSE;
@@ -606,27 +609,27 @@ int Win32BaseDriver::wait_key_pressed(int timeout)
 
 int Win32BaseDriver::get_char_attr()
 {
-	return wintext_get_char_attr(&m_wintext, g_text_row, g_text_col);
+	return m_wintext.get_char_attr(g_text_row, g_text_col);
 }
 
 void Win32BaseDriver::put_char_attr(int char_attr)
 {
-	wintext_put_char_attr(&m_wintext, g_text_row, g_text_col, char_attr);
+	m_wintext.put_char_attr(g_text_row, g_text_col, char_attr);
 }
 
 int Win32BaseDriver::get_char_attr_rowcol(int row, int col)
 {
-	return wintext_get_char_attr(&m_wintext, row, col);
+	return m_wintext.get_char_attr(row, col);
 }
 
 void Win32BaseDriver::put_char_attr_rowcol(int row, int col, int char_attr)
 {
-	wintext_put_char_attr(&m_wintext, row, col, char_attr);
+	m_wintext.put_char_attr(row, col, char_attr);
 }
 
 void Win32BaseDriver::delay(int ms)
 {
-	frame_pump_messages(FALSE);
+	m_frame.pump_messages(FALSE);
 	if (ms >= 0)
 	{
 		Sleep(ms);
@@ -635,5 +638,5 @@ void Win32BaseDriver::delay(int ms)
 
 void Win32BaseDriver::set_keyboard_timeout(int ms)
 {
-	frame_set_keyboard_timeout(ms);
+	m_frame.set_keyboard_timeout(ms);
 }

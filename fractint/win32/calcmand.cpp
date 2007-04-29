@@ -54,24 +54,17 @@ long cdecl calculate_mandelbrot_asm(void)
 */
 static long cdecl calculate_mandelbrot_asm1(void)
 {
-	long cx;
-	long savedand;
-	int savedincr;
-	long tmpfsd;
-	long x, y, x2, y2, xy, Cx, Cy, savedx, savedy;
-
 	g_old_color_iter = (g_periodicity_check == 0) ? 0 : (g_max_iteration - 250);
-	tmpfsd = g_max_iteration - g_first_saved_and;
+	long tmpfsd = g_max_iteration - g_first_saved_and;
 	if (g_old_color_iter > tmpfsd)
 	{
 		g_old_color_iter = tmpfsd;
 	}
 
-	savedx = 0;
-	savedy = 0;
+	long savedx = 0;
+	long savedy = 0;
 	g_orbit_index = 0;
-	savedand = g_first_saved_and;
-	savedincr = 1;             /* start checking the very first time */
+	long savedand = g_first_saved_and;             /* start checking the very first time */
 	g_input_counter--;                /* Only check the keyboard sometimes */
 	if (g_input_counter < 0)
 	{
@@ -93,7 +86,13 @@ static long cdecl calculate_mandelbrot_asm1(void)
 		}
 	}
 
-	cx = g_max_iteration;
+	long x;
+	long y;
+	long x2;
+	long y2;
+	long xy;
+	long Cx;
+	long Cy;
 	if (g_fractal_type != JULIA)
 	{
 		/* Mandelbrot_87 */
@@ -120,6 +119,8 @@ static long cdecl calculate_mandelbrot_asm1(void)
 	xy = FUDGE_MUL(x, y);
 
 	/* top_of_cs_loop_87 */
+	long cx = g_max_iteration;
+	int savedincr = 1;
 	while (--cx > 0)
 	{
 		x = x2-y2 + Cx;

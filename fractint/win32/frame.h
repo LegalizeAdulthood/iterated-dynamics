@@ -10,6 +10,41 @@
 class Frame
 {
 public:
+	void init(HINSTANCE instance, LPCSTR title);
+	void create(int width, int height);
+	int key_pressed(void);
+	int get_key_press(int option);
+	int pump_messages(int waitflag);
+	void schedule_alarm(int soon);
+	void resize(int width, int height);
+	void set_keyboard_timeout(int ms);
+
+	HWND window() const	{ return m_window; }
+	int width() const	{ return m_width; }
+	int height() const	{ return m_height; }
+
+	static LRESULT CALLBACK proc(HWND window, UINT message, WPARAM wp, LPARAM lp);
+
+private:
+	static void OnClose(HWND window);
+	static void OnSetFocus(HWND window, HWND old_focus);
+	static void OnKillFocus(HWND window, HWND old_focus);
+	static void OnPaint(HWND window);
+	int add_key_press(unsigned int key);
+	static int mod_key(int modifier, int code, int fik, unsigned int *j);
+	static void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+	static void OnChar(HWND hwnd, TCHAR ch, int cRepeat);
+	static void OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info);
+	static void OnTimer(HWND window, UINT id);
+	static void OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags);
+	static void OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags);
+	static void OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
+	static void OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags);
+	static void OnRightButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
+	static void OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags);
+	static void OnMiddleButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
+	void adjust_size(int width, int height);
+
 	HINSTANCE m_instance;
 	HWND m_window;
 	char m_title[80];
@@ -32,19 +67,8 @@ public:
 	int m_start_x, m_start_y;
 	int m_delta_x, m_delta_y;
 	int m_look_mouse;
+
+	static Frame *s_frame;
 };
-
-extern Frame g_frame;
-
-extern void frame_init(HINSTANCE instance, LPCSTR title);
-extern void frame_window(int width, int height);
-extern int frame_key_pressed(void);
-extern int frame_get_key_press(int option);
-extern int frame_pump_messages(int waitflag);
-extern void frame_schedule_alarm(int soon);
-extern void frame_resize(int width, int height);
-extern void frame_set_keyboard_timeout(int ms);
-
-extern LRESULT CALLBACK frame_proc(HWND window, UINT message, WPARAM wp, LPARAM lp);
 
 #endif

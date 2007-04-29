@@ -6,7 +6,7 @@ class Plot
 public:
 	int initialize(HINSTANCE instance, LPCSTR title);
 	void terminate();
-	void window(HWND parent);
+	void create(HWND parent);
 	void write_pixel(int x, int y, int color);
 	int read_pixel(int x, int y);
 	void write_span(int x, int y, int lastx, const BYTE *pixels);
@@ -41,6 +41,9 @@ private:
 	static void OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags);
 	static void OnRightButtonUp(HWND hwnd, int x, int y, int keyFlags);
 	static void OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags);
+
+	static Plot *s_plot;
+	static LPCTSTR s_window_class;
 
 	HINSTANCE m_instance;
 	char m_title[120];
