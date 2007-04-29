@@ -11,6 +11,7 @@ public:
 	/* shutdown the driver */			virtual void terminate();
 
 										virtual void set_video_mode(const VIDEOINFO &mode);
+										virtual void max_size(int &width, int &height, bool &center_x, bool &center_y);
 
 	/* poll or block for a key */		virtual int get_key();
 										virtual void unget_key(int key);
@@ -31,6 +32,7 @@ public:
 										virtual void put_char_attr(int char_attr);
 										virtual int get_char_attr_rowcol(int row, int col);
 										virtual void put_char_attr_rowcol(int row, int col, int char_attr);
+
 										virtual void set_clear();
 
 	/* sound routines */				virtual int init_fm();

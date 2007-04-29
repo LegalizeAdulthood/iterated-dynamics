@@ -298,6 +298,10 @@
 				RelativePath=".\win32\WinText.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\win32\WinText.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="common"

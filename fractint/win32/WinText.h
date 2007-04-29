@@ -8,6 +8,49 @@
 class WinText
 {
 public:
+	WinText();
+
+	void clear();
+	void cursor(int, int, int);
+	void destroy();
+	BOOL initialize(HINSTANCE, HWND, LPCSTR);
+	void paintscreen(int, int, int, int);
+	void putstring(int, int, int, const char *, int *, int *);
+	void scroll_up(int top, int bot);
+	void set_attr(int row, int col, int attr, int count);
+	void create(HWND parent);
+	BYTE *screen_get();
+	void screen_set(const BYTE *copy);
+	void hide_cursor();
+	void schedule_alarm(int delay);
+	int get_char_attr(int row, int col);
+	void put_char_attr(int row, int col, int char_attr);
+	void set_focus(void);
+	void kill_focus(void);
+	void resume();
+
+	int max_width() const	{ return m_max_width; }
+	int max_height() const	{ return m_max_height; }
+	HWND window() const		{ return m_window; }
+
+private:
+	int textoff();
+	int texton();
+	void invalidate(int left, int bot, int right, int top);
+
+	static LRESULT CALLBACK proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+	static void OnClose(HWND window);
+	static void OnSetFocus(HWND window, HWND old_focus);
+	static void OnKillFocus(HWND window, HWND old_focus);
+	static void OnPaint(HWND window);
+	static void OnSize(HWND window, UINT state, int cx, int cy);
+	static void OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo);
+	static VOID CALLBACK timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime);
+
+	static LPCTSTR s_window_class;
+	static bool s_showing_cursor;
+	static WinText *s_me;
+
 	int m_text_mode;
 	int m_alt_f4_hit;
 	int m_showing_cursor;
@@ -44,25 +87,5 @@ public:
 	HWND m_parent_window;				/* a Global copy of hWnd's Parent */
 	HINSTANCE m_instance;			/* a global copy of hInstance */
 };
-
-extern void			wintext_clear(WinText *);
-extern void			wintext_cursor(WinText *, int, int, int);
-extern void			wintext_destroy(WinText *);
-extern BOOL			wintext_initialize(WinText *, HINSTANCE, HWND, LPCSTR);
-extern void			wintext_paintscreen(WinText *, int, int, int, int);
-extern void			wintext_putstring(WinText *, int, int, int, const char *, int *, int *);
-extern void			wintext_scroll_up(WinText *, int top, int bot);
-extern void			wintext_set_attr(WinText *, int row, int col, int attr, int count);
-extern int			wintext_textoff(WinText *);
-extern int			wintext_texton(WinText *);
-extern BYTE *		wintext_screen_get(WinText *);
-extern void			wintext_screen_set(WinText *, const BYTE *copy);
-extern void			wintext_hide_cursor(WinText *);
-extern void			wintext_schedule_alarm(WinText *, int delay);
-extern int			wintext_get_char_attr(WinText *, int row, int col);
-extern void			wintext_put_char_attr(WinText *, int row, int col, int char_attr);
-extern void			wintext_set_focus(void);
-extern void			wintext_kill_focus(void);
-extern void			wintext_resume(WinText *me);
 
 #endif

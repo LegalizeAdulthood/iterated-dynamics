@@ -282,10 +282,10 @@ static void parse_geometry(const char *spec, int *x, int *y, int *width, int *he
 */
 int Win32DiskDriver::initialize(int *argc, char **argv)
 {
-	LPCSTR title = "FractInt for Windows";
+	LPCTSTR title = "FractInt for Windows";
 
-	frame_init(g_instance, title);
-	if (!wintext_initialize(&m_wintext, g_instance, NULL, title))
+	m_frame.init(g_instance, title);
+	if (!m_wintext.initialize(g_instance, NULL, title))
 	{
 		return FALSE;
 	}
@@ -330,7 +330,7 @@ int Win32DiskDriver::initialize(int *argc, char **argv)
  */
 int Win32DiskDriver::resize()
 {
-	frame_resize(m_wintext.m_max_width, m_wintext.m_max_height);
+	m_frame.resize(m_wintext.max_width(), m_wintext.max_height());
 	if ((g_video_table[g_adapter].x_dots == m_width)
 		&& (g_video_table[g_adapter].y_dots == m_height))
 	{
@@ -423,7 +423,7 @@ int Win32DiskDriver::write_palette()
 */
 void Win32DiskDriver::schedule_alarm(int soon)
 {
-	wintext_schedule_alarm(&m_wintext, (soon ? 1 : DRAW_INTERVAL)*1000);
+	m_wintext.schedule_alarm((soon ? 1 : DRAW_INTERVAL)*1000);
 }
 
 /*
@@ -548,14 +548,13 @@ void Win32DiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 void Win32DiskDriver::redraw()
 {
 	ODS("disk_redraw");
-	wintext_paintscreen(&m_wintext, 0, 80, 0, 25);
+	m_wintext.paintscreen(0, 80, 0, 25);
 }
 
 void Win32DiskDriver::window()
 {
-	frame_window(m_wintext.m_max_width, m_wintext.m_max_height);
-	m_wintext.m_parent_window = g_frame.m_window;
-	wintext_texton(&m_wintext);
+	m_frame.create(m_wintext.max_width(), m_wintext.max_height());
+	m_wintext.create(m_frame.window());
 }
 
 /*
@@ -628,24 +627,24 @@ int Win32DiskDriver::validate_mode(const VIDEOINFO &mode)
 
 void Win32DiskDriver::pause()
 {
-	if (m_wintext.m_window)
+	if (m_wintext.window())
 	{
-		ShowWindow(m_wintext.m_window, SW_HIDE);
+		ShowWindow(m_wintext.window(), SW_HIDE);
 	}
 }
 
 void Win32DiskDriver::resume()
 {
-	if (!m_wintext.m_window)
+	if (!m_wintext.window())
 	{
 		window();
 	}
 
-	if (m_wintext.m_window)
+	if (m_wintext.window())
 	{
-		ShowWindow(m_wintext.m_window, SW_NORMAL);
+		ShowWindow(m_wintext.window(), SW_NORMAL);
 	}
-	wintext_resume(&m_wintext);
+	m_wintext.resume();
 }
 
 void Win32DiskDriver::get_truecolor(int x, int y, int &r, int &g, int &b, int &a)

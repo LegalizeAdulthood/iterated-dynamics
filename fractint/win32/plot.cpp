@@ -19,8 +19,8 @@
 
 #define PLOT_TIMER_ID 1
 
-static Plot *s_plot = NULL;
-static LPCSTR s_window_class = "FractIntPlot";
+Plot *Plot::s_plot = NULL;
+LPCSTR Plot::s_window_class = "FractIntPlot";
 
 void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
 {
@@ -140,31 +140,31 @@ void Plot::OnPaint(HWND window)
 /* forward all mouse events to the frame */
 void Plot::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
 {
-	FORWARD_WM_LBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
+	FORWARD_WM_LBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, Frame::proc);
 }
 void Plot::OnLeftButtonUp(HWND hwnd, int x, int y, int keyFlags)
 {
-	FORWARD_WM_LBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
+	FORWARD_WM_LBUTTONUP(hwnd, x, y, keyFlags, Frame::proc);
 }
 void Plot::OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
 {
-	FORWARD_WM_MBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
+	FORWARD_WM_MBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, Frame::proc);
 }
 void Plot::OnMiddleButtonUp(HWND hwnd, int x, int y, int keyFlags)
 {
-	FORWARD_WM_MBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
+	FORWARD_WM_MBUTTONUP(hwnd, x, y, keyFlags, Frame::proc);
 }
 void Plot::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
 {
-	FORWARD_WM_RBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, frame_proc);
+	FORWARD_WM_RBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, Frame::proc);
 }
 void Plot::OnRightButtonUp(HWND hwnd, int x, int y, int keyFlags)
 {
-	FORWARD_WM_RBUTTONUP(hwnd, x, y, keyFlags, frame_proc);
+	FORWARD_WM_RBUTTONUP(hwnd, x, y, keyFlags, Frame::proc);
 }
 void Plot::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
-	FORWARD_WM_MOUSEMOVE(hwnd, x, y, keyFlags, frame_proc);
+	FORWARD_WM_MOUSEMOVE(hwnd, x, y, keyFlags, Frame::proc);
 }
 
 LRESULT CALLBACK Plot::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
@@ -296,7 +296,7 @@ void Plot::create_backing_store()
 	::SetBkMode(m_memory_dc, OPAQUE);
 }
 
-void Plot::window(HWND parent)
+void Plot::create(HWND parent)
 {
 	if (NULL == m_window)
 	{
