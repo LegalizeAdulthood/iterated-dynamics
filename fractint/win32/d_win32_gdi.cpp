@@ -222,12 +222,12 @@ void GDIDriver::max_size(int &width, int &height, bool &center_x, bool &center_y
 	if (g_video_table[g_adapter].x_dots > width)
 	{
 		width = g_video_table[g_adapter].x_dots;
-		center_x = FALSE;
+		center_x = false;
 	}
 	if (g_video_table[g_adapter].y_dots > height)
 	{
 		height = g_video_table[g_adapter].y_dots;
-		center_y = FALSE;
+		center_y = false;
 	}
 }
 
@@ -666,6 +666,7 @@ int GDIDriver::validate_mode(const VIDEOINFO &mode)
 
 void GDIDriver::pause()
 {
+	Win32BaseDriver::pause();
 	if (m_plot.window())
 	{
 		ShowWindow(m_plot.window(), SW_HIDE);
@@ -674,13 +675,16 @@ void GDIDriver::pause()
 
 void GDIDriver::resume()
 {
-	if (!m_wintext.window())
+	Win32BaseDriver::resume();
+	if (!m_plot.window())
 	{
 		window();
 	}
 
-	ShowWindow(m_wintext.window(), SW_NORMAL);
-	m_wintext.resume();
+	if (m_plot.window())
+	{
+		ShowWindow(m_plot.window(), SW_SHOW);
+	}
 }
 
 void GDIDriver::display_string(int x, int y, int fg, int bg, const char *text)

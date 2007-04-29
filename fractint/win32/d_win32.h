@@ -9,6 +9,8 @@ public:
 
 	/* initialize the driver */			virtual int initialize(int *argc, char **argv);
 	/* shutdown the driver */			virtual void terminate();
+										virtual void pause();
+										virtual void resume();
 
 										virtual void set_video_mode(const VIDEOINFO &mode);
 										virtual void max_size(int &width, int &height, bool &center_x, bool &center_y);

@@ -41,8 +41,6 @@ public:
 	Win32DiskDriver(const char *name, const char *description);
 
 	/* initialize the driver */			virtual int initialize(int *argc, char **argv);
-	/* pause this driver */				virtual void pause();
-	/* resume this driver */			virtual void resume();
 
 	/* validate a fractint.cfg mode */	virtual int validate_mode(const VIDEOINFO &mode);
 										virtual void set_video_mode(const VIDEOINFO &mode);
@@ -623,28 +621,6 @@ int Win32DiskDriver::validate_mode(const VIDEOINFO &mode)
 		(mode.videomodecx == 0) &&
 		(mode.videomodedx == 0) &&
 		(mode.dotmode == 19);
-}
-
-void Win32DiskDriver::pause()
-{
-	if (m_wintext.window())
-	{
-		ShowWindow(m_wintext.window(), SW_HIDE);
-	}
-}
-
-void Win32DiskDriver::resume()
-{
-	if (!m_wintext.window())
-	{
-		window();
-	}
-
-	if (m_wintext.window())
-	{
-		ShowWindow(m_wintext.window(), SW_NORMAL);
-	}
-	m_wintext.resume();
 }
 
 void Win32DiskDriver::get_truecolor(int x, int y, int &r, int &g, int &b, int &a)

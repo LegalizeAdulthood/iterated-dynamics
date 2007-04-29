@@ -22,7 +22,103 @@
 #define ZoomVHLimit 1
 #define JitterMickeys 3
 
-Frame *Frame::s_frame = NULL;
+class FrameImpl
+{
+public:
+	FrameImpl();
+	void init(HINSTANCE instance, LPCSTR title);
+	void create(int width, int height);
+	int get_key_press(int option);
+	int pump_messages(int waitflag);
+	void resize(int width, int height);
+	void set_keyboard_timeout(int ms);
+
+	HWND window() const	{ return m_window; }
+	int width() const	{ return m_width; }
+	int height() const	{ return m_height; }
+
+	static LRESULT CALLBACK proc(HWND window, UINT message, WPARAM wp, LPARAM lp);
+
+private:
+	static void OnClose(HWND window);
+	static void OnSetFocus(HWND window, HWND old_focus);
+	static void OnKillFocus(HWND window, HWND old_focus);
+	static void OnPaint(HWND window);
+	int add_key_press(unsigned int key);
+	static int mod_key(int modifier, int code, int fik, unsigned int *j);
+	static void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags);
+	static void OnChar(HWND hwnd, TCHAR ch, int cRepeat);
+	static void OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info);
+	static void OnTimer(HWND window, UINT id);
+	static void OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags);
+	static void OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags);
+	static void OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
+	static void OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags);
+	static void OnRightButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
+	static void OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags);
+	static void OnMiddleButtonUp(HWND hwnd, int x, int y, UINT keyFlags);
+	void adjust_size(int width, int height);
+
+	HINSTANCE m_instance;
+	HWND m_window;
+	char m_title[80];
+	int m_width;
+	int m_height;
+	int m_nc_width;
+	int m_nc_height;
+	HWND m_child;
+	BOOL m_has_focus;
+	BOOL m_timed_out;
+
+	/* the keypress buffer */
+	unsigned int m_keypress_count;
+	unsigned int m_keypress_head;
+	unsigned int m_keypress_tail;
+	unsigned int m_keypress_buffer[KEYBUFMAX];
+
+	/* mouse data */
+	BOOL m_button_down[3];
+	int m_start_x, m_start_y;
+	int m_delta_x, m_delta_y;
+	int m_look_mouse;
+
+	static FrameImpl *s_frame;
+};
+
+FrameImpl *FrameImpl::s_frame = NULL;
+
+FrameImpl::FrameImpl() :
+	m_instance(0),
+	m_window(0),
+	m_width(0),
+	m_height(0),
+	m_nc_width(0),
+	m_nc_height(0),
+	m_child(0),
+	m_has_focus(0),
+	m_timed_out(0),
+	m_keypress_count(0),
+	m_keypress_head(0),
+	m_keypress_tail(0),
+	m_start_x(0),
+	m_start_y(0),
+	m_delta_x(0),
+	m_delta_y(0),
+	m_look_mouse(0)
+{
+	for (int i = 0; i < NUM_OF(m_title); i++)
+	{
+		m_title[i] = 0;
+	}
+	for (int i = 0; i < NUM_OF(m_button_down); i++)
+	{
+		m_button_down[i] = 0;
+	}
+	for (int i = 0; i < NUM_OF(m_keypress_buffer); i++)
+	{
+		m_keypress_buffer[i] = 0;
+	}
+}
 
 /*
 ; translate table for mouse movement -> fake keys
@@ -40,29 +136,29 @@ static int s_mouse_keys[16] =
 	FIK_CTL_END,		FIK_CTL_HOME,	FIK_CTL_PAGE_DOWN,	FIK_CTL_PAGE_UP	/* middle button */
 };
 
-void Frame::OnClose(HWND window)
+void FrameImpl::OnClose(HWND window)
 {
 	PostQuitMessage(0);
 }
 
-void Frame::OnSetFocus(HWND window, HWND old_focus)
+void FrameImpl::OnSetFocus(HWND window, HWND old_focus)
 {
 	s_frame->m_has_focus = TRUE;
 }
 
-void Frame::OnKillFocus(HWND window, HWND old_focus)
+void FrameImpl::OnKillFocus(HWND window, HWND old_focus)
 {
 	s_frame->m_has_focus = FALSE;
 }
 
-void Frame::OnPaint(HWND window)
+void FrameImpl::OnPaint(HWND window)
 {
 	PAINTSTRUCT ps;
 	HDC hDC = BeginPaint(window, &ps);
 	EndPaint(window, &ps);
 }
 
-int Frame::add_key_press(unsigned int key)
+int FrameImpl::add_key_press(unsigned int key)
 {
 	if (m_keypress_count >= KEYBUFMAX)
 	{
@@ -80,7 +176,7 @@ int Frame::add_key_press(unsigned int key)
 	return m_keypress_count == KEYBUFMAX;
 }
 
-int Frame::mod_key(int modifier, int code, int fik, unsigned int *j)
+int FrameImpl::mod_key(int modifier, int code, int fik, unsigned int *j)
 {
 	SHORT state = GetKeyState(modifier);
 	if ((state & 0x8000) != 0)
@@ -99,7 +195,7 @@ int Frame::mod_key(int modifier, int code, int fik, unsigned int *j)
 #define CTL_KEY2(fik_, j_)	mod_key(VK_CONTROL, i, fik_, j_)
 #define SHF_KEY(fik_)		mod_key(VK_SHIFT, i, fik_, NULL)
 
-void Frame::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
+void FrameImpl::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
 	/* KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code */
 	/* a key has been pressed - maybe ASCII, maybe not */
@@ -170,7 +266,7 @@ void Frame::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 	}
 }
 
-void Frame::OnChar(HWND hwnd, TCHAR ch, int cRepeat)
+void FrameImpl::OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 {
 	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
 	/* an ASCII key has been pressed */
@@ -181,7 +277,7 @@ void Frame::OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 	s_frame->add_key_press(k);
 }
 
-void Frame::OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
+void FrameImpl::OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
 {
 	info->ptMaxSize.x = s_frame->m_nc_width;
 	info->ptMaxSize.y = s_frame->m_nc_height;
@@ -189,7 +285,7 @@ void Frame::OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO info)
 	info->ptMinTrackSize = info->ptMaxSize;
 }
 
-void Frame::OnTimer(HWND window, UINT id)
+void FrameImpl::OnTimer(HWND window, UINT id)
 {
 	_ASSERTE(s_frame->m_window == window);
 	_ASSERTE(FRAME_TIMER_ID == id);
@@ -197,7 +293,7 @@ void Frame::OnTimer(HWND window, UINT id)
 	KillTimer(window, FRAME_TIMER_ID);
 }
 
-void Frame::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
+void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	int key_index;
 
@@ -249,7 +345,7 @@ void Frame::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 	}
 }
 
-void Frame::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
+void FrameImpl::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	s_frame->m_button_down[BUTTON_LEFT] = TRUE;
 	if (doubleClick && (LOOK_MOUSE_NONE != g_look_at_mouse))
@@ -258,12 +354,12 @@ void Frame::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT key
 	}
 }
 
-void Frame::OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+void FrameImpl::OnLeftButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	s_frame->m_button_down[BUTTON_LEFT] = FALSE;
 }
 
-void Frame::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
+void FrameImpl::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	s_frame->m_button_down[BUTTON_RIGHT] = TRUE;
 	if (doubleClick && (LOOK_MOUSE_NONE != g_look_at_mouse))
@@ -272,22 +368,22 @@ void Frame::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT ke
 	}
 }
 
-void Frame::OnRightButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+void FrameImpl::OnRightButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	s_frame->m_button_down[BUTTON_RIGHT] = FALSE;
 }
 
-void Frame::OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
+void FrameImpl::OnMiddleButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT keyFlags)
 {
 	s_frame->m_button_down[BUTTON_MIDDLE] = TRUE;
 }
 
-void Frame::OnMiddleButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
+void FrameImpl::OnMiddleButtonUp(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	s_frame->m_button_down[BUTTON_MIDDLE] = FALSE;
 }
 
-LRESULT CALLBACK Frame::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
+LRESULT CALLBACK FrameImpl::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
 	switch (message)
 	{
@@ -314,7 +410,7 @@ LRESULT CALLBACK Frame::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 	return 0;
 }
 
-void Frame::init(HINSTANCE instance, LPCSTR title)
+void FrameImpl::init(HINSTANCE instance, LPCSTR title)
 {
 	BOOL status;
 	LPCSTR windowClass = "FractintFrame";
@@ -345,7 +441,7 @@ void Frame::init(HINSTANCE instance, LPCSTR title)
 	m_keypress_tail  = 0;
 }
 
-int Frame::pump_messages(int waitflag)
+int FrameImpl::pump_messages(int waitflag)
 {
 	MSG msg;
 	BOOL quitting = FALSE;
@@ -387,7 +483,7 @@ int Frame::pump_messages(int waitflag)
 	return m_keypress_count == 0 ? 0 : 1;
 }
 
-int Frame::get_key_press(int wait_for_key)
+int FrameImpl::get_key_press(int wait_for_key)
 {
 	int i;
 
@@ -425,7 +521,7 @@ int Frame::get_key_press(int wait_for_key)
 	return i;
 }
 
-void Frame::adjust_size(int width, int height)
+void FrameImpl::adjust_size(int width, int height)
 {
 	m_width = width;
 	m_nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
@@ -434,10 +530,11 @@ void Frame::adjust_size(int width, int height)
 		GetSystemMetrics(SM_CYFRAME)*2 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
-void Frame::create(int width, int height)
+void FrameImpl::create(int width, int height)
 {
 	if (NULL == m_window)
 	{
+		s_frame = this;
 		adjust_size(width, height);
 		m_window = CreateWindow("FractintFrame",
 			m_title,
@@ -456,7 +553,7 @@ void Frame::create(int width, int height)
 	}
 }
 
-void Frame::resize(int width, int height)
+void FrameImpl::resize(int width, int height)
 {
 	BOOL status;
 
@@ -468,7 +565,7 @@ void Frame::resize(int width, int height)
 
 }
 
-void Frame::set_keyboard_timeout(int ms)
+void FrameImpl::set_keyboard_timeout(int ms)
 {
 	UINT_PTR result = SetTimer(m_window, FRAME_TIMER_ID, ms, NULL);
 	if (!result)
@@ -476,4 +573,56 @@ void Frame::set_keyboard_timeout(int ms)
 		DWORD error = GetLastError();
 		_ASSERTE(result == FRAME_TIMER_ID);
 	}
+}
+
+FrameImpl Frame::s_impl;
+
+void Frame::init(HINSTANCE instance, LPCTSTR title)
+{
+	s_impl.init(instance, title);
+}
+
+void Frame::create(int width, int height)
+{
+	s_impl.create(width, height);
+}
+
+int Frame::get_key_press(int option)
+{
+	return s_impl.get_key_press(option);
+}
+
+int Frame::pump_messages(int waitflag)
+{
+	return s_impl.pump_messages(waitflag);
+}
+
+void Frame::resize(int width, int height)
+{
+	s_impl.resize(width, height);
+}
+
+void Frame::set_keyboard_timeout(int ms)
+{
+	s_impl.set_keyboard_timeout(ms);
+}
+
+HWND Frame::window() const
+{
+	return s_impl.window();
+}
+
+int Frame::width() const
+{
+	return s_impl.width();
+}
+
+int Frame::height() const
+{
+	return s_impl.height();
+}
+
+LRESULT CALLBACK Frame::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
+{
+	return FrameImpl::proc(window, message, wp, lp);
 }

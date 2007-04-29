@@ -819,7 +819,14 @@ void WinText::put_char_attr(int row, int col, int char_attr)
 	invalidate(col, row, col, row);
 }
 
+void WinText::pause()
+{
+	::ShowWindow(m_window, SW_HIDE);
+	s_me = NULL;
+}
+
 void WinText::resume()
 {
 	s_me = this;
+	::ShowWindow(m_window, SW_SHOW);
 }

@@ -35,7 +35,7 @@ Win32BaseDriver::Win32BaseDriver(const char *name, const char *description)
 	m_frame(),
 	m_wintext(),
 	m_key_buffer(0),
-	m_screen_count(0),
+	m_screen_count(-1),
 	m_cursor_shown(false),
 	m_cursor_row(0),
 	m_cursor_col(0),
@@ -59,8 +59,8 @@ void Win32BaseDriver::max_size(int &width, int &height, bool &center_x, bool &ce
 {
 	width = m_wintext.max_width();
 	height = m_wintext.max_height();
-	center_x = FALSE;
-	center_y = FALSE;
+	center_x = true;
+	center_y = true;
 }
 
 int Win32BaseDriver::handle_timed_save(int ch)
@@ -639,4 +639,14 @@ void Win32BaseDriver::delay(int ms)
 void Win32BaseDriver::set_keyboard_timeout(int ms)
 {
 	m_frame.set_keyboard_timeout(ms);
+}
+
+void Win32BaseDriver::pause()
+{
+	m_wintext.pause();
+}
+
+void Win32BaseDriver::resume()
+{
+	m_wintext.resume();
 }

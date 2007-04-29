@@ -146,22 +146,35 @@ void driver_terminate()
 	s_current->terminate();
 }
 
-#define METHOD_VOID(name_) \
-	void driver_##name_() { s_current->name_(); }
-#define METHOD(type_, name_) \
-	type_ driver_##name_() { return s_current->name_(); }
-#define METHOD_INT(name_) METHOD(int, name_)
-
 void driver_schedule_alarm(int soon)
 {
 	s_current->schedule_alarm(soon);
 }
 
-METHOD_VOID(window)
-METHOD_INT(resize)
-METHOD_VOID(redraw)
-METHOD_INT(read_palette)
-METHOD_INT(write_palette)
+void driver_window()
+{
+	s_current->window();
+}
+
+int driver_resize()
+{
+	return s_current->resize();
+}
+
+void driver_redraw()
+{
+	s_current->redraw();
+}
+
+int driver_read_palette()
+{
+	return s_current->read_palette();
+}
+
+int driver_write_palette()
+{
+	return s_current->write_palette();
+}
 
 int driver_read_pixel(int x, int y)
 {
@@ -213,23 +226,40 @@ int driver_wait_key_pressed(int timeout)
 	return s_current->wait_key_pressed(timeout);
 }
 
-METHOD_VOID(shell)
+void driver_shell()
+{
+	s_current->shell();
+}
 
 void driver_put_string(int row, int col, int attr, const char *msg)
 {
 	s_current->put_string(row, col, attr, msg);
 }
 
-METHOD_VOID(set_for_text)
-METHOD_VOID(set_for_graphics)
-METHOD_VOID(set_clear)
+void driver_set_for_text()
+{
+	s_current->set_for_text();
+}
+
+void driver_set_for_graphics()
+{
+	s_current->set_for_graphics();
+}
+
+void driver_set_clear()
+{
+	s_current->set_clear();
+}
 
 void driver_move_cursor(int row, int col)
 {
 	s_current->move_cursor(row, col);
 }
 
-METHOD_VOID(hide_text_cursor)
+void driver_hide_text_cursor()
+{
+	s_current->hide_text_cursor();
+}
 
 void driver_set_attr(int row, int col, int attr, int count)
 {
@@ -241,11 +271,25 @@ void driver_scroll_up(int top, int bot)
 	s_current->scroll_up(top, bot);
 }
 
-METHOD_VOID(stack_screen)
-METHOD_VOID(unstack_screen)
-METHOD_VOID(discard_screen)
+void driver_stack_screen()
+{
+	s_current->stack_screen();
+}
 
-METHOD_INT(init_fm)
+void driver_unstack_screen()
+{
+	s_current->unstack_screen();
+}
+
+void driver_discard_screen()
+{
+	s_current->discard_screen();
+}
+
+int driver_init_fm()
+{
+	return s_current->init_fm();
+}
 
 void driver_buzzer(int kind)
 {
@@ -257,9 +301,20 @@ int driver_sound_on(int freq)
 	return s_current->sound_on(freq);
 }
 
-METHOD_VOID(sound_off)
-METHOD_VOID(mute)
-METHOD_INT(diskp)
+void driver_sound_off()
+{
+	s_current->sound_off();
+}
+
+void driver_mute()
+{
+	s_current->mute();
+}
+
+int driver_diskp()
+{
+	return s_current->diskp();
+}
 
 int driver_get_char_attr()
 {
