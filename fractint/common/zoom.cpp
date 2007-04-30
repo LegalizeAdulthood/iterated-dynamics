@@ -650,7 +650,7 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 	{
 		return 1; /* btm, align on any pixel */
 	}
-	if (g_standard_calculation_mode != 'g' || (g_current_fractal_specific->flags&NOGUESS))
+	if (g_standard_calculation_mode != 'g' || (g_current_fractal_specific->flags & FRACTALFLAG_NO_SOLID_GUESSING))
 	{
 		if (g_standard_calculation_mode == '2' || g_standard_calculation_mode == '3') /* align on even pixel for 2pass */
 		{

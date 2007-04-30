@@ -107,7 +107,7 @@ int     g_log_automatic_flag = FALSE;  /* auto calculate logmap */
 int     g_no_bof = FALSE; /* Flag to make inside=bof options not duplicate bof images */
 int		g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
 int		g_command_initialize = TRUE;               /* first time into command_files? */
-struct fractal_specific_stuff *g_current_fractal_specific = NULL;
+FractalTypeSpecificData *g_current_fractal_specific = NULL;
 char	g_formula_filename[FILE_MAX_PATH]; /* file to find (type=)formulas in */
 char	g_formula_name[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
 char	g_l_system_filename[FILE_MAX_PATH];   /* file to find (type=)L-System's in */

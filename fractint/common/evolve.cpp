@@ -360,7 +360,7 @@ choose_vars_restart:
 	}
 
 	if (g_current_fractal_specific->calculate_type == standard_fractal &&
-		(g_current_fractal_specific->flags & BAILTEST))
+		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 	{
 		choices[++k] = g_genes[NUMGENES - 1].name;
 		uvalues[k].type = 'l';
@@ -420,7 +420,7 @@ choose_vars_restart:
 	}
 
 	if (g_current_fractal_specific->calculate_type == standard_fractal &&
-		(g_current_fractal_specific->flags & BAILTEST))
+		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 	{
 		g_genes[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
 	}

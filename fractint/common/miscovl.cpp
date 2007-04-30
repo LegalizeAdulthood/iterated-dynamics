@@ -2663,7 +2663,7 @@ void flip_image(int key)
 	int i, j, ixhalf, iyhalf, tempdot;
 
 	/* fractal must be rotate-able and be finished */
-	if ((g_current_fractal_specific->flags&NOROTATE) != 0
+	if ((g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0
 			|| g_calculation_status == CALCSTAT_IN_PROGRESS
 			|| g_calculation_status == CALCSTAT_RESUMABLE)
 		return;

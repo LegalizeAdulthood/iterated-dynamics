@@ -750,25 +750,44 @@ struct tag_more_parameters
 };
 typedef struct tag_more_parameters more_parameters;
 
-struct fractal_specific_stuff
+/* bitmask defines for g_fractal_specific flags */
+#define FRACTALFLAG_NO_ZOOM					1			/* zoombox not allowed at all          */
+#define FRACTALFLAG_NO_SOLID_GUESSING		2			/* solid guessing not allowed          */
+#define FRACTALFLAG_NO_BOUNDARY_TRACING		4			/* boundary tracing not allowed        */
+#define FRACTALFLAG_NO_ZOOM_BOX_ROTATE		8			/* zoombox rotate/stretch not allowed  */
+#define FRACTALFLAG_NOT_RESUMABLE			0x10		/* can't interrupt and resume          */
+#define FRACTALFLAG_INFINITE_CALCULATION	0x20		/* this type calculates forever        */
+#define FRACTALFLAG_FUNCTION_SHIFT			6			/* number of trig functions in formula */
+#define FRACTALFLAG_FUNCTION_MASK			0x7
+#define FRACTALFLAG_1_FUNCTION				(1 << FRACTALFLAG_FUNCTION_SHIFT)	
+#define FRACTALFLAG_2_FUNCTIONS				(2 << FRACTALFLAG_FUNCTION_SHIFT)
+#define FRACTALFLAG_4_FUNCTIONS				(4 << FRACTALFLAG_FUNCTION_SHIFT)
+#define FRACTALFLAG_3D_PARAMETERS			0x400		/* uses 3d parameters                  */
+#define FRACTALFLAG_JULIBROT				0x800		/* works with Julibrot                 */
+#define FRACTALFLAG_MORE_PARAMETERS			0x1000		/* more than 4 parms                   */
+#define FRACTALFLAG_BAIL_OUT_TESTS			0x2000		/* can use different bailout tests     */
+#define FRACTALFLAG_ARBITRARY_PRECISION		0x4000		/* supports arbitrary precision        */
+#define FRACTALFLAG_DONT_DISPLAY			0x10000		/* don't display in fractal type list */
+
+struct FractalTypeSpecificData
 {
 	int fractal_type;
-	char  *name;                         /* name of the fractal */
+	char *name;							/* name of the fractal */
 										/* (leading "*" supresses name display) */
-	char  *parameters[4];                 /* name of the parameters */
-	double paramvalue[4];                /* default parameter values */
-	int   helptext;                      /* helpdefs.h HT_xxxx, -1 for none */
-	int   helpformula;                   /* helpdefs.h HF_xxxx, -1 for none */
-	unsigned flags;                      /* constraints, bits defined below */
-	float x_min;                          /* default XMIN corner */
-	float x_max;                          /* default XMAX corner */
-	float y_min;                          /* default YMIN corner */
-	float y_max;                          /* default YMAX corner */
-	int   isinteger;                     /* 1 if g_integer_fractal, 0 otherwise */
-	int   tojulia;                       /* mandel-to-julia switch */
-	int   tomandel;                      /* julia-to-mandel switch */
-	int   tofloat;                       /* integer-to-floating switch */
-	int   symmetry;                      /* applicable symmetry logic
+	char  *parameters[4];				/* name of the parameters */
+	double paramvalue[4];				/* default parameter values */
+	int   helptext;						/* helpdefs.h HT_xxxx, -1 for none */
+	int   helpformula;					/* helpdefs.h HF_xxxx, -1 for none */
+	int flags;							/* constraints, bits defined below */
+	float x_min;						/* default XMIN corner */
+	float x_max;						/* default XMAX corner */
+	float y_min;						/* default YMIN corner */
+	float y_max;						/* default YMAX corner */
+	int   isinteger;					/* 1 if g_integer_fractal, 0 otherwise */
+	int   tojulia;						/* mandel-to-julia switch */
+	int   tomandel;						/* julia-to-mandel switch */
+	int   tofloat;						/* integer-to-floating switch */
+	int   symmetry;						/* applicable symmetry logic
 										   0 = no symmetry
 										  -1 = y-axis symmetry (If No Params)
 										   1 = y-axis symmetry
@@ -781,11 +800,11 @@ struct fractal_specific_stuff
 										   5 = PI (sin/cos) symmetry
 										   6 = NEWTON (power) symmetry
 																*/
-	int (*orbitcalc)();      /* function that calculates one orbit */
-	int (*per_pixel)();      /* once-per-pixel init */
-	int (*per_image)();      /* once-per-image setup */
-	int (*calculate_type)();       /* name of main fractal function */
-	int orbit_bailout;           /* usual bailout value for orbit calc */
+	int (*orbitcalc)();					/* function that calculates one orbit */
+	int (*per_pixel)();					/* once-per-pixel init */
+	int (*per_image)();					/* once-per-image setup */
+	int (*calculate_type)();			/* name of main fractal function */
+	int orbit_bailout;					/* usual bailout value for orbit calc */
 };
 
 struct tag_alternate_math_info
@@ -839,25 +858,6 @@ enum bailouts { Mod, Real, Imag, Or, And, Manh, Manr };
 enum Major  {breadth_first, depth_first, random_walk, random_run};
 enum Minor  {left_first, right_first};
 
-/* bitmask defines for g_fractal_specific flags */
-#define  NOZOOM         1    /* zoombox not allowed at all          */
-#define  NOGUESS        2    /* solid guessing not allowed          */
-#define  NOTRACE        4    /* boundary tracing not allowed        */
-#define  NOROTATE       8    /* zoombox rotate/stretch not allowed  */
-#define  NORESUME    0x10    /* can't interrupt and resume          */
-#define  INFCALC     0x20    /* this type calculates forever        */
-#define  TRIG1       0x40    /* number of trig functions in formula */
-#define  TRIG2       0x80
-#define  TRIG3       0xC0
-#define  TRIG4      0x100
-#define  PARMS3D    0x400    /* uses 3d parameters                  */
-#define  OKJB       0x800    /* works with Julibrot                 */
-#define  MORE      0x1000    /* more than 4 parms                   */
-#define  BAILTEST  0x2000    /* can use different bailout tests     */
-#define  BF_MATH   0x4000    /* supports arbitrary precision        */
-#define  LD_MATH   0x8000    /* supports long double                */
-
-
 /* more bitmasks for evolution mode flag */
 #define EVOLVE_NONE			0	/* no evolution */
 #define EVOLVE_FIELD_MAP	1	/*steady field varyiations across screen */
@@ -867,8 +867,8 @@ enum Minor  {left_first, right_first};
 #define EVOLVE_PARM_BOX		128
 
 
-extern struct fractal_specific_stuff g_fractal_specific[];
-extern struct fractal_specific_stuff *g_current_fractal_specific;
+extern FractalTypeSpecificData g_fractal_specific[];
+extern FractalTypeSpecificData *g_current_fractal_specific;
 
 #define DEFAULTFRACTALTYPE      ".gif"
 #define ALTERNATEFRACTALTYPE    ".fra"

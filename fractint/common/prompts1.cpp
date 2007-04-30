@@ -1133,7 +1133,7 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	{
 		if (g_julibrot)
 		{
-			if (!((g_fractal_specific[i].flags & OKJB) && g_fractal_specific[i].name[0] != '*'))
+			if (!((g_fractal_specific[i].flags & FRACTALFLAG_JULIBROT) && g_fractal_specific[i].name[0] != '*'))
 			{
 				continue;
 			}
@@ -1361,7 +1361,7 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 	numfractals = 0;
 	for (i = 0; i < g_num_fractal_types; i++)
 	{
-		if ((g_fractal_specific[i].flags & OKJB) && g_fractal_specific[i].name[0] != '*')
+		if ((g_fractal_specific[i].flags & FRACTALFLAG_JULIBROT) && g_fractal_specific[i].name[0] != '*')
 		{
 			fractals[numfractals] = i;
 			if (i == g_new_orbit_type || i == g_fractal_specific[g_new_orbit_type].tofloat)
@@ -1498,8 +1498,8 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	static /* Can't initialize aggregates on the stack */
 #endif
 	char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
-	struct fractal_specific_stuff *jborbit = NULL;
-	struct fractal_specific_stuff *savespecific;
+	FractalTypeSpecificData *jborbit = NULL;
+	FractalTypeSpecificData *savespecific;
 	int firstparm = 0;
 	int lastparm  = MAX_PARAMETERS;
 	double oldparam[MAX_PARAMETERS];
@@ -1766,7 +1766,7 @@ gfp_top:
 	i = g_current_fractal_specific->orbit_bailout;
 
 	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
-		(g_current_fractal_specific->flags & BAILTEST))
+		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 	{
 		paramvalues[promptnum].type = 'l';
 		paramvalues[promptnum].uval.ch.val  = (int)g_bail_out_test;
@@ -1988,7 +1988,7 @@ gfp_top:
 	i = g_current_fractal_specific->orbit_bailout;
 
 	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
-		(g_current_fractal_specific->flags & BAILTEST))
+		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 	{
 		if (paramvalues[promptnum].uval.ch.val != (int)g_bail_out_test)
 		{
@@ -2068,7 +2068,7 @@ int find_extra_parameter(int type)
 	ret = -1;
 	i = -1;
 
-	if (g_fractal_specific[type].flags&MORE)
+	if (g_fractal_specific[type].flags&FRACTALFLAG_MORE_PARAMETERS)
 	{
 		do
 		{

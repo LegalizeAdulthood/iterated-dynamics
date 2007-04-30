@@ -893,11 +893,11 @@ static void perform_work_list()
 			}
 		}
 	}
-	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->flags & NOTRACE))
+	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_BOUNDARY_TRACING))
 	{
 		g_standard_calculation_mode = '1';
 	}
-	if (g_standard_calculation_mode == 'g' && (g_current_fractal_specific->flags & NOGUESS))
+	if (g_standard_calculation_mode == 'g' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_SOLID_GUESSING))
 	{
 		g_standard_calculation_mode = '1';
 	}
