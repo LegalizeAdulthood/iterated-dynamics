@@ -7,7 +7,7 @@ class Win32BaseDriver : public NamedDriver
 public:
 	Win32BaseDriver(const char *name, const char *description);
 
-	/* initialize the driver */			virtual int initialize(int *argc, char **argv);
+	/* initialize the driver */			virtual int initialize(int &argc, char **argv);
 	/* shutdown the driver */			virtual void terminate();
 										virtual void pause();
 										virtual void resume();

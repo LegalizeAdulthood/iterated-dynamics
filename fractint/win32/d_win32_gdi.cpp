@@ -38,7 +38,7 @@ public:
 	{
 	}
 
-	virtual int initialize(int *argc, char **argv);
+	virtual int initialize(int &argc, char **argv);
 	virtual void terminate();
 	virtual void get_max_screen(int &x_max, int &y_max) const;
 	virtual int resize();

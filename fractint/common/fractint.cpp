@@ -637,7 +637,7 @@ int main(int argc, char **argv)
 	InitMemory();
 
 	/* let drivers add their video modes */
-	if (!DriverManager::open_drivers(&argc, argv))
+	if (!DriverManager::open_drivers(argc, argv))
 	{
 		init_failure("Sorry, I couldn't find any working video drivers for your system\n");
 		exit(-1);
