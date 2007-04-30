@@ -72,7 +72,7 @@ public:
 	X11Driver(const char *name, const char *description);
 
 	virtual BYTE *find_font(int parm);
-	virtual int initialize(int *argc, char **argv);
+	virtual int initialize(int &argc, char **argv);
 	virtual int validate_mode(const VIDEOINFO &mode);
 	virtual void flush();
 	virtual void terminate();
@@ -302,52 +302,52 @@ int X11Driver::check_arg(int i, int argc, char **argv)
 		m_Xdisplay = argv[i+1];
 		return 2;
 	}
-	else if (strcmp(argv[*i], "-fullscreen") == 0)
+	else if (strcmp(argv[i], "-fullscreen") == 0)
 	{
 		m_fullscreen = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-onroot") == 0)
+	else if (strcmp(argv[i], "-onroot") == 0)
 	{
 		m_on_root = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-share") == 0)
+	else if (strcmp(argv[i], "-share") == 0)
 	{
 		m_sharecolor = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-fast") == 0)
+	else if (strcmp(argv[i], "-fast") == 0)
 	{
 		m_fastmode = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-slowdisplay") == 0)
+	else if (strcmp(argv[i], "-slowdisplay") == 0)
 	{
 		slowdisplay = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-sync") == 0)
+	else if (strcmp(argv[i], "-sync") == 0)
 	{
 		m_sync = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-private") == 0)
+	else if (strcmp(argv[i], "-private") == 0)
 	{
 		m_privatecolor = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-fixcolors") == 0 && i < argc-1)
+	else if (strcmp(argv[i], "-fixcolors") == 0 && i < argc-1)
 	{
 		m_fixcolors = atoi(argv[i+1]);
 		return 2;
 	}
-	else if (strcmp(argv[*i], "-geometry") == 0 && i < argc-1)
+	else if (strcmp(argv[i], "-geometry") == 0 && i < argc-1)
 	{
 		m_Xgeometry = argv[i+1];
 		return 2;
 	}
-	else if (strcmp(argv[*i], "-fn") == 0 && i < argc-1)
+	else if (strcmp(argv[i], "-fn") == 0 && i < argc-1)
 	{
 		m_x_font_name = argv[i+1];
 		return 2;
@@ -1749,7 +1749,7 @@ void X11Driver::flush()
  *
  *----------------------------------------------------------------------
  */
-int X11Driver::initialize(int *argc, char **argv)
+int X11Driver::initialize(int &argc, char **argv)
 {
 	/*
 	* Check a bunch of important conditions
