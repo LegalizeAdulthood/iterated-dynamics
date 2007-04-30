@@ -124,7 +124,6 @@ static int alarmon = 0; /* 1 if the refresh alarm is on */
 static int doredraw = 0; /* 1 if we have a redraw waiting */
 
 /* Static routines */
-static Window FindRootWindow();
 static Window pr_dwmroot(Display *dpy, Window pwin);
 static int errhand(Display *dp, XErrorEvent *xe);
 static int getachar();
@@ -132,7 +131,6 @@ static int handleesc();
 static int translatekey(int ch); 
 static int xcmapstuff(); 
 static void xhandleevents();
-static void RemoveRootPixmap();
 static void doneXwindow();
 static void initdacbox();
 static void setredrawscreen(); 
@@ -531,8 +529,8 @@ void initUnixWindow()
 		}
 		if (onroot)
 		{
-			Xroot = FindRootWindow();
-			RemoveRootPixmap();
+			//Xroot = FindRootWindow();
+			//RemoveRootPixmap();
 			Xgc = XCreateGC(Xdp, Xroot, 0, &Xgcvals);
 			Xpixmap = XCreatePixmap(Xdp, Xroot, Xwinwidth, Xwinheight, Xdepth);
 			Xw = Xroot;
