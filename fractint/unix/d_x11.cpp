@@ -138,7 +138,7 @@ public:
 
 private:
 	unsigned long do_fake_lut(int idx);
-	int check_arg(int argc, char **argv, int *i);
+	int check_arg(int &argc, char **argv);
 	void doneXwindow();
 	void initdacbox();
 	void erase_text_screen();
@@ -295,7 +295,7 @@ unsigned long X11Driver::do_fake_lut(int idx)
  *
  *----------------------------------------------------------------------
  */
-int X11Driver::check_arg(int argc, char **argv, int *i)
+int X11Driver::check_arg(int &argc, char **argv)
 {
 	if (strcmp(argv[*i], "-display") == 0 && (*i)+1 < argc)
 	{
@@ -308,7 +308,7 @@ int X11Driver::check_arg(int argc, char **argv, int *i)
 		m_fullscreen = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-m_on_root") == 0)
+	else if (strcmp(argv[*i], "-onroot") == 0)
 	{
 		m_on_root = 1;
 		return 1;
@@ -1786,27 +1786,24 @@ int X11Driver::initialize(int *argc, char **argv)
 #endif
 
 	/* filter out x11 arguments */
+	int count = *argc;
+	char **argv_copy = (char **) malloc(sizeof(char *)*count);
+	int i;
+	int copied;
 
- {
-		int count = *argc;
-		char **argv_copy = (char **) malloc(sizeof(char *)*count);
-		int i;
-		int copied;
+	for (i = 0; i < count; i++)
+	{
+		argv_copy[i] = argv[i];
+	}
 
-		for (i = 0; i < count; i++)
+	copied = 0;
+	for (i = 0; i < count; i++)
+	{
+		if (!check_arg(i, argv))
 		{
-			argv_copy[i] = argv[i];
+			argv[copied++] = argv_copy[i];
 		}
-
-		copied = 0;
-		for (i = 0; i < count; i++)
-		{
-			if (!check_arg(i, argv, &i))
-			{
-				argv[copied++] = argv_copy[i];
-			}
-			*argc = copied;
-		}
+		*argc = copied;
 	}
 
 	m_Xdp = XOpenDisplay(m_Xdisplay);

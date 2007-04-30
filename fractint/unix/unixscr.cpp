@@ -149,84 +149,16 @@ static int mousefkey[4][4] /* [button][dir] */ = {
 	{ FIK_CTL_END,		FIK_CTL_HOME,	FIK_CTL_PAGE_DOWN,	FIK_CTL_PAGE_UP }
 };
 
-/*
-*----------------------------------------------------------------------
-*
-* unixarg --
-*
-*	See if we want to do something with the argument.
-*
-* Results:
-*	Returns 1 if we parsed the argument.
-*
-* Side effects:
-*	Increments i if we use more than 1 argument.
-*
-*----------------------------------------------------------------------
-*/
 int unixarg(int argc, char **argv, int *i)
 {
-	if (strcmp(argv[*i], "-display") == 0 && (*i)+1 < argc)
-	{
-		Xdisplay = argv[(*i)+1];
-		(*i)++;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-fullscreen") == 0)
-	{
-		fullscreen = 1;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-disk") == 0)
+	if (strcmp(argv[*i], "-disk") == 0)
 	{
 		unixDisk = 1;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-onroot") == 0)
-	{
-		onroot = 1;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-share") == 0)
-	{
-		sharecolor = 1;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-fast") == 0)
-	{
-		fastmode = 1;
 		return 1;
 	}
 	else if (strcmp(argv[*i], "-simple") == 0)
 	{
 		simple_input = 1;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-slowdisplay") == 0)
-	{
-		slowdisplay = 1;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-sync") == 0)
-	{
-		synch = 1;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-private") == 0)
-	{
-		privatecolor = 1;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc)
-	{
-		fixcolors = atoi(argv[(*i)+1]);
-		(*i)++;
-		return 1;
-	}
-	else if (strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc)
-	{
-		Xgeometry = argv[(*i)+1];
-		(*i)++;
 		return 1;
 	}
 	else
@@ -2465,86 +2397,6 @@ static Window pr_dwmroot(Display *dpy, Window pwin)
 	}
 }
 
-/*
-*----------------------------------------------------------------------
-*
-* FindRootWindow --
-*
-*	Find the root or virtual root window.
-*
-* Results:
-*	Returns the root window.
-*
-* Side effects:
-*	None.
-*
-*----------------------------------------------------------------------
-*/
-static Window FindRootWindow()
-{
-	int i;
-	w_root = RootWindow(dpy, scr);
-	w_root = pr_dwmroot(dpy, w_root); /* search for DEC wm root */
-
-	{  /* search for swm/tvtwm root (from ssetroot by Tom LaStrange) */
-		Atom __SWM_VROOT = None;
-		Window rootReturn, parentReturn, *children;
-		unsigned int numChildren;
-
-		__SWM_VROOT = XInternAtom(dpy, "__SWM_VROOT", False);
-		XQueryTree(dpy, w_root, &rootReturn, &parentReturn, &children, &numChildren);
-		for (i = 0; i < numChildren; i++)
-		{
-			Atom actual_type;
-			int actual_format;
-			unsigned long nitems, bytesafter;
-			Window *newRoot = NULL;
-
-			if (XGetWindowProperty (dpy, children[i], __SWM_VROOT, (long) 0, (long) 1,
-				False, XA_WINDOW, &actual_type, &actual_format, &nitems, &bytesafter,
-				(unsigned char **) &newRoot) == Success && newRoot)
-			{
-				w_root = *newRoot; break;
-			}
-		}
-	}
-	return w_root;
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* RemoveRootPixmap --
-*
-*	Clean up old pixmap on the root window.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Pixmap is cleaned up.
-*
-*----------------------------------------------------------------------
-*/
-static void RemoveRootPixmap()
-{
-	Atom prop, type;
-	int format;
-	unsigned long nitems, after;
-	Pixmap *pm;
-
-	prop = XInternAtom(Xdp, "_XSETROOT_ID", False);
-	if (XGetWindowProperty(Xdp, Xroot, prop, (long) 0, (long) 1, 1, AnyPropertyType,
-			&type, &format, &nitems, &after, (unsigned char **) &pm) == Success
-		&& nitems == 1)
-	{
-		if (type == XA_PIXMAP && format == 32 && after == 0)
-		{
-			XKillClient(Xdp, (XID) *pm);
-			XFree((char *) pm);
-		}
-	}
-}
 static unsigned char *fontPtr = NULL;
 /*
 *----------------------------------------------------------------------
@@ -2645,90 +2497,6 @@ unsigned char *x_get_font()
 	XFreePixmap(Xdp, font_pixmap);
 
 	return fontPtr;
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* shell_to_dos --
-*
-*	Exit to a unix shell.
-*
-* Results:
-*	None.
-*
-* Side effects:
-*	Goes to shell
-*
-*----------------------------------------------------------------------
-*/
-#define SHELL "/bin/csh"
-void shell_to_dos()
-{
-	SignalHandler sigint;
-	char *shell;
-	char *argv[2];
-	int pid, donepid;
-
-	sigint = (SignalHandler) signal(SIGINT, SIG_IGN);
-	shell = getenv("SHELL");
-	if (shell == NULL)
-	{
-		shell = SHELL;
-	}
-	argv[0] = shell;
-	argv[1] = NULL;
-
-	/* Clean up the window */
-
-	if (!simple_input)
-	{
-		fcntl(0, F_SETFL, old_fcntl);
-	}
-	mvcur(0, COLS-1, LINES-1, 0);
-	nocbreak();
-	echo();
-	endwin();
-
-	/* Fork the shell */
-
-	pid = fork();
-	if (pid < 0)
-	{
-		perror("fork to shell");
-	}
-	if (pid == 0)
-	{
-		execvp(shell, argv);
-		perror("fork to shell");
-		exit(1);
-	}
-
-	/* Wait for the shell to finish */
-
-	while (1)
-	{
-		donepid = wait(0);
-		if (donepid < 0 || donepid == pid)
-		{
-			break;
-		}
-	}
-
-	/* Go back to curses mode */
-
-	initscr();
-	g_current_window = stdscr;
-	cbreak();
-	noecho();
-	if (!simple_input)
-	{
-		old_fcntl = fcntl(0, F_GETFL);
-		fcntl(0, F_SETFL, FNDELAY);
-	}
-
-	signal(SIGINT, (SignalHandler) sigint);
-	putchar('\n');
 }
 
 /*
