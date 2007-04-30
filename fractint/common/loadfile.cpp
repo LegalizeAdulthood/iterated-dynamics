@@ -34,7 +34,7 @@ static int find_fractal_info(char *, struct fractal_info *,
 							struct ext_blk_orbits_info *);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
-static void backwardscompat(struct fractal_info *info);
+static void translate_obsolete_fractal_types(struct fractal_info *info);
 static int fix_bof();
 static int fix_period_bof();
 
@@ -277,7 +277,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
 	{
-		backwardscompat(&read_info); /* translate obsolete types */
+		translate_obsolete_fractal_types(&read_info);
 		if (g_log_palette_flag)
 		{
 			g_log_palette_flag = 2;
@@ -362,9 +362,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		g_quick_calculate   = read_info.quick_calculate;
 		g_proximity    = read_info.proximity;
-		if (g_fractal_type == FPPOPCORN || g_fractal_type == LPOPCORN ||
-			g_fractal_type == FPPOPCORNJUL || g_fractal_type == LPOPCORNJUL ||
-			g_fractal_type == LATOO)
+		if (g_fractal_type == FRACTYPE_POPCORN_FP || g_fractal_type == FRACTYPE_POPCORN_L ||
+			g_fractal_type == FRACTYPE_POPCORN_JULIA_FP || g_fractal_type == FRACTYPE_POPCORN_JULIA_L ||
+			g_fractal_type == FRACTYPE_LATOOCARFIAN)
 		{
 			g_function_preloaded = TRUE;
 		}
@@ -444,7 +444,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (g_display_3d)
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		g_fractal_type = PLASMA;
+		g_fractal_type = FRACTYPE_PLASMA;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		g_parameters[0] = 0;
 		if (!g_initialize_batch)
@@ -470,12 +470,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		char *nameptr;
 		switch (read_info.fractal_type)
 		{
-		case LSYSTEM:
+		case FRACTYPE_L_SYSTEM:
 			nameptr = g_l_system_name;
 			break;
 
-		case IFS:
-		case IFS3D:
+		case FRACTYPE_IFS:
+		case FRACTYPE_IFS_3D:
 			nameptr = g_ifs_name;
 			break;
 
@@ -954,7 +954,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	strcpy(info->info_id, "GIFFILE");
 	info->iterations = 150;
 	info->iterationsold = 150;
-	info->fractal_type = PLASMA;
+	info->fractal_type = FRACTYPE_PLASMA;
 	info->x_min = -1;
 	info->x_max = 1;
 	info->y_min = -1;
@@ -1012,99 +1012,99 @@ static void skip_ext_blk(int *block_len, int *data_len)
 
 
 /* switch obsolete fractal types to new generalizations */
-static void backwardscompat(struct fractal_info *info)
+static void translate_obsolete_fractal_types(struct fractal_info *info)
 {
 	switch (g_fractal_type)
 	{
-	case LAMBDASINE:
-		g_fractal_type = LAMBDATRIGFP;
+	case FRACTYPE_OBSOLETE_LAMBDA_SINE:
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
 		g_trig_index[0] = SIN;
 		break;
-	case LAMBDACOS    :
-		g_fractal_type = LAMBDATRIGFP;
+	case FRACTYPE_OBSOLETE_LAMBDA_COS    :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
 		g_trig_index[0] = COS;
 		break;
-	case LAMBDAEXP    :
-		g_fractal_type = LAMBDATRIGFP;
+	case FRACTYPE_OBSOLETE_LAMBDA_EXP    :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
 		g_trig_index[0] = EXP;
 		break;
-	case MANDELSINE   :
-		g_fractal_type = MANDELTRIGFP;
+	case FRACTYPE_OBSOLETE_MANDELBROT_SINE   :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
 		g_trig_index[0] = SIN;
 		break;
-	case MANDELCOS    :
-		g_fractal_type = MANDELTRIGFP;
+	case FRACTYPE_OBSOLETE_MANDELBROT_COS    :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
 		g_trig_index[0] = COS;
 		break;
-	case MANDELEXP    :
-		g_fractal_type = MANDELTRIGFP;
+	case FRACTYPE_OBSOLETE_MANDELBROT_EXP    :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
 		g_trig_index[0] = EXP;
 		break;
-	case MANDELSINH   :
-		g_fractal_type = MANDELTRIGFP;
+	case FRACTYPE_OBSOLETE_MANDELBROT_SINH   :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
 		g_trig_index[0] = SINH;
 		break;
-	case LAMBDASINH   :
-		g_fractal_type = LAMBDATRIGFP;
+	case FRACTYPE_OBSOLETE_LAMBDA_SINH   :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
 		g_trig_index[0] = SINH;
 		break;
-	case MANDELCOSH   :
-		g_fractal_type = MANDELTRIGFP;
+	case FRACTYPE_OBSOLETE_MANDELBROT_COSH   :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
 		g_trig_index[0] = COSH;
 		break;
-	case LAMBDACOSH   :
-		g_fractal_type = LAMBDATRIGFP;
+	case FRACTYPE_OBSOLETE_LAMBDA_COSH   :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
 		g_trig_index[0] = COSH;
 		break;
-	case LMANDELSINE  :
-		g_fractal_type = MANDELTRIG;
+	case FRACTYPE_OBSOLETE_MANDELBROT_SINE_L  :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
 		g_trig_index[0] = SIN;
 		break;
-	case LLAMBDASINE  :
-		g_fractal_type = LAMBDATRIG;
+	case FRACTYPE_OBSOLETE_LAMBDA_SINE_L  :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
 		g_trig_index[0] = SIN;
 		break;
-	case LMANDELCOS   :
-		g_fractal_type = MANDELTRIG;
+	case FRACTYPE_OBSOLETE_MANDELBROT_COS_L   :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
 		g_trig_index[0] = COS;
 		break;
-	case LLAMBDACOS   :
-		g_fractal_type = LAMBDATRIG;
+	case FRACTYPE_OBSOLETE_LAMBDA_COS_L   :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
 		g_trig_index[0] = COS;
 		break;
-	case LMANDELSINH  :
-		g_fractal_type = MANDELTRIG;
+	case FRACTYPE_OBSOLETE_MANDELBROT_SINH_L  :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
 		g_trig_index[0] = SINH;
 		break;
-	case LLAMBDASINH  :
-		g_fractal_type = LAMBDATRIG;
+	case FRACTYPE_OBSOLETE_LAMBDA_SINH_L  :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
 		g_trig_index[0] = SINH;
 		break;
-	case LMANDELCOSH  :
-		g_fractal_type = MANDELTRIG;
+	case FRACTYPE_OBSOLETE_MANDELBROT_COSH_L  :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
 		g_trig_index[0] = COSH;
 		break;
-	case LLAMBDACOSH  :
-		g_fractal_type = LAMBDATRIG;
+	case FRACTYPE_OBSOLETE_LAMBDA_COSH_L  :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
 		g_trig_index[0] = COSH;
 		break;
-	case LMANDELEXP   :
-		g_fractal_type = MANDELTRIG;
+	case FRACTYPE_OBSOLETE_MANDELBROT_EXP_L   :
+		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
 		g_trig_index[0] = EXP;
 		break;
-	case LLAMBDAEXP   :
-		g_fractal_type = LAMBDATRIG;
+	case FRACTYPE_OBSOLETE_LAMBDA_EXP_L   :
+		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
 		g_trig_index[0] = EXP;
 		break;
-	case DEMM         :
-		g_fractal_type = MANDELFP;
+	case FRACTYPE_OBSOLETE_DEM_MANDELBROT         :
+		g_fractal_type = FRACTYPE_MANDELBROT_FP;
 		g_user_distance_test = (info->y_dots - 1)*2;
 		break;
-	case DEMJ         :
-		g_fractal_type = JULIAFP;
+	case FRACTYPE_OBSOLETE_DEM_JULIA         :
+		g_fractal_type = FRACTYPE_JULIA_FP;
 		g_user_distance_test = (info->y_dots - 1)*2;
 		break;
-	case MANDELLAMBDA :
+	case FRACTYPE_MANDELBROT_LAMBDA :
 		g_use_initial_orbit_z = 2;
 		break;
 	}
@@ -1119,19 +1119,19 @@ void set_if_old_bif()
 
 	switch (g_fractal_type)
 	{
-	case BIFURCATION:
-	case LBIFURCATION:
-	case BIFSTEWART:
-	case LBIFSTEWART:
-	case BIFLAMBDA:
-	case LBIFLAMBDA:
+	case FRACTYPE_BIFURCATION:
+	case FRACTYPE_BIFURCATION_L:
+	case FRACTYPE_BIFURCATION_STEWART:
+	case FRACTYPE_BIFURCATION_STEWART_L:
+	case FRACTYPE_BIFURCATION_LAMBDA:
+	case FRACTYPE_BIFURCATION_LAMBDA_L:
 		set_trig_array(0, "ident");
 		break;
 
-	case BIFEQSINPI:
-	case LBIFEQSINPI:
-	case BIFADSINPI:
-	case LBIFADSINPI:
+	case FRACTYPE_BIFURCATION_EQUAL_FUNC_PI:
+	case FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L:
+	case FRACTYPE_BIFURCATION_PLUS_FUNC_PI:
+	case FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L:
 		set_trig_array(0, "sin");
 		break;
 	}
@@ -1142,16 +1142,16 @@ void set_function_parm_defaults()
 {
 	switch (g_fractal_type)
 	{
-	case FPPOPCORN:
-	case LPOPCORN:
-	case FPPOPCORNJUL:
-	case LPOPCORNJUL:
+	case FRACTYPE_POPCORN_FP:
+	case FRACTYPE_POPCORN_L:
+	case FRACTYPE_POPCORN_JULIA_FP:
+	case FRACTYPE_POPCORN_JULIA_L:
 		set_trig_array(0, "sin");
 		set_trig_array(1, "tan");
 		set_trig_array(2, "sin");
 		set_trig_array(3, "tan");
 		break;
-	case LATOO:
+	case FRACTYPE_LATOOCARFIAN:
 		set_trig_array(0, "sin");
 		set_trig_array(1, "sin");
 		set_trig_array(2, "sin");
@@ -1166,12 +1166,12 @@ void backwards_v18()
 	{
 		set_if_old_bif(); /* old bifs need function set, JCO 7/5/92 */
 	}
-	if (g_fractal_type == MANDELTRIG && g_user_float_flag == 1
+	if (g_fractal_type == FRACTYPE_MANDELBROT_FUNC && g_user_float_flag == 1
 			&& g_save_release < 1800 && g_bail_out == 0)
 	{
 		g_bail_out = 2500;
 	}
-	if (g_fractal_type == LAMBDATRIG && g_user_float_flag == 1
+	if (g_fractal_type == FRACTYPE_LAMBDA_FUNC && g_user_float_flag == 1
 			&& g_save_release < 1800 && g_bail_out == 0)
 	{
 		g_bail_out = 2500;
@@ -1180,7 +1180,7 @@ void backwards_v18()
 
 void backwards_v19()
 {
-	if (g_fractal_type == MARKSJULIA && g_save_release < 1825)
+	if (g_fractal_type == FRACTYPE_MARKS_JULIA && g_save_release < 1825)
 	{
 		if (g_parameters[2] == 0)
 		{
@@ -1191,7 +1191,7 @@ void backwards_v19()
 			g_parameters[2]++;
 		}
 	}
-	if (g_fractal_type == MARKSJULIAFP && g_save_release < 1825)
+	if (g_fractal_type == FRACTYPE_MARKS_JULIA_FP && g_save_release < 1825)
 	{
 		if (g_parameters[2] == 0)
 		{
@@ -1202,7 +1202,7 @@ void backwards_v19()
 			g_parameters[2]++;
 		}
 	}
-	if ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA) && g_save_release < 1824)
+	if ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP) && g_save_release < 1824)
 	{
 		g_inversion[0] = g_inversion[1] = g_inversion[2] = g_invert = 0;
 	}
@@ -1214,11 +1214,11 @@ void backwards_v19()
 void backwards_v20()
 {
 	/* Fractype == FP type is not seen from PAR file ????? */
-	g_bad_outside = ((g_fractal_type == MANDELFP || g_fractal_type == JULIAFP
-						|| g_fractal_type == MANDEL || g_fractal_type == JULIA)
+	g_bad_outside = ((g_fractal_type == FRACTYPE_MANDELBROT_FP || g_fractal_type == FRACTYPE_JULIA_FP
+						|| g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)
 					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960)
 		? 1 : 0;
-	g_use_old_complex_power = ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+	g_use_old_complex_power = ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 				&& (g_save_release < 1900 || DEBUGFLAG_OLD_POWER == g_debug_flag))
 		? 1 : 0;
 	if (g_inside == EPSCROSS && g_save_release < 1961)
@@ -1237,36 +1237,35 @@ int check_back()
 		put the features that need to save the value in g_save_release for backwards
 		compatibility in this routine
 	*/
-	int ret = 0;
-	if (g_fractal_type == LYAPUNOV
-		|| g_fractal_type == FROTH
-		|| g_fractal_type == FROTHFP
+	if (g_fractal_type == FRACTYPE_LYAPUNOV
+		|| g_fractal_type == FRACTYPE_FROTHY_BASIN
+		|| g_fractal_type == FRACTYPE_FROTHY_BASIN_FP
 		|| fix_bof()
 		|| fix_period_bof()
 		|| g_use_old_distance_test
 		|| g_decomposition[0] == 2
-		|| (g_fractal_type == FORMULA && g_save_release <= 1920)
-		|| (g_fractal_type == FFORMULA && g_save_release <= 1920)
+		|| (g_fractal_type == FRACTYPE_FORMULA && g_save_release <= 1920)
+		|| (g_fractal_type == FRACTYPE_FORMULA_FP && g_save_release <= 1920)
 		|| (g_log_palette_flag != 0 && g_save_release <= 2001)
-		|| (g_fractal_type == TRIGSQR && g_save_release < 1900)
+		|| (g_fractal_type == FRACTYPE_FUNC_SQR && g_save_release < 1900)
 		|| (g_inside == STARTRAIL && g_save_release < 1825)
 		|| (g_max_iteration > 32767 && g_save_release <= 1950)
 		|| (g_distance_test && g_save_release <= 1950)
 		|| ((g_outside <= REAL && g_outside >= ATAN) && g_save_release <= 1960)
-		|| (g_fractal_type == FPPOPCORN && g_save_release <= 1960)
-		|| (g_fractal_type == LPOPCORN && g_save_release <= 1960)
-		|| (g_fractal_type == FPPOPCORNJUL && g_save_release <= 1960)
-		|| (g_fractal_type == LPOPCORNJUL && g_save_release <= 1960)
+		|| (g_fractal_type == FRACTYPE_POPCORN_FP && g_save_release <= 1960)
+		|| (g_fractal_type == FRACTYPE_POPCORN_L && g_save_release <= 1960)
+		|| (g_fractal_type == FRACTYPE_POPCORN_JULIA_FP && g_save_release <= 1960)
+		|| (g_fractal_type == FRACTYPE_POPCORN_JULIA_L && g_save_release <= 1960)
 		|| (g_inside == FMODI && g_save_release <= 2000)
 		|| ((g_inside == ATANI || g_outside == ATAN) && g_save_release <= 2002)
-		|| (g_fractal_type == LAMBDATRIGFP && g_trig_index[0] == EXP && g_save_release <= 2002)
-		|| ((g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
-			&& (g_new_orbit_type == QUATFP || g_new_orbit_type == HYPERCMPLXFP)
+		|| (g_fractal_type == FRACTYPE_LAMBDA_FUNC_FP && g_trig_index[0] == EXP && g_save_release <= 2002)
+		|| ((g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
+			&& (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
 			&& g_save_release <= 2002))
 	{
-		ret = 1;
+		return 1;
 	}
-	return ret;
+	return 0;
 }
 
 static int fix_bof()
@@ -1276,7 +1275,7 @@ static int fix_bof()
 	{
 		if ((g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & BAILTEST) == 0) ||
-			(g_fractal_type == FORMULA || g_fractal_type == FFORMULA))
+			(g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP))
 		{
 			ret = 1;
 		}
@@ -2097,8 +2096,8 @@ static char functionOK(struct fractal_info *info, int numfn)
 static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	int numfn;
-	if ((g_fractal_type == FORMULA || g_fractal_type == FFORMULA) &&
-		(info->fractal_type == FORMULA || info->fractal_type == FFORMULA))
+	if ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP) &&
+		(info->fractal_type == FRACTYPE_FORMULA || info->fractal_type == FRACTYPE_FORMULA_FP))
 	{
 		if (!stricmp(formula_info->form_name, g_formula_name))
 		{
@@ -2124,14 +2123,14 @@ static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formu
 
 static void check_history (char *oldname, char *newname)
 {
-int i;
+	int i;
 
-/* g_file_name_stack[] is maintained in framain2.c.  It is the history */
-/*  file for the browser and holds a maximum of 16 images.  The history */
-/*  file needs to be adjusted if the rename or delete functions of the */
-/*  browser are used. */
-/* g_name_stack_ptr is also maintained in framain2.c.  It is the index into */
-/*  g_file_name_stack[]. */
+	/* g_file_name_stack[] is maintained in framain2.c.  It is the history */
+	/*  file for the browser and holds a maximum of 16 images.  The history */
+	/*  file needs to be adjusted if the rename or delete functions of the */
+	/*  browser are used. */
+	/* g_name_stack_ptr is also maintained in framain2.c.  It is the index into */
+	/*  g_file_name_stack[]. */
 
 	for (i = 0; i < g_name_stack_ptr; i++)
 	{

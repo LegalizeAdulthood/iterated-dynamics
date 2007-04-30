@@ -534,7 +534,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_screen_distance_fp = 24.0f;
 	g_eyes_fp = 2.5f;
 	g_depth_fp = 8;
-	g_new_orbit_type = JULIA;
+	g_new_orbit_type = FRACTYPE_JULIA;
 	g_z_dots = 128;
 	initialize_variables_3d();
 	g_base_hertz = 440;                     /* basic hertz rate          */
@@ -1780,7 +1780,7 @@ static int julibrot_from_to_arg(const cmd_context *context)
 static int corners_arg(const cmd_context *context)
 {
 	int dec;
-	if (g_fractal_type == CELLULAR)
+	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
 		return COMMAND_FRACTAL_PARAM; /* skip setting the corners */
 	}
@@ -1987,7 +1987,7 @@ static int center_mag_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	if (g_fractal_type == CELLULAR)
+	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
 		return COMMAND_FRACTAL_PARAM; /* skip setting the corners */
 	}

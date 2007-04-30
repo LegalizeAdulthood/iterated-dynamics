@@ -152,17 +152,17 @@ void _fastcall history_save_info()
 	memcpy(current.dac, g_dac_box, 256*3);
 	switch (g_fractal_type)
 	{
-	case FORMULA:
-	case FFORMULA:
+	case FRACTYPE_FORMULA:
+	case FRACTYPE_FORMULA_FP:
 		strncpy(current.filename, g_formula_filename, FILE_MAX_PATH);
 		strncpy(current.itemname, g_formula_name, ITEMNAMELEN + 1);
 		break;
-	case IFS:
-	case IFS3D:
+	case FRACTYPE_IFS:
+	case FRACTYPE_IFS_3D:
 		strncpy(current.filename, g_ifs_filename, FILE_MAX_PATH);
 		strncpy(current.itemname, g_ifs_name, ITEMNAMELEN + 1);
 		break;
-	case LSYSTEM:
+	case FRACTYPE_L_SYSTEM:
 		strncpy(current.filename, g_l_system_filename, FILE_MAX_PATH);
 		strncpy(current.itemname, g_l_system_name, ITEMNAMELEN + 1);
 		break;
@@ -358,20 +358,20 @@ void _fastcall history_restore_info()
 		memcpy(g_map_dac_box, last.dac, 256*3);
 	}
 	spindac(0, 1);
-	g_save_dac = (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP) ? SAVEDAC_NO : SAVEDAC_YES;
+	g_save_dac = (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP) ? SAVEDAC_NO : SAVEDAC_YES;
 	switch (g_fractal_type)
 	{
-	case FORMULA:
-	case FFORMULA:
+	case FRACTYPE_FORMULA:
+	case FRACTYPE_FORMULA_FP:
 		strncpy(g_formula_filename, last.filename, FILE_MAX_PATH);
 		strncpy(g_formula_name, last.itemname, ITEMNAMELEN + 1);
 		break;
-	case IFS:
-	case IFS3D:
+	case FRACTYPE_IFS:
+	case FRACTYPE_IFS_3D:
 		strncpy(g_ifs_filename, last.filename, FILE_MAX_PATH);
 		strncpy(g_ifs_name, last.itemname, ITEMNAMELEN + 1);
 		break;
-	case LSYSTEM:
+	case FRACTYPE_L_SYSTEM:
 		strncpy(g_l_system_filename, last.filename, FILE_MAX_PATH);
 		strncpy(g_l_system_name, last.itemname, ITEMNAMELEN + 1);
 		break;

@@ -93,7 +93,7 @@ static long cdecl calculate_mandelbrot_asm1()
 	long xy;
 	long Cx;
 	long Cy;
-	if (g_fractal_type != JULIA)
+	if (g_fractal_type != FRACTYPE_JULIA)
 	{
 		/* Mandelbrot_87 */
 		Cx = g_initial_x_l;

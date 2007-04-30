@@ -105,18 +105,18 @@ static char s_imag_relaxation_coefficient[] = {"Imag Relaxation coefficient"};
 
 more_parameters g_more_parameters[] =
 {
-	{ICON             , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
-	{ICON3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
-	{HYPERCMPLXJFP    , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{QUATJULFP        , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{PHOENIXCPLX      , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{PHOENIXFPCPLX    , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{MANDPHOENIXCPLX  , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{MANDPHOENIXFPCPLX, { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{FORMULA  , { s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
-	{FFORMULA , { s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
-	{ANT              , { "+Wrap?", s_random_seed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
-	{MANDELBROTMIX4   , { s_p3_real, s_p3_imag,        "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_ICON             , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
+	{FRACTYPE_ICON_3D           , { "Omega", "+Degree of symmetry",   "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
+	{FRACTYPE_HYPERCOMPLEX_JULIA_FP    , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_QUATERNION_JULIA_FP        , { "zj",      "zk",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_PHOENIX_COMPLEX      , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_PHOENIX_COMPLEX_FP    , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_MANDELBROT_PHOENIX_COMPLEX  , { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_MANDELBROT_PHOENIX_COMPLEX_FP, { s_degree_z, "",          "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_FORMULA  , { s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_FORMULA_FP , { s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
+	{FRACTYPE_ANT              , { "+Wrap?", s_random_seed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
+	{FRACTYPE_MANDELBROT_MIX4   , { s_p3_real, s_p3_imag,        "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
 	{-1               , { NULL, NULL, NULL, NULL, NULL, NULL    }, {0, 0, 0, 0, 0, 0}}
 };
 
@@ -127,11 +127,11 @@ alternate_math g_alternate_math[] =
 {
 #define USEBN
 #ifdef USEBN
-	{ JULIAFP,	BIGNUM, julia_orbit_bn, julia_per_pixel_bn,  mandelbrot_setup_bn },
-	{ MANDELFP,	BIGNUM, julia_orbit_bn, mandelbrot_per_pixel_bn, mandelbrot_setup_bn },
+	{ FRACTYPE_JULIA_FP,	BIGNUM, julia_orbit_bn, julia_per_pixel_bn,  mandelbrot_setup_bn },
+	{ FRACTYPE_MANDELBROT_FP,	BIGNUM, julia_orbit_bn, mandelbrot_per_pixel_bn, mandelbrot_setup_bn },
 #else
-	{ JULIAFP,	BIGFLT, julia_orbit_bf, julia_per_pixel_bf,  mandelbrot_setup_bf },
-	{ MANDELFP,	BIGFLT, julia_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf },
+	{ FRACTYPE_JULIA_FP,	BIGFLT, julia_orbit_bf, julia_per_pixel_bf,  mandelbrot_setup_bf },
+	{ FRACTYPE_MANDELBROT_FP,	BIGFLT, julia_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf },
 #endif
 	/*
 	NOTE: The default precision for g_bf_math=BIGNUM is not high enough
@@ -139,8 +139,8 @@ alternate_math g_alternate_math[] =
 	of the usual BIGFLT (2), then set bfdigits on the command to
 	increase the precision.
 	*/
-	{ FPJULIAZPOWER,  BIGFLT, julia_z_power_orbit_bf, julia_per_pixel_bf, mandelbrot_setup_bf },
-	{ FPMANDELZPOWER, BIGFLT, julia_z_power_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf }
+	{ FRACTYPE_JULIA_Z_POWER_FP,  BIGFLT, julia_z_power_orbit_bf, julia_per_pixel_bf, mandelbrot_setup_bf },
+	{ FRACTYPE_MANDELBROT_Z_POWER_FP, BIGFLT, julia_z_power_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf }
 };
 int g_alternate_math_len = NUM_OF(g_alternate_math);
 
@@ -219,6 +219,7 @@ struct fractal_specific_stuff g_fractal_specific[] =
 {
 	/*
 	{ [OLDTYPEINDEX, ]NEWTYPEINDEX
+		fractal type,
 		fractal name,
 		{parameter text strings},
 		{parameter values},
@@ -230,84 +231,92 @@ struct fractal_specific_stuff g_fractal_specific[] =
 	}
 	*/
 
-	{ /* MANDEL */
+	{
+	FRACTYPE_MANDELBROT,
 	s_mandel_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDEL, HF_MANDEL, BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		1, JULIA, NOFRACTAL, MANDELFP, XAXIS_NOPARM,
+		1, FRACTYPE_JULIA, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FP, XAXIS_NOPARM,
 		julia_orbit, mandelbrot_per_pixel, mandelbrot_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* JULIA */
+	{
+	FRACTYPE_JULIA,
 	s_julia_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.3, 0.6, 0, 0},
 		HT_JULIA, HF_JULIA, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, MANDEL, JULIAFP, ORIGIN,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT, FRACTYPE_JULIA_FP, ORIGIN,
 		julia_orbit, julia_per_pixel, julia_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* NEWTBASIN */
+	{
+	FRACTYPE_NEWTON_BASIN,
 	s_newtbasin_name,
 		{s_newton_degree, "Enter non-zero value for stripes", "", ""},
 		{3, 0, 0, 0},
 		HT_NEWTBAS, HF_NEWTBAS, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, MPNEWTBASIN, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NEWTON_BASIN_MP, NOSYM,
 		newton2_orbit, other_julia_per_pixel_fp, newton_setup, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* LAMBDA */
+	{
+	FRACTYPE_LAMBDA,
 	s_lambda_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.85, 0.6, 0, 0},
 		HT_LAMBDA, HF_LAMBDA, OKJB | BAILTEST,
 		-1.5f, 2.5f, -1.5f, 1.5f,
-		1, NOFRACTAL, MANDELLAMBDA, LAMBDAFP, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_LAMBDA, FRACTYPE_LAMBDA_FP, NOSYM,
 		lambda_orbit, julia_per_pixel, julia_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MANDELFP */
+	{
+	FRACTYPE_MANDELBROT_FP,
 	s_mandel_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDEL, HF_MANDEL, BAILTEST | BF_MATH,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, JULIAFP, NOFRACTAL, MANDEL, XAXIS_NOPARM,
+		0, FRACTYPE_JULIA_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT, XAXIS_NOPARM,
 		julia_orbit_fp, mandelbrot_per_pixel_fp, mandelbrot_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* NEWTON */
+	{
+	FRACTYPE_NEWTON,
 	s_newton_name,
 		{s_newton_degree, "", "", ""},
 		{3, 0, 0, 0},
 		HT_NEWT, HF_NEWT, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, MPNEWTON, XAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NEWTON_MP, XAXIS,
 		newton2_orbit, other_julia_per_pixel_fp, newton_setup, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* JULIAFP */
+	{
+	FRACTYPE_JULIA_FP,
 	s_julia_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.3, 0.6, 0, 0},
 		HT_JULIA, HF_JULIA, OKJB | BAILTEST | BF_MATH,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANDELFP, JULIA, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FP, FRACTYPE_JULIA, ORIGIN,
 		julia_orbit_fp, julia_per_pixel_fp,  julia_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* PLASMA */
+	{
+	FRACTYPE_PLASMA,
 	"plasma",
 		{"Graininess Factor (0 or 0.125 to 100, default is 2)",
 		"+Algorithm (0 = original, 1 = new)",
@@ -317,46 +326,50 @@ struct fractal_specific_stuff g_fractal_specific[] =
 		{2, 0, 0, 0},
 		HT_PLASMA, HF_PLASMA, NOZOOM | NOGUESS | NOTRACE | NORESUME,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, stand_alone_setup, plasma,
 		BAILOUT_NONE
 	},
 
-	{ /* LAMBDASINE, MANDELTRIGFP */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_SINE, FRACTYPE_MANDELBROT_FUNC_FP */
+	FRACTYPE_MANDELBROT_FUNC_FP,
 	s_mandelfn_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDFN, HF_MANDFN, TRIG1,
 		-8.0f, 8.0f, -6.0f, 6.0f,
-		0, LAMBDATRIGFP, NOFRACTAL, MANDELTRIG, XYAXIS_NOPARM,
+		0, FRACTYPE_LAMBDA_FUNC_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC, XYAXIS_NOPARM,
 		lambda_trig_orbit_fp, other_mandelbrot_per_pixel_fp, mandelbrot_trig_setup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LAMBDACOS, MANOWARFP */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_COS, FRACTYPE_MAN_O_WAR_FP */
+	FRACTYPE_MAN_O_WAR_FP,
 	s_manowar_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_MANOWAR, BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, MANOWARJFP, NOFRACTAL, MANOWAR, XAXIS_NOPARM,
+		0, FRACTYPE_MAN_O_WAR_JULIA_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MAN_O_WAR, XAXIS_NOPARM,
 		man_o_war_orbit_fp, mandelbrot_per_pixel_fp, mandelbrot_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LAMBDAEXP, MANOWAR */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_EXP, FRACTYPE_MAN_O_WAR */
+	FRACTYPE_MAN_O_WAR,
 	s_manowar_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_MANOWAR, BAILTEST,
 		-2.5f,  1.5f, -1.5f, 1.5f,
-		1, MANOWARJ, NOFRACTAL, MANOWARFP, XAXIS_NOPARM,
+		1, FRACTYPE_MAN_O_WAR_JULIA, FRACTYPE_NO_FRACTAL, FRACTYPE_MAN_O_WAR_FP, XAXIS_NOPARM,
 		man_o_war_orbit, mandelbrot_per_pixel, mandelbrot_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* TEST */
+	{
+	FRACTYPE_TEST,
 	"test",
 		{"(testpt Param #1)",
 		"(testpt param #2)",
@@ -366,917 +379,997 @@ struct fractal_specific_stuff g_fractal_specific[] =
 		{0, 0, 0, 0},
 		HT_TEST, HF_TEST, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, stand_alone_setup, test,
 		BAILOUT_STANDARD
 	},
 
-	{ /* SIERPINSKI */
+	{
+	FRACTYPE_SIERPINSKI,
 	s_sierpinski_name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SIER, HF_SIER, 0,
 		-4.0f/3.0f, 96.0f/45.0f, -0.9f, 1.7f,
-		1, NOFRACTAL, NOFRACTAL, SIERPINSKIFP, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_SIERPINSKI_FP, NOSYM,
 		sierpinski_orbit, julia_per_pixel_l, sierpinski_setup,
 				standard_fractal,
 		127
 	},
 
-	{ /* BARNSLEYM1 */
+	{
+	FRACTYPE_BARNSLEY_M1,
 	s_barnsleym1_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM1, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, BARNSLEYJ1, NOFRACTAL, BARNSLEYM1FP, XYAXIS_NOPARM,
+		1, FRACTYPE_BARNSLEY_J1, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M1_FP, XYAXIS_NOPARM,
 		barnsley1_orbit, mandelbrot_per_pixel_l, mandelbrot_setup_l,
 				standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYJ1 */
+	{
+	FRACTYPE_BARNSLEY_J1,
 	s_barnsleyj1_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ1, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, BARNSLEYM1, BARNSLEYJ1FP, ORIGIN,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M1, FRACTYPE_BARNSLEY_J1_FP, ORIGIN,
 		barnsley1_orbit, julia_per_pixel_l, julia_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYM2 */
+	{
+	FRACTYPE_BARNSLEY_M2,
 	s_barnsleym2_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM2, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, BARNSLEYJ2, NOFRACTAL, BARNSLEYM2FP, YAXIS_NOPARM,
+		1, FRACTYPE_BARNSLEY_J2, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M2_FP, YAXIS_NOPARM,
 		barnsley2_orbit, mandelbrot_per_pixel_l, mandelbrot_setup_l,
 				standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYJ2 */
+	{
+	FRACTYPE_BARNSLEY_J2,
 	s_barnsleyj2_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ2, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, BARNSLEYM2, BARNSLEYJ2FP, ORIGIN,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M2, FRACTYPE_BARNSLEY_J2_FP, ORIGIN,
 		barnsley2_orbit, julia_per_pixel_l, julia_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MANDELSINE, SQRTRIG */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_SINE, FRACTYPE_SQR_FUNC */
+	FRACTYPE_SQR_FUNC,
 	s_sqr_fn__name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SQRFN, TRIG1 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, NOFRACTAL, SQRTRIGFP, XAXIS,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_SQR_FUNC_FP, XAXIS,
 		sqr_trig_orbit, julia_per_pixel_l, sqr_trig_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* MANDELCOS, SQRTRIGFP */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_COS, FRACTYPE_SQR_FUNC_FP */
+	FRACTYPE_SQR_FUNC_FP,
 	s_sqr_fn__name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SQRFN, TRIG1 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, NOFRACTAL, SQRTRIG, XAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_SQR_FUNC, XAXIS,
 		sqr_trig_orbit_fp, other_julia_per_pixel_fp, sqr_trig_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* MANDELEXP, TRIGPLUSTRIG */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_EXP, FRACTYPE_FUNC_PLUS_FUNC */
+	FRACTYPE_FUNC_PLUS_FUNC,
 	s_fnplusfn_name + 1,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, s_trig2_coefficient_re, s_trig2_coefficient_im},
 		{1, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNPLUSFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, NOFRACTAL, TRIGPLUSTRIGFP, XAXIS,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_PLUS_FUNC_FP, XAXIS,
 		trig_plus_trig_orbit, julia_per_pixel_l, trig_plus_trig_setup_l,
 				standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* MANDELLAMBDA */
+	{
+	FRACTYPE_MANDELBROT_LAMBDA,
 	s_mandellambda_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MLAMBDA, HF_MLAMBDA, BAILTEST,
 		-3.0f, 5.0f, -3.0f, 3.0f,
-		1, LAMBDA, NOFRACTAL, MANDELLAMBDAFP, XAXIS_NOPARM,
+		1, FRACTYPE_LAMBDA, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_LAMBDA_FP, XAXIS_NOPARM,
 		lambda_orbit, mandelbrot_per_pixel, mandelbrot_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MARKSMANDEL */
+	{
+	FRACTYPE_MARKS_MANDELBROT,
 	s_marksmandel_name + 1,
 		{s_real_z0, s_imag_z0, s_exponent, ""},
 		{0, 0, 1, 0},
 		HT_MARKS, HF_MARKSMAND, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, MARKSJULIA, NOFRACTAL, MARKSMANDELFP, NOSYM,
+		1, FRACTYPE_MARKS_JULIA, FRACTYPE_NO_FRACTAL, FRACTYPE_MARKS_MANDELBROT_FP, NOSYM,
 		marks_lambda_orbit, marks_mandelbrot_per_pixel, mandelbrot_setup_l,
 				standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MARKSJULIA */
+	{
+	FRACTYPE_MARKS_JULIA,
 	s_marksjulia_name + 1,
 		{s_parameter_real, s_parameter_imag, s_exponent, ""},
 		{0.1, 0.9, 1, 0},
 		HT_MARKS, HF_MARKSJULIA, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, MARKSMANDEL, MARKSJULIAFP, ORIGIN,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_MARKS_MANDELBROT, FRACTYPE_MARKS_JULIA_FP, ORIGIN,
 		marks_lambda_orbit, julia_per_pixel, marks_julia_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* UNITY */
+	{
+	FRACTYPE_UNITY,
 	s_unity_name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_UNITY, HF_UNITY, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, NOFRACTAL, UNITYFP, XYAXIS,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_UNITY_FP, XYAXIS,
 		unity_orbit, julia_per_pixel_l, unity_setup, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* MANDEL4 */
+	{
+	FRACTYPE_MANDELBROT_4,
 	s_mandel4_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDJUL4, HF_MANDEL4, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, JULIA4, NOFRACTAL, MANDEL4FP, XAXIS_NOPARM,
+		1, FRACTYPE_JULIA_4, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_4_FP, XAXIS_NOPARM,
 		mandel4_orbit, mandelbrot_per_pixel, mandelbrot_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* JULIA4 */
+	{
+	FRACTYPE_JULIA_4,
 	s_julia4_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 0.55, 0, 0},
 		HT_MANDJUL4, HF_JULIA4, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, MANDEL4, JULIA4FP, ORIGIN,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_4, FRACTYPE_JULIA_4_FP, ORIGIN,
 		mandel4_orbit, julia_per_pixel, julia_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* IFS */
+	{
+	FRACTYPE_IFS,
 	"ifs",
 		{s_color_method, "", "", ""},
 		{0, 0, 0, 0},
 		HT_IFS, -4, NOGUESS | NOTRACE | NORESUME | INFCALC,
 		-8.0f, 8.0f, -1.0f, 11.0f,
-		16, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, stand_alone_setup, ifs,
 		BAILOUT_NONE
 	},
 
-	{ /* IFS3D */
+	{
+	FRACTYPE_IFS_3D,
 	s_ifs3d_name,
 		{s_color_method, "", "", ""},
 		{0, 0, 0, 0},
 		HT_IFS, -4, NOGUESS | NOTRACE | NORESUME | PARMS3D | INFCALC,
 		-11.0f, 11.0f, -11.0f, 11.0f,
-		16, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, stand_alone_setup, ifs,
 		BAILOUT_NONE
 	},
 
-	{ /* BARNSLEYM3 */
+	{
+	FRACTYPE_BARNSLEY_M3,
 	s_barnsleym3_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM3, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, BARNSLEYJ3, NOFRACTAL, BARNSLEYM3FP, XAXIS_NOPARM,
+		1, FRACTYPE_BARNSLEY_J3, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M3_FP, XAXIS_NOPARM,
 		barnsley3_orbit, mandelbrot_per_pixel_l, mandelbrot_setup_l,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYJ3 */
+	{
+	FRACTYPE_BARNSLEY_J3,
 	s_barnsleyj3_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.1, 0.36, 0, 0},
 		HT_BARNS, HF_BARNSJ3, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, BARNSLEYM3, BARNSLEYJ3FP, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M3, FRACTYPE_BARNSLEY_J3_FP, NOSYM,
 		barnsley3_orbit, julia_per_pixel_l, julia_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* DEMM, TRIGSQR */
+	{ /* FRACTYPE_OBSOLETE_DEM_MANDELBROT, FRACTYPE_FUNC_SQR */
+	FRACTYPE_FUNC_SQR,
 	s_fn_zz__name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_FNZTIMESZ, TRIG1 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, NOFRACTAL, TRIGSQRFP, XYAXIS,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_SQR_FP, XYAXIS,
 		trig_z_squared_orbit, julia_per_pixel, julia_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* DEMJ, TRIGSQRFP */
+	{ /* FRACTYPE_OBSOLETE_DEM_JULIA, FRACTYPE_FUNC_SQR_FP */
+	FRACTYPE_FUNC_SQR_FP,
 	s_fn_zz__name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_FNZTIMESZ, TRIG1 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, NOFRACTAL, TRIGSQR, XYAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_SQR, XYAXIS,
 		trig_z_squared_orbit_fp, julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BIFURCATION */
+	{
+	FRACTYPE_BIFURCATION,
 	s_bifurcation_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFURCATION, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		1.9f, 3.0f, 0.0f, 1.34f,
-		0, NOFRACTAL, NOFRACTAL, LBIFURCATION, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_L, NOSYM,
 		bifurcation_verhulst_trig_fp, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* MANDELSINH, TRIGPLUSTRIGFP */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_SINH, FRACTYPE_FUNC_PLUS_FUNC_FP */
+	FRACTYPE_FUNC_PLUS_FUNC_FP,
 	s_fnplusfn_name,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, s_trig2_coefficient_re, s_trig2_coefficient_im},
 		{1, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNPLUSFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, NOFRACTAL, TRIGPLUSTRIG, XAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_PLUS_FUNC, XAXIS,
 		trig_plus_trig_orbit_fp, other_julia_per_pixel_fp, trig_plus_trig_setup_fp,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LAMBDASINH, TRIGXTRIG */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_SINH, FRACTYPE_FUNC_TIMES_FUNC */
+	FRACTYPE_FUNC_TIMES_FUNC,
 	s_fnfn_name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_FNTIMESFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, NOFRACTAL, TRIGXTRIGFP, XAXIS,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_TIMES_FUNC_FP, XAXIS,
 		trig_trig_orbit, julia_per_pixel_l, fn_fn_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* MANDELCOSH, TRIGXTRIGFP */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_COSH, FRACTYPE_FUNC_TIMES_FUNC_FP */
+	FRACTYPE_FUNC_TIMES_FUNC_FP,
 	s_fnfn_name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_FNTIMESFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, NOFRACTAL, TRIGXTRIG, XAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_TIMES_FUNC, XAXIS,
 		trig_trig_orbit_fp, other_julia_per_pixel_fp, fn_fn_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LAMBDACOSH, SQR1OVERTRIG */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_COSH, FRACTYPE_SQR_RECIPROCAL_FUNC */
+	FRACTYPE_SQR_RECIPROCAL_FUNC,
 	s_sqr_1divfn__name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SQROVFN, TRIG1 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, NOFRACTAL, SQR1OVERTRIGFP, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_SQR_RECIPROCAL_FUNC_FP, NOSYM,
 		sqr_1_over_trig_z_orbit, julia_per_pixel_l, sqr_trig_setup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LMANDELSINE, SQR1OVERTRIGFP */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_SINE_L, FRACTYPE_SQR_RECIPROCAL_FUNC_FP */
+	FRACTYPE_SQR_RECIPROCAL_FUNC_FP,
 	s_sqr_1divfn__name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SQROVFN, TRIG1 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, NOFRACTAL, SQR1OVERTRIG, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_SQR_RECIPROCAL_FUNC, NOSYM,
 		sqr_1_over_trig_z_orbit_fp, other_julia_per_pixel_fp, sqr_trig_setup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LLAMBDASINE, ZXTRIGPLUSZ */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_SINE_L, FRACTYPE_FUNC_TIMES_Z_PLUS_Z */
+	FRACTYPE_FUNC_TIMES_Z_PLUS_Z,
 	s_fnzplusz_name + 1,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
 		{1, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNXZPLUSZ, TRIG1 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		1, NOFRACTAL, NOFRACTAL, ZXTRIGPLUSZFP, XAXIS,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_TIMES_Z_PLUS_Z_FP, XAXIS,
 		z_trig_z_plus_z_orbit, julia_per_pixel, z_trig_plus_z_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LMANDELCOS, ZXTRIGPLUSZFP */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_COS_L, FRACTYPE_FUNC_TIMES_Z_PLUS_Z_FP */
+	FRACTYPE_FUNC_TIMES_Z_PLUS_Z_FP,
 	s_fnzplusz_name,
 		{s_trig1_coefficient_re, s_trig1_coefficient_im, "Real Coefficient Second Term", "Imag Coefficient Second Term"},
 		{1, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNXZPLUSZ, TRIG1 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, NOFRACTAL, ZXTRIGPLUSZ, XAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_TIMES_Z_PLUS_Z, XAXIS,
 		z_trig_z_plus_z_orbit_fp, julia_per_pixel_fp, z_trig_plus_z_setup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LLAMBDACOS, KAMFP */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_COS_L, FRACTYPE_KAM_TORUS_FP */
+	FRACTYPE_KAM_TORUS_FP,
 	s_kamtorus_name,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
 		{1.3, .05, 1.5, 150},
 		HT_KAM, HF_KAM, NOGUESS | NOTRACE,
 		-1.0f, 1.0f, -.75f, .75f,
-		0, NOFRACTAL, NOFRACTAL, KAM, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_KAM_TORUS, NOSYM,
 		(VF) kam_torus_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* LMANDELSINH, KAM */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_SINH_L, FRACTYPE_KAM_TORUS */
+	FRACTYPE_KAM_TORUS,
 	s_kamtorus_name + 1,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
 		{1.3, .05, 1.5, 150},
 		HT_KAM, HF_KAM, NOGUESS | NOTRACE,
 		-1.0f, 1.0f, -.75f, .75f,
-		16, NOFRACTAL, NOFRACTAL, KAMFP, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_KAM_TORUS_FP, NOSYM,
 		(VF) kam_torus_orbit, NULL, orbit_3d_setup, orbit_2d,
 		BAILOUT_NONE
 	},
 
-	{ /* LLAMBDASINH, KAM3DFP */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_SINH_L, FRACTYPE_KAM_TORUS_3D_FP */
+	FRACTYPE_KAM_TORUS_3D_FP,
 	s_kamtorus3d_name,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
 		{1.3, .05, 1.5, 150},
 		HT_KAM, HF_KAM, NOGUESS | NOTRACE | NORESUME | PARMS3D,
 		-3.0f, 3.0f, -1.0f, 3.5f,
-		0, NOFRACTAL, NOFRACTAL, KAM3D, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_KAM_TORUS_3D, NOSYM,
 		(VF) kam_torus_orbit_fp, NULL, orbit_3d_setup_fp, orbit_3d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* LMANDELCOSH, KAM3D */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_COSH_L, FRACTYPE_KAM_TORUS_3D */
+	FRACTYPE_KAM_TORUS_3D,
 	s_kamtorus3d_name + 1,
 		{s_kam_angle, s_kam_step, s_kam_stop, s_points_per_orbit},
 		{1.3, .05, 1.5, 150},
 		HT_KAM, HF_KAM, NOGUESS | NOTRACE | NORESUME | PARMS3D,
 		-3.0f, 3.0f, -1.0f, 3.5f,
-		16, NOFRACTAL, NOFRACTAL, KAM3DFP, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_KAM_TORUS_3D_FP, NOSYM,
 		(VF) kam_torus_orbit, NULL, orbit_3d_setup, orbit_3d,
 		BAILOUT_NONE
 	},
 
-	{ /* LLAMBDACOSH, LAMBDATRIG */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_COSH_L, FRACTYPE_LAMBDA_FUNC */
+	FRACTYPE_LAMBDA_FUNC,
 	s_lambdafn_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{1.0, 0.4, 0, 0},
 		HT_LAMBDAFN, HF_LAMBDAFN, TRIG1 | OKJB,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, MANDELTRIG, LAMBDATRIGFP, PI_SYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC, FRACTYPE_LAMBDA_FUNC_FP, PI_SYM,
 		(VF) lambda_trig_orbit, julia_per_pixel_l, lambda_trig_setup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LMANTRIGPLUSZSQRD */
+	{
+	FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_L,
 	s_manfnpluszsqrd_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_MANDFNPLUSZSQRD, TRIG1 | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		16, LJULTRIGPLUSZSQRD, NOFRACTAL, FPMANTRIGPLUSZSQRD, XAXIS_NOPARM,
+		16, FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_L, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_FP, XAXIS_NOPARM,
 		trig_plus_z_squared_orbit, mandelbrot_per_pixel, mandelbrot_setup_l,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LJULTRIGPLUSZSQRD */
+	{
+	FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_L,
 	s_julfnpluszsqrd_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{-0.5, 0.5, 0, 0},
 		HT_PICKMJ, HF_JULFNPLUSZSQRD, TRIG1 | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		16, NOFRACTAL, LMANTRIGPLUSZSQRD, FPJULTRIGPLUSZSQRD, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_L, FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_FP, NOSYM,
 		trig_plus_z_squared_orbit, julia_per_pixel, julia_fn_plus_z_squared_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPMANTRIGPLUSZSQRD */
+	{
+	FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_FP,
 	s_manfnpluszsqrd_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_MANDFNPLUSZSQRD, TRIG1 | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, FPJULTRIGPLUSZSQRD,   NOFRACTAL, LMANTRIGPLUSZSQRD, XAXIS_NOPARM,
+		0, FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_FP,   FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_L, XAXIS_NOPARM,
 		trig_plus_z_squared_orbit_fp, mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPJULTRIGPLUSZSQRD */
+	{
+	FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_FP,
 	s_julfnpluszsqrd_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{-0.5, 0.5, 0, 0},
 		HT_PICKMJ, HF_JULFNPLUSZSQRD, TRIG1 | OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, FPMANTRIGPLUSZSQRD, LJULTRIGPLUSZSQRD, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_FP, FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_L, NOSYM,
 		trig_plus_z_squared_orbit_fp, julia_per_pixel_fp, julia_fn_plus_z_squared_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LMANDELEXP, LAMBDATRIGFP */
+	{ /* FRACTYPE_OBSOLETE_MANDELBROT_EXP_L, FRACTYPE_LAMBDA_FUNC_FP */
+	FRACTYPE_LAMBDA_FUNC_FP,
 	s_lambdafn_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{1.0, 0.4, 0, 0},
 		HT_LAMBDAFN, HF_LAMBDAFN, TRIG1 | OKJB,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANDELTRIGFP, LAMBDATRIG, PI_SYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_FP, FRACTYPE_LAMBDA_FUNC, PI_SYM,
 		lambda_trig_orbit_fp, other_julia_per_pixel_fp, lambda_trig_setup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LLAMBDAEXP, MANDELTRIG */
+	{ /* FRACTYPE_OBSOLETE_LAMBDA_EXP_L, FRACTYPE_MANDELBROT_FUNC */
+	FRACTYPE_MANDELBROT_FUNC,
 	s_mandelfn_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDFN, HF_MANDFN, TRIG1,
 		-8.0f, 8.0f, -6.0f, 6.0f,
-		16, LAMBDATRIG, NOFRACTAL, MANDELTRIGFP, XYAXIS_NOPARM,
+		16, FRACTYPE_LAMBDA_FUNC, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_FP, XYAXIS_NOPARM,
 		lambda_trig_orbit, mandelbrot_per_pixel_l, mandelbrot_trig_setup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LMANDELZPOWER */
+	{
+	FRACTYPE_MANDELBROT_Z_POWER_L,
 	s_manzpower_name + 1,
 		{s_real_z0, s_imag_z0, s_exponent, s_exponent_imag},
 		{0, 0, 2, 0},
 		HT_PICKMJ, HF_MANZPOWER, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, LJULIAZPOWER, NOFRACTAL, FPMANDELZPOWER, XAXIS_NOIMAG,
+		1, FRACTYPE_JULIA_Z_POWER_L, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_Z_POWER_FP, XAXIS_NOIMAG,
 		z_power_orbit, mandelbrot_per_pixel_l, mandelbrot_setup_l,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LJULIAZPOWER */
+	{
+	FRACTYPE_JULIA_Z_POWER_L,
 	s_julzpower_name + 1,
 		{s_parameter_real, s_parameter_imag, s_exponent, s_exponent_imag},
 		{0.3, 0.6, 2, 0},
 		HT_PICKMJ, HF_JULZPOWER, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, LMANDELZPOWER, FPJULIAZPOWER, ORIGIN,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_Z_POWER_L, FRACTYPE_JULIA_Z_POWER_FP, ORIGIN,
 		z_power_orbit, julia_per_pixel_l, julia_setup_l,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPMANDELZPOWER */
+	{
+	FRACTYPE_MANDELBROT_Z_POWER_FP,
 	s_manzpower_name,
 		{s_real_z0, s_imag_z0, s_exponent, s_exponent_imag},
 		{0, 0, 2, 0},
 		HT_PICKMJ, HF_MANZPOWER, BAILTEST | BF_MATH,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, FPJULIAZPOWER, NOFRACTAL, LMANDELZPOWER, XAXIS_NOIMAG,
+		0, FRACTYPE_JULIA_Z_POWER_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_Z_POWER_L, XAXIS_NOIMAG,
 		z_power_orbit_fp, other_mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPJULIAZPOWER */
+	{
+	FRACTYPE_JULIA_Z_POWER_FP,
 	s_julzpower_name,
 		{s_parameter_real, s_parameter_imag, s_exponent, s_exponent_imag},
 		{0.3, 0.6, 2, 0},
 		HT_PICKMJ, HF_JULZPOWER, OKJB | BAILTEST | BF_MATH,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, FPMANDELZPOWER, LJULIAZPOWER, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_Z_POWER_FP, FRACTYPE_JULIA_Z_POWER_L, ORIGIN,
 		z_power_orbit_fp, other_julia_per_pixel_fp, julia_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPMANZTOZPLUSZPWR */
+	{
+	FRACTYPE_MANDELBROT_Z_TO_Z_PLUS_Z_POWER_FP,
 	"manzzpwr",
 		{s_real_z0, s_imag_z0, s_exponent, ""},
 		{0, 0, 2, 0},
 		HT_PICKMJ, HF_MANZZPWR, BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, FPJULZTOZPLUSZPWR, NOFRACTAL, NOFRACTAL, XAXIS_NOPARM,
+		0, FRACTYPE_JULIA_Z_TO_Z_PLUS_Z_POWER_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, XAXIS_NOPARM,
 		z_to_z_plus_z_orbit_fp, other_mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPJULZTOZPLUSZPWR */
+	{
+	FRACTYPE_JULIA_Z_TO_Z_PLUS_Z_POWER_FP,
 	"julzzpwr",
 		{s_parameter_real, s_parameter_imag, s_exponent, ""},
 		{-0.3, 0.3, 2, 0},
 		HT_PICKMJ, HF_JULZZPWR, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, FPMANZTOZPLUSZPWR, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_Z_TO_Z_PLUS_Z_POWER_FP, FRACTYPE_NO_FRACTAL, NOSYM,
 		z_to_z_plus_z_orbit_fp, other_julia_per_pixel_fp, julia_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LMANTRIGPLUSEXP */
+	{
+	FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_L,
 	s_manfnplusexp_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_MANDFNPLUSEXP, TRIG1 | BAILTEST,
 		-8.0f, 8.0f, -6.0f, 6.0f,
-		16, LJULTRIGPLUSEXP, NOFRACTAL, FPMANTRIGPLUSEXP, XAXIS_NOPARM,
+		16, FRACTYPE_JULIA_FUNC_PLUS_EXP_L, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_FP, XAXIS_NOPARM,
 		trig_plus_exponent_orbit, mandelbrot_per_pixel_l, mandelbrot_setup_l,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LJULTRIGPLUSEXP */
+	{
+	FRACTYPE_JULIA_FUNC_PLUS_EXP_L,
 	s_julfnplusexp_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_JULFNPLUSEXP, TRIG1 | OKJB | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, LMANTRIGPLUSEXP, FPJULTRIGPLUSEXP, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_L, FRACTYPE_JULIA_FUNC_PLUS_EXP_FP, NOSYM,
 		trig_plus_exponent_orbit, julia_per_pixel_l, julia_setup_l,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPMANTRIGPLUSEXP */
+	{
+	FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_FP,
 	s_manfnplusexp_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_MANDFNPLUSEXP, TRIG1 | BAILTEST,
 		-8.0f, 8.0f, -6.0f, 6.0f,
-		0, FPJULTRIGPLUSEXP, NOFRACTAL, LMANTRIGPLUSEXP, XAXIS_NOPARM,
+		0, FRACTYPE_JULIA_FUNC_PLUS_EXP_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_L, XAXIS_NOPARM,
 		trig_plus_exponent_orbit_fp, other_mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
  			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPJULTRIGPLUSEXP */
+	{
+	FRACTYPE_JULIA_FUNC_PLUS_EXP_FP,
 	s_julfnplusexp_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_PICKMJ, HF_JULFNPLUSEXP, TRIG1 | OKJB | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, FPMANTRIGPLUSEXP, LJULTRIGPLUSEXP, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_FP, FRACTYPE_JULIA_FUNC_PLUS_EXP_L, NOSYM,
 		trig_plus_exponent_orbit_fp, other_julia_per_pixel_fp, julia_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPPOPCORN */
+	{
+	FRACTYPE_POPCORN_FP,
 	s_popcorn_name,
 		{s_step_x, s_step_y, s_constant_x, s_constant_y},
 		{0.05, 0, 3.00, 0},
 		HT_POPCORN, HF_POPCORN, NOGUESS | NOTRACE | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
-		0, NOFRACTAL, NOFRACTAL, LPOPCORN, NOPLOT,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_POPCORN_L, NOPLOT,
 		popcorn_fn_orbit_fp, other_julia_per_pixel_fp, julia_setup_fp, popcorn,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LPOPCORN */
+	{
+	FRACTYPE_POPCORN_L,
 	s_popcorn_name + 1,
 		{s_step_x, s_step_y, s_constant_x, s_constant_y},
 		{0.05, 0, 3.00, 0},
 		HT_POPCORN, HF_POPCORN, NOGUESS | NOTRACE | TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
-		16, NOFRACTAL, NOFRACTAL, FPPOPCORN, NOPLOT,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_POPCORN_FP, NOPLOT,
 		popcorn_fn_orbit, julia_per_pixel_l, julia_setup_l, popcorn,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPLORENZ */
+	{
+	FRACTYPE_LORENZ_FP,
 	s_lorenz_name,
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ, NOGUESS | NOTRACE | INFCALC,
 		-15.0f, 15.0f, 0.0f, 30.0f,
-		0, NOFRACTAL, NOFRACTAL, LLORENZ, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_LORENZ_L, NOSYM,
 		(VF) lorenz_3d_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* LLORENZ */
+	{
+	FRACTYPE_LORENZ_L,
 	s_lorenz_name + 1,
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ, NOGUESS | NOTRACE | INFCALC,
 		-15.0f, 15.0f, 0.0f, 30.0f,
-		16, NOFRACTAL, NOFRACTAL, FPLORENZ, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_LORENZ_FP, NOSYM,
 		(VF) lorenz_3d_orbit, NULL, orbit_3d_setup, orbit_2d,
 		BAILOUT_NONE
 	},
 
-	{ /* LLORENZ3D */
+	{
+	FRACTYPE_LORENZ_3D_L,
 	s_lorenz3d_name + 1,
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ, NOGUESS | NOTRACE | NORESUME | PARMS3D | INFCALC,
 		-30.0f, 30.0f, -30.0f, 30.0f,
-		16, NOFRACTAL, NOFRACTAL, FPLORENZ3D, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_LORENZ_3D_FP, NOSYM,
 		(VF) lorenz_3d_orbit, NULL, orbit_3d_setup, orbit_3d,
 		BAILOUT_NONE
 	},
 
-	{ /* MPNEWTON */
+	{
+	FRACTYPE_NEWTON_MP,
 	s_newton_name + 1,
 		{s_newton_degree, "", "", ""},
 		{3, 0, 0, 0},
 		HT_NEWT, HF_NEWT, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NEWTON, XAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NEWTON, XAXIS,
 		newton_orbit_mpc, julia_per_pixel_mpc, newton_setup, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* MPNEWTBASIN */
+	{
+	FRACTYPE_NEWTON_BASIN_MP,
 	s_newtbasin_name + 1,
 		{s_newton_degree, "Enter non-zero value for stripes", "", ""},
 		{3, 0, 0, 0},
 		HT_NEWTBAS, HF_NEWTBAS, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NEWTBASIN, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NEWTON_BASIN, NOSYM,
 		newton_orbit_mpc, julia_per_pixel_mpc, newton_setup, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* COMPLEXNEWTON */
+	{
+	FRACTYPE_NEWTON_COMPLEX,
 	"complexnewton",
 		{"Real part of Degree", "Imag part of Degree", "Real part of Root", "Imag part of Root"},
 		{3, 0, 1, 0},
 		HT_NEWTCMPLX, HF_COMPLEXNEWT, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		complex_newton, other_julia_per_pixel_fp, complex_newton_setup,
 			standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* COMPLEXBASIN */
+	{
+	FRACTYPE_NEWTON_BASIN_COMPLEX,
 	"complexbasin",
 		{"Real part of Degree", "Imag part of Degree", "Real part of Root", "Imag part of Root"},
 		{3, 0, 1, 0},
 		HT_NEWTCMPLX, HF_COMPLEXNEWT, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		complex_basin, other_julia_per_pixel_fp, complex_newton_setup,
 			standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* COMPLEXMARKSMAND */
+	{
+	FRACTYPE_MARKS_MANDELBROT_COMPLEX,
 	"cmplxmarksmand",
 		{s_real_z0, s_imag_z0, s_exponent, s_exponent_imag},
 		{0, 0, 1, 0},
 		HT_MARKS, HF_CMPLXMARKSMAND, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, COMPLEXMARKSJUL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_MARKS_JULIA_COMPLEX, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		marks_complex_mandelbrot_orbit, marks_complex_mandelbrot_per_pixel, mandelbrot_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* COMPLEXMARKSJUL */
+	{
+	FRACTYPE_MARKS_JULIA_COMPLEX,
 	"cmplxmarksjul",
 		{s_parameter_real, s_parameter_imag, s_exponent, s_exponent_imag},
 		{0.3, 0.6, 1, 0},
 		HT_MARKS, HF_CMPLXMARKSJUL, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, COMPLEXMARKSMAND, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MARKS_MANDELBROT_COMPLEX, FRACTYPE_NO_FRACTAL, NOSYM,
 		marks_complex_mandelbrot_orbit, julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FORMULA */
+	{
+	FRACTYPE_FORMULA,
 	s_formula_name + 1,
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0, 0, 0, 0},
 		HT_FORMULA, -2, MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, NOFRACTAL, FFORMULA, SETUP_SYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FORMULA_FP, SETUP_SYM,
 		Formula, form_per_pixel, formula_setup_int, standard_fractal,
 		0
 	},
 
-	{ /* FFORMULA */
+	{
+	FRACTYPE_FORMULA_FP,
 	s_formula_name,
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0, 0, 0, 0},
 		HT_FORMULA, -2, MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, FORMULA, SETUP_SYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FORMULA, SETUP_SYM,
 		Formula, form_per_pixel, formula_setup_fp, standard_fractal,
 		0
 	},
 
-	{ /* SIERPINSKIFP */
+	{
+	FRACTYPE_SIERPINSKI_FP,
 	s_sierpinski_name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_SIER, HF_SIER, 0,
 		-4.0f/3.0f, 96.0f/45.0f, -0.9f, 1.7f,
-		0, NOFRACTAL, NOFRACTAL, SIERPINSKI, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_SIERPINSKI, NOSYM,
 		sierpinski_orbit_fp, other_julia_per_pixel_fp, sierpinski_setup_fp,
 			standard_fractal,
 		127
 	},
 
-	{ /* LAMBDAFP */
+	{
+	FRACTYPE_LAMBDA_FP,
 	s_lambda_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.85, 0.6, 0, 0},
 		HT_LAMBDA, HF_LAMBDA, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANDELLAMBDAFP, LAMBDA, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_LAMBDA_FP, FRACTYPE_LAMBDA, NOSYM,
 		lambda_orbit_fp, julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYM1FP */
+	{
+	FRACTYPE_BARNSLEY_M1_FP,
 	s_barnsleym1_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM1, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, BARNSLEYJ1FP, NOFRACTAL, BARNSLEYM1, XYAXIS_NOPARM,
+		0, FRACTYPE_BARNSLEY_J1_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M1, XYAXIS_NOPARM,
 		barnsley1_orbit_fp, other_mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYJ1FP */
+	{
+	FRACTYPE_BARNSLEY_J1_FP,
 	s_barnsleyj1_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ1, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, BARNSLEYM1FP, BARNSLEYJ1, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M1_FP, FRACTYPE_BARNSLEY_J1, ORIGIN,
 		barnsley1_orbit_fp, other_julia_per_pixel_fp, julia_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYM2FP */
+	{
+	FRACTYPE_BARNSLEY_M2_FP,
 	s_barnsleym2_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM2, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, BARNSLEYJ2FP, NOFRACTAL, BARNSLEYM2, YAXIS_NOPARM,
+		0, FRACTYPE_BARNSLEY_J2_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M2, YAXIS_NOPARM,
 		barnsley2_orbit_fp, other_mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYJ2FP */
+	{
+	FRACTYPE_BARNSLEY_J2_FP,
 	s_barnsleyj2_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ2, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, BARNSLEYM2FP, BARNSLEYJ2, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M2_FP, FRACTYPE_BARNSLEY_J2, ORIGIN,
 		barnsley2_orbit_fp, other_julia_per_pixel_fp, julia_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYM3FP */
+	{
+	FRACTYPE_BARNSLEY_M3_FP,
 	s_barnsleym3_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_BARNS, HF_BARNSM3, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, BARNSLEYJ3FP, NOFRACTAL, BARNSLEYM3, XAXIS_NOPARM,
+		0, FRACTYPE_BARNSLEY_J3_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M3, XAXIS_NOPARM,
 		barnsley3_orbit_fp, other_mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* BARNSLEYJ3FP */
+	{
+	FRACTYPE_BARNSLEY_J3_FP,
 	s_barnsleyj3_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 1.1, 0, 0},
 		HT_BARNS, HF_BARNSJ3, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, BARNSLEYM3FP, BARNSLEYJ3, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_BARNSLEY_M3_FP, FRACTYPE_BARNSLEY_J3, NOSYM,
 		barnsley3_orbit_fp, other_julia_per_pixel_fp, julia_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MANDELLAMBDAFP */
+	{
+	FRACTYPE_MANDELBROT_LAMBDA_FP,
 	s_mandellambda_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MLAMBDA, HF_MLAMBDA, BAILTEST,
 		-3.0f, 5.0f, -3.0f, 3.0f,
-		0, LAMBDAFP, NOFRACTAL, MANDELLAMBDA, XAXIS_NOPARM,
+		0, FRACTYPE_LAMBDA_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_LAMBDA, XAXIS_NOPARM,
 		lambda_orbit_fp, mandelbrot_per_pixel_fp, mandelbrot_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* JULIBROT */
+	{
+	FRACTYPE_JULIBROT,
 	s_julibrot_name + 1,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_JULIBROT, -1, NOGUESS | NOTRACE | NOROTATE | NORESUME,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, NOFRACTAL, JULIBROTFP, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_JULIBROT_FP, NOSYM,
 		julia_orbit, julibrot_per_pixel, julibrot_setup, standard_4d_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FPLORENZ3D */
+	{
+	FRACTYPE_LORENZ_3D_FP,
 	s_lorenz3d_name,
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ, NOGUESS | NOTRACE | NORESUME | PARMS3D | INFCALC,
 		-30.0f, 30.0f, -30.0f, 30.0f,
-		0, NOFRACTAL, NOFRACTAL, LLORENZ3D, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_LORENZ_3D_L, NOSYM,
 		(VF) lorenz_3d_orbit_fp, NULL, orbit_3d_setup_fp, orbit_3d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* LROSSLER */
+	{
+	FRACTYPE_ROSSLER_L,
 	s_rossler3d_name + 1,
 		{s_time_step, "a", "b", "c"},
 		{.04, .2, .2, 5.7},
 		HT_ROSS, HF_ROSS, NOGUESS | NOTRACE | NORESUME | PARMS3D | INFCALC,
 		-30.0f, 30.0f, -20.0f, 40.0f,
-		16, NOFRACTAL, NOFRACTAL, FPROSSLER, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_ROSSLER_FP, NOSYM,
 		(VF) rossler_orbit, NULL, orbit_3d_setup, orbit_3d,
 		BAILOUT_NONE
 	},
 
-	{ /* FPROSSLER */
+	{
+	FRACTYPE_ROSSLER_FP,
 	s_rossler3d_name,
 		{s_time_step, "a", "b", "c"},
 		{.04, .2, .2, 5.7},
 		HT_ROSS, HF_ROSS, NOGUESS | NOTRACE | NORESUME | PARMS3D | INFCALC,
 		-30.0f, 30.0f, -20.0f, 40.0f,
-		0, NOFRACTAL, NOFRACTAL, LROSSLER, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_ROSSLER_L, NOSYM,
 		(VF) rossler_orbit_fp, NULL, orbit_3d_setup_fp, orbit_3d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* LHENON */
+	{
+	FRACTYPE_HENON_L,
 	s_henon_name + 1,
 		{"a", "b", "", ""},
 		{1.4, .3, 0, 0},
 		HT_HENON, HF_HENON, NOGUESS | NOTRACE | INFCALC,
 		-1.4f, 1.4f, -.5f, .5f,
-		16, NOFRACTAL, NOFRACTAL, FPHENON, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_HENON_FP, NOSYM,
 		(VF) henon_orbit, NULL, orbit_3d_setup, orbit_2d,
 		BAILOUT_NONE
 	},
 
-	{ /* FPHENON */
+	{
+	FRACTYPE_HENON_FP,
 	s_henon_name,
 		{"a", "b", "", ""},
 		{1.4, .3, 0, 0},
 		HT_HENON, HF_HENON, NOGUESS | NOTRACE | INFCALC,
 		-1.4f, 1.4f, -.5f, .5f,
-		0, NOFRACTAL, NOFRACTAL, LHENON, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_HENON_L, NOSYM,
 		(VF) henon_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* FPPICKOVER */
+	{
+	FRACTYPE_PICKOVER_FP,
 	"pickover",
 		{"a", "b", "c", "d"},
 		{2.24, .43, -.65, -2.43},
 		HT_PICK, HF_PICKOVER, NOGUESS | NOTRACE | NORESUME | PARMS3D,
 		-8.0f/3.0f, 8.0f/3.0f, -2.0f, 2.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) pickover_orbit_fp, NULL, orbit_3d_setup_fp, orbit_3d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* FPGINGERBREAD */
+	{
+	FRACTYPE_GINGERBREAD_FP,
 	"gingerbreadman",
 		{"Initial x", "Initial y", "", ""},
 		{-.1, 0, 0, 0},
 		HT_GINGER, HF_GINGER, NOGUESS | NOTRACE | INFCALC,
 		-4.5f, 8.5f, -4.5f, 8.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) gingerbread_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* DIFFUSION */
+	{
+	FRACTYPE_DIFFUSION,
 	"diffusion",
 		{"+Border size",
 		"+Type (0=Central, 1=Falling, 2=Square Cavity)",
@@ -1286,582 +1379,633 @@ struct fractal_specific_stuff g_fractal_specific[] =
 		{10, 0, 0, 0},
 		HT_DIFFUS, HF_DIFFUS, NOZOOM | NOGUESS | NOTRACE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, stand_alone_setup, diffusion,
 		BAILOUT_NONE
 	},
 
-	{ /* UNITYFP */
+	{
+	FRACTYPE_UNITY_FP,
 	s_unity_name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_UNITY, HF_UNITY, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, UNITY, XYAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_UNITY, XYAXIS,
 		unity_orbit_fp, other_julia_per_pixel_fp, standard_setup, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* SPIDERFP */
+	{
+	FRACTYPE_SPIDER_FP,
 	s_spider_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SPIDER, BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, SPIDER, XAXIS_NOPARM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_SPIDER, XAXIS_NOPARM,
 		spider_orbit_fp, mandelbrot_per_pixel_fp, mandelbrot_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* SPIDER */
+	{
+	FRACTYPE_SPIDER,
 	s_spider_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_SPIDER, BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		1, NOFRACTAL, NOFRACTAL, SPIDERFP, XAXIS_NOPARM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_SPIDER_FP, XAXIS_NOPARM,
 		spider_orbit, mandelbrot_per_pixel, mandelbrot_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* TETRATEFP */
+	{
+	FRACTYPE_TETRATE_FP,
 	"tetrate",
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_TETRATE, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, XAXIS_NOIMAG,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, XAXIS_NOIMAG,
 		tetrate_orbit_fp, other_mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MAGNET1M */
+	{
+	FRACTYPE_MAGNET_1M,
 	"magnet1m",
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MAGNET, HF_MAGM1, 0,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, MAGNET1J, NOFRACTAL, NOFRACTAL, XAXIS_NOPARM,
+		0, FRACTYPE_MAGNET_1J, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, XAXIS_NOPARM,
 		magnet1_orbit_fp, mandelbrot_per_pixel_fp, mandelbrot_setup_fp, standard_fractal,
 		100
 	},
 
-	{ /* MAGNET1J */
+	{
+	FRACTYPE_MAGNET_1J,
 	"magnet1j",
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_MAGNET, HF_MAGJ1, 0,
 		-8.0f, 8.0f, -6.0f, 6.0f,
-		0, NOFRACTAL, MAGNET1M, NOFRACTAL, XAXIS_NOIMAG,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MAGNET_1M, FRACTYPE_NO_FRACTAL, XAXIS_NOIMAG,
 		magnet1_orbit_fp, julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		100
 	},
 
-	{ /* MAGNET2M */
+	{
+	FRACTYPE_MAGNET_2M,
 	"magnet2m",
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MAGNET, HF_MAGM2, 0,
 		-1.5f, 3.7f, -1.95f, 1.95f,
-		0, MAGNET2J, NOFRACTAL, NOFRACTAL, XAXIS_NOPARM,
+		0, FRACTYPE_MAGNET_2J, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, XAXIS_NOPARM,
 		magnet2_orbit_fp, mandelbrot_per_pixel_fp, mandelbrot_setup_fp, standard_fractal,
 		100
 	},
 
-	{ /* MAGNET2J */
+	{
+	FRACTYPE_MAGNET_2J,
 	"magnet2j",
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_MAGNET, HF_MAGJ2, 0,
 		-8.0f, 8.0f, -6.0f, 6.0f,
-		0, NOFRACTAL, MAGNET2M, NOFRACTAL, XAXIS_NOIMAG,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MAGNET_2M, FRACTYPE_NO_FRACTAL, XAXIS_NOIMAG,
 		magnet2_orbit_fp, julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		100
 	},
 
-	{ /* LBIFURCATION */
+	{
+	FRACTYPE_BIFURCATION_L,
 	s_bifurcation_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFURCATION, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		1.9f, 3.0f, 0.0f, 1.34f,
-		1, NOFRACTAL, NOFRACTAL, BIFURCATION, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION, NOSYM,
 		bifurcation_verhulst_trig, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* LBIFLAMBDA */
+	{
+	FRACTYPE_BIFURCATION_LAMBDA_L,
 	s_biflambda_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFLAMBDA, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		-2.0f, 4.0f, -1.0f, 2.0f,
-		1, NOFRACTAL, NOFRACTAL, BIFLAMBDA, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_LAMBDA, NOSYM,
 		bifurcation_lambda_trig, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* BIFLAMBDA */
+	{
+	FRACTYPE_BIFURCATION_LAMBDA,
 	s_biflambda_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFLAMBDA, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		-2.0f, 4.0f, -1.0f, 2.0f,
-		0, NOFRACTAL, NOFRACTAL, LBIFLAMBDA, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_LAMBDA_L, NOSYM,
 		bifurcation_lambda_trig_fp, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* BIFADSINPI */
+	{
+	FRACTYPE_BIFURCATION_PLUS_FUNC_PI,
 	s_bifplussinpi_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFPLUSSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		0.275f, 1.45f, 0.0f, 2.0f,
-		0, NOFRACTAL, NOFRACTAL, LBIFADSINPI, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L, NOSYM,
 		bifurcation_add_trig_pi_fp, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* BIFEQSINPI */
+	{
+	FRACTYPE_BIFURCATION_EQUAL_FUNC_PI,
 	s_bifeqsinpi_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFEQSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		-2.5f, 2.5f, -3.5f, 3.5f,
-		0, NOFRACTAL, NOFRACTAL, LBIFEQSINPI, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L, NOSYM,
 		bifurcation_set_trig_pi_fp, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* FPPOPCORNJUL */
+	{
+	FRACTYPE_POPCORN_JULIA_FP,
 	s_popcornjul_name,
 		{s_step_x, s_step_y, s_constant_x, s_constant_y},
 		{0.05, 0, 3.00, 0},
 		HT_POPCORN, HF_POPCJUL, TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
-		0, NOFRACTAL, NOFRACTAL, LPOPCORNJUL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_POPCORN_JULIA_L, NOSYM,
 		popcorn_fn_orbit_fp, other_julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LPOPCORNJUL */
+	{
+	FRACTYPE_POPCORN_JULIA_L,
 	s_popcornjul_name + 1,
 		{s_step_x, s_step_y, s_constant_x, s_constant_y},
 		{0.05, 0, 3.0, 0},
 		HT_POPCORN, HF_POPCJUL, TRIG4,
 		-3.0f, 3.0f, -2.25f, 2.25f,
-		16, NOFRACTAL, NOFRACTAL, FPPOPCORNJUL, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_POPCORN_JULIA_FP, NOSYM,
 		popcorn_fn_orbit, julia_per_pixel_l, julia_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LSYSTEM */
+	{
+	FRACTYPE_L_SYSTEM,
 	"lsystem",
 		{" + Order", "", "", ""},
 		{2, 0, 0, 0},
 		HT_LSYS, -3, NOZOOM | NORESUME | NOGUESS | NOTRACE,
 		-1.0f, 1.0f, -1.0f, 1.0f,
-		1, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, stand_alone_setup, l_system,
 		BAILOUT_NONE
 	},
 
-	{ /* MANOWARJFP */
+	{
+	FRACTYPE_MAN_O_WAR_JULIA_FP,
 	s_manowarj_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_MANOWARJ, OKJB | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANOWARFP, MANOWARJ, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MAN_O_WAR_FP, FRACTYPE_MAN_O_WAR_JULIA, NOSYM,
 		man_o_war_orbit_fp, julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MANOWARJ */
+	{
+	FRACTYPE_MAN_O_WAR_JULIA,
 	s_manowarj_name + 1,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0, 0, 0, 0},
 		HT_SCOTSKIN, HF_MANOWARJ, OKJB | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		1, NOFRACTAL, MANOWAR, MANOWARJFP, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_MAN_O_WAR, FRACTYPE_MAN_O_WAR_JULIA_FP, NOSYM,
 		man_o_war_orbit, julia_per_pixel, julia_setup_l, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* FNPLUSFNPIXFP */
+	{
+	FRACTYPE_FUNC_PLUS_FUNC_PIXEL_FP,
 	s_fn_z_plusfn_pix__name,
 		{s_real_z0, s_imag_z0, s_trig2_coefficient_re, s_trig2_coefficient_im},
 		{0, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNPLUSFNPIX, TRIG2 | BAILTEST,
 		-3.6f, 3.6f, -2.7f, 2.7f,
-		0, NOFRACTAL, NOFRACTAL, FNPLUSFNPIXLONG, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_PLUS_FUNC_PIXEL_L, NOSYM,
 		richard8_orbit_fp, other_richard8_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* FNPLUSFNPIXLONG */
+	{
+	FRACTYPE_FUNC_PLUS_FUNC_PIXEL_L,
 	s_fn_z_plusfn_pix__name + 1,
 		{s_real_z0, s_imag_z0, s_trig2_coefficient_re, s_trig2_coefficient_im},
 		{0, 0, 1, 0},
 		HT_SCOTSKIN, HF_FNPLUSFNPIX, TRIG2 | BAILTEST,
 		-3.6f, 3.6f, -2.7f, 2.7f,
-		1, NOFRACTAL, NOFRACTAL, FNPLUSFNPIXFP, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FUNC_PLUS_FUNC_PIXEL_FP, NOSYM,
 		richard8_orbit, richard8_per_pixel, mandelbrot_setup_l,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* MARKSMANDELPWRFP */
+	{
+	FRACTYPE_MARKS_MANDELBROT_POWER_FP,
 	s_marksmandelpwr_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MARKS, HF_MARKSMANDPWR, TRIG1 | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, MARKSMANDELPWR, XAXIS_NOPARM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_MARKS_MANDELBROT_POWER, XAXIS_NOPARM,
 		marks_mandel_power_orbit_fp, marks_mandelbrot_power_per_pixel_fp, mandelbrot_setup_fp,
  			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MARKSMANDELPWR */
+	{
+	FRACTYPE_MARKS_MANDELBROT_POWER,
 	s_marksmandelpwr_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MARKS, HF_MARKSMANDPWR, TRIG1 | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		1, NOFRACTAL, NOFRACTAL, MARKSMANDELPWRFP, XAXIS_NOPARM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_MARKS_MANDELBROT_POWER_FP, XAXIS_NOPARM,
 		marks_mandel_power_orbit, marks_mandelbrot_power_per_pixel, mandelbrot_setup_l,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* TIMSERRORFP */
+	{
+	FRACTYPE_TIMS_ERROR_FP,
 	s_tims_error_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MARKS, HF_TIMSERR, TRIG1 | BAILTEST,
 		-2.9f, 4.3f, -2.7f, 2.7f,
-		0, NOFRACTAL, NOFRACTAL, TIMSERROR, XAXIS_NOPARM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_TIMS_ERROR, XAXIS_NOPARM,
 		tims_error_orbit_fp, marks_mandelbrot_power_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* TIMSERROR */
+	{
+	FRACTYPE_TIMS_ERROR,
 	s_tims_error_name + 1,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MARKS, HF_TIMSERR, TRIG1 | BAILTEST,
 		-2.9f, 4.3f, -2.7f, 2.7f,
-		1, NOFRACTAL, NOFRACTAL, TIMSERRORFP, XAXIS_NOPARM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_TIMS_ERROR_FP, XAXIS_NOPARM,
 		tims_error_orbit, marks_mandelbrot_power_per_pixel, mandelbrot_setup_l,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* LBIFEQSINPI */
+	{
+	FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L,
 	s_bifeqsinpi_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFEQSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		-2.5f, 2.5f, -3.5f, 3.5f,
-		1, NOFRACTAL, NOFRACTAL, BIFEQSINPI, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_EQUAL_FUNC_PI, NOSYM,
 		bifurcation_set_trig_pi, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* LBIFADSINPI */
+	{
+	FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L,
 	s_bifplussinpi_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFPLUSSINPI, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		0.275f, 1.45f, 0.0f, 2.0f,
-		1, NOFRACTAL, NOFRACTAL, BIFADSINPI, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_PLUS_FUNC_PI, NOSYM,
 		bifurcation_add_trig_pi, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* BIFSTEWART */
+	{
+	FRACTYPE_BIFURCATION_STEWART,
 	s_bifstewart_name,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFSTEWART, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		0.7f, 2.0f, -1.1f, 1.1f,
-		0, NOFRACTAL, NOFRACTAL, LBIFSTEWART, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_STEWART_L, NOSYM,
 		bifurcation_stewart_trig_fp, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* LBIFSTEWART */
+	{
+	FRACTYPE_BIFURCATION_STEWART_L,
 	s_bifstewart_name + 1,
 		{s_filter_cycles, s_seed_population, "", ""},
 		{1000.0, 0.66, 0, 0},
 		HT_BIF, HF_BIFSTEWART, TRIG1 | NOGUESS | NOTRACE | NOROTATE,
 		0.7f, 2.0f, -1.1f, 1.1f,
-		1, NOFRACTAL, NOFRACTAL, BIFSTEWART, NOSYM,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_STEWART, NOSYM,
 		bifurcation_stewart_trig, NULL, stand_alone_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* FPHOPALONG */
+	{
+	FRACTYPE_HOPALONG_FP,
 	"hopalong",
 		{"a", "b", "c", ""},
 		{.4, 1, 0, 0},
 		HT_MARTIN, HF_HOPALONG, NOGUESS | NOTRACE | INFCALC,
 		-2.0f, 3.0f, -1.625f, 2.625f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) hopalong_2d_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* FPCIRCLE */
+	{
+	FRACTYPE_CIRCLE_FP,
 	"circle",
 		{"magnification", "", "", ""},
 		{200000L, 0, 0, 0},
 		HT_CIRCLE, HF_CIRCLE, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, XYAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, XYAXIS,
 		circle_orbit_fp, julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* FPMARTIN */
+	{
+	FRACTYPE_MARTIN_FP,
 	"martin",
 		{"a", "", "", ""},
 		{3.14, 0, 0, 0},
 		HT_MARTIN, HF_MARTIN, NOGUESS | NOTRACE | INFCALC,
 		-32.0f, 32.0f, -24.0f, 24.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) martin_2d_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* LYAPUNOV */
+	{
+	FRACTYPE_LYAPUNOV,
 	"lyapunov",
 		{"+Order (integer)", "Population Seed", "+Filter Cycles", ""},
 		{0, 0.5, 0, 0},
 		HT_LYAPUNOV, HT_LYAPUNOV, 0,
 		-8.0f, 8.0f, -6.0f, 6.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		bifurcation_lambda, NULL, lyapunov_setup, lyapunov,
 		BAILOUT_NONE
 	},
 
-	{ /* FPLORENZ3D1 */
+	{
+	FRACTYPE_LORENZ_3D_1_FP,
 	"lorenz3d1",
 		{s_time_step, "a", "b", "c"},
 		{.02, 5, 15, 1},
 		HT_LORENZ, HF_LORENZ3D1,
 								NOGUESS | NOTRACE | NORESUME | PARMS3D | INFCALC,
 		-30.0f, 30.0f, -30.0f, 30.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) lorenz_3d1_orbit_fp, NULL, orbit_3d_setup_fp, orbit_3d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* FPLORENZ3D3 */
+	{
+	FRACTYPE_LORENZ_3D_3_FP,
 	"lorenz3d3",
 		{s_time_step, "a", "b", "c"},
 		{.02, 10, 28, 2.66},
 		HT_LORENZ, HF_LORENZ3D3,
 			NOGUESS | NOTRACE | NORESUME | PARMS3D | INFCALC,
 		-30.0f, 30.0f, -30.0f, 30.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) lorenz_3d3_orbit_fp, NULL, orbit_3d_setup_fp, orbit_3d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* FPLORENZ3D4 */
+	{
+	FRACTYPE_LORENZ_3D_4_FP,
 	"lorenz3d4",
 		{s_time_step, "a", "b", "c"},
 		{.02, 10, 28, 2.66},
 		HT_LORENZ, HF_LORENZ3D4,
 			NOGUESS | NOTRACE | NORESUME | PARMS3D | INFCALC,
 		-30.0f, 30.0f, -30.0f, 30.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) lorenz_3d4_orbit_fp, NULL, orbit_3d_setup_fp, orbit_3d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* LLAMBDAFNFN */
+	{
+	FRACTYPE_LAMBDA_FUNC_OR_FUNC_L,
 	s_lambda_fnorfn__name + 1,
 		{s_parameter_real, s_parameter_imag, "Function Shift Value", ""},
 		{1, 0.1, 1, 0},
 		HT_FNORFN, HF_LAMBDAFNFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, LMANLAMFNFN, FPLAMBDAFNFN, ORIGIN,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_L, FRACTYPE_LAMBDA_FUNC_OR_FUNC_FP, ORIGIN,
 		lambda_trig_or_trig_orbit, julia_per_pixel_l, lambda_trig_or_trig_setup,
  			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* FPLAMBDAFNFN */
+	{
+	FRACTYPE_LAMBDA_FUNC_OR_FUNC_FP,
 	s_lambda_fnorfn__name,
 		{s_parameter_real, s_parameter_imag, "Function Shift Value", ""},
 		{1, 0.1, 1, 0},
 		HT_FNORFN, HF_LAMBDAFNFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, FPMANLAMFNFN, LLAMBDAFNFN, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_FP, FRACTYPE_LAMBDA_FUNC_OR_FUNC_L, ORIGIN,
 		lambda_trig_or_trig_orbit_fp, other_julia_per_pixel_fp,
 			lambda_trig_or_trig_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LJULFNFN */
+	{
+	FRACTYPE_JULIA_FUNC_OR_FUNC_L,
 	s_julia_fnorfn__name + 1,
 		{s_parameter_real, s_parameter_imag, "Function Shift Value", ""},
 		{0, 0, 8, 0},
 		HT_FNORFN, HF_JULIAFNFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, NOFRACTAL, LMANFNFN, FPJULFNFN, XAXIS,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_OR_FUNC_L, FRACTYPE_JULIA_FUNC_OR_FUNC_FP, XAXIS,
 		julia_trig_or_trig_orbit, julia_per_pixel_l, julia_trig_or_trig_setup,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* FPJULFNFN */
+	{
+	FRACTYPE_JULIA_FUNC_OR_FUNC_FP,
 	s_julia_fnorfn__name,
 		{s_parameter_real, s_parameter_imag, "Function Shift Value", ""},
 		{0, 0, 8, 0},
 		HT_FNORFN, HF_JULIAFNFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, NOFRACTAL, FPMANFNFN, LJULFNFN, XAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_OR_FUNC_FP, FRACTYPE_JULIA_FUNC_OR_FUNC_L, XAXIS,
 		julia_trig_or_trig_orbit_fp, other_julia_per_pixel_fp,
 			julia_trig_or_trig_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LMANLAMFNFN */
+	{
+	FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_L,
 	s_manlam_fnorfn__name + 1,
 		{s_real_z0, s_imag_z0, "Function Shift Value", ""},
 		{0, 0, 10, 0},
 		HT_FNORFN, HF_MANLAMFNFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, LLAMBDAFNFN, NOFRACTAL, FPMANLAMFNFN, XAXIS_NOPARM,
+		16, FRACTYPE_LAMBDA_FUNC_OR_FUNC_L, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_FP, XAXIS_NOPARM,
 		lambda_trig_or_trig_orbit, mandelbrot_per_pixel_l,
 			mandelbrot_lambda_trig_or_trig_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* FPMANLAMFNFN */
+	{
+	FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_FP,
 	s_manlam_fnorfn__name,
 		{s_real_z0, s_imag_z0, "Function Shift Value", ""},
 		{0, 0, 10, 0},
 		HT_FNORFN, HF_MANLAMFNFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, FPLAMBDAFNFN, NOFRACTAL, LMANLAMFNFN, XAXIS_NOPARM,
+		0, FRACTYPE_LAMBDA_FUNC_OR_FUNC_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_L, XAXIS_NOPARM,
 		lambda_trig_or_trig_orbit_fp, other_mandelbrot_per_pixel_fp,
 			mandelbrot_lambda_trig_or_trig_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LMANFNFN */
+	{
+	FRACTYPE_MANDELBROT_FUNC_OR_FUNC_L,
 	s_mandel_fnorfn__name + 1,
 		{s_real_z0, s_imag_z0, "Function Shift Value", ""},
 		{0, 0, 0.5, 0},
 		HT_FNORFN, HF_MANDELFNFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		16, LJULFNFN, NOFRACTAL, FPMANFNFN, XAXIS_NOPARM,
+		16, FRACTYPE_JULIA_FUNC_OR_FUNC_L, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_OR_FUNC_FP, XAXIS_NOPARM,
 		julia_trig_or_trig_orbit, mandelbrot_per_pixel_l,
 			mandelbrot_trig_or_trig_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* FPMANFNFN */
+	{
+	FRACTYPE_MANDELBROT_FUNC_OR_FUNC_FP,
 	s_mandel_fnorfn__name,
 		{s_real_z0, s_imag_z0, "Function Shift Value", ""},
 		{0, 0, 0.5, 0},
 		HT_FNORFN, HF_MANDELFNFN, TRIG2 | BAILTEST,
 		-4.0f, 4.0f, -3.0f, 3.0f,
-		0, FPJULFNFN, NOFRACTAL, LMANFNFN, XAXIS_NOPARM,
+		0, FRACTYPE_JULIA_FUNC_OR_FUNC_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_FUNC_OR_FUNC_L, XAXIS_NOPARM,
 		julia_trig_or_trig_orbit_fp, other_mandelbrot_per_pixel_fp,
 			mandelbrot_trig_or_trig_setup, standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* LBIFMAY */
+	{
+	FRACTYPE_BIFURCATION_MAY_L,
 	s_bifmay_name + 1,
 		{s_filter_cycles, s_seed_population, "Beta >= 2", ""},
 		{300.0, 0.9, 5, 0},
 		HT_BIF, HF_BIFMAY, NOGUESS | NOTRACE | NOROTATE,
 		-3.5f, -0.9f, -0.5f, 3.2f,
-		16, NOFRACTAL, NOFRACTAL, BIFMAY, NOSYM,
+		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_MAY, NOSYM,
 		bifurcation_may, NULL, bifurcation_may_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* BIFMAY */
+	{
+	FRACTYPE_BIFURCATION_MAY,
 	s_bifmay_name,
 		{s_filter_cycles, s_seed_population, "Beta >= 2", ""},
 		{300.0, 0.9, 5, 0},
 		HT_BIF, HF_BIFMAY, NOGUESS | NOTRACE | NOROTATE,
 		-3.5f, -0.9f, -0.5f, 3.2f,
-		0, NOFRACTAL, NOFRACTAL, LBIFMAY, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_BIFURCATION_MAY_L, NOSYM,
 		bifurcation_may_fp, NULL, bifurcation_may_setup, bifurcation,
 		BAILOUT_NONE
 	},
 
-	{ /* MPHALLEY */
+	{
+	FRACTYPE_HALLEY_MP,
 	s_halley_name + 1,
 		{s_order, s_real_relaxation_coefficient, s_epsilon, s_imag_relaxation_coefficient},
 		{6, 1.0, 0.0001, 0},
 		HT_HALLEY, HF_HALLEY, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, HALLEY, XYAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_HALLEY, XYAXIS,
 		halley_orbit_mpc, halley_per_pixel_mpc, halley_setup, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* HALLEY */
+	{
+	FRACTYPE_HALLEY,
 	s_halley_name,
 		{s_order, s_real_relaxation_coefficient, s_epsilon, s_imag_relaxation_coefficient},
 		{6, 1.0, 0.0001, 0},
 		HT_HALLEY, HF_HALLEY, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, MPHALLEY, XYAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_HALLEY_MP, XYAXIS,
 		halley_orbit_fp, halley_per_pixel, halley_setup, standard_fractal,
 		BAILOUT_NONE
 	},
 
-	{ /* DYNAMICFP */
+	{
+	FRACTYPE_DYNAMIC_FP,
 	"dynamic",
 		{"+# of intervals (<0 = connect)", "time step (<0 = Euler)", "a", "b"},
 		{50, .1, 1, 3},
 		HT_DYNAM, HF_DYNAM, NOGUESS | NOTRACE | TRIG1,
 		-20.0f, 20.0f, -20.0f, 20.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) dynamic_orbit_fp, NULL, dynamic_2d_setup_fp, dynamic_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* QUATFP */
+	{
+	FRACTYPE_QUATERNION_FP,
 	"quat",
 		{"notused", "notused", "cj", "ck"},
 		{0, 0, 0, 0},
 		HT_QUAT, HF_QUAT, OKJB,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, QUATJULFP, NOFRACTAL, NOFRACTAL, XAXIS,
+		0, FRACTYPE_QUATERNION_JULIA_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, XAXIS,
 		quaternion_orbit_fp, quaternion_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* QUATJULFP */
+	{
+	FRACTYPE_QUATERNION_JULIA_FP,
 	"quatjul",
 		{"c1", "ci", "cj", "ck"},
 		{-.745, 0, .113, .05},
 		HT_QUAT, HF_QUATJ, OKJB | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, QUATFP, NOFRACTAL, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_QUATERNION_FP, FRACTYPE_NO_FRACTAL, ORIGIN,
 		quaternion_orbit_fp, quaternion_julia_per_pixel_fp, julia_setup_fp,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* CELLULAR */
+	{
+	FRACTYPE_CELLULAR,
 	"cellular",
 		{
 			"#Initial String | 0 = Random | -1 = Reuse Last Random",
@@ -1872,292 +2016,317 @@ struct fractal_specific_stuff g_fractal_specific[] =
 		{11.0, 3311100320.0, 41.0, 0},
 		HT_CELLULAR, HF_CELLULAR, NOGUESS | NOTRACE | NOZOOM,
 		-1.0f, 1.0f, -1.0f, 1.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, cellular_setup, cellular,
 		BAILOUT_NONE
 	},
 
-	{ /* JULIBROTFP */
+	{
+	FRACTYPE_JULIBROT_FP,
 	s_julibrot_name,
 		{"", "", "", ""},
 		{0, 0, 0, 0},
 		HT_JULIBROT, -1, NOGUESS | NOTRACE | NOROTATE | NORESUME,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, JULIBROT, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_JULIBROT, NOSYM,
 		julia_orbit_fp, julibrot_per_pixel_fp, julibrot_setup, standard_4d_fractal_fp,
 		BAILOUT_STANDARD
 	},
 
 #ifdef RANDOM_RUN
-	{ /* INVERSEJULIA */
+	{
+	FRACTYPE_INVERSE_JULIA,
 	s_julia_inverse_name + 1,
 		{s_parameter_real, s_parameter_imag, s_max_hits_per_pixel, "Random Run Interval"},
 		{-0.11, 0.6557, 4, 1024},
 		HT_INVERSE, HF_INVERSE, NOGUESS | NOTRACE | INFCALC | NORESUME,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		24, NOFRACTAL, MANDEL, INVERSEJULIAFP, NOSYM,
+		24, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT, FRACTYPE_INVERSE_JULIA_FP, NOSYM,
 		Linverse_julia_orbit, NULL, orbit_3d_setup, inverse_julia_per_image,
 		BAILOUT_NONE
 	},
 
-	{ /* INVERSEJULIAFP */
+	{
+	FRACTYPE_INVERSE_JULIA_FP,
 	s_julia_inverse_name,
 		{s_parameter_real, s_parameter_imag, s_max_hits_per_pixel, "Random Run Interval"},
 		{-0.11, 0.6557, 4, 1024},
 		HT_INVERSE, HF_INVERSE, NOGUESS | NOTRACE | INFCALC | NORESUME,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANDEL, INVERSEJULIA, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT, FRACTYPE_INVERSE_JULIA, NOSYM,
 		Minverse_julia_orbit, NULL, orbit_3d_setup_fp, inverse_julia_per_image,
 		BAILOUT_NONE
 	},
 #else
-	{ /* INVERSEJULIA */
+	{
+	FRACTYPE_INVERSE_JULIA,
 	s_julia_inverse_name + 1,
 		{s_parameter_real, s_parameter_imag, s_max_hits_per_pixel, ""},
 		{-0.11, 0.6557, 4, 1024},
 		HT_INVERSE, HF_INVERSE, NOGUESS | NOTRACE | INFCALC | NORESUME,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		24, NOFRACTAL, MANDEL, INVERSEJULIAFP, NOSYM,
+		24, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT, FRACTYPE_INVERSE_JULIA_FP, NOSYM,
 		Linverse_julia_orbit, NULL, orbit_3d_setup, inverse_julia_per_image,
 		BAILOUT_NONE
 	},
 
-	{ /* INVERSEJULIAFP */
+	{
+	FRACTYPE_INVERSE_JULIA_FP,
 	s_julia_inverse_name,
 		{s_parameter_real, s_parameter_imag, s_max_hits_per_pixel, ""},
 		{-0.11, 0.6557, 4, 1024},
 		HT_INVERSE, HF_INVERSE, NOGUESS | NOTRACE | INFCALC | NORESUME,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANDEL, INVERSEJULIA, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT, FRACTYPE_INVERSE_JULIA, NOSYM,
 		Minverse_julia_orbit, NULL, orbit_3d_setup_fp, inverse_julia_per_image,
 		BAILOUT_NONE
 	},
 
 #endif
 
-	{ /* MANDELCLOUD */
+	{
+	FRACTYPE_MANDELBROT_CLOUD,
 	"mandelcloud",
 		{"+# of intervals (<0 = connect)", "", "", ""},
 		{50, 0, 0, 0},
 		HT_MANDELCLOUD, HF_MANDELCLOUD, NOGUESS | NOTRACE,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) mandel_cloud_orbit_fp, NULL, dynamic_2d_setup_fp, dynamic_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* PHOENIX */
+	{
+	FRACTYPE_PHOENIX,
 	s_phoenix_name + 1,
 		{s_p1_real, s_p2_real, s_degree_z, ""},
 		{0.56667, -0.5, 0, 0},
 		HT_PHOENIX, HF_PHOENIX, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, MANDPHOENIX, PHOENIXFP, XAXIS,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_PHOENIX, FRACTYPE_PHOENIX_FP, XAXIS,
 		phoenix_orbit, phoenix_per_pixel, phoenix_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* PHOENIXFP */
+	{
+	FRACTYPE_PHOENIX_FP,
 	s_phoenix_name,
 		{s_p1_real, s_p2_real, s_degree_z, ""},
 		{0.56667, -0.5, 0, 0},
 		HT_PHOENIX, HF_PHOENIX, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANDPHOENIXFP, PHOENIX, XAXIS,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_PHOENIX_FP, FRACTYPE_PHOENIX, XAXIS,
 		phoenix_orbit_fp, phoenix_per_pixel_fp, phoenix_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MANDPHOENIX */
+	{
+	FRACTYPE_MANDELBROT_PHOENIX,
 	s_mandphoenix_name + 1,
 		{s_real_z0, s_imag_z0, s_degree_z, ""},
 		{0.0, 0.0, 0, 0},
 		HT_PHOENIX, HF_MANDPHOENIX, BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		1, PHOENIX, NOFRACTAL, MANDPHOENIXFP, NOSYM,
+		1, FRACTYPE_PHOENIX, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_PHOENIX_FP, NOSYM,
 		phoenix_orbit, mandelbrot_phoenix_per_pixel, mandelbrot_phoenix_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MANDPHOENIXFP */
+	{
+	FRACTYPE_MANDELBROT_PHOENIX_FP,
 	s_mandphoenix_name,
 		{s_real_z0, s_imag_z0, s_degree_z, ""},
 		{0.0, 0.0, 0, 0},
 		HT_PHOENIX, HF_MANDPHOENIX, BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, PHOENIXFP, NOFRACTAL, MANDPHOENIX, NOSYM,
+		0, FRACTYPE_PHOENIX_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_PHOENIX, NOSYM,
 		phoenix_orbit_fp, mandelbrot_phoenix_per_pixel_fp, mandelbrot_phoenix_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* HYPERCMPLXFP */
+	{
+	FRACTYPE_HYPERCOMPLEX_FP,
 	"hypercomplex",
 		{"notused", "notused", "cj", "ck"},
 		{0, 0, 0, 0},
 		HT_HYPERC, HF_HYPERC, OKJB | TRIG1,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, HYPERCMPLXJFP, NOFRACTAL, NOFRACTAL, XAXIS,
+		0, FRACTYPE_HYPERCOMPLEX_JULIA_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, XAXIS,
 		hyper_complex_orbit_fp, quaternion_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* HYPERCMPLXJFP */
+	{
+	FRACTYPE_HYPERCOMPLEX_JULIA_FP,
 	"hypercomplexj",
 		{"c1", "ci", "cj", "ck"},
 		{-.745, 0, .113, .05},
 		HT_HYPERC, HF_HYPERCJ, OKJB | TRIG1 | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, HYPERCMPLXFP, NOFRACTAL, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_HYPERCOMPLEX_FP, FRACTYPE_NO_FRACTAL, ORIGIN,
 		hyper_complex_orbit_fp, quaternion_julia_per_pixel_fp, julia_setup_fp,
 			standard_fractal,
 		BAILOUT_TRIG_L
 	},
 
-	{ /* FROTH */
+	{
+	FRACTYPE_FROTHY_BASIN,
 	s_frothybasin_name + 1,
 		{s_frothy_mapping, s_frothy_shade, s_frothy_a_value, ""},
 		{1, 0, 1.028713768218725, 0},
 		HT_FROTH, HF_FROTH, NOTRACE,
 		-2.8f, 2.8f, -2.355f, 1.845f,
-		28, NOFRACTAL, NOFRACTAL, FROTHFP, NOSYM,
+		28, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FROTHY_BASIN_FP, NOSYM,
 		froth_per_orbit, froth_per_pixel, froth_setup, froth_calc,
 		BAILOUT_FROTHY_BASIN
 	},
 
-	{ /* FROTHFP */
+	{
+	FRACTYPE_FROTHY_BASIN_FP,
 	s_frothybasin_name,
 		{s_frothy_mapping, s_frothy_shade, s_frothy_a_value, ""},
 		{1, 0, 1.028713768218725, 0},
 		HT_FROTH, HF_FROTH, NOTRACE,
 		-2.8f, 2.8f, -2.355f, 1.845f,
-		0, NOFRACTAL, NOFRACTAL, FROTH, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FROTHY_BASIN, NOSYM,
 		froth_per_orbit, froth_per_pixel, froth_setup, froth_calc,
 		BAILOUT_FROTHY_BASIN
 	},
 
-	{ /* MANDEL4FP */
+	{
+	FRACTYPE_MANDELBROT_4_FP,
 	s_mandel4_name,
 		{s_real_z0, s_imag_z0, "", ""},
 		{0, 0, 0, 0},
 		HT_MANDJUL4, HF_MANDEL4, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, JULIA4FP, NOFRACTAL, MANDEL4, XAXIS_NOPARM,
+		0, FRACTYPE_JULIA_4_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_4, XAXIS_NOPARM,
 		mandel4_orbit_fp, mandelbrot_per_pixel_fp, mandelbrot_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* JULIA4FP */
+	{
+	FRACTYPE_JULIA_4_FP,
 	s_julia4_name,
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.6, 0.55, 0, 0},
 		HT_MANDJUL4, HF_JULIA4, OKJB | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANDEL4FP, JULIA4, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_4_FP, FRACTYPE_JULIA_4, ORIGIN,
 		mandel4_orbit_fp, julia_per_pixel_fp, julia_setup_fp, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MARKSMANDELFP */
+	{
+	FRACTYPE_MARKS_MANDELBROT_FP,
 	s_marksmandel_name,
 		{s_real_z0, s_imag_z0, s_exponent, ""},
 		{0, 0, 1, 0},
 		HT_MARKS, HF_MARKSMAND, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, MARKSJULIAFP, NOFRACTAL, MARKSMANDEL, NOSYM,
+		0, FRACTYPE_MARKS_JULIA_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MARKS_MANDELBROT, NOSYM,
 		marks_lambda_orbit_fp, marks_mandelbrot_per_pixel_fp, mandelbrot_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MARKSJULIAFP */
+	{
+	FRACTYPE_MARKS_JULIA_FP,
 	s_marksjulia_name,
 		{s_parameter_real, s_parameter_imag, s_exponent, ""},
 		{0.1, 0.9, 1, 0},
 		HT_MARKS, HF_MARKSJULIA, BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MARKSMANDELFP, MARKSJULIA, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MARKS_MANDELBROT_FP, FRACTYPE_MARKS_JULIA, ORIGIN,
 		marks_lambda_orbit_fp, julia_per_pixel_fp, marks_julia_setup_fp,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
 	/* dmf */
-	{ /* ICON */
+	{
+	FRACTYPE_ICON,
 	"icons",
 		{"Lambda", "Alpha", "Beta", "Gamma"},
 		{-2.34, 2.0, 0.2, 0.1},
 		HT_ICON, HF_ICON, NOGUESS | NOTRACE | INFCALC | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) icon_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
 	/* dmf */
-	{ /* ICON3D */
+	{
+	FRACTYPE_ICON_3D,
 	"icons3d",
 		{"Lambda", "Alpha", "Beta", "Gamma"},
 		{-2.34, 2.0, 0.2, 0.1},
 		HT_ICON, HF_ICON, NOGUESS | NOTRACE | INFCALC | PARMS3D | MORE,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) icon_orbit_fp, NULL, orbit_3d_setup_fp, orbit_3d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* PHOENIXCPLX */
+	{
+	FRACTYPE_PHOENIX_COMPLEX,
 	s_phoenixcplx_name + 1,
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0.2, 0, 0.3, 0},
 		HT_PHOENIX, HF_PHOENIXCPLX, MORE | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		1, NOFRACTAL, MANDPHOENIXCPLX, PHOENIXFPCPLX, ORIGIN,
+		1, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_PHOENIX_COMPLEX, FRACTYPE_PHOENIX_COMPLEX_FP, ORIGIN,
 		phoenix_complex_orbit, phoenix_per_pixel, phoenix_complex_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* PHOENIXFPCPLX */
+	{
+	FRACTYPE_PHOENIX_COMPLEX_FP,
 	s_phoenixcplx_name,
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0.2, 0, 0.3, 0},
 		HT_PHOENIX, HF_PHOENIXCPLX, MORE | BAILTEST,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, MANDPHOENIXFPCPLX, PHOENIXCPLX, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_PHOENIX_COMPLEX_FP, FRACTYPE_PHOENIX_COMPLEX, ORIGIN,
 		phoenix_complex_orbit_fp, phoenix_per_pixel_fp, phoenix_complex_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MANDPHOENIXCPLX */
+	{
+	FRACTYPE_MANDELBROT_PHOENIX_COMPLEX,
 	s_mandphoenixcplx_name + 1,
 		{s_real_z0, s_imag_z0, s_p2_real, s_p2_imag},
 		{0, 0, 0.5, 0},
 		HT_PHOENIX, HF_MANDPHOENIXCPLX, MORE | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		1, PHOENIXCPLX, NOFRACTAL, MANDPHOENIXFPCPLX, XAXIS,
+		1, FRACTYPE_PHOENIX_COMPLEX, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_PHOENIX_COMPLEX_FP, XAXIS,
 		phoenix_complex_orbit, mandelbrot_phoenix_per_pixel,
 			mandelbrot_phoenix_complex_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* MANDPHOENIXFPCPLX */
+	{
+	FRACTYPE_MANDELBROT_PHOENIX_COMPLEX_FP,
 	s_mandphoenixcplx_name,
 		{s_real_z0, s_imag_z0, s_p2_real, s_p2_imag},
 		{0, 0, 0.5, 0},
 		HT_PHOENIX, HF_MANDPHOENIXCPLX, MORE | BAILTEST,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, PHOENIXFPCPLX, NOFRACTAL, MANDPHOENIXCPLX, XAXIS,
+		0, FRACTYPE_PHOENIX_COMPLEX_FP, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT_PHOENIX_COMPLEX, XAXIS,
 		phoenix_complex_orbit_fp, mandelbrot_phoenix_per_pixel_fp, mandelbrot_phoenix_complex_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
 	},
 
-	{ /* ANT */
+	{
+	FRACTYPE_ANT,
 	"ant",
 		{"#Rule String (1's and non-1's, 0 rand)",
 		"#Maxpts",
@@ -2167,62 +2336,67 @@ struct fractal_specific_stuff g_fractal_specific[] =
 		{1100, 1.0E9, 1, 1},
 		HT_ANT, HF_ANT, NOZOOM | NOGUESS | NOTRACE | NORESUME | MORE,
 		-1.0f, 1.0f, -1.0f, 1.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, stand_alone_setup, ant,
 		BAILOUT_NONE
 	},
 
-	{ /* CHIP */
+	{
+	FRACTYPE_CHIP,
 	"chip",
 		{"a", "b", "c", ""},
 		{-15, -19, 1, 0},
 		HT_MARTIN, HF_CHIP, NOGUESS | NOTRACE | INFCALC,
 		-760.0f, 760.0f, -570.0f, 570.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) chip_2d_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* QUADRUPTWO */
+	{
+	FRACTYPE_QUADRUP_TWO,
 	"quadruptwo",
 		{"a", "b", "c", ""},
 		{34, 1, 5, 0},
 		HT_MARTIN, HF_QUADRUPTWO, NOGUESS | NOTRACE | INFCALC,
 		-82.93367f, 112.2749f, -55.76383f, 90.64257f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) quadrup_two_2d_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* THREEPLY */
+	{
+	FRACTYPE_THREE_PLY,
 	"threeply",
 		{"a", "b", "c", ""},
 		{-55, -1, -42, 0},
 		HT_MARTIN, HF_THREEPLY, NOGUESS | NOTRACE | INFCALC,
 		-8000.0f, 8000.0f, -6000.0f, 6000.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) three_ply_2d_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 
-	{ /* VL */
+	{
+	FRACTYPE_VOLTERRA_LOTKA,
 	"volterra-lotka",
 		{"h", "p", "", ""},
 		{0.739, 0.739, 0, 0},
 		HT_VL, HF_VL, 0,
 		0.0f, 6.0f, 0.0f, 4.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		volterra_lotka_orbit_fp, other_julia_per_pixel_fp, volterra_lotka_setup, standard_fractal,
 		256
 	},
 
-	{ /* ESCHER */
+	{
+	FRACTYPE_ESCHER_JULIA,
 	"escher_julia",
 		{s_parameter_real, s_parameter_imag, "", ""},
 		{0.32, 0.043, 0, 0},
 		HT_ESCHER, HF_ESCHER, 0,
 		-1.6f, 1.6f, -1.2f, 1.2f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, ORIGIN,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, ORIGIN,
 		escher_orbit_fp, julia_per_pixel_fp, standard_setup,
 			standard_fractal,
 		BAILOUT_STANDARD
@@ -2231,35 +2405,38 @@ struct fractal_specific_stuff g_fractal_specific[] =
 	/* From Pickovers' "Chaos in Wonderland"      */
 	/* included by Humberto R. Baptista           */
 	/* code adapted from king.cpp bt James Rankin */
-	{ /* LATOO */
+	{
+	FRACTYPE_LATOOCARFIAN,
 	"latoocarfian",
 		{"a", "b", "c", "d"},
 		{-0.966918, 2.879879, 0.765145, 0.744728},
 		HT_LATOO, HF_LATOO, NOGUESS | NOTRACE | INFCALC | MORE | TRIG4,
 		-2.0f, 2.0f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		(VF) latoo_orbit_fp, NULL, orbit_3d_setup_fp, orbit_2d_fp,
 		BAILOUT_NONE
 	},
 #if 0
-	{ /* MANDELBROTMIX4 */
+	{
+	FRACTYPE_MANDELBROT_MIX4,
 	"mandelbrotmix4",
 		{s_p1_real, s_p1_imag, s_p2_real, s_p2_imag},
 		{0.05, 3, -1.5, -2},
 		HT_MANDELBROTMIX4, HF_MANDELBROTMIX4, BAILTEST | TRIG1 | MORE,
 		-2.5f, 1.5f, -1.5f, 1.5f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		mandelbrot_mix4_orbit_fp, mandelbrot_mix4_per_pixel_fp, mandelbrot_mix4_setup, standard_fractal,
 		BAILOUT_STANDARD
 	},
 #endif
 	{
+		0,
 		NULL,            /* marks the END of the list */
 		{NULL, NULL, NULL, NULL},
 		{0, 0, 0, 0},
 		-1, -1, 0,
 		0.0f, 0.0f, 0.0f, 0.0f,
-		0, NOFRACTAL, NOFRACTAL, NOFRACTAL, NOSYM,
+		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, NOSYM,
 		NULL, NULL, NULL, NULL,
 		0
 	}
@@ -2277,7 +2454,7 @@ int parameter_not_used(int parm)
 	int ret = 0;
 
 	/* sanity check */
-	if (g_fractal_type != FORMULA && g_fractal_type != FFORMULA)
+	if (g_fractal_type != FRACTYPE_FORMULA && g_fractal_type != FRACTYPE_FORMULA_FP)
 	{
 		return 0;
 	}
@@ -2351,7 +2528,7 @@ int type_has_parameter(int type, int parm, char *buf)
 		}
 	}
 
-	if (type == FORMULA || type == FFORMULA)
+	if (type == FRACTYPE_FORMULA || type == FRACTYPE_FORMULA_FP)
 	{
 		if (parameter_not_used(parm))
 		{

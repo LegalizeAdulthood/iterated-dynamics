@@ -593,11 +593,11 @@ int mandelbrot_setup_bn()
 	g_c_exp = (int)g_parameters[2];
 	switch (g_fractal_type)
 	{
-	case JULIAFP:
+	case FRACTYPE_JULIA_FP:
 		bftobn(bnparm.x, bfparms[0]);
 		bftobn(bnparm.y, bfparms[1]);
 		break;
-	case FPMANDELZPOWER:
+	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		init_big_pi();
 		if ((double)g_c_exp == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
 		{
@@ -608,7 +608,7 @@ int mandelbrot_setup_bn()
 			g_symmetry = NOSYM;
 		}
 		break;
-	case FPJULIAZPOWER:
+	case FRACTYPE_JULIA_Z_POWER_FP:
 		init_big_pi();
 		bftobn(bnparm.x, bfparms[0]);
 		bftobn(bnparm.y, bfparms[1]);
@@ -684,11 +684,11 @@ int mandelbrot_setup_bf()
 	g_c_exp = (int)g_parameters[2];
 	switch (g_fractal_type)
 	{
-	case JULIAFP:
+	case FRACTYPE_JULIA_FP:
 		copy_bf(bfparm.x, bfparms[0]);
 		copy_bf(bfparm.y, bfparms[1]);
 		break;
-	case FPMANDELZPOWER:
+	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		init_big_pi();
 		if ((double)g_c_exp == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
 		{
@@ -699,7 +699,7 @@ int mandelbrot_setup_bf()
 			g_symmetry = NOSYM;
 		}
 		break;
-	case FPJULIAZPOWER:
+	case FRACTYPE_JULIA_Z_POWER_FP:
 		init_big_pi();
 		copy_bf(bfparm.x, bfparms[0]);
 		copy_bf(bfparm.y, bfparms[1]);

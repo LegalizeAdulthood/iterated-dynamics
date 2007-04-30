@@ -86,7 +86,7 @@ int mandelbrot_setup_fp()
 	g_float_parameter = &g_initial_z;
 	switch (g_fractal_type)
 	{
-	case MARKSMANDELFP:
+	case FRACTYPE_MARKS_MANDELBROT_FP:
 		if (g_c_exp < 1)
 		{
 			g_c_exp = 1;
@@ -101,7 +101,7 @@ int mandelbrot_setup_fp()
 			g_symmetry = XAXIS_NOPARM;
 		}
 		break;
-	case MANDELFP:
+	case FRACTYPE_MANDELBROT_FP:
 		/*
 		floating point code could probably be altered to handle many of
 		the situations that otherwise are using standard_fractal().
@@ -160,7 +160,7 @@ int mandelbrot_setup_fp()
 			g_calculate_type = standard_fractal;
 		}
 		break;
-	case FPMANDELZPOWER:
+	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		if ((double)g_c_exp == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
 		{
 			g_symmetry = XYAXIS_NOPARM;
@@ -173,38 +173,38 @@ int mandelbrot_setup_fp()
 			(g_parameters[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == g_parameters[2]) ?
 			z_power_orbit_fp : complex_z_power_orbit_fp;
 		break;
-	case MAGNET1M:
-	case MAGNET2M:
+	case FRACTYPE_MAGNET_1M:
+	case FRACTYPE_MAGNET_2M:
 		g_attractors[0].x = 1.0;      /* 1.0 + 0.0i always attracts */
 		g_attractors[0].y = 0.0;      /* - both MAGNET1 and MAGNET2 */
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
 		break;
-	case SPIDERFP:
+	case FRACTYPE_SPIDER_FP:
 		if (g_periodicity_check == 1) /* if not user set */
 		{
 			g_periodicity_check = 4;
 		}
 		break;
-	case MANDELEXP:
+	case FRACTYPE_OBSOLETE_MANDELBROT_EXP:
 		g_symmetry = XAXIS_NOPARM;
 		break;
 /* Added to account for symmetry in manfn + exp and manfn + zsqrd */
 /*     JCO 2/29/92 */
-	case FPMANTRIGPLUSEXP:
-	case FPMANTRIGPLUSZSQRD:
+	case FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_FP:
+	case FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_FP:
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
 		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
 		break;
-	case QUATFP:
+	case FRACTYPE_QUATERNION_FP:
 		g_float_parameter = &g_temp_z;
 		g_num_attractors = 0;
 		g_periodicity_check = 0;
 		break;
-	case HYPERCMPLXFP:
+	case FRACTYPE_HYPERCOMPLEX_FP:
 		g_float_parameter = &g_temp_z;
 		g_num_attractors = 0;
 		g_periodicity_check = 0;
@@ -217,13 +217,13 @@ int mandelbrot_setup_fp()
 			g_symmetry = NOSYM;
 		}
 		break;
-	case TIMSERRORFP:
+	case FRACTYPE_TIMS_ERROR_FP:
 		if (g_trig_index[0] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
 		break;
-	case MARKSMANDELPWRFP:
+	case FRACTYPE_MARKS_MANDELBROT_POWER_FP:
 		if (g_trig_index[0] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
@@ -239,7 +239,7 @@ int julia_setup_fp()
 {
 	g_c_exp = (int)g_parameters[2];
 	g_float_parameter = &g_parameter;
-	if (g_fractal_type == COMPLEXMARKSJUL)
+	if (g_fractal_type == FRACTYPE_MARKS_JULIA_COMPLEX)
 	{
 		g_power.x = g_parameters[2] - 1.0;
 		g_power.y = g_parameters[3];
@@ -247,7 +247,7 @@ int julia_setup_fp()
 	}
 	switch (g_fractal_type)
 	{
-	case JULIAFP:
+	case FRACTYPE_JULIA_FP:
 		/*
 		floating point code could probably be altered to handle many of
 		the situations that otherwise are using standard_fractal().
@@ -308,7 +308,7 @@ int julia_setup_fp()
 			get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		}
 		break;
-	case FPJULIAZPOWER:
+	case FRACTYPE_JULIA_Z_POWER_FP:
 		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || (double)g_c_exp != g_parameters[2])
 		{
 			g_symmetry = NOSYM;
@@ -318,20 +318,21 @@ int julia_setup_fp()
 			? z_power_orbit_fp : complex_z_power_orbit_fp;
 		get_julia_attractor (g_parameters[0], g_parameters[1]); /* another attractor? */
 		break;
-	case MAGNET2J:
+	case FRACTYPE_MAGNET_2J:
 		magnet2_precalculate_fp();
-	case MAGNET1J:
+	case FRACTYPE_MAGNET_1J:
 		g_attractors[0].x = 1.0;      /* 1.0 + 0.0i always attracts */
 		g_attractors[0].y = 0.0;      /* - both MAGNET1 and MAGNET2 */
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		break;
-	case LAMBDAFP:
+	case FRACTYPE_LAMBDA_FP:
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		get_julia_attractor (0.5, 0.0);   /* another attractor? */
 		break;
-	case LAMBDAEXP:
+	/* TODO: should this really be here? */
+	case FRACTYPE_OBSOLETE_LAMBDA_EXP:
 		if (g_parameter.y == 0.0)
 		{
 			g_symmetry = XAXIS;
@@ -340,8 +341,8 @@ int julia_setup_fp()
 		break;
 	/* Added to account for symmetry in julfn + exp and julfn + zsqrd */
 	/*     JCO 2/29/92 */
-	case FPJULTRIGPLUSEXP:
-	case FPJULTRIGPLUSZSQRD:
+	case FRACTYPE_JULIA_FUNC_PLUS_EXP_FP:
+	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_FP:
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
 		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
 		{
@@ -349,7 +350,7 @@ int julia_setup_fp()
 		}
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		break;
-	case HYPERCMPLXJFP:
+	case FRACTYPE_HYPERCOMPLEX_JULIA_FP:
 		if (g_parameters[2] != 0)
 		{
 			g_symmetry = NOSYM;
@@ -358,7 +359,7 @@ int julia_setup_fp()
 		{
 			g_symmetry = NOSYM;
 		}
-	case QUATJULFP:
+	case FRACTYPE_QUATERNION_JULIA_FP:
 		g_num_attractors = 0;   /* attractors broken since code checks r, i not j, k */
 		g_periodicity_check = 0;
 		if (g_parameters[4] != 0.0 || g_parameters[5] != 0)
@@ -366,8 +367,8 @@ int julia_setup_fp()
 			g_symmetry = NOSYM;
 		}
 		break;
-	case FPPOPCORN:
-	case FPPOPCORNJUL:
+	case FRACTYPE_POPCORN_FP:
+	case FRACTYPE_POPCORN_JULIA_FP:
 		{
 			int default_functions = 0;
 			if (g_trig_index[0] == SIN &&
@@ -379,7 +380,7 @@ int julia_setup_fp()
 				g_parameter.y == 0)
 			{
 				default_functions = 1;
-				if (g_fractal_type == FPPOPCORNJUL)
+				if (g_fractal_type == FRACTYPE_POPCORN_JULIA_FP)
 				{
 					g_symmetry = ORIGIN;
 				}
@@ -399,8 +400,8 @@ int julia_setup_fp()
 			get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		}
 		break;
-	case FPCIRCLE:
-		if (g_inside == STARTRAIL) /* FPCIRCLE locks up when used with STARTRAIL */
+	case FRACTYPE_CIRCLE_FP:
+		if (g_inside == STARTRAIL) /* FRACTYPE_CIRCLE_FP locks up when used with STARTRAIL */
 		{
 			g_inside = 0; /* arbitrarily set inside = NUMB */
 		}
@@ -416,26 +417,26 @@ int julia_setup_fp()
 int mandelbrot_setup_l()
 {
 	g_c_exp = (int)g_parameters[2];
-	if (g_fractal_type == MARKSMANDEL && g_c_exp < 1)
+	if (g_fractal_type == FRACTYPE_MARKS_MANDELBROT && g_c_exp < 1)
 	{
 		g_c_exp = 1;
 		g_parameters[2] = 1;
 	}
-	if ((g_fractal_type == MARKSMANDEL   && !(g_c_exp & 1)) ||
-		(g_fractal_type == LMANDELZPOWER && (g_c_exp & 1)))
+	if ((g_fractal_type == FRACTYPE_MARKS_MANDELBROT   && !(g_c_exp & 1)) ||
+		(g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L && (g_c_exp & 1)))
 	{
 		g_symmetry = XYAXIS_NOPARM;    /* odd exponents */
 	}
-	if ((g_fractal_type == MARKSMANDEL && (g_c_exp & 1)) || g_fractal_type == LMANDELEXP)
+	if ((g_fractal_type == FRACTYPE_MARKS_MANDELBROT && (g_c_exp & 1)) || g_fractal_type == FRACTYPE_OBSOLETE_MANDELBROT_EXP_L)
 	{
 		g_symmetry = XAXIS_NOPARM;
 	}
-	if (g_fractal_type == SPIDER && g_periodicity_check == 1)
+	if (g_fractal_type == FRACTYPE_SPIDER && g_periodicity_check == 1)
 	{
 		g_periodicity_check = 4;
 	}
 	g_long_parameter = &g_initial_z_l;
-	if (g_fractal_type == LMANDELZPOWER)
+	if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L)
 	{
 		if (g_parameters[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
 		{
@@ -452,7 +453,7 @@ int mandelbrot_setup_l()
 	}
 	/* Added to account for symmetry in manfn + exp and manfn + zsqrd */
 	/*     JCO 2/29/92 */
-	if ((g_fractal_type == LMANTRIGPLUSEXP) || (g_fractal_type == LMANTRIGPLUSZSQRD))
+	if ((g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_L) || (g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_L))
 	{
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
 		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
@@ -460,14 +461,14 @@ int mandelbrot_setup_l()
 			g_symmetry = NOSYM;
 		}
 	}
-	if (g_fractal_type == TIMSERROR)
+	if (g_fractal_type == FRACTYPE_TIMS_ERROR)
 	{
 		if (g_trig_index[0] == 14) /* FLIP */
 		{
 			g_symmetry = NOSYM;
 		}
 	}
-	if (g_fractal_type == MARKSMANDELPWR)
+	if (g_fractal_type == FRACTYPE_MARKS_MANDELBROT_POWER)
 	{
 		if (g_trig_index[0] == 14) /* FLIP */
 		{
@@ -483,7 +484,7 @@ int julia_setup_l()
 	g_long_parameter = &g_parameter_l;
 	switch (g_fractal_type)
 	{
-	case LJULIAZPOWER:
+	case FRACTYPE_JULIA_Z_POWER_L:
 		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || (double)g_c_exp != g_parameters[2])
 		{
 			g_symmetry = NOSYM;
@@ -492,11 +493,11 @@ int julia_setup_l()
 			(g_parameters[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
 			? z_power_orbit : complex_z_power_orbit;
 		break;
-	case LAMBDA:
+	case FRACTYPE_LAMBDA:
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		get_julia_attractor (0.5, 0.0);   /* another attractor? */
 		break;
-	case LLAMBDAEXP:
+	case FRACTYPE_OBSOLETE_LAMBDA_EXP_L:
 		if (g_parameter_l.y == 0)
 		{
 			g_symmetry = XAXIS;
@@ -504,8 +505,8 @@ int julia_setup_l()
 		break;
 	/* Added to account for symmetry in julfn + exp and julfn + zsqrd */
 	/*     JCO 2/29/92 */
-	case LJULTRIGPLUSEXP:
-	case LJULTRIGPLUSZSQRD:
+	case FRACTYPE_JULIA_FUNC_PLUS_EXP_L:
+	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_L:
 		g_symmetry = (g_parameter.y == 0.0) ? XAXIS : NOSYM;
 		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
 		{
@@ -513,8 +514,8 @@ int julia_setup_l()
 		}
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		break;
-	case LPOPCORN:
-	case LPOPCORNJUL:
+	case FRACTYPE_POPCORN_L:
+	case FRACTYPE_POPCORN_JULIA_L:
 		{
 			int default_functions = 0;
 			if (g_trig_index[0] == SIN &&
@@ -526,7 +527,7 @@ int julia_setup_l()
 				g_parameter.y == 0)
 			{
 				default_functions = 1;
-				if (g_fractal_type == LPOPCORNJUL)
+				if (g_fractal_type == FRACTYPE_POPCORN_JULIA_L)
 				{
 					g_symmetry = ORIGIN;
 				}
@@ -1202,7 +1203,7 @@ int mandelbrot_phoenix_complex_setup()
 
 int standard_setup()
 {
-	if (g_fractal_type == UNITYFP)
+	if (g_fractal_type == FRACTYPE_UNITY_FP)
 	{
 		g_periodicity_check = 0;
 	}

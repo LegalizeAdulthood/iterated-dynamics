@@ -49,7 +49,7 @@ int Halley::setup()
 	/* Halley */
 	g_periodicity_check = 0;
 
-	g_fractal_type = g_user_float_flag ? HALLEY : MPHALLEY;
+	g_fractal_type = g_user_float_flag ? FRACTYPE_HALLEY : FRACTYPE_HALLEY_MP;
 
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 
@@ -140,7 +140,7 @@ int HalleyMP::setup()
 	Halley::setup();
 
 #if !defined(XFRACT)
-	if (g_fractal_type == MPHALLEY)
+	if (g_fractal_type == FRACTYPE_HALLEY_MP)
 	{
 		setMPfunctions();
 		m_a_plus_1_mp = *pd2MP((double) m_a_plus_1);

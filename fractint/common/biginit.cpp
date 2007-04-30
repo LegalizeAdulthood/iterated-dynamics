@@ -402,7 +402,7 @@ void init_bf_dec(int dec)
 		/* using 2 doesn't gain much and requires another test */
 		intlength = 4;
 	}
-	else if (g_fractal_type == FPMANDELZPOWER || g_fractal_type == FPJULIAZPOWER)
+	else if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
 		intlength = 2;
 	}
@@ -434,7 +434,7 @@ void init_bf_length(int bnl)
 		/* using 2 doesn't gain much and requires another test */
 		intlength = 4;
 	}
-	else if (g_fractal_type == FPMANDELZPOWER || g_fractal_type == FPJULIAZPOWER)
+	else if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
 		intlength = 2;
 	}

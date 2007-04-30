@@ -669,7 +669,7 @@ static void trigdetails(char *buf)
 {
 	int i, numfn;
 	char tmpbuf[20];
-	if (g_fractal_type == JULIBROT || g_fractal_type == JULIBROTFP)
+	if (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
 	{
 		numfn = (g_fractal_specific[g_new_orbit_type].flags >> 6) & 7;
 	}
@@ -677,8 +677,8 @@ static void trigdetails(char *buf)
 	{
 		numfn = (g_current_fractal_specific->flags >> 6) & 7;
 	}
-	if (g_current_fractal_specific == &g_fractal_specific[FORMULA] ||
-		g_current_fractal_specific == &g_fractal_specific[FFORMULA])
+	if (g_current_fractal_specific == &g_fractal_specific[FRACTYPE_FORMULA] ||
+		g_current_fractal_specific == &g_fractal_specific[FRACTYPE_FORMULA_FP])
 	{
 		numfn = g_max_fn;
 	}
@@ -844,7 +844,7 @@ int tab_display_2(char *msg)
 	write_row(row++, "Sizeof g_fractal_specific array %d",
 		g_num_fractal_types*(int)sizeof(struct fractal_specific_stuff));
 	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
-	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
 		write_row(row++, "g_total_formula_mem %ld g_formula_max_ops (g_posp) %u g_formula_max_args (g_parser_vsp) %u",
 			g_total_formula_mem, g_posp, g_parser_vsp);
@@ -928,7 +928,7 @@ int tab_display()       /* display the status of the current image */
 		bfXctr = alloc_stack(bflength + 2);
 		bfYctr = alloc_stack(bflength + 2);
 	}
-	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
 		for (i = 0; i < MAX_PARAMETERS; i += 2)
 		{
@@ -956,7 +956,7 @@ top:
 			g_current_fractal_specific->name[0] == '*' ?
 				&g_current_fractal_specific->name[1] : g_current_fractal_specific->name);
 		i = 0;
-		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_formula_name);
@@ -970,7 +970,7 @@ top:
 		}
 		trigdetails(msg);
 		driver_put_string(s_row + 1, 16 + i, C_GENERAL_HI, msg);
-		if (g_fractal_type == LSYSTEM)
+		if (g_fractal_type == FRACTYPE_L_SYSTEM)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_l_system_name);
@@ -981,7 +981,7 @@ top:
 			}
 			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_l_system_filename);
 		}
-		if (g_fractal_type == IFS || g_fractal_type == IFS3D)
+		if (g_fractal_type == FRACTYPE_IFS || g_fractal_type == FRACTYPE_IFS_3D)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_ifs_name);
@@ -1311,7 +1311,7 @@ top:
 	sprintf(msg, "%f", g_rq_limit);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
-	if (g_fractal_type == PLASMA || g_fractal_type == ANT || g_fractal_type == CELLULAR)
+	if (g_fractal_type == FRACTYPE_PLASMA || g_fractal_type == FRACTYPE_ANT || g_fractal_type == FRACTYPE_CELLULAR)
 	{
 		driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
 		sprintf(msg, "%d", g_random_seed);
