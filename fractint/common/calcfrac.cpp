@@ -960,10 +960,10 @@ static void perform_work_list()
 		}
 		/* must be mandel type, formula, or old PAR/GIF */
 		s_dem_mandelbrot =
-			(g_current_fractal_specific->tojulia != NOFRACTAL
+			(g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
 			|| g_use_old_distance_test
-			|| g_fractal_type == FORMULA
-			|| g_fractal_type == FFORMULA) ?
+			|| g_fractal_type == FRACTYPE_FORMULA
+			|| g_fractal_type == FRACTYPE_FORMULA_FP) ?
 				TRUE : FALSE;
 
 		s_dem_delta = sqr(g_delta_x_fp) + sqr(delta_y2_fp);
@@ -2096,7 +2096,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 	g_orbit_index = 0;
 	g_color_iter = 0;
-	if (g_fractal_type == JULIAFP || g_fractal_type == JULIA)
+	if (g_fractal_type == FRACTYPE_JULIA_FP || g_fractal_type == FRACTYPE_JULIA)
 	{
 		g_color_iter = -1;
 	}
@@ -4308,20 +4308,20 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	parmsnoimag = (g_parameter.y == 0.0 && g_use_initial_orbit_z != 1);
 	switch (g_fractal_type)
 	{
-	case LMANLAMFNFN:      /* These need only P1 checked. */
-	case FPMANLAMFNFN:     /* P2 is used for a switch value */
-	case LMANFNFN:         /* These have NOPARM set in fractalp.c, */
-	case FPMANFNFN:        /* but it only applies to P1. */
-	case FPMANDELZPOWER:   /* or P2 is an exponent */
-	case LMANDELZPOWER:
-	case FPMANZTOZPLUSZPWR:
-	case MARKSMANDEL:
-	case MARKSMANDELFP:
-	case MARKSJULIA:
-	case MARKSJULIAFP:
+	case FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_L:      /* These need only P1 checked. */
+	case FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_FP:     /* P2 is used for a switch value */
+	case FRACTYPE_MANDELBROT_FUNC_OR_FUNC_L:         /* These have NOPARM set in fractalp.c, */
+	case FRACTYPE_MANDELBROT_FUNC_OR_FUNC_FP:        /* but it only applies to P1. */
+	case FRACTYPE_MANDELBROT_Z_POWER_FP:   /* or P2 is an exponent */
+	case FRACTYPE_MANDELBROT_Z_POWER_L:
+	case FRACTYPE_MANDELBROT_Z_TO_Z_PLUS_Z_POWER_FP:
+	case FRACTYPE_MARKS_MANDELBROT:
+	case FRACTYPE_MARKS_MANDELBROT_FP:
+	case FRACTYPE_MARKS_JULIA:
+	case FRACTYPE_MARKS_JULIA_FP:
 		break;
-	case FORMULA:  /* Check P2, P3, P4 and P5 */
-	case FFORMULA:
+	case FRACTYPE_FORMULA:  /* Check P2, P3, P4 and P5 */
+	case FRACTYPE_FORMULA_FP:
 		parmszero = (parmszero && g_parameters[2] == 0.0 && g_parameters[3] == 0.0
 						&& g_parameters[4] == 0.0 && g_parameters[5] == 0.0
 						&& g_parameters[6] == 0.0 && g_parameters[7] == 0.0

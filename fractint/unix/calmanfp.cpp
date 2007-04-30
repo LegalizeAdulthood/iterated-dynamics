@@ -103,7 +103,7 @@ long calculate_mandelbrot_fp_asm()
 	}
 
 	cx = g_max_iteration;
-	if (g_fractal_type != JULIAFP && g_fractal_type != JULIA)
+	if (g_fractal_type != FRACTYPE_JULIA_FP && g_fractal_type != FRACTYPE_JULIA)
 	{
 		/* Mandelbrot_87 */
 		Cx = g_initial_z.x;

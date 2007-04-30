@@ -265,16 +265,16 @@ int orbit_3d_setup()
 	s_connect = 1;
 	s_waste = 100;
 	s_projection = PROJECTION_XY;
-	if (g_fractal_type == LHENON || g_fractal_type == KAM || g_fractal_type == KAM3D ||
-		g_fractal_type == INVERSEJULIA)
+	if (g_fractal_type == FRACTYPE_HENON_L || g_fractal_type == FRACTYPE_KAM_TORUS || g_fractal_type == FRACTYPE_KAM_TORUS_3D ||
+		g_fractal_type == FRACTYPE_INVERSE_JULIA)
 	{
 		s_connect = 0;
 	}
-	if (g_fractal_type == LROSSLER)
+	if (g_fractal_type == FRACTYPE_ROSSLER_L)
 	{
 		s_waste = 500;
 	}
-	if (g_fractal_type == LLORENZ)
+	if (g_fractal_type == FRACTYPE_LORENZ_L)
 	{
 		s_projection = PROJECTION_XZ;
 	}
@@ -283,14 +283,14 @@ int orbit_3d_setup()
 	s_init_orbit_long[1] = g_fudge;
 	s_init_orbit_long[2] = g_fudge;
 
-	if (g_fractal_type == LHENON)
+	if (g_fractal_type == FRACTYPE_HENON_L)
 	{
 		s_l_a =  (long) (g_parameters[0]*g_fudge);
 		s_l_b =  (long) (g_parameters[1]*g_fudge);
 		s_l_c =  (long) (g_parameters[2]*g_fudge);
 		s_l_d =  (long) (g_parameters[3]*g_fudge);
 	}
-	else if (g_fractal_type == KAM || g_fractal_type == KAM3D)
+	else if (g_fractal_type == FRACTYPE_KAM_TORUS || g_fractal_type == FRACTYPE_KAM_TORUS_3D)
 	{
 		g_max_count = 1L;
 		s_a   = g_parameters[0];           /* angle */
@@ -308,7 +308,7 @@ int orbit_3d_setup()
 		s_l_orbit = 0;
 		s_init_orbit_long[0] = s_init_orbit_long[1] = s_init_orbit_long[2] = 0;
 	}
-	else if (g_fractal_type == INVERSEJULIA)
+	else if (g_fractal_type == FRACTYPE_INVERSE_JULIA)
 	{
 		LCMPLX Sqrt;
 
@@ -406,22 +406,22 @@ int orbit_3d_setup_fp()
 	s_waste = 100;
 	s_projection = PROJECTION_XY;
 
-	if (g_fractal_type == FPHENON || g_fractal_type == FPPICKOVER || g_fractal_type == FPGINGERBREAD
-				|| g_fractal_type == KAMFP || g_fractal_type == KAM3DFP
-				|| g_fractal_type == FPHOPALONG || g_fractal_type == INVERSEJULIAFP)
+	if (g_fractal_type == FRACTYPE_HENON_FP || g_fractal_type == FRACTYPE_PICKOVER_FP || g_fractal_type == FRACTYPE_GINGERBREAD_FP
+				|| g_fractal_type == FRACTYPE_KAM_TORUS_FP || g_fractal_type == FRACTYPE_KAM_TORUS_3D_FP
+				|| g_fractal_type == FRACTYPE_HOPALONG_FP || g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
 	{
 		s_connect = 0;
 	}
-	if (g_fractal_type == FPLORENZ3D1 || g_fractal_type == FPLORENZ3D3 ||
-		g_fractal_type == FPLORENZ3D4)
+	if (g_fractal_type == FRACTYPE_LORENZ_3D_1_FP || g_fractal_type == FRACTYPE_LORENZ_3D_3_FP ||
+		g_fractal_type == FRACTYPE_LORENZ_3D_4_FP)
 	{
 		s_waste = 750;
 	}
-	if (g_fractal_type == FPROSSLER)
+	if (g_fractal_type == FRACTYPE_ROSSLER_FP)
 	{
 		s_waste = 500;
 	}
-	if (g_fractal_type == FPLORENZ)
+	if (g_fractal_type == FRACTYPE_LORENZ_FP)
 	{
 		s_projection = PROJECTION_XZ; /* plot x and z */
 	}
@@ -429,13 +429,13 @@ int orbit_3d_setup_fp()
 	s_init_orbit_fp[0] = 1;  /* initial conditions */
 	s_init_orbit_fp[1] = 1;
 	s_init_orbit_fp[2] = 1;
-	if (g_fractal_type == FPGINGERBREAD)
+	if (g_fractal_type == FRACTYPE_GINGERBREAD_FP)
 	{
 		s_init_orbit_fp[0] = g_parameters[0];        /* initial conditions */
 		s_init_orbit_fp[1] = g_parameters[1];
 	}
 
-	if (g_fractal_type == ICON || g_fractal_type == ICON3D)        /* DMF */
+	if (g_fractal_type == FRACTYPE_ICON || g_fractal_type == FRACTYPE_ICON_3D)        /* DMF */
 	{
 		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
 		s_init_orbit_fp[1] = 0.003;
@@ -443,19 +443,19 @@ int orbit_3d_setup_fp()
 		s_waste = 2000;
 	}
 
-	if (g_fractal_type == LATOO)        /* HB */
+	if (g_fractal_type == FRACTYPE_LATOOCARFIAN)        /* HB */
 	{
 		s_connect = 0;
 	}
 
-	if (g_fractal_type == FPHENON || g_fractal_type == FPPICKOVER)
+	if (g_fractal_type == FRACTYPE_HENON_FP || g_fractal_type == FRACTYPE_PICKOVER_FP)
 	{
 		s_a =  g_parameters[0];
 		s_b =  g_parameters[1];
 		s_c =  g_parameters[2];
 		s_d =  g_parameters[3];
 	}
-	else if (g_fractal_type == ICON || g_fractal_type == ICON3D)        /* DMF */
+	else if (g_fractal_type == FRACTYPE_ICON || g_fractal_type == FRACTYPE_ICON_3D)        /* DMF */
 	{
 		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
 		s_init_orbit_fp[1] = 0.003;
@@ -467,7 +467,7 @@ int orbit_3d_setup_fp()
 		s_c  =   g_parameters[2];
 		s_d  =   g_parameters[3];
 	}
-	else if (g_fractal_type == KAMFP || g_fractal_type == KAM3DFP)
+	else if (g_fractal_type == FRACTYPE_KAM_TORUS_FP || g_fractal_type == FRACTYPE_KAM_TORUS_3D_FP)
 	{
 		g_max_count = 1L;
 		s_a = g_parameters[0];           /* angle */
@@ -484,8 +484,8 @@ int orbit_3d_setup_fp()
 		s_orbit = 0;
 		s_init_orbit_fp[0] = s_init_orbit_fp[1] = s_init_orbit_fp[2] = 0;
 	}
-	else if (g_fractal_type == FPHOPALONG || g_fractal_type == FPMARTIN || g_fractal_type == CHIP
-		|| g_fractal_type == QUADRUPTWO || g_fractal_type == THREEPLY)
+	else if (g_fractal_type == FRACTYPE_HOPALONG_FP || g_fractal_type == FRACTYPE_MARTIN_FP || g_fractal_type == FRACTYPE_CHIP
+		|| g_fractal_type == FRACTYPE_QUADRUP_TWO || g_fractal_type == FRACTYPE_THREE_PLY)
 	{
 		s_init_orbit_fp[0] = 0;  /* initial conditions */
 		s_init_orbit_fp[1] = 0;
@@ -495,13 +495,13 @@ int orbit_3d_setup_fp()
 		s_b =  g_parameters[1];
 		s_c =  g_parameters[2];
 		s_d =  g_parameters[3];
-		if (g_fractal_type == THREEPLY)
+		if (g_fractal_type == FRACTYPE_THREE_PLY)
 		{
 			COSB   = cos(s_b);
 			SINABC = sin(s_a + s_b + s_c);
 		}
 	}
-	else if (g_fractal_type == INVERSEJULIAFP)
+	else if (g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
 	{
 		_CMPLX Sqrt;
 
@@ -1260,20 +1260,17 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 	return 0;
 }
 
-/* dmf */
-#undef  LAMBDA
-#define LAMBDA  g_parameters[0]
-#define ALPHA   g_parameters[1]
-#define BETA    g_parameters[2]
-#define GAMMA   g_parameters[3]
-#define OMEGA   g_parameters[4]
-#define DEGREE  g_parameters[5]
-
+/*
+	LAMBDA  g_parameters[0]
+	ALPHA   g_parameters[1]
+	BETA    g_parameters[2]
+	GAMMA   g_parameters[3]
+	OMEGA   g_parameters[4]
+	DEGREE  g_parameters[5]
+*/
 int icon_orbit_fp(double *x, double *y, double *z)
 {
-
 	double oldx, oldy, zzbar, zreal, zimag, za, zb, zn, p;
-	int i;
 
 	oldx = *x;
 	oldy = *y;
@@ -1282,7 +1279,8 @@ int icon_orbit_fp(double *x, double *y, double *z)
 	zreal = oldx;
 	zimag = oldy;
 
-	for (i = 1; i <= DEGREE-2; i++)
+	int degree = static_cast<int>(g_parameters[5]);
+	for (int i = 1; i <= degree-2; i++)
 	{
 		za = zreal*oldx - zimag*oldy;
 		zb = zimag*oldx + zreal*oldy;
@@ -1290,19 +1288,13 @@ int icon_orbit_fp(double *x, double *y, double *z)
 		zimag = zb;
 	}
 	zn = oldx*zreal - oldy*zimag;
-	p = LAMBDA + ALPHA*zzbar + BETA*zn;
-	*x = p*oldx + GAMMA*zreal - OMEGA*oldy;
-	*y = p*oldy - GAMMA*zimag + OMEGA*oldx;
+	p = g_parameters[0] + g_parameters[1]*zzbar + g_parameters[2]*zn;
+	*x = p*oldx + g_parameters[3]*zreal - g_parameters[4]*oldy;
+	*y = p*oldy - g_parameters[3]*zimag + g_parameters[4]*oldx;
 
 	*z = zzbar;
 	return 0;
 }
-#ifdef LAMBDA  /* Tim says this will make me a "good citizen" */
-#undef LAMBDA  /* Yeah, but you were bad, Dan - LAMBDA was already */
-#undef ALPHA   /* defined! <grin!> TW */
-#undef BETA
-#undef GAMMA
-#endif
 
 /* hb */
 #define PAR_A   g_parameters[0]
@@ -1459,7 +1451,7 @@ int orbit_2d_fp()
 			{
 				sound_tone((int) (*soundvar*100 + g_base_hertz));
 			}
-			if ((g_fractal_type != ICON) && (g_fractal_type != LATOO))
+			if ((g_fractal_type != FRACTYPE_ICON) && (g_fractal_type != FRACTYPE_LATOOCARFIAN))
 			{
 				if (oldcol != -1 && s_connect)
 				{
@@ -1893,7 +1885,7 @@ int dynamic_2d_setup_fp()
 	{
 		s_d = 1;
 	}
-	if (g_fractal_type == DYNAMICFP)
+	if (g_fractal_type == FRACTYPE_DYNAMIC_FP)
 	{
 		s_a = g_parameters[2]; /* parameter */
 		s_b = g_parameters[3]; /* parameter */
@@ -2010,7 +2002,7 @@ int dynamic_2d_fp()
 		ypixel = g_dy_size*(ystep + .5)/s_d;
 		x = (double) ((g_xx_min + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
 		y = (double) ((g_yy_max-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
-		if (g_fractal_type == MANDELCLOUD)
+		if (g_fractal_type == FRACTYPE_MANDELBROT_CLOUD)
 		{
 			s_a = x;
 			s_b = y;
@@ -2047,7 +2039,7 @@ int dynamic_2d_fp()
 					{
 						driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
 					}
-					else if (count > 0 || g_fractal_type != MANDELCLOUD)
+					else if (count > 0 || g_fractal_type != FRACTYPE_MANDELBROT_CLOUD)
 					{
 						(*g_plot_color)(col, row, color % g_colors);
 					}
@@ -2114,7 +2106,7 @@ int plotorbits2dsetup()
 	if (g_current_fractal_specific->isinteger != 0)
 	{
 		int tofloat = g_current_fractal_specific->tofloat;
-		if (tofloat == NOFRACTAL)
+		if (tofloat == FRACTYPE_NO_FRACTAL)
 		{
 			return -1;
 		}

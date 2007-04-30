@@ -332,7 +332,7 @@ static int get_the_rest()
 	struct full_screen_values uvalues[20];
 
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
-	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
 		numtrig = g_max_fn;
 	}
@@ -438,7 +438,7 @@ static int get_variations()
 	int lastparm  = MAX_PARAMETERS;
 	int chngd = -1;
 
-	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
 		if (g_uses_p1)  /* set first parameter */
 		{
@@ -488,7 +488,7 @@ static int get_variations()
 	{
 		if (type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, NULL) == 0)
 		{
-			if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+			if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 			{
 				if (parameter_not_used(i))
 				{
@@ -500,7 +500,7 @@ static int get_variations()
 		numparams++;
 	}
 
-	if (g_fractal_type != FORMULA && g_fractal_type != FFORMULA)
+	if (g_fractal_type != FRACTYPE_FORMULA && g_fractal_type != FRACTYPE_FORMULA_FP)
 	{
 		lastparm = numparams;
 	}
@@ -509,7 +509,7 @@ choose_vars_restart:
 	k = -1;
 	for (num = firstparm; num < lastparm; num++)
 	{
-		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 		{
 			if (parameter_not_used(num))
 			{
@@ -583,7 +583,7 @@ choose_vars_restart:
 	k = -1;
 	for (num = firstparm; num < lastparm; num++)
 	{
-		if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 		{
 			if (parameter_not_used(num))
 			{

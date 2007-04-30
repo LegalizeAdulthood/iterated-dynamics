@@ -2536,7 +2536,7 @@ int mandelbrot_per_pixel()
 	}
 	switch (g_fractal_type)
 	{
-	case MANDELLAMBDA:              /* Critical Value 0.5 + 0.0i  */
+	case FRACTYPE_MANDELBROT_LAMBDA:              /* Critical Value 0.5 + 0.0i  */
 		g_old_z_l.x = g_fudge >> 1;
 		g_old_z_l.y = 0;
 		break;
@@ -2708,12 +2708,12 @@ int mandelbrot_per_pixel_fp()
 	}
 	switch (g_fractal_type)
 	{
-	case MAGNET2M:
+	case FRACTYPE_MAGNET_2M:
 		magnet2_precalculate_fp();
-	case MAGNET1M:           /* Crit Val Zero both, but neither   */
+	case FRACTYPE_MAGNET_1M:           /* Crit Val Zero both, but neither   */
 		g_old_z.x = g_old_z.y = 0.0; /* is of the form f(Z, C) = Z*g(Z) + C  */
 		break;
-	case MANDELLAMBDAFP:            /* Critical Value 0.5 + 0.0i  */
+	case FRACTYPE_MANDELBROT_LAMBDA_FP:            /* Critical Value 0.5 + 0.0i  */
 		g_old_z.x = 0.5;
 		g_old_z.y = 0.0;
 		break;

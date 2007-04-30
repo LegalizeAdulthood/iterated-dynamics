@@ -1174,7 +1174,7 @@ top:
 		choicekey[nextleft] = 'o';
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = "orbits window          <o>  ";
-		if (!(g_fractal_type == JULIA || g_fractal_type == JULIAFP || g_fractal_type == INVERSEJULIA))
+		if (!(g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP || g_fractal_type == FRACTYPE_INVERSE_JULIA))
 		{
 			nextleft += 2;
 		}
@@ -1200,9 +1200,9 @@ top:
 
 	if (fullmenu)
 	{
-		if ((g_current_fractal_specific->tojulia != NOFRACTAL
+		if ((g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
 			&& g_parameters[0] == 0.0 && g_parameters[1] == 0.0)
-			|| g_current_fractal_specific->tomandel != NOFRACTAL)
+			|| g_current_fractal_specific->tomandel != FRACTYPE_NO_FRACTAL)
 		{
 			nextleft += 2;
 			choicekey[nextleft] = FIK_SPACE;
@@ -1210,7 +1210,7 @@ top:
 			choices[nextleft] = "toggle to/from julia <space>";
 			showjuliatoggle = 1;
 		}
-		if (g_fractal_type == JULIA || g_fractal_type == JULIAFP || g_fractal_type == INVERSEJULIA)
+		if (g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP || g_fractal_type == FRACTYPE_INVERSE_JULIA)
 		{
 			nextleft += 2;
 			choicekey[nextleft] = 'j';
@@ -1504,9 +1504,9 @@ static int menu_check_key(int curkey, int choice)
 			return -testkey;
 		if (testkey == ' ')
 		{
-			if ((g_current_fractal_specific->tojulia != NOFRACTAL
+			if ((g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
 					&& g_parameters[0] == 0.0 && g_parameters[1] == 0.0)
-				|| g_current_fractal_specific->tomandel != NOFRACTAL)
+				|| g_current_fractal_specific->tomandel != FRACTYPE_NO_FRACTAL)
 			{
 				return -testkey;
 			}

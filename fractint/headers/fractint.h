@@ -752,6 +752,7 @@ typedef struct tag_more_parameters more_parameters;
 
 struct fractal_specific_stuff
 {
+	int fractal_type;
 	char  *name;                         /* name of the fractal */
 										/* (leading "*" supresses name display) */
 	char  *parameters[4];                 /* name of the parameters */

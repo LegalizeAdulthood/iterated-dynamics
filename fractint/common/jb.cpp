@@ -18,7 +18,7 @@ float g_screen_distance_fp    = 24.0f;
 float g_eyes_fp    = 2.5f;
 float g_depth_fp   = 8.0f;
 int g_juli_3d_mode = JULI3DMODE_MONOCULAR;
-int g_new_orbit_type = JULIA;
+int g_new_orbit_type = FRACTYPE_JULIA;
 
 struct perspective
 {
@@ -304,7 +304,7 @@ static int z_line_fp(double x, double y)
 	for (z_pixel = 0; z_pixel < g_z_dots; z_pixel++)
 	{
 		/* Special initialization for Mandelbrot types */
-		if ((g_new_orbit_type == QUATFP || g_new_orbit_type == HYPERCMPLXFP)
+		if ((g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
 			&& g_save_release > 2002)
 		{
 			g_old_z.x = 0.0;
@@ -395,7 +395,7 @@ int standard_4d_fractal()
 	long x, y;
 	int xdot, ydot;
 	g_c_exp = (int)g_parameters[2];
-	if (g_new_orbit_type == LJULIAZPOWER)
+	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_L)
 	{
 		if (g_c_exp < 1)
 		{
@@ -446,7 +446,7 @@ int standard_4d_fractal_fp()
 	int xdot, ydot;
 	g_c_exp = (int)g_parameters[2];
 
-	if (g_new_orbit_type == FPJULIAZPOWER)
+	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
 		g_fractal_specific[g_new_orbit_type].orbitcalc =
 			(g_parameters[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == g_parameters[2])

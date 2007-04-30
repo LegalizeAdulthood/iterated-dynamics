@@ -475,7 +475,7 @@ void plot_setup()
 	case STEREO_SUPERIMPOSE:
 		if (g_colors == 256)
 		{
-			g_standard_plot = (g_fractal_type != IFS3D) ? plot_3d_superimpose_256 : plot_ifs_3d_superimpose_256;
+			g_standard_plot = (g_fractal_type != FRACTYPE_IFS_3D) ? plot_3d_superimpose_256 : plot_ifs_3d_superimpose_256;
 		}
 		else
 		{

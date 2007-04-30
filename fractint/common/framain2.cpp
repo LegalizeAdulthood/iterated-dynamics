@@ -31,7 +31,7 @@ static void julman()
 	i = -1;
 	while (g_fractal_specific[++i].name)
 	{
-		if (g_fractal_specific[i].tojulia != NOFRACTAL && g_fractal_specific[i].name[0] != '*')
+		if (g_fractal_specific[i].tojulia != FRACTYPE_NO_FRACTAL && g_fractal_specific[i].name[0] != '*')
 		{
 			fprintf(fp, "%s  %s\n", g_fractal_specific[i].name,
 				g_fractal_specific[g_fractal_specific[i].tojulia].name);
@@ -498,7 +498,7 @@ done:
 		}
 #endif
 
-		if (g_fractal_type == PLASMA && g_cpu > 88)
+		if (g_fractal_type == FRACTYPE_PLASMA && g_cpu > 88)
 		{
 			g_cycle_limit = 256;              /* plasma clouds need quick spins */
 			g_dac_count = 256;
@@ -961,9 +961,9 @@ static int handle_ant()
 	{
 		oldparm[i] = g_parameters[i];
 	}
-	if (g_fractal_type != ANT)
+	if (g_fractal_type != FRACTYPE_ANT)
 	{
-		g_fractal_type = ANT;
+		g_fractal_type = FRACTYPE_ANT;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		load_parameters(g_fractal_type);
 	}
@@ -1025,7 +1025,7 @@ static void handle_orbits()
 	if ((g_fractal_specific[g_fractal_type].calculate_type == standard_fractal
 			|| g_fractal_specific[g_fractal_type].calculate_type == froth_calc)
 		&& (g_fractal_specific[g_fractal_type].isinteger == FALSE
-			|| g_fractal_specific[g_fractal_type].tofloat != NOFRACTAL)
+			|| g_fractal_specific[g_fractal_type].tofloat != FRACTYPE_NO_FRACTAL)
 		&& !g_bf_math /* for now no arbitrary precision support */
 		&& !(g_is_true_color && g_true_mode))
 	{
@@ -1043,7 +1043,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 	{
 		return;
 	}
-	if (g_fractal_type == CELLULAR)
+	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
 		g_next_screen_flag = !g_next_screen_flag;
 		g_calculation_status = CALCSTAT_RESUMABLE;
@@ -1051,29 +1051,29 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		return;
 	}
 
-	if (g_fractal_type == FORMULA || g_fractal_type == FFORMULA)
+	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
 		if (g_is_mand)
 		{
 			g_fractal_specific[g_fractal_type].tojulia = g_fractal_type;
-			g_fractal_specific[g_fractal_type].tomandel = NOFRACTAL;
+			g_fractal_specific[g_fractal_type].tomandel = FRACTYPE_NO_FRACTAL;
 			g_is_mand = 0;
 		}
 		else
 		{
-			g_fractal_specific[g_fractal_type].tojulia = NOFRACTAL;
+			g_fractal_specific[g_fractal_type].tojulia = FRACTYPE_NO_FRACTAL;
 			g_fractal_specific[g_fractal_type].tomandel = g_fractal_type;
 			g_is_mand = 1;
 		}
 	}
 
-	if (g_current_fractal_specific->tojulia != NOFRACTAL
+	if (g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
 		&& g_parameters[0] == 0.0
 		&& g_parameters[1] == 0.0)
 	{
 		/* switch to corresponding Julia set */
 		int key;
-		g_has_inverse = (g_fractal_type == MANDEL || g_fractal_type == MANDELFP)
+		g_has_inverse = (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_MANDELBROT_FP)
 			&& (g_bf_math == 0) ? TRUE : FALSE;
 		clear_zoom_box();
 		Jiim(JIIM);
@@ -1124,7 +1124,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		*kbdmore = 0;
 	}
-	else if (g_current_fractal_specific->tomandel != NOFRACTAL)
+	else if (g_current_fractal_specific->tomandel != FRACTYPE_NO_FRACTAL)
 	{
 		/* switch to corresponding Mandel set */
 		g_fractal_type = g_current_fractal_specific->tomandel;
@@ -1163,30 +1163,23 @@ static void handle_inverse_julia_toggle(int *kbdmore)
 {
 	/* if the inverse types proliferate, something more elegant will be
 	* needed */
-	if (g_fractal_type == JULIA || g_fractal_type == JULIAFP || g_fractal_type == INVERSEJULIA)
+	if (g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP || g_fractal_type == FRACTYPE_INVERSE_JULIA)
 	{
 		static int oldtype = -1;
-		if (g_fractal_type == JULIA || g_fractal_type == JULIAFP)
+		if (g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP)
 		{
 			oldtype = g_fractal_type;
-			g_fractal_type = INVERSEJULIA;
+			g_fractal_type = FRACTYPE_INVERSE_JULIA;
 		}
-		else if (g_fractal_type == INVERSEJULIA)
+		else if (g_fractal_type == FRACTYPE_INVERSE_JULIA)
 		{
-			g_fractal_type = (oldtype != -1) ? oldtype : JULIA;
+			g_fractal_type = (oldtype != -1) ? oldtype : FRACTYPE_JULIA;
 		}
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		g_zoom_off = TRUE;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		*kbdmore = 0;
 	}
-#if 0
-	else if (g_fractal_type == MANDEL || g_fractal_type == MANDELFP)
-	{
-		clear_zoom_box();
-		Jiim(JIIM);
-	}
-#endif
 	else
 	{
 		driver_buzzer(BUZZER_ERROR);
@@ -1239,12 +1232,12 @@ static int handle_history(int *stacked, int kbdchar)
 		g_zoom_off = TRUE;
 		g_init_mode = g_adapter;
 		if (g_current_fractal_specific->isinteger != 0
-			&& g_current_fractal_specific->tofloat != NOFRACTAL)
+			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
 			g_user_float_flag = 0;
 		}
 		if (g_current_fractal_specific->isinteger == 0
-			&& g_current_fractal_specific->tofloat != NOFRACTAL)
+			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
 			g_user_float_flag = 1;
 		}
@@ -1805,12 +1798,12 @@ static int handle_evolver_history(int *stacked, int *kbdchar)
 		g_zoom_off = TRUE;
 		g_init_mode = g_adapter;
 		if (g_current_fractal_specific->isinteger != 0
-			&& g_current_fractal_specific->tofloat != NOFRACTAL)
+			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
 			g_user_float_flag = 0;
 		}
 		if (g_current_fractal_specific->isinteger == 0
-			&& g_current_fractal_specific->tofloat != NOFRACTAL)
+			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
 			g_user_float_flag = 1;
 		}

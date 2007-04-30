@@ -94,36 +94,36 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 	{
 		if (g_fpu != 0)
 		{
-			if (g_fractal_type == MPNEWTON)
+			if (g_fractal_type == FRACTYPE_NEWTON_MP)
 			{
-				g_fractal_type = NEWTON;
+				g_fractal_type = FRACTYPE_NEWTON;
 			}
-			else if (g_fractal_type == MPNEWTBASIN)
+			else if (g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 			{
-				g_fractal_type = NEWTBASIN;
+				g_fractal_type = FRACTYPE_NEWTON_BASIN;
 			}
 		}
 		else
 		{
-			if (g_fractal_type == NEWTON)
+			if (g_fractal_type == FRACTYPE_NEWTON)
 			{
-				g_fractal_type = MPNEWTON;
+				g_fractal_type = FRACTYPE_NEWTON_MP;
 			}
-			else if (g_fractal_type == NEWTBASIN)
+			else if (g_fractal_type == FRACTYPE_NEWTON_BASIN)
 			{
-				g_fractal_type = MPNEWTBASIN;
+				g_fractal_type = FRACTYPE_NEWTON_BASIN_MP;
 			}
 		}
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	}
 #else
-	if (g_fractal_type == MPNEWTON)
+	if (g_fractal_type == FRACTYPE_NEWTON_MP)
 	{
-		g_fractal_type = NEWTON;
+		g_fractal_type = FRACTYPE_NEWTON;
 	}
-	else if (g_fractal_type == MPNEWTBASIN)
+	else if (g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 	{
-		g_fractal_type = NEWTBASIN;
+		g_fractal_type = FRACTYPE_NEWTON_BASIN;
 	}
 
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
@@ -142,7 +142,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 	g_max_color     = 0;
 	g_threshold    = .3*PI/g_degree; /* less than half distance between roots */
 #if !defined(XFRACT)
-	if (g_fractal_type == MPNEWTON || g_fractal_type == MPNEWTBASIN)
+	if (g_fractal_type == FRACTYPE_NEWTON_MP || g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 	{
 		m_root_over_degree_mp			= *pd2MP(m_root_over_degree);
 		m_degree_minus_1_over_degree_mp	= *pd2MP(m_degree_minus_1_over_degree);
@@ -158,7 +158,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 		g_roots = g_static_roots;
 	}
 
-	if (g_fractal_type == NEWTBASIN)
+	if (g_fractal_type == FRACTYPE_NEWTON_BASIN)
 	{
 		g_basin = g_parameter.y ? 2 : 1; /*stripes */
 		if (g_degree > 16)
@@ -183,7 +183,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 		}
 	}
 #if !defined(XFRACT)
-	else if (g_fractal_type == MPNEWTBASIN)
+	else if (g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 	{
 		g_basin = g_parameter.y ? 2 : 1; /*stripes */
 
@@ -215,7 +215,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 
 	g_calculate_type = standard_fractal;
 #if !defined(XFRACT)
-	if (g_fractal_type == MPNEWTON || g_fractal_type == MPNEWTBASIN)
+	if (g_fractal_type == FRACTYPE_NEWTON_MP || g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 	{
 		setMPfunctions();
 	}
@@ -230,7 +230,7 @@ int Newton::orbit()
 
 	if (distance_from_1(g_new_z) < g_threshold)
 	{
-		if (g_fractal_type == NEWTBASIN || g_fractal_type == MPNEWTBASIN)
+		if (g_fractal_type == FRACTYPE_NEWTON_BASIN || g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 		{
 			long tmpcolor;
 			int i;
@@ -283,7 +283,7 @@ int NewtonMPC::orbit()
 	mpctmp1.y = *pMPsub(mpcnew.y, g_one_mpc.y);
 	if (pMPcmp(MPCmod(mpctmp1), g_threshold_mp)< 0)
 	{
-		if (g_fractal_type == MPNEWTBASIN)
+		if (g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 		{
 			long tmpcolor;
 			int i;
