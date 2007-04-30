@@ -188,14 +188,14 @@ void calculate_fractal_initialize()
 
 	set_grid_pointers();
 
-	if (!(g_current_fractal_specific->flags & BF_MATH))
+	if (!(g_current_fractal_specific->flags & FRACTALFLAG_ARBITRARY_PRECISION))
 	{
 		int tofloat = g_current_fractal_specific->tofloat;
 		if (tofloat == FRACTYPE_NO_FRACTAL)
 		{
 			g_bf_math = 0;
 		}
-		else if (!(g_fractal_specific[tofloat].flags & BF_MATH))
+		else if (!(g_fractal_specific[tofloat].flags & FRACTALFLAG_ARBITRARY_PRECISION))
 		{
 			g_bf_math = 0;
 		}
@@ -372,7 +372,7 @@ init_restart:
 		}
 	}
 
-	if ((g_current_fractal_specific->flags&NOROTATE) != 0)
+	if ((g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0)
 	{
 		/* ensure min < max and unrotated rectangle */
 		if (g_xx_min > g_xx_max)
@@ -584,7 +584,7 @@ expand_retry:
 				if (ratio_bad(testx_try, testx_exact) ||
 					ratio_bad(testy_try, testy_exact))
 				{
-					if (g_current_fractal_specific->flags & BF_MATH)
+					if (g_current_fractal_specific->flags & FRACTALFLAG_ARBITRARY_PRECISION)
 					{
 						fractal_float_to_bf();
 						goto init_restart;

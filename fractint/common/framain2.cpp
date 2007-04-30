@@ -195,7 +195,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
 				}
-				if ((g_evolving & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & INFCALC))
+				if ((g_evolving & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & FRACTALFLAG_INFINITE_CALCULATION))
 				{
 					stop_message(0, "Fractal doesn't terminate! switching off evolution.");
 					g_evolving &= ~EVOLVE_FIELD_MAP;
@@ -303,7 +303,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 		}
 
 		g_zoom_off = TRUE;                      /* zooming is enabled */
-		if (driver_diskp() || (g_current_fractal_specific->flags&NOZOOM) != 0)
+		if (driver_diskp() || (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM) != 0)
 		{
 			g_zoom_off = FALSE;                   /* for these cases disable zooming */
 		}
@@ -346,7 +346,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 		else
 		{                            /* draw an image */
 			if (g_save_time != 0          /* autosave and resumable? */
-				&& (g_current_fractal_specific->flags & NORESUME) == 0)
+				&& (g_current_fractal_specific->flags & FRACTALFLAG_NOT_RESUMABLE) == 0)
 			{
 				g_save_base = read_ticker(); /* calc's start time */
 				g_save_ticks = g_save_time*60*1000; /* in milliseconds */
@@ -1420,7 +1420,7 @@ static void handle_zoom_skew(int negative)
 {
 	if (negative)
 	{
-		if (g_box_count && (g_current_fractal_specific->flags & NOROTATE) == 0)
+		if (g_box_count && (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_HOME);
 			g_z_skew -= 0.02*i;
@@ -1432,7 +1432,7 @@ static void handle_zoom_skew(int negative)
 	}
 	else
 	{
-		if (g_box_count && (g_current_fractal_specific->flags & NOROTATE) == 0)
+		if (g_box_count && (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) == 0)
 		{
 			int i = key_count(FIK_CTL_END);
 			g_z_skew += 0.02*i;
@@ -1494,7 +1494,7 @@ static int handle_video_mode(int kbdchar, int *kbdmore)
 
 static void handle_z_rotate(int increase)
 {
-	if (g_box_count && (g_current_fractal_specific->flags & NOROTATE) == 0)
+	if (g_box_count && (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) == 0)
 	{
 		if (increase)
 		{

@@ -842,7 +842,7 @@ int tab_display_2(char *msg)
 	show_str_var("lightname",   g_light_name,   &row, msg);
 	show_str_var("map",         g_map_name,     &row, msg);
 	write_row(row++, "Sizeof g_fractal_specific array %d",
-		g_num_fractal_types*(int)sizeof(struct fractal_specific_stuff));
+		g_num_fractal_types*(int)sizeof(FractalTypeSpecificData));
 	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
@@ -1055,7 +1055,7 @@ top:
 
 	if (g_calculation_status == CALCSTAT_IN_PROGRESS || g_calculation_status == CALCSTAT_RESUMABLE)
 	{
-		if (g_current_fractal_specific->flags & NORESUME)
+		if (g_current_fractal_specific->flags & FRACTALFLAG_NOT_RESUMABLE)
 		{
 			driver_put_string(s_row++, 2, C_GENERAL_HI,
 				"Note: can't resume this type after interrupts other than <tab> and <F1>");
@@ -1157,7 +1157,7 @@ top:
 		driver_put_string(-1, -1, C_GENERAL_HI, msg);
 	}
 
-	if ((g_current_fractal_specific->flags&INFCALC) && (g_color_iter != 0))
+	if ((g_current_fractal_specific->flags&FRACTALFLAG_INFINITE_CALCULATION) && (g_color_iter != 0))
 	{
 		driver_put_string(s_row, -1, C_GENERAL_MED, " 1000's of points:");
 		sprintf(msg, " %ld of %ld", g_color_iter-2, g_max_count);
@@ -1178,7 +1178,7 @@ top:
 				g_video_entry.name, g_video_entry.comment);
 		driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
 	}
-	if (!(g_current_fractal_specific->flags&NOZOOM))
+	if (!(g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM))
 	{
 		adjust_corner(); /* make bottom left exact if very near exact */
 		if (g_bf_math)

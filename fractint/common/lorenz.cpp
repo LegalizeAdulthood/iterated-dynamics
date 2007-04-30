@@ -2281,7 +2281,7 @@ int funny_glasses_call(int (*calc)())
 				driver_set_video_mode(g_video_entry);
 		}
 		g_which_image = WHICHIMAGE_BLUE;
-		if (g_current_fractal_specific->flags & INFCALC)
+		if (g_current_fractal_specific->flags & FRACTALFLAG_INFINITE_CALCULATION)
 		{
 			g_current_fractal_specific->per_image(); /* reset for 2nd image */
 		}

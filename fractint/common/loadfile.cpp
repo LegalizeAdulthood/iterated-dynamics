@@ -134,7 +134,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_save_release  = 1200;
 		if (!g_display_3d
 			&& (read_info.version <= 4 || read_info.flag3d > 0
-				|| (g_current_fractal_specific->flags & PARMS3D)))
+				|| (g_current_fractal_specific->flags & FRACTALFLAG_3D_PARAMETERS)))
 		{
 			int i;
 			for (i = 0; i < 16; i++)
@@ -1274,7 +1274,7 @@ static int fix_bof()
 	if (g_inside <= BOF60 && g_inside >= BOF61 && g_save_release < 1826)
 	{
 		if ((g_current_fractal_specific->calculate_type == standard_fractal &&
-			(g_current_fractal_specific->flags & BAILTEST) == 0) ||
+			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS) == 0) ||
 			(g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP))
 		{
 			ret = 1;
