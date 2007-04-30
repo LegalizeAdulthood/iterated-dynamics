@@ -238,7 +238,7 @@ void Win32BaseDriver::terminate()
 *
 *----------------------------------------------------------------------
 */
-int Win32BaseDriver::initialize(int *argc, char **argv)
+int Win32BaseDriver::initialize(int &argc, char **argv)
 {
 	LPCSTR title = "FractInt for Windows";
 

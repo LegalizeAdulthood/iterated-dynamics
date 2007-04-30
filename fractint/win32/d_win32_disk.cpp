@@ -40,7 +40,7 @@ class Win32DiskDriver : public Win32BaseDriver
 public:
 	Win32DiskDriver(const char *name, const char *description);
 
-	/* initialize the driver */			virtual int initialize(int *argc, char **argv);
+	/* initialize the driver */			virtual int initialize(int &argc, char **argv);
 
 	/* validate a fractint.cfg mode */	virtual int validate_mode(const VIDEOINFO &mode);
 										virtual void set_video_mode(const VIDEOINFO &mode);
@@ -157,24 +157,6 @@ VIDEOINFO Win32DiskDriver::s_modes[] =
  */
 int Win32DiskDriver::check_arg(char *arg)
 {
-#if 0
-	if (strcmp(arg, "-disk") == 0)
-	{
-		return 1;
-	}
-	else if (strcmp(arg, "-simple") == 0)
-	{
-		base.simple_input = 1;
-		return 1;
-	}
-	else if (strcmp(arg, "-geometry") == 0 && *i + 1 < argc)
-	{
-		base.Xgeometry = argv[(*i) + 1];
-		(*i)++;
-		return 1;
-	}
-#endif
-
 	return 0;
 }
 
@@ -278,7 +260,7 @@ static void parse_geometry(const char *spec, int *x, int *y, int *width, int *he
 *
 *----------------------------------------------------------------------
 */
-int Win32DiskDriver::initialize(int *argc, char **argv)
+int Win32DiskDriver::initialize(int &argc, char **argv)
 {
 	LPCTSTR title = "FractInt for Windows";
 
@@ -290,32 +272,10 @@ int Win32DiskDriver::initialize(int *argc, char **argv)
 
 	initdacbox();
 
-	/* filter out driver arguments */
-	{
-		int i;
-
-		for (i = 0; i < *argc; i++)
-		{
-			if (check_arg(argv[i]))
-			{
-				int j;
-				for (j = i; j < *argc-1; j++)
-				{
-					argv[j] = argv[j + 1];
-				}
-				argv[j] = NULL;
-				--*argc;
-			}
-		}
-	}
-
 	/* add default list of video modes */
+	for (int m = 0; m < NUM_OF(s_modes); m++)
 	{
-		int m;
-		for (m = 0; m < NUM_OF(s_modes); m++)
-		{
-			add_video_mode(this, s_modes[m]);
-		}
+		add_video_mode(this, s_modes[m]);
 	}
 
 	return TRUE;
