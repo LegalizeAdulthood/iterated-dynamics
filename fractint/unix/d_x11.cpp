@@ -138,7 +138,7 @@ public:
 
 private:
 	unsigned long do_fake_lut(int idx);
-	int check_arg(int &argc, char **argv);
+	int check_arg(int i, int argc, char **argv);
 	void doneXwindow();
 	void initdacbox();
 	void erase_text_screen();
@@ -295,13 +295,12 @@ unsigned long X11Driver::do_fake_lut(int idx)
  *
  *----------------------------------------------------------------------
  */
-int X11Driver::check_arg(int &argc, char **argv)
+int X11Driver::check_arg(int i, int argc, char **argv)
 {
-	if (strcmp(argv[*i], "-display") == 0 && (*i)+1 < argc)
+	if (strcmp(argv[i], "-display") == 0 && i < argc-1)
 	{
-		m_Xdisplay = argv[(*i)+1];
-		(*i)++;
-		return 1;
+		m_Xdisplay = argv[i+1];
+		return 2;
 	}
 	else if (strcmp(argv[*i], "-fullscreen") == 0)
 	{
@@ -338,23 +337,20 @@ int X11Driver::check_arg(int &argc, char **argv)
 		m_privatecolor = 1;
 		return 1;
 	}
-	else if (strcmp(argv[*i], "-fixcolors") == 0 && *i+1 < argc)
+	else if (strcmp(argv[*i], "-fixcolors") == 0 && i < argc-1)
 	{
-		m_fixcolors = atoi(argv[(*i)+1]);
-		(*i)++;
-		return 1;
+		m_fixcolors = atoi(argv[i+1]);
+		return 2;
 	}
-	else if (strcmp(argv[*i], "-geometry") == 0 && *i+1 < argc)
+	else if (strcmp(argv[*i], "-geometry") == 0 && i < argc-1)
 	{
-		m_Xgeometry = argv[(*i)+1];
-		(*i)++;
-		return 1;
+		m_Xgeometry = argv[i+1];
+		return 2;
 	}
-	else if (strcmp(argv[*i], "-fn") == 0 && *i+1 < argc)
+	else if (strcmp(argv[*i], "-fn") == 0 && i < argc-1)
 	{
-		m_x_font_name = argv[(*i)+1];
-		(*i)++;
-		return 1;
+		m_x_font_name = argv[i+1];
+		return 2;
 	}
 	else
 	{
@@ -1786,24 +1782,17 @@ int X11Driver::initialize(int *argc, char **argv)
 #endif
 
 	/* filter out x11 arguments */
-	int count = *argc;
-	char **argv_copy = (char **) malloc(sizeof(char *)*count);
-	int i;
-	int copied;
-
-	for (i = 0; i < count; i++)
+	for (int i = 0; i < argc; i++)
 	{
-		argv_copy[i] = argv[i];
-	}
-
-	copied = 0;
-	for (i = 0; i < count; i++)
-	{
-		if (!check_arg(i, argv))
+		int count = check_arg(i, argc, argv);
+		if (count)
 		{
-			argv[copied++] = argv_copy[i];
+			for (int j = i; j < argc - count; j++)
+			{
+				argv[j] = argv[j + count];
+			}
+			argc -= count;
 		}
-		*argc = copied;
 	}
 
 	m_Xdp = XOpenDisplay(m_Xdisplay);

@@ -68,7 +68,6 @@ public:
 	virtual void put_truecolor(int x, int y, int r, int g, int b, int a)		{}
 
 private:
-	int check_arg(char *arg);
 	void show_hide_windows(HWND show, HWND hide);
 	void max_size(int &width, int &height, bool &center_x, bool &center_y);
 	void center_windows(bool center_x, bool center_y);
@@ -130,21 +129,6 @@ VIDEOINFO GDIDriver::s_modes[] =
 };
 #undef MODE19
 #undef DRIVER_MODE
-
-/* check_arg
- *
- *	See if we want to do something with the argument.
- *
- * Results:
- *	Returns 1 if we parsed the argument.
- *
- * Side effects:
- *	Increments i if we use more than 1 argument.
- */
-int GDIDriver::check_arg(char *arg)
-{
-	return 0;
-}
 
 /* handle_special_keys
  *
@@ -314,7 +298,7 @@ void GDIDriver::get_max_screen(int &x_max, int &y_max) const
 *
 *----------------------------------------------------------------------
 */
-int GDIDriver::initialize(int *argc, char **argv)
+int GDIDriver::initialize(int &argc, char **argv)
 {
 	LPCSTR title = "FractInt for Windows";
 
@@ -327,19 +311,6 @@ int GDIDriver::initialize(int *argc, char **argv)
 	m_plot.initialize(g_instance, "Plot");
 
 	/* filter out driver arguments */
-	for (int i = 0; i < *argc; i++)
-	{
-		if (check_arg(argv[i]))
-		{
-			int j;
-			for (j = i; j < *argc-1; j++)
-			{
-				argv[j] = argv[j + 1];
-			}
-			argv[j] = NULL;
-			--*argc;
-		}
-	}
 
 	/* add default list of video modes */
 	int width, height;

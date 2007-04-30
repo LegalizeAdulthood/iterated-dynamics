@@ -25,7 +25,7 @@ static AbstractDriver *s_current = NULL;
 int DriverManager::s_num_drivers = 0;
 AbstractDriver *DriverManager::s_drivers[DriverManager::MAX_DRIVERS] = { 0 };
 
-int DriverManager::load(AbstractDriver *drv, int *argc, char **argv)
+int DriverManager::load(AbstractDriver *drv, int &argc, char **argv)
 {
 	if (drv)
 	{
@@ -50,7 +50,7 @@ int DriverManager::load(AbstractDriver *drv, int *argc, char **argv)
  * Go through the static list of drivers defined and try to initialize
  * them one at a time.  Returns the number of drivers initialized.
  */
-int DriverManager::open_drivers(int *argc, char **argv)
+int DriverManager::open_drivers(int &argc, char **argv)
 {
 #if HAVE_X11_DRIVER
 	load(x11_driver, argc, argv);

@@ -11,7 +11,7 @@ class AbstractDriver
 public:
 	/* name of driver */				virtual const char *name() const = 0;
 	/* driver description */			virtual const char *description() const = 0;
-	/* initialize the driver */			virtual int initialize(int *argc, char **argv) = 0;
+	/* initialize the driver */			virtual int initialize(int &argc, char **argv) = 0;
 	/* shutdown the driver */			virtual void terminate() = 0;
 	/* pause this driver */				virtual void pause() = 0;
 	/* resume this driver */			virtual void resume() = 0;
@@ -97,13 +97,13 @@ private:
 class DriverManager
 {
 public:
-	static int open_drivers(int *argc, char **argv);
+	static int open_drivers(int &argc, char **argv);
 	static void close_drivers();
 	static AbstractDriver *find_by_name(const char *name);
 	static void change_video_mode(VIDEOINFO &mode);
 
 private:
-	static int load(AbstractDriver *driver, int *argc, char **argv);
+	static int load(AbstractDriver *driver, int &argc, char **argv);
 
 	static const int MAX_DRIVERS = 10;
 	static int s_num_drivers;
