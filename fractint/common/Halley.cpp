@@ -4,7 +4,7 @@
 #include "fractint.h"
 #include "externs.h"
 #include "fractype.h"
-#include "halley.h"
+#include "Halley.h"
 
 #if !defined(XFRACT)
 extern struct MPC mpcold;
