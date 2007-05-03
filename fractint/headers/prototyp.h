@@ -13,7 +13,6 @@ extern int get_corners();
 extern int getakeynohelp();
 extern void set_null_video();
 extern void spindac(int, int);
-extern int get_sound_params();
 extern void initasmvars();
 
 /* maintain the common prototypes in this file

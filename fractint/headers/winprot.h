@@ -98,12 +98,6 @@ extern void _fastcall add_box(struct coords);
 extern void _fastcall draw_lines(struct coords, struct coords, int, int);
 extern int show_vid_length();
 
-extern int get_sound_params();
-extern int soundon(int);
-extern void soundoff();
-extern int initfm();
-extern void mute();
-
 extern void disk_video_status(int, char *);
 extern int tovideotable();
 extern void TranspPerPixel();
