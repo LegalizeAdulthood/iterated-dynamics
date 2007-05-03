@@ -224,7 +224,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		{parameter text strings},
 		{parameter values},
 		helptext, helpformula, flags,
-		g_x_min, g_x_max, g_y_min, g_y_max,
+		x_min, x_max, y_min, y_max,
 		int, tojulia, tomandel, tofloat, symmetry,
 		orbit fnct, per_pixel fnct, per_image fnct, calctype fcnt,
 		bailout

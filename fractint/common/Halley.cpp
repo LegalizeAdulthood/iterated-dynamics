@@ -1,8 +1,8 @@
 #include "port.h"
+#include "prototyp.h"
 #include "cmplx.h"
 #include "fractint.h"
 #include "externs.h"
-#include "prototyp.h"
 #include "fractype.h"
 #include "halley.h"
 

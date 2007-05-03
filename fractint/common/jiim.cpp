@@ -53,6 +53,7 @@
 #include "fractype.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "EscapeTime.h"
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
@@ -659,8 +660,8 @@ void Jiim(int which)         /* called by fractint */
 	if (g_col < 0 || g_col >= g_x_dots ||
 		g_row < 0 || g_row >= g_y_dots)
 	{
-		cr = (g_xx_max + g_xx_min) / 2.0;
-		ci = (g_yy_max + g_yy_min) / 2.0;
+		cr = (g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min()) / 2.0;
+		ci = (g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min()) / 2.0;
 	}
 	else
 	{

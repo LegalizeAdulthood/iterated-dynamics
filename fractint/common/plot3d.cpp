@@ -463,7 +463,6 @@ void plot_setup()
 {
 	double d_red_bright  = 0;
 	double d_blue_bright = 0;
-	int i;
 
 	/* set funny glasses plot function */
 	switch (g_glasses_type)
@@ -565,7 +564,7 @@ void plot_setup()
 				g_dac_box[PAL_MAGENTA][1] =    0;
 				g_dac_box[PAL_MAGENTA][2] = COLOR_CHANNEL_MAX;
 			}
-			for (i = 0; i < 256; i++)
+			for (int i = 0; i < 256; i++)
 			{
 				g_dac_box[i][0] = (BYTE)(g_dac_box[i][0]*d_red_bright);
 				g_dac_box[i][2] = (BYTE)(g_dac_box[i][2]*d_blue_bright);

@@ -13,6 +13,7 @@
 #include "fractype.h"
 #include "targa_lc.h"
 #include "drivers.h"
+#include "EscapeTime.h"
 
 #define RANDOM(x)  (rand() % (x))
 
@@ -680,7 +681,7 @@ static void set_plasma_palette()
 
 int diffusion()
 {
-	int g_x_max, g_y_max, g_x_min, g_y_min;     /* Current maximum coordinates */
+	int x_max, y_max, x_min, y_min;     /* Current maximum coordinates */
 	int border;   /* Distance between release point and fractal */
 	int mode;     /* Determines diffusion type:  0 = central (classic) */
 					/*                             1 = falling particles */
@@ -728,16 +729,16 @@ int diffusion()
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL:
-		g_x_max = g_x_dots / 2 + border;  /* Initial box */
-		g_x_min = g_x_dots / 2 - border;
-		g_y_max = g_y_dots / 2 + border;
-		g_y_min = g_y_dots / 2 - border;
+		x_max = g_x_dots / 2 + border;  /* Initial box */
+		x_min = g_x_dots / 2 - border;
+		y_max = g_y_dots / 2 + border;
+		y_min = g_y_dots / 2 - border;
 		break;
 
 	case DIFFUSION_LINE:
-		g_x_max = g_x_dots / 2 + border;  /* Initial box */
-		g_x_min = g_x_dots / 2 - border;
-		g_y_min = g_y_dots - border;
+		x_max = g_x_dots / 2 + border;  /* Initial box */
+		x_min = g_x_dots / 2 - border;
+		y_min = g_y_dots - border;
 		break;
 
 	case DIFFUSION_SQUARE:
@@ -750,13 +751,13 @@ int diffusion()
 		start_resume();
 		if (mode != DIFFUSION_SQUARE)
 		{
-			get_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min,
-				sizeof(g_y_max), &g_y_max, sizeof(g_y_min), &g_y_min, 0);
+			get_resume(sizeof(x_max), &x_max, sizeof(x_min), &x_min,
+				sizeof(y_max), &y_max, sizeof(y_min), &y_min, 0);
 		}
 		else
 		{
-			get_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min,
-				sizeof(g_y_max), &g_y_max, sizeof(radius), &radius, 0);
+			get_resume(sizeof(x_max), &x_max, sizeof(x_min), &x_min,
+				sizeof(y_max), &y_max, sizeof(radius), &radius, 0);
 		}
 		end_resume();
 	}
@@ -803,15 +804,14 @@ int diffusion()
 		case DIFFUSION_CENTRAL: /* Release new point on a circle inside the box */
 			angle = 2*(double)rand()/(RAND_MAX/PI);
 			FPUsincos(&angle, &sine, &cosine);
-			x = (int)(cosine*(g_x_max-g_x_min) + g_x_dots);
-			y = (int)(sine  *(g_y_max-g_y_min) + g_y_dots);
+			x = (int)(cosine*(x_max-x_min) + g_x_dots);
+			y = (int)(sine  *(y_max-y_min) + g_y_dots);
 			x /= 2;
 			y /= 2;
 			break;
-		case DIFFUSION_LINE: /* Release new point on the line g_y_min somewhere between g_x_min
-					and g_x_max */
-			y = g_y_min;
-			x = RANDOM(g_x_max-g_x_min) + (g_x_dots-g_x_max + g_x_min)/2;
+		case DIFFUSION_LINE: /* Release new point on the line y_min somewhere between x_min and x_max */
+			y = y_min;
+			x = RANDOM(x_max-x_min) + (g_x_dots-x_max + x_min)/2;
 			break;
 		case DIFFUSION_SQUARE: /* Release new point on a circle inside the box with radius
 					given by the radius variable */
@@ -840,19 +840,19 @@ int diffusion()
 
 			if (mode == DIFFUSION_CENTRAL) /* Make sure point is inside the box */
 			{
-				if (x == g_x_max)
+				if (x == x_max)
 				{
 					x--;
 				}
-				else if (x == g_x_min)
+				else if (x == x_min)
 				{
 					x++;
 				}
-				if (y == g_y_max)
+				if (y == y_max)
 				{
 					y--;
 				}
-				else if (y == g_y_min)
+				else if (y == y_min)
 				{
 					y++;
 				}
@@ -869,7 +869,7 @@ int diffusion()
 				{
 					x++;
 				}
-				if (y < g_y_min)
+				if (y < y_min)
 				{
 					y++;
 				}
@@ -887,13 +887,13 @@ int diffusion()
 					alloc_resume(20, 1);
 					if (mode != DIFFUSION_SQUARE)
 					{
-						put_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min,
-							sizeof(g_y_max), &g_y_max, sizeof(g_y_min), &g_y_min, 0);
+						put_resume(sizeof(x_max), &x_max, sizeof(x_min), &x_min,
+							sizeof(y_max), &y_max, sizeof(y_min), &y_min, 0);
 					}
 					else
 					{
-						put_resume(sizeof(g_x_max), &g_x_max, sizeof(g_x_min), &g_x_min,
-							sizeof(g_y_max), &g_y_max, sizeof(radius), &radius, 0);
+						put_resume(sizeof(x_max), &x_max, sizeof(x_min), &x_min,
+							sizeof(y_max), &y_max, sizeof(radius), &radius, 0);
 					}
 					s_plasma_check--;
 					return 1;
@@ -934,26 +934,26 @@ int diffusion()
 		switch (mode)
 		{
 		case DIFFUSION_CENTRAL:
-			if (((x + border) > g_x_max) || ((x-border) < g_x_min)
-				|| ((y-border) < g_y_min) || ((y + border) > g_y_max))
+			if (((x + border) > x_max) || ((x-border) < x_min)
+				|| ((y-border) < y_min) || ((y + border) > y_max))
 			{
 				/* Increase box size, but not past the edge of the screen */
-				g_y_min--;
-				g_y_max++;
-				g_x_min--;
-				g_x_max++;
-				if ((g_y_min == 0) || (g_x_min == 0))
+				y_min--;
+				y_max++;
+				x_min--;
+				x_max++;
+				if ((y_min == 0) || (x_min == 0))
 				{
 					return 0;
 				}
 			}
 			break;
 		case DIFFUSION_LINE: /* Decrease g_y_min, but not past top of screen */
-			if (y-border < g_y_min)
+			if (y-border < y_min)
 			{
-				g_y_min--;
+				y_min--;
 			}
-			if (g_y_min == 0)
+			if (y_min == 0)
 			{
 				return 0;
 			}
@@ -1063,11 +1063,11 @@ int bifurcation()
 
 	if (g_integer_fractal)
 	{
-		g_initial_z_l.y = g_y_max - g_y_stop*g_delta_y;            /* Y-value of    */
+		g_initial_z_l.y = g_escape_time_state_l.y_max() - g_y_stop*g_delta_y;            /* Y-value of    */
 	}
 	else
 	{
-		g_initial_z.y = (double)(g_yy_max - g_y_stop*g_delta_y_fp); /* bottom pixels */
+		g_initial_z.y = (double)(g_escape_time_state_fp.y_max() - g_y_stop*g_delta_y_fp); /* bottom pixels */
 	}
 
 	while (column <= g_x_stop)
@@ -1082,11 +1082,11 @@ int bifurcation()
 
 		if (g_integer_fractal)
 		{
-			s_rate_l = g_x_min + column*g_delta_x;
+			s_rate_l = g_escape_time_state_l.x_min() + column*g_delta_x;
 		}
 		else
 		{
-			s_rate = (double)(g_xx_min + column*g_delta_x_fp);
+			s_rate = (double)(g_escape_time_state_fp.x_min() + column*g_delta_x_fp);
 		}
 		verhulst();        /* calculate array once per column */
 

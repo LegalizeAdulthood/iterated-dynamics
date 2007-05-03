@@ -15,6 +15,8 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "EscapeTime.h"
+#include "SoundState.h"
 
 #define INIT_GIF87      0       /* Turn on GIF 89a processing  */
 #define NON_NUMERIC -32767
@@ -40,7 +42,6 @@ int     g_potential_flag = FALSE;              /* continuous potential enabled? 
 int     g_potential_16bit;               /* store 16 bit continuous potential values */
 int     g_gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
 int     g_dither_flag;            /* 1 if want to dither GIFs */
-int     g_ask_video;               /* flag for video prompting */
 int		g_float_flag;
 int     g_biomorph;               /* flag for g_biomorph */
 int     g_user_biomorph;
@@ -51,8 +52,6 @@ int     g_decomposition[2];              /* Decomposition coloring */
 long    g_distance_test;
 int     g_distance_test_width;
 int		g_fractal_overwrite = FALSE;	/* 0 if file overwrite not allowed */
-int     g_sound_flags;              /* sound control bitfield... see sound.c for useage*/
-int     g_base_hertz;              /* sound=x/y/x hertz value */
 int     g_debug_flag;              /* internal use only - you didn't see this */
 int     g_timer_flag;              /* you didn't see this, either */
 int     g_cycle_limit;             /* color-rotator upper limit */
@@ -314,14 +313,6 @@ int command_files(int argc, char **argv)
 	{
 		g_command_initialize = FALSE;
 	}
-	/*
-	{
-		char msg[MESSAGE_LEN];
-		sprintf(msg, "command_files colorpreloaded %d showfile %d g_save_dac %d",
-		g_color_preloaded, g_show_file, g_save_dac);
-		stop_message(0, msg);
-	}
-	*/
 	/* PAR reads a file and sets color */
 	g_dont_read_color = (g_color_preloaded && (g_show_file == 0));
 
@@ -340,15 +331,6 @@ int load_commands(FILE *infile)
 	int ret;
 	s_init_corners = s_initial_parameters = 0; /* reset flags for type= */
 	ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
-	/*
-	{
-		char msg[MESSAGE_LEN];
-		sprintf(msg, "load commands colorpreloaded %d showfile %d g_save_dac %d",
-		g_color_preloaded, g_show_file, g_save_dac);
-		stop_message(0, msg);
-	}
-	*/
-
 	/* PAR reads a file and sets color */
 	g_dont_read_color = (g_color_preloaded && (g_show_file == 0));
 	return ret;
@@ -385,9 +367,9 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_save_release = g_release;            /* this release number */
 	g_gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
 	g_dither_flag = 0;                     /* no dithering */
-	g_ask_video = 1;                        /* turn on video-prompt flag */
+	g_ui_state.ask_video = true;                        /* turn on video-prompt flag */
 	g_fractal_overwrite = FALSE;                 /* don't overwrite           */
-	g_sound_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
+	g_sound_state.m_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
 	g_initialize_batch = INITBATCH_NONE;			/* not in batch mode         */
 	g_check_current_dir = 0;                     /* flag to check current dire for files */
 	g_save_time = 0;                    /* no auto-save              */
@@ -396,7 +378,8 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_view_reduction = 4.2f;
 	g_view_crop = 1;
 	g_final_aspect_ratio = g_screen_aspect_ratio;
-	g_view_x_dots = g_view_y_dots = 0;
+	g_view_x_dots = 0;
+	g_view_y_dots = 0;
 	g_orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
 	g_debug_flag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
@@ -477,10 +460,10 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_pseudo_y = 0;
 	g_distance_test_width = 71;
 	g_force_symmetry = FORCESYMMETRY_NONE;                 /* symmetry not forced */
-	g_xx_3rd = g_xx_min = -2.5;
-	g_xx_max = 1.5;						/* initial corner values  */
-	g_yy_3rd = g_yy_min = -1.5;
-	g_yy_max = 1.5;						/* initial corner values  */
+	g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min() = -2.5;
+	g_escape_time_state_fp.x_max() = 1.5;						/* initial corner values  */
+	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min() = -1.5;
+	g_escape_time_state_fp.y_max() = 1.5;						/* initial corner values  */
 	g_bf_math = 0;
 	g_potential_16bit = g_potential_flag = FALSE;
 	g_log_palette_flag = LOGPALETTE_NONE;                         /* no logarithmic palette */
@@ -537,20 +520,8 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_new_orbit_type = FRACTYPE_JULIA;
 	g_z_dots = 128;
 	initialize_variables_3d();
-	g_base_hertz = 440;                     /* basic hertz rate          */
 #ifndef XFRACT
-	g_fm_volume = 63;                         /* full volume on soundcard o/p */
-	g_note_attenuation = ATTENUATE_NONE;                        /* no attenuation of hi notes */
-	g_fm_attack = 5;                       /* fast attack     */
-	g_fm_decay = 10;                        /* long decay      */
-	g_fm_sustain = 13;                      /* fairly high sustain level   */
-	g_fm_release = 5;                      /* short release   */
-	g_fm_wave_type = 0;                     /* sin wave */
-	g_polyphony = 0;                       /* no g_polyphony    */
-	for (i = 0; i <= 11; i++)
-	{
-		g_scale_map[i] = i + 1;    /* straight mapping of notes in octave */
-	}
+	g_sound_state.initialize();
 #endif
 }
 
@@ -871,6 +842,16 @@ static int gobble_flag_arg(const cmd_context *context)
 		return bad_arg(context->curarg);
 	}
 	return COMMAND_OK;
+}
+
+static int flag_arg(const cmd_context &context, bool &flag, int result)
+{
+	if (context.yesnoval[0] < 0)
+	{
+		return bad_arg(context.curarg);
+	}
+	flag = (context.yesnoval[0] != 0);
+	return result;
 }
 
 static int flag_arg(const cmd_context *context, int *flag, int result)
@@ -1237,10 +1218,10 @@ static int type_arg(const cmd_context *context)
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	if (s_init_corners == 0)
 	{
-		g_xx_3rd = g_xx_min = g_current_fractal_specific->x_min;
-		g_xx_max         = g_current_fractal_specific->x_max;
-		g_yy_3rd = g_yy_min = g_current_fractal_specific->y_min;
-		g_yy_max         = g_current_fractal_specific->y_max;
+		g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min() = g_current_fractal_specific->x_min;
+		g_escape_time_state_fp.x_max()         = g_current_fractal_specific->x_max;
+		g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min() = g_current_fractal_specific->y_min;
+		g_escape_time_state_fp.y_max()         = g_current_fractal_specific->y_max;
 	}
 	if (s_initial_parameters == 0)
 	{
@@ -1820,27 +1801,27 @@ static int corners_arg(const cmd_context *context)
 			}
 		}
 
-		/* g_xx_3rd = g_xx_min = floatval[0]; */
-		get_bf(bfxmin, context->floatvalstr[0]);
-		get_bf(bfx3rd, context->floatvalstr[0]);
+		/* x3rd = xmin = floatval[0]; */
+		get_bf(g_escape_time_state_bf.x_min(), context->floatvalstr[0]);
+		get_bf(g_escape_time_state_bf.x_3rd(), context->floatvalstr[0]);
 
-		/* g_xx_max = floatval[1]; */
-		get_bf(bfxmax, context->floatvalstr[1]);
+		/* xmax = floatval[1]; */
+		get_bf(g_escape_time_state_bf.x_max(), context->floatvalstr[1]);
 
-		/* g_yy_3rd = g_yy_min = floatval[2]; */
-		get_bf(bfymin, context->floatvalstr[2]);
-		get_bf(bfy3rd, context->floatvalstr[2]);
+		/* y3rd = ymin = floatval[2]; */
+		get_bf(g_escape_time_state_bf.y_min(), context->floatvalstr[2]);
+		get_bf(g_escape_time_state_bf.y_3rd(), context->floatvalstr[2]);
 
-		/* g_yy_max = floatval[3]; */
-		get_bf(bfymax, context->floatvalstr[3]);
+		/* ymax = floatval[3]; */
+		get_bf(g_escape_time_state_bf.y_max(), context->floatvalstr[3]);
 
 		if (context->totparms == 6)
 		{
-			/* g_xx_3rd = floatval[4]; */
-			get_bf(bfx3rd, context->floatvalstr[4]);
+			/* x3rd = floatval[4]; */
+			get_bf(g_escape_time_state_bf.x_3rd(), context->floatvalstr[4]);
 
-			/* g_yy_3rd = floatval[5]; */
-			get_bf(bfy3rd, context->floatvalstr[5]);
+			/* y3rd = floatval[5]; */
+			get_bf(g_escape_time_state_bf.y_3rd(), context->floatvalstr[5]);
 		}
 
 		/* now that all the corners have been read in, get a more */
@@ -1865,39 +1846,39 @@ static int corners_arg(const cmd_context *context)
 				floattobf(bfparms[k], g_parameters[k]);
 			}
 
-			/* g_xx_3rd = g_xx_min = floatval[0]; */
-			get_bf(bfxmin, context->floatvalstr[0]);
-			get_bf(bfx3rd, context->floatvalstr[0]);
+			/* x3rd = xmin = floatval[0]; */
+			get_bf(g_escape_time_state_bf.x_min(), context->floatvalstr[0]);
+			get_bf(g_escape_time_state_bf.x_3rd(), context->floatvalstr[0]);
 
-			/* g_xx_max = floatval[1]; */
-			get_bf(bfxmax, context->floatvalstr[1]);
+			/* xmax = floatval[1]; */
+			get_bf(g_escape_time_state_bf.x_max(), context->floatvalstr[1]);
 
-			/* g_yy_3rd = g_yy_min = floatval[2]; */
-			get_bf(bfymin, context->floatvalstr[2]);
-			get_bf(bfy3rd, context->floatvalstr[2]);
+			/* y3rd = ymin = floatval[2]; */
+			get_bf(g_escape_time_state_bf.y_min(), context->floatvalstr[2]);
+			get_bf(g_escape_time_state_bf.y_3rd(), context->floatvalstr[2]);
 
-			/* g_yy_max = floatval[3]; */
-			get_bf(bfymax, context->floatvalstr[3]);
+			/* ymax = floatval[3]; */
+			get_bf(g_escape_time_state_bf.y_max(), context->floatvalstr[3]);
 
 			if (context->totparms == 6)
 			{
-				/* g_xx_3rd = floatval[4]; */
-				get_bf(bfx3rd, context->floatvalstr[4]);
+				/* x3rd = floatval[4]; */
+				get_bf(g_escape_time_state_bf.x_3rd(), context->floatvalstr[4]);
 
-				/* g_yy_3rd = floatval[5]; */
-				get_bf(bfy3rd, context->floatvalstr[5]);
+				/* y3rd = floatval[5]; */
+				get_bf(g_escape_time_state_bf.y_3rd(), context->floatvalstr[5]);
 			}
 		}
 	}
-	g_xx_3rd = g_xx_min = context->floatval[0];
-	g_xx_max =         context->floatval[1];
-	g_yy_3rd = g_yy_min = context->floatval[2];
-	g_yy_max =         context->floatval[3];
+	g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min() = context->floatval[0];
+	g_escape_time_state_fp.x_max() =         context->floatval[1];
+	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min() = context->floatval[2];
+	g_escape_time_state_fp.y_max() =         context->floatval[3];
 
 	if (context->totparms == 6)
 	{
-		g_xx_3rd =      context->floatval[4];
-		g_yy_3rd =      context->floatval[5];
+		g_escape_time_state_fp.x_3rd() =      context->floatval[4];
+		g_escape_time_state_fp.y_3rd() =      context->floatval[5];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
@@ -2240,10 +2221,10 @@ static int sound_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	g_sound_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
+	g_sound_state.m_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
 	if (context->totparms == 1)
 	{
-		g_sound_flags = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
+		g_sound_state.m_flags = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
 	}
 
 	/* g_sound_flags is used as a bitfield... bit 0, 1, 2 used for whether sound
@@ -2257,23 +2238,23 @@ static int sound_arg(const cmd_context *context)
 
 	if (context->charval[0] == 'n' || context->charval[0] == 'o')
 	{
-		g_sound_flags &= ~SOUNDFLAG_ORBITMASK;
+		g_sound_state.m_flags &= ~SOUNDFLAG_ORBITMASK;
 	}
 	else if ((strncmp(context->value, "ye", 2) == 0) || (context->charval[0] == 'b'))
 	{
-		g_sound_flags |= SOUNDFLAG_BEEP;
+		g_sound_state.m_flags |= SOUNDFLAG_BEEP;
 	}
 	else if (context->charval[0] == 'x')
 	{
-		g_sound_flags |= SOUNDFLAG_X;
+		g_sound_state.m_flags |= SOUNDFLAG_X;
 	}
 	else if (context->charval[0] == 'y' && strncmp(context->value, "ye", 2) != 0)
 	{
-		g_sound_flags |= SOUNDFLAG_Y;
+		g_sound_state.m_flags |= SOUNDFLAG_Y;
 	}
 	else if (context->charval[0] == 'z')
 	{
-		g_sound_flags |= SOUNDFLAG_Z;
+		g_sound_state.m_flags |= SOUNDFLAG_Z;
 	}
 	else
 	{
@@ -2283,7 +2264,7 @@ static int sound_arg(const cmd_context *context)
 	if (context->totparms > 1)
 	{
 		int i;
-		g_sound_flags &= SOUNDFLAG_ORBITMASK; /* reset options */
+		g_sound_state.m_flags &= SOUNDFLAG_ORBITMASK; /* reset options */
 		for (i = 1; i < context->totparms; i++)
 		{
 			/* this is for 2 or more options at the same time */
@@ -2291,24 +2272,24 @@ static int sound_arg(const cmd_context *context)
 			{
 				if (driver_init_fm())
 				{
-					g_sound_flags |= SOUNDFLAG_OPL3_FM;
+					g_sound_state.m_flags |= SOUNDFLAG_OPL3_FM;
 				}
 				else
 				{
-					g_sound_flags &= ~SOUNDFLAG_OPL3_FM;
+					g_sound_state.m_flags &= ~SOUNDFLAG_OPL3_FM;
 				}
 			}
 			else if (context->charval[i] == 'p')
 			{
-				g_sound_flags |= SOUNDFLAG_SPEAKER;
+				g_sound_state.m_flags |= SOUNDFLAG_SPEAKER;
 			}
 			else if (context->charval[i] == 'm')
 			{
-				g_sound_flags |= SOUNDFLAG_MIDI;
+				g_sound_state.m_flags |= SOUNDFLAG_MIDI;
 			}
 			else if (context->charval[i] == 'q')
 			{
-				g_sound_flags |= SOUNDFLAG_QUANTIZED;
+				g_sound_state.m_flags |= SOUNDFLAG_QUANTIZED;
 			}
 			else
 			{
@@ -2322,13 +2303,13 @@ static int sound_arg(const cmd_context *context)
 
 static int hertz_arg(const cmd_context *context)
 {
-	g_base_hertz = context->numval;
+	g_sound_state.m_base_hertz = context->numval;
 	return COMMAND_OK;
 }
 
 static int volume_arg(const cmd_context *context)
 {
-	g_fm_volume = context->numval & 0x3F; /* 63 */
+	g_sound_state.m_fm_volume = context->numval & 0x3F; /* 63 */
 	return COMMAND_OK;
 }
 
@@ -2336,19 +2317,19 @@ static int attenuate_arg(const cmd_context *context)
 {
 	if (context->charval[0] == 'n')
 	{
-		g_note_attenuation = ATTENUATE_NONE;
+		g_sound_state.m_note_attenuation = ATTENUATE_NONE;
 	}
 	else if (context->charval[0] == 'l')
 	{
-		g_note_attenuation = ATTENUATE_LOW;
+		g_sound_state.m_note_attenuation = ATTENUATE_LOW;
 	}
 	else if (context->charval[0] == 'm')
 	{
-		g_note_attenuation = ATTENUATE_MIDDLE;
+		g_sound_state.m_note_attenuation = ATTENUATE_MIDDLE;
 	}
 	else if (context->charval[0] == 'h')
 	{
-		g_note_attenuation = ATTENUATE_HIGH;
+		g_sound_state.m_note_attenuation = ATTENUATE_HIGH;
 	}
 	else
 	{
@@ -2363,37 +2344,37 @@ static int polyphony_arg(const cmd_context *context)
 	{
 		return bad_arg(context->curarg);
 	}
-	g_polyphony = abs(context->numval-1);
+	g_sound_state.m_polyphony = abs(context->numval-1);
 	return COMMAND_OK;
 }
 
 static int wave_type_arg(const cmd_context *context)
 {
-	g_fm_wave_type = context->numval & 0x0F;
+	g_sound_state.m_fm_wave_type = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
 static int attack_arg(const cmd_context *context)
 {
-	g_fm_attack = context->numval & 0x0F;
+	g_sound_state.m_fm_attack = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
 static int decay_arg(const cmd_context *context)
 {
-	g_fm_decay = context->numval & 0x0F;
+	g_sound_state.m_fm_decay = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
 static int sustain_arg(const cmd_context *context)
 {
-	g_fm_sustain = context->numval & 0x0F;
+	g_sound_state.m_fm_sustain = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
 static int sustain_release_arg(const cmd_context *context)
 {
-	g_fm_release = context->numval & 0x0F;
+	g_sound_state.m_fm_release = context->numval & 0x0F;
 	return COMMAND_OK;
 }
 
@@ -2409,7 +2390,7 @@ static int scale_map_arg(const cmd_context *context)
 		if ((context->totparms > counter) && (context->intval[counter] > 0)
 			&& (context->intval[counter] < 13))
 		{
-			g_scale_map[counter] = context->intval[counter];
+			g_sound_state.m_scale_map[counter] = context->intval[counter];
 		}
 	}
 	return COMMAND_OK;
@@ -3144,7 +3125,7 @@ static int olddemmcolors_arg(const cmd_context *context)
 
 static int ask_video_arg(const cmd_context *context)
 {
-	return flag_arg(context, &g_ask_video, COMMAND_OK);
+	return flag_arg(*context, g_ui_state.ask_video, COMMAND_OK);
 }
 
 static int cur_dir_arg(const cmd_context *context)

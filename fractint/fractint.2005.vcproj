@@ -916,6 +916,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\SoundState.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\stereo.cpp"
 					>
 					<FileConfiguration
@@ -1077,6 +1081,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\EscapeTime.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\externs.h"
 				>
 			</File>
@@ -1125,6 +1133,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\SoundState.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\winprot.h"
 				>
 			</File>
@@ -1141,7 +1153,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Compiling help files"
-						CommandLine="cd $(ProjectDir)dos_help&#x0D;&#x0A;$(ConfigurationName)\hc /c&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy fractint.hlp $(ProjectDir)&#x0D;&#x0A;"
+						CommandLine="$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy fractint.hlp $(ProjectDir)&#x0D;&#x0A;"
 						AdditionalDependencies="dos_help\help2.src;dos_help\help3.src;dos_help\help4.src;dos_help\help5.src"
 						Outputs="headers\helpdefs.h;fractint.hlp;"
 					/>

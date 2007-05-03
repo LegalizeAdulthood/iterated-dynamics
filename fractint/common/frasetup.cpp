@@ -11,6 +11,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+#include "SoundState.h"
 
 #if !defined(XFRACT)
 #define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
@@ -118,7 +119,7 @@ int mandelbrot_setup_fp()
 			/* uncomment this next line if more outside options are added */
 			&& g_outside >= -6
 			&& g_use_initial_orbit_z != 1
-			&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+			&& (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& g_using_jiim == 0 && g_bail_out_test == Mod
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
@@ -264,7 +265,7 @@ int julia_setup_fp()
 				/* uncomment this next line if more outside options are added */
 				&& g_outside >= -6
 				&& g_use_initial_orbit_z != 1
-				&& (g_sound_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+				&& (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 				&& !g_finite_attractor
 				&& g_using_jiim == 0 && g_bail_out_test == Mod
 				&& (g_orbit_save & ORBITSAVE_SOUND) == 0)

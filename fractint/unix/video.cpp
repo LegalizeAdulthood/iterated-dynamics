@@ -536,33 +536,6 @@ int SetupShadowVideo()
 }
 
 /*
-; adapter_detect:
-;       This routine performs a few quick checks on the type of
-;       video adapter installed.
-;       It sets variables video_type and textsafe,
-;       and fills in a few bank-switching routines.
-*/
-int done_detect = 0;
-
-void adapter_detect()
-{
-	if (done_detect)
-	{
-		return;
-	}
-	done_detect = 1;
-	textsafe = 2;
-	if (g_colors == 2)
-	{
-		video_type = 100;
-	}
-	else
-	{
-		video_type = 101;
-	}
-}
-
-/*
 ; **************** internal Read/Write-a-line routines *********************
 ;
 ;       These routines are called by out_line(), put_line() and get_line().

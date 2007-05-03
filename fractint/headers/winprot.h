@@ -116,6 +116,5 @@ extern void gettruecolor(int, int, int*, int*, int*);
 extern void puttruecolor(int, int, int, int, int);
 extern void delay(int);
 extern void initasmvars();
-extern void adapter_detect();
 
 #endif

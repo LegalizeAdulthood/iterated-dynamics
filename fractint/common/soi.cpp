@@ -20,6 +20,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "EscapeTime.h"
 
 #define DBLS LDBL
 #define FABS(x)  fabsl(x)
@@ -1125,17 +1126,17 @@ void soi_long_double()
 	g_max_rhombus_depth = 0;
 	if (g_bf_math)
 	{
-		xxminl = bftofloat(bfxmin);
-		yyminl = bftofloat(bfymin);
-		xxmaxl = bftofloat(bfxmax);
-		yymaxl = bftofloat(bfymax);
+		xxminl = bftofloat(g_escape_time_state_bf.x_min());
+		yyminl = bftofloat(g_escape_time_state_bf.y_min());
+		xxmaxl = bftofloat(g_escape_time_state_bf.x_max());
+		yymaxl = bftofloat(g_escape_time_state_bf.y_max());
 	}
 	else
 	{
-		xxminl = g_xx_min;
-		yyminl = g_yy_min;
-		xxmaxl = g_xx_max;
-		yymaxl = g_yy_max;
+		xxminl = g_escape_time_state_fp.x_min();
+		yyminl = g_escape_time_state_fp.y_min();
+		xxmaxl = g_escape_time_state_fp.x_max();
+		yymaxl = g_escape_time_state_fp.y_max();
 	}
 	twidth = tolerance/(g_x_dots-1);
 	stepx = (xxmaxl - xxminl) / g_x_dots;

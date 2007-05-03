@@ -25,6 +25,8 @@
 #include "fractype.h"
 #include "targa_lc.h"
 #include "drivers.h"
+#include "EscapeTime.h"
+#include "SoundState.h"
 
 #define SHOWDOT_SAVE    1
 #define SHOWDOT_RESTORE 2
@@ -331,7 +333,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else    /* cheap and easy way out */
 	{
-		for (i = left; i <= right; i++)  /* DG */
+		for (int i = left; i <= right; i++)  /* DG */
 		{
 			(*g_plot_color)(i, row, str[i-left]);
 		}
@@ -364,7 +366,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	}
 	else
 	{
-		for (i = left; i <= right; i++)  /* DG */
+		for (int i = left; i <= right; i++)  /* DG */
 		{
 			(*g_plot_color)(i, row, str[i-left]);
 		}
@@ -374,7 +376,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 
 static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, int direction, int action)
 {
-	int j, ct;
+	int ct;
 	ct = 0;
 	if (direction != JUST_A_POINT)
 	{
@@ -392,7 +394,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 	switch (direction)
 	{
 	case LOWER_RIGHT:
-		for (j = starty; j <= stopy; startx++, j++)
+		for (int j = starty; j <= stopy; startx++, j++)
 		{
 			if (action == SHOWDOT_SAVE)
 			{
@@ -407,7 +409,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 		}
 		break;
 	case UPPER_RIGHT:
-		for (j = starty; j >= stopy; startx++, j--)
+		for (int j = starty; j >= stopy; startx++, j--)
 		{
 			if (action == SHOWDOT_SAVE)
 			{
@@ -422,7 +424,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 		}
 		break;
 	case LOWER_LEFT:
-		for (j = starty; j <= stopy; stopx--, j++)
+		for (int j = starty; j <= stopy; stopx--, j++)
 		{
 			if (action == SHOWDOT_SAVE)
 			{
@@ -437,7 +439,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 		}
 		break;
 	case UPPER_LEFT:
-		for (j = starty; j >= stopy; stopx--, j--)
+		for (int j = starty; j >= stopy; stopx--, j--)
 		{
 			if (action == SHOWDOT_SAVE)
 			{
@@ -684,17 +686,17 @@ int calculate_fractal()
 
 		if (g_inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
 		{
-			g_inversion[0] = min(fabs(g_xx_max - g_xx_min), fabs(g_yy_max - g_yy_min)) / 6.0;
+			g_inversion[0] = min(fabs(g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_min()), fabs(g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_min())) / 6.0;
 			fix_inversion(&g_inversion[0]);
 			g_f_radius = g_inversion[0];
 		}
 
 		if (g_invert < 2 || g_inversion[1] == AUTOINVERT)  /* xcenter not already set */
 		{
-			g_inversion[1] = (g_xx_min + g_xx_max) / 2.0;
+			g_inversion[1] = (g_escape_time_state_fp.x_min() + g_escape_time_state_fp.x_max()) / 2.0;
 			fix_inversion(&g_inversion[1]);
 			g_f_x_center = g_inversion[1];
-			if (fabs(g_f_x_center) < fabs(g_xx_max-g_xx_min) / 100)
+			if (fabs(g_f_x_center) < fabs(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()) / 100)
 			{
 				g_inversion[1] = g_f_x_center = 0.0;
 			}
@@ -702,10 +704,10 @@ int calculate_fractal()
 
 		if (g_invert < 3 || g_inversion[2] == AUTOINVERT)  /* ycenter not already set */
 		{
-			g_inversion[2] = (g_yy_min + g_yy_max) / 2.0;
+			g_inversion[2] = (g_escape_time_state_fp.y_min() + g_escape_time_state_fp.y_max()) / 2.0;
 			fix_inversion(&g_inversion[2]);
 			g_f_y_center = g_inversion[2];
-			if (fabs(g_f_y_center) < fabs(g_yy_max-g_yy_min) / 100)
+			if (fabs(g_f_y_center) < fabs(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()) / 100)
 			{
 				g_inversion[2] = g_f_y_center = 0.0;
 			}
@@ -825,10 +827,8 @@ int calculate_fractal()
 		free_work_area();
 	}
 
-	if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) /* close sound write file */
-	{
-		sound_close();
-	}
+	g_sound_state.close();
+
 	if (g_true_color)
 	{
 		disk_end();
@@ -839,12 +839,11 @@ int calculate_fractal()
 /* locate alternate math record */
 int find_alternate_math(int type, int math)
 {
-	int i;
 	if (math == 0)
 	{
 		return -1;
 	}
-	for (i = 0; i < g_alternate_math_len; i++)
+	for (int i = 0; i < g_alternate_math_len; i++)
 	{
 		if ((type == g_alternate_math[i].type) && g_alternate_math[i].math)
 		{
@@ -862,7 +861,7 @@ static void perform_work_list()
 	int (*sv_orbitcalc)() = NULL;  /* function that calculates one orbit */
 	int (*sv_per_pixel)() = NULL;  /* once-per-pixel init */
 	int (*sv_per_image)() = NULL;  /* once-per-image setup */
-	int i, alt;
+	int alt;
 
 	alt = find_alternate_math(g_fractal_type, g_bf_math);
 	if (alt > -1)
@@ -942,10 +941,10 @@ static void perform_work_list()
 			dysize = g_y_dots-1;
 		}
 
-		delta_x_fp  = (g_xx_max - g_xx_3rd) / dxsize; /* calculate stepsizes */
-		delta_y_fp  = (g_yy_max - g_yy_3rd) / dysize;
-		delta_x2_fp = (g_xx_3rd - g_xx_min) / dysize;
-		delta_y2_fp = (g_yy_3rd - g_yy_min) / dxsize;
+		delta_x_fp  = (g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd()) / dxsize; /* calculate stepsizes */
+		delta_y_fp  = (g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_3rd()) / dysize;
+		delta_x2_fp = (g_escape_time_state_fp.x_3rd() - g_escape_time_state_fp.x_min()) / dysize;
+		delta_y2_fp = (g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_min()) / dxsize;
 
 		/* in case it's changed with <G> */
 		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
@@ -979,8 +978,8 @@ static void perform_work_list()
 		ftemp = g_distance_test_width;
 		/* multiply by thickness desired */
 		s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000); 
-		s_dem_width = (sqrt(sqr(g_xx_max-g_xx_min) + sqr(g_xx_3rd-g_xx_min) )*aspect
-			+ sqrt(sqr(g_yy_max-g_yy_min) + sqr(g_yy_3rd-g_yy_min) ) ) / g_distance_test;
+		s_dem_width = (sqrt(sqr(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()) + sqr(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min()) )*aspect
+			+ sqrt(sqr(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()) + sqr(g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_min()) ) ) / g_distance_test;
 		ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
@@ -1007,7 +1006,7 @@ static void perform_work_list()
 		s_work_pass = g_work_list[0].pass;
 		s_work_sym  = g_work_list[0].sym;
 		--g_num_work_list;
-		for (i = 0; i < g_num_work_list; ++i)
+		for (int i = 0; i < g_num_work_list; ++i)
 		{
 			g_work_list[i] = g_work_list[i + 1];
 		}
@@ -1213,9 +1212,8 @@ static int diffusion_scan()
 	top left cornet at (x, y) with optimization from sym_fill_line */
 static void diffusion_plot_block(int x, int y, int s, int c)
 {
-	int ty;
 	memset(g_stack, c, s);
-	for (ty = y; ty < y + s; ty++)
+	for (int ty = y; ty < y + s; ty++)
 	{
 		sym_fill_line(ty, x, x + s - 1, g_stack);
 	}
@@ -1224,9 +1222,8 @@ static void diffusion_plot_block(int x, int y, int s, int c)
 /* function that does the same as above, but checks the limits in x and y */
 static void plot_block_lim(int x, int y, int s, int c)
 {
-	int ty;
 	memset(g_stack, (c), (s));
-	for (ty = y; ty < min(y + s, g_y_stop + 1); ty++)
+	for (int ty = y; ty < min(y + s, g_y_stop + 1); ty++)
 	{
 		sym_fill_line(ty, x, min(x + s - 1, g_x_stop), g_stack);
 	}
@@ -1975,7 +1972,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	long savedand;
 	int savedincr;       /* for periodicity checking */
 	_LCMPLX lsaved;
-	int i, attracted;
+	int attracted;
 	_LCMPLX lat;
 	_CMPLX  at;
 	_CMPLX deriv;
@@ -1988,7 +1985,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	lcloseprox = (long)(g_proximity*g_fudge);
 	savemaxit = g_max_iteration;
 #ifdef NUMSAVED
-	for (i = 0; i < NUMSAVED; i++)
+	for (int i = 0; i < NUMSAVED; i++)
 	{
 		caught[i] = 0L;
 		changed[i] = 0L;
@@ -1996,8 +1993,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 #endif
 	if (g_inside == STARTRAIL)
 	{
-		int i;
-		for (i = 0; i < 16; i++)
+		for (int i = 0; i < 16; i++)
 		{
 			tantable[i] = 0.0;
 		}
@@ -2146,12 +2142,12 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		lastz.y = g_old_z.y;
 	}
 
-	check_freq = (((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
+	check_freq = (((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
 		? 16 : 2048;
 
 	if (g_show_orbit)
 	{
-		sound_write_time();
+		g_sound_state.write_time();
 	}
 	while (++g_color_iter < g_max_iteration)
 	{
@@ -2401,7 +2397,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		{                         /* NOTE: Integer code is UNTESTED */
 			if (g_integer_fractal)
 			{
-				for (i = 0; i < g_num_attractors; i++)
+				for (int i = 0; i < g_num_attractors; i++)
 				{
 					lat.x = g_new_z_l.x - g_attractors_l[i].x;
 					lat.x = lsqr(lat.x);
@@ -2426,7 +2422,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			}
 			else
 			{
-				for (i = 0; i < g_num_attractors; i++)
+				for (int i = 0; i < g_num_attractors; i++)
 				{
 					at.x = g_new_z.x - g_attractors[i].x;
 					at.x = sqr(at.x);
@@ -2534,8 +2530,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					}
 #ifdef NUMSAVED
 					{
-						int i;
-						for (i = 0; i <= zctr; i++)
+						for (int i = 0; i <= zctr; i++)
 						{
 							if (caught[i] == 0)
 							{
@@ -2568,8 +2563,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 						g_row, g_col, cyclelen, g_color_iter, savedand);
 					if (zctr > 1 && zctr < NUMSAVED)
 					{
-						int i;
-						for (i = 0; i < zctr; i++)
+						for (int i = 0; i < zctr; i++)
 						{
 							fprintf(fp, "   caught %2d saved %6ld iter %6ld\n", i, changed[i], caught[i]);
 						}
@@ -2640,7 +2634,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
 		}
-		else if (g_bf_math == 1)
+		else if (g_bf_math == BIGNUM)
 		{
 			g_new_z.x = (double)bntofloat(bnnew.x);
 			g_new_z.y = (double)bntofloat(bnnew.y);
@@ -2776,10 +2770,9 @@ plot_inside: /* we're "inside" */
 	{
 		if (g_inside == STARTRAIL)
 		{
-			int i;
 			double diff;
 			g_color_iter = 0;
-			for (i = 1; i < 16; i++)
+			for (int i = 1; i < 16; i++)
 			{
 				diff = tantable[0] - tantable[i];
 				if (fabs(diff) < .05)
@@ -2934,7 +2927,6 @@ static void decomposition()
 	static long reset_fudge = -1;
 	int temp = 0;
 	int save_temp = 0;
-	int i;
 	_LCMPLX lalt;
 	_CMPLX alt;
 	g_color_iter = 0;
@@ -3153,7 +3145,7 @@ static void decomposition()
 			}
 		}
 	}
-	for (i = 1; temp > 0; ++i)
+	for (int i = 1; temp > 0; ++i)
 	{
 		if (temp & 1)
 		{
@@ -3574,7 +3566,7 @@ static void step_col_row()
 
 static int solid_guess()
 {
-	int i, x, y, xlim, ylim, blocksize;
+	int i, xlim, ylim, blocksize;
 	unsigned int *pfxp0, *pfxp1;
 	unsigned int u;
 
@@ -3630,7 +3622,7 @@ static int solid_guess()
 		{
 			memset(&s_t_prefix[1][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags on */
 		}
-		for (y = s_iy_start; y <= g_y_stop; y += blocksize)
+		for (int y = s_iy_start; y <= g_y_stop; y += blocksize)
 		{
 			g_current_row = y;
 			i = 0;
@@ -3673,7 +3665,7 @@ static int solid_guess()
 		ylim = ((g_y_stop + s_max_block)/s_max_block + 15)/16 + 1;
 		if (!s_right_guess) /* no right edge guessing, zap border */
 		{
-			for (y = 0; y <= ylim; ++y)
+			for (int y = 0; y <= ylim; ++y)
 			{
 				s_t_prefix[1][y][xlim] = 0xffff;
 			}
@@ -3681,19 +3673,19 @@ static int solid_guess()
 		if (!s_bottom_guess) /* no bottom edge guessing, zap border */
 		{
 			i = (g_y_stop + s_max_block)/s_max_block + 1;
-			y = i/16 + 1;
+			int y = i/16 + 1;
 			i = 1 << (i&15);
-			for (x = 0; x <= xlim; ++x)
+			for (int x = 0; x <= xlim; ++x)
 			{
 				s_t_prefix[1][y][x] |= i;
 			}
 		}
 		/* set each bit in s_t_prefix[0] to OR of it & surrounding 8 in s_t_prefix[1] */
-		for (y = 0; ++y < ylim; )
+		for (int y = 0; ++y < ylim; )
 		{
 			pfxp0 = (unsigned int *)&s_t_prefix[0][y][0];
 			pfxp1 = (unsigned int *)&s_t_prefix[1][y][0];
-			for (x = 0; ++x < xlim; )
+			for (int x = 0; ++x < xlim; )
 			{
 				++pfxp1;
 				u = *(pfxp1-1)|*pfxp1|*(pfxp1 + 1);
@@ -3733,7 +3725,7 @@ static int solid_guess()
 			}
 		}
 		g_current_pass = s_work_pass + 1;
-		for (y = s_iy_start; y <= g_y_stop; y += blocksize)
+		for (int y = s_iy_start; y <= g_y_stop; y += blocksize)
 		{
 			g_current_row = y;
 			if (guess_row(0, y, blocksize) != 0)
@@ -3775,7 +3767,7 @@ static int solid_guess()
 
 static int _fastcall guess_row(int firstpass, int y, int blocksize)
 {
-	int x, i, j, color;
+	int j, color;
 	int xplushalf, xplusblock;
 	int ylessblock, ylesshalf, yplushalf, yplusblock;
 	int     c21, c31, c41;         /* cxy is the color of pixel at (x, y) */
@@ -3789,9 +3781,11 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	c44 = c41 = c42 = 0;  /* just for warning */
 
 	s_half_block = blocksize >> 1;
-	i = y/s_max_block;
-	pfxptr = (unsigned int *)&s_t_prefix[firstpass][(i >> 4) + 1][s_ix_start/s_max_block];
-	pfxmask = 1 << (i&15);
+	{
+		int i = y/s_max_block;
+		pfxptr = (unsigned int *)&s_t_prefix[firstpass][(i >> 4) + 1][s_ix_start/s_max_block];
+		pfxmask = 1 << (i & 15);
+	}
 	ylesshalf = y-s_half_block;
 	ylessblock = y-blocksize; /* constants, for speed */
 	yplushalf = y + s_half_block;
@@ -3809,7 +3803,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	}
 	guessed12 = guessed13 = 0;
 
-	for (x = s_ix_start; x <= g_x_stop; )  /* increment at end, or when doing continue */
+	for (int x = s_ix_start; x <= g_x_stop; )  /* increment at end, or when doing continue */
 	{
 		if ((x & (s_max_block-1)) == 0)  /* time for skip flag stuff */
 		{
@@ -4025,7 +4019,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	}
 
 	/* paint rows the fast way */
-	for (i = 0; i < s_half_block; ++i)
+	for (int i = 0; i < s_half_block; ++i)
 	{
 		j = y + i;
 		if (j <= g_y_stop)
@@ -4046,7 +4040,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	{
 		if (g_plot_color == symplot2J) /* origin sym, reverse lines */
 		{
-			for (i = (g_x_stop + g_xx_start + 1)/2; --i >= g_xx_start; )
+			for (int i = (g_x_stop + g_xx_start + 1)/2; --i >= g_xx_start; )
 			{
 				color = g_stack[i];
 				j = g_x_stop-(i-g_xx_start);
@@ -4058,7 +4052,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 				g_stack[j] = (BYTE)color;
 			}
 		}
-		for (i = 0; i < s_half_block; ++i)
+		for (int i = 0; i < s_half_block; ++i)
 		{
 			j = g_yy_stop-(y + i-g_yy_start);
 			if (j > g_y_stop && j < g_y_dots)
@@ -4081,7 +4075,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 
 static void _fastcall plot_block(int buildrow, int x, int y, int color)
 {
-	int i, xlim, ylim;
+	int xlim, ylim;
 	xlim = x + s_half_block;
 	if (xlim > g_x_stop)
 	{
@@ -4091,14 +4085,14 @@ static void _fastcall plot_block(int buildrow, int x, int y, int color)
 	{
 		if (buildrow == 0)
 		{
-			for (i = x; i < xlim; ++i)
+			for (int i = x; i < xlim; ++i)
 			{
 				g_stack[i] = (BYTE)color;
 			}
 		}
 		else
 		{
-			for (i = x; i < xlim; ++i)
+			for (int i = x; i < xlim; ++i)
 			{
 				g_stack[i + OLD_MAX_PIXELS] = (BYTE)color;
 			}
@@ -4118,13 +4112,13 @@ static void _fastcall plot_block(int buildrow, int x, int y, int color)
 		}
 		ylim = g_y_stop + 1;
 	}
-	for (i = x; ++i < xlim; )
+	for (int i = x; ++i < xlim; )
 	{
 		(*g_plot_color)(i, y, color); /* skip 1st dot on 1st row */
 	}
 	while (++y < ylim)
 	{
-		for (i = x; i < xlim; ++i)
+		for (int i = x; i < xlim; ++i)
 		{
 			(*g_plot_color)(i, y, color);
 		}
@@ -4271,14 +4265,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	/* also any rotation other than 180deg and any off-axis stretch */
 	if (g_bf_math)
 	{
-		if (cmp_bf(bfxmin, bfx3rd) || cmp_bf(bfymin, bfy3rd))
+		if (cmp_bf(g_escape_time_state_bf.x_min(), g_escape_time_state_bf.x_3rd()) || cmp_bf(g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_3rd()))
 		{
 			return;
 		}
 	}
 	if ((g_potential_flag && g_potential_16bit) || (g_invert && g_inversion[2] != 0.0)
 			|| g_decomposition[0] != 0
-			|| g_xx_min != g_xx_3rd || g_yy_min != g_yy_3rd)
+			|| g_escape_time_state_fp.x_min() != g_escape_time_state_fp.x_3rd() || g_escape_time_state_fp.y_min() != g_escape_time_state_fp.y_3rd())
 	{
 		return;
 	}
@@ -4339,27 +4333,27 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	{
 		saved = save_stack();
 		bft1    = alloc_stack(rbflength + 2);
-		xaxis_on_screen = (sign_bf(bfymin) != sign_bf(bfymax));
-		yaxis_on_screen = (sign_bf(bfxmin) != sign_bf(bfxmax));
+		xaxis_on_screen = (sign_bf(g_escape_time_state_bf.y_min()) != sign_bf(g_escape_time_state_bf.y_max()));
+		yaxis_on_screen = (sign_bf(g_escape_time_state_bf.x_min()) != sign_bf(g_escape_time_state_bf.x_max()));
 	}
 	else
 	{
-		xaxis_on_screen = (sign(g_yy_min) != sign(g_yy_max));
-		yaxis_on_screen = (sign(g_xx_min) != sign(g_xx_max));
+		xaxis_on_screen = (sign(g_escape_time_state_fp.y_min()) != sign(g_escape_time_state_fp.y_max()));
+		yaxis_on_screen = (sign(g_escape_time_state_fp.x_min()) != sign(g_escape_time_state_fp.x_max()));
 	}
 	if (xaxis_on_screen) /* axis is on screen */
 	{
 		if (g_bf_math)
 		{
 			/* ftemp = -g_yy_max / (g_yy_min-g_yy_max); */
-			sub_bf(bft1, bfymin, bfymax);
-			div_bf(bft1, bfymax, bft1);
+			sub_bf(bft1, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
+			div_bf(bft1, g_escape_time_state_bf.y_max(), bft1);
 			neg_a_bf(bft1);
 			ftemp = (double)bftofloat(bft1);
 		}
 		else
 		{
-			ftemp = -g_yy_max / (g_yy_min-g_yy_max);
+			ftemp = -g_escape_time_state_fp.y_max() / (g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_max());
 		}
 		ftemp *= (g_y_dots-1);
 		ftemp += 0.25;
@@ -4375,14 +4369,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		if (g_bf_math)
 		{
 			/* ftemp = -g_xx_min / (g_xx_max-g_xx_min); */
-			sub_bf(bft1, bfxmax, bfxmin);
-			div_bf(bft1, bfxmin, bft1);
+			sub_bf(bft1, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+			div_bf(bft1, g_escape_time_state_bf.x_min(), bft1);
 			neg_a_bf(bft1);
 			ftemp = (double)bftofloat(bft1);
 		}
 		else
 		{
-			ftemp = -g_xx_min / (g_xx_max-g_xx_min);
+			ftemp = -g_escape_time_state_fp.x_min() / (g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min());
 		}
 		ftemp *= (g_x_dots-1);
 		ftemp += 0.25;
@@ -4486,14 +4480,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	case PI_SYM:                      /* PI symmetry */
 		if (g_bf_math)
 		{
-			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, bfxmax, bfxmin))) < PI/4)
+			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min()))) < PI/4)
 			{
 				break; /* no point in pi symmetry if values too close */
 			}
 		}
 		else
 		{
-			if (fabs(g_xx_max - g_xx_min) < PI/4)
+			if (fabs(g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_min()) < PI/4)
 			{
 				break; /* no point in pi symmetry if values too close */
 			}
@@ -4517,13 +4511,13 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		if (g_bf_math)
 		{
-			sub_bf(bft1, bfxmax, bfxmin);
+			sub_bf(bft1, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
 			abs_a_bf(bft1);
 			s_pixel_pi = (int) ((PI/(double)bftofloat(bft1)*g_x_dots)); /* PI in pixels */
 		}
 		else
 		{
-			s_pixel_pi = (int) ((PI/fabs(g_xx_max-g_xx_min))*g_x_dots); /* PI in pixels */
+			s_pixel_pi = (int) ((PI/fabs(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))*g_x_dots); /* PI in pixels */
 		}
 
 		g_x_stop = g_xx_start + s_pixel_pi-1;
@@ -4940,7 +4934,6 @@ static int _fastcall tesseral_row(int x1, int x2, int y)
 static long automatic_log_map()   /*RB*/
 {  /* calculate round screen edges to avoid wasted colours in logmap */
 	long mincolour;
-	int lag;
 	int xstop = g_x_dots - 1; /* don't use symetry */
 	int ystop = g_y_dots - 1; /* don't use symetry */
 	long old_maxit;
@@ -4965,7 +4958,7 @@ static long automatic_log_map()   /*RB*/
 			(*g_plot_color)(g_col-32, g_row, 0);
 		}
 	}                                    /* these lines tidy up for BTM etc */
-	for (lag = 32; lag > 0; lag--)
+	for (int lag = 32; lag > 0; lag--)
 	{
 		(*g_plot_color)(g_col-lag, g_row, 0);
 	}
@@ -4988,7 +4981,7 @@ static long automatic_log_map()   /*RB*/
 			(*g_plot_color)(g_col, g_row-32, 0);
 		}
 	}
-	for (lag = 32; lag > 0; lag--)
+	for (int lag = 32; lag > 0; lag--)
 	{
 		(*g_plot_color)(g_col, g_row-lag, 0);
 	}
@@ -5011,7 +5004,7 @@ static long automatic_log_map()   /*RB*/
 			(*g_plot_color)(g_col, g_row-32, 0);
 		}
 	}
-	for (lag = 32; lag > 0; lag--)
+	for (int lag = 32; lag > 0; lag--)
 	{
 		(*g_plot_color)(g_col, g_row-lag, 0);
 	}
@@ -5034,7 +5027,7 @@ static long automatic_log_map()   /*RB*/
 			(*g_plot_color)(g_col-32, g_row, 0);
 		}
 	}
-	for (lag = 32; lag > 0; lag--)
+	for (int lag = 32; lag > 0; lag--)
 	{
 		(*g_plot_color)(g_col-lag, g_row, 0);
 	}
