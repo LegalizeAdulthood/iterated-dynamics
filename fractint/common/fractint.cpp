@@ -317,8 +317,8 @@ static void main_restart(int argc, char *argv[], int &stacked)
 	}
 #endif
 
-	g_max_colors = 256;                    /* the Windows version is lower */
-	g_max_input_counter = (g_cpu >= 386) ? 80 : 30;   /* check the keyboard this often */
+	g_max_colors = 256;
+	g_max_input_counter = 80;				/* check the keyboard this often */
 
 	if (g_show_file && g_init_mode < 0)
 	{
