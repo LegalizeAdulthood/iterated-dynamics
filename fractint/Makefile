@@ -212,7 +212,8 @@ $(COMDIR)/plot3d.o $(COMDIR)/prompts1.o \
 $(COMDIR)/prompts2.o $(COMDIR)/realdos.o $(COMDIR)/rotate.o \
 $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
 $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
-$(COMDIR)/zoom.o $(COMDIR)/Halley.o
+$(COMDIR)/zoom.o $(COMDIR)/Halley.o $(COMDIR)/Newton.o \
+$(COMDIR)/SoundState.o
 
 
 ifeq ($(AS),/usr/bin/nasm)
