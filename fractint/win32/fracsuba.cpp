@@ -220,7 +220,7 @@ int bail_out_mod_fp_asm()
 	g_temp_sqr_x = sqr(g_new_z.x);
 	g_temp_sqr_y = sqr(g_new_z.y);
 	g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-	if (g_magnitude > g_rq_limit || g_magnitude < 0.0 || fabs(g_new_z.x) > g_rq_limit2 ||
+	if (g_magnitude >= g_rq_limit || fabs(g_new_z.x) > g_rq_limit2 ||
 		fabs(g_new_z.y) > g_rq_limit2 || g_overflow)
 	{
 		g_overflow = 0;

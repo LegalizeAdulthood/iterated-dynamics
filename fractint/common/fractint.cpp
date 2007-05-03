@@ -255,27 +255,9 @@ static void set_exe_path(char *path)
 
 static void set_cpu_fpu()
 {
-	if (DEBUGFLAG_CPU_8088 == g_debug_flag)
-	{
-		g_cpu =  86; /* for testing purposes */
-	}
-	if (DEBUGFLAG_X_FPU_287 == g_debug_flag && g_fpu >= 287)
-	{
-		g_fpu = 287; /* for testing purposes */
-		g_cpu = 286;
-	}
-	if (DEBUGFLAG_FPU_87 == g_debug_flag && g_fpu >=  87)
-	{
-		g_fpu =  87; /* for testing purposes */
-		g_cpu =  86;
-	}
 	if (DEBUGFLAG_NO_FPU == g_debug_flag)
 	{
 		g_fpu =   0; /* for testing purposes */
-	}
-	if (getenv("NO87"))
-	{
-		g_fpu = 0;
 	}
 }
 

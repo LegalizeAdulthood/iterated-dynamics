@@ -124,36 +124,7 @@ int mandelbrot_setup_fp()
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
-#if !defined(XFRACT)
-			if (g_cpu >= 386 && g_fpu >= 387)
-			{
-				calculate_mandelbrot_fp_p5_asm_start();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_p5_asm;
-			}
-			else if (g_cpu == 286 && g_fpu >= 287)
-			{
-				calculate_mandelbrot_start_fp_asm();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_287_asm;
-			}
-			else
-			{
-				calculate_mandelbrot_start_fp_asm();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_87_asm;
-			}
-#else
-#ifdef NASM
-			if (g_fpu == -1)
-			{
-				calculate_mandelbrot_fp_p5_asm_start();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_p5_asm;
-			}
-			else
-#endif
-			{
-				calculate_mandelbrot_start_fp_asm();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_asm;
-			}
-#endif
+			g_calculate_mandelbrot_asm_fp = calculate_mandelbrot_fp_asm;
 		}
 		else
 		{
@@ -271,36 +242,7 @@ int julia_setup_fp()
 				&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
-#if !defined(XFRACT)
-			if (g_cpu >= 386 && g_fpu >= 387)
-			{
-				calculate_mandelbrot_fp_p5_asm_start();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_p5_asm;
-			}
-			else if (g_cpu == 286 && g_fpu >= 287)
-			{
-				calculate_mandelbrot_start_fp_asm();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_287_asm;
-			}
-			else
-			{
-				calculate_mandelbrot_start_fp_asm();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_87_asm;
-			}
-#else
-#ifdef NASM
-			if (g_fpu == -1)
-			{
-				calculate_mandelbrot_fp_p5_asm_start();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_p5_asm;
-			}
-			else
-#endif
-			{
-				calculate_mandelbrot_start_fp_asm();
-				g_calculate_mandelbrot_asm_fp = (long (*)())calculate_mandelbrot_fp_asm;
-			}
-#endif
+			g_calculate_mandelbrot_asm_fp = calculate_mandelbrot_fp_asm;
 		}
 		else
 		{

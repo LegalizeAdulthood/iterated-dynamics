@@ -226,17 +226,7 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
 	FPUcplxlog(&xx, &cLog);
 	FPUcplxmul(&cLog, &yy, &t);
 
-	if (g_fpu >= 387)
-	{
-		FPUcplxexp387(&t, &z);
-	}
-	else
-	{
-		e2x = (t.x < -690) ? 0 : exp(t.x);
-		FPUsincos(&t.y, &siny, &cosy);
-		z.x = e2x*cosy;
-		z.y = e2x*siny;
-	}
+	FPUcplxexp387(&t, &z);
 	return z;
 }
 
