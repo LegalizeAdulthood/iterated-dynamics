@@ -90,10 +90,9 @@ These extra bytes are refered to in the code as the "padding," that is:
 rlength = bnlength + padding.
 
 All three of the values, bnlength, rlength, and therefore padding, must be
-multiples of the size of memory blocks being used for arithmetic (2 on
-8086/286 and 4 on 386+).  Typically, the padding is 2*blocksize.  In the
-case where bnlength = blocksize, padding can only be blocksize to keep
-rlength from being too big.
+multiples of the size of memory blocks being used for arithmetic (4 on 386+).
+Typically, the padding is 2*blocksize.  In the case where bnlength =
+blocksize, padding can only be blocksize to keep rlength from being too big.
 
 The product of two bignumbers, n1 and n2, will then be a result, r, which
 is of length rlength.  The integer part will be twice as wide, thereby
