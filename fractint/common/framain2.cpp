@@ -496,7 +496,7 @@ done:
 		}
 #endif
 
-		if (g_fractal_type == FRACTYPE_PLASMA && g_cpu > 88)
+		if (g_fractal_type == FRACTYPE_PLASMA)
 		{
 			g_cycle_limit = 256;              /* plasma clouds need quick spins */
 			g_dac_count = 256;
