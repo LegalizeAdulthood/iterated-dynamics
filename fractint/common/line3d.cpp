@@ -1018,7 +1018,6 @@ static void _fastcall vdraw_line(double *v1, double *v2, int color)
 
 static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
 {
-	int i, j;
 	VECTOR S[2][4];              /* Holds the top an bottom points,
 								* S[0][]=bottom */
 
@@ -1026,13 +1025,12 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 	* "bottom" - these points are the corners of the screen in the x-y plane.
 	* The "t"'s stand for Top - they are the top of the cube where 255 color
 	* points hit. */
-
 	*pxmin = *pymin = *pzmin = (int) INT_MAX;
 	*pxmax = *pymax = *pzmax = (int) INT_MIN;
 
-	for (j = 0; j < 4; ++j)
+	for (int j = 0; j < 4; ++j)
 	{
-		for (i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			S[0][j][i] = S[1][j][i] = 0;
 		}
@@ -1042,7 +1040,7 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 	S[0][2][1] = S[0][3][1] = S[1][2][1] = S[1][3][1] = g_y_dots - 1;
 	S[1][0][2] = S[1][1][2] = S[1][2][2] = S[1][3][2] = s_z_coord - 1;
 
-	for (i = 0; i < 4; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		/* transform points */
 		vmult(S[0][i], m, S[0][i]);
@@ -1103,7 +1101,7 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 	{
 		if (s_persp)
 		{
-			for (i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 			{
 				perspective(S[0][i]);
 				perspective(S[1][i]);
@@ -1111,9 +1109,9 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 		}
 
 		/* Keep the box surrounding the fractal */
-		for (j = 0; j < 2; j++)
+		for (int j = 0; j < 2; j++)
 		{
-			for (i = 0; i < 4; ++i)
+			for (int i = 0; i < 4; ++i)
 			{
 				S[j][i][0] += g_xx_adjust;
 				S[j][i][1] += g_yy_adjust;
@@ -1137,7 +1135,6 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 {
 	VECTOR S[2][4];
-	int i, j;
 	double temp;
 
 	S[1][0][0] = S[0][0][0] = origin[0];
@@ -1145,7 +1142,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 
 	S[1][0][2] = direct[2];
 
-	for (i = 0; i < 2; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		S[i][1][0] = S[i][0][0];
 		S[i][1][1] = direct[1];
@@ -1161,7 +1158,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	/* transform the corners if necessary */
 	if (FILLTYPE == FILLTYPE_LIGHT_AFTER)
 	{
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			vmult(S[0][i], light_m, S[0][i]);
 			vmult(S[1][i], light_m, S[1][i]);
@@ -1173,7 +1170,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 									* restore */
 	g_view[2] = -PERSPECTIVE_DISTANCE*300.0/100.0;
 
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		perspective(S[0][i]);
 		perspective(S[1][i]);
@@ -1181,7 +1178,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	g_view[2] = temp;              /* Restore perspective distance */
 
 	/* Adjust for aspect */
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		S[0][i][0] = S[0][i][0]*s_aspect;
 		S[1][i][0] = S[1][i][0]*s_aspect;
@@ -1199,9 +1196,9 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 3, 1);
 
 	/* Draw the "arrow head" */
-	for (i = -3; i < 4; i++)
+	for (int i = -3; i < 4; i++)
 	{
-		for (j = -3; j < 4; j++)
+		for (int j = -3; j < 4; j++)
 		{
 			if (abs(i) + abs(j) < 6)
 			{
@@ -1214,10 +1211,9 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int rect)
 {
 	VECTOR V[4];
-	int i;
 
 	/* Since V[2] is not used by vdraw_line don't bother setting it */
-	for (i = 0; i < 2; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		V[0][i] = V0[i];
 		V[1][i] = V1[i];
@@ -1226,7 +1222,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 	}
 	if (rect)                    /* Draw a rectangle */
 	{
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2*BAD_CHECK &&
 				fabs(V[i][1] - V[(i + 1) % 4][1]) < -2*BAD_CHECK)
@@ -1238,7 +1234,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 	else
 		/* Draw 2 lines instead */
 	{
-		for (i = 0; i < 3; i += 2)
+		for (int i = 0; i < 3; i += 2)
 		{
 			if (fabs(V[i][0] - V[i + 1][0]) < -2*BAD_CHECK &&
 				fabs(V[i][1] - V[i + 1][1]) < -2*BAD_CHECK)
@@ -1278,7 +1274,7 @@ static void _fastcall put_minmax(int x, int y, int color)
 static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct point pt3, int color)
 {
 	int miny, maxy;
-	int x, y, xlim;
+	int xlim;
 
 	/* Too many points off the screen? */
 	if ((off_screen(pt1) + off_screen(pt2) + off_screen(pt3)) > MAXOFFSCREEN)
@@ -1342,7 +1338,7 @@ static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct 
 		maxy = g_y_dots - 1;
 	}
 
-	for (y = miny; y <= maxy; y++)
+	for (int y = miny; y <= maxy; y++)
 	{
 		s_minmax_x[y].minx = (int) INT_MAX;
 		s_minmax_x[y].maxx = (int) INT_MIN;
@@ -1356,10 +1352,10 @@ static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct 
 	driver_draw_line(s_p2.x, s_p2.y, s_p3.x, s_p3.y, 0);
 	driver_draw_line(s_p3.x, s_p3.y, s_p1.x, s_p1.y, 0);
 
-	for (y = miny; y <= maxy; y++)
+	for (int y = miny; y <= maxy; y++)
 	{
 		xlim = s_minmax_x[y].maxx;
-		for (x = s_minmax_x[y].minx; x <= xlim; x++)
+		for (int x = s_minmax_x[y].minx; x <= xlim; x++)
 		{
 			(*fill_plot)(x, y, color);
 		}
@@ -1576,10 +1572,9 @@ int _fastcall targa_color(int x, int y, int color)
 
 static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 {
-	int i;
 	if ((s_even_odd_row++ & 1) == 0) /* even rows are color value */
 	{
-		for (i = 0; i < (int) linelen; i++)       /* add the fractional part in odd row */
+		for (int i = 0; i < (int) linelen; i++)       /* add the fractional part in odd row */
 		{
 			fraction[i] = pixels[i];
 		}
@@ -1589,7 +1584,7 @@ static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 		/* swap */
 	{
 		BYTE tmp;
-		for (i = 0; i < (int) linelen; i++)       /* swap so pixel has color */
+		for (int i = 0; i < (int) linelen; i++)       /* swap so pixel has color */
 		{
 			tmp = pixels[i];
 			pixels[i] = fraction[i];
@@ -1649,7 +1644,7 @@ static void file_error(char *filename, int code)
 
 int start_disk1(char *file_name2, FILE *Source, int overlay)
 {
-	int i, j, k, inc;
+	int inc;
 	FILE *fps;
 
 	/* Open File for both reading and writing */
@@ -1665,7 +1660,7 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 	/* Write the header */
 	if (overlay)                 /* We are overlaying a file */
 	{
-		for (i = 0; i < s_targa_header_len; i++) /* Copy the header from the Source */
+		for (int i = 0; i < s_targa_header_len; i++) /* Copy the header from the Source */
 		{
 			fputc(fgetc(Source), fps);
 		}
@@ -1673,7 +1668,7 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 	else
 	{                            /* Write header for a new file */
 		/* ID field size = 0, No color map, Targa type 2 file */
-		for (i = 0; i < 12; i++)
+		for (int i = 0; i < 12; i++)
 		{
 			if (i == 0 && g_true_color != 0)
 			{
@@ -1691,7 +1686,7 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 			}
 		}
 		/* Write image size  */
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			fputc(s_targa_size[i], fps);
 		}
@@ -1709,9 +1704,9 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 	}
 
 	/* Finished with the header, now lets work on the display area  */
-	for (i = 0; i < g_y_dots; i++)  /* "clear the screen" (write to the disk) */
+	for (int i = 0; i < g_y_dots; i++)  /* "clear the screen" (write to the disk) */
 	{
-		for (j = 0; j < s_line_length; j = j + inc)
+		for (int j = 0; j < s_line_length; j = j + inc)
 		{
 			if (overlay)
 			{
@@ -1719,7 +1714,7 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 			}
 			else
 			{
-				for (k = 2; k > -1; k--)
+				for (int k = 2; k > -1; k--)
 				{
 					fputc(g_back_color[k], fps);       /* Targa order (B, G, R) */
 				}
@@ -1755,7 +1750,6 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 static int targa_validate(char *file_name)
 {
 	FILE *fp;
-	int i;
 
 	/* Attempt to open source file for reading */
 	fp = dir_fopen(g_work_dir, file_name, "rb");
@@ -1780,18 +1774,18 @@ static int targa_validate(char *file_name)
 	}
 
 	/* Skip color map specification */
-	for (i = 0; i < 5; i++)
+	for (int i = 0; i < 5; i++)
 	{
 		fgetc(fp);
 	}
 
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		/* Check image origin */
 		fgetc(fp);
 	}
 	/* Check Image specs */
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		if (fgetc(fp) != (int) s_targa_size[i])
 		{
@@ -2128,7 +2122,6 @@ static int _fastcall out_triangle(const struct f_point pt1,
 								  const struct f_point pt3,
 								  int c1, int c2, int c3)
 {
-	int i, j;
 	float c[3];
 	float pt_t[3][3];
 
@@ -2146,7 +2139,7 @@ static int _fastcall out_triangle(const struct f_point pt1,
 	/* Color of triangle is average of g_colors of its verticies */
 	if (!g_raytrace_brief)
 	{
-		for (i = 0; i <= 2; i++)
+		for (int i = 0; i <= 2; i++)
 		{
 			c[i] = (float) (g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
 				/ (3*COLOR_CHANNEL_MAX);
@@ -2187,7 +2180,7 @@ static int _fastcall out_triangle(const struct f_point pt1,
 
 	if (!g_raytrace_brief && g_raytrace_output != RAYTRACE_POVRAY && g_raytrace_output != RAYTRACE_DXF)
 	{
-		for (i = 0; i <= 2; i++)
+		for (int i = 0; i <= 2; i++)
 		{
 			fprintf(s_raytrace_file, "% #4.4f ", c[i]);
 		}
@@ -2224,7 +2217,7 @@ static int _fastcall out_triangle(const struct f_point pt1,
 		fprintf(s_raytrace_file, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", min(255, max(1, c1)));
 	}
 
-	for (i = 0; i <= 2; i++)     /* Describe each  Vertex  */
+	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
 	{
 		if (g_raytrace_output != RAYTRACE_DXF)
 		{
@@ -2244,7 +2237,7 @@ static int _fastcall out_triangle(const struct f_point pt1,
 			fprintf(s_raytrace_file, " ");
 		}
 
-		for (j = 0; j <= 2; j++)
+		for (int j = 0; j <= 2; j++)
 		{
 			if (g_raytrace_output == RAYTRACE_DXF)
 			{
@@ -2315,11 +2308,9 @@ static int _fastcall out_triangle(const struct f_point pt1,
 
 static void _fastcall triangle_bounds(float pt_t[3][3])
 {
-	int i, j;
-
-	for (i = 0; i <= 2; i++)
+	for (int i = 0; i <= 2; i++)
 	{
-		for (j = 0; j <= 2; j++)
+		for (int j = 0; j <= 2; j++)
 		{
 			if (pt_t[i][j] < s_min_xyz[j])
 			{
@@ -2375,8 +2366,7 @@ static int _fastcall end_object(int triout)
 		if (triout)
 		{
 			/* Make sure the bounding box is slightly larger than the object */
-			int i;
-			for (i = 0; i <= 2; i++)
+			for (int i = 0; i <= 2; i++)
 			{
 				if (s_min_xyz[i] == s_max_xyz[i])
 				{
@@ -2415,7 +2405,6 @@ static int _fastcall end_object(int triout)
 
 static void line3d_cleanup()
 {
-	int i, j;
 	if (g_raytrace_output && s_raytrace_file)
 	{                            /* Finish up the ray tracing files */
 		if (g_raytrace_output != RAYTRACE_RAYSHADE && g_raytrace_output != RAYTRACE_DXF)
@@ -2440,9 +2429,9 @@ static void line3d_cleanup()
 		if (g_raytrace_output == RAYTRACE_ACROSPIN)
 		{
 			fprintf(s_raytrace_file, "LineList From To\n");
-			for (i = 0; i < RO; i++)
+			for (int i = 0; i < RO; i++)
 			{
-				for (j = 0; j <= CO_MAX; j++)
+				for (int j = 0; j <= CO_MAX; j++)
 				{
 					if (j < CO_MAX)
 					{
@@ -2503,11 +2492,9 @@ static int first_time(int linelen, VECTOR v)
 {
 	int err;
 	MATRIX lightm;               /* m w/no trans, keeps obj. on screen */
-	float twocosdeltatheta;
 	double xval, yval, zval;     /* rotation values */
 	/* corners of transformed xdotx by g_y_dots x g_colors box */
-	double g_x_min, g_y_min, zmin, g_x_max, g_y_max, zmax;
-	int i, j;
+	double x_min, y_min, z_min, x_max, y_max, z_max;
 	double v_length;
 	VECTOR origin, direct, tmp;
 	float theta, theta1, theta2; /* current, start, stop latitude */
@@ -2640,7 +2627,7 @@ static int first_time(int linelen, VECTOR v)
 		/* m current matrix */
 		/* 0 means don't show box */
 		/* returns minimum and maximum values of x, y, z in fractal */
-		corners(s_m, 0, &g_x_min, &g_y_min, &zmin, &g_x_max, &g_y_max, &zmax);
+		corners(s_m, 0, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
 	}
 
 	/* perspective 3D vector - s_lview[2] == 0 means no perspective */
@@ -2668,7 +2655,7 @@ static int first_time(int linelen, VECTOR v)
 	}
 	else                         /* non-sphere case */
 	{
-		s_lview[2] = (long) ((zmin - zmax)*(double) ZVIEWER/100.0);
+		s_lview[2] = (long) ((z_min - z_max)*(double) ZVIEWER/100.0);
 	}
 
 	g_view[0] = s_lview[0];
@@ -2682,18 +2669,18 @@ static int first_time(int linelen, VECTOR v)
 	{
 		/* translate back exactly amount we translated earlier plus enough to
 		* center image so maximum values are non-positive */
-		trans(((double) g_x_dots - g_x_max - g_x_min)/2, ((double) g_y_dots - g_y_max - g_y_min)/2, -zmax, s_m);
+		trans(((double) g_x_dots - x_max - x_min)/2, ((double) g_y_dots - y_max - y_min)/2, -z_max, s_m);
 
 		/* Keep the box centered and on screen regardless of shifts */
-		trans(((double) g_x_dots - g_x_max - g_x_min)/2, ((double) g_y_dots - g_y_max - g_y_min)/2, -zmax, lightm);
+		trans(((double) g_x_dots - x_max - x_min)/2, ((double) g_y_dots - y_max - y_min)/2, -z_max, lightm);
 
 		trans((double) (g_x_shift), (double) (-g_y_shift), 0.0, s_m);
 
 		/* matrix s_m now contains ALL those transforms composed together !!
 		* convert s_m to long integers shifted 16 bits */
-		for (i = 0; i < 4; i++)
+		for (int i = 0; i < 4; i++)
 		{
-			for (j = 0; j < 4; j++)
+			for (int j = 0; j < 4; j++)
 			{
 				s_lm[i][j] = (long) (s_m[i][j]*65536.0);
 			}
@@ -2742,14 +2729,14 @@ static int first_time(int linelen, VECTOR v)
 		s_cos_theta_array[1] = (float) cos((double) (theta + deltatheta));
 
 		/* sin, cos delta theta */
-		twocosdeltatheta = (float) (2.0*cos((double) deltatheta));
+		float two_cos_delta_theta = (float) (2.0*cos((double) deltatheta));
 
 		/* build table of other sin, cos with trig identity */
-		for (i = 2; i < (int) linelen; i++)
+		for (int i = 2; i < (int) linelen; i++)
 		{
-			s_sin_theta_array[i] = s_sin_theta_array[i - 1]*twocosdeltatheta -
+			s_sin_theta_array[i] = s_sin_theta_array[i - 1]*two_cos_delta_theta -
 				s_sin_theta_array[i - 2];
-			s_cos_theta_array[i] = s_cos_theta_array[i - 1]*twocosdeltatheta -
+			s_cos_theta_array[i] = s_cos_theta_array[i - 1]*two_cos_delta_theta -
 				s_cos_theta_array[i - 2];
 		}
 
@@ -2851,7 +2838,7 @@ static int first_time(int linelen, VECTOR v)
 		vmult(v, s_m, v);
 		vmult(s_light_direction, s_m, s_light_direction);
 
-		for (i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			s_light_direction[i] -= v[i];
 		}
@@ -2880,13 +2867,13 @@ static int first_time(int linelen, VECTOR v)
 
 		/* Set direct[] to point from origin[] in direction of untransformed
 		* s_light_direction (direct[]). */
-		for (i = 0; i < 3; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			direct[i] = origin[i] + direct[i]*v_length;
 		}
 
 		/* center light box */
-		for (i = 0; i < 2; i++)
+		for (int i = 0; i < 2; i++)
 		{
 			tmp[i] = (direct[i] - origin[i])/2;
 			origin[i] -= tmp[i];
@@ -2900,7 +2887,7 @@ static int first_time(int linelen, VECTOR v)
 		* rotations 1 means show box - g_x_min etc. do nothing here */
 		if (!SPHERE)
 		{
-			corners(s_m, 1, &g_x_min, &g_y_min, &zmin, &g_x_max, &g_y_max, &zmax);
+			corners(s_m, 1, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
 		}
 	}
 
@@ -2911,7 +2898,7 @@ static int first_time(int linelen, VECTOR v)
 	s_f_bad.x = (float) s_bad.x;
 	s_f_bad.y = (float) s_bad.y;
 	s_f_bad.color = (float) s_bad.color;
-	for (i = 0; i < (int) linelen; i++)
+	for (int i = 0; i < (int) linelen; i++)
 	{
 		s_last_row[i] = s_bad;
 		s_f_last_row[i] = s_f_bad;

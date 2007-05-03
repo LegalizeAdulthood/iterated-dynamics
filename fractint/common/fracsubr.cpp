@@ -23,6 +23,8 @@
 #include "fractype.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "EscapeTime.h"
+#include "SoundState.h"
 
 #if defined(_WIN32)
 #define ftimex ftime
@@ -39,7 +41,6 @@
 int g_resume_length = 0;				/* length of resume info */
 int g_use_grid = FALSE;
 
-static int s_tab_or_help = 0;			/* kludge for sound and tab or help key press */
 static int s_resume_offset;				/* offset in resume info gets */
 static int s_resume_info_length = 0;
 static int s_save_orbit[1500] = { 0 };	/* array to save orbit values */
@@ -56,75 +57,38 @@ static void   _fastcall adjust_to_limits_bf(double);
 static void   _fastcall smallest_add_bf(bf_t);
 static int sound_open();
 
+EscapeTimeState<bf_t> g_escape_time_state_bf;
+EscapeTimeState<double> g_escape_time_state_fp;
+EscapeTimeState<long> g_escape_time_state_l;
+
 void free_grid_pointers()
 {
-	if (g_x0)
-	{
-		free(g_x0);
-		g_x0 = NULL;
-	}
-	if (g_x0_l)
-	{
-		free(g_x0_l);
-		g_x0_l = NULL;
-	}
+	g_escape_time_state_fp.free_grid_pointers();
+	g_escape_time_state_l.free_grid_pointers();
 }
 
 void set_grid_pointers()
 {
-	free_grid_pointers();
-	g_x0 = (double *) malloc(sizeof(double)*(2*g_x_dots + 2*g_y_dots));
-	g_y1 = g_x0 + g_x_dots;
-	g_y0 = g_y1 + g_x_dots;
-	g_x1 = g_y0 + g_y_dots;
-	g_x0_l = (long *) malloc(sizeof(long)*(2*g_x_dots + 2*g_y_dots));
-	g_y1_l = g_x0_l + g_x_dots;
-	g_y0_l = g_y1_l + g_x_dots;
-	g_x1_l = g_y0_l + g_y_dots;
+	g_escape_time_state_fp.set_grid_pointers(g_x_dots, g_y_dots);
+	g_escape_time_state_l.set_grid_pointers(g_x_dots, g_y_dots);
 	set_pixel_calc_functions();
 }
 
 void fill_dx_array()
 {
-	int i;
 	if (g_use_grid)
 	{
-		g_x0[0] = g_xx_min;              /* fill up the x, y grids */
-		g_y0[0] = g_yy_max;
-		g_x1[0] = g_y1[0] = 0;
-		for (i = 1; i < g_x_dots; i++)
-		{
-			g_x0[i] = (double)(g_x0[0] + i*g_delta_x_fp);
-			g_y1[i] = (double)(g_y1[0] - i*g_delta_y2_fp);
-		}
-		for (i = 1; i < g_y_dots; i++)
-		{
-			g_y0[i] = (double)(g_y0[0] - i*g_delta_y_fp);
-			g_x1[i] = (double)(g_x1[0] + i*g_delta_x2_fp);
-		}
+		g_escape_time_state_fp.fill();
 	}
 }
 
 void fill_lx_array()
 {
-	int i;
 	/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
 	/* they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  */
 	if (g_use_grid)
 	{
-		g_x0_l[0] = g_x_min;               /* fill up the x, y grids */
-		g_y0_l[0] = g_y_max;
-		g_x1_l[0] = g_y1_l[0] = 0;
-		for (i = 1; i < g_x_dots; i++)
-		{
-			g_x0_l[i] = g_x0_l[i-1] + g_delta_x;
-			g_y1_l[i] = g_y1_l[i-1] - g_delta_y2;
-		}
-		for (i = 1; i < g_y_dots; i++)
-		{
-			g_y0_l[i] = g_y0_l[i-1] - g_delta_y;
-			g_x1_l[i] = g_x1_l[i-1] + g_delta_x2;
-		}
+		g_escape_time_state_l.fill();
 	}
 }
 
@@ -132,12 +96,12 @@ void fractal_float_to_bf()
 {
 	int i;
 	init_bf_dec(get_precision_dbl(CURRENTREZ));
-	floattobf(bfxmin, g_xx_min);
-	floattobf(bfxmax, g_xx_max);
-	floattobf(bfymin, g_yy_min);
-	floattobf(bfymax, g_yy_max);
-	floattobf(bfx3rd, g_xx_3rd);
-	floattobf(bfy3rd, g_yy_3rd);
+	floattobf(g_escape_time_state_bf.x_min(), g_escape_time_state_fp.x_min());
+	floattobf(g_escape_time_state_bf.x_max(), g_escape_time_state_fp.x_max());
+	floattobf(g_escape_time_state_bf.y_min(), g_escape_time_state_fp.y_min());
+	floattobf(g_escape_time_state_bf.y_max(), g_escape_time_state_fp.y_max());
+	floattobf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_fp.x_3rd());
+	floattobf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_fp.y_3rd());
 
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
@@ -375,20 +339,20 @@ init_restart:
 	if ((g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0)
 	{
 		/* ensure min < max and unrotated rectangle */
-		if (g_xx_min > g_xx_max)
+		if (g_escape_time_state_fp.x_min() > g_escape_time_state_fp.x_max())
 		{
-			ftemp = g_xx_max;
-			g_xx_max = g_xx_min;
-			g_xx_min = ftemp;
+			ftemp = g_escape_time_state_fp.x_max();
+			g_escape_time_state_fp.x_max() = g_escape_time_state_fp.x_min();
+			g_escape_time_state_fp.x_min() = ftemp;
 		}
-		if (g_yy_min > g_yy_max)
+		if (g_escape_time_state_fp.y_min() > g_escape_time_state_fp.y_max())
 		{
-			ftemp = g_yy_max;
-			g_yy_max = g_yy_min;
-			g_yy_min = ftemp;
+			ftemp = g_escape_time_state_fp.y_max();
+			g_escape_time_state_fp.y_max() = g_escape_time_state_fp.y_min();
+			g_escape_time_state_fp.y_min() = ftemp;
 		}
-		g_xx_3rd = g_xx_min;
-		g_yy_3rd = g_yy_min;
+		g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
+		g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
 	}
 
 	/* set up g_bit_shift for integer math */
@@ -441,10 +405,10 @@ init_restart:
 	else
 	{
 		adjust_to_limits(1.0); /* make sure all corners in valid range */
-		g_delta_x_fp  = (LDBL)(g_xx_max - g_xx_3rd) / (LDBL)g_dx_size; /* calculate stepsizes */
-		g_delta_y_fp  = (LDBL)(g_yy_max - g_yy_3rd) / (LDBL)g_dy_size;
-		g_delta_x2_fp = (LDBL)(g_xx_3rd - g_xx_min) / (LDBL)g_dy_size;
-		g_delta_y2_fp = (LDBL)(g_yy_3rd - g_yy_min) / (LDBL)g_dx_size;
+		g_delta_x_fp  = (LDBL)(g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd()) / (LDBL)g_dx_size; /* calculate stepsizes */
+		g_delta_y_fp  = (LDBL)(g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_3rd()) / (LDBL)g_dy_size;
+		g_delta_x2_fp = (LDBL)(g_escape_time_state_fp.x_3rd() - g_escape_time_state_fp.x_min()) / (LDBL)g_dy_size;
+		g_delta_y2_fp = (LDBL)(g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_min()) / (LDBL)g_dx_size;
 		fill_dx_array();
 	}
 
@@ -452,12 +416,12 @@ init_restart:
 	{
 		g_c_real = fudge_to_long(g_parameters[0]); /* integer equivs for it all */
 		g_c_imag = fudge_to_long(g_parameters[1]);
-		g_x_min  = fudge_to_long(g_xx_min);
-		g_x_max  = fudge_to_long(g_xx_max);
-		g_x_3rd  = fudge_to_long(g_xx_3rd);
-		g_y_min  = fudge_to_long(g_yy_min);
-		g_y_max  = fudge_to_long(g_yy_max);
-		g_y_3rd  = fudge_to_long(g_yy_3rd);
+		g_escape_time_state_l.x_min()  = fudge_to_long(g_escape_time_state_fp.x_min());
+		g_escape_time_state_l.x_max()  = fudge_to_long(g_escape_time_state_fp.x_max());
+		g_escape_time_state_l.x_3rd()  = fudge_to_long(g_escape_time_state_fp.x_3rd());
+		g_escape_time_state_l.y_min()  = fudge_to_long(g_escape_time_state_fp.y_min());
+		g_escape_time_state_l.y_max()  = fudge_to_long(g_escape_time_state_fp.y_max());
+		g_escape_time_state_l.y_3rd()  = fudge_to_long(g_escape_time_state_fp.y_3rd());
 		g_delta_x  = fudge_to_long((double)g_delta_x_fp);
 		g_delta_y  = fudge_to_long((double)g_delta_y_fp);
 		g_delta_x2 = fudge_to_long((double)g_delta_x2_fp);
@@ -483,10 +447,10 @@ init_restart:
 
 			fill_lx_array();   /* fill up the x, y grids */
 			/* past max res?  check corners within 10% of expected */
-			if (ratio_bad((double)g_x0_l[g_x_dots-1]-g_x_min, (double)g_x_max-g_x_3rd)
-				|| ratio_bad((double)g_y0_l[g_y_dots-1]-g_y_max, (double)g_y_3rd-g_y_max)
-				|| ratio_bad((double)g_x1_l[(g_y_dots >> 1)-1], ((double)g_x_3rd-g_x_min)/2)
-				|| ratio_bad((double)g_y1_l[(g_x_dots >> 1)-1], ((double)g_y_min-g_y_3rd)/2))
+			if (   ratio_bad((double) g_escape_time_state_l.x0(g_x_dots - 1) - g_escape_time_state_l.x_min(), (double) g_escape_time_state_l.x_max() - g_escape_time_state_l.x_3rd())
+				|| ratio_bad((double) g_escape_time_state_l.y0(g_y_dots - 1) - g_escape_time_state_l.y_max(), (double) g_escape_time_state_l.y_3rd() - g_escape_time_state_l.y_max())
+				|| ratio_bad((double) g_escape_time_state_l.x1((g_y_dots/2) - 1), ((double) g_escape_time_state_l.x_3rd() - g_escape_time_state_l.x_min())/2)
+				|| ratio_bad((double) g_escape_time_state_l.y1((g_x_dots/2) - 1), ((double) g_escape_time_state_l.y_min() - g_escape_time_state_l.y_3rd())/2))
 			{
 expand_retry:
 				if (g_integer_fractal          /* integer fractal type? */
@@ -506,24 +470,24 @@ expand_retry:
 			} /* end if ratio bad */
 
 			/* re-set corners to match reality */
-			g_x_max = g_x0_l[g_x_dots-1] + g_x1_l[g_y_dots-1];
-			g_y_min = g_y0_l[g_y_dots-1] + g_y1_l[g_x_dots-1];
-			g_x_3rd = g_x_min + g_x1_l[g_y_dots-1];
-			g_y_3rd = g_y0_l[g_y_dots-1];
-			g_xx_min = fudge_to_double(g_x_min);
-			g_xx_max = fudge_to_double(g_x_max);
-			g_xx_3rd = fudge_to_double(g_x_3rd);
-			g_yy_min = fudge_to_double(g_y_min);
-			g_yy_max = fudge_to_double(g_y_max);
-			g_yy_3rd = fudge_to_double(g_y_3rd);
+			g_escape_time_state_l.x_max() = g_escape_time_state_l.x0(g_x_dots-1) + g_escape_time_state_l.x1(g_y_dots-1);
+			g_escape_time_state_l.y_min() = g_escape_time_state_l.y0(g_y_dots-1) + g_escape_time_state_l.y1(g_x_dots-1);
+			g_escape_time_state_l.x_3rd() = g_escape_time_state_l.x_min() + g_escape_time_state_l.x1(g_y_dots-1);
+			g_escape_time_state_l.y_3rd() = g_escape_time_state_l.y0(g_y_dots-1);
+			g_escape_time_state_fp.x_min() = fudge_to_double(g_escape_time_state_l.x_min());
+			g_escape_time_state_fp.x_max() = fudge_to_double(g_escape_time_state_l.x_max());
+			g_escape_time_state_fp.x_3rd() = fudge_to_double(g_escape_time_state_l.x_3rd());
+			g_escape_time_state_fp.y_min() = fudge_to_double(g_escape_time_state_l.y_min());
+			g_escape_time_state_fp.y_max() = fudge_to_double(g_escape_time_state_l.y_max());
+			g_escape_time_state_fp.y_3rd() = fudge_to_double(g_escape_time_state_l.y_3rd());
 		} /* end if (g_integer_fractal && !g_invert && g_use_grid) */
 		else
 		{
 			double dx0, dy0, dx1, dy1;
 			/* set up dx0 and dy0 analogs of g_x0_l and g_y0_l */
 			/* put fractal parameters in doubles */
-			dx0 = g_xx_min;                /* fill up the x, y grids */
-			dy0 = g_yy_max;
+			dx0 = g_escape_time_state_fp.x_min();                /* fill up the x, y grids */
+			dy0 = g_escape_time_state_fp.y_max();
 			dx1 = dy1 = 0;
 			/* this way of defining the dx and dy arrays is not the most
 				accurate, but it is kept because it is used to determine
@@ -561,24 +525,24 @@ expand_retry:
 					now only tests the larger of the two deltas in an attempt
 					to repair this bug. This should never make the transition
 					to arbitrary precision sooner, but always later.*/
-				if (fabs(g_xx_max-g_xx_3rd) > fabs(g_xx_3rd-g_xx_min))
+				if (fabs(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd()) > fabs(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min()))
 				{
-					testx_exact  = g_xx_max-g_xx_3rd;
-					testx_try    = dx0-g_xx_min;
+					testx_exact  = g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd();
+					testx_try    = dx0-g_escape_time_state_fp.x_min();
 				}
 				else
 				{
-					testx_exact  = g_xx_3rd-g_xx_min;
+					testx_exact  = g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min();
 					testx_try    = dx1;
 				}
-				if (fabs(g_yy_3rd-g_yy_max) > fabs(g_yy_min-g_yy_3rd))
+				if (fabs(g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max()) > fabs(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd()))
 				{
-					testy_exact = g_yy_3rd-g_yy_max;
-					testy_try   = dy0-g_yy_max;
+					testy_exact = g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max();
+					testy_try   = dy0-g_escape_time_state_fp.y_max();
 				}
 				else
 				{
-					testy_exact = g_yy_min-g_yy_3rd;
+					testy_exact = g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd();
 					testy_try   = dy1;
 				}
 				if (ratio_bad(testx_try, testx_exact) ||
@@ -598,10 +562,10 @@ expand_retry:
 			fill_dx_array();       /* fill up the x, y grids */
 
 			/* re-set corners to match reality */
-			g_xx_max = (double)(g_xx_min + (g_x_dots-1)*g_delta_x_fp + (g_y_dots-1)*g_delta_x2_fp);
-			g_yy_min = (double)(g_yy_max - (g_y_dots-1)*g_delta_y_fp - (g_x_dots-1)*g_delta_y2_fp);
-			g_xx_3rd = (double)(g_xx_min + (g_y_dots-1)*g_delta_x2_fp);
-			g_yy_3rd = (double)(g_yy_max - (g_y_dots-1)*g_delta_y_fp);
+			g_escape_time_state_fp.x_max() = (double)(g_escape_time_state_fp.x_min() + (g_x_dots-1)*g_delta_x_fp + (g_y_dots-1)*g_delta_x2_fp);
+			g_escape_time_state_fp.y_min() = (double)(g_escape_time_state_fp.y_max() - (g_y_dots-1)*g_delta_y_fp - (g_x_dots-1)*g_delta_y2_fp);
+			g_escape_time_state_fp.x_3rd() = (double)(g_escape_time_state_fp.x_min() + (g_y_dots-1)*g_delta_x2_fp);
+			g_escape_time_state_fp.y_3rd() = (double)(g_escape_time_state_fp.y_max() - (g_y_dots-1)*g_delta_y_fp);
 
 		} /* end else */
 	} /* end if not plasma */
@@ -628,13 +592,13 @@ expand_retry:
 
 	/* calculate factors which plot real values to screen co-ords */
 	/* calcfrac.c plot_orbit routines have comments about this    */
-	ftemp = (double)(-g_delta_y2_fp*g_delta_x2_fp*g_dx_size*g_dy_size - (g_xx_max - g_xx_3rd)*(g_yy_3rd - g_yy_max));
+	ftemp = (double)(-g_delta_y2_fp*g_delta_x2_fp*g_dx_size*g_dy_size - (g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd())*(g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_max()));
 	if (ftemp != 0)
 	{
 		g_plot_mx1 = (double)(g_delta_x2_fp*g_dx_size*g_dy_size / ftemp);
-		g_plot_mx2 = (g_yy_3rd-g_yy_max)*g_dx_size / ftemp;
+		g_plot_mx2 = (g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max())*g_dx_size / ftemp;
 		g_plot_my1 = (double)(-g_delta_y2_fp*g_dx_size*g_dy_size/ftemp);
-		g_plot_my2 = (g_xx_max-g_xx_3rd)*g_dy_size / ftemp;
+		g_plot_my2 = (g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd())*g_dy_size / ftemp;
 	}
 	if (g_bf_math == 0)
 	{
@@ -696,54 +660,54 @@ void adjust_corner_bf()
 		convert_corners_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
 	}
 
-	/* ftemp = fabs(g_xx_3rd-g_xx_min); */
-	abs_a_bf(sub_bf(bftemp, bfx3rd, bfxmin));
+	/* ftemp = fabs(x3rd-xmin); */
+	abs_a_bf(sub_bf(bftemp, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min()));
 
-	/* ftemp2 = fabs(g_xx_max-g_xx_3rd); */
-	abs_a_bf(sub_bf(bftemp2, bfxmax, bfx3rd));
+	/* ftemp2 = fabs(xmax-x3rd); */
+	abs_a_bf(sub_bf(bftemp2, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_3rd()));
 
-	/* if ((ftemp = fabs(g_xx_3rd-g_xx_min)) < (ftemp2 = fabs(g_xx_max-g_xx_3rd))) */
+	/* if ((ftemp = fabs(x3rd-xmin)) < (ftemp2 = fabs(xmax-x3rd))) */
 	if (cmp_bf(bftemp, bftemp2) < 0)
 	{
-		/* if (ftemp*10000 < ftemp2 && g_yy_3rd != g_yy_max) */
+		/* if (ftemp*10000 < ftemp2 && y3rd != ymax) */
 		if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
-			&& cmp_bf(bfy3rd, bfymax) != 0)
-			/* g_xx_3rd = g_xx_min; */
-			copy_bf(bfx3rd, bfxmin);
+			&& cmp_bf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_max()) != 0)
+			/* x3rd = xmin; */
+			copy_bf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
 	}
 
-	/* else if (ftemp2*10000 < ftemp && g_yy_3rd != g_yy_min) */
+	/* else if (ftemp2*10000 < ftemp && y3rd != ymin) */
 	if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-		&& cmp_bf(bfy3rd, bfymin) != 0)
+		&& cmp_bf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min()) != 0)
 	{
-		/* g_xx_3rd = g_xx_max; */
-		copy_bf(bfx3rd, bfxmax);
+		/* x3rd = xmax; */
+		copy_bf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_max());
 	}
 
-	/* ftemp = fabs(g_yy_3rd-g_yy_min); */
-	abs_a_bf(sub_bf(bftemp, bfy3rd, bfymin));
+	/* ftemp = fabs(y3rd-ymin); */
+	abs_a_bf(sub_bf(bftemp, g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min()));
 
-	/* ftemp2 = fabs(g_yy_max-g_yy_3rd); */
-	abs_a_bf(sub_bf(bftemp2, bfymax, bfy3rd));
+	/* ftemp2 = fabs(ymax-y3rd); */
+	abs_a_bf(sub_bf(bftemp2, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd()));
 
-	/* if ((ftemp = fabs(g_yy_3rd-g_yy_min)) < (ftemp2 = fabs(g_yy_max-g_yy_3rd))) */
+	/* if ((ftemp = fabs(y3rd-ymin)) < (ftemp2 = fabs(ymax-y3rd))) */
 	if (cmp_bf(bftemp, bftemp2) < 0)
 	{
-		/* if (ftemp*10000 < ftemp2 && g_xx_3rd != g_xx_max) */
+		/* if (ftemp*10000 < ftemp2 && x3rd != xmax) */
 		if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
-			&& cmp_bf(bfx3rd, bfxmax) != 0)
+			&& cmp_bf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_max()) != 0)
 		{
-			/* g_yy_3rd = g_yy_min; */
-			copy_bf(bfy3rd, bfymin);
+			/* y3rd = ymin; */
+			copy_bf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min());
 		}
 	}
 
-	/* else if (ftemp2*10000 < ftemp && g_xx_3rd != g_xx_min) */
+	/* else if (ftemp2*10000 < ftemp && x3rd != xmin) */
 	if (cmp_bf(mult_bf_int(btmp1, bftemp2, 10000), bftemp) < 0
-		&& cmp_bf(bfx3rd, bfxmin) != 0)
+		&& cmp_bf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min()) != 0)
 	{
-		/* g_yy_3rd = g_yy_max; */
-		copy_bf(bfy3rd, bfymax);
+		/* y3rd = ymax; */
+		copy_bf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_max());
 	}
 
 
@@ -770,34 +734,34 @@ void adjust_corner()
 		}
 	}
 
-	ftemp = fabs(g_xx_3rd-g_xx_min);
-	ftemp2 = fabs(g_xx_max-g_xx_3rd);
+	ftemp = fabs(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min());
+	ftemp2 = fabs(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd());
 	if (ftemp < ftemp2)
 	{
-		if (ftemp*10000 < ftemp2 && g_yy_3rd != g_yy_max)
+		if (ftemp*10000 < ftemp2 && g_escape_time_state_fp.y_3rd() != g_escape_time_state_fp.y_max())
 		{
-			g_xx_3rd = g_xx_min;
+			g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
 		}
 		}
 
-	if (ftemp2*10000 < ftemp && g_yy_3rd != g_yy_min)
+	if (ftemp2*10000 < ftemp && g_escape_time_state_fp.y_3rd() != g_escape_time_state_fp.y_min())
 	{
-		g_xx_3rd = g_xx_max;
+		g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_max();
 	}
 
-	ftemp = fabs(g_yy_3rd-g_yy_min);
-	ftemp2 = fabs(g_yy_max-g_yy_3rd);
+	ftemp = fabs(g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_min());
+	ftemp2 = fabs(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_3rd());
 	if (ftemp < ftemp2)
 	{
-		if (ftemp*10000 < ftemp2 && g_xx_3rd != g_xx_max)
+		if (ftemp*10000 < ftemp2 && g_escape_time_state_fp.x_3rd() != g_escape_time_state_fp.x_max())
 		{
-			g_yy_3rd = g_yy_min;
+			g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
 		}
 		}
 
-	if (ftemp2*10000 < ftemp && g_xx_3rd != g_xx_min)
+	if (ftemp2*10000 < ftemp && g_escape_time_state_fp.x_3rd() != g_escape_time_state_fp.x_min())
 	{
-		g_yy_3rd = g_yy_max;
+		g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_max();
 	}
 
 }
@@ -838,67 +802,67 @@ static void _fastcall adjust_to_limits_bf(double expand)
 	floattobf(blimit, limit);
 	floattobf(bexpand, expand);
 
-	add_bf(bcenterx, bfxmin, bfxmax);
+	add_bf(bcenterx, g_escape_time_state_bf.x_min(), g_escape_time_state_bf.x_max());
 	half_a_bf(bcenterx);
 
-	/* centery = (g_yy_min + g_yy_max)/2; */
-	add_bf(bcentery, bfymin, bfymax);
+	/* centery = (ymin + ymax)/2; */
+	add_bf(bcentery, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
 	half_a_bf(bcentery);
 
-	/* if (g_xx_min == centerx) { */
-	if (cmp_bf(bfxmin, bcenterx) == 0)  /* ohoh, infinitely thin, fix it */
+	/* if (xmin == centerx) { */
+	if (cmp_bf(g_escape_time_state_bf.x_min(), bcenterx) == 0)  /* ohoh, infinitely thin, fix it */
 	{
-		smallest_add_bf(bfxmax);
+		smallest_add_bf(g_escape_time_state_bf.x_max());
 		/* bfxmin -= bfxmax-centerx; */
-		sub_a_bf(bfxmin, sub_bf(btmp1, bfxmax, bcenterx));
+		sub_a_bf(g_escape_time_state_bf.x_min(), sub_bf(btmp1, g_escape_time_state_bf.x_max(), bcenterx));
 		}
 
 	/* if (bfymin == centery) */
-	if (cmp_bf(bfymin, bcentery) == 0)
+	if (cmp_bf(g_escape_time_state_bf.y_min(), bcentery) == 0)
 	{
-		smallest_add_bf(bfymax);
+		smallest_add_bf(g_escape_time_state_bf.y_max());
 		/* bfymin -= bfymax-centery; */
-		sub_a_bf(bfymin, sub_bf(btmp1, bfymax, bcentery));
+		sub_a_bf(g_escape_time_state_bf.y_min(), sub_bf(btmp1, g_escape_time_state_bf.y_max(), bcentery));
 		}
 
 	/* if (bfx3rd == centerx) */
-	if (cmp_bf(bfx3rd, bcenterx) == 0)
+	if (cmp_bf(g_escape_time_state_bf.x_3rd(), bcenterx) == 0)
 	{
-		smallest_add_bf(bfx3rd);
+		smallest_add_bf(g_escape_time_state_bf.x_3rd());
 	}
 
 	/* if (bfy3rd == centery) */
-	if (cmp_bf(bfy3rd, bcentery) == 0)
+	if (cmp_bf(g_escape_time_state_bf.y_3rd(), bcentery) == 0)
 	{
-		smallest_add_bf(bfy3rd);
+		smallest_add_bf(g_escape_time_state_bf.y_3rd());
 	}
 
 	/* setup array for easier manipulation */
-	/* cornerx[0] = g_xx_min; */
-	copy_bf(bcornerx[0], bfxmin);
+	/* cornerx[0] = xmin; */
+	copy_bf(bcornerx[0], g_escape_time_state_bf.x_min());
 
-	/* cornerx[1] = g_xx_max; */
-	copy_bf(bcornerx[1], bfxmax);
+	/* cornerx[1] = xmax; */
+	copy_bf(bcornerx[1], g_escape_time_state_bf.x_max());
 
-	/* cornerx[2] = g_xx_3rd; */
-	copy_bf(bcornerx[2], bfx3rd);
+	/* cornerx[2] = x3rd; */
+	copy_bf(bcornerx[2], g_escape_time_state_bf.x_3rd());
 
-	/* cornerx[3] = g_xx_min + (g_xx_max-g_xx_3rd); */
-	sub_bf(bcornerx[3], bfxmax, bfx3rd);
-	add_a_bf(bcornerx[3], bfxmin);
+	/* cornerx[3] = xmin + (xmax-x3rd); */
+	sub_bf(bcornerx[3], g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_3rd());
+	add_a_bf(bcornerx[3], g_escape_time_state_bf.x_min());
 
-	/* cornery[0] = g_yy_max; */
-	copy_bf(bcornery[0], bfymax);
+	/* cornery[0] = ymax; */
+	copy_bf(bcornery[0], g_escape_time_state_bf.y_max());
 
-	/* cornery[1] = g_yy_min; */
-	copy_bf(bcornery[1], bfymin);
+	/* cornery[1] = ymin; */
+	copy_bf(bcornery[1], g_escape_time_state_bf.y_min());
 
-	/* cornery[2] = g_yy_3rd; */
-	copy_bf(bcornery[2], bfy3rd);
+	/* cornery[2] = y3rd; */
+	copy_bf(bcornery[2], g_escape_time_state_bf.y_3rd());
 
-	/* cornery[3] = g_yy_min + (g_yy_max-g_yy_3rd); */
-	sub_bf(bcornery[3], bfymax, bfy3rd);
-	add_a_bf(bcornery[3], bfymin);
+	/* cornery[3] = ymin + (ymax-y3rd); */
+	sub_bf(bcornery[3], g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
+	add_a_bf(bcornery[3], g_escape_time_state_bf.y_min());
 
 	/* if caller wants image size adjusted, do that first */
 	if (expand != 1.0)
@@ -1032,18 +996,18 @@ static void _fastcall adjust_to_limits_bf(double expand)
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
 
-	/* g_xx_min = cornerx[0] - adjx; */
-	sub_bf(bfxmin, bcornerx[0], badjx);
-	/* g_xx_max = cornerx[1] - adjx; */
-	sub_bf(bfxmax, bcornerx[1], badjx);
-	/* g_xx_3rd = cornerx[2] - adjx; */
-	sub_bf(bfx3rd, bcornerx[2], badjx);
-	/* g_yy_max = cornery[0] - adjy; */
-	sub_bf(bfymax, bcornery[0], badjy);
-	/* g_yy_min = cornery[1] - adjy; */
-	sub_bf(bfymin, bcornery[1], badjy);
-	/* g_yy_3rd = cornery[2] - adjy; */
-	sub_bf(bfy3rd, bcornery[2], badjy);
+	/* xmin = cornerx[0] - adjx; */
+	sub_bf(g_escape_time_state_bf.x_min(), bcornerx[0], badjx);
+	/* xmax = cornerx[1] - adjx; */
+	sub_bf(g_escape_time_state_bf.x_max(), bcornerx[1], badjx);
+	/* x3rd = cornerx[2] - adjx; */
+	sub_bf(g_escape_time_state_bf.x_3rd(), bcornerx[2], badjx);
+	/* ymax = cornery[0] - adjy; */
+	sub_bf(g_escape_time_state_bf.y_max(), bcornery[0], badjy);
+	/* ymin = cornery[1] - adjy; */
+	sub_bf(g_escape_time_state_bf.y_min(), bcornery[1], badjy);
+	/* y3rd = cornery[2] - adjy; */
+	sub_bf(g_escape_time_state_bf.y_3rd(), bcornery[2], badjy);
 
 	adjust_corner_bf(); /* make 3rd corner exact if very near other co-ords */
 	restore_stack(saved);
@@ -1074,41 +1038,41 @@ static void _fastcall adjust_to_limits(double expand)
 		}
 	}
 
-	centerx = (g_xx_min + g_xx_max)/2;
-	centery = (g_yy_min + g_yy_max)/2;
+	centerx = (g_escape_time_state_fp.x_min() + g_escape_time_state_fp.x_max())/2;
+	centery = (g_escape_time_state_fp.y_min() + g_escape_time_state_fp.y_max())/2;
 
-	if (g_xx_min == centerx)  /* ohoh, infinitely thin, fix it */
+	if (g_escape_time_state_fp.x_min() == centerx)  /* ohoh, infinitely thin, fix it */
 	{
-		smallest_add(&g_xx_max);
-		g_xx_min -= g_xx_max-centerx;
+		smallest_add(&g_escape_time_state_fp.x_max());
+		g_escape_time_state_fp.x_min() -= g_escape_time_state_fp.x_max()-centerx;
 	}
 
-	if (g_yy_min == centery)
+	if (g_escape_time_state_fp.y_min() == centery)
 	{
-		smallest_add(&g_yy_max);
-		g_yy_min -= g_yy_max-centery;
+		smallest_add(&g_escape_time_state_fp.y_max());
+		g_escape_time_state_fp.y_min() -= g_escape_time_state_fp.y_max()-centery;
 	}
 
-	if (g_xx_3rd == centerx)
+	if (g_escape_time_state_fp.x_3rd() == centerx)
 	{
-		smallest_add(&g_xx_3rd);
+		smallest_add(&g_escape_time_state_fp.x_3rd());
 	}
 
-	if (g_yy_3rd == centery)
+	if (g_escape_time_state_fp.y_3rd() == centery)
 	{
-		smallest_add(&g_yy_3rd);
+		smallest_add(&g_escape_time_state_fp.y_3rd());
 	}
 
 	/* setup array for easier manipulation */
-	cornerx[0] = g_xx_min;
-	cornerx[1] = g_xx_max;
-	cornerx[2] = g_xx_3rd;
-	cornerx[3] = g_xx_min + (g_xx_max-g_xx_3rd);
+	cornerx[0] = g_escape_time_state_fp.x_min();
+	cornerx[1] = g_escape_time_state_fp.x_max();
+	cornerx[2] = g_escape_time_state_fp.x_3rd();
+	cornerx[3] = g_escape_time_state_fp.x_min() + (g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd());
 
-	cornery[0] = g_yy_max;
-	cornery[1] = g_yy_min;
-	cornery[2] = g_yy_3rd;
-	cornery[3] = g_yy_min + (g_yy_max-g_yy_3rd);
+	cornery[0] = g_escape_time_state_fp.y_max();
+	cornery[1] = g_escape_time_state_fp.y_min();
+	cornery[2] = g_escape_time_state_fp.y_3rd();
+	cornery[3] = g_escape_time_state_fp.y_min() + (g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_3rd());
 
 	/* if caller wants image size adjusted, do that first */
 	if (expand != 1.0)
@@ -1204,12 +1168,12 @@ static void _fastcall adjust_to_limits(double expand)
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
-	g_xx_min = cornerx[0] - adjx;
-	g_xx_max = cornerx[1] - adjx;
-	g_xx_3rd = cornerx[2] - adjx;
-	g_yy_max = cornery[0] - adjy;
-	g_yy_min = cornery[1] - adjy;
-	g_yy_3rd = cornery[2] - adjy;
+	g_escape_time_state_fp.x_min() = cornerx[0] - adjx;
+	g_escape_time_state_fp.x_max() = cornerx[1] - adjx;
+	g_escape_time_state_fp.x_3rd() = cornerx[2] - adjx;
+	g_escape_time_state_fp.y_max() = cornery[0] - adjy;
+	g_escape_time_state_fp.y_min() = cornery[1] - adjy;
+	g_escape_time_state_fp.y_3rd() = cornery[2] - adjy;
 
 	adjust_corner(); /* make 3rd corner exact if very near other co-ords */
 }
@@ -1433,23 +1397,23 @@ void end_resume()
 
 /* Showing orbit requires converting real co-ords to screen co-ords.
 	Define:
-		Xs == g_xx_max-g_xx_3rd               Ys == g_yy_3rd-g_yy_max
+		Xs == xmax-x3rd               Ys == y3rd-ymax
 		W  == g_x_dots-1                   D  == g_y_dots-1
 	We know that:
-		realx == g_x0_l[col] + g_x1_l[row]
-		realy == g_y0_l[row] + g_y1_l[col]
-		g_x0_l[col] == (col/width)*Xs + g_xx_min
-		g_x1_l[row] == row*g_delta_x_fp
-		g_y0_l[row] == (row/D)*Ys + g_yy_max
-		g_y1_l[col] == col*(-g_delta_y_fp)
+		realx == lx0(col) + lx1(row)
+		realy == ly0(row) + ly1(col)
+		lx0(col) == (col/width)*Xs + xmin
+		lx1(row) == row*g_delta_x_fp
+		ly0(row) == (row/D)*Ys + ymax
+		ly1(col) == col*(-g_delta_y_fp)
 	so:
-		realx == (col/W)*Xs + g_xx_min + row*g_delta_x_fp
-		realy == (row/D)*Ys + g_yy_max + col*(-g_delta_y_fp)
+		realx == (col/W)*Xs + xmin + row*g_delta_x_fp
+		realy == (row/D)*Ys + ymax + col*(-g_delta_y_fp)
 	and therefore:
-		row == (realx-g_xx_min - (col/W)*Xs) / Xv    (1)
-		col == (realy-g_yy_max - (row/D)*Ys) / Yv    (2)
+		row == (realx-xmin - (col/W)*Xs) / Xv    (1)
+		col == (realy-ymax - (row/D)*Ys) / Yv    (2)
 	substitute (2) into (1) and solve for row:
-		row == ((realx-g_xx_min)*(-g_delta_y2_fp)*W*D - (realy-g_yy_max)*Xs*D)
+		row == ((realx-xmin)*(-g_delta_y2_fp)*W*D - (realy-ymax)*Xs*D)
 						/ ((-g_delta_y2_fp)*W*g_delta_x2_fp*D-Ys*Xs)
 */
 
@@ -1605,72 +1569,6 @@ void reset_clock()
 #define LOG2  0.693147180f
 #define LOG32 3.465735902f
 
-static FILE *snd_fp = NULL;
-
-/* open sound file */
-static int sound_open()
-{
-	static char soundname[] = {"sound001.txt"};
-	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && snd_fp == NULL)
-	{
-		snd_fp = fopen(soundname, "w");
-		if (snd_fp == NULL)
-		{
-			stop_message(0, "Can't open SOUND*.TXT");
-		}
-		else
-		{
-			update_save_name(soundname);
-		}
-	}
-	return snd_fp != NULL;
-}
-
-/*
-	This routine plays a tone in the speaker and optionally writes a file
-	if the g_orbit_save variable is turned on
-*/
-void sound_tone(int tone)
-{
-	if ((g_orbit_save & ORBITSAVE_SOUND) != 0)
-	{
-		if (sound_open())
-		{
-			fprintf(snd_fp, "%-d\n", tone);
-		}
-	}
-	s_tab_or_help = 0;
-	if (!driver_key_pressed())  /* driver_key_pressed calls driver_sound_off() if TAB or F1 pressed */
-	{
-		/* must not then call soundoff(), else indexes out of synch */
-		if (driver_sound_on(tone))
-		{
-			wait_until(0, g_orbit_delay);
-			if (!s_tab_or_help) /* kludge because wait_until() calls driver_key_pressed */
-			{
-				driver_sound_off();
-			}
-		}
-	}
-}
-
-void sound_write_time()
-{
-	if (sound_open())
-	{
-		fprintf(snd_fp, "time=%-ld\n", (long)clock()*1000/CLK_TCK);
-	}
-}
-
-void sound_close()
-{
-	if (snd_fp)
-	{
-		fclose(snd_fp);
-	}
-	snd_fp = NULL;
-}
-
 static void _fastcall plot_orbit_d(double dx, double dy, int color)
 {
 	int i, j, c;
@@ -1710,13 +1608,13 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	g_sy_offset = save_syoffs;
 	if (DEBUGFLAG_OLD_ORBIT_SOUND == g_debug_flag)
 	{
-		if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
+		if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 		{
-			sound_tone((int)(i*1000/g_x_dots + g_base_hertz));
+			g_sound_state.tone((int)(i*1000/g_x_dots + g_sound_state.m_base_hertz));
 		}
-		else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
+		else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
 		{
-			sound_tone((int)(j*1000/g_y_dots + g_base_hertz));
+			g_sound_state.tone((int)(j*1000/g_y_dots + g_sound_state.m_base_hertz));
 		}
 		else if (g_orbit_delay > 0)
 		{
@@ -1725,17 +1623,17 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	}
 	else
 	{
-		if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
+		if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 		{
-			sound_tone((int)(i + g_base_hertz));
+			g_sound_state.tone((int)(i + g_sound_state.m_base_hertz));
 		}
-		else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
+		else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
 		{
-			sound_tone((int)(j + g_base_hertz));
+			g_sound_state.tone((int)(j + g_sound_state.m_base_hertz));
 		}
-		else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
+		else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
 		{
-			sound_tone((int)(i + j + g_base_hertz));
+			g_sound_state.tone((int)(i + j + g_sound_state.m_base_hertz));
 		}
 		else if (g_orbit_delay > 0)
 		{
@@ -1748,12 +1646,12 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 
 void plot_orbit_i(long ix, long iy, int color)
 {
-	plot_orbit_d((double)ix/g_fudge-g_xx_min, (double)iy/g_fudge-g_yy_max, color);
+	plot_orbit_d((double)ix/g_fudge-g_escape_time_state_fp.x_min(), (double)iy/g_fudge-g_escape_time_state_fp.y_max(), color);
 }
 
 void plot_orbit(double real, double imag, int color)
 {
-	plot_orbit_d(real-g_xx_min, imag-g_yy_max, color);
+	plot_orbit_d(real-g_escape_time_state_fp.x_min(), imag-g_escape_time_state_fp.y_max(), color);
 }
 
 void orbit_scrub()

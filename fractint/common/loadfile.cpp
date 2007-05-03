@@ -14,6 +14,7 @@
 #include "targa_lc.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "EscapeTime.h"
 
 #define BLOCKTYPE_MAIN_INFO		1
 #define BLOCKTYPE_RESUME_INFO	2
@@ -89,10 +90,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_fractal_type = 0;
 	}
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-	g_xx_min        = read_info.x_min;
-	g_xx_max        = read_info.x_max;
-	g_yy_min        = read_info.y_min;
-	g_yy_max        = read_info.y_max;
+	g_escape_time_state_fp.x_min()        = read_info.x_min;
+	g_escape_time_state_fp.x_max()        = read_info.x_max;
+	g_escape_time_state_fp.y_min()        = read_info.y_min;
+	g_escape_time_state_fp.y_max()        = read_info.y_max;
 	g_parameters[0]     = read_info.c_real;
 	g_parameters[1]     = read_info.c_imag;
 	g_save_release = 1100; /* unless we find out better later on */
@@ -163,15 +164,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
-	g_xx_3rd = g_xx_min;
-	g_yy_3rd = g_yy_min;
+	g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
+	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
 	g_user_distance_test = 0;
 	g_calculation_time = 0;
 	if (read_info.version > 3)
 	{
 		g_save_release = 1400;
-		g_xx_3rd       = read_info.x_3rd;
-		g_yy_3rd       = read_info.y_3rd;
+		g_escape_time_state_fp.x_3rd()       = read_info.x_3rd;
+		g_escape_time_state_fp.y_3rd()       = read_info.y_3rd;
 		g_calculation_status = read_info.calculation_status;
 		g_user_standard_calculation_mode = read_info.stdcalcmode;
 		g_three_pass = 0;
@@ -513,9 +514,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (mp_info.got_data == 1)
 	{
-		g_bf_math = 1;
+		g_bf_math = BIGNUM;
 		init_bf_length(read_info.bflength);
-		memcpy((char *) bfxmin, mp_info.apm_data, mp_info.length);
+		memcpy((char *) g_escape_time_state_bf.x_min(), mp_info.apm_data, mp_info.length);
 		free(mp_info.apm_data);
 	}
 	else
@@ -1321,7 +1322,7 @@ static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, struct dblcoords *);
 
 char g_browse_name[FILE_MAX_FNAME]; /* name for browse file */
-struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
+static struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
 static int *boxx_storage = NULL;
 static int *boxy_storage = NULL;
 static int *boxvalues_storage = NULL;
@@ -1598,7 +1599,7 @@ rescan:  /* entry for changed browse parms */
 				driver_wait_key_pressed(0);
 				clear_temp_message();
 				c = driver_get_key();
-				if (c == 'Y' && g_double_caution)
+				if (c == 'Y' && g_ui_state.double_caution)
 				{
 					text_temp_message("ARE YOU SURE???? (Y/N)");
 					if (driver_get_key() != 'Y')
@@ -2158,72 +2159,72 @@ static void bfsetup_convert_to_screen()
 	bt_tmp1 = alloc_stack(rbflength + 2);
 	bt_tmp2 = alloc_stack(rbflength + 2);
 
-	/* g_xx_3rd-g_xx_min */
-	sub_bf(bt_inter1, bfx3rd, bfxmin);
-	/* g_yy_min-g_yy_max */
-	sub_bf(bt_inter2, bfymin, bfymax);
-	/* (g_xx_3rd-g_xx_min)*(g_yy_min-g_yy_max) */
+	/* x3rd-xmin */
+	sub_bf(bt_inter1, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
+	/* ymin-ymax */
+	sub_bf(bt_inter2, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
+	/* (x3rd-xmin)*(ymin-ymax) */
 	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
-	/* g_yy_max-g_yy_3rd */
-	sub_bf(bt_inter1, bfymax, bfy3rd);
-	/* g_xx_max-g_xx_min */
-	sub_bf(bt_inter2, bfxmax, bfxmin);
-	/* (g_yy_max-g_yy_3rd)*(g_xx_max-g_xx_min) */
+	/* ymax-y3rd */
+	sub_bf(bt_inter1, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
+	/* xmax-xmin */
+	sub_bf(bt_inter2, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+	/* (ymax-y3rd)*(xmax-xmin) */
 	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
-	/* det = (g_xx_3rd-g_xx_min)*(g_yy_min-g_yy_max) + (g_yy_max-g_yy_3rd)*(g_xx_max-g_xx_min) */
+	/* det = (x3rd-xmin)*(ymin-ymax) + (ymax-y3rd)*(xmax-xmin) */
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
 
 	/* xd = g_dx_size/det */
 	floattobf(bt_tmp1, g_dx_size);
 	div_bf(bt_xd, bt_tmp1, bt_det);
 
-	/* a =  xd*(g_yy_max-g_yy_3rd) */
-	sub_bf(bt_inter1, bfymax, bfy3rd);
+	/* a =  xd*(ymax-y3rd) */
+	sub_bf(bt_inter1, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
 	mult_bf(bt_a, bt_xd, bt_inter1);
 
-	/* b =  xd*(g_xx_3rd-g_xx_min) */
-	sub_bf(bt_inter1, bfx3rd, bfxmin);
+	/* b =  xd*(x3rd-xmin) */
+	sub_bf(bt_inter1, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
 	mult_bf(bt_b, bt_xd, bt_inter1);
 
-	/* e = -(a*g_xx_min + b*g_yy_max) */
-	mult_bf(bt_tmp1, bt_a, bfxmin);
-	mult_bf(bt_tmp2, bt_b, bfymax);
+	/* e = -(a*xmin + b*ymax) */
+	mult_bf(bt_tmp1, bt_a, g_escape_time_state_bf.x_min());
+	mult_bf(bt_tmp2, bt_b, g_escape_time_state_bf.y_max());
 	neg_a_bf(add_bf(bt_e, bt_tmp1, bt_tmp2));
 
-	/* g_xx_3rd-g_xx_max */
-	sub_bf(bt_inter1, bfx3rd, bfxmax);
-	/* g_yy_min-g_yy_max */
-	sub_bf(bt_inter2, bfymin, bfymax);
-	/* (g_xx_3rd-g_xx_max)*(g_yy_min-g_yy_max) */
+	/* x3rd-xmax */
+	sub_bf(bt_inter1, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_max());
+	/* ymin-ymax */
+	sub_bf(bt_inter2, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
+	/* (x3rd-xmax)*(ymin-ymax) */
 	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
-	/* g_yy_min-g_yy_3rd */
-	sub_bf(bt_inter1, bfymin, bfy3rd);
-	/* g_xx_max-g_xx_min */
-	sub_bf(bt_inter2, bfxmax, bfxmin);
-	/* (g_yy_min-g_yy_3rd)*(g_xx_max-g_xx_min) */
+	/* ymin-y3rd */
+	sub_bf(bt_inter1, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_3rd());
+	/* xmax-xmin */
+	sub_bf(bt_inter2, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+	/* (ymin-y3rd)*(xmax-xmin) */
 	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
-	/* det = (g_xx_3rd-g_xx_max)*(g_yy_min-g_yy_max) + (g_yy_min-g_yy_3rd)*(g_xx_max-g_xx_min) */
+	/* det = (x3rd-xmax)*(ymin-ymax) + (ymin-y3rd)*(xmax-xmin) */
 	add_bf(bt_det, bt_tmp1, bt_tmp2);
 
 	/* yd = g_dy_size/det */
 	floattobf(bt_tmp2, g_dy_size);
 	div_bf(bt_yd, bt_tmp2, bt_det);
 
-	/* c =  yd*(g_yy_min-g_yy_3rd) */
-	sub_bf(bt_inter1, bfymin, bfy3rd);
+	/* c =  yd*(ymin-y3rd) */
+	sub_bf(bt_inter1, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_3rd());
 	mult_bf(bt_c, bt_yd, bt_inter1);
 
-	/* d =  yd*(g_xx_3rd-g_xx_max) */
-	sub_bf(bt_inter1, bfx3rd, bfxmax);
+	/* d =  yd*(x3rd-xmax) */
+	sub_bf(bt_inter1, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_max());
 	mult_bf(bt_d, bt_yd, bt_inter1);
 
-	/* f = -(c*g_xx_min + d*g_yy_max) */
-	mult_bf(bt_tmp1, bt_c, bfxmin);
-	mult_bf(bt_tmp2, bt_d, bfymax);
+	/* f = -(c*xmin + d*ymax) */
+	mult_bf(bt_tmp1, bt_c, g_escape_time_state_bf.x_min());
+	mult_bf(bt_tmp2, bt_d, g_escape_time_state_bf.y_max());
 	neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
 
 	restore_stack(saved);

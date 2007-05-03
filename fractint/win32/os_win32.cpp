@@ -12,11 +12,11 @@
 #include <dbghelp.h>
 
 #include "port.h"
+#include "prototyp.h"
 #include "cmplx.h"
 #include "fractint.h"
 #include "drivers.h"
 #include "externs.h"
-#include "prototyp.h"
 #include "helpdefs.h"
 #include "frame.h"
 #include "mpmath.h"
@@ -124,15 +124,8 @@ int g_dac_count = 0;
 int g_disk_flag = 0;
 int g_disk_targa = FALSE;
 int DivideOverflow = 0;
-int g_fm_attack = 0;
-int g_fm_decay = 0;
-int g_fm_release = 0;
-int g_fm_sustain = 0;
-int g_fm_volume = 0;
-int g_fm_wave_type = 0;
 int g_good_mode = 0;
 int g_got_real_dac = 0;
-int g_note_attenuation = ATTENUATE_NONE;
 int g_is_true_color = 0;
 long g_initial_x_l = 0;
 long g_initial_y_l = 0;
@@ -508,23 +501,6 @@ void spindac(int dir, int inc)
 	}
 	driver_write_palette();
 	driver_delay(g_colors - g_dac_count - 1);
-}
-
-/*
-; adapter_detect:
-;       This routine performs a few quick checks on the type of
-;       video adapter installed.
-;       and fills in a few bank-switching routines.
-*/
-void adapter_detect()
-{
-	static int done_detect = 0;
-
-	if (done_detect)
-	{
-		return;
-	}
-	done_detect = 1;
 }
 
 /*

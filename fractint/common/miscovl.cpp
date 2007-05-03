@@ -27,6 +27,8 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "EscapeTime.h"
+#include "SoundState.h"
 
 /* routines in this module      */
 
@@ -424,20 +426,20 @@ skip_UI:
 /***** start here*/
 		if (xm > 1 || ym > 1)
 		{
-			have3rd = (g_xx_min != g_xx_3rd || g_yy_min != g_yy_3rd) ? 1 : 0;
+			have3rd = (g_escape_time_state_fp.x_min() != g_escape_time_state_fp.x_3rd() || g_escape_time_state_fp.y_min() != g_escape_time_state_fp.y_3rd()) ? 1 : 0;
 			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
 			if (fpbat == NULL)
 			{
 				xm = ym = 0;
 			}
-			pdelx  = (g_xx_max - g_xx_3rd) / (xm*pxdots - 1);   /* calculate stepsizes */
-			pdely  = (g_yy_max - g_yy_3rd) / (ym*pydots - 1);
-			pdelx2 = (g_xx_3rd - g_xx_min) / (ym*pydots - 1);
-			pdely2 = (g_yy_3rd - g_yy_min) / (xm*pxdots - 1);
+			pdelx  = (g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd()) / (xm*pxdots - 1);   /* calculate stepsizes */
+			pdely  = (g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_3rd()) / (ym*pydots - 1);
+			pdelx2 = (g_escape_time_state_fp.x_3rd() - g_escape_time_state_fp.x_min()) / (ym*pydots - 1);
+			pdely2 = (g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_min()) / (xm*pxdots - 1);
 
 			/* save corners */
-			pxxmin = g_xx_min;
-			pyymax = g_yy_max;
+			pxxmin = g_escape_time_state_fp.x_min();
+			pyymax = g_escape_time_state_fp.y_max();
 		}
 		for (i = 0; i < (int)xm; i++)  /* columns */
 		{
@@ -466,19 +468,19 @@ skip_UI:
 						strcat(PCommandName, buf);
 					}
 					fprintf(parmfile, "%-19s{", PCommandName);
-					g_xx_min = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
-					g_xx_max = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
-					g_yy_min = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
-					g_yy_max = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
+					g_escape_time_state_fp.x_min() = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
+					g_escape_time_state_fp.x_max() = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
+					g_escape_time_state_fp.y_min() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
+					g_escape_time_state_fp.y_max() = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
 					if (have3rd)
 					{
-						g_xx_3rd = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
-						g_yy_3rd = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
+						g_escape_time_state_fp.x_3rd() = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
+						g_escape_time_state_fp.y_3rd() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
 					}
 					else
 					{
-						g_xx_3rd = g_xx_min;
-						g_yy_3rd = g_yy_min;
+						g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
+						g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
 					}
 					fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
 					fprintf(fpbat, "If Errorlevel 2 goto oops\n");
@@ -761,29 +763,29 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				int digits;
 				digits = get_precision_bf(MAXREZ);
-				put_bf(0, bfxmin, digits);
-				put_bf(1, bfxmax, digits);
-				put_bf(1, bfymin, digits);
-				put_bf(1, bfymax, digits);
-				if (cmp_bf(bfx3rd, bfxmin) || cmp_bf(bfy3rd, bfymin))
+				put_bf(0, g_escape_time_state_bf.x_min(), digits);
+				put_bf(1, g_escape_time_state_bf.x_max(), digits);
+				put_bf(1, g_escape_time_state_bf.y_min(), digits);
+				put_bf(1, g_escape_time_state_bf.y_max(), digits);
+				if (cmp_bf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min()) || cmp_bf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min()))
 				{
-					put_bf(1, bfx3rd, digits);
-					put_bf(1, bfy3rd, digits);
+					put_bf(1, g_escape_time_state_bf.x_3rd(), digits);
+					put_bf(1, g_escape_time_state_bf.y_3rd(), digits);
 				}
 			}
 			else
 			{
 				int xdigits, ydigits;
-				xdigits = getprec(g_xx_min, g_xx_max, g_xx_3rd);
-				ydigits = getprec(g_yy_min, g_yy_max, g_yy_3rd);
-				put_float(0, g_xx_min, xdigits);
-				put_float(1, g_xx_max, xdigits);
-				put_float(1, g_yy_min, ydigits);
-				put_float(1, g_yy_max, ydigits);
-				if (g_xx_3rd != g_xx_min || g_yy_3rd != g_yy_min)
+				xdigits = getprec(g_escape_time_state_fp.x_min(), g_escape_time_state_fp.x_max(), g_escape_time_state_fp.x_3rd());
+				ydigits = getprec(g_escape_time_state_fp.y_min(), g_escape_time_state_fp.y_max(), g_escape_time_state_fp.y_3rd());
+				put_float(0, g_escape_time_state_fp.x_min(), xdigits);
+				put_float(1, g_escape_time_state_fp.x_max(), xdigits);
+				put_float(1, g_escape_time_state_fp.y_min(), ydigits);
+				put_float(1, g_escape_time_state_fp.y_max(), ydigits);
+				if (g_escape_time_state_fp.x_3rd() != g_escape_time_state_fp.x_min() || g_escape_time_state_fp.y_3rd() != g_escape_time_state_fp.y_min())
 				{
-					put_float(1, g_xx_3rd, xdigits);
-					put_float(1, g_yy_3rd, ydigits);
+					put_float(1, g_escape_time_state_fp.x_3rd(), xdigits);
+					put_float(1, g_escape_time_state_fp.y_3rd(), ydigits);
 				}
 			}
 		}
@@ -1237,49 +1239,49 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			put_parm(" cyclerange=%d/%d", g_rotate_lo, g_rotate_hi);
 		}
 
-		if (g_base_hertz != 440)
+		if (g_sound_state.m_base_hertz != 440)
 		{
-			put_parm(" hertz=%d", g_base_hertz);
+			put_parm(" hertz=%d", g_sound_state.m_base_hertz);
 		}
 
-		if (g_sound_flags != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
+		if (g_sound_state.m_flags != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
 		{
-			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
+			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
 			{
 				put_parm(" sound=off");
 			}
-			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
+			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
 			{
 				put_parm(" sound=beep");
 			}
-			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
 			{
 				put_parm(" sound=x");
 			}
-			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
 			{
 				put_parm(" sound=y");
 			}
-			else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
 			{
 				put_parm(" sound=z");
 			}
 #ifndef XFRACT
-			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) && (g_sound_flags & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
+			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) && (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
 			{
-				if (g_sound_flags & SOUNDFLAG_SPEAKER)
+				if (g_sound_state.m_flags & SOUNDFLAG_SPEAKER)
 				{
 					put_parm("/pc");
 				}
-				if (g_sound_flags & SOUNDFLAG_OPL3_FM)
+				if (g_sound_state.m_flags & SOUNDFLAG_OPL3_FM)
 				{
 					put_parm("/fm");
 				}
-				if (g_sound_flags & SOUNDFLAG_MIDI)
+				if (g_sound_state.m_flags & SOUNDFLAG_MIDI)
 				{
 					put_parm("/midi");
 				}
-				if (g_sound_flags & SOUNDFLAG_QUANTIZED)
+				if (g_sound_state.m_flags & SOUNDFLAG_QUANTIZED)
 				{
 					put_parm("/quant");
 				}
@@ -1288,12 +1290,12 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		}
 
 #ifndef XFRACT
-		if (g_fm_volume != 63)
+		if (g_sound_state.m_fm_volume != 63)
 		{
-			put_parm(" volume=%d", g_fm_volume);
+			put_parm(" volume=%d", g_sound_state.m_fm_volume);
 		}
 
-		switch (g_note_attenuation)
+		switch (g_sound_state.m_note_attenuation)
 		{
 		case ATTENUATE_LOW:
 			put_parm(" attenuate=low");
@@ -1306,50 +1308,50 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			break;
 		}
 
-		if (g_polyphony != 0)
+		if (g_sound_state.m_polyphony != 0)
 		{
-			put_parm(" polyphony=%d", g_polyphony + 1);
+			put_parm(" polyphony=%d", g_sound_state.m_polyphony + 1);
 		}
 
-		if (g_fm_wave_type != 0)
+		if (g_sound_state.m_fm_wave_type != 0)
 		{
-			put_parm(" wavetype=%d", g_fm_wave_type);
+			put_parm(" wavetype=%d", g_sound_state.m_fm_wave_type);
 		}
 
-		if (g_fm_attack != 5)
+		if (g_sound_state.m_fm_attack != 5)
 		{
-			put_parm(" attack=%d", g_fm_attack);
+			put_parm(" attack=%d", g_sound_state.m_fm_attack);
 		}
 
-		if (g_fm_decay != 10)
+		if (g_sound_state.m_fm_decay != 10)
 		{
-			put_parm(" decay=%d", g_fm_decay);
+			put_parm(" decay=%d", g_sound_state.m_fm_decay);
 		}
 
-		if (g_fm_sustain != 13)
+		if (g_sound_state.m_fm_sustain != 13)
 		{
-			put_parm(" sustain=%d", g_fm_sustain);
+			put_parm(" sustain=%d", g_sound_state.m_fm_sustain);
 		}
 
-		if (g_fm_release != 5)
+		if (g_sound_state.m_fm_release != 5)
 		{
-			put_parm(" srelease=%d", g_fm_release);
+			put_parm(" srelease=%d", g_sound_state.m_fm_release);
 		}
 
-		if (g_sound_flags & SOUNDFLAG_QUANTIZED)  /* quantize turned on */
+		if (g_sound_state.m_flags & SOUNDFLAG_QUANTIZED)  /* quantize turned on */
 		{
 			for (i = 0; i <= 11; i++)
 			{
-				if (g_scale_map[i] != i + 1)
+				if (g_sound_state.m_scale_map[i] != i + 1)
 				{
 					i = 15;
 				}
 			}
 			if (i > 12)
 			{
-				put_parm(" scalemap=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", g_scale_map[0], g_scale_map[1], g_scale_map[2], g_scale_map[3]
-					, g_scale_map[4], g_scale_map[5], g_scale_map[6], g_scale_map[7], g_scale_map[8]
-					, g_scale_map[9], g_scale_map[10], g_scale_map[11]);
+				put_parm(" scalemap=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", g_sound_state.m_scale_map[0], g_sound_state.m_scale_map[1], g_sound_state.m_scale_map[2], g_sound_state.m_scale_map[3]
+					, g_sound_state.m_scale_map[4], g_sound_state.m_scale_map[5], g_sound_state.m_scale_map[6], g_sound_state.m_scale_map[7], g_sound_state.m_scale_map[8]
+					, g_sound_state.m_scale_map[9], g_sound_state.m_scale_map[10], g_sound_state.m_scale_map[11]);
 			}
 		}
 #endif
@@ -1744,11 +1746,11 @@ int get_precision_bf(int rezflag)
 	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
 
 	/* bfxxdel = (bfxmax - bfx3rd)/(g_x_dots-1) */
-	sub_bf(bfxxdel, bfxmax, bfx3rd);
+	sub_bf(bfxxdel, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_3rd());
 	div_a_bf_int(bfxxdel, (U16)rez);
 
 	/* bfyydel2 = (bfy3rd - bfymin)/(g_x_dots-1) */
-	sub_bf(bfyydel2, bfy3rd, bfymin);
+	sub_bf(bfyydel2, g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min());
 	div_a_bf_int(bfyydel2, (U16)rez);
 
 	if (rezflag == CURRENTREZ)
@@ -1757,11 +1759,11 @@ int get_precision_bf(int rezflag)
 	}
 
 	/* bfyydel = (bfymax - bfy3rd)/(g_y_dots-1) */
-	sub_bf(bfyydel, bfymax, bfy3rd);
+	sub_bf(bfyydel, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
 	div_a_bf_int(bfyydel, (U16)rez);
 
 	/* bfxxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1) */
-	sub_bf(bfxxdel2, bfx3rd, bfxmin);
+	sub_bf(bfxxdel2, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
 	div_a_bf_int(bfxxdel2, (U16)rez);
 
 	abs_a_bf(add_bf(del1, bfxxdel, bfxxdel2));
@@ -1802,16 +1804,16 @@ int get_precision_dbl(int rezflag)
 
 	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS -1) : (g_x_dots-1);
 
-	xdel =  ((LDBL)g_xx_max - (LDBL)g_xx_3rd)/rez;
-	ydel2 = ((LDBL)g_yy_3rd - (LDBL)g_yy_min)/rez;
+	xdel =  ((LDBL)g_escape_time_state_fp.x_max() - (LDBL)g_escape_time_state_fp.x_3rd())/rez;
+	ydel2 = ((LDBL)g_escape_time_state_fp.y_3rd() - (LDBL)g_escape_time_state_fp.y_min())/rez;
 
 	if (rezflag == CURRENTREZ)
 	{
 		rez = g_y_dots-1;
 	}
 
-	ydel = ((LDBL)g_yy_max - (LDBL)g_yy_3rd)/rez;
-	xdel2 = ((LDBL)g_xx_3rd - (LDBL)g_xx_min)/rez;
+	ydel = ((LDBL)g_escape_time_state_fp.y_max() - (LDBL)g_escape_time_state_fp.y_3rd())/rez;
+	xdel2 = ((LDBL)g_escape_time_state_fp.x_3rd() - (LDBL)g_escape_time_state_fp.x_min())/rez;
 
 	del1 = fabsl(xdel) + fabsl(xdel2);
 	del2 = fabsl(ydel) + fabsl(ydel2);
@@ -2689,22 +2691,22 @@ void flip_image(int key)
 				g_put_color(g_x_dots-1-i, j, tempdot);
 			}
 		}
-		g_sx_min = g_xx_max + g_xx_min - g_xx_3rd;
-		g_sy_max = g_yy_max + g_yy_min - g_yy_3rd;
-		g_sx_max = g_xx_3rd;
-		g_sy_min = g_yy_3rd;
-		g_sx_3rd = g_xx_max;
-		g_sy_3rd = g_yy_min;
+		g_sx_min = g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_3rd();
+		g_sy_max = g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min() - g_escape_time_state_fp.y_3rd();
+		g_sx_max = g_escape_time_state_fp.x_3rd();
+		g_sy_min = g_escape_time_state_fp.y_3rd();
+		g_sx_3rd = g_escape_time_state_fp.x_max();
+		g_sy_3rd = g_escape_time_state_fp.y_min();
 		if (g_bf_math)
 		{
-			add_bf(bfsxmin, bfxmax, bfxmin); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsxmin, bfx3rd);
-			add_bf(bfsymax, bfymax, bfymin); /* g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsymax, bfy3rd);
-			copy_bf(bfsxmax, bfx3rd);        /* g_sx_max = g_xx_3rd; */
-			copy_bf(bfsymin, bfy3rd);        /* g_sy_min = g_yy_3rd; */
-			copy_bf(bfsx3rd, bfxmax);        /* g_sx_3rd = g_xx_max; */
-			copy_bf(bfsy3rd, bfymin);        /* g_sy_3rd = g_yy_min; */
+			add_bf(bfsxmin, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min()); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
+			sub_a_bf(bfsxmin, g_escape_time_state_bf.x_3rd());
+			add_bf(bfsymax, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min()); /* g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; */
+			sub_a_bf(bfsymax, g_escape_time_state_bf.y_3rd());
+			copy_bf(bfsxmax, g_escape_time_state_bf.x_3rd());        /* g_sx_max = g_xx_3rd; */
+			copy_bf(bfsymin, g_escape_time_state_bf.y_3rd());        /* g_sy_min = g_yy_3rd; */
+			copy_bf(bfsx3rd, g_escape_time_state_bf.x_max());        /* g_sx_3rd = g_xx_max; */
+			copy_bf(bfsy3rd, g_escape_time_state_bf.y_min());        /* g_sy_3rd = g_yy_min; */
 		}
 		break;
 	case FIK_CTL_Y:            /* control-Y - reverse Y-aXis */
@@ -2721,22 +2723,22 @@ void flip_image(int key)
 				g_put_color(i, g_y_dots-1-j, tempdot);
 			}
 		}
-		g_sx_min = g_xx_3rd;
-		g_sy_max = g_yy_3rd;
-		g_sx_max = g_xx_max + g_xx_min - g_xx_3rd;
-		g_sy_min = g_yy_max + g_yy_min - g_yy_3rd;
-		g_sx_3rd = g_xx_min;
-		g_sy_3rd = g_yy_max;
+		g_sx_min = g_escape_time_state_fp.x_3rd();
+		g_sy_max = g_escape_time_state_fp.y_3rd();
+		g_sx_max = g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_3rd();
+		g_sy_min = g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min() - g_escape_time_state_fp.y_3rd();
+		g_sx_3rd = g_escape_time_state_fp.x_min();
+		g_sy_3rd = g_escape_time_state_fp.y_max();
 		if (g_bf_math)
 		{
-			copy_bf(bfsxmin, bfx3rd);        /* g_sx_min = g_xx_3rd; */
-			copy_bf(bfsymax, bfy3rd);        /* g_sy_max = g_yy_3rd; */
-			add_bf(bfsxmax, bfxmax, bfxmin); /* g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsxmax, bfx3rd);
-			add_bf(bfsymin, bfymax, bfymin); /* g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsymin, bfy3rd);
-			copy_bf(bfsx3rd, bfxmin);        /* g_sx_3rd = g_xx_min; */
-			copy_bf(bfsy3rd, bfymax);        /* g_sy_3rd = g_yy_max; */
+			copy_bf(bfsxmin, g_escape_time_state_bf.x_3rd());        /* g_sx_min = g_xx_3rd; */
+			copy_bf(bfsymax, g_escape_time_state_bf.y_3rd());        /* g_sy_max = g_yy_3rd; */
+			add_bf(bfsxmax, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min()); /* g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; */
+			sub_a_bf(bfsxmax, g_escape_time_state_bf.x_3rd());
+			add_bf(bfsymin, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min()); /* g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; */
+			sub_a_bf(bfsymin, g_escape_time_state_bf.y_3rd());
+			copy_bf(bfsx3rd, g_escape_time_state_bf.x_min());        /* g_sx_3rd = g_xx_min; */
+			copy_bf(bfsy3rd, g_escape_time_state_bf.y_max());        /* g_sy_3rd = g_yy_max; */
 		}
 		break;
 	case FIK_CTL_Z:            /* control-Z - reverse X and Y aXis */
@@ -2753,22 +2755,22 @@ void flip_image(int key)
 				g_put_color(g_x_dots-1-i, g_y_dots-1-j, tempdot);
 			}
 		}
-		g_sx_min = g_xx_max;
-		g_sy_max = g_yy_min;
-		g_sx_max = g_xx_min;
-		g_sy_min = g_yy_max;
-		g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd;
-		g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd;
+		g_sx_min = g_escape_time_state_fp.x_max();
+		g_sy_max = g_escape_time_state_fp.y_min();
+		g_sx_max = g_escape_time_state_fp.x_min();
+		g_sy_min = g_escape_time_state_fp.y_max();
+		g_sx_3rd = g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_3rd();
+		g_sy_3rd = g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min() - g_escape_time_state_fp.y_3rd();
 		if (g_bf_math)
 		{
-			copy_bf(bfsxmin, bfxmax);        /* g_sx_min = g_xx_max; */
-			copy_bf(bfsymax, bfymin);        /* g_sy_max = g_yy_min; */
-			copy_bf(bfsxmax, bfxmin);        /* g_sx_max = g_xx_min; */
-			copy_bf(bfsymin, bfymax);        /* g_sy_min = g_yy_max; */
-			add_bf(bfsx3rd, bfxmax, bfxmin); /* g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsx3rd, bfx3rd);
-			add_bf(bfsy3rd, bfymax, bfymin); /* g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsy3rd, bfy3rd);
+			copy_bf(bfsxmin, g_escape_time_state_bf.x_max());        /* g_sx_min = g_xx_max; */
+			copy_bf(bfsymax, g_escape_time_state_bf.y_min());        /* g_sy_max = g_yy_min; */
+			copy_bf(bfsxmax, g_escape_time_state_bf.x_min());        /* g_sx_max = g_xx_min; */
+			copy_bf(bfsymin, g_escape_time_state_bf.y_max());        /* g_sy_min = g_yy_max; */
+			add_bf(bfsx3rd, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min()); /* g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; */
+			sub_a_bf(bfsx3rd, g_escape_time_state_bf.x_3rd());
+			add_bf(bfsy3rd, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min()); /* g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; */
+			sub_a_bf(bfsy3rd, g_escape_time_state_bf.y_3rd());
 		}
 		break;
 	}

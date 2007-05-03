@@ -52,6 +52,7 @@
 #include "helpdefs.h"
 #include "fractype.h"
 #include "externs.h"
+#include "EscapeTime.h"
 
 #define modulus(z)			(sqr((z).x) + sqr((z).y))
 #define conjugate(pz)		((pz)->y = - (pz)->y)
@@ -3283,49 +3284,49 @@ int mandelbrot_mix4_orbit_fp() /* from formula by Jim Muth */
 /* Real component, grid lookup version - requires g_x0/g_x1 arrays */
 static double _fastcall dx_pixel_grid()
 {
-	return g_x0[g_col] + g_x1[g_row];
+	return g_escape_time_state_fp.x_pixel_grid(g_col, g_row);
 }
 
 /* Real component, calculation version - does not require arrays */
 static double _fastcall dx_pixel_calc()
 {
-	return (double) (g_xx_min + g_col*g_delta_x_fp + g_row*g_delta_x2_fp);
+	return (double) (g_escape_time_state_fp.x_min() + g_col*g_delta_x_fp + g_row*g_delta_x2_fp);
 }
 
 /* Imaginary component, grid lookup version - requires g_y0/g_y1 arrays */
 static double _fastcall dy_pixel_grid()
 {
-	return g_y0[g_row] + g_y1[g_col];
+	return g_escape_time_state_fp.y_pixel_grid(g_col, g_row);
 }
 
 /* Imaginary component, calculation version - does not require arrays */
 static double _fastcall dy_pixel_calc()
 {
-	return (double)(g_yy_max - g_row*g_delta_y_fp - g_col*g_delta_y2_fp);
+	return (double)(g_escape_time_state_fp.y_max() - g_row*g_delta_y_fp - g_col*g_delta_y2_fp);
 }
 
 /* Real component, grid lookup version - requires g_x0_l/g_x1_l arrays */
 static long _fastcall lx_pixel_grid()
 {
-	return g_x0_l[g_col] + g_x1_l[g_row];
+	return g_escape_time_state_l.x_pixel_grid(g_col, g_row);
 }
 
 /* Real component, calculation version - does not require arrays */
 static long _fastcall lx_pixel_calc()
 {
-	return g_x_min + g_col*g_delta_x + g_row*g_delta_x2;
+	return g_escape_time_state_l.x_min() + g_col*g_delta_x + g_row*g_delta_x2;
 }
 
 /* Imaginary component, grid lookup version - requires g_y0_l/g_y1_l arrays */
 static long _fastcall ly_pixel_grid()
 {
-	return g_y0_l[g_row] + g_y1_l[g_col];
+	return g_escape_time_state_l.y_pixel_grid(g_col, g_row);
 }
 
 /* Imaginary component, calculation version - does not require arrays */
 static long _fastcall ly_pixel_calc()
 {
-	return g_y_max - g_row*g_delta_y - g_col*g_delta_y2;
+	return g_escape_time_state_l.y_max() - g_row*g_delta_y - g_col*g_delta_y2;
 }
 
 void set_pixel_calc_functions()

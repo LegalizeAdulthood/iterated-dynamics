@@ -11,6 +11,8 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "EscapeTime.h"
+#include "SoundState.h"
 
 /* orbitcalc is declared with no arguments so jump through hoops here */
 #define LORBIT(x, y, z) \
@@ -132,14 +134,14 @@ static void _fastcall plot_hist(int x, int y, int color);
 	to rectangular screen. We know this map must map parallelogram corners to
 	screen corners, so we have following equations:
 
-		a*g_xx_min + b*g_yy_max + e == 0        (upper left)
-		c*g_xx_min + d*g_yy_max + f == 0
+		a*xmin + b*ymax + e == 0        (upper left)
+		c*xmin + d*ymax + f == 0
 
-		a*g_xx_3rd + b*g_yy_3rd + e == 0        (lower left)
-		c*g_xx_3rd + d*g_yy_3rd + f == g_y_dots-1
+		a*x3rd + b*y3rd + e == 0        (lower left)
+		c*x3rd + d*y3rd + f == g_y_dots-1
 
-		a*g_xx_max + b*g_yy_min + e == g_x_dots-1  (lower right)
-		c*g_xx_max + d*g_yy_min + f == g_y_dots-1
+		a*xmax + b*ymin + e == g_x_dots-1  (lower right)
+		c*xmax + d*ymin + f == g_y_dots-1
 
 		First we must solve for a, b, c, d, e, f - (which we do once per image),
 		then we just apply the transformation to each orbit value.
@@ -164,10 +166,10 @@ static void _fastcall plot_hist(int x, int y, int color);
   the unknowns e and f have the same coefficient: 1.
 
   First set of 3 equations:
-     a*g_xx_min + b*g_yy_max + e == 0
-     a*g_xx_3rd + b*g_yy_3rd + e == 0
-     a*g_xx_max + b*g_yy_min + e == g_x_dots-1
-  To make things easy to read, I just replace g_xx_min, g_xx_max, g_xx_3rd by x1,
+     a*xmin + b*ymax + e == 0
+     a*x3rd + b*y3rd + e == 0
+     a*xmax + b*ymin + e == g_x_dots-1
+  To make things easy to read, I just replace xmin, xmax, x3rd by x1,
   x2, x3 (ditto for yy...) and g_x_dots-1 by xd.
 
      a*x1 + b*y2 + e == 0    (1)
@@ -189,9 +191,9 @@ static void _fastcall plot_hist(int x, int y, int color);
 
 The same technique can be applied to the second set of equations:
 
-	c*g_xx_min + d*g_yy_max + f == 0
-	c*g_xx_3rd + d*g_yy_3rd + f == g_y_dots-1
-	c*g_xx_max + d*g_yy_min + f == g_y_dots-1
+	c*xmin + d*ymax + f == 0
+	c*x3rd + d*y3rd + f == g_y_dots-1
+	c*xmax + d*ymin + f == g_y_dots-1
 
 	c*x1 + d*y2 + f == 0    (1)
 	c*x3 + d*y3 + f == yd   (2)
@@ -213,25 +215,25 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 {
 	double det, xd, yd;
 
-	det = (g_xx_3rd-g_xx_min)*(g_yy_min-g_yy_max) + (g_yy_max-g_yy_3rd)*(g_xx_max-g_xx_min);
+	det = (g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min())*(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_max()) + (g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_3rd())*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min());
 	if (det == 0)
 	{
 		return -1;
 	}
 	xd = g_dx_size/det;
-	scrn_cnvt->a =  xd*(g_yy_max-g_yy_3rd);
-	scrn_cnvt->b =  xd*(g_xx_3rd-g_xx_min);
-	scrn_cnvt->e = -scrn_cnvt->a*g_xx_min - scrn_cnvt->b*g_yy_max;
+	scrn_cnvt->a =  xd*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_3rd());
+	scrn_cnvt->b =  xd*(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min());
+	scrn_cnvt->e = -scrn_cnvt->a*g_escape_time_state_fp.x_min() - scrn_cnvt->b*g_escape_time_state_fp.y_max();
 
-	det = (g_xx_3rd-g_xx_max)*(g_yy_min-g_yy_max) + (g_yy_min-g_yy_3rd)*(g_xx_max-g_xx_min);
+	det = (g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_max())*(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_max()) + (g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd())*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min());
 	if (det == 0)
 	{
 		return -1;
 	}
 	yd = g_dy_size/det;
-	scrn_cnvt->c =  yd*(g_yy_min-g_yy_3rd);
-	scrn_cnvt->d =  yd*(g_xx_3rd-g_xx_max);
-	scrn_cnvt->f = -scrn_cnvt->c*g_xx_min - scrn_cnvt->d*g_yy_max;
+	scrn_cnvt->c =  yd*(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd());
+	scrn_cnvt->d =  yd*(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_max());
+	scrn_cnvt->f = -scrn_cnvt->c*g_escape_time_state_fp.x_min() - scrn_cnvt->d*g_escape_time_state_fp.y_max();
 	return 0;
 }
 
@@ -1370,7 +1372,6 @@ int inverse_julia_per_image()
 int orbit_2d_fp()
 {
 	FILE *fp;
-	double *soundvar;
 	double x, y, z;
 	int color, col, row;
 	int count;
@@ -1379,7 +1380,7 @@ int orbit_2d_fp()
 	struct affine cvt;
 	int ret;
 
-	soundvar = p0 = p1 = p2 = NULL;
+	p0 = p1 = p2 = NULL;
 
 	fp = open_orbit_save();
 	/* setup affine screen coord conversion */
@@ -1392,11 +1393,12 @@ int orbit_2d_fp()
 	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
 	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
-	switch (g_sound_flags & SOUNDFLAG_ORBITMASK)
+	double &soundvar = x;
+	switch (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK)
 	{
-	case SOUNDFLAG_X: soundvar = &x; break;
-	case SOUNDFLAG_Y: soundvar = &y; break;
-	case SOUNDFLAG_Z: soundvar = &z; break;
+	case SOUNDFLAG_X: soundvar = x; break;
+	case SOUNDFLAG_Y: soundvar = y; break;
+	case SOUNDFLAG_Z: soundvar = z; break;
 	}
 
 	color = (g_inside > 0) ? g_inside : 2;
@@ -1447,9 +1449,9 @@ int orbit_2d_fp()
 		row = (int) (cvt.c*x + cvt.d*y + cvt.f);
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
-			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
-				sound_tone((int) (*soundvar*100 + g_base_hertz));
+				g_sound_state.tone((int) (soundvar*100 + g_sound_state.m_base_hertz));
 			}
 			if ((g_fractal_type != FRACTYPE_ICON) && (g_fractal_type != FRACTYPE_LATOOCARFIAN))
 			{
@@ -1526,7 +1528,7 @@ int orbit_2d()
 	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
 	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
-	switch (g_sound_flags & SOUNDFLAG_ORBITMASK)
+	switch (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK)
 	{
 	case SOUNDFLAG_X: soundvar = &x; break;
 	case SOUNDFLAG_Y: soundvar = &y; break;
@@ -1589,12 +1591,12 @@ int orbit_2d()
 		}
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
-			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
 				double yy;
 				yy = *soundvar;
 				yy = yy/g_fudge;
-				sound_tone((int) (yy*100 + g_base_hertz));
+				g_sound_state.tone((int) (yy*100 + g_sound_state.m_base_hertz));
 			}
 			if (oldcol != -1 && s_connect)
 			{
@@ -1700,12 +1702,12 @@ static int orbit_3d_calc()
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
-				if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+				if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
 					double yy;
-					yy = inf.viewvect[((g_sound_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
+					yy = inf.viewvect[((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
 					yy = yy/g_fudge;
-					sound_tone((int) (yy*100 + g_base_hertz));
+					g_sound_state.tone((int) (yy*100 + g_sound_state.m_base_hertz));
 				}
 				if (oldcol != -1 && s_connect)
 				{
@@ -1821,9 +1823,9 @@ static int orbit_3d_calc_fp()
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
-				if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+				if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					sound_tone((int) (inf.viewvect[((g_sound_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + g_base_hertz));
+					g_sound_state.tone((int) (inf.viewvect[((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + g_sound_state.m_base_hertz));
 				}
 				if (oldcol != -1 && s_connect)
 				{
@@ -1936,15 +1938,15 @@ int dynamic_2d_fp()
 	p1 = &y;
 
 
-	if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+	if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
 	{
 		soundvar = &x;
 	}
-	else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+	else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
 	{
 		soundvar = &y;
 	}
-	else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+	else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
 	{
 		soundvar = &z;
 	}
@@ -2000,8 +2002,8 @@ int dynamic_2d_fp()
 
 		xpixel = g_dx_size*(xstep + .5)/s_d;
 		ypixel = g_dy_size*(ystep + .5)/s_d;
-		x = (double) ((g_xx_min + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
-		y = (double) ((g_yy_max-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
+		x = (double) ((g_escape_time_state_fp.x_min() + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
+		y = (double) ((g_escape_time_state_fp.y_max()-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
 		if (g_fractal_type == FRACTYPE_MANDELBROT_CLOUD)
 		{
 			s_a = x;
@@ -2028,9 +2030,9 @@ int dynamic_2d_fp()
 			row = (int) (cvt.c*x + cvt.d*y + cvt.f);
 			if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 			{
-				if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+				if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					sound_tone((int) (*soundvar*100 + g_base_hertz));
+					g_sound_state.tone((int) (*soundvar*100 + g_sound_state.m_base_hertz));
 				}
 
 				if (count >= g_orbit_delay)
@@ -2174,15 +2176,15 @@ int plotorbits2dfloat()
 	return 0;
 #endif
 
-	if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+	if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
 	{
 		soundvar = &x;
 	}
-	else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+	else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
 	{
 		soundvar = &y;
 	}
-	else if ((g_sound_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+	else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
 	{
 		soundvar = &z;
 	}
@@ -2231,9 +2233,9 @@ int plotorbits2dfloat()
 		if (col > 0 && col < g_x_dots && row > 0 && row < g_y_dots)
 #endif
 		{             /* plot if on the screen */
-			if ((g_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 			{
-				sound_tone((int) (*soundvar*100 + g_base_hertz));
+				g_sound_state.tone((int) (*soundvar*100 + g_sound_state.m_base_hertz));
 			}
 
 			(*g_plot_color)(col, row, s_o_color % g_colors);
@@ -2814,8 +2816,8 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double)g_x_shift*(g_xx_max-g_xx_min))/(g_x_dots);
-			tmpy += ((double)g_y_shift*(g_yy_max-g_yy_min))/(g_y_dots);
+			tmpx += ((double)g_x_shift*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))/(g_x_dots);
+			tmpy += ((double)g_y_shift*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()))/(g_y_dots);
 			tmpz = -((double)inf->maxvals[2]) / g_fudge;
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -2825,8 +2827,8 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
-				tmpx += ((double)g_x_shift1*(g_xx_max-g_xx_min))/(g_x_dots);
-				tmpy += ((double)g_y_shift1*(g_yy_max-g_yy_min))/(g_y_dots);
+				tmpx += ((double)g_x_shift1*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))/(g_x_dots);
+				tmpy += ((double)g_y_shift1*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()))/(g_y_dots);
 				tmpz = -((double)inf->maxvals[2]) / g_fudge;
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
@@ -2979,8 +2981,8 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double)g_x_shift*(g_xx_max-g_xx_min))/(g_x_dots);
-			tmpy += ((double)g_y_shift*(g_yy_max-g_yy_min))/(g_y_dots);
+			tmpx += ((double)g_x_shift*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))/(g_x_dots);
+			tmpy += ((double)g_y_shift*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()))/(g_y_dots);
 			tmpz = -(inf->maxvals[2]);
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -2990,8 +2992,8 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
-				tmpx += ((double)g_x_shift1*(g_xx_max-g_xx_min))/(g_x_dots);
-				tmpy += ((double)g_y_shift1*(g_yy_max-g_yy_min))/(g_y_dots);
+				tmpx += ((double)g_x_shift1*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))/(g_x_dots);
+				tmpy += ((double)g_y_shift1*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()))/(g_y_dots);
 				tmpz = -(inf->maxvals[2]);
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 				}

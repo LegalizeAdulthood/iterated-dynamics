@@ -64,10 +64,9 @@ ROTZ(i) =           cosi  sini    0     0
 	(all 0's, 1's on diagonal) */
 void identity(MATRIX m)
 {
-	int i, j;
-	for (i = 0; i < CMAX; i++)
+	for (int i = 0; i < CMAX; i++)
 	{
-		for (j = 0; j < RMAX; j++)
+		for (int j = 0; j < RMAX; j++)
 		{
 			m[j][i] = (i == j) ? 1.0 : 0.0;
 		}
@@ -80,10 +79,9 @@ void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 	/* result stored in MATRIX new to avoid problems
 		in case parameter mat3 == mat2 or mat 1 */
 	MATRIX newmat;
-	int i, j;
-	for (i = 0; i < 4; i++)
+	for (int i = 0; i < 4; i++)
 	{
-		for (j = 0; j < 4; j++)
+		for (int j = 0; j < 4; j++)
 		{
 			newmat[j][i] =  mat1[j][0]*mat2[0][i]+
 							mat1[j][1]*mat2[1][i]+
@@ -217,11 +215,10 @@ int normalize_vector(VECTOR v)
 int vmult(VECTOR s, MATRIX m, VECTOR t)
 {
 	VECTOR tmp;
-	int i, j;
-	for (j = 0; j < CMAX-1; j++)
+	for (int j = 0; j < CMAX-1; j++)
 	{
 		tmp[j] = 0.0;
-		for (i = 0; i < RMAX-1; i++)
+		for (int i = 0; i < RMAX-1; i++)
 		{
 			tmp[j] += s[i]*m[i][j];
 		}
@@ -240,11 +237,10 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
 void mult_vec(VECTOR s, MATRIX m)
 {
 	VECTOR tmp;
-	int i, j;
-	for (j = 0; j < CMAX-1; j++)
+	for (int j = 0; j < CMAX-1; j++)
 	{
 		tmp[j] = 0.0;
-		for (i = 0; i < RMAX-1; i++)
+		for (int i = 0; i < RMAX-1; i++)
 		{
 			tmp[j] += s[i]*m[i][j];
 		}
@@ -287,7 +283,7 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 	/* lview: perspective viewer coordinates */
 	/* bit_shift: fixed point conversion bit_shift */
 	LVECTOR tmp;
-	int i, j, k;
+	int k;
 	g_overflow = 0;
 	k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
 	if (lview[2] == 0 && t0[0] == 0)
@@ -295,10 +291,10 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 		k--;
 	}
 
-	for (j = 0; j < k; j++)
+	for (int j = 0; j < k; j++)
 	{
 		tmp[j] = 0;
-		for (i = 0; i < RMAX-1; i++)
+		for (int i = 0; i < RMAX-1; i++)
 		{
 			tmp[j] += multiply(s[i], m[i][j], bit_shift);
 		}
@@ -386,14 +382,14 @@ int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
 int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
 {
 	LVECTOR tmp;
-	int i, j, k;
+	int k;
 	g_overflow = 0;
 	k = CMAX-1;
 
-	for (j = 0; j < k; j++)
+	for (int j = 0; j < k; j++)
 	{
 		tmp[j] = 0;
-		for (i = 0; i < RMAX-1; i++)
+		for (int i = 0; i < RMAX-1; i++)
 		{
 			tmp[j] += multiply(s[i], m[i][j], bit_shift);
 		}

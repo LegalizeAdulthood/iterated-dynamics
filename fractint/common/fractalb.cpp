@@ -19,6 +19,7 @@ fractal routines.
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+#include "EscapeTime.h"
 
 int g_bf_math = 0;
 
@@ -39,12 +40,12 @@ void show_corners_dbl(char *s)
 {
 	char msg[400];
 	sprintf(msg, "%s\n"
-		"g_xx_min= %.20f g_xx_max= %.20f\n"
-		"g_yy_min= %.20f g_yy_max= %.20f\n"
-		"g_xx_3rd= %.20f g_yy_3rd= %.20f\n"
+		"xmin= %.20f xmax= %.20f\n"
+		"ymin= %.20f ymax= %.20f\n"
+		"x3rd= %.20f y3rd= %.20f\n"
 		"delxx= %.20Lf delta_y_fp= %.20Lf\n"
 		"g_delta_x2= %.20Lf g_delta_y2= %.20Lf",
-		s, g_xx_min, g_xx_max, g_yy_min, g_yy_max, g_xx_3rd, g_yy_3rd,
+		s, g_escape_time_state_fp.x_min(), g_escape_time_state_fp.x_max(), g_escape_time_state_fp.y_min(), g_escape_time_state_fp.y_max(), g_escape_time_state_fp.x_3rd(), g_escape_time_state_fp.y_3rd(),
 		delxx, delta_y_fp, g_delta_x2_fp, g_delta_y2_fp);
 	if (stop_message(0, msg) == -1)
 	{
@@ -58,24 +59,24 @@ void showcorners(char *s)
 	int dec = 20;
 	char msg[100], msg1[100], msg3[100];
 	bntostr(msg, dec, bnxmin);
-	sprintf(msg1, "bnxmin=%s\nxxmin= %.20f\n\n", msg, g_xx_min);
+	sprintf(msg1, "bnxmin=%s\nxxmin= %.20f\n\n", msg, g_escape_time_state_fp.x_min());
 	strcpy(msg3, s);
 	strcat(msg3, "\n");
 	strcat(msg3, msg1);
 	bntostr(msg, dec, bnxmax);
-	sprintf(msg1, "bnxmax=%s\nxxmax= %.20f\n\n", msg, g_xx_max);
+	sprintf(msg1, "bnxmax=%s\nxxmax= %.20f\n\n", msg, g_escape_time_state_fp.x_max());
 	strcat(msg3, msg1);
 	bntostr(msg, dec, bnymin);
-	sprintf(msg1, "bnymin=%s\nyymin= %.20f\n\n", msg, g_yy_min);
+	sprintf(msg1, "bnymin=%s\nyymin= %.20f\n\n", msg, g_escape_time_state_fp.y_min());
 	strcat(msg3, msg1);
 	bntostr(msg, dec, bnymax);
-	sprintf(msg1, "bnymax=%s\nyymax= %.20f\n\n", msg, g_yy_max);
+	sprintf(msg1, "bnymax=%s\nyymax= %.20f\n\n", msg, g_escape_time_state_fp.y_max());
 	strcat(msg3, msg1);
 	bntostr(msg, dec, bnx3rd);
-	sprintf(msg1, "bnx3rd=%s\nxx3rd= %.20f\n\n", msg, g_xx_3rd);
+	sprintf(msg1, "bnx3rd=%s\nxx3rd= %.20f\n\n", msg, g_escape_time_state_fp.x_3rd());
 	strcat(msg3, msg1);
 	bntostr(msg, dec, bny3rd);
-	sprintf(msg1, "bny3rd=%s\nyy3rd= %.20f\n\n", msg, g_yy_3rd);
+	sprintf(msg1, "bny3rd=%s\nyy3rd= %.20f\n\n", msg, g_escape_time_state_fp.y_3rd());
 	strcat(msg3, msg1);
 	if (stop_message(0, msg3) == -1)
 	{
@@ -108,26 +109,26 @@ void showcornersbf(char *s)
 	{
 		dec = 20;
 	}
-	bftostr(msg, dec, bfxmin);
+	bftostr(msg, dec, g_escape_time_state_bf.x_min());
 	sprintf(msg1, "bfxmin=%s\nxxmin= %.20f g_decimals %d bflength %d\n\n",
-		msg, g_xx_min, g_decimals, bflength);
+		msg, g_escape_time_state_fp.x_min(), g_decimals, bflength);
 	strcpy(msg3, s);
 	strcat(msg3, "\n");
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfxmax);
-	sprintf(msg1, "bfxmax=%s\nxxmax= %.20f\n\n", msg, g_xx_max);
+	bftostr(msg, dec, g_escape_time_state_bf.x_max());
+	sprintf(msg1, "bfxmax=%s\nxxmax= %.20f\n\n", msg, g_escape_time_state_fp.x_max());
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfymin);
-	sprintf(msg1, "bfymin=%s\nyymin= %.20f\n\n", msg, g_yy_min);
+	bftostr(msg, dec, g_escape_time_state_bf.y_min());
+	sprintf(msg1, "bfymin=%s\nyymin= %.20f\n\n", msg, g_escape_time_state_fp.y_min());
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfymax);
-	sprintf(msg1, "bfymax=%s\nyymax= %.20f\n\n", msg, g_yy_max);
+	bftostr(msg, dec, g_escape_time_state_bf.y_max());
+	sprintf(msg1, "bfymax=%s\nyymax= %.20f\n\n", msg, g_escape_time_state_fp.y_max());
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfx3rd);
-	sprintf(msg1, "bfx3rd=%s\nxx3rd= %.20f\n\n", msg, g_xx_3rd);
+	bftostr(msg, dec, g_escape_time_state_bf.x_3rd());
+	sprintf(msg1, "bfx3rd=%s\nxx3rd= %.20f\n\n", msg, g_escape_time_state_fp.x_3rd());
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfy3rd);
-	sprintf(msg1, "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, g_yy_3rd);
+	bftostr(msg, dec, g_escape_time_state_bf.y_3rd());
+	sprintf(msg1, "bfy3rd=%s\nyy3rd= %.20f\n\n", msg, g_escape_time_state_fp.y_3rd());
 	strcat(msg3, msg1);
 	if (stop_message(0, msg3) == -1)
 	{
@@ -140,24 +141,24 @@ void showcornersbfs(char *s)
 	int dec = 20;
 	char msg[100], msg1[100], msg3[500];
 	bftostr(msg, dec, bfsxmin);
-	sprintf(msg1, "bfsxmin=%s\nxxmin= %.20f\n\n", msg, g_xx_min);
+	sprintf(msg1, "bfsxmin=%s\nxxmin= %.20f\n\n", msg, g_escape_time_state_fp.x_min());
 	strcpy(msg3, s);
 	strcat(msg3, "\n");
 	strcat(msg3, msg1);
 	bftostr(msg, dec, bfsxmax);
-	sprintf(msg1, "bfsxmax=%s\nxxmax= %.20f\n\n", msg, g_xx_max);
+	sprintf(msg1, "bfsxmax=%s\nxxmax= %.20f\n\n", msg, g_escape_time_state_fp.x_max());
 	strcat(msg3, msg1);
 	bftostr(msg, dec, bfsymin);
-	sprintf(msg1, "bfsymin=%s\nyymin= %.20f\n\n", msg, g_yy_min);
+	sprintf(msg1, "bfsymin=%s\nyymin= %.20f\n\n", msg, g_escape_time_state_fp.y_min());
 	strcat(msg3, msg1);
 	bftostr(msg, dec, bfsymax);
-	sprintf(msg1, "bfsymax=%s\nyymax= %.20f\n\n", msg, g_yy_max);
+	sprintf(msg1, "bfsymax=%s\nyymax= %.20f\n\n", msg, g_escape_time_state_fp.y_max());
 	strcat(msg3, msg1);
 	bftostr(msg, dec, bfsx3rd);
-	sprintf(msg1, "bfsx3rd=%s\nxx3rd= %.20f\n\n", msg, g_xx_3rd);
+	sprintf(msg1, "bfsx3rd=%s\nxx3rd= %.20f\n\n", msg, g_escape_time_state_fp.x_3rd());
 	strcat(msg3, msg1);
 	bftostr(msg, dec, bfsy3rd);
-	sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, g_yy_3rd);
+	sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, g_escape_time_state_fp.y_3rd());
 	strcat(msg3, msg1);
 	if (stop_message(0, msg3) == -1)
 	{
@@ -199,13 +200,13 @@ void showaspect(char *s)
 	bt1    = alloc_stack(rbflength + 2);
 	bt2    = alloc_stack(rbflength + 2);
 	aspect = alloc_stack(rbflength + 2);
-	sub_bf(bt1, bfxmax, bfxmin);
-	sub_bf(bt2, bfymax, bfymin);
+	sub_bf(bt1, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+	sub_bf(bt2, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min());
 	div_bf(aspect, bt2, bt1);
 	bftostr(str, 10, aspect);
 	sprintf(msg, "aspect %s\nfloat %13.10f\nbf    %s\n\n",
 				s,
-				(g_yy_max-g_yy_min)/(g_xx_max-g_xx_min),
+				(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min())/(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()),
 				str);
 	if (stop_message(0, msg) == -1)
 	{
@@ -260,12 +261,12 @@ void corners_bf_to_float()
 	int i;
 	if (g_bf_math)
 	{
-		g_xx_min = (double)bftofloat(bfxmin);
-		g_yy_min = (double)bftofloat(bfymin);
-		g_xx_max = (double)bftofloat(bfxmax);
-		g_yy_max = (double)bftofloat(bfymax);
-		g_xx_3rd = (double)bftofloat(bfx3rd);
-		g_yy_3rd = (double)bftofloat(bfy3rd);
+		g_escape_time_state_fp.x_min() = (double)bftofloat(g_escape_time_state_bf.x_min());
+		g_escape_time_state_fp.y_min() = (double)bftofloat(g_escape_time_state_bf.y_min());
+		g_escape_time_state_fp.x_max() = (double)bftofloat(g_escape_time_state_bf.x_max());
+		g_escape_time_state_fp.y_max() = (double)bftofloat(g_escape_time_state_bf.y_max());
+		g_escape_time_state_fp.x_3rd() = (double)bftofloat(g_escape_time_state_bf.x_3rd());
+		g_escape_time_state_fp.y_3rd() = (double)bftofloat(g_escape_time_state_bf.y_3rd());
 	}
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
@@ -540,12 +541,12 @@ int mandelbrot_setup_bn()
 	bntemp1 = alloc_stack(bnlength);
 	bntemp2 = alloc_stack(bnlength);
 
-	bftobn(bnxmin, bfxmin);
-	bftobn(bnxmax, bfxmax);
-	bftobn(bnymin, bfymin);
-	bftobn(bnymax, bfymax);
-	bftobn(bnx3rd, bfx3rd);
-	bftobn(bny3rd, bfy3rd);
+	bftobn(bnxmin, g_escape_time_state_bf.x_min());
+	bftobn(bnxmax, g_escape_time_state_bf.x_max());
+	bftobn(bnymin, g_escape_time_state_bf.y_min());
+	bftobn(bnymax, g_escape_time_state_bf.y_max());
+	bftobn(bnx3rd, g_escape_time_state_bf.x_3rd());
+	bftobn(bny3rd, g_escape_time_state_bf.y_3rd());
 
 	g_bf_math = BIGNUM;
 
@@ -641,19 +642,19 @@ int mandelbrot_setup_bf()
 	g_bf_math = BIGFLT;
 
 	/* bfxdel = (bfxmax - bfx3rd)/(g_x_dots-1) */
-	sub_bf(bfxdel, bfxmax, bfx3rd);
+	sub_bf(bfxdel, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_3rd());
 	div_a_bf_int(bfxdel, (U16)(g_x_dots - 1));
 
 	/* bfydel = (bfymax - bfy3rd)/(g_y_dots-1) */
-	sub_bf(bfydel, bfymax, bfy3rd);
+	sub_bf(bfydel, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
 	div_a_bf_int(bfydel, (U16)(g_y_dots - 1));
 
 	/* bfxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1) */
-	sub_bf(bfxdel2, bfx3rd, bfxmin);
+	sub_bf(bfxdel2, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
 	div_a_bf_int(bfxdel2, (U16)(g_y_dots - 1));
 
 	/* bfydel2 = (bfy3rd - bfymin)/(g_x_dots-1) */
-	sub_bf(bfydel2, bfy3rd, bfymin);
+	sub_bf(bfydel2, g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min());
 	div_a_bf_int(bfydel2, (U16)(g_x_dots - 1));
 
 	abs_bf(bfclosenuff, bfxdel);
@@ -716,14 +717,14 @@ int mandelbrot_setup_bf()
 
 int mandelbrot_per_pixel_bn()
 {
-	/* g_parameter.x = g_xx_min + col*delx + row*g_delta_x2 */
+	/* g_parameter.x = xmin + col*delx + row*g_delta_x2 */
 	mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
 	mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
 	add_a_bn(bnparm.x, bntmp);
 	add_a_bn(bnparm.x, bnxmin);
 
-	/* g_parameter.y = g_yy_max - row*dely - col*g_delta_y2; */
+	/* g_parameter.y = ymax - row*dely - col*g_delta_y2; */
 	/* note: in next four lines, bnold is just used as a temporary variable */
 	mult_bn_int(bnold.x, bnydel,  (U16)g_row);
 	mult_bn_int(bnold.y, bnydel2, (U16)g_col);
@@ -762,19 +763,19 @@ int mandelbrot_per_pixel_bn()
 
 int mandelbrot_per_pixel_bf()
 {
-	/* g_parameter.x = g_xx_min + col*delx + row*g_delta_x2 */
+	/* g_parameter.x = xmin + col*delx + row*g_delta_x2 */
 	mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
 	mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
 	add_a_bf(bfparm.x, bftmp);
-	add_a_bf(bfparm.x, bfxmin);
+	add_a_bf(bfparm.x, g_escape_time_state_bf.x_min());
 
-	/* g_parameter.y = g_yy_max - row*dely - col*g_delta_y2; */
+	/* g_parameter.y = ymax - row*dely - col*g_delta_y2; */
 	/* note: in next four lines, bfold is just used as a temporary variable */
 	mult_bf_int(bfold.x, bfydel,  (U16)g_row);
 	mult_bf_int(bfold.y, bfydel2, (U16)g_col);
 	add_a_bf(bfold.x, bfold.y);
-	sub_bf(bfparm.y, bfymax, bfold.x);
+	sub_bf(bfparm.y, g_escape_time_state_bf.y_max(), bfold.x);
 
 	copy_bf(bfold.x, bfparm.x);
 	copy_bf(bfold.y, bfparm.y);
@@ -808,14 +809,14 @@ int mandelbrot_per_pixel_bf()
 
 int julia_per_pixel_bn()
 {
-	/* old.x = g_xx_min + col*delx + row*g_delta_x2 */
+	/* old.x = xmin + col*delx + row*g_delta_x2 */
 	mult_bn_int(bnold.x, bnxdel, (U16)g_col);
 	mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
 	add_a_bn(bnold.x, bntmp);
 	add_a_bn(bnold.x, bnxmin);
 
-	/* old.y = g_yy_max - row*dely - col*g_delta_y2; */
+	/* old.y = ymax - row*dely - col*g_delta_y2; */
 	/* note: in next four lines, bnnew is just used as a temporary variable */
 	mult_bn_int(bnnew.x, bnydel,  (U16)g_row);
 	mult_bn_int(bnnew.y, bnydel2, (U16)g_col);
@@ -835,19 +836,19 @@ int julia_per_pixel_bn()
 
 int julia_per_pixel_bf()
 {
-	/* old.x = g_xx_min + col*delx + row*g_delta_x2 */
+	/* old.x = xmin + col*delx + row*g_delta_x2 */
 	mult_bf_int(bfold.x, bfxdel, (U16)g_col);
 	mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
 	add_a_bf(bfold.x, bftmp);
-	add_a_bf(bfold.x, bfxmin);
+	add_a_bf(bfold.x, g_escape_time_state_bf.x_min());
 
-	/* old.y = g_yy_max - row*dely - col*g_delta_y2; */
+	/* old.y = ymax - row*dely - col*g_delta_y2; */
 	/* note: in next four lines, bfnew is just used as a temporary variable */
 	mult_bf_int(bfnew.x, bfydel,  (U16)g_row);
 	mult_bf_int(bfnew.y, bfydel2, (U16)g_col);
 	add_a_bf(bfnew.x, bfnew.y);
-	sub_bf(bfold.y, bfymax, bfnew.x);
+	sub_bf(bfold.y, g_escape_time_state_bf.y_max(), bfnew.x);
 
 	/* square has side effect - must copy first */
 	copy_bf(bfnew.x, bfold.x);

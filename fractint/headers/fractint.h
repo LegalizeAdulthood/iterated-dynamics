@@ -30,7 +30,7 @@ typedef BYTE BOOLEAN;
 
 #define COLOR_CHANNEL_MAX 63
 
-/* g_note_attenuation values */
+/* g_sound_state.m_note_attenuation values */
 #define ATTENUATE_NONE		0
 #define ATTENUATE_LOW		1
 #define ATTENUATE_MIDDLE	2
@@ -1424,6 +1424,12 @@ struct entryinfo
 {
 	char name[ITEMNAMELEN + 2];
 	long point; /* points to the (or the { following the name */
+};
+
+struct UserInterfaceState
+{
+	bool double_caution;			/* confirm for deleting */
+	bool ask_video;					/* flag for video prompting */
 };
 
 #endif

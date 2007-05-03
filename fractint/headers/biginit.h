@@ -41,7 +41,6 @@ extern bf_t big_pi;                                           /* bflength+2 */
 /* for testing only */
 
 /* used by other routines */
-extern bf_t bfxmin, bfxmax, bfymin, bfymax, bfx3rd, bfy3rd;   /* bflength+2 */
 extern bf_t bfsxmin, bfsxmax, bfsymin,bfsymax,bfsx3rd,bfsy3rd;/* bflength+2 */
 extern bf_t bfparms[10];                                 /* (bflength+2)*10 */
 extern bf_t bftmp;

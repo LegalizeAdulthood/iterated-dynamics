@@ -18,6 +18,7 @@
 #include "prototyp.h"
 #include "drivers.h"
 #include "busy.h"
+#include "SoundState.h"
 
 #define MAXCOLORS       256
 
@@ -432,19 +433,18 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 
 static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
-	int col;
-	for (col = colstart; col <= colstop; col++)
+	for (int col = colstart; col <= colstop; col++)
 	{
 		g_put_color(col, row, *pixels);
 		if (g_orbit_delay > 0)
 		{
 			sleep_ms(g_orbit_delay);
 		}
-		sound_tone((int)((int)(*pixels++)*3000/g_colors + g_base_hertz));
+		g_sound_state.tone((int)((int)(*pixels++)*3000/g_colors + g_sound_state.m_base_hertz));
 		if (driver_key_pressed())
 		{
-		driver_mute();
-		return -1;
+			driver_mute();
+			return -1;
 		}
 	}
 	return 0;

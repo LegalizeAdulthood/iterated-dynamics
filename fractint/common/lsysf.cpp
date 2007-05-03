@@ -364,7 +364,7 @@ int _fastcall
 lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
 {
 	float horiz, vert;
-	LDBL g_x_min, g_x_max, g_y_min, g_y_max;
+	LDBL x_min, x_max, y_min, y_max;
 	LDBL locsize;
 	LDBL locaspect;
 	struct lsys_cmd *fsret;
@@ -384,20 +384,20 @@ lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, stru
 	ts->size = 1;
 	fsret = find_size(command, ts, rules, depth);
 	thinking(0, NULL); /* erase thinking message if any */
-	g_x_min = ts->x_min;
-	g_x_max = ts->x_max;
-	g_y_min = ts->y_min;
-	g_y_max = ts->y_max;
+	x_min = ts->x_min;
+	x_max = ts->x_max;
+	y_min = ts->y_min;
+	y_max = ts->y_max;
 	if (fsret == NULL)
 	{
 		return 0;
 	}
-	horiz = (g_x_max == g_x_min) ? 1.0e37f : (float)((g_x_dots-10)/(g_x_max-g_x_min));
-	vert  = (g_y_max == g_y_min) ? 1.0e37f : (float)((g_y_dots-6) /(g_y_max-g_y_min));
+	horiz = (x_max == x_min) ? 1.0e37f : (float)((g_x_dots-10)/(x_max-x_min));
+	vert  = (y_max == y_min) ? 1.0e37f : (float)((g_y_dots-6) /(y_max-y_min));
 	locsize = (vert < horiz) ? vert : horiz;
 
-	ts->xpos = (horiz == 1.0e37f) ? g_x_dots/2 : (g_x_dots-locsize*(g_x_max + g_x_min))/2;
-	ts->ypos = (vert  == 1.0e37f) ? g_y_dots/2 : (g_y_dots-locsize*(g_y_max + g_y_min))/2;
+	ts->xpos = (horiz == 1.0e37f) ? g_x_dots/2 : (g_x_dots-locsize*(x_max + x_min))/2;
+	ts->ypos = (vert  == 1.0e37f) ? g_y_dots/2 : (g_y_dots-locsize*(y_max + y_min))/2;
 	ts->size = locsize;
 
 	return 1;

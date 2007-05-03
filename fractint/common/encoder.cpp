@@ -14,6 +14,7 @@
 #include "fractype.h"
 #include "drivers.h"
 #include "busy.h"
+#include "EscapeTime.h"
 
 static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE *color, int g_num_colors);
@@ -574,7 +575,7 @@ int encoder()
 			save_info.tot_extend_len += extend_blk_len(22*(bflength + 2));
 			/* note: this assumes variables allocated in order starting with
 			 * bfxmin in init_bf2() in BIGNUM.C */
-			if (!put_extend_blk(5, 22*(bflength + 2), (char *) bfxmin))
+			if (!put_extend_blk(5, 22*(bflength + 2), (char *) g_escape_time_state_bf.x_min()))
 			{
 				goto oops;
 			}
@@ -813,10 +814,10 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->iterationsold = (g_max_iteration <= SHRT_MAX) ? (short) g_max_iteration : (short) SHRT_MAX;
 
 	save_info->fractal_type = (short) g_fractal_type;
-	save_info->x_min = g_xx_min;
-	save_info->x_max = g_xx_max;
-	save_info->y_min = g_yy_min;
-	save_info->y_max = g_yy_max;
+	save_info->x_min = g_escape_time_state_fp.x_min();
+	save_info->x_max = g_escape_time_state_fp.x_max();
+	save_info->y_min = g_escape_time_state_fp.y_min();
+	save_info->y_max = g_escape_time_state_fp.y_max();
 	save_info->c_real = g_parameters[0];
 	save_info->c_imag = g_parameters[1];
 	save_info->videomodeax = (short) g_video_entry.videomodeax;
@@ -869,8 +870,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->eyeseparation = (short) g_eye_separation;
 	save_info->glassestype = (short) g_glasses_type;
 	save_info->outside = (short) g_outside;
-	save_info->x_3rd = g_xx_3rd;
-	save_info->y_3rd = g_yy_3rd;
+	save_info->x_3rd = g_escape_time_state_fp.x_3rd();
+	save_info->y_3rd = g_escape_time_state_fp.y_3rd();
 	save_info->calculation_status = (short) g_calculation_status;
 	save_info->stdcalcmode = (char) ((g_three_pass && g_standard_calculation_mode == '3') ? 127 : g_standard_calculation_mode);
 	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;

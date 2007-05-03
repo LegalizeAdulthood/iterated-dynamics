@@ -8,6 +8,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "EscapeTime.h"
 
 static HISTORY *s_history = NULL;		/* history storage */
 static int s_history_index = -1;			/* user pointer into history tbl  */
@@ -30,10 +31,10 @@ void _fastcall history_save_info()
 
 	memset((void *) &current, 0, sizeof(HISTORY));
 	current.fractal_type		= (short) g_fractal_type;
-	current.x_min				= g_xx_min;
-	current.x_max				= g_xx_max;
-	current.y_min				= g_yy_min;
-	current.y_max				= g_yy_max;
+	current.x_min				= g_escape_time_state_fp.x_min();
+	current.x_max				= g_escape_time_state_fp.x_max();
+	current.y_min				= g_escape_time_state_fp.y_min();
+	current.y_max				= g_escape_time_state_fp.y_max();
 	current.c_real				= g_parameters[0];
 	current.c_imag				= g_parameters[1];
 	current.dparm3				= g_parameters[2];
@@ -88,8 +89,8 @@ void _fastcall history_save_info()
 	current.eyeseparation		= (short) g_eye_separation;
 	current.glassestype			= (short) g_glasses_type;
 	current.outside				= (short) g_outside;
-	current.x_3rd				= g_xx_3rd;
-	current.y_3rd				= g_yy_3rd;
+	current.x_3rd				= g_escape_time_state_fp.x_3rd();
+	current.y_3rd				= g_escape_time_state_fp.y_3rd();
 	current.stdcalcmode			= g_user_standard_calculation_mode;
 	current.three_pass			= (char) g_three_pass;
 	current.stop_pass			= (short) g_stop_pass;
@@ -217,10 +218,10 @@ void _fastcall history_restore_info()
 	g_calculation_status				= CALCSTAT_PARAMS_CHANGED;
 	g_resuming				= 0;
 	g_fractal_type				= last.fractal_type;
-	g_xx_min               	= last.x_min;
-	g_xx_max               	= last.x_max;
-	g_yy_min               	= last.y_min;
-	g_yy_max               	= last.y_max;
+	g_escape_time_state_fp.x_min()               	= last.x_min;
+	g_escape_time_state_fp.x_max()               	= last.x_max;
+	g_escape_time_state_fp.y_min()               	= last.y_min;
+	g_escape_time_state_fp.y_max()               	= last.y_max;
 	g_parameters[0]            	= last.c_real;
 	g_parameters[1]            	= last.c_imag;
 	g_parameters[2]            	= last.dparm3;
@@ -276,8 +277,8 @@ void _fastcall history_restore_info()
 	g_eye_separation    	= last.eyeseparation;
 	g_glasses_type      	= last.glassestype;
 	g_outside             	= last.outside;
-	g_xx_3rd               	= last.x_3rd;
-	g_yy_3rd               	= last.y_3rd;
+	g_escape_time_state_fp.x_3rd()               	= last.x_3rd;
+	g_escape_time_state_fp.y_3rd()               	= last.y_3rd;
 	g_user_standard_calculation_mode     	= last.stdcalcmode;
 	g_standard_calculation_mode         	= last.stdcalcmode;
 	g_three_pass          	= (int) last.three_pass;

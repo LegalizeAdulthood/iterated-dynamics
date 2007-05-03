@@ -13,7 +13,6 @@ extern int get_corners();
 extern int getakeynohelp();
 extern void set_null_video();
 extern void spindac(int, int);
-extern void adapter_detect();
 extern int get_sound_params();
 extern void initasmvars();
 
@@ -328,9 +327,6 @@ extern void adjust_corner_bf();
 extern void set_grid_pointers();
 extern void fill_dx_array();
 extern void fill_lx_array();
-extern void sound_tone(int);
-extern void sound_write_time();
-extern void sound_close();
 
 /*  fractalp -- C file prototypes */
 

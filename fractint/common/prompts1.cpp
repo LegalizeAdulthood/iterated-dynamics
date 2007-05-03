@@ -23,6 +23,7 @@
 #include "helpdefs.h"
 #include "fihelp.h"
 #include "drivers.h"
+#include "EscapeTime.h"
 
 #ifdef __hpux
 #include <sys/param.h>
@@ -1316,12 +1317,12 @@ sel_type_restart:
 void set_default_parms()
 {
 	int i, extra;
-	g_xx_min = g_current_fractal_specific->x_min;
-	g_xx_max = g_current_fractal_specific->x_max;
-	g_yy_min = g_current_fractal_specific->y_min;
-	g_yy_max = g_current_fractal_specific->y_max;
-	g_xx_3rd = g_xx_min;
-	g_yy_3rd = g_yy_min;
+	g_escape_time_state_fp.x_min() = g_current_fractal_specific->x_min;
+	g_escape_time_state_fp.x_max() = g_current_fractal_specific->x_max;
+	g_escape_time_state_fp.y_min() = g_current_fractal_specific->y_min;
+	g_escape_time_state_fp.y_max() = g_current_fractal_specific->y_max;
+	g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
+	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
 
 	if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 	{

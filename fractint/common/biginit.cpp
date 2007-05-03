@@ -136,7 +136,7 @@ static void init_bf_2()
 	{
 		i = find_alternate_math(g_fractal_type, BIGFLT);
 		/* 1 => maybe called from cmdfiles.c and g_fractal_type not set */
-		g_bf_math = (i > -1) ? g_alternate_math[i].math : 1;
+		g_bf_math = (i > -1) ? g_alternate_math[i].math : BIGNUM;
 	}
 	g_float_flag = TRUE;
 
@@ -337,9 +337,18 @@ static int restore_bf_vars()
 /* free corners and parameters save memory */
 void free_bf_vars()
 {
-	g_bf_save_len = g_bf_math = 0;
-	bnstep = bnlength = intlength = rlength = padding = shiftfactor = g_decimals = 0;
-	bflength = rbflength = bfdecimals = 0;
+	g_bf_save_len = 0;
+	g_bf_math = 0;
+	bnstep = 0;
+	bnlength = 0;
+	intlength = 0;
+	rlength = 0;
+	padding = 0;
+	shiftfactor = 0;
+	g_decimals = 0;
+	bflength = 0;
+	rbflength = 0;
+	bfdecimals = 0;
 }
 
 /************************************************************************/

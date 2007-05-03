@@ -4,6 +4,7 @@
 #include "helpdefs.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "EscapeTime.h"
 
 /* these need to be accessed elsewhere for saving data */
 double g_m_x_min_fp = -.83;
@@ -68,13 +69,13 @@ int julibrot_setup()
 	}
 #endif
 
-	s_x_offset_fp = (g_xx_max + g_xx_min) / 2;     /* Calculate average */
-	s_y_offset_fp = (g_yy_max + g_yy_min) / 2;     /* Calculate average */
+	s_x_offset_fp = (g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min()) / 2;     /* Calculate average */
+	s_y_offset_fp = (g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min()) / 2;     /* Calculate average */
 	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp) / g_z_dots;
 	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / g_z_dots;
 	g_float_parameter = &s_jbc_fp;
-	s_x_per_inch_fp = (g_xx_min - g_xx_max) / g_width_fp;
-	s_y_per_inch_fp = (g_yy_max - g_yy_min) / g_height_fp;
+	s_x_per_inch_fp = (g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_max()) / g_width_fp;
+	s_y_per_inch_fp = (g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_min()) / g_height_fp;
 	s_inch_per_x_dot_fp = g_width_fp / g_x_dots;
 	s_inch_per_y_dot_fp = g_height_fp / g_y_dots;
 	s_init_z_fp = g_origin_fp - (g_depth_fp / 2);
@@ -99,11 +100,11 @@ int julibrot_setup()
 		}
 		s_fg = (double) (1L << g_bit_shift);
 		s_fg16 = (double) (1L << 16);
-		jxmin = (long) (g_xx_min*s_fg);
-		jxmax = (long) (g_xx_max*s_fg);
+		jxmin = (long) (g_escape_time_state_fp.x_min()*s_fg);
+		jxmax = (long) (g_escape_time_state_fp.x_max()*s_fg);
 		s_x_offset = (jxmax + jxmin) / 2;    /* Calculate average */
-		jymin = (long) (g_yy_min*s_fg);
-		jymax = (long) (g_yy_max*s_fg);
+		jymin = (long) (g_escape_time_state_fp.y_min()*s_fg);
+		jymax = (long) (g_escape_time_state_fp.y_max()*s_fg);
 		s_y_offset = (jymax + jymin) / 2;    /* Calculate average */
 		s_m_x_min = (long) (g_m_x_min_fp*s_fg);
 		mxmax = (long) (g_m_x_max_fp*s_fg);
@@ -119,8 +120,8 @@ int julibrot_setup()
 		s_dmy = (mymax - s_m_y_min) / g_z_dots;
 		g_long_parameter = &s_jbc;
 
-		s_x_per_inch = (long) ((g_xx_min - g_xx_max) / g_width_fp*s_fg);
-		s_y_per_inch = (long) ((g_yy_max - g_yy_min) / g_height_fp*s_fg);
+		s_x_per_inch = (long) ((g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_max()) / g_width_fp*s_fg);
+		s_y_per_inch = (long) ((g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_min()) / g_height_fp*s_fg);
 		s_inch_per_x_dot = (long) ((g_width_fp / g_x_dots)*s_fg16);
 		s_inch_per_y_dot = (long) ((g_height_fp / g_y_dots)*s_fg16);
 		s_init_z = origin - (s_depth / 2);

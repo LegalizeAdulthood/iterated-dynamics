@@ -147,12 +147,12 @@ int     g_tab_mode = 1;                    /* tab display enabled */
 /*    top    left  corner of screen is (g_xx_min, g_yy_max) */
 /*    bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) */
 /*    bottom right corner of screen is (g_xx_max, g_yy_min) */
-double  g_xx_min;
-double	g_xx_max;
-double	g_yy_min;
-double	g_yy_max;
-double	g_xx_3rd;
-double	g_yy_3rd; /* selected screen corners  */
+//double  g_xx_min;
+//double	g_xx_max;
+//double	g_yy_min;
+//double	g_yy_max;
+//double	g_xx_3rd;
+//double	g_yy_3rd; /* selected screen corners  */
 long    g_x_min;
 long	g_x_max;
 long	g_y_min;
@@ -187,11 +187,12 @@ double	g_too_small;
 int		g_cross_hair_box_size;
 int		g_no_sub_images;
 int		g_auto_browse;
-int		g_double_caution;
+
+UserInterfaceState g_ui_state;
+
 char	g_browse_check_parameters;
 char	g_browse_check_type;
 char	g_browse_mask[FILE_MAX_FNAME];
-int		g_scale_map[12] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 }; /*RB, array for mapping notes to a (user defined) scale */
 char	g_exe_path[FILE_MAX_PATH] = { 0 };
 
 #define RESTART           1
@@ -286,7 +287,7 @@ static void main_restart(int argc, char *argv[], int &stacked)
 	g_auto_browse     = FALSE;
 	g_browse_check_type  = TRUE;
 	g_browse_check_parameters = TRUE;
-	g_double_caution  = TRUE;
+	g_ui_state.double_caution = true;
 	g_no_sub_images = FALSE;
 	g_too_small = 6;
 	g_cross_hair_box_size   = 3;
@@ -323,8 +324,6 @@ static void main_restart(int argc, char *argv[], int &stacked)
 	memcpy(g_old_dac_box, g_dac_box, 256*3);      /* save in case g_colors= present */
 
 	set_cpu_fpu();
-
-	adapter_detect();                    /* check what video is really present */
 
 	driver_set_for_text();                      /* switch to text mode */
 	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
