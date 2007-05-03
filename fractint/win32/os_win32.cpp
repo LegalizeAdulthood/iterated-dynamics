@@ -419,13 +419,6 @@ int fr_find_next()
 	return 0;
 }
 
-int get_sound_params()
-{
-	/* TODO */
-	_ASSERTE(FALSE);
-	return 0;
-}
-
 /*
 ; long read_ticker() returns current bios ticker value
 */

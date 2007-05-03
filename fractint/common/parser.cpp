@@ -1881,15 +1881,13 @@ void (*StkLog)() = dStkLog;
 
 void FPUcplxexp(_CMPLX *x, _CMPLX *z)
 {
-	double e2x, siny, cosy;
-
 	FPUcplxexp387(x, z);
 }
 
-	void dStkExp()
-	{
-		FPUcplxexp(&Arg1->d, &Arg1->d);
-	}
+void dStkExp()
+{
+	FPUcplxexp(&Arg1->d, &Arg1->d);
+}
 
 #if !defined(XFRACT)
 void mStkExp()

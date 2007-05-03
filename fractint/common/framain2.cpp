@@ -809,7 +809,9 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		}
 		break;
 
-	case FIK_CTL_F:	i = get_sound_params(); break;
+	case FIK_CTL_F:
+		i = g_sound_state.get_parameters();
+		break;
 
 	default:
 		i = get_command_string();

@@ -1283,7 +1283,8 @@ top:
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = "evolver parms...     <ctl-e>";
 
-#ifndef XFRACT
+		// TODO: sound support for unix/X11
+#if !defined(XFRACT)
 		nextleft += 2;
 		choicekey[nextleft] = FIK_CTL_F;
 		attributes[nextleft] = MENU_ITEM;

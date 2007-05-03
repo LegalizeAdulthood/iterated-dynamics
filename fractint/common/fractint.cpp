@@ -57,6 +57,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "SoundState.h"
 
 struct video_info g_video_entry;
 long g_timer_start;
@@ -563,7 +564,7 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 		}
 		if (kbdchar == FIK_CTL_F)  /* ctrl f = sound parms*/
 		{
-			get_sound_params();
+			g_sound_state.get_parameters();
 			return IMAGESTART;
 		}
 		if (kbdchar == 'f')  /* floating pt toggle */
