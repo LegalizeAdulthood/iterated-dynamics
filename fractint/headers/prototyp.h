@@ -114,13 +114,6 @@ void history_forward();
 
 /*  mpmath_a -- assembler file prototypes */
 
-extern struct MP * MPmul086(struct MP, struct MP);
-extern struct MP * MPdiv086(struct MP, struct MP);
-extern struct MP * MPadd086(struct MP, struct MP);
-extern int         MPcmp086(struct MP, struct MP);
-extern struct MP * d2MP086(double);
-extern double    * MP2d086(struct MP);
-extern struct MP * fg2MP086(long, int);
 extern struct MP * MPmul386(struct MP, struct MP);
 extern struct MP * MPdiv386(struct MP, struct MP);
 extern struct MP * MPadd386(struct MP, struct MP);
@@ -745,7 +738,6 @@ extern void get_calculation_time(char *, long);
 /*  mpmath_c -- C file prototypes */
 
 extern struct MP *MPsub(struct MP, struct MP);
-extern struct MP *MPsub086(struct MP, struct MP);
 extern struct MP *MPsub386(struct MP, struct MP);
 extern struct MP *MPabs(struct MP);
 extern struct MPC MPCsqr(struct MPC);
