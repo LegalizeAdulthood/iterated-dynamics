@@ -41,6 +41,7 @@
 #include "externs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "SoundState.h"
 
 #ifdef LINUX
 #define FNDELAY O_NDELAY
@@ -2822,7 +2823,7 @@ int X11Driver::init_fm()
 */
 void X11Driver::buzzer(int buzzer_type)
 {
-	if ((g_sound_flags & 7) != 0)
+	if ((g_sound_state.m_flags & 7) != 0)
 	{
 		printf("\007");
 		fflush(stdout);
