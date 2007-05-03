@@ -5,9 +5,9 @@ Add one to any debug value to trigger writing benchmark values to
 the file "bench".  This gets stripped at startup; so all values
 used for other purposes are even.
 
-Example:  "fractint debug=8088" forces Fractint to think you have an
-8088/8086 CPU and ignore all of the tricky 186/286/386-specific stuff.
-"Fractint 8089" does the same thing, but also turns on the benchmark
+Example:  "fractint debug=90" forces Fractint to use "C" code for
+Mandelbrot and Julia set computations.
+"Fractint 91" does the same thing, but also turns on the benchmark
 timer.
 
 22		lorenz.c		force float for 3D perspective
@@ -61,7 +61,6 @@ timer.
                         instead of complexzpower when imaginary part of 
                         parameter is zero
 8088	general.asm		set cpu = 86, ie dont use 32 bit stuff
-8088	fractint.c		set cpu = 86, (case in general.asm is redundant?)
 9002-9100 fractint.c	reduce video_type to (debug-9000)/2 if init was higher
 10000	fractint.c		display cpu, fpu, and free memory at startup
 10000	fractint.c		? (try extra hard for minimal startup memory?)
@@ -70,4 +69,4 @@ timer.
 <> 0	line3d.c		show "normal vector" errors instead of just fixing
 <> 0	prompts.c		show info if fullscreen_prompt2 array invalid
 
-odd		cmdfiles.c		sets timer flag and subtracts 1 to even integer
+odd		cmdfiles.c		sets benchmark timer flag and subtracts 1 to even integer

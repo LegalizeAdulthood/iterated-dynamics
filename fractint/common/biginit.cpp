@@ -73,22 +73,7 @@ static int restore_bf_vars();
 /* given bnlength, calc_lengths will calculate all the other lengths */
 void calc_lengths()
 {
-#if 0
-#ifdef USE_BIGNUM_C_CODE
-	bnstep = 2;
-#else /* use 80x86 asm code */
-	if (g_cpu >= 386)
-	{
-		bnstep = 4;
-	}
-	else /* g_cpu <= 286 */
-	{
-		bnstep = 2;
-	}
-#endif
-#else
-		bnstep = 4;  /* use 4 in all cases */
-#endif
+	bnstep = 4;  /* use 4 in all cases */
 
 	if (bnlength % bnstep != 0)
 	{

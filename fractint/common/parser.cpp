@@ -1883,17 +1883,7 @@ void FPUcplxexp(_CMPLX *x, _CMPLX *z)
 {
 	double e2x, siny, cosy;
 
-	if (g_fpu >= 387)
-	{
-		FPUcplxexp387(x, z);
-	}
-	else
-	{
-		e2x = exp(x->x);
-		FPUsincos(&x->y, &siny, &cosy);
-		z->x = e2x*cosy;
-		z->y = e2x*siny;
-	}
+	FPUcplxexp387(x, z);
 }
 
 	void dStkExp()
@@ -4310,7 +4300,7 @@ int formula_setup_fp()
 		MathType = D_MATH;
 		/* CAE changed below for fp */
 		RunFormRes = !RunForm(g_formula_name, 0); /* RunForm() returns 1 for failure */
-		if (RunFormRes && (g_fpu >= 387) && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
+		if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !Randomized
 			&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
 		{
 			return CvtStk(); /* run fast assembler code in parsera.asm */

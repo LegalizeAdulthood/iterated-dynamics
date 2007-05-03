@@ -76,11 +76,9 @@ void FPUcplxlog(_CMPLX *x, _CMPLX *z)
 
 void FPUcplxexp387(_CMPLX *x, _CMPLX *z)
 {
-	double pow, y;
-	y = x->y;
-	pow = exp(x->x);
-	z->x = pow*cos(y);
-	z->y = pow*sin(y);
+	double pow = exp(x->x);
+	z->x = pow*cos(x->y);
+	z->y = pow*sin(x->y);
 }
 
 /* Integer Routines */
