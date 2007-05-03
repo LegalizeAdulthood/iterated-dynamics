@@ -5,7 +5,7 @@
 #include "externs.h"
 #include "fractype.h"
 #include "mpmath.h"
-#include "newton.h"
+#include "Newton.h"
 
 #if !defined(XFRACT)
 static struct MPC mpctmp, mpctmp1;
