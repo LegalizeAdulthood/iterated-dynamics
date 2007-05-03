@@ -1,0 +1,76 @@
+This list complete as of version 20.
+None of these are necessarily supported in future.
+
+Add one to any debug value to trigger writing benchmark values to
+the file "bench".  This gets stripped at startup; so all values
+used for other purposes are even.
+
+Example:  "fractint debug=8088" forces Fractint to think you have an
+8088/8086 CPU and ignore all of the tricky 186/286/386-specific stuff.
+"Fractint 8089" does the same thing, but also turns on the benchmark
+timer.
+
+16	video.asm	pretend not a vga
+22	lorenz.c	force float for 3D perspective
+50	fractint.c	compare <r>estored files
+70	fractint.c	set fpu = 0
+72	fractint.c	don't use fast >= 287 fpu routines
+90	fractals.c	force "C" mandel & julia code (no calcmand or calmanfp)
+90	fractals.c	force generic code for fn+fn etc types
+90 	parser.c	force "C" parser code even if FPU >= 387
+92 	parser.c	print out list of FRM files searched
+94      parsera.asm     Use old buggy pwr()
+94      mpmath_c.c      Use old buggy pwr()
+96      frasetup.c      Use real formula for popcorn in the old case.
+96      parserfp.c      write debug messages to disk files(3)
+100	calcmand.asm	force use of 'code32bit' logic
+110     cmdfiles.c      turns off first-time initialization of variables
+200	fractint.c	time encoder
+322	parserfp.c	disable optimizer (FPU >= 387 only)
+324     realdos.c       disables help ESC in screen messages    
+420	diskvid.c	don't use extended/expanded mem (force disk)
+420	memory.c	same for screen save (force disk)
+420	editpal.c	same for screen save (force disk)
+422	diskvid.c	don't use expanded mem (force extended or disk)
+422	memory.c	same for screen save (force extended or disk)
+450	fractint.c	abort in batch mode if savename exists
+470	calcfract.c	disable prevention of color 0 for BTM
+472	calcfract.c	enable solid guessing at bottom and right
+600	printer.c	paintjet, no form feed
+602	printer.c	paintjet, flip image
+7nn     miscovl.c	set <b> getprec() digits variable to nn
+750     miscovl.c	print out as many params digits as possible in PAR
+870	fractint.c	set fpu to max 87
+900     printer.c       color test (commented out)
+902     printer.c       color test (commented out)
+910     miscovl.c       disables Sylvie Gallet's colors= color compression fix.
+920     miscovl.c       makes colors= compression lossless.
+1010	fractals.c	force fp for newton & newtbasin (no mpc math)
+1012	fractals.c	swap sign bit of zero for mandelbrotmix4
+1234	fractint.c	force larger integer arithmetic bitshift value
+2222	line3d.c	show amount of extra seg memory used
+2224	line3d.c	old just-the-dots logic, probably a temporary thing
+2870	fractint.c	set fpu to max 287
+3000	general.asm	'~' goes to color play mode
+3002	realdos.c	don't show development in heading
+3200    fracsubr.c      disable auto switch back from arbitrary precision
+3400    fracsubr.c      disable auto switch from integer to float
+3444    calcfrac.c      turns on long double soi algorithm (passes=s) 
+3600    miscfrac.c      pins the plasma corners to 1
+3800    fracsubr.c      turns off grid pixel lookup
+4000	miscres.c	turn on math error message (off otherwise)
+4010    miscres.c	use pre-19.3 centermag conversion.
+4020    fracsubr.c      use old timer.
+4030    fracsubr.c      use old orbit->sound code w/integer overflow.
+4200    diskvid.c       sets disk video cache size to minimum
+6000    frasetup        turns off optimization of using realzzpower types
+                        instead of complexzpower when imaginary part of 
+                        parameter is zero
+8088	general.asm	set cpu = 86, ie dont use 32 bit stuff
+8088	fractint.c	set cpu = 86, (case in general.asm is redundant?)
+9002-9100 fractint.c	reduce video_type to (debug-9000)/2 if init was higher
+10000	fractint.c	display cpu, fpu, and free memory at startup
+10000	fractint.c	? (try extra hard for minimal startup memory?)
+
+nonzero value, line3d.c, show "normal vector" errors instead of just fixing
+nonzero value, prompts.c, show info if fullscreen_prompt2 array invalid

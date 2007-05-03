@@ -739,7 +739,7 @@ static FCODE sflag_is_activated[] = {" flag is activated"};
 static FCODE sinteger_math[]      = {"Integer math is in use"};
 static FCODE sin_use_required[] = {" in use (required)"};
 static FCODE sarbitrary_precision[] = {"Arbitrary precision "};
-#ifdef XFRACT
+#if defined(XFRACT) || defined(WINFRACT)
 static FCODE spressanykey[] = {"Press any key to continue, F6 for area, F7 for next page"};
 #else
 static FCODE spressanykey[] = {"Press any key to continue, F6 for area, CTRL-TAB for next page"};

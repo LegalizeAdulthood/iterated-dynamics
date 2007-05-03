@@ -52,9 +52,6 @@
 #define     IDM_ORBITS   181
 #define     IDM_RESTART  182
 #define     IDM_PASSES   183
-#define     IDM_BROWSER  184
-#define     IDM_EVOLVER  185
-#define     IDM_MAINMENU 186
 
 #define     ID_GIF89A	113
 #define     ID_GIF87A	114
@@ -104,9 +101,6 @@
 #define     IDF_STARFIELD      528
 #define     IDF_RESTART        529
 #define     IDF_PASSES         530
-#define     IDF_BROWSER        531
-#define     IDF_EVOLVER        532
-#define     IDF_MAINMENU       533
 #define     IDF_CMDSTRING      534
 #define     IDF_HISTORY_B      535
 #define     IDF_HISTORY_F      536
@@ -142,7 +136,7 @@
 int PASCAL WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
 BOOL InitApplication(HANDLE);
 BOOL InitInstance(HANDLE, int);
-long CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK MainWndProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK SaveStatusProc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK About(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK HelpBox(HWND, UINT, WPARAM, LPARAM);

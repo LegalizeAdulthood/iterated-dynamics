@@ -1306,7 +1306,6 @@ top:
              LOADPROMPTSCHOICES(nextleft,"toggle to/from inverse <j>  ");
              showjuliatoggle = 1;
           }
-/* History not implemented in WinFract
       choicekey[nextleft+=2] = 'h';
       attributes[nextleft] = MENU_ITEM;
       LOADPROMPTSCHOICES(nextleft,"return to prior image  <h>   ");
@@ -1314,7 +1313,6 @@ top:
       choicekey[nextleft+=2] = 8;
       attributes[nextleft] = MENU_ITEM;
       LOADPROMPTSCHOICES(nextleft,"reverse thru history <ctl-h> ");
- */
    }
    else
       nextleft += 2;

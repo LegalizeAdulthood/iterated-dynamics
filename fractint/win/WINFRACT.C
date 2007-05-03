@@ -501,7 +501,7 @@ WPARAM SecondarywParam;
 LPARAM SecondarylParam;
 
 
-long FAR PASCAL MainWndProc(hWnd, message, wParam, lParam)
+LRESULT CALLBACK MainWndProc(hWnd, message, wParam, lParam)
 HWND hWnd;                                /* handle to main window */
 UINT message;
 WPARAM wParam;
@@ -1242,12 +1242,6 @@ GlobalExit:
                 case IDM_ZOOM:
                 case IDF_PASSES:
                 case IDM_PASSES:
-                case IDF_BROWSER:
-                case IDM_BROWSER:
-                case IDF_EVOLVER:
-                case IDM_EVOLVER:
-                case IDM_MAINMENU:
-                case IDF_MAINMENU:
                 case IDF_CMDSTRING:
                 case IDF_HISTORY_F:
                 case IDF_HISTORY_B:
@@ -1715,15 +1709,6 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                 case IDF_PASSES:
                     if (!winfract_menustyle)   /* Windows menus */
                         goto winfract_pmenu;   /* for now */
-                case IDF_BROWSER:
-                    if (!winfract_menustyle)   /* Windows menus */
-                        goto winfract_bmenu;   /* for now */
-                case IDF_EVOLVER:
-                    if (!winfract_menustyle)   /* Windows menus */
-                        goto winfract_emenu;   /* for now */
-                case IDF_MAINMENU:
-                    if (!winfract_menustyle)   /* Windows menus */
-                        goto winfract_mmenu;   /* for now */
                 case IDF_CMDSTRING:
 
                     if (winfract_menustyle) {        /* fractint prompts */
@@ -1739,12 +1724,6 @@ julibrot_fudge:                                /* dive in here for Julibrots */
                             i = get_fract_params(1);
                         else if (wParam == IDF_PASSES || wParam == IDM_PASSES)
                             i = passes_options();
-                        else if (wParam == IDF_BROWSER || wParam == IDM_BROWSER)
-                            i = get_browse_params();
-                        else if (wParam == IDF_EVOLVER || wParam == IDM_EVOLVER)
-                            i = get_evolve_Parms();
-                        else if (wParam == IDF_MAINMENU || wParam == IDM_MAINMENU)
-                            i = main_menu(1);
                         else if (wParam == IDF_CMDSTRING)
                             i = get_cmd_string();
                         else {
@@ -1840,18 +1819,6 @@ winfract_zmenu:
 
                 case IDM_PASSES:
 winfract_pmenu:
-                  break;
-
-                case IDM_BROWSER:
-winfract_bmenu:
-                  break;
-
-                case IDM_EVOLVER:
-winfract_emenu:
-                  break;
-
-                case IDM_MAINMENU:
-winfract_mmenu:
                   break;
 
                 case IDF_IFS3D:
