@@ -102,15 +102,14 @@ VK_INSERT,  IDF_RESTART,       VIRTKEY
 ".",        IDF_HOTCYCLERSTEP
 "*",        IDM_ORBITS
 "@",        IDF_PARFILE
+"2",        IDF_PARFILE
 "3",        IDF_3D
 "a",        IDF_STARFIELD
 "A",        IDF_STARFIELD
 "b",        IDF_SAVEPAR
-"B",        IDF_BROWSER
+"B",        IDF_SAVEPAR
 "c",        IDF_CYCLE
-"C",        IDF_CYCLE
-"e",        IDF_EVOLVER
-"E",        IDF_EVOLVER
+"C",        IDF_HOTCYCLEON
 "g",        IDF_CMDSTRING
 "G",        IDF_CMDSTRING
 "h",        IDF_HISTORY_B
@@ -119,8 +118,6 @@ VK_INSERT,  IDF_RESTART,       VIRTKEY
 "I",        IDF_IFS3D
 "l",        IDF_MAPIN
 "L",        IDF_MAPIN
-"m",        IDF_MAINMENU
-"M",        IDF_MAINMENU
 "o",        IDF_3DOVER
 "O",        IDF_3DOVER
 "p",        IDF_PASSES
