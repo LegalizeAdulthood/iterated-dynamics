@@ -17,7 +17,9 @@ public:
 	void write_time();
 	int get_parameters();
 	void orbit(int x, int y);
+	void orbit(double x, double y, double z);
 	const char *parameter_text() const;
+	int parse_command(const cmd_context &context);
 
 	int m_flags;
 	int m_base_hertz;				/* sound=x/y/z hertz value */
