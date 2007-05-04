@@ -229,17 +229,17 @@ int julia_setup_fp()
 		Took out support for inside= options, for speed. 7/13/97
 		*/
 		if (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL
-				&& !g_distance_test
-				&& g_decomposition[0] == 0
-				&& g_biomorph == -1
-				&& (g_inside >= -1)
-				/* uncomment this next line if more outside options are added */
-				&& g_outside >= -6
-				&& g_use_initial_orbit_z != 1
-				&& (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-				&& !g_finite_attractor
-				&& g_using_jiim == 0 && g_bail_out_test == Mod
-				&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
+			&& !g_distance_test
+			&& g_decomposition[0] == 0
+			&& g_biomorph == -1
+			&& (g_inside >= -1)
+			/* uncomment this next line if more outside options are added */
+			&& g_outside >= -6
+			&& g_use_initial_orbit_z != 1
+			&& (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
+			&& !g_finite_attractor
+			&& g_using_jiim == 0 && g_bail_out_test == Mod
+			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
 			g_calculate_mandelbrot_asm_fp = calculate_mandelbrot_fp_asm;

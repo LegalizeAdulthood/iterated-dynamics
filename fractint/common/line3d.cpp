@@ -220,11 +220,12 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 	}
 	/* Allow Ray trace to go through so display ok */
 	if (s_persp || g_raytrace_output)
-	{  /* mrr how do lv[] and cur and f_cur all relate */
+	{
+		/* mrr how do lv[] and cur and f_cur all relate */
 		/* NOTE: g_fudge was pre-calculated above in r and s_radius */
 		/* (almost) guarantee negative */
 		lv[2] = (long) (-s_radius - (*r)*cos_theta*s_sin_phi);     /* z */
-		// TODO: what should this really be?  !FILLTYPE < FILLTYPE_POINTS
+		// TODO: what should this really be?  Was: !FILLTYPE < FILLTYPE_POINTS
 		if ((lv[2] > s_z_cutoff) && FILLTYPE < FILLTYPE_POINTS)
 		{
 			*cur = s_bad;
@@ -235,7 +236,8 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		lv[1] = (long) (s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r)); /* y */
 
 		if ((FILLTYPE >= FILLTYPE_LIGHT_BEFORE) || g_raytrace_output)
-		{     /* calculate illumination normal before s_persp */
+		{
+			/* calculate illumination normal before s_persp */
 			double r0 = (*r)/65536L;
 			f_cur->x = (float) (xcenter0 + sin_theta*s_scale_x*r0);
 			f_cur->y = (float) (ycenter0 + cos_theta*s_cos_phi*s_scale_y*r0);
@@ -273,7 +275,8 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		f_cur->y = (float) (s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r) + g_yy_adjust);
 		cur->x = (int) f_cur->x;
 		cur->y = (int) f_cur->y;
-		if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE || g_raytrace_output)        /* mrr why do we do this for filltype > 5? */
+		/* mrr why do we do this for filltype > 5? */
+		if (FILLTYPE >= FILLTYPE_LIGHT_BEFORE || g_raytrace_output)
 		{
 			f_cur->color = (float) (-(*r)*cos_theta*s_sin_phi*s_scale_z);
 		}
@@ -617,9 +620,8 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 		}
 		else
 		{
-			static VECTOR tmpcross;
-
 			/* line-wise averaging scheme */
+			static VECTOR tmpcross;
 			if (LIGHTAVG > 0)
 			{
 				if (cross_not_init)

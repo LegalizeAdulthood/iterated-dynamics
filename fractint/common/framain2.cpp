@@ -152,7 +152,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 #endif
 				}
 				g_color_state = COLORSTATE_DEFAULT;
-				}
+			}
 			if (g_view_window)
 			{
 				/* bypass for VESA virtual screen */
