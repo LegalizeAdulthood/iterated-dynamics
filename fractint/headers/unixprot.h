@@ -5,8 +5,6 @@
 
 
 /*  calmanp5 -- assembler file prototypes */
-
-extern long  cdecl calcmandfpasm_c(void);
 extern long  cdecl calcmandfpasm_p5(void);
 extern void cdecl calcmandfpasmstart_p5(void);
 
@@ -14,7 +12,6 @@ extern void cdecl calcmandfpasmstart_p5(void);
 /*
  *   general.c -- C file prototypes
  */
-extern int waitkeypressed(int);
 extern void fix_ranges(int *, int, int);
 extern void decode_evolver_info(struct evolution_info *, int);
 extern void decode_fractal_info(struct fractal_info *, int);
