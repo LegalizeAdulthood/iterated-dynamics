@@ -213,7 +213,7 @@ $(COMDIR)/prompts2.o $(COMDIR)/realdos.o $(COMDIR)/rotate.o \
 $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
 $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
 $(COMDIR)/zoom.o $(COMDIR)/Halley.o $(COMDIR)/Newton.o \
-$(COMDIR)/SoundState.o
+$(COMDIR)/SoundState.o $(COMDIR)/EscapeTime.o
 
 
 ifeq ($(AS),/usr/bin/nasm)
@@ -242,7 +242,6 @@ HOBJS = hc.o unix.o
 .SUFFIXES: .o .cpp .s .h .asm
 
 xfractint: fractint.hlp .WAIT
-	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
@@ -264,7 +263,7 @@ clean:
 	cd $(COMDIR) ; ${MAKE} clean
 	cd $(UDIR) ; ${MAKE} clean
 
-depend:
+depend: fractint.hlp
 	cd $(COMDIR) ; ${MAKE} depend "CFLAGS=${DEPFLAGS}"
 	cd $(UDIR) ; ${MAKE} depend "CFLAGS=${DEPFLAGS}"
 
@@ -317,6 +316,7 @@ uninstall:
 
 fractint.hlp: hc $(DOSHELPDIR)/$(HELP)
 	cd $(DOSHELPDIR); ../hc /c; mv fractint.hlp ..
+	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 
 .WAIT:
 
