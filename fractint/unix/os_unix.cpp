@@ -15,17 +15,9 @@ int g_checked_vvs = 0;
 int g_cpu, g_fpu;                        /* cpu, fpu flags */
 static char extrasegment[0x18000] = { 0 };
 void *extraseg = &extrasegment[0];
-int g_fm_attack = 0;
-int g_fm_decay = 0;
-int g_fm_release = 0;
-int g_fm_sustain = 0;
-int g_fm_volume = 0;
-int g_fm_wave_type = 0;
-int g_note_attenuation = 0;
 long g_initial_x_l = 0;
 long g_initial_y_l = 0;
 BYTE g_old_dac_box[256][3];
-int g_polyphony = 0;
 long g_save_base = 0;				/* base clock ticks */ 
 long g_save_ticks = 0;				/* save after this many ticks */ 
 unsigned int strlocn[10*1024] = { 0 };
