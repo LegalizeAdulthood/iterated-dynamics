@@ -114,40 +114,59 @@ void fractal_float_to_bf()
 }
 
 
-#ifdef _MSC_VER
-#if _MSC_VER == 800
-/* MSC8 doesn't correctly calculate the address of certain arrays here */
-#pragma optimize("", off)
-#endif
-#endif
+void calculate_fractal_initialize_bail_out_limit()
+{
+	if (g_potential_flag && g_potential_parameter[2] != 0.0)
+	{
+		g_rq_limit = g_potential_parameter[2];
+	}
+	else if (g_bail_out) /* user input bailout */
+	{
+		g_rq_limit = g_bail_out;
+	}
+	else if (g_biomorph != -1) /* biomorph benefits from larger bailout */
+	{
+		g_rq_limit = 100;
+	}
+	else
+	{
+		g_rq_limit = g_current_fractal_specific->orbit_bailout;
+	}
+	if (g_integer_fractal) /* the bailout limit mustn't be too high here */
+	{
+		if (g_rq_limit > 127.0)
+		{
+			g_rq_limit = 127.0;
+		}
+	}
+}
 
 /* initialize a *pile* of stuff for fractal calculation */
 void calculate_fractal_initialize()
 {
 	int tries = 0;
-	int i, gotprec;
-	long xytemp;
-	double ftemp;
 	g_color_iter = g_old_color_iter = 0L;
-	for (i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		g_rhombus_stack[i] = 0;
 	}
 
-  /* set up grid array compactly leaving space at end */
-  /* space req for grid is 2(g_x_dots + g_y_dots)*sizeof(long or double) */
-  /* space available in extraseg is 65536 Bytes */
-	xytemp = g_x_dots + g_y_dots;
-	if (((g_user_float_flag == 0) && (xytemp*sizeof(long) > 32768))
-		|| ((g_user_float_flag == 1) && (xytemp*sizeof(double) > 32768))
-		|| DEBUGFLAG_NO_PIXEL_GRID == g_debug_flag)
+	/* set up grid array compactly leaving space at end */
+	/* space req for grid is 2(g_x_dots + g_y_dots)*sizeof(long or double) */
+	/* space available in extraseg is 65536 Bytes */
 	{
-		g_use_grid = FALSE;
-		g_float_flag = g_user_float_flag = TRUE;
-	}
-	else
-	{
-		g_use_grid = TRUE;
+		long xytemp = g_x_dots + g_y_dots;
+		if (((g_user_float_flag == 0) && (xytemp*sizeof(long) > 32768))
+			|| ((g_user_float_flag == 1) && (xytemp*sizeof(double) > 32768))
+			|| DEBUGFLAG_NO_PIXEL_GRID == g_debug_flag)
+		{
+			g_use_grid = FALSE;
+			g_float_flag = g_user_float_flag = TRUE;
+		}
+		else
+		{
+			g_use_grid = TRUE;
+		}
 	}
 
 	set_grid_pointers();
@@ -173,7 +192,7 @@ void calculate_fractal_initialize()
 	/* switch back to double when zooming out if using arbitrary precision */
 	if (g_bf_math)
 	{
-		gotprec = get_precision_bf(CURRENTREZ);
+		int gotprec = get_precision_bf(CURRENTREZ);
 		if ((gotprec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || g_math_tolerance[1] >= 1.0)
 		{
 			corners_bf_to_float();
@@ -312,30 +331,9 @@ init_restart:
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	g_integer_fractal = g_current_fractal_specific->isinteger;
 
-	if (g_potential_flag && g_potential_parameter[2] != 0.0)
-	{
-		g_rq_limit = g_potential_parameter[2];
-	}
-	else if (g_bail_out) /* user input bailout */
-	{
-		g_rq_limit = g_bail_out;
-	}
-	else if (g_biomorph != -1) /* biomorph benefits from larger bailout */
-	{
-		g_rq_limit = 100;
-	}
-	else
-	{
-		g_rq_limit = g_current_fractal_specific->orbit_bailout;
-	}
-	if (g_integer_fractal) /* the bailout limit mustn't be too high here */
-	{
-		if (g_rq_limit > 127.0)
-		{
-			g_rq_limit = 127.0;
-		}
-	}
+	calculate_fractal_initialize_bail_out_limit();
 
+	double ftemp;
 	if ((g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0)
 	{
 		/* ensure min < max and unrotated rectangle */
@@ -363,7 +361,7 @@ init_restart:
 	}
 	if (g_integer_fractal == 0)  /* float? */
 	{
-		i = g_current_fractal_specific->tofloat;
+		int i = g_current_fractal_specific->tofloat;
 		if (i != FRACTYPE_NO_FRACTAL) /* -> int? */
 		{
 			if (g_fractal_specific[i].isinteger > 1) /* specific shift? */
@@ -380,17 +378,19 @@ init_restart:
 	if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)  /* adust shift bits if.. */
 	{
 		if (!g_potential_flag                            /* not using potential */
-		&& (g_parameters[0] > -2.0 && g_parameters[0] < 2.0)  /* parameters not too large */
-		&& (g_parameters[1] > -2.0 && g_parameters[1] < 2.0)
-		&& !g_invert                                /* and not inverting */
-		&& g_biomorph == -1                         /* and not biomorphing */
-		&& g_rq_limit <= 4.0                           /* and bailout not too high */
-		&& (g_outside > -2 || g_outside < -6)         /* and no funny outside stuff */
-		&& g_debug_flag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
-		&& g_proximity <= 2.0                       /* and g_proximity not too large */
-		&& g_bail_out_test == Mod)                     /* and bailout test = mod */
+			&& (g_parameters[0] > -2.0 && g_parameters[0] < 2.0)  /* parameters not too large */
+			&& (g_parameters[1] > -2.0 && g_parameters[1] < 2.0)
+			&& !g_invert                                /* and not inverting */
+			&& g_biomorph == -1                         /* and not biomorphing */
+			&& g_rq_limit <= 4.0                           /* and bailout not too high */
+			&& (g_outside > -2 || g_outside < -6)         /* and no funny outside stuff */
+			&& g_debug_flag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
+			&& g_proximity <= 2.0                       /* and g_proximity not too large */
+			&& g_bail_out_test == Mod)                     /* and bailout test = mod */
+		{
 			g_bit_shift = FUDGE_FACTOR;                  /* use the larger g_bit_shift */
 		}
+	}
 
 	g_fudge = 1L << g_bit_shift;
 
@@ -483,29 +483,27 @@ expand_retry:
 		} /* end if (g_integer_fractal && !g_invert && g_use_grid) */
 		else
 		{
-			double dx0, dy0, dx1, dy1;
 			/* set up dx0 and dy0 analogs of g_x0_l and g_y0_l */
 			/* put fractal parameters in doubles */
-			dx0 = g_escape_time_state_fp.x_min();                /* fill up the x, y grids */
-			dy0 = g_escape_time_state_fp.y_max();
-			dx1 = dy1 = 0;
+			double dx0 = g_escape_time_state_fp.x_min();                /* fill up the x, y grids */
+			double dy0 = g_escape_time_state_fp.y_max();
+			double dx1 = 0;
+			double dy1 = 0;
 			/* this way of defining the dx and dy arrays is not the most
 				accurate, but it is kept because it is used to determine
 				the limit of resolution */
-			for (i = 1; i < g_x_dots; i++)
+			for (int i = 1; i < g_x_dots; i++)
 			{
 				dx0 = (double)(dx0 + (double)g_delta_x_fp);
 				dy1 = (double)(dy1 - (double)g_delta_y2_fp);
 			}
-			for (i = 1; i < g_y_dots; i++)
+			for (int i = 1; i < g_y_dots; i++)
 			{
 				dy0 = (double)(dy0 - (double)g_delta_y_fp);
 				dx1 = (double)(dx1 + (double)g_delta_x2_fp);
 			}
 			if (g_bf_math == 0) /* redundant test, leave for now */
 			{
-				double testx_try, testx_exact;
-				double testy_try, testy_exact;
 				/* Following is the old logic for detecting failure of double
 					precision. It has two advantages: it is independent of the
 					representation of numbers, and it is sensitive to resolution
@@ -514,47 +512,51 @@ expand_retry:
 					by using the magnification.  */
 				if (++tries < 2) /* for safety */
 				{
-				if (tries > 1)
-				{
-					stop_message(0, "precision-detection error");
-				}
-				/* Previously there were four tests of distortions in the
+					if (tries > 1)
+					{
+						stop_message(0, "precision-detection error");
+					}
+					/* Previously there were four tests of distortions in the
 					zoom box used to detect precision limitations. In some
 					cases of rotated/skewed zoom boxs, this causes the algorithm
 					to bail out to arbitrary precision too soon. The logic
 					now only tests the larger of the two deltas in an attempt
 					to repair this bug. This should never make the transition
 					to arbitrary precision sooner, but always later.*/
-				if (fabs(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd()) > fabs(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min()))
-				{
-					testx_exact  = g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd();
-					testx_try    = dx0-g_escape_time_state_fp.x_min();
-				}
-				else
-				{
-					testx_exact  = g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min();
-					testx_try    = dx1;
-				}
-				if (fabs(g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max()) > fabs(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd()))
-				{
-					testy_exact = g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max();
-					testy_try   = dy0-g_escape_time_state_fp.y_max();
-				}
-				else
-				{
-					testy_exact = g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd();
-					testy_try   = dy1;
-				}
-				if (ratio_bad(testx_try, testx_exact) ||
-					ratio_bad(testy_try, testy_exact))
-				{
-					if (g_current_fractal_specific->flags & FRACTALFLAG_ARBITRARY_PRECISION)
+					double testx_try;
+					double testx_exact;
+					if (fabs(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd()) > fabs(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min()))
 					{
-						fractal_float_to_bf();
-						goto init_restart;
+						testx_exact  = g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd();
+						testx_try    = dx0-g_escape_time_state_fp.x_min();
 					}
-					goto expand_retry;
-				} /* end if ratio_bad etc. */
+					else
+					{
+						testx_exact  = g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min();
+						testx_try    = dx1;
+					}
+					double testy_exact;
+					double testy_try;
+					if (fabs(g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max()) > fabs(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd()))
+					{
+						testy_exact = g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max();
+						testy_try   = dy0-g_escape_time_state_fp.y_max();
+					}
+					else
+					{
+						testy_exact = g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd();
+						testy_try   = dy1;
+					}
+					if (ratio_bad(testx_try, testx_exact) ||
+						ratio_bad(testy_try, testy_exact))
+					{
+						if (g_current_fractal_specific->flags & FRACTALFLAG_ARBITRARY_PRECISION)
+						{
+							fractal_float_to_bf();
+							goto init_restart;
+						}
+						goto expand_retry;
+					} /* end if ratio_bad etc. */
 				} /* end if tries < 2 */
 			} /* end if g_bf_math == 0 */
 
@@ -566,7 +568,6 @@ expand_retry:
 			g_escape_time_state_fp.y_min() = (double)(g_escape_time_state_fp.y_max() - (g_y_dots-1)*g_delta_y_fp - (g_x_dots-1)*g_delta_y2_fp);
 			g_escape_time_state_fp.x_3rd() = (double)(g_escape_time_state_fp.x_min() + (g_y_dots-1)*g_delta_x2_fp);
 			g_escape_time_state_fp.y_3rd() = (double)(g_escape_time_state_fp.y_max() - (g_y_dots-1)*g_delta_y_fp);
-
 		} /* end else */
 	} /* end if not plasma */
 
@@ -592,7 +593,7 @@ expand_retry:
 
 	/* calculate factors which plot real values to screen co-ords */
 	/* calcfrac.c plot_orbit routines have comments about this    */
-	ftemp = (double)(-g_delta_y2_fp*g_delta_x2_fp*g_dx_size*g_dy_size - (g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd())*(g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_max()));
+	ftemp = (double) (-g_delta_y2_fp*g_delta_x2_fp*g_dx_size*g_dy_size - (g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd())*(g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_max()));
 	if (ftemp != 0)
 	{
 		g_plot_mx1 = (double)(g_delta_x2_fp*g_dx_size*g_dy_size / ftemp);
@@ -605,12 +606,6 @@ expand_retry:
 		free_bf_vars();
 	}
 }
-
-#ifdef _MSC_VER
-#if _MSC_VER == 800
-#pragma optimize("", on) /* restore optimization options */
-#endif
-#endif
 
 static long _fastcall fudge_to_long(double d)
 {
@@ -1571,34 +1566,32 @@ void reset_clock()
 
 static void _fastcall plot_orbit_d(double dx, double dy, int color)
 {
-	int i, j, c;
-	int save_sxoffs, save_syoffs;
 	if (g_orbit_index >= 1500-3)
 	{
 		return;
 	}
-	i = (int) (dy*g_plot_mx1 - dx*g_plot_mx2);
-	i += g_sx_offset;
+	int i = (int) (dy*g_plot_mx1 - dx*g_plot_mx2) + g_sx_offset;
 	if (i < 0 || i >= g_screen_width)
 	{
 		return;
 	}
-	j = (int) (dx*g_plot_my1 - dy*g_plot_my2);
-	j += g_sy_offset;
+	int j = (int) (dx*g_plot_my1 - dy*g_plot_my2) + g_sy_offset;
 	if (j < 0 || j >= g_screen_height)
 	{
 		return;
 	}
-	save_sxoffs = g_sx_offset;
-	save_syoffs = g_sy_offset;
-	g_sx_offset = g_sy_offset = 0;
+	int save_sxoffs = g_sx_offset;
+	int save_syoffs = g_sy_offset;
+	g_sx_offset = 0;
+	g_sy_offset = 0;
 	/* save orbit value */
 	if (color == -1)
 	{
 		*(s_save_orbit + g_orbit_index++) = i;
 		*(s_save_orbit + g_orbit_index++) = j;
-		*(s_save_orbit + g_orbit_index++) = c = getcolor(i, j);
-		g_put_color(i, j, c^g_orbit_color);
+		int c = getcolor(i, j);
+		*(s_save_orbit + g_orbit_index++) = c;
+		g_put_color(i, j, c ^ g_orbit_color);
 	}
 	else
 	{
@@ -1606,41 +1599,7 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	}
 	g_sx_offset = save_sxoffs;
 	g_sy_offset = save_syoffs;
-	if (DEBUGFLAG_OLD_ORBIT_SOUND == g_debug_flag)
-	{
-		if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
-		{
-			g_sound_state.tone((int)(i*1000/g_x_dots + g_sound_state.m_base_hertz));
-		}
-		else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
-		{
-			g_sound_state.tone((int)(j*1000/g_y_dots + g_sound_state.m_base_hertz));
-		}
-		else if (g_orbit_delay > 0)
-		{
-			wait_until(0, g_orbit_delay);
-		}
-	}
-	else
-	{
-		if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
-		{
-			g_sound_state.tone((int)(i + g_sound_state.m_base_hertz));
-		}
-		else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
-		{
-			g_sound_state.tone((int)(j + g_sound_state.m_base_hertz));
-		}
-		else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
-		{
-			g_sound_state.tone((int)(i + j + g_sound_state.m_base_hertz));
-		}
-		else if (g_orbit_delay > 0)
-		{
-			wait_until(0, g_orbit_delay);
-		}
-	}
-
+	g_sound_state.orbit(i, j);
 	/* placing sleep_ms here delays each dot */
 }
 

@@ -714,3 +714,51 @@ int SoundState::get_music_parameters()
 
 	return 0;
 }
+
+void SoundState::old_orbit(int i, int j)
+{
+	if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
+	{
+		tone((int)(i*1000/g_x_dots + m_base_hertz));
+	}
+	else if ((m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
+	{
+		tone((int)(j*1000/g_y_dots + m_base_hertz));
+	}
+	else if (g_orbit_delay > 0)
+	{
+		wait_until(0, g_orbit_delay);
+	}
+}
+
+void SoundState::new_orbit(int i, int j)
+{
+	if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
+	{
+		tone((int)(i + m_base_hertz));
+	}
+	else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
+	{
+		tone((int)(j + m_base_hertz));
+	}
+	else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
+	{
+		tone((int)(i + j + m_base_hertz));
+	}
+	else if (g_orbit_delay > 0)
+	{
+		wait_until(0, g_orbit_delay);
+	}
+}
+
+void SoundState::orbit(int i, int j)
+{
+	if (DEBUGFLAG_OLD_ORBIT_SOUND == g_debug_flag)
+	{
+		old_orbit(i, j);
+	}
+	else
+	{
+		new_orbit(i, j);
+	}
+}
