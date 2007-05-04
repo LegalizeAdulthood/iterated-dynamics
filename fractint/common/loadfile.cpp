@@ -90,10 +90,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_fractal_type = 0;
 	}
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-	g_escape_time_state_fp.x_min()        = read_info.x_min;
-	g_escape_time_state_fp.x_max()        = read_info.x_max;
-	g_escape_time_state_fp.y_min()        = read_info.y_min;
-	g_escape_time_state_fp.y_max()        = read_info.y_max;
+	g_escape_time_state.m_grid_fp.x_min()        = read_info.x_min;
+	g_escape_time_state.m_grid_fp.x_max()        = read_info.x_max;
+	g_escape_time_state.m_grid_fp.y_min()        = read_info.y_min;
+	g_escape_time_state.m_grid_fp.y_max()        = read_info.y_max;
 	g_parameters[0]     = read_info.c_real;
 	g_parameters[1]     = read_info.c_imag;
 	g_save_release = 1100; /* unless we find out better later on */
@@ -164,15 +164,15 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
-	g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
-	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
+	g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
+	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 	g_user_distance_test = 0;
 	g_calculation_time = 0;
 	if (read_info.version > 3)
 	{
 		g_save_release = 1400;
-		g_escape_time_state_fp.x_3rd()       = read_info.x_3rd;
-		g_escape_time_state_fp.y_3rd()       = read_info.y_3rd;
+		g_escape_time_state.m_grid_fp.x_3rd()       = read_info.x_3rd;
+		g_escape_time_state.m_grid_fp.y_3rd()       = read_info.y_3rd;
 		g_calculation_status = read_info.calculation_status;
 		g_user_standard_calculation_mode = read_info.stdcalcmode;
 		g_three_pass = 0;
@@ -516,7 +516,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		g_bf_math = BIGNUM;
 		init_bf_length(read_info.bflength);
-		memcpy((char *) g_escape_time_state_bf.x_min(), mp_info.apm_data, mp_info.length);
+		memcpy((char *) g_escape_time_state.m_grid_bf.x_min(), mp_info.apm_data, mp_info.length);
 		free(mp_info.apm_data);
 	}
 	else
@@ -2160,16 +2160,16 @@ static void bfsetup_convert_to_screen()
 	bt_tmp2 = alloc_stack(rbflength + 2);
 
 	/* x3rd-xmin */
-	sub_bf(bt_inter1, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
+	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	/* ymin-ymax */
-	sub_bf(bt_inter2, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
+	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 	/* (x3rd-xmin)*(ymin-ymax) */
 	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
 	/* ymax-y3rd */
-	sub_bf(bt_inter1, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
+	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	/* xmax-xmin */
-	sub_bf(bt_inter2, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 	/* (ymax-y3rd)*(xmax-xmin) */
 	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
@@ -2181,29 +2181,29 @@ static void bfsetup_convert_to_screen()
 	div_bf(bt_xd, bt_tmp1, bt_det);
 
 	/* a =  xd*(ymax-y3rd) */
-	sub_bf(bt_inter1, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
+	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	mult_bf(bt_a, bt_xd, bt_inter1);
 
 	/* b =  xd*(x3rd-xmin) */
-	sub_bf(bt_inter1, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
+	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	mult_bf(bt_b, bt_xd, bt_inter1);
 
 	/* e = -(a*xmin + b*ymax) */
-	mult_bf(bt_tmp1, bt_a, g_escape_time_state_bf.x_min());
-	mult_bf(bt_tmp2, bt_b, g_escape_time_state_bf.y_max());
+	mult_bf(bt_tmp1, bt_a, g_escape_time_state.m_grid_bf.x_min());
+	mult_bf(bt_tmp2, bt_b, g_escape_time_state.m_grid_bf.y_max());
 	neg_a_bf(add_bf(bt_e, bt_tmp1, bt_tmp2));
 
 	/* x3rd-xmax */
-	sub_bf(bt_inter1, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_max());
+	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
 	/* ymin-ymax */
-	sub_bf(bt_inter2, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
+	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 	/* (x3rd-xmax)*(ymin-ymax) */
 	mult_bf(bt_tmp1, bt_inter1, bt_inter2);
 
 	/* ymin-y3rd */
-	sub_bf(bt_inter1, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_3rd());
+	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 	/* xmax-xmin */
-	sub_bf(bt_inter2, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+	sub_bf(bt_inter2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 	/* (ymin-y3rd)*(xmax-xmin) */
 	mult_bf(bt_tmp2, bt_inter1, bt_inter2);
 
@@ -2215,16 +2215,16 @@ static void bfsetup_convert_to_screen()
 	div_bf(bt_yd, bt_tmp2, bt_det);
 
 	/* c =  yd*(ymin-y3rd) */
-	sub_bf(bt_inter1, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_3rd());
+	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 	mult_bf(bt_c, bt_yd, bt_inter1);
 
 	/* d =  yd*(x3rd-xmax) */
-	sub_bf(bt_inter1, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_max());
+	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
 	mult_bf(bt_d, bt_yd, bt_inter1);
 
 	/* f = -(c*xmin + d*ymax) */
-	mult_bf(bt_tmp1, bt_c, g_escape_time_state_bf.x_min());
-	mult_bf(bt_tmp2, bt_d, g_escape_time_state_bf.y_max());
+	mult_bf(bt_tmp1, bt_c, g_escape_time_state.m_grid_bf.x_min());
+	mult_bf(bt_tmp2, bt_d, g_escape_time_state.m_grid_bf.y_max());
 	neg_a_bf(add_bf(bt_f, bt_tmp1, bt_tmp2));
 
 	restore_stack(saved);

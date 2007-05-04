@@ -542,7 +542,7 @@ int calculate_fractal()
 			g_true_color = 0;
 		}
 	}
-	if (!g_use_grid)
+	if (!g_escape_time_state.m_use_grid)
 	{
 		if (g_user_standard_calculation_mode != 'o')
 		{
@@ -686,17 +686,17 @@ int calculate_fractal()
 
 		if (g_inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
 		{
-			g_inversion[0] = min(fabs(g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_min()), fabs(g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_min())) / 6.0;
+			g_inversion[0] = min(fabs(g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_min()), fabs(g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_min())) / 6.0;
 			fix_inversion(&g_inversion[0]);
 			g_f_radius = g_inversion[0];
 		}
 
 		if (g_invert < 2 || g_inversion[1] == AUTOINVERT)  /* xcenter not already set */
 		{
-			g_inversion[1] = (g_escape_time_state_fp.x_min() + g_escape_time_state_fp.x_max()) / 2.0;
+			g_inversion[1] = (g_escape_time_state.m_grid_fp.x_min() + g_escape_time_state.m_grid_fp.x_max()) / 2.0;
 			fix_inversion(&g_inversion[1]);
 			g_f_x_center = g_inversion[1];
-			if (fabs(g_f_x_center) < fabs(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()) / 100)
+			if (fabs(g_f_x_center) < fabs(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min()) / 100)
 			{
 				g_inversion[1] = g_f_x_center = 0.0;
 			}
@@ -704,10 +704,10 @@ int calculate_fractal()
 
 		if (g_invert < 3 || g_inversion[2] == AUTOINVERT)  /* ycenter not already set */
 		{
-			g_inversion[2] = (g_escape_time_state_fp.y_min() + g_escape_time_state_fp.y_max()) / 2.0;
+			g_inversion[2] = (g_escape_time_state.m_grid_fp.y_min() + g_escape_time_state.m_grid_fp.y_max()) / 2.0;
 			fix_inversion(&g_inversion[2]);
 			g_f_y_center = g_inversion[2];
-			if (fabs(g_f_y_center) < fabs(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()) / 100)
+			if (fabs(g_f_y_center) < fabs(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()) / 100)
 			{
 				g_inversion[2] = g_f_y_center = 0.0;
 			}
@@ -941,10 +941,10 @@ static void perform_work_list()
 			dysize = g_y_dots-1;
 		}
 
-		delta_x_fp  = (g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd()) / dxsize; /* calculate stepsizes */
-		delta_y_fp  = (g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_3rd()) / dysize;
-		delta_x2_fp = (g_escape_time_state_fp.x_3rd() - g_escape_time_state_fp.x_min()) / dysize;
-		delta_y2_fp = (g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_min()) / dxsize;
+		delta_x_fp  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / dxsize; /* calculate stepsizes */
+		delta_y_fp  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / dysize;
+		delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / dysize;
+		delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / dxsize;
 
 		/* in case it's changed with <G> */
 		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
@@ -978,8 +978,8 @@ static void perform_work_list()
 		ftemp = g_distance_test_width;
 		/* multiply by thickness desired */
 		s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000); 
-		s_dem_width = (sqrt(sqr(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()) + sqr(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min()) )*aspect
-			+ sqrt(sqr(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()) + sqr(g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_min()) ) ) / g_distance_test;
+		s_dem_width = (sqrt(sqr(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min()) + sqr(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()) )*aspect
+			+ sqrt(sqr(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()) + sqr(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min()) ) ) / g_distance_test;
 		ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 		ftemp += 3; /* bailout plus just a bit */
 		ftemp2 = log(ftemp);
@@ -4265,14 +4265,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	/* also any rotation other than 180deg and any off-axis stretch */
 	if (g_bf_math)
 	{
-		if (cmp_bf(g_escape_time_state_bf.x_min(), g_escape_time_state_bf.x_3rd()) || cmp_bf(g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_3rd()))
+		if (cmp_bf(g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd()) || cmp_bf(g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd()))
 		{
 			return;
 		}
 	}
 	if ((g_potential_flag && g_potential_16bit) || (g_invert && g_inversion[2] != 0.0)
 			|| g_decomposition[0] != 0
-			|| g_escape_time_state_fp.x_min() != g_escape_time_state_fp.x_3rd() || g_escape_time_state_fp.y_min() != g_escape_time_state_fp.y_3rd())
+			|| g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd() || g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd())
 	{
 		return;
 	}
@@ -4333,27 +4333,27 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	{
 		saved = save_stack();
 		bft1    = alloc_stack(rbflength + 2);
-		xaxis_on_screen = (sign_bf(g_escape_time_state_bf.y_min()) != sign_bf(g_escape_time_state_bf.y_max()));
-		yaxis_on_screen = (sign_bf(g_escape_time_state_bf.x_min()) != sign_bf(g_escape_time_state_bf.x_max()));
+		xaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.y_min()) != sign_bf(g_escape_time_state.m_grid_bf.y_max()));
+		yaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.x_min()) != sign_bf(g_escape_time_state.m_grid_bf.x_max()));
 	}
 	else
 	{
-		xaxis_on_screen = (sign(g_escape_time_state_fp.y_min()) != sign(g_escape_time_state_fp.y_max()));
-		yaxis_on_screen = (sign(g_escape_time_state_fp.x_min()) != sign(g_escape_time_state_fp.x_max()));
+		xaxis_on_screen = (sign(g_escape_time_state.m_grid_fp.y_min()) != sign(g_escape_time_state.m_grid_fp.y_max()));
+		yaxis_on_screen = (sign(g_escape_time_state.m_grid_fp.x_min()) != sign(g_escape_time_state.m_grid_fp.x_max()));
 	}
 	if (xaxis_on_screen) /* axis is on screen */
 	{
 		if (g_bf_math)
 		{
 			/* ftemp = -g_yy_max / (g_yy_min-g_yy_max); */
-			sub_bf(bft1, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
-			div_bf(bft1, g_escape_time_state_bf.y_max(), bft1);
+			sub_bf(bft1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
+			div_bf(bft1, g_escape_time_state.m_grid_bf.y_max(), bft1);
 			neg_a_bf(bft1);
 			ftemp = (double)bftofloat(bft1);
 		}
 		else
 		{
-			ftemp = -g_escape_time_state_fp.y_max() / (g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_max());
+			ftemp = -g_escape_time_state.m_grid_fp.y_max() / (g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_max());
 		}
 		ftemp *= (g_y_dots-1);
 		ftemp += 0.25;
@@ -4369,14 +4369,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		if (g_bf_math)
 		{
 			/* ftemp = -g_xx_min / (g_xx_max-g_xx_min); */
-			sub_bf(bft1, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
-			div_bf(bft1, g_escape_time_state_bf.x_min(), bft1);
+			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
+			div_bf(bft1, g_escape_time_state.m_grid_bf.x_min(), bft1);
 			neg_a_bf(bft1);
 			ftemp = (double)bftofloat(bft1);
 		}
 		else
 		{
-			ftemp = -g_escape_time_state_fp.x_min() / (g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min());
+			ftemp = -g_escape_time_state.m_grid_fp.x_min() / (g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min());
 		}
 		ftemp *= (g_x_dots-1);
 		ftemp += 0.25;
@@ -4480,14 +4480,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	case PI_SYM:                      /* PI symmetry */
 		if (g_bf_math)
 		{
-			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min()))) < PI/4)
+			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()))) < PI/4)
 			{
 				break; /* no point in pi symmetry if values too close */
 			}
 		}
 		else
 		{
-			if (fabs(g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_min()) < PI/4)
+			if (fabs(g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_min()) < PI/4)
 			{
 				break; /* no point in pi symmetry if values too close */
 			}
@@ -4511,13 +4511,13 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		}
 		if (g_bf_math)
 		{
-			sub_bf(bft1, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			abs_a_bf(bft1);
 			s_pixel_pi = (int) ((PI/(double)bftofloat(bft1)*g_x_dots)); /* PI in pixels */
 		}
 		else
 		{
-			s_pixel_pi = (int) ((PI/fabs(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))*g_x_dots); /* PI in pixels */
+			s_pixel_pi = (int) ((PI/fabs(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min()))*g_x_dots); /* PI in pixels */
 		}
 
 		g_x_stop = g_xx_start + s_pixel_pi-1;

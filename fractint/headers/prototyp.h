@@ -283,7 +283,6 @@ extern int t16_getline(FILE *, int, U16 *);
 
 /*  fracsubr -- C file prototypes */
 
-extern void free_grid_pointers();
 extern void calculate_fractal_initialize();
 extern void adjust_corner();
 #ifndef USE_VARARGS
@@ -317,9 +316,6 @@ extern void _fastcall symplot4basin(int, int, int);
 extern void _fastcall noplot(int, int, int);
 extern void fractal_float_to_bf();
 extern void adjust_corner_bf();
-extern void set_grid_pointers();
-extern void fill_dx_array();
-extern void fill_lx_array();
 
 /*  fractalp -- C file prototypes */
 

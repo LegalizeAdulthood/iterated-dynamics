@@ -193,12 +193,12 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 	double tmpx1, tmpx2, tmpy1, tmpy2, tmpa; /* temporary x, y, angle */
 
 	/* simple normal case first */
-	if (g_escape_time_state_fp.x_3rd() == g_escape_time_state_fp.x_min() && g_escape_time_state_fp.y_3rd() == g_escape_time_state_fp.y_min())
+	if (g_escape_time_state.m_grid_fp.x_3rd() == g_escape_time_state.m_grid_fp.x_min() && g_escape_time_state.m_grid_fp.y_3rd() == g_escape_time_state.m_grid_fp.y_min())
 	{ /* no rotation or skewing, but stretching is allowed */
-		Width  = g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_min();
-		Height = g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_min();
-		*Xctr = (g_escape_time_state_fp.x_min() + g_escape_time_state_fp.x_max())/2.0;
-		*Yctr = (g_escape_time_state_fp.y_min() + g_escape_time_state_fp.y_max())/2.0;
+		Width  = g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_min();
+		Height = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_min();
+		*Xctr = (g_escape_time_state.m_grid_fp.x_min() + g_escape_time_state.m_grid_fp.x_max())/2.0;
+		*Yctr = (g_escape_time_state.m_grid_fp.y_min() + g_escape_time_state.m_grid_fp.y_max())/2.0;
 		*Magnification  = 2.0/Height;
 		*Xmagfactor =  Height / (DEFAULT_ASPECT_RATIO*Width);
 		*Rotation = 0.0;
@@ -208,26 +208,26 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 	{
 		/* set up triangle ABC, having sides abc */
 		/* side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) */
-		tmpx1 = g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_min();
-		tmpy1 = g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_min();
+		tmpx1 = g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_min();
+		tmpy1 = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_min();
 		c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
-		tmpx1 = g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd();
-		tmpy1 = g_escape_time_state_fp.y_min() - g_escape_time_state_fp.y_3rd();
+		tmpx1 = g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd();
+		tmpy1 = g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 		a = sqrt(a2);
 		*Rotation = -rad_to_deg(atan2(tmpy1, tmpx1)); /* negative for image rotation */
 
-		tmpx2 = g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_3rd();
-		tmpy2 = g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_3rd();
+		tmpx2 = g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
+		tmpy2 = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd();
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
 		b = sqrt(b2);
 
 		tmpa = acos((a2 + b2-c2)/(2*a*b)); /* save tmpa for later use */
 		*Skew = 90.0 - rad_to_deg(tmpa);
 
-		*Xctr = (g_escape_time_state_fp.x_min() + g_escape_time_state_fp.x_max())*0.5;
-		*Yctr = (g_escape_time_state_fp.y_min() + g_escape_time_state_fp.y_max())*0.5;
+		*Xctr = (g_escape_time_state.m_grid_fp.x_min() + g_escape_time_state.m_grid_fp.x_max())*0.5;
+		*Yctr = (g_escape_time_state.m_grid_fp.y_min() + g_escape_time_state.m_grid_fp.y_max())*0.5;
 
 		Height = b*sin(tmpa);
 
@@ -253,29 +253,29 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 	{
 		double txmin, txmax, tx3rd, tymin, tymax, ty3rd;
 		double error;
-		txmin = g_escape_time_state_fp.x_min();
-		txmax = g_escape_time_state_fp.x_max();
-		tx3rd = g_escape_time_state_fp.x_3rd();
-		tymin = g_escape_time_state_fp.y_min();
-		tymax = g_escape_time_state_fp.y_max();
-		ty3rd = g_escape_time_state_fp.y_3rd();
+		txmin = g_escape_time_state.m_grid_fp.x_min();
+		txmax = g_escape_time_state.m_grid_fp.x_max();
+		tx3rd = g_escape_time_state.m_grid_fp.x_3rd();
+		tymin = g_escape_time_state.m_grid_fp.y_min();
+		tymax = g_escape_time_state.m_grid_fp.y_max();
+		ty3rd = g_escape_time_state.m_grid_fp.y_3rd();
 		convert_corners(*Xctr, *Yctr, *Magnification, *Xmagfactor, *Rotation, *Skew);
-		error = sqr(txmin - g_escape_time_state_fp.x_min()) +
-			sqr(txmax - g_escape_time_state_fp.x_max()) +
-			sqr(tx3rd - g_escape_time_state_fp.x_3rd()) +
-			sqr(tymin - g_escape_time_state_fp.y_min()) +
-			sqr(tymax - g_escape_time_state_fp.y_max()) +
-			sqr(ty3rd - g_escape_time_state_fp.y_3rd());
+		error = sqr(txmin - g_escape_time_state.m_grid_fp.x_min()) +
+			sqr(txmax - g_escape_time_state.m_grid_fp.x_max()) +
+			sqr(tx3rd - g_escape_time_state.m_grid_fp.x_3rd()) +
+			sqr(tymin - g_escape_time_state.m_grid_fp.y_min()) +
+			sqr(tymax - g_escape_time_state.m_grid_fp.y_max()) +
+			sqr(ty3rd - g_escape_time_state.m_grid_fp.y_3rd());
 		if (error > .001)
 		{
 			show_corners_dbl("convert_center_mag problem");
 		}
-		g_escape_time_state_fp.x_min() = txmin;
-		g_escape_time_state_fp.x_max() = txmax;
-		g_escape_time_state_fp.x_3rd() = tx3rd;
-		g_escape_time_state_fp.y_min() = tymin;
-		g_escape_time_state_fp.y_max() = tymax;
-		g_escape_time_state_fp.y_3rd() = ty3rd;
+		g_escape_time_state.m_grid_fp.x_min() = txmin;
+		g_escape_time_state.m_grid_fp.x_max() = txmax;
+		g_escape_time_state.m_grid_fp.x_3rd() = tx3rd;
+		g_escape_time_state.m_grid_fp.y_min() = tymin;
+		g_escape_time_state.m_grid_fp.y_max() = tymax;
+		g_escape_time_state.m_grid_fp.y_3rd() = ty3rd;
 	}
 #endif
 	return;
@@ -299,20 +299,20 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 
 	if (Rotation == 0.0 && Skew == 0.0)
 		{ /* simple, faster case */
-		g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min() = Xctr - w;
-		g_escape_time_state_fp.x_max() = Xctr + w;
-		g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min() = Yctr - h;
-		g_escape_time_state_fp.y_max() = Yctr + h;
+		g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min() = Xctr - w;
+		g_escape_time_state.m_grid_fp.x_max() = Xctr + w;
+		g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min() = Yctr - h;
+		g_escape_time_state.m_grid_fp.y_max() = Yctr + h;
 		return;
 		}
 
 	/* in unrotated, untranslated coordinate system */
 	tanskew = tan(deg_to_rad(Skew));
-	g_escape_time_state_fp.x_min() = -w + h*tanskew;
-	g_escape_time_state_fp.x_max() =  w - h*tanskew;
-	g_escape_time_state_fp.x_3rd() = -w - h*tanskew;
-	g_escape_time_state_fp.y_max() = h;
-	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min() = -h;
+	g_escape_time_state.m_grid_fp.x_min() = -w + h*tanskew;
+	g_escape_time_state.m_grid_fp.x_max() =  w - h*tanskew;
+	g_escape_time_state.m_grid_fp.x_3rd() = -w - h*tanskew;
+	g_escape_time_state.m_grid_fp.y_max() = h;
+	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min() = -h;
 
 	/* rotate coord system and then translate it */
 	Rotation = deg_to_rad(Rotation);
@@ -320,22 +320,22 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	cosrot = cos(Rotation);
 
 	/* top left */
-	x = g_escape_time_state_fp.x_min()*cosrot + g_escape_time_state_fp.y_max()*sinrot;
-	y = -g_escape_time_state_fp.x_min()*sinrot + g_escape_time_state_fp.y_max()*cosrot;
-	g_escape_time_state_fp.x_min() = x + Xctr;
-	g_escape_time_state_fp.y_max() = y + Yctr;
+	x = g_escape_time_state.m_grid_fp.x_min()*cosrot + g_escape_time_state.m_grid_fp.y_max()*sinrot;
+	y = -g_escape_time_state.m_grid_fp.x_min()*sinrot + g_escape_time_state.m_grid_fp.y_max()*cosrot;
+	g_escape_time_state.m_grid_fp.x_min() = x + Xctr;
+	g_escape_time_state.m_grid_fp.y_max() = y + Yctr;
 
 	/* bottom right */
-	x = g_escape_time_state_fp.x_max()*cosrot + g_escape_time_state_fp.y_min()*sinrot;
-	y = -g_escape_time_state_fp.x_max()*sinrot + g_escape_time_state_fp.y_min()*cosrot;
-	g_escape_time_state_fp.x_max() = x + Xctr;
-	g_escape_time_state_fp.y_min() = y + Yctr;
+	x = g_escape_time_state.m_grid_fp.x_max()*cosrot + g_escape_time_state.m_grid_fp.y_min()*sinrot;
+	y = -g_escape_time_state.m_grid_fp.x_max()*sinrot + g_escape_time_state.m_grid_fp.y_min()*cosrot;
+	g_escape_time_state.m_grid_fp.x_max() = x + Xctr;
+	g_escape_time_state.m_grid_fp.y_min() = y + Yctr;
 
 	/* bottom left */
-	x = g_escape_time_state_fp.x_3rd()*cosrot + g_escape_time_state_fp.y_3rd()*sinrot;
-	y = -g_escape_time_state_fp.x_3rd()*sinrot + g_escape_time_state_fp.y_3rd()*cosrot;
-	g_escape_time_state_fp.x_3rd() = x + Xctr;
-	g_escape_time_state_fp.y_3rd() = y + Yctr;
+	x = g_escape_time_state.m_grid_fp.x_3rd()*cosrot + g_escape_time_state.m_grid_fp.y_3rd()*sinrot;
+	y = -g_escape_time_state.m_grid_fp.x_3rd()*sinrot + g_escape_time_state.m_grid_fp.y_3rd()*cosrot;
+	g_escape_time_state.m_grid_fp.x_3rd() = x + Xctr;
+	g_escape_time_state.m_grid_fp.y_3rd() = y + Yctr;
 
 	return;
 }
@@ -358,21 +358,21 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 
 	/* simple normal case first */
 	/* if (x3rd == xmin && y3rd == ymin) */
-	if (!cmp_bf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min()) && !cmp_bf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min()))
+	if (!cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()) && !cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()))
 	{ /* no rotation or skewing, but stretching is allowed */
 		bfWidth  = alloc_stack(bflength + 2);
 		bfHeight = alloc_stack(bflength + 2);
 		/* Width  = xmax - xmin; */
-		sub_bf(bfWidth, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+		sub_bf(bfWidth, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		Width  = bftofloat(bfWidth);
 		/* Height = ymax - ymin; */
-		sub_bf(bfHeight, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min());
+		sub_bf(bfHeight, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
 		Height = bftofloat(bfHeight);
 		/* *Xctr = (xmin + xmax)/2; */
-		add_bf(Xctr, g_escape_time_state_bf.x_min(), g_escape_time_state_bf.x_max());
+		add_bf(Xctr, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_max());
 		half_a_bf(Xctr);
 		/* *Yctr = (ymin + ymax)/2; */
-		add_bf(Yctr, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
+		add_bf(Yctr, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 		half_a_bf(Yctr);
 		*Magnification  = 2/Height;
 		*Xmagfactor =  (double)(Height / (DEFAULT_ASPECT_RATIO*Width));
@@ -389,19 +389,19 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		/* IMPORTANT: convert from bf AFTER subtracting */
 
 		/* tmpx = xmax - xmin; */
-		sub_bf(bftmpx, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min());
+		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		tmpx1 = bftofloat(bftmpx);
 		/* tmpy = ymax - ymin; */
-		sub_bf(bftmpy, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min());
+		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
 		tmpy1 = bftofloat(bftmpy);
 		c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
 		/* tmpx = xmax - x3rd; */
-		sub_bf(bftmpx, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_3rd());
+		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 		tmpx1 = bftofloat(bftmpx);
 
 		/* tmpy = ymin - y3rd; */
-		sub_bf(bftmpy, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_3rd());
+		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 		tmpy1 = bftofloat(bftmpy);
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 		a = sqrtl(a2);
@@ -416,10 +416,10 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		*Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx))); /* negative for image rotation */
 
 		/* tmpx = xmin - x3rd; */
-		sub_bf(bftmpx, g_escape_time_state_bf.x_min(), g_escape_time_state_bf.x_3rd());
+		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd());
 		tmpx2 = bftofloat(bftmpx);
 		/* tmpy = ymax - y3rd; */
-		sub_bf(bftmpy, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
+		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 		tmpy2 = bftofloat(bftmpy);
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
 		b = sqrtl(b2);
@@ -429,10 +429,10 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 
 		/* these are the only two variables that must use big precision */
 		/* *Xctr = (xmin + xmax)/2; */
-		add_bf(Xctr, g_escape_time_state_bf.x_min(), g_escape_time_state_bf.x_max());
+		add_bf(Xctr, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_max());
 		half_a_bf(Xctr);
 		/* *Yctr = (ymin + ymax)/2; */
-		add_bf(Yctr, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_max());
+		add_bf(Yctr, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 		half_a_bf(Yctr);
 
 		Height = b*sin(tmpa);
@@ -486,15 +486,15 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	if (Rotation == 0.0 && Skew == 0.0)
 		{ /* simple, faster case */
 		/* x3rd = xmin = Xctr - w; */
-		sub_bf(g_escape_time_state_bf.x_min(), Xctr, bfw);
-		copy_bf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
+		sub_bf(g_escape_time_state.m_grid_bf.x_min(), Xctr, bfw);
+		copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 		/* xmax = Xctr + w; */
-		add_bf(g_escape_time_state_bf.x_max(), Xctr, bfw);
+		add_bf(g_escape_time_state.m_grid_bf.x_max(), Xctr, bfw);
 		/* y3rd = ymin = Yctr - h; */
-		sub_bf(g_escape_time_state_bf.y_min(), Yctr, bfh);
-		copy_bf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min());
+		sub_bf(g_escape_time_state.m_grid_bf.y_min(), Yctr, bfh);
+		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 		/* ymax = Yctr + h; */
-		add_bf(g_escape_time_state_bf.y_max(), Yctr, bfh);
+		add_bf(g_escape_time_state.m_grid_bf.y_max(), Yctr, bfh);
 		restore_stack(saved);
 		return;
 		}
@@ -518,30 +518,30 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	y = -x_min*sinrot + y_max*cosrot;
 	/* xmin = x + Xctr; */
 	floattobf(bftmp, x);
-	add_bf(g_escape_time_state_bf.x_min(), bftmp, Xctr);
+	add_bf(g_escape_time_state.m_grid_bf.x_min(), bftmp, Xctr);
 	/* ymax = y + Yctr; */
 	floattobf(bftmp, y);
-	add_bf(g_escape_time_state_bf.y_max(), bftmp, Yctr);
+	add_bf(g_escape_time_state.m_grid_bf.y_max(), bftmp, Yctr);
 
 	/* bottom right */
 	x =  x_max*cosrot + y_min*sinrot;
 	y = -x_max*sinrot + y_min*cosrot;
 	/* xmax = x + Xctr; */
 	floattobf(bftmp, x);
-	add_bf(g_escape_time_state_bf.x_max(), bftmp, Xctr);
+	add_bf(g_escape_time_state.m_grid_bf.x_max(), bftmp, Xctr);
 	/* ymin = y + Yctr; */
 	floattobf(bftmp, y);
-	add_bf(g_escape_time_state_bf.y_min(), bftmp, Yctr);
+	add_bf(g_escape_time_state.m_grid_bf.y_min(), bftmp, Yctr);
 
 	/* bottom left */
 	x =  x_3rd*cosrot + y_3rd*sinrot;
 	y = -x_3rd*sinrot + y_3rd*cosrot;
 	/* x3rd = x + Xctr; */
 	floattobf(bftmp, x);
-	add_bf(g_escape_time_state_bf.x_3rd(), bftmp, Xctr);
+	add_bf(g_escape_time_state.m_grid_bf.x_3rd(), bftmp, Xctr);
 	/* y3rd = y + Yctr; */
 	floattobf(bftmp, y);
-	add_bf(g_escape_time_state_bf.y_3rd(), bftmp, Yctr);
+	add_bf(g_escape_time_state.m_grid_bf.y_3rd(), bftmp, Yctr);
 
 	restore_stack(saved);
 	return;
@@ -883,8 +883,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d g_bit_shift %d",
 	ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
 	*/
-	write_row(row++, "g_minimum_stack_available %d g_limit2_l %ld g_use_grid %d",
-		g_minimum_stack_available, g_limit2_l, g_use_grid);
+	write_row(row++, "g_minimum_stack_available %d g_limit2_l %ld g_use_grid %s",
+		g_minimum_stack_available, g_limit2_l, g_escape_time_state.m_use_grid ? "true" : "false");
 	put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 
@@ -1229,16 +1229,16 @@ top:
 		{
 			driver_put_string(s_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
 			driver_put_string(++s_row, 3, C_GENERAL_MED, "Top-l");
-			sprintf(msg, "%20.16f  %20.16f", g_escape_time_state_fp.x_min(), g_escape_time_state_fp.y_max());
+			sprintf(msg, "%20.16f  %20.16f", g_escape_time_state.m_grid_fp.x_min(), g_escape_time_state.m_grid_fp.y_max());
 			driver_put_string(-1, 17, C_GENERAL_HI, msg);
 			driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-r");
-			sprintf(msg, "%20.16f  %20.16f", g_escape_time_state_fp.x_max(), g_escape_time_state_fp.y_min());
+			sprintf(msg, "%20.16f  %20.16f", g_escape_time_state.m_grid_fp.x_max(), g_escape_time_state.m_grid_fp.y_min());
 			driver_put_string(-1, 17, C_GENERAL_HI, msg);
 
-			if (g_escape_time_state_fp.x_min() != g_escape_time_state_fp.x_3rd() || g_escape_time_state_fp.y_min() != g_escape_time_state_fp.y_3rd())
+			if (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd() || g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd())
 			{
 				driver_put_string(++s_row, 3, C_GENERAL_MED, "Bot-l");
-				sprintf(msg, "%20.16f  %20.16f", g_escape_time_state_fp.x_3rd(), g_escape_time_state_fp.y_3rd());
+				sprintf(msg, "%20.16f  %20.16f", g_escape_time_state.m_grid_fp.x_3rd(), g_escape_time_state.m_grid_fp.y_3rd());
 				driver_put_string(-1, 17, C_GENERAL_HI, msg);
 			}
 			convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -1401,7 +1401,7 @@ static void area()
 	}
 	sprintf(buf, "%s%ld inside pixels of %ld%s%f",
 			msg, cnt, (long)g_x_dots*(long)g_y_dots, ".  Total area ",
-			cnt/((float)g_x_dots*(float)g_y_dots)*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min())*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()));
+			cnt/((float)g_x_dots*(float)g_y_dots)*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min())*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()));
 	stop_message(STOPMSG_NO_BUZZER, buf);
 }
 

@@ -215,25 +215,25 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 {
 	double det, xd, yd;
 
-	det = (g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min())*(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_max()) + (g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_3rd())*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min());
+	det = (g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min())*(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_max()) + (g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_3rd())*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min());
 	if (det == 0)
 	{
 		return -1;
 	}
 	xd = g_dx_size/det;
-	scrn_cnvt->a =  xd*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_3rd());
-	scrn_cnvt->b =  xd*(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min());
-	scrn_cnvt->e = -scrn_cnvt->a*g_escape_time_state_fp.x_min() - scrn_cnvt->b*g_escape_time_state_fp.y_max();
+	scrn_cnvt->a =  xd*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_3rd());
+	scrn_cnvt->b =  xd*(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min());
+	scrn_cnvt->e = -scrn_cnvt->a*g_escape_time_state.m_grid_fp.x_min() - scrn_cnvt->b*g_escape_time_state.m_grid_fp.y_max();
 
-	det = (g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_max())*(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_max()) + (g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd())*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min());
+	det = (g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_max())*(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_max()) + (g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd())*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min());
 	if (det == 0)
 	{
 		return -1;
 	}
 	yd = g_dy_size/det;
-	scrn_cnvt->c =  yd*(g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd());
-	scrn_cnvt->d =  yd*(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_max());
-	scrn_cnvt->f = -scrn_cnvt->c*g_escape_time_state_fp.x_min() - scrn_cnvt->d*g_escape_time_state_fp.y_max();
+	scrn_cnvt->c =  yd*(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd());
+	scrn_cnvt->d =  yd*(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_max());
+	scrn_cnvt->f = -scrn_cnvt->c*g_escape_time_state.m_grid_fp.x_min() - scrn_cnvt->d*g_escape_time_state.m_grid_fp.y_max();
 	return 0;
 }
 
@@ -1964,8 +1964,8 @@ int dynamic_2d_fp()
 
 		xpixel = g_dx_size*(xstep + .5)/s_d;
 		ypixel = g_dy_size*(ystep + .5)/s_d;
-		x = (double) ((g_escape_time_state_fp.x_min() + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
-		y = (double) ((g_escape_time_state_fp.y_max()-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
+		x = (double) ((g_escape_time_state.m_grid_fp.x_min() + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
+		y = (double) ((g_escape_time_state.m_grid_fp.y_max()-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
 		z = 0.0;
 		if (g_fractal_type == FRACTYPE_MANDELBROT_CLOUD)
 		{
@@ -2741,8 +2741,8 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double)g_x_shift*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))/(g_x_dots);
-			tmpy += ((double)g_y_shift*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()))/(g_y_dots);
+			tmpx += ((double)g_x_shift*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min()))/(g_x_dots);
+			tmpy += ((double)g_y_shift*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()))/(g_y_dots);
 			tmpz = -((double)inf->maxvals[2]) / g_fudge;
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -2752,8 +2752,8 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
-				tmpx += ((double)g_x_shift1*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))/(g_x_dots);
-				tmpy += ((double)g_y_shift1*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()))/(g_y_dots);
+				tmpx += ((double)g_x_shift1*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min()))/(g_x_dots);
+				tmpy += ((double)g_y_shift1*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()))/(g_y_dots);
 				tmpz = -((double)inf->maxvals[2]) / g_fudge;
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
@@ -2906,8 +2906,8 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double)g_x_shift*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))/(g_x_dots);
-			tmpy += ((double)g_y_shift*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()))/(g_y_dots);
+			tmpx += ((double)g_x_shift*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min()))/(g_x_dots);
+			tmpy += ((double)g_y_shift*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()))/(g_y_dots);
 			tmpz = -(inf->maxvals[2]);
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -2917,8 +2917,8 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
-				tmpx += ((double)g_x_shift1*(g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_min()))/(g_x_dots);
-				tmpy += ((double)g_y_shift1*(g_escape_time_state_fp.y_max()-g_escape_time_state_fp.y_min()))/(g_y_dots);
+				tmpx += ((double)g_x_shift1*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min()))/(g_x_dots);
+				tmpy += ((double)g_y_shift1*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()))/(g_y_dots);
 				tmpz = -(inf->maxvals[2]);
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 				}

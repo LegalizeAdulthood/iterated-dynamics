@@ -660,8 +660,8 @@ void Jiim(int which)         /* called by fractint */
 	if (g_col < 0 || g_col >= g_x_dots ||
 		g_row < 0 || g_row >= g_y_dots)
 	{
-		cr = (g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min()) / 2.0;
-		ci = (g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min()) / 2.0;
+		cr = (g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min()) / 2.0;
+		ci = (g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min()) / 2.0;
 	}
 	else
 	{
@@ -675,7 +675,8 @@ void Jiim(int which)         /* called by fractint */
 	g_row = (int)(cvt.c*cr + cvt.d*ci + cvt.f + .5);
 
 	/* possible extraseg arrays have been trashed, so set up again */
-	g_integer_fractal ? fill_lx_array() : fill_dx_array();
+	// TODO: is this necessary anymore?  extraseg is dead!
+	g_integer_fractal ? g_escape_time_state.fill_grid_l() : g_escape_time_state.fill_grid_fp();
 
 	cursor_set_position(g_col, g_row);
 	cursor_show();

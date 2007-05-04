@@ -156,12 +156,12 @@ void zoom_box_draw(int drawit)
 
 	tl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND)); /* screen co-ords */
 	tl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
-	g_escape_time_state_fp.x_min()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
-	g_escape_time_state_fp.y_max()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
+	g_escape_time_state.m_grid_fp.x_min()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
+	g_escape_time_state.m_grid_fp.y_max()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
 	{
-		calculate_corner(g_escape_time_state_bf.x_min(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calculate_corner(g_escape_time_state_bf.y_max(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.x_min(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.y_max(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
 	}
 
 	/* calc co-ords of bottom right */
@@ -169,12 +169,12 @@ void zoom_box_draw(int drawit)
 	ftemp2 = g_zby - dy/g_final_aspect_ratio + g_z_depth;
 	br.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
 	br.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
-	g_escape_time_state_fp.x_max()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
-	g_escape_time_state_fp.y_min()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
+	g_escape_time_state.m_grid_fp.x_max()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
+	g_escape_time_state.m_grid_fp.y_min()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
 	{
-		calculate_corner(g_escape_time_state_bf.x_max(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calculate_corner(g_escape_time_state_bf.y_min(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.x_max(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.y_min(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
 	}
 	/* do the same for botleft & topright */
 	tmpx = g_z_width/-2 - fxadj;
@@ -185,12 +185,12 @@ void zoom_box_draw(int drawit)
 	ftemp2 = g_zby + dy/g_final_aspect_ratio + g_z_depth;
 	bl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
 	bl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
-	g_escape_time_state_fp.x_3rd()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
-	g_escape_time_state_fp.y_3rd()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
+	g_escape_time_state.m_grid_fp.x_3rd()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
+	g_escape_time_state.m_grid_fp.y_3rd()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
 	{
-		calculate_corner(g_escape_time_state_bf.x_3rd(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calculate_corner(g_escape_time_state_bf.y_3rd(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.x_3rd(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.y_3rd(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
 		restore_stack(saved);
 	}
 	ftemp1 = g_zbx + g_z_width - dx + fxadj;
@@ -509,10 +509,10 @@ static void zoom_out_bf() /* for ctl-enter, calc corners for zooming out */
 	bfplotmy1 = alloc_stack(rbflength + 2);
 	bfplotmy2 = alloc_stack(rbflength + 2);
 	/* ftemp = (ymin-y3rd)*(x3rd-xmin) - (xmax-x3rd)*(y3rd-ymax); */
-	sub_bf(tmp1, g_escape_time_state_bf.y_min(), g_escape_time_state_bf.y_3rd());
-	sub_bf(tmp2, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
-	sub_bf(tmp3, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_3rd());
-	sub_bf(tmp4, g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_max());
+	sub_bf(tmp1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
+	sub_bf(tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
+	sub_bf(tmp3, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
+	sub_bf(tmp4, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_max());
 	mult_bf(tmp5, tmp1, tmp2);
 	mult_bf(tmp6, tmp3, tmp4);
 	sub_bf(bfftemp, tmp5, tmp6);
@@ -526,20 +526,20 @@ static void zoom_out_bf() /* for ctl-enter, calc corners for zooming out */
 	copy_bf(bfplotmy2, tmp3);
 
 	/* savxxmin = xmin; savyymax = ymax; */
-	copy_bf(savbfxmin, g_escape_time_state_bf.x_min()); 
-	copy_bf(savbfymax, g_escape_time_state_bf.y_max());
+	copy_bf(savbfxmin, g_escape_time_state.m_grid_bf.x_min()); 
+	copy_bf(savbfymax, g_escape_time_state.m_grid_bf.y_max());
 
 	sub_bf(tmp1, bfsxmin, savbfxmin);
 	sub_bf(tmp2, bfsymax, savbfymax);
-	zmo_calcbf(tmp1, tmp2, g_escape_time_state_bf.x_min(), g_escape_time_state_bf.y_max(), bfplotmx1, bfplotmx2, bfplotmy1,
+	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.y_max(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
 	sub_bf(tmp1, bfsxmax, savbfxmin);
 	sub_bf(tmp2, bfsymin, savbfymax);
-	zmo_calcbf(tmp1, tmp2, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.y_min(), bfplotmx1, bfplotmx2, bfplotmy1,
+	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.y_min(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
 	sub_bf(tmp1, bfsx3rd, savbfxmin);
 	sub_bf(tmp2, bfsy3rd, savbfymax);
-	zmo_calcbf(tmp1, tmp2, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.y_3rd(), bfplotmx1, bfplotmx2, bfplotmy1,
+	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.y_3rd(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
 	restore_stack(saved);
 }
@@ -556,16 +556,16 @@ static void zoom_out_double() /* for ctl-enter, calc corners for zooming out */
 		new actual corners
 		*/
 	double savxxmin, savyymax, ftemp;
-	ftemp = (g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd())*(g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min()) - (g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd())*(g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max());
-	g_plot_mx1 = (g_escape_time_state_fp.x_3rd()-g_escape_time_state_fp.x_min()); /* reuse the plotxxx vars is safe */
-	g_plot_mx2 = (g_escape_time_state_fp.y_3rd()-g_escape_time_state_fp.y_max());
-	g_plot_my1 = (g_escape_time_state_fp.y_min()-g_escape_time_state_fp.y_3rd());
-	g_plot_my2 = (g_escape_time_state_fp.x_max()-g_escape_time_state_fp.x_3rd());
-	savxxmin = g_escape_time_state_fp.x_min();
-	savyymax = g_escape_time_state_fp.y_max();
-	zmo_calc(g_sx_min-savxxmin, g_sy_max-savyymax, &g_escape_time_state_fp.x_min(), &g_escape_time_state_fp.y_max(), ftemp);
-	zmo_calc(g_sx_max-savxxmin, g_sy_min-savyymax, &g_escape_time_state_fp.x_max(), &g_escape_time_state_fp.y_min(), ftemp);
-	zmo_calc(g_sx_3rd-savxxmin, g_sy_3rd-savyymax, &g_escape_time_state_fp.x_3rd(), &g_escape_time_state_fp.y_3rd(), ftemp);
+	ftemp = (g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd())*(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()) - (g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd())*(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max());
+	g_plot_mx1 = (g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()); /* reuse the plotxxx vars is safe */
+	g_plot_mx2 = (g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max());
+	g_plot_my1 = (g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd());
+	g_plot_my2 = (g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd());
+	savxxmin = g_escape_time_state.m_grid_fp.x_min();
+	savyymax = g_escape_time_state.m_grid_fp.y_max();
+	zmo_calc(g_sx_min-savxxmin, g_sy_max-savyymax, &g_escape_time_state.m_grid_fp.x_min(), &g_escape_time_state.m_grid_fp.y_max(), ftemp);
+	zmo_calc(g_sx_max-savxxmin, g_sy_min-savyymax, &g_escape_time_state.m_grid_fp.x_max(), &g_escape_time_state.m_grid_fp.y_min(), ftemp);
+	zmo_calc(g_sx_3rd-savxxmin, g_sy_3rd-savyymax, &g_escape_time_state.m_grid_fp.x_3rd(), &g_escape_time_state.m_grid_fp.y_3rd(), ftemp);
 }
 
 void zoom_box_out() /* for ctl-enter, calc corners for zooming out */
@@ -586,23 +586,23 @@ void aspect_ratio_crop(float oldaspect, float newaspect)
 	if (newaspect > oldaspect)  /* new ratio is taller, crop x */
 	{
 		ftemp = (1.0 - oldaspect / newaspect) / 2;
-		xmargin = (g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd())*ftemp;
-		ymargin = (g_escape_time_state_fp.y_min() - g_escape_time_state_fp.y_3rd())*ftemp;
-		g_escape_time_state_fp.x_3rd() += xmargin;
-		g_escape_time_state_fp.y_3rd() += ymargin;
-		}
+		xmargin = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())*ftemp;
+		ymargin = (g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd())*ftemp;
+		g_escape_time_state.m_grid_fp.x_3rd() += xmargin;
+		g_escape_time_state.m_grid_fp.y_3rd() += ymargin;
+	}
 	else                        /* new ratio is wider, crop y */
 	{
 		ftemp = (1.0 - newaspect / oldaspect) / 2;
-		xmargin = (g_escape_time_state_fp.x_3rd() - g_escape_time_state_fp.x_min())*ftemp;
-		ymargin = (g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_max())*ftemp;
-		g_escape_time_state_fp.x_3rd() -= xmargin;
-		g_escape_time_state_fp.y_3rd() -= ymargin;
-		}
-	g_escape_time_state_fp.x_min() += xmargin;
-	g_escape_time_state_fp.y_max() += ymargin;
-	g_escape_time_state_fp.x_max() -= xmargin;
-	g_escape_time_state_fp.y_min() -= ymargin;
+		xmargin = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())*ftemp;
+		ymargin = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_max())*ftemp;
+		g_escape_time_state.m_grid_fp.x_3rd() -= xmargin;
+		g_escape_time_state.m_grid_fp.y_3rd() -= ymargin;
+	}
+	g_escape_time_state.m_grid_fp.x_min() += xmargin;
+	g_escape_time_state.m_grid_fp.y_max() += ymargin;
+	g_escape_time_state.m_grid_fp.x_max() -= xmargin;
+	g_escape_time_state.m_grid_fp.y_min() -= ymargin;
 }
 
 static int check_pan() /* return 0 if can't, alignment requirement if can */

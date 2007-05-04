@@ -426,20 +426,20 @@ skip_UI:
 /***** start here*/
 		if (xm > 1 || ym > 1)
 		{
-			have3rd = (g_escape_time_state_fp.x_min() != g_escape_time_state_fp.x_3rd() || g_escape_time_state_fp.y_min() != g_escape_time_state_fp.y_3rd()) ? 1 : 0;
+			have3rd = (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd() || g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd()) ? 1 : 0;
 			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
 			if (fpbat == NULL)
 			{
 				xm = ym = 0;
 			}
-			pdelx  = (g_escape_time_state_fp.x_max() - g_escape_time_state_fp.x_3rd()) / (xm*pxdots - 1);   /* calculate stepsizes */
-			pdely  = (g_escape_time_state_fp.y_max() - g_escape_time_state_fp.y_3rd()) / (ym*pydots - 1);
-			pdelx2 = (g_escape_time_state_fp.x_3rd() - g_escape_time_state_fp.x_min()) / (ym*pydots - 1);
-			pdely2 = (g_escape_time_state_fp.y_3rd() - g_escape_time_state_fp.y_min()) / (xm*pxdots - 1);
+			pdelx  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / (xm*pxdots - 1);   /* calculate stepsizes */
+			pdely  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / (ym*pydots - 1);
+			pdelx2 = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / (ym*pydots - 1);
+			pdely2 = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / (xm*pxdots - 1);
 
 			/* save corners */
-			pxxmin = g_escape_time_state_fp.x_min();
-			pyymax = g_escape_time_state_fp.y_max();
+			pxxmin = g_escape_time_state.m_grid_fp.x_min();
+			pyymax = g_escape_time_state.m_grid_fp.y_max();
 		}
 		for (i = 0; i < (int)xm; i++)  /* columns */
 		{
@@ -468,19 +468,19 @@ skip_UI:
 						strcat(PCommandName, buf);
 					}
 					fprintf(parmfile, "%-19s{", PCommandName);
-					g_escape_time_state_fp.x_min() = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
-					g_escape_time_state_fp.x_max() = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
-					g_escape_time_state_fp.y_min() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
-					g_escape_time_state_fp.y_max() = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
+					g_escape_time_state.m_grid_fp.x_min() = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
+					g_escape_time_state.m_grid_fp.x_max() = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
+					g_escape_time_state.m_grid_fp.y_min() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
+					g_escape_time_state.m_grid_fp.y_max() = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
 					if (have3rd)
 					{
-						g_escape_time_state_fp.x_3rd() = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
-						g_escape_time_state_fp.y_3rd() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
+						g_escape_time_state.m_grid_fp.x_3rd() = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
+						g_escape_time_state.m_grid_fp.y_3rd() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
 					}
 					else
 					{
-						g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
-						g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
+						g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
+						g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 					}
 					fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
 					fprintf(fpbat, "If Errorlevel 2 goto oops\n");
@@ -763,29 +763,29 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				int digits;
 				digits = get_precision_bf(MAXREZ);
-				put_bf(0, g_escape_time_state_bf.x_min(), digits);
-				put_bf(1, g_escape_time_state_bf.x_max(), digits);
-				put_bf(1, g_escape_time_state_bf.y_min(), digits);
-				put_bf(1, g_escape_time_state_bf.y_max(), digits);
-				if (cmp_bf(g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min()) || cmp_bf(g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min()))
+				put_bf(0, g_escape_time_state.m_grid_bf.x_min(), digits);
+				put_bf(1, g_escape_time_state.m_grid_bf.x_max(), digits);
+				put_bf(1, g_escape_time_state.m_grid_bf.y_min(), digits);
+				put_bf(1, g_escape_time_state.m_grid_bf.y_max(), digits);
+				if (cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()) || cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()))
 				{
-					put_bf(1, g_escape_time_state_bf.x_3rd(), digits);
-					put_bf(1, g_escape_time_state_bf.y_3rd(), digits);
+					put_bf(1, g_escape_time_state.m_grid_bf.x_3rd(), digits);
+					put_bf(1, g_escape_time_state.m_grid_bf.y_3rd(), digits);
 				}
 			}
 			else
 			{
 				int xdigits, ydigits;
-				xdigits = getprec(g_escape_time_state_fp.x_min(), g_escape_time_state_fp.x_max(), g_escape_time_state_fp.x_3rd());
-				ydigits = getprec(g_escape_time_state_fp.y_min(), g_escape_time_state_fp.y_max(), g_escape_time_state_fp.y_3rd());
-				put_float(0, g_escape_time_state_fp.x_min(), xdigits);
-				put_float(1, g_escape_time_state_fp.x_max(), xdigits);
-				put_float(1, g_escape_time_state_fp.y_min(), ydigits);
-				put_float(1, g_escape_time_state_fp.y_max(), ydigits);
-				if (g_escape_time_state_fp.x_3rd() != g_escape_time_state_fp.x_min() || g_escape_time_state_fp.y_3rd() != g_escape_time_state_fp.y_min())
+				xdigits = getprec(g_escape_time_state.m_grid_fp.x_min(), g_escape_time_state.m_grid_fp.x_max(), g_escape_time_state.m_grid_fp.x_3rd());
+				ydigits = getprec(g_escape_time_state.m_grid_fp.y_min(), g_escape_time_state.m_grid_fp.y_max(), g_escape_time_state.m_grid_fp.y_3rd());
+				put_float(0, g_escape_time_state.m_grid_fp.x_min(), xdigits);
+				put_float(1, g_escape_time_state.m_grid_fp.x_max(), xdigits);
+				put_float(1, g_escape_time_state.m_grid_fp.y_min(), ydigits);
+				put_float(1, g_escape_time_state.m_grid_fp.y_max(), ydigits);
+				if (g_escape_time_state.m_grid_fp.x_3rd() != g_escape_time_state.m_grid_fp.x_min() || g_escape_time_state.m_grid_fp.y_3rd() != g_escape_time_state.m_grid_fp.y_min())
 				{
-					put_float(1, g_escape_time_state_fp.x_3rd(), xdigits);
-					put_float(1, g_escape_time_state_fp.y_3rd(), ydigits);
+					put_float(1, g_escape_time_state.m_grid_fp.x_3rd(), xdigits);
+					put_float(1, g_escape_time_state.m_grid_fp.y_3rd(), ydigits);
 				}
 			}
 		}
@@ -1631,11 +1631,11 @@ int get_precision_bf(int rezflag)
 	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
 
 	/* bfxxdel = (bfxmax - bfx3rd)/(g_x_dots-1) */
-	sub_bf(bfxxdel, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_3rd());
+	sub_bf(bfxxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 	div_a_bf_int(bfxxdel, (U16)rez);
 
 	/* bfyydel2 = (bfy3rd - bfymin)/(g_x_dots-1) */
-	sub_bf(bfyydel2, g_escape_time_state_bf.y_3rd(), g_escape_time_state_bf.y_min());
+	sub_bf(bfyydel2, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 	div_a_bf_int(bfyydel2, (U16)rez);
 
 	if (rezflag == CURRENTREZ)
@@ -1644,11 +1644,11 @@ int get_precision_bf(int rezflag)
 	}
 
 	/* bfyydel = (bfymax - bfy3rd)/(g_y_dots-1) */
-	sub_bf(bfyydel, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_3rd());
+	sub_bf(bfyydel, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	div_a_bf_int(bfyydel, (U16)rez);
 
 	/* bfxxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1) */
-	sub_bf(bfxxdel2, g_escape_time_state_bf.x_3rd(), g_escape_time_state_bf.x_min());
+	sub_bf(bfxxdel2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	div_a_bf_int(bfxxdel2, (U16)rez);
 
 	abs_a_bf(add_bf(del1, bfxxdel, bfxxdel2));
@@ -1689,16 +1689,16 @@ int get_precision_dbl(int rezflag)
 
 	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS -1) : (g_x_dots-1);
 
-	xdel =  ((LDBL)g_escape_time_state_fp.x_max() - (LDBL)g_escape_time_state_fp.x_3rd())/rez;
-	ydel2 = ((LDBL)g_escape_time_state_fp.y_3rd() - (LDBL)g_escape_time_state_fp.y_min())/rez;
+	xdel =  ((LDBL)g_escape_time_state.m_grid_fp.x_max() - (LDBL)g_escape_time_state.m_grid_fp.x_3rd())/rez;
+	ydel2 = ((LDBL)g_escape_time_state.m_grid_fp.y_3rd() - (LDBL)g_escape_time_state.m_grid_fp.y_min())/rez;
 
 	if (rezflag == CURRENTREZ)
 	{
 		rez = g_y_dots-1;
 	}
 
-	ydel = ((LDBL)g_escape_time_state_fp.y_max() - (LDBL)g_escape_time_state_fp.y_3rd())/rez;
-	xdel2 = ((LDBL)g_escape_time_state_fp.x_3rd() - (LDBL)g_escape_time_state_fp.x_min())/rez;
+	ydel = ((LDBL)g_escape_time_state.m_grid_fp.y_max() - (LDBL)g_escape_time_state.m_grid_fp.y_3rd())/rez;
+	xdel2 = ((LDBL)g_escape_time_state.m_grid_fp.x_3rd() - (LDBL)g_escape_time_state.m_grid_fp.x_min())/rez;
 
 	del1 = fabsl(xdel) + fabsl(xdel2);
 	del2 = fabsl(ydel) + fabsl(ydel2);
@@ -2576,22 +2576,22 @@ void flip_image(int key)
 				g_put_color(g_x_dots-1-i, j, tempdot);
 			}
 		}
-		g_sx_min = g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_3rd();
-		g_sy_max = g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min() - g_escape_time_state_fp.y_3rd();
-		g_sx_max = g_escape_time_state_fp.x_3rd();
-		g_sy_min = g_escape_time_state_fp.y_3rd();
-		g_sx_3rd = g_escape_time_state_fp.x_max();
-		g_sy_3rd = g_escape_time_state_fp.y_min();
+		g_sx_min = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
+		g_sy_max = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
+		g_sx_max = g_escape_time_state.m_grid_fp.x_3rd();
+		g_sy_min = g_escape_time_state.m_grid_fp.y_3rd();
+		g_sx_3rd = g_escape_time_state.m_grid_fp.x_max();
+		g_sy_3rd = g_escape_time_state.m_grid_fp.y_min();
 		if (g_bf_math)
 		{
-			add_bf(bfsxmin, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min()); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsxmin, g_escape_time_state_bf.x_3rd());
-			add_bf(bfsymax, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min()); /* g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsymax, g_escape_time_state_bf.y_3rd());
-			copy_bf(bfsxmax, g_escape_time_state_bf.x_3rd());        /* g_sx_max = g_xx_3rd; */
-			copy_bf(bfsymin, g_escape_time_state_bf.y_3rd());        /* g_sy_min = g_yy_3rd; */
-			copy_bf(bfsx3rd, g_escape_time_state_bf.x_max());        /* g_sx_3rd = g_xx_max; */
-			copy_bf(bfsy3rd, g_escape_time_state_bf.y_min());        /* g_sy_3rd = g_yy_min; */
+			add_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
+			sub_a_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_3rd());
+			add_bf(bfsymax, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; */
+			sub_a_bf(bfsymax, g_escape_time_state.m_grid_bf.y_3rd());
+			copy_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_3rd());        /* g_sx_max = g_xx_3rd; */
+			copy_bf(bfsymin, g_escape_time_state.m_grid_bf.y_3rd());        /* g_sy_min = g_yy_3rd; */
+			copy_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_max());        /* g_sx_3rd = g_xx_max; */
+			copy_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_min());        /* g_sy_3rd = g_yy_min; */
 		}
 		break;
 	case FIK_CTL_Y:            /* control-Y - reverse Y-aXis */
@@ -2608,22 +2608,22 @@ void flip_image(int key)
 				g_put_color(i, g_y_dots-1-j, tempdot);
 			}
 		}
-		g_sx_min = g_escape_time_state_fp.x_3rd();
-		g_sy_max = g_escape_time_state_fp.y_3rd();
-		g_sx_max = g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_3rd();
-		g_sy_min = g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min() - g_escape_time_state_fp.y_3rd();
-		g_sx_3rd = g_escape_time_state_fp.x_min();
-		g_sy_3rd = g_escape_time_state_fp.y_max();
+		g_sx_min = g_escape_time_state.m_grid_fp.x_3rd();
+		g_sy_max = g_escape_time_state.m_grid_fp.y_3rd();
+		g_sx_max = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
+		g_sy_min = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
+		g_sx_3rd = g_escape_time_state.m_grid_fp.x_min();
+		g_sy_3rd = g_escape_time_state.m_grid_fp.y_max();
 		if (g_bf_math)
 		{
-			copy_bf(bfsxmin, g_escape_time_state_bf.x_3rd());        /* g_sx_min = g_xx_3rd; */
-			copy_bf(bfsymax, g_escape_time_state_bf.y_3rd());        /* g_sy_max = g_yy_3rd; */
-			add_bf(bfsxmax, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min()); /* g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsxmax, g_escape_time_state_bf.x_3rd());
-			add_bf(bfsymin, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min()); /* g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsymin, g_escape_time_state_bf.y_3rd());
-			copy_bf(bfsx3rd, g_escape_time_state_bf.x_min());        /* g_sx_3rd = g_xx_min; */
-			copy_bf(bfsy3rd, g_escape_time_state_bf.y_max());        /* g_sy_3rd = g_yy_max; */
+			copy_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_3rd());        /* g_sx_min = g_xx_3rd; */
+			copy_bf(bfsymax, g_escape_time_state.m_grid_bf.y_3rd());        /* g_sy_max = g_yy_3rd; */
+			add_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; */
+			sub_a_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_3rd());
+			add_bf(bfsymin, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; */
+			sub_a_bf(bfsymin, g_escape_time_state.m_grid_bf.y_3rd());
+			copy_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_min());        /* g_sx_3rd = g_xx_min; */
+			copy_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_max());        /* g_sy_3rd = g_yy_max; */
 		}
 		break;
 	case FIK_CTL_Z:            /* control-Z - reverse X and Y aXis */
@@ -2640,22 +2640,22 @@ void flip_image(int key)
 				g_put_color(g_x_dots-1-i, g_y_dots-1-j, tempdot);
 			}
 		}
-		g_sx_min = g_escape_time_state_fp.x_max();
-		g_sy_max = g_escape_time_state_fp.y_min();
-		g_sx_max = g_escape_time_state_fp.x_min();
-		g_sy_min = g_escape_time_state_fp.y_max();
-		g_sx_3rd = g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min() - g_escape_time_state_fp.x_3rd();
-		g_sy_3rd = g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min() - g_escape_time_state_fp.y_3rd();
+		g_sx_min = g_escape_time_state.m_grid_fp.x_max();
+		g_sy_max = g_escape_time_state.m_grid_fp.y_min();
+		g_sx_max = g_escape_time_state.m_grid_fp.x_min();
+		g_sy_min = g_escape_time_state.m_grid_fp.y_max();
+		g_sx_3rd = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
+		g_sy_3rd = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
 		if (g_bf_math)
 		{
-			copy_bf(bfsxmin, g_escape_time_state_bf.x_max());        /* g_sx_min = g_xx_max; */
-			copy_bf(bfsymax, g_escape_time_state_bf.y_min());        /* g_sy_max = g_yy_min; */
-			copy_bf(bfsxmax, g_escape_time_state_bf.x_min());        /* g_sx_max = g_xx_min; */
-			copy_bf(bfsymin, g_escape_time_state_bf.y_max());        /* g_sy_min = g_yy_max; */
-			add_bf(bfsx3rd, g_escape_time_state_bf.x_max(), g_escape_time_state_bf.x_min()); /* g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsx3rd, g_escape_time_state_bf.x_3rd());
-			add_bf(bfsy3rd, g_escape_time_state_bf.y_max(), g_escape_time_state_bf.y_min()); /* g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsy3rd, g_escape_time_state_bf.y_3rd());
+			copy_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_max());        /* g_sx_min = g_xx_max; */
+			copy_bf(bfsymax, g_escape_time_state.m_grid_bf.y_min());        /* g_sy_max = g_yy_min; */
+			copy_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_min());        /* g_sx_max = g_xx_min; */
+			copy_bf(bfsymin, g_escape_time_state.m_grid_bf.y_max());        /* g_sy_min = g_yy_max; */
+			add_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; */
+			sub_a_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_3rd());
+			add_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; */
+			sub_a_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_3rd());
 		}
 		break;
 	}

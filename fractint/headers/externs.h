@@ -500,7 +500,6 @@ extern double				g_two_pi;
 extern VOIDPTR				g_type_specific_work_area;
 extern UserInterfaceState	g_ui_state;
 extern char					g_use_initial_orbit_z;
-extern int					g_use_grid;	
 extern int					g_use_center_mag;
 extern short				g_uses_is_mand;
 extern short				g_uses_p1;

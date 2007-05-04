@@ -1317,12 +1317,12 @@ sel_type_restart:
 void set_default_parms()
 {
 	int i, extra;
-	g_escape_time_state_fp.x_min() = g_current_fractal_specific->x_min;
-	g_escape_time_state_fp.x_max() = g_current_fractal_specific->x_max;
-	g_escape_time_state_fp.y_min() = g_current_fractal_specific->y_min;
-	g_escape_time_state_fp.y_max() = g_current_fractal_specific->y_max;
-	g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
-	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
+	g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
+	g_escape_time_state.m_grid_fp.x_max() = g_current_fractal_specific->x_max;
+	g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
+	g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
+	g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
+	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 
 	if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
 	{
