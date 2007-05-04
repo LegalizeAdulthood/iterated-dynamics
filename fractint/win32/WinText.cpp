@@ -450,8 +450,8 @@ void WinText::OnPaint(HWND window)
 void WinText::OnSize(HWND window, UINT state, int cx, int cy)
 {
 	ODS("wintext_OnSize");
-	if (cx > (WORD)s_me->m_max_width ||
-		cy > (WORD)s_me->m_max_height)
+	if (cx > (WORD) s_me->m_max_width ||
+		cy > (WORD) s_me->m_max_height)
 	{
 		::SetWindowPos(window,
 			::GetNextWindow(window, GW_HWNDPREV),
@@ -483,11 +483,11 @@ LRESULT CALLBACK WinText::proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
 	switch (message)
 	{
 	case WM_GETMINMAXINFO:	HANDLE_WM_GETMINMAXINFO(hWnd, wParam, lParam, OnGetMinMaxInfo); break;
-	case WM_CLOSE:			HANDLE_WM_CLOSE(hWnd, wParam, lParam, OnClose);			break;
-	case WM_SIZE:			HANDLE_WM_SIZE(hWnd, wParam, lParam, OnSize);			break;
-	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, OnSetFocus);	break;
-	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, OnKillFocus); break;
-	case WM_PAINT:			HANDLE_WM_PAINT(hWnd, wParam, lParam, OnPaint);			break;
+	case WM_CLOSE:			HANDLE_WM_CLOSE(hWnd, wParam, lParam, OnClose);					break;
+	case WM_SIZE:			HANDLE_WM_SIZE(hWnd, wParam, lParam, OnSize);					break;
+	case WM_SETFOCUS:		HANDLE_WM_SETFOCUS(hWnd, wParam, lParam, OnSetFocus);			break;
+	case WM_KILLFOCUS:		HANDLE_WM_KILLFOCUS(hWnd, wParam, lParam, OnKillFocus);			break;
+	case WM_PAINT:			HANDLE_WM_PAINT(hWnd, wParam, lParam, OnPaint);					break;
 	default:				return DefWindowProc(hWnd, message, wParam, lParam);			break;
 	}
 	return 0;

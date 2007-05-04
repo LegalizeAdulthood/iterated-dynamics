@@ -139,7 +139,7 @@ static int s_mouse_keys[16] =
 
 void FrameImpl::OnClose(HWND window)
 {
-	PostQuitMessage(0);
+	::PostQuitMessage(0);
 }
 
 void FrameImpl::OnSetFocus(HWND window, HWND old_focus)
@@ -155,8 +155,8 @@ void FrameImpl::OnKillFocus(HWND window, HWND old_focus)
 void FrameImpl::OnPaint(HWND window)
 {
 	PAINTSTRUCT ps;
-	HDC hDC = BeginPaint(window, &ps);
-	EndPaint(window, &ps);
+	HDC hDC = ::BeginPaint(window, &ps);
+	::EndPaint(window, &ps);
 }
 
 int FrameImpl::add_key_press(unsigned int key)
@@ -179,7 +179,7 @@ int FrameImpl::add_key_press(unsigned int key)
 
 int FrameImpl::mod_key(int modifier, int code, int fik, unsigned int *j)
 {
-	SHORT state = GetKeyState(modifier);
+	SHORT state = ::GetKeyState(modifier);
 	if ((state & 0x8000) != 0)
 	{
 		if (j)
@@ -201,17 +201,16 @@ void FrameImpl::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flag
 	/* KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code */
 	/* a key has been pressed - maybe ASCII, maybe not */
 	/* if it's an ASCII key, 'WM_CHAR' will handle it  */
-	unsigned int i, j, k;
-	i = MapVirtualKey(vk, 0);
-	j = MapVirtualKey(vk, 2);
-	k = (i << 8) + j;
+	unsigned int i = ::MapVirtualKey(vk, 0);
+	unsigned int j = ::MapVirtualKey(vk, 2);
+	unsigned int k = (i << 8) + j;
 
 	/* handle modifier keys on the non-WM_CHAR keys */
 	if (VK_F1 <= vk && vk <= VK_F10)
 	{
-		BOOL ctl = GetKeyState(VK_CONTROL) & 0x8000;
-		BOOL alt = GetKeyState(VK_MENU) & 0x8000;
-		BOOL  shift = GetKeyState(VK_SHIFT) & 0x8000;
+		BOOL ctl = ::GetKeyState(VK_CONTROL) & 0x8000;
+		BOOL alt = ::GetKeyState(VK_MENU) & 0x8000;
+		BOOL  shift = ::GetKeyState(VK_SHIFT) & 0x8000;
 
 		if (shift)
 		{
@@ -271,10 +270,9 @@ void FrameImpl::OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 {
 	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
 	/* an ASCII key has been pressed */
-	unsigned int i, j, k;
-	i = (unsigned int)((cRepeat & 0x00ff0000) >> 16);
-	j = ch;
-	k = (i << 8) + j;
+	unsigned int i = (unsigned int) ((cRepeat & 0x00ff0000) >> 16);
+	unsigned int j = ch;
+	unsigned int k = (i << 8) + j;
 	s_frame->add_key_press(k);
 }
 
@@ -429,11 +427,11 @@ void FrameImpl::init(HINSTANCE instance, LPCSTR title)
 	LPCSTR windowClass = "FractintFrame";
 	WNDCLASS  wc;
 
-	status = GetClassInfo(instance, windowClass, &wc);
+	status = ::GetClassInfo(instance, windowClass, &wc);
 	if (!status)
 	{
 		m_instance = instance;
-		strcpy(m_title, title);
+		::strcpy(m_title, title);
 
 		wc.style = CS_DBLCLKS;
 		wc.lpfnWndProc = proc;
@@ -441,12 +439,12 @@ void FrameImpl::init(HINSTANCE instance, LPCSTR title)
 		wc.cbWndExtra = 0;
 		wc.hInstance = m_instance;
 		wc.hIcon = NULL;
-		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = (HBRUSH) (COLOR_BACKGROUND + 1);
+		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BACKGROUND + 1);
 		wc.lpszMenuName = m_title;
 		wc.lpszClassName = windowClass;
 
-		status = RegisterClass(&wc);
+		status = ::RegisterClass(&wc);
 	}
 
 	m_keypress_count = 0;
@@ -462,7 +460,7 @@ int FrameImpl::pump_messages(int waitflag)
 
 	while (!quitting)
 	{
-		if (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
+		if (::PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
 		{
 			/* no messages waiting */
 			if (!waitflag
@@ -474,12 +472,12 @@ int FrameImpl::pump_messages(int waitflag)
 		}
 
 		{
-			int result = GetMessage(&msg, NULL, 0, 0);
+			int result = ::GetMessage(&msg, NULL, 0, 0);
 			if (result > 0)
 			{
 				// translate accelerator here?
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				::TranslateMessage(&msg);
+				::DispatchMessage(&msg);
 			}
 			else if (0 == result)
 			{
@@ -540,10 +538,10 @@ int FrameImpl::get_key_press(int wait_for_key)
 void FrameImpl::adjust_size(int width, int height)
 {
 	m_width = width;
-	m_nc_width = width + GetSystemMetrics(SM_CXFRAME)*2;
+	m_nc_width = width + ::GetSystemMetrics(SM_CXFRAME)*2;
 	m_height = height;
 	m_nc_height = height +
-		GetSystemMetrics(SM_CYFRAME)*2 + GetSystemMetrics(SM_CYCAPTION) - 1;
+		::GetSystemMetrics(SM_CYFRAME)*2 + ::GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
 void FrameImpl::create(int width, int height)
@@ -552,7 +550,7 @@ void FrameImpl::create(int width, int height)
 	{
 		s_frame = this;
 		adjust_size(width, height);
-		m_window = CreateWindow("FractintFrame",
+		m_window = ::CreateWindow("FractintFrame",
 			m_title,
 			WS_OVERLAPPEDWINDOW,
 			CW_USEDEFAULT,               /* default horizontal position */
@@ -561,7 +559,7 @@ void FrameImpl::create(int width, int height)
 			m_nc_height,
 			NULL, NULL, m_instance,
 			NULL);
-		ShowWindow(m_window, SW_SHOWNORMAL);
+		::ShowWindow(m_window, SW_SHOWNORMAL);
 	}
 	else
 	{
@@ -574,7 +572,7 @@ void FrameImpl::resize(int width, int height)
 	BOOL status;
 
 	adjust_size(width, height);
-	status = SetWindowPos(m_window, NULL,
+	status = ::SetWindowPos(m_window, NULL,
 		0, 0, m_nc_width, m_nc_height,
 		SWP_NOZORDER | SWP_NOMOVE);
 	_ASSERTE(status);
@@ -583,10 +581,10 @@ void FrameImpl::resize(int width, int height)
 
 void FrameImpl::set_keyboard_timeout(int ms)
 {
-	UINT_PTR result = SetTimer(m_window, FRAME_TIMER_ID, ms, NULL);
+	UINT_PTR result = ::SetTimer(m_window, FRAME_TIMER_ID, ms, NULL);
 	if (!result)
 	{
-		DWORD error = GetLastError();
+		DWORD error = ::GetLastError();
 		_ASSERTE(result == FRAME_TIMER_ID);
 	}
 }
