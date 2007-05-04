@@ -1239,122 +1239,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			put_parm(" cyclerange=%d/%d", g_rotate_lo, g_rotate_hi);
 		}
 
-		if (g_sound_state.m_base_hertz != 440)
-		{
-			put_parm(" hertz=%d", g_sound_state.m_base_hertz);
-		}
-
-		if (g_sound_state.m_flags != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
-		{
-			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
-			{
-				put_parm(" sound=off");
-			}
-			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
-			{
-				put_parm(" sound=beep");
-			}
-			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
-			{
-				put_parm(" sound=x");
-			}
-			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
-			{
-				put_parm(" sound=y");
-			}
-			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
-			{
-				put_parm(" sound=z");
-			}
-#ifndef XFRACT
-			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) && (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
-			{
-				if (g_sound_state.m_flags & SOUNDFLAG_SPEAKER)
-				{
-					put_parm("/pc");
-				}
-				if (g_sound_state.m_flags & SOUNDFLAG_OPL3_FM)
-				{
-					put_parm("/fm");
-				}
-				if (g_sound_state.m_flags & SOUNDFLAG_MIDI)
-				{
-					put_parm("/midi");
-				}
-				if (g_sound_state.m_flags & SOUNDFLAG_QUANTIZED)
-				{
-					put_parm("/quant");
-				}
-			}
-#endif
-		}
-
-#ifndef XFRACT
-		if (g_sound_state.m_fm_volume != 63)
-		{
-			put_parm(" volume=%d", g_sound_state.m_fm_volume);
-		}
-
-		switch (g_sound_state.m_note_attenuation)
-		{
-		case ATTENUATE_LOW:
-			put_parm(" attenuate=low");
-			break;
-		case ATTENUATE_MIDDLE:
-			put_parm(" attenuate=mid");
-			break;
-		case ATTENUATE_HIGH:
-			put_parm(" attenuate=high");
-			break;
-		}
-
-		if (g_sound_state.m_polyphony != 0)
-		{
-			put_parm(" polyphony=%d", g_sound_state.m_polyphony + 1);
-		}
-
-		if (g_sound_state.m_fm_wave_type != 0)
-		{
-			put_parm(" wavetype=%d", g_sound_state.m_fm_wave_type);
-		}
-
-		if (g_sound_state.m_fm_attack != 5)
-		{
-			put_parm(" attack=%d", g_sound_state.m_fm_attack);
-		}
-
-		if (g_sound_state.m_fm_decay != 10)
-		{
-			put_parm(" decay=%d", g_sound_state.m_fm_decay);
-		}
-
-		if (g_sound_state.m_fm_sustain != 13)
-		{
-			put_parm(" sustain=%d", g_sound_state.m_fm_sustain);
-		}
-
-		if (g_sound_state.m_fm_release != 5)
-		{
-			put_parm(" srelease=%d", g_sound_state.m_fm_release);
-		}
-
-		if (g_sound_state.m_flags & SOUNDFLAG_QUANTIZED)  /* quantize turned on */
-		{
-			for (i = 0; i <= 11; i++)
-			{
-				if (g_sound_state.m_scale_map[i] != i + 1)
-				{
-					i = 15;
-				}
-			}
-			if (i > 12)
-			{
-				put_parm(" scalemap=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", g_sound_state.m_scale_map[0], g_sound_state.m_scale_map[1], g_sound_state.m_scale_map[2], g_sound_state.m_scale_map[3]
-					, g_sound_state.m_scale_map[4], g_sound_state.m_scale_map[5], g_sound_state.m_scale_map[6], g_sound_state.m_scale_map[7], g_sound_state.m_scale_map[8]
-					, g_sound_state.m_scale_map[9], g_sound_state.m_scale_map[10], g_sound_state.m_scale_map[11]);
-			}
-		}
-#endif
+		put_parm(g_sound_state.parameter_text());
 
 		if (g_no_bof)
 		{
@@ -1456,7 +1341,7 @@ docolors:
 						k += ('_' - 36);
 					}
 					buf[j] = (char)k;
-					}
+				}
 				buf[3] = 0;
 				put_parm(buf);
 				if (++curc >= maxcolor)      /* quit if done last color */

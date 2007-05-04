@@ -1,4 +1,6 @@
 #include <time.h>
+#include <string>
+#include <sstream>
 
 #include "port.h"
 #include "prototyp.h"
@@ -761,4 +763,129 @@ void SoundState::orbit(int i, int j)
 	{
 		new_orbit(i, j);
 	}
+}
+
+const char *SoundState::parameter_text() const
+{
+	std::ostringstream text;
+
+	if (m_base_hertz != DEFAULT_BASE_HERTZ)
+	{
+		text << " hertz=" << m_base_hertz;
+	}
+
+	if (m_flags != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
+	{
+		if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
+		{
+			text << " sound=off";
+		}
+		else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
+		{
+			text << " sound=beep";
+		}
+		else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+		{
+			text << " sound=x";
+		}
+		else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+		{
+			text << " sound=y";
+		}
+		else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+		{
+			text << " sound=z";
+		}
+		if ((m_flags & SOUNDFLAG_ORBITMASK) && (m_flags & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
+		{
+			if (m_flags & SOUNDFLAG_SPEAKER)
+			{
+				text << "/pc";
+			}
+			if (m_flags & SOUNDFLAG_OPL3_FM)
+			{
+				text << "/fm";
+			}
+			if (m_flags & SOUNDFLAG_MIDI)
+			{
+				text << "/midi";
+			}
+			if (m_flags & SOUNDFLAG_QUANTIZED)
+			{
+				text << "/quant";
+			}
+		}
+	}
+
+	if (m_fm_volume != DEFAULT_FM_VOLUME)
+	{
+		text << " volume=" << m_fm_volume;
+	}
+
+	switch (m_note_attenuation)
+	{
+	case ATTENUATE_LOW:
+		text << " attenuate=low";
+		break;
+	case ATTENUATE_MIDDLE:
+		text << " attenuate=mid";
+		break;
+	case ATTENUATE_HIGH:
+		text << " attenuate=high";
+		break;
+	}
+
+	if (m_polyphony != DEFAULT_POLYPHONY)
+	{
+		text << " polyphony=" << m_polyphony + 1;
+	}
+
+	if (m_fm_wave_type != DEFAULT_FM_WAVE_TYPE)
+	{
+		text << " wavetype=" << m_fm_wave_type;
+	}
+
+	if (m_fm_attack != DEFAULT_FM_ATTACK)
+	{
+		text << " attack=" << m_fm_attack;
+	}
+
+	if (m_fm_decay != DEFAULT_FM_DECAY)
+	{
+		text << " decay=" << m_fm_decay;
+	}
+
+	if (m_fm_sustain != DEFAULT_FM_SUSTAIN)
+	{
+		text << " sustain=" << m_fm_sustain;
+	}
+
+	if (m_fm_release != DEFAULT_FM_RELEASE)
+	{
+		text << " srelease=" << m_fm_release;
+	}
+
+	if ((m_flags & SOUNDFLAG_QUANTIZED) && !default_scale_map())  /* quantize turned on */
+	{
+		text << " scalemap=" << m_scale_map[0];
+		for (int i = 1; i < NUM_OCTAVES; i++)
+		{
+			text << "/" << m_scale_map[i];
+		}
+	}
+	text << std::ends;
+
+	return text.str().c_str();
+}
+
+bool SoundState::default_scale_map() const
+{
+	for (int i = 0; i < NUM_OCTAVES; i++)
+	{
+		if (m_scale_map[i] != i + 1)
+		{
+			return false;
+		}
+	}
+	return true;
 }
