@@ -17,6 +17,7 @@ public:
 	void write_time();
 	int get_parameters();
 	void orbit(int x, int y);
+	const char *parameter_text() const;
 
 	int m_flags;
 	int m_base_hertz;				/* sound=x/y/z hertz value */
@@ -33,7 +34,15 @@ public:
 private:
 	enum
 	{
-		NUM_CHANNELS = 9
+		NUM_CHANNELS = 9,
+		DEFAULT_FM_RELEASE = 5,
+		DEFAULT_FM_SUSTAIN = 13,
+		DEFAULT_FM_DECAY = 10,
+		DEFAULT_FM_ATTACK = 5,
+		DEFAULT_FM_WAVE_TYPE = 0,
+		DEFAULT_POLYPHONY = 0,
+		DEFAULT_FM_VOLUME = 63,
+		DEFAULT_BASE_HERTZ = 440
 	};
 	void old_orbit(int x, int y);
 	void new_orbit(int x, int y);
@@ -41,9 +50,11 @@ private:
 	void sound_off();
 	int get_music_parameters();
 	int get_scale_map();
+	bool default_scale_map() const;
+
+	// TODO: these functions need to be migrated to the driver for sound support
 	void mute();
 	void buzzer(int tone);
-
 	void initfm() {}
 	int fm(int, int)			{ return 0; }
 	int buzzerpcspkr(int tone)	{ return 0; }
