@@ -16,6 +16,7 @@ public:
 	void tone(int tone);
 	void write_time();
 	int get_parameters();
+	void orbit(int x, int y);
 
 	int m_flags;
 	int m_base_hertz;				/* sound=x/y/z hertz value */
@@ -34,6 +35,8 @@ private:
 	{
 		NUM_CHANNELS = 9
 	};
+	void old_orbit(int x, int y);
+	void new_orbit(int x, int y);
 	int sound_on(int freq);
 	void sound_off();
 	int get_music_parameters();
