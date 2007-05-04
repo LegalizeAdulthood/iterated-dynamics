@@ -419,7 +419,7 @@ void X11Driver::doneXwindow()
 void X11Driver::initdacbox()
 {
 	int i;
-	for (i=0;i < 256;i++)
+	for (i = 0; i < 256; i++)
 	{
 		g_dac_box[i][0] = (i >> 5)*8+7;
 		g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
@@ -2363,7 +2363,7 @@ void X11Driver::write_span(int y, int x, int lastx, const BYTE *pixels)
 	width = lastx-x+1;
 	if (m_usepixtab)
 	{
-		for (i=0;i < width;i++)
+		for (i = 0; i < width; i++)
 		{
 			m_pixbuf[i] = m_pixtab[pixels[i]];
 		}
@@ -2394,7 +2394,7 @@ void X11Driver::write_span(int y, int x, int lastx, const BYTE *pixels)
 	}
 #else
 	width = lastx-x+1;
-	for (i=0;i < width;i++)
+	for (i = 0; i < width; i++)
 	{
 		write_pixel(x+i, y, pixels[i]);
 	}
