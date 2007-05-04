@@ -59,7 +59,8 @@ SRCS = \
     zoom.cpp \
     Halley.cpp \
     Newton.cpp \
-	SoundState.cpp
+	SoundState.cpp \
+	EscapeTime.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
