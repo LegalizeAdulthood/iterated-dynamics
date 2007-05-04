@@ -2,10 +2,10 @@
 #define ESCAPE_TIME_H
 
 template <typename T>
-class EscapeTimeState
+class SampleGrid
 {
 public:
-	EscapeTimeState<T>() :
+	SampleGrid<T>() :
 		m_width(0),
 		m_height(0),
 		m_x0(NULL),
@@ -24,7 +24,7 @@ public:
 		m_delta_y2(0)
 	{
 	}
-	~EscapeTimeState<T>()
+	~SampleGrid<T>()
 	{
 		free_grid_pointers();
 	}
@@ -121,8 +121,22 @@ private:
 	T m_delta_y2;
 };
 
-extern EscapeTimeState<bf_t>	g_escape_time_state_bf;
-extern EscapeTimeState<double>	g_escape_time_state_fp;
-extern EscapeTimeState<long>	g_escape_time_state_l;
+class EscapeTimeState
+{
+public:
+	EscapeTimeState();
+	~EscapeTimeState();
+	void free_grids();
+	void set_grids();
+	void fill_grid_fp();
+	void fill_grid_l();
+
+	bool m_use_grid;	
+	SampleGrid<bf_t>	m_grid_bf;
+	SampleGrid<double>	m_grid_fp;
+	SampleGrid<long>	m_grid_l;
+};
+
+extern EscapeTimeState g_escape_time_state;
 
 #endif

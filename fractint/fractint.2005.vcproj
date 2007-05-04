@@ -348,6 +348,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\EscapeTime.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\fracsubr.cpp"
 					>
 					<FileConfiguration

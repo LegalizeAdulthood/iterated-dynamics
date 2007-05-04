@@ -311,21 +311,21 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 		}
 		driver_schedule_alarm(1);
 
-		g_sx_min = g_escape_time_state_fp.x_min(); /* save 3 corners for zoom.c ref points */
-		g_sx_max = g_escape_time_state_fp.x_max();
-		g_sx_3rd = g_escape_time_state_fp.x_3rd();
-		g_sy_min = g_escape_time_state_fp.y_min();
-		g_sy_max = g_escape_time_state_fp.y_max();
-		g_sy_3rd = g_escape_time_state_fp.y_3rd();
+		g_sx_min = g_escape_time_state.m_grid_fp.x_min(); /* save 3 corners for zoom.c ref points */
+		g_sx_max = g_escape_time_state.m_grid_fp.x_max();
+		g_sx_3rd = g_escape_time_state.m_grid_fp.x_3rd();
+		g_sy_min = g_escape_time_state.m_grid_fp.y_min();
+		g_sy_max = g_escape_time_state.m_grid_fp.y_max();
+		g_sy_3rd = g_escape_time_state.m_grid_fp.y_3rd();
 
 		if (g_bf_math)
 		{
-			copy_bf(bfsxmin, g_escape_time_state_bf.x_min());
-			copy_bf(bfsxmax, g_escape_time_state_bf.x_max());
-			copy_bf(bfsymin, g_escape_time_state_bf.y_min());
-			copy_bf(bfsymax, g_escape_time_state_bf.y_max());
-			copy_bf(bfsx3rd, g_escape_time_state_bf.x_3rd());
-			copy_bf(bfsy3rd, g_escape_time_state_bf.y_3rd());
+			copy_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_min());
+			copy_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_max());
+			copy_bf(bfsymin, g_escape_time_state.m_grid_bf.y_min());
+			copy_bf(bfsymax, g_escape_time_state.m_grid_bf.y_max());
+			copy_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_3rd());
+			copy_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_3rd());
 		}
 		history_save_info();
 
@@ -1082,8 +1082,8 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		if (g_julia_c_x == BIG || g_julia_c_y == BIG)
 		{
-			g_parameters[0] = (g_escape_time_state_fp.x_max() + g_escape_time_state_fp.x_min()) / 2;
-			g_parameters[1] = (g_escape_time_state_fp.y_max() + g_escape_time_state_fp.y_min()) / 2;
+			g_parameters[0] = (g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min()) / 2;
+			g_parameters[1] = (g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min()) / 2;
 		}
 		else
 		{
@@ -1098,22 +1098,22 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		jxx3rd = g_sx_3rd;
 		jyy3rd = g_sy_3rd;
 		*frommandel = 1;
-		g_escape_time_state_fp.x_min() = g_current_fractal_specific->x_min;
-		g_escape_time_state_fp.x_max() = g_current_fractal_specific->x_max;
-		g_escape_time_state_fp.y_min() = g_current_fractal_specific->y_min;
-		g_escape_time_state_fp.y_max() = g_current_fractal_specific->y_max;
-		g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min();
-		g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min();
+		g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
+		g_escape_time_state.m_grid_fp.x_max() = g_current_fractal_specific->x_max;
+		g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
+		g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
+		g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
+		g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 		if (g_user_distance_test == 0
 			&& g_user_biomorph != -1
 			&& g_bit_shift != 29)
 		{
-			g_escape_time_state_fp.x_min() *= 3.0;
-			g_escape_time_state_fp.x_max() *= 3.0;
-			g_escape_time_state_fp.y_min() *= 3.0;
-			g_escape_time_state_fp.y_max() *= 3.0;
-			g_escape_time_state_fp.x_3rd() *= 3.0;
-			g_escape_time_state_fp.y_3rd() *= 3.0;
+			g_escape_time_state.m_grid_fp.x_min() *= 3.0;
+			g_escape_time_state.m_grid_fp.x_max() *= 3.0;
+			g_escape_time_state.m_grid_fp.y_min() *= 3.0;
+			g_escape_time_state.m_grid_fp.y_max() *= 3.0;
+			g_escape_time_state.m_grid_fp.x_3rd() *= 3.0;
+			g_escape_time_state.m_grid_fp.y_3rd() *= 3.0;
 		}
 		g_zoom_off = TRUE;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
@@ -1126,19 +1126,19 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		if (*frommandel)
 		{
-			g_escape_time_state_fp.x_min() = jxxmin;
-			g_escape_time_state_fp.x_max() = jxxmax;
-			g_escape_time_state_fp.y_min() = jyymin;
-			g_escape_time_state_fp.y_max() = jyymax;
-			g_escape_time_state_fp.x_3rd() = jxx3rd;
-			g_escape_time_state_fp.y_3rd() = jyy3rd;
+			g_escape_time_state.m_grid_fp.x_min() = jxxmin;
+			g_escape_time_state.m_grid_fp.x_max() = jxxmax;
+			g_escape_time_state.m_grid_fp.y_min() = jyymin;
+			g_escape_time_state.m_grid_fp.y_max() = jyymax;
+			g_escape_time_state.m_grid_fp.x_3rd() = jxx3rd;
+			g_escape_time_state.m_grid_fp.y_3rd() = jyy3rd;
 		}
 		else
 		{
-			g_escape_time_state_fp.x_min() = g_escape_time_state_fp.x_3rd() = g_current_fractal_specific->x_min;
-			g_escape_time_state_fp.x_max() = g_current_fractal_specific->x_max;
-			g_escape_time_state_fp.y_min() = g_escape_time_state_fp.y_3rd() = g_current_fractal_specific->y_min;
-			g_escape_time_state_fp.y_max() = g_current_fractal_specific->y_max;
+			g_escape_time_state.m_grid_fp.x_min() = g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
+			g_escape_time_state.m_grid_fp.x_max() = g_current_fractal_specific->x_max;
+			g_escape_time_state.m_grid_fp.y_min() = g_escape_time_state.m_grid_fp.y_3rd() = g_current_fractal_specific->y_min;
+			g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
 		}
 		g_save_c.x = g_parameters[0];
 		g_save_c.y = g_parameters[1];
@@ -2331,20 +2331,20 @@ void clear_zoom_box()
 
 void reset_zoom_corners()
 {
-	g_escape_time_state_fp.x_min() = g_sx_min;
-	g_escape_time_state_fp.x_max() = g_sx_max;
-	g_escape_time_state_fp.x_3rd() = g_sx_3rd;
-	g_escape_time_state_fp.y_max() = g_sy_max;
-	g_escape_time_state_fp.y_min() = g_sy_min;
-	g_escape_time_state_fp.y_3rd() = g_sy_3rd;
+	g_escape_time_state.m_grid_fp.x_min() = g_sx_min;
+	g_escape_time_state.m_grid_fp.x_max() = g_sx_max;
+	g_escape_time_state.m_grid_fp.x_3rd() = g_sx_3rd;
+	g_escape_time_state.m_grid_fp.y_max() = g_sy_max;
+	g_escape_time_state.m_grid_fp.y_min() = g_sy_min;
+	g_escape_time_state.m_grid_fp.y_3rd() = g_sy_3rd;
 	if (g_bf_math)
 	{
-		copy_bf(g_escape_time_state_bf.x_min(), bfsxmin);
-		copy_bf(g_escape_time_state_bf.x_max(), bfsxmax);
-		copy_bf(g_escape_time_state_bf.y_min(), bfsymin);
-		copy_bf(g_escape_time_state_bf.y_max(), bfsymax);
-		copy_bf(g_escape_time_state_bf.x_3rd(), bfsx3rd);
-		copy_bf(g_escape_time_state_bf.y_3rd(), bfsy3rd);
+		copy_bf(g_escape_time_state.m_grid_bf.x_min(), bfsxmin);
+		copy_bf(g_escape_time_state.m_grid_bf.x_max(), bfsxmax);
+		copy_bf(g_escape_time_state.m_grid_bf.y_min(), bfsymin);
+		copy_bf(g_escape_time_state.m_grid_bf.y_max(), bfsymax);
+		copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), bfsx3rd);
+		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), bfsy3rd);
 	}
 }
 

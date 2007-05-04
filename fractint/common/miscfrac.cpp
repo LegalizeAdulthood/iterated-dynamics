@@ -1063,11 +1063,11 @@ int bifurcation()
 
 	if (g_integer_fractal)
 	{
-		g_initial_z_l.y = g_escape_time_state_l.y_max() - g_y_stop*g_delta_y;            /* Y-value of    */
+		g_initial_z_l.y = g_escape_time_state.m_grid_l.y_max() - g_y_stop*g_delta_y;            /* Y-value of    */
 	}
 	else
 	{
-		g_initial_z.y = (double)(g_escape_time_state_fp.y_max() - g_y_stop*g_delta_y_fp); /* bottom pixels */
+		g_initial_z.y = (double)(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_delta_y_fp); /* bottom pixels */
 	}
 
 	while (column <= g_x_stop)
@@ -1082,11 +1082,11 @@ int bifurcation()
 
 		if (g_integer_fractal)
 		{
-			s_rate_l = g_escape_time_state_l.x_min() + column*g_delta_x;
+			s_rate_l = g_escape_time_state.m_grid_l.x_min() + column*g_delta_x;
 		}
 		else
 		{
-			s_rate = (double)(g_escape_time_state_fp.x_min() + column*g_delta_x_fp);
+			s_rate = (double)(g_escape_time_state.m_grid_fp.x_min() + column*g_delta_x_fp);
 		}
 		verhulst();        /* calculate array once per column */
 

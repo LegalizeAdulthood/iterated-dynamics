@@ -4375,7 +4375,6 @@ static void parser_allocate()
 	/* however Store and Load were reduced in size to help make up for it */
 	long f_size, Store_size, Load_size, v_size, p_size;
 	int pass, is_bad_form = 0;
-	long end_dx_array;
 	/* TW Jan 1 1996 Made two passes to determine actual values of
 		g_formula_max_ops and g_formula_max_args. */
 	for (pass = 0; pass < 2; pass++)
@@ -4393,7 +4392,6 @@ static void parser_allocate()
 		p_size = sizeof(struct fls *)*g_formula_max_ops;
 		g_total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
 			+ sizeof(struct PEND_OP)*g_formula_max_ops;
-		end_dx_array = g_use_grid ? 2*(g_x_dots + g_y_dots)*sizeof(double) : 0;
 
 		g_type_specific_work_area = malloc(f_size + Load_size + Store_size + v_size + p_size);
 		f = (void (**)()) g_type_specific_work_area;

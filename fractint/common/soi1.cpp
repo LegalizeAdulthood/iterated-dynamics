@@ -973,17 +973,17 @@ void soi()
 	g_max_rhombus_depth = 0;
 	if (g_bf_math)
 	{
-		xxminl = (DBLS)bftofloat(g_escape_time_state_bf.x_min());
-		yyminl = (DBLS)bftofloat(g_escape_time_state_bf.y_min());
-		xxmaxl = (DBLS)bftofloat(g_escape_time_state_bf.x_max());
-		yymaxl = (DBLS)bftofloat(g_escape_time_state_bf.y_max());
+		xxminl = (DBLS)bftofloat(g_escape_time_state.m_grid_bf.x_min());
+		yyminl = (DBLS)bftofloat(g_escape_time_state.m_grid_bf.y_min());
+		xxmaxl = (DBLS)bftofloat(g_escape_time_state.m_grid_bf.x_max());
+		yymaxl = (DBLS)bftofloat(g_escape_time_state.m_grid_bf.y_max());
 	}
 	else
 	{
-		xxminl = g_escape_time_state_fp.x_min();
-		yyminl = g_escape_time_state_fp.y_min();
-		xxmaxl = g_escape_time_state_fp.x_max();
-		yymaxl = g_escape_time_state_fp.y_max();
+		xxminl = g_escape_time_state.m_grid_fp.x_min();
+		yyminl = g_escape_time_state.m_grid_fp.y_min();
+		xxmaxl = g_escape_time_state.m_grid_fp.x_max();
+		yymaxl = g_escape_time_state.m_grid_fp.y_max();
 	}
 	twidth = tolerance/(g_x_dots-1);
 	stepx = (xxmaxl - xxminl) / g_x_dots;
