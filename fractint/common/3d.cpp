@@ -310,11 +310,7 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 	}
 	if (lview[2] != 0)           /* perspective 3D */
 	{
-
-		LVECTOR tmpview;
-		long denom;
-
-		denom = lview[2] - tmp[2];
+		long denom = lview[2] - tmp[2];
 		if (denom >= 0)           /* bail out if point is "behind" us */
 		{
 			t[0] = g_bad_value << bit_shift;
@@ -324,6 +320,7 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 		}
 
 		/* doing math in this order helps prevent overflow */
+		LVECTOR tmpview;
 		tmpview[0] = divide(lview[0], denom, bit_shift);
 		tmpview[1] = divide(lview[1], denom, bit_shift);
 		tmpview[2] = divide(lview[2], denom, bit_shift);
@@ -350,10 +347,8 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 	is danger of overflow and underflow */
 int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
 {
-	LVECTOR tmpview;
-	long denom;
 	g_overflow = 0;
-	denom = lview[2] - lv[2];
+	long denom = lview[2] - lv[2];
 	if (denom >= 0)              /* bail out if point is "behind" us */
 	{
 		lv[0] = g_bad_value;
@@ -364,6 +359,7 @@ int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
 	}
 
 	/* doing math in this order helps prevent overflow */
+	LVECTOR tmpview;
 	tmpview[0] = divide(lview[0], denom, bit_shift);
 	tmpview[1] = divide(lview[1], denom, bit_shift);
 	tmpview[2] = divide(lview[2], denom, bit_shift);
@@ -381,11 +377,10 @@ int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
 
 int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
 {
-	LVECTOR tmp;
-	int k;
 	g_overflow = 0;
-	k = CMAX-1;
+	int k = CMAX-1;
 
+	LVECTOR tmp;
 	for (int j = 0; j < k; j++)
 	{
 		tmp[j] = 0;

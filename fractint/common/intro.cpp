@@ -89,6 +89,9 @@ void intro()
 	HelpModeSaver saved_help(HELPMENU);
 	while (! driver_key_pressed())
 	{
+#if defined(_WIN32)
+		_ASSERTE(_CrtCheckMemory());
+#endif
 #ifdef XFRACT
 		if (slowdisplay)
 		{
