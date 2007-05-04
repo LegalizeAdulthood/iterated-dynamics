@@ -875,15 +875,14 @@ int tab_display_2(char *msg)
 		g_current_fractal_specific->orbitcalc ==  Formula ? "slow parser" :
 		g_current_fractal_specific->orbitcalc ==  BadFormula ? "bad formula" :
 		"", g_uses_is_mand);
-/*
-	{
-		char message[80] = { 0 };
-		extern void tile_message(char *message, int message_len);
-		tile_message(message, NUM_OF(message));
-		write_row(row++, message)
+	/*
+	char message[80] = { 0 };
+	extern void tile_message(char *message, int message_len);
+	tile_message(message, NUM_OF(message));
+	write_row(row++, message)
 	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d g_bit_shift %d",
-		ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
-*/
+	ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
+	*/
 	write_row(row++, "g_minimum_stack_available %d g_limit2_l %ld g_use_grid %d",
 		g_minimum_stack_available, g_limit2_l, g_use_grid);
 	put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
