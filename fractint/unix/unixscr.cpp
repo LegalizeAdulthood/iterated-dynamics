@@ -2460,7 +2460,7 @@ unsigned char *x_get_font()
 		GCForeground | GCBackground | GCFont, &values);
 	assert(font_gc);
 
-	for (i = 0; i < 128; i+=8)
+	for (i = 0; i < 128; i += 8)
 	{
 		for (j = 0; j < 8; j++)
 		{
