@@ -889,3 +889,101 @@ bool SoundState::default_scale_map() const
 	}
 	return true;
 }
+
+int SoundState::parse_command(const cmd_context &context)
+{
+	if (context.totparms > 5)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
+	if (context.totparms == 1)
+	{
+		m_flags = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
+	}
+
+	/* g_sound_flags is used as a bitfield... bit 0, 1, 2 used for whether sound
+		is modified by an orbits x, y, or z component. and also to turn it on
+		or off (0==off, 1==beep (or yes), 2==x, 3 == y, 4 == z),
+		Bit 3 is used for flagging the PC speaker sound,
+		Bit 4 for OPL3 FM soundcard output,
+		Bit 5 will be for midi output (not yet),
+		Bit 6 for whether the tone is quantised to the nearest 'proper' note
+	(according to the western, even tempered system anyway) */
+
+	if (context.charval[0] == 'n' || context.charval[0] == 'o')
+	{
+		m_flags &= ~SOUNDFLAG_ORBITMASK;
+	}
+	else if ((strncmp(context.value, "ye", 2) == 0) || (context.charval[0] == 'b'))
+	{
+		m_flags |= SOUNDFLAG_BEEP;
+	}
+	else if (context.charval[0] == 'x')
+	{
+		m_flags |= SOUNDFLAG_X;
+	}
+	else if (context.charval[0] == 'y' && strncmp(context.value, "ye", 2) != 0)
+	{
+		m_flags |= SOUNDFLAG_Y;
+	}
+	else if (context.charval[0] == 'z')
+	{
+		m_flags |= SOUNDFLAG_Z;
+	}
+	else
+	{
+		return bad_arg(context.curarg);
+	}
+	if (context.totparms > 1)
+	{
+		m_flags &= SOUNDFLAG_ORBITMASK; /* reset options */
+		for (int i = 1; i < context.totparms; i++)
+		{
+			/* this is for 2 or more options at the same time */
+			if (context.charval[i] == 'f')  /* (try to)switch on opl3 fm synth */
+			{
+				if (driver_init_fm())
+				{
+					m_flags |= SOUNDFLAG_OPL3_FM;
+				}
+				else
+				{
+					m_flags &= ~SOUNDFLAG_OPL3_FM;
+				}
+			}
+			else if (context.charval[i] == 'p')
+			{
+				m_flags |= SOUNDFLAG_SPEAKER;
+			}
+			else if (context.charval[i] == 'm')
+			{
+				m_flags |= SOUNDFLAG_MIDI;
+			}
+			else if (context.charval[i] == 'q')
+			{
+				m_flags |= SOUNDFLAG_QUANTIZED;
+			}
+			else
+			{
+				return bad_arg(context.curarg);
+			}
+		}
+	}
+	return COMMAND_OK;
+}
+
+void SoundState::orbit(double x, double y, double z)
+{
+	if ((m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+	{
+		double value;
+		switch (m_flags & SOUNDFLAG_ORBITMASK)
+		{
+		case SOUNDFLAG_X: value = x; break;
+		case SOUNDFLAG_Y: value = y; break;
+		case SOUNDFLAG_Z: value = z; break;
+		}
+		tone((int) (value*100 + m_base_hertz));
+	}
+}

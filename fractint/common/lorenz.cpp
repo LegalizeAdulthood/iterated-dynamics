@@ -1393,13 +1393,6 @@ int orbit_2d_fp()
 	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
 	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
-	double &soundvar = x;
-	switch (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK)
-	{
-	case SOUNDFLAG_X: soundvar = x; break;
-	case SOUNDFLAG_Y: soundvar = y; break;
-	case SOUNDFLAG_Z: soundvar = z; break;
-	}
 
 	color = (g_inside > 0) ? g_inside : 2;
 
@@ -1449,10 +1442,7 @@ int orbit_2d_fp()
 		row = (int) (cvt.c*x + cvt.d*y + cvt.f);
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
-			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
-			{
-				g_sound_state.tone((int) (soundvar*100 + g_sound_state.m_base_hertz));
-			}
+			g_sound_state.orbit(x, y, z);
 			if ((g_fractal_type != FRACTYPE_ICON) && (g_fractal_type != FRACTYPE_LATOOCARFIAN))
 			{
 				if (oldcol != -1 && s_connect)
@@ -1504,50 +1494,40 @@ int orbit_2d_fp()
 
 int orbit_2d()
 {
-	FILE *fp;
-	long *soundvar;
-	long x, y, z;
-	int color, col, row;
-	int count;
-	int oldrow, oldcol;
-	long *p0, *p1, *p2;
 	struct l_affine cvt;
-	int ret, start;
-
-	start = 1;
-	soundvar = p0 = p1 = p2 = NULL;
-	fp = open_orbit_save();
-
 	/* setup affine screen coord conversion */
 	l_setup_convert_to_screen(&cvt);
 
 	/* set up projection scheme */
+	long *p0 = NULL;
+	long *p1 = NULL;
+	long *p2 = NULL;
+	long x;
+	long y;
+	long z;
 	switch (s_projection)
 	{
 	case PROJECTION_ZX: p0 = &z; p1 = &x; p2 = &y; break;
 	case PROJECTION_XZ: p0 = &x; p1 = &z; p2 = &y; break;
 	case PROJECTION_XY: p0 = &x; p1 = &y; p2 = &z; break;
 	}
-	switch (g_sound_state.m_flags & SOUNDFLAG_ORBITMASK)
-	{
-	case SOUNDFLAG_X: soundvar = &x; break;
-	case SOUNDFLAG_Y: soundvar = &y; break;
-	case SOUNDFLAG_Z: soundvar = &z; break;
-	}
 
+	int color;
 	color = (g_inside > 0) ? g_inside : 2;
 	if (color >= g_colors)
 	{
 		color = 1;
 	}
+	int oldcol;
+	int oldrow;
 	oldcol = oldrow = -1;
 	x = s_init_orbit_long[0];
 	y = s_init_orbit_long[1];
 	z = s_init_orbit_long[2];
-	count = ret = 0;
 	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
 	g_color_iter = 0L;
 
+	int count = 0;
 	if (g_resuming)
 	{
 		start_resume();
@@ -1559,6 +1539,9 @@ int orbit_2d()
 		end_resume();
 	}
 
+	FILE *fp = open_orbit_save();
+	int ret = 0;
+	int start = 1;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())
@@ -1582,8 +1565,8 @@ int orbit_2d()
 			}
 		}
 
-		col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
-		row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
+		int col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
+		int row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
 		if (g_overflow)
 		{
 			g_overflow = 0;
@@ -1591,13 +1574,7 @@ int orbit_2d()
 		}
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
-			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
-			{
-				double yy;
-				yy = *soundvar;
-				yy = yy/g_fudge;
-				g_sound_state.tone((int) (yy*100 + g_sound_state.m_base_hertz));
-			}
+			g_sound_state.orbit(x/g_fudge, y/g_fudge, z/g_fudge);
 			if (oldcol != -1 && s_connect)
 			{
 				driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
@@ -1919,7 +1896,6 @@ int dynamic_2d_setup_fp()
 int dynamic_2d_fp()
 {
 	FILE *fp;
-	double *soundvar = NULL;
 	double x, y, z;
 	int color, col, row;
 	long count;
@@ -1936,20 +1912,6 @@ int dynamic_2d_fp()
 
 	p0 = &x;
 	p1 = &y;
-
-
-	if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
-	{
-		soundvar = &x;
-	}
-	else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
-	{
-		soundvar = &y;
-	}
-	else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
-	{
-		soundvar = &z;
-	}
 
 	count = 0;
 	color = (g_inside > 0) ? g_inside : 1;
@@ -2004,6 +1966,7 @@ int dynamic_2d_fp()
 		ypixel = g_dy_size*(ystep + .5)/s_d;
 		x = (double) ((g_escape_time_state_fp.x_min() + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
 		y = (double) ((g_escape_time_state_fp.y_max()-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
+		z = 0.0;
 		if (g_fractal_type == FRACTYPE_MANDELBROT_CLOUD)
 		{
 			s_a = x;
@@ -2030,10 +1993,7 @@ int dynamic_2d_fp()
 			row = (int) (cvt.c*x + cvt.d*y + cvt.f);
 			if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 			{
-				if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
-				{
-					g_sound_state.tone((int) (*soundvar*100 + g_sound_state.m_base_hertz));
-				}
+				g_sound_state.orbit(x, y, z);
 
 				if (count >= g_orbit_delay)
 				{
@@ -2153,8 +2113,6 @@ int plotorbits2dsetup()
 
 int plotorbits2dfloat()
 {
-	double *soundvar = NULL;
-	double x, y, z;
 	int col, row;
 	long count;
 
@@ -2164,29 +2122,6 @@ int plotorbits2dfloat()
 		alloc_resume(100, 1);
 		put_resume(sizeof(s_o_color), &s_o_color, 0);
 		return -1;
-	}
-
-#if 0
-	col = (int) (s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
-	row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
-	if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
-	{
-		(*g_plot_color)(col, row, 1);
-	}
-	return 0;
-#endif
-
-	if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
-	{
-		soundvar = &x;
-	}
-	else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
-	{
-		soundvar = &y;
-	}
-	else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
-	{
-		soundvar = &z;
 	}
 
 	if (g_resuming)
@@ -2226,18 +2161,8 @@ int plotorbits2dfloat()
 		/* else count >= g_orbit_delay and we want to plot it */
 		col = (int) (s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
 		row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
-#ifdef XFRACT
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
-#else
-		/* don't know why the next line is necessary, the one above should work */
-		if (col > 0 && col < g_x_dots && row > 0 && row < g_y_dots)
-#endif
 		{             /* plot if on the screen */
-			if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
-			{
-				g_sound_state.tone((int) (*soundvar*100 + g_sound_state.m_base_hertz));
-			}
-
 			(*g_plot_color)(col, row, s_o_color % g_colors);
 		}
 		else

@@ -718,29 +718,11 @@ static int next_line(FILE *handle, char *linebuf, int mode)
 	return -1;
 }
 
-static int bad_arg(const char *curarg)
+int bad_arg(const char *curarg)
 {
 	arg_error(curarg);
 	return COMMAND_ERROR;
 }
-
-struct cmd_context
-{
-	const char *curarg;
-	int     yesnoval[16];                /* 0 if 'n', 1 if 'y', -1 if not */
-	int     numval;                      /* numeric value of arg      */
-	char    *value;                      /* pointer to variable value */
-	char    charval[16];                 /* first character of arg    */
-	int     totparms;                    /* # of / delimited parms    */
-	int     valuelen;                    /* length of value           */
-	int mode;
-	const char *variable;
-	int     intval[64];                  /* pre-parsed integer parms  */
-	double  floatval[16];                /* pre-parsed floating parms */
-	char    *floatvalstr[16];            /* pointers to float vals */
-	int     intparms;                    /* # of / delimited ints     */
-	int     floatparms;                  /* # of / delimited floats   */
-};
 
 struct named_int
 {
@@ -2213,88 +2195,7 @@ static int symmetry_arg(const cmd_context &context)
 
 static int sound_arg(const cmd_context &context)
 {
-	if (context.totparms > 5)
-	{
-		return bad_arg(context.curarg);
-	}
-	g_sound_state.m_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
-	if (context.totparms == 1)
-	{
-		g_sound_state.m_flags = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
-	}
-
-	/* g_sound_flags is used as a bitfield... bit 0, 1, 2 used for whether sound
-		is modified by an orbits x, y, or z component. and also to turn it on
-		or off (0==off, 1==beep (or yes), 2==x, 3 == y, 4 == z),
-		Bit 3 is used for flagging the PC speaker sound,
-		Bit 4 for OPL3 FM soundcard output,
-		Bit 5 will be for midi output (not yet),
-		Bit 6 for whether the tone is quantised to the nearest 'proper' note
-	(according to the western, even tempered system anyway) */
-
-	if (context.charval[0] == 'n' || context.charval[0] == 'o')
-	{
-		g_sound_state.m_flags &= ~SOUNDFLAG_ORBITMASK;
-	}
-	else if ((strncmp(context.value, "ye", 2) == 0) || (context.charval[0] == 'b'))
-	{
-		g_sound_state.m_flags |= SOUNDFLAG_BEEP;
-	}
-	else if (context.charval[0] == 'x')
-	{
-		g_sound_state.m_flags |= SOUNDFLAG_X;
-	}
-	else if (context.charval[0] == 'y' && strncmp(context.value, "ye", 2) != 0)
-	{
-		g_sound_state.m_flags |= SOUNDFLAG_Y;
-	}
-	else if (context.charval[0] == 'z')
-	{
-		g_sound_state.m_flags |= SOUNDFLAG_Z;
-	}
-	else
-	{
-		return bad_arg(context.curarg);
-	}
-#if !defined(XFRACT)
-	if (context.totparms > 1)
-	{
-		int i;
-		g_sound_state.m_flags &= SOUNDFLAG_ORBITMASK; /* reset options */
-		for (i = 1; i < context.totparms; i++)
-		{
-			/* this is for 2 or more options at the same time */
-			if (context.charval[i] == 'f')  /* (try to)switch on opl3 fm synth */
-			{
-				if (driver_init_fm())
-				{
-					g_sound_state.m_flags |= SOUNDFLAG_OPL3_FM;
-				}
-				else
-				{
-					g_sound_state.m_flags &= ~SOUNDFLAG_OPL3_FM;
-				}
-			}
-			else if (context.charval[i] == 'p')
-			{
-				g_sound_state.m_flags |= SOUNDFLAG_SPEAKER;
-			}
-			else if (context.charval[i] == 'm')
-			{
-				g_sound_state.m_flags |= SOUNDFLAG_MIDI;
-			}
-			else if (context.charval[i] == 'q')
-			{
-				g_sound_state.m_flags |= SOUNDFLAG_QUANTIZED;
-			}
-			else
-			{
-				return bad_arg(context.curarg);
-			}
-		} /* end for */
-	}    /* end context.totparms > 1 */
-#endif
-	return COMMAND_OK;
+	return g_sound_state.parse_command(context);
 }
 
 static int hertz_arg(const cmd_context &context)
