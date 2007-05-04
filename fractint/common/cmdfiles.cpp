@@ -520,9 +520,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_new_orbit_type = FRACTYPE_JULIA;
 	g_z_dots = 128;
 	initialize_variables_3d();
-#ifndef XFRACT
 	g_sound_state.initialize();
-#endif
 }
 
 static void initialize_variables_3d()               /* init vars affecting 3d */
@@ -726,7 +724,7 @@ static int bad_arg(const char *curarg)
 	return COMMAND_ERROR;
 }
 
-struct tag_cmd_context
+struct cmd_context
 {
 	const char *curarg;
 	int     yesnoval[16];                /* 0 if 'n', 1 if 'y', -1 if not */
@@ -743,14 +741,12 @@ struct tag_cmd_context
 	int     intparms;                    /* # of / delimited ints     */
 	int     floatparms;                  /* # of / delimited floats   */
 };
-typedef struct tag_cmd_context cmd_context;
 
-struct tag_named_int
+struct named_int
 {
 	const char *name;
 	int value;
 };
-typedef struct tag_named_int named_int;
 
 static int named_value(const named_int *args, int num_args, const char *name, int *value)
 {
@@ -767,37 +763,37 @@ static int named_value(const named_int *args, int num_args, const char *name, in
 	return FALSE;
 }
 
-static int batch_arg(const cmd_context *context)
+static int batch_arg(const cmd_context &context)
 {
-	if (context->yesnoval[0] < 0)
+	if (context.yesnoval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 #ifdef XFRACT
-	g_init_mode = context->yesnoval[0] ? 0 : -1; /* skip credits for batch mode */
+	g_init_mode = context.yesnoval[0] ? 0 : -1; /* skip credits for batch mode */
 #endif
-	g_initialize_batch = context->yesnoval[0];
+	g_initialize_batch = context.yesnoval[0];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int max_history_arg(const cmd_context *context)
+static int max_history_arg(const cmd_context &context)
 {
-	if (context->numval == NON_NUMERIC)
+	if (context.numval == NON_NUMERIC)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	else if (context->numval < 0 /* || context->numval > 1000 */)
+	else if (context.numval < 0 /* || context.numval > 1000 */)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	else
 	{
-		g_max_history = context->numval;
+		g_max_history = context.numval;
 	}
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int adapter_arg(const cmd_context *context)
+static int adapter_arg(const cmd_context &context)
 {
 	/* adapter parameter no longer used; check for bad argument anyway */
 	named_int args[] =
@@ -810,36 +806,36 @@ static int adapter_arg(const cmd_context *context)
 		{ "vga", -1 }
 	};
 	int adapter = 0;
-	if (named_value(args, NUM_OF(args), context->value, &adapter))
+	if (named_value(args, NUM_OF(args), context.value, &adapter))
 	{
 		assert(adapter == -1);
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int text_safe_arg(const cmd_context *context)
+static int text_safe_arg(const cmd_context &context)
 {
 	/* textsafe no longer used, do validity checking, but gobble argument */
 	if (g_command_initialize)
 	{
-		if (!((context->charval[0] == 'n')	/* no */
-				|| (context->charval[0] == 'y')	/* yes */
-				|| (context->charval[0] == 'b')	/* bios */
-				|| (context->charval[0] == 's'))) /* save */
+		if (!((context.charval[0] == 'n')	/* no */
+				|| (context.charval[0] == 'y')	/* yes */
+				|| (context.charval[0] == 'b')	/* bios */
+				|| (context.charval[0] == 's'))) /* save */
 		{
-			return bad_arg(context->curarg);
+			return bad_arg(context.curarg);
 		}
 	}
 	return COMMAND_OK;
 }
 
-static int gobble_flag_arg(const cmd_context *context)
+static int gobble_flag_arg(const cmd_context &context)
 {
-	if (context->yesnoval[0] < 0)
+	if (context.yesnoval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	return COMMAND_OK;
 }
@@ -854,24 +850,24 @@ static int flag_arg(const cmd_context &context, bool &flag, int result)
 	return result;
 }
 
-static int flag_arg(const cmd_context *context, int *flag, int result)
+static int flag_arg(const cmd_context &context, int *flag, int result)
 {
-	if (context->yesnoval[0] < 0)
+	if (context.yesnoval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	*flag = context->yesnoval[0];
+	*flag = context.yesnoval[0];
 	return result;
 }
 
-static int exit_no_ask_arg(const cmd_context *context)
+static int exit_no_ask_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_escape_exit_flag, COMMAND_FRACTAL_PARAM	| COMMAND_3D_PARAM);
 }
 
-static int fpu_arg(const cmd_context *context)
+static int fpu_arg(const cmd_context &context)
 {
-	if (strcmp(context->value, "387") == 0)
+	if (strcmp(context.value, "387") == 0)
 	{
 #ifndef XFRACT
 		g_fpu = 387;
@@ -880,33 +876,33 @@ static int fpu_arg(const cmd_context *context)
 #endif
 		return COMMAND_OK;
 	}
-	return bad_arg(context->curarg);
+	return bad_arg(context.curarg);
 }
 
-static int make_doc_arg(const cmd_context *context)
+static int make_doc_arg(const cmd_context &context)
 {
-	print_document(context->value ? context->value : "fractint.doc", makedoc_msg_func, 0);
+	print_document(context.value ? context.value : "fractint.doc", makedoc_msg_func, 0);
 #ifndef WINFRACT
 	goodbye();
 #endif
 	return 0;
 }
 
-static int make_par_arg(const cmd_context *context)
+static int make_par_arg(const cmd_context &context)
 {
 	char *slash, *next = NULL;
-	if (context->totparms < 1 || context->totparms > 2)
+	if (context.totparms < 1 || context.totparms > 2)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	slash = strchr(context->value, '/');
+	slash = strchr(context.value, '/');
 	if (slash != NULL)
 	{
 		*slash = 0;
 		next = slash + 1;
 	}
 
-	strcpy(g_command_file, context->value);
+	strcpy(g_command_file, context.value);
 	if (strchr(g_command_file, '.') == NULL)
 	{
 		strcat(g_command_file, ".par");
@@ -927,7 +923,7 @@ static int make_par_arg(const cmd_context *context)
 		}
 		else
 		{
-			return bad_arg(context->curarg);
+			return bad_arg(context.curarg);
 		}
 	}
 	else
@@ -976,18 +972,18 @@ static int make_par_arg(const cmd_context *context)
 	return 0;
 }
 
-static int reset_arg(const cmd_context *context)
+static int reset_arg(const cmd_context &context)
 {
 	initialize_variables_fractal();
 
 	/* PAR release unknown unless specified */
-	if (context->numval >= 0)
+	if (context.numval >= 0)
 	{
-		g_save_release = context->numval;
+		g_save_release = context.numval;
 	}
 	else
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	if (g_save_release == 0)
 	{
@@ -996,37 +992,37 @@ static int reset_arg(const cmd_context *context)
 	return COMMAND_RESET | COMMAND_FRACTAL_PARAM;
 }
 
-static int filename_arg(const cmd_context *context)
+static int filename_arg(const cmd_context &context)
 {
 	int existdir;
-	if (context->charval[0] == '.' && context->value[1] != SLASHC)
+	if (context.charval[0] == '.' && context.value[1] != SLASHC)
 	{
-		if (context->valuelen > 4)
+		if (context.valuelen > 4)
 		{
-			return bad_arg(context->curarg);
+			return bad_arg(context.curarg);
 		}
 		g_gif_mask[0] = '*';
 		g_gif_mask[1] = 0;
-		strcat(g_gif_mask, context->value);
+		strcat(g_gif_mask, context.value);
 		return COMMAND_OK;
 	}
-	if (context->valuelen > (FILE_MAX_PATH-1))
+	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (context->mode == CMDFILE_AT_AFTER_STARTUP && g_display_3d == 0) /* can't do this in @ command */
+	if (context.mode == CMDFILE_AT_AFTER_STARTUP && g_display_3d == 0) /* can't do this in @ command */
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 
-	existdir = merge_path_names(g_read_name, context->value, context->mode);
+	existdir = merge_path_names(g_read_name, context.value, context.mode);
 	if (existdir == 0)
 	{
 		g_show_file = 0;
 	}
 	else if (existdir < 0)
 	{
-		init_msg(context->variable, context->value, context->mode);
+		init_msg(context.variable, context.value, context.mode);
 	}
 	else
 	{
@@ -1035,14 +1031,14 @@ static int filename_arg(const cmd_context *context)
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int video_arg(const cmd_context *context)
+static int video_arg(const cmd_context &context)
 {
-	int k = check_vidmode_keyname(context->value);
+	int k = check_vidmode_keyname(context.value);
 	int i;
 
 	if (k == 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_init_mode = -1;
 	for (i = 0; i < MAXVIDEOMODES; ++i)
@@ -1055,145 +1051,145 @@ static int video_arg(const cmd_context *context)
 	}
 	if (g_init_mode == -1)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int map_arg(const cmd_context *context)
+static int map_arg(const cmd_context &context)
 {
 	int existdir;
-	if (context->valuelen > (FILE_MAX_PATH-1))
+	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	existdir = merge_path_names(g_map_name, context->value, context->mode);
+	existdir = merge_path_names(g_map_name, context.value, context.mode);
 	if (existdir > 0)
 	{
 		return COMMAND_OK;    /* got a directory */
 	}
 	else if (existdir < 0)
 	{
-		init_msg(context->variable, context->value, context->mode);
+		init_msg(context.variable, context.value, context.mode);
 		return COMMAND_OK;
 	}
 	set_color_palette_name(g_map_name);
 	return COMMAND_OK;
 }
 
-static int colors_arg(const cmd_context *context)
+static int colors_arg(const cmd_context &context)
 {
-	if (parse_colors(context->value) < 0)
+	if (parse_colors(context.value) < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	return COMMAND_OK;
 }
 
-static int record_colors_arg(const cmd_context *context)
+static int record_colors_arg(const cmd_context &context)
 {
-	if (*context->value != 'y' && *context->value != 'c' && *context->value != 'a')
+	if (*context.value != 'y' && *context.value != 'c' && *context.value != 'a')
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_record_colors = *context->value;
+	g_record_colors = *context.value;
 	return COMMAND_OK;
 }
 
-static int max_line_length_arg(const cmd_context *context)
+static int max_line_length_arg(const cmd_context &context)
 {
-	if (context->numval < MIN_MAX_LINE_LENGTH || context->numval > MAX_MAX_LINE_LENGTH)
+	if (context.numval < MIN_MAX_LINE_LENGTH || context.numval > MAX_MAX_LINE_LENGTH)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_max_line_length = context->numval;
+	g_max_line_length = context.numval;
 	return COMMAND_OK;
 }
 
-static int parse_arg(const cmd_context *context)
+static int parse_arg(const cmd_context &context)
 {
-	parse_comments(context->value);
+	parse_comments(context.value);
 	return COMMAND_OK;
 }
 
 /* maxcolorres no longer used, validate value and gobble argument */
-static int max_color_res_arg(const cmd_context *context)
+static int max_color_res_arg(const cmd_context &context)
 {
-	if (context->numval == 1
-		|| context->numval == 4
-		|| context->numval == 8
-		|| context->numval == 16
-		|| context->numval == 24)
+	if (context.numval == 1
+		|| context.numval == 4
+		|| context.numval == 8
+		|| context.numval == 16
+		|| context.numval == 24)
 	{
 		return COMMAND_OK;
 	}
-	return bad_arg(context->curarg);
+	return bad_arg(context.curarg);
 }
 
 /* pixelzoom no longer used, validate value and gobble argument */
-static int pixel_zoom_arg(const cmd_context *context)
+static int pixel_zoom_arg(const cmd_context &context)
 {
-	if (context->numval >= 5)
+	if (context.numval >= 5)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	return COMMAND_OK;
 }
 
 /* keep this for backward compatibility */
-static int warn_arg(const cmd_context *context)
+static int warn_arg(const cmd_context &context)
 {
-	if (context->yesnoval[0] < 0)
+	if (context.yesnoval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_fractal_overwrite = context->yesnoval[0]^1;
+	g_fractal_overwrite = context.yesnoval[0]^1;
 	return COMMAND_OK;
 }
 
-static int overwrite_arg(const cmd_context *context)
+static int overwrite_arg(const cmd_context &context)
 {
-	if (context->yesnoval[0] < 0)
+	if (context.yesnoval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_fractal_overwrite = context->yesnoval[0];
+	g_fractal_overwrite = context.yesnoval[0];
 	return COMMAND_OK;
 }
 
-static int save_time_arg(const cmd_context *context)
+static int save_time_arg(const cmd_context &context)
 {
-	g_save_time = context->numval;
+	g_save_time = context.numval;
 	return COMMAND_OK;
 }
 
-static int auto_key_arg(const cmd_context *context)
+static int auto_key_arg(const cmd_context &context)
 {
 	named_int args[] =
 	{
 		{ "record", SLIDES_RECORD },
 		{ "play", SLIDES_PLAY }
 	};
-	return named_value(args, NUM_OF(args), context->value, &g_slides)
-		? COMMAND_OK : bad_arg(context->curarg);
+	return named_value(args, NUM_OF(args), context.value, &g_slides)
+		? COMMAND_OK : bad_arg(context.curarg);
 }
 
-static int auto_key_name_arg(const cmd_context *context)
+static int auto_key_name_arg(const cmd_context &context)
 {
-	if (merge_path_names(g_autokey_name, context->value, context->mode) < 0)
+	if (merge_path_names(g_autokey_name, context.value, context.mode) < 0)
 	{
-		init_msg(context->variable, context->value, context->mode);
+		init_msg(context.variable, context.value, context.mode);
 	}
 	return COMMAND_OK;
 }
 
-static int type_arg(const cmd_context *context)
+static int type_arg(const cmd_context &context)
 {
 	char value[256];
-	int valuelen = context->valuelen;
+	int valuelen = context.valuelen;
 	int k;
 
-	strcpy(value, context->value);
+	strcpy(value, context.value);
 	if (value[valuelen-1] == '*')
 	{
 		value[--valuelen] = 0;
@@ -1212,7 +1208,7 @@ static int type_arg(const cmd_context *context)
 	}
 	if (g_fractal_specific[k].name == NULL)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_fractal_type = k;
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
@@ -1230,7 +1226,7 @@ static int type_arg(const cmd_context *context)
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int inside_arg(const cmd_context *context)
+static int inside_arg(const cmd_context &context)
 {
 	named_int args[] =
 	{
@@ -1244,54 +1240,54 @@ static int inside_arg(const cmd_context *context)
 		{ "atan", ATANI },
 		{ "maxiter", -1 }
 	};
-	if (named_value(args, NUM_OF(args), context->value, &g_inside))
+	if (named_value(args, NUM_OF(args), context.value, &g_inside))
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}
-	if (context->numval == NON_NUMERIC)
+	if (context.numval == NON_NUMERIC)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	else
 	{
-		g_inside = context->numval;
+		g_inside = context.numval;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int proximity_arg(const cmd_context *context)
+static int proximity_arg(const cmd_context &context)
 {
-	g_proximity = context->floatval[0];
+	g_proximity = context.floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int fill_color_arg(const cmd_context *context)
+static int fill_color_arg(const cmd_context &context)
 {
-	if (strcmp(context->value, "normal") == 0)
+	if (strcmp(context.value, "normal") == 0)
 	{
 		g_fill_color = -1;
 	}
-	else if (context->numval == NON_NUMERIC)
+	else if (context.numval == NON_NUMERIC)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	else
 	{
-		g_fill_color = context->numval;
+		g_fill_color = context.numval;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int function_arg(const cmd_context *context)
+static int function_arg(const cmd_context &context)
 {
 	int k = 0;
-	const char *value = context->value;
+	const char *value = context.value;
 
 	while (*value && k < 4)
 	{
 		if (set_trig_array(k++, value))
 		{
-			return bad_arg(context->curarg);
+			return bad_arg(context.curarg);
 		}
 		value = strchr(value, '/');
 		if (value == NULL)
@@ -1304,7 +1300,7 @@ static int function_arg(const cmd_context *context)
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int outside_arg(const cmd_context *context)
+static int outside_arg(const cmd_context &context)
 {
 	named_int args[] =
 	{
@@ -1317,51 +1313,51 @@ static int outside_arg(const cmd_context *context)
 		{ "fmod", FMOD },
 		{ "tdis", TDIS }
 	};
-	if (named_value(args, NUM_OF(args), context->value, &g_outside))
+	if (named_value(args, NUM_OF(args), context.value, &g_outside))
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}
-	if ((context->numval == NON_NUMERIC) || (context->numval < TDIS || context->numval > 255))
+	if ((context.numval == NON_NUMERIC) || (context.numval < TDIS || context.numval > 255))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_outside = context->numval;
+	g_outside = context.numval;
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int bf_digits_arg(const cmd_context *context)
+static int bf_digits_arg(const cmd_context &context)
 {
-	if ((context->numval == NON_NUMERIC) || (context->numval < 0 || context->numval > 2000))
+	if ((context.numval == NON_NUMERIC) || (context.numval < 0 || context.numval > 2000))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_bf_digits = context->numval;
+	g_bf_digits = context.numval;
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int max_iter_arg(const cmd_context *context)
+static int max_iter_arg(const cmd_context &context)
 {
-	if (context->floatval[0] < 2)
+	if (context.floatval[0] < 2)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_max_iteration = (long) context->floatval[0];
+	g_max_iteration = (long) context.floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int passes_arg(const cmd_context *context)
+static int passes_arg(const cmd_context &context)
 {
-	if (context->charval[0] != '1' && context->charval[0] != '2' && context->charval[0] != '3'
-		&& context->charval[0] != 'g' && context->charval[0] != 'b'
-		&& context->charval[0] != 't' && context->charval[0] != 's'
-		&& context->charval[0] != 'd' && context->charval[0] != 'o')
+	if (context.charval[0] != '1' && context.charval[0] != '2' && context.charval[0] != '3'
+		&& context.charval[0] != 'g' && context.charval[0] != 'b'
+		&& context.charval[0] != 't' && context.charval[0] != 's'
+		&& context.charval[0] != 'd' && context.charval[0] != 'o')
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_user_standard_calculation_mode = context->charval[0];
-	if (context->charval[0] == 'g')
+	g_user_standard_calculation_mode = context.charval[0];
+	if (context.charval[0] == 'g')
 	{
-		g_stop_pass = ((int)context->value[1] - (int)'0');
+		g_stop_pass = ((int)context.value[1] - (int)'0');
 		if (g_stop_pass < 0 || g_stop_pass > 6)
 		{
 			g_stop_pass = 0;
@@ -1370,25 +1366,25 @@ static int passes_arg(const cmd_context *context)
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int cycle_limit_arg(const cmd_context *context)
+static int cycle_limit_arg(const cmd_context &context)
 {
-	if (context->numval <= 1 || context->numval > 256)
+	if (context.numval <= 1 || context.numval > 256)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_initial_cycle_limit = context->numval;
+	g_initial_cycle_limit = context.numval;
 	return COMMAND_OK;
 }
 
-static int make_mig_arg(const cmd_context *context)
+static int make_mig_arg(const cmd_context &context)
 {
 	int xmult, ymult;
-	if (context->totparms < 2)
+	if (context.totparms < 2)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	xmult = context->intval[0];
-	ymult = context->intval[1];
+	xmult = context.intval[0];
+	ymult = context.intval[1];
 	make_mig(xmult, ymult);
 #ifndef WINFRACT
 	exit(0);
@@ -1396,70 +1392,70 @@ static int make_mig_arg(const cmd_context *context)
 	return COMMAND_OK;
 }
 
-static int cycle_range_arg(const cmd_context *context)
+static int cycle_range_arg(const cmd_context &context)
 {
 	int lo;
 	int hi;
-	if (context->totparms < 2)
+	if (context.totparms < 2)
 	{
 		hi = 255;
 	}
 	else
 	{
-		hi = context->intval[1];
+		hi = context.intval[1];
 	}
-	if (context->totparms < 1)
+	if (context.totparms < 1)
 	{
 		lo = 1;
 	}
 	else
 	{
-		lo = context->intval[0];
+		lo = context.intval[0];
 	}
-	if (context->totparms != context->intparms
+	if (context.totparms != context.intparms
 		|| lo < 0 || hi > 255 || lo > hi)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_rotate_lo = lo;
 	g_rotate_hi = hi;
 	return COMMAND_OK;
 }
 
-static int ranges_arg(const cmd_context *context)
+static int ranges_arg(const cmd_context &context)
 {
 	int i, j, entries, prev;
 	int tmpranges[128];
 
-	if (context->totparms != context->intparms)
+	if (context.totparms != context.intparms)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	entries = prev = i = 0;
 	g_log_palette_flag = LOGPALETTE_NONE; /* ranges overrides logmap */
-	while (i < context->totparms)
+	while (i < context.totparms)
 	{
-		j = context->intval[i++];
+		j = context.intval[i++];
 		if (j < 0) /* striping */
 		{
 			j = -j;
-			if (j < 1 || j >= 16384 || i >= context->totparms)
+			if (j < 1 || j >= 16384 || i >= context.totparms)
 			{
-				return bad_arg(context->curarg);
+				return bad_arg(context.curarg);
 			}
 			tmpranges[entries++] = -1; /* {-1,width,limit} for striping */
 			tmpranges[entries++] = j;
-			j = context->intval[i++];
+			j = context.intval[i++];
 		}
 		if (j < prev)
 		{
-			return bad_arg(context->curarg);
+			return bad_arg(context.curarg);
 		}
 		tmpranges[entries++] = prev = j;
 	}
 	if (prev == 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_ranges = (int *)malloc(sizeof(int)*entries);
 	if (g_ranges == NULL)
@@ -1475,89 +1471,89 @@ static int ranges_arg(const cmd_context *context)
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int save_name_arg(const cmd_context *context)
+static int save_name_arg(const cmd_context &context)
 {
-	if (context->valuelen > (FILE_MAX_PATH-1))
+	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (g_command_initialize || context->mode == CMDFILE_AT_AFTER_STARTUP)
+	if (g_command_initialize || context.mode == CMDFILE_AT_AFTER_STARTUP)
 	{
-		if (merge_path_names(g_save_name, context->value, context->mode) < 0)
+		if (merge_path_names(g_save_name, context.value, context.mode) < 0)
 		{
-			init_msg(context->variable, context->value, context->mode);
+			init_msg(context.variable, context.value, context.mode);
 		}
 	}
 	return COMMAND_OK;
 }
 
-static int min_stack_arg(const cmd_context *context)
+static int min_stack_arg(const cmd_context &context)
 {
-	if (context->totparms != 1)
+	if (context.totparms != 1)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_minimum_stack = context->intval[0];
+	g_minimum_stack = context.intval[0];
 	return COMMAND_OK;
 }
 
-static int math_tolerance_arg(const cmd_context *context)
+static int math_tolerance_arg(const cmd_context &context)
 {
-	if (context->charval[0] == '/')
+	if (context.charval[0] == '/')
 	{
 		; /* leave g_math_tolerance[0] at the default value */
 	}
-	else if (context->totparms >= 1)
+	else if (context.totparms >= 1)
 	{
-		g_math_tolerance[0] = context->floatval[0];
+		g_math_tolerance[0] = context.floatval[0];
 	}
-	if (context->totparms >= 2)
+	if (context.totparms >= 2)
 	{
-		g_math_tolerance[1] = context->floatval[1];
+		g_math_tolerance[1] = context.floatval[1];
 	}
 	return COMMAND_OK;
 }
 
-static int temp_dir_arg(const cmd_context *context)
+static int temp_dir_arg(const cmd_context &context)
 {
-	if (context->valuelen > (FILE_MAX_DIR-1))
+	if (context.valuelen > (FILE_MAX_DIR-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (is_a_directory(context->value) == 0)
+	if (is_a_directory(context.value) == 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	strcpy(g_temp_dir, context->value);
+	strcpy(g_temp_dir, context.value);
 	fix_dir_name(g_temp_dir);
 	return COMMAND_OK;
 }
 
-static int work_dir_arg(const cmd_context *context)
+static int work_dir_arg(const cmd_context &context)
 {
-	if (context->valuelen > (FILE_MAX_DIR-1))
+	if (context.valuelen > (FILE_MAX_DIR-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (is_a_directory(context->value) == 0)
+	if (is_a_directory(context.value) == 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	strcpy(g_work_dir, context->value);
+	strcpy(g_work_dir, context.value);
 	fix_dir_name(g_work_dir);
 	return COMMAND_OK;
 }
 
-static int text_colors_arg(const cmd_context *context)
+static int text_colors_arg(const cmd_context &context)
 {
-	parse_text_colors(context->value);
+	parse_text_colors(context.value);
 	return COMMAND_OK;
 }
 
-static int potential_arg(const cmd_context *context)
+static int potential_arg(const cmd_context &context)
 {
 	int k = 0;
-	char *value = context->value;
+	char *value = context.value;
 	while (k < 3 && *value)
 	{
 		g_potential_parameter[k] = (k == 1) ? atof(value) : atoi(value);
@@ -1574,25 +1570,25 @@ static int potential_arg(const cmd_context *context)
 	{
 		if (strcmp(value, "16bit"))
 		{
-			return bad_arg(context->curarg);
+			return bad_arg(context.curarg);
 		}
 		g_potential_16bit = TRUE;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int params_arg(const cmd_context *context)
+static int params_arg(const cmd_context &context)
 {
 	int k;
 
-	if (context->totparms != context->floatparms || context->totparms > MAX_PARAMETERS)
+	if (context.totparms != context.floatparms || context.totparms > MAX_PARAMETERS)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	s_initial_parameters = 1;
 	for (k = 0; k < MAX_PARAMETERS; ++k)
 	{
-		g_parameters[k] = (k < context->totparms) ? context->floatval[k] : 0.0;
+		g_parameters[k] = (k < context.totparms) ? context.floatval[k] : 0.0;
 	}
 	if (g_bf_math)
 	{
@@ -1604,161 +1600,161 @@ static int params_arg(const cmd_context *context)
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int miim_arg(const cmd_context *context)
+static int miim_arg(const cmd_context &context)
 {
-	if (context->totparms > 6)
+	if (context.totparms > 6)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (context->charval[0] == 'b')
+	if (context.charval[0] == 'b')
 	{
 		g_major_method = breadth_first;
 	}
-	else if (context->charval[0] == 'd')
+	else if (context.charval[0] == 'd')
 	{
 		g_major_method = depth_first;
 	}
-	else if (context->charval[0] == 'w')
+	else if (context.charval[0] == 'w')
 	{
 		g_major_method = random_walk;
 	}
 #ifdef RANDOM_RUN
-	else if (context->charval[0] == 'r')
+	else if (context.charval[0] == 'r')
 	{
 		g_major_method = random_run;
 	}
 #endif
 	else
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 
-	if (context->charval[1] == 'l')
+	if (context.charval[1] == 'l')
 	{
 		g_minor_method = left_first;
 	}
-	else if (context->charval[1] == 'r')
+	else if (context.charval[1] == 'r')
 	{
 		g_minor_method = right_first;
 	}
 	else
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 
 	/* keep this next part in for backwards compatibility with old PARs ??? */
 
-	if (context->totparms > 2)
+	if (context.totparms > 2)
 	{
 		int k;
 		for (k = 2; k < 6; ++k)
 		{
-			g_parameters[k-2] = (k < context->totparms) ? context->floatval[k] : 0.0;
+			g_parameters[k-2] = (k < context.totparms) ? context.floatval[k] : 0.0;
 		}
 	}
 
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int init_orbit_arg(const cmd_context *context)
+static int init_orbit_arg(const cmd_context &context)
 {
-	if (strcmp(context->value, "pixel") == 0)
+	if (strcmp(context.value, "pixel") == 0)
 	{
 		g_use_initial_orbit_z = 2;
 	}
 	else
 	{
-		if (context->totparms != 2 || context->floatparms != 2)
+		if (context.totparms != 2 || context.floatparms != 2)
 		{
-			return bad_arg(context->curarg);
+			return bad_arg(context.curarg);
 		}
-		g_initial_orbit_z.x = context->floatval[0];
-		g_initial_orbit_z.y = context->floatval[1];
+		g_initial_orbit_z.x = context.floatval[0];
+		g_initial_orbit_z.y = context.floatval[1];
 		g_use_initial_orbit_z = 1;
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int orbit_name_arg(const cmd_context *context)
+static int orbit_name_arg(const cmd_context &context)
 {
-	if (check_orbit_name(context->value))
+	if (check_orbit_name(context.value))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int threed_mode_arg(const cmd_context *context)
+static int threed_mode_arg(const cmd_context &context)
 {
 	int i;
 	for (i = 0; i < 4; i++)
 	{
-		if (strcmp(context->value, g_juli_3d_options[i]) == 0)
+		if (strcmp(context.value, g_juli_3d_options[i]) == 0)
 		{
 			g_juli_3d_mode = i;
 			return COMMAND_FRACTAL_PARAM;
 		}
 	}
-	return bad_arg(context->curarg);
+	return bad_arg(context.curarg);
 }
 
-static int julibrot_3d_arg(const cmd_context *context)
+static int julibrot_3d_arg(const cmd_context &context)
 {
-	if (context->floatparms != context->totparms)
+	if (context.floatparms != context.totparms)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (context->totparms > 0)
+	if (context.totparms > 0)
 	{
-		g_z_dots = (int)context->floatval[0];
+		g_z_dots = (int)context.floatval[0];
 	}
-	if (context->totparms > 1)
+	if (context.totparms > 1)
 	{
-		g_origin_fp = (float)context->floatval[1];
+		g_origin_fp = (float)context.floatval[1];
 	}
-	if (context->totparms > 2)
+	if (context.totparms > 2)
 	{
-		g_depth_fp = (float)context->floatval[2];
+		g_depth_fp = (float)context.floatval[2];
 	}
-	if (context->totparms > 3)
+	if (context.totparms > 3)
 	{
-		g_height_fp = (float)context->floatval[3];
+		g_height_fp = (float)context.floatval[3];
 	}
-	if (context->totparms > 4)
+	if (context.totparms > 4)
 	{
-		g_width_fp = (float)context->floatval[4];
+		g_width_fp = (float)context.floatval[4];
 	}
-	if (context->totparms > 5)
+	if (context.totparms > 5)
 	{
-		g_screen_distance_fp = (float)context->floatval[5];
+		g_screen_distance_fp = (float)context.floatval[5];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int julibrot_eyes_arg(const cmd_context *context)
+static int julibrot_eyes_arg(const cmd_context &context)
 {
-	if (context->floatparms != context->totparms || context->totparms != 1)
+	if (context.floatparms != context.totparms || context.totparms != 1)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_eyes_fp =  (float)context->floatval[0];
+	g_eyes_fp =  (float)context.floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int julibrot_from_to_arg(const cmd_context *context)
+static int julibrot_from_to_arg(const cmd_context &context)
 {
-	if (context->floatparms != context->totparms || context->totparms != 4)
+	if (context.floatparms != context.totparms || context.totparms != 4)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_m_x_max_fp = context->floatval[0];
-	g_m_x_min_fp = context->floatval[1];
-	g_m_y_max_fp = context->floatval[2];
-	g_m_y_min_fp = context->floatval[3];
+	g_m_x_max_fp = context.floatval[0];
+	g_m_x_min_fp = context.floatval[1];
+	g_m_y_max_fp = context.floatval[2];
+	g_m_y_min_fp = context.floatval[3];
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int corners_arg(const cmd_context *context)
+static int corners_arg(const cmd_context &context)
 {
 	int dec;
 	if (g_fractal_type == FRACTYPE_CELLULAR)
@@ -1767,22 +1763,22 @@ static int corners_arg(const cmd_context *context)
 	}
 #if 0
 	/* use a debugger and OutputDebugString instead of standard I/O on Windows */
-	printf("totparms %d floatparms %d\n", totparms, context->floatparms);
+	printf("totparms %d floatparms %d\n", totparms, context.floatparms);
 	getch();
 #endif
-	if (context->floatparms != context->totparms
-		|| (context->totparms != 0 && context->totparms != 4 && context->totparms != 6))
+	if (context.floatparms != context.totparms
+		|| (context.totparms != 0 && context.totparms != 4 && context.totparms != 6))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_use_center_mag = FALSE;
-	if (context->totparms == 0)
+	if (context.totparms == 0)
 	{
 		return COMMAND_OK; /* turns corners mode on */
 	}
 	s_init_corners = 1;
 	/* good first approx, but dec could be too big */
-	dec = get_max_curarg_len((char **) context->floatvalstr, context->totparms) + 1;
+	dec = get_max_curarg_len((char **) context.floatvalstr, context.totparms) + 1;
 	if ((dec > DBL_DIG + 1 || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag) && g_debug_flag != DEBUGFLAG_NO_INT_TO_FLOAT)
 	{
 		int old_bf_math;
@@ -1802,26 +1798,26 @@ static int corners_arg(const cmd_context *context)
 		}
 
 		/* x3rd = xmin = floatval[0]; */
-		get_bf(g_escape_time_state_bf.x_min(), context->floatvalstr[0]);
-		get_bf(g_escape_time_state_bf.x_3rd(), context->floatvalstr[0]);
+		get_bf(g_escape_time_state_bf.x_min(), context.floatvalstr[0]);
+		get_bf(g_escape_time_state_bf.x_3rd(), context.floatvalstr[0]);
 
 		/* xmax = floatval[1]; */
-		get_bf(g_escape_time_state_bf.x_max(), context->floatvalstr[1]);
+		get_bf(g_escape_time_state_bf.x_max(), context.floatvalstr[1]);
 
 		/* y3rd = ymin = floatval[2]; */
-		get_bf(g_escape_time_state_bf.y_min(), context->floatvalstr[2]);
-		get_bf(g_escape_time_state_bf.y_3rd(), context->floatvalstr[2]);
+		get_bf(g_escape_time_state_bf.y_min(), context.floatvalstr[2]);
+		get_bf(g_escape_time_state_bf.y_3rd(), context.floatvalstr[2]);
 
 		/* ymax = floatval[3]; */
-		get_bf(g_escape_time_state_bf.y_max(), context->floatvalstr[3]);
+		get_bf(g_escape_time_state_bf.y_max(), context.floatvalstr[3]);
 
-		if (context->totparms == 6)
+		if (context.totparms == 6)
 		{
 			/* x3rd = floatval[4]; */
-			get_bf(g_escape_time_state_bf.x_3rd(), context->floatvalstr[4]);
+			get_bf(g_escape_time_state_bf.x_3rd(), context.floatvalstr[4]);
 
 			/* y3rd = floatval[5]; */
-			get_bf(g_escape_time_state_bf.y_3rd(), context->floatvalstr[5]);
+			get_bf(g_escape_time_state_bf.y_3rd(), context.floatvalstr[5]);
 		}
 
 		/* now that all the corners have been read in, get a more */
@@ -1830,7 +1826,7 @@ static int corners_arg(const cmd_context *context)
 		dec = get_precision_mag_bf();
 		if (dec < 0)
 		{
-			return bad_arg(context->curarg);     /* ie: Magnification is +-1.#INF */
+			return bad_arg(context.curarg);     /* ie: Magnification is +-1.#INF */
 		}
 
 		if (dec > g_decimals)  /* get corners again if need more precision */
@@ -1847,84 +1843,84 @@ static int corners_arg(const cmd_context *context)
 			}
 
 			/* x3rd = xmin = floatval[0]; */
-			get_bf(g_escape_time_state_bf.x_min(), context->floatvalstr[0]);
-			get_bf(g_escape_time_state_bf.x_3rd(), context->floatvalstr[0]);
+			get_bf(g_escape_time_state_bf.x_min(), context.floatvalstr[0]);
+			get_bf(g_escape_time_state_bf.x_3rd(), context.floatvalstr[0]);
 
 			/* xmax = floatval[1]; */
-			get_bf(g_escape_time_state_bf.x_max(), context->floatvalstr[1]);
+			get_bf(g_escape_time_state_bf.x_max(), context.floatvalstr[1]);
 
 			/* y3rd = ymin = floatval[2]; */
-			get_bf(g_escape_time_state_bf.y_min(), context->floatvalstr[2]);
-			get_bf(g_escape_time_state_bf.y_3rd(), context->floatvalstr[2]);
+			get_bf(g_escape_time_state_bf.y_min(), context.floatvalstr[2]);
+			get_bf(g_escape_time_state_bf.y_3rd(), context.floatvalstr[2]);
 
 			/* ymax = floatval[3]; */
-			get_bf(g_escape_time_state_bf.y_max(), context->floatvalstr[3]);
+			get_bf(g_escape_time_state_bf.y_max(), context.floatvalstr[3]);
 
-			if (context->totparms == 6)
+			if (context.totparms == 6)
 			{
 				/* x3rd = floatval[4]; */
-				get_bf(g_escape_time_state_bf.x_3rd(), context->floatvalstr[4]);
+				get_bf(g_escape_time_state_bf.x_3rd(), context.floatvalstr[4]);
 
 				/* y3rd = floatval[5]; */
-				get_bf(g_escape_time_state_bf.y_3rd(), context->floatvalstr[5]);
+				get_bf(g_escape_time_state_bf.y_3rd(), context.floatvalstr[5]);
 			}
 		}
 	}
-	g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min() = context->floatval[0];
-	g_escape_time_state_fp.x_max() =         context->floatval[1];
-	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min() = context->floatval[2];
-	g_escape_time_state_fp.y_max() =         context->floatval[3];
+	g_escape_time_state_fp.x_3rd() = g_escape_time_state_fp.x_min() = context.floatval[0];
+	g_escape_time_state_fp.x_max() =         context.floatval[1];
+	g_escape_time_state_fp.y_3rd() = g_escape_time_state_fp.y_min() = context.floatval[2];
+	g_escape_time_state_fp.y_max() =         context.floatval[3];
 
-	if (context->totparms == 6)
+	if (context.totparms == 6)
 	{
-		g_escape_time_state_fp.x_3rd() =      context->floatval[4];
-		g_escape_time_state_fp.y_3rd() =      context->floatval[5];
+		g_escape_time_state_fp.x_3rd() =      context.floatval[4];
+		g_escape_time_state_fp.y_3rd() =      context.floatval[5];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int orbit_corners_arg(const cmd_context *context)
+static int orbit_corners_arg(const cmd_context &context)
 {
 	g_set_orbit_corners = 0;
-	if (context->floatparms != context->totparms
-		|| (context->totparms != 0 && context->totparms != 4 && context->totparms != 6))
+	if (context.floatparms != context.totparms
+		|| (context.totparms != 0 && context.totparms != 4 && context.totparms != 6))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_orbit_x_3rd = g_orbit_x_min = context->floatval[0];
-	g_orbit_x_max =         context->floatval[1];
-	g_orbit_y_3rd = g_orbit_y_min = context->floatval[2];
-	g_orbit_y_max =         context->floatval[3];
+	g_orbit_x_3rd = g_orbit_x_min = context.floatval[0];
+	g_orbit_x_max =         context.floatval[1];
+	g_orbit_y_3rd = g_orbit_y_min = context.floatval[2];
+	g_orbit_y_max =         context.floatval[3];
 
-	if (context->totparms == 6)
+	if (context.totparms == 6)
 	{
-		g_orbit_x_3rd =      context->floatval[4];
-		g_orbit_y_3rd =      context->floatval[5];
+		g_orbit_x_3rd =      context.floatval[4];
+		g_orbit_y_3rd =      context.floatval[5];
 	}
 	g_set_orbit_corners = 1;
 	g_keep_screen_coords = 1;
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int orbit_draw_mode_arg(const cmd_context *context)
+static int orbit_draw_mode_arg(const cmd_context &context)
 {
-	switch (context->charval[0])
+	switch (context.charval[0])
 	{
 	case 'l': g_orbit_draw_mode = ORBITDRAW_LINE;		break;
 	case 'r': g_orbit_draw_mode = ORBITDRAW_RECTANGLE;	break;
 	case 'f': g_orbit_draw_mode = ORBITDRAW_FUNCTION;	break;
 
 	default:
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int view_windows_arg(const cmd_context *context)
+static int view_windows_arg(const cmd_context &context)
 {
-	if (context->totparms > 5 || context->floatparms-context->intparms > 2 || context->intparms > 4)
+	if (context.totparms > 5 || context.floatparms-context.intparms > 2 || context.intparms > 4)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_view_window = 1;
 	g_view_reduction = 4.2f;  /* reset default values */
@@ -1932,91 +1928,91 @@ static int view_windows_arg(const cmd_context *context)
 	g_view_crop = 1; /* yes */
 	g_view_x_dots = g_view_y_dots = 0;
 
-	if ((context->totparms > 0) && (context->floatval[0] > 0.001))
+	if ((context.totparms > 0) && (context.floatval[0] > 0.001))
 	{
-		g_view_reduction = (float)context->floatval[0];
+		g_view_reduction = (float)context.floatval[0];
 	}
-	if ((context->totparms > 1) && (context->floatval[1] > 0.001))
+	if ((context.totparms > 1) && (context.floatval[1] > 0.001))
 	{
-		g_final_aspect_ratio = (float)context->floatval[1];
+		g_final_aspect_ratio = (float)context.floatval[1];
 	}
-	if ((context->totparms > 2) && (context->yesnoval[2] == 0))
+	if ((context.totparms > 2) && (context.yesnoval[2] == 0))
 	{
-		g_view_crop = context->yesnoval[2];
+		g_view_crop = context.yesnoval[2];
 	}
-	if ((context->totparms > 3) && (context->intval[3] > 0))
+	if ((context.totparms > 3) && (context.intval[3] > 0))
 	{
-		g_view_x_dots = context->intval[3];
+		g_view_x_dots = context.intval[3];
 	}
-	if ((context->totparms == 5) && (context->intval[4] > 0))
+	if ((context.totparms == 5) && (context.intval[4] > 0))
 	{
-		g_view_y_dots = context->intval[4];
+		g_view_y_dots = context.intval[4];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int center_mag_arg(const cmd_context *context)
+static int center_mag_arg(const cmd_context &context)
 {
 	int dec;
 	double Xctr, Yctr, Xmagfactor, Rotation, Skew;
 	LDBL Magnification;
 	bf_t bXctr, bYctr;
 
-	if ((context->totparms != context->floatparms)
-		|| (context->totparms != 0 && context->totparms < 3)
-		|| (context->totparms >= 3 && context->floatval[2] == 0.0))
+	if ((context.totparms != context.floatparms)
+		|| (context.totparms != 0 && context.totparms < 3)
+		|| (context.totparms >= 3 && context.floatval[2] == 0.0))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
 		return COMMAND_FRACTAL_PARAM; /* skip setting the corners */
 	}
 	g_use_center_mag = TRUE;
-	if (context->totparms == 0)
+	if (context.totparms == 0)
 	{
 		return COMMAND_OK; /* turns center-mag mode on */
 	}
 	s_init_corners = 1;
-	/* dec = get_max_curarg_len(floatvalstr, context->totparms); */
+	/* dec = get_max_curarg_len(floatvalstr, context.totparms); */
 #ifdef USE_LONG_DOUBLE
-	sscanf(context->floatvalstr[2], "%Lf", &Magnification);
+	sscanf(context.floatvalstr[2], "%Lf", &Magnification);
 #else
-	sscanf(context->floatvalstr[2], "%lf", &Magnification);
+	sscanf(context.floatvalstr[2], "%lf", &Magnification);
 #endif
 
 	/* I don't know if this is portable, but something needs to */
 	/* be used in case compiler's LDBL_MAX is not big enough    */
 	if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
 	{
-		return bad_arg(context->curarg);     /* ie: Magnification is +-1.#INF */
+		return bad_arg(context.curarg);     /* ie: Magnification is +-1.#INF */
 	}
 
 	dec = get_power_10(Magnification) + 4; /* 4 digits of padding sounds good */
 
 	if ((dec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || DEBUGFLAG_NO_INT_TO_FLOAT == g_debug_flag)  /* rough estimate that double is OK */
 	{
-		Xctr = context->floatval[0];
-		Yctr = context->floatval[1];
-		/* Magnification = context->floatval[2]; */  /* already done above */
+		Xctr = context.floatval[0];
+		Yctr = context.floatval[1];
+		/* Magnification = context.floatval[2]; */  /* already done above */
 		Xmagfactor = 1;
 		Rotation = 0;
 		Skew = 0;
-		if (context->floatparms > 3)
+		if (context.floatparms > 3)
 		{
-			Xmagfactor = context->floatval[3];
+			Xmagfactor = context.floatval[3];
 		}
 		if (Xmagfactor == 0)
 		{
 			Xmagfactor = 1;
 		}
-		if (context->floatparms > 4)
+		if (context.floatparms > 4)
 		{
-			Rotation = context->floatval[4];
+			Rotation = context.floatval[4];
 		}
-		if (context->floatparms > 5)
+		if (context.floatparms > 5)
 		{
-			Skew = context->floatval[5];
+			Skew = context.floatval[5];
 		}
 		/* calculate bounds */
 		convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
@@ -2044,29 +2040,29 @@ static int center_mag_arg(const cmd_context *context)
 		saved = save_stack();
 		bXctr            = alloc_stack(bflength + 2);
 		bYctr            = alloc_stack(bflength + 2);
-		/* Xctr = context->floatval[0]; */
-		get_bf(bXctr, context->floatvalstr[0]);
-		/* Yctr = context->floatval[1]; */
-		get_bf(bYctr, context->floatvalstr[1]);
-		/* Magnification = context->floatval[2]; */  /* already done above */
+		/* Xctr = context.floatval[0]; */
+		get_bf(bXctr, context.floatvalstr[0]);
+		/* Yctr = context.floatval[1]; */
+		get_bf(bYctr, context.floatvalstr[1]);
+		/* Magnification = context.floatval[2]; */  /* already done above */
 		Xmagfactor = 1;
 		Rotation = 0;
 		Skew = 0;
-		if (context->floatparms > 3)
+		if (context.floatparms > 3)
 		{
-			Xmagfactor = context->floatval[3];
+			Xmagfactor = context.floatval[3];
 		}
 		if (Xmagfactor == 0)
 		{
 			Xmagfactor = 1;
 		}
-		if (context->floatparms > 4)
+		if (context.floatparms > 4)
 		{
-			Rotation = context->floatval[4];
+			Rotation = context.floatval[4];
 		}
-		if (context->floatparms > 5)
+		if (context.floatparms > 5)
 		{
-			Skew = context->floatval[5];
+			Skew = context.floatval[5];
 		}
 		/* calculate bounds */
 		convert_corners_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
@@ -2076,105 +2072,105 @@ static int center_mag_arg(const cmd_context *context)
 	}
 }
 
-static int aspect_drift_arg(const cmd_context *context)
+static int aspect_drift_arg(const cmd_context &context)
 {
-	if (context->floatparms != 1 || context->floatval[0] < 0)
+	if (context.floatparms != 1 || context.floatval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_aspect_drift = (float)context->floatval[0];
+	g_aspect_drift = (float)context.floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int invert_arg(const cmd_context *context)
+static int invert_arg(const cmd_context &context)
 {
-	if (context->totparms != context->floatparms || (context->totparms != 1 && context->totparms != 3))
+	if (context.totparms != context.floatparms || (context.totparms != 1 && context.totparms != 3))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_inversion[0] = context->floatval[0];
-	g_invert = (g_inversion[0] != 0.0) ? context->totparms : 0;
-	if (context->totparms == 3)
+	g_inversion[0] = context.floatval[0];
+	g_invert = (g_inversion[0] != 0.0) ? context.totparms : 0;
+	if (context.totparms == 3)
 	{
-		g_inversion[1] = context->floatval[1];
-		g_inversion[2] = context->floatval[2];
+		g_inversion[1] = context.floatval[1];
+		g_inversion[2] = context.floatval[2];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int ignore_arg(const cmd_context *context)
+static int ignore_arg(const cmd_context &context)
 {
 	return COMMAND_OK; /* just ignore and return, for old time's sake */
 }
 
-static int float_arg(const cmd_context *context)
+static int float_arg(const cmd_context &context)
 {
-	if (context->yesnoval[0] < 0)
+	if (context.yesnoval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 #ifndef XFRACT
-	g_user_float_flag = (char)context->yesnoval[0];
+	g_user_float_flag = (char)context.yesnoval[0];
 #else
 	g_user_float_flag = 1; /* must use floating point */
 #endif
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int fast_restore_arg(const cmd_context *context)
+static int fast_restore_arg(const cmd_context &context)
 {
-	if (context->yesnoval[0] < 0)
+	if (context.yesnoval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_fast_restore = (char)context->yesnoval[0];
+	g_fast_restore = (char)context.yesnoval[0];
 	return COMMAND_OK;
 }
 
-static int organize_formula_dir_arg(const cmd_context *context)
+static int organize_formula_dir_arg(const cmd_context &context)
 {
-	if ((context->valuelen > (FILE_MAX_DIR-1))
-		|| (is_a_directory(context->value) == 0))
+	if ((context.valuelen > (FILE_MAX_DIR-1))
+		|| (is_a_directory(context.value) == 0))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_organize_formula_search = TRUE;
-	strcpy(g_organize_formula_dir, context->value);
+	strcpy(g_organize_formula_dir, context.value);
 	fix_dir_name(g_organize_formula_dir);
 	return COMMAND_OK;
 }
 
-static int biomorph_arg(const cmd_context *context)
+static int biomorph_arg(const cmd_context &context)
 {
-	g_user_biomorph = context->numval;
+	g_user_biomorph = context.numval;
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int orbit_save_arg(const cmd_context *context)
+static int orbit_save_arg(const cmd_context &context)
 {
-	if (context->charval[0] == 's')
+	if (context.charval[0] == 's')
 	{
 		g_orbit_save |= ORBITSAVE_SOUND;
 	}
-	else if (context->yesnoval[0] < 0)
+	else if (context.yesnoval[0] < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_orbit_save |= context->yesnoval[0];
+	g_orbit_save |= context.yesnoval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int bail_out_arg(const cmd_context *context)
+static int bail_out_arg(const cmd_context &context)
 {
-	if (context->floatval[0] < 1 || context->floatval[0] > 2100000000L)
+	if (context.floatval[0] < 1 || context.floatval[0] > 2100000000L)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_bail_out = (long)context->floatval[0];
+	g_bail_out = (long)context.floatval[0];
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int bail_out_test_arg(const cmd_context *context)
+static int bail_out_test_arg(const cmd_context &context)
 {
 	named_int args[] =
 	{
@@ -2187,17 +2183,17 @@ static int bail_out_test_arg(const cmd_context *context)
 		{ "manr", Manr }
 	};
 	int value;
-	if (named_value(args, NUM_OF(args), context->value, &value))
+	if (named_value(args, NUM_OF(args), context.value, &value))
 	{
 		g_bail_out_test = (enum bailouts) value;
 		set_bail_out_formula(g_bail_out_test);
 		return COMMAND_FRACTAL_PARAM;
 	}
 
-	return bad_arg(context->curarg);
+	return bad_arg(context.curarg);
 }
 
-static int symmetry_arg(const cmd_context *context)
+static int symmetry_arg(const cmd_context &context)
 {
 	named_int args[] =
 	{
@@ -2208,21 +2204,21 @@ static int symmetry_arg(const cmd_context *context)
 		{ "pi", PI_SYM },
 		{ "none", NOSYM }
 	};
-	if (named_value(args, NUM_OF(args), context->value, &g_force_symmetry))
+	if (named_value(args, NUM_OF(args), context.value, &g_force_symmetry))
 	{
 		return COMMAND_FRACTAL_PARAM;
 	}
-	return bad_arg(context->curarg);
+	return bad_arg(context.curarg);
 }
 
-static int sound_arg(const cmd_context *context)
+static int sound_arg(const cmd_context &context)
 {
-	if (context->totparms > 5)
+	if (context.totparms > 5)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_sound_state.m_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
-	if (context->totparms == 1)
+	if (context.totparms == 1)
 	{
 		g_sound_state.m_flags = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
 	}
@@ -2236,39 +2232,39 @@ static int sound_arg(const cmd_context *context)
 		Bit 6 for whether the tone is quantised to the nearest 'proper' note
 	(according to the western, even tempered system anyway) */
 
-	if (context->charval[0] == 'n' || context->charval[0] == 'o')
+	if (context.charval[0] == 'n' || context.charval[0] == 'o')
 	{
 		g_sound_state.m_flags &= ~SOUNDFLAG_ORBITMASK;
 	}
-	else if ((strncmp(context->value, "ye", 2) == 0) || (context->charval[0] == 'b'))
+	else if ((strncmp(context.value, "ye", 2) == 0) || (context.charval[0] == 'b'))
 	{
 		g_sound_state.m_flags |= SOUNDFLAG_BEEP;
 	}
-	else if (context->charval[0] == 'x')
+	else if (context.charval[0] == 'x')
 	{
 		g_sound_state.m_flags |= SOUNDFLAG_X;
 	}
-	else if (context->charval[0] == 'y' && strncmp(context->value, "ye", 2) != 0)
+	else if (context.charval[0] == 'y' && strncmp(context.value, "ye", 2) != 0)
 	{
 		g_sound_state.m_flags |= SOUNDFLAG_Y;
 	}
-	else if (context->charval[0] == 'z')
+	else if (context.charval[0] == 'z')
 	{
 		g_sound_state.m_flags |= SOUNDFLAG_Z;
 	}
 	else
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 #if !defined(XFRACT)
-	if (context->totparms > 1)
+	if (context.totparms > 1)
 	{
 		int i;
 		g_sound_state.m_flags &= SOUNDFLAG_ORBITMASK; /* reset options */
-		for (i = 1; i < context->totparms; i++)
+		for (i = 1; i < context.totparms; i++)
 		{
 			/* this is for 2 or more options at the same time */
-			if (context->charval[i] == 'f')  /* (try to)switch on opl3 fm synth */
+			if (context.charval[i] == 'f')  /* (try to)switch on opl3 fm synth */
 			{
 				if (driver_init_fm())
 				{
@@ -2279,145 +2275,145 @@ static int sound_arg(const cmd_context *context)
 					g_sound_state.m_flags &= ~SOUNDFLAG_OPL3_FM;
 				}
 			}
-			else if (context->charval[i] == 'p')
+			else if (context.charval[i] == 'p')
 			{
 				g_sound_state.m_flags |= SOUNDFLAG_SPEAKER;
 			}
-			else if (context->charval[i] == 'm')
+			else if (context.charval[i] == 'm')
 			{
 				g_sound_state.m_flags |= SOUNDFLAG_MIDI;
 			}
-			else if (context->charval[i] == 'q')
+			else if (context.charval[i] == 'q')
 			{
 				g_sound_state.m_flags |= SOUNDFLAG_QUANTIZED;
 			}
 			else
 			{
-				return bad_arg(context->curarg);
+				return bad_arg(context.curarg);
 			}
 		} /* end for */
-	}    /* end context->totparms > 1 */
+	}    /* end context.totparms > 1 */
 #endif
 	return COMMAND_OK;
 }
 
-static int hertz_arg(const cmd_context *context)
+static int hertz_arg(const cmd_context &context)
 {
-	g_sound_state.m_base_hertz = context->numval;
+	g_sound_state.m_base_hertz = context.numval;
 	return COMMAND_OK;
 }
 
-static int volume_arg(const cmd_context *context)
+static int volume_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_volume = context->numval & 0x3F; /* 63 */
+	g_sound_state.m_fm_volume = context.numval & 0x3F; /* 63 */
 	return COMMAND_OK;
 }
 
-static int attenuate_arg(const cmd_context *context)
+static int attenuate_arg(const cmd_context &context)
 {
-	if (context->charval[0] == 'n')
+	if (context.charval[0] == 'n')
 	{
 		g_sound_state.m_note_attenuation = ATTENUATE_NONE;
 	}
-	else if (context->charval[0] == 'l')
+	else if (context.charval[0] == 'l')
 	{
 		g_sound_state.m_note_attenuation = ATTENUATE_LOW;
 	}
-	else if (context->charval[0] == 'm')
+	else if (context.charval[0] == 'm')
 	{
 		g_sound_state.m_note_attenuation = ATTENUATE_MIDDLE;
 	}
-	else if (context->charval[0] == 'h')
+	else if (context.charval[0] == 'h')
 	{
 		g_sound_state.m_note_attenuation = ATTENUATE_HIGH;
 	}
 	else
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	return COMMAND_OK;
 }
 
-static int polyphony_arg(const cmd_context *context)
+static int polyphony_arg(const cmd_context &context)
 {
-	if (context->numval > 9)
+	if (context.numval > 9)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_sound_state.m_polyphony = abs(context->numval-1);
+	g_sound_state.m_polyphony = abs(context.numval-1);
 	return COMMAND_OK;
 }
 
-static int wave_type_arg(const cmd_context *context)
+static int wave_type_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_wave_type = context->numval & 0x0F;
+	g_sound_state.m_fm_wave_type = context.numval & 0x0F;
 	return COMMAND_OK;
 }
 
-static int attack_arg(const cmd_context *context)
+static int attack_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_attack = context->numval & 0x0F;
+	g_sound_state.m_fm_attack = context.numval & 0x0F;
 	return COMMAND_OK;
 }
 
-static int decay_arg(const cmd_context *context)
+static int decay_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_decay = context->numval & 0x0F;
+	g_sound_state.m_fm_decay = context.numval & 0x0F;
 	return COMMAND_OK;
 }
 
-static int sustain_arg(const cmd_context *context)
+static int sustain_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_sustain = context->numval & 0x0F;
+	g_sound_state.m_fm_sustain = context.numval & 0x0F;
 	return COMMAND_OK;
 }
 
-static int sustain_release_arg(const cmd_context *context)
+static int sustain_release_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_release = context->numval & 0x0F;
+	g_sound_state.m_fm_release = context.numval & 0x0F;
 	return COMMAND_OK;
 }
 
-static int scale_map_arg(const cmd_context *context)
+static int scale_map_arg(const cmd_context &context)
 {
 	int counter;
-	if (context->totparms != context->intparms)
+	if (context.totparms != context.intparms)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	for (counter = 0; counter <= 11; counter++)
 	{
-		if ((context->totparms > counter) && (context->intval[counter] > 0)
-			&& (context->intval[counter] < 13))
+		if ((context.totparms > counter) && (context.intval[counter] > 0)
+			&& (context.intval[counter] < 13))
 		{
-			g_sound_state.m_scale_map[counter] = context->intval[counter];
+			g_sound_state.m_scale_map[counter] = context.intval[counter];
 		}
 	}
 	return COMMAND_OK;
 }
 
-static int periodicity_arg(const cmd_context *context)
+static int periodicity_arg(const cmd_context &context)
 {
 	g_user_periodicity_check = 1;
-	if ((context->charval[0] == 'n') || (context->numval == 0))
+	if ((context.charval[0] == 'n') || (context.numval == 0))
 	{
 		g_user_periodicity_check = 0;
 	}
-	else if (context->charval[0] == 'y')
+	else if (context.charval[0] == 'y')
 	{
 		g_user_periodicity_check = 1;
 	}
-	else if (context->charval[0] == 's')   /* 's' for 'show' */
+	else if (context.charval[0] == 's')   /* 's' for 'show' */
 	{
 		g_user_periodicity_check = -1;
 	}
-	else if (context->numval == NON_NUMERIC)
+	else if (context.numval == NON_NUMERIC)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	else if (context->numval != 0)
+	else if (context.numval != 0)
 	{
-		g_user_periodicity_check = context->numval;
+		g_user_periodicity_check = context.numval;
 	}
 	if (g_user_periodicity_check > 255)
 	{
@@ -2430,75 +2426,75 @@ static int periodicity_arg(const cmd_context *context)
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int log_map_arg(const cmd_context *context)
+static int log_map_arg(const cmd_context &context)
 {
 	g_log_automatic_flag = FALSE;   /* turn this off if loading a PAR */
-	if (context->charval[0] == 'y')
+	if (context.charval[0] == 'y')
 	{
 		g_log_palette_flag = LOGPALETTE_STANDARD;                           /* palette is logarithmic */
 	}
-	else if (context->charval[0] == 'n')
+	else if (context.charval[0] == 'n')
 	{
 		g_log_palette_flag = LOGPALETTE_NONE;
 	}
-	else if (context->charval[0] == 'o')
+	else if (context.charval[0] == 'o')
 	{
 		g_log_palette_flag = LOGPALETTE_OLD;                          /* old log palette */
 	}
 	else
 	{
-		g_log_palette_flag = (long)context->floatval[0];
+		g_log_palette_flag = (long)context.floatval[0];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int log_mode_arg(const cmd_context *context)
+static int log_mode_arg(const cmd_context &context)
 {
 	g_log_dynamic_calculate = LOGDYNAMIC_NONE;                         /* turn off if error */
 	g_log_automatic_flag = FALSE;
-	if (context->charval[0] == 'f')
+	if (context.charval[0] == 'f')
 	{
 		g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;                      /* calculate on the fly */
 	}
-	else if (context->charval[0] == 't')
+	else if (context.charval[0] == 't')
 	{
 		g_log_dynamic_calculate = LOGDYNAMIC_TABLE;                      /* force use of g_log_table */
 	}
-	else if (context->charval[0] == 'a')
+	else if (context.charval[0] == 'a')
 	{
 		g_log_automatic_flag = TRUE;                     /* force auto calc of logmap */
 	}
 	else
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int debug_flag_arg(const cmd_context *context)
+static int debug_flag_arg(const cmd_context &context)
 {
-	g_debug_flag = context->numval;
+	g_debug_flag = context.numval;
 	g_timer_flag = g_debug_flag & 1;                /* separate timer flag */
 	g_debug_flag &= ~1;
 	return COMMAND_OK;
 }
 
-static int random_seed_arg(const cmd_context *context)
+static int random_seed_arg(const cmd_context &context)
 {
-	g_random_seed = context->numval;
+	g_random_seed = context.numval;
 	g_random_flag = 1;
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int orbit_delay_arg(const cmd_context *context)
+static int orbit_delay_arg(const cmd_context &context)
 {
-	g_orbit_delay = context->numval;
+	g_orbit_delay = context.numval;
 	return COMMAND_OK;
 }
 
-static int orbit_interval_arg(const cmd_context *context)
+static int orbit_interval_arg(const cmd_context &context)
 {
-	g_orbit_interval = context->numval;
+	g_orbit_interval = context.numval;
 	if (g_orbit_interval < 1)
 	{
 		g_orbit_interval = 1;
@@ -2510,34 +2506,34 @@ static int orbit_interval_arg(const cmd_context *context)
 	return COMMAND_OK;
 }
 
-static int show_dot_arg(const cmd_context *context)
+static int show_dot_arg(const cmd_context &context)
 {
 	g_show_dot = 15;
-	if (context->totparms > 0)
+	if (context.totparms > 0)
 	{
 		g_auto_show_dot = (char)0;
-		if (isalpha(context->charval[0]))
+		if (isalpha(context.charval[0]))
 		{
-			if (strchr("abdm", (int)context->charval[0]) != NULL)
+			if (strchr("abdm", (int)context.charval[0]) != NULL)
 			{
-				g_auto_show_dot = context->charval[0];
+				g_auto_show_dot = context.charval[0];
 			}
 			else
 			{
-				return bad_arg(context->curarg);
+				return bad_arg(context.curarg);
 			}
 		}
 		else
 		{
-			g_show_dot = context->numval;
+			g_show_dot = context.numval;
 			if (g_show_dot < 0)
 			{
 				g_show_dot = -1;
 			}
 		}
-		if (context->totparms > 1 && context->intparms > 0)
+		if (context.totparms > 1 && context.intparms > 0)
 		{
-			g_size_dot = context->intval[1];
+			g_size_dot = context.intval[1];
 		}
 		if (g_size_dot < 0)
 		{
@@ -2547,43 +2543,43 @@ static int show_dot_arg(const cmd_context *context)
 	return COMMAND_OK;
 }
 
-static int show_orbit_arg(const cmd_context *context)
+static int show_orbit_arg(const cmd_context &context)
 {
-	g_start_show_orbit = (char)context->yesnoval[0];
+	g_start_show_orbit = (char)context.yesnoval[0];
 	return COMMAND_OK;
 }
 
-static int decomposition_arg(const cmd_context *context)
+static int decomposition_arg(const cmd_context &context)
 {
-	if (context->totparms != context->intparms || context->totparms < 1)
+	if (context.totparms != context.intparms || context.totparms < 1)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_decomposition[0] = context->intval[0];
+	g_decomposition[0] = context.intval[0];
 	g_decomposition[1] = 0;
-	if (context->totparms > 1) /* backward compatibility */
+	if (context.totparms > 1) /* backward compatibility */
 	{
-		g_bail_out = g_decomposition[1] = context->intval[1];
+		g_bail_out = g_decomposition[1] = context.intval[1];
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int distance_test_arg(const cmd_context *context)
+static int distance_test_arg(const cmd_context &context)
 {
-	if (context->totparms != context->intparms || context->totparms < 1)
+	if (context.totparms != context.intparms || context.totparms < 1)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_user_distance_test = (long)context->floatval[0];
+	g_user_distance_test = (long)context.floatval[0];
 	g_distance_test_width = 71;
-	if (context->totparms > 1)
+	if (context.totparms > 1)
 	{
-		g_distance_test_width = context->intval[1];
+		g_distance_test_width = context.intval[1];
 	}
-	if (context->totparms > 3 && context->intval[2] > 0 && context->intval[3] > 0)
+	if (context.totparms > 3 && context.intval[2] > 0 && context.intval[3] > 0)
 	{
-		g_pseudo_x = context->intval[2];
-		g_pseudo_y = context->intval[3];
+		g_pseudo_x = context.intval[2];
+		g_pseudo_y = context.intval[3];
 	}
 	else
 	{
@@ -2592,193 +2588,193 @@ static int distance_test_arg(const cmd_context *context)
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int formula_file_arg(const cmd_context *context)
+static int formula_file_arg(const cmd_context &context)
 {
-	if (context->valuelen > (FILE_MAX_PATH-1))
+	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (merge_path_names(g_formula_filename, context->value, context->mode) < 0)
+	if (merge_path_names(g_formula_filename, context.value, context.mode) < 0)
 	{
-		init_msg(context->variable, context->value, context->mode);
+		init_msg(context.variable, context.value, context.mode);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int formula_name_arg(const cmd_context *context)
+static int formula_name_arg(const cmd_context &context)
 {
-	if (context->valuelen > ITEMNAMELEN)
+	if (context.valuelen > ITEMNAMELEN)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	strcpy(g_formula_name, context->value);
+	strcpy(g_formula_name, context.value);
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int l_file_arg(const cmd_context *context)
+static int l_file_arg(const cmd_context &context)
 {
-	if (context->valuelen > (FILE_MAX_PATH-1))
+	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (merge_path_names(g_l_system_filename, context->value, context->mode) < 0)
+	if (merge_path_names(g_l_system_filename, context.value, context.mode) < 0)
 	{
-		init_msg(context->variable, context->value, context->mode);
+		init_msg(context.variable, context.value, context.mode);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int l_name_arg(const cmd_context *context)
+static int l_name_arg(const cmd_context &context)
 {
-	if (context->valuelen > ITEMNAMELEN)
+	if (context.valuelen > ITEMNAMELEN)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	strcpy(g_l_system_name, context->value);
+	strcpy(g_l_system_name, context.value);
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int ifs_file_arg(const cmd_context *context)
+static int ifs_file_arg(const cmd_context &context)
 {
 	int existdir;
-	if (context->valuelen > (FILE_MAX_PATH-1))
+	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	existdir = merge_path_names(g_ifs_filename, context->value, context->mode);
+	existdir = merge_path_names(g_ifs_filename, context.value, context.mode);
 	if (existdir == 0)
 	{
 		reset_ifs_definition();
 	}
 	else if (existdir < 0)
 	{
-		init_msg(context->variable, context->value, context->mode);
+		init_msg(context.variable, context.value, context.mode);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int ifs_arg(const cmd_context *context)
+static int ifs_arg(const cmd_context &context)
 {
-	if (context->valuelen > ITEMNAMELEN)
+	if (context.valuelen > ITEMNAMELEN)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	strcpy(g_ifs_name, context->value);
+	strcpy(g_ifs_name, context.value);
 	reset_ifs_definition();
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int parm_file_arg(const cmd_context *context)
+static int parm_file_arg(const cmd_context &context)
 {
-	if (context->valuelen > (FILE_MAX_PATH-1))
+	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (merge_path_names(g_command_file, context->value, context->mode) < 0)
+	if (merge_path_names(g_command_file, context.value, context.mode) < 0)
 	{
-		init_msg(context->variable, context->value, context->mode);
+		init_msg(context.variable, context.value, context.mode);
 	}
 	return COMMAND_FRACTAL_PARAM;
 }
 
-static int stereo_arg(const cmd_context *context)
+static int stereo_arg(const cmd_context &context)
 {
-	if ((context->numval < 0) || (context->numval > 4))
+	if ((context.numval < 0) || (context.numval > 4))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_glasses_type = context->numval;
+	g_glasses_type = context.numval;
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int rotation_arg(const cmd_context *context)
+static int rotation_arg(const cmd_context &context)
 {
-	if (context->totparms != 3 || context->intparms != 3)
+	if (context.totparms != 3 || context.intparms != 3)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	XROT = context->intval[0];
-	YROT = context->intval[1];
-	ZROT = context->intval[2];
+	XROT = context.intval[0];
+	YROT = context.intval[1];
+	ZROT = context.intval[2];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int perspective_arg(const cmd_context *context)
+static int perspective_arg(const cmd_context &context)
 {
-	if (context->numval == NON_NUMERIC)
+	if (context.numval == NON_NUMERIC)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	ZVIEWER = context->numval;
+	ZVIEWER = context.numval;
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int xy_shift_arg(const cmd_context *context)
+static int xy_shift_arg(const cmd_context &context)
 {
-	if (context->totparms != 2 || context->intparms != 2)
+	if (context.totparms != 2 || context.intparms != 2)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	XSHIFT = context->intval[0];
-	YSHIFT = context->intval[1];
+	XSHIFT = context.intval[0];
+	YSHIFT = context.intval[1];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int inter_ocular_arg(const cmd_context *context)
+static int inter_ocular_arg(const cmd_context &context)
 {
-	g_eye_separation = context->numval;
+	g_eye_separation = context.numval;
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int converge_arg(const cmd_context *context)
+static int converge_arg(const cmd_context &context)
 {
-	g_x_adjust = context->numval;
+	g_x_adjust = context.numval;
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int crop_arg(const cmd_context *context)
+static int crop_arg(const cmd_context &context)
 {
-	if (context->totparms != 4 || context->intparms != 4
-		|| context->intval[0] < 0 || context->intval[0] > 100
-		|| context->intval[1] < 0 || context->intval[1] > 100
-		|| context->intval[2] < 0 || context->intval[2] > 100
-		|| context->intval[3] < 0 || context->intval[3] > 100)
+	if (context.totparms != 4 || context.intparms != 4
+		|| context.intval[0] < 0 || context.intval[0] > 100
+		|| context.intval[1] < 0 || context.intval[1] > 100
+		|| context.intval[2] < 0 || context.intval[2] > 100
+		|| context.intval[3] < 0 || context.intval[3] > 100)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_red_crop_left   = context->intval[0];
-	g_red_crop_right  = context->intval[1];
-	g_blue_crop_left  = context->intval[2];
-	g_blue_crop_right = context->intval[3];
+	g_red_crop_left   = context.intval[0];
+	g_red_crop_right  = context.intval[1];
+	g_blue_crop_left  = context.intval[2];
+	g_blue_crop_right = context.intval[3];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int bright_arg(const cmd_context *context)
+static int bright_arg(const cmd_context &context)
 {
-	if (context->totparms != 2 || context->intparms != 2)
+	if (context.totparms != 2 || context.intparms != 2)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_red_bright  = context->intval[0];
-	g_blue_bright = context->intval[1];
+	g_red_bright  = context.intval[0];
+	g_blue_bright = context.intval[1];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int xy_adjust_arg(const cmd_context *context)
+static int xy_adjust_arg(const cmd_context &context)
 {
-	if (context->totparms != 2 || context->intparms != 2)
+	if (context.totparms != 2 || context.intparms != 2)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_x_trans = context->intval[0];
-	g_y_trans = context->intval[1];
+	g_x_trans = context.intval[0];
+	g_y_trans = context.intval[1];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int threed_arg(const cmd_context *context)
+static int threed_arg(const cmd_context &context)
 {
-	int yesno = context->yesnoval[0];
-	if (strcmp(context->value, "overlay") == 0)
+	int yesno = context.yesnoval[0];
+	if (strcmp(context.value, "overlay") == 0)
 	{
 		yesno = 1;
 		if (g_calculation_status > CALCSTAT_NO_FRACTAL) /* if no image, treat same as 3D=yes */
@@ -2788,252 +2784,252 @@ static int threed_arg(const cmd_context *context)
 	}
 	else if (yesno < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	g_display_3d = yesno;
 	initialize_variables_3d();
 	return (g_display_3d) ? 6 : 2;
 }
 
-static int scale_xyz_arg(const cmd_context *context)
+static int scale_xyz_arg(const cmd_context &context)
 {
-	if (context->totparms < 2 || context->intparms != context->totparms)
+	if (context.totparms < 2 || context.intparms != context.totparms)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	XSCALE = context->intval[0];
-	YSCALE = context->intval[1];
-	if (context->totparms > 2)
+	XSCALE = context.intval[0];
+	YSCALE = context.intval[1];
+	if (context.totparms > 2)
 	{
-		ROUGH = context->intval[2];
+		ROUGH = context.intval[2];
 	}
 	return COMMAND_3D_PARAM;
 }
 
-static int roughness_arg(const cmd_context *context)
+static int roughness_arg(const cmd_context &context)
 {
 	/* "rough" is really scale z, but we add it here for convenience */
-	ROUGH = context->numval;
+	ROUGH = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int water_line_arg(const cmd_context *context)
+static int water_line_arg(const cmd_context &context)
 {
-	if (context->numval < 0)
+	if (context.numval < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	WATERLINE = context->numval;
+	WATERLINE = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int fill_type_arg(const cmd_context *context)
+static int fill_type_arg(const cmd_context &context)
 {
-	if (context->numval < -1 || context->numval > 6)
+	if (context.numval < -1 || context.numval > 6)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	FILLTYPE = context->numval;
+	FILLTYPE = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int light_source_arg(const cmd_context *context)
+static int light_source_arg(const cmd_context &context)
 {
-	if (context->totparms != 3 || context->intparms != 3)
+	if (context.totparms != 3 || context.intparms != 3)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	XLIGHT = context->intval[0];
-	YLIGHT = context->intval[1];
-	ZLIGHT = context->intval[2];
+	XLIGHT = context.intval[0];
+	YLIGHT = context.intval[1];
+	ZLIGHT = context.intval[2];
 	return COMMAND_3D_PARAM;
 }
 
-static int smoothing_arg(const cmd_context *context)
+static int smoothing_arg(const cmd_context &context)
 {
-	if (context->numval < 0)
+	if (context.numval < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	LIGHTAVG = context->numval;
+	LIGHTAVG = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int latitude_arg(const cmd_context *context)
+static int latitude_arg(const cmd_context &context)
 {
-	if (context->totparms != 2 || context->intparms != 2)
+	if (context.totparms != 2 || context.intparms != 2)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	THETA1 = context->intval[0];
-	THETA2 = context->intval[1];
+	THETA1 = context.intval[0];
+	THETA2 = context.intval[1];
 	return COMMAND_3D_PARAM;
 }
 
-static int longitude_arg(const cmd_context *context)
+static int longitude_arg(const cmd_context &context)
 {
-	if (context->totparms != 2 || context->intparms != 2)
+	if (context.totparms != 2 || context.intparms != 2)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	PHI1 = context->intval[0];
-	PHI2 = context->intval[1];
+	PHI1 = context.intval[0];
+	PHI2 = context.intval[1];
 	return COMMAND_3D_PARAM;
 }
 
-static int radius_arg(const cmd_context *context)
+static int radius_arg(const cmd_context &context)
 {
-	if (context->numval < 0)
+	if (context.numval < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	RADIUS = context->numval;
+	RADIUS = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int transparent_arg(const cmd_context *context)
+static int transparent_arg(const cmd_context &context)
 {
-	if (context->totparms != context->intparms || context->totparms < 1)
+	if (context.totparms != context.intparms || context.totparms < 1)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_transparent[1] = g_transparent[0] = context->intval[0];
-	if (context->totparms > 1)
+	g_transparent[1] = g_transparent[0] = context.intval[0];
+	if (context.totparms > 1)
 	{
-		g_transparent[1] = context->intval[1];
+		g_transparent[1] = context.intval[1];
 	}
 	return COMMAND_3D_PARAM;
 }
 
-static int coarse_arg(const cmd_context *context)
+static int coarse_arg(const cmd_context &context)
 {
-	if (context->numval < 3 || context->numval > 2000)
+	if (context.numval < 3 || context.numval > 2000)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_preview_factor = context->numval;
+	g_preview_factor = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int randomize_arg(const cmd_context *context)
+static int randomize_arg(const cmd_context &context)
 {
-	if (context->numval < 0 || context->numval > 7)
+	if (context.numval < 0 || context.numval > 7)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_randomize = context->numval;
+	g_randomize = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int ambient_arg(const cmd_context *context)
+static int ambient_arg(const cmd_context &context)
 {
-	if (context->numval < 0 || context->numval > 100)
+	if (context.numval < 0 || context.numval > 100)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_ambient = context->numval;
+	g_ambient = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int haze_arg(const cmd_context *context)
+static int haze_arg(const cmd_context &context)
 {
-	if (context->numval < 0 || context->numval > 100)
+	if (context.numval < 0 || context.numval > 100)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_haze = context->numval;
+	g_haze = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int true_mode_arg(const cmd_context *context)
+static int true_mode_arg(const cmd_context &context)
 {
 	g_true_mode = TRUEMODE_DEFAULT;				/* use default if error */
-	if (context->charval[0] == 'd')
+	if (context.charval[0] == 'd')
 	{
 		g_true_mode = TRUEMODE_DEFAULT;			/* use default color output */
 	}
-	if (context->charval[0] == 'i' || context->intval[0] == 1)
+	if (context.charval[0] == 'i' || context.intval[0] == 1)
 	{
 		g_true_mode = TRUEMODE_ITERATES;			/* use iterates output */
 	}
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
-static int monitor_width_arg(const cmd_context *context)
+static int monitor_width_arg(const cmd_context &context)
 {
-	if (context->totparms != 1 || context->floatparms != 1)
+	if (context.totparms != 1 || context.floatparms != 1)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_auto_stereo_width  = context->floatval[0];
+	g_auto_stereo_width  = context.floatval[0];
 	return COMMAND_3D_PARAM;
 }
 
-static int background_arg(const cmd_context *context)
+static int background_arg(const cmd_context &context)
 {
 	int i;
 
-	if (context->totparms != 3 || context->intparms != 3)
+	if (context.totparms != 3 || context.intparms != 3)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 	for (i = 0; i < 3; i++)
 	{
-		if (context->intval[i] & ~0xff)
+		if (context.intval[i] & ~0xff)
 		{
-			return bad_arg(context->curarg);
+			return bad_arg(context.curarg);
 		}
 	}
-	g_back_color[0] = (BYTE)context->intval[0];
-	g_back_color[1] = (BYTE)context->intval[1];
-	g_back_color[2] = (BYTE)context->intval[2];
+	g_back_color[0] = (BYTE)context.intval[0];
+	g_back_color[1] = (BYTE)context.intval[1];
+	g_back_color[2] = (BYTE)context.intval[2];
 	return COMMAND_3D_PARAM;
 }
 
-static int light_name_arg(const cmd_context *context)
+static int light_name_arg(const cmd_context &context)
 {
-	if (context->valuelen > (FILE_MAX_PATH-1))
+	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	if (g_command_initialize || context->mode == CMDFILE_AT_AFTER_STARTUP)
+	if (g_command_initialize || context.mode == CMDFILE_AT_AFTER_STARTUP)
 	{
-		strcpy(g_light_name, context->value);
+		strcpy(g_light_name, context.value);
 	}
 	return COMMAND_OK;
 }
 
-static int ray_arg(const cmd_context *context)
+static int ray_arg(const cmd_context &context)
 {
-	if (context->numval < 0 || context->numval > 6)
+	if (context.numval < 0 || context.numval > 6)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
-	g_raytrace_output = context->numval;
+	g_raytrace_output = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
-static int release_arg(const cmd_context *context)
+static int release_arg(const cmd_context &context)
 {
-	if (context->numval < 0)
+	if (context.numval < 0)
 	{
-		return bad_arg(context->curarg);
+		return bad_arg(context.curarg);
 	}
 
-	g_save_release = context->numval;
+	g_save_release = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
 struct tag_command_processor
 {
 	const char *command;
-	int (*processor)(const cmd_context *context);
+	int (*processor)(const cmd_context &context);
 };
 typedef struct tag_command_processor command_processor;
 
 static int named_processor(const command_processor *processors,
 						   int num_processors,
-						   const cmd_context *context,
+						   const cmd_context &context,
 						   const char *command, int *result)
 {
 	int i;
@@ -3048,87 +3044,87 @@ static int named_processor(const command_processor *processors,
 	return FALSE;
 }
 
-static int gif87a_arg(const cmd_context *context)
+static int gif87a_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_gif87a_flag, COMMAND_OK);
 }
 
-static int dither_arg(const cmd_context *context)
+static int dither_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_dither_flag, COMMAND_OK);
 }
 
-static int finite_attractor_arg(const cmd_context *context)
+static int finite_attractor_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_finite_attractor, COMMAND_FRACTAL_PARAM);
 }
 
-static int no_bof_arg(const cmd_context *context)
+static int no_bof_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_no_bof, COMMAND_FRACTAL_PARAM);
 }
 
-static int is_mand_arg(const cmd_context *context)
+static int is_mand_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_is_mand, COMMAND_FRACTAL_PARAM);
 }
 
-static int sphere_arg(const cmd_context *context)
+static int sphere_arg(const cmd_context &context)
 {
 	return flag_arg(context, &SPHERE, COMMAND_3D_PARAM);
 }
 
-static int preview_arg(const cmd_context *context)
+static int preview_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_preview, COMMAND_3D_PARAM);
 }
 
-static int showbox_arg(const cmd_context *context)
+static int showbox_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_show_box, COMMAND_3D_PARAM);
 }
 
-static int fullcolor_arg(const cmd_context *context)
+static int fullcolor_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_targa_output, COMMAND_3D_PARAM);
 }
 
-static int truecolor_arg(const cmd_context *context)
+static int truecolor_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_true_color, COMMAND_3D_PARAM | COMMAND_FRACTAL_PARAM);
 }
 
-static int use_grayscale_depth_arg(const cmd_context *context)
+static int use_grayscale_depth_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_grayscale_depth, COMMAND_3D_PARAM);
 }
 
-static int targa_overlay_arg(const cmd_context *context)
+static int targa_overlay_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_targa_overlay, COMMAND_3D_PARAM);
 }
 
-static int brief_arg(const cmd_context *context)
+static int brief_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_raytrace_brief, COMMAND_3D_PARAM);
 }
 
-static int screencoords_arg(const cmd_context *context)
+static int screencoords_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_keep_screen_coords, COMMAND_FRACTAL_PARAM);
 }
 
-static int olddemmcolors_arg(const cmd_context *context)
+static int olddemmcolors_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_old_demm_colors, COMMAND_OK);
 }
 
-static int ask_video_arg(const cmd_context *context)
+static int ask_video_arg(const cmd_context &context)
 {
-	return flag_arg(*context, g_ui_state.ask_video, COMMAND_OK);
+	return flag_arg(context, g_ui_state.ask_video, COMMAND_OK);
 }
 
-static int cur_dir_arg(const cmd_context *context)
+static int cur_dir_arg(const cmd_context &context)
 {
 	return flag_arg(context, &g_check_current_dir, COMMAND_OK);
 }
@@ -3331,7 +3327,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "makepar",	make_par_arg }
 		};
 		int result = COMMAND_OK;
-		if (named_processor(processors, NUM_OF(processors), &context, variable, &result))
+		if (named_processor(processors, NUM_OF(processors), context, variable, &result))
 		{
 			return result;
 		}
@@ -3496,7 +3492,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "virtual", 		gobble_flag_arg }
 		};
 		int result = COMMAND_OK;
-		if (named_processor(processors, NUM_OF(processors), &context, variable, &result))
+		if (named_processor(processors, NUM_OF(processors), context, variable, &result))
 		{
 			return result;
 		}
