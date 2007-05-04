@@ -186,7 +186,7 @@ static int handle_special_keys(int ch)
 static void parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 {
 	/* do something like XParseGeometry() */
-	if (2 == sscanf(spec, "%dx%d", width, height))
+	if (2 == ::sscanf(spec, "%dx%d", width, height))
 	{
 		/* all we care about is width and height for disk output */
 		*x = 0;
@@ -196,8 +196,8 @@ static void parse_geometry(const char *spec, int *x, int *y, int *width, int *he
 
 void GDIDriver::show_hide_windows(HWND show, HWND hide)
 {
-	ShowWindow(show, SW_NORMAL);
-	ShowWindow(hide, SW_HIDE);
+	::ShowWindow(show, SW_NORMAL);
+	::ShowWindow(hide, SW_HIDE);
 }
 
 void GDIDriver::max_size(int &width, int &height, bool &center_x, bool &center_y)

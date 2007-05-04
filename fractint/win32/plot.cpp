@@ -455,7 +455,7 @@ void Plot::schedule_alarm(int delay)
 	UINT_PTR result = ::SetTimer(m_window, PLOT_TIMER_ID, delay, redraw_window);
 	if (!result)
 	{
-		DWORD error = GetLastError();
+		DWORD error = ::GetLastError();
 		_ASSERTE(result);
 	}
 }
