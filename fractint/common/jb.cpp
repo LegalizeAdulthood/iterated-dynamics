@@ -75,7 +75,7 @@ int julibrot_setup()
 	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / g_z_dots;
 	g_float_parameter = &s_jbc_fp;
 	s_x_per_inch_fp = -g_escape_time_state.m_grid_fp.width()/g_width_fp;
-	s_y_per_inch_fp = (g_escape_time_state.m_grid_fp.height()/g_height_fp;
+	s_y_per_inch_fp = g_escape_time_state.m_grid_fp.height()/g_height_fp;
 	s_inch_per_x_dot_fp = g_width_fp / g_x_dots;
 	s_inch_per_y_dot_fp = g_height_fp / g_y_dots;
 	s_init_z_fp = g_origin_fp - (g_depth_fp / 2);
