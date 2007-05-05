@@ -505,10 +505,10 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 
 	g_old_demm_colors = 0;
 	g_bail_out_test    = Mod;
-	g_bail_out_fp  = (int (*)())bail_out_mod_fp;
-	g_bail_out_l   = (int (*)())bail_out_mod_l_asm;
-	g_bail_out_bn = (int (*)())bail_out_mod_bn;
-	g_bail_out_bf = (int (*)())bail_out_mod_bf;
+	g_bail_out_fp  = bail_out_mod_fp;
+	g_bail_out_l   = bail_out_mod_l;
+	g_bail_out_bn = bail_out_mod_bn;
+	g_bail_out_bf = bail_out_mod_bf;
 
 	g_function_preloaded = FALSE; /* for old bifs  JCO 7/5/92 */
 	g_m_x_min_fp = -.83;

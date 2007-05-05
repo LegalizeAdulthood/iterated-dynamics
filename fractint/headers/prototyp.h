@@ -80,13 +80,13 @@ extern void cdecl FPUcplxexp387(_CMPLX *, _CMPLX *);
 
 /*  fracsuba -- assembler file prototypes */
 
-extern int bail_out_mod_l_asm();
-extern int bail_out_real_l_asm();
-extern int bail_out_imag_l_asm();
-extern int bail_out_or_l_asm();
-extern int bail_out_and_l_asm();
-extern int bail_out_manhattan_l_asm();
-extern int bail_out_manhattan_r_l_asm();
+extern int bail_out_mod_l();
+extern int bail_out_real_l();
+extern int bail_out_imag_l();
+extern int bail_out_or_l();
+extern int bail_out_and_l();
+extern int bail_out_manhattan_l();
+extern int bail_out_manhattan_r_l();
 extern int asm386lMODbailout();
 extern int asm386lREALbailout();
 extern int asm386lIMAGbailout();
@@ -94,13 +94,6 @@ extern int asm386lORbailout();
 extern int asm386lANDbailout();
 extern int asm386lMANHbailout();
 extern int asm386lMANRbailout();
-extern int bail_out_mod_fp_asm();
-extern int bail_out_real_fp_asm();
-extern int bail_out_imag_fp_asm();
-extern int bail_out_or_fp_asm();
-extern int bail_out_and_fp_asm();
-extern int bail_out_manhattan_fp_asm();
-extern int bail_out_manhattan_r_fp_asm();
 
 /* history -- C file prototypes */
 

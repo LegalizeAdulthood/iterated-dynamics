@@ -397,13 +397,6 @@ int bail_out_manhattan_r_fp()
 	while (0)
 
 #if defined(XFRACT)
-int bail_out_mod_l_asm() { return 0; }
-int bail_out_real_l_asm() { return 0; }
-int bail_out_imag_l_asm() { return 0; }
-int bail_out_or_l_asm() { return 0; }
-int bail_out_and_l_asm() { return 0; }
-int bail_out_manhattan_l_asm() { return 0; }
-int bail_out_manhattan_r_l_asm() { return 0; }
 int asm386lMODbailout() { return 0; }
 int asm386lREALbailout() { return 0; }
 int asm386lIMAGbailout() { return 0; }
