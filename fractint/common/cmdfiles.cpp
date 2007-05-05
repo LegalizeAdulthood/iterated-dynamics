@@ -499,7 +499,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_math_tolerance[0] = 0.05;
 	g_math_tolerance[1] = 0.05;
 
-	g_display_3d = 0;                       /* 3D display is off        */
+	g_display_3d = DISPLAY3D_NONE;
 	g_overlay_3d = 0;                       /* 3D overlay is off        */
 
 	g_old_demm_colors = 0;
@@ -975,7 +975,7 @@ static int filename_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	if (context.mode == CMDFILE_AT_AFTER_STARTUP && g_display_3d == 0) /* can't do this in @ command */
+	if (context.mode == CMDFILE_AT_AFTER_STARTUP && g_display_3d == DISPLAY3D_NONE) /* can't do this in @ command */
 	{
 		return bad_arg(context.curarg);
 	}
@@ -2610,9 +2610,9 @@ static int threed_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_display_3d = yesno;
+	g_display_3d = yesno ? DISPLAY3D_YES : DISPLAY3D_NONE;
 	initialize_variables_3d();
-	return (g_display_3d) ? 6 : 2;
+	return Command::ThreeDParameter | (g_display_3d ? Command::ThreeDYes : 0);
 }
 
 static int scale_xyz_arg(const cmd_context &context)

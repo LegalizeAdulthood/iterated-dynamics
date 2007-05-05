@@ -592,7 +592,7 @@ static void write_universal_3d_parameters()
 	if (g_display_3d)  /* universal 3d */
 	{
 		/***** common (fractal & transform) 3d parameters in this section *****/
-		if (!g_raytrace_state.sphere() || g_display_3d < 0)
+		if (!g_raytrace_state.sphere() || g_display_3d == DISPLAY3D_GENERATED)
 		{
 			put_parm(" rotation=%d/%d/%d", g_raytrace_state.x_rot(), g_raytrace_state.y_rot(), g_raytrace_state.z_rot());
 		}
@@ -616,10 +616,10 @@ static void write_universal_3d_parameters()
 
 static void write_3d_parameters()
 {
-	if (g_display_3d >= 1)
+	if ((g_display_3d == DISPLAY3D_YES) || (g_display_3d == DISPLAY3D_OVERLAY))
 	{
 		/***** 3d transform only parameters in this section *****/
-		if (g_display_3d == 2)
+		if (g_display_3d == DISPLAY3D_OVERLAY)
 		{
 			put_parm(" 3d=overlay");
 		}
@@ -735,7 +735,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 	{
 		goto docolors;
 	}
-	if (g_display_3d <= 0)  /* a fractal was generated */
+	if (g_display_3d == DISPLAY3D_NONE || g_display_3d == DISPLAY3D_GENERATED)
 	{
 		/****** fractal only parameters in this section *******/
 		put_parm(" reset=%d", check_back() ?

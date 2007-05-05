@@ -339,7 +339,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 			}
 			if (g_loaded_3d)      /* 'r' of image created with '3' */
 			{
-				g_display_3d = 1;  /* so set flag for 'b' command */
+				g_display_3d = DISPLAY3D_YES;  /* so set flag for 'b' command */
 			}
 		}
 		else
@@ -1358,7 +1358,7 @@ static int handle_restore_from(int *frommandel, int kbdchar, int *stacked)
 		{
 			g_compare_gif = g_overlay_3d = 0;
 		}
-		g_display_3d = 0;
+		g_display_3d = DISPLAY3D_NONE;
 	}
 	driver_stack_screen();            /* save graphics image */
 	*stacked = g_overlay_3d ? 0 : 1;
@@ -1680,7 +1680,7 @@ int main_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, int *stacked, 
 
 do_3d_transform:
 	case '3':                    /* restore-from (3d)            */
-		g_display_3d = g_overlay_3d ? 2 : 1; /* for <b> command               */
+		g_display_3d = g_overlay_3d ? DISPLAY3D_OVERLAY : DISPLAY3D_YES; /* for <b> command               */
 		/* fall through */
 
 	case 'r':                    /* restore-from                 */

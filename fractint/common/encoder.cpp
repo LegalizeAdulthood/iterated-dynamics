@@ -558,7 +558,8 @@ int encoder()
 		{
 			save_info.tot_extend_len += store_item_name(g_ifs_name);
 		}
-		if (g_display_3d <= 0 && g_ranges_length)
+		if ((g_display_3d == DISPLAY3D_GENERATED || g_display_3d == DISPLAY3D_NONE)
+			&& g_ranges_length)
 		{
 			/* ranges g_block, 004 */
 			save_info.tot_extend_len += extend_blk_len(g_ranges_length*2);

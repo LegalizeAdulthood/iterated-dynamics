@@ -2654,26 +2654,26 @@ static void setup_matrix(MATRIX doublemat)
 
 }
 
+static int orbit_3d_aux(int (*orbit)())
+{
+	g_display_3d = DISPLAY3D_GENERATED;
+	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
+	return funny_glasses_call(orbit);
+}
+
 int orbit_3d_fp()
 {
-	g_display_3d = -1;
-	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
-	return funny_glasses_call(orbit_3d_calc_fp);
+	return orbit_3d_aux(orbit_3d_calc_fp);
 }
 
 int orbit_3d()
 {
-	g_display_3d = -1;
-	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
-	return funny_glasses_call(orbit_3d_calc);
+	return orbit_3d_aux(orbit_3d_calc);
 }
 
 static int ifs_3d()
 {
-	g_display_3d = -1;
-
-	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
-	return funny_glasses_call(g_float_flag ? ifs_3d_float : ifs_3d_long); /* double, long version of ifs_3d */
+	return orbit_3d_aux(g_float_flag ? ifs_3d_float : ifs_3d_long);
 }
 
 static int threed_view_trans(struct threed_vt_inf *inf)

@@ -1897,8 +1897,7 @@ gfp_top:
 	}
 
 	if (caller                           /* <z> command ? */
-/*      && (g_display_3d > 0 || promptnum == 0)) */
-		&& (g_display_3d > 0))
+		&& (g_display_3d > DISPLAY3D_NONE))
 	{
 		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
 		goto gfp_exit;

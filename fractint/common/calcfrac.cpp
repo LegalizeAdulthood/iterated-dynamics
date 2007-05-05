@@ -519,7 +519,7 @@ int calculate_fractal()
 {
 	g_math_error_count = 0;
 	g_num_attractors = 0;          /* default to no known finite attractors  */
-	g_display_3d = 0;
+	g_display_3d = DISPLAY3D_NONE;
 	g_basin = 0;
 	/* added yet another level of indirection to g_put_color!!! TW */
 	g_put_color = putcolor_a;
