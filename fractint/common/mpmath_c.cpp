@@ -24,6 +24,8 @@
 
 #if !defined(XFRACT)
 
+static struct MP s_answer = { 0 };
+
 struct MPC g_one_mpc =
 {
 	{ 0x3fff, 0x80000000L },
@@ -36,41 +38,34 @@ struct MP *MPsub(struct MP x, struct MP y)
 	return MPadd(x, y);
 }
 
-/* added by TW */
-struct MP *MPsub386(struct MP x, struct MP y)
-{
-	y.Exp ^= 0x8000;
-	return MPadd386(x, y);
-}
-
 struct MP *MPabs(struct MP x)
 {
-	g_ans = x;
-	g_ans.Exp &= 0x7fff;
-	return &g_ans;
+	s_answer = x;
+	s_answer.Exp &= 0x7fff;
+	return &s_answer;
 }
 
 struct MPC MPCsqr(struct MPC x)
 {
 	struct MPC z;
 
-	z.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
-	z.y = *pMPmul(x.x, x.y);
+	z.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
+	z.y = *MPmul(x.x, x.y);
 	z.y.Exp++;
 	return z;
 }
 
 struct MP MPCmod(struct MPC x)
 {
-	return *pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
+	return *MPadd(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
 }
 
 struct MPC MPCmul(struct MPC x, struct MPC y)
 {
 	struct MPC z;
 
-	z.x = *pMPsub(*pMPmul(x.x, y.x), *pMPmul(x.y, y.y));
-	z.y = *pMPadd(*pMPmul(x.x, y.y), *pMPmul(x.y, y.x));
+	z.x = *MPsub(*MPmul(x.x, y.x), *MPmul(x.y, y.y));
+	z.y = *MPadd(*MPmul(x.x, y.y), *MPmul(x.y, y.x));
 	return z;
 }
 
@@ -80,8 +75,8 @@ struct MPC MPCdiv(struct MPC x, struct MPC y)
 
 	mod = MPCmod(y);
 	y.y.Exp ^= 0x8000;
-	y.x = *pMPdiv(y.x, mod);
-	y.y = *pMPdiv(y.y, mod);
+	y.x = *MPdiv(y.x, mod);
+	y.y = *MPdiv(y.y, mod);
 	return MPCmul(x, y);
 }
 
@@ -89,8 +84,8 @@ struct MPC MPCadd(struct MPC x, struct MPC y)
 {
 	struct MPC z;
 
-	z.x = *pMPadd(x.x, y.x);
-	z.y = *pMPadd(x.y, y.y);
+	z.x = *MPadd(x.x, y.x);
+	z.y = *MPadd(x.y, y.y);
 	return z;
 }
 
@@ -98,8 +93,8 @@ struct MPC MPCsub(struct MPC x, struct MPC y)
 {
 	struct MPC z;
 
-	z.x = *pMPsub(x.x, y.x);
-	z.y = *pMPsub(x.y, y.y);
+	z.x = *MPsub(x.x, y.x);
+	z.y = *MPsub(x.y, y.y);
 	return z;
 }
 
@@ -112,14 +107,14 @@ struct MPC MPCpow(struct MPC x, int exp)
 	exp >>= 1;
 	while (exp)
 	{
-		zz.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
-		zz.y = *pMPmul(x.x, x.y);
+		zz.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
+		zz.y = *MPmul(x.x, x.y);
 		zz.y.Exp++;
 		x = zz;
 		if (exp & 1)
 		{
-			zz.x = *pMPsub(*pMPmul(z.x, x.x), *pMPmul(z.y, x.y));
-			zz.y = *pMPadd(*pMPmul(z.x, x.y), *pMPmul(z.y, x.x));
+			zz.x = *MPsub(*MPmul(z.x, x.x), *MPmul(z.y, x.y));
+			zz.y = *MPadd(*MPmul(z.x, x.y), *MPmul(z.y, x.x));
 			z = zz;
 		}
 		exp >>= 1;
@@ -131,11 +126,11 @@ int MPCcmp(struct MPC x, struct MPC y)
 {
 	struct MPC z;
 
-	if (pMPcmp(x.x, y.x) || pMPcmp(x.y, y.y))
+	if (MPcmp(x.x, y.x) || MPcmp(x.y, y.y))
 	{
 		z.x = MPCmod(x);
 		z.y = MPCmod(y);
-		return pMPcmp(z.x, z.y);
+		return MPcmp(z.x, z.y);
 	}
 	else
 	{
@@ -147,8 +142,8 @@ _CMPLX MPC2cmplx(struct MPC x)
 {
 	_CMPLX z;
 
-	z.x = *pMP2d(x.x);
-	z.y = *pMP2d(x.y);
+	z.x = *MP2d(x.x);
+	z.y = *MP2d(x.y);
 	return z;
 }
 
@@ -156,29 +151,11 @@ struct MPC cmplx2MPC(_CMPLX z)
 {
 	struct MPC x;
 
-	x.x = *pd2MP(z.x);
-	x.y = *pd2MP(z.y);
+	x.x = *d2MP(z.x);
+	x.y = *d2MP(z.y);
 	return x;
 }
 
-int        (*pMPcmp)(struct MP x, struct MP y) = MPcmp386;
-struct MP  *(*pMPmul)(struct MP x, struct MP y) = MPmul386;
-struct MP  *(*pMPdiv)(struct MP x, struct MP y) = MPdiv386;
-struct MP  *(*pMPadd)(struct MP x, struct MP y) = MPadd386;
-struct MP  *(*pMPsub)(struct MP x, struct MP y) = MPsub386;
-struct MP  *(*pd2MP)(double x)                 = d2MP386 ;
-double *(*pMP2d)(struct MP m)                  = MP2d386 ;
-
-void setMPfunctions()
-{
-	pMPmul = MPmul386;
-	pMPdiv = MPdiv386;
-	pMPadd = MPadd386;
-	pMPsub = MPsub386;
-	pMPcmp = MPcmp386;
-	pd2MP  = d2MP386 ;
-	pMP2d  = MP2d386 ;
-}
 #endif /* XFRACT */
 
 #ifndef sqr
@@ -630,12 +607,9 @@ long logtablecalc(long citer)
 long ExpFloat14(long xx)
 {
 	static float fLogTwo = 0.6931472f;
-	int f;
-	long g_ans;
-
-	f = 23 - (int)RegFloat2Fg(RegDivFloat(xx, *(long*)&fLogTwo), 0);
-	g_ans = ExpFudged(RegFloat2Fg(xx, 16), f);
-	return RegFg2Float(g_ans, (char)f);
+	int f = 23 - (int) RegFloat2Fg(RegDivFloat(xx, *(long*) &fLogTwo), 0);
+	long answer = ExpFudged(RegFloat2Fg(xx, 16), f);
+	return RegFg2Float(answer, (char) f);
 }
 
 double TwoPi;
@@ -714,28 +688,26 @@ int complex_basin()
  * 1 in Distribution*(1-Probability/Range*con) + 1 chance of getting a
  * Gaussian; otherwise you just get offset.
  */
-int gaussian_number(int Probability, int Range)
+int gaussian_number(int probability, int range)
 {
-	int n, r;
-	long Accum = 0, p;
-
-	p = divide((long)Probability << 16, (long)Range << 16, 16);
+	long p = divide((long) probability << 16, (long) range << 16, 16);
 	p = multiply(p, g_gaussian_constant, 16);
-	p = multiply((long)g_gaussian_distribution << 16, p, 16);
-	if (!(rand15() % (g_gaussian_distribution - (int)(p >> 16) + 1)))
+	p = multiply((long) g_gaussian_distribution << 16, p, 16);
+	if (!(rand15() % (g_gaussian_distribution - (int) (p >> 16) + 1)))
 	{
-		for (n = 0; n < g_gaussian_slope; n++)
+		long accum = 0;
+		for (int n = 0; n < g_gaussian_slope; n++)
 		{
-			Accum += rand15();
+			accum += rand15();
 		}
-		Accum /= g_gaussian_slope;
-		r = (int)(multiply((long)Range << 15, Accum, 15) >> 14);
-		r = r - Range;
+		accum /= g_gaussian_slope;
+		int r = (int) (multiply((long) range << 15, accum, 15) >> 14);
+		r = r - range;
 		if (r < 0)
 		{
 			r = -r;
 		}
-		return Range - r + g_gaussian_offset;
+		return range - r + g_gaussian_offset;
 	}
 	return g_gaussian_offset;
 }
@@ -772,22 +744,22 @@ NonZero:
 	rcr   edx, 1
 
 StoreAns:
-	mov   g_ans.Exp, si
-	mov   g_ans.Mant, edx
+	mov   s_answer.Exp, si
+	mov   s_answer.Mant, edx
 
-	lea   ax, g_ans
+	lea   ax, s_answer
 	mov   dx, ds
 .8086
 	ret
 d2MP386     ENDP
 */
-struct MP *d2MP386(double x)
+struct MP *d2MP(double x)
 {
 	/* TODO: implement */
 #if defined(_WIN32)
-	_ASSERTE(0 && "d2MP386 called.");
+	_ASSERTE(0 && "d2MP called.");
 #endif
-	return &g_ans;
+	return &s_answer;
 }
 
 /*
@@ -830,12 +802,12 @@ StoreAns:
 	ret
 MP2d386     ENDP
 */
-double *MP2d386(struct MP x)
+double *MP2d(struct MP x)
 {
 	/* TODO: implement */
 	static double ans = 0.0;
 #if defined(_WIN32)
-	_ASSERTE(0 && "MP2d386 called.");
+	_ASSERTE(0 && "MP2d called.");
 #endif
 	return &ans;
 }
@@ -924,22 +896,22 @@ SubtractNumbers:
 	jo    Overflow
 
 StoreAns:
-	mov   g_ans.Exp, si
-	mov   g_ans.Mant, eax
+	mov   s_answer.Exp, si
+	mov   s_answer.Mant, eax
 
-	lea   ax, g_ans
+	lea   ax, s_answer
 	mov   dx, ds
 .8086
 	ret
 MPadd386    ENDP
 */
-struct MP *MPadd386(struct MP x, struct MP y)
+struct MP *MPadd(struct MP x, struct MP y)
 {
 	/* TODO: implement */
 #if defined(_WIN32)
-	_ASSERTE(0 && "MPadd386 called.");
+	_ASSERTE(0 && "MPadd called.");
 #endif
-	return &g_ans;
+	return &s_answer;
 }
 
 /*
@@ -998,11 +970,11 @@ ExitCmp:
 	ret
 MPcmp386    ENDP
 */
-int MPcmp386(struct MP x, struct MP y)
+int MPcmp(struct MP x, struct MP y)
 {
 	/* TODO: implement */
 #if defined(_WIN32)
-	_ASSERTE(0 && "MPcmp386 called.");
+	_ASSERTE(0 && "MPcmp called.");
 #endif
 	return 0;
 }
@@ -1028,11 +1000,11 @@ Overflow:
 
 ZeroAns:
 	xor   eax, eax
-	mov   g_ans.Exp, ax
+	mov   s_answer.Exp, ax
 	jmp   StoreMant
 
 NoOverflow:
-	mov   g_ans.Exp, ax
+	mov   s_answer.Exp, ax
 
 	xor   eax, eax
 	mov   edx, xMant
@@ -1048,27 +1020,27 @@ NoOverflow:
 
 	shr   edx, 1
 	rcr   eax, 1
-	add   g_ans.Exp, 1
+	add   s_answer.Exp, 1
 	jo    Overflow
 
 Divide:
 	div   ecx
 
 StoreMant:
-	mov   g_ans.Mant, eax
-	lea   ax, g_ans
+	mov   s_answer.Mant, eax
+	lea   ax, s_answer
 	mov   dx, ds
 .8086
 	ret
 MPdiv386    ENDP
 */
-struct MP *MPdiv386(struct MP x, struct MP y)
+struct MP *MPdiv(struct MP x, struct MP y)
 {
 	/* TODO: implement */
 #if defined(_WIN32)
-	_ASSERTE(0 && "MPdiv386 called.");
+	_ASSERTE(0 && "MPdiv called.");
 #endif
-	return &g_ans;
+	return &s_answer;
 }
 
 /*
@@ -1097,11 +1069,11 @@ Overflow:
 
 ZeroAns:
 	xor   edx, edx
-	mov   g_ans.Exp, dx
+	mov   s_answer.Exp, dx
 	jmp   StoreMant
 
 NoOverflow:
-	mov   g_ans.Exp, ax
+	mov   s_answer.Exp, ax
 
 	mov   eax, xMant
 	mov   edx, yMant
@@ -1117,51 +1089,24 @@ NoOverflow:
 	js    StoreMant
 
 	shld  edx, eax, 1
-	sub   g_ans.Exp, 1
+	sub   s_answer.Exp, 1
 	jo    Overflow
 
 StoreMant:
-	mov   g_ans.Mant, edx
-	lea   ax, g_ans
+	mov   s_answer.Mant, edx
+	lea   ax, s_answer
 	mov   dx, ds
 .8086
 	ret
 MPmul386    ENDP
 */
-struct MP *MPmul386(struct MP x, struct MP y)
+struct MP *MPmul(struct MP x, struct MP y)
 {
 	/* TODO: implement */
 #if defined(_WIN32)
 	_ASSERTE(0 && "MPmul386 called.");
 #endif
-	return &g_ans;
-}
-
-/*
-*/
-struct MP *d2MP(double x)
-{
-	return d2MP386(x);
-}
-
-struct MP *MPadd(struct MP x, struct MP y)
-{
-	return MPadd386(x, y);
-}
-
-struct MP *MPmul(struct MP x, struct MP y)
-{
-	return MPmul386(x, y);
-}
-
-struct MP *MPdiv(struct MP x, struct MP y)
-{
-	return MPdiv386(x, y);
-}
-
-int MPcmp(struct MP x, struct MP y)
-{
-	return MPcmp386(x, y);
+	return &s_answer;
 }
 
 /*
@@ -1191,24 +1136,20 @@ BitScanRight:
 	shl   edx, cl
 
 StoreAns:
-	mov   g_ans.Exp, bx
-	mov   g_ans.Mant, edx
+	mov   s_answer.Exp, bx
+	mov   s_answer.Mant, edx
 .8086
-	lea   ax, g_ans
+	lea   ax, s_answer
 	mov   dx, ds
 	ret
 fg2MP386    ENDP
 */
-struct MP *fg2MP386(long x, int fg)
-{
-#if defined(_WIN32)
-	_ASSERTE(0 && "fg2MP386 called");
-#endif
-	return &g_ans;
-}
-
 struct MP *fg2MP(long x, int fg)
 {
-	return fg2MP386(x, fg);
+#if defined(_WIN32)
+	_ASSERTE(0 && "fg2MP called");
+#endif
+	return &s_answer;
 }
+
 #endif

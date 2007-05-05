@@ -14,7 +14,7 @@
 #include "SoundState.h"
 
 #if !defined(XFRACT)
-#define MPCmod(m) (*pMPadd(*pMPmul((m).x, (m).x), *pMPmul((m).y, (m).y)))
+#define MPCmod(m) (*MPadd(*MPmul((m).x, (m).x), *MPmul((m).y, (m).y)))
 #endif
 
 long calculate_mandelbrot_fp_asm();

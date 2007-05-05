@@ -103,7 +103,6 @@ extern struct MP * MPmul386(struct MP, struct MP);
 extern struct MP * MPdiv386(struct MP, struct MP);
 extern struct MP * MPadd386(struct MP, struct MP);
 extern int         MPcmp386(struct MP, struct MP);
-extern struct MP * d2MP386(double);
 extern double    * MP2d386(struct MP);
 extern struct MP * fg2MP386(long, int);
 extern double *    MP2d(struct MP);
@@ -719,7 +718,6 @@ extern void get_calculation_time(char *, long);
 /*  mpmath_c -- C file prototypes */
 
 extern struct MP *MPsub(struct MP, struct MP);
-extern struct MP *MPsub386(struct MP, struct MP);
 extern struct MP *MPabs(struct MP);
 extern struct MPC MPCsqr(struct MPC);
 extern struct MP MPCmod(struct MPC);
@@ -731,7 +729,6 @@ extern struct MPC MPCpow(struct MPC, int);
 extern int MPCcmp(struct MPC, struct MPC);
 extern _CMPLX MPC2cmplx(struct MPC);
 extern struct MPC cmplx2MPC(_CMPLX);
-extern void setMPfunctions();
 extern _CMPLX ComplexPower(_CMPLX, _CMPLX);
 extern void SetupLogTable();
 extern long logtablecalc(long);

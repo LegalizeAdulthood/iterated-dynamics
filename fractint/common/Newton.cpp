@@ -34,17 +34,17 @@ static double distance_from_1(const _CMPLX &z)
 #if !defined(XFRACT)
 static struct MP pMPsqr(struct MP &z)
 {
-	return *pMPmul(z, z);
+	return *MPmul(z, z);
 }
 
 static struct MP operator-(const struct MP &left, const struct MP &right)
 {
-	return *pMPsub(left, right);
+	return *MPsub(left, right);
 }
 
 static struct MP operator+(const struct MP &left, const struct MP &right)
 {
-	return *pMPadd(left, right);
+	return *MPadd(left, right);
 }
 
 static struct MP MPCdistance(const struct MPC &z1, const struct MPC &z2)
@@ -144,10 +144,10 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 #if !defined(XFRACT)
 	if (g_fractal_type == FRACTYPE_NEWTON_MP || g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 	{
-		m_root_over_degree_mp			= *pd2MP(m_root_over_degree);
-		m_degree_minus_1_over_degree_mp	= *pd2MP(m_degree_minus_1_over_degree);
-		g_threshold_mp					= *pd2MP(g_threshold);
-		g_one_mp						= *pd2MP(1.0);
+		m_root_over_degree_mp			= *d2MP(m_root_over_degree);
+		m_degree_minus_1_over_degree_mp	= *d2MP(m_degree_minus_1_over_degree);
+		g_threshold_mp					= *d2MP(g_threshold);
+		g_one_mp						= *d2MP(1.0);
 	}
 #endif
 
@@ -204,8 +204,8 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 		/* list of roots to discover where we converged for newtbasin */
 		for (i = 0; i < g_degree; i++)
 		{
-			g_roots_mpc[i].x = *pd2MP(cos(i*g_two_pi/(double)g_degree));
-			g_roots_mpc[i].y = *pd2MP(sin(i*g_two_pi/(double)g_degree));
+			g_roots_mpc[i].x = *d2MP(cos(i*g_two_pi/(double)g_degree));
+			g_roots_mpc[i].y = *d2MP(sin(i*g_two_pi/(double)g_degree));
 		}
 	}
 #endif
@@ -214,12 +214,6 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 	g_symmetry = (g_degree % 4 == 0) ? XYAXIS : XAXIS;
 
 	g_calculate_type = standard_fractal;
-#if !defined(XFRACT)
-	if (g_fractal_type == FRACTYPE_NEWTON_MP || g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
-	{
-		setMPfunctions();
-	}
-#endif
 	return 1;
 }
 
@@ -277,11 +271,11 @@ int NewtonMPC::orbit()
 	g_overflow_mp = 0;
 	mpctmp   = MPCpow(mpcold, g_degree-1);
 
-	mpcnew.x = *pMPsub(*pMPmul(mpctmp.x, mpcold.x), *pMPmul(mpctmp.y, mpcold.y));
-	mpcnew.y = *pMPadd(*pMPmul(mpctmp.x, mpcold.y), *pMPmul(mpctmp.y, mpcold.x));
-	mpctmp1.x = *pMPsub(mpcnew.x, g_one_mpc.x);
-	mpctmp1.y = *pMPsub(mpcnew.y, g_one_mpc.y);
-	if (pMPcmp(MPCmod(mpctmp1), g_threshold_mp)< 0)
+	mpcnew.x = *MPsub(*MPmul(mpctmp.x, mpcold.x), *MPmul(mpctmp.y, mpcold.y));
+	mpcnew.y = *MPadd(*MPmul(mpctmp.x, mpcold.y), *MPmul(mpctmp.y, mpcold.x));
+	mpctmp1.x = *MPsub(mpcnew.x, g_one_mpc.x);
+	mpctmp1.y = *MPsub(mpcnew.y, g_one_mpc.y);
+	if (MPcmp(MPCmod(mpctmp1), g_threshold_mp)< 0)
 	{
 		if (g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 		{
@@ -290,7 +284,7 @@ int NewtonMPC::orbit()
 			tmpcolor = -1;
 			for (i = 0; i < g_degree; i++)
 			{
-				if (pMPcmp(MPCdistance(g_roots_mpc[i], mpcold), g_threshold_mp) < 0)
+				if (MPcmp(MPCdistance(g_roots_mpc[i], mpcold), g_threshold_mp) < 0)
 				{
 					tmpcolor = (g_basin == 2) ?
 						(1 + (i & 7) + ((g_color_iter & 1) << 3)) : (1 + i);
@@ -304,15 +298,15 @@ int NewtonMPC::orbit()
 
 	{
 		struct MP mpt2;
-		mpcnew.x = *pMPadd(*pMPmul(m_degree_minus_1_over_degree_mp, mpcnew.x), m_root_over_degree_mp);
-		mpcnew.y = *pMPmul(mpcnew.y, m_degree_minus_1_over_degree_mp);
+		mpcnew.x = *MPadd(*MPmul(m_degree_minus_1_over_degree_mp, mpcnew.x), m_root_over_degree_mp);
+		mpcnew.y = *MPmul(mpcnew.y, m_degree_minus_1_over_degree_mp);
 		mpt2 = MPCmod(mpctmp);
-		mpt2 = *pMPdiv(g_one_mp, mpt2);
-		mpcold.x = *pMPmul(mpt2, (*pMPadd(*pMPmul(mpcnew.x, mpctmp.x), *pMPmul(mpcnew.y, mpctmp.y))));
-		mpcold.y = *pMPmul(mpt2, (*pMPsub(*pMPmul(mpcnew.y, mpctmp.x), *pMPmul(mpcnew.x, mpctmp.y))));
+		mpt2 = *MPdiv(g_one_mp, mpt2);
+		mpcold.x = *MPmul(mpt2, (*MPadd(*MPmul(mpcnew.x, mpctmp.x), *MPmul(mpcnew.y, mpctmp.y))));
+		mpcold.y = *MPmul(mpt2, (*MPsub(*MPmul(mpcnew.y, mpctmp.x), *MPmul(mpcnew.x, mpctmp.y))));
 	}
-	g_new_z.x = *pMP2d(mpcold.x);
-	g_new_z.y = *pMP2d(mpcold.y);
+	g_new_z.x = *MP2d(mpcold.x);
+	g_new_z.y = *MP2d(mpcold.y);
 	return g_overflow_mp;
 #else
 	return 0;
