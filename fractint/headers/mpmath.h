@@ -40,16 +40,6 @@ extern int DivideOverflow;
    the operation results in an overflow (result < 2**(2**14), or division
    by zero) the global 'MPoverflow' is set to one. */
 
-/* function pointer support added by Tim Wegner 12/07/89 */
-extern int         (*pMPcmp)(struct MP , struct MP );
-extern struct MP  *(*pMPmul)(struct MP , struct MP );
-extern struct MP  *(*pMPdiv)(struct MP , struct MP );
-extern struct MP  *(*pMPadd)(struct MP , struct MP );
-extern struct MP  *(*pMPsub)(struct MP , struct MP );
-extern struct MP  *(*pd2MP)(double )                ;
-extern double     *(*pMP2d)(struct MP )             ;
-
-
 /*** Formula Declarations ***/
 #if !defined(XFRACT)
 enum MATH_TYPE { D_MATH, M_MATH, L_MATH };

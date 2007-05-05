@@ -109,7 +109,6 @@ typedef enum
 
 /* Global variables (yuck!) */
 int g_overflow_mp = 0;
-struct MP g_ans = { 0 };
 int g_and_color;
 BYTE g_block[4096] = { 0 };
 int g_checked_vvs = 0;

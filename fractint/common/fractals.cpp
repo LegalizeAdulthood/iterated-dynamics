@@ -56,7 +56,7 @@
 
 #define modulus(z)			(sqr((z).x) + sqr((z).y))
 #define conjugate(pz)		((pz)->y = - (pz)->y)
-#define pMPsqr(z)			(*pMPmul((z), (z)))
+#define pMPsqr(z)			(*MPmul((z), (z)))
 
 static double _fastcall dx_pixel_calc();
 static double _fastcall dy_pixel_calc();
@@ -2761,8 +2761,8 @@ int julia_per_pixel_mpc()
 		g_old_z.x = g_dx_pixel();
 		g_old_z.y = g_dy_pixel();
 	}
-	mpcold.x = *pd2MP(g_old_z.x);
-	mpcold.y = *pd2MP(g_old_z.y);
+	mpcold.x = *d2MP(g_old_z.x);
+	mpcold.y = *d2MP(g_old_z.y);
 	return 0;
 #else
 	return 0;
