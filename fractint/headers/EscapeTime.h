@@ -91,6 +91,11 @@ public:
 	T delta_x2() const	{ return m_delta_x2; }
 	T delta_y2() const	{ return m_delta_y2; }
 
+	T width() const		{ return m_x_max - m_x_min; }
+	T height() const	{ return m_y_max - m_y_min; }
+	T x_center() const	{ return (m_x_min + m_x_max)/2; }
+	T y_center() const	{ return (m_y_min + m_y_max)/2; }
+
 	T &x_min()			{ return m_x_min; }
 	T &x_max()			{ return m_x_max; }
 	T &x_3rd()			{ return m_x_3rd; }

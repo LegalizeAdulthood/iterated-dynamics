@@ -1082,8 +1082,8 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		if (g_julia_c_x == BIG || g_julia_c_y == BIG)
 		{
-			g_parameters[0] = (g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min()) / 2;
-			g_parameters[1] = (g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min()) / 2;
+			g_parameters[0] = g_escape_time_state.m_grid_fp.x_center();
+			g_parameters[1] = g_escape_time_state.m_grid_fp.y_center();
 		}
 		else
 		{

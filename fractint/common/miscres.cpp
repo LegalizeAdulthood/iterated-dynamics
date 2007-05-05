@@ -195,10 +195,10 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 	/* simple normal case first */
 	if (g_escape_time_state.m_grid_fp.x_3rd() == g_escape_time_state.m_grid_fp.x_min() && g_escape_time_state.m_grid_fp.y_3rd() == g_escape_time_state.m_grid_fp.y_min())
 	{ /* no rotation or skewing, but stretching is allowed */
-		Width  = g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_min();
-		Height = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_min();
-		*Xctr = (g_escape_time_state.m_grid_fp.x_min() + g_escape_time_state.m_grid_fp.x_max())/2.0;
-		*Yctr = (g_escape_time_state.m_grid_fp.y_min() + g_escape_time_state.m_grid_fp.y_max())/2.0;
+		Width  = g_escape_time_state.m_grid_fp.width();
+		Height = g_escape_time_state.m_grid_fp.height();
+		*Xctr = g_escape_time_state.m_grid_fp.x_center();
+		*Yctr = g_escape_time_state.m_grid_fp.y_center();
 		*Magnification  = 2.0/Height;
 		*Xmagfactor =  Height / (DEFAULT_ASPECT_RATIO*Width);
 		*Rotation = 0.0;
@@ -208,8 +208,8 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 	{
 		/* set up triangle ABC, having sides abc */
 		/* side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) */
-		tmpx1 = g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_min();
-		tmpy1 = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_min();
+		tmpx1 = g_escape_time_state.m_grid_fp.width();
+		tmpy1 = g_escape_time_state.m_grid_fp.height();
 		c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
 		tmpx1 = g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd();
@@ -226,8 +226,8 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		tmpa = acos((a2 + b2-c2)/(2*a*b)); /* save tmpa for later use */
 		*Skew = 90.0 - rad_to_deg(tmpa);
 
-		*Xctr = (g_escape_time_state.m_grid_fp.x_min() + g_escape_time_state.m_grid_fp.x_max())*0.5;
-		*Yctr = (g_escape_time_state.m_grid_fp.y_min() + g_escape_time_state.m_grid_fp.y_max())*0.5;
+		*Xctr = g_escape_time_state.m_grid_fp.x_center();
+		*Yctr = g_escape_time_state.m_grid_fp.y_center();
 
 		Height = b*sin(tmpa);
 
