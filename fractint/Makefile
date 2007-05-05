@@ -213,7 +213,8 @@ $(COMDIR)/prompts2.o $(COMDIR)/realdos.o $(COMDIR)/rotate.o \
 $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
 $(COMDIR)/testpt.o $(COMDIR)/tgaview.o \
 $(COMDIR)/zoom.o $(COMDIR)/Halley.o $(COMDIR)/Newton.o \
-$(COMDIR)/SoundState.o $(COMDIR)/EscapeTime.o
+$(COMDIR)/SoundState.o $(COMDIR)/EscapeTime.o \
+$(COMDIR)/RayTraceState.o
 
 
 ifeq ($(AS),/usr/bin/nasm)
