@@ -593,27 +593,15 @@ void update_save_name(char *filename) /* go to the next file name */
 	make_path(filename, drive, dir, fname, ext);
 }
 
-int check_write_file(char *name, char *ext)
+int check_write_file(char *name, const char *ext)
 {
-	/* after v16 release, change encoder.c to also use this routine */
-	char openfile[FILE_MAX_DIR];
-	char opentype[20];
-	/* int i; */
-	char *period;
+	/* TODO: change encoder.cpp to also use this routine */
 nextname:
+	char openfile[FILE_MAX_DIR];
 	strcpy(openfile, name);
+	char opentype[20];
 	strcpy(opentype, ext);
-#if 0
-	for (i = 0; i < (int)strlen(openfile); i++)
-	{
-		if (openfile[i] == '.')
-		{
-			strcpy(opentype, &openfile[i]);
-			openfile[i] = 0;
-		}
-	}
-#endif
-	period = has_extension(openfile);
+	char *period = has_extension(openfile);
 	if (period != NULL)
 	{
 		strcpy(opentype, period);

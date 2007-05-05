@@ -700,7 +700,7 @@ extern void convert_corners(double, double, LDBL, double, double, double);
 extern void convert_center_mag_bf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void convert_corners_bf(bf_t, bf_t, LDBL, double, double, double);
 extern void update_save_name(char *);
-extern int check_write_file(char *, char *);
+extern int check_write_file(char *filename, const char *ext);
 extern int check_key();
 extern void show_trig(char *);
 extern int set_trig_array(int, const char *);

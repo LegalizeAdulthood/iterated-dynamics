@@ -62,8 +62,8 @@ void _fastcall history_save_info()
 	current.symmetry			= (short) g_force_symmetry;
 	g_raytrace_state.history_save(&current.init_3d[0]);
 	current.previewfactor		= (short) g_preview_factor;
-	current.xtrans				= (short) g_raytrace_state.m_x_trans;
-	current.ytrans				= (short) g_raytrace_state.m_y_trans;
+	current.xtrans				= (short) g_raytrace_state.x_trans();
+	current.ytrans				= (short) g_raytrace_state.y_trans();
 	current.red_crop_left		= (short) g_red_crop_left;
 	current.red_crop_right		= (short) g_red_crop_right;
 	current.blue_crop_left		= (short) g_blue_crop_left;
@@ -94,9 +94,9 @@ void _fastcall history_save_info()
 	current.release				= (short) g_release;
 	current.save_release		= (short) g_save_release;
 	current.flag3d				= (short) g_display_3d;
-	current.ambient				= (short) g_raytrace_state.m_ambient;
-	current.randomize			= (short) g_raytrace_state.m_randomize_colors;
-	current.haze				= (short) g_raytrace_state.m_haze;
+	current.ambient				= (short) g_raytrace_state.ambient();
+	current.randomize			= (short) g_raytrace_state.randomize_colors();
+	current.haze				= (short) g_raytrace_state.haze();
 	current.transparent[0]		= (short) g_transparent[0];
 	current.transparent[1]		= (short) g_transparent[1];
 	current.rotate_lo			= (short) g_rotate_lo;
@@ -235,8 +235,8 @@ void _fastcall history_restore_info()
 	g_force_symmetry       	= last.symmetry;
 	g_raytrace_state.history_restore(&last.init_3d[0]);
 	g_preview_factor       	= last.previewfactor;
-	g_raytrace_state.m_x_trans              	= last.xtrans;
-	g_raytrace_state.m_y_trans              	= last.ytrans;
+	g_raytrace_state.set_x_trans(last.xtrans);
+	g_raytrace_state.set_y_trans(last.ytrans);
 	g_red_crop_left       	= last.red_crop_left;
 	g_red_crop_right      	= last.red_crop_right;
 	g_blue_crop_left      	= last.blue_crop_left;
@@ -270,9 +270,9 @@ void _fastcall history_restore_info()
 	g_release           	= last.release;
 	g_save_release        	= last.save_release;
 	g_display_3d           	= last.flag3d;
-	g_raytrace_state.m_ambient             	= last.ambient;
-	g_raytrace_state.m_randomize_colors           	= last.randomize;
-	g_raytrace_state.m_haze                	= last.haze;
+	g_raytrace_state.set_ambient(last.ambient);
+	g_raytrace_state.set_randomize_colors(last.randomize);
+	g_raytrace_state.set_haze(last.haze);
 	g_transparent[0]      	= last.transparent[0];
 	g_transparent[1]      	= last.transparent[1];
 	g_rotate_lo           	= last.rotate_lo;

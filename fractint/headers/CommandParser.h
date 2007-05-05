@@ -1,6 +1,8 @@
 #if !defined(COMMAND_PARSER_H)
 #define COMMAND_PARSER_H
 
+#define NON_NUMERIC -32767
+
 /* process_command(), AbstractCommandParser::parse() return values */
 class Command
 {

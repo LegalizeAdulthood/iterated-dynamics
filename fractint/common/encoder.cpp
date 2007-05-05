@@ -855,8 +855,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->symmetry = (short) g_force_symmetry;
 	g_raytrace_state.get_init_3d(&save_info->init_3d[0], 16);
 	save_info->previewfactor = (short) g_preview_factor;
-	save_info->xtrans = (short) g_raytrace_state.m_x_trans;
-	save_info->ytrans = (short) g_raytrace_state.m_y_trans;
+	save_info->xtrans = (short) g_raytrace_state.x_trans();
+	save_info->ytrans = (short) g_raytrace_state.y_trans();
 	save_info->red_crop_left = (short) g_red_crop_left;
 	save_info->red_crop_right = (short) g_red_crop_right;
 	save_info->blue_crop_left = (short) g_blue_crop_left;
@@ -893,9 +893,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->release = check_back() ? (short) min(g_save_release, g_release) : (short) g_release;
 
 	save_info->flag3d = (short) g_display_3d;
-	save_info->ambient = (short) g_raytrace_state.m_ambient;
-	save_info->randomize = (short) g_raytrace_state.m_randomize_colors;
-	save_info->haze = (short) g_raytrace_state.m_haze;
+	save_info->ambient = (short) g_raytrace_state.ambient();
+	save_info->randomize = (short) g_raytrace_state.randomize_colors();
+	save_info->haze = (short) g_raytrace_state.haze();
 	save_info->transparent[0] = (short) g_transparent[0];
 	save_info->transparent[1] = (short) g_transparent[1];
 	save_info->rotate_lo = (short) g_rotate_lo;
