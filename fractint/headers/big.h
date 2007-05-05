@@ -1,30 +1,9 @@
-/* big.h */
-
-/* Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer */
-
 #ifndef _BIG_H
 #define _BIG_H
 
-/*************************************************************
- The following allows the programmer to customize routines.
- They can be selected here or on the compiler command line.
-**************************************************************/
+/* big.h */
 
-/* different pointer versions: near, based, far                    */
-/* huge pointers is not supported in assembly, only in C           */
-/* uncomment only ONE of these or declare on compiler command line */
-/* #define BIG_NEAR   */
-#if !defined(_WIN32)
-#if defined(_MSC_VER)
-#   define BIG_BASED    
-#elif defined( __BORLANDC__)  
-#   define BIG_FAR    
-#endif
-#endif
-/* #define BIG_HUGE   */  /* C code only */
-/* #define BIG_ANSI_C */  /* C code only */
-/* In DOS, BIG_ANSI_C uses default pointer for model selected */
-
+/* Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer */
 
 /* Number of bytes to use for integer part for fixed decimal math, */
 /* does not effect floating point math at all. */
@@ -36,16 +15,8 @@
  The rest is handled by the compiler
 ****************************************************************/
 
-#ifndef BIG_NEAR
-#ifndef BIG_BASED
-#ifndef BIG_FAR
-#ifndef BIG_HUGE
 #ifndef BIG_ANSI_C
-#error BIG_NEAR, BIG_BASED, BIG_FAR, BIG_HUGE, or BIG_ANSI_C must be defined.
-#endif
-#endif
-#endif
-#endif
+#error BIG_ANSI_C must be defined.
 #endif
 
 #define LOG10_256 2.4082399653118
@@ -57,42 +28,7 @@
 #define BIGNUM 1  /* g_bf_math is being used with bn_t numbers */
 #define BIGFLT 2  /* g_bf_math is being used with bf_t numbers */
 
-
 /* use this for dynamic allocation */
-#ifdef BIG_NEAR
-extern _segment bignum_seg;
-#define BIGDIST             __near
-#define BIG_NULL            NULL
-#define BIG_SIZE_T          size_t
-#define big_malloc(size)    _nmalloc(size)
-#define big_free(ptr)       _nfree(ptr)
-#endif
-
-#ifdef BIG_BASED
-extern _segment bignum_seg;
-#define BIGDIST             __based(bignum_seg)
-#define BIG_NULL            _NULLOFF
-#define BIG_SIZE_T          size_t
-#define big_malloc(size)    _bmalloc(bignum_seg, (size))
-#define big_free(ptr)       _bfree( bignum_seg, (ptr))
-#endif
-
-#ifdef BIG_FAR
-#define BIGDIST             __far
-#define BIG_NULL            NULL
-#define BIG_SIZE_T          size_t
-#define big_malloc(size)    _fmalloc( size )
-#define big_free(ptr)       _ffree(ptr)
-#endif
-
-#ifdef BIG_HUGE
-#define BIGDIST             __huge
-#define BIG_NULL            NULL
-#define BIG_SIZE_T          long
-#define big_malloc(size)    _halloc( (size), 1 )
-#define big_free(ptr)       _hfree(ptr)
-#endif
-
 #ifdef BIG_ANSI_C
 #define USE_BIGNUM_C_CODE
 #define BIGDIST
@@ -107,16 +43,7 @@ typedef unsigned char BIGDIST * big_t;
 #define bf_t   big_t
 #define bf10_t big_t
 
-#if 0 /* remove for Fractint */
-struct Complex
-{
-   LDBL x;
-   LDBL y;
-};
-typedef struct Complex    _CMPLX;
-#else
 #include "cmplx.h"
-#endif
 
 struct BFComplex
 {
