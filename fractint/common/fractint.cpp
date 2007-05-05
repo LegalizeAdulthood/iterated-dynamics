@@ -413,7 +413,7 @@ static int main_restore_restart(int &stacked, int &resume_flag)
 		driver_unstack_screen();                  /* restore the graphics screen */
 		stacked = 0;
 		g_overlay_3d = 0;                    /* forget overlays */
-		g_display_3d = 0;                    /* forget 3D */
+		g_display_3d = DISPLAY3D_NONE;
 		if (g_calculation_status == CALCSTAT_NON_RESUMABLE)
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
@@ -519,10 +519,10 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3)
 #endif
 		{
-			g_display_3d = 0;
+			g_display_3d = DISPLAY3D_NONE;
 			if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
 			{
-				g_display_3d = 1;
+				g_display_3d = DISPLAY3D_YES;
 			}
 			if (g_color_preloaded)
 			{

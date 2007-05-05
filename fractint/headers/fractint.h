@@ -30,6 +30,12 @@ typedef BYTE BOOLEAN;
 
 #define COLOR_CHANNEL_MAX 63
 
+/* g_display_3d values */
+#define DISPLAY3D_GENERATED	-1
+#define DISPLAY3D_NONE		0
+#define DISPLAY3D_YES		1
+#define DISPLAY3D_OVERLAY	2
+
 /* g_sound_state.m_note_attenuation values */
 #define ATTENUATE_NONE		0
 #define ATTENUATE_LOW		1
