@@ -69,13 +69,13 @@ int julibrot_setup()
 	}
 #endif
 
-	s_x_offset_fp = (g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min()) / 2;     /* Calculate average */
-	s_y_offset_fp = (g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min()) / 2;     /* Calculate average */
+	s_x_offset_fp = g_escape_time_state.m_grid_fp.x_center();     /* Calculate average */
+	s_y_offset_fp = g_escape_time_state.m_grid_fp.y_center();     /* Calculate average */
 	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp) / g_z_dots;
 	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / g_z_dots;
 	g_float_parameter = &s_jbc_fp;
-	s_x_per_inch_fp = (g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_max()) / g_width_fp;
-	s_y_per_inch_fp = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_min()) / g_height_fp;
+	s_x_per_inch_fp = -g_escape_time_state.m_grid_fp.width()/g_width_fp;
+	s_y_per_inch_fp = (g_escape_time_state.m_grid_fp.height()/g_height_fp;
 	s_inch_per_x_dot_fp = g_width_fp / g_x_dots;
 	s_inch_per_y_dot_fp = g_height_fp / g_y_dots;
 	s_init_z_fp = g_origin_fp - (g_depth_fp / 2);
@@ -120,8 +120,8 @@ int julibrot_setup()
 		s_dmy = (mymax - s_m_y_min) / g_z_dots;
 		g_long_parameter = &s_jbc;
 
-		s_x_per_inch = (long) ((g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_max()) / g_width_fp*s_fg);
-		s_y_per_inch = (long) ((g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_min()) / g_height_fp*s_fg);
+		s_x_per_inch = (long) (-g_escape_time_state.m_grid_fp.width()/g_width_fp*s_fg);
+		s_y_per_inch = (long) (g_escape_time_state.m_grid_fp.height()/g_height_fp*s_fg);
 		s_inch_per_x_dot = (long) ((g_width_fp / g_x_dots)*s_fg16);
 		s_inch_per_y_dot = (long) ((g_height_fp / g_y_dots)*s_fg16);
 		s_init_z = origin - (s_depth / 2);

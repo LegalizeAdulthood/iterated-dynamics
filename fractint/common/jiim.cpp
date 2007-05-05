@@ -660,8 +660,8 @@ void Jiim(int which)         /* called by fractint */
 	if (g_col < 0 || g_col >= g_x_dots ||
 		g_row < 0 || g_row >= g_y_dots)
 	{
-		cr = (g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min()) / 2.0;
-		ci = (g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min()) / 2.0;
+		cr = g_escape_time_state.m_grid_fp.x_center();
+		ci = g_escape_time_state.m_grid_fp.y_center();
 	}
 	else
 	{

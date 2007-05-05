@@ -206,7 +206,7 @@ void showaspect(char *s)
 	bftostr(str, 10, aspect);
 	sprintf(msg, "aspect %s\nfloat %13.10f\nbf    %s\n\n",
 				s,
-				(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min())/(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min()),
+				g_escape_time_state.m_grid_fp.height()/g_escape_time_state.m_grid_fp.width(),
 				str);
 	if (stop_message(0, msg) == -1)
 	{
@@ -261,12 +261,12 @@ void corners_bf_to_float()
 	int i;
 	if (g_bf_math)
 	{
-		g_escape_time_state.m_grid_fp.x_min() = (double)bftofloat(g_escape_time_state.m_grid_bf.x_min());
-		g_escape_time_state.m_grid_fp.y_min() = (double)bftofloat(g_escape_time_state.m_grid_bf.y_min());
-		g_escape_time_state.m_grid_fp.x_max() = (double)bftofloat(g_escape_time_state.m_grid_bf.x_max());
-		g_escape_time_state.m_grid_fp.y_max() = (double)bftofloat(g_escape_time_state.m_grid_bf.y_max());
-		g_escape_time_state.m_grid_fp.x_3rd() = (double)bftofloat(g_escape_time_state.m_grid_bf.x_3rd());
-		g_escape_time_state.m_grid_fp.y_3rd() = (double)bftofloat(g_escape_time_state.m_grid_bf.y_3rd());
+		g_escape_time_state.m_grid_fp.x_min() = (double) bftofloat(g_escape_time_state.m_grid_bf.x_min());
+		g_escape_time_state.m_grid_fp.y_min() = (double) bftofloat(g_escape_time_state.m_grid_bf.y_min());
+		g_escape_time_state.m_grid_fp.x_max() = (double) bftofloat(g_escape_time_state.m_grid_bf.x_max());
+		g_escape_time_state.m_grid_fp.y_max() = (double) bftofloat(g_escape_time_state.m_grid_bf.y_max());
+		g_escape_time_state.m_grid_fp.x_3rd() = (double) bftofloat(g_escape_time_state.m_grid_bf.x_3rd());
+		g_escape_time_state.m_grid_fp.y_3rd() = (double) bftofloat(g_escape_time_state.m_grid_bf.y_3rd());
 	}
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
