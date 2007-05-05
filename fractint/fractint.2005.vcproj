@@ -321,6 +321,10 @@
 					RelativePath=".\common\plot3d.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\common\RayTraceState.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="engine"
@@ -1134,6 +1138,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\prototyp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\RayTraceState.h"
 				>
 			</File>
 			<File

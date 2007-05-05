@@ -24,6 +24,7 @@
 #include "fihelp.h"
 #include "drivers.h"
 #include "EscapeTime.h"
+#include "RayTraceState.h"
 
 #ifdef __hpux
 #include <sys/param.h>
@@ -2866,17 +2867,17 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 	driver_stack_screen();
 	k = 0;
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = XROT;
+	uvalues[k++].uval.ival = g_raytrace_state.x_rot();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = YROT;
+	uvalues[k++].uval.ival = g_raytrace_state.y_rot();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = ZROT;
+	uvalues[k++].uval.ival = g_raytrace_state.z_rot();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = ZVIEWER;
+	uvalues[k++].uval.ival = g_raytrace_state.z_viewer();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = XSHIFT;
+	uvalues[k++].uval.ival = g_raytrace_state.x_shift();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = YSHIFT;
+	uvalues[k++].uval.ival = g_raytrace_state.y_shift();
 	uvalues[k].type = 'i';
 	uvalues[k++].uval.ival = g_glasses_type;
 
@@ -2889,12 +2890,12 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 		}
 
 	ret = k = 0;
-	XROT    =  uvalues[k++].uval.ival;
-	YROT    =  uvalues[k++].uval.ival;
-	ZROT    =  uvalues[k++].uval.ival;
-	ZVIEWER =  uvalues[k++].uval.ival;
-	XSHIFT  =  uvalues[k++].uval.ival;
-	YSHIFT  =  uvalues[k++].uval.ival;
+	g_raytrace_state.set_x_rot(uvalues[k++].uval.ival);
+	g_raytrace_state.set_y_rot(uvalues[k++].uval.ival);
+	g_raytrace_state.set_z_rot(uvalues[k++].uval.ival);
+	g_raytrace_state.set_z_viewer(uvalues[k++].uval.ival);
+	g_raytrace_state.set_x_shift(uvalues[k++].uval.ival);
+	g_raytrace_state.set_y_shift(uvalues[k++].uval.ival);
 	g_glasses_type = uvalues[k++].uval.ival;
 	if (g_glasses_type < 0 || g_glasses_type > STEREO_PAIR)
 	{
@@ -2957,7 +2958,7 @@ restart_1:
 
 	prompts3d[++k] = "Spherical Projection?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = sphere = SPHERE;
+	uvalues[k].uval.ch.val = sphere = g_raytrace_state.sphere();
 
 	prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
 	uvalues[k].type = 'i';
@@ -2968,19 +2969,19 @@ restart_1:
 
 	prompts3d[++k] = "Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_raytrace_output;
+	uvalues[k].uval.ival = g_raytrace_state.m_raytrace_output;
 
 	prompts3d[++k] = "                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)";
 	uvalues[k].type = '*';
 
 	prompts3d[++k] = "    Brief output?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_raytrace_brief;
+	uvalues[k].uval.ch.val = g_raytrace_state.m_raytrace_brief;
 
-	check_write_file(g_ray_name, ".ray");
+	check_write_file(g_raytrace_state.m_ray_name, ".ray");
 	prompts3d[++k] = "    Output File Name";
 	uvalues[k].type = 's';
-	strcpy(uvalues[k].uval.sval, g_ray_name);
+	strcpy(uvalues[k].uval.sval, g_raytrace_state.m_ray_name);
 
 	prompts3d[++k] = "Targa output?";
 	uvalues[k].type = 'y';
@@ -2994,27 +2995,27 @@ restart_1:
 	if (k < 0)
 	{
 		return -1;
-		}
+	}
 
 	k = 0;
 
 	g_preview = uvalues[k++].uval.ch.val;
 	g_show_box = uvalues[k++].uval.ch.val;
 	g_preview_factor  = uvalues[k++].uval.ival;
-	sphere = uvalues[k++].uval.ch.val;
+	g_raytrace_state.set_sphere(uvalues[k++].uval.ch.val != 0);
 	g_glasses_type = uvalues[k++].uval.ival;
 	k++;
 
-	g_raytrace_output = uvalues[k++].uval.ival;
+	g_raytrace_state.m_raytrace_output = uvalues[k++].uval.ival;
 	k++;
-	if (g_raytrace_output == RAYTRACE_POVRAY)
+	if (g_raytrace_state.m_raytrace_output == RAYTRACE_POVRAY)
 	{
 		stop_message(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
 		"the online documentation.");
 	}
-	g_raytrace_brief = uvalues[k++].uval.ch.val;
+	g_raytrace_state.m_raytrace_brief = uvalues[k++].uval.ch.val;
 
-	strcpy(g_ray_name, uvalues[k++].uval.sval);
+	strcpy(g_raytrace_state.m_ray_name, uvalues[k++].uval.sval);
 
 	g_targa_output = uvalues[k++].uval.ch.val;
 	g_grayscale_depth  = uvalues[k++].uval.ch.val;
@@ -3029,15 +3030,15 @@ restart_1:
 		g_preview_factor = 2000;
 	}
 
-	if (sphere && !SPHERE)
+	if (sphere && !g_raytrace_state.sphere())
 	{
-		SPHERE = TRUE;
-		set_3d_defaults();
+		g_raytrace_state.set_sphere(true);
+		g_raytrace_state.set_defaults();
 	}
-	else if (!sphere && SPHERE)
+	else if (!sphere && g_raytrace_state.sphere())
 	{
-		SPHERE = FALSE;
-		set_3d_defaults();
+		g_raytrace_state.set_sphere(false);
+		g_raytrace_state.set_defaults();
 	}
 
 	if (g_glasses_type < 0)
@@ -3053,16 +3054,16 @@ restart_1:
 		g_which_image = WHICHIMAGE_RED;
 	}
 
-	if (g_raytrace_output < RAYTRACE_NONE)
+	if (g_raytrace_state.m_raytrace_output < RAYTRACE_NONE)
 	{
-		g_raytrace_output = RAYTRACE_NONE;
+		g_raytrace_state.m_raytrace_output = RAYTRACE_NONE;
 	}
-	if (g_raytrace_output > RAYTRACE_DXF)
+	if (g_raytrace_state.m_raytrace_output > RAYTRACE_DXF)
 	{
-		g_raytrace_output = RAYTRACE_DXF;
+		g_raytrace_state.m_raytrace_output = RAYTRACE_DXF;
 	}
 
-	if (!g_raytrace_output)
+	if (!g_raytrace_state.m_raytrace_output)
 	{
 		k = 0;
 		choices[k++] = "make a surface grid";
@@ -3071,7 +3072,7 @@ restart_1:
 		choices[k++] = "surface fill (colors interpolated)";
 		choices[k++] = "surface fill (colors not interpolated)";
 		choices[k++] = "solid fill (bars up from \"ground\")";
-		if (SPHERE)
+		if (g_raytrace_state.sphere())
 		{
 			choices[k++] = "light source";
 		}
@@ -3085,12 +3086,12 @@ restart_1:
 			attributes[i] = 1;
 		}
 		i = full_screen_choice_help(HELP3DFILL, CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
-										0, 0, 0, FILLTYPE + 1, NULL, NULL, NULL, NULL);
+										0, 0, 0, g_raytrace_state.fill_type() + 1, NULL, NULL, NULL, NULL);
 		if (i < 0)
 		{
 			goto restart_1;
 		}
-		FILLTYPE = i-1;
+		g_raytrace_state.set_fill_type(i - 1);
 
 		if (g_glasses_type)
 		{
@@ -3106,7 +3107,7 @@ restart_1:
 		}
 	restart_3:
 
-	if (SPHERE)
+	if (g_raytrace_state.sphere())
 	{
 		k = -1;
 		prompts3d[++k] = "Longitude start (degrees)";
@@ -3118,7 +3119,7 @@ restart_1:
 	else
 	{
 		k = -1;
-		if (!g_raytrace_output)
+		if (!g_raytrace_state.m_raytrace_output)
 		{
 			prompts3d[++k] = "X-axis rotation in degrees";
 			prompts3d[++k] = "Y-axis rotation in degrees";
@@ -3128,50 +3129,50 @@ restart_1:
 		prompts3d[++k] = "Y-axis scaling factor in pct";
 	}
 	k = -1;
-	if (!(g_raytrace_output && !SPHERE))
+	if (!(g_raytrace_state.m_raytrace_output && !g_raytrace_state.sphere()))
 	{
-		uvalues[++k].uval.ival   = XROT    ;
+		uvalues[++k].uval.ival   = g_raytrace_state.x_rot()    ;
 		uvalues[k].type = 'i';
-		uvalues[++k].uval.ival   = YROT    ;
+		uvalues[++k].uval.ival   = g_raytrace_state.y_rot()    ;
 		uvalues[k].type = 'i';
-		uvalues[++k].uval.ival   = ZROT    ;
+		uvalues[++k].uval.ival   = g_raytrace_state.z_rot()    ;
 		uvalues[k].type = 'i';
 	}
-	uvalues[++k].uval.ival   = XSCALE    ;
+	uvalues[++k].uval.ival   = g_raytrace_state.x_scale()    ;
 	uvalues[k].type = 'i';
 
-	uvalues[++k].uval.ival   = YSCALE    ;
+	uvalues[++k].uval.ival   = g_raytrace_state.y_scale()    ;
 	uvalues[k].type = 'i';
 
 	prompts3d[++k] = "Surface Roughness scaling factor in pct";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = ROUGH     ;
+	uvalues[k].uval.ival = g_raytrace_state.rough()     ;
 
 	prompts3d[++k] = "'Water Level' (minimum color value)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = WATERLINE ;
+	uvalues[k].uval.ival = g_raytrace_state.water_line() ;
 
-	if (!g_raytrace_output)
+	if (!g_raytrace_state.m_raytrace_output)
 	{
 		prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = ZVIEWER     ;
+		uvalues[k].uval.ival = g_raytrace_state.z_viewer()     ;
 
 		prompts3d[++k] = "X shift with perspective (positive = right)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = XSHIFT    ;
+		uvalues[k].uval.ival = g_raytrace_state.x_shift()    ;
 
 		prompts3d[++k] = "Y shift with perspective (positive = up   )";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = YSHIFT    ;
+		uvalues[k].uval.ival = g_raytrace_state.y_shift()    ;
 
 		prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_x_trans    ;
+		uvalues[k].uval.ival = g_raytrace_state.m_x_trans    ;
 
 		prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_y_trans    ;
+		uvalues[k].uval.ival = g_raytrace_state.m_y_trans    ;
 
 		prompts3d[++k] = "First transparent color";
 		uvalues[k].type = 'i';
@@ -3184,9 +3185,9 @@ restart_1:
 
 	prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_randomize;
+	uvalues[k++].uval.ival = g_raytrace_state.m_randomize_colors;
 
-	if (SPHERE)
+	if (g_raytrace_state.sphere())
 	{
 		s = "Sphere 3D Parameters\n"
 			"Sphere is on its side; North pole to right\n"
@@ -3206,37 +3207,37 @@ restart_1:
 	}
 
 	k = 0;
-	if (!(g_raytrace_output && !SPHERE))
+	if (!(g_raytrace_state.m_raytrace_output && !g_raytrace_state.sphere()))
 	{
-		XROT    = uvalues[k++].uval.ival;
-		YROT    = uvalues[k++].uval.ival;
-		ZROT    = uvalues[k++].uval.ival;
+		g_raytrace_state.set_x_rot(uvalues[k++].uval.ival);
+		g_raytrace_state.set_y_rot(uvalues[k++].uval.ival);
+		g_raytrace_state.set_z_rot(uvalues[k++].uval.ival);
 	}
-	XSCALE     = uvalues[k++].uval.ival;
-	YSCALE     = uvalues[k++].uval.ival;
-	ROUGH      = uvalues[k++].uval.ival;
-	WATERLINE  = uvalues[k++].uval.ival;
-	if (!g_raytrace_output)
+	g_raytrace_state.set_x_scale(uvalues[k++].uval.ival);
+	g_raytrace_state.set_y_scale(uvalues[k++].uval.ival);
+	g_raytrace_state.set_rough(uvalues[k++].uval.ival);
+	g_raytrace_state.set_water_line(uvalues[k++].uval.ival);
+	if (!g_raytrace_state.m_raytrace_output)
 	{
-		ZVIEWER = uvalues[k++].uval.ival;
-		XSHIFT     = uvalues[k++].uval.ival;
-		YSHIFT     = uvalues[k++].uval.ival;
-		g_x_trans     = uvalues[k++].uval.ival;
-		g_y_trans     = uvalues[k++].uval.ival;
+		g_raytrace_state.set_z_viewer(uvalues[k++].uval.ival);
+		g_raytrace_state.set_x_shift(uvalues[k++].uval.ival);
+		g_raytrace_state.set_y_shift(uvalues[k++].uval.ival);
+		g_raytrace_state.m_x_trans     = uvalues[k++].uval.ival;
+		g_raytrace_state.m_y_trans     = uvalues[k++].uval.ival;
 		g_transparent[0] = uvalues[k++].uval.ival;
 		g_transparent[1] = uvalues[k++].uval.ival;
 	}
-	g_randomize  = uvalues[k++].uval.ival;
-	if (g_randomize >= 7)
+	g_raytrace_state.m_randomize_colors  = uvalues[k++].uval.ival;
+	if (g_raytrace_state.m_randomize_colors >= 7)
 	{
-		g_randomize = 7;
+		g_raytrace_state.m_randomize_colors = 7;
 	}
-	if (g_randomize <= 0)
+	if (g_raytrace_state.m_randomize_colors <= 0)
 	{
-		g_randomize = 0;
+		g_raytrace_state.m_randomize_colors = 0;
 	}
 
-	if ((g_targa_output || ILLUMINE || g_raytrace_output))
+	if ((g_targa_output || (g_raytrace_state.fill_type() > FillType::Bars) || g_raytrace_state.m_raytrace_output))
 	{
 		if (get_light_params())
 		{
@@ -3256,37 +3257,37 @@ static int get_light_params()
 	/* defaults go here */
 	k = -1;
 
-	if (ILLUMINE || g_raytrace_output)
+	if ((g_raytrace_state.fill_type() > FillType::Bars) || g_raytrace_state.m_raytrace_output)
 	{
 		prompts3d[++k] = "X value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = XLIGHT    ;
+		uvalues[k].uval.ival = g_raytrace_state.x_light()    ;
 
 		prompts3d[++k] = "Y value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = YLIGHT    ;
+		uvalues[k].uval.ival = g_raytrace_state.y_light()    ;
 
 		prompts3d[++k] = "Z value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = ZLIGHT    ;
+		uvalues[k].uval.ival = g_raytrace_state.z_light()    ;
 
-		if (!g_raytrace_output)
+		if (!g_raytrace_state.m_raytrace_output)
 		{
 			prompts3d[++k] = "Light Source Smoothing Factor";
 			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = LIGHTAVG  ;
+			uvalues[k].uval.ival = g_raytrace_state.light_avg()  ;
 
 			prompts3d[++k] = "Ambient";
 			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = g_ambient;
+			uvalues[k].uval.ival = g_raytrace_state.m_ambient;
 		}
 	}
 
-	if (g_targa_output && !g_raytrace_output)
+	if (g_targa_output && !g_raytrace_state.m_raytrace_output)
 	{
 		prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_haze;
+		uvalues[k].uval.ival = g_raytrace_state.m_haze;
 
 		if (!g_targa_overlay)
 		{
@@ -3301,15 +3302,15 @@ static int get_light_params()
 
 		prompts3d[++k] = "   Red";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_back_color[0];
+		uvalues[k].uval.ival = (int) g_raytrace_state.m_background_color[0];
 
 		prompts3d[++k] = "   Green";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_back_color[1];
+		uvalues[k].uval.ival = (int) g_raytrace_state.m_background_color[1];
 
 		prompts3d[++k] = "   Blue";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_back_color[2];
+		uvalues[k].uval.ival = (int) g_raytrace_state.m_background_color[2];
 
 		prompts3d[++k] = "Overlay Targa File? (Y/N)";
 		uvalues[k].type = 'y';
@@ -3326,44 +3327,44 @@ static int get_light_params()
 	}
 
 	k = 0;
-	if (ILLUMINE)
+	if ((g_raytrace_state.fill_type() > FillType::Bars))
 	{
-		XLIGHT   = uvalues[k++].uval.ival;
-		YLIGHT   = uvalues[k++].uval.ival;
-		ZLIGHT   = uvalues[k++].uval.ival;
-		if (!g_raytrace_output)
+		g_raytrace_state.set_x_light(uvalues[k++].uval.ival);
+		g_raytrace_state.set_y_light(uvalues[k++].uval.ival);
+		g_raytrace_state.set_z_light(uvalues[k++].uval.ival);
+		if (!g_raytrace_state.m_raytrace_output)
 		{
-			LIGHTAVG = uvalues[k++].uval.ival;
-			g_ambient  = uvalues[k++].uval.ival;
-			if (g_ambient >= 100)
+			g_raytrace_state.set_light_avg(uvalues[k++].uval.ival);
+			g_raytrace_state.m_ambient  = uvalues[k++].uval.ival;
+			if (g_raytrace_state.m_ambient >= 100)
 			{
-				g_ambient = 100;
+				g_raytrace_state.m_ambient = 100;
 			}
-			if (g_ambient <= 0)
+			if (g_raytrace_state.m_ambient <= 0)
 			{
-				g_ambient = 0;
+				g_raytrace_state.m_ambient = 0;
 			}
 		}
 	}
 
-	if (g_targa_output && !g_raytrace_output)
+	if (g_targa_output && !g_raytrace_state.m_raytrace_output)
 	{
-		g_haze  =  uvalues[k++].uval.ival;
-		if (g_haze >= 100)
+		g_raytrace_state.m_haze  =  uvalues[k++].uval.ival;
+		if (g_raytrace_state.m_haze >= 100)
 		{
-			g_haze = 100;
+			g_raytrace_state.m_haze = 100;
 		}
-		if (g_haze <= 0)
+		if (g_raytrace_state.m_haze <= 0)
 		{
-			g_haze = 0;
+			g_raytrace_state.m_haze = 0;
 		}
 		strcpy(g_light_name, uvalues[k++].uval.sval);
         /* In case g_light_name conflicts with an existing name it is checked
 						again in line3d */
 		k++;
-		g_back_color[0] = (BYTE) (uvalues[k++].uval.ival % 255);
-		g_back_color[1] = (BYTE) (uvalues[k++].uval.ival % 255);
-		g_back_color[2] = (BYTE) (uvalues[k++].uval.ival % 255);
+		g_raytrace_state.m_background_color[0] = (BYTE) (uvalues[k++].uval.ival % 255);
+		g_raytrace_state.m_background_color[1] = (BYTE) (uvalues[k++].uval.ival % 255);
+		g_raytrace_state.m_background_color[2] = (BYTE) (uvalues[k++].uval.ival % 255);
 		g_targa_overlay = uvalues[k].uval.ch.val;
 	}
 	return 0;
@@ -3435,9 +3436,9 @@ static int get_funny_glasses_params()
 	int k;
 
 	/* defaults */
-	if (ZVIEWER == 0)
+	if (g_raytrace_state.z_viewer() == 0)
 	{
-		ZVIEWER = 150;
+		g_raytrace_state.set_z_viewer(150);
 	}
 	if (g_eye_separation == 0)
 	{
@@ -3459,7 +3460,7 @@ static int get_funny_glasses_params()
 	}
 	else if (g_glasses_type == STEREO_SUPERIMPOSE)
 	{
-		if (FILLTYPE == FILLTYPE_SURFACE_GRID)
+		if (g_raytrace_state.fill_type() == FillType::SurfaceGrid)
 		{
 			strcpy(funnyglasses_map_name, "grid.map");
 		}

@@ -29,6 +29,7 @@
 #include "fihelp.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
+#include "RayTraceState.h"
 
 /* routines in this module      */
 
@@ -1130,19 +1131,19 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		{
 			put_filename("filename", g_read_name);
 		}
-		if (SPHERE)
+		if (g_raytrace_state.sphere())
 		{
 			put_parm(" sphere=y");
-			put_parm(" latitude=%d/%d", THETA1, THETA2);
-			put_parm(" longitude=%d/%d", PHI1, PHI2);
-			put_parm(" radius=%d", RADIUS);
+			put_parm(" latitude=%d/%d", g_raytrace_state.theta1(), g_raytrace_state.theta2());
+			put_parm(" longitude=%d/%d", g_raytrace_state.phi1(), g_raytrace_state.phi2());
+			put_parm(" radius=%d", g_raytrace_state.radius());
 		}
-		put_parm(" scalexyz=%d/%d", XSCALE, YSCALE);
-		put_parm(" roughness=%d", ROUGH);
-		put_parm(" waterline=%d", WATERLINE);
-		if (FILLTYPE)
+		put_parm(" scalexyz=%d/%d", g_raytrace_state.x_scale(), g_raytrace_state.y_scale());
+		put_parm(" roughness=%d", g_raytrace_state.rough());
+		put_parm(" waterline=%d", g_raytrace_state.water_line());
+		if (g_raytrace_state.fill_type())
 		{
-			put_parm(" filltype=%d", FILLTYPE);
+			put_parm(" filltype=%d", g_raytrace_state.fill_type());
 		}
 		if (g_transparent[0] || g_transparent[1])
 		{
@@ -1157,25 +1158,25 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			}
 			put_parm(" coarse=%d", g_preview_factor);
 		}
-		if (g_raytrace_output)
+		if (g_raytrace_state.m_raytrace_output)
 		{
-			put_parm(" ray=%d", g_raytrace_output);
-			if (g_raytrace_brief)
+			put_parm(" ray=%d", g_raytrace_state.m_raytrace_output);
+			if (g_raytrace_state.m_raytrace_brief)
 			{
 				put_parm(" brief=y");
 			}
 		}
-		if (FILLTYPE > FILLTYPE_FILL_BARS)
+		if (g_raytrace_state.fill_type() > FillType::Bars)
 		{
-			put_parm(" lightsource=%d/%d/%d", XLIGHT, YLIGHT, ZLIGHT);
-			if (LIGHTAVG)
+			put_parm(" lightsource=%d/%d/%d", g_raytrace_state.x_light(), g_raytrace_state.y_light(), g_raytrace_state.z_light());
+			if (g_raytrace_state.light_avg())
 			{
-				put_parm(" smoothing=%d", LIGHTAVG);
+				put_parm(" smoothing=%d", g_raytrace_state.light_avg());
 			}
 		}
-		if (g_randomize)
+		if (g_raytrace_state.m_randomize_colors)
 		{
-			put_parm(" randomize=%d", g_randomize);
+			put_parm(" randomize=%d", g_raytrace_state.m_randomize_colors);
 		}
 		if (g_targa_output)
 		{
@@ -1185,32 +1186,32 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		{
 			put_parm(" usegrayscale=y");
 		}
-		if (g_ambient)
+		if (g_raytrace_state.m_ambient)
 		{
-			put_parm(" ambient=%d", g_ambient);
+			put_parm(" ambient=%d", g_raytrace_state.m_ambient);
 		}
-		if (g_haze)
+		if (g_raytrace_state.m_haze)
 		{
-			put_parm(" haze=%d", g_haze);
+			put_parm(" haze=%d", g_raytrace_state.m_haze);
 		}
-		if (g_back_color[0] != 51 || g_back_color[1] != 153 || g_back_color[2] != 200)
+		if (g_raytrace_state.m_background_color[0] != 51 || g_raytrace_state.m_background_color[1] != 153 || g_raytrace_state.m_background_color[2] != 200)
 		{
-			put_parm(" background=%d/%d/%d", g_back_color[0], g_back_color[1], g_back_color[2]);
+			put_parm(" background=%d/%d/%d", g_raytrace_state.m_background_color[0], g_raytrace_state.m_background_color[1], g_raytrace_state.m_background_color[2]);
 		}
 	}
 
 	if (g_display_3d)  /* universal 3d */
 	{
 		/***** common (fractal & transform) 3d parameters in this section *****/
-		if (!SPHERE || g_display_3d < 0)
+		if (!g_raytrace_state.sphere() || g_display_3d < 0)
 		{
-			put_parm(" rotation=%d/%d/%d", XROT, YROT, ZROT);
+			put_parm(" rotation=%d/%d/%d", g_raytrace_state.x_rot(), g_raytrace_state.y_rot(), g_raytrace_state.z_rot());
 		}
-		put_parm(" perspective=%d", ZVIEWER);
-		put_parm(" xyshift=%d/%d", XSHIFT, YSHIFT);
-		if (g_x_trans || g_y_trans)
+		put_parm(" perspective=%d", g_raytrace_state.z_viewer());
+		put_parm(" xyshift=%d/%d", g_raytrace_state.x_shift(), g_raytrace_state.y_shift());
+		if (g_raytrace_state.m_x_trans || g_raytrace_state.m_y_trans)
 		{
-			put_parm(" xyadjust=%d/%d", g_x_trans, g_y_trans);
+			put_parm(" xyadjust=%d/%d", g_raytrace_state.m_x_trans, g_raytrace_state.m_y_trans);
 		}
 		if (g_glasses_type)
 		{

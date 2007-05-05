@@ -15,6 +15,7 @@
 #include "drivers.h"
 #include "busy.h"
 #include "EscapeTime.h"
+#include "RayTraceState.h"
 
 static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE *color, int g_num_colors);
@@ -852,13 +853,10 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->decomposition[0] = (short) g_decomposition[0];
 	save_info->biomorph = (short) g_user_biomorph;
 	save_info->symmetry = (short) g_force_symmetry;
-	for (i = 0; i < 16; i++)
-	{
-		save_info->init_3d[i] = (short) g_init_3d[i];
-	}
+	g_raytrace_state.get_init_3d(&save_info->init_3d[0], 16);
 	save_info->previewfactor = (short) g_preview_factor;
-	save_info->xtrans = (short) g_x_trans;
-	save_info->ytrans = (short) g_y_trans;
+	save_info->xtrans = (short) g_raytrace_state.m_x_trans;
+	save_info->ytrans = (short) g_raytrace_state.m_y_trans;
 	save_info->red_crop_left = (short) g_red_crop_left;
 	save_info->red_crop_right = (short) g_red_crop_right;
 	save_info->blue_crop_left = (short) g_blue_crop_left;
@@ -895,9 +893,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->release = check_back() ? (short) min(g_save_release, g_release) : (short) g_release;
 
 	save_info->flag3d = (short) g_display_3d;
-	save_info->ambient = (short) g_ambient;
-	save_info->randomize = (short) g_randomize;
-	save_info->haze = (short) g_haze;
+	save_info->ambient = (short) g_raytrace_state.m_ambient;
+	save_info->randomize = (short) g_raytrace_state.m_randomize_colors;
+	save_info->haze = (short) g_raytrace_state.m_haze;
 	save_info->transparent[0] = (short) g_transparent[0];
 	save_info->transparent[1] = (short) g_transparent[1];
 	save_info->rotate_lo = (short) g_rotate_lo;

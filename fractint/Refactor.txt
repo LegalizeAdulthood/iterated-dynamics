@@ -23,7 +23,7 @@
 	int g_x_shift
 	int g_y_shift
 	int g_bad_value
-	int g_raytrace_output
+	int g_raytrace_state.m_raytrace_output
 	int g_raytrace_brief
 	VECTOR g_view
 	VECTOR g_cross

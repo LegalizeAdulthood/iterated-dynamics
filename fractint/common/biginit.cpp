@@ -15,53 +15,95 @@ is in the allocations of memory for the big numbers.
 #include "prototyp.h"
 #include "fractype.h"
 
-/* appears to me that avoiding the start of extraseg is unnecessary. If
-	correct, later we can eliminate ENDVID here. */
-#ifdef ENDVID
-#undef ENDVID
-#endif
-#define ENDVID 0
-
 /* globals */
-#ifdef BIG_BASED
-_segment bignum_seg;
-#endif
-int bnstep = 0, bnlength = 0, intlength = 0, rlength = 0, padding = 0, shiftfactor = 0, g_decimals = 0;
-int bflength = 0, rbflength = 0, bfdecimals = 0;
+int bnstep = 0;
+int bnlength = 0;
+int intlength = 0;
+int rlength = 0;
+int padding = 0;
+int shiftfactor = 0;
+int g_decimals = 0;
+int bflength = 0;
+int rbflength = 0;
+int bfdecimals = 0;
 
 /* used internally by bignum.c routines */
 static char s_storage[4096];
-static bn_t bnroot = BIG_NULL;
-static bn_t stack_ptr = BIG_NULL; /* memory allocator base after global variables */
-bn_t bntmp1 = BIG_NULL, bntmp2 = BIG_NULL, bntmp3 = BIG_NULL, bntmp4 = BIG_NULL, bntmp5 = BIG_NULL, bntmp6 = BIG_NULL; /* rlength  */
-bn_t bntmpcpy1 = BIG_NULL, bntmpcpy2 = BIG_NULL;                           /* bnlength */
+static bn_t bnroot = NULL;
+static bn_t stack_ptr = NULL;			/* memory allocator base after global variables */
+bn_t bntmp1 = NULL;
+bn_t bntmp2 = NULL;
+bn_t bntmp3 = NULL;
+bn_t bntmp4 = NULL;
+bn_t bntmp5 = NULL;
+bn_t bntmp6 = NULL;						/* rlength  */
+bn_t bntmpcpy1 = NULL;
+bn_t bntmpcpy2 = NULL;					/* bnlength */
 
 /* used by other routines */
-bn_t bnxmin = BIG_NULL, bnxmax = BIG_NULL, bnymin = BIG_NULL, bnymax = BIG_NULL, bnx3rd = BIG_NULL, bny3rd = BIG_NULL;        /* bnlength */
-bn_t bnxdel = BIG_NULL, bnydel = BIG_NULL, bnxdel2 = BIG_NULL, bnydel2 = BIG_NULL, bnclosenuff = BIG_NULL;         /* bnlength */
-bn_t bntmpsqrx = BIG_NULL, bntmpsqry = BIG_NULL, bntmp = BIG_NULL;                           /* rlength  */
-_BNCMPLX bnold = { BIG_NULL, BIG_NULL }, /* bnnew, */ bnparm = { BIG_NULL, BIG_NULL }, bnsaved = { BIG_NULL, BIG_NULL };               /* bnlength */
-_BNCMPLX bnnew = { BIG_NULL, BIG_NULL };                                              /* rlength */
-bn_t bn_pi = BIG_NULL;                                           /* TAKES NO SPACE */
+bn_t bnxmin = NULL;
+bn_t bnxmax = NULL;
+bn_t bnymin = NULL;
+bn_t bnymax = NULL;
+bn_t bnx3rd = NULL;
+bn_t bny3rd = NULL;						/* bnlength */
+bn_t bnxdel = NULL;
+bn_t bnydel = NULL;
+bn_t bnxdel2 = NULL;
+bn_t bnydel2 = NULL;
+bn_t bnclosenuff = NULL;				/* bnlength */
+bn_t bntmpsqrx = NULL;
+bn_t bntmpsqry = NULL;
+bn_t bntmp = NULL;						/* rlength  */
+_BNCMPLX bnold = { NULL, NULL };
+_BNCMPLX bnparm = { NULL, NULL };
+_BNCMPLX bnsaved = { NULL, NULL };		/* bnlength */
+_BNCMPLX bnnew = { NULL, NULL };		/* rlength */
+bn_t bn_pi = NULL;						/* TAKES NO SPACE */
 
-bf_t bftmp1 = BIG_NULL, bftmp2 = BIG_NULL, bftmp3 = BIG_NULL, bftmp4 = BIG_NULL, bftmp5 = BIG_NULL, bftmp6 = BIG_NULL;     /* rbflength + 2 */
-bf_t bftmpcpy1 = BIG_NULL, bftmpcpy2 = BIG_NULL;                               /* rbflength + 2 */
-bf_t bfxdel = BIG_NULL, bfydel = BIG_NULL, bfxdel2 = BIG_NULL, bfydel2 = BIG_NULL, bfclosenuff = BIG_NULL;      /* rbflength + 2 */
-bf_t bftmpsqrx = BIG_NULL, bftmpsqry = BIG_NULL;                               /* rbflength + 2 */
-_BFCMPLX /* bfold,  bfnew, */ bfparm = { BIG_NULL, BIG_NULL }, bfsaved = { BIG_NULL, BIG_NULL };            /* bflength + 2 */
-_BFCMPLX bfold = { BIG_NULL, BIG_NULL },  bfnew = { BIG_NULL, BIG_NULL };                                  /* rbflength + 2 */
-bf_t bf_pi = BIG_NULL;                                           /* TAKES NO SPACE */
-bf_t big_pi = BIG_NULL;                                              /* bflength + 2 */
+bf_t bftmp1 = NULL;
+bf_t bftmp2 = NULL;
+bf_t bftmp3 = NULL;
+bf_t bftmp4 = NULL;
+bf_t bftmp5 = NULL;
+bf_t bftmp6 = NULL;						/* rbflength + 2 */
+bf_t bftmpcpy1 = NULL;
+bf_t bftmpcpy2 = NULL;					/* rbflength + 2 */
+bf_t bfxdel = NULL;
+bf_t bfydel = NULL;
+bf_t bfxdel2 = NULL;
+bf_t bfydel2 = NULL;
+bf_t bfclosenuff = NULL;				/* rbflength + 2 */
+bf_t bftmpsqrx = NULL;
+bf_t bftmpsqry = NULL;					/* rbflength + 2 */
+_BFCMPLX bfparm = {NULL, NULL};			/* bflength + 2 */
+										/* bflength + 2 */
+_BFCMPLX bfsaved = {NULL, NULL};		/* bfold,  bfnew, */
+										/* bflength + 2 */
+_BFCMPLX bfold = {NULL, NULL};
+_BFCMPLX bfnew = {NULL, NULL};			/* rbflength + 2 */
+bf_t bf_pi = NULL;						/* TAKES NO SPACE */
+bf_t big_pi = NULL;						/* bflength + 2 */
 
 /* for testing only */
 
 /* used by other routines */
-bf_t bfxmin = BIG_NULL, bfxmax = BIG_NULL, bfymin = BIG_NULL, bfymax = BIG_NULL, bfx3rd = BIG_NULL, bfy3rd = BIG_NULL;      /* bflength + 2 */
-bf_t bfsxmin = BIG_NULL, bfsxmax = BIG_NULL, bfsymin = BIG_NULL, bfsymax = BIG_NULL, bfsx3rd = BIG_NULL, bfsy3rd = BIG_NULL; /* bflength + 2 */
-bf_t bfparms[10];                                    /* (bflength + 2)*10 */
-bf_t bftmp = BIG_NULL;
+bf_t bfxmin = NULL;
+bf_t bfxmax = NULL;
+bf_t bfymin = NULL;
+bf_t bfymax = NULL;
+bf_t bfx3rd = NULL;
+bf_t bfy3rd = NULL;						/* bflength + 2 */
+bf_t bfsxmin = NULL;
+bf_t bfsxmax = NULL;
+bf_t bfsymin = NULL;
+bf_t bfsymax = NULL;
+bf_t bfsx3rd = NULL;
+bf_t bfsy3rd = NULL;					/* bflength + 2 */
+bf_t bfparms[10];						/* (bflength + 2)*10 */
+bf_t bftmp = NULL;
 
-bf_t bf10tmp = BIG_NULL;                                              /* dec + 4 */
+bf_t bf10tmp = NULL;					/* dec + 4 */
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
@@ -102,8 +144,6 @@ int g_bf_save_len = 0;
 
 static void init_bf_2()
 {
-	int i;
-	long ptr;
 	save_bf_vars(); /* copy corners values for conversion */
 
 	calc_lengths();
@@ -112,7 +152,7 @@ static void init_bf_2()
 
 	/* at present time one call would suffice, but this logic allows
 		multiple kinds of alternate math eg long double */
-	i = find_alternate_math(g_fractal_type, BIGNUM);
+	int i = find_alternate_math(g_fractal_type, BIGNUM);
 	if (i > -1)
 	{
 		g_bf_math = g_alternate_math[i].math;
@@ -127,7 +167,7 @@ static void init_bf_2()
 
 	/* Now split up the memory among the pointers */
 	/* internal pointers */
-	ptr        = 0;
+	long ptr = 0;
 	bntmp1     = bnroot + ptr; ptr += rlength;
 	bntmp2     = bnroot + ptr; ptr += rlength;
 	bntmp3     = bnroot + ptr; ptr += rlength;
@@ -202,7 +242,7 @@ static void init_bf_2()
 	startstack = ptr;
 
 	/* max stack offset from bnroot */
-	maxstack = (long)0x10000l-(bflength + 2)*22-ENDVID;
+	maxstack = (long) 0x10000l-(bflength + 2)*22;
 
 	/* sanity check */
 	/* leave room for NUMVARS variables allocated from stack */
@@ -254,9 +294,8 @@ static void init_bf_2()
 
 	/* Initialize the value of pi.  Needed for trig functions. */
 	/* init_big_pi(); */
-/* call to init_big_pi() has been moved to fractal setup routine */
-/* so as to use only when necessary. */
-
+	/* call to init_big_pi() has been moved to fractal setup routine */
+	/* so as to use only when necessary. */
 }
 
 
@@ -267,7 +306,7 @@ static int save_bf_vars()
 {
 	int ret;
 	unsigned int mem;
-	if (bnroot != BIG_NULL)
+	if (bnroot != NULL)
 	{
 		mem = (bflength + 2)*22;  /* 6 corners + 6 save corners + 10 params */
 		g_bf_save_len = bflength;
@@ -348,7 +387,7 @@ bn_t alloc_stack(size_t size)
 		stop_message(0, "alloc_stack called with g_bf_math == 0");
 		return 0;
 	}
-	stack_addr = (long)((stack_ptr-bnroot) + size); /* +ENDVID, part of bnroot */
+	stack_addr = (long) (stack_ptr - bnroot + size); /* part of bnroot */
 
 	if (stack_addr > maxstack)
 	{

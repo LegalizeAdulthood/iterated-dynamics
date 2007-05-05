@@ -449,13 +449,6 @@ long bntoint(bn_t n)
 /*  Converts a double to a bignumber                                 */
 bn_t floattobn(bn_t r, LDBL f)
 {
-#ifndef USE_BIGNUM_C_CODE
-	/* Only use this when using the ASM code as the C version of  */
-	/* floattobf() calls floattobn(), an infinite recursive loop. */
-	floattobf(bftmp1, f);
-	return bftobn(r, bftmp1);
-
-#else
 	bn_t onesbyte;
 	int i;
 	int signflag = 0;
@@ -496,7 +489,6 @@ bn_t floattobn(bn_t r, LDBL f)
 	}
 
 	return r;
-#endif /* USE_BIGNUM_C_CODE */
 }
 
 /********************************************************************/
