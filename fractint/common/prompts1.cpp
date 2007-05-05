@@ -1,7 +1,7 @@
 /*
 		Various routines that prompt for things.
 */
-
+#include <assert.h>
 #include <string.h>
 #include <ctype.h>
 #ifdef   XFRACT
@@ -80,15 +80,14 @@ int scroll_column_status; /* will be set to first column of extra info to
                              be displayed (0 = leftmost column)*/
 
 int full_screen_prompt(/* full-screen prompting routine */
-		char *hdg,          /* heading, lines separated by \n */
-		int numprompts,         /* there are this many prompts (max) */
-		char **prompts,     /* array of prompting pointers */
-		struct full_screen_values *values, /* array of values */
-		int fkeymask,           /* bit n on if Fn to cause return */
-		char *extrainfo     /* extra info box to display, \n separated */
-)
+					   const char *hdg,          /* heading, lines separated by \n */
+					   int numprompts,         /* there are this many prompts (max) */
+					   char **prompts,     /* array of prompting pointers */
+struct full_screen_values *values, /* array of values */
+	int fkeymask,           /* bit n on if Fn to cause return */
+	char *extrainfo     /* extra info box to display, \n separated */
+	)
 {
-	char *hdgscan;
 	int titlelines, titlewidth, titlerow;
 	int maxpromptwidth, maxfldwidth, maxcomment;
 	int boxrow, boxlines;
@@ -102,7 +101,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 	int curtype, curlen;
 	char buf[81];
 
-		/* scrolling related variables */
+	/* scrolling related variables */
 	FILE *scroll_file = NULL;     /* file with extrainfo entry to scroll   */
 	long scroll_file_start = 0;    /* where entry starts in scroll_file     */
 	int in_scrolling_mode = 0;     /* will be 1 if need to scroll extrainfo */
@@ -117,10 +116,10 @@ int full_screen_prompt(/* full-screen prompting routine */
 	memset(blanks, ' ', 77);   /* initialize string of blanks */
 	blanks[77] = (char) 0;
 
-		/* If applicable, open file for scrolling extrainfo. The function
-			find_file_item() opens the file and sets the file pointer to the
-			beginning of the entry.
-		*/
+	/* If applicable, open file for scrolling extrainfo. The function
+	find_file_item() opens the file and sets the file pointer to the
+	beginning of the entry.
+	*/
 	if (extrainfo && *extrainfo)
 	{
 		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
@@ -143,7 +142,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 		}
 	}
 
-		/* initialize widest_entry_line and lines_in_entry */
+	/* initialize widest_entry_line and lines_in_entry */
 	if (in_scrolling_mode && scroll_file != NULL)
 	{
 		int comment = 0;
@@ -186,13 +185,10 @@ int full_screen_prompt(/* full-screen prompting routine */
 		}
 	}
 
-
-
 	help_title();                        /* clear screen, display title line  */
 	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  /* init rest of screen to background */
 
-
-	hdgscan = hdg;                      /* count title lines, find widest */
+	const char *hdgscan = hdg;                      /* count title lines, find widest */
 	i = titlewidth = 0;
 	titlelines = 1;
 	while (*hdgscan)
@@ -208,23 +204,23 @@ int full_screen_prompt(/* full-screen prompting routine */
 		}
 	}
 	extralines = extrawidth = i = 0;
-	hdgscan = extrainfo;
-	if (hdgscan != 0)
+	char *extra_scan = extrainfo;
+	if (extra_scan != 0)
 	{
-		if (*hdgscan == 0)
+		if (*extra_scan == 0)
 		{
 			extrainfo = NULL;
 		}
 		else  /* count extra lines, find widest */
 		{
 			extralines = 3;
-			while (*hdgscan)
+			while (*extra_scan)
 			{
-				if (*(hdgscan++) == '\n')
+				if (*(extra_scan++) == '\n')
 				{
 					if (extralines + numprompts + titlelines >= 20)
 					{
-						*hdgscan = 0; /* full screen, cut off here */
+						*extra_scan = 0; /* full screen, cut off here */
 						break;
 					}
 					++extralines;
@@ -238,7 +234,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 		}
 	}
 
-		/* if entry fits in available space, shut off scrolling */
+	/* if entry fits in available space, shut off scrolling */
 	if (in_scrolling_mode && scroll_row_status == 0
 		&& lines_in_entry == extralines - 2
 		&& scroll_column_status == 0
@@ -249,10 +245,10 @@ int full_screen_prompt(/* full-screen prompting routine */
 		scroll_file = NULL;
 	}
 
-		/*initialize vertical scroll limit. When the top line of the text
-		box is the vertical scroll limit, the bottom line is the end of the
-		entry, and no further down scrolling is necessary.
-		*/
+	/*initialize vertical scroll limit. When the top line of the text
+	box is the vertical scroll limit, the bottom line is the end of the
+	entry, and no further down scrolling is necessary.
+	*/
 	if (in_scrolling_mode)
 	{
 		vertical_scroll_limit = lines_in_entry - (extralines - 2);
@@ -270,7 +266,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 		--titlerow;
 		--boxrow;
 		++boxlines;
-		}
+	}
 	instrrow = boxrow + boxlines;
 	if (instrrow + 3 + extralines < 25)
 	{
@@ -280,7 +276,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 		{
 			++instrrow; /* blank before instructions */
 		}
-		}
+	}
 	extrarow = instrrow + 2;
 	if (numprompts > 1) /* 3 instructions lines */
 	{
@@ -363,7 +359,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 		}
 		boxwidth += i;
 		boxcol -= i / 2;
-		}
+	}
 	i = (90 - boxwidth) / 20;
 	boxcol    -= i;
 	promptcol -= i;
@@ -467,11 +463,11 @@ int full_screen_prompt(/* full-screen prompting routine */
 	if (!anyinput)
 	{
 		put_string_center(instrrow++, 0, 80, C_PROMPT_BKGRD,
-		"No changeable parameters;");
+			"No changeable parameters;");
 		put_string_center(instrrow, 0, 80, C_PROMPT_BKGRD,
 			(get_help_mode() > 0)
-				? "Press ENTER to exit, ESC to back out, "FK_F1" for help"
-				: "Press ENTER to exit");
+			? "Press ENTER to exit, ESC to back out, "FK_F1" for help"
+			: "Press ENTER to exit");
 		driver_hide_text_cursor();
 		g_text_cbase = 2;
 		while (1)
@@ -481,7 +477,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 				rewrite_extrainfo = 0;
 				fseek(scroll_file, scroll_file_start, SEEK_SET);
 				load_entry_text(scroll_file, extrainfo, extralines - 2,
-								scroll_row_status, scroll_column_status);
+					scroll_row_status, scroll_column_status);
 				for (i = 1; i <= extralines - 2; i++)
 				{
 					driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
@@ -606,7 +602,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 			g_text_cbase = 2;
 			fseek(scroll_file, scroll_file_start, SEEK_SET);
 			load_entry_text(scroll_file, extrainfo, extralines - 2,
-							scroll_row_status, scroll_column_status);
+				scroll_row_status, scroll_column_status);
 			for (i = 1; i <= extralines - 2; i++)
 			{
 				driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
@@ -642,7 +638,7 @@ int full_screen_prompt(/* full-screen prompting routine */
 				}
 			}
 			values[curchoice].uval.ch.val = j;
-			}
+		}
 		else
 		{
 			j = 0;
@@ -2851,7 +2847,6 @@ static void format_parmfile_line(int choice, char *buf)
 
 int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 {
-	int i, k, ret;
 	struct full_screen_values uvalues[20];
 	char *ifs3d_prompts[7] =
 	{
@@ -2865,7 +2860,7 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 	};
 
 	driver_stack_screen();
-	k = 0;
+	int k = 0;
 	uvalues[k].type = 'i';
 	uvalues[k++].uval.ival = g_raytrace_state.x_rot();
 	uvalues[k].type = 'i';
@@ -2881,15 +2876,17 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 	uvalues[k].type = 'i';
 	uvalues[k++].uval.ival = g_glasses_type;
 
-	i = full_screen_prompt_help(HELP3DFRACT, "3D Parameters",
+	int i = full_screen_prompt_help(HELP3DFRACT, "3D Parameters",
 		k, ifs3d_prompts, uvalues, 0, NULL);
+	int ret;
 	if (i < 0)
 	{
 		ret = -1;
 		goto get_f3d_exit;
-		}
+	}
 
-	ret = k = 0;
+	ret = 0;
+	k = 0;
 	g_raytrace_state.set_x_rot(uvalues[k++].uval.ival);
 	g_raytrace_state.set_y_rot(uvalues[k++].uval.ival);
 	g_raytrace_state.set_z_rot(uvalues[k++].uval.ival);
@@ -2914,35 +2911,20 @@ get_f3d_exit:
 	return ret;
 }
 
-/* --------------------------------------------------------------------- */
-/* These macros streamline the "save near space" campaign */
-
 int get_3d_parameters()     /* prompt for 3D parameters */
 {
 	char *choices[11];
 	int attributes[21];
-	int sphere;
-	char *s;
 	char *prompts3d[21];
 	struct full_screen_values uvalues[21];
-	int i, k;
 
-#ifdef WINFRACT
-	{
-		extern int wintext_textmode;
-		if (wintext_textmode != 2)  /* are we in textmode? */
-		{
-			return 0;              /* no - prompts are already handled */
-		}
-	}
-#endif
 restart_1:
 	if (g_targa_output && g_overlay_3d)
 	{
 		g_targa_overlay = 1;
 	}
 
-	k = -1;
+	int k = -1;
 
 	prompts3d[++k] = "Preview Mode?";
 	uvalues[k].type = 'y';
@@ -2958,7 +2940,8 @@ restart_1:
 
 	prompts3d[++k] = "Spherical Projection?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = sphere = g_raytrace_state.sphere();
+	int sphere = g_raytrace_state.sphere();
+	uvalues[k].uval.ch.val = sphere;
 
 	prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
 	uvalues[k].type = 'i';
@@ -3032,12 +3015,11 @@ restart_1:
 
 	if (sphere && !g_raytrace_state.sphere())
 	{
-		g_raytrace_state.set_sphere(true);
 		g_raytrace_state.set_defaults();
+		g_raytrace_state.set_sphere(true);
 	}
 	else if (!sphere && g_raytrace_state.sphere())
 	{
-		g_raytrace_state.set_sphere(false);
 		g_raytrace_state.set_defaults();
 	}
 
@@ -3081,12 +3063,13 @@ restart_1:
 			choices[k++] = "light source before transformation";
 			choices[k++] = "light source after transformation";
 		}
-		for (i = 0; i < k; ++i)
+		for (int i = 0; i < k; ++i)
 		{
 			attributes[i] = 1;
 		}
-		i = full_screen_choice_help(HELP3DFILL, CHOICE_HELP, "Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
-										0, 0, 0, g_raytrace_state.fill_type() + 1, NULL, NULL, NULL, NULL);
+		int i = full_screen_choice_help(HELP3DFILL, CHOICE_HELP,
+			"Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
+			0, 0, 0, g_raytrace_state.fill_type() + 1, NULL, NULL, NULL, NULL);
 		if (i < 0)
 		{
 			goto restart_1;
@@ -3187,6 +3170,7 @@ restart_1:
 	uvalues[k].type = 'i';
 	uvalues[k++].uval.ival = g_raytrace_state.m_randomize_colors;
 
+	const char *s;
 	if (g_raytrace_state.sphere())
 	{
 		s = "Sphere 3D Parameters\n"

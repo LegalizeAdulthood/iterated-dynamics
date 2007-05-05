@@ -1593,7 +1593,7 @@ int get_help_mode()
 	return s_help_mode;
 }
 
-int full_screen_prompt_help(int help_mode, char *hdg, int numprompts, char **prompts,
+int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, char **prompts,
 	struct full_screen_values *values, int fkeymask, char *extrainfo)
 {
 	int result;
