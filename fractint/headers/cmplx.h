@@ -3,25 +3,30 @@
 #define _CMPLX_DEFINED
 
 
-struct DHyperComplex {
+struct DHyperComplex
+{
     double x, y;
     double z, t;
 };
 
-struct LHyperComplex {
+struct LHyperComplex
+{
     long x, y;
     long z, t;
 };
 
-struct DComplex {
+struct DComplex
+{
     double x, y;
 };
 
-struct LDComplex {
+struct LDComplex
+{
     LDBL x, y;
 };
 
-struct LComplex {
+struct LComplex
+{
     long x, y;
 };
 

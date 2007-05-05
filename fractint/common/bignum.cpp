@@ -146,22 +146,22 @@ double wide number can then be ignored.
 * the bignumber format could be reversed.
 **************************************************************************/
 #ifdef ACCESS_BY_BYTE
-U32 big_access32(BYTE BIGDIST *addr)
+U32 big_access32(BYTE *addr)
 {
 	return addr[0] | ((U32)addr[1] << 8) | ((U32)addr[2] << 16) | ((U32)addr[3] << 24);
 }
 
-U16 big_access16(BYTE BIGDIST *addr)
+U16 big_access16(BYTE *addr)
 {
 	return (U16)addr[0] | ((U16)addr[1] << 8);
 }
 
-S16 big_accessS16(S16 BIGDIST *addr)
+S16 big_accessS16(S16 *addr)
 {
 	return (S16)((BYTE *)addr)[0] | ((S16)((BYTE *)addr)[1] << 8);
 }
 
-U32 big_set32(BYTE BIGDIST *addr, U32 val)
+U32 big_set32(BYTE *addr, U32 val)
 {
 	addr[0] = (BYTE)(val&0xff);
 	addr[1] = (BYTE)((val >> 8)&0xff);
@@ -170,14 +170,14 @@ U32 big_set32(BYTE BIGDIST *addr, U32 val)
 	return val;
 }
 
-U16 big_set16(BYTE BIGDIST *addr, U16 val)
+U16 big_set16(BYTE *addr, U16 val)
 {
 	addr[0] = (BYTE)(val&0xff);
 	addr[1] = (BYTE)((val >> 8)&0xff);
 	return val;
 }
 
-S16 big_setS16(S16 BIGDIST *addr, S16 val)
+S16 big_setS16(S16 *addr, S16 val)
 {
 	((BYTE *)addr)[0] = (BYTE)(val&0xff);
 	((BYTE *)addr)[1] = (BYTE)((val >> 8)&0xff);

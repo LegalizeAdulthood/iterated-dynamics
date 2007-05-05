@@ -356,7 +356,7 @@ extern long stackavail();
 #ifdef LDBL_DIG
 /* this is what we're hoping for */
 #define USE_LONG_DOUBLE
-        typedef long double LDBL;
+typedef long double LDBL;
 #else
 #define DO_NOT_USE_LONG_DOUBLE
 #endif /* #ifdef LDBL_DIG */

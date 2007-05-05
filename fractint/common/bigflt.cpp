@@ -619,10 +619,10 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 bf_t exp_bf(bf_t r, bf_t n)
 {
 	U16 fact = 1;
-	S16 BIGDIST *testexp, BIGDIST *rexp;
+	S16 *testexp, *rexp;
 
-	testexp = (S16 BIGDIST *)(bftmp2 + bflength);
-	rexp = (S16 BIGDIST *)(r + bflength);
+	testexp = (S16 *)(bftmp2 + bflength);
+	rexp = (S16 *)(r + bflength);
 
 	if (is_bf_zero(n))
 	{
@@ -773,11 +773,11 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 	int k = 0, i, halves;
 	int signcos = 0, signsin = 0, switch_sincos = 0;
 	int sin_done = 0, cos_done = 0;
-	S16 BIGDIST *testexp, BIGDIST *cexp, BIGDIST *sexp;
+	S16 *testexp, *cexp, *sexp;
 
-	testexp = (S16 BIGDIST *)(bftmp1 + bflength);
-	cexp = (S16 BIGDIST *)(c + bflength);
-	sexp = (S16 BIGDIST *)(s + bflength);
+	testexp = (S16 *)(bftmp1 + bflength);
+	cexp = (S16 *)(c + bflength);
+	sexp = (S16 *)(s + bflength);
 
 #ifndef CALCULATING_BIG_PI
 	/* assure range 0 <= x < pi/4 */
@@ -1362,9 +1362,9 @@ bf_t norm_bf(bf_t r)
 {
 	int scale;
 	BYTE hi_byte;
-	S16 BIGDIST *rexp;
+	S16 *rexp;
 
-	rexp  = (S16 BIGDIST *)(r + bflength);
+	rexp  = (S16 *)(r + bflength);
 
 	/* check for overflow */
 	hi_byte = r[bflength-1];
@@ -1418,12 +1418,12 @@ S16 adjust_bf_add(bf_t n1, bf_t n2)
 {
 	int scale, fill_byte;
 	S16 rexp;
-	S16 BIGDIST *n1exp, BIGDIST *n2exp;
+	S16 *n1exp, *n2exp;
 
 	/* scale n1 or n2 */
 	/* compare exp's */
-	n1exp = (S16 BIGDIST *)(n1 + bflength);
-	n2exp = (S16 BIGDIST *)(n2 + bflength);
+	n1exp = (S16 *)(n1 + bflength);
+	n2exp = (S16 *)(n2 + bflength);
 	if (big_accessS16(n1exp) > big_accessS16(n2exp))
 	{ /* scale n2 */
 		scale = big_accessS16(n1exp) - big_accessS16(n2exp); /* n1exp - n2exp */
@@ -1483,7 +1483,7 @@ int cmp_bf(bf_t n1, bf_t n2)
 {
 	int i;
 	int sign1, sign2;
-	S16 BIGDIST *n1exp, BIGDIST *n2exp;
+	S16 *n1exp, *n2exp;
 	U16 value1, value2;
 
 
@@ -1501,8 +1501,8 @@ int cmp_bf(bf_t n1, bf_t n2)
 	/* signs are the same */
 
 	/* compare exponents, using signed comparisons */
-	n1exp = (S16 BIGDIST *)(n1 + bflength);
-	n2exp = (S16 BIGDIST *)(n2 + bflength);
+	n1exp = (S16 *)(n1 + bflength);
+	n2exp = (S16 *)(n2 + bflength);
 	if (big_accessS16(n1exp) > big_accessS16(n2exp))
 	{
 		return sign1*(bflength);
@@ -1564,7 +1564,7 @@ int is_bf_not_zero(bf_t n)
 bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	int bnl;
-	S16 BIGDIST *rexp;
+	S16 *rexp;
 
 	if (is_bf_zero(n1))
 	{
@@ -1577,7 +1577,7 @@ bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	rexp = (S16 BIGDIST *)(r + bflength);
+	rexp = (S16 *)(r + bflength);
 	big_setS16(rexp, adjust_bf_add(n1, n2));
 
 	bnl = bnlength;
@@ -1623,7 +1623,7 @@ bf_t unsafe_add_a_bf(bf_t r, bf_t n)
 bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	int bnl;
-	S16 BIGDIST *rexp;
+	S16 *rexp;
 
 	if (is_bf_zero(n1))
 	{
@@ -1636,7 +1636,7 @@ bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	rexp = (S16 BIGDIST *)(r + bflength);
+	rexp = (S16 *)(r + bflength);
 	big_setS16(rexp, adjust_bf_add(n1, n2));
 
 	bnl = bnlength;
@@ -1680,10 +1680,10 @@ bf_t unsafe_sub_a_bf(bf_t r, bf_t n)
 bf_t neg_bf(bf_t r, bf_t n)
 {
 	int bnl;
-	S16 BIGDIST *rexp, BIGDIST *nexp;
+	S16 *rexp, *nexp;
 
-	rexp = (S16 BIGDIST *)(r + bflength);
-	nexp = (S16 BIGDIST *)(n + bflength);
+	rexp = (S16 *)(r + bflength);
+	nexp = (S16 *)(n + bflength);
 	big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
 	bnl = bnlength;
@@ -1715,10 +1715,10 @@ bf_t neg_a_bf(bf_t r)
 bf_t double_bf(bf_t r, bf_t n)
 {
 	int bnl;
-	S16 BIGDIST *rexp, BIGDIST *nexp;
+	S16 *rexp, *nexp;
 
-	rexp = (S16 BIGDIST *)(r + bflength);
-	nexp = (S16 BIGDIST *)(n + bflength);
+	rexp = (S16 *)(r + bflength);
+	nexp = (S16 *)(n + bflength);
 	big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
 	bnl = bnlength;
@@ -1750,10 +1750,10 @@ bf_t double_a_bf(bf_t r)
 bf_t half_bf(bf_t r, bf_t n)
 {
 	int bnl;
-	S16 BIGDIST *rexp, BIGDIST *nexp;
+	S16 *rexp, *nexp;
 
-	rexp = (S16 BIGDIST *)(r + bflength);
-	nexp = (S16 BIGDIST *)(n + bflength);
+	rexp = (S16 *)(r + bflength);
+	nexp = (S16 *)(n + bflength);
 	big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
 	bnl = bnlength;
@@ -1788,7 +1788,7 @@ bf_t half_a_bf(bf_t r)
 bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 {
 	int bnl, dbfl;
-	S16 BIGDIST *rexp, BIGDIST *n1exp, BIGDIST *n2exp;
+	S16 *rexp, *n1exp, *n2exp;
 
 	if (is_bf_zero(n1) || is_bf_zero(n2))
 	{
@@ -1799,9 +1799,9 @@ bf_t unsafe_full_mult_bf(bf_t r, bf_t n1, bf_t n2)
 	}
 
 	dbfl = 2*bflength; /* double width bflength */
-	rexp  = (S16 BIGDIST *)(r + dbfl); /* note: 2*bflength */
-	n1exp = (S16 BIGDIST *)(n1 + bflength);
-	n2exp = (S16 BIGDIST *)(n2 + bflength);
+	rexp  = (S16 *)(r + dbfl); /* note: 2*bflength */
+	n1exp = (S16 *)(n1 + bflength);
+	n2exp = (S16 *)(n2 + bflength);
 	/* add exp's */
 	big_setS16(rexp, (S16)(big_accessS16(n1exp) + big_accessS16(n2exp)));
 
@@ -1826,7 +1826,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 	int positive;
 	int bnl, bfl, rl;
 	int rexp;
-	S16 BIGDIST *n1exp, BIGDIST *n2exp;
+	S16 *n1exp, *n2exp;
 
 	if (is_bf_zero(n1) || is_bf_zero(n2))
 	{
@@ -1834,8 +1834,8 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 		return r;
 	}
 
-	n1exp = (S16 BIGDIST *)(n1 + bflength);
-	n2exp = (S16 BIGDIST *)(n2 + bflength);
+	n1exp = (S16 *)(n1 + bflength);
+	n2exp = (S16 *)(n2 + bflength);
 	/* add exp's */
 	rexp = big_accessS16(n1exp) + big_accessS16(n2exp);
 
@@ -1872,7 +1872,7 @@ bf_t unsafe_mult_bf(bf_t r, bf_t n1, bf_t n2)
 bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 {
 	int bnl, dbfl;
-	S16 BIGDIST *rexp, BIGDIST *nexp;
+	S16 *rexp, *nexp;
 
 	if (is_bf_zero(n))
 	{
@@ -1883,8 +1883,8 @@ bf_t unsafe_full_square_bf(bf_t r, bf_t n)
 	}
 
 	dbfl = 2*bflength; /* double width bflength */
-	rexp  = (S16 BIGDIST *)(r + dbfl); /* note: 2*bflength */
-	nexp = (S16 BIGDIST *)(n + bflength);
+	rexp  = (S16 *)(r + dbfl); /* note: 2*bflength */
+	nexp = (S16 *)(n + bflength);
 	big_setS16(rexp, 2*big_accessS16(nexp));
 
 	bnl = bnlength;
@@ -1914,7 +1914,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 {
 	int bnl, bfl, rl;
 	int rexp;
-	S16 BIGDIST *nexp;
+	S16 *nexp;
 
 	if (is_bf_zero(n))
 	{
@@ -1922,7 +1922,7 @@ bf_t unsafe_square_bf(bf_t r, bf_t n)
 		return r;
 	}
 
-	nexp = (S16 BIGDIST *)(n + bflength);
+	nexp = (S16 *)(n + bflength);
 	rexp = (S16)(2*big_accessS16(nexp));
 
 	bnl = bnlength;
@@ -1951,10 +1951,10 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 {
 	int positive;
 	int bnl;
-	S16 BIGDIST *rexp, BIGDIST *nexp;
+	S16 *rexp, *nexp;
 
-	rexp = (S16 BIGDIST *)(r + bflength);
-	nexp = (S16 BIGDIST *)(n + bflength);
+	rexp = (S16 *)(r + bflength);
+	nexp = (S16 *)(n + bflength);
 	big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
 	positive = !is_bf_neg(n);
@@ -1985,9 +1985,9 @@ bf_t mult_a_bf_int(bf_t r, U16 u)
 {
 	int positive;
 	int bnl;
-	S16 BIGDIST *rexp;
+	S16 *rexp;
 
-	rexp = (S16 BIGDIST *)(r + bflength);
+	rexp = (S16 *)(r + bflength);
 	positive = !is_bf_neg(r);
 
 /*
@@ -2015,7 +2015,7 @@ multiplication is performed.
 bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
 {
 	int bnl;
-	S16 BIGDIST *rexp, BIGDIST *nexp;
+	S16 *rexp, *nexp;
 
 	if (u == 0) /* division by zero */
 	{
@@ -2027,8 +2027,8 @@ bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
 		return r;
 	}
 
-	rexp = (S16 BIGDIST *)(r + bflength);
-	nexp = (S16 BIGDIST *)(n + bflength);
+	rexp = (S16 *)(r + bflength);
+	nexp = (S16 *)(n + bflength);
 	big_setS16(rexp, big_accessS16(nexp)); /* *rexp = *nexp; */
 
 	bnl = bnlength;
