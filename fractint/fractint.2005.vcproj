@@ -251,10 +251,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\win32\fracsuba.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\win32\FractInt.ico"
 				>
 			</File>
@@ -353,6 +349,10 @@
 				</File>
 				<File
 					RelativePath=".\common\EscapeTime.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\fracsuba.cpp"
 					>
 				</File>
 				<File

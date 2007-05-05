@@ -404,13 +404,6 @@ int asm386lORbailout() { return 0; }
 int asm386lANDbailout() { return 0; }
 int asm386lMANHbailout() { return 0; }
 int asm386lMANRbailout() { return 0; }
-int bail_out_mod_fp_asm() { return 0; }
-int bail_out_real_fp_asm() { return 0; }
-int bail_out_imag_fp_asm() { return 0; }
-int bail_out_or_fp_asm() { return 0; }
-int bail_out_and_fp_asm() { return 0; }
-int bail_out_manhattan_fp_asm() { return 0; }
-int bail_out_manhattan_r_fp_asm() { return 0; }
 #endif
 
 /* -------------------------------------------------------------------- */
