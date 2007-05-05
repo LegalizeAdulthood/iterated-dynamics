@@ -1,6 +1,8 @@
 #if !defined(RAYTRACE_STATE_H)
 #define RAYTRACE_STATE_H
 
+#include "CommandParser.h"
+
 /* RayTraceState::raytrace_output() values */
 #define RAYTRACE_NONE		0
 #define RAYTRACE_POVRAY		1

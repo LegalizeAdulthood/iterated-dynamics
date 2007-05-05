@@ -36,12 +36,6 @@ typedef BYTE BOOLEAN;
 #define DISPLAY3D_YES		1
 #define DISPLAY3D_OVERLAY	2
 
-/* g_sound_state.m_note_attenuation values */
-#define ATTENUATE_NONE		0
-#define ATTENUATE_LOW		1
-#define ATTENUATE_MIDDLE	2
-#define ATTENUATE_HIGH		3
-
 /* g_ifs_type values */
 #define IFSTYPE_2D 0
 #define IFSTYPE_3D 1
@@ -1375,24 +1369,6 @@ struct UserInterfaceState
 {
 	bool double_caution;			/* confirm for deleting */
 	bool ask_video;					/* flag for video prompting */
-};
-
-struct cmd_context
-{
-	const char *curarg;
-	int     yesnoval[16];                /* 0 if 'n', 1 if 'y', -1 if not */
-	int     numval;                      /* numeric value of arg      */
-	char    *value;                      /* pointer to variable value */
-	char    charval[16];                 /* first character of arg    */
-	int     totparms;                    /* # of / delimited parms    */
-	int     valuelen;                    /* length of value           */
-	int mode;
-	const char *variable;
-	int     intval[64];                  /* pre-parsed integer parms  */
-	double  floatval[16];                /* pre-parsed floating parms */
-	char    *floatvalstr[16];            /* pointers to float vals */
-	int     intparms;                    /* # of / delimited ints     */
-	int     floatparms;                  /* # of / delimited floats   */
 };
 
 #endif
