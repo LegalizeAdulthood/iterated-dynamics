@@ -396,16 +396,6 @@ int bail_out_manhattan_r_fp()
 	}									\
 	while (0)
 
-#if defined(XFRACT)
-int asm386lMODbailout() { return 0; }
-int asm386lREALbailout() { return 0; }
-int asm386lIMAGbailout() { return 0; }
-int asm386lORbailout() { return 0; }
-int asm386lANDbailout() { return 0; }
-int asm386lMANHbailout() { return 0; }
-int asm386lMANRbailout() { return 0; }
-#endif
-
 /* -------------------------------------------------------------------- */
 /*              Fractal (once per iteration) routines                   */
 /* -------------------------------------------------------------------- */
