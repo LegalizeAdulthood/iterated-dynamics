@@ -603,8 +603,8 @@ extern int    EnQueueFloat(float,  float);
 
 /*  line3d -- C file prototypes */
 
-extern int line3d(BYTE *, unsigned int);
-extern int _fastcall targa_color(int, int, int);
+extern int line3d(BYTE *, int);
+extern int targa_color(int, int, int);
 extern int start_disk1(char *, FILE *, int);
 extern void line_3d_free();
 
@@ -1051,24 +1051,6 @@ extern void tga_reopen();
 extern int test_start();
 extern void test_end();
 extern int test_per_pixel(double, double, double, double, long, int);
-
-/*  tga_view -- C file prototypes */
-
-extern int tga_view();
-extern int out_line_16(BYTE*, int);
-
-/*  yourvid -- C file prototypes */
-
-//extern int startvideo();
-//extern int endvideo();
-//extern void writevideo(int, int, int);
-//extern int readvideo(int, int);
-//extern int readvideopalette();
-//extern int writevideopalette();
-#ifdef XFRACT
-//extern void readvideoline(int, int, int, BYTE *);
-//extern void writevideoline(int, int, int, BYTE *);
-#endif
 
 /*  zoom -- C file prototypes */
 

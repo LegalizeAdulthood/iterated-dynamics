@@ -30,6 +30,9 @@ typedef BYTE BOOLEAN;
 
 #define COLOR_CHANNEL_MAX 63
 
+/* g_file_type values */
+#define FILETYPE_GIF 0
+
 /* g_display_3d values */
 #define DISPLAY3D_GENERATED	-1
 #define DISPLAY3D_NONE		0
