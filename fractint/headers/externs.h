@@ -146,7 +146,6 @@ extern double				g_fiddle_factor;
 extern double				g_fiddle_reduction;
 extern float				g_file_aspect_ratio;
 extern int					g_file_colors;
-extern int					g_file_type;
 extern int					g_file_x_dots;
 extern int					g_file_y_dots;
 extern char					g_file_name_stack[16][FILE_MAX_FNAME];

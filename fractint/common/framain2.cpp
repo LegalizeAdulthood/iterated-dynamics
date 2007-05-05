@@ -55,7 +55,6 @@ int main_menu_switch(int*, int*, int*, int *stacked, int);
 int evolver_menu_switch(int*, int*, int*, int *stacked);
 int big_while_loop(int *kbdmore, int *stacked, int resumeflag);
 static void move_zoombox(int);
-static int call_line3d(BYTE *pixels, int linelen);
 static  void note_zoom();
 static  void restore_zoom();
 static  void move_zoombox(int keynum);
@@ -230,11 +229,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 			g_out_line_cleanup = NULL;          /* g_out_line routine can set this */
 			if (g_display_3d)                 /* set up 3D decoding */
 			{
-				g_out_line = call_line3d;
-			}
-			else if (g_file_type >= 1)         /* old .tga format input file */
-			{
-				g_out_line = out_line_16;
+				g_out_line = line3d;
 			}
 			else if (g_compare_gif)            /* debug 50 */
 			{
@@ -264,20 +259,13 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 			{
 				g_out_line = out_line;        /* regular decoding */
 			}
-			if (g_file_type == 0)
+			if (2224 == g_debug_flag)
 			{
-				if (2224 == g_debug_flag)
-				{
-					char msg[MESSAGE_LEN];
-					sprintf(msg, "floatflag=%d", g_user_float_flag);
-					stop_message(STOPMSG_NO_BUZZER, (char *)msg);
-				}
-				i = funny_glasses_call(gifview);
+				char msg[MESSAGE_LEN];
+				sprintf(msg, "floatflag=%d", g_user_float_flag);
+				stop_message(STOPMSG_NO_BUZZER, (char *)msg);
 			}
-			else
-			{
-				i = funny_glasses_call(tga_view);
-			}
+			i = funny_glasses_call(gifview);
 			if (g_out_line_cleanup)              /* cleanup routine defined? */
 			{
 				(*g_out_line_cleanup)();
@@ -2171,12 +2159,6 @@ int evolver_menu_switch(int *kbdchar, int *frommandel, int *kbdmore, int *stacke
 	}                            /* end of the big evolver switch */
 
 	return 0;
-}
-
-static int call_line3d(BYTE *pixels, int linelen)
-{
-	/* this routine exists because line3d might be in an overlay */
-	return line3d(pixels, linelen);
 }
 
 static void note_zoom()

@@ -40,7 +40,6 @@ static void translate_obsolete_fractal_types(struct fractal_info *info);
 static int fix_bof();
 static int fix_period_bof();
 
-int g_file_type;
 int g_loaded_3d;
 static FILE *fp;
 int g_file_y_dots, g_file_x_dots, g_file_colors;
@@ -672,7 +671,6 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 		return -1;
 	}
 
-	g_file_type = 0; /* GIF */
 	GET16(gifstart[6], g_file_x_dots);
 	GET16(gifstart[8], g_file_y_dots);
 	g_file_colors = 2 << (gifstart[10] & 7);

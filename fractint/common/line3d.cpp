@@ -51,11 +51,11 @@ struct minmax
 
 /* routines in this module */
 int line3d(BYTE *, unsigned);
-int _fastcall targa_color(int, int, int);
+int targa_color(int, int, int);
 int start_disk1(char *, FILE *, int);
 
 /* global variables defined here */
-void (_fastcall *g_standard_plot)(int x, int y, int color) = NULL;
+void (*g_standard_plot)(int x, int y, int color) = NULL;
 
 char g_light_name[FILE_MAX_PATH] = "fract001";
 int g_targa_overlay = 0;
@@ -79,24 +79,24 @@ static int line_3d_mem();
 static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static int set_pixel_buff(BYTE *, BYTE *, unsigned);
 static void set_upr_lwr();
-static int _fastcall end_object(int);
-static int _fastcall off_screen(struct point);
-static int _fastcall out_triangle(const struct f_point, const struct f_point, const struct f_point, int, int, int);
-static int _fastcall raytrace_header();
-static int _fastcall start_object();
+static int end_object(int);
+static int off_screen(struct point);
+static int out_triangle(const struct f_point, const struct f_point, const struct f_point, int, int, int);
+static int raytrace_header();
+static int start_object();
 static void corners(MATRIX, int, double *, double *, double *, double *, double *, double *);
 static void draw_light_box(double *, double *, MATRIX);
 static void draw_rect(VECTOR, VECTOR, VECTOR, VECTOR, int, int);
 static void line3d_cleanup();
-static void _fastcall clip_color(int, int, int);
-static void _fastcall interp_color(int, int, int);
-static void _fastcall put_a_triangle(struct point, struct point, struct point, int);
-static void _fastcall put_minmax(int, int, int);
-static void _fastcall triangle_bounds(float pt_t[3][3]);
-static void _fastcall transparent_clip_color(int, int, int);
-static void _fastcall vdraw_line(double *, double *, int color);
-static void (_fastcall *fill_plot)(int, int, int);
-static void (_fastcall *normal_plot)(int, int, int);
+static void clip_color(int, int, int);
+static void interp_color(int, int, int);
+static void put_a_triangle(struct point, struct point, struct point, int);
+static void put_minmax(int, int, int);
+static void triangle_bounds(float pt_t[3][3]);
+static void transparent_clip_color(int, int, int);
+static void vdraw_line(double *, double *, int color);
+static void (*fill_plot)(int, int, int);
+static void (*normal_plot)(int, int, int);
 static void file_error(const char *filename, int code);
 
 /* static variables */
@@ -294,16 +294,8 @@ static int line3d_non_sphere(int col,
 		lv[0] = lv[0] << 16;
 		lv[1] = g_current_row;
 		lv[1] = lv[1] << 16;
-		if (g_file_type || g_potential_16bit) /* don't truncate fractional part */
-		{
-			lv[2] = (long) (f_cur->color*65536.0);
-		}
-		else
-			/* there IS no fractional part here! */
-		{
-			lv[2] = (long) f_cur->color;
-			lv[2] = lv[2] << 16;
-		}
+		lv[2] = (long) f_cur->color;
+		lv[2] = lv[2] << 16;
 
 		if (longvmultpersp(lv, s_lm, lv0, lv, s_lview, 16) == -1)
 		{
@@ -727,7 +719,7 @@ static void line3d_fill(int col, int next, int last_dot, int cross_not_init,
 	}
 }
 
-int line3d(BYTE *pixels, unsigned linelen)
+int line3d(BYTE *pixels, int linelen)
 {
 	int tout;                    /* triangle has been sent to ray trace file */
 	float f_water = 0.0f;        /* transformed WATERLINE for ray trace files */
@@ -1003,7 +995,7 @@ reallythebottom:
 }
 
 /* vector version of line draw */
-static void _fastcall vdraw_line(double *v1, double *v2, int color)
+static void vdraw_line(double *v1, double *v2, int color)
 {
 	int x1, y1, x2, y2;
 	x1 = (int) v1[0];
@@ -1245,7 +1237,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 
 /* replacement for plot - builds a table of min and max x's instead of plot */
 /* called by draw_line as part of triangle fill routine */
-static void _fastcall put_minmax(int x, int y, int color)
+static void put_minmax(int x, int y, int color)
 {
 	color = 0; /* to supress warning only */
 	if (y >= 0 && y < g_y_dots)
@@ -1268,7 +1260,7 @@ static void _fastcall put_minmax(int x, int y, int color)
 */
 #define MAXOFFSCREEN  2    /* allow two of three points to be off screen */
 
-static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct point pt3, int color)
+static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3, int color)
 {
 	int miny, maxy;
 	int xlim;
@@ -1360,7 +1352,7 @@ static void _fastcall put_a_triangle(struct point pt1, struct point pt2, struct 
 	g_plot_color = normal_plot;
 }
 
-static int _fastcall off_screen(struct point pt)
+static int off_screen(struct point pt)
 {
 	if ((pt.x >= 0) && (pt.x < g_x_dots) && (pt.y >= 0) && (pt.y < g_y_dots))
 	{
@@ -1374,7 +1366,7 @@ static int _fastcall off_screen(struct point pt)
 	return 1;                  /* point is off the screen */
 }
 
-static void _fastcall clip_color(int x, int y, int color)
+static void clip_color(int x, int y, int color)
 {
 	if (0 <= x && x < g_x_dots &&
 		0 <= y && y < g_y_dots &&
@@ -1400,7 +1392,7 @@ static void _fastcall clip_color(int x, int y, int color)
 /* has been enabled.                                                 */
 /*********************************************************************/
 
-static void _fastcall transparent_clip_color(int x, int y, int color)
+static void transparent_clip_color(int x, int y, int color)
 {
 	if (0 <= x && x < g_x_dots &&   /* is the point on screen?  */
 		0 <= y && y < g_y_dots &&   /* Yes?  */
@@ -1430,7 +1422,7 @@ static void _fastcall transparent_clip_color(int x, int y, int color)
 /*      s_real_color always contains the actual color                     */
 /************************************************************************/
 
-static void _fastcall interp_color(int x, int y, int color)
+static void interp_color(int x, int y, int color)
 {
 	int D, d1, d2, d3;
 
@@ -1495,7 +1487,7 @@ static void _fastcall interp_color(int x, int y, int color)
 		and plots it in a Targa file. Used in plot3d.c
 */
 
-int _fastcall targa_color(int x, int y, int color)
+int targa_color(int x, int y, int color)
 {
 	unsigned long H, S, V;
 	BYTE RGB[3];
@@ -1977,7 +1969,7 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 /*                                                                  */
 /********************************************************************/
 
-static int _fastcall raytrace_header()
+static int raytrace_header()
 {
 	/* Open the ray tracing output file */
 	g_raytrace_state.next_ray_name();
@@ -2114,7 +2106,7 @@ static int _fastcall raytrace_header()
 /*                                                                  */
 /********************************************************************/
 
-static int _fastcall out_triangle(const struct f_point pt1,
+static int out_triangle(const struct f_point pt1,
 								  const struct f_point pt2,
 								  const struct f_point pt3,
 								  int c1, int c2, int c3)
@@ -2303,7 +2295,7 @@ static int _fastcall out_triangle(const struct f_point pt1,
 /*                                                                  */
 /********************************************************************/
 
-static void _fastcall triangle_bounds(float pt_t[3][3])
+static void triangle_bounds(float pt_t[3][3])
 {
 	for (int i = 0; i <= 2; i++)
 	{
@@ -2328,7 +2320,7 @@ static void _fastcall triangle_bounds(float pt_t[3][3])
 /*                                                                  */
 /********************************************************************/
 
-static int _fastcall start_object()
+static int start_object()
 {
 	if (g_raytrace_state.raytrace_output() != RAYTRACE_POVRAY)
 	{
@@ -2352,7 +2344,7 @@ static int _fastcall start_object()
 /*                                                                  */
 /********************************************************************/
 
-static int _fastcall end_object(int triout)
+static int end_object(int triout)
 {
 	if (g_raytrace_state.raytrace_output() == RAYTRACE_DXF)
 	{
