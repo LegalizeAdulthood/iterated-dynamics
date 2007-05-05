@@ -24,6 +24,12 @@
 
 #if !defined(XFRACT)
 
+struct MPC g_one_mpc =
+{
+	{ 0x3fff, 0x80000000L },
+    { 0, 0L }
+};
+
 struct MP *MPsub(struct MP x, struct MP y)
 {
 	y.Exp ^= 0x8000;
@@ -48,23 +54,23 @@ struct MPC MPCsqr(struct MPC x)
 {
 	struct MPC z;
 
-		z.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
-		z.y = *pMPmul(x.x, x.y);
-		z.y.Exp++;
+	z.x = *pMPsub(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
+	z.y = *pMPmul(x.x, x.y);
+	z.y.Exp++;
 	return z;
 }
 
 struct MP MPCmod(struct MPC x)
 {
-		return *pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
+	return *pMPadd(*pMPmul(x.x, x.x), *pMPmul(x.y, x.y));
 }
 
 struct MPC MPCmul(struct MPC x, struct MPC y)
 {
 	struct MPC z;
 
-		z.x = *pMPsub(*pMPmul(x.x, y.x), *pMPmul(x.y, y.y));
-		z.y = *pMPadd(*pMPmul(x.x, y.y), *pMPmul(x.y, y.x));
+	z.x = *pMPsub(*pMPmul(x.x, y.x), *pMPmul(x.y, y.y));
+	z.y = *pMPadd(*pMPmul(x.x, y.y), *pMPmul(x.y, y.x));
 	return z;
 }
 
@@ -73,9 +79,9 @@ struct MPC MPCdiv(struct MPC x, struct MPC y)
 	struct MP mod;
 
 	mod = MPCmod(y);
-		y.y.Exp ^= 0x8000;
-		y.x = *pMPdiv(y.x, mod);
-		y.y = *pMPdiv(y.y, mod);
+	y.y.Exp ^= 0x8000;
+	y.x = *pMPdiv(y.x, mod);
+	y.y = *pMPdiv(y.y, mod);
 	return MPCmul(x, y);
 }
 
@@ -83,8 +89,8 @@ struct MPC MPCadd(struct MPC x, struct MPC y)
 {
 	struct MPC z;
 
-		z.x = *pMPadd(x.x, y.x);
-		z.y = *pMPadd(x.y, y.y);
+	z.x = *pMPadd(x.x, y.x);
+	z.y = *pMPadd(x.y, y.y);
 	return z;
 }
 
@@ -92,15 +98,10 @@ struct MPC MPCsub(struct MPC x, struct MPC y)
 {
 	struct MPC z;
 
-		z.x = *pMPsub(x.x, y.x);
-		z.y = *pMPsub(x.y, y.y);
+	z.x = *pMPsub(x.x, y.x);
+	z.y = *pMPsub(x.y, y.y);
 	return z;
 }
-
-struct MPC g_one_mpc = {
-	{0x3fff, 0x80000000l},
-    {0, 0l}
-};
 
 struct MPC MPCpow(struct MPC x, int exp)
 {
@@ -146,8 +147,8 @@ _CMPLX MPC2cmplx(struct MPC x)
 {
 	_CMPLX z;
 
-		z.x = *pMP2d(x.x);
-		z.y = *pMP2d(x.y);
+	z.x = *pMP2d(x.x);
+	z.y = *pMP2d(x.y);
 	return z;
 }
 
@@ -155,8 +156,8 @@ struct MPC cmplx2MPC(_CMPLX z)
 {
 	struct MPC x;
 
-		x.x = *pd2MP(z.x);
-		x.y = *pd2MP(z.y);
+	x.x = *pd2MP(z.x);
+	x.y = *pd2MP(z.y);
 	return x;
 }
 
@@ -205,22 +206,17 @@ _CMPLX ComplexPower(_CMPLX xx, _CMPLX yy)
 	return z;
 }
 
-/*
-
-  The following Complex function routines added by Tim Wegner November 1994.
-
-*/
-
 #define Sqrtz(z, rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
 
 /* rz=Arcsin(z)=-i*Log{i*z + sqrt(1-z*z)} */
 void Arcsinz(_CMPLX z, _CMPLX *rz)
 {
-	_CMPLX tempz1, tempz2;
+	_CMPLX tempz1;
+	_CMPLX tempz2;
 
 	FPUcplxmul(&z, &z, &tempz1);
 	tempz1.x = 1 - tempz1.x;
-	tempz1.y = -tempz1.y;  /* tempz1 = 1 - tempz1 */
+	tempz1.y = -tempz1.y;			/* tempz1 = 1 - tempz1 */
 	Sqrtz(tempz1, &tempz1);
 
 	tempz2.x = -z.y; tempz2.y = z.x;                /* tempz2 = i*z  */
@@ -238,16 +234,16 @@ void Arccosz(_CMPLX z, _CMPLX *rz)
 	_CMPLX temp;
 
 	FPUcplxmul(&z, &z, &temp);
-	temp.x -= 1;                                 /* temp = temp - 1 */
+	temp.x -= 1;
 	Sqrtz(temp, &temp);
 
 	temp.x += z.x;
-	temp.y += z.y;                /* temp = z + temp */
+	temp.y += z.y;
 
 	FPUcplxlog(&temp, &temp);
 	rz->x = temp.y;
 	rz->y = -temp.x;              /* rz = (-i)*tempz1 */
-}   /* end. Arccosz */
+}
 
 void Arcsinhz(_CMPLX z, _CMPLX *rz)
 {

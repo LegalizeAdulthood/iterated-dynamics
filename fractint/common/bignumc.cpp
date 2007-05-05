@@ -91,8 +91,8 @@ int cmp_bn(bn_t n1, bn_t n2)
 
 	/* two bytes at a time */
 	/* signed comparison for msb */
-	Svalue1 = big_accessS16((S16 BIGDIST *)(n1 + bnlength-2));
-	Svalue2 = big_accessS16((S16 BIGDIST *)(n2 + bnlength-2));
+	Svalue1 = big_accessS16((S16 *)(n1 + bnlength-2));
+	Svalue2 = big_accessS16((S16 *)(n2 + bnlength-2));
 	if (Svalue1 > Svalue2)
 	{
 		/* now determine which of the two bytes was different */
@@ -241,7 +241,7 @@ bn_t neg_bn(bn_t r, bn_t n)
 	/* if neg was 0, then just "not" the rest */
 	for (; i < bnlength; i += 2)
 	{ /* notice that big_access16() and big_set16() are not needed here */
-		*(U16 BIGDIST *)(r + i) = ~*(U16 BIGDIST *)(n + i); /* toggle all the bits */
+		*(U16 *)(r + i) = ~*(U16 *)(n + i); /* toggle all the bits */
 	}
 	return r;
 }
@@ -265,7 +265,7 @@ bn_t neg_a_bn(bn_t r)
 	/* if neg was 0, then just "not" the rest */
 	for (; i < bnlength; i += 2)
 	{ /* notice that big_access16() and big_set16() are not needed here */
-		*(U16 BIGDIST *)(r + i) = ~*(U16 BIGDIST *)(r + i); /* toggle all the bits */
+		*(U16 *)(r + i) = ~*(U16 *)(r + i); /* toggle all the bits */
 	}
 	return r;
 }

@@ -31,14 +31,13 @@
 /* use this for dynamic allocation */
 #ifdef BIG_ANSI_C
 #define USE_BIGNUM_C_CODE
-#define BIGDIST
 #define BIG_NULL            NULL
 #define BIG_SIZE_T          size_t
 #define big_malloc(size)    malloc(size)
 #define big_free(ptr)       free(ptr)
 #endif
 
-typedef unsigned char BIGDIST * big_t;
+typedef unsigned char * big_t;
 #define bn_t   big_t  /* for clarification purposes */
 #define bf_t   big_t
 #define bf10_t big_t
@@ -65,23 +64,47 @@ extern int g_cpu;
 
 extern int g_bf_math;
 
-extern int bnstep, intlength;
-extern int bnlength, rlength,   padding,   g_decimals,   shiftfactor;
-extern int bflength, rbflength, bfpadding, bfdecimals;
+extern int bnstep;
+extern int intlength;
+extern int bnlength;
+extern int rlength;
+extern int padding;
+extern int g_decimals;
+extern int shiftfactor;
+extern int bflength;
+extern int rbflength;
+extern int bfpadding;
+extern int bfdecimals;
 
-extern bn_t bntmp1, bntmp2, bntmp3, bntmp4, bntmp5, bntmp6;  /* rlength */
-extern bn_t bntest1, bntest2, bntest3;                       /* rlength */
-extern bn_t bntmpcpy1, bntmpcpy2;                            /* bnlength */
+extern bn_t bntmp1;
+extern bn_t bntmp2;
+extern bn_t bntmp3;
+extern bn_t bntmp4;
+extern bn_t bntmp5;
+extern bn_t bntmp6;							/* rlength */
+extern bn_t bntest1;
+extern bn_t bntest2;
+extern bn_t bntest3;						/* rlength */
+extern bn_t bntmpcpy1;
+extern bn_t bntmpcpy2;						/* bnlength */
 extern bn_t bn_pi;
-extern bn_t bntmp;                                           /* rlength  */
+extern bn_t bntmp;							/* rlength  */
 
-extern bf_t bftmp1, bftmp2, bftmp3, bftmp4, bftmp5, bftmp6;  /* rbflength+2 */
-extern bf_t bftest1, bftest2, bftest3;                       /* rbflength+2 */
-extern bf_t bftmpcpy1, bftmpcpy2;                            /* bflength+2  */
+extern bf_t bftmp1;
+extern bf_t bftmp2;
+extern bf_t bftmp3;
+extern bf_t bftmp4;
+extern bf_t bftmp5;
+extern bf_t bftmp6;							/* rbflength+2 */
+extern bf_t bftest1;
+extern bf_t bftest2;
+extern bf_t bftest3;						/* rbflength+2 */
+extern bf_t bftmpcpy1;
+extern bf_t bftmpcpy2;						/* bflength+2  */
 extern bf_t bf_pi;
-extern bf_t bftmp;                                           /* rbflength  */
+extern bf_t bftmp;							/* rbflength  */
 
-extern bf10_t bf10tmp;                                            /* dec+4 */
+extern bf10_t bf10tmp;						/* dec+4 */
 extern big_t big_pi;
 
 
@@ -134,20 +157,20 @@ extern LDBL scale_256( LDBL f, int n );
 /* functions defined in bignum.c */
 #ifdef ACCESS_BY_BYTE
 /* prototypes */
-extern U32 big_access32(BYTE BIGDIST *addr);
-extern U16 big_access16(BYTE BIGDIST *addr);
-extern S16 big_accessS16(S16 BIGDIST *addr);
-extern U32 big_set32(BYTE BIGDIST *addr, U32 val);
-extern U16 big_set16(BYTE BIGDIST *addr, U16 val);
-extern S16 big_setS16(S16 BIGDIST *addr, S16 val);
+extern U32 big_access32(BYTE *addr);
+extern U16 big_access16(BYTE *addr);
+extern S16 big_accessS16(S16 *addr);
+extern U32 big_set32(BYTE *addr, U32 val);
+extern U16 big_set16(BYTE *addr, U16 val);
+extern S16 big_setS16(S16 *addr, S16 val);
 #else
 /* equivalent defines */
-#define big_access32(addr)   (*(U32 BIGDIST *)(addr))
-#define big_access16(addr)   (*(U16 BIGDIST *)(addr))
-#define big_accessS16(addr)   (*(S16 BIGDIST *)(addr))
-#define big_set32(addr, val) (*(U32 BIGDIST *)(addr) = (U32)(val))
-#define big_set16(addr, val) (*(U16 BIGDIST *)(addr) = (U16)(val))
-#define big_setS16(addr, val) (*(S16 BIGDIST *)(addr) = (S16)(val))
+#define big_access32(addr)   (*(U32 *)(addr))
+#define big_access16(addr)   (*(U16 *)(addr))
+#define big_accessS16(addr)   (*(S16 *)(addr))
+#define big_set32(addr, val) (*(U32 *)(addr) = (U32)(val))
+#define big_set16(addr, val) (*(U16 *)(addr) = (U16)(val))
+#define big_setS16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
 
 extern void bn_hexdump(bn_t r);
