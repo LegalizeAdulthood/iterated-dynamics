@@ -10,6 +10,7 @@
 #include "fihelp.h"
 #include "SoundState.h"
 #include "drivers.h"
+#include "CommandParser.h"
 
 #define KEYON    0x20     /* 0010 0000 key-on bit in regs b0 - b8 */
 
@@ -970,7 +971,7 @@ int SoundState::parse_command(const cmd_context &context)
 			}
 		}
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 void SoundState::orbit(double x, double y, double z)

@@ -22,6 +22,7 @@
 #include "fihelp.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
+#include "CommandParser.h"
 
 #if 0
 /* makes a handly list of jul-man pairs, not for release */
@@ -830,7 +831,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		&& !g_true_color /* recalc not yet implemented with truecolor */
 		&& !(g_user_standard_calculation_mode == 't' && g_fill_color > -1) /* tesseral with fill doesn't work */
 		&& !(g_user_standard_calculation_mode == 'o')
-		&& i == COMMAND_FRACTAL_PARAM /* nothing else changed */
+		&& i == Command::FractalParameter /* nothing else changed */
 		&& g_outside != ATAN)
 	{
 		g_quick_calculate = TRUE;
@@ -882,7 +883,7 @@ static void handle_evolver_options(int kbdchar, int *kbdmore)
 	{
 		g_true_color = 0; /* truecolor doesn't play well with the evolver */
 	}
-	if (i > COMMAND_OK)              /* time to redraw? */
+	if (i > Command::OK)              /* time to redraw? */
 	{
 		save_parameter_history();
 		*kbdmore = 0;
@@ -899,7 +900,7 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 	{                         /* video= was specified */
 		g_adapter = g_init_mode;
 		g_init_mode = -1;
-		i |= COMMAND_FRACTAL_PARAM;
+		i |= Command::FractalParameter;
 		g_save_dac = SAVEDAC_NO;
 	}
 	else if (g_color_preloaded)
@@ -907,17 +908,17 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 		spindac(0, 1);
 		g_color_preloaded = FALSE;
 	}
-	else if (i & COMMAND_RESET)         /* reset was specified */
+	else if (i & Command::Reset)         /* reset was specified */
 	{
 		g_save_dac = SAVEDAC_NO;
 	}
-	if (i & COMMAND_3D_YES)
+	if (i & Command::ThreeDYes)
 	{                         /* 3d = was specified */
 		*kbdchar = '3';
 		driver_unstack_screen();
 		return TRUE;
 	}
-	if (i & COMMAND_FRACTAL_PARAM)
+	if (i & Command::FractalParameter)
 	{                         /* fractal parameter changed */
 		driver_discard_screen();
 		*kbdmore = 0;
