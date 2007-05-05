@@ -9,6 +9,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "RayTraceState.h"
 
 /* Use these palette indices for red/blue - same on ega/vga */
 #define PAL_BLUE    1
@@ -22,8 +23,6 @@ int g_eye_separation = 0;
 int g_glasses_type = STEREO_NONE;
 int g_x_shift1;
 int g_y_shift1;
-int g_x_trans = 0;
-int g_y_trans = 0;
 int g_red_crop_left   = 4;
 int g_red_crop_right  = 0;
 int g_blue_crop_left  = 0;
@@ -274,7 +273,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 			g_put_color(x, y, color|(tmp&240));
 			if (g_targa_output)
 			{
-				if (!ILLUMINE)
+				if (!(g_raytrace_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color|(tmp&240));
 				}
@@ -294,7 +293,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 			g_put_color(x, y, color|(tmp&15));
 			if (g_targa_output)
 			{
-				if (!ILLUMINE)
+				if (!(g_raytrace_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color|(tmp&15));
 				}
@@ -335,7 +334,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 			g_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
-				if (!ILLUMINE)
+				if (!(g_raytrace_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color|tmp);
 				}
@@ -354,7 +353,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 			g_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
-				if (!ILLUMINE)
+				if (!(g_raytrace_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color|tmp);
 				}
@@ -385,7 +384,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 			g_put_color(x, y, color >> 1);
 			if (g_targa_output)
 			{
-				if (!ILLUMINE)
+				if (!(g_raytrace_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color >> 1);
 				}
@@ -403,7 +402,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 			g_put_color(x, y, (color >> 1) + (g_colors >> 1));
 			if (g_targa_output)
 			{
-				if (!ILLUMINE)
+				if (!(g_raytrace_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, (color >> 1) + (g_colors >> 1));
 				}
@@ -485,10 +484,10 @@ void plot_setup()
 	case STEREO_PAIR: /* crosseyed mode */
 		if (g_screen_width < 2*g_x_dots)
 		{
-			g_standard_plot = (XROT == 0 && YROT == 0) ? /* use hidden surface kludge */
+			g_standard_plot = (g_raytrace_state.x_rot() == 0 && g_raytrace_state.y_rot() == 0) ? /* use hidden surface kludge */
 				plot3dcrosseyedA : plot3dcrosseyedB;
 		}
-		else if (XROT == 0 && YROT == 0)
+		else if (g_raytrace_state.x_rot() == 0 && g_raytrace_state.y_rot() == 0)
 		{
 			g_standard_plot = plot3dcrosseyedC; /* use hidden surface kludge */
 		}
@@ -504,8 +503,8 @@ void plot_setup()
 	}
 	assert(g_standard_plot);
 
-	g_x_shift1 = g_x_shift = (int) ((XSHIFT*(double) g_x_dots)/100);
-	g_y_shift1 = g_y_shift = (int) ((YSHIFT*(double) g_y_dots)/100);
+	g_x_shift1 = g_x_shift = (int) ((g_raytrace_state.x_shift()*(double) g_x_dots)/100);
+	g_y_shift1 = g_y_shift = (int) ((g_raytrace_state.y_shift()*(double) g_y_dots)/100);
 
 	if (g_glasses_type)
 	{
@@ -520,9 +519,9 @@ void plot_setup()
 		{
 		case WHICHIMAGE_RED:
 			g_x_shift  += (int) ((g_eye_separation*(double) g_x_dots)/200);
-			g_xx_adjust = (int) (((g_x_trans + g_x_adjust)*(double) g_x_dots)/100);
+			g_xx_adjust = (int) (((g_raytrace_state.m_x_trans + g_x_adjust)*(double) g_x_dots)/100);
 			g_x_shift1 -= (int) ((g_eye_separation*(double) g_x_dots)/200);
-			g_xx_adjust1 = (int) (((g_x_trans-g_x_adjust)*(double) g_x_dots)/100);
+			g_xx_adjust1 = (int) (((g_raytrace_state.m_x_trans-g_x_adjust)*(double) g_x_dots)/100);
 			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2 - g_x_dots;
@@ -531,7 +530,7 @@ void plot_setup()
 
 		case WHICHIMAGE_BLUE:
 			g_x_shift  -= (int) ((g_eye_separation* (double)g_x_dots)/200);
-			g_xx_adjust = (int) (((g_x_trans-g_x_adjust)* (double)g_x_dots)/100);
+			g_xx_adjust = (int) (((g_raytrace_state.m_x_trans-g_x_adjust)* (double)g_x_dots)/100);
 			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2;
@@ -541,9 +540,9 @@ void plot_setup()
 	}
 	else
 	{
-		g_xx_adjust = (int) ((g_x_trans* (double)g_x_dots)/100);
+		g_xx_adjust = (int) ((g_raytrace_state.m_x_trans* (double)g_x_dots)/100);
 	}
-	g_yy_adjust = (int) (-(g_y_trans* (double)g_y_dots)/100);
+	g_yy_adjust = (int) (-(g_raytrace_state.m_y_trans* (double)g_y_dots)/100);
 
 	if (g_map_set)
 	{

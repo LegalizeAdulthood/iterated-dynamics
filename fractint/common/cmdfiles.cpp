@@ -17,6 +17,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
+#include "RayTraceState.h"
 
 #define INIT_GIF87      0       /* Turn on GIF 89a processing  */
 #define NON_NUMERIC -32767
@@ -527,9 +528,9 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 
 static void initialize_variables_3d()               /* init vars affecting 3d */
 {
-	g_raytrace_output = RAYTRACE_NONE;
-	g_raytrace_brief   = 0;
-	SPHERE = FALSE;
+	g_raytrace_state.m_raytrace_output = RAYTRACE_NONE;
+	g_raytrace_state.m_raytrace_brief   = 0;
+	g_raytrace_state.set_sphere(false);
 	g_preview = 0;
 	g_show_box = 0;
 	g_x_adjust = 0;
@@ -544,7 +545,7 @@ static void initialize_variables_3d()               /* init vars affecting 3d */
 	g_red_bright     = 80;
 	g_blue_bright   = 100;
 	g_transparent[0] = g_transparent[1] = 0; /* no min/max transparency */
-	set_3d_defaults();
+	g_raytrace_state.set_defaults();
 }
 
 static void reset_ifs_definition()
@@ -2600,9 +2601,9 @@ static int rotation_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	XROT = context.intval[0];
-	YROT = context.intval[1];
-	ZROT = context.intval[2];
+	g_raytrace_state.set_x_rot(context.intval[0]);
+	g_raytrace_state.set_y_rot(context.intval[1]);
+	g_raytrace_state.set_z_rot(context.intval[2]);
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -2612,7 +2613,7 @@ static int perspective_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	ZVIEWER = context.numval;
+	g_raytrace_state.set_z_viewer(context.numval);
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -2622,8 +2623,8 @@ static int xy_shift_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	XSHIFT = context.intval[0];
-	YSHIFT = context.intval[1];
+	g_raytrace_state.set_x_shift(context.intval[0]);
+	g_raytrace_state.set_y_shift(context.intval[1]);
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -2673,8 +2674,8 @@ static int xy_adjust_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_x_trans = context.intval[0];
-	g_y_trans = context.intval[1];
+	g_raytrace_state.m_x_trans = context.intval[0];
+	g_raytrace_state.m_y_trans = context.intval[1];
 	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
 }
 
@@ -2704,11 +2705,11 @@ static int scale_xyz_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	XSCALE = context.intval[0];
-	YSCALE = context.intval[1];
+	g_raytrace_state.set_x_scale(context.intval[0]);
+	g_raytrace_state.set_y_scale(context.intval[1]);
 	if (context.totparms > 2)
 	{
-		ROUGH = context.intval[2];
+		g_raytrace_state.set_rough(context.intval[2]);
 	}
 	return COMMAND_3D_PARAM;
 }
@@ -2716,7 +2717,7 @@ static int scale_xyz_arg(const cmd_context &context)
 static int roughness_arg(const cmd_context &context)
 {
 	/* "rough" is really scale z, but we add it here for convenience */
-	ROUGH = context.numval;
+	g_raytrace_state.set_rough(context.numval);
 	return COMMAND_3D_PARAM;
 }
 
@@ -2726,17 +2727,17 @@ static int water_line_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	WATERLINE = context.numval;
+	g_raytrace_state.set_water_line(context.numval);
 	return COMMAND_3D_PARAM;
 }
 
 static int fill_type_arg(const cmd_context &context)
 {
-	if (context.numval < -1 || context.numval > 6)
+	if (context.numval < FillType::SurfaceGrid || context.numval > FillType::LightAfter)
 	{
 		return bad_arg(context.curarg);
 	}
-	FILLTYPE = context.numval;
+	g_raytrace_state.set_fill_type(context.numval);
 	return COMMAND_3D_PARAM;
 }
 
@@ -2746,9 +2747,9 @@ static int light_source_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	XLIGHT = context.intval[0];
-	YLIGHT = context.intval[1];
-	ZLIGHT = context.intval[2];
+	g_raytrace_state.set_x_light(context.intval[0]);
+	g_raytrace_state.set_y_light(context.intval[1]);
+	g_raytrace_state.set_z_light(context.intval[2]);
 	return COMMAND_3D_PARAM;
 }
 
@@ -2758,7 +2759,7 @@ static int smoothing_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	LIGHTAVG = context.numval;
+	g_raytrace_state.set_light_avg(context.numval);
 	return COMMAND_3D_PARAM;
 }
 
@@ -2768,8 +2769,8 @@ static int latitude_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	THETA1 = context.intval[0];
-	THETA2 = context.intval[1];
+	g_raytrace_state.set_theta1(context.intval[0]);
+	g_raytrace_state.set_theta2(context.intval[1]);
 	return COMMAND_3D_PARAM;
 }
 
@@ -2779,8 +2780,8 @@ static int longitude_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	PHI1 = context.intval[0];
-	PHI2 = context.intval[1];
+	g_raytrace_state.set_phi1(context.intval[0]);
+	g_raytrace_state.set_phi2(context.intval[1]);
 	return COMMAND_3D_PARAM;
 }
 
@@ -2790,7 +2791,7 @@ static int radius_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	RADIUS = context.numval;
+	g_raytrace_state.set_radius(context.numval);
 	return COMMAND_3D_PARAM;
 }
 
@@ -2824,7 +2825,7 @@ static int randomize_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_randomize = context.numval;
+	g_raytrace_state.m_randomize_colors = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -2834,7 +2835,7 @@ static int ambient_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_ambient = context.numval;
+	g_raytrace_state.m_ambient = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -2844,7 +2845,7 @@ static int haze_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_haze = context.numval;
+	g_raytrace_state.m_haze = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -2887,9 +2888,9 @@ static int background_arg(const cmd_context &context)
 			return bad_arg(context.curarg);
 		}
 	}
-	g_back_color[0] = (BYTE)context.intval[0];
-	g_back_color[1] = (BYTE)context.intval[1];
-	g_back_color[2] = (BYTE)context.intval[2];
+	g_raytrace_state.m_background_color[0] = (BYTE)context.intval[0];
+	g_raytrace_state.m_background_color[1] = (BYTE)context.intval[1];
+	g_raytrace_state.m_background_color[2] = (BYTE)context.intval[2];
 	return COMMAND_3D_PARAM;
 }
 
@@ -2912,7 +2913,7 @@ static int ray_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_raytrace_output = context.numval;
+	g_raytrace_state.m_raytrace_output = context.numval;
 	return COMMAND_3D_PARAM;
 }
 
@@ -2978,7 +2979,10 @@ static int is_mand_arg(const cmd_context &context)
 
 static int sphere_arg(const cmd_context &context)
 {
-	return flag_arg(context, &SPHERE, COMMAND_3D_PARAM);
+	bool flag = false;
+	int result = flag_arg(context, flag, COMMAND_3D_PARAM);
+	g_raytrace_state.set_sphere(flag);
+	return result;
 }
 
 static int preview_arg(const cmd_context &context)
@@ -3013,7 +3017,7 @@ static int targa_overlay_arg(const cmd_context &context)
 
 static int brief_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_raytrace_brief, COMMAND_3D_PARAM);
+	return flag_arg(context, &g_raytrace_state.m_raytrace_brief, COMMAND_3D_PARAM);
 }
 
 static int screencoords_arg(const cmd_context &context)
@@ -3614,48 +3618,6 @@ static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 	{
 		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED;
 		goodbye();
-	}
-}
-
-void set_3d_defaults()
-{
-	ROUGH     = 30;
-	WATERLINE = 0;
-	ZVIEWER   = 0;
-	XSHIFT    = 0;
-	YSHIFT    = 0;
-	g_x_trans    = 0;
-	g_y_trans    = 0;
-	LIGHTAVG  = 0;
-	g_ambient   = 20;
-	g_randomize = 0;
-	g_haze      = 0;
-	g_back_color[0] = 51;
-	g_back_color[1] = 153;
-	g_back_color[2] = 200;
-	if (SPHERE)
-	{
-		PHI1      =  180;
-		PHI2      =  0;
-		THETA1    =  -90;
-		THETA2    =  90;
-		RADIUS    =  100;
-		FILLTYPE  = FILLTYPE_FILL_GOURAUD;
-		XLIGHT    = 1;
-		YLIGHT    = 1;
-		ZLIGHT    = 1;
-	}
-	else
-	{
-		XROT      = 60;
-		YROT      = 30;
-		ZROT      = 0;
-		XSCALE    = 90;
-		YSCALE    = 90;
-		FILLTYPE  = FILLTYPE_POINTS;
-		XLIGHT    = 1;
-		YLIGHT    = -1;
-		ZLIGHT    = 1;
 	}
 }
 

@@ -28,16 +28,7 @@
 #define BIGNUM 1  /* g_bf_math is being used with bn_t numbers */
 #define BIGFLT 2  /* g_bf_math is being used with bf_t numbers */
 
-/* use this for dynamic allocation */
-#ifdef BIG_ANSI_C
-#define USE_BIGNUM_C_CODE
-#define BIG_NULL            NULL
-#define BIG_SIZE_T          size_t
-#define big_malloc(size)    malloc(size)
-#define big_free(ptr)       free(ptr)
-#endif
-
-typedef unsigned char * big_t;
+typedef unsigned char *big_t;
 #define bn_t   big_t  /* for clarification purposes */
 #define bf_t   big_t
 #define bf10_t big_t
@@ -107,17 +98,10 @@ extern bf_t bftmp;							/* rbflength  */
 extern bf10_t bf10tmp;						/* dec+4 */
 extern big_t big_pi;
 
-
-/* functions defined in biginit.c */
-
-big_t big_alloc(size_t size);
-/* void big_free(big_t memblock); now defined as a macro above */
-
 void calc_lengths();
 void init_big_dec(int dec);
 void init_big_length(int bnl);
 void init_big_pi();
-
 
 /* functions defined in bignuma.asm or bignumc.c */
 extern bn_t clear_bn(bn_t r);

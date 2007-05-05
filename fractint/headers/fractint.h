@@ -64,7 +64,7 @@ typedef BYTE BOOLEAN;
 #define SAVEDAC_YES		1
 #define SAVEDAC_NEXT	2
 
-/* g_raytrace_output values */
+/* g_raytrace_state.m_raytrace_output values */
 #define RAYTRACE_NONE		0
 #define RAYTRACE_POVRAY		1
 #define RAYTRACE_VIVID		2
@@ -158,16 +158,6 @@ typedef BYTE BOOLEAN;
 #define WHICHIMAGE_NONE 0
 #define WHICHIMAGE_RED	1
 #define WHICHIMAGE_BLUE	2
-
-/* FILLTYPE values */
-#define FILLTYPE_SURFACE_GRID	-1
-#define FILLTYPE_POINTS			0
-#define FILLTYPE_WIRE_FRAME		1
-#define FILLTYPE_FILL_GOURAUD	2
-#define FILLTYPE_FILL_FLAT		3
-#define FILLTYPE_FILL_BARS		4
-#define FILLTYPE_LIGHT_BEFORE	5
-#define FILLTYPE_LIGHT_AFTER	6
 
 /* g_orbit_save values */
 #define ORBITSAVE_NONE	0
@@ -727,7 +717,6 @@ struct orbits_info      /* for saving orbits data in a GIF file */
 #define MAXVIDEOMODES 300       /* maximum entries in fractint.cfg        */
 
 #define AUTOINVERT -123456.789
-#define ENDVID 22400   /* video table uses extra seg up to here */
 
 #define N_ATTR 8                        /* max number of attractors     */
 
@@ -917,34 +906,6 @@ is not in the data structure */
 #undef PI
 #endif
 #define PI 3.14159265358979323846
-#define SPHERE    g_init_3d[0]             /* sphere? 1 = yes, 0 = no  */
-#define ILLUMINE  (FILLTYPE > 4)  /* illumination model       */
-
-/* regular 3D */
-#define XROT      g_init_3d[1]     /* rotate x-axis 60 degrees */
-#define YROT      g_init_3d[2]     /* rotate y-axis 90 degrees */
-#define ZROT      g_init_3d[3]     /* rotate x-axis  0 degrees */
-#define XSCALE    g_init_3d[4]     /* scale x-axis, 90 percent */
-#define YSCALE    g_init_3d[5]     /* scale y-axis, 90 percent */
-
-/* sphere 3D */
-#define PHI1      g_init_3d[1]     /* longitude start, 180     */
-#define PHI2      g_init_3d[2]     /* longitude end ,   0      */
-#define THETA1    g_init_3d[3]         /* latitude start,-90 degrees */
-#define THETA2    g_init_3d[4]         /* latitude stop,  90 degrees */
-#define RADIUS    g_init_3d[5]     /* should be user input */
-
-/* common parameters */
-#define ROUGH     g_init_3d[6]     /* scale z-axis, 30 percent */
-#define WATERLINE g_init_3d[7]     /* water level              */
-#define FILLTYPE  g_init_3d[8]     /* fill type                */
-#define ZVIEWER   g_init_3d[9]     /* perspective view point   */
-#define XSHIFT    g_init_3d[10]    /* x shift */
-#define YSHIFT    g_init_3d[11]    /* y shift */
-#define XLIGHT    g_init_3d[12]    /* x light vector coordinate */
-#define YLIGHT    g_init_3d[13]    /* y light vector coordinate */
-#define ZLIGHT    g_init_3d[14]    /* z light vector coordinate */
-#define LIGHTAVG  g_init_3d[15]    /* number of points to average */
 
 #ifndef TRUE
 #define TRUE 1

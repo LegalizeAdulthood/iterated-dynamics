@@ -205,7 +205,6 @@ extern int find_alternate_math(int, int);
 
 extern int command_files(int, char **);
 extern int load_commands(FILE *);
-extern void set_3d_defaults();
 extern int get_curarg_len(char *curarg);
 extern int get_max_curarg_len(char *floatvalstr[], int totparm);
 extern int init_msg(const char *, char *, int);
