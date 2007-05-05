@@ -4,6 +4,7 @@
 #include "prototyp.h"
 #include "fractint.h"
 #include "RayTraceState.h"
+#include "CommandParser.h"
 
 RayTraceState g_raytrace_state;
 
@@ -125,3 +126,9 @@ void RayTraceState::history_restore(const short *data)
 	m_init_3d[15]          	= data[14];
 	m_init_3d[16]          	= data[15];
 }
+
+int RayTraceState::parse_sphere(const cmd_context &context)
+{
+	return FlagParser<int>(m_init_3d[0], Command::ThreeDParameter).parse(context);
+}
+

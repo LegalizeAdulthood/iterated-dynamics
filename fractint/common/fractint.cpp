@@ -58,6 +58,7 @@
 #include "drivers.h"
 #include "fihelp.h"
 #include "SoundState.h"
+#include "CommandParser.h"
 
 struct video_info g_video_entry;
 long g_timer_start;
@@ -506,7 +507,7 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 		if (kbdchar == FIK_F2 || kbdchar == '@')  /* We mapped @ to F2 */
 #endif
 		{
-			if ((get_commands() & COMMAND_3D_YES) == 0)
+			if ((get_commands() & Command::ThreeDYes) == 0)
 			{
 				return IMAGESTART;
 			}

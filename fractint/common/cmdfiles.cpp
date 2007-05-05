@@ -18,6 +18,7 @@
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "RayTraceState.h"
+#include "CommandParser.h"
 
 #define INIT_GIF87      0       /* Turn on GIF 89a processing  */
 #define NON_NUMERIC -32767
@@ -602,7 +603,7 @@ static int command_file(FILE *handle, int mode)
 #ifdef XFRACT
 	g_init_mode = 0;                /* Skip credits if @file is used. */
 #endif
-	if (changeflag & COMMAND_FRACTAL_PARAM)
+	if (changeflag & Command::FractalParameter)
 	{
 		backwards_v18();
 		backwards_v19();
@@ -724,7 +725,7 @@ static int next_line(FILE *handle, char *linebuf, int mode)
 int bad_arg(const char *curarg)
 {
 	arg_error(curarg);
-	return COMMAND_ERROR;
+	return Command::Error;
 }
 
 struct named_int
@@ -758,7 +759,7 @@ static int batch_arg(const cmd_context &context)
 	g_init_mode = context.yesnoval[0] ? 0 : -1; /* skip credits for batch mode */
 #endif
 	g_initialize_batch = context.yesnoval[0];
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int max_history_arg(const cmd_context &context)
@@ -775,7 +776,7 @@ static int max_history_arg(const cmd_context &context)
 	{
 		g_max_history = context.numval;
 	}
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int adapter_arg(const cmd_context &context)
@@ -797,7 +798,7 @@ static int adapter_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int text_safe_arg(const cmd_context &context)
@@ -813,7 +814,7 @@ static int text_safe_arg(const cmd_context &context)
 			return bad_arg(context.curarg);
 		}
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int gobble_flag_arg(const cmd_context &context)
@@ -822,32 +823,12 @@ static int gobble_flag_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	return COMMAND_OK;
-}
-
-static int flag_arg(const cmd_context &context, bool &flag, int result)
-{
-	if (context.yesnoval[0] < 0)
-	{
-		return bad_arg(context.curarg);
-	}
-	flag = (context.yesnoval[0] != 0);
-	return result;
-}
-
-static int flag_arg(const cmd_context &context, int *flag, int result)
-{
-	if (context.yesnoval[0] < 0)
-	{
-		return bad_arg(context.curarg);
-	}
-	*flag = context.yesnoval[0];
-	return result;
+	return Command::OK;
 }
 
 static int exit_no_ask_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_escape_exit_flag, COMMAND_FRACTAL_PARAM	| COMMAND_3D_PARAM);
+	return FlagParser<int>(g_escape_exit_flag, Command::FractalParameter	| Command::ThreeDParameter).parse(context);
 }
 
 static int fpu_arg(const cmd_context &context)
@@ -859,7 +840,7 @@ static int fpu_arg(const cmd_context &context)
 #else
 		g_fpu = -1;
 #endif
-		return COMMAND_OK;
+		return Command::OK;
 	}
 	return bad_arg(context.curarg);
 }
@@ -974,7 +955,7 @@ static int reset_arg(const cmd_context &context)
 	{
 		g_save_release = 1730; /* before start of lyapunov wierdness */
 	}
-	return COMMAND_RESET | COMMAND_FRACTAL_PARAM;
+	return Command::Reset | Command::FractalParameter;
 }
 
 static int filename_arg(const cmd_context &context)
@@ -989,7 +970,7 @@ static int filename_arg(const cmd_context &context)
 		g_gif_mask[0] = '*';
 		g_gif_mask[1] = 0;
 		strcat(g_gif_mask, context.value);
-		return COMMAND_OK;
+		return Command::OK;
 	}
 	if (context.valuelen > (FILE_MAX_PATH-1))
 	{
@@ -1013,7 +994,7 @@ static int filename_arg(const cmd_context &context)
 	{
 		extract_filename(g_browse_name, g_read_name);
 	}
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int video_arg(const cmd_context &context)
@@ -1038,7 +1019,7 @@ static int video_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int map_arg(const cmd_context &context)
@@ -1051,15 +1032,15 @@ static int map_arg(const cmd_context &context)
 	existdir = merge_path_names(g_map_name, context.value, context.mode);
 	if (existdir > 0)
 	{
-		return COMMAND_OK;    /* got a directory */
+		return Command::OK;    /* got a directory */
 	}
 	else if (existdir < 0)
 	{
 		init_msg(context.variable, context.value, context.mode);
-		return COMMAND_OK;
+		return Command::OK;
 	}
 	set_color_palette_name(g_map_name);
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int colors_arg(const cmd_context &context)
@@ -1068,7 +1049,7 @@ static int colors_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int record_colors_arg(const cmd_context &context)
@@ -1078,7 +1059,7 @@ static int record_colors_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_record_colors = *context.value;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int max_line_length_arg(const cmd_context &context)
@@ -1088,13 +1069,13 @@ static int max_line_length_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_max_line_length = context.numval;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int parse_arg(const cmd_context &context)
 {
 	parse_comments(context.value);
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 /* maxcolorres no longer used, validate value and gobble argument */
@@ -1106,7 +1087,7 @@ static int max_color_res_arg(const cmd_context &context)
 		|| context.numval == 16
 		|| context.numval == 24)
 	{
-		return COMMAND_OK;
+		return Command::OK;
 	}
 	return bad_arg(context.curarg);
 }
@@ -1118,7 +1099,7 @@ static int pixel_zoom_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 /* keep this for backward compatibility */
@@ -1129,7 +1110,7 @@ static int warn_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_fractal_overwrite = context.yesnoval[0]^1;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int overwrite_arg(const cmd_context &context)
@@ -1139,13 +1120,13 @@ static int overwrite_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_fractal_overwrite = context.yesnoval[0];
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int save_time_arg(const cmd_context &context)
 {
 	g_save_time = context.numval;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int auto_key_arg(const cmd_context &context)
@@ -1156,7 +1137,7 @@ static int auto_key_arg(const cmd_context &context)
 		{ "play", SLIDES_PLAY }
 	};
 	return named_value(args, NUM_OF(args), context.value, &g_slides)
-		? COMMAND_OK : bad_arg(context.curarg);
+		? Command::OK : bad_arg(context.curarg);
 }
 
 static int auto_key_name_arg(const cmd_context &context)
@@ -1165,7 +1146,7 @@ static int auto_key_name_arg(const cmd_context &context)
 	{
 		init_msg(context.variable, context.value, context.mode);
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int type_arg(const cmd_context &context)
@@ -1210,7 +1191,7 @@ static int type_arg(const cmd_context &context)
 	{
 		load_parameters(g_fractal_type);
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int inside_arg(const cmd_context &context)
@@ -1229,7 +1210,7 @@ static int inside_arg(const cmd_context &context)
 	};
 	if (named_value(args, NUM_OF(args), context.value, &g_inside))
 	{
-		return COMMAND_FRACTAL_PARAM;
+		return Command::FractalParameter;
 	}
 	if (context.numval == NON_NUMERIC)
 	{
@@ -1239,13 +1220,13 @@ static int inside_arg(const cmd_context &context)
 	{
 		g_inside = context.numval;
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int proximity_arg(const cmd_context &context)
 {
 	g_proximity = context.floatval[0];
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int fill_color_arg(const cmd_context &context)
@@ -1262,7 +1243,7 @@ static int fill_color_arg(const cmd_context &context)
 	{
 		g_fill_color = context.numval;
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int function_arg(const cmd_context &context)
@@ -1284,7 +1265,7 @@ static int function_arg(const cmd_context &context)
 		++value;
 	}
 	g_function_preloaded = TRUE; /* for old bifs  JCO 7/5/92 */
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int outside_arg(const cmd_context &context)
@@ -1302,14 +1283,14 @@ static int outside_arg(const cmd_context &context)
 	};
 	if (named_value(args, NUM_OF(args), context.value, &g_outside))
 	{
-		return COMMAND_FRACTAL_PARAM;
+		return Command::FractalParameter;
 	}
 	if ((context.numval == NON_NUMERIC) || (context.numval < TDIS || context.numval > 255))
 	{
 		return bad_arg(context.curarg);
 	}
 	g_outside = context.numval;
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int bf_digits_arg(const cmd_context &context)
@@ -1319,7 +1300,7 @@ static int bf_digits_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_bf_digits = context.numval;
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int max_iter_arg(const cmd_context &context)
@@ -1329,7 +1310,7 @@ static int max_iter_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_max_iteration = (long) context.floatval[0];
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int passes_arg(const cmd_context &context)
@@ -1350,7 +1331,7 @@ static int passes_arg(const cmd_context &context)
 			g_stop_pass = 0;
 		}
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int cycle_limit_arg(const cmd_context &context)
@@ -1360,7 +1341,7 @@ static int cycle_limit_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_initial_cycle_limit = context.numval;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int make_mig_arg(const cmd_context &context)
@@ -1376,7 +1357,7 @@ static int make_mig_arg(const cmd_context &context)
 #ifndef WINFRACT
 	exit(0);
 #endif
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int cycle_range_arg(const cmd_context &context)
@@ -1406,7 +1387,7 @@ static int cycle_range_arg(const cmd_context &context)
 	}
 	g_rotate_lo = lo;
 	g_rotate_hi = hi;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int ranges_arg(const cmd_context &context)
@@ -1455,7 +1436,7 @@ static int ranges_arg(const cmd_context &context)
 	{
 		g_ranges[i] = tmpranges[i];
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int save_name_arg(const cmd_context &context)
@@ -1471,7 +1452,7 @@ static int save_name_arg(const cmd_context &context)
 			init_msg(context.variable, context.value, context.mode);
 		}
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int min_stack_arg(const cmd_context &context)
@@ -1481,7 +1462,7 @@ static int min_stack_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_minimum_stack = context.intval[0];
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int math_tolerance_arg(const cmd_context &context)
@@ -1498,7 +1479,7 @@ static int math_tolerance_arg(const cmd_context &context)
 	{
 		g_math_tolerance[1] = context.floatval[1];
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int temp_dir_arg(const cmd_context &context)
@@ -1513,7 +1494,7 @@ static int temp_dir_arg(const cmd_context &context)
 	}
 	strcpy(g_temp_dir, context.value);
 	fix_dir_name(g_temp_dir);
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int work_dir_arg(const cmd_context &context)
@@ -1528,13 +1509,13 @@ static int work_dir_arg(const cmd_context &context)
 	}
 	strcpy(g_work_dir, context.value);
 	fix_dir_name(g_work_dir);
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int text_colors_arg(const cmd_context &context)
 {
 	parse_text_colors(context.value);
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int potential_arg(const cmd_context &context)
@@ -1561,7 +1542,7 @@ static int potential_arg(const cmd_context &context)
 		}
 		g_potential_16bit = TRUE;
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int params_arg(const cmd_context &context)
@@ -1584,7 +1565,7 @@ static int params_arg(const cmd_context &context)
 			floattobf(bfparms[k], g_parameters[k]);
 		}
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int miim_arg(const cmd_context &context)
@@ -1640,7 +1621,7 @@ static int miim_arg(const cmd_context &context)
 		}
 	}
 
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int init_orbit_arg(const cmd_context &context)
@@ -1659,7 +1640,7 @@ static int init_orbit_arg(const cmd_context &context)
 		g_initial_orbit_z.y = context.floatval[1];
 		g_use_initial_orbit_z = 1;
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int orbit_name_arg(const cmd_context &context)
@@ -1668,7 +1649,7 @@ static int orbit_name_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int threed_mode_arg(const cmd_context &context)
@@ -1679,7 +1660,7 @@ static int threed_mode_arg(const cmd_context &context)
 		if (strcmp(context.value, g_juli_3d_options[i]) == 0)
 		{
 			g_juli_3d_mode = i;
-			return COMMAND_FRACTAL_PARAM;
+			return Command::FractalParameter;
 		}
 	}
 	return bad_arg(context.curarg);
@@ -1715,7 +1696,7 @@ static int julibrot_3d_arg(const cmd_context &context)
 	{
 		g_screen_distance_fp = (float)context.floatval[5];
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int julibrot_eyes_arg(const cmd_context &context)
@@ -1725,7 +1706,7 @@ static int julibrot_eyes_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_eyes_fp =  (float)context.floatval[0];
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int julibrot_from_to_arg(const cmd_context &context)
@@ -1738,7 +1719,7 @@ static int julibrot_from_to_arg(const cmd_context &context)
 	g_m_x_min_fp = context.floatval[1];
 	g_m_y_max_fp = context.floatval[2];
 	g_m_y_min_fp = context.floatval[3];
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int corners_arg(const cmd_context &context)
@@ -1746,7 +1727,7 @@ static int corners_arg(const cmd_context &context)
 	int dec;
 	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
-		return COMMAND_FRACTAL_PARAM; /* skip setting the corners */
+		return Command::FractalParameter; /* skip setting the corners */
 	}
 #if 0
 	/* use a debugger and OutputDebugString instead of standard I/O on Windows */
@@ -1761,7 +1742,7 @@ static int corners_arg(const cmd_context &context)
 	g_use_center_mag = FALSE;
 	if (context.totparms == 0)
 	{
-		return COMMAND_OK; /* turns corners mode on */
+		return Command::OK; /* turns corners mode on */
 	}
 	s_init_corners = 1;
 	/* good first approx, but dec could be too big */
@@ -1865,7 +1846,7 @@ static int corners_arg(const cmd_context &context)
 		g_escape_time_state.m_grid_fp.x_3rd() = context.floatval[4];
 		g_escape_time_state.m_grid_fp.y_3rd() = context.floatval[5];
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int orbit_corners_arg(const cmd_context &context)
@@ -1888,7 +1869,7 @@ static int orbit_corners_arg(const cmd_context &context)
 	}
 	g_set_orbit_corners = 1;
 	g_keep_screen_coords = 1;
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int orbit_draw_mode_arg(const cmd_context &context)
@@ -1902,7 +1883,7 @@ static int orbit_draw_mode_arg(const cmd_context &context)
 	default:
 		return bad_arg(context.curarg);
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int view_windows_arg(const cmd_context &context)
@@ -1937,7 +1918,7 @@ static int view_windows_arg(const cmd_context &context)
 	{
 		g_view_y_dots = context.intval[4];
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int center_mag_arg(const cmd_context &context)
@@ -1955,12 +1936,12 @@ static int center_mag_arg(const cmd_context &context)
 	}
 	if (g_fractal_type == FRACTYPE_CELLULAR)
 	{
-		return COMMAND_FRACTAL_PARAM; /* skip setting the corners */
+		return Command::FractalParameter; /* skip setting the corners */
 	}
 	g_use_center_mag = TRUE;
 	if (context.totparms == 0)
 	{
-		return COMMAND_OK; /* turns center-mag mode on */
+		return Command::OK; /* turns center-mag mode on */
 	}
 	s_init_corners = 1;
 	/* dec = get_max_curarg_len(floatvalstr, context.totparms); */
@@ -2005,7 +1986,7 @@ static int center_mag_arg(const cmd_context &context)
 		}
 		/* calculate bounds */
 		convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-		return COMMAND_FRACTAL_PARAM;
+		return Command::FractalParameter;
 	}
 	else  /* use arbitrary precision */
 	{
@@ -2057,7 +2038,7 @@ static int center_mag_arg(const cmd_context &context)
 		convert_corners_bf(bXctr, bYctr, Magnification, Xmagfactor, Rotation, Skew);
 		corners_bf_to_float();
 		restore_stack(saved);
-		return COMMAND_FRACTAL_PARAM;
+		return Command::FractalParameter;
 	}
 }
 
@@ -2068,7 +2049,7 @@ static int aspect_drift_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_aspect_drift = (float)context.floatval[0];
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int invert_arg(const cmd_context &context)
@@ -2084,12 +2065,12 @@ static int invert_arg(const cmd_context &context)
 		g_inversion[1] = context.floatval[1];
 		g_inversion[2] = context.floatval[2];
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int ignore_arg(const cmd_context &context)
 {
-	return COMMAND_OK; /* just ignore and return, for old time's sake */
+	return Command::OK; /* just ignore and return, for old time's sake */
 }
 
 static int float_arg(const cmd_context &context)
@@ -2103,7 +2084,7 @@ static int float_arg(const cmd_context &context)
 #else
 	g_user_float_flag = 1; /* must use floating point */
 #endif
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int fast_restore_arg(const cmd_context &context)
@@ -2113,7 +2094,7 @@ static int fast_restore_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_fast_restore = (char)context.yesnoval[0];
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int organize_formula_dir_arg(const cmd_context &context)
@@ -2126,13 +2107,13 @@ static int organize_formula_dir_arg(const cmd_context &context)
 	g_organize_formula_search = TRUE;
 	strcpy(g_organize_formula_dir, context.value);
 	fix_dir_name(g_organize_formula_dir);
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int biomorph_arg(const cmd_context &context)
 {
 	g_user_biomorph = context.numval;
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int orbit_save_arg(const cmd_context &context)
@@ -2146,7 +2127,7 @@ static int orbit_save_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_orbit_save |= context.yesnoval[0];
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int bail_out_arg(const cmd_context &context)
@@ -2156,7 +2137,7 @@ static int bail_out_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_bail_out = (long)context.floatval[0];
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int bail_out_test_arg(const cmd_context &context)
@@ -2176,7 +2157,7 @@ static int bail_out_test_arg(const cmd_context &context)
 	{
 		g_bail_out_test = (enum bailouts) value;
 		set_bail_out_formula(g_bail_out_test);
-		return COMMAND_FRACTAL_PARAM;
+		return Command::FractalParameter;
 	}
 
 	return bad_arg(context.curarg);
@@ -2195,9 +2176,14 @@ static int symmetry_arg(const cmd_context &context)
 	};
 	if (named_value(args, NUM_OF(args), context.value, &g_force_symmetry))
 	{
-		return COMMAND_FRACTAL_PARAM;
+		return Command::FractalParameter;
 	}
 	return bad_arg(context.curarg);
+}
+
+static int sphere_arg(const cmd_context &context)
+{
+	return g_raytrace_state.parse_sphere(context);
 }
 
 static int sound_arg(const cmd_context &context)
@@ -2208,13 +2194,13 @@ static int sound_arg(const cmd_context &context)
 static int hertz_arg(const cmd_context &context)
 {
 	g_sound_state.m_base_hertz = context.numval;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int volume_arg(const cmd_context &context)
 {
 	g_sound_state.m_fm_volume = context.numval & 0x3F; /* 63 */
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int attenuate_arg(const cmd_context &context)
@@ -2239,7 +2225,7 @@ static int attenuate_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int polyphony_arg(const cmd_context &context)
@@ -2249,37 +2235,37 @@ static int polyphony_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_sound_state.m_polyphony = abs(context.numval-1);
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int wave_type_arg(const cmd_context &context)
 {
 	g_sound_state.m_fm_wave_type = context.numval & 0x0F;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int attack_arg(const cmd_context &context)
 {
 	g_sound_state.m_fm_attack = context.numval & 0x0F;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int decay_arg(const cmd_context &context)
 {
 	g_sound_state.m_fm_decay = context.numval & 0x0F;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int sustain_arg(const cmd_context &context)
 {
 	g_sound_state.m_fm_sustain = context.numval & 0x0F;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int sustain_release_arg(const cmd_context &context)
 {
 	g_sound_state.m_fm_release = context.numval & 0x0F;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int scale_map_arg(const cmd_context &context)
@@ -2297,7 +2283,7 @@ static int scale_map_arg(const cmd_context &context)
 			g_sound_state.m_scale_map[counter] = context.intval[counter];
 		}
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int periodicity_arg(const cmd_context &context)
@@ -2331,7 +2317,7 @@ static int periodicity_arg(const cmd_context &context)
 	{
 		g_user_periodicity_check = -255;
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int log_map_arg(const cmd_context &context)
@@ -2353,7 +2339,7 @@ static int log_map_arg(const cmd_context &context)
 	{
 		g_log_palette_flag = (long)context.floatval[0];
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int log_mode_arg(const cmd_context &context)
@@ -2376,7 +2362,7 @@ static int log_mode_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int debug_flag_arg(const cmd_context &context)
@@ -2384,20 +2370,20 @@ static int debug_flag_arg(const cmd_context &context)
 	g_debug_flag = context.numval;
 	g_timer_flag = g_debug_flag & 1;                /* separate timer flag */
 	g_debug_flag &= ~1;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int random_seed_arg(const cmd_context &context)
 {
 	g_random_seed = context.numval;
 	g_random_flag = 1;
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int orbit_delay_arg(const cmd_context &context)
 {
 	g_orbit_delay = context.numval;
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int orbit_interval_arg(const cmd_context &context)
@@ -2411,7 +2397,7 @@ static int orbit_interval_arg(const cmd_context &context)
 	{
 		g_orbit_interval = 255;
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int show_dot_arg(const cmd_context &context)
@@ -2448,13 +2434,13 @@ static int show_dot_arg(const cmd_context &context)
 			g_size_dot = 0;
 		}
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int show_orbit_arg(const cmd_context &context)
 {
 	g_start_show_orbit = (char)context.yesnoval[0];
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int decomposition_arg(const cmd_context &context)
@@ -2469,7 +2455,7 @@ static int decomposition_arg(const cmd_context &context)
 	{
 		g_bail_out = g_decomposition[1] = context.intval[1];
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int distance_test_arg(const cmd_context &context)
@@ -2493,7 +2479,7 @@ static int distance_test_arg(const cmd_context &context)
 	{
 		g_pseudo_x = g_pseudo_y = 0;
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int formula_file_arg(const cmd_context &context)
@@ -2506,7 +2492,7 @@ static int formula_file_arg(const cmd_context &context)
 	{
 		init_msg(context.variable, context.value, context.mode);
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int formula_name_arg(const cmd_context &context)
@@ -2516,7 +2502,7 @@ static int formula_name_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	strcpy(g_formula_name, context.value);
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int l_file_arg(const cmd_context &context)
@@ -2529,7 +2515,7 @@ static int l_file_arg(const cmd_context &context)
 	{
 		init_msg(context.variable, context.value, context.mode);
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int l_name_arg(const cmd_context &context)
@@ -2539,7 +2525,7 @@ static int l_name_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	strcpy(g_l_system_name, context.value);
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int ifs_file_arg(const cmd_context &context)
@@ -2558,7 +2544,7 @@ static int ifs_file_arg(const cmd_context &context)
 	{
 		init_msg(context.variable, context.value, context.mode);
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int ifs_arg(const cmd_context &context)
@@ -2569,7 +2555,7 @@ static int ifs_arg(const cmd_context &context)
 	}
 	strcpy(g_ifs_name, context.value);
 	reset_ifs_definition();
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int parm_file_arg(const cmd_context &context)
@@ -2582,7 +2568,7 @@ static int parm_file_arg(const cmd_context &context)
 	{
 		init_msg(context.variable, context.value, context.mode);
 	}
-	return COMMAND_FRACTAL_PARAM;
+	return Command::FractalParameter;
 }
 
 static int stereo_arg(const cmd_context &context)
@@ -2592,7 +2578,7 @@ static int stereo_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_glasses_type = context.numval;
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int rotation_arg(const cmd_context &context)
@@ -2604,7 +2590,7 @@ static int rotation_arg(const cmd_context &context)
 	g_raytrace_state.set_x_rot(context.intval[0]);
 	g_raytrace_state.set_y_rot(context.intval[1]);
 	g_raytrace_state.set_z_rot(context.intval[2]);
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int perspective_arg(const cmd_context &context)
@@ -2614,7 +2600,7 @@ static int perspective_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.set_z_viewer(context.numval);
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int xy_shift_arg(const cmd_context &context)
@@ -2625,19 +2611,19 @@ static int xy_shift_arg(const cmd_context &context)
 	}
 	g_raytrace_state.set_x_shift(context.intval[0]);
 	g_raytrace_state.set_y_shift(context.intval[1]);
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int inter_ocular_arg(const cmd_context &context)
 {
 	g_eye_separation = context.numval;
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int converge_arg(const cmd_context &context)
 {
 	g_x_adjust = context.numval;
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int crop_arg(const cmd_context &context)
@@ -2654,7 +2640,7 @@ static int crop_arg(const cmd_context &context)
 	g_red_crop_right  = context.intval[1];
 	g_blue_crop_left  = context.intval[2];
 	g_blue_crop_right = context.intval[3];
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int bright_arg(const cmd_context &context)
@@ -2665,7 +2651,7 @@ static int bright_arg(const cmd_context &context)
 	}
 	g_red_bright  = context.intval[0];
 	g_blue_bright = context.intval[1];
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int xy_adjust_arg(const cmd_context &context)
@@ -2676,7 +2662,7 @@ static int xy_adjust_arg(const cmd_context &context)
 	}
 	g_raytrace_state.m_x_trans = context.intval[0];
 	g_raytrace_state.m_y_trans = context.intval[1];
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int threed_arg(const cmd_context &context)
@@ -2711,14 +2697,14 @@ static int scale_xyz_arg(const cmd_context &context)
 	{
 		g_raytrace_state.set_rough(context.intval[2]);
 	}
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int roughness_arg(const cmd_context &context)
 {
 	/* "rough" is really scale z, but we add it here for convenience */
 	g_raytrace_state.set_rough(context.numval);
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int water_line_arg(const cmd_context &context)
@@ -2728,7 +2714,7 @@ static int water_line_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.set_water_line(context.numval);
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int fill_type_arg(const cmd_context &context)
@@ -2738,7 +2724,7 @@ static int fill_type_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.set_fill_type(context.numval);
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int light_source_arg(const cmd_context &context)
@@ -2750,7 +2736,7 @@ static int light_source_arg(const cmd_context &context)
 	g_raytrace_state.set_x_light(context.intval[0]);
 	g_raytrace_state.set_y_light(context.intval[1]);
 	g_raytrace_state.set_z_light(context.intval[2]);
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int smoothing_arg(const cmd_context &context)
@@ -2760,7 +2746,7 @@ static int smoothing_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.set_light_avg(context.numval);
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int latitude_arg(const cmd_context &context)
@@ -2771,7 +2757,7 @@ static int latitude_arg(const cmd_context &context)
 	}
 	g_raytrace_state.set_theta1(context.intval[0]);
 	g_raytrace_state.set_theta2(context.intval[1]);
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int longitude_arg(const cmd_context &context)
@@ -2782,7 +2768,7 @@ static int longitude_arg(const cmd_context &context)
 	}
 	g_raytrace_state.set_phi1(context.intval[0]);
 	g_raytrace_state.set_phi2(context.intval[1]);
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int radius_arg(const cmd_context &context)
@@ -2792,7 +2778,7 @@ static int radius_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.set_radius(context.numval);
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int transparent_arg(const cmd_context &context)
@@ -2806,7 +2792,7 @@ static int transparent_arg(const cmd_context &context)
 	{
 		g_transparent[1] = context.intval[1];
 	}
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int coarse_arg(const cmd_context &context)
@@ -2816,7 +2802,7 @@ static int coarse_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_preview_factor = context.numval;
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int randomize_arg(const cmd_context &context)
@@ -2826,7 +2812,7 @@ static int randomize_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.m_randomize_colors = context.numval;
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int ambient_arg(const cmd_context &context)
@@ -2836,7 +2822,7 @@ static int ambient_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.m_ambient = context.numval;
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int haze_arg(const cmd_context &context)
@@ -2846,7 +2832,7 @@ static int haze_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.m_haze = context.numval;
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int true_mode_arg(const cmd_context &context)
@@ -2860,7 +2846,7 @@ static int true_mode_arg(const cmd_context &context)
 	{
 		g_true_mode = TRUEMODE_ITERATES;			/* use iterates output */
 	}
-	return COMMAND_FRACTAL_PARAM | COMMAND_3D_PARAM;
+	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int monitor_width_arg(const cmd_context &context)
@@ -2870,7 +2856,7 @@ static int monitor_width_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_auto_stereo_width  = context.floatval[0];
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int background_arg(const cmd_context &context)
@@ -2891,7 +2877,7 @@ static int background_arg(const cmd_context &context)
 	g_raytrace_state.m_background_color[0] = (BYTE)context.intval[0];
 	g_raytrace_state.m_background_color[1] = (BYTE)context.intval[1];
 	g_raytrace_state.m_background_color[2] = (BYTE)context.intval[2];
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int light_name_arg(const cmd_context &context)
@@ -2904,7 +2890,7 @@ static int light_name_arg(const cmd_context &context)
 	{
 		strcpy(g_light_name, context.value);
 	}
-	return COMMAND_OK;
+	return Command::OK;
 }
 
 static int ray_arg(const cmd_context &context)
@@ -2914,7 +2900,7 @@ static int ray_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_raytrace_state.m_raytrace_output = context.numval;
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 static int release_arg(const cmd_context &context)
@@ -2925,7 +2911,7 @@ static int release_arg(const cmd_context &context)
 	}
 
 	g_save_release = context.numval;
-	return COMMAND_3D_PARAM;
+	return Command::ThreeDParameter;
 }
 
 struct tag_command_processor
@@ -2954,90 +2940,82 @@ static int named_processor(const command_processor *processors,
 
 static int gif87a_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_gif87a_flag, COMMAND_OK);
+	return FlagParser<int>(g_gif87a_flag, Command::OK).parse(context);
 }
 
 static int dither_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_dither_flag, COMMAND_OK);
+	return FlagParser<int>(g_dither_flag, Command::OK).parse(context);
 }
 
 static int finite_attractor_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_finite_attractor, COMMAND_FRACTAL_PARAM);
+	return FlagParser<int>(g_finite_attractor, Command::FractalParameter).parse(context);
 }
 
 static int no_bof_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_no_bof, COMMAND_FRACTAL_PARAM);
+	return FlagParser<int>(g_no_bof, Command::FractalParameter).parse(context);
 }
 
 static int is_mand_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_is_mand, COMMAND_FRACTAL_PARAM);
-}
-
-static int sphere_arg(const cmd_context &context)
-{
-	bool flag = false;
-	int result = flag_arg(context, flag, COMMAND_3D_PARAM);
-	g_raytrace_state.set_sphere(flag);
-	return result;
+	return FlagParser<int>(g_is_mand, Command::FractalParameter).parse(context);
 }
 
 static int preview_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_preview, COMMAND_3D_PARAM);
+	return FlagParser<int>(g_preview, Command::ThreeDParameter).parse(context);
 }
 
 static int showbox_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_show_box, COMMAND_3D_PARAM);
+	return FlagParser<int>(g_show_box, Command::ThreeDParameter).parse(context);
 }
 
 static int fullcolor_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_targa_output, COMMAND_3D_PARAM);
+	return FlagParser<int>(g_targa_output, Command::ThreeDParameter).parse(context);
 }
 
 static int truecolor_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_true_color, COMMAND_3D_PARAM | COMMAND_FRACTAL_PARAM);
+	return FlagParser<int>(g_true_color, Command::ThreeDParameter | Command::FractalParameter).parse(context);
 }
 
 static int use_grayscale_depth_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_grayscale_depth, COMMAND_3D_PARAM);
+	return FlagParser<int>(g_grayscale_depth, Command::ThreeDParameter).parse(context);
 }
 
 static int targa_overlay_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_targa_overlay, COMMAND_3D_PARAM);
+	return FlagParser<int>(g_targa_overlay, Command::ThreeDParameter).parse(context);
 }
 
 static int brief_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_raytrace_state.m_raytrace_brief, COMMAND_3D_PARAM);
+	return FlagParser<int>(g_raytrace_state.m_raytrace_brief, Command::ThreeDParameter).parse(context);
 }
 
 static int screencoords_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_keep_screen_coords, COMMAND_FRACTAL_PARAM);
+	return FlagParser<int>(g_keep_screen_coords, Command::FractalParameter).parse(context);
 }
 
 static int olddemmcolors_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_old_demm_colors, COMMAND_OK);
+	return FlagParser<int>(g_old_demm_colors, Command::OK).parse(context);
 }
 
 static int ask_video_arg(const cmd_context &context)
 {
-	return flag_arg(context, g_ui_state.ask_video, COMMAND_OK);
+	return FlagParser<bool>(g_ui_state.ask_video, Command::OK).parse(context);
 }
 
 static int cur_dir_arg(const cmd_context &context)
 {
-	return flag_arg(context, &g_check_current_dir, COMMAND_OK);
+	return FlagParser<int>(g_check_current_dir, Command::OK).parse(context);
 }
 
 /*
@@ -3237,7 +3215,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "makedoc",	make_doc_arg },
 			{ "makepar",	make_par_arg }
 		};
-		int result = COMMAND_OK;
+		int result = Command::OK;
 		if (named_processor(processors, NUM_OF(processors), context, variable, &result))
 		{
 			return result;
@@ -3402,7 +3380,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "curdir", 		cur_dir_arg },
 			{ "virtual", 		gobble_flag_arg }
 		};
-		int result = COMMAND_OK;
+		int result = Command::OK;
 		if (named_processor(processors, NUM_OF(processors), context, variable, &result))
 		{
 			return result;

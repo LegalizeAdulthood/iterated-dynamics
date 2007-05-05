@@ -48,6 +48,7 @@ public:
 	void get_init_3d(short *data, int count) const;
 	void history_save(short *destination) const;
 	void history_restore(const short *data);
+	int parse_sphere(const cmd_context &context);
 
 	void set_sphere(bool value)		{ m_init_3d[SPHERE] = value ? 1 : 0; }
 	void set_x_rot(int value)		{ m_init_3d[XROT] = value; }
