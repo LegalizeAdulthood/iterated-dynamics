@@ -2143,7 +2143,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		lastz.y = g_old_z.y;
 	}
 
-	check_freq = (((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
+	check_freq = (((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
 		? 16 : 2048;
 
 	if (g_show_orbit)

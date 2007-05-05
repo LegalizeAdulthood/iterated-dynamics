@@ -18,9 +18,29 @@ public:
 	int get_parameters();
 	void orbit(int x, int y);
 	void orbit(double x, double y, double z);
-	const char *parameter_text() const;
-	int parse_command(const cmd_context &context);
 
+	const char *parameter_text() const;
+	int parse_sound(const cmd_context &context);
+	int parse_hertz(const cmd_context &context);
+	int parse_attack(const cmd_context &context);
+	int parse_decay(const cmd_context &context);
+	int parse_release(const cmd_context &context);
+	int parse_sustain(const cmd_context &context);
+	int parse_volume(const cmd_context &context);
+	int parse_wave_type(const cmd_context &context);
+	int parse_attenuation(const cmd_context &context);
+	int parse_polyphony(const cmd_context &context);
+	int parse_scale_map(const cmd_context &context);
+
+	int flags() const				{ return m_flags; }
+	int base_hertz() const			{ return m_base_hertz; }
+	int fm_volume() const			{ return m_fm_volume; }
+
+	void set_flags(int flags)		{ m_flags = flags; }
+	void silence_xyz()				{ m_flags &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); }
+	void set_speaker_beep()			{ m_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; }
+
+private:
 	int m_flags;
 	int m_base_hertz;				/* sound=x/y/z hertz value */
 	int m_fm_attack;
@@ -33,7 +53,6 @@ public:
 	int m_polyphony;
 	int m_scale_map[NUM_OCTAVES];	/* array for mapping notes to a (user defined) scale */
 
-private:
 	enum
 	{
 		NUM_CHANNELS = 9,

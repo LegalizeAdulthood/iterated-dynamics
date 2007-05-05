@@ -766,6 +766,21 @@ void SoundState::orbit(int i, int j)
 	}
 }
 
+void SoundState::orbit(double x, double y, double z)
+{
+	if ((m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+	{
+		double value;
+		switch (m_flags & SOUNDFLAG_ORBITMASK)
+		{
+		case SOUNDFLAG_X: value = x; break;
+		case SOUNDFLAG_Y: value = y; break;
+		case SOUNDFLAG_Z: value = z; break;
+		}
+		tone((int) (value*100 + m_base_hertz));
+	}
+}
+
 const char *SoundState::parameter_text() const
 {
 	std::ostringstream text;
@@ -891,7 +906,7 @@ bool SoundState::default_scale_map() const
 	return true;
 }
 
-int SoundState::parse_command(const cmd_context &context)
+int SoundState::parse_sound(const cmd_context &context)
 {
 	if (context.totparms > 5)
 	{
@@ -974,17 +989,97 @@ int SoundState::parse_command(const cmd_context &context)
 	return Command::OK;
 }
 
-void SoundState::orbit(double x, double y, double z)
+int SoundState::parse_hertz(const cmd_context &context)
 {
-	if ((m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+	m_base_hertz = context.numval;
+	return Command::OK;
+}
+
+int SoundState::parse_volume(const cmd_context &context)
+{
+	m_fm_volume = (context.numval > 63) ? 63 : context.numval;
+	return Command::OK;
+}
+
+int SoundState::parse_attenuation(const cmd_context &context)
+{
+	if (context.charval[0] == 'n')
 	{
-		double value;
-		switch (m_flags & SOUNDFLAG_ORBITMASK)
-		{
-		case SOUNDFLAG_X: value = x; break;
-		case SOUNDFLAG_Y: value = y; break;
-		case SOUNDFLAG_Z: value = z; break;
-		}
-		tone((int) (value*100 + m_base_hertz));
+		m_note_attenuation = ATTENUATE_NONE;
 	}
+	else if (context.charval[0] == 'l')
+	{
+		m_note_attenuation = ATTENUATE_LOW;
+	}
+	else if (context.charval[0] == 'm')
+	{
+		m_note_attenuation = ATTENUATE_MIDDLE;
+	}
+	else if (context.charval[0] == 'h')
+	{
+		m_note_attenuation = ATTENUATE_HIGH;
+	}
+	else
+	{
+		return bad_arg(context.curarg);
+	}
+	return Command::OK;
+}
+
+int SoundState::parse_polyphony(const cmd_context &context)
+{
+	if (context.numval > 9)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_polyphony = abs(context.numval-1);
+	return Command::OK;
+}
+
+int SoundState::parse_wave_type(const cmd_context &context)
+{
+	m_fm_wave_type = context.numval & 0x0F;
+	return Command::OK;
+}
+
+int SoundState::parse_attack(const cmd_context &context)
+{
+	m_fm_attack = context.numval & 0x0F;
+	return Command::OK;
+}
+
+int SoundState::parse_decay(const cmd_context &context)
+{
+	m_fm_decay = context.numval & 0x0F;
+	return Command::OK;
+}
+
+int SoundState::parse_sustain(const cmd_context &context)
+{
+	m_fm_sustain = context.numval & 0x0F;
+	return Command::OK;
+}
+
+int SoundState::parse_release(const cmd_context &context)
+{
+	m_fm_release = context.numval & 0x0F;
+	return Command::OK;
+}
+
+int SoundState::parse_scale_map(const cmd_context &context)
+{
+	int counter;
+	if (context.totparms != context.intparms)
+	{
+		return bad_arg(context.curarg);
+	}
+	for (counter = 0; counter <= 11; counter++)
+	{
+		if ((context.totparms > counter) && (context.intval[counter] > 0)
+			&& (context.intval[counter] < 13))
+		{
+			m_scale_map[counter] = context.intval[counter];
+		}
+	}
+	return Command::OK;
 }

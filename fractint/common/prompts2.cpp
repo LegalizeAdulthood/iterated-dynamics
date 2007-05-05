@@ -254,7 +254,7 @@ int get_toggles()
 	uvalues[k].uval.ch.vlen = 4;
 	uvalues[k].uval.ch.llen = 5;
 	uvalues[k].uval.ch.list = soundmodes;
-	old_soundflag = g_sound_state.m_flags;
+	old_soundflag = g_sound_state.flags();
 	uvalues[k].uval.ch.val = old_soundflag & SOUNDFLAG_ORBITMASK;
 
 	if (g_ranges_length == 0)
@@ -431,8 +431,10 @@ int get_toggles()
 	}
 	g_fractal_overwrite = uvalues[++k].uval.ch.val;
 
-	g_sound_state.m_flags = ((g_sound_state.m_flags >> 3) << 3) | (uvalues[++k].uval.ch.val);
-	if (g_sound_state.m_flags != old_soundflag && ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP || (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
+	g_sound_state.set_flags((g_sound_state.flags() & ~SOUNDFLAG_ORBITMASK) | uvalues[++k].uval.ch.val);
+	if ((g_sound_state.flags() != old_soundflag)
+		&& ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP
+			|| (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
 	{
 		j++;
 	}
@@ -487,8 +489,6 @@ int get_toggles()
 	{
 		j++;
 	}
-
-	/* if (j >= 1) j = 1; need to know how many prompts changed for g_quick_calculate JCO 6/23/2001 */
 
 	return j;
 }
