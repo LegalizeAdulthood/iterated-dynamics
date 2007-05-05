@@ -83,8 +83,10 @@ depend:
 #	makedepend $(CFLAGS) $(SRCS)
 
 fractint.o: fractint.cpp
+	$(CXX) -c $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" $<
+
 help.o: help.cpp
-	$(CC) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c $<
+	$(CXX) -c $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" $<
 
 copy: $(FILES)
 	mv $(FILES) backup
