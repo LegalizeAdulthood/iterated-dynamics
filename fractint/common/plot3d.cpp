@@ -519,9 +519,9 @@ void plot_setup()
 		{
 		case WHICHIMAGE_RED:
 			g_x_shift  += (int) ((g_eye_separation*(double) g_x_dots)/200);
-			g_xx_adjust = (int) (((g_raytrace_state.m_x_trans + g_x_adjust)*(double) g_x_dots)/100);
+			g_xx_adjust = (int) (((g_raytrace_state.x_trans() + g_x_adjust)*(double) g_x_dots)/100);
 			g_x_shift1 -= (int) ((g_eye_separation*(double) g_x_dots)/200);
-			g_xx_adjust1 = (int) (((g_raytrace_state.m_x_trans-g_x_adjust)*(double) g_x_dots)/100);
+			g_xx_adjust1 = (int) (((g_raytrace_state.x_trans() - g_x_adjust)*(double) g_x_dots)/100);
 			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2 - g_x_dots;
@@ -530,7 +530,7 @@ void plot_setup()
 
 		case WHICHIMAGE_BLUE:
 			g_x_shift  -= (int) ((g_eye_separation* (double)g_x_dots)/200);
-			g_xx_adjust = (int) (((g_raytrace_state.m_x_trans-g_x_adjust)* (double)g_x_dots)/100);
+			g_xx_adjust = (int) (((g_raytrace_state.x_trans() - g_x_adjust)* (double)g_x_dots)/100);
 			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2;
@@ -540,9 +540,9 @@ void plot_setup()
 	}
 	else
 	{
-		g_xx_adjust = (int) ((g_raytrace_state.m_x_trans* (double)g_x_dots)/100);
+		g_xx_adjust = (int) ((g_raytrace_state.x_trans()*(double) g_x_dots)/100);
 	}
-	g_yy_adjust = (int) (-(g_raytrace_state.m_y_trans* (double)g_y_dots)/100);
+	g_yy_adjust = (int) (-(g_raytrace_state.y_trans()*(double) g_y_dots)/100);
 
 	if (g_map_set)
 	{

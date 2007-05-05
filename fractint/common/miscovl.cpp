@@ -1158,10 +1158,10 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			}
 			put_parm(" coarse=%d", g_preview_factor);
 		}
-		if (g_raytrace_state.m_raytrace_output)
+		if (g_raytrace_state.raytrace_output())
 		{
-			put_parm(" ray=%d", g_raytrace_state.m_raytrace_output);
-			if (g_raytrace_state.m_raytrace_brief)
+			put_parm(" ray=%d", g_raytrace_state.raytrace_output());
+			if (g_raytrace_state.raytrace_brief())
 			{
 				put_parm(" brief=y");
 			}
@@ -1174,9 +1174,9 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 				put_parm(" smoothing=%d", g_raytrace_state.light_avg());
 			}
 		}
-		if (g_raytrace_state.m_randomize_colors)
+		if (g_raytrace_state.randomize_colors())
 		{
-			put_parm(" randomize=%d", g_raytrace_state.m_randomize_colors);
+			put_parm(" randomize=%d", g_raytrace_state.randomize_colors());
 		}
 		if (g_targa_output)
 		{
@@ -1186,17 +1186,20 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		{
 			put_parm(" usegrayscale=y");
 		}
-		if (g_raytrace_state.m_ambient)
+		if (g_raytrace_state.ambient())
 		{
-			put_parm(" ambient=%d", g_raytrace_state.m_ambient);
+			put_parm(" ambient=%d", g_raytrace_state.ambient());
 		}
-		if (g_raytrace_state.m_haze)
+		if (g_raytrace_state.haze())
 		{
-			put_parm(" haze=%d", g_raytrace_state.m_haze);
+			put_parm(" haze=%d", g_raytrace_state.haze());
 		}
-		if (g_raytrace_state.m_background_color[0] != 51 || g_raytrace_state.m_background_color[1] != 153 || g_raytrace_state.m_background_color[2] != 200)
+		if (g_raytrace_state.background_red() != 51
+			|| g_raytrace_state.background_green() != 153
+			|| g_raytrace_state.background_blue() != 200)
 		{
-			put_parm(" background=%d/%d/%d", g_raytrace_state.m_background_color[0], g_raytrace_state.m_background_color[1], g_raytrace_state.m_background_color[2]);
+			put_parm(" background=%d/%d/%d", g_raytrace_state.background_red(),
+				g_raytrace_state.background_green(), g_raytrace_state.background_blue());
 		}
 	}
 
@@ -1209,9 +1212,9 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		}
 		put_parm(" perspective=%d", g_raytrace_state.z_viewer());
 		put_parm(" xyshift=%d/%d", g_raytrace_state.x_shift(), g_raytrace_state.y_shift());
-		if (g_raytrace_state.m_x_trans || g_raytrace_state.m_y_trans)
+		if (g_raytrace_state.x_trans() || g_raytrace_state.y_trans())
 		{
-			put_parm(" xyadjust=%d/%d", g_raytrace_state.m_x_trans, g_raytrace_state.m_y_trans);
+			put_parm(" xyadjust=%d/%d", g_raytrace_state.x_trans(), g_raytrace_state.y_trans());
 		}
 		if (g_glasses_type)
 		{

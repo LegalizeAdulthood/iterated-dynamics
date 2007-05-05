@@ -2952,19 +2952,19 @@ restart_1:
 
 	prompts3d[++k] = "Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_raytrace_state.m_raytrace_output;
+	uvalues[k].uval.ival = g_raytrace_state.raytrace_output();
 
 	prompts3d[++k] = "                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)";
 	uvalues[k].type = '*';
 
 	prompts3d[++k] = "    Brief output?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_raytrace_state.m_raytrace_brief;
+	uvalues[k].uval.ch.val = g_raytrace_state.raytrace_brief();
 
-	check_write_file(g_raytrace_state.m_ray_name, ".ray");
+	g_raytrace_state.next_ray_name();
 	prompts3d[++k] = "    Output File Name";
 	uvalues[k].type = 's';
-	strcpy(uvalues[k].uval.sval, g_raytrace_state.m_ray_name);
+	strcpy(uvalues[k].uval.sval, g_raytrace_state.ray_name());
 
 	prompts3d[++k] = "Targa output?";
 	uvalues[k].type = 'y';
@@ -2989,16 +2989,16 @@ restart_1:
 	g_glasses_type = uvalues[k++].uval.ival;
 	k++;
 
-	g_raytrace_state.m_raytrace_output = uvalues[k++].uval.ival;
+	g_raytrace_state.set_raytrace_output(uvalues[k++].uval.ival);
 	k++;
-	if (g_raytrace_state.m_raytrace_output == RAYTRACE_POVRAY)
+	if (g_raytrace_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
 		stop_message(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
 		"the online documentation.");
 	}
-	g_raytrace_state.m_raytrace_brief = uvalues[k++].uval.ch.val;
+	g_raytrace_state.set_raytrace_brief(uvalues[k++].uval.ch.val);
 
-	strcpy(g_raytrace_state.m_ray_name, uvalues[k++].uval.sval);
+	g_raytrace_state.set_ray_name(uvalues[k++].uval.sval);
 
 	g_targa_output = uvalues[k++].uval.ch.val;
 	g_grayscale_depth  = uvalues[k++].uval.ch.val;
@@ -3036,16 +3036,16 @@ restart_1:
 		g_which_image = WHICHIMAGE_RED;
 	}
 
-	if (g_raytrace_state.m_raytrace_output < RAYTRACE_NONE)
+	if (g_raytrace_state.raytrace_output() < RAYTRACE_NONE)
 	{
-		g_raytrace_state.m_raytrace_output = RAYTRACE_NONE;
+		g_raytrace_state.set_raytrace_output(RAYTRACE_NONE);
 	}
-	if (g_raytrace_state.m_raytrace_output > RAYTRACE_DXF)
+	if (g_raytrace_state.raytrace_output() > RAYTRACE_DXF)
 	{
-		g_raytrace_state.m_raytrace_output = RAYTRACE_DXF;
+		g_raytrace_state.set_raytrace_output(RAYTRACE_DXF);
 	}
 
-	if (!g_raytrace_state.m_raytrace_output)
+	if (!g_raytrace_state.raytrace_output())
 	{
 		k = 0;
 		choices[k++] = "make a surface grid";
@@ -3102,7 +3102,7 @@ restart_1:
 	else
 	{
 		k = -1;
-		if (!g_raytrace_state.m_raytrace_output)
+		if (!g_raytrace_state.raytrace_output())
 		{
 			prompts3d[++k] = "X-axis rotation in degrees";
 			prompts3d[++k] = "Y-axis rotation in degrees";
@@ -3112,7 +3112,7 @@ restart_1:
 		prompts3d[++k] = "Y-axis scaling factor in pct";
 	}
 	k = -1;
-	if (!(g_raytrace_state.m_raytrace_output && !g_raytrace_state.sphere()))
+	if (!(g_raytrace_state.raytrace_output() && !g_raytrace_state.sphere()))
 	{
 		uvalues[++k].uval.ival   = g_raytrace_state.x_rot()    ;
 		uvalues[k].type = 'i';
@@ -3135,7 +3135,7 @@ restart_1:
 	uvalues[k].type = 'i';
 	uvalues[k].uval.ival = g_raytrace_state.water_line() ;
 
-	if (!g_raytrace_state.m_raytrace_output)
+	if (!g_raytrace_state.raytrace_output())
 	{
 		prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
 		uvalues[k].type = 'i';
@@ -3151,11 +3151,11 @@ restart_1:
 
 		prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.m_x_trans    ;
+		uvalues[k].uval.ival = g_raytrace_state.x_trans();
 
 		prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.m_y_trans    ;
+		uvalues[k].uval.ival = g_raytrace_state.y_trans();
 
 		prompts3d[++k] = "First transparent color";
 		uvalues[k].type = 'i';
@@ -3168,7 +3168,7 @@ restart_1:
 
 	prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_raytrace_state.m_randomize_colors;
+	uvalues[k++].uval.ival = g_raytrace_state.randomize_colors();
 
 	const char *s;
 	if (g_raytrace_state.sphere())
@@ -3191,7 +3191,7 @@ restart_1:
 	}
 
 	k = 0;
-	if (!(g_raytrace_state.m_raytrace_output && !g_raytrace_state.sphere()))
+	if (!(g_raytrace_state.raytrace_output() && !g_raytrace_state.sphere()))
 	{
 		g_raytrace_state.set_x_rot(uvalues[k++].uval.ival);
 		g_raytrace_state.set_y_rot(uvalues[k++].uval.ival);
@@ -3201,27 +3201,28 @@ restart_1:
 	g_raytrace_state.set_y_scale(uvalues[k++].uval.ival);
 	g_raytrace_state.set_rough(uvalues[k++].uval.ival);
 	g_raytrace_state.set_water_line(uvalues[k++].uval.ival);
-	if (!g_raytrace_state.m_raytrace_output)
+	if (!g_raytrace_state.raytrace_output())
 	{
 		g_raytrace_state.set_z_viewer(uvalues[k++].uval.ival);
 		g_raytrace_state.set_x_shift(uvalues[k++].uval.ival);
 		g_raytrace_state.set_y_shift(uvalues[k++].uval.ival);
-		g_raytrace_state.m_x_trans     = uvalues[k++].uval.ival;
-		g_raytrace_state.m_y_trans     = uvalues[k++].uval.ival;
+		g_raytrace_state.set_x_trans(uvalues[k++].uval.ival);
+		g_raytrace_state.set_y_trans(uvalues[k++].uval.ival);
 		g_transparent[0] = uvalues[k++].uval.ival;
 		g_transparent[1] = uvalues[k++].uval.ival;
 	}
-	g_raytrace_state.m_randomize_colors  = uvalues[k++].uval.ival;
-	if (g_raytrace_state.m_randomize_colors >= 7)
+	int randomize_colors  = uvalues[k++].uval.ival;
+	if (randomize_colors >= 7)
 	{
-		g_raytrace_state.m_randomize_colors = 7;
+		randomize_colors = 7;
 	}
-	if (g_raytrace_state.m_randomize_colors <= 0)
+	if (randomize_colors <= 0)
 	{
-		g_raytrace_state.m_randomize_colors = 0;
+		randomize_colors = 0;
 	}
+	g_raytrace_state.set_randomize_colors(randomize_colors);
 
-	if ((g_targa_output || (g_raytrace_state.fill_type() > FillType::Bars) || g_raytrace_state.m_raytrace_output))
+	if ((g_targa_output || (g_raytrace_state.fill_type() > FillType::Bars) || g_raytrace_state.raytrace_output()))
 	{
 		if (get_light_params())
 		{
@@ -3241,37 +3242,37 @@ static int get_light_params()
 	/* defaults go here */
 	k = -1;
 
-	if ((g_raytrace_state.fill_type() > FillType::Bars) || g_raytrace_state.m_raytrace_output)
+	if ((g_raytrace_state.fill_type() > FillType::Bars) || g_raytrace_state.raytrace_output())
 	{
 		prompts3d[++k] = "X value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.x_light()    ;
+		uvalues[k].uval.ival = g_raytrace_state.x_light();
 
 		prompts3d[++k] = "Y value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.y_light()    ;
+		uvalues[k].uval.ival = g_raytrace_state.y_light();
 
 		prompts3d[++k] = "Z value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.z_light()    ;
+		uvalues[k].uval.ival = g_raytrace_state.z_light();
 
-		if (!g_raytrace_state.m_raytrace_output)
+		if (!g_raytrace_state.raytrace_output())
 		{
 			prompts3d[++k] = "Light Source Smoothing Factor";
 			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = g_raytrace_state.light_avg()  ;
+			uvalues[k].uval.ival = g_raytrace_state.light_avg();
 
 			prompts3d[++k] = "Ambient";
 			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = g_raytrace_state.m_ambient;
+			uvalues[k].uval.ival = g_raytrace_state.ambient();
 		}
 	}
 
-	if (g_targa_output && !g_raytrace_state.m_raytrace_output)
+	if (g_targa_output && !g_raytrace_state.raytrace_output())
 	{
 		prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.m_haze;
+		uvalues[k].uval.ival = g_raytrace_state.haze();
 
 		if (!g_targa_overlay)
 		{
@@ -3286,15 +3287,15 @@ static int get_light_params()
 
 		prompts3d[++k] = "   Red";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_raytrace_state.m_background_color[0];
+		uvalues[k].uval.ival = (int) g_raytrace_state.background_red();
 
 		prompts3d[++k] = "   Green";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_raytrace_state.m_background_color[1];
+		uvalues[k].uval.ival = (int) g_raytrace_state.background_green();
 
 		prompts3d[++k] = "   Blue";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_raytrace_state.m_background_color[2];
+		uvalues[k].uval.ival = (int) g_raytrace_state.background_blue();
 
 		prompts3d[++k] = "Overlay Targa File? (Y/N)";
 		uvalues[k].type = 'y';
@@ -3316,39 +3317,43 @@ static int get_light_params()
 		g_raytrace_state.set_x_light(uvalues[k++].uval.ival);
 		g_raytrace_state.set_y_light(uvalues[k++].uval.ival);
 		g_raytrace_state.set_z_light(uvalues[k++].uval.ival);
-		if (!g_raytrace_state.m_raytrace_output)
+		if (!g_raytrace_state.raytrace_output())
 		{
 			g_raytrace_state.set_light_avg(uvalues[k++].uval.ival);
-			g_raytrace_state.m_ambient  = uvalues[k++].uval.ival;
-			if (g_raytrace_state.m_ambient >= 100)
+			int ambient = uvalues[k++].uval.ival;
+			if (ambient >= 100)
 			{
-				g_raytrace_state.m_ambient = 100;
+				ambient = 100;
 			}
-			if (g_raytrace_state.m_ambient <= 0)
+			else if (ambient <= 0)
 			{
-				g_raytrace_state.m_ambient = 0;
+				ambient = 0;
 			}
+			g_raytrace_state.set_ambient(ambient);
 		}
 	}
 
-	if (g_targa_output && !g_raytrace_state.m_raytrace_output)
+	if (g_targa_output && !g_raytrace_state.raytrace_output())
 	{
-		g_raytrace_state.m_haze  =  uvalues[k++].uval.ival;
-		if (g_raytrace_state.m_haze >= 100)
+		int haze = uvalues[k++].uval.ival;
+		if (haze >= 100)
 		{
-			g_raytrace_state.m_haze = 100;
+			haze = 100;
 		}
-		if (g_raytrace_state.m_haze <= 0)
+		if (haze <= 0)
 		{
-			g_raytrace_state.m_haze = 0;
+			haze = 0;
 		}
+		g_raytrace_state.set_haze(haze);
 		strcpy(g_light_name, uvalues[k++].uval.sval);
         /* In case g_light_name conflicts with an existing name it is checked
 						again in line3d */
 		k++;
-		g_raytrace_state.m_background_color[0] = (BYTE) (uvalues[k++].uval.ival % 255);
-		g_raytrace_state.m_background_color[1] = (BYTE) (uvalues[k++].uval.ival % 255);
-		g_raytrace_state.m_background_color[2] = (BYTE) (uvalues[k++].uval.ival % 255);
+		g_raytrace_state.set_background_color(
+			(BYTE) (uvalues[k + 0].uval.ival % 255),
+			(BYTE) (uvalues[k + 1].uval.ival % 255),
+			(BYTE) (uvalues[k + 2].uval.ival % 255));
+		k += 3;
 		g_targa_overlay = uvalues[k].uval.ch.val;
 	}
 	return 0;

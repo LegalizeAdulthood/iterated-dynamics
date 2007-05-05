@@ -140,8 +140,8 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			g_raytrace_state.set_init_3d(read_info.init_3d, 16);
 			g_preview_factor   = read_info.previewfactor;
-			g_raytrace_state.m_x_trans = read_info.xtrans;
-			g_raytrace_state.m_y_trans = read_info.ytrans;
+			g_raytrace_state.set_x_trans(read_info.xtrans);
+			g_raytrace_state.set_y_trans(read_info.ytrans);
 			g_red_crop_left   = read_info.red_crop_left;
 			g_red_crop_right  = read_info.red_crop_right;
 			g_blue_crop_left  = read_info.blue_crop_left;
@@ -218,9 +218,9 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		if (!g_display_3d && read_info.flag3d > 0)
 		{
 			g_loaded_3d       = 1;
-			g_raytrace_state.m_ambient        = read_info.ambient;
-			g_raytrace_state.m_randomize_colors      = read_info.randomize;
-			g_raytrace_state.m_haze           = read_info.haze;
+			g_raytrace_state.set_ambient(read_info.ambient);
+			g_raytrace_state.set_randomize_colors(read_info.randomize);
+			g_raytrace_state.set_haze(read_info.haze);
 			g_transparent[0] = read_info.transparent[0];
 			g_transparent[1] = read_info.transparent[1];
 		}

@@ -132,3 +132,218 @@ int RayTraceState::parse_sphere(const cmd_context &context)
 	return FlagParser<int>(m_init_3d[0], Command::ThreeDParameter).parse(context);
 }
 
+int RayTraceState::parse_rotation(const cmd_context &context)
+{
+	if (context.totparms != 3 || context.intparms != 3)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[XROT] = context.intval[0];
+	m_init_3d[YROT] = context.intval[1];
+	m_init_3d[ZROT] = context.intval[2];
+	return Command::FractalParameter | Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_perspective(const cmd_context &context)
+{
+	if (context.numval == NON_NUMERIC)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[ZVIEWER] = context.numval;
+	return Command::FractalParameter | Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_xy_shift(const cmd_context &context)
+{
+	if (context.totparms != 2 || context.intparms != 2)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[XSHIFT] = context.intval[0];
+	m_init_3d[YSHIFT] = context.intval[1];
+	return Command::FractalParameter | Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_xy_translate(const cmd_context &context)
+{
+	if (context.totparms != 2 || context.intparms != 2)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_x_trans = context.intval[0];
+	m_y_trans = context.intval[1];
+	return Command::FractalParameter | Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_xyz_scale(const cmd_context &context)
+{
+	if (context.totparms < 2 || context.intparms != context.totparms)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[XSCALE] = context.intval[0];
+	m_init_3d[YSCALE] = context.intval[1];
+	if (context.totparms > 2)
+	{
+		m_init_3d[ROUGH] = context.intval[2];
+	}
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_roughness(const cmd_context &context)
+{
+	/* "rough" is really scale z, but we add it here for convenience */
+	m_init_3d[ROUGH] = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_water_line(const cmd_context &context)
+{
+	if (context.numval < 0)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[WATERLINE] = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_fill_type(const cmd_context &context)
+{
+	if (context.numval < FillType::SurfaceGrid || context.numval > FillType::LightAfter)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[FILLTYPE] = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_light_source(const cmd_context &context)
+{
+	if (context.totparms != 3 || context.intparms != 3)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[XLIGHT] = context.intval[0];
+	m_init_3d[YLIGHT] = context.intval[1];
+	m_init_3d[ZLIGHT] = context.intval[2];
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_smoothing(const cmd_context &context)
+{
+	if (context.numval < 0)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[LIGHTAVG] = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_lattitude(const cmd_context &context)
+{
+	if (context.totparms != 2 || context.intparms != 2)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[THETA1] = context.intval[0];
+	m_init_3d[THETA2] = context.intval[1];
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_longitude(const cmd_context &context)
+{
+	if (context.totparms != 2 || context.intparms != 2)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[PHI1] = context.intval[0];
+	m_init_3d[PHI2] = context.intval[1];
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_radius(const cmd_context &context)
+{
+	if (context.numval < 0)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_init_3d[RADIUS] = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_randomize_colors(const cmd_context &context)
+{
+	if (context.numval < 0 || context.numval > 7)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_randomize_colors = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_ambient(const cmd_context &context)
+{
+	if (context.numval < 0 || context.numval > 100)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_ambient = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_haze(const cmd_context &context)
+{
+	if (context.numval < 0 || context.numval > 100)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_haze = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_background_color(const cmd_context &context)
+{
+	int i;
+
+	if (context.totparms != 3 || context.intparms != 3)
+	{
+		return bad_arg(context.curarg);
+	}
+	for (i = 0; i < 3; i++)
+	{
+		if (context.intval[i] & ~0xff)
+		{
+			return bad_arg(context.curarg);
+		}
+	}
+	m_background_color[0] = (BYTE)context.intval[0];
+	m_background_color[1] = (BYTE)context.intval[1];
+	m_background_color[2] = (BYTE)context.intval[2];
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_raytrace_output(const cmd_context &context)
+{
+	if (context.numval < 0 || context.numval > 6)
+	{
+		return bad_arg(context.curarg);
+	}
+	m_raytrace_output = context.numval;
+	return Command::ThreeDParameter;
+}
+
+int RayTraceState::parse_raytrace_brief(const cmd_context &context)
+{
+	return FlagParser<int>(m_raytrace_brief, Command::ThreeDParameter).parse(context);
+}
+
+void RayTraceState::set_ray_name(const char *value)
+{
+	::strcpy(m_ray_name, value);
+}
+
+void RayTraceState::next_ray_name()
+{
+	check_write_file(m_ray_name, ".ray");
+}

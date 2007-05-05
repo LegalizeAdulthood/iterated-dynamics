@@ -64,16 +64,6 @@ typedef BYTE BOOLEAN;
 #define SAVEDAC_YES		1
 #define SAVEDAC_NEXT	2
 
-/* g_raytrace_state.m_raytrace_output values */
-#define RAYTRACE_NONE		0
-#define RAYTRACE_POVRAY		1
-#define RAYTRACE_VIVID		2
-#define RAYTRACE_RAW		3
-#define RAYTRACE_MTV		4
-#define RAYTRACE_RAYSHADE	5
-#define RAYTRACE_ACROSPIN	6
-#define RAYTRACE_DXF		7
-
 /* g_orbit_draw_mode values */
 #define ORBITDRAW_RECTANGLE	0
 #define ORBITDRAW_LINE		1
