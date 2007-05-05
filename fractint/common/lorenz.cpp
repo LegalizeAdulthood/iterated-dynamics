@@ -1680,12 +1680,12 @@ static int orbit_3d_calc()
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
-				if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+				if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
 					double yy;
-					yy = inf.viewvect[((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
+					yy = inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
 					yy = yy/g_fudge;
-					g_sound_state.tone((int) (yy*100 + g_sound_state.m_base_hertz));
+					g_sound_state.tone((int) (yy*100 + g_sound_state.base_hertz()));
 				}
 				if (oldcol != -1 && s_connect)
 				{
@@ -1801,9 +1801,9 @@ static int orbit_3d_calc_fp()
 				{
 					g_which_image = WHICHIMAGE_RED;
 				}
-				if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+				if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					g_sound_state.tone((int) (inf.viewvect[((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + g_sound_state.m_base_hertz));
+					g_sound_state.tone((int) (inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + g_sound_state.base_hertz()));
 				}
 				if (oldcol != -1 && s_connect)
 				{

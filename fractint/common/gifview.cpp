@@ -440,7 +440,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 		{
 			sleep_ms(g_orbit_delay);
 		}
-		g_sound_state.tone((int)((int)(*pixels++)*3000/g_colors + g_sound_state.m_base_hertz));
+		g_sound_state.tone((int)((int)(*pixels++)*3000/g_colors + g_sound_state.base_hertz()));
 		if (driver_key_pressed())
 		{
 			driver_mute();

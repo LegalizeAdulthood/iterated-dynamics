@@ -371,7 +371,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_dither_flag = 0;                     /* no dithering */
 	g_ui_state.ask_video = true;                        /* turn on video-prompt flag */
 	g_fractal_overwrite = FALSE;                 /* don't overwrite           */
-	g_sound_state.m_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* sound is on to PC speaker */
+	g_sound_state.set_speaker_beep();		/* sound is on to PC speaker */
 	g_initialize_batch = INITBATCH_NONE;			/* not in batch mode         */
 	g_check_current_dir = 0;                     /* flag to check current dire for files */
 	g_save_time = 0;                    /* no auto-save              */
@@ -2188,102 +2188,57 @@ static int sphere_arg(const cmd_context &context)
 
 static int sound_arg(const cmd_context &context)
 {
-	return g_sound_state.parse_command(context);
+	return g_sound_state.parse_sound(context);
 }
 
 static int hertz_arg(const cmd_context &context)
 {
-	g_sound_state.m_base_hertz = context.numval;
-	return Command::OK;
+	return g_sound_state.parse_hertz(context);
 }
 
 static int volume_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_volume = context.numval & 0x3F; /* 63 */
-	return Command::OK;
+	return g_sound_state.parse_volume(context);
 }
 
 static int attenuate_arg(const cmd_context &context)
 {
-	if (context.charval[0] == 'n')
-	{
-		g_sound_state.m_note_attenuation = ATTENUATE_NONE;
-	}
-	else if (context.charval[0] == 'l')
-	{
-		g_sound_state.m_note_attenuation = ATTENUATE_LOW;
-	}
-	else if (context.charval[0] == 'm')
-	{
-		g_sound_state.m_note_attenuation = ATTENUATE_MIDDLE;
-	}
-	else if (context.charval[0] == 'h')
-	{
-		g_sound_state.m_note_attenuation = ATTENUATE_HIGH;
-	}
-	else
-	{
-		return bad_arg(context.curarg);
-	}
-	return Command::OK;
+	return g_sound_state.parse_attenuation(context);
 }
 
 static int polyphony_arg(const cmd_context &context)
 {
-	if (context.numval > 9)
-	{
-		return bad_arg(context.curarg);
-	}
-	g_sound_state.m_polyphony = abs(context.numval-1);
-	return Command::OK;
+	return g_sound_state.parse_polyphony(context);
 }
 
 static int wave_type_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_wave_type = context.numval & 0x0F;
-	return Command::OK;
+	return g_sound_state.parse_wave_type(context);
 }
 
 static int attack_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_attack = context.numval & 0x0F;
-	return Command::OK;
+	return g_sound_state.parse_attack(context);
 }
 
 static int decay_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_decay = context.numval & 0x0F;
-	return Command::OK;
+	return g_sound_state.parse_decay(context);
 }
 
 static int sustain_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_sustain = context.numval & 0x0F;
-	return Command::OK;
+	return g_sound_state.parse_sustain(context);
 }
 
 static int sustain_release_arg(const cmd_context &context)
 {
-	g_sound_state.m_fm_release = context.numval & 0x0F;
-	return Command::OK;
+	return g_sound_state.parse_release(context);
 }
 
 static int scale_map_arg(const cmd_context &context)
 {
-	int counter;
-	if (context.totparms != context.intparms)
-	{
-		return bad_arg(context.curarg);
-	}
-	for (counter = 0; counter <= 11; counter++)
-	{
-		if ((context.totparms > counter) && (context.intval[counter] > 0)
-			&& (context.intval[counter] < 13))
-		{
-			g_sound_state.m_scale_map[counter] = context.intval[counter];
-		}
-	}
-	return Command::OK;
+	return g_sound_state.parse_scale_map(context);
 }
 
 static int periodicity_arg(const cmd_context &context)

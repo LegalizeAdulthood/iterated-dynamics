@@ -256,7 +256,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 				}
 				g_out_line = potential_line;
 			}
-			else if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !g_evolving) /* regular gif/fra input file */
+			else if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !g_evolving) /* regular gif/fra input file */
 			{
 				g_out_line = sound_line;      /* sound decoding */
 			}
@@ -805,7 +805,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		if (i > 0)
 		{
 			g_start_show_orbit = 0;
-			g_sound_state.m_flags &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); /* turn off only x, y, z */
+			g_sound_state.silence_xyz();
 			g_log_automatic_flag = FALSE; /* turn it off */
 		}
 		break;
