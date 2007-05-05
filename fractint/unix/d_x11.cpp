@@ -2823,7 +2823,7 @@ int X11Driver::init_fm()
 */
 void X11Driver::buzzer(int buzzer_type)
 {
-	if ((g_sound_state.m_flags & SOUNDFLAG_ORBITMASK) != 0)
+	if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) != 0)
 	{
 		printf("\007");
 		fflush(stdout);
