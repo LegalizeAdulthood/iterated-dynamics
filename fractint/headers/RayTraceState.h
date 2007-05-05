@@ -31,43 +31,50 @@ public:
 class RayTraceState
 {
 public:
+	enum
+	{
+		DEFAULT_BACKGROUND_RED = 51,
+		DEFAULT_BACKGROUND_GREEN = 153,
+		DEFAULT_BACKGROUND_BLUE = 200
+	};
 	RayTraceState();
 	~RayTraceState();
 
-	int raytrace_output()		{ return m_raytrace_output; }
-	int raytrace_brief()		{ return m_raytrace_brief; }
-	int ambient()				{ return m_ambient; }
-	BYTE background_red()		{ return m_background_color[0]; }
-	BYTE background_green()		{ return m_background_color[1]; }
-	BYTE background_blue()		{ return m_background_color[2]; }
-	int haze()					{ return m_haze; }
-	int randomize_colors()		{ return m_randomize_colors; }
-	int x_trans()				{ return m_x_trans; }
-	int y_trans()				{ return m_y_trans; }
-	const char *ray_name()		{ return m_ray_name; }
+	int raytrace_output() const		{ return m_raytrace_output; }
+	int raytrace_brief() const		{ return m_raytrace_brief; }
+	int ambient() const				{ return m_ambient; }
+	BYTE background_red() const		{ return m_background_color[0]; }
+	BYTE background_green() const	{ return m_background_color[1]; }
+	BYTE background_blue() const	{ return m_background_color[2]; }
+	int haze() const				{ return m_haze; }
+	int randomize_colors() const	{ return m_randomize_colors; }
+	int x_trans() const				{ return m_x_trans; }
+	int y_trans() const				{ return m_y_trans; }
+	const char *ray_name() const	{ return m_ray_name; }
 
-	bool sphere() const			{ return (m_init_3d[SPHERE] != 0); }
-	int x_rot() const			{ return m_init_3d[XROT]; }
-	int y_rot() const			{ return m_init_3d[YROT]; }
-	int z_rot() const			{ return m_init_3d[ZROT]; }
-	int x_scale() const			{ return m_init_3d[XSCALE]; }
-	int y_scale() const			{ return m_init_3d[YSCALE]; }
-	int phi1() const			{ return m_init_3d[PHI1]; }
-	int phi2() const			{ return m_init_3d[PHI2]; }
-	int theta1() const			{ return m_init_3d[THETA1]; }
-	int theta2() const			{ return m_init_3d[THETA2]; }
-	int radius() const			{ return m_init_3d[RADIUS]; }
-	int rough() const			{ return m_init_3d[ROUGH]; }
-	int water_line() const		{ return m_init_3d[WATERLINE]; }
-	int fill_type() const		{ return m_init_3d[FILLTYPE]; }
-	int z_viewer() const		{ return m_init_3d[ZVIEWER]; }
-	int x_shift() const			{ return m_init_3d[XSHIFT]; }
-	int y_shift() const			{ return m_init_3d[YSHIFT]; }
-	int x_light() const			{ return m_init_3d[XLIGHT]; }
-	int y_light() const			{ return m_init_3d[YLIGHT]; }
-	int z_light() const			{ return m_init_3d[ZLIGHT]; }
-	int light_avg() const		{ return m_init_3d[LIGHTAVG]; }
+	bool sphere() const				{ return (m_init_3d[SPHERE] != 0); }
+	int x_rot() const				{ return m_init_3d[XROT]; }
+	int y_rot() const				{ return m_init_3d[YROT]; }
+	int z_rot() const				{ return m_init_3d[ZROT]; }
+	int x_scale() const				{ return m_init_3d[XSCALE]; }
+	int y_scale() const				{ return m_init_3d[YSCALE]; }
+	int phi1() const				{ return m_init_3d[PHI1]; }
+	int phi2() const				{ return m_init_3d[PHI2]; }
+	int theta1() const				{ return m_init_3d[THETA1]; }
+	int theta2() const				{ return m_init_3d[THETA2]; }
+	int radius() const				{ return m_init_3d[RADIUS]; }
+	int rough() const				{ return m_init_3d[ROUGH]; }
+	int water_line() const			{ return m_init_3d[WATERLINE]; }
+	int fill_type() const			{ return m_init_3d[FILLTYPE]; }
+	int z_viewer() const			{ return m_init_3d[ZVIEWER]; }
+	int x_shift() const				{ return m_init_3d[XSHIFT]; }
+	int y_shift() const				{ return m_init_3d[YSHIFT]; }
+	int x_light() const				{ return m_init_3d[XLIGHT]; }
+	int y_light() const				{ return m_init_3d[YLIGHT]; }
+	int z_light() const				{ return m_init_3d[ZLIGHT]; }
+	int light_avg() const			{ return m_init_3d[LIGHTAVG]; }
 	void get_init_3d(short *data, int count) const;
+
 	void history_save(short *destination) const;
 	void history_restore(const short *data);
 
@@ -131,6 +138,8 @@ public:
 	int parse_raytrace_brief(const cmd_context &context);
 
 	void next_ray_name();
+
+	const char *parameter_text() const;
 
 private:
 	int m_raytrace_brief;

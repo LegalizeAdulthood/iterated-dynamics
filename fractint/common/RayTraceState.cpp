@@ -1,3 +1,5 @@
+#include <string>
+#include <sstream>
 #include <string.h>
 
 #include "port.h"
@@ -346,4 +348,64 @@ void RayTraceState::set_ray_name(const char *value)
 void RayTraceState::next_ray_name()
 {
 	check_write_file(m_ray_name, ".ray");
+}
+
+const char *RayTraceState::parameter_text() const
+{
+	std::ostringstream text;
+
+	if (sphere())
+	{
+		text << " sphere=y";
+		text << " latitude=" << theta1() << "/" << theta2();
+		text << " longitude=" << phi1() << "/" << phi2();
+		text << " radius=" << radius();
+	}
+	text << " scalexyz=" << x_scale() << "/" << y_scale();
+	text << " roughness=" << rough();
+	text << " waterline=" << water_line();
+	if (fill_type())
+	{
+		text << " filltype=" << fill_type();
+	}
+
+	if (m_raytrace_output)
+	{
+		text << " ray=" << m_raytrace_output;
+		if (m_raytrace_brief)
+		{
+			text << " brief=y";
+		}
+	}
+	if (fill_type() > FillType::Bars)
+	{
+		text << " lightsource=" << x_light() << "/" << y_light() << "/" << z_light();
+		if (light_avg())
+		{
+			text << " smoothing=" << light_avg();
+		}
+	}
+	if (m_randomize_colors)
+	{
+		text << " randomize=" << m_randomize_colors;
+	}
+	if (ambient())
+	{
+		text << " ambient=" << ambient();
+	}
+	if (haze())
+	{
+		text << " haze=" << haze();
+	}
+	if (m_background_color[0] != DEFAULT_BACKGROUND_RED
+		|| m_background_color[1] != DEFAULT_BACKGROUND_GREEN
+		|| m_background_color[2] != DEFAULT_BACKGROUND_BLUE)
+	{
+		text << " background=" << m_background_color[0]
+			<< "/" << m_background_color[1]
+			<< "/" << m_background_color[2];
+	}
+
+	text << std::ends;
+	return text.str().c_str();
 }
