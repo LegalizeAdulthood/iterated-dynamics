@@ -56,7 +56,6 @@ SRCS = \
     soi1.cpp \
     stereo.cpp \
     testpt.cpp \
-    tgaview.cpp \
     zoom.cpp \
     Halley.cpp \
     Newton.cpp \
