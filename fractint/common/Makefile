@@ -17,6 +17,7 @@ SRCS = \
     evolve.cpp \
     f16.cpp \
     font8x8.cpp \
+	fracsuba.cpp \
     fracsubr.cpp \
     fractalb.cpp \
     fractalp.cpp \

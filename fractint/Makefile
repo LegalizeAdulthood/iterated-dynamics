@@ -199,7 +199,8 @@ $(COMDIR)/3d.o $(COMDIR)/ant.o $(COMDIR)/bigflt.o  $(COMDIR)/biginit.o \
 $(COMDIR)/bignum.o $(COMDIR)/bignumc.o $(COMDIR)/calcfrac.o \
 $(COMDIR)/cmdfiles.o $(COMDIR)/decoder.o \
 $(COMDIR)/drivers.o $(COMDIR)/editpal.o \
-$(COMDIR)/encoder.o $(COMDIR)/evolve.o $(COMDIR)/f16.o $(COMDIR)/fracsubr.o \
+$(COMDIR)/encoder.o $(COMDIR)/evolve.o $(COMDIR)/f16.o \
+$(COMDIR)/fracsuba.o $(COMDIR)/fracsubr.o \
 $(COMDIR)/fractalb.o $(COMDIR)/fractalp.o $(COMDIR)/fractals.o \
 $(COMDIR)/fractint.o $(COMDIR)/framain2.o $(COMDIR)/frasetup.o \
 $(COMDIR)/gifview.o $(COMDIR)/hcmplx.o $(COMDIR)/help.o $(COMDIR)/history.o \
