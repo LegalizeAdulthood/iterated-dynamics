@@ -87,13 +87,6 @@ extern int bail_out_or_l();
 extern int bail_out_and_l();
 extern int bail_out_manhattan_l();
 extern int bail_out_manhattan_r_l();
-extern int asm386lMODbailout();
-extern int asm386lREALbailout();
-extern int asm386lIMAGbailout();
-extern int asm386lORbailout();
-extern int asm386lANDbailout();
-extern int asm386lMANHbailout();
-extern int asm386lMANRbailout();
 
 /* history -- C file prototypes */
 
