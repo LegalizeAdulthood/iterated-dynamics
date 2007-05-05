@@ -1,6 +1,14 @@
 #if !defined(SOUND_STATE_H)
 #define SOUND_STATE_H
 
+#include "CommandParser.h"
+
+/* note attenuation values */
+#define ATTENUATE_NONE		0
+#define ATTENUATE_LOW		1
+#define ATTENUATE_MIDDLE	2
+#define ATTENUATE_HIGH		3
+
 class SoundState
 {
 public:
