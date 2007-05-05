@@ -587,17 +587,140 @@ static struct write_batch_data /* buffer for parms to break lines nicely */
 	char buf[10000];
 } s_wbdata;
 
+static void write_universal_3d_parameters()
+{
+	if (g_display_3d)  /* universal 3d */
+	{
+		/***** common (fractal & transform) 3d parameters in this section *****/
+		if (!g_raytrace_state.sphere() || g_display_3d < 0)
+		{
+			put_parm(" rotation=%d/%d/%d", g_raytrace_state.x_rot(), g_raytrace_state.y_rot(), g_raytrace_state.z_rot());
+		}
+		put_parm(" perspective=%d", g_raytrace_state.z_viewer());
+		put_parm(" xyshift=%d/%d", g_raytrace_state.x_shift(), g_raytrace_state.y_shift());
+		if (g_raytrace_state.x_trans() || g_raytrace_state.y_trans())
+		{
+			put_parm(" xyadjust=%d/%d", g_raytrace_state.x_trans(), g_raytrace_state.y_trans());
+		}
+		if (g_glasses_type)
+		{
+			put_parm(" stereo=%d", g_glasses_type);
+			put_parm(" interocular=%d", g_eye_separation);
+			put_parm(" converge=%d", g_x_adjust);
+			put_parm(" crop=%d/%d/%d/%d",
+				g_red_crop_left, g_red_crop_right, g_blue_crop_left, g_blue_crop_right);
+			put_parm(" bright=%d/%d", g_red_bright, g_blue_bright);
+		}
+	}
+}
+
+static void write_3d_parameters()
+{
+	if (g_display_3d >= 1)
+	{
+		/***** 3d transform only parameters in this section *****/
+		if (g_display_3d == 2)
+		{
+			put_parm(" 3d=overlay");
+		}
+		else
+		{
+			put_parm(" 3d=yes");
+		}
+		if (g_loaded_3d == 0)
+		{
+			put_filename("filename", g_read_name);
+		}
+
+		if (g_raytrace_state.sphere())
+		{
+			put_parm(" sphere=y");
+			put_parm(" latitude=%d/%d", g_raytrace_state.theta1(), g_raytrace_state.theta2());
+			put_parm(" longitude=%d/%d", g_raytrace_state.phi1(), g_raytrace_state.phi2());
+			put_parm(" radius=%d", g_raytrace_state.radius());
+		}
+		put_parm(" scalexyz=%d/%d", g_raytrace_state.x_scale(), g_raytrace_state.y_scale());
+		put_parm(" roughness=%d", g_raytrace_state.rough());
+		put_parm(" waterline=%d", g_raytrace_state.water_line());
+		if (g_raytrace_state.fill_type())
+		{
+			put_parm(" filltype=%d", g_raytrace_state.fill_type());
+		}
+		if (g_transparent[0] || g_transparent[1])
+		{
+			put_parm(" transparent=%d/%d", g_transparent[0], g_transparent[1]);
+		}
+		if (g_preview)
+		{
+			put_parm(" preview=yes");
+			if (g_show_box)
+			{
+				put_parm(" showbox=yes");
+			}
+			put_parm(" coarse=%d", g_preview_factor);
+		}
+		if (g_raytrace_state.raytrace_output())
+		{
+			put_parm(" ray=%d", g_raytrace_state.raytrace_output());
+			if (g_raytrace_state.raytrace_brief())
+			{
+				put_parm(" brief=y");
+			}
+		}
+		if (g_raytrace_state.fill_type() > FillType::Bars)
+		{
+			put_parm(" lightsource=%d/%d/%d", g_raytrace_state.x_light(), g_raytrace_state.y_light(), g_raytrace_state.z_light());
+			if (g_raytrace_state.light_avg())
+			{
+				put_parm(" smoothing=%d", g_raytrace_state.light_avg());
+			}
+		}
+		if (g_raytrace_state.randomize_colors())
+		{
+			put_parm(" randomize=%d", g_raytrace_state.randomize_colors());
+		}
+		if (g_targa_output)
+		{
+			put_parm(" fullcolor=y");
+		}
+		if (g_grayscale_depth)
+		{
+			put_parm(" usegrayscale=y");
+		}
+		if (g_raytrace_state.ambient())
+		{
+			put_parm(" ambient=%d", g_raytrace_state.ambient());
+		}
+		if (g_raytrace_state.haze())
+		{
+			put_parm(" haze=%d", g_raytrace_state.haze());
+		}
+		if (g_raytrace_state.background_red() != 51
+			|| g_raytrace_state.background_green() != 153
+			|| g_raytrace_state.background_blue() != 200)
+		{
+			put_parm(" background=%d/%d/%d", g_raytrace_state.background_red(),
+				g_raytrace_state.background_green(), g_raytrace_state.background_blue());
+		}
+	}
+}
+
 void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
 {
-	int i, j, k;
-	double Xctr, Yctr;
+	int i;
+	int j;
+	int k;
+	double Xctr;
+	double Yctr;
 	LDBL Magnification;
-	double Xmagfactor, Rotation, Skew;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	char *sptr;
 	char buf[81];
-	bf_t bfXctr = NULL, bfYctr = NULL;
-	int saved;
-	saved = save_stack();
+	bf_t bfXctr = NULL;
+	bf_t bfYctr = NULL;
+	int saved = save_stack();
 	if (g_bf_math)
 	{
 		bfXctr = alloc_stack(bflength + 2);
@@ -1116,116 +1239,8 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		}
 	}
 
-	if (g_display_3d >= 1)
-	{
-		/***** 3d transform only parameters in this section *****/
-		if (g_display_3d == 2)
-		{
-			put_parm(" 3d=overlay");
-		}
-		else
-		{
-			put_parm(" 3d=yes");
-		}
-		if (g_loaded_3d == 0)
-		{
-			put_filename("filename", g_read_name);
-		}
-		if (g_raytrace_state.sphere())
-		{
-			put_parm(" sphere=y");
-			put_parm(" latitude=%d/%d", g_raytrace_state.theta1(), g_raytrace_state.theta2());
-			put_parm(" longitude=%d/%d", g_raytrace_state.phi1(), g_raytrace_state.phi2());
-			put_parm(" radius=%d", g_raytrace_state.radius());
-		}
-		put_parm(" scalexyz=%d/%d", g_raytrace_state.x_scale(), g_raytrace_state.y_scale());
-		put_parm(" roughness=%d", g_raytrace_state.rough());
-		put_parm(" waterline=%d", g_raytrace_state.water_line());
-		if (g_raytrace_state.fill_type())
-		{
-			put_parm(" filltype=%d", g_raytrace_state.fill_type());
-		}
-		if (g_transparent[0] || g_transparent[1])
-		{
-			put_parm(" transparent=%d/%d", g_transparent[0], g_transparent[1]);
-		}
-		if (g_preview)
-		{
-			put_parm(" preview=yes");
-			if (g_show_box)
-			{
-				put_parm(" showbox=yes");
-			}
-			put_parm(" coarse=%d", g_preview_factor);
-		}
-		if (g_raytrace_state.raytrace_output())
-		{
-			put_parm(" ray=%d", g_raytrace_state.raytrace_output());
-			if (g_raytrace_state.raytrace_brief())
-			{
-				put_parm(" brief=y");
-			}
-		}
-		if (g_raytrace_state.fill_type() > FillType::Bars)
-		{
-			put_parm(" lightsource=%d/%d/%d", g_raytrace_state.x_light(), g_raytrace_state.y_light(), g_raytrace_state.z_light());
-			if (g_raytrace_state.light_avg())
-			{
-				put_parm(" smoothing=%d", g_raytrace_state.light_avg());
-			}
-		}
-		if (g_raytrace_state.randomize_colors())
-		{
-			put_parm(" randomize=%d", g_raytrace_state.randomize_colors());
-		}
-		if (g_targa_output)
-		{
-			put_parm(" fullcolor=y");
-		}
-		if (g_grayscale_depth)
-		{
-			put_parm(" usegrayscale=y");
-		}
-		if (g_raytrace_state.ambient())
-		{
-			put_parm(" ambient=%d", g_raytrace_state.ambient());
-		}
-		if (g_raytrace_state.haze())
-		{
-			put_parm(" haze=%d", g_raytrace_state.haze());
-		}
-		if (g_raytrace_state.background_red() != 51
-			|| g_raytrace_state.background_green() != 153
-			|| g_raytrace_state.background_blue() != 200)
-		{
-			put_parm(" background=%d/%d/%d", g_raytrace_state.background_red(),
-				g_raytrace_state.background_green(), g_raytrace_state.background_blue());
-		}
-	}
-
-	if (g_display_3d)  /* universal 3d */
-	{
-		/***** common (fractal & transform) 3d parameters in this section *****/
-		if (!g_raytrace_state.sphere() || g_display_3d < 0)
-		{
-			put_parm(" rotation=%d/%d/%d", g_raytrace_state.x_rot(), g_raytrace_state.y_rot(), g_raytrace_state.z_rot());
-		}
-		put_parm(" perspective=%d", g_raytrace_state.z_viewer());
-		put_parm(" xyshift=%d/%d", g_raytrace_state.x_shift(), g_raytrace_state.y_shift());
-		if (g_raytrace_state.x_trans() || g_raytrace_state.y_trans())
-		{
-			put_parm(" xyadjust=%d/%d", g_raytrace_state.x_trans(), g_raytrace_state.y_trans());
-		}
-		if (g_glasses_type)
-		{
-			put_parm(" stereo=%d", g_glasses_type);
-			put_parm(" interocular=%d", g_eye_separation);
-			put_parm(" converge=%d", g_x_adjust);
-			put_parm(" crop=%d/%d/%d/%d",
-				g_red_crop_left, g_red_crop_right, g_blue_crop_left, g_blue_crop_right);
-			put_parm(" bright=%d/%d", g_red_bright, g_blue_bright);
-		}
-	}
+	write_3d_parameters();
+	write_universal_3d_parameters();
 
 	/***** universal parameters in this section *****/
 
