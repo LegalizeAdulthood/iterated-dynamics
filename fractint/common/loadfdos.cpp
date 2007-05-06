@@ -1,10 +1,8 @@
 /*
-	loadfdos.c - subroutine of loadfile.c (read_overlay) which sets
-				up video (mode, screen size).
-	This module is linked as an overlay, should only be called from loadfile.c
+	loadfdos.cpp - Stuff split out of loadfile.cpp, for ancient crusty DOS
+	reasons a long, long time ago in a code base far, far away.
 
-	This code was split to a separate module to isolate the DOS only aspects
-	of loading an image.  get_video_mode should return with:
+	get_video_mode should return with:
 		return code 0 for ok, -1 for error or cancelled by user
 		video parameters setup for the mainline, in the dos case this means
 		setting g_init_mode to video mode, based on this fractint.c will set up
@@ -15,20 +13,7 @@
 		set g_skip_x_dots and g_skip_y_dots, to 0 if all pixels are to be loaded,
 		to 1 for every 2nd pixel, 2 for every 3rd, etc
 
-	In WinFract, at least initially, get_video_mode can do just the
-	following:
-		set overall image x & y dimensions (g_screen_width and g_screen_height) to g_file_x_dots
-		and g_file_y_dots (note that g_file_colors is the number of g_colors in the
-		gif, not sure if that is of any use...)
-		if current window smaller than new g_screen_width and g_screen_height, use scroll bars,
-		if larger perhaps reduce the window size? whatever
-		set g_view_window to 0 (no need? it always is for now in windows vsn?)
-		set g_final_aspect_ratio to .75 (ditto?)
-		set g_skip_x_dots and g_skip_y_dots to 0
-		return 0
-
 */
-
 #include <string.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
@@ -39,17 +24,15 @@
 
 /* routines in this module      */
 
-#ifndef XFRACT
-static int    vidcompare(VOIDCONSTPTR , VOIDCONSTPTR);
+static int    video_mode_compare(const void *, const void *);
 static void   format_item(int, char *);
-static int    check_modekey(int, int);
-static void   format_vid_inf(int i, char *err, char *buf);
-#endif
-static double vid_aspect(int tryxdots, int tryydots);
+static int    check_mode_key(int, int);
+static void   format_video_info(int i, char *err, char *buf);
+static double video_mode_aspect_ratio(int width, int height);
 
-struct vidinf
+struct video_mode_info
 {
-	int entnum;     /* g_video_entry subscript */
+	int index;     /* g_video_entry subscript */
 	unsigned flags; /* flags for sort's compare, defined below */
 };
 /* defines for flags; done this way instead of bit union to ensure ordering;
@@ -64,12 +47,10 @@ struct vidinf
 #define VI_CBIG      4  /* mode has excess g_colors */
 #define VI_ASPECT    1  /* aspect ratio bad */
 
-#ifndef XFRACT
-static int vidcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
+static int video_mode_compare(const void *p1, const void *p2)
 {
-	struct vidinf CONST *ptr1, *ptr2;
-	ptr1 = (struct vidinf CONST *)p1;
-	ptr2 = (struct vidinf CONST *)p2;
+	const video_mode_info *ptr1 = (const video_mode_info *) p1;
+	const video_mode_info *ptr2 = (const video_mode_info *) p2;
 	if (ptr1->flags < ptr2->flags)
 	{
 		return -1;
@@ -78,22 +59,22 @@ static int vidcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
 	{
 		return 1;
 	}
-	if (g_video_table[ptr1->entnum].keynum < g_video_table[ptr2->entnum].keynum)
+	if (g_video_table[ptr1->index].keynum < g_video_table[ptr2->index].keynum)
 	{
 		return -1;
 	}
-	if (g_video_table[ptr1->entnum].keynum > g_video_table[ptr2->entnum].keynum)
+	if (g_video_table[ptr1->index].keynum > g_video_table[ptr2->index].keynum)
 	{
 		return 1;
 	}
-	if (ptr1->entnum < ptr2->entnum)
+	if (ptr1->index < ptr2->index)
 	{
 		return -1;
 	}
 	return 1;
 }
 
-static void format_vid_inf(int i, char *err, char *buf)
+static void format_video_info(int i, char *err, char *buf)
 {
 	char kname[5];
 	memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
@@ -105,22 +86,21 @@ static void format_vid_inf(int i, char *err, char *buf)
 			g_video_entry.colors, g_video_entry.comment);
 	g_video_entry.x_dots = 0; /* so tab_display knows to display nothing */
 }
-#endif
 
-static double vid_aspect(int tryxdots, int tryydots)
+static double video_mode_aspect_ratio(int width, int height)
 {  /* calc resulting aspect ratio for specified dots in current mode */
-	return (double)tryydots / (double)tryxdots
+	return (double)height / (double)width
 		*(double)g_video_entry.x_dots / (double)g_video_entry.y_dots
 		*g_screen_aspect_ratio;
 	}
 
 #ifndef XFRACT
-static struct vidinf *vidptr;
+static video_mode_info *vidptr;
 #endif
 
 int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
-	struct vidinf vid[MAXVIDEOMODES];
+	video_mode_info vid[MAXVIDEOMODES];
 	int i, j;
 	int gotrealmode;
 	double ftemp, ftemp2;
@@ -207,14 +187,14 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 		if (g_file_aspect_ratio != 0 && (tmpflags & VI_VSMALL) == 0)
 		{
-			ftemp = vid_aspect(g_file_x_dots, g_file_y_dots);
+			ftemp = video_mode_aspect_ratio(g_file_x_dots, g_file_y_dots);
 			if (ftemp < g_file_aspect_ratio*0.98 ||
 				ftemp > g_file_aspect_ratio*1.02)
 			{
 				tmpflags |= VI_ASPECT;
 			}
 		}
-		vid[i].entnum = i;
+		vid[i].index = i;
 		vid[i].flags  = tmpflags;
 	}
 
@@ -231,7 +211,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		/* no exact match or (askvideo=yes and batch=no), and not
 			in makepar mode, talk to user */
 
-		qsort(vid, g_video_table_len, sizeof(vid[0]), vidcompare); /* sort modes */
+		qsort(vid, g_video_table_len, sizeof(vid[0]), video_mode_compare); /* sort modes */
 
 		attributes = (int *)&g_stack[1000];
 		for (i = 0; i < g_video_table_len; ++i)
@@ -297,7 +277,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 			}
 			else
 			{
-				format_vid_inf(g_init_mode, "", temp1);
+				format_video_info(g_init_mode, "", temp1);
 				strcat((char *)g_stack, temp1);
 			}
 		}
@@ -320,7 +300,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		i = full_screen_choice_help(HELPLOADFILE, 0, (char *) g_stack,
 			"key...name......................err...xdot..ydot.clr.comment..................",
 			temp1, g_video_table_len, NULL, attributes,
-			1, 13, 78, 0, format_item, NULL, NULL, check_modekey);
+			1, 13, 78, 0, format_item, NULL, NULL, check_mode_key);
 		if (i == -1)
 		{
 			return -1;
@@ -332,7 +312,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 		else
 		{
-			g_init_mode = vid[i].entnum;
+			g_init_mode = vid[i].index;
 		}
 	}
 #else
@@ -411,14 +391,14 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 			tmpxdots = (g_file_x_dots + g_skip_x_dots - 1) / g_skip_x_dots;
 			tmpydots = (g_file_y_dots + g_skip_y_dots - 1) / g_skip_y_dots;
 			/* reduce further if that improves aspect */
-			ftemp = vid_aspect(tmpxdots, tmpydots);
+			ftemp = video_mode_aspect_ratio(tmpxdots, tmpydots);
 			if (ftemp > g_file_aspect_ratio)
 			{
 				if (j)
 				{
 					break; /* already reduced x, don't reduce y */
 				}
-				ftemp2 = vid_aspect(tmpxdots, (g_file_y_dots + g_skip_y_dots)/(g_skip_y_dots + 1));
+				ftemp2 = video_mode_aspect_ratio(tmpxdots, (g_file_y_dots + g_skip_y_dots)/(g_skip_y_dots + 1));
 				if (ftemp2 < g_file_aspect_ratio &&
 					ftemp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/ftemp2)
 				{
@@ -433,7 +413,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 				{
 					break; /* already reduced y, don't reduce x */
 				}
-				ftemp2 = vid_aspect((g_file_x_dots + g_skip_x_dots)/(g_skip_x_dots + 1), tmpydots);
+				ftemp2 = video_mode_aspect_ratio((g_file_x_dots + g_skip_x_dots)/(g_skip_x_dots + 1), tmpydots);
 				if (ftemp2 > g_file_aspect_ratio &&
 					g_file_aspect_ratio/ftemp *0.9 <= ftemp2/g_file_aspect_ratio)
 				{
@@ -452,7 +432,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	g_final_aspect_ratio = g_file_aspect_ratio;
 	if (g_final_aspect_ratio == 0) /* assume display correct */
 	{
-		g_final_aspect_ratio = (float)vid_aspect(g_file_x_dots, g_file_y_dots);
+		g_final_aspect_ratio = (float) video_mode_aspect_ratio(g_file_x_dots, g_file_y_dots);
 	}
 	if (g_final_aspect_ratio >= g_screen_aspect_ratio-0.02
 		&& g_final_aspect_ratio <= g_screen_aspect_ratio + 0.02)
@@ -505,7 +485,6 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	return 0;
 }
 
-#ifndef XFRACT
 static void format_item(int choice, char *buf)
 {
 	char errbuf[10];
@@ -536,14 +515,13 @@ static void format_item(int choice, char *buf)
 	{
 		strcat(errbuf, "c");
 	}
-	format_vid_inf(vidptr[choice].entnum, errbuf, buf);
+	format_video_info(vidptr[choice].index, errbuf, buf);
 }
 
-static int check_modekey(int curkey, int choice)
+static int check_mode_key(int curkey, int choice)
 {
 	int i;
 	i = choice; /* avoid warning */
 	i = check_video_mode_key(0, curkey);
 	return (i >= 0) ? -100-i : 0;
 }
-#endif

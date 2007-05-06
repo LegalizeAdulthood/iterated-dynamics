@@ -51,7 +51,7 @@ static void put_filename(char *keyword, char *fname);
 #ifndef XFRACT
 static int check_modekey(int curkey, int choice);
 #endif
-static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2);
+static int entcompare(const void *p1, const void *p2);
 static void update_fractint_cfg();
 static void strip_zeros(char *buf);
 
@@ -2128,7 +2128,7 @@ static int check_modekey(int curkey, int choice)
 }
 #endif
 
-static int entcompare(VOIDCONSTPTR p1, VOIDCONSTPTR p2)
+static int entcompare(const void *p1, const void *p2)
 {
 	int i, j;
 	i = g_video_table[*((int *)p1)].keynum;
