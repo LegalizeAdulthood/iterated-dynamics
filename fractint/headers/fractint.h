@@ -746,10 +746,10 @@ struct FractalTypeSpecificData
 	float x_max;						/* default XMAX corner */
 	float y_min;						/* default YMIN corner */
 	float y_max;						/* default YMAX corner */
-	int   isinteger;					/* 1 if g_integer_fractal, 0 otherwise */
-	int   tojulia;						/* mandel-to-julia switch */
-	int   tomandel;						/* julia-to-mandel switch */
-	int   tofloat;						/* integer-to-floating switch */
+	int   isinteger;					/* >= 1 if integer fractal, 0 otherwise */
+	int   tojulia;						/* index of corresponding julia type */
+	int   tomandel;						/* index of corresponding mandelbrot type */
+	int   tofloat;						/* index of corresponding floating-point type */
 	int   symmetry;						/* applicable symmetry logic
 										   0 = no symmetry
 										  -1 = y-axis symmetry (If No Params)

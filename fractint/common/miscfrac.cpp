@@ -1064,11 +1064,11 @@ int bifurcation()
 
 	if (g_integer_fractal)
 	{
-		g_initial_z_l.y = g_escape_time_state.m_grid_l.y_max() - g_y_stop*g_delta_y;            /* Y-value of    */
+		g_initial_z_l.y = g_escape_time_state.m_grid_l.y_max() - g_y_stop*g_escape_time_state.m_grid_l.delta_y();            /* Y-value of    */
 	}
 	else
 	{
-		g_initial_z.y = (double)(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_delta_y_fp); /* bottom pixels */
+		g_initial_z.y = (double)(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_escape_time_state.m_grid_fp.delta_y()); /* bottom pixels */
 	}
 
 	while (column <= g_x_stop)
@@ -1083,11 +1083,11 @@ int bifurcation()
 
 		if (g_integer_fractal)
 		{
-			s_rate_l = g_escape_time_state.m_grid_l.x_min() + column*g_delta_x;
+			s_rate_l = g_escape_time_state.m_grid_l.x_min() + column*g_escape_time_state.m_grid_l.delta_x();
 		}
 		else
 		{
-			s_rate = (double)(g_escape_time_state.m_grid_fp.x_min() + column*g_delta_x_fp);
+			s_rate = (double)(g_escape_time_state.m_grid_fp.x_min() + column*g_escape_time_state.m_grid_fp.delta_x());
 		}
 		verhulst();        /* calculate array once per column */
 
@@ -1182,8 +1182,8 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = g_integer_fractal
-			? (g_y_stop - (int)((s_population_l - g_initial_z_l.y) / g_delta_y))
-			: (g_y_stop - (int)((s_population - g_initial_z.y) / g_delta_y_fp));
+			? (g_y_stop - (int)((s_population_l - g_initial_z_l.y) / g_escape_time_state.m_grid_l.delta_y()))
+			: (g_y_stop - (int)((s_population - g_initial_z.y) / g_escape_time_state.m_grid_fp.delta_y()));
 
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)g_y_stop) /* JCO 6/6/92 */
@@ -1206,12 +1206,12 @@ static void bifurcation_period_init()
 	if (g_integer_fractal)
 	{
 		s_bifurcation_saved_population_l = -1;
-		s_bifurcation_close_enough_l = g_delta_y / 8;
+		s_bifurcation_close_enough_l = g_escape_time_state.m_grid_l.delta_y() / 8;
 	}
 	else
 	{
 		s_bifurcation_saved_population = -1.0;
-		s_bifurcation_close_enough = (double) g_delta_y_fp / 8.0;
+		s_bifurcation_close_enough = (double) g_escape_time_state.m_grid_fp.delta_y() / 8.0;
 	}
 }
 

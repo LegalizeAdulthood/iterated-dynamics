@@ -1965,8 +1965,8 @@ int dynamic_2d_fp()
 
 		xpixel = g_dx_size*(xstep + .5)/s_d;
 		ypixel = g_dy_size*(ystep + .5)/s_d;
-		x = (double) ((g_escape_time_state.m_grid_fp.x_min() + g_delta_x_fp*xpixel) + (g_delta_x2_fp*ypixel));
-		y = (double) ((g_escape_time_state.m_grid_fp.y_max()-g_delta_y_fp*ypixel) + (-g_delta_y2_fp*xpixel));
+		x = (double) ((g_escape_time_state.m_grid_fp.x_min() + g_escape_time_state.m_grid_fp.delta_x()*xpixel) + (g_escape_time_state.m_grid_fp.delta_x2()*ypixel));
+		y = (double) ((g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.delta_y()*ypixel) + (-g_escape_time_state.m_grid_fp.delta_y2()*xpixel));
 		z = 0.0;
 		if (g_fractal_type == FRACTYPE_MANDELBROT_CLOUD)
 		{

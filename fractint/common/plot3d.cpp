@@ -496,8 +496,10 @@ void plot_setup()
 	}
 	assert(g_standard_plot);
 
-	g_x_shift1 = g_x_shift = (int) ((g_3d_state.x_shift()*(double) g_x_dots)/100);
-	g_y_shift1 = g_y_shift = (int) ((g_3d_state.y_shift()*(double) g_y_dots)/100);
+	g_x_shift = (int) ((g_3d_state.x_shift()*(double) g_x_dots)/100);
+	g_y_shift = (int) ((g_3d_state.y_shift()*(double) g_y_dots)/100);
+	g_x_shift1 = g_x_shift;
+	g_y_shift1 = g_y_shift;
 
 	if (g_3d_state.glasses_type())
 	{

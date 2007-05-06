@@ -94,14 +94,6 @@ int     g_fractal_type;               /* if == 0, use Mandelbrot  */
 char    g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
 long    g_c_real;
 long	g_c_imag;           /* real, imag'ry parts of C */
-long    g_delta_x;
-long	g_delta_y;             /* screen pixel increments  */
-long    g_delta_x2;
-long	g_delta_y2;           /* screen pixel increments  */
-LDBL    g_delta_x_fp;
-LDBL	g_delta_y_fp;           /* screen pixel increments  */
-LDBL    g_delta_x2_fp;
-LDBL	g_delta_y2_fp;         /* screen pixel increments  */
 long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot    */
 double  g_delta_min_fp;                /* same as a double         */
 double  g_parameters[MAX_PARAMETERS];       /* parameters               */
@@ -281,10 +273,13 @@ static void main_restart(int argc, char *argv[], int &stacked)
 
 	g_evolving = FALSE;
 	g_parameter_range_x = 4;
-	g_parameter_offset_x = g_new_parameter_offset_x = -2.0;
+	g_parameter_offset_x = -2.0;
+	g_new_parameter_offset_x = -2.0;
 	g_parameter_range_y = 3;
-	g_parameter_offset_y = g_new_parameter_offset_y = -1.5;
-	g_discrete_parameter_offset_x = g_discrete_parameter_offset_y = 0;
+	g_parameter_offset_y = -1.5;
+	g_new_parameter_offset_y = -1.5;
+	g_discrete_parameter_offset_x = 0;
+	g_discrete_parameter_offset_y = 0;
 	g_grid_size = 9;
 	g_fiddle_factor = 1;
 	g_fiddle_reduction = 1.0;
@@ -770,6 +765,6 @@ va_dcl
 		{
 			fclose(fp);
 		}
-		}
+	}
 	return out;
 }

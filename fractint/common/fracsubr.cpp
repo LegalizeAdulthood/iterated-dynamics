@@ -368,10 +368,10 @@ init_restart:
 	else
 	{
 		adjust_to_limits(1.0); /* make sure all corners in valid range */
-		g_delta_x_fp  = (LDBL)(g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / (LDBL)g_dx_size; /* calculate stepsizes */
-		g_delta_y_fp  = (LDBL)(g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / (LDBL)g_dy_size;
-		g_delta_x2_fp = (LDBL)(g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / (LDBL)g_dy_size;
-		g_delta_y2_fp = (LDBL)(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / (LDBL)g_dx_size;
+		g_escape_time_state.m_grid_fp.delta_x()  = (LDBL)(g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / (LDBL)g_dx_size; /* calculate stepsizes */
+		g_escape_time_state.m_grid_fp.delta_y()  = (LDBL)(g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / (LDBL)g_dy_size;
+		g_escape_time_state.m_grid_fp.delta_x2() = (LDBL)(g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / (LDBL)g_dy_size;
+		g_escape_time_state.m_grid_fp.delta_y2() = (LDBL)(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / (LDBL)g_dx_size;
 		g_escape_time_state.fill_grid_fp();
 	}
 
@@ -385,10 +385,10 @@ init_restart:
 		g_escape_time_state.m_grid_l.y_min() = fudge_to_long(g_escape_time_state.m_grid_fp.y_min());
 		g_escape_time_state.m_grid_l.y_max() = fudge_to_long(g_escape_time_state.m_grid_fp.y_max());
 		g_escape_time_state.m_grid_l.y_3rd() = fudge_to_long(g_escape_time_state.m_grid_fp.y_3rd());
-		g_delta_x  = fudge_to_long((double)g_delta_x_fp);
-		g_delta_y  = fudge_to_long((double)g_delta_y_fp);
-		g_delta_x2 = fudge_to_long((double)g_delta_x2_fp);
-		g_delta_y2 = fudge_to_long((double)g_delta_y2_fp);
+		g_escape_time_state.m_grid_l.delta_x() = fudge_to_long(g_escape_time_state.m_grid_fp.delta_x());
+		g_escape_time_state.m_grid_l.delta_y() = fudge_to_long(g_escape_time_state.m_grid_fp.delta_y());
+		g_escape_time_state.m_grid_l.delta_x2() = fudge_to_long(g_escape_time_state.m_grid_fp.delta_x2());
+		g_escape_time_state.m_grid_l.delta_y2() = fudge_to_long(g_escape_time_state.m_grid_fp.delta_y2());
 	}
 
 	/* skip this if plasma to avoid 3d problems */
@@ -400,10 +400,10 @@ init_restart:
 	{
 		if (g_integer_fractal && !g_invert && g_escape_time_state.m_use_grid)
 		{
-			if ((g_delta_x  == 0 && g_delta_x_fp  != 0.0)
-				|| (g_delta_x2 == 0 && g_delta_x2_fp != 0.0)
-				|| (g_delta_y  == 0 && g_delta_y_fp  != 0.0)
-				|| (g_delta_y2 == 0 && g_delta_y2_fp != 0.0))
+			if ((g_escape_time_state.m_grid_l.delta_x()  == 0 && g_escape_time_state.m_grid_fp.delta_x()  != 0.0)
+				|| (g_escape_time_state.m_grid_l.delta_x2() == 0 && g_escape_time_state.m_grid_fp.delta_x2() != 0.0)
+				|| (g_escape_time_state.m_grid_l.delta_y()  == 0 && g_escape_time_state.m_grid_fp.delta_y()  != 0.0)
+				|| (g_escape_time_state.m_grid_l.delta_y2() == 0 && g_escape_time_state.m_grid_fp.delta_y2() != 0.0))
 			{
 				goto expand_retry;
 			}
@@ -457,13 +457,13 @@ expand_retry:
 				the limit of resolution */
 			for (int i = 1; i < g_x_dots; i++)
 			{
-				dx0 = (double)(dx0 + (double)g_delta_x_fp);
-				dy1 = (double)(dy1 - (double)g_delta_y2_fp);
+				dx0 = (double)(dx0 + (double)g_escape_time_state.m_grid_fp.delta_x());
+				dy1 = (double)(dy1 - (double)g_escape_time_state.m_grid_fp.delta_y2());
 			}
 			for (int i = 1; i < g_y_dots; i++)
 			{
-				dy0 = (double)(dy0 - (double)g_delta_y_fp);
-				dx1 = (double)(dx1 + (double)g_delta_x2_fp);
+				dy0 = (double)(dy0 - (double)g_escape_time_state.m_grid_fp.delta_y());
+				dx1 = (double)(dx1 + (double)g_escape_time_state.m_grid_fp.delta_x2());
 			}
 			if (g_bf_math == 0) /* redundant test, leave for now */
 			{
@@ -527,41 +527,41 @@ expand_retry:
 			g_escape_time_state.fill_grid_fp();       /* fill up the x, y grids */
 
 			/* re-set corners to match reality */
-			g_escape_time_state.m_grid_fp.x_max() = (double)(g_escape_time_state.m_grid_fp.x_min() + (g_x_dots-1)*g_delta_x_fp + (g_y_dots-1)*g_delta_x2_fp);
-			g_escape_time_state.m_grid_fp.y_min() = (double)(g_escape_time_state.m_grid_fp.y_max() - (g_y_dots-1)*g_delta_y_fp - (g_x_dots-1)*g_delta_y2_fp);
-			g_escape_time_state.m_grid_fp.x_3rd() = (double)(g_escape_time_state.m_grid_fp.x_min() + (g_y_dots-1)*g_delta_x2_fp);
-			g_escape_time_state.m_grid_fp.y_3rd() = (double)(g_escape_time_state.m_grid_fp.y_max() - (g_y_dots-1)*g_delta_y_fp);
+			g_escape_time_state.m_grid_fp.x_max() = (double)(g_escape_time_state.m_grid_fp.x_min() + (g_x_dots-1)*g_escape_time_state.m_grid_fp.delta_x() + (g_y_dots-1)*g_escape_time_state.m_grid_fp.delta_x2());
+			g_escape_time_state.m_grid_fp.y_min() = (double)(g_escape_time_state.m_grid_fp.y_max() - (g_y_dots-1)*g_escape_time_state.m_grid_fp.delta_y() - (g_x_dots-1)*g_escape_time_state.m_grid_fp.delta_y2());
+			g_escape_time_state.m_grid_fp.x_3rd() = (double)(g_escape_time_state.m_grid_fp.x_min() + (g_y_dots-1)*g_escape_time_state.m_grid_fp.delta_x2());
+			g_escape_time_state.m_grid_fp.y_3rd() = (double)(g_escape_time_state.m_grid_fp.y_max() - (g_y_dots-1)*g_escape_time_state.m_grid_fp.delta_y());
 		} /* end else */
 	} /* end if not plasma */
 
 	/* for periodicity close-enough, and for unity: */
 	/*     min(max(g_delta_x, g_delta_x2), max(g_delta_y, g_delta_y2)      */
-	g_delta_min_fp = fabs((double)g_delta_x_fp);
-	if (fabs((double)g_delta_x2_fp) > g_delta_min_fp)
+	g_delta_min_fp = fabs((double)g_escape_time_state.m_grid_fp.delta_x());
+	if (fabs((double)g_escape_time_state.m_grid_fp.delta_x2()) > g_delta_min_fp)
 	{
-		g_delta_min_fp = fabs((double)g_delta_x2_fp);
+		g_delta_min_fp = fabs((double)g_escape_time_state.m_grid_fp.delta_x2());
 	}
-	if (fabs((double)g_delta_y_fp) > fabs((double)g_delta_y2_fp))
+	if (fabs((double)g_escape_time_state.m_grid_fp.delta_y()) > fabs((double)g_escape_time_state.m_grid_fp.delta_y2()))
 	{
-		if (fabs((double)g_delta_y_fp) < g_delta_min_fp)
+		if (fabs((double)g_escape_time_state.m_grid_fp.delta_y()) < g_delta_min_fp)
 		{
-			g_delta_min_fp = fabs((double)g_delta_y_fp);
+			g_delta_min_fp = fabs((double)g_escape_time_state.m_grid_fp.delta_y());
 		}
 	}
-	else if (fabs((double)g_delta_y2_fp) < g_delta_min_fp)
+	else if (fabs((double)g_escape_time_state.m_grid_fp.delta_y2()) < g_delta_min_fp)
 	{
-		g_delta_min_fp = fabs((double)g_delta_y2_fp);
+		g_delta_min_fp = fabs((double)g_escape_time_state.m_grid_fp.delta_y2());
 	}
 	g_delta_min = fudge_to_long(g_delta_min_fp);
 
 	/* calculate factors which plot real values to screen co-ords */
 	/* calcfrac.c plot_orbit routines have comments about this    */
-	ftemp = (double) (-g_delta_y2_fp*g_delta_x2_fp*g_dx_size*g_dy_size - (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())*(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_max()));
+	ftemp = (double) (-g_escape_time_state.m_grid_fp.delta_y2()*g_escape_time_state.m_grid_fp.delta_x2()*g_dx_size*g_dy_size - (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())*(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_max()));
 	if (ftemp != 0)
 	{
-		g_plot_mx1 = (double)(g_delta_x2_fp*g_dx_size*g_dy_size / ftemp);
+		g_plot_mx1 = (double)(g_escape_time_state.m_grid_fp.delta_x2()*g_dx_size*g_dy_size / ftemp);
 		g_plot_mx2 = (g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max())*g_dx_size / ftemp;
-		g_plot_my1 = (double)(-g_delta_y2_fp*g_dx_size*g_dy_size/ftemp);
+		g_plot_my1 = (double)(-g_escape_time_state.m_grid_fp.delta_y2()*g_dx_size*g_dy_size/ftemp);
 		g_plot_my2 = (g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd())*g_dy_size / ftemp;
 	}
 	if (g_bf_math == 0)
@@ -700,7 +700,7 @@ void adjust_corner()
 		{
 			g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
 		}
-		}
+	}
 
 	if (ftemp2*10000 < ftemp && g_escape_time_state.m_grid_fp.y_3rd() != g_escape_time_state.m_grid_fp.y_min())
 	{
@@ -715,7 +715,7 @@ void adjust_corner()
 		{
 			g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 		}
-		}
+	}
 
 	if (ftemp2*10000 < ftemp && g_escape_time_state.m_grid_fp.x_3rd() != g_escape_time_state.m_grid_fp.x_min())
 	{
@@ -1809,13 +1809,13 @@ int solid_guess_block_size() /* used by solidguessing and by zoom panning */
 	i = 300;
 	while (i <= g_y_dots)
 	{
-		blocksize += blocksize;
-		i += i;
+		blocksize *= 2;
+		i *= 2;
 	}
 	/* increase blocksize if prefix array not big enough */
 	while (blocksize*(MAX_X_BLOCK-2) < g_x_dots || blocksize*(MAX_Y_BLOCK-2)*16 < g_y_dots)
 	{
-		blocksize += blocksize;
+		blocksize *= 2;
 	}
 	return blocksize;
 }

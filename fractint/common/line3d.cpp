@@ -272,13 +272,15 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		{
 			f_cur->color = (float) (-(*r)*cos_theta*s_sin_phi*s_scale_z);
 		}
-		v[0] = v[1] = v[2] = 0;  /* MRR Why do we do this? */
+		v[0] = 0;
+		v[1] = 0;
+		v[2] = 0;  /* MRR Why do we do this? */
 	}
 	return 0;
 }
 
-static int line3d_non_sphere(int col,
-	struct f_point *f_cur, struct point *cur, LVECTOR lv0, LVECTOR lv, VECTOR v, float *f_water)
+static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
+						 LVECTOR lv0, LVECTOR lv, VECTOR v, float *f_water)
 {
 	if (!g_user_float_flag && !g_3d_state.raytrace_output())
 	{
@@ -548,22 +550,8 @@ static void line3d_fill_bars(int col,
 		old->x = (int) ((lv[0] + 32768L) >> 16);
 		old->y = (int) ((lv[1] + 32768L) >> 16);
 	}
-	if (old->x < 0)
-	{
-		old->x = 0;
-	}
-	else if (old->x >= g_x_dots)
-	{
-		old->x = g_x_dots - 1;
-	}
-	if (old->y < 0)
-	{
-		old->y = 0;
-	}
-	else if (old->y >= g_y_dots)
-	{
-		old->y = g_y_dots - 1;
-	}
+	old->x = MathUtil::Clamp(old->x, 0, g_x_dots - 1);
+	old->y = MathUtil::Clamp(old->y, 0, g_y_dots - 1);
 	driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
 }
 
@@ -650,14 +638,7 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 		* but avoid background index. This makes g_colors "opaque" so
 		* SOMETHING plots. These conditions shouldn't happen but just
 		* in case                                        */
-		if (cur->color < 1)       /* prevent transparent g_colors */
-		{
-			cur->color = 1; /* avoid background */
-		}
-		if (cur->color > g_colors - 1)
-		{
-			cur->color = g_colors - 1;
-		}
+		cur->color = MathUtil::Clamp(cur->color, 1, g_colors - 1);
 
 		/* why "col < 2"? So we have sufficient geometry for the fill */
 		/* algorithm, which needs previous point in same row to have  */
@@ -857,7 +838,8 @@ int line3d(BYTE *pixels, int linelen)
 			goto loopbottom;
 		}
 
-		cur.color = s_real_color = pixels[col];
+		s_real_color = pixels[col];
+		cur.color = s_real_color;
 		f_cur.color = (float) cur.color;
 
 		if (g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
@@ -879,7 +861,8 @@ int line3d(BYTE *pixels, int linelen)
 
 		if (cur.color > 0 && cur.color < g_3d_state.water_line())
 		{
-			cur.color = s_real_color = (BYTE)g_3d_state.water_line();
+			s_real_color = (BYTE) g_3d_state.water_line();
+			cur.color = s_real_color;
 			f_cur.color = (float) cur.color; /* "lake" */
 		}
 		else if (g_potential_16bit)
@@ -897,7 +880,7 @@ int line3d(BYTE *pixels, int linelen)
 		else
 			/* non-sphere 3D */
 		{
-			if (line3d_non_sphere(col, &f_cur, &cur, lv0, lv, v, &f_water))
+			if (line3d_planar(col, &f_cur, &cur, lv0, lv, v, &f_water))
 			{
 				goto loopbottom;
 			}
@@ -946,10 +929,12 @@ loopbottom:
 		{
 			/* for triangle and grid fill purposes */
 			old_last = s_last_row[col];
-			old = s_last_row[col] = cur;
+			s_last_row[col] = cur;
+			old = cur;
 
 			/* for illumination model purposes */
-			f_old = s_f_last_row[col] = f_cur;
+			f_old = f_cur;
+			s_f_last_row[col] = f_cur;
 			if (g_current_row && g_3d_state.raytrace_output() && col >= last_dot)
 				/* if we're at the end of a row, close the object */
 			{
@@ -1011,20 +996,36 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 	* "bottom" - these points are the corners of the screen in the x-y plane.
 	* The "t"'s stand for Top - they are the top of the cube where 255 color
 	* points hit. */
-	*pxmin = *pymin = *pzmin = (int) INT_MAX;
-	*pxmax = *pymax = *pzmax = (int) INT_MIN;
+	*pxmin = (int) INT_MAX;
+	*pymin = (int) INT_MAX;
+	*pzmin = (int) INT_MAX;
+	*pxmax = (int) INT_MIN;
+	*pymax = (int) INT_MIN;
+	*pzmax = (int) INT_MIN;
 
 	for (int j = 0; j < 4; ++j)
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			S[0][j][i] = S[1][j][i] = 0;
+			S[0][j][i] = 0;
+			S[1][j][i] = 0;
 		}
 	}
 
-	S[0][1][0] = S[0][2][0] = S[1][1][0] = S[1][2][0] = g_x_dots - 1;
-	S[0][2][1] = S[0][3][1] = S[1][2][1] = S[1][3][1] = g_y_dots - 1;
-	S[1][0][2] = S[1][1][2] = S[1][2][2] = S[1][3][2] = s_z_coord - 1;
+	S[0][1][0] = g_x_dots - 1;
+	S[0][2][0] = g_x_dots - 1;
+	S[1][1][0] = g_x_dots - 1;
+	S[1][2][0] = g_x_dots - 1;
+
+	S[0][2][1] = g_y_dots - 1;
+	S[0][3][1] = g_y_dots - 1;
+	S[1][2][1] = g_y_dots - 1;
+	S[1][3][1] = g_y_dots - 1;
+
+	S[1][0][2] = s_z_coord - 1;
+	S[1][1][2] = s_z_coord - 1;
+	S[1][2][2] = s_z_coord - 1;
+	S[1][3][2] = s_z_coord - 1;
 
 	for (int i = 0; i < 4; ++i)
 	{
@@ -1123,8 +1124,10 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	VECTOR S[2][4];
 	double temp;
 
-	S[1][0][0] = S[0][0][0] = origin[0];
-	S[1][0][1] = S[0][0][1] = origin[1];
+	S[1][0][0] = origin[0];
+	S[0][0][0] = origin[0];
+	S[1][0][1] = origin[1];
+	S[0][0][1] = origin[1];
 
 	S[1][0][2] = direct[2];
 
@@ -1296,7 +1299,8 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 	}
 
 	/* find min max y */
-	miny = maxy = s_p1.y;
+	miny = s_p1.y;
+	maxy = s_p1.y;
 	if (s_p2.y < miny)
 	{
 		miny = s_p2.y;
@@ -1693,7 +1697,7 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 	/* Finished with the header, now lets work on the display area  */
 	for (int i = 0; i < g_y_dots; i++)  /* "clear the screen" (write to the disk) */
 	{
-		for (int j = 0; j < s_line_length; j = j + inc)
+		for (int j = 0; j < s_line_length; j += inc)
 		{
 			if (overlay)
 			{
@@ -1878,20 +1882,18 @@ static int RGBtoHSV(BYTE red, BYTE green, BYTE blue,
 
 static int HSVtoRGB(BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsigned long saturation, unsigned long value)
 {
-	unsigned long P1, P2, P3;
-	int RMD, I;
-
 	if (hue >= 23040)
 	{
 		hue = hue % 23040;            /* Makes h circular  */
 	}
-	I = (int) (hue/3840);
-	RMD = (int) (hue % 3840);      /* RMD = fractional part of hue    */
 
-	P1 = ((value*(65535L - saturation))/65280L) >> 8;
-	P2 = (((value*(65535L - (saturation*RMD)/3840))/65280L) - 1) >> 8;
-	P3 = (((value*(65535L - (saturation*(3840 - RMD))/3840))/65280L)) >> 8;
-	value = value >> 8;
+	int I = (int) (hue/3840);
+	int RMD = (int) (hue % 3840);      /* RMD = fractional part of hue    */
+
+	unsigned long P1 = ((value*(65535L - saturation))/65280L) >> 8;
+	unsigned long P2 = (((value*(65535L - (saturation*RMD)/3840))/65280L) - 1) >> 8;
+	unsigned long P3 = (((value*(65535L - (saturation*(3840 - RMD))/3840))/65280L)) >> 8;
+	value >>= 8;
 	switch (I)
 	{
 	case 0:
@@ -2329,8 +2331,13 @@ static int start_object()
 	}
 
 	/* Reset the min/max values, for bounding box  */
-	s_min_xyz[0] = s_min_xyz[1] = s_min_xyz[2] = 999999.0f;
-	s_max_xyz[0] = s_max_xyz[1] = s_max_xyz[2] = -999999.0f;
+	s_min_xyz[0] = 999999.0f;
+	s_min_xyz[1] = 999999.0f;
+	s_min_xyz[2] = 999999.0f;
+
+	s_max_xyz[0] = -999999.0f;
+	s_max_xyz[1] = -999999.0f;
+	s_max_xyz[2] = -999999.0f;
 
 	fprintf(s_raytrace_file, "COMPOSITE\n");
 	return 0;
@@ -2492,7 +2499,8 @@ static int first_time(int linelen, VECTOR v)
 	float deltatheta;            /* increment of latitude */
 	g_out_line_cleanup = line3d_cleanup;
 
-	g_calculation_time = s_even_odd_row = 0;
+	g_calculation_time = 0;
+	s_even_odd_row = 0;
 	/* mark as in-progress, and enable <tab> timer display */
 	g_calculation_status = CALCSTAT_IN_PROGRESS;
 
@@ -2508,12 +2516,15 @@ static int first_time(int linelen, VECTOR v)
 	if (g_3d_state.raytrace_output())
 	{
 		raytrace_header();
-		g_xx_adjust = g_yy_adjust = 0;  /* Disable shifting in ray tracing */
+		g_xx_adjust = 0;
+		g_yy_adjust = 0;  /* Disable shifting in ray tracing */
 		g_x_shift = 0;
 		g_y_shift = 0;
 	}
 
-	CO_MAX = CO = RO = 0;
+	CO_MAX = 0;
+	CO = 0;
+	RO = 0;
 
 	set_upr_lwr();
 	s_file_error = FILEERROR_NONE;
@@ -2564,8 +2575,9 @@ static int first_time(int linelen, VECTOR v)
 	}
 	else
 	{
-		s_r_scale = s_scale_z = -0.0001;  /* if rough=0 make it very flat but plot
-									* something */
+		/* if rough=0 make it very flat but plot something */
+		s_r_scale = -0.0001;
+		s_scale_z = -0.0001;
 	}
 
 	/* aspect ratio calculation - assume screen is 4 x 3 */
@@ -2604,7 +2616,9 @@ static int first_time(int linelen, VECTOR v)
 
 		if (g_3d_state.raytrace_output())
 		{
-			xval = yval = zval = 0;
+			xval = 0;
+			yval = 0;
+			zval = 0;
 		}
 
 		xrot(xval, s_m);
@@ -2737,8 +2751,10 @@ static int first_time(int linelen, VECTOR v)
 			float delta_phi = (float) (phi2 - phi1)/(float) g_height;
 
 			/* initial sin, cos phi */
-			s_sin_phi = s_old_sin_phi1 = (float) sin((double) phi1);
-			s_cos_phi = s_old_cos_phi1 = (float) cos((double) phi1);
+			s_old_sin_phi1 = (float) sin((double) phi1);
+			s_sin_phi = s_old_sin_phi1;
+			s_old_cos_phi1 = (float) cos((double) phi1);
+			s_cos_phi = s_old_cos_phi1;
 			s_old_sin_phi2 = (float) sin((double) (phi1 + delta_phi));
 			s_old_cos_phi2 = (float) cos((double) (phi1 + delta_phi));
 
@@ -2758,7 +2774,9 @@ static int first_time(int linelen, VECTOR v)
 		/* precalculate factor */
 		s_r_scale_r = s_radius*s_r_scale;
 
-		s_scale_z = s_scale_x = s_scale_y = g_3d_state.radius()/100.0;      /* Need x, y, z for g_3d_state.raytrace_output() */
+		s_scale_x = g_3d_state.radius()/100.0;      /* Need x, y, z for g_3d_state.raytrace_output() */
+		s_scale_y = s_scale_x;
+		s_scale_z = s_scale_x;
 
 		/* adjust x scale factor for aspect */
 		s_scale_x *= s_aspect;
@@ -2806,15 +2824,19 @@ static int first_time(int linelen, VECTOR v)
 	}
 
 	/* Both Sphere and Normal 3D */
-	direct[0] = s_light_direction[0] = g_3d_state.x_light();
-	direct[1] = s_light_direction[1] = -g_3d_state.y_light();
-	direct[2] = s_light_direction[2] = g_3d_state.z_light();
+	direct[0] = g_3d_state.x_light();
+	direct[1] = -g_3d_state.y_light();
+	direct[2] = g_3d_state.z_light();
+	s_light_direction[0] = direct[0];
+	s_light_direction[1] = direct[1];
+	s_light_direction[2] = direct[2];
 
 	/* Needed because s_scale_z = -ROUGH/100 and s_light_direction is transformed in
 	* FILLTYPE 6 but not in 5. */
 	if (g_3d_state.fill_type() == FillType::LightBefore)
 	{
-		direct[2] = s_light_direction[2] = -g_3d_state.z_light();
+		direct[2] = -g_3d_state.z_light();
+		s_light_direction[2] = direct[2];
 	}
 
 	if (g_3d_state.fill_type() == FillType::LightAfter)           /* transform light direction */
