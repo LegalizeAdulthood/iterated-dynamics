@@ -118,7 +118,7 @@ static double vid_aspect(int tryxdots, int tryydots)
 static struct vidinf *vidptr;
 #endif
 
-int get_video_mode(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
+int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	struct vidinf vid[MAXVIDEOMODES];
 	int i, j;

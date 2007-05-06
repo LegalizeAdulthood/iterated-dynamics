@@ -29,7 +29,6 @@ extern void CalibrateDelay();
 extern void start_wait();
 extern void end_wait();
 
-extern int get_video_mode(struct fractal_info *,struct ext_blk_formula_info *);
 extern int check_vidmode_keyname(char *);
 extern void video_mode_key_name(int, char *);
 extern int check_video_mode_key(int, int);

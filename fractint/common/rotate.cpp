@@ -14,12 +14,12 @@
 
 /* routines in this module      */
 
-static void pauserotate();
+static void pause_rotate();
 static void set_palette(BYTE start[3], BYTE finish[3]);
 static void set_palette2(BYTE start[3], BYTE finish[3]);
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3]);
 
-static int paused;                      /* rotate-is-paused flag */
+static bool s_paused;                      /* rotate-is-paused flag */
 static BYTE Red[3]    = {COLOR_CHANNEL_MAX, 0, 0};     /* for shifted-Fkeys */
 static BYTE Green[3]  = { 0,COLOR_CHANNEL_MAX, 0};
 static BYTE Blue[3]   = { 0, 0,COLOR_CHANNEL_MAX};
@@ -32,12 +32,6 @@ static char mapmask[13] = {"*.map"};
 
 void rotate(int direction)      /* rotate-the-palette routine */
 {
-	int  kbdchar, more, last, next;
-	int fkey, step, fstep, istep, jstep, oldstep;
-	int incr, fromred = 0, fromblue = 0, fromgreen = 0, tored = 0, toblue = 0, togreen = 0;
-	int i, changecolor, changedirection;
-	int rotate_max, rotate_size;
-
 	static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
 
 #ifndef XFRACT
@@ -53,48 +47,55 @@ void rotate(int direction)      /* rotate-the-palette routine */
 
 	HelpModeSaver saved_help(HELPCYCLING);
 
-	paused = 0;                          /* not paused                   */
-	fkey = 0;                            /* no random coloring           */
-	oldstep = step = 1;                  /* single-step                  */
-	fstep = 1;
-	changecolor = -1;                    /* no color (rgb) to change     */
-	changedirection = 0;                 /* no color direction to change */
-	incr = 999;                          /* ready to randomize           */
-	srand((unsigned)time(NULL));         /* randomize things             */
+	s_paused = false;						/* not paused                   */
+	int fkey = 0;							/* no random coloring           */
+	int step = 1;
+	int oldstep = 1;						/* single-step                  */
+	int fstep = 1;
+	int change_color = -1;					/* no color (rgb) to change     */
+	int change_direction = 0;				/* no color direction to change */
+	int incr = 999;							/* ready to randomize           */
+	srand((unsigned) time(NULL));			/* randomize things             */
 
 	if (direction == 0)  /* firing up in paused mode?    */
 	{
-		pauserotate();                    /* then force a pause           */
+		pause_rotate();                    /* then force a pause           */
 		direction = 1;                    /* and set a rotate direction   */
 	}
 
-	rotate_max = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors-1;
-	rotate_size = rotate_max - g_rotate_lo + 1;
-	last = rotate_max;                   /* last box that was filled     */
-	next = g_rotate_lo;                    /* next box to be filled        */
+	int rotate_max = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors-1;
+	int rotate_size = rotate_max - g_rotate_lo + 1;
+	int last = rotate_max;                   /* last box that was filled     */
+	int next = g_rotate_lo;                    /* next box to be filled        */
 	if (direction < 0)
 	{
 		last = g_rotate_lo;
 		next = rotate_max;
 	}
 
-	more = 1;
+	bool more = true;
 	while (more)
 	{
 		if (driver_diskp())
 		{
-			if (!paused)
+			if (!s_paused)
 			{
-				pauserotate();
+				pause_rotate();
 			}
 		}
 		else while (!driver_key_pressed())  /* rotate until key hit, at least once so step = oldstep ok */
 		{
 			if (fkey > 0)  /* randomizing is on */
 			{
-				for (istep = 0; istep < step; istep++)
+				int fromred = 0;
+				int fromblue = 0;
+				int fromgreen = 0;
+				int tored = 0;
+				int toblue = 0;
+				int togreen = 0;
+				for (int istep = 0; istep < step; istep++)
 				{
-					jstep = next + (istep*direction);
+					int jstep = next + (istep*direction);
 					while (jstep < g_rotate_lo)
 					{
 						jstep += rotate_size;
@@ -131,13 +132,14 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		{
 			step = oldstep;
 		}
-		kbdchar = driver_get_key();
-		if (paused && (kbdchar != ' '
+		int kbdchar = driver_get_key();
+		if (s_paused
+			&& (kbdchar != ' '
 				&& kbdchar != 'c'
 				&& kbdchar != FIK_HOME
 				&& kbdchar != 'C'))
 		{
-			paused = 0;                    /* clear paused condition       */
+			s_paused = false;                    /* clear paused condition       */
 		}
 		switch (kbdchar)
 		{
@@ -225,68 +227,68 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			step = rotate_size;
 			break;
 		case 'r':                      /* color changes */
-			if (changecolor    == -1)
+			if (change_color    == -1)
 			{
-				changecolor = 0;
+				change_color = 0;
 			}
 		case 'g':                      /* color changes */
-			if (changecolor    == -1)
+			if (change_color    == -1)
 			{
-				changecolor = 1;
+				change_color = 1;
 			}
 		case 'b':                      /* color changes */
-			if (changecolor    == -1)
+			if (change_color    == -1)
 			{
-				changecolor = 2;
+				change_color = 2;
 			}
-			if (changedirection == 0)
+			if (change_direction == 0)
 			{
-				changedirection = -1;
+				change_direction = -1;
 			}
 		case 'R':                      /* color changes */
-			if (changecolor    == -1)
+			if (change_color    == -1)
 			{
-				changecolor = 0;
+				change_color = 0;
 			}
 		case 'G':                      /* color changes */
-			if (changecolor    == -1)
+			if (change_color    == -1)
 			{
-				changecolor = 1;
+				change_color = 1;
 			}
 		case 'B':                      /* color changes */
 			if (driver_diskp())
 			{
 				break;
 			}
-			if (changecolor    == -1)
+			if (change_color    == -1)
 			{
-				changecolor = 2;
+				change_color = 2;
 			}
-			if (changedirection == 0)
+			if (change_direction == 0)
 			{
-				changedirection = 1;
+				change_direction = 1;
 			}
-			for (i = 1; i < 256; i++)
+			for (int i = 1; i < 256; i++)
 			{
-				g_dac_box[i][changecolor] = (BYTE) (g_dac_box[i][changecolor] + changedirection);
-				if (g_dac_box[i][changecolor] == COLOR_CHANNEL_MAX+1)
+				g_dac_box[i][change_color] = (BYTE) (g_dac_box[i][change_color] + change_direction);
+				if (g_dac_box[i][change_color] == COLOR_CHANNEL_MAX+1)
 				{
-					g_dac_box[i][changecolor] = COLOR_CHANNEL_MAX;
+					g_dac_box[i][change_color] = COLOR_CHANNEL_MAX;
 				}
-				if (g_dac_box[i][changecolor] == 255)
+				if (g_dac_box[i][change_color] == 255)
 				{
-					g_dac_box[i][changecolor] = 0;
+					g_dac_box[i][change_color] = 0;
 				}
 			}
-			changecolor    = -1;        /* clear flags for next time */
-			changedirection = 0;
-			paused          = 0;        /* clear any pause */
-		case ' ':                      /* use the spacebar as a "pause" toggle */
-		case 'c':                      /* for completeness' sake, the 'c' too */
+			change_color = -1;				/* clear flags for next time */
+			change_direction = 0;
+			s_paused = false;				/* clear any pause */
+		case ' ':							/* use the spacebar as a "pause" toggle */
+		case 'c':							/* for completeness' sake, the 'c' too */
 		case 'C':
-			pauserotate();              /* pause */
+			pause_rotate();					/* pause */
 			break;
-		case '>':                      /* single-step */
+		case '>':							/* single-step */
 		case '.':
 		case '<':
 		case ',':
@@ -306,20 +308,22 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			}
 			fkey = 0;
 			spindac(direction, 1);
-			if (! paused)
+			if (! s_paused)
 			{
-				pauserotate();           /* pause */
+				pause_rotate();				/* pause */
 			}
 			break;
-		case 'd':                      /* load g_colors from "default.map" */
+
+		case 'd':							/* load g_colors from "default.map" */
 		case 'D':
 			if (validate_luts("default") != 0)
 			{
 				break;
 			}
 			fkey = 0;                   /* disable random generation */
-			pauserotate();              /* update palette and pause */
+			pause_rotate();              /* update palette and pause */
 			break;
+
 		case 'a':                      /* load g_colors from "altern.map" */
 		case 'A':
 			if (validate_luts("altern") != 0)
@@ -327,30 +331,35 @@ void rotate(int direction)      /* rotate-the-palette routine */
 				break;
 			}
 			fkey = 0;                   /* disable random generation */
-			pauserotate();              /* update palette and pause */
+			pause_rotate();              /* update palette and pause */
 			break;
+
 		case 'l':                      /* load g_colors from a specified map */
 #ifndef XFRACT /* L is used for FIK_RIGHT_ARROW in Unix keyboard mapping */
 		case 'L':
 #endif
 			load_palette();
 			fkey = 0;                   /* disable random generation */
-			pauserotate();              /* update palette and pause */
+			pause_rotate();              /* update palette and pause */
 			break;
+
 		case 's':                      /* save the palette */
 		case 'S':
 			save_palette();
 			fkey = 0;                   /* disable random generation */
-			pauserotate();              /* update palette and pause */
+			pause_rotate();              /* update palette and pause */
 			break;
+
 		case FIK_ESC:                      /* escape */
-			more = 0;                   /* time to bail out */
+			more = false;                   /* time to bail out */
 			break;
+
 		case FIK_HOME:                     /* restore palette */
 			memcpy(g_dac_box, g_old_dac_box, 256*3);
-			pauserotate();              /* pause */
+			pause_rotate();              /* pause */
 			break;
-		default:                       /* maybe a new palette */
+
+		default:						/* maybe a new palette */
 			fkey = 0;                   /* disable random generation */
 			switch (kbdchar)
 			{
@@ -385,59 +394,56 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			case FIK_ALT_F9:	set_palette3(Green, Green, White);	break;
 			case FIK_ALT_F10:	set_palette3(Red, Blue, White);		break;
 			}
-			pauserotate();  /* update palette and pause */
+			pause_rotate();  /* update palette and pause */
 			break;
 		}
 	}
 }
 
-static void pauserotate()               /* pause-the-rotate routine */
+static void pause_rotate()               /* pause-the-rotate routine */
 {
-	int olddaccount;                        /* saved dac-count value goes here */
-	BYTE olddac0, olddac1, olddac2;
-
-	if (paused)                          /* if already paused , just clear */
+	/* saved dac-count value goes here */
+	if (s_paused)                          /* if already paused , just clear */
 	{
-		paused = 0;
+		s_paused = false;
+		return;
 	}
-	else  /* else set border, wait for a key */
-	{
-		olddaccount = g_dac_count;
-		olddac0 = g_dac_box[0][0];
-		olddac1 = g_dac_box[0][1];
-		olddac2 = g_dac_box[0][2];
-		g_dac_count = 256;
-		g_dac_box[0][0] = 3*COLOR_CHANNEL_MAX/4;
-		g_dac_box[0][1] = 3*COLOR_CHANNEL_MAX/4;
-		g_dac_box[0][2] = 3*COLOR_CHANNEL_MAX/4;
-		spindac(0, 1);                     /* show white border */
-		if (driver_diskp())
-		{
-			disk_video_status(100, " Paused in \"color cycling\" mode ");
-		}
-		driver_wait_key_pressed(0);                /* wait for any key */
 
-		if (driver_diskp())
-		{
-			disk_video_status(0, "");
-		}
-		g_dac_box[0][0] = olddac0;
-		g_dac_box[0][1] = olddac1;
-		g_dac_box[0][2] = olddac2;
-		spindac(0, 1);                     /* show black border */
-		g_dac_count = olddaccount;
-		paused = 1;
+	/* set border, wait for a key */
+	int olddaccount = g_dac_count;
+	BYTE olddac0 = g_dac_box[0][0];
+	BYTE olddac1 = g_dac_box[0][1];
+	BYTE olddac2 = g_dac_box[0][2];
+	g_dac_count = 256;
+	g_dac_box[0][0] = 3*COLOR_CHANNEL_MAX/4;
+	g_dac_box[0][1] = 3*COLOR_CHANNEL_MAX/4;
+	g_dac_box[0][2] = 3*COLOR_CHANNEL_MAX/4;
+	spindac(0, 1);                     /* show white border */
+	if (driver_diskp())
+	{
+		disk_video_status(100, " Paused in \"color cycling\" mode ");
 	}
+	driver_wait_key_pressed(0);                /* wait for any key */
+
+	if (driver_diskp())
+	{
+		disk_video_status(0, "");
+	}
+	g_dac_box[0][0] = olddac0;
+	g_dac_box[0][1] = olddac1;
+	g_dac_box[0][2] = olddac2;
+	spindac(0, 1);                     /* show black border */
+	g_dac_count = olddaccount;
+	s_paused = true;
 }
 
 /* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
-	int i, j;
 	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-	for (i = 1; i <= 255; i++)                  /* fill the palette     */
+	for (int i = 1; i <= 255; i++)                  /* fill the palette     */
 	{
-		for (j = 0; j < 3; j++)
+		for (int j = 0; j < 3; j++)
 		{
 			g_dac_box[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
 		}
@@ -447,14 +453,15 @@ static void set_palette(BYTE start[3], BYTE finish[3])
 /* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette2(BYTE start[3], BYTE finish[3])
 {
-	int i, j;
-	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-	for (i = 1; i <= 128; i++)
+	g_dac_box[0][0] = 0;
+	g_dac_box[0][1] = 0;
+	g_dac_box[0][2] = 0;
+	for (int i = 1; i <= 128; i++)
 	{
-		for (j = 0; j < 3; j++)
+		for (int j = 0; j < 3; j++)
 		{
-			g_dac_box[i][j]     = (BYTE)((i*finish[j] + (128-i)*start[j])/128);
-			g_dac_box[i + 127][j] = (BYTE)((i*start[j]  + (128-i)*finish[j])/128);
+			g_dac_box[i][j]       = (BYTE)((i*finish[j] + (128 - i)*start[j])/128);
+			g_dac_box[i + 127][j] = (BYTE)((i*start[j]  + (128 - i)*finish[j])/128);
 		}
 	}
 }
@@ -462,15 +469,16 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 /* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
-	int i, j;
-	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-	for (i = 1; i <= 85; i++)
+	g_dac_box[0][0] = 0;
+	g_dac_box[0][1] = 0;
+	g_dac_box[0][2] = 0;
+	for (int i = 1; i <= 85; i++)
 	{
-		for (j = 0; j < 3; j++)
+		for (int j = 0; j < 3; j++)
 		{
-			g_dac_box[i][j]     = (BYTE)((i*middle[j] + (86-i)*start[j])/85);
-			g_dac_box[i + 85][j]  = (BYTE)((i*finish[j] + (86-i)*middle[j])/85);
-			g_dac_box[i + 170][j] = (BYTE)((i*start[j]  + (86-i)*finish[j])/85);
+			g_dac_box[i][j]       = (BYTE)((i*middle[j] + (86 - i)*start[j])/85);
+			g_dac_box[i + 85][j]  = (BYTE)((i*finish[j] + (86 - i)*middle[j])/85);
+			g_dac_box[i + 170][j] = (BYTE)((i*start[j]  + (86 - i)*finish[j])/85);
 		}
 	}
 }
@@ -478,13 +486,10 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 void save_palette()
 {
 	char palname[FILE_MAX_PATH];
-	FILE *dacfile;
-	int i;
-	char temp1[256] = { 0 };
-
 	strcpy(palname, g_map_name);
 	driver_stack_screen();
-	i = field_prompt_help(HELPCOLORMAP, "Name of map file to write", NULL, temp1, 60, NULL);
+	char temp1[256] = { 0 };
+	int i = field_prompt_help(HELPCOLORMAP, "Name of map file to write", NULL, temp1, 60, NULL);
 	driver_unstack_screen();
 	if (i != -1 && temp1[0])
 	{
@@ -493,7 +498,7 @@ void save_palette()
 			strcat(temp1, ".map");
 		}
 		merge_path_names(palname, temp1, 2);
-		dacfile = fopen(palname, "w");
+		FILE *dacfile = fopen(palname, "w");
 		if (dacfile == NULL)
 		{
 			driver_buzzer(BUZZER_ERROR);
@@ -522,12 +527,10 @@ void save_palette()
 
 int load_palette()
 {
-	int i;
 	char filename[FILE_MAX_PATH];
-	
 	strcpy(filename, g_map_name);
 	driver_stack_screen();
-	i = get_a_filename_help(HELPCOLORMAP, "Select a MAP File", mapmask, filename);
+	int i = get_a_filename_help(HELPCOLORMAP, "Select a MAP File", mapmask, filename);
 	driver_unstack_screen();
 	if (i >= 0)
 	{

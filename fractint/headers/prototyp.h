@@ -609,9 +609,8 @@ extern int start_disk1(char *, FILE *, int);
 extern void line_3d_free();
 
 /*  loadfdos -- C file prototypes */
-#ifndef WINFRACT
-extern int get_video_mode(struct fractal_info *, struct ext_blk_formula_info *);
-#endif
+extern int get_video_mode(const fractal_info *, struct ext_blk_formula_info *);
+
 /*  loadfile -- C file prototypes */
 
 extern int read_overlay();

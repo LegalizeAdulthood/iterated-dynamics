@@ -15,8 +15,18 @@
 #include "prototyp.h"
 #include "drivers.h"
 
+bool g_busy = false;
+static FILE *s_slide_file = NULL;
+static long s_start_tick = 0;
+static long s_ticks = 0;
+static int s_slow_count = 0;
+static unsigned int s_quotes = 0;
+static bool s_calc_wait = false;
+static int s_repeats = 0;
+static int s_last1 = 0;
+
 static void sleep_secs(int);
-static int  showtempmsg_txt(int, int, int, int, char *);
+static void showtempmsg_txt(int, int, int, int, char *);
 static void message(int secs, char *buf);
 static void slideshowerr(char *msg);
 static int  get_scancode(char *mn);
@@ -51,58 +61,40 @@ static struct scancodes scancodes[] =
 	{ FIK_CTL_DOWN_ARROW,	"CTRL_DOWN" },
 	{ FIK_CTL_UP_ARROW,		"CTRL_UP"   },
 	{ FIK_CTL_END,			"CTRL_END"  },
-	{ FIK_CTL_HOME,			"CTRL_HOME" },
-	{ -1,					NULL		}
+	{ FIK_CTL_HOME,			"CTRL_HOME" }
 };
-#define stop sizeof(scancodes)/sizeof(struct scancodes)-1
 
 static int get_scancode(char *mn)
 {
-	int i;
-	i = 0;
-	for (i = 0; i< stop; i++)
+	for (int i = 0; i < NUM_OF(scancodes); i++)
 	{
-		if (strcmp((char *)mn, scancodes[i].mnemonic) == 0)
+		if (strcmp((char *) mn, scancodes[i].mnemonic) == 0)
 		{
-			break;
+			return scancodes[i].code;
 		}
 	}
-	return scancodes[i].code;
+	return -1;
 }
 
 static void get_mnemonic(int code, char *mnemonic)
 {
-	int i;
-	i = 0;
 	*mnemonic = 0;
-	for (i = 0; i< stop; i++)
+	for (int i = 0; i < NUM_OF(scancodes); i++)
 	{
 		if (code == scancodes[i].code)
 		{
 			strcpy(mnemonic, scancodes[i].mnemonic);
-			break;
+			return;
 		}
 	}
 }
-#undef stop
-
-bool g_busy = false;
-static FILE *fpss = NULL;
-static long starttick;
-static long ticks;
-static int slowcount;
-static unsigned int quotes;
-static char calcwait = 0;
-static int repeats = 0;
-static int last1 = 0;
 
 /* places a temporary message on the screen in text mode */
-static int showtempmsg_txt(int row, int col, int attr, int secs, char *txt)
+static void showtempmsg_txt(int row, int col, int attr, int secs, char *txt)
 {
 	int savescrn[80];
-	int i;
 
-	for (i = 0; i < 80; i++)
+	for (int i = 0; i < 80; i++)
 	{
 		driver_move_cursor(row, i);
 		savescrn[i] = driver_get_char_attr();
@@ -110,12 +102,11 @@ static int showtempmsg_txt(int row, int col, int attr, int secs, char *txt)
 	driver_put_string(row, col, attr, txt);
 	driver_hide_text_cursor();
 	sleep_secs(secs);
-	for (i = 0; i < 80; i++)
+	for (int i = 0; i < 80; i++)
 	{
 		driver_move_cursor(row, i);
 		driver_put_char_attr(savescrn[i]);
 	}
-	return 0;
 }
 
 static void message(int secs, char *buf)
@@ -133,59 +124,61 @@ static void message(int secs, char *buf)
 /* this routine reads the file g_autokey_name and returns keystrokes */
 int slide_show()
 {
-	int out, err, i;
-	char buffer[81];
-	if (calcwait)
+	if (s_calc_wait)
 	{
 		if (g_calculation_status == CALCSTAT_IN_PROGRESS || g_busy) /* restart timer - process not done */
 		{
 			return 0; /* wait for calc to finish before reading more keystrokes */
 		}
-		calcwait = 0;
+		s_calc_wait = false;
 	}
-	if (fpss == NULL)   /* open files first time through */
+	if (s_slide_file == NULL)   /* open files first time through */
+	{
 		if (start_slide_show() == 0)
-			{
+		{
 			stop_slide_show();
 			return 0;
-			}
+		}
+	}
 
-	if (ticks) /* if waiting, see if waited long enough */
+	if (s_ticks) /* if waiting, see if waited long enough */
 	{
-		if (clock_ticks() - starttick < ticks) /* haven't waited long enough */
+		if (clock_ticks() - s_start_tick < s_ticks) /* haven't waited long enough */
 		{
 			return 0;
 		}
-		ticks = 0;
+		s_ticks = 0;
 	}
-	if (++slowcount <= 18)
+	if (++s_slow_count <= 18)
 	{
-		starttick = clock_ticks();
-		ticks = CLK_TCK/5; /* a slight delay so keystrokes are visible */
-		if (slowcount > 10)
+		s_start_tick = clock_ticks();
+		s_ticks = CLK_TCK/5; /* a slight delay so keystrokes are visible */
+		if (s_slow_count > 10)
 		{
-			ticks /= 2;
+			s_ticks /= 2;
 		}
 	}
-	if (repeats > 0)
+	if (s_repeats > 0)
 	{
-		repeats--;
-		return last1;
+		s_repeats--;
+		return s_last1;
 	}
+
 start:
-	if (quotes) /* reading a quoted string */
+	int out;
+	if (s_quotes) /* reading a quoted string */
 	{
-		out = fgetc(fpss);
+		out = fgetc(s_slide_file);
 		if (out != '\"' && out != EOF)
 		{
-			return last1 = out;
+			return s_last1 = out;
 		}
-		quotes = 0;
+		s_quotes = 0;
 	}
 	/* skip white space: */
 	do
 	{
-		out = fgetc(fpss);
+		out = fgetc(s_slide_file);
 	}
 	while (out == ' ' || out == '\t' || out == '\n');
 	switch (out)
@@ -194,41 +187,42 @@ start:
 		stop_slide_show();
 		return 0;
 	case '\"':        /* begin quoted string */
-		quotes = 1;
+		s_quotes = 1;
 		goto start;
 	case ';':         /* comment from here to end of line, skip it */
 		do
 		{
-			out = fgetc(fpss);
+			out = fgetc(s_slide_file);
 		}
 		while (out != '\n' && out != EOF);
 		goto start;
 	case '*':
-		if (fscanf(fpss, "%d", &repeats) != 1
-			|| repeats <= 1 || repeats >= 256 || feof(fpss))
+		if (fscanf(s_slide_file, "%d", &s_repeats) != 1
+			|| s_repeats <= 1 || s_repeats >= 256 || feof(s_slide_file))
 		{
 			slideshowerr("error in * argument");
-			last1 = repeats = 0;
+			s_last1 = s_repeats = 0;
 		}
-		repeats -= 2;
-		return out = last1;
+		s_repeats -= 2;
+		return out = s_last1;
 	}
 
-	i = 0;
+	char buffer[81];
+	int i = 0;
 	while (1) /* get a token */
 	{
 		if (i < 80)
 		{
-			buffer[i++] = (char)out;
+			buffer[i++] = (char) out;
 		}
-		out = fgetc(fpss);
+		out = fgetc(s_slide_file);
 		if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
 		{
 			break;
 		}
 	}
 	buffer[i] = 0;
-	if (buffer[i-1] == ':')
+	if (buffer[i - 1] == ':')
 	{
 		goto start;
 	}
@@ -239,42 +233,42 @@ start:
 	}
 	else if (strcmp((char *)buffer, "MESSAGE") == 0)
 	{
-		int secs;
 		out = 0;
-		if (fscanf(fpss, "%d", &secs) != 1)
+		int secs;
+		if (fscanf(s_slide_file, "%d", &secs) != 1)
 		{
 			slideshowerr("MESSAGE needs argument");
 		}
 		else
 		{
-			int len;
 			char buf[41];
 			buf[40] = 0;
-			fgets(buf, 40, fpss);
-			len = (int) strlen(buf);
-			buf[len-1] = 0; /* zap newline */
-			message(secs, (char *)buf);
+			fgets(buf, 40, s_slide_file);
+			int len = (int) strlen(buf);
+			buf[len - 1] = 0; /* zap newline */
+			message(secs, (char *) buf);
 		}
 		out = 0;
 	}
 	else if (strcmp((char *)buffer, "GOTO") == 0)
 	{
-		if (fscanf(fpss, "%s", buffer) != 1)
+		if (fscanf(s_slide_file, "%s", buffer) != 1)
 		{
 			slideshowerr("GOTO needs target");
 			out = 0;
 		}
 		else
 		{
-			char buffer1[80];
-			rewind(fpss);
+			rewind(s_slide_file);
 			strcat(buffer, ":");
+			int err;
+			char buffer1[80];
 			do
 			{
-				err = fscanf(fpss, "%s", buffer1);
+				err = fscanf(s_slide_file, "%s", buffer1);
 			}
 			while (err == 1 && strcmp(buffer1, buffer) != 0);
-			if (feof(fpss))
+			if (feof(s_slide_file))
 			{
 				slideshowerr("GOTO target not found");
 				return 0;
@@ -289,24 +283,26 @@ start:
 	else if (strcmp("WAIT", (char *)buffer) == 0)
 	{
 		float fticks;
-		err = fscanf(fpss, "%f", &fticks); /* how many ticks to wait */
+		int err = fscanf(s_slide_file, "%f", &fticks); /* how many ticks to wait */
 		driver_set_keyboard_timeout((int) (fticks*1000.f));
 		fticks *= CLK_TCK;             /* convert from seconds to ticks */
 		if (err == 1)
 		{
-			ticks = (long)fticks;
-			starttick = clock_ticks();  /* start timing */
+			s_ticks = (long) fticks;
+			s_start_tick = clock_ticks();  /* start timing */
 		}
 		else
 		{
 			slideshowerr("WAIT needs argument");
 		}
-		slowcount = out = 0;
+		s_slow_count = 0;
+		out = 0;
 	}
 	else if (strcmp("CALCWAIT", (char *)buffer) == 0) /* wait for calc to finish */
 	{
-		calcwait = 1;
-		slowcount = out = 0;
+		s_calc_wait = true;
+		s_slow_count = 0;
+		out = 0;
 	}
 	else
 	{
@@ -323,91 +319,90 @@ start:
 		slideshowerr(msg);
 		out = 0;
 	}
-	return last1 = out;
+	s_last1 = out;
+	return out;
 }
 
-int
-start_slide_show()
+int start_slide_show()
 {
-	fpss = fopen(g_autokey_name, "r");
-	if (fpss == NULL)
+	s_slide_file = fopen(g_autokey_name, "r");
+	if (s_slide_file == NULL)
 	{
 		g_slides = SLIDES_OFF;
 	}
-	ticks = 0;
-	quotes = 0;
-	calcwait = 0;
-	slowcount = 0;
+	s_ticks = 0;
+	s_quotes = 0;
+	s_calc_wait = false;
+	s_slow_count = 0;
 	return g_slides;
 }
 
 void stop_slide_show()
 {
-	if (fpss)
+	if (s_slide_file)
 	{
-		fclose(fpss);
+		fclose(s_slide_file);
 	}
-	fpss = NULL;
+	s_slide_file = NULL;
 	g_slides = SLIDES_OFF;
 }
 
 void record_show(int key)
 {
-	char mn[MAX_MNEMONIC];
-	float dt;
-	dt = (float)ticks;      /* save time of last call */
-	ticks = clock_ticks();  /* current time */
-	if (fpss == NULL)
+	float dt = (float) s_ticks;      /* save time of last call */
+	s_ticks = clock_ticks();  /* current time */
+	if (s_slide_file == NULL)
 	{
-		fpss = fopen(g_autokey_name, "w");
-		if (fpss == NULL)
+		s_slide_file = fopen(g_autokey_name, "w");
+		if (s_slide_file == NULL)
 		{
 			return;
 		}
 	}
-	dt = ticks-dt;
+	dt = s_ticks-dt;
 	dt /= CLK_TCK;  /* dt now in seconds */
-	if (dt > .5) /* don't bother with less than half a second */
+	if (dt > 0.5) /* don't bother with less than half a second */
 	{
-		if (quotes) /* close quotes first */
+		if (s_quotes) /* close quotes first */
 		{
-			quotes = 0;
-			fprintf(fpss, "\"\n");
+			s_quotes = 0;
+			fprintf(s_slide_file, "\"\n");
 		}
-		fprintf(fpss, "WAIT %4.1f\n", dt);
+		fprintf(s_slide_file, "WAIT %4.1f\n", dt);
 	}
 	if (key >= 32 && key < 128)
 	{
-		if (!quotes)
+		if (!s_quotes)
 		{
-			quotes = 1;
-			fputc('\"', fpss);
+			s_quotes = 1;
+			fputc('\"', s_slide_file);
 		}
-		fputc(key, fpss);
+		fputc(key, s_slide_file);
 	}
 	else
 	{
-		if (quotes) /* not an ASCII character - turn off quotes */
+		if (s_quotes) /* not an ASCII character - turn off quotes */
 		{
-			fprintf(fpss, "\"\n");
-			quotes = 0;
+			fprintf(s_slide_file, "\"\n");
+			s_quotes = 0;
 		}
+		char mn[MAX_MNEMONIC];
 		get_mnemonic(key, mn);
 		if (*mn)
 		{
-			fprintf(fpss, "%s", mn);
+			fprintf(s_slide_file, "%s", mn);
 		}
 		else if (check_video_mode_key(0, key) >= 0)
 		{
 			char buf[10];
 			video_mode_key_name(key, buf);
-			fprintf(fpss, buf);
+			fprintf(s_slide_file, buf);
 		}
 		else /* not ASCII and not FN key */
 		{
-			fprintf(fpss, "%4d", key);
+			fprintf(s_slide_file, "%4d", key);
 		}
-		fputc('\n', fpss);
+		fputc('\n', s_slide_file);
 	}
 }
 

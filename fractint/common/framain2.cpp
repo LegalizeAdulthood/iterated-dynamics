@@ -744,8 +744,8 @@ static int handle_fractal_type(int *frommandel)
 		g_save_release = g_release;
 		g_no_magnitude_calculation = FALSE;
 		g_use_old_periodicity = FALSE;
-		g_bad_outside = 0;
-		g_use_old_complex_power = TRUE;
+		g_bad_outside = false;
+		g_use_old_complex_power = true;
 		set_current_parameters();
 		g_discrete_parameter_offset_x = g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_x = g_new_discrete_parameter_offset_y = 0;
 		g_fiddle_factor = 1;           /* reset param evolution stuff */
