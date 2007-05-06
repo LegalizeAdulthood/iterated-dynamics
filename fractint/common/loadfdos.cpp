@@ -94,9 +94,7 @@ static double video_mode_aspect_ratio(int width, int height)
 		*g_screen_aspect_ratio;
 	}
 
-#ifndef XFRACT
 static video_mode_info *vidptr;
-#endif
 
 int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
