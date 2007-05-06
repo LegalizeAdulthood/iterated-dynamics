@@ -770,15 +770,16 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
 	struct ext_blk_evolver_info *evolver_info,
 	struct ext_blk_orbits_info *orbits_info)
 {
-	BYTE gifstart[18];
-	char temp1[81];
-	int scan_extend, block_type, block_len, data_len;
+	int scan_extend;
+	int block_type;
+	int block_len;
+	int data_len;
 	int fractinf_len;
 	int hdr_offset;
 	struct formula_info fload_info;
 	struct evolution_info eload_info;
 	struct orbits_info oload_info;
-	int i, j, k = 0;
+	int k = 0;
 
 	resume_info_blk->got_data = 0; /* initialize to no data */
 	formula_info->got_data = 0; /* initialize to no data */
@@ -792,6 +793,7 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
 	{
 		return -1;
 	}
+	BYTE gifstart[18];
 	fread(gifstart, 13, 1, s_gif_file);
 	if (strncmp((char *)gifstart, "GIF", 3) != 0)  /* not GIF, maybe old .tga? */
 	{
@@ -820,9 +822,9 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
 
 	if (*g_make_par == 0 && (gifstart[10] & 0x80) != 0)
 	{
-		for (i = 0; i < g_file_colors; i++)
+		for (int i = 0; i < g_file_colors; i++)
 		{
-			for (j = 0; j < 3; j++)
+			for (int j = 0; j < 3; j++)
 			{
 				k = getc(s_gif_file);
 				if (k < 0)
@@ -881,7 +883,7 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
 	else
 	{
 		/* didn't work 1st try, maybe an older vsn, maybe junk at eof, scan: */
-		int offset, i;
+		int offset;
 		char tmpbuf[110];
 		hdr_offset = 0;
 		offset = 80; /* don't even check last 80 bytes of file for id */
@@ -890,7 +892,7 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
 			offset += 100; /* go back 100 bytes at a time */
 			fseek(s_gif_file, (long) -offset, SEEK_END);
 			fread(tmpbuf, 1, 110, s_gif_file); /* read 10 extra for string compare */
-			for (i = 0; i < 100; ++i)
+			for (int i = 0; i < 100; ++i)
 			{
 				if (!strcmp(INFO_ID, &tmpbuf[i]))  /* found header? */
 				{
@@ -922,6 +924,7 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
 			scan_extend = 1;
 			while (scan_extend)
 			{
+				char temp1[81];
 				if (fgetc(s_gif_file) != '!' /* if not what we expect just give up */
 					|| fread(temp1, 1, 13, s_gif_file) != 13
 					|| strncmp(&temp1[2], "fractint", 8))
@@ -1040,7 +1043,7 @@ static int find_fractal_info(char *gif_file, fractal_info *info,
 					evolver_info->this_generation_random_seed = eload_info.this_generation_random_seed;
 					evolver_info->fiddle_factor = eload_info.fiddle_factor;
 					evolver_info->ecount = eload_info.ecount;
-					for (i = 0; i < NUMGENES; i++)
+					for (int i = 0; i < NUMGENES; i++)
 					{
 						evolver_info->mutate[i] = eload_info.mutate[i];
 					}
@@ -1441,7 +1444,7 @@ static void transform(struct dblcoords *);
 static char paramsOK(fractal_info *);
 static char typeOK(fractal_info *, struct ext_blk_formula_info *);
 static char functionOK(fractal_info *, int);
-static void check_history(char *, char *);
+static void check_history(const char *, const char *);
 static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, struct dblcoords *);
 
@@ -1453,8 +1456,18 @@ static int *boxvalues_storage = NULL;
 
 /* here because must be visible inside several routines */
 static struct affine *cvt;
-static bf_t   bt_a, bt_b, bt_c, bt_d, bt_e, bt_f;
-static bf_t   n_a, n_b, n_c, n_d, n_e, n_f;
+static bf_t bt_a;
+static bf_t bt_b;
+static bf_t bt_c;
+static bf_t bt_d;
+static bf_t bt_e;
+static bf_t bt_f;
+static bf_t n_a;
+static bf_t n_b;
+static bf_t n_c;
+static bf_t n_d;
+static bf_t n_e;
+static bf_t n_f;
 int oldbf_math;
 
 /* look_get_window reads all .GIF files and draws window outlines on the screen */
@@ -1468,9 +1481,16 @@ int look_get_window()
 	struct ext_blk_mp_info mp_info;
 	struct ext_blk_evolver_info evolver_info;
 	struct ext_blk_orbits_info orbits_info;
-	time_t thistime, lastime;
-	char mesg[40], newname[60], oldname[60];
-	int c, i, index, done, wincount, toggle, color_of_box;
+	time_t thistime;
+	time_t lastime;
+	char mesg[40];
+	char newname[60];
+	char oldname[60];
+	int index;
+	int done;
+	int wincount;
+	int toggle;
+	int color_of_box;
 	struct window winlist;
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
@@ -1607,7 +1627,7 @@ rescan:  /* entry for changed browse parms */
 	{
 		text_temp_message("Xdots + Ydots > 4096.");
 	}
-	c = 0;
+	int c = 0;
 	if (wincount)
 	{
 		driver_buzzer(BUZZER_COMPLETE); /*let user know we've finished */
@@ -1679,7 +1699,7 @@ rescan:  /* entry for changed browse parms */
 #ifndef XFRACT
 			case FIK_CTL_INSERT:
 				color_of_box += key_count(FIK_CTL_INSERT);
-				for (i = 0; i < wincount; i++)
+				for (int i = 0; i < wincount; i++)
 				{
 					winlist = browse_windows[i];
 					drawindow(color_of_box, &winlist);
@@ -1690,7 +1710,7 @@ rescan:  /* entry for changed browse parms */
 
 			case FIK_CTL_DEL:
 				color_of_box -= key_count(FIK_CTL_DEL);
-				for (i = 0; i < wincount; i++)
+				for (int i = 0; i < wincount; i++)
 				{
 					winlist = browse_windows[i];
 					drawindow(color_of_box, &winlist);
@@ -1766,23 +1786,25 @@ rescan:  /* entry for changed browse parms */
 				make_path(tmpmask, drive, dir, fname, ext);
 				strcpy(newname, tmpmask);
 				strcat(mesg, tmpmask);
-				i = field_prompt(mesg, NULL, newname, 60, NULL);
-				driver_unstack_screen();
-				if (i != -1)
 				{
-					if (!rename(tmpmask, newname))
+					int i = field_prompt(mesg, NULL, newname, 60, NULL);
+					driver_unstack_screen();
+					if (i != -1)
 					{
-						if (errno == EACCES)
+						if (!rename(tmpmask, newname))
 						{
-							text_temp_message("Sorry....can't rename");
-						}
-						else
-						{
-							split_path(newname, NULL, NULL, fname, ext);
-							make_path(tmpmask, NULL, NULL, fname, ext);
-							strcpy(oldname, winlist.name);
-							check_history(oldname, tmpmask);
-							strcpy(winlist.name, tmpmask);
+							if (errno == EACCES)
+							{
+								text_temp_message("Sorry....can't rename");
+							}
+							else
+							{
+								split_path(newname, NULL, NULL, fname, ext);
+								make_path(tmpmask, NULL, NULL, fname, ext);
+								strcpy(oldname, winlist.name);
+								check_history(oldname, tmpmask);
+								strcpy(winlist.name, tmpmask);
+							}
 						}
 					}
 				}
@@ -1867,7 +1889,8 @@ static void drawindow(int colour, struct window *info)
 {
 #ifndef XFRACT
 	int cross_size;
-	struct coords ibl, itr;
+	struct coords ibl;
+	struct coords itr;
 #endif
 
 	g_box_color = colour;
@@ -1918,60 +1941,70 @@ static void drawindow(int colour, struct window *info)
 /* maps points onto view screen*/
 static void transform(struct dblcoords *point)
 {
-	double tmp_pt_x;
-	tmp_pt_x = cvt->a*point->x + cvt->b*point->y + cvt->e;
+	double tmp_pt_x = cvt->a*point->x + cvt->b*point->y + cvt->e;
 	point->y = cvt->c*point->x + cvt->d*point->y + cvt->f;
 	point->x = tmp_pt_x;
 }
 
+static void is_visible_window_corner(const fractal_info &info,
+	bf_t bt_x, bf_t bt_y,
+	bf_t bt_xmin, bf_t bt_xmax,
+	bf_t bt_ymin, bf_t bt_ymax,
+	bf_t bt_x3rd, bf_t bt_y3rd,
+	dblcoords &corner)
+{
+	if (oldbf_math || info.bf_math)
+	{
+		if (!info.bf_math)
+		{
+			floattobf(bt_x, (info.x_max)-(info.x_3rd-info.x_min));
+			floattobf(bt_y, (info.y_max) + (info.y_min-info.y_3rd));
+		}
+		else
+		{
+			neg_a_bf(sub_bf(bt_x, bt_x3rd, bt_xmin));
+			add_a_bf(bt_x, bt_xmax);
+			sub_bf(bt_y, bt_ymin, bt_y3rd);
+			add_a_bf(bt_y, bt_ymax);
+		}
+		bftransform(bt_x, bt_y, &corner);
+	}
+	else
+	{
+		corner.x = (info.x_max)-(info.x_3rd-info.x_min);
+		corner.y = (info.y_max) + (info.y_min-info.y_3rd);
+		transform(&corner);
+	}
+}
 static char is_visible_window(struct window *list, fractal_info *info,
 	struct ext_blk_mp_info *mp_info)
 {
-	struct dblcoords tl, tr, bl, br;
-	bf_t bt_x, bt_y;
-	bf_t bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd;
-	int saved;
-	int two_len;
-	int cornercount, cant_see;
-	int  orig_bflength,
-		orig_bnlength,
-		orig_padding,
-		orig_rlength,
-		orig_shiftfactor,
-		orig_rbflength;
-	double toobig, tmp_sqrt;
-	toobig = sqrt(sqr((double)g_screen_width) + sqr((double)g_screen_height))*1.5;
-	/* arbitrary value... stops browser zooming out too far */
-	cornercount = 0;
-	cant_see = 0;
+	double toobig = sqrt(sqr((double)g_screen_width) + sqr((double)g_screen_height))*1.5;
+	int saved = save_stack();
 
-	saved = save_stack();
 	/* Save original values. */
-	orig_bflength = bflength;
-	orig_bnlength = bnlength;
-	orig_padding = padding;
-	orig_rlength = rlength;
-	orig_shiftfactor = shiftfactor;
-	orig_rbflength = rbflength;
+	int orig_bflength = bflength;
+	int orig_bnlength = bnlength;
+	int orig_padding = padding;
+	int orig_rlength = rlength;
+	int orig_shiftfactor = shiftfactor;
+	int orig_rbflength = rbflength;
 
-	two_len = bflength + 2;
-	bt_x = alloc_stack(two_len);
-	bt_y = alloc_stack(two_len);
-	bt_xmin = alloc_stack(two_len);
-	bt_xmax = alloc_stack(two_len);
-	bt_ymin = alloc_stack(two_len);
-	bt_ymax = alloc_stack(two_len);
-	bt_x3rd = alloc_stack(two_len);
-	bt_y3rd = alloc_stack(two_len);
+	int two_len = bflength + 2;
+	bf_t bt_x = alloc_stack(two_len);
+	bf_t bt_y = alloc_stack(two_len);
+	bf_t bt_xmin = alloc_stack(two_len);
+	bf_t bt_xmax = alloc_stack(two_len);
+	bf_t bt_ymin = alloc_stack(two_len);
+	bf_t bt_ymax = alloc_stack(two_len);
+	bf_t bt_x3rd = alloc_stack(two_len);
+	bf_t bt_y3rd = alloc_stack(two_len);
 
 	if (info->bf_math)
 	{
-		bf_t   bt_t1, bt_t2, bt_t3, bt_t4, bt_t5, bt_t6;
-		int di_bflength, two_di_len, two_rbf;
-
-		di_bflength = info->bflength + bnstep;
-		two_di_len = di_bflength + 2;
-		two_rbf = rbflength + 2;
+		int di_bflength = info->bflength + bnstep;
+		int two_di_len = di_bflength + 2;
+		int two_rbf = rbflength + 2;
 
 		n_a = alloc_stack(two_rbf);
 		n_b = alloc_stack(two_rbf);
@@ -1987,12 +2020,12 @@ static char is_visible_window(struct window *list, fractal_info *info,
 		convert_bf(n_e, bt_e, rbflength, orig_rbflength);
 		convert_bf(n_f, bt_f, rbflength, orig_rbflength);
 
-		bt_t1 = alloc_stack(two_di_len);
-		bt_t2 = alloc_stack(two_di_len);
-		bt_t3 = alloc_stack(two_di_len);
-		bt_t4 = alloc_stack(two_di_len);
-		bt_t5 = alloc_stack(two_di_len);
-		bt_t6 = alloc_stack(two_di_len);
+		bf_t bt_t1 = alloc_stack(two_di_len);
+		bf_t bt_t2 = alloc_stack(two_di_len);
+		bf_t bt_t3 = alloc_stack(two_di_len);
+		bf_t bt_t4 = alloc_stack(two_di_len);
+		bf_t bt_t5 = alloc_stack(two_di_len);
+		bf_t bt_t6 = alloc_stack(two_di_len);
 
 		memcpy((char *)bt_t1, mp_info->apm_data, (two_di_len));
 		memcpy((char *)bt_t2, mp_info->apm_data + two_di_len, (two_di_len));
@@ -2011,107 +2044,38 @@ static char is_visible_window(struct window *list, fractal_info *info,
 
 	/* tranform maps real plane co-ords onto the current screen view
 		see above */
-	if (oldbf_math || info->bf_math)
-	{
-		if (!info->bf_math)
-		{
-			floattobf(bt_x, info->x_min);
-			floattobf(bt_y, info->y_max);
-		}
-		else
-		{
-			copy_bf(bt_x, bt_xmin);
-			copy_bf(bt_y, bt_ymax);
-		}
-		bftransform(bt_x, bt_y, &tl);
-	}
-	else
-	{
-		tl.x = info->x_min;
-		tl.y = info->y_max;
-		transform(&tl);
-	}
+	struct dblcoords tl;
+	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, tl);
 	list->itl.x = (int)(tl.x + 0.5);
 	list->itl.y = (int)(tl.y + 0.5);
-	if (oldbf_math || info->bf_math)
-	{
-		if (!info->bf_math)
-		{
-			floattobf(bt_x, (info->x_max)-(info->x_3rd-info->x_min));
-			floattobf(bt_y, (info->y_max) + (info->y_min-info->y_3rd));
-		}
-		else
-		{
-			neg_a_bf(sub_bf(bt_x, bt_x3rd, bt_xmin));
-			add_a_bf(bt_x, bt_xmax);
-			sub_bf(bt_y, bt_ymin, bt_y3rd);
-			add_a_bf(bt_y, bt_ymax);
-		}
-		bftransform(bt_x, bt_y, &tr);
-	}
-	else
-	{
-		tr.x = (info->x_max)-(info->x_3rd-info->x_min);
-		tr.y = (info->y_max) + (info->y_min-info->y_3rd);
-		transform(&tr);
-	}
+
+	struct dblcoords tr;
+	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, tr);
 	list->itr.x = (int)(tr.x + 0.5);
 	list->itr.y = (int)(tr.y + 0.5);
-	if (oldbf_math || info->bf_math)
-	{
-		if (!info->bf_math)
-		{
-			floattobf(bt_x, info->x_3rd);
-			floattobf(bt_y, info->y_3rd);
-		}
-		else
-		{
-			copy_bf(bt_x, bt_x3rd);
-			copy_bf(bt_y, bt_y3rd);
-		}
-		bftransform(bt_x, bt_y, &bl);
-	}
-	else
-	{
-		bl.x = info->x_3rd;
-		bl.y = info->y_3rd;
-		transform(&bl);
-	}
+
+	struct dblcoords bl;
+	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, bl);
 	list->ibl.x = (int)(bl.x + 0.5);
 	list->ibl.y = (int)(bl.y + 0.5);
-	if (oldbf_math || info->bf_math)
-	{
-		if (!info->bf_math)
-		{
-			floattobf(bt_x, info->x_max);
-			floattobf(bt_y, info->y_min);
-		}
-		else
-		{
-			copy_bf(bt_x, bt_xmax);
-			copy_bf(bt_y, bt_ymin);
-		}
-		bftransform(bt_x, bt_y, &br);
-	}
-	else
-	{
-		br.x = info->x_max;
-		br.y = info->y_min;
-		transform(&br);
-	}
+
+	struct dblcoords br;
+	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, br);
 	list->ibr.x = (int)(br.x + 0.5);
 	list->ibr.y = (int)(br.y + 0.5);
 
-	tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
+	double tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
 	list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */
+	/* arbitrary value... stops browser zooming out too far */
+	bool cant_see = false;
 	if (tmp_sqrt < g_too_small)
 	{
-		cant_see = 1;
+		cant_see = true;
 	}
 	/* reject anything too small onscreen */
 	if (tmp_sqrt > toobig)
 	{
-		cant_see = 1;
+		cant_see = true;
 	}
 	/* or too big... */
 
@@ -2130,21 +2094,22 @@ static char is_visible_window(struct window *list, fractal_info *info,
 	}
 
 	/* now see how many corners are on the screen, accept if one or more */
+	int cornercount = 0;
 	if (tl.x >= -g_sx_offset && tl.x <= (g_screen_width-g_sx_offset) && tl.y >= (0-g_sy_offset) && tl.y <= (g_screen_height-g_sy_offset))
 	{
-		cornercount ++;
+		cornercount++;
 	}
 	if (bl.x >= -g_sx_offset && bl.x <= (g_screen_width-g_sx_offset) && bl.y >= (0-g_sy_offset) && bl.y <= (g_screen_height-g_sy_offset))
 	{
-		cornercount ++;
+		cornercount++;
 	}
 	if (tr.x >= -g_sx_offset && tr.x <= (g_screen_width-g_sx_offset) && tr.y >= (0-g_sy_offset) && tr.y <= (g_screen_height-g_sy_offset))
 	{
-		cornercount ++;
+		cornercount++;
 	}
 	if (br.x >= -g_sx_offset && br.x <= (g_screen_width-g_sx_offset) && br.y >= (0-g_sy_offset) && br.y <= (g_screen_height-g_sy_offset))
 	{
-		cornercount ++;
+		cornercount++;
 	}
 
 	return (cornercount >= 1) ? TRUE : FALSE;
@@ -2152,12 +2117,10 @@ static char is_visible_window(struct window *list, fractal_info *info,
 
 static char paramsOK(fractal_info *info)
 {
-	double tmpparm3, tmpparm4;
-	double tmpparm5, tmpparm6;
-	double tmpparm7, tmpparm8;
-	double tmpparm9, tmpparm10;
 #define MINDIF 0.001
 
+	double tmpparm3;
+	double tmpparm4;
 	if (info->version > 6)
 	{
 		tmpparm3 = info->dparm3;
@@ -2170,6 +2133,13 @@ static char paramsOK(fractal_info *info)
 		tmpparm4 = info->parm4;
 		round_float_d(&tmpparm4);
 	}
+
+	double tmpparm5;
+	double tmpparm6;
+	double tmpparm7;
+	double tmpparm8;
+	double tmpparm9;
+	double tmpparm10;
 	if (info->version > 8)
 	{
 		tmpparm5 = info->dparm5;
@@ -2206,9 +2176,8 @@ static char paramsOK(fractal_info *info)
 
 static char functionOK(fractal_info *info, int numfn)
 {
-	int i, mzmatch;
-	mzmatch = 0;
-	for (i = 0; i < numfn; i++)
+	int mzmatch = 0;
+	for (int i = 0; i < numfn; i++)
 	{
 		if (info->trig_index[i] != g_trig_index[i])
 		{
@@ -2246,18 +2215,15 @@ static char typeOK(fractal_info *info, struct ext_blk_formula_info *formula_info
 	}
 }
 
-static void check_history (char *oldname, char *newname)
+static void check_history(const char *oldname, const char *newname)
 {
-	int i;
-
 	/* g_file_name_stack[] is maintained in framain2.c.  It is the history */
 	/*  file for the browser and holds a maximum of 16 images.  The history */
 	/*  file needs to be adjusted if the rename or delete functions of the */
 	/*  browser are used. */
 	/* g_name_stack_ptr is also maintained in framain2.c.  It is the index into */
 	/*  g_file_name_stack[]. */
-
-	for (i = 0; i < g_name_stack_ptr; i++)
+	for (int i = 0; i < g_name_stack_ptr; i++)
 	{
 		if (stricmp(g_file_name_stack[i], oldname) == 0) /* we have a match */
 		{
@@ -2270,18 +2236,14 @@ static void bfsetup_convert_to_screen()
 {
 	/* setup_convert_to_screen() in LORENZ.C, converted to bf_math */
 	/* Call only from within look_get_window() */
-	bf_t   bt_det, bt_xd, bt_yd, bt_tmp1, bt_tmp2;
-	bf_t   bt_inter1, bt_inter2;
-	int saved;
-
-	saved = save_stack();
-	bt_inter1 = alloc_stack(rbflength + 2);
-	bt_inter2 = alloc_stack(rbflength + 2);
-	bt_det = alloc_stack(rbflength + 2);
-	bt_xd = alloc_stack(rbflength + 2);
-	bt_yd = alloc_stack(rbflength + 2);
-	bt_tmp1 = alloc_stack(rbflength + 2);
-	bt_tmp2 = alloc_stack(rbflength + 2);
+	int saved = save_stack();
+	bf_t bt_inter1 = alloc_stack(rbflength + 2);
+	bf_t bt_inter2 = alloc_stack(rbflength + 2);
+	bf_t bt_det = alloc_stack(rbflength + 2);
+	bf_t bt_xd = alloc_stack(rbflength + 2);
+	bf_t bt_yd = alloc_stack(rbflength + 2);
+	bf_t bt_tmp1 = alloc_stack(rbflength + 2);
+	bf_t bt_tmp2 = alloc_stack(rbflength + 2);
 
 	/* x3rd-xmin */
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
@@ -2357,26 +2319,23 @@ static void bfsetup_convert_to_screen()
 /* maps points onto view screen*/
 static void bftransform(bf_t bt_x, bf_t bt_y, struct dblcoords *point)
 {
-	bf_t   bt_tmp1, bt_tmp2;
-	int saved;
+	int saved = save_stack();
+	bf_t bt_tmp1 = alloc_stack(rbflength + 2);
+	bf_t bt_tmp2 = alloc_stack(rbflength + 2);
 
-	saved = save_stack();
-	bt_tmp1 = alloc_stack(rbflength + 2);
-	bt_tmp2 = alloc_stack(rbflength + 2);
-
-/*  point->x = cvt->a*point->x + cvt->b*point->y + cvt->e; */
+	/*  point->x = cvt->a*point->x + cvt->b*point->y + cvt->e; */
 	mult_bf(bt_tmp1, n_a, bt_x);
 	mult_bf(bt_tmp2, n_b, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_e);
-	point->x = (double)bftofloat(bt_tmp1);
+	point->x = (double) bftofloat(bt_tmp1);
 
-/*  point->y = cvt->c*point->x + cvt->d*point->y + cvt->f; */
+	/*  point->y = cvt->c*point->x + cvt->d*point->y + cvt->f; */
 	mult_bf(bt_tmp1, n_c, bt_x);
 	mult_bf(bt_tmp2, n_d, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_f);
-	point->y = (double)bftofloat(bt_tmp1);
+	point->y = (double) bftofloat(bt_tmp1);
 
 	restore_stack(saved);
 }
