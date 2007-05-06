@@ -1117,7 +1117,7 @@ int full_screen_choice_help(int help_mode, int options, const char *hdg,
 /* case independent version of strncmp */
 int strncasecmp(char *s, char *t, int ct)
 {
-	for (; (tolower(*s) == tolower(*t)) && --ct ; s++, t++)
+	for (; (tolower(*s) == tolower(*t)) && --ct; s++, t++)
 	{
 		if (*s == '\0')
 		{

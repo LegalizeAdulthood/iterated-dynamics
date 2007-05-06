@@ -17,7 +17,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
-#include "RayTraceState.h"
+#include "ThreeDimensionalState.h"
 #include "CommandParser.h"
 
 #define INIT_GIF87      0       /* Turn on GIF 89a processing  */
@@ -528,24 +528,25 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 
 static void initialize_variables_3d()               /* init vars affecting 3d */
 {
-	g_raytrace_state.set_raytrace_output(RAYTRACE_NONE);
-	g_raytrace_state.set_raytrace_brief(0);
-	g_raytrace_state.set_sphere(false);
-	g_preview = 0;
-	g_show_box = 0;
-	g_x_adjust = 0;
-	g_y_adjust = 0;
-	g_eye_separation = 0;
-	g_glasses_type = STEREO_NONE;
-	g_preview_factor = 20;
-	g_red_crop_left   = 4;
-	g_red_crop_right  = 0;
-	g_blue_crop_left  = 0;
-	g_blue_crop_right = 4;
-	g_red_bright     = 80;
-	g_blue_bright   = 100;
-	g_transparent[0] = g_transparent[1] = 0; /* no min/max transparency */
-	g_raytrace_state.set_defaults();
+	g_3d_state.set_raytrace_output(RAYTRACE_NONE);
+	g_3d_state.set_raytrace_brief(0);
+	g_3d_state.set_sphere(false);
+	g_3d_state.set_preview(false);
+	g_3d_state.set_show_box(false);
+	g_3d_state.set_x_adjust(0);
+	g_3d_state.set_y_adjust(0);
+	g_3d_state.set_eye_separation(0);
+	g_3d_state.set_glasses_type(STEREO_NONE);
+	g_3d_state.set_preview_factor(20);
+	g_3d_state.set_red().set_crop_left(4);
+	g_3d_state.set_red().set_crop_right(0);
+	g_3d_state.set_blue().set_crop_left(0);
+	g_3d_state.set_blue().set_crop_right(4);
+	g_3d_state.set_red().set_bright(80);
+	g_3d_state.set_blue().set_bright(100);
+	g_3d_state.set_transparent0(0);
+	g_3d_state.set_transparent1(0); /* no min/max transparency */
+	g_3d_state.set_defaults();
 }
 
 static void reset_ifs_definition()
@@ -2182,7 +2183,7 @@ static int symmetry_arg(const cmd_context &context)
 
 static int sphere_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_sphere(context);
+	return g_3d_state.parse_sphere(context);
 }
 
 static int sound_arg(const cmd_context &context)
@@ -2531,34 +2532,34 @@ static int stereo_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_glasses_type = context.numval;
+	g_3d_state.set_glasses_type(context.numval);
 	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int rotation_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_rotation(context);
+	return g_3d_state.parse_rotation(context);
 }
 
 static int perspective_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_perspective(context);
+	return g_3d_state.parse_perspective(context);
 }
 
 static int xy_shift_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_xy_shift(context);
+	return g_3d_state.parse_xy_shift(context);
 }
 
 static int inter_ocular_arg(const cmd_context &context)
 {
-	g_eye_separation = context.numval;
+	g_3d_state.set_eye_separation(context.numval);
 	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int converge_arg(const cmd_context &context)
 {
-	g_x_adjust = context.numval;
+	g_3d_state.set_x_adjust(context.numval);
 	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
@@ -2572,10 +2573,10 @@ static int crop_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_red_crop_left   = context.intval[0];
-	g_red_crop_right  = context.intval[1];
-	g_blue_crop_left  = context.intval[2];
-	g_blue_crop_right = context.intval[3];
+	g_3d_state.set_red().set_crop_left(context.intval[0]);
+	g_3d_state.set_red().set_crop_right(context.intval[1]);
+	g_3d_state.set_blue().set_crop_left(context.intval[2]);
+	g_3d_state.set_blue().set_crop_right(context.intval[3]);
 	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
@@ -2585,14 +2586,14 @@ static int bright_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_red_bright  = context.intval[0];
-	g_blue_bright = context.intval[1];
+	g_3d_state.set_red().set_bright(context.intval[0]);
+	g_3d_state.set_blue().set_bright(context.intval[1]);
 	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
 static int xy_adjust_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_xy_translate(context);
+	return g_3d_state.parse_xy_translate(context);
 }
 
 static int threed_arg(const cmd_context &context)
@@ -2617,47 +2618,47 @@ static int threed_arg(const cmd_context &context)
 
 static int scale_xyz_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_xyz_scale(context);
+	return g_3d_state.parse_xyz_scale(context);
 }
 
 static int roughness_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_roughness(context);
+	return g_3d_state.parse_roughness(context);
 }
 
 static int water_line_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_water_line(context);
+	return g_3d_state.parse_water_line(context);
 }
 
 static int fill_type_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_fill_type(context);
+	return g_3d_state.parse_fill_type(context);
 }
 
 static int light_source_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_light_source(context);
+	return g_3d_state.parse_light_source(context);
 }
 
 static int smoothing_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_smoothing(context);
+	return g_3d_state.parse_smoothing(context);
 }
 
 static int lattitude_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_lattitude(context);
+	return g_3d_state.parse_lattitude(context);
 }
 
 static int longitude_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_longitude(context);
+	return g_3d_state.parse_longitude(context);
 }
 
 static int radius_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_radius(context);
+	return g_3d_state.parse_radius(context);
 }
 
 static int transparent_arg(const cmd_context &context)
@@ -2666,8 +2667,8 @@ static int transparent_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_transparent[0] = context.intval[0];
-	g_transparent[1] = (context.totparms > 1) ? context.intval[1] : context.intval[0];
+	g_3d_state.set_transparent0(context.intval[0]);
+	g_3d_state.set_transparent1((context.totparms > 1) ? context.intval[1] : context.intval[0]);
 	return Command::ThreeDParameter;
 }
 
@@ -2677,23 +2678,23 @@ static int coarse_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_preview_factor = context.numval;
+	g_3d_state.set_preview_factor(context.numval);
 	return Command::ThreeDParameter;
 }
 
 static int randomize_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_randomize_colors(context);
+	return g_3d_state.parse_randomize_colors(context);
 }
 
 static int ambient_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_ambient(context);
+	return g_3d_state.parse_ambient(context);
 }
 
 static int haze_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_haze(context);
+	return g_3d_state.parse_haze(context);
 }
 
 static int true_mode_arg(const cmd_context &context)
@@ -2722,7 +2723,7 @@ static int monitor_width_arg(const cmd_context &context)
 
 static int background_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_background_color(context);
+	return g_3d_state.parse_background_color(context);
 }
 
 static int light_name_arg(const cmd_context &context)
@@ -2740,7 +2741,7 @@ static int light_name_arg(const cmd_context &context)
 
 static int ray_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_raytrace_output(context);
+	return g_3d_state.parse_raytrace_output(context);
 }
 
 static int release_arg(const cmd_context &context)
@@ -2805,12 +2806,12 @@ static int is_mand_arg(const cmd_context &context)
 
 static int preview_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_preview, Command::ThreeDParameter).parse(context);
+	return g_3d_state.parse_preview(context);
 }
 
 static int showbox_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_show_box, Command::ThreeDParameter).parse(context);
+	return g_3d_state.parse_show_box(context);
 }
 
 static int fullcolor_arg(const cmd_context &context)
@@ -2835,7 +2836,7 @@ static int targa_overlay_arg(const cmd_context &context)
 
 static int brief_arg(const cmd_context &context)
 {
-	return g_raytrace_state.parse_raytrace_brief(context);
+	return g_3d_state.parse_raytrace_brief(context);
 }
 
 static int screencoords_arg(const cmd_context &context)

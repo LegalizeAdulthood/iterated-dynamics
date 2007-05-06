@@ -8,6 +8,7 @@
 #include "prototyp.h"
 #include "lsys.h"
 #include "drivers.h"
+#include "MathUtil.h"
 
 #ifdef max
 #undef max
@@ -503,7 +504,6 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	void (*f)(lsys_turtle_state_fp *);
 	long num;
 	int ptype;
-	double PI180 = PI / 180.0;
 
 	void (*plus)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_plus_pow2 : lsysf_plus;
 	void (*minus)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_minus_pow2 : lsysf_minus;
@@ -528,24 +528,52 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 		ret[n].ch = *s;
 		switch (*s)
 		{
-		case '+': f = plus;            break;
-		case '-': f = minus;           break;
-		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = get_number(&s)*PI180;  break;
-		case '\\': f = bslash;         ptype = 10;  ret[n].parm.nf = get_number(&s)*PI180;  break;
-		case '@': f = at;              ptype = 10;  ret[n].parm.nf = get_number(&s);  break;
-		case '|': f = pipe;            break;
-		case '!': f = lsysf_exclamation;     break;
+		case '+':
+			f = plus;
+			break;
+		case '-':
+			f = minus;
+			break;
+		case '/':
+			f = slash;
+			ptype = 10;
+			ret[n].parm.nf = MathUtil::DegreesToRadians(get_number(&s));
+			break;
+		case '\\':
+			f = bslash;
+			ptype = 10;
+			ret[n].parm.nf = MathUtil::DegreesToRadians(get_number(&s));
+			break;
+		case '@':
+			f = at;
+			ptype = 10;
+			ret[n].parm.nf = get_number(&s);
+			break;
+		case '|':
+			f = pipe;
+			break;
+		case '!':
+			f = lsysf_exclamation;
+			break;
 		case 'd':
-		case 'm': f = lsysf_size_dm;   break;
+		case 'm':
+			f = lsysf_size_dm;
+			break;
 		case 'g':
-		case 'f': f = dogf;       break;
-		case '[': num = 1;        break;
-		case ']': num = 2;        break;
+		case 'f':
+			f = dogf;
+			break;
+		case '[':
+			num = 1;
+			break;
+		case ']':
+			num = 2;
+			break;
 		default:
 			num = 3;
 			break;
 		}
-		ret[n].f = (void (*)(struct lsys_turtle_state_fp *))f;
+		ret[n].f = f;
 		if (ptype == 4)
 		{
 			ret[n].parm.n = num;
@@ -594,7 +622,6 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	void (*f)(lsys_turtle_state_fp *);
 	LDBL num;
 	int ptype;
-	LDBL PI180 = PI / 180.0;
 
 	void (*plus)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_plus_pow2 : lsysf_plus;
 	void (*minus)(lsys_turtle_state_fp *) = (is_pow2(ts->max_angle)) ? lsysf_minus_pow2 : lsysf_minus;
@@ -621,8 +648,8 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
-		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = get_number(&s)*PI180;  break;
-		case '\\': f = bslash;         ptype = 10;  ret[n].parm.nf = get_number(&s)*PI180;  break;
+		case '/': f = slash;           ptype = 10;  ret[n].parm.nf = MathUtil::DegreesToRadians(get_number(&s));  break;
+		case '\\': f = bslash;         ptype = 10;  ret[n].parm.nf = MathUtil::DegreesToRadians(get_number(&s));  break;
 		case '@': f = at;              ptype = 10;  ret[n].parm.nf = get_number(&s);  break;
 		case '|': f = pipe;            break;
 		case '!': f = lsysf_exclamation;    break;
@@ -681,7 +708,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 void _fastcall lsysf_sin_cos()
 {
 	LDBL locaspect;
-	LDBL TWOPI = 2.0*PI;
+	LDBL TWOPI = 2.0*MathUtil::Pi;
 	LDBL twopimax;
 	LDBL twopimaxi;
 	int i;

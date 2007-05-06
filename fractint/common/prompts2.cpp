@@ -2645,7 +2645,7 @@ get_brws_restart:
 	g_too_small  = uvalues[++k].uval.dval;
 	if (g_too_small < 0)
 	{
-		g_too_small = 0 ;
+		g_too_small = 0;
 	}
 	g_cross_hair_box_size = uvalues[++k].uval.ival;
 	if (g_cross_hair_box_size < 1)

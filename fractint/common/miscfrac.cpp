@@ -14,6 +14,7 @@
 #include "targa_lc.h"
 #include "drivers.h"
 #include "EscapeTime.h"
+#include "MathUtil.h"
 
 #define RANDOM(x)  (rand() % (x))
 
@@ -165,7 +166,7 @@ int test()
 		return 0;
 	}
 	numpasses = (g_standard_calculation_mode == '1') ? 0 : 1;
-	for (g_passes = startpass; g_passes <= numpasses ; g_passes++)
+	for (g_passes = startpass; g_passes <= numpasses; g_passes++)
 	{
 		for (g_row = startrow; g_row <= g_y_stop; g_row = g_row + 1 + numpasses)
 		{
@@ -802,7 +803,7 @@ int diffusion()
 		switch (mode)
 		{
 		case DIFFUSION_CENTRAL: /* Release new point on a circle inside the box */
-			angle = 2*(double)rand()/(RAND_MAX/PI);
+			angle = 2*(double)rand()/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
 			x = (int)(cosine*(x_max-x_min) + g_x_dots);
 			y = (int)(sine  *(y_max-y_min) + g_y_dots);
@@ -815,7 +816,7 @@ int diffusion()
 			break;
 		case DIFFUSION_SQUARE: /* Release new point on a circle inside the box with radius
 					given by the radius variable */
-			angle = 2*(double)rand()/(RAND_MAX/PI);
+			angle = 2*(double)rand()/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
 			x = (int)(cosine*radius + g_x_dots);
 			y = (int)(sine  *radius + g_y_dots);
@@ -1028,7 +1029,7 @@ int bifurcation()
 		return -1;
 	}
 
-	s_pi_l = (long)(PI*g_fudge);
+	s_pi_l = (long)(MathUtil::Pi*g_fudge);
 
 	for (row = 0; row <= g_y_stop; row++) /* should be g_y_stop */
 	{
@@ -1131,7 +1132,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 
 	errors = g_overflow = FALSE;
 
-	for (counter = 0 ; counter < s_filter_cycles ; counter++)
+	for (counter = 0; counter < s_filter_cycles; counter++)
 	{
 		errors = g_current_fractal_specific->orbitcalc();
 		if (errors)
@@ -1142,7 +1143,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	if (s_half_time_check) /* check for periodicity at half-time */
 	{
 		bifurcation_period_init();
-		for (counter = 0 ; counter < (unsigned long)g_max_iteration ; counter++)
+		for (counter = 0; counter < (unsigned long)g_max_iteration; counter++)
 		{
 			errors = g_current_fractal_specific->orbitcalc();
 			if (errors)
@@ -1156,7 +1157,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		}
 		if (counter >= (unsigned long)g_max_iteration)   /* if not periodic, go the distance */
 		{
-			for (counter = 0 ; counter < s_filter_cycles ; counter++)
+			for (counter = 0; counter < s_filter_cycles; counter++)
 			{
 				errors = g_current_fractal_specific->orbitcalc();
 				if (errors)
@@ -1171,7 +1172,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	{
 		bifurcation_period_init();
 	}
-	for (counter = 0 ; counter < (unsigned long)g_max_iteration ; counter++)
+	for (counter = 0; counter < (unsigned long)g_max_iteration; counter++)
 	{
 		errors = g_current_fractal_specific->orbitcalc();
 		if (errors)
@@ -1310,7 +1311,7 @@ int bifurcation_stewart_trig()
 
 int bifurcation_set_trig_pi_fp()
 {
-	g_temp_z.x = s_population*PI;
+	g_temp_z.x = s_population*MathUtil::Pi;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
 	s_population = s_rate*g_temp_z.x;
@@ -1330,7 +1331,7 @@ int bifurcation_set_trig_pi()
 
 int bifurcation_add_trig_pi_fp()
 {
-	g_temp_z.x = s_population*PI;
+	g_temp_z.x = s_population*MathUtil::Pi;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
 	s_population += s_rate*g_temp_z.x;

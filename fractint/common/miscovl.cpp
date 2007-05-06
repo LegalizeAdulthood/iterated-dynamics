@@ -29,7 +29,7 @@
 #include "fihelp.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
-#include "RayTraceState.h"
+#include "ThreeDimensionalState.h"
 
 /* routines in this module      */
 
@@ -592,24 +592,24 @@ static void write_universal_3d_parameters()
 	if (g_display_3d)  /* universal 3d */
 	{
 		/***** common (fractal & transform) 3d parameters in this section *****/
-		if (!g_raytrace_state.sphere() || g_display_3d == DISPLAY3D_GENERATED)
+		if (!g_3d_state.sphere() || g_display_3d == DISPLAY3D_GENERATED)
 		{
-			put_parm(" rotation=%d/%d/%d", g_raytrace_state.x_rot(), g_raytrace_state.y_rot(), g_raytrace_state.z_rot());
+			put_parm(" rotation=%d/%d/%d", g_3d_state.x_rotation(), g_3d_state.y_rotation(), g_3d_state.z_rotation());
 		}
-		put_parm(" perspective=%d", g_raytrace_state.z_viewer());
-		put_parm(" xyshift=%d/%d", g_raytrace_state.x_shift(), g_raytrace_state.y_shift());
-		if (g_raytrace_state.x_trans() || g_raytrace_state.y_trans())
+		put_parm(" perspective=%d", g_3d_state.z_viewer());
+		put_parm(" xyshift=%d/%d", g_3d_state.x_shift(), g_3d_state.y_shift());
+		if (g_3d_state.x_trans() || g_3d_state.y_trans())
 		{
-			put_parm(" xyadjust=%d/%d", g_raytrace_state.x_trans(), g_raytrace_state.y_trans());
+			put_parm(" xyadjust=%d/%d", g_3d_state.x_trans(), g_3d_state.y_trans());
 		}
-		if (g_glasses_type)
+		if (g_3d_state.glasses_type())
 		{
-			put_parm(" stereo=%d", g_glasses_type);
-			put_parm(" interocular=%d", g_eye_separation);
-			put_parm(" converge=%d", g_x_adjust);
+			put_parm(" stereo=%d", g_3d_state.glasses_type());
+			put_parm(" interocular=%d", g_3d_state.eye_separation());
+			put_parm(" converge=%d", g_3d_state.x_adjust());
 			put_parm(" crop=%d/%d/%d/%d",
-				g_red_crop_left, g_red_crop_right, g_blue_crop_left, g_blue_crop_right);
-			put_parm(" bright=%d/%d", g_red_bright, g_blue_bright);
+				g_3d_state.red().crop_left(), g_3d_state.red().crop_right(), g_3d_state.blue().crop_left(), g_3d_state.blue().crop_right());
+			put_parm(" bright=%d/%d", g_3d_state.red().bright(), g_3d_state.blue().bright());
 		}
 	}
 }
@@ -632,52 +632,52 @@ static void write_3d_parameters()
 			put_filename("filename", g_read_name);
 		}
 
-		if (g_raytrace_state.sphere())
+		if (g_3d_state.sphere())
 		{
 			put_parm(" sphere=y");
-			put_parm(" latitude=%d/%d", g_raytrace_state.theta1(), g_raytrace_state.theta2());
-			put_parm(" longitude=%d/%d", g_raytrace_state.phi1(), g_raytrace_state.phi2());
-			put_parm(" radius=%d", g_raytrace_state.radius());
+			put_parm(" latitude=%d/%d", g_3d_state.theta1(), g_3d_state.theta2());
+			put_parm(" longitude=%d/%d", g_3d_state.phi1(), g_3d_state.phi2());
+			put_parm(" radius=%d", g_3d_state.radius());
 		}
-		put_parm(" scalexyz=%d/%d", g_raytrace_state.x_scale(), g_raytrace_state.y_scale());
-		put_parm(" roughness=%d", g_raytrace_state.rough());
-		put_parm(" waterline=%d", g_raytrace_state.water_line());
-		if (g_raytrace_state.fill_type())
+		put_parm(" scalexyz=%d/%d", g_3d_state.x_scale(), g_3d_state.y_scale());
+		put_parm(" roughness=%d", g_3d_state.roughness());
+		put_parm(" waterline=%d", g_3d_state.water_line());
+		if (g_3d_state.fill_type())
 		{
-			put_parm(" filltype=%d", g_raytrace_state.fill_type());
+			put_parm(" filltype=%d", g_3d_state.fill_type());
 		}
-		if (g_transparent[0] || g_transparent[1])
+		if (g_3d_state.transparent0() || g_3d_state.transparent1())
 		{
-			put_parm(" transparent=%d/%d", g_transparent[0], g_transparent[1]);
+			put_parm(" transparent=%d/%d", g_3d_state.transparent0(), g_3d_state.transparent1());
 		}
-		if (g_preview)
+		if (g_3d_state.preview())
 		{
 			put_parm(" preview=yes");
-			if (g_show_box)
+			if (g_3d_state.show_box())
 			{
 				put_parm(" showbox=yes");
 			}
-			put_parm(" coarse=%d", g_preview_factor);
+			put_parm(" coarse=%d", g_3d_state.preview_factor());
 		}
-		if (g_raytrace_state.raytrace_output())
+		if (g_3d_state.raytrace_output())
 		{
-			put_parm(" ray=%d", g_raytrace_state.raytrace_output());
-			if (g_raytrace_state.raytrace_brief())
+			put_parm(" ray=%d", g_3d_state.raytrace_output());
+			if (g_3d_state.raytrace_brief())
 			{
 				put_parm(" brief=y");
 			}
 		}
-		if (g_raytrace_state.fill_type() > FillType::Bars)
+		if (g_3d_state.fill_type() > FillType::Bars)
 		{
-			put_parm(" lightsource=%d/%d/%d", g_raytrace_state.x_light(), g_raytrace_state.y_light(), g_raytrace_state.z_light());
-			if (g_raytrace_state.light_avg())
+			put_parm(" lightsource=%d/%d/%d", g_3d_state.x_light(), g_3d_state.y_light(), g_3d_state.z_light());
+			if (g_3d_state.light_avg())
 			{
-				put_parm(" smoothing=%d", g_raytrace_state.light_avg());
+				put_parm(" smoothing=%d", g_3d_state.light_avg());
 			}
 		}
-		if (g_raytrace_state.randomize_colors())
+		if (g_3d_state.randomize_colors())
 		{
-			put_parm(" randomize=%d", g_raytrace_state.randomize_colors());
+			put_parm(" randomize=%d", g_3d_state.randomize_colors());
 		}
 		if (g_targa_output)
 		{
@@ -687,20 +687,20 @@ static void write_3d_parameters()
 		{
 			put_parm(" usegrayscale=y");
 		}
-		if (g_raytrace_state.ambient())
+		if (g_3d_state.ambient())
 		{
-			put_parm(" ambient=%d", g_raytrace_state.ambient());
+			put_parm(" ambient=%d", g_3d_state.ambient());
 		}
-		if (g_raytrace_state.haze())
+		if (g_3d_state.haze())
 		{
-			put_parm(" haze=%d", g_raytrace_state.haze());
+			put_parm(" haze=%d", g_3d_state.haze());
 		}
-		if (g_raytrace_state.background_red() != 51
-			|| g_raytrace_state.background_green() != 153
-			|| g_raytrace_state.background_blue() != 200)
+		if (g_3d_state.background_red() != 51
+			|| g_3d_state.background_green() != 153
+			|| g_3d_state.background_blue() != 200)
 		{
-			put_parm(" background=%d/%d/%d", g_raytrace_state.background_red(),
-				g_raytrace_state.background_green(), g_raytrace_state.background_blue());
+			put_parm(" background=%d/%d/%d", g_3d_state.background_red(),
+				g_3d_state.background_green(), g_3d_state.background_blue());
 		}
 	}
 }

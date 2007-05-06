@@ -19,6 +19,7 @@
 #include "drivers.h"
 #include "busy.h"
 #include "SoundState.h"
+#include "ThreeDimensionalState.h"
 
 #define MAXCOLORS       256
 
@@ -152,7 +153,7 @@ int gifview()
 				close_file();
 				return -1;
 			}
-			if ((!g_display_3d || (g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE))
+			if ((!g_display_3d || (g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE))
 				&& !g_dont_read_color)
 			{
 				g_dac_box[i][j] = (BYTE)(k >> 2); /* TODO: don't right shift color table by 2 */
@@ -162,7 +163,7 @@ int gifview()
 	g_color_state = COLORSTATE_UNKNOWN; /* g_colors aren't default and not a known .map file */
 
 	/* don't read if glasses */
-	if (g_display_3d && g_map_set && g_glasses_type != STEREO_ALTERNATE && g_glasses_type != STEREO_SUPERIMPOSE)
+	if (g_display_3d && g_map_set && g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE)
 	{
 		validate_luts(g_map_name);  /* read the palette file */
 		spindac(0, 1); /* load it, but don't spin */

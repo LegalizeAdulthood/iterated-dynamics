@@ -27,6 +27,7 @@
 #include "drivers.h"
 #include "fihelp.h"
 #include "EscapeTime.h"
+#include "MathUtil.h"
 
 extern long g_bn_max_stack;
 extern long maxstack;
@@ -173,8 +174,6 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
 	return done;
 }
 
-#define rad_to_deg(x) ((x)*(180.0/PI)) /* most people "think" in degrees */
-#define deg_to_rad(x) ((x)*(PI/180.0))
 /*
 convert corners to center/mag
 Rotation angles indicate how much the IMAGE has been rotated, not the
@@ -216,7 +215,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		tmpy1 = g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 		a = sqrt(a2);
-		*Rotation = -rad_to_deg(atan2(tmpy1, tmpx1)); /* negative for image rotation */
+		*Rotation = -MathUtil::RadiansToDegrees(atan2(tmpy1, tmpx1)); /* negative for image rotation */
 
 		tmpx2 = g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
 		tmpy2 = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd();
@@ -224,7 +223,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		b = sqrt(b2);
 
 		tmpa = acos((a2 + b2-c2)/(2*a*b)); /* save tmpa for later use */
-		*Skew = 90.0 - rad_to_deg(tmpa);
+		*Skew = 90.0 - MathUtil::RadiansToDegrees(tmpa);
 
 		*Xctr = g_escape_time_state.m_grid_fp.x_center();
 		*Yctr = g_escape_time_state.m_grid_fp.y_center();
@@ -307,7 +306,7 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 		}
 
 	/* in unrotated, untranslated coordinate system */
-	tanskew = tan(deg_to_rad(Skew));
+	tanskew = tan(MathUtil::DegreesToRadians(Skew));
 	g_escape_time_state.m_grid_fp.x_min() = -w + h*tanskew;
 	g_escape_time_state.m_grid_fp.x_max() =  w - h*tanskew;
 	g_escape_time_state.m_grid_fp.x_3rd() = -w - h*tanskew;
@@ -315,7 +314,7 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min() = -h;
 
 	/* rotate coord system and then translate it */
-	Rotation = deg_to_rad(Rotation);
+	Rotation = MathUtil::DegreesToRadians(Rotation);
 	sinrot = sin(Rotation);
 	cosrot = cos(Rotation);
 
@@ -347,7 +346,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 	LDBL Width, Height;
 	LDBL a, b; /* bottom, left, diagonal */
 	LDBL a2, b2, c2; /* squares of above */
-	LDBL tmpx1, tmpx2, tmpy = 0.0, tmpy1, tmpy2 ;
+	LDBL tmpx1, tmpx2, tmpy = 0.0, tmpy1, tmpy2;
 	double tmpa; /* temporary x, y, angle */
 	bf_t bfWidth, bfHeight;
 	bf_t bftmpx, bftmpy;
@@ -413,7 +412,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		{
 			tmpy = tmpy1/tmpx1*signx;    /* tmpy = tmpy / |tmpx| */
 		}
-		*Rotation = (double)(-rad_to_deg(atan2((double)tmpy, signx))); /* negative for image rotation */
+		*Rotation = (double)(-MathUtil::RadiansToDegrees(atan2((double)tmpy, signx))); /* negative for image rotation */
 
 		/* tmpx = xmin - x3rd; */
 		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd());
@@ -425,7 +424,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		b = sqrtl(b2);
 
 		tmpa = acos((double)((a2 + b2-c2)/(2*a*b))); /* save tmpa for later use */
-		*Skew = 90 - rad_to_deg(tmpa);
+		*Skew = 90 - MathUtil::RadiansToDegrees(tmpa);
 
 		/* these are the only two variables that must use big precision */
 		/* *Xctr = (xmin + xmax)/2; */
@@ -501,7 +500,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 
 	bftmp = alloc_stack(bflength + 2);
 	/* in unrotated, untranslated coordinate system */
-	tanskew = tan(deg_to_rad(Skew));
+	tanskew = tan(MathUtil::DegreesToRadians(Skew));
 	x_min = -w + h*tanskew;
 	x_max =  w - h*tanskew;
 	x_3rd = -w - h*tanskew;
@@ -509,7 +508,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	y_3rd = y_min = -h;
 
 	/* rotate coord system and then translate it */
-	Rotation = deg_to_rad(Rotation);
+	Rotation = MathUtil::DegreesToRadians(Rotation);
 	sinrot = sin(Rotation);
 	cosrot = cos(Rotation);
 
@@ -1486,7 +1485,7 @@ int ifs_load()                   /* read in IFS parameters */
 	{
 		if (sscanf(bufptr, " %f ", &((float *)g_text_stack)[i]) != 1)
 		{
-			break ;
+			break;
 		}
 		if (++i >= NUMIFS*rowsize)
 		{
@@ -1902,26 +1901,3 @@ void fix_inversion(double *x) /* make double converted from string look ok */
 	sprintf(buf, "%-1.15lg", *x);
 	*x = atof(buf);
 }
-
-#if _MSC_VER == 800
-#ifdef FIXTAN_DEFINED
-#undef tan
-/* !!!!! stupid MSVC tan(x) bug fix !!!!!!!!            */
-/* tan(x) can return -tan(x) if -pi/2 < x < pi/2       */
-/* if tan(x) has been called before outside this range. */
-double fixtan(double x)
-	{
-	double y;
-
-	y = tan(x);
-	if ((x > -PI/2 && x < 0 && y > 0) || (x > 0 && x < PI/2 && y < 0))
-	{
-		y = -y;
-	}
-	return y;
-	}
-#define tan fixtan
-#endif
-#endif
-
-

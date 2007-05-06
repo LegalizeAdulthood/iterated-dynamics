@@ -6,6 +6,7 @@
 #include "fractype.h"
 #include "mpmath.h"
 #include "Newton.h"
+#include "MathUtil.h"
 
 #if !defined(XFRACT)
 static struct MPC mpctmp, mpctmp1;
@@ -140,7 +141,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 	m_root_over_degree       = (double)g_root / (double)g_degree;
 	m_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
 	g_max_color     = 0;
-	g_threshold    = .3*PI/g_degree; /* less than half distance between roots */
+	g_threshold    = .3*MathUtil::Pi/g_degree; /* less than half distance between roots */
 #if !defined(XFRACT)
 	if (g_fractal_type == FRACTYPE_NEWTON_MP || g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 	{

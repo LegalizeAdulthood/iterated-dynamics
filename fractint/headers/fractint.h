@@ -157,13 +157,6 @@ typedef BYTE BOOLEAN;
 #define ORBITSAVE_RAW	1
 #define ORBITSAVE_SOUND 2
 
-/* g_glasses_type values */
-#define STEREO_NONE			0
-#define STEREO_ALTERNATE	1
-#define STEREO_SUPERIMPOSE	2
-#define STEREO_PHOTO		3
-#define STEREO_PAIR			4
-
 /* find_file_item itemtypes */
 #define ITEMTYPE_PARAMETER	0
 #define ITEMTYPE_FORMULA	1
@@ -887,11 +880,6 @@ typedef long  LVECTOR [DIM];  /* vector of longs   */
 and direction. A fourth dimension is assumed to always have the value 1, but
 is not in the data structure */
 
-#ifdef PI
-#undef PI
-#endif
-#define PI 3.14159265358979323846
-
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
@@ -1314,7 +1302,7 @@ struct search_path
 	char frm[FILE_MAX_PATH];
 	char ifs[FILE_MAX_PATH];
 	char lsys[FILE_MAX_PATH];
-} ;
+};
 
 struct affine
 {
@@ -1329,10 +1317,10 @@ struct affine
 
 struct baseunit  /* smallest part of a fractint 'gene' */
 {
-	void *addr               ; /* address of variable to be referenced */
+	void *addr; /* address of variable to be referenced */
 	void (*varyfunc)(struct baseunit*,int,int); /* pointer to func used to vary it */
 							  /* takes random number and pointer to var*/
-	int mutate ;  /* flag to switch on variation of this variable */
+	int mutate;  /* flag to switch on variation of this variable */
 				  /* 0 for no mutation, 1 for x axis, 2 for y axis */
 				  /* in steady field maps, either x or y=yes in random modes*/ 
 	char name[16]; /* name of variable (for menu ) */

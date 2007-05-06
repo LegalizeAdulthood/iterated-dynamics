@@ -8,14 +8,16 @@
 /*                to eliminate compiler warnings. Did a long-overdue    */
 /*                formatting cleanup.                                   */
 /************************************************************************/
-#include <assert.h>
+#include <cmath>
+#include <cassert>
 #include <limits.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
-#include "RayTraceState.h"
+#include "ThreeDimensionalState.h"
+#include "MathUtil.h"
 
 #define FILEERROR_NONE				0
 #define FILEERROR_OPEN				1
@@ -59,24 +61,19 @@ void (*g_standard_plot)(int x, int y, int color) = NULL;
 
 char g_light_name[FILE_MAX_PATH] = "fract001";
 int g_targa_overlay = 0;
-int g_preview = 0;
-int g_show_box = 0;
-int g_preview_factor = 20;
-int g_x_adjust = 0;
-int g_y_adjust = 0;
 int g_xx_adjust = 0;
 int g_yy_adjust = 0;
 int g_x_shift = 0;
-int g_y_shift;
-int g_bad_value = -10000; /* set bad values to this */
+int g_y_shift = 0;
 VECTOR g_view;                /* position of observer for perspective */
 VECTOR g_cross;
+int g_bad_value = -10000; /* set bad values to this */
 
 static int targa_validate(char *);
 static int first_time(int, VECTOR);
-static int H_R(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
+static int HSVtoRGB(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
 static int line_3d_mem();
-static int R_H(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
+static int RGBtoHSV(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static int set_pixel_buff(BYTE *, BYTE *, unsigned);
 static void set_upr_lwr();
 static int end_object(int);
@@ -183,7 +180,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 	float cos_theta = s_sin_theta_array[col];
 	float sin_theta = s_cos_theta_array[col];    /* precalculated sin/cos of latitude */
 
-	if (s_sin_phi < 0 && !(g_raytrace_state.raytrace_output() || g_raytrace_state.fill_type() < FillType::Points))
+	if (s_sin_phi < 0 && !(g_3d_state.raytrace_output() || g_3d_state.fill_type() < FillType::Points))
 	{
 		*cur = s_bad;
 		*f_cur = s_f_bad;
@@ -197,8 +194,8 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 	/* r = 1.0-s_r_scale + ((double)cur.color/(double)s_z_coord)*s_r_scale;*/
 	/* s_radius = (double)g_y_dots/2;                                     */
 	/* r = r*s_radius;                                                 */
-	/* cur.x = g_x_dots/2 + s_scale_x*r*sin_theta*s_aspect + xup ;         */
-	/* cur.y = g_y_dots/2 + s_scale_y*r*cos_theta*s_cos_phi - yup ;         */
+	/* cur.x = g_x_dots/2 + s_scale_x*r*sin_theta*s_aspect + xup;         */
+	/* cur.y = g_y_dots/2 + s_scale_y*r*cos_theta*s_cos_phi - yup;         */
 	/************************************************************/
 
 	if (s_r_scale < 0.0)
@@ -214,14 +211,14 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		*r = s_radius;
 	}
 	/* Allow Ray trace to go through so display ok */
-	if (s_persp || g_raytrace_state.raytrace_output())
+	if (s_persp || g_3d_state.raytrace_output())
 	{
 		/* mrr how do lv[] and cur and f_cur all relate */
 		/* NOTE: g_fudge was pre-calculated above in r and s_radius */
 		/* (almost) guarantee negative */
 		lv[2] = (long) (-s_radius - (*r)*cos_theta*s_sin_phi);     /* z */
 		// TODO: what should this really be?  Was: !FILLTYPE < FillTypePoints
-		if ((lv[2] > s_z_cutoff) && g_raytrace_state.fill_type() < FillType::Points)
+		if ((lv[2] > s_z_cutoff) && g_3d_state.fill_type() < FillType::Points)
 		{
 			*cur = s_bad;
 			*f_cur = s_f_bad;
@@ -230,7 +227,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		lv[0] = (long) (s_x_center + sin_theta*s_scale_x*(*r));  /* x */
 		lv[1] = (long) (s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r)); /* y */
 
-		if ((g_raytrace_state.fill_type() >= FillType::LightBefore) || g_raytrace_state.raytrace_output())
+		if ((g_3d_state.fill_type() >= FillType::LightBefore) || g_3d_state.raytrace_output())
 		{
 			/* calculate illumination normal before s_persp */
 			double r0 = (*r)/65536L;
@@ -238,7 +235,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 			f_cur->y = (float) (ycenter0 + cos_theta*s_cos_phi*s_scale_y*r0);
 			f_cur->color = (float) (-r0*cos_theta*s_sin_phi);
 		}
-		if (!(g_user_float_flag || g_raytrace_state.raytrace_output()))
+		if (!(g_user_float_flag || g_3d_state.raytrace_output()))
 		{
 			if (longpersp(lv, s_lview, 16) == -1)
 			{
@@ -249,7 +246,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 			cur->x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
 			cur->y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
 		}
-		if (g_user_float_flag || g_overflow || g_raytrace_state.raytrace_output())
+		if (g_user_float_flag || g_overflow || g_3d_state.raytrace_output())
 		{
 			v[0] = lv[0];
 			v[1] = lv[1];
@@ -263,7 +260,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		}
 	}
 	/* mrr Not sure how this an 3rd if above relate */
-	else if (!(s_persp && g_raytrace_state.raytrace_output()))
+	else if (!(s_persp && g_3d_state.raytrace_output()))
 	{
 		/* mrr Why the xx- and g_yy_adjust here and not above? */
 		f_cur->x = (float) (s_x_center + sin_theta*s_scale_x*(*r) + g_xx_adjust);
@@ -271,7 +268,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		cur->x = (int) f_cur->x;
 		cur->y = (int) f_cur->y;
 		/* mrr why do we do this for filltype > 5? */
-		if (g_raytrace_state.fill_type() >= FillType::LightBefore || g_raytrace_state.raytrace_output())
+		if (g_3d_state.fill_type() >= FillType::LightBefore || g_3d_state.raytrace_output())
 		{
 			f_cur->color = (float) (-(*r)*cos_theta*s_sin_phi*s_scale_z);
 		}
@@ -283,11 +280,11 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 static int line3d_non_sphere(int col,
 	struct f_point *f_cur, struct point *cur, LVECTOR lv0, LVECTOR lv, VECTOR v, float *f_water)
 {
-	if (!g_user_float_flag && !g_raytrace_state.raytrace_output())
+	if (!g_user_float_flag && !g_3d_state.raytrace_output())
 	{
 		/* flag to save vector before perspective */
 		/* in longvmultpersp calculation */
-		lv0[0] = (g_raytrace_state.fill_type() >= FillType::LightBefore) ? 1 : 0;   
+		lv0[0] = (g_3d_state.fill_type() >= FillType::LightBefore) ? 1 : 0;   
 
 		/* use 32-bit multiply math to snap this out */
 		lv[0] = col;
@@ -306,7 +303,7 @@ static int line3d_non_sphere(int col,
 
 		cur->x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
 		cur->y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
-		if (g_raytrace_state.fill_type() >= FillType::LightBefore && !g_overflow)
+		if (g_3d_state.fill_type() >= FillType::LightBefore && !g_overflow)
 		{
 			f_cur->x = (float) lv0[0];
 			f_cur->x /= 65536.0f;
@@ -317,7 +314,7 @@ static int line3d_non_sphere(int col,
 		}
 	}
 
-	if (g_user_float_flag || g_overflow || g_raytrace_state.raytrace_output())
+	if (g_user_float_flag || g_overflow || g_3d_state.raytrace_output())
 		/* do in float if integer math overflowed or doing Ray trace */
 	{
 		/* slow float version for comparison */
@@ -327,13 +324,13 @@ static int line3d_non_sphere(int col,
 
 		mult_vec(v, s_m);     /* matrix*vector routine */
 
-		if (g_raytrace_state.fill_type() > FillType::Bars || g_raytrace_state.raytrace_output())
+		if (g_3d_state.fill_type() > FillType::Bars || g_3d_state.raytrace_output())
 		{
 			f_cur->x = (float) v[0];
 			f_cur->y = (float) v[1];
 			f_cur->color = (float) v[2];
 
-			if (g_raytrace_state.raytrace_output() == RAYTRACE_ACROSPIN)
+			if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 			{
 				f_cur->x = f_cur->x*(2.0f/g_x_dots) - 1.0f;
 				f_cur->y = f_cur->y*(2.0f/g_y_dots) - 1.0f;
@@ -341,7 +338,7 @@ static int line3d_non_sphere(int col,
 			}
 		}
 
-		if (s_persp && !g_raytrace_state.raytrace_output())
+		if (s_persp && !g_3d_state.raytrace_output())
 		{
 			perspective(v);
 		}
@@ -350,7 +347,7 @@ static int line3d_non_sphere(int col,
 
 		v[0] = 0;
 		v[1] = 0;
-		v[2] = g_raytrace_state.water_line();
+		v[2] = g_3d_state.water_line();
 		mult_vec(v, s_m);
 		*f_water = (float) v[2];
 	}
@@ -382,7 +379,7 @@ static void line3d_raytrace(int col, int next,
 			return;
 		}
 
-		if (g_raytrace_state.raytrace_output() != RAYTRACE_ACROSPIN)    /* Output the vertex info */
+		if (g_3d_state.raytrace_output() != RAYTRACE_ACROSPIN)    /* Output the vertex info */
 		{
 			out_triangle(*f_cur, *f_old, s_f_last_row[col],
 				cur->color, old->color, s_last_row[col].color);
@@ -418,7 +415,7 @@ static void line3d_raytrace(int col, int next,
 			return;
 		}
 
-		if (g_raytrace_state.raytrace_output() != RAYTRACE_ACROSPIN)    /* Output the vertex info */
+		if (g_3d_state.raytrace_output() != RAYTRACE_ACROSPIN)    /* Output the vertex info */
 		{
 			out_triangle(*f_cur, s_f_last_row[col], s_f_last_row[next],
 					cur->color, s_last_row[col].color, s_last_row[next].color);
@@ -434,7 +431,7 @@ static void line3d_raytrace(int col, int next,
 		s_num_tris++;
 	}
 
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_ACROSPIN)       /* Output vertex info for Acrospin */
+	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)       /* Output vertex info for Acrospin */
 	{
 		fprintf(s_raytrace_file, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
 			f_cur->x, f_cur->y, f_cur->color, RO, CO);
@@ -517,7 +514,7 @@ static void line3d_fill_bars(int col,
 	struct point *old, struct point *cur, struct f_point *f_cur,
 	LVECTOR lv, LVECTOR lv0)
 {
-	if (g_raytrace_state.sphere())
+	if (g_3d_state.sphere())
 	{
 		if (s_persp)
 		{
@@ -609,7 +606,7 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 		{
 			/* line-wise averaging scheme */
 			static VECTOR tmpcross;
-			if (g_raytrace_state.light_avg() > 0)
+			if (g_3d_state.light_avg() > 0)
 			{
 				if (cross_not_init)
 				{
@@ -619,12 +616,12 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 					cross_avg[2] = g_cross[2];
 					cross_not_init = 0;
 				}
-				tmpcross[0] = (cross_avg[0]*g_raytrace_state.light_avg() + g_cross[0]) /
-					(g_raytrace_state.light_avg() + 1);
-				tmpcross[1] = (cross_avg[1]*g_raytrace_state.light_avg() + g_cross[1]) /
-					(g_raytrace_state.light_avg() + 1);
-				tmpcross[2] = (cross_avg[2]*g_raytrace_state.light_avg() + g_cross[2]) /
-					(g_raytrace_state.light_avg() + 1);
+				tmpcross[0] = (cross_avg[0]*g_3d_state.light_avg() + g_cross[0]) /
+					(g_3d_state.light_avg() + 1);
+				tmpcross[1] = (cross_avg[1]*g_3d_state.light_avg() + g_cross[1]) /
+					(g_3d_state.light_avg() + 1);
+				tmpcross[2] = (cross_avg[2]*g_3d_state.light_avg() + g_cross[2]) /
+					(g_3d_state.light_avg() + 1);
 				g_cross[0] = tmpcross[0];
 				g_cross[1] = tmpcross[1];
 				g_cross[2] = tmpcross[2];
@@ -692,7 +689,7 @@ static void line3d_fill(int col, int next, int last_dot, int cross_not_init,
 						struct f_point *f_old, struct f_point *f_cur,
 						LVECTOR lv, LVECTOR lv0, VECTOR v1, VECTOR v2, VECTOR cross_avg)
 {
-	switch (g_raytrace_state.fill_type())
+	switch (g_3d_state.fill_type())
 	{
 	case FillType::SurfaceGrid:
 		line3d_fill_surface_grid(col, old, cur);
@@ -743,7 +740,7 @@ int line3d(BYTE *pixels, int linelen)
 	static struct point old_last = { 0, 0, 0 }; /* old pixels */
 
 	g_fudge = 1L << 16;
-	g_plot_color = (g_transparent[0] || g_transparent[1]) ? transparent_clip_color : clip_color;
+	g_plot_color = (g_3d_state.transparent0() || g_3d_state.transparent1()) ? transparent_clip_color : clip_color;
 	normal_plot = g_plot_color;
 
 	g_current_row = g_row_count;
@@ -811,29 +808,29 @@ int line3d(BYTE *pixels, int linelen)
 	/* we have ALREADY sinned, so why not sin some more?                     */
 	/*************************************************************************/
 	last_dot = min(g_x_dots - 1, (int) linelen - 1);
-	if (g_raytrace_state.fill_type() >= FillType::LightBefore)
+	if (g_3d_state.fill_type() >= FillType::LightBefore)
 	{
-		if (g_raytrace_state.haze() && g_targa_output)
+		if (g_3d_state.haze() && g_targa_output)
 		{
-			s_haze_mult = (int) (g_raytrace_state.haze()*((float) ((long) (g_y_dots - 1 - g_current_row)*(long) (g_y_dots - 1 - g_current_row))
+			s_haze_mult = (int) (g_3d_state.haze()*((float) ((long) (g_y_dots - 1 - g_current_row)*(long) (g_y_dots - 1 - g_current_row))
 									/ (float) ((long) (g_y_dots - 1)*(long) (g_y_dots - 1))));
 			s_haze_mult = 100 - s_haze_mult;
 		}
 	}
 
-	if (g_preview_factor >= g_y_dots || g_preview_factor > last_dot)
+	if (g_3d_state.preview_factor() >= g_y_dots || g_3d_state.preview_factor() > last_dot)
 	{
-		g_preview_factor = min(g_y_dots - 1, last_dot);
+		g_3d_state.set_preview_factor(min(g_y_dots - 1, last_dot));
 	}
 
-	s_local_preview_factor = g_y_dots/g_preview_factor;
+	s_local_preview_factor = g_y_dots/g_3d_state.preview_factor();
 
 	tout = 0;
 	/* Insure last line is drawn in preview and filltypes <0  */
-	if ((g_raytrace_state.raytrace_output() || g_preview || g_raytrace_state.fill_type() < FillType::Points)
+	if ((g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 		&& (g_current_row != g_y_dots - 1)
 		&& (g_current_row % s_local_preview_factor) /* Draw mod preview lines */
-		&& !(!g_raytrace_state.raytrace_output() && (g_raytrace_state.fill_type() > FillType::Bars) && (g_current_row == 1)))
+		&& !(!g_3d_state.raytrace_output() && (g_3d_state.fill_type() > FillType::Bars) && (g_current_row == 1)))
 			/* Get init geometry in lightsource modes */
 	{
 		goto reallythebottom;     /* skip over most of the line3d calcs */
@@ -845,17 +842,17 @@ int line3d(BYTE *pixels, int linelen)
 		disk_video_status(1, s);
 	}
 
-	if (!col && g_raytrace_state.raytrace_output() && g_current_row != 0)
+	if (!col && g_3d_state.raytrace_output() && g_current_row != 0)
 	{
 		start_object();
 	}
 	/* PROCESS ROW LOOP BEGINS HERE */
 	while (col < (int) linelen)
 	{
-		if ((g_raytrace_state.raytrace_output() || g_preview || g_raytrace_state.fill_type() < FillType::Points)
+		if ((g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 			&& (col != last_dot) /* if this is not the last col */
 			&&  (col % (int) (s_aspect*s_local_preview_factor)) /* if not the 1st or mod factor col */
-			&& (!(!g_raytrace_state.raytrace_output() && g_raytrace_state.fill_type() > FillType::Bars && col == 1)))
+			&& (!(!g_3d_state.raytrace_output() && g_3d_state.fill_type() > FillType::Bars && col == 1)))
 		{
 			goto loopbottom;
 		}
@@ -863,7 +860,7 @@ int line3d(BYTE *pixels, int linelen)
 		cur.color = s_real_color = pixels[col];
 		f_cur.color = (float) cur.color;
 
-		if (g_raytrace_state.raytrace_output() || g_preview || g_raytrace_state.fill_type() < FillType::Points)
+		if (g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 		{
 			next = (int) (col + s_aspect*s_local_preview_factor);
 			if (next == col)
@@ -880,9 +877,9 @@ int line3d(BYTE *pixels, int linelen)
 			next = last_dot;
 		}
 
-		if (cur.color > 0 && cur.color < g_raytrace_state.water_line())
+		if (cur.color > 0 && cur.color < g_3d_state.water_line())
 		{
-			cur.color = s_real_color = (BYTE)g_raytrace_state.water_line();
+			cur.color = s_real_color = (BYTE)g_3d_state.water_line();
 			f_cur.color = (float) cur.color; /* "lake" */
 		}
 		else if (g_potential_16bit)
@@ -890,7 +887,7 @@ int line3d(BYTE *pixels, int linelen)
 			f_cur.color += ((float) s_fraction[col])/(float) (1 << 8);
 		}
 
-		if (g_raytrace_state.sphere())            /* sphere case */
+		if (g_3d_state.sphere())            /* sphere case */
 		{
 			if (line3d_sphere(col, xcenter0, ycenter0, &cur, &f_cur, &r, lv, v))
 			{
@@ -906,9 +903,9 @@ int line3d(BYTE *pixels, int linelen)
 			}
 		}
 
-		if (g_raytrace_state.randomize_colors())
+		if (g_3d_state.randomize_colors())
 		{
-			if (cur.color > g_raytrace_state.water_line())
+			if (cur.color > g_3d_state.water_line())
 			{
 				int rnd = rand15() >> 8;     /* 7-bit number */
 				rnd = rnd*rnd >> s_rand_factor;  /* n-bit number */
@@ -922,9 +919,9 @@ int line3d(BYTE *pixels, int linelen)
 				{
 					cur.color = g_colors - 2;
 				}
-				else if ((int) (cur.color) + rnd <= g_raytrace_state.water_line())
+				else if ((int) (cur.color) + rnd <= g_3d_state.water_line())
 				{
-					cur.color = g_raytrace_state.water_line() + 1;
+					cur.color = g_3d_state.water_line() + 1;
 				}
 				else
 				{
@@ -934,7 +931,7 @@ int line3d(BYTE *pixels, int linelen)
 			}
 		}
 
-		if (g_raytrace_state.raytrace_output())
+		if (g_3d_state.raytrace_output())
 		{
 			line3d_raytrace(col, next, &old, &cur, &f_old, &f_cur, f_water, last_dot, &tout);
 			goto loopbottom;
@@ -945,7 +942,7 @@ int line3d(BYTE *pixels, int linelen)
 			lv, lv0, v1, v2, cross_avg);
 
 loopbottom:
-		if (g_raytrace_state.raytrace_output() || (g_raytrace_state.fill_type() != FillType::Points && g_raytrace_state.fill_type() != FillType::Bars))
+		if (g_3d_state.raytrace_output() || (g_3d_state.fill_type() != FillType::Points && g_3d_state.fill_type() != FillType::Bars))
 		{
 			/* for triangle and grid fill purposes */
 			old_last = s_last_row[col];
@@ -953,7 +950,7 @@ loopbottom:
 
 			/* for illumination model purposes */
 			f_old = s_f_last_row[col] = f_cur;
-			if (g_current_row && g_raytrace_state.raytrace_output() && col >= last_dot)
+			if (g_current_row && g_3d_state.raytrace_output() && col >= last_dot)
 				/* if we're at the end of a row, close the object */
 			{
 				end_object(tout);
@@ -962,7 +959,7 @@ loopbottom:
 				{
 					fclose(s_raytrace_file);
 					remove(g_light_name);
-					file_error(g_raytrace_state.ray_name(), FILEERROR_NO_SPACE);
+					file_error(g_3d_state.ray_name(), FILEERROR_NO_SPACE);
 					return -1;
 				}
 			}
@@ -973,7 +970,7 @@ loopbottom:
 
 reallythebottom:
 	/* stuff that HAS to be done, even in preview mode, goes here */
-	if (g_raytrace_state.sphere())
+	if (g_3d_state.sphere())
 	{
 		/* incremental sin/cos phi calc */
 		if (g_current_row == 0)
@@ -1118,7 +1115,7 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 
 /* This function draws a vector from origin[] to direct[] and a box
 		around it. The vector and box are transformed or not depending on
-		g_raytrace_state.fill_type().
+		g_3d_state.fill_type().
 */
 
 static void draw_light_box(double *origin, double *direct, MATRIX light_m)
@@ -1145,7 +1142,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	}
 
 	/* transform the corners if necessary */
-	if (g_raytrace_state.fill_type() == FillType::LightAfter)
+	if (g_3d_state.fill_type() == FillType::LightAfter)
 	{
 		for (int i = 0; i < 4; i++)
 		{
@@ -1378,7 +1375,7 @@ static void clip_color(int x, int y, int color)
 		if (g_targa_output)
 		{
 			/* g_standard_plot modifies color in these types */
-			if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
+			if (!(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 			{
 				targa_color(x, y, color);
 			}
@@ -1398,14 +1395,14 @@ static void transparent_clip_color(int x, int y, int color)
 		0 <= y && y < g_y_dots &&   /* Yes?  */
 		0 <= color && color < g_colors &&  /* Colors in valid range?  */
 		/* Lets make sure its not a transparent color  */
-		(g_transparent[0] > color || color > g_transparent[1]))
+		(g_3d_state.transparent0() > color || color > g_3d_state.transparent1()))
 	{
 		assert(g_standard_plot);
 		(*g_standard_plot)(x, y, color); /* I guess we can plot then  */
 		if (g_targa_output)
 		{
 			/* g_standard_plot modifies color in these types */
-			if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
+			if (!(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 			{
 				targa_color(x, y, color);
 			}
@@ -1446,19 +1443,19 @@ static void interp_color(int x, int y, int color)
 	if (0 <= x && x < g_x_dots &&
 		0 <= y && y < g_y_dots &&
 		0 <= color && color < g_colors &&
-		(g_transparent[1] == 0 || (int) s_real_color > g_transparent[1] ||
-			g_transparent[0] > (int) s_real_color))
+		(g_3d_state.transparent1() == 0 || (int) s_real_color > g_3d_state.transparent1() ||
+			g_3d_state.transparent0() > (int) s_real_color))
 	{
 		if (g_targa_output)
 		{
 			/* g_standard_plot modifies color in these types */
-			if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
+			if (!(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 			{
 				D = targa_color(x, y, color);
 			}
 		}
 
-		if (g_raytrace_state.fill_type() >= FillType::LightBefore)
+		if (g_3d_state.fill_type() >= FillType::LightBefore)
 		{
 			if (s_real_v && g_targa_output)
 			{
@@ -1489,74 +1486,75 @@ static void interp_color(int x, int y, int color)
 
 int targa_color(int x, int y, int color)
 {
-	unsigned long H, S, V;
-	BYTE RGB[3];
-
-	if (g_raytrace_state.fill_type() == FillType::Gouraud
-		|| g_glasses_type == STEREO_ALTERNATE
-		|| g_glasses_type == STEREO_SUPERIMPOSE
+	if (g_3d_state.fill_type() == FillType::Gouraud
+		|| g_3d_state.glasses_type() == STEREO_ALTERNATE
+		|| g_3d_state.glasses_type() == STEREO_SUPERIMPOSE
 		|| g_true_color)
 	{
-		s_real_color = (BYTE)color;       /* So Targa gets interpolated color */
+		s_real_color = (BYTE) color;       /* So Targa gets interpolated color */
 	}
 
+	BYTE rgb[3];
 	switch (g_true_mode)
 	{
 	case TRUEMODE_DEFAULT:
 		/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
-		RGB[0] = (BYTE)(g_dac_box[s_real_color][0] << 2); /* Move color space to */
-		RGB[1] = (BYTE)(g_dac_box[s_real_color][1] << 2); /* 256 color primaries */
-		RGB[2] = (BYTE)(g_dac_box[s_real_color][2] << 2); /* from 64 g_colors */
+		rgb[0] = (BYTE) (g_dac_box[s_real_color][0] << 2); /* Move color space to */
+		rgb[1] = (BYTE) (g_dac_box[s_real_color][1] << 2); /* 256 color primaries */
+		rgb[2] = (BYTE) (g_dac_box[s_real_color][2] << 2); /* from 64 colors */
 		break;
 	case TRUEMODE_ITERATES:
-		RGB[0] = (BYTE)((g_real_color_iter >> 16) & 0xff);  /* red   */
-		RGB[1] = (BYTE)((g_real_color_iter >> 8) & 0xff);  /* green */
-		RGB[2] = (BYTE)((g_real_color_iter) & 0xff);  /* blue  */
+		rgb[0] = (BYTE) ((g_real_color_iter >> 16) & 0xff);  /* red   */
+		rgb[1] = (BYTE) ((g_real_color_iter >> 8) & 0xff);  /* green */
+		rgb[2] = (BYTE) ((g_real_color_iter) & 0xff);  /* blue  */
 		break;
 	}
 
 	/* Now lets convert it to HSV */
-	R_H(RGB[0], RGB[1], RGB[2], &H, &S, &V);
+	unsigned long hue;
+	unsigned long saturation;
+	unsigned long value;
+	RGBtoHSV(rgb[0], rgb[1], rgb[2], &hue, &saturation, &value);
 
-	/* Modify original S and V components */
-	if (g_raytrace_state.fill_type() > FillType::Bars
-		&& !(g_glasses_type == STEREO_ALTERNATE
-			 || g_glasses_type == STEREO_SUPERIMPOSE))
+	/* Modify original saturation and V components */
+	if (g_3d_state.fill_type() > FillType::Bars
+		&& !(g_3d_state.glasses_type() == STEREO_ALTERNATE
+			 || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 	{
 		/* Adjust for ambient */
-		V = (V*(65535L - (unsigned) (color*s_ambient)))/65535L;
+		value = (value*(65535L - (unsigned) (color*s_ambient)))/65535L;
 	}
 
-	if (g_raytrace_state.haze())
+	if (g_3d_state.haze())
 	{
-		/* Haze lowers sat of g_colors */
-		S = (unsigned long) (S*s_haze_mult)/100;
-		if (V >= 32640)           /* Haze reduces contrast */
+		/* Haze lowers saturatoin of colors */
+		saturation = (unsigned long) (saturation*s_haze_mult)/100;
+		if (value >= 32640)           /* Haze reduces contrast */
 		{
-			V = V - 32640;
-			V = (unsigned long) ((V*s_haze_mult)/100);
-			V = V + 32640;
+			value -= 32640;
+			value = (unsigned long) ((value*s_haze_mult)/100);
+			value += 32640;
 		}
 		else
 		{
-			V = 32640 - V;
-			V = (unsigned long) ((V*s_haze_mult)/100);
-			V = 32640 - V;
+			value = 32640 - value;
+			value = (unsigned long) ((value*s_haze_mult)/100);
+			value = 32640 - value;
 		}
 	}
 	/* Now lets convert it back to RGB. Original Hue, modified Sat and Val */
-	H_R(&RGB[0], &RGB[1], &RGB[2], H, S, V);
+	HSVtoRGB(&rgb[0], &rgb[1], &rgb[2], hue, saturation, value);
 
 	if (s_real_v)
 	{
-		V = (35*(int) RGB[0] + 45*(int) RGB[1] + 20*(int) RGB[2])/100;
+		value = (35*(int) rgb[0] + 45*(int) rgb[1] + 20*(int) rgb[2])/100;
 	}
 
 	/* Now write the color triple to its transformed location */
 	/* on the disk. */
-	disk_write_targa(x + g_sx_offset, y + g_sy_offset, RGB[0], RGB[1], RGB[2]);
+	disk_write_targa(x + g_sx_offset, y + g_sy_offset, rgb[0], rgb[1], rgb[2]);
 
-	return (int) (255 - V);
+	return (int) (255 - value);
 }
 
 static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
@@ -1704,9 +1702,9 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 			else
 			{
 				/* Targa order (B, G, R) */
-				fputc(g_raytrace_state.background_blue(), fps);
-				fputc(g_raytrace_state.background_green(), fps);
-				fputc(g_raytrace_state.background_red(), fps);
+				fputc(g_3d_state.background_blue(), fps);
+				fputc(g_3d_state.background_green(), fps);
+				fputc(g_3d_state.background_red(), fps);
 			}
 		}
 		if (ferror(fps))
@@ -1804,124 +1802,127 @@ static int targa_validate(char *file_name)
 	return 0;
 }
 
-static int R_H(BYTE R, BYTE G, BYTE B, unsigned long *H, unsigned long *S, unsigned long *V)
+static unsigned long color_distance(BYTE color, unsigned long value, unsigned long denominator)
 {
-	unsigned long R1, G1, B1, DENOM;
-	BYTE MIN;
+	return (((value - color)*60) << 6)/denominator;
+}
 
-	*V = R;
-	MIN = G;
-	if (R < G)
+static int RGBtoHSV(BYTE red, BYTE green, BYTE blue,
+					unsigned long *hue, unsigned long *saturation, unsigned long *value)
+{
+	*value = red;
+	BYTE smallest = green;
+	if (red < green)
 	{
-		*V = G;
-		MIN = R;
-		if (G < B)
+		*value = green;
+		smallest = red;
+		if (green < blue)
 		{
-			*V = B;
+			*value = blue;
 		}
-		if (B < R)
+		if (blue < red)
 		{
-			MIN = B;
+			smallest = blue;
 		}
 	}
 	else
 	{
-		if (B < G)
+		if (blue < green)
 		{
-			MIN = B;
+			smallest = blue;
 		}
-		if (R < B)
+		if (red < blue)
 		{
-			*V = B;
+			*value = blue;
 		}
 	}
-	DENOM = *V - MIN;
-	if (*V != 0 && DENOM != 0)
+	unsigned long denominator = *value - smallest;
+	if (*value != 0 && denominator != 0)
 	{
-		*S = ((DENOM << 16)/(*V)) - 1;
+		*saturation = ((denominator << 16)/(*value)) - 1;
 	}
 	else
 	{
-		*S = 0;      /* Color is black! and Sat has no meaning */
+		*saturation = 0;      /* Color is black! and Sat has no meaning */
 	}
-	if (*S == 0)    /* R = G=B => shade of grey and Hue has no meaning */
+	if (*saturation == 0)    /* red = G=blue => shade of grey and Hue has no meaning */
 	{
-		*H = 0;
-		*V = *V << 8;
+		*hue = 0;
+		*value = *value << 8;
 		return 1;               /* v or s or both are 0 */
 	}
-	if (*V == MIN)
+	if (*value == smallest)
 	{
-		*H = 0;
-		*V = *V << 8;
+		*hue = 0;
+		*value = *value << 8;
 		return 0;
 	}
-	R1 = (((*V - R)*60) << 6)/DENOM; /* distance of color from red   */
-	G1 = (((*V - G)*60) << 6)/DENOM; /* distance of color from green */
-	B1 = (((*V - B)*60) << 6)/DENOM; /* distance of color from blue  */
-	if (*V == R)
+	unsigned long red_distance = color_distance(red, *value, denominator);
+	unsigned long green_distance = color_distance(green, *value, denominator);
+	unsigned long blue_distance = color_distance(blue, *value, denominator);
+	if (*value == red)
 	{
-		*H = (MIN == G) ? (300 << 6) + B1 : (60 << 6) - G1;
+		*hue = (smallest == green) ? (300 << 6) + blue_distance : (60 << 6) - green_distance;
 	}
-	if (*V == G)
+	if (*value == green)
 	{
-		*H = (MIN == B) ? (60 << 6) + R1 : (180 << 6) - B1;
+		*hue = (smallest == blue) ? (60 << 6) + red_distance : (180 << 6) - blue_distance;
 	}
-	if (*V == B)
+	if (*value == blue)
 	{
-		*H = (MIN == R) ? (180 << 6) + G1 : (300 << 6) - R1;
+		*hue = (smallest == red) ? (180 << 6) + green_distance : (300 << 6) - red_distance;
 	}
-	*V = *V << 8;
+	*value <<= 8;
 	return 0;
 }
 
-static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsigned long V)
+static int HSVtoRGB(BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsigned long saturation, unsigned long value)
 {
 	unsigned long P1, P2, P3;
 	int RMD, I;
 
-	if (H >= 23040)
+	if (hue >= 23040)
 	{
-		H = H % 23040;            /* Makes h circular  */
+		hue = hue % 23040;            /* Makes h circular  */
 	}
-	I = (int) (H/3840);
-	RMD = (int) (H % 3840);      /* RMD = fractional part of H    */
+	I = (int) (hue/3840);
+	RMD = (int) (hue % 3840);      /* RMD = fractional part of hue    */
 
-	P1 = ((V*(65535L - S))/65280L) >> 8;
-	P2 = (((V*(65535L - (S*RMD)/3840))/65280L) - 1) >> 8;
-	P3 = (((V*(65535L - (S*(3840 - RMD))/3840))/65280L)) >> 8;
-	V = V >> 8;
+	P1 = ((value*(65535L - saturation))/65280L) >> 8;
+	P2 = (((value*(65535L - (saturation*RMD)/3840))/65280L) - 1) >> 8;
+	P3 = (((value*(65535L - (saturation*(3840 - RMD))/3840))/65280L)) >> 8;
+	value = value >> 8;
 	switch (I)
 	{
 	case 0:
-		*R = (BYTE) V;
-		*G = (BYTE) P3;
-		*B = (BYTE) P1;
+		*red = (BYTE) value;
+		*green = (BYTE) P3;
+		*blue = (BYTE) P1;
 		break;
 	case 1:
-		*R = (BYTE) P2;
-		*G = (BYTE) V;
-		*B = (BYTE) P1;
+		*red = (BYTE) P2;
+		*green = (BYTE) value;
+		*blue = (BYTE) P1;
 		break;
 	case 2:
-		*R = (BYTE) P1;
-		*G = (BYTE) V;
-		*B = (BYTE) P3;
+		*red = (BYTE) P1;
+		*green = (BYTE) value;
+		*blue = (BYTE) P3;
 		break;
 	case 3:
-		*R = (BYTE) P1;
-		*G = (BYTE) P2;
-		*B = (BYTE) V;
+		*red = (BYTE) P1;
+		*green = (BYTE) P2;
+		*blue = (BYTE) value;
 		break;
 	case 4:
-		*R = (BYTE) P3;
-		*G = (BYTE) P1;
-		*B = (BYTE) V;
+		*red = (BYTE) P3;
+		*green = (BYTE) P1;
+		*blue = (BYTE) value;
 		break;
 	case 5:
-		*R = (BYTE) V;
-		*G = (BYTE) P1;
-		*B = (BYTE) P2;
+		*red = (BYTE) value;
+		*green = (BYTE) P1;
+		*blue = (BYTE) P2;
 		break;
 	}
 	return 0;
@@ -1972,30 +1973,30 @@ static int H_R(BYTE *R, BYTE *G, BYTE *B, unsigned long H, unsigned long S, unsi
 static int raytrace_header()
 {
 	/* Open the ray tracing output file */
-	g_raytrace_state.next_ray_name();
-	s_raytrace_file = fopen(g_raytrace_state.ray_name(), "w");
+	g_3d_state.next_ray_name();
+	s_raytrace_file = fopen(g_3d_state.ray_name(), "w");
 	if (s_raytrace_file == NULL)
 	{
 		return -1;              /* Oops, somethings wrong! */
 	}
 
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_VIVID)
+	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 	{
 		fprintf(s_raytrace_file, "//");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_MTV)
+	if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
 	{
 		fprintf(s_raytrace_file, "#");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_RAYSHADE)
+	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 	{
 		fprintf(s_raytrace_file, "/*\n");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_ACROSPIN)
+	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 	{
 		fprintf(s_raytrace_file, "--");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_DXF)
+	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 	{
 		fprintf(s_raytrace_file,
 			"  0\n"
@@ -2038,44 +2039,44 @@ static int raytrace_header()
 			"ENTITIES\n");
 	}
 
-	if (g_raytrace_state.raytrace_output() != RAYTRACE_DXF)
+	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
 		fprintf(s_raytrace_file, "{ Created by FRACTINT Ver. %#4.2f }\n\n", g_release/100.);
 	}
 
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_RAYSHADE)
+	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 	{
 		fprintf(s_raytrace_file, "*/\n");
 	}
 
 
 	/* Set the default color */
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_POVRAY)
+	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
 		fprintf(s_raytrace_file, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
 	}
-	if (g_raytrace_state.raytrace_brief())
+	if (g_3d_state.raytrace_brief())
 	{
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_VIVID)
+		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 		{
 			fprintf(s_raytrace_file, "surf={diff=0.8 0.4 0.1;}\n");
 		}
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_MTV)
+		if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
 		{
 			fprintf(s_raytrace_file, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
 		}
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_RAYSHADE)
+		if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 		{
 			fprintf(s_raytrace_file, "applysurf diffuse 0.8 0.4 0.1");
 		}
 	}
-	if (g_raytrace_state.raytrace_output() != RAYTRACE_DXF)
+	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
 		fprintf(s_raytrace_file, "\n");
 	}
 
 	/* EB & DG: open "grid" opject, a speedy way to do aggregates in rayshade */
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_RAYSHADE)
+	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 	{
 		fprintf(s_raytrace_file,
 			"/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
@@ -2083,7 +2084,7 @@ static int raytrace_header()
 			"grid 33 25 1\n");
 	}
 
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_ACROSPIN)
+	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 	{
 		fprintf(s_raytrace_file, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
 	}
@@ -2126,7 +2127,7 @@ static int out_triangle(const struct f_point pt1,
 	pt_t[2][2] = -2*pt3.color/g_num_colors - 1;
 
 	/* Color of triangle is average of g_colors of its verticies */
-	if (!g_raytrace_state.raytrace_brief())
+	if (!g_3d_state.raytrace_brief())
 	{
 		for (int i = 0; i <= 2; i++)
 		{
@@ -2150,24 +2151,24 @@ static int out_triangle(const struct f_point pt1,
 	}
 
 	/* Describe the triangle */
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_POVRAY)
+	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
 		fprintf(s_raytrace_file, " OBJECT\n  TRIANGLE ");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_VIVID && !g_raytrace_state.raytrace_brief())
+	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID && !g_3d_state.raytrace_brief())
 	{
 		fprintf(s_raytrace_file, "surf={diff=");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_MTV && !g_raytrace_state.raytrace_brief())
+	if (g_3d_state.raytrace_output() == RAYTRACE_MTV && !g_3d_state.raytrace_brief())
 	{
 		fprintf(s_raytrace_file, "f");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_RAYSHADE && !g_raytrace_state.raytrace_brief())
+	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE && !g_3d_state.raytrace_brief())
 	{
 		fprintf(s_raytrace_file, "applysurf diffuse ");
 	}
 
-	if (!g_raytrace_state.raytrace_brief() && g_raytrace_state.raytrace_output() != RAYTRACE_POVRAY && g_raytrace_state.raytrace_output() != RAYTRACE_DXF)
+	if (!g_3d_state.raytrace_brief() && g_3d_state.raytrace_output() != RAYTRACE_POVRAY && g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
 		for (int i = 0; i <= 2; i++)
 		{
@@ -2175,25 +2176,25 @@ static int out_triangle(const struct f_point pt1,
 		}
 	}
 
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_VIVID)
+	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 	{
-		if (!g_raytrace_state.raytrace_brief())
+		if (!g_3d_state.raytrace_brief())
 		{
 			fprintf(s_raytrace_file, ";}\n");
 		}
 		fprintf(s_raytrace_file, "polygon={points=3;");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_MTV)
+	if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
 	{
-		if (!g_raytrace_state.raytrace_brief())
+		if (!g_3d_state.raytrace_brief())
 		{
 			fprintf(s_raytrace_file, "0.95 0.05 5 0 0\n");
 		}
 		fprintf(s_raytrace_file, "p 3");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_RAYSHADE)
+	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 	{
-		if (!g_raytrace_state.raytrace_brief())
+		if (!g_3d_state.raytrace_brief())
 		{
 			fprintf(s_raytrace_file, "\n");
 		}
@@ -2201,34 +2202,34 @@ static int out_triangle(const struct f_point pt1,
 		fprintf(s_raytrace_file, "triangle");
 	}
 
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_DXF)
+	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 	{
 		fprintf(s_raytrace_file, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", min(255, max(1, c1)));
 	}
 
 	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
 	{
-		if (g_raytrace_state.raytrace_output() != RAYTRACE_DXF)
+		if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
 			fprintf(s_raytrace_file, "\n");
 		}
 
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_POVRAY)
+		if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 		{
 			fprintf(s_raytrace_file, "      <");
 		}
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_VIVID)
+		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 		{
 			fprintf(s_raytrace_file, " vertex =  ");
 		}
-		if (g_raytrace_state.raytrace_output() > RAYTRACE_RAW && g_raytrace_state.raytrace_output() != RAYTRACE_DXF)
+		if (g_3d_state.raytrace_output() > RAYTRACE_RAW && g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
 			fprintf(s_raytrace_file, " ");
 		}
 
 		for (int j = 0; j <= 2; j++)
 		{
-			if (g_raytrace_state.raytrace_output() == RAYTRACE_DXF)
+			if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 			{
 				/* write 3dface entity to dxf file */
 				fprintf(s_raytrace_file, "%3d\n%g\n", 10*(j + 1) + i, pt_t[i][j]);
@@ -2236,7 +2237,7 @@ static int out_triangle(const struct f_point pt1,
 					fprintf(s_raytrace_file, "%3d\n%g\n", 10*(j + 1) + i + 1,
 						pt_t[i][j]);
 			}
-			else if (!(g_raytrace_state.raytrace_output() == RAYTRACE_MTV || g_raytrace_state.raytrace_output() == RAYTRACE_RAYSHADE))
+			else if (!(g_3d_state.raytrace_output() == RAYTRACE_MTV || g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE))
 			{
 				fprintf(s_raytrace_file, "% #4.4f ", pt_t[i][j]); /* Right handed */
 			}
@@ -2246,20 +2247,20 @@ static int out_triangle(const struct f_point pt1,
 			}
 		}
 
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_POVRAY)
+		if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 		{
 			fprintf(s_raytrace_file, ">");
 		}
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_VIVID)
+		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 		{
 			fprintf(s_raytrace_file, ";");
 		}
 	}
 
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_POVRAY)
+	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
 		fprintf(s_raytrace_file, " END_TRIANGLE \n");
-		if (!g_raytrace_state.raytrace_brief())
+		if (!g_3d_state.raytrace_brief())
 		{
 			fprintf(s_raytrace_file,
 				"  TEXTURE\n"
@@ -2270,16 +2271,16 @@ static int out_triangle(const struct f_point pt1,
 		fprintf(s_raytrace_file, "  COLOR  F_Dflt  END_OBJECT");
 		triangle_bounds(pt_t);    /* update bounding info */
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_VIVID)
+	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 	{
 		fprintf(s_raytrace_file, "}");
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_RAW && !g_raytrace_state.raytrace_brief())
+	if (g_3d_state.raytrace_output() == RAYTRACE_RAW && !g_3d_state.raytrace_brief())
 	{
 		fprintf(s_raytrace_file, "\n");
 	}
 
-	if (g_raytrace_state.raytrace_output() != RAYTRACE_DXF)
+	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
 		fprintf(s_raytrace_file, "\n");
 	}
@@ -2322,7 +2323,7 @@ static void triangle_bounds(float pt_t[3][3])
 
 static int start_object()
 {
-	if (g_raytrace_state.raytrace_output() != RAYTRACE_POVRAY)
+	if (g_3d_state.raytrace_output() != RAYTRACE_POVRAY)
 	{
 		return 0;
 	}
@@ -2346,11 +2347,11 @@ static int start_object()
 
 static int end_object(int triout)
 {
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_DXF)
+	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 	{
 		return 0;
 	}
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_POVRAY)
+	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
 		if (triout)
 		{
@@ -2384,7 +2385,7 @@ static int end_object(int triout)
 		fprintf(s_raytrace_file, "END_%s\n", "COMPOSITE");
 	}
 
-	if (g_raytrace_state.raytrace_output() != RAYTRACE_ACROSPIN && g_raytrace_state.raytrace_output() != RAYTRACE_RAYSHADE)
+	if (g_3d_state.raytrace_output() != RAYTRACE_ACROSPIN && g_3d_state.raytrace_output() != RAYTRACE_RAYSHADE)
 	{
 		fprintf(s_raytrace_file, "\n");    /* EB & DG: too many newlines */
 	}
@@ -2394,28 +2395,28 @@ static int end_object(int triout)
 
 static void line3d_cleanup()
 {
-	if (g_raytrace_state.raytrace_output() && s_raytrace_file)
+	if (g_3d_state.raytrace_output() && s_raytrace_file)
 	{                            /* Finish up the ray tracing files */
-		if (g_raytrace_state.raytrace_output() != RAYTRACE_RAYSHADE && g_raytrace_state.raytrace_output() != RAYTRACE_DXF)
+		if (g_3d_state.raytrace_output() != RAYTRACE_RAYSHADE && g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
 			fprintf(s_raytrace_file, "\n"); /* EB & DG: too many newlines */
 		}
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_VIVID)
+		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 		{
 			fprintf(s_raytrace_file, "\n\n//");
 		}
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_MTV)
+		if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
 		{
 			fprintf(s_raytrace_file, "\n\n#");
 		}
 
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_RAYSHADE)
+		if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 		{
 			/* EB & DG: end grid aggregate */
 			fprintf(s_raytrace_file, "end\n\n/*good landscape:*/\n%s%s\n/*",
 				"screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
 		}
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_ACROSPIN)
+		if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 		{
 			fprintf(s_raytrace_file, "LineList From To\n");
 			for (int i = 0; i < RO; i++)
@@ -2438,11 +2439,11 @@ static void line3d_cleanup()
 			}
 			fprintf(s_raytrace_file, "\n\n--");
 		}
-		if (g_raytrace_state.raytrace_output() != RAYTRACE_DXF)
+		if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
 			fprintf(s_raytrace_file, "{ No. Of Triangles = %ld }*/\n\n", s_num_tris);
 		}
-		if (g_raytrace_state.raytrace_output() == RAYTRACE_DXF)
+		if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 		{
 			fprintf(s_raytrace_file, "  0\nENDSEC\n  0\nEOF\n");
 		}
@@ -2495,7 +2496,7 @@ static int first_time(int linelen, VECTOR v)
 	/* mark as in-progress, and enable <tab> timer display */
 	g_calculation_status = CALCSTAT_IN_PROGRESS;
 
-	s_ambient = (unsigned int) (255*(float) (100 - g_raytrace_state.ambient())/100.0);
+	s_ambient = (unsigned int) (255*(float) (100 - g_3d_state.ambient())/100.0);
 	if (s_ambient < 1)
 	{
 		s_ambient = 1;
@@ -2504,11 +2505,12 @@ static int first_time(int linelen, VECTOR v)
 	s_num_tris = 0;
 
 	/* Open file for raytrace output and write header */
-	if (g_raytrace_state.raytrace_output())
+	if (g_3d_state.raytrace_output())
 	{
 		raytrace_header();
 		g_xx_adjust = g_yy_adjust = 0;  /* Disable shifting in ray tracing */
-		g_x_shift = g_y_shift = 0;
+		g_x_shift = 0;
+		g_y_shift = 0;
 	}
 
 	CO_MAX = CO = RO = 0;
@@ -2521,7 +2523,7 @@ static int first_time(int linelen, VECTOR v)
 		s_targa_safe = 0; /* Not safe yet to mess with the source image */
 	}
 
-	if (g_targa_output && !((g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
+	if (g_targa_output && !((g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 		&& g_which_image == WHICHIMAGE_BLUE))
 	{
 		if (g_targa_overlay)
@@ -2542,7 +2544,7 @@ static int first_time(int linelen, VECTOR v)
 		}
 	}
 
-	s_rand_factor = 14 - g_raytrace_state.randomize_colors();
+	s_rand_factor = 14 - g_3d_state.randomize_colors();
 
 	s_z_coord = g_file_colors;
 
@@ -2554,11 +2556,11 @@ static int first_time(int linelen, VECTOR v)
 
 
 	/* get scale factors */
-	s_scale_x = g_raytrace_state.x_scale()/100.0;
-	s_scale_y = g_raytrace_state.y_scale()/100.0;
-	if (g_raytrace_state.rough())
+	s_scale_x = g_3d_state.x_scale()/100.0;
+	s_scale_y = g_3d_state.y_scale()/100.0;
+	if (g_3d_state.roughness())
 	{
-		s_scale_z = -g_raytrace_state.rough()/100.0;
+		s_scale_z = -g_3d_state.roughness()/100.0;
 	}
 	else
 	{
@@ -2569,7 +2571,7 @@ static int first_time(int linelen, VECTOR v)
 	/* aspect ratio calculation - assume screen is 4 x 3 */
 	s_aspect = (double) g_x_dots *.75/(double) g_y_dots;
 
-	if (g_raytrace_state.sphere() == FALSE)         /* skip this slow stuff in sphere case */
+	if (g_3d_state.sphere() == FALSE)         /* skip this slow stuff in sphere case */
 	{
 		/*********************************************************************/
 		/* What is done here is to create a single matrix, m, which has      */
@@ -2596,11 +2598,11 @@ static int first_time(int linelen, VECTOR v)
 		scale(s_scale_x, s_scale_y, s_scale_z, lightm);
 
 		/* rotation values - converting from degrees to radians */
-		xval = g_raytrace_state.x_rot()/57.29577;
-		yval = g_raytrace_state.y_rot()/57.29577;
-		zval = g_raytrace_state.z_rot()/57.29577;
+		xval = MathUtil::DegreesToRadians(g_3d_state.x_rotation());
+		yval = MathUtil::DegreesToRadians(g_3d_state.y_rotation());
+		zval = MathUtil::DegreesToRadians(g_3d_state.z_rotation());
 
-		if (g_raytrace_state.raytrace_output())
+		if (g_3d_state.raytrace_output())
 		{
 			xval = yval = zval = 0;
 		}
@@ -2623,10 +2625,10 @@ static int first_time(int linelen, VECTOR v)
 
 	/* set perspective flag */
 	s_persp = 0;
-	if (g_raytrace_state.z_viewer() != 0)
+	if (g_3d_state.z_viewer() != 0)
 	{
 		s_persp = 1;
-		if (g_raytrace_state.z_viewer() < 80)         /* force float */
+		if (g_3d_state.z_viewer() < 80)         /* force float */
 		{
 			g_user_float_flag |= 2;    /* turn on second bit */
 		}
@@ -2638,13 +2640,13 @@ static int first_time(int linelen, VECTOR v)
 
 	/* z value of user's eye - should be more negative than extreme negative
 	* part of image */
-	if (g_raytrace_state.sphere())                  /* sphere case */
+	if (g_3d_state.sphere())                  /* sphere case */
 	{
-		s_lview[2] = -(long) ((double) g_y_dots*(double) g_raytrace_state.z_viewer()/100.0);
+		s_lview[2] = -(long) ((double) g_y_dots*(double) g_3d_state.z_viewer()/100.0);
 	}
 	else                         /* non-sphere case */
 	{
-		s_lview[2] = (long) ((z_min - z_max)*(double) g_raytrace_state.z_viewer()/100.0);
+		s_lview[2] = (long) ((z_min - z_max)*(double) g_3d_state.z_viewer()/100.0);
 	}
 
 	g_view[0] = s_lview[0];
@@ -2654,7 +2656,7 @@ static int first_time(int linelen, VECTOR v)
 	s_lview[1] <<= 16;
 	s_lview[2] <<= 16;
 
-	if (g_raytrace_state.sphere() == FALSE)         /* sphere skips this */
+	if (g_3d_state.sphere() == FALSE)         /* sphere skips this */
 	{
 		/* translate back exactly amount we translated earlier plus enough to
 		* center image so maximum values are non-positive */
@@ -2682,12 +2684,12 @@ static int first_time(int linelen, VECTOR v)
 		* latitude; bottom 90 degrees */
 
 		/* Map X to this LATITUDE range */
-		theta1 = (float) (g_raytrace_state.theta1()*PI/180.0);
-		theta2 = (float) (g_raytrace_state.theta2()*PI/180.0);
+		theta1 = (float) MathUtil::DegreesToRadians(g_3d_state.theta1());
+		theta2 = (float) MathUtil::DegreesToRadians(g_3d_state.theta2());
 
 		/* Map Y to this LONGITUDE range */
-		phi1 = (float) (g_raytrace_state.phi1()*PI/180.0);
-		phi2 = (float) (g_raytrace_state.phi2()*PI/180.0);
+		phi1 = (float) MathUtil::DegreesToRadians(g_3d_state.phi1());
+		phi2 = (float) MathUtil::DegreesToRadians(g_3d_state.phi2());
 
 		theta = theta1;
 
@@ -2745,9 +2747,9 @@ static int first_time(int linelen, VECTOR v)
 		}
 
 		/* affects how rough planet terrain is */
-		if (g_raytrace_state.rough())
+		if (g_3d_state.roughness())
 		{
-			s_r_scale = .3*g_raytrace_state.rough()/100.0;
+			s_r_scale = 0.3*g_3d_state.roughness()/100.0;
 		}
 
 		/* radius of planet */
@@ -2756,7 +2758,7 @@ static int first_time(int linelen, VECTOR v)
 		/* precalculate factor */
 		s_r_scale_r = s_radius*s_r_scale;
 
-		s_scale_z = s_scale_x = s_scale_y = g_raytrace_state.radius()/100.0;      /* Need x, y, z for g_raytrace_state.raytrace_output() */
+		s_scale_z = s_scale_x = s_scale_y = g_3d_state.radius()/100.0;      /* Need x, y, z for g_3d_state.raytrace_output() */
 
 		/* adjust x scale factor for aspect */
 		s_scale_x *= s_aspect;
@@ -2778,7 +2780,7 @@ static int first_time(int linelen, VECTOR v)
 
 			/* calculate z cutoff factor attempt to prevent out-of-view surfaces
 			* from being written */
-			zview = -(long) ((double) g_y_dots*(double) g_raytrace_state.z_viewer()/100.0);
+			zview = -(long) ((double) g_y_dots*(double) g_3d_state.z_viewer()/100.0);
 			radius = (double) (g_y_dots)/2;
 			angle = atan(-radius/(zview + radius));
 			s_z_cutoff = -radius - sin(angle)*radius;
@@ -2788,7 +2790,7 @@ static int first_time(int linelen, VECTOR v)
 	}
 
 	/* set fill plot function */
-	if (g_raytrace_state.fill_type() != FillType::Flat)
+	if (g_3d_state.fill_type() != FillType::Flat)
 	{
 		fill_plot = interp_color;
 	}
@@ -2797,25 +2799,25 @@ static int first_time(int linelen, VECTOR v)
 		fill_plot = clip_color;
 
 		/* If transparent g_colors are set */
-		if (g_transparent[0] || g_transparent[1])
+		if (g_3d_state.transparent0() || g_3d_state.transparent1())
 		{
 			fill_plot = transparent_clip_color; /* Use the transparent plot function  */
 		}
 	}
 
 	/* Both Sphere and Normal 3D */
-	direct[0] = s_light_direction[0] = g_raytrace_state.x_light();
-	direct[1] = s_light_direction[1] = -g_raytrace_state.y_light();
-	direct[2] = s_light_direction[2] = g_raytrace_state.z_light();
+	direct[0] = s_light_direction[0] = g_3d_state.x_light();
+	direct[1] = s_light_direction[1] = -g_3d_state.y_light();
+	direct[2] = s_light_direction[2] = g_3d_state.z_light();
 
 	/* Needed because s_scale_z = -ROUGH/100 and s_light_direction is transformed in
 	* FILLTYPE 6 but not in 5. */
-	if (g_raytrace_state.fill_type() == FillType::LightBefore)
+	if (g_3d_state.fill_type() == FillType::LightBefore)
 	{
-		direct[2] = s_light_direction[2] = -g_raytrace_state.z_light();
+		direct[2] = s_light_direction[2] = -g_3d_state.z_light();
 	}
 
-	if (g_raytrace_state.fill_type() == FillType::LightAfter)           /* transform light direction */
+	if (g_3d_state.fill_type() == FillType::LightAfter)           /* transform light direction */
 	{
 		/* Think of light direction  as a vector with tail at (0, 0, 0) and head
 		* at (s_light_direction). We apply the transformation to BOTH head and
@@ -2834,14 +2836,14 @@ static int first_time(int linelen, VECTOR v)
 	}
 	normalize_vector(s_light_direction);
 
-	if (g_preview && g_show_box)
+	if (g_3d_state.preview() && g_3d_state.show_box())
 	{
 		normalize_vector(direct);
 
 		/* move light vector to be more clear with grey scale maps */
 		origin[0] = (3*g_x_dots)/16;
 		origin[1] = (3*g_y_dots)/4;
-		if (g_raytrace_state.fill_type() == FillType::LightAfter)
+		if (g_3d_state.fill_type() == FillType::LightAfter)
 		{
 			origin[1] = (11*g_y_dots)/16;
 		}
@@ -2849,9 +2851,9 @@ static int first_time(int linelen, VECTOR v)
 		origin[2] = 0.0;
 
 		v_length = min(g_x_dots, g_y_dots)/2;
-		if (s_persp && g_raytrace_state.z_viewer() <= PERSPECTIVE_DISTANCE)
+		if (s_persp && g_3d_state.z_viewer() <= PERSPECTIVE_DISTANCE)
 		{
-			v_length *= (long) (PERSPECTIVE_DISTANCE + 600)/((long) (g_raytrace_state.z_viewer() + 600)*2);
+			v_length *= (long) (PERSPECTIVE_DISTANCE + 600)/((long) (g_3d_state.z_viewer() + 600)*2);
 		}
 
 		/* Set direct[] to point from origin[] in direction of untransformed
@@ -2874,7 +2876,7 @@ static int first_time(int linelen, VECTOR v)
 		draw_light_box(origin, direct, lightm);
 		/* draw box around original field of view to help visualize effect of
 		* rotations 1 means show box - g_x_min etc. do nothing here */
-		if (!g_raytrace_state.sphere())
+		if (!g_3d_state.sphere())
 		{
 			corners(s_m, 1, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
 		}
@@ -2913,7 +2915,7 @@ static int line_3d_mem()
 		return TRUE;
 	}
 
-	if (g_raytrace_state.sphere())
+	if (g_3d_state.sphere())
 	{
 		s_sin_theta_array = new float[g_x_dots];
 		s_cos_theta_array = new float[g_x_dots];
@@ -2934,10 +2936,10 @@ static int line_3d_mem()
 	s_minmax_x = NULL;
 
 	/* these fill types call put_a_triangle which uses s_minmax_x */
-	if (g_raytrace_state.fill_type() == FillType::Gouraud
-		|| g_raytrace_state.fill_type() == FillType::Flat
-		|| g_raytrace_state.fill_type() == FillType::LightBefore
-		|| g_raytrace_state.fill_type() == FillType::LightAfter)
+	if (g_3d_state.fill_type() == FillType::Gouraud
+		|| g_3d_state.fill_type() == FillType::Flat
+		|| g_3d_state.fill_type() == FillType::LightBefore
+		|| g_3d_state.fill_type() == FillType::LightAfter)
 	{
 		/* end of arrays if we use extra segement */
 		s_minmax_x = new minmax[g_y_dots];

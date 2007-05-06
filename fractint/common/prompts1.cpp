@@ -24,7 +24,7 @@
 #include "fihelp.h"
 #include "drivers.h"
 #include "EscapeTime.h"
-#include "RayTraceState.h"
+#include "ThreeDimensionalState.h"
 
 #ifdef __hpux
 #include <sys/param.h>
@@ -2861,19 +2861,19 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 	driver_stack_screen();
 	int k = 0;
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_raytrace_state.x_rot();
+	uvalues[k++].uval.ival = g_3d_state.x_rotation();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_raytrace_state.y_rot();
+	uvalues[k++].uval.ival = g_3d_state.y_rotation();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_raytrace_state.z_rot();
+	uvalues[k++].uval.ival = g_3d_state.z_rotation();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_raytrace_state.z_viewer();
+	uvalues[k++].uval.ival = g_3d_state.z_viewer();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_raytrace_state.x_shift();
+	uvalues[k++].uval.ival = g_3d_state.x_shift();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_raytrace_state.y_shift();
+	uvalues[k++].uval.ival = g_3d_state.y_shift();
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_glasses_type;
+	uvalues[k++].uval.ival = g_3d_state.glasses_type();
 
 	int i = full_screen_prompt_help(HELP3DFRACT, "3D Parameters",
 		k, ifs3d_prompts, uvalues, 0, NULL);
@@ -2886,18 +2886,19 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 
 	ret = 0;
 	k = 0;
-	g_raytrace_state.set_x_rot(uvalues[k++].uval.ival);
-	g_raytrace_state.set_y_rot(uvalues[k++].uval.ival);
-	g_raytrace_state.set_z_rot(uvalues[k++].uval.ival);
-	g_raytrace_state.set_z_viewer(uvalues[k++].uval.ival);
-	g_raytrace_state.set_x_shift(uvalues[k++].uval.ival);
-	g_raytrace_state.set_y_shift(uvalues[k++].uval.ival);
-	g_glasses_type = uvalues[k++].uval.ival;
-	if (g_glasses_type < 0 || g_glasses_type > STEREO_PAIR)
+	g_3d_state.set_x_rotation(uvalues[k++].uval.ival);
+	g_3d_state.set_y_rotation(uvalues[k++].uval.ival);
+	g_3d_state.set_z_rotation(uvalues[k++].uval.ival);
+	g_3d_state.set_z_viewer(uvalues[k++].uval.ival);
+	g_3d_state.set_x_shift(uvalues[k++].uval.ival);
+	g_3d_state.set_y_shift(uvalues[k++].uval.ival);
+	int glasses_type = uvalues[k++].uval.ival;
+	if (glasses_type < STEREO_NONE || glasses_type > STEREO_PAIR)
 	{
-		g_glasses_type = 0;
+		glasses_type = 0;
 	}
-	if (g_glasses_type)
+	g_3d_state.set_glasses_type(glasses_type);
+	if (g_3d_state.glasses_type())
 	{
 		if (get_funny_glasses_params() || check_mapfile())
 		{
@@ -2927,43 +2928,43 @@ restart_1:
 
 	prompts3d[++k] = "Preview Mode?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_preview;
+	uvalues[k].uval.ch.val = g_3d_state.preview();
 
 	prompts3d[++k] = "    Show Box?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_show_box;
+	uvalues[k].uval.ch.val = g_3d_state.show_box() ? 1 : 0;
 
 	prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_preview_factor;
+	uvalues[k].uval.ival = g_3d_state.preview_factor();
 
 	prompts3d[++k] = "Spherical Projection?";
 	uvalues[k].type = 'y';
-	int sphere = g_raytrace_state.sphere();
+	int sphere = g_3d_state.sphere();
 	uvalues[k].uval.ch.val = sphere;
 
 	prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_glasses_type;
+	uvalues[k].uval.ival = g_3d_state.glasses_type();
 
 	prompts3d[++k] = "                  3=photo,4=stereo pair)";
 	uvalues[k].type = '*';
 
 	prompts3d[++k] = "Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_raytrace_state.raytrace_output();
+	uvalues[k].uval.ival = g_3d_state.raytrace_output();
 
 	prompts3d[++k] = "                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)";
 	uvalues[k].type = '*';
 
 	prompts3d[++k] = "    Brief output?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_raytrace_state.raytrace_brief();
+	uvalues[k].uval.ch.val = g_3d_state.raytrace_brief();
 
-	g_raytrace_state.next_ray_name();
+	g_3d_state.next_ray_name();
 	prompts3d[++k] = "    Output File Name";
 	uvalues[k].type = 's';
-	strcpy(uvalues[k].uval.sval, g_raytrace_state.ray_name());
+	strcpy(uvalues[k].uval.sval, g_3d_state.ray_name());
 
 	prompts3d[++k] = "Targa output?";
 	uvalues[k].type = 'y';
@@ -2981,70 +2982,70 @@ restart_1:
 
 	k = 0;
 
-	g_preview = uvalues[k++].uval.ch.val;
-	g_show_box = uvalues[k++].uval.ch.val;
-	g_preview_factor  = uvalues[k++].uval.ival;
-	g_raytrace_state.set_sphere(uvalues[k++].uval.ch.val != 0);
-	g_glasses_type = uvalues[k++].uval.ival;
+	g_3d_state.set_preview(uvalues[k++].uval.ch.val != 0);
+	g_3d_state.set_show_box(uvalues[k++].uval.ch.val != 0);
+	g_3d_state.set_preview_factor(uvalues[k++].uval.ival);
+	g_3d_state.set_sphere(uvalues[k++].uval.ch.val != 0);
+	g_3d_state.set_glasses_type(uvalues[k++].uval.ival);
 	k++;
 
-	g_raytrace_state.set_raytrace_output(uvalues[k++].uval.ival);
+	g_3d_state.set_raytrace_output(uvalues[k++].uval.ival);
 	k++;
-	if (g_raytrace_state.raytrace_output() == RAYTRACE_POVRAY)
+	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
 		stop_message(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
 		"the online documentation.");
 	}
-	g_raytrace_state.set_raytrace_brief(uvalues[k++].uval.ch.val);
+	g_3d_state.set_raytrace_brief(uvalues[k++].uval.ch.val != 0);
 
-	g_raytrace_state.set_ray_name(uvalues[k++].uval.sval);
+	g_3d_state.set_ray_name(uvalues[k++].uval.sval);
 
 	g_targa_output = uvalues[k++].uval.ch.val;
 	g_grayscale_depth  = uvalues[k++].uval.ch.val;
 
 	/* check ranges */
-	if (g_preview_factor < 2)
+	if (g_3d_state.preview_factor() < 2)
 	{
-		g_preview_factor = 2;
+		g_3d_state.set_preview_factor(2);
 	}
-	if (g_preview_factor > 2000)
+	else if (g_3d_state.preview_factor() > 2000)
 	{
-		g_preview_factor = 2000;
-	}
-
-	if (sphere && !g_raytrace_state.sphere())
-	{
-		g_raytrace_state.set_defaults();
-		g_raytrace_state.set_sphere(true);
-	}
-	else if (!sphere && g_raytrace_state.sphere())
-	{
-		g_raytrace_state.set_defaults();
+		g_3d_state.set_preview_factor(2000);
 	}
 
-	if (g_glasses_type < 0)
+	if (sphere && !g_3d_state.sphere())
 	{
-		g_glasses_type = 0;
+		g_3d_state.set_defaults();
+		g_3d_state.set_sphere(true);
 	}
-	if (g_glasses_type > STEREO_PAIR)
+	else if (!sphere && g_3d_state.sphere())
 	{
-		g_glasses_type = STEREO_PAIR;
+		g_3d_state.set_defaults();
 	}
-	if (g_glasses_type)
+
+	if (g_3d_state.glasses_type() < STEREO_NONE)
+	{
+		g_3d_state.set_glasses_type(STEREO_NONE);
+	}
+	else if (g_3d_state.glasses_type() > STEREO_PAIR)
+	{
+		g_3d_state.set_glasses_type(STEREO_PAIR);
+	}
+	if (g_3d_state.glasses_type())
 	{
 		g_which_image = WHICHIMAGE_RED;
 	}
 
-	if (g_raytrace_state.raytrace_output() < RAYTRACE_NONE)
+	if (g_3d_state.raytrace_output() < RAYTRACE_NONE)
 	{
-		g_raytrace_state.set_raytrace_output(RAYTRACE_NONE);
+		g_3d_state.set_raytrace_output(RAYTRACE_NONE);
 	}
-	if (g_raytrace_state.raytrace_output() > RAYTRACE_DXF)
+	if (g_3d_state.raytrace_output() > RAYTRACE_DXF)
 	{
-		g_raytrace_state.set_raytrace_output(RAYTRACE_DXF);
+		g_3d_state.set_raytrace_output(RAYTRACE_DXF);
 	}
 
-	if (!g_raytrace_state.raytrace_output())
+	if (!g_3d_state.raytrace_output())
 	{
 		k = 0;
 		choices[k++] = "make a surface grid";
@@ -3053,7 +3054,7 @@ restart_1:
 		choices[k++] = "surface fill (colors interpolated)";
 		choices[k++] = "surface fill (colors not interpolated)";
 		choices[k++] = "solid fill (bars up from \"ground\")";
-		if (g_raytrace_state.sphere())
+		if (g_3d_state.sphere())
 		{
 			choices[k++] = "light source";
 		}
@@ -3068,14 +3069,14 @@ restart_1:
 		}
 		int i = full_screen_choice_help(HELP3DFILL, CHOICE_HELP,
 			"Select 3D Fill Type", NULL, NULL, k, (char **) choices, attributes,
-			0, 0, 0, g_raytrace_state.fill_type() + 1, NULL, NULL, NULL, NULL);
+			0, 0, 0, g_3d_state.fill_type() + 1, NULL, NULL, NULL, NULL);
 		if (i < 0)
 		{
 			goto restart_1;
 		}
-		g_raytrace_state.set_fill_type(i - 1);
+		g_3d_state.set_fill_type(i - 1);
 
-		if (g_glasses_type)
+		if (g_3d_state.glasses_type())
 		{
 			if (get_funny_glasses_params())
 			{
@@ -3089,7 +3090,7 @@ restart_1:
 		}
 	restart_3:
 
-	if (g_raytrace_state.sphere())
+	if (g_3d_state.sphere())
 	{
 		k = -1;
 		prompts3d[++k] = "Longitude start (degrees)";
@@ -3101,7 +3102,7 @@ restart_1:
 	else
 	{
 		k = -1;
-		if (!g_raytrace_state.raytrace_output())
+		if (!g_3d_state.raytrace_output())
 		{
 			prompts3d[++k] = "X-axis rotation in degrees";
 			prompts3d[++k] = "Y-axis rotation in degrees";
@@ -3111,66 +3112,66 @@ restart_1:
 		prompts3d[++k] = "Y-axis scaling factor in pct";
 	}
 	k = -1;
-	if (!(g_raytrace_state.raytrace_output() && !g_raytrace_state.sphere()))
+	if (!(g_3d_state.raytrace_output() && !g_3d_state.sphere()))
 	{
-		uvalues[++k].uval.ival   = g_raytrace_state.x_rot()    ;
+		uvalues[++k].uval.ival   = g_3d_state.x_rotation();
 		uvalues[k].type = 'i';
-		uvalues[++k].uval.ival   = g_raytrace_state.y_rot()    ;
+		uvalues[++k].uval.ival   = g_3d_state.y_rotation();
 		uvalues[k].type = 'i';
-		uvalues[++k].uval.ival   = g_raytrace_state.z_rot()    ;
+		uvalues[++k].uval.ival   = g_3d_state.z_rotation();
 		uvalues[k].type = 'i';
 	}
-	uvalues[++k].uval.ival   = g_raytrace_state.x_scale()    ;
+	uvalues[++k].uval.ival   = g_3d_state.x_scale();
 	uvalues[k].type = 'i';
 
-	uvalues[++k].uval.ival   = g_raytrace_state.y_scale()    ;
+	uvalues[++k].uval.ival   = g_3d_state.y_scale();
 	uvalues[k].type = 'i';
 
 	prompts3d[++k] = "Surface Roughness scaling factor in pct";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_raytrace_state.rough()     ;
+	uvalues[k].uval.ival = g_3d_state.roughness();
 
 	prompts3d[++k] = "'Water Level' (minimum color value)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_raytrace_state.water_line() ;
+	uvalues[k].uval.ival = g_3d_state.water_line();
 
-	if (!g_raytrace_state.raytrace_output())
+	if (!g_3d_state.raytrace_output())
 	{
 		prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.z_viewer()     ;
+		uvalues[k].uval.ival = g_3d_state.z_viewer();
 
 		prompts3d[++k] = "X shift with perspective (positive = right)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.x_shift()    ;
+		uvalues[k].uval.ival = g_3d_state.x_shift();
 
 		prompts3d[++k] = "Y shift with perspective (positive = up   )";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.y_shift()    ;
+		uvalues[k].uval.ival = g_3d_state.y_shift();
 
 		prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.x_trans();
+		uvalues[k].uval.ival = g_3d_state.x_trans();
 
 		prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.y_trans();
+		uvalues[k].uval.ival = g_3d_state.y_trans();
 
 		prompts3d[++k] = "First transparent color";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_transparent[0];
+		uvalues[k].uval.ival = g_3d_state.transparent0();
 
 		prompts3d[++k] = "Last transparent color";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_transparent[1];
+		uvalues[k].uval.ival = g_3d_state.transparent1();
 	}
 
 	prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
 	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_raytrace_state.randomize_colors();
+	uvalues[k++].uval.ival = g_3d_state.randomize_colors();
 
 	const char *s;
-	if (g_raytrace_state.sphere())
+	if (g_3d_state.sphere())
 	{
 		s = "Sphere 3D Parameters\n"
 			"Sphere is on its side; North pole to right\n"
@@ -3190,25 +3191,25 @@ restart_1:
 	}
 
 	k = 0;
-	if (!(g_raytrace_state.raytrace_output() && !g_raytrace_state.sphere()))
+	if (!(g_3d_state.raytrace_output() && !g_3d_state.sphere()))
 	{
-		g_raytrace_state.set_x_rot(uvalues[k++].uval.ival);
-		g_raytrace_state.set_y_rot(uvalues[k++].uval.ival);
-		g_raytrace_state.set_z_rot(uvalues[k++].uval.ival);
+		g_3d_state.set_x_rotation(uvalues[k++].uval.ival);
+		g_3d_state.set_y_rotation(uvalues[k++].uval.ival);
+		g_3d_state.set_z_rotation(uvalues[k++].uval.ival);
 	}
-	g_raytrace_state.set_x_scale(uvalues[k++].uval.ival);
-	g_raytrace_state.set_y_scale(uvalues[k++].uval.ival);
-	g_raytrace_state.set_rough(uvalues[k++].uval.ival);
-	g_raytrace_state.set_water_line(uvalues[k++].uval.ival);
-	if (!g_raytrace_state.raytrace_output())
+	g_3d_state.set_x_scale(uvalues[k++].uval.ival);
+	g_3d_state.set_y_scale(uvalues[k++].uval.ival);
+	g_3d_state.set_roughness(uvalues[k++].uval.ival);
+	g_3d_state.set_water_line(uvalues[k++].uval.ival);
+	if (!g_3d_state.raytrace_output())
 	{
-		g_raytrace_state.set_z_viewer(uvalues[k++].uval.ival);
-		g_raytrace_state.set_x_shift(uvalues[k++].uval.ival);
-		g_raytrace_state.set_y_shift(uvalues[k++].uval.ival);
-		g_raytrace_state.set_x_trans(uvalues[k++].uval.ival);
-		g_raytrace_state.set_y_trans(uvalues[k++].uval.ival);
-		g_transparent[0] = uvalues[k++].uval.ival;
-		g_transparent[1] = uvalues[k++].uval.ival;
+		g_3d_state.set_z_viewer(uvalues[k++].uval.ival);
+		g_3d_state.set_x_shift(uvalues[k++].uval.ival);
+		g_3d_state.set_y_shift(uvalues[k++].uval.ival);
+		g_3d_state.set_x_trans(uvalues[k++].uval.ival);
+		g_3d_state.set_y_trans(uvalues[k++].uval.ival);
+		g_3d_state.set_transparent0(uvalues[k++].uval.ival);
+		g_3d_state.set_transparent1(uvalues[k++].uval.ival);
 	}
 	int randomize_colors  = uvalues[k++].uval.ival;
 	if (randomize_colors >= 7)
@@ -3219,9 +3220,9 @@ restart_1:
 	{
 		randomize_colors = 0;
 	}
-	g_raytrace_state.set_randomize_colors(randomize_colors);
+	g_3d_state.set_randomize_colors(randomize_colors);
 
-	if ((g_targa_output || (g_raytrace_state.fill_type() > FillType::Bars) || g_raytrace_state.raytrace_output()))
+	if ((g_targa_output || (g_3d_state.fill_type() > FillType::Bars) || g_3d_state.raytrace_output()))
 	{
 		if (get_light_params())
 		{
@@ -3241,37 +3242,37 @@ static int get_light_params()
 	/* defaults go here */
 	k = -1;
 
-	if ((g_raytrace_state.fill_type() > FillType::Bars) || g_raytrace_state.raytrace_output())
+	if ((g_3d_state.fill_type() > FillType::Bars) || g_3d_state.raytrace_output())
 	{
 		prompts3d[++k] = "X value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.x_light();
+		uvalues[k].uval.ival = g_3d_state.x_light();
 
 		prompts3d[++k] = "Y value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.y_light();
+		uvalues[k].uval.ival = g_3d_state.y_light();
 
 		prompts3d[++k] = "Z value light vector";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.z_light();
+		uvalues[k].uval.ival = g_3d_state.z_light();
 
-		if (!g_raytrace_state.raytrace_output())
+		if (!g_3d_state.raytrace_output())
 		{
 			prompts3d[++k] = "Light Source Smoothing Factor";
 			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = g_raytrace_state.light_avg();
+			uvalues[k].uval.ival = g_3d_state.light_avg();
 
 			prompts3d[++k] = "Ambient";
 			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = g_raytrace_state.ambient();
+			uvalues[k].uval.ival = g_3d_state.ambient();
 		}
 	}
 
-	if (g_targa_output && !g_raytrace_state.raytrace_output())
+	if (g_targa_output && !g_3d_state.raytrace_output())
 	{
 		prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_raytrace_state.haze();
+		uvalues[k].uval.ival = g_3d_state.haze();
 
 		if (!g_targa_overlay)
 		{
@@ -3286,15 +3287,15 @@ static int get_light_params()
 
 		prompts3d[++k] = "   Red";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_raytrace_state.background_red();
+		uvalues[k].uval.ival = (int) g_3d_state.background_red();
 
 		prompts3d[++k] = "   Green";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_raytrace_state.background_green();
+		uvalues[k].uval.ival = (int) g_3d_state.background_green();
 
 		prompts3d[++k] = "   Blue";
 		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_raytrace_state.background_blue();
+		uvalues[k].uval.ival = (int) g_3d_state.background_blue();
 
 		prompts3d[++k] = "Overlay Targa File? (Y/N)";
 		uvalues[k].type = 'y';
@@ -3311,14 +3312,14 @@ static int get_light_params()
 	}
 
 	k = 0;
-	if ((g_raytrace_state.fill_type() > FillType::Bars))
+	if ((g_3d_state.fill_type() > FillType::Bars))
 	{
-		g_raytrace_state.set_x_light(uvalues[k++].uval.ival);
-		g_raytrace_state.set_y_light(uvalues[k++].uval.ival);
-		g_raytrace_state.set_z_light(uvalues[k++].uval.ival);
-		if (!g_raytrace_state.raytrace_output())
+		g_3d_state.set_x_light(uvalues[k++].uval.ival);
+		g_3d_state.set_y_light(uvalues[k++].uval.ival);
+		g_3d_state.set_z_light(uvalues[k++].uval.ival);
+		if (!g_3d_state.raytrace_output())
 		{
-			g_raytrace_state.set_light_avg(uvalues[k++].uval.ival);
+			g_3d_state.set_light_average(uvalues[k++].uval.ival);
 			int ambient = uvalues[k++].uval.ival;
 			if (ambient >= 100)
 			{
@@ -3328,11 +3329,11 @@ static int get_light_params()
 			{
 				ambient = 0;
 			}
-			g_raytrace_state.set_ambient(ambient);
+			g_3d_state.set_ambient(ambient);
 		}
 	}
 
-	if (g_targa_output && !g_raytrace_state.raytrace_output())
+	if (g_targa_output && !g_3d_state.raytrace_output())
 	{
 		int haze = uvalues[k++].uval.ival;
 		if (haze >= 100)
@@ -3343,12 +3344,12 @@ static int get_light_params()
 		{
 			haze = 0;
 		}
-		g_raytrace_state.set_haze(haze);
+		g_3d_state.set_haze(haze);
 		strcpy(g_light_name, uvalues[k++].uval.sval);
         /* In case g_light_name conflicts with an existing name it is checked
 						again in line3d */
 		k++;
-		g_raytrace_state.set_background_color(
+		g_3d_state.set_background_color(
 			(BYTE) (uvalues[k + 0].uval.ival % 255),
 			(BYTE) (uvalues[k + 1].uval.ival % 255),
 			(BYTE) (uvalues[k + 2].uval.ival % 255));
@@ -3376,7 +3377,7 @@ static int check_mapfile()
 	{
 		strcpy(temp1, g_map_name);
 	}
-	if (!(g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE))
+	if (!(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 	{
 		askflag = 1;
 	}
@@ -3424,31 +3425,31 @@ static int get_funny_glasses_params()
 	int k;
 
 	/* defaults */
-	if (g_raytrace_state.z_viewer() == 0)
+	if (g_3d_state.z_viewer() == 0)
 	{
-		g_raytrace_state.set_z_viewer(150);
+		g_3d_state.set_z_viewer(150);
 	}
-	if (g_eye_separation == 0)
+	if (g_3d_state.eye_separation() == 0)
 	{
 		if (g_fractal_type == FRACTYPE_IFS_3D || g_fractal_type == FRACTYPE_LORENZ_3D_L || g_fractal_type == FRACTYPE_LORENZ_3D_FP)
 		{
-			g_eye_separation =  2;
-			g_x_adjust       = -2;
+			g_3d_state.set_eye_separation(2);
+			g_3d_state.set_x_adjust(-2);
 		}
 		else
 		{
-			g_eye_separation =  3;
-			g_x_adjust       =  0;
+			g_3d_state.set_eye_separation(3);
+			g_3d_state.set_x_adjust(0);
 		}
 	}
 
-	if (g_glasses_type == STEREO_ALTERNATE)
+	if (g_3d_state.glasses_type() == STEREO_ALTERNATE)
 	{
 		strcpy(funnyglasses_map_name, g_glasses1_map);
 	}
-	else if (g_glasses_type == STEREO_SUPERIMPOSE)
+	else if (g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
-		if (g_raytrace_state.fill_type() == FillType::SurfaceGrid)
+		if (g_3d_state.fill_type() == FillType::SurfaceGrid)
 		{
 			strcpy(funnyglasses_map_name, "grid.map");
 		}
@@ -3462,37 +3463,37 @@ static int get_funny_glasses_params()
 	k = -1;
 	prompts3d[++k] = "Interocular distance (as % of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_eye_separation;
+	uvalues[k].uval.ival = g_3d_state.eye_separation();
 
 	prompts3d[++k] = "Convergence adjust (positive = spread greater)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_x_adjust;
+	uvalues[k].uval.ival = g_3d_state.x_adjust();
 
 	prompts3d[++k] = "Left  red image crop (% of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_red_crop_left;
+	uvalues[k].uval.ival = g_3d_state.red().crop_left();
 
 	prompts3d[++k] = "Right red image crop (% of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_red_crop_right;
+	uvalues[k].uval.ival = g_3d_state.red().crop_right();
 
 	prompts3d[++k] = "Left  blue image crop (% of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_blue_crop_left;
+	uvalues[k].uval.ival = g_3d_state.blue().crop_left();
 
 	prompts3d[++k] = "Right blue image crop (% of screen)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_blue_crop_right;
+	uvalues[k].uval.ival = g_3d_state.blue().crop_right();
 
 	prompts3d[++k] = "Red brightness factor (%)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_red_bright;
+	uvalues[k].uval.ival = g_3d_state.red().bright();
 
 	prompts3d[++k] = "Blue brightness factor (%)";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_blue_bright;
+	uvalues[k].uval.ival = g_3d_state.blue().bright();
 
-	if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
+	if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
 		prompts3d[++k] = "Map File name";
 		uvalues[k].type = 's';
@@ -3506,16 +3507,16 @@ static int get_funny_glasses_params()
 	}
 
 	k = 0;
-	g_eye_separation   =  uvalues[k++].uval.ival;
-	g_x_adjust         =  uvalues[k++].uval.ival;
-	g_red_crop_left   =  uvalues[k++].uval.ival;
-	g_red_crop_right  =  uvalues[k++].uval.ival;
-	g_blue_crop_left  =  uvalues[k++].uval.ival;
-	g_blue_crop_right =  uvalues[k++].uval.ival;
-	g_red_bright      =  uvalues[k++].uval.ival;
-	g_blue_bright     =  uvalues[k++].uval.ival;
+	g_3d_state.set_eye_separation(uvalues[k++].uval.ival);
+	g_3d_state.set_x_adjust(uvalues[k++].uval.ival);
+	g_3d_state.set_red().set_crop_left(uvalues[k++].uval.ival);
+	g_3d_state.set_red().set_crop_right(uvalues[k++].uval.ival);
+	g_3d_state.set_blue().set_crop_left(uvalues[k++].uval.ival);
+	g_3d_state.set_blue().set_crop_right(uvalues[k++].uval.ival);
+	g_3d_state.set_red().set_bright(uvalues[k++].uval.ival);
+	g_3d_state.set_blue().set_bright(uvalues[k++].uval.ival);
 
-	if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
+	if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
 		strcpy(funnyglasses_map_name, uvalues[k].uval.sval);
 	}

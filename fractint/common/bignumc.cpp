@@ -280,7 +280,7 @@ bn_t double_bn(bn_t r, bn_t n)
 	/* two bytes at a time */
 	for (i = 0; i < bnlength; i += 2)
 	{
-		prod += (U32)big_access16(n + i) << 1 ; /* double it */
+		prod += (U32)big_access16(n + i) << 1; /* double it */
 		big_set16(r + i, (U16)prod);   /* store the lower 2 bytes */
 		prod >>= 16; /* shift the overflow for next time */
 	}
@@ -297,7 +297,7 @@ bn_t double_a_bn(bn_t r)
 	/* two bytes at a time */
 	for (i = 0; i < bnlength; i += 2)
 	{
-		prod += (U32)big_access16(r + i) << 1 ; /* double it */
+		prod += (U32)big_access16(r + i) << 1; /* double it */
 		big_set16(r + i, (U16)prod);   /* store the lower 2 bytes */
 		prod >>= 16; /* shift the overflow for next time */
 	}
@@ -315,14 +315,14 @@ bn_t half_bn(bn_t r, bn_t n)
 
 	/* start with an arithmetic shift */
 	i = bnlength-2;
-	quot += (U32)(((S32)(S16)big_access16(n + i) << 16) >> 1) ; /* shift to upper 2 bytes and half it */
+	quot += (U32)(((S32)(S16)big_access16(n + i) << 16) >> 1); /* shift to upper 2 bytes and half it */
 	big_set16(r + i, (U16)(quot >> 16));   /* store the upper 2 bytes */
 	quot <<= 16; /* shift the underflow for next time */
 
 	for (i = bnlength-4; i >= 0; i -= 2)
 	{
 		/* looks wierd, but properly sign extends argument */
-		quot += (U32)(((U32)big_access16(n + i) << 16) >> 1) ; /* shift to upper 2 bytes and half it */
+		quot += (U32)(((U32)big_access16(n + i) << 16) >> 1); /* shift to upper 2 bytes and half it */
 		big_set16(r + i, (U16)(quot >> 16));   /* store the upper 2 bytes */
 		quot <<= 16; /* shift the underflow for next time */
 	}
@@ -341,14 +341,14 @@ bn_t half_a_bn(bn_t r)
 
 	/* start with an arithmetic shift */
 	i = bnlength-2;
-	quot += (U32)(((S32)(S16)big_access16(r + i) << 16) >> 1) ; /* shift to upper 2 bytes and half it */
+	quot += (U32)(((S32)(S16)big_access16(r + i) << 16) >> 1); /* shift to upper 2 bytes and half it */
 	big_set16(r + i, (U16)(quot >> 16));   /* store the upper 2 bytes */
 	quot <<= 16; /* shift the underflow for next time */
 
 	for (i = bnlength-4; i >= 0; i -= 2)
 	{
 		/* looks wierd, but properly sign extends argument */
-		quot += (U32)(((U32)(U16)big_access16(r + i) << 16) >> 1) ; /* shift to upper 2 bytes and half it */
+		quot += (U32)(((U32)(U16)big_access16(r + i) << 16) >> 1); /* shift to upper 2 bytes and half it */
 		big_set16(r + i, (U16)(quot >> 16));   /* store the upper 2 bytes */
 		quot <<= 16; /* shift the underflow for next time */
 	}
@@ -772,7 +772,7 @@ bn_t mult_bn_int(bn_t r, bn_t n, U16 u)
 	/* two bytes at a time */
 	for (i = 0; i < bnlength; i += 2)
 	{
-		prod += (U32)big_access16(n + i)*u ; /* n*u */
+		prod += (U32)big_access16(n + i)*u; /* n*u */
 		big_set16(r + i, (U16)prod);   /* store the lower 2 bytes */
 		prod >>= 16; /* shift the overflow for next time */
 	}
@@ -789,7 +789,7 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 	/* two bytes at a time */
 	for (i = 0; i < bnlength; i += 2)
 	{
-		prod += (U32)big_access16(r + i)*u ; /* r*u */
+		prod += (U32)big_access16(r + i)*u; /* r*u */
 		big_set16(r + i, (U16)prod);   /* store the lower 2 bytes */
 		prod >>= 16; /* shift the overflow for next time */
 	}
