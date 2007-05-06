@@ -25,30 +25,65 @@
 #include "drivers.h"
 #include "fihelp.h"
 
-#define RANDOM(n)       ((int)((long)((long)rand()*(long)(n)) >> 15)) /* Generate Random
-                                                                         * Number 0 <= r < n */
-#define MAX_ANTS        256
-#define XO              (g_x_dots/2)
-#define YO              (g_y_dots/2)
-#define DIRS            4
-#define INNER_LOOP      100
-
-/* possible value of idir e relative movement in the 4 directions
- * for x 0, 1, 0, -1
- * for y 1, 0, -1, 0
- */
-static int *s_incx[DIRS];         /* tab for 4 directions */
-static int *s_incy[DIRS];
-static int s_last_xdots = 0;
-static int s_last_ydots = 0;
-
-static void set_wait(long *wait)
+class Ant
 {
-	char msg[30];
-	int kbdchar;
+public:
+	Ant()
+		: m_last_xdots(0),
+		m_last_ydots(0),
+		m_max_ants(0),
+		m_wrap(false)
+	{
+		for (int i = 0; i < DIRS; i++)
+		{
+			m_incx[i] = NULL;
+			m_incy[i] = NULL;
+		}
+	};
+	~Ant()
+	{
+		free_storage();
+	}
 
+	int compute();
+
+private:
+	enum
+	{
+		DIRS = 4,
+		MAX_ANTS = 256,
+		INNER_LOOP = 100
+	};
+	/* possible value of idir e relative movement in the 4 directions
+	 * for x 0, 1, 0, -1
+	 * for y 1, 0, -1, 0
+	 */
+	int *m_incx[DIRS];         /* tab for 4 directions */
+	int *m_incy[DIRS];
+	int m_last_xdots;
+	int m_last_ydots;
+	int m_max_ants;
+	char m_rule[MAX_ANTS];
+	bool m_wrap;
+
+	void initialize_increments();
+	void free_storage();
+	void set_wait(long *wait);
+	void turk_mite1(int rule_len, long maxpts, long wait);
+	void turk_mite2(int rule_len, long maxptr, long wait);
+
+	/* Generate Random Number 0 <= r < n */
+	static int random_number(long n)
+	{
+		return (int) (((long) rand()*n) >> 15);
+	}
+};
+
+void Ant::set_wait(long *wait)
+{
 	while (1)
 	{
+		char msg[30];
 		sprintf(msg, "Delay %4ld", *wait);
 		while ((int) strlen(msg) < 15)
 		{
@@ -56,7 +91,8 @@ static void set_wait(long *wait)
 		}
 		msg[15] = '\0';
 		show_temp_message(msg);
-		kbdchar = driver_get_key();
+
+		int kbdchar = driver_get_key();
 		switch (kbdchar)
 		{
 		case FIK_CTL_RIGHT_ARROW:
@@ -89,16 +125,9 @@ static void set_wait(long *wait)
 /* turkmite from scientific american july 1994 pag 91
  * Tweaked by Luciano Genero & Fulvio Cappelli
  */
-static void
-turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
+void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 {
-	int color, ix, iy, idir, pixel, i;
-	int kbdchar, step, antwrap;
-	int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
-	int next_col[MAX_ANTS + 1], rule[MAX_ANTS + 1], dir[MAX_ANTS + 1];
-	long count;
-	antwrap = ((g_parameters[4] == 0) ? 0 : 1);
-	step = (int) wait;
+	int step = (int) wait;
 	if (step == 1)
 	{
 		wait = 0;
@@ -107,6 +136,9 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 	{
 		step = 0;
 	}
+	int color;
+	int next_col[MAX_ANTS + 1];
+	int rule[MAX_ANTS + 1];
 	if (rule_len == 0)
 	{
 		/* random rule */
@@ -114,7 +146,7 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		{
 			/* init the rules and g_colors for the
 			* turkmites: 1 turn left, -1 turn right */
-			rule[color] = 1 - (RANDOM(2)*2);
+			rule[color] = 1 - (random_number(2)*2);
 			next_col[color] = color + 1;
 		}
 		/* close the cycle */
@@ -127,7 +159,7 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		{
 			/* init the rules and g_colors for the
 			* turkmites: 1 turn left, -1 turn right */
-			rule[color] = (ru[color]*2) - 1;
+			rule[color] = (m_rule[color]*2) - 1;
 			next_col[color] = color + 1;
 		}
 		/* repeats to last color */
@@ -141,28 +173,32 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		/* close the cycle */
 		next_col[color] = 0;
 	}
-	for (color = maxtur; color; color--)
+	int x[MAX_ANTS + 1];
+	int y[MAX_ANTS + 1];
+	int dir[MAX_ANTS + 1];
+	for (color = m_max_ants; color; color--)
 	{
 		/* init the various turmites N.B. non usa
 		* x[0], y[0], dir[0] */
 		if (rule_len)
 		{
 			dir[color] = 1;
-			x[color] = XO;
-			y[color] = YO;
+			x[color] = g_x_dots/2;
+			y[color] = g_y_dots/2;
 		}
 		else
 		{
-			dir[color] = RANDOM(DIRS);
-			x[color] = RANDOM(g_x_dots);
-			y[color] = RANDOM(g_y_dots);
+			dir[color] = random_number(DIRS);
+			x[color] = random_number(g_x_dots);
+			y[color] = random_number(g_y_dots);
 		}
 	}
 	maxpts = maxpts / (long) INNER_LOOP;
+	long count;
 	for (count = 0; count < maxpts; count++)
 	{
 		/* check for a key only every inner_loop times */
-		kbdchar = driver_key_pressed();
+		int kbdchar = driver_key_pressed();
 		if (kbdchar || step)
 		{
 			int done = 0;
@@ -194,18 +230,22 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 			}
 			if (done)
 			{
-				goto exit_ant;
+				return;
 			}
 			if (driver_key_pressed())
 			{
 				driver_get_key();
 			}
 		}
-		for (i = INNER_LOOP; i; i--)
+		for (int i = INNER_LOOP; i; i--)
 		{
+			int ix;
+			int iy;
+			int idir;
+			int pixel;
 			if (wait > 0 && step == 0)
 			{
-				for (color = maxtur; color; color--)
+				for (color = m_max_ants; color; color--)
 				{                   /* move the various turmites */
 					ix = x[color];   /* temp vars */
 					iy = y[color];
@@ -217,24 +257,24 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 					g_put_color(ix, iy, next_col[pixel]);
 					idir += rule[pixel];
 					idir &= 3;
-					if (antwrap == 0)
+					if (!m_wrap)
 					{
 						if ((idir == 0 && iy == g_y_dots - 1) ||
 							(idir == 1 && ix == g_x_dots - 1) ||
 							(idir == 2 && iy == 0) ||
 							(idir == 3 && ix == 0))
 						{
-							goto exit_ant;
+							return;
 						}
 					}
-					x[color] = s_incx[idir][ix];
-					y[color] = s_incy[idir][iy];
+					x[color] = m_incx[idir][ix];
+					y[color] = m_incy[idir][iy];
 					dir[color] = idir;
 				}
 			}
 			else
 			{
-				for (color = maxtur; color; color--)
+				for (color = m_max_ants; color; color--)
 				{                   /* move the various turmites without delay */
 					ix = x[color];   /* temp vars */
 					iy = y[color];
@@ -243,40 +283,29 @@ turk_mite1(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 					g_put_color(ix, iy, next_col[pixel]);
 					idir += rule[pixel];
 					idir &= 3;
-					if (antwrap == 0)
+					if (!m_wrap)
 					{
 						if ((idir == 0 && iy == g_y_dots - 1) ||
 							(idir == 1 && ix == g_x_dots - 1) ||
 							(idir == 2 && iy == 0) ||
 							(idir == 3 && ix == 0))
 						{
-							goto exit_ant;
+							return;
 						}
 					}
-					x[color] = s_incx[idir][ix];
-					y[color] = s_incy[idir][iy];
+					x[color] = m_incx[idir][ix];
+					y[color] = m_incy[idir][iy];
 					dir[color] = idir;
 				}
 			}
 		}
 	}
-exit_ant:
-	return;
 }
 
 /* this one ignore the color of the current cell is more like a white ant */
-static void
-turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
+void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 {
-	int color, ix, iy, idir, pixel, dir[MAX_ANTS + 1], i;
-	int kbdchar, step, antwrap;
-	int x[MAX_ANTS + 1], y[MAX_ANTS + 1];
-	int rule[MAX_ANTS + 1], rule_mask;
-	long count;
-
-	antwrap = ((g_parameters[4] == 0) ? 0 : 1);
-
-	step = (int) wait;
+	int step = (int) wait;
 	if (step == 1)
 	{
 		wait = 0;
@@ -285,17 +314,21 @@ turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 	{
 		step = 0;
 	}
+	int dir[MAX_ANTS + 1];
+	int x[MAX_ANTS + 1];
+	int y[MAX_ANTS + 1];
+	int rule[MAX_ANTS + 1];
 	if (rule_len == 0)
 	{
 		/* random rule */
-		for (color = MAX_ANTS - 1; color; color--)
+		for (int color = MAX_ANTS - 1; color; color--)
 		{
 			/* init the various turmites N.B. don't use
 			* x[0], y[0], dir[0] */
-			dir[color] = RANDOM(DIRS);
-			rule[color] = (rand() << RANDOM(2)) | RANDOM(2);
-			x[color] = RANDOM(g_x_dots);
-			y[color] = RANDOM(g_y_dots);
+			dir[color] = random_number(DIRS);
+			rule[color] = (rand() << random_number(2)) | random_number(2);
+			x[color] = random_number(g_x_dots);
+			y[color] = random_number(g_y_dots);
 		}
 	}
 	else
@@ -303,28 +336,29 @@ turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 		/* the same rule the user wants for every
 		* turkmite (max rule_len = 16 bit) */
 		rule_len = min(rule_len, 8*sizeof(int));
-		for (i = 0, rule[0] = 0; i < rule_len; i++)
+		rule[0] = 0;
+		for (int i = 0; i < rule_len; i++)
 		{
-			rule[0] = (rule[0] << 1) | ru[i];
+			rule[0] = (rule[0] << 1) | m_rule[i];
 		}
-		for (color = MAX_ANTS - 1; color; color--)
+		for (int color = MAX_ANTS - 1; color; color--)
 		{
 			/* init the various turmites N.B. non usa
 			* x[0], y[0], dir[0] */
 			dir[color] = 0;
 			rule[color] = rule[0];
-			x[color] = XO;
-			y[color] = YO;
+			x[color] = g_x_dots/2;
+			y[color] = g_y_dots/2;
 		}
 	}
 	/* use this rule when a black pixel is found */
 	rule[0] = 0;
-	rule_mask = 1;
+	int rule_mask = 1;
 	maxpts = maxpts / (long) INNER_LOOP;
-	for (count = 0; count < maxpts; count++)
+	for (int count = 0; count < maxpts; count++)
 	{
 		/* check for a key only every inner_loop times */
-		kbdchar = driver_key_pressed();
+		int kbdchar = driver_key_pressed();
 		if (kbdchar || step)
 		{
 			int done = 0;
@@ -356,21 +390,21 @@ turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 			}
 			if (done)
 			{
-				goto exit_ant;
+				return;
 			}
 			if (driver_key_pressed())
 			{
 				driver_get_key();
 			}
 		}
-		for (i = INNER_LOOP; i; i--)
+		for (int i = INNER_LOOP; i; i--)
 		{
-			for (color = maxtur; color; color--)
+			for (int color = m_max_ants; color; color--)
 			{                      /* move the various turmites */
-				ix = x[color];      /* temp vars */
-				iy = y[color];
-				idir = dir[color];
-				pixel = getcolor(ix, iy);
+				int ix = x[color];      /* temp vars */
+				int iy = y[color];
+				int idir = dir[color];
+				int pixel = getcolor(ix, iy);
 				g_put_color(ix, iy, 15);
 
 				if (wait > 0 && step == 0)
@@ -391,110 +425,106 @@ turk_mite2(int maxtur, int rule_len, char *ru, long maxpts, long wait)
 					g_put_color(ix, iy, color);
 				}
 				idir &= 3;
-				if (antwrap == 0)
+				if (!m_wrap)
 				{
 					if ((idir == 0 && iy == g_y_dots - 1) ||
 						(idir == 1 && ix == g_x_dots - 1) ||
 						(idir == 2 && iy == 0) ||
 						(idir == 3 && ix == 0))
 					{
-						goto exit_ant;
+						return;
 					}
 				}
-				x[color] = s_incx[idir][ix];
-				y[color] = s_incy[idir][iy];
+				x[color] = m_incx[idir][ix];
+				y[color] = m_incy[idir][iy];
 				dir[color] = idir;
 			}
 			rule_mask = _rotl(rule_mask, 1);
 		}
 	}
-exit_ant:
-	return;
 }
 
-void free_ant_storage()
+void Ant::free_storage()
 {
-	if (s_incx[0])
+	for (int i = 0; i < DIRS; i++)
 	{
-		free(s_incx[0]);
-		s_incx[0] = NULL;
+		delete[] m_incx[i];
+		delete[] m_incy[i];
+		m_incx[i] = NULL;
+		m_incy[i] = NULL;
 	}
 }
 
-int ant()
+void Ant::initialize_increments()
 {
-	int maxants, type, i;
-	int rule_len;
-	long maxpts, wait;
-	char rule[MAX_ANTS];
-
-	if (g_x_dots != s_last_xdots || g_y_dots != s_last_ydots)
-	{
-		int *storage = (int *) malloc((g_x_dots + 2)*sizeof(int)*DIRS + (g_y_dots + 2)*sizeof(int)*DIRS);
-		int *y_storage = storage + (g_x_dots + 2)*DIRS;
-
-		s_last_xdots = g_x_dots;
-		s_last_ydots = g_y_dots;
-
-		free_ant_storage();	/* free old memory */
-		for (i = 0; i < DIRS; i++)
-		{
-			s_incx[i] = storage;
-			storage += g_x_dots + 2;
-			s_incy[i] = y_storage;
-			y_storage += g_y_dots + 2;
-		}
-	}
-
 	/* In this vectors put all the possible point that the ants can visit.
 	* Wrap them from a side to the other insted of simply end calculation
 	*/
-	for (i = 0; i < g_x_dots; i++)
+	for (int i = 0; i < g_x_dots; i++)
 	{
-		s_incx[0][i] = i;
-		s_incx[2][i] = i;
+		m_incx[0][i] = i;
+		m_incx[2][i] = i;
+	}
+	for (int i = 0; i < g_x_dots; i++)
+	{
+		m_incx[3][i] = i + 1;
+	}
+	m_incx[3][g_x_dots-1] = 0; /* wrap from right of the screen to left */
+	for (int i = 1; i < g_x_dots; i++)
+	{
+		m_incx[1][i] = i - 1;
+	}
+	m_incx[1][0] = g_x_dots-1; /* wrap from left of the screen to right */
+
+	for (int i = 0; i < g_y_dots; i++)
+	{
+		m_incy[1][i] = i;
+		m_incy[3][i] = i;
+	}
+	for (int i = 0; i < g_y_dots; i++)
+	{
+		m_incy[0][i] = i + 1;
+	}
+	m_incy[0][g_y_dots - 1] = 0;      /* wrap from the top of the screen to the bottom */
+	for (int i = 1; i < g_y_dots; i++)
+	{
+		m_incy[2][i] = i - 1;
+	}
+	m_incy[2][0] = g_y_dots - 1;      /* wrap from the bottom of the screen to the top */
+}
+
+int Ant::compute()
+{
+	int rule_len;
+	long maxpts;
+	long wait;
+
+	if (g_x_dots != m_last_xdots || g_y_dots != m_last_ydots)
+	{
+		m_last_xdots = g_x_dots;
+		m_last_ydots = g_y_dots;
+
+		free_storage();	/* free old memory */
+		for (int i = 0; i < DIRS; i++)
+		{
+			m_incx[i] = new int[g_x_dots];
+			m_incy[i] = new int[g_y_dots];
+		}
 	}
 
-	for (i = 0; i < g_x_dots; i++)
-	{
-		s_incx[3][i] = i + 1;
-	}
-	s_incx[3][g_x_dots-1] = 0; /* wrap from right of the screen to left */
+	initialize_increments();
 
-	for (i = 1; i < g_x_dots; i++)
-	{
-		s_incx[1][i] = i - 1;
-	}
-	s_incx[1][0] = g_x_dots-1; /* wrap from left of the screen to right */
-
-	for (i = 0; i < g_y_dots; i++)
-	{
-		s_incy[1][i] = i;
-		s_incy[3][i] = i;
-	}
-	for (i = 0; i < g_y_dots; i++)
-	{
-		s_incy[0][i] = i + 1;
-	}
-	s_incy[0][g_y_dots - 1] = 0;      /* wrap from the top of the screen to the
-									* bottom */
-	for (i = 1; i < g_y_dots; i++)
-	{
-		s_incy[2][i] = i - 1;
-	}
-	s_incy[2][0] = g_y_dots - 1;      /* wrap from the bottom of the screen to the
-									* top */
 	HelpModeSaver saved_help(ANTCOMMANDS);
 	maxpts = (long) g_parameters[1];
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
-	sprintf(rule, "%.17g", g_parameters[0]);
-	rule_len = (int) strlen(rule);
+	sprintf(m_rule, "%.17g", g_parameters[0]);
+	rule_len = (int) strlen(m_rule);
 	if (rule_len > 1)
 	{                            /* if rule_len == 0 random rule */
-		for (i = 0; i < rule_len; i++)
+		for (int i = 0; i < rule_len; i++)
 		{
-			rule[i] = (rule[i] != '1') ? (char) 0 : (char) 1;
+			m_rule[i] = (m_rule[i] != '1') ? (char) 0 : (char) 1;
 		}
 	}
 	else
@@ -509,7 +539,7 @@ int ant()
 	}
 	if (g_parameters[5] != 0 && g_parameters[5] != 1)
 	{
-		g_random_seed = (int)g_parameters[5];
+		g_random_seed = (int) g_parameters[5];
 	}
 
 	srand(g_random_seed);
@@ -518,28 +548,40 @@ int ant()
 		++g_random_seed;
 	}
 
-	maxants = (int) g_parameters[2];
-	if (maxants < 1)             /* if maxants == 0 maxants random */
+	m_max_ants = (int) g_parameters[2];
+	if (m_max_ants < 1)             /* if m_max_ants == 0 maxants random */
 	{
-		maxants = 2 + RANDOM(MAX_ANTS - 2);
+		m_max_ants = 2 + random_number(MAX_ANTS - 2);
 	}
-	else if (maxants > MAX_ANTS)
+	else if (m_max_ants > MAX_ANTS)
 	{
-		g_parameters[2] = maxants = MAX_ANTS;
+		m_max_ants = MAX_ANTS;
+		g_parameters[2] = m_max_ants;
+			
 	}
-	type = (int) g_parameters[3] - 1;
+	int type = (int) g_parameters[3] - 1;
 	if (type < ANTTYPE_MOVE_COLOR || type > ANTTYPE_MOVE_RULE)
 	{
-		type = RANDOM(2);         /* if parma[3] == 0 choose a random type */
+		type = random_number(2);         /* if parma[3] == 0 choose a random type */
 	}
+
+	m_wrap = (g_parameters[4] != 0);
+
 	switch (type)
 	{
 	case ANTTYPE_MOVE_COLOR:
-		turk_mite1(maxants, rule_len, rule, maxpts, wait);
+		turk_mite1(rule_len, maxpts, wait);
 		break;
 	case ANTTYPE_MOVE_RULE:
-		turk_mite2(maxants, rule_len, rule, maxpts, wait);
+		turk_mite2(rule_len, maxpts, wait);
 		break;
 	}
 	return 0;
+}
+
+static Ant s_ant;
+
+int ant()
+{
+	return s_ant.compute();
 }
