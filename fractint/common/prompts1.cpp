@@ -2892,17 +2892,19 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 	g_3d_state.set_z_viewer(uvalues[k++].uval.ival);
 	g_3d_state.set_x_shift(uvalues[k++].uval.ival);
 	g_3d_state.set_y_shift(uvalues[k++].uval.ival);
-	int glasses_type = uvalues[k++].uval.ival;
-	if (glasses_type < STEREO_NONE || glasses_type > STEREO_PAIR)
 	{
-		glasses_type = 0;
-	}
-	g_3d_state.set_glasses_type(glasses_type);
-	if (g_3d_state.glasses_type())
-	{
-		if (get_funny_glasses_params() || check_mapfile())
+		int glasses_type = uvalues[k++].uval.ival;
+		if (glasses_type < STEREO_NONE || glasses_type > STEREO_PAIR)
 		{
-			ret = -1;
+			glasses_type = 0;
+		}
+		g_3d_state.set_glasses_type(glasses_type);
+		if (g_3d_state.glasses_type())
+		{
+			if (get_funny_glasses_params() || check_mapfile())
+			{
+				ret = -1;
+			}
 		}
 	}
 
