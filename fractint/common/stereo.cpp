@@ -63,13 +63,9 @@ static BYTE s_save_dac[256][3];
 	0 to 255.
 */
 
-typedef BYTE *DACBOX[256][3];
-#define dac   (*((DACBOX) s_save_dac))
-
 static int getdepth(int xd, int yd)
 {
-	int pal;
-	pal = getcolor(xd, yd);
+	int pal = getcolor(xd, yd);
 	if (g_grayscale_depth)
 	{
 		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
@@ -84,13 +80,11 @@ static int getdepth(int xd, int yd)
 /*
 	Get min and max DEPTH value in picture
 */
-
 static int get_min_max()
 {
-	int xd, yd, ldepth;
 	s_min_c = g_colors;
 	s_max_c = 0;
-	for (yd = 0; yd < g_y_dots; yd++)
+	for (int yd = 0; yd < g_y_dots; yd++)
 	{
 		if (driver_key_pressed())
 		{
@@ -100,9 +94,9 @@ static int get_min_max()
 		{
 			show_temp_message("Getting min and max");
 		}
-		for (xd = 0; xd < g_x_dots; xd++)
+		for (int xd = 0; xd < g_x_dots; xd++)
 		{
-			ldepth = getdepth(xd, yd);
+			int ldepth = getdepth(xd, yd);
 			if (ldepth < s_min_c)
 			{
 				s_min_c = ldepth;
@@ -117,16 +111,15 @@ static int get_min_max()
 	return 0;
 }
 
-void toggle_bars(int *bars, int barwidth, int *colour)
+static void toggle_bars(bool &bars, int barwidth, int *colour)
 {
-	int i, j, ct;
 	find_special_colors();
-	ct = 0;
-	for (i = s_x_center; i < (s_x_center) + barwidth; i++)
+	int ct = 0;
+	for (int i = s_x_center; i < (s_x_center) + barwidth; i++)
 	{
-		for (j = s_y_center; j < (s_y_center) + s_bar_height; j++)
+		for (int j = s_y_center; j < (s_y_center) + s_bar_height; j++)
 		{
-			if (*bars)
+			if (bars)
 			{
 				g_put_color(i + (int) s_average, j , g_color_bright);
 				g_put_color(i - (int) s_average, j , g_color_bright);
@@ -138,24 +131,23 @@ void toggle_bars(int *bars, int barwidth, int *colour)
 			}
 		}
 	}
-	*bars = 1 - *bars;
+	bars = !bars;
 }
 
 int out_line_stereo(BYTE *pixels, int linelen)
 {
-	int i, j, x, s;
-	int *same = (int *) _alloca(sizeof(int)*g_x_dots);
 	int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
 	if ((s_y) >= g_y_dots)
 	{
 		return 1;
 	}
 
-	for (x = 0; x < g_x_dots; ++x)
+	int *same = (int *) _alloca(sizeof(int)*g_x_dots);
+	for (int x = 0; x < g_x_dots; ++x)
 	{
 		same[x] = x;
 	}
-	for (x = 0; x < g_x_dots; ++x)
+	for (int x = 0; x < g_x_dots; ++x)
 	{
 		s_separation = s_reverse
 			? (s_ground - (int) (s_depth*(getdepth(x, s_y) - s_min_c) / s_max_cc))
@@ -168,13 +160,13 @@ int out_line_stereo(BYTE *pixels, int linelen)
 			s_average += s_separation;
 			(s_average_count)++;
 		}
-		i = x - (s_separation + (s_separation & s_y & 1)) / 2;
-		j = i + s_separation;
+		int i = x - (s_separation + (s_separation & s_y & 1)) / 2;
+		int j = i + s_separation;
 		if (0 <= i && j < g_x_dots)
 		{
 			/* there are cases where next never terminates so we timeout */
 			int ct = 0;
-			for (s = same[i]; s != i && s != j && ct++ < g_x_dots; s = same[i])
+			for (int s = same[i]; s != i && s != j && ct++ < g_x_dots; s = same[i])
 			{
 				if (s > j)
 				{
@@ -190,7 +182,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 			same[i] = j;
 		}
 	}
-	for (x = g_x_dots - 1; x >= 0; x--)
+	for (int x = g_x_dots - 1; x >= 0; x--)
 	{
 		colour[x] = (same[x] == x) ? (int) pixels[x % linelen] : colour[same[x]];
 		g_put_color(x, s_y, colour[x]);
@@ -206,22 +198,18 @@ int out_line_stereo(BYTE *pixels, int linelen)
 
 int auto_stereo()
 {
-	int ret = 0;
-	int i, j, done;
-	int bars, ct, kbdchar, barwidth;
-	time_t ltime;
-	unsigned char *buf = (unsigned char *)g_decoder_line;
-	int *same = (int *) _alloca(sizeof(int)*g_x_dots);
-	int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
-
 	/* Use the current time to randomize the random number sequence. */
-	time(&ltime);
-	srand((unsigned int) ltime);
+	{
+		time_t ltime;
+		time(&ltime);
+		srand((unsigned int) ltime);
+	}
 
 	HelpModeSaver saved_help(RDSKEYS);
 	driver_save_graphics();                      /* save graphics image */
 	memcpy(s_save_dac, g_dac_box, 256*3);  /* save g_colors */
 
+	int ret = 0;
 	if (g_x_dots > OLD_MAX_PIXELS)
 	{
 		stop_message(0, "Stereo not allowed with resolution > 2048 pixels wide");
@@ -248,7 +236,7 @@ int auto_stereo()
 	}
 	s_max_cc = s_max_c - s_min_c + 1;
 	s_average = s_average_count = 0L;
-	barwidth  = 1 + g_x_dots / 200;
+	int barwidth = 1 + g_x_dots / 200;
 	s_bar_height = 1 + g_y_dots / 20;
 	s_x_center = g_x_dots/2;
 	s_y_center = (g_calibrate > 1) ? s_bar_height/2 : g_y_dots/2;
@@ -281,9 +269,10 @@ int auto_stereo()
 				ret = 1;
 				goto exit_stereo;
 			}
-			for (i = 0; i < g_x_dots; i++)
+			unsigned char *buf = (unsigned char *) g_decoder_line;
+			for (int i = 0; i < g_x_dots; i++)
 			{
-				buf[i] = (unsigned char)(rand() % g_colors);
+				buf[i] = (unsigned char) (rand() % g_colors);
 			}
 			out_line_stereo(buf, g_x_dots);
 		}
@@ -291,27 +280,28 @@ int auto_stereo()
 
 	find_special_colors();
 	s_average /= 2*s_average_count;
-	ct = 0;
-	for (i = s_x_center; i < s_x_center + barwidth; i++)
+	int ct = 0;
+	int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
+	for (int i = s_x_center; i < s_x_center + barwidth; i++)
 	{
-		for (j = s_y_center; j < s_y_center + s_bar_height; j++)
+		for (int j = s_y_center; j < s_y_center + s_bar_height; j++)
 		{
 			colour[ct++] = getcolor(i + (int) s_average, j);
 			colour[ct++] = getcolor(i - (int) s_average, j);
 		}
 	}
-	bars = g_calibrate ? 1 : 0;
-	toggle_bars(&bars, barwidth, colour);
-	done = 0;
+	bool bars = (g_calibrate != 0);
+	toggle_bars(bars, barwidth, colour);
+	int done = 0;
 	while (done == 0)
 	{
 		driver_wait_key_pressed(0);
-		kbdchar = driver_get_key();
+		int kbdchar = driver_get_key();
 		switch (kbdchar)
 		{
 		case FIK_ENTER:   /* toggle bars */
 		case FIK_SPACE:
-			toggle_bars(&bars, barwidth, colour);
+			toggle_bars(bars, barwidth, colour);
 			break;
 		case 'c':
 		case '+':

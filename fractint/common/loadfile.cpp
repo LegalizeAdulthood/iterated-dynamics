@@ -27,7 +27,7 @@
 
 /* routines in this module      */
 
-static int find_fractal_info(char *, struct fractal_info *,
+static int find_fractal_info(char *, fractal_info *,
 							struct ext_blk_resume_info *,
 							struct ext_blk_formula_info *,
 							struct ext_blk_ranges_info *,
@@ -36,106 +36,66 @@ static int find_fractal_info(char *, struct fractal_info *,
 							struct ext_blk_orbits_info *);
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
-static void translate_obsolete_fractal_types(struct fractal_info *info);
+static void translate_obsolete_fractal_types(const fractal_info *info);
 static int fix_bof();
 static int fix_period_bof();
 
-int g_loaded_3d;
-static FILE *fp;
-int g_file_y_dots, g_file_x_dots, g_file_colors;
-float g_file_aspect_ratio;
-short g_skip_x_dots, g_skip_y_dots;      /* for decoder, when reducing image */
-int g_bad_outside = 0;
-int g_use_old_complex_power = FALSE;
+int g_loaded_3d = 0;
+int g_file_y_dots = 0;
+int g_file_x_dots = 0;
+int g_file_colors = 0;
+float g_file_aspect_ratio = 0.0;
+short g_skip_x_dots = 0;
+short g_skip_y_dots = 0;      /* for decoder, when reducing image */
+bool g_bad_outside = false;
+bool g_use_old_complex_power = false;
 
-int read_overlay()      /* read overlay/3D files, if reqr'd */
+static FILE *s_gif_file;
+
+static void read_info_version_0(const fractal_info &read_info)
 {
-	struct fractal_info read_info;
-	char oldfloatflag;
-	char msg[110];
-	struct ext_blk_resume_info resume_info_blk;
-	struct ext_blk_formula_info formula_info;
-	struct ext_blk_ranges_info ranges_info;
-	struct ext_blk_mp_info mp_info;
-	struct ext_blk_evolver_info evolver_info;
-	struct ext_blk_orbits_info orbits_info;
-
-	g_show_file = 1;                /* for any abort exit, pretend done */
-	g_init_mode = -1;               /* no viewing mode set yet */
-	oldfloatflag = g_user_float_flag;
-	g_loaded_3d = 0;
-	if (g_fast_restore)
-	{
-		g_view_window = 0;
-	}
-	if (has_extension(g_read_name) == NULL)
-	{
-		strcat(g_read_name, ".gif");
-	}
-
-	if (find_fractal_info(g_read_name, &read_info, &resume_info_blk, &formula_info,
-		&ranges_info, &mp_info, &evolver_info, &orbits_info))
-	{
-		/* didn't find a useable file */
-		sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_name);
-		stop_message(0, msg);
-		return -1;
-	}
-
-	g_max_iteration        = read_info.iterationsold;
-	g_fractal_type     = read_info.fractal_type;
-	if (g_fractal_type < 0 || g_fractal_type >= g_num_fractal_types)
-	{
-		sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_name);
-		g_fractal_type = 0;
-	}
-	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-	g_escape_time_state.m_grid_fp.x_min()        = read_info.x_min;
-	g_escape_time_state.m_grid_fp.x_max()        = read_info.x_max;
-	g_escape_time_state.m_grid_fp.y_min()        = read_info.y_min;
-	g_escape_time_state.m_grid_fp.y_max()        = read_info.y_max;
-	g_parameters[0]     = read_info.c_real;
-	g_parameters[1]     = read_info.c_imag;
-	g_save_release = 1100; /* unless we find out better later on */
-
 	g_invert = 0;
+
 	if (read_info.version > 0)
 	{
-		g_parameters[2]      = read_info.parm3;
+		g_parameters[2] = read_info.parm3;
 		round_float_d(&g_parameters[2]);
-		g_parameters[3]      = read_info.parm4;
+		g_parameters[3] = read_info.parm4;
 		round_float_d(&g_parameters[3]);
-		g_potential_parameter[0]   = read_info.potential[0];
-		g_potential_parameter[1]   = read_info.potential[1];
-		g_potential_parameter[2]   = read_info.potential[2];
+		g_potential_parameter[0] = read_info.potential[0];
+		g_potential_parameter[1] = read_info.potential[1];
+		g_potential_parameter[2] = read_info.potential[2];
 		if (*g_make_par == '\0')
 		{
 			g_colors = read_info.colors;
 		}
 		g_potential_flag = (g_potential_parameter[0] != 0.0);
-		g_random_flag         = read_info.random_flag;
-		g_random_seed         = read_info.random_seed;
-		g_inside        = read_info.inside;
-		g_log_palette_flag       = read_info.logmapold;
-		g_inversion[0]  = read_info.invert[0];
-		g_inversion[1]  = read_info.invert[1];
-		g_inversion[2]  = read_info.invert[2];
+		g_random_flag = read_info.random_flag;
+		g_random_seed = read_info.random_seed;
+		g_inside = read_info.inside;
+		g_log_palette_flag = read_info.logmapold;
+		g_inversion[0] = read_info.invert[0];
+		g_inversion[1] = read_info.invert[1];
+		g_inversion[2] = read_info.invert[2];
 		if (g_inversion[0] != 0.0)
 		{
 			g_invert = 3;
 		}
-		g_decomposition[0]     = read_info.decomposition[0];
-		g_decomposition[1]     = read_info.decomposition[1];
-		g_user_biomorph  = read_info.biomorph;
+		g_decomposition[0] = read_info.decomposition[0];
+		g_decomposition[1] = read_info.decomposition[1];
+		g_user_biomorph = read_info.biomorph;
 		g_force_symmetry = read_info.symmetry;
 	}
+}
 
+static void read_info_version_1(const fractal_info &read_info)
+{
 	if (read_info.version > 1)
 	{
-		g_save_release  = 1200;
+		g_save_release = 1200;
 		if (!g_display_3d
 			&& (read_info.version <= 4 || read_info.flag3d > 0
-				|| (g_current_fractal_specific->flags & FRACTALFLAG_3D_PARAMETERS)))
+			|| (g_current_fractal_specific->flags & FRACTALFLAG_3D_PARAMETERS)))
 		{
 			g_3d_state.set_raytrace_parameters(&read_info.init_3d[0]);
 			g_3d_state.set_preview_factor(read_info.previewfactor);
@@ -152,23 +112,30 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			g_3d_state.set_glasses_type(read_info.glassestype);
 		}
 	}
+}
 
+static void read_info_version_2(const fractal_info &read_info)
+{
 	if (read_info.version > 2)
 	{
 		g_save_release = 1300;
-		g_outside      = read_info.outside;
+		g_outside = read_info.outside;
 	}
+}
 
+static void read_info_version_3(const fractal_info &read_info)
+{
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
 	g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
 	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 	g_user_distance_test = 0;
 	g_calculation_time = 0;
+
 	if (read_info.version > 3)
 	{
 		g_save_release = 1400;
-		g_escape_time_state.m_grid_fp.x_3rd()       = read_info.x_3rd;
-		g_escape_time_state.m_grid_fp.y_3rd()       = read_info.y_3rd;
+		g_escape_time_state.m_grid_fp.x_3rd() = read_info.x_3rd;
+		g_escape_time_state.m_grid_fp.y_3rd() = read_info.y_3rd;
 		g_calculation_status = read_info.calculation_status;
 		g_user_standard_calculation_mode = read_info.stdcalcmode;
 		g_three_pass = 0;
@@ -177,26 +144,30 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			g_three_pass = 1;
 			g_user_standard_calculation_mode = '3';
 		}
-		g_user_distance_test     = read_info.distestold;
-		g_user_float_flag   = (char)read_info.float_flag;
-		g_bail_out     = read_info.bailoutold;
-		g_calculation_time    = read_info.calculation_time;
-		g_trig_index[0]  = read_info.trig_index[0];
-		g_trig_index[1]  = read_info.trig_index[1];
-		g_trig_index[2]  = read_info.trig_index[2];
-		g_trig_index[3]  = read_info.trig_index[3];
-		g_finite_attractor  = read_info.finattract;
+		g_user_distance_test = read_info.distestold;
+		g_user_float_flag = (char)read_info.float_flag;
+		g_bail_out = read_info.bailoutold;
+		g_calculation_time = read_info.calculation_time;
+		g_trig_index[0] = read_info.trig_index[0];
+		g_trig_index[1] = read_info.trig_index[1];
+		g_trig_index[2] = read_info.trig_index[2];
+		g_trig_index[3] = read_info.trig_index[3];
+		g_finite_attractor = read_info.finattract;
 		g_initial_orbit_z.x = read_info.initial_orbit_z[0];
 		g_initial_orbit_z.y = read_info.initial_orbit_z[1];
 		g_use_initial_orbit_z = read_info.use_initial_orbit_z;
 		g_user_periodicity_check = read_info.periodicity;
 	}
+}
 
+static void read_info_version_4(const fractal_info &read_info)
+{
 	g_potential_16bit = FALSE;
 	g_save_system = 0;
+
 	if (read_info.version > 4)
 	{
-		g_potential_16bit     = read_info.potential_16bit;
+		g_potential_16bit = read_info.potential_16bit;
 		if (g_potential_16bit)
 		{
 			g_file_x_dots >>= 1;
@@ -206,7 +177,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		{
 			g_file_aspect_ratio = g_screen_aspect_ratio;
 		}
-		g_save_system  = read_info.system;
+		g_save_system = read_info.system;
 		g_save_release = read_info.release; /* from fmt 5 on we know real number */
 		if (read_info.version == 5        /* except a few early fmt 5 cases: */
 			&& (g_save_release <= 0 || g_save_release >= 4000))
@@ -216,7 +187,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 		if (!g_display_3d && read_info.flag3d > 0)
 		{
-			g_loaded_3d       = 1;
+			g_loaded_3d = 1;
 			g_3d_state.set_ambient(read_info.ambient);
 			g_3d_state.set_randomize_colors(read_info.randomize);
 			g_3d_state.set_haze(read_info.haze);
@@ -224,44 +195,57 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			g_3d_state.set_transparent1(read_info.transparent[1]);
 		}
 	}
+}
 
+static void read_info_version_5(const fractal_info &read_info)
+{
 	g_rotate_lo = 1;
 	g_rotate_hi = 255;
 	g_distance_test_width = 71;
+
 	if (read_info.version > 5)
 	{
-		g_rotate_lo         = read_info.rotate_lo;
-		g_rotate_hi         = read_info.rotate_hi;
-		g_distance_test_width      = read_info.distance_test_width;
+		g_rotate_lo = read_info.rotate_lo;
+		g_rotate_hi = read_info.rotate_hi;
+		g_distance_test_width = read_info.distance_test_width;
 	}
+}
 
+static void read_info_version_6(const fractal_info &read_info)
+{
 	if (read_info.version > 6)
 	{
-		g_parameters[2]          = read_info.dparm3;
-		g_parameters[3]          = read_info.dparm4;
+		g_parameters[2] = read_info.dparm3;
+		g_parameters[3] = read_info.dparm4;
 	}
+}
 
+static void read_info_version_7(const fractal_info &read_info)
+{
 	if (read_info.version > 7)
 	{
-		g_fill_color         = read_info.fill_color;
+		g_fill_color = read_info.fill_color;
 	}
+}
 
+static void read_info_version_8(const fractal_info &read_info)
+{
 	if (read_info.version > 8)
 	{
-		g_m_x_max_fp   =  read_info.mxmaxfp;
-		g_m_x_min_fp   =  read_info.mxminfp;
-		g_m_y_max_fp   =  read_info.mymaxfp;
-		g_m_y_min_fp   =  read_info.myminfp;
-		g_z_dots     =  read_info.zdots;
-		g_origin_fp  =  read_info.originfp;
-		g_depth_fp   =  read_info.depthfp;
-		g_height_fp  =  read_info.heightfp;
-		g_width_fp   =  read_info.widthfp;
-		g_screen_distance_fp    =  read_info.screen_distance_fp;
-		g_eyes_fp    =  read_info.eyesfp;
+		g_m_x_max_fp = read_info.mxmaxfp;
+		g_m_x_min_fp = read_info.mxminfp;
+		g_m_y_max_fp = read_info.mymaxfp;
+		g_m_y_min_fp = read_info.myminfp;
+		g_z_dots = read_info.zdots;
+		g_origin_fp = read_info.originfp;
+		g_depth_fp = read_info.depthfp;
+		g_height_fp = read_info.heightfp;
+		g_width_fp = read_info.widthfp;
+		g_screen_distance_fp = read_info.screen_distance_fp;
+		g_eyes_fp = read_info.eyesfp;
 		g_new_orbit_type = read_info.orbittype;
-		g_juli_3d_mode   = read_info.juli3Dmode;
-		g_max_fn    =   (char)read_info.max_fn;
+		g_juli_3d_mode = read_info.juli3Dmode;
+		g_max_fn = (char)read_info.max_fn;
 		g_major_method = (enum Major) (read_info.inversejulia >> 8);
 		g_minor_method = (enum Minor) (read_info.inversejulia & 255);
 		g_parameters[4] = read_info.dparm5;
@@ -271,7 +255,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_parameters[8] = read_info.dparm9;
 		g_parameters[9] = read_info.dparm10;
 	}
+}
 
+static void read_info_pre_version_14(const fractal_info &read_info)
+{
 	if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
 	{
 		translate_obsolete_fractal_types(&read_info);
@@ -281,7 +268,10 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 		g_user_float_flag = (char) (g_current_fractal_specific->isinteger ? 0 : 1);
 	}
+}
 
+static void read_info_pre_version_15(const fractal_info &read_info)
+{
 	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
 	{
 		if (g_log_palette_flag == 2) /* logmap = old changed again in format 5! */
@@ -293,6 +283,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			g_bail_out = g_decomposition[1];
 		}
 	}
+
 	if (g_potential_flag) /* in version 15.x and 16.x logmap didn't work with pot */
 	{
 		if (read_info.version == 6 || read_info.version == 7)
@@ -301,11 +292,14 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		}
 	}
 	set_trig_pointers(-1);
+}
 
+static void read_info_pre_version_18(const fractal_info &read_info)
+{
 	if (read_info.version < 9 && read_info.version != 0) /* pre-version 18.0? */
 	{
 		/* g_force_symmetry==FORCESYMMETRY_SEARCH means we want to force symmetry but don't
-			know which symmetry yet, will find out in setsymmetry() */
+		know which symmetry yet, will find out in setsymmetry() */
 		if (g_outside == REAL || g_outside == IMAG || g_outside == MULT || g_outside == SUM
 			|| g_outside == ATAN)
 		{
@@ -315,15 +309,22 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			}
 		}
 	}
+}
+
+static void read_info_pre_version_17_25(const fractal_info &read_info)
+{
 	if (g_save_release < 1725 && read_info.version != 0) /* pre-version 17.25 */
 	{
 		set_if_old_bif(); /* translate bifurcation types */
 		g_function_preloaded = TRUE;
 	}
+}
 
+static void read_info_version_9(const fractal_info &read_info)
+{
 	if (read_info.version > 9)
 	{ /* post-version 18.22 */
-		g_bail_out     = read_info.bail_out; /* use long bailout */
+		g_bail_out = read_info.bail_out; /* use long bailout */
 		g_bail_out_test = (enum bailouts) read_info.bailoutest;
 	}
 	else
@@ -331,7 +332,6 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_bail_out_test = Mod;
 	}
 	set_bail_out_formula(g_bail_out_test);
-
 	if (read_info.version > 9)
 	{
 		/* post-version 18.23 */
@@ -339,26 +339,35 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		/* post-version 18.27 */
 		g_old_demm_colors = read_info.old_demm_colors;
 	}
+}
 
+static void read_info_version_10(const fractal_info &read_info)
+{
 	if (read_info.version > 10) /* post-version 19.20 */
 	{
 		g_log_palette_flag = read_info.logmap;
 		g_user_distance_test = read_info.distance_test;
 	}
+}
 
+static void read_info_version_11(const fractal_info &read_info)
+{
 	if (read_info.version > 11) /* post-version 19.20, inversion fix */
 	{
 		g_inversion[0] = read_info.dinvert[0];
 		g_inversion[1] = read_info.dinvert[1];
 		g_inversion[2] = read_info.dinvert[2];
 		g_log_dynamic_calculate = read_info.logcalc;
-		g_stop_pass     = read_info.stop_pass;
+		g_stop_pass = read_info.stop_pass;
 	}
+}
 
+static void read_info_version_12(const fractal_info &read_info)
+{
 	if (read_info.version > 12) /* post-version 19.60 */
 	{
-		g_quick_calculate   = read_info.quick_calculate;
-		g_proximity    = read_info.proximity;
+		g_quick_calculate = read_info.quick_calculate;
+		g_proximity = read_info.proximity;
 		if (g_fractal_type == FRACTYPE_POPCORN_FP || g_fractal_type == FRACTYPE_POPCORN_L ||
 			g_fractal_type == FRACTYPE_POPCORN_JULIA_FP || g_fractal_type == FRACTYPE_POPCORN_JULIA_L ||
 			g_fractal_type == FRACTYPE_LATOOCARFIAN)
@@ -366,23 +375,35 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			g_function_preloaded = TRUE;
 		}
 	}
+}
 
+static void read_info_version_13(const fractal_info &read_info)
+{
 	g_no_bof = FALSE;
 	if (read_info.version > 13) /* post-version 20.1.2 */
 	{
 		g_no_bof = read_info.no_bof;
 	}
+}
 
+static void read_info_version_14()
+{
 	/* if (read_info.version > 14)  post-version 20.1.12 */
 	/* modified saved evolver structure JCO 12JUL01 */
 	g_log_automatic_flag = FALSE;  /* make sure it's turned off */
+}
 
+static void read_info_version_15(const fractal_info &read_info)
+{
 	g_orbit_interval = 1;
 	if (read_info.version > 15) /* post-version 20.3.2 */
 	{
 		g_orbit_interval = read_info.orbit_interval;
 	}
+}
 
+static void read_info_version_16(const fractal_info &read_info)
+{
 	g_orbit_delay = 0;
 	g_math_tolerance[0] = 0.05;
 	g_math_tolerance[1] = 0.05;
@@ -392,14 +413,214 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_math_tolerance[0] = read_info.math_tolerance[0];
 		g_math_tolerance[1] = read_info.math_tolerance[1];
 	}
+}
 
-	backwards_v18();
-	backwards_v19();
-	backwards_v20();
-
-	if (g_display_3d)                   /* PB - a klooge till the meaning of */
+void free_ranges()
+{
+	if (g_ranges_length) /* free prior ranges */
 	{
-		g_user_float_flag = oldfloatflag; /*  g_float_flag in line3d is clarified */
+		free(g_ranges);
+		g_ranges = NULL;
+		g_ranges_length = 0;
+	}
+}
+
+static void got_resume_info(struct ext_blk_resume_info resume_info)
+{
+	end_resume();
+
+	if (resume_info.got_data == 1)
+	{
+		g_resume_info = resume_info.resume_data;
+		g_resume_length = resume_info.length;
+	}
+}
+
+static void got_formula_info(const fractal_info &read_info, struct ext_blk_formula_info formula_info)
+{
+	if (formula_info.got_data != 1)
+	{
+		return;
+	}
+
+	char *nameptr;
+	switch (read_info.fractal_type)
+	{
+	case FRACTYPE_L_SYSTEM:
+		nameptr = g_l_system_name;
+		break;
+
+	case FRACTYPE_IFS:
+	case FRACTYPE_IFS_3D:
+		nameptr = g_ifs_name;
+		break;
+
+	default:
+		nameptr = g_formula_name;
+		g_uses_p1 = formula_info.uses_p1;
+		g_uses_p2 = formula_info.uses_p2;
+		g_uses_p3 = formula_info.uses_p3;
+		g_uses_is_mand = formula_info.uses_is_mand;
+		g_is_mand = formula_info.ismand;
+		g_uses_p4 = formula_info.uses_p4;
+		g_uses_p5 = formula_info.uses_p5;
+		break;
+	}
+	formula_info.form_name[ITEMNAMELEN] = 0;
+	strcpy(nameptr, formula_info.form_name);
+	/* perhaps in future add more here, check block_len for backward compatibility */
+}
+
+static void got_ranges_info(struct ext_blk_ranges_info ranges_info)
+{
+	free_ranges();
+	if (ranges_info.got_data == 1)
+	{
+		g_ranges = (int *) ranges_info.range_data;
+		g_ranges_length = ranges_info.length;
+#ifdef XFRACT
+		fix_ranges(g_ranges, g_ranges_length, 1);
+#endif
+	}
+}
+
+static void got_multiple_precision_info(const fractal_info &read_info, struct ext_blk_mp_info mp_info)
+{
+	if (mp_info.got_data == 1)
+	{
+		g_bf_math = BIGNUM;
+		init_bf_length(read_info.bflength);
+		memcpy((char *) g_escape_time_state.m_grid_bf.x_min(), mp_info.apm_data, mp_info.length);
+		free(mp_info.apm_data);
+	}
+	else
+	{
+		g_bf_math = 0;
+	}
+}
+
+static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolver_info evolver_info)
+{
+	if (evolver_info.got_data != 1)
+	{
+		g_evolving = EVOLVE_NONE;
+		return;
+	}
+
+	if (read_info.version < 15)
+	{
+		/* Increasing NUMGENES moves ecount in the data structure */
+		/* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
+		evolver_info.ecount = evolver_info.mutate[NUMGENES - 4];
+	}
+	if (evolver_info.ecount != evolver_info.gridsz*evolver_info.gridsz
+		&& g_calculation_status != CALCSTAT_COMPLETED)
+	{
+		g_calculation_status = CALCSTAT_RESUMABLE;
+		struct evolution_info resume_e_info;
+		if (g_evolve_handle == NULL)
+		{
+			g_evolve_handle = malloc(sizeof(resume_e_info));
+		}
+		resume_e_info.parameter_range_x = evolver_info.parameter_range_x;
+		resume_e_info.parameter_range_y = evolver_info.parameter_range_y;
+		resume_e_info.opx = evolver_info.opx;
+		resume_e_info.opy = evolver_info.opy;
+		resume_e_info.odpx = evolver_info.odpx;
+		resume_e_info.odpy = evolver_info.odpy;
+		resume_e_info.px = evolver_info.px;
+		resume_e_info.py = evolver_info.py;
+		resume_e_info.sxoffs = evolver_info.sxoffs;
+		resume_e_info.syoffs = evolver_info.syoffs;
+		resume_e_info.x_dots = evolver_info.x_dots;
+		resume_e_info.y_dots = evolver_info.y_dots;
+		resume_e_info.gridsz = evolver_info.gridsz;
+		resume_e_info.evolving = evolver_info.evolving;
+		resume_e_info.this_generation_random_seed = evolver_info.this_generation_random_seed;
+		resume_e_info.fiddle_factor = evolver_info.fiddle_factor;
+		resume_e_info.ecount = evolver_info.ecount;
+		memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
+	}
+	else
+	{
+		if (g_evolve_handle != NULL)  /* Image completed, release it. */
+		{
+			free(g_evolve_handle);
+			g_evolve_handle = NULL;
+		}
+		g_calculation_status = CALCSTAT_COMPLETED;
+	}
+	g_parameter_range_x = evolver_info.parameter_range_x;
+	g_parameter_range_y = evolver_info.parameter_range_y;
+	g_parameter_offset_x = g_new_parameter_offset_x = evolver_info.opx;
+	g_parameter_offset_y = g_new_parameter_offset_y = evolver_info.opy;
+	g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x = (char) evolver_info.odpx;
+	g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y = (char) evolver_info.odpy;
+	g_px = evolver_info.px;
+	g_py = evolver_info.py;
+	g_sx_offset = evolver_info.sxoffs;
+	g_sy_offset = evolver_info.syoffs;
+	g_x_dots = evolver_info.x_dots;
+	g_y_dots = evolver_info.y_dots;
+	g_grid_size = evolver_info.gridsz;
+	g_this_generation_random_seed = evolver_info.this_generation_random_seed;
+	g_fiddle_factor = evolver_info.fiddle_factor;
+	g_evolving = g_view_window = (int) evolver_info.evolving;
+	g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size - 1);
+	g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size - 1);
+	if (read_info.version > 14)
+	{
+		for (int i = 0; i < NUMGENES; i++)
+		{
+			g_genes[i].mutate = (int) evolver_info.mutate[i];
+		}
+	}
+	else
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			g_genes[i].mutate = (int) evolver_info.mutate[i];
+		}
+		for (int i = 6; i < 10; i++)
+		{
+			g_genes[i].mutate = 0;
+		}
+		for (int i = 10; i < NUMGENES; i++)
+		{
+			g_genes[i].mutate = (int) evolver_info.mutate[i-4];
+		}
+	}
+	save_parameter_history();
+}
+
+static void got_orbits_info(struct ext_blk_orbits_info orbits_info)
+{
+	if (orbits_info.got_data != 1)
+	{
+		return;
+	}
+
+	g_orbit_x_min = orbits_info.oxmin;
+	g_orbit_x_max = orbits_info.oxmax;
+	g_orbit_y_min = orbits_info.oymin;
+	g_orbit_y_max = orbits_info.oymax;
+	g_orbit_x_3rd = orbits_info.ox3rd;
+	g_orbit_y_3rd = orbits_info.oy3rd;
+	g_keep_screen_coords = orbits_info.keep_scrn_coords;
+	g_orbit_draw_mode = (int) orbits_info.drawmode;
+	if (g_keep_screen_coords)
+	{
+		g_set_orbit_corners = 1;
+	}
+}
+
+static int fixup_3d_info(int oldfloatflag, const fractal_info &read_info, ext_blk_formula_info formula_info,
+						 ext_blk_resume_info resume_info_blk)
+{
+	/* TODO: a klooge till the meaning of g_float_flag in line3d is clarified */
+	if (g_display_3d)                   
+	{
+		g_user_float_flag = oldfloatflag; 
 	}
 
 	if (g_overlay_3d)
@@ -414,16 +635,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 	else
 	{
-		int olddisplay3d, i;
-		char oldfloatflag;
-		olddisplay3d = g_display_3d;
-		oldfloatflag = g_float_flag;
+		int olddisplay3d = g_display_3d;
+		char oldfloatflag = g_float_flag;
 		g_display_3d = g_loaded_3d;      /* for <tab> display during next */
 		g_float_flag = g_user_float_flag; /* ditto */
-		i = get_video_mode(&read_info, &formula_info);
-#if defined(_WIN32)
-		_ASSERTE(_CrtCheckMemory());
-#endif
+		int i = get_video_mode(&read_info, &formula_info);
 		g_display_3d = olddisplay3d;
 		g_float_flag = oldfloatflag;
 		if (i)
@@ -453,188 +669,100 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			}
 		}
 	}
-
-	end_resume();
-
-	if (resume_info_blk.got_data == 1)
-	{
-		g_resume_info = resume_info_blk.resume_data;
-		g_resume_length = resume_info_blk.length;
-	}
-
-	if (formula_info.got_data == 1)
-	{
-		char *nameptr;
-		switch (read_info.fractal_type)
-		{
-		case FRACTYPE_L_SYSTEM:
-			nameptr = g_l_system_name;
-			break;
-
-		case FRACTYPE_IFS:
-		case FRACTYPE_IFS_3D:
-			nameptr = g_ifs_name;
-			break;
-
-		default:
-			nameptr = g_formula_name;
-			g_uses_p1 = formula_info.uses_p1;
-			g_uses_p2 = formula_info.uses_p2;
-			g_uses_p3 = formula_info.uses_p3;
-			g_uses_is_mand = formula_info.uses_is_mand;
-			g_is_mand = formula_info.ismand;
-			g_uses_p4 = formula_info.uses_p4;
-			g_uses_p5 = formula_info.uses_p5;
-			break;
-		}
-		formula_info.form_name[ITEMNAMELEN] = 0;
-		strcpy(nameptr, formula_info.form_name);
-		/* perhaps in future add more here, check block_len for backward compatibility */
-	}
-
-	if (g_ranges_length) /* free prior ranges */
-	{
-		free(g_ranges);
-		g_ranges = NULL;
-		g_ranges_length = 0;
-	}
-
-	if (ranges_info.got_data == 1)
-	{
-		g_ranges = (int *) ranges_info.range_data;
-		g_ranges_length = ranges_info.length;
-#ifdef XFRACT
-		fix_ranges(g_ranges, g_ranges_length, 1);
-#endif
-	}
-
-	if (mp_info.got_data == 1)
-	{
-		g_bf_math = BIGNUM;
-		init_bf_length(read_info.bflength);
-		memcpy((char *) g_escape_time_state.m_grid_bf.x_min(), mp_info.apm_data, mp_info.length);
-		free(mp_info.apm_data);
-	}
-	else
-	{
-		g_bf_math = 0;
-	}
-
-	if (evolver_info.got_data == 1)
-	{
-		struct evolution_info resume_e_info;
-		int i;
-
-		if (read_info.version < 15)  /* This is VERY Ugly!  JCO  14JUL01 */
-		{
-			/* Increasing NUMGENES moves ecount in the data structure */
-			/* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
-			evolver_info.ecount = evolver_info.mutate[NUMGENES - 4];
-		}
-		if (evolver_info.ecount != evolver_info.gridsz*evolver_info.gridsz
-				&& g_calculation_status != CALCSTAT_COMPLETED)
-		{
-			g_calculation_status = CALCSTAT_RESUMABLE;
-			if (g_evolve_handle == NULL)
-			{
-				g_evolve_handle = malloc(sizeof(resume_e_info));
-			}
-			resume_e_info.parameter_range_x  = evolver_info.parameter_range_x;
-			resume_e_info.parameter_range_y  = evolver_info.parameter_range_y;
-			resume_e_info.opx          = evolver_info.opx;
-			resume_e_info.opy          = evolver_info.opy;
-			resume_e_info.odpx         = evolver_info.odpx;
-			resume_e_info.odpy         = evolver_info.odpy;
-			resume_e_info.px           = evolver_info.px;
-			resume_e_info.py           = evolver_info.py;
-			resume_e_info.sxoffs       = evolver_info.sxoffs;
-			resume_e_info.syoffs       = evolver_info.syoffs;
-			resume_e_info.x_dots        = evolver_info.x_dots;
-			resume_e_info.y_dots        = evolver_info.y_dots;
-			resume_e_info.gridsz       = evolver_info.gridsz;
-			resume_e_info.evolving     = evolver_info.evolving;
-			resume_e_info.this_generation_random_seed = evolver_info.this_generation_random_seed;
-			resume_e_info.fiddle_factor = evolver_info.fiddle_factor;
-			resume_e_info.ecount       = evolver_info.ecount;
-			memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
-		}
-		else
-		{
-			if (g_evolve_handle != NULL)  /* Image completed, release it. */
-			{
-				free(g_evolve_handle);
-				g_evolve_handle = NULL;
-			}
-			g_calculation_status = CALCSTAT_COMPLETED;
-		}
-		g_parameter_range_x  = evolver_info.parameter_range_x;
-		g_parameter_range_y  = evolver_info.parameter_range_y;
-		g_parameter_offset_x = g_new_parameter_offset_x = evolver_info.opx;
-		g_parameter_offset_y = g_new_parameter_offset_y = evolver_info.opy;
-		g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x = (char) evolver_info.odpx;
-		g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y = (char) evolver_info.odpy;
-		g_px           = evolver_info.px;
-		g_py           = evolver_info.py;
-		g_sx_offset       = evolver_info.sxoffs;
-		g_sy_offset       = evolver_info.syoffs;
-		g_x_dots        = evolver_info.x_dots;
-		g_y_dots        = evolver_info.y_dots;
-		g_grid_size       = evolver_info.gridsz;
-		g_this_generation_random_seed = evolver_info.this_generation_random_seed;
-		g_fiddle_factor   = evolver_info.fiddle_factor;
-		g_evolving = g_view_window = (int) evolver_info.evolving;
-		g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size - 1);
-		g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size - 1);
-		if (read_info.version > 14)
-		{
-			for (i = 0; i < NUMGENES; i++)
-			{
-				g_genes[i].mutate = (int) evolver_info.mutate[i];
-			}
-		}
-		else
-		{
-			for (i = 0; i < 6; i++)
-			{
-				g_genes[i].mutate = (int) evolver_info.mutate[i];
-			}
-			for (i = 6; i < 10; i++)
-			{
-				g_genes[i].mutate = 0;
-			}
-			for (i = 10; i < NUMGENES; i++)
-			{
-				g_genes[i].mutate = (int) evolver_info.mutate[i-4];
-			}
-		}
-		save_parameter_history();
-	}
-	else
-	{
-		g_evolving = EVOLVE_NONE;
-	}
-
-	if (orbits_info.got_data == 1)
-	{
-		g_orbit_x_min       = orbits_info.oxmin;
-		g_orbit_x_max       = orbits_info.oxmax;
-		g_orbit_y_min       = orbits_info.oymin;
-		g_orbit_y_max       = orbits_info.oymax;
-		g_orbit_x_3rd       = orbits_info.ox3rd;
-		g_orbit_y_3rd       = orbits_info.oy3rd;
-		g_keep_screen_coords = orbits_info.keep_scrn_coords;
-		g_orbit_draw_mode    = (int) orbits_info.drawmode;
-		if (g_keep_screen_coords)
-		{
-			g_set_orbit_corners = 1;
-		}
-	}
-
-	g_show_file = 0;                   /* trigger the file load */
 	return 0;
 }
 
-static int find_fractal_info(char *gif_file, struct fractal_info *info,
+int read_overlay()      /* read overlay/3D files, if reqr'd */
+{
+	g_show_file = 1;                /* for any abort exit, pretend done */
+	g_init_mode = -1;               /* no viewing mode set yet */
+	char oldfloatflag = g_user_float_flag;
+	g_loaded_3d = 0;
+	if (g_fast_restore)
+	{
+		g_view_window = 0;
+	}
+	if (has_extension(g_read_name) == NULL)
+	{
+		strcat(g_read_name, ".gif");
+	}
+
+	char msg[110];
+	fractal_info read_info;
+	struct ext_blk_resume_info resume_info_blk;
+	struct ext_blk_formula_info formula_info;
+	struct ext_blk_ranges_info ranges_info;
+	struct ext_blk_mp_info mp_info;
+	struct ext_blk_evolver_info evolver_info;
+	struct ext_blk_orbits_info orbits_info;
+	if (find_fractal_info(g_read_name, &read_info, &resume_info_blk, &formula_info,
+		&ranges_info, &mp_info, &evolver_info, &orbits_info))
+	{
+		/* didn't find a useable file */
+		sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_name);
+		stop_message(0, msg);
+		return -1;
+	}
+
+	g_max_iteration = read_info.iterationsold;
+	g_fractal_type = read_info.fractal_type;
+	if (g_fractal_type < 0 || g_fractal_type >= g_num_fractal_types)
+	{
+		sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_name);
+		g_fractal_type = 0;
+	}
+	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
+	g_escape_time_state.m_grid_fp.x_min() = read_info.x_min;
+	g_escape_time_state.m_grid_fp.x_max() = read_info.x_max;
+	g_escape_time_state.m_grid_fp.y_min() = read_info.y_min;
+	g_escape_time_state.m_grid_fp.y_max() = read_info.y_max;
+	g_parameters[0] = read_info.c_real;
+	g_parameters[1] = read_info.c_imag;
+	g_save_release = 1100; /* unless we find out better later on */
+
+	read_info_version_0(read_info);
+	read_info_version_1(read_info);
+	read_info_version_2(read_info);
+	read_info_version_3(read_info);
+	read_info_version_4(read_info);
+	read_info_version_5(read_info);
+	read_info_version_6(read_info);
+	read_info_version_7(read_info);
+	read_info_version_8(read_info);
+	read_info_pre_version_14(read_info);
+	read_info_pre_version_15(read_info);
+	read_info_pre_version_18(read_info);
+	read_info_pre_version_17_25(read_info);
+	read_info_version_9(read_info);
+	read_info_version_10(read_info);
+	read_info_version_11(read_info);
+	read_info_version_12(read_info);
+	read_info_version_13(read_info);
+	read_info_version_14();
+	read_info_version_15(read_info);
+	read_info_version_16(read_info);
+	backwards_v18();
+	backwards_v19();
+	backwards_v20();
+
+	if (fixup_3d_info(oldfloatflag, read_info, formula_info, resume_info_blk))
+	{
+		return -1;
+	}
+
+	got_resume_info(resume_info_blk);
+	got_formula_info(read_info, formula_info);
+	got_ranges_info(ranges_info);
+	got_multiple_precision_info(read_info, mp_info);
+	got_evolver_info(read_info, evolver_info);
+	got_orbits_info(orbits_info);
+
+	g_show_file = 0;                   /* trigger the file load */
+
+	return 0;
+}
+
+static int find_fractal_info(char *gif_file, fractal_info *info,
 	struct ext_blk_resume_info *resume_info_blk,
 	struct ext_blk_formula_info *formula_info,
 	struct ext_blk_ranges_info *ranges_info,
@@ -659,15 +787,15 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	evolver_info->got_data = 0; /* initialize to no data */
 	orbits_info->got_data = 0; /* initialize to no data */
 
-	fp = fopen(gif_file, "rb");
-	if (fp == NULL)
+	s_gif_file = fopen(gif_file, "rb");
+	if (s_gif_file == NULL)
 	{
 		return -1;
 	}
-	fread(gifstart, 13, 1, fp);
+	fread(gifstart, 13, 1, s_gif_file);
 	if (strncmp((char *)gifstart, "GIF", 3) != 0)  /* not GIF, maybe old .tga? */
 	{
-		fclose(fp);
+		fclose(s_gif_file);
 		return -1;
 	}
 
@@ -696,7 +824,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 		{
 			for (j = 0; j < 3; j++)
 			{
-				k = getc(fp);
+				k = getc(s_gif_file);
 				if (k < 0)
 				{
 					break;
@@ -739,10 +867,10 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 
 	memset(info, 0, FRACTAL_INFO_SIZE);
 	fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE + 254)/255;
-	fseek(fp, (long)(-1-fractinf_len), SEEK_END);
+	fseek(s_gif_file, (long)(-1-fractinf_len), SEEK_END);
 	/* TODO: revise this to read members one at a time so we get natural alignment
 		of fields within the FRACTAL_INFO structure for the platform */
-	fread(info, 1, FRACTAL_INFO_SIZE, fp);
+	fread(info, 1, FRACTAL_INFO_SIZE, s_gif_file);
 	if (strcmp(INFO_ID, info->info_id) == 0)
 	{
 #ifdef XFRACT
@@ -760,17 +888,17 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 		while (offset < fractinf_len + 513)  /* allow 512 garbage at eof */
 		{
 			offset += 100; /* go back 100 bytes at a time */
-			fseek(fp, (long) -offset, SEEK_END);
-			fread(tmpbuf, 1, 110, fp); /* read 10 extra for string compare */
+			fseek(s_gif_file, (long) -offset, SEEK_END);
+			fread(tmpbuf, 1, 110, s_gif_file); /* read 10 extra for string compare */
 			for (i = 0; i < 100; ++i)
 			{
 				if (!strcmp(INFO_ID, &tmpbuf[i]))  /* found header? */
 				{
 					strcpy(info->info_id, INFO_ID);
-					fseek(fp, (long)(hdr_offset = i-offset), SEEK_END);
+					fseek(s_gif_file, (long)(hdr_offset = i-offset), SEEK_END);
 					/* TODO: revise this to read members one at a time so we get natural alignment
 						of fields within the FRACTAL_INFO structure for the platform */
-					fread(info, 1, FRACTAL_INFO_SIZE, fp);
+					fread(info, 1, FRACTAL_INFO_SIZE, s_gif_file);
 #ifdef XFRACT
 					decode_fractal_info(info, 1);
 #endif
@@ -790,12 +918,12 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 			might be over 255 chars, and thus earlier load might be bad
 			find exact endpoint, so scan back to start of ext blks works
 			*/
-			fseek(fp, (long)(hdr_offset-15), SEEK_END);
+			fseek(s_gif_file, (long)(hdr_offset-15), SEEK_END);
 			scan_extend = 1;
 			while (scan_extend)
 			{
-				if (fgetc(fp) != '!' /* if not what we expect just give up */
-					|| fread(temp1, 1, 13, fp) != 13
+				if (fgetc(s_gif_file) != '!' /* if not what we expect just give up */
+					|| fread(temp1, 1, 13, s_gif_file) != 13
 					|| strncmp(&temp1[2], "fractint", 8))
 				{
 					break;
@@ -816,7 +944,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 #endif
 					scan_extend = 2;
 					/* now we know total extension len, back up to first g_block */
-					fseek(fp, 0L-info->tot_extend_len, SEEK_CUR);
+					fseek(s_gif_file, 0L-info->tot_extend_len, SEEK_CUR);
 					break;
 				case BLOCKTYPE_RESUME_INFO: /* resume info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
@@ -827,7 +955,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					}
 					else
 					{
-						fseek(fp, (long) -block_len, SEEK_CUR);
+						fseek(s_gif_file, (long) -block_len, SEEK_CUR);
 						load_ext_blk(resume_info_blk->resume_data, data_len);
 						resume_info_blk->length = data_len;
 						resume_info_blk->got_data = 1; /* got data */
@@ -836,7 +964,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 				case BLOCKTYPE_FORMULA_INFO: /* formula info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 					/* check data_len for backward compatibility */
-					fseek(fp, (long) -block_len, SEEK_CUR);
+					fseek(s_gif_file, (long) -block_len, SEEK_CUR);
 					load_ext_blk((char *)&fload_info, data_len);
 					strcpy(formula_info->form_name, fload_info.form_name);
 					formula_info->length = data_len;
@@ -867,7 +995,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					ranges_info->range_data = (int *)malloc((long)data_len);
 					if (ranges_info->range_data != NULL)
 					{
-						fseek(fp, (long) -block_len, SEEK_CUR);
+						fseek(s_gif_file, (long) -block_len, SEEK_CUR);
 						load_ext_blk((char *)ranges_info->range_data, data_len);
 						ranges_info->length = data_len/2;
 						ranges_info->got_data = 1; /* got data */
@@ -878,7 +1006,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					mp_info->apm_data = (char *)malloc((long)data_len);
 					if (mp_info->apm_data != NULL)
 					{
-						fseek(fp, (long) -block_len, SEEK_CUR);
+						fseek(s_gif_file, (long) -block_len, SEEK_CUR);
 						load_ext_blk(mp_info->apm_data, data_len);
 						mp_info->length = data_len;
 						mp_info->got_data = 1; /* got data */
@@ -886,7 +1014,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					break;
 				case BLOCKTYPE_EVOLVER_INFO: /* evolver params */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					fseek(fp, (long) -block_len, SEEK_CUR);
+					fseek(s_gif_file, (long) -block_len, SEEK_CUR);
 					load_ext_blk((char *)&eload_info, data_len);
 					/* XFRACT processing of doubles here */
 #ifdef XFRACT
@@ -895,31 +1023,31 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 					evolver_info->length = data_len;
 					evolver_info->got_data = 1; /* got data */
 
-					evolver_info->parameter_range_x     = eload_info.parameter_range_x;
-					evolver_info->parameter_range_y     = eload_info.parameter_range_y;
-					evolver_info->opx             = eload_info.opx;
-					evolver_info->opy             = eload_info.opy;
-					evolver_info->odpx            = (char)eload_info.odpx;
-					evolver_info->odpy            = (char)eload_info.odpy;
-					evolver_info->px              = eload_info.px;
-					evolver_info->py              = eload_info.py;
-					evolver_info->sxoffs          = eload_info.sxoffs;
-					evolver_info->syoffs          = eload_info.syoffs;
-					evolver_info->x_dots           = eload_info.x_dots;
-					evolver_info->y_dots           = eload_info.y_dots;
-					evolver_info->gridsz          = eload_info.gridsz;
-					evolver_info->evolving        = eload_info.evolving;
-					evolver_info->this_generation_random_seed  = eload_info.this_generation_random_seed;
-					evolver_info->fiddle_factor    = eload_info.fiddle_factor;
-					evolver_info->ecount          = eload_info.ecount;
+					evolver_info->parameter_range_x = eload_info.parameter_range_x;
+					evolver_info->parameter_range_y = eload_info.parameter_range_y;
+					evolver_info->opx = eload_info.opx;
+					evolver_info->opy = eload_info.opy;
+					evolver_info->odpx = (char)eload_info.odpx;
+					evolver_info->odpy = (char)eload_info.odpy;
+					evolver_info->px = eload_info.px;
+					evolver_info->py = eload_info.py;
+					evolver_info->sxoffs = eload_info.sxoffs;
+					evolver_info->syoffs = eload_info.syoffs;
+					evolver_info->x_dots = eload_info.x_dots;
+					evolver_info->y_dots = eload_info.y_dots;
+					evolver_info->gridsz = eload_info.gridsz;
+					evolver_info->evolving = eload_info.evolving;
+					evolver_info->this_generation_random_seed = eload_info.this_generation_random_seed;
+					evolver_info->fiddle_factor = eload_info.fiddle_factor;
+					evolver_info->ecount = eload_info.ecount;
 					for (i = 0; i < NUMGENES; i++)
 					{
-						evolver_info->mutate[i]    = eload_info.mutate[i];
+						evolver_info->mutate[i] = eload_info.mutate[i];
 					}
 					break;
 				case BLOCKTYPE_ORBITS_INFO: /* orbits parameters  */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					fseek(fp, (long) -block_len, SEEK_CUR);
+					fseek(s_gif_file, (long) -block_len, SEEK_CUR);
 					load_ext_blk((char *)&oload_info, data_len);
 					/* XFRACT processing of doubles here */
 #ifdef XFRACT
@@ -927,14 +1055,14 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 #endif
 					orbits_info->length = data_len;
 					orbits_info->got_data = 1; /* got data */
-					orbits_info->oxmin           = oload_info.oxmin;
-					orbits_info->oxmax           = oload_info.oxmax;
-					orbits_info->oymin           = oload_info.oymin;
-					orbits_info->oymax           = oload_info.oymax;
-					orbits_info->ox3rd           = oload_info.ox3rd;
-					orbits_info->oy3rd           = oload_info.oy3rd;
+					orbits_info->oxmin = oload_info.oxmin;
+					orbits_info->oxmax = oload_info.oxmax;
+					orbits_info->oymin = oload_info.oymin;
+					orbits_info->oymax = oload_info.oymax;
+					orbits_info->ox3rd = oload_info.ox3rd;
+					orbits_info->oy3rd = oload_info.oy3rd;
 					orbits_info->keep_scrn_coords = oload_info.keep_scrn_coords;
-					orbits_info->drawmode        = oload_info.drawmode;
+					orbits_info->drawmode = oload_info.drawmode;
 					break;
 				default:
 					skip_ext_blk(&block_len, &data_len);
@@ -942,7 +1070,7 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 			}
 		}
 
-		fclose(fp);
+		fclose(s_gif_file);
 		g_file_aspect_ratio = g_screen_aspect_ratio; /* if not >= v15, this is correct */
 		return 0;
 	}
@@ -970,24 +1098,24 @@ static int find_fractal_info(char *gif_file, struct fractal_info *info,
 	info->version = 0; /* this forces lots more init at calling end too */
 
 	/* zero means we won */
-	fclose(fp);
+	fclose(s_gif_file);
 	return 0;
 }
 
 static void load_ext_blk(char *loadptr, int loadlen)
 {
 	int len;
-	while ((len = fgetc(fp)) > 0)
+	while ((len = fgetc(s_gif_file)) > 0)
 	{
 		while (--len >= 0)
 		{
 			if (--loadlen >= 0)
 			{
-				*(loadptr++) = (char)fgetc(fp);
+				*(loadptr++) = (char)fgetc(s_gif_file);
 			}
 			else
 			{
-				fgetc(fp); /* discard excess characters */
+				fgetc(s_gif_file); /* discard excess characters */
 			}
 		}
 	}
@@ -998,9 +1126,9 @@ static void skip_ext_blk(int *block_len, int *data_len)
 	int len;
 	*data_len = 0;
 	*block_len = 1;
-	while ((len = fgetc(fp)) > 0)
+	while ((len = fgetc(s_gif_file)) > 0)
 	{
-		fseek(fp, (long)len, SEEK_CUR);
+		fseek(s_gif_file, (long)len, SEEK_CUR);
 		*data_len += len;
 		*block_len += len + 1;
 	}
@@ -1008,7 +1136,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 
 
 /* switch obsolete fractal types to new generalizations */
-static void translate_obsolete_fractal_types(struct fractal_info *info)
+static void translate_obsolete_fractal_types(const fractal_info *info)
 {
 	switch (g_fractal_type)
 	{
@@ -1210,13 +1338,14 @@ void backwards_v19()
 void backwards_v20()
 {
 	/* Fractype == FP type is not seen from PAR file ????? */
+	// TODO: g_bad_outside is a compatability flag with buggy old code,
+	// but the current code doesn't emulate the buggy behavior.
+	// See calmanfp.asm and calmanfp5.asm in the DOS code.
 	g_bad_outside = ((g_fractal_type == FRACTYPE_MANDELBROT_FP || g_fractal_type == FRACTYPE_JULIA_FP
 						|| g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)
-					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960)
-		? 1 : 0;
+					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960);
 	g_use_old_complex_power = ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
-				&& (g_save_release < 1900 || DEBUGFLAG_OLD_POWER == g_debug_flag))
-		? 1 : 0;
+				&& (g_save_release < 1900 || DEBUGFLAG_OLD_POWER == g_debug_flag));
 	if (g_inside == EPSCROSS && g_save_release < 1961)
 	{
 		g_proximity = 0.01;
@@ -1307,11 +1436,11 @@ struct window  /* for look_get_window on screen browser */
 /* prototypes */
 static void drawindow(int, struct window *);
 static char is_visible_window
-				(struct window *, struct fractal_info *, struct ext_blk_mp_info *);
+				(struct window *, fractal_info *, struct ext_blk_mp_info *);
 static void transform(struct dblcoords *);
-static char paramsOK(struct fractal_info *);
-static char typeOK(struct fractal_info *, struct ext_blk_formula_info *);
-static char functionOK(struct fractal_info *, int);
+static char paramsOK(fractal_info *);
+static char typeOK(fractal_info *, struct ext_blk_formula_info *);
+static char functionOK(fractal_info *, int);
 static void check_history(char *, char *);
 static void bfsetup_convert_to_screen();
 static void bftransform(bf_t, bf_t, struct dblcoords *);
@@ -1332,7 +1461,7 @@ int oldbf_math;
 int look_get_window()
 {
 	struct affine stack_cvt;
-	struct fractal_info read_info;
+	fractal_info read_info;
 	struct ext_blk_resume_info resume_info_blk;
 	struct ext_blk_formula_info formula_info;
 	struct ext_blk_ranges_info ranges_info;
@@ -1795,7 +1924,7 @@ static void transform(struct dblcoords *point)
 	point->x = tmp_pt_x;
 }
 
-static char is_visible_window(struct window *list, struct fractal_info *info,
+static char is_visible_window(struct window *list, fractal_info *info,
 	struct ext_blk_mp_info *mp_info)
 {
 	struct dblcoords tl, tr, bl, br;
@@ -1818,12 +1947,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 
 	saved = save_stack();
 	/* Save original values. */
-	orig_bflength      = bflength;
-	orig_bnlength      = bnlength;
-	orig_padding       = padding;
-	orig_rlength       = rlength;
-	orig_shiftfactor   = shiftfactor;
-	orig_rbflength     = rbflength;
+	orig_bflength = bflength;
+	orig_bnlength = bnlength;
+	orig_padding = padding;
+	orig_rlength = rlength;
+	orig_shiftfactor = shiftfactor;
+	orig_rbflength = rbflength;
 
 	two_len = bflength + 2;
 	bt_x = alloc_stack(two_len);
@@ -1844,12 +1973,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 		two_di_len = di_bflength + 2;
 		two_rbf = rbflength + 2;
 
-		n_a     = alloc_stack(two_rbf);
-		n_b     = alloc_stack(two_rbf);
-		n_c     = alloc_stack(two_rbf);
-		n_d     = alloc_stack(two_rbf);
-		n_e     = alloc_stack(two_rbf);
-		n_f     = alloc_stack(two_rbf);
+		n_a = alloc_stack(two_rbf);
+		n_b = alloc_stack(two_rbf);
+		n_c = alloc_stack(two_rbf);
+		n_d = alloc_stack(two_rbf);
+		n_e = alloc_stack(two_rbf);
+		n_f = alloc_stack(two_rbf);
 
 		convert_bf(n_a, bt_a, rbflength, orig_rbflength);
 		convert_bf(n_b, bt_b, rbflength, orig_rbflength);
@@ -1858,12 +1987,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 		convert_bf(n_e, bt_e, rbflength, orig_rbflength);
 		convert_bf(n_f, bt_f, rbflength, orig_rbflength);
 
-		bt_t1   = alloc_stack(two_di_len);
-		bt_t2   = alloc_stack(two_di_len);
-		bt_t3   = alloc_stack(two_di_len);
-		bt_t4   = alloc_stack(two_di_len);
-		bt_t5   = alloc_stack(two_di_len);
-		bt_t6   = alloc_stack(two_di_len);
+		bt_t1 = alloc_stack(two_di_len);
+		bt_t2 = alloc_stack(two_di_len);
+		bt_t3 = alloc_stack(two_di_len);
+		bt_t4 = alloc_stack(two_di_len);
+		bt_t5 = alloc_stack(two_di_len);
+		bt_t6 = alloc_stack(two_di_len);
 
 		memcpy((char *)bt_t1, mp_info->apm_data, (two_di_len));
 		memcpy((char *)bt_t2, mp_info->apm_data + two_di_len, (two_di_len));
@@ -1987,12 +2116,12 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	/* or too big... */
 
 	/* restore original values */
-	bflength      = orig_bflength;
-	bnlength      = orig_bnlength;
-	padding       = orig_padding;
-	rlength       = orig_rlength;
-	shiftfactor   = orig_shiftfactor;
-	rbflength     = orig_rbflength;
+	bflength = orig_bflength;
+	bnlength = orig_bnlength;
+	padding = orig_padding;
+	rlength = orig_rlength;
+	shiftfactor = orig_shiftfactor;
+	rbflength = orig_rbflength;
 
 	restore_stack(saved);
 	if (cant_see) /* do it this way so bignum stack is released */
@@ -2021,7 +2150,7 @@ static char is_visible_window(struct window *list, struct fractal_info *info,
 	return (cornercount >= 1) ? TRUE : FALSE;
 }
 
-static char paramsOK(struct fractal_info *info)
+static char paramsOK(fractal_info *info)
 {
 	double tmpparm3, tmpparm4;
 	double tmpparm5, tmpparm6;
@@ -2075,7 +2204,7 @@ static char paramsOK(struct fractal_info *info)
 		? 1 : 0;
 }
 
-static char functionOK(struct fractal_info *info, int numfn)
+static char functionOK(fractal_info *info, int numfn)
 {
 	int i, mzmatch;
 	mzmatch = 0;
@@ -2089,7 +2218,7 @@ static char functionOK(struct fractal_info *info, int numfn)
 	return (mzmatch > 0) ? 0 : 1;
 }
 
-static char typeOK(struct fractal_info *info, struct ext_blk_formula_info *formula_info)
+static char typeOK(fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	int numfn;
 	if ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP) &&
@@ -2149,8 +2278,8 @@ static void bfsetup_convert_to_screen()
 	bt_inter1 = alloc_stack(rbflength + 2);
 	bt_inter2 = alloc_stack(rbflength + 2);
 	bt_det = alloc_stack(rbflength + 2);
-	bt_xd  = alloc_stack(rbflength + 2);
-	bt_yd  = alloc_stack(rbflength + 2);
+	bt_xd = alloc_stack(rbflength + 2);
+	bt_yd = alloc_stack(rbflength + 2);
 	bt_tmp1 = alloc_stack(rbflength + 2);
 	bt_tmp2 = alloc_stack(rbflength + 2);
 
@@ -2175,11 +2304,11 @@ static void bfsetup_convert_to_screen()
 	floattobf(bt_tmp1, g_dx_size);
 	div_bf(bt_xd, bt_tmp1, bt_det);
 
-	/* a =  xd*(ymax-y3rd) */
+	/* a = xd*(ymax-y3rd) */
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	mult_bf(bt_a, bt_xd, bt_inter1);
 
-	/* b =  xd*(x3rd-xmin) */
+	/* b = xd*(x3rd-xmin) */
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	mult_bf(bt_b, bt_xd, bt_inter1);
 
@@ -2209,11 +2338,11 @@ static void bfsetup_convert_to_screen()
 	floattobf(bt_tmp2, g_dy_size);
 	div_bf(bt_yd, bt_tmp2, bt_det);
 
-	/* c =  yd*(ymin-y3rd) */
+	/* c = yd*(ymin-y3rd) */
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 	mult_bf(bt_c, bt_yd, bt_inter1);
 
-	/* d =  yd*(x3rd-xmax) */
+	/* d = yd*(x3rd-xmax) */
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_max());
 	mult_bf(bt_d, bt_yd, bt_inter1);
 
