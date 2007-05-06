@@ -9,6 +9,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "externs.h"
+#include "MathUtil.h"
 
 extern int get_a_key();
 extern int keypressed();
@@ -252,7 +253,7 @@ over_bailout_87:
 		}
 		else if (g_outside == ATAN)
 		{
-			g_color_iter = (long)fabs(atan2(g_new_z.y,g_new_z.x)*g_atan_colors/PI);
+			g_color_iter = (long)fabs(atan2(g_new_z.y,g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
 		/* check_color */
 		if (((g_color_iter <= 0) || (g_color_iter > g_max_iteration))
