@@ -3267,7 +3267,7 @@ static double _fastcall dx_pixel_grid()
 /* Real component, calculation version - does not require arrays */
 static double _fastcall dx_pixel_calc()
 {
-	return (double) (g_escape_time_state.m_grid_fp.x_min() + g_col*g_delta_x_fp + g_row*g_delta_x2_fp);
+	return (double) (g_escape_time_state.m_grid_fp.x_min() + g_col*g_escape_time_state.m_grid_fp.delta_x() + g_row*g_escape_time_state.m_grid_fp.delta_x2());
 }
 
 /* Imaginary component, grid lookup version - requires g_y0/g_y1 arrays */
@@ -3279,7 +3279,7 @@ static double _fastcall dy_pixel_grid()
 /* Imaginary component, calculation version - does not require arrays */
 static double _fastcall dy_pixel_calc()
 {
-	return (double)(g_escape_time_state.m_grid_fp.y_max() - g_row*g_delta_y_fp - g_col*g_delta_y2_fp);
+	return (double)(g_escape_time_state.m_grid_fp.y_max() - g_row*g_escape_time_state.m_grid_fp.delta_y() - g_col*g_escape_time_state.m_grid_fp.delta_y2());
 }
 
 /* Real component, grid lookup version - requires g_x0_l/g_x1_l arrays */
@@ -3291,7 +3291,7 @@ static long _fastcall lx_pixel_grid()
 /* Real component, calculation version - does not require arrays */
 static long _fastcall lx_pixel_calc()
 {
-	return g_escape_time_state.m_grid_l.x_min() + g_col*g_delta_x + g_row*g_delta_x2;
+	return g_escape_time_state.m_grid_l.x_min() + g_col*g_escape_time_state.m_grid_l.delta_x() + g_row*g_escape_time_state.m_grid_l.delta_x2();
 }
 
 /* Imaginary component, grid lookup version - requires g_y0_l/g_y1_l arrays */
@@ -3303,7 +3303,7 @@ static long _fastcall ly_pixel_grid()
 /* Imaginary component, calculation version - does not require arrays */
 static long _fastcall ly_pixel_calc()
 {
-	return g_escape_time_state.m_grid_l.y_max() - g_row*g_delta_y - g_col*g_delta_y2;
+	return g_escape_time_state.m_grid_l.y_max() - g_row*g_escape_time_state.m_grid_l.delta_y() - g_col*g_escape_time_state.m_grid_l.delta_y2();
 }
 
 void set_pixel_calc_functions()

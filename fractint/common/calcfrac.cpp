@@ -196,13 +196,16 @@ static char s_diffusion_lb[] =
 	6, 6,14
 };
 
-static double s_dem_delta, s_dem_width;     /* distance estimator variables */
+static double s_dem_delta;
+static double s_dem_width;     /* distance estimator variables */
 static double s_dem_too_big;
 static int s_dem_mandelbrot;
 /* static vars for solid_guess & its subroutines */
-static int s_max_block, s_half_block;
+static int s_max_block;
+static int s_half_block;
 static int s_guess_plot;                   /* paint 1st pass row at a time?   */
-static int s_right_guess, s_bottom_guess;
+static int s_right_guess;
+static int s_bottom_guess;
 static _CMPLX s_saved_z;
 static double s_rq_limit_save;
 static int s_pixel_pi; /* value of pi in pixels */
@@ -228,14 +231,13 @@ static int s_show_dot_width = 0;
 */
 static double fmod_test()
 {
-	double result;
 	if (g_inside == FMODI && g_save_release <= 2000) /* for backwards compatibility */
 	{
-		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
+		return (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
 			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
-		return result;
 	}
 
+	double result;
 	switch (g_bail_out_test)
 	{
 	case Mod:
@@ -250,9 +252,8 @@ static double fmod_test()
 		break;
 	case Or:
 		{
-			double tmpx, tmpy;
-			tmpx = sqr(g_new_z.x);
-			tmpy = sqr(g_new_z.y);
+			double tmpx = sqr(g_new_z.x);
+			double tmpy = sqr(g_new_z.y);
 			result = (tmpx > tmpy) ? tmpx : tmpy;
 		}
 		break;
@@ -280,17 +281,17 @@ static double fmod_test()
 */
 static void sym_fill_line(int row, int left, int right, BYTE *str)
 {
-	int i, j, k, length;
-	length = right-left + 1;
 	put_line(row, left, right, str);
+
 	/* here's where all the symmetry goes */
+	int length = right-left + 1;
 	if (g_plot_color == g_put_color)
 	{
 		g_input_counter -= length >> 4; /* seems like a reasonable value */
 	}
 	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
-		i = g_yy_stop-(row-g_yy_start);
+		int i = g_yy_stop - (row - g_yy_start);
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
@@ -304,9 +305,9 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == symplot2J)  /* Origin symmetry */
 	{
-		i = g_yy_stop-(row-g_yy_start);
-		j = min(g_xx_stop-(right-g_xx_start), g_x_dots-1);
-		k = min(g_xx_stop-(left -g_xx_start), g_x_dots-1);
+		int i = g_yy_stop-(row-g_yy_start);
+		int j = min(g_xx_stop-(right-g_xx_start), g_x_dots-1);
+		int k = min(g_xx_stop-(left -g_xx_start), g_x_dots-1);
 		if (i > g_y_stop && i < g_y_dots && j <= k)
 		{
 			put_line(i, j, k, str);
@@ -315,9 +316,9 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == symplot4) /* X-axis and Y-axis symmetry */
 	{
-		i = g_yy_stop-(row-g_yy_start);
-		j = min(g_xx_stop-(right-g_xx_start), g_x_dots-1);
-		k = min(g_xx_stop-(left -g_xx_start), g_x_dots-1);
+		int i = g_yy_stop-(row-g_yy_start);
+		int j = min(g_xx_stop-(right-g_xx_start), g_x_dots-1);
+		int k = min(g_xx_stop-(left -g_xx_start), g_x_dots-1);
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
@@ -349,16 +350,15 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 */
 static void sym_put_line(int row, int left, int right, BYTE *str)
 {
-	int length, i;
-	length = right-left + 1;
 	put_line(row, left, right, str);
+	int length = right-left + 1;
 	if (g_plot_color == g_put_color)
 	{
 		g_input_counter -= length >> 4; /* seems like a reasonable value */
 	}
 	else if (g_plot_color == symplot2) /* X-axis symmetry */
 	{
-		i = g_yy_stop-(row-g_yy_start);
+		int i = g_yy_stop-(row-g_yy_start);
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
@@ -377,8 +377,6 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 
 static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, int direction, int action)
 {
-	int ct;
-	ct = 0;
 	if (direction != JUST_A_POINT)
 	{
 		if (s_save_dots == NULL)
@@ -392,6 +390,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 			exit(0);
 		}
 	}
+	int ct = 0;
 	switch (direction)
 	{
 	case LOWER_RIGHT:
@@ -463,11 +462,12 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 
 static int calculate_type_show_dot()
 {
-	int out, startx, starty, stopx, stopy, direction, width;
-	direction = JUST_A_POINT;
-	startx = stopx = g_col;
-	starty = stopy = g_row;
-	width = s_show_dot_width + 1;
+	int width = s_show_dot_width + 1;
+	int startx = g_col;
+	int stopx = g_col;
+	int starty = g_row;
+	int stopy = g_row;
+	int direction = JUST_A_POINT;
 	if (width > 0)
 	{
 		if (g_col + width <= g_x_stop && g_row + width <= g_y_stop)
@@ -510,7 +510,7 @@ static int calculate_type_show_dot()
 	{
 		sleep_ms(g_orbit_delay);
 	}
-	out = (*g_calculate_type_temp)();
+	int out = (*g_calculate_type_temp)();
 	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_RESTORE);
 	return out;
 }
@@ -527,7 +527,8 @@ int calculate_fractal()
 	if (g_is_true_color && g_true_mode)
 	{
 		/* Have to force passes = 1 */
-		g_user_standard_calculation_mode = g_standard_calculation_mode = '1';
+		g_user_standard_calculation_mode = '1';
+		g_standard_calculation_mode = '1';
 	}
 	if (g_true_color)
 	{
@@ -535,7 +536,8 @@ int calculate_fractal()
 		if (start_disk1(g_light_name, NULL, 0) == 0)
 		{
 			/* Have to force passes = 1 */
-			g_user_standard_calculation_mode = g_standard_calculation_mode = '1';
+			g_user_standard_calculation_mode = '1';
+			g_standard_calculation_mode = '1';
 			g_put_color = put_truecolor_disk;
 		}
 		else
@@ -547,7 +549,8 @@ int calculate_fractal()
 	{
 		if (g_user_standard_calculation_mode != 'o')
 		{
-			g_user_standard_calculation_mode = g_standard_calculation_mode = '1';
+			g_user_standard_calculation_mode = '1';
+			g_standard_calculation_mode = '1';
 		}
 	}
 
@@ -583,25 +586,28 @@ int calculate_fractal()
 		{
 			g_next_saved_incr = 4; /* maintains image with low iterations */
 		}
-		g_first_saved_and = (long)((g_next_saved_incr*2) + 1);
+		g_first_saved_and = (long) (g_next_saved_incr*2 + 1);
 	}
 
 	g_log_table = NULL;
 	g_max_log_table_size = g_max_iteration;
 	g_log_calculation = 0;
+
 	/* below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint. */
 	/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
-	if (g_log_palette_flag && (((g_max_iteration > 32767) && (g_save_release > 1920))
-		|| g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC))
+	if (g_log_palette_flag
+		&& (((g_max_iteration > 32767) && true) || g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC))
 	{
-		g_log_calculation = 1; /* calculate on the fly */
-		SetupLogTable();
-	}
-	else if (g_log_palette_flag && (((g_max_iteration > 32767) && (g_save_release <= 1920))
-		|| g_log_dynamic_calculate == LOGDYNAMIC_TABLE))
-	{
-		g_max_log_table_size = 32767;
-		g_log_calculation = 0; /* use logtable */
+		if (g_save_release > 1920)
+		{
+			g_log_calculation = 1; /* calculate on the fly */
+			SetupLogTable();
+		}
+		else
+		{
+			g_max_log_table_size = 32767;
+			g_log_calculation = 0; /* use logtable */
+		}
 	}
 	else if (g_ranges_length && (g_max_iteration >= 32767))
 	{
@@ -610,7 +616,7 @@ int calculate_fractal()
 
 	if ((g_log_palette_flag || g_ranges_length) && !g_log_calculation)
 	{
-		g_log_table = (BYTE *)malloc((long)g_max_log_table_size + 1);
+		g_log_table = (BYTE *) malloc(g_max_log_table_size + 1);
 
 		if (g_log_table == NULL)
 		{
@@ -628,29 +634,31 @@ int calculate_fractal()
 		}
 		else if (g_ranges_length)  /* Can't do ranges if g_max_log_table_size > 32767 */
 		{
-			int i, k, l, m, numval, flip, altern;
-			i = k = l = 0;
+			int i = 0;
+			int k = 0;
+			int l = 0;
 			g_log_palette_flag = LOGPALETTE_NONE; /* ranges overrides logmap */
 			while (i < g_ranges_length)
 			{
-				m = flip = 0;
-				altern = 32767;
-				numval = g_ranges[i++];
+				int m = 0;
+				int flip = 0;
+				int altern = 32767;
+				int numval = g_ranges[i++];
 				if (numval < 0)
 				{
 					altern = g_ranges[i++];    /* sub-range iterations */
 					numval = g_ranges[i++];
 				}
-				if (numval > (int)g_max_log_table_size || i >= g_ranges_length)
+				if ((numval > (int) g_max_log_table_size) || (i >= g_ranges_length))
 				{
-					numval = (int)g_max_log_table_size;
+					numval = (int) g_max_log_table_size;
 				}
 				while (l <= numval)
 				{
-					g_log_table[l++] = (BYTE)(k + flip);
+					g_log_table[l++] = (BYTE) (k + flip);
 					if (++m >= altern)
 					{
-						flip ^= 1;            /* Alternate g_colors */
+						flip ^= 1;            /* Alternate colors */
 						m = 0;
 					}
 				}
@@ -700,7 +708,8 @@ int calculate_fractal()
 			g_f_x_center = g_inversion[1];
 			if (fabs(g_f_x_center) < fabs(g_escape_time_state.m_grid_fp.width())/100)
 			{
-				g_inversion[1] = g_f_x_center = 0.0;
+				g_f_x_center = 0.0;
+				g_inversion[1] = 0.0;
 			}
 		}
 
@@ -711,7 +720,8 @@ int calculate_fractal()
 			g_f_y_center = g_inversion[2];
 			if (fabs(g_f_y_center) < fabs(g_escape_time_state.m_grid_fp.height())/100)
 			{
-				g_inversion[2] = g_f_y_center = 0.0;
+				g_f_y_center = 0.0;
+				g_inversion[2] = 0.0;
 			}
 		}
 
@@ -723,19 +733,19 @@ int calculate_fractal()
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (g_integer_fractal)          /* for integer routines (lambda) */
 	{
-		g_parameter_l.x = (long)(g_parameter.x*g_fudge);    /* real portion of Lambda */
-		g_parameter_l.y = (long)(g_parameter.y*g_fudge);    /* imaginary portion of Lambda */
-		g_parameter2_l.x = (long)(g_parameter2.x*g_fudge);  /* real portion of Lambda2 */
-		g_parameter2_l.y = (long)(g_parameter2.y*g_fudge);  /* imaginary portion of Lambda2 */
-		g_limit_l = (long)(g_rq_limit*g_fudge);      /* stop if magnitude exceeds this */
+		g_parameter_l.x = (long) (g_parameter.x*g_fudge);    /* real portion of Lambda */
+		g_parameter_l.y = (long) (g_parameter.y*g_fudge);    /* imaginary portion of Lambda */
+		g_parameter2_l.x = (long) (g_parameter2.x*g_fudge);  /* real portion of Lambda2 */
+		g_parameter2_l.y = (long) (g_parameter2.y*g_fudge);  /* imaginary portion of Lambda2 */
+		g_limit_l = (long) (g_rq_limit*g_fudge);      /* stop if magnitude exceeds this */
 		if (g_limit_l <= 0)
 		{
 			g_limit_l = 0x7fffffffL; /* klooge for integer math */
 		}
-		g_limit2_l = (long)(g_rq_limit2*g_fudge);    /* stop if magnitude exceeds this */
-		g_close_enough_l = (long)(g_close_enough*g_fudge); /* "close enough" value */
-		g_init_orbit_l.x = (long)(g_initial_orbit_z.x*g_fudge);
-		g_init_orbit_l.y = (long)(g_initial_orbit_z.y*g_fudge);
+		g_limit2_l = (long) (g_rq_limit2*g_fudge);    /* stop if magnitude exceeds this */
+		g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
+		g_init_orbit_l.x = (long) (g_initial_orbit_z.x*g_fudge);
+		g_init_orbit_l.y = (long) (g_initial_orbit_z.y*g_fudge);
 	}
 	g_resuming = (g_calculation_status == CALCSTAT_RESUMABLE);
 	if (!g_resuming) /* free resume_info memory if any is hanging around */
@@ -756,20 +766,30 @@ int calculate_fractal()
 		&& g_current_fractal_specific->calculate_type != lyapunov
 		&& g_current_fractal_specific->calculate_type != froth_calc)
 	{
-		g_calculate_type = g_current_fractal_specific->calculate_type; /* per_image can override */
-		g_symmetry = g_current_fractal_specific->symmetry; /*   calculate_type & symmetry  */
-		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
-		s_iy_start = s_ix_start = g_yy_start = g_xx_start = g_yy_begin = g_xx_begin = 0;
-		g_y_stop = g_yy_stop = g_y_dots -1;
-		g_x_stop = g_xx_stop = g_x_dots -1;
-		g_calculation_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
-		g_distance_test = 0; /* only standard escape time engine supports distest */
-		/* per_image routine is run here */
+		/* per_image can override calculate_type & symmetry */
+		g_calculate_type = g_current_fractal_specific->calculate_type; 
+		g_symmetry = g_current_fractal_specific->symmetry;
+		/* defaults when setsymmetry not called or does nothing */
+		g_plot_color = g_put_color;
+		s_iy_start = 0;
+		s_ix_start = 0;
+		g_yy_start = 0;
+		g_xx_start = 0;
+		g_yy_begin = 0;
+		g_xx_begin = 0;
+		g_y_stop = g_y_dots - 1;
+		g_yy_stop = g_y_dots - 1;
+		g_x_stop = g_x_dots - 1;
+		g_xx_stop = g_x_dots - 1;
+		g_calculation_status = CALCSTAT_IN_PROGRESS;
+		/* only standard escape time engine supports distest */
+		g_distance_test = 0;
 		if (g_current_fractal_specific->per_image())
-		{ /* not a stand-alone */
+		{
+			/* not a stand-alone */
 			/* next two lines in case periodicity changed */
 			g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
-			g_close_enough_l = (long)(g_close_enough*g_fudge); /* "close enough" value */
+			g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
 			setsymmetry(g_symmetry, 0);
 			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
 		}
@@ -860,17 +880,17 @@ int find_alternate_math(int type, int math)
 
 static void perform_work_list()
 {
-	int (*sv_orbitcalc)() = NULL;  /* function that calculates one orbit */
-	int (*sv_per_pixel)() = NULL;  /* once-per-pixel init */
-	int (*sv_per_image)() = NULL;  /* once-per-image setup */
+	int (*save_orbit_calc)() = NULL;  /* function that calculates one orbit */
+	int (*save_per_pixel)() = NULL;  /* once-per-pixel init */
+	int (*save_per_image)() = NULL;  /* once-per-image setup */
 	int alt;
 
 	alt = find_alternate_math(g_fractal_type, g_bf_math);
 	if (alt > -1)
 	{
-		sv_orbitcalc = g_current_fractal_specific->orbitcalc;
-		sv_per_pixel = g_current_fractal_specific->per_pixel;
-		sv_per_image = g_current_fractal_specific->per_image;
+		save_orbit_calc = g_current_fractal_specific->orbitcalc;
+		save_per_pixel = g_current_fractal_specific->per_pixel;
+		save_per_image = g_current_fractal_specific->per_image;
 		g_current_fractal_specific->orbitcalc = g_alternate_math[alt].orbitcalc;
 		g_current_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
 		g_current_fractal_specific->per_image = g_alternate_math[alt].per_image;
@@ -909,11 +929,14 @@ static void perform_work_list()
 
 	/* default setup a new g_work_list */
 	g_num_work_list = 1;
-	g_work_list[0].xx_start = g_work_list[0].xx_begin = 0;
-	g_work_list[0].yy_start = g_work_list[0].yy_begin = 0;
+	g_work_list[0].xx_begin = 0;
+	g_work_list[0].xx_start = 0;
+	g_work_list[0].yy_start = 0;
+	g_work_list[0].yy_begin = 0;
 	g_work_list[0].xx_stop = g_x_dots - 1;
 	g_work_list[0].yy_stop = g_y_dots - 1;
-	g_work_list[0].pass = g_work_list[0].sym = 0;
+	g_work_list[0].pass = 0;
+	g_work_list[0].sym = 0;
 	if (g_resuming) /* restore g_work_list, if we can't the above will stay in place */
 	{
 		int vsn;
@@ -967,7 +990,7 @@ static void perform_work_list()
 			|| g_fractal_type == FRACTYPE_FORMULA_FP) ?
 				TRUE : FALSE;
 
-		s_dem_delta = sqr(g_delta_x_fp) + sqr(delta_y2_fp);
+		s_dem_delta = sqr(g_escape_time_state.m_grid_fp.delta_x()) + sqr(delta_y2_fp);
 		ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
 		if (ftemp > s_dem_delta)
 		{
@@ -999,11 +1022,15 @@ static void perform_work_list()
 		g_plot_color = g_put_color; /* defaults when setsymmetry not called or does nothing */
 
 		/* pull top entry off g_work_list */
-		s_ix_start = g_xx_start = g_work_list[0].xx_start;
-		g_x_stop  = g_xx_stop  = g_work_list[0].xx_stop;
+		g_xx_start = g_work_list[0].xx_start;
+		g_xx_stop = g_work_list[0].xx_stop;
+		s_ix_start = g_xx_start;
+		g_x_stop  = g_xx_stop;
 		g_xx_begin  = g_work_list[0].xx_begin;
-		s_iy_start = g_yy_start = g_work_list[0].yy_start;
-		g_y_stop  = g_yy_stop  = g_work_list[0].yy_stop;
+		g_yy_start = g_work_list[0].yy_start;
+		g_yy_stop = g_work_list[0].yy_stop;
+		s_iy_start = g_yy_start;
+		g_y_stop  = g_yy_stop;
 		g_yy_begin  = g_work_list[0].yy_begin;
 		s_work_pass = g_work_list[0].pass;
 		s_work_sym  = g_work_list[0].sym;
@@ -1173,11 +1200,11 @@ static void perform_work_list()
 	{
 		g_calculation_status = CALCSTAT_COMPLETED; /* completed */
 	}
-	if (sv_orbitcalc != NULL)
+	if (save_orbit_calc != NULL)
 	{
-		g_current_fractal_specific->orbitcalc = sv_orbitcalc;
-		g_current_fractal_specific->per_pixel = sv_per_pixel;
-		g_current_fractal_specific->per_image = sv_per_image;
+		g_current_fractal_specific->orbitcalc = save_orbit_calc;
+		g_current_fractal_specific->per_pixel = save_per_pixel;
+		g_current_fractal_specific->per_image = save_per_image;
 	}
 }
 
@@ -1906,7 +1933,9 @@ int calculate_mandelbrot_fp()
 		}
 		if ((g_log_table || g_log_calculation) /* map color, but not if maxit & adjusted for inside, etc */
 				&& (g_real_color_iter < g_max_iteration || (g_inside < 0 && g_color_iter == g_max_iteration)))
+		{
 			g_color_iter = logtablecalc(g_color_iter);
+		}
 		g_color = abs((int)g_color_iter);
 		if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
 		{
@@ -2115,7 +2144,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 
 	if (g_inside <= BOF60 && g_inside >= BOF61)
 	{
-		g_magnitude = g_magnitude_l = 0;
+		g_magnitude = 0;
+		g_magnitude_l = 0;
 		min_orbit = 100000.0;
 	}
 	g_overflow = 0;                /* reset integer math overflow flag */
@@ -3580,10 +3610,13 @@ static int solid_guess()
 	/* there seems to be a bug in solid guessing at bottom and side */
 	if (g_debug_flag != DEBUGFLAG_SOLID_GUESS_BR)
 	{
-		s_bottom_guess = s_right_guess = FALSE;  /* TIW march 1995 */
+		s_bottom_guess = FALSE;
+		s_right_guess = FALSE;  /* TIW march 1995 */
 	}
 
-	i = s_max_block = blocksize = solid_guess_block_size();
+	blocksize = solid_guess_block_size();
+	i = blocksize;
+	s_max_block = blocksize;
 	g_total_passes = 1;
 	while ((i >>= 1) > 1)
 	{
@@ -3593,9 +3626,9 @@ static int solid_guess()
 	/* ensure window top and left are on required boundary, treat window
 			as larger than it really is if necessary (this is the reason symplot
 			routines must check for > g_x_dots/g_y_dots before plotting sym points) */
-	s_ix_start &= -1 - (s_max_block-1);
+	s_ix_start &= -1 - (s_max_block - 1);
 	s_iy_start = g_yy_begin;
-	s_iy_start &= -1 - (s_max_block-1);
+	s_iy_start &= -1 - (s_max_block - 1);
 
 	g_got_status = GOT_STATUS_GUESSING;
 
@@ -3768,27 +3801,49 @@ static int solid_guess()
 
 static int _fastcall guess_row(int firstpass, int y, int blocksize)
 {
-	int j, color;
-	int xplushalf, xplusblock;
-	int ylessblock, ylesshalf, yplushalf, yplusblock;
-	int     c21, c31, c41;         /* cxy is the color of pixel at (x, y) */
-	int c12, c22, c32, c42;         /* where c22 is the topleft corner of */
-	int c13, c23, c33;             /* the g_block being handled in current */
-	int     c24,    c44;         /* iteration                          */
-	int guessed23, guessed32, guessed33, guessed12, guessed13;
-	int prev11, fix21, fix31;
-	unsigned int *pfxptr, pfxmask;
+	int j;
+	int color;
+	int xplushalf;
+	int xplusblock;
+	int ylessblock;
+	int ylesshalf;
+	int yplushalf;
+	int yplusblock;
+	int c21;
+	int c31;
+	int c41;         /* cxy is the color of pixel at (x, y) */
+	int c12;
+	int c22;
+	int c32;
+	int c42;         /* where c22 is the topleft corner of */
+	int c13;
+	int c23;
+	int c33;             /* the g_block being handled in current */
+	int c24;
+	int c44;         /* iteration                          */
+	int guessed23;
+	int guessed32;
+	int guessed33;
+	int guessed12;
+	int guessed13;
+	int prev11;
+	int fix21;
+	int fix31;
+	unsigned int *pfxptr;
+	unsigned int pfxmask;
 
-	c44 = c41 = c42 = 0;  /* just for warning */
+	c44 = 0;
+	c41 = 0;
+	c42 = 0;  /* just for warning */
 
-	s_half_block = blocksize >> 1;
+	s_half_block = blocksize/2;
 	{
 		int i = y/s_max_block;
-		pfxptr = (unsigned int *)&s_t_prefix[firstpass][(i >> 4) + 1][s_ix_start/s_max_block];
+		pfxptr = (unsigned int *) &s_t_prefix[firstpass][(i >> 4) + 1][s_ix_start/s_max_block];
 		pfxmask = 1 << (i & 15);
 	}
-	ylesshalf = y-s_half_block;
-	ylessblock = y-blocksize; /* constants, for speed */
+	ylesshalf = y - s_half_block;
+	ylessblock = y - blocksize; /* constants, for speed */
 	yplushalf = y + s_half_block;
 	yplusblock = y + blocksize;
 	prev11 = -1;

@@ -1,6 +1,8 @@
 #if !defined(ESCAPE_TIME_H)
 #define ESCAPE_TIME_H
 
+#include <cassert>
+
 template <typename T>
 class SampleGrid
 {
@@ -33,11 +35,11 @@ public:
 	{
 		m_width = 0;
 		m_height = 0;
-		if (m_x0)
-		{
-			delete[] m_x0;
-			m_x0 = NULL;
-		}
+		delete[] m_x0;
+		delete[] m_y0;
+		delete[] m_x1;
+		delete[] m_y1;
+		m_x0 = NULL;
 		m_x1 = NULL;
 		m_y0 = NULL;
 		m_y1 = NULL;
@@ -48,14 +50,24 @@ public:
 		free_grid_pointers();
 		m_width = width;
 		m_height = height;
-		m_x0 = new T[2*width + 2*height];
-		m_y0 = &m_x0[width];
-		m_x1 = &m_y0[height];
-		m_y1 = &m_x1[width];
+		m_x0 = new T[width];
+		m_y1 = new T[width];
+		m_x1 = new T[height];
+		m_y0 = new T[height];
 	}
 
-	T x_pixel_grid(int col, int row) const { return m_x0[col] + m_x1[row]; }
-	T y_pixel_grid(int col, int row) const { return m_y0[row] + m_y1[col]; }
+	T x_pixel_grid(int col, int row) const
+	{
+		assert(col < m_width);
+		assert(row < m_height);
+		return m_x0[col] + m_x1[row];
+	}
+	T y_pixel_grid(int col, int row) const
+	{
+		assert(col < m_width);
+		assert(row < m_height);
+		return m_y0[row] + m_y1[col];
+	}
 
 	void fill()
 	{

@@ -46,7 +46,7 @@ void show_corners_dbl(char *s)
 		"delxx= %.20Lf delta_y_fp= %.20Lf\n"
 		"g_delta_x2= %.20Lf g_delta_y2= %.20Lf",
 		s, g_escape_time_state.m_grid_fp.x_min(), g_escape_time_state.m_grid_fp.x_max(), g_escape_time_state.m_grid_fp.y_min(), g_escape_time_state.m_grid_fp.y_max(), g_escape_time_state.m_grid_fp.x_3rd(), g_escape_time_state.m_grid_fp.y_3rd(),
-		delxx, delta_y_fp, g_delta_x2_fp, g_delta_y2_fp);
+		delxx, delta_y_fp, g_escape_time_state.m_grid_fp.delta_x2(), g_escape_time_state.m_grid_fp.delta_y2());
 	if (stop_message(0, msg) == -1)
 	{
 		goodbye();
