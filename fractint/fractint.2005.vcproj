@@ -318,7 +318,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\common\RayTraceState.cpp"
+					RelativePath=".\common\ThreeDimensionalState.cpp"
 					>
 				</File>
 			</Filter>
@@ -974,6 +974,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\MathUtil.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\mpmath_c.cpp"
 					>
 				</File>
@@ -1107,6 +1111,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\MathUtil.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\mpmath.h"
 				>
 			</File>
@@ -1123,11 +1131,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\RayTraceState.h"
+				RelativePath=".\headers\SoundState.h"
 				>
 			</File>
 			<File
-				RelativePath=".\headers\SoundState.h"
+				RelativePath=".\headers\ThreeDimensionalState.h"
 				>
 			</File>
 			<File
@@ -1147,7 +1155,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Compiling help files"
-						CommandLine="$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy fractint.hlp $(ProjectDir)&#x0D;&#x0A;"
+						CommandLine="cd dos_help&#x0D;&#x0A;$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy fractint.hlp $(ProjectDir)&#x0D;&#x0A;"
 						AdditionalDependencies="dos_help\help2.src;dos_help\help3.src;dos_help\help4.src;dos_help\help5.src"
 						Outputs="headers\helpdefs.h;fractint.hlp;"
 					/>

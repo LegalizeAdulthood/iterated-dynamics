@@ -24,7 +24,7 @@ int  driver_get_key();
 
 int test_start()     /* this routine is called just before the fractal starts */
 {
-	return  0 ;
+	return  0;
 }
 
 void test_end()       /* this routine is called just after the fractal ends */

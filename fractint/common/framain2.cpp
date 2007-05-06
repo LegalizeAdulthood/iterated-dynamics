@@ -521,7 +521,7 @@ resumeloop:                             /* return here on failed overlays */
 				driver_set_mouse_mode((g_z_width == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX);
 				if (g_calculation_status == CALCSTAT_RESUMABLE && g_z_width == 0 && !driver_key_pressed())
 				{
-					kbdchar = FIK_ENTER ;  /* no visible reason to stop, continue */
+					kbdchar = FIK_ENTER;  /* no visible reason to stop, continue */
 				}
 				else      /* wait for a real keystroke */
 				{

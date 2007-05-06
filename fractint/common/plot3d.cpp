@@ -9,7 +9,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
-#include "RayTraceState.h"
+#include "ThreeDimensionalState.h"
 
 /* Use these palette indices for red/blue - same on ega/vga */
 #define PAL_BLUE    1
@@ -19,16 +19,9 @@
 int g_which_image;
 int g_xx_adjust1;
 int g_yy_adjust1;
-int g_eye_separation = 0;
-int g_glasses_type = STEREO_NONE;
+//int g_glasses_type = STEREO_NONE;
 int g_x_shift1;
 int g_y_shift1;
-int g_red_crop_left   = 4;
-int g_red_crop_right  = 0;
-int g_blue_crop_left  = 0;
-int g_blue_crop_right = 4;
-int g_red_bright      = 80;
-int g_blue_bright     = 100;
 
 static int s_red_local_left;
 static int s_red_local_right;
@@ -273,7 +266,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 			g_put_color(x, y, color|(tmp&240));
 			if (g_targa_output)
 			{
-				if (!(g_raytrace_state.fill_type() > FillType::Bars))
+				if (!(g_3d_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color|(tmp&240));
 				}
@@ -293,7 +286,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 			g_put_color(x, y, color|(tmp&15));
 			if (g_targa_output)
 			{
-				if (!(g_raytrace_state.fill_type() > FillType::Bars))
+				if (!(g_3d_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color|(tmp&15));
 				}
@@ -334,7 +327,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 			g_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
-				if (!(g_raytrace_state.fill_type() > FillType::Bars))
+				if (!(g_3d_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color|tmp);
 				}
@@ -353,7 +346,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 			g_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
-				if (!(g_raytrace_state.fill_type() > FillType::Bars))
+				if (!(g_3d_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color|tmp);
 				}
@@ -384,7 +377,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 			g_put_color(x, y, color >> 1);
 			if (g_targa_output)
 			{
-				if (!(g_raytrace_state.fill_type() > FillType::Bars))
+				if (!(g_3d_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, color >> 1);
 				}
@@ -402,7 +395,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 			g_put_color(x, y, (color >> 1) + (g_colors >> 1));
 			if (g_targa_output)
 			{
-				if (!(g_raytrace_state.fill_type() > FillType::Bars))
+				if (!(g_3d_state.fill_type() > FillType::Bars))
 				{
 					targa_color(x, y, (color >> 1) + (g_colors >> 1));
 				}
@@ -464,7 +457,7 @@ void plot_setup()
 	double d_blue_bright = 0;
 
 	/* set funny glasses plot function */
-	switch (g_glasses_type)
+	switch (g_3d_state.glasses_type())
 	{
 	case STEREO_ALTERNATE:
 		g_standard_plot = plot_3d_alternate;
@@ -484,10 +477,10 @@ void plot_setup()
 	case STEREO_PAIR: /* crosseyed mode */
 		if (g_screen_width < 2*g_x_dots)
 		{
-			g_standard_plot = (g_raytrace_state.x_rot() == 0 && g_raytrace_state.y_rot() == 0) ? /* use hidden surface kludge */
+			g_standard_plot = (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0) ? /* use hidden surface kludge */
 				plot3dcrosseyedA : plot3dcrosseyedB;
 		}
-		else if (g_raytrace_state.x_rot() == 0 && g_raytrace_state.y_rot() == 0)
+		else if (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0)
 		{
 			g_standard_plot = plot3dcrosseyedC; /* use hidden surface kludge */
 		}
@@ -503,35 +496,35 @@ void plot_setup()
 	}
 	assert(g_standard_plot);
 
-	g_x_shift1 = g_x_shift = (int) ((g_raytrace_state.x_shift()*(double) g_x_dots)/100);
-	g_y_shift1 = g_y_shift = (int) ((g_raytrace_state.y_shift()*(double) g_y_dots)/100);
+	g_x_shift1 = g_x_shift = (int) ((g_3d_state.x_shift()*(double) g_x_dots)/100);
+	g_y_shift1 = g_y_shift = (int) ((g_3d_state.y_shift()*(double) g_y_dots)/100);
 
-	if (g_glasses_type)
+	if (g_3d_state.glasses_type())
 	{
-		s_red_local_left  =   (int) ((g_red_crop_left*(double) g_x_dots)/100.0);
-		s_red_local_right =   (int) (((100 - g_red_crop_right)*(double) g_x_dots)/100.0);
-		s_blue_local_left =   (int) ((g_blue_crop_left*(double) g_x_dots)/100.0);
-		s_blue_local_right =  (int) (((100 - g_blue_crop_right)*(double) g_x_dots)/100.0);
-		d_red_bright    =   (double) g_red_bright/100.0;
-		d_blue_bright   =   (double) g_blue_bright/100.0;
+		s_red_local_left  =   (int) ((g_3d_state.red().crop_left()*(double) g_x_dots)/100.0);
+		s_red_local_right =   (int) (((100 - g_3d_state.red().crop_right())*(double) g_x_dots)/100.0);
+		s_blue_local_left =   (int) ((g_3d_state.blue().crop_left()*(double) g_x_dots)/100.0);
+		s_blue_local_right =  (int) (((100 - g_3d_state.blue().crop_right())*(double) g_x_dots)/100.0);
+		d_red_bright    =   (double) g_3d_state.red().bright()/100.0;
+		d_blue_bright   =   (double) g_3d_state.blue().bright()/100.0;
 
 		switch (g_which_image)
 		{
 		case WHICHIMAGE_RED:
-			g_x_shift  += (int) ((g_eye_separation*(double) g_x_dots)/200);
-			g_xx_adjust = (int) (((g_raytrace_state.x_trans() + g_x_adjust)*(double) g_x_dots)/100);
-			g_x_shift1 -= (int) ((g_eye_separation*(double) g_x_dots)/200);
-			g_xx_adjust1 = (int) (((g_raytrace_state.x_trans() - g_x_adjust)*(double) g_x_dots)/100);
-			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
+			g_x_shift  += (int) ((g_3d_state.eye_separation()*(double) g_x_dots)/200);
+			g_xx_adjust = (int) (((g_3d_state.x_trans() + g_3d_state.x_adjust())*(double) g_x_dots)/100);
+			g_x_shift1 -= (int) ((g_3d_state.eye_separation()*(double) g_x_dots)/200);
+			g_xx_adjust1 = (int) (((g_3d_state.x_trans() - g_3d_state.x_adjust())*(double) g_x_dots)/100);
+			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2 - g_x_dots;
 			}
 			break;
 
 		case WHICHIMAGE_BLUE:
-			g_x_shift  -= (int) ((g_eye_separation* (double)g_x_dots)/200);
-			g_xx_adjust = (int) (((g_raytrace_state.x_trans() - g_x_adjust)* (double)g_x_dots)/100);
-			if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
+			g_x_shift  -= (int) ((g_3d_state.eye_separation()* (double)g_x_dots)/200);
+			g_xx_adjust = (int) (((g_3d_state.x_trans() - g_3d_state.x_adjust())* (double)g_x_dots)/100);
+			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2;
 			}
@@ -540,16 +533,16 @@ void plot_setup()
 	}
 	else
 	{
-		g_xx_adjust = (int) ((g_raytrace_state.x_trans()*(double) g_x_dots)/100);
+		g_xx_adjust = (int) ((g_3d_state.x_trans()*(double) g_x_dots)/100);
 	}
-	g_yy_adjust = (int) (-(g_raytrace_state.y_trans()*(double) g_y_dots)/100);
+	g_yy_adjust = (int) (-(g_3d_state.y_trans()*(double) g_y_dots)/100);
 
 	if (g_map_set)
 	{
 		validate_luts(g_map_name); /* read the palette file */
-		if (g_glasses_type == STEREO_ALTERNATE || g_glasses_type == STEREO_SUPERIMPOSE)
+		if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 		{
-			if (g_glasses_type == STEREO_SUPERIMPOSE && g_colors < 256)
+			if (g_3d_state.glasses_type() == STEREO_SUPERIMPOSE && g_colors < 256)
 			{
 				g_dac_box[PAL_RED  ][0] = COLOR_CHANNEL_MAX;
 				g_dac_box[PAL_RED  ][1] =  0;

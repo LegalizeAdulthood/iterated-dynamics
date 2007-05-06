@@ -13,6 +13,7 @@
 #include "fractype.h"
 #include "externs.h"
 #include "drivers.h"
+#include "MathUtil.h"
 
 #define FUDGE_FACTOR_BITS 29
 #define FUDGE_FACTOR ((1L << FUDGE_FACTOR_BITS)-1)
@@ -174,7 +175,7 @@ static long cdecl calculate_mandelbrot_asm1()
 				}
 				else if (g_outside == ATAN)
 				{
-					g_color_iter = (long) fabs(atan2((double) g_new_z_l.y, (double) g_new_z_l.x)*g_atan_colors/PI);
+					g_color_iter = (long) fabs(atan2((double) g_new_z_l.y, (double) g_new_z_l.x)*g_atan_colors/MathUtil::Pi);
 				}
 				/* check_color */
 				if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != FMOD)
@@ -245,7 +246,7 @@ static long cdecl calculate_mandelbrot_asm2()
 {
 	__asm
 	{
-		sub		eax, eax					; clear eax
+		sub		eax, eax; clear eax
 		mov		edx, eax					; clear edx
 		cmp		g_periodicity_check, eax		;	periodicity	checking disabled?
 		je		initoldcolor				;  yup,	set	oldcolor 0 to disable it

@@ -8,6 +8,7 @@
 #include "prototyp.h"
 #include "lsys.h"
 #include "drivers.h"
+#include "MathUtil.h"
 
 struct lsys_cmd
 {
@@ -587,8 +588,6 @@ static void lsysi_size_dm(struct lsys_turtle_state *cmd)
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 
-	/* xpos += size*aspect*cos(realangle*PI/180); */
-	/* ypos += size*sin(realangle*PI/180); */
 	if (cmd->xpos > cmd->x_max)
 	{
 		cmd->x_max = cmd->xpos;
@@ -646,8 +645,6 @@ static void lsysi_draw_d(struct lsys_turtle_state *cmd)
 	lasty = (int) (cmd->ypos >> 19);
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
-	/* xpos += size*aspect*cos(realangle*PI/180); */
-	/* ypos += size*sin(realangle*PI/180); */
 	driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
 }
 
@@ -661,8 +658,6 @@ static void lsysi_draw_m(struct lsys_turtle_state *cmd)
 	fixedsin = (long) (s*FIXEDLT1);
 	fixedcos = (long) (c*FIXEDLT1);
 
-	/* xpos += size*aspect*cos(realangle*PI/180); */
-	/* ypos += size*sin(realangle*PI/180); */
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 }
@@ -1092,7 +1087,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 static void _fastcall lsysi_sin_cos()
 {
 	double locaspect;
-	double TWOPI = 2.0*PI;
+	double TWOPI = 2.0*MathUtil::Pi;
 	double twopimax;
 	double twopimaxi;
 	double s, c;

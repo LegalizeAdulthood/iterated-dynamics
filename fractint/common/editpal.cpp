@@ -223,7 +223,7 @@ static void clip_put_line(int row, int start, int stop, BYTE *pixels)
 	{
 	if (row < 0 || row >= g_screen_height || start > g_screen_width || stop < 0)
 	{
-		return ;
+		return;
 	}
 
 	if (start < 0)
@@ -239,7 +239,7 @@ static void clip_put_line(int row, int start, int stop, BYTE *pixels)
 
 	if (start > stop)
 	{
-		return ;
+		return;
 	}
 
 	put_line(row, start, stop, pixels);
@@ -249,7 +249,7 @@ static void clip_get_line(int row, int start, int stop, BYTE *pixels)
 {
 	if (row < 0 || row >= g_screen_height || start > g_screen_width || stop < 0)
 	{
-		return ;
+		return;
 	}
 
 	if (start < 0)
@@ -265,7 +265,7 @@ static void clip_get_line(int row, int start, int stop, BYTE *pixels)
 
 	if (start > stop)
 	{
-		return ;
+		return;
 	}
 
 	get_line(row, start, stop, pixels);
@@ -275,7 +275,7 @@ static void clip_put_color(int x, int y, int color)
 {
 	if (x < 0 || y < 0 || x >= g_screen_width || y >= g_screen_height)
 	{
-		return ;
+		return;
 	}
 
 	g_put_color(x, y, color);
@@ -1492,7 +1492,7 @@ static void rgb_editor_blank_sample_box(rgb_editor *me)
 {
 	if (me->hidden)
 	{
-		return ;
+		return;
 	}
 
 	cursor_hide();
@@ -1507,7 +1507,7 @@ static void rgb_editor_update(rgb_editor *me)
 
 	if (me->hidden)
 	{
-		return ;
+		return;
 	}
 
 	cursor_hide();
@@ -1542,7 +1542,7 @@ static void rgb_editor_draw(rgb_editor *me)
 {
 	if (me->hidden)
 	{
-		return ;
+		return;
 	}
 
 	cursor_hide();
@@ -1725,7 +1725,7 @@ static void pal_table_save_undo_data(pal_table *me, int first, int last)
 
 	if (me->undo_file == NULL)
 	{
-		return ;
+		return;
 	}
 
 	num = (last - first) + 1;
@@ -1850,7 +1850,7 @@ static void pal_table_undo(pal_table *me)
 
 	if (ftell(me->undo_file) <= 0)   /* at beginning of file? */
 	{                                  /*   nothing to undo -- exit */
-		return ;
+		return;
 	}
 
 	fseek(me->undo_file, -(int)sizeof(int), SEEK_CUR);  /* go back to get size */
@@ -1871,7 +1871,7 @@ static void pal_table_redo(pal_table *me)
 {
 	if (me->num_redo <= 0)
 	{
-		return ;
+		return;
 	}
 
 #ifdef DEBUG_UNDO
@@ -1927,7 +1927,7 @@ static void pal_table_highlight_pal(pal_table *me, int pnum, int color)
 
 	if (me->hidden)
 	{
-		return ;
+		return;
 	}
 
 	cursor_hide();
@@ -1952,7 +1952,7 @@ static void pal_table_draw(pal_table *me)
 
 	if (me->hidden)
 	{
-		return ;
+		return;
 	}
 
 	cursor_hide();
@@ -2168,7 +2168,7 @@ static void pal_table_save_rect(pal_table *me)
 			{
 				me->stored_at = NOWHERE;
 				driver_buzzer(BUZZER_ERROR);
-				return ;
+				return;
 			}
 		}
 
@@ -2363,7 +2363,7 @@ static void pal_table_change(rgb_editor *rgb, VOIDPTR info)
 	{
 		me->fs_color = rgb_editor_get_rgb(rgb);
 		pal_table_update_dac(me);
-		return ;
+		return;
 	}
 
 	if (!me->curr_changed)
@@ -3158,7 +3158,7 @@ static pal_table *pal_table_new()
 	me->freestyle      = FALSE;
 	me->bandwidth      = 15;
 	me->top            = 255;
-	me->bottom         = 0 ;
+	me->bottom         = 0;
 
 	me->undo_file    = dir_fopen(g_temp_dir, s_undo_file, "w+b");
 	me->curr_changed = FALSE;
@@ -3277,7 +3277,7 @@ static void pal_table_process(pal_table *me)
 		if (!move_box_process(me->movebox))
 		{
 			set_pal_range(0, g_colors, me->pal);
-			return ;
+			return;
 		}
 
 		pal_table_set_position(me, move_box_x(me->movebox), move_box_y(me->movebox));

@@ -9,7 +9,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "EscapeTime.h"
-#include "RayTraceState.h"
+#include "ThreeDimensionalState.h"
 
 static HISTORY *s_history = NULL;		/* history storage */
 static int s_history_index = -1;			/* user pointer into history tbl  */
@@ -60,20 +60,20 @@ void _fastcall history_save_info()
 	current.decomposition		= (short) g_decomposition[0];
 	current.biomorph			= (short) g_biomorph;
 	current.symmetry			= (short) g_force_symmetry;
-	g_raytrace_state.history_save(&current.init_3d[0]);
-	current.previewfactor		= (short) g_preview_factor;
-	current.xtrans				= (short) g_raytrace_state.x_trans();
-	current.ytrans				= (short) g_raytrace_state.y_trans();
-	current.red_crop_left		= (short) g_red_crop_left;
-	current.red_crop_right		= (short) g_red_crop_right;
-	current.blue_crop_left		= (short) g_blue_crop_left;
-	current.blue_crop_right		= (short) g_blue_crop_right;
-	current.red_bright			= (short) g_red_bright;
-	current.blue_bright			= (short) g_blue_bright;
-	current.xadjust				= (short) g_x_adjust;
-	current.yadjust				= (short) g_y_adjust;
-	current.eyeseparation		= (short) g_eye_separation;
-	current.glassestype			= (short) g_glasses_type;
+	g_3d_state.get_raytrace_parameters(&current.init_3d[0]);
+	current.previewfactor		= (short) g_3d_state.preview_factor();
+	current.xtrans				= (short) g_3d_state.x_trans();
+	current.ytrans				= (short) g_3d_state.y_trans();
+	current.red_crop_left		= (short) g_3d_state.red().crop_left();
+	current.red_crop_right		= (short) g_3d_state.red().crop_right();
+	current.blue_crop_left		= (short) g_3d_state.blue().crop_left();
+	current.blue_crop_right		= (short) g_3d_state.blue().crop_right();
+	current.red_bright			= (short) g_3d_state.red().bright();
+	current.blue_bright			= (short) g_3d_state.blue().bright();
+	current.xadjust				= (short) g_3d_state.x_adjust();
+	current.yadjust				= (short) g_3d_state.y_adjust();
+	current.eyeseparation		= (short) g_3d_state.eye_separation();
+	current.glassestype			= (short) g_3d_state.glasses_type();
 	current.outside				= (short) g_outside;
 	current.x_3rd				= g_escape_time_state.m_grid_fp.x_3rd();
 	current.y_3rd				= g_escape_time_state.m_grid_fp.y_3rd();
@@ -94,11 +94,11 @@ void _fastcall history_save_info()
 	current.release				= (short) g_release;
 	current.save_release		= (short) g_save_release;
 	current.flag3d				= (short) g_display_3d;
-	current.ambient				= (short) g_raytrace_state.ambient();
-	current.randomize			= (short) g_raytrace_state.randomize_colors();
-	current.haze				= (short) g_raytrace_state.haze();
-	current.transparent[0]		= (short) g_transparent[0];
-	current.transparent[1]		= (short) g_transparent[1];
+	current.ambient				= (short) g_3d_state.ambient();
+	current.randomize			= (short) g_3d_state.randomize_colors();
+	current.haze				= (short) g_3d_state.haze();
+	current.transparent[0]		= (short) g_3d_state.transparent0();
+	current.transparent[1]		= (short) g_3d_state.transparent1();
 	current.rotate_lo			= (short) g_rotate_lo;
 	current.rotate_hi			= (short) g_rotate_hi;
 	current.distance_test_width	= (short) g_distance_test_width;
@@ -233,20 +233,20 @@ void _fastcall history_restore_info()
 	g_user_biomorph        	= last.biomorph;
 	g_biomorph            	= last.biomorph;
 	g_force_symmetry       	= last.symmetry;
-	g_raytrace_state.history_restore(&last.init_3d[0]);
-	g_preview_factor       	= last.previewfactor;
-	g_raytrace_state.set_x_trans(last.xtrans);
-	g_raytrace_state.set_y_trans(last.ytrans);
-	g_red_crop_left       	= last.red_crop_left;
-	g_red_crop_right      	= last.red_crop_right;
-	g_blue_crop_left      	= last.blue_crop_left;
-	g_blue_crop_right     	= last.blue_crop_right;
-	g_red_bright          	= last.red_bright;
-	g_blue_bright         	= last.blue_bright;
-	g_x_adjust             	= last.xadjust;
-	g_y_adjust             	= last.yadjust;
-	g_eye_separation    	= last.eyeseparation;
-	g_glasses_type      	= last.glassestype;
+	g_3d_state.set_raytrace_parameters(&last.init_3d[0]);
+	g_3d_state.set_preview_factor(last.previewfactor);
+	g_3d_state.set_x_trans(last.xtrans);
+	g_3d_state.set_y_trans(last.ytrans);
+	g_3d_state.set_red().set_crop_left(last.red_crop_left);
+	g_3d_state.set_red().set_crop_right(last.red_crop_right);
+	g_3d_state.set_blue().set_crop_left(last.blue_crop_left);
+	g_3d_state.set_blue().set_crop_right(last.blue_crop_right);
+	g_3d_state.set_red().set_bright(last.red_bright);
+	g_3d_state.set_blue().set_bright(last.blue_bright);
+	g_3d_state.set_x_adjust(last.xadjust);
+	g_3d_state.set_y_adjust(last.yadjust);
+	g_3d_state.set_eye_separation(last.eyeseparation);
+	g_3d_state.set_glasses_type(last.glassestype);
 	g_outside             	= last.outside;
 	g_escape_time_state.m_grid_fp.x_3rd()               	= last.x_3rd;
 	g_escape_time_state.m_grid_fp.y_3rd()               	= last.y_3rd;
@@ -270,11 +270,11 @@ void _fastcall history_restore_info()
 	g_release           	= last.release;
 	g_save_release        	= last.save_release;
 	g_display_3d           	= last.flag3d;
-	g_raytrace_state.set_ambient(last.ambient);
-	g_raytrace_state.set_randomize_colors(last.randomize);
-	g_raytrace_state.set_haze(last.haze);
-	g_transparent[0]      	= last.transparent[0];
-	g_transparent[1]      	= last.transparent[1];
+	g_3d_state.set_ambient(last.ambient);
+	g_3d_state.set_randomize_colors(last.randomize);
+	g_3d_state.set_haze(last.haze);
+	g_3d_state.set_transparent0(last.transparent[0]);
+	g_3d_state.set_transparent1(last.transparent[1]);
 	g_rotate_lo           	= last.rotate_lo;
 	g_rotate_hi           	= last.rotate_hi;
 	g_distance_test_width	= last.distance_test_width;

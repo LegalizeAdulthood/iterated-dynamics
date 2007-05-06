@@ -141,7 +141,7 @@ void restore_parameter_history()
 	g_inversion[0] = s_old_history.invert0;
 	g_inversion[1] = s_old_history.invert1;
 	g_inversion[2] = s_old_history.invert2;
-	g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
+	g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
 	g_trig_index[0] = s_old_history.trigndx0;
 	g_trig_index[1] = s_old_history.trigndx1;
 	g_trig_index[2] = s_old_history.trigndx2;
@@ -313,7 +313,7 @@ static void vary_invert(GENEBASE gene[], int randval, int i)
 	{
 		vary_double(gene, randval, i);
 	}
-	g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
+	g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
 }
 
 /* --------------------------------------------------------------------- */
@@ -693,7 +693,7 @@ get_evol_restart:
 	choices[++k]= "Press F2 to halve mutation levels";
 	uvalues[k].type = '*';
 
-	choices[++k]= "Press F3 to double mutation levels" ;
+	choices[++k]= "Press F3 to double mutation levels";
 	uvalues[k].type ='*';
 
 	choices[++k]= "Press F6 to control which parameters are varied";
@@ -857,7 +857,7 @@ void setup_parameter_box()
 	}
 	g_parameter_box_count = 0;
 
-	/* vidsize = (vidsize / g_grid_size) + 3 ; */ /* allocate less mem for smaller box */
+	/* vidsize = (vidsize / g_grid_size) + 3; */ /* allocate less mem for smaller box */
 	/* taken out above as *all* pixels get plotted in small boxes */
 	if (!s_image_box)
 	{

@@ -546,8 +546,8 @@ static int find_link_key(LINK *link, int num_link, int curr_link, int key)
 	link = NULL;   /* just for warning */
 	switch (key)
 	{
-	case FIK_TAB:      return (curr_link >= num_link-1) ? -1 : curr_link + 1 ;
-	case FIK_SHF_TAB: return (curr_link <= 0)          ? -1 : curr_link-1 ;
+	case FIK_TAB:      return (curr_link >= num_link-1) ? -1 : curr_link + 1;
+	case FIK_SHF_TAB: return (curr_link <= 0)          ? -1 : curr_link-1;
 	default:       assert(0);  return -1;
 	}
 }
@@ -1021,7 +1021,7 @@ static int _read_help_topic(int topic, int off, int len, VOIDPTR buf)
 		fread(buf, sizeof(char), read_len, s_help_file);
 	}
 
-	return curr_len - (off + len) ;
+	return curr_len - (off + len);
 }
 
 int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
@@ -1189,7 +1189,7 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
 	case PD_GET_LINK_PAGE:
 		pd->i = getint(pd->s + sizeof(long));
-		return (pd->i == -1) ? 0 : 1 ;
+		return (pd->i == -1) ? 0 : 1;
 
 	case PD_RELEASE_TOPIC:
 		return 1;
@@ -1228,7 +1228,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
 			info->margin = PAGE_INDENT;
 
-			return keep_going ;
+			return keep_going;
 		}
 
 	case PD_FOOTING:

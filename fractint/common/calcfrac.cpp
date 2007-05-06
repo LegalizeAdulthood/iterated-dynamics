@@ -27,6 +27,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
+#include "MathUtil.h"
 
 #define SHOWDOT_SAVE    1
 #define SHOWDOT_RESTORE 2
@@ -1683,7 +1684,6 @@ static int draw_function_orbits()
 	LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
 	double Xmagfactor, Rotation, Skew;
 	int angle;
-	double factor = PI / 180.0;
 	double theta;
 	double xfactor = g_x_dots / 2.0;
 	double yfactor = g_y_dots / 2.0;
@@ -1698,7 +1698,7 @@ static int draw_function_orbits()
 
 	while (angle < Rotation)
 	{
-		theta = (double)angle*factor;
+		theta = MathUtil::DegreesToRadians(angle);
 		g_col = (int) (xfactor + (Xctr + Xmagfactor*cos(theta)));
 		g_row = (int) (yfactor + (Yctr + Xmagfactor*sin(theta)));
 		if (plotorbits2dfloat() == -1)
@@ -2659,7 +2659,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_outside == ATAN)          /* "atan" */
 		{
-			g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+			g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
 		else if (g_outside == FMOD)
 		{
@@ -2816,11 +2816,11 @@ plot_inside: /* we're "inside" */
 			{
 				g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
 				g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
-				g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+				g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 			}
 			else
 			{
-				g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+				g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 			}
 		}
 		else if (g_inside == BOF60)
@@ -2913,18 +2913,18 @@ static void decomposition()
 	static double tan2_8125 = 0.04912684976946725; /* tan 2.8125 degrees */
 	static double tan1_4063 = 0.02454862210892544; /* tan 1.4063 degrees */
 	/* static long lcos45     ;*/ /* cos 45   degrees */
-	static long lsin45     ; /* sin 45     degrees */
-	static long lcos22_5   ; /* cos 22.5   degrees */
-	static long lsin22_5   ; /* sin 22.5   degrees */
-	static long lcos11_25  ; /* cos 11.25  degrees */
-	static long lsin11_25  ; /* sin 11.25  degrees */
-	static long lcos5_625  ; /* cos 5.625  degrees */
-	static long lsin5_625  ; /* sin 5.625  degrees */
-	static long ltan22_5   ; /* tan 22.5   degrees */
-	static long ltan11_25  ; /* tan 11.25  degrees */
-	static long ltan5_625  ; /* tan 5.625  degrees */
-	static long ltan2_8125 ; /* tan 2.8125 degrees */
-	static long ltan1_4063 ; /* tan 1.4063 degrees */
+	static long lsin45; /* sin 45     degrees */
+	static long lcos22_5; /* cos 22.5   degrees */
+	static long lsin22_5; /* sin 22.5   degrees */
+	static long lcos11_25; /* cos 11.25  degrees */
+	static long lsin11_25; /* sin 11.25  degrees */
+	static long lcos5_625; /* cos 5.625  degrees */
+	static long lsin5_625; /* sin 5.625  degrees */
+	static long ltan22_5; /* tan 22.5   degrees */
+	static long ltan11_25; /* tan 11.25  degrees */
+	static long ltan5_625; /* tan 5.625  degrees */
+	static long ltan2_8125; /* tan 2.8125 degrees */
+	static long ltan1_4063; /* tan 1.4063 degrees */
 	static long reset_fudge = -1;
 	int temp = 0;
 	int save_temp = 0;
@@ -4481,14 +4481,14 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	case PI_SYM:                      /* PI symmetry */
 		if (g_bf_math)
 		{
-			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()))) < PI/4)
+			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()))) < MathUtil::Pi/4)
 			{
 				break; /* no point in pi symmetry if values too close */
 			}
 		}
 		else
 		{
-			if (fabs(g_escape_time_state.m_grid_fp.width()) < PI/4)
+			if (fabs(g_escape_time_state.m_grid_fp.width()) < MathUtil::Pi/4)
 			{
 				break; /* no point in pi symmetry if values too close */
 			}
@@ -4514,11 +4514,11 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		{
 			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			abs_a_bf(bft1);
-			s_pixel_pi = (int) ((PI/(double)bftofloat(bft1)*g_x_dots)); /* PI in pixels */
+			s_pixel_pi = (int) ((MathUtil::Pi/(double)bftofloat(bft1)*g_x_dots)); /* PI in pixels */
 		}
 		else
 		{
-			s_pixel_pi = (int) ((PI/fabs(g_escape_time_state.m_grid_fp.width()))*g_x_dots); /* PI in pixels */
+			s_pixel_pi = (int) ((MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width()))*g_x_dots); /* PI in pixels */
 		}
 
 		g_x_stop = g_xx_start + s_pixel_pi-1;
@@ -5169,7 +5169,7 @@ void _fastcall symplot2basin(int x, int y, int color)
 		color -= stripe;                    /* reconstruct unstriped color */
 		color = (g_degree + 1-color) % g_degree + 1;  /* symmetrical color */
 		color += stripe;                    /* add stripe */
-		g_put_color(x, i, color) ;
+		g_put_color(x, i, color);
 	}
 }
 

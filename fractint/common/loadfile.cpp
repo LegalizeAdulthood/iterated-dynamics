@@ -15,7 +15,7 @@
 #include "drivers.h"
 #include "fihelp.h"
 #include "EscapeTime.h"
-#include "RayTraceState.h"
+#include "ThreeDimensionalState.h"
 
 #define BLOCKTYPE_MAIN_INFO		1
 #define BLOCKTYPE_RESUME_INFO	2
@@ -137,19 +137,19 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 			&& (read_info.version <= 4 || read_info.flag3d > 0
 				|| (g_current_fractal_specific->flags & FRACTALFLAG_3D_PARAMETERS)))
 		{
-			g_raytrace_state.set_init_3d(read_info.init_3d, 16);
-			g_preview_factor   = read_info.previewfactor;
-			g_raytrace_state.set_x_trans(read_info.xtrans);
-			g_raytrace_state.set_y_trans(read_info.ytrans);
-			g_red_crop_left   = read_info.red_crop_left;
-			g_red_crop_right  = read_info.red_crop_right;
-			g_blue_crop_left  = read_info.blue_crop_left;
-			g_blue_crop_right = read_info.blue_crop_right;
-			g_red_bright      = read_info.red_bright;
-			g_blue_bright     = read_info.blue_bright;
-			g_x_adjust         = read_info.xadjust;
-			g_eye_separation   = read_info.eyeseparation;
-			g_glasses_type     = read_info.glassestype;
+			g_3d_state.set_raytrace_parameters(&read_info.init_3d[0]);
+			g_3d_state.set_preview_factor(read_info.previewfactor);
+			g_3d_state.set_x_trans(read_info.xtrans);
+			g_3d_state.set_y_trans(read_info.ytrans);
+			g_3d_state.set_red().set_crop_left(read_info.red_crop_left);
+			g_3d_state.set_red().set_crop_right(read_info.red_crop_right);
+			g_3d_state.set_blue().set_crop_left(read_info.blue_crop_left);
+			g_3d_state.set_blue().set_crop_right(read_info.blue_crop_right);
+			g_3d_state.set_red().set_bright(read_info.red_bright);
+			g_3d_state.set_blue().set_bright(read_info.blue_bright);
+			g_3d_state.set_x_adjust(read_info.xadjust);
+			g_3d_state.set_eye_separation(read_info.eyeseparation);
+			g_3d_state.set_glasses_type(read_info.glassestype);
 		}
 	}
 
@@ -217,11 +217,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		if (!g_display_3d && read_info.flag3d > 0)
 		{
 			g_loaded_3d       = 1;
-			g_raytrace_state.set_ambient(read_info.ambient);
-			g_raytrace_state.set_randomize_colors(read_info.randomize);
-			g_raytrace_state.set_haze(read_info.haze);
-			g_transparent[0] = read_info.transparent[0];
-			g_transparent[1] = read_info.transparent[1];
+			g_3d_state.set_ambient(read_info.ambient);
+			g_3d_state.set_randomize_colors(read_info.randomize);
+			g_3d_state.set_haze(read_info.haze);
+			g_3d_state.set_transparent0(read_info.transparent[0]);
+			g_3d_state.set_transparent1(read_info.transparent[1]);
 		}
 	}
 
@@ -248,20 +248,20 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 
 	if (read_info.version > 8)
 	{
-		g_m_x_max_fp   =  read_info.mxmaxfp        ;
-		g_m_x_min_fp   =  read_info.mxminfp        ;
-		g_m_y_max_fp   =  read_info.mymaxfp        ;
-		g_m_y_min_fp   =  read_info.myminfp        ;
-		g_z_dots     =  read_info.zdots          ;
-		g_origin_fp  =  read_info.originfp       ;
-		g_depth_fp   =  read_info.depthfp        ;
-		g_height_fp  =  read_info.heightfp       ;
-		g_width_fp   =  read_info.widthfp        ;
-		g_screen_distance_fp    =  read_info.screen_distance_fp         ;
-		g_eyes_fp    =  read_info.eyesfp         ;
-		g_new_orbit_type = read_info.orbittype    ;
-		g_juli_3d_mode   = read_info.juli3Dmode   ;
-		g_max_fn    =   (char)read_info.max_fn          ;
+		g_m_x_max_fp   =  read_info.mxmaxfp;
+		g_m_x_min_fp   =  read_info.mxminfp;
+		g_m_y_max_fp   =  read_info.mymaxfp;
+		g_m_y_min_fp   =  read_info.myminfp;
+		g_z_dots     =  read_info.zdots;
+		g_origin_fp  =  read_info.originfp;
+		g_depth_fp   =  read_info.depthfp;
+		g_height_fp  =  read_info.heightfp;
+		g_width_fp   =  read_info.widthfp;
+		g_screen_distance_fp    =  read_info.screen_distance_fp;
+		g_eyes_fp    =  read_info.eyesfp;
+		g_new_orbit_type = read_info.orbittype;
+		g_juli_3d_mode   = read_info.juli3Dmode;
+		g_max_fn    =   (char)read_info.max_fn;
 		g_major_method = (enum Major) (read_info.inversejulia >> 8);
 		g_minor_method = (enum Minor) (read_info.inversejulia & 255);
 		g_parameters[4] = read_info.dparm5;

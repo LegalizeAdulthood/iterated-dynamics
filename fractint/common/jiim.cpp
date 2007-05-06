@@ -104,7 +104,7 @@ void _fastcall c_putcolor(int x, int y, int color)
 	/* avoid writing outside window */
 	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
 	{
-		return ;
+		return;
 	}
 	if (y >= g_screen_height - show_numbers) /* avoid overwriting coords */
 	{

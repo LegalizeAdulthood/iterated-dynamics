@@ -10,6 +10,7 @@
 #include "prototyp.h"
 #include "drivers.h"
 #include "EscapeTime.h"
+#include "MathUtil.h"
 
 #define PIXELROUND 0.00001
 
@@ -123,7 +124,7 @@ void zoom_box_draw(int drawit)
 		bffyskew  = alloc_stack(rbflength + 2);
 		bffxadj   = alloc_stack(rbflength + 2);
 	}
-	ftemp1 = PI*g_z_rotate/72; /* convert to radians */
+	ftemp1 = MathUtil::Pi*g_z_rotate/72; /* convert to radians */
 	rotcos = cos(ftemp1);   /* sin & cos of rotation */
 	rotsin = sin(ftemp1);
 
@@ -418,7 +419,7 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	bf_t bfnewx, bf_t bfnewy, bf_t bfplotmx1, bf_t bfplotmx2, bf_t bfplotmy1,
 	bf_t bfplotmy2, bf_t bfftemp)
 {
-	bf_t btmp1, btmp2, btmp3, btmp4, btempx, btempy ;
+	bf_t btmp1, btmp2, btmp3, btmp4, btempx, btempy;
 	bf_t btmp2a, btmp4a;
 	int saved = save_stack();
 
@@ -516,7 +517,7 @@ static void zoom_out_bf() /* for ctl-enter, calc corners for zooming out */
 	mult_bf(tmp5, tmp1, tmp2);
 	mult_bf(tmp6, tmp3, tmp4);
 	sub_bf(bfftemp, tmp5, tmp6);
-	/* g_plot_mx1 = (x3rd-xmin); */ ; /* reuse the plotxxx vars is safe */
+	/* g_plot_mx1 = (x3rd-xmin); */; /* reuse the plotxxx vars is safe */
 	copy_bf(bfplotmx1, tmp2);
 	/* g_plot_mx2 = (y3rd-ymax); */
 	copy_bf(bfplotmx2, tmp4);

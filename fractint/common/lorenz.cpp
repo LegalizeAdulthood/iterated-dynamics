@@ -13,7 +13,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
-#include "RayTraceState.h"
+#include "ThreeDimensionalState.h"
 
 /* orbitcalc is declared with no arguments so jump through hoops here */
 #define LORBIT(x, y, z) \
@@ -2183,19 +2183,19 @@ int funny_glasses_call(int (*calc)())
 {
 	int status;
 	status = 0;
-	g_which_image = g_glasses_type ? WHICHIMAGE_RED : WHICHIMAGE_NONE;
+	g_which_image = g_3d_state.glasses_type() ? WHICHIMAGE_RED : WHICHIMAGE_NONE;
 	plot_setup();
 	assert(g_standard_plot);
 	g_plot_color = g_standard_plot;
 	status = calc();
-	if (s_real_time && g_glasses_type < STEREO_PHOTO)
+	if (s_real_time && g_3d_state.glasses_type() < STEREO_PHOTO)
 	{
 		s_real_time = 0;
 		goto done;
 	}
-	if (g_glasses_type && status == 0 && g_display_3d)
+	if (g_3d_state.glasses_type() && status == 0 && g_display_3d)
 	{
-		if (g_glasses_type == STEREO_PHOTO)   /* photographer's mode */
+		if (g_3d_state.glasses_type() == STEREO_PHOTO)   /* photographer's mode */
 		{
 				int i;
 				stop_message(STOPMSG_INFO_ONLY,
@@ -2222,13 +2222,13 @@ int funny_glasses_call(int (*calc)())
 		{
 			goto done;
 		}
-		if (g_glasses_type == STEREO_PHOTO) /* photographer's mode */
+		if (g_3d_state.glasses_type() == STEREO_PHOTO) /* photographer's mode */
 		{
-				stop_message(STOPMSG_INFO_ONLY, "Second image (right eye) is ready");
+			stop_message(STOPMSG_INFO_ONLY, "Second image (right eye) is ready");
 		}
 	}
 done:
-	if (g_glasses_type == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
+	if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 	{
 		/* turn off view windows so will save properly */
 		g_sx_offset = g_sy_offset = 0;
@@ -2645,19 +2645,19 @@ static void setup_matrix(MATRIX doublemat)
 
 	/* apply rotations - uses the same rotation variables as line3d.c */
 	const double scale_factor = 57.29577;
-	xrot((double) g_raytrace_state.x_rot()/scale_factor, doublemat);
-	yrot((double) g_raytrace_state.y_rot()/scale_factor, doublemat);
-	zrot((double) g_raytrace_state.z_rot()/scale_factor, doublemat);
+	xrot((double) g_3d_state.x_rotation()/scale_factor, doublemat);
+	yrot((double) g_3d_state.y_rotation()/scale_factor, doublemat);
+	zrot((double) g_3d_state.z_rotation()/scale_factor, doublemat);
 
 	/* apply scale */
-/*   scale((double)g_raytrace_state.x_scale()/100.0, (double)g_raytrace_state.y_scale()/100.0, (double)ROUGH/100.0, doublemat); */
+/*   scale((double)g_3d_state.x_scale()/100.0, (double)g_3d_state.y_scale()/100.0, (double)ROUGH/100.0, doublemat); */
 
 }
 
 static int orbit_3d_aux(int (*orbit)())
 {
 	g_display_3d = DISPLAY3D_GENERATED;
-	s_real_time = (STEREO_NONE < g_glasses_type && g_glasses_type < STEREO_PHOTO) ? 1 : 0;
+	s_real_time = (STEREO_NONE < g_3d_state.glasses_type() && g_3d_state.glasses_type() < STEREO_PHOTO) ? 1 : 0;
 	return funny_glasses_call(orbit);
 }
 
@@ -2736,7 +2736,7 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 
 			/* z value of user's eye - should be more negative than extreme
 								negative part of image */
-			inf->iview[2] = (long) ((inf->minvals[2]-inf->maxvals[2])*(double)g_raytrace_state.z_viewer()/100.0);
+			inf->iview[2] = (long) ((inf->minvals[2]-inf->maxvals[2])*(double)g_3d_state.z_viewer()/100.0);
 
 			/* center image on origin */
 			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); /* center x */
@@ -2781,9 +2781,9 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 	}
 
 	/* apply perspective if requested */
-	if (g_raytrace_state.z_viewer())
+	if (g_3d_state.z_viewer())
 	{
-		if ((DEBUGFLAG_LORENZ_FLOAT == g_debug_flag) || (g_raytrace_state.z_viewer() < 100)) /* use float for small persp */
+		if ((DEBUGFLAG_LORENZ_FLOAT == g_debug_flag) || (g_3d_state.z_viewer() < 100)) /* use float for small persp */
 		{
 			/* use float perspective calc */
 			VECTOR tmpv;
@@ -2901,7 +2901,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 			g_view[0] = g_view[1] = 0; /* center on origin */
 			/* z value of user's eye - should be more negative than extreme
 									negative part of image */
-			g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)g_raytrace_state.z_viewer()/100.0;
+			g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)g_3d_state.z_viewer()/100.0;
 
 			/* center image on origin */
 			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
@@ -2929,7 +2929,7 @@ static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
 		}
 
 	/* apply perspective if requested */
-	if (g_raytrace_state.z_viewer())
+	if (g_3d_state.z_viewer())
 	{
 		perspective(inf->viewvect);
 		if (s_real_time)

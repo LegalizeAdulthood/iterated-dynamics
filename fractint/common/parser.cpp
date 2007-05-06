@@ -2513,7 +2513,7 @@ static int ParseStr(char *Str, int pass)
 		StkEQ  = dStkEQ;         /* MCP 11-3-91 */
 		StkNE  = dStkNE;         /* MCP 11-3-91 */
 		StkAND = dStkAND;        /* MCP 11-3-91 */
-		StkOR  = dStkOR ;        /* MCP 11-3-91 */
+		StkOR  = dStkOR;        /* MCP 11-3-91 */
 		StkSRand = dStkSRand;    /* MCP 11-21-91 */
 		StkASin = dStkASin;      /* TIW 11-25-94 */
 		StkASinh = dStkASinh;    /* TIW 11-25-94 */
@@ -2569,7 +2569,7 @@ static int ParseStr(char *Str, int pass)
 		StkEQ  = mStkEQ;         /* MCP 11-3-91 */
 		StkNE  = mStkNE;         /* MCP 11-3-91 */
 		StkAND = mStkAND;        /* MCP 11-3-91 */
-		StkOR  = mStkOR ;        /* MCP 11-3-91 */
+		StkOR  = mStkOR;        /* MCP 11-3-91 */
 		StkSRand = mStkSRand;    /* MCP 11-21-91 */
 		StkASin = mStkASin;      /* TIW 11-25-94 */
 		StkACos = mStkACos;      /* TIW 11-25-94 */
@@ -2625,7 +2625,7 @@ static int ParseStr(char *Str, int pass)
 		StkEQ  = lStkEQ;         /* MCP 11-3-91 */
 		StkNE  = lStkNE;         /* MCP 11-3-91 */
 		StkAND = lStkAND;        /* MCP 11-3-91 */
-		StkOR  = lStkOR ;        /* MCP 11-3-91 */
+		StkOR  = lStkOR;        /* MCP 11-3-91 */
 		StkSRand = lStkSRand;    /* MCP 11-21-91 */
 		StkASin = lStkASin;      /* TIW 11-25-94 */
 		StkACos = lStkACos;      /* TIW 11-25-94 */

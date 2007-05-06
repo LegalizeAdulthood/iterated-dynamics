@@ -27,7 +27,7 @@
  */
 #define FIXEDLT1        536870912.0
 
-#define ANGLE2DOUBLE    (2.0*PI / 4294967296.0)
+#define ANGLE2DOUBLE    (2.0*MathUtil::Pi/4294967296.0)
 
 #define MAXRULES 27 /* this limits rules to 25 */
 #define MAX_LSYS_LINE_LEN 255 /* this limits line length to 255 */

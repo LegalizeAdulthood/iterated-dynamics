@@ -53,6 +53,7 @@
 #include "fractype.h"
 #include "externs.h"
 #include "EscapeTime.h"
+#include "MathUtil.h"
 
 #define modulus(z)			(sqr((z).x) + sqr((z).y))
 #define conjugate(pz)		((pz)->y = - (pz)->y)
@@ -84,7 +85,7 @@ _CMPLX  *g_roots = g_static_roots;
 struct MPC *g_roots_mpc = NULL;
 _CMPLX g_power = { 0.0, 0.0};
 int g_bit_shift_minus_1 = 0;                  /* bit shift less 1 */
-double g_two_pi = PI*2.0;
+double g_two_pi = MathUtil::Pi*2.0;
 int g_c_exp = 0;
 /* These are local but I don't want to pass them as parameters */
 _CMPLX g_parameter = { 0, 0 };

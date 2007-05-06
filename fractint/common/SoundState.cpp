@@ -648,7 +648,7 @@ int SoundState::get_music_parameters()
 
 	choices[++k] = "Soundcard volume?  0..63";
 	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_fm_volume ;
+	uvalues[k].uval.ival = m_fm_volume;
 
 	choices[++k] = "Hi pitch attenuation";
 	uvalues[k].type = 'l';
