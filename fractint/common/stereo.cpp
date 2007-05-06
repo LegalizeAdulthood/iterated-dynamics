@@ -236,7 +236,6 @@ int auto_stereo()
 	}
 	s_max_cc = s_max_c - s_min_c + 1;
 	s_average = s_average_count = 0L;
-	int barwidth = 1 + g_x_dots / 200;
 	s_bar_height = 1 + g_y_dots / 20;
 	s_x_center = g_x_dots/2;
 	s_y_center = (g_calibrate > 1) ? s_bar_height/2 : g_y_dots/2;
@@ -278,49 +277,52 @@ int auto_stereo()
 		}
 	}
 
-	find_special_colors();
-	s_average /= 2*s_average_count;
-	int ct = 0;
-	int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
-	for (int i = s_x_center; i < s_x_center + barwidth; i++)
 	{
-		for (int j = s_y_center; j < s_y_center + s_bar_height; j++)
+		find_special_colors();
+		s_average /= 2*s_average_count;
+		int ct = 0;
+		int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
+		int barwidth = 1 + g_x_dots / 200;
+		for (int i = s_x_center; i < s_x_center + barwidth; i++)
 		{
-			colour[ct++] = getcolor(i + (int) s_average, j);
-			colour[ct++] = getcolor(i - (int) s_average, j);
-		}
-	}
-	bool bars = (g_calibrate != 0);
-	toggle_bars(bars, barwidth, colour);
-	int done = 0;
-	while (done == 0)
-	{
-		driver_wait_key_pressed(0);
-		int kbdchar = driver_get_key();
-		switch (kbdchar)
-		{
-		case FIK_ENTER:   /* toggle bars */
-		case FIK_SPACE:
-			toggle_bars(bars, barwidth, colour);
-			break;
-		case 'c':
-		case '+':
-		case '-':
-			rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
-			break;
-		case 's':
-		case 'S':
-			save_to_disk(g_save_name);
-			break;
-		default:
-			if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
+			for (int j = s_y_center; j < s_y_center + s_bar_height; j++)
 			{
-				kbdchar = 255;
+				colour[ct++] = getcolor(i + (int) s_average, j);
+				colour[ct++] = getcolor(i - (int) s_average, j);
 			}
-			driver_unget_key(kbdchar);
-			driver_buzzer(BUZZER_COMPLETE);
-			done = 1;
-			break;
+		}
+		bool bars = (g_calibrate != 0);
+		toggle_bars(bars, barwidth, colour);
+		int done = 0;
+		while (done == 0)
+		{
+			driver_wait_key_pressed(0);
+			int kbdchar = driver_get_key();
+			switch (kbdchar)
+			{
+			case FIK_ENTER:   /* toggle bars */
+			case FIK_SPACE:
+				toggle_bars(bars, barwidth, colour);
+				break;
+			case 'c':
+			case '+':
+			case '-':
+				rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
+				break;
+			case 's':
+			case 'S':
+				save_to_disk(g_save_name);
+				break;
+			default:
+				if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
+				{
+					kbdchar = 255;
+				}
+				driver_unget_key(kbdchar);
+				driver_buzzer(BUZZER_COMPLETE);
+				done = 1;
+				break;
+			}
 		}
 	}
 
