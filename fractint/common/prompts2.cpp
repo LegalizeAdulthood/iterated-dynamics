@@ -1325,7 +1325,6 @@ void goodbye()                  /* we done.  Bail out */
 		free(g_ifs_definition);
 		g_ifs_definition = NULL;
 	}
-	free_ant_storage();
 	disk_end();
 	ExitCheck();
 #ifdef WINFRACT
