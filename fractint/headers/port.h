@@ -119,7 +119,6 @@ extern long stackavail();
         typedef signed long    S32;
         typedef unsigned char  BYTE;
         typedef void          *VOIDPTR;
-        typedef const void    *VOIDCONSTPTR;
 
 #		define CONST          const
 #		define PRINTER        "PRT:"
@@ -184,7 +183,6 @@ extern long stackavail();
         typedef unsigned char  BYTE;
         typedef unsigned char  CHAR;
         typedef void          *VOIDPTR;
-        typedef const void    *VOIDCONSTPTR;
 
 #		define CONST          const
 #		define PRINTER        "/dev/prn"
@@ -214,7 +212,6 @@ extern long stackavail();
         typedef UBYTE          CHAR;
 
         typedef void          *VOIDPTR;
-        typedef const void    *VOIDCONSTPTR;
 
 #		define PRINTER        "PRT:"
 #		define LOBYTEFIRST    0
@@ -251,14 +248,11 @@ extern long stackavail();
 
 #		ifdef __SVR4
 		typedef void          *VOIDPTR;
-		typedef const void    *VOIDCONSTPTR;
 #		else
 #		 ifdef BADVOID
 		typedef char          *VOIDPTR;
-		typedef char          *VOIDCONSTPTR;
 #		 else
 		typedef void          *VOIDPTR;
-		typedef const void    *VOIDCONSTPTR;
 #		 endif
 #		endif
 
