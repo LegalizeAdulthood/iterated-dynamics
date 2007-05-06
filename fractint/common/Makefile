@@ -15,7 +15,6 @@ SRCS = \
     editpal.cpp \
     encoder.cpp \
     evolve.cpp \
-    f16.cpp \
     font8x8.cpp \
 	fracsuba.cpp \
     fracsubr.cpp \
