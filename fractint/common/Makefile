@@ -61,7 +61,8 @@ SRCS = \
     Newton.cpp \
 	SoundState.cpp \
 	EscapeTime.cpp \
-	RayTraceState.cpp
+	ThreeDimensionalState.cpp \
+	MathUtil.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
