@@ -858,7 +858,7 @@ awful_error:
 			}
 
 			if (FNPTR(cvtptrx-1) == fStkLodRealC
-				&& m_load[m_load_ptr-2]->d.x == _2_)
+				&& m_load[m_load_ptr-2]->d.x == 2.0)
 			{
 				/* -- Convert '2*a' into 'a + a'.                CAE 31OCT93  */
 				if (FNPTR(cvtptrx) == NO_FUNCTION)
@@ -944,7 +944,7 @@ awful_error:
 
 			/**********************  begin extension  ***  CAE 31OCT93  ****/
 			if (prevfptr == fStkLodRealC  /* use prevfptr here  */
-				&& m_load[m_load_ptr-1]->d.x == _2_)
+				&& m_load[m_load_ptr-1]->d.x == 2.0)
 			{
 				if (FNPTR(cvtptrx) == fStkPush2)
 				{
@@ -1037,7 +1037,7 @@ awful_error:
 			}
 			m_variables[m_parser_vsp].s = NULL;  /* this constant has no name  */
 			m_variables[m_parser_vsp].len = 0;
-			m_variables[m_parser_vsp].a.d.x = _1_ / m_load[m_load_ptr-1]->d.x;
+			m_variables[m_parser_vsp].a.d.x = 1.0/m_load[m_load_ptr - 1]->d.x;
 			m_variables[m_parser_vsp].a.d.y = 0.0;
 			OPPTR(cvtptrx) = &m_variables[m_parser_vsp++].a;
 			ffptr = fStkLodRealMul;
@@ -1198,7 +1198,7 @@ awful_error:
 		if (prevfptr == fStkLodRealC)
 		{
 			dTemp = m_load[m_load_ptr-1]->d.x;
-			if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0)
+			if (dTemp == 2.0 || dTemp == 1.0 || dTemp == -1.0 || dTemp == 0.0)
 			{
 				/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr  CAE 06NOV93  */
 				if (FNPTR(cvtptrx-1) == fStkPush2)
@@ -1214,7 +1214,7 @@ awful_error:
 				}
 				--cvtptrx;
 				OPPTR(cvtptrx) = NO_OPERAND;
-				if (dTemp == _2_)
+				if (dTemp == 2.0)
 				{
 					DBUGMSG("[]=Sqr0");
 					ffptr = fStkSqr0;  /* no need to compute lastsqr here  */
@@ -1231,7 +1231,7 @@ awful_error:
 						ffptr = fStkStoSqr0;  /* dont save lastsqr  */
 					}
 				}
-				else if (dTemp == _1_)
+				else if (dTemp == 1.0)
 				{
 					DBUGMSG("[]=Ident");
 					ffptr = fStkIdent;

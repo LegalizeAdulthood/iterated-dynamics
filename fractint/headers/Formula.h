@@ -5,16 +5,16 @@
 
 struct JUMP_PTRS
 {
-	int      JumpOpPtr;
-	int      JumpLodPtr;
-	int      JumpStoPtr;
+	int JumpOpPtr;
+	int JumpLodPtr;
+	int JumpStoPtr;
 };
 
 struct JUMP_CONTROL
 {
-	int      type;
+	int type;
 	JUMP_PTRS ptrs;
-	int      DestJumpIndex;
+	int DestJumpIndex;
 };
 
 /* function, load, store pointers */
@@ -192,8 +192,6 @@ private:
 
 extern Arg *Arg1;
 extern Arg *Arg2;
-extern double _1_;
-extern double _2_;
 extern Arg s[20];
 extern int InitLodPtr;
 extern int InitStoPtr;

@@ -20,9 +20,6 @@
  *----------------------------------------------------------------------
  */
 
-double _2_ = 2.0;
-double _1_ = 1.0;
-
 void FPUaptan387(double *y, double *x, double *atan)
 {
 	*atan = atan2(*y, *x);
