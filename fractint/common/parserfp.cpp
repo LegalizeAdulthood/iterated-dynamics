@@ -106,7 +106,7 @@
 
 #include <ctype.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "Formula.h"
@@ -118,89 +118,122 @@
 
 typedef void OLD_FN();  /* old C functions  */
 
-OLD_FN  StkLod, StkClr, StkSto, EndInit, StkJumpLabel;
-OLD_FN  dStkAdd, dStkSub, dStkMul, dStkDiv;
-OLD_FN  dStkSqr, dStkMod;
-OLD_FN  dStkSin, dStkCos, dStkSinh, dStkCosh, dStkCosXX;
-OLD_FN  dStkTan, dStkTanh, dStkCoTan, dStkCoTanh;
-OLD_FN  dStkLog, dStkExp, dStkPwr;
-OLD_FN  dStkLT, dStkLTE;
-OLD_FN  dStkFlip, dStkReal, dStkImag;
-OLD_FN  dStkConj, dStkNeg, dStkAbs;
-OLD_FN  dStkRecip, StkIdent;
-OLD_FN  dStkGT, dStkGTE, dStkNE, dStkEQ;
-OLD_FN  dStkAND, dStkOR;
-OLD_FN  dStkZero;
-OLD_FN  dStkSqrt;
-OLD_FN  dStkASin, dStkACos, dStkASinh, dStkACosh;
-OLD_FN  dStkATanh, dStkATan;
-OLD_FN  dStkCAbs;
-OLD_FN  dStkFloor;
-OLD_FN  dStkCeil;
-OLD_FN  dStkTrunc;
-OLD_FN  dStkRound;
-OLD_FN  StkJump, dStkJumpOnTrue, dStkJumpOnFalse;
-OLD_FN  dStkOne;
+OLD_FN StkLod;
+OLD_FN StkClr;
+OLD_FN StkSto;
+OLD_FN EndInit;
+OLD_FN StkJumpLabel;
+OLD_FN dStkAdd;
+OLD_FN dStkSub;
+OLD_FN dStkMul;
+OLD_FN dStkDiv;
+OLD_FN dStkSqr;
+OLD_FN dStkMod;
+OLD_FN dStkSin;
+OLD_FN dStkCos;
+OLD_FN dStkSinh;
+OLD_FN dStkCosh;
+OLD_FN dStkCosXX;
+OLD_FN dStkTan;
+OLD_FN dStkTanh;
+OLD_FN dStkCoTan;
+OLD_FN dStkCoTanh;
+OLD_FN dStkLog;
+OLD_FN dStkExp;
+OLD_FN dStkPwr;
+OLD_FN dStkLT;
+OLD_FN dStkLTE;
+OLD_FN dStkFlip;
+OLD_FN dStkReal;
+OLD_FN dStkImag;
+OLD_FN dStkConj;
+OLD_FN dStkNeg;
+OLD_FN dStkAbs;
+OLD_FN dStkRecip;
+OLD_FN StkIdent;
+OLD_FN dStkGT;
+OLD_FN dStkGTE;
+OLD_FN dStkNE;
+OLD_FN dStkEQ;
+OLD_FN dStkAND;
+OLD_FN dStkOR;
+OLD_FN dStkZero;
+OLD_FN dStkSqrt;
+OLD_FN dStkASin;
+OLD_FN dStkACos;
+OLD_FN dStkASinh;
+OLD_FN dStkACosh;
+OLD_FN dStkATanh;
+OLD_FN dStkATan;
+OLD_FN dStkCAbs;
+OLD_FN dStkFloor;
+OLD_FN dStkCeil;
+OLD_FN dStkTrunc;
+OLD_FN dStkRound;
+OLD_FN StkJump;
+OLD_FN dStkJumpOnTrue;
+OLD_FN dStkJumpOnFalse;
+OLD_FN dStkOne;
 
-typedef void (NEW_FN)();  /* new 387-only ASM functions  */
+typedef void NEW_FN();  /* new 387-only ASM functions  */
 
-NEW_FN  fStkPull2;  /* pull up g_fpu stack from 2 to 4  */
-NEW_FN  fStkPush2;  /* push down g_fpu stack from 8 to 6  */
-NEW_FN  fStkPush2a;  /* push down g_fpu stack from 6 to 4  */
-NEW_FN  fStkPush4;  /* push down g_fpu stack from 8 to 4  */
-NEW_FN  fStkLodDup;  /* lod, dup  */
-NEW_FN  fStkLodSqr;  /* lod, sqr, dont save magnitude(i.e. lastsqr)  */
-NEW_FN  fStkLodSqr2;  /* lod, sqr, save lastsqr  */
-NEW_FN  fStkStoDup;  /* store, duplicate  */
-NEW_FN  fStkStoSqr;  /* store, sqr, save lastsqr  */
-NEW_FN  fStkStoSqr0;  /* store, sqr, dont save lastsqr  */
-NEW_FN  fStkLodDbl;  /* load, double  */
-NEW_FN  fStkStoDbl;  /* store, double  */
-NEW_FN  fStkReal2;  /* fast ver. of real  */
-NEW_FN  fStkSqr;  /* sqr, save magnitude in lastsqr  */
-NEW_FN  fStkSqr0;  /* sqr, no save magnitude  */
-NEW_FN  fStkClr1;  /* clear g_fpu  */
-NEW_FN  fStkClr2;  /* test stack top, clear g_fpu  */
-NEW_FN  fStkStoClr1;  /* store, clr1  */
-NEW_FN  fStkAdd, fStkSub;
-NEW_FN  fStkSto, fStkSto2;  /* fast ver. of sto  */
-NEW_FN  fStkLod, fStkEndInit;
-NEW_FN  fStkMod, fStkMod2;  /* faster mod  */
-NEW_FN  fStkLodMod2, fStkStoMod2;
-NEW_FN  fStkLTE, fStkLodLTEMul, fStkLTE2, fStkLodLTE;
-NEW_FN  fStkLodLTE2, fStkLodLTEAnd2;
-NEW_FN  fStkLT, fStkLodLTMul, fStkLT2, fStkLodLT;
-NEW_FN  fStkLodLT2;
-NEW_FN  fStkGTE, fStkLodGTE, fStkLodGTE2;
-NEW_FN  fStkGT, fStkGT2, fStkLodGT, fStkLodGT2;
-NEW_FN  fStkEQ, fStkLodEQ, fStkNE, fStkLodNE;
-NEW_FN  fStkAND, fStkANDClr2, fStkOR, fStkORClr2;
-NEW_FN  fStkSin, fStkSinh, fStkCos, fStkCosh, fStkCosXX;
-NEW_FN  fStkTan, fStkTanh, fStkCoTan, fStkCoTanh;
-NEW_FN  fStkLog, fStkExp, fStkPwr;
-NEW_FN  fStkMul, fStkDiv;
-NEW_FN  fStkFlip, fStkReal, fStkImag, fStkRealFlip, fStkImagFlip;
-NEW_FN  fStkConj, fStkNeg, fStkAbs, fStkRecip;
-NEW_FN  fStkLodReal, fStkLodRealC, fStkLodImag;
-NEW_FN  fStkLodRealFlip, fStkLodRealAbs;
-NEW_FN  fStkLodRealMul, fStkLodRealAdd, fStkLodRealSub, fStkLodRealPwr;
-NEW_FN  fStkLodImagMul, fStkLodImagAdd, fStkLodImagSub;  /* CAE 4Dec93  */
-NEW_FN  fStkLodImagFlip, fStkLodImagAbs;
-NEW_FN  fStkLodConj;
-NEW_FN  fStkLodAdd, fStkLodSub, fStkLodSubMod, fStkLodMul;
-NEW_FN  fStkPLodAdd, fStkPLodSub;  /* push-lod-add/sub  */
-NEW_FN  fStkIdent;
-NEW_FN  fStkStoClr2;  /* store, clear stack by popping  */
-NEW_FN  fStkZero;  /* to support new parser fn.  */
-NEW_FN  fStkDbl;  /* double the stack top  CAE 31OCT93  */
-NEW_FN  fStkOne, fStkSqr3;  /* sqr3 is sqr/mag of a real  CAE 09NOV93  */
-NEW_FN  fStkSqrt;
-NEW_FN  fStkASin, fStkACos, fStkASinh, fStkACosh;
-NEW_FN  fStkATanh, fStkATan;
-NEW_FN  fStkCAbs;
-NEW_FN  fStkFloor, fStkCeil, fStkTrunc, fStkRound; /* rounding functions */
-NEW_FN  fStkJump, fStkJumpOnTrue, fStkJumpOnFalse, fStkJumpLabel; /* flow */
-NEW_FN  fStkOne;   /* to support new parser fn.  */
+NEW_FN fStkPull2;  /* pull up g_fpu stack from 2 to 4  */
+NEW_FN fStkPush2;  /* push down g_fpu stack from 8 to 6  */
+NEW_FN fStkPush2a;  /* push down g_fpu stack from 6 to 4  */
+NEW_FN fStkPush4;  /* push down g_fpu stack from 8 to 4  */
+NEW_FN fStkLodDup;  /* lod, dup  */
+NEW_FN fStkLodSqr;  /* lod, sqr, dont save magnitude(i.e. lastsqr)  */
+NEW_FN fStkLodSqr2;  /* lod, sqr, save lastsqr  */
+NEW_FN fStkStoDup;  /* store, duplicate  */
+NEW_FN fStkStoSqr;  /* store, sqr, save lastsqr  */
+NEW_FN fStkStoSqr0;  /* store, sqr, dont save lastsqr  */
+NEW_FN fStkLodDbl;  /* load, double  */
+NEW_FN fStkStoDbl;  /* store, double  */
+NEW_FN fStkReal2;  /* fast ver. of real  */
+NEW_FN fStkSqr;  /* sqr, save magnitude in lastsqr  */
+NEW_FN fStkSqr0;  /* sqr, no save magnitude  */
+NEW_FN fStkClr1;  /* clear g_fpu  */
+NEW_FN fStkClr2;  /* test stack top, clear g_fpu  */
+NEW_FN fStkStoClr1;  /* store, clr1  */
+NEW_FN fStkAdd, fStkSub;
+NEW_FN fStkSto, fStkSto2;  /* fast ver. of sto  */
+NEW_FN fStkLod, fStkEndInit;
+NEW_FN fStkMod, fStkMod2;  /* faster mod  */
+NEW_FN fStkLodMod2, fStkStoMod2;
+NEW_FN fStkLTE, fStkLodLTEMul, fStkLTE2, fStkLodLTE;
+NEW_FN fStkLodLTE2, fStkLodLTEAnd2;
+NEW_FN fStkLT, fStkLodLTMul, fStkLT2, fStkLodLT;
+NEW_FN fStkLodLT2;
+NEW_FN fStkGTE, fStkLodGTE, fStkLodGTE2;
+NEW_FN fStkGT, fStkGT2, fStkLodGT, fStkLodGT2;
+NEW_FN fStkEQ, fStkLodEQ, fStkNE, fStkLodNE;
+NEW_FN fStkAND, fStkANDClr2, fStkOR, fStkORClr2;
+NEW_FN fStkSin, fStkSinh, fStkCos, fStkCosh, fStkCosXX;
+NEW_FN fStkTan, fStkTanh, fStkCoTan, fStkCoTanh;
+NEW_FN fStkLog, fStkExp, fStkPwr;
+NEW_FN fStkMul, fStkDiv;
+NEW_FN fStkFlip, fStkReal, fStkImag, fStkRealFlip, fStkImagFlip;
+NEW_FN fStkConj, fStkNeg, fStkAbs, fStkRecip;
+NEW_FN fStkLodReal, fStkLodRealC, fStkLodImag;
+NEW_FN fStkLodRealFlip, fStkLodRealAbs;
+NEW_FN fStkLodRealMul, fStkLodRealAdd, fStkLodRealSub, fStkLodRealPwr;
+NEW_FN fStkLodImagMul, fStkLodImagAdd, fStkLodImagSub;  /* CAE 4Dec93  */
+NEW_FN fStkLodImagFlip, fStkLodImagAbs;
+NEW_FN fStkLodConj;
+NEW_FN fStkLodAdd, fStkLodSub, fStkLodSubMod, fStkLodMul;
+NEW_FN fStkPLodAdd, fStkPLodSub;  /* push-lod-add/sub  */
+NEW_FN fStkIdent;
+NEW_FN fStkStoClr2;  /* store, clear stack by popping  */
+NEW_FN fStkZero;  /* to support new parser fn.  */
+NEW_FN fStkDbl;  /* double the stack top  CAE 31OCT93  */
+NEW_FN fStkOne, fStkSqr3;  /* sqr3 is sqr/mag of a real  CAE 09NOV93  */
+NEW_FN fStkSqrt;
+NEW_FN fStkASin, fStkACos, fStkASinh, fStkACosh;
+NEW_FN fStkATanh, fStkATan;
+NEW_FN fStkCAbs;
+NEW_FN fStkFloor, fStkCeil, fStkTrunc, fStkRound; /* rounding functions */
+NEW_FN fStkJump, fStkJumpOnTrue, fStkJumpOnFalse, fStkJumpLabel; /* flow */
+NEW_FN fStkOne;   /* to support new parser fn.  */
 
 /* check to see if a const is being loaded  */
 /* the really awful hack below gets the first char of the name  */
@@ -223,7 +256,13 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 		|| prevfptr == fStkImag || prevfptr == fStkLodImag)
 
 /* remove push operator from stack top  */
-#define REMOVE_PUSH --cvtptrx, stkcnt += 2
+#define REMOVE_PUSH			\
+	do						\
+	{						\
+		--cvtptrx;			\
+		s_stack_count += 2;	\
+	}						\
+	while (0)
 
 #define CLEAR_STK 127
 #define FNPTR(x) m_function_load_store_pointers[(x)].function  /* function pointer */
@@ -357,19 +396,16 @@ int pstopmsg(int x, char *msg)
 #define LAST_FN          FN_ONE
 #define NUM_FNS          LAST_FN + 1
 
-static unsigned char
-	realstkcnt,   /* how many scalars are really on stack  */
-	stkcnt,       /* # scalars on FPU stack  */
-	lastsqrused,  /* was lastsqr loaded in the formula?  */
-	lastsqrreal,  /* was lastsqr stored explicitly in the formula?  */
-	p1const,      /* is p1 a constant?  */
-	p2const,      /* ...and p2?  */
-	p3const,      /* ...and p3?  */
-	p4const,      /* ...and p4?  */
-	p5const;      /* ...and p5?  */
-
-static unsigned int
-	cvtptrx;      /* subscript of next free entry in m_function_load_store_pointers  */
+static int s_real_stack_count;		/* how many scalars are really on stack */
+static int s_stack_count;			/* # scalars on FPU stack */
+static bool s_last_sqr_used;		/* was lastsqr loaded in the formula? */
+static bool s_last_sqr_stored;		/* was lastsqr stored explicitly in the formula? */
+static bool s_p1_constant;			/* is p1 a constant? */
+static bool s_p2_constant;			/* ...and p2? */
+static bool s_p3_constant;			/* ...and p3? */
+static bool s_p4_constant;			/* ...and p4? */
+static bool s_p5_constant;			/* ...and p5? */
+static int cvtptrx;			/* subscript of next free entry in m_function_load_store_pointers  */
 
 static void (*prevfptr)();  /* previous function pointer  */
 
@@ -485,25 +521,25 @@ awful_error:
 
 	/* this if statement inserts a stack push or pull into the token array  */
 	/*   it would be much better to do this *after* optimization  */
-	if ((int)stkcnt < MinStk)  /* not enough operands on g_fpu stack  */
+	if ((int)s_stack_count < MinStk)  /* not enough operands on g_fpu stack  */
 	{
 		DBUGMSG2("Inserted pull.  Stack: %2d --> %2d", stkcnt, stkcnt + 2);
 		OPPTR(cvtptrx) = NO_OPERAND;
 		FNPTR(cvtptrx++) = fStkPull2;  /* so adjust the stack, pull operand  */
-		stkcnt += 2;
+		s_stack_count += 2;
 	}
-	else if ((int)stkcnt > Max_On_Stack)  /* too many operands  */
+	else if ((int)s_stack_count > Max_On_Stack)  /* too many operands  */
 	{
 
-		Num_To_Push = stkcnt - Max_On_Stack;
+		Num_To_Push = s_stack_count - Max_On_Stack;
 		if (Num_To_Push == 2)
 		{
-			if (stkcnt == MAX_STACK)
+			if (s_stack_count == MAX_STACK)
 			{
 				/* push stack down from max to max-2  */
 				FNPTR(cvtptrx) = fStkPush2;
 			}
-			else if (stkcnt == MAX_STACK - 2)
+			else if (s_stack_count == MAX_STACK - 2)
 			{
 				/* push stack down from max-2 to max-4  */
 				FNPTR(cvtptrx) = fStkPush2a;
@@ -514,7 +550,7 @@ awful_error:
 			}
 			DBUGMSG2("Inserted push.  Stack: %2d --> %2d", stkcnt, stkcnt-2);
 			OPPTR(cvtptrx++) = NO_OPERAND;
-			stkcnt -= 2;
+			s_stack_count -= 2;
 		}
 		else if (Num_To_Push == 4)
 		{
@@ -522,7 +558,7 @@ awful_error:
 			FNPTR(cvtptrx) = fStkPush4;
 			DBUGMSG2("Inserted push.  Stack: %2d --> %2d", stkcnt, stkcnt-4);
 			OPPTR(cvtptrx++) = NO_OPERAND;
-			stkcnt -= 4;
+			s_stack_count -= 4;
 		}
 		else
 		{
@@ -533,12 +569,12 @@ awful_error:
 	/* set the operand pointer here for store function  */
 	if (ffptr == fStkSto)
 	{
-		OPPTR(cvtptrx) = Store[m_store_ptr++];
+		OPPTR(cvtptrx) = m_store[m_store_ptr++];
 	}
 	else if (ffptr == fStkLod && DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag)
 	{
 		/* when disabling optimizer, set load pointer here  */
-		OPPTR(cvtptrx) = Load[m_load_ptr++];
+		OPPTR(cvtptrx) = m_load[m_load_ptr++];
 	}
 	else  /* the optimizer will set the pointer for load fn.  */
 	{
@@ -562,7 +598,7 @@ awful_error:
 	/* ******************************************************************** */
 	if (ffptr == fStkLod)  /* about to add Lod to the array  */
 	{
-		if (prevfptr == fStkLod && Load[m_load_ptr-1] == Load[m_load_ptr])
+		if (prevfptr == fStkLod && m_load[m_load_ptr-1] == m_load[m_load_ptr])
 		{
 			/* previous non-adjust operator was Lod of same operand  */
 			/* ? lodx ? (*lodx)  */
@@ -590,7 +626,7 @@ awful_error:
 			ffptr = fStkLodDup;
 		}
 		else if (prevfptr == fStkSto2
-				&& Store[m_store_ptr-1] == Load[m_load_ptr])
+				&& m_store[m_store_ptr-1] == m_load[m_load_ptr])
 		{
 			/* store, load of same value  */
 			/* only one operand on stack here when prev oper is Sto2  */
@@ -602,7 +638,7 @@ awful_error:
 		/*  use the rounded value that was stored here, while the next  */
 		/*  operator uses the more accurate internal value.  */
 		else if (prevfptr == fStkStoClr2
-				&& Store[m_store_ptr-1] == Load[m_load_ptr])
+				&& m_store[m_store_ptr-1] == m_load[m_load_ptr])
 		{
 			/* store, clear, load same value found  */
 			/* only one operand was on stack so this is safe  */
@@ -612,21 +648,21 @@ awful_error:
 		}
 		else
 		{
-			testload = Load[m_load_ptr];
-			if (testload == &LASTSQR && lastsqrreal)
+			testload = m_load[m_load_ptr];
+			if (testload == &LASTSQR && s_last_sqr_stored)
 			{
 				/* -- LastSqr is a real.  CAE 31OCT93  */
 				DBUGMSG("(*lod[lastsqr]) -> (*lodreal)");
 				ffptr = fStkLodReal;
 			}
-			else if (IS_CONST(testload) && testload->d.y == 0.0)
+			else if (s_p1_constant && testload->d.y == 0.0)
 			{
 				DBUGMSG("(*lod) -> (*lodrealc)");
 				ffptr = fStkLodRealC;  /* a real const is being loaded  */
 			}
 		}
 		/* set the operand ptr here  */
-		OPPTR(cvtptrx) = Load[m_load_ptr++];
+		OPPTR(cvtptrx) = m_load[m_load_ptr++];
 	}
 	/* ******************************************************************** */
 	else if (ffptr == fStkAdd)
@@ -646,7 +682,7 @@ awful_error:
 			{
 				DBUGMSG("push4 *loddup (add) -> push2 (*loddbl),stk+=2");
 				FNPTR(cvtptrx-1) = fStkPush2;
-				stkcnt += 2;  /*  CAE added 12 July 1993 to fix bug  */
+				s_stack_count += 2;  /*  CAE added 12 July 1993 to fix bug  */
 			}
 			else
 			{
@@ -816,14 +852,14 @@ awful_error:
 
 			FNPTR(cvtptrx) = NO_FUNCTION;  /* mark the pending fn as null  */
 			if (FNPTR(cvtptrx-1) == fStkPush4
-					|| FNPTR(cvtptrx-1) == fStkPush2a)
-					{
+				|| FNPTR(cvtptrx-1) == fStkPush2a)
+			{
 				--cvtptrx;  /* look back past this push  */
 			}
 
 			if (FNPTR(cvtptrx-1) == fStkLodRealC
-					&& Load[m_load_ptr-2]->d.x == _2_)
-					{
+				&& m_load[m_load_ptr-2]->d.x == _2_)
+			{
 				/* -- Convert '2*a' into 'a + a'.                CAE 31OCT93  */
 				if (FNPTR(cvtptrx) == NO_FUNCTION)
 				{
@@ -836,14 +872,14 @@ awful_error:
 					DBUGMSG("lodreal[2] *pusha (lodmul[b])"
 							" -> loddbl[b],stk+=2");
 					OPPTR(cvtptrx-1) = OPPTR(cvtptrx + 1);
-					stkcnt += 2;
+					s_stack_count += 2;
 				}
 				else if (FNPTR(cvtptrx) == fStkPush4)
 				{
 					DBUGMSG("lodreal[2] *push4 (lodmul[b])"
 							" -> loddbl[b],stk+=4");
 					OPPTR(cvtptrx-1) = OPPTR(cvtptrx + 1);
-					stkcnt += 4;
+					s_stack_count += 4;
 				}
 				FNPTR(--cvtptrx) = NO_FUNCTION;  /* so no increment later  */
 				ffptr = fStkLodDbl;
@@ -870,7 +906,7 @@ awful_error:
 					/* set this fn ptr to null so cvtptrx won't be incr later  */
 					FNPTR(cvtptrx) = NO_FUNCTION;
 					OPPTR(cvtptrx-1) = OPPTR(cvtptrx + 1);  /* prev lodptr = this  */
-					stkcnt += 2;
+					s_stack_count += 2;
 				}
 				else if (FNPTR(cvtptrx) == fStkPush4)
 				{
@@ -879,7 +915,7 @@ awful_error:
 					FNPTR(cvtptrx++) = fStkPush2;
 					OPPTR(cvtptrx-2) = OPPTR(cvtptrx);  /* prev lodptr = this  */
 					/* we know cvtptrx points to a null function now  */
-					stkcnt += 2;
+					s_stack_count += 2;
 				}
 				OPPTR(cvtptrx) = otemp;  /* switch the operands  */
 				ffptr = fStkLodRealMul;  /* next fn is now lodrealmul  */
@@ -908,8 +944,8 @@ awful_error:
 
 			/**********************  begin extension  ***  CAE 31OCT93  ****/
 			if (prevfptr == fStkLodRealC  /* use prevfptr here  */
-					&& Load[m_load_ptr-1]->d.x == _2_)
-					{
+				&& m_load[m_load_ptr-1]->d.x == _2_)
+			{
 				if (FNPTR(cvtptrx) == fStkPush2)
 				{
 					DBUGMSG("push (*lodrealmul[2]) -> (*dbl),stk+=2");
@@ -971,7 +1007,7 @@ awful_error:
 	{
 
 		--cvtptrx;
-		if (stkcnt == 2)
+		if (s_stack_count == 2)
 		{
 			DBUGMSG("sto (*clr1) -> (*stoclr2)");
 			ffptr = fStkStoClr2;
@@ -1001,7 +1037,7 @@ awful_error:
 			}
 			m_variables[m_parser_vsp].s = NULL;  /* this constant has no name  */
 			m_variables[m_parser_vsp].len = 0;
-			m_variables[m_parser_vsp].a.d.x = _1_ / Load[m_load_ptr-1]->d.x;
+			m_variables[m_parser_vsp].a.d.x = _1_ / m_load[m_load_ptr-1]->d.x;
 			m_variables[m_parser_vsp].a.d.y = 0.0;
 			OPPTR(cvtptrx) = &m_variables[m_parser_vsp++].a;
 			ffptr = fStkLodRealMul;
@@ -1017,7 +1053,7 @@ awful_error:
 			--cvtptrx;
 			ffptr = fStkLodReal;
 		}
-		else if (stkcnt < MAX_STACK)
+		else if (s_stack_count < MAX_STACK)
 		{
 			DBUGMSG("(*real) -> (*real2)");
 			ffptr = fStkReal2;
@@ -1040,7 +1076,7 @@ awful_error:
 		ffptr = fStkLodConj;
 	}
 	/* ******************************************************************** */
-	else if (ffptr == fStkMod && stkcnt < MAX_STACK)
+	else if (ffptr == fStkMod && s_stack_count < MAX_STACK)
 	{
 
 		DBUGMSG("(*mod) -> (*mod2)");
@@ -1124,7 +1160,7 @@ awful_error:
 			DBUGMSG("lod (*sqr) -> (*lodsqr)");
 			--cvtptrx;
 			ffptr = fStkLodSqr;  /* assume no need to save lastsqr  */
-			if (lastsqrused)
+			if (s_last_sqr_used)
 			{
 				DBUGMSG("(*lodsqr) -> (*lodsqr2)");
 				ffptr = fStkLodSqr2;  /* lastsqr is being used  */
@@ -1135,7 +1171,7 @@ awful_error:
 			DBUGMSG("sto2 (*sqr) -> (*stosqr0)");
 			--cvtptrx;
 			ffptr = fStkStoSqr0;  /* assume no need to save lastsqr  */
-			if (lastsqrused)
+			if (s_last_sqr_used)
 			{
 				DBUGMSG("(*stosqr0) -> (*stosqr)");
 				ffptr = fStkStoSqr;  /* save lastsqr  */
@@ -1143,7 +1179,7 @@ awful_error:
 		}
 		else
 		{
-			if (!lastsqrused)
+			if (!s_last_sqr_used)
 			{
 				DBUGMSG("(*sqr) -> (*sqr0)");
 				ffptr = fStkSqr0;  /* don't save lastsqr  */
@@ -1161,7 +1197,7 @@ awful_error:
 
 		if (prevfptr == fStkLodRealC)
 		{
-			dTemp = Load[m_load_ptr-1]->d.x;
+			dTemp = m_load[m_load_ptr-1]->d.x;
 			if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0)
 			{
 				/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr  CAE 06NOV93  */
@@ -1231,8 +1267,8 @@ awful_error:
 	{
 
 		if (prevfptr == fStkLod
-				|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
-				{
+			|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+		{
 			DBUGMSG("Lod (*LTE) -> (*LodLTE)");
 			--cvtptrx;
 			ffptr = fStkLodLTE;
@@ -1243,8 +1279,8 @@ awful_error:
 	{
 
 		if (prevfptr == fStkLod || prevfptr == fStkLodReal
-				|| prevfptr == fStkLodRealC)
-				{
+			|| prevfptr == fStkLodRealC)
+		{
 			DBUGMSG("Lod (*LT) -> (*LodLT)");
 			--cvtptrx;
 			ffptr = fStkLodLT;
@@ -1255,8 +1291,8 @@ awful_error:
 	{
 
 		if (prevfptr == fStkLod
-				|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
-				{
+			|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+		{
 			DBUGMSG("Lod (*GT) -> (*LodGT)");
 			--cvtptrx;
 			ffptr = fStkLodGT;
@@ -1267,8 +1303,8 @@ awful_error:
 	{
 
 		if (prevfptr == fStkLod
-				|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
-				{
+			|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+		{
 			DBUGMSG("Lod (*GTE) -> (*LodGTE)");
 			--cvtptrx;
 			ffptr = fStkLodGTE;
@@ -1279,8 +1315,8 @@ awful_error:
 	{
 
 		if (prevfptr == fStkLod
-				|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
-				{
+			|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+		{
 			DBUGMSG("Lod (*NE) -> (*LodNE)");
 			--cvtptrx;
 			ffptr = fStkLodNE;
@@ -1291,8 +1327,8 @@ awful_error:
 	{
 
 		if (prevfptr == fStkLod
-				|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
-				{
+			|| prevfptr == fStkLodReal || prevfptr == fStkLodRealC)
+		{
 			DBUGMSG("Lod (*EQ) -> (*LodEQ)");
 			--cvtptrx;
 			ffptr = fStkLodEQ;
@@ -1307,12 +1343,12 @@ SkipOptimizer:  /* -------------  end of optimizer ----------------------- */
 #endif
 	if (Delta == CLEAR_STK)
 	{
-		realstkcnt = stkcnt = 0;
+		s_real_stack_count = s_stack_count = 0;
 	}
 	else
 	{
-		stkcnt = (unsigned char)(stkcnt + Delta);
-		realstkcnt = (unsigned char)(realstkcnt + Delta);
+		s_stack_count = (unsigned char)(s_stack_count + Delta);
+		s_real_stack_count = (unsigned char)(s_real_stack_count + Delta);
 	}
 
 	DBUGMSG3("Stack:  %2d --> %2d,  Real stack:  %2d",
@@ -1327,15 +1363,15 @@ int Formula::fill_jump_struct_fp()
 	/* On entry, m_jump_index is the number of jump functions in the formula*/
 	int i = 0;
 	int checkforelse = 0;
-	NEW_FN  * JumpFunc = NULL;
+	NEW_FN *JumpFunc = NULL;
 	int find_new_func = 1;
-	JUMP_PTRS_ST jump_data[MAX_JUMPS];
+	JUMP_PTRS jump_data[MAX_JUMPS];
 
 	for (m_op_ptr = 0; m_op_ptr < m_last_op; m_op_ptr++)
 	{
 		if (find_new_func)
 		{
-			switch (jump_control[i].type)
+			switch (m_jump_control[i].type)
 			{
 			case 1:
 				JumpFunc = fStkJumpOnFalse;
@@ -1364,8 +1400,8 @@ int Formula::fill_jump_struct_fp()
 	}
 
 		/* Following for safety only; all should always be false */
-	if (i != m_jump_index || jump_control[i - 1].type != 4
-		|| jump_control[0].type != 1)
+	if (i != m_jump_index || m_jump_control[i - 1].type != 4
+		|| m_jump_control[0].type != 1)
 	{
 		return 1;
 	}
@@ -1390,94 +1426,94 @@ int Formula::CvtStk()  /* convert the array of ptrs  */
 	struct fn_entry *pfe;
 	int fnfound;
 
-	lastsqrreal = 1;  /* assume lastsqr is real (not stored explicitly)  */
-	p1const = p2const = p3const = (unsigned char)1;  /* . . . p1, p2, p3 const  */
-	p4const = p5const = (unsigned char)1;  /* . . . p4, p5 const  */
-	lastsqrused = 0;  /* ... and LastSqr is not used  */
+	s_last_sqr_stored = 1;  /* assume lastsqr is real (not stored explicitly)  */
+	s_p1_constant = s_p2_constant = s_p3_constant = (unsigned char)1;  /* . . . p1, p2, p3 const  */
+	s_p4_constant = s_p5_constant = (unsigned char)1;  /* . . . p4, p5 const  */
+	s_last_sqr_used = 0;  /* ... and LastSqr is not used  */
 
 	/* now see if the above assumptions are true */
 	for (m_op_ptr = m_load_ptr = m_store_ptr = 0; m_op_ptr < (int)m_last_op; m_op_ptr++)
 	{
-		ftst = f[m_op_ptr];
+		ftst = m_functions[m_op_ptr];
 		if (ftst == StkLod)
 		{
-			if (Load[m_load_ptr++] == &LASTSQR)
+			if (m_load[m_load_ptr++] == &LASTSQR)
 			{
-				lastsqrused = 1;
+				s_last_sqr_used = 1;
 			}
 		}
 		else if (ftst == StkSto)
 		{
-			testoperand = Store[m_store_ptr++];
+			testoperand = m_store[m_store_ptr++];
 			if (testoperand == &PARM1)
 			{
-				p1const = 0;
+				s_p1_constant = 0;
 			}
 			else if (testoperand == &PARM2)
 			{
-				p2const = 0;
+				s_p2_constant = 0;
 			}
 			else if (testoperand == &PARM3)
 			{
-				p3const = 0;
+				s_p3_constant = 0;
 			}
 			else if (testoperand == &PARM4)
 			{
-				p4const = 0;
+				s_p4_constant = 0;
 			}
 			else if (testoperand == &PARM5)
 			{
-				p5const = 0;
+				s_p5_constant = 0;
 			}
 			else if (testoperand == &LASTSQR)
 			{
-				lastsqrreal = 0;
+				s_last_sqr_stored = 0;
 			}
 		}
 	}
 
-	if (!p1const)
+	if (!s_p1_constant)
 	{
 		DBUGMSG("p1 not constant");
 	}
-	if (!p2const)
+	if (!s_p2_constant)
 	{
 		DBUGMSG("p2 not constant");
 	}
-	if (!p3const)
+	if (!s_p3_constant)
 	{
 		DBUGMSG("p3 not constant");
 	}
-	if (!p4const)
+	if (!s_p4_constant)
 	{
 		DBUGMSG("p4 not constant");
 	}
-	if (!p5const)
+	if (!s_p5_constant)
 	{
 		DBUGMSG("p5 not constant");
 	}
-	if (lastsqrused)
+	if (s_last_sqr_used)
 	{
 		DBUGMSG("LastSqr loaded");
-		if (!lastsqrreal)
+		if (!s_last_sqr_stored)
 		{
 			DBUGMSG("LastSqr stored");
 		}
 	}
 
-	if (f[m_last_op-1] != StkClr)
+	if (m_functions[m_last_op-1] != StkClr)
 	{
 		DBUGMSG("Missing clr added at end");
 		/* should be safe to modify this  */
-		f[m_last_op++] = StkClr;
+		m_functions[m_last_op++] = StkClr;
 	}
 
 	prevfptr = (void (*)())0;
-	cvtptrx = realstkcnt = stkcnt = 0;
+	cvtptrx = s_real_stack_count = s_stack_count = 0;
 
 	for (m_op_ptr = m_load_ptr = m_store_ptr = 0; m_op_ptr < (int)m_last_op; m_op_ptr++)
 	{
-		ftst = f[m_op_ptr];
+		ftst = m_functions[m_op_ptr];
 		fnfound = 0;
 		for (pfe = &afe[0]; pfe <= &afe[LAST_OLD_FN]; pfe++)
 		{

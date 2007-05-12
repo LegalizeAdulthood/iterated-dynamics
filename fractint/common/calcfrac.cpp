@@ -19,7 +19,7 @@
 #include <limits.h>
 #include <time.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -28,6 +28,7 @@
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "MathUtil.h"
+#include "Formula.h"
 
 #define SHOWDOT_SAVE    1
 #define SHOWDOT_RESTORE 2
@@ -106,7 +107,6 @@ int g_xx_begin;             /* these are same as g_work_list, */
 int g_yy_start;
 int g_yy_stop;
 int g_yy_begin;             /* declared as separate items  */
-VOIDPTR g_type_specific_work_area = NULL;
 /* variables which must be visible for tab_display */
 int g_got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
 			  /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
@@ -554,7 +554,7 @@ int calculate_fractal()
 		}
 	}
 
-	init_misc();  /* set up some variables in parser.c */
+	g_formula_state.init_misc();  /* set up some variables in parser.c */
 	reset_clock();
 
 	/* following delta values useful only for types with rotation disabled */
@@ -844,10 +844,7 @@ int calculate_fractal()
 		free(g_log_table);   /* free if not using extraseg */
 		g_log_table = NULL;
 	}
-	if (g_type_specific_work_area)
-	{
-		free_work_area();
-	}
+	g_formula_state.free_work_area();
 
 	g_sound_state.close();
 

@@ -17,7 +17,7 @@
 #include <sys/types.h>
 #include <time.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"

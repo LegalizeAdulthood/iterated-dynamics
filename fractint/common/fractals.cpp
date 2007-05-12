@@ -46,7 +46,7 @@
 #endif
 #endif
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -54,6 +54,7 @@
 #include "externs.h"
 #include "EscapeTime.h"
 #include "MathUtil.h"
+#include "Formula.h"
 
 #define modulus(z)			(sqr((z).x) + sqr((z).y))
 #define conjugate(pz)		((pz)->y = - (pz)->y)

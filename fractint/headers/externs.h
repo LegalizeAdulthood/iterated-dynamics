@@ -454,7 +454,6 @@ extern int					g_true_color;
 extern int					g_true_mode;
 extern char					g_text_stack[];
 extern double				g_two_pi;
-extern VOIDPTR				g_type_specific_work_area;
 extern UserInterfaceState	g_ui_state;
 extern char					g_use_initial_orbit_z;
 extern int					g_use_center_mag;
