@@ -267,7 +267,7 @@ NEW_FN fStkOne;   /* to support new parser fn.  */
 #define CLEAR_STK 127
 #define FNPTR(x) m_function_load_store_pointers[(x)].function  /* function pointer */
 #define OPPTR(x) m_function_load_store_pointers[(x)].operand   /* operand pointer */
-#define NO_OPERAND (union Arg  *)0
+#define NO_OPERAND (Arg  *)0
 #define NO_FUNCTION (void (*)())0
 #define LASTSQR m_variables[4].a
 #define PARM1 m_variables[1].a
@@ -493,8 +493,8 @@ static char cDbgMsg[255];
 
 int Formula::CvtFptr(void (* ffptr)(), int MinStk, int FreeStk, int Delta)
 {
-	union Arg  *otemp;    /* temp operand ptr  */
-	union Arg *testload;
+	Arg  *otemp;    /* temp operand ptr  */
+	Arg *testload;
 #ifdef TESTFP
 	int prevstkcnt;
 #endif
@@ -1416,8 +1416,8 @@ int Formula::CvtStk()  /* convert the array of ptrs  */
 	extern char g_formula_name[];
 	void (*ftst)();
 	void (*ntst)();
-	union Arg *testoperand;
-	struct fn_entry *pfe;
+	Arg *testoperand;
+	fn_entry *pfe;
 	int fnfound;
 
 	s_last_sqr_stored = true;  /* assume lastsqr is real (not stored explicitly)  */

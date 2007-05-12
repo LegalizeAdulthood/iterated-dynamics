@@ -185,9 +185,11 @@ private:
 	Arg **m_load;
 	t_function_pointer *m_functions;
 	JUMP_CONTROL m_jump_control[MAX_JUMPS];
+	Arg m_arg1;
+	Arg m_arg2;
 
-	ConstArg *is_constant(char *text, int length);
-	int ParseStr(char *text, int pass);
+	ConstArg *is_constant(const char *text, int length);
+	int ParseStr(const char *text, int pass);
 	void allocate();
 	void count_lists();
 	int prescan(FILE *open_file);
@@ -203,7 +205,7 @@ private:
 	int fill_jump_struct_fp();
 	int CvtStk();
 	int CvtFptr(void (* ffptr)(), int MinStk, int FreeStk, int Delta);
-	t_function *is_function(char *str, int len);
+	t_function *is_function(const char *str, int len);
 	int fill_if_group(int endif_index, JUMP_PTRS *jump_data);
 };
 

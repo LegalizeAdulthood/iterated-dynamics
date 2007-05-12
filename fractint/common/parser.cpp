@@ -28,6 +28,9 @@
 #include "drivers.h"
 #include "Formula.h"
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 #ifdef WATCH_MP
 double x1, y1, x2, y2;
 #endif
@@ -40,6 +43,77 @@ struct PEND_OP
 {
 	void (*f)();
 	int p;
+};
+
+enum VariableNames
+{
+	VARIABLE_PIXEL = 0,
+	VARIABLE_P1,
+	VARIABLE_P2,
+	VARIABLE_Z,
+	VARIABLE_LAST_SQR,
+	VARIABLE_PI,
+	VARIABLE_E,
+	VARIABLE_RAND,
+	VARIABLE_P3,
+	VARIABLE_WHITE_SQ,
+	VARIABLE_SCRN_PIX,
+	VARIABLE_SCRN_MAX,
+	VARIABLE_MAX_IT,
+	VARIABLE_IS_MAND,
+	VARIABLE_CENTER,
+	VARIABLE_MAG_X_MAG,
+	VARIABLE_ROT_SKEW,
+	VARIABLE_P4,
+	VARIABLE_P5
+};
+
+static const char *Constants[] =
+{
+	"pixel",        /* m_variables[0] */
+	"p1",           /* m_variables[1] */
+	"p2",           /* m_variables[2] */
+	"z",            /* m_variables[3] */
+	"LastSqr",      /* m_variables[4] */
+	"pi",           /* m_variables[5] */
+	"e",            /* m_variables[6] */
+	"rand",         /* m_variables[7] */
+	"p3",           /* m_variables[8] */
+	"whitesq",      /* m_variables[9] */
+	"scrnpix",      /* m_variables[10] */
+	"scrnmax",      /* m_variables[11] */
+	"maxit",        /* m_variables[12] */
+	"ismand",       /* m_variables[13] */
+	"center",       /* m_variables[14] */
+	"magxmag",      /* m_variables[15] */
+	"rotskew",      /* m_variables[16] */
+	"p4",           /* m_variables[17] */
+	"p5"            /* m_variables[18] */
+};
+
+struct SYMMETRY
+{
+	const char *s;
+	int n;
+};
+
+static SYMMETRY SymStr[] =
+{
+	{"NOSYM",         0},
+	{"XAXIS_NOPARM", -1},
+	{"XAXIS",         1},
+	{"YAXIS_NOPARM", -2},
+	{"YAXIS",         2},
+	{"XYAXIS_NOPARM", -3},
+	{"XYAXIS",        3},
+	{"ORIGIN_NOPARM", -4},
+	{"ORIGIN",        4},
+	{"PI_SYM_NOPARM", -5},
+	{"PI_SYM",        5},
+	{"XAXIS_NOIMAG", -6},
+	{"XAXIS_NOREAL",  6},
+	{"NOPLOT",       99},
+	{"",              0}
 };
 
 class Random
@@ -76,7 +150,6 @@ double g_fudge_limit = 0.0;
 bool g_is_mand = true;
 
 static Random s_random;
-
 static double s_fudge = 0.0;
 static int s_delta16 = 0;
 static int s_shift_back = 0;
@@ -141,6 +214,7 @@ Formula::Formula()
 
 Formula::~Formula()
 {
+	free_work_area();
 }
 
 #define CASE_TERMINATOR case',':\
@@ -2150,7 +2224,7 @@ void Formula::StackJumpLabel()
 }
 
 
-static unsigned count_white_space(char *str)
+static unsigned count_white_space(const char *str)
 {
 	unsigned n, done;
 
@@ -2171,7 +2245,7 @@ static unsigned count_white_space(char *str)
 }
 
 /* detect if constant is part of a (a, b) construct */
-static int isconst_pair(char *Str)
+static int isconst_pair(const char *Str)
 {
 	int n, j;
 	int answer = 0;
@@ -2192,7 +2266,7 @@ static int isconst_pair(char *Str)
 	return answer;
 }
 
-ConstArg *Formula::is_constant(char *text, int length)
+ConstArg *Formula::is_constant(const char *text, int length)
 {
 	DComplex z;
 	unsigned j;
@@ -2203,36 +2277,36 @@ ConstArg *Formula::is_constant(char *text, int length)
 		{
 			if (!strnicmp(m_variables[n].s, text, length))
 			{
-				if (n == 1)        /* The formula uses 'p1'. */
+				if (n == VARIABLE_P1)
 				{
 					m_uses_p1 = true;
 				}
-				if (n == 2)        /* The formula uses 'p2'. */
+				if (n == VARIABLE_P2)
 				{
 					m_uses_p2 = true;
 				}
-				if (n == 7)        /* The formula uses 'rand'. */
+				if (n == VARIABLE_RAND)
 				{
 					RandomSeed();
 				}
-				if (n == 8)        /* The formula uses 'p3'. */
+				if (n == VARIABLE_P3)
 				{
 					m_uses_p3 = true;
 				}
-				if (n == 13)        /* The formula uses 'ismand'. */
+				if (n == VARIABLE_IS_MAND)
 				{
 					m_uses_is_mand = true;
 				}
-				if (n == 17)        /* The formula uses 'p4'. */
+				if (n == VARIABLE_P4)
 				{
 					m_uses_p4 = true;
 				}
-				if (n == 18)        /* The formula uses 'p5'. */
+				if (n == VARIABLE_P5)
 				{
 					m_uses_p5 = true;
 				}
 #if !defined(XFRACT)
-				if (n == 10 || n == 11 || n == 12)
+				if (n == VARIABLE_SCRN_PIX || n == VARIABLE_SCRN_MAX || n == VARIABLE_MAX_IT)
 				{
 					if (m_math_type == L_MATH)
 					{
@@ -2249,18 +2323,22 @@ ConstArg *Formula::is_constant(char *text, int length)
 	}
 	m_variables[m_parser_vsp].s = text;
 	m_variables[m_parser_vsp].len = length;
-	m_variables[m_parser_vsp].a.d.x = m_variables[m_parser_vsp].a.d.y = 0.0;
+	m_variables[m_parser_vsp].a.d.x = 0.0;
+	m_variables[m_parser_vsp].a.d.y = 0.0;
 
 #if !defined(XFRACT)
 	/* m_variables[m_parser_vsp].a should already be zeroed out */
 	switch (m_math_type)
 	{
 	case M_MATH:
-		m_variables[m_parser_vsp].a.m.x.Mant = m_variables[m_parser_vsp].a.m.x.Exp = 0;
-		m_variables[m_parser_vsp].a.m.y.Mant = m_variables[m_parser_vsp].a.m.y.Exp = 0;
+		m_variables[m_parser_vsp].a.m.x.Mant = 0;
+		m_variables[m_parser_vsp].a.m.x.Exp = 0;
+		m_variables[m_parser_vsp].a.m.y.Mant = 0;
+		m_variables[m_parser_vsp].a.m.y.Exp = 0;
 		break;
 	case L_MATH:
-		m_variables[m_parser_vsp].a.l.x = m_variables[m_parser_vsp].a.l.y = 0;
+		m_variables[m_parser_vsp].a.l.x = 0;
+		m_variables[m_parser_vsp].a.l.y = 0;
 		break;
 	}
 #endif
@@ -2323,10 +2401,9 @@ ConstArg *Formula::is_constant(char *text, int length)
 	return &m_variables[m_parser_vsp++];
 }
 
-
 struct FNCT_LIST
 {
-	char *s;
+	const char *s;
 	void (**ptr)();
 };
 
@@ -2480,7 +2557,7 @@ void function_not_found()
 }
 
 /* determine if s names a function and if so which one */
-int whichfn(char *s, int len)
+static int which_function(const char *s, int len)
 {
 	int out;
 	if (len != 3)
@@ -2502,7 +2579,7 @@ int whichfn(char *s, int len)
 	return out;
 }
 
-t_function *Formula::is_function(char *Str, int Len)
+t_function *Formula::is_function(const char *Str, int Len)
 {
 	unsigned n;
 	n = count_white_space(&Str[Len]);
@@ -2515,7 +2592,7 @@ t_function *Formula::is_function(char *Str, int Len)
 				if (!strnicmp(FnctList[n].s, Str, Len))
 				{
 					/* count function variables */
-					int functnum = whichfn(Str, Len);
+					int functnum = which_function(Str, Len);
 					if (functnum != 0)
 					{
 						if (functnum > m_max_fn)
@@ -2542,60 +2619,21 @@ void Formula::RecSortPrec()
 	m_functions[m_op_ptr++] = s_ops[ThisOp].f;
 }
 
-static char *Constants[] =
+int Formula::ParseStr(const char *text, int pass)
 {
-	"pixel",        /* m_variables[0] */
-	"p1",           /* m_variables[1] */
-	"p2",           /* m_variables[2] */
-	"z",            /* m_variables[3] */
-	"LastSqr",      /* m_variables[4] */
-	"pi",           /* m_variables[5] */
-	"e",            /* m_variables[6] */
-	"rand",         /* m_variables[7] */
-	"p3",           /* m_variables[8] */
-	"whitesq",      /* m_variables[9] */
-	"scrnpix",      /* m_variables[10] */
-	"scrnmax",      /* m_variables[11] */
-	"maxit",        /* m_variables[12] */
-	"ismand",       /* m_variables[13] */
-	"center",       /* m_variables[14] */
-	"magxmag",      /* m_variables[15] */
-	"rotskew",      /* m_variables[16] */
-	"p4",           /* m_variables[17] */
-	"p5"            /* m_variables[18] */
-};
-
-struct SYMETRY
-{
-	char *s;
-	int n;
-}
-SymStr[] =
-{
-	{"NOSYM",         0},
-	{"XAXIS_NOPARM", -1},
-	{"XAXIS",         1},
-	{"YAXIS_NOPARM", -2},
-	{"YAXIS",         2},
-	{"XYAXIS_NOPARM", -3},
-	{"XYAXIS",        3},
-	{"ORIGIN_NOPARM", -4},
-	{"ORIGIN",        4},
-	{"PI_SYM_NOPARM", -5},
-	{"PI_SYM",        5},
-	{"XAXIS_NOIMAG", -6},
-	{"XAXIS_NOREAL",  6},
-	{"NOPLOT",       99},
-	{"",              0}
-};
-
-int Formula::ParseStr(char *text, int pass)
-{
-	ConstArg *c;
-	int ModFlag = 999, Len, Equals = 0, Mod[20], mdstk = 0;
+	int ModFlag = 999;
+	int Len;
+	int Equals = 0;
+	int Mod[20];
+	int mdstk = 0;
 	int jumptype;
-	double const_pi, const_e;
-	double Xctr, Yctr, Xmagfactor, Rotation, Skew;
+	double const_pi;
+	double const_e;
+	double Xctr;
+	double Yctr;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	LDBL Magnification;
 	s_random.set_random(false);
 	s_random.set_randomized(false);
@@ -2777,7 +2815,7 @@ int Formula::ParseStr(char *text, int pass)
 #endif
 	}
 	m_max_fn = 0;
-	for (m_parser_vsp = 0; m_parser_vsp < sizeof(Constants) / sizeof(char*); m_parser_vsp++)
+	for (m_parser_vsp = 0; m_parser_vsp < NUM_OF(Constants); m_parser_vsp++)
 	{
 		m_variables[m_parser_vsp].s = Constants[m_parser_vsp];
 		m_variables[m_parser_vsp].len = (int) strlen(Constants[m_parser_vsp]);
@@ -3083,7 +3121,7 @@ int Formula::ParseStr(char *text, int pass)
 				}
 				else
 				{
-					c = is_constant(&text[m_initial_n], Len);
+					ConstArg *c = is_constant(&text[m_initial_n], Len);
 					m_load[m_load_ptr++] = &(c->a);
 					s_ops[m_posp].f = StkLod;
 					s_ops[m_posp++].p = 1 - (m_parenthesis_count + Equals)*15;
@@ -3179,6 +3217,7 @@ int Formula::orbit()
 
 int Formula::per_pixel()
 {
+	_ASSERTE(_CrtCheckMemory());
 	if (g_formula_name[0] == 0)
 	{
 		return 1;
@@ -3484,7 +3523,7 @@ void getvarinfo(token_st *tok)
 {
 	int i;
 
-	for (i = 0; i < sizeof(Constants) / sizeof(char*); i++)
+	for (i = 0; i < NUM_OF(Constants); i++)
 	{
 		if (!strcmp(Constants[i], tok->token_str))
 		{
@@ -3973,7 +4012,7 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 		this_token->token_str[i] = (char) 0;
 		if (this_token->token_type == TOKENTYPE_OPERATOR)
 		{
-			for (i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++)
+			for (i = 0; i < NUM_OF(OPList); i++)
 			{
 				if (!strcmp(OPList[i], this_token->token_str))
 				{
@@ -4467,30 +4506,24 @@ int Formula::setup_fp()
 
 int Formula::setup_int()
 {
-#if defined(XFRACT) || defined(_WIN32)
+#if defined(XFRACT)
 	return integer_unsupported();
 #else
-	MathType = L_MATH;
-	m_fudge = (double)(1L << g_bit_shift);
-	g_fudge_limit = (double)0x7fffffffL / m_fudge;
+	m_math_type = L_MATH;
+	s_fudge = (double) (1L << g_bit_shift);
+	g_fudge_limit = (double) 0x7fffffffL/s_fudge;
 	s_shift_back = 32 - g_bit_shift;
 	return !RunForm(g_formula_name, 0);
 #endif
 }
 
-
 void Formula::init_misc()
 {
-	static ConstArg vv[5];
-	static Arg argfirst, argsecond;
-	if (!m_variables)
-	{
-		m_variables = vv;
-	}
-	Arg1 = &argfirst;
-	Arg2 = &argsecond; /* needed by all the ?Stk* functions */
-	s_fudge = (double)(1L << g_bit_shift);
-	g_fudge_limit = (double)0x7fffffffL / s_fudge;
+	//static Arg argfirst, argsecond;
+	Arg1 = &m_arg1;
+	Arg2 = &m_arg2; /* needed by all the ?Stk* functions */
+	s_fudge = (double) (1L << g_bit_shift);
+	g_fudge_limit = (double) 0x7fffffffL/s_fudge;
 	s_shift_back = 32 - g_bit_shift;
 	s_delta16 = g_bit_shift - 16;
 	g_bit_shift_minus_1 = g_bit_shift-1;
@@ -4557,21 +4590,21 @@ void free_work_area()
 
 void Formula::free_work_area()
 {
+	delete[] m_functions;
 	delete[] m_store;
 	delete[] m_load;
 	delete[] m_variables;
-	delete[] m_functions;
 	delete[] m_function_load_store_pointers;
 
+	m_functions = NULL;
 	m_store = NULL;
 	m_load = NULL;
 	m_variables = NULL;
-	m_functions = NULL;
 	m_function_load_store_pointers = NULL;
 }
 
 
-struct error_data_st
+struct error_data
 {
 	long start_pos;
 	long error_pos;
@@ -5693,21 +5726,29 @@ int Formula::prescan(FILE *open_file)
 
 const char *Formula::info_line1() const
 {
+	static char buffer[80];
 	std::ostringstream text;
 	text << " MaxOps (posp) " << m_posp
-		<< " MaxArgs (vsp) " << m_parser_vsp;
-	return text.str().c_str();
+		<< " MaxArgs (vsp) " << m_parser_vsp
+		<< std::ends;
+	::strncpy(buffer, text.str().c_str(), 79);
+	buffer[79] = 0;
+	return &buffer[0];
 }
 
 const char *Formula::info_line2() const
 {
+	static char buffer[80];
 	std::ostringstream text;
 	text << "   Store ptr " << m_store_ptr
 		<< " Loadptr " << m_load_ptr
 		<< " MaxOps var " << m_formula_max_ops
 		<< " MaxArgs var " << m_formula_max_args
-		<< " LastInitOp " << m_last_init_op;
-	return text.str().c_str();
+		<< " LastInitOp " << m_last_init_op
+		<< std::ends;
+	::strncpy(buffer, text.str().c_str(), 79);
+	buffer[79] = 0;
+	return &buffer[0];
 }
 
 // TODO: remove these glue functions when everything has been refactored to objects
