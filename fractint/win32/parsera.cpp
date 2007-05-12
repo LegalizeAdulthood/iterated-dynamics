@@ -1,9 +1,9 @@
-#include <crtdbg.h>
+#include <cassert>
 
 #include "port.h"
 #include "prototyp.h"
 
-#define FN(name_) void fStk##name_() { _ASSERTE(0 && "Called " #name_); }
+#define FN(name_) void fStk##name_() { assert(0 && "Called " #name_); }
 
 FN(Abs)
 FN(ACos)
@@ -130,7 +130,7 @@ FN(StoSqr0)
 
 int fform_per_pixel()
 {
-	_ASSERTE(0 && "fform_per_pixel called.");
+	assert(0 && "fform_per_pixel called.");
 	return 0;
 }
 
@@ -179,7 +179,7 @@ _fFormula          endp
 */
 int fFormula()
 {
-	_ASSERTE(0 && "fFormula called.");
+	assert(0 && "fFormula called.");
 	return 0;
 }
 
@@ -214,5 +214,5 @@ _Img_Setup         endp
 */
 void Img_Setup()
 {
-	_ASSERTE(0 && "Img_Setup called.");
+	assert(0 && "Img_Setup called.");
 }
