@@ -51,15 +51,15 @@ enum direction
 
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
-_LCMPLX g_init_orbit_l = { 0, 0 };
+LComplex g_init_orbit_l = { 0, 0 };
 long g_magnitude_l = 0;
 long g_limit_l = 0;
 long g_limit2_l = 0;
 long g_close_enough_l = 0;
-_CMPLX g_initial_z = { 0, 0 };
-_CMPLX g_old_z = { 0, 0 };
-_CMPLX g_new_z = { 0, 0 };
-_CMPLX g_temp_z = { 0, 0 };
+DComplex g_initial_z = { 0, 0 };
+DComplex g_old_z = { 0, 0 };
+DComplex g_new_z = { 0, 0 };
+DComplex g_temp_z = { 0, 0 };
 int g_color = 0;
 long g_color_iter;
 long g_old_color_iter;
@@ -122,8 +122,8 @@ unsigned long g_diffusion_limit; 	/* the diffusion counter */
 int g_three_pass;
 int g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
-_CMPLX  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
-_LCMPLX g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
+DComplex  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
+LComplex g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
 int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
 int g_periodicity_check;
 /* next has a skip bit for each s_max_block unit;
@@ -206,7 +206,7 @@ static int s_half_block;
 static int s_guess_plot;                   /* paint 1st pass row at a time?   */
 static int s_right_guess;
 static int s_bottom_guess;
-static _CMPLX s_saved_z;
+static DComplex s_saved_z;
 static double s_rq_limit_save;
 static int s_pixel_pi; /* value of pi in pixels */
 static int s_ix_start;
@@ -1984,7 +1984,7 @@ int calculate_mandelbrot_fp()
 int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 {
 #ifdef NUMSAVED
-	_CMPLX savedz[NUMSAVED];
+	DComplex savedz[NUMSAVED];
 	long caught[NUMSAVED];
 	long changed[NUMSAVED];
 	int zctr = 0;
@@ -2001,16 +2001,16 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	int caught_a_cycle;
 	long savedand;
 	int savedincr;       /* for periodicity checking */
-	_LCMPLX lsaved;
+	LComplex lsaved;
 	int attracted;
-	_LCMPLX lat;
-	_CMPLX  at;
-	_CMPLX deriv;
+	LComplex lat;
+	DComplex  at;
+	DComplex deriv;
 	long dem_color = -1;
-	_CMPLX dem_new;
+	DComplex dem_new;
 	int check_freq;
 	double totaldist = 0.0;
-	_CMPLX lastz;
+	DComplex lastz;
 
 	lcloseprox = (long)(g_proximity*g_fudge);
 	savemaxit = g_max_iteration;
@@ -2958,8 +2958,8 @@ static void decomposition()
 	static long reset_fudge = -1;
 	int temp = 0;
 	int save_temp = 0;
-	_LCMPLX lalt;
-	_CMPLX alt;
+	LComplex lalt;
+	DComplex alt;
 	g_color_iter = 0;
 	if (g_integer_fractal) /* the only case */
 	{

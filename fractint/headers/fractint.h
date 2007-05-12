@@ -853,8 +853,6 @@ extern FractalTypeSpecificData *g_current_fractal_specific;
 #define PER_PIXEL   (g_fractal_specific[g_fractal_type].per_pixel)
 #define ORBITCALC   (g_fractal_specific[g_fractal_type].orbitcalc)
 
-typedef  _LCMPLX LCMPLX;
-
 /* 3D stuff - formerly in 3d.h */
 #ifndef dot_product
 #define dot_product(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])  /* TW 7-09-89 */

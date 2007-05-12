@@ -3,7 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-void HComplexMult(_HCMPLX *arg1, _HCMPLX *arg2, _HCMPLX *out)
+void HComplexMult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
 	/* it is possible to reoganize this code and reduce the multiplies
 		from 16 to 10, but on my 486 it is SLOWER !!! so I left it
@@ -18,7 +18,7 @@ void HComplexMult(_HCMPLX *arg1, _HCMPLX *arg2, _HCMPLX *out)
 			+ arg1->y*arg2->z + arg1->x*arg2->t;
 }
 
-void HComplexSqr(_HCMPLX *arg, _HCMPLX *out)
+void HComplexSqr(DHyperComplex *arg, DHyperComplex *out)
 {
 	out->x = arg->x*arg->x - arg->y*arg->y
 			- arg->z*arg->z + arg->t*arg->t;
@@ -27,7 +27,7 @@ void HComplexSqr(_HCMPLX *arg, _HCMPLX *out)
 	out->t = 2*arg->t*arg->x + 2*arg->z*arg->y;
 }
 
-int HComplexInv(_HCMPLX *arg, _HCMPLX *out)
+int HComplexInv(DHyperComplex *arg, DHyperComplex *out)
 {
 	double det, mod, xt_minus_yz;
 
@@ -48,7 +48,7 @@ int HComplexInv(_HCMPLX *arg, _HCMPLX *out)
 	return 0;
 }
 
-void HComplexAdd(_HCMPLX *arg1, _HCMPLX *arg2, _HCMPLX *out)
+void HComplexAdd(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
 	out->x = arg1->x + arg2->x;
 	out->y = arg1->y + arg2->y;
@@ -56,7 +56,7 @@ void HComplexAdd(_HCMPLX *arg1, _HCMPLX *arg2, _HCMPLX *out)
 	out->t = arg1->t + arg2->t;
 }
 
-void HComplexSub(_HCMPLX *arg1, _HCMPLX *arg2, _HCMPLX *out)
+void HComplexSub(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
 	out->x = arg1->x - arg2->x;
 	out->y = arg1->y - arg2->y;
@@ -64,7 +64,7 @@ void HComplexSub(_HCMPLX *arg1, _HCMPLX *arg2, _HCMPLX *out)
 	out->t = arg1->t - arg2->t;
 }
 
-void HComplexMinus(_HCMPLX *arg1, _HCMPLX *out)
+void HComplexMinus(DHyperComplex *arg1, DHyperComplex *out)
 {
 	out->x = -arg1->x;
 	out->y = -arg1->y;
@@ -73,13 +73,13 @@ void HComplexMinus(_HCMPLX *arg1, _HCMPLX *out)
 }
 
 /* extends the unary function f to *h1 */
-void HComplexTrig0(_HCMPLX *h, _HCMPLX *out)
+void HComplexTrig0(DHyperComplex *h, DHyperComplex *out)
 {
 	/* This is the whole beauty of Hypercomplex numbers - *ANY* unary
        complex valued function of a complex variable can easily
        be generalized to hypercomplex numbers */
 
-	_CMPLX a, b, resulta, resultb;
+	DComplex a, b, resulta, resultb;
 
 	/* convert to duplex form */
 	a.x = h->x - h->t;
