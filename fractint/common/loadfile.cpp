@@ -16,6 +16,7 @@
 #include "fihelp.h"
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"
+#include "Formula.h"
 
 #define BLOCKTYPE_MAIN_INFO		1
 #define BLOCKTYPE_RESUME_INFO	2
@@ -245,7 +246,7 @@ static void read_info_version_8(const fractal_info &read_info)
 		g_eyes_fp = read_info.eyesfp;
 		g_new_orbit_type = read_info.orbittype;
 		g_juli_3d_mode = read_info.juli3Dmode;
-		g_max_fn = (char)read_info.max_fn;
+		g_formula_state.set_max_fn(read_info.max_fn);
 		g_major_method = (enum Major) (read_info.inversejulia >> 8);
 		g_minor_method = (enum Minor) (read_info.inversejulia & 255);
 		g_parameters[4] = read_info.dparm5;
@@ -457,13 +458,13 @@ static void got_formula_info(const fractal_info &read_info, struct ext_blk_formu
 
 	default:
 		nameptr = g_formula_name;
-		g_uses_p1 = formula_info.uses_p1;
-		g_uses_p2 = formula_info.uses_p2;
-		g_uses_p3 = formula_info.uses_p3;
-		g_uses_is_mand = formula_info.uses_is_mand;
-		g_is_mand = formula_info.ismand;
-		g_uses_p4 = formula_info.uses_p4;
-		g_uses_p5 = formula_info.uses_p5;
+		g_formula_state.set_uses_p1(formula_info.uses_p1 != 0);
+		g_formula_state.set_uses_p2(formula_info.uses_p2 != 0);
+		g_formula_state.set_uses_p3(formula_info.uses_p3 != 0);
+		g_formula_state.set_uses_p4(formula_info.uses_p4 != 0);
+		g_formula_state.set_uses_p5(formula_info.uses_p5 != 0);
+		g_formula_state.set_uses_is_mand(formula_info.uses_is_mand != 0);
+		g_is_mand = formula_info.ismand != 0;
 		break;
 	}
 	formula_info.form_name[ITEMNAMELEN] = 0;
@@ -2195,7 +2196,7 @@ static char typeOK(fractal_info *info, struct ext_blk_formula_info *formula_info
 	{
 		if (!stricmp(formula_info->form_name, g_formula_name))
 		{
-			numfn = g_max_fn;
+			numfn = g_formula_state.max_fn();
 			return (numfn > 0) ? functionOK(info, numfn) : 1;
 		}
 		else

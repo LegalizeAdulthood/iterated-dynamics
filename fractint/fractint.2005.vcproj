@@ -1069,6 +1069,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\Formula.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\fractint.h"
 				>
 			</File>

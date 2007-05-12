@@ -5,6 +5,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+#include "Formula.h"
 
 #define VARYINT_NONE			0
 #define VARYINT_WITH_X			1
@@ -334,7 +335,7 @@ static int get_the_rest()
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
-		numtrig = g_max_fn;
+		numtrig = g_formula_state.max_fn();
 	}
 
 choose_vars_restart:
@@ -440,46 +441,46 @@ static int get_variations()
 
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
-		if (g_uses_p1)  /* set first parameter */
+		if (g_formula_state.uses_p1())  /* set first parameter */
 		{
 			firstparm = 0;
 		}
-		else if (g_uses_p2)
+		else if (g_formula_state.uses_p2())
 		{
 			firstparm = 2;
 		}
-		else if (g_uses_p3)
+		else if (g_formula_state.uses_p3())
 		{
 			firstparm = 4;
 		}
-		else if (g_uses_p4)
+		else if (g_formula_state.uses_p4())
 		{
 			firstparm = 6;
 		}
 		else
 		{
-			firstparm = 8; /* g_uses_p5 or no parameter */
+			firstparm = 8; /* g_formula_state.uses_p5() or no parameter */
 		}
 
-		if (g_uses_p5) /* set last parameter */
+		if (g_formula_state.uses_p5()) /* set last parameter */
 		{
 			lastparm = 10;
 		}
-		else if (g_uses_p4)
+		else if (g_formula_state.uses_p4())
 		{
 			lastparm = 8;
 		}
-		else if (g_uses_p3)
+		else if (g_formula_state.uses_p3())
 		{
 			lastparm = 6;
 		}
-		else if (g_uses_p2)
+		else if (g_formula_state.uses_p2())
 		{
 			lastparm = 4;
 		}
 		else
 		{
-			lastparm = 2; /* g_uses_p1 or no parameter */
+			lastparm = 2; /* g_formula_state.uses_p1() or no parameter */
 		}
 	}
 

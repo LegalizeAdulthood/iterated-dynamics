@@ -15,10 +15,6 @@ extern void set_default_parms();
 /*  windos -- C file prototypes */
 
 extern void debugmessage(char *, char *);
-extern int  farread(int, VOIDPTR, unsigned);
-extern int  farwrite(int, VOIDPTR, unsigned);
-extern void far_memcpy(void *, void *, int);
-extern void far_memset(void *, int , int);
 extern int getcolor(int, int);
 extern int out_line(BYTE *, int);
 extern void putcolor_a (int, int, int);

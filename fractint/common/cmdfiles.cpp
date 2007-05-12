@@ -431,7 +431,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
 	g_quick_calculate = FALSE;
 	g_proximity = 0.01;
-	g_is_mand = 1;                          /* default formula mand/jul toggle */
+	g_is_mand = true;                          /* default formula mand/jul toggle */
 #ifndef XFRACT
 	g_user_float_flag = 0;                   /* turn off the float flag */
 #else
@@ -2800,7 +2800,7 @@ static int no_bof_arg(const cmd_context &context)
 
 static int is_mand_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_is_mand, Command::FractalParameter).parse(context);
+	return FlagParser<bool>(g_is_mand, Command::FractalParameter).parse(context);
 }
 
 static int preview_arg(const cmd_context &context)

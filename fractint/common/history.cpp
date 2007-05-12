@@ -10,6 +10,7 @@
 #include "fractype.h"
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"
+#include "Formula.h"
 
 static HISTORY *s_history = NULL;		/* history storage */
 static int s_history_index = -1;			/* user pointer into history tbl  */
@@ -115,7 +116,7 @@ void _fastcall history_save_info()
 	current.eyesfp				= g_eyes_fp;
 	current.orbittype			= (short) g_new_orbit_type;
 	current.juli3Dmode			= (short) g_juli_3d_mode;
-	current.max_fn				= g_max_fn;
+	current.max_fn				= static_cast<char>(g_formula_state.max_fn());
 	current.major_method		= (short) g_major_method;
 	current.minor_method		= (short) g_minor_method;
 	current.bail_out			= g_bail_out;
@@ -123,7 +124,7 @@ void _fastcall history_save_info()
 	current.iterations			= g_max_iteration;
 	current.old_demm_colors		= (short) g_old_demm_colors;
 	current.logcalc				= (short) g_log_dynamic_calculate;
-	current.ismand				= (short) g_is_mand;
+	current.ismand				= (short) g_is_mand ? 1 : 0;
 	current.proximity			= g_proximity;
 	current.no_bof				= (short) g_no_bof;
 	current.orbit_delay			= (short) g_orbit_delay;
@@ -291,7 +292,7 @@ void _fastcall history_restore_info()
 	g_eyes_fp              	= last.eyesfp;
 	g_new_orbit_type        = last.orbittype;
 	g_juli_3d_mode			= last.juli3Dmode;
-	g_max_fn               	= last.max_fn;
+	g_formula_state.set_max_fn(static_cast<int>(last.max_fn));
 	g_major_method        	= (enum Major) last.major_method;
 	g_minor_method        	= (enum Minor) last.minor_method;
 	g_bail_out             	= last.bail_out;
@@ -305,7 +306,7 @@ void _fastcall history_restore_info()
 		g_invert = 3;
 	}
 	g_log_dynamic_calculate			= last.logcalc;
-	g_is_mand				= last.ismand;
+	g_is_mand = last.ismand != 0;
 	g_proximity				= last.proximity;
 	g_no_bof					= last.no_bof;
 	g_orbit_delay				= last.orbit_delay;

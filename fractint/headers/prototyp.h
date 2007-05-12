@@ -706,7 +706,7 @@ extern void set_trig_pointers(int);
 extern int tab_display();
 extern int ends_with_slash(char *);
 extern int ifs_load();
-extern int find_file_item(char *, char *, FILE **, int);
+extern int find_file_item(char *, const char *item_name, FILE **, int);
 extern int file_gets(char *, int, FILE *);
 extern void round_float_d(double *);
 extern void fix_inversion(double *);
@@ -746,15 +746,6 @@ extern double _cos(double);
 
 /*  parser -- C file prototypes */
 
-extern unsigned long new_random_number();
-extern void lRandom();
-extern void dRandom();
-extern void mRandom();
-extern void SetRandFnct();
-extern void RandomSeed();
-extern void lStkSRand();
-extern void mStkSRand();
-extern void dStkSRand();
 extern void dStkAbs();
 extern void mStkAbs();
 extern void lStkAbs();
@@ -902,21 +893,10 @@ extern void dStkRound();
 extern void mStkRound();
 extern void lStkRound();
 extern void EndInit();
-extern struct ConstArg *is_constant(char *, int);
-extern void not_a_function();
-extern void function_not_found();
-extern int whichfn(char *, int);
-extern int CvtStk();
 extern int fFormula();
-#if !defined(XFRACT)
-typedef void t_function();
-extern t_function *is_function(char *, int);
-#endif
-extern void RecSortPrec();
-extern int Formula();
+extern int formula_orbit();
 extern int BadFormula();
 extern int form_per_pixel();
-extern int frm_get_param_stuff (char *);
 extern int RunForm(char *, int);
 extern int formula_setup_fp();
 extern int formula_setup_int();
@@ -947,7 +927,7 @@ extern void set_bail_out_formula(enum bailouts);
 extern int find_extra_parameter(int);
 extern void load_parameters(int g_fractal_type);
 extern int check_orbit_name(char *);
-extern int scan_entries(FILE *infile, struct entryinfo *choices, char *itemname);
+extern int scan_entries(FILE *infile, struct entryinfo *choices, const char *itemname);
 
 /*  prompts2 -- C file prototypes */
 

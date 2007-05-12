@@ -1041,13 +1041,13 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, int *frommandel)
 		{
 			g_fractal_specific[g_fractal_type].tojulia = g_fractal_type;
 			g_fractal_specific[g_fractal_type].tomandel = FRACTYPE_NO_FRACTAL;
-			g_is_mand = 0;
+			g_is_mand = false;
 		}
 		else
 		{
 			g_fractal_specific[g_fractal_type].tojulia = FRACTYPE_NO_FRACTAL;
 			g_fractal_specific[g_fractal_type].tomandel = g_fractal_type;
-			g_is_mand = 1;
+			g_is_mand = true;
 		}
 	}
 

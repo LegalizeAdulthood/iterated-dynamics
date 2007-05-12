@@ -111,6 +111,7 @@
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "Formula.h"
 
 /* global data  */
 struct fls *g_function_load_store_pointers = (struct fls *)0;
@@ -119,16 +120,6 @@ struct fls *g_function_load_store_pointers = (struct fls *)0;
 
 /* not moved to PROTOTYPE.H because these only communicate within
 	PARSER.C and other parser modules */
-
-extern union Arg *Arg1, *Arg2;
-extern double _1_, _2_;
-extern union Arg s[20], **Store, **Load;
-extern int OpPtr;
-extern struct ConstArg *v;
-extern int InitLodPtr, InitStoPtr, InitOpPtr;
-extern void (* *f)();
-extern JUMP_CONTROL_ST *jump_control;
-extern int uses_jump, jump_index;
 
 typedef void OLD_FN();  /* old C functions  */
 
@@ -475,8 +466,7 @@ struct fn_entry
 static char cDbgMsg[255];
 #endif  /* TESTFP  */
 
-static int CvtFptr(void (* ffptr)(), int MinStk, int FreeStk,
-		int Delta)
+int Formula::CvtFptr(void (* ffptr)(), int MinStk, int FreeStk, int Delta)
 {
 	union Arg  *otemp;    /* temp operand ptr  */
 	union Arg *testload;
@@ -548,12 +538,12 @@ awful_error:
 	/* set the operand pointer here for store function  */
 	if (ffptr == fStkSto)
 	{
-		OPPTR(cvtptrx) = Store[g_store_ptr++];
+		OPPTR(cvtptrx) = Store[m_store_ptr++];
 	}
 	else if (ffptr == fStkLod && DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag)
 	{
 		/* when disabling optimizer, set load pointer here  */
-		OPPTR(cvtptrx) = Load[g_lod_ptr++];
+		OPPTR(cvtptrx) = Load[m_load_ptr++];
 	}
 	else  /* the optimizer will set the pointer for load fn.  */
 	{
@@ -577,7 +567,7 @@ awful_error:
 	/* ******************************************************************** */
 	if (ffptr == fStkLod)  /* about to add Lod to the array  */
 	{
-		if (prevfptr == fStkLod && Load[g_lod_ptr-1] == Load[g_lod_ptr])
+		if (prevfptr == fStkLod && Load[m_load_ptr-1] == Load[m_load_ptr])
 		{
 			/* previous non-adjust operator was Lod of same operand  */
 			/* ? lodx ? (*lodx)  */
@@ -605,7 +595,7 @@ awful_error:
 			ffptr = fStkLodDup;
 		}
 		else if (prevfptr == fStkSto2
-				&& Store[g_store_ptr-1] == Load[g_lod_ptr])
+				&& Store[m_store_ptr-1] == Load[m_load_ptr])
 		{
 			/* store, load of same value  */
 			/* only one operand on stack here when prev oper is Sto2  */
@@ -617,7 +607,7 @@ awful_error:
 		/*  use the rounded value that was stored here, while the next  */
 		/*  operator uses the more accurate internal value.  */
 		else if (prevfptr == fStkStoClr2
-				&& Store[g_store_ptr-1] == Load[g_lod_ptr])
+				&& Store[m_store_ptr-1] == Load[m_load_ptr])
 		{
 			/* store, clear, load same value found  */
 			/* only one operand was on stack so this is safe  */
@@ -627,7 +617,7 @@ awful_error:
 		}
 		else
 		{
-			testload = Load[g_lod_ptr];
+			testload = Load[m_load_ptr];
 			if (testload == &LASTSQR && lastsqrreal)
 			{
 				/* -- LastSqr is a real.  CAE 31OCT93  */
@@ -641,7 +631,7 @@ awful_error:
 			}
 		}
 		/* set the operand ptr here  */
-		OPPTR(cvtptrx) = Load[g_lod_ptr++];
+		OPPTR(cvtptrx) = Load[m_load_ptr++];
 	}
 	/* ******************************************************************** */
 	else if (ffptr == fStkAdd)
@@ -837,7 +827,7 @@ awful_error:
 			}
 
 			if (FNPTR(cvtptrx-1) == fStkLodRealC
-					&& Load[g_lod_ptr-2]->d.x == _2_)
+					&& Load[m_load_ptr-2]->d.x == _2_)
 					{
 				/* -- Convert '2*a' into 'a + a'.                CAE 31OCT93  */
 				if (FNPTR(cvtptrx) == NO_FUNCTION)
@@ -923,7 +913,7 @@ awful_error:
 
 			/**********************  begin extension  ***  CAE 31OCT93  ****/
 			if (prevfptr == fStkLodRealC  /* use prevfptr here  */
-					&& Load[g_lod_ptr-1]->d.x == _2_)
+					&& Load[m_load_ptr-1]->d.x == _2_)
 					{
 				if (FNPTR(cvtptrx) == fStkPush2)
 				{
@@ -1000,8 +990,7 @@ awful_error:
 	/* ******************************************************************** */
 	else if (ffptr == fStkDiv)
 	{
-
-		if (prevfptr == fStkLodRealC && g_parser_vsp < g_formula_max_args - 1)
+		if (prevfptr == fStkLodRealC && m_parser_vsp < m_formula_max_args - 1)
 		{
 			/* have found a divide by a real constant  */
 			/*  and there is space to create a new one  */
@@ -1015,11 +1004,11 @@ awful_error:
 			{
 				DBUGMSG("*lodrealc (div) -> (*lodrealmul)");
 			}
-			v[g_parser_vsp].s = NULL;  /* this constant has no name  */
-			v[g_parser_vsp].len = 0;
-			v[g_parser_vsp].a.d.x = _1_ / Load[g_lod_ptr-1]->d.x;
-			v[g_parser_vsp].a.d.y = 0.0;
-			OPPTR(cvtptrx) = &v[g_parser_vsp++].a;
+			v[m_parser_vsp].s = NULL;  /* this constant has no name  */
+			v[m_parser_vsp].len = 0;
+			v[m_parser_vsp].a.d.x = _1_ / Load[m_load_ptr-1]->d.x;
+			v[m_parser_vsp].a.d.y = 0.0;
+			OPPTR(cvtptrx) = &v[m_parser_vsp++].a;
 			ffptr = fStkLodRealMul;
 		}
 	}
@@ -1177,7 +1166,7 @@ awful_error:
 
 		if (prevfptr == fStkLodRealC)
 		{
-			dTemp = Load[g_lod_ptr-1]->d.x;
+			dTemp = Load[m_load_ptr-1]->d.x;
 			if (dTemp == _2_ || dTemp == _1_ || dTemp == -1.0 || dTemp == 0.0)
 			{
 				/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr  CAE 06NOV93  */
@@ -1337,17 +1326,17 @@ SkipOptimizer:  /* -------------  end of optimizer ----------------------- */
 	return 1;  /* return 1 for success  */
 }
 
-int fpfill_jump_struct()
+int Formula::fill_jump_struct_fp()
 {
 	/* Completes all entries in jump structure. Returns 1 on error) */
-	/* On entry, jump_index is the number of jump functions in the formula*/
+	/* On entry, m_jump_index is the number of jump functions in the formula*/
 	int i = 0;
 	int checkforelse = 0;
 	NEW_FN  * JumpFunc = NULL;
 	int find_new_func = 1;
 	JUMP_PTRS_ST jump_data[MAX_JUMPS];
 
-	for (OpPtr = 0; OpPtr < (int) g_last_op; OpPtr++)
+	for (m_op_ptr = 0; m_op_ptr < m_last_op; m_op_ptr++)
 	{
 		if (find_new_func)
 		{
@@ -1371,16 +1360,16 @@ int fpfill_jump_struct()
 			}
 			find_new_func = 0;
 		}
-		if (g_function_load_store_pointers[OpPtr].function == JumpFunc)
+		if (g_function_load_store_pointers[m_op_ptr].function == JumpFunc)
 		{
-			jump_data[i].JumpOpPtr = OpPtr*4;
+			jump_data[i].JumpOpPtr = m_op_ptr*4;
 			i++;
 			find_new_func = 1;
 		}
 	}
 
 		/* Following for safety only; all should always be false */
-	if (i != jump_index || jump_control[i - 1].type != 4
+	if (i != m_jump_index || jump_control[i - 1].type != 4
 		|| jump_control[0].type != 1)
 	{
 		return 1;
@@ -1397,7 +1386,7 @@ int fform_per_pixel();       /* these fns are in parsera.asm  */
 int BadFormula();
 void Img_Setup();
 
-int CvtStk()  /* convert the array of ptrs  */
+int Formula::CvtStk()  /* convert the array of ptrs  */
 {
 	extern char g_formula_name[];
 	void (*ftst)();
@@ -1412,19 +1401,19 @@ int CvtStk()  /* convert the array of ptrs  */
 	lastsqrused = 0;  /* ... and LastSqr is not used  */
 
 	/* now see if the above assumptions are true */
-	for (OpPtr = g_lod_ptr = g_store_ptr = 0; OpPtr < (int)g_last_op; OpPtr++)
+	for (m_op_ptr = m_load_ptr = m_store_ptr = 0; m_op_ptr < (int)m_last_op; m_op_ptr++)
 	{
-		ftst = f[OpPtr];
+		ftst = f[m_op_ptr];
 		if (ftst == StkLod)
 		{
-			if (Load[g_lod_ptr++] == &LASTSQR)
+			if (Load[m_load_ptr++] == &LASTSQR)
 			{
 				lastsqrused = 1;
 			}
 		}
 		else if (ftst == StkSto)
 		{
-			testoperand = Store[g_store_ptr++];
+			testoperand = Store[m_store_ptr++];
 			if (testoperand == &PARM1)
 			{
 				p1const = 0;
@@ -1481,19 +1470,19 @@ int CvtStk()  /* convert the array of ptrs  */
 		}
 	}
 
-	if (f[g_last_op-1] != StkClr)
+	if (f[m_last_op-1] != StkClr)
 	{
 		DBUGMSG("Missing clr added at end");
 		/* should be safe to modify this  */
-		f[g_last_op++] = StkClr;
+		f[m_last_op++] = StkClr;
 	}
 
 	prevfptr = (void (*)())0;
 	cvtptrx = realstkcnt = stkcnt = 0;
 
-	for (OpPtr = g_lod_ptr = g_store_ptr = 0; OpPtr < (int)g_last_op; OpPtr++)
+	for (m_op_ptr = m_load_ptr = m_store_ptr = 0; m_op_ptr < (int)m_last_op; m_op_ptr++)
 	{
-		ftst = f[OpPtr];
+		ftst = f[m_op_ptr];
 		fnfound = 0;
 		for (pfe = &afe[0]; pfe <= &afe[LAST_OLD_FN]; pfe++)
 		{
@@ -1501,7 +1490,7 @@ int CvtStk()  /* convert the array of ptrs  */
 			{
 				fnfound = 1;
 				ntst = pfe->outfn;
-				if (ntst == fStkClr1 && OpPtr == (int)(g_last_op-1))
+				if (ntst == fStkClr1 && m_op_ptr == (int)(m_last_op-1))
 				{
 					ntst = fStkClr2;  /* convert the last clear to a clr2  */
 					DBUGMSG("Last fn (CLR) --> (is really CLR2)");
@@ -1603,12 +1592,12 @@ int CvtStk()  /* convert the array of ptrs  */
 
 skipfinalopt:  /* -------------- end of final optimizations ------------ */
 
-	g_last_op = cvtptrx;  /* save the new operator count  */
+	m_last_op = cvtptrx;  /* save the new operator count  */
 	LASTSQR.d.y = 0.0;  /* do this once per image  */
 
 	/* now change the pointers  */
 	if (g_formula_name[0] != 0 &&
-		(uses_jump == 0 || fpfill_jump_struct() == 0)) /* but only if parse succeeded  */
+		(m_uses_jump == 0 || fill_jump_struct_fp() == 0)) /* but only if parse succeeded  */
 	{
 		g_current_fractal_specific->per_pixel = fform_per_pixel;
 		g_current_fractal_specific->orbitcalc = fFormula;
