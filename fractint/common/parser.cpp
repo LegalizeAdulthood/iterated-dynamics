@@ -336,8 +336,6 @@ int InitOpPtr;
 	} \
 	while (0)
 
-#define LastSqr m_variables[4].a
-
 /* error_messages() defines; all calls to error_messages(), or any variable which will
 	be used as the argument in a call to error_messages(), should use one of these
 	defines.
@@ -506,8 +504,8 @@ void lRandom()
 
 void Formula::Random_l()
 {
-	m_variables[7].a.l.x = new_random_number() >> (32 - g_bit_shift);
-	m_variables[7].a.l.y = new_random_number() >> (32 - g_bit_shift);
+	m_variables[VARIABLE_RAND].a.l.x = new_random_number() >> (32 - g_bit_shift);
+	m_variables[VARIABLE_RAND].a.l.y = new_random_number() >> (32 - g_bit_shift);
 }
 
 void dRandom()
@@ -523,8 +521,8 @@ void Formula::Random_d()
           the same fractals when the srand() function is used. */
 	x = new_random_number() >> (32 - g_bit_shift);
 	y = new_random_number() >> (32 - g_bit_shift);
-	m_variables[7].a.d.x = ((double)x / (1L << g_bit_shift));
-	m_variables[7].a.d.y = ((double)y / (1L << g_bit_shift));
+	m_variables[VARIABLE_RAND].a.d.x = ((double)x / (1L << g_bit_shift));
+	m_variables[VARIABLE_RAND].a.d.y = ((double)y / (1L << g_bit_shift));
 
 }
 
@@ -542,8 +540,8 @@ void Formula::Random_m()
 		the same fractals when the srand() function is used. */
 	x = new_random_number() >> (32 - g_bit_shift);
 	y = new_random_number() >> (32 - g_bit_shift);
-	m_variables[7].a.m.x = *fg2MP(x, g_bit_shift);
-	m_variables[7].a.m.y = *fg2MP(y, g_bit_shift);
+	m_variables[VARIABLE_RAND].a.m.x = *fg2MP(x, g_bit_shift);
+	m_variables[VARIABLE_RAND].a.m.y = *fg2MP(y, g_bit_shift);
 #endif
 }
 
@@ -600,7 +598,7 @@ void Formula::StackStoreRandom_l()
 #if !defined(XFRACT)
 	SetRandFnct();
 	lRandom();
-	Arg1->l = m_variables[7].a.l;
+	Arg1->l = m_variables[VARIABLE_RAND].a.l;
 #endif
 }
 
@@ -616,7 +614,7 @@ void Formula::StackStoreRandom_m()
 	Arg1->l.y = Arg1->m.y.Mant ^ (long)Arg1->m.y.Exp;
 	SetRandFnct();
 	mRandom();
-	Arg1->m = m_variables[7].a.m;
+	Arg1->m = m_variables[VARIABLE_RAND].a.m;
 #endif
 }
 
@@ -631,7 +629,7 @@ void Formula::StackStoreRandom_d()
 	Arg1->l.y = (long)(Arg1->d.y*(1L << g_bit_shift));
 	SetRandFnct();
 	dRandom();
-	Arg1->d = m_variables[7].a.d;
+	Arg1->d = m_variables[VARIABLE_RAND].a.d;
 }
 
 void (*StkSRand)() = dStkSRand;
@@ -668,12 +666,12 @@ void Formula::StackLoadSqr2_d()
 {
 	Arg1++;
 	Arg2++;
-	LastSqr.d.x = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x;
-	LastSqr.d.y = m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y;
+	m_variables[VARIABLE_LAST_SQR].a.d.x = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x;
+	m_variables[VARIABLE_LAST_SQR].a.d.y = m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y;
 	Arg1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
-	Arg1->d.x = LastSqr.d.x - LastSqr.d.y;
-	LastSqr.d.x += LastSqr.d.y;
-	LastSqr.d.y = 0;
+	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].a.d.x - m_variables[VARIABLE_LAST_SQR].a.d.y;
+	m_variables[VARIABLE_LAST_SQR].a.d.x += m_variables[VARIABLE_LAST_SQR].a.d.y;
+	m_variables[VARIABLE_LAST_SQR].a.d.y = 0;
 	m_load_ptr++;
 }
 
@@ -698,9 +696,9 @@ void dStkSqr0()
 
 void Formula::StackSqr0()
 {
-	LastSqr.d.y = Arg1->d.y*Arg1->d.y; /* use LastSqr as temp storage */
+	m_variables[VARIABLE_LAST_SQR].a.d.y = Arg1->d.y*Arg1->d.y; /* use LastSqr as temp storage */
 	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
-	Arg1->d.x = Arg1->d.x*Arg1->d.x - LastSqr.d.y;
+	Arg1->d.x = Arg1->d.x*Arg1->d.x - m_variables[VARIABLE_LAST_SQR].a.d.y;
 }
 
 void dStkSqr3()
@@ -743,12 +741,12 @@ void dStkSqr()
 
 void Formula::StackSqr_d()
 {
-	LastSqr.d.x = Arg1->d.x*Arg1->d.x;
-	LastSqr.d.y = Arg1->d.y*Arg1->d.y;
+	m_variables[VARIABLE_LAST_SQR].a.d.x = Arg1->d.x*Arg1->d.x;
+	m_variables[VARIABLE_LAST_SQR].a.d.y = Arg1->d.y*Arg1->d.y;
 	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
-	Arg1->d.x = LastSqr.d.x - LastSqr.d.y;
-	LastSqr.d.x += LastSqr.d.y;
-	LastSqr.d.y = 0;
+	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].a.d.x - m_variables[VARIABLE_LAST_SQR].a.d.y;
+	m_variables[VARIABLE_LAST_SQR].a.d.x += m_variables[VARIABLE_LAST_SQR].a.d.y;
+	m_variables[VARIABLE_LAST_SQR].a.d.y = 0;
 }
 
 void mStkSqr()
@@ -759,14 +757,14 @@ void mStkSqr()
 void Formula::StackSqr_m()
 {
 #if !defined(XFRACT)
-	LastSqr.m.x = *MPmul(Arg1->m.x, Arg1->m.x);
-	LastSqr.m.y = *MPmul(Arg1->m.y, Arg1->m.y);
+	m_variables[VARIABLE_LAST_SQR].a.m.x = *MPmul(Arg1->m.x, Arg1->m.x);
+	m_variables[VARIABLE_LAST_SQR].a.m.y = *MPmul(Arg1->m.y, Arg1->m.y);
 	Arg1->m.y = *MPmul(Arg1->m.x, Arg1->m.y);
 	Arg1->m.y.Exp++;
-	Arg1->m.x = *MPsub(LastSqr.m.x, LastSqr.m.y);
-	LastSqr.m.x = *MPadd(LastSqr.m.x, LastSqr.m.y);
-	LastSqr.m.y.Exp = 0;
-	LastSqr.m.y.Mant = 0L;
+	Arg1->m.x = *MPsub(m_variables[VARIABLE_LAST_SQR].a.m.x, m_variables[VARIABLE_LAST_SQR].a.m.y);
+	m_variables[VARIABLE_LAST_SQR].a.m.x = *MPadd(m_variables[VARIABLE_LAST_SQR].a.m.x, m_variables[VARIABLE_LAST_SQR].a.m.y);
+	m_variables[VARIABLE_LAST_SQR].a.m.y.Exp = 0;
+	m_variables[VARIABLE_LAST_SQR].a.m.y.Mant = 0L;
 #endif
 }
 
@@ -778,12 +776,12 @@ void lStkSqr()
 void Formula::StackSqr_l()
 {
 #if !defined(XFRACT)
-	LastSqr.l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift);
-	LastSqr.l.y = multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
+	m_variables[VARIABLE_LAST_SQR].a.l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift);
+	m_variables[VARIABLE_LAST_SQR].a.l.y = multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
 	Arg1->l.y = multiply(Arg1->l.x, Arg1->l.y, g_bit_shift) << 1;
-	Arg1->l.x = LastSqr.l.x - LastSqr.l.y;
-	LastSqr.l.x += LastSqr.l.y;
-	LastSqr.l.y = 0L;
+	Arg1->l.x = m_variables[VARIABLE_LAST_SQR].a.l.x - m_variables[VARIABLE_LAST_SQR].a.l.y;
+	m_variables[VARIABLE_LAST_SQR].a.l.x += m_variables[VARIABLE_LAST_SQR].a.l.y;
+	m_variables[VARIABLE_LAST_SQR].a.l.y = 0L;
 #endif
 }
 
@@ -2823,92 +2821,92 @@ int Formula::ParseStr(const char *text, int pass)
 	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	const_pi = atan(1.0)*4;
 	const_e  = exp(1.0);
-	m_variables[7].a.d.x = m_variables[7].a.d.y = 0.0;
-	m_variables[11].a.d.x = (double)g_x_dots;
-	m_variables[11].a.d.y = (double)g_y_dots;
-	m_variables[12].a.d.x = (double)g_max_iteration;
-	m_variables[12].a.d.y = 0;
-	m_variables[13].a.d.x = g_is_mand ? 1.0 : 0.0;
-	m_variables[13].a.d.y = 0;
-	m_variables[14].a.d.x = Xctr;
-	m_variables[14].a.d.y = Yctr;
-	m_variables[15].a.d.x = (double)Magnification;
-	m_variables[15].a.d.y = Xmagfactor;
-	m_variables[16].a.d.x = Rotation;
-	m_variables[16].a.d.y = Skew;
+	m_variables[VARIABLE_RAND].a.d.x = m_variables[VARIABLE_RAND].a.d.y = 0.0;
+	m_variables[VARIABLE_SCRN_MAX].a.d.x = (double)g_x_dots;
+	m_variables[VARIABLE_SCRN_MAX].a.d.y = (double)g_y_dots;
+	m_variables[VARIABLE_MAX_IT].a.d.x = (double)g_max_iteration;
+	m_variables[VARIABLE_MAX_IT].a.d.y = 0;
+	m_variables[VARIABLE_IS_MAND].a.d.x = g_is_mand ? 1.0 : 0.0;
+	m_variables[VARIABLE_IS_MAND].a.d.y = 0;
+	m_variables[VARIABLE_CENTER].a.d.x = Xctr;
+	m_variables[VARIABLE_CENTER].a.d.y = Yctr;
+	m_variables[VARIABLE_MAG_X_MAG].a.d.x = (double)Magnification;
+	m_variables[VARIABLE_MAG_X_MAG].a.d.y = Xmagfactor;
+	m_variables[VARIABLE_ROT_SKEW].a.d.x = Rotation;
+	m_variables[VARIABLE_ROT_SKEW].a.d.y = Skew;
 
 	switch (m_math_type)
 	{
 	case D_MATH:
-		m_variables[1].a.d.x = g_parameters[0];
-		m_variables[1].a.d.y = g_parameters[1];
-		m_variables[2].a.d.x = g_parameters[2];
-		m_variables[2].a.d.y = g_parameters[3];
-		m_variables[5].a.d.x = const_pi;
-		m_variables[5].a.d.y = 0.0;
-		m_variables[6].a.d.x = const_e;
-		m_variables[6].a.d.y = 0.0;
-		m_variables[8].a.d.x = g_parameters[4];
-		m_variables[8].a.d.y = g_parameters[5];
-		m_variables[17].a.d.x = g_parameters[6];
-		m_variables[17].a.d.y = g_parameters[7];
-		m_variables[18].a.d.x = g_parameters[8];
-		m_variables[18].a.d.y = g_parameters[9];
+		m_variables[VARIABLE_P1].a.d.x = g_parameters[0];
+		m_variables[VARIABLE_P1].a.d.y = g_parameters[1];
+		m_variables[VARIABLE_P2].a.d.x = g_parameters[2];
+		m_variables[VARIABLE_P2].a.d.y = g_parameters[3];
+		m_variables[VARIABLE_PI].a.d.x = const_pi;
+		m_variables[VARIABLE_PI].a.d.y = 0.0;
+		m_variables[VARIABLE_E].a.d.x = const_e;
+		m_variables[VARIABLE_E].a.d.y = 0.0;
+		m_variables[VARIABLE_P3].a.d.x = g_parameters[4];
+		m_variables[VARIABLE_P3].a.d.y = g_parameters[5];
+		m_variables[VARIABLE_P4].a.d.x = g_parameters[6];
+		m_variables[VARIABLE_P4].a.d.y = g_parameters[7];
+		m_variables[VARIABLE_P5].a.d.x = g_parameters[8];
+		m_variables[VARIABLE_P5].a.d.y = g_parameters[9];
 		break;
 #if !defined(XFRACT)
 	case M_MATH:
-		m_variables[1].a.m.x = *d2MP(g_parameters[0]);
-		m_variables[1].a.m.y = *d2MP(g_parameters[1]);
-		m_variables[2].a.m.x = *d2MP(g_parameters[2]);
-		m_variables[2].a.m.y = *d2MP(g_parameters[3]);
-		m_variables[5].a.m.x = *d2MP(const_pi);
-		m_variables[5].a.m.y = *d2MP(0.0);
-		m_variables[6].a.m.x = *d2MP(const_e);
-		m_variables[6].a.m.y = *d2MP(0.0);
-		m_variables[8].a.m.x = *d2MP(g_parameters[4]);
-		m_variables[8].a.m.y = *d2MP(g_parameters[5]);
-		m_variables[11].a.m  = cmplx2MPC(m_variables[11].a.d);
-		m_variables[12].a.m  = cmplx2MPC(m_variables[12].a.d);
-		m_variables[13].a.m  = cmplx2MPC(m_variables[13].a.d);
-		m_variables[14].a.m  = cmplx2MPC(m_variables[14].a.d);
-		m_variables[15].a.m  = cmplx2MPC(m_variables[15].a.d);
-		m_variables[16].a.m  = cmplx2MPC(m_variables[16].a.d);
-		m_variables[17].a.m.x = *d2MP(g_parameters[6]);
-		m_variables[17].a.m.y = *d2MP(g_parameters[7]);
-		m_variables[18].a.m.x = *d2MP(g_parameters[8]);
-		m_variables[18].a.m.y = *d2MP(g_parameters[9]);
+		m_variables[VARIABLE_P1].a.m.x = *d2MP(g_parameters[0]);
+		m_variables[VARIABLE_P1].a.m.y = *d2MP(g_parameters[1]);
+		m_variables[VARIABLE_P2].a.m.x = *d2MP(g_parameters[2]);
+		m_variables[VARIABLE_P2].a.m.y = *d2MP(g_parameters[3]);
+		m_variables[VARIABLE_PI].a.m.x = *d2MP(const_pi);
+		m_variables[VARIABLE_PI].a.m.y = *d2MP(0.0);
+		m_variables[VARIABLE_E].a.m.x = *d2MP(const_e);
+		m_variables[VARIABLE_E].a.m.y = *d2MP(0.0);
+		m_variables[VARIABLE_P3].a.m.x = *d2MP(g_parameters[4]);
+		m_variables[VARIABLE_P3].a.m.y = *d2MP(g_parameters[5]);
+		m_variables[VARIABLE_SCRN_MAX].a.m  = cmplx2MPC(m_variables[VARIABLE_SCRN_MAX].a.d);
+		m_variables[VARIABLE_MAX_IT].a.m  = cmplx2MPC(m_variables[VARIABLE_MAX_IT].a.d);
+		m_variables[VARIABLE_IS_MAND].a.m  = cmplx2MPC(m_variables[VARIABLE_IS_MAND].a.d);
+		m_variables[VARIABLE_CENTER].a.m  = cmplx2MPC(m_variables[VARIABLE_CENTER].a.d);
+		m_variables[VARIABLE_MAG_X_MAG].a.m  = cmplx2MPC(m_variables[VARIABLE_MAG_X_MAG].a.d);
+		m_variables[VARIABLE_ROT_SKEW].a.m  = cmplx2MPC(m_variables[VARIABLE_ROT_SKEW].a.d);
+		m_variables[VARIABLE_P4].a.m.x = *d2MP(g_parameters[6]);
+		m_variables[VARIABLE_P4].a.m.y = *d2MP(g_parameters[7]);
+		m_variables[VARIABLE_P5].a.m.x = *d2MP(g_parameters[8]);
+		m_variables[VARIABLE_P5].a.m.y = *d2MP(g_parameters[9]);
 		break;
 	case L_MATH:
-		m_variables[1].a.l.x = (long)(g_parameters[0]*s_fudge);
-		m_variables[1].a.l.y = (long)(g_parameters[1]*s_fudge);
-		m_variables[2].a.l.x = (long)(g_parameters[2]*s_fudge);
-		m_variables[2].a.l.y = (long)(g_parameters[3]*s_fudge);
-		m_variables[5].a.l.x = (long)(const_pi*s_fudge);
-		m_variables[5].a.l.y = 0L;
-		m_variables[6].a.l.x = (long)(const_e*s_fudge);
-		m_variables[6].a.l.y = 0L;
-		m_variables[8].a.l.x = (long)(g_parameters[4]*s_fudge);
-		m_variables[8].a.l.y = (long)(g_parameters[5]*s_fudge);
-		m_variables[11].a.l.x = g_x_dots;
-		m_variables[11].a.l.x <<= g_bit_shift;
-		m_variables[11].a.l.y = g_y_dots;
-		m_variables[11].a.l.y <<= g_bit_shift;
-		m_variables[12].a.l.x = g_max_iteration;
-		m_variables[12].a.l.x <<= g_bit_shift;
-		m_variables[12].a.l.y = 0L;
-		m_variables[13].a.l.x = g_is_mand ? 1 : 0;
-		m_variables[13].a.l.x <<= g_bit_shift;
-		m_variables[13].a.l.y = 0L;
-		m_variables[14].a.l.x = (long)(m_variables[14].a.d.x*s_fudge);
-		m_variables[14].a.l.y = (long)(m_variables[14].a.d.y*s_fudge);
-		m_variables[15].a.l.x = (long)(m_variables[15].a.d.x*s_fudge);
-		m_variables[15].a.l.y = (long)(m_variables[15].a.d.y*s_fudge);
-		m_variables[16].a.l.x = (long)(m_variables[16].a.d.x*s_fudge);
-		m_variables[16].a.l.y = (long)(m_variables[16].a.d.y*s_fudge);
-		m_variables[17].a.l.x = (long)(g_parameters[6]*s_fudge);
-		m_variables[17].a.l.y = (long)(g_parameters[7]*s_fudge);
-		m_variables[18].a.l.x = (long)(g_parameters[8]*s_fudge);
-		m_variables[18].a.l.y = (long)(g_parameters[9]*s_fudge);
+		m_variables[VARIABLE_P1].a.l.x = (long)(g_parameters[0]*s_fudge);
+		m_variables[VARIABLE_P1].a.l.y = (long)(g_parameters[1]*s_fudge);
+		m_variables[VARIABLE_P2].a.l.x = (long)(g_parameters[2]*s_fudge);
+		m_variables[VARIABLE_P2].a.l.y = (long)(g_parameters[3]*s_fudge);
+		m_variables[VARIABLE_PI].a.l.x = (long)(const_pi*s_fudge);
+		m_variables[VARIABLE_PI].a.l.y = 0L;
+		m_variables[VARIABLE_E].a.l.x = (long)(const_e*s_fudge);
+		m_variables[VARIABLE_E].a.l.y = 0L;
+		m_variables[VARIABLE_P3].a.l.x = (long)(g_parameters[4]*s_fudge);
+		m_variables[VARIABLE_P3].a.l.y = (long)(g_parameters[5]*s_fudge);
+		m_variables[VARIABLE_SCRN_MAX].a.l.x = g_x_dots;
+		m_variables[VARIABLE_SCRN_MAX].a.l.x <<= g_bit_shift;
+		m_variables[VARIABLE_SCRN_MAX].a.l.y = g_y_dots;
+		m_variables[VARIABLE_SCRN_MAX].a.l.y <<= g_bit_shift;
+		m_variables[VARIABLE_MAX_IT].a.l.x = g_max_iteration;
+		m_variables[VARIABLE_MAX_IT].a.l.x <<= g_bit_shift;
+		m_variables[VARIABLE_MAX_IT].a.l.y = 0L;
+		m_variables[VARIABLE_IS_MAND].a.l.x = g_is_mand ? 1 : 0;
+		m_variables[VARIABLE_IS_MAND].a.l.x <<= g_bit_shift;
+		m_variables[VARIABLE_IS_MAND].a.l.y = 0L;
+		m_variables[VARIABLE_CENTER].a.l.x = (long)(m_variables[VARIABLE_CENTER].a.d.x*s_fudge);
+		m_variables[VARIABLE_CENTER].a.l.y = (long)(m_variables[VARIABLE_CENTER].a.d.y*s_fudge);
+		m_variables[VARIABLE_MAG_X_MAG].a.l.x = (long)(m_variables[VARIABLE_MAG_X_MAG].a.d.x*s_fudge);
+		m_variables[VARIABLE_MAG_X_MAG].a.l.y = (long)(m_variables[VARIABLE_MAG_X_MAG].a.d.y*s_fudge);
+		m_variables[VARIABLE_ROT_SKEW].a.l.x = (long)(m_variables[VARIABLE_ROT_SKEW].a.d.x*s_fudge);
+		m_variables[VARIABLE_ROT_SKEW].a.l.y = (long)(m_variables[VARIABLE_ROT_SKEW].a.d.y*s_fudge);
+		m_variables[VARIABLE_P4].a.l.x = (long)(g_parameters[6]*s_fudge);
+		m_variables[VARIABLE_P4].a.l.y = (long)(g_parameters[7]*s_fudge);
+		m_variables[VARIABLE_P5].a.l.x = (long)(g_parameters[8]*s_fudge);
+		m_variables[VARIABLE_P5].a.l.y = (long)(g_parameters[9]*s_fudge);
 		break;
 #endif
 	}
@@ -3197,14 +3195,14 @@ int Formula::orbit()
 	switch (m_math_type)
 	{
 	case D_MATH:
-		g_old_z = g_new_z = m_variables[3].a.d;
+		g_old_z = g_new_z = m_variables[VARIABLE_Z].a.d;
 		return Arg1->d.x == 0.0;
 #if !defined(XFRACT)
 	case M_MATH:
-		g_old_z = g_new_z = MPC2cmplx(m_variables[3].a.m);
+		g_old_z = g_new_z = MPC2cmplx(m_variables[VARIABLE_Z].a.m);
 		return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
 	case L_MATH:
-		g_old_z_l = g_new_z_l = m_variables[3].a.l;
+		g_old_z_l = g_new_z_l = m_variables[VARIABLE_Z].a.l;
 		if (g_overflow)
 		{
 			return 1;
@@ -3228,14 +3226,14 @@ int Formula::per_pixel()
 	Arg2--;
 
 
-	m_variables[10].a.d.x = (double)g_col;
-	m_variables[10].a.d.y = (double)g_row;
+	m_variables[VARIABLE_SCRN_PIX].a.d.x = (double)g_col;
+	m_variables[VARIABLE_SCRN_PIX].a.d.y = (double)g_row;
 
 	switch (m_math_type)
 	{
 	case D_MATH:
-		m_variables[9].a.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
-		m_variables[9].a.d.y = 0.0;
+		m_variables[VARIABLE_WHITE_SQ].a.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
+		m_variables[VARIABLE_WHITE_SQ].a.d.y = 0.0;
 		break;
 
 
@@ -3243,22 +3241,22 @@ int Formula::per_pixel()
 	case M_MATH:
 		if ((g_row + g_col) & 1)
 		{
-			m_variables[9].a.m = g_one_mpc;
+			m_variables[VARIABLE_WHITE_SQ].a.m = g_one_mpc;
 		}
 		else
 		{
-			m_variables[9].a.m.x.Mant = m_variables[9].a.m.x.Exp = 0;
-			m_variables[9].a.m.y.Mant = m_variables[9].a.m.y.Exp = 0;
+			m_variables[VARIABLE_WHITE_SQ].a.m.x.Mant = m_variables[VARIABLE_WHITE_SQ].a.m.x.Exp = 0;
+			m_variables[VARIABLE_WHITE_SQ].a.m.y.Mant = m_variables[VARIABLE_WHITE_SQ].a.m.y.Exp = 0;
 		}
-		m_variables[10].a.m = cmplx2MPC(m_variables[10].a.d);
+		m_variables[VARIABLE_SCRN_PIX].a.m = cmplx2MPC(m_variables[VARIABLE_SCRN_PIX].a.d);
 		break;
 	case L_MATH:
-		m_variables[9].a.l.x = (long) (((g_row + g_col) & 1)*s_fudge);
-		m_variables[9].a.l.y = 0L;
-		m_variables[10].a.l.x = g_col;
-		m_variables[10].a.l.x <<= g_bit_shift;
-		m_variables[10].a.l.y = g_row;
-		m_variables[10].a.l.y <<= g_bit_shift;
+		m_variables[VARIABLE_WHITE_SQ].a.l.x = (long) (((g_row + g_col) & 1)*s_fudge);
+		m_variables[VARIABLE_WHITE_SQ].a.l.y = 0L;
+		m_variables[VARIABLE_SCRN_PIX].a.l.x = g_col;
+		m_variables[VARIABLE_SCRN_PIX].a.l.x <<= g_bit_shift;
+		m_variables[VARIABLE_SCRN_PIX].a.l.y = g_row;
+		m_variables[VARIABLE_SCRN_PIX].a.l.y <<= g_bit_shift;
 		break;
 #endif
 	}
@@ -3270,13 +3268,13 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case D_MATH:
-			m_variables[0].a.d.x = g_old_z.x;
-			m_variables[0].a.d.y = g_old_z.y;
+			m_variables[VARIABLE_PIXEL].a.d.x = g_old_z.x;
+			m_variables[VARIABLE_PIXEL].a.d.y = g_old_z.y;
 			break;
 #if !defined(XFRACT)
 		case M_MATH:
-			m_variables[0].a.m.x = *d2MP(g_old_z.x);
-			m_variables[0].a.m.y = *d2MP(g_old_z.y);
+			m_variables[VARIABLE_PIXEL].a.m.x = *d2MP(g_old_z.x);
+			m_variables[VARIABLE_PIXEL].a.m.y = *d2MP(g_old_z.y);
 			break;
 		case L_MATH:
 			/* watch out for overflow */
@@ -3286,8 +3284,8 @@ int Formula::per_pixel()
 				g_old_z.y = 8;
 			}
 			/* convert to fudged longs */
-			m_variables[0].a.l.x = (long)(g_old_z.x*s_fudge);
-			m_variables[0].a.l.y = (long)(g_old_z.y*s_fudge);
+			m_variables[VARIABLE_PIXEL].a.l.x = (long)(g_old_z.x*s_fudge);
+			m_variables[VARIABLE_PIXEL].a.l.y = (long)(g_old_z.y*s_fudge);
 			break;
 #endif
 		}
@@ -3298,17 +3296,17 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case D_MATH:
-			m_variables[0].a.d.x = g_dx_pixel();
-			m_variables[0].a.d.y = g_dy_pixel();
+			m_variables[VARIABLE_PIXEL].a.d.x = g_dx_pixel();
+			m_variables[VARIABLE_PIXEL].a.d.y = g_dy_pixel();
 			break;
 #if !defined(XFRACT)
 		case M_MATH:
-			m_variables[0].a.m.x = *d2MP(g_dx_pixel());
-			m_variables[0].a.m.y = *d2MP(g_dy_pixel());
+			m_variables[VARIABLE_PIXEL].a.m.x = *d2MP(g_dx_pixel());
+			m_variables[VARIABLE_PIXEL].a.m.y = *d2MP(g_dy_pixel());
 			break;
 		case L_MATH:
-			m_variables[0].a.l.x = g_lx_pixel();
-			m_variables[0].a.l.y = g_ly_pixel();
+			m_variables[VARIABLE_PIXEL].a.l.x = g_lx_pixel();
+			m_variables[VARIABLE_PIXEL].a.l.y = g_ly_pixel();
 			break;
 #endif
 		}
@@ -3330,14 +3328,14 @@ int Formula::per_pixel()
 	switch (m_math_type)
 	{
 	case D_MATH:
-		g_old_z = m_variables[3].a.d;
+		g_old_z = m_variables[VARIABLE_Z].a.d;
 		break;
 #if !defined(XFRACT)
 	case M_MATH:
-		g_old_z = MPC2cmplx(m_variables[3].a.m);
+		g_old_z = MPC2cmplx(m_variables[VARIABLE_Z].a.m);
 		break;
 	case L_MATH:
-		g_old_z_l = m_variables[3].a.l;
+		g_old_z_l = m_variables[VARIABLE_Z].a.l;
 		break;
 #endif
 	}
@@ -3348,27 +3346,27 @@ int Formula::per_pixel()
 int Formula::fill_if_group(int endif_index, JUMP_PTRS *jump_data)
 {
 	int i   = endif_index;
-	int ljp = endif_index; /* ljp means "last jump processed" */
+	int last_jump_processed = endif_index;
 	while (i > 0)
 	{
 		i--;
 		switch (m_jump_control[i].type)
 		{
 		case 1:    /*if (); this concludes processing of this group*/
-			m_jump_control[i].ptrs = jump_data[ljp];
-			m_jump_control[i].DestJumpIndex = ljp + 1;
+			m_jump_control[i].ptrs = jump_data[last_jump_processed];
+			m_jump_control[i].DestJumpIndex = last_jump_processed + 1;
 			return i;
 		case 2:    /*elseif* (2 jumps, the else and the if*/
 				/* first, the "if" part */
-			m_jump_control[i].ptrs = jump_data[ljp];
-			m_jump_control[i].DestJumpIndex = ljp + 1;
+			m_jump_control[i].ptrs = jump_data[last_jump_processed];
+			m_jump_control[i].DestJumpIndex = last_jump_processed + 1;
 
 				/* then, the else part */
 			i--; /*fall through to "else" is intentional*/
 		case 3:
 			m_jump_control[i].ptrs = jump_data[endif_index];
 			m_jump_control[i].DestJumpIndex = endif_index + 1;
-			ljp = i;
+			last_jump_processed = i;
 			break;
 		case 4:    /*endif*/
 				i = fill_if_group(i, jump_data);
