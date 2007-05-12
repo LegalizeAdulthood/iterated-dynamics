@@ -78,12 +78,13 @@ union Arg
 
 struct ConstArg
 {
-   char *s;
+   const char *s;
    int len;
    union Arg a;
 };
 
-extern union Arg *Arg1, *Arg2;
+extern Arg *Arg1;
+extern Arg *Arg2;
 
 extern void lStkSin();
 extern void lStkCos();
