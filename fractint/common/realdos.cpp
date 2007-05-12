@@ -57,7 +57,7 @@ static int menu_check_key(int curkey, int choice);
 		&8 for Fractint for Windows & parser - use a fixed pitch font
 		&16 for info only message (green box instead of red in DOS vsn)
 */
-int stop_message(int flags, char *msg)
+int stop_message(int flags, const char *msg)
 {
 	int ret, toprow, color;
 	static unsigned char batchmode = 0;

@@ -202,7 +202,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		*Xmagfactor =  Height / (DEFAULT_ASPECT_RATIO*Width);
 		*Rotation = 0.0;
 		*Skew = 0.0;
-		}
+	}
 	else
 	{
 		/* set up triangle ABC, having sides abc */
@@ -831,12 +831,12 @@ int tab_display_2(char *msg)
 	show_str_var("map",         g_map_name,     &row, msg);
 	write_row(row++, "Sizeof g_fractal_specific array %d",
 		g_num_fractal_types*(int)sizeof(FractalTypeSpecificData));
-	write_row(row++, "g_calculation_status %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
+	write_row(row++, "CalculationStatus %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
-		write_row(row++, "g_total_formula_mem %ld g_formula_max_ops (g_posp) %u g_formula_max_args (g_parser_vsp) %u",
+		write_row(row++, "TotalFormulaMem %ld MaxOps (posp) %u MaxArgs (vsp) %u",
 			g_total_formula_mem, g_posp, g_parser_vsp);
-		write_row(row++, "   Store ptr %d Loadptr %d g_formula_max_ops var %u g_formula_max_args var %u g_last_init_op %d",
+		write_row(row++, "   Store ptr %d Loadptr %d MaxOps var %u MaxArgs var %u LastInitOp %d",
 			g_store_ptr, g_lod_ptr, g_formula_max_ops, g_formula_max_args, g_last_init_op);
 	}
 	else if (g_rhombus_stack[0])
@@ -849,12 +849,9 @@ int tab_display_2(char *msg)
 			g_rhombus_stack[9]);
 	}
 
-/*
-	write_row(row++, "g_x_dots %d g_y_dots %d g_screen_width %d g_screen_height %d", g_x_dots, g_y_dots, g_screen_width, g_screen_height);
-*/
 	write_row(row++, "%dx%d dm=%d %s (%s)", g_x_dots, g_y_dots, g_dot_mode,
 		driver_name(), driver_description());
-	write_row(row++, "g_xx_start %d g_xx_stop %d g_yy_start %d g_yy_stop %d %s g_uses_is_mand %d",
+	write_row(row++, "xx: start %d, stop %d; yy: start %d, stop %d %s UsesIsMand %d",
 		g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
 #if !defined(XFRACT) && !defined(_WIN32)
 		g_current_fractal_specific->orbitcalc == fFormula ? "fast parser" :

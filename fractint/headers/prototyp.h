@@ -982,7 +982,7 @@ extern int integer_unsupported();
 /*  realdos -- C file prototypes */
 
 extern int show_vid_length();
-extern int stop_message(int, char *);
+extern int stop_message(int, const char *);
 extern void blank_rows(int, int, int);
 extern int text_temp_message(char *);
 extern int full_screen_choice(int options, const char *hdg, char *hdg2,
