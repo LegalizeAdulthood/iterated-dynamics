@@ -18,9 +18,6 @@
  *
  *----------------------------------------------------------------------
  */
-double _2_ = 2.0;
-double _1_ = 1.0;
-double PointFive = 0.5;
 
 void FPUaptan387(double *y, double *x, double *atan)
 {

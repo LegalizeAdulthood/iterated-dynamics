@@ -24,10 +24,27 @@ struct function_load_store
 	union Arg *operand;
 };
 
+/* token_type definitions */
+enum TokenType
+{
+	TOKENTYPE_NONE = 0,
+	TOKENTYPE_PARENTHESIS,
+	TOKENTYPE_PARAMETER_VARIABLE,
+	TOKENTYPE_USER_VARIABLE,
+	TOKENTYPE_PREDEFINED_VARIABLE,
+	TOKENTYPE_REAL_CONSTANT,
+	TOKENTYPE_COMPLEX_CONSTANT,
+	TOKENTYPE_FUNCTION,
+	TOKENTYPE_PARAMETER_FUNCTION,
+	TOKENTYPE_FLOW_CONTROL,
+	TOKENTYPE_OPERATOR,
+	TOKENTYPE_END_OF_FORMULA
+};
+
 struct token_st
 {
 	char token_str[80];
-	int token_type;
+	TokenType token_type;
 	int token_id;
 	DComplex token_const;
 };

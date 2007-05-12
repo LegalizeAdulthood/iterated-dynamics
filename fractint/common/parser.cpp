@@ -16,6 +16,7 @@
 	Southington, CT 06489
 	(203) 276-9721
 */
+#include <cassert>
 #include <string>
 #include <sstream>
 
@@ -197,20 +198,6 @@ Formula::~Formula()
 						case '7':\
 						case '8':\
 						case '9'
-
-/* token_type definitions */
-#define NOT_A_TOKEN           0
-#define PARENS                1
-#define PARAM_VARIABLE        2
-#define USER_NAMED_VARIABLE   3
-#define PREDEFINED_VARIABLE   4
-#define REAL_CONSTANT         5
-#define COMPLEX_CONSTANT      6
-#define FUNCTION              7
-#define PARAM_FUNCTION        8
-#define FLOW_CONTROL          9
-#define OPERATOR             10
-#define END_OF_FORMULA       11
 
 /* token IDs */
 #define END_OF_FILE            1
@@ -2348,18 +2335,24 @@ void (*StkTrig1)() = dStkSqr;
 void (*StkTrig2)() = dStkSinh;
 void (*StkTrig3)() = dStkCosh;
 
-char * JumpList[] =
+enum JumpType
+{
+	JUMPTYPE_NONE = 0,
+	JUMPTYPE_IF = 1,
+	JUMPTYPE_ELSEIF = 2,
+	JUMPTYPE_ELSE = 3,
+	JUMPTYPE_ENDIF = 4
+};
+
+static const char *s_jump_keywords[] =
 {
 	"if",
 	"elseif",
 	"else",
-	"endif",
-	""
+	"endif"
 };
 
-
-
-int isjump(char *Str, int Len)
+static int is_jump_keyword(const char *Str, int Len)
 {
 	/* return values
        0 - Not a jump
@@ -2368,14 +2361,11 @@ int isjump(char *Str, int Len)
        3 - else
        4 - endif
 	*/
-
-	int i;
-
-	for (i = 0; *JumpList[i]; i++)
+	for (int i = 0; i < NUM_OF(s_jump_keywords); i++)
 	{
-		if ((int) strlen(JumpList[i]) == Len)
+		if ((int) strlen(s_jump_keywords[i]) == Len)
 		{
-			if (!strnicmp(JumpList[i], Str, Len))
+			if (!strnicmp(s_jump_keywords[i], Str, Len))
 			{
 				return i + 1;
 			}
@@ -2384,6 +2374,43 @@ int isjump(char *Str, int Len)
 	return 0;
 }
 
+enum FunctionType
+{
+	FUNCTION_SIN = 0,
+	FUNCTION_SINH,
+	FUNCTION_COS,
+	FUNCTION_COSH,
+	FUNCTION_SQR,
+	FUNCTION_LOG,
+	FUNCTION_EXP,
+	FUNCTION_ABS,
+	FUNCTION_CONJ,
+	FUNCTION_REAL,
+	FUNCTION_IMAG,
+	FUNCTION_FN1,
+	FUNCTION_FN2,
+	FUNCTION_FN3,
+	FUNCTION_FN4,
+	FUNCTION_FLIP,
+	FUNCTION_TAN,
+	FUNCTION_TANH,
+	FUNCTION_COTAN,
+	FUNCTION_COTANH,
+	FUNCTION_COSXX,
+	FUNCTION_SRAND,
+	FUNCTION_ASIN,
+	FUNCTION_ASINH,
+	FUNCTION_ACOS,
+	FUNCTION_ACOSH,
+	FUNCTION_ATAN,
+	FUNCTION_ATANH,
+	FUNCTION_SQRT,
+	FUNCTION_CABS,
+	FUNCTION_FLOOR,
+	FUNCTION_CEIL,
+	FUNCTION_TRUNC,
+	FUNCTION_ROUND
+};
 
 FNCT_LIST FnctList[] =
 {
@@ -3006,19 +3033,19 @@ int Formula::ParseStr(char *text, int pass)
 			}
 			Len = (n + 1)-m_initial_n;
 			m_expecting_arg = 0;
-			jumptype = isjump(&text[m_initial_n], Len);
-			if (jumptype != 0)
+			jumptype = is_jump_keyword(&text[m_initial_n], Len);
+			if (jumptype != JUMPTYPE_NONE)
 			{
 				m_uses_jump = true;
 				switch (jumptype)
 				{
-				case 1:                      /* if */
+				case JUMPTYPE_IF:
 					m_expecting_arg = 1;
 					m_jump_control[m_jump_index++].type = 1;
 					s_ops[m_posp].f = StkJumpOnFalse;
 					s_ops[m_posp++].p = 1;
 					break;
-				case 2:                     /* elseif */
+				case JUMPTYPE_ELSEIF:
 					m_expecting_arg = 1;
 					m_jump_control[m_jump_index++].type = 2;
 					m_jump_control[m_jump_index++].type = 2;
@@ -3031,17 +3058,18 @@ int Formula::ParseStr(char *text, int pass)
 					s_ops[m_posp].f = StkJumpOnFalse;
 					s_ops[m_posp++].p = 1;
 					break;
-				case 3:                     /* else */
+				case JUMPTYPE_ELSE:
 					m_jump_control[m_jump_index++].type = 3;
 					s_ops[m_posp].f = StkJump;
 					s_ops[m_posp++].p = 1;
 					break;
-				case 4: /* endif */
+				case JUMPTYPE_ENDIF:
 					m_jump_control[m_jump_index++].type = 4;
 					s_ops[m_posp].f = StkJumpLabel;
 					s_ops[m_posp++].p = 1;
 					break;
 				default:
+					assert(false && "Bad jump type");
 					break;
 				}
 			}
@@ -3428,26 +3456,26 @@ int frmgetchar (FILE *openfile)
 void getfuncinfo(token_st *tok)
 {
 	int i;
-	for (i = 0; i < sizeof(FnctList)/ sizeof(FNCT_LIST); i++)
+	for (i = 0; i < NUM_OF(FnctList); i++)
 	{
 		if (!strcmp(FnctList[i].s, tok->token_str))
 		{
 			tok->token_id = i;
-			tok->token_type = (i >= 11 && i <= 14) ? PARAM_FUNCTION : FUNCTION;
+			tok->token_type = (i >= 11 && i <= 14) ? TOKENTYPE_PARAMETER_FUNCTION : TOKENTYPE_FUNCTION;
 			return;
 		}
 	}
 
 	for (i = 0; i < 4; i++)  /*pick up flow control*/
 	{
-		if (!strcmp(JumpList[i], tok->token_str))
+		if (!strcmp(s_jump_keywords[i], tok->token_str))
 		{
-			tok->token_type = FLOW_CONTROL;
+			tok->token_type = TOKENTYPE_FLOW_CONTROL;
 			tok->token_id   = i + 1;
 			return;
 		}
 	}
-	tok->token_type = NOT_A_TOKEN;
+	tok->token_type = TOKENTYPE_NONE;
 	tok->token_id   = UNDEFINED_FUNCTION;
 	return;
 }
@@ -3464,16 +3492,16 @@ void getvarinfo(token_st *tok)
 			switch (i)
 			{
 			case 1: case 2: case 8: case 13: case 17: case 18:
-				tok->token_type = PARAM_VARIABLE;
+				tok->token_type = TOKENTYPE_PARAMETER_VARIABLE;
 				break;
 			default:
-				tok->token_type = PREDEFINED_VARIABLE;
+				tok->token_type = TOKENTYPE_PREDEFINED_VARIABLE;
 				break;
 			}
 			return;
 		}
 	}
-	tok->token_type = USER_NAMED_VARIABLE;
+	tok->token_type = TOKENTYPE_USER_VARIABLE;
 	tok->token_id   = 0;
 }
 
@@ -3481,7 +3509,7 @@ void getvarinfo(token_st *tok)
 /* Note - this function will be called twice to fill in the components
 		of a complex constant. See is_complex_constant() below. */
 
-/* returns 1 on success, 0 on NOT_A_TOKEN */
+/* returns 1 on success, 0 on TOKENTYPE_NONE */
 
 int frmgetconstant(FILE *openfile, token_st *tok)
 {
@@ -3504,7 +3532,7 @@ int frmgetconstant(FILE *openfile, token_st *tok)
 		{
 		case EOF: case '\032':
 			tok->token_str[i] = (char) 0;
-			tok->token_type = NOT_A_TOKEN;
+			tok->token_type = TOKENTYPE_NONE;
 			tok->token_id   = END_OF_FILE;
 			return 0;
 		CASE_NUM:
@@ -3516,7 +3544,7 @@ int frmgetconstant(FILE *openfile, token_st *tok)
 			{
 				tok->token_str[i++] = (char) c;
 				tok->token_str[i++] = (char) 0;
-				tok->token_type = NOT_A_TOKEN;
+				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id = ILL_FORMED_CONSTANT;
 				return 0;
 			}
@@ -3549,7 +3577,7 @@ int frmgetconstant(FILE *openfile, token_st *tok)
 			{
 				tok->token_str[i++] = (char) c;
 				tok->token_str[i++] = (char) 0;
-				tok->token_type = NOT_A_TOKEN;
+				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id = ILL_FORMED_CONSTANT;
 				return 0;
 			}
@@ -3557,7 +3585,7 @@ int frmgetconstant(FILE *openfile, token_st *tok)
 			{
 				tok->token_str[i++] = (char) c;
 				tok->token_str[i++] = (char) 0;
-				tok->token_type = NOT_A_TOKEN;
+				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id = ILL_FORMED_CONSTANT;
 				return 0;
 			}
@@ -3572,13 +3600,13 @@ int frmgetconstant(FILE *openfile, token_st *tok)
 		if (i == 33 && tok->token_str[32])
 		{
 			tok->token_str[33] = (char) 0;
-			tok->token_type = NOT_A_TOKEN;
+			tok->token_type = TOKENTYPE_NONE;
 			tok->token_id = TOKEN_TOO_LONG;
 			return 0;
 		}
 	}    /* end of while loop. Now fill in the value */
 	tok->token_const.x = atof(tok->token_str);
-	tok->token_type = REAL_CONSTANT;
+	tok->token_type = TOKENTYPE_REAL_CONSTANT;
 	tok->token_id   = 0;
 	return 1;
 }
@@ -3677,11 +3705,11 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 				strcat(tok->token_str, temp_tok.token_str);
 				strcat(tok->token_str, ")");
 				tok->token_const.y = temp_tok.token_const.x*sign_value;
-				tok->token_type = tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT;
+				tok->token_type = tok->token_const.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT;
 				tok->token_id   = 0;
 				if (debug_token != NULL)
 				{
-					fprintf(debug_token,  "Exiting with type set to %d\n", tok->token_const.y ? COMPLEX_CONSTANT : REAL_CONSTANT);
+					fprintf(debug_token,  "Exiting with type set to %d\n", tok->token_const.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT);
 					fclose (debug_token);
 				}
 				return;
@@ -3699,7 +3727,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 	fseek (openfile, filepos, SEEK_SET);
 	tok->token_str[1] = (char) 0;
 	tok->token_const.y = tok->token_const.x = 0.0;
-	tok->token_type = PARENS;
+	tok->token_type = TOKENTYPE_PARENTHESIS;
 	tok->token_id = OPEN_PARENS;
 	if (debug_token != NULL)
 	{
@@ -3739,7 +3767,7 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 		default:
 			if (c == '.')  /*illegal character in variable or func name*/
 			{
-				tok->token_type = NOT_A_TOKEN;
+				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id   = ILLEGAL_VARIABLE_NAME;
 				tok->token_str[i++] = '.';
 				tok->token_str[i] = (char) 0;
@@ -3747,7 +3775,7 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 			}
 			else if (var_name_too_long)
 			{
-				tok->token_type = NOT_A_TOKEN;
+				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id   = TOKEN_TOO_LONG;
 				tok->token_str[i] = (char) 0;
 				fseek(openfile, last_filepos, SEEK_SET);
@@ -3758,13 +3786,13 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 			getfuncinfo(tok);
 			if (c == '(')  /*getfuncinfo() correctly filled structure*/
 			{
-				if (tok->token_type == NOT_A_TOKEN)
+				if (tok->token_type == TOKENTYPE_NONE)
 				{
 					return 0;
 				}
-				else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
+				else if (tok->token_type == TOKENTYPE_FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
 				{
-					tok->token_type = NOT_A_TOKEN;
+					tok->token_type = TOKENTYPE_NONE;
 					tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
 					return 0;
 				}
@@ -3774,19 +3802,19 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 				}
 			}
 			/*can't use function names as variables*/
-			else if (tok->token_type == FUNCTION || tok->token_type == PARAM_FUNCTION)
+			else if (tok->token_type == TOKENTYPE_FUNCTION || tok->token_type == TOKENTYPE_PARAMETER_FUNCTION)
 			{
-				tok->token_type = NOT_A_TOKEN;
+				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id   = FUNC_USED_AS_VAR;
 				return 0;
 			}
-			else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
+			else if (tok->token_type == TOKENTYPE_FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
 			{
-				tok->token_type = NOT_A_TOKEN;
+				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id   = JUMP_MISSING_BOOLEAN;
 				return 0;
 			}
-			else if (tok->token_type == FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
+			else if (tok->token_type == TOKENTYPE_FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
 			{
 				if (c == ',' || c == '\n' || c == ':')
 				{
@@ -3794,7 +3822,7 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 				}
 				else
 				{
-					tok->token_type = NOT_A_TOKEN;
+					tok->token_type = TOKENTYPE_NONE;
 					tok->token_id   = JUMP_WITH_ILLEGAL_CHAR;
 					return 0;
 				}
@@ -3807,7 +3835,7 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 		}
 	}
 	tok->token_str[0] = (char) 0;
-	tok->token_type = NOT_A_TOKEN;
+	tok->token_type = TOKENTYPE_NONE;
 	tok->token_id   = END_OF_FILE;
 	return 0;
 }
@@ -3828,7 +3856,7 @@ void frm_get_eos(FILE *openfile, token_st *this_token)
 	if (c == '}')
 	{
 		this_token->token_str[0] = '}';
-		this_token->token_type = END_OF_FORMULA;
+		this_token->token_type = TOKENTYPE_END_OF_FORMULA;
 		this_token->token_id   = 0;
 	}
 	else
@@ -3842,7 +3870,7 @@ void frm_get_eos(FILE *openfile, token_st *this_token)
 }
 
 /* fills token structure; returns 1 on success and 0 on
-  NOT_A_TOKEN and END_OF_FORMULA
+  TOKENTYPE_NONE and TOKENTYPE_END_OF_FORMULA
 */
 
 static int formula_get_token(FILE *openfile, token_st *this_token)
@@ -3859,7 +3887,7 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 		this_token->token_str[0] = (char) c;
 		return frmgetalpha(openfile, this_token);
 	CASE_TERMINATOR:
-		this_token->token_type = OPERATOR; /* this may be changed below */
+		this_token->token_type = TOKENTYPE_OPERATOR; /* this may be changed below */
 		this_token->token_str[0] = (char) c;
 		filepos = ftell(openfile);
 		if (c == '<' || c == '>' || c == '=')
@@ -3885,7 +3913,7 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 			{
 				fseek(openfile, filepos, SEEK_SET);
 				this_token->token_str[1] = (char) 0;
-				this_token->token_type = NOT_A_TOKEN;
+				this_token->token_type = TOKENTYPE_NONE;
 				this_token->token_id = ILLEGAL_OPERATOR;
 				return 0;
 			}
@@ -3913,14 +3941,14 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 			{
 				fseek(openfile, filepos, SEEK_SET);
 				this_token->token_str[1] = (char) 0;
-				this_token->token_type = NOT_A_TOKEN;
+				this_token->token_type = TOKENTYPE_NONE;
 				this_token->token_id = ILLEGAL_OPERATOR;
 				return 0;
 			}
 		}
 		else if (this_token->token_str[0] == '}')
 		{
-			this_token->token_type = END_OF_FORMULA;
+			this_token->token_type = TOKENTYPE_END_OF_FORMULA;
 			this_token->token_id   = 0;
 		}
 		else if (this_token->token_str[0] == '\n'
@@ -3931,19 +3959,19 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 		}
 		else if (this_token->token_str[0] == ')')
 		{
-			this_token->token_type = PARENS;
+			this_token->token_type = TOKENTYPE_PARENTHESIS;
 			this_token->token_id = CLOSE_PARENS;
 		}
 		else if (this_token->token_str[0] == '(')
 		{
-			/* the following function will set token_type to PARENS and
+			/* the following function will set token_type to TOKENTYPE_PARENTHESIS and
 				token_id to OPEN_PARENS if this is not the start of a
 				complex constant */
 			is_complex_constant(openfile, this_token);
 				return 1;
 		}
 		this_token->token_str[i] = (char) 0;
-		if (this_token->token_type == OPERATOR)
+		if (this_token->token_type == TOKENTYPE_OPERATOR)
 		{
 			for (i = 0; i < sizeof(OPList)/sizeof(OPList[0]); i++)
 			{
@@ -3956,13 +3984,13 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 		return this_token->token_str[0] == '}' ? 0 : 1;
 	case EOF: case '\032':
 		this_token->token_str[0] = (char) 0;
-		this_token->token_type = NOT_A_TOKEN;
+		this_token->token_type = TOKENTYPE_NONE;
 		this_token->token_id = END_OF_FILE;
 		return 0;
 	default:
 		this_token->token_str[0] = (char) c;
 		this_token->token_str[1] = (char) 0;
-		this_token->token_type = NOT_A_TOKEN;
+		this_token->token_type = TOKENTYPE_NONE;
 		this_token->token_id = ILLEGAL_CHARACTER;
 		return 0;
 	}
@@ -4022,7 +4050,7 @@ int Formula::get_parameter(const char *Name)
 			fprintf(debug_token, "%s\n", current_token.token_str);
 			fprintf(debug_token, "token_type is %d\n", current_token.token_type);
 			fprintf(debug_token, "token_id is %d\n", current_token.token_id);
-			if (current_token.token_type == REAL_CONSTANT || current_token.token_type == COMPLEX_CONSTANT)
+			if (current_token.token_type == TOKENTYPE_REAL_CONSTANT || current_token.token_type == TOKENTYPE_COMPLEX_CONSTANT)
 			{
 				fprintf(debug_token, "Real value is %f\n", current_token.token_const.x);
 				fprintf(debug_token, "Imag value is %f\n", current_token.token_const.y);
@@ -4031,7 +4059,7 @@ int Formula::get_parameter(const char *Name)
 		}
 		switch (current_token.token_type)
 		{
-		case PARAM_VARIABLE:
+		case TOKENTYPE_PARAMETER_VARIABLE:
 			if (current_token.token_id == 1)
 			{
 				m_uses_p1 = true;
@@ -4057,7 +4085,7 @@ int Formula::get_parameter(const char *Name)
 				m_uses_p5 = true;
 			}
 			break;
-		case PARAM_FUNCTION:
+		case TOKENTYPE_PARAMETER_FUNCTION:
 			if ((current_token.token_id - 10) > m_max_fn)
 			{
 				m_max_fn = (char) (current_token.token_id - 10);
@@ -4070,7 +4098,7 @@ int Formula::get_parameter(const char *Name)
 	{
 		fclose(debug_token);
 	}
-	if (current_token.token_type != END_OF_FORMULA)
+	if (current_token.token_type != TOKENTYPE_END_OF_FORMULA)
 	{
 		m_uses_p1 = false;
 		m_uses_p2 = false;
@@ -4280,13 +4308,13 @@ char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
 	while (!Done)
 	{
 		formula_get_token(file, &temp_tok);
-		if (temp_tok.token_type == NOT_A_TOKEN)
+		if (temp_tok.token_type == TOKENTYPE_NONE)
 		{
 			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
 			fseek(file, filepos, SEEK_SET);
 			return NULL;
 		}
-		else if (temp_tok.token_type == END_OF_FORMULA)
+		else if (temp_tok.token_type == TOKENTYPE_END_OF_FORMULA)
 		{
 			stop_message(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
 			fseek(file, filepos, SEEK_SET);
@@ -4309,11 +4337,11 @@ char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
 		formula_get_token(file, &temp_tok);
 		switch (temp_tok.token_type)
 		{
-		case NOT_A_TOKEN:
+		case TOKENTYPE_NONE:
 			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
 			fseek(file, filepos, SEEK_SET);
 			return NULL;
-		case END_OF_FORMULA:
+		case TOKENTYPE_END_OF_FORMULA:
 			Done = 1;
 			fseek(file, filepos, SEEK_SET);
 			break;
@@ -4616,10 +4644,10 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 				statement_len += (int) strlen(tok.token_str);
 				token_count++;
 			}
-			if ((tok.token_type == END_OF_FORMULA)
-				|| (tok.token_type == OPERATOR
+			if ((tok.token_type == TOKENTYPE_END_OF_FORMULA)
+				|| (tok.token_type == TOKENTYPE_OPERATOR
 					&& (tok.token_id == 0 || tok.token_id == 11))
-				|| (tok.token_type == NOT_A_TOKEN && tok.token_id == END_OF_FILE))
+				|| (tok.token_type == TOKENTYPE_NONE && tok.token_id == END_OF_FILE))
 			{
 				done = 1;
 				if (token_count > 1 && !initialization_error)
@@ -4860,14 +4888,15 @@ int Formula::prescan(FILE *open_file)
 {
 	long filepos;
 	int i;
-	long statement_pos, orig_pos;
+	long statement_pos;
+	long orig_pos;
 	int done = 0;
 	token_st this_token;
 	int errors_found = 0;
-	int ExpectingArg = 1;
-	int NewStatement = 1;
-	int assignment_ok = 1;
-	int already_got_colon = 0;
+	bool ExpectingArg = true;
+	int NewStatement = true;
+	int assignment_ok = true;
+	int already_got_colon = false;
 	unsigned long else_has_been_used = 0;
 	unsigned long waiting_for_mod = 0;
 	int waiting_for_endif = 0;
@@ -4906,8 +4935,8 @@ int Formula::prescan(FILE *open_file)
 		m_chars_in_formula += (int) strlen(this_token.token_str);
 		switch (this_token.token_type)
 		{
-		case NOT_A_TOKEN:
-			assignment_ok = 0;
+		case TOKENTYPE_NONE:
+			assignment_ok = false;
 			switch (this_token.token_id)
 			{
 			case END_OF_FILE:
@@ -4992,9 +5021,9 @@ int Formula::prescan(FILE *open_file)
 				return 0;
 			}
 			break;
-		case PARENS:
-			assignment_ok = 0;
-			NewStatement = 0;
+		case TOKENTYPE_PARENTHESIS:
+			assignment_ok = false;
+			NewStatement = false;
 			switch (this_token.token_id)
 			{
 			case OPEN_PARENS:
@@ -5060,10 +5089,10 @@ int Formula::prescan(FILE *open_file)
 				break;
 			}
 			break;
-		case PARAM_VARIABLE: /*i.e. p1, p2, p3, p4 or p5*/
+		case TOKENTYPE_PARAMETER_VARIABLE: /*i.e. p1, p2, p3, p4 or p5*/
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = 0;
+			NewStatement = false;
 			if (!ExpectingArg)
 			{
 				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5073,12 +5102,12 @@ int Formula::prescan(FILE *open_file)
 					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 				}
 			}
-			ExpectingArg = 0;
+			ExpectingArg = false;
 			break;
-		case USER_NAMED_VARIABLE: /* i.e. c, iter, etc. */
+		case TOKENTYPE_USER_VARIABLE: /* i.e. c, iter, etc. */
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = 0;
+			NewStatement = false;
 			if (!ExpectingArg)
 			{
 				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5088,7 +5117,7 @@ int Formula::prescan(FILE *open_file)
 					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 				}
 			}
-			ExpectingArg = 0;
+			ExpectingArg = false;
 			m_variable_list = var_list_st::add(m_variable_list, this_token);
 			if (m_variable_list == NULL)
 			{
@@ -5099,10 +5128,10 @@ int Formula::prescan(FILE *open_file)
 				return 0;
 			}
 			break;
-		case PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
+		case TOKENTYPE_PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = 0;
+			NewStatement = false;
 			if (!ExpectingArg)
 			{
 				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5112,13 +5141,13 @@ int Formula::prescan(FILE *open_file)
 					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 				}
 			}
-			ExpectingArg = 0;
+			ExpectingArg = false;
 			break;
-		case REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
-			assignment_ok = 0;
+		case TOKENTYPE_REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
+			assignment_ok = false;
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = 0;
+			NewStatement = false;
 			if (!ExpectingArg)
 			{
 				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5128,7 +5157,7 @@ int Formula::prescan(FILE *open_file)
 					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 				}
 			}
-			ExpectingArg = 0;
+			ExpectingArg = false;
 			m_real_list = const_list_st::add(m_real_list, this_token);
 			if (m_real_list == NULL)
 			{
@@ -5139,11 +5168,11 @@ int Formula::prescan(FILE *open_file)
 				return 0;
 			}
 			break;
-		case COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
-			assignment_ok = 0;
+		case TOKENTYPE_COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
+			assignment_ok = false;
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = 0;
+			NewStatement = false;
 			if (!ExpectingArg)
 			{
 				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5153,7 +5182,7 @@ int Formula::prescan(FILE *open_file)
 					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 				}
 			}
-			ExpectingArg = 0;
+			ExpectingArg = false;
 			m_complex_list = const_list_st::add(m_complex_list, this_token);
 			if (m_complex_list == NULL)
 			{
@@ -5164,9 +5193,9 @@ int Formula::prescan(FILE *open_file)
 				return 0;
 			}
 			break;
-		case FUNCTION:
-			assignment_ok = 0;
-			NewStatement = 0;
+		case TOKENTYPE_FUNCTION:
+			assignment_ok = false;
+			NewStatement = false;
 			m_number_of_ops++;
 			if (!ExpectingArg)
 			{
@@ -5178,9 +5207,9 @@ int Formula::prescan(FILE *open_file)
 				}
 			}
 			break;
-		case PARAM_FUNCTION:
-			assignment_ok = 0;
-			NewStatement = 0;
+		case TOKENTYPE_PARAMETER_FUNCTION:
+			assignment_ok = false;
+			NewStatement = false;
 			m_number_of_ops++;
 			if (!ExpectingArg)
 			{
@@ -5191,10 +5220,10 @@ int Formula::prescan(FILE *open_file)
 					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
 				}
 			}
-			NewStatement = 0;
+			NewStatement = false;
 			break;
-		case FLOW_CONTROL:
-			assignment_ok = 0;
+		case TOKENTYPE_FLOW_CONTROL:
+			assignment_ok = false;
 			m_number_of_ops++;
 			m_number_of_jumps++;
 			if (!NewStatement)
@@ -5218,7 +5247,7 @@ int Formula::prescan(FILE *open_file)
 				case 2: /*ELSEIF*/
 					m_number_of_ops += 3; /*else + two clear statements*/
 					m_number_of_jumps++;  /* this involves two jumps */
-					if (else_has_been_used % 2)
+					if (else_has_been_used & 1)
 					{
 						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 						{
@@ -5238,7 +5267,7 @@ int Formula::prescan(FILE *open_file)
 					}
 					break;
 				case 3: /*ELSE*/
-					if (else_has_been_used % 2)
+					if (else_has_been_used & 1)
 					{
 						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
 						{
@@ -5277,7 +5306,7 @@ int Formula::prescan(FILE *open_file)
 				}
 			}
 			break;
-		case OPERATOR:
+		case TOKENTYPE_OPERATOR:
 			m_number_of_ops++; /*This will be corrected below in certain cases*/
 			switch (this_token.token_id)
 			{
@@ -5344,13 +5373,15 @@ int Formula::prescan(FILE *open_file)
 				}
 				if (this_token.token_id == 11)
 				{
-					already_got_colon = 1;
+					already_got_colon = true;
 				}
-				NewStatement = ExpectingArg = assignment_ok = 1;
+				NewStatement = true;
+				assignment_ok = true;
+				ExpectingArg = true;
 				statement_pos = ftell(open_file);
 				break;
 			case 1:     /* != */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5360,7 +5391,7 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 2:     /* = */
 				m_number_of_ops--; /*this just converts a load to a store*/
@@ -5375,10 +5406,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_ILLEGAL_ASSIGNMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 3:     /* == */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5388,10 +5419,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 4:     /* < */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5401,10 +5432,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 5:     /* <= */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5414,10 +5445,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 6:     /* > */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5427,10 +5458,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 7:     /* >= */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5440,10 +5471,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 8:     /* | */ /* (half of the modulus operator */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (!waiting_for_mod & 1L)
 				{
 					m_number_of_ops--;
@@ -5469,7 +5500,7 @@ int Formula::prescan(FILE *open_file)
 				waiting_for_mod = waiting_for_mod ^ 1L; /*switch right bit*/
 				break;
 			case 9:     /* || */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5479,10 +5510,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 10:    /* && */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5492,10 +5523,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 12:    /* + */ /* case 11 (":") is up with case 0 */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5505,14 +5536,14 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 13:    /* - */
-				assignment_ok = 0;
-				ExpectingArg = 1;
+				assignment_ok = false;
+				ExpectingArg = true;
 				break;
 			case 14:    /* * */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5522,10 +5553,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 15:    /* / */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5535,10 +5566,10 @@ int Formula::prescan(FILE *open_file)
 						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
 					}
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			case 16:    /* ^ */
-				assignment_ok = 0;
+				assignment_ok = false;
 				if (ExpectingArg)
 				{
 					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
@@ -5563,13 +5594,13 @@ int Formula::prescan(FILE *open_file)
 				{
 					fseek(open_file, filepos, SEEK_SET);
 				}
-				ExpectingArg = 1;
+				ExpectingArg = true;
 				break;
 			default:
 				break;
 			}
 			break;
-		case END_OF_FORMULA:
+		case TOKENTYPE_END_OF_FORMULA:
 			m_number_of_ops += 3; /* Just need one, but a couple of extra just for the heck of it */
 			if (m_parenthesis_count)
 			{
