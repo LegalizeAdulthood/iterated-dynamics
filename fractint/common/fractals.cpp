@@ -2991,16 +2991,15 @@ int mandelbrot_phoenix_per_pixel_fp()
 
 int quaternion_orbit_fp()
 {
-	double a0, a1, a2, a3, n0, n1, n2, n3;
-	a0 = g_old_z.x;
-	a1 = g_old_z.y;
-	a2 = g_float_parameter->x;
-	a3 = g_float_parameter->y;
+	double a0 = g_old_z.x;
+	double a1 = g_old_z.y;
+	double a2 = g_float_parameter->x;
+	double a3 = g_float_parameter->y;
 
-	n0 = a0*a0-a1*a1-a2*a2-a3*a3 + g_quaternion_c;
-	n1 = 2*a0*a1 + g_quaternion_ci;
-	n2 = 2*a0*a2 + g_quaternion_cj;
-	n3 = 2*a0*a3 + g_quaternion_ck;
+	double n0 = a0*a0-a1*a1-a2*a2-a3*a3 + g_quaternion_c;
+	double n1 = 2*a0*a1 + g_quaternion_ci;
+	double n2 = 2*a0*a2 + g_quaternion_cj;
+	double n3 = 2*a0*a3 + g_quaternion_ck;
 	/* Check bailout */
 	g_magnitude = a0*a0 + a1*a1 + a2*a2 + a3*a3;
 	if (g_magnitude > g_rq_limit)
@@ -3016,13 +3015,14 @@ int quaternion_orbit_fp()
 
 int hyper_complex_orbit_fp()
 {
-	DHyperComplex hold, hnew;
+	DHyperComplex hold;
 	hold.x = g_old_z.x;
 	hold.y = g_old_z.y;
 	hold.z = g_float_parameter->x;
 	hold.t = g_float_parameter->y;
 
 /*   HComplexSqr(&hold, &hnew); */
+	DHyperComplex hnew;
 	HComplexTrig0(&hold, &hnew);
 
 	hnew.x += g_quaternion_c;
@@ -3047,15 +3047,13 @@ int hyper_complex_orbit_fp()
 /* Beauty of Fractals pp. 125 - 127 */
 int volterra_lotka_orbit_fp()
 {
-	double a, b, ab, half, u, w, xy;
-
-	half = g_parameters[0] / 2.0;
-	xy = g_old_z.x*g_old_z.y;
-	u = g_old_z.x - xy;
-	w = -g_old_z.y + xy;
-	a = g_old_z.x + g_parameters[1]*u;
-	b = g_old_z.y + g_parameters[1]*w;
-	ab = a*b;
+	double half = g_parameters[0]/2.0;
+	double xy = g_old_z.x*g_old_z.y;
+	double u = g_old_z.x - xy;
+	double w = -g_old_z.y + xy;
+	double a = g_old_z.x + g_parameters[1]*u;
+	double b = g_old_z.y + g_parameters[1]*w;
+	double ab = a*b;
 	g_new_z.x = g_old_z.x + half*(u + (a - ab));
 	g_new_z.y = g_old_z.y + half*(w + (-b + ab));
 	return g_bail_out_fp();
@@ -3064,18 +3062,19 @@ int volterra_lotka_orbit_fp()
 /* Science of Fractal Images pp. 185, 187 */
 int escher_orbit_fp()
 {
-	DComplex oldtest, newtest, testsqr;
-	double testsize = 0.0;
-	long testiter = 0;
-
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y; /* standard Julia with C == (0.0, 0.0i) */
 	g_new_z.y = 2.0*g_old_z.x*g_old_z.y;
+	DComplex oldtest;
 	oldtest.x = g_new_z.x*15.0;    /* scale it */
 	oldtest.y = g_new_z.y*15.0;
+	DComplex testsqr;
 	testsqr.x = sqr(oldtest.x);  /* set up to test with user-specified ... */
 	testsqr.y = sqr(oldtest.y);  /*    ... Julia as the target set */
+	double testsize = 0.0;
+	long testiter = 0;
 	while (testsize <= g_rq_limit && testiter < g_max_iteration) /* nested Julia loop */
 	{
+		DComplex newtest;
 		newtest.x = testsqr.x - testsqr.y + g_parameters[0];
 		newtest.y = 2.0*oldtest.x*oldtest.y + g_parameters[1];
 		testsqr.x = sqr(newtest.x);

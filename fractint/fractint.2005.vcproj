@@ -275,10 +275,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\win32\parsera.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\win32\plot.cpp"
 				>
 			</File>
@@ -834,6 +830,10 @@
 							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\common\parsera.cpp"
+					>
 				</File>
 				<File
 					RelativePath=".\common\parserfp.cpp"
