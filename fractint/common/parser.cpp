@@ -19,8 +19,6 @@
 #include <string>
 #include <sstream>
 
-//#include <string.h>
-//#include <ctype.h>
 #include <time.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
@@ -121,7 +119,9 @@ Formula::Formula()
 	m_uses_p3(false),
 	m_uses_p4(false),
 	m_uses_p5(false),
-	m_max_fn(0)
+	m_max_fn(0),
+	m_function_load_store_pointers(NULL),
+	m_variables(NULL)
 {
 	Arg zero = { 0 };
 	for (int i = 0; i < NUM_OF(m_argument_stack); i++)
@@ -225,15 +225,6 @@ JUMP_CONTROL_ST jump_control[MAX_JUMPS];
 #define OPEN_PARENS            1
 #define CLOSE_PARENS          -1
 
-struct token_st
-{
-	char token_str[80];
-	int token_type;
-	int token_id;
-	_CMPLX token_const;
-};
-
-
 /* CAE fp added MAX_STORES and LOADS */
 /* MAX_STORES must be even to make Unix alignment work */
 /* TW made dependent on m_formula_max_ops */
@@ -251,7 +242,6 @@ Arg **Store;
 Arg **Load;
 void (**f)() = NULL;
 
-ConstArg *v = NULL;
 int InitLodPtr;
 int InitStoPtr;
 int InitOpPtr;
@@ -288,7 +278,7 @@ int InitOpPtr;
 	} \
 	while (0)
 
-#define LastSqr v[4].a
+#define LastSqr m_variables[4].a
 
 /* error_messages() defines; all calls to error_messages(), or any variable which will
 	be used as the argument in a call to error_messages(), should use one of these
@@ -453,11 +443,21 @@ unsigned long new_random_number()
 
 void lRandom()
 {
-	v[7].a.l.x = new_random_number() >> (32 - g_bit_shift);
-	v[7].a.l.y = new_random_number() >> (32 - g_bit_shift);
+	g_formula_state.Random_l();
+}
+
+void Formula::Random_l()
+{
+	m_variables[7].a.l.x = new_random_number() >> (32 - g_bit_shift);
+	m_variables[7].a.l.y = new_random_number() >> (32 - g_bit_shift);
 }
 
 void dRandom()
+{
+	g_formula_state.Random_d();
+}
+
+void Formula::Random_d()
 {
 	long x, y;
 
@@ -465,24 +465,29 @@ void dRandom()
           the same fractals when the srand() function is used. */
 	x = new_random_number() >> (32 - g_bit_shift);
 	y = new_random_number() >> (32 - g_bit_shift);
-	v[7].a.d.x = ((double)x / (1L << g_bit_shift));
-	v[7].a.d.y = ((double)y / (1L << g_bit_shift));
+	m_variables[7].a.d.x = ((double)x / (1L << g_bit_shift));
+	m_variables[7].a.d.y = ((double)y / (1L << g_bit_shift));
 
 }
 
-#if !defined(XFRACT)
 void mRandom()
 {
+	g_formula_state.Random_m();
+}
+
+void Formula::Random_m()
+{
+#if !defined(XFRACT)
 	long x, y;
 
 	/* Use the same algorithm as for fixed math so that they will generate
 		the same fractals when the srand() function is used. */
 	x = new_random_number() >> (32 - g_bit_shift);
 	y = new_random_number() >> (32 - g_bit_shift);
-	v[7].a.m.x = *fg2MP(x, g_bit_shift);
-	v[7].a.m.y = *fg2MP(y, g_bit_shift);
-}
+	m_variables[7].a.m.x = *fg2MP(x, g_bit_shift);
+	m_variables[7].a.m.y = *fg2MP(y, g_bit_shift);
 #endif
+}
 
 void Random::set_random_function()
 {
@@ -527,33 +532,48 @@ void RandomSeed()
 	s_random.seed();
 }
 
-#if !defined(XFRACT)
 void lStkSRand()
 {
+	g_formula_state.StackStoreRandom_l();
+}
+
+void Formula::StackStoreRandom_l()
+{
+#if !defined(XFRACT)
 	SetRandFnct();
 	lRandom();
-	Arg1->l = v[7].a.l;
-}
+	Arg1->l = m_variables[7].a.l;
 #endif
+}
 
-#if !defined(XFRACT)
 void mStkSRand()
 {
+	g_formula_state.StackStoreRandom_m();
+}
+
+void Formula::StackStoreRandom_m()
+{
+#if !defined(XFRACT)
 	Arg1->l.x = Arg1->m.x.Mant ^ (long)Arg1->m.x.Exp;
 	Arg1->l.y = Arg1->m.y.Mant ^ (long)Arg1->m.y.Exp;
 	SetRandFnct();
 	mRandom();
-	Arg1->m = v[7].a.m;
-}
+	Arg1->m = m_variables[7].a.m;
 #endif
+}
 
 void dStkSRand()
+{
+	g_formula_state.StackStoreRandom_d();
+}
+
+void Formula::StackStoreRandom_d()
 {
 	Arg1->l.x = (long)(Arg1->d.x*(1L << g_bit_shift));
 	Arg1->l.y = (long)(Arg1->d.y*(1L << g_bit_shift));
 	SetRandFnct();
 	dRandom();
-	Arg1->d = v[7].a.d;
+	Arg1->d = m_variables[7].a.d;
 }
 
 void (*StkSRand)() = dStkSRand;
@@ -615,6 +635,11 @@ void Formula::StackLoadDouble()
 
 void dStkSqr0()
 {
+	g_formula_state.StackSqr0();
+}
+
+void Formula::StackSqr0()
+{
 	LastSqr.d.y = Arg1->d.y*Arg1->d.y; /* use LastSqr as temp storage */
 	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
 	Arg1->d.x = Arg1->d.x*Arg1->d.x - LastSqr.d.y;
@@ -655,6 +680,11 @@ void (*StkAbs)() = dStkAbs;
 
 void dStkSqr()
 {
+	g_formula_state.StackSqr_d();
+}
+
+void Formula::StackSqr_d()
+{
 	LastSqr.d.x = Arg1->d.x*Arg1->d.x;
 	LastSqr.d.y = Arg1->d.y*Arg1->d.y;
 	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
@@ -663,9 +693,14 @@ void dStkSqr()
 	LastSqr.d.y = 0;
 }
 
-#if !defined(XFRACT)
 void mStkSqr()
 {
+	g_formula_state.StackSqr_m();
+}
+
+void Formula::StackSqr_m()
+{
+#if !defined(XFRACT)
 	LastSqr.m.x = *MPmul(Arg1->m.x, Arg1->m.x);
 	LastSqr.m.y = *MPmul(Arg1->m.y, Arg1->m.y);
 	Arg1->m.y = *MPmul(Arg1->m.x, Arg1->m.y);
@@ -674,18 +709,25 @@ void mStkSqr()
 	LastSqr.m.x = *MPadd(LastSqr.m.x, LastSqr.m.y);
 	LastSqr.m.y.Exp = 0;
 	LastSqr.m.y.Mant = 0L;
+#endif
 }
 
 void lStkSqr()
 {
+	g_formula_state.StackSqr_l();
+}
+
+void Formula::StackSqr_l()
+{
+#if !defined(XFRACT)
 	LastSqr.l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift);
 	LastSqr.l.y = multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
 	Arg1->l.y = multiply(Arg1->l.x, Arg1->l.y, g_bit_shift) << 1;
 	Arg1->l.x = LastSqr.l.x - LastSqr.l.y;
 	LastSqr.l.x += LastSqr.l.y;
 	LastSqr.l.y = 0L;
-}
 #endif
+}
 
 void (*StkSqr)() = dStkSqr;
 
@@ -2175,9 +2217,9 @@ ConstArg *Formula::is_constant(char *text, int length)
 	/* next line enforces variable vs constant naming convention */
 	for (int n = 0; n < m_parser_vsp; n++)
 	{
-		if (v[n].len == length)
+		if (m_variables[n].len == length)
 		{
-			if (!strnicmp(v[n].s, text, length))
+			if (!strnicmp(m_variables[n].s, text, length))
 			{
 				if (n == 1)        /* The formula uses 'p1'. */
 				{
@@ -2218,25 +2260,25 @@ ConstArg *Formula::is_constant(char *text, int length)
 #endif
 				if (!isconst_pair(text))
 				{
-					return &v[n];
+					return &m_variables[n];
 				}
 			}
 		}
 	}
-	v[m_parser_vsp].s = text;
-	v[m_parser_vsp].len = length;
-	v[m_parser_vsp].a.d.x = v[m_parser_vsp].a.d.y = 0.0;
+	m_variables[m_parser_vsp].s = text;
+	m_variables[m_parser_vsp].len = length;
+	m_variables[m_parser_vsp].a.d.x = m_variables[m_parser_vsp].a.d.y = 0.0;
 
 #if !defined(XFRACT)
-	/* v[m_parser_vsp].a should already be zeroed out */
+	/* m_variables[m_parser_vsp].a should already be zeroed out */
 	switch (m_math_type)
 	{
 	case M_MATH:
-		v[m_parser_vsp].a.m.x.Mant = v[m_parser_vsp].a.m.x.Exp = 0;
-		v[m_parser_vsp].a.m.y.Mant = v[m_parser_vsp].a.m.y.Exp = 0;
+		m_variables[m_parser_vsp].a.m.x.Mant = m_variables[m_parser_vsp].a.m.x.Exp = 0;
+		m_variables[m_parser_vsp].a.m.y.Mant = m_variables[m_parser_vsp].a.m.y.Exp = 0;
 		break;
 	case L_MATH:
-		v[m_parser_vsp].a.l.x = v[m_parser_vsp].a.l.y = 0;
+		m_variables[m_parser_vsp].a.l.x = m_variables[m_parser_vsp].a.l.y = 0;
 		break;
 	}
 #endif
@@ -2250,7 +2292,7 @@ ConstArg *Formula::is_constant(char *text, int length)
 			m_posp--;
 			text = text - 1;
 			m_initial_n--;
-			v[m_parser_vsp].len++;
+			m_variables[m_parser_vsp].len++;
 		}
 		int n;
 		for (n = 1; isdigit(text[n]) || text[n] == '.'; n++)
@@ -2267,7 +2309,7 @@ ConstArg *Formula::is_constant(char *text, int length)
 				for (; isdigit(text[j]) || text[j] == '.' || text[j] == '-'; j++)
 				{
 				}
-				v[m_parser_vsp].len = j;
+				m_variables[m_parser_vsp].len = j;
 			}
 			else
 			{
@@ -2282,21 +2324,21 @@ ConstArg *Formula::is_constant(char *text, int length)
 		switch (m_math_type)
 		{
 		case D_MATH:
-			v[m_parser_vsp].a.d = z;
+			m_variables[m_parser_vsp].a.d = z;
 			break;
 #if !defined(XFRACT)
 		case M_MATH:
-			v[m_parser_vsp].a.m = cmplx2MPC(z);
+			m_variables[m_parser_vsp].a.m = cmplx2MPC(z);
 			break;
 		case L_MATH:
-			v[m_parser_vsp].a.l.x = (long)(z.x*s_fudge);
-			v[m_parser_vsp].a.l.y = (long)(z.y*s_fudge);
+			m_variables[m_parser_vsp].a.l.x = (long)(z.x*s_fudge);
+			m_variables[m_parser_vsp].a.l.y = (long)(z.y*s_fudge);
 			break;
 #endif
 		}
-		v[m_parser_vsp].s = text;
+		m_variables[m_parser_vsp].s = text;
 	}
-	return &v[m_parser_vsp++];
+	return &m_variables[m_parser_vsp++];
 }
 
 
@@ -2480,25 +2522,25 @@ void Formula::RecSortPrec()
 
 static char *Constants[] =
 {
-	"pixel",        /* v[0] */
-	"p1",           /* v[1] */
-	"p2",           /* v[2] */
-	"z",            /* v[3] */
-	"LastSqr",      /* v[4] */
-	"pi",           /* v[5] */
-	"e",            /* v[6] */
-	"rand",         /* v[7] */
-	"p3",           /* v[8] */
-	"whitesq",      /* v[9] */
-	"scrnpix",      /* v[10] */
-	"scrnmax",      /* v[11] */
-	"maxit",        /* v[12] */
-	"ismand",       /* v[13] */
-	"center",       /* v[14] */
-	"magxmag",      /* v[15] */
-	"rotskew",      /* v[16] */
-	"p4",           /* v[17] */
-	"p5"            /* v[18] */
+	"pixel",        /* m_variables[0] */
+	"p1",           /* m_variables[1] */
+	"p2",           /* m_variables[2] */
+	"z",            /* m_variables[3] */
+	"LastSqr",      /* m_variables[4] */
+	"pi",           /* m_variables[5] */
+	"e",            /* m_variables[6] */
+	"rand",         /* m_variables[7] */
+	"p3",           /* m_variables[8] */
+	"whitesq",      /* m_variables[9] */
+	"scrnpix",      /* m_variables[10] */
+	"scrnmax",      /* m_variables[11] */
+	"maxit",        /* m_variables[12] */
+	"ismand",       /* m_variables[13] */
+	"center",       /* m_variables[14] */
+	"magxmag",      /* m_variables[15] */
+	"rotskew",      /* m_variables[16] */
+	"p4",           /* m_variables[17] */
+	"p5"            /* m_variables[18] */
 };
 
 struct SYMETRY
@@ -2527,7 +2569,7 @@ SymStr[] =
 
 int Formula::ParseStr(char *text, int pass)
 {
-	struct ConstArg *c;
+	ConstArg *c;
 	int ModFlag = 999, Len, Equals = 0, Mod[20], mdstk = 0;
 	int jumptype;
 	double const_pi, const_e;
@@ -2715,98 +2757,98 @@ int Formula::ParseStr(char *text, int pass)
 	m_max_fn = 0;
 	for (m_parser_vsp = 0; m_parser_vsp < sizeof(Constants) / sizeof(char*); m_parser_vsp++)
 	{
-		v[m_parser_vsp].s = Constants[m_parser_vsp];
-		v[m_parser_vsp].len = (int) strlen(Constants[m_parser_vsp]);
+		m_variables[m_parser_vsp].s = Constants[m_parser_vsp];
+		m_variables[m_parser_vsp].len = (int) strlen(Constants[m_parser_vsp]);
 	}
 	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	const_pi = atan(1.0)*4;
 	const_e  = exp(1.0);
-	v[7].a.d.x = v[7].a.d.y = 0.0;
-	v[11].a.d.x = (double)g_x_dots;
-	v[11].a.d.y = (double)g_y_dots;
-	v[12].a.d.x = (double)g_max_iteration;
-	v[12].a.d.y = 0;
-	v[13].a.d.x = g_is_mand ? 1.0 : 0.0;
-	v[13].a.d.y = 0;
-	v[14].a.d.x = Xctr;
-	v[14].a.d.y = Yctr;
-	v[15].a.d.x = (double)Magnification;
-	v[15].a.d.y = Xmagfactor;
-	v[16].a.d.x = Rotation;
-	v[16].a.d.y = Skew;
+	m_variables[7].a.d.x = m_variables[7].a.d.y = 0.0;
+	m_variables[11].a.d.x = (double)g_x_dots;
+	m_variables[11].a.d.y = (double)g_y_dots;
+	m_variables[12].a.d.x = (double)g_max_iteration;
+	m_variables[12].a.d.y = 0;
+	m_variables[13].a.d.x = g_is_mand ? 1.0 : 0.0;
+	m_variables[13].a.d.y = 0;
+	m_variables[14].a.d.x = Xctr;
+	m_variables[14].a.d.y = Yctr;
+	m_variables[15].a.d.x = (double)Magnification;
+	m_variables[15].a.d.y = Xmagfactor;
+	m_variables[16].a.d.x = Rotation;
+	m_variables[16].a.d.y = Skew;
 
 	switch (m_math_type)
 	{
 	case D_MATH:
-		v[1].a.d.x = g_parameters[0];
-		v[1].a.d.y = g_parameters[1];
-		v[2].a.d.x = g_parameters[2];
-		v[2].a.d.y = g_parameters[3];
-		v[5].a.d.x = const_pi;
-		v[5].a.d.y = 0.0;
-		v[6].a.d.x = const_e;
-		v[6].a.d.y = 0.0;
-		v[8].a.d.x = g_parameters[4];
-		v[8].a.d.y = g_parameters[5];
-		v[17].a.d.x = g_parameters[6];
-		v[17].a.d.y = g_parameters[7];
-		v[18].a.d.x = g_parameters[8];
-		v[18].a.d.y = g_parameters[9];
+		m_variables[1].a.d.x = g_parameters[0];
+		m_variables[1].a.d.y = g_parameters[1];
+		m_variables[2].a.d.x = g_parameters[2];
+		m_variables[2].a.d.y = g_parameters[3];
+		m_variables[5].a.d.x = const_pi;
+		m_variables[5].a.d.y = 0.0;
+		m_variables[6].a.d.x = const_e;
+		m_variables[6].a.d.y = 0.0;
+		m_variables[8].a.d.x = g_parameters[4];
+		m_variables[8].a.d.y = g_parameters[5];
+		m_variables[17].a.d.x = g_parameters[6];
+		m_variables[17].a.d.y = g_parameters[7];
+		m_variables[18].a.d.x = g_parameters[8];
+		m_variables[18].a.d.y = g_parameters[9];
 		break;
 #if !defined(XFRACT)
 	case M_MATH:
-		v[1].a.m.x = *d2MP(g_parameters[0]);
-		v[1].a.m.y = *d2MP(g_parameters[1]);
-		v[2].a.m.x = *d2MP(g_parameters[2]);
-		v[2].a.m.y = *d2MP(g_parameters[3]);
-		v[5].a.m.x = *d2MP(const_pi);
-		v[5].a.m.y = *d2MP(0.0);
-		v[6].a.m.x = *d2MP(const_e);
-		v[6].a.m.y = *d2MP(0.0);
-		v[8].a.m.x = *d2MP(g_parameters[4]);
-		v[8].a.m.y = *d2MP(g_parameters[5]);
-		v[11].a.m  = cmplx2MPC(v[11].a.d);
-		v[12].a.m  = cmplx2MPC(v[12].a.d);
-		v[13].a.m  = cmplx2MPC(v[13].a.d);
-		v[14].a.m  = cmplx2MPC(v[14].a.d);
-		v[15].a.m  = cmplx2MPC(v[15].a.d);
-		v[16].a.m  = cmplx2MPC(v[16].a.d);
-		v[17].a.m.x = *d2MP(g_parameters[6]);
-		v[17].a.m.y = *d2MP(g_parameters[7]);
-		v[18].a.m.x = *d2MP(g_parameters[8]);
-		v[18].a.m.y = *d2MP(g_parameters[9]);
+		m_variables[1].a.m.x = *d2MP(g_parameters[0]);
+		m_variables[1].a.m.y = *d2MP(g_parameters[1]);
+		m_variables[2].a.m.x = *d2MP(g_parameters[2]);
+		m_variables[2].a.m.y = *d2MP(g_parameters[3]);
+		m_variables[5].a.m.x = *d2MP(const_pi);
+		m_variables[5].a.m.y = *d2MP(0.0);
+		m_variables[6].a.m.x = *d2MP(const_e);
+		m_variables[6].a.m.y = *d2MP(0.0);
+		m_variables[8].a.m.x = *d2MP(g_parameters[4]);
+		m_variables[8].a.m.y = *d2MP(g_parameters[5]);
+		m_variables[11].a.m  = cmplx2MPC(m_variables[11].a.d);
+		m_variables[12].a.m  = cmplx2MPC(m_variables[12].a.d);
+		m_variables[13].a.m  = cmplx2MPC(m_variables[13].a.d);
+		m_variables[14].a.m  = cmplx2MPC(m_variables[14].a.d);
+		m_variables[15].a.m  = cmplx2MPC(m_variables[15].a.d);
+		m_variables[16].a.m  = cmplx2MPC(m_variables[16].a.d);
+		m_variables[17].a.m.x = *d2MP(g_parameters[6]);
+		m_variables[17].a.m.y = *d2MP(g_parameters[7]);
+		m_variables[18].a.m.x = *d2MP(g_parameters[8]);
+		m_variables[18].a.m.y = *d2MP(g_parameters[9]);
 		break;
 	case L_MATH:
-		v[1].a.l.x = (long)(g_parameters[0]*s_fudge);
-		v[1].a.l.y = (long)(g_parameters[1]*s_fudge);
-		v[2].a.l.x = (long)(g_parameters[2]*s_fudge);
-		v[2].a.l.y = (long)(g_parameters[3]*s_fudge);
-		v[5].a.l.x = (long)(const_pi*s_fudge);
-		v[5].a.l.y = 0L;
-		v[6].a.l.x = (long)(const_e*s_fudge);
-		v[6].a.l.y = 0L;
-		v[8].a.l.x = (long)(g_parameters[4]*s_fudge);
-		v[8].a.l.y = (long)(g_parameters[5]*s_fudge);
-		v[11].a.l.x = g_x_dots;
-		v[11].a.l.x <<= g_bit_shift;
-		v[11].a.l.y = g_y_dots;
-		v[11].a.l.y <<= g_bit_shift;
-		v[12].a.l.x = g_max_iteration;
-		v[12].a.l.x <<= g_bit_shift;
-		v[12].a.l.y = 0L;
-		v[13].a.l.x = g_is_mand ? 1 : 0;
-		v[13].a.l.x <<= g_bit_shift;
-		v[13].a.l.y = 0L;
-		v[14].a.l.x = (long)(v[14].a.d.x*s_fudge);
-		v[14].a.l.y = (long)(v[14].a.d.y*s_fudge);
-		v[15].a.l.x = (long)(v[15].a.d.x*s_fudge);
-		v[15].a.l.y = (long)(v[15].a.d.y*s_fudge);
-		v[16].a.l.x = (long)(v[16].a.d.x*s_fudge);
-		v[16].a.l.y = (long)(v[16].a.d.y*s_fudge);
-		v[17].a.l.x = (long)(g_parameters[6]*s_fudge);
-		v[17].a.l.y = (long)(g_parameters[7]*s_fudge);
-		v[18].a.l.x = (long)(g_parameters[8]*s_fudge);
-		v[18].a.l.y = (long)(g_parameters[9]*s_fudge);
+		m_variables[1].a.l.x = (long)(g_parameters[0]*s_fudge);
+		m_variables[1].a.l.y = (long)(g_parameters[1]*s_fudge);
+		m_variables[2].a.l.x = (long)(g_parameters[2]*s_fudge);
+		m_variables[2].a.l.y = (long)(g_parameters[3]*s_fudge);
+		m_variables[5].a.l.x = (long)(const_pi*s_fudge);
+		m_variables[5].a.l.y = 0L;
+		m_variables[6].a.l.x = (long)(const_e*s_fudge);
+		m_variables[6].a.l.y = 0L;
+		m_variables[8].a.l.x = (long)(g_parameters[4]*s_fudge);
+		m_variables[8].a.l.y = (long)(g_parameters[5]*s_fudge);
+		m_variables[11].a.l.x = g_x_dots;
+		m_variables[11].a.l.x <<= g_bit_shift;
+		m_variables[11].a.l.y = g_y_dots;
+		m_variables[11].a.l.y <<= g_bit_shift;
+		m_variables[12].a.l.x = g_max_iteration;
+		m_variables[12].a.l.x <<= g_bit_shift;
+		m_variables[12].a.l.y = 0L;
+		m_variables[13].a.l.x = g_is_mand ? 1 : 0;
+		m_variables[13].a.l.x <<= g_bit_shift;
+		m_variables[13].a.l.y = 0L;
+		m_variables[14].a.l.x = (long)(m_variables[14].a.d.x*s_fudge);
+		m_variables[14].a.l.y = (long)(m_variables[14].a.d.y*s_fudge);
+		m_variables[15].a.l.x = (long)(m_variables[15].a.d.x*s_fudge);
+		m_variables[15].a.l.y = (long)(m_variables[15].a.d.y*s_fudge);
+		m_variables[16].a.l.x = (long)(m_variables[16].a.d.x*s_fudge);
+		m_variables[16].a.l.y = (long)(m_variables[16].a.d.y*s_fudge);
+		m_variables[17].a.l.x = (long)(g_parameters[6]*s_fudge);
+		m_variables[17].a.l.y = (long)(g_parameters[7]*s_fudge);
+		m_variables[18].a.l.x = (long)(g_parameters[8]*s_fudge);
+		m_variables[18].a.l.y = (long)(g_parameters[9]*s_fudge);
 		break;
 #endif
 	}
@@ -3094,14 +3136,14 @@ int Formula::orbit()
 	switch (m_math_type)
 	{
 	case D_MATH:
-		g_old_z = g_new_z = v[3].a.d;
+		g_old_z = g_new_z = m_variables[3].a.d;
 		return Arg1->d.x == 0.0;
 #if !defined(XFRACT)
 	case M_MATH:
-		g_old_z = g_new_z = MPC2cmplx(v[3].a.m);
+		g_old_z = g_new_z = MPC2cmplx(m_variables[3].a.m);
 		return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
 	case L_MATH:
-		g_old_z_l = g_new_z_l = v[3].a.l;
+		g_old_z_l = g_new_z_l = m_variables[3].a.l;
 		if (g_overflow)
 		{
 			return 1;
@@ -3124,14 +3166,14 @@ int Formula::per_pixel()
 	Arg2--;
 
 
-	v[10].a.d.x = (double)g_col;
-	v[10].a.d.y = (double)g_row;
+	m_variables[10].a.d.x = (double)g_col;
+	m_variables[10].a.d.y = (double)g_row;
 
 	switch (m_math_type)
 	{
 	case D_MATH:
-		v[9].a.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
-		v[9].a.d.y = 0.0;
+		m_variables[9].a.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
+		m_variables[9].a.d.y = 0.0;
 		break;
 
 
@@ -3139,22 +3181,22 @@ int Formula::per_pixel()
 	case M_MATH:
 		if ((g_row + g_col) & 1)
 		{
-			v[9].a.m = g_one_mpc;
+			m_variables[9].a.m = g_one_mpc;
 		}
 		else
 		{
-			v[9].a.m.x.Mant = v[9].a.m.x.Exp = 0;
-			v[9].a.m.y.Mant = v[9].a.m.y.Exp = 0;
+			m_variables[9].a.m.x.Mant = m_variables[9].a.m.x.Exp = 0;
+			m_variables[9].a.m.y.Mant = m_variables[9].a.m.y.Exp = 0;
 		}
-		v[10].a.m = cmplx2MPC(v[10].a.d);
+		m_variables[10].a.m = cmplx2MPC(m_variables[10].a.d);
 		break;
 	case L_MATH:
-		v[9].a.l.x = (long) (((g_row + g_col) & 1)*s_fudge);
-		v[9].a.l.y = 0L;
-		v[10].a.l.x = g_col;
-		v[10].a.l.x <<= g_bit_shift;
-		v[10].a.l.y = g_row;
-		v[10].a.l.y <<= g_bit_shift;
+		m_variables[9].a.l.x = (long) (((g_row + g_col) & 1)*s_fudge);
+		m_variables[9].a.l.y = 0L;
+		m_variables[10].a.l.x = g_col;
+		m_variables[10].a.l.x <<= g_bit_shift;
+		m_variables[10].a.l.y = g_row;
+		m_variables[10].a.l.y <<= g_bit_shift;
 		break;
 #endif
 	}
@@ -3166,13 +3208,13 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case D_MATH:
-			v[0].a.d.x = g_old_z.x;
-			v[0].a.d.y = g_old_z.y;
+			m_variables[0].a.d.x = g_old_z.x;
+			m_variables[0].a.d.y = g_old_z.y;
 			break;
 #if !defined(XFRACT)
 		case M_MATH:
-			v[0].a.m.x = *d2MP(g_old_z.x);
-			v[0].a.m.y = *d2MP(g_old_z.y);
+			m_variables[0].a.m.x = *d2MP(g_old_z.x);
+			m_variables[0].a.m.y = *d2MP(g_old_z.y);
 			break;
 		case L_MATH:
 			/* watch out for overflow */
@@ -3182,8 +3224,8 @@ int Formula::per_pixel()
 				g_old_z.y = 8;
 			}
 			/* convert to fudged longs */
-			v[0].a.l.x = (long)(g_old_z.x*s_fudge);
-			v[0].a.l.y = (long)(g_old_z.y*s_fudge);
+			m_variables[0].a.l.x = (long)(g_old_z.x*s_fudge);
+			m_variables[0].a.l.y = (long)(g_old_z.y*s_fudge);
 			break;
 #endif
 		}
@@ -3194,17 +3236,17 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case D_MATH:
-			v[0].a.d.x = g_dx_pixel();
-			v[0].a.d.y = g_dy_pixel();
+			m_variables[0].a.d.x = g_dx_pixel();
+			m_variables[0].a.d.y = g_dy_pixel();
 			break;
 #if !defined(XFRACT)
 		case M_MATH:
-			v[0].a.m.x = *d2MP(g_dx_pixel());
-			v[0].a.m.y = *d2MP(g_dy_pixel());
+			m_variables[0].a.m.x = *d2MP(g_dx_pixel());
+			m_variables[0].a.m.y = *d2MP(g_dy_pixel());
 			break;
 		case L_MATH:
-			v[0].a.l.x = g_lx_pixel();
-			v[0].a.l.y = g_ly_pixel();
+			m_variables[0].a.l.x = g_lx_pixel();
+			m_variables[0].a.l.y = g_ly_pixel();
 			break;
 #endif
 		}
@@ -3226,14 +3268,14 @@ int Formula::per_pixel()
 	switch (m_math_type)
 	{
 	case D_MATH:
-		g_old_z = v[3].a.d;
+		g_old_z = m_variables[3].a.d;
 		break;
 #if !defined(XFRACT)
 	case M_MATH:
-		g_old_z = MPC2cmplx(v[3].a.m);
+		g_old_z = MPC2cmplx(m_variables[3].a.m);
 		break;
 	case L_MATH:
-		g_old_z_l = v[3].a.l;
+		g_old_z_l = m_variables[3].a.l;
 		break;
 #endif
 	}
@@ -3388,10 +3430,10 @@ int frmgetchar (FILE *openfile)
 
 /* This function also gets flow control info */
 
-void getfuncinfo(struct token_st *tok)
+void getfuncinfo(token_st *tok)
 {
 	int i;
-	for (i = 0; i < sizeof(FnctList)/ sizeof(struct FNCT_LIST); i++)
+	for (i = 0; i < sizeof(FnctList)/ sizeof(FNCT_LIST); i++)
 	{
 		if (!strcmp(FnctList[i].s, tok->token_str))
 		{
@@ -3415,7 +3457,7 @@ void getfuncinfo(struct token_st *tok)
 	return;
 }
 
-void getvarinfo(struct token_st *tok)
+void getvarinfo(token_st *tok)
 {
 	int i;
 
@@ -3446,7 +3488,7 @@ void getvarinfo(struct token_st *tok)
 
 /* returns 1 on success, 0 on NOT_A_TOKEN */
 
-int frmgetconstant(FILE *openfile, struct token_st *tok)
+int frmgetconstant(FILE *openfile, token_st *tok)
 {
 	int c;
 	int i = 1;
@@ -3546,10 +3588,10 @@ int frmgetconstant(FILE *openfile, struct token_st *tok)
 	return 1;
 }
 
-void is_complex_constant(FILE *openfile, struct token_st *tok)
+void is_complex_constant(FILE *openfile, token_st *tok)
 {
 	/* should test to make sure tok->token_str[0] == '(' */
-	struct token_st temp_tok;
+	token_st temp_tok;
 	long filepos;
 	int c;
 	int sign_value = 1;
@@ -3672,7 +3714,7 @@ void is_complex_constant(FILE *openfile, struct token_st *tok)
 	return;
 }
 
-int frmgetalpha(FILE *openfile, struct token_st *tok)
+int frmgetalpha(FILE *openfile, token_st *tok)
 {
 	int c;
 	int i = 1;
@@ -3775,7 +3817,7 @@ int frmgetalpha(FILE *openfile, struct token_st *tok)
 	return 0;
 }
 
-void frm_get_eos(FILE *openfile, struct token_st *this_token)
+void frm_get_eos(FILE *openfile, token_st *this_token)
 {
 	long last_filepos = ftell(openfile);
 	int c;
@@ -3808,7 +3850,7 @@ void frm_get_eos(FILE *openfile, struct token_st *this_token)
   NOT_A_TOKEN and END_OF_FORMULA
 */
 
-static int formula_get_token(FILE *openfile, struct token_st *this_token)
+static int formula_get_token(FILE *openfile, token_st *this_token)
 {
 	long filepos;
 	int i = 1;
@@ -4194,7 +4236,7 @@ char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
 
 	FILE *debug_fp = NULL;
 	char *FormulaStr;
-	struct token_st temp_tok;
+	token_st temp_tok;
 	int Done;
 	long filepos = ftell(file);
 
@@ -4421,11 +4463,11 @@ void init_misc()
 
 void Formula::init_misc()
 {
-	static struct ConstArg vv[5];
-	static union Arg argfirst, argsecond;
-	if (!v)
+	static ConstArg vv[5];
+	static Arg argfirst, argsecond;
+	if (!m_variables)
 	{
-		v = vv;
+		m_variables = vv;
 	}
 	Arg1 = &argfirst;
 	Arg2 = &argsecond; /* needed by all the ?Stk* functions */
@@ -4464,20 +4506,20 @@ void Formula::allocate()
 			m_formula_max_args = (unsigned) (m_formula_max_ops/2.5);
 		}
 		long f_size = sizeof(void (**)())*m_formula_max_ops;
-		long Store_size = sizeof(union Arg *)*MAX_STORES;
-		long Load_size = sizeof(union Arg *)*MAX_LOADS;
+		long Store_size = sizeof(Arg *)*MAX_STORES;
+		long Load_size = sizeof(Arg *)*MAX_LOADS;
 		
-		long v_size = sizeof(struct ConstArg)*m_formula_max_args;
-		long p_size = sizeof(struct fls *)*m_formula_max_ops;
+		long v_size = sizeof(ConstArg)*m_formula_max_args;
+		long p_size = sizeof(function_load_store *)*m_formula_max_ops;
 		m_total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
-			+ sizeof(struct PEND_OP)*m_formula_max_ops;
+			+ sizeof(PEND_OP)*m_formula_max_ops;
 
 		g_type_specific_work_area = malloc(f_size + Load_size + Store_size + v_size + p_size);
 		f = (void (**)()) g_type_specific_work_area;
-		Store = (union Arg **) (f + m_formula_max_ops);
-		Load = (union Arg **) (Store + MAX_STORES);
-		v = (struct ConstArg *) (Load + MAX_LOADS);
-		g_function_load_store_pointers = (struct fls *) (v + m_formula_max_args);
+		Store = (Arg **) (f + m_formula_max_ops);
+		Load = (Arg **) (Store + MAX_STORES);
+		m_variables = (ConstArg *) (Load + MAX_LOADS);
+		m_function_load_store_pointers = (function_load_store *) (m_variables + m_formula_max_args);
 
 		if (pass == 0)
 		{
@@ -4510,9 +4552,9 @@ void Formula::free_work_area()
 	g_type_specific_work_area = NULL;
 	Store = NULL;
 	Load = NULL;
-	v = NULL;
+	m_variables = NULL;
 	f = NULL;
-	g_function_load_store_pointers = NULL;
+	m_function_load_store_pointers = NULL;
 	m_total_formula_mem = 0;
 }
 
@@ -4527,7 +4569,7 @@ struct error_data_st
 
 void Formula::frm_error(FILE *open_file, long begin_frm)
 {
-	struct token_st tok;
+	token_st tok;
 	/* char debugmsg[500]; */
 	int i, chars_to_error = 0, chars_in_error = 0, token_count;
 	int statement_len, line_number;
@@ -4657,43 +4699,53 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 
 void Formula::display_var_list()
 {
-	struct var_list_st *p;
+	if (m_variable_list)
+	{
+		m_variable_list->display();
+	}
+}
+
+void var_list_st::display() const
+{
 	stop_message(0, "List of user defined variables:\n");
-	for (p = m_variable_list; p; p = p->next_item)
+	for (const var_list_st *p = this; p; p = p->next_item)
 	{
 		stop_message(0, p->name);
 	}
-
 }
 
 void Formula::display_const_lists()
 {
-	struct const_list_st *p;
+	if (m_complex_list)
+	{
+		m_complex_list->display("Complex constants are:");
+	}
+	if (m_real_list)
+	{
+		m_real_list->display("Real constants are:");
+	}
+}
+
+void const_list_st::display(const char *title) const
+{
 	char msgbuf[800];
-	stop_message (0, "Complex constants are:");
-	for (p = m_complex_list; p; p = p->next_item)
-	{
-		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
-		stop_message(0, msgbuf);
-	}
-	stop_message (0, "Real constants are:");
-	for (p = m_real_list; p; p = p->next_item)
+	stop_message (0, title);
+	for (const const_list_st *p = this; p; p = p->next_item)
 	{
 		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
 		stop_message(0, msgbuf);
 	}
 }
 
-
-struct var_list_st *var_list_alloc()
+var_list_st *var_list_alloc()
 {
-	return (struct var_list_st *) malloc(sizeof(struct var_list_st));
+	return (var_list_st *) malloc(sizeof(var_list_st));
 }
 
 
-struct const_list_st *const_list_alloc()
+const_list_st *const_list_alloc()
 {
-	return (struct const_list_st *) malloc(sizeof(struct const_list_st));
+	return (const_list_st *) malloc(sizeof(const_list_st));
 }
 
 void Formula::init_var_list()
@@ -4710,7 +4762,7 @@ void Formula::init_var_list()
 
 void Formula::init_const_lists()
 {
-	struct const_list_st *temp, *p;
+	const_list_st *temp, *p;
 	for (p = m_complex_list; p; p = temp)
 	{
 		temp = p->next_item;
@@ -4725,7 +4777,7 @@ void Formula::init_const_lists()
 	m_real_list = NULL;
 }
 
-struct var_list_st *add_var_to_list(struct var_list_st *p, struct token_st tok)
+var_list_st *var_list_st::add(var_list_st *p, token_st tok)
 {
 	if (p == NULL)
 	{
@@ -4742,7 +4794,7 @@ struct var_list_st *add_var_to_list(struct var_list_st *p, struct token_st tok)
 	}
 	else
 	{
-		p->next_item = add_var_to_list(p->next_item, tok);
+		p->next_item = add(p->next_item, tok);
 		if (p->next_item == NULL)
 		{
 			return NULL;
@@ -4751,7 +4803,7 @@ struct var_list_st *add_var_to_list(struct var_list_st *p, struct token_st tok)
 	return p;
 }
 
-struct const_list_st *add_const_to_list(struct const_list_st *p, struct token_st tok)
+const_list_st *const_list_st::add(const_list_st *p, token_st tok)
 {
 	if (p == NULL)
 	{
@@ -4764,12 +4816,10 @@ struct const_list_st *add_const_to_list(struct const_list_st *p, struct token_st
 		p->complex_const.y = tok.token_const.y;
 		p->next_item = NULL;
 	}
-	else if (p->complex_const.x == tok.token_const.x && p->complex_const.y == tok.token_const.y)
+	else if (p->complex_const.x != tok.token_const.x
+			 || p->complex_const.y != tok.token_const.y)
 	{
-	}
-	else
-	{
-		p->next_item = add_const_to_list(p->next_item, tok);
+		p->next_item = add(p->next_item, tok);
 		if (p->next_item == NULL)
 		{
 			return NULL;
@@ -4783,8 +4833,8 @@ void Formula::count_lists()
 	/*
 	char msgbuf[800];
 	*/
-	struct var_list_st *p;
-	struct const_list_st *q;
+	var_list_st *p;
+	const_list_st *q;
 
 	m_variable_count = 0;
 	m_complex_count = 0;
@@ -4828,7 +4878,7 @@ int Formula::prescan(FILE *open_file)
 	int i;
 	long statement_pos, orig_pos;
 	int done = 0;
-	struct token_st this_token;
+	token_st this_token;
 	int errors_found = 0;
 	int ExpectingArg = 1;
 	int NewStatement = 1;
@@ -5055,8 +5105,7 @@ int Formula::prescan(FILE *open_file)
 				}
 			}
 			ExpectingArg = 0;
-			/*
-			m_variable_list = add_var_to_list(m_variable_list, this_token);
+			m_variable_list = var_list_st::add(m_variable_list, this_token);
 			if (m_variable_list == NULL)
 			{
 				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
@@ -5065,7 +5114,6 @@ int Formula::prescan(FILE *open_file)
 				init_const_lists();
 				return 0;
 			}
-			*/
 			break;
 		case PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
 			m_number_of_ops++;
@@ -5097,8 +5145,7 @@ int Formula::prescan(FILE *open_file)
 				}
 			}
 			ExpectingArg = 0;
-			/*
-			m_real_list = add_const_to_list (m_real_list, this_token);
+			m_real_list = const_list_st::add(m_real_list, this_token);
 			if (m_real_list == NULL)
 			{
 				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
@@ -5107,7 +5154,6 @@ int Formula::prescan(FILE *open_file)
 				init_const_lists();
 				return 0;
 			}
-			*/
 			break;
 		case COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
 			assignment_ok = 0;
@@ -5124,8 +5170,7 @@ int Formula::prescan(FILE *open_file)
 				}
 			}
 			ExpectingArg = 0;
-			/*
-			m_complex_list = add_const_to_list (m_complex_list, this_token);
+			m_complex_list = const_list_st::add(m_complex_list, this_token);
 			if (m_complex_list == NULL)
 			{
 				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
@@ -5134,7 +5179,6 @@ int Formula::prescan(FILE *open_file)
 				init_const_lists();
 				return 0;
 			}
-			*/
 			break;
 		case FUNCTION:
 			assignment_ok = 0;
