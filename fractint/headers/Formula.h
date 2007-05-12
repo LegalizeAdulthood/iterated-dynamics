@@ -1,16 +1,39 @@
 #if !defined(FORMULA_H)
 #define FORMULA_H
 
+/* function, load, store pointers */
+struct function_load_store 
+{ 
+	void (*function)();
+	union Arg *operand;
+};
+
+struct token_st
+{
+	char token_str[80];
+	int token_type;
+	int token_id;
+	_CMPLX token_const;
+};
+
 struct var_list_st
 {
 	char name[34];
 	var_list_st *next_item;
+
+	void display() const;
+
+	static var_list_st *add(var_list_st *list, token_st tok);
 };
 
 struct const_list_st
 {
 	_CMPLX complex_const;
 	const_list_st *next_item;
+
+	void display(const char *title) const;
+
+	static const_list_st *add(const_list_st *p, token_st tok);
 };
 
 typedef void t_function();
@@ -48,6 +71,16 @@ public:
 	void StackLoadDouble();
 	void StackStore();
 	void StackLoad();
+	void Random_l();
+	void Random_d();
+	void Random_m();
+	void StackStoreRandom_l();
+	void StackStoreRandom_m();
+	void StackStoreRandom_d();
+	void StackSqr0();
+	void StackSqr_d();
+	void StackSqr_m();
+	void StackSqr_l();
 
 	int get_parameter(const char *name);
 
@@ -114,6 +147,8 @@ private:
 	bool m_uses_p4;
 	bool m_uses_p5;
 	int m_max_fn;
+	function_load_store *m_function_load_store_pointers;
+	ConstArg *m_variables;
 
 	ConstArg *is_constant(char *text, int length);
 	int ParseStr(char *text, int pass);
@@ -142,7 +177,7 @@ extern double _2_;
 extern Arg s[20];
 extern Arg **Store;
 extern Arg **Load;
-extern ConstArg *v;
+//extern ConstArg *v;
 extern int InitLodPtr;
 extern int InitStoPtr;
 extern int InitOpPtr;

@@ -104,17 +104,12 @@
 /* Use startup parameter "debugflag = 324" to show debug messages after  */
 /*    compiling with above #define uncommented.  */
 
-#include <string.h>
 #include <ctype.h>
-#include <time.h>
 
 /* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "Formula.h"
-
-/* global data  */
-struct fls *g_function_load_store_pointers = (struct fls *)0;
 
 #if !defined(XFRACT)
 
@@ -231,16 +226,16 @@ NEW_FN  fStkOne;   /* to support new parser fn.  */
 #define REMOVE_PUSH --cvtptrx, stkcnt += 2
 
 #define CLEAR_STK 127
-#define FNPTR(x) g_function_load_store_pointers[(x)].function  /* function pointer */
-#define OPPTR(x) g_function_load_store_pointers[(x)].operand   /* operand pointer */
+#define FNPTR(x) m_function_load_store_pointers[(x)].function  /* function pointer */
+#define OPPTR(x) m_function_load_store_pointers[(x)].operand   /* operand pointer */
 #define NO_OPERAND (union Arg  *)0
 #define NO_FUNCTION (void (*)())0
-#define LASTSQR v[4].a
-#define PARM1 v[1].a
-#define PARM2 v[2].a
-#define PARM3 v[8].a
-#define PARM4 v[17].a
-#define PARM5 v[18].a
+#define LASTSQR m_variables[4].a
+#define PARM1 m_variables[1].a
+#define PARM2 m_variables[2].a
+#define PARM3 m_variables[8].a
+#define PARM4 m_variables[17].a
+#define PARM5 m_variables[18].a
 #define MAX_STACK 8   /* max # of stack register avail  */
 
 #ifdef TESTFP
@@ -374,7 +369,7 @@ static unsigned char
 	p5const;      /* ...and p5?  */
 
 static unsigned int
-	cvtptrx;      /* subscript of next free entry in g_function_load_store_pointers  */
+	cvtptrx;      /* subscript of next free entry in m_function_load_store_pointers  */
 
 static void (*prevfptr)();  /* previous function pointer  */
 
@@ -1004,11 +999,11 @@ awful_error:
 			{
 				DBUGMSG("*lodrealc (div) -> (*lodrealmul)");
 			}
-			v[m_parser_vsp].s = NULL;  /* this constant has no name  */
-			v[m_parser_vsp].len = 0;
-			v[m_parser_vsp].a.d.x = _1_ / Load[m_load_ptr-1]->d.x;
-			v[m_parser_vsp].a.d.y = 0.0;
-			OPPTR(cvtptrx) = &v[m_parser_vsp++].a;
+			m_variables[m_parser_vsp].s = NULL;  /* this constant has no name  */
+			m_variables[m_parser_vsp].len = 0;
+			m_variables[m_parser_vsp].a.d.x = _1_ / Load[m_load_ptr-1]->d.x;
+			m_variables[m_parser_vsp].a.d.y = 0.0;
+			OPPTR(cvtptrx) = &m_variables[m_parser_vsp++].a;
 			ffptr = fStkLodRealMul;
 		}
 	}
@@ -1360,7 +1355,7 @@ int Formula::fill_jump_struct_fp()
 			}
 			find_new_func = 0;
 		}
-		if (g_function_load_store_pointers[m_op_ptr].function == JumpFunc)
+		if (m_function_load_store_pointers[m_op_ptr].function == JumpFunc)
 		{
 			jump_data[i].JumpOpPtr = m_op_ptr*4;
 			i++;

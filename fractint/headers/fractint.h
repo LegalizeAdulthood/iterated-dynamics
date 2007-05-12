@@ -1343,13 +1343,6 @@ double fixtan( double x );
 #endif
 #endif
 
-/* function, load, store pointers  CAE fp */
-struct fls 
-{ 
-	void (*function)();
-	union Arg *operand;
-};
-
 struct entryinfo
 {
 	char name[ITEMNAMELEN + 2];
