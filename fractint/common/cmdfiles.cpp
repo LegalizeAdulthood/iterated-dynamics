@@ -736,12 +736,11 @@ struct named_int
 
 static int named_value(const named_int *args, int num_args, const char *name, int *value)
 {
-	int ii;
-	for (ii = 0; ii < NUM_OF(args); ii++)
+	for (int i = 0; i < num_args; i++)
 	{
-		if (strcmp(name, args[ii].name) == 0)
+		if (strcmp(name, args[i].name) == 0)
 		{
-			*value = args[ii].value;
+			*value = args[i].value;
 			return TRUE;
 		}
 	}

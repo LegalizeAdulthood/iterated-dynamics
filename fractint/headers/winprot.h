@@ -15,7 +15,6 @@ extern void set_default_parms();
 /*  windos -- C file prototypes */
 
 extern void debugmessage(char *, char *);
-extern int stop_message(int , char *);
 extern int  farread(int, VOIDPTR, unsigned);
 extern int  farwrite(int, VOIDPTR, unsigned);
 extern void far_memcpy(void *, void *, int);

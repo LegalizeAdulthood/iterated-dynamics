@@ -697,12 +697,6 @@ va_dcl
 #endif
 {
 	va_list arg_marker;  /* variable arg list */
-	char *timestring;
-	time_t ltime;
-	FILE *fp = NULL;
-	int out = 0;
-	int i;
-	int do_bench;
 
 #ifndef USE_VARARGS
 	va_start(arg_marker, subrtn);
@@ -714,24 +708,25 @@ va_dcl
 	subrtn = (int (*)())va_arg(arg_marker, int *);
 #endif
 
-	do_bench = g_timer_flag; /* record time? */
+	int do_bench = g_timer_flag; /* record time? */
 	if (timertype == 2)   /* encoder, record time only if debug = 200 */
 	{
 		do_bench = (DEBUGFLAG_TIME_ENCODER == g_debug_flag);
 	}
+	FILE *fp = NULL;
 	if (do_bench)
 	{
 		fp = dir_fopen(g_work_dir, "bench", "a");
 	}
 	g_timer_start = clock_ticks();
+	int out = 0;
 	switch (timertype)
 	{
 	case TIMER_ENGINE:
 		out = (*(int(*)())subrtn)();
 		break;
 	case TIMER_DECODER:
-		i = va_arg(arg_marker, int);
-		out = (int)decoder((short)i); /* not indirect, safer with overlays */
+		out = (int) decoder((short) va_arg(arg_marker, int)); /* not indirect, safer with overlays */
 		break;
 	case TIMER_ENCODER:
 		out = encoder();            /* not indirect, safer with overlays */
@@ -742,8 +737,9 @@ va_dcl
 
 	if (do_bench)
 	{
+		time_t ltime;
 		time(&ltime);
-		timestring = ctime(&ltime);
+		char *timestring = ctime(&ltime);
 		timestring[24] = 0; /*clobber newline in time string */
 		switch (timertype)
 		{
