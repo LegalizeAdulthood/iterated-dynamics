@@ -1198,23 +1198,6 @@ typedef struct palett
 }
 Palettetype;
 
-#define MAX_JUMPS 200  /* size of JUMP_CONTROL array */
-
-typedef struct frm_jmpptrs_st
-{
-	int      JumpOpPtr;
-	int      JumpLodPtr;
-	int      JumpStoPtr;
-} JUMP_PTRS_ST;
-
-
-typedef struct frm_jump_st
-{
-	int      type;
-	JUMP_PTRS_ST ptrs;
-	int      DestJumpIndex;
-} JUMP_CONTROL_ST;
-
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif

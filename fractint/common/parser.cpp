@@ -21,7 +21,7 @@
 
 #include <time.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
@@ -103,7 +103,6 @@ Formula::Formula()
 	m_parser_vsp(0),
 	m_formula_max_ops(MAX_OPS),
 	m_formula_max_args(MAX_ARGS),
-	m_total_formula_mem(0),
 	m_op_ptr(0),
 	m_uses_jump(false),
 	m_jump_index(0),
@@ -123,23 +122,25 @@ Formula::Formula()
 	m_function_load_store_pointers(NULL),
 	m_variables(NULL)
 {
-	Arg zero = { 0 };
-	for (int i = 0; i < NUM_OF(m_argument_stack); i++)
 	{
-		m_argument_stack[i] = zero;
+		Arg zero = { 0 };
+		for (int i = 0; i < NUM_OF(m_argument_stack); i++)
+		{
+			m_argument_stack[i] = zero;
+		}
+	}
+	{
+		JUMP_CONTROL zero = { 0 };
+		for (int i = 0; i < NUM_OF(m_jump_control); i++)
+		{
+			m_jump_control[i] = zero;
+		}
 	}
 }
 
 Formula::~Formula()
 {
 }
-
-#if !defined(XFRACT) && !defined(_WIN32)
-/* reuse an array in the decoder */
-JUMP_CONTROL_ST *jump_control = (JUMP_CONTROL_ST *) g_size_of_string;
-#else
-JUMP_CONTROL_ST jump_control[MAX_JUMPS];
-#endif
 
 #define CASE_TERMINATOR case',':\
 						case '\n':\
@@ -238,10 +239,6 @@ Arg *Arg1;
 Arg *Arg2;
 
 /* Some of these variables should be renamed for safety */
-Arg **Store;
-Arg **Load;
-void (**f)() = NULL;
-
 int InitLodPtr;
 int InitStoPtr;
 int InitOpPtr;
@@ -583,7 +580,7 @@ void Formula::StackLoadDup_d()
 {
 	Arg1 += 2;
 	Arg2 += 2;
-	*Arg2 = *Arg1 = *Load[m_load_ptr];
+	*Arg2 = *Arg1 = *m_load[m_load_ptr];
 	m_load_ptr += 2;
 }
 
@@ -596,8 +593,8 @@ void Formula::StackLoadSqr_d()
 {
 	Arg1++;
 	Arg2++;
-	Arg1->d.y = Load[m_load_ptr]->d.x*Load[m_load_ptr]->d.y*2.0;
-	Arg1->d.x = (Load[m_load_ptr]->d.x*Load[m_load_ptr]->d.x) - (Load[m_load_ptr]->d.y*Load[m_load_ptr]->d.y);
+	Arg1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
+	Arg1->d.x = (m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x) - (m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y);
 	m_load_ptr++;
 }
 
@@ -610,9 +607,9 @@ void Formula::StackLoadSqr2_d()
 {
 	Arg1++;
 	Arg2++;
-	LastSqr.d.x = Load[m_load_ptr]->d.x*Load[m_load_ptr]->d.x;
-	LastSqr.d.y = Load[m_load_ptr]->d.y*Load[m_load_ptr]->d.y;
-	Arg1->d.y = Load[m_load_ptr]->d.x*Load[m_load_ptr]->d.y*2.0;
+	LastSqr.d.x = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x;
+	LastSqr.d.y = m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y;
+	Arg1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
 	Arg1->d.x = LastSqr.d.x - LastSqr.d.y;
 	LastSqr.d.x += LastSqr.d.y;
 	LastSqr.d.y = 0;
@@ -628,8 +625,8 @@ void Formula::StackLoadDouble()
 {
 	Arg1++;
 	Arg2++;
-	Arg1->d.x = Load[m_load_ptr]->d.x*2.0;
-	Arg1->d.y = Load[m_load_ptr]->d.y*2.0;
+	Arg1->d.x = m_load[m_load_ptr]->d.x*2.0;
+	Arg1->d.y = m_load[m_load_ptr]->d.y*2.0;
 	m_load_ptr++;
 }
 
@@ -1131,7 +1128,7 @@ void StkSto()
 
 void Formula::StackStore()
 {
-	*Store[m_store_ptr++] = *Arg1;
+	*m_store[m_store_ptr++] = *Arg1;
 }
 
 void (*PtrStkSto)() = StkSto;
@@ -1145,7 +1142,7 @@ void Formula::StackLoad()
 {
 	Arg1++;
 	Arg2++;
-	*Arg1 = *Load[m_load_ptr++];
+	*Arg1 = *m_load[m_load_ptr++];
 }
 
 void StkClr()
@@ -2032,8 +2029,6 @@ void Formula::end_init()
 	m_initial_jump_index = m_jump_index;
 }
 
-void (*PtrEndInit)() = EndInit;
-
 void StkJump()
 {
 	g_formula_state.StackJump();
@@ -2041,10 +2036,10 @@ void StkJump()
 
 void Formula::StackJump()
 {
-	m_op_ptr =  jump_control[m_jump_index].ptrs.JumpOpPtr;
-	m_load_ptr = jump_control[m_jump_index].ptrs.JumpLodPtr;
-	m_store_ptr = jump_control[m_jump_index].ptrs.JumpStoPtr;
-	m_jump_index = jump_control[m_jump_index].DestJumpIndex;
+	m_op_ptr =  m_jump_control[m_jump_index].ptrs.JumpOpPtr;
+	m_load_ptr = m_jump_control[m_jump_index].ptrs.JumpLodPtr;
+	m_store_ptr = m_jump_control[m_jump_index].ptrs.JumpStoPtr;
+	m_jump_index = m_jump_control[m_jump_index].DestJumpIndex;
 }
 
 void dStkJumpOnFalse()
@@ -2517,7 +2512,7 @@ void Formula::RecSortPrec()
 	{
 		RecSortPrec();
 	}
-	f[m_op_ptr++] = s_ops[ThisOp].f;
+	m_functions[m_op_ptr++] = s_ops[ThisOp].f;
 }
 
 static char *Constants[] =
@@ -2579,7 +2574,7 @@ int Formula::ParseStr(char *text, int pass)
 	s_random.set_randomized(false);
 	m_uses_jump = false;
 	m_jump_index = 0;
-	if (!g_type_specific_work_area)
+	if (!m_store || !m_load || !m_functions)
 	{
 		stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 		return 1;
@@ -3000,7 +2995,7 @@ int Formula::ParseStr(char *text, int pass)
 			{
 				s_ops[m_posp-1].f = StkSto;
 				s_ops[m_posp-1].p = 5 - (m_parenthesis_count + Equals)*15;
-				Store[m_store_ptr++] = Load[--m_load_ptr];
+				m_store[m_store_ptr++] = m_load[--m_load_ptr];
 				Equals++;
 			}
 			break;
@@ -3019,14 +3014,14 @@ int Formula::ParseStr(char *text, int pass)
 				{
 				case 1:                      /* if */
 					m_expecting_arg = 1;
-					jump_control[m_jump_index++].type = 1;
+					m_jump_control[m_jump_index++].type = 1;
 					s_ops[m_posp].f = StkJumpOnFalse;
 					s_ops[m_posp++].p = 1;
 					break;
 				case 2:                     /* elseif */
 					m_expecting_arg = 1;
-					jump_control[m_jump_index++].type = 2;
-					jump_control[m_jump_index++].type = 2;
+					m_jump_control[m_jump_index++].type = 2;
+					m_jump_control[m_jump_index++].type = 2;
 					s_ops[m_posp].f = StkJump;
 					s_ops[m_posp++].p = 1;
 					s_ops[m_posp].f = (void(*)())0;
@@ -3037,12 +3032,12 @@ int Formula::ParseStr(char *text, int pass)
 					s_ops[m_posp++].p = 1;
 					break;
 				case 3:                     /* else */
-					jump_control[m_jump_index++].type = 3;
+					m_jump_control[m_jump_index++].type = 3;
 					s_ops[m_posp].f = StkJump;
 					s_ops[m_posp++].p = 1;
 					break;
 				case 4: /* endif */
-					jump_control[m_jump_index++].type = 4;
+					m_jump_control[m_jump_index++].type = 4;
 					s_ops[m_posp].f = StkJumpLabel;
 					s_ops[m_posp++].p = 1;
 					break;
@@ -3061,7 +3056,7 @@ int Formula::ParseStr(char *text, int pass)
 				else
 				{
 					c = is_constant(&text[m_initial_n], Len);
-					Load[m_load_ptr++] = &(c->a);
+					m_load[m_load_ptr++] = &(c->a);
 					s_ops[m_posp].f = StkLod;
 					s_ops[m_posp++].p = 1 - (m_parenthesis_count + Equals)*15;
 					n = m_initial_n + c->len - 1;
@@ -3123,7 +3118,7 @@ int Formula::orbit()
 	Arg2 = Arg1-1;
 	while (m_op_ptr < m_last_op)
 	{
-		f[m_op_ptr]();
+		m_functions[m_op_ptr]();
 		m_op_ptr++;
 #ifdef WATCH_MP
 		x1 = *MP2d(Arg1->m.x);
@@ -3258,7 +3253,7 @@ int Formula::per_pixel()
 	}
 	while (m_op_ptr < m_last_init_op)
 	{
-		f[m_op_ptr]();
+		m_functions[m_op_ptr]();
 		m_op_ptr++;
 	}
 	InitLodPtr = m_load_ptr;
@@ -3283,29 +3278,29 @@ int Formula::per_pixel()
 	return g_overflow ? 0 : 1;
 }
 
-int fill_if_group(int endif_index, JUMP_PTRS_ST* jump_data)
+int Formula::fill_if_group(int endif_index, JUMP_PTRS *jump_data)
 {
 	int i   = endif_index;
 	int ljp = endif_index; /* ljp means "last jump processed" */
 	while (i > 0)
 	{
 		i--;
-		switch (jump_control[i].type)
+		switch (m_jump_control[i].type)
 		{
 		case 1:    /*if (); this concludes processing of this group*/
-			jump_control[i].ptrs = jump_data[ljp];
-			jump_control[i].DestJumpIndex = ljp + 1;
+			m_jump_control[i].ptrs = jump_data[ljp];
+			m_jump_control[i].DestJumpIndex = ljp + 1;
 			return i;
 		case 2:    /*elseif* (2 jumps, the else and the if*/
 				/* first, the "if" part */
-			jump_control[i].ptrs = jump_data[ljp];
-			jump_control[i].DestJumpIndex = ljp + 1;
+			m_jump_control[i].ptrs = jump_data[ljp];
+			m_jump_control[i].DestJumpIndex = ljp + 1;
 
 				/* then, the else part */
 			i--; /*fall through to "else" is intentional*/
 		case 3:
-			jump_control[i].ptrs = jump_data[endif_index];
-			jump_control[i].DestJumpIndex = endif_index + 1;
+			m_jump_control[i].ptrs = jump_data[endif_index];
+			m_jump_control[i].DestJumpIndex = endif_index + 1;
 			ljp = i;
 			break;
 		case 4:    /*endif*/
@@ -3328,13 +3323,13 @@ int Formula::fill_jump_struct()
 	void (*JumpFunc)() = NULL;
 	int find_new_func = 1;
 
-	JUMP_PTRS_ST jump_data[MAX_JUMPS];
+	JUMP_PTRS jump_data[MAX_JUMPS];
 
 	for (m_op_ptr = 0; m_op_ptr < m_last_op; m_op_ptr++)
 	{
 		if (find_new_func)
 		{
-			switch (jump_control[i].type)
+			switch (m_jump_control[i].type)
 			{
 			case 1:
 				JumpFunc = StkJumpOnFalse;
@@ -3354,15 +3349,15 @@ int Formula::fill_jump_struct()
 			}
 			find_new_func = 0;
 		}
-		if (*(f[m_op_ptr]) == StkLod)
+		if (*(m_functions[m_op_ptr]) == StkLod)
 		{
 			loadcount++;
 		}
-		else if (*(f[m_op_ptr]) == StkSto)
+		else if (*(m_functions[m_op_ptr]) == StkSto)
 		{
 			storecount++;
 		}
-		else if (*(f[m_op_ptr]) == JumpFunc)
+		else if (*(m_functions[m_op_ptr]) == JumpFunc)
 		{
 			jump_data[i].JumpOpPtr = m_op_ptr;
 			jump_data[i].JumpLodPtr = loadcount;
@@ -3373,8 +3368,8 @@ int Formula::fill_jump_struct()
 	}
 
 	/* Following for safety only; all should always be false */
-	if (i != m_jump_index || jump_control[i - 1].type != 4
-		|| jump_control[0].type != 1)
+	if (i != m_jump_index || m_jump_control[i - 1].type != 4
+		|| m_jump_control[0].type != 1)
 	{
 		return 1;
 	}
@@ -4456,11 +4451,6 @@ int Formula::setup_int()
 }
 
 
-void init_misc()
-{
-	g_formula_state.init_misc();
-}
-
 void Formula::init_misc()
 {
 	static ConstArg vv[5];
@@ -4505,21 +4495,12 @@ void Formula::allocate()
 			m_formula_max_ops = 2300; /* this value uses up about 64K memory */
 			m_formula_max_args = (unsigned) (m_formula_max_ops/2.5);
 		}
-		long f_size = sizeof(void (**)())*m_formula_max_ops;
-		long Store_size = sizeof(Arg *)*MAX_STORES;
-		long Load_size = sizeof(Arg *)*MAX_LOADS;
-		
-		long v_size = sizeof(ConstArg)*m_formula_max_args;
-		long p_size = sizeof(function_load_store *)*m_formula_max_ops;
-		m_total_formula_mem = f_size + Load_size + Store_size + v_size + p_size /*+ jump_size*/
-			+ sizeof(PEND_OP)*m_formula_max_ops;
 
-		g_type_specific_work_area = malloc(f_size + Load_size + Store_size + v_size + p_size);
-		f = (void (**)()) g_type_specific_work_area;
-		Store = (Arg **) (f + m_formula_max_ops);
-		Load = (Arg **) (Store + MAX_STORES);
-		m_variables = (ConstArg *) (Load + MAX_LOADS);
-		m_function_load_store_pointers = (function_load_store *) (m_variables + m_formula_max_args);
+		m_functions = new t_function_pointer[m_formula_max_ops];
+		m_store = new Arg *[MAX_STORES];
+		m_load = new Arg *[MAX_LOADS];
+		m_variables = new ConstArg[m_formula_max_args];
+		m_function_load_store_pointers = new function_load_store[m_formula_max_ops];
 
 		if (pass == 0)
 		{
@@ -4536,6 +4517,9 @@ void Formula::allocate()
 	m_uses_p3 = false;
 	m_uses_p4 = false;
 	m_uses_p5 = false;
+#if defined(_WIN32)
+	_ASSERTE(_CrtCheckMemory());
+#endif
 }
 
 void free_work_area()
@@ -4545,17 +4529,17 @@ void free_work_area()
 
 void Formula::free_work_area()
 {
-	if (g_type_specific_work_area)
-	{
-		free(g_type_specific_work_area);
-	}
-	g_type_specific_work_area = NULL;
-	Store = NULL;
-	Load = NULL;
+	delete[] m_store;
+	delete[] m_load;
+	delete[] m_variables;
+	delete[] m_functions;
+	delete[] m_function_load_store_pointers;
+
+	m_store = NULL;
+	m_load = NULL;
 	m_variables = NULL;
-	f = NULL;
+	m_functions = NULL;
 	m_function_load_store_pointers = NULL;
-	m_total_formula_mem = 0;
 }
 
 
@@ -5679,8 +5663,7 @@ int Formula::prescan(FILE *open_file)
 const char *Formula::info_line1() const
 {
 	std::ostringstream text;
-	text << "TotalFormulaMem " << m_total_formula_mem
-		<< " MaxOps (posp) " << m_posp
+	text << " MaxOps (posp) " << m_posp
 		<< " MaxArgs (vsp) " << m_parser_vsp;
 	return text.str().c_str();
 }

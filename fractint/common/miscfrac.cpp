@@ -1,13 +1,11 @@
 /*
-
-	Miscellaneous fractal-specific code (formerly in CALCFRAC.C)
-
+	Miscellaneous fractal-specific code
 */
 
 #include <string.h>
 #include <limits.h>
 
-/* see Fractint.c for a description of the "include"  hierarchy */
+/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -15,6 +13,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "MathUtil.h"
+#include "Formula.h"
 
 #define RANDOM(x)  (rand() % (x))
 
