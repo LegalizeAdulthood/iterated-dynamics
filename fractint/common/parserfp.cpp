@@ -414,27 +414,21 @@ static void (*prevfptr)();  /* previous function pointer  */
 /* this table is searched sequentially  */
 struct fn_entry
 {
-
 #ifdef TESTFP
 	char *fname;  /* function name  */
 #endif
 	void (*infn)();  /* 'old' function pointer  */
 			/* (infn points to an operator fn in parser.c)  */
-
 	void (*outfn)();  /* pointer to equiv. fast fn.  */
-
 	char min_regs;  /* min regs needed on stack by this fn.  */
 			/* (legal values are 0, 2, 4)  */
-
 	char free_regs;  /* free regs required by this fn  */
 			/* (legal values are 0, 2, 4)  */
-
 	char delta;  /* net change to # of values on the fp stack  */
 			/* (legal values are -2, 0, +2)  */
-
-} static afe[NUM_OLD_FNS] =  /* array of function entries  */
+};
+static fn_entry afe[NUM_OLD_FNS] =  /* array of function entries  */
 {
-
 	{FNAME("Lod",     StkLod,      fStkLod,    0, 2, +2) },          /*  0  */
 	{FNAME("Clr",     StkClr,      fStkClr1,   0, 0,  CLEAR_STK) },  /*  1  */
 	{FNAME("+",       dStkAdd,     fStkAdd,    4, 0, -2) },          /*  2  */
@@ -521,14 +515,14 @@ awful_error:
 
 	/* this if statement inserts a stack push or pull into the token array  */
 	/*   it would be much better to do this *after* optimization  */
-	if ((int)s_stack_count < MinStk)  /* not enough operands on g_fpu stack  */
+	if (s_stack_count < MinStk)  /* not enough operands on g_fpu stack  */
 	{
 		DBUGMSG2("Inserted pull.  Stack: %2d --> %2d", stkcnt, stkcnt + 2);
 		OPPTR(cvtptrx) = NO_OPERAND;
 		FNPTR(cvtptrx++) = fStkPull2;  /* so adjust the stack, pull operand  */
 		s_stack_count += 2;
 	}
-	else if ((int)s_stack_count > Max_On_Stack)  /* too many operands  */
+	else if (s_stack_count > Max_On_Stack)  /* too many operands  */
 	{
 
 		Num_To_Push = s_stack_count - Max_On_Stack;
@@ -1347,8 +1341,8 @@ SkipOptimizer:  /* -------------  end of optimizer ----------------------- */
 	}
 	else
 	{
-		s_stack_count = (unsigned char)(s_stack_count + Delta);
-		s_real_stack_count = (unsigned char)(s_real_stack_count + Delta);
+		s_stack_count = s_stack_count + Delta;
+		s_real_stack_count = s_real_stack_count + Delta;
 	}
 
 	DBUGMSG3("Stack:  %2d --> %2d,  Real stack:  %2d",
@@ -1426,10 +1420,13 @@ int Formula::CvtStk()  /* convert the array of ptrs  */
 	struct fn_entry *pfe;
 	int fnfound;
 
-	s_last_sqr_stored = 1;  /* assume lastsqr is real (not stored explicitly)  */
-	s_p1_constant = s_p2_constant = s_p3_constant = (unsigned char)1;  /* . . . p1, p2, p3 const  */
-	s_p4_constant = s_p5_constant = (unsigned char)1;  /* . . . p4, p5 const  */
-	s_last_sqr_used = 0;  /* ... and LastSqr is not used  */
+	s_last_sqr_stored = true;  /* assume lastsqr is real (not stored explicitly)  */
+	s_p1_constant = true;
+	s_p2_constant = true;
+	s_p3_constant = true;  /* . . . p1, p2, p3 const  */
+	s_p4_constant = true;
+	s_p5_constant = true;  /* . . . p4, p5 const  */
+	s_last_sqr_used = false;  /* ... and LastSqr is not used  */
 
 	/* now see if the above assumptions are true */
 	for (m_op_ptr = m_load_ptr = m_store_ptr = 0; m_op_ptr < (int)m_last_op; m_op_ptr++)
@@ -1439,7 +1436,7 @@ int Formula::CvtStk()  /* convert the array of ptrs  */
 		{
 			if (m_load[m_load_ptr++] == &LASTSQR)
 			{
-				s_last_sqr_used = 1;
+				s_last_sqr_used = true;
 			}
 		}
 		else if (ftst == StkSto)
@@ -1447,27 +1444,27 @@ int Formula::CvtStk()  /* convert the array of ptrs  */
 			testoperand = m_store[m_store_ptr++];
 			if (testoperand == &PARM1)
 			{
-				s_p1_constant = 0;
+				s_p1_constant = false;
 			}
 			else if (testoperand == &PARM2)
 			{
-				s_p2_constant = 0;
+				s_p2_constant = false;
 			}
 			else if (testoperand == &PARM3)
 			{
-				s_p3_constant = 0;
+				s_p3_constant = false;
 			}
 			else if (testoperand == &PARM4)
 			{
-				s_p4_constant = 0;
+				s_p4_constant = false;
 			}
 			else if (testoperand == &PARM5)
 			{
-				s_p5_constant = 0;
+				s_p5_constant = false;
 			}
 			else if (testoperand == &LASTSQR)
 			{
-				s_last_sqr_stored = 0;
+				s_last_sqr_stored = false;
 			}
 		}
 	}
