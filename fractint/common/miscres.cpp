@@ -28,6 +28,7 @@
 #include "fihelp.h"
 #include "EscapeTime.h"
 #include "MathUtil.h"
+#include "Formula.h"
 
 extern long g_bn_max_stack;
 extern long maxstack;
@@ -668,7 +669,7 @@ static void trigdetails(char *buf)
 	if (g_current_fractal_specific == &g_fractal_specific[FRACTYPE_FORMULA] ||
 		g_current_fractal_specific == &g_fractal_specific[FRACTYPE_FORMULA_FP])
 	{
-		numfn = g_max_fn;
+		numfn = g_formula_state.max_fn();
 	}
 	*buf = 0; /* null string if none */
 	if (numfn > 0)
@@ -834,10 +835,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "CalculationStatus %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
-		write_row(row++, "TotalFormulaMem %ld MaxOps (posp) %u MaxArgs (vsp) %u",
-			g_total_formula_mem, g_posp, g_parser_vsp);
-		write_row(row++, "   Store ptr %d Loadptr %d MaxOps var %u MaxArgs var %u LastInitOp %d",
-			g_store_ptr, g_lod_ptr, g_formula_max_ops, g_formula_max_args, g_last_init_op);
+		write_row(row++, g_formula_state.info_line1());
+		write_row(row++, g_formula_state.info_line2());
 	}
 	else if (g_rhombus_stack[0])
 	{
@@ -856,9 +855,9 @@ int tab_display_2(char *msg)
 #if !defined(XFRACT) && !defined(_WIN32)
 		g_current_fractal_specific->orbitcalc == fFormula ? "fast parser" :
 #endif
-		g_current_fractal_specific->orbitcalc ==  Formula ? "slow parser" :
+		g_current_fractal_specific->orbitcalc ==  formula_orbit ? "slow parser" :
 		g_current_fractal_specific->orbitcalc ==  BadFormula ? "bad formula" :
-		"", g_uses_is_mand);
+		"", g_formula_state.uses_is_mand() ? 1 : 0);
 	/*
 	char message[80] = { 0 };
 	extern void tile_message(char *message, int message_len);
@@ -1544,7 +1543,7 @@ int ifs_load()                   /* read in IFS parameters */
 /* TW 5-31-94 - added search of current directory for entry files if
 	entry item not found */
 
-int find_file_item(char *filename, char *itemname, FILE **fileptr, int itemtype)
+int find_file_item(char *filename, const char *itemname, FILE **fileptr, int itemtype)
 {
 	FILE *infile = NULL;
 	int found = 0;

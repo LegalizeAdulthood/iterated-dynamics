@@ -25,6 +25,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"
+#include "Formula.h"
 
 #ifdef __hpux
 #include <sys/param.h>
@@ -1557,7 +1558,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 			fclose(entryfile);
 			if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 			{
-				frm_get_param_stuff(entryname); /* no error check, should be okay, from above */
+				g_formula_state.get_parameter(entryname); /* no error check, should be okay, from above */
 			}
 		}
 	}
@@ -1633,46 +1634,46 @@ gfp_top:
 
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
-		if (g_uses_p1)  /* set first parameter */
+		if (g_formula_state.uses_p1())  /* set first parameter */
 		{
 			firstparm = 0;
 		}
-		else if (g_uses_p2)
+		else if (g_formula_state.uses_p2())
 		{
 			firstparm = 2;
 		}
-		else if (g_uses_p3)
+		else if (g_formula_state.uses_p3())
 		{
 			firstparm = 4;
 		}
-		else if (g_uses_p4)
+		else if (g_formula_state.uses_p4())
 		{
 			firstparm = 6;
 		}
 		else
 		{
-			firstparm = 8; /* g_uses_p5 or no parameter */
+			firstparm = 8; /* g_formula_state.uses_p5() or no parameter */
 		}
 
-		if (g_uses_p5)  /* set last parameter */
+		if (g_formula_state.uses_p5())  /* set last parameter */
 		{
 			lastparm = 10;
 		}
-		else if (g_uses_p4)
+		else if (g_formula_state.uses_p4())
 		{
 			lastparm = 8;
 		}
-		else if (g_uses_p3)
+		else if (g_formula_state.uses_p3())
 		{
 			lastparm = 6;
 		}
-		else if (g_uses_p2)
+		else if (g_formula_state.uses_p2())
 		{
 			lastparm = 4;
 		}
 		else
 		{
-			lastparm = 2; /* g_uses_p1 or no parameter */
+			lastparm = 2; /* g_formula_state.uses_p1() or no parameter */
 		}
 	}
 
@@ -1738,7 +1739,7 @@ gfp_top:
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
 	if (curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP)
 	{
-		numtrig = g_max_fn;
+		numtrig = g_formula_state.max_fn();
 	}
 
 	i = NUMTRIGFN;
@@ -1889,11 +1890,11 @@ gfp_top:
 		paramvalues[promptnum++].uval.ch.val  = g_minor_method;
 	}
 
-	if ((curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP) && g_uses_is_mand)
+	if ((curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
 	{
 		choices[promptnum] = "ismand";
 		paramvalues[promptnum].type = 'y';
-		paramvalues[promptnum++].uval.ch.val = g_is_mand?1:0;
+		paramvalues[promptnum++].uval.ch.val = g_is_mand ? 1 : 0;
 	}
 
 	if (caller                           /* <z> command ? */
@@ -2044,11 +2045,11 @@ gfp_top:
 		g_major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
 		g_minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
 	}
-	if ((curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP) && g_uses_is_mand)
+	if ((curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
 	{
-		if (g_is_mand != (short int)paramvalues[promptnum].uval.ch.val)
+		if ((g_is_mand ? 1 : 0) != paramvalues[promptnum].uval.ch.val)
 		{
-			g_is_mand = (short int)paramvalues[promptnum].uval.ch.val;
+			g_is_mand = (paramvalues[promptnum].uval.ch.val != 0);
 			ret = 1;
 		}
 		++promptnum;
@@ -2229,7 +2230,7 @@ int skip_comment(FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(FILE *infile, struct entryinfo *choices, char *itemname)
+int scan_entries(FILE *infile, struct entryinfo *choices, const char *itemname)
 {
 		/*
 		function returns the number of entries found; if a

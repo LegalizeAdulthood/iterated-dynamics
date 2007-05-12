@@ -30,6 +30,7 @@
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
+#include "Formula.h"
 
 /* routines in this module      */
 
@@ -780,7 +781,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		{
 			put_filename("formulafile", g_formula_filename);
 			put_parm(" formulaname=%s", g_formula_name);
-			if (g_uses_is_mand)
+			if (g_formula_state.uses_is_mand())
 			{
 				put_parm(" ismand=%c", g_is_mand ? 'y' : 'n');
 			}

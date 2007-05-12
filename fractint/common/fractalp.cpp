@@ -13,6 +13,7 @@
 #include "fractype.h"
 #include "Halley.h"
 #include "Newton.h"
+#include "Formula.h"
 
 /* functions defined elswhere needed for g_fractal_specific */
 /* moved to prototyp.h */
@@ -225,7 +226,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		{parameter values},
 		helptext, helpformula, flags,
 		x_min, x_max, y_min, y_max,
-		int, tojulia, tomandel, tofloat, symmetry,
+		integer, tojulia, tomandel, tofloat, symmetry,
 		orbit fnct, per_pixel fnct, per_image fnct, calctype fcnt,
 		bailout
 	}
@@ -1141,7 +1142,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		HT_FORMULA, -2, FRACTALFLAG_MORE_PARAMETERS,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FORMULA_FP, SETUP_SYM,
-		Formula, form_per_pixel, formula_setup_int, standard_fractal,
+		formula_orbit, form_per_pixel, formula_setup_int, standard_fractal,
 		0
 	},
 
@@ -1153,7 +1154,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		HT_FORMULA, -2, FRACTALFLAG_MORE_PARAMETERS,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL, FRACTYPE_FORMULA, SETUP_SYM,
-		Formula, form_per_pixel, formula_setup_fp, standard_fractal,
+		formula_orbit, form_per_pixel, formula_setup_fp, standard_fractal,
 		0
 	},
 
@@ -2462,31 +2463,31 @@ int parameter_not_used(int parm)
 	switch (parm/2)
 	{
 	case 0:
-		if (!g_uses_p1)
+		if (!g_formula_state.uses_p1())
 		{
 			ret = 1;
 		}
 		break;
 	case 1:
-		if (!g_uses_p2)
+		if (!g_formula_state.uses_p2())
 		{
 			ret = 1;
 		}
 		break;
 	case 2:
-		if (!g_uses_p3)
+		if (!g_formula_state.uses_p3())
 		{
 			ret = 1;
 		}
 		break;
 	case 3:
-		if (!g_uses_p4)
+		if (!g_formula_state.uses_p4())
 		{
 			ret = 1;
 		}
 		break;
 	case 4:
-		if (!g_uses_p5)
+		if (!g_formula_state.uses_p5())
 		{
 			ret = 1;
 		}

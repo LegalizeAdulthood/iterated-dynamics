@@ -16,6 +16,7 @@
 #include "busy.h"
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"
+#include "Formula.h"
 
 static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE *color, int g_num_colors);
@@ -775,13 +776,13 @@ static int _fastcall store_item_name(char *nameptr)
 	strcpy(fsave_info.form_name, nameptr);
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
-		fsave_info.uses_p1 = (short) g_uses_p1;
-		fsave_info.uses_p2 = (short) g_uses_p2;
-		fsave_info.uses_p3 = (short) g_uses_p3;
-		fsave_info.uses_is_mand = (short) g_uses_is_mand;
-		fsave_info.ismand = (short) g_is_mand;
-		fsave_info.uses_p4 = (short) g_uses_p4;
-		fsave_info.uses_p5 = (short) g_uses_p5;
+		fsave_info.uses_p1 = (short) g_formula_state.uses_p1();
+		fsave_info.uses_p2 = (short) g_formula_state.uses_p2();
+		fsave_info.uses_p3 = (short) g_formula_state.uses_p3();
+		fsave_info.uses_is_mand = (short) g_formula_state.uses_is_mand() ? 1 : 0;
+		fsave_info.ismand = (short) g_is_mand ? 1 : 0;
+		fsave_info.uses_p4 = (short) g_formula_state.uses_p4();
+		fsave_info.uses_p5 = (short) g_formula_state.uses_p5();
 	}
 	else
 	{
@@ -807,7 +808,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	int i;
 	if (g_fractal_type != FRACTYPE_FORMULA && g_fractal_type != FRACTYPE_FORMULA_FP)
 	{
-		g_max_fn = 0;
+		g_formula_state.set_max_fn(0);
 	}
 	/* set save parameters in save structure */
 	strcpy(save_info->info_id, INFO_ID);
@@ -915,7 +916,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->eyesfp = g_eyes_fp;
 	save_info->orbittype = (short) g_new_orbit_type;
 	save_info->juli3Dmode = (short) g_juli_3d_mode;
-	save_info->max_fn = g_max_fn;
+	save_info->max_fn = static_cast<char>(g_formula_state.max_fn());
 	save_info->inversejulia = (short) ((g_major_method << 8) + g_minor_method);      /* MVS */
 	save_info->bail_out = g_bail_out;
 	save_info->bailoutest = (short) g_bail_out_test;
