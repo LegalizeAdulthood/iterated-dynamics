@@ -1702,8 +1702,8 @@ void work_list_tidy() /* combine mergeable entries, resort */
 
 void get_julia_attractor(double real, double imag)
 {
-	_LCMPLX lresult;
-	_CMPLX result;
+	LComplex lresult;
+	DComplex result;
 	int savper;
 	long savmaxit;
 	int i;

@@ -1001,17 +1001,17 @@ julia_orbit_bn()
 }
 #endif
 
-_CMPLX complex_bn_to_float(_BNCMPLX *s)
+DComplex complex_bn_to_float(_BNCMPLX *s)
 {
-	_CMPLX t;
+	DComplex t;
 	t.x = (double)bntofloat(s->x);
 	t.y = (double)bntofloat(s->y);
 	return t;
 }
 
-_CMPLX complex_bf_to_float(_BFCMPLX *s)
+DComplex complex_bf_to_float(_BFCMPLX *s)
 {
-	_CMPLX t;
+	DComplex t;
 	t.x = (double)bftofloat(s->x);
 	t.y = (double)bftofloat(s->y);
 	return t;

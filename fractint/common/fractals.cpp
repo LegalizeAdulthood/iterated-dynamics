@@ -64,14 +64,14 @@ static double _fastcall dy_pixel_calc();
 static long _fastcall lx_pixel_calc();
 static long _fastcall ly_pixel_calc();
 
-_LCMPLX g_coefficient_l = { 0, 0 };
-_LCMPLX g_old_z_l = { 0, 0 };
-_LCMPLX g_new_z_l = { 0, 0 };
-_LCMPLX g_parameter_l = { 0, 0 };
-_LCMPLX g_initial_z_l = { 0, 0 };
-_LCMPLX g_tmp_z_l = { 0, 0 };
-_LCMPLX g_tmp_z2_l = { 0, 0 };
-_LCMPLX g_parameter2_l = { 0, 0 };
+LComplex g_coefficient_l = { 0, 0 };
+LComplex g_old_z_l = { 0, 0 };
+LComplex g_new_z_l = { 0, 0 };
+LComplex g_parameter_l = { 0, 0 };
+LComplex g_initial_z_l = { 0, 0 };
+LComplex g_tmp_z_l = { 0, 0 };
+LComplex g_tmp_z2_l = { 0, 0 };
+LComplex g_parameter2_l = { 0, 0 };
 long g_temp_sqr_x_l = 0;
 long g_temp_sqr_y_l = 0;
 int g_max_color = 0;
@@ -79,19 +79,19 @@ int g_root = 0;
 int g_degree = 0;
 int g_basin = 0;
 double g_threshold = 0.0;
-_CMPLX g_coefficient = { 0.0, 0.0 };
-_CMPLX  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
-_CMPLX  *g_roots = g_static_roots;
+DComplex g_coefficient = { 0.0, 0.0 };
+DComplex  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
+DComplex  *g_roots = g_static_roots;
 struct MPC *g_roots_mpc = NULL;
-_CMPLX g_power = { 0.0, 0.0};
+DComplex g_power = { 0.0, 0.0};
 int g_bit_shift_minus_1 = 0;                  /* bit shift less 1 */
 double g_two_pi = MathUtil::Pi*2.0;
 int g_c_exp = 0;
 /* These are local but I don't want to pass them as parameters */
-_CMPLX g_parameter = { 0, 0 };
-_CMPLX g_parameter2 = { 0, 0 };
-_CMPLX *g_float_parameter = NULL;
-_LCMPLX *g_long_parameter = NULL; /* used here and in jb.c */
+DComplex g_parameter = { 0, 0 };
+DComplex g_parameter2 = { 0, 0 };
+DComplex *g_float_parameter = NULL;
+LComplex *g_long_parameter = NULL; /* used here and in jb.c */
 double g_cos_x = 0.0;
 double g_sin_x = 0.0;
 double g_temp_sqr_x = 0.0;
@@ -116,10 +116,10 @@ long   (_fastcall *g_ly_pixel)() = ly_pixel_calc;
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */
-static _CMPLX  s_3_c_minus_1 = { 0.0, 0.0 };		/* 3*(g_float_parameter - 1)                */
-static _CMPLX  s_3_c_minus_2 = { 0.0, 0.0 };        /* 3*(g_float_parameter - 2)                */
-static _CMPLX  s_c_minus_1_c_minus_2 = { 0.0, 0.0 }; /* (g_float_parameter - 1)*(g_float_parameter - 2) */
-static _CMPLX s_temp2 = { 0.0, 0.0 };
+static DComplex  s_3_c_minus_1 = { 0.0, 0.0 };		/* 3*(g_float_parameter - 1)                */
+static DComplex  s_3_c_minus_2 = { 0.0, 0.0 };        /* 3*(g_float_parameter - 2)                */
+static DComplex  s_c_minus_1_c_minus_2 = { 0.0, 0.0 }; /* (g_float_parameter - 1)*(g_float_parameter - 2) */
+static DComplex s_temp2 = { 0.0, 0.0 };
 static double s_cos_y = 0.0;
 static double s_sin_y = 0.0;
 static double s_temp_exp = 0.0;
@@ -404,7 +404,7 @@ int bail_out_manhattan_r_fp()
 /* Raise complex number (base) to the (exp) power, storing the result
 ** in complex (result).
 */
-void complex_power(_CMPLX *base, int exp, _CMPLX *result)
+void complex_power(DComplex *base, int exp, DComplex *result)
 {
 	if (exp < 0)
 	{
@@ -447,7 +447,7 @@ void complex_power(_CMPLX *base, int exp, _CMPLX *result)
 #if !defined(XFRACT)
 /* long version */
 static long lxt, lyt, lt2;
-int complex_power_l(_LCMPLX *base, int exp, _LCMPLX *result, int g_bit_shift)
+int complex_power_l(LComplex *base, int exp, LComplex *result, int g_bit_shift)
 {
 	static long maxarg;
 	maxarg = 64L << g_bit_shift;
@@ -506,9 +506,9 @@ int complex_power_l(_LCMPLX *base, int exp, _LCMPLX *result, int g_bit_shift)
 
 #if 0
 int
-z_to_the_z(_CMPLX *z, _CMPLX *out)
+z_to_the_z(DComplex *z, DComplex *out)
 {
-	static _CMPLX tmp1, tmp2;
+	static DComplex tmp1, tmp2;
 	/* raises complex z to the z power */
 	int errno_xxx;
 	errno_xxx = 0;
@@ -977,7 +977,7 @@ int z_power_orbit()
 int complex_z_power_orbit()
 {
 #if !defined(XFRACT)
-	_CMPLX x, y;
+	DComplex x, y;
 
 	x.x = (double)g_old_z_l.x / g_fudge;
 	x.y = (double)g_old_z_l.y / g_fudge;
@@ -1294,8 +1294,8 @@ int popcorn_orbit()
 
 int popcorn_fn_orbit_fp()
 {
-	_CMPLX tmpx;
-	_CMPLX tmpy;
+	DComplex tmpx;
+	DComplex tmpy;
 
 	/* tmpx contains the generalized value of the old real "x" equation */
 	CMPLXtimesreal(g_parameter2, g_old_z.y, g_temp_z);  /* tmp = (C*old.y)         */
@@ -1348,7 +1348,7 @@ int popcorn_fn_orbit_fp()
 int popcorn_fn_orbit()
 {
 #if !defined(XFRACT)
-	_LCMPLX ltmpx, ltmpy;
+	LComplex ltmpx, ltmpy;
 
 	g_overflow = 0;
 
@@ -1684,7 +1684,7 @@ int phoenix_plus_orbit()
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	_LCMPLX loldplus, lnewminus;
+	LComplex loldplus, lnewminus;
 	loldplus = g_old_z_l;
 	g_tmp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1706,7 +1706,7 @@ int phoenix_plus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	_CMPLX oldplus, newminus;
+	DComplex oldplus, newminus;
 	oldplus = g_old_z;
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1726,7 +1726,7 @@ int phoenix_minus_orbit()
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	_LCMPLX loldsqr, lnewminus;
+	LComplex loldsqr, lnewminus;
 	LCMPLXmult(g_old_z_l, g_old_z_l, loldsqr);
 	g_tmp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -1748,7 +1748,7 @@ int phoenix_minus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	_CMPLX oldsqr, newminus;
+	DComplex oldsqr, newminus;
 	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -1768,7 +1768,7 @@ int phoenix_complex_plus_orbit()
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	_LCMPLX loldplus, lnewminus;
+	LComplex loldplus, lnewminus;
 	loldplus = g_old_z_l;
 	g_tmp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1792,7 +1792,7 @@ int phoenix_complex_plus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	_CMPLX oldplus, newminus;
+	DComplex oldplus, newminus;
 	oldplus = g_old_z;
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1814,7 +1814,7 @@ int phoenix_complex_minus_orbit()
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	_LCMPLX loldsqr, lnewminus;
+	LComplex loldsqr, lnewminus;
 	LCMPLXmult(g_old_z_l, g_old_z_l, loldsqr);
 	g_tmp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -1838,7 +1838,7 @@ int phoenix_complex_minus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	_CMPLX oldsqr, newminus;
+	DComplex oldsqr, newminus;
 	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -1938,7 +1938,7 @@ int try_float_fractal(int (*fpFractal)())
 int trig_trig_orbit()
 {
 #if !defined(XFRACT)
-	_LCMPLX g_tmp_z2_l;
+	LComplex g_tmp_z2_l;
 	/* z = trig0(z)*trig1(z) */
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_tmp_z2_l);
@@ -2084,7 +2084,7 @@ int sqr_trig_orbit_fp()
 
 int magnet1_orbit_fp()    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 {                   /*  In "Beauty of Fractals", code by Kev Allen. */
-	_CMPLX top, bot, tmp;
+	DComplex top, bot, tmp;
 	double div;
 
 	top.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x - 1; /* top = Z**2 + C-1 */
@@ -2114,7 +2114,7 @@ int magnet1_orbit_fp()    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 int magnet2_orbit_fp()
 {
 	/*   In "Beauty of Fractals", code by Kev Allen.  */
-	_CMPLX top, bot, tmp;
+	DComplex top, bot, tmp;
 	double div;
 
 	top.x = g_old_z.x*(g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + s_3_c_minus_1.x)
@@ -2325,7 +2325,7 @@ int circle_orbit()
 /* -------------------------------------------------------------------- */
 
 /* transform points with reciprocal function */
-void invert_z(_CMPLX *z)
+void invert_z(DComplex *z)
 {
 	z->x = g_dx_pixel();
 	z->y = g_dy_pixel();
@@ -3016,7 +3016,7 @@ int quaternion_orbit_fp()
 
 int hyper_complex_orbit_fp()
 {
-	_HCMPLX hold, hnew;
+	DHyperComplex hold, hnew;
 	hold.x = g_old_z.x;
 	hold.y = g_old_z.y;
 	hold.z = g_float_parameter->x;
@@ -3064,7 +3064,7 @@ int volterra_lotka_orbit_fp()
 /* Science of Fractal Images pp. 185, 187 */
 int escher_orbit_fp()
 {
-	_CMPLX oldtest, newtest, testsqr;
+	DComplex oldtest, newtest, testsqr;
 	double testsize = 0.0;
 	long testiter = 0;
 
@@ -3220,7 +3220,7 @@ int mandelbrot_mix4_per_pixel_fp()
 int mandelbrot_mix4_orbit_fp() /* from formula by Jim Muth */
 {
 	/* z = k*((a*(z^b)) + (d*(z^f))) + c, */
-	_CMPLX z_b, z_f;
+	DComplex z_b, z_f;
 	CMPLXpwr(g_old_z, B, z_b);     /* (z^b)     */
 	CMPLXpwr(g_old_z, F, z_f);     /* (z^f)     */
 	g_new_z.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;

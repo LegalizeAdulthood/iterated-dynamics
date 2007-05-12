@@ -356,10 +356,10 @@ PushFloat(float x, float y)
 	return 0;                    /* fail */
 }
 
-_CMPLX
+DComplex
 PopFloat()
 {
-	_CMPLX pop;
+	DComplex pop;
 	float  popx, popy;
 
 	if (!QueueEmpty())
@@ -383,10 +383,10 @@ PopFloat()
 	return pop;
 }
 
-LCMPLX
+LComplex
 PopLong()
 {
-	LCMPLX pop;
+	LComplex pop;
 
 	if (!QueueEmpty())
 	{
@@ -419,10 +419,10 @@ EnQueueLong(long x, long y)
 	return PushLong(x, y);
 }
 
-_CMPLX
+DComplex
 DeQueueFloat()
 {
-	_CMPLX out;
+	DComplex out;
 	float outx, outy;
 
 	if (ListBack != ListFront)
@@ -442,10 +442,10 @@ DeQueueFloat()
 	return out;
 }
 
-LCMPLX
+LComplex
 DeQueueLong()
 {
-	LCMPLX out;
+	LComplex out;
 	out.x = 0;
 	out.y = 0;
 
@@ -513,7 +513,7 @@ static void RestoreRect(int x, int y, int width, int height)
  * interface to FRACTINT
  */
 
-_CMPLX g_save_c = {-3000.0, -3000.0};
+DComplex g_save_c = {-3000.0, -3000.0};
 
 void Jiim(int which)         /* called by fractint */
 {
@@ -945,7 +945,7 @@ void Jiim(int which)         /* called by fractint */
 			/* compute fixed points and use them as starting points of JIIM */
 			if (which == JIIM && OKtoMIIM)
 			{
-				_CMPLX f1, f2, Sqrt;        /* Fixed points of Julia */
+				DComplex f1, f2, Sqrt;        /* Fixed points of Julia */
 
 				Sqrt = ComplexSqrtFloat(1 - 4*cr, -4*ci);
 				f1.x = (1 + Sqrt.x) / 2;

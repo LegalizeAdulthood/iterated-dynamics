@@ -51,11 +51,11 @@ extern long  cdecl calculate_mandelbrot_fp_87_asm();
 
 /*  fpu087 -- assembler file prototypes */
 
-extern void cdecl FPUcplxmul(_CMPLX *, _CMPLX *, _CMPLX *);
-extern void cdecl FPUcplxdiv(_CMPLX *, _CMPLX *, _CMPLX *);
+extern void cdecl FPUcplxmul(DComplex *, DComplex *, DComplex *);
+extern void cdecl FPUcplxdiv(DComplex *, DComplex *, DComplex *);
 extern void cdecl FPUsincos(double *, double *, double *);
 extern void cdecl FPUsinhcosh(double *, double *, double *);
-extern void cdecl FPUcplxlog(_CMPLX *, _CMPLX *);
+extern void cdecl FPUcplxlog(DComplex *, DComplex *);
 extern void cdecl SinCos086(long, long *, long *);
 extern void cdecl SinhCosh086(long, long *, long *);
 extern long cdecl r16Mul(long, long);
@@ -76,7 +76,7 @@ extern long cdecl RegSftFloat(long, int);
 /*  fpu387 -- assembler file prototypes */
 
 extern void cdecl FPUaptan387(double *, double *, double *);
-extern void cdecl FPUcplxexp387(_CMPLX *, _CMPLX *);
+extern void cdecl FPUcplxexp387(DComplex *, DComplex *);
 
 /*  fracsuba -- assembler file prototypes */
 
@@ -115,7 +115,7 @@ extern struct MP * fg2MP(long, int); /* Convert fudged to type MP */
 
 /*  newton -- assembler file prototypes */
 
-extern void cdecl   invert_z(_CMPLX *);
+extern void cdecl   invert_z(DComplex *);
 
 /*  tplus_a -- assembler file prototypes */
 
@@ -309,9 +309,9 @@ extern int parameter_not_used(int);
 /*  fractals -- C file prototypes */
 
 extern void magnet2_precalculate_fp();
-extern void complex_power(_CMPLX *, int, _CMPLX *);
-extern int complex_power_l(_LCMPLX *, int, _LCMPLX *, int);
-extern int lcomplex_mult(_LCMPLX, _LCMPLX, _LCMPLX *, int);
+extern void complex_power(DComplex *, int, DComplex *);
+extern int complex_power_l(LComplex *, int, LComplex *, int);
+extern int lcomplex_mult(LComplex, LComplex, LComplex *, int);
 extern int barnsley1_orbit();
 extern int barnsley1_orbit_fp();
 extern int barnsley2_orbit();
@@ -552,7 +552,7 @@ extern int gifview();
 
 /*  hcmplx -- C file prototypes */
 
-extern void HComplexTrig0(_HCMPLX *, _HCMPLX *);
+extern void HComplexTrig0(DHyperComplex *, DHyperComplex *);
 
 /*  help -- C file prototypes */
 
@@ -583,12 +583,12 @@ extern int standard_4d_fractal_fp();
 /*  jiim -- C file prototypes */
 
 extern void Jiim(int);
-extern LCMPLX PopLong();
-extern _CMPLX PopFloat();
-extern LCMPLX DeQueueLong();
-extern _CMPLX DeQueueFloat();
-extern LCMPLX ComplexSqrtLong(long,  long);
-extern _CMPLX ComplexSqrtFloat(double, double);
+extern LComplex PopLong();
+extern DComplex PopFloat();
+extern LComplex DeQueueLong();
+extern DComplex DeQueueFloat();
+extern LComplex ComplexSqrtLong(long,  long);
+extern DComplex ComplexSqrtFloat(double, double);
 extern int    Init_Queue(unsigned long);
 extern void   Free_Queue();
 extern void   ClearQueue();
@@ -725,20 +725,20 @@ extern struct MPC MPCadd(struct MPC, struct MPC);
 extern struct MPC MPCsub(struct MPC, struct MPC);
 extern struct MPC MPCpow(struct MPC, int);
 extern int MPCcmp(struct MPC, struct MPC);
-extern _CMPLX MPC2cmplx(struct MPC);
-extern struct MPC cmplx2MPC(_CMPLX);
-extern _CMPLX ComplexPower(_CMPLX, _CMPLX);
+extern DComplex MPC2cmplx(struct MPC);
+extern struct MPC cmplx2MPC(DComplex);
+extern DComplex ComplexPower(DComplex, DComplex);
 extern void SetupLogTable();
 extern long logtablecalc(long);
 extern long ExpFloat14(long);
 extern int complex_basin();
 extern int gaussian_number(int, int);
-extern void Arcsinz(_CMPLX z, _CMPLX *rz);
-extern void Arccosz(_CMPLX z, _CMPLX *rz);
-extern void Arcsinhz(_CMPLX z, _CMPLX *rz);
-extern void Arccoshz(_CMPLX z, _CMPLX *rz);
-extern void Arctanhz(_CMPLX z, _CMPLX *rz);
-extern void Arctanz(_CMPLX z, _CMPLX *rz);
+extern void Arcsinz(DComplex z, DComplex *rz);
+extern void Arccosz(DComplex z, DComplex *rz);
+extern void Arcsinhz(DComplex z, DComplex *rz);
+extern void Arccoshz(DComplex z, DComplex *rz);
+extern void Arctanhz(DComplex z, DComplex *rz);
+extern void Arctanz(DComplex z, DComplex *rz);
 
 /*  msccos -- C file prototypes */
 
@@ -849,7 +849,7 @@ extern void lStkAND();
 extern void dStkLog();
 extern void mStkLog();
 extern void lStkLog();
-extern void FPUcplxexp(_CMPLX *, _CMPLX *);
+extern void FPUcplxexp(DComplex *, DComplex *);
 extern void dStkExp();
 extern void mStkExp();
 extern void lStkExp();
@@ -1046,8 +1046,8 @@ extern void display_box();
 
 /*  fractalb.c -- C file prototypes */
 
-extern _CMPLX complex_bn_to_float(_BNCMPLX *);
-extern _CMPLX complex_bf_to_float(_BFCMPLX *);
+extern DComplex complex_bn_to_float(_BNCMPLX *);
+extern DComplex complex_bf_to_float(_BFCMPLX *);
 extern void compare_values(char *, LDBL, bn_t);
 extern void compare_values_bf(char *, LDBL, bf_t);
 extern void show_var_bf(char *s, bf_t n);

@@ -13,7 +13,7 @@ struct token_st
 	char token_str[80];
 	int token_type;
 	int token_id;
-	_CMPLX token_const;
+	DComplex token_const;
 };
 
 struct var_list_st
@@ -28,7 +28,7 @@ struct var_list_st
 
 struct const_list_st
 {
-	_CMPLX complex_const;
+	DComplex complex_const;
 	const_list_st *next_item;
 
 	void display(const char *title) const;

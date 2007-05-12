@@ -43,8 +43,8 @@ static long s_jx, s_jy, s_mx, s_my, s_x_offset, s_y_offset;
 static double s_jx_fp, s_jy_fp, s_mx_fp, s_my_fp, s_x_offset_fp, s_y_offset_fp;
 static struct perspective s_left_eye, s_right_eye, *s_per;
 static struct perspective_fp s_left_eye_fp, s_right_eye_fp, *s_per_fp;
-static _LCMPLX s_jbc;
-static _CMPLX s_jbc_fp;
+static LComplex s_jbc;
+static DComplex s_jbc_fp;
 #ifndef XFRACT
 static double s_fg, s_fg16;
 #endif

@@ -14,7 +14,7 @@ extern struct MPC mpcnew;
 static Halley s_halley;
 static HalleyMP s_halley_mp;
 
-static double modulus(const _CMPLX &z)
+static double modulus(const DComplex &z)
 {
 	return sqr(z.x) + sqr(z.y);
 }
@@ -98,9 +98,9 @@ int Halley::orbit()
 	/*  a = g_parameter.x = degree, relaxation coeff. = g_parameter.y, epsilon = g_parameter2.x  */
 
 	int ihal;
-	_CMPLX XtoAlessOne, XtoA, XtoAplusOne; /* a-1, a, a + 1 */
-	_CMPLX FX, F1prime, F2prime, Halnumer1, Halnumer2, Haldenom;
-	_CMPLX relax;
+	DComplex XtoAlessOne, XtoA, XtoAplusOne; /* a-1, a, a + 1 */
+	DComplex FX, F1prime, F2prime, Halnumer1, Halnumer2, Haldenom;
+	DComplex relax;
 
 	XtoAlessOne = g_old_z;
 	for (ihal = 2; ihal < g_degree; ihal++)
