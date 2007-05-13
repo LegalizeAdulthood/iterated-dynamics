@@ -2173,7 +2173,7 @@ long get_file_entry(int type, char *title, char *fmask,
 		switch (type)
 		{
 		case GETFILE_FORMULA:
-			if (RunForm(entryname, 1) == 0)
+			if (g_formula_state.RunFormula(entryname, true) == 0)
 			{
 				return 0;
 			}

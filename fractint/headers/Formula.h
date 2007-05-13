@@ -89,8 +89,8 @@ public:
 	int per_pixel();
 
 	void end_init();
-	int RunForm(char *Name, int from_prompts1c);
-	char *PrepareFormula(FILE *file, int from_prompts1c);
+	int RunFormula(const char *name, bool report_bad_symmetry);
+	const char *PrepareFormula(FILE *file, bool report_bad_symmetry);
 
 	int setup_fp();
 	int setup_int();
@@ -199,6 +199,7 @@ private:
 	long m_file_pos;
 	long m_statement_pos;
 	int m_errors_found;
+	char m_prepare_formula_text[16384];
 
 	ConstArg *is_constant(const char *text, int length);
 	int ParseStr(const char *text, int pass);
@@ -211,7 +212,7 @@ private:
 	void init_var_list();
 	void init_const_lists();
 	const char *error_messages(int which);
-	int frm_check_name_and_sym(FILE *open_file, int report_bad_sym);
+	int check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry);
 	void frm_error(FILE *open_file, long begin_frm);
 	int fill_jump_struct();
 	int fill_jump_struct_fp();
@@ -380,7 +381,6 @@ extern int fFormula();
 extern int formula_orbit();
 extern int BadFormula();
 extern int form_per_pixel();
-extern int RunForm(char *, int);
 extern int formula_setup_fp();
 extern int formula_setup_int();
 extern void EndInit();
