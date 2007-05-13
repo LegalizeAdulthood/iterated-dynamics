@@ -28,8 +28,10 @@
 #include "drivers.h"
 #include "Formula.h"
 
+#if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#endif
 
 #ifdef WATCH_MP
 double x1, y1, x2, y2;
@@ -3215,7 +3217,9 @@ int Formula::orbit()
 
 int Formula::per_pixel()
 {
+#if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
+#endif
 	if (g_formula_name[0] == 0)
 	{
 		return 1;
