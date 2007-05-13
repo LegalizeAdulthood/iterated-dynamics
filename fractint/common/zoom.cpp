@@ -100,10 +100,28 @@ void clear_box()
 
 void zoom_box_draw(int drawit)
 {
-	struct coords tl, bl, tr, br; /* dot addr of topleft, botleft, etc */
-	double tmpx, tmpy, dx, dy, rotcos, rotsin, ftemp1, ftemp2;
-	double fxwidth, fxskew, fydepth, fyskew, fxadj;
-	bf_t bffxwidth, bffxskew, bffydepth, bffyskew, bffxadj;
+	coords tl;
+	coords bl;
+	coords tr;
+	coords br; /* dot addr of topleft, botleft, etc */
+	double tmpx;
+	double tmpy;
+	double dx;
+	double dy;
+	double rotcos;
+	double rotsin;
+	double ftemp1;
+	double ftemp2;
+	double fxwidth;
+	double fxskew;
+	double fydepth;
+	double fyskew;
+	double fxadj;
+	big_t bffxwidth;
+	big_t bffxskew;
+	big_t bffydepth;
+	big_t bffyskew;
+	big_t bffxadj;
 	int saved = 0;
 	if (g_z_width == 0)  /* no box to draw */
 	{
@@ -231,9 +249,15 @@ void zoom_box_draw(int drawit)
 void _fastcall draw_lines(struct coords fr, struct coords to,
 						int dx, int dy)
 {
-	int xincr, yincr, ctr;
-	int altctr, altdec, altinc;
-	struct coords tmpp, line1, line2;
+	int xincr;
+	int yincr;
+	int ctr;
+	int altctr;
+	int altdec;
+	int altinc;
+	struct coords tmpp;
+	struct coords line1;
+	struct coords line2;
 
 	if (abs(to.x-fr.x) > abs(to.y-fr.y))  /* delta.x > delta.y */
 	{
@@ -396,7 +420,8 @@ static void _fastcall chgboxf(double dwidth, double ddepth)
 
 void zoom_box_resize(int steps)
 {
-	double deltax, deltay;
+	double deltax;
+	double deltay;
 	if (g_z_depth*g_screen_aspect_ratio > g_z_width)  /* box larger on y axis */
 	{
 		deltay = steps*0.036 / g_screen_aspect_ratio;
@@ -419,8 +444,14 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	bf_t bfnewx, bf_t bfnewy, bf_t bfplotmx1, bf_t bfplotmx2, bf_t bfplotmy1,
 	bf_t bfplotmy2, bf_t bfftemp)
 {
-	bf_t btmp1, btmp2, btmp3, btmp4, btempx, btempy;
-	bf_t btmp2a, btmp4a;
+	big_t btmp1;
+	big_t btmp2;
+	big_t btmp3;
+	big_t btmp4;
+	big_t btempx;
+	big_t btempy;
+	big_t btmp2a;
+	big_t btmp4a;
 	int saved = save_stack();
 
 	btmp1  = alloc_stack(rbflength + 2);
@@ -470,7 +501,8 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 
 static void _fastcall zmo_calc(double dx, double dy, double *newx, double *newy, double ftemp)
 {
-	double tempx, tempy;
+	double tempx;
+	double tempy;
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
 		are taken as (0, 0) topleft thru (1, 1) bottom right */
 	tempx = dy*g_plot_mx1 - dx*g_plot_mx2;
@@ -492,8 +524,19 @@ static void zoom_out_bf() /* for ctl-enter, calc corners for zooming out */
 	then extend these co-ords from current real screen corners to get
 	new actual corners
 	*/
-	bf_t savbfxmin, savbfymax, bfftemp;
-	bf_t tmp1, tmp2, tmp3, tmp4, tmp5, tmp6, bfplotmx1, bfplotmx2, bfplotmy1, bfplotmy2;
+	big_t savbfxmin;
+	big_t savbfymax;
+	big_t bfftemp;
+	big_t tmp1;
+	big_t tmp2;
+	big_t tmp3;
+	big_t tmp4;
+	big_t tmp5;
+	big_t tmp6;
+	big_t bfplotmx1;
+	big_t bfplotmx2;
+	big_t bfplotmy1;
+	big_t bfplotmy2;
 	int saved;
 	saved = save_stack();
 	savbfxmin = alloc_stack(rbflength + 2);
@@ -556,7 +599,9 @@ static void zoom_out_double() /* for ctl-enter, calc corners for zooming out */
 		then extend these co-ords from current real screen corners to get
 		new actual corners
 		*/
-	double savxxmin, savyymax, ftemp;
+	double savxxmin;
+	double savyymax;
+	double ftemp;
 	ftemp = (g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd())*(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()) - (g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd())*(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max());
 	g_plot_mx1 = (g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()); /* reuse the plotxxx vars is safe */
 	g_plot_mx2 = (g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max());
@@ -583,7 +628,9 @@ void zoom_box_out() /* for ctl-enter, calc corners for zooming out */
 
 void aspect_ratio_crop(float oldaspect, float newaspect)
 {
-	double ftemp, xmargin, ymargin;
+	double ftemp;
+	double xmargin;
+	double ymargin;
 	if (newaspect > oldaspect)  /* new ratio is taller, crop x */
 	{
 		ftemp = (1.0 - oldaspect / newaspect) / 2;
@@ -608,7 +655,8 @@ void aspect_ratio_crop(float oldaspect, float newaspect)
 
 static int check_pan() /* return 0 if can't, alignment requirement if can */
 {
-	int i, j;
+	int i;
+	int j;
 	if ((g_calculation_status != CALCSTAT_RESUMABLE && g_calculation_status != CALCSTAT_COMPLETED) || g_evolving)
 	{
 		return 0; /* not resumable, not complete */
@@ -683,7 +731,9 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 static void _fastcall move_row(int fromrow, int torow, int col)
 /* move a row on the screen */
 {
-	int startcol, endcol, tocol;
+	int startcol;
+	int endcol;
+	int tocol;
 	memset(g_stack, 0, g_x_dots); /* use g_stack as a temp for the row; clear it */
 	if (fromrow >= 0 && fromrow < g_y_dots)
 	{
@@ -705,7 +755,13 @@ static void _fastcall move_row(int fromrow, int torow, int col)
 
 int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_list & pan */
 {
-	int i, j, row, col, y, alignmask, listfull;
+	int i;
+	int j;
+	int row;
+	int col;
+	int y;
+	int alignmask;
+	int listfull;
 	if (g_z_width == 0.0)
 	{
 		return 0; /* no zoombox, leave g_calculation_status as is */
@@ -813,7 +869,10 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 static void _fastcall restart_window(int wknum)
 /* force a g_work_list entry to restart */
 {
-	int yfrom, yto, xfrom, xto;
+	int yfrom;
+	int yto;
+	int xfrom;
+	int xto;
 	yfrom = g_work_list[wknum].yy_start;
 	if (yfrom < 0)
 	{

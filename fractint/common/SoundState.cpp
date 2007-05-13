@@ -388,7 +388,7 @@ void SoundState::buzzer(int tone)
 int SoundState::get_parameters()
 {
 	/* routine to get sound settings  */
-	char *choices[15];
+	const char *choices[15];
 	struct full_screen_values uvalues[15];
 	int old_soundflag = m_flags;
 	int old_orbit_delay = g_orbit_delay;
@@ -505,10 +505,11 @@ get_sound_restart:
 
 int SoundState::get_scale_map()
 {
-	char *choices[15];
+	const char *choices[15];
 	struct full_screen_values uvalues[15];
 	int k;
-	int i, j;
+	int i;
+	int j;
 
 	m_menu_count++;
 
@@ -614,7 +615,7 @@ get_map_restart:
 int SoundState::get_music_parameters()
 {
 	const char *attenmodes[] = { "none", "low", "mid", "high" };
-	char *choices[11];
+	const char *choices[11];
 	struct full_screen_values uvalues[11];
 	int i;
 

@@ -1,4 +1,4 @@
-/* Parser.c (C) 1990, Mark C. Peterson, CompuServe [70441, 3353]
+/* Parser.cpp (C) 1990, Mark C. Peterson, CompuServe [70441, 3353]
 	All rights reserved.
 
 	Code may be used in any program provided the author is credited
@@ -2277,7 +2277,8 @@ void Formula::StackJumpLabel()
 
 static unsigned count_white_space(const char *str)
 {
-	unsigned n, done;
+	unsigned n;
+	unsigned done;
 
 	for (done = n = 0; !done; n++)
 	{

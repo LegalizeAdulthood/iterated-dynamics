@@ -68,11 +68,17 @@ static char *ditherbuf = NULL;
 int gifview()
 {
 	BYTE buffer[16];
-	unsigned top, left, width, finished;
+	unsigned top;
+	unsigned left;
+	unsigned width;
+	unsigned finished;
 	char temp1[FILE_MAX_DIR];
 	BYTE byte_buf[257]; /* for decoder */
 	int status;
-	int i, j, k, planes;
+	int i;
+	int j;
+	int k;
+	int planes;
 
 	/* using stack for decoder byte buf rather than static mem */
 	set_byte_buff(byte_buf);
@@ -355,7 +361,9 @@ static void close_file()
 
 static int out_line_migs(BYTE *pixels, int linelen)
 {
-	int row, startcol, stopcol;
+	int row;
+	int startcol;
+	int stopcol;
 
 	row = gifview_image_top + g_row_count;
 	startcol = gifview_image_left;
@@ -368,7 +376,10 @@ static int out_line_migs(BYTE *pixels, int linelen)
 
 static int out_line_dither(BYTE *pixels, int linelen)
 {
-	int i, nexterr, brt, err;
+	int i;
+	int nexterr;
+	int brt;
+	int err;
 	if (ditherbuf == NULL)
 	{
 		ditherbuf = (char *) malloc(linelen + 1);
@@ -495,7 +506,9 @@ int sound_line(BYTE *pixels, int linelen)
 
 int potential_line(BYTE *pixels, int linelen)
 {
-	int row, col, saverowcount;
+	int row;
+	int col;
+	int saverowcount;
 	if (g_row_count == 0)
 	{
 		if (disk_start_potential() < 0)

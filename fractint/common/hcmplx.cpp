@@ -29,17 +29,15 @@ void HComplexSqr(DHyperComplex *arg, DHyperComplex *out)
 
 int HComplexInv(DHyperComplex *arg, DHyperComplex *out)
 {
-	double det, mod, xt_minus_yz;
-
-	det = (sqr(arg->x - arg->t) + sqr(arg->y + arg->z))*
+	double det = (sqr(arg->x - arg->t) + sqr(arg->y + arg->z))*
 		(sqr(arg->x + arg->t) + sqr(arg->y - arg->z));
 
 	if (det == 0.0)
 	{
 		return -1;
 	}
-	mod = sqr(arg->x) + sqr(arg->y) + sqr(arg->z) + sqr(arg->t);
-	xt_minus_yz = arg->x*arg->t - arg->y*arg->z;
+	double mod = sqr(arg->x) + sqr(arg->y) + sqr(arg->z) + sqr(arg->t);
+	double xt_minus_yz = arg->x*arg->t - arg->y*arg->z;
 
 	out->x = (arg->x*mod - 2*arg->t*xt_minus_yz)/det;
 	out->y = (-arg->y*mod - 2*arg->z*xt_minus_yz)/det;

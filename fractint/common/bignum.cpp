@@ -191,7 +191,8 @@ S16 big_setS16(S16 *addr, S16 val)
 int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
                                    int oldbnlength, int oldintlength)
 {
-	int savebnlength, saveintlength;
+	int savebnlength;
+	int saveintlength;
 
 	/* save lengths so not dependent on external environment */
 	saveintlength = intlength;
@@ -351,7 +352,8 @@ int strlen_needed()
 
 char *unsafe_bntostr(char *s, int dec, bn_t r)
 {
-	int l = 0, d;
+	int l = 0;
+	int d;
 	bn_t onesbyte;
 	long longval = 0;
 
@@ -528,14 +530,16 @@ bn_t abs_a_bn(bn_t r)
 /*      n ends up as |n|    Make copy first if necessary.           */
 bn_t unsafe_inv_bn(bn_t r, bn_t n)
 {
-	int signflag = 0, i;
+	int signflag = 0;
+	int i;
 	long maxval;
 	LDBL f;
-	bn_t orig_r, orig_n; /* orig_bntmp1 not needed here */
-	int  orig_bnlength,
-			orig_padding,
-			orig_rlength,
-			orig_shiftfactor;
+	big_t orig_r;
+	big_t orig_n; /* orig_bntmp1 not needed here */
+	int orig_bnlength;
+	int orig_padding;
+	int orig_rlength;
+	int orig_shiftfactor;
 
 	/* use Newton's recursive method for zeroing in on 1/n : r = r(2-rn) */
 
@@ -642,9 +646,15 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 /*      Make copies first if necessary.                             */
 bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int scale1, scale2, scale, sign = 0, i;
+	int scale1;
+	int scale2;
+	int scale;
+	int sign = 0;
+	int i;
 	long maxval;
-	LDBL a, b, f;
+	LDBL a;
+	LDBL b;
+	LDBL f;
 
 	/* first, check for valid data */
 	a = bntofloat(n1);
@@ -753,13 +763,16 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 /*      n ends up as |n|                                            */
 bn_t sqrt_bn(bn_t r, bn_t n)
 {
-	int i, comp, almost_match = 0;
+	int i;
+	int comp;
+	int almost_match = 0;
 	LDBL f;
-	bn_t orig_r, orig_n;
-	int  orig_bnlength,
-			orig_padding,
-			orig_rlength,
-			orig_shiftfactor;
+	big_t orig_r;
+	big_t orig_n;
+	int orig_bnlength;
+	int orig_padding;
+	int orig_rlength;
+	int orig_shiftfactor;
 
 /* use Newton's recursive method for zeroing in on sqrt(n): r = .5(r + n/r) */
 
@@ -888,14 +901,19 @@ bn_t exp_bn(bn_t r, bn_t n)
 /*      n ends up as |n|                                            */
 bn_t unsafe_ln_bn(bn_t r, bn_t n)
 {
-	int i, comp, almost_match = 0;
+	int i;
+	int comp;
+	int almost_match = 0;
 	long maxval;
 	LDBL f;
-	bn_t orig_r, orig_n, orig_bntmp5, orig_bntmp4;
-	int  orig_bnlength,
-			orig_padding,
-			orig_rlength,
-			orig_shiftfactor;
+	big_t orig_r;
+	big_t orig_n;
+	big_t orig_bntmp5;
+	big_t orig_bntmp4;
+	int orig_bnlength;
+	int orig_padding;
+	int orig_rlength;
+	int orig_shiftfactor;
 
 /* use Newton's recursive method for zeroing in on ln(n): r = r + n*exp(-r)-1 */
 
@@ -1013,8 +1031,12 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 {
 	U16 fact = 2;
-	int k = 0, i, halves;
-	int signcos = 0, signsin = 0, switch_sincos = 0;
+	int k = 0;
+	int i;
+	int halves;
+	int signcos = 0;
+	int signsin = 0;
+	int switch_sincos = 0;
 
 #ifndef CALCULATING_BIG_PI
 	/* assure range 0 <= x < pi/4 */
@@ -1174,13 +1196,19 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 /*      n ends up as |n| or 1/|n|                                   */
 bn_t unsafe_atan_bn(bn_t r, bn_t n)
 {
-	int i, comp, almost_match = 0, signflag = 0;
+	int i;
+	int comp;
+	int almost_match = 0;
+	int signflag = 0;
 	LDBL f;
-	bn_t orig_r, orig_n, orig_bn_pi, orig_bntmp3;
-	int  orig_bnlength,
-			orig_padding,
-			orig_rlength,
-			orig_shiftfactor;
+	big_t orig_r;
+	big_t orig_n;
+	big_t orig_bn_pi;
+	big_t orig_bntmp3;
+	int orig_bnlength;
+	int orig_padding;
+	int orig_rlength;
+	int orig_shiftfactor;
 	int large_arg;
 
 /* use Newton's recursive method for zeroing in on atan(n): r = r-cos(r)(sin(r)-n*cos(r)) */
@@ -1326,7 +1354,8 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 /* uses bntmp1 - bntmp6 - global temp bigfloats                     */
 bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
 {
-	int signx, signy;
+	int signx;
+	int signy;
 
 	signx = sign_bn(nx);
 	signy = sign_bn(ny);
@@ -1384,7 +1413,8 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
 /**********************************************************************/
 bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int sign1, sign2;
+	int sign1;
+	int sign2;
 
 	sign1 = is_bn_neg(n1);
 	sign2 = is_bn_neg(n2);
@@ -1403,7 +1433,8 @@ bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 /**********************************************************************/
 bn_t mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int sign1, sign2;
+	int sign1;
+	int sign2;
 
 	/* TW ENDFIX */
 	sign1 = is_bn_neg(n1);

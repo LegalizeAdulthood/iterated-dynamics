@@ -83,23 +83,36 @@ int scroll_column_status; /* will be set to first column of extra info to
 int full_screen_prompt(/* full-screen prompting routine */
 					   const char *hdg,          /* heading, lines separated by \n */
 					   int numprompts,         /* there are this many prompts (max) */
-					   char **prompts,     /* array of prompting pointers */
+					   const char **prompts,     /* array of prompting pointers */
 struct full_screen_values *values, /* array of values */
 	int fkeymask,           /* bit n on if Fn to cause return */
 	char *extrainfo     /* extra info box to display, \n separated */
 	)
 {
-	int titlelines, titlewidth, titlerow;
-	int maxpromptwidth, maxfldwidth, maxcomment;
-	int boxrow, boxlines;
-	int boxcol, boxwidth;
-	int extralines, extrawidth, extrarow;
+	int titlelines;
+	int titlewidth;
+	int titlerow;
+	int maxpromptwidth;
+	int maxfldwidth;
+	int maxcomment;
+	int boxrow;
+	int boxlines;
+	int boxcol;
+	int boxwidth;
+	int extralines;
+	int extrawidth;
+	int extrarow;
 	int instrrow;
-	int promptrow, promptcol, valuecol;
+	int promptrow;
+	int promptcol;
+	int valuecol;
 	int curchoice = 0;
-	int done, i, j;
+	int done;
+	int i;
+	int j;
 	int anyinput;
-	int curtype, curlen;
+	int curtype;
+	int curlen;
 	char buf[81];
 
 	/* scrolling related variables */
@@ -373,7 +386,8 @@ struct full_screen_values *values, /* array of values */
 	}
 
 	{
-		char buffer[256], *hdgline = buffer;
+		char buffer[256];
+		char *hdgline = buffer;
 		/* center each line of heading independently */
 		int i;
 		strcpy(hdgline, hdg);
@@ -816,7 +830,8 @@ fullscreen_exit:
 
 int prompt_value_string(char *buf, struct full_screen_values *val)
 {  /* format value into buf, return field width */
-	int i, ret;
+	int i;
+	int ret;
 	switch (val->type)
 	{
 	case 'd':
@@ -946,10 +961,12 @@ static int input_field_list(
 		int (*checkkey)(int)  /* routine to check non data keys, or NULL */
 )
 {
-	int initval, curval;
+	int initval;
+	int curval;
 	char buf[81];
 	int curkey;
-	int i, j;
+	int i;
+	int j;
 	int ret;
 
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
@@ -1064,7 +1081,10 @@ static void clear_line(int row, int start, int stop, int color) /* clear part of
 
 int get_fractal_type()             /* prompt for and select fractal type */
 {
-	int done, i, oldfractype, t;
+	int done;
+	int i;
+	int oldfractype;
+	int t;
 	done = -1;
 	oldfractype = g_fractal_type;
 	while (1)
@@ -1103,8 +1123,10 @@ static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
 static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
                                    /* so that storage gets freed up      */
 {
-	int numtypes, done;
-	int i, j;
+	int numtypes;
+	int done;
+	int i;
+	int j;
 #define MAXFTYPES 200
 	char tname[40];
 	struct FT_CHOICE storage[MAXFTYPES] = { 0 };
@@ -1314,7 +1336,8 @@ sel_type_restart:
 
 void set_default_parms()
 {
-	int i, extra;
+	int i;
+	int extra;
 	g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
 	g_escape_time_state.m_grid_fp.x_max() = g_current_fractal_specific->x_max;
 	g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
@@ -1355,7 +1378,8 @@ void set_default_parms()
 
 int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 {
-	int numfractals, i;
+	int numfractals;
+	int i;
 
 	numfractals = 0;
 	for (i = 0; i < g_num_fractal_types; i++)
@@ -1484,14 +1508,19 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	char *v2 = "To   cx (real part)";
 	char *v3 = "To   cy (imaginary part)";
 	char *juliorbitname = NULL;
-	int i, j, k;
-	int curtype, numparams, numtrig;
+	int i;
+	int j;
+	int k;
+	int curtype;
+	int numparams;
+	int numtrig;
 	struct full_screen_values paramvalues[30];
-	char *choices[30];
+	const char *choices[30];
 	long oldbailout = 0L;
 	int promptnum;
 	char msg[120];
-	char *type_name, *tmpptr;
+	char *type_name;
+	char *tmpptr;
 	char bailoutmsg[50];
 	int ret = 0;
 	char parmprompt[MAX_PARAMETERS][55];
@@ -1499,7 +1528,8 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	{
 		"First Function", "Second Function", "Third Function", "Fourth Function"
 	};
-	char *filename, *entryname;
+	char *filename;
+	char *entryname;
 	FILE *entryfile;
 	const char *trignameptr[NUMTRIGFN];
 #ifdef XFRACT
@@ -1573,7 +1603,8 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	}
 	else if (i >= 0)
 	{
-		int c, lines;
+		int c;
+		int lines;
 		read_help_topic(i, 0, 2000, g_text_stack); /* need error handling here ?? */
 		g_text_stack[2000-i] = 0;
 		i = j = lines = 0;
@@ -2071,7 +2102,9 @@ gfp_exit:
 
 int find_extra_parameter(int type)
 {
-	int i, ret, curtyp;
+	int i;
+	int ret;
+	int curtyp;
 	ret = -1;
 	i = -1;
 
@@ -2092,7 +2125,8 @@ int find_extra_parameter(int type)
 
 void load_parameters(int g_fractal_type)
 {
-	int i, extra;
+	int i;
+	int extra;
 	for (i = 0; i < 4; ++i)
 	{
 		g_parameters[i] = g_fractal_specific[g_fractal_type].paramvalue[i];
@@ -2113,7 +2147,9 @@ void load_parameters(int g_fractal_type)
 
 int check_orbit_name(char *orbitname)
 {
-	int i, numtypes, bad;
+	int i;
+	int numtypes;
+	int bad;
 	char *nameptr[MAXFRACTALS];
 	int fractals[MAXFRACTALS];
 	int last_val;
@@ -2141,7 +2177,8 @@ long get_file_entry(int type, char *title, char *fmask,
 {
 	/* Formula, LSystem, etc type structure, select from file */
 	/* containing definitions in the form    name { ... }     */
-	int newfile, firsttry;
+	int newfile;
+	int firsttry;
 	long entry_pointer;
 	newfile = 0;
 	while (1)
@@ -2248,7 +2285,8 @@ int scan_entries(FILE *infile, struct entryinfo *choices, const char *itemname)
 		*/
 	char buf[101];
 	int exclude_entry;
-	long name_offset, temp_offset;   /*rev 5/23/96 to add temp_offset,
+	long name_offset;
+	long temp_offset;   /*rev 5/23/96 to add temp_offset,
                                       used below to skip any '{' that
                                       does not have a corresponding
                                       '}' - GGM */
@@ -2257,7 +2295,8 @@ int scan_entries(FILE *infile, struct entryinfo *choices, const char *itemname)
 
 	while (1)
 	{                            /* scan the file for entry names */
-		int c, len;
+		int c;
+		int len;
 top:
 		c = skip_white_space(infile, &file_offset);
 		if (c == ';')
@@ -2395,13 +2434,16 @@ static long gfe_choose_entry(int type, char *title, char *filename, char *entryn
 #else
 	char *o_instr = "Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort ";
 #endif
-	int numentries, i;
+	int numentries;
+	int i;
 	char buf[101];
 	struct entryinfo storage[MAXENTRIES + 1];
 	struct entryinfo *choices[MAXENTRIES + 1] = { NULL };
 	int attributes[MAXENTRIES + 1] = { 0 };
 	void (*formatitem)(int, char *);
-	int boxwidth, boxdepth, colwidth;
+	int boxwidth;
+	int boxdepth;
+	int colwidth;
 	char instr[80];
 	char temp1[256];
 
@@ -2678,7 +2720,8 @@ static void load_entry_text(
         is deleted if maxlines is reached before the end of the entry.
 	*/
 
-	int linelen, i;
+	int linelen;
+	int i;
 	int comment = 0;
 	int c = 0;
 	int tabpos = 7 - (startcol % 8);
@@ -2825,7 +2868,8 @@ static void load_entry_text(
 
 static void format_parmfile_line(int choice, char *buf)
 {
-	int c, i;
+	int c;
+	int i;
 	char line[80];
 	fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
 	do
@@ -2857,7 +2901,7 @@ static void format_parmfile_line(int choice, char *buf)
 int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 {
 	struct full_screen_values uvalues[20];
-	char *ifs3d_prompts[7] =
+	const char *ifs3d_prompts[7] =
 	{
 		"X-axis rotation in degrees",
 		"Y-axis rotation in degrees",
@@ -2925,9 +2969,9 @@ get_f3d_exit:
 
 int get_3d_parameters()     /* prompt for 3D parameters */
 {
-	char *choices[11];
+	const char *choices[11];
 	int attributes[21];
-	char *prompts3d[21];
+	const char *prompts3d[21];
 	struct full_screen_values uvalues[21];
 
 restart_1:
@@ -3247,7 +3291,7 @@ return 0;
 /* --------------------------------------------------------------------- */
 static int get_light_params()
 {
-	char *prompts3d[13];
+	const char *prompts3d[13];
 	struct full_screen_values uvalues[13];
 	int k;
 
@@ -3432,7 +3476,7 @@ static int check_mapfile()
 
 static int get_funny_glasses_params()
 {
-	char *prompts3d[10];
+	const char *prompts3d[10];
 	struct full_screen_values uvalues[10];
 	int k;
 

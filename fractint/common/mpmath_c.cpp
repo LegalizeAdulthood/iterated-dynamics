@@ -373,8 +373,10 @@ long lsqrt(long f)
 #endif
 LComplex ComplexSqrtLong(long x, long y)
 {
-	double    mag, theta;
-	long      maglong, thetalong;
+	double mag;
+	double theta;
+	long maglong;
+	long thetalong;
 	LComplex    result;
 
 #ifndef LONGSQRT
@@ -433,8 +435,13 @@ static unsigned long lf;
 
 void SetupLogTable()
 {
-	float l, f, c, m;
-	unsigned long prev, limit, sptop;
+	float l;
+	float f;
+	float c;
+	float m;
+	unsigned long prev;
+	unsigned long limit;
+	unsigned long sptop;
 	unsigned n;
 
 	if (g_save_release > 1920 || g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)  /* set up on-the-fly variables */

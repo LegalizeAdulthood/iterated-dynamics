@@ -3,7 +3,7 @@
 
 extern void set_help_mode(int new_mode);
 extern int get_help_mode();
-extern int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, char **prompts,
+extern int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, const char **prompts,
 	struct full_screen_values *values, int fkeymask, char *extrainfo);
 extern int field_prompt_help(int help_mode,
 	char *hdg, char *instr, char *fld, int len, int (*checkkey)(int));

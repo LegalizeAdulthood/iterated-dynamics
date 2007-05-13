@@ -93,11 +93,16 @@ static BYTE paletteEGA[] =
 static int gif_savetodisk(char *filename)      /* save-to-disk routine */
 {
 	char tmpmsg[41];                 /* before openfile in case of overrun */
-	char openfile[FILE_MAX_PATH], openfiletype[10];
+	char openfile[FILE_MAX_PATH];
+	char openfiletype[10];
 	char tmpfile[FILE_MAX_PATH];
 	char *period;
 	int newfile;
-	int i, j, interrupted, outcolor1, outcolor2;
+	int i;
+	int j;
+	int interrupted;
+	int outcolor1;
+	int outcolor2;
 
 restart:
 	save16bit = g_disk_16bit;
@@ -308,7 +313,10 @@ int save_to_disk(char *filename)
 
 int encoder()
 {
-	int i, width, rowlimit, interrupted;
+	int i;
+	int width;
+	int rowlimit;
+	int interrupted;
 	BYTE bitsperpixel, x;
 	struct fractal_info save_info;
 
@@ -712,7 +720,8 @@ oops:
 static int _fastcall shftwrite(BYTE *color, int g_num_colors)
 {
 	BYTE thiscolor;
-	int i, j;
+	int i;
+	int j;
 	for (i = 0; i < g_num_colors; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -737,7 +746,8 @@ static int _fastcall extend_blk_len(int datalen)
 
 static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data)
 {
-	int i, j;
+	int i;
+	int j;
 	char header[15];
 	strcpy(header, "!\377\013fractint");
 	sprintf(&header[11], "%03u", block_id);
@@ -1044,14 +1054,17 @@ static char *accum; /* 256 bytes */
 
 static int compress(int rowlimit)
 {
-	int outcolor1, outcolor2;
+	int outcolor1;
+	int outcolor2;
 	long fcode;
 	int i = 0;
 	int ent;
 	int disp;
 	int hsize_reg;
 	int hshift;
-	int ydot, xdot, color;
+	int ydot;
+	int xdot;
+	int color;
 	int rownum;
 	int in_count = 0;
 	int interrupted = 0;

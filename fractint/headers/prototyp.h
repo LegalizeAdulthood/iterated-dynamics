@@ -751,7 +751,7 @@ extern void plot_setup();
 
 /*  prompts1 -- C file prototypes */
 
-extern int full_screen_prompt(const char *hdg, int numprompts, char **prompts,
+extern int full_screen_prompt(const char *hdg, int numprompts, const char **prompts,
 	struct full_screen_values *values, int fkeymask, char *extrainfo);
 extern long get_file_entry(int, char *, char *, char *, char *);
 extern int get_fractal_type();
