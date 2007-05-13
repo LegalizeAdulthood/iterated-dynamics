@@ -1184,23 +1184,23 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 				stop_message(0, "Regenerate before <b> to get correct symmetry");
 			}
 			put_parm(" symmetry=");
-			if (g_force_symmetry == XAXIS)
+			if (g_force_symmetry == SYMMETRY_X_AXIS)
 			{
 				put_parm("xaxis");
 			}
-			else if (g_force_symmetry == YAXIS)
+			else if (g_force_symmetry == SYMMETRY_Y_AXIS)
 			{
 				put_parm("yaxis");
 			}
-			else if (g_force_symmetry == XYAXIS)
+			else if (g_force_symmetry == SYMMETRY_XY_AXIS)
 			{
 				put_parm("xyaxis");
 			}
-			else if (g_force_symmetry == ORIGIN)
+			else if (g_force_symmetry == SYMMETRY_ORIGIN)
 			{
 				put_parm("origin");
 			}
-			else if (g_force_symmetry == PI_SYM)
+			else if (g_force_symmetry == SYMMETRY_PI)
 			{
 				put_parm("pi");
 			}

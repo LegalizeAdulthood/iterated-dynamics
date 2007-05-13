@@ -425,7 +425,7 @@ extern int					g_sx_offset;
 extern double				g_sy_3rd;
 extern double				g_sy_max;
 extern double				g_sy_min;
-extern int					g_symmetry;
+extern SymmetryType			g_symmetry;
 extern int					g_sy_offset;
 extern char					g_make_par[];
 extern int					g_tab_mode;

@@ -96,26 +96,26 @@ static const char *Constants[] =
 struct SYMMETRY
 {
 	const char *s;
-	int n;
+	SymmetryType n;
 };
 
 static SYMMETRY SymStr[] =
 {
-	{"NOSYM",         0},
-	{"XAXIS_NOPARM", -1},
-	{"XAXIS",         1},
-	{"YAXIS_NOPARM", -2},
-	{"YAXIS",         2},
-	{"XYAXIS_NOPARM", -3},
-	{"XYAXIS",        3},
-	{"ORIGIN_NOPARM", -4},
-	{"ORIGIN",        4},
-	{"PI_SYM_NOPARM", -5},
-	{"PI_SYM",        5},
-	{"XAXIS_NOIMAG", -6},
-	{"XAXIS_NOREAL",  6},
-	{"NOPLOT",       99},
-	{"",              0}
+	{ "XAXIS_NOIMAG",	SYMMETRY_X_AXIS_NO_IMAGINARY },
+	{ "PI_SYM_NOPARM",	SYMMETRY_PI_NO_PARAMETER },
+	{ "ORIGIN_NOPARM",	SYMMETRY_ORIGIN_NO_PARAMETER },
+	{ "XYAXIS_NOPARM",	SYMMETRY_XY_AXIS_NO_PARAMETER },
+	{ "YAXIS_NOPARM",	SYMMETRY_Y_AXIS_NO_PARAMETER },
+	{ "XAXIS_NOPARM",	SYMMETRY_X_AXIS_NO_PARAMETER },
+	{ "NOSYM",			SYMMETRY_NONE },
+	{ "XAXIS",			SYMMETRY_X_AXIS },
+	{ "YAXIS",			SYMMETRY_Y_AXIS },
+	{ "XYAXIS",			SYMMETRY_XY_AXIS },
+	{ "ORIGIN",			SYMMETRY_ORIGIN },
+	{ "PI_SYM",			SYMMETRY_PI },
+	{ "XAXIS_NOREAL",	SYMMETRY_X_AXIS_NO_REAL },
+	{ "NOPLOT",			SYMMETRY_NO_PLOT },
+	{ "",				SYMMETRY_NONE }
 };
 
 class Random
@@ -4207,7 +4207,7 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		return 0;
 	}
 		/* get symmetry */
-	g_symmetry = 0;
+	g_symmetry = SYMMETRY_NONE;
 	if (c == '(')
 	{
 		char sym_buf[20];
