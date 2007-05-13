@@ -2166,12 +2166,12 @@ static int symmetry_arg(const cmd_context &context)
 {
 	named_int args[] =
 	{
-		{ "xaxis", XAXIS },
-		{ "yaxis", YAXIS },
-		{ "xyaxis", XYAXIS },
-		{ "origin", ORIGIN },
-		{ "pi", PI_SYM },
-		{ "none", NOSYM }
+		{ "xaxis", SYMMETRY_X_AXIS },
+		{ "yaxis", SYMMETRY_Y_AXIS },
+		{ "xyaxis", SYMMETRY_XY_AXIS },
+		{ "origin", SYMMETRY_ORIGIN },
+		{ "pi", SYMMETRY_PI },
+		{ "none", SYMMETRY_NONE }
 	};
 	if (named_value(args, NUM_OF(args), context.value, &g_force_symmetry))
 	{

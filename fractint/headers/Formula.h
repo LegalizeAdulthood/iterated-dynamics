@@ -79,6 +79,7 @@ struct const_list_st
 typedef void t_function();
 typedef t_function *t_function_pointer;
 
+// TODO: Separate parsing and formula execution responsibilities into two classes
 class Formula
 {
 public:

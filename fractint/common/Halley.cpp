@@ -64,7 +64,7 @@ int Halley::setup()
 	m_a_plus_1 = g_degree + 1; /* a + 1 */
 	m_a_plus_1_degree = m_a_plus_1*g_degree;
 
-	g_symmetry = (g_degree % 2) ? XAXIS : XYAXIS;   /* odd, even */
+	g_symmetry = (g_degree % 2) ? SYMMETRY_X_AXIS : SYMMETRY_XY_AXIS;   /* odd, even */
 	return 1;
 }
 

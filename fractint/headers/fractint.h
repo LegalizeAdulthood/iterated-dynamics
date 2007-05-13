@@ -30,244 +30,359 @@ typedef BYTE BOOLEAN;
 
 #define COLOR_CHANNEL_MAX 63
 
+/* symmetry values */
+enum SymmetryType
+{
+	SYMMETRY_X_AXIS_NO_IMAGINARY = -6,
+	SYMMETRY_PI_NO_PARAMETER = -5,
+	SYMMETRY_ORIGIN_NO_PARAMETER = -4,
+	SYMMETRY_XY_AXIS_NO_PARAMETER = -3,
+	SYMMETRY_Y_AXIS_NO_PARAMETER = -2,
+	SYMMETRY_X_AXIS_NO_PARAMETER = -1,
+	SYMMETRY_NONE = 0,
+	SYMMETRY_X_AXIS = 1,
+	SYMMETRY_Y_AXIS = 2,
+	SYMMETRY_XY_AXIS = 3,
+	SYMMETRY_ORIGIN = 4,
+	SYMMETRY_PI = 5,
+	SYMMETRY_X_AXIS_NO_REAL = 6,
+	SYMMETRY_NO_PLOT = 99,
+	SYMMETRY_SETUP = 100
+};
+
 /* g_file_type values */
-#define FILETYPE_GIF 0
+enum FileType
+{
+	FILETYPE_GIF = 0
+};
 
 /* g_display_3d values */
-#define DISPLAY3D_GENERATED	-1
-#define DISPLAY3D_NONE		0
-#define DISPLAY3D_YES		1
-#define DISPLAY3D_OVERLAY	2
+enum Display3DType
+{
+	DISPLAY3D_GENERATED	= -1,
+	DISPLAY3D_NONE		= 0,
+	DISPLAY3D_YES		= 1,
+	DISPLAY3D_OVERLAY	= 2
+};
 
 /* g_ifs_type values */
-#define IFSTYPE_2D 0
-#define IFSTYPE_3D 1
+enum IFSType
+{
+	IFSTYPE_2D = 0,
+	IFSTYPE_3D = 1
+};
 
 /* g_log_dynamic_calculate values */
-#define LOGDYNAMIC_NONE 0
-#define LOGDYNAMIC_DYNAMIC 1
-#define LOGDYNAMIC_TABLE 2
+enum LogDynamicType
+{
+	LOGDYNAMIC_NONE = 0,
+	LOGDYNAMIC_DYNAMIC = 1,
+	LOGDYNAMIC_TABLE = 2
+};
 
 /* g_log_palette_flag special values */
-#define LOGPALETTE_NONE 0
-#define LOGPALETTE_STANDARD 1
-#define LOGPALETTE_OLD -1
+enum LogPaletteType
+{
+	LOGPALETTE_NONE = 0,
+	LOGPALETTE_STANDARD = 1,
+	LOGPALETTE_OLD = -1
+};
 
 /* g_color_state values */
-#define COLORSTATE_DEFAULT	0
-#define COLORSTATE_UNKNOWN	1
-#define COLORSTATE_MAP		2
+enum ColorStateType
+{
+	COLORSTATE_DEFAULT	= 0,
+	COLORSTATE_UNKNOWN	= 1,
+	COLORSTATE_MAP		= 2
+};
 
 /* g_force_symmetry values */
-#define FORCESYMMETRY_NONE		999
-#define FORCESYMMETRY_SEARCH	1000
+enum ForceSymmetryType
+{
+	FORCESYMMETRY_NONE		= 999,
+	FORCESYMMETRY_SEARCH	= 1000
+};
 
 /* g_save_dac values */
-#define SAVEDAC_NO		0
-#define SAVEDAC_YES		1
-#define SAVEDAC_NEXT	2
+enum SaveDACType
+{
+	SAVEDAC_NO		= 0,
+	SAVEDAC_YES		= 1,
+	SAVEDAC_NEXT	= 2
+};
 
 /* g_orbit_draw_mode values */
-#define ORBITDRAW_RECTANGLE	0
-#define ORBITDRAW_LINE		1
-#define ORBITDRAW_FUNCTION	2
+enum OrbitDrawType
+{
+	ORBITDRAW_RECTANGLE	= 0,
+	ORBITDRAW_LINE		= 1,
+	ORBITDRAW_FUNCTION	= 2
+};
 
 /* ant types */
-#define ANTTYPE_MOVE_COLOR	0
-#define ANTTYPE_MOVE_RULE	1
+enum AntType
+{
+	ANTTYPE_MOVE_COLOR	= 0,
+	ANTTYPE_MOVE_RULE	= 1
+};
 
 /* g_true_mode values */
-#define TRUEMODE_DEFAULT	0
-#define TRUEMODE_ITERATES	1
+enum TrueModeType
+{
+	TRUEMODE_DEFAULT	= 0,
+	TRUEMODE_ITERATES	= 1
+};
 
 /* timer type values */
-#define TIMER_ENGINE	0
-#define TIMER_DECODER	1
-#define TIMER_ENCODER	2
+enum TimerType
+{
+	TIMER_ENGINE	= 0,
+	TIMER_DECODER	= 1,
+	TIMER_ENCODER	= 2
+};
 
 /* g_debug_flag values */
-#define DEBUGFLAG_NONE				0
-#define DEBUGFLAG_LORENZ_FLOAT		22
-#define DEBUGFLAG_COMPARE_RESTORED	50
-#define DEBUGFLAG_NO_FPU			70
-#define DEBUGFLAG_NO_ASM_MANDEL		90
-#define DEBUGFLAG_OLD_POWER			94
-#define DEBUGFLAG_DISK_MESSAGES		96
-#define DEBUGFLAG_REAL_POPCORN		98
-#define DEBUGFLAG_NO_FIRST_INIT		110
-#define DEBUGFLAG_TIME_ENCODER		200
-#define DEBUGFLAG_NO_MIIM_QUEUE		300
-#define DEBUGFLAG_SKIP_OPTIMIZER	322
-#define DEBUGFLAG_NO_HELP_F1_ESC	324
-#define DEBUGFLAG_USE_DISK			420
-#define DEBUGFLAG_USE_MEMORY		422
-#define DEBUGFLAG_ABORT_SAVENAME	450
-#define DEBUGFLAG_BNDTRACE_NONZERO	470
-#define DEBUGFLAG_SOLID_GUESS_BR	472
-#define DEBUGFLAG_SET_DIGITS_MIN	700
-#define DEBUGFLAG_SET_DIGITS_MAX	720
-#define DEBUGFLAG_MORE_DIGITS		750
-#define DEBUGFLAG_NO_COLORS_FIX		910
-#define DEBUGFLAG_COLORS_LOSSLESS	920
-#define DEBUGFLAG_FORCE_FP_NEWTON	1010
-#define DEBUGFLAG_SWAP_SIGN			1012
-#define DEBUGFLAG_FORCE_BITSHIFT	1234
-#define DEBUGFLAG_2222				2222
-#define DEBUGFLAG_2224				2224
-#define DEBUGFLAG_EDIT_TEXT_COLORS	3000
-#define DEBUGFLAG_NO_DEV_HEADING	3002
-#define DEBUGFLAG_NO_BIG_TO_FLOAT	3200
-#define DEBUGFLAG_NO_INT_TO_FLOAT	3400
-#define DEBUGFLAG_SOI_LONG_DOUBLE	3444
-#define DEBUGFLAG_PIN_CORNERS_ONE	3600
-#define DEBUGFLAG_NO_PIXEL_GRID		3800
-#define DEBUGFLAG_SHOW_MATH_ERRORS	4000
-#define DEBUGFLAG_PRE193_CENTERMAG	4010
-#define DEBUGFLAG_OLD_TIMER			4020
-#define DEBUGFLAG_OLD_ORBIT_SOUND	4030
-#define DEBUGFLAG_MIN_DISKVID_CACHE	4200
-#define DEBUGFLAG_UNOPT_POWER		6000
-#define DEBUGFLAG_REDUCE_VIDEO_MIN	9002
-#define DEBUGFLAG_REDUCE_VIDEO_MAX	9100
-#define DEBUGFLAG_MEMORY			10000
+enum DebugFlagType
+{
+	DEBUGFLAG_NONE				= 0,
+	DEBUGFLAG_LORENZ_FLOAT		= 22,
+	DEBUGFLAG_COMPARE_RESTORED	= 50,
+	DEBUGFLAG_NO_FPU			= 70,
+	DEBUGFLAG_NO_ASM_MANDEL		= 90,
+	DEBUGFLAG_OLD_POWER			= 94,
+	DEBUGFLAG_DISK_MESSAGES		= 96,
+	DEBUGFLAG_REAL_POPCORN		= 98,
+	DEBUGFLAG_NO_FIRST_INIT		= 110,
+	DEBUGFLAG_TIME_ENCODER		= 200,
+	DEBUGFLAG_NO_MIIM_QUEUE		= 300,
+	DEBUGFLAG_SKIP_OPTIMIZER	= 322,
+	DEBUGFLAG_NO_HELP_F1_ESC	= 324,
+	DEBUGFLAG_USE_DISK			= 420,
+	DEBUGFLAG_USE_MEMORY		= 422,
+	DEBUGFLAG_ABORT_SAVENAME	= 450,
+	DEBUGFLAG_BNDTRACE_NONZERO	= 470,
+	DEBUGFLAG_SOLID_GUESS_BR	= 472,
+	DEBUGFLAG_SET_DIGITS_MIN	= 700,
+	DEBUGFLAG_SET_DIGITS_MAX	= 720,
+	DEBUGFLAG_MORE_DIGITS		= 750,
+	DEBUGFLAG_NO_COLORS_FIX		= 910,
+	DEBUGFLAG_COLORS_LOSSLESS	= 920,
+	DEBUGFLAG_FORCE_FP_NEWTON	= 1010,
+	DEBUGFLAG_SWAP_SIGN			= 1012,
+	DEBUGFLAG_FORCE_BITSHIFT	= 1234,
+	DEBUGFLAG_2222				= 2222,
+	DEBUGFLAG_2224				= 2224,
+	DEBUGFLAG_EDIT_TEXT_COLORS	= 3000,
+	DEBUGFLAG_NO_DEV_HEADING	= 3002,
+	DEBUGFLAG_NO_BIG_TO_FLOAT	= 3200,
+	DEBUGFLAG_NO_INT_TO_FLOAT	= 3400,
+	DEBUGFLAG_SOI_LONG_DOUBLE	= 3444,
+	DEBUGFLAG_PIN_CORNERS_ONE	= 3600,
+	DEBUGFLAG_NO_PIXEL_GRID		= 3800,
+	DEBUGFLAG_SHOW_MATH_ERRORS	= 4000,
+	DEBUGFLAG_PRE193_CENTERMAG	= 4010,
+	DEBUGFLAG_OLD_TIMER			= 4020,
+	DEBUGFLAG_OLD_ORBIT_SOUND	= 4030,
+	DEBUGFLAG_MIN_DISKVID_CACHE	= 4200,
+	DEBUGFLAG_UNOPT_POWER		= 6000,
+	DEBUGFLAG_REDUCE_VIDEO_MIN	= 9002,
+	DEBUGFLAG_REDUCE_VIDEO_MAX	= 9100,
+	DEBUGFLAG_MEMORY			= 10000
+};
 
 /* projection values */
-#define PROJECTION_ZX	0
-#define PROJECTION_XZ	1
-#define PROJECTION_XY	2
+enum ProjectionType
+{
+	PROJECTION_ZX	= 0,
+	PROJECTION_XZ	= 1,
+	PROJECTION_XY	= 2
+};
 
 /* random_dir values */
-#define DIRECTION_LEFT		0
-#define DIRECTION_RIGHT		1
-#define DIRECTION_RANDOM	2
+enum DirectionType
+{
+	DIRECTION_LEFT		= 0,
+	DIRECTION_RIGHT		= 1,
+	DIRECTION_RANDOM	= 2
+};
 
 /* g_juli_3d_mode values */
-#define JULI3DMODE_MONOCULAR	0
-#define JULI3DMODE_LEFT_EYE		1
-#define JULI3DMODE_RIGHT_EYE	2
-#define JULI3DMODE_RED_BLUE		3
+enum Juli3DModeType
+{
+	JULI3DMODE_MONOCULAR	= 0,
+	JULI3DMODE_LEFT_EYE		= 1,
+	JULI3DMODE_RIGHT_EYE	= 2,
+	JULI3DMODE_RED_BLUE		= 3
+};
 
 /* g_which_image values */
-#define WHICHIMAGE_NONE 0
-#define WHICHIMAGE_RED	1
-#define WHICHIMAGE_BLUE	2
+enum WhichImageType
+{
+	WHICHIMAGE_NONE = 0,
+	WHICHIMAGE_RED	= 1,
+	WHICHIMAGE_BLUE	= 2
+};
 
 /* g_orbit_save values */
-#define ORBITSAVE_NONE	0
-#define ORBITSAVE_RAW	1
-#define ORBITSAVE_SOUND 2
+enum OrbitSaveType
+{
+	ORBITSAVE_NONE	= 0,
+	ORBITSAVE_RAW	= 1,
+	ORBITSAVE_SOUND = 2
+};
 
 /* find_file_item itemtypes */
-#define ITEMTYPE_PARAMETER	0
-#define ITEMTYPE_FORMULA	1
-#define ITEMTYPE_L_SYSTEM	2
-#define ITEMTYPE_IFS		3
+enum FindFileItemType
+{
+	ITEMTYPE_PARAMETER	= 0,
+	ITEMTYPE_FORMULA	= 1,
+	ITEMTYPE_L_SYSTEM	= 2,
+	ITEMTYPE_IFS		= 3
+};
 
 /* getfileentry and find_file_item itemtype values */
-#define GETFILE_FORMULA		0
-#define GETFILE_L_SYSTEM	1
-#define GETFILE_IFS			2
-#define GETFILE_PARAMETER	3
+enum GetFileEntryType
+{
+	GETFILE_FORMULA		= 0,
+	GETFILE_L_SYSTEM	= 1,
+	GETFILE_IFS			= 2,
+	GETFILE_PARAMETER	= 3
+};
 
 /* g_got_status values */
-#define GOT_STATUS_NONE -1
-#define GOT_STATUS_12PASS 0
-#define GOT_STATUS_GUESSING 1
-#define GOT_STATUS_BOUNDARY_TRACE 2
-#define GOT_STATUS_3D 3
-#define GOT_STATUS_TESSERAL 4
-#define GOT_STATUS_DIFFUSION 5
-#define GOT_STATUS_ORBITS 6
+enum GotStatusType
+{
+	GOT_STATUS_NONE = -1,
+	GOT_STATUS_12PASS = 0,
+	GOT_STATUS_GUESSING = 1,
+	GOT_STATUS_BOUNDARY_TRACE = 2,
+	GOT_STATUS_3D = 3,
+	GOT_STATUS_TESSERAL = 4,
+	GOT_STATUS_DIFFUSION = 5,
+	GOT_STATUS_ORBITS = 6
+};
 
 /* g_resave_flag values */
-#define RESAVE_NO 0
-#define RESAVE_YES 1
-#define RESAVE_DONE 2
+enum ResaveType
+{
+	RESAVE_NO = 0,
+	RESAVE_YES = 1,
+	RESAVE_DONE = 2
+};
 
 /* g_look_at_mouse values */
-#define LOOK_MOUSE_NONE		0
-#define LOOK_MOUSE_TEXT		2
-#define LOOK_MOUSE_ZOOM_BOX	3
+enum LookMouseType
+{
+	LOOK_MOUSE_NONE		= 0,
+	LOOK_MOUSE_TEXT		= 2,
+	LOOK_MOUSE_ZOOM_BOX	= 3
+};
 
 /* pause_error() values */
-#define PAUSE_ERROR_NO_BATCH 0
-#define PAUSE_ERROR_ANY 1
-#define PAUSE_ERROR_GOODBYE 2
+enum PauseErrorType
+{
+	PAUSE_ERROR_NO_BATCH = 0,
+	PAUSE_ERROR_ANY = 1,
+	PAUSE_ERROR_GOODBYE = 2
+};
 
 /* g_initialize_batch values */
-#define INITBATCH_FINISH_CALC -1
-#define INITBATCH_NONE 0
-#define INITBATCH_NORMAL 1
-#define INITBATCH_SAVE 2
-#define INITBATCH_BAILOUT_ERROR 3
-#define INITBATCH_BAILOUT_INTERRUPTED 4
-#define INITBATCH_BAILOUT_SAVE 5
+enum InitBatchType
+{
+	INITBATCH_FINISH_CALC = -1,
+	INITBATCH_NONE = 0,
+	INITBATCH_NORMAL = 1,
+	INITBATCH_SAVE = 2,
+	INITBATCH_BAILOUT_ERROR = 3,
+	INITBATCH_BAILOUT_INTERRUPTED = 4,
+	INITBATCH_BAILOUT_SAVE = 5
+};
 
 /* driver_buzzer() codes */
-#define BUZZER_COMPLETE 0
-#define BUZZER_INTERRUPT 1
-#define BUZZER_ERROR 2
+enum BuzzerType
+{
+	BUZZER_COMPLETE = 0,
+	BUZZER_INTERRUPT = 1,
+	BUZZER_ERROR = 2
+};
 
 /* stop_message() flags */
-#define STOPMSG_NO_STACK	1
-#define STOPMSG_CANCEL		2
-#define STOPMSG_NO_BUZZER	4
-#define STOPMSG_FIXED_FONT	8
-#define STOPMSG_INFO_ONLY	16
-
-/* g_video_type video types */
-#define VIDEO_TYPE_HGC		1
-#define VIDEO_TYPE_EGA		3
-#define VIDEO_TYPE_CGA		2
-#define VIDEO_TYPE_MCGA		4
-#define VIDEO_TYPE_VGA		5
+enum StopMessageFlag
+{
+	STOPMSG_NO_STACK	= 1,
+	STOPMSG_CANCEL		= 2,
+	STOPMSG_NO_BUZZER	= 4,
+	STOPMSG_FIXED_FONT	= 8,
+	STOPMSG_INFO_ONLY	= 16
+};
 
 /* for gotos in former FRACTINT.C pieces */
-#define RESTART           1
-#define IMAGESTART        2
-#define RESTORESTART      3
-#define CONTINUE          4
+enum MainLoopType
+{
+	RESTART           = 1,
+	IMAGESTART        = 2,
+	RESTORESTART      = 3,
+	CONTINUE          = 4
+};
 
-#define SLIDES_OFF		0
-#define SLIDES_PLAY		1
-#define SLIDES_RECORD	2
+enum SlideType
+{
+	SLIDES_OFF		= 0,
+	SLIDES_PLAY		= 1,
+	SLIDES_RECORD	= 2
+};
 
 /* full_screen_choice options */
-#define CHOICE_RETURN_KEY	1
-#define CHOICE_MENU			2
-#define CHOICE_HELP			4
-#define CHOICE_INSTRUCTIONS	8
-#define CHOICE_CRUNCH		16
-#define CHOICE_NOT_SORTED	32
+enum FullScreenChoiceFlag
+{
+	CHOICE_RETURN_KEY	= 1,
+	CHOICE_MENU			= 2,
+	CHOICE_HELP			= 4,
+	CHOICE_INSTRUCTIONS	= 8,
+	CHOICE_CRUNCH		= 16,
+	CHOICE_NOT_SORTED	= 32
+};
 
 /* g_calculation_status values */
-#define CALCSTAT_NO_FRACTAL		-1
-#define CALCSTAT_PARAMS_CHANGED	0
-#define CALCSTAT_IN_PROGRESS	1
-#define CALCSTAT_RESUMABLE		2
-#define CALCSTAT_NON_RESUMABLE	3
-#define CALCSTAT_COMPLETED		4
+enum CalculationStatusType
+{
+	CALCSTAT_NO_FRACTAL		= -1,
+	CALCSTAT_PARAMS_CHANGED	= 0,
+	CALCSTAT_IN_PROGRESS	= 1,
+	CALCSTAT_RESUMABLE		= 2,
+	CALCSTAT_NON_RESUMABLE	= 3,
+	CALCSTAT_COMPLETED		= 4
+};
 
-#define CMDFILE_AT_CMDLINE 0
-#define CMDFILE_SSTOOLS_INI 1
-#define CMDFILE_AT_AFTER_STARTUP 2
-#define CMDFILE_AT_CMDLINE_SETNAME 3
+enum CommandFileType
+{
+	CMDFILE_AT_CMDLINE = 0,
+	CMDFILE_SSTOOLS_INI = 1,
+	CMDFILE_AT_AFTER_STARTUP = 2,
+	CMDFILE_AT_CMDLINE_SETNAME = 3
+};
 
-#define INPUTFIELD_NUMERIC 1
-#define INPUTFIELD_INTEGER 2
-#define INPUTFIELD_DOUBLE 4
+enum InputFieldType
+{
+	INPUTFIELD_NUMERIC = 1,
+	INPUTFIELD_INTEGER = 2,
+	INPUTFIELD_DOUBLE = 4
+};
 
-#define SOUNDFLAG_OFF		0
-#define SOUNDFLAG_BEEP		1
-#define SOUNDFLAG_X			2
-#define SOUNDFLAG_Y			3
-#define SOUNDFLAG_Z			4
-#define SOUNDFLAG_ORBITMASK 0x07
-#define SOUNDFLAG_SPEAKER	0x08
-#define SOUNDFLAG_OPL3_FM	0x10
-#define SOUNDFLAG_MIDI		0x20
-#define SOUNDFLAG_QUANTIZED 0x40
-#define SOUNDFLAG_MASK		0x7F
+enum SoundFlagType
+{
+	SOUNDFLAG_OFF		= 0,
+	SOUNDFLAG_BEEP		= 1,
+	SOUNDFLAG_X			= 2,
+	SOUNDFLAG_Y			= 3,
+	SOUNDFLAG_Z			= 4,
+	SOUNDFLAG_ORBITMASK = 0x07,
+	SOUNDFLAG_SPEAKER	= 0x08,
+	SOUNDFLAG_OPL3_FM	= 0x10,
+	SOUNDFLAG_MIDI		= 0x20,
+	SOUNDFLAG_QUANTIZED = 0x40,
+	SOUNDFLAG_MASK		= 0x7F
+};
 
 /* these are used to declare arrays for file names */
 #if defined(_WIN32)
@@ -750,7 +865,7 @@ struct FractalTypeSpecificData
 	int   tojulia;						/* index of corresponding julia type */
 	int   tomandel;						/* index of corresponding mandelbrot type */
 	int   tofloat;						/* index of corresponding floating-point type */
-	int   symmetry;						/* applicable symmetry logic
+	SymmetryType symmetry;				/* applicable symmetry logic
 										   0 = no symmetry
 										  -1 = y-axis symmetry (If No Params)
 										   1 = y-axis symmetry
@@ -770,6 +885,19 @@ struct FractalTypeSpecificData
 	int orbit_bailout;					/* usual bailout value for orbit calc */
 };
 
+class AbstractFractalType
+{
+public:
+	virtual ~AbstractFractalType()
+	{
+	}
+
+	virtual int Orbit() = 0;
+	virtual int PerPixel() = 0;
+	virtual int PerImage() = 0;
+	virtual int CalculateType() = 0;
+};
+
 struct tag_alternate_math_info
 {
 	int type;                    /* index in fractalname of the fractal */
@@ -780,23 +908,6 @@ struct tag_alternate_math_info
 };
 
 typedef struct tag_alternate_math_info alternate_math;
-
-/* defines for symmetry */
-#define  NOSYM          0
-#define  XAXIS_NOPARM  -1
-#define  XAXIS          1
-#define  YAXIS_NOPARM  -2
-#define  YAXIS          2
-#define  XYAXIS_NOPARM -3
-#define  XYAXIS         3
-#define  ORIGIN_NOPARM -4
-#define  ORIGIN         4
-#define  PI_SYM_NOPARM -5
-#define  PI_SYM         5
-#define  XAXIS_NOIMAG  -6
-#define  XAXIS_NOREAL   6
-#define  NOPLOT        99
-#define  SETUP_SYM    100
 
 /* defines for inside/outside */
 #define ITER        -1

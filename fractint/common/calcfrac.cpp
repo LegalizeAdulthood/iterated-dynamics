@@ -93,7 +93,7 @@ int g_orbit_index;                      /* pointer into g_save_orbit array */
 int g_orbit_color = 15;                 /* XOR color */
 int g_x_stop;
 int g_y_stop;							/* stop here */
-int g_symmetry;          /* symmetry flag */
+SymmetryType g_symmetry;
 int g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
 int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
@@ -150,7 +150,7 @@ static void step_col_row();
 static int  solid_guess();
 static int  _fastcall guess_row(int, int, int);
 static void _fastcall plot_block(int, int, int, int);
-static void _fastcall setsymmetry(int, int);
+static void _fastcall set_symmetry(int, int);
 static int  _fastcall x_symmetry_split(int, int);
 static int  _fastcall y_symmetry_split(int, int);
 static void _fastcall put_truecolor_disk(int, int, int);
@@ -345,7 +345,7 @@ static void sym_fill_line(int row, int left, int right, BYTE *str)
 
 /*
   The sym_put_line() routine is the symmetry-aware version of put_line().
-  It only works efficiently in the no symmetry or XAXIS symmetry case,
+  It only works efficiently in the no symmetry or SYMMETRY_X_AXIS symmetry case,
   otherwise it just writes the pixels one-by-one.
 */
 static void sym_put_line(int row, int left, int right, BYTE *str)
@@ -790,7 +790,7 @@ int calculate_fractal()
 			/* next two lines in case periodicity changed */
 			g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
 			g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
-			setsymmetry(g_symmetry, 0);
+			set_symmetry(g_symmetry, 0);
 			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
 		}
 		if (check_key())
@@ -1135,7 +1135,7 @@ static void perform_work_list()
 		g_close_enough_l = (long)(g_close_enough*g_fudge); /* "close enough" value */
 		g_input_counter = g_max_input_counter;
 
-		setsymmetry(g_symmetry, 1);
+		set_symmetry(g_symmetry, 1);
 
 		if (!(g_resuming) && (labs(g_log_palette_flag) == 2 || (g_log_palette_flag && g_log_automatic_flag)))
 		{  /* calculate round screen edges to work out best start for logmap */
@@ -4231,7 +4231,7 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 		g_y_stop = xaxis_row;
 		s_work_sym |= 1;
 	}
-	g_symmetry = 0;
+	g_symmetry = SYMMETRY_NONE;
 	return 0; /* tell set_symmetry its a go */
 }
 
@@ -4285,7 +4285,7 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 		g_x_stop = yaxis_col;
 		s_work_sym |= 2;
 	}
-	g_symmetry = 0;
+	g_symmetry = SYMMETRY_NONE;
 	return 0; /* tell set_symmetry its a go */
 }
 
@@ -4293,22 +4293,27 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 #pragma optimize ("ea", off)
 #endif
 
-static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetrical plot functions */
+static void _fastcall set_symmetry(int symmetry, int use_list) /* set up proper symmetrical plot functions */
 {
 	int i;
-	int parmszero, parmsnoreal, parmsnoimag;
-	int xaxis_row, yaxis_col;         /* pixel number for origin */
-	int xaxis_between = 0, yaxis_between = 0; /* if axis between 2 pixels, not on one */
-	int xaxis_on_screen = 0, yaxis_on_screen = 0;
+	int parmszero;
+	int parmsnoreal;
+	int parmsnoimag;
+	int xaxis_row;
+	int yaxis_col;         /* pixel number for origin */
+	int xaxis_between = 0;
+	int yaxis_between = 0; /* if axis between 2 pixels, not on one */
+	int xaxis_on_screen = 0;
+	int yaxis_on_screen = 0;
 	double ftemp;
 	bf_t bft1;
 	int saved = 0;
-	g_symmetry = 1;
+	g_symmetry = SYMMETRY_X_AXIS;
 	if (g_standard_calculation_mode == 's' || g_standard_calculation_mode == 'o')
 	{
 		return;
 	}
-	if (sym == NOPLOT && g_force_symmetry == FORCESYMMETRY_NONE)
+	if (symmetry == SYMMETRY_NO_PLOT && g_force_symmetry == FORCESYMMETRY_NONE)
 	{
 		g_plot_color = noplot;
 		return;
@@ -4329,17 +4334,17 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 	{
 		return;
 	}
-	if (sym != XAXIS && sym != XAXIS_NOPARM && g_inversion[1] != 0.0 && g_force_symmetry == FORCESYMMETRY_NONE)
+	if (symmetry != SYMMETRY_X_AXIS && symmetry != SYMMETRY_X_AXIS_NO_PARAMETER && g_inversion[1] != 0.0 && g_force_symmetry == FORCESYMMETRY_NONE)
 	{
 		return;
 	}
 	if (g_force_symmetry < FORCESYMMETRY_NONE)
 	{
-		sym = g_force_symmetry;
+		symmetry = g_force_symmetry;
 	}
 	else if (g_force_symmetry == FORCESYMMETRY_SEARCH)
 	{
-		g_force_symmetry = sym;  /* for backwards compatibility */
+		g_force_symmetry = symmetry;  /* for backwards compatibility */
 	}
 	else if (g_outside == REAL || g_outside == IMAG || g_outside == MULT || g_outside == SUM
 			|| g_outside == ATAN || g_bail_out_test == Manr || g_outside == FMOD)
@@ -4412,7 +4417,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		ftemp += 0.25;
 		xaxis_row = (int)ftemp;
 		xaxis_between = (ftemp - xaxis_row >= 0.5);
-		if (uselist == 0 && (!xaxis_between || (xaxis_row + 1)*2 != g_y_dots))
+		if (use_list == 0 && (!xaxis_between || (xaxis_row + 1)*2 != g_y_dots))
 		{
 			xaxis_row = -1; /* can't split screen, so dead center or not at all */
 		}
@@ -4435,82 +4440,82 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		ftemp += 0.25;
 		yaxis_col = (int)ftemp;
 		yaxis_between = (ftemp - yaxis_col >= 0.5);
-		if (uselist == 0 && (!yaxis_between || (yaxis_col + 1)*2 != g_x_dots))
+		if (use_list == 0 && (!yaxis_between || (yaxis_col + 1)*2 != g_x_dots))
 		{
 			yaxis_col = -1; /* can't split screen, so dead center or not at all */
 		}
 	}
-	switch (sym)       /* symmetry switch */
+	switch (symmetry)
 	{
-	case XAXIS_NOREAL:    /* X-axis Symmetry (no real param) */
+	case SYMMETRY_X_AXIS_NO_REAL:
 		if (!parmsnoreal)
 		{
 			break;
 		}
 		goto xsym;
-	case XAXIS_NOIMAG:    /* X-axis Symmetry (no imag param) */
+	case SYMMETRY_X_AXIS_NO_IMAGINARY:
 		if (!parmsnoimag)
 		{
 			break;
 		}
 		goto xsym;
-	case XAXIS_NOPARM:                        /* X-axis Symmetry  (no params)*/
+	case SYMMETRY_X_AXIS_NO_PARAMETER:
 		if (!parmszero)
 		{
 			break;
 		}
 		xsym:
-	case XAXIS:                       /* X-axis Symmetry */
+	case SYMMETRY_X_AXIS:
 		if (x_symmetry_split(xaxis_row, xaxis_between) == 0)
 		{
 			g_plot_color = g_basin ? symplot2basin : symplot2;
 		}
 		break;
-	case YAXIS_NOPARM:                        /* Y-axis Symmetry (No Parms)*/
+	case SYMMETRY_Y_AXIS_NO_PARAMETER:
 		if (!parmszero)
 		{
 			break;
 		}
-	case YAXIS:                       /* Y-axis Symmetry */
+	case SYMMETRY_Y_AXIS:
 		if (y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
 			g_plot_color = symplot2Y;
 		}
 		break;
-	case XYAXIS_NOPARM:                       /* X-axis AND Y-axis Symmetry (no parms)*/
+	case SYMMETRY_XY_AXIS_NO_PARAMETER:
 		if (!parmszero)
 		{
 			break;
 		}
-	case XYAXIS:                      /* X-axis AND Y-axis Symmetry */
+	case SYMMETRY_XY_AXIS:
 		x_symmetry_split(xaxis_row, xaxis_between);
 		y_symmetry_split(yaxis_col, yaxis_between);
 		switch (s_work_sym & 3)
 		{
-		case XAXIS: /* just xaxis symmetry */
+		case SYMMETRY_X_AXIS: /* just xaxis symmetry */
 			g_plot_color = g_basin ? symplot2basin : symplot2;
 			break;
-		case YAXIS: /* just yaxis symmetry */
+		case SYMMETRY_Y_AXIS: /* just yaxis symmetry */
 			if (g_basin) /* got no routine for this case */
 			{
 				g_x_stop = g_xx_stop; /* fix what split should not have done */
-				g_symmetry = 1;
+				g_symmetry = SYMMETRY_X_AXIS;
 			}
 			else
 			{
 				g_plot_color = symplot2Y;
 			}
 			break;
-		case XYAXIS: /* both axes */
+		case SYMMETRY_XY_AXIS:
 			g_plot_color = g_basin ? symplot4basin : symplot4;
 		}
 		break;
-	case ORIGIN_NOPARM:                       /* Origin Symmetry (no parms)*/
+	case SYMMETRY_ORIGIN_NO_PARAMETER:
 		if (!parmszero)
 		{
 			break;
 		}
-	case ORIGIN:                      /* Origin Symmetry */
+	case SYMMETRY_ORIGIN:
 		originsym:
 		if (x_symmetry_split(xaxis_row, xaxis_between) == 0
 			&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
@@ -4521,16 +4526,16 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 		else
 		{
 			g_y_stop = g_yy_stop; /* in case first split worked */
-			g_symmetry = 1;
+			g_symmetry = SYMMETRY_X_AXIS;
 			s_work_sym = 0x30; /* let it recombine with others like it */
 		}
 		break;
-	case PI_SYM_NOPARM:
+	case SYMMETRY_PI_NO_PARAMETER:
 		if (!parmszero)
 		{
 			break;
 		}
-	case PI_SYM:                      /* PI symmetry */
+	case SYMMETRY_PI:                      /* PI symmetry */
 		if (g_bf_math)
 		{
 			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()))) < MathUtil::Pi/4)
@@ -4550,7 +4555,7 @@ static void _fastcall setsymmetry(int sym, int uselist) /* set up proper symmetr
 			goto originsym;
 		}
 		g_plot_color = symPIplot;
-		g_symmetry = 0;
+		g_symmetry = SYMMETRY_NONE;
 		if (x_symmetry_split(xaxis_row, xaxis_between) == 0
 				&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{

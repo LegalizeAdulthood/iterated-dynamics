@@ -212,7 +212,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 #endif
 
 	g_parameters[0] = (double)g_degree; /* JCO 7/1/92 */
-	g_symmetry = (g_degree % 4 == 0) ? XYAXIS : XAXIS;
+	g_symmetry = (g_degree % 4 == 0) ? SYMMETRY_XY_AXIS : SYMMETRY_X_AXIS;
 
 	g_calculate_type = standard_fractal;
 	return 1;
