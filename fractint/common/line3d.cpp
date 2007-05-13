@@ -128,7 +128,9 @@ static BYTE s_targa_size[4];
 static int s_targa_safe;						/* Original Targa Image successfully copied to s_targa_temp */
 static VECTOR s_light_direction;
 static BYTE s_real_color;					/* Actual color of cur pixel */
-static int RO, CO, CO_MAX;				/* For use in Acrospin support */
+static int RO;
+static int CO;
+static int CO_MAX;				/* For use in Acrospin support */
 static int s_local_preview_factor;
 static int s_z_coord = 256;
 static double s_aspect;					/* aspect ratio */
@@ -979,12 +981,7 @@ reallythebottom:
 /* vector version of line draw */
 static void vdraw_line(double *v1, double *v2, int color)
 {
-	int x1, y1, x2, y2;
-	x1 = (int) v1[0];
-	y1 = (int) v1[1];
-	x2 = (int) v2[0];
-	y2 = (int) v2[1];
-	driver_draw_line(x1, y1, x2, y2, color);
+	driver_draw_line((int) v1[0], (int) v1[1], (int) v2[0], (int) v2[1], color);
 }
 
 static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
@@ -1262,9 +1259,6 @@ static void put_minmax(int x, int y, int color)
 
 static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3, int color)
 {
-	int miny, maxy;
-	int xlim;
-
 	/* Too many points off the screen? */
 	if ((off_screen(pt1) + off_screen(pt2) + off_screen(pt3)) > MAXOFFSCREEN)
 	{
@@ -1299,8 +1293,8 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 	}
 
 	/* find min max y */
-	miny = s_p1.y;
-	maxy = s_p1.y;
+	int miny = s_p1.y;
+	int maxy = s_p1.y;
 	if (s_p2.y < miny)
 	{
 		miny = s_p2.y;
@@ -1344,7 +1338,7 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 
 	for (int y = miny; y <= maxy; y++)
 	{
-		xlim = s_minmax_x[y].maxx;
+		int xlim = s_minmax_x[y].maxx;
 		for (int x = s_minmax_x[y].minx; x <= xlim; x++)
 		{
 			(*fill_plot)(x, y, color);
@@ -1425,17 +1419,15 @@ static void transparent_clip_color(int x, int y, int color)
 
 static void interp_color(int x, int y, int color)
 {
-	int D, d1, d2, d3;
-
 	/* this distance formula is not the usual one - but it has the virtue that
 	* it uses ONLY additions (almost) and it DOES go to zero as the points
 	* get close. */
 
-	d1 = abs(s_p1.x - x) + abs(s_p1.y - y);
-	d2 = abs(s_p2.x - x) + abs(s_p2.y - y);
-	d3 = abs(s_p3.x - x) + abs(s_p3.y - y);
+	int d1 = abs(s_p1.x - x) + abs(s_p1.y - y);
+	int d2 = abs(s_p2.x - x) + abs(s_p2.y - y);
+	int d3 = abs(s_p3.x - x) + abs(s_p3.y - y);
 
-	D = (d1 + d2 + d3) << 1;
+	int D = (d1 + d2 + d3) << 1;
 	if (D)
 	{  /* calculate a weighted average of g_colors long casts prevent integer
 			overflow. This can evaluate to zero */
@@ -2489,13 +2481,25 @@ static int first_time(int linelen, VECTOR v)
 {
 	int err;
 	MATRIX lightm;               /* m w/no trans, keeps obj. on screen */
-	double xval, yval, zval;     /* rotation values */
+	double xval;
+	double yval;
+	double zval;     /* rotation values */
 	/* corners of transformed xdotx by g_y_dots x g_colors box */
-	double x_min, y_min, z_min, x_max, y_max, z_max;
+	double x_min;
+	double y_min;
+	double z_min;
+	double x_max;
+	double y_max;
+	double z_max;
 	double v_length;
-	VECTOR origin, direct, tmp;
-	float theta, theta1, theta2; /* current, start, stop latitude */
-	float phi1, phi2;            /* current start, stop longitude */
+	VECTOR origin;
+	VECTOR direct;
+	VECTOR tmp;
+	float theta;
+	float theta1;
+	float theta2; /* current, start, stop latitude */
+	float phi1;
+	float phi2;            /* current start, stop longitude */
 	float deltatheta;            /* increment of latitude */
 	g_out_line_cleanup = line3d_cleanup;
 

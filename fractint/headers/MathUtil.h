@@ -5,6 +5,7 @@ class MathUtil
 {
 public:
 	static const double Pi;
+	static const double e;
 
 	static double RadiansToDegrees(double radians)
 	{
