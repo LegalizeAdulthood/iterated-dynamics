@@ -598,7 +598,9 @@ void adjust_corner_bf()
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
 	double ftemp;
-	double Xmagfactor, Rotation, Skew;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	LDBL Magnification;
 
 	bf_t bftemp, bftemp2;
@@ -676,10 +678,14 @@ void adjust_corner()
 {
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
-	double ftemp, ftemp2;
-	double Xctr, Yctr, Xmagfactor, Rotation, Skew;
+	double Xctr;
+	double Yctr;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	LDBL Magnification;
 
+	double ftemp;
 	if (!g_integer_fractal)
 	{
 		/* While we're at it, let's adjust the Xmagfactor as well */
@@ -693,6 +699,7 @@ void adjust_corner()
 	}
 
 	ftemp = fabs(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min());
+	double ftemp2;
 	ftemp2 = fabs(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd());
 	if (ftemp < ftemp2)
 	{
@@ -973,9 +980,18 @@ static void _fastcall adjust_to_limits_bf(double expand)
 
 static void _fastcall adjust_to_limits(double expand)
 {
-	double cornerx[4], cornery[4];
-	double lowx, highx, lowy, highy, limit, ftemp;
-	double centerx, centery, adjx, adjy;
+	double cornerx[4];
+	double cornery[4];
+	double lowx;
+	double highx;
+	double lowy;
+	double highy;
+	double limit;
+	double ftemp;
+	double centerx;
+	double centery;
+	double adjx;
+	double adjy;
 	int i;
 
 	limit = 32767.99;
@@ -1153,7 +1169,8 @@ static void _fastcall smallest_add_bf(bf_t num)
 
 static int _fastcall ratio_bad(double actual, double desired)
 {
-	double ftemp, tol;
+	double ftemp;
+	double tol;
 	tol = g_math_tolerance[g_integer_fractal ? 0 : 1];
 	if (tol <= 0.0)
 	{
@@ -1390,7 +1407,8 @@ static void sleep_ms_old(long ms)
 	{
 		/* selects a value of scalems that makes the units
 			10000 per sec independent of CPU speed */
-		int i, elapsed;
+		int i;
+		int elapsed;
 		scalems = 1L;
 		if (driver_key_pressed()) /* check at start, hope to get start of timeslice */
 		{
@@ -1578,8 +1596,11 @@ void plot_orbit(double real, double imag, int color)
 
 void orbit_scrub()
 {
-	int i, j, c;
-	int save_sxoffs, save_syoffs;
+	int i;
+	int j;
+	int c;
+	int save_sxoffs;
+	int save_syoffs;
 	driver_mute();
 	save_sxoffs = g_sx_offset;
 	save_syoffs = g_sy_offset;
@@ -1619,7 +1640,8 @@ int work_list_add(int xfrom, int xto, int xbegin,
 
 static int _fastcall work_list_combine() /* look for 2 entries which can freely merge */
 {
-	int i, j;
+	int i;
+	int j;
 	for (i = 0; i < g_num_work_list; ++i)
 	{
 		if (g_work_list[i].yy_start == g_work_list[i].yy_begin)
@@ -1672,7 +1694,8 @@ static int _fastcall work_list_combine() /* look for 2 entries which can freely 
 
 void work_list_tidy() /* combine mergeable entries, resort */
 {
-	int i, j;
+	int i;
+	int j;
 	WORKLIST tempwork;
 	while ((i = work_list_combine()) != 0)
 	{ /* merged two, delete the gone one */
@@ -1803,7 +1826,8 @@ void get_julia_attractor(double real, double imag)
 
 int solid_guess_block_size() /* used by solidguessing and by zoom panning */
 {
-	int blocksize, i;
+	int blocksize;
+	int i;
 	/* blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >= 1200 */
 	blocksize = 4;
 	i = 300;

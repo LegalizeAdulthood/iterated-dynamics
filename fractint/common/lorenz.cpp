@@ -53,9 +53,11 @@ struct threed_vt_inf /* data used by 3d view transform subroutine */
 	MATRIX doublemat1;   /* transformation matrix */
 	long longmat[4][4];  /* long version of matrix */
 	long longmat1[4][4]; /* long version of matrix */
-	int row, col;         /* results */
-	int row1, col1;
-	struct l_affine cvt;
+	int row;
+	int col;         /* results */
+	int row1;
+	int col1;
+	l_affine cvt;
 };
 
 struct threed_vt_inf_fp /* data used by 3d view transform subroutine */
@@ -67,9 +69,11 @@ struct threed_vt_inf_fp /* data used by 3d view transform subroutine */
 	double minvals[3];
 	MATRIX doublemat;    /* transformation matrix */
 	MATRIX doublemat1;   /* transformation matrix */
-	int row, col;         /* results */
-	int row1, col1;
-	struct affine cvt;
+	int row;
+	int col;         /* results */
+	int row1;
+	int col1;
+	affine cvt;
 };
 
 /* global data provided by this module */
@@ -87,11 +91,12 @@ double g_orbit_x_3rd;
 double g_orbit_y_3rd;
 
 /* local data in this module */
-static struct affine s_o_cvt;
+static affine s_o_cvt;
 static int s_o_color;
-static struct affine s_cvt;
-static struct l_affine s_lcvt;
-static double s_cx, s_cy;
+static affine s_cvt;
+static l_affine s_lcvt;
+static double s_cx;
+static double s_cy;
 static long   s_x_long, s_y_long;
 /* s_connect, s_euler, s_waste are potential user parameters */
 static int s_connect = 1;    /* flag to connect points with a line */
@@ -118,10 +123,10 @@ static int  ifs_2d();
 static int  ifs_3d();
 static int  ifs_3d_long();
 static int  ifs_3d_float();
-static int  l_setup_convert_to_screen(struct l_affine *);
+static int  l_setup_convert_to_screen(l_affine *);
 static void setup_matrix(MATRIX);
-static int  threed_view_trans(struct threed_vt_inf *inf);
-static int  threed_view_trans_fp(struct threed_vt_inf_fp *inf);
+static int  threed_view_trans(threed_vt_inf *inf);
+static int  threed_view_trans_fp(threed_vt_inf_fp *inf);
 static FILE *open_orbit_save();
 static void _fastcall plot_hist(int x, int y, int color);
 
@@ -212,9 +217,11 @@ The same technique can be applied to the second set of equations:
 
 		-  Sylvie
 */
-int setup_convert_to_screen(struct affine *scrn_cnvt)
+int setup_convert_to_screen(affine *scrn_cnvt)
 {
-	double det, xd, yd;
+	double det;
+	double xd;
+	double yd;
 
 	det = (g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min())*(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_max()) + (g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_3rd())*g_escape_time_state.m_grid_fp.width();
 	if (det == 0)
@@ -238,9 +245,9 @@ int setup_convert_to_screen(struct affine *scrn_cnvt)
 	return 0;
 }
 
-static int l_setup_convert_to_screen(struct l_affine *l_cvt)
+static int l_setup_convert_to_screen(l_affine *l_cvt)
 {
-	struct affine cvt;
+	affine cvt;
 
 	/* MCP 7-7-91, This function should return a something! */
 	if (setup_convert_to_screen(&cvt))
@@ -597,9 +604,12 @@ rwalk:
 
 int Minverse_julia_orbit()
 {
-	static int   random_dir = 0, random_len = 0;
-	int    newrow, newcol;
-	int    color,  leftright;
+	static int random_dir = 0;
+	static int random_len = 0;
+	int newrow;
+	int newcol;
+	int color;
+	int leftright;
 
 	/*
 	* First, compute new point
@@ -777,9 +787,11 @@ int Minverse_julia_orbit()
 
 int Linverse_julia_orbit()
 {
-	static int   random_dir = 0, random_len = 0;
-	int    newrow, newcol;
-	int    color;
+	static int random_dir = 0;
+	static int random_len = 0;
+	int newrow;
+	int newcol;
+	int color;
 
 	/*
 	* First, compute new point
@@ -1030,7 +1042,8 @@ int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
 
 int henon_orbit_fp(double *x, double *y, double *z)
 {
-	double newx, newy;
+	double newx;
+	double newy;
 	*z = *x; /* for warning only */
 	newx  = 1 + *y - s_a*(*x)*(*x);
 	newy  = s_b*(*x);
@@ -1041,7 +1054,8 @@ int henon_orbit_fp(double *x, double *y, double *z)
 
 int henon_orbit(long *l_x, long *l_y, long *l_z)
 {
-	long newx, newy;
+	long newx;
+	long newy;
 	*l_z = *l_x; /* for warning only */
 	newx = multiply(*l_x, *l_x, g_bit_shift);
 	newx = multiply(newx, s_l_a, g_bit_shift);
@@ -1069,7 +1083,9 @@ int rossler_orbit_fp(double *x, double *y, double *z)
 
 int pickover_orbit_fp(double *x, double *y, double *z)
 {
-	double newx, newy, newz;
+	double newx;
+	double newy;
+	double newz;
 	newx = sin(s_a*(*y)) - (*z)*cos(s_b*(*x));
 	newy = (*z)*sin(s_c*(*x)) - cos(s_d*(*y));
 	newz = sin(*x);
@@ -1224,7 +1240,10 @@ int martin_2d_orbit_fp(double *x, double *y, double *z)
 
 int mandel_cloud_orbit_fp(double *x, double *y, double *z)
 {
-	double newx, newy, x2, y2;
+	double newx;
+	double newy;
+	double x2;
+	double y2;
 #ifndef XFRACT
 	newx = *z; /* for warning only */
 #endif
@@ -1243,8 +1262,10 @@ int mandel_cloud_orbit_fp(double *x, double *y, double *z)
 
 int dynamic_orbit_fp(double *x, double *y, double *z)
 {
-	DComplex cp, tmp;
-	double newx, newy;
+	DComplex cp;
+	DComplex tmp;
+	double newx;
+	double newy;
 	cp.x = s_b* *x;
 	cp.y = 0;
 	CMPLXtrig0(cp, tmp);
@@ -1273,7 +1294,15 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 */
 int icon_orbit_fp(double *x, double *y, double *z)
 {
-	double oldx, oldy, zzbar, zreal, zimag, za, zb, zn, p;
+	double oldx;
+	double oldy;
+	double zzbar;
+	double zreal;
+	double zimag;
+	double za;
+	double zb;
+	double zn;
+	double p;
 
 	oldx = *x;
 	oldy = *y;
@@ -1307,8 +1336,9 @@ int icon_orbit_fp(double *x, double *y, double *z)
 
 int latoo_orbit_fp(double *x, double *y, double *z)
 {
-
-	double xold, yold, tmp;
+	double xold;
+	double yold;
+	double tmp;
 
 	xold = *z; /* for warning only */
 
@@ -1373,12 +1403,19 @@ int inverse_julia_per_image()
 int orbit_2d_fp()
 {
 	FILE *fp;
-	double x, y, z;
-	int color, col, row;
+	double x;
+	double y;
+	double z;
+	int color;
+	int col;
+	int row;
 	int count;
-	int oldrow, oldcol;
-	double *p0, *p1, *p2;
-	struct affine cvt;
+	int oldrow;
+	int oldcol;
+	double *p0;
+	double *p1;
+	double *p2;
+	affine cvt;
 	int ret;
 
 	p0 = p1 = p2 = NULL;
@@ -1495,7 +1532,7 @@ int orbit_2d_fp()
 
 int orbit_2d()
 {
-	struct l_affine cvt;
+	l_affine cvt;
 	/* setup affine screen coord conversion */
 	l_setup_convert_to_screen(&cvt);
 
@@ -1618,9 +1655,11 @@ static int orbit_3d_calc()
 {
 	FILE *fp;
 	unsigned long count;
-	int oldcol, oldrow;
-	int oldcol1, oldrow1;
-	struct threed_vt_inf inf;
+	int oldcol;
+	int oldrow;
+	int oldcol1;
+	int oldrow1;
+	threed_vt_inf inf;
 	int color;
 	int ret;
 
@@ -1738,11 +1777,13 @@ static int orbit_3d_calc_fp()
 {
 	FILE *fp;
 	unsigned long count;
-	int oldcol, oldrow;
-	int oldcol1, oldrow1;
+	int oldcol;
+	int oldrow;
+	int oldcol1;
+	int oldrow1;
 	int color;
 	int ret;
-	struct threed_vt_inf_fp inf;
+	threed_vt_inf_fp inf;
 
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&inf.cvt);
@@ -1897,15 +1938,23 @@ int dynamic_2d_setup_fp()
 int dynamic_2d_fp()
 {
 	FILE *fp;
-	double x, y, z;
-	int color, col, row;
+	double x;
+	double y;
+	double z;
+	int color;
+	int col;
+	int row;
 	long count;
-	int oldrow, oldcol;
-	double *p0, *p1;
-	struct affine cvt;
+	int oldrow;
+	int oldcol;
+	double *p0;
+	double *p1;
+	affine cvt;
 	int ret;
-	int xstep, ystep; /* The starting position step number */
-	double xpixel, ypixel; /* Our pixel position on the screen */
+	int xstep;
+	int ystep; /* The starting position step number */
+	double xpixel;
+	double ypixel; /* Our pixel position on the screen */
 
 	fp = open_orbit_save();
 	/* setup affine screen coord conversion */
@@ -2036,9 +2085,11 @@ int dynamic_2d_fp()
 	return ret;
 }
 
-int setup_orbits_to_screen(struct affine *scrn_cnvt)
+int setup_orbits_to_screen(affine *scrn_cnvt)
 {
-	double det, xd, yd;
+	double det;
+	double xd;
+	double yd;
 
 	det = (g_orbit_x_3rd-g_orbit_x_min)*(g_orbit_y_min-g_orbit_y_max) + (g_orbit_y_max-g_orbit_y_3rd)*(g_orbit_x_max-g_orbit_x_min);
 	if (det == 0)
@@ -2114,7 +2165,8 @@ int plotorbits2dsetup()
 
 int plotorbits2dfloat()
 {
-	int col, row;
+	int col;
+	int row;
 	long count;
 
 	if (driver_key_pressed())
@@ -2246,12 +2298,16 @@ static int ifs_3d_float()
 	FILE *fp;
 	int color;
 
-	double newx, newy, newz, r, sum;
+	double newx;
+	double newy;
+	double newz;
+	double r;
+	double sum;
 
 	int k;
 	int ret;
 
-	struct threed_vt_inf_fp inf;
+	threed_vt_inf_fp inf;
 
 	float *ffptr;
 
@@ -2399,10 +2455,18 @@ static int ifs_2d()
 	int ret;
 	long *localifs;
 	long *lfptr;
-	long x, y, newx, newy, r, sum, tempr;
+	long x;
+	long y;
+	long newx;
+	long newy;
+	long r;
+	long sum;
+	long tempr;
 
-	int i, j, k;
-	struct l_affine cvt;
+	int i;
+	int j;
+	int k;
+	l_affine cvt;
 	/* setup affine screen coord conversion */
 	l_setup_convert_to_screen(&cvt);
 
@@ -2502,11 +2566,18 @@ static int ifs_3d_long()
 
 	long *localifs;
 	long *lfptr;
-	long newx, newy, newz, r, sum, tempr;
+	long newx;
+	long newy;
+	long newz;
+	long r;
+	long sum;
+	long tempr;
 
-	int i, j, k;
+	int i;
+	int j;
+	int k;
 
-	struct threed_vt_inf inf;
+	threed_vt_inf inf;
 	srand(1);
 	color_method = (int) g_parameters[0];
 	localifs = (long *) malloc(g_num_affine*IFS3DPARM*sizeof(long));
@@ -2676,10 +2747,13 @@ static int ifs_3d()
 	return orbit_3d_aux(g_float_flag ? ifs_3d_float : ifs_3d_long);
 }
 
-static int threed_view_trans(struct threed_vt_inf *inf)
+static int threed_view_trans(threed_vt_inf *inf)
 {
-	int i, j;
-	double tmpx, tmpy, tmpz;
+	int i;
+	int j;
+	double tmpx;
+	double tmpy;
+	double tmpz;
 	long tmp;
 
 	if (g_color_iter == 1)  /* initialize on first call */
@@ -2854,10 +2928,12 @@ static int threed_view_trans(struct threed_vt_inf *inf)
 	return 1;
 }
 
-static int threed_view_trans_fp(struct threed_vt_inf_fp *inf)
+static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 {
 	int i;
-	double tmpx, tmpy, tmpz;
+	double tmpx;
+	double tmpy;
+	double tmpz;
 	double tmp;
 
 	if (g_color_iter == 1)  /* initialize on first call */

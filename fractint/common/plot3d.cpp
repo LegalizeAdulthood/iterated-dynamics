@@ -33,12 +33,14 @@ static BYTE s_targa_red;
 void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 
 {               /* uses Bresenham algorithm to draw a line */
-	int dX, dY;                     /* vector components */
-	int row, col,
-		final,                      /* final row or column number */
-		G,                  /* used to test for new row or column */
-		inc1,           /* G increment when row or column doesn't change */
-		inc2;               /* G increment when row or column changes */
+	int dX;
+	int dY;                     /* vector components */
+	int row;
+	int col;
+	int final;					/* final row or column number */
+	int G;                  /* used to test for new row or column */
+	int inc1;           /* G increment when row or column doesn't change */
+	int inc2;               /* G increment when row or column changes */
 	char pos_slope;
 
 	dX = X2 - X1;                   /* find vector components */

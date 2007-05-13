@@ -37,7 +37,11 @@ void test_end()       /* this routine is called just after the fractal ends */
 int test_per_pixel(double initreal, double initimag, double parm1, double parm2,
 	long g_max_iteration, int inside)
 {
-	double oldreal, oldimag, newreal, newimag, magnitude;
+	double oldreal;
+	double oldimag;
+	double newreal;
+	double newimag;
+	double magnitude;
 	long color;
 	oldreal = parm1;
 	oldimag = parm2;

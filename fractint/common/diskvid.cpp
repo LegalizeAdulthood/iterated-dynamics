@@ -112,8 +112,10 @@ int disk_start_targa(FILE *targafp, int overhead)
 
 int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 {
-	int i, freemem;
-	long memorysize, offset;
+	int i;
+	int freemem;
+	long memorysize;
+	long offset;
 	unsigned int *fwd_link = NULL;
 	struct cache *ptr1 = NULL;
 	long longtmp;
@@ -474,7 +476,8 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 {
 #ifndef XFRACT
 	unsigned int tbloffset;
-	int i, j;
+	int i;
+	int j;
 	unsigned int *fwd_link;
 	BYTE *pixelptr;
 	BYTE tmpchar;
@@ -603,7 +606,8 @@ static struct cache *_fastcall  find_cache(long offset)
 
 static void  write_cache_lru()
 {
-	int i, j;
+	int i;
+	int j;
 	BYTE *pixelptr;
 	long offset;
 	BYTE tmpchar = 0;

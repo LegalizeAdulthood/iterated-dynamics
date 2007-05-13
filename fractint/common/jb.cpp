@@ -21,34 +21,70 @@ float g_depth_fp   = 8.0f;
 int g_juli_3d_mode = JULI3DMODE_MONOCULAR;
 int g_new_orbit_type = FRACTYPE_JULIA;
 
-struct perspective
+template <typename T>
+struct PerspectiveT
 {
-	long x, y, zx, zy;
+	T x;
+	T y;
+	T zx;
+	T zy;
 };
 
-struct perspective_fp
-{
-	double x, y, zx, zy;
-};
+typedef PerspectiveT<long> Perspective;
+typedef PerspectiveT<double> Perspective_fp;
 
-static long s_m_x_min, s_m_y_min;
-static long s_x_per_inch, s_y_per_inch, s_inch_per_x_dot, s_inch_per_y_dot;
-static double s_x_per_inch_fp, s_y_per_inch_fp, s_inch_per_x_dot_fp, s_inch_per_y_dot_fp;
+static long s_m_x_min;
+static long s_m_y_min;
+static long s_x_per_inch;
+static long s_y_per_inch;
+static long s_inch_per_x_dot;
+static long s_inch_per_y_dot;
+static double s_x_per_inch_fp;
+static double s_y_per_inch_fp;
+static double s_inch_per_x_dot_fp;
+static double s_inch_per_y_dot_fp;
 static int s_b_base;
-static long s_x_pixel, s_y_pixel;
-static double s_x_pixel_fp, s_y_pixel_fp;
-static long s_init_z, s_djx, s_djy, s_dmx, s_dmy;
-static double s_init_z_fp, s_djx_fp, s_djy_fp, s_dmx_fp, s_dmy_fp;
-static long s_jx, s_jy, s_mx, s_my, s_x_offset, s_y_offset;
-static double s_jx_fp, s_jy_fp, s_mx_fp, s_my_fp, s_x_offset_fp, s_y_offset_fp;
-static struct perspective s_left_eye, s_right_eye, *s_per;
-static struct perspective_fp s_left_eye_fp, s_right_eye_fp, *s_per_fp;
+static long s_x_pixel;
+static long s_y_pixel;
+static double s_x_pixel_fp;
+static double s_y_pixel_fp;
+static long s_init_z;
+static long s_djx;
+static long s_djy;
+static long s_dmx;
+static long s_dmy;
+static double s_init_z_fp;
+static double s_djx_fp;
+static double s_djy_fp;
+static double s_dmx_fp;
+static double s_dmy_fp;
+static long s_jx;
+static long s_jy;
+static long s_mx;
+static long s_my;
+static long s_x_offset;
+static long s_y_offset;
+static double s_jx_fp;
+static double s_jy_fp;
+static double s_mx_fp;
+static double s_my_fp;
+static double s_x_offset_fp;
+static double s_y_offset_fp;
+static Perspective s_left_eye;
+static Perspective s_right_eye;
+static Perspective *s_per;
+static Perspective_fp s_left_eye_fp;
+static Perspective_fp s_right_eye_fp;
+static Perspective_fp *s_per_fp;
 static LComplex s_jbc;
 static DComplex s_jbc_fp;
 #ifndef XFRACT
 static double s_fg, s_fg16;
 #endif
-static long s_width, s_dist, s_depth, s_br_ratio;
+static long s_width;
+static long s_dist;
+static long s_depth;
+static long s_br_ratio;
 #ifndef XFRACT
 static long s_eyes;
 #endif
@@ -89,7 +125,12 @@ int julibrot_setup()
 #ifndef XFRACT
 	if (g_fractal_specific[g_fractal_type].isinteger > 0)
 	{
-		long jxmin, jxmax, jymin, jymax, mxmax, mymax;
+		long jxmin;
+		long jxmax;
+		long jymin;
+		long jymax;
+		long mxmax;
+		long mymax;
 		if (g_fractal_specific[g_new_orbit_type].isinteger == 0)
 		{
 			stop_message(0, "Julibrot orbit type isinteger mismatch");
@@ -393,8 +434,10 @@ static int z_line_fp(double x, double y)
 
 int standard_4d_fractal()
 {
-	long x, y;
-	int xdot, ydot;
+	long x;
+	long y;
+	int xdot;
+	int ydot;
 	g_c_exp = (int)g_parameters[2];
 	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_L)
 	{
@@ -443,8 +486,10 @@ int standard_4d_fractal()
 
 int standard_4d_fractal_fp()
 {
-	double x, y;
-	int xdot, ydot;
+	double x;
+	double y;
+	int xdot;
+	int ydot;
 	g_c_exp = (int)g_parameters[2];
 
 	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_FP)

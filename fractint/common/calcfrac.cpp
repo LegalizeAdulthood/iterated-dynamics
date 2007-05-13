@@ -948,7 +948,8 @@ static void perform_work_list()
 
 	if (g_distance_test) /* setup stuff for distance estimator */
 	{
-		double ftemp, ftemp2, delta_x_fp, delta_y2_fp, delta_y_fp, delta_x2_fp, dxsize, dysize;
+		double dxsize;
+		double dysize;
 		double aspect;
 		if (g_pseudo_x && g_pseudo_y)
 		{
@@ -963,10 +964,10 @@ static void perform_work_list()
 			dysize = g_y_dots-1;
 		}
 
-		delta_x_fp  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / dxsize; /* calculate stepsizes */
-		delta_y_fp  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / dysize;
-		delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / dysize;
-		delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / dxsize;
+		double delta_x_fp = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / dxsize; /* calculate stepsizes */
+		double delta_y_fp = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / dysize;
+		double delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / dysize;
+		double delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / dxsize;
 
 		/* in case it's changed with <G> */
 		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
@@ -988,7 +989,7 @@ static void perform_work_list()
 				TRUE : FALSE;
 
 		s_dem_delta = sqr(g_escape_time_state.m_grid_fp.delta_x()) + sqr(delta_y2_fp);
-		ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
+		double ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
 		if (ftemp > s_dem_delta)
 		{
 			s_dem_delta = ftemp;
@@ -1004,7 +1005,7 @@ static void perform_work_list()
 			+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min()) ) ) / g_distance_test;
 		ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
 		ftemp += 3; /* bailout plus just a bit */
-		ftemp2 = log(ftemp);
+		double ftemp2 = log(ftemp);
 		s_dem_too_big = g_use_old_distance_test ?
 			sqr(ftemp)*sqr(ftemp2)*4 / s_dem_delta
 			:
@@ -1320,14 +1321,18 @@ static int diffusion_block_lim(int row, int col, int sqsz)
 static int diffusion_engine()
 {
 	double log2 = (double) log (2.0);
-	int i, j;
-	int nx, ny; /* number of tyles to build in x and y dirs */
+	int i;
+	int j;
+	int nx;
+	int ny; /* number of tiles to build in x and y dirs */
 	/* made this to complete the area that is not */
 	/* a square with sides like 2 ** n */
-	int rem_x, rem_y; /* what is left on the last tile to draw */
+	int rem_x;
+	int rem_y; /* what is left on the last tile to draw */
 	int dif_offset; /* offset for adjusting looked-up values */
 	int sqsz;  /* size of the g_block being filled */
-	int colo, rowo; /* original col and row */
+	int colo;
+	int rowo; /* original col and row */
 	int s = 1 << (g_bits/2); /* size of the square */
 
 	nx = (int) floor((double) (g_x_stop-s_ix_start + 1)/s );
@@ -1564,7 +1569,8 @@ static int draw_rectangle_orbits()
 
 static int draw_line_orbits()
 {
-	int dX, dY;                     /* vector components */
+	int dX;
+	int dY;                     /* vector components */
 	int final,                      /* final row or column number */
 		G,                  /* used to test for new row or column */
 		inc1,           /* G increment when row or column doesn't change */
@@ -1704,9 +1710,12 @@ static int draw_line_orbits()
 /* TODO: this code does not yet work??? */
 static int draw_function_orbits()
 {
-	double Xctr, Yctr;
+	double Xctr;
+	double Yctr;
 	LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
-	double Xmagfactor, Rotation, Skew;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	int angle;
 	double theta;
 	double xfactor = g_x_dots / 2.0;
@@ -2706,16 +2715,14 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 
 	if (g_distance_test)
 	{
-		double dist, temp;
-		dist = sqr(g_new_z.x) + sqr(g_new_z.y);
+		double dist = (g_new_z.x) + sqr(g_new_z.y);
 		if (dist == 0 || g_overflow)
 		{
 			dist = 0;
 		}
 		else
 		{
-			temp = log(dist);
-			dist = dist*sqr(temp) / (sqr(deriv.x) + sqr(deriv.y) );
+			dist = dist*sqr(log(dist)) / (sqr(deriv.x) + sqr(deriv.y) );
 		}
 		if (dist < s_dem_delta)     /* point is on the edge */
 		{
@@ -3223,7 +3230,9 @@ static void decomposition()
 
 static int _fastcall potential(double mag, long iterations)
 {
-	float f_mag, f_tmp, pot;
+	float f_mag;
+	float f_tmp;
+	float pot;
 	double d_tmp;
 	int i_pot;
 	long l_pot;
@@ -3330,10 +3339,15 @@ Guenther's code.  I've noted these places with the initials DG.
 static int boundary_trace_main()
 {
 	enum direction coming_from;
-	unsigned int match_found, continue_loop;
-	int trail_color, fillcolor_used, last_fillcolor_used = -1;
+	unsigned int match_found;
+	unsigned int continue_loop;
+	int trail_color;
+	int fillcolor_used;
+	int last_fillcolor_used = -1;
 	int max_putline_length;
-	int right, left, length;
+	int right;
+	int left;
+	int length;
 	if (g_inside == 0 || g_outside == 0)
 	{
 		stop_message(0, "Boundary tracing cannot be used with inside=0 or outside=0");
@@ -3594,8 +3608,12 @@ static void step_col_row()
 
 static int solid_guess()
 {
-	int i, xlim, ylim, blocksize;
-	unsigned int *pfxp0, *pfxp1;
+	int i;
+	int xlim;
+	int ylim;
+	int blocksize;
+	unsigned int *pfxp0;
+	unsigned int *pfxp1;
 	unsigned int u;
 
 	s_guess_plot = (g_plot_color != g_put_color && g_plot_color != symplot2 && g_plot_color != symplot2J);
@@ -4128,7 +4146,8 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 
 static void _fastcall plot_block(int buildrow, int x, int y, int color)
 {
-	int xlim, ylim;
+	int xlim;
+	int ylim;
 	xlim = x + s_half_block;
 	if (xlim > g_x_stop)
 	{
@@ -4610,8 +4629,14 @@ static void _fastcall set_symmetry(int symmetry, int use_list) /* set up proper 
 
 struct tess  /* one of these per box to be done gets stacked */
 {
-	int x1, x2, y1, y2;      /* left/right top/bottom x/y coords  */
-	int top, bot, lft, rgt;  /* edge g_colors, -1 mixed, -2 unknown */
+	int x1;
+	int x2;
+	int y1;
+	int y2;      /* left/right top/bottom x/y coords  */
+	int top;
+	int bottom;
+	int left;
+	int right;  /* edge g_colors, -1 mixed, -2 unknown */
 };
 
 static int tesseral()
@@ -4628,9 +4653,9 @@ static int tesseral()
 	if (s_work_pass == 0)  /* not resuming */
 	{
 		tp->top = tesseral_row(s_ix_start, g_x_stop, s_iy_start);     /* Do top row */
-		tp->bot = tesseral_row(s_ix_start, g_x_stop, g_y_stop);      /* Do bottom row */
-		tp->lft = tesseral_column(s_ix_start, s_iy_start + 1, g_y_stop-1); /* Do left column */
-		tp->rgt = tesseral_column(g_x_stop, s_iy_start + 1, g_y_stop-1);  /* Do right column */
+		tp->bottom = tesseral_row(s_ix_start, g_x_stop, g_y_stop);      /* Do bottom row */
+		tp->left = tesseral_column(s_ix_start, s_iy_start + 1, g_y_stop-1); /* Do left column */
+		tp->right = tesseral_column(g_x_stop, s_iy_start + 1, g_y_stop-1);  /* Do right column */
 		if (check_key())  /* interrupt before we got properly rolling */
 		{
 			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, s_work_sym);
@@ -4639,9 +4664,14 @@ static int tesseral()
 	}
 	else  /* resuming, rebuild work stack */
 	{
-		int i, mid, curx, cury, xsize, ysize;
+		int i;
+		int mid;
+		int curx;
+		int cury;
+		int xsize;
+		int ysize;
 		struct tess *tp2;
-		tp->top = tp->bot = tp->lft = tp->rgt = -2;
+		tp->top = tp->bottom = tp->left = tp->right = -2;
 		cury = g_yy_begin & 0xfff;
 		ysize = 1;
 		i = (unsigned)g_yy_begin >> 12;
@@ -4697,7 +4727,7 @@ static int tesseral()
 		g_current_col = tp->x1; /* for tab_display */
 		g_current_row = tp->y1;
 
-		if (tp->top == -1 || tp->bot == -1 || tp->lft == -1 || tp->rgt == -1)
+		if (tp->top == -1 || tp->bottom == -1 || tp->left == -1 || tp->right == -1)
 		{
 			goto tess_split;
 		}
@@ -4710,33 +4740,34 @@ static int tesseral()
 		{
 			goto tess_split;
 		}
-		if (tp->bot == -2)
+		if (tp->bottom == -2)
 		{
-			tp->bot = tesseral_check_row(tp->x1, tp->x2, tp->y2);
+			tp->bottom = tesseral_check_row(tp->x1, tp->x2, tp->y2);
 		}
-		if (tp->bot != tp->top)
-		{
-			goto tess_split;
-		}
-		if (tp->lft == -2)
-		{
-			tp->lft = tesseral_check_column(tp->x1, tp->y1, tp->y2);
-		}
-		if (tp->lft != tp->top)
+		if (tp->bottom != tp->top)
 		{
 			goto tess_split;
 		}
-		if (tp->rgt == -2)
+		if (tp->left == -2)
 		{
-			tp->rgt = tesseral_check_column(tp->x2, tp->y1, tp->y2);
+			tp->left = tesseral_check_column(tp->x1, tp->y1, tp->y2);
 		}
-		if (tp->rgt != tp->top)
+		if (tp->left != tp->top)
+		{
+			goto tess_split;
+		}
+		if (tp->right == -2)
+		{
+			tp->right = tesseral_check_column(tp->x2, tp->y1, tp->y2);
+		}
+		if (tp->right != tp->top)
 		{
 			goto tess_split;
 		}
 
 		{
-			int mid, midcolor;
+			int mid;
+			int midcolor;
 			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
 			{
 				mid = (tp->x1 + tp->x2) >> 1;           /* Find mid point */
@@ -4758,7 +4789,8 @@ static int tesseral()
 		}
 
 		{  /* all 4 edges are the same color, fill in */
-			int i, j;
+			int i;
+			int j;
 			i = 0;
 			if (g_fill_color != 0)
 			{
@@ -4816,7 +4848,8 @@ static int tesseral()
 
 tess_split:
 		{  /* box not surrounded by same color, sub-divide */
-			int mid, midcolor;
+			int mid;
+			int midcolor;
 			struct tess *tp2;
 			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
 			{
@@ -4832,19 +4865,19 @@ tess_split:
 					{
 						tp->top = -2;
 					}
-					if (tp->bot == -1)
+					if (tp->bottom == -1)
 					{
-						tp->bot = -2;
+						tp->bottom = -2;
 					}
 					tp2 = tp;
 					if (mid - tp->x1 > 1)  /* left part >= 1 col, stack right */
 					{
 						memcpy(++tp, tp2, sizeof(*tp));
 						tp->x2 = mid;
-						tp->rgt = midcolor;
+						tp->right = midcolor;
 					}
 					tp2->x1 = mid;
-					tp2->lft = midcolor;
+					tp2->left = midcolor;
 				}
 				else
 				{
@@ -4861,20 +4894,20 @@ tess_split:
 				}
 				if (tp->y2 - mid > 1)  /* bottom part >= 1 column */
 				{
-					if (tp->lft == -1)
+					if (tp->left == -1)
 					{
-						tp->lft = -2;
+						tp->left = -2;
 					}
-					if (tp->rgt == -1)
+					if (tp->right == -1)
 					{
-						tp->rgt = -2;
+						tp->right = -2;
 					}
 					tp2 = tp;
 					if (mid - tp->y1 > 1)  /* top also >= 1 col, stack bottom */
 					{
 						memcpy(++tp, tp2, sizeof(*tp));
 						tp->y2 = mid;
-						tp->bot = midcolor;
+						tp->bottom = midcolor;
 					}
 					tp2->y1 = mid;
 					tp2->top = midcolor;
@@ -4890,7 +4923,9 @@ tess_split:
 tess_end:
 	if (tp >= (struct tess *)&g_stack[0])  /* didn't complete */
 	{
-		int i, xsize, ysize;
+		int i;
+		int xsize;
+		int ysize;
 		xsize = ysize = 1;
 		i = 2;
 		while (tp->x2 - tp->x1 - 2 >= i)
@@ -4942,7 +4977,8 @@ static int _fastcall tesseral_check_row(int x1, int x2, int y)
 
 static int _fastcall tesseral_column(int x, int y1, int y2)
 {
-	int colcolor, i;
+	int colcolor;
+	int i;
 	g_col = x;
 	g_row = y1;
 	g_reset_periodicity = 1;
@@ -4965,7 +5001,8 @@ static int _fastcall tesseral_column(int x, int y1, int y2)
 
 static int _fastcall tesseral_row(int x1, int x2, int y)
 {
-	int rowcolor, i;
+	int rowcolor;
+	int i;
 	g_row = y;
 	g_col = x1;
 	g_reset_periodicity = 1;
@@ -5112,7 +5149,8 @@ void _fastcall symPIplot(int x, int y, int color)
 /* Symmetry plot for period PI plus Origin Symmetry */
 void _fastcall symPIplot2J(int x, int y, int color)
 {
-	int i, j;
+	int i;
+	int j;
 	while (x <= g_xx_stop)
 	{
 		g_put_color(x, y, color);
@@ -5131,7 +5169,8 @@ void _fastcall symPIplot2J(int x, int y, int color)
 /* Symmetry plot for period PI plus Both Axis Symmetry */
 void _fastcall symPIplot4J(int x, int y, int color)
 {
-	int i, j;
+	int i;
+	int j;
 	while (x <= (g_xx_start + g_xx_stop)/2)
 	{
 		j = g_xx_stop-(x-g_xx_start);
@@ -5196,7 +5235,8 @@ void _fastcall symplot2J(int x, int y, int color)
 /* Symmetry plot for Both Axis Symmetry */
 void _fastcall symplot4(int x, int y, int color)
 {
-	int i, j;
+	int i;
+	int j;
 	j = g_xx_stop-(x-g_xx_start);
 	g_put_color(x , y, color);
 	if (j < g_x_dots)
@@ -5217,7 +5257,8 @@ void _fastcall symplot4(int x, int y, int color)
 /* Symmetry plot for X Axis Symmetry - Striped Newtbasin version */
 void _fastcall symplot2basin(int x, int y, int color)
 {
-	int i, stripe;
+	int i;
+	int stripe;
 	g_put_color(x, y, color);
 	stripe = (g_basin == 2 && color > 8) ? 8 : 0;
 	i = g_yy_stop-(y-g_yy_start);
@@ -5233,7 +5274,10 @@ void _fastcall symplot2basin(int x, int y, int color)
 /* Symmetry plot for Both Axis Symmetry  - Newtbasin version */
 void _fastcall symplot4basin(int x, int y, int color)
 {
-	int i, j, color1, stripe;
+	int i;
+	int j;
+	int color1;
+	int stripe;
 	if (color == 0) /* assumed to be "inside" color */
 	{
 		symplot4(x, y, color);

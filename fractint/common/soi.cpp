@@ -22,7 +22,6 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 
-#define DBLS LDBL
 #define FABS(x)  fabsl(x)
 /* the following needs to be changed back to frexpl once the portability
 	issue has been addressed JCO */
@@ -44,25 +43,30 @@ int g_minimum_stack_available;
 /* int g_minimum_stack = 1700; */ /* need this much stack to recurse */
 int g_minimum_stack = 2200; /* and this much stack to not crash when <tab> is pressed */
 
-static DBLS twidth;
-static DBLS equal;
+static LDBL twidth;
+static LDBL equal;
 static char baxinxx = FALSE;
 
-long iteration(register DBLS cr, register DBLS ci,
-				register DBLS re, register DBLS im,
+long iteration(LDBL cr, LDBL ci,
+				LDBL re, LDBL im,
 				long start)
 {
-	register long iter, offset = 0;
-	int k, n;
-	register DBLS ren, imn, sre, sim;
+	long iter;
+	long offset = 0;
+	int k;
+	int n;
+	LDBL ren;
+	LDBL imn;
+	LDBL sre;
+	LDBL sim;
 #ifdef INTEL
-	register float mag;
-	register unsigned long bail = 0x41800000, magi; /* bail = 16.0 */
-	register unsigned long eq = *(unsigned long *)&equal;
+	float mag;
+	unsigned long bail = 0x41800000, magi; /* bail = 16.0 */
+	unsigned long eq = *(unsigned long *)&equal;
 #else
-	register DBLS mag;
+	LDBL mag;
 #endif
-	DBLS d;
+	LDBL d;
 	int exponent;
 
 	if (baxinxx)
@@ -323,8 +327,7 @@ long iteration(register DBLS cr, register DBLS ci,
 
 static void put_horizontal_line(int x1, int y1, int x2, int color)
 {
-	int x;
-	for (x = x1; x <= x2; x++)
+	for (int x = x1; x <= x2; x++)
 	{
 		(*g_plot_color)(x, y1, color);
 	}
@@ -332,9 +335,9 @@ static void put_horizontal_line(int x1, int y1, int x2, int color)
 
 static void put_box(int x1, int y1, int x2, int y2, int color)
 {
-	for (; y1 <= y2; y1++)
+	for (int y = y1; y <= y2; y++)
 	{
-		put_horizontal_line(x1, y1, x2, color);
+		put_horizontal_line(x1, y, x2, color);
 	}
 }
 
@@ -403,19 +406,20 @@ static void put_box(int x1, int y1, int x2, int y2, int color)
 /* Newton Interpolation.
 	It computes the value of the interpolation polynomial given by
 	(x0, w0)..(x2, w2) at x:=t */
-static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
-		DBLS w0, DBLS w1, DBLS w2,
-		DBLS t)
+static LDBL interpolate(LDBL x0, LDBL x1, LDBL x2,
+		LDBL w0, LDBL w1, LDBL w2,
+		LDBL t)
 {
-	register DBLS b0 = w0, b1 = w1, b2 = w2, b;
-
+	LDBL b0 = w0;
+	LDBL b1 = w1;
+	LDBL b2 = w2;
 	/*b0 = (r0*b1-r1*b0)/(x1-x0);
 	b1 = (r1*b2-r2*b1)/(x2-x1);
 	b0 = (r0*b1-r2*b0)/(x2-x0);
 
-	return (DBLS)b0; */
-	b = (b1-b0)/(x1-x0);
-	return (DBLS)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
+	return (LDBL)b0; */
+	LDBL b = (b1-b0)/(x1-x0);
+	return (LDBL)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
 	/*
 	if (t < x1)
 		return w0 + ((t-x0)/(LDBL)(x1-x0))*(w1-w0);
@@ -443,7 +447,7 @@ static DBLS interpolate(DBLS x0, DBLS x1, DBLS x2,
 
 	  iter       : current number of iterations
 	  */
-static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
+static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 				zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
 /*
 	The purpose of this macro is to reduce the number of parameters of the
@@ -468,38 +472,43 @@ static DBLS zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 	} \
 	while (0)
 
-static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
+static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 				int x1, int x2, int y1, int y2, long iter)
 {
 	/* The following variables do not need their values saved */
 	/* used in scanning */
-	static long savecolor, color, helpcolor;
-	static int x, y, z, savex;
+	static long savecolor;
+	static long color;
+	static long helpcolor;
+	static int x;
+	static int y;
+	static int z;
+	static int savex;
 
 #if 0
-	static DBLS re, im, restep, imstep, interstep, helpre;
-	static DBLS zre, zim;
+	static LDBL re, im, restep, imstep, interstep, helpre;
+	static LDBL zre, zim;
 	/* interpolation coefficients */
-	static DBLS br10, br11, br12, br20, br21, br22, br30, br31, br32;
-	static DBLS bi10, bi11, bi12, bi20, bi21, bi22, bi30, bi31, bi32;
+	static LDBL br10, br11, br12, br20, br21, br22, br30, br31, br32;
+	static LDBL bi10, bi11, bi12, bi20, bi21, bi22, bi30, bi31, bi32;
 	/* ratio of interpolated test point to iterated one */
-	static DBLS l1, l2;
+	static LDBL l1, l2;
 	/* squares of key values */
-	static DBLS rq1, iq1;
-	static DBLS rq2, iq2;
-	static DBLS rq3, iq3;
-	static DBLS rq4, iq4;
-	static DBLS rq5, iq5;
-	static DBLS rq6, iq6;
-	static DBLS rq7, iq7;
-	static DBLS rq8, iq8;
-	static DBLS rq9, iq9;
+	static LDBL rq1, iq1;
+	static LDBL rq2, iq2;
+	static LDBL rq3, iq3;
+	static LDBL rq4, iq4;
+	static LDBL rq5, iq5;
+	static LDBL rq6, iq6;
+	static LDBL rq7, iq7;
+	static LDBL rq8, iq8;
+	static LDBL rq9, iq9;
 
 	/* test points */
-	static DBLS cr1, cr2;
-	static DBLS ci1, ci2;
-	static DBLS tzr1, tzi1, tzr2, tzi2, tzr3, tzi3, tzr4, tzi4;
-	static DBLS trq1, tiq1, trq2, tiq2, trq3, tiq3, trq4, tiq4;
+	static LDBL cr1, cr2;
+	static LDBL ci1, ci2;
+	static LDBL tzr1, tzi1, tzr2, tzi2, tzr3, tzi3, tzr4, tzi4;
+	static LDBL trq1, tiq1, trq2, tiq2, trq3, tiq3, trq4, tiq4;
 #else
 #define re        mem_static[ 0]
 #define im        mem_static[ 1]
@@ -574,19 +583,19 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 	static int avail;
 
 	/* the variables below need to have local copis for recursive calls */
-	DBLS *mem;
-	DBLS *mem_static;
+	LDBL *mem;
+	LDBL *mem_static;
 	/* center of rectangle */
-	DBLS midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
+	LDBL midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
 
 #if 0
 	/* saved values of key values */
-	DBLS sr1, si1, sr2, si2, sr3, si3, sr4, si4;
-	DBLS sr5, si5, sr6, si6, sr7, si7, sr8, si8, sr9, si9;
+	LDBL sr1, si1, sr2, si2, sr3, si3, sr4, si4;
+	LDBL sr5, si5, sr6, si6, sr7, si7, sr8, si8, sr9, si9;
 	/* key values for subsequent rectangles */
-	DBLS re10, re11, re12, re13, re14, re15, re16, re17, re18, re19, re20, re21;
-	DBLS im10, im11, im12, im13, im14, im15, im16, im17, im18, im19, im20, im21;
-	DBLS re91, re92, re93, re94, im91, im92, im93, im94;
+	LDBL re10, re11, re12, re13, re14, re15, re16, re17, re18, re19, re20, re21;
+	LDBL im10, im11, im12, im13, im14, im15, im16, im17, im18, im19, im20, im21;
+	LDBL re91, re92, re93, re94, im91, im92, im93, im94;
 #else
 #define sr1  mem[ 0]
 #define si1  mem[ 1]
@@ -650,7 +659,7 @@ static int rhombus(DBLS cre1, DBLS cre2, DBLS cim1, DBLS cim2,
 		static variables, then we make our own "stack" with copies
 		for each recursive call of rhombus() for the rest.
 		*/
-	mem_static = (DBLS *)g_size_of_string;
+	mem_static = (LDBL *)g_size_of_string;
 	mem = mem_static+ 66 + 50*rhombus_depth;
 #endif
 
@@ -1118,9 +1127,13 @@ rhombus_done:
 void soi_long_double()
 {
 	int status;
-	DBLS tolerance = 0.1;
-	DBLS stepx, stepy;
-	DBLS xxminl, xxmaxl, yyminl, yymaxl;
+	LDBL tolerance = 0.1;
+	LDBL stepx;
+	LDBL stepy;
+	LDBL xxminl;
+	LDBL xxmaxl;
+	LDBL yyminl;
+	LDBL yymaxl;
 	g_minimum_stack_available = 30000;
 	rhombus_depth = -1;
 	g_max_rhombus_depth = 0;
