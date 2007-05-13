@@ -27,6 +27,7 @@
 #include "prototyp.h"
 #include "drivers.h"
 #include "Formula.h"
+#include "MathUtil.h"
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
@@ -34,7 +35,10 @@
 #endif
 
 #ifdef WATCH_MP
-double x1, y1, x2, y2;
+double x1;
+double y1;
+double x2;
+double y2;
 #endif
 
 #define MAX_OPS 250
@@ -534,12 +538,10 @@ void dRandom()
 
 void Formula::Random_d()
 {
-	long x, y;
-
 	/* Use the same algorithm as for fixed math so that they will generate
           the same fractals when the srand() function is used. */
-	x = new_random_number() >> (32 - g_bit_shift);
-	y = new_random_number() >> (32 - g_bit_shift);
+	long x = new_random_number() >> (32 - g_bit_shift);
+	long y = new_random_number() >> (32 - g_bit_shift);
 	m_variables[VARIABLE_RAND].a.d.x = ((double)x / (1L << g_bit_shift));
 	m_variables[VARIABLE_RAND].a.d.y = ((double)y / (1L << g_bit_shift));
 
@@ -553,12 +555,10 @@ void mRandom()
 void Formula::Random_m()
 {
 #if !defined(XFRACT)
-	long x, y;
-
 	/* Use the same algorithm as for fixed math so that they will generate
 		the same fractals when the srand() function is used. */
-	x = new_random_number() >> (32 - g_bit_shift);
-	y = new_random_number() >> (32 - g_bit_shift);
+	long x = new_random_number() >> (32 - g_bit_shift);
+	long y = new_random_number() >> (32 - g_bit_shift);
 	m_variables[VARIABLE_RAND].a.m.x = *fg2MP(x, g_bit_shift);
 	m_variables[VARIABLE_RAND].a.m.y = *fg2MP(y, g_bit_shift);
 #endif
@@ -948,9 +948,8 @@ void lStkTrunc()
 {
 	/* shifting and shifting back truncates positive numbers,
 		so we make the numbers positive */
-	int signx, signy;
-	signx = sign(Arg1->l.x);
-	signy = sign(Arg1->l.y);
+	int signx = sign(Arg1->l.x);
+	int signy = sign(Arg1->l.y);
 	Arg1->l.x = labs(Arg1->l.x);
 	Arg1->l.y = labs(Arg1->l.y);
 	Arg1->l.x = (Arg1->l.x) >> g_bit_shift;
@@ -1111,12 +1110,10 @@ void mStkMul()
 
 void lStkMul()
 {
-	long x, y;
-
-	x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) -
-	multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
-	y = multiply(Arg2->l.y, Arg1->l.x, g_bit_shift) +
-	multiply(Arg2->l.x, Arg1->l.y, g_bit_shift);
+	long x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) -
+		multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
+	long y = multiply(Arg2->l.y, Arg1->l.x, g_bit_shift) +
+		multiply(Arg2->l.x, Arg1->l.y, g_bit_shift);
 	Arg2->l.x = x;
 	Arg2->l.y = y;
 	Arg1--;
@@ -1143,14 +1140,12 @@ void mStkDiv()
 
 void lStkDiv()
 {
-	long x, y, mod, x2, y2;
-
-	mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
-	multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
-	x = divide(Arg1->l.x, mod, g_bit_shift);
-	y = -divide(Arg1->l.y, mod, g_bit_shift);
-	x2 = multiply(Arg2->l.x, x, g_bit_shift) - multiply(Arg2->l.y, y, g_bit_shift);
-	y2 = multiply(Arg2->l.y, x, g_bit_shift) + multiply(Arg2->l.x, y, g_bit_shift);
+	long mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
+		multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
+	long x = divide(Arg1->l.x, mod, g_bit_shift);
+	long y = -divide(Arg1->l.y, mod, g_bit_shift);
+	long x2 = multiply(Arg2->l.x, x, g_bit_shift) - multiply(Arg2->l.y, y, g_bit_shift);
+	long y2 = multiply(Arg2->l.y, x, g_bit_shift) + multiply(Arg2->l.x, y, g_bit_shift);
 	Arg2->l.x = x2;
 	Arg2->l.y = y2;
 	Arg1--;
@@ -1271,9 +1266,11 @@ void (*StkFlip)() = dStkFlip;
 
 void dStkSin()
 {
-	double sinx, cosx, sinhy, coshy;
-
+	double sinx;
+	double cosx;
 	FPUsincos(&Arg1->d.x, &sinx, &cosx);
+	double sinhy;
+	double coshy;
 	FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
 	Arg1->d.x = sinx*coshy;
 	Arg1->d.y = cosx*sinhy;
@@ -1287,10 +1284,13 @@ void mStkSin()
 
 void lStkSin()
 {
-	long x, y, sinx, cosx, sinhy, coshy;
-	x = Arg1->l.x >> s_delta16;
-	y = Arg1->l.y >> s_delta16;
+	long x = Arg1->l.x >> s_delta16;
+	long y = Arg1->l.y >> s_delta16;
+	long sinx;
+	long cosx;
 	SinCos086(x, &sinx, &cosx);
+	long sinhy;
+	long coshy;
 	SinhCosh086(y, &sinhy, &coshy);
 	Arg1->l.x = multiply(sinx, coshy, s_shift_back);
 	Arg1->l.y = multiply(cosx, sinhy, s_shift_back);
@@ -1304,12 +1304,15 @@ void (*StkSin)() = dStkSin;
 
 void dStkTan()
 {
-	double sinx, cosx, sinhy, coshy, denom;
 	Arg1->d.x *= 2;
 	Arg1->d.y *= 2;
+	double sinx;
+	double cosx;
 	FPUsincos(&Arg1->d.x, &sinx, &cosx);
+	double sinhy;
+	double coshy;
 	FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
-	denom = cosx + coshy;
+	double denom = cosx + coshy;
 	ChkFloatDenom(denom);
 	Arg1->d.x = sinx/denom;
 	Arg1->d.y = sinhy/denom;
@@ -1323,14 +1326,15 @@ void mStkTan()
 
 void lStkTan()
 {
-	long x, y, sinx, cosx, sinhy, coshy, denom;
-	x = Arg1->l.x >> s_delta16;
-	x = x << 1;
-	y = Arg1->l.y >> s_delta16;
-	y = y << 1;
+	long x = (Arg1->l.x >> s_delta16)*2;
+	long y = (Arg1->l.y >> s_delta16)*2;
+	long sinx;
+	long cosx;
 	SinCos086(x, &sinx, &cosx);
+	long sinhy;
+	long coshy;
 	SinhCosh086(y, &sinhy, &coshy);
-	denom = cosx + coshy;
+	long denom = cosx + coshy;
 	ChkLongDenom(denom);
 	Arg1->l.x = divide(sinx, denom, g_bit_shift);
 	Arg1->l.y = divide(sinhy, denom, g_bit_shift);
@@ -1341,12 +1345,15 @@ void (*StkTan)() = dStkTan;
 
 void dStkTanh()
 {
-	double siny, cosy, sinhx, coshx, denom;
 	Arg1->d.x *= 2;
 	Arg1->d.y *= 2;
+	double siny;
+	double cosy;
 	FPUsincos(&Arg1->d.y, &siny, &cosy);
+	double sinhx;
+	double coshx;
 	FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
-	denom = coshx + cosy;
+	double denom = coshx + cosy;
 	ChkFloatDenom(denom);
 	Arg1->d.x = sinhx/denom;
 	Arg1->d.y = siny/denom;
@@ -1360,14 +1367,17 @@ void mStkTanh()
 
 void lStkTanh()
 {
-	long x, y, siny, cosy, sinhx, coshx, denom;
-	x = Arg1->l.x >> s_delta16;
+	long x = Arg1->l.x >> s_delta16;
 	x = x << 1;
-	y = Arg1->l.y >> s_delta16;
+	long y = Arg1->l.y >> s_delta16;
 	y = y << 1;
+	long siny;
+	long cosy;
 	SinCos086(y, &siny, &cosy);
+	long sinhx;
+	long coshx;
 	SinhCosh086(x, &sinhx, &coshx);
-	denom = coshx + cosy;
+	long denom = coshx + cosy;
 	ChkLongDenom(denom);
 	Arg1->l.x = divide(sinhx, denom, g_bit_shift);
 	Arg1->l.y = divide(siny, denom, g_bit_shift);
@@ -1378,12 +1388,15 @@ void (*StkTanh)() = dStkTanh;
 
 void dStkCoTan()
 {
-	double sinx, cosx, sinhy, coshy, denom;
 	Arg1->d.x *= 2;
 	Arg1->d.y *= 2;
+	double sinx;
+	double cosx;
 	FPUsincos(&Arg1->d.x, &sinx, &cosx);
+	double sinhy;
+	double coshy;
 	FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
-	denom = coshy - cosx;
+	double denom = coshy - cosx;
 	ChkFloatDenom(denom);
 	Arg1->d.x = sinx/denom;
 	Arg1->d.y = -sinhy/denom;
@@ -1397,14 +1410,17 @@ void mStkCoTan()
 
 void lStkCoTan()
 {
-	long x, y, sinx, cosx, sinhy, coshy, denom;
-	x = Arg1->l.x >> s_delta16;
+	long x = Arg1->l.x >> s_delta16;
 	x = x << 1;
-	y = Arg1->l.y >> s_delta16;
+	long y = Arg1->l.y >> s_delta16;
 	y = y << 1;
+	long sinx;
+	long cosx;
 	SinCos086(x, &sinx, &cosx);
+	long sinhy;
+	long coshy;
 	SinhCosh086(y, &sinhy, &coshy);
-	denom = coshy - cosx;
+	long denom = coshy - cosx;
 	ChkLongDenom(denom);
 	Arg1->l.x = divide(sinx, denom, g_bit_shift);
 	Arg1->l.y = -divide(sinhy, denom, g_bit_shift);
@@ -1415,12 +1431,15 @@ void (*StkCoTan)() = dStkCoTan;
 
 void dStkCoTanh()
 {
-	double siny, cosy, sinhx, coshx, denom;
 	Arg1->d.x *= 2;
 	Arg1->d.y *= 2;
+	double siny;
+	double cosy;
 	FPUsincos(&Arg1->d.y, &siny, &cosy);
+	double sinhx;
+	double coshx;
 	FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
-	denom = coshx - cosy;
+	double denom = coshx - cosy;
 	ChkFloatDenom(denom);
 	Arg1->d.x = sinhx/denom;
 	Arg1->d.y = -siny/denom;
@@ -1434,14 +1453,17 @@ void mStkCoTanh()
 
 void lStkCoTanh()
 {
-	long x, y, siny, cosy, sinhx, coshx, denom;
-	x = Arg1->l.x >> s_delta16;
+	long x = Arg1->l.x >> s_delta16;
 	x = x << 1;
-	y = Arg1->l.y >> s_delta16;
+	long y = Arg1->l.y >> s_delta16;
 	y = y << 1;
+	long siny;
+	long cosy;
 	SinCos086(y, &siny, &cosy);
+	long sinhx;
+	long coshx;
 	SinhCosh086(x, &sinhx, &coshx);
-	denom = coshx - cosy;
+	long denom = coshx - cosy;
 	ChkLongDenom(denom);
 	Arg1->l.x = divide(sinhx, denom, g_bit_shift);
 	Arg1->l.y = -divide(siny, denom, g_bit_shift);
@@ -1503,9 +1525,11 @@ void StkIdent()  /* do nothing - the function Z */
 
 void dStkSinh()
 {
-	double siny, cosy, sinhx, coshx;
-
+	double siny;
+	double cosy;
 	FPUsincos(&Arg1->d.y, &siny, &cosy);
+	double sinhx;
+	double coshx;
 	FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
 	Arg1->d.x = sinhx*cosy;
 	Arg1->d.y = coshx*siny;
@@ -1519,11 +1543,13 @@ void mStkSinh()
 
 void lStkSinh()
 {
-	long x, y, sinhx, coshx, siny, cosy;
-
-	x = Arg1->l.x >> s_delta16;
-	y = Arg1->l.y >> s_delta16;
+	long x = Arg1->l.x >> s_delta16;
+	long y = Arg1->l.y >> s_delta16;
+	long siny;
+	long cosy;
 	SinCos086(y, &siny, &cosy);
+	long sinhx;
+	long coshx;
 	SinhCosh086(x, &sinhx, &coshx);
 	Arg1->l.x = multiply(cosy, sinhx, s_shift_back);
 	Arg1->l.y = multiply(siny, coshx, s_shift_back);
@@ -1534,9 +1560,11 @@ void (*StkSinh)() = dStkSinh;
 
 void dStkCos()
 {
-	double sinx, cosx, sinhy, coshy;
-
+	double sinx;
+	double cosx;
 	FPUsincos(&Arg1->d.x, &sinx, &cosx);
+	double sinhy;
+	double coshy;
 	FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
 	Arg1->d.x = cosx*coshy;
 	Arg1->d.y = -sinx*sinhy;
@@ -1550,11 +1578,13 @@ void mStkCos()
 
 void lStkCos()
 {
-	long x, y, sinx, cosx, sinhy, coshy;
-
-	x = Arg1->l.x >> s_delta16;
-	y = Arg1->l.y >> s_delta16;
+	long x = Arg1->l.x >> s_delta16;
+	long y = Arg1->l.y >> s_delta16;
+	long sinx;
+	long cosx;
 	SinCos086(x, &sinx, &cosx);
+	long sinhy;
+	long coshy;
 	SinhCosh086(y, &sinhy, &coshy);
 	Arg1->l.x = multiply(cosx, coshy, s_shift_back);
 	Arg1->l.y = -multiply(sinx, sinhy, s_shift_back);
@@ -1588,9 +1618,11 @@ void (*StkCosXX)() = dStkCosXX;
 
 void dStkCosh()
 {
-	double siny, cosy, sinhx, coshx;
-
+	double siny;
+	double cosy;
 	FPUsincos(&Arg1->d.y, &siny, &cosy);
+	double sinhx;
+	double coshx;
 	FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
 	Arg1->d.x = coshx*cosy;
 	Arg1->d.y = sinhx*siny;
@@ -1604,11 +1636,13 @@ void mStkCosh()
 
 void lStkCosh()
 {
-	long x, y, sinhx, coshx, siny, cosy;
-
-	x = Arg1->l.x >> s_delta16;
-	y = Arg1->l.y >> s_delta16;
+	long x = Arg1->l.x >> s_delta16;
+	long y = Arg1->l.y >> s_delta16;
+	long siny;
+	long cosy;
 	SinCos086(y, &siny, &cosy);
+	long sinhx;
+	long coshx;
 	SinhCosh086(x, &sinhx, &coshx);
 	Arg1->l.x = multiply(cosy, coshx, s_shift_back);
 	Arg1->l.y = multiply(siny, sinhx, s_shift_back);
@@ -2264,23 +2298,22 @@ static unsigned count_white_space(const char *str)
 /* detect if constant is part of a (a, b) construct */
 static int isconst_pair(const char *Str)
 {
-	int n, j;
-	int answer = 0;
 	/* skip past first number */
+	int n;
 	for (n = 0; isdigit(Str[n]) || Str[n] == '.'; n++)
 	{
 	}
 	if (Str[n] == ',')
 	{
-		j = n + count_white_space(&Str[n + 1]) + 1;
+		int j = n + count_white_space(&Str[n + 1]) + 1;
 		if (isdigit(Str[j])
 			|| (Str[j] == '-' && (isdigit(Str[j + 1]) || Str[j + 1] == '.'))
 			|| Str[j] == '.')
 		{
-			answer = 1;
+			return 1;
 		}
 	}
-	return answer;
+	return 0;
 }
 
 ConstArg *Formula::is_constant(const char *text, int length)
@@ -2627,8 +2660,6 @@ int Formula::ParseStr(const char *text, int pass)
 	int Mod[20];
 	int mdstk = 0;
 	int jumptype;
-	double const_pi;
-	double const_e;
 	double Xctr;
 	double Yctr;
 	double Xmagfactor;
@@ -2821,8 +2852,6 @@ int Formula::ParseStr(const char *text, int pass)
 		m_variables[m_parser_vsp].len = (int) strlen(Constants[m_parser_vsp]);
 	}
 	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-	const_pi = atan(1.0)*4;
-	const_e  = exp(1.0);
 	m_variables[VARIABLE_RAND].a.d.x = m_variables[VARIABLE_RAND].a.d.y = 0.0;
 	m_variables[VARIABLE_SCRN_MAX].a.d.x = (double)g_x_dots;
 	m_variables[VARIABLE_SCRN_MAX].a.d.y = (double)g_y_dots;
@@ -2844,9 +2873,9 @@ int Formula::ParseStr(const char *text, int pass)
 		m_variables[VARIABLE_P1].a.d.y = g_parameters[1];
 		m_variables[VARIABLE_P2].a.d.x = g_parameters[2];
 		m_variables[VARIABLE_P2].a.d.y = g_parameters[3];
-		m_variables[VARIABLE_PI].a.d.x = const_pi;
+		m_variables[VARIABLE_PI].a.d.x = MathUtil::Pi;
 		m_variables[VARIABLE_PI].a.d.y = 0.0;
-		m_variables[VARIABLE_E].a.d.x = const_e;
+		m_variables[VARIABLE_E].a.d.x = MathUtil::e;
 		m_variables[VARIABLE_E].a.d.y = 0.0;
 		m_variables[VARIABLE_P3].a.d.x = g_parameters[4];
 		m_variables[VARIABLE_P3].a.d.y = g_parameters[5];
@@ -2861,9 +2890,9 @@ int Formula::ParseStr(const char *text, int pass)
 		m_variables[VARIABLE_P1].a.m.y = *d2MP(g_parameters[1]);
 		m_variables[VARIABLE_P2].a.m.x = *d2MP(g_parameters[2]);
 		m_variables[VARIABLE_P2].a.m.y = *d2MP(g_parameters[3]);
-		m_variables[VARIABLE_PI].a.m.x = *d2MP(const_pi);
+		m_variables[VARIABLE_PI].a.m.x = *d2MP(MathUtil::Pi);
 		m_variables[VARIABLE_PI].a.m.y = *d2MP(0.0);
-		m_variables[VARIABLE_E].a.m.x = *d2MP(const_e);
+		m_variables[VARIABLE_E].a.m.x = *d2MP(MathUtil::e);
 		m_variables[VARIABLE_E].a.m.y = *d2MP(0.0);
 		m_variables[VARIABLE_P3].a.m.x = *d2MP(g_parameters[4]);
 		m_variables[VARIABLE_P3].a.m.y = *d2MP(g_parameters[5]);
@@ -2883,9 +2912,9 @@ int Formula::ParseStr(const char *text, int pass)
 		m_variables[VARIABLE_P1].a.l.y = (long)(g_parameters[1]*s_fudge);
 		m_variables[VARIABLE_P2].a.l.x = (long)(g_parameters[2]*s_fudge);
 		m_variables[VARIABLE_P2].a.l.y = (long)(g_parameters[3]*s_fudge);
-		m_variables[VARIABLE_PI].a.l.x = (long)(const_pi*s_fudge);
+		m_variables[VARIABLE_PI].a.l.x = (long)(MathUtil::Pi*s_fudge);
 		m_variables[VARIABLE_PI].a.l.y = 0L;
-		m_variables[VARIABLE_E].a.l.x = (long)(const_e*s_fudge);
+		m_variables[VARIABLE_E].a.l.x = (long)(MathUtil::e*s_fudge);
 		m_variables[VARIABLE_E].a.l.y = 0L;
 		m_variables[VARIABLE_P3].a.l.x = (long)(g_parameters[4]*s_fudge);
 		m_variables[VARIABLE_P3].a.l.y = (long)(g_parameters[5]*s_fudge);
@@ -4160,7 +4189,10 @@ int Formula::get_parameter(const char *Name)
 int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 {
 	long filepos = ftell(open_file);
-	int c, i, done, at_end_of_name;
+	int c;
+	int i;
+	int done;
+	int at_end_of_name;
 
 	/* first, test name */
 	done = at_end_of_name = i = 0;
