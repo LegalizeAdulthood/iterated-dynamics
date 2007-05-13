@@ -331,8 +331,11 @@ static int get_the_rest()
 	{
 		"no", "x", "y", "x+y", "x-y", "random", "spread"
 	};
-	int i, k, num, numtrig;
-	char *choices[20];
+	int i;
+	int k;
+	int num;
+	int numtrig;
+	const char *choices[20];
 	struct full_screen_values uvalues[20];
 
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
@@ -438,8 +441,11 @@ static int get_variations()
 	{
 		"no", "x", "y", "x+y", "x-y", "random", "spread"
 	};
-	int i, k, num, numparams;
-	char *choices[20];
+	int i;
+	int k;
+	int num;
+	int numparams;
+	const char *choices[20];
 	struct full_screen_values uvalues[20];
 	int firstparm = 0;
 	int lastparm  = MAX_PARAMETERS;
@@ -618,12 +624,20 @@ void set_mutation_level(int strength)
 
 int get_evolve_parameters()
 {
-	char *choices[20];
+	const char *choices[20];
 	struct full_screen_values uvalues[20];
-	int i, j, k, tmp;
-	int old_evolving, old_gridsz;
+	int i;
+	int j;
+	int k;
+	int tmp;
+	int old_evolving;
+	int old_gridsz;
 	int old_variations = 0;
-	double old_paramrangex, old_paramrangey, old_opx, old_opy, old_fiddlefactor;
+	double old_paramrangex;
+	double old_paramrangey;
+	double old_opx;
+	double old_opy;
+	double old_fiddlefactor;
 
 	/* fill up the previous values arrays */
 	old_evolving      = g_evolving;
@@ -738,7 +752,8 @@ get_evol_restart:
 	}
 	if (i == FIK_F3)
 	{
-		double centerx, centery;
+		double centerx;
+		double centery;
 		centerx = g_parameter_offset_x + g_parameter_range_x / 2;
 		g_parameter_range_x = g_parameter_range_x*2;
 		g_parameter_offset_x = g_new_parameter_offset_x = centerx - g_parameter_range_x / 2;
@@ -943,7 +958,8 @@ static void set_random(int ecount)
 	/* Call this routine to set the random # to the proper value */
 	/* if it may have changed, before fiddle_parameters() is called. */
 	/* Now called by fiddle_parameters(). */
-	int index, i;
+	int index;
+	int i;
 
 	srand(g_this_generation_random_seed);
 	for (index = 0; index < ecount; index++)
@@ -1074,7 +1090,9 @@ void spiral_map(int count)
 	/* more intuitively useful order of drawing the sub images.  */
 	/* All the malarky with count is to allow resuming */
 
-	int i, mid, offset;
+	int i;
+	int mid;
+	int offset;
 	i = 0;
 	mid = g_grid_size / 2;
 	if (count == 0)  /* start in the middle */
@@ -1135,7 +1153,8 @@ int unspiral_map()
 	mid = g_grid_size / 2;
 	if ((g_px == mid && g_py == mid) || (last_grid_size != g_grid_size))
 	{
-		int i, gridsqr;
+		int i;
+		int gridsqr;
 		/* set up array and return */
 		gridsqr = g_grid_size*g_grid_size;
 		ecountbox[g_px][g_py] = 0;  /* we know the first one, do the rest */

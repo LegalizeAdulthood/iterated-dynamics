@@ -29,7 +29,11 @@ void intro()
 #else
 	static char PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
 #endif
-	int       toprow, botrow, i, j, delaymax;
+	int toprow;
+	int botrow;
+	int i;
+	int j;
+	int delaymax;
 	char      oldchar;
 	int       authors[100];              /* this should be enough for awhile */
 	char credits[32768];

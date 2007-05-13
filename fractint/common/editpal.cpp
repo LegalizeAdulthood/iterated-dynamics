@@ -385,9 +385,9 @@ va_dcl
 static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
 	int    curr;
-	double rm = (double)((int) p2->red   - (int) p1->red) / num,
-			gm = (double)((int) p2->green - (int) p1->green) / num,
-			bm = (double)((int) p2->blue  - (int) p1->blue) / num;
+	double rm = (double)((int)p2->red - (int)p1->red) / num;
+	double gm = (double)((int)p2->green - (int)p1->green) / num;
+	double bm = (double)((int)p2->blue - (int)p1->blue) / num;
 
 	for (curr = 0; curr < num; curr += skip)
 	{
@@ -556,7 +556,8 @@ static void draw_diamond(int x, int y, int color)
 
 struct tag_cursor
 {
-	int     x, y;
+	int x;
+	int y;
 	int     hidden;       /* >0 if mouse hidden */
 	long    last_blink;
 	BOOLEAN blink;
@@ -769,14 +770,17 @@ int cursor_wait_key()   /* blink cursor while waiting for a key */
 
 struct tag_move_box
 {
-	int      x, y;
-	int      base_width,
-				base_depth;
+	int x;
+	int y;
+	int base_width;
+	int base_depth;
 	int      csize;
 	BOOLEAN  moved;
 	BOOLEAN  should_hide;
-	char    *t, *b,
-			*l, *r;
+	char *t;
+	char *b;
+	char *l;
+	char *r;
 };
 typedef struct tag_move_box move_box;
 
@@ -861,10 +865,10 @@ static void move_box_set_csize(move_box *me, int csize)
 
 static void move_box_draw(move_box *me)  /* private */
 {
-	int width = me->base_width + me->csize*16 + 1,
-		depth = me->base_depth + me->csize*16 + 1;
-	int x     = me->x,
-		y     = me->y;
+	int width = me->base_width + me->csize * 16 + 1;
+	int depth = me->base_depth + me->csize * 16 + 1;
+	int x = me->x;
+	int y = me->y;
 
 
 	get_row (x, y,         width, me->t);
@@ -882,8 +886,8 @@ static void move_box_draw(move_box *me)  /* private */
 
 static void move_box_erase(move_box *me)   /* private */
 {
-	int width = me->base_width + me->csize*16 + 1,
-		depth = me->base_depth + me->csize*16 + 1;
+	int width = me->base_width + me->csize * 16 + 1;
+	int depth = me->base_depth + me->csize * 16 + 1;
 
 	vertical_put_row(me->x,         me->y, depth, me->l);
 	vertical_put_row(me->x + width-1, me->y, depth, me->r);
@@ -899,8 +903,8 @@ static void move_box_move(move_box *me, int key)
 {
 	BOOLEAN done  = FALSE;
 	BOOLEAN first = TRUE;
-	int     xoff  = 0,
-			yoff  = 0;
+	int xoff = 0;
+	int yoff = 0;
 
 	while (!done)
 	{
@@ -967,9 +971,9 @@ static void move_box_move(move_box *me, int key)
 static BOOLEAN move_box_process(move_box *me)
 {
 	int     key;
-	int     orig_x     = me->x,
-			orig_y     = me->y,
-			orig_csize = me->csize;
+	int orig_x = me->x;
+	int orig_y = me->y;
+	int orig_csize = me->csize;
 
 	move_box_draw(me);
 
@@ -1322,7 +1326,8 @@ static int color_editor_edit(color_editor *me)
 
 struct tag_rgb_editor
 {
-	int       x, y;            /* position */
+	int x;
+	int y;            /* position */
 	int       curr;            /* 0 = r, 1 = g, 2 = b */
 	int       pal;             /* palette number */
 	BOOLEAN   done;
@@ -1502,8 +1507,8 @@ static void rgb_editor_blank_sample_box(rgb_editor *me)
 
 static void rgb_editor_update(rgb_editor *me)
 {
-	int x1 = me->x + 2 + COLOR_EDITOR_WIDTH + 1 + 1,
-		y1 = me->y + 2 + 1;
+	int x1 = me->x + 2 + COLOR_EDITOR_WIDTH + 1 + 1;
+	int y1 = me->y + 2 + 1;
 
 	if (me->hidden)
 	{
@@ -1520,8 +1525,8 @@ static void rgb_editor_update(rgb_editor *me)
 
 	else if (is_reserved(me->pal))
 	{
-		int x2 = x1 + RGB_EDITOR_BOX_WIDTH-3,
-			y2 = y1 + RGB_EDITOR_BOX_DEPTH-3;
+		int x2 = x1 + RGB_EDITOR_BOX_WIDTH - 3;
+		int y2 = y1 + RGB_EDITOR_BOX_DEPTH - 3;
 
 		fill_rectangle(x1, y1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
 		driver_draw_line(x1, y1, x2, y2, s_fg_color);
@@ -1624,7 +1629,8 @@ Modes:
 
 struct tag_pal_table
 {
-	int           x, y;
+	int x;
+	int y;
 	int           csize;
 	int           active;   /* which rgb_editor is active (0, 1) */
 	int           curr[2];
@@ -1646,7 +1652,8 @@ struct tag_pal_table
 
 
 	PALENTRY      fs_color;
-	int           top, bottom; /* top and bottom colours of freestyle band */
+	int top;
+	int bottom; /* top and bottom colours of freestyle band */
 	int           bandwidth; /*size of freestyle colour band */
 	BOOLEAN       freestyle;
 };
@@ -1696,7 +1703,9 @@ static void pal_table_calc_top_bottom(pal_table *me)
 
 static void pal_table_put_band(pal_table *me, PALENTRY *pal)
 {
-	int r, b, a;
+	int r;
+	int b;
+	int a;
 
 	/* clip top and bottom values to stop them running off the end of the DAC */
 
@@ -1784,7 +1793,9 @@ static void pal_table_undo_process(pal_table *me, int delta)   /* undo/redo comm
 	case UNDO_DATA:
 	case UNDO_DATA_SINGLE:
 		{
-			int      first, last, num;
+			int first;
+			int last;
+			int num;
 			PALENTRY temp[256];
 
 			if (cmd == UNDO_DATA)
@@ -1893,8 +1904,8 @@ static void pal_table_draw_status(pal_table *me, BOOLEAN stripe_mode)
 
 	if (!me->hidden && (width - (RGB_EDITOR_WIDTH*2 + 4) >= STATUS_LEN*8))
 	{
-		int x = me->x + 2 + RGB_EDITOR_WIDTH,
-			y = me->y + PALTABLE_PALY - 10;
+		int x = me->x + 2 + RGB_EDITOR_WIDTH;
+		int y = me->y + PALTABLE_PALY - 10;
 		color = pal_table_get_cursor_color(me);
 		if (color < 0 || color >= g_colors) /* hmm, the border returns -1 */
 		{
@@ -1921,9 +1932,9 @@ static void pal_table_draw_status(pal_table *me, BOOLEAN stripe_mode)
 
 static void pal_table_highlight_pal(pal_table *me, int pnum, int color)
 {
-	int x    = me->x + PALTABLE_PALX + (pnum % 16)*me->csize,
-		y    = me->y + PALTABLE_PALY + (pnum/16)*me->csize,
-		size = me->csize;
+	int x = me->x + PALTABLE_PALX + (pnum % 16) * me->csize;
+	int y = me->y + PALTABLE_PALY + (pnum / 16) * me->csize;
+	int size = me->csize;
 
 	if (me->hidden)
 	{
@@ -1947,7 +1958,8 @@ static void pal_table_highlight_pal(pal_table *me, int pnum, int color)
 static void pal_table_draw(pal_table *me)
 {
 	int pal;
-	int xoff, yoff;
+	int xoff;
+	int yoff;
 	int width;
 
 	if (me->hidden)
@@ -1982,10 +1994,10 @@ static void pal_table_draw(pal_table *me)
 		}
 		else if (is_reserved(pal))
 		{
-			int x1 = me->x + xoff + 1,
-				y1 = me->y + yoff + 1,
-				x2 = x1 + me->csize - 2,
-				y2 = y1 + me->csize - 2;
+			int x1 = me->x + xoff + 1;
+			int y1 = me->y + yoff + 1;
+			int x2 = x1 + me->csize - 2;
+			int y2 = y1 + me->csize - 2;
 			fill_rectangle(me->x + xoff + 1, me->y + yoff + 1, me->csize-1, me->csize-1, s_bg_color);
 			driver_draw_line(x1, y1, x2, y2, s_fg_color);
 			driver_draw_line(x1, y2, x2, y1, s_fg_color);
@@ -2116,8 +2128,8 @@ static BOOLEAN pal_table_memory_alloc(pal_table *me, long size)
 static void pal_table_save_rect(pal_table *me)
 {
 	char buff[MAX_WIDTH];
-	int  width = PALTABLE_PALX + me->csize*16 + 1 + 1,
-		depth = PALTABLE_PALY + me->csize*16 + 1 + 1;
+	int width = PALTABLE_PALX + me->csize * 16 + 1 + 1;
+	int depth = PALTABLE_PALY + me->csize * 16 + 1 + 1;
 	int  yoff;
 
 
@@ -2192,8 +2204,8 @@ static void pal_table_save_rect(pal_table *me)
 static void pal_table_restore_rect(pal_table *me)
 {
 	char buff[MAX_WIDTH];
-	int  width = PALTABLE_PALX + me->csize*16 + 1 + 1,
-		depth = PALTABLE_PALY + me->csize*16 + 1 + 1;
+	int width = PALTABLE_PALX + me->csize * 16 + 1 + 1;
+	int depth = PALTABLE_PALY + me->csize * 16 + 1 + 1;
 	int  yoff;
 
 	if (me->hidden)
@@ -2261,9 +2273,9 @@ static void pal_table_set_csize(pal_table *me, int csize)
 
 static int pal_table_get_cursor_color(pal_table *me)
 {
-	int x     = cursor_get_x(),
-		y     = cursor_get_y(),
-		size;
+	int x = cursor_get_x();
+	int y = cursor_get_y();
+	int size;
 	int color = getcolor(x, y);
 
 	if (is_reserved(color))
@@ -2307,8 +2319,8 @@ static void pal_table_do_cursor(pal_table *me, int key)
 {
 	BOOLEAN done  = FALSE;
 	BOOLEAN first = TRUE;
-	int     xoff  = 0,
-			yoff  = 0;
+	int xoff = 0;
+	int yoff = 0;
 
 	while (!done)
 	{
@@ -2402,8 +2414,8 @@ static void pal_table_update_dac(pal_table *me)
 		}
 		else
 		{
-			int a = me->curr[0],
-				b = me->curr[1];
+			int a = me->curr[0];
+			int b = me->curr[1];
 
 			if (a > b)
 			{
@@ -2570,8 +2582,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 'D':    /* copy (Duplicate?) color in inactive to color in active */
 	case 'd':
 		{
-			int   a = me->active,
-				b = (a == 0) ? 1 : 0;
+			int a = me->active;
+			int b = (a == 0) ? 1 : 0;
 			PALENTRY t;
 
 			t = rgb_editor_get_rgb(me->rgb[b]);
@@ -2588,8 +2600,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 	case '=':    /* create a shade range between the two entries */
 		{
-			int a = me->curr[0],
-				b = me->curr[1];
+			int a = me->curr[0];
+			int b = me->curr[1];
 
 			if (a > b)
 			{
@@ -2611,8 +2623,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 	case '!':    /* swap r<->g */
 		{
-			int a = me->curr[0],
-				b = me->curr[1];
+			int a = me->curr[0];
+			int b = me->curr[1];
 
 			if (a > b)
 			{
@@ -2635,8 +2647,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case '"':    /* UK keyboards */
 	case 151:    /* French keyboards */
 		{
-			int a = me->curr[0],
-				b = me->curr[1];
+			int a = me->curr[0];
+			int b = me->curr[1];
 
 			if (a > b)
 			{
@@ -2660,8 +2672,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 156:    /* UK keyboards (pound sign) */
 	case '$':    /* For French keyboards */
 		{
-			int a = me->curr[0],
-				b = me->curr[1];
+			int a = me->curr[0];
+			int b = me->curr[1];
 
 			if (a > b)
 			{
@@ -2693,8 +2705,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 			if (key >= '1' && key <= '9')
 			{
-				int a = me->curr[0],
-					b = me->curr[1];
+				int a = me->curr[0];
+				int b = me->curr[1];
 
 				if (a > b)
 				{
@@ -3015,8 +3027,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 		case EXCLUDE_RANGE:  /* 'y' mode.  convert range between editors to grey. */
 			{
-				int a = me->curr[0],
-					b = me->curr[1];
+				int a = me->curr[0];
+				int b = me->curr[1];
 
 				if (a > b)
 				{
@@ -3054,8 +3066,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 		case EXCLUDE_RANGE:  /* 'y' mode.  convert range between editors to grey. */
 			{
-				int a = me->curr[0],
-				b = me->curr[1];
+				int a = me->curr[0];
+				int b = me->curr[1];
 
 				if (a > b)
 				{

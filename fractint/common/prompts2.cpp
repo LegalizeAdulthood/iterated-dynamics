@@ -95,15 +95,21 @@ struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
 
 int get_toggles()
 {
-	char *choices[20];
+	const char *choices[20];
 	char prevsavename[FILE_MAX_DIR + 1];
 	char *savenameptr;
 	struct full_screen_values uvalues[25];
-	int i, j, k;
+	int i;
+	int j;
+	int k;
 	char old_usr_stdcalcmode;
-	long old_maxit, old_logflag;
-	int old_inside, old_outside, old_soundflag;
-	int old_biomorph, old_decomp;
+	long old_maxit;
+	long old_logflag;
+	int old_inside;
+	int old_outside;
+	int old_soundflag;
+	int old_biomorph;
+	int old_decomp;
 	int old_fillcolor;
 	int old_stoppass;
 	double old_closeprox;
@@ -513,14 +519,17 @@ int get_toggles()
 
 int get_toggles2()
 {
-	char *choices[18];
+	const char *choices[18];
+	full_screen_values uvalues[23];
+	int i;
+	int j;
+	int k;
 
-	struct full_screen_values uvalues[23];
-	int i, j, k;
-
-	int old_rotate_lo, old_rotate_hi;
+	int old_rotate_lo;
+	int old_rotate_hi;
 	int old_distestwidth;
-	double old_potparam[3], old_inversion[3];
+	double old_potparam[3];
+	double old_inversion[3];
 	long old_usr_distest;
 
 	/* fill up the choices (and previous values) arrays */
@@ -693,17 +702,21 @@ int get_toggles2()
 
 int passes_options()
 {
-	char *choices[20];
+	const char *choices[20];
 	const char *passcalcmodes[] =
 	{
 		"rect", "line"
 	};
 
 	struct full_screen_values uvalues[25];
-	int i, j, k;
+	int i;
+	int j;
+	int k;
 	int ret;
 
-	int old_periodicity, old_orbit_delay, old_orbit_interval;
+	int old_periodicity;
+	int old_orbit_delay;
+	int old_orbit_interval;
 	int old_keep_scrn_coords;
 	int old_drawmode;
 
@@ -851,12 +864,19 @@ pass_option_restart:
 
 int get_view_params()
 {
-	char *choices[16];
+	const char *choices[16];
 	struct full_screen_values uvalues[25];
-	int i, k;
-	float old_viewreduction, old_aspectratio;
-	int old_viewwindow, old_viewxdots, old_viewydots, old_sxdots, old_sydots;
-	int x_max, y_max;
+	int i;
+	int k;
+	float old_viewreduction;
+	float old_aspectratio;
+	int old_viewwindow;
+	int old_viewxdots;
+	int old_viewydots;
+	int old_sxdots;
+	int old_sydots;
+	int x_max;
+	int y_max;
 
 	driver_get_max_screen(x_max, y_max);
 
@@ -1034,7 +1054,9 @@ int get_command_string()
 
 /* --------------------------------------------------------------------- */
 
-int g_gaussian_distribution = 30, g_gaussian_offset = 0, g_gaussian_slope = 25;
+int g_gaussian_distribution = 30;
+int g_gaussian_offset = 0;
+int g_gaussian_slope = 25;
 long g_gaussian_constant;
 
 
@@ -1109,7 +1131,7 @@ int get_starfield_params()
 {
 	struct full_screen_values uvalues[3];
 	int i;
-	char *starfield_prompts[3] =
+	const char *starfield_prompts[3] =
 	{
 		"Star Density in Pixels per Star",
 		"Percent Clumpiness",
@@ -1151,7 +1173,7 @@ int get_random_dot_stereogram_parameters()
 		"none", "middle", "top"
 	};
 	struct full_screen_values uvalues[7];
-	char *rds_prompts[7] =
+	const char *rds_prompts[] =
 	{
 		"Depth Effect (negative reverses front and back)",
 		"Image width in inches",
@@ -1161,7 +1183,8 @@ int get_random_dot_stereogram_parameters()
 		"  If yes, use current image map name? (see below)",
 		rds6
 	};
-	int i, k;
+	int i;
+	int k;
 	int ret;
 	static char reuse = 0;
 	driver_stack_screen();
@@ -1258,10 +1281,10 @@ int get_random_dot_stereogram_parameters()
 
 int get_a_number(double *x, double *y)
 {
-	char *choices[2];
-
-	struct full_screen_values uvalues[2];
-	int i, k;
+	const char *choices[2];
+	full_screen_values uvalues[2];
+	int i;
+	int k;
 
 	driver_stack_screen();
 
@@ -1453,11 +1476,12 @@ int get_a_filename(char *hdg, char *file_template, char *flname)
 	int rds;  /* if getting an RDS image map */
 	char instr[80];
 	int masklen;
-	char filename[FILE_MAX_PATH]; /* 13 is big enough for Fractint, but not Xfractint */
+	char filename[FILE_MAX_PATH];
 	char speedstr[81];
 	char tmpmask[FILE_MAX_PATH];   /* used to locate next file in list */
 	char old_flname[FILE_MAX_PATH];
-	int i, j;
+	int i;
+	int j;
 	int out;
 	int retried;
 	/* Only the first 13 characters of file names are displayed... */
@@ -2103,17 +2127,27 @@ int cmpdbl(double old, double new_value)
 int get_corners()
 {
 	struct full_screen_values values[15];
-	char *prompts[15];
+	const char *prompts[15];
 	char xprompt[] = "          X";
 	char yprompt[] = "          Y";
 	char zprompt[] = "          Z";
-	int i, nump, prompt_ret;
+	int i;
+	int nump;
+	int prompt_ret;
 	int cmag;
-	double Xctr, Yctr;
+	double Xctr;
+	double Yctr;
 	LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
-	double Xmagfactor, Rotation, Skew;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	BYTE ousemag;
-	double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
+	double oxxmin;
+	double oxxmax;
+	double oyymin;
+	double oyymax;
+	double oxx3rd;
+	double oyy3rd;
 
 	ousemag = g_use_center_mag;
 	oxxmin = g_escape_time_state.m_grid_fp.x_min();
@@ -2323,18 +2357,33 @@ gc_loop:
 static int get_screen_corners()
 {
 	struct full_screen_values values[15];
-	char *prompts[15];
+	const char *prompts[15];
 	char xprompt[] = "          X";
 	char yprompt[] = "          Y";
 	char zprompt[] = "          Z";
-	int i, nump, prompt_ret;
+	int i;
+	int nump;
+	int prompt_ret;
 	int cmag;
-	double Xctr, Yctr;
+	double Xctr;
+	double Yctr;
 	LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
-	double Xmagfactor, Rotation, Skew;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	BYTE ousemag;
-	double oxxmin, oxxmax, oyymin, oyymax, oxx3rd, oyy3rd;
-	double svxxmin, svxxmax, svyymin, svyymax, svxx3rd, svyy3rd;
+	double oxxmin;
+	double oxxmax;
+	double oyymin;
+	double oyymax;
+	double oxx3rd;
+	double oyy3rd;
+	double svxxmin;
+	double svxxmax;
+	double svyymin;
+	double svyymax;
+	double svxx3rd;
+	double svyy3rd;
 
 	ousemag = g_use_center_mag;
 
@@ -2575,10 +2624,13 @@ gsc_loop:
 
 int get_browse_parameters()
 {
-	char *choices[10];
+	const char *choices[10];
 	struct full_screen_values uvalues[25];
-	int i, k;
-	int old_autobrowse, old_brwschecktype, old_brwscheckparms;
+	int i;
+	int k;
+	int old_autobrowse;
+	int old_brwschecktype;
+	int old_brwscheckparms;
 	bool old_doublecaution;
 	int old_minbox;
 	double old_toosmall;
@@ -2776,7 +2828,8 @@ int merge_path_names(char *oldfullpath, char *newfilename, int mode)
 	/* if dot, slash, its relative to the current directory, set up full path */
 	if (newfilename[0] == '.' && newfilename[1] == SLASHC)
 	{
-		int len, test_dir = 0;
+		int len;
+		int test_dir = 0;
 		temp_path[0] = (char)('a' + _getdrive() - 1);
 		temp_path[1] = ':';
 		temp_path[2] = 0;
@@ -2888,7 +2941,9 @@ char *has_extension(char *source)
 /* I tried heap sort also - this is faster! */
 void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, VOIDPTR arg2))
 {
-	int gap, i, j;
+	int gap;
+	int i;
+	int j;
 	char *temp;
 	char *v;
 	v = (char *)v1;

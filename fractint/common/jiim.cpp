@@ -171,7 +171,9 @@ void plot8(int x, int y, int color)
 
 void circle(int radius, int color)
 {
-	int x, y, sum;
+	int x;
+	int y;
+	int sum;
 
 	x = 0;
 	y = radius << 1;
@@ -203,12 +205,16 @@ void circle(int radius, int color)
  */
 
 
-long   ListFront, ListBack, ListSize;  /* head, tail, size of MIIM Queue */
-long   lsize, lmax;                    /* how many in queue (now, ever) */
+long ListFront;
+long ListBack;
+long ListSize;  /* head, tail, size of MIIM Queue */
+long lsize;
+long lmax;                    /* how many in queue (now, ever) */
 int    maxhits = 1;
 int    OKtoMIIM;
 static int    SecretExperimentalMode;
-float  luckyx = 0, luckyy = 0;
+float luckyx = 0;
+float luckyy = 0;
 
 static void fillrect(int x, int y, int width, int height, int color)
 {
@@ -360,7 +366,8 @@ DComplex
 PopFloat()
 {
 	DComplex pop;
-	float  popx, popy;
+	float popx;
+	float popy;
 
 	if (!QueueEmpty())
 	{
@@ -423,7 +430,8 @@ DComplex
 DeQueueFloat()
 {
 	DComplex out;
-	float outx, outy;
+	float outx;
+	float outy;
 
 	if (ListBack != ListFront)
 	{
@@ -521,18 +529,26 @@ void Jiim(int which)         /* called by fractint */
 	int exact = 0;
 	int count = 0;            /* coloring julia */
 	static int mode = 0;      /* point, circle, ... */
-	double cr, ci, r;
-	int xfactor, yfactor;             /* aspect ratio          */
-	int xoff, yoff;                   /* center of the window  */
-	int x, y;
-	int still, kbdchar = -1;
+	double cr;
+	double ci;
+	double r;
+	int xfactor;
+	int yfactor;             /* aspect ratio          */
+	int xoff;
+	int yoff;                   /* center of the window  */
+	int x;
+	int y;
+	int still;
+	int kbdchar = -1;
 	long iter;
 	int color;
 	float zoom;
-	int oldsxoffs, oldsyoffs;
+	int oldsxoffs;
+	int oldsyoffs;
 	int savehasinverse;
 	int (*oldcalctype)();
-	int old_x, old_y;
+	int old_x;
+	int old_y;
 	double aspect;
 	static int randir = 0;
 	static int rancnt = 0;
@@ -692,7 +708,8 @@ void Jiim(int which)         /* called by fractint */
 
 	while (still)
 	{
-		int dcol, drow;
+		int dcol;
+		int drow;
 
 		if (actively_computing)
 		{

@@ -99,11 +99,14 @@ static video_mode_info *vidptr;
 int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formula_info)
 {
 	video_mode_info vid[MAXVIDEOMODES];
-	int i, j;
+	int i;
+	int j;
 	int gotrealmode;
-	double ftemp, ftemp2;
+	double ftemp;
+	double ftemp2;
 	unsigned tmpflags;
-	int tmpxdots, tmpydots;
+	int tmpxdots;
+	int tmpydots;
 	float tmpreduce;
 #ifndef XFRACT
 	char *nameptr;

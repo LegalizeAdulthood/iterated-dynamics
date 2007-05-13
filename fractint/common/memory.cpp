@@ -33,7 +33,10 @@ BYTE *charbuf = NULL;
 char memfile[] = "handle.$$$";
 int numTOTALhandles;
 
-char memstr[3][9] = {{"nowhere"}, {"memory"}, {"disk"}};
+const char *memstr[3] =
+{
+	"nowhere", "memory", "disk"
+};
 
 struct nowhere
 {
@@ -289,7 +292,8 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 {
 /* Returns handle number if successful, 0 or NULL if failure */
 	U16 handle = 0;
-	int success, use_this_type;
+	int success;
+	int use_this_type;
 	long toallocate;
 
 	success = FALSE;

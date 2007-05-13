@@ -346,7 +346,11 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 			if (g_view_window && (g_evolving & EVOLVE_FIELD_MAP) && (g_calculation_status != CALCSTAT_COMPLETED))
 			{
 				/* generate a set of images with varied parameters on each one */
-				int grout, ecount, tmpxdots, tmpydots, gridsqr;
+				int grout;
+				int ecount;
+				int tmpxdots;
+				int tmpydots;
+				int gridsqr;
 				struct evolution_info resume_e_info;
 
 				if ((g_evolve_handle != NULL) && (g_calculation_status == CALCSTAT_RESUMABLE))
@@ -936,7 +940,9 @@ static int handle_toggle_float()
 
 static int handle_ant()
 {
-	int oldtype, err, i;
+	int oldtype;
+	int err;
+	int i;
 	double oldparm[MAX_PARAMETERS];
 
 	clear_zoom_box();
@@ -1289,7 +1295,12 @@ static int handle_save_to_disk()
 
 static int handle_evolver_save_to_disk()
 {
-	int oldsxoffs, oldsyoffs, oldxdots, oldydots, oldpx, oldpy;
+	int oldsxoffs;
+	int oldsyoffs;
+	int oldxdots;
+	int oldydots;
+	int oldpx;
+	int oldpy;
 
 	if (driver_diskp() && g_disk_targa)
 	{
@@ -1946,7 +1957,8 @@ static void handle_evolver_mutation(int halve, int *kbdmore)
 	}
 	else
 	{
-		double centerx, centery;
+		double centerx;
+		double centery;
 		g_fiddle_factor *= 2;
 		centerx = g_parameter_offset_x + g_parameter_range_x / 2;
 		g_parameter_range_x *= 2;
@@ -2249,7 +2261,8 @@ static FILE *cmp_fp;
 static int errcount;
 int cmp_line(BYTE *pixels, int linelen)
 {
-	int row, col;
+	int row;
+	int col;
 	int oldcolor;
 	row = g_row_count++;
 	if (row == 0)

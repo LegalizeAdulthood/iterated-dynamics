@@ -80,32 +80,39 @@ void make_batch_file()
 {
 #define MAXPROMPTS 18
 	int colorsonly = 0;
-	/** added for pieces feature **/
 	double pdelx = 0.0;
 	double pdely = 0.0;
 	double pdelx2 = 0.0;
 	double pdely2 = 0.0;
-	unsigned int pxdots, pydots, xm, ym;
-	double pxxmin = 0.0, pyymax = 0.0;
+	unsigned int pxdots;
+	unsigned int pydots;
+	unsigned int xm;
+	unsigned int ym;
+	double pxxmin = 0.0;
+	double pyymax = 0.0;
 	char vidmde[5];
 	int promptnum;
 	int piecespromts;
 	int have3rd = 0;
-	/****/
 
-	int i, j;
-	char inpcommandfile[80], inpcommandname[ITEMNAMELEN + 1];
+	int i;
+	int j;
+	char inpcommandfile[80];
+	char inpcommandname[ITEMNAMELEN + 1];
 	char inpcomment[4][MAX_COMMENT];
 	struct full_screen_values paramvalues[18];
-	char *choices[MAXPROMPTS];
+	const char *choices[MAXPROMPTS];
 	int gotinfile;
-	char outname[FILE_MAX_PATH + 1], buf[256], buf2[128];
+	char outname[FILE_MAX_PATH + 1];
+	char buf[256];
+	char buf2[128];
 	FILE *infile = NULL;
 	FILE *fpbat = NULL;
 	char colorspec[14];
 	int maxcolor;
 	int maxcolorindex = 0;
-	char *sptr = NULL, *sptr2;
+	char *sptr = NULL;
+	char *sptr2;
 
 	if (g_make_par[1] == 0) /* makepar map case */
 	{
@@ -314,7 +321,8 @@ prompt_user:
 
 		/* sanity checks */
 		{
-			long xtotal, ytotal;
+			long xtotal;
+			long ytotal;
 #ifndef XFRACT
 			int i;
 
@@ -495,7 +503,8 @@ skip_UI:
 				{
 					/* guarantee that there are no blank comments above the last
 					non-blank par_comment */
-					int i, last;
+					int i;
+					int last;
 					for (last = -1, i = 0; i < 4; i++)
 					{
 						if (*par_comment[i])
@@ -901,9 +910,8 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			}
 			else
 			{
-				int xdigits, ydigits;
-				xdigits = getprec(g_escape_time_state.m_grid_fp.x_min(), g_escape_time_state.m_grid_fp.x_max(), g_escape_time_state.m_grid_fp.x_3rd());
-				ydigits = getprec(g_escape_time_state.m_grid_fp.y_min(), g_escape_time_state.m_grid_fp.y_max(), g_escape_time_state.m_grid_fp.y_3rd());
+				int xdigits = getprec(g_escape_time_state.m_grid_fp.x_min(), g_escape_time_state.m_grid_fp.x_max(), g_escape_time_state.m_grid_fp.x_3rd());
+				int ydigits = getprec(g_escape_time_state.m_grid_fp.y_min(), g_escape_time_state.m_grid_fp.y_max(), g_escape_time_state.m_grid_fp.y_3rd());
 				put_float(0, g_escape_time_state.m_grid_fp.x_min(), xdigits);
 				put_float(1, g_escape_time_state.m_grid_fp.x_max(), xdigits);
 				put_float(1, g_escape_time_state.m_grid_fp.y_min(), ydigits);
@@ -1289,10 +1297,9 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 
 		if (g_user_standard_calculation_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
 		{
-			int xdigits, ydigits;
 			put_parm(" orbitcorners=");
-			xdigits = getprec(g_orbit_x_min, g_orbit_x_max, g_orbit_x_3rd);
-			ydigits = getprec(g_orbit_y_min, g_orbit_y_max, g_orbit_y_3rd);
+			int xdigits = getprec(g_orbit_x_min, g_orbit_x_max, g_orbit_x_3rd);
+			int ydigits = getprec(g_orbit_y_min, g_orbit_y_max, g_orbit_y_3rd);
 			put_float(0, g_orbit_x_min, xdigits);
 			put_float(1, g_orbit_x_max, xdigits);
 			put_float(1, g_orbit_y_min, ydigits);
@@ -1334,8 +1341,13 @@ docolors:
 		}
 		else
 		{
-			int curc, scanc, force, diffmag = -1;
-			int delta, diff1[4][3], diff2[4][3];
+			int curc;
+			int scanc;
+			int force;
+			int diffmag = -1;
+			int delta;
+			int diff1[4][3];
+			int diff2[4][3];
 			curc = force = 0;
 #ifdef XFRACT
 			if (g_fake_lut && !g_true_mode) /* stupid kludge JCO 6/23/2001  */
@@ -1530,8 +1542,8 @@ int g_max_line_length = 72;
 
 static void put_parm_line()
 {
-	int len, c;
-	len = s_wbdata.len;
+	int c;
+	int len = s_wbdata.len;
 	if (len > NICELINELEN)
 	{
 		len = NICELINELEN + 1;
@@ -1567,10 +1579,14 @@ static void put_parm_line()
 
 int get_precision_mag_bf()
 {
-	double Xmagfactor, Rotation, Skew;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	LDBL Magnification;
-	bf_t bXctr, bYctr;
-	int saved, dec;
+	big_t bXctr;
+	big_t bYctr;
+	int saved;
+	int dec;
 
 	saved = save_stack();
 	bXctr            = alloc_stack(bflength + 2);
@@ -1592,7 +1608,8 @@ int get_precision_mag_bf()
 
 static int getprec(double a, double b, double c)
 {
-	double diff, temp;
+	double diff;
+	double temp;
 	int digits;
 	double highv = 1.0E20;
 	diff = fabs(a - b);
@@ -1636,8 +1653,15 @@ static int getprec(double a, double b, double c)
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
 int get_precision_bf(int rezflag)
 {
-	bf_t del1, del2, one, bfxxdel, bfxxdel2, bfyydel, bfyydel2;
-	int digits, dec;
+	big_t del1;
+	big_t del2;
+	big_t one;
+	big_t bfxxdel;
+	big_t bfxxdel2;
+	big_t bfyydel;
+	big_t bfyydel2;
+	int digits;
+	int dec;
 	int saved;
 	int rez;
 	saved    = save_stack();
@@ -1757,7 +1781,9 @@ int get_precision_dbl(int rezflag)
 
 static void strip_zeros(char *buf)
 {
-	char *dptr, *bptr, *exptr;
+	char *dptr;
+	char *bptr;
+	char *exptr;
 	strlwr(buf);
 	dptr = strchr(buf, '.');
 	if (dptr != 0)
@@ -1822,9 +1848,16 @@ static void put_bf(int slash, bf_t r, int prec)
 void edit_text_colors()
 {
 	int	save_debugflag;
-	int	row, col, bkgrd;
-	int	rowf, colf, rowt, colt;
-	int	i, j, k;
+	int row;
+	int col;
+	int bkgrd;
+	int rowf;
+	int colf;
+	int rowt;
+	int colt;
+	int i;
+	int j;
+	int k;
 
 	save_debugflag = g_debug_flag;
 	g_debug_flag =	0;	 /*	don't get called recursively */
@@ -1954,7 +1987,9 @@ int select_video_mode(int curmode)
 {
 	int entnums[MAXVIDEOMODES];
 	int attributes[MAXVIDEOMODES];
-	int i, k, ret;
+	int i;
+	int k;
+	int ret;
 #ifndef XFRACT
 	int oldtabmode;
 #endif
@@ -2082,7 +2117,10 @@ void format_vid_table(int choice, char *buf)
 #ifndef XFRACT
 static int check_modekey(int curkey, int choice)
 {
-	int i, j, k, ret;
+	int i;
+	int j;
+	int k;
+	int ret;
 	i = check_video_mode_key(1, curkey);
 	if (i >= 0)
 	{
@@ -2132,7 +2170,8 @@ static int check_modekey(int curkey, int choice)
 
 static int entcompare(const void *p1, const void *p2)
 {
-	int i, j;
+	int i;
+	int j;
 	i = g_video_table[*((int *)p1)].keynum;
 	if (i == 0)
 	{
@@ -2153,9 +2192,17 @@ static int entcompare(const void *p1, const void *p2)
 static void update_fractint_cfg()
 {
 #ifndef XFRACT
-	char cfgname[100], outname[100], buf[121], kname[5];
-	FILE *cfgfile, *outfile;
-	int i, j, linenum, nextlinenum, nextmode;
+	char cfgname[100];
+	char outname[100];
+	char buf[121];
+	char kname[5];
+	FILE *cfgfile;
+	FILE *outfile;
+	int i;
+	int j;
+	int linenum;
+	int nextlinenum;
+	int nextmode;
 	struct video_info vident;
 
 	findpath("fractint.cfg", cfgname);
@@ -2260,17 +2307,27 @@ static void update_fractint_cfg()
 
 void make_mig(unsigned int xmult, unsigned int ymult)
 {
-	unsigned int xstep, ystep;
-	unsigned int xres, yres;
-	unsigned int allxres, allyres, xtot, ytot;
-	unsigned int xloc, yloc;
+	unsigned int xstep;
+	unsigned int ystep;
+	unsigned int xres;
+	unsigned int yres;
+	unsigned int allxres;
+	unsigned int allyres;
+	unsigned int xtot;
+	unsigned int ytot;
+	unsigned int xloc;
+	unsigned int yloc;
 	unsigned char ichar;
-	unsigned int allitbl, itbl;
+	unsigned int allitbl;
+	unsigned int itbl;
 	unsigned int i;
-	char gifin[15], gifout[15];
-	int errorflag, inputerrorflag;
+	char gifin[15];
+	char gifout[15];
+	int errorflag;
+	int inputerrorflag;
 	unsigned char *temp;
-	FILE *out, *in;
+	FILE *out;
+	FILE *in;
 
 	errorflag = 0;                          /* no errors so */
 	inputerrorflag = 0;
@@ -2568,7 +2625,11 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 	is still valid. */
 void flip_image(int key)
 {
-	int i, j, ixhalf, iyhalf, tempdot;
+	int i;
+	int j;
+	int ixhalf;
+	int iyhalf;
+	int tempdot;
 
 	/* fractal must be rotate-able and be finished */
 	if ((g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0
@@ -2686,7 +2747,8 @@ void flip_image(int key)
 static char *expand_var(char *var, char *buf)
 {
 	time_t ltime;
-	char *str, *out;
+	char *str;
+	char *out;
 
 	time(&ltime);
 	str = ctime(&ltime);
@@ -2787,8 +2849,13 @@ static const char esc_char = '$';
 /* extract comments from the comments= command */
 void expand_comments(char *target, char *source)
 {
-	int i, j, k, escape = 0;
-	char c, oldc, varname[MAXVNAME];
+	int i;
+	int j;
+	int k;
+	int escape = 0;
+	char c;
+	char oldc;
+	char varname[MAXVNAME];
 	i = j = k = 0;
 	c = oldc = 0;
 	while (i < MAX_COMMENT && j < MAX_COMMENT && (c = *(source + i++)) != '\0')
@@ -2845,7 +2912,8 @@ void expand_comments(char *target, char *source)
 void parse_comments(char *value)
 {
 	int i;
-	char *next, save;
+	char *next;
+	char save;
 	for (i = 0; i < 4; i++)
 	{
 		save = '\0';

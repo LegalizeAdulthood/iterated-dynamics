@@ -59,7 +59,9 @@ static int menu_check_key(int curkey, int choice);
 */
 int stop_message(int flags, const char *msg)
 {
-	int ret, toprow, color;
+	int ret;
+	int toprow;
+	int color;
 	static unsigned char batchmode = 0;
 	if (g_debug_flag || g_initialize_batch >= INITBATCH_NORMAL)
 	{
@@ -176,7 +178,8 @@ int show_temp_message(char *msgparm)
 	int i;
 	int xrepeat = 0;
 	int yrepeat = 0;
-	int save_sxoffs, save_syoffs;
+	int save_sxoffs;
+	int save_syoffs;
 
 	strncpy(msg, msgparm, 40);
 	msg[40] = 0; /* ensure max message len of 40 chars */
@@ -232,7 +235,8 @@ int show_temp_message(char *msgparm)
 void clear_temp_message()
 {
 	int i;
-	int save_sxoffs, save_syoffs;
+	int save_sxoffs;
+	int save_syoffs;
 	if (driver_diskp()) /* disk video, easy */
 	{
 		disk_video_status(0, "");
@@ -269,7 +273,8 @@ void blank_rows(int row, int rows, int attr)
 
 void help_title()
 {
-	char msg[MESSAGE_LEN], buf[MESSAGE_LEN];
+	char msg[MESSAGE_LEN];
+	char buf[MESSAGE_LEN];
 	driver_set_clear(); /* clear the screen */
 #ifdef XFRACT
 	strcpy(msg,"X");
@@ -324,7 +329,9 @@ void footer_msg(int *i, int options, char *speedstring)
 int put_string_center(int row, int col, int width, int attr, const char *msg)
 {
 	char buf[81];
-	int i, j, k;
+	int i;
+	int j;
+	int k;
 	i = 0;
 #ifdef XFRACT
 	if (width >= 80) /* Some systems choke in column 80  */
@@ -379,7 +386,8 @@ static void show_speed_string(int speedrow,
 					int (*speedprompt)(int, int, int, char *, int))
 {
 	int speed_match = 0;
-	int i, j;
+	int i;
+	int j;
 	char buf[81];
 	memset(buf, ' ', 80);
 	buf[80] = 0;
@@ -420,7 +428,8 @@ static void process_speed_string(char    *speedstring,
 								int       numchoices,
 								int       is_unsorted)
 {
-	int i, comp_result;
+	int i;
+	int comp_result;
 
 	i = (int) strlen(speedstring);
 	if (curkey == 8 && i > 0) /* backspace */
@@ -499,15 +508,21 @@ int full_screen_choice(
 						speedstring[0] != 0 on return if string is present
 	*/
 {
-	int titlelines, titlewidth;
+	int titlelines;
+	int titlewidth;
 	int reqdrows;
-	int topleftrow, topleftcol;
+	int topleftrow;
+	int topleftcol;
 	int topleftchoice;
 	int speedrow = 0;  /* speed key prompt */
 	int boxitems;      /* boxwidth*boxdepth */
-	int curkey, increment, rev_increment = 0;
+	int curkey;
+	int increment;
+	int rev_increment = 0;
 	int redisplay;
-	int i, j, k = 0;
+	int i;
+	int j;
+	int k = 0;
 	const char *charptr;
 	char buf[81];
 	char curitem[81];
@@ -1134,7 +1149,8 @@ int main_menu(int fullmenu)
 	int attributes[44];
 	int choicekey[44];
 	int i;
-	int nextleft, nextright;
+	int nextleft;
+	int nextright;
 	int oldtabmode;
 	int showjuliatoggle;
 	oldtabmode = g_tab_mode;
@@ -1549,8 +1565,13 @@ int input_field(
 {
 	char savefld[81];
 	char buf[81];
-	int insert, started, offset, curkey, display;
-	int i, j;
+	int insert;
+	int started;
+	int offset;
+	int curkey;
+	int display;
+	int i;
+	int j;
 	int ret;
 
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
@@ -1741,9 +1762,13 @@ int field_prompt(
 		)
 {
 	char *charptr;
-	int boxwidth, titlelines, titlecol, titlerow;
+	int boxwidth;
+	int titlelines;
+	int titlecol;
+	int titlerow;
 	int promptcol;
-	int i, j;
+	int i;
+	int j;
 	char buf[81];
 	help_title();                           /* clear screen, display title */
 	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);     /* init rest to background */
@@ -1878,8 +1903,17 @@ void load_fractint_config()
 	FILE *cfgfile;
 	VIDEOINFO vident;
 	int linenum;
-	long g_x_dots, g_y_dots;
-	int i, j, keynum, ax, bx, cx, dx, dotmode, g_colors;
+	long x_dots;
+	long y_dots;
+	int i;
+	int j;
+	int keynum;
+	int ax;
+	int bx;
+	int cx;
+	int dx;
+	int dotmode;
+	int g_colors;
 	char *fields[11];
 	int textsafe2;
 	char tempstring[150];
@@ -1935,8 +1969,8 @@ void load_fractint_config()
 		sscanf(fields[3], "%x", &cx);
 		sscanf(fields[4], "%x", &dx);
 		dotmode     = atoi(fields[5]);
-		g_x_dots       = atol(fields[6]);
-		g_y_dots       = atol(fields[7]);
+		x_dots       = atol(fields[6]);
+		y_dots       = atol(fields[7]);
 		g_colors      = atoi(fields[8]);
 		if (g_colors == 4 && strchr(strlwr(fields[8]), 'g'))
 		{
@@ -1969,8 +2003,8 @@ void load_fractint_config()
 			keynum < 0 ||
 			dotmode < 0 || dotmode > 30 ||
 			textsafe2 < 0 || textsafe2 > 4 ||
-			g_x_dots < MIN_PIXELS || g_x_dots > MAX_PIXELS ||
-			g_y_dots < MIN_PIXELS || g_y_dots > MAX_PIXELS ||
+			x_dots < MIN_PIXELS || x_dots > MAX_PIXELS ||
+			y_dots < MIN_PIXELS || y_dots > MAX_PIXELS ||
 			(g_colors != 0 && g_colors != 2 && g_colors != 4 && g_colors != 16 &&
 				g_colors != 256))
 		{
@@ -1988,8 +2022,8 @@ void load_fractint_config()
 		vident.videomodecx = cx;
 		vident.videomodedx = dx;
 		vident.dotmode     = truecolorbits*1000 + textsafe2*100 + dotmode;
-		vident.x_dots       = (short)g_x_dots;
-		vident.y_dots       = (short)g_y_dots;
+		vident.x_dots       = (short)x_dots;
+		vident.y_dots       = (short)y_dots;
 		vident.colors      = g_colors;
 
 		/* if valid, add to supported modes */
@@ -2078,7 +2112,8 @@ int check_video_mode_key(int option, int k)
 int check_vidmode_keyname(char *kname)
 {
 	/* returns key number for the passed keyname, 0 if not a keyname */
-	int i, keyset;
+	int i;
+	int keyset;
 	keyset = 1058;
 	if (*kname == 'S' || *kname == 's')
 	{

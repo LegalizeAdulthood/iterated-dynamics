@@ -126,9 +126,11 @@ static void display_text(int row, int col, int color, char *text, unsigned len)
 static void display_parse_text(char *text, unsigned len, int start_margin, int *num_link, LINK *link)
 {
 	char *curr;
-	int row, col;
+	int row;
+	int col;
 	int tok;
-	int size, width;
+	int size;
+	int width;
 
 	g_text_cbase = SCREEN_INDENT;
 	g_text_rbase = TEXT_START_ROW;
@@ -147,7 +149,8 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 		{
 		case TOK_PARA:
 			{
-				int indent, margin;
+				int indent;
+				int margin;
 
 				if (size > 0)
 				{
@@ -442,8 +445,13 @@ static int dist1(int a, int b)
 
 static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 {
-	int ctr, curr_c2, best_overlap = 0, temp_overlap;
-	LINK *curr, *temp, *best;
+	int ctr;
+	int curr_c2;
+	int best_overlap = 0;
+	int temp_overlap;
+	LINK *curr;
+	LINK *temp;
+	LINK *best;
 	int temp_dist;
 
 	curr    = &link[curr_link];
@@ -494,8 +502,15 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 
 static int find_link_leftright(LINK *link, int num_link, int curr_link, int left)
 {
-	int ctr, curr_c2, best_c2 = 0, temp_c2, best_dist = 0, temp_dist;
-	LINK *curr, *temp, *best;
+	int ctr;
+	int curr_c2;
+	int best_c2 = 0;
+	int temp_c2;
+	int best_dist = 0;
+	int temp_dist;
+	LINK *curr;
+	LINK *temp;
+	LINK *best;
 
 	curr    = &link[curr_link];
 	best    = NULL;
@@ -1041,7 +1056,7 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
 #define MAX_NUM_TOPIC_SEC  (10)          /* max. number of topics under any */
 										/*    single section (CONTENT)     */
 
-typedef struct PRINT_DOC_INFO
+struct PRINT_DOC_INFO
 {
 	int       cnum;          /* current CONTENT num */
 	int       tnum;          /* current topic num */
@@ -1049,12 +1064,12 @@ typedef struct PRINT_DOC_INFO
 	long      content_pos;   /* current CONTENT item offset in file */
 	int       num_page;      /* total number of pages in document */
 
-	int       num_contents,  /* total number of CONTENT entries */
-				s_num_topic;     /* number of topics in current CONTENT */
+	int       num_contents;  /* total number of CONTENT entries */
+	int num_topic;			/* number of topics in current CONTENT */
 
 	int       topic_num[MAX_NUM_TOPIC_SEC]; /* topic_num[] for current CONTENT entry */
 
-	char s_buffer[PRINT_BUFFER_SIZE];        /* text s_buffer */
+	char buffer[PRINT_BUFFER_SIZE];        /* text s_buffer */
 
 	char      id[81];        /* s_buffer to store id in */
 	char      title[81];     /* s_buffer to store title in */
@@ -1066,7 +1081,7 @@ typedef struct PRINT_DOC_INFO
 	int       margin;        /* indent text by this much */
 	int       start_of_line; /* are we at the beginning of a line? */
 	int       spaces;        /* number of spaces in a row */
-	} PRINT_DOC_INFO;
+};
 
 void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg);
 
@@ -1164,7 +1179,7 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 		t = ch;
 		assert(t < MAX_NUM_TOPIC_SEC);
 		fread(info->topic_num, sizeof(int), t, s_help_file);  /* read topic_num[] */
-		info->s_num_topic = t;
+		info->num_topic = t;
 		info->content_pos += 1 + t*sizeof(int);
 
 		info->tnum = -1;
@@ -1174,16 +1189,16 @@ static int print_doc_get_info(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 		return 1;
 
 	case PD_GET_TOPIC:
-		if (++info->tnum >= info->s_num_topic)
+		if (++info->tnum >= info->num_topic)
 		{
 			return 0;
 		}
 
-		t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->s_buffer);
+		t = _read_help_topic(info->topic_num[info->tnum], 0, PRINT_BUFFER_SIZE, info->buffer);
 
 		assert(t <= 0);
 
-		pd->curr = info->s_buffer;
+		pd->curr = info->buffer;
 		pd->len  = PRINT_BUFFER_SIZE + t;   /* same as ...SIZE - abs(t) */
 		return 1;
 
@@ -1363,7 +1378,7 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 			goto ErrorAbort;
 		}
 
-		if (fwrite(info.s_buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
+		if (fwrite(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
 		{
 			msg = "Error writing temporary file.\n";
 			goto ErrorAbort;
@@ -1393,7 +1408,7 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 			goto ErrorAbort;
 		}
 
-		if (fread(info.s_buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
+		if (fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
 		{
 			msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
 			goto ErrorAbort;
@@ -1593,7 +1608,7 @@ int get_help_mode()
 	return s_help_mode;
 }
 
-int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, char **prompts,
+int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, const char **prompts,
 	struct full_screen_values *values, int fkeymask, char *extrainfo)
 {
 	int result;

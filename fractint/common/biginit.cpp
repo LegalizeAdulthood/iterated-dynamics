@@ -491,7 +491,8 @@ void init_big_pi()
 {
 	/* What, don't you recognize the first 700 digits of pi, */
 	/* in base 256, in reverse order?                        */
-	int length, pi_offset;
+	int length;
+	int pi_offset;
 	static BYTE pi_table[] =
 	{
 			0x44, 0xD5, 0xDB, 0x69, 0x17, 0xDF, 0x2E, 0x56, 0x87, 0x1A,

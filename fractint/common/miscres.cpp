@@ -104,8 +104,13 @@ void not_disk_message()
 /* returns 0 if success, 1 if hit maxrow before done                      */
 int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow)
 {
-	char save1, save2;
-	int length, decpt, padding, startrow, done;
+	char save1;
+	char save2;
+	int length;
+	int decpt;
+	int padding;
+	int startrow;
+	int done;
 	done = 0;
 	startrow = *row;
 	length = (int) strlen(str);
@@ -187,10 +192,18 @@ zoom box.  Same goes for the Skew angles
 
 void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
-	double Width, Height;
-	double a, b; /* bottom, left, diagonal */
-	double a2, b2, c2; /* squares of above */
-	double tmpx1, tmpx2, tmpy1, tmpy2, tmpa; /* temporary x, y, angle */
+	double Width;
+	double Height;
+	double a;
+	double b; /* bottom, left, diagonal */
+	double a2;
+	double b2;
+	double c2; /* squares of above */
+	double tmpx1;
+	double tmpx2;
+	double tmpy1;
+	double tmpy2;
+	double tmpa; /* temporary x, y, angle */
 
 	/* simple normal case first */
 	if (g_escape_time_state.m_grid_fp.x_3rd() == g_escape_time_state.m_grid_fp.x_min() && g_escape_time_state.m_grid_fp.y_3rd() == g_escape_time_state.m_grid_fp.y_min())
@@ -285,9 +298,13 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 /* convert center/mag to corners */
 void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
-	double x, y;
-	double h, w; /* half height, width */
-	double tanskew, sinrot, cosrot;
+	double x;
+	double y;
+	double h;
+	double w; /* half height, width */
+	double tanskew;
+	double sinrot;
+	double cosrot;
 
 	if (Xmagfactor == 0.0)
 	{
@@ -344,13 +361,23 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
 	/* needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits */
-	LDBL Width, Height;
-	LDBL a, b; /* bottom, left, diagonal */
-	LDBL a2, b2, c2; /* squares of above */
-	LDBL tmpx1, tmpx2, tmpy = 0.0, tmpy1, tmpy2;
+	LDBL Width;
+	LDBL Height;
+	LDBL a;
+	LDBL b; /* bottom, left, diagonal */
+	LDBL a2;
+	LDBL b2;
+	LDBL c2; /* squares of above */
+	LDBL tmpx1;
+	LDBL tmpx2;
+	LDBL tmpy = 0.0;
+	LDBL tmpy1;
+	LDBL tmpy2;
 	double tmpa; /* temporary x, y, angle */
-	bf_t bfWidth, bfHeight;
-	bf_t bftmpx, bftmpy;
+	big_t bfWidth;
+	big_t bfHeight;
+	big_t bftmpx;
+	big_t bftmpy;
 	int saved;
 	int signx;
 
@@ -461,11 +488,21 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 /* convert center/mag to corners using bf */
 void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
-	LDBL x, y;
-	LDBL h, w; /* half height, width */
-	LDBL x_min, y_min, x_max, y_max, x_3rd, y_3rd;
-	double tanskew, sinrot, cosrot;
-	bf_t bfh, bfw;
+	LDBL x;
+	LDBL y;
+	LDBL h;
+	LDBL w; /* half height, width */
+	LDBL x_min;
+	LDBL y_min;
+	LDBL x_max;
+	LDBL y_max;
+	LDBL x_3rd;
+	LDBL y_3rd;
+	double tanskew;
+	double sinrot;
+	double cosrot;
+	big_t bfh;
+	big_t bfw;
 	bf_t bftmp;
 	int saved;
 
@@ -553,7 +590,8 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 
 void update_save_name(char *filename) /* go to the next file name */
 {
-	char *save, *hold;
+	char *save;
+	char *hold;
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
 	char fname[FILE_MAX_FNAME];
@@ -653,7 +691,8 @@ void show_trig(char *buf) /* return display form of active trig functions */
 
 static void trigdetails(char *buf)
 {
-	int i, numfn;
+	int i;
+	int numfn;
 	char tmpbuf[20];
 	if (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
 	{
@@ -799,7 +838,8 @@ write_row(int row, const char *format, ...)
 
 int tab_display_2(char *msg)
 {
-	int row, key = 0;
+	int row;
+	int key = 0;
 
 	help_title();
 	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
@@ -880,11 +920,18 @@ int tab_display_2(char *msg)
 
 int tab_display()       /* display the status of the current image */
 {
-	int s_row, i, j, addrow = 0;
-	double Xctr, Yctr;
+	int s_row;
+	int i;
+	int j;
+	int addrow = 0;
+	double Xctr;
+	double Yctr;
 	LDBL Magnification;
-	double Xmagfactor, Rotation, Skew;
-	bf_t bfXctr = NULL, bfYctr = NULL;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
+	big_t bfXctr = NULL;
+	big_t bfYctr = NULL;
 	char msg[350];
 	char *msgptr;
 	int key;
@@ -1163,7 +1210,8 @@ top:
 		adjust_corner(); /* make bottom left exact if very near exact */
 		if (g_bf_math)
 		{
-			int truncate, truncaterow;
+			int truncate;
+			int truncaterow;
 			dec = min(320, g_decimals);
 			adjust_corner_bf(); /* make bottom left exact if very near exact */
 			convert_center_mag_bf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
@@ -1353,7 +1401,8 @@ static void area()
 {
 	/* apologies to UNIX folks, we PC guys have to save near space */
 	char *msg;
-	int x, y;
+	int x;
+	int y;
 	char buf[160];
 	long cnt = 0;
 	if (g_inside < 0)
@@ -1434,13 +1483,14 @@ int ifs_load()                   /* read in IFS parameters */
 	FILE *ifsfile;
 	char buf[201];
 	char *bufptr;
-	int ret, rowsize;
+	int ret;
+	int rowsize;
 
 	if (g_ifs_definition)  /* release prior parms */
 	{
 		free((char *)g_ifs_definition);
 		g_ifs_definition = NULL;
-		}
+	}
 
 	g_ifs_type = IFSTYPE_2D;
 	rowsize = IFSPARM;
@@ -1766,17 +1816,16 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 
 int file_gets(char *buf, int maxlen, FILE *infile)
 {
-	int len, c;
 	/* similar to 'fgets', but file may be in either text or binary mode */
 	/* returns -1 at eof, length of string otherwise */
 	if (feof(infile))
 	{
 		return -1;
 	}
-	len = 0;
+	int len = 0;
 	while (len < maxlen)
 	{
-		c = getc(infile);
+		int c = getc(infile);
 		if (c == EOF || c == '\032')
 		{
 			if (len)
