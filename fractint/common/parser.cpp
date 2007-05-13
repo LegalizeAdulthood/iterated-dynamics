@@ -226,6 +226,7 @@ Formula::Formula()
 			m_errors[i] = zero;
 		}
 	}
+	m_prepare_formula_text[0] = 0;
 }
 
 Formula::~Formula()
@@ -4146,13 +4147,13 @@ int Formula::get_parameter(const char *Name)
 	return 1;
 }
 
-/* frm_check_name_and_sym():
+/* check_name_and_symmetry():
 	error checking to the open brace on the first line; return 1
 	on success, 2 if an invalid symmetry is found, and 0 if errors
 	are found which should cause the formula not to be executed
 */
 
-int Formula::frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
+int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 {
 	long filepos = ftell(open_file);
 	int c, i, done, at_end_of_name;
@@ -4243,7 +4244,7 @@ int Formula::frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 				break;
 			}
 		}
-		if (SymStr[i].s[0] == (char) 0 && report_bad_sym)
+		if (SymStr[i].s[0] == (char) 0 && report_bad_symmetry)
 		{
 			char *msgbuf = (char *) malloc((int) strlen(error_messages(PE_INVALID_SYM_USING_NOSYM))
 							+ (int) strlen(sym_buf) + 6);
@@ -4279,7 +4280,7 @@ int Formula::frm_check_name_and_sym(FILE *open_file, int report_bad_sym)
 	return 1;
 }
 
-char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
+const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 {
 
 	/* GGM 5-23-96: replaces FindFormula(). This function sets the
@@ -4288,11 +4289,10 @@ char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
 	and except the final expression in the formula. The open file passed
 	as an argument is open in "rb" mode and is positioned at the first
 	letter of the name of the formula to be prepared. This function
-	is called from RunForm() below.
+	is called from RunFormula() below.
 	*/
 
 	FILE *debug_fp = NULL;
-	char *FormulaStr;
 	token_st temp_tok;
 	int Done;
 	long filepos = ftell(file);
@@ -4303,7 +4303,7 @@ char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
 
 	/*Test for a repeat*/
 
-	if (frm_check_name_and_sym(file, from_prompts1c) == 0)
+	if (check_name_and_symmetry(file, report_bad_symmetry) == 0)
 	{
 		fseek(file, filepos, SEEK_SET);
 		return NULL;
@@ -4333,8 +4333,7 @@ char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
 		}
 	}
 
-	FormulaStr = (char *)g_box_x;
-	FormulaStr[0] = (char) 0; /* To permit concantenation later */
+	m_prepare_formula_text[0] = (char) 0; /* To permit concantenation later */
 
 	Done = 0;
 
@@ -4360,7 +4359,7 @@ char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
 		}
 		else
 		{
-			strcat(FormulaStr, temp_tok.token_str);
+			strcat(m_prepare_formula_text, temp_tok.token_str);
 			Done = 1;
 		}
 	}
@@ -4380,25 +4379,21 @@ char *Formula::PrepareFormula(FILE *file, int from_prompts1c)
 			fseek(file, filepos, SEEK_SET);
 			break;
 		default:
-			strcat(FormulaStr, temp_tok.token_str);
+			strcat(m_prepare_formula_text, temp_tok.token_str);
 			break;
 		}
 	}
 
-	if (debug_fp != NULL && FormulaStr != NULL)
+	if (debug_fp != NULL && m_prepare_formula_text != NULL)
 	{
-		fprintf(debug_fp, "   %s\n", FormulaStr);
+		fprintf(debug_fp, "   %s\n", m_prepare_formula_text);
 	}
 	if (debug_fp != NULL)
 	{
 		fclose(debug_fp);
 	}
 
-
-/* sprintf(debugmsg, "Chars in formula per g_box_x is %u.\n", strlen(FormulaStr));
-	stop_message(0, debugmsg);
-*/
-	return FormulaStr;
+	return m_prepare_formula_text;
 }
 
 int BadFormula()
@@ -4410,7 +4405,7 @@ int BadFormula()
 	return 1;
 }
 
-int Formula::RunForm(char *Name, int from_prompts1c)
+int Formula::RunFormula(const char *Name, bool report_bad_symmetry)
 {
 	FILE *entry_file = NULL;
 
@@ -4432,7 +4427,7 @@ int Formula::RunForm(char *Name, int from_prompts1c)
 		return 1;
 	}
 
-	m_formula_text = PrepareFormula(entry_file, from_prompts1c);
+	m_formula_text = PrepareFormula(entry_file, report_bad_symmetry);
 	fclose(entry_file);
 
 	if (m_formula_text)  /*  No errors while making string */
@@ -4472,7 +4467,7 @@ int Formula::setup_fp()
 	{
 		MathType = D_MATH;
 		/* CAE changed below for fp */
-		RunFormRes = !RunForm(g_formula_name, 0); /* RunForm() returns 1 for failure */
+		RunFormRes = !RunFormula(g_formula_name, false); /* RunFormula() returns 1 for failure */
 		if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 			&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
 		{
@@ -4483,11 +4478,11 @@ int Formula::setup_fp()
 	else
 	{
 		MathType = M_MATH;
-		return !RunForm(g_formula_name, 0);
+		return !RunFormula(g_formula_name, false);
 	}
 #else
 	m_math_type = D_MATH;
-	RunFormRes = !RunForm(g_formula_name, 0); /* RunForm() returns 1 for failure */
+	RunFormRes = !RunFormula(g_formula_name, false); /* RunForm() returns 1 for failure */
 #if 0
 	if (RunFormRes && (g_fpu == -1) && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
@@ -4508,7 +4503,7 @@ int Formula::setup_int()
 	s_fudge = (double) (1L << g_bit_shift);
 	g_fudge_limit = (double) 0x7fffffffL/s_fudge;
 	s_shift_back = 32 - g_bit_shift;
-	return !RunForm(g_formula_name, 0);
+	return !RunFormula(g_formula_name, false);
 #endif
 }
 
@@ -5470,16 +5465,6 @@ int formula_orbit()
 int form_per_pixel()
 {
 	return g_formula_state.per_pixel();
-}
-
-char *PrepareFormula(FILE *file, int from_prompts1c)
-{
-	return g_formula_state.PrepareFormula(file, from_prompts1c);
-}
-
-int RunForm(char *Name, int from_prompts1c)  /*  returns 1 if an error occurred  */
-{
-	return g_formula_state.RunForm(Name, from_prompts1c);
 }
 
 int formula_setup_fp()
