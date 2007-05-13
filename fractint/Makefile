@@ -158,6 +158,12 @@ DOCS = debugfla.doc fractsrc.doc hc.doc
 
 HELPFILES = help.src help2.src help3.src help4.src help5.src
 
+HELP = $(DOSHELPDIR)/help.src \
+	$(DOSHELPDIR)/help2.src \
+	$(DOSHELPDIR)/help3.src \
+	$(DOSHELPDIR)/help4.src \
+	$(DOSHELPDIR)/help5.src
+
 SRCFILES = $(COMDIR)/$(OLDSRC) $(UDIR)/$(NEWSRC) $(DOSHELPDIR)/$(HELPFILES) \
 $(HFD)/$(HEADERS) $(DOCS)
 
@@ -316,7 +322,7 @@ uninstall:
 # only next might need su
 	rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
 
-fractint.hlp: hc $(DOSHELPDIR)/$(HELP)
+fractint.hlp: hc $(HELP)
 	cd $(DOSHELPDIR); ../hc /c; mv fractint.hlp ..
 	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 
