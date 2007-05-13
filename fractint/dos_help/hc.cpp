@@ -266,13 +266,14 @@ int      xdoc;
 
 #define  MAX_INCLUDE_STACK (5)    /* allow 5 nested includes */
 
-struct
+struct includes
 {
 	char *fname;
 	FILE *file;
 	int   line;
 	int   col;
-} include_stack[MAX_INCLUDE_STACK];
+};
+includes include_stack[MAX_INCLUDE_STACK];
 int include_stack_top = -1;
 
 void check_buffer(char *current, unsigned off, char *buffer);
