@@ -17,6 +17,13 @@
 #define _CRT_SECURE_NO_DEPRECATE
 /* disable unsafe CRT warnings */
 #pragma warning(disable: 4996)
+
+#if defined(_DEBUG)
+#define DEBUG_CLIENTBLOCK new(_CLIENT_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_CLIENTBLOCK
+#else
+#endif
+
 #endif
 
 #if !defined(XFRACT) && !defined(_WIN32)
