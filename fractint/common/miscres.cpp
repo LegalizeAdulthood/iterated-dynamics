@@ -622,9 +622,6 @@ nextname:
 	return 1;
 }
 
-/* ('check_key()' was moved to FRACTINT.C for MSC7-overlay speed purposes) */
-/* ('timer()'     was moved to FRACTINT.C for MSC7-overlay speed purposes) */
-
 BYTE g_trig_index[] = {SIN, SQR, SINH, COSH};
 #if !defined(XFRACT)
 void (*g_trig0_l)() = lStkSin;

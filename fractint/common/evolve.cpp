@@ -327,7 +327,10 @@ static void vary_invert(GENEBASE gene[], int randval, int i)
 */
 static int get_the_rest()
 {
-	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+	const char *evolvmodes[] =
+	{
+		"no", "x", "y", "x+y", "x-y", "random", "spread"
+	};
 	int i, k, num, numtrig;
 	char *choices[20];
 	struct full_screen_values uvalues[20];
@@ -431,7 +434,10 @@ choose_vars_restart:
 
 static int get_variations()
 {
-	char *evolvmodes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+	const char *evolvmodes[] = 
+	{
+		"no", "x", "y", "x+y", "x-y", "random", "spread"
+	};
 	int i, k, num, numparams;
 	char *choices[20];
 	struct full_screen_values uvalues[20];

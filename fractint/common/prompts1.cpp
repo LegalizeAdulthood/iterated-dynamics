@@ -55,7 +55,7 @@ static char lsysmask[13]    = {"*.l"};
 /* Routines in this module      */
 
 static int select_type_params(int newfractype, int oldfractype);
-static  int input_field_list(int attr, char *fld, int vlen, char **list, int llen,
+static  int input_field_list(int attr, char *fld, int vlen, const char **list, int llen,
 							int row, int col, int (*checkkey)(int));
 static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
@@ -299,7 +299,7 @@ struct full_screen_values *values, /* array of values */
 	{
 		if (values[i].type == 'y')
 		{
-			static char *noyes[2] =
+			static const char *noyes[2] =
 			{"no", "yes"};
 			values[i].type = 'l';
 			values[i].uval.ch.vlen = 3;
@@ -939,7 +939,7 @@ static int input_field_list(
 		int attr,             /* display attribute */
 		char *fld,            /* display form field value */
 		int vlen,             /* field length */
-		char **list,          /* list of values */
+		const char **list,          /* list of values */
 		int llen,             /* number of entries in list */
 		int row,              /* display row */
 		int col,              /* display column */
@@ -1378,18 +1378,27 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 	return numfractals;
 }
 
-char *g_juli_3d_options[] = {"monocular", "lefteye", "righteye", "red-blue"};
+const char *g_juli_3d_options[] =
+{
+	"monocular", "lefteye", "righteye", "red-blue"
+};
 
 /* JIIM */
 #ifdef RANDOM_RUN
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
-char *g_jiim_method[] = {"breadth", "depth", "walk", "run"};
+const char *g_jiim_method[] = {"breadth", "depth", "walk", "run"};
 #else
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
-char *g_jiim_method[] = {"breadth", "depth", "walk"};
+const char *g_jiim_method[] =
+{
+	"breadth", "depth", "walk"
+};
 #endif
 static char JIIMstr2[] = "Left first or Right first?";
-char *g_jiim_left_right[] = {"left", "right"};
+const char *g_jiim_left_right[] =
+{
+	"left", "right"
+};
 
 /* moved from miscres.c so sizeof structure can be accessed here */
 struct trig_funct_lst trigfn[] =
@@ -1492,11 +1501,11 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	};
 	char *filename, *entryname;
 	FILE *entryfile;
-	char *trignameptr[NUMTRIGFN];
+	const char *trignameptr[NUMTRIGFN];
 #ifdef XFRACT
 	static /* Can't initialize aggregates on the stack */
 #endif
-	char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
+	const char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
 	FractalTypeSpecificData *jborbit = NULL;
 	FractalTypeSpecificData *savespecific;
 	int firstparm = 0;
