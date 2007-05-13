@@ -107,12 +107,26 @@ int get_toggles()
 	int old_fillcolor;
 	int old_stoppass;
 	double old_closeprox;
-	char *calcmodes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
-	char *soundmodes[5] = {"off", "beep", "x", "y", "z"};
-	char *insidemodes[] = {"numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross",
-						"startrail", "period", "atan", "fmod"};
-	char *outsidemodes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan",
-						"fmod", "tdis"};
+	const char *calcmodes[] =
+	{
+		"1", "2", "3", "g", "g1",
+		"g2", "g3", "g4", "g5", "g6",
+		"b", "s", "t", "d", "o"
+	};
+	const char *soundmodes[5] =
+	{
+		"off", "beep", "x", "y", "z"
+	};
+	const char *insidemodes[] =
+	{
+		"numb", "maxiter", "zmag", "bof60", "bof61",
+		"epsiloncross", "startrail", "period", "atan", "fmod"
+	};
+	const char *outsidemodes[] =
+	{
+		"numb", "iter", "real", "imag", "mult",
+		"summ", "atan", "fmod", "tdis"
+	};
 
 	k = -1;
 
@@ -680,7 +694,10 @@ int get_toggles2()
 int passes_options()
 {
 	char *choices[20];
-	char *passcalcmodes[] = {"rect", "line"};
+	const char *passcalcmodes[] =
+	{
+		"rect", "line"
+	};
 
 	struct full_screen_values uvalues[25];
 	int i, j, k;
@@ -1129,7 +1146,10 @@ static char *masks[] = {"*.pot", "*.gif"};
 int get_random_dot_stereogram_parameters()
 {
 	char rds6[60];
-	char *stereobars[] = {"none", "middle", "top"};
+	const char *stereobars[] =
+	{
+		"none", "middle", "top"
+	};
 	struct full_screen_values uvalues[7];
 	char *rds_prompts[7] =
 	{

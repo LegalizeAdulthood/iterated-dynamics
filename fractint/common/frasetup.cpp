@@ -162,7 +162,7 @@ int mandelbrot_setup_fp()
 		g_symmetry = SYMMETRY_X_AXIS_NO_PARAMETER;
 		break;
 /* Added to account for symmetry in manfn + exp and manfn + zsqrd */
-/*     JCO 2/29/92 */
+
 	case FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_FP:
 	case FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_FP:
 		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
@@ -283,7 +283,7 @@ int julia_setup_fp()
 		get_julia_attractor (0.0, 0.0);   /* another attractor? */
 		break;
 	/* Added to account for symmetry in julfn + exp and julfn + zsqrd */
-	/*     JCO 2/29/92 */
+
 	case FRACTYPE_JULIA_FUNC_PLUS_EXP_FP:
 	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_FP:
 		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
@@ -395,7 +395,7 @@ int mandelbrot_setup_l()
 		}
 	}
 	/* Added to account for symmetry in manfn + exp and manfn + zsqrd */
-	/*     JCO 2/29/92 */
+
 	if ((g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_L) || (g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_L))
 	{
 		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
@@ -447,7 +447,7 @@ int julia_setup_l()
 		}
 		break;
 	/* Added to account for symmetry in julfn + exp and julfn + zsqrd */
-	/*     JCO 2/29/92 */
+
 	case FRACTYPE_JULIA_FUNC_PLUS_EXP_L:
 	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_L:
 		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
@@ -788,13 +788,13 @@ int lambda_trig_setup()
 	case EXP:
 		g_current_fractal_specific->orbitcalc = 
 			isinteger ? lambda_exponent_orbit : lambda_exponent_orbit_fp;
-		g_symmetry = SYMMETRY_NONE; /* JCO 1/9/93 */
+		g_symmetry = SYMMETRY_NONE;
 		break;
 	case LOG:
 		g_symmetry = SYMMETRY_NONE;
 		break;
 	default:   /* default for additional functions */
-		g_symmetry = SYMMETRY_ORIGIN;  /* JCO 5/8/92 */
+		g_symmetry = SYMMETRY_ORIGIN;
 		break;
 	}
 	get_julia_attractor (0.0, 0.0);      /* an attractor? */
@@ -864,7 +864,7 @@ int fn_fn_setup()
 	*/
 	if (g_trig_index[0] < 7 && g_trig_index[1] < 7)  /* bounds of array JCO 5/22/92*/
 	{
-		g_symmetry = fnxfn[g_trig_index[0]][g_trig_index[1]];  /* JCO 5/22/92 */
+		g_symmetry = fnxfn[g_trig_index[0]][g_trig_index[1]];
 	}
 	/* defaults to SYMMETRY_X_AXIS symmetry JCO 5/22/92 */
 	else  /* added to complete the symmetry JCO 5/22/92 */

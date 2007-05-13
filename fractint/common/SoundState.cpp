@@ -410,7 +410,7 @@ get_sound_restart:
 	uvalues[k].type = 'l';
 	uvalues[k].uval.ch.vlen = 4;
 	uvalues[k].uval.ch.llen = 5;
-	char *soundmodes[] = { "off", "beep", "x", "y", "z" };
+	const char *soundmodes[] = { "off", "beep", "x", "y", "z" };
 	uvalues[k].uval.ch.list = soundmodes;
 	uvalues[k].uval.ch.val = m_flags & 7;
 
@@ -613,7 +613,7 @@ get_map_restart:
 
 int SoundState::get_music_parameters()
 {
-	char *attenmodes[] = { "none", "low", "mid", "high" };
+	const char *attenmodes[] = { "none", "low", "mid", "high" };
 	char *choices[11];
 	struct full_screen_values uvalues[11];
 	int i;

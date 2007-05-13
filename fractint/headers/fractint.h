@@ -1083,13 +1083,11 @@ struct dblcoords
 
 struct trig_funct_lst
 {
-	char *name;
+	const char *name;
 	void (*lfunct)();
 	void (*dfunct)();
 	void (*mfunct)();
 };
-
-/* for overlay return stack */
 
 #define BIG 100000.0
 
@@ -1280,7 +1278,7 @@ struct full_screen_values
 		{          /* when type is 'l'      */
 			 int  val;      /*   selected choice     */
 			 int  vlen;     /*   char len per choice */
-			 char **list;   /*   list of values      */
+			 const char **list;   /*   list of values      */
 			 int  llen;     /*   number of values    */
 		} ch;
 	} uval;

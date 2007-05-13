@@ -1185,13 +1185,13 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 			: (g_y_stop - (int)((s_population - g_initial_z.y) / g_escape_time_state.m_grid_fp.delta_y()));
 
 		/* if it's visible on the screen, save it in the column array */
-		if (pixel_row <= (unsigned int)g_y_stop) /* JCO 6/6/92 */
+		if (pixel_row <= (unsigned int)g_y_stop)
 		{
 			s_verhulst_array[pixel_row] ++;
 		}
 		if (g_periodicity_check && bifurcation_periodic(counter))
 		{
-			if (pixel_row <= (unsigned int)g_y_stop) /* JCO 6/6/92 */
+			if (pixel_row <= (unsigned int)g_y_stop)
 				s_verhulst_array[pixel_row] --;
 			break;
 		}
