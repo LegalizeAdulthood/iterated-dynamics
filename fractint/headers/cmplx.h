@@ -3,20 +3,20 @@
 #define _CMPLX_DEFINED
 
 template <typename T>
-struct Complex
+struct ComplexT
 {
 	T x, y;
 };
 
 template <typename T>
-struct HyperComplex : public Complex<T>
+struct HyperComplexT : public ComplexT<T>
 {
 	T z, t;
 };
 
-typedef struct Complex<double> DComplex;
-typedef struct Complex<long> LComplex;
-typedef struct HyperComplex<double> DHyperComplex;
-typedef struct HyperComplex<long> LHyperComplex;
+typedef struct ComplexT<double> DComplex;
+typedef struct ComplexT<long> LComplex;
+typedef struct HyperComplexT<double> DHyperComplex;
+typedef struct HyperComplexT<long> LHyperComplex;
 
 #endif
