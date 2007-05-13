@@ -194,7 +194,16 @@ Formula::Formula()
 	m_uses_p5(false),
 	m_max_fn(0),
 	m_function_load_store_pointers(NULL),
-	m_variables(NULL)
+	m_variables(NULL),
+	m_store(NULL),
+	m_load(NULL),
+	m_functions(NULL),
+	m_arg1(),
+	m_arg2(),
+	m_formula_text(NULL),
+	m_file_pos(0),
+	m_statement_pos(0),
+	m_errors_found(0)
 {
 	{
 		Arg zero = { 0 };
@@ -208,6 +217,13 @@ Formula::Formula()
 		for (int i = 0; i < NUM_OF(m_jump_control); i++)
 		{
 			m_jump_control[i] = zero;
+		}
+	}
+	{
+		error_data zero = { 0 };
+		for (int i = 0; i < NUM_OF(m_errors); i++)
+		{
+			m_errors[i] = zero;
 		}
 	}
 }
@@ -371,7 +387,7 @@ int InitOpPtr;
 #define PE_ILLEGAL_VAR_NAME                          26
 #define PE_INVALID_CONST                             27
 #define PE_ILLEGAL_CHAR                              28
-#define PE_NESTING_TO_DEEP                           29
+#define PE_NESTING_TOO_DEEP                           29
 #define PE_UNMATCHED_MODULUS                         30
 #define PE_FUNC_USED_AS_VAR                          31
 #define PE_NO_NEG_AFTER_EXPONENT                     32
@@ -2275,43 +2291,26 @@ ConstArg *Formula::is_constant(const char *text, int length)
 		{
 			if (!strnicmp(m_variables[n].s, text, length))
 			{
-				if (n == VARIABLE_P1)
+				switch (n)
 				{
-					m_uses_p1 = true;
-				}
-				if (n == VARIABLE_P2)
-				{
-					m_uses_p2 = true;
-				}
-				if (n == VARIABLE_RAND)
-				{
-					RandomSeed();
-				}
-				if (n == VARIABLE_P3)
-				{
-					m_uses_p3 = true;
-				}
-				if (n == VARIABLE_IS_MAND)
-				{
-					m_uses_is_mand = true;
-				}
-				if (n == VARIABLE_P4)
-				{
-					m_uses_p4 = true;
-				}
-				if (n == VARIABLE_P5)
-				{
-					m_uses_p5 = true;
-				}
+				case VARIABLE_P1:		m_uses_p1 = true;		break;
+				case VARIABLE_P2:		m_uses_p2 = true;		break;
+				case VARIABLE_P3:		m_uses_p3 = true;		break;
+				case VARIABLE_P4:		m_uses_p4 = true;		break;
+				case VARIABLE_P5:		m_uses_p5 = true;		break;
+				case VARIABLE_IS_MAND:	m_uses_is_mand = true;	break;
+				case VARIABLE_RAND:		RandomSeed();			break;
+				case VARIABLE_SCRN_PIX:
+				case VARIABLE_SCRN_MAX:
+				case VARIABLE_MAX_IT:
 #if !defined(XFRACT)
-				if (n == VARIABLE_SCRN_PIX || n == VARIABLE_SCRN_MAX || n == VARIABLE_MAX_IT)
-				{
 					if (m_math_type == L_MATH)
 					{
 						driver_unget_key('f');
 					}
-				}
 #endif
+					break;
+				}
 				if (!isconst_pair(text))
 				{
 					return &m_variables[n];
@@ -3446,9 +3445,7 @@ int Formula::fill_jump_struct()
 	return i < 0 ? 1 : 0;
 }
 
-static char *FormStr;
-
-int frmgetchar (FILE *openfile)
+int frmgetchar(FILE *openfile)
 {
 	int c;
 	int done = 0;
@@ -3714,7 +3711,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 		{
 				fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", done);
 		}
-		if (!done && frmgetconstant (openfile, &temp_tok))
+		if (!done && frmgetconstant(openfile, &temp_tok))
 		{
 			c = frmgetchar(openfile);
 			if (debug_token != NULL)
@@ -3747,7 +3744,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 				if (debug_token != NULL)
 				{
 					fprintf(debug_token,  "Exiting with type set to %d\n", tok->token_const.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT);
-					fclose (debug_token);
+					fclose(debug_token);
 				}
 				return;
 			}
@@ -3761,7 +3758,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 			done = 1;
 		}
 	}
-	fseek (openfile, filepos, SEEK_SET);
+	fseek(openfile, filepos, SEEK_SET);
 	tok->token_str[1] = (char) 0;
 	tok->token_const.y = tok->token_const.x = 0.0;
 	tok->token_type = TOKENTYPE_PARENTHESIS;
@@ -3769,7 +3766,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 	if (debug_token != NULL)
 	{
 		fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
-		fclose (debug_token);
+		fclose(debug_token);
 	}
 	return;
 }
@@ -4435,13 +4432,13 @@ int Formula::RunForm(char *Name, int from_prompts1c)
 		return 1;
 	}
 
-	FormStr = PrepareFormula(entry_file, from_prompts1c);
+	m_formula_text = PrepareFormula(entry_file, from_prompts1c);
 	fclose(entry_file);
 
-	if (FormStr)  /*  No errors while making string */
+	if (m_formula_text)  /*  No errors while making string */
 	{
 		allocate();  /*  ParseStr() will test if this alloc worked  */
-		if (ParseStr(FormStr, 1))
+		if (ParseStr(m_formula_text, 1))
 		{
 			return 1;   /*  parse failed, don't change fn pointers  */
 		}
@@ -4563,7 +4560,7 @@ void Formula::allocate()
 
 		if (pass == 0)
 		{
-			if (ParseStr(FormStr, pass) == 0)
+			if (ParseStr(m_formula_text, pass) == 0)
 			{
 				/* per Chuck Ebbert, fudge these up a little */
 				m_formula_max_ops = m_posp + 4;
@@ -4602,33 +4599,22 @@ void Formula::free_work_area()
 }
 
 
-struct error_data
-{
-	long start_pos;
-	long error_pos;
-	int error_number;
-} errors[3];
-
-
 void Formula::frm_error(FILE *open_file, long begin_frm)
 {
-	token_st tok;
-	/* char debugmsg[500]; */
-	int i, chars_to_error = 0, chars_in_error = 0, token_count;
-	int statement_len, line_number;
-	int done;
 	char msgbuf[900];
-	long filepos;
-	int j;
-	int initialization_error;
-	strcpy (msgbuf, "\n");
+	strcpy(msgbuf, "\n");
 
-	for (j = 0; j < 3 && errors[j].start_pos; j++)
+	token_st tok;
+	int token_count;
+	int chars_to_error = 0;
+	int chars_in_error = 0;
+	for (int j = 0; j < NUM_OF(m_errors) && m_errors[j].start_pos; j++)
 	{
-		initialization_error = errors[j].error_number == PE_SECOND_COLON ? 1 : 0;
+		int initialization_error = (m_errors[j].error_number == PE_SECOND_COLON) ? 1 : 0;
 		fseek(open_file, begin_frm, SEEK_SET);
-		line_number = 1;
-		while (ftell(open_file) != errors[j].error_pos)
+		int i;
+		int line_number = 1;
+		while (ftell(open_file) != m_errors[j].error_pos)
 		{
 			i = fgetc(open_file);
 			if (i == '\n')
@@ -4638,40 +4624,31 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 			else if (i == EOF || i == '}')
 			{
 				stop_message(0, "Unexpected EOF or end-of-formula in error function.\n");
-				fseek (open_file, errors[j].error_pos, SEEK_SET);
+				fseek(open_file, m_errors[j].error_pos, SEEK_SET);
 				formula_get_token(open_file, &tok); /*reset file to end of error token */
 				return;
 			}
 		}
-		sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", errors[j].error_number, line_number, error_messages(errors[j].error_number));
+		sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", m_errors[j].error_number, line_number, error_messages(m_errors[j].error_number));
 		i = (int) strlen(msgbuf);
-		/* sprintf(debugmsg, "msgbuf is: %s\n and i is %d\n", msgbuf, i);
-		stop_message (0, debugmsg);
-		*/
-		fseek(open_file, errors[j].start_pos, SEEK_SET);
-		statement_len = token_count = 0;
-		done = 0;
+		fseek(open_file, m_errors[j].start_pos, SEEK_SET);
+		int statement_len = 0;
+		token_count = 0;
+		bool done = false;
 		while (!done)
 		{
-			filepos = ftell (open_file);
-			if (filepos == errors[j].error_pos)
+			long filepos = ftell(open_file);
+			if (filepos == m_errors[j].error_pos)
 			{
-				/* stop_message(0, "About to get error token\n"); */
 				chars_to_error = statement_len;
 				formula_get_token(open_file, &tok);
 				chars_in_error = (int) strlen(tok.token_str);
 				statement_len += chars_in_error;
 				token_count++;
-				/* sprintf(debugmsg, "Error is %s\nChars in error is %d\nChars to error is %d\n", tok.token_str, chars_in_error, chars_to_error);
-				stop_message (0, debugmsg);
-				*/
 			}
 			else
 			{
 				formula_get_token(open_file, &tok);
-				/* sprintf(debugmsg, "Just got %s\n", tok.token_str);
-				stop_message (0, debugmsg);
-				*/
 				statement_len += (int) strlen(tok.token_str);
 				token_count++;
 			}
@@ -4680,19 +4657,18 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 					&& (tok.token_id == 0 || tok.token_id == 11))
 				|| (tok.token_type == TOKENTYPE_NONE && tok.token_id == END_OF_FILE))
 			{
-				done = 1;
+				done = true;
 				if (token_count > 1 && !initialization_error)
 				{
 					token_count--;
 				}
 			}
 		}
-		fseek(open_file, errors[j].start_pos, SEEK_SET);
+		fseek(open_file, m_errors[j].start_pos, SEEK_SET);
 		if (chars_in_error < 74)
 		{
 			while (chars_to_error + chars_in_error > 74)
 			{
-				/* stop_message(0, "chars in error less than 74, but late in line"); */
 				formula_get_token(open_file, &tok);
 				chars_to_error -= (int) strlen(tok.token_str);
 				token_count--;
@@ -4700,19 +4676,17 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 		}
 		else
 		{
-			fseek(open_file, errors[j].error_pos, SEEK_SET);
+			fseek(open_file, m_errors[j].error_pos, SEEK_SET);
 			chars_to_error = 0;
 			token_count = 1;
 		}
-		/* stop_message(0, "Back to beginning of statement to build msgbuf"); */
 		while ((int) strlen(&msgbuf[i]) <= 74 && token_count--)
 		{
-			formula_get_token (open_file, &tok);
-			strcat (msgbuf, tok.token_str);
-			/* stop_message(0, &msgbuf[i]); */
+			formula_get_token(open_file, &tok);
+			strcat(msgbuf, tok.token_str);
 		}
-		fseek (open_file, errors[j].error_pos, SEEK_SET);
-		formula_get_token (open_file, &tok);
+		fseek(open_file, m_errors[j].error_pos, SEEK_SET);
+		formula_get_token(open_file, &tok);
 		if ((int) strlen(&msgbuf[i]) > 74)
 		{
 			msgbuf[i + 74] = (char) 0;
@@ -4721,22 +4695,19 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 		i = (int) strlen(msgbuf);
 		while (chars_to_error-- > -2)
 		{
-			strcat (msgbuf, " ");
+			strcat(msgbuf, " ");
 		}
-		/* sprintf(debugmsg, "Going into final line, chars in error is %d", chars_in_error);
-		stop_message(0, debugmsg);
-		*/
-		if (errors[j].error_number == PE_TOKEN_TOO_LONG)
+		if (m_errors[j].error_number == PE_TOKEN_TOO_LONG)
 		{
 			chars_in_error = 33;
 		}
 		while (chars_in_error-- && (int) strlen(&msgbuf[i]) <= 74)
 		{
-			strcat (msgbuf, "^");
+			strcat(msgbuf, "^");
 		}
-		strcat (msgbuf, "\n");
+		strcat(msgbuf, "\n");
 	}
-	stop_message (8, msgbuf);
+	stop_message(8, msgbuf);
 	return;
 }
 
@@ -4772,7 +4743,7 @@ void Formula::display_const_lists()
 void const_list_st::display(const char *title) const
 {
 	char msgbuf[800];
-	stop_message (0, title);
+	stop_message(0, title);
 	for (const const_list_st *p = this; p; p = p->next_item)
 	{
 		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
@@ -4911,19 +4882,23 @@ memory allocation to be done later.
 The function returns 1 if success, and 0 if errors are found.
 */
 
-int disable_fastparser;
-int must_use_float;
-
+void Formula::record_error(int error_code)
+{
+	if (!m_errors_found || m_errors[m_errors_found - 1].start_pos != m_statement_pos)
+	{
+		m_errors[m_errors_found].start_pos      = m_statement_pos;
+		m_errors[m_errors_found].error_pos      = m_file_pos;
+		m_errors[m_errors_found++].error_number = error_code;
+	}
+}
 
 int Formula::prescan(FILE *open_file)
 {
-	long filepos;
 	int i;
-	long statement_pos;
 	long orig_pos;
 	int done = 0;
 	token_st this_token;
-	int errors_found = 0;
+	m_errors_found = 0;
 	bool ExpectingArg = true;
 	int NewStatement = true;
 	int assignment_ok = true;
@@ -4934,11 +4909,8 @@ int Formula::prescan(FILE *open_file)
 	int max_parens = sizeof(long)*8;
 	/*
 	char debugmsg[800];
-	stop_message (0, "Entering prescan");
+	stop_message(0, "Entering prescan");
 	*/
-
-	disable_fastparser = 0;
-	must_use_float     = 0;
 
 	m_number_of_ops = 0;
 	m_number_of_loads = 0;
@@ -4951,18 +4923,18 @@ int Formula::prescan(FILE *open_file)
 	init_var_list();
 	init_const_lists();
 
-	orig_pos = statement_pos = ftell(open_file);
+	orig_pos = m_statement_pos = ftell(open_file);
 	for (i = 0; i < 3; i++)
 	{
-		errors[i].start_pos    = 0L;
-		errors[i].error_pos    = 0L;
-		errors[i].error_number = 0;
+		m_errors[i].start_pos    = 0L;
+		m_errors[i].error_pos    = 0L;
+		m_errors[i].error_number = 0;
 	}
 
 	while (!done)
 	{
-		filepos = ftell (open_file);
-		formula_get_token (open_file, &this_token);
+		m_file_pos = ftell(open_file);
+		formula_get_token(open_file, &this_token);
 		m_chars_in_formula += (int) strlen(this_token.token_str);
 		switch (this_token.token_type)
 		{
@@ -4975,76 +4947,31 @@ int Formula::prescan(FILE *open_file)
 				fseek(open_file, orig_pos, SEEK_SET);
 				return 0;
 			case ILLEGAL_CHARACTER:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_ILLEGAL_CHAR;
-				}
+				record_error(PE_ILLEGAL_CHAR);
 				break;
 			case ILLEGAL_VARIABLE_NAME:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_ILLEGAL_VAR_NAME;
-				}
+				record_error(PE_ILLEGAL_VAR_NAME);
 				break;
 			case TOKEN_TOO_LONG:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_TOKEN_TOO_LONG;
-				}
+				record_error(PE_TOKEN_TOO_LONG);
 				break;
 			case FUNC_USED_AS_VAR:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_FUNC_USED_AS_VAR;
-				}
+				record_error(PE_FUNC_USED_AS_VAR);
 				break;
 			case JUMP_MISSING_BOOLEAN:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_JUMP_NEEDS_BOOLEAN;
-				}
+				record_error(PE_JUMP_NEEDS_BOOLEAN);
 				break;
 			case JUMP_WITH_ILLEGAL_CHAR:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_NO_CHAR_AFTER_THIS_JUMP;
-				}
+				record_error(PE_NO_CHAR_AFTER_THIS_JUMP);
 				break;
 			case UNDEFINED_FUNCTION:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_UNDEFINED_FUNCTION;
-				}
+				record_error(PE_UNDEFINED_FUNCTION);
 				break;
 			case ILLEGAL_OPERATOR:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_UNDEFINED_OPERATOR;
-				}
+				record_error(PE_UNDEFINED_OPERATOR);
 				break;
 			case ILL_FORMED_CONSTANT:
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_INVALID_CONST;
-				}
+				record_error(PE_INVALID_CONST);
 				break;
 			default:
 				stop_message(0, "Unexpected arrival at default case in prescan()");
@@ -5060,21 +4987,11 @@ int Formula::prescan(FILE *open_file)
 			case OPEN_PARENS:
 				if (++m_parenthesis_count > max_parens)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_NESTING_TO_DEEP;
-					}
+					record_error(PE_NESTING_TOO_DEEP);
 				}
 				else if (!ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-					}
+					record_error(PE_SHOULD_BE_OPERATOR);
 				}
 				waiting_for_mod = waiting_for_mod << 1;
 				break;
@@ -5085,22 +5002,12 @@ int Formula::prescan(FILE *open_file)
 				}
 				else
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_NEED_A_MATCHING_OPEN_PARENS;
-					}
+					record_error(PE_NEED_A_MATCHING_OPEN_PARENS);
 					m_parenthesis_count = 0;
 				}
 				if (waiting_for_mod & 1L)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
-					}
+					record_error(PE_UNMATCHED_MODULUS);
 				}
 				else
 				{
@@ -5108,12 +5015,7 @@ int Formula::prescan(FILE *open_file)
 				}
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				break;
 			default:
@@ -5126,12 +5028,7 @@ int Formula::prescan(FILE *open_file)
 			NewStatement = false;
 			if (!ExpectingArg)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-				}
+				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			ExpectingArg = false;
 			break;
@@ -5141,12 +5038,7 @@ int Formula::prescan(FILE *open_file)
 			NewStatement = false;
 			if (!ExpectingArg)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-				}
+				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			ExpectingArg = false;
 			m_variable_list = var_list_st::add(m_variable_list, this_token);
@@ -5165,12 +5057,7 @@ int Formula::prescan(FILE *open_file)
 			NewStatement = false;
 			if (!ExpectingArg)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-				}
+				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			ExpectingArg = false;
 			break;
@@ -5181,12 +5068,7 @@ int Formula::prescan(FILE *open_file)
 			NewStatement = false;
 			if (!ExpectingArg)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-				}
+				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			ExpectingArg = false;
 			m_real_list = const_list_st::add(m_real_list, this_token);
@@ -5206,12 +5088,7 @@ int Formula::prescan(FILE *open_file)
 			NewStatement = false;
 			if (!ExpectingArg)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-				}
+				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			ExpectingArg = false;
 			m_complex_list = const_list_st::add(m_complex_list, this_token);
@@ -5230,12 +5107,7 @@ int Formula::prescan(FILE *open_file)
 			m_number_of_ops++;
 			if (!ExpectingArg)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-				}
+				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			break;
 		case TOKENTYPE_PARAMETER_FUNCTION:
@@ -5244,12 +5116,7 @@ int Formula::prescan(FILE *open_file)
 			m_number_of_ops++;
 			if (!ExpectingArg)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-				}
+				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			NewStatement = false;
 			break;
@@ -5259,12 +5126,7 @@ int Formula::prescan(FILE *open_file)
 			m_number_of_jumps++;
 			if (!NewStatement)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_JUMP_NOT_FIRST;
-				}
+				record_error(PE_JUMP_NOT_FIRST);
 			}
 			else
 			{
@@ -5280,41 +5142,21 @@ int Formula::prescan(FILE *open_file)
 					m_number_of_jumps++;  /* this involves two jumps */
 					if (else_has_been_used & 1)
 					{
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
-						}
+						record_error(PE_ENDIF_REQUIRED_AFTER_ELSE);
 					}
 					else if (!waiting_for_endif)
 					{
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
-						}
+						record_error(PE_MISPLACED_ELSE_OR_ELSEIF);
 					}
 					break;
 				case 3: /*ELSE*/
 					if (else_has_been_used & 1)
 					{
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_ENDIF_REQUIRED_AFTER_ELSE;
-						}
+						record_error(PE_ENDIF_REQUIRED_AFTER_ELSE);
 					}
 					else if (!waiting_for_endif)
 					{
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_MISPLACED_ELSE_OR_ELSEIF;
-						}
+						record_error(PE_MISPLACED_ELSE_OR_ELSEIF);
 					}
 					else_has_been_used |= 1;
 					break;
@@ -5323,12 +5165,7 @@ int Formula::prescan(FILE *open_file)
 					waiting_for_endif--;
 					if (waiting_for_endif < 0)
 					{
-						if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-						{
-							errors[errors_found].start_pos      = statement_pos;
-							errors[errors_found].error_pos      = filepos;
-							errors[errors_found++].error_number = PE_ENDIF_WITH_NO_IF;
-						}
+						record_error(PE_ENDIF_WITH_NO_IF);
 						waiting_for_endif = 0;
 					}
 					break;
@@ -5345,22 +5182,12 @@ int Formula::prescan(FILE *open_file)
 				m_number_of_ops++; /* ParseStr inserts a dummy op*/
 				if (m_parenthesis_count)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
-					}
+					record_error(PE_NEED_MORE_CLOSE_PARENS);
 					m_parenthesis_count = 0;
 				}
 				if (waiting_for_mod)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
-					}
+					record_error(PE_UNMATCHED_MODULUS);
 					waiting_for_mod = 0;
 				}
 				if (!ExpectingArg)
@@ -5376,31 +5203,16 @@ int Formula::prescan(FILE *open_file)
 				}
 				else if (!NewStatement)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				if (this_token.token_id == 11 && waiting_for_endif)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_UNMATCHED_IF_IN_INIT_SECTION;
-					}
+					record_error(PE_UNMATCHED_IF_IN_INIT_SECTION);
 					waiting_for_endif = 0;
 				}
 				if (this_token.token_id == 11 && already_got_colon)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SECOND_COLON;
-					}
+					record_error(PE_SECOND_COLON);
 				}
 				if (this_token.token_id == 11)
 				{
@@ -5409,18 +5221,13 @@ int Formula::prescan(FILE *open_file)
 				NewStatement = true;
 				assignment_ok = true;
 				ExpectingArg = true;
-				statement_pos = ftell(open_file);
+				m_statement_pos = ftell(open_file);
 				break;
 			case 1:     /* != */
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5430,12 +5237,7 @@ int Formula::prescan(FILE *open_file)
 				m_number_of_stores++;
 				if (!assignment_ok)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_ILLEGAL_ASSIGNMENT;
-					}
+					record_error(PE_ILLEGAL_ASSIGNMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5443,12 +5245,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5456,12 +5253,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5469,12 +5261,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5482,12 +5269,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5495,12 +5277,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5512,21 +5289,11 @@ int Formula::prescan(FILE *open_file)
 				}
 				if (!(waiting_for_mod & 1L) && !ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_OPERATOR;
-					}
+					record_error(PE_SHOULD_BE_OPERATOR);
 				}
 				else if ((waiting_for_mod & 1L) && ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				waiting_for_mod = waiting_for_mod ^ 1L; /*switch right bit*/
 				break;
@@ -5534,12 +5301,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5547,12 +5309,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5560,12 +5317,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5577,12 +5329,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5590,12 +5337,7 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
 				ExpectingArg = true;
 				break;
@@ -5603,27 +5345,17 @@ int Formula::prescan(FILE *open_file)
 				assignment_ok = false;
 				if (ExpectingArg)
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-					}
+					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				filepos = ftell(open_file);
+				m_file_pos = ftell(open_file);
 				formula_get_token (open_file, &this_token);
 				if (this_token.token_str[0] == '-')
 				{
-					if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-					{
-						errors[errors_found].start_pos      = statement_pos;
-						errors[errors_found].error_pos      = filepos;
-						errors[errors_found++].error_number = PE_NO_NEG_AFTER_EXPONENT;
-					}
+					record_error(PE_NO_NEG_AFTER_EXPONENT);
 				}
 				else
 				{
-					fseek(open_file, filepos, SEEK_SET);
+					fseek(open_file, m_file_pos, SEEK_SET);
 				}
 				ExpectingArg = true;
 				break;
@@ -5635,53 +5367,28 @@ int Formula::prescan(FILE *open_file)
 			m_number_of_ops += 3; /* Just need one, but a couple of extra just for the heck of it */
 			if (m_parenthesis_count)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_NEED_MORE_CLOSE_PARENS;
-				}
+				record_error(PE_NEED_MORE_CLOSE_PARENS);
 				m_parenthesis_count = 0;
 			}
 			if (waiting_for_mod)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_UNMATCHED_MODULUS;
-				}
+				record_error(PE_UNMATCHED_MODULUS);
 				waiting_for_mod = 0;
 			}
 			if (waiting_for_endif)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_IF_WITH_NO_ENDIF;
-				}
+				record_error(PE_IF_WITH_NO_ENDIF);
 				waiting_for_endif = 0;
 			}
 			if (ExpectingArg && !NewStatement)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_SHOULD_BE_ARGUMENT;
-				}
-				statement_pos = ftell(open_file);
+				record_error(PE_SHOULD_BE_ARGUMENT);
+				m_statement_pos = ftell(open_file);
 			}
 
 			if (m_number_of_jumps >= MAX_JUMPS)
 			{
-				if (!errors_found || errors[errors_found-1].start_pos != statement_pos)
-				{
-					errors[errors_found].start_pos      = statement_pos;
-					errors[errors_found].error_pos      = filepos;
-					errors[errors_found++].error_number = PE_TOO_MANY_JUMPS;
-				}
+				record_error(PE_TOO_MANY_JUMPS);
 			}
 			done = 1;
 			break;
@@ -5689,18 +5396,18 @@ int Formula::prescan(FILE *open_file)
 		default:
 			break;
 		}
-		if (errors_found == 3)
+		if (m_errors_found == NUM_OF(m_errors))
 		{
 			done = 1;
 		}
 	}
-	if (errors[0].start_pos)
+	if (m_errors[0].start_pos)
 	{
 		/*
 		sprintf (debugmsg, "Errors structure on entering frm_error\n 0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
-				errors[0].start_pos, errors[0].error_pos, errors[0].error_number,
-				errors[1].start_pos, errors[1].error_pos, errors[1].error_number,
-				errors[2].start_pos, errors[2].error_pos, errors[2].error_number);
+				m_errors[0].start_pos, m_errors[0].error_pos, m_errors[0].error_number,
+				m_errors[1].start_pos, m_errors[1].error_pos, m_errors[1].error_number,
+				m_errors[2].start_pos, m_errors[2].error_pos, m_errors[2].error_number);
 			stop_message (0, debugmsg);
 		*/
 		frm_error(open_file, orig_pos);

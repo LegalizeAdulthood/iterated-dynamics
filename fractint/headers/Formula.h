@@ -3,6 +3,13 @@
 
 #define MAX_JUMPS 200  /* size of JUMP_CONTROL array */
 
+struct error_data
+{
+	long start_pos;
+	long error_pos;
+	int error_number;
+};
+
 struct JUMP_PTRS
 {
 	int JumpOpPtr;
@@ -187,6 +194,11 @@ private:
 	JUMP_CONTROL m_jump_control[MAX_JUMPS];
 	Arg m_arg1;
 	Arg m_arg2;
+	const char *m_formula_text;
+	error_data m_errors[50];
+	long m_file_pos;
+	long m_statement_pos;
+	int m_errors_found;
 
 	ConstArg *is_constant(const char *text, int length);
 	int ParseStr(const char *text, int pass);
@@ -207,6 +219,7 @@ private:
 	int CvtFptr(void (* ffptr)(), int MinStk, int FreeStk, int Delta);
 	t_function *is_function(const char *str, int len);
 	int fill_if_group(int endif_index, JUMP_PTRS *jump_data);
+	void record_error(int error_code);
 };
 
 extern Arg *Arg1;
