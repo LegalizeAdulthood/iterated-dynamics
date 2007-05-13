@@ -48,7 +48,8 @@ int     g_biomorph;               /* flag for g_biomorph */
 int     g_user_biomorph;
 int     g_force_symmetry;          /* force symmetry */
 int     g_show_file;               /* zero if file display pending */
-int     g_random_flag, g_random_seed;           /* Random number seeding flag and value */
+int g_random_flag;
+int g_random_seed;           /* Random number seeding flag and value */
 int     g_decomposition[2];              /* Decomposition coloring */
 long    g_distance_test;
 int     g_distance_test_width;
@@ -74,7 +75,8 @@ int		g_use_center_mag;                 /* use center-mag corners   */
 long    g_bail_out;                /* user input bailout value */
 enum bailouts g_bail_out_test;       /* test used for determining bailout */
 double  g_inversion[3];           /* radius, xcenter, ycenter */
-int     g_rotate_lo, g_rotate_hi;    /* cycling color range      */
+int g_rotate_lo;
+int g_rotate_hi;    /* cycling color range      */
 int		*g_ranges;                /* iter->color ranges mapping */
 int     g_ranges_length = 0;          /* size of ranges array     */
 BYTE	*g_map_dac_box = NULL;     /* map= (default g_colors)    */
@@ -855,7 +857,8 @@ static int make_doc_arg(const cmd_context &context)
 
 static int make_par_arg(const cmd_context &context)
 {
-	char *slash, *next = NULL;
+	char *slash;
+	char *next = NULL;
 	if (context.totparms < 1 || context.totparms > 2)
 	{
 		return bad_arg(context.curarg);
@@ -1345,7 +1348,8 @@ static int cycle_limit_arg(const cmd_context &context)
 
 static int make_mig_arg(const cmd_context &context)
 {
-	int xmult, ymult;
+	int xmult;
+	int ymult;
 	if (context.totparms < 2)
 	{
 		return bad_arg(context.curarg);
@@ -1391,7 +1395,10 @@ static int cycle_range_arg(const cmd_context &context)
 
 static int ranges_arg(const cmd_context &context)
 {
-	int i, j, entries, prev;
+	int i;
+	int j;
+	int entries;
+	int prev;
 	int tmpranges[128];
 
 	if (context.totparms != context.intparms)
@@ -1923,9 +1930,14 @@ static int view_windows_arg(const cmd_context &context)
 static int center_mag_arg(const cmd_context &context)
 {
 	int dec;
-	double Xctr, Yctr, Xmagfactor, Rotation, Skew;
+	double Xctr;
+	double Yctr;
+	double Xmagfactor;
+	double Rotation;
+	double Skew;
 	LDBL Magnification;
-	bf_t bXctr, bYctr;
+	big_t bXctr;
+	big_t bYctr;
 
 	if ((context.totparms != context.floatparms)
 		|| (context.totparms != 0 && context.totparms < 3)
@@ -2874,8 +2886,10 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	cmd_context context;
 	char    variable[21];                /* variable name goes here   */
 	double  ftemp;
-	int     i, j;
-	char    *argptr, *argptr2;
+	int i;
+	int j;
+	char *argptr;
+	char *argptr2;
 	char    tmpc;
 	int     lastarg;
 
@@ -3238,7 +3252,10 @@ int process_command(char *curarg, int mode) /* process a single argument */
 
 static void parse_text_colors(char *value)
 {
-	int i, j, k, hexval;
+	int i;
+	int j;
+	int k;
+	int hexval;
 	if (strcmp(value, "mono") == 0)
 	{
 		for (k = 0; k < sizeof(g_text_colors); ++k)
@@ -3289,7 +3306,9 @@ static void parse_text_colors(char *value)
 
 static int parse_colors(char *value)
 {
-	int i, j, k;
+	int i;
+	int j;
+	int k;
 	if (*value == '@')
 	{
 		if (merge_path_names(g_map_name, &value[1], 3) < 0)
@@ -3478,7 +3497,9 @@ int get_curarg_len(char *curarg)
 /* Get max length of current args */
 int get_max_curarg_len(char *floatvalstr[], int totparms)
 {
-	int i, tmp, max_str;
+	int i;
+	int tmp;
+	int max_str;
 	max_str = 0;
 	for (i = 0; i < totparms; i++)
 	{
@@ -3500,7 +3521,9 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 int init_msg(const char *cmdstr, char *badfilename, int mode)
 {
 	char *modestr[4] =
-		{"command line", "sstools.ini", "PAR file", "PAR file"};
+	{
+		"command line", "sstools.ini", "PAR file", "PAR file"
+	};
 	char msg[256];
 	char cmd[80];
 	static int row = 1;

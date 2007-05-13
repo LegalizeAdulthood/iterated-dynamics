@@ -153,7 +153,8 @@ static void lsysf_exclamation(struct lsys_turtle_state_fp *cmd)
 static void lsysf_size_dm(struct lsys_turtle_state_fp *cmd)
 {
 	double angle = (double) cmd->realangle;
-	double s, c;
+	double s;
+	double c;
 
 	s = sin(angle);
 	c = cos(angle);
@@ -205,8 +206,10 @@ static void lsysf_size_gf(struct lsys_turtle_state_fp *cmd)
 static void lsysf_draw_d(struct lsys_turtle_state_fp *cmd)
 {
 	double angle = (double) cmd->realangle;
-	double s, c;
-	int lastx, lasty;
+	double s;
+	double c;
+	int lastx;
+	int lasty;
 	s = sin(angle);
 	c = cos(angle);
 
@@ -222,7 +225,8 @@ static void lsysf_draw_d(struct lsys_turtle_state_fp *cmd)
 static void lsysf_draw_m(struct lsys_turtle_state_fp *cmd)
 {
 	double angle = (double) cmd->realangle;
-	double s, c;
+	double s;
+	double c;
 
 	s = sin(angle);
 	c = cos(angle);
@@ -334,8 +338,12 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 			}
 			else if (command->ch == '[')
 			{
-				char saveang, saverev;
-				LDBL savesize, savex, savey, saverang;
+				char saveang;
+				char saverev;
+				LDBL savesize;
+				LDBL savex;
+				LDBL savey;
+				LDBL saverang;
 
 				saveang = ts->angle;
 				saverev = ts->reverse;
@@ -364,8 +372,12 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 int _fastcall
 lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
 {
-	float horiz, vert;
-	LDBL x_min, x_max, y_min, y_max;
+	float horiz;
+	float vert;
+	LDBL x_min;
+	LDBL x_max;
+	LDBL y_min;
+	LDBL y_max;
 	LDBL locsize;
 	LDBL locaspect;
 	struct lsys_cmd *fsret;
@@ -467,8 +479,13 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 			}
 			else if (command->ch == '[')
 			{
-				char saveang, saverev, savecolor;
-				LDBL savesize, savex, savey, saverang;
+				char saveang;
+				char saverev;
+				char savecolor;
+				LDBL savesize;
+				LDBL savex;
+				LDBL savey;
+				LDBL saverang;
 
 				saveang = ts->angle;
 				saverev = ts->reverse;

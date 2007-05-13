@@ -27,14 +27,14 @@ int g_bf_math = 0;
 
 /**********************************************************************/
 void show_var_bn(char *s, bn_t n)
-	{
-		char msg[200];
-		strcpy(msg, s);
-		strcat(msg, " ");
-		bntostr(msg + strlen(s), 40, n);
-		msg[79] = 0;
-		stop_message(0, (char *)msg);
-	}
+{
+	char msg[200];
+	strcpy(msg, s);
+	strcat(msg, " ");
+	bntostr(msg + strlen(s), 40, n);
+	msg[79] = 0;
+	stop_message(0, (char *)msg);
+}
 
 void show_corners_dbl(char *s)
 {
@@ -337,7 +337,8 @@ int bail_out_imag_bn()
 
 int bail_out_or_bn()
 {
-	long longtempsqrx, longtempsqry;
+	long longtempsqrx;
+	long longtempsqry;
 
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
@@ -354,7 +355,8 @@ int bail_out_or_bn()
 
 int bail_out_and_bn()
 {
-	long longtempsqrx, longtempsqry;
+	long longtempsqrx;
+	long longtempsqry;
 
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
@@ -461,7 +463,8 @@ int bail_out_imag_bf()
 
 int bail_out_or_bf()
 {
-	long longtempsqrx, longtempsqry;
+	long longtempsqrx;
+	long longtempsqry;
 
 	square_bf(bftmpsqrx, bfnew.x);
 	square_bf(bftmpsqry, bfnew.y);
@@ -478,7 +481,8 @@ int bail_out_or_bf()
 
 int bail_out_and_bf()
 {
-	long longtempsqrx, longtempsqry;
+	long longtempsqrx;
+	long longtempsqry;
 
 	square_bf(bftmpsqrx, bfnew.x);
 	square_bf(bftmpsqry, bfnew.y);

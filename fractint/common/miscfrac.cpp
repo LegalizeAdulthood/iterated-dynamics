@@ -152,7 +152,9 @@ static int lyapunov_cycles(long, double, double);
 
 int test()
 {
-	int startrow, startpass, numpasses;
+	int startrow;
+	int startpass;
+	int numpasses;
 	startrow = startpass = 0;
 	if (g_resuming)
 	{
@@ -301,10 +303,12 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 
 static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 {
-	int x, y;
+	int x;
+	int y;
 	int nx1;
 	int nx;
-	int ny1, ny;
+	int ny1;
+	int ny;
 	S32 i, v;
 
 	struct sub
@@ -415,8 +419,10 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 
 static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 {
-	int x, y;
-	S32 v, i;
+	int x;
+	int y;
+	S32 v;
+	S32 i;
 	if ((++s_plasma_check & 0x7f) == 1)
 	{
 		if (driver_key_pressed())
@@ -473,9 +479,12 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 
 int plasma()
 {
-	int i, k, n;
+	int i;
+	int k;
+	int n;
 	U16 rnd[4];
-	int OldPotFlag, OldPot16bit;
+	int OldPotFlag;
+	int OldPot16bit;
 
 	OldPotFlag = OldPot16bit = s_plasma_check = 0;
 
@@ -658,7 +667,8 @@ static void set_plasma_palette()
 		BYTE green[3]	= { 0, COLOR_CHANNEL_MAX, 0 };
 		BYTE blue[3]	= { 0,  0, COLOR_CHANNEL_MAX };
 		BYTE black[3]	= { 0, 0, 0 };
-		int i, j;
+		int i;
+		int j;
 
 		for (j = 0; j < 3; j++)
 		{
@@ -681,18 +691,26 @@ static void set_plasma_palette()
 
 int diffusion()
 {
-	int x_max, y_max, x_min, y_min;     /* Current maximum coordinates */
+	int x_max;
+	int y_max;
+	int x_min;
+	int y_min;     /* Current maximum coordinates */
 	int border;   /* Distance between release point and fractal */
 	int mode;     /* Determines diffusion type:  0 = central (classic) */
 					/*                             1 = falling particles */
 					/*                             2 = square cavity     */
 	int colorshift; /* If zero, select g_colors at random, otherwise shift */
 					/* the color every colorshift points */
-	int colorcount, currentcolor;
+	int colorcount;
+	int currentcolor;
 	int i;
-	double cosine, sine, angle;
-	int x, y;
-	float r, radius;
+	double cosine;
+	double sine;
+	double angle;
+	int x;
+	int y;
+	float r;
+	float radius;
 
 	if (driver_diskp())
 	{
@@ -1012,7 +1030,8 @@ int diffusion()
 int bifurcation()
 {
 	unsigned long array_size;
-	int row, column;
+	int row;
+	int column;
 	column = 0;
 	if (g_resuming)
 	{
@@ -1454,7 +1473,8 @@ int popcorn()   /* subset of std engine */
 /**************************************************************************/
 int lyapunov()
 {
-	double a, b;
+	double a;
+	double b;
 
 	if (driver_key_pressed())
 	{
@@ -1591,9 +1611,13 @@ int lyapunov_setup()
 
 static int lyapunov_cycles(long filter_cycles, double a, double b)
 {
-	int color, count, lnadjust;
+	int color;
+	int count;
+	int lnadjust;
 	long i;
-	double lyap, total, temp;
+	double lyap;
+	double total;
+	double temp;
 	/* e10 = 22026.4657948  e-10 = 0.0000453999297625 */
 
 	total = 1.0;
@@ -2122,7 +2146,10 @@ static void set_froth_palette()
 
 int froth_setup()
 {
-	double sin_theta, cos_theta, x0, y0;
+	double sin_theta;
+	double cos_theta;
+	double x0;
+	double y0;
 
 	sin_theta = SQRT3/2; /* sin(2*PI/3) */
 	cos_theta = -0.5;    /* cos(2*PI/3) */

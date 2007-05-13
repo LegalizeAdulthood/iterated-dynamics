@@ -61,7 +61,9 @@ LDBL _fastcall get_number(char **str)
 {
 	char numstr[30];
 	LDBL ret;
-	int i, root, inverse;
+	int i;
+	int root;
+	int inverse;
 
 	root = 0;
 	inverse = 0;
@@ -118,8 +120,11 @@ static int _fastcall read_l_system_file(char *str)
 	int c;
 	char **rulind;
 	int err = 0;
-	int linenum, check = 0;
-	char inline1[MAX_LSYS_LINE_LEN + 1], fixed[MAX_LSYS_LINE_LEN + 1], *word;
+	int linenum;
+	int check = 0;
+	char inline1[MAX_LSYS_LINE_LEN + 1];
+	char fixed[MAX_LSYS_LINE_LEN + 1];
+	char *word;
 	FILE *infile;
 	char msgbuf[481]; /* enough for 6 full lines */
 
@@ -177,7 +182,8 @@ static int _fastcall read_l_system_file(char *str)
 			else if (!word[1])
 			{
 				char *temp;
-				int index, memerr = 0;
+				int index;
+				int memerr = 0;
 
 				if (strchr("+-/\\@|!c<>][", *word))
 				{
@@ -424,8 +430,11 @@ static int _fastcall save_rule(char *rule, char **saveptr)
 
 static int _fastcall append_rule(char *rule, int index)
 {
-	char *dst, *old, *sav;
-	int i, j;
+	char *dst;
+	char *old;
+	char *sav;
+	int i;
+	int j;
 
 	old = sav = ruleptrs[index];
 	for (i = 0; *(old++); i++)
@@ -578,8 +587,10 @@ static void lsysi_exclamation(struct lsys_turtle_state *cmd)
 static void lsysi_size_dm(struct lsys_turtle_state *cmd)
 {
 	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
-	double s, c;
-	long fixedsin, fixedcos;
+	double s;
+	double c;
+	long fixedsin;
+	long fixedcos;
 
 	FPUsincos(&angle, &s, &c);
 	fixedsin = (long) (s*FIXEDLT1);
@@ -633,9 +644,12 @@ static void lsysi_size_gf(struct lsys_turtle_state *cmd)
 static void lsysi_draw_d(struct lsys_turtle_state *cmd)
 {
 	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
-	double s, c;
-	long fixedsin, fixedcos;
-	int lastx, lasty;
+	double s;
+	double c;
+	long fixedsin;
+	long fixedcos;
+	int lastx;
+	int lasty;
 
 	FPUsincos(&angle, &s, &c);
 	fixedsin = (long) (s*FIXEDLT1);
@@ -651,8 +665,10 @@ static void lsysi_draw_d(struct lsys_turtle_state *cmd)
 static void lsysi_draw_m(struct lsys_turtle_state *cmd)
 {
 	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
-	double s, c;
-	long fixedsin, fixedcos;
+	double s;
+	double c;
+	long fixedsin;
+	long fixedcos;
 
 	FPUsincos(&angle, &s, &c);
 	fixedsin = (long) (s*FIXEDLT1);
@@ -758,8 +774,11 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cm
 			}
 			else if (command->ch == '[')
 			{
-				char saveang, saverev;
-				long savesize, savex, savey;
+				char saveang;
+				char saverev;
+				long savesize;
+				long savex;
+				long savey;
 				unsigned long saverang;
 
 				saveang = ts->angle;
@@ -789,8 +808,12 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cm
 static int
 lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cmd **rules, int depth)
 {
-	float horiz, vert;
-	double x_min, x_max, y_min, y_max;
+	float horiz;
+	float vert;
+	double x_min;
+	double x_max;
+	double y_min;
+	double y_max;
 	double locsize;
 	double locaspect;
 	struct lsys_cmd *fsret;
@@ -883,8 +906,12 @@ draw_lsysi(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_c
 			}
 			else if (command->ch == '[')
 			{
-				char saveang, saverev, savecolor;
-				long savesize, savex, savey;
+				char saveang;
+				char saverev;
+				char savecolor;
+				long savesize;
+				long savex;
+				long savey;
 				unsigned long saverang;
 
 				saveang = ts->angle;
@@ -1086,18 +1113,13 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 
 static void _fastcall lsysi_sin_cos()
 {
-	double locaspect;
-	double TWOPI = 2.0*MathUtil::Pi;
-	double twopimax;
-	double twopimaxi;
-	double s, c;
-	int i;
-
-	locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
-	twopimax = TWOPI / g_max_angle;
-	for (i = 0; i < g_max_angle; i++)
+	double locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
+	double twopimax = 2.0*MathUtil::Pi / g_max_angle;
+	for (int i = 0; i < g_max_angle; i++)
 	{
-		twopimaxi = i*twopimax;
+		double twopimaxi = i*twopimax;
+		double s;
+		double c;
 		FPUsincos(&twopimaxi, &s, &c);
 		sins[i] = (long) (s*FIXEDLT1);
 		coss[i] = (long) ((locaspect*c)*FIXEDLT1);
