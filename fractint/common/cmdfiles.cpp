@@ -6,9 +6,6 @@
 #include <ctype.h>
 #include <time.h>
 #include <math.h>
-#if !defined(XFRACT) && !defined(_WIN32)
-#include <bios.h>
-#endif
 
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"

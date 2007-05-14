@@ -1,4 +1,6 @@
+#include <string.h>
 #include <time.h>
+
 #include <string>
 #include <sstream>
 
@@ -11,6 +13,7 @@
 #include "SoundState.h"
 #include "drivers.h"
 #include "CommandParser.h"
+#include "UIChoices.h"
 
 #define KEYON    0x20     /* 0010 0000 key-on bit in regs b0 - b8 */
 
@@ -388,225 +391,133 @@ void SoundState::buzzer(int tone)
 int SoundState::get_parameters()
 {
 	/* routine to get sound settings  */
-	const char *choices[15];
-	struct full_screen_values uvalues[15];
 	int old_soundflag = m_flags;
 	int old_orbit_delay = g_orbit_delay;
 	char old_start_showorbit = g_start_show_orbit;
 
-	/* m_flags bits 0..7 used as thus:
-	bit 0, 1, 2 controls sound beep/off and x, y, z
-	(0 == off 1 == beep, 2 == x, 3 == y, 4 == z)
-	bit 3 controls PC speaker
-	bit 4 controls sound card OPL3 FM sound
-	bit 5 controls midi output
-	bit 6 controls pitch quantise
-	bit 7 free! */
 get_sound_restart:
-	m_menu_count = 0;
-	int k = -1;
-
-	choices[++k] = "Sound (off, beep, x, y, z)";
-	uvalues[k].type = 'l';
-	uvalues[k].uval.ch.vlen = 4;
-	uvalues[k].uval.ch.llen = 5;
-	const char *soundmodes[] = { "off", "beep", "x", "y", "z" };
-	uvalues[k].uval.ch.list = soundmodes;
-	uvalues[k].uval.ch.val = m_flags & 7;
-
-	choices[++k] = "Use PC internal speaker?";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = (m_flags & 8) ? 1 : 0;
-
-	choices[++k] = "Use soundcard output?";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = (m_flags & 16) ? 1 : 0;
-
-	choices[++k] = "Quantize note pitch ?";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = (m_flags & 64) ? 1 : 0;
-
-	choices[++k] = "Orbit delay in ms (0 = none)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_orbit_delay;
-
-	choices[++k] = "Base Hz Value";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_base_hertz;
-
-	choices[++k] = "Show orbits?";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_start_show_orbit;
-
-	choices[++k] = "";
-	uvalues[k].type = '*';
-
-	choices[++k] = "Press F6 for FM synth parameters, F7 for scale mappings";
-	uvalues[k].type = '*';
-
-	choices[++k] = "Press F4 to reset to default values";
-	uvalues[k].type = '*';
-
-	int i = full_screen_prompt_help(HELPSOUND, "Sound Control Screen", k + 1, choices, uvalues, 255, NULL);
-	if (i < 0)
 	{
-		m_flags = old_soundflag;
-		g_orbit_delay = old_orbit_delay;
-		g_start_show_orbit = old_start_showorbit;
-		return -1; /*escaped */
-	}
+		m_menu_count = 0;
+		UIChoices dialog(HELPSOUND, "Sound Control Screen", 255);
+		const char *soundmodes[] = { "off", "beep", "x", "y", "z" };
+		dialog.push("Sound (off, beep, x, y, z)", soundmodes, NUM_OF(soundmodes), m_flags & SOUNDFLAG_ORBITMASK);
+		dialog.push("Use PC internal speaker?", (m_flags & SOUNDFLAG_SPEAKER) != 0);
+		dialog.push("Use soundcard output?", (m_flags & SOUNDFLAG_OPL3_FM) != 0);
+		dialog.push("Quantize note pitch ?", (m_flags & SOUNDFLAG_QUANTIZED) != 0);
+		dialog.push("Orbit delay in ms (0 = none)", g_orbit_delay);
+		dialog.push("Base Hz Value", m_base_hertz);
+		dialog.push("Show orbits?", g_start_show_orbit != 0);
+		dialog.push("");
+		dialog.push("Press F6 for FM synth parameters, F7 for scale mappings");
+		dialog.push("Press F4 to reset to default values");
 
-	k = -1;
+		int i = dialog.prompt();
+		if (i < 0)
+		{
+			m_flags = old_soundflag;
+			g_orbit_delay = old_orbit_delay;
+			g_start_show_orbit = old_start_showorbit;
+			return -1; /*escaped */
+		}
 
-	m_flags = uvalues[++k].uval.ch.val;
-	m_flags = m_flags + (uvalues[++k].uval.ch.val * 8);
-	m_flags = m_flags + (uvalues[++k].uval.ch.val * 16);
-	m_flags = m_flags + (uvalues[++k].uval.ch.val * 64);
-	g_orbit_delay = uvalues[++k].uval.ival;
-	m_base_hertz = uvalues[++k].uval.ival;
-	g_start_show_orbit = (char) uvalues[++k].uval.ch.val;
+		int k = -1;
+		m_flags = dialog.values(++k).uval.ch.val;
+		m_flags = m_flags + (dialog.values(++k).uval.ch.val * SOUNDFLAG_SPEAKER);
+		m_flags = m_flags + (dialog.values(++k).uval.ch.val * SOUNDFLAG_OPL3_FM);
+		m_flags = m_flags + (dialog.values(++k).uval.ch.val * SOUNDFLAG_QUANTIZED);
+		g_orbit_delay = dialog.values(++k).uval.ival;
+		m_base_hertz = dialog.values(++k).uval.ival;
+		g_start_show_orbit = (char) dialog.values(++k).uval.ch.val;
 
-	/* now do any intialization needed and check for soundcard */
-	if ((m_flags & 16) && !(old_soundflag & 16))
-	{
-		initfm();
-	}
+		/* now do any intialization needed and check for soundcard */
+		if ((m_flags & SOUNDFLAG_OPL3_FM) && !(old_soundflag & SOUNDFLAG_OPL3_FM))
+		{
+			initfm();
+		}
 
-	if (i == FIK_F6)
-	{
-		get_music_parameters();/* see below, for controling fmsynth */
-		goto get_sound_restart;
-	}
+		switch (i)
+		{
+		case FIK_F6:
+			get_music_parameters();/* see below, for controlling fmsynth */
+			goto get_sound_restart;
+			break;
 
-	if (i == FIK_F7)
-	{
-		get_scale_map();/* see below, for setting scale mapping */
-		goto get_sound_restart;
-	}
+		case FIK_F7:
+			get_scale_map();/* see below, for setting scale mapping */
+			goto get_sound_restart;
+			break;
 
-	if (i == FIK_F4)
-	{
-		m_flags = 9; /* reset to default */
-		g_orbit_delay = 0;
-		m_base_hertz = 440;
-		g_start_show_orbit = 0;
-		goto get_sound_restart;
-	}
+		case FIK_F4:
+			m_flags = 9; /* reset to default */
+			g_orbit_delay = 0;
+			m_base_hertz = 440;
+			g_start_show_orbit = 0;
+			goto get_sound_restart;
+			break;
+		}
 
-	if (m_flags != old_soundflag && ((m_flags & 7) > 1 || (old_soundflag & 7) > 1))
-	{
-		return 1;
-	}
-	else
-	{
-		return 0;
+		return (m_flags != old_soundflag
+				&& ((m_flags & SOUNDFLAG_ORBITMASK) > 1
+					|| (old_soundflag & SOUNDFLAG_ORBITMASK) > 1)) ? 1 : 0;
 	}
 }
 
 int SoundState::get_scale_map()
 {
-	const char *choices[15];
-	struct full_screen_values uvalues[15];
-	int k;
-	int i;
-	int j;
-
 	m_menu_count++;
 
 get_map_restart:
-	k = -1;
-
-	choices[++k] = "Scale map C (1)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[0];
-
-	choices[++k] = "Scale map C#(2)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[1];
-
-	choices[++k] = "Scale map D (3)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[2];
-
-	choices[++k] = "Scale map D#(4)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[3];
-
-	choices[++k] = "Scale map E (5)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[4];
-
-	choices[++k] = "Scale map F (6)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[5];
-
-	choices[++k] = "Scale map F#(7)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[6];
-
-	choices[++k] = "Scale map G (8)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[7];
-
-	choices[++k] = "Scale map G#(9)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[8];
-
-	choices[++k] = "Scale map A (10)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[9];
-
-	choices[++k] = "Scale map A#(11)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[10];
-
-	choices[++k] = "Scale map B (12)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_scale_map[11];
-
-	choices[++k] = "";
-	uvalues[k].type = '*';
-
-	choices[++k] = "Press F6 for FM synth parameters";
-	uvalues[k].type = '*';
-
-	choices[++k] = "Press F4 to reset to default values";
-	uvalues[k].type = '*';
-
-	i = full_screen_prompt_help(HELPMUSIC, "Scale Mapping Screen", k + 1, choices, uvalues, 255, NULL);
-	if (i < 0)
 	{
-		return -1;
-	}
+		UIChoices dialog(HELPMUSIC, "Scale Mapping Screen", 255);
+		dialog.push("Scale map C (1)", m_scale_map[0]);
+		dialog.push("Scale map C#(2)", m_scale_map[1]);
+		dialog.push("Scale map D (3)", m_scale_map[2]);
+		dialog.push("Scale map D#(4)", m_scale_map[3]);
+		dialog.push("Scale map E (5)", m_scale_map[4]);
+		dialog.push("Scale map F (6)", m_scale_map[5]);
+		dialog.push("Scale map F#(7)", m_scale_map[6]);
+		dialog.push("Scale map G (8)", m_scale_map[7]);
+		dialog.push("Scale map G#(9)", m_scale_map[8]);
+		dialog.push("Scale map A (10)", m_scale_map[9]);
+		dialog.push("Scale map A#(11)", m_scale_map[10]);
+		dialog.push("Scale map B (12)", m_scale_map[11]);
+		dialog.push("");
+		dialog.push("Press F6 for FM synth parameters");
+		dialog.push("Press F4 to reset to default values");
 
-	k = -1;
-
-	for (j = 0; j <= 11; j++)
-	{
-		m_scale_map[j] = abs(uvalues[++k].uval.ival);
-		if (m_scale_map[j] > 12)
+		int i = dialog.prompt();
+		if (i < 0)
 		{
-			m_scale_map[j] = 12;
+			return -1;
 		}
-	}
 
-	if (i == FIK_F6 && m_menu_count == 1)
-	{
-		get_music_parameters();/* see below, for controling fmsynth */
-		goto get_map_restart;
-	}
-	else if (i == FIK_F6 && m_menu_count == 2)
-	{
-		m_menu_count--;
-	}
-
-	if (i == FIK_F4)
-	{
-		for (j = 0; j <= 11; j++)
+		for (int j = 0; j < 12; j++)
 		{
-			m_scale_map[j] = j + 1;
+			m_scale_map[j] = abs(dialog.values(j).uval.ival);
+			if (m_scale_map[j] > 12)
+			{
+				m_scale_map[j] = 12;
+			}
 		}
-		goto get_map_restart;
+
+		if (i == FIK_F6 && m_menu_count == 1)
+		{
+			get_music_parameters();/* see below, for controling fmsynth */
+			goto get_map_restart;
+		}
+		else if (i == FIK_F6 && m_menu_count == 2)
+		{
+			m_menu_count--;
+		}
+
+		if (i == FIK_F4)
+		{
+			for (int j = 0; j <= 11; j++)
+			{
+				m_scale_map[j] = j + 1;
+			}
+			goto get_map_restart;
+		}
 	}
 
 	return 0;
@@ -614,106 +525,74 @@ get_map_restart:
 
 int SoundState::get_music_parameters()
 {
-	const char *attenmodes[] = { "none", "low", "mid", "high" };
-	const char *choices[11];
-	struct full_screen_values uvalues[11];
-	int i;
-
 	m_menu_count++;
-	get_music_restart:
-	int k = -1;
 
-	choices[++k] = "Polyphony 1..9";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_polyphony + 1;
-
-	choices[++k] = "Wave type 0..7";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_fm_wave_type;
-
-	choices[++k] = "Note attack time   0..15";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_fm_attack;
-
-	choices[++k] = "Note decay time    0..15";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_fm_decay;
-
-	choices[++k] = "Note sustain level 0..15";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_fm_sustain;
-
-	choices[++k] = "Note release time  0..15";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_fm_release;
-
-	choices[++k] = "Soundcard volume?  0..63";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = m_fm_volume;
-
-	choices[++k] = "Hi pitch attenuation";
-	uvalues[k].type = 'l';
-	uvalues[k].uval.ch.vlen = 4;
-	uvalues[k].uval.ch.llen = 4;
-	uvalues[k].uval.ch.list = attenmodes;
-	uvalues[k].uval.ch.val = m_note_attenuation;
-
-	choices[++k] = "";
-	uvalues[k].type = '*';
-	choices[++k] = "Press F7 for scale mappings";
-	uvalues[k].type = '*';
-	choices[++k] = "Press F4 to reset to default values";
-	uvalues[k].type = '*';
-
-	i = full_screen_prompt_help(HELPMUSIC, "FM Synth Card Control Screen", k + 1, choices, uvalues, 255, NULL);
-	if (i < 0)
+get_music_restart:
 	{
-		return -1;
-	}
+		UIChoices dialog(HELPMUSIC, "FM Synth Card Control Screen", 255);
+		dialog.push("Polyphony 1..9", m_polyphony + 1);
+		dialog.push("Wave type 0..7", m_fm_wave_type);
+		dialog.push("Note attack time   0..15", m_fm_attack);
+		dialog.push("Note decay time    0..15", m_fm_decay);
+		dialog.push("Note sustain level 0..15", m_fm_sustain);
+		dialog.push("Note release time  0..15", m_fm_release);
+		dialog.push("Soundcard volume?  0..63", m_fm_volume);
+		const char *attenuation_modes[] = { "none", "low", "mid", "high" };
+		dialog.push("Hi pitch attenuation", attenuation_modes, NUM_OF(attenuation_modes), m_note_attenuation);
+		dialog.push("");
+		dialog.push("Press F7 for scale mappings");
+		dialog.push("Press F4 to reset to default values");
 
-	k = -1;
-	m_polyphony = abs(uvalues[++k].uval.ival - 1);
-	if (m_polyphony > 8)
-	{
-		m_polyphony = 8;
-	}
-	m_fm_wave_type =  (uvalues[++k].uval.ival) & 0x07;
-	m_fm_attack =  (uvalues[++k].uval.ival) & 0x0F;
-	m_fm_decay =  (uvalues[++k].uval.ival) & 0x0F;
-	m_fm_sustain = (uvalues[++k].uval.ival) & 0x0F;
-	m_fm_release = (uvalues[++k].uval.ival) & 0x0F;
-	m_fm_volume = (uvalues[++k].uval.ival) & 0x3F;
-	m_note_attenuation = uvalues[++k].uval.ch.val;
-	if (m_flags & 16)
-	{
-		initfm();
-	}
+		int i = dialog.prompt();
+		if (i < 0)
+		{
+			return -1;
+		}
 
-	if (i == FIK_F7 && m_menu_count == 1)
-	{
-		get_scale_map();/* see above, for setting scale mapping */
-		goto get_music_restart;
-	}
-	else if (i == FIK_F7 && m_menu_count == 2)
-	{
-		m_menu_count--;
-	}
-
-	if (i == FIK_F4)
-	{
-		m_polyphony = 0;
-		m_fm_wave_type = 0;
-		m_fm_attack = 5;
-		m_fm_decay = 10;
-		m_fm_sustain = 13;
-		m_fm_release = 5;
-		m_fm_volume = 63;
-		m_note_attenuation = 0;
-		if (m_flags & 16)
+		int k = -1;
+		m_polyphony = abs(dialog.values(++k).uval.ival - 1);
+		if (m_polyphony > 8)
+		{
+			m_polyphony = 8;
+		}
+		m_fm_wave_type =  (dialog.values(++k).uval.ival) & 0x07;
+		m_fm_attack =  (dialog.values(++k).uval.ival) & 0x0F;
+		m_fm_decay =  (dialog.values(++k).uval.ival) & 0x0F;
+		m_fm_sustain = (dialog.values(++k).uval.ival) & 0x0F;
+		m_fm_release = (dialog.values(++k).uval.ival) & 0x0F;
+		m_fm_volume = (dialog.values(++k).uval.ival) & 0x3F;
+		m_note_attenuation = dialog.values(++k).uval.ch.val;
+		if (m_flags & SOUNDFLAG_OPL3_FM)
 		{
 			initfm();
 		}
-		goto get_music_restart;
+
+		if (i == FIK_F7 && m_menu_count == 1)
+		{
+			get_scale_map();/* see above, for setting scale mapping */
+			goto get_music_restart;
+		}
+		else if (i == FIK_F7 && m_menu_count == 2)
+		{
+			m_menu_count--;
+		}
+
+		if (i == FIK_F4)
+		{
+			m_polyphony = 0;
+			m_fm_wave_type = 0;
+			m_fm_attack = 5;
+			m_fm_decay = 10;
+			m_fm_sustain = 13;
+			m_fm_release = 5;
+			m_fm_volume = 63;
+			m_note_attenuation = 0;
+			if (m_flags & 16)
+			{
+				initfm();
+			}
+			goto get_music_restart;
+		}
 	}
 
 	return 0;

@@ -755,28 +755,28 @@ void set_trig_pointers(int which)
 	switch (which)
 	{
 	case 0:
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 		g_trig0_l = trigfn[g_trig_index[0]].lfunct;
 		g_trig0_m = trigfn[g_trig_index[0]].mfunct;
 #endif
 		g_trig0_d = trigfn[g_trig_index[0]].dfunct;
 		break;
 	case 1:
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 		g_trig1_l = trigfn[g_trig_index[1]].lfunct;
 		g_trig1_m = trigfn[g_trig_index[1]].mfunct;
 #endif
 		g_trig1_d = trigfn[g_trig_index[1]].dfunct;
 		break;
 	case 2:
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 		g_trig2_l = trigfn[g_trig_index[2]].lfunct;
 		g_trig2_m = trigfn[g_trig_index[2]].mfunct;
 #endif
 		g_trig2_d = trigfn[g_trig_index[2]].dfunct;
 		break;
 	case 3:
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 		g_trig3_l = trigfn[g_trig_index[3]].lfunct;
 		g_trig3_m = trigfn[g_trig_index[3]].mfunct;
 #endif

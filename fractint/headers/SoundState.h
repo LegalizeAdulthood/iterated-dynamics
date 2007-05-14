@@ -4,10 +4,28 @@
 #include "CommandParser.h"
 
 /* note attenuation values */
-#define ATTENUATE_NONE		0
-#define ATTENUATE_LOW		1
-#define ATTENUATE_MIDDLE	2
-#define ATTENUATE_HIGH		3
+enum AttenuateType
+{
+	ATTENUATE_NONE		= 0,
+	ATTENUATE_LOW		= 1,
+	ATTENUATE_MIDDLE	= 2,
+	ATTENUATE_HIGH		= 3
+};
+
+enum SoundFlagType
+{
+	SOUNDFLAG_OFF		= 0,
+	SOUNDFLAG_BEEP		= 1,
+	SOUNDFLAG_X			= 2,
+	SOUNDFLAG_Y			= 3,
+	SOUNDFLAG_Z			= 4,
+	SOUNDFLAG_ORBITMASK = 0x07,
+	SOUNDFLAG_SPEAKER	= 0x08,
+	SOUNDFLAG_OPL3_FM	= 0x10,
+	SOUNDFLAG_MIDI		= 0x20,
+	SOUNDFLAG_QUANTIZED = 0x40,
+	SOUNDFLAG_MASK		= 0x7F
+};
 
 class SoundState
 {

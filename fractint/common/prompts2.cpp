@@ -46,6 +46,8 @@
 #include <direct.h>
 #endif
 
+#include <string>
+
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -56,6 +58,7 @@
 #include "busy.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
+#include "UIChoices.h"
 
 /* Routines in this module      */
 
@@ -76,6 +79,55 @@ static  int get_screen_corners();
 
 struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
 
+static int calculation_mode()
+{
+	switch (g_user_standard_calculation_mode)
+	{
+	case '1': return 0;
+	case '2': return 1;
+	case '3': return 2;
+	case 'g': return 3 + g_stop_pass;
+	case 'b': return 10;
+	case 's': return 11;
+	case 't': return 12;
+	case 'd': return 13;
+	case 'o': return 14;
+	default:
+		assert(false && "Bad g_user_standard_calculation_mode");
+	}
+	return -1;
+}
+
+static int inside_mode()
+{
+	if (g_inside >= 0)  /* numb */
+	{
+		return 0;
+	}
+	
+	switch (g_inside)
+	{
+	case -1:		return 1;
+	case ZMAG:		return 2;
+	case BOF60:		return 3;
+	case BOF61:		return 4;
+	case EPSCROSS:	return 5;
+	case STARTRAIL: return 6;
+	case PERIOD:	return 7;
+	case ATANI:		return 8;
+	case FMODI:		return 9;
+	default:
+		assert(false && "Bad g_inside");
+	}
+	return -1;
+}
+
+static char *save_name()
+{
+	char *result = ::strrchr(g_save_name, SLASHC);
+	return (result == NULL) ? g_save_name : result+1;
+}
+
 /* --------------------------------------------------------------------- */
 /*
 		get_toggles() is called from FRACTINT.C whenever the 'x' key
@@ -95,280 +147,123 @@ struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
 
 int get_toggles()
 {
-	const char *choices[20];
-	char prevsavename[FILE_MAX_DIR + 1];
-	char *savenameptr;
-	struct full_screen_values uvalues[25];
-	int i;
-	int j;
-	int k;
-	char old_usr_stdcalcmode;
-	long old_maxit;
-	long old_logflag;
-	int old_inside;
-	int old_outside;
-	int old_soundflag;
-	int old_biomorph;
-	int old_decomp;
-	int old_fillcolor;
-	int old_stoppass;
-	double old_closeprox;
-	const char *calcmodes[] =
+	char old_user_standard_calculation_mode = g_user_standard_calculation_mode;
+	int old_stop_pass = g_stop_pass;
+	long old_max_iteration = g_max_iteration;
+	int old_inside = g_inside;
+	int old_outside = g_outside;
+	char previous_save_name[FILE_MAX_DIR + 1];
+	strcpy(previous_save_name, g_save_name);
+	int old_sound_flags = g_sound_state.flags();
+	long old_log_palette_flag = g_log_palette_flag;
+	int old_biomorph = g_user_biomorph;
+	int old_decomposition = g_decomposition[0];
+	int old_fill_color = g_fill_color;
+	double old_proximity = g_proximity;
+
+	UIChoices dialog(HELPXOPTS, "Basic Options\n(not all combinations make sense)", 0);
+	const char *calculation_modes[] =
 	{
-		"1", "2", "3", "g", "g1",
-		"g2", "g3", "g4", "g5", "g6",
+		"1", "2", "3",
+		"g", "g1", "g2", "g3", "g4", "g5", "g6",
 		"b", "s", "t", "d", "o"
 	};
-	const char *soundmodes[5] =
-	{
-		"off", "beep", "x", "y", "z"
-	};
+	dialog.push("Passes (1,2,3, g[uess], b[ound], t[ess], d[iffu], o[rbit])",
+		calculation_modes, NUM_OF(calculation_modes), calculation_mode());
+	dialog.push("Floating Point Algorithm", g_user_float_flag ? true : false);
+	dialog.push("Maximum Iterations (2 to 2,147,483,647)", g_max_iteration);
+	dialog.push("Inside Color (0-# of colors, if Inside=numb)", (g_inside >= 0) ? g_inside : 0);
 	const char *insidemodes[] =
 	{
 		"numb", "maxiter", "zmag", "bof60", "bof61",
 		"epsiloncross", "startrail", "period", "atan", "fmod"
 	};
+	dialog.push("Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)",
+		insidemodes, NUM_OF(insidemodes), inside_mode());
+	dialog.push("Outside Color (0-# of colors, if Outside=numb)", g_outside >= 0 ? g_outside : 0);
 	const char *outsidemodes[] =
 	{
 		"numb", "iter", "real", "imag", "mult",
 		"summ", "atan", "fmod", "tdis"
 	};
-
-	k = -1;
-
-	choices[++k] = "Passes (1,2,3, g[uess], b[ound], t[ess], d[iffu], o[rbit])";
-	uvalues[k].type = 'l';
-	uvalues[k].uval.ch.vlen = 3;
-	uvalues[k].uval.ch.llen = sizeof(calcmodes)/sizeof(*calcmodes);
-	uvalues[k].uval.ch.list = calcmodes;
-	uvalues[k].uval.ch.val = (g_user_standard_calculation_mode == '1') ? 0
-						: (g_user_standard_calculation_mode == '2') ? 1
-						: (g_user_standard_calculation_mode == '3') ? 2
-						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 0) ? 3
-						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 1) ? 4
-						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 2) ? 5
-						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 3) ? 6
-						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 4) ? 7
-						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 5) ? 8
-						: (g_user_standard_calculation_mode == 'g' && g_stop_pass == 6) ? 9
-						: (g_user_standard_calculation_mode == 'b') ? 10
-						: (g_user_standard_calculation_mode == 's') ? 11
-						: (g_user_standard_calculation_mode == 't') ? 12
-						: (g_user_standard_calculation_mode == 'd') ? 13
-						:        /* "o"rbits */      14;
-	old_usr_stdcalcmode = g_user_standard_calculation_mode;
-	old_stoppass = g_stop_pass;
-#ifndef XFRACT
-	choices[++k] = "Floating Point Algorithm";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_user_float_flag;
-#endif
-	choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
-	uvalues[k].type = 'L';
-	uvalues[k].uval.Lval = old_maxit = g_max_iteration;
-
-	choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
-	uvalues[k].type = 'i';
-	if (g_inside >= 0)
+	dialog.push("Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)",
+		outsidemodes, NUM_OF(outsidemodes), g_outside >= 0 ? 0 : -g_outside);
+	char *savenameptr = save_name();
+	dialog.push("Savename (.GIF implied)", savenameptr);
+	dialog.push("File Overwrite ('overwrite=')", g_fractal_overwrite ? true : false);
+	const char *soundmodes[5] =
 	{
-		uvalues[k].uval.ival = g_inside;
-	}
-	else
-	{
-		uvalues[k].uval.ival = 0;
-	}
-
-	choices[++k] = "Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)";
-	uvalues[k].type = 'l';
-	uvalues[k].uval.ch.vlen = 12;
-	uvalues[k].uval.ch.llen = sizeof(insidemodes)/sizeof(*insidemodes);
-	uvalues[k].uval.ch.list = insidemodes;
-	if (g_inside >= 0)  /* numb */
-	{
-		uvalues[k].uval.ch.val = 0;
-	}
-	else if (g_inside == -1)  /* maxiter */
-	{
-		uvalues[k].uval.ch.val = 1;
-	}
-	else if (g_inside == ZMAG)
-	{
-		uvalues[k].uval.ch.val = 2;
-	}
-	else if (g_inside == BOF60)
-	{
-		uvalues[k].uval.ch.val = 3;
-	}
-	else if (g_inside == BOF61)
-	{
-		uvalues[k].uval.ch.val = 4;
-	}
-	else if (g_inside == EPSCROSS)
-	{
-		uvalues[k].uval.ch.val = 5;
-	}
-	else if (g_inside == STARTRAIL)
-	{
-		uvalues[k].uval.ch.val = 6;
-	}
-	else if (g_inside == PERIOD)
-	{
-		uvalues[k].uval.ch.val = 7;
-	}
-	else if (g_inside == ATANI)
-	{
-		uvalues[k].uval.ch.val = 8;
-	}
-	else if (g_inside == FMODI)
-	{
-		uvalues[k].uval.ch.val = 9;
-	}
-	old_inside = g_inside;
-
-	choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
-	uvalues[k].type = 'i';
-	if (g_outside >= 0)
-	{
-		uvalues[k].uval.ival = g_outside;
-	}
-	else
-	{
-		uvalues[k].uval.ival = 0;
-	}
-
-	choices[++k] = "Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)";
-	uvalues[k].type = 'l';
-	uvalues[k].uval.ch.vlen = 4;
-	uvalues[k].uval.ch.llen = sizeof(outsidemodes)/sizeof(*outsidemodes);
-	uvalues[k].uval.ch.list = outsidemodes;
-	if (g_outside >= 0)  /* numb */
-	{
-		uvalues[k].uval.ch.val = 0;
-	}
-	else
-	{
-		uvalues[k].uval.ch.val = -g_outside;
-	}
-	old_outside = g_outside;
-
-	choices[++k] = "Savename (.GIF implied)";
-	uvalues[k].type = 's';
-	strcpy(prevsavename, g_save_name);
-	savenameptr = strrchr(g_save_name, SLASHC);
-	if (savenameptr == NULL)
-	{
-		savenameptr = g_save_name;
-	}
-	else
-	{
-		savenameptr++; /* point past slash */
-	}
-	strcpy(uvalues[k].uval.sval, savenameptr);
-
-	choices[++k] = "File Overwrite ('overwrite=')";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_fractal_overwrite;
-
-	choices[++k] = "Sound (off, beep, x, y, z)";
-	uvalues[k].type = 'l';
-	uvalues[k].uval.ch.vlen = 4;
-	uvalues[k].uval.ch.llen = 5;
-	uvalues[k].uval.ch.list = soundmodes;
-	old_soundflag = g_sound_state.flags();
-	uvalues[k].uval.ch.val = old_soundflag & SOUNDFLAG_ORBITMASK;
-
+		"off", "beep", "x", "y", "z"
+	};
+	dialog.push("Sound (off, beep, x, y, z)",
+		soundmodes, NUM_OF(soundmodes), old_sound_flags & SOUNDFLAG_ORBITMASK);
 	if (g_ranges_length == 0)
 	{
-		choices[++k] = "Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)";
-		uvalues[k].type = 'L';
-		}
-	else
-	{
-		choices[++k] = "Log Palette (n/a, ranges= parameter is in effect)";
-		uvalues[k].type = '*';
-		}
-	uvalues[k].uval.Lval = old_logflag = g_log_palette_flag;
-
-	choices[++k] = "Biomorph Color (-1 means OFF)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_biomorph = g_user_biomorph;
-
-	choices[++k] = "Decomp Option (2,4,8,..,256, 0=OFF)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_decomp = g_decomposition[0];
-
-	choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
-	uvalues[k].type = 's';
-	if (g_fill_color < 0)
-	{
-		strcpy(uvalues[k].uval.sval, "normal");
+		dialog.push("Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)", g_log_palette_flag);
 	}
 	else
 	{
-		sprintf(uvalues[k].uval.sval, "%d", g_fill_color);
+		dialog.push("Log Palette (n/a, ranges= parameter is in effect)");
 	}
-	old_fillcolor = g_fill_color;
-
-	choices[++k] = "Proximity value for inside=epscross and fmod";
-	uvalues[k].type = 'f'; /* should be 'd', but prompts get messed up JCO */
-	uvalues[k].uval.dval = old_closeprox = g_proximity;
-
-	i = full_screen_prompt_help(HELPXOPTS, "Basic Options\n(not all combinations make sense)", k + 1, choices, uvalues, 0, NULL);
-	if (i < 0)
+	dialog.push("Biomorph Color (-1 means OFF)", g_user_biomorph);
+	dialog.push("Decomp Option (2,4,8,..,256, 0=OFF)", g_decomposition[0]);
+	char fill_buffer[80] = "normal";
+	if (g_fill_color >= 0)
+	{
+		sprintf(fill_buffer, "%d", g_fill_color);
+	}
+	dialog.push("Fill Color (normal,#) (works with passes=t, b and d)", fill_buffer);
+	dialog.push("Proximity value for inside=epscross and fmod", static_cast<float>(g_proximity));
+	if (dialog.prompt() < 0)
 	{
 		return -1;
-		}
+	}
 
-	/* now check out the results (*hopefully* in the same order <grin>) */
-	k = -1;
-	j = 0;   /* return code */
-
-	g_user_standard_calculation_mode = calcmodes[uvalues[++k].uval.ch.val][0];
-	g_stop_pass = (int)calcmodes[uvalues[k].uval.ch.val][1] - (int)'0';
-
+	int k = -1;
+	int j = 0;
+	g_user_standard_calculation_mode = calculation_modes[dialog.values(++k).uval.ch.val][0];
+	g_stop_pass = (int) calculation_modes[dialog.values(k).uval.ch.val][1] - (int) '0';
 	if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_standard_calculation_mode != 'g')
 	{
 		g_stop_pass = 0;
 	}
+	/* Oops, lyapunov type doesn't use 'new' & breaks orbits */
+	if (g_user_standard_calculation_mode == 'o'
+		&& g_fractal_type == FRACTYPE_LYAPUNOV)
+	{
+		g_user_standard_calculation_mode = old_user_standard_calculation_mode;
+	}
+	if (old_user_standard_calculation_mode != g_user_standard_calculation_mode)
+	{
+		j++;
+	}
+	if (old_stop_pass != g_stop_pass)
+	{
+		j++;
+	}
 
-	if (g_user_standard_calculation_mode == 'o' && g_fractal_type == FRACTYPE_LYAPUNOV) /* Oops, lyapunov type */
-										/* doesn't use 'new' & breaks orbits */
+	if (dialog.values(++k).uval.ch.val != g_user_float_flag)
 	{
-		g_user_standard_calculation_mode = old_usr_stdcalcmode;
+		g_user_float_flag = (char) dialog.values(k).uval.ch.val;
+		j++;
 	}
 
-	if (old_usr_stdcalcmode != g_user_standard_calculation_mode)
-	{
-		j++;
-	}
-	if (old_stoppass != g_stop_pass)
-	{
-		j++;
-	}
-#ifndef XFRACT
-	if (uvalues[++k].uval.ch.val != g_user_float_flag)
-	{
-		g_user_float_flag = (char)uvalues[k].uval.ch.val;
-		j++;
-	}
-#endif
 	++k;
-	g_max_iteration = uvalues[k].uval.Lval;
+	g_max_iteration = dialog.values(k).uval.Lval;
 	if (g_max_iteration < 0)
 	{
-		g_max_iteration = old_maxit;
+		g_max_iteration = old_max_iteration;
 	}
 	if (g_max_iteration < 2)
 	{
 		g_max_iteration = 2;
 	}
-
-	if (g_max_iteration != old_maxit)
+	if (g_max_iteration != old_max_iteration)
 	{
 		j++;
 	}
 
-	g_inside = uvalues[++k].uval.ival;
+	g_inside = dialog.values(++k).uval.ival;
 	if (g_inside < 0)
 	{
 		g_inside = -g_inside;
@@ -379,40 +274,14 @@ int get_toggles()
 	}
 
 	{
-		int tmp;
-		tmp = uvalues[++k].uval.ch.val;
-		if (tmp > 0)
+		int tmp = dialog.values(++k).uval.ch.val;
+		int insides[] =
 		{
-			switch (tmp)
-			{
-			case 1:
-				g_inside = -1;  /* maxiter */
-				break;
-			case 2:
-				g_inside = ZMAG;
-				break;
-			case 3:
-				g_inside = BOF60;
-				break;
-			case 4:
-				g_inside = BOF61;
-				break;
-			case 5:
-				g_inside = EPSCROSS;
-				break;
-			case 6:
-				g_inside = STARTRAIL;
-				break;
-			case 7:
-				g_inside = PERIOD;
-				break;
-			case 8:
-				g_inside = ATANI;
-				break;
-			case 9:
-				g_inside = FMODI;
-				break;
-			}
+			0, -1, ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, ATANI, FMODI
+		};
+		if (tmp > 0 && tmp < NUM_OF(insides))
+		{
+			g_inside = insides[tmp];
 		}
 	}
 	if (g_inside != old_inside)
@@ -420,7 +289,7 @@ int get_toggles()
 		j++;
 	}
 
-	g_outside = uvalues[++k].uval.ival;
+	g_outside = dialog.values(++k).uval.ival;
 	if (g_outside < 0)
 	{
 		g_outside = -g_outside;
@@ -429,10 +298,8 @@ int get_toggles()
 	{
 		g_outside = (g_outside % g_colors) + (g_outside / g_colors);
 	}
-
 	{
-		int tmp;
-		tmp = uvalues[++k].uval.ch.val;
+		int tmp = dialog.values(++k).uval.ch.val;
 		if (tmp > 0)
 		{
 			g_outside = -tmp;
@@ -443,30 +310,31 @@ int get_toggles()
 		j++;
 	}
 
-	strcpy(savenameptr, uvalues[++k].uval.sval);
-	if (strcmp(g_save_name, prevsavename))
+	::strcpy(savenameptr, dialog.values(++k).uval.sval);
+	if (::strcmp(g_save_name, previous_save_name))
 	{
 		g_resave_flag = RESAVE_NO;
 		g_started_resaves = FALSE; /* forget pending increment */
 	}
-	g_fractal_overwrite = uvalues[++k].uval.ch.val;
 
-	g_sound_state.set_flags((g_sound_state.flags() & ~SOUNDFLAG_ORBITMASK) | uvalues[++k].uval.ch.val);
-	if ((g_sound_state.flags() != old_soundflag)
+	g_fractal_overwrite = dialog.values(++k).uval.ch.val;
+
+	g_sound_state.set_flags((g_sound_state.flags() & ~SOUNDFLAG_ORBITMASK) | dialog.values(++k).uval.ch.val);
+	if ((g_sound_state.flags() != old_sound_flags)
 		&& ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP
-			|| (old_soundflag & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
+			|| (old_sound_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP))
 	{
 		j++;
 	}
 
-	g_log_palette_flag = uvalues[++k].uval.Lval;
-	if (g_log_palette_flag != old_logflag)
+	g_log_palette_flag = dialog.values(++k).uval.Lval;
+	if (g_log_palette_flag != old_log_palette_flag)
 	{
 		j++;
 		g_log_automatic_flag = FALSE;  /* turn it off, use the supplied value */
 	}
 
-	g_user_biomorph = uvalues[++k].uval.ival;
+	g_user_biomorph = dialog.values(++k).uval.ival;
 	if (g_user_biomorph >= g_colors)
 	{
 		g_user_biomorph = (g_user_biomorph % g_colors) + (g_user_biomorph / g_colors);
@@ -476,19 +344,19 @@ int get_toggles()
 		j++;
 	}
 
-	g_decomposition[0] = uvalues[++k].uval.ival;
-	if (g_decomposition[0] != old_decomp)
+	g_decomposition[0] = dialog.values(++k).uval.ival;
+	if (g_decomposition[0] != old_decomposition)
 	{
 		j++;
 	}
 
-	if (strncmp(strlwr(uvalues[++k].uval.sval), "normal", 4) == 0)
+	if (::strncmp(::strlwr(const_cast<char *>(dialog.values(++k).uval.sval)), "normal", 4) == 0)
 	{
 		g_fill_color = -1;
 	}
 	else
 	{
-		g_fill_color = atoi(uvalues[k].uval.sval);
+		g_fill_color = atoi(dialog.values(k).uval.sval);
 	}
 	if (g_fill_color < 0)
 	{
@@ -498,14 +366,13 @@ int get_toggles()
 	{
 		g_fill_color = (g_fill_color % g_colors) + (g_fill_color / g_colors);
 	}
-	if (g_fill_color != old_fillcolor)
+	if (g_fill_color != old_fill_color)
 	{
 		j++;
 	}
 
-	++k;
-	g_proximity = uvalues[k].uval.dval;
-	if (g_proximity != old_closeprox)
+	g_proximity = dialog.values(++k).uval.dval;
+	if (g_proximity != old_proximity)
 	{
 		j++;
 	}
@@ -519,119 +386,86 @@ int get_toggles()
 
 int get_toggles2()
 {
-	const char *choices[18];
-	full_screen_values uvalues[23];
-	int i;
-	int j;
-	int k;
-
-	int old_rotate_lo;
-	int old_rotate_hi;
-	int old_distestwidth;
 	double old_potparam[3];
-	double old_inversion[3];
-	long old_usr_distest;
-
-	/* fill up the choices (and previous values) arrays */
-	k = -1;
-
-	choices[++k] = "Look for finite attractor (0=no,>0=yes,<0=phase)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ch.val = g_finite_attractor;
-
-	choices[++k] = "Potential Max Color (0 means off)";
-	uvalues[k].type = 'i';
 	old_potparam[0] = g_potential_parameter[0];
-	uvalues[k].uval.ival = (int) old_potparam[0];
-
-	choices[++k] = "          Slope";
-	uvalues[k].type = 'd';
-	uvalues[k].uval.dval = old_potparam[1] = g_potential_parameter[1];
-
-	choices[++k] = "          Bailout";
-	uvalues[k].type = 'i';
+	old_potparam[1] = g_potential_parameter[1];
 	old_potparam[2] = g_potential_parameter[2];
-	uvalues[k].uval.ival = (int) old_potparam[2];
-
-	choices[++k] = "          16 bit values";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_potential_16bit;
-
-	choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
-	uvalues[k].type = 'L';
-	uvalues[k].uval.Lval = old_usr_distest = g_user_distance_test;
-
-	choices[++k] = "          width factor:";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_distestwidth = g_distance_test_width;
-
-	choices[++k] = "Inversion radius or \"auto\" (0 means off)";
-	choices[++k] = "          center X coordinate or \"auto\"";
-	choices[++k] = "          center Y coordinate or \"auto\"";
-	k = k - 3;
-	for (i = 0; i < 3; i++)
+	long old_usr_distest = g_user_distance_test;
+	int old_distestwidth = g_distance_test_width;
+	int old_rotate_lo = g_rotate_lo;
+	int old_rotate_hi = g_rotate_hi;
+	double old_inversion[3];
+	for (int i = 0; i < NUM_OF(old_inversion); i++)
 	{
-		uvalues[++k].type = 's';
 		old_inversion[i] = g_inversion[i];
-		if (g_inversion[i] == AUTOINVERT)
+	}
+
+	UIChoices dialog(HELPYOPTS, "Extended Options\n(not all combinations make sense)", 0);
+	dialog.push("Look for finite attractor (0=no,>0=yes,<0=phase)", g_finite_attractor);
+	dialog.push("Potential Max Color (0 means off)", (int) old_potparam[0]);
+	dialog.push("          Slope", old_potparam[1]);
+	dialog.push("          Bailout", (int) old_potparam[2]);
+	dialog.push("          16 bit values", g_potential_16bit ? true : false);
+	dialog.push("Distance Estimator (0=off, <0=edge, >0=on):", g_user_distance_test);
+	dialog.push("          width factor:", g_distance_test_width);
+	{
+		const char *prompts[] =
 		{
-			sprintf(uvalues[k].uval.sval, "auto");
-		}
-		else
+			"Inversion radius or \"auto\" (0 means off)",
+			"          center X coordinate or \"auto\"",
+			"          center Y coordinate or \"auto\""
+		};
+		for (int i = 0; i < 3; i++)
 		{
-			sprintf(uvalues[k].uval.sval, "%-1.15lg", g_inversion[i]);
+			char buffer[80];
+			if (g_inversion[i] == AUTOINVERT)
+			{
+				::strcpy(buffer, "auto");
+			}
+			else
+			{
+				sprintf(buffer, "%-1.15lg", g_inversion[i]);
+			}
+			dialog.push(prompts[i], buffer);
 		}
 	}
-	choices[++k] = "  (use fixed radius & center when zooming)";
-	uvalues[k].type = '*';
-
-	choices[++k] = "Color cycling from color (0 ... 254)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_rotate_lo = g_rotate_lo;
-
-	choices[++k] = "              to   color (1 ... 255)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_rotate_hi = g_rotate_hi;
-
-	i = full_screen_prompt_help(HELPYOPTS, "Extended Options\n"
-		"(not all combinations make sense)",
-		k + 1, choices, uvalues, 0, NULL);
-	if (i < 0)
+	dialog.push("  (use fixed radius & center when zooming)");
+	dialog.push("Color cycling from color (0 ... 254)", g_rotate_lo);
+	dialog.push("              to   color (1 ... 255)", g_rotate_hi);
+	if (dialog.prompt() < 0)
 	{
 		return -1;
 	}
 
-	/* now check out the results (*hopefully* in the same order <grin>) */
-	k = -1;
-	j = 0;   /* return code */
-
-	if (uvalues[++k].uval.ch.val != g_finite_attractor)
+	int k = -1;
+	int j = 0;   /* return code */
+	if (dialog.values(++k).uval.ch.val != g_finite_attractor)
 	{
-		g_finite_attractor = uvalues[k].uval.ch.val;
+		g_finite_attractor = dialog.values(k).uval.ch.val;
 		j = 1;
 	}
 
-	g_potential_parameter[0] = uvalues[++k].uval.ival;
+	g_potential_parameter[0] = dialog.values(++k).uval.ival;
 	if (g_potential_parameter[0] != old_potparam[0])
 	{
 		j = 1;
 	}
 
-	g_potential_parameter[1] = uvalues[++k].uval.dval;
+	g_potential_parameter[1] = dialog.values(++k).uval.dval;
 	if (g_potential_parameter[0] != 0.0 && g_potential_parameter[1] != old_potparam[1])
 	{
 		j = 1;
 	}
 
-	g_potential_parameter[2] = uvalues[++k].uval.ival;
+	g_potential_parameter[2] = dialog.values(++k).uval.ival;
 	if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != old_potparam[2])
 	{
 		j = 1;
 	}
 
-	if (uvalues[++k].uval.ch.val != g_potential_16bit)
+	if (dialog.values(++k).uval.ch.val != g_potential_16bit)
 	{
-		g_potential_16bit = uvalues[k].uval.ch.val;
+		g_potential_16bit = dialog.values(k).uval.ch.val;
 		if (g_potential_16bit)  /* turned it on */
 		{
 			if (g_potential_parameter[0] != 0.0)
@@ -653,27 +487,27 @@ int get_toggles2()
 	}
 
 	++k;
-	g_user_distance_test = uvalues[k].uval.Lval;
+	g_user_distance_test = dialog.values(k).uval.Lval;
 	if (g_user_distance_test != old_usr_distest)
 	{
 		j = 1;
 	}
 	++k;
-	g_distance_test_width = uvalues[k].uval.ival;
+	g_distance_test_width = dialog.values(k).uval.ival;
 	if (g_user_distance_test && g_distance_test_width != old_distestwidth)
 	{
 		j = 1;
 	}
 
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		if (uvalues[++k].uval.sval[0] == 'a' || uvalues[k].uval.sval[0] == 'A')
+		if (dialog.values(++k).uval.sval[0] == 'a' || dialog.values(k).uval.sval[0] == 'A')
 		{
 			g_inversion[i] = AUTOINVERT;
 		}
 		else
 		{
-			g_inversion[i] = atof(uvalues[k].uval.sval);
+			g_inversion[i] = atof(dialog.values(k).uval.sval);
 		}
 		if (old_inversion[i] != g_inversion[i]
 			&& (i == 0 || g_inversion[0] != 0.0))
@@ -684,8 +518,8 @@ int get_toggles2()
 	g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
 	++k;
 
-	g_rotate_lo = uvalues[++k].uval.ival;
-	g_rotate_hi = uvalues[++k].uval.ival;
+	g_rotate_lo = dialog.values(++k).uval.ival;
+	g_rotate_hi = dialog.values(++k).uval.ival;
 	if (g_rotate_lo < 0 || g_rotate_hi > 255 || g_rotate_lo > g_rotate_hi)
 	{
 		g_rotate_lo = old_rotate_lo;
