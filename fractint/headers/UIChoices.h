@@ -1,6 +1,14 @@
 #if !defined(UICHOICES_H)
 #define UICHOICES_H
 
+#if defined(max)
+#undef max
+#endif
+
+#if defined(min)
+#undef min
+#endif
+
 #include <vector>
 
 struct full_screen_values;
