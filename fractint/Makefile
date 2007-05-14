@@ -221,7 +221,8 @@ $(COMDIR)/slideshw.o $(COMDIR)/soi.o $(COMDIR)/soi1.o $(COMDIR)/stereo.o \
 $(COMDIR)/testpt.o \
 $(COMDIR)/zoom.o $(COMDIR)/Halley.o $(COMDIR)/Newton.o \
 $(COMDIR)/SoundState.o $(COMDIR)/EscapeTime.o \
-$(COMDIR)/ThreeDimensionalState.o $(COMDIR)/MathUtil.o
+$(COMDIR)/ThreeDimensionalState.o $(COMDIR)/MathUtil.o \
+$(COMDIR)/UIChoices.o
 
 
 ifeq ($(AS),/usr/bin/nasm)

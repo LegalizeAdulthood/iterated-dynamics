@@ -61,7 +61,8 @@ SRCS = \
 	SoundState.cpp \
 	EscapeTime.cpp \
 	ThreeDimensionalState.cpp \
-	MathUtil.cpp
+	MathUtil.cpp \
+	UIChoices.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
