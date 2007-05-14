@@ -1020,6 +1020,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\UIChoices.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\zoom.cpp"
 					>
 				</File>
@@ -1118,6 +1122,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\ThreeDimensionalState.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\UIChoices.h"
 				>
 			</File>
 			<File

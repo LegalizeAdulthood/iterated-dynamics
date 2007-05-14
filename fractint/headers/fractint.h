@@ -369,21 +369,6 @@ enum InputFieldType
 	INPUTFIELD_DOUBLE = 4
 };
 
-enum SoundFlagType
-{
-	SOUNDFLAG_OFF		= 0,
-	SOUNDFLAG_BEEP		= 1,
-	SOUNDFLAG_X			= 2,
-	SOUNDFLAG_Y			= 3,
-	SOUNDFLAG_Z			= 4,
-	SOUNDFLAG_ORBITMASK = 0x07,
-	SOUNDFLAG_SPEAKER	= 0x08,
-	SOUNDFLAG_OPL3_FM	= 0x10,
-	SOUNDFLAG_MIDI		= 0x20,
-	SOUNDFLAG_QUANTIZED = 0x40,
-	SOUNDFLAG_MASK		= 0x7F
-};
-
 /* these are used to declare arrays for file names */
 #if defined(_WIN32)
 #define FILE_MAX_PATH _MAX_PATH
@@ -1272,7 +1257,7 @@ struct full_screen_values
 		double dval;      /* when type 'd' or 'f'  */
 		int    ival;      /* when type is 'i'      */
 		long   Lval;      /* when type is 'L'      */
-		char   sval[16];  /* when type is 's'      */
+		char   sval[FILE_MAX_PATH];  /* when type is 's'      */
 		char  *sbuf;  /* when type is 0x100+n  */
 		struct
 		{          /* when type is 'l'      */

@@ -144,13 +144,6 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 					memcpy((char *)g_dac_box, g_map_dac_box, 768);
 					spindac(0, 1);
 				}
-				else if ((driver_diskp() && g_colors == 256) || !g_colors)
-				{
-					/* disk video, setvideomode via bios didn't get it right, so: */
-#if !defined(XFRACT) && !defined(_WIN32)
-					validate_luts("default"); /* read the default palette file */
-#endif
-				}
 				g_color_state = COLORSTATE_DEFAULT;
 			}
 			if (g_view_window)

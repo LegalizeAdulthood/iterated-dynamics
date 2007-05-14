@@ -16,6 +16,8 @@
 #endif
 #endif
 
+#include <string>
+
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
@@ -26,6 +28,8 @@
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"
 #include "Formula.h"
+#include "UIChoices.h"
+#include "MathUtil.h"
 
 #ifdef __hpux
 #include <sys/param.h>
@@ -42,10 +46,13 @@ char g_map_name[FILE_MAX_DIR] = "";
 int  g_map_set = FALSE;
 int g_julibrot;   /* flag for julibrot */
 
-/* Routines used in prompts2.c */
-long get_file_entry(int, char *, char *, char *, char *);
-int prompt_value_string(char *buf, struct full_screen_values *val);
-void set_default_parms();
+/* These need to be global because F6 exits full_screen_prompt() */
+static int s_prompt_function_keys;
+/* will be set to first line of extra info to be displayed (0 = top line) */
+static int s_scroll_row_status;
+/* will be set to first column of extra info to be displayed (0 = leftmost column)*/
+static int s_scroll_column_status;
+static FILE *s_gfe_file;
 
 static char funnyglasses_map_name[16];
 static char ifsmask[13]     = {"*.ifs"};
@@ -59,7 +66,7 @@ static  int input_field_list(int attr, char *fld, int vlen, const char **list, i
 							int row, int col, int (*checkkey)(int));
 static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
-static  long gfe_choose_entry(int, char *, char *, char *);
+static  long gfe_choose_entry(int type, const char *title, char *filename, char *entryname);
 static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int, char *);
@@ -71,14 +78,6 @@ static int prompt_checkkey_scroll(int curkey);
 
 
 /* --------------------------------------------------------------------- */
-
-int promptfkeys;
-
-	/* These need to be global because F6 exits full_screen_prompt() */
-int scroll_row_status;    /* will be set to first line of extra info to
-                             be displayed (0 = top line) */
-int scroll_column_status; /* will be set to first column of extra info to
-                             be displayed (0 = leftmost column)*/
 
 int full_screen_prompt(/* full-screen prompting routine */
 					   const char *hdg,          /* heading, lines separated by \n */
@@ -126,7 +125,7 @@ struct full_screen_values *values, /* array of values */
 	char blanks[78];               /* used to clear text box                */
 
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
-	promptfkeys = fkeymask;
+	s_prompt_function_keys = fkeymask;
 	memset(blanks, ' ', 77);   /* initialize string of blanks */
 	blanks[77] = (char) 0;
 
@@ -249,9 +248,9 @@ struct full_screen_values *values, /* array of values */
 	}
 
 	/* if entry fits in available space, shut off scrolling */
-	if (in_scrolling_mode && scroll_row_status == 0
+	if (in_scrolling_mode && s_scroll_row_status == 0
 		&& lines_in_entry == extralines - 2
-		&& scroll_column_status == 0
+		&& s_scroll_column_status == 0
 		&& strchr(extrainfo, '\021') == NULL)
 	{
 		in_scrolling_mode = 0;
@@ -492,7 +491,7 @@ struct full_screen_values *values, /* array of values */
 				rewrite_extrainfo = 0;
 				fseek(scroll_file, scroll_file_start, SEEK_SET);
 				load_entry_text(scroll_file, extrainfo, extralines - 2,
-					scroll_row_status, scroll_column_status);
+					s_scroll_row_status, s_scroll_column_status);
 				for (i = 1; i <= extralines - 2; i++)
 				{
 					driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
@@ -512,51 +511,51 @@ struct full_screen_values *values, /* array of values */
 			case FIK_ENTER_2:
 				goto fullscreen_exit;
 			case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
-				if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
+				if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
 				{
-					scroll_row_status++;
+					s_scroll_row_status++;
 					rewrite_extrainfo = 1;
 				}
 				break;
 			case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
-				if (in_scrolling_mode && scroll_row_status > 0)
+				if (in_scrolling_mode && s_scroll_row_status > 0)
 				{
-					scroll_row_status--;
+					s_scroll_row_status--;
 					rewrite_extrainfo = 1;
 				}
 				break;
 			case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
-				if (in_scrolling_mode && scroll_column_status > 0)
+				if (in_scrolling_mode && s_scroll_column_status > 0)
 				{
-					scroll_column_status--;
+					s_scroll_column_status--;
 					rewrite_extrainfo = 1;
 				}
 				break;
 			case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
 				if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL)
 				{
-					scroll_column_status++;
+					s_scroll_column_status++;
 					rewrite_extrainfo = 1;
 				}
 				break;
 			case FIK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
-				if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
+				if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
 				{
-					scroll_row_status += extralines - 2;
-					if (scroll_row_status > vertical_scroll_limit)
+					s_scroll_row_status += extralines - 2;
+					if (s_scroll_row_status > vertical_scroll_limit)
 					{
-						scroll_row_status = vertical_scroll_limit;
+						s_scroll_row_status = vertical_scroll_limit;
 					}
 					rewrite_extrainfo = 1;
 				}
 				break;
 			case FIK_CTL_PAGE_UP:     /* scrolling key - up one screen */
-				if (in_scrolling_mode && scroll_row_status > 0)
+				if (in_scrolling_mode && s_scroll_row_status > 0)
 				{
-					scroll_row_status -= extralines - 2;
-					if (scroll_row_status < 0)
+					s_scroll_row_status -= extralines - 2;
+					if (s_scroll_row_status < 0)
 					{
-						scroll_row_status = 0;
+						s_scroll_row_status = 0;
 					}
 					rewrite_extrainfo = 1;
 				}
@@ -564,15 +563,15 @@ struct full_screen_values *values, /* array of values */
 			case FIK_CTL_END:         /* scrolling key - to end of entry */
 				if (in_scrolling_mode)
 				{
-					scroll_row_status = vertical_scroll_limit;
-					scroll_column_status = 0;
+					s_scroll_row_status = vertical_scroll_limit;
+					s_scroll_column_status = 0;
 					rewrite_extrainfo = 1;
 				}
 				break;
 			case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
 				if (in_scrolling_mode)
 				{
-					scroll_row_status = scroll_column_status = 0;
+					s_scroll_row_status = s_scroll_column_status = 0;
 					rewrite_extrainfo = 1;
 				}
 				break;
@@ -585,7 +584,7 @@ struct full_screen_values *values, /* array of values */
 			case FIK_F8:
 			case FIK_F9:
 			case FIK_F10:
-				if (promptfkeys & (1 << (done + 1-FIK_F1)))
+				if (s_prompt_function_keys & (1 << (done + 1-FIK_F1)))
 				{
 					goto fullscreen_exit;
 				}
@@ -617,7 +616,7 @@ struct full_screen_values *values, /* array of values */
 			g_text_cbase = 2;
 			fseek(scroll_file, scroll_file_start, SEEK_SET);
 			load_entry_text(scroll_file, extrainfo, extralines - 2,
-				scroll_row_status, scroll_column_status);
+				s_scroll_row_status, s_scroll_column_status);
 			for (i = 1; i <= extralines - 2; i++)
 			{
 				driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
@@ -751,51 +750,51 @@ struct full_screen_values *values, /* array of values */
 			while (values[curchoice].type == '*');
 			break;
 		case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
-			if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
+			if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
 			{
-				scroll_row_status++;
+				s_scroll_row_status++;
 				rewrite_extrainfo = 1;
 			}
 			break;
 		case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
-			if (in_scrolling_mode && scroll_row_status > 0)
+			if (in_scrolling_mode && s_scroll_row_status > 0)
 			{
-				scroll_row_status--;
+				s_scroll_row_status--;
 				rewrite_extrainfo = 1;
 			}
 			break;
 		case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
-			if (in_scrolling_mode && scroll_column_status > 0)
+			if (in_scrolling_mode && s_scroll_column_status > 0)
 			{
-				scroll_column_status--;
+				s_scroll_column_status--;
 				rewrite_extrainfo = 1;
 			}
 			break;
 		case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
 			if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL)
 			{
-				scroll_column_status++;
+				s_scroll_column_status++;
 				rewrite_extrainfo = 1;
 			}
 			break;
 		case FIK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
-			if (in_scrolling_mode && scroll_row_status < vertical_scroll_limit)
+			if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
 			{
-				scroll_row_status += extralines - 2;
-				if (scroll_row_status > vertical_scroll_limit)
+				s_scroll_row_status += extralines - 2;
+				if (s_scroll_row_status > vertical_scroll_limit)
 				{
-					scroll_row_status = vertical_scroll_limit;
+					s_scroll_row_status = vertical_scroll_limit;
 				}
 				rewrite_extrainfo = 1;
 			}
 			break;
 		case FIK_CTL_PAGE_UP:      /* scrolling key - up one screen */
-			if (in_scrolling_mode && scroll_row_status > 0)
+			if (in_scrolling_mode && s_scroll_row_status > 0)
 			{
-				scroll_row_status -= extralines - 2;
-				if (scroll_row_status < 0)
+				s_scroll_row_status -= extralines - 2;
+				if (s_scroll_row_status < 0)
 				{
-					scroll_row_status = 0;
+					s_scroll_row_status = 0;
 				}
 				rewrite_extrainfo = 1;
 			}
@@ -803,15 +802,15 @@ struct full_screen_values *values, /* array of values */
 		case FIK_CTL_END:          /* scrolling key - go to end of entry */
 			if (in_scrolling_mode)
 			{
-				scroll_row_status = vertical_scroll_limit;
-				scroll_column_status = 0;
+				s_scroll_row_status = vertical_scroll_limit;
+				s_scroll_column_status = 0;
 				rewrite_extrainfo = 1;
 			}
 			break;
 		case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
 			if (in_scrolling_mode)
 			{
-				scroll_row_status = scroll_column_status = 0;
+				s_scroll_row_status = s_scroll_column_status = 0;
 				rewrite_extrainfo = 1;
 			}
 			break;
@@ -908,7 +907,7 @@ int prompt_checkkey(int curkey)
 	case FIK_F8:
 	case FIK_F9:
 	case FIK_F10:
-		if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
+		if (s_prompt_function_keys & (1 << (curkey + 1-FIK_F1)))
 		{
 			return curkey;
 		}
@@ -942,7 +941,7 @@ int prompt_checkkey_scroll(int curkey)
 	case FIK_F8:
 	case FIK_F9:
 	case FIK_F10:
-		if (promptfkeys & (1 << (curkey + 1-FIK_F1)))
+		if (s_prompt_function_keys & (1 << (curkey + 1-FIK_F1)))
 		{
 			return curkey;
 		}
@@ -1050,34 +1049,6 @@ inpfldl_end:
 	strcpy(fld, list[curval]);
 	return ret;
 }
-
-
-/* --------------------------------------------------------------------- */
-
-/* MCP 7-7-91, This is static code, but not called anywhere */
-#ifdef DELETE_UNUSED_CODE
-
-/* compare for sort of type table */
-static int compare(const VOIDPTR i, const VOIDPTR j)
-{
-	return strcmp(g_fractal_specific[(int) *((BYTE *) i)].name,
-					g_fractal_specific[(int) *((BYTE *) j)].name);
-}
-
-/* --------------------------------------------------------------------- */
-
-static void clear_line(int row, int start, int stop, int color) /* clear part of a line */
-{
-	int col;
-	for (col = start; col <= stop; col++)
-	{
-		driver_put_string(row, col, color, " ");
-	}
-}
-
-#endif
-
-/* --------------------------------------------------------------------- */
 
 int get_fractal_type()             /* prompt for and select fractal type */
 {
@@ -1429,7 +1400,7 @@ struct trig_funct_lst trigfn[] =
 /* changing the order of these alters meaning of *.fra file */
 /* maximum 6 characters in function names or recheck all related code */
 {
-#if !defined(XFRACT) && !defined(_WIN32)
+#if !defined(XFRACT)
 	{"sin",   lStkSin,   dStkSin,   mStkSin   },
 	{"cosxx", lStkCosXX, dStkCosXX, mStkCosXX },
 	{"sinh",  lStkSinh,  dStkSinh,  mStkSinh  },
@@ -1959,8 +1930,8 @@ gfp_top:
 	{
 		fkeymask = 0;
 	}
-	scroll_row_status = 0; /* make sure we start at beginning of entry */
-	scroll_column_status = 0;
+	s_scroll_row_status = 0; /* make sure we start at beginning of entry */
+	s_scroll_column_status = 0;
 	while (1)
 	{
 		i = full_screen_prompt_help(g_current_fractal_specific->helptext, msg,
@@ -2170,9 +2141,7 @@ int check_orbit_name(char *orbitname)
 
 /* --------------------------------------------------------------------- */
 
-static FILE *gfe_file;
-
-long get_file_entry(int type, char *title, char *fmask,
+long get_file_entry(int type, const char *title, char *fmask,
 					char *filename, char *entryname)
 {
 	/* Formula, LSystem, etc type structure, select from file */
@@ -2186,7 +2155,7 @@ long get_file_entry(int type, char *title, char *fmask,
 		firsttry = 0;
 		/* pb: binary mode used here - it is more work, but much faster, */
 		/*     especially when ftell or fgetpos is used                  */
-		while (newfile || (gfe_file = fopen(filename, "rb")) == NULL)
+		while (newfile || (s_gfe_file = fopen(filename, "rb")) == NULL)
 		{
 			char buf[60];
 			newfile = 0;
@@ -2204,7 +2173,7 @@ long get_file_entry(int type, char *title, char *fmask,
 
 			firsttry = 1; /* if around open loop again it is an error */
 		}
-		setvbuf(gfe_file, g_text_stack, _IOFBF, 4096); /* improves speed when file is big */
+		setvbuf(s_gfe_file, g_text_stack, _IOFBF, 4096); /* improves speed when file is big */
 		newfile = 0;
 		entry_pointer = gfe_choose_entry(type, title, filename, entryname);
 		if (entry_pointer == -2)
@@ -2246,7 +2215,7 @@ long get_file_entry(int type, char *title, char *fmask,
 }
 
 static struct entryinfo **gfe_choices; /* for format_getparm_line */
-static char *gfe_title;
+static const char *gfe_title;
 
 /* skip to next non-white space character and return it */
 static int skip_white_space(FILE *infile, long *file_offset)
@@ -2426,7 +2395,7 @@ top:
 }
 
 /* subrtn of get_file_entry, separated so that storage gets freed up */
-static long gfe_choose_entry(int type, char *title, char *filename, char *entryname)
+static long gfe_choose_entry(int type, const char *title, char *filename, char *entryname)
 {
 #ifdef XFRACT
 	char *o_instr = "Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort ";
@@ -2462,11 +2431,11 @@ retry:
 	numentries = 0;
 	help_title(); /* to display a clue when file big and next is slow */
 
-	numentries = scan_entries(gfe_file, &storage[0], NULL);
+	numentries = scan_entries(s_gfe_file, &storage[0], NULL);
 	if (numentries == 0)
 	{
 		stop_message(0, "File doesn't contain any valid entries");
-		fclose(gfe_file);
+		fclose(s_gfe_file);
 		return -2; /* back to file list */
 	}
 	strcpy(instr, o_instr);
@@ -2498,11 +2467,11 @@ retry:
 		formatitem, buf, NULL, check_gfe_key);
 	if (i == -FIK_F4)
 	{
-		rewind(gfe_file);
+		rewind(s_gfe_file);
 		dosort = 1-dosort;
 		goto retry;
 	}
-	fclose(gfe_file);
+	fclose(s_gfe_file);
 	if (i < 0)
 	{
 		/* go back to file list or cancel */
@@ -2542,8 +2511,8 @@ static int check_gfe_key(int curkey, int choice)
 		int comment = 0;
 		int c = 0;
 		int widthct = 0;
-		fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
-		while ((c = fgetc(gfe_file)) != EOF && c != '\032')
+		fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
+		while ((c = fgetc(s_gfe_file)) != EOF && c != '\032')
 		{
 			if (c == ';')
 			{
@@ -2575,11 +2544,11 @@ static int check_gfe_key(int curkey, int choice)
 		}
 		if (c == EOF || c == '\032')  /* should never happen */
 		{
-			fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
+			fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
 			in_scrolling_mode = 0;
 		}
-		fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
-		load_entry_text(gfe_file, infbuf, 17, 0, 0);
+		fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
+		load_entry_text(s_gfe_file, infbuf, 17, 0, 0);
 		if (lines_in_entry > 17 || widest_entry_line > 74)
 		{
 			in_scrolling_mode = 1;
@@ -2606,8 +2575,8 @@ static int check_gfe_key(int curkey, int choice)
 			if (rewrite_infbuf)
 			{
 				rewrite_infbuf = 0;
-				fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
-				load_entry_text(gfe_file, infbuf, 17, top_line, left_column);
+				fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
+				load_entry_text(s_gfe_file, infbuf, 17, top_line, left_column);
 				for (i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
 				{
 					driver_put_string(i, 0, C_GENERAL_MED, blanks);
@@ -2871,22 +2840,22 @@ static void format_parmfile_line(int choice, char *buf)
 	int c;
 	int i;
 	char line[80];
-	fseek(gfe_file, gfe_choices[choice]->point, SEEK_SET);
+	fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
 	do
 	{
-		c = getc(gfe_file);
+		c = getc(s_gfe_file);
 	}
 	while (c != '{');
 	do
 	{
-		c = getc(gfe_file);
+		c = getc(s_gfe_file);
 	}
 	while (c == ' ' || c == '\t' || c == ';');
 	i = 0;
 	while (i < 56 && c != '\n' && c != '\r' && c != EOF && c != '\032')
 	{
 		line[i++] = (char)((c == '\t') ? ' ' : c);
-		c = getc(gfe_file);
+		c = getc(s_gfe_file);
 	}
 	line[i] = 0;
 #ifndef XFRACT
@@ -2898,56 +2867,32 @@ static void format_parmfile_line(int choice, char *buf)
 
 /* --------------------------------------------------------------------- */
 
-int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
+static int get_fractal_3d_parameters_aux()
 {
-	struct full_screen_values uvalues[20];
-	const char *ifs3d_prompts[7] =
-	{
-		"X-axis rotation in degrees",
-		"Y-axis rotation in degrees",
-		"Z-axis rotation in degrees",
-		"Perspective distance [1 - 999, 0 for no persp]",
-		"X shift with perspective (positive = right)",
-		"Y shift with perspective (positive = up)",
-		"Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)"
-	};
-
-	driver_stack_screen();
-	int k = 0;
-	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_3d_state.x_rotation();
-	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_3d_state.y_rotation();
-	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_3d_state.z_rotation();
-	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_3d_state.z_viewer();
-	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_3d_state.x_shift();
-	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_3d_state.y_shift();
-	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_3d_state.glasses_type();
-
-	int i = full_screen_prompt_help(HELP3DFRACT, "3D Parameters",
-		k, ifs3d_prompts, uvalues, 0, NULL);
-	int ret;
+	UIChoices dialog(HELP3DFRACT, "3D Parameters", 0);
+	dialog.push("X-axis rotation in degrees", g_3d_state.x_rotation());
+	dialog.push("Y-axis rotation in degrees", g_3d_state.y_rotation());
+	dialog.push("Z-axis rotation in degrees", g_3d_state.z_rotation());
+	dialog.push("Perspective distance [1 - 999, 0 for no persp]", g_3d_state.z_viewer());
+	dialog.push("X shift with perspective (positive = right)", g_3d_state.x_shift());
+	dialog.push("Y shift with perspective (positive = up)", g_3d_state.y_shift());
+	dialog.push("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)",
+		g_3d_state.glasses_type());
+	int i = dialog.prompt();
 	if (i < 0)
 	{
-		ret = -1;
-		goto get_f3d_exit;
+		return -1;
 	}
 
-	ret = 0;
-	k = 0;
-	g_3d_state.set_x_rotation(uvalues[k++].uval.ival);
-	g_3d_state.set_y_rotation(uvalues[k++].uval.ival);
-	g_3d_state.set_z_rotation(uvalues[k++].uval.ival);
-	g_3d_state.set_z_viewer(uvalues[k++].uval.ival);
-	g_3d_state.set_x_shift(uvalues[k++].uval.ival);
-	g_3d_state.set_y_shift(uvalues[k++].uval.ival);
+	int k = 0;
+	g_3d_state.set_x_rotation(dialog.values(k++).uval.ival);
+	g_3d_state.set_y_rotation(dialog.values(k++).uval.ival);
+	g_3d_state.set_z_rotation(dialog.values(k++).uval.ival);
+	g_3d_state.set_z_viewer(dialog.values(k++).uval.ival);
+	g_3d_state.set_x_shift(dialog.values(k++).uval.ival);
+	g_3d_state.set_y_shift(dialog.values(k++).uval.ival);
 	{
-		int glasses_type = uvalues[k++].uval.ival;
+		int glasses_type = dialog.values(k++).uval.ival;
 		if (glasses_type < STEREO_NONE || glasses_type > STEREO_PAIR)
 		{
 			glasses_type = 0;
@@ -2957,14 +2902,20 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 		{
 			if (get_funny_glasses_params() || check_mapfile())
 			{
-				ret = -1;
+				return -1;
 			}
 		}
 	}
 
-get_f3d_exit:
+	return 0;
+}
+
+int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
+{
+	driver_stack_screen();
+	int status = get_fractal_3d_parameters_aux();
 	driver_unstack_screen();
-	return ret;
+	return status;
 }
 
 int get_3d_parameters()     /* prompt for 3D parameters */
@@ -3291,126 +3242,66 @@ return 0;
 /* --------------------------------------------------------------------- */
 static int get_light_params()
 {
-	const char *prompts3d[13];
-	struct full_screen_values uvalues[13];
-	int k;
-
-	/* defaults go here */
-	k = -1;
-
+	UIChoices dialog(HELP3DLIGHT, "Light Source Parameters", 0);
 	if ((g_3d_state.fill_type() > FillType::Bars) || g_3d_state.raytrace_output())
 	{
-		prompts3d[++k] = "X value light vector";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.x_light();
-
-		prompts3d[++k] = "Y value light vector";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.y_light();
-
-		prompts3d[++k] = "Z value light vector";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.z_light();
+		dialog.push("X value light vector", g_3d_state.x_light());
+		dialog.push("Y value light vector", g_3d_state.y_light());
+		dialog.push("Z value light vector", g_3d_state.z_light());
 
 		if (!g_3d_state.raytrace_output())
 		{
-			prompts3d[++k] = "Light Source Smoothing Factor";
-			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = g_3d_state.light_avg();
-
-			prompts3d[++k] = "Ambient";
-			uvalues[k].type = 'i';
-			uvalues[k].uval.ival = g_3d_state.ambient();
+			dialog.push("Light Source Smoothing Factor", g_3d_state.light_avg());
+			dialog.push("Ambient", g_3d_state.ambient());
 		}
 	}
 
 	if (g_targa_output && !g_3d_state.raytrace_output())
 	{
-		prompts3d[++k] = "Haze Factor        (0 - 100, '0' disables)";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.haze();
-
+		dialog.push("Haze Factor        (0 - 100, '0' disables)", g_3d_state.haze());
 		if (!g_targa_overlay)
 		{
 			check_write_file(g_light_name, ".tga");
 		}
-		prompts3d[++k] = "Targa File Name  (Assume .tga)";
-		uvalues[k].type = 's';
-		strcpy(uvalues[k].uval.sval, g_light_name);
-
-		prompts3d[++k] = "Back Ground Color (0 - 255)";
-		uvalues[k].type = '*';
-
-		prompts3d[++k] = "   Red";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_3d_state.background_red();
-
-		prompts3d[++k] = "   Green";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_3d_state.background_green();
-
-		prompts3d[++k] = "   Blue";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = (int) g_3d_state.background_blue();
-
-		prompts3d[++k] = "Overlay Targa File? (Y/N)";
-		uvalues[k].type = 'y';
-		uvalues[k].uval.ch.val = g_targa_overlay;
-
+		dialog.push("Targa File Name  (Assume .tga)", g_light_name);
+		dialog.push("Back Ground Color (0 - 255)");
+		dialog.push("   Red", (int) g_3d_state.background_red());
+		dialog.push("   Green", (int) g_3d_state.background_green());
+		dialog.push("   Blue", (int) g_3d_state.background_blue());
+		dialog.push("Overlay Targa File? (Y/N)", g_targa_overlay ? true : false);
 	}
-
-	prompts3d[++k] = "";
-
-	k = full_screen_prompt_help(HELP3DLIGHT, "Light Source Parameters", k, prompts3d, uvalues, 0, NULL);
-	if (k < 0)
+	dialog.push("");
+	if (dialog.prompt() < 0)
 	{
 		return -1;
 	}
 
-	k = 0;
+	int k = 0;
 	if ((g_3d_state.fill_type() > FillType::Bars))
 	{
-		g_3d_state.set_x_light(uvalues[k++].uval.ival);
-		g_3d_state.set_y_light(uvalues[k++].uval.ival);
-		g_3d_state.set_z_light(uvalues[k++].uval.ival);
+		g_3d_state.set_x_light(dialog.values(k++).uval.ival);
+		g_3d_state.set_y_light(dialog.values(k++).uval.ival);
+		g_3d_state.set_z_light(dialog.values(k++).uval.ival);
 		if (!g_3d_state.raytrace_output())
 		{
-			g_3d_state.set_light_average(uvalues[k++].uval.ival);
-			int ambient = uvalues[k++].uval.ival;
-			if (ambient >= 100)
-			{
-				ambient = 100;
-			}
-			else if (ambient <= 0)
-			{
-				ambient = 0;
-			}
-			g_3d_state.set_ambient(ambient);
+			g_3d_state.set_light_average(dialog.values(k++).uval.ival);
+			g_3d_state.set_ambient(MathUtil::Clamp(dialog.values(k++).uval.ival, 0, 100));
 		}
 	}
 
 	if (g_targa_output && !g_3d_state.raytrace_output())
 	{
-		int haze = uvalues[k++].uval.ival;
-		if (haze >= 100)
-		{
-			haze = 100;
-		}
-		if (haze <= 0)
-		{
-			haze = 0;
-		}
-		g_3d_state.set_haze(haze);
-		strcpy(g_light_name, uvalues[k++].uval.sval);
+		g_3d_state.set_haze(MathUtil::Clamp(dialog.values(k++).uval.ival, 0, 100));
+		strcpy(g_light_name, dialog.values(k++).uval.sval);
         /* In case g_light_name conflicts with an existing name it is checked
 						again in line3d */
 		k++;
 		g_3d_state.set_background_color(
-			(BYTE) (uvalues[k + 0].uval.ival % 255),
-			(BYTE) (uvalues[k + 1].uval.ival % 255),
-			(BYTE) (uvalues[k + 2].uval.ival % 255));
+			(BYTE) (dialog.values(k + 0).uval.ival % 255),
+			(BYTE) (dialog.values(k + 1).uval.ival % 255),
+			(BYTE) (dialog.values(k + 2).uval.ival % 255));
 		k += 3;
-		g_targa_overlay = uvalues[k].uval.ch.val;
+		g_targa_overlay = dialog.values(k).uval.ch.val;
 	}
 	return 0;
 }
@@ -3476,10 +3367,6 @@ static int check_mapfile()
 
 static int get_funny_glasses_params()
 {
-	const char *prompts3d[10];
-	struct full_screen_values uvalues[10];
-	int k;
-
 	/* defaults */
 	if (g_3d_state.z_viewer() == 0)
 	{
@@ -3487,7 +3374,9 @@ static int get_funny_glasses_params()
 	}
 	if (g_3d_state.eye_separation() == 0)
 	{
-		if (g_fractal_type == FRACTYPE_IFS_3D || g_fractal_type == FRACTYPE_LORENZ_3D_L || g_fractal_type == FRACTYPE_LORENZ_3D_FP)
+		if (g_fractal_type == FRACTYPE_IFS_3D
+			|| g_fractal_type == FRACTYPE_LORENZ_3D_L
+			|| g_fractal_type == FRACTYPE_LORENZ_3D_FP)
 		{
 			g_3d_state.set_eye_separation(2);
 			g_3d_state.set_x_adjust(-2);
@@ -3516,65 +3405,40 @@ static int get_funny_glasses_params()
 		}
 	}
 
-	k = -1;
-	prompts3d[++k] = "Interocular distance (as % of screen)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.eye_separation();
+	UIChoices dialog(HELP3DGLASSES, "Funny Glasses Parameters", 0);
+	dialog.push("Interocular distance (as % of screen)", g_3d_state.eye_separation());
+	dialog.push("Convergence adjust (positive = spread greater)", g_3d_state.x_adjust());
+	dialog.push("Left  red image crop (% of screen)", g_3d_state.red().crop_left());
+	dialog.push("Right red image crop (% of screen)", g_3d_state.red().crop_right());
+	dialog.push("Left  blue image crop (% of screen)", g_3d_state.blue().crop_left());
+	dialog.push("Right blue image crop (% of screen)", g_3d_state.blue().crop_right());
+	dialog.push("Red brightness factor (%)", g_3d_state.red().bright());
+	dialog.push("Blue brightness factor (%)", g_3d_state.blue().bright());
 
-	prompts3d[++k] = "Convergence adjust (positive = spread greater)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.x_adjust();
-
-	prompts3d[++k] = "Left  red image crop (% of screen)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.red().crop_left();
-
-	prompts3d[++k] = "Right red image crop (% of screen)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.red().crop_right();
-
-	prompts3d[++k] = "Left  blue image crop (% of screen)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.blue().crop_left();
-
-	prompts3d[++k] = "Right blue image crop (% of screen)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.blue().crop_right();
-
-	prompts3d[++k] = "Red brightness factor (%)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.red().bright();
-
-	prompts3d[++k] = "Blue brightness factor (%)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.blue().bright();
-
-	if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
+	if (g_3d_state.glasses_type() == STEREO_ALTERNATE
+		|| g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
-		prompts3d[++k] = "Map File name";
-		uvalues[k].type = 's';
-		strcpy(uvalues[k].uval.sval, funnyglasses_map_name);
+		dialog.push("Map File name", funnyglasses_map_name);
 	}
 
-	k = full_screen_prompt_help(HELP3DGLASSES, "Funny Glasses Parameters", k + 1, prompts3d, uvalues, 0, NULL);
-	if (k < 0)
+	if (dialog.prompt() < 0)
 	{
 		return -1;
 	}
 
-	k = 0;
-	g_3d_state.set_eye_separation(uvalues[k++].uval.ival);
-	g_3d_state.set_x_adjust(uvalues[k++].uval.ival);
-	g_3d_state.set_red().set_crop_left(uvalues[k++].uval.ival);
-	g_3d_state.set_red().set_crop_right(uvalues[k++].uval.ival);
-	g_3d_state.set_blue().set_crop_left(uvalues[k++].uval.ival);
-	g_3d_state.set_blue().set_crop_right(uvalues[k++].uval.ival);
-	g_3d_state.set_red().set_bright(uvalues[k++].uval.ival);
-	g_3d_state.set_blue().set_bright(uvalues[k++].uval.ival);
+	int k = 0;
+	g_3d_state.set_eye_separation(dialog.values(k++).uval.ival);
+	g_3d_state.set_x_adjust(dialog.values(k++).uval.ival);
+	g_3d_state.set_red().set_crop_left(dialog.values(k++).uval.ival);
+	g_3d_state.set_red().set_crop_right(dialog.values(k++).uval.ival);
+	g_3d_state.set_blue().set_crop_left(dialog.values(k++).uval.ival);
+	g_3d_state.set_blue().set_crop_right(dialog.values(k++).uval.ival);
+	g_3d_state.set_red().set_bright(dialog.values(k++).uval.ival);
+	g_3d_state.set_blue().set_bright(dialog.values(k++).uval.ival);
 
 	if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
-		strcpy(funnyglasses_map_name, uvalues[k].uval.sval);
+		strcpy(funnyglasses_map_name, dialog.values(k).uval.sval);
 	}
 	return 0;
 }

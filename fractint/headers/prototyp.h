@@ -27,10 +27,6 @@ extern void initasmvars();
 #include "winprot.h"
 #endif
 
-#if (!defined(XFRACT) && !defined(WINFRACT) && !defined(_WIN32))
-#include "dosprot.h"
-#endif
-
 extern long cdecl divide(long, long, int);
 extern long cdecl multiply(long, long, int);
 extern void put_line(int, int, int, BYTE *);
@@ -65,13 +61,8 @@ extern unsigned long cdecl ExpFudged(long, int);
 extern long cdecl RegDivFloat(long, long);
 extern long cdecl LogFudged(unsigned long, int);
 extern long cdecl LogFloat14(unsigned long);
-#if !defined(XFRACT) && !defined(_WIN32)
-extern long cdecl RegFg2Float(long, char);
-extern long cdecl RegSftFloat(long, char);
-#else
 extern long cdecl RegFg2Float(long, int);
 extern long cdecl RegSftFloat(long, int);
-#endif
 
 /*  fpu387 -- assembler file prototypes */
 
@@ -753,7 +744,7 @@ extern void plot_setup();
 
 extern int full_screen_prompt(const char *hdg, int numprompts, const char **prompts,
 	struct full_screen_values *values, int fkeymask, char *extrainfo);
-extern long get_file_entry(int, char *, char *, char *, char *);
+extern long get_file_entry(int type, const char *title, char *fmask, char *filename, char *entryname);
 extern int get_fractal_type();
 extern int get_fractal_parameters(int);
 extern int get_fractal_3d_parameters();
