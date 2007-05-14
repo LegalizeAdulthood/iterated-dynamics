@@ -16,6 +16,7 @@ struct full_screen_values;
 class UIChoices
 {
 public:
+	UIChoices(const char *heading, int key_mask);
 	UIChoices(int help_mode, const char *heading, int key_mask, char *extra_info = NULL);
 	~UIChoices();
 
