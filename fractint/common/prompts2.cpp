@@ -1960,231 +1960,190 @@ int cmpdbl(double old, double new_value)
 
 int get_corners()
 {
-	struct full_screen_values values[15];
-	const char *prompts[15];
-	char xprompt[] = "          X";
-	char yprompt[] = "          Y";
-	char zprompt[] = "          Z";
-	int i;
-	int nump;
-	int prompt_ret;
-	int cmag;
-	double Xctr;
-	double Yctr;
-	LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
-	double Xmagfactor;
-	double Rotation;
-	double Skew;
-	BYTE ousemag;
-	double oxxmin;
-	double oxxmax;
-	double oyymin;
-	double oyymax;
-	double oxx3rd;
-	double oyy3rd;
-
-	ousemag = g_use_center_mag;
-	oxxmin = g_escape_time_state.m_grid_fp.x_min();
-	oxxmax = g_escape_time_state.m_grid_fp.x_max();
-	oyymin = g_escape_time_state.m_grid_fp.y_min();
-	oyymax = g_escape_time_state.m_grid_fp.y_max();
-	oxx3rd = g_escape_time_state.m_grid_fp.x_3rd();
-	oyy3rd = g_escape_time_state.m_grid_fp.y_3rd();
+	const char *xprompt = "          X";
+	const char *yprompt = "          Y";
+	const char *zprompt = "          Z";
+	BYTE ousemag = g_use_center_mag;
+	double oxxmin = g_escape_time_state.m_grid_fp.x_min();
+	double oxxmax = g_escape_time_state.m_grid_fp.x_max();
+	double oyymin = g_escape_time_state.m_grid_fp.y_min();
+	double oyymax = g_escape_time_state.m_grid_fp.y_max();
+	double oxx3rd = g_escape_time_state.m_grid_fp.x_3rd();
+	double oyy3rd = g_escape_time_state.m_grid_fp.y_3rd();
 
 gc_loop:
-	for (i = 0; i < 15; ++i)
 	{
-		values[i].type = 'd'; /* most values on this screen are type d */
-	}
-	cmag = g_use_center_mag;
-	if (g_orbit_draw_mode == ORBITDRAW_LINE)
-	{
-		cmag = 0;
-	}
-	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-
-	nump = -1;
-	if (cmag)
-	{
-		prompts[++nump]= "Center X";
-		values[nump].uval.dval = Xctr;
-		prompts[++nump]= "Center Y";
-		values[nump].uval.dval = Yctr;
-		prompts[++nump]= "Magnification";
-		values[nump].uval.dval = (double)Magnification;
-		prompts[++nump]= "X Magnification Factor";
-		values[nump].uval.dval = Xmagfactor;
-		prompts[++nump]= "Rotation Angle (degrees)";
-		values[nump].uval.dval = Rotation;
-		prompts[++nump]= "Skew Angle (degrees)";
-		values[nump].uval.dval = Skew;
-		prompts[++nump]= "";
-		values[nump].type = '*';
-		prompts[++nump]= "Press "FK_F7" to switch to \"corners\" mode";
-		values[nump].type = '*';
-		}
-
-	else
-	{
+		UIChoices dialog(HELPCOORDS, "Image Coordinates", 0x90);
+		int cmag = g_use_center_mag;
 		if (g_orbit_draw_mode == ORBITDRAW_LINE)
 		{
-			prompts[++nump]= "Left End Point";
-			values[nump].type = '*';
-			prompts[++nump] = xprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.x_min();
-			prompts[++nump] = yprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.y_max();
-			prompts[++nump]= "Right End Point";
-			values[nump].type = '*';
-			prompts[++nump] = xprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.x_max();
-			prompts[++nump] = yprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.y_min();
+			cmag = 0;
+		}
+		double Yctr;
+		double Xctr;
+		double Skew;
+		double Rotation;
+		LDBL Magnification;
+		double Xmagfactor;
+		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+
+		if (cmag)
+		{
+			dialog.push("Center X", Xctr);
+			dialog.push("Center Y", Yctr);
+			dialog.push("Magnification", static_cast<double>(Magnification));
+			dialog.push("X Magnification Factor", Xmagfactor);
+			dialog.push("Rotation Angle (degrees)", Rotation);
+			dialog.push("Skew Angle (degrees)", Skew);
+			dialog.push("");
+			dialog.push("Press "FK_F7" to switch to \"corners\" mode");
 		}
 		else
 		{
-			prompts[++nump]= "Top-Left Corner";
-			values[nump].type = '*';
-			prompts[++nump] = xprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.x_min();
-			prompts[++nump] = yprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.y_max();
-			prompts[++nump]= "Bottom-Right Corner";
-			values[nump].type = '*';
-			prompts[++nump] = xprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.x_max();
-			prompts[++nump] = yprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.y_min();
-			if (g_escape_time_state.m_grid_fp.x_min() == g_escape_time_state.m_grid_fp.x_3rd() && g_escape_time_state.m_grid_fp.y_min() == g_escape_time_state.m_grid_fp.y_3rd())
+			if (g_orbit_draw_mode == ORBITDRAW_LINE)
 			{
-				g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.y_3rd() = 0;
+				dialog.push("Left End Point");
+				dialog.push(xprompt, g_escape_time_state.m_grid_fp.x_min());
+				dialog.push(yprompt, g_escape_time_state.m_grid_fp.y_max());
+				dialog.push("Right End Point");
+				dialog.push(xprompt, g_escape_time_state.m_grid_fp.x_max());
+				dialog.push(yprompt, g_escape_time_state.m_grid_fp.y_min());
 			}
-			prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
-			values[nump].type = '*';
-			prompts[++nump] = xprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.x_3rd();
-			prompts[++nump] = yprompt;
-			values[nump].uval.dval = g_escape_time_state.m_grid_fp.y_3rd();
-			prompts[++nump]= "Press "FK_F7" to switch to \"center-mag\" mode";
-			values[nump].type = '*';
-		}
-	}
-
-	prompts[++nump]= "Press "FK_F4" to reset to type default values";
-	values[nump].type = '*';
-
-	prompt_ret = full_screen_prompt_help(HELPCOORDS, "Image Coordinates", nump + 1, prompts, values, 0x90, NULL);
-	if (prompt_ret < 0)
-	{
-		g_use_center_mag = ousemag;
-		g_escape_time_state.m_grid_fp.x_min() = oxxmin;
-		g_escape_time_state.m_grid_fp.x_max() = oxxmax;
-		g_escape_time_state.m_grid_fp.y_min() = oyymin;
-		g_escape_time_state.m_grid_fp.y_max() = oyymax;
-		g_escape_time_state.m_grid_fp.x_3rd() = oxx3rd;
-		g_escape_time_state.m_grid_fp.y_3rd() = oyy3rd;
-		return -1;
-	}
-
-	if (prompt_ret == FIK_F4)  /* reset to type defaults */
-	{
-		g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
-		g_escape_time_state.m_grid_fp.x_max()         = g_current_fractal_specific->x_max;
-		g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
-		g_escape_time_state.m_grid_fp.y_max()         = g_current_fractal_specific->y_max;
-		if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
-		{
-			aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
-		}
-		if (g_bf_math != 0)
-		{
-			fractal_float_to_bf();
-		}
-		goto gc_loop;
-	}
-
-	if (cmag)
-	{
-		if (cmpdbl(Xctr         , values[0].uval.dval)
-			|| cmpdbl(Yctr         , values[1].uval.dval)
-			|| cmpdbl((double)Magnification, values[2].uval.dval)
-			|| cmpdbl(Xmagfactor   , values[3].uval.dval)
-			|| cmpdbl(Rotation     , values[4].uval.dval)
-			|| cmpdbl(Skew         , values[5].uval.dval))
-		{
-			Xctr          = values[0].uval.dval;
-			Yctr          = values[1].uval.dval;
-			Magnification = values[2].uval.dval;
-			Xmagfactor    = values[3].uval.dval;
-			Rotation      = values[4].uval.dval;
-			Skew          = values[5].uval.dval;
-			if (Xmagfactor == 0)
+			else
 			{
-				Xmagfactor = 1;
+				dialog.push("Top-Left Corner");
+				dialog.push(xprompt, g_escape_time_state.m_grid_fp.x_min());
+				dialog.push(yprompt, g_escape_time_state.m_grid_fp.y_max());
+				dialog.push("Bottom-Right Corner");
+				dialog.push(xprompt, g_escape_time_state.m_grid_fp.x_max());
+				dialog.push(yprompt, g_escape_time_state.m_grid_fp.y_min());
+				if (g_escape_time_state.m_grid_fp.x_min() == g_escape_time_state.m_grid_fp.x_3rd()
+					&& g_escape_time_state.m_grid_fp.y_min() == g_escape_time_state.m_grid_fp.y_3rd())
+				{
+					g_escape_time_state.m_grid_fp.x_3rd() = 0;
+					g_escape_time_state.m_grid_fp.y_3rd() = 0;
+				}
+				dialog.push("Bottom-left (zeros for top-left X, bottom-right Y)");
+				dialog.push(xprompt, g_escape_time_state.m_grid_fp.x_3rd());
+				dialog.push(yprompt, g_escape_time_state.m_grid_fp.y_3rd());
+				dialog.push("Press "FK_F7" to switch to \"center-mag\" mode");
 			}
-			convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
 		}
-	}
+		dialog.push("Press "FK_F4" to reset to type default values");
 
-	else
-	{
-		if (g_orbit_draw_mode == ORBITDRAW_LINE)
+		int result = dialog.prompt();
+		if (result < 0)
 		{
-			nump = 1;
-			g_escape_time_state.m_grid_fp.x_min() = values[nump++].uval.dval;
-			g_escape_time_state.m_grid_fp.y_max() = values[nump++].uval.dval;
-			nump++;
-			g_escape_time_state.m_grid_fp.x_max() = values[nump++].uval.dval;
-			g_escape_time_state.m_grid_fp.y_min() = values[nump++].uval.dval;
+			g_use_center_mag = ousemag;
+			g_escape_time_state.m_grid_fp.x_min() = oxxmin;
+			g_escape_time_state.m_grid_fp.x_max() = oxxmax;
+			g_escape_time_state.m_grid_fp.y_min() = oyymin;
+			g_escape_time_state.m_grid_fp.y_max() = oyymax;
+			g_escape_time_state.m_grid_fp.x_3rd() = oxx3rd;
+			g_escape_time_state.m_grid_fp.y_3rd() = oyy3rd;
+			return -1;
+		}
+
+		if (result == FIK_F4)  /* reset to type defaults */
+		{
+			g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
+			g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
+			g_escape_time_state.m_grid_fp.x_max() = g_current_fractal_specific->x_max;
+			g_escape_time_state.m_grid_fp.y_3rd() = g_current_fractal_specific->y_min;
+			g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
+			g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
+			if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
+			{
+				aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
+			}
+			if (g_bf_math != 0)
+			{
+				fractal_float_to_bf();
+			}
+			goto gc_loop;
+		}
+
+		if (cmag)
+		{
+			if (cmpdbl(Xctr, dialog.values(0).uval.dval)
+				|| cmpdbl(Yctr, dialog.values(1).uval.dval)
+				|| cmpdbl(static_cast<double>(Magnification), dialog.values(2).uval.dval)
+				|| cmpdbl(Xmagfactor, dialog.values(3).uval.dval)
+				|| cmpdbl(Rotation, dialog.values(4).uval.dval)
+				|| cmpdbl(Skew, dialog.values(5).uval.dval))
+			{
+				Xctr = dialog.values(0).uval.dval;
+				Yctr = dialog.values(1).uval.dval;
+				Magnification = dialog.values(2).uval.dval;
+				Xmagfactor = dialog.values(3).uval.dval;
+				Rotation = dialog.values(4).uval.dval;
+				Skew = dialog.values(5).uval.dval;
+				if (Xmagfactor == 0)
+				{
+					Xmagfactor = 1;
+				}
+				convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+			}
 		}
 		else
 		{
-			nump = 1;
-			g_escape_time_state.m_grid_fp.x_min() = values[nump++].uval.dval;
-			g_escape_time_state.m_grid_fp.y_max() = values[nump++].uval.dval;
-			nump++;
-			g_escape_time_state.m_grid_fp.x_max() = values[nump++].uval.dval;
-			g_escape_time_state.m_grid_fp.y_min() = values[nump++].uval.dval;
-			nump++;
-			g_escape_time_state.m_grid_fp.x_3rd() = values[nump++].uval.dval;
-			g_escape_time_state.m_grid_fp.y_3rd() = values[nump++].uval.dval;
-			if (g_escape_time_state.m_grid_fp.x_3rd() == 0 && g_escape_time_state.m_grid_fp.y_3rd() == 0)
+			int i = 1;
+			if (g_orbit_draw_mode == ORBITDRAW_LINE)
 			{
-				g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
-				g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
+				g_escape_time_state.m_grid_fp.x_min() = dialog.values(i++).uval.dval;
+				g_escape_time_state.m_grid_fp.y_max() = dialog.values(i++).uval.dval;
+				i++;
+				g_escape_time_state.m_grid_fp.x_max() = dialog.values(i++).uval.dval;
+				g_escape_time_state.m_grid_fp.y_min() = dialog.values(i++).uval.dval;
+			}
+			else
+			{
+				g_escape_time_state.m_grid_fp.x_min() = dialog.values(i++).uval.dval;
+				g_escape_time_state.m_grid_fp.y_max() = dialog.values(i++).uval.dval;
+				i++;
+				g_escape_time_state.m_grid_fp.x_max() = dialog.values(i++).uval.dval;
+				g_escape_time_state.m_grid_fp.y_min() = dialog.values(i++).uval.dval;
+				i++;
+				g_escape_time_state.m_grid_fp.x_3rd() = dialog.values(i++).uval.dval;
+				g_escape_time_state.m_grid_fp.y_3rd() = dialog.values(i++).uval.dval;
+				if (g_escape_time_state.m_grid_fp.x_3rd() == 0 && g_escape_time_state.m_grid_fp.y_3rd() == 0)
+				{
+					g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
+					g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
+				}
 			}
 		}
-	}
 
-	if (prompt_ret == FIK_F7 && g_orbit_draw_mode != ORBITDRAW_LINE)  /* toggle corners/center-mag mode */
-	{
-		if (!g_use_center_mag)
+		if (result == FIK_F7 && g_orbit_draw_mode != ORBITDRAW_LINE)  /* toggle corners/center-mag mode */
 		{
-			convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-			g_use_center_mag = TRUE;
+			if (!g_use_center_mag)
+			{
+				convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+				g_use_center_mag = TRUE;
+			}
+			else
+			{
+				g_use_center_mag = FALSE;
+			}
+			goto gc_loop;
+		}
+
+		if (!cmpdbl(oxxmin, g_escape_time_state.m_grid_fp.x_min()) && !cmpdbl(oxxmax, g_escape_time_state.m_grid_fp.x_max()) && !cmpdbl(oyymin, g_escape_time_state.m_grid_fp.y_min()) &&
+			!cmpdbl(oyymax, g_escape_time_state.m_grid_fp.y_max()) && !cmpdbl(oxx3rd, g_escape_time_state.m_grid_fp.x_3rd()) && !cmpdbl(oyy3rd, g_escape_time_state.m_grid_fp.y_3rd()))
+		{
+			/* no change, restore values to avoid drift */
+			g_escape_time_state.m_grid_fp.x_min() = oxxmin;
+			g_escape_time_state.m_grid_fp.x_max() = oxxmax;
+			g_escape_time_state.m_grid_fp.y_min() = oyymin;
+			g_escape_time_state.m_grid_fp.y_max() = oyymax;
+			g_escape_time_state.m_grid_fp.x_3rd() = oxx3rd;
+			g_escape_time_state.m_grid_fp.y_3rd() = oyy3rd;
+			return 0;
 		}
 		else
 		{
-			g_use_center_mag = FALSE;
+			return 1;
 		}
-		goto gc_loop;
-	}
-
-	if (!cmpdbl(oxxmin, g_escape_time_state.m_grid_fp.x_min()) && !cmpdbl(oxxmax, g_escape_time_state.m_grid_fp.x_max()) && !cmpdbl(oyymin, g_escape_time_state.m_grid_fp.y_min()) &&
-		!cmpdbl(oyymax, g_escape_time_state.m_grid_fp.y_max()) && !cmpdbl(oxx3rd, g_escape_time_state.m_grid_fp.x_3rd()) && !cmpdbl(oyy3rd, g_escape_time_state.m_grid_fp.y_3rd()))
-	{
-		/* no change, restore values to avoid drift */
-		g_escape_time_state.m_grid_fp.x_min() = oxxmin;
-		g_escape_time_state.m_grid_fp.x_max() = oxxmax;
-		g_escape_time_state.m_grid_fp.y_min() = oyymin;
-		g_escape_time_state.m_grid_fp.y_max() = oyymax;
-		g_escape_time_state.m_grid_fp.x_3rd() = oxx3rd;
-		g_escape_time_state.m_grid_fp.y_3rd() = oyy3rd;
-		return 0;
-	}
-	else
-	{
-		return 1;
 	}
 }
 
