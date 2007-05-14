@@ -1809,7 +1809,7 @@ int split_path(const char *file_template, char *drive, char *dir, char *fname, c
 			len = (int) (tmp - (char *)&file_template[offset]);
 			if (len >= 0 && len < FILE_MAX_DIR && dir)
 			{
-				strncpy(dir, &file_template[offset], min(len, FILE_MAX_DIR));
+				strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
 			}
 			if (len < FILE_MAX_DIR && dir)
 			{
@@ -1837,7 +1837,7 @@ int split_path(const char *file_template, char *drive, char *dir, char *fname, c
 			len = (int) (tmp - (char *)&file_template[offset]);
 			if ((len > 0) && (offset + len < length) && fname)
 			{
-				strncpy(fname, &file_template[offset], min(len, FILE_MAX_FNAME));
+				strncpy(fname, &file_template[offset], std::min(len, FILE_MAX_FNAME));
 				if (len < FILE_MAX_FNAME)
 				{
 					fname[len] = 0;
