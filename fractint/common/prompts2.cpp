@@ -59,6 +59,7 @@
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "UIChoices.h"
+#include "MathUtil.h"
 
 /* Routines in this module      */
 
@@ -536,148 +537,100 @@ int get_toggles2()
 
 int passes_options()
 {
-	const char *choices[20];
-	const char *passcalcmodes[] =
-	{
-		"rect", "line"
-	};
-
-	struct full_screen_values uvalues[25];
-	int i;
-	int j;
-	int k;
-	int ret;
-
 	int old_periodicity;
+	old_periodicity = g_user_periodicity_check;
 	int old_orbit_delay;
+	old_orbit_delay = g_orbit_delay;
 	int old_orbit_interval;
+	old_orbit_interval = (int)g_orbit_interval;
 	int old_keep_scrn_coords;
+	old_keep_scrn_coords = g_keep_screen_coords;
 	int old_drawmode;
-
-	ret = 0;
-
-pass_option_restart:
-	/* fill up the choices (and previous values) arrays */
-	k = -1;
-
-	choices[++k] = "Periodicity (0=off, <0=show, >0=on, -255..+255)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_periodicity = g_user_periodicity_check;
-
-	choices[++k] = "Orbit delay (0 = none)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_orbit_delay = g_orbit_delay;
-
-	choices[++k] = "Orbit interval (1 ... 255)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = old_orbit_interval = (int)g_orbit_interval;
-
-	choices[++k] = "Maintain screen coordinates";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = old_keep_scrn_coords = g_keep_screen_coords;
-
-	choices[++k] = "Orbit pass shape (rect,line)";
-	/* TODO: change to below when function mode works: */
-	/* choices[++k] = "Orbit pass shape (rect,line,func)"; */
-	uvalues[k].type = 'l';
-	uvalues[k].uval.ch.vlen = 5;
-	uvalues[k].uval.ch.llen = sizeof(passcalcmodes)/sizeof(*passcalcmodes);
-	uvalues[k].uval.ch.list = passcalcmodes;
-	uvalues[k].uval.ch.val = g_orbit_draw_mode;
 	old_drawmode = g_orbit_draw_mode;
 
-	i = full_screen_prompt_help(HELPPOPTS, "Passes Options\n"
-		"(not all combinations make sense)\n"
-		"(Press "FK_F2" for corner parameters)\n"
-		"(Press "FK_F6" for calculation parameters)", k + 1, choices, uvalues, 0x44, NULL);
-	if (i < 0)
+pass_option_restart:
 	{
-		return -1;
-	}
-
-	/* now check out the results (*hopefully* in the same order <grin>) */
-	k = -1;
-	j = 0;   /* return code */
-
-	g_user_periodicity_check = uvalues[++k].uval.ival;
-	if (g_user_periodicity_check > 255)
-	{
-		g_user_periodicity_check = 255;
-	}
-	if (g_user_periodicity_check < -255)
-	{
-		g_user_periodicity_check = -255;
-	}
-	if (g_user_periodicity_check != old_periodicity)
-	{
-		j = 1;
-	}
-
-
-	g_orbit_delay = uvalues[++k].uval.ival;
-	if (g_orbit_delay != old_orbit_delay)
-	{
-		j = 1;
-	}
-
-
-	g_orbit_interval = uvalues[++k].uval.ival;
-	if (g_orbit_interval > 255)
-	{
-		g_orbit_interval = 255;
-	}
-	if (g_orbit_interval < 1)
-	{
-		g_orbit_interval = 1;
-	}
-	if (g_orbit_interval != old_orbit_interval)
-	{
-		j = 1;
-	}
-
-	g_keep_screen_coords = uvalues[++k].uval.ch.val;
-	if (g_keep_screen_coords != old_keep_scrn_coords)
-	{
-		j = 1;
-	}
-	if (g_keep_screen_coords == 0)
-	{
-		g_set_orbit_corners = 0;
-	}
-
-	g_orbit_draw_mode = uvalues[++k].uval.ch.val;
-	if (g_orbit_draw_mode != old_drawmode)
-	{
-		j = 1;
-	}
-
-	if (i == FIK_F2)
-	{
-		if (get_screen_corners() > 0)
+		UIChoices dialog(HELPPOPTS, "Passes Options\n"
+			"(not all combinations make sense)\n"
+			"(Press "FK_F2" for corner parameters)\n"
+			"(Press "FK_F6" for calculation parameters)", 0x44);
+		dialog.push("Periodicity (0=off, <0=show, >0=on, -255..+255)", g_user_periodicity_check);
+		dialog.push("Orbit delay (0 = none)", g_orbit_delay);
+		dialog.push("Orbit interval (1 ... 255)", static_cast<int>(g_orbit_interval));
+		dialog.push("Maintain screen coordinates", g_keep_screen_coords);
+		const char *passcalcmodes[] =
 		{
-			ret = 1;
-		}
-		if (j)
-		{
-			ret = 1;
-		}
-		goto pass_option_restart;
-	}
+			"rect", "line"
+		};
+		dialog.push("Orbit pass shape (rect,line)", passcalcmodes, NUM_OF(passcalcmodes), g_orbit_draw_mode);
 
-	if (i == FIK_F6)
-	{
-		if (get_corners() > 0)
+		int i = dialog.prompt();
+		if (i < 0)
 		{
-			ret = 1;
+			return -1;
 		}
-		if (j)
-		{
-			ret = 1;
-		}
-		goto pass_option_restart;
-	}
 
-	return j + ret;
+		int j = 0;
+		int ret = 0;
+
+		int k = -1;
+		g_user_periodicity_check = MathUtil::Clamp(dialog.values(++k).uval.ival, -255, 255);
+		if (g_user_periodicity_check != old_periodicity)
+		{
+			j = 1;
+		}
+		g_orbit_delay = dialog.values(++k).uval.ival;
+		if (g_orbit_delay != old_orbit_delay)
+		{
+			j = 1;
+		}
+		g_orbit_interval = MathUtil::Clamp(dialog.values(++k).uval.ival, 1, 255);
+		if (g_orbit_interval != old_orbit_interval)
+		{
+			j = 1;
+		}
+		g_keep_screen_coords = dialog.values(++k).uval.ch.val;
+		if (g_keep_screen_coords != old_keep_scrn_coords)
+		{
+			j = 1;
+		}
+		if (g_keep_screen_coords == 0)
+		{
+			g_set_orbit_corners = 0;
+		}
+		g_orbit_draw_mode = dialog.values(++k).uval.ch.val;
+		if (g_orbit_draw_mode != old_drawmode)
+		{
+			j = 1;
+		}
+
+		if (i == FIK_F2)
+		{
+			if (get_screen_corners() > 0)
+			{
+				ret = 1;
+			}
+			if (j)
+			{
+				ret = 1;
+			}
+			goto pass_option_restart;
+		}
+		if (i == FIK_F6)
+		{
+			if (get_corners() > 0)
+			{
+				ret = 1;
+			}
+			if (j)
+			{
+				ret = 1;
+			}
+			goto pass_option_restart;
+		}
+
+		return j + ret;
+	}
 }
 
 
@@ -698,163 +651,125 @@ pass_option_restart:
 
 int get_view_params()
 {
-	const char *choices[16];
-	struct full_screen_values uvalues[25];
-	int i;
-	int k;
-	float old_viewreduction;
-	float old_aspectratio;
-	int old_viewwindow;
-	int old_viewxdots;
-	int old_viewydots;
-	int old_sxdots;
-	int old_sydots;
 	int x_max;
 	int y_max;
-
 	driver_get_max_screen(x_max, y_max);
-
-	old_viewwindow    = g_view_window;
-	old_viewreduction = g_view_reduction;
-	old_aspectratio   = g_final_aspect_ratio;
-	old_viewxdots     = g_view_x_dots;
-	old_viewydots     = g_view_y_dots;
-	old_sxdots        = g_screen_width;
-	old_sydots        = g_screen_height;
+	int old_viewwindow = g_view_window;
+	float old_viewreduction = g_view_reduction;
+	float old_aspectratio = g_final_aspect_ratio;
+	int old_viewxdots = g_view_x_dots;
+	int old_viewydots = g_view_y_dots;
+	int old_sxdots = g_screen_width;
+	int old_sydots = g_screen_height;
 
 get_view_restart:
-	/* fill up the previous values arrays */
-	k = -1;
-
-	if (!driver_diskp())
 	{
-		choices[++k] = "Preview display? (no for full screen)";
-		uvalues[k].type = 'y';
-		uvalues[k].uval.ch.val = g_view_window;
+		UIChoices dialog(HELPVIEW, "View Window Options", 16);
 
-		choices[++k] = "Auto window size reduction factor";
-		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = g_view_reduction;
-
-		choices[++k] = "Final media overall aspect ratio, y/x";
-		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = g_final_aspect_ratio;
-
-		choices[++k] = "Crop starting coordinates to new aspect ratio?";
-		uvalues[k].type = 'y';
-		uvalues[k].uval.ch.val = g_view_crop;
-
-		choices[++k] = "Explicit size x pixels (0 for auto size)";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_view_x_dots;
-
-		choices[++k] = "              y pixels (0 to base on aspect ratio)";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_view_y_dots;
-	}
-	else
-	{
-		choices[++k] = "Disk Video x pixels";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_screen_width;
-
-		choices[++k] = "           y pixels";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_screen_height;
-	}
-
-	choices[++k] = "";
-	uvalues[k].type = '*';
-
-	if (!driver_diskp())
-	{
-		choices[++k] = "Press F4 to reset view parameters to defaults.";
-		uvalues[k].type = '*';
-	}
-
-	i = full_screen_prompt_help(HELPVIEW, "View Window Options", k + 1, choices, uvalues, 16, NULL);
-	if (i < 0)
-	{
-		return -1;
-	}
-
-	if (i == FIK_F4 && !driver_diskp())
-	{
-		g_view_window = g_view_x_dots = g_view_y_dots = 0;
-		g_view_reduction = 4.2f;
-		g_view_crop = 1;
-		g_final_aspect_ratio = g_screen_aspect_ratio;
-		g_screen_width = old_sxdots;
-		g_screen_height = old_sydots;
-		goto get_view_restart;
-	}
-
-	/* now check out the results (*hopefully* in the same order <grin>) */
-	k = -1;
-
-	if (!driver_diskp())
-	{
-		g_view_window = uvalues[++k].uval.ch.val;
-		g_view_reduction = (float) uvalues[++k].uval.dval;
-		g_final_aspect_ratio = (float) uvalues[++k].uval.dval;
-		g_view_crop = uvalues[++k].uval.ch.val;
-		g_view_x_dots = uvalues[++k].uval.ival;
-		g_view_y_dots = uvalues[++k].uval.ival;
-	}
-	else
-	{
-		g_screen_width = uvalues[++k].uval.ival;
-		g_screen_height = uvalues[++k].uval.ival;
-		if ((x_max != -1) && (g_screen_width > x_max))
+		if (!driver_diskp())
 		{
-			g_screen_width = (int) x_max;
+			dialog.push("Preview display? (no for full screen)", g_view_window ? true : false);
+			dialog.push("Auto window size reduction factor", g_view_reduction);
+			dialog.push("Final media overall aspect ratio, y/x", g_final_aspect_ratio);
+			dialog.push("Crop starting coordinates to new aspect ratio?", g_view_crop ? true : false);
+			dialog.push("Explicit size x pixels (0 for auto size)", g_view_x_dots);
+			dialog.push("              y pixels (0 to base on aspect ratio)", g_view_y_dots);
 		}
-		if (g_screen_width < 2)
+		else
 		{
-			g_screen_width = 2;
+			dialog.push("Disk Video x pixels", g_screen_width);
+			dialog.push("           y pixels", g_screen_height);
 		}
-		if ((y_max != -1) && (g_screen_height > y_max))
+		dialog.push("");
+		if (!driver_diskp())
 		{
-			g_screen_height = y_max;
-		}
-		if (g_screen_height < 2)
-		{
-			g_screen_height = 2;
-		}
-	}
-	++k;
-
-	if (!driver_diskp())
-	{
-		if (g_view_x_dots != 0 && g_view_y_dots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
-		{
-			g_final_aspect_ratio = ((float) g_view_y_dots)/((float) g_view_x_dots);
-		}
-		else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
-		{
-			g_final_aspect_ratio = old_aspectratio;
+			dialog.push("Press F4 to reset view parameters to defaults.");
 		}
 
-		if (g_final_aspect_ratio != old_aspectratio && g_view_crop)
+		int i = dialog.prompt();
+		if (i < 0)
 		{
-			aspect_ratio_crop(old_aspectratio, g_final_aspect_ratio);
+			return -1;
 		}
-	}
-	else
-	{
-		g_video_entry.x_dots = g_screen_width;
-		g_video_entry.y_dots = g_screen_height;
-		g_final_aspect_ratio = ((float) g_screen_height)/((float) g_screen_width);
-		memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
-	}
 
-	return (g_view_window != old_viewwindow
-		|| g_screen_width != old_sxdots || g_screen_height != old_sydots
-		|| (g_view_window
-			&& (g_view_reduction != old_viewreduction
-				|| g_final_aspect_ratio != old_aspectratio
-				|| g_view_x_dots != old_viewxdots
-				|| (g_view_y_dots != old_viewydots && g_view_x_dots)))) ? 1 : 0;
+		if (i == FIK_F4 && !driver_diskp())
+		{
+			g_view_window = 0;
+			g_view_x_dots = 0;
+			g_view_y_dots = 0;
+			g_view_reduction = 4.2f;
+			g_view_crop = 1;
+			g_final_aspect_ratio = g_screen_aspect_ratio;
+			g_screen_width = old_sxdots;
+			g_screen_height = old_sydots;
+			goto get_view_restart;
+		}
+
+		int k = -1;
+		if (!driver_diskp())
+		{
+			g_view_window = dialog.values(++k).uval.ch.val;
+			g_view_reduction = (float) dialog.values(++k).uval.dval;
+			g_final_aspect_ratio = (float) dialog.values(++k).uval.dval;
+			g_view_crop = dialog.values(++k).uval.ch.val;
+			g_view_x_dots = dialog.values(++k).uval.ival;
+			g_view_y_dots = dialog.values(++k).uval.ival;
+		}
+		else
+		{
+			g_screen_width = dialog.values(++k).uval.ival;
+			g_screen_height = dialog.values(++k).uval.ival;
+			if ((x_max != -1) && (g_screen_width > x_max))
+			{
+				g_screen_width = (int) x_max;
+			}
+			if (g_screen_width < 2)
+			{
+				g_screen_width = 2;
+			}
+			if ((y_max != -1) && (g_screen_height > y_max))
+			{
+				g_screen_height = y_max;
+			}
+			if (g_screen_height < 2)
+			{
+				g_screen_height = 2;
+			}
+		}
+		++k;
+
+		if (!driver_diskp())
+		{
+			if (g_view_x_dots != 0 && g_view_y_dots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
+			{
+				g_final_aspect_ratio = ((float) g_view_y_dots)/((float) g_view_x_dots);
+			}
+			else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
+			{
+				g_final_aspect_ratio = old_aspectratio;
+			}
+
+			if (g_final_aspect_ratio != old_aspectratio && g_view_crop)
+			{
+				aspect_ratio_crop(old_aspectratio, g_final_aspect_ratio);
+			}
+		}
+		else
+		{
+			g_video_entry.x_dots = g_screen_width;
+			g_video_entry.y_dots = g_screen_height;
+			g_final_aspect_ratio = ((float) g_screen_height)/((float) g_screen_width);
+			memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
+		}
+
+		return (g_view_window != old_viewwindow
+			|| g_screen_width != old_sxdots || g_screen_height != old_sydots
+			|| (g_view_window
+				&& (g_view_reduction != old_viewreduction
+					|| g_final_aspect_ratio != old_aspectratio
+					|| g_view_x_dots != old_viewxdots
+					|| (g_view_y_dots != old_viewydots && g_view_x_dots)))) ? 1 : 0;
+	}
 }
 
 /*
@@ -1115,38 +1030,21 @@ int get_random_dot_stereogram_parameters()
 
 int get_a_number(double *x, double *y)
 {
-	const char *choices[2];
-	full_screen_values uvalues[2];
-	int i;
-	int k;
+	ScreenStacker stacker;
 
-	driver_stack_screen();
+	UIChoices dialog("Set Cursor Coordinates", 25);
+	dialog.push("X coordinate at cursor", *x);
+	dialog.push("Y coordinate at cursor", *y);
 
-	/* fill up the previous values arrays */
-	k = -1;
-
-	choices[++k] = "X coordinate at cursor";
-	uvalues[k].type = 'd';
-	uvalues[k].uval.dval = *x;
-
-	choices[++k] = "Y coordinate at cursor";
-	uvalues[k].type = 'd';
-	uvalues[k].uval.dval = *y;
-
-	i = full_screen_prompt("Set Cursor Coordinates", k + 1, choices, uvalues, 25, NULL);
+	int i = dialog.prompt();
 	if (i < 0)
 	{
-		driver_unstack_screen();
 		return -1;
-		}
+	}
 
-	/* now check out the results (*hopefully* in the same order <grin>) */
-	k = -1;
+	*x = dialog.values(0).uval.dval;
+	*y = dialog.values(1).uval.dval;
 
-	*x = uvalues[++k].uval.dval;
-	*y = uvalues[++k].uval.dval;
-
-	driver_unstack_screen();
 	return i;
 }
 
@@ -1947,7 +1845,7 @@ FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 int cmpdbl(double old, double new_value)
 {
 	char buf[81];
-	struct full_screen_values val;
+	full_screen_values val;
 
 	/* change the old value with the same torture the new value had */
 	val.type = 'd'; /* most values on this screen are type d */
@@ -2149,44 +2047,16 @@ gc_loop:
 
 static int get_screen_corners()
 {
-	struct full_screen_values values[15];
-	const char *prompts[15];
-	char xprompt[] = "          X";
-	char yprompt[] = "          Y";
-	char zprompt[] = "          Z";
-	int i;
-	int nump;
-	int prompt_ret;
-	int cmag;
-	double Xctr;
-	double Yctr;
-	LDBL Magnification; /* LDBL not really needed here, but used to match function parameters */
-	double Xmagfactor;
-	double Rotation;
-	double Skew;
-	BYTE ousemag;
-	double oxxmin;
-	double oxxmax;
-	double oyymin;
-	double oyymax;
-	double oxx3rd;
-	double oyy3rd;
-	double svxxmin;
-	double svxxmax;
-	double svyymin;
-	double svyymax;
-	double svxx3rd;
-	double svyy3rd;
-
-	ousemag = g_use_center_mag;
-
-	svxxmin = g_escape_time_state.m_grid_fp.x_min();  /* save these for later since convert_corners modifies them */
-	svxxmax = g_escape_time_state.m_grid_fp.x_max();  /* and we need to set them for convert_center_mag to work */
-	svxx3rd = g_escape_time_state.m_grid_fp.x_3rd();
-	svyymin = g_escape_time_state.m_grid_fp.y_min();
-	svyymax = g_escape_time_state.m_grid_fp.y_max();
-	svyy3rd = g_escape_time_state.m_grid_fp.y_3rd();
-
+	const char *xprompt = "          X";
+	const char *yprompt = "          Y";
+	const char *zprompt = "          Z";
+	BYTE ousemag = g_use_center_mag;
+	double svxxmin = g_escape_time_state.m_grid_fp.x_min();  /* save these for later since convert_corners modifies them */
+	double svxxmax = g_escape_time_state.m_grid_fp.x_max();  /* and we need to set them for convert_center_mag to work */
+	double svxx3rd = g_escape_time_state.m_grid_fp.x_3rd();
+	double svyymin = g_escape_time_state.m_grid_fp.y_min();
+	double svyymax = g_escape_time_state.m_grid_fp.y_max();
+	double svyy3rd = g_escape_time_state.m_grid_fp.y_3rd();
 	if (!g_set_orbit_corners && !g_keep_screen_coords)
 	{
 		g_orbit_x_min = g_escape_time_state.m_grid_fp.x_min();
@@ -2196,14 +2066,12 @@ static int get_screen_corners()
 		g_orbit_y_max = g_escape_time_state.m_grid_fp.y_max();
 		g_orbit_y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
 	}
-
-	oxxmin = g_orbit_x_min;
-	oxxmax = g_orbit_x_max;
-	oyymin = g_orbit_y_min;
-	oyymax = g_orbit_y_max;
-	oxx3rd = g_orbit_x_3rd;
-	oyy3rd = g_orbit_y_3rd;
-
+	double oxxmin = g_orbit_x_min;
+	double oxxmax = g_orbit_x_max;
+	double oyymin = g_orbit_y_min;
+	double oyymax = g_orbit_y_max;
+	double oxx3rd = g_orbit_x_3rd;
+	double oyy3rd = g_orbit_y_3rd;
 	g_escape_time_state.m_grid_fp.x_min() = g_orbit_x_min;
 	g_escape_time_state.m_grid_fp.x_max() = g_orbit_x_max;
 	g_escape_time_state.m_grid_fp.y_min() = g_orbit_y_min;
@@ -2212,203 +2080,186 @@ static int get_screen_corners()
 	g_escape_time_state.m_grid_fp.y_3rd() = g_orbit_y_3rd;
 
 gsc_loop:
-	for (i = 0; i < 15; ++i)
 	{
-		values[i].type = 'd'; /* most values on this screen are type d */
-	}
-	cmag = g_use_center_mag;
-	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+		UIChoices dialog(HELPSCRNCOORDS, "Screen Coordinates", 0x90);
+		int cmag = g_use_center_mag;
+		double Skew;
+		double Rotation;
+		LDBL Magnification;
+		double Xmagfactor;
+		double Yctr;
+		double Xctr;
+		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
-	nump = -1;
-	if (cmag)
-	{
-		prompts[++nump]= "Center X";
-		values[nump].uval.dval = Xctr;
-		prompts[++nump]= "Center Y";
-		values[nump].uval.dval = Yctr;
-		prompts[++nump]= "Magnification";
-		values[nump].uval.dval = (double)Magnification;
-		prompts[++nump]= "X Magnification Factor";
-		values[nump].uval.dval = Xmagfactor;
-		prompts[++nump]= "Rotation Angle (degrees)";
-		values[nump].uval.dval = Rotation;
-		prompts[++nump]= "Skew Angle (degrees)";
-		values[nump].uval.dval = Skew;
-		prompts[++nump]= "";
-		values[nump].type = '*';
-		prompts[++nump]= "Press "FK_F7" to switch to \"corners\" mode";
-		values[nump].type = '*';
-	}
-	else
-	{
-		prompts[++nump]= "Top-Left Corner";
-		values[nump].type = '*';
-		prompts[++nump] = xprompt;
-		values[nump].uval.dval = g_orbit_x_min;
-		prompts[++nump] = yprompt;
-		values[nump].uval.dval = g_orbit_y_max;
-		prompts[++nump]= "Bottom-Right Corner";
-		values[nump].type = '*';
-		prompts[++nump] = xprompt;
-		values[nump].uval.dval = g_orbit_x_max;
-		prompts[++nump] = yprompt;
-		values[nump].uval.dval = g_orbit_y_min;
-		if (g_orbit_x_min == g_orbit_x_3rd && g_orbit_y_min == g_orbit_y_3rd)
+		if (cmag)
 		{
-			g_orbit_x_3rd = g_orbit_y_3rd = 0;
+			dialog.push("Center X", Xctr);
+			dialog.push("Center Y", Yctr);
+			dialog.push("Magnification", static_cast<double>(Magnification));
+			dialog.push("X Magnification Factor", Xmagfactor);
+			dialog.push("Rotation Angle (degrees)", Rotation);
+			dialog.push("Skew Angle (degrees)", Skew);
+			dialog.push("");
+			dialog.push("Press "FK_F7" to switch to \"corners\" mode");
 		}
-		prompts[++nump]= "Bottom-left (zeros for top-left X, bottom-right Y)";
-		values[nump].type = '*';
-		prompts[++nump] = xprompt;
-		values[nump].uval.dval = g_orbit_x_3rd;
-		prompts[++nump] = yprompt;
-		values[nump].uval.dval = g_orbit_y_3rd;
-		prompts[++nump]= "Press "FK_F7" to switch to \"center-mag\" mode";
-		values[nump].type = '*';
-	}
-
-	prompts[++nump]= "Press "FK_F4" to reset to type default values";
-	values[nump].type = '*';
-
-	prompt_ret = full_screen_prompt_help(HELPSCRNCOORDS, "Screen Coordinates",
-		nump + 1, prompts, values, 0x90, NULL);
-	if (prompt_ret < 0)
-	{
-		g_use_center_mag = ousemag;
-		g_orbit_x_min = oxxmin;
-		g_orbit_x_max = oxxmax;
-		g_orbit_y_min = oyymin;
-		g_orbit_y_max = oyymax;
-		g_orbit_x_3rd = oxx3rd;
-		g_orbit_y_3rd = oyy3rd;
-		/* restore corners */
-		g_escape_time_state.m_grid_fp.x_min() = svxxmin;
-		g_escape_time_state.m_grid_fp.x_max() = svxxmax;
-		g_escape_time_state.m_grid_fp.y_min() = svyymin;
-		g_escape_time_state.m_grid_fp.y_max() = svyymax;
-		g_escape_time_state.m_grid_fp.x_3rd() = svxx3rd;
-		g_escape_time_state.m_grid_fp.y_3rd() = svyy3rd;
-		return -1;
-		}
-
-	if (prompt_ret == FIK_F4)  /* reset to type defaults */
-	{
-		g_orbit_x_3rd = g_orbit_x_min = g_current_fractal_specific->x_min;
-		g_orbit_x_max = g_current_fractal_specific->x_max;
-		g_orbit_y_3rd = g_orbit_y_min = g_current_fractal_specific->y_min;
-		g_orbit_y_max = g_current_fractal_specific->y_max;
-		g_escape_time_state.m_grid_fp.x_min() = g_orbit_x_min;
-		g_escape_time_state.m_grid_fp.x_max() = g_orbit_x_max;
-		g_escape_time_state.m_grid_fp.y_min() = g_orbit_y_min;
-		g_escape_time_state.m_grid_fp.y_max() = g_orbit_y_max;
-		g_escape_time_state.m_grid_fp.x_3rd() = g_orbit_x_3rd;
-		g_escape_time_state.m_grid_fp.y_3rd() = g_orbit_y_3rd;
-		if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
+		else
 		{
-			aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
-		}
-
-		g_orbit_x_min = g_escape_time_state.m_grid_fp.x_min();
-		g_orbit_x_max = g_escape_time_state.m_grid_fp.x_max();
-		g_orbit_y_min = g_escape_time_state.m_grid_fp.y_min();
-		g_orbit_y_max = g_escape_time_state.m_grid_fp.y_max();
-		g_orbit_x_3rd = g_escape_time_state.m_grid_fp.x_min();
-		g_orbit_y_3rd = g_escape_time_state.m_grid_fp.y_min();
-		goto gsc_loop;
-		}
-
-	if (cmag)
-	{
-		if (cmpdbl(Xctr         , values[0].uval.dval)
-		|| cmpdbl(Yctr         , values[1].uval.dval)
-		|| cmpdbl((double)Magnification, values[2].uval.dval)
-		|| cmpdbl(Xmagfactor   , values[3].uval.dval)
-		|| cmpdbl(Rotation     , values[4].uval.dval)
-		|| cmpdbl(Skew         , values[5].uval.dval))
-		{
-			Xctr          = values[0].uval.dval;
-			Yctr          = values[1].uval.dval;
-			Magnification = values[2].uval.dval;
-			Xmagfactor    = values[3].uval.dval;
-			Rotation      = values[4].uval.dval;
-			Skew          = values[5].uval.dval;
-			if (Xmagfactor == 0)
+			dialog.push("Top-Left Corner");
+			dialog.push(xprompt, g_orbit_x_min);
+			dialog.push(yprompt, g_orbit_y_max);
+			dialog.push("Bottom-Right Corner");
+			dialog.push(xprompt, g_orbit_x_max);
+			dialog.push(yprompt, g_orbit_y_min);
+			if (g_orbit_x_min == g_orbit_x_3rd && g_orbit_y_min == g_orbit_y_3rd)
 			{
-				Xmagfactor = 1;
+				g_orbit_x_3rd = 0;
+				g_orbit_y_3rd = 0;
 			}
-			convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
-			/* set screen corners */
+			dialog.push("Bottom-left (zeros for top-left X, bottom-right Y)");
+			dialog.push(xprompt, g_orbit_x_3rd);
+			dialog.push(yprompt, g_orbit_y_3rd);
+			dialog.push("Press "FK_F7" to switch to \"center-mag\" mode");
+		}
+		dialog.push("Press "FK_F4" to reset to type default values");
+
+		int prompt_ret = dialog.prompt();
+		if (prompt_ret < 0)
+		{
+			g_use_center_mag = ousemag;
+			g_orbit_x_min = oxxmin;
+			g_orbit_x_max = oxxmax;
+			g_orbit_y_min = oyymin;
+			g_orbit_y_max = oyymax;
+			g_orbit_x_3rd = oxx3rd;
+			g_orbit_y_3rd = oyy3rd;
+			/* restore corners */
+			g_escape_time_state.m_grid_fp.x_min() = svxxmin;
+			g_escape_time_state.m_grid_fp.x_max() = svxxmax;
+			g_escape_time_state.m_grid_fp.y_min() = svyymin;
+			g_escape_time_state.m_grid_fp.y_max() = svyymax;
+			g_escape_time_state.m_grid_fp.x_3rd() = svxx3rd;
+			g_escape_time_state.m_grid_fp.y_3rd() = svyy3rd;
+			return -1;
+		}
+
+		if (prompt_ret == FIK_F4)  /* reset to type defaults */
+		{
+			g_orbit_x_3rd = g_orbit_x_min = g_current_fractal_specific->x_min;
+			g_orbit_x_max = g_current_fractal_specific->x_max;
+			g_orbit_y_3rd = g_orbit_y_min = g_current_fractal_specific->y_min;
+			g_orbit_y_max = g_current_fractal_specific->y_max;
+			g_escape_time_state.m_grid_fp.x_min() = g_orbit_x_min;
+			g_escape_time_state.m_grid_fp.x_max() = g_orbit_x_max;
+			g_escape_time_state.m_grid_fp.y_min() = g_orbit_y_min;
+			g_escape_time_state.m_grid_fp.y_max() = g_orbit_y_max;
+			g_escape_time_state.m_grid_fp.x_3rd() = g_orbit_x_3rd;
+			g_escape_time_state.m_grid_fp.y_3rd() = g_orbit_y_3rd;
+			if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
+			{
+				aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
+			}
 			g_orbit_x_min = g_escape_time_state.m_grid_fp.x_min();
 			g_orbit_x_max = g_escape_time_state.m_grid_fp.x_max();
 			g_orbit_y_min = g_escape_time_state.m_grid_fp.y_min();
 			g_orbit_y_max = g_escape_time_state.m_grid_fp.y_max();
-			g_orbit_x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
-			g_orbit_y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
+			g_orbit_x_3rd = g_escape_time_state.m_grid_fp.x_min();
+			g_orbit_y_3rd = g_escape_time_state.m_grid_fp.y_min();
+			goto gsc_loop;
 		}
-	}
-	else
-	{
-		nump = 1;
-		g_orbit_x_min = values[nump++].uval.dval;
-		g_orbit_y_max = values[nump++].uval.dval;
-		nump++;
-		g_orbit_x_max = values[nump++].uval.dval;
-		g_orbit_y_min = values[nump++].uval.dval;
-		nump++;
-		g_orbit_x_3rd = values[nump++].uval.dval;
-		g_orbit_y_3rd = values[nump++].uval.dval;
-		if (g_orbit_x_3rd == 0 && g_orbit_y_3rd == 0)
-		{
-			g_orbit_x_3rd = g_orbit_x_min;
-			g_orbit_y_3rd = g_orbit_y_min;
-		}
-	}
 
-	if (prompt_ret == FIK_F7)  /* toggle corners/center-mag mode */
-	{
-		if (!g_use_center_mag)
+		if (cmag)
 		{
-			convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-			g_use_center_mag = TRUE;
+			if (cmpdbl(Xctr, dialog.values(0).uval.dval)
+				|| cmpdbl(Yctr, dialog.values(1).uval.dval)
+				|| cmpdbl(static_cast<double>(Magnification), dialog.values(2).uval.dval)
+				|| cmpdbl(Xmagfactor, dialog.values(3).uval.dval)
+				|| cmpdbl(Rotation, dialog.values(4).uval.dval)
+				|| cmpdbl(Skew, dialog.values(5).uval.dval))
+			{
+				Xctr = dialog.values(0).uval.dval;
+				Yctr = dialog.values(1).uval.dval;
+				Magnification = dialog.values(2).uval.dval;
+				Xmagfactor = dialog.values(3).uval.dval;
+				Rotation = dialog.values(4).uval.dval;
+				Skew = dialog.values(5).uval.dval;
+				if (Xmagfactor == 0)
+				{
+					Xmagfactor = 1;
+				}
+				convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
+				/* set screen corners */
+				g_orbit_x_min = g_escape_time_state.m_grid_fp.x_min();
+				g_orbit_x_max = g_escape_time_state.m_grid_fp.x_max();
+				g_orbit_y_min = g_escape_time_state.m_grid_fp.y_min();
+				g_orbit_y_max = g_escape_time_state.m_grid_fp.y_max();
+				g_orbit_x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
+				g_orbit_y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
+			}
 		}
 		else
 		{
-			g_use_center_mag = FALSE;
+			int nump = 1;
+			g_orbit_x_min = dialog.values(nump++).uval.dval;
+			g_orbit_y_max = dialog.values(nump++).uval.dval;
+			nump++;
+			g_orbit_x_max = dialog.values(nump++).uval.dval;
+			g_orbit_y_min = dialog.values(nump++).uval.dval;
+			nump++;
+			g_orbit_x_3rd = dialog.values(nump++).uval.dval;
+			g_orbit_y_3rd = dialog.values(nump++).uval.dval;
+			if (g_orbit_x_3rd == 0 && g_orbit_y_3rd == 0)
+			{
+				g_orbit_x_3rd = g_orbit_x_min;
+				g_orbit_y_3rd = g_orbit_y_min;
+			}
 		}
-		goto gsc_loop;
-	}
 
-	if (!cmpdbl(oxxmin, g_orbit_x_min) && !cmpdbl(oxxmax, g_orbit_x_max) && !cmpdbl(oyymin, g_orbit_y_min) &&
-		!cmpdbl(oyymax, g_orbit_y_max) && !cmpdbl(oxx3rd, g_orbit_x_3rd) && !cmpdbl(oyy3rd, g_orbit_y_3rd))
-	{
-		/* no change, restore values to avoid drift */
-		g_orbit_x_min = oxxmin;
-		g_orbit_x_max = oxxmax;
-		g_orbit_y_min = oyymin;
-		g_orbit_y_max = oyymax;
-		g_orbit_x_3rd = oxx3rd;
-		g_orbit_y_3rd = oyy3rd;
-		/* restore corners */
-		g_escape_time_state.m_grid_fp.x_min() = svxxmin;
-		g_escape_time_state.m_grid_fp.x_max() = svxxmax;
-		g_escape_time_state.m_grid_fp.y_min() = svyymin;
-		g_escape_time_state.m_grid_fp.y_max() = svyymax;
-		g_escape_time_state.m_grid_fp.x_3rd() = svxx3rd;
-		g_escape_time_state.m_grid_fp.y_3rd() = svyy3rd;
-		return 0;
-	}
-	else
-	{
-		g_set_orbit_corners = 1;
-		g_keep_screen_coords = 1;
-		/* restore corners */
-		g_escape_time_state.m_grid_fp.x_min() = svxxmin;
-		g_escape_time_state.m_grid_fp.x_max() = svxxmax;
-		g_escape_time_state.m_grid_fp.y_min() = svyymin;
-		g_escape_time_state.m_grid_fp.y_max() = svyymax;
-		g_escape_time_state.m_grid_fp.x_3rd() = svxx3rd;
-		g_escape_time_state.m_grid_fp.y_3rd() = svyy3rd;
-		return 1;
+		if (prompt_ret == FIK_F7)  /* toggle corners/center-mag mode */
+		{
+			if (!g_use_center_mag)
+			{
+				convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
+				g_use_center_mag = TRUE;
+			}
+			else
+			{
+				g_use_center_mag = FALSE;
+			}
+			goto gsc_loop;
+		}
+
+		if (!cmpdbl(oxxmin, g_orbit_x_min) && !cmpdbl(oxxmax, g_orbit_x_max) && !cmpdbl(oyymin, g_orbit_y_min) &&
+			!cmpdbl(oyymax, g_orbit_y_max) && !cmpdbl(oxx3rd, g_orbit_x_3rd) && !cmpdbl(oyy3rd, g_orbit_y_3rd))
+		{
+			/* no change, restore values to avoid drift */
+			g_orbit_x_min = oxxmin;
+			g_orbit_x_max = oxxmax;
+			g_orbit_y_min = oyymin;
+			g_orbit_y_max = oyymax;
+			g_orbit_x_3rd = oxx3rd;
+			g_orbit_y_3rd = oyy3rd;
+			/* restore corners */
+			g_escape_time_state.m_grid_fp.x_min() = svxxmin;
+			g_escape_time_state.m_grid_fp.x_max() = svxxmax;
+			g_escape_time_state.m_grid_fp.y_min() = svyymin;
+			g_escape_time_state.m_grid_fp.y_max() = svyymax;
+			g_escape_time_state.m_grid_fp.x_3rd() = svxx3rd;
+			g_escape_time_state.m_grid_fp.y_3rd() = svyy3rd;
+			return 0;
+		}
+		else
+		{
+			g_set_orbit_corners = 1;
+			g_keep_screen_coords = 1;
+			/* restore corners */
+			g_escape_time_state.m_grid_fp.x_min() = svxxmin;
+			g_escape_time_state.m_grid_fp.x_max() = svxxmax;
+			g_escape_time_state.m_grid_fp.y_min() = svyymin;
+			g_escape_time_state.m_grid_fp.y_max() = svyymax;
+			g_escape_time_state.m_grid_fp.x_3rd() = svxx3rd;
+			g_escape_time_state.m_grid_fp.y_3rd() = svyy3rd;
+			return 1;
+		}
 	}
 }
 
@@ -2417,131 +2268,90 @@ gsc_loop:
 
 int get_browse_parameters()
 {
-	const char *choices[10];
-	struct full_screen_values uvalues[25];
-	int i;
-	int k;
-	int old_autobrowse;
-	int old_brwschecktype;
-	int old_brwscheckparms;
-	bool old_doublecaution;
-	int old_minbox;
-	double old_toosmall;
+	int old_autobrowse = g_auto_browse;
+	int old_brwschecktype = g_browse_check_type;
+	int old_brwscheckparms = g_browse_check_parameters;
+	bool old_doublecaution = g_ui_state.double_caution;
+	int old_minbox = g_cross_hair_box_size;
+	double old_toosmall = g_too_small;
 	char old_browsemask[FILE_MAX_FNAME];
-
-	old_autobrowse     = g_auto_browse;
-	old_brwschecktype  = g_browse_check_type;
-	old_brwscheckparms = g_browse_check_parameters;
-	old_doublecaution  = g_ui_state.double_caution;
-	old_minbox         = g_cross_hair_box_size;
-	old_toosmall       = g_too_small;
 	strcpy(old_browsemask, g_browse_mask);
 
 get_brws_restart:
-	/* fill up the previous values arrays */
-	k = -1;
-
-	choices[++k] = "Autobrowsing? (y/n)";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_auto_browse;
-
-	choices[++k] = "Ask about GIF video mode? (y/n)";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_ui_state.ask_video ? 1 : 0;
-
-	choices[++k] = "Check fractal type? (y/n)";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_browse_check_type;
-
-	choices[++k] = "Check fractal parameters (y/n)";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_browse_check_parameters;
-
-	choices[++k] = "Confirm file deletes (y/n)";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_ui_state.double_caution ? 1 : 0;
-
-	choices[++k] = "Smallest window to display (size in pixels)";
-	uvalues[k].type = 'f';
-	uvalues[k].uval.dval = g_too_small;
-
-	choices[++k] = "Smallest box size shown before crosshairs used (pix)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_cross_hair_box_size;
-	choices[++k] = "Browse search filename mask ";
-	uvalues[k].type = 's';
-	strcpy(uvalues[k].uval.sval, g_browse_mask);
-
-	choices[++k] = "";
-	uvalues[k].type = '*';
-
-	choices[++k] = "Press "FK_F4" to reset browse parameters to defaults.";
-	uvalues[k].type = '*';
-
-	i = full_screen_prompt_help(HELPBRWSPARMS, "Browse ('L'ook) Mode Options",
-		k + 1, choices, uvalues, 16, NULL);
-	if (i < 0)
 	{
-		return 0;
-	}
+		UIChoices dialog(HELPBRWSPARMS, "Browse ('L'ook) Mode Options", 16);
 
-	if (i == FIK_F4)
-	{
-		g_too_small = 6;
-		g_auto_browse = FALSE;
-		g_ui_state.ask_video = true;
-		g_browse_check_parameters = TRUE;
-		g_browse_check_type  = TRUE;
-		g_ui_state.double_caution  = true;
-		g_cross_hair_box_size = 3;
-		strcpy(g_browse_mask, "*.gif");
-		goto get_brws_restart;
-	}
+		dialog.push("Autobrowsing? (y/n)", g_auto_browse ? true : false);
+		dialog.push("Ask about GIF video mode? (y/n)", g_ui_state.ask_video);
+		dialog.push("Check fractal type? (y/n)", g_browse_check_type ? true : false);
+		dialog.push("Check fractal parameters (y/n)", g_browse_check_parameters ? true : false);
+		dialog.push("Confirm file deletes (y/n)", g_ui_state.double_caution);
+		dialog.push("Smallest window to display (size in pixels)", static_cast<float>(g_too_small));
+		dialog.push("Smallest box size shown before crosshairs used (pix)", g_cross_hair_box_size);
+		dialog.push("Browse search filename mask ", g_browse_mask);
+		dialog.push("");
+		dialog.push("Press "FK_F4" to reset browse parameters to defaults.");
 
-	/* now check out the results (*hopefully* in the same order <grin>) */
-	k = -1;
+		int result = dialog.prompt();
+		if (result < 0)
+		{
+			return 0;
+		}
 
-	g_auto_browse = uvalues[++k].uval.ch.val;
-	g_ui_state.ask_video = (uvalues[++k].uval.ch.val != 0);
-	g_browse_check_type = (char) uvalues[++k].uval.ch.val;
-	g_browse_check_parameters = (char) uvalues[++k].uval.ch.val;
-	g_ui_state.double_caution = (uvalues[++k].uval.ch.val != 0);
-	g_too_small  = uvalues[++k].uval.dval;
-	if (g_too_small < 0)
-	{
-		g_too_small = 0;
-	}
-	g_cross_hair_box_size = uvalues[++k].uval.ival;
-	if (g_cross_hair_box_size < 1)
-	{
-		g_cross_hair_box_size = 1;
-	}
-	if (g_cross_hair_box_size > 10)
-	{
-		g_cross_hair_box_size = 10;
-	}
+		if (result == FIK_F4)
+		{
+			g_too_small = 6;
+			g_auto_browse = FALSE;
+			g_ui_state.ask_video = true;
+			g_browse_check_parameters = TRUE;
+			g_browse_check_type  = TRUE;
+			g_ui_state.double_caution  = true;
+			g_cross_hair_box_size = 3;
+			strcpy(g_browse_mask, "*.gif");
+			goto get_brws_restart;
+		}
 
-	strcpy(g_browse_mask, uvalues[++k].uval.sval);
+		int k = -1;
+		g_auto_browse = dialog.values(++k).uval.ch.val;
+		g_ui_state.ask_video = (dialog.values(++k).uval.ch.val != 0);
+		g_browse_check_type = (char) dialog.values(++k).uval.ch.val;
+		g_browse_check_parameters = (char) dialog.values(++k).uval.ch.val;
+		g_ui_state.double_caution = (dialog.values(++k).uval.ch.val != 0);
+		g_too_small  = dialog.values(++k).uval.dval;
+		if (g_too_small < 0)
+		{
+			g_too_small = 0;
+		}
+		g_cross_hair_box_size = dialog.values(++k).uval.ival;
+		if (g_cross_hair_box_size < 1)
+		{
+			g_cross_hair_box_size = 1;
+		}
+		if (g_cross_hair_box_size > 10)
+		{
+			g_cross_hair_box_size = 10;
+		}
+		strcpy(g_browse_mask, dialog.values(++k).uval.sval);
 
-	i = 0;
-	if (g_auto_browse != old_autobrowse ||
+		int i = 0;
+		if (g_auto_browse != old_autobrowse ||
 			g_browse_check_type != old_brwschecktype ||
 			g_browse_check_parameters != old_brwscheckparms ||
 			g_ui_state.double_caution != old_doublecaution ||
 			g_too_small != old_toosmall ||
 			g_cross_hair_box_size != old_minbox ||
 			!stricmp(g_browse_mask, old_browsemask))
-	{
-		i = -3;
-	}
+		{
+			i = -3;
+		}
+		if (g_evolving)  /* can't browse */
+		{
+			g_auto_browse = 0;
+			i = 0;
+		}
 
-	if (g_evolving)  /* can't browse */
-	{
-		g_auto_browse = 0;
-		i = 0;
+		return i;
 	}
-
-	return i;
 }
 
 /* merge existing full path with new one  */

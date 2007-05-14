@@ -2912,10 +2912,8 @@ static int get_fractal_3d_parameters_aux()
 
 int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 {
-	driver_stack_screen();
-	int status = get_fractal_3d_parameters_aux();
-	driver_unstack_screen();
-	return status;
+	ScreenStacker stacker;
+	return get_fractal_3d_parameters_aux();
 }
 
 int get_3d_parameters()     /* prompt for 3D parameters */

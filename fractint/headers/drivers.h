@@ -206,4 +206,17 @@ private:
 	int m_old_mode;
 };
 
+class ScreenStacker
+{
+public:
+	ScreenStacker()
+	{
+		driver_stack_screen();
+	}
+	~ScreenStacker()
+	{
+		driver_unstack_screen();
+	}
+};
+
 #endif /* DRIVERS_H */

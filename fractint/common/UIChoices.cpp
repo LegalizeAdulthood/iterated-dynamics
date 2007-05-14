@@ -4,8 +4,19 @@
 
 #include "port.h"
 #include "fractint.h"
+#include "prototyp.h"
 #include "fihelp.h"
 #include "UIChoices.h"
+
+UIChoices::UIChoices(const char *heading, int key_mask)
+	: m_help_mode(-1),
+	m_heading(heading),
+	m_key_mask(key_mask),
+	m_extra_info(NULL),
+	m_choices(),
+	m_values()
+{
+}
 
 UIChoices::UIChoices(int help_mode, const char *heading, int key_mask, char *extra_info)
 	: m_help_mode(help_mode),
@@ -103,7 +114,15 @@ void UIChoices::push(const char *label, double value)
 
 int UIChoices::prompt()
 {
-	return full_screen_prompt_help(m_help_mode, m_heading,
-		static_cast<int>(m_choices.size()),
-		&m_choices[0], &m_values[0], m_key_mask, m_extra_info);
+	if (m_help_mode != -1)
+	{
+		return full_screen_prompt_help(m_help_mode, m_heading,
+			static_cast<int>(m_choices.size()),
+			&m_choices[0], &m_values[0], m_key_mask, m_extra_info);
+	}
+	else
+	{
+		return full_screen_prompt(m_heading, static_cast<int>(m_choices.size()),
+			&m_choices[0], &m_values[0], m_key_mask, m_extra_info);
+	}
 }
