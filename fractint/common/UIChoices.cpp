@@ -93,7 +93,7 @@ void UIChoices::push(const char *label, float value)
 	fsv.uval.dval = value;
 }
 
-void UIChoice::push(const char *label, double value)
+void UIChoices::push(const char *label, double value)
 {
 	m_choices.push_back(label);
 	full_screen_values fsv;
