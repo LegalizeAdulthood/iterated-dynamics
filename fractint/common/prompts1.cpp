@@ -1204,6 +1204,46 @@ static void set_trig_array_sin(int old_type, int old_float_type, int old_int_typ
 	set_trig_array_bifurcation(old_type, old_float_type, old_int_type, "sin");
 }
 
+void set_default_parms()
+{
+	int i;
+	int extra;
+	g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
+	g_escape_time_state.m_grid_fp.x_max() = g_current_fractal_specific->x_max;
+	g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
+	g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
+	g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
+	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
+
+	if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
+	{
+		aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
+	}
+	for (i = 0; i < 4; i++)
+	{
+		g_parameters[i] = g_current_fractal_specific->paramvalue[i];
+		if (g_fractal_type != FRACTYPE_CELLULAR && g_fractal_type != FRACTYPE_FROTHY_BASIN && g_fractal_type != FRACTYPE_FROTHY_BASIN_FP &&
+				g_fractal_type != FRACTYPE_ANT)
+			round_float_d(&g_parameters[i]); /* don't round cellular, frothybasin or ant */
+	}
+	extra = find_extra_parameter(g_fractal_type);
+	if (extra > -1)
+	{
+		for (i = 0; i < MAX_PARAMETERS-4; i++)
+		{
+			g_parameters[i + 4] = g_more_parameters[extra].paramvalue[i];
+		}
+	}
+	if (g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT)
+	{
+		g_bf_math = 0;
+	}
+	else if (g_bf_math)
+	{
+		fractal_float_to_bf();
+	}
+}
+
 /*
 	prompt for new fractal type parameters
 
@@ -1303,46 +1343,6 @@ sel_type_restart:
 	}
 
 	return FALSE;
-}
-
-void set_default_parms()
-{
-	int i;
-	int extra;
-	g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
-	g_escape_time_state.m_grid_fp.x_max() = g_current_fractal_specific->x_max;
-	g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
-	g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
-	g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
-	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
-
-	if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
-	{
-		aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
-	}
-	for (i = 0; i < 4; i++)
-	{
-		g_parameters[i] = g_current_fractal_specific->paramvalue[i];
-		if (g_fractal_type != FRACTYPE_CELLULAR && g_fractal_type != FRACTYPE_FROTHY_BASIN && g_fractal_type != FRACTYPE_FROTHY_BASIN_FP &&
-				g_fractal_type != FRACTYPE_ANT)
-			round_float_d(&g_parameters[i]); /* don't round cellular, frothybasin or ant */
-	}
-	extra = find_extra_parameter(g_fractal_type);
-	if (extra > -1)
-	{
-		for (i = 0; i < MAX_PARAMETERS-4; i++)
-		{
-			g_parameters[i + 4] = g_more_parameters[extra].paramvalue[i];
-		}
-	}
-	if (g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT)
-	{
-		g_bf_math = 0;
-	}
-	else if (g_bf_math)
-	{
-		fractal_float_to_bf();
-	}
 }
 
 #define MAXFRACTALS 25
