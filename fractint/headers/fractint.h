@@ -1039,7 +1039,7 @@ is not in the data structure */
 #define JIIM  0
 #define ORBIT 1
 
-struct workliststuff    /* work list entry for std escape time engines */
+struct WorkListItem    /* work list entry for std escape time engines */
 {
 	int xx_start;    /* screen window for this entry */
 	int xx_stop;
@@ -1051,7 +1051,7 @@ struct workliststuff    /* work list entry for std escape time engines */
 	int xx_begin;    /* start col within window, =0 except on resume */
 };
 
-typedef struct workliststuff        WORKLIST;
+typedef struct WorkListItem WORKLIST;
 
 
 #define MAXCALCWORK 12
