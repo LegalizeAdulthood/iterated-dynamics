@@ -24,7 +24,7 @@ void FPUaptan387(double *y, double *x, double *atan)
 	*atan = atan2(*y, *x);
 }
 
-void FPUcplxmul(DComplex *x, DComplex *y, DComplex *z)
+void FPUcplxmul(ComplexD *x, ComplexD *y, ComplexD *z)
 {
 	double tx;
 	tx = x->x * y->x - x->y * y->y;
@@ -32,7 +32,7 @@ void FPUcplxmul(DComplex *x, DComplex *y, DComplex *z)
 	z->x = tx;
 }
 
-void FPUcplxdiv(DComplex *x, DComplex *y, DComplex *z)
+void FPUcplxdiv(ComplexD *x, ComplexD *y, ComplexD *z)
 {
 	double mod, tx, yxmod, yymod;
 	mod = y->x * y->x + y->y * y->y;
@@ -59,7 +59,7 @@ void FPUsinhcosh(double *Angle, double *Sinh, double *Cosh)
 	*Cosh = cosh(*Angle);
 }
 
-void FPUcplxlog(DComplex *x, DComplex *z)
+void FPUcplxlog(ComplexD *x, ComplexD *z)
 {
 	double mod, zx, zy;
 	mod = sqrt(x->x*x->x + x->y*x->y);
@@ -70,7 +70,7 @@ void FPUcplxlog(DComplex *x, DComplex *z)
 	z->y = zy;
 }
 
-void FPUcplxexp387(DComplex *x, DComplex *z)
+void FPUcplxexp387(ComplexD *x, ComplexD *z)
 {
 	double pow, y;
 	y = x->y;
