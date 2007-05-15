@@ -878,35 +878,31 @@ int starfield()
 
 int get_starfield_params()
 {
-	struct full_screen_values uvalues[3];
-	int i;
+	if (g_colors < 255)
+	{
+		stop_message(0, "starfield requires 256 color mode");
+		return -1;
+	}
+
+	UIChoices dialog(HELPSTARFLD, "Starfield Parameters", 0);
 	const char *starfield_prompts[3] =
 	{
 		"Star Density in Pixels per Star",
 		"Percent Clumpiness",
 		"Ratio of Dim stars to Bright"
 	};
-
-	if (g_colors < 255)
+	for (int i = 0; i < 3; i++)
 	{
-		stop_message(0, "starfield requires 256 color mode");
-		return -1;
+		dialog.push(starfield_prompts[i], static_cast<float>(starfield_values[i]));
 	}
-	for (i = 0; i < 3; i++)
-	{
-		uvalues[i].uval.dval = starfield_values[i];
-		uvalues[i].type = 'f';
-	}
-	driver_stack_screen();
-	i = full_screen_prompt_help(HELPSTARFLD, "Starfield Parameters", 3, starfield_prompts, uvalues, 0, NULL);
-	driver_unstack_screen();
-	if (i < 0)
+	ScreenStacker stacker;
+	if (dialog.prompt() < 0)
 	{
 		return -1;
 	}
-	for (i = 0; i < 3; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		starfield_values[i] = uvalues[i].uval.dval;
+		starfield_values[i] = dialog.values(i).uval.dval;
 	}
 
 	return 0;
