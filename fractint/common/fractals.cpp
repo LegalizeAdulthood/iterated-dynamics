@@ -3025,14 +3025,14 @@ int quaternion_orbit_fp()
 
 int hyper_complex_orbit_fp()
 {
-	DHyperComplex hold;
+	HyperComplexD hold;
 	hold.x = g_old_z.x;
 	hold.y = g_old_z.y;
 	hold.z = g_float_parameter->x;
 	hold.t = g_float_parameter->y;
 
 /*   HComplexSqr(&hold, &hnew); */
-	DHyperComplex hnew;
+	HyperComplexD hnew;
 	HComplexTrig0(&hold, &hnew);
 
 	hnew.x += g_quaternion_c;
