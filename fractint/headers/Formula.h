@@ -53,7 +53,7 @@ struct token_st
 	char token_str[80];
 	TokenType token_type;
 	int token_id;
-	DComplex token_const;
+	ComplexD token_const;
 };
 
 struct var_list_st
@@ -68,7 +68,7 @@ struct var_list_st
 
 struct const_list_st
 {
-	DComplex complex_const;
+	ComplexD complex_const;
 	const_list_st *next_item;
 
 	void display(const char *title) const;
@@ -335,7 +335,7 @@ extern void lStkAND();
 extern void dStkLog();
 extern void mStkLog();
 extern void lStkLog();
-extern void FPUcplxexp(DComplex *, DComplex *);
+extern void FPUcplxexp(ComplexD *, ComplexD *);
 extern void dStkExp();
 extern void mStkExp();
 extern void lStkExp();

@@ -57,10 +57,10 @@ long g_magnitude_l = 0;
 long g_limit_l = 0;
 long g_limit2_l = 0;
 long g_close_enough_l = 0;
-DComplex g_initial_z = { 0, 0 };
-DComplex g_old_z = { 0, 0 };
-DComplex g_new_z = { 0, 0 };
-DComplex g_temp_z = { 0, 0 };
+ComplexD g_initial_z = { 0, 0 };
+ComplexD g_old_z = { 0, 0 };
+ComplexD g_new_z = { 0, 0 };
+ComplexD g_temp_z = { 0, 0 };
 int g_color = 0;
 long g_color_iter;
 long g_old_color_iter;
@@ -122,7 +122,7 @@ unsigned long g_diffusion_limit; 	/* the diffusion counter */
 int g_three_pass;
 int g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
-DComplex  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
+ComplexD  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
 LComplex g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
 int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
 int g_periodicity_check;
@@ -206,7 +206,7 @@ static int s_half_block;
 static int s_guess_plot;                   /* paint 1st pass row at a time?   */
 static int s_right_guess;
 static int s_bottom_guess;
-static DComplex s_saved_z;
+static ComplexD s_saved_z;
 static double s_rq_limit_save;
 static int s_pixel_pi; /* value of pi in pixels */
 static int s_ix_start;
@@ -1990,7 +1990,7 @@ int calculate_mandelbrot_fp()
 int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 {
 #ifdef NUMSAVED
-	DComplex savedz[NUMSAVED];
+	ComplexD savedz[NUMSAVED];
 	long caught[NUMSAVED];
 	long changed[NUMSAVED];
 	int zctr = 0;
@@ -2010,13 +2010,13 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	LComplex lsaved;
 	int attracted;
 	LComplex lat;
-	DComplex  at;
-	DComplex deriv;
+	ComplexD  at;
+	ComplexD deriv;
 	long dem_color = -1;
-	DComplex dem_new;
+	ComplexD dem_new;
 	int check_freq;
 	double totaldist = 0.0;
-	DComplex lastz;
+	ComplexD lastz;
 
 	lcloseprox = (long)(g_proximity*g_fudge);
 	savemaxit = g_max_iteration;
@@ -2963,7 +2963,7 @@ static void decomposition()
 	int temp = 0;
 	int save_temp = 0;
 	LComplex lalt;
-	DComplex alt;
+	ComplexD alt;
 	g_color_iter = 0;
 	if (g_integer_fractal) /* the only case */
 	{

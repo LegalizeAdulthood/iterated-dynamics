@@ -14,21 +14,21 @@ extern struct MPC mpcold, mpcnew;
 #endif
 
 extern double TwoPi;
-extern DComplex temp;
-extern DComplex BaseLog;
-extern DComplex cdegree;
-extern DComplex croot;
+extern ComplexD temp;
+extern ComplexD BaseLog;
+extern ComplexD cdegree;
+extern ComplexD croot;
 
 static Newton s_newton;
 static NewtonMPC s_newton_mpc;
 static NewtonComplex s_newton_complex;
 
-static double distance(const DComplex &z1, const DComplex &z2)
+static double distance(const ComplexD &z1, const ComplexD &z2)
 {
 	return sqr(z1.x - z2.x) + sqr(z1.y - z2.y);
 }
 
-static double distance_from_1(const DComplex &z)
+static double distance_from_1(const ComplexD &z)
 {
 	return (((z).x-1.0)*((z).x-1.0) + ((z).y)*((z).y));
 }
@@ -56,7 +56,7 @@ static struct MP MPCdistance(const struct MPC &z1, const struct MPC &z2)
 }
 #endif
 
-static int complex_multiply(DComplex arg1, DComplex arg2, DComplex *pz)
+static int complex_multiply(ComplexD arg1, ComplexD arg2, ComplexD *pz)
 {
 	pz->x = arg1.x*arg2.x - arg1.y*arg2.y;
 	pz->y = arg1.x*arg2.y + arg1.y*arg2.x;
@@ -165,7 +165,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 		g_basin = g_parameter.y ? 2 : 1; /*stripes */
 		if (g_degree > 16)
 		{
-			g_roots = (DComplex *) malloc(g_degree*sizeof(DComplex));
+			g_roots = (ComplexD *) malloc(g_degree*sizeof(ComplexD));
 			if (g_roots == NULL)
 			{
 				g_roots = g_static_roots;
@@ -334,7 +334,7 @@ int NewtonComplex::setup()
 
 int NewtonComplex::orbit()
 {
-	DComplex cd1;
+	ComplexD cd1;
 
 	/* new = ((cdegree-1)*old**cdegree) + croot
 				----------------------------------

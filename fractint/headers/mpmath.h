@@ -64,11 +64,11 @@ enum MATH_TYPE { D_MATH};
 	while (0)
 
 /* the following are declared 4 dimensional as an experiment */
-/* changeing declarations to DComplex and LComplex restores the code */
+/* changeing declarations to ComplexD and LComplex restores the code */
 /* to 2D */
 union Arg
 {
-   DComplex     d;
+   ComplexD     d;
    struct MPC m;
    LComplex    l;
 /*
@@ -298,7 +298,7 @@ extern void (*g_trig3_d)();
 #define CMPLXmult(arg1, arg2, out)						\
 	do													\
 	{													\
-		DComplex TmP;										\
+		ComplexD TmP;										\
 		TmP.x = (arg1).x*(arg2).x - (arg1).y*(arg2).y;	\
 		TmP.y = (arg1).x*(arg2).y + (arg1).y*(arg2).x;	\
 		(out) = TmP;									\

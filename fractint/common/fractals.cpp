@@ -80,18 +80,18 @@ int g_root = 0;
 int g_degree = 0;
 int g_basin = 0;
 double g_threshold = 0.0;
-DComplex g_coefficient = { 0.0, 0.0 };
-DComplex  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
-DComplex  *g_roots = g_static_roots;
+ComplexD g_coefficient = { 0.0, 0.0 };
+ComplexD  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
+ComplexD  *g_roots = g_static_roots;
 struct MPC *g_roots_mpc = NULL;
-DComplex g_power = { 0.0, 0.0};
+ComplexD g_power = { 0.0, 0.0};
 int g_bit_shift_minus_1 = 0;                  /* bit shift less 1 */
 double g_two_pi = MathUtil::Pi*2.0;
 int g_c_exp = 0;
 /* These are local but I don't want to pass them as parameters */
-DComplex g_parameter = { 0, 0 };
-DComplex g_parameter2 = { 0, 0 };
-DComplex *g_float_parameter = NULL;
+ComplexD g_parameter = { 0, 0 };
+ComplexD g_parameter2 = { 0, 0 };
+ComplexD *g_float_parameter = NULL;
 LComplex *g_long_parameter = NULL; /* used here and in jb.c */
 double g_cos_x = 0.0;
 double g_sin_x = 0.0;
@@ -117,10 +117,10 @@ long   (_fastcall *g_ly_pixel)() = ly_pixel_calc;
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */
-static DComplex  s_3_c_minus_1 = { 0.0, 0.0 };		/* 3*(g_float_parameter - 1)                */
-static DComplex  s_3_c_minus_2 = { 0.0, 0.0 };        /* 3*(g_float_parameter - 2)                */
-static DComplex  s_c_minus_1_c_minus_2 = { 0.0, 0.0 }; /* (g_float_parameter - 1)*(g_float_parameter - 2) */
-static DComplex s_temp2 = { 0.0, 0.0 };
+static ComplexD  s_3_c_minus_1 = { 0.0, 0.0 };		/* 3*(g_float_parameter - 1)                */
+static ComplexD  s_3_c_minus_2 = { 0.0, 0.0 };        /* 3*(g_float_parameter - 2)                */
+static ComplexD  s_c_minus_1_c_minus_2 = { 0.0, 0.0 }; /* (g_float_parameter - 1)*(g_float_parameter - 2) */
+static ComplexD s_temp2 = { 0.0, 0.0 };
 static double s_cos_y = 0.0;
 static double s_sin_y = 0.0;
 static double s_temp_exp = 0.0;
@@ -405,7 +405,7 @@ int bail_out_manhattan_r_fp()
 /* Raise complex number (base) to the (exp) power, storing the result
 ** in complex (result).
 */
-void complex_power(DComplex *base, int exp, DComplex *result)
+void complex_power(ComplexD *base, int exp, ComplexD *result)
 {
 	if (exp < 0)
 	{
@@ -507,9 +507,9 @@ int complex_power_l(LComplex *base, int exp, LComplex *result, int g_bit_shift)
 
 #if 0
 int
-z_to_the_z(DComplex *z, DComplex *out)
+z_to_the_z(ComplexD *z, ComplexD *out)
 {
-	static DComplex tmp1, tmp2;
+	static ComplexD tmp1, tmp2;
 	/* raises complex z to the z power */
 	int errno_xxx;
 	errno_xxx = 0;
@@ -978,8 +978,8 @@ int z_power_orbit()
 int complex_z_power_orbit()
 {
 #if !defined(XFRACT)
-	DComplex x;
-	DComplex y;
+	ComplexD x;
+	ComplexD y;
 
 	x.x = (double)g_old_z_l.x / g_fudge;
 	x.y = (double)g_old_z_l.y / g_fudge;
@@ -1296,8 +1296,8 @@ int popcorn_orbit()
 
 int popcorn_fn_orbit_fp()
 {
-	DComplex tmpx;
-	DComplex tmpy;
+	ComplexD tmpx;
+	ComplexD tmpy;
 
 	/* tmpx contains the generalized value of the old real "x" equation */
 	CMPLXtimesreal(g_parameter2, g_old_z.y, g_temp_z);  /* tmp = (C*old.y)         */
@@ -1708,8 +1708,8 @@ int phoenix_plus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	DComplex oldplus;
-	DComplex newminus;
+	ComplexD oldplus;
+	ComplexD newminus;
 	oldplus = g_old_z;
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1751,8 +1751,8 @@ int phoenix_minus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	DComplex oldsqr;
-	DComplex newminus;
+	ComplexD oldsqr;
+	ComplexD newminus;
 	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -1796,8 +1796,8 @@ int phoenix_complex_plus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	DComplex oldplus;
-	DComplex newminus;
+	ComplexD oldplus;
+	ComplexD newminus;
 	oldplus = g_old_z;
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1843,8 +1843,8 @@ int phoenix_complex_minus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	DComplex oldsqr;
-	DComplex newminus;
+	ComplexD oldsqr;
+	ComplexD newminus;
 	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -2090,9 +2090,9 @@ int sqr_trig_orbit_fp()
 
 int magnet1_orbit_fp()    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 {                   /*  In "Beauty of Fractals", code by Kev Allen. */
-	DComplex top;
-	DComplex bot;
-	DComplex tmp;
+	ComplexD top;
+	ComplexD bot;
+	ComplexD tmp;
 	double div;
 
 	top.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x - 1; /* top = Z**2 + C-1 */
@@ -2122,9 +2122,9 @@ int magnet1_orbit_fp()    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 int magnet2_orbit_fp()
 {
 	/*   In "Beauty of Fractals", code by Kev Allen.  */
-	DComplex top;
-	DComplex bot;
-	DComplex tmp;
+	ComplexD top;
+	ComplexD bot;
+	ComplexD tmp;
 	double div;
 
 	top.x = g_old_z.x*(g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + s_3_c_minus_1.x)
@@ -2335,7 +2335,7 @@ int circle_orbit()
 /* -------------------------------------------------------------------- */
 
 /* transform points with reciprocal function */
-void invert_z(DComplex *z)
+void invert_z(ComplexD *z)
 {
 	z->x = g_dx_pixel();
 	z->y = g_dy_pixel();
@@ -3074,17 +3074,17 @@ int escher_orbit_fp()
 {
 	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y; /* standard Julia with C == (0.0, 0.0i) */
 	g_new_z.y = 2.0*g_old_z.x*g_old_z.y;
-	DComplex oldtest;
+	ComplexD oldtest;
 	oldtest.x = g_new_z.x*15.0;    /* scale it */
 	oldtest.y = g_new_z.y*15.0;
-	DComplex testsqr;
+	ComplexD testsqr;
 	testsqr.x = sqr(oldtest.x);  /* set up to test with user-specified ... */
 	testsqr.y = sqr(oldtest.y);  /*    ... Julia as the target set */
 	double testsize = 0.0;
 	long testiter = 0;
 	while (testsize <= g_rq_limit && testiter < g_max_iteration) /* nested Julia loop */
 	{
-		DComplex newtest;
+		ComplexD newtest;
 		newtest.x = testsqr.x - testsqr.y + g_parameters[0];
 		newtest.y = 2.0*oldtest.x*oldtest.y + g_parameters[1];
 		testsqr.x = sqr(newtest.x);
@@ -3229,8 +3229,8 @@ int mandelbrot_mix4_per_pixel_fp()
 int mandelbrot_mix4_orbit_fp() /* from formula by Jim Muth */
 {
 	/* z = k*((a*(z^b)) + (d*(z^f))) + c, */
-	DComplex z_b;
-	DComplex z_f;
+	ComplexD z_b;
+	ComplexD z_f;
 	CMPLXpwr(g_old_z, B, z_b);     /* (z^b)     */
 	CMPLXpwr(g_old_z, F, z_f);     /* (z^f)     */
 	g_new_z.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;
