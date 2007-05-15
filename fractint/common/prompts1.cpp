@@ -47,7 +47,7 @@ int  g_map_set = FALSE;
 int g_julibrot;   /* flag for julibrot */
 
 /* These need to be global because F6 exits full_screen_prompt() */
-static int s_prompt_function_keys;
+static int s_prompt_function_key_mask;
 /* will be set to first line of extra info to be displayed (0 = top line) */
 static int s_scroll_row_status;
 /* will be set to first column of extra info to be displayed (0 = leftmost column)*/
@@ -79,346 +79,412 @@ static int prompt_checkkey_scroll(int curkey);
 
 /* --------------------------------------------------------------------- */
 
-int full_screen_prompt(/* full-screen prompting routine */
-					   const char *hdg,          /* heading, lines separated by \n */
-					   int numprompts,         /* there are this many prompts (max) */
-					   const char **prompts,     /* array of prompting pointers */
-struct full_screen_values *values, /* array of values */
-	int fkeymask,           /* bit n on if Fn to cause return */
-	char *extrainfo     /* extra info box to display, \n separated */
-	)
+class FullScreenPrompter
 {
-	int titlelines;
-	int titlewidth;
-	int titlerow;
-	int maxpromptwidth;
-	int maxfldwidth;
-	int maxcomment;
-	int boxrow;
-	int boxlines;
-	int boxcol;
-	int boxwidth;
-	int extralines;
-	int extrawidth;
-	int extrarow;
-	int instrrow;
-	int promptrow;
-	int promptcol;
-	int valuecol;
-	int curchoice = 0;
-	int done;
-	int i;
-	int j;
-	int anyinput;
-	int curtype;
-	int curlen;
-	char buf[81];
+public:
+	FullScreenPrompter(const char *heading, int num_prompts, const char **prompts,
+		full_screen_values *values, int function_key_mask, char *footer);
+	int Prompt();
 
-	/* scrolling related variables */
-	FILE *scroll_file = NULL;     /* file with extrainfo entry to scroll   */
-	long scroll_file_start = 0;    /* where entry starts in scroll_file     */
-	int in_scrolling_mode = 0;     /* will be 1 if need to scroll extrainfo */
-	int lines_in_entry = 0;        /* total lines in entry to be scrolled   */
-	int vertical_scroll_limit = 0; /* don't scroll down if this is top line */
-	int widest_entry_line = 0;     /* length of longest line in entry       */
-	int rewrite_extrainfo = 0;     /* if 1: rewrite extrainfo to text box   */
-	char blanks[78];               /* used to clear text box                */
+private:
+	void PrepareHeader();
+	void PrepareFooter();
+	void PrepareFooterFile();
+	void PrepareFooterLinesInEntry();
+	void PrepareFooterSize();
+	void WorkOutVerticalPositioning();
+	void WorkOutHorizontalPositioning();
+	void DisplayHeader();
+	void DisplayFooter();
+	void DisplayInitialScreen();
+	void DisplayInitialValues();
+	void DisplayEmptyBox();
 
-	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
-	s_prompt_function_keys = fkeymask;
-	memset(blanks, ' ', 77);   /* initialize string of blanks */
-	blanks[77] = (char) 0;
+	const char *m_heading;
+	int m_num_prompts;
+	const char **m_prompts;
+	full_screen_values *m_values;
+	int m_function_key_mask;
+	char *m_footer;
 
+	FILE *m_scroll_file;			/* file with extrainfo entry to scroll   */
+	long m_scroll_file_start;		/* where entry starts in scroll_file     */
+	bool m_in_scrolling_mode;		/* will be true if need to scroll footer */
+	int m_lines_in_entry;			/* total lines in entry to be scrolled   */
+	int m_title_lines;
+	int m_title_width;
+	int m_vertical_scroll_limit;	/* don't scroll down if this is top line */
+	int m_footer_lines;
+	int m_footer_width;
+	int m_title_row;
+	int m_box_row;
+	int m_box_lines;
+	int m_footer_row;
+	int m_instructions_row;
+	int m_prompt_row;
+	int m_max_prompt_width;
+	int m_max_field_width;
+	int m_max_comment;
+	int m_box_column;
+	int m_box_width;
+	int m_prompt_column;
+	int m_value_column;
+	bool m_any_input;
+};
+
+FullScreenPrompter::FullScreenPrompter(const char *heading,
+		int num_prompts, const char **prompts,
+		full_screen_values *values,
+		int function_key_mask, char *footer)
+	: m_heading(heading),
+	m_num_prompts(num_prompts),
+	m_prompts(prompts),
+	m_values(values),
+	m_function_key_mask(function_key_mask),
+	m_footer(footer),
+	m_scroll_file(NULL),
+	m_scroll_file_start(0),
+	m_in_scrolling_mode(false),
+	m_lines_in_entry(0),
+	m_title_lines(0),
+	m_title_width(0),
+	m_vertical_scroll_limit(0),
+	m_footer_lines(0),
+	m_footer_width(0),
+	m_title_row(0),
+	m_box_row(0),
+	m_box_lines(0),
+	m_footer_row(0),
+	m_instructions_row(0),
+	m_prompt_row(0),
+	m_max_prompt_width(0),
+	m_max_field_width(0),
+	m_max_comment(0),
+	m_box_column(0),
+	m_box_width(0),
+	m_prompt_column(0),
+	m_value_column(0),
+	m_any_input(false)
+{
+}
+
+void FullScreenPrompter::PrepareFooterFile()
+{
 	/* If applicable, open file for scrolling extrainfo. The function
 	find_file_item() opens the file and sets the file pointer to the
 	beginning of the entry.
 	*/
-	if (extrainfo && *extrainfo)
+	if (m_footer && *m_footer)
 	{
 		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 		{
-			find_file_item(g_formula_filename, g_formula_name, &scroll_file, ITEMTYPE_FORMULA);
-			in_scrolling_mode = 1;
-			scroll_file_start = ftell(scroll_file);
+			find_file_item(g_formula_filename, g_formula_name, &m_scroll_file, ITEMTYPE_FORMULA);
+			m_in_scrolling_mode = true;
+			m_scroll_file_start = ftell(m_scroll_file);
 		}
 		else if (g_fractal_type == FRACTYPE_L_SYSTEM)
 		{
-			find_file_item(g_l_system_filename, g_l_system_name, &scroll_file, 2);
-			in_scrolling_mode = 1;
-			scroll_file_start = ftell(scroll_file);
+			find_file_item(g_l_system_filename, g_l_system_name, &m_scroll_file, ITEMTYPE_L_SYSTEM);
+			m_in_scrolling_mode = true;
+			m_scroll_file_start = ftell(m_scroll_file);
 		}
 		else if (g_fractal_type == FRACTYPE_IFS || g_fractal_type == FRACTYPE_IFS_3D)
 		{
-			find_file_item(g_ifs_filename, g_ifs_name, &scroll_file, 3);
-			in_scrolling_mode = 1;
-			scroll_file_start = ftell(scroll_file);
+			find_file_item(g_ifs_filename, g_ifs_name, &m_scroll_file, ITEMTYPE_IFS);
+			m_in_scrolling_mode = true;
+			m_scroll_file_start = ftell(m_scroll_file);
 		}
 	}
+}
 
-	/* initialize widest_entry_line and lines_in_entry */
-	if (in_scrolling_mode && scroll_file != NULL)
+void FullScreenPrompter::PrepareFooterLinesInEntry()
+{
+	/* initialize m_lines_in_entry */
+	if (m_in_scrolling_mode && m_scroll_file != NULL)
 	{
-		int comment = 0;
+		bool comment = false;
 		int c = 0;
-		int widthct = 0;
-		while ((c = fgetc(scroll_file)) != EOF && c != '\032')
+		while ((c = fgetc(m_scroll_file)) != EOF && c != '\032')
 		{
 			if (c == ';')
 			{
-				comment = 1;
+				comment = true;
 			}
 			else if (c == '\n')
 			{
-				comment = 0;
-				lines_in_entry++;
-				widthct =  -1;
-			}
-			else if (c == '\t')
-			{
-				widthct += 7 - widthct % 8;
+				comment = false;
+				m_lines_in_entry++;
 			}
 			else if (c == '\r')
 			{
 				continue;
 			}
-			if (++widthct > widest_entry_line)
-			{
-				widest_entry_line = widthct;
-			}
 			if (c == '}' && !comment)
 			{
-				lines_in_entry++;
+				m_lines_in_entry++;
 				break;
 			}
 		}
 		if (c == EOF || c == '\032')  /* should never happen */
 		{
-			fclose(scroll_file);
-			in_scrolling_mode = 0;
+			fclose(m_scroll_file);
+			m_in_scrolling_mode = false;
 		}
 	}
+}
 
-	help_title();                        /* clear screen, display title line  */
-	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  /* init rest of screen to background */
-
-	const char *hdgscan = hdg;                      /* count title lines, find widest */
-	i = titlewidth = 0;
-	titlelines = 1;
-	while (*hdgscan)
-	{
-		if (*(hdgscan++) == '\n')
-		{
-			++titlelines;
-			i = -1;
-		}
-		if (++i > titlewidth)
-		{
-			titlewidth = i;
-		}
-	}
-	extralines = extrawidth = i = 0;
-	char *extra_scan = extrainfo;
-	if (extra_scan != 0)
-	{
-		if (*extra_scan == 0)
-		{
-			extrainfo = NULL;
-		}
-		else  /* count extra lines, find widest */
-		{
-			extralines = 3;
-			while (*extra_scan)
-			{
-				if (*(extra_scan++) == '\n')
-				{
-					if (extralines + numprompts + titlelines >= 20)
-					{
-						*extra_scan = 0; /* full screen, cut off here */
-						break;
-					}
-					++extralines;
-					i = -1;
-				}
-				if (++i > extrawidth)
-				{
-					extrawidth = i;
-				}
-			}
-		}
-	}
+void FullScreenPrompter::PrepareFooter()
+{
+	PrepareFooterFile();
+	PrepareFooterLinesInEntry();
+	PrepareFooterSize();
 
 	/* if entry fits in available space, shut off scrolling */
-	if (in_scrolling_mode && s_scroll_row_status == 0
-		&& lines_in_entry == extralines - 2
+	if (m_in_scrolling_mode && s_scroll_row_status == 0
+		&& m_lines_in_entry == m_footer_lines - 2
 		&& s_scroll_column_status == 0
-		&& strchr(extrainfo, '\021') == NULL)
+		&& strchr(m_footer, '\021') == NULL)
 	{
-		in_scrolling_mode = 0;
-		fclose(scroll_file);
-		scroll_file = NULL;
+		m_in_scrolling_mode = false;
+		fclose(m_scroll_file);
+		m_scroll_file = NULL;
 	}
 
 	/*initialize vertical scroll limit. When the top line of the text
 	box is the vertical scroll limit, the bottom line is the end of the
 	entry, and no further down scrolling is necessary.
 	*/
-	if (in_scrolling_mode)
+	if (m_in_scrolling_mode)
 	{
-		vertical_scroll_limit = lines_in_entry - (extralines - 2);
+		m_vertical_scroll_limit = m_lines_in_entry - (m_footer_lines - 2);
+	}
+}
+
+void FullScreenPrompter::PrepareFooterSize()
+{
+	m_footer_lines = 0;
+	m_footer_width = 0;
+	if (!m_footer)
+	{
+		return;
+	}
+	if (!*m_footer)
+	{
+		m_footer = NULL;
+		return;
 	}
 
-	/* work out vertical positioning */
-	i = numprompts + titlelines + extralines + 3; /* total rows required */
-	j = (25 - i) / 2;                   /* top row of it all when centered */
-	j -= j / 4;                         /* higher is better if lots extra */
-	boxlines = numprompts;
-	titlerow = 1 + j;
-	promptrow = boxrow = titlerow + titlelines;
-	if (titlerow > 2)  /* room for blank between title & box? */
+	/* count footer lines, find widest */
+	m_footer_lines = 3;
+	int i = 0;
+	for (char *scan = m_footer; *scan; scan++)
 	{
-		--titlerow;
-		--boxrow;
-		++boxlines;
-	}
-	instrrow = boxrow + boxlines;
-	if (instrrow + 3 + extralines < 25)
-	{
-		++boxlines;    /* blank at bottom of box */
-		++instrrow;
-		if (instrrow + 3 + extralines < 25)
+		if (*scan == '\n')
 		{
-			++instrrow; /* blank before instructions */
+			if (m_footer_lines + m_num_prompts + m_title_lines >= 20)
+			{
+				*scan = 0; /* full screen, cut off here */
+				break;
+			}
+			++m_footer_lines;
+			i = -1;
+		}
+		if (++i > m_footer_width)
+		{
+			m_footer_width = i;
 		}
 	}
-	extrarow = instrrow + 2;
-	if (numprompts > 1) /* 3 instructions lines */
-	{
-		++extrarow;
-	}
-	if (extrarow + extralines < 25)
-	{
-		++extrarow;
-	}
+}
 
-	if (in_scrolling_mode)  /* set box to max width if in scrolling mode */
+void FullScreenPrompter::PrepareHeader()
+{
+	/* count title lines, find widest */
+	m_title_lines = 1;
+	m_title_width = 0;
+	int i = 0;
+	for (const char *heading_scan = m_heading; *heading_scan; heading_scan++)
 	{
-		extrawidth = 76;
+		if (*heading_scan == '\n')
+		{
+			++m_title_lines;
+			i = -1;
+		}
+		if (++i > m_title_width)
+		{
+			m_title_width = i;
+		}
+	}
+}
+
+void FullScreenPrompter::WorkOutVerticalPositioning()
+{
+	int total_rows = m_num_prompts + m_title_lines + m_footer_lines + 3;
+	int j = (25 - total_rows) / 2;                   /* top row of it all when centered */
+	j -= j / 4;                         /* higher is better if lots extra */
+	m_box_lines = m_num_prompts;
+	m_title_row = 1 + j;
+	m_box_row = m_title_row + m_title_lines;
+	m_prompt_row = m_box_row;
+		
+	if (m_title_row > 2)  /* room for blank between title & box? */
+	{
+		--m_title_row;
+		--m_box_row;
+		++m_box_lines;
+	}
+	m_instructions_row = m_box_row + m_box_lines;
+	if (m_instructions_row + 3 + m_footer_lines < 25)
+	{
+		++m_box_lines;    /* blank at bottom of box */
+		++m_instructions_row;
+		if (m_instructions_row + 3 + m_footer_lines < 25)
+		{
+			++m_instructions_row; /* blank before instructions */
+		}
+	}
+	m_footer_row = m_instructions_row + 2;
+	if (m_num_prompts > 1) /* 3 instructions lines */
+	{
+		++m_footer_row;
+	}
+	if (m_footer_row + m_footer_lines < 25)
+	{
+		++m_footer_row;
+	}
+}
+
+void FullScreenPrompter::WorkOutHorizontalPositioning()
+{
+	if (m_in_scrolling_mode)  /* set box to max width if in scrolling mode */
+	{
+		m_footer_width = 76;
 	}
 
 	/* work out horizontal positioning */
-	maxfldwidth = maxpromptwidth = maxcomment = anyinput = 0;
-	for (i = 0; i < numprompts; i++)
+	m_max_field_width = 0;
+	m_max_prompt_width = 0;
+	m_max_comment = 0;
+	m_any_input = false;
+	for (int i = 0; i < m_num_prompts; i++)
 	{
-		if (values[i].type == 'y')
+		if (m_values[i].type == 'y')
 		{
 			static const char *noyes[2] =
-			{"no", "yes"};
-			values[i].type = 'l';
-			values[i].uval.ch.vlen = 3;
-			values[i].uval.ch.list = noyes;
-			values[i].uval.ch.llen = 2;
+			{ 
+				"no", "yes"
+			};
+			m_values[i].type = 'l';
+			m_values[i].uval.ch.vlen = 3;
+			m_values[i].uval.ch.list = noyes;
+			m_values[i].uval.ch.llen = 2;
 		}
-		j = (int) strlen(prompts[i]);
-		if (values[i].type == '*')
+		int j = (int) strlen(m_prompts[i]);
+		if (m_values[i].type == '*')
 		{
-			if (j > maxcomment)
+			if (j > m_max_comment)
 			{
-				maxcomment = j;
+				m_max_comment = j;
 			}
 		}
 		else
 		{
-			anyinput = 1;
-			if (j > maxpromptwidth)
+			m_any_input = true;
+			if (j > m_max_prompt_width)
 			{
-				maxpromptwidth = j;
+				m_max_prompt_width = j;
 			}
-			j = prompt_value_string(buf, &values[i]);
-			if (j > maxfldwidth)
+			char buffer[81];
+			j = prompt_value_string(buffer, &m_values[i]);
+			if (j > m_max_field_width)
 			{
-				maxfldwidth = j;
+				m_max_field_width = j;
 			}
 		}
 	}
-	boxwidth = maxpromptwidth + maxfldwidth + 2;
-	if (maxcomment > boxwidth)
+	m_box_width = m_max_prompt_width + m_max_field_width + 2;
+	if (m_max_comment > m_box_width)
 	{
-		boxwidth = maxcomment;
+		m_box_width = m_max_comment;
 	}
-	boxwidth += 4;
-	if (boxwidth > 80)
+	m_box_width += 4;
+	if (m_box_width > 80)
 	{
-		boxwidth = 80;
+		m_box_width = 80;
 	}
-	boxcol = (80 - boxwidth) / 2;       /* center the box */
-	promptcol = boxcol + 2;
-	valuecol = boxcol + boxwidth - maxfldwidth - 2;
-	if (boxwidth <= 76)  /* make margin a bit wider if we can */
+	m_box_column = (80 - m_box_width) / 2;       /* center the box */
+	m_prompt_column = m_box_column + 2;
+	m_value_column = m_box_column + m_box_width - m_max_field_width - 2;
+	if (m_box_width <= 76)  /* make margin a bit wider if we can */
 	{
-		boxwidth += 2;
-		--boxcol;
+		m_box_width += 2;
+		--m_box_column;
 	}
-	j = titlewidth;
-	if (j < extrawidth)
+	int j = m_title_width;
+	if (j < m_footer_width)
 	{
-		j = extrawidth;
+		j = m_footer_width;
 	}
-	i = j + 4 - boxwidth;
+	int i = j + 4 - m_box_width;
 	if (i > 0)  /* expand box for title/extra */
 	{
-		if (boxwidth + i > 80)
+		if (m_box_width + i > 80)
 		{
-			i = 80 - boxwidth;
+			i = 80 - m_box_width;
 		}
-		boxwidth += i;
-		boxcol -= i / 2;
+		m_box_width += i;
+		m_box_column -= i / 2;
 	}
-	i = (90 - boxwidth) / 20;
-	boxcol    -= i;
-	promptcol -= i;
-	valuecol  -= i;
+	i = (90 - m_box_width) / 20;
+	m_box_column    -= i;
+	m_prompt_column -= i;
+	m_value_column  -= i;
+}
 
-	/* display box heading */
-	for (i = titlerow; i < boxrow; ++i)
+void FullScreenPrompter::DisplayHeader()
+{
+	for (int i = m_title_row; i < m_box_row; ++i)
 	{
-		driver_set_attr(i, boxcol, C_PROMPT_HI, boxwidth);
-	}
-
-	{
-		char buffer[256];
-		char *hdgline = buffer;
-		/* center each line of heading independently */
-		int i;
-		strcpy(hdgline, hdg);
-		for (i = 0; i < titlelines-1; i++)
-		{
-			char *next = strchr(hdgline, '\n');
-			if (next == NULL)
-			{
-				break; /* shouldn't happen */
-			}
-			*next = '\0';
-			titlewidth = (int) strlen(hdgline);
-			g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
-			driver_put_string(titlerow + i, 0, C_PROMPT_HI, hdgline);
-			*next = '\n';
-			hdgline = next + 1;
-		}
-		/* add scrolling key message, if applicable */
-		if (in_scrolling_mode)
-		{
-			*(hdgline + 31) = (char) 0;   /* replace the ')' */
-			strcat(hdgline, ". CTRL+(direction key) to scroll text.)");
-		}
-
-		titlewidth = (int) strlen(hdgline);
-		g_text_cbase = boxcol + (boxwidth - titlewidth) / 2;
-		driver_put_string(titlerow + i, 0, C_PROMPT_HI, hdgline);
+		driver_set_attr(i, m_box_column, C_PROMPT_HI, m_box_width);
 	}
 
-	/* display extra info */
-	if (extrainfo)
+	char buffer[256];
+	char *heading_line = buffer;
+	/* center each line of heading independently */
+	int i;
+	::strcpy(heading_line, m_heading);
+	for (i = 0; i < m_title_lines-1; i++)
 	{
+		char *next = ::strchr(heading_line, '\n');
+		if (next == NULL)
+		{
+			break; /* shouldn't happen */
+		}
+		*next = '\0';
+		m_title_width = (int) ::strlen(heading_line);
+		g_text_cbase = m_box_column + (m_box_width - m_title_width) / 2;
+		driver_put_string(m_title_row + i, 0, C_PROMPT_HI, heading_line);
+		*next = '\n';
+		heading_line = next + 1;
+	}
+	/* add scrolling key message, if applicable */
+	if (m_in_scrolling_mode)
+	{
+		*(heading_line + 31) = (char) 0;   /* replace the ')' */
+		::strcat(heading_line, ". CTRL+(direction key) to scroll text.)");
+	}
+
+	m_title_width = (int) ::strlen(heading_line);
+	g_text_cbase = m_box_column + (m_box_width - m_title_width) / 2;
+	driver_put_string(m_title_row + i, 0, C_PROMPT_HI, heading_line);
+}
+
+void FullScreenPrompter::DisplayFooter()
+{
+	if (!m_footer)
+	{
+		return;
+	}
+
 #ifndef XFRACT
 #define S1 '\xC4'
 #define S2 "\xC0"
@@ -434,51 +500,97 @@ struct full_screen_values *values, /* array of values */
 #define S5 "+" /* ul corner */
 #define S6 "+" /* ur corner */
 #endif
-		memset(buf, S1, 80);
-		buf[boxwidth-2] = 0;
-		g_text_cbase = boxcol + 1;
-		driver_put_string(extrarow, 0, C_PROMPT_BKGRD, buf);
-		driver_put_string(extrarow + extralines-1, 0, C_PROMPT_BKGRD, buf);
-		--g_text_cbase;
-		driver_put_string(extrarow, 0, C_PROMPT_BKGRD, S5);
-		driver_put_string(extrarow + extralines-1, 0, C_PROMPT_BKGRD, S2);
-		g_text_cbase += boxwidth - 1;
-		driver_put_string(extrarow, 0, C_PROMPT_BKGRD, S6);
-		driver_put_string(extrarow + extralines-1, 0, C_PROMPT_BKGRD, S3);
+	char buffer[81];
+	memset(buffer, S1, 80);
+	buffer[m_box_width-2] = 0;
+	g_text_cbase = m_box_column + 1;
+	driver_put_string(m_footer_row, 0, C_PROMPT_BKGRD, buffer);
+	driver_put_string(m_footer_row + m_footer_lines-1, 0, C_PROMPT_BKGRD, buffer);
+	--g_text_cbase;
+	driver_put_string(m_footer_row, 0, C_PROMPT_BKGRD, S5);
+	driver_put_string(m_footer_row + m_footer_lines-1, 0, C_PROMPT_BKGRD, S2);
+	g_text_cbase += m_box_width - 1;
+	driver_put_string(m_footer_row, 0, C_PROMPT_BKGRD, S6);
+	driver_put_string(m_footer_row + m_footer_lines-1, 0, C_PROMPT_BKGRD, S3);
 
-		g_text_cbase = boxcol;
+	g_text_cbase = m_box_column;
 
-		for (i = 1; i < extralines-1; ++i)
-		{
-			driver_put_string(extrarow + i, 0, C_PROMPT_BKGRD, S4);
-			driver_put_string(extrarow + i, boxwidth-1, C_PROMPT_BKGRD, S4);
-		}
-		g_text_cbase += (boxwidth - extrawidth) / 2;
-		driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
+	for (int i = 1; i < m_footer_lines-1; ++i)
+	{
+		driver_put_string(m_footer_row + i, 0, C_PROMPT_BKGRD, S4);
+		driver_put_string(m_footer_row + i, m_box_width-1, C_PROMPT_BKGRD, S4);
 	}
+	g_text_cbase += (m_box_width - m_footer_width) / 2;
+	driver_put_string(m_footer_row + 1, 0, C_PROMPT_TEXT, m_footer);
+}
 
+void FullScreenPrompter::DisplayEmptyBox()
+{
 	g_text_cbase = 0;
 
 	/* display empty box */
-	for (i = 0; i < boxlines; ++i)
+	for (int i = 0; i < m_box_lines; ++i)
 	{
-		driver_set_attr(boxrow + i, boxcol, C_PROMPT_LO, boxwidth);
+		driver_set_attr(m_box_row + i, m_box_column, C_PROMPT_LO, m_box_width);
 	}
+}
 
+void FullScreenPrompter::DisplayInitialValues()
+{
 	/* display initial values */
-	for (i = 0; i < numprompts; i++)
+	for (int i = 0; i < m_num_prompts; i++)
 	{
-		driver_put_string(promptrow + i, promptcol, C_PROMPT_LO, prompts[i]);
-		prompt_value_string(buf, &values[i]);
-		driver_put_string(promptrow + i, valuecol, C_PROMPT_LO, buf);
+		driver_put_string(m_prompt_row + i, m_prompt_column, C_PROMPT_LO, m_prompts[i]);
+		char buffer[81];
+		prompt_value_string(buffer, &m_values[i]);
+		driver_put_string(m_prompt_row + i, m_value_column, C_PROMPT_LO, buffer);
 	}
+}
 
+void FullScreenPrompter::DisplayInitialScreen()
+{
+	help_title();                        /* clear screen, display title line  */
+	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  /* init rest of screen to background */
 
-	if (!anyinput)
+	DisplayHeader();
+	DisplayFooter();
+
+	DisplayEmptyBox();
+	DisplayInitialValues();
+}
+
+int FullScreenPrompter::Prompt()
+{
+	int current_choice = 0;
+	int done;
+	int i;
+	int j;
+	int current_type;
+	int current_length;
+
+	/* scrolling related variables */
+	bool rewrite_footer = false;	/* if true: rewrite footer to text box   */
+
+	char blanks[78];				/* used to clear text box                */
+	memset(blanks, ' ', NUM_OF(blanks) - 1);   /* initialize string of blanks */
+	blanks[NUM_OF(blanks) - 1] = 0;
+
+	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
+	s_prompt_function_key_mask = m_function_key_mask;
+
+	PrepareHeader();
+	PrepareFooter();
+
+	WorkOutVerticalPositioning();
+	WorkOutHorizontalPositioning();
+
+	DisplayInitialScreen();
+
+	if (!m_any_input)
 	{
-		put_string_center(instrrow++, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(m_instructions_row++, 0, 80, C_PROMPT_BKGRD,
 			"No changeable parameters;");
-		put_string_center(instrrow, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(m_instructions_row, 0, 80, C_PROMPT_BKGRD,
 			(get_help_mode() > 0)
 			? "Press ENTER to exit, ESC to back out, "FK_F1" for help"
 			: "Press ENTER to exit");
@@ -486,17 +598,17 @@ struct full_screen_values *values, /* array of values */
 		g_text_cbase = 2;
 		while (1)
 		{
-			if (rewrite_extrainfo)
+			if (rewrite_footer)
 			{
-				rewrite_extrainfo = 0;
-				fseek(scroll_file, scroll_file_start, SEEK_SET);
-				load_entry_text(scroll_file, extrainfo, extralines - 2,
+				rewrite_footer = false;
+				fseek(m_scroll_file, m_scroll_file_start, SEEK_SET);
+				load_entry_text(m_scroll_file, m_footer, m_footer_lines - 2,
 					s_scroll_row_status, s_scroll_column_status);
-				for (i = 1; i <= extralines - 2; i++)
+				for (i = 1; i <= m_footer_lines - 2; i++)
 				{
-					driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
+					driver_put_string(m_footer_row + i, 0, C_PROMPT_TEXT, blanks);
 				}
-				driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
+				driver_put_string(m_footer_row + 1, 0, C_PROMPT_TEXT, m_footer);
 			}
 			/* TODO: rework key interaction to blocking wait */
 			while (!driver_key_pressed())
@@ -511,68 +623,68 @@ struct full_screen_values *values, /* array of values */
 			case FIK_ENTER_2:
 				goto fullscreen_exit;
 			case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
-				if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
+				if (m_in_scrolling_mode && s_scroll_row_status < m_vertical_scroll_limit)
 				{
 					s_scroll_row_status++;
-					rewrite_extrainfo = 1;
+					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
-				if (in_scrolling_mode && s_scroll_row_status > 0)
+				if (m_in_scrolling_mode && s_scroll_row_status > 0)
 				{
 					s_scroll_row_status--;
-					rewrite_extrainfo = 1;
+					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
-				if (in_scrolling_mode && s_scroll_column_status > 0)
+				if (m_in_scrolling_mode && s_scroll_column_status > 0)
 				{
 					s_scroll_column_status--;
-					rewrite_extrainfo = 1;
+					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
-				if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL)
+				if (m_in_scrolling_mode && strchr(m_footer, '\021') != NULL)
 				{
 					s_scroll_column_status++;
-					rewrite_extrainfo = 1;
+					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
-				if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
+				if (m_in_scrolling_mode && s_scroll_row_status < m_vertical_scroll_limit)
 				{
-					s_scroll_row_status += extralines - 2;
-					if (s_scroll_row_status > vertical_scroll_limit)
+					s_scroll_row_status += m_footer_lines - 2;
+					if (s_scroll_row_status > m_vertical_scroll_limit)
 					{
-						s_scroll_row_status = vertical_scroll_limit;
+						s_scroll_row_status = m_vertical_scroll_limit;
 					}
-					rewrite_extrainfo = 1;
+					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_PAGE_UP:     /* scrolling key - up one screen */
-				if (in_scrolling_mode && s_scroll_row_status > 0)
+				if (m_in_scrolling_mode && s_scroll_row_status > 0)
 				{
-					s_scroll_row_status -= extralines - 2;
+					s_scroll_row_status -= m_footer_lines - 2;
 					if (s_scroll_row_status < 0)
 					{
 						s_scroll_row_status = 0;
 					}
-					rewrite_extrainfo = 1;
+					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_END:         /* scrolling key - to end of entry */
-				if (in_scrolling_mode)
+				if (m_in_scrolling_mode)
 				{
-					s_scroll_row_status = vertical_scroll_limit;
+					s_scroll_row_status = m_vertical_scroll_limit;
 					s_scroll_column_status = 0;
-					rewrite_extrainfo = 1;
+					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
-				if (in_scrolling_mode)
+				if (m_in_scrolling_mode)
 				{
 					s_scroll_row_status = s_scroll_column_status = 0;
-					rewrite_extrainfo = 1;
+					rewrite_footer = true;
 				}
 				break;
 			case FIK_F2:
@@ -584,7 +696,7 @@ struct full_screen_values *values, /* array of values */
 			case FIK_F8:
 			case FIK_F9:
 			case FIK_F10:
-				if (s_prompt_function_keys & (1 << (done + 1-FIK_F1)))
+				if (s_prompt_function_key_mask & (1 << (done + 1-FIK_F1)))
 				{
 					goto fullscreen_exit;
 				}
@@ -594,119 +706,120 @@ struct full_screen_values *values, /* array of values */
 
 
 	/* display footing */
-	if (numprompts > 1)
+	if (m_num_prompts > 1)
 	{
-		put_string_center(instrrow++, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(m_instructions_row++, 0, 80, C_PROMPT_BKGRD,
 			"Use " UPARR1 " and " DNARR1 " to select values to change");
 	}
-	put_string_center(instrrow + 1, 0, 80, C_PROMPT_BKGRD,
+	put_string_center(m_instructions_row + 1, 0, 80, C_PROMPT_BKGRD,
 		(get_help_mode() > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
 	done = 0;
-	while (values[curchoice].type == '*')
+	while (m_values[current_choice].type == '*')
 	{
-		++curchoice;
+		++current_choice;
 	}
 
 	while (!done)
 	{
-		if (rewrite_extrainfo)
+		if (rewrite_footer)
 		{
 			j = g_text_cbase;
 			g_text_cbase = 2;
-			fseek(scroll_file, scroll_file_start, SEEK_SET);
-			load_entry_text(scroll_file, extrainfo, extralines - 2,
+			fseek(m_scroll_file, m_scroll_file_start, SEEK_SET);
+			load_entry_text(m_scroll_file, m_footer, m_footer_lines - 2,
 				s_scroll_row_status, s_scroll_column_status);
-			for (i = 1; i <= extralines - 2; i++)
+			for (i = 1; i <= m_footer_lines - 2; i++)
 			{
-				driver_put_string(extrarow + i, 0, C_PROMPT_TEXT, blanks);
+				driver_put_string(m_footer_row + i, 0, C_PROMPT_TEXT, blanks);
 			}
-			driver_put_string(extrarow + 1, 0, C_PROMPT_TEXT, extrainfo);
+			driver_put_string(m_footer_row + 1, 0, C_PROMPT_TEXT, m_footer);
 			g_text_cbase = j;
 		}
 
-		curtype = values[curchoice].type;
-		curlen = prompt_value_string(buf, &values[curchoice]);
-		if (!rewrite_extrainfo)
+		current_type = m_values[current_choice].type;
+		char buffer[81];
+		current_length = prompt_value_string(buffer, &m_values[current_choice]);
+		if (!rewrite_footer)
 		{
-			put_string_center(instrrow, 0, 80, C_PROMPT_BKGRD,
-				(curtype == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
+			put_string_center(m_instructions_row, 0, 80, C_PROMPT_BKGRD,
+				(current_type == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
 		}
 		else
 		{
-			rewrite_extrainfo = 0;
+			rewrite_footer = false;
 		}
-		driver_put_string(promptrow + curchoice, promptcol, C_PROMPT_HI, prompts[curchoice]);
+		driver_put_string(m_prompt_row + current_choice, m_prompt_column, C_PROMPT_HI, m_prompts[current_choice]);
 
-		if (curtype == 'l')
+		if (current_type == 'l')
 		{
 			i = input_field_list(
-				C_PROMPT_CHOOSE, buf, curlen,
-				values[curchoice].uval.ch.list, values[curchoice].uval.ch.llen,
-				promptrow + curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
-			for (j = 0; j < values[curchoice].uval.ch.llen; ++j)
+				C_PROMPT_CHOOSE, buffer, current_length,
+				m_values[current_choice].uval.ch.list, m_values[current_choice].uval.ch.llen,
+				m_prompt_row + current_choice, m_value_column, m_in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+			for (j = 0; j < m_values[current_choice].uval.ch.llen; ++j)
 			{
-				if (strcmp(buf, values[curchoice].uval.ch.list[j]) == 0)
+				if (strcmp(buffer, m_values[current_choice].uval.ch.list[j]) == 0)
 				{
 					break;
 				}
 			}
-			values[curchoice].uval.ch.val = j;
+			m_values[current_choice].uval.ch.val = j;
 		}
 		else
 		{
 			j = 0;
-			if (curtype == 'i')
+			if (current_type == 'i')
 			{
 				j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
 			}
-			if (curtype == 'L')
+			if (current_type == 'L')
 			{
 				j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
 			}
-			if (curtype == 'd')
+			if (current_type == 'd')
 			{
 				j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
 			}
-			if (curtype == 'D')
+			if (current_type == 'D')
 			{
 				j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
 			}
-			if (curtype == 'f')
+			if (current_type == 'f')
 			{
 				j = INPUTFIELD_NUMERIC;
 			}
-			i = input_field(j, C_PROMPT_INPUT, buf, curlen,
-				promptrow + curchoice, valuecol, in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
-			switch (values[curchoice].type)
+			i = input_field(j, C_PROMPT_INPUT, buffer, current_length,
+				m_prompt_row + current_choice, m_value_column, m_in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
+			switch (m_values[current_choice].type)
 			{
 			case 'd':
 			case 'D':
-				values[curchoice].uval.dval = atof(buf);
+				m_values[current_choice].uval.dval = atof(buffer);
 				break;
 			case 'f':
-				values[curchoice].uval.dval = atof(buf);
-				round_float_d(&values[curchoice].uval.dval);
+				m_values[current_choice].uval.dval = atof(buffer);
+				round_float_d(&m_values[current_choice].uval.dval);
 				break;
 			case 'i':
-				values[curchoice].uval.ival = atoi(buf);
+				m_values[current_choice].uval.ival = atoi(buffer);
 				break;
 			case 'L':
-				values[curchoice].uval.Lval = atol(buf);
+				m_values[current_choice].uval.Lval = atol(buffer);
 				break;
 			case 's':
-				strncpy(values[curchoice].uval.sval, buf, 16);
+				strncpy(m_values[current_choice].uval.sval, buffer, 16);
 				break;
 			default: /* assume 0x100 + n */
-				strcpy(values[curchoice].uval.sbuf, buf);
+				strcpy(m_values[current_choice].uval.sbuf, buffer);
 			}
 		}
 
-		driver_put_string(promptrow + curchoice, promptcol, C_PROMPT_LO, prompts[curchoice]);
-		j = (int) strlen(buf);
-		memset(&buf[j], ' ', 80-j);
-		buf[curlen] = 0;
-		driver_put_string(promptrow + curchoice, valuecol, C_PROMPT_LO,  buf);
+		driver_put_string(m_prompt_row + current_choice, m_prompt_column, C_PROMPT_LO, m_prompts[current_choice]);
+		j = (int) strlen(buffer);
+		memset(&buffer[j], ' ', 80-j);
+		buffer[current_length] = 0;
+		driver_put_string(m_prompt_row + current_choice, m_value_column, C_PROMPT_LO,  buffer);
 
 		switch (i)
 		{
@@ -726,92 +839,92 @@ struct full_screen_values *values, /* array of values */
 			done = i;
 			break;
 		case FIK_PAGE_UP:
-			curchoice = -1;
+			current_choice = -1;
 		case FIK_DOWN_ARROW:
 			do
 			{
-				if (++curchoice >= numprompts)
+				if (++current_choice >= m_num_prompts)
 				{
-					curchoice = 0;
+					current_choice = 0;
 				}
 			}
-			while (values[curchoice].type == '*');
+			while (m_values[current_choice].type == '*');
 			break;
 		case FIK_PAGE_DOWN:
-			curchoice = numprompts;
+			current_choice = m_num_prompts;
 		case FIK_UP_ARROW:
 			do
 			{
-				if (--curchoice < 0)
+				if (--current_choice < 0)
 				{
-					curchoice = numprompts - 1;
+					current_choice = m_num_prompts - 1;
 				}
 			}
-			while (values[curchoice].type == '*');
+			while (m_values[current_choice].type == '*');
 			break;
 		case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
-			if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
+			if (m_in_scrolling_mode && s_scroll_row_status < m_vertical_scroll_limit)
 			{
 				s_scroll_row_status++;
-				rewrite_extrainfo = 1;
+				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
-			if (in_scrolling_mode && s_scroll_row_status > 0)
+			if (m_in_scrolling_mode && s_scroll_row_status > 0)
 			{
 				s_scroll_row_status--;
-				rewrite_extrainfo = 1;
+				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
-			if (in_scrolling_mode && s_scroll_column_status > 0)
+			if (m_in_scrolling_mode && s_scroll_column_status > 0)
 			{
 				s_scroll_column_status--;
-				rewrite_extrainfo = 1;
+				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
-			if (in_scrolling_mode && strchr(extrainfo, '\021') != NULL)
+			if (m_in_scrolling_mode && strchr(m_footer, '\021') != NULL)
 			{
 				s_scroll_column_status++;
-				rewrite_extrainfo = 1;
+				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
-			if (in_scrolling_mode && s_scroll_row_status < vertical_scroll_limit)
+			if (m_in_scrolling_mode && s_scroll_row_status < m_vertical_scroll_limit)
 			{
-				s_scroll_row_status += extralines - 2;
-				if (s_scroll_row_status > vertical_scroll_limit)
+				s_scroll_row_status += m_footer_lines - 2;
+				if (s_scroll_row_status > m_vertical_scroll_limit)
 				{
-					s_scroll_row_status = vertical_scroll_limit;
+					s_scroll_row_status = m_vertical_scroll_limit;
 				}
-				rewrite_extrainfo = 1;
+				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_PAGE_UP:      /* scrolling key - up one screen */
-			if (in_scrolling_mode && s_scroll_row_status > 0)
+			if (m_in_scrolling_mode && s_scroll_row_status > 0)
 			{
-				s_scroll_row_status -= extralines - 2;
+				s_scroll_row_status -= m_footer_lines - 2;
 				if (s_scroll_row_status < 0)
 				{
 					s_scroll_row_status = 0;
 				}
-				rewrite_extrainfo = 1;
+				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_END:          /* scrolling key - go to end of entry */
-			if (in_scrolling_mode)
+			if (m_in_scrolling_mode)
 			{
-				s_scroll_row_status = vertical_scroll_limit;
+				s_scroll_row_status = m_vertical_scroll_limit;
 				s_scroll_column_status = 0;
-				rewrite_extrainfo = 1;
+				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
-			if (in_scrolling_mode)
+			if (m_in_scrolling_mode)
 			{
 				s_scroll_row_status = s_scroll_column_status = 0;
-				rewrite_extrainfo = 1;
+				rewrite_footer = true;
 			}
 			break;
 		}
@@ -819,12 +932,32 @@ struct full_screen_values *values, /* array of values */
 
 fullscreen_exit:
 	driver_hide_text_cursor();
-	if (scroll_file)
+	if (m_scroll_file)
 	{
-		fclose(scroll_file);
-		scroll_file = NULL;
+		fclose(m_scroll_file);
+		m_scroll_file = NULL;
 	}
 	return done;
+}
+
+/*
+	full_screen_prompt
+
+	full-screen prompting routine arguments:
+	heading				heading, lines separated by \n
+	num_prompts			there are this many prompts (max)
+	prompts				array of promp strings
+	values				in/out values
+	function_key_mask	bit n on if Fn to cause return
+	footer				extra info box to display, \n separated
+
+*/
+// TODO: extrainfo should be const, but it is modified here!
+int full_screen_prompt(const char *heading, int num_prompts, const char **prompts,
+	struct full_screen_values *values, int function_key_mask, char *footer)
+{
+	FullScreenPrompter prompter(heading, num_prompts, prompts, values, function_key_mask, footer);
+	return prompter.Prompt();
 }
 
 int prompt_value_string(char *buf, struct full_screen_values *val)
@@ -907,7 +1040,7 @@ int prompt_checkkey(int curkey)
 	case FIK_F8:
 	case FIK_F9:
 	case FIK_F10:
-		if (s_prompt_function_keys & (1 << (curkey + 1-FIK_F1)))
+		if (s_prompt_function_key_mask & (1 << (curkey + 1-FIK_F1)))
 		{
 			return curkey;
 		}
@@ -941,7 +1074,7 @@ int prompt_checkkey_scroll(int curkey)
 	case FIK_F8:
 	case FIK_F9:
 	case FIK_F10:
-		if (s_prompt_function_keys & (1 << (curkey + 1-FIK_F1)))
+		if (s_prompt_function_key_mask & (1 << (curkey + 1-FIK_F1)))
 		{
 			return curkey;
 		}
@@ -2486,7 +2619,7 @@ static int check_gfe_key(int curkey, int choice)
 {
 	char infhdg[60];
 	char infbuf[25*80];
-	int in_scrolling_mode = 0; /* 1 if entry doesn't fit available space */
+	bool in_scrolling_mode = false; /* true if entry doesn't fit available space */
 	int top_line = 0;
 	int left_column = 0;
 	int i;
@@ -2545,13 +2678,13 @@ static int check_gfe_key(int curkey, int choice)
 		if (c == EOF || c == '\032')  /* should never happen */
 		{
 			fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
-			in_scrolling_mode = 0;
+			in_scrolling_mode = false;
 		}
 		fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
 		load_entry_text(s_gfe_file, infbuf, 17, 0, 0);
 		if (lines_in_entry > 17 || widest_entry_line > 74)
 		{
-			in_scrolling_mode = 1;
+			in_scrolling_mode = true;
 		}
 		strcpy(infhdg, gfe_title);
 		strcat(infhdg, " file entry:\n\n");

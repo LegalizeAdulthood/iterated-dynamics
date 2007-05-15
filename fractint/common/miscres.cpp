@@ -1494,7 +1494,7 @@ int ifs_load()                   /* read in IFS parameters */
 
 	g_ifs_type = IFSTYPE_2D;
 	rowsize = IFSPARM;
-	if (find_file_item(g_ifs_filename, g_ifs_name, &ifsfile, 3) < 0)
+	if (find_file_item(g_ifs_filename, g_ifs_name, &ifsfile, ITEMTYPE_IFS) < 0)
 	{
 		return -1;
 	}
