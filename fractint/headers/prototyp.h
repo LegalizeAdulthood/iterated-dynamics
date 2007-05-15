@@ -301,8 +301,8 @@ extern int parameter_not_used(int);
 
 extern void magnet2_precalculate_fp();
 extern void complex_power(ComplexD *, int, ComplexD *);
-extern int complex_power_l(LComplex *, int, LComplex *, int);
-extern int lcomplex_mult(LComplex, LComplex, LComplex *, int);
+extern int complex_power_l(ComplexL *, int, ComplexL *, int);
+extern int lcomplex_mult(ComplexL, ComplexL, ComplexL *, int);
 extern int barnsley1_orbit();
 extern int barnsley1_orbit_fp();
 extern int barnsley2_orbit();
@@ -574,11 +574,11 @@ extern int standard_4d_fractal_fp();
 /*  jiim -- C file prototypes */
 
 extern void Jiim(int);
-extern LComplex PopLong();
+extern ComplexL PopLong();
 extern ComplexD PopFloat();
-extern LComplex DeQueueLong();
+extern ComplexL DeQueueLong();
 extern ComplexD DeQueueFloat();
-extern LComplex ComplexSqrtLong(long,  long);
+extern ComplexL ComplexSqrtLong(long,  long);
 extern ComplexD ComplexSqrtFloat(double, double);
 extern int    Init_Queue(unsigned long);
 extern void   Free_Queue();

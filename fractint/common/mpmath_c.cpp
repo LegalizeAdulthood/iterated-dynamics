@@ -378,13 +378,13 @@ long lsqrt(long f)
 	return (N >= 0) ? (y0 << N) : (y0 >> -N); /* correct for shift above */
 }
 #endif
-LComplex ComplexSqrtLong(long x, long y)
+ComplexL ComplexSqrtLong(long x, long y)
 {
 	double mag;
 	double theta;
 	long maglong;
 	long thetalong;
-	LComplex    result;
+	ComplexL    result;
 
 #ifndef LONGSQRT
 	mag       = sqrt(sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge +

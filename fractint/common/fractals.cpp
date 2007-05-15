@@ -65,14 +65,14 @@ static double _fastcall dy_pixel_calc();
 static long _fastcall lx_pixel_calc();
 static long _fastcall ly_pixel_calc();
 
-LComplex g_coefficient_l = { 0, 0 };
-LComplex g_old_z_l = { 0, 0 };
-LComplex g_new_z_l = { 0, 0 };
-LComplex g_parameter_l = { 0, 0 };
-LComplex g_initial_z_l = { 0, 0 };
-LComplex g_tmp_z_l = { 0, 0 };
-LComplex g_tmp_z2_l = { 0, 0 };
-LComplex g_parameter2_l = { 0, 0 };
+ComplexL g_coefficient_l = { 0, 0 };
+ComplexL g_old_z_l = { 0, 0 };
+ComplexL g_new_z_l = { 0, 0 };
+ComplexL g_parameter_l = { 0, 0 };
+ComplexL g_initial_z_l = { 0, 0 };
+ComplexL g_tmp_z_l = { 0, 0 };
+ComplexL g_tmp_z2_l = { 0, 0 };
+ComplexL g_parameter2_l = { 0, 0 };
 long g_temp_sqr_x_l = 0;
 long g_temp_sqr_y_l = 0;
 int g_max_color = 0;
@@ -92,7 +92,7 @@ int g_c_exp = 0;
 ComplexD g_parameter = { 0, 0 };
 ComplexD g_parameter2 = { 0, 0 };
 ComplexD *g_float_parameter = NULL;
-LComplex *g_long_parameter = NULL; /* used here and in jb.c */
+ComplexL *g_long_parameter = NULL; /* used here and in jb.c */
 double g_cos_x = 0.0;
 double g_sin_x = 0.0;
 double g_temp_sqr_x = 0.0;
@@ -448,7 +448,7 @@ void complex_power(ComplexD *base, int exp, ComplexD *result)
 #if !defined(XFRACT)
 /* long version */
 static long lxt, lyt, lt2;
-int complex_power_l(LComplex *base, int exp, LComplex *result, int g_bit_shift)
+int complex_power_l(ComplexL *base, int exp, ComplexL *result, int g_bit_shift)
 {
 	static long maxarg;
 	maxarg = 64L << g_bit_shift;
@@ -1350,7 +1350,7 @@ int popcorn_fn_orbit_fp()
 int popcorn_fn_orbit()
 {
 #if !defined(XFRACT)
-	LComplex ltmpx, ltmpy;
+	ComplexL ltmpx, ltmpy;
 
 	g_overflow = 0;
 
@@ -1686,7 +1686,7 @@ int phoenix_plus_orbit()
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	LComplex loldplus, lnewminus;
+	ComplexL loldplus, lnewminus;
 	loldplus = g_old_z_l;
 	g_tmp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1729,7 +1729,7 @@ int phoenix_minus_orbit()
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	LComplex loldsqr, lnewminus;
+	ComplexL loldsqr, lnewminus;
 	LCMPLXmult(g_old_z_l, g_old_z_l, loldsqr);
 	g_tmp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -1772,7 +1772,7 @@ int phoenix_complex_plus_orbit()
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	LComplex loldplus, lnewminus;
+	ComplexL loldplus, lnewminus;
 	loldplus = g_old_z_l;
 	g_tmp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1819,7 +1819,7 @@ int phoenix_complex_minus_orbit()
 #if !defined(XFRACT)
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	LComplex loldsqr, lnewminus;
+	ComplexL loldsqr, lnewminus;
 	LCMPLXmult(g_old_z_l, g_old_z_l, loldsqr);
 	g_tmp_z_l = g_old_z_l;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -1944,7 +1944,7 @@ int try_float_fractal(int (*fpFractal)())
 int trig_trig_orbit()
 {
 #if !defined(XFRACT)
-	LComplex g_tmp_z2_l;
+	ComplexL g_tmp_z2_l;
 	/* z = trig0(z)*trig1(z) */
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);
 	LCMPLXtrig1(g_old_z_l, g_tmp_z2_l);
