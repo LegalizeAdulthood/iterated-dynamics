@@ -100,10 +100,10 @@ void clear_box()
 
 void zoom_box_draw(int drawit)
 {
-	coords tl;
-	coords bl;
-	coords tr;
-	coords br; /* dot addr of topleft, botleft, etc */
+	Coordinate tl;
+	Coordinate bl;
+	Coordinate tr;
+	Coordinate br; /* dot addr of topleft, botleft, etc */
 	double tmpx;
 	double tmpy;
 	double dx;
@@ -246,7 +246,7 @@ void zoom_box_draw(int drawit)
 		}
 	}
 
-void _fastcall draw_lines(struct coords fr, struct coords to,
+void _fastcall draw_lines(Coordinate fr, Coordinate to,
 						int dx, int dy)
 {
 	int xincr;
@@ -255,9 +255,9 @@ void _fastcall draw_lines(struct coords fr, struct coords to,
 	int altctr;
 	int altdec;
 	int altinc;
-	struct coords tmpp;
-	struct coords line1;
-	struct coords line2;
+	Coordinate tmpp;
+	Coordinate line1;
+	Coordinate line2;
 
 	if (abs(to.x-fr.x) > abs(to.y-fr.y))  /* delta.x > delta.y */
 	{
@@ -328,7 +328,7 @@ void _fastcall draw_lines(struct coords fr, struct coords to,
 	}
 }
 
-void _fastcall add_box(struct coords point)
+void _fastcall add_box(Coordinate point)
 {
 #if defined(_WIN32)
 	_ASSERTE(g_box_count < NUM_BOXES);

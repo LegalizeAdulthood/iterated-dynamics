@@ -7,7 +7,7 @@
 #endif
 
 extern BYTE g_trig_index[];
-extern struct trig_funct_lst trigfn[];
+extern struct TrigonometricFunctionListItem trigfn[];
 extern  void   (_fastcall *plot)(int, int, int);
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */

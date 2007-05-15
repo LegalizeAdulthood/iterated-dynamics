@@ -866,8 +866,8 @@ extern void zoom_box_change_i(int, int);
 extern void zoom_box_out();
 extern void aspect_ratio_crop(float, float);
 extern int init_pan_or_recalc(int);
-extern void _fastcall draw_lines(struct coords, struct coords, int, int);
-extern void _fastcall add_box(struct coords);
+extern void _fastcall draw_lines(Coordinate, Coordinate, int, int);
+extern void _fastcall add_box(Coordinate);
 extern void clear_box();
 extern void display_box();
 

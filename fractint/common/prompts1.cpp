@@ -1529,7 +1529,7 @@ const char *g_jiim_left_right[] =
 };
 
 /* moved from miscres.c so sizeof structure can be accessed here */
-struct trig_funct_lst trigfn[] =
+struct TrigonometricFunctionListItem trigfn[] =
 /* changing the order of these alters meaning of *.fra file */
 /* maximum 6 characters in function names or recheck all related code */
 {
@@ -1600,9 +1600,7 @@ struct trig_funct_lst trigfn[] =
 #endif
 };
 
-#define NUMTRIGFN  sizeof(trigfn)/sizeof(struct trig_funct_lst)
-
-const int g_num_trig_fn = NUMTRIGFN;
+const int g_num_trig_fn = NUM_OF(trigfn);
 
 /* --------------------------------------------------------------------- */
 int get_fractal_parameters(int caller)        /* prompt for type-specific parms */
@@ -1635,7 +1633,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	char *filename;
 	char *entryname;
 	FILE *entryfile;
-	const char *trignameptr[NUMTRIGFN];
+	const char *trignameptr[NUM_OF(trigfn)];
 #ifdef XFRACT
 	static /* Can't initialize aggregates on the stack */
 #endif
@@ -1886,7 +1884,7 @@ gfp_top:
 		numtrig = g_formula_state.max_fn();
 	}
 
-	i = NUMTRIGFN;
+	i = NUM_OF(trigfn);
 	while (--i >= 0)
 	{
 		trignameptr[i] = trigfn[i].name;
@@ -1895,7 +1893,7 @@ gfp_top:
 	{
 		paramvalues[promptnum].type = 'l';
 		paramvalues[promptnum].uval.ch.val  = g_trig_index[i];
-		paramvalues[promptnum].uval.ch.llen = NUMTRIGFN;
+		paramvalues[promptnum].uval.ch.llen = NUM_OF(trigfn);
 		paramvalues[promptnum].uval.ch.vlen = 6;
 		paramvalues[promptnum].uval.ch.list = trignameptr;
 		choices[promptnum++] = (char *)trg[i];

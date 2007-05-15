@@ -875,7 +875,7 @@ void draw_parameter_box(int mode)
 {
 	/* draws parameter zoom box in evolver mode */
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
-	struct coords tl, tr, bl, br;
+	Coordinate tl, tr, bl, br;
 	int grout;
 	if (!(g_evolving & EVOLVE_PARM_BOX))
 	{

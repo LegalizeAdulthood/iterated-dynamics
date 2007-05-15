@@ -88,8 +88,7 @@ extern int key_count(int);
 
 extern void display_box();
 extern void clear_box();
-extern void _fastcall add_box(struct coords);
-extern void _fastcall draw_lines(struct coords, struct coords, int, int);
+extern void _fastcall draw_lines(Coordinate, Coordinate, int, int);
 extern int show_vid_length();
 
 extern void disk_video_status(int, char *);

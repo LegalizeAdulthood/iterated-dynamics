@@ -1056,17 +1056,17 @@ typedef struct WorkListItem WORKLIST;
 
 #define MAXCALCWORK 12
 
-struct coords
+template <typename T>
+struct CoordinateT
 {
-	int x, y;
+	T x;
+	T y;
 };
 
-struct dblcoords
-{
-	double x, y;
-};
+typedef CoordinateT<int> Coordinate;
+typedef CoordinateT<double> CoordinateD;
 
-struct trig_funct_lst
+struct TrigonometricFunctionListItem
 {
 	const char *name;
 	void (*lfunct)();
