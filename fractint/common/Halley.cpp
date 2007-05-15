@@ -98,8 +98,15 @@ int Halley::orbit()
 	/*  a = g_parameter.x = degree, relaxation coeff. = g_parameter.y, epsilon = g_parameter2.x  */
 
 	int ihal;
-	DComplex XtoAlessOne, XtoA, XtoAplusOne; /* a-1, a, a + 1 */
-	DComplex FX, F1prime, F2prime, Halnumer1, Halnumer2, Haldenom;
+	DComplex XtoAlessOne;
+	DComplex XtoA;
+	DComplex XtoAplusOne; /* a-1, a, a + 1 */
+	DComplex FX;
+	DComplex F1prime;
+	DComplex F2prime;
+	DComplex Halnumer1;
+	DComplex Halnumer2;
+	DComplex Haldenom;
 	DComplex relax;
 
 	XtoAlessOne = g_old_z;

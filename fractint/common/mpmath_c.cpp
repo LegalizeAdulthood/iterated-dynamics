@@ -164,7 +164,9 @@ struct MPC cmplx2MPC(DComplex z)
 
 DComplex ComplexPower(DComplex xx, DComplex yy)
 {
-	DComplex z, cLog, t;
+	DComplex z;
+	DComplex cLog;
+	DComplex t;
 
 	/* fixes power bug - if any complaints, backwards compatibility hook
 		goes here TIW 3/95 */
@@ -249,7 +251,9 @@ void Arccoshz(DComplex z, DComplex *rz)
 /* rz=Arctanh(z)=1/2*Log{(1 + z)/(1-z)} */
 void Arctanhz(DComplex z, DComplex *rz)
 {
-	DComplex temp0, temp1, temp2;
+	DComplex temp0;
+	DComplex temp1;
+	DComplex temp2;
 
 	if (z.x == 0.0)
 	{
@@ -287,7 +291,10 @@ void Arctanhz(DComplex z, DComplex *rz)
 /* rz = Arctan(z) = i/2*Log{(1-i*z)/(1 + i*z)} */
 void Arctanz(DComplex z, DComplex *rz)
 {
-	DComplex temp0, temp1, temp2, temp3;
+	DComplex temp0;
+	DComplex temp1;
+	DComplex temp2;
+	DComplex temp3;
 	if (z.x == 0.0 && z.y == 0.0)
 	{
 		rz->x = rz->y = 0;
@@ -620,7 +627,8 @@ long ExpFloat14(long xx)
 }
 
 double TwoPi;
-DComplex temp, BaseLog;
+DComplex temp;
+DComplex BaseLog;
 DComplex cdegree = { 3.0, 0.0 };
 DComplex croot   = { 1.0, 0.0 };
 

@@ -14,7 +14,8 @@ extern struct MPC mpcold, mpcnew;
 #endif
 
 extern double TwoPi;
-extern DComplex temp, BaseLog;
+extern DComplex temp;
+extern DComplex BaseLog;
 extern DComplex cdegree;
 extern DComplex croot;
 

@@ -77,7 +77,10 @@ void HComplexTrig0(DHyperComplex *h, DHyperComplex *out)
        complex valued function of a complex variable can easily
        be generalized to hypercomplex numbers */
 
-	DComplex a, b, resulta, resultb;
+	DComplex a;
+	DComplex b;
+	DComplex resulta;
+	DComplex resultb;
 
 	/* convert to duplex form */
 	a.x = h->x - h->t;

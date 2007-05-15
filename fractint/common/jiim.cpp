@@ -962,7 +962,9 @@ void Jiim(int which)         /* called by fractint */
 			/* compute fixed points and use them as starting points of JIIM */
 			if (which == JIIM && OKtoMIIM)
 			{
-				DComplex f1, f2, Sqrt;        /* Fixed points of Julia */
+				DComplex f1;
+				DComplex f2;
+				DComplex Sqrt;        /* Fixed points of Julia */
 
 				Sqrt = ComplexSqrtFloat(1 - 4*cr, -4*ci);
 				f1.x = (1 + Sqrt.x) / 2;
