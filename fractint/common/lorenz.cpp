@@ -320,7 +320,7 @@ int orbit_3d_setup()
 	}
 	else if (g_fractal_type == FRACTYPE_INVERSE_JULIA)
 	{
-		LComplex Sqrt;
+		ComplexL Sqrt;
 
 		s_x_long = (long) (g_parameters[0]*g_fudge);
 		s_y_long = (long) (g_parameters[1]*g_fudge);

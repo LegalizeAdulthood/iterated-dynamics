@@ -64,13 +64,13 @@ enum MATH_TYPE { D_MATH};
 	while (0)
 
 /* the following are declared 4 dimensional as an experiment */
-/* changeing declarations to ComplexD and LComplex restores the code */
+/* changeing declarations to ComplexD and ComplexL restores the code */
 /* to 2D */
 union Arg
 {
    ComplexD     d;
    struct MPC m;
-   LComplex    l;
+   ComplexL    l;
 /*
    _DHCMPLX   dh;
    _LHCMPLX   lh; */

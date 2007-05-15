@@ -390,10 +390,10 @@ PopFloat()
 	return pop;
 }
 
-LComplex
+ComplexL
 PopLong()
 {
-	LComplex pop;
+	ComplexL pop;
 
 	if (!QueueEmpty())
 	{
@@ -450,10 +450,10 @@ DeQueueFloat()
 	return out;
 }
 
-LComplex
+ComplexL
 DeQueueLong()
 {
-	LComplex out;
+	ComplexL out;
 	out.x = 0;
 	out.y = 0;
 

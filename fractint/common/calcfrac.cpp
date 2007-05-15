@@ -52,7 +52,7 @@ enum direction
 
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
-LComplex g_init_orbit_l = { 0, 0 };
+ComplexL g_init_orbit_l = { 0, 0 };
 long g_magnitude_l = 0;
 long g_limit_l = 0;
 long g_limit2_l = 0;
@@ -123,7 +123,7 @@ int g_three_pass;
 int g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
 ComplexD  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
-LComplex g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
+ComplexL g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
 int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
 int g_periodicity_check;
 /* next has a skip bit for each s_max_block unit;
@@ -2007,9 +2007,9 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	int caught_a_cycle;
 	long savedand;
 	int savedincr;       /* for periodicity checking */
-	LComplex lsaved;
+	ComplexL lsaved;
 	int attracted;
-	LComplex lat;
+	ComplexL lat;
 	ComplexD  at;
 	ComplexD deriv;
 	long dem_color = -1;
@@ -2962,7 +2962,7 @@ static void decomposition()
 	static long reset_fudge = -1;
 	int temp = 0;
 	int save_temp = 0;
-	LComplex lalt;
+	ComplexL lalt;
 	ComplexD alt;
 	g_color_iter = 0;
 	if (g_integer_fractal) /* the only case */
