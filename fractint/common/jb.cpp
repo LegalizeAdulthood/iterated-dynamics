@@ -77,7 +77,7 @@ static Perspective_fp s_left_eye_fp;
 static Perspective_fp s_right_eye_fp;
 static Perspective_fp *s_per_fp;
 static LComplex s_jbc;
-static DComplex s_jbc_fp;
+static ComplexD s_jbc_fp;
 #ifndef XFRACT
 static double s_fg, s_fg16;
 #endif

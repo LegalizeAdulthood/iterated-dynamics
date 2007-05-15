@@ -14,7 +14,7 @@ struct HyperComplexT : public ComplexT<T>
 	T z, t;
 };
 
-typedef struct ComplexT<double> DComplex;
+typedef struct ComplexT<double> ComplexD;
 typedef struct ComplexT<long> LComplex;
 typedef struct HyperComplexT<double> DHyperComplex;
 typedef struct HyperComplexT<long> LHyperComplex;

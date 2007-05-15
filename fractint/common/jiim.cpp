@@ -362,10 +362,10 @@ PushFloat(float x, float y)
 	return 0;                    /* fail */
 }
 
-DComplex
+ComplexD
 PopFloat()
 {
-	DComplex pop;
+	ComplexD pop;
 	float popx;
 	float popy;
 
@@ -426,10 +426,10 @@ EnQueueLong(long x, long y)
 	return PushLong(x, y);
 }
 
-DComplex
+ComplexD
 DeQueueFloat()
 {
-	DComplex out;
+	ComplexD out;
 	float outx;
 	float outy;
 
@@ -521,7 +521,7 @@ static void RestoreRect(int x, int y, int width, int height)
  * interface to FRACTINT
  */
 
-DComplex g_save_c = {-3000.0, -3000.0};
+ComplexD g_save_c = {-3000.0, -3000.0};
 
 void Jiim(int which)         /* called by fractint */
 {
@@ -962,9 +962,9 @@ void Jiim(int which)         /* called by fractint */
 			/* compute fixed points and use them as starting points of JIIM */
 			if (which == JIIM && OKtoMIIM)
 			{
-				DComplex f1;
-				DComplex f2;
-				DComplex Sqrt;        /* Fixed points of Julia */
+				ComplexD f1;
+				ComplexD f2;
+				ComplexD Sqrt;        /* Fixed points of Julia */
 
 				Sqrt = ComplexSqrtFloat(1 - 4*cr, -4*ci);
 				f1.x = (1 + Sqrt.x) / 2;

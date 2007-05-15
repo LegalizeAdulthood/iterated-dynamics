@@ -513,7 +513,7 @@ int orbit_3d_setup_fp()
 	}
 	else if (g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
 	{
-		DComplex Sqrt;
+		ComplexD Sqrt;
 
 		s_cx = g_parameters[0];
 		s_cy = g_parameters[1];
@@ -1262,8 +1262,8 @@ int mandel_cloud_orbit_fp(double *x, double *y, double *z)
 
 int dynamic_orbit_fp(double *x, double *y, double *z)
 {
-	DComplex cp;
-	DComplex tmp;
+	ComplexD cp;
+	ComplexD tmp;
 	double newx;
 	double newy;
 	cp.x = s_b* *x;

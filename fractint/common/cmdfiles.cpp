@@ -64,7 +64,7 @@ int     g_init_3d[20];             /* '3d=nn/nn/nn/...' values */
 int     g_check_current_dir;            /* flag to check current dir for files */
 int     g_initialize_batch = 0;			/* 1 if batch run (no kbd)  */
 int     g_save_time;           /* autosave minutes         */
-DComplex  g_initial_orbit_z;              /* initial orbitvalue */
+ComplexD  g_initial_orbit_z;              /* initial orbitvalue */
 char    g_use_initial_orbit_z;           /* flag for g_initial_orbit_z */
 int     g_init_mode;               /* initial video mode       */
 int     g_initial_cycle_limit;         /* initial cycle limit      */

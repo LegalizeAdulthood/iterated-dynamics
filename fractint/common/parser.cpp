@@ -2066,7 +2066,7 @@ void lStkLog()
 
 void (*StkLog)() = dStkLog;
 
-void FPUcplxexp(DComplex *x, DComplex *z)
+void FPUcplxexp(ComplexD *x, ComplexD *z)
 {
 	FPUcplxexp387(x, z);
 }
@@ -2100,8 +2100,8 @@ void dStkPwr()
 #if !defined(XFRACT)
 void mStkPwr()
 {
-	DComplex x;
-	DComplex y;
+	ComplexD x;
+	ComplexD y;
 
 	x = MPC2cmplx(Arg2->m);
 	y = MPC2cmplx(Arg1->m);
@@ -2113,8 +2113,8 @@ void mStkPwr()
 
 void lStkPwr()
 {
-	DComplex x;
-	DComplex y;
+	ComplexD x;
+	ComplexD y;
 
 	x.x = (double)Arg2->l.x / s_fudge;
 	x.y = (double)Arg2->l.y / s_fudge;
@@ -2321,7 +2321,7 @@ static int isconst_pair(const char *Str)
 
 ConstArg *Formula::is_constant(const char *text, int length)
 {
-	DComplex z;
+	ComplexD z;
 	unsigned j;
 	/* next line enforces variable vs constant naming convention */
 	for (int n = 0; n < m_parser_vsp; n++)
