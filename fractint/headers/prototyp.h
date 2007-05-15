@@ -543,7 +543,7 @@ extern int gifview();
 
 /*  hcmplx -- C file prototypes */
 
-extern void HComplexTrig0(DHyperComplex *, DHyperComplex *);
+extern void HComplexTrig0(HyperComplexD *, HyperComplexD *);
 
 /*  help -- C file prototypes */
 
