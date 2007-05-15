@@ -2100,7 +2100,8 @@ void dStkPwr()
 #if !defined(XFRACT)
 void mStkPwr()
 {
-	DComplex x, y;
+	DComplex x;
+	DComplex y;
 
 	x = MPC2cmplx(Arg2->m);
 	y = MPC2cmplx(Arg1->m);
@@ -2112,7 +2113,8 @@ void mStkPwr()
 
 void lStkPwr()
 {
-	DComplex x, y;
+	DComplex x;
+	DComplex y;
 
 	x.x = (double)Arg2->l.x / s_fudge;
 	x.y = (double)Arg2->l.y / s_fudge;

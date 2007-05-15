@@ -978,7 +978,8 @@ int z_power_orbit()
 int complex_z_power_orbit()
 {
 #if !defined(XFRACT)
-	DComplex x, y;
+	DComplex x;
+	DComplex y;
 
 	x.x = (double)g_old_z_l.x / g_fudge;
 	x.y = (double)g_old_z_l.y / g_fudge;
@@ -1707,7 +1708,8 @@ int phoenix_plus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	DComplex oldplus, newminus;
+	DComplex oldplus;
+	DComplex newminus;
 	oldplus = g_old_z;
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1749,7 +1751,8 @@ int phoenix_minus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	DComplex oldsqr, newminus;
+	DComplex oldsqr;
+	DComplex newminus;
 	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -1793,7 +1796,8 @@ int phoenix_complex_plus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-1)*(z(n) + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	DComplex oldplus, newminus;
+	DComplex oldplus;
+	DComplex newminus;
 	oldplus = g_old_z;
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 2, degree = degree-1 in setup */
@@ -1839,7 +1843,8 @@ int phoenix_complex_minus_orbit_fp()
 {
 	/* z(n + 1) = z(n)^(degree-2)*(z(n)^2 + p) + qy(n),  y(n + 1) = z(n) */
 	int i;
-	DComplex oldsqr, newminus;
+	DComplex oldsqr;
+	DComplex newminus;
 	FPUcplxmul(&g_old_z, &g_old_z, &oldsqr);
 	g_temp_z = g_old_z;
 	for (i = 1; i < g_degree; i++)  /* degree >= 3, degree = degree-2 in setup */
@@ -2085,7 +2090,9 @@ int sqr_trig_orbit_fp()
 
 int magnet1_orbit_fp()    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 {                   /*  In "Beauty of Fractals", code by Kev Allen. */
-	DComplex top, bot, tmp;
+	DComplex top;
+	DComplex bot;
+	DComplex tmp;
 	double div;
 
 	top.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x - 1; /* top = Z**2 + C-1 */
@@ -2115,7 +2122,9 @@ int magnet1_orbit_fp()    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 int magnet2_orbit_fp()
 {
 	/*   In "Beauty of Fractals", code by Kev Allen.  */
-	DComplex top, bot, tmp;
+	DComplex top;
+	DComplex bot;
+	DComplex tmp;
 	double div;
 
 	top.x = g_old_z.x*(g_temp_sqr_x-g_temp_sqr_y-g_temp_sqr_y-g_temp_sqr_y + s_3_c_minus_1.x)
@@ -3220,7 +3229,8 @@ int mandelbrot_mix4_per_pixel_fp()
 int mandelbrot_mix4_orbit_fp() /* from formula by Jim Muth */
 {
 	/* z = k*((a*(z^b)) + (d*(z^f))) + c, */
-	DComplex z_b, z_f;
+	DComplex z_b;
+	DComplex z_f;
 	CMPLXpwr(g_old_z, B, z_b);     /* (z^b)     */
 	CMPLXpwr(g_old_z, F, z_f);     /* (z^f)     */
 	g_new_z.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;
