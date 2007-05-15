@@ -1428,10 +1428,10 @@ static int fix_period_bof()
 
 struct window  /* for look_get_window on screen browser */
 {
-	struct coords itl; /* screen coordinates */
-	struct coords ibl;
-	struct coords itr;
-	struct coords ibr;
+	Coordinate itl; /* screen coordinates */
+	Coordinate ibl;
+	Coordinate itr;
+	Coordinate ibr;
 	double win_size;   /* box size for drawindow() */
 	char name[FILE_MAX_FNAME];     /* for filename */
 	int box_count;      /* bytes of saved screen info */
@@ -1441,13 +1441,13 @@ struct window  /* for look_get_window on screen browser */
 static void drawindow(int, struct window *);
 static char is_visible_window
 				(struct window *, fractal_info *, struct ext_blk_mp_info *);
-static void transform(struct dblcoords *);
+static void transform(CoordinateD *);
 static char paramsOK(fractal_info *);
 static char typeOK(fractal_info *, struct ext_blk_formula_info *);
 static char functionOK(fractal_info *, int);
 static void check_history(const char *, const char *);
 static void bfsetup_convert_to_screen();
-static void bftransform(bf_t, bf_t, struct dblcoords *);
+static void bftransform(bf_t, bf_t, CoordinateD *);
 
 char g_browse_name[FILE_MAX_FNAME]; /* name for browse file */
 static struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
@@ -1890,8 +1890,8 @@ static void drawindow(int colour, struct window *info)
 {
 #ifndef XFRACT
 	int cross_size;
-	struct coords ibl;
-	struct coords itr;
+	Coordinate ibl;
+	Coordinate itr;
 #endif
 
 	g_box_color = colour;
@@ -1940,7 +1940,7 @@ static void drawindow(int colour, struct window *info)
 }
 
 /* maps points onto view screen*/
-static void transform(struct dblcoords *point)
+static void transform(CoordinateD *point)
 {
 	double tmp_pt_x = cvt->a*point->x + cvt->b*point->y + cvt->e;
 	point->y = cvt->c*point->x + cvt->d*point->y + cvt->f;
@@ -1952,7 +1952,7 @@ static void is_visible_window_corner(const fractal_info &info,
 	bf_t bt_xmin, bf_t bt_xmax,
 	bf_t bt_ymin, bf_t bt_ymax,
 	bf_t bt_x3rd, bf_t bt_y3rd,
-	dblcoords &corner)
+	CoordinateD &corner)
 {
 	if (oldbf_math || info.bf_math)
 	{
@@ -2045,22 +2045,22 @@ static char is_visible_window(struct window *list, fractal_info *info,
 
 	/* tranform maps real plane co-ords onto the current screen view
 		see above */
-	struct dblcoords tl;
+	CoordinateD tl;
 	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, tl);
 	list->itl.x = (int)(tl.x + 0.5);
 	list->itl.y = (int)(tl.y + 0.5);
 
-	struct dblcoords tr;
+	CoordinateD tr;
 	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, tr);
 	list->itr.x = (int)(tr.x + 0.5);
 	list->itr.y = (int)(tr.y + 0.5);
 
-	struct dblcoords bl;
+	CoordinateD bl;
 	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, bl);
 	list->ibl.x = (int)(bl.x + 0.5);
 	list->ibl.y = (int)(bl.y + 0.5);
 
-	struct dblcoords br;
+	CoordinateD br;
 	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, br);
 	list->ibr.x = (int)(br.x + 0.5);
 	list->ibr.y = (int)(br.y + 0.5);
@@ -2318,7 +2318,7 @@ static void bfsetup_convert_to_screen()
 }
 
 /* maps points onto view screen*/
-static void bftransform(bf_t bt_x, bf_t bt_y, struct dblcoords *point)
+static void bftransform(bf_t bt_x, bf_t bt_y, CoordinateD *point)
 {
 	int saved = save_stack();
 	bf_t bt_tmp1 = alloc_stack(rbflength + 2);
