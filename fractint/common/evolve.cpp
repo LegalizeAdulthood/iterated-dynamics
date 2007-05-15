@@ -1,19 +1,26 @@
 #include <string.h>
 
+#include <string>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
 #include "fihelp.h"
 #include "Formula.h"
+#include "UIChoices.h"
+#include "MathUtil.h"
 
-#define VARYINT_NONE			0
-#define VARYINT_WITH_X			1
-#define VARYINT_WITH_Y			2
-#define VARYINT_WITH_X_PLUS_Y	3
-#define VARYINT_WITH_X_MINUS_Y	4
-#define VARYINT_RANDOM			5
-#define VARYINT_RANDOM_WEIGHTED	6
+enum VaryIntType
+{
+	VARYINT_NONE			= 0,
+	VARYINT_WITH_X			= 1,
+	VARYINT_WITH_Y			= 2,
+	VARYINT_WITH_X_PLUS_Y	= 3,
+	VARYINT_WITH_X_MINUS_Y	= 4,
+	VARYINT_RANDOM			= 5,
+	VARYINT_RANDOM_WEIGHTED	= 6
+};
 
 #define MAX_GRID_SIZE 51  /* This is arbitrary, = 1024/20 */
 
@@ -327,130 +334,89 @@ static void vary_invert(GENEBASE gene[], int randval, int i)
 */
 static int get_the_rest()
 {
-	const char *evolvmodes[] =
-	{
-		"no", "x", "y", "x+y", "x-y", "random", "spread"
-	};
-	int i;
-	int k;
-	int num;
-	int numtrig;
-	const char *choices[20];
-	struct full_screen_values uvalues[20];
-
-	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
+	int numtrig = (g_current_fractal_specific->flags >> 6) & 7;
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
 		numtrig = g_formula_state.max_fn();
 	}
 
 choose_vars_restart:
-	k = -1;
-	for (num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
 	{
-		choices[++k] = g_genes[num].name;
-		uvalues[k].type = 'l';
-		uvalues[k].uval.ch.vlen = 7;
-		uvalues[k].uval.ch.llen = 7;
-		uvalues[k].uval.ch.list = evolvmodes;
-		uvalues[k].uval.ch.val =  g_genes[num].mutate;
-	}
-
-	for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
-	{
-		choices[++k] = g_genes[num].name;
-		uvalues[k].type = 'l';
-		uvalues[k].uval.ch.vlen = 7;
-		uvalues[k].uval.ch.llen = 7;
-		uvalues[k].uval.ch.list = evolvmodes;
-		uvalues[k].uval.ch.val =  g_genes[num].mutate;
-	}
-
-	if (g_current_fractal_specific->calculate_type == standard_fractal &&
-		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
-	{
-		choices[++k] = g_genes[NUMGENES - 1].name;
-		uvalues[k].type = 'l';
-		uvalues[k].uval.ch.vlen = 7;
-		uvalues[k].uval.ch.llen = 7;
-		uvalues[k].uval.ch.list = evolvmodes;
-		uvalues[k].uval.ch.val =  g_genes[NUMGENES - 1].mutate;
-	}
-
-	choices[++k]= "";
-	uvalues[k].type = '*';
-	choices[++k]= "Press F2 to set all to off";
-	uvalues[k].type ='*';
-	choices[++k]= "Press F3 to set all on";
-	uvalues[k].type = '*';
-	choices[++k]= "Press F4 to randomize all";
-	uvalues[k].type = '*';
-
-	i = full_screen_prompt("Variable tweak central 2 of 2", k + 1, choices, uvalues, 28, NULL);
-
-	switch (i)
-	{
-	case FIK_F2: /* set all off */
-		for (num = MAX_PARAMETERS; num < NUMGENES; num++)
+		const char *evolvmodes[] =
 		{
-			g_genes[num].mutate = VARYINT_NONE;
-		}
-		goto choose_vars_restart;
-	case FIK_F3: /* set all on..alternate x and y for field map */
-		for (num = MAX_PARAMETERS; num < NUMGENES; num ++)
+			"no", "x", "y", "x+y", "x-y", "random", "spread"
+		};
+		UIChoices dialog("Variable tweak central 2 of 2", 28);
+		for (int num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
 		{
-			g_genes[num].mutate = (char)((num % 2) + 1);
+			dialog.push(g_genes[num].name, evolvmodes, NUM_OF(evolvmodes), g_genes[num].mutate);
 		}
-		goto choose_vars_restart;
-	case FIK_F4: /* Randomize all */
-		for (num = MAX_PARAMETERS; num < NUMGENES; num ++)
+		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
 		{
-			g_genes[num].mutate = (char)(rand() % 6);
+			dialog.push(g_genes[num].name, evolvmodes, NUM_OF(evolvmodes), g_genes[num].mutate);
 		}
-		goto choose_vars_restart;
-	case -1:
-		return -1;
-	default:
-		break;
-	}
+		if (g_current_fractal_specific->calculate_type == standard_fractal &&
+			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
+		{
+			dialog.push(g_genes[NUMGENES - 1].name, evolvmodes, NUM_OF(evolvmodes), g_genes[NUMGENES - 1].mutate);
+		}
+		dialog.push("");
+		dialog.push("Press F2 to set all to off");
+		dialog.push("Press F3 to set all on");
+		dialog.push("Press F4 to randomize all");
 
-	/* read out values */
-	k = -1;
-	for (num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
-	{
-		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
-	}
+		int i = dialog.prompt();
+		switch (i)
+		{
+		case FIK_F2: /* set all off */
+			for (int num = MAX_PARAMETERS; num < NUMGENES; num++)
+			{
+				g_genes[num].mutate = VARYINT_NONE;
+			}
+			goto choose_vars_restart;
+		case FIK_F3: /* set all on..alternate x and y for field map */
+			for (int num = MAX_PARAMETERS; num < NUMGENES; num ++)
+			{
+				g_genes[num].mutate = (char)((num % 2) + 1);
+			}
+			goto choose_vars_restart;
+		case FIK_F4: /* Randomize all */
+			for (int num = MAX_PARAMETERS; num < NUMGENES; num ++)
+			{
+				g_genes[num].mutate = (char)(rand() % 6);
+			}
+			goto choose_vars_restart;
+		case -1:
+			return -1;
+		default:
+			break;
+		}
 
-	for (num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
-	{
-		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
-	}
+		int k = -1;
+		for (int num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
+		{
+			g_genes[num].mutate = (char)(dialog.values(++k).uval.ch.val);
+		}
 
-	if (g_current_fractal_specific->calculate_type == standard_fractal &&
-		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
-	{
-		g_genes[NUMGENES - 1].mutate = (char)(uvalues[++k].uval.ch.val);
-	}
+		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
+		{
+			g_genes[num].mutate = (char)(dialog.values(++k).uval.ch.val);
+		}
 
-	return 1; /* if you were here, you want to regenerate */
+		if (g_current_fractal_specific->calculate_type == standard_fractal &&
+			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
+		{
+			g_genes[NUMGENES - 1].mutate = (char)(dialog.values(++k).uval.ch.val);
+		}
+
+		return 1; /* if you were here, you want to regenerate */
+	}
 }
 
 static int get_variations()
 {
-	const char *evolvmodes[] = 
-	{
-		"no", "x", "y", "x+y", "x-y", "random", "spread"
-	};
-	int i;
-	int k;
-	int num;
-	int numparams;
-	const char *choices[20];
-	struct full_screen_values uvalues[20];
 	int firstparm = 0;
 	int lastparm  = MAX_PARAMETERS;
-	int chngd = -1;
-
 	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 	{
 		if (g_formula_state.uses_p1())  /* set first parameter */
@@ -496,8 +462,8 @@ static int get_variations()
 		}
 	}
 
-	numparams = 0;
-	for (i = firstparm; i < lastparm; i++)
+	int numparams = 0;
+	for (int i = firstparm; i < lastparm; i++)
 	{
 		if (type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, NULL) == 0)
 		{
@@ -519,94 +485,86 @@ static int get_variations()
 	}
 
 choose_vars_restart:
-	k = -1;
-	for (num = firstparm; num < lastparm; num++)
 	{
-		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+		UIChoices dialog("Variable tweak central 1 of 2", 92);
+		const char *evolvmodes[] = 
 		{
-			if (parameter_not_used(num))
+			"no", "x", "y", "x+y", "x-y", "random", "spread"
+		};
+		for (int num = firstparm; num < lastparm; num++)
+		{
+			if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 			{
-				continue;
+				if (parameter_not_used(num))
+				{
+					continue;
+				}
 			}
+			dialog.push(g_genes[num].name, evolvmodes, NUM_OF(evolvmodes), g_genes[num].mutate);
 		}
-		choices[++k] = g_genes[num].name;
-		uvalues[k].type = 'l';
-		uvalues[k].uval.ch.vlen = 7;
-		uvalues[k].uval.ch.llen = 7;
-		uvalues[k].uval.ch.list = evolvmodes;
-		uvalues[k].uval.ch.val =  g_genes[num].mutate;
+		dialog.push("");
+		dialog.push("Press F2 to set all to off");
+		dialog.push("Press F3 to set all on");
+		dialog.push("Press F4 to randomize all");
+		dialog.push("Press F6 for second page");
+
+		int i = dialog.prompt();
+		int chngd = -1;
+		switch (i)
+		{
+		case FIK_F2: /* set all off */
+			for (int num = 0; num < MAX_PARAMETERS; num++)
+			{
+				g_genes[num].mutate = VARYINT_NONE;
+			}
+			goto choose_vars_restart;
+		case FIK_F3: /* set all on..alternate x and y for field map */
+			for (int num = 0; num < MAX_PARAMETERS; num ++)
+			{
+				g_genes[num].mutate = (char) ((num % 2) + 1);
+			}
+			goto choose_vars_restart;
+		case FIK_F4: /* Randomize all */
+			for (int num = 0; num < MAX_PARAMETERS; num ++)
+			{
+				g_genes[num].mutate = (char) (rand() % 6);
+			}
+			goto choose_vars_restart;
+		case FIK_F6: /* go to second screen, put array away first */
+			{
+				GENEBASE save[NUMGENES];
+				for (int g = 0; g < NUMGENES; g++)
+				{
+					save[g] = g_genes[g];
+				}
+				chngd = get_the_rest();
+				for (int g = 0; g < NUMGENES; g++)
+				{
+					g_genes[g] = save[g];
+				}
+			}
+			goto choose_vars_restart;
+		case -1:
+			return chngd;
+		default:
+			break;
+		}
+
+		int k = 0;
+		for (int num = firstparm; num < lastparm; num++)
+		{
+			if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+			{
+				if (parameter_not_used(num))
+				{
+					continue;
+				}
+			}
+			g_genes[num].mutate = (char)(dialog.values(k++).uval.ch.val);
+		}
+
+		return 1; /* if you were here, you want to regenerate */
 	}
-
-	choices[++k]= "";
-	uvalues[k].type = '*';
-	choices[++k]= "Press F2 to set all to off";
-	uvalues[k].type ='*';
-	choices[++k]= "Press F3 to set all on";
-	uvalues[k].type = '*';
-	choices[++k]= "Press F4 to randomize all";
-	uvalues[k].type = '*';
-	choices[++k]= "Press F6 for second page"; /* F5 gets eaten */
-	uvalues[k].type = '*';
-
-	i = full_screen_prompt("Variable tweak central 1 of 2", k + 1, choices, uvalues, 92, NULL);
-
-	switch (i)
-	{
-	case FIK_F2: /* set all off */
-		for (num = 0; num < MAX_PARAMETERS; num++)
-		{
-			g_genes[num].mutate = VARYINT_NONE;
-		}
-		goto choose_vars_restart;
-	case FIK_F3: /* set all on..alternate x and y for field map */
-		for (num = 0; num < MAX_PARAMETERS; num ++)
-		{
-			g_genes[num].mutate = (char)((num % 2) + 1);
-		}
-		goto choose_vars_restart;
-	case FIK_F4: /* Randomize all */
-		for (num = 0; num < MAX_PARAMETERS; num ++)
-		{
-			g_genes[num].mutate = (char)(rand() % 6);
-		}
-		goto choose_vars_restart;
-	case FIK_F6: /* go to second screen, put array away first */
-		{
-			GENEBASE save[NUMGENES];
-			int g;
-
-			for (g = 0; g < NUMGENES; g++)
-			{
-				save[g] = g_genes[g];
-			}
-			chngd = get_the_rest();
-			for (g = 0; g < NUMGENES; g++)
-			{
-				g_genes[g] = save[g];
-			}
-		}
-		goto choose_vars_restart;
-	case -1:
-		return chngd;
-	default:
-		break;
-	}
-
-	/* read out values */
-	k = -1;
-	for (num = firstparm; num < lastparm; num++)
-	{
-		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
-		{
-			if (parameter_not_used(num))
-			{
-				continue;
-			}
-		}
-		g_genes[num].mutate = (char)(uvalues[++k].uval.ch.val);
-	}
-
-	return 1; /* if you were here, you want to regenerate */
 }
 
 void set_mutation_level(int strength)
@@ -624,31 +582,18 @@ void set_mutation_level(int strength)
 
 int get_evolve_parameters()
 {
-	const char *choices[20];
-	struct full_screen_values uvalues[20];
-	int i;
-	int j;
-	int k;
-	int tmp;
-	int old_evolving;
-	int old_gridsz;
 	int old_variations = 0;
-	double old_paramrangex;
-	double old_paramrangey;
-	double old_opx;
-	double old_opy;
-	double old_fiddlefactor;
-
 	/* fill up the previous values arrays */
-	old_evolving      = g_evolving;
-	old_gridsz        = g_grid_size;
-	old_paramrangex   = g_parameter_range_x;
-	old_paramrangey   = g_parameter_range_y;
-	old_opx           = g_parameter_offset_x;
-	old_opy           = g_parameter_offset_y;
-	old_fiddlefactor  = g_fiddle_factor;
+	int old_evolving = g_evolving;
+	int old_gridsz = g_grid_size;
+	double old_paramrangex = g_parameter_range_x;
+	double old_paramrangey = g_parameter_range_y;
+	double old_opx = g_parameter_offset_x;
+	double old_opy = g_parameter_offset_y;
+	double old_fiddlefactor = g_fiddle_factor;
 
 get_evol_restart:
+	int j;
 	if ((g_evolving & EVOLVE_RAND_WALK) || (g_evolving & EVOLVE_RAND_PARAM))
 	{
 		/* adjust field param to make some sense when changing from random modes*/
@@ -659,163 +604,101 @@ get_evol_restart:
 		/* set middle image to last selected and edges to +- g_fiddle_factor */
 	}
 
-	k = -1;
-
-	choices[++k]= "Evolution mode? (no for full screen)";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_evolving & EVOLVE_FIELD_MAP;
-
-	choices[++k]= "Image grid size (odd numbers only)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_grid_size;
-
-	if (explore_check())  /* test to see if any parms are set to linear */
 	{
-		/* variation 'explore mode' */
-		choices[++k]= "Show parameter zoom box?";
-		uvalues[k].type = 'y';
-		uvalues[k].uval.ch.val = ((g_evolving & EVOLVE_PARM_BOX) / EVOLVE_PARM_BOX);
-
-		choices[++k]= "x parameter range (across screen)";
-		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = g_parameter_range_x;
-
-		choices[++k]= "x parameter offset (left hand edge)";
-		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = g_parameter_offset_x;
-
-		choices[++k]= "y parameter range (up screen)";
-		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = g_parameter_range_y;
-
-		choices[++k]= "y parameter offset (lower edge)";
-		uvalues[k].type = 'f';
-		uvalues[k].uval.dval = g_parameter_offset_y;
-	}
-
-	choices[++k]= "Max random mutation";
-	uvalues[k].type = 'f';
-	uvalues[k].uval.dval = g_fiddle_factor;
-
-	choices[++k]= "Mutation reduction factor (between generations)";
-	uvalues[k].type = 'f';
-	uvalues[k].uval.dval = g_fiddle_reduction;
-
-	choices[++k]= "Grouting? ";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = !((g_evolving & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
-
-	choices[++k]= "";
-	uvalues[k].type = '*';
-
-	choices[++k]= "Press F4 to reset view parameters to defaults.";
-	uvalues[k].type = '*';
-
-	choices[++k]= "Press F2 to halve mutation levels";
-	uvalues[k].type = '*';
-
-	choices[++k]= "Press F3 to double mutation levels";
-	uvalues[k].type ='*';
-
-	choices[++k]= "Press F6 to control which parameters are varied";
-	uvalues[k].type = '*';
-	i = full_screen_prompt_help(HELPEVOL, "Evolution Mode Options", k + 1, choices, uvalues, 255, NULL);
-	if (i < 0)
-	{
-		/* in case this point has been reached after calling sub menu with F6 */
-		g_evolving      = old_evolving;
-		g_grid_size        = old_gridsz;
-		g_parameter_range_x   = old_paramrangex;
-		g_parameter_range_y   = old_paramrangey;
-		g_parameter_offset_x           = old_opx;
-		g_parameter_offset_y           = old_opy;
-		g_fiddle_factor  = old_fiddlefactor;
-
-		return -1;
-	}
-
-	if (i == FIK_F4)
-	{
-		set_current_parameters();
-		g_fiddle_factor = 1;
-		g_fiddle_reduction = 1.0;
-		goto get_evol_restart;
-	}
-	if (i == FIK_F2)
-	{
-		g_parameter_range_x = g_parameter_range_x / 2;
-		g_parameter_offset_x = g_new_parameter_offset_y = g_parameter_offset_x + g_parameter_range_x / 2;
-		g_parameter_range_y = g_parameter_range_y / 2;
-		g_parameter_offset_y = g_new_parameter_offset_y = g_parameter_offset_y + g_parameter_range_y / 2;
-		g_fiddle_factor = g_fiddle_factor / 2;
-		goto get_evol_restart;
-	}
-	if (i == FIK_F3)
-	{
-		double centerx;
-		double centery;
-		centerx = g_parameter_offset_x + g_parameter_range_x / 2;
-		g_parameter_range_x = g_parameter_range_x*2;
-		g_parameter_offset_x = g_new_parameter_offset_x = centerx - g_parameter_range_x / 2;
-		centery = g_parameter_offset_y + g_parameter_range_y / 2;
-		g_parameter_range_y = g_parameter_range_y*2;
-		g_parameter_offset_y = g_new_parameter_offset_y = centery - g_parameter_range_y / 2;
-		g_fiddle_factor = g_fiddle_factor*2;
-		goto get_evol_restart;
-	}
-
-	j = i;
-
-	/* now check out the results (*hopefully* in the same order <grin>) */
-
-	k = -1;
-
-	g_view_window = g_evolving = uvalues[++k].uval.ch.val;
-
-	if (!g_evolving && i != FIK_F6)  /* don't need any of the other parameters JCO 12JUL2002 */
-	{
-		return 1;              /* the following code can set g_evolving even if it's off */
-	}
-
-	g_grid_size = uvalues[++k].uval.ival;
-	tmp = g_screen_width / (MIN_PIXELS << 1);
-	/* (g_screen_width / 20), max # of subimages @ 20 pixels per subimage */
-	/* MAX_GRID_SIZE == 1024 / 20 == 51 */
-	if (g_grid_size > MAX_GRID_SIZE)
-	{
-		g_grid_size = MAX_GRID_SIZE;
-	}
-	if (g_grid_size > tmp)
-	{
-		g_grid_size = tmp;
-	}
-	if (g_grid_size < 3)
-	{
-		g_grid_size = 3;
-	}
-	g_grid_size |= 1; /* make sure g_grid_size is odd */
-	if (explore_check())
-	{
-		tmp = (EVOLVE_PARM_BOX*uvalues[++k].uval.ch.val);
-		if (g_evolving)
+		UIChoices dialog(HELPEVOL, "Evolution Mode Options", 255);
+		dialog.push("Evolution mode? (no for full screen)", (g_evolving & EVOLVE_FIELD_MAP) != 0);
+		dialog.push("Image grid size (odd numbers only)", g_grid_size);
+		if (explore_check())  /* test to see if any parms are set to linear */
 		{
-			g_evolving += tmp;
+			/* variation 'explore mode' */
+			dialog.push("Show parameter zoom box?", (g_evolving & EVOLVE_PARM_BOX) != 0);
+			dialog.push("x parameter range (across screen)", static_cast<float>(g_parameter_range_x));
+			dialog.push("x parameter offset (left hand edge)", static_cast<float>(g_parameter_offset_x));
+			dialog.push("y parameter range (up screen)", static_cast<float>(g_parameter_range_y));
+			dialog.push("y parameter offset (lower edge)", static_cast<float>(g_parameter_offset_y));
 		}
-		g_parameter_range_x = uvalues[++k].uval.dval;
-		g_new_parameter_offset_x = g_parameter_offset_x = uvalues[++k].uval.dval;
-		g_parameter_range_y = uvalues[++k].uval.dval;
-		g_new_parameter_offset_y = g_parameter_offset_y = uvalues[++k].uval.dval;
+		dialog.push("Max random mutation", static_cast<float>(g_fiddle_factor));
+		dialog.push("Mutation reduction factor (between generations)", static_cast<float>(g_fiddle_reduction));
+		dialog.push("Grouting? ", (g_evolving & EVOLVE_NO_GROUT) == 0);
+		dialog.push("");
+		dialog.push("Press F4 to reset view parameters to defaults.");
+		dialog.push("Press F2 to halve mutation levels");
+		dialog.push("Press F3 to double mutation levels");
+		dialog.push("Press F6 to control which parameters are varied");
+		int i = dialog.prompt();
+		if (i < 0)
+		{
+			/* in case this point has been reached after calling sub menu with F6 */
+			g_evolving      = old_evolving;
+			g_grid_size        = old_gridsz;
+			g_parameter_range_x   = old_paramrangex;
+			g_parameter_range_y   = old_paramrangey;
+			g_parameter_offset_x           = old_opx;
+			g_parameter_offset_y           = old_opy;
+			g_fiddle_factor  = old_fiddlefactor;
+
+			return -1;
+		}
+		switch (i)
+		{
+		case FIK_F4:
+			set_current_parameters();
+			g_fiddle_factor = 1;
+			g_fiddle_reduction = 1.0;
+			goto get_evol_restart;
+		case FIK_F2:
+			g_parameter_range_x = g_parameter_range_x / 2;
+			g_parameter_offset_x = g_new_parameter_offset_y = g_parameter_offset_x + g_parameter_range_x / 2;
+			g_parameter_range_y = g_parameter_range_y / 2;
+			g_parameter_offset_y = g_new_parameter_offset_y = g_parameter_offset_y + g_parameter_range_y / 2;
+			g_fiddle_factor = g_fiddle_factor / 2;
+			goto get_evol_restart;
+		case FIK_F3:
+			{
+				double centerx = g_parameter_offset_x + g_parameter_range_x / 2;
+				g_parameter_range_x = g_parameter_range_x*2;
+				g_parameter_offset_x = g_new_parameter_offset_x = centerx - g_parameter_range_x / 2;
+				double centery = g_parameter_offset_y + g_parameter_range_y / 2;
+				g_parameter_range_y = g_parameter_range_y*2;
+				g_parameter_offset_y = g_new_parameter_offset_y = centery - g_parameter_range_y / 2;
+				g_fiddle_factor = g_fiddle_factor*2;
+				goto get_evol_restart;
+			}
+		}
+		j = i;
+		int k = -1;
+		g_evolving = dialog.values(++k).uval.ch.val;
+		g_view_window = g_evolving;
+
+		if (!g_evolving && i != FIK_F6)  /* don't need any of the other parameters */
+		{
+			return 1;              /* the following code can set g_evolving even if it's off */
+		}
+
+		g_grid_size = dialog.values(++k).uval.ival;
+		/* (g_screen_width / 20), max # of subimages @ 20 pixels per subimage */
+		/* MAX_GRID_SIZE == 1024 / 20 == 51 */
+		g_grid_size = MathUtil::Clamp(g_grid_size, 3, std::min(MAX_GRID_SIZE, g_screen_width / (MIN_PIXELS << 1)));
+		g_grid_size |= 1; /* make sure g_grid_size is odd */
+		if (explore_check())
+		{
+			int temp = (EVOLVE_PARM_BOX*dialog.values(++k).uval.ch.val);
+			if (g_evolving)
+			{
+				g_evolving += temp;
+			}
+			g_parameter_range_x = dialog.values(++k).uval.dval;
+			g_new_parameter_offset_x = g_parameter_offset_x = dialog.values(++k).uval.dval;
+			g_parameter_range_y = dialog.values(++k).uval.dval;
+			g_new_parameter_offset_y = g_parameter_offset_y = dialog.values(++k).uval.dval;
+		}
+		g_fiddle_factor = dialog.values(++k).uval.dval;
+		g_fiddle_reduction = dialog.values(++k).uval.dval;
+		if (!(dialog.values(++k).uval.ch.val))
+		{
+			g_evolving |= EVOLVE_NO_GROUT;
+		}
 	}
-
-	g_fiddle_factor = uvalues[++k].uval.dval;
-
-	g_fiddle_reduction = uvalues[++k].uval.dval;
-
-	if (!(uvalues[++k].uval.ch.val))
-	{
-		g_evolving |= EVOLVE_NO_GROUT;
-	}
-
 	g_view_x_dots = (g_screen_width / g_grid_size)-2;
 	g_view_y_dots = (g_screen_height / g_grid_size)-2;
 	if (!g_view_window)
@@ -823,15 +706,14 @@ get_evol_restart:
 		g_view_x_dots = g_view_y_dots = 0;
 	}
 
-	i = 0;
-
+	int result = 0;
 	if (g_evolving != old_evolving
 		|| (g_grid_size != old_gridsz) ||(g_parameter_range_x != old_paramrangex)
 		|| (g_parameter_offset_x != old_opx) || (g_parameter_range_y != old_paramrangey)
 		|| (g_parameter_offset_y != old_opy)  || (g_fiddle_factor != old_fiddlefactor)
 		|| (old_variations > 0))
 	{
-		i = 1;
+		result = 1;
 	}
 
 	if (g_evolving && !old_evolving)
@@ -841,7 +723,7 @@ get_evol_restart:
 
 	if (!g_evolving && (g_evolving == old_evolving))
 	{
-		i = 0;
+		result = 0;
 	}
 
 	if (j == FIK_F6)
@@ -857,7 +739,7 @@ get_evol_restart:
 		g_fiddle_reduction = 1.0;
 		goto get_evol_restart;
 	}
-	return i;
+	return result;
 }
 
 void setup_parameter_box()
