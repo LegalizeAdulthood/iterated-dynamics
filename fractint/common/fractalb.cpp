@@ -900,7 +900,7 @@ int julia_orbit_bf()
 
 int julia_z_power_orbit_bn()
 {
-	_BNCMPLX parm2;
+	ComplexBigNum parm2;
 	int saved = save_stack();
 
 	parm2.x = alloc_stack(bnlength);
@@ -917,7 +917,7 @@ int julia_z_power_orbit_bn()
 
 int julia_z_power_orbit_bf()
 {
-	_BFCMPLX parm2;
+	ComplexBigFloat parm2;
 	int saved = save_stack();
 
 	parm2.x = alloc_stack(bflength + 2);
@@ -1005,7 +1005,7 @@ julia_orbit_bn()
 }
 #endif
 
-ComplexD complex_bn_to_float(_BNCMPLX *s)
+ComplexD complex_bn_to_float(ComplexBigNum *s)
 {
 	ComplexD t;
 	t.x = (double)bntofloat(s->x);
@@ -1013,7 +1013,7 @@ ComplexD complex_bn_to_float(_BNCMPLX *s)
 	return t;
 }
 
-ComplexD complex_bf_to_float(_BFCMPLX *s)
+ComplexD complex_bf_to_float(ComplexBigFloat *s)
 {
 	ComplexD t;
 	t.x = (double)bftofloat(s->x);
@@ -1021,7 +1021,7 @@ ComplexD complex_bf_to_float(_BFCMPLX *s)
 	return t;
 }
 
-_BFCMPLX *complex_log_bf(_BFCMPLX *t, _BFCMPLX *s)
+ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s)
 {
 	square_bf(t->x, s->x);
 	square_bf(t->y, s->y);
@@ -1032,7 +1032,7 @@ _BFCMPLX *complex_log_bf(_BFCMPLX *t, _BFCMPLX *s)
 	return t;
 }
 
-_BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
+ComplexBigFloat *cplxmul_bf(ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y)
 {
 	bf_t tmp1;
 	int saved = save_stack();
@@ -1048,9 +1048,9 @@ _BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y)
 	return t;
 }
 
-_BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
+ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, ComplexBigFloat *yy)
 {
-	_BFCMPLX tmp;
+	ComplexBigFloat tmp;
 	bf_t e2x, siny, cosy;
 	int saved = save_stack();
 	e2x  = alloc_stack(rbflength + 2);
@@ -1077,7 +1077,7 @@ _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy)
 	return t;
 }
 
-_BNCMPLX *complex_log_bn(_BNCMPLX *t, _BNCMPLX *s)
+ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s)
 {
 	square_bn(t->x, s->x);
 	square_bn(t->y, s->y);
@@ -1088,7 +1088,7 @@ _BNCMPLX *complex_log_bn(_BNCMPLX *t, _BNCMPLX *s)
 	return t;
 }
 
-_BNCMPLX *complex_multiply_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
+ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y)
 {
 	bn_t tmp1;
 	int saved = save_stack();
@@ -1105,9 +1105,9 @@ _BNCMPLX *complex_multiply_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y)
 }
 
 /* note: complex_power_bn() returns need to be +shiftfactor'ed */
-_BNCMPLX *complex_power_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy)
+ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy)
 {
-	_BNCMPLX tmp;
+	ComplexBigNum tmp;
 	bn_t e2x, siny, cosy;
 	int saved = save_stack();
 	e2x  = alloc_stack(bnlength);
