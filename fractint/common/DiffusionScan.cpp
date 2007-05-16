@@ -9,8 +9,7 @@
 #include "WorkList.h"
 
 /* vars for diffusion scan */
-unsigned long g_diffusion_limit; 	/* the diffusion counter */
-
+static unsigned long s_diffusion_limit; 	/* the diffusion counter */
 static unsigned s_bits = 0; 		/* number of bits in the counter */
 static unsigned long s_diffusion_counter; 	/* the diffusion counter */
 
@@ -168,7 +167,7 @@ static int diffusion_engine()
 	/* only the points (dithering only) :*/
 	if (g_fill_color == 0 )
 	{
-		while (s_diffusion_counter < (g_diffusion_limit >> 1))
+		while (s_diffusion_counter < (s_diffusion_limit >> 1))
 		{
 			count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
 			i = 0;
@@ -229,7 +228,7 @@ static int diffusion_engine()
 	{
 		/*********************************/
 		/* with progressive filling :    */
-		while (s_diffusion_counter < (g_diffusion_limit >> 1))
+		while (s_diffusion_counter < (s_diffusion_limit >> 1))
 		{
 			sqsz = 1 << ((int) (s_bits - (int) (log(s_diffusion_counter + 0.5)/log2 )-1)/2 );
 			count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
@@ -291,7 +290,7 @@ static int diffusion_engine()
 		}
 	}
 	/* from half g_diffusion_limit on we only plot 1x1 points :-) */
-	while (s_diffusion_counter < g_diffusion_limit)
+	while (s_diffusion_counter < s_diffusion_limit)
 	{
 		count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
 
@@ -367,7 +366,7 @@ int diffusion_scan()
 	s_bits = (unsigned) (min(log((double) (g_y_stop - g_iy_start + 1)),
 							 log((double) (g_x_stop - g_ix_start + 1)))/log2);
 	s_bits <<= 1; /* double for two axes */
-	g_diffusion_limit = 1l << s_bits;
+	s_diffusion_limit = 1l << s_bits;
 
 	if (diffusion_engine() == -1)
 	{
@@ -383,12 +382,12 @@ int diffusion_scan()
 
 void diffusion_get_calculation_time(char *msg)
 {
-	get_calculation_time(msg, (long)(g_calculation_time*((g_diffusion_limit*1.0)/s_diffusion_counter)));
+	get_calculation_time(msg, (long)(g_calculation_time*((s_diffusion_limit*1.0)/s_diffusion_counter)));
 }
 
 void diffusion_get_status(char *msg)
 {
 	sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
-			(100.0*s_diffusion_counter)/g_diffusion_limit,
-			s_diffusion_counter, g_diffusion_limit, s_bits);
+			(100.0*s_diffusion_counter)/s_diffusion_limit,
+			s_diffusion_counter, s_diffusion_limit, s_bits);
 }
