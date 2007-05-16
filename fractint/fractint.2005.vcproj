@@ -322,6 +322,10 @@
 				Name="engine"
 				>
 				<File
+					RelativePath=".\common\BoundaryTrace.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\calcfrac.cpp"
 					>
 					<FileConfiguration
@@ -529,6 +533,10 @@
 				</File>
 				<File
 					RelativePath=".\common\SolidGuess.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\Tesseral.cpp"
 					>
 				</File>
 				<File
@@ -1045,6 +1053,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\BoundaryTrace.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\busy.h"
 				>
 			</File>
@@ -1126,6 +1138,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\SoundState.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\Tesseral.h"
 				>
 			</File>
 			<File
@@ -1825,6 +1841,10 @@
 		</File>
 		<File
 			RelativePath=".\hc.txt"
+			>
+		</File>
+		<File
+			RelativePath=".\History.txt"
 			>
 		</File>
 		<File

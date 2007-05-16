@@ -35,4 +35,6 @@ extern int s_ix_start;
 extern int s_iy_start;
 extern int s_work_sym;
 
+extern void sym_fill_line(int row, int left, int right, BYTE *str);
+
 #endif

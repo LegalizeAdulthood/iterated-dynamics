@@ -1,0 +1,22 @@
+/************************ super solid guessing *****************************/
+
+/*
+   I, Timothy Wegner, invented this solidguessing idea and implemented it in
+   more or less the overall framework you see here.  I am adding this note
+   now in a possibly vain attempt to secure my place in history, because
+   Pieter Branderhorst has totally rewritten this routine, incorporating
+   a *MUCH* more sophisticated algorithm.  His revised code is not only
+   faster, but is also more accurate. Harrumph!
+*/
+
+Fractint's original btm was written by David Guenther.  There were a few
+rare circumstances in which the original btm would not trace or fill
+correctly, even on Mandelbrot Sets.  The code below was adapted from
+"Mandelbrot Sets by Wesley Loewer" (see calmanfp.asm) which was written
+before I was introduced to Fractint.  It should be noted that without
+David Guenther's implimentation of a btm, I doubt that I would have been
+able to impliment my own code into Fractint.  There are several things in
+the following code that are not original with me but came from David
+Guenther's code.  I've noted these places with the initials DG.
+
+                                        Wesley Loewer 3/8/92
