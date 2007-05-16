@@ -122,7 +122,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	s_half_block = blocksize/2;
 	{
 		int i = y/s_max_block;
-		pfxptr = (unsigned int *) &s_t_prefix[firstpass][(i >> 4) + 1][s_ix_start/s_max_block];
+		pfxptr = (unsigned int *) &s_t_prefix[firstpass][(i >> 4) + 1][g_ix_start/s_max_block];
 		pfxmask = 1 << (i & 15);
 	}
 	ylesshalf = y - s_half_block;
@@ -130,11 +130,11 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	yplushalf = y + s_half_block;
 	yplusblock = y + blocksize;
 	prev11 = -1;
-	c24 = c12 = c13 = c22 = getcolor(s_ix_start, y);
-	c31 = c21 = getcolor(s_ix_start, (y > 0) ? ylesshalf : 0);
+	c24 = c12 = c13 = c22 = getcolor(g_ix_start, y);
+	c31 = c21 = getcolor(g_ix_start, (y > 0) ? ylesshalf : 0);
 	if (yplusblock <= g_y_stop)
 	{
-		c24 = getcolor(s_ix_start, yplusblock);
+		c24 = getcolor(g_ix_start, yplusblock);
 	}
 	else if (!s_bottom_guess)
 	{
@@ -142,7 +142,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	}
 	guessed12 = guessed13 = 0;
 
-	for (int x = s_ix_start; x <= g_x_stop; )  /* increment at end, or when doing continue */
+	for (int x = g_ix_start; x <= g_x_stop; )  /* increment at end, or when doing continue */
 	{
 		if ((x & (s_max_block-1)) == 0)  /* time for skip flag stuff */
 		{
@@ -297,7 +297,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 		fix21 = ((c22 != c12 || c22 != c32)
 			&& c21 == c22 && c21 == c31 && c21 == prev11
 			&& y > 0
-			&& (x == s_ix_start || c21 == getcolor(x-s_half_block, ylessblock))
+			&& (x == g_ix_start || c21 == getcolor(x-s_half_block, ylessblock))
 			&& (xplushalf > g_x_stop || c21 == getcolor(xplushalf, ylessblock))
 			&& c21 == getcolor(x, ylessblock));
 		fix31 = (c22 != c32
@@ -448,27 +448,27 @@ int solid_guess()
 	/* ensure window top and left are on required boundary, treat window
 			as larger than it really is if necessary (this is the reason symplot
 			routines must check for > g_x_dots/g_y_dots before plotting sym points) */
-	s_ix_start &= -1 - (s_max_block - 1);
-	s_iy_start = s_yy_begin;
-	s_iy_start &= -1 - (s_max_block - 1);
+	g_ix_start &= -1 - (s_max_block - 1);
+	g_iy_start = g_yy_begin;
+	g_iy_start &= -1 - (s_max_block - 1);
 
 	g_got_status = GOT_STATUS_GUESSING;
 
-	if (s_work_pass == 0) /* otherwise first pass already done */
+	if (g_work_pass == 0) /* otherwise first pass already done */
 	{
 		/* first pass, calc every blocksize**2 pixel, quarter result & paint it */
 		g_current_pass = 1;
-		if (s_iy_start <= g_yy_start) /* first time for this window, init it */
+		if (g_iy_start <= g_yy_start) /* first time for this window, init it */
 		{
 			g_current_row = 0;
 			memset(&s_t_prefix[1][0][0], 0, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags off */
 			g_reset_periodicity = 1;
-			g_row = s_iy_start;
-			for (g_col = s_ix_start; g_col <= g_x_stop; g_col += s_max_block)
+			g_row = g_iy_start;
+			for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
 			{ /* calc top row */
 				if ((*g_calculate_type)() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, s_xx_begin, g_yy_start, g_yy_stop, s_yy_begin, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, g_work_sym);
 					goto exit_solid_guess;
 				}
 				g_reset_periodicity = 0;
@@ -478,7 +478,7 @@ int solid_guess()
 		{
 			memset(&s_t_prefix[1][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags on */
 		}
-		for (int y = s_iy_start; y <= g_y_stop; y += blocksize)
+		for (int y = g_iy_start; y <= g_y_stop; y += blocksize)
 		{
 			g_current_row = y;
 			i = 0;
@@ -486,7 +486,7 @@ int solid_guess()
 			{ /* calc the row below */
 				g_row = y + blocksize;
 				g_reset_periodicity = 1;
-				for (g_col = s_ix_start; g_col <= g_x_stop; g_col += s_max_block)
+				for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
 				{
 					i = (*g_calculate_type)();
 					if (i == -1)
@@ -503,18 +503,18 @@ int solid_guess()
 				{
 					y = g_yy_start;
 				}
-				work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, s_work_sym);
+				work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, g_work_sym);
 				goto exit_solid_guess;
 			}
 		}
 
 		if (g_num_work_list) /* work list not empty, just do 1st pass */
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_sym);
 			goto exit_solid_guess;
 		}
-		++s_work_pass;
-		s_iy_start = g_yy_start & (-1 - (s_max_block-1));
+		++g_work_pass;
+		g_iy_start = g_yy_start & (-1 - (s_max_block-1));
 
 		/* calculate skip flags for skippable blocks */
 		xlim = (g_x_stop + s_max_block)/s_max_block + 1;
@@ -565,7 +565,7 @@ int solid_guess()
 	}
 
 	/* remaining pass(es), halve blocksize & quarter each blocksize**2 */
-	i = s_work_pass;
+	i = g_work_pass;
 	while (--i > 0) /* allow for already done passes */
 	{
 		blocksize = blocksize >> 1;
@@ -575,13 +575,13 @@ int solid_guess()
 	{
 		if (g_stop_pass > 0)
 		{
-			if (s_work_pass >= g_stop_pass)
+			if (g_work_pass >= g_stop_pass)
 			{
 				goto exit_solid_guess;
 			}
 		}
-		g_current_pass = s_work_pass + 1;
-		for (int y = s_iy_start; y <= g_y_stop; y += blocksize)
+		g_current_pass = g_work_pass + 1;
+		for (int y = g_iy_start; y <= g_y_stop; y += blocksize)
 		{
 			g_current_row = y;
 			if (guess_row(0, y, blocksize) != 0)
@@ -590,18 +590,18 @@ int solid_guess()
 				{
 					y = g_yy_start;
 				}
-				work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, s_work_pass, s_work_sym);
+				work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, g_work_pass, g_work_sym);
 				goto exit_solid_guess;
 			}
 		}
-		++s_work_pass;
+		++g_work_pass;
 		if (g_num_work_list /* work list not empty, do one pass at a time */
 			&& blocksize > 2) /* if 2, we just did last pass */
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, g_work_sym);
 			goto exit_solid_guess;
 		}
-		s_iy_start = g_yy_start & (-1 - (s_max_block-1));
+		g_iy_start = g_yy_start & (-1 - (s_max_block-1));
 	}
 
 	exit_solid_guess:

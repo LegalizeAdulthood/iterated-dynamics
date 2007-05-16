@@ -105,20 +105,20 @@ int tesseral()
 
 	bool guess_plot = (g_plot_color != g_put_color && g_plot_color != symplot2);
 	tp = (struct tess *)&g_stack[0];
-	tp->x1 = s_ix_start;                              /* set up initial box */
+	tp->x1 = g_ix_start;                              /* set up initial box */
 	tp->x2 = g_x_stop;
-	tp->y1 = s_iy_start;
+	tp->y1 = g_iy_start;
 	tp->y2 = g_y_stop;
 
-	if (s_work_pass == 0)  /* not resuming */
+	if (g_work_pass == 0)  /* not resuming */
 	{
-		tp->top = tesseral_row(s_ix_start, g_x_stop, s_iy_start);     /* Do top row */
-		tp->bottom = tesseral_row(s_ix_start, g_x_stop, g_y_stop);      /* Do bottom row */
-		tp->left = tesseral_column(s_ix_start, s_iy_start + 1, g_y_stop-1); /* Do left column */
-		tp->right = tesseral_column(g_x_stop, s_iy_start + 1, g_y_stop-1);  /* Do right column */
+		tp->top = tesseral_row(g_ix_start, g_x_stop, g_iy_start);     /* Do top row */
+		tp->bottom = tesseral_row(g_ix_start, g_x_stop, g_y_stop);      /* Do bottom row */
+		tp->left = tesseral_column(g_ix_start, g_iy_start + 1, g_y_stop-1); /* Do left column */
+		tp->right = tesseral_column(g_x_stop, g_iy_start + 1, g_y_stop-1);  /* Do right column */
 		if (check_key())  /* interrupt before we got properly rolling */
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, g_work_sym);
 			return -1;
 		}
 	}
@@ -132,16 +132,16 @@ int tesseral()
 		int ysize;
 		struct tess *tp2;
 		tp->top = tp->bottom = tp->left = tp->right = -2;
-		cury = s_yy_begin & 0xfff;
+		cury = g_yy_begin & 0xfff;
 		ysize = 1;
-		i = (unsigned)s_yy_begin >> 12;
+		i = (unsigned)g_yy_begin >> 12;
 		while (--i >= 0)
 		{
 			ysize <<= 1;
 		}
-		curx = s_work_pass & 0xfff;
+		curx = g_work_pass & 0xfff;
 		xsize = 1;
-		i = (unsigned)s_work_pass >> 12;
+		i = (unsigned)g_work_pass >> 12;
 		while (--i >= 0)
 		{
 			xsize <<= 1;
@@ -400,7 +400,7 @@ tess_end:
 			++ysize;
 		}
 		work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
-			(ysize << 12) + tp->y1, (xsize << 12) + tp->x1, s_work_sym);
+			(ysize << 12) + tp->y1, (xsize << 12) + tp->x1, g_work_sym);
 		return -1;
 	}
 	return 0;

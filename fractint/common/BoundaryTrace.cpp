@@ -72,11 +72,11 @@ int boundary_trace_main()
 
 	g_got_status = GOT_STATUS_BOUNDARY_TRACE;
 	max_putline_length = 0; /* reset max_putline_length */
-	for (g_current_row = s_iy_start; g_current_row <= g_y_stop; g_current_row++)
+	for (g_current_row = g_iy_start; g_current_row <= g_y_stop; g_current_row++)
 	{
 		g_reset_periodicity = 1; /* reset for a new row */
 		g_color = bkcolor;
-		for (g_current_col = s_ix_start; g_current_col <= g_x_stop; g_current_col++)
+		for (g_current_col = g_ix_start; g_current_col <= g_x_stop; g_current_col++)
 		{
 			if (getcolor(g_current_col, g_current_row) != bkcolor)
 			{
@@ -95,7 +95,7 @@ int boundary_trace_main()
 				{
 					g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 				}
-				work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
+				work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
 				return -1;
 			}
 			g_reset_periodicity = 0; /* normal periodicity checking */
@@ -122,7 +122,7 @@ int boundary_trace_main()
 			{
 				step_col_row();
 				if (g_row >= g_current_row
-					&& g_col >= s_ix_start
+					&& g_col >= g_ix_start
 					&& g_col <= g_x_stop
 					&& g_row <= g_y_stop)
 				{
@@ -139,7 +139,7 @@ int boundary_trace_main()
 						{
 							g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 						}
-						work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
+						work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
 						return -1;
 					}
 					else if (g_color == trail_color)
@@ -189,7 +189,7 @@ int boundary_trace_main()
 				{
 					step_col_row();
 					if (g_row >= g_current_row
-						&& g_col >= s_ix_start
+						&& g_col >= g_ix_start
 						&& g_col <= g_x_stop
 						&& g_row <= g_y_stop
 						&& getcolor(g_col, g_row) == trail_color)
@@ -199,7 +199,7 @@ int boundary_trace_main()
 							|| (s_going_to == West && coming_from != East))
 						{ /* fill a row, but only once */
 							right = g_col;
-							while (--right >= s_ix_start)
+							while (--right >= g_ix_start)
 							{
 								g_color = getcolor(right, g_row);
 								if (g_color != trail_color)
@@ -211,7 +211,7 @@ int boundary_trace_main()
 							{
 								left = right;
 								while (getcolor(--left, g_row) == bkcolor)
-									/* Should NOT be possible for left < s_ix_start */
+									/* Should NOT be possible for left < g_ix_start */
 								{
 									/* do nothing */
 								}
@@ -242,7 +242,7 @@ int boundary_trace_main()
 									{
 										g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
 									}
-									work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, s_work_sym);
+									work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
 									return -1;
 								}
 								g_input_counter = g_max_input_counter;

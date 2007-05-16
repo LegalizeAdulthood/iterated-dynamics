@@ -28,12 +28,12 @@ extern int g_xx_start;
 extern int g_xx_stop;
 extern int g_yy_start;
 extern int g_yy_stop;
-extern int s_xx_begin;
-extern int s_yy_begin;
-extern int s_work_pass;
-extern int s_ix_start;
-extern int s_iy_start;
-extern int s_work_sym;
+extern int g_xx_begin;
+extern int g_yy_begin;
+extern int g_work_pass;
+extern int g_ix_start;
+extern int g_iy_start;
+extern int g_work_sym;
 
 extern void sym_fill_line(int row, int left, int right, BYTE *str);
 
