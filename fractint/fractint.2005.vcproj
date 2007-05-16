@@ -348,6 +348,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\DiffusionScan.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\EscapeTime.cpp"
 					>
 				</File>
@@ -1066,6 +1070,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\CommandParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\DiffusionScan.h"
 				>
 			</File>
 			<File
