@@ -1039,23 +1039,6 @@ is not in the data structure */
 #define JIIM  0
 #define ORBIT 1
 
-struct WorkListItem    /* work list entry for std escape time engines */
-{
-	int xx_start;    /* screen window for this entry */
-	int xx_stop;
-	int yy_start;
-	int yy_stop;
-	int yy_begin;    /* start row within window, for 2pass/ssg resume */
-	int sym;        /* if symmetry in window, prevents bad combines */
-	int pass;       /* for 2pass and solid guessing */
-	int xx_begin;    /* start col within window, =0 except on resume */
-};
-
-typedef struct WorkListItem WORK_LIST;
-
-
-#define MAX_WORK_LIST 40
-
 template <typename T>
 struct CoordinateT
 {

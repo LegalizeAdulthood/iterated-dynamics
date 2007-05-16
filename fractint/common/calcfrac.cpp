@@ -29,6 +29,7 @@
 #include "SoundState.h"
 #include "MathUtil.h"
 #include "Formula.h"
+#include "WorkList.h"
 
 #define SHOWDOT_SAVE    1
 #define SHOWDOT_RESTORE 2
@@ -103,10 +104,10 @@ int g_num_work_list;                       /* resume g_work_list for standard en
 WORK_LIST g_work_list[MAX_WORK_LIST];
 int g_xx_start;
 int g_xx_stop;
-int g_xx_begin;             /* these are same as g_work_list, */
+static int g_xx_begin;             /* these are same as g_work_list, */
 int g_yy_start;
 int g_yy_stop;
-int g_yy_begin;             /* declared as separate items  */
+static int g_yy_begin;             /* declared as separate items  */
 /* variables which must be visible for tab_display */
 int g_got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
 			  /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
