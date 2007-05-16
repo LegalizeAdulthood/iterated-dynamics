@@ -55,10 +55,10 @@ bn_t bnclosenuff = NULL;				/* bnlength */
 bn_t bntmpsqrx = NULL;
 bn_t bntmpsqry = NULL;
 bn_t bntmp = NULL;						/* rlength  */
-_BNCMPLX bnold = { NULL, NULL };
-_BNCMPLX bnparm = { NULL, NULL };
-_BNCMPLX bnsaved = { NULL, NULL };		/* bnlength */
-_BNCMPLX bnnew = { NULL, NULL };		/* rlength */
+ComplexBigNum bnold = { NULL, NULL };
+ComplexBigNum bnparm = { NULL, NULL };
+ComplexBigNum bnsaved = { NULL, NULL };		/* bnlength */
+ComplexBigNum bnnew = { NULL, NULL };		/* rlength */
 bn_t bn_pi = NULL;						/* TAKES NO SPACE */
 
 bf_t bftmp1 = NULL;
@@ -76,12 +76,12 @@ bf_t bfydel2 = NULL;
 bf_t bfclosenuff = NULL;				/* rbflength + 2 */
 bf_t bftmpsqrx = NULL;
 bf_t bftmpsqry = NULL;					/* rbflength + 2 */
-_BFCMPLX bfparm = {NULL, NULL};			/* bflength + 2 */
+ComplexBigFloat bfparm = {NULL, NULL};			/* bflength + 2 */
 										/* bflength + 2 */
-_BFCMPLX bfsaved = {NULL, NULL};		/* bfold,  bfnew, */
+ComplexBigFloat bfsaved = {NULL, NULL};		/* bfold,  bfnew, */
 										/* bflength + 2 */
-_BFCMPLX bfold = {NULL, NULL};
-_BFCMPLX bfnew = {NULL, NULL};			/* rbflength + 2 */
+ComplexBigFloat bfold = {NULL, NULL};
+ComplexBigFloat bfnew = {NULL, NULL};			/* rbflength + 2 */
 bf_t bf_pi = NULL;						/* TAKES NO SPACE */
 bf_t big_pi = NULL;						/* bflength + 2 */
 

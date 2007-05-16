@@ -873,8 +873,8 @@ extern void display_box();
 
 /*  fractalb.c -- C file prototypes */
 
-extern ComplexD complex_bn_to_float(_BNCMPLX *);
-extern ComplexD complex_bf_to_float(_BFCMPLX *);
+extern ComplexD complex_bn_to_float(ComplexBigNum *);
+extern ComplexD complex_bf_to_float(ComplexBigFloat *);
 extern void compare_values(char *, LDBL, bn_t);
 extern void compare_values_bf(char *, LDBL, bf_t);
 extern void show_var_bf(char *s, bf_t n);
@@ -886,17 +886,17 @@ extern int mandelbrot_per_pixel_bn();
 extern int julia_per_pixel_bn();
 extern int julia_orbit_bn();
 extern int julia_z_power_orbit_bn();
-extern _BNCMPLX *complex_log_bn(_BNCMPLX *t, _BNCMPLX *s);
-extern _BNCMPLX *complex_multiply_bn(_BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
-extern _BNCMPLX *complex_power_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy);
+extern ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s);
+extern ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y);
+extern ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy);
 extern int mandelbrot_setup_bf();
 extern int mandelbrot_per_pixel_bf();
 extern int julia_per_pixel_bf();
 extern int julia_orbit_bf();
 extern int julia_z_power_orbit_bf();
-extern _BFCMPLX *complex_log_bf(_BFCMPLX *t, _BFCMPLX *s);
-extern _BFCMPLX *cplxmul_bf(_BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
-extern _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy);
+extern ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s);
+extern ComplexBigFloat *cplxmul_bf(ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y);
+extern ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, ComplexBigFloat *yy);
 
 /*  memory -- C file prototypes */
 /* TODO: Get rid of this and use regular memory routines;

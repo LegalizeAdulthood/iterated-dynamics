@@ -35,19 +35,8 @@ typedef unsigned char *big_t;
 
 #include "cmplx.h"
 
-struct BFComplex
-{
-   bn_t x;
-   bn_t y;
-};
-typedef struct BFComplex  _BFCMPLX;
-
-struct BNComplex
-{
-   bn_t x;
-   bn_t y;
-};
-typedef struct BNComplex  _BNCMPLX;
+typedef ComplexT<bn_t> ComplexBigFloat;
+typedef ComplexT<bn_t> ComplexBigNum;
 
 /* globals */
 extern int g_fpu;
@@ -283,14 +272,14 @@ extern bf_t div_a_bf_int(bf_t r, U16 u);
 
 /****************************/
 /* bigcmplx.c */
-extern ComplexD complex_bn_to_float(_BNCMPLX *s);
-extern ComplexD complex_bf_to_float(_BFCMPLX *s);
-extern _BFCMPLX *complex_log_bf(_BFCMPLX *t, _BFCMPLX *s);
-extern _BFCMPLX *cplxmul_bf( _BFCMPLX *t, _BFCMPLX *x, _BFCMPLX *y);
-extern _BFCMPLX *ComplexPower_bf(_BFCMPLX *t, _BFCMPLX *xx, _BFCMPLX *yy);
-extern _BNCMPLX *complex_power_bn(_BNCMPLX *t, _BNCMPLX *xx, _BNCMPLX *yy);
-extern _BNCMPLX *complex_log_bn(_BNCMPLX *t, _BNCMPLX *s);
-extern _BNCMPLX *complex_multiply_bn( _BNCMPLX *t, _BNCMPLX *x, _BNCMPLX *y);
+extern ComplexD complex_bn_to_float(ComplexBigNum *s);
+extern ComplexD complex_bf_to_float(ComplexBigFloat *s);
+extern ComplexBigFloat *complex_log_bf(ComplexBigFloat *t, ComplexBigFloat *s);
+extern ComplexBigFloat *cplxmul_bf( ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFloat *y);
+extern ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, ComplexBigFloat *yy);
+extern ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy);
+extern ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s);
+extern ComplexBigNum *complex_multiply_bn( ComplexBigNum *t, ComplexBigNum *x, ComplexBigNum *y);
 
 #include "biginit.h" /* fractint only */
 

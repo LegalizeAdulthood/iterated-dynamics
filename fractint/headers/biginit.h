@@ -25,16 +25,16 @@ extern bn_t bntmpcpy1, bntmpcpy2;                               /* bnlength */
 extern bn_t bnxmin, bnxmax, bnymin, bnymax, bnx3rd, bny3rd;     /* bnlength */
 extern bn_t bnxdel, bnydel, bnxdel2, bnydel2, bnclosenuff;      /* bnlength */
 extern bn_t bntmpsqrx, bntmpsqry, bntmp;                        /* rlength  */
-extern _BNCMPLX bnold, /* bnnew, */ bnparm, bnsaved;            /* bnlength */
-extern _BNCMPLX bnnew;                                           /* rlength */
+extern ComplexBigNum bnold, /* bnnew, */ bnparm, bnsaved;            /* bnlength */
+extern ComplexBigNum bnnew;                                           /* rlength */
 extern bn_t bn_pi;                                        /* TAKES NO SPACE */
 
 extern bf_t bftmp1, bftmp2, bftmp3, bftmp4, bftmp5, bftmp6;  /* rbflength+2 */
 extern bf_t bftmpcpy1, bftmpcpy2;                            /* rbflength+2 */
 extern bf_t bfxdel, bfydel, bfxdel2, bfydel2, bfclosenuff;   /* rbflength+2 */
 extern bf_t bftmpsqrx, bftmpsqry;                            /* rbflength+2 */
-extern _BFCMPLX /* bfold,  bfnew, */ bfparm, bfsaved;         /* bflength+2 */
-extern _BFCMPLX bfold,  bfnew;                               /* rbflength+2 */
+extern ComplexBigFloat /* bfold,  bfnew, */ bfparm, bfsaved;         /* bflength+2 */
+extern ComplexBigFloat bfold,  bfnew;                               /* rbflength+2 */
 extern bf_t bf_pi;                                        /* TAKES NO SPACE */
 extern bf_t big_pi;                                           /* bflength+2 */
 
