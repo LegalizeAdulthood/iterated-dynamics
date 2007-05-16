@@ -1051,10 +1051,10 @@ struct WorkListItem    /* work list entry for std escape time engines */
 	int xx_begin;    /* start col within window, =0 except on resume */
 };
 
-typedef struct WorkListItem WORKLIST;
+typedef struct WorkListItem WORK_LIST;
 
 
-#define MAXCALCWORK 12
+#define MAX_WORK_LIST 40
 
 template <typename T>
 struct CoordinateT

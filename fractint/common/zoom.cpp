@@ -905,7 +905,7 @@ static void _fastcall restart_window(int wknum)
 
 static void fix_work_list() /* fix out of bounds and symmetry related stuff */
 {   int i, j, k;
-	WORKLIST *wk;
+	WORK_LIST *wk;
 	for (i = 0; i < g_num_work_list; ++i)
 	{
 		wk = &g_work_list[i];
@@ -930,7 +930,7 @@ static void fix_work_list() /* fix out of bounds and symmetry related stuff */
 			else  /* xaxis symmetry */
 			{
 				j = wk->yy_stop + wk->yy_start;
-				if (j > 0 && g_num_work_list < MAXCALCWORK)  /* split the sym part */
+				if (j > 0 && g_num_work_list < MAX_WORK_LIST)  /* split the sym part */
 				{
 					g_work_list[g_num_work_list] = g_work_list[i];
 					g_work_list[g_num_work_list].yy_start = 0;
@@ -952,7 +952,7 @@ static void fix_work_list() /* fix out of bounds and symmetry related stuff */
 				k = wk->yy_start + (wk->yy_stop - j);
 				if (k < j)
 				{
-					if (g_num_work_list >= MAXCALCWORK) /* no room to split */
+					if (g_num_work_list >= MAX_WORK_LIST) /* no room to split */
 					{
 						restart_window(i);
 					}
@@ -975,7 +975,7 @@ static void fix_work_list() /* fix out of bounds and symmetry related stuff */
 			else  /* yaxis symmetry */
 			{
 				j = wk->xx_stop + wk->xx_start;
-				if (j > 0 && g_num_work_list < MAXCALCWORK)  /* split the sym part */
+				if (j > 0 && g_num_work_list < MAX_WORK_LIST)  /* split the sym part */
 				{
 					g_work_list[g_num_work_list] = g_work_list[i];
 					g_work_list[g_num_work_list].xx_start = 0;
@@ -997,7 +997,7 @@ static void fix_work_list() /* fix out of bounds and symmetry related stuff */
 				k = wk->xx_start + (wk->xx_stop - j);
 				if (k < j)
 				{
-					if (g_num_work_list >= MAXCALCWORK) /* no room to split */
+					if (g_num_work_list >= MAX_WORK_LIST) /* no room to split */
 					{
 						restart_window(i);
 					}

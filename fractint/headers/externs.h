@@ -479,7 +479,7 @@ extern int					g_vx_dots;
 extern int					g_which_image;
 extern float				g_width_fp;
 extern char					g_work_dir[];
-extern WORKLIST				g_work_list[MAXCALCWORK];
+extern WORK_LIST				g_work_list[MAX_WORK_LIST];
 extern int					g_x_dots;
 extern int					g_x_shift1;
 extern int					g_x_shift;

@@ -100,7 +100,7 @@ int g_max_input_counter;    /* avoids checking keyboard too often */
 char *g_resume_info = NULL;                    /* resume info if allocated */
 int g_resuming;                           /* nonzero if resuming after interrupt */
 int g_num_work_list;                       /* resume g_work_list for standard engine */
-WORKLIST g_work_list[MAXCALCWORK];
+WORK_LIST g_work_list[MAX_WORK_LIST];
 int g_xx_start;
 int g_xx_stop;
 int g_xx_begin;             /* these are same as g_work_list, */
@@ -4225,7 +4225,7 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 		}
 		if (i > g_yy_stop) /* split into 2 pieces, bottom has the symmetry */
 		{
-			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
+			if (g_num_work_list >= MAX_WORK_LIST-1) /* no room to split */
 			{
 				return 1;
 			}
@@ -4240,7 +4240,7 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 		}
 		if (i < g_yy_stop) /* split into 2 pieces, top has the symmetry */
 		{
-			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
+			if (g_num_work_list >= MAX_WORK_LIST-1) /* no room to split */
 			{
 				return 1;
 			}
@@ -4279,7 +4279,7 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 		}
 		if (i > g_xx_stop) /* split into 2 pieces, right has the symmetry */
 		{
-			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
+			if (g_num_work_list >= MAX_WORK_LIST-1) /* no room to split */
 			{
 				return 1;
 			}
@@ -4294,7 +4294,7 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 		}
 		if (i < g_xx_stop) /* split into 2 pieces, left has the symmetry */
 		{
-			if (g_num_work_list >= MAXCALCWORK-1) /* no room to split */
+			if (g_num_work_list >= MAX_WORK_LIST-1) /* no room to split */
 			{
 				return 1;
 			}

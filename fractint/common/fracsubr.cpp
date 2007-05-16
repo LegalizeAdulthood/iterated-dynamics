@@ -1621,7 +1621,7 @@ int work_list_add(int xfrom, int xto, int xbegin,
 	int yfrom, int yto, int ybegin,
 	int pass, int sym)
 {
-	if (g_num_work_list >= MAXCALCWORK)
+	if (g_num_work_list >= MAX_WORK_LIST)
 	{
 		return -1;
 	}
@@ -1696,7 +1696,7 @@ void work_list_tidy() /* combine mergeable entries, resort */
 {
 	int i;
 	int j;
-	WORKLIST tempwork;
+	WORK_LIST tempwork;
 	while ((i = work_list_combine()) != 0)
 	{ /* merged two, delete the gone one */
 		while (++i < g_num_work_list)
