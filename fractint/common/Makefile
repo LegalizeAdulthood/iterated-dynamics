@@ -62,7 +62,10 @@ SRCS = \
 	EscapeTime.cpp \
 	ThreeDimensionalState.cpp \
 	MathUtil.cpp \
-	UIChoices.cpp
+	UIChoices.cpp \
+	SolidGuess.cpp \
+	Tesseral.cpp \
+	BoundaryTrace.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
