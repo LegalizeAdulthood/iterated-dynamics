@@ -183,8 +183,13 @@ static char s_diffusion_lb[] =
 	6, 6,14
 };
 
-int s_xx_begin;             /* these are same as g_work_list, */
-int s_yy_begin;             /* declared as separate items  */
+int g_xx_begin;             /* these are same as g_work_list, */
+int g_yy_begin;             /* declared as separate items  */
+int g_ix_start;
+int g_iy_start;						/* start here */
+int g_work_pass;
+int g_work_sym;                   /* for the sake of calculate_mandelbrot    */
+
 static double s_dem_delta;
 static double s_dem_width;     /* distance estimator variables */
 static double s_dem_too_big;
@@ -193,10 +198,6 @@ static int s_dem_mandelbrot;
 static ComplexD s_saved_z;
 static double s_rq_limit_save;
 static int s_pixel_pi; /* value of pi in pixels */
-int s_ix_start;
-int s_iy_start;						/* start here */
-int s_work_pass;
-int s_work_sym;                   /* for the sake of calculate_mandelbrot    */
 static BYTE *s_save_dots = NULL;
 static BYTE *s_fill_buffer;
 static int s_save_dots_len;
@@ -459,7 +460,7 @@ static int calculate_type_show_dot()
 			starty = g_row + width;
 			stopy  = g_row + 1;
 		}
-		else if (g_col-width >= s_ix_start && g_row + width <= g_y_stop)
+		else if (g_col-width >= g_ix_start && g_row + width <= g_y_stop)
 		{
 			/* second choice */
 			direction = UPPER_RIGHT;
@@ -468,7 +469,7 @@ static int calculate_type_show_dot()
 			starty = g_row + width;
 			stopy  = g_row + 1;
 		}
-		else if (g_col-width >= s_ix_start && g_row-width >= s_iy_start)
+		else if (g_col-width >= g_ix_start && g_row-width >= g_iy_start)
 		{
 			direction = LOWER_RIGHT;
 			startx = g_col-width;
@@ -476,7 +477,7 @@ static int calculate_type_show_dot()
 			starty = g_row-width;
 			stopy  = g_row-1;
 		}
-		else if (g_col + width <= g_x_stop && g_row-width >= s_iy_start)
+		else if (g_col + width <= g_x_stop && g_row-width >= g_iy_start)
 		{
 			direction = LOWER_LEFT;
 			startx = g_col;
@@ -751,12 +752,12 @@ int calculate_fractal()
 		g_symmetry = g_current_fractal_specific->symmetry;
 		/* defaults when setsymmetry not called or does nothing */
 		g_plot_color = g_put_color;
-		s_iy_start = 0;
-		s_ix_start = 0;
+		g_iy_start = 0;
+		g_ix_start = 0;
 		g_yy_start = 0;
 		g_xx_start = 0;
-		s_yy_begin = 0;
-		s_xx_begin = 0;
+		g_yy_begin = 0;
+		g_xx_begin = 0;
 		g_y_stop = g_y_dots - 1;
 		g_yy_stop = g_y_dots - 1;
 		g_x_stop = g_x_dots - 1;
@@ -922,7 +923,7 @@ static void perform_work_list()
 		end_resume();
 		if (vsn < 2)
 		{
-			s_xx_begin = 0;
+			g_xx_begin = 0;
 		}
 	}
 
@@ -1002,16 +1003,16 @@ static void perform_work_list()
 		/* pull top entry off g_work_list */
 		g_xx_start = g_work_list[0].xx_start;
 		g_xx_stop = g_work_list[0].xx_stop;
-		s_ix_start = g_xx_start;
+		g_ix_start = g_xx_start;
 		g_x_stop  = g_xx_stop;
-		s_xx_begin  = g_work_list[0].xx_begin;
+		g_xx_begin  = g_work_list[0].xx_begin;
 		g_yy_start = g_work_list[0].yy_start;
 		g_yy_stop = g_work_list[0].yy_stop;
-		s_iy_start = g_yy_start;
+		g_iy_start = g_yy_start;
 		g_y_stop  = g_yy_stop;
-		s_yy_begin  = g_work_list[0].yy_begin;
-		s_work_pass = g_work_list[0].pass;
-		s_work_sym  = g_work_list[0].sym;
+		g_yy_begin  = g_work_list[0].yy_begin;
+		g_work_pass = g_work_list[0].pass;
+		g_work_sym  = g_work_list[0].sym;
 		--g_num_work_list;
 		for (int i = 0; i < g_num_work_list; ++i)
 		{
@@ -1198,8 +1199,8 @@ static int diffusion_scan()
 	/* fit any 32 bit architecture, the maxinum limit for this case would  */
 	/* be 65536x65536 (HB) */
 
-	g_bits = (unsigned) (min(log((double) (g_y_stop - s_iy_start + 1)),
-							 log((double) (g_x_stop - s_ix_start + 1)))/log2);
+	g_bits = (unsigned) (min(log((double) (g_y_stop - g_iy_start + 1)),
+							 log((double) (g_x_stop - g_ix_start + 1)))/log2);
 	g_bits <<= 1; /* double for two axes */
 	g_diffusion_limit = 1l << g_bits;
 
@@ -1208,7 +1209,7 @@ static int diffusion_scan()
 		work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
 			(int) (g_diffusion_counter >> 16),            /* high, */
 			(int) (g_diffusion_counter & 0xffff),         /* low order words */
-			s_work_sym);
+			g_work_sym);
 		return -1;
 	}
 
@@ -1315,20 +1316,20 @@ static int diffusion_engine()
 	int rowo; /* original col and row */
 	int s = 1 << (g_bits/2); /* size of the square */
 
-	nx = (int) floor((double) (g_x_stop-s_ix_start + 1)/s );
-	ny = (int) floor((double) (g_y_stop-s_iy_start + 1)/s );
+	nx = (int) floor((double) (g_x_stop-g_ix_start + 1)/s );
+	ny = (int) floor((double) (g_y_stop-g_iy_start + 1)/s );
 
-	rem_x = (g_x_stop-s_ix_start + 1) - nx*s;
-	rem_y = (g_y_stop-s_iy_start + 1) - ny*s;
+	rem_x = (g_x_stop-g_ix_start + 1) - nx*s;
+	rem_y = (g_y_stop-g_iy_start + 1) - ny*s;
 
-	if (s_yy_begin == s_iy_start && s_work_pass == 0)  /* if restarting on pan: */
+	if (g_yy_begin == g_iy_start && g_work_pass == 0)  /* if restarting on pan: */
 	{
 		g_diffusion_counter = 0L;
 	}
 	else
 	{
 		/* g_yy_begin and passes contain data for resuming the type: */
-		g_diffusion_counter = (((long) ((unsigned)s_yy_begin)) << 16) | ((unsigned)s_work_pass);
+		g_diffusion_counter = (((long) ((unsigned) g_yy_begin)) << 16) | ((unsigned) g_work_pass);
 	}
 
 	dif_offset = 12-(g_bits/2); /* offset to adjust coordinates */
@@ -1342,11 +1343,11 @@ static int diffusion_engine()
 		{
 			count_to_int(dif_offset, g_diffusion_counter, &colo, &rowo);
 			i = 0;
-			g_col = s_ix_start + colo; /* get the right tiles */
+			g_col = g_ix_start + colo; /* get the right tiles */
 			do
 			{
 				j = 0;
-				g_row = s_iy_start + rowo;
+				g_row = g_iy_start + rowo;
 				do
 				{
 					if (diffusion_point(g_row, g_col))
@@ -1372,7 +1373,7 @@ static int diffusion_engine()
 			/* in the last x tiles we may not need to plot the point */
 			if (colo < rem_x)
 			{
-				g_row = s_iy_start + rowo;
+				g_row = g_iy_start + rowo;
 				j = 0;
 				do
 				{
@@ -1410,8 +1411,8 @@ static int diffusion_engine()
 				j = 0;
 				do
 				{
-					g_col = s_ix_start + colo + i*s; /* get the right tiles */
-					g_row = s_iy_start + rowo + j*s;
+					g_col = g_ix_start + colo + i*s; /* get the right tiles */
+					g_row = g_iy_start + rowo + j*s;
 
 					if (diffusion_block(g_row, g_col, sqsz))
 					{
@@ -1423,7 +1424,7 @@ static int diffusion_engine()
 				/* in the last tile we may not need to plot the point */
 				if (rowo < rem_y)
 				{
-					g_row = s_iy_start + rowo + ny*s;
+					g_row = g_iy_start + rowo + ny*s;
 					if (diffusion_block(g_row, g_col, sqsz))
 					{
 						return -1;
@@ -1435,11 +1436,11 @@ static int diffusion_engine()
 			/* in the last tile we may not need to plot the point */
 			if (colo < rem_x)
 			{
-				g_col = s_ix_start + colo + nx*s;
+				g_col = g_ix_start + colo + nx*s;
 				j = 0;
 				do
 				{
-					g_row = s_iy_start + rowo + j*s; /* get the right tiles */
+					g_row = g_iy_start + rowo + j*s; /* get the right tiles */
 					if (diffusion_block_lim(g_row, g_col, sqsz))
 					{
 						return -1;
@@ -1449,7 +1450,7 @@ static int diffusion_engine()
 				while (j < ny);
 				if (rowo < rem_y)
 				{
-					g_row = s_iy_start + rowo + ny*s;
+					g_row = g_iy_start + rowo + ny*s;
 					if (diffusion_block_lim(g_row, g_col, sqsz))
 					{
 						return -1;
@@ -1471,8 +1472,8 @@ static int diffusion_engine()
 			j = 0;
 			do
 			{
-				g_col = s_ix_start + colo + i*s; /* get the right tiles */
-				g_row = s_iy_start + rowo + j*s;
+				g_col = g_ix_start + colo + i*s; /* get the right tiles */
+				g_row = g_iy_start + rowo + j*s;
 				if (diffusion_point(g_row, g_col))
 				{
 					return -1;
@@ -1483,7 +1484,7 @@ static int diffusion_engine()
 			/* in the last tile we may not need to plot the point */
 			if (rowo < rem_y)
 			{
-				g_row = s_iy_start + rowo + ny*s;
+				g_row = g_iy_start + rowo + ny*s;
 				if (diffusion_point(g_row, g_col))
 				{
 					return -1;
@@ -1495,11 +1496,11 @@ static int diffusion_engine()
 		/* in the last tile we may nnt need to plot the point */
 		if (colo < rem_x)
 		{
-			g_col = s_ix_start + colo + nx*s;
+			g_col = g_ix_start + colo + nx*s;
 			j = 0;
 			do
 			{
-				g_row = s_iy_start + rowo + j*s; /* get the right tiles */
+				g_row = g_iy_start + rowo + j*s; /* get the right tiles */
 				if (diffusion_point(g_row, g_col))
 				{
 					return -1;
@@ -1509,7 +1510,7 @@ static int diffusion_engine()
 			while (j < ny);
 			if (rowo < rem_y)
 			{
-				g_row = s_iy_start + rowo + ny*s;
+				g_row = g_iy_start + rowo + ny*s;
 				if (diffusion_point(g_row, g_col))
 				{
 					return -1;
@@ -1525,8 +1526,8 @@ static int diffusion_engine()
 static int draw_rectangle_orbits()
 {
 	/* draw a rectangle */
-	g_row = s_yy_begin;
-	g_col = s_xx_begin;
+	g_row = g_yy_begin;
+	g_col = g_xx_begin;
 
 	while (g_row <= g_y_stop)
 	{
@@ -1535,12 +1536,12 @@ static int draw_rectangle_orbits()
 		{
 			if (plotorbits2dfloat() == -1)
 			{
-				work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+				work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
 				return -1; /* interrupted */
 			}
 			++g_col;
 		}
-		g_col = s_ix_start;
+		g_col = g_ix_start;
 		++g_row;
 	}
 
@@ -1557,8 +1558,8 @@ static int draw_line_orbits()
 		inc2;               /* G increment when row or column changes */
 	char pos_slope;
 
-	dX = g_x_stop - s_ix_start;                   /* find vector components */
-	dY = g_y_stop - s_iy_start;
+	dX = g_x_stop - g_ix_start;                   /* find vector components */
+	dY = g_y_stop - g_iy_start;
 	pos_slope = (char)(dX > 0);                   /* is slope positive? */
 	if (dY < 0)
 	{
@@ -1568,15 +1569,15 @@ static int draw_line_orbits()
 	{
 		if (dX > 0)         /* determine start point and last column */
 		{
-			g_col = s_xx_begin;
-			g_row = s_yy_begin;
+			g_col = g_xx_begin;
+			g_row = g_yy_begin;
 			final = g_x_stop;
 		}
 		else
 		{
 			g_col = g_x_stop;
 			g_row = g_y_stop;
-			final = s_xx_begin;
+			final = g_xx_begin;
 		}
 		inc1 = 2*abs(dY);            /* determine increments and initial G */
 		G = inc1 - abs(dX);
@@ -1587,7 +1588,7 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -1608,7 +1609,7 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -1628,15 +1629,15 @@ static int draw_line_orbits()
 	{
 		if (dY > 0)             /* determine start point and last row */
 		{
-			g_col = s_xx_begin;
-			g_row = s_yy_begin;
+			g_col = g_xx_begin;
+			g_row = g_yy_begin;
 			final = g_y_stop;
 		}
 		else
 		{
 			g_col = g_x_stop;
 			g_row = g_y_stop;
-			final = s_yy_begin;
+			final = g_yy_begin;
 		}
 		inc1 = 2*abs(dX);            /* determine increments and initial G */
 		G = inc1 - abs(dY);
@@ -1647,7 +1648,7 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1668,7 +1669,7 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1701,7 +1702,7 @@ static int draw_function_orbits()
 	double xfactor = g_x_dots / 2.0;
 	double yfactor = g_y_dots / 2.0;
 
-	angle = s_xx_begin;  /* save angle in x parameter */
+	angle = g_xx_begin;  /* save angle in x parameter */
 
 	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	if (Rotation <= 0)
@@ -1716,7 +1717,7 @@ static int draw_function_orbits()
 		g_row = (int) (yfactor + (Yctr + Xmagfactor*sin(theta)));
 		if (plotorbits2dfloat() == -1)
 		{
-			work_list_add(angle, 0, 0, 0, 0, 0, 0, s_work_sym);
+			work_list_add(angle, 0, 0, 0, 0, 0, 0, g_work_sym);
 			return -1; /* interrupted */
 		}
 		angle++;
@@ -1757,21 +1758,21 @@ static int one_or_two_pass()
 	{
 		g_total_passes = 2;
 	}
-	if (g_standard_calculation_mode == '2' && s_work_pass == 0) /* do 1st pass of two */
+	if (g_standard_calculation_mode == '2' && g_work_pass == 0) /* do 1st pass of two */
 	{
 		if (standard_calculate(1) == -1)
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
 			return -1;
 		}
 		if (g_num_work_list > 0) /* g_work_list not empty, defer 2nd pass */
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, s_work_sym);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_sym);
 			return 0;
 		}
-		s_work_pass = 1;
-		s_xx_begin = g_xx_start;
-		s_yy_begin = g_yy_start;
+		g_work_pass = 1;
+		g_xx_begin = g_xx_start;
+		g_yy_begin = g_yy_start;
 	}
 	/* second or only pass */
 	if (standard_calculate(2) == -1)
@@ -1779,9 +1780,9 @@ static int one_or_two_pass()
 		i = g_yy_stop;
 		if (g_y_stop != g_yy_stop) /* must be due to symmetry */
 		{
-			i -= g_row - s_iy_start;
+			i -= g_row - g_iy_start;
 		}
-		work_list_add(g_xx_start, g_xx_stop, g_col, g_row, i, g_row, s_work_pass, s_work_sym);
+		work_list_add(g_xx_start, g_xx_stop, g_col, g_row, i, g_row, g_work_pass, g_work_sym);
 		return -1;
 	}
 
@@ -1792,8 +1793,8 @@ static int _fastcall standard_calculate(int passnum)
 {
 	g_got_status = GOT_STATUS_12PASS;
 	g_current_pass = passnum;
-	g_row = s_yy_begin;
-	g_col = s_xx_begin;
+	g_row = g_yy_begin;
+	g_col = g_xx_begin;
 
 	while (g_row <= g_y_stop)
 	{
@@ -1837,7 +1838,7 @@ static int _fastcall standard_calculate(int passnum)
 			}
 			++g_col;
 		}
-		g_col = s_ix_start;
+		g_col = g_ix_start;
 		if (passnum == 1 && (g_row&1) == 0)
 		{
 			++g_row;
@@ -3304,17 +3305,17 @@ static int _fastcall potential(double mag, long iterations)
 static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 {
 	int i;
-	if ((s_work_sym&0x11) == 0x10) /* already decided not sym */
+	if ((g_work_sym&0x11) == 0x10) /* already decided not sym */
 	{
 		return 1;
 	}
-	if ((s_work_sym&1) != 0) /* already decided on sym */
+	if ((g_work_sym&1) != 0) /* already decided on sym */
 	{
 		g_y_stop = (g_yy_start + g_yy_stop)/2;
 	}
 	else /* new window, decide */
 	{
-		s_work_sym |= 0x10;
+		g_work_sym |= 0x10;
 		if (xaxis_row <= g_yy_start || xaxis_row >= g_yy_stop)
 		{
 			return 1; /* axis not in window */
@@ -3335,7 +3336,7 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 			{
 				--g_y_stop;
 			}
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_y_stop + 1, g_yy_stop, g_y_stop + 1, s_work_pass, 0);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_y_stop + 1, g_yy_stop, g_y_stop + 1, g_work_pass, 0);
 			g_yy_stop = g_y_stop;
 			return 1; /* tell set_symmetry no sym for current window */
 		}
@@ -3345,11 +3346,11 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 			{
 				return 1;
 			}
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, i + 1, g_yy_stop, i + 1, s_work_pass, 0);
+			work_list_add(g_xx_start, g_xx_stop, g_xx_start, i + 1, g_yy_stop, i + 1, g_work_pass, 0);
 			g_yy_stop = i;
 		}
 		g_y_stop = xaxis_row;
-		s_work_sym |= 1;
+		g_work_sym |= 1;
 	}
 	g_symmetry = SYMMETRY_NONE;
 	return 0; /* tell set_symmetry its a go */
@@ -3358,17 +3359,17 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 {
 	int i;
-	if ((s_work_sym&0x22) == 0x20) /* already decided not sym */
+	if ((g_work_sym&0x22) == 0x20) /* already decided not sym */
 	{
 		return 1;
 	}
-	if ((s_work_sym&2) != 0) /* already decided on sym */
+	if ((g_work_sym&2) != 0) /* already decided on sym */
 	{
 		g_x_stop = (g_xx_start + g_xx_stop)/2;
 	}
 	else /* new window, decide */
 	{
-		s_work_sym |= 0x20;
+		g_work_sym |= 0x20;
 		if (yaxis_col <= g_xx_start || yaxis_col >= g_xx_stop)
 		{
 			return 1; /* axis not in window */
@@ -3389,7 +3390,7 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 			{
 				--g_x_stop;
 			}
-			work_list_add(g_x_stop + 1, g_xx_stop, g_x_stop + 1, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, 0);
+			work_list_add(g_x_stop + 1, g_xx_stop, g_x_stop + 1, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, 0);
 			g_xx_stop = g_x_stop;
 			return 1; /* tell set_symmetry no sym for current window */
 		}
@@ -3399,11 +3400,11 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 			{
 				return 1;
 			}
-			work_list_add(i + 1, g_xx_stop, i + 1, g_yy_start, g_yy_stop, g_yy_start, s_work_pass, 0);
+			work_list_add(i + 1, g_xx_stop, i + 1, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, 0);
 			g_xx_stop = i;
 		}
 		g_x_stop = yaxis_col;
-		s_work_sym |= 2;
+		g_work_sym |= 2;
 	}
 	g_symmetry = SYMMETRY_NONE;
 	return 0; /* tell set_symmetry its a go */
@@ -3610,7 +3611,7 @@ static void _fastcall set_symmetry(int symmetry, int use_list) /* set up proper 
 	case SYMMETRY_XY_AXIS:
 		x_symmetry_split(xaxis_row, xaxis_between);
 		y_symmetry_split(yaxis_col, yaxis_between);
-		switch (s_work_sym & 3)
+		switch (g_work_sym & 3)
 		{
 		case SYMMETRY_X_AXIS: /* just xaxis symmetry */
 			g_plot_color = g_basin ? symplot2basin : symplot2;
@@ -3647,7 +3648,7 @@ static void _fastcall set_symmetry(int symmetry, int use_list) /* set up proper 
 		{
 			g_y_stop = g_yy_stop; /* in case first split worked */
 			g_symmetry = SYMMETRY_X_AXIS;
-			s_work_sym = 0x30; /* let it recombine with others like it */
+			g_work_sym = 0x30; /* let it recombine with others like it */
 		}
 		break;
 	case SYMMETRY_PI_NO_PARAMETER:
@@ -3685,7 +3686,7 @@ static void _fastcall set_symmetry(int symmetry, int use_list) /* set up proper 
 		else
 		{
 			g_y_stop = g_yy_stop; /* in case first split worked */
-			s_work_sym = 0x30;  /* don't mark pisym as ysym, just do it unmarked */
+			g_work_sym = 0x30;  /* don't mark pisym as ysym, just do it unmarked */
 		}
 		if (g_bf_math)
 		{
