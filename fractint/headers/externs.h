@@ -39,7 +39,6 @@ extern int					g_basin;
 extern int					g_bf_save_len;
 extern int					g_bf_digits;
 extern int					g_biomorph;
-extern unsigned int			g_bits;
 extern int					g_bit_shift;
 extern int					g_bit_shift_minus_1;
 extern BYTE					g_block[];
@@ -99,8 +98,6 @@ extern int					g_decomposition[];
 extern int					g_degree;
 extern long					g_delta_min;
 extern float				g_depth_fp;
-extern unsigned long		g_diffusion_counter;
-extern unsigned long		g_diffusion_limit;
 extern int					g_disk_16bit;
 extern int					g_disk_flag;						/* disk video active flag */
 extern int					g_disk_targa;
