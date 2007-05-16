@@ -29,6 +29,7 @@
 #include "EscapeTime.h"
 #include "MathUtil.h"
 #include "Formula.h"
+#include "WorkList.h"
 
 extern long g_bn_max_stack;
 extern long maxstack;

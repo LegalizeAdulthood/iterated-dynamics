@@ -1132,6 +1132,10 @@
 				RelativePath=".\headers\winprot.h"
 				>
 			</File>
+			<File
+				RelativePath=".\headers\WorkList.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="help"

@@ -11,6 +11,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "MathUtil.h"
+#include "WorkList.h"
 
 #define PIXELROUND 0.00001
 

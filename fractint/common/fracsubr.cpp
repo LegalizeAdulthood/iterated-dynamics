@@ -25,6 +25,7 @@
 #include "fihelp.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
+#include "WorkList.h"
 
 #if defined(_WIN32)
 #define ftimex ftime
