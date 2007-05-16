@@ -17,7 +17,10 @@ typedef struct WorkListItem WORK_LIST;
 
 enum
 {
-	MAX_WORK_LIST = 40
+	MAX_WORK_LIST = 40,
+	MAX_Y_BLOCK = 7,		/* MAX_X_BLOCK*MAX_Y_BLOCK*2 <= 4096, the size of "prefix" */
+	MAX_X_BLOCK = 202		/* each maxnblk is oversize by 2 for a "border" */
+							/* MAX_X_BLOCK defn must match fracsubr.c */
 };
 
 extern WORK_LIST g_work_list[MAX_WORK_LIST];
@@ -25,5 +28,11 @@ extern int g_xx_start;
 extern int g_xx_stop;
 extern int g_yy_start;
 extern int g_yy_stop;
+extern int s_xx_begin;
+extern int s_yy_begin;
+extern int s_work_pass;
+extern int s_ix_start;
+extern int s_iy_start;
+extern int s_work_sym;
 
 #endif

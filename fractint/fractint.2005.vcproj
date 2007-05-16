@@ -528,6 +528,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\SolidGuess.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\testpt.cpp"
 					>
 					<FileConfiguration
@@ -1114,6 +1118,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\prototyp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\SolidGuess.h"
 				>
 			</File>
 			<File
