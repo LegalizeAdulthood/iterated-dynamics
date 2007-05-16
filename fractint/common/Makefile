@@ -65,7 +65,8 @@ SRCS = \
 	UIChoices.cpp \
 	SolidGuess.cpp \
 	Tesseral.cpp \
-	BoundaryTrace.cpp
+	BoundaryTrace.cpp \
+	DiffusionScan.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
