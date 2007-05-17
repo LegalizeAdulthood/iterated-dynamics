@@ -1586,7 +1586,7 @@ int calculate_mandelbrot_fp()
 #define STARTRAILMAX FLT_MAX   /* just a convenient large number */
 #define green 2
 #define yellow 6
-#if 0
+#if 1
 #define NUMSAVED 40     /* define this to save periodicity analysis to file */
 #endif
 #if 0
@@ -1678,7 +1678,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			s_saved_z.y = 0;
 		}
 #ifdef NUMSAVED
-		savedz[zctr++] = saved;
+		savedz[zctr++] = s_saved_z;
 #endif
 		if (g_bf_math)
 		{
