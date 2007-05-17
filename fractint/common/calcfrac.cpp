@@ -1586,7 +1586,7 @@ int calculate_mandelbrot_fp()
 #define STARTRAILMAX FLT_MAX   /* just a convenient large number */
 #define green 2
 #define yellow 6
-#if 1
+#if 0
 #define NUMSAVED 40     /* define this to save periodicity analysis to file */
 #endif
 #if 0
