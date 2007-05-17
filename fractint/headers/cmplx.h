@@ -6,6 +6,8 @@ template <typename T>
 struct ComplexT
 {
 	T x, y;
+	T real() const { return x; }
+	T imag() const { return y; }
 };
 
 template <typename T>
