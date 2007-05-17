@@ -1600,7 +1600,6 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	long changed[NUMSAVED];
 	int zctr = 0;
 #endif
-	long savemaxit;
 	double tantable[16];
 	int hooper = 0;
 	long lcloseprox;
@@ -1621,10 +1620,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	ComplexD dem_new;
 	int check_freq;
 	double totaldist = 0.0;
-	ComplexD lastz;
-
 	lcloseprox = (long) (g_proximity*g_fudge);
-	savemaxit = g_max_iteration;
+	long saved_max_iterations = g_max_iteration;
 #ifdef NUMSAVED
 	for (int i = 0; i < NUMSAVED; i++)
 	{
@@ -1765,6 +1762,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 
 	attracted = FALSE;
 
+	ComplexD lastz;
 	if (g_outside == TDIS)
 	{
 		if (g_integer_fractal)
@@ -2511,7 +2509,7 @@ plot_pixel:
 	}
 	(*g_plot_color)(g_col, g_row, g_color);
 
-	g_max_iteration = savemaxit;
+	g_max_iteration = saved_max_iterations;
 	g_input_counter -= abs((int)g_real_color_iter);
 	if (g_input_counter <= 0)
 	{
