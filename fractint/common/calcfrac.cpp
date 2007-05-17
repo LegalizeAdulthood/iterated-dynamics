@@ -1586,7 +1586,7 @@ int calculate_mandelbrot_fp()
 #define STARTRAILMAX FLT_MAX   /* just a convenient large number */
 #define green 2
 #define yellow 6
-#if 0
+#if 1
 #define NUMSAVED 40     /* define this to save periodicity analysis to file */
 #endif
 #if 0
@@ -1623,7 +1623,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	double totaldist = 0.0;
 	ComplexD lastz;
 
-	lcloseprox = (long)(g_proximity*g_fudge);
+	lcloseprox = (long) (g_proximity*g_fudge);
 	savemaxit = g_max_iteration;
 #ifdef NUMSAVED
 	for (int i = 0; i < NUMSAVED; i++)
@@ -2199,7 +2199,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 						fp = dir_fopen(g_work_dir, "cycles.txt", "w");
 					}
 #endif
-					cyclelen = g_color_iter-savedcoloriter;
+					cyclelen = g_color_iter - savedcoloriter;
 #ifdef NUMSAVED
 					fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
 						g_row, g_col, cyclelen, g_color_iter, savedand);
@@ -2241,18 +2241,18 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		if (g_integer_fractal)       /* adjust integer fractals */
 		{
-			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
-			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
+			g_new_z.x = ((double) g_new_z_l.x)/g_fudge;
+			g_new_z.y = ((double) g_new_z_l.y)/g_fudge;
 		}
 		else if (g_bf_math == BIGNUM)
 		{
-			g_new_z.x = (double)bntofloat(bnnew.x);
-			g_new_z.y = (double)bntofloat(bnnew.y);
+			g_new_z.x = (double) bntofloat(bnnew.x);
+			g_new_z.y = (double) bntofloat(bnnew.y);
 		}
 		else if (g_bf_math == BIGFLT)
 		{
-			g_new_z.x = (double)bftofloat(bfnew.x);
-			g_new_z.y = (double)bftofloat(bfnew.y);
+			g_new_z.x = (double) bftofloat(bfnew.x);
+			g_new_z.y = (double) bftofloat(bfnew.y);
 		}
 		g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
 		g_color_iter = potential(g_magnitude, g_color_iter);
@@ -2410,12 +2410,10 @@ plot_inside: /* we're "inside" */
 	{
 		if (g_inside == STARTRAIL)
 		{
-			double diff;
 			g_color_iter = 0;
 			for (int i = 1; i < 16; i++)
 			{
-				diff = tantable[0] - tantable[i];
-				if (fabs(diff) < .05)
+				if (fabs(tantable[0] - tantable[i]) < .05)
 				{
 					g_color_iter = i;
 					break;
@@ -2447,24 +2445,20 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == FMODI)
 		{
-			g_color_iter = (long)(memvalue*g_colors / g_proximity);
+			g_color_iter = (long) (memvalue*g_colors/g_proximity);
 		}
 		else if (g_inside == ATANI)          /* "atan" */
 		{
 			if (g_integer_fractal)
 			{
-				g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
-				g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
-				g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
+				g_new_z.x = ((double) g_new_z_l.x) / g_fudge;
+				g_new_z.y = ((double) g_new_z_l.y) / g_fudge;
 			}
-			else
-			{
-				g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
-			}
+			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
 		else if (g_inside == BOF60)
 		{
-			g_color_iter = (long)(sqrt(min_orbit)*75);
+			g_color_iter = (long) (sqrt(min_orbit)*75);
 		}
 		else if (g_inside == BOF61)
 		{
@@ -2472,9 +2466,9 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == ZMAG)
 		{
-			g_color_iter = g_integer_fractal ?
-				(long)(((double)g_magnitude_l/g_fudge)*(g_max_iteration >> 1) + 1)
-				: (long)((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration >> 1) + 1);
+			g_color_iter = (long) (g_integer_fractal ?
+				(((double) g_magnitude_l/g_fudge)*(g_max_iteration/2) + 1)
+				: ((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration/2) + 1));
 		}
 		else /* inside == -1 */
 		{
