@@ -225,6 +225,8 @@ init_restart:
    periodicitycheck = usr_periodicitycheck;
    distest          = usr_distest;
    biomorph         = usr_biomorph;
+   if(inside == ATANI && save_release >= 2004)
+      periodicitycheck = 0;
 
    potflag = 0;
    if (potparam[0] != 0.0

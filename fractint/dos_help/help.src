@@ -313,6 +313,8 @@ Jonathan's changes\
 
   Resurrected the documentation for ap_math that was at the beginning of bignum.c.
 
+  Added code to force periodicity=0 when the inside=atan feature is used.
+
 Patch 4 to Version 20.4.0\
 Added minor changes so that Xfractint would compile under Cygwin.
 

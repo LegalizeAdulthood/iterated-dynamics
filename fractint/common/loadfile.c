@@ -1086,7 +1086,7 @@ int ret = 0;
        (fractype == FPPOPCORNJUL && save_release <= 1960) ||
        (fractype == LPOPCORNJUL && save_release <= 1960) ||
        (inside == FMODI && save_release <= 2000) ||
-       ((inside == ATANI || outside == ATAN) && save_release <= 2002) ||
+       ((inside == ATANI || outside == ATAN) && save_release <= 2005) ||
        (fractype == LAMBDATRIGFP && trigndx[0] == EXP && save_release <= 2002) ||
        ((fractype == JULIBROT || fractype == JULIBROTFP) &&
           (neworbittype == QUATFP || neworbittype == HYPERCMPLXFP) &&
