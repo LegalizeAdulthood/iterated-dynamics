@@ -2942,3 +2942,12 @@ void parse_comments(char *value)
 		value = next + 1;
 	}
 }
+
+void init_comments()
+{
+	int i;
+	for (i = 0; i < 4; i++)
+	{
+		par_comment[i][0] = '\0';
+	}
+}

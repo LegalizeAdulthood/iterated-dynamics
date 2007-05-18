@@ -337,15 +337,6 @@ int load_commands(FILE *infile)
 	return ret;
 }
 
-static void init_comments()
-{
-	int i;
-	for (i = 0; i < 4; i++)
-	{
-		par_comment[i][0] = '\0';
-	}
-}
-
 static void initialize_variables_once()              /* once per run init */
 {
 	char *p;
