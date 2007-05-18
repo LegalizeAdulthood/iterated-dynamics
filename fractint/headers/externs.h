@@ -370,7 +370,7 @@ extern int					g_resave_flag;
 extern int					g_reset_periodicity;
 extern char					*g_resume_info;
 extern int					g_resume_length;
-extern int					g_resuming;
+extern bool					g_resuming;
 extern int					g_random_flag;
 extern char					g_rle_buffer[];
 extern int					g_rhombus_stack[];

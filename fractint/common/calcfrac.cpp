@@ -94,7 +94,7 @@ int g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
 int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
 char *g_resume_info = NULL;                    /* resume info if allocated */
-int g_resuming;                           /* nonzero if resuming after interrupt */
+bool g_resuming;                           /* true if resuming after interrupt */
 int g_num_work_list;                       /* resume g_work_list for standard engine */
 WORK_LIST g_work_list[MAX_WORK_LIST];
 int g_xx_start;
@@ -135,7 +135,7 @@ static int  one_or_two_pass();
 static int  _fastcall standard_calculate(int);
 static int  _fastcall potential(double, long);
 static void decomposition();
-static void _fastcall set_symmetry(int, int);
+static void _fastcall set_symmetry(int symmetry, bool use_list);
 static int  _fastcall x_symmetry_split(int, int);
 static int  _fastcall y_symmetry_split(int, int);
 static void _fastcall put_truecolor_disk(int, int, int);
@@ -731,7 +731,7 @@ int calculate_fractal()
 			/* next two lines in case periodicity changed */
 			g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
 			g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
-			set_symmetry(g_symmetry, 0);
+			set_symmetry(g_symmetry, false);
 			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
 		}
 		if (check_key())
@@ -843,7 +843,7 @@ static void perform_work_list()
 		int tmpcalcmode = g_standard_calculation_mode;
 
 		g_standard_calculation_mode = '1'; /* force 1 pass */
-		if (g_resuming == 0)
+		if (!g_resuming)
 		{
 			if (disk_start_potential() < 0)
 			{
@@ -1077,7 +1077,7 @@ static void perform_work_list()
 		g_close_enough_l = (long)(g_close_enough*g_fudge); /* "close enough" value */
 		g_input_counter = g_max_input_counter;
 
-		set_symmetry(g_symmetry, 1);
+		set_symmetry(g_symmetry, true);
 
 		if (!(g_resuming) && (labs(g_log_palette_flag) == 2 || (g_log_palette_flag && g_log_automatic_flag)))
 		{  /* calculate round screen edges to work out best start for logmap */
@@ -1442,7 +1442,7 @@ static int _fastcall standard_calculate(int passnum)
 				{
 					return -1; /* interrupted */
 				}
-				g_resuming = 0; /* reset so g_quick_calculate works */
+				g_resuming = false; /* reset so g_quick_calculate works */
 				g_reset_periodicity = 0;
 				if (passnum == 1) /* first pass, copy pixel and bump col */
 				{
@@ -2189,7 +2189,6 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				if (caught_a_cycle)
 				{
 #ifdef NUMSAVED
-					char msg[MESSAGE_LEN];
 					static FILE *fp = NULL;
 					static char c;
 					if (fp == NULL)
@@ -3030,7 +3029,7 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 #pragma optimize ("ea", off)
 #endif
 
-static void _fastcall set_symmetry(int symmetry, int use_list) /* set up proper symmetrical plot functions */
+static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper symmetrical plot functions */
 {
 	int i;
 	int parmszero;
@@ -3154,7 +3153,7 @@ static void _fastcall set_symmetry(int symmetry, int use_list) /* set up proper 
 		ftemp += 0.25;
 		xaxis_row = (int)ftemp;
 		xaxis_between = (ftemp - xaxis_row >= 0.5);
-		if (use_list == 0 && (!xaxis_between || (xaxis_row + 1)*2 != g_y_dots))
+		if (!use_list && (!xaxis_between || (xaxis_row + 1)*2 != g_y_dots))
 		{
 			xaxis_row = -1; /* can't split screen, so dead center or not at all */
 		}
@@ -3177,7 +3176,7 @@ static void _fastcall set_symmetry(int symmetry, int use_list) /* set up proper 
 		ftemp += 0.25;
 		yaxis_col = (int)ftemp;
 		yaxis_between = (ftemp - yaxis_col >= 0.5);
-		if (use_list == 0 && (!yaxis_between || (yaxis_col + 1)*2 != g_x_dots))
+		if (!use_list && (!yaxis_between || (yaxis_col + 1)*2 != g_x_dots))
 		{
 			yaxis_col = -1; /* can't split screen, so dead center or not at all */
 		}
@@ -3449,7 +3448,7 @@ static long automatic_log_map()   /*RB*/
 ack: /* bailout here if key is pressed */
 	if (mincolour == 2)
 	{
-		g_resuming = 1; /* insure automatic_log_map not called again */
+		g_resuming = true; /* insure automatic_log_map not called again */
 	}
 	g_max_iteration = old_maxit;
 

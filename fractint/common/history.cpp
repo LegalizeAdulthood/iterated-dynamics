@@ -203,7 +203,7 @@ void _fastcall history_restore_info()
 
 	g_invert				= 0;
 	g_calculation_status				= CALCSTAT_PARAMS_CHANGED;
-	g_resuming				= 0;
+	g_resuming = false;
 	g_fractal_type				= last.fractal_type;
 	g_escape_time_state.m_grid_fp.x_min()               	= last.x_min;
 	g_escape_time_state.m_grid_fp.x_max()               	= last.x_max;
