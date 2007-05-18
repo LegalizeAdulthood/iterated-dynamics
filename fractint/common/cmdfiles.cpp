@@ -159,8 +159,8 @@ char	g_make_par[] =          "makepar";
 int  process_command(char *, int);
 
 static int s_init_random_seed;
-static int s_init_corners;
-static int s_initial_parameters;
+static bool s_initial_corners = false;
+static bool s_initial_parameters = false;
 
 static int  command_file(FILE *, int);
 static int  next_command(char *, int, FILE *, char *, int *, int);
@@ -329,17 +329,27 @@ int load_commands(FILE *infile)
 	/* when called, file is open in binary mode, positioned at the */
 	/* '(' or '{' following the desired parameter set's name       */
 	int ret;
-	s_init_corners = s_initial_parameters = 0; /* reset flags for type= */
+	s_initial_corners = false;
+	s_initial_parameters = false; /* reset flags for type= */
 	ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
 	/* PAR reads a file and sets color */
 	g_dont_read_color = (g_color_preloaded && (g_show_file == 0));
 	return ret;
 }
 
+static void init_comments()
+{
+	int i;
+	for (i = 0; i < 4; i++)
+	{
+		par_comment[i][0] = '\0';
+	}
+}
+
 static void initialize_variables_once()              /* once per run init */
 {
 	char *p;
-	s_init_random_seed = (int)time(NULL);
+	s_init_random_seed = (int) time(NULL);
 	init_comments();
 	p = getenv("TMP");
 	if (p == NULL)
@@ -439,7 +449,8 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_finite_attractor = 0;                      /* disable finite attractor logic */
 	g_fractal_type = 0;                        /* initial type Set flag  */
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-	s_init_corners = s_initial_parameters = 0;
+	s_initial_corners = false;
+	s_initial_parameters = false;
 	g_bail_out = 0;                         /* no user-entered bailout */
 	g_no_bof = FALSE;  /* use normal bof initialization to make bof images */
 	g_use_initial_orbit_z = 0;
@@ -700,17 +711,10 @@ static int next_line(FILE *handle, char *linebuf, int mode)
 	{
 		if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')  /* check for [fractint] */
 		{
-#ifndef XFRACT
 			strncpy(tmpbuf, &linebuf[1], 9);
 			tmpbuf[9] = 0;
 			strlwr(tmpbuf);
 			toolssection = strncmp(tmpbuf, "fractint]", 9);
-#else
-			strncpy(tmpbuf, &linebuf[1], 10);
-			tmpbuf[10] = 0;
-			strlwr(tmpbuf);
-			toolssection = strncmp(tmpbuf, "xfractint]", 10);
-#endif
 			continue;                              /* skip tools section heading */
 		}
 		if (toolssection == 0)
@@ -1177,7 +1181,7 @@ static int type_arg(const cmd_context &context)
 	}
 	g_fractal_type = k;
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-	if (s_init_corners == 0)
+	if (!s_initial_corners)
 	{
 		g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
 		g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
@@ -1186,7 +1190,7 @@ static int type_arg(const cmd_context &context)
 		g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
 		g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
 	}
-	if (s_initial_parameters == 0)
+	if (!s_initial_parameters)
 	{
 		load_parameters(g_fractal_type);
 	}
@@ -1556,7 +1560,7 @@ static int params_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	s_initial_parameters = 1;
+	s_initial_parameters = true;
 	for (k = 0; k < MAX_PARAMETERS; ++k)
 	{
 		g_parameters[k] = (k < context.totparms) ? context.floatval[k] : 0.0;
@@ -1747,7 +1751,7 @@ static int corners_arg(const cmd_context &context)
 	{
 		return Command::OK; /* turns corners mode on */
 	}
-	s_init_corners = 1;
+	s_initial_corners = true;
 	/* good first approx, but dec could be too big */
 	dec = get_max_curarg_len((char **) context.floatvalstr, context.totparms) + 1;
 	if ((dec > DBL_DIG + 1 || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag) && g_debug_flag != DEBUGFLAG_NO_INT_TO_FLOAT)
@@ -1951,7 +1955,7 @@ static int center_mag_arg(const cmd_context &context)
 	{
 		return Command::OK; /* turns center-mag mode on */
 	}
-	s_init_corners = 1;
+	s_initial_corners = true;
 	/* dec = get_max_curarg_len(floatvalstr, context.totparms); */
 #ifdef USE_LONG_DOUBLE
 	sscanf(context.floatvalstr[2], "%Lf", &Magnification);
@@ -2000,7 +2004,7 @@ static int center_mag_arg(const cmd_context &context)
 	{
 		int old_bf_math;
 		int saved;
-		s_init_corners = 1;
+		s_initial_corners = true;
 		old_bf_math = g_bf_math;
 		if (!g_bf_math || dec > g_decimals)
 		{
