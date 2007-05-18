@@ -29,18 +29,23 @@ static unsigned int s_t_prefix[2][MAX_Y_BLOCK][MAX_X_BLOCK]; /* common temp */
 	} \
 	while (0)
 
-static void _fastcall plot_block(int buildrow, int x, int y, int color)
+enum BuildRowType
 {
-	int xlim;
-	int ylim;
-	xlim = x + s_half_block;
+	BUILDROW_NEW = 0,
+	BUILDROW_OLD = 1,
+	BUILDROW_NONE = -1
+};
+
+static void _fastcall plot_block(BuildRowType buildrow, int x, int y, int color)
+{
+	int xlim = x + s_half_block;
 	if (xlim > g_x_stop)
 	{
 		xlim = g_x_stop + 1;
 	}
-	if (buildrow >= 0 && !s_guess_plot) /* save it for later put_line */
+	if (buildrow != BUILDROW_NONE && !s_guess_plot) /* save it for later put_line */
 	{
-		if (buildrow == 0)
+		if (buildrow == BUILDROW_NEW)
 		{
 			for (int i = x; i < xlim; ++i)
 			{
@@ -60,7 +65,7 @@ static void _fastcall plot_block(int buildrow, int x, int y, int color)
 		}
 	}
 	/* paint it */
-	ylim = y + s_half_block;
+	int ylim = y + s_half_block;
 	if (ylim > g_y_stop)
 	{
 		if (y > g_y_stop)
@@ -167,7 +172,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 
 		if (firstpass)  /* 1st pass, paint topleft corner */
 		{
-			plot_block(0, x, y, c22);
+			plot_block(BUILDROW_NEW, x, y, c22);
 		}
 		/* setup variables */
 		xplushalf = x + s_half_block;
@@ -272,23 +277,23 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 						(*g_plot_color)(xplushalf, yplushalf, c33);
 					}
 				}
-				plot_block(1, x, yplushalf, c23);
-				plot_block(0, xplushalf, y, c32);
-				plot_block(1, xplushalf, yplushalf, c33);
+				plot_block(BUILDROW_OLD, x, yplushalf, c23);
+				plot_block(BUILDROW_NEW, xplushalf, y, c32);
+				plot_block(BUILDROW_OLD, xplushalf, yplushalf, c33);
 			}
 			else  /* repaint changed blocks */
 			{
 				if (c23 != c22)
 				{
-					plot_block(-1, x, yplushalf, c23);
+					plot_block(BUILDROW_NONE, x, yplushalf, c23);
 				}
 				if (c32 != c22)
 				{
-					plot_block(-1, xplushalf, y, c32);
+					plot_block(BUILDROW_NONE, xplushalf, y, c32);
 				}
 				if (c33 != c22)
 				{
-					plot_block(-1, xplushalf, yplushalf, c33);
+					plot_block(BUILDROW_NONE, xplushalf, yplushalf, c33);
 				}
 			}
 		}
@@ -312,7 +317,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			calcadot(c21, x, ylesshalf);
 			if (s_half_block > 1 && c21 != c22)
 			{
-				plot_block(-1, x, ylesshalf, c21);
+				plot_block(BUILDROW_NONE, x, ylesshalf, c21);
 			}
 		}
 		if (fix31)
@@ -320,7 +325,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			calcadot(c31, xplushalf, ylesshalf);
 			if (s_half_block > 1 && c31 != c22)
 			{
-				plot_block(-1, xplushalf, ylesshalf, c31);
+				plot_block(BUILDROW_NONE, xplushalf, ylesshalf, c31);
 			}
 		}
 		if (c23 != c22)
@@ -330,7 +335,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 				calcadot(c12, x-s_half_block, y);
 				if (s_half_block > 1 && c12 != c22)
 				{
-					plot_block(-1, x-s_half_block, y, c12);
+					plot_block(BUILDROW_NONE, x-s_half_block, y, c12);
 				}
 			}
 			if (guessed13)
@@ -338,7 +343,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 				calcadot(c13, x-s_half_block, yplushalf);
 				if (s_half_block > 1 && c13 != c22)
 				{
-					plot_block(-1, x-s_half_block, yplushalf, c13);
+					plot_block(BUILDROW_NONE, x-s_half_block, yplushalf, c13);
 				}
 			}
 		}
