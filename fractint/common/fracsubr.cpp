@@ -558,7 +558,7 @@ expand_retry:
 	/* calculate factors which plot real values to screen co-ords */
 	/* calcfrac.c plot_orbit routines have comments about this    */
 	ftemp = (double) (-g_escape_time_state.m_grid_fp.delta_y2()*g_escape_time_state.m_grid_fp.delta_x2()*g_dx_size*g_dy_size - (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())*(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_max()));
-	if (ftemp != 0)
+	if (ftemp != 0.0)
 	{
 		g_plot_mx1 = (double)(g_escape_time_state.m_grid_fp.delta_x2()*g_dx_size*g_dy_size / ftemp);
 		g_plot_mx2 = (g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max())*g_dx_size / ftemp;

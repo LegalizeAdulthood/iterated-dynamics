@@ -2744,6 +2744,7 @@ void flip_image(int key)
 	reset_zoom_corners();
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
+
 static char *expand_var(char *var, char *buf)
 {
 	time_t ltime;
@@ -2852,12 +2853,12 @@ void expand_comments(char *target, char *source)
 	int i;
 	int j;
 	int k;
-	int escape = 0;
 	char c;
 	char oldc;
 	char varname[MAXVNAME];
 	i = j = k = 0;
 	c = oldc = 0;
+	bool escape = false;
 	while (i < MAX_COMMENT && j < MAX_COMMENT && (c = *(source + i++)) != '\0')
 	{
 		if (c == '\\' && oldc != '\\')
@@ -2873,9 +2874,9 @@ void expand_comments(char *target, char *source)
 		/* esc_char marks start and end of variable names */
 		if (c == esc_char && oldc != '\\')
 		{
-			escape = 1 - escape;
+			escape = !escape;
 		}
-		if (c != esc_char && escape != 0) /* if true, building variable name */
+		if (c != esc_char && escape) /* if true, building variable name */
 		{
 			if (k < MAXVNAME-1)
 			{
@@ -2883,20 +2884,19 @@ void expand_comments(char *target, char *source)
 			}
 		}
 		/* got variable name */
-		else if (c == esc_char && escape == 0 && oldc != '\\')
+		else if (c == esc_char && !escape && oldc != '\\')
 		{
 			char buf[100];
-			char *varstr;
 			varname[k] = 0;
-			varstr = expand_var(varname, buf);
+			char *varstr = expand_var(varname, buf);
 			strncpy(target + j, varstr, MAX_COMMENT-j-1);
 			j += (int) strlen(varstr);
 		}
-		else if (c == esc_char && escape != 0 && oldc != '\\')
+		else if (c == esc_char && escape && oldc != '\\')
 		{
 			k = 0;
 		}
-		else if ((c != esc_char || oldc == '\\') && escape == 0)
+		else if ((c != esc_char || oldc == '\\') && !escape)
 		{
 			*(target + j++) = c;
 		}
