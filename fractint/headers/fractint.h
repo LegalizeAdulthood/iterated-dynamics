@@ -438,7 +438,7 @@ struct video_info
 							/*      16 = Chips&Tech SuperVGA*256    */
 	int     x_dots;          /* number of dots across the screen     */
 	int     y_dots;          /* number of dots down the screen       */
-	int     colors;         /* number of g_colors available           */
+	int     colors;         /* number of colors available           */
 	AbstractDriver *driver;
 };
 
@@ -1169,7 +1169,7 @@ struct TrigonometricFunctionListItem
 /* not really a key, but a special trigger */
 #define FIK_SAVE_TIME		9999
 
-/* text g_colors */
+/* text colors */
 #define BLACK      0
 #define BLUE       1
 #define GREEN      2

@@ -158,7 +158,7 @@ void make_batch_file()
 			maxcolor = 256;
 		}
 		if (g_color_state == COLORSTATE_DEFAULT)
-		{                         /* default g_colors */
+		{                         /* default colors */
 			if (g_map_dac_box)
 			{
 				colorspec[0] = '@';
@@ -166,11 +166,11 @@ void make_batch_file()
 			}
 		}
 		else if (g_color_state == COLORSTATE_MAP)
-		{                         /* g_colors match g_color_file */
+		{                         /* colors match g_color_file */
 			colorspec[0] = '@';
 			sptr = g_color_file;
 		}
-		else                      /* g_colors match no .map that we know of */
+		else                      /* colors match no .map that we know of */
 		{
 			strcpy (colorspec, "y");
 		}

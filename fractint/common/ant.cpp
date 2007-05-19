@@ -144,7 +144,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 		/* random rule */
 		for (color = 0; color < MAX_ANTS; color++)
 		{
-			/* init the rules and g_colors for the
+			/* init the rules and colors for the
 			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = 1 - (random_number(2)*2);
 			next_col[color] = color + 1;
@@ -157,7 +157,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 		/* user defined rule */
 		for (color = 0; color < rule_len; color++)
 		{
-			/* init the rules and g_colors for the
+			/* init the rules and colors for the
 			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = (m_rule[color]*2) - 1;
 			next_col[color] = color + 1;
@@ -165,7 +165,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 		/* repeats to last color */
 		for (color = rule_len; color < MAX_ANTS; color++)
 		{
-			/* init the rules and g_colors for the
+			/* init the rules and colors for the
 			* turkmites: 1 turn left, -1 turn right */
 			rule[color] = rule[color % rule_len];
 			next_col[color] = color + 1;

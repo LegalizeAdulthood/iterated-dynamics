@@ -1945,7 +1945,7 @@ void load_fractint_config()
 		tempstring[120] = 0;
 		tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
 		i = j = -1;
-		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, g_colors, comments, driver */
+		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
 		while (1)
 		{
 			if (tempstring[++i] < ' ')

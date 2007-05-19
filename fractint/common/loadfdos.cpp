@@ -43,8 +43,8 @@ struct video_mode_info
 #define VI_SBIG     64  /* screen bigger than file's screen */
 #define VI_VSMALL   32  /* screen smaller than file's view */
 #define VI_VBIG     16  /* screen bigger than file's view */
-#define VI_CSMALL    8  /* mode has too few g_colors */
-#define VI_CBIG      4  /* mode has excess g_colors */
+#define VI_CSMALL    8  /* mode has too few colors */
+#define VI_CBIG      4  /* mode has excess colors */
 #define VI_ASPECT    1  /* aspect ratio bad */
 
 static int video_mode_compare(const void *p1, const void *p2)

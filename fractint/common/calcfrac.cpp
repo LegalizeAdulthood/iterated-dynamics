@@ -218,7 +218,7 @@ static double fmod_test()
 	with the color. The routine does write the line using symmetry
 	in all cases, however the symmetry logic assumes that the line
 	is one color; it is not general enough to handle a row of
-	pixels of different g_colors.
+	pixels of different colors.
 */
 void sym_fill_line(int row, int left, int right, BYTE *str)
 {
@@ -914,7 +914,7 @@ static void perform_work_list()
 		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
 
 		g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
-		if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside g_colors */
+		if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */
 		{
 			if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
 			{
@@ -1703,7 +1703,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			if (g_use_old_distance_test)
 			{
 				g_rq_limit = s_rq_limit_save;
-				if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside g_colors */
+				if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */
 					if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
 					{
 						g_rq_limit = DEM_BAILOUT;
@@ -2308,7 +2308,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			g_color_iter = (long)(totaldist);
 		}
 
-		/* eliminate negative g_colors & wrap arounds */
+		/* eliminate negative colors & wrap arounds */
 		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != FMOD)
 		{
 			g_color_iter = (g_save_release < 1961) ? 0 : 1;

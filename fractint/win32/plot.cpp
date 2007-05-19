@@ -201,7 +201,7 @@ LRESULT CALLBACK Plot::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 *	Color 1 should be bright for bifurcation.
 *	Colors 1, 2, 3 should be distinct for periodicity.
 *	The color map should look good for mandelbrot.
-*	The color map should be good if only 128 g_colors are used.
+*	The color map should be good if only 128 colors are used.
 *
 * Results:
 *	None.

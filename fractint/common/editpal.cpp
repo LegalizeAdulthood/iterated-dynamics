@@ -42,11 +42,11 @@
  *                    Change 'c' to 'd' and 's' to '=' for below.
  *                    Add 'l' to load palette from .map, 's' to store .map.
  *                    Add 'c' to invoke color cycling.
- *                    Change cursor to use whatever g_colors it can from
+ *                    Change cursor to use whatever colors it can from
  *                    the palette (not fixed 0 and 255).
- *                    Restore g_colors 0 and 255 to real values whenever
+ *                    Restore colors 0 and 255 to real values whenever
  *                    palette is not on display.
- *                    Rotate 255 g_colors instead of 254.
+ *                    Rotate 255 colors instead of 254.
  *                    Reduce cursor blink rate.
  *
  *   11-15-90 EAN     Minor "bug" fixes.  Continuous rotation now at a fixed
@@ -59,11 +59,11 @@
  *
  *   01-16-91 PB      Change rotate function to use new cyclerange stuff.
  *
- *   01-29-91 EAN     Made all g_colors editable.  The two reserved g_colors are
+ *   01-29-91 EAN     Made all colors editable.  The two reserved colors are
  *                       X'ed out.  They can be edited but the color is not
  *                       visible.  (There is an X over the sample instead.)
- *                    Changed default reserved g_colors to 254 & 255.
- *                    Added 'v' command to set the reserved g_colors to those
+ *                    Changed default reserved colors to 254 & 255.
+ *                    Added 'v' command to set the reserved colors to those
  *                       under the editors.
  *                    Added 'o' command to set the rotate range to between
  *                      the two editors.
@@ -73,9 +73,9 @@
  *                        range between editors in 'y' mode or entire palette
  *                        if in "normal" mode.
  *
- *   02-08-91 EAN     Improved 16 color support.  In 16 color mode, g_colors
+ *   02-08-91 EAN     Improved 16 color support.  In 16 color mode, colors
  *                      16-255 have a dot over them and are editable but not
- *                      visible (like the two reserved g_colors).
+ *                      visible (like the two reserved colors).
  *
  *   09-08-91 SWT     Added 'n' command to make a negative color palette:
  *                      will convert only current color if in 'x' mode or
@@ -380,7 +380,7 @@ va_dcl
 
 
 /*
- * create smooth shades between two g_colors
+ * create smooth shades between two colors
  */
 static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
@@ -454,7 +454,7 @@ static void swap_columns_br(PALENTRY pal[], int num)
 }
 
 /*
- * convert a range of g_colors to grey scale
+ * convert a range of colors to grey scale
  */
 static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
 {
@@ -470,7 +470,7 @@ static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
 }
 
 /*
- * convert a range of g_colors to their s_inverse
+ * convert a range of colors to their inverse
  */
 static void pal_range_to_negative(PALENTRY pal[], int first, int how_many)
 {
@@ -2836,7 +2836,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		break;
 
 	case 'V':
-	case 'v':  /* set the reserved g_colors to the editor g_colors */
+	case 'v':  /* set the reserved g_colors to the editor colors */
 		if (me->curr[0] >= g_colors || me->curr[1] >= g_colors ||
 			me->curr[0] == me->curr[1])
 		{
@@ -3015,7 +3015,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 'w':
 		switch (me->exclude)
 		{
-		case EXCLUDE_NONE:   /* normal mode.  convert all g_colors to grey scale */
+		case EXCLUDE_NONE:   /* normal mode.  convert all colors to grey scale */
 			pal_table_save_undo_data(me, 0, 255);
 			pal_range_to_grey(me->pal, 0, 256);
 			break;
@@ -3054,7 +3054,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 'n':
 		switch (me->exclude)
 		{
-		case EXCLUDE_NONE:      /* normal mode.  convert all g_colors to grey scale */
+		case EXCLUDE_NONE:      /* normal mode.  convert all colors to grey scale */
 			pal_table_save_undo_data(me, 0, 255);
 			pal_range_to_negative(me->pal, 0, 256);
 			break;

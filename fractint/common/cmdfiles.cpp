@@ -76,7 +76,7 @@ int g_rotate_lo;
 int g_rotate_hi;    /* cycling color range      */
 int		*g_ranges;                /* iter->color ranges mapping */
 int     g_ranges_length = 0;          /* size of ranges array     */
-BYTE	*g_map_dac_box = NULL;     /* map= (default g_colors)    */
+BYTE	*g_map_dac_box = NULL;     /* map= (default colors)    */
 int     g_color_state;				/* 0, g_dac_box matches default (bios or map=) */
 									/* 1, g_dac_box matches no known defined map   */
 									/* 2, g_dac_box matches the g_color_file map      */
@@ -87,7 +87,7 @@ double  g_math_tolerance[2] = {.05, .05};  /* For math transition */
 int		g_targa_output = 0;              /* 3D fullcolor flag */
 int		g_true_color = 0;              /* escape time truecolor flag */
 int		g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
-char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or g_colors=@filename */
+char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
 int		g_function_preloaded; /* if function loaded for new bifs, JCO 7/5/92 */
 float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;   /* aspect ratio of the screen */
 float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  /* how much drift is allowed and */
@@ -2895,7 +2895,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 		}
 		else if (*argptr == '=')
 		{
-			/* don't convert g_colors=value or comment=value */
+			/* don't convert colors=value or comment=value */
 			if ((strncmp(curarg, "colors=", 7) == 0) || (strncmp(curarg, "comment", 7) == 0))
 			{
 				break;
@@ -3074,8 +3074,8 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			{ "reset",			reset_arg },
 			{ "filename",		filename_arg },			/* filename=?     */
 			{ "video",			video_arg },			/* video=? */
- 			{ "map",			map_arg },				/* map=, set default g_colors */
-			{ "colors",			colors_arg },			/* colors=, set current g_colors */
+ 			{ "map",			map_arg },				/* map=, set default colors */
+			{ "colors",			colors_arg },			/* colors=, set current colors */
 			{ "recordcolors",	record_colors_arg },	/* recordcolors= */
 			{ "maxlinelength",	max_line_length_arg },	/* maxlinelength= */
 			{ "comment",		parse_arg },			/* comment= */

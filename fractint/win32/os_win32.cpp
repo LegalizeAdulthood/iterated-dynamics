@@ -271,7 +271,7 @@ long multiply(long x, long y, int n)
 /*
 ; *************** Function find_special_colors ********************
 
-;       Find the darkest and brightest g_colors in palette, and a medium
+;       Find the darkest and brightest colors in palette, and a medium
 ;       color which is reasonably bright and reasonably grey.
 */
 void find_special_colors()
