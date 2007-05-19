@@ -1560,7 +1560,7 @@ static int filename_speedstr(int row, int col, int vid,
 }
 
 #if !defined(_WIN32)
-int is_a_directory(char *s)
+bool is_a_directory(char *s)
 {
 	int len;
 	char sv;
@@ -1569,7 +1569,7 @@ int is_a_directory(char *s)
 #endif
 	if (strchr(s, '*') || strchr(s, '?'))
 	{
-		return 0; /* for my purposes, not a directory */
+		return false; /* for my purposes, not a directory */
 	}
 
 	len = (int) strlen(s);
@@ -1585,7 +1585,7 @@ int is_a_directory(char *s)
 #ifdef _MSC_VER
 	if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
 	{
-		return 1;  /* not a directory or doesn't exist */
+		return true;  /* not a directory or doesn't exist */
 	}
 	else if (sv == SLASHC)
 	{
@@ -1594,22 +1594,22 @@ int is_a_directory(char *s)
 		if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
 		{
 			s[len-1] = sv;
-			return 1;
+			return true;
 		}
 		s[len-1] = sv;
 	}
-	return 0;
+	return false;
 #else
 	if (fr_find_first(s) != 0) /* couldn't find it */
 	{
 		/* any better ideas?? */
 		if (sv == SLASHC) /* we'll guess it is a directory */
 		{
-			return 1;
+			return true;
 		}
 		else
 		{
-			return 0;  /* no slashes - we'll guess it's a file */
+			return false;  /* no slashes - we'll guess it's a file */
 		}
 	}
 	else if ((g_dta.attribute & SUBDIR) != 0)
@@ -1620,23 +1620,23 @@ int is_a_directory(char *s)
 			s[len-1] = 0;
 			if (fr_find_first(s) != 0) /* couldn't find it */
 			{
-				return 0;
+				return false;
 			}
 			else if ((g_dta.attribute & SUBDIR) != 0)
 			{
-				return 1;   /* we're SURE it's a directory */
+				return true;   /* we're SURE it's a directory */
 			}
 			else
 			{
-				return 0;
+				return false;
 			}
 		}
 		else
 		{
-			return 1;   /* we're SURE it's a directory */
+			return true;   /* we're SURE it's a directory */
 		}
 	}
-	return 0;
+	return false;
 #endif
 }
 #endif
