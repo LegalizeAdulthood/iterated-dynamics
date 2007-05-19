@@ -1357,7 +1357,7 @@ bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx)
 }
 
 /**********************************************************************/
-int is_bf_zero(bf_t n)
+bool is_bf_zero(bf_t n)
 {
 	return !is_bf_not_zero(n);
 }
@@ -1571,7 +1571,7 @@ int cmp_bf(bf_t n1, bf_t n2)
 /********************************************************************/
 /* r < 0 ?                                      */
 /* returns 1 if negative, 0 if positive or zero */
-int is_bf_neg(bf_t n)
+bool is_bf_neg(bf_t n)
 {
 	return (S8)n[bflength-1] < 0;
 }
@@ -1580,16 +1580,12 @@ int is_bf_neg(bf_t n)
 /* n != 0 ?                      */
 /* RETURNS: if n != 0 returns 1  */
 /*          else returns 0       */
-int is_bf_not_zero(bf_t n)
+bool is_bf_not_zero(bf_t n)
 {
-	int bnl;
-	int retval;
-
-	bnl = bnlength;
+	int bnl = bnlength;
 	bnlength = bflength;
-	retval = is_bn_not_zero(n);
+	bool retval = is_bn_not_zero(n);
 	bnlength = bnl;
-
 	return retval;
 }
 
@@ -2004,11 +2000,11 @@ bf_t unsafe_mult_bf_int(bf_t r, bf_t n, U16 u)
 
 	positive = !is_bf_neg(n);
 
-/*
-if u > 0x00FF, then the integer part of the mantissa will overflow the
-2 byte (16 bit) integer size.  Therefore, make adjustment before
-multiplication is performed.
-*/
+	/*
+	if u > 0x00FF, then the integer part of the mantissa will overflow the
+	2 byte (16 bit) integer size.  Therefore, make adjustment before
+	multiplication is performed.
+	*/
 	if (u > 0x00FF)
 	{ /* un-normalize n */
 		memmove(n, n + 1, bflength-1);  /* this sign extends as well */

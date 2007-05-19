@@ -957,7 +957,8 @@ static void _fastcall adjust_to_limits_bf(double expand)
 
 	/* if (g_calculation_status == CALCSTAT_RESUMABLE && (adjx != 0 || adjy != 0) && (g_z_width == 1.0))
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED; */
-	if (g_calculation_status == CALCSTAT_RESUMABLE && (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (g_z_width == 1.0))
+	if (g_calculation_status == CALCSTAT_RESUMABLE
+		&& (is_bf_not_zero(badjx)|| is_bf_not_zero(badjy)) && (g_z_width == 1.0))
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
