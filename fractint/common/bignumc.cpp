@@ -132,7 +132,7 @@ int cmp_bn(bn_t n1, bn_t n2)
 /********************************************************************/
 /* r < 0 ?                                      */
 /* returns 1 if negative, 0 if positive or zero */
-int is_bn_neg(bn_t n)
+bool is_bn_neg(bn_t n)
 {
 	return (S8)n[bnlength-1] < 0;
 }
@@ -141,19 +141,17 @@ int is_bn_neg(bn_t n)
 /* n != 0 ?                      */
 /* RETURNS: if n != 0 returns 1  */
 /*          else returns 0       */
-int is_bn_not_zero(bn_t n)
+bool is_bn_not_zero(bn_t n)
 {
-	int i;
-
 	/* two bytes at a time */
-	for (i = 0; i < bnlength; i += 2)
+	for (int i = 0; i < bnlength; i += 2)
 	{
 		if (big_access16(n + i) != 0)
 		{
-			return 1;
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 /********************************************************************/
@@ -364,9 +362,6 @@ bn_t half_a_bn(bn_t r)
 /* SIDE-EFFECTS: n1 and n2 are changed to their absolute values         */
 bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int sign1;
-	int sign2 = 0;
-	int samevar;
 	int i;
 	int j;
 	int k;
@@ -381,16 +376,17 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	U32 prod;
 	U32 sum;
 
-	sign1 = is_bn_neg(n1);
-	if (sign1 != 0) /* =, not == */
+	bool sign1 = is_bn_neg(n1);
+	if (sign1) /* =, not == */
 	{
 		neg_a_bn(n1);
 	}
-	samevar = (n1 == n2);
-	if (!samevar) /* check to see if they're the same pointer */
+	bool same_variable = (n1 == n2);
+	bool sign2 = false;
+	if (!same_variable) /* check to see if they're the same pointer */
 	{
 		sign2 = is_bn_neg(n2);
-		if (sign2 != 0) /* =, not == */
+		if (sign2) /* =, not == */
 		{
 			neg_a_bn(n2);
 		}
@@ -433,7 +429,7 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	}
 
 	/* if they were the same or same sign, the product must be positive */
-	if (!samevar && sign1 != sign2)
+	if (!same_variable && sign1 != sign2)
 	{
 		bnlength <<= 1;         /* for a double wide number */
 		neg_a_bn(r);
@@ -450,9 +446,6 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 /* SIDE-EFFECTS: n1 and n2 are changed to their absolute values         */
 bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int sign1;
-	int sign2 = 0;
-	int samevar;
 	int i;
 	int j;
 	int k;
@@ -470,16 +463,17 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	int bnl; /* temp bnlength holder */
 
 	bnl = bnlength;
-	sign1 = is_bn_neg(n1);
-	if (sign1 != 0) /* =, not == */
+	bool sign1 = is_bn_neg(n1);
+	if (sign1) /* =, not == */
 	{
 		neg_a_bn(n1);
 	}
-	samevar = (n1 == n2);
+	bool samevar = (n1 == n2);
+	bool sign2 = false;
 	if (!samevar) /* check to see if they're the same pointer */
 	{
 		sign2 = is_bn_neg(n2);
-		if (sign2 != 0) /* =, not == */
+		if (sign2) /* =, not == */
 		{
 			neg_a_bn(n2);
 		}
@@ -846,12 +840,11 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 {
 	int i;
-	int sign;
 	U32 full_number;
 	U16 quot;
 	U16 rem = 0;
 
-	sign = is_bn_neg(n);
+	bool sign = is_bn_neg(n);
 	if (sign)
 	{
 		neg_a_bn(n);
@@ -888,12 +881,11 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 bn_t div_a_bn_int(bn_t r, U16 u)
 {
 	int i;
-	int sign;
 	U32 full_number;
 	U16 quot;
 	U16 rem = 0;
 
-	sign = is_bn_neg(r);
+	bool sign = is_bn_neg(r);
 	if (sign)
 	{
 		neg_a_bn(r);

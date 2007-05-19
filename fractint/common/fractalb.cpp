@@ -1118,11 +1118,11 @@ ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigN
 
 	/* 0 raised to anything is 0 */
 	if (is_bn_zero(xx->x) && is_bn_zero(xx->y))
-		{
+	{
 		clear_bn(t->x);
 		clear_bn(t->y);
 		return t;
-		}
+	}
 
 	complex_log_bn(t, xx);
 	complex_multiply_bn(&tmp, t, yy);

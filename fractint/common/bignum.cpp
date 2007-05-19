@@ -1413,11 +1413,8 @@ bn_t unsafe_atan2_bn(bn_t r, bn_t ny, bn_t nx)
 /**********************************************************************/
 bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int sign1;
-	int sign2;
-
-	sign1 = is_bn_neg(n1);
-	sign2 = is_bn_neg(n2);
+	bool sign1 = is_bn_neg(n1);
+	bool sign2 = is_bn_neg(n2);
 	unsafe_full_mult_bn(r, n1, n2);
 	if (sign1)
 	{
@@ -1433,12 +1430,8 @@ bn_t full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 /**********************************************************************/
 bn_t mult_bn(bn_t r, bn_t n1, bn_t n2)
 {
-	int sign1;
-	int sign2;
-
-	/* TW ENDFIX */
-	sign1 = is_bn_neg(n1);
-	sign2 = is_bn_neg(n2);
+	bool sign1 = is_bn_neg(n1);
+	bool sign2 = is_bn_neg(n2);
 	unsafe_mult_bn(r, n1, n2);
 	if (sign1)
 	{
@@ -1454,9 +1447,7 @@ bn_t mult_bn(bn_t r, bn_t n1, bn_t n2)
 /**********************************************************************/
 bn_t full_square_bn(bn_t r, bn_t n)
 {
-	int sign;
-
-	sign = is_bn_neg(n);
+	bool sign = is_bn_neg(n);
 	unsafe_full_square_bn(r, n);
 	if (sign)
 	{
@@ -1468,9 +1459,7 @@ bn_t full_square_bn(bn_t r, bn_t n)
 /**********************************************************************/
 bn_t square_bn(bn_t r, bn_t n)
 {
-	int sign;
-
-	sign = is_bn_neg(n);
+	bool sign = is_bn_neg(n);
 	unsafe_square_bn(r, n);
 	if (sign)
 	{
@@ -1482,9 +1471,7 @@ bn_t square_bn(bn_t r, bn_t n)
 /**********************************************************************/
 bn_t div_bn_int(bn_t r, bn_t n, U16 u)
 {
-	int sign;
-
-	sign = is_bn_neg(n);
+	bool sign = is_bn_neg(n);
 	unsafe_div_bn_int(r, n, u);
 	if (sign)
 	{
@@ -1502,9 +1489,7 @@ char *bntostr(char *s, int dec, bn_t r)
 /**********************************************************************/
 bn_t inv_bn(bn_t r, bn_t n)
 {
-	int sign;
-
-	sign = is_bn_neg(n);
+	bool sign = is_bn_neg(n);
 	unsafe_inv_bn(r, n);
 	if (sign)
 	{
@@ -1525,9 +1510,7 @@ bn_t div_bn(bn_t r, bn_t n1, bn_t n2)
 bn_t ln_bn(bn_t r, bn_t n)
 {
 #if 0
-	int sign;
-
-	sign = is_bn_neg(n);
+	bool sign = is_bn_neg(n);
 	unsafe_ln_bn(r, n);
 	if (sign)
 	{
@@ -1548,9 +1531,7 @@ bn_t sincos_bn(bn_t s, bn_t c, bn_t n)
 /**********************************************************************/
 bn_t atan_bn(bn_t r, bn_t n)
 {
-	int sign;
-
-	sign = is_bn_neg(n);
+	bool sign = is_bn_neg(n);
 	unsafe_atan_bn(r, n);
 	if (sign)
 	{
@@ -1573,7 +1554,7 @@ bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx)
 /* Tim's miscellaneous stuff follows                                  */
 
 /**********************************************************************/
-int is_bn_zero(bn_t n)
+bool is_bn_zero(bn_t n)
 {
 	return !is_bn_not_zero(n);
 }

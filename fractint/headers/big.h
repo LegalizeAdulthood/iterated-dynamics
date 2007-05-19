@@ -97,8 +97,8 @@ extern bn_t clear_bn(bn_t r);
 extern bn_t max_bn(bn_t r);
 extern bn_t copy_bn(bn_t r, bn_t n);
 extern int cmp_bn(bn_t n1, bn_t n2);
-extern int is_bn_neg(bn_t n);
-extern int is_bn_not_zero(bn_t n);
+extern bool is_bn_neg(bn_t n);
+extern bool is_bn_not_zero(bn_t n);
 extern bn_t add_bn(bn_t r, bn_t n1, bn_t n2);
 extern bn_t add_a_bn(bn_t r, bn_t n);
 extern bn_t sub_bn(bn_t r, bn_t n1, bn_t n2);
@@ -180,7 +180,7 @@ extern bn_t atan_bn(bn_t r, bn_t n);
 extern bn_t atan2_bn(bn_t r, bn_t ny, bn_t nx);
 
     /* misc */
-extern int is_bn_zero(bn_t n);
+extern bool is_bn_zero(bn_t n);
 extern bn_t floattobn(bn_t r, LDBL f);
 
 /************/
@@ -229,7 +229,7 @@ extern bf_t ln_bf(bf_t r, bf_t n);
 extern bf_t sincos_bf(bf_t s, bf_t c, bf_t n);
 extern bf_t atan_bf(bf_t r, bf_t n);
 extern bf_t atan2_bf(bf_t r, bf_t ny, bf_t nx);
-extern int is_bf_zero(bf_t n);
+extern bool is_bf_zero(bf_t n);
 extern int convert_bf(bf_t result, bf_t old, int newbflength, int oldbflength);
 
 extern LDBL extract_value(LDBL f, LDBL b, int *exp_ptr);
@@ -249,8 +249,8 @@ extern void norm_sign_bf(bf_t r, int positive);
 extern S16 adjust_bf_add(bf_t n1, bf_t n2);
 extern bf_t max_bf(bf_t r);
 extern int cmp_bf(bf_t n1, bf_t n2);
-extern int is_bf_neg(bf_t n);
-extern int is_bf_not_zero(bf_t n);
+extern bool is_bf_neg(bf_t n);
+extern bool is_bf_not_zero(bf_t n);
 extern bf_t unsafe_add_bf(bf_t r, bf_t n1, bf_t n2);
 extern bf_t unsafe_add_a_bf(bf_t r, bf_t n);
 extern bf_t unsafe_sub_bf(bf_t r, bf_t n1, bf_t n2);
