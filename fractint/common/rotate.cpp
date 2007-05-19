@@ -218,7 +218,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			fstep = 1;
 			incr = 999;
 			break;
-		case FIK_ENTER:                    /* enter key: randomize all g_colors */
+		case FIK_ENTER:                    /* enter key: randomize all colors */
 		case FIK_ENTER_2:                  /* also the Numeric-Keypad Enter */
 			fkey = rand15()/3277 + 1;
 			fstep = 1;
@@ -314,7 +314,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			}
 			break;
 
-		case 'd':							/* load g_colors from "default.map" */
+		case 'd':							/* load colors from "default.map" */
 		case 'D':
 			if (validate_luts("default") != 0)
 			{
@@ -324,7 +324,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			pause_rotate();              /* update palette and pause */
 			break;
 
-		case 'a':                      /* load g_colors from "altern.map" */
+		case 'a':                      /* load colors from "altern.map" */
 		case 'A':
 			if (validate_luts("altern") != 0)
 			{
@@ -334,7 +334,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			pause_rotate();              /* update palette and pause */
 			break;
 
-		case 'l':                      /* load g_colors from a specified map */
+		case 'l':                      /* load colors from a specified map */
 #ifndef XFRACT /* L is used for FIK_RIGHT_ARROW in Unix keyboard mapping */
 		case 'L':
 #endif

@@ -103,7 +103,7 @@ typedef void (_fastcall *PLOT)(int, int, int);
 
 /* data local to this module */
 static int s_iparm_x;      /* s_iparm_x = g_parameter.x*8 */
-static int s_shift_value;  /* shift based on #g_colors */
+static int s_shift_value;  /* shift based on #colors */
 static int s_recur1 = 1;
 static int s_plasma_colors;
 static int s_recur_level = 0;
@@ -573,7 +573,7 @@ int plasma()
 
 	if (g_colors == 256)                   /* set the (256-color) palette */
 	{
-		set_plasma_palette();             /* skip this if < 256 g_colors */
+		set_plasma_palette();             /* skip this if < 256 colors */
 	}
 
 	if (g_colors > 16)
@@ -699,7 +699,7 @@ int diffusion()
 	int mode;     /* Determines diffusion type:  0 = central (classic) */
 					/*                             1 = falling particles */
 					/*                             2 = square cavity     */
-	int colorshift; /* If zero, select g_colors at random, otherwise shift */
+	int colorshift; /* If zero, select colors at random, otherwise shift */
 					/* the color every colorshift points */
 	int colorcount;
 	int currentcolor;

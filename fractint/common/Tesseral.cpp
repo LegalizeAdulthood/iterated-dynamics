@@ -19,7 +19,7 @@ struct tess  /* one of these per box to be done gets stacked */
 	int top;
 	int bottom;
 	int left;
-	int right;  /* edge g_colors, -1 mixed, -2 unknown */
+	int right;  /* edge colors, -1 mixed, -2 unknown */
 };
 
 static int _fastcall tesseral_check_column(int x, int y1, int y2)

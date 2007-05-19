@@ -81,7 +81,7 @@ int     g_x_dots;
 int		g_y_dots;           /* # of dots on the logical screen     */
 double  g_dx_size;
 double	g_dy_size;         /* g_x_dots-1, g_y_dots-1         */
-int     g_colors = 256;           /* maximum g_colors available */
+int     g_colors = 256;           /* maximum colors available */
 long    g_max_iteration;                  /* try this many iterations */
 int     g_box_count;               /* 0 if no zoom-box yet     */
 int     g_z_rotate;                /* zoombox rotation         */
@@ -300,7 +300,7 @@ static void main_restart(int argc, char *argv[], int &stacked)
 		check_same_name();
 	}
 	driver_window();
-	memcpy(g_old_dac_box, g_dac_box, 256*3);      /* save in case g_colors= present */
+	memcpy(g_old_dac_box, g_dac_box, 256*3);      /* save in case colors= present */
 
 	set_cpu_fpu();
 
@@ -344,7 +344,7 @@ static int main_restore_restart(int &stacked, int &resume_flag)
 
 	if (g_color_preloaded)
 	{
-		memcpy(g_dac_box, g_old_dac_box, 256*3);   /* restore in case g_colors= present */
+		memcpy(g_dac_box, g_old_dac_box, 256*3);   /* restore in case colors= present */
 	}
 
 	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
@@ -521,7 +521,7 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 			}
 			if (g_color_preloaded)
 			{
-				memcpy(g_old_dac_box, g_dac_box, 256*3);     /* save in case g_colors= present */
+				memcpy(g_old_dac_box, g_dac_box, 256*3);     /* save in case colors= present */
 			}
 			driver_set_for_text(); /* switch to text mode */
 			g_show_file = -1;

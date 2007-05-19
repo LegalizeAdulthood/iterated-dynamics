@@ -636,8 +636,8 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 			cur->color = (int) (1 + (g_colors - 2) *
 				(1.0 - dot_product(g_cross, s_light_direction)));
 		}
-		/* if g_colors out of range, set them to min or max color index
-		* but avoid background index. This makes g_colors "opaque" so
+		/* if colors out of range, set them to min or max color index
+		* but avoid background index. This makes colors "opaque" so
 		* SOMETHING plots. These conditions shouldn't happen but just
 		* in case                                        */
 		cur->color = MathUtil::Clamp(cur->color, 1, g_colors - 1);
@@ -651,7 +651,7 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 			put_a_triangle(s_last_row[next], s_last_row[col], *cur, cur->color);
 		}
 
-		if (col < 2 || g_current_row < 2)       /* don't have valid g_colors yet */
+		if (col < 2 || g_current_row < 2)       /* don't have valid color yet */
 		{
 			return;
 		}
@@ -1409,7 +1409,7 @@ static void transparent_clip_color(int x, int y, int color)
 }
 
 /************************************************************************/
-/* A substitute for plotcolor that interpolates the g_colors according    */
+/* A substitute for plotcolor that interpolates the colors according    */
 /* to the x and y values of three points (s_p1, s_p2, s_p3) which are static in */
 /* this routine                                                         */
 /*                                                                      */
@@ -1429,7 +1429,7 @@ static void interp_color(int x, int y, int color)
 
 	int D = (d1 + d2 + d3) << 1;
 	if (D)
-	{  /* calculate a weighted average of g_colors long casts prevent integer
+	{  /* calculate a weighted average of colors long casts prevent integer
 			overflow. This can evaluate to zero */
 		color = (int) (((long) (d2 + d3)*(long) s_p1.color +
 				(long) (d1 + d3)*(long) s_p2.color +
@@ -2094,8 +2094,8 @@ static int raytrace_header()
 /*  of its verticies and sets the light parameters to arbitrary     */
 /*  values.                                                         */
 /*                                                                  */
-/*  Note: g_num_colors (number of g_colors in the source                 */
-/*  file) is used instead of g_colors (number of g_colors avail. with   */
+/*  Note: g_num_colors (number of colors in the source              */
+/*  file) is used instead of g_colors (number of colors avail. with */
 /*  display) so you can generate ray trace files with your LCD      */
 /*  or monochrome display                                           */
 /*                                                                  */
@@ -2120,7 +2120,7 @@ static int out_triangle(const struct f_point pt1,
 	pt_t[2][1] = (2*pt3.y/g_y_dots - 1);
 	pt_t[2][2] = -2*pt3.color/g_num_colors - 1;
 
-	/* Color of triangle is average of g_colors of its verticies */
+	/* Color of triangle is average of colors of its verticies */
 	if (!g_3d_state.raytrace_brief())
 	{
 		for (int i = 0; i <= 2; i++)
@@ -2484,7 +2484,7 @@ static int first_time(int linelen, VECTOR v)
 	double xval;
 	double yval;
 	double zval;     /* rotation values */
-	/* corners of transformed xdotx by g_y_dots x g_colors box */
+	/* corners of transformed xdotx by ydotx colors box */
 	double x_min;
 	double y_min;
 	double z_min;
@@ -2820,7 +2820,7 @@ static int first_time(int linelen, VECTOR v)
 	{
 		fill_plot = clip_color;
 
-		/* If transparent g_colors are set */
+		/* If transparent colors are set */
 		if (g_3d_state.transparent0() || g_3d_state.transparent1())
 		{
 			fill_plot = transparent_clip_color; /* Use the transparent plot function  */

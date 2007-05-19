@@ -94,7 +94,7 @@ int big_while_loop(int *kbdmore, int *stacked, int resumeflag)
 			g_dot_mode = g_video_entry.dotmode;     /* assembler dot read/write */
 			g_x_dots   = g_video_entry.x_dots;       /* # dots across the screen */
 			g_y_dots   = g_video_entry.y_dots;       /* # dots down the screen   */
-			g_colors  = g_video_entry.colors;      /* # g_colors available */
+			g_colors  = g_video_entry.colors;      /* # colors available */
 			g_dot_mode  %= 100;
 			g_screen_width  = g_x_dots;
 			g_screen_height  = g_y_dots;
@@ -889,7 +889,7 @@ static int handle_execute_commands(int *kbdchar, int *kbdmore)
 		g_save_dac = SAVEDAC_NO;
 	}
 	else if (g_color_preloaded)
-	{                         /* g_colors= was specified */
+	{                         /* colors= was specified */
 		spindac(0, 1);
 		g_color_preloaded = FALSE;
 	}

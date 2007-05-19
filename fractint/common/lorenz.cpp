@@ -1468,7 +1468,7 @@ int orbit_2d_fp()
 			break;
 		}
 		if (++count > 1000)
-		{        /* time to switch g_colors? */
+		{        /* time to switch colors? */
 			count = 0;
 			if (++color >= g_colors)   /* another color to switch to? */
 			{
@@ -1595,7 +1595,7 @@ int orbit_2d()
 			break;
 		}
 		if (++count > 1000)
-		{        /* time to switch g_colors? */
+		{        /* time to switch colors? */
 			count = 0;
 			if (++color >= g_colors)   /* another color to switch to? */
 			{
@@ -1691,7 +1691,7 @@ static int orbit_3d_calc()
 	{
 		/* calc goes here */
 		if (++count > 1000)
-		{        /* time to switch g_colors? */
+		{        /* time to switch colors? */
 			count = 0;
 			if (++color >= g_colors)   /* another color to switch to? */
 			{
@@ -1813,7 +1813,7 @@ static int orbit_3d_calc_fp()
 	{
 		/* calc goes here */
 		if (++count > 1000)
-		{        /* time to switch g_colors? */
+		{        /* time to switch colors? */
 			count = 0;
 			if (++color >= g_colors)   /* another color to switch to? */
 			{

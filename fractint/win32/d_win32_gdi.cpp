@@ -105,9 +105,9 @@ private:
 /*                                      14 = Tandy 1000                 */
 /*                                      15 = TRIDENT  SuperVGA*256      */
 /*                                      16 = Chips&Tech SuperVGA*256    */
-/*         int     g_x_dots;          number of dots across the screen     */
-/*         int     g_y_dots;          number of dots down the screen       */
-/*         int     g_colors;         number of g_colors available           */
+/*         int     x_dots;          number of dots across the screen     */
+/*         int     y_dots;          number of dots down the screen       */
+/*         int     colors;         number of g_colors available           */
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
 	{ name_, comment_, key_, 0, 0, 0, 0, mode_, width_, height_, 256 }
@@ -384,7 +384,7 @@ int GDIDriver::read_palette()
 *	None.
 *
 * Side effects:
-*	Changes the displayed g_colors.
+*	Changes the displayed colors.
 *
 *----------------------------------------------------------------------
 */
@@ -623,7 +623,7 @@ int GDIDriver::validate_mode(const VIDEOINFO &mode)
 	int width, height;
 	get_max_screen(width, height);
 
-	/* allow modes <= size of screen with 256 g_colors and g_dot_mode = 19
+	/* allow modes <= size of screen with 256 colors and g_dot_mode = 19
 	   ax/bx/cx/dx must be zero. */
 	return (mode.x_dots <= width) &&
 		(mode.y_dots <= height) &&

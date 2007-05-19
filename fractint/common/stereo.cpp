@@ -207,7 +207,7 @@ int auto_stereo()
 
 	HelpModeSaver saved_help(RDSKEYS);
 	driver_save_graphics();                      /* save graphics image */
-	memcpy(s_save_dac, g_dac_box, 256*3);  /* save g_colors */
+	memcpy(s_save_dac, g_dac_box, 256*3);  /* save colors */
 
 	int ret = 0;
 	if (g_x_dots > OLD_MAX_PIXELS)
