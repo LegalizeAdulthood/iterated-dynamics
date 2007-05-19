@@ -658,7 +658,7 @@ extern int plotorbits2dfloat();
 /*  lsys -- C file prototypes */
 
 extern LDBL  _fastcall get_number(char **);
-extern int _fastcall is_pow2(int);
+extern bool _fastcall is_pow2(int);
 extern int l_system();
 extern int l_load();
 
@@ -765,7 +765,7 @@ extern int get_view_params();
 extern int get_starfield_params();
 extern int get_commands();
 extern void goodbye();
-extern int is_a_directory(char *s);
+extern bool is_a_directory(char *s);
 extern int get_a_filename(char *, char *, char *);
 extern int split_path(const char *file_template, char *drive, char *dir, char *fname, char *ext);
 extern int make_path(char *file_template, char *drive, char *dir, char *fname, char *ext);

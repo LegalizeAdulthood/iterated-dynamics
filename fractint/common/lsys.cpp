@@ -52,7 +52,7 @@ static void lsysi_draw_c(struct lsys_turtle_state *cmd);
 static void lsysi_draw_gt(struct lsys_turtle_state *cmd);
 static void lsysi_draw_lt(struct lsys_turtle_state *cmd);
 
-int _fastcall is_pow2(int n)
+bool _fastcall is_pow2(int n)
 {
 	return n == (n & -n);
 }
