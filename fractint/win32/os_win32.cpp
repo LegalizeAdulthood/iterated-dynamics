@@ -538,9 +538,9 @@ void initasmvars()
 	g_fpu = 487;
 }
 
-int is_a_directory(char *s)
+bool is_a_directory(char *s)
 {
-	return PathIsDirectory(s);
+	return PathIsDirectory(s) != 0;
 }
 
 /*
