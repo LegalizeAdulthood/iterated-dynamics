@@ -41,6 +41,9 @@
 #include "externs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "diskvid.h"
+#include "editpal.h"
+
 #include "SoundState.h"
 
 #ifdef LINUX

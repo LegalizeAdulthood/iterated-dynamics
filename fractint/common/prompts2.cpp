@@ -57,6 +57,7 @@
 #include "fihelp.h"
 #include "history.h"
 #include "cmdfiles.h"
+#include "diskvid.h"
 #include "evolve.h"
 #include "fracsubr.h"
 
