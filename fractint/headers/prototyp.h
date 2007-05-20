@@ -811,7 +811,7 @@ extern int put_string_center(int, int, int, int, const char *);
 #ifndef XFRACT /* Unix should have this in string.h */
 extern int strncasecmp(char *, char *, int);
 #endif
-extern int main_menu(int);
+extern int main_menu(bool full_menu);
 extern int input_field(int, int, char *, int, int, int, int (*)(int));
 extern int field_prompt(char *, char *, char *, int, int (*)(int));
 extern int thinking(int, char *);

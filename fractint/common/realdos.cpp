@@ -39,7 +39,7 @@ int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
 static BYTE *s_temp_text_save = 0;
 static int s_text_x_dots = 0;
 static int s_text_y_dots = 0;
-static int s_full_menu = 0;
+static bool s_full_menu = false;
 static int menu_check_key(int curkey, int choice);
 
 /* int stop_message(flags, message) displays message and waits for a key:
@@ -1144,7 +1144,7 @@ int strncasecmp(char *s, char *t, int ct)
 }
 #endif
 
-int main_menu(int fullmenu)
+int main_menu(bool full_menu)
 {
 	const char *choices[44]; /* 2 columns*22 rows */
 	int attributes[44];
@@ -1157,7 +1157,7 @@ int main_menu(int fullmenu)
 	oldtabmode = g_tab_mode;
 
 top:
-	s_full_menu = fullmenu;
+	s_full_menu = full_menu;
 	g_tab_mode = 0;
 	showjuliatoggle = 0;
 	for (i = 0; i < 44; ++i)
@@ -1169,7 +1169,7 @@ top:
 	nextleft = -2;
 	nextright = -1;
 
-	if (fullmenu)
+	if (full_menu)
 	{
 		nextleft += 2;
 		choices[nextleft] = "      CURRENT IMAGE         ";
@@ -1215,7 +1215,7 @@ top:
 	attributes[nextleft] = MENU_ITEM;
 	choices[nextleft] = "select fractal type    <t>  ";
 
-	if (fullmenu)
+	if (full_menu)
 	{
 		if ((g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
 			&& g_parameters[0] == 0.0 && g_parameters[1] == 0.0)
@@ -1293,7 +1293,7 @@ top:
 	attributes[nextleft] = MENU_ITEM;
 	choices[nextleft] = "browse parms...      <ctl-b>";
 
-	if (fullmenu)
+	if (full_menu)
 	{
 		nextleft += 2;
 		choicekey[nextleft] = FIK_CTL_E;
@@ -1318,7 +1318,7 @@ top:
 	attributes[nextright] = MENU_ITEM;
 	choices[nextright] = "run saved command set... <@>  ";
 
-	if (fullmenu)
+	if (full_menu)
 	{
 		nextright += 2;
 		choicekey[nextright] = 's';
@@ -1336,7 +1336,7 @@ top:
 	attributes[nextright] = MENU_ITEM;
 	choices[nextright] = "3d transform from file...<3>  ";
 
-	if (fullmenu)
+	if (full_menu)
 	{
 		nextright += 2;
 		choicekey[nextright] = '#';
@@ -1381,7 +1381,7 @@ top:
 #ifdef XFRACT
 	if (fullmenu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
 #else
-	if (fullmenu && g_got_real_dac && g_colors >= 16)
+	if (full_menu && g_got_real_dac && g_colors >= 16)
 #endif
 	{
 		nextright += 2;

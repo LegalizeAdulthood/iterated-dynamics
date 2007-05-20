@@ -541,7 +541,7 @@ resumeloop:                             /* return here on failed overlays */
 						}
 						driver_stack_screen();
 #ifndef XFRACT
-						kbdchar = main_menu(1);
+						kbdchar = main_menu(true);
 #else
 						if (XZoomWaiting)
 						{
@@ -549,7 +549,7 @@ resumeloop:                             /* return here on failed overlays */
 						}
 						else
 						{
-							kbdchar = main_menu(1);
+							kbdchar = main_menu(true);
 							if (XZoomWaiting)
 							{
 								kbdchar = FIK_ENTER;
