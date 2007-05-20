@@ -11,9 +11,12 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "targa_lc.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "calcfrac.h"
+#include "evolve.h"
+#include "fracsubr.h"
+
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"
 #include "Formula.h"

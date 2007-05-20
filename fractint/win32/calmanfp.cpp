@@ -9,6 +9,8 @@
 #include "fractype.h"
 #include "externs.h"
 #include "drivers.h"
+#include "fracsubr.h"
+
 #include "MathUtil.h"
 
 static int inside_color, periodicity_color;
@@ -251,14 +253,4 @@ over_bailout_87:
 	}
 
 	goto pop_stack;
-}
-
-long cdecl calculate_mandelbrot_fp_287_asm()
-{
-	return calculate_mandelbrot_fp_asm();
-}
-
-long cdecl calculate_mandelbrot_fp_87_asm()
-{
-	return calculate_mandelbrot_fp_asm();
 }

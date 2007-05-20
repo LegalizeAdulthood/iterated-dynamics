@@ -5,6 +5,8 @@
 #include "cmplx.h"
 #include "externs.h"
 #include "prototyp.h"
+#include "fracsubr.h"
+
 #include "DiffusionScan.h"
 #include "WorkList.h"
 

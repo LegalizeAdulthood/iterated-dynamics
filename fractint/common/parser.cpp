@@ -26,6 +26,9 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "fpu.h"
+#include "fractals.h"
+
 #include "Formula.h"
 #include "MathUtil.h"
 

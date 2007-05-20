@@ -25,6 +25,12 @@
 #include "helpdefs.h"
 #include "fihelp.h"
 #include "drivers.h"
+#include "fracsuba.h"
+#include "calcfrac.h"
+#include "fracsubr.h"
+#include "fractalp.h"
+#include "fractals.h"
+
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"
 #include "Formula.h"

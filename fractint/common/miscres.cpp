@@ -26,6 +26,9 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "fracsubr.h"
+#include "fractalp.h"
+
 #include "EscapeTime.h"
 #include "MathUtil.h"
 #include "Formula.h"

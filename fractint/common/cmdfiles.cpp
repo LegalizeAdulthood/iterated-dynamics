@@ -12,6 +12,12 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "fracsuba.h"
+#include "history.h"
+#include "cmdfiles.h"
+#include "fracsubr.h"
+#include "fractals.h"
+
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"

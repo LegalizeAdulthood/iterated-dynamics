@@ -354,4 +354,12 @@ extern void (*g_trig3_d)();
 	}						\
 	while (0)
 
+extern double *    MP2d(struct MP);
+extern int         MPcmp(struct MP, struct MP);
+extern struct MP * MPmul(struct MP, struct MP);
+extern struct MP * MPadd(struct MP, struct MP);
+extern struct MP * MPdiv(struct MP, struct MP);
+extern struct MP * d2MP(double);  /* Convert double to type MP */
+extern struct MP * fg2MP(long, int); /* Convert fudged to type MP */
+
 #endif

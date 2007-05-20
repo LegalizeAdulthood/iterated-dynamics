@@ -7,6 +7,11 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+#include "history.h"
+#include "calcfrac.h"
+#include "evolve.h"
+#include "fractalp.h"
+
 #include "Formula.h"
 #include "UIChoices.h"
 #include "MathUtil.h"

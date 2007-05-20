@@ -9,6 +9,9 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "calcfrac.h"
+#include "fracsubr.h"
+
 #include "EscapeTime.h"
 #include "MathUtil.h"
 #include "WorkList.h"

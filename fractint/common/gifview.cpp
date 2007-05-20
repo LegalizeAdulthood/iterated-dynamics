@@ -17,6 +17,12 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "decoder.h"
+#include "diskvid.h"
+#include "fracsubr.h"
+#include "framain2.h"
+#include "gifview.h"
+
 #include "busy.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"

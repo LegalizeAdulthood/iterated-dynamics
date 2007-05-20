@@ -19,7 +19,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-
+#include "cmdfiles.h"
 
 /* uncomment following for production version */
 /*

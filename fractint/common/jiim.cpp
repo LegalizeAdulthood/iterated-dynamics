@@ -53,6 +53,9 @@
 #include "fractype.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "calcfrac.h"
+#include "editpal.h"
+
 #include "EscapeTime.h"
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */

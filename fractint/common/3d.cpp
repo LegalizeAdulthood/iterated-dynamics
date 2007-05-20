@@ -59,6 +59,7 @@ ROTZ(i) =           cosi  sini    0     0
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "3d.h"
 
 /* initialize a matrix and set to identity matrix
 	(all 0's, 1's on diagonal) */
@@ -74,7 +75,7 @@ void identity(MATRIX m)
 }
 
 /* Multiply two matrices */
-void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
+static void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 {
 	/* result stored in MATRIX new to avoid problems
 		in case parameter mat3 == mat2 or mat 1 */

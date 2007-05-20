@@ -10,8 +10,9 @@
 #include "externs.h"
 #include "helpdefs.h"
 #include "fihelp.h"
-#include "SoundState.h"
 #include "drivers.h"
+#include "cmdfiles.h"
+#include "SoundState.h"
 #include "CommandParser.h"
 #include "UIChoices.h"
 

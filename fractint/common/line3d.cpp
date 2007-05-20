@@ -16,6 +16,9 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "3d.h"
+#include "diskvid.h"
+
 #include "ThreeDimensionalState.h"
 #include "MathUtil.h"
 

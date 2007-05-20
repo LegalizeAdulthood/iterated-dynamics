@@ -1049,6 +1049,10 @@
 			Name="headers"
 			>
 			<File
+				RelativePath=".\headers\3d.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\big.h"
 				>
 			</File>
@@ -1065,6 +1069,22 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\calcfrac.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\calcmand.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\calmanfp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\cmdfiles.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\cmplx.h"
 				>
 			</File>
@@ -1073,7 +1093,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\decoder.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\DiffusionScan.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\diskvid.h"
 				>
 			</File>
 			<File
@@ -1081,7 +1109,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\editpal.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\encoder.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\EscapeTime.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\evolve.h"
 				>
 			</File>
 			<File
@@ -1101,6 +1141,26 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\fpu087.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\fracsuba.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\fracsubr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\fractalp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\fractals.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\fractint.h"
 				>
 			</File>
@@ -1109,11 +1169,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\framain2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\frasetup.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\gifview.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\halley.h"
 				>
 			</File>
 			<File
 				RelativePath=".\headers\helpcom.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\history.h"
 				>
 			</File>
 			<File

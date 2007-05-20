@@ -11,6 +11,12 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+#include "calcfrac.h"
+#include "fracsubr.h"
+#include "fractals.h"
+#include "framain2.h"
+#include "frasetup.h"
+
 #include "SoundState.h"
 
 #if !defined(XFRACT)
