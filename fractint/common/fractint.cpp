@@ -122,7 +122,7 @@ int     g_integer_fractal;         /* true if fractal uses integer math */
 char    g_user_standard_calculation_mode;
 int     g_user_periodicity_check;
 long    g_user_distance_test;
-int g_user_float_flag;
+bool g_user_float_flag;
 bool g_view_window;             /* 0 for full screen, 1 for window */
 float   g_view_reduction;          /* window auto-sizing */
 bool g_view_crop;               /* nonzero to crop default coords */
@@ -418,9 +418,6 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 		driver_discard_screen();
 		screen_stacked = false;
 	}
-#ifdef XFRACT
-	g_user_float_flag = 1;
-#endif
 	g_got_status = GOT_STATUS_NONE;                     /* for tab_display */
 
 	if (g_show_file)
@@ -551,7 +548,7 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 		}
 		if (kbdchar == 'f')  /* floating pt toggle */
 		{
-			g_user_float_flag = (g_user_float_flag == 0) ? 1 : 0;
+			g_user_float_flag = !g_user_float_flag;
 			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == 'i')  /* set 3d fractal parms */

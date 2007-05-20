@@ -1201,13 +1201,13 @@ nomatch:
 				last_colorbar = ydot;
 			} /* end if !driver_diskp() */
 			tempkey = driver_key_pressed();
-			if (tempkey && (tempkey != (int)'s'))  /* keyboard hit - bail out */
+			if (tempkey && (tempkey != (int) 's'))  /* keyboard hit - bail out */
 			{
 				interrupted = 1;
 				rownum = g_y_dots;
 				break;
 			}
-			if (tempkey == (int)'s')
+			if (tempkey == (int) 's')
 			{
 				driver_get_key();   /* eat the keystroke */
 			}

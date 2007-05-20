@@ -92,7 +92,7 @@ bool g_function_preloaded; /* if function loaded for new bifurcations */
 float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;   /* aspect ratio of the screen */
 float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  /* how much drift is allowed and */
 								/* still forced to g_screen_aspect_ratio  */
-int		g_fast_restore = 0;          /* 1 - reset viewwindows prior to a restore
+bool g_fast_restore = false;          /* true - reset viewwindows prior to a restore
 								and do not display warnings when video
 								mode changes during restore */
 bool g_organize_formula_search = false;            /* 1 - user has specified a directory for
@@ -307,7 +307,7 @@ int command_files(int argc, char **argv)
 		g_show_file = 1;  /* nor startup image file              */
 	}
 
-	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
+	init_msg("", NULL, 0);
 
 	if (g_debug_mode != DEBUGMODE_NO_FIRST_INIT)
 	{
@@ -432,11 +432,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_quick_calculate = false;
 	g_proximity = 0.01;
 	g_is_mand = true;                          /* default formula mand/jul toggle */
-#ifndef XFRACT
-	g_user_float_flag = 0;                   /* turn off the float flag */
-#else
-	g_user_float_flag = 1;                   /* turn on the float flag */
-#endif
+	g_user_float_flag = false;                   /* turn off the float flag */
 	g_finite_attractor = 0;                      /* disable finite attractor logic */
 	g_fractal_type = 0;                        /* initial type Set flag  */
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
@@ -2085,11 +2081,7 @@ static int float_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-#ifndef XFRACT
-	g_user_float_flag = context.yesnoval[0];
-#else
-	g_user_float_flag = 1; /* must use floating point */
-#endif
+	g_user_float_flag = (context.yesnoval[0] != 0);
 	return Command::FractalParameter | Command::ThreeDParameter;
 }
 
@@ -2099,7 +2091,7 @@ static int fast_restore_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_fast_restore = (char)context.yesnoval[0];
+	g_fast_restore = (context.yesnoval[0] != 0);
 	return Command::OK;
 }
 

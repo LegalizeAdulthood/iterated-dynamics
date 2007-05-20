@@ -284,7 +284,7 @@ int l_system()
 	}
 	if (g_user_float_flag)
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 	else
 	{

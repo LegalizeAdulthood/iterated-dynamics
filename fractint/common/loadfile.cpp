@@ -146,7 +146,7 @@ static void read_info_version_3(const fractal_info &read_info)
 			g_user_standard_calculation_mode = '3';
 		}
 		g_user_distance_test = read_info.distestold;
-		g_user_float_flag = read_info.float_flag;
+		g_user_float_flag = (read_info.float_flag != 0);
 		g_bail_out = read_info.bailoutold;
 		g_calculation_time = read_info.calculation_time;
 		g_trig_index[0] = read_info.trig_index[0];
@@ -267,7 +267,7 @@ static void read_info_pre_version_14(const fractal_info &read_info)
 		{
 			g_log_palette_mode = 2;
 		}
-		g_user_float_flag = (g_current_fractal_specific->isinteger ? 0 : 1);
+		g_user_float_flag = (g_current_fractal_specific->isinteger != 0);
 	}
 }
 
@@ -618,7 +618,7 @@ static void got_orbits_info(struct ext_blk_orbits_info orbits_info)
 	}
 }
 
-static int fixup_3d_info(int oldfloatflag, const fractal_info &read_info, ext_blk_formula_info formula_info,
+static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_blk_formula_info formula_info,
 						 ext_blk_resume_info resume_info_blk)
 {
 	/* TODO: a klooge till the meaning of g_float_flag in line3d is clarified */
@@ -680,7 +680,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
 	g_show_file = 1;                /* for any abort exit, pretend done */
 	g_init_mode = -1;               /* no viewing mode set yet */
-	int oldfloatflag = g_user_float_flag;
+	bool oldfloatflag = g_user_float_flag;
 	g_loaded_3d = 0;
 	if (g_fast_restore)
 	{
@@ -1297,13 +1297,13 @@ void backwards_v18()
 	{
 		set_if_old_bif(); /* old bifurcations need function set */
 	}
-	if (g_fractal_type == FRACTYPE_MANDELBROT_FUNC && g_user_float_flag == 1
-			&& g_save_release < 1800 && g_bail_out == 0)
+	if (g_fractal_type == FRACTYPE_MANDELBROT_FUNC && g_user_float_flag
+		&& g_save_release < 1800 && g_bail_out == 0)
 	{
 		g_bail_out = 2500;
 	}
-	if (g_fractal_type == FRACTYPE_LAMBDA_FUNC && g_user_float_flag == 1
-			&& g_save_release < 1800 && g_bail_out == 0)
+	if (g_fractal_type == FRACTYPE_LAMBDA_FUNC && g_user_float_flag
+		&& g_save_release < 1800 && g_bail_out == 0)
 	{
 		g_bail_out = 2500;
 	}

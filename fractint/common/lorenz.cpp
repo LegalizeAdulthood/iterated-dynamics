@@ -2125,7 +2125,7 @@ int plotorbits2dsetup()
 			return -1;
 		}
 		g_float_flag = true;
-		g_user_float_flag = 1;
+		g_user_float_flag = true;
 		g_fractal_type = tofloat;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	}
