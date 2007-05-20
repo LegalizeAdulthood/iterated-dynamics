@@ -28,7 +28,7 @@ int (*g_dot_read)(int, int);	/* read-a-dot routine */
 void (*g_line_write)(int, int, int, BYTE *);		/* write-a-line routine */
 void (*g_line_read)(int, int, int, BYTE *);		/* read-a-line routine */
 int g_and_color = 0;		/* "and" value used for color selection */
-int g_disk_flag = 0;		/* disk video active flag */
+bool g_disk_flag = 0;		/* disk video active flag */
 
 int videoflag = 0;		/* special "your-own-video" flag */
 
@@ -38,7 +38,7 @@ int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
 int boxcolor = 0;		/* Zoom-Box color */
-int g_got_real_dac = 0;		/* 1 if load_dac has a dacbox */
+bool g_got_real_dac = false;		/* 1 if load_dac has a dacbox */
 int g_row_count = 0;		/* row-counter for decoder and out_line */
 int video_type = 0;		/* actual video adapter type:
 				   0  = type not yet determined

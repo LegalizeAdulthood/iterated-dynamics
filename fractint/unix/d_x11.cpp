@@ -73,7 +73,7 @@ public:
 	X11Driver(const char *name, const char *description);
 
 	virtual BYTE *find_font(int parm);
-	virtual int initialize(int &argc, char **argv);
+	virtual bool initialize(int &argc, char **argv);
 	virtual int validate_mode(const VIDEOINFO &mode);
 	virtual void flush();
 	virtual void terminate();
@@ -1750,7 +1750,7 @@ void X11Driver::flush()
  *
  *----------------------------------------------------------------------
  */
-int X11Driver::initialize(int &argc, char **argv)
+bool X11Driver::initialize(int &argc, char **argv)
 {
 	/*
 	* Check a bunch of important conditions
