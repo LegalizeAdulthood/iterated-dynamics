@@ -467,7 +467,7 @@ extern int mandelbrot_mix4_setup();
 
 /*  fractint -- C file prototypes */
 
-extern int main(int argc, char **argv);
+extern int application_main(int argc, char **argv);
 extern int elapsed_time(int);
 
 /*  framain2 -- C file prototypes */

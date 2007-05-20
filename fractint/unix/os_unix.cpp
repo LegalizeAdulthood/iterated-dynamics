@@ -99,3 +99,8 @@ void init_failure(const char *message)
 {
 	fprintf(stderr, message);
 }
+
+int main(int argc, char *argv[])
+{
+	return application_main(argc, argv);
+}
