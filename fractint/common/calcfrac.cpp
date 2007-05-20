@@ -3314,7 +3314,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
 			/* both axes or origin*/
-			g_plot_color = (g_parameter.y == 0.0) ? symPIplot4J : symPIplot2J; 
+			g_plot_color = (g_parameter.y == 0.0) ? plot_color_symmetry_pi_xy_axis : plot_color_symmetry_pi_origin; 
 		}
 		else
 		{
@@ -3325,11 +3325,11 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		{
 			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			abs_a_bf(bft1);
-			s_pixel_pi = (int) ((MathUtil::Pi/(double)bftofloat(bft1)*g_x_dots)); /* PI in pixels */
+			s_pixel_pi = (int) (MathUtil::Pi/(double) bftofloat(bft1)*g_x_dots); /* PI in pixels */
 		}
 		else
 		{
-			s_pixel_pi = (int) ((MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width()))*g_x_dots); /* PI in pixels */
+			s_pixel_pi = (int) (MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width())*g_x_dots); /* PI in pixels */
 		}
 
 		g_x_stop = g_xx_start + s_pixel_pi-1;
@@ -3337,7 +3337,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		{
 			g_x_stop = g_xx_stop;
 		}
-		if (g_plot_color == symPIplot4J)
+		if (g_plot_color == plot_color_symmetry_pi_xy_axis)
 		{
 			i = (g_xx_start + g_xx_stop)/2;
 			if (g_x_stop > i)
@@ -3483,7 +3483,7 @@ void _fastcall plot_color_symmetry_pi(int x, int y, int color)
 	}
 }
 /* Symmetry plot for period PI plus Origin Symmetry */
-void _fastcall symPIplot2J(int x, int y, int color)
+void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
 {
 	int i;
 	int j;
@@ -3503,7 +3503,7 @@ void _fastcall symPIplot2J(int x, int y, int color)
 	}
 }
 /* Symmetry plot for period PI plus Both Axis Symmetry */
-void _fastcall symPIplot4J(int x, int y, int color)
+void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
 {
 	int i;
 	int j;

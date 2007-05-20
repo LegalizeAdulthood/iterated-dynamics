@@ -108,8 +108,8 @@ void SetAspect(double aspect)
 	}
 }
 
-void _fastcall c_putcolor(int x, int y, int color)
-	{
+static void _fastcall plot_color_clip(int x, int y, int color)
+{
 	/* avoid writing outside window */
 	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
 	{
@@ -157,16 +157,16 @@ void circleplot(int x, int y, int color)
 	{
 		if (yAspect == 0)
 		{
-			c_putcolor(x + xbase, y + ybase, color);
+			plot_color_clip(x + xbase, y + ybase, color);
 		}
 		else
 		{
-			c_putcolor(x + xbase, (short)(ybase + (((long) y*(long) yAspect) >> 16)), color);
+			plot_color_clip(x + xbase, (short)(ybase + (((long) y*(long) yAspect) >> 16)), color);
 		}
 	}
 	else
 	{
-		c_putcolor((int)(xbase + (((long) x*(long) xAspect) >> 16)), y + ybase, color);
+		plot_color_clip((int)(xbase + (((long) x*(long) xAspect) >> 16)), y + ybase, color);
 	}
 }
 
@@ -612,7 +612,7 @@ void Jiim(int which)         /* called by fractint */
 	maxhits = 1;
 	if (which == ORBIT)
 	{
-		g_plot_color = c_putcolor;                /* for line with clipping */
+		g_plot_color = plot_color_clip;                /* for line with clipping */
 	}
 
 	if (g_sx_offset != 0 || g_sy_offset != 0) /* we're in view windows */
@@ -1054,7 +1054,7 @@ void Jiim(int which)         /* called by fractint */
 				color = c_getcolor(x, y);
 				if (color < maxhits)
 				{
-					c_putcolor(x, y, color + 1);
+					plot_color_clip(x, y, color + 1);
 					g_new_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
 					EnQueueFloat((float)g_new_z.x,  (float)g_new_z.y);
 					EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
@@ -1154,7 +1154,7 @@ void Jiim(int which)         /* called by fractint */
 					{
 						if (mode == 0)                        /* pixels  */
 						{
-							c_putcolor(x, y, color);
+							plot_color_clip(x, y, color);
 						}
 						else if (mode & 1)            /* circles */
 						{
@@ -1250,7 +1250,7 @@ void Jiim(int which)         /* called by fractint */
 		{
 			if (mode == 0)                  /* pixels  */
 			{
-				c_putcolor(x, y, color);
+				plot_color_clip(x, y, color);
 			}
 			else if (mode & 1)            /* circles */
 			{

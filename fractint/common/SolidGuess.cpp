@@ -5,6 +5,8 @@
 #include "cmplx.h"
 #include "externs.h"
 #include "prototyp.h"
+
+#include "calcfrac.h"
 #include "drivers.h"
 #include "fracsubr.h"
 

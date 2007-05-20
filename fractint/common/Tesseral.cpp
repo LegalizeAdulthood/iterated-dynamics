@@ -4,6 +4,8 @@
 #include "fractint.h"
 #include "prototyp.h"
 #include "externs.h"
+
+#include "calcfrac.h"
 #include "fracsubr.h"
 #include "miscres.h"
 
