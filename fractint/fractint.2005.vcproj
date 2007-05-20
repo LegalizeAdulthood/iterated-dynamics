@@ -1049,14 +1049,6 @@
 			Name="headers"
 			>
 			<File
-				RelativePath=".\headers\big.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\biginit.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\busy.h"
 				>
 			</File>
@@ -1069,59 +1061,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\cmdfiles.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\cmplx.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\CommandParser.h"
 				>
 			</File>
 			<File
-				RelativePath=".\headers\decoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\diskvid.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\drivers.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\editpal.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\encoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\evolve.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\externs.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\fihelp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\fmath.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\Formula.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\fpu087.h"
 				>
 			</File>
 			<File
@@ -1133,55 +1077,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\framain2.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\gifview.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\hcmplx.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\helpcom.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\intro.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\jiim.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\loadfdos.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\loadfile.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\loadmap.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\MathUtil.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\miscovl.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\miscres.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\mpmath.h"
 				>
 			</File>
 			<File
@@ -1189,39 +1085,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\prompts1.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\prompts2.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\prototyp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\realdos.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\rotate.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\slideshw.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\SoundState.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\stereo.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\UIChoices.h"
 				>
 			</File>
 			<File
@@ -1230,10 +1094,6 @@
 			</File>
 			<File
 				RelativePath=".\headers\WorkList.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\zoom.h"
 				>
 			</File>
 			<Filter
@@ -1328,6 +1188,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\headers\Formula.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\halley.h"
 					>
 				</File>
@@ -1349,6 +1213,158 @@
 				</File>
 				<File
 					RelativePath=".\headers\newton.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="i/o"
+				>
+				<File
+					RelativePath=".\headers\cmdfiles.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\decoder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\diskvid.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\editpal.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\encoder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\evolve.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\gifview.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\loadfdos.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\loadfile.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\loadmap.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\rotate.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\slideshw.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\SoundState.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\stereo.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="math"
+				>
+				<File
+					RelativePath=".\headers\big.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\biginit.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\cmplx.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\fmath.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\fpu087.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\hcmplx.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\MathUtil.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\mpmath.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="plumbing"
+				>
+				<File
+					RelativePath=".\headers\drivers.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="ui"
+				>
+				<File
+					RelativePath=".\headers\fihelp.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\framain2.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\intro.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\jiim.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\miscovl.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\miscres.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\prompts1.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\prompts2.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\realdos.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\UIChoices.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\zoom.h"
 					>
 				</File>
 			</Filter>
