@@ -6,6 +6,7 @@
 #include "cmplx.h"
 #include "fractint.h"
 #include "mpmath.h"
+#include "prototyp.h"
 
 /* Global variables (yuck!) */
 int MPOverflow = 0;
