@@ -33,29 +33,29 @@ void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
 		m_dirty_region.right = x_max;
 		m_dirty_region.top = y_min;
 		m_dirty_region.bottom = y_max;
-		m_dirty = TRUE;
+		m_dirty = true;
 	}
 	else
 	{
 		if (x_min < m_dirty_region.left)
 		{
 			m_dirty_region.left = x_min;
-			m_dirty = TRUE;
+			m_dirty = true;
 		}
 		if (x_max > m_dirty_region.right)
 		{
 			m_dirty_region.right = x_max;
-			m_dirty = TRUE;
+			m_dirty = true;
 		}
 		if (y_min < m_dirty_region.top)
 		{
 			m_dirty_region.top = y_min;
-			m_dirty = TRUE;
+			m_dirty = true;
 		}
 		if (y_max > m_dirty_region.bottom)
 		{
 			m_dirty_region.bottom = y_max;
-			m_dirty = TRUE;
+			m_dirty = true;
 		}
 	}
 }
@@ -85,7 +85,7 @@ void Plot::init_pixels()
 	_ASSERTE(m_pixels_len > 0);
 	m_pixels = (BYTE *) ::malloc(m_pixels_len);
 	memset(m_pixels, 0, m_pixels_len);
-	m_dirty = FALSE;
+	m_dirty = false;
 	{
 		RECT dirty_rect = { -1, -1, -1, -1 };
 		m_dirty_region = dirty_rect;
@@ -364,7 +364,7 @@ void Plot::flush()
 		::InvalidateRect(m_window, NULL, FALSE);
 #endif
 #endif
-		m_dirty = FALSE;
+		m_dirty = false;
 		m_dirty_region = r;
 	}
 }
@@ -464,7 +464,7 @@ void Plot::clear()
 {
 	RECT r = { 0, 0, m_width, m_height };
 	m_dirty_region = r;
-	m_dirty = TRUE;
+	m_dirty = true;
 	::memset(m_pixels, 0, m_pixels_len);
 }
 

@@ -31,8 +31,6 @@
 #define FREXP(x, y) frexp(x, y)
 #endif
 
-#define TRUE 1
-#define FALSE 0
 #define EVERY 15
 #define BASIN_COLOR 0
 
@@ -45,7 +43,7 @@ int g_minimum_stack = 2200; /* and this much stack to not crash when <tab> is pr
 
 static LDBL twidth;
 static LDBL equal;
-static char baxinxx = FALSE;
+static bool baxinxx = false;
 
 long iteration(LDBL cr, LDBL ci,
 				LDBL re, LDBL im,
@@ -289,7 +287,7 @@ long iteration(LDBL cr, LDBL ci,
 
 	if (iter == 0)
 	{
-		baxinxx = TRUE;
+		baxinxx = true;
 		return BASIN_COLOR;
 	}
 	else
@@ -314,7 +312,7 @@ long iteration(LDBL cr, LDBL ci,
 			8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
 		};
 
-		baxinxx = FALSE;
+		baxinxx = false;
 #ifdef INTEL
 		d = ren + imn;
 #else

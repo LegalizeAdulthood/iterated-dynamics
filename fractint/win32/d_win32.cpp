@@ -89,7 +89,7 @@ int Win32BaseDriver::handle_timed_save(int ch)
 			}
 			else if (g_current_row != g_finish_row)
 			{
-				g_timed_save = TRUE;
+				g_timed_save = true;
 				return FIK_SAVE_TIME;
 			}
 		}
@@ -133,7 +133,7 @@ int Win32BaseDriver::handle_special_keys(int ch)
 			record_show(ch);
 		}
 	}
-	if (DEBUGFLAG_EDIT_TEXT_COLORS == g_debug_flag)
+	if (DEBUGMODE_EDIT_TEXT_COLORS == g_debug_mode)
 	{
 		if ('~' == ch)
 		{
@@ -186,7 +186,7 @@ void Win32BaseDriver::flush_output()
 		if ((now - m_last)*m_frames_per_second > m_ticks_per_second)
 		{
 			flush();
-			m_frame.pump_messages(FALSE);
+			m_frame.pump_messages(false);
 			m_last = now;
 		}
 	}
@@ -238,7 +238,7 @@ void Win32BaseDriver::terminate()
 *
 *----------------------------------------------------------------------
 */
-int Win32BaseDriver::initialize(int &argc, char **argv)
+bool Win32BaseDriver::initialize(int &argc, char **argv)
 {
 	LPCSTR title = "FractInt for Windows";
 
@@ -246,10 +246,10 @@ int Win32BaseDriver::initialize(int &argc, char **argv)
 	m_frame.init(g_instance, title);
 	if (!m_wintext.initialize(g_instance, NULL, "Text"))
 	{
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 /* key_pressed
@@ -271,7 +271,7 @@ int Win32BaseDriver::key_pressed()
 		return ch;
 	}
 	flush_output();
-	ch = handle_special_keys(m_frame.get_key_press(0));
+	ch = handle_special_keys(m_frame.get_key_press(false));
 	_ASSERTE(m_key_buffer == 0);
 	m_key_buffer = ch;
 
@@ -309,7 +309,7 @@ int Win32BaseDriver::get_key()
 		}
 		else
 		{
-			ch = handle_special_keys(m_frame.get_key_press(1));
+			ch = handle_special_keys(m_frame.get_key_press(true));
 		}
 	}
 	while (ch == 0);
@@ -348,9 +348,9 @@ void Win32BaseDriver::shell()
 
 void Win32BaseDriver::hide_text_cursor()
 {
-	if (TRUE == m_cursor_shown)
+	if (m_cursor_shown)
 	{
-		m_cursor_shown = FALSE;
+		m_cursor_shown = false;
 		m_wintext.hide_cursor();
 	}
 	ODS("win32_hide_text_cursor");
@@ -366,7 +366,7 @@ void Win32BaseDriver::set_video_mode(const VIDEOINFO &mode)
 	/* initially, set the virtual line to be the scan line length */
 	g_vx_dots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
-	g_ok_to_print = FALSE;
+	g_ok_to_print = false;
 	g_good_mode = 1;
 	if (g_dot_mode != 0)
 	{
@@ -374,7 +374,7 @@ void Win32BaseDriver::set_video_mode(const VIDEOINFO &mode)
 		g_box_count = 0;
 		g_dac_learn = 1;
 		g_dac_count = g_cycle_limit;
-		g_got_real_dac = TRUE;			/* we are "VGA" */
+		g_got_real_dac = true;			/* we are "VGA" */
 
 		read_palette();
 	}
@@ -436,7 +436,7 @@ void Win32BaseDriver::move_cursor(int row, int col)
 	row = m_cursor_row;
 	col = m_cursor_col;
 	m_wintext.cursor(g_text_cbase + col, g_text_rbase + row, 1);
-	m_cursor_shown = TRUE;
+	m_cursor_shown = true;
 }
 
 void Win32BaseDriver::set_clear()
@@ -581,11 +581,11 @@ int Win32BaseDriver::key_cursor(int row, int col)
 	}
 	else
 	{
-		m_cursor_shown = TRUE;
+		m_cursor_shown = true;
 		m_wintext.cursor(col, row, 1);
 		result = get_key();
 		hide_text_cursor();
-		m_cursor_shown = FALSE;
+		m_cursor_shown = false;
 	}
 
 	return result;
@@ -628,7 +628,7 @@ void Win32BaseDriver::put_char_attr_rowcol(int row, int col, int char_attr)
 
 void Win32BaseDriver::delay(int ms)
 {
-	m_frame.pump_messages(FALSE);
+	m_frame.pump_messages(false);
 	if (ms >= 0)
 	{
 		Sleep(ms);

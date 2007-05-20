@@ -33,7 +33,7 @@ int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 int g_grayscale_depth = 0; /* flag to use gray value rather than color number */
 char g_calibrate = 1;             /* add calibration bars to image */
-char g_image_map = 0;
+bool g_image_map = false;
 
 static long s_average;
 static long s_average_count;

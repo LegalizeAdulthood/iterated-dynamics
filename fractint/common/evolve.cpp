@@ -25,10 +25,10 @@ enum VaryIntType
 #define MAX_GRID_SIZE 51  /* This is arbitrary, = 1024/20 */
 
 /* g_px and g_py are coordinates in the parameter grid (small images on screen) */
-/* g_evolving = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size) */
+/* g_evolving_flags = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size) */
 int g_px;
 int g_py;
-int g_evolving;
+int g_evolving_flags;
 int g_grid_size;
 unsigned int g_this_generation_random_seed;
 /* used to replay random sequences to obtain correct values when selecting a
@@ -44,10 +44,10 @@ double g_delta_parameter_image_y;
 double g_fiddle_factor;
 double g_fiddle_reduction;
 double g_parameter_zoom;
-char g_discrete_parameter_offset_x;
-char g_discrete_parameter_offset_y;
-char g_new_discrete_parameter_offset_x;
-char g_new_discrete_parameter_offset_y;
+int g_discrete_parameter_offset_x;
+int  g_discrete_parameter_offset_y;
+int g_new_discrete_parameter_offset_x;
+int  g_new_discrete_parameter_offset_y;
 /* offset for discrete parameters x and y..*/
 /* used for things like inside or outside types, bailout tests, trig fn etc */
 /* variation factors, g_parameter_offset_x, g_parameter_offset_y, g_parameter_range_x/y g_delta_parameter_image_x, g_delta_parameter_image_y.. used in field mapping
@@ -99,7 +99,7 @@ static void vary_power2(GENEBASE gene[], int randval, int i);
 static void vary_trig(GENEBASE gene[], int randval, int i);
 static void vary_bail_out_test(GENEBASE gene[], int randval, int i);
 static void vary_invert(GENEBASE gene[], int randval, int i);
-static int explore_check();
+static bool explore_check();
 void spiral_map(int);
 static void set_random(int);
 void set_mutation_level(int);
@@ -584,7 +584,7 @@ int get_evolve_parameters()
 {
 	int old_variations = 0;
 	/* fill up the previous values arrays */
-	int old_evolving = g_evolving;
+	int old_evolving = g_evolving_flags;
 	int old_gridsz = g_grid_size;
 	double old_paramrangex = g_parameter_range_x;
 	double old_paramrangey = g_parameter_range_y;
@@ -594,7 +594,7 @@ int get_evolve_parameters()
 
 get_evol_restart:
 	int j;
-	if ((g_evolving & EVOLVE_RAND_WALK) || (g_evolving & EVOLVE_RAND_PARAM))
+	if ((g_evolving_flags & EVOLVE_RAND_WALK) || (g_evolving_flags & EVOLVE_RAND_PARAM))
 	{
 		/* adjust field param to make some sense when changing from random modes*/
 		/* maybe should adjust for aspect ratio here? */
@@ -606,12 +606,12 @@ get_evol_restart:
 
 	{
 		UIChoices dialog(HELPEVOL, "Evolution Mode Options", 255);
-		dialog.push("Evolution mode? (no for full screen)", (g_evolving & EVOLVE_FIELD_MAP) != 0);
+		dialog.push("Evolution mode? (no for full screen)", (g_evolving_flags & EVOLVE_FIELD_MAP) != 0);
 		dialog.push("Image grid size (odd numbers only)", g_grid_size);
 		if (explore_check())  /* test to see if any parms are set to linear */
 		{
 			/* variation 'explore mode' */
-			dialog.push("Show parameter zoom box?", (g_evolving & EVOLVE_PARM_BOX) != 0);
+			dialog.push("Show parameter zoom box?", (g_evolving_flags & EVOLVE_PARM_BOX) != 0);
 			dialog.push("x parameter range (across screen)", static_cast<float>(g_parameter_range_x));
 			dialog.push("x parameter offset (left hand edge)", static_cast<float>(g_parameter_offset_x));
 			dialog.push("y parameter range (up screen)", static_cast<float>(g_parameter_range_y));
@@ -619,7 +619,7 @@ get_evol_restart:
 		}
 		dialog.push("Max random mutation", static_cast<float>(g_fiddle_factor));
 		dialog.push("Mutation reduction factor (between generations)", static_cast<float>(g_fiddle_reduction));
-		dialog.push("Grouting? ", (g_evolving & EVOLVE_NO_GROUT) == 0);
+		dialog.push("Grouting? ", (g_evolving_flags & EVOLVE_NO_GROUT) == 0);
 		dialog.push("");
 		dialog.push("Press F4 to reset view parameters to defaults.");
 		dialog.push("Press F2 to halve mutation levels");
@@ -629,7 +629,7 @@ get_evol_restart:
 		if (i < 0)
 		{
 			/* in case this point has been reached after calling sub menu with F6 */
-			g_evolving      = old_evolving;
+			g_evolving_flags      = old_evolving;
 			g_grid_size        = old_gridsz;
 			g_parameter_range_x   = old_paramrangex;
 			g_parameter_range_y   = old_paramrangey;
@@ -667,12 +667,12 @@ get_evol_restart:
 		}
 		j = i;
 		int k = -1;
-		g_evolving = dialog.values(++k).uval.ch.val;
-		g_view_window = g_evolving;
+		g_evolving_flags = dialog.values(++k).uval.ch.val;
+		g_view_window = (g_evolving_flags != 0);
 
-		if (!g_evolving && i != FIK_F6)  /* don't need any of the other parameters */
+		if (!g_evolving_flags && i != FIK_F6)  /* don't need any of the other parameters */
 		{
-			return 1;              /* the following code can set g_evolving even if it's off */
+			return 1;              /* the following code can set g_evolving_flags even if it's off */
 		}
 
 		g_grid_size = dialog.values(++k).uval.ival;
@@ -683,9 +683,9 @@ get_evol_restart:
 		if (explore_check())
 		{
 			int temp = (EVOLVE_PARM_BOX*dialog.values(++k).uval.ch.val);
-			if (g_evolving)
+			if (g_evolving_flags)
 			{
-				g_evolving += temp;
+				g_evolving_flags += temp;
 			}
 			g_parameter_range_x = dialog.values(++k).uval.dval;
 			g_new_parameter_offset_x = g_parameter_offset_x = dialog.values(++k).uval.dval;
@@ -696,18 +696,19 @@ get_evol_restart:
 		g_fiddle_reduction = dialog.values(++k).uval.dval;
 		if (!(dialog.values(++k).uval.ch.val))
 		{
-			g_evolving |= EVOLVE_NO_GROUT;
+			g_evolving_flags |= EVOLVE_NO_GROUT;
 		}
 	}
 	g_view_x_dots = (g_screen_width / g_grid_size)-2;
 	g_view_y_dots = (g_screen_height / g_grid_size)-2;
 	if (!g_view_window)
 	{
-		g_view_x_dots = g_view_y_dots = 0;
+		g_view_x_dots = 0;
+		g_view_y_dots = 0;
 	}
 
 	int result = 0;
-	if (g_evolving != old_evolving
+	if (g_evolving_flags != old_evolving
 		|| (g_grid_size != old_gridsz) ||(g_parameter_range_x != old_paramrangex)
 		|| (g_parameter_offset_x != old_opx) || (g_parameter_range_y != old_paramrangey)
 		|| (g_parameter_offset_y != old_opy)  || (g_fiddle_factor != old_fiddlefactor)
@@ -716,12 +717,12 @@ get_evol_restart:
 		result = 1;
 	}
 
-	if (g_evolving && !old_evolving)
+	if (g_evolving_flags && !old_evolving)
 	{
 		save_parameter_history();
 	}
 
-	if (!g_evolving && (g_evolving == old_evolving))
+	if (!g_evolving_flags && (g_evolving_flags == old_evolving))
 	{
 		result = 0;
 	}
@@ -732,8 +733,8 @@ get_evol_restart:
 		set_current_parameters();
 		if (old_variations > 0)
 		{
-			g_view_window = 1;
-			g_evolving |= EVOLVE_FIELD_MAP;   /* leave other settings alone */
+			g_view_window = true;
+			g_evolving_flags |= EVOLVE_FIELD_MAP;   /* leave other settings alone */
 		}
 		g_fiddle_factor = 1;
 		g_fiddle_reduction = 1.0;
@@ -757,7 +758,7 @@ void setup_parameter_box()
 	if (!s_parameter_box)
 	{
 		text_temp_message("Sorry...can't allocate mem for parmbox");
-		g_evolving = EVOLVE_NONE;
+		g_evolving_flags = EVOLVE_NONE;
 	}
 	g_parameter_box_count = 0;
 
@@ -853,19 +854,18 @@ static void set_random(int ecount)
 	}
 }
 
-static int explore_check()
+static bool explore_check()
 {
 	/* checks through gene array to see if any of the parameters are set to */
 	/* one of the non random variation modes. Used to see if g_parameter_zoom box is */
 	/* needed */
-	int nonrandom = FALSE;
-	int i;
+	bool nonrandom = false;
 
-	for (i = 0; i < NUMGENES && !(nonrandom); i++)
+	for (int i = 0; i < NUMGENES && !(nonrandom); i++)
 	{
 		if ((g_genes[i].mutate > VARYINT_NONE) && (g_genes[i].mutate < VARYINT_RANDOM))
 		{
-			nonrandom = TRUE;
+			nonrandom = true;
 		}
 	}
 	return nonrandom;
@@ -877,11 +877,11 @@ void draw_parameter_box(int mode)
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
 	Coordinate tl, tr, bl, br;
 	int grout;
-	if (!(g_evolving & EVOLVE_PARM_BOX))
+	if (!(g_evolving_flags & EVOLVE_PARM_BOX))
 	{
 		return; /* don't draw if not asked to! */
 	}
-	grout = !((g_evolving & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+	grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 	s_image_box_count = g_box_count;
 	if (g_box_count)
 	{
@@ -961,8 +961,8 @@ void set_evolve_ranges()
 	g_new_parameter_offset_x = g_parameter_offset_x + (((double)g_px-g_parameter_zoom)*g_delta_parameter_image_x);
 	g_new_parameter_offset_y = g_parameter_offset_y + (((double)lclpy-g_parameter_zoom)*g_delta_parameter_image_y);
 
-	g_new_discrete_parameter_offset_x = (char)(g_discrete_parameter_offset_x + (g_px-g_grid_size/2));
-	g_new_discrete_parameter_offset_y = (char)(g_discrete_parameter_offset_y + (lclpy-g_grid_size/2));
+	g_new_discrete_parameter_offset_x = g_discrete_parameter_offset_x + g_px - g_grid_size/2;
+	g_new_discrete_parameter_offset_y = g_discrete_parameter_offset_y + lclpy - g_grid_size/2;
 	return;
 }
 

@@ -220,7 +220,7 @@ void cursor_check_blink();
 void cursor_start_mouse_tracking();
 void cursor_end_mouse_tracking();
 #endif
-BOOLEAN cursor_new();
+bool cursor_new();
 void cursor_destroy();
 void cursor_set_position(int x, int y);
 void cursor_move(int xoff, int yoff);
@@ -472,11 +472,10 @@ extern int elapsed_time(int);
 
 /*  framain2 -- C file prototypes */
 
-extern int big_while_loop(int *kbd_more, int *stacked, int resume_flag);
+extern int big_while_loop(int *kbd_more, bool &screen_stacked, bool resume_flag);
 extern int check_key();
 extern int cmp_line(BYTE *, int);
 extern int key_count(int);
-extern int main_menu_switch(int *, int *, int *, int *, int);
 extern int potential_line(BYTE *, int);
 extern int sound_line(BYTE *, int);
 #if !defined(XFRACT)
@@ -907,9 +906,9 @@ extern void InitMemory();
 extern void ExitCheck();
 extern U16 MemoryAlloc(U16 size, long count, int stored_at);
 extern void MemoryRelease(U16 handle);
-extern int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-extern int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-extern int SetMemory(int value, U16 size, long count, long offset, U16 handle);
+extern bool MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+extern bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+extern bool SetMemory(int value, U16 size, long count, long offset, U16 handle);
 
 /*  soi -- C file prototypes */
 extern void soi();

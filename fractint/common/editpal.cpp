@@ -157,8 +157,8 @@ int g_using_jiim = 0;
 static char s_undo_file[] = "FRACTINT.$$2";  /* file where undo list is stored */
 static BYTE		s_fg_color,
 				s_bg_color;
-static BOOLEAN	s_reserve_colors;
-static BOOLEAN	s_inverse;
+static bool s_reserve_colors;
+static bool s_inverse;
 static float    s_gamma_val = 1;
 
 /*
@@ -524,14 +524,14 @@ static void dotted_rectangle(int x, int y, int width, int depth)
  * misc. routines
  *
  */
-static BOOLEAN is_reserved(int color)
+static bool is_reserved(int color)
 {
-	return (BOOLEAN) ((s_reserve_colors && (color == (int)s_fg_color || color == (int)s_bg_color)) ? TRUE : FALSE);
+	return s_reserve_colors && (color == (int) s_fg_color || color == (int) s_bg_color);
 }
 
-static BOOLEAN is_in_box(int x, int y, int bx, int by, int bw, int bd)
+static bool is_in_box(int x, int y, int bx, int by, int bw, int bd)
 {
-	return (BOOLEAN) ((x >= bx) && (y >= by) && (x < bx + bw) && (y < by + bd));
+	return (x >= bx) && (y >= by) && (x < bx + bw) && (y < by + bd);
 }
 
 static void draw_diamond(int x, int y, int color)
@@ -560,7 +560,7 @@ struct tag_cursor
 	int y;
 	int     hidden;       /* >0 if mouse hidden */
 	long    last_blink;
-	BOOLEAN blink;
+	bool blink;
 #if 0
 	char    t[CURSOR_SIZE],        /* save line segments here */
 			b[CURSOR_SIZE],
@@ -581,11 +581,11 @@ static void cursor_restore();
 
 static cursor *s_the_cursor = NULL;
 
-BOOLEAN cursor_new()
+bool cursor_new()
 {
 	if (s_the_cursor != NULL)
 	{
-		return FALSE;
+		return false;
 	}
 
 	s_the_cursor = NEWC(cursor);
@@ -593,10 +593,10 @@ BOOLEAN cursor_new()
 	s_the_cursor->x          = g_screen_width/2;
 	s_the_cursor->y          = g_screen_height/2;
 	s_the_cursor->hidden     = 1;
-	s_the_cursor->blink      = FALSE;
+	s_the_cursor->blink      = false;
 	s_the_cursor->last_blink = 0;
 
-	return TRUE;
+	return true;
 }
 
 void cursor_destroy()
@@ -739,7 +739,7 @@ void cursor_check_blink()
 
 	if ((tick - s_the_cursor->last_blink) > CURSOR_BLINK_RATE)
 	{
-		s_the_cursor->blink = (BOOLEAN)((s_the_cursor->blink) ? FALSE : TRUE);
+		s_the_cursor->blink = !s_the_cursor->blink;
 		s_the_cursor->last_blink = tick;
 		if (!s_the_cursor->hidden)
 		{
@@ -775,8 +775,8 @@ struct tag_move_box
 	int base_width;
 	int base_depth;
 	int      csize;
-	BOOLEAN  moved;
-	BOOLEAN  should_hide;
+	bool moved;
+	bool should_hide;
 	char *t;
 	char *b;
 	char *l;
@@ -790,9 +790,9 @@ static void     move_box_move     (move_box *me, int key);
 static move_box *move_box_new  (int x, int y, int csize, int base_width,
 									int base_depth);
 static void     move_box_destroy    (move_box *me);
-static BOOLEAN  move_box_process    (move_box *me); /* returns FALSE if ESCAPED */
-static BOOLEAN  move_box_moved      (move_box *me);
-static BOOLEAN  move_box_should_hide (move_box *me);
+static bool move_box_process    (move_box *me); /* returns false if ESCAPED */
+static bool move_box_moved      (move_box *me);
+static bool move_box_should_hide (move_box *me);
 static int      move_box_x          (move_box *me);
 static int      move_box_y          (move_box *me);
 static int      move_box_csize      (move_box *me);
@@ -808,8 +808,8 @@ static move_box *move_box_new(int x, int y, int csize, int base_width, int base_
 	me->csize       = csize;
 	me->base_width  = base_width;
 	me->base_depth  = base_depth;
-	me->moved       = FALSE;
-	me->should_hide = FALSE;
+	me->moved       = false;
+	me->should_hide = false;
 	me->t           = (char *) malloc(g_screen_width);
 	me->b           = (char *) malloc(g_screen_width);
 	me->l           = (char *) malloc(g_screen_height);
@@ -827,12 +827,12 @@ static void move_box_destroy(move_box *me)
 	DELETE(me);
 }
 
-static BOOLEAN move_box_moved(move_box *me)
+static bool move_box_moved(move_box *me)
 {
 	return me->moved;
 }
 
-static BOOLEAN move_box_should_hide(move_box *me)
+static bool move_box_should_hide(move_box *me)
 {
 	return me->should_hide;
 }
@@ -901,8 +901,8 @@ static void move_box_erase(move_box *me)   /* private */
 
 static void move_box_move(move_box *me, int key)
 {
-	BOOLEAN done  = FALSE;
-	BOOLEAN first = TRUE;
+	bool done  = false;
+	bool first = true;
 	int xoff = 0;
 	int yoff = 0;
 
@@ -920,7 +920,7 @@ static void move_box_move(move_box *me, int key)
 		case FIK_UP_ARROW:          yoff -= BOX_INC;     break;
 
 		default:
-			done = TRUE;
+			done = true;
 		}
 
 		if (!done)
@@ -931,7 +931,7 @@ static void move_box_move(move_box *me, int key)
 			}
 			else
 			{
-				first = FALSE;
+				first = false;
 			}
 			key = driver_key_pressed();   /* peek at the next one... */
 		}
@@ -968,7 +968,7 @@ static void move_box_move(move_box *me, int key)
 	}
 }
 
-static BOOLEAN move_box_process(move_box *me)
+static bool move_box_process(move_box *me)
 {
 	int     key;
 	int orig_x = me->x;
@@ -987,8 +987,7 @@ static BOOLEAN move_box_process(move_box *me)
 
 		if (key == FIK_ENTER || key == FIK_ENTER_2 || key == FIK_ESC || key == 'H' || key == 'h')
 		{
-			me->moved = (me->x != orig_x || me->y != orig_y || me->csize != orig_csize)
-				? TRUE : FALSE;
+			me->moved = (me->x != orig_x || me->y != orig_y || me->csize != orig_csize);
 			break;
 		}
 
@@ -1066,9 +1065,9 @@ static BOOLEAN move_box_process(move_box *me)
 
 	move_box_erase(me);
 
-	me->should_hide = (BOOLEAN)((key == 'H' || key == 'h') ? TRUE : FALSE);
+	me->should_hide = (key == 'H' || key == 'h');
 
-	return (BOOLEAN)((key == FIK_ESC) ? FALSE : TRUE);
+	return key != FIK_ESC;
 }
 
 /*
@@ -1086,8 +1085,8 @@ struct tag_color_editor
 	int       x, y;
 	char      letter;
 	int       val;
-	BOOLEAN   done;
-	BOOLEAN   hidden;
+	bool done;
+	bool hidden;
 	void    (*other_key)(int key, color_editor *ce, VOIDPTR info);
 	void    (*change)(color_editor *ce, VOIDPTR info);
 	void     *info;
@@ -1103,8 +1102,8 @@ static void color_editor_draw      (color_editor *me);
 static void color_editor_set_position    (color_editor *me, int x, int y);
 static void color_editor_set_value    (color_editor *me, int val);
 static int  color_editor_get_value    (color_editor *me);
-static void color_editor_set_done   (color_editor *me, BOOLEAN done);
-static void color_editor_set_hidden (color_editor *me, BOOLEAN hidden);
+static void color_editor_set_done   (color_editor *me, bool done);
+static void color_editor_set_hidden (color_editor *me, bool hidden);
 static int  color_editor_edit      (color_editor *me);
 #else
 static color_editor *color_editor_new(int , int , char ,
@@ -1115,8 +1114,8 @@ static void color_editor_draw    (color_editor *);
 static void color_editor_set_position  (color_editor *, int , int);
 static void color_editor_set_value  (color_editor *, int);
 static int  color_editor_get_value  (color_editor *);
-static void color_editor_set_done         (color_editor *, BOOLEAN);
-static void color_editor_set_hidden (color_editor *, BOOLEAN);
+static void color_editor_set_done         (color_editor *, bool);
+static void color_editor_set_hidden (color_editor *, bool);
 static int  color_editor_edit    (color_editor *);
 #endif
 
@@ -1136,7 +1135,7 @@ static color_editor *color_editor_new(int x, int y, char letter,
 	me->letter    = letter;
 	me->val       = 0;
 	me->other_key = other_key;
-	me->hidden    = FALSE;
+	me->hidden    = false;
 	me->change    = change;
 	me->info      = info;
 
@@ -1180,12 +1179,12 @@ static int color_editor_get_value(color_editor *me)
 	return me->val;
 }
 
-static void color_editor_set_done(color_editor *me, BOOLEAN done)
+static void color_editor_set_done(color_editor *me, bool done)
 {
 	me->done = done;
 }
 
-static void color_editor_set_hidden(color_editor *me, BOOLEAN hidden)
+static void color_editor_set_hidden(color_editor *me, bool hidden)
 {
 	me->hidden = hidden;
 }
@@ -1195,7 +1194,7 @@ static int color_editor_edit(color_editor *me)
 	int key = 0;
 	int diff;
 
-	me->done = FALSE;
+	me->done = false;
 
 	if (!me->hidden)
 	{
@@ -1330,8 +1329,8 @@ struct tag_rgb_editor
 	int y;            /* position */
 	int       curr;            /* 0 = r, 1 = g, 2 = b */
 	int       pal;             /* palette number */
-	BOOLEAN   done;
-	BOOLEAN   hidden;
+	bool done;
+	bool hidden;
 	color_editor  *color[3];        /* color editors 0 = r, 1 = g, 2 = b */
 	void    (*other_key)(int key, struct tag_rgb_editor *e, VOIDPTR info);
 	void    (*change)(struct tag_rgb_editor *e, VOIDPTR info);
@@ -1346,8 +1345,8 @@ static rgb_editor *rgb_editor_new(int x, int y,
 						void (*change)(rgb_editor*, void*), VOIDPTR info);
 static void     rgb_editor_destroy  (rgb_editor *me);
 static void     rgb_editor_set_position   (rgb_editor *me, int x, int y);
-static void     rgb_editor_set_done  (rgb_editor *me, BOOLEAN done);
-static void     rgb_editor_set_hidden(rgb_editor *me, BOOLEAN hidden);
+static void     rgb_editor_set_done  (rgb_editor *me, bool done);
+static void     rgb_editor_set_hidden(rgb_editor *me, bool hidden);
 static void     rgb_editor_blank_sample_box(rgb_editor *me);
 static void     rgb_editor_update   (rgb_editor *me);
 static void     rgb_editor_draw     (rgb_editor *me);
@@ -1378,7 +1377,7 @@ static rgb_editor *rgb_editor_new(int x, int y, void (*other_key)(int, rgb_edito
 	rgb_editor_set_position(me, x, y);
 	me->curr      = 0;
 	me->pal       = 1;
-	me->hidden    = FALSE;
+	me->hidden    = false;
 	me->other_key = other_key;
 	me->change    = change;
 	me->info      = info;
@@ -1394,12 +1393,12 @@ static void rgb_editor_destroy(rgb_editor *me)
 	DELETE(me);
 }
 
-static void rgb_editor_set_done(rgb_editor *me, BOOLEAN done)
+static void rgb_editor_set_done(rgb_editor *me, bool done)
 {
 	me->done = done;
 }
 
-static void rgb_editor_set_hidden(rgb_editor *me, BOOLEAN hidden)
+static void rgb_editor_set_hidden(rgb_editor *me, bool hidden)
 {
 	me->hidden = hidden;
 	color_editor_set_hidden(me->color[0], hidden);
@@ -1418,7 +1417,7 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		if (me->curr != 0)
 		{
 			me->curr = 0;
-			color_editor_set_done(ceditor, TRUE);
+			color_editor_set_done(ceditor, true);
 		}
 		break;
 	case 'G':
@@ -1426,7 +1425,7 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		if (me->curr != 1)
 		{
 			me->curr = 1;
-			color_editor_set_done(ceditor, TRUE);
+			color_editor_set_done(ceditor, true);
 		}
 		break;
 
@@ -1435,7 +1434,7 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		if (me->curr != 2)
 		{
 			me->curr = 2;
-			color_editor_set_done(ceditor, TRUE);
+			color_editor_set_done(ceditor, true);
 		}
 		break;
 
@@ -1445,7 +1444,7 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		{
 			me->curr = 0;
 		}
-		color_editor_set_done(ceditor, TRUE);
+		color_editor_set_done(ceditor, true);
 		break;
 
 	case FIK_INSERT:   /* move to prev color_editor */
@@ -1453,14 +1452,14 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		{
 			me->curr = 2;
 		}
-		color_editor_set_done(ceditor, TRUE);
+		color_editor_set_done(ceditor, true);
 		break;
 
 	default:
 		me->other_key(key, me, me->info);
 		if (me->done)
 		{
-			color_editor_set_done(ceditor, TRUE);
+			color_editor_set_done(ceditor, true);
 		}
 		break;
 	}
@@ -1562,7 +1561,7 @@ static int rgb_editor_edit(rgb_editor *me)
 {
 	int key = 0;
 
-	me->done = FALSE;
+	me->done = false;
 
 	if (!me->hidden)
 	{
@@ -1636,14 +1635,14 @@ struct tag_pal_table
 	int           curr[2];
 	rgb_editor    *rgb[2];
 	move_box      *movebox;
-	BOOLEAN       done;
+	bool done;
 	int exclude;
-	BOOLEAN       auto_select;
+	bool auto_select;
 	PALENTRY      pal[256];
 	FILE         *undo_file;
-	BOOLEAN       curr_changed;
+	bool curr_changed;
 	int           num_redo;
-	int           hidden;
+	bool hidden;
 	int           stored_at;
 	FILE         *file;
 	char     *memory;
@@ -1655,15 +1654,15 @@ struct tag_pal_table
 	int top;
 	int bottom; /* top and bottom colours of freestyle band */
 	int           bandwidth; /*size of freestyle colour band */
-	BOOLEAN       freestyle;
+	bool freestyle;
 };
 typedef struct tag_pal_table pal_table;
 
-static void    pal_table_draw_status  (pal_table *me, BOOLEAN stripe_mode);
+static void    pal_table_draw_status  (pal_table *me, bool stripe_mode);
 static void    pal_table_highlight_pal       (pal_table *me, int pnum, int color);
 static void    pal_table_draw        (pal_table *me);
-static BOOLEAN pal_table_set_current     (pal_table *me, int which, int curr);
-static BOOLEAN pal_table_memory_alloc (pal_table *me, long size);
+static bool pal_table_set_current     (pal_table *me, int which, int curr);
+static bool pal_table_memory_alloc (pal_table *me, long size);
 static void    pal_table_save_rect    (pal_table *me);
 static void    pal_table_restore_rect (pal_table *me);
 static void    pal_table_set_position      (pal_table *me, int x, int y);
@@ -1682,8 +1681,8 @@ static void    pal_table_change      (rgb_editor *rgb, VOIDPTR info);
 static pal_table *pal_table_new();
 static void      pal_table_destroy   (pal_table *me);
 static void      pal_table_process   (pal_table *me);
-static void      pal_table_set_hidden (pal_table *me, BOOLEAN hidden);
-static void      pal_table_hide      (pal_table *me, rgb_editor *rgb, BOOLEAN hidden);
+static void      pal_table_set_hidden (pal_table *me, bool hidden);
+static void      pal_table_hide      (pal_table *me, rgb_editor *rgb, bool hidden);
 
 #define PALTABLE_PALX (1)
 #define PALTABLE_PALY (2 + RGB_EDITOR_DEPTH + 2)
@@ -1897,7 +1896,7 @@ static void pal_table_redo(pal_table *me)
 
 #define STATUS_LEN (4)
 
-static void pal_table_draw_status(pal_table *me, BOOLEAN stripe_mode)
+static void pal_table_draw_status(pal_table *me, bool stripe_mode)
 {
 	int color;
 	int width = 1 + (me->csize*16) + 1 + 1;
@@ -2019,13 +2018,13 @@ static void pal_table_draw(pal_table *me)
 		pal_table_highlight_pal(me, me->curr[1], s_fg_color);
 	}
 
-	pal_table_draw_status(me, FALSE);
+	pal_table_draw_status(me, false);
 	cursor_show();
 }
 
-static BOOLEAN pal_table_set_current(pal_table *me, int which, int curr)
+static bool pal_table_set_current(pal_table *me, int which, int curr)
 {
-	BOOLEAN redraw = (BOOLEAN)((which < 0) ? TRUE : FALSE);
+	bool redraw = (which < 0);
 
 	if (redraw)
 	{
@@ -2034,7 +2033,7 @@ static BOOLEAN pal_table_set_current(pal_table *me, int which, int curr)
 	}
 	else if (curr == me->curr[which] || curr < 0)
 	{
-		return FALSE;
+		return false;
 	}
 
 	cursor_hide();
@@ -2055,7 +2054,7 @@ static BOOLEAN pal_table_set_current(pal_table *me, int which, int curr)
 		rgb_editor_update(me->rgb[which]);
 		pal_table_update_dac(me);
 		cursor_show();
-		return TRUE;
+		return true;
 	}
 
 	me->curr[which] = curr;
@@ -2086,26 +2085,26 @@ static BOOLEAN pal_table_set_current(pal_table *me, int which, int curr)
 	}
 
 	cursor_show();
-	me->curr_changed = FALSE;
-	return TRUE;
+	me->curr_changed = false;
+	return true;
 }
 
 
-static BOOLEAN pal_table_memory_alloc(pal_table *me, long size)
+static bool pal_table_memory_alloc(pal_table *me, long size)
 {
 	char *temp;
 
-	if (DEBUGFLAG_USE_DISK == g_debug_flag)
+	if (DEBUGMODE_USE_DISK == g_debug_mode)
 	{
 		me->stored_at = NOWHERE;
-		return FALSE;   /* can't do it */
+		return false;   /* can't do it */
 	}
 	temp = (char *)malloc(FAR_RESERVE);   /* minimum free space */
 
 	if (temp == NULL)
 	{
 		me->stored_at = NOWHERE;
-		return FALSE;   /* can't do it */
+		return false;   /* can't do it */
 	}
 
 	me->memory = (char *)malloc(size);
@@ -2115,12 +2114,12 @@ static BOOLEAN pal_table_memory_alloc(pal_table *me, long size)
 	if (me->memory == NULL)
 	{
 		me->stored_at = NOWHERE;
-		return FALSE;
+		return false;
 	}
 	else
 	{
 		me->stored_at = MEMORY;
-		return TRUE;
+		return true;
 	}
 }
 
@@ -2317,8 +2316,8 @@ static int pal_table_get_cursor_color(pal_table *me)
 
 static void pal_table_do_cursor(pal_table *me, int key)
 {
-	BOOLEAN done  = FALSE;
-	BOOLEAN first = TRUE;
+	bool done = false;
+	bool first = true;
 	int xoff = 0;
 	int yoff = 0;
 
@@ -2336,7 +2335,7 @@ static void pal_table_do_cursor(pal_table *me, int key)
 		case FIK_UP_ARROW:          yoff -= CURS_INC;     break;
 
 		default:
-			done = TRUE;
+			done = true;
 		}
 
 		if (!done)
@@ -2347,7 +2346,7 @@ static void pal_table_do_cursor(pal_table *me, int key)
 			}
 			else
 			{
-				first = FALSE;
+				first = false;
 			}
 			key = driver_key_pressed();   /* peek at the next one... */
 		}
@@ -2381,7 +2380,7 @@ static void pal_table_change(rgb_editor *rgb, VOIDPTR info)
 	if (!me->curr_changed)
 	{
 		pal_table_save_undo_data(me, pnum, pnum);
-		me->curr_changed = TRUE;
+		me->curr_changed = true;
 	}
 
 	me->pal[pnum] = rgb_editor_get_rgb(rgb);
@@ -2496,7 +2495,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			if (move_box_should_hide(me->movebox))
 			{
-				pal_table_set_hidden(me, TRUE);
+				pal_table_set_hidden(me, true);
 			}
 			else if (move_box_moved(me->movebox))
 			{
@@ -2508,7 +2507,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		pal_table_draw(me);
 		cursor_show();
 
-		rgb_editor_set_done(me->rgb[me->active], TRUE);
+		rgb_editor_set_done(me->rgb[me->active], true);
 
 		if (me->auto_select)
 		{
@@ -2540,8 +2539,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		break;
 
 	case FIK_ESC:
-		me->done = TRUE;
-		rgb_editor_set_done(rgb, TRUE);
+		me->done = true;
+		rgb_editor_set_done(rgb, true);
 		break;
 
 	case ' ':     /* select the other palette register */
@@ -2558,7 +2557,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			pal_table_update_dac(me);
 		}
-		rgb_editor_set_done(rgb, TRUE);
+		rgb_editor_set_done(rgb, true);
 		break;
 
 	case FIK_ENTER:    /* set register to color under cursor.  useful when not */
@@ -2576,7 +2575,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			pal_table_update_dac(me);
 		}
 
-		rgb_editor_set_done(rgb, TRUE);
+		rgb_editor_set_done(rgb, true);
 		break;
 
 	case 'D':    /* copy (Duplicate?) color in inactive to color in active */
@@ -2699,7 +2698,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			int key;
 
 			cursor_hide();
-			pal_table_draw_status(me, TRUE);
+			pal_table_draw_status(me, true);
 			key = getakeynohelp();
 			cursor_show();
 
@@ -2749,7 +2748,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 	case 'A':   /* toggle auto-select mode */
 	case 'a':
-		me->auto_select = (BOOLEAN)((me->auto_select) ? FALSE : TRUE);
+		me->auto_select = !me->auto_select;
 		if (me->auto_select)
 		{
 			pal_table_set_current(me, me->active, pal_table_get_cursor_color(me));
@@ -2763,7 +2762,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 'H':
 	case 'h': /* toggle hide/display of palette editor */
 		cursor_hide();
-		pal_table_hide(me, rgb, (BOOLEAN)((me->hidden) ? FALSE : TRUE));
+		pal_table_hide(me, rgb, !me->hidden);
 		cursor_show();
 		break;
 
@@ -2790,8 +2789,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			{
 				rgb_editor_blank_sample_box(me->rgb[0]);
 				rgb_editor_blank_sample_box(me->rgb[1]);
-				rgb_editor_set_hidden(me->rgb[0], TRUE);
-				rgb_editor_set_hidden(me->rgb[1], TRUE);
+				rgb_editor_set_hidden(me->rgb[0], true);
+				rgb_editor_set_hidden(me->rgb[1], true);
 			}
 
 			do
@@ -2814,8 +2813,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 			if (!me->hidden)
 			{
-				rgb_editor_set_hidden(me->rgb[0], FALSE);
-				rgb_editor_set_hidden(me->rgb[1], FALSE);
+				rgb_editor_set_hidden(me->rgb[0], false);
+				rgb_editor_set_hidden(me->rgb[1], false);
 				rgb_editor_update(me->rgb[0]);
 				rgb_editor_update(me->rgb[1]);
 			}
@@ -2831,7 +2830,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 	case 'I':     /* invert the fg & bg g_colors */
 	case 'i':
-		s_inverse = (BOOLEAN)!s_inverse;
+		s_inverse = !s_inverse;
 		pal_table_update_dac(me);
 		break;
 
@@ -2855,7 +2854,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			cursor_show();
 		}
 
-		rgb_editor_set_done(me->rgb[me->active], TRUE);
+		rgb_editor_set_done(me->rgb[me->active], true);
 		break;
 
 	case 'O':    /* set rotate_lo and rotate_hi to editors */
@@ -2893,7 +2892,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 				pal_table_set_current(me, -1, 0);
 				cursor_show();
-				rgb_editor_set_done(me->rgb[me->active], TRUE);
+				rgb_editor_set_done(me->rgb[me->active], true);
 			}
 			else
 			{
@@ -2954,14 +2953,14 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 	case 'C':     /* color cycling sub-mode */
 	case 'c':
 		{
-			BOOLEAN oldhidden = (BOOLEAN)me->hidden;
+			bool oldhidden = me->hidden;
 
 			pal_table_save_undo_data(me, 0, 255);
 
 			cursor_hide();
 			if (!oldhidden)
 			{
-				pal_table_hide(me, rgb, TRUE);
+				pal_table_hide(me, rgb, true);
 			}
 			set_pal_range(0, g_colors, me->pal);
 			rotate(0);
@@ -2971,7 +2970,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			{
 				rgb_editor_set_rgb(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
 				rgb_editor_set_rgb(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-				pal_table_hide(me, rgb, FALSE);
+				pal_table_hide(me, rgb, false);
 			}
 			cursor_show();
 			break;
@@ -2979,7 +2978,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 	case 'F':
 	case 'f':    /* toggle freestyle palette edit mode */
-		me->freestyle = (BOOLEAN)((me->freestyle) ? FALSE :TRUE);
+		me->freestyle = !me->freestyle;
 		pal_table_set_current(me, -1, 0);
 		if (!me->freestyle)   /* if turning off... */
 		{
@@ -3099,7 +3098,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		pal_table_redo(me);
 		break;
 	} /* switch */
-	pal_table_draw_status(me, FALSE);
+	pal_table_draw_status(me, false);
 }
 
 static void pal_table_make_default_palettes(pal_table *me)  /* creates default Fkey palettes */
@@ -3157,9 +3156,9 @@ static pal_table *pal_table_new()
 	me->active      = 0;
 	me->curr[0]     = 1;
 	me->curr[1]     = 1;
-	me->auto_select = TRUE;
+	me->auto_select = true;
 	me->exclude     = EXCLUDE_NONE;
-	me->hidden      = FALSE;
+	me->hidden      = false;
 	me->stored_at   = NOWHERE;
 	me->file        = NULL;
 	me->memory      = NULL;
@@ -3167,13 +3166,13 @@ static pal_table *pal_table_new()
 	me->fs_color.red   = 42;
 	me->fs_color.green = 42;
 	me->fs_color.blue  = 42;
-	me->freestyle      = FALSE;
+	me->freestyle      = false;
 	me->bandwidth      = 15;
 	me->top            = 255;
 	me->bottom         = 0;
 
 	me->undo_file    = dir_fopen(g_temp_dir, s_undo_file, "w+b");
-	me->curr_changed = FALSE;
+	me->curr_changed = false;
 	me->num_redo     = 0;
 
 	rgb_editor_set_rgb(me->rgb[0], me->curr[0], &me->pal[me->curr[0]]);
@@ -3192,7 +3191,7 @@ static pal_table *pal_table_new()
 }
 
 
-static void pal_table_set_hidden(pal_table *me, BOOLEAN hidden)
+static void pal_table_set_hidden(pal_table *me, bool hidden)
 {
 	me->hidden = hidden;
 	rgb_editor_set_hidden(me->rgb[0], hidden);
@@ -3202,13 +3201,13 @@ static void pal_table_set_hidden(pal_table *me, BOOLEAN hidden)
 
 
 
-static void pal_table_hide(pal_table *me, rgb_editor *rgb, BOOLEAN hidden)
+static void pal_table_hide(pal_table *me, rgb_editor *rgb, bool hidden)
 {
 	if (hidden)
 	{
 		pal_table_restore_rect(me);
-		pal_table_set_hidden(me, TRUE);
-		s_reserve_colors = FALSE;
+		pal_table_set_hidden(me, true);
+		s_reserve_colors = false;
 		if (me->auto_select)
 		{
 			pal_table_set_current(me, me->active, pal_table_get_cursor_color(me));
@@ -3216,8 +3215,8 @@ static void pal_table_hide(pal_table *me, rgb_editor *rgb, BOOLEAN hidden)
 	}
 	else
 	{
-		pal_table_set_hidden(me, FALSE);
-		s_reserve_colors = TRUE;
+		pal_table_set_hidden(me, false);
+		s_reserve_colors = true;
 		if (me->stored_at == NOWHERE)  /* do we need to save screen? */
 		{
 			pal_table_save_rect(me);
@@ -3227,7 +3226,7 @@ static void pal_table_hide(pal_table *me, rgb_editor *rgb, BOOLEAN hidden)
 		{
 			pal_table_set_current(me, me->active, pal_table_get_cursor_color(me));
 		}
-		rgb_editor_set_done(rgb, TRUE);
+		rgb_editor_set_done(rgb, true);
 	}
 }
 
@@ -3297,12 +3296,12 @@ static void pal_table_process(pal_table *me)
 
 		if (move_box_should_hide(me->movebox))
 		{
-			pal_table_set_hidden(me, TRUE);
-			s_reserve_colors = FALSE;   /* <EAN> */
+			pal_table_set_hidden(me, true);
+			s_reserve_colors = false;   /* <EAN> */
 		}
 		else
 		{
-			s_reserve_colors = TRUE;    /* <EAN> */
+			s_reserve_colors = true;    /* <EAN> */
 			pal_table_save_rect(me);
 			pal_table_draw(me);
 		}
@@ -3312,7 +3311,7 @@ static void pal_table_process(pal_table *me)
 	pal_table_set_current(me, (me->active == 1) ? 0 : 1, pal_table_get_cursor_color(me));
 	cursor_show();
 	pal_table_make_default_palettes(me);
-	me->done = FALSE;
+	me->done = false;
 
 	while (!me->done)
 	{
@@ -3351,8 +3350,8 @@ void palette_edit()       /* called by fractint */
 
 	g_sx_offset = g_sy_offset = 0;
 
-	s_reserve_colors = TRUE;
-	s_inverse = FALSE;
+	s_reserve_colors = true;
+	s_inverse = false;
 	s_fg_color = (BYTE)(255 % g_colors);
 	s_bg_color = (BYTE)(s_fg_color-1);
 

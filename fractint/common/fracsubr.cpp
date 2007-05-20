@@ -122,10 +122,11 @@ void calculate_fractal_initialize()
 		long xytemp = g_x_dots + g_y_dots;
 		if (((g_user_float_flag == 0) && (xytemp*sizeof(long) > 32768))
 			|| ((g_user_float_flag == 1) && (xytemp*sizeof(double) > 32768))
-			|| DEBUGFLAG_NO_PIXEL_GRID == g_debug_flag)
+			|| DEBUGMODE_NO_PIXEL_GRID == g_debug_mode)
 		{
 			g_escape_time_state.m_use_grid = false;
-			g_float_flag = g_user_float_flag = TRUE;
+			g_float_flag = true;
+			g_user_float_flag = 1;
 		}
 		else
 		{
@@ -157,7 +158,7 @@ void calculate_fractal_initialize()
 	if (g_bf_math)
 	{
 		int gotprec = get_precision_bf(CURRENTREZ);
-		if ((gotprec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || g_math_tolerance[1] >= 1.0)
+		if ((gotprec <= DBL_DIG + 1 && g_debug_mode != DEBUGMODE_NO_BIG_TO_FLOAT) || g_math_tolerance[1] >= 1.0)
 		{
 			corners_bf_to_float();
 			g_bf_math = 0;
@@ -167,28 +168,28 @@ void calculate_fractal_initialize()
 			init_bf_dec(gotprec);
 		}
 	}
-	else if ((g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_MANDELBROT_FP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+	else if ((g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_MANDELBROT_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 	{
 		g_fractal_type = FRACTYPE_MANDELBROT_FP;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
 		g_user_float_flag = 1;
 	}
-	else if ((g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+	else if ((g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 	{
 		g_fractal_type = FRACTYPE_JULIA_FP;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
 		g_user_float_flag = 1;
 	}
-	else if ((g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L || g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+	else if ((g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L || g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 	{
 		g_fractal_type = FRACTYPE_MANDELBROT_Z_POWER_FP;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
 		g_user_float_flag = 1;
 	}
-	else if ((g_fractal_type == FRACTYPE_JULIA_Z_POWER_L || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP) && DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+	else if ((g_fractal_type == FRACTYPE_JULIA_Z_POWER_L || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 	{
 		g_fractal_type = FRACTYPE_JULIA_Z_POWER_FP;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
@@ -199,21 +200,21 @@ void calculate_fractal_initialize()
 	{
 		free_bf_vars();
 	}
-	g_float_flag = g_bf_math ? TRUE : g_user_float_flag;
+	g_float_flag = (g_bf_math || g_user_float_flag);
 	if (g_calculation_status == CALCSTAT_RESUMABLE)  /* on resume, ensure g_float_flag correct */
 	{
-		g_float_flag = g_current_fractal_specific->isinteger ? FALSE : TRUE;
+		g_float_flag = (g_current_fractal_specific->isinteger == 0);
 	}
 	/* if floating pt only, set g_float_flag for TAB screen */
 	if (!g_current_fractal_specific->isinteger && g_current_fractal_specific->tofloat == FRACTYPE_NO_FRACTAL)
 	{
-		g_float_flag = TRUE;
+		g_float_flag = true;
 	}
 	if (g_user_standard_calculation_mode == 's')
 	{
 		if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_MANDELBROT_FP)
 		{
-			g_float_flag = TRUE;
+			g_float_flag = true;
 		}
 		else
 		{
@@ -234,20 +235,21 @@ init_restart:
 	g_distance_test          = g_user_distance_test;
 	g_biomorph         = g_user_biomorph;
 
-	g_potential_flag = FALSE;
+	g_potential_flag = false;
 	if (g_potential_parameter[0] != 0.0
 		&& g_colors >= 64
 		&& (g_current_fractal_specific->calculate_type == standard_fractal
 			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot
 			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot_fp))
 	{
-		g_potential_flag = TRUE;
-		g_distance_test = g_user_distance_test = 0;    /* can't do distest too */
+		g_potential_flag = true;
+		g_distance_test = 0;
+		g_user_distance_test = 0;    /* can't do distest too */
 	}
 
 	if (g_distance_test)
 	{
-		g_float_flag = TRUE;  /* force floating point for dist est */
+		g_float_flag = true;  /* force floating point for dist est */
 	}
 
 	if (g_float_flag)  /* ensure type matches g_float_flag */
@@ -348,7 +350,7 @@ init_restart:
 			&& g_biomorph == -1                         /* and not biomorphing */
 			&& g_rq_limit <= 4.0                           /* and bailout not too high */
 			&& (g_outside > -2 || g_outside < -6)         /* and no funny outside stuff */
-			&& g_debug_flag != DEBUGFLAG_FORCE_BITSHIFT	/* and not debugging */
+			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	/* and not debugging */
 			&& g_proximity <= 2.0                       /* and g_proximity not too large */
 			&& g_bail_out_test == Mod)                     /* and bailout test = mod */
 		{
@@ -420,7 +422,7 @@ expand_retry:
 				if (g_integer_fractal          /* integer fractal type? */
 					&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 				{
-					g_float_flag = TRUE;           /* switch to floating pt */
+					g_float_flag = true;           /* switch to floating pt */
 				}
 				else
 				{
@@ -1183,7 +1185,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 		return 0;
 	}
 	ftemp = 0;
-	if (desired != 0 && g_debug_flag != DEBUGFLAG_NO_INT_TO_FLOAT)
+	if (desired != 0 && g_debug_mode != DEBUGMODE_NO_INT_TO_FLOAT)
 	{
 		ftemp = actual / desired;
 		if (ftemp < (1.0-tol) || ftemp > (1.0 + tol))
@@ -1498,7 +1500,7 @@ static void sleep_ms_new(long ms)
 
 void sleep_ms(long ms)
 {
-	if (DEBUGFLAG_OLD_TIMER == g_debug_flag)
+	if (DEBUGMODE_OLD_TIMER == g_debug_mode)
 	{
 		sleep_ms_old(ms);
 	}
@@ -1516,7 +1518,7 @@ void sleep_ms(long ms)
 static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
-	if (DEBUGFLAG_OLD_TIMER == g_debug_flag)
+	if (DEBUGMODE_OLD_TIMER == g_debug_mode)
 	{
 		sleep_ms_old(wait_time);
 	}

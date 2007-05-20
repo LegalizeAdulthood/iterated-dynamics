@@ -332,7 +332,7 @@ void WinText::create(HWND parent)
 	m_cursor_y    = 0;
 	m_cursor_type = 0;
 	m_cursor_owned = 0;
-	m_showing_cursor = FALSE;
+	m_showing_cursor = false;
 	m_parent_window = parent;
 
 	if (m_window)
@@ -398,7 +398,7 @@ void WinText::OnSetFocus(HWND window, HWND old_focus)
 	ODS("wintext_OnSetFocus");
 	/* get focus - display caret */
 	/* create caret & display */
-	if (TRUE == s_me->m_showing_cursor)
+	if (s_me->m_showing_cursor)
 	{
 		s_me->m_cursor_owned = 1;
 		::CreateCaret(s_me->m_window, s_me->m_bitmap[s_me->m_cursor_type], s_me->m_char_width, s_me->m_char_height);
@@ -412,7 +412,7 @@ void WinText::OnKillFocus(HWND window, HWND old_focus)
 {
 	/* kill focus - hide caret */
 	ODS("wintext_OnKillFocus");
-	if (TRUE == s_me->m_showing_cursor)
+	if (s_me->m_showing_cursor)
 	{
 		s_me->m_cursor_owned = 0;
 		::HideCaret(window);
@@ -630,7 +630,7 @@ void WinText::paintscreen(
 	::SetBkMode(hDC, OPAQUE);
 	::SetTextAlign(hDC, TA_LEFT | TA_TOP);
 
-	if (TRUE == m_showing_cursor)
+	if (m_showing_cursor)
 	{
 		::HideCaret(m_window);
 	}
@@ -677,7 +677,7 @@ void WinText::paintscreen(
 		}
 	}
 
-	if (TRUE == m_showing_cursor)
+	if (m_showing_cursor)
 	{
 		::ShowCaret(m_window);
 	}
@@ -709,7 +709,7 @@ void WinText::cursor(int xpos, int ypos, int m_cursor_type)
 	{
 		m_cursor_type = 2;
 	}
-	if (FALSE == m_showing_cursor)
+	if (!m_showing_cursor)
 	{
 		x = m_cursor_x*m_char_width;
 		y = m_cursor_y*m_char_height;
@@ -717,7 +717,7 @@ void WinText::cursor(int xpos, int ypos, int m_cursor_type)
 			m_char_width, m_char_height);
 		::SetCaretPos(x, y);
 		::ShowCaret(m_window);
-		m_showing_cursor = TRUE;
+		m_showing_cursor = true;
 	}
 	else
 	{
@@ -782,9 +782,9 @@ void WinText::screen_set(const BYTE *copy)
 
 void WinText::hide_cursor()
 {
-	if (TRUE == m_showing_cursor)
+	if (m_showing_cursor)
 	{
-		m_showing_cursor = FALSE;
+		m_showing_cursor = false;
 		::HideCaret(m_window);
 	}
 }

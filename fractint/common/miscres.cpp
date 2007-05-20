@@ -251,7 +251,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
-		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && g_debug_flag != DEBUGFLAG_PRE193_CENTERMAG)
+		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && g_debug_mode != DEBUGMODE_PRE193_CENTERMAG)
 		{
 			*Skew = -*Skew;
 			*Xmagfactor = -*Xmagfactor;
@@ -470,7 +470,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
-		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && g_debug_flag != DEBUGFLAG_PRE193_CENTERMAG)
+		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && g_debug_mode != DEBUGMODE_PRE193_CENTERMAG)
 		{
 			*Skew = -*Skew;
 			*Xmagfactor = -*Xmagfactor;
@@ -1858,12 +1858,12 @@ int win_matherr(struct exception *except)
 int _cdecl _matherr(struct exception *except)
 #endif
 {
-	if (g_debug_flag)
+	if (g_debug_mode)
 	{
 		static FILE *fp = NULL;
 		if (g_math_error_count++ == 0)
 		{
-			if (DEBUGFLAG_SHOW_MATH_ERRORS == g_debug_flag || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag)
+			if (DEBUGMODE_SHOW_MATH_ERRORS == g_debug_mode || DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 			{
 				stop_message(0, "Math error, but we'll try to keep going");
 			}

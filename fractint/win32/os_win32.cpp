@@ -120,16 +120,16 @@ int g_cpu, g_fpu;                        /* g_cpu, g_fpu flags */
 unsigned char g_dac_box[256][3] = { 0 };
 int g_dac_learn = 0;
 int g_dac_count = 0;
-int g_disk_flag = 0;
-int g_disk_targa = FALSE;
+bool g_disk_flag = false;
+bool g_disk_targa = false;
 int DivideOverflow = 0;
 int g_good_mode = 0;
-int g_got_real_dac = 0;
+bool g_got_real_dac = false;
 int g_is_true_color = 0;
 long g_initial_x_l = 0;
 long g_initial_y_l = 0;
 BYTE g_old_dac_box[256][3] = { 0 };
-int g_overflow = 0;
+bool g_overflow = false;
 int g_polyphony = 0;
 char g_rle_buffer[258] = { 0 };
 int g_row_count = 0;
@@ -403,9 +403,8 @@ int fr_find_first(char *path)       /* Find 1st file (or subdir) meeting path/fi
  */
 int fr_find_next()
 {
-	BOOL result = FALSE;
 	_ASSERTE(INVALID_HANDLE_VALUE != s_find_context);
-	result = FindNextFile(s_find_context, &s_find_data);
+	BOOL result = FindNextFile(s_find_context, &s_find_data);
 	if (result == 0)
 	{
 		DWORD code = GetLastError();
@@ -502,7 +501,7 @@ void spindac(int dir, int inc)
 void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
 {
 	/* TODO */
-	_ASSERTE(FALSE);
+	_ASSERTE(false);
 	*red = 0;
 	*green = 0;
 	*blue = 0;
@@ -550,7 +549,7 @@ bool is_a_directory(char *s)
 void puttruecolor(int xdot, int ydot, int red, int green, int blue)
 {
 	/* TODO */
-	_ASSERTE(FALSE);
+	_ASSERTE(false);
 }
 
 /* tenths of millisecond timewr routine */
@@ -576,7 +575,7 @@ uclock_t usec_clock()
 {
 	uclock_t result = 0;
 	/* TODO */
-	_ASSERTE(FALSE);
+	_ASSERTE(false);
 
 	return result;
 }
@@ -584,7 +583,7 @@ uclock_t usec_clock()
 void showfreemem()
 {
 	/* TODO */
-	_ASSERTE(FALSE);
+	_ASSERTE(false);
 }
 
 unsigned long get_disk_space()
@@ -864,12 +863,12 @@ void set_normal_line()
 
 static void null_write(int a, int b, int c)
 {
-	_ASSERTE(FALSE);
+	_ASSERTE(false);
 }
 
 static int null_read(int a, int b)
 {
-	_ASSERTE(FALSE);
+	_ASSERTE(false);
 	return 0;
 }
 

@@ -163,7 +163,7 @@ static void init_bf_2()
 		/* 1 => maybe called from cmdfiles.c and g_fractal_type not set */
 		g_bf_math = (i > -1) ? g_alternate_math[i].math : BIGNUM;
 	}
-	g_float_flag = TRUE;
+	g_float_flag = true;
 
 	/* Now split up the memory among the pointers */
 	/* internal pointers */

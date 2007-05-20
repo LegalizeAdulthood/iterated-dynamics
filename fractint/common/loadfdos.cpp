@@ -444,11 +444,13 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	g_final_aspect_ratio = (float)(i/1000.0); /* chop precision to 3 decimals */
 
 	/* setup view window stuff */
-	g_view_window = g_view_x_dots = g_view_y_dots = 0;
+	g_view_window = false;
+	g_view_x_dots = 0;
+	g_view_y_dots = 0;
 	if (g_file_x_dots != g_video_entry.x_dots || g_file_y_dots != g_video_entry.y_dots)
 	{
 		/* image not exactly same size as screen */
-		g_view_window = 1;
+		g_view_window = true;
 		ftemp = g_final_aspect_ratio*
 			(double)g_video_entry.y_dots / (double)g_video_entry.x_dots
 				/ g_screen_aspect_ratio;

@@ -112,7 +112,7 @@ static U16 (_fastcall *s_get_pixels)(int, int)  = (U16(_fastcall *)(int, int))ge
 static U16 s_max_plasma;
 static int *s_verhulst_array;
 static unsigned long s_filter_cycles;
-static unsigned int s_half_time_check;
+static bool s_half_time_check;
 static long s_population_l;
 static long s_rate_l;
 static double s_population;
@@ -483,10 +483,12 @@ int plasma()
 	int k;
 	int n;
 	U16 rnd[4];
-	int OldPotFlag;
-	int OldPot16bit;
+	bool OldPotFlag;
+	bool OldPot16bit;
 
-	OldPotFlag = OldPot16bit = s_plasma_check = 0;
+	OldPotFlag = false;
+	OldPot16bit = false;
+	s_plasma_check = 0;
 
 	if (g_colors < 4)
 	{
@@ -531,7 +533,7 @@ int plasma()
 		g_parameters[3] = 1;
 	}
 
-	if ((!g_random_flag) && g_parameters[2] == 1)
+	if (!g_use_fixed_random_seed && (g_parameters[2] == 1))
 	{
 		--g_random_seed;
 	}
@@ -566,7 +568,7 @@ int plasma()
 		s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(g_random_seed);
-	if (!g_random_flag)
+	if (!g_use_fixed_random_seed)
 	{
 		++g_random_seed;
 	}
@@ -611,7 +613,7 @@ int plasma()
 			rnd[n] = rand16();
 		}
 	}
-	if (DEBUGFLAG_PIN_CORNERS_ONE == g_debug_flag)
+	if (DEBUGMODE_PIN_CORNERS_ONE == g_debug_mode)
 	{
 		for (n = 0; n < 4; n++)
 		{
@@ -739,7 +741,7 @@ int diffusion()
 	}
 
 	srand(g_random_seed);
-	if (!g_random_flag)
+	if (!g_use_fixed_random_seed)
 	{
 		++g_random_seed;
 	}
@@ -1073,11 +1075,11 @@ int bifurcation()
 	}
 
 	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULT_FILTER : (long)g_parameter.x;
-	s_half_time_check = FALSE;
+	s_half_time_check = false;
 	if (g_periodicity_check && (unsigned long)g_max_iteration < s_filter_cycles)
 	{
 		s_filter_cycles = (s_filter_cycles - g_max_iteration + 1) / 2;
-		s_half_time_check = TRUE;
+		s_half_time_check = true;
 	}
 
 	if (g_integer_fractal)
@@ -1136,7 +1138,8 @@ int bifurcation()
 
 static void verhulst()          /* P. F. Verhulst (1845) */
 {
-	unsigned int pixel_row, errors;
+	unsigned int pixel_row;
+	bool errors;
 	unsigned long counter;
 
 	if (g_integer_fractal)
@@ -1148,11 +1151,12 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		s_population = (g_parameter.y == 0) ? SEED : g_parameter.y;
 	}
 
-	errors = g_overflow = FALSE;
+	errors = false;
+	g_overflow = false;
 
 	for (counter = 0; counter < s_filter_cycles; counter++)
 	{
-		errors = g_current_fractal_specific->orbitcalc();
+		errors = (g_current_fractal_specific->orbitcalc() != 0);
 		if (errors)
 		{
 			return;
@@ -1163,7 +1167,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		bifurcation_period_init();
 		for (counter = 0; counter < (unsigned long)g_max_iteration; counter++)
 		{
-			errors = g_current_fractal_specific->orbitcalc();
+			errors = (g_current_fractal_specific->orbitcalc() != 0);
 			if (errors)
 			{
 				return;
@@ -1177,7 +1181,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		{
 			for (counter = 0; counter < s_filter_cycles; counter++)
 			{
-				errors = g_current_fractal_specific->orbitcalc();
+				errors = (g_current_fractal_specific->orbitcalc() != 0);
 				if (errors)
 				{
 					return;
@@ -1192,7 +1196,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	}
 	for (counter = 0; counter < (unsigned long)g_max_iteration; counter++)
 	{
-		errors = g_current_fractal_specific->orbitcalc();
+		errors = (g_current_fractal_specific->orbitcalc() != 0);
 		if (errors)
 		{
 			return;
@@ -1480,7 +1484,7 @@ int lyapunov()
 	{
 		return -1;
 	}
-	g_overflow = FALSE;
+	g_overflow = false;
 	if (g_parameters[1] == 1)
 	{
 		s_population = (1.0 + rand())/(2.0 + RAND_MAX);
@@ -1629,7 +1633,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 			s_rate = s_lyapunov_r_xy[count] ? a : b;
 			if (g_current_fractal_specific->orbitcalc())
 			{
-				g_overflow = TRUE;
+				g_overflow = true;
 				goto jumpout;
 			}
 		}
@@ -1641,14 +1645,14 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 			s_rate = s_lyapunov_r_xy[count] ? a : b;
 			if (g_current_fractal_specific->orbitcalc())
 			{
-				g_overflow = TRUE;
+				g_overflow = true;
 				goto jumpout;
 			}
 			temp = fabs(s_rate-2.0*s_rate*s_population);
 			total *= temp;
 			if (total == 0)
 			{
-				g_overflow = TRUE;
+				g_overflow = true;
 				goto jumpout;
 			}
 		}
@@ -1672,7 +1676,7 @@ jumpout:
 	}
 	else
 	{
-		lyap = g_log_palette_flag
+		lyap = g_log_palette_mode
 			? -temp/((double) s_lyapunov_length*i)
 			: 1 - exp(temp/((double) s_lyapunov_length*i));
 		color = 1 + (int)(lyap*(g_colors-1));
@@ -1807,7 +1811,7 @@ int cellular()
 	s_k_1 = (S16)(k - 1); /* Highest state value, k = 3 has highest state value of 2 */
 	s_rule_digits = (S16)((s_r*2 + 1)*s_k_1 + 1); /* Number of digits in the rule */
 
-	if ((!g_random_flag) && randparam == -1)
+	if (!g_use_fixed_random_seed && (randparam == -1))
 	{
 		--g_random_seed;
 	}
@@ -1838,7 +1842,7 @@ int cellular()
 	}
 
 	srand(g_random_seed);
-	if (!g_random_flag)
+	if (!g_use_fixed_random_seed)
 	{
 		++g_random_seed;
 	}
@@ -1898,7 +1902,7 @@ int cellular()
 		return -1;
 	}
 
-	/* g_next_screen_flag toggled by space bar in fractint.c, 1 for continuous */
+	/* g_next_screen_flag toggled by space bar in fractint.cpp, 1 for continuous */
 	/* 0 to stop on next screen */
 	filled = 0;
 	notfilled = (S16)(1-filled);
@@ -1919,7 +1923,7 @@ int cellular()
 	}
 	else
 	{
-		if (g_random_flag || randparam == 0 || randparam == -1)
+		if (g_use_fixed_random_seed || randparam == 0 || randparam == -1)
 		{
 			for (g_col = 0; g_col <= g_x_stop; g_col++)
 			{
@@ -1952,7 +1956,7 @@ int cellular()
 		for (big_row = (U32)start_row; big_row < lnnmbr; big_row++)
 		{
 			thinking(1, "Cellular thinking (higher start row takes longer)");
-			if (g_random_flag || randparam == 0 || randparam == -1)
+			if (g_use_fixed_random_seed || randparam == 0 || randparam == -1)
 			{
 				/* Use a random border */
 				for (i = 0; i <= (U16) s_r; i++)
@@ -2015,7 +2019,7 @@ contloop:
 	/* This section does all the work */
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
-		if (g_random_flag || randparam == 0 || randparam == -1)
+		if (g_use_fixed_random_seed || randparam == 0 || randparam == -1)
 		{
 			/* Use a random border */
 			for (i = 0; i <= (U16) s_r; i++)
@@ -2085,7 +2089,7 @@ int cellular_setup()
 {
 	if (!g_resuming)
 	{
-		g_next_screen_flag = 0; /* initialize flag */
+		g_next_screen_flag = false;
 	}
 	timer(TIMER_ENGINE, g_current_fractal_specific->calculate_type);
 	return 0;

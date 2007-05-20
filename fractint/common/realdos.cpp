@@ -63,7 +63,7 @@ int stop_message(int flags, const char *msg)
 	int toprow;
 	int color;
 	static unsigned char batchmode = 0;
-	if (g_debug_flag || g_initialize_batch >= INITBATCH_NORMAL)
+	if (g_debug_mode || g_initialize_batch >= INITBATCH_NORMAL)
 	{
 		FILE *fp = NULL;
 		if (g_initialize_batch == INITBATCH_NONE)
@@ -125,7 +125,7 @@ int stop_message(int flags, const char *msg)
 	{
 		driver_get_key();
 	}
-	if (g_debug_flag != DEBUGFLAG_NO_HELP_F1_ESC)
+	if (g_debug_mode != DEBUGMODE_NO_HELP_F1_ESC)
 	{
 		if (getakeynohelp() == FIK_ESC)
 		{
@@ -190,6 +190,7 @@ int show_temp_message(char *msgparm)
 	}
 	if (g_command_initialize)      /* & command_files hasn't finished 1st try */
 	{
+		// TOO: don't use printf!
 		printf("%s\n", msg);
 		return 0;
 	}
@@ -300,7 +301,7 @@ void help_title()
 	return;
 	/*NOTREACHED*/
 #else
-	if (DEBUGFLAG_NO_DEV_HEADING == g_debug_flag)
+	if (DEBUGMODE_NO_DEV_HEADING == g_debug_mode)
 	{
 		return;
 	}
@@ -2034,7 +2035,7 @@ void load_fractint_config()
 			{
 				/* look for a synonym mode and if found, overwite its key */
 				int m;
-				int synonym_found = FALSE;
+				int synonym_found = false;
 				for (m = 0; m < g_video_table_len; m++)
 				{
 					VIDEOINFO *mode = &g_video_table[m];
@@ -2046,12 +2047,12 @@ void load_fractint_config()
 						{
 							mode->keynum = vident.keynum;
 						}
-						synonym_found = TRUE;
+						synonym_found = true;
 						break;
 					}
 				}
 				/* no synonym found, append it to current list of video modes */
-				if (FALSE == synonym_found)
+				if (!synonym_found)
 				{
 					add_video_mode(vident.driver, vident);
 				}

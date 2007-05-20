@@ -72,7 +72,7 @@ int g_bad_value = -10000; /* set bad values to this */
 static int targa_validate(char *);
 static int first_time(int, VECTOR);
 static int HSVtoRGB(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
-static int line_3d_mem();
+static bool line_3d_mem();
 static int RGBtoHSV(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static int set_pixel_buff(BYTE *, BYTE *, unsigned);
 static void set_upr_lwr();
@@ -585,7 +585,7 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 		/* normalize cross - and check if non-zero */
 		if (normalize_vector(g_cross))
 		{
-			if (g_debug_flag)
+			if (g_debug_mode)
 			{
 				stop_message(0, "debug, cur->color=bad");
 			}
@@ -618,7 +618,7 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 				if (normalize_vector(g_cross))
 				{
 					/* this shouldn't happen */
-					if (g_debug_flag)
+					if (g_debug_mode)
 					{
 						stop_message(0, "debug, normal vector err2");
 					}
@@ -2453,12 +2453,12 @@ static void line3d_cleanup()
 	{                            /* Finish up targa files */
 		s_targa_header_len = 18;         /* Reset Targa header size */
 		disk_end();
-		if (!g_debug_flag && (!s_targa_safe || s_file_error) && g_targa_overlay)
+		if (!g_debug_mode && (!s_targa_safe || s_file_error) && g_targa_overlay)
 		{
 			dir_remove(g_work_dir, g_light_name);
 			rename(s_targa_temp, g_light_name);
 		}
-		if (!g_debug_flag && g_targa_overlay)
+		if (!g_debug_mode && g_targa_overlay)
 		{
 			dir_remove(g_work_dir, s_targa_temp);
 		}
@@ -2479,7 +2479,6 @@ static void set_upr_lwr()
 
 static int first_time(int linelen, VECTOR v)
 {
-	int err;
 	MATRIX lightm;               /* m w/no trans, keeps obj. on screen */
 	double xval;
 	double yval;
@@ -2563,10 +2562,9 @@ static int first_time(int linelen, VECTOR v)
 
 	s_z_coord = g_file_colors;
 
-	err = line_3d_mem();
-	if (err != 0)
+	if (line_3d_mem())
 	{
-		return err;
+		return 1;
 	}
 
 
@@ -2587,7 +2585,7 @@ static int first_time(int linelen, VECTOR v)
 	/* aspect ratio calculation - assume screen is 4 x 3 */
 	s_aspect = (double) g_x_dots *.75/(double) g_y_dots;
 
-	if (g_3d_state.sphere() == FALSE)         /* skip this slow stuff in sphere case */
+	if (g_3d_state.sphere() == false)         /* skip this slow stuff in sphere case */
 	{
 		/*********************************************************************/
 		/* What is done here is to create a single matrix, m, which has      */
@@ -2674,7 +2672,7 @@ static int first_time(int linelen, VECTOR v)
 	s_lview[1] <<= 16;
 	s_lview[2] <<= 16;
 
-	if (g_3d_state.sphere() == FALSE)         /* sphere skips this */
+	if (g_3d_state.sphere() == false)         /* sphere skips this */
 	{
 		/* translate back exactly amount we translated earlier plus enough to
 		* center image so maximum values are non-positive */
@@ -2930,7 +2928,7 @@ static int first_time(int linelen, VECTOR v)
 	Allocate buffers needed, depending on the pixel dimensions of the
 	vide mode.
 */
-static int line_3d_mem()
+static bool line_3d_mem()
 {
 	/* s_last_row stores the previous row of the original GIF image for
 		the purpose of filling in gaps with triangle procedure */
@@ -2938,7 +2936,7 @@ static int line_3d_mem()
 	s_f_last_row = new f_point[g_y_dots];
 	if (!s_last_row || !s_f_last_row)
 	{
-		return TRUE;
+		return true;
 	}
 
 	if (g_3d_state.sphere())
@@ -2947,7 +2945,7 @@ static int line_3d_mem()
 		s_cos_theta_array = new float[g_x_dots];
 		if (!s_sin_theta_array || !s_cos_theta_array)
 		{
-			return TRUE;
+			return true;
 		}
 	}
 
@@ -2956,7 +2954,7 @@ static int line_3d_mem()
 		s_fraction = new BYTE[g_x_dots];
 		if (!s_fraction)
 		{
-			return TRUE;
+			return true;
 		}
 	}
 	s_minmax_x = NULL;
@@ -2971,12 +2969,12 @@ static int line_3d_mem()
 		s_minmax_x = new minmax[g_y_dots];
 		if (!s_minmax_x)
 		{
-			return TRUE;
+			return true;
 		}
 	}
 
 	/* no errors, got all memroy */
-	return FALSE;
+	return false;
 }
 
 void line_3d_free()

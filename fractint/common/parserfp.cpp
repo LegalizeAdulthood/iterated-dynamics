@@ -78,7 +78,7 @@
 /*       "     fStkZero added to support new 'zero' function in v18    */
 /*    Added optimization for x^2 -> sqr(x).                            */
 /*    Changed "stop_message" to "DBUGMSG" and made all macros upper case.   */
-/*       (g_debug_flag = 324 now needed for debug msgs to print.)           */
+/*       (g_debug_mode = 324 now needed for debug msgs to print.)           */
 
 /* 12 July 1993 (for v18.1) by CAE to fix optimizer bug  */
 
@@ -295,24 +295,24 @@ int pstopmsg(int x, char *msg)
 
 #define stop_message pstopmsg
 
-#define DBUGMSG(y) if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag) stop_message(0, (y))
+#define DBUGMSG(y) if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode) stop_message(0, (y))
 #define DBUGMSG1(y, p) \
-		if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag){ \
+		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
 			sprintf(cDbgMsg, (y), (p)); \
 			stop_message(0, cDbgMsg); \
 		}
 #define DBUGMSG2(y, p, q) \
-		if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag){ \
+		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
 			sprintf(cDbgMsg, (y), (p), (q)); \
 			stop_message(0, cDbgMsg); \
 		}
 #define DBUGMSG3(y, p, q, r) \
-		if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag){ \
+		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r)); \
 			stop_message(0, cDbgMsg); \
 		}
 #define DBUGMSG4(y, p, q, r, s) \
-		if (DEBUGFLAG_NO_HELP_F1_ESC == g_debug_flag || DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag){ \
+		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r), (s)); \
 			stop_message(0, cDbgMsg); \
 		}
@@ -565,7 +565,7 @@ awful_error:
 	{
 		OPPTR(cvtptrx) = m_store[m_store_ptr++];
 	}
-	else if (ffptr == fStkLod && DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag)
+	else if (ffptr == fStkLod && DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode)
 	{
 		/* when disabling optimizer, set load pointer here  */
 		OPPTR(cvtptrx) = m_load[m_load_ptr++];
@@ -575,7 +575,7 @@ awful_error:
 		OPPTR(cvtptrx) = NO_OPERAND;
 	}
 
-	if (DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag)
+	if (DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode)
 	{
 		goto SkipOptimizer;
 	} /* --------------------------  begin optimizer  --------------------- */
@@ -1523,7 +1523,7 @@ int Formula::CvtStk()  /* convert the array of ptrs  */
 					ntst = fStkClr2;  /* convert the last clear to a clr2  */
 					DBUGMSG("Last fn (CLR) --> (is really CLR2)");
 				}
-				if (ntst == fStkIdent && g_debug_flag != DEBUGFLAG_SKIP_OPTIMIZER)
+				if (ntst == fStkIdent && g_debug_mode != DEBUGMODE_SKIP_OPTIMIZER)
 				{
 					/* ident will be skipped here  */
 					/* this is really part of the optimizer  */
@@ -1551,7 +1551,7 @@ int Formula::CvtStk()  /* convert the array of ptrs  */
 		}
 	} /* end for  */
 
-	if (DEBUGFLAG_SKIP_OPTIMIZER == g_debug_flag)
+	if (DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode)
 	{
 		goto skipfinalopt;
 	} /* ------------------------------ final optimizations ---------- */

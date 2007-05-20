@@ -219,7 +219,7 @@ float luckyy = 0;
 static void fillrect(int x, int y, int width, int height, int color)
 {
 	/* fast version of fillrect */
-	if (g_has_inverse == 0)
+	if (!g_has_inverse)
 	{
 		return;
 	}
@@ -282,7 +282,7 @@ int Init_Queue(unsigned long request)
 	}
 
 #if 0
-	if (xmmquery() && g_debug_flag != DEBUGFLAG_USE_DISK)  /* use LARGEST extended mem */
+	if (xmmquery() && g_debug_mode != DEBUGMODE_USE_DISK)  /* use LARGEST extended mem */
 	{
 		largest = xmmlongest();
 		if (largest > request / 128)
@@ -476,7 +476,7 @@ DeQueueLong()
 
 static void SaveRect(int x, int y, int width, int height)
 {
-	if (g_has_inverse == 0)
+	if (!g_has_inverse)
 	{
 		return;
 	}
@@ -503,7 +503,7 @@ static void RestoreRect(int x, int y, int width, int height)
 	char *buff = rect_buff;
 	int  yoff;
 
-	if (g_has_inverse == 0)
+	if (!g_has_inverse)
 	{
 		return;
 	}
@@ -545,7 +545,7 @@ void Jiim(int which)         /* called by fractint */
 	float zoom;
 	int oldsxoffs;
 	int oldsyoffs;
-	int savehasinverse;
+	bool savehasinverse;
 	int (*oldcalctype)();
 	int old_x;
 	int old_y;
@@ -554,7 +554,7 @@ void Jiim(int which)         /* called by fractint */
 	static int rancnt = 0;
 	int actively_computing = 1;
 	int first_time = 1;
-	int old_debugflag = g_debug_flag;
+	int old_debugflag = g_debug_mode;
 
 	/* must use standard fractal or be froth_calc */
 	if (g_fractal_specific[g_fractal_type].calculate_type != standard_fractal
@@ -565,7 +565,7 @@ void Jiim(int which)         /* called by fractint */
 	HelpModeSaver saved_help(JIIM == which ? HELP_JIIM : HELP_ORBITS);
 	if (which != JIIM)
 	{
-		g_has_inverse = 1;
+		g_has_inverse = true;
 	}
 	oldsxoffs = g_sx_offset;
 	oldsyoffs = g_sy_offset;
@@ -591,7 +591,7 @@ void Jiim(int which)         /* called by fractint */
 
 	/* Grab memory for Queue/Stack before SaveRect gets it. */
 	OKtoMIIM  = 0;
-	if (which == JIIM && !(g_debug_flag == DEBUGFLAG_NO_MIIM_QUEUE))
+	if (which == JIIM && !(g_debug_mode == DEBUGMODE_NO_MIIM_QUEUE))
 	{
 		OKtoMIIM = Init_Queue((long)8*1024); /* Queue Set-up Successful? */
 	}
@@ -605,7 +605,7 @@ void Jiim(int which)         /* called by fractint */
 	if (g_sx_offset != 0 || g_sy_offset != 0) /* we're in view windows */
 	{
 		savehasinverse = g_has_inverse;
-		g_has_inverse = 1;
+		g_has_inverse = true;
 		SaveRect(0, 0, g_x_dots, g_y_dots);
 		g_sx_offset = 0;
 		g_sy_offset = 0;
@@ -1002,7 +1002,7 @@ void Jiim(int which)         /* called by fractint */
 
 		if (which == JIIM)
 		{
-			if (g_has_inverse == 0)
+			if (!g_has_inverse)
 			{
 				continue;
 			}
@@ -1284,7 +1284,7 @@ finish:
 			}
 			cursor_hide();
 			savehasinverse = g_has_inverse;
-			g_has_inverse = 1;
+			g_has_inverse = true;
 			SaveRect(0, 0, g_x_dots, g_y_dots);
 			g_sx_offset = oldsxoffs;
 			g_sy_offset = oldsyoffs;
@@ -1310,12 +1310,13 @@ finish:
 
 	g_using_jiim = 0;
 	g_calculate_type = oldcalctype;
-	g_debug_flag = old_debugflag; /* yo Chuck! */
+	g_debug_mode = old_debugflag; /* yo Chuck! */
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
-		g_view_window = g_view_x_dots = g_view_y_dots = 0;
+		g_view_window = false;
+		g_view_x_dots = g_view_y_dots = 0;
 		g_view_reduction = 4.2f;
-		g_view_crop = 1;
+		g_view_crop = true;
 		g_final_aspect_ratio = g_screen_aspect_ratio;
 		g_x_dots = g_screen_width;
 		g_y_dots = g_screen_height;

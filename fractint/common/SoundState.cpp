@@ -393,7 +393,7 @@ int SoundState::get_parameters()
 	/* routine to get sound settings  */
 	int old_soundflag = m_flags;
 	int old_orbit_delay = g_orbit_delay;
-	char old_start_showorbit = g_start_show_orbit;
+	bool old_start_show_orbit = g_start_show_orbit;
 
 get_sound_restart:
 	{
@@ -406,7 +406,7 @@ get_sound_restart:
 		dialog.push("Quantize note pitch ?", (m_flags & SOUNDFLAG_QUANTIZED) != 0);
 		dialog.push("Orbit delay in ms (0 = none)", g_orbit_delay);
 		dialog.push("Base Hz Value", m_base_hertz);
-		dialog.push("Show orbits?", g_start_show_orbit != 0);
+		dialog.push("Show orbits?", g_start_show_orbit);
 		dialog.push("");
 		dialog.push("Press F6 for FM synth parameters, F7 for scale mappings");
 		dialog.push("Press F4 to reset to default values");
@@ -416,7 +416,7 @@ get_sound_restart:
 		{
 			m_flags = old_soundflag;
 			g_orbit_delay = old_orbit_delay;
-			g_start_show_orbit = old_start_showorbit;
+			g_start_show_orbit = old_start_show_orbit;
 			return -1; /*escaped */
 		}
 
@@ -427,7 +427,7 @@ get_sound_restart:
 		m_flags = m_flags + (dialog.values(++k).uval.ch.val * SOUNDFLAG_QUANTIZED);
 		g_orbit_delay = dialog.values(++k).uval.ival;
 		m_base_hertz = dialog.values(++k).uval.ival;
-		g_start_show_orbit = (char) dialog.values(++k).uval.ch.val;
+		g_start_show_orbit = (dialog.values(++k).uval.ch.val != 0);
 
 		/* now do any intialization needed and check for soundcard */
 		if ((m_flags & SOUNDFLAG_OPL3_FM) && !(old_soundflag & SOUNDFLAG_OPL3_FM))
@@ -451,7 +451,7 @@ get_sound_restart:
 			m_flags = 9; /* reset to default */
 			g_orbit_delay = 0;
 			m_base_hertz = 440;
-			g_start_show_orbit = 0;
+			g_start_show_orbit = false;
 			goto get_sound_restart;
 			break;
 		}
@@ -636,7 +636,7 @@ void SoundState::new_orbit(int i, int j)
 
 void SoundState::orbit(int i, int j)
 {
-	if (DEBUGFLAG_OLD_ORBIT_SOUND == g_debug_flag)
+	if (DEBUGMODE_OLD_ORBIT_SOUND == g_debug_mode)
 	{
 		old_orbit(i, j);
 	}

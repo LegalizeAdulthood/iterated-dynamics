@@ -434,10 +434,10 @@ static double mlf;
 static unsigned long lf;
 
 /*
-	g_log_palette_flag == 1  -- standard log palettes
-	g_log_palette_flag == -1 -- 'old' log palettes
-	g_log_palette_flag >  1  -- compress counts < g_log_palette_flag into color #1
-	g_log_palette_flag < -1  -- use quadratic palettes based on square roots && compress
+	g_log_palette_mode == 1  -- standard log palettes
+	g_log_palette_mode == -1 -- 'old' log palettes
+	g_log_palette_mode >  1  -- compress counts < g_log_palette_mode into color #1
+	g_log_palette_mode < -1  -- use quadratic palettes based on square roots && compress
 */
 
 void SetupLogTable()
@@ -453,22 +453,22 @@ void SetupLogTable()
 
 	if (g_save_release > 1920 || g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)  /* set up on-the-fly variables */
 	{
-		if (g_log_palette_flag > LOGPALETTE_NONE)  /* new log function */
+		if (g_log_palette_mode > LOGPALETTE_NONE)  /* new log function */
 		{
-			lf = (g_log_palette_flag > LOGPALETTE_STANDARD) ? g_log_palette_flag : 0;
+			lf = (g_log_palette_mode > LOGPALETTE_STANDARD) ? g_log_palette_mode : 0;
 			if (lf >= (unsigned long)g_max_log_table_size)
 			{
 				lf = g_max_log_table_size - 1;
 			}
 			mlf = (g_colors - (lf ? 2 : 1 ))/log((double) (g_max_log_table_size - lf));
 		}
-		else if (g_log_palette_flag == LOGPALETTE_OLD)  /* old log function */
+		else if (g_log_palette_mode == LOGPALETTE_OLD)  /* old log function */
 		{
 			mlf = (g_colors - 1)/log((double) g_max_log_table_size);
 		}
-		else if (g_log_palette_flag <= -2)  /* sqrt function */
+		else if (g_log_palette_mode <= -2)  /* sqrt function */
 		{
-			lf = -g_log_palette_flag;
+			lf = -g_log_palette_mode;
 			if (lf >= (unsigned long)g_max_log_table_size)
 			{
 				lf = g_max_log_table_size - 1;
@@ -493,9 +493,9 @@ void SetupLogTable()
 		return;
 	}
 
-	if (g_log_palette_flag > -2)
+	if (g_log_palette_mode > -2)
 	{
-		lf = (g_log_palette_flag > LOGPALETTE_STANDARD) ? g_log_palette_flag : 0;
+		lf = (g_log_palette_mode > LOGPALETTE_STANDARD) ? g_log_palette_mode : 0;
 		if (lf >= (unsigned long)g_max_log_table_size)
 		{
 			lf = g_max_log_table_size - 1;
@@ -526,7 +526,7 @@ void SetupLogTable()
 	}
 	else
 	{
-		lf = -g_log_palette_flag;
+		lf = -g_log_palette_mode;
 		if (lf >= (unsigned long)g_max_log_table_size)
 		{
 			lf = g_max_log_table_size - 1;
@@ -556,7 +556,7 @@ void SetupLogTable()
 		}
 	}
 	g_log_table[0] = 0;
-	if (g_log_palette_flag != LOGPALETTE_OLD)
+	if (g_log_palette_mode != LOGPALETTE_OLD)
 	{
 		for (sptop = 1; sptop < (unsigned long)g_max_log_table_size; sptop++) /* spread top to incl unused g_colors */
 		{
@@ -572,7 +572,7 @@ long logtablecalc(long citer)
 {
 	long ret = 0;
 
-	if (g_log_palette_flag == LOGPALETTE_NONE && !g_ranges_length) /* Oops, how did we get here? */
+	if (g_log_palette_mode == LOGPALETTE_NONE && !g_ranges_length) /* Oops, how did we get here? */
 	{
 		return citer;
 	}
@@ -581,7 +581,7 @@ long logtablecalc(long citer)
 		return g_log_table[(long)min(citer, g_max_log_table_size)];
 	}
 
-	if (g_log_palette_flag > LOGPALETTE_NONE)  /* new log function */
+	if (g_log_palette_mode > LOGPALETTE_NONE)  /* new log function */
 	{
 		if ((unsigned long)citer <= lf + 1)
 		{
@@ -596,11 +596,11 @@ long logtablecalc(long citer)
 			ret = (long)(mlf*log((double) (citer - lf))) + 1;
 		}
 	}
-	else if (g_log_palette_flag == LOGPALETTE_OLD)  /* old log function */
+	else if (g_log_palette_mode == LOGPALETTE_OLD)  /* old log function */
 	{
 		ret = (citer == 0) ? 1 : (long)(mlf*log(static_cast<double>(citer))) + 1;
 	}
-	else if (g_log_palette_flag <= -2)  /* sqrt function */
+	else if (g_log_palette_mode <= -2)  /* sqrt function */
 	{
 		if ((unsigned long)citer <= lf)
 		{

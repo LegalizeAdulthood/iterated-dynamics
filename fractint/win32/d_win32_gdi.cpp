@@ -38,7 +38,7 @@ public:
 	{
 	}
 
-	virtual int initialize(int &argc, char **argv);
+	virtual bool initialize(int &argc, char **argv);
 	virtual void terminate();
 	virtual void get_max_screen(int &x_max, int &y_max) const;
 	virtual int resize();
@@ -298,14 +298,14 @@ void GDIDriver::get_max_screen(int &x_max, int &y_max) const
 *
 *----------------------------------------------------------------------
 */
-int GDIDriver::initialize(int &argc, char **argv)
+bool GDIDriver::initialize(int &argc, char **argv)
 {
 	LPCSTR title = "FractInt for Windows";
 
 	ODS("gdi_init");
 	if (!Win32BaseDriver::initialize(argc, argv))
 	{
-		return FALSE;
+		return false;
 	}
 
 	m_plot.initialize(g_instance, "Plot");
@@ -325,7 +325,7 @@ int GDIDriver::initialize(int &argc, char **argv)
 		}
 	}
 
-	return TRUE;
+	return true;
 }
 
 /* resize
@@ -537,7 +537,7 @@ void GDIDriver::redraw()
 	{
 		m_plot.redraw();
 	}
-	m_frame.pump_messages(FALSE);
+	m_frame.pump_messages(false);
 }
 
 void GDIDriver::window()
@@ -590,7 +590,7 @@ void GDIDriver::set_video_mode(const VIDEOINFO &mode)
 	/* initially, set the virtual line to be the scan line length */
 	g_vx_dots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
-	g_ok_to_print = FALSE;
+	g_ok_to_print = false;
 	g_good_mode = 1;
 	if (g_dot_mode != 0)
 	{
@@ -598,7 +598,7 @@ void GDIDriver::set_video_mode(const VIDEOINFO &mode)
 		g_box_count = 0;
 		g_dac_learn = 1;
 		g_dac_count = g_cycle_limit;
-		g_got_real_dac = TRUE;			/* we are "VGA" */
+		g_got_real_dac = true;
 
 		driver_read_palette();
 	}

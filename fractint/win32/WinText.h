@@ -54,7 +54,7 @@ private:
 
 	int m_text_mode;
 	int m_alt_f4_hit;
-	int m_showing_cursor;
+	bool m_showing_cursor;
 
 	/* Local copy of the "screen" characters and attributes */
 	char m_chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL];

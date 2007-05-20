@@ -15,8 +15,8 @@ public:
 	Frame() {}
 	void init(HINSTANCE instance, LPCTSTR title);
 	void create(int width, int height);
-	int get_key_press(int option);
-	int pump_messages(int waitflag);
+	int get_key_press(bool wait_for_key);
+	int pump_messages(bool wait_flag);
 	void resize(int width, int height);
 	void set_keyboard_timeout(int ms);
 	void set_mouse_mode(int new_mode);

@@ -92,7 +92,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 {
 	int i;
 #if !defined(XFRACT)
-	if (g_debug_flag != DEBUGFLAG_FORCE_FP_NEWTON)
+	if (g_debug_mode != DEBUGMODE_FORCE_FP_NEWTON)
 	{
 		if (g_fpu != 0)
 		{

@@ -38,8 +38,8 @@ static int find_fractal_info(char *, fractal_info *,
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
 static void translate_obsolete_fractal_types(const fractal_info *info);
-static int fix_bof();
-static int fix_period_bof();
+static bool fix_bof();
+static bool fix_period_bof();
 
 int g_loaded_3d = 0;
 int g_file_y_dots = 0;
@@ -71,10 +71,10 @@ static void read_info_version_0(const fractal_info &read_info)
 			g_colors = read_info.colors;
 		}
 		g_potential_flag = (g_potential_parameter[0] != 0.0);
-		g_random_flag = read_info.random_flag;
+		g_use_fixed_random_seed = (read_info.random_flag != 0);
 		g_random_seed = read_info.random_seed;
 		g_inside = read_info.inside;
-		g_log_palette_flag = read_info.logmapold;
+		g_log_palette_mode = read_info.logmapold;
 		g_inversion[0] = read_info.invert[0];
 		g_inversion[1] = read_info.invert[1];
 		g_inversion[2] = read_info.invert[2];
@@ -146,7 +146,7 @@ static void read_info_version_3(const fractal_info &read_info)
 			g_user_standard_calculation_mode = '3';
 		}
 		g_user_distance_test = read_info.distestold;
-		g_user_float_flag = (char)read_info.float_flag;
+		g_user_float_flag = read_info.float_flag;
 		g_bail_out = read_info.bailoutold;
 		g_calculation_time = read_info.calculation_time;
 		g_trig_index[0] = read_info.trig_index[0];
@@ -156,19 +156,19 @@ static void read_info_version_3(const fractal_info &read_info)
 		g_finite_attractor = read_info.finattract;
 		g_initial_orbit_z.x = read_info.initial_orbit_z[0];
 		g_initial_orbit_z.y = read_info.initial_orbit_z[1];
-		g_use_initial_orbit_z = read_info.use_initial_orbit_z;
+		g_use_initial_orbit_z = static_cast<InitialZType>(read_info.use_initial_orbit_z);
 		g_user_periodicity_check = read_info.periodicity;
 	}
 }
 
 static void read_info_version_4(const fractal_info &read_info)
 {
-	g_potential_16bit = FALSE;
+	g_potential_16bit = false;
 	g_save_system = 0;
 
 	if (read_info.version > 4)
 	{
-		g_potential_16bit = read_info.potential_16bit;
+		g_potential_16bit = (read_info.potential_16bit != 0);
 		if (g_potential_16bit)
 		{
 			g_file_x_dots >>= 1;
@@ -263,11 +263,11 @@ static void read_info_pre_version_14(const fractal_info &read_info)
 	if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
 	{
 		translate_obsolete_fractal_types(&read_info);
-		if (g_log_palette_flag)
+		if (g_log_palette_mode)
 		{
-			g_log_palette_flag = 2;
+			g_log_palette_mode = 2;
 		}
-		g_user_float_flag = (char) (g_current_fractal_specific->isinteger ? 0 : 1);
+		g_user_float_flag = (g_current_fractal_specific->isinteger ? 0 : 1);
 	}
 }
 
@@ -275,9 +275,9 @@ static void read_info_pre_version_15(const fractal_info &read_info)
 {
 	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
 	{
-		if (g_log_palette_flag == 2) /* logmap = old changed again in format 5! */
+		if (g_log_palette_mode == 2) /* logmap = old changed again in format 5! */
 		{
-			g_log_palette_flag = LOGPALETTE_OLD;
+			g_log_palette_mode = LOGPALETTE_OLD;
 		}
 		if (g_decomposition[0] > 0 && g_decomposition[1] > 0)
 		{
@@ -289,7 +289,7 @@ static void read_info_pre_version_15(const fractal_info &read_info)
 	{
 		if (read_info.version == 6 || read_info.version == 7)
 		{
-			g_log_palette_flag = LOGPALETTE_NONE;
+			g_log_palette_mode = LOGPALETTE_NONE;
 		}
 	}
 	set_trig_pointers(-1);
@@ -317,7 +317,7 @@ static void read_info_pre_version_17_25(const fractal_info &read_info)
 	if (g_save_release < 1725 && read_info.version != 0) /* pre-version 17.25 */
 	{
 		set_if_old_bif(); /* translate bifurcation types */
-		g_function_preloaded = TRUE;
+		g_function_preloaded = true;
 	}
 }
 
@@ -338,7 +338,7 @@ static void read_info_version_9(const fractal_info &read_info)
 		/* post-version 18.23 */
 		g_max_iteration = read_info.iterations; /* use long maxit */
 		/* post-version 18.27 */
-		g_old_demm_colors = read_info.old_demm_colors;
+		g_old_demm_colors = (read_info.old_demm_colors != 0);
 	}
 }
 
@@ -346,7 +346,7 @@ static void read_info_version_10(const fractal_info &read_info)
 {
 	if (read_info.version > 10) /* post-version 19.20 */
 	{
-		g_log_palette_flag = read_info.logmap;
+		g_log_palette_mode = read_info.logmap;
 		g_user_distance_test = read_info.distance_test;
 	}
 }
@@ -367,23 +367,23 @@ static void read_info_version_12(const fractal_info &read_info)
 {
 	if (read_info.version > 12) /* post-version 19.60 */
 	{
-		g_quick_calculate = read_info.quick_calculate;
+		g_quick_calculate = (read_info.quick_calculate != 0);
 		g_proximity = read_info.proximity;
 		if (g_fractal_type == FRACTYPE_POPCORN_FP || g_fractal_type == FRACTYPE_POPCORN_L ||
 			g_fractal_type == FRACTYPE_POPCORN_JULIA_FP || g_fractal_type == FRACTYPE_POPCORN_JULIA_L ||
 			g_fractal_type == FRACTYPE_LATOOCARFIAN)
 		{
-			g_function_preloaded = TRUE;
+			g_function_preloaded = true;
 		}
 	}
 }
 
 static void read_info_version_13(const fractal_info &read_info)
 {
-	g_no_bof = FALSE;
+	g_no_bof = false;
 	if (read_info.version > 13) /* post-version 20.1.2 */
 	{
-		g_no_bof = read_info.no_bof;
+		g_no_bof = (read_info.no_bof != 0);
 	}
 }
 
@@ -391,7 +391,7 @@ static void read_info_version_14()
 {
 	/* if (read_info.version > 14)  post-version 20.1.12 */
 	/* modified saved evolver structure JCO 12JUL01 */
-	g_log_automatic_flag = FALSE;  /* make sure it's turned off */
+	g_log_automatic_flag = false;  /* make sure it's turned off */
 }
 
 static void read_info_version_15(const fractal_info &read_info)
@@ -504,7 +504,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 {
 	if (evolver_info.got_data != 1)
 	{
-		g_evolving = EVOLVE_NONE;
+		g_evolving_flags = EVOLVE_NONE;
 		return;
 	}
 
@@ -555,8 +555,10 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	g_parameter_range_y = evolver_info.parameter_range_y;
 	g_parameter_offset_x = g_new_parameter_offset_x = evolver_info.opx;
 	g_parameter_offset_y = g_new_parameter_offset_y = evolver_info.opy;
-	g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x = (char) evolver_info.odpx;
-	g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y = (char) evolver_info.odpy;
+	g_new_discrete_parameter_offset_x = evolver_info.odpx;
+	g_new_discrete_parameter_offset_y = evolver_info.odpy;
+	g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x;
+	g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y;
 	g_px = evolver_info.px;
 	g_py = evolver_info.py;
 	g_sx_offset = evolver_info.sxoffs;
@@ -566,7 +568,8 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	g_grid_size = evolver_info.gridsz;
 	g_this_generation_random_seed = evolver_info.this_generation_random_seed;
 	g_fiddle_factor = evolver_info.fiddle_factor;
-	g_evolving = g_view_window = (int) evolver_info.evolving;
+	g_evolving_flags = evolver_info.evolving;
+	g_view_window = (g_evolving_flags != 0);
 	g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size - 1);
 	g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size - 1);
 	if (read_info.version > 14)
@@ -637,9 +640,9 @@ static int fixup_3d_info(int oldfloatflag, const fractal_info &read_info, ext_bl
 	else
 	{
 		int olddisplay3d = g_display_3d;
-		char oldfloatflag = g_float_flag;
+		bool oldfloatflag = g_float_flag;
 		g_display_3d = g_loaded_3d;      /* for <tab> display during next */
-		g_float_flag = g_user_float_flag; /* ditto */
+		g_float_flag = (g_user_float_flag != 0); /* ditto */
 		int i = get_video_mode(&read_info, &formula_info);
 		g_display_3d = olddisplay3d;
 		g_float_flag = oldfloatflag;
@@ -677,11 +680,11 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
 	g_show_file = 1;                /* for any abort exit, pretend done */
 	g_init_mode = -1;               /* no viewing mode set yet */
-	char oldfloatflag = g_user_float_flag;
+	int oldfloatflag = g_user_float_flag;
 	g_loaded_3d = 0;
 	if (g_fast_restore)
 	{
-		g_view_window = 0;
+		g_view_window = false;
 	}
 	if (has_extension(g_read_name) == NULL)
 	{
@@ -1233,7 +1236,7 @@ static void translate_obsolete_fractal_types(const fractal_info *info)
 		g_user_distance_test = (info->y_dots - 1)*2;
 		break;
 	case FRACTYPE_MANDELBROT_LAMBDA :
-		g_use_initial_orbit_z = 2;
+		g_use_initial_orbit_z = INITIALZ_PIXEL;
 		break;
 	}
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
@@ -1243,7 +1246,7 @@ static void translate_obsolete_fractal_types(const fractal_info *info)
 void set_if_old_bif()
 {
 	/* set functions if not set already, may need to check 'g_function_preloaded'
-		before calling this routine.  JCO 7/5/92 */
+		before calling this routine.  */
 
 	switch (g_fractal_type)
 	{
@@ -1292,7 +1295,7 @@ void backwards_v18()
 {
 	if (!g_function_preloaded)
 	{
-		set_if_old_bif(); /* old bifs need function set, JCO 7/5/92 */
+		set_if_old_bif(); /* old bifurcations need function set */
 	}
 	if (g_fractal_type == FRACTYPE_MANDELBROT_FUNC && g_user_float_flag == 1
 			&& g_save_release < 1800 && g_bail_out == 0)
@@ -1334,9 +1337,9 @@ void backwards_v19()
 	{
 		g_inversion[0] = g_inversion[1] = g_inversion[2] = g_invert = 0;
 	}
-	g_no_magnitude_calculation = fix_bof() ? TRUE : FALSE; /* fractal has old bof60/61 problem with magnitude */
-	g_use_old_periodicity = fix_period_bof() ? TRUE : FALSE; /* fractal uses old periodicity method */
-	g_use_old_distance_test = (g_save_release < 1827 && g_distance_test) ? TRUE : FALSE; /* use old distest code */
+	g_no_magnitude_calculation = fix_bof(); /* fractal has old bof60/61 problem with magnitude */
+	g_use_old_periodicity = fix_period_bof(); /* fractal uses old periodicity method */
+	g_use_old_distance_test = (g_save_release < 1827 && g_distance_test); /* use old distest code */
 }
 
 void backwards_v20()
@@ -1349,7 +1352,7 @@ void backwards_v20()
 						|| g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)
 					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960);
 	g_use_old_complex_power = ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
-				&& (g_save_release < 1900 || DEBUGFLAG_OLD_POWER == g_debug_flag));
+				&& (g_save_release < 1900 || DEBUGMODE_OLD_POWER == g_debug_mode));
 	if (g_inside == EPSCROSS && g_save_release < 1961)
 	{
 		g_proximity = 0.01;
@@ -1375,7 +1378,7 @@ int check_back()
 		|| g_decomposition[0] == 2
 		|| (g_fractal_type == FRACTYPE_FORMULA && g_save_release <= 1920)
 		|| (g_fractal_type == FRACTYPE_FORMULA_FP && g_save_release <= 1920)
-		|| (g_log_palette_flag != 0 && g_save_release <= 2001)
+		|| (g_log_palette_mode != 0 && g_save_release <= 2001)
 		|| (g_fractal_type == FRACTYPE_FUNC_SQR && g_save_release < 1900)
 		|| (g_inside == STARTRAIL && g_save_release < 1825)
 		|| (g_max_iteration > 32767 && g_save_release <= 1950)
@@ -1397,29 +1400,23 @@ int check_back()
 	return 0;
 }
 
-static int fix_bof()
+static bool fix_bof()
 {
-	int ret = 0;
 	if (g_inside <= BOF60 && g_inside >= BOF61 && g_save_release < 1826)
 	{
 		if ((g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS) == 0) ||
 			(g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP))
 		{
-			ret = 1;
+			return true;
 		}
 	}
-	return ret;
+	return false;
 }
 
-static int fix_period_bof()
+static bool fix_period_bof()
 {
-	int ret = 0;
-	if (g_inside <= BOF60 && g_inside >= BOF61 && g_save_release < 1826)
-	{
-		ret = 1;
-	}
-	return ret;
+	return (g_inside <= BOF60 && g_inside >= BOF61 && g_save_release < 1826);
 }
 
 /* browse code RB*/
@@ -1439,7 +1436,7 @@ struct window  /* for look_get_window on screen browser */
 
 /* prototypes */
 static void drawindow(int, struct window *);
-static char is_visible_window
+static bool is_visible_window
 				(struct window *, fractal_info *, struct ext_blk_mp_info *);
 static void transform(CoordinateD *);
 static char paramsOK(fractal_info *);
@@ -1565,7 +1562,7 @@ rescan:  /* entry for changed browse parms */
 	time(&lastime);
 	toggle = 0;
 	wincount = 0;
-	g_no_sub_images = FALSE;
+	g_no_sub_images = false;
 	split_path(g_read_name, drive, dir, NULL, NULL);
 	split_path(g_browse_mask, NULL, NULL, fname, ext);
 	make_path(tmpmask, drive, dir, fname, ext);
@@ -1733,7 +1730,7 @@ rescan:  /* entry for changed browse parms */
 				/* Need all boxes turned on, turn last one back on. */
 				drawindow(g_color_bright, &winlist);
 #endif
-				g_auto_browse = FALSE;
+				g_auto_browse = false;
 				done = 2;
 				break;
 
@@ -1822,7 +1819,7 @@ rescan:  /* entry for changed browse parms */
 				break;
 
 			case 's': /* save image with boxes */
-				g_auto_browse = FALSE;
+				g_auto_browse = false;
 				drawindow(color_of_box, &winlist); /* current window white */
 				done = 4;
 				break;
@@ -1868,7 +1865,7 @@ rescan:  /* entry for changed browse parms */
 	{
 		driver_buzzer(BUZZER_INTERRUPT); /*no suitable files in directory! */
 		text_temp_message("Sorry.. I can't find anything");
-		g_no_sub_images = TRUE;
+		g_no_sub_images = true;
 	}
 
 	free(boxx_storage);
@@ -1880,7 +1877,7 @@ rescan:  /* entry for changed browse parms */
 		free_bf_vars();
 	}
 	g_bf_math = oldbf_math;
-	g_float_flag = g_user_float_flag;
+	g_float_flag = (g_user_float_flag != 0);
 
 	return c;
 }
@@ -1977,7 +1974,7 @@ static void is_visible_window_corner(const fractal_info &info,
 		transform(&corner);
 	}
 }
-static char is_visible_window(struct window *list, fractal_info *info,
+static bool is_visible_window(struct window *list, fractal_info *info,
 	struct ext_blk_mp_info *mp_info)
 {
 	double toobig = sqrt(sqr((double)g_screen_width) + sqr((double)g_screen_height))*1.5;
@@ -2091,7 +2088,7 @@ static char is_visible_window(struct window *list, fractal_info *info,
 	restore_stack(saved);
 	if (cant_see) /* do it this way so bignum stack is released */
 	{
-		return FALSE;
+		return false;
 	}
 
 	/* now see how many corners are on the screen, accept if one or more */
@@ -2113,7 +2110,7 @@ static char is_visible_window(struct window *list, fractal_info *info,
 		cornercount++;
 	}
 
-	return (cornercount >= 1) ? TRUE : FALSE;
+	return (cornercount >= 1);
 }
 
 static char paramsOK(fractal_info *info)
