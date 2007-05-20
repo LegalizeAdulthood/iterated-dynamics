@@ -966,7 +966,7 @@ rhombus_done:
 	return status;
 }
 
-void soi()
+static void soi_double()
 {
 	int status;
 	double tolerance = 0.1;
@@ -1010,4 +1010,16 @@ void soi()
 			(xxmaxl + xxminl)/2, yyminl,
 			(xxminl + xxmaxl)/2, (yymaxl + yyminl)/2,
 			1);
+}
+
+void soi()
+{
+	if (DEBUGMODE_SOI_LONG_DOUBLE == g_debug_mode)
+	{
+		soi_long_double();
+	}
+	else
+	{
+		soi_double();
+	}
 }
