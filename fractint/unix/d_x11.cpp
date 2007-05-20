@@ -273,7 +273,7 @@ extern void (*g_line_read)(int, int, int, BYTE *);	/* read-a-line routine */
 static const VIDEOINFO x11_info =
 {
 	"xfractint mode           ","                         ",
-	999, 0,	 0,   0,   0,	19, 640, 480,  256
+	999, 19, 640, 480,  256
 };
 
 unsigned long X11Driver::do_fake_lut(int idx)
