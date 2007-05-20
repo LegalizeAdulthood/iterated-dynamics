@@ -55,6 +55,11 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "history.h"
+#include "cmdfiles.h"
+#include "evolve.h"
+#include "fracsubr.h"
+
 #include "busy.h"
 #include "EscapeTime.h"
 #include "SoundState.h"

@@ -28,6 +28,10 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "cmdfiles.h"
+#include "fractalp.h"
+#include "framain2.h"
+
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"

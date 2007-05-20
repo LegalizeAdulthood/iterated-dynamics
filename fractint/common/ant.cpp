@@ -24,6 +24,7 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "fracsubr.h"
 
 class Ant
 {

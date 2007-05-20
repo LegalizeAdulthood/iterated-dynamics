@@ -1,6 +1,8 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
+#include "fractals.h"
+
 #include "EscapeTime.h"
 
 EscapeTimeState g_escape_time_state;

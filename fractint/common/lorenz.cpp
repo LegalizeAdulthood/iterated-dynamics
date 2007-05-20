@@ -11,6 +11,10 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "3d.h"
+#include "encoder.h"
+#include "fracsubr.h"
+
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"

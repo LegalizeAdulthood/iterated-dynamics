@@ -13,6 +13,10 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "diskvid.h"
+#include "encoder.h"
+#include "framain2.h"
+
 #include "busy.h"
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"

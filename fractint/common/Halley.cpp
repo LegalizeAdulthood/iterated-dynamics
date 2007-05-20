@@ -4,6 +4,9 @@
 #include "fractint.h"
 #include "externs.h"
 #include "fractype.h"
+#include "fpu.h"
+#include "fractals.h"
+
 #include "Halley.h"
 
 #if !defined(XFRACT)

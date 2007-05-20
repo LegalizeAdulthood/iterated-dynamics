@@ -20,6 +20,7 @@
 #include "helpdefs.h"
 #include "frame.h"
 #include "mpmath.h"
+#include "diskvid.h"
 
 /* External declarations */
 extern void check_samename();

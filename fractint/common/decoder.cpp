@@ -44,6 +44,8 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "decoder.h"
+#include "gifview.h"
 
 /* Various error codes used by decoder
  * and my own routines...   It's okay

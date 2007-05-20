@@ -5,6 +5,10 @@
 #include "externs.h"
 #include "fractype.h"
 #include "mpmath.h"
+#include "fpu.h"
+#include "calcfrac.h"
+#include "fractals.h"
+
 #include "Newton.h"
 #include "MathUtil.h"
 

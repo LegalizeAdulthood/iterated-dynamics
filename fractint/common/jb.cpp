@@ -4,6 +4,9 @@
 #include "helpdefs.h"
 #include "fractype.h"
 #include "drivers.h"
+#include "fracsubr.h"
+#include "fractals.h"
+
 #include "EscapeTime.h"
 
 /* these need to be accessed elsewhere for saving data */

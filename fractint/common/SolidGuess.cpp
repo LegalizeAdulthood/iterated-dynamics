@@ -6,6 +6,8 @@
 #include "externs.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "fracsubr.h"
+
 #include "SolidGuess.h"
 #include "WorkList.h"
 

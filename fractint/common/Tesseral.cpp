@@ -4,6 +4,8 @@
 #include "fractint.h"
 #include "prototyp.h"
 #include "externs.h"
+#include "fracsubr.h"
+
 #include "Tesseral.h"
 #include "WorkList.h"
 

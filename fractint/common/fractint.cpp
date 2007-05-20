@@ -45,9 +45,6 @@
 				fractype.h
 				helpdefs.h
 				lsys.y
-				targa.h
-				targa_lc.h
-				tplus.h
 		If included separately from prototyp.h, big.h includes cmplx.h
 		and biginit.h; and mpmath.h includes cmplx.h
 	*/
@@ -57,6 +54,14 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "history.h"
+#include "cmdfiles.h"
+#include "decoder.h"
+#include "encoder.h"
+#include "evolve.h"
+#include "fracsubr.h"
+#include "framain2.h"
+
 #include "SoundState.h"
 #include "CommandParser.h"
 

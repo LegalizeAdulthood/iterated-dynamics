@@ -8,6 +8,7 @@
 #include "prototyp.h"
 #include "lsys.h"
 #include "drivers.h"
+#include "fpu.h"
 #include "MathUtil.h"
 
 struct lsys_cmd

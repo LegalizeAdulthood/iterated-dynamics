@@ -23,6 +23,10 @@
 #include "fractype.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "calcfrac.h"
+#include "fracsubr.h"
+#include "fractalp.h"
+
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "WorkList.h"

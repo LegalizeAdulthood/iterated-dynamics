@@ -52,6 +52,10 @@
 #include "helpdefs.h"
 #include "fractype.h"
 #include "externs.h"
+#include "fpu.h"
+#include "fracsubr.h"
+#include "fractals.h"
+
 #include "EscapeTime.h"
 #include "MathUtil.h"
 #include "Formula.h"

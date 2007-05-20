@@ -6,6 +6,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
+#include "cmdfiles.h"
 #include "ThreeDimensionalState.h"
 #include "CommandParser.h"
 

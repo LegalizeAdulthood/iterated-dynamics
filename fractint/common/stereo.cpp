@@ -25,6 +25,8 @@
 #include "drivers.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+#include "encoder.h"
+#include "gifview.h"
 
 #include <malloc.h>
 

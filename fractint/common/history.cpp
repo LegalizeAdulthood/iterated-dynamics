@@ -8,6 +8,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "history.h"
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"
 #include "Formula.h"

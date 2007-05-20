@@ -21,6 +21,7 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "fpu.h"
 
 #if !defined(XFRACT)
 
@@ -1119,7 +1120,7 @@ struct MP *MPmul(struct MP x, struct MP y)
 {
 	/* TODO: implement */
 #if defined(_WIN32)
-	_ASSERTE(0 && "MPmul386 called.");
+	_ASSERTE(0 && "MPmul called.");
 #endif
 	return &s_answer;
 }
