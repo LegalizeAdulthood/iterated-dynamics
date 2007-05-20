@@ -65,7 +65,10 @@
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 ComplexL g_init_orbit_l = { 0, 0 };
+
+// magnitude of current orbit z
 long g_magnitude_l = 0;
+
 long g_limit_l = 0;
 long g_limit2_l = 0;
 long g_close_enough_l = 0;
@@ -1369,7 +1372,7 @@ static int draw_orbits()
 	g_got_status = GOT_STATUS_ORBITS; /* for <tab> screen */
 	g_total_passes = 1;
 
-	if (plotorbits2dsetup() == -1)
+	if (plot_orbits_2d_setup() == -1)
 	{
 		g_standard_calculation_mode = 'g';
 		return -1;
@@ -1807,7 +1810,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	while (++g_color_iter < g_max_iteration)
 	{
 		/* calculation of one orbit goes here */
-		/* input in "g_old_z" -- output in "new" */
+		/* input in "g_old_z" -- output in "g_new_z" */
 		if (g_color_iter % check_freq == 0)
 		{
 			if (check_key())

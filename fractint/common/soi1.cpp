@@ -76,7 +76,7 @@ static long iteration(double cr, double ci,
 	g_float_parameter = &g_initial_z;
 	g_float_parameter->x = cr;
 	g_float_parameter->y = ci;
-	while (ORBITCALC() == 0 && start < g_max_iteration)
+	while (g_fractal_specific[g_fractal_type].orbitcalc() == 0 && start < g_max_iteration)
 	{
 		start++;
 	}
@@ -635,7 +635,7 @@ scan:
 		old.y = zi;								\
 		g_float_parameter->x = cr;				\
 		g_float_parameter->y = ci;				\
-		esc = ORBITCALC();						\
+		esc = g_fractal_specific[g_fractal_type].orbitcalc();						\
 		rq = g_temp_sqr_x;						\
 		iq = g_temp_sqr_y;						\
 		zr = g_new_z.x;							\

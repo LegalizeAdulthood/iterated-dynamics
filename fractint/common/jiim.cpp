@@ -589,7 +589,7 @@ void Jiim(int which)         /* called by fractint */
 
 	if (which == ORBIT)
 	{
-		(*PER_IMAGE)();
+		(*g_fractal_specific[g_fractal_type].per_image)();
 	}
 	else
 	{
@@ -988,7 +988,7 @@ void Jiim(int which)         /* called by fractint */
 			}
 			if (which == ORBIT)
 			{
-				PER_PIXEL();
+				g_fractal_specific[g_fractal_type].per_pixel();
 			}
 			/* move window if bumped */
 			if (windows == 0 && g_col > xc && g_col < xc + xd && g_row > yc && g_row < yc + yd)
@@ -1227,7 +1227,7 @@ void Jiim(int which)         /* called by fractint */
 				}
 				x = (int)((g_old_z.x - g_initial_z.x)*xfactor*3*zoom + xoff);
 				y = (int)((g_old_z.y - g_initial_z.y)*yfactor*3*zoom + yoff);
-				if ((*ORBITCALC)())
+				if ((*g_fractal_specific[g_fractal_type].orbitcalc)())
 				{
 					iter = g_max_iteration;
 				}
