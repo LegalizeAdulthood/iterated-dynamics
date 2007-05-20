@@ -2660,8 +2660,8 @@ void flip_image(int key)
 			for (j = 0; j < g_y_dots; j++)
 			{
 				tempdot = getcolor(i, j);
-				g_put_color(i, j, getcolor(g_x_dots-1-i, j));
-				g_put_color(g_x_dots-1-i, j, tempdot);
+				g_plot_color_put_color(i, j, getcolor(g_x_dots-1-i, j));
+				g_plot_color_put_color(g_x_dots-1-i, j, tempdot);
 			}
 		}
 		g_sx_min = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
@@ -2692,8 +2692,8 @@ void flip_image(int key)
 			for (i = 0; i < g_x_dots; i++)
 			{
 				tempdot = getcolor(i, j);
-				g_put_color(i, j, getcolor(i, g_y_dots-1-j));
-				g_put_color(i, g_y_dots-1-j, tempdot);
+				g_plot_color_put_color(i, j, getcolor(i, g_y_dots-1-j));
+				g_plot_color_put_color(i, g_y_dots-1-j, tempdot);
 			}
 		}
 		g_sx_min = g_escape_time_state.m_grid_fp.x_3rd();
@@ -2724,8 +2724,8 @@ void flip_image(int key)
 			for (j = 0; j < g_y_dots; j++)
 			{
 				tempdot = getcolor(i, j);
-				g_put_color(i, j, getcolor(g_x_dots-1-i, g_y_dots-1-j));
-				g_put_color(g_x_dots-1-i, g_y_dots-1-j, tempdot);
+				g_plot_color_put_color(i, j, getcolor(g_x_dots-1-i, g_y_dots-1-j));
+				g_plot_color_put_color(g_x_dots-1-i, g_y_dots-1-j, tempdot);
 			}
 		}
 		g_sx_min = g_escape_time_state.m_grid_fp.x_max();

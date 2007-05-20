@@ -1584,11 +1584,11 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 		*(s_save_orbit + g_orbit_index++) = j;
 		int c = getcolor(i, j);
 		*(s_save_orbit + g_orbit_index++) = c;
-		g_put_color(i, j, c ^ g_orbit_color);
+		g_plot_color_put_color(i, j, c ^ g_orbit_color);
 	}
 	else
 	{
-		g_put_color(i, j, color);
+		g_plot_color_put_color(i, j, color);
 	}
 	g_sx_offset = save_sxoffs;
 	g_sy_offset = save_syoffs;
@@ -1622,7 +1622,7 @@ void orbit_scrub()
 		c = *(s_save_orbit + --g_orbit_index);
 		j = *(s_save_orbit + --g_orbit_index);
 		i = *(s_save_orbit + --g_orbit_index);
-		g_put_color(i, j, c);
+		g_plot_color_put_color(i, j, c);
 	}
 	g_sx_offset = save_sxoffs;
 	g_sy_offset = save_syoffs;

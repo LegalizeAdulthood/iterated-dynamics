@@ -256,9 +256,9 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 					idir = dir[color];
 
 					pixel = getcolor(ix, iy);
-					g_put_color(ix, iy, 15);
+					g_plot_color_put_color(ix, iy, 15);
 					sleep_ms(wait);
-					g_put_color(ix, iy, next_col[pixel]);
+					g_plot_color_put_color(ix, iy, next_col[pixel]);
 					idir += rule[pixel];
 					idir &= 3;
 					if (!m_wrap)
@@ -284,7 +284,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 					iy = y[color];
 					idir = dir[color];
 					pixel = getcolor(ix, iy);
-					g_put_color(ix, iy, next_col[pixel]);
+					g_plot_color_put_color(ix, iy, next_col[pixel]);
 					idir += rule[pixel];
 					idir &= 3;
 					if (!m_wrap)
@@ -409,7 +409,7 @@ void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 				int iy = y[color];
 				int idir = dir[color];
 				int pixel = getcolor(ix, iy);
-				g_put_color(ix, iy, 15);
+				g_plot_color_put_color(ix, iy, 15);
 
 				if (wait > 0 && step == 0)
 				{
@@ -420,13 +420,13 @@ void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 				{
 					/* turn right */
 					idir--;
-					g_put_color(ix, iy, 0);
+					g_plot_color_put_color(ix, iy, 0);
 				}
 				else
 				{
 					/* turn left */
 					idir++;
-					g_put_color(ix, iy, color);
+					g_plot_color_put_color(ix, iy, color);
 				}
 				idir &= 3;
 				if (!m_wrap)

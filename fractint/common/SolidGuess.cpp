@@ -382,9 +382,9 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			return -1;
 		}
 	}
-	if (g_plot_color != g_put_color)  /* symmetry, just vertical & origin the fast way */
+	if (g_plot_color != g_plot_color_put_color)  /* symmetry, just vertical & origin the fast way */
 	{
-		if (g_plot_color == symplot2J) /* origin sym, reverse lines */
+		if (g_plot_color == plot_color_symmetry_origin) /* origin sym, reverse lines */
 		{
 			for (int i = (g_x_stop + g_xx_start + 1)/2; --i >= g_xx_start; )
 			{
@@ -430,11 +430,11 @@ int solid_guess()
 	unsigned int *pfxp1;
 	unsigned int u;
 
-	s_guess_plot = (g_plot_color != g_put_color && g_plot_color != symplot2 && g_plot_color != symplot2J);
+	s_guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis && g_plot_color != plot_color_symmetry_origin);
 	/* check if guessing at bottom & right edges is ok */
-	s_bottom_guess = (g_plot_color == symplot2 || (g_plot_color == g_put_color && g_y_stop + 1 == g_y_dots));
-	s_right_guess  = (g_plot_color == symplot2J
-		|| ((g_plot_color == g_put_color || g_plot_color == symplot2) && g_x_stop + 1 == g_x_dots));
+	s_bottom_guess = (g_plot_color == plot_color_symmetry_x_axis || (g_plot_color == g_plot_color_put_color && g_y_stop + 1 == g_y_dots));
+	s_right_guess  = (g_plot_color == plot_color_symmetry_origin
+		|| ((g_plot_color == g_plot_color_put_color || g_plot_color == plot_color_symmetry_x_axis) && g_x_stop + 1 == g_x_dots));
 
 	/* there seems to be a bug in solid guessing at bottom and side */
 	if (g_debug_mode != DEBUGMODE_SOLID_GUESS_BR)

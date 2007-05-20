@@ -137,7 +137,7 @@ static void setup_matrix(MATRIX);
 static int  threed_view_trans(threed_vt_inf *inf);
 static int  threed_view_trans_fp(threed_vt_inf_fp *inf);
 static FILE *open_orbit_save();
-static void _fastcall plot_hist(int x, int y, int color);
+static void _fastcall plot_color_histogram(int x, int y, int color);
 
 /******************************************************************/
 /*                 zoom box conversion functions                  */
@@ -719,7 +719,7 @@ int Minverse_julia_orbit()
 	case breadth_first:
 		if (color < s_max_hits)
 		{
-			g_put_color(newcol, newrow, color + 1);
+			g_plot_color_put_color(newcol, newrow, color + 1);
 			/* g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy); */
 			EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
 			EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
@@ -728,7 +728,7 @@ int Minverse_julia_orbit()
 	case depth_first:
 		if (color < s_max_hits)
 		{
-			g_put_color(newcol, newrow, color + 1);
+			g_plot_color_put_color(newcol, newrow, color + 1);
 			/* g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy); */
 			if (g_minor_method == left_first)
 			{
@@ -777,13 +777,13 @@ int Minverse_julia_orbit()
 		}
 		if (color < g_colors-1)
 		{
-			g_put_color(newcol, newrow, color + 1);
+			g_plot_color_put_color(newcol, newrow, color + 1);
 		}
 		break;
 	case random_walk:
 		if (color < g_colors-1)
 		{
-			g_put_color(newcol, newrow, color + 1);
+			g_plot_color_put_color(newcol, newrow, color + 1);
 		}
 		g_new_z.x = leftright*g_new_z.x;
 		g_new_z.y = leftright*g_new_z.y;
@@ -900,7 +900,7 @@ int Linverse_julia_orbit()
 	case breadth_first:
 		if (color < s_max_hits)
 		{
-			g_put_color(newcol, newrow, color + 1);
+			g_plot_color_put_color(newcol, newrow, color + 1);
 			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
 			EnQueueLong(g_new_z_l.x,  g_new_z_l.y);
 			EnQueueLong(-g_new_z_l.x, -g_new_z_l.y);
@@ -909,7 +909,7 @@ int Linverse_julia_orbit()
 	case depth_first:
 		if (color < s_max_hits)
 		{
-			g_put_color(newcol, newrow, color + 1);
+			g_plot_color_put_color(newcol, newrow, color + 1);
 			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
 			if (g_minor_method == left_first)
 			{
@@ -943,7 +943,7 @@ int Linverse_julia_orbit()
 	case random_walk:
 		if (color < g_colors-1)
 		{
-			g_put_color(newcol, newrow, color + 1);
+			g_plot_color_put_color(newcol, newrow, color + 1);
 		}
 		break;
 	}
@@ -1930,7 +1930,7 @@ int dynamic_2d_setup_fp()
 	}
 	if (g_outside == SUM)
 	{
-		g_plot_color = plot_hist;
+		g_plot_color = plot_color_histogram;
 	}
 	return 1;
 }
@@ -2166,7 +2166,7 @@ int plot_orbits_2d_setup()
 
 	if (g_outside == SUM)
 	{
-		g_plot_color = plot_hist;
+		g_plot_color = plot_color_histogram;
 	}
 	return 1;
 }
@@ -2245,8 +2245,8 @@ int funny_glasses_call(int (*calc)())
 	status = 0;
 	g_which_image = g_3d_state.glasses_type() ? WHICHIMAGE_RED : WHICHIMAGE_NONE;
 	plot_setup();
-	assert(g_standard_plot);
-	g_plot_color = g_standard_plot;
+	assert(g_plot_color_standard);
+	g_plot_color = g_plot_color_standard;
 	status = calc();
 	if (s_real_time && g_3d_state.glasses_type() < STEREO_PHOTO)
 	{
@@ -2274,8 +2274,8 @@ int funny_glasses_call(int (*calc)())
 			g_current_fractal_specific->per_image(); /* reset for 2nd image */
 		}
 		plot_setup();
-		assert(g_standard_plot);
-		g_plot_color = g_standard_plot;
+		assert(g_plot_color_standard);
+		g_plot_color = g_plot_color_standard;
 		/* is there a better way to clear the graphics screen ? */
 		status = calc();
 		if (status != 0)
@@ -3062,12 +3062,12 @@ static FILE *open_orbit_save()
 }
 
 /* Plot a histogram by incrementing the pixel each time it it touched */
-static void _fastcall plot_hist(int x, int y, int color)
+static void _fastcall plot_color_histogram(int x, int y, int color)
 {
 	color = getcolor(x, y) + 1;
 	if (color >= g_colors)
 	{
 		color = 1;
 	}
-	g_put_color(x, y, color);
+	g_plot_color_put_color(x, y, color);
 }

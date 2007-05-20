@@ -259,8 +259,8 @@ restart:
 			}
 			for (i = 0; 250*i < g_x_dots; i++)
 			{  /* clear vert status bars */
-				g_put_color(i, j, getcolor(i, j) ^ outcolor1);
-				g_put_color(g_x_dots - 1 - i, j,
+				g_plot_color_put_color(i, j, getcolor(i, j) ^ outcolor1);
+				g_plot_color_put_color(g_x_dots - 1 - i, j,
 					getcolor(g_x_dots - 1 - i, j) ^ outcolor2);
 			}
 		}
@@ -1202,8 +1202,8 @@ nomatch:
 				for (i = 0; 250*i < g_x_dots; i++)
 				{  /* display vert status bars */
 					/* (this is NOT GIF-related)  */
-					g_put_color(i, ydot, getcolor(i, ydot) ^ outcolor1);
-					g_put_color(g_x_dots - 1 - i, ydot,
+					g_plot_color_put_color(i, ydot, getcolor(i, ydot) ^ outcolor1);
+					g_plot_color_put_color(g_x_dots - 1 - i, ydot,
 						getcolor(g_x_dots - 1 - i, ydot) ^ outcolor2);
 				}
 				last_colorbar = ydot;

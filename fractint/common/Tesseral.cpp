@@ -106,7 +106,7 @@ int tesseral()
 {
 	struct tess *tp;
 
-	bool guess_plot = (g_plot_color != g_put_color && g_plot_color != symplot2);
+	bool guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis);
 	tp = (struct tess *)&g_stack[0];
 	tp->x1 = g_ix_start;                              /* set up initial box */
 	tp->x2 = g_x_stop;
@@ -286,7 +286,7 @@ int tesseral()
 					for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
 					{
 						put_line(g_row, tp->x1 + 1, tp->x2-1, &g_stack[OLD_MAX_PIXELS]);
-						if (g_plot_color != g_put_color) /* symmetry */
+						if (g_plot_color != g_plot_color_put_color) /* symmetry */
 						{
 							j = g_yy_stop-(g_row-g_yy_start);
 							if (j > g_y_stop && j < g_y_dots)
