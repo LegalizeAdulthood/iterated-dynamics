@@ -585,7 +585,7 @@ static int main_image_start(bool &screen_stacked, int &kbdchar, bool &resume_fla
 	return 0;
 }
 
-int main(int argc, char **argv)
+int application_main(int argc, char **argv)
 {
 	int kbdchar;						/* keyboard key-hit value       */
 	int kbdmore;						/* continuation variable        */
