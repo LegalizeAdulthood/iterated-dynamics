@@ -145,7 +145,7 @@ int keypressed()
 		inside_help = 0;
 		return 0;
 	}
-	else if (ch == FIK_TAB && g_tab_mode)
+	else if (ch == FIK_TAB && g_tab_display_enabled)
 	{
 		keybuffer = 0;
 		tab_display();
