@@ -22,15 +22,6 @@ extern int work_list_add(int, int, int, int, int, int, int, int);
 extern void work_list_tidy();
 extern void get_julia_attractor(double, double);
 extern int solid_guess_block_size();
-extern void _fastcall plot_color_symmetry_pi(int, int, int);
-extern void _fastcall symPIplot2J(int, int, int);
-extern void _fastcall symPIplot4J(int, int, int);
-extern void _fastcall plot_color_symmetry_x_axis(int, int, int);
-extern void _fastcall plot_color_symmetry_y_axis(int, int, int);
-extern void _fastcall plot_color_symmetry_origin(int, int, int);
-extern void _fastcall plot_color_symmetry_xy_axis(int, int, int);
-extern void _fastcall plot_color_symmetry_x_axis_basin(int, int, int);
-extern void _fastcall plot_color_symmetry_xy_axis_basin(int, int, int);
 extern void fractal_float_to_bf();
 extern void adjust_corner_bf();
 
