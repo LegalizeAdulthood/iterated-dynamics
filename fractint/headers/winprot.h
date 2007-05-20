@@ -8,10 +8,6 @@
 extern long cdecl calculate_mandelbrot_fp_p5_asm();
 extern void cdecl calculate_mandelbrot_fp_p5_asm_start();
 
-/*  prompts1 -- C file prototypes */
-
-extern void set_default_parms();
-
 /*  windos -- C file prototypes */
 
 extern void debugmessage(char *, char *);

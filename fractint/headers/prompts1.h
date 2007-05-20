@@ -14,5 +14,6 @@ extern int find_extra_parameter(int);
 extern void load_parameters(int g_fractal_type);
 extern int check_orbit_name(char *);
 extern int scan_entries(FILE *infile, struct entryinfo *choices, const char *itemname);
+extern void set_default_parms();
 
 #endif
