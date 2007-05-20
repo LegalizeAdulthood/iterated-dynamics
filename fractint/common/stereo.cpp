@@ -127,13 +127,13 @@ static void toggle_bars(bool &bars, int barwidth, int *colour)
 		{
 			if (bars)
 			{
-				g_put_color(i + (int) s_average, j , g_color_bright);
-				g_put_color(i - (int) s_average, j , g_color_bright);
+				g_plot_color_put_color(i + (int) s_average, j , g_color_bright);
+				g_plot_color_put_color(i - (int) s_average, j , g_color_bright);
 			}
 			else
 			{
-				g_put_color(i + (int) s_average, j, colour[ct++]);
-				g_put_color(i - (int) s_average, j, colour[ct++]);
+				g_plot_color_put_color(i + (int) s_average, j, colour[ct++]);
+				g_plot_color_put_color(i - (int) s_average, j, colour[ct++]);
 			}
 		}
 	}
@@ -191,7 +191,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 	for (int x = g_x_dots - 1; x >= 0; x--)
 	{
 		colour[x] = (same[x] == x) ? (int) pixels[x % linelen] : colour[same[x]];
-		g_put_color(x, s_y, colour[x]);
+		g_plot_color_put_color(x, s_y, colour[x]);
 	}
 	(s_y)++;
 	return 0;

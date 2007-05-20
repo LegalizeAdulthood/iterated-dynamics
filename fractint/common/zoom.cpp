@@ -72,18 +72,18 @@ void display_box()
 			values[i] = (unsigned char)getcolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset);
 		}
 	}
-	/* There is an interaction between getcolor and g_put_color, so separate them */
+	/* There is an interaction between getcolor and g_plot_color_put_color, so separate them */
 	if (!(g_is_true_color && g_true_mode)) /* don't need this for truecolor with truemode set */
 	{
 		for (i = 0; i < g_box_count; i++)
 		{
 			if (g_colors == 2)
 			{
-				g_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, (1 - values[i]));
+				g_plot_color_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, (1 - values[i]));
 			}
 			else
 			{
-				g_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, boxc);
+				g_plot_color_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, boxc);
 			}
 		}
 	}
@@ -101,7 +101,7 @@ void clear_box()
 		unsigned char *values = (unsigned char *)g_box_values;
 		for (i = 0; i < g_box_count; i++)
 		{
-			g_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, values[i]);
+			g_plot_color_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, values[i]);
 		}
 	}
 }

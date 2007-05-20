@@ -18,7 +18,7 @@
  *   10-22-90 EAN     Initial release.
  *
  *   10-23-90 EAN     "Discovered" get_line/put_line functions, integrated
- *                      them in (instead of only getcolor/g_put_color). Much
+ *                      them in (instead of only getcolor/g_plot_color_put_color). Much
  *                      faster!
  *                    Redesigned color editors (now at top of palette) and
  *                      re-assigned some keys.
@@ -283,7 +283,7 @@ static void clip_put_color(int x, int y, int color)
 		return;
 	}
 
-	g_put_color(x, y, color);
+	g_plot_color_put_color(x, y, color);
 }
 
 static int clip_get_color(int x, int y)
@@ -541,11 +541,11 @@ static bool is_in_box(int x, int y, int bx, int by, int bw, int bd)
 
 static void draw_diamond(int x, int y, int color)
 {
-	g_put_color (x + 2, y + 0,    color);
+	g_plot_color_put_color (x + 2, y + 0,    color);
 	horizontal_line    (x + 1, y + 1, 3, color);
 	horizontal_line    (x + 0, y + 2, 5, color);
 	horizontal_line    (x + 1, y + 3, 3, color);
-	g_put_color (x + 2, y + 4,    color);
+	g_plot_color_put_color (x + 2, y + 4,    color);
 }
 
 /*
@@ -3349,7 +3349,7 @@ void palette_edit()       /* called by fractint */
 	HelpModeSaver saved_help(HELPXHAIR);
 	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
-	g_plot_color = g_put_color;
+	g_plot_color = g_plot_color_put_color;
 
 	g_line_buffer = (BYTE *) malloc(max(g_screen_width, g_screen_height));
 

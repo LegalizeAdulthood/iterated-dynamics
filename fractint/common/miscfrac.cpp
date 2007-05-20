@@ -242,8 +242,8 @@ static void _fastcall put_potential(int x, int y, U16 color)
 	{
 		color = 1;
 	}
-	g_put_color(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
-	/* we don't write this if driver_diskp() because the above g_put_color
+	g_plot_color_put_color(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
+	/* we don't write this if driver_diskp() because the above g_plot_color_put_color
 			was already a "disk_write" in that case */
 	if (!driver_diskp())
 	{
@@ -273,7 +273,7 @@ static void _fastcall put_color_border(int x, int y, int color)
 	{
 		color = 1;
 	}
-	g_put_color(x, y, color);
+	g_plot_color_put_color(x, y, color);
 }
 
 static U16 _fastcall get_potential(int x, int y)
@@ -570,13 +570,13 @@ int plasma()
 		{
 			s_max_plasma = 0;        /* can't do potential (disk_start failed) */
 			g_parameters[3]   = 0;
-			g_plot_color = (g_outside >= 0) ? put_color_border : g_put_color;
+			g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
 			s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 		}
 	}
 	else
 	{
-		g_plot_color = (g_outside >= 0) ? put_color_border : g_put_color;
+		g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
 		s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	}
 	srand(g_random_seed);
@@ -668,7 +668,7 @@ done:
 		g_potential_flag = OldPotFlag;
 		g_potential_16bit = OldPot16bit;
 	}
-	g_plot_color    = g_put_color;
+	g_plot_color    = g_plot_color_put_color;
 	s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
 	return n;
 }
@@ -797,12 +797,12 @@ int diffusion()
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL: /* Single seed point in the center */
-		g_put_color(g_x_dots / 2, g_y_dots / 2, currentcolor);
+		g_plot_color_put_color(g_x_dots / 2, g_y_dots / 2, currentcolor);
 		break;
 	case DIFFUSION_LINE: /* Line along the bottom */
 		for (i = 0; i <= g_x_dots; i++)
 		{
-			g_put_color(i, g_y_dots-1, currentcolor);
+			g_plot_color_put_color(i, g_y_dots-1, currentcolor);
 		}
 		break;
 	case DIFFUSION_SQUARE: /* Large square that fills the screen */
@@ -810,20 +810,20 @@ int diffusion()
 		{
 			for (i = 0; i < g_y_dots; i++)
 			{
-				g_put_color(g_x_dots/2-g_y_dots/2 , i , currentcolor);
-				g_put_color(g_x_dots/2 + g_y_dots/2 , i , currentcolor);
-				g_put_color(g_x_dots/2-g_y_dots/2 + i , 0 , currentcolor);
-				g_put_color(g_x_dots/2-g_y_dots/2 + i , g_y_dots-1 , currentcolor);
+				g_plot_color_put_color(g_x_dots/2-g_y_dots/2 , i , currentcolor);
+				g_plot_color_put_color(g_x_dots/2 + g_y_dots/2 , i , currentcolor);
+				g_plot_color_put_color(g_x_dots/2-g_y_dots/2 + i , 0 , currentcolor);
+				g_plot_color_put_color(g_x_dots/2-g_y_dots/2 + i , g_y_dots-1 , currentcolor);
 			}
 		}
 		else
 		{
 			for (i = 0; i < g_x_dots; i++)
 			{
-				g_put_color(0 , g_y_dots/2-g_x_dots/2 + i , currentcolor);
-				g_put_color(g_x_dots-1 , g_y_dots/2-g_x_dots/2 + i , currentcolor);
-				g_put_color(i , g_y_dots/2-g_x_dots/2 , currentcolor);
-				g_put_color(i , g_y_dots/2 + g_x_dots/2 , currentcolor);
+				g_plot_color_put_color(0 , g_y_dots/2-g_x_dots/2 + i , currentcolor);
+				g_plot_color_put_color(g_x_dots-1 , g_y_dots/2-g_x_dots/2 + i , currentcolor);
+				g_plot_color_put_color(i , g_y_dots/2-g_x_dots/2 , currentcolor);
+				g_plot_color_put_color(i , g_y_dots/2 + g_x_dots/2 , currentcolor);
 			}
 		}
 		break;
@@ -867,7 +867,7 @@ int diffusion()
 			/* Erase moving point */
 			if (g_show_orbit)
 			{
-				g_put_color(x, y, 0);
+				g_plot_color_put_color(x, y, 0);
 			}
 
 			if (mode == DIFFUSION_CENTRAL) /* Make sure point is inside the box */
@@ -935,14 +935,14 @@ int diffusion()
 			/* Show the moving point */
 			if (g_show_orbit)
 			{
-				g_put_color(x, y, RANDOM(g_colors-1) + 1);
+				g_plot_color_put_color(x, y, RANDOM(g_colors-1) + 1);
 			}
 
 		} /* End of loop, now fix the point */
 
 		/* If we're doing colorshifting then use currentcolor, otherwise
 			pick one at random */
-		g_put_color(x, y, colorshift ? currentcolor : RANDOM(g_colors-1) + 1);
+		g_plot_color_put_color(x, y, colorshift ? currentcolor : RANDOM(g_colors-1) + 1);
 
 		/* If we're doing colorshifting then check to see if we need to shift*/
 		if (colorshift)
@@ -1454,7 +1454,7 @@ int popcorn()   /* subset of std engine */
 		end_resume();
 	}
 	g_input_counter = g_max_input_counter;
-	g_plot_color = noplot;
+	g_plot_color = plot_color_none;
 	g_temp_sqr_x = g_temp_sqr_x_l = 0; /* PB added this to cover weird BAILOUTs */
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{

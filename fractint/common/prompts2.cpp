@@ -885,7 +885,7 @@ int starfield()
 			{
 				c = g_colors-1;
 			}
-			g_put_color(g_col, g_row, gaussian_number(c, g_colors));
+			g_plot_color_put_color(g_col, g_row, gaussian_number(c, g_colors));
 		}
 	}
 	driver_buzzer(BUZZER_COMPLETE);

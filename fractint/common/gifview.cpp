@@ -457,7 +457,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 {
 	for (int col = colstart; col <= colstop; col++)
 	{
-		g_put_color(col, row, *pixels);
+		g_plot_color_put_color(col, row, *pixels);
 		if (g_orbit_delay > 0)
 		{
 			sleep_ms(g_orbit_delay);

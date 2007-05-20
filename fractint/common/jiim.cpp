@@ -120,16 +120,18 @@ void _fastcall c_putcolor(int x, int y, int color)
 		return;
 	}
 	if (windows == 2) /* avoid overwriting fractal */
+	{
 		if (0 <= x && x < g_x_dots && 0 <= y && y < g_y_dots)
 		{
 			return;
 		}
-	g_put_color(x, y, color);
 	}
+	g_plot_color_put_color(x, y, color);
+}
 
 
 int  c_getcolor(int x, int y)
-	{
+{
 	/* avoid reading outside window */
 	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
 	{
@@ -140,12 +142,14 @@ int  c_getcolor(int x, int y)
 		return 1000;
 	}
 	if (windows == 2) /* avoid overreading fractal */
+	{
 		if (0 <= x && x < g_x_dots && 0 <= y && y < g_y_dots)
 		{
 			return 1000;
 		}
-	return getcolor(x, y);
 	}
+	return getcolor(x, y);
+}
 
 void circleplot(int x, int y, int color)
 {

@@ -183,7 +183,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			g_put_color(x, y, color|tmp);
+			g_plot_color_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
 				targa_color(x, y, color|tmp);
@@ -195,7 +195,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			color = color <<2;
-			g_put_color(x, y, color|tmp);
+			g_plot_color_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
 				targa_color(x, y, color|tmp);
@@ -221,7 +221,7 @@ void _fastcall plot_3d_superimpose_16(int x, int y, int color)
 		}
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			g_put_color(x, y, color);
+			g_plot_color_put_color(x, y, color);
 			if (g_targa_output)
 			{
 				targa_color(x, y, color);
@@ -237,7 +237,7 @@ void _fastcall plot_3d_superimpose_16(int x, int y, int color)
 			{
 				color = PAL_MAGENTA;
 			}
-			g_put_color(x, y, color);
+			g_plot_color_put_color(x, y, color);
 			if (g_targa_output)
 			{
 				targa_color(x, y, color);
@@ -270,7 +270,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
 			/* Overwrite prev Red don't mess w/blue */
-			g_put_color(x, y, color|(tmp&240));
+			g_plot_color_put_color(x, y, color|(tmp&240));
 			if (g_targa_output)
 			{
 				if (!(g_3d_state.fill_type() > FillType::Bars))
@@ -290,7 +290,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 		{
 			/* Overwrite previous blue, don't mess with existing red */
 			color = color <<4;
-			g_put_color(x, y, color|(tmp&15));
+			g_plot_color_put_color(x, y, color|(tmp&15));
 			if (g_targa_output)
 			{
 				if (!(g_3d_state.fill_type() > FillType::Bars))
@@ -331,7 +331,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			g_put_color(x, y, color|tmp);
+			g_plot_color_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
 				if (!(g_3d_state.fill_type() > FillType::Bars))
@@ -350,7 +350,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			color = color <<4;
-			g_put_color(x, y, color|tmp);
+			g_plot_color_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
 				if (!(g_3d_state.fill_type() > FillType::Bars))
@@ -381,7 +381,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			g_put_color(x, y, color >> 1);
+			g_plot_color_put_color(x, y, color >> 1);
 			if (g_targa_output)
 			{
 				if (!(g_3d_state.fill_type() > FillType::Bars))
@@ -399,7 +399,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
-			g_put_color(x, y, (color >> 1) + (g_colors >> 1));
+			g_plot_color_put_color(x, y, (color >> 1) + (g_colors >> 1));
 			if (g_targa_output)
 			{
 				if (!(g_3d_state.fill_type() > FillType::Bars))
@@ -431,7 +431,7 @@ void _fastcall plot_3d_cross_eyed_A(int x, int y, int color)
 			return;
 		}
 	}
-	g_put_color(x, y, color);
+	g_plot_color_put_color(x, y, color);
 }
 
 void _fastcall plot_3d_cross_eyed_B(int x, int y, int color)
@@ -442,7 +442,7 @@ void _fastcall plot_3d_cross_eyed_B(int x, int y, int color)
 	{
 		x += g_x_dots/2;
 	}
-	g_put_color(x, y, color);
+	g_plot_color_put_color(x, y, color);
 }
 
 void _fastcall plot_3d_cross_eyed_C(int x, int y, int color)
@@ -455,7 +455,7 @@ void _fastcall plot_3d_cross_eyed_C(int x, int y, int color)
 			return;
 		}
 	}
-	g_put_color(x, y, color);
+	g_plot_color_put_color(x, y, color);
 }
 
 void plot_setup()
@@ -467,41 +467,41 @@ void plot_setup()
 	switch (g_3d_state.glasses_type())
 	{
 	case STEREO_ALTERNATE:
-		g_standard_plot = plot_3d_alternate;
+		g_plot_color_standard = plot_3d_alternate;
 		break;
 
 	case STEREO_SUPERIMPOSE:
 		if (g_colors == 256)
 		{
-			g_standard_plot = (g_fractal_type != FRACTYPE_IFS_3D) ? plot_3d_superimpose_256 : plot_ifs_3d_superimpose_256;
+			g_plot_color_standard = (g_fractal_type != FRACTYPE_IFS_3D) ? plot_3d_superimpose_256 : plot_ifs_3d_superimpose_256;
 		}
 		else
 		{
-			g_standard_plot = plot_3d_superimpose_16;
+			g_plot_color_standard = plot_3d_superimpose_16;
 		}
 		break;
 
 	case STEREO_PAIR: /* crosseyed mode */
 		if (g_screen_width < 2*g_x_dots)
 		{
-			g_standard_plot = (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0) ? /* use hidden surface kludge */
+			g_plot_color_standard = (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0) ? /* use hidden surface kludge */
 				plot_3d_cross_eyed_A : plot_3d_cross_eyed_B;
 		}
 		else if (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0)
 		{
-			g_standard_plot = plot_3d_cross_eyed_C; /* use hidden surface kludge */
+			g_plot_color_standard = plot_3d_cross_eyed_C; /* use hidden surface kludge */
 		}
 		else
 		{
-			g_standard_plot = g_put_color;
+			g_plot_color_standard = g_plot_color_put_color;
 		}
 		break;
 
 	default:
-		g_standard_plot = g_put_color;
+		g_plot_color_standard = g_plot_color_put_color;
 		break;
 	}
-	assert(g_standard_plot);
+	assert(g_plot_color_standard);
 
 	g_x_shift = (int) ((g_3d_state.x_shift()*(double) g_x_dots)/100);
 	g_y_shift = (int) ((g_3d_state.y_shift()*(double) g_y_dots)/100);

@@ -65,7 +65,7 @@ int targa_color(int, int, int);
 int start_disk1(char *, FILE *, int);
 
 /* global variables defined here */
-void (*g_standard_plot)(int x, int y, int color) = NULL;
+void (*g_plot_color_standard)(int x, int y, int color) = NULL;
 
 char g_light_name[FILE_MAX_PATH] = "fract001";
 int g_targa_overlay = 0;
@@ -93,15 +93,15 @@ static void corners(MATRIX, int, double *, double *, double *, double *, double 
 static void draw_light_box(double *, double *, MATRIX);
 static void draw_rect(VECTOR, VECTOR, VECTOR, VECTOR, int, int);
 static void line3d_cleanup();
-static void clip_color(int, int, int);
+static void plot_color_clip(int, int, int);
 static void interp_color(int, int, int);
 static void put_a_triangle(struct point, struct point, struct point, int);
-static void put_minmax(int, int, int);
+static void plot_color_put_min_max(int, int, int);
 static void triangle_bounds(float pt_t[3][3]);
-static void transparent_clip_color(int, int, int);
+static void plot_color_transparent_clip(int, int, int);
 static void vdraw_line(double *, double *, int color);
-static void (*fill_plot)(int, int, int);
-static void (*normal_plot)(int, int, int);
+static void (*s_plot_color_fill)(int, int, int);
+static void (*s_plot_color_normal)(int, int, int);
 static void file_error(const char *filename, int code);
 
 /* static variables */
@@ -669,8 +669,8 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 			put_a_triangle(s_last_row[next], s_last_row[col], *cur, cur->color);
 		}
 		put_a_triangle(*old, s_last_row[col], *cur, cur->color);
-		assert(g_standard_plot);
-		g_plot_color = g_standard_plot;
+		assert(g_plot_color_standard);
+		g_plot_color = g_plot_color_standard;
 	}
 }
 
@@ -731,8 +731,8 @@ int line3d(BYTE *pixels, int linelen)
 	static struct point old_last = { 0, 0, 0 }; /* old pixels */
 
 	g_fudge = 1L << 16;
-	g_plot_color = (g_3d_state.transparent0() || g_3d_state.transparent1()) ? transparent_clip_color : clip_color;
-	normal_plot = g_plot_color;
+	g_plot_color = (g_3d_state.transparent0() || g_3d_state.transparent1()) ? plot_color_transparent_clip : plot_color_clip;
+	s_plot_color_normal = g_plot_color;
 
 	g_current_row = g_row_count;
 	/* use separate variable to allow for g_potential_16bit files */
@@ -1242,7 +1242,7 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 
 /* replacement for plot - builds a table of min and max x's instead of plot */
 /* called by draw_line as part of triangle fill routine */
-static void put_minmax(int x, int y, int color)
+static void plot_color_put_min_max(int x, int y, int color)
 {
 	color = 0; /* to supress warning only */
 	if (y >= 0 && y < g_y_dots)
@@ -1280,7 +1280,7 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 	/* fast way if single point or single line */
 	if (s_p1.y == s_p2.y && s_p1.x == s_p2.x)
 	{
-		g_plot_color = fill_plot;
+		g_plot_color = s_plot_color_fill;
 		if (s_p1.y == s_p3.y && s_p1.x == s_p3.x)
 		{
 			(*g_plot_color)(s_p1.x, s_p1.y, color);
@@ -1289,14 +1289,14 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 		{
 			driver_draw_line(s_p1.x, s_p1.y, s_p3.x, s_p3.y, color);
 		}
-		g_plot_color = normal_plot;
+		g_plot_color = s_plot_color_normal;
 		return;
 	}
 	else if ((s_p3.y == s_p1.y && s_p3.x == s_p1.x) || (s_p3.y == s_p2.y && s_p3.x == s_p2.x))
 	{
-		g_plot_color = fill_plot;
+		g_plot_color = s_plot_color_fill;
 		driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, color);
-		g_plot_color = normal_plot;
+		g_plot_color = s_plot_color_normal;
 		return;
 	}
 
@@ -1337,7 +1337,7 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 	}
 
 	/* set plot to "fake" plot function */
-	g_plot_color = put_minmax;
+	g_plot_color = plot_color_put_min_max;
 
 	/* build table of extreme x's of triangle */
 	driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, 0);
@@ -1349,10 +1349,10 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 		int xlim = s_minmax_x[y].maxx;
 		for (int x = s_minmax_x[y].minx; x <= xlim; x++)
 		{
-			(*fill_plot)(x, y, color);
+			(*s_plot_color_fill)(x, y, color);
 		}
 	}
-	g_plot_color = normal_plot;
+	g_plot_color = s_plot_color_normal;
 }
 
 static int off_screen(struct point pt)
@@ -1369,18 +1369,18 @@ static int off_screen(struct point pt)
 	return 1;                  /* point is off the screen */
 }
 
-static void clip_color(int x, int y, int color)
+static void plot_color_clip(int x, int y, int color)
 {
 	if (0 <= x && x < g_x_dots &&
 		0 <= y && y < g_y_dots &&
 		0 <= color && color < g_file_colors)
 	{
-		assert(g_standard_plot);
-		(*g_standard_plot)(x, y, color);
+		assert(g_plot_color_standard);
+		(*g_plot_color_standard)(x, y, color);
 
 		if (g_targa_output)
 		{
-			/* g_standard_plot modifies color in these types */
+			/* g_plot_color_standard modifies color in these types */
 			if (!(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 			{
 				targa_color(x, y, color);
@@ -1390,12 +1390,12 @@ static void clip_color(int x, int y, int color)
 }
 
 /*********************************************************************/
-/* This function is the same as clip_color but checks for color being */
+/* This function is the same as plot_color_clip but checks for color being */
 /* in transparent range. Intended to be called only if transparency  */
 /* has been enabled.                                                 */
 /*********************************************************************/
 
-static void transparent_clip_color(int x, int y, int color)
+static void plot_color_transparent_clip(int x, int y, int color)
 {
 	if (0 <= x && x < g_x_dots &&   /* is the point on screen?  */
 		0 <= y && y < g_y_dots &&   /* Yes?  */
@@ -1403,11 +1403,11 @@ static void transparent_clip_color(int x, int y, int color)
 		/* Lets make sure its not a transparent color  */
 		(g_3d_state.transparent0() > color || color > g_3d_state.transparent1()))
 	{
-		assert(g_standard_plot);
-		(*g_standard_plot)(x, y, color); /* I guess we can plot then  */
+		assert(g_plot_color_standard);
+		(*g_plot_color_standard)(x, y, color); /* I guess we can plot then  */
 		if (g_targa_output)
 		{
-			/* g_standard_plot modifies color in these types */
+			/* g_plot_color_standard modifies color in these types */
 			if (!(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 			{
 				targa_color(x, y, color);
@@ -1452,7 +1452,7 @@ static void interp_color(int x, int y, int color)
 	{
 		if (g_targa_output)
 		{
-			/* g_standard_plot modifies color in these types */
+			/* g_plot_color_standard modifies color in these types */
 			if (!(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 			{
 				D = targa_color(x, y, color);
@@ -1474,8 +1474,8 @@ static void interp_color(int x, int y, int color)
 				}
 			}
 		}
-		assert(g_standard_plot);
-		(*g_standard_plot)(x, y, color);
+		assert(g_plot_color_standard);
+		(*g_plot_color_standard)(x, y, color);
 	}
 }
 
@@ -2810,16 +2810,16 @@ static int first_time(int linelen, VECTOR v)
 	/* set fill plot function */
 	if (g_3d_state.fill_type() != FillType::Flat)
 	{
-		fill_plot = interp_color;
+		s_plot_color_fill = interp_color;
 	}
 	else
 	{
-		fill_plot = clip_color;
+		s_plot_color_fill = plot_color_clip;
 
 		/* If transparent colors are set */
 		if (g_3d_state.transparent0() || g_3d_state.transparent1())
 		{
-			fill_plot = transparent_clip_color; /* Use the transparent plot function  */
+			s_plot_color_fill = plot_color_transparent_clip; /* Use the transparent plot function  */
 		}
 	}
 

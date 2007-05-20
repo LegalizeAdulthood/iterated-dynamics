@@ -52,6 +52,8 @@
 #include "helpdefs.h"
 #include "fractype.h"
 #include "externs.h"
+
+#include "calcfrac.h"
 #include "fpu.h"
 #include "fracsubr.h"
 #include "fractals.h"
@@ -1151,7 +1153,7 @@ int popcorn_old_orbit_fp()
 	FPUsincos(&g_temp_z.y, &s_sin_y, &s_cos_y);
 	g_new_z.x = g_old_z.x - g_parameter.x*s_sin_y;
 	g_new_z.y = g_old_z.y - g_parameter.x*g_sin_x;
-	if (g_plot_color == noplot)
+	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
 		g_old_z = g_new_z;
@@ -1193,7 +1195,7 @@ int popcorn_orbit_fp()
 	g_new_z.x = g_old_z.x - g_parameter.x*sin(g_old_z.y + tan(3*g_old_z.y));
 	g_new_z.y = g_old_z.y - g_parameter.x*sin(g_old_z.x + tan(3*g_old_z.x));
 	*/
-	if (g_plot_color == noplot)
+	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
 		g_old_z = g_new_z;
@@ -1235,7 +1237,7 @@ int popcorn_old_orbit()
 	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
 	g_new_z_l.x = g_old_z_l.x - multiply(g_parameter_l.x, s_sin_y_l, g_bit_shift);
 	g_new_z_l.y = g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift);
-	if (g_plot_color == noplot)
+	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
@@ -1276,7 +1278,7 @@ int popcorn_orbit()
 	SinCos086(g_tmp_z_l.y, &s_sin_y_l, &s_cos_y_l);
 	g_new_z_l.x = g_old_z_l.x - multiply(g_parameter_l.x, s_sin_y_l, g_bit_shift);
 	g_new_z_l.y = g_old_z_l.y - multiply(g_parameter_l.x, s_sin_x_l, g_bit_shift);
-	if (g_plot_color == noplot)
+	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
@@ -1322,7 +1324,7 @@ int popcorn_fn_orbit_fp()
 	g_new_z.x = g_old_z.x - tmpx.x - tmpy.y;
 	g_new_z.y = g_old_z.y - tmpy.x - tmpx.y;
 
-	if (g_plot_color == noplot)
+	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit(g_new_z.x, g_new_z.y, 1 + g_row % g_colors);
 		g_old_z = g_new_z;
@@ -1380,7 +1382,7 @@ int popcorn_fn_orbit()
 	g_new_z_l.x = g_old_z_l.x - ltmpx.x - ltmpy.y;
 	g_new_z_l.y = g_old_z_l.y - ltmpy.x - ltmpx.y;
 
-	if (g_plot_color == noplot)
+	if (g_plot_color == plot_color_none)
 	{
 		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, 1 + g_row % g_colors);
 		g_old_z_l = g_new_z_l;
