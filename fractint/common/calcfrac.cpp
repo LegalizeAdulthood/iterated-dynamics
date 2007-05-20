@@ -1098,13 +1098,13 @@ static void perform_work_list()
 		}
 
 		/* some common initialization for escape-time pixel level routines */
-		g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
-		g_close_enough_l = (long)(g_close_enough*g_fudge); /* "close enough" value */
+		g_close_enough = g_delta_min_fp*pow(2.0, (double) -abs(g_periodicity_check));
+		g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
 		g_input_counter = g_max_input_counter;
 
 		set_symmetry(g_symmetry, true);
 
-		if (!(g_resuming) && (labs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
+		if (!g_resuming && (labs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
 		{  /* calculate round screen edges to work out best start for logmap */
 			g_log_palette_mode = (automatic_log_map()*(g_log_palette_mode / labs(g_log_palette_mode)));
 			SetupLogTable();

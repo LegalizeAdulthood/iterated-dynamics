@@ -10,8 +10,9 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
-#include "drivers.h"
+
 #include "3d.h"
+#include "drivers.h"
 #include "encoder.h"
 #include "fracsubr.h"
 #include "jiim.h"
