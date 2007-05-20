@@ -3256,7 +3256,11 @@ int Formula::per_pixel()
 	{
 		return 1;
 	}
-	g_overflow = m_load_ptr = m_store_ptr = m_op_ptr = m_jump_index = 0;
+	g_overflow = false;
+	m_load_ptr = 0;
+	m_store_ptr = 0;
+	m_op_ptr = 0;
+	m_jump_index = 0;
 	Arg1 = &m_argument_stack[0];
 	Arg2 = Arg1;
 	Arg2--;
@@ -3695,7 +3699,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 	tok->token_str[1] = (char) 0;  /* so we can concatenate later */
 
 	filepos = ftell(openfile);
-	if (DEBUGFLAG_DISK_MESSAGES == g_debug_flag)
+	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
 		debug_token = fopen("frmconst.txt", "at");
 	}
@@ -4105,7 +4109,7 @@ int Formula::get_parameter(const char *Name)
 	}
 
 	FILE *debug_token = NULL;
-	if (DEBUGFLAG_DISK_MESSAGES == g_debug_flag)
+	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
 		debug_token = fopen("frmtokens.txt", "at");
 		if (debug_token != NULL)
@@ -4359,7 +4363,7 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		return NULL;
 	}
 
-	if (DEBUGFLAG_DISK_MESSAGES == g_debug_flag)
+	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
 		debug_fp = fopen("debugfrm.txt", "at");
 		if (debug_fp != NULL)
@@ -4508,7 +4512,7 @@ int Formula::setup_fp()
 		/* CAE changed below for fp */
 		RunFormRes = !RunFormula(g_formula_name, false); /* RunFormula() returns 1 for failure */
 		if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
-			&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
+			&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 		{
 			return CvtStk(); /* run fast assembler code in parsera.asm */
 		}
@@ -4524,7 +4528,7 @@ int Formula::setup_fp()
 	RunFormRes = !RunFormula(g_formula_name, false); /* RunForm() returns 1 for failure */
 #if 0
 	if (RunFormRes && (g_fpu == -1) && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
-		&& (g_debug_flag != DEBUGFLAG_NO_ASM_MANDEL))
+		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
 		return CvtStk(); /* run fast assembler code in parsera.asm */
 	}

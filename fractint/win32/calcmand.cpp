@@ -43,6 +43,7 @@ long cdecl calculate_mandelbrot_asm()
 	return integer_unsupported();
 }
 
+#if 0
 /*
 	The following code are all experimental versions of the assembly code
 	that is not currently used.
@@ -77,7 +78,7 @@ static long cdecl calculate_mandelbrot_asm1()
 			if (key == 'o' || key == 'O')
 			{
 				driver_get_key();
-				g_show_orbit = g_show_orbit ? FALSE : TRUE;
+				g_show_orbit = !g_show_orbit;
 			}
 			else
 			{
@@ -1041,3 +1042,4 @@ horbit:	push	bx							; save my flags
 
 	return 0;
 }
+#endif

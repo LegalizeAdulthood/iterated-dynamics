@@ -68,7 +68,7 @@ union mem
 union mem handletable[MAXHANDLES];
 
 /* Routines in this module */
-static int _fastcall  CheckDiskSpace(long howmuch);
+static bool CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
 static U16 next_handle();
 static int CheckBounds (long start, long length, U16 handle);
@@ -84,16 +84,16 @@ void InitMemory();
 void ExitCheck();
 U16 MemoryAlloc(U16 size, long count, int stored_at);
 void MemoryRelease(U16 handle);
-int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
-int SetMemory(int value, U16 size, long count, long offset, U16 handle);
+bool MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle);
+bool SetMemory(int value, U16 size, long count, long offset, U16 handle);
 
 /* Memory handling support routines */
 
-static int _fastcall CheckDiskSpace(long howmuch)
+static bool CheckDiskSpace(long howmuch)
 {
 	/* TODO */
-	return TRUE;
+	return true;
 }
 
 static void WhichDiskError(int I_O)
@@ -109,7 +109,7 @@ static void WhichDiskError(int I_O)
 		"Read file error %d:  %s"
 	};
 	sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
-	if (DEBUGFLAG_MEMORY == g_debug_flag)
+	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
 		{
@@ -144,11 +144,11 @@ static int check_for_mem(int stored_at, long howmuch)
 	BYTE *temp;
 	int use_this_type = NOWHERE;
 
-	if (DEBUGFLAG_USE_DISK == g_debug_flag)
+	if (DEBUGMODE_USE_DISK == g_debug_mode)
 	{
 		stored_at = DISK;
 	}
-	if (DEBUGFLAG_USE_MEMORY == g_debug_flag)
+	if (DEBUGMODE_USE_MEMORY == g_debug_mode)
 	{
 		stored_at = MEMORY;
 	}
@@ -292,11 +292,11 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 {
 /* Returns handle number if successful, 0 or NULL if failure */
 	U16 handle = 0;
-	int success;
+	bool success;
 	int use_this_type;
 	long toallocate;
 
-	success = FALSE;
+	success = false;
 	toallocate = count*size;
 	if (toallocate <= 0)     /* we failed, can't allocate > 2,147,483,647 */
 	{
@@ -340,7 +340,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		handletable[handle].Linearmem.size = toallocate;
 		handletable[handle].Linearmem.stored_at = MEMORY;
 		numTOTALhandles++;
-		success = TRUE;
+		success = true;
 		break;
 
 	default:
@@ -371,7 +371,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 			break;
 		}
 		numTOTALhandles++;
-		success = TRUE;
+		success = true;
 		fclose(handletable[handle].Disk.file); /* so clusters aren't lost if we crash while running */
 		if (g_disk_targa)
 		{
@@ -388,7 +388,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		break;
 	} /* end of switch */
 
-	if (stored_at != use_this_type && DEBUGFLAG_MEMORY == g_debug_flag)
+	if (stored_at != use_this_type && DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		char buf[MESSAGE_LEN];
 		sprintf(buf, "Asked for %s, allocated %lu bytes of %s, handle = %u.",
@@ -436,24 +436,24 @@ void MemoryRelease(U16 handle)
 	} /* end of switch */
 }
 
-int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
+bool MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 {
 	/* buffer is a pointer to local memory */
 	/* Always start moving from the beginning of buffer */
 	/* offset is the number of units from the start of the allocated "Memory" */
 	/* to start moving the contents of buffer to */
 	/* size is the size of the unit, count is the number of units to move */
-	/* Returns TRUE if successful, FALSE if failure */
+	/* Returns true if successful, false if failure */
 	BYTE diskbuf[DISKWRITELEN];
 	long start; /* offset to first location to move to */
 	long tomove; /* number of bytes to move */
 	U16 numwritten;
-	int success;
+	bool success;
 
-	success = FALSE;
+	success = false;
 	start = (long)offset*size;
 	tomove = (long)count*size;
-	if (DEBUGFLAG_MEMORY == g_debug_flag)
+	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		if (CheckBounds(start, tomove, handle))
 		{
@@ -472,7 +472,7 @@ int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 		_ASSERTE(handletable[handle].Linearmem.size >= size*count + start);
 #endif
 		memcpy(handletable[handle].Linearmem.memory + start, buffer, size*count);
-		success = TRUE; /* No way to gauge success or failure */
+		success = true; /* No way to gauge success or failure */
 		break;
 
 	case DISK: /* MoveToMemory */
@@ -497,33 +497,33 @@ int MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 			WhichDiskError(3);
 			break;
 		}
-		success = TRUE;
+		success = true;
 diskerror:
 		break;
 	} /* end of switch */
-	if (!success && DEBUGFLAG_MEMORY == g_debug_flag)
+	if (!success && DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		DisplayHandle(handle);
 	}
 	return success;
 }
 
-int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
+bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 {
 	/* buffer points is the location to move the data to */
 	/* offset is the number of units from the beginning of buffer to start moving */
 	/* size is the size of the unit, count is the number of units to move */
-	/* Returns TRUE if successful, FALSE if failure */
+	/* Returns true if successful, false if failure */
 	BYTE diskbuf[DISKWRITELEN];
 	long start; /* first location to move */
 	long tomove; /* number of bytes to move */
 	U16 numread, i;
-	int success;
+	bool success;
 
-	success = FALSE;
+	success = false;
 	start = (long)offset*size;
 	tomove = (long)count*size;
-	if (DEBUGFLAG_MEMORY == g_debug_flag)
+	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		if (CheckBounds(start, tomove, handle))
 		{
@@ -544,7 +544,7 @@ int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 			start += size;
 			buffer += size;
 		}
-		success = TRUE; /* No way to gauge success or failure */
+		success = true; /* No way to gauge success or failure */
 		break;
 
 	case DISK: /* MoveFromMemory */
@@ -569,33 +569,33 @@ int MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 			break;
 		}
 		memcpy(buffer, diskbuf, (U16)tomove);
-		success = TRUE;
+		success = true;
 diskerror:
 		break;
 	} /* end of switch */
-	if (!success && DEBUGFLAG_MEMORY == g_debug_flag)
+	if (!success && DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		DisplayHandle(handle);
 	}
 	return success;
 }
 
-int SetMemory(int value, U16 size, long count, long offset, U16 handle)
+bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
 {
 	/* value is the value to set memory to */
 	/* offset is the number of units from the start of allocated memory */
 	/* size is the size of the unit, count is the number of units to set */
-	/* Returns TRUE if successful, FALSE if failure */
+	/* Returns true if successful, false if failure */
 	BYTE diskbuf[DISKWRITELEN];
 	long start; /* first location to set */
 	long tomove; /* number of bytes to set */
 	U16 numwritten, i;
-	int success;
+	bool success;
 
-	success = FALSE;
+	success = false;
 	start = (long)offset*size;
 	tomove = (long)count*size;
-	if (DEBUGFLAG_MEMORY == g_debug_flag)
+	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		if (CheckBounds(start, tomove, handle))
 		{
@@ -615,7 +615,7 @@ int SetMemory(int value, U16 size, long count, long offset, U16 handle)
 			memset(handletable[handle].Linearmem.memory + start, value, (U16)count);
 			start += count;
 		}
-		success = TRUE; /* No way to gauge success or failure */
+		success = true; /* No way to gauge success or failure */
 		break;
 
 	case DISK: /* SetMemory */
@@ -638,11 +638,11 @@ int SetMemory(int value, U16 size, long count, long offset, U16 handle)
 			WhichDiskError(2);
 			break;
 		}
-		success = TRUE;
+		success = true;
 diskerror:
 		break;
 	} /* end of switch */
-	if (!success && DEBUGFLAG_MEMORY == g_debug_flag)
+	if (!success && DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		DisplayHandle(handle);
 	}

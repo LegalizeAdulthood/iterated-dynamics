@@ -446,7 +446,7 @@ int standard_4d_fractal()
 			g_c_exp = 1;
 		}
 		g_fractal_specific[g_new_orbit_type].orbitcalc =
-			(g_parameters[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
+			(g_parameters[3] == 0.0 && g_debug_mode != DEBUGMODE_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
 			? z_power_orbit : complex_z_power_orbit;
 	}
 
@@ -495,7 +495,7 @@ int standard_4d_fractal_fp()
 	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
 		g_fractal_specific[g_new_orbit_type].orbitcalc =
-			(g_parameters[3] == 0.0 && g_debug_flag != DEBUGFLAG_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
+			(g_parameters[3] == 0.0 && g_debug_mode != DEBUGMODE_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
 			? z_power_orbit_fp : complex_z_power_orbit_fp;
 		get_julia_attractor (g_parameters[0], g_parameters[1]); /* another attractor? */
 	}

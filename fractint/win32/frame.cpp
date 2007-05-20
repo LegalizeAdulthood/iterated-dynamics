@@ -28,8 +28,8 @@ public:
 	FrameImpl();
 	void init(HINSTANCE instance, LPCSTR title);
 	void create(int width, int height);
-	int get_key_press(int option);
-	int pump_messages(int waitflag);
+	int get_key_press(bool wait_for_key);
+	int pump_messages(bool wait_flag);
 	void resize(int width, int height);
 	void set_keyboard_timeout(int ms);
 	void set_mouse_mode(int new_mode);
@@ -69,8 +69,8 @@ private:
 	int m_nc_width;
 	int m_nc_height;
 	HWND m_child;
-	BOOL m_has_focus;
-	BOOL m_timed_out;
+	bool m_has_focus;
+	bool m_timed_out;
 
 	/* the keypress buffer */
 	unsigned int m_keypress_count;
@@ -144,12 +144,12 @@ void FrameImpl::OnClose(HWND window)
 
 void FrameImpl::OnSetFocus(HWND window, HWND old_focus)
 {
-	s_frame->m_has_focus = TRUE;
+	s_frame->m_has_focus = true;
 }
 
 void FrameImpl::OnKillFocus(HWND window, HWND old_focus)
 {
-	s_frame->m_has_focus = FALSE;
+	s_frame->m_has_focus = false;
 }
 
 void FrameImpl::OnPaint(HWND window)
@@ -288,7 +288,7 @@ void FrameImpl::OnTimer(HWND window, UINT id)
 {
 	_ASSERTE(s_frame->m_window == window);
 	_ASSERTE(FRAME_TIMER_ID == id);
-	s_frame->m_timed_out = TRUE;
+	s_frame->m_timed_out = true;
 	KillTimer(window, FRAME_TIMER_ID);
 }
 
@@ -452,20 +452,20 @@ void FrameImpl::init(HINSTANCE instance, LPCSTR title)
 	m_keypress_tail  = 0;
 }
 
-int FrameImpl::pump_messages(int waitflag)
+int FrameImpl::pump_messages(bool wait_flag)
 {
 	MSG msg;
-	BOOL quitting = FALSE;
-	m_timed_out = FALSE;
+	bool quitting = false;
+	m_timed_out = false;
 
 	while (!quitting)
 	{
 		if (::PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
 		{
 			/* no messages waiting */
-			if (!waitflag
+			if (!wait_flag
 				|| (m_keypress_count != 0)
-				|| (waitflag && m_timed_out))
+				|| (wait_flag && m_timed_out))
 			{
 				return (m_keypress_count > 0) ? 1 : 0;
 			}
@@ -481,7 +481,7 @@ int FrameImpl::pump_messages(int waitflag)
 			}
 			else if (0 == result)
 			{
-				quitting = TRUE;
+				quitting = true;
 			}
 		}
 	}
@@ -509,7 +509,7 @@ void FrameImpl::set_mouse_mode(int new_mode)
 	}
 }
 
-int FrameImpl::get_key_press(int wait_for_key)
+int FrameImpl::get_key_press(bool wait_for_key)
 {
 	int i;
 
@@ -601,14 +601,14 @@ void Frame::create(int width, int height)
 	s_impl.create(width, height);
 }
 
-int Frame::get_key_press(int option)
+int Frame::get_key_press(bool wait_for_key)
 {
-	return s_impl.get_key_press(option);
+	return s_impl.get_key_press(wait_for_key);
 }
 
-int Frame::pump_messages(int waitflag)
+int Frame::pump_messages(bool wait_flag)
 {
-	return s_impl.pump_messages(waitflag);
+	return s_impl.pump_messages(wait_flag);
 }
 
 void Frame::resize(int width, int height)

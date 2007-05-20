@@ -658,7 +658,7 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 {
 	int i;
 	int j;
-	if ((g_calculation_status != CALCSTAT_RESUMABLE && g_calculation_status != CALCSTAT_COMPLETED) || g_evolving)
+	if ((g_calculation_status != CALCSTAT_RESUMABLE && g_calculation_status != CALCSTAT_COMPLETED) || g_evolving_flags)
 	{
 		return 0; /* not resumable, not complete */
 	}
@@ -769,7 +769,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	/* got a zoombox */
 	alignmask = check_pan()-1;
-	if (alignmask < 0 || g_evolving)
+	if (alignmask < 0 || g_evolving_flags)
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
 		return 0;

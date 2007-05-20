@@ -533,7 +533,7 @@ int Ant::compute()
 	}
 
 	/* set random seed for reproducibility */
-	if ((!g_random_flag) && g_parameters[5] == 1)
+	if (!g_use_fixed_random_seed && (g_parameters[5] == 1))
 	{
 		--g_random_seed;
 	}
@@ -543,7 +543,7 @@ int Ant::compute()
 	}
 
 	srand(g_random_seed);
-	if (!g_random_flag)
+	if (!g_use_fixed_random_seed)
 	{
 		++g_random_seed;
 	}

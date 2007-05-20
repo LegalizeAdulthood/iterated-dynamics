@@ -28,7 +28,7 @@
 #define FREE_MEM  33     /* try to leave this much memory unallocated */
 #define HASH_SIZE 1024   /* power of 2, near CACHE_MAX/(BLOCK_LEN + 8) */
 
-int g_disk_16bit = 0;         /* storing 16 bit values for continuous potential */
+bool g_disk_16bit = false;	/* storing 16 bit values for continuous potential */
 
 static int s_time_to_display;
 static FILE *s_file = NULL;
@@ -87,7 +87,7 @@ int disk_start_potential()
 	clear_temp_message();
 	if (i == 0)
 	{
-		g_disk_16bit = 1;
+		g_disk_16bit = true;
 	}
 
 	return i;
@@ -175,7 +175,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		there is free; demand a certain minimum or nogo at all */
 	freemem = FREE_MEM;
 
-	if (DEBUGFLAG_MIN_DISKVID_CACHE == g_debug_flag)
+	if (DEBUGMODE_MIN_DISKVID_CACHE == g_debug_mode)
 	{
 		cache_size = CACHE_MIN;
 	}
@@ -238,7 +238,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	}
 	memorysize >>= s_pixel_shift;
 	memorysize >>= BLOCK_SHIFT;
-	g_disk_flag = 1;
+	g_disk_flag = true;
 	s_row_size = (unsigned int) newrowsize;
 	s_col_size = (unsigned int) newcolsize;
 
@@ -338,7 +338,9 @@ void disk_end()
 		free((void *)s_memory_buffer);
 		s_memory_buffer = NULL;
 	}
-	g_disk_flag = s_row_size = g_disk_16bit = 0;
+	g_disk_flag = false;
+	s_row_size = 0;
+	g_disk_16bit = false;
 }
 
 int disk_read(int col, int row)

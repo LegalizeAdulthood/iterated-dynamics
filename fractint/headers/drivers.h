@@ -11,7 +11,7 @@ class AbstractDriver
 public:
 	/* name of driver */				virtual const char *name() const = 0;
 	/* driver description */			virtual const char *description() const = 0;
-	/* initialize the driver */			virtual int initialize(int &argc, char **argv) = 0;
+	/* initialize the driver */			virtual bool initialize(int &argc, char **argv) = 0;
 	/* shutdown the driver */			virtual void terminate() = 0;
 	/* pause this driver */				virtual void pause() = 0;
 	/* resume this driver */			virtual void resume() = 0;

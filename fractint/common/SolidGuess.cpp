@@ -12,8 +12,8 @@
 static int s_max_block;
 static int s_half_block;
 static int s_guess_plot;                   /* paint 1st pass row at a time?   */
-static int s_right_guess;
-static int s_bottom_guess;
+static bool s_right_guess;
+static bool s_bottom_guess;
 static unsigned int s_t_prefix[2][MAX_Y_BLOCK][MAX_X_BLOCK]; /* common temp */
 
 #define calcadot(c, x, y) \
@@ -435,10 +435,10 @@ int solid_guess()
 		|| ((g_plot_color == g_put_color || g_plot_color == symplot2) && g_x_stop + 1 == g_x_dots));
 
 	/* there seems to be a bug in solid guessing at bottom and side */
-	if (g_debug_flag != DEBUGFLAG_SOLID_GUESS_BR)
+	if (g_debug_mode != DEBUGMODE_SOLID_GUESS_BR)
 	{
-		s_bottom_guess = FALSE;
-		s_right_guess = FALSE;  /* TIW march 1995 */
+		s_bottom_guess = false;
+		s_right_guess = false;  /* TIW march 1995 */
 	}
 
 	blocksize = solid_guess_block_size();

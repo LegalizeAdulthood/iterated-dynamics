@@ -55,7 +55,7 @@ private:
 	HBITMAP m_backup;
 	HFONT m_font;
 
-	BOOL m_dirty;
+	bool m_dirty;
 	RECT m_dirty_region;
 	BITMAPINFO m_bmi;						/* contains first clut entry too */
 	RGBQUAD m_bmiColors[255];				/* color look up table */

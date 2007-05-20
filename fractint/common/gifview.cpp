@@ -146,7 +146,7 @@ int gifview()
 
 	if (g_dither_flag && g_num_colors > 2 && g_colors == 2 && g_out_line == out_line)
 	{
-			g_out_line = out_line_dither;
+		g_out_line = out_line_dither;
 	}
 
 	for (i = 0; i < (int)g_num_colors; i++)
@@ -189,7 +189,7 @@ int gifview()
 		sprintf(msg, "restoring %s", tmpname);
 		disk_video_status(1, msg);
 	}
-	g_dont_read_color = FALSE;
+	g_dont_read_color = false;
 
 	/* Now display one or more GIF objects */
 	finished = 0;

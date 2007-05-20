@@ -455,7 +455,7 @@ int complex_power_l(ComplexL *base, int exp, ComplexL *result, int g_bit_shift)
 
 	if (exp < 0)
 	{
-		g_overflow = complex_power_l(base, -exp, result, g_bit_shift);
+		g_overflow = complex_power_l(base, -exp, result, g_bit_shift) != 0;
 		LCMPLXrecip(*result, *result);
 		return g_overflow;
 	}
@@ -2426,7 +2426,7 @@ int mandelbrot_per_pixel_l()
 		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
 	}
 
-	g_old_z_l = (g_use_initial_orbit_z == 1) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    /* initial pertubation of parameters set */
 	g_old_z_l.y += g_parameter_l.y;
@@ -2534,11 +2534,11 @@ int mandelbrot_per_pixel()
 	}
 
 	/* alter g_initial_z value */
-	if (g_use_initial_orbit_z == 1)
+	if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 	{
 		g_old_z_l = g_init_orbit_l;
 	}
-	else if (g_use_initial_orbit_z == 2)
+	else if (g_use_initial_orbit_z == INITIALZ_PIXEL)
 	{
 		g_old_z_l = g_initial_z_l;
 	}
@@ -2590,7 +2590,7 @@ int marks_mandelbrot_per_pixel()
 		}
 	}
 
-	g_old_z_l = (g_use_initial_orbit_z == 1) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    /* initial pertubation of parameters set */
 	g_old_z_l.y += g_parameter_l.y;
@@ -2638,7 +2638,7 @@ int marks_mandelbrot_per_pixel_fp()
 		}
 	}
 
-	g_old_z = (g_use_initial_orbit_z == 1) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;
@@ -2711,11 +2711,11 @@ int mandelbrot_per_pixel_fp()
 	}
 
 	/* alter g_initial_z value */
-	if (g_use_initial_orbit_z == 1)
+	if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 	{
 		g_old_z = g_initial_orbit_z;
 	}
-	else if (g_use_initial_orbit_z == 2)
+	else if (g_use_initial_orbit_z == INITIALZ_PIXEL)
 	{
 		g_old_z = g_initial_z;
 	}
@@ -2803,7 +2803,7 @@ int other_mandelbrot_per_pixel_fp()
 		}
 	}
 
-	g_old_z = (g_use_initial_orbit_z == 1) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;
@@ -2959,7 +2959,7 @@ int mandelbrot_phoenix_per_pixel()
 		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
 	}
 
-	g_old_z_l = (g_use_initial_orbit_z == 1) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    /* initial pertubation of parameters set */
 	g_old_z_l.y += g_parameter_l.y;
@@ -2988,7 +2988,7 @@ int mandelbrot_phoenix_per_pixel_fp()
 		}
 	}
 
-	g_old_z = (g_use_initial_orbit_z == 1) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      /* initial pertubation of parameters set */
 	g_old_z.y += g_parameter.y;
@@ -3189,7 +3189,7 @@ int mandelbrot_mix4_setup()
 			break;
 		}
 		/* in case our kludge failed, let the user fix it */
-		if (DEBUGFLAG_SWAP_SIGN == g_debug_flag)
+		if (DEBUGMODE_SWAP_SIGN == g_debug_mode)
 		{
 			g_temp_z.y = -g_temp_z.y;
 		}

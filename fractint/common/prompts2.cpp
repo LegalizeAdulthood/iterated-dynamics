@@ -156,7 +156,7 @@ int get_toggles()
 	char previous_save_name[FILE_MAX_DIR + 1];
 	strcpy(previous_save_name, g_save_name);
 	int old_sound_flags = g_sound_state.flags();
-	long old_log_palette_flag = g_log_palette_flag;
+	long old_log_palette_flag = g_log_palette_mode;
 	int old_biomorph = g_user_biomorph;
 	int old_decomposition = g_decomposition[0];
 	int old_fill_color = g_fill_color;
@@ -191,7 +191,7 @@ int get_toggles()
 		outsidemodes, NUM_OF(outsidemodes), g_outside >= 0 ? 0 : -g_outside);
 	char *savenameptr = save_name();
 	dialog.push("Savename (.GIF implied)", savenameptr);
-	dialog.push("File Overwrite ('overwrite=')", g_fractal_overwrite ? true : false);
+	dialog.push("File Overwrite ('overwrite=')", g_fractal_overwrite);
 	const char *soundmodes[5] =
 	{
 		"off", "beep", "x", "y", "z"
@@ -200,7 +200,7 @@ int get_toggles()
 		soundmodes, NUM_OF(soundmodes), old_sound_flags & SOUNDFLAG_ORBITMASK);
 	if (g_ranges_length == 0)
 	{
-		dialog.push("Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)", g_log_palette_flag);
+		dialog.push("Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)", g_log_palette_mode);
 	}
 	else
 	{
@@ -314,11 +314,11 @@ int get_toggles()
 	::strcpy(savenameptr, dialog.values(++k).uval.sval);
 	if (::strcmp(g_save_name, previous_save_name))
 	{
-		g_resave_flag = RESAVE_NO;
-		g_started_resaves = FALSE; /* forget pending increment */
+		g_resave_mode = RESAVE_NO;
+		g_started_resaves = false; /* forget pending increment */
 	}
 
-	g_fractal_overwrite = dialog.values(++k).uval.ch.val;
+	g_fractal_overwrite = (dialog.values(++k).uval.ch.val != 0);
 
 	g_sound_state.set_flags((g_sound_state.flags() & ~SOUNDFLAG_ORBITMASK) | dialog.values(++k).uval.ch.val);
 	if ((g_sound_state.flags() != old_sound_flags)
@@ -328,11 +328,11 @@ int get_toggles()
 		j++;
 	}
 
-	g_log_palette_flag = dialog.values(++k).uval.Lval;
-	if (g_log_palette_flag != old_log_palette_flag)
+	g_log_palette_mode = dialog.values(++k).uval.Lval;
+	if (g_log_palette_mode != old_log_palette_flag)
 	{
 		j++;
-		g_log_automatic_flag = FALSE;  /* turn it off, use the supplied value */
+		g_log_automatic_flag = false;  /* turn it off, use the supplied value */
 	}
 
 	g_user_biomorph = dialog.values(++k).uval.ival;
@@ -406,7 +406,7 @@ int get_toggles2()
 	dialog.push("Potential Max Color (0 means off)", (int) old_potparam[0]);
 	dialog.push("          Slope", old_potparam[1]);
 	dialog.push("          Bailout", (int) old_potparam[2]);
-	dialog.push("          16 bit values", g_potential_16bit ? true : false);
+	dialog.push("          16 bit values", g_potential_16bit);
 	dialog.push("Distance Estimator (0=off, <0=edge, >0=on):", g_user_distance_test);
 	dialog.push("          width factor:", g_distance_test_width);
 	{
@@ -464,9 +464,9 @@ int get_toggles2()
 		j = 1;
 	}
 
-	if (dialog.values(++k).uval.ch.val != g_potential_16bit)
+	if (dialog.values(++k).uval.ch.val != (g_potential_16bit ? 1 : 0))
 	{
-		g_potential_16bit = dialog.values(k).uval.ch.val;
+		g_potential_16bit = (dialog.values(k).uval.ch.val != 0);
 		if (g_potential_16bit)  /* turned it on */
 		{
 			if (g_potential_parameter[0] != 0.0)
@@ -482,7 +482,7 @@ int get_toggles2()
 			}
 			else /* keep disk video, but ditch the fraction part at end */
 			{
-				g_disk_16bit = 0;
+				g_disk_16bit = false;
 			}
 		}
 	}
@@ -654,7 +654,7 @@ int get_view_params()
 	int x_max;
 	int y_max;
 	driver_get_max_screen(x_max, y_max);
-	int old_viewwindow = g_view_window;
+	bool old_viewwindow = g_view_window;
 	float old_viewreduction = g_view_reduction;
 	float old_aspectratio = g_final_aspect_ratio;
 	int old_viewxdots = g_view_x_dots;
@@ -668,10 +668,10 @@ get_view_restart:
 
 		if (!driver_diskp())
 		{
-			dialog.push("Preview display? (no for full screen)", g_view_window ? true : false);
+			dialog.push("Preview display? (no for full screen)", g_view_window);
 			dialog.push("Auto window size reduction factor", g_view_reduction);
 			dialog.push("Final media overall aspect ratio, y/x", g_final_aspect_ratio);
-			dialog.push("Crop starting coordinates to new aspect ratio?", g_view_crop ? true : false);
+			dialog.push("Crop starting coordinates to new aspect ratio?", g_view_crop);
 			dialog.push("Explicit size x pixels (0 for auto size)", g_view_x_dots);
 			dialog.push("              y pixels (0 to base on aspect ratio)", g_view_y_dots);
 		}
@@ -694,11 +694,11 @@ get_view_restart:
 
 		if (i == FIK_F4 && !driver_diskp())
 		{
-			g_view_window = 0;
+			g_view_window = false;
 			g_view_x_dots = 0;
 			g_view_y_dots = 0;
 			g_view_reduction = 4.2f;
-			g_view_crop = 1;
+			g_view_crop = true;
 			g_final_aspect_ratio = g_screen_aspect_ratio;
 			g_screen_width = old_sxdots;
 			g_screen_height = old_sydots;
@@ -708,10 +708,10 @@ get_view_restart:
 		int k = -1;
 		if (!driver_diskp())
 		{
-			g_view_window = dialog.values(++k).uval.ch.val;
+			g_view_window = (dialog.values(++k).uval.ch.val != 0);
 			g_view_reduction = (float) dialog.values(++k).uval.dval;
 			g_final_aspect_ratio = (float) dialog.values(++k).uval.dval;
-			g_view_crop = dialog.values(++k).uval.ch.val;
+			g_view_crop = (dialog.values(++k).uval.ch.val != 0);
 			g_view_x_dots = dialog.values(++k).uval.ival;
 			g_view_y_dots = dialog.values(++k).uval.ival;
 		}
@@ -789,7 +789,7 @@ int get_command_string()
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
-		if (DEBUGFLAG_REAL_POPCORN == g_debug_flag)
+		if (DEBUGMODE_REAL_POPCORN == g_debug_mode)
 		{
 			backwards_v18();
 			backwards_v19();
@@ -953,7 +953,7 @@ int get_random_dot_stereogram_parameters()
 		uvalues[k].uval.ch.llen = 3;
 		uvalues[k++].uval.ch.val  = g_calibrate;
 
-		uvalues[k].uval.ch.val = g_image_map;
+		uvalues[k].uval.ch.val = g_image_map ? 1 : 0;
 		uvalues[k++].type = 'y';
 
 
@@ -1000,8 +1000,8 @@ int get_random_dot_stereogram_parameters()
 			g_auto_stereo_depth = uvalues[k++].uval.ival;
 			g_auto_stereo_width = uvalues[k++].uval.dval;
 			g_grayscale_depth = uvalues[k++].uval.ch.val;
-			g_calibrate        = (char)uvalues[k++].uval.ch.val;
-			g_image_map        = (char)uvalues[k++].uval.ch.val;
+			g_calibrate = (char) uvalues[k++].uval.ch.val;
+			g_image_map = (uvalues[k++].uval.ch.val != 0);
 			if (*g_stereo_map_name && g_image_map)
 			{
 				reuse         = (char)uvalues[k++].uval.ch.val;
@@ -1857,7 +1857,7 @@ int get_corners()
 	const char *xprompt = "          X";
 	const char *yprompt = "          Y";
 	const char *zprompt = "          Z";
-	BYTE ousemag = g_use_center_mag;
+	bool ousemag = g_use_center_mag;
 	double oxxmin = g_escape_time_state.m_grid_fp.x_min();
 	double oxxmax = g_escape_time_state.m_grid_fp.x_max();
 	double oyymin = g_escape_time_state.m_grid_fp.y_min();
@@ -1868,11 +1868,7 @@ int get_corners()
 gc_loop:
 	{
 		UIChoices dialog(HELPCOORDS, "Image Coordinates", 0x90);
-		int cmag = g_use_center_mag;
-		if (g_orbit_draw_mode == ORBITDRAW_LINE)
-		{
-			cmag = 0;
-		}
+		bool center_mag = (g_orbit_draw_mode == ORBITDRAW_LINE) ? false : g_use_center_mag;
 		double Yctr;
 		double Xctr;
 		double Skew;
@@ -1881,7 +1877,7 @@ gc_loop:
 		double Xmagfactor;
 		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
-		if (cmag)
+		if (center_mag)
 		{
 			dialog.push("Center X", Xctr);
 			dialog.push("Center Y", Yctr);
@@ -1957,7 +1953,7 @@ gc_loop:
 			goto gc_loop;
 		}
 
-		if (cmag)
+		if (center_mag)
 		{
 			if (cmpdbl(Xctr, dialog.values(0).uval.dval)
 				|| cmpdbl(Yctr, dialog.values(1).uval.dval)
@@ -2013,11 +2009,11 @@ gc_loop:
 			if (!g_use_center_mag)
 			{
 				convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-				g_use_center_mag = TRUE;
+				g_use_center_mag = true;
 			}
 			else
 			{
-				g_use_center_mag = FALSE;
+				g_use_center_mag = false;
 			}
 			goto gc_loop;
 		}
@@ -2046,7 +2042,7 @@ static int get_screen_corners()
 	const char *xprompt = "          X";
 	const char *yprompt = "          Y";
 	const char *zprompt = "          Z";
-	BYTE ousemag = g_use_center_mag;
+	bool ousemag = g_use_center_mag;
 	double svxxmin = g_escape_time_state.m_grid_fp.x_min();  /* save these for later since convert_corners modifies them */
 	double svxxmax = g_escape_time_state.m_grid_fp.x_max();  /* and we need to set them for convert_center_mag to work */
 	double svxx3rd = g_escape_time_state.m_grid_fp.x_3rd();
@@ -2078,7 +2074,6 @@ static int get_screen_corners()
 gsc_loop:
 	{
 		UIChoices dialog(HELPSCRNCOORDS, "Screen Coordinates", 0x90);
-		int cmag = g_use_center_mag;
 		double Skew;
 		double Rotation;
 		LDBL Magnification;
@@ -2087,7 +2082,7 @@ gsc_loop:
 		double Xctr;
 		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 
-		if (cmag)
+		if (g_use_center_mag)
 		{
 			dialog.push("Center X", Xctr);
 			dialog.push("Center Y", Yctr);
@@ -2163,7 +2158,7 @@ gsc_loop:
 			goto gsc_loop;
 		}
 
-		if (cmag)
+		if (g_use_center_mag)
 		{
 			if (cmpdbl(Xctr, dialog.values(0).uval.dval)
 				|| cmpdbl(Yctr, dialog.values(1).uval.dval)
@@ -2215,11 +2210,11 @@ gsc_loop:
 			if (!g_use_center_mag)
 			{
 				convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-				g_use_center_mag = TRUE;
+				g_use_center_mag = true;
 			}
 			else
 			{
-				g_use_center_mag = FALSE;
+				g_use_center_mag = false;
 			}
 			goto gsc_loop;
 		}
@@ -2264,23 +2259,23 @@ gsc_loop:
 
 int get_browse_parameters()
 {
-	int old_autobrowse = g_auto_browse;
-	int old_brwschecktype = g_browse_check_type;
-	int old_brwscheckparms = g_browse_check_parameters;
-	bool old_doublecaution = g_ui_state.double_caution;
-	int old_minbox = g_cross_hair_box_size;
-	double old_toosmall = g_too_small;
-	char old_browsemask[FILE_MAX_FNAME];
-	strcpy(old_browsemask, g_browse_mask);
+	bool old_auto_browse = g_auto_browse;
+	bool old_browse_check_type = g_browse_check_type;
+	bool old_browse_check_parameters = g_browse_check_parameters;
+	bool old_double_caution = g_ui_state.double_caution;
+	int old_cross_hair_box_size = g_cross_hair_box_size;
+	double old_too_small = g_too_small;
+	char old_browse_mask[FILE_MAX_FNAME];
+	strcpy(old_browse_mask, g_browse_mask);
 
 get_brws_restart:
 	{
 		UIChoices dialog(HELPBRWSPARMS, "Browse ('L'ook) Mode Options", 16);
 
-		dialog.push("Autobrowsing? (y/n)", g_auto_browse ? true : false);
+		dialog.push("Autobrowsing? (y/n)", g_auto_browse);
 		dialog.push("Ask about GIF video mode? (y/n)", g_ui_state.ask_video);
-		dialog.push("Check fractal type? (y/n)", g_browse_check_type ? true : false);
-		dialog.push("Check fractal parameters (y/n)", g_browse_check_parameters ? true : false);
+		dialog.push("Check fractal type? (y/n)", g_browse_check_type);
+		dialog.push("Check fractal parameters (y/n)", g_browse_check_parameters);
 		dialog.push("Confirm file deletes (y/n)", g_ui_state.double_caution);
 		dialog.push("Smallest window to display (size in pixels)", static_cast<float>(g_too_small));
 		dialog.push("Smallest box size shown before crosshairs used (pix)", g_cross_hair_box_size);
@@ -2297,10 +2292,10 @@ get_brws_restart:
 		if (result == FIK_F4)
 		{
 			g_too_small = 6;
-			g_auto_browse = FALSE;
+			g_auto_browse = false;
 			g_ui_state.ask_video = true;
-			g_browse_check_parameters = TRUE;
-			g_browse_check_type  = TRUE;
+			g_browse_check_parameters = true;
+			g_browse_check_type  = true;
 			g_ui_state.double_caution  = true;
 			g_cross_hair_box_size = 3;
 			strcpy(g_browse_mask, "*.gif");
@@ -2308,10 +2303,10 @@ get_brws_restart:
 		}
 
 		int k = -1;
-		g_auto_browse = dialog.values(++k).uval.ch.val;
+		g_auto_browse = (dialog.values(++k).uval.ch.val != 0);
 		g_ui_state.ask_video = (dialog.values(++k).uval.ch.val != 0);
-		g_browse_check_type = (char) dialog.values(++k).uval.ch.val;
-		g_browse_check_parameters = (char) dialog.values(++k).uval.ch.val;
+		g_browse_check_type = (dialog.values(++k).uval.ch.val != 0);
+		g_browse_check_parameters = (dialog.values(++k).uval.ch.val != 0);
 		g_ui_state.double_caution = (dialog.values(++k).uval.ch.val != 0);
 		g_too_small  = dialog.values(++k).uval.dval;
 		if (g_too_small < 0)
@@ -2330,19 +2325,19 @@ get_brws_restart:
 		strcpy(g_browse_mask, dialog.values(++k).uval.sval);
 
 		int i = 0;
-		if (g_auto_browse != old_autobrowse ||
-			g_browse_check_type != old_brwschecktype ||
-			g_browse_check_parameters != old_brwscheckparms ||
-			g_ui_state.double_caution != old_doublecaution ||
-			g_too_small != old_toosmall ||
-			g_cross_hair_box_size != old_minbox ||
-			!stricmp(g_browse_mask, old_browsemask))
+		if (g_auto_browse != old_auto_browse ||
+			g_browse_check_type != old_browse_check_type ||
+			g_browse_check_parameters != old_browse_check_parameters ||
+			g_ui_state.double_caution != old_double_caution ||
+			g_too_small != old_too_small ||
+			g_cross_hair_box_size != old_cross_hair_box_size ||
+			!stricmp(g_browse_mask, old_browse_mask))
 		{
 			i = -3;
 		}
-		if (g_evolving)  /* can't browse */
+		if (g_evolving_flags)  /* can't browse */
 		{
-			g_auto_browse = 0;
+			g_auto_browse = false;
 			i = 0;
 		}
 

@@ -50,8 +50,8 @@ static void step_col_row()
 int boundary_trace_main()
 {
 	enum direction coming_from;
-	unsigned int match_found;
-	unsigned int continue_loop;
+	int matches_found;
+	bool continue_loop;
 	int trail_color;
 	int fillcolor_used;
 	int last_fillcolor_used = -1;
@@ -116,8 +116,8 @@ int boundary_trace_main()
 			fillcolor_used = g_fill_color > 0 ? g_fill_color : trail_color;
 			coming_from = West;
 			s_going_to = East;
-			match_found = 0;
-			continue_loop = TRUE;
+			matches_found = 0;
+			continue_loop = true;
 			do
 			{
 				step_col_row();
@@ -144,9 +144,9 @@ int boundary_trace_main()
 					}
 					else if (g_color == trail_color)
 					{
-						if (match_found < 4) /* to keep it from overflowing */
+						if (matches_found < 4) /* to keep it from overflowing */
 						{
-							match_found++;
+							matches_found++;
 						}
 						s_trail_row = g_row;
 						s_trail_col = g_col;
@@ -155,18 +155,18 @@ int boundary_trace_main()
 					else
 					{
 						advance_no_match();
-						continue_loop = s_going_to != coming_from || match_found;
+						continue_loop = (s_going_to != coming_from) || (matches_found > 0);
 					}
 				}
 				else
 				{
 					advance_no_match();
-					continue_loop = s_going_to != coming_from || match_found;
+					continue_loop = (s_going_to != coming_from) || (matches_found > 0);
 				}
 			}
 			while (continue_loop && (g_col != g_current_col || g_row != g_current_row));
 
-			if (match_found <= 3)  /* DG */
+			if (matches_found <= 3)  /* DG */
 			{
 				/* no hole */
 				g_color = bkcolor;
@@ -184,7 +184,7 @@ int boundary_trace_main()
 			s_going_to = East;
 			do
 			{
-				match_found = FALSE;
+				matches_found = 0;
 				do
 				{
 					step_col_row();
@@ -252,16 +252,16 @@ int boundary_trace_main()
 						s_trail_row = g_row;
 						s_trail_col = g_col;
 						advance_match();
-						match_found = TRUE;
+						matches_found = 1;
 					}
 					else
 					{
 						advance_no_match();
 					}
 				}
-				while (!match_found && s_going_to != coming_from);
+				while ((matches_found == 0) && s_going_to != coming_from);
 
-				if (!match_found)
+				if (matches_found == 0)
 				{ /* next one has to be a match */
 					step_col_row();
 					s_trail_row = g_row;

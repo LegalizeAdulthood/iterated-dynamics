@@ -942,7 +942,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			else
 			{
 #ifdef USE_LONG_DOUBLE
-				if (DEBUGFLAG_MORE_DIGITS == g_debug_flag)
+				if (DEBUGMODE_MORE_DIGITS == g_debug_mode)
 				{
 					put_parm(" params=%.17Lg", (long double)g_parameters[0]);
 				}
@@ -961,7 +961,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 				else
 				{
 #ifdef USE_LONG_DOUBLE
-					if (DEBUGFLAG_MORE_DIGITS == g_debug_flag)
+					if (DEBUGMODE_MORE_DIGITS == g_debug_mode)
 					{
 						put_parm("/%.17Lg", (long double)g_parameters[j]);
 					}
@@ -974,11 +974,11 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			}
 		}
 
-		if (g_use_initial_orbit_z == 2)
+		if (g_use_initial_orbit_z == INITIALZ_PIXEL)
 		{
 			put_parm(" initorbit=pixel");
 		}
-		else if (g_use_initial_orbit_z == 1)
+		else if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 		{
 			put_parm(" initorbit=%.15g/%.15g", g_initial_orbit_z.x, g_initial_orbit_z.y);
 		}
@@ -1120,24 +1120,24 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			}
 		}
 
-		if (g_log_palette_flag && !g_ranges_length)
+		if (g_log_palette_mode && !g_ranges_length)
 		{
 			put_parm(" logmap=");
-			if (g_log_palette_flag == LOGPALETTE_OLD)
+			if (g_log_palette_mode == LOGPALETTE_OLD)
 			{
 				put_parm("old");
 			}
-			else if (g_log_palette_flag == LOGPALETTE_STANDARD)
+			else if (g_log_palette_mode == LOGPALETTE_STANDARD)
 			{
 				put_parm("yes");
 			}
 			else
 			{
-				put_parm("%ld", g_log_palette_flag);
+				put_parm("%ld", g_log_palette_mode);
 			}
 		}
 
-		if (g_log_dynamic_calculate && g_log_palette_flag && !g_ranges_length)
+		if (g_log_dynamic_calculate && g_log_palette_mode && !g_ranges_length)
 		{
 			put_parm(" logmode=");
 			if (g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)
@@ -1224,7 +1224,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			put_parm(" periodicity=%d", g_periodicity_check);
 		}
 
-		if (g_random_flag)
+		if (g_use_fixed_random_seed)
 		{
 			put_parm(" rseed=%d", g_random_seed);
 		}
@@ -1254,7 +1254,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 
 	/***** universal parameters in this section *****/
 
-	if (g_view_window == 1)
+	if (g_view_window)
 	{
 		put_parm(" viewwindows=%g/%g", g_view_reduction, g_final_aspect_ratio);
 		put_parm(g_view_crop ? "/yes" : "/no");
@@ -1285,7 +1285,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			put_parm(" orbitinterval=%d", g_orbit_interval);
 		}
 
-		if (g_start_show_orbit > 0)
+		if (g_start_show_orbit)
 		{
 			put_parm(" showorbit=yes");
 		}
@@ -1381,7 +1381,7 @@ docolors:
 				{
 					break;
 				}
-				if (DEBUGFLAG_COLORS_LOSSLESS == g_debug_flag)  /* lossless compression */
+				if (DEBUGMODE_COLORS_LOSSLESS == g_debug_mode)  /* lossless compression */
 				{
 					continue;
 				}
@@ -1412,7 +1412,7 @@ docolors:
 						for (j = 0; j < 3; ++j)  /* check pattern of chg per color */
 						{
 							/* Sylvie Gallet's fix */
-							if (g_debug_flag != DEBUGFLAG_NO_COLORS_FIX && scanc > (curc + 4) && scanc < maxcolor-5)
+							if (g_debug_mode != DEBUGMODE_NO_COLORS_FIX && scanc > (curc + 4) && scanc < maxcolor-5)
 							{
 								if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
 										- g_dac_box[scanc + 5][j]) >= 2)
@@ -1636,9 +1636,9 @@ static int getprec(double a, double b, double c)
 		diff = temp;
 	}
 	digits = 7;
-	if (g_debug_flag >= DEBUGFLAG_SET_DIGITS_MIN && g_debug_flag < DEBUGFLAG_SET_DIGITS_MAX)
+	if (g_debug_mode >= DEBUGMODE_SET_DIGITS_MIN && g_debug_mode < DEBUGMODE_SET_DIGITS_MAX)
 	{
-		digits =  g_debug_flag - DEBUGFLAG_SET_DIGITS_MIN;
+		digits =  g_debug_mode - DEBUGMODE_SET_DIGITS_MIN;
 	}
 	while (diff < 1.0 && digits <= DBL_DIG + 1)
 	{
@@ -1859,8 +1859,8 @@ void edit_text_colors()
 	int j;
 	int k;
 
-	save_debugflag = g_debug_flag;
-	g_debug_flag =	0;	 /*	don't get called recursively */
+	save_debugflag = g_debug_mode;
+	g_debug_mode =	0;	 /*	don't get called recursively */
 	MouseModeSaver saved_mouse(LOOK_MOUSE_TEXT); /* text mouse sensitivity */
 	row	= col =	bkgrd =	rowt = rowf	= colt = colf =	0;
 
@@ -1888,7 +1888,7 @@ void edit_text_colors()
 		switch (i)
 		{
 		case FIK_ESC:
-			g_debug_flag =	save_debugflag;
+			g_debug_mode =	save_debugflag;
 			driver_hide_text_cursor();
 			return;
 		case '/':
@@ -2338,7 +2338,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 
 	temp = &g_old_dac_box[0][0];                 /* a safe place for our temp data */
 
-	g_gif87a_flag = 1;                        /* for now, force this */
+	g_gif87a_flag = true;                        /* for now, force this */
 
 	/* process each input image, one at a time */
 	for (ystep = 0; ystep < ymult; ystep++)
@@ -2509,7 +2509,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 					{
 						inputerrorflag = 9;
 					}
-					if ((!g_gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+					if (!g_gif87a_flag && (xstep == xmult-1) && (ystep == ymult-1))
 					{
 						if (fwrite(temp, 2, 1, out) != 1)
 						{
@@ -2542,7 +2542,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						{
 							inputerrorflag = 11;
 						}
-						if ((!g_gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
+						if (!g_gif87a_flag && (xstep == xmult-1) && (ystep == ymult-1))
 						{
 							if (fwrite(temp, i, 1, out) != 1)
 							{

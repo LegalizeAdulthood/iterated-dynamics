@@ -72,7 +72,7 @@ char *g_fract_dir2 = "";
 */
 int     g_dot_mode;                /* video access method      */
 int     textsafe2;              /* textsafe override from g_video_table */
-int     g_ok_to_print;              /* 0 if printf() won't work */
+bool g_ok_to_print;              /* 0 if printf() won't work */
 int     g_screen_width;
 int		g_screen_height;          /* # of dots on the physical screen    */
 int     g_sx_offset;
@@ -104,7 +104,7 @@ double  g_attractor_radius_fp;               /* finite attractor radius  */
 int     g_bit_shift;               /* fudgefactor              */
 
 int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
-int g_has_inverse = 0;
+bool g_has_inverse = false;
 /* note that integer grid is set when g_integer_fractal && !invert;    */
 /* otherwise the floating point grid is set; never both at once     */
 long    *g_x0_l;
@@ -117,15 +117,15 @@ double	*g_x0;
 double	*g_y0;      /* floating pt equivs */
 double	*g_x1;
 double	*g_y1;
-int     g_integer_fractal;         /* TRUE if fractal uses integer math */
+int     g_integer_fractal;         /* true if fractal uses integer math */
 /* usr_xxx is what the user wants, vs what we may be forced to do */
 char    g_user_standard_calculation_mode;
 int     g_user_periodicity_check;
 long    g_user_distance_test;
-char    g_user_float_flag;
-int     g_view_window;             /* 0 for full screen, 1 for window */
+int g_user_float_flag;
+bool g_view_window;             /* 0 for full screen, 1 for window */
 float   g_view_reduction;          /* window auto-sizing */
-int     g_view_crop;               /* nonzero to crop default coords */
+bool g_view_crop;               /* nonzero to crop default coords */
 float   g_final_aspect_ratio;       /* for view shape and rotation */
 int     g_view_x_dots;
 int		g_view_y_dots;    /* explicit view sizing */
@@ -133,8 +133,8 @@ int		g_max_history = 10;
 /* variables defined by the command line/files processor */
 int     g_compare_gif = 0;                   /* compare two gif files flag */
 int     g_timed_save = 0;                    /* when doing a timed save */
-int     g_resave_flag = RESAVE_NO;                  /* tells encoder not to incr filename */
-int     g_started_resaves = FALSE;              /* but incr on first resave */
+int     g_resave_mode = RESAVE_NO;                  /* tells encoder not to incr filename */
+bool g_started_resaves = false;              /* but incr on first resave */
 int     g_save_system;                    /* from and for save files */
 int     g_tab_mode = 1;                    /* tab display enabled */
 /* for historical reasons (before rotation):         */
@@ -172,26 +172,23 @@ int		g_calculation_status = CALCSTAT_NO_FRACTAL;
 					  /*  4 completed                    */
 long	g_calculation_time;
 int		g_max_colors;                         /* maximum palette size */
-int		g_zoom_off;                     /* = 0 when zoom is disabled    */
+bool g_zoom_off;                     /* = 0 when zoom is disabled    */
 int		g_save_dac;                     /* save-the-Video DAC flag      */
-int		g_browsing;                 /* browse mode flag */
+bool g_browsing;                 /* browse mode flag */
 char	g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while browsing */
 int		g_name_stack_ptr;
 double	g_too_small;
 int		g_cross_hair_box_size;
-int		g_no_sub_images;
-int		g_auto_browse;
+bool g_no_sub_images;
+bool g_auto_browse;
 
 UserInterfaceState g_ui_state;
 
-char	g_browse_check_parameters;
-char	g_browse_check_type;
+bool g_browse_check_parameters;
+bool g_browse_check_type;
 char	g_browse_mask[FILE_MAX_FNAME];
 char	g_exe_path[FILE_MAX_PATH] = { 0 };
 
-#define RESTART           1
-#define IMAGESTART        2
-#define RESTORESTART      3
 #define CONTINUE          4
 
 void check_same_name()
@@ -249,29 +246,29 @@ static void set_exe_path(char *path)
 
 static void set_cpu_fpu()
 {
-	if (DEBUGFLAG_NO_FPU == g_debug_flag)
+	if (DEBUGMODE_NO_FPU == g_debug_mode)
 	{
 		g_fpu =   0; /* for testing purposes */
 	}
 }
 
-static void main_restart(int argc, char *argv[], int &stacked)
+static void main_restart(int argc, char *argv[], bool &screen_stacked)
 {
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
 #endif
-	g_auto_browse     = FALSE;
-	g_browse_check_type  = TRUE;
-	g_browse_check_parameters = TRUE;
+	g_auto_browse     = false;
+	g_browse_check_type  = true;
+	g_browse_check_parameters = true;
 	g_ui_state.double_caution = true;
-	g_no_sub_images = FALSE;
+	g_no_sub_images = false;
 	g_too_small = 6;
 	g_cross_hair_box_size   = 3;
 	strcpy(g_browse_mask, "*.gif");
 	strcpy(g_browse_name, "            ");
 	g_name_stack_ptr = -1; /* init loaded files stack */
 
-	g_evolving = FALSE;
+	g_evolving_flags = EVOLVE_NONE;
 	g_parameter_range_x = 4;
 	g_parameter_offset_x = -2.0;
 	g_new_parameter_offset_x = -2.0;
@@ -285,7 +282,7 @@ static void main_restart(int argc, char *argv[], int &stacked)
 	g_fiddle_reduction = 1.0;
 	g_this_generation_random_seed = (unsigned int)clock_ticks();
 	srand(g_this_generation_random_seed);
-	g_start_show_orbit = 0;
+	g_start_show_orbit = false;
 	g_show_dot = -1; /* turn off g_show_dot if entered with <g> command */
 	g_calculation_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
 
@@ -295,7 +292,7 @@ static void main_restart(int argc, char *argv[], int &stacked)
 
 	history_allocate();
 
-	if (DEBUGFLAG_ABORT_SAVENAME == g_debug_flag && g_initialize_batch == INITBATCH_NORMAL)   /* abort if savename already exists */
+	if (DEBUGMODE_ABORT_SAVENAME == g_debug_mode && g_initialize_batch == INITBATCH_NORMAL)   /* abort if savename already exists */
 	{
 		check_same_name();
 	}
@@ -327,16 +324,16 @@ static void main_restart(int argc, char *argv[], int &stacked)
 		}
 	}
 
-	g_browsing = FALSE;
+	g_browsing = false;
 
 	if (!g_function_preloaded)
 	{
 		set_if_old_bif();
 	}
-	stacked = 0;
+	screen_stacked = false;
 }
 
-static int main_restore_restart(int &stacked, int &resume_flag)
+static bool main_restore_restart(bool &screen_stacked, bool &resume_flag)
 {
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
@@ -381,16 +378,16 @@ static int main_restore_restart(int &stacked, int &resume_flag)
 			strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_name);
 		}
 
-		g_evolving = EVOLVE_NONE;
-		g_view_window = 0;
+		g_evolving_flags = EVOLVE_NONE;
+		g_view_window = false;
 		g_show_file = 1;
 		set_help_mode(-1);
 		g_tab_mode = 1;
-		if (stacked)
+		if (screen_stacked)
 		{
 			driver_discard_screen();
 			driver_set_for_text();
-			stacked = 0;
+			screen_stacked = false;
 		}
 		if (read_overlay() == 0)       /* read hdr, get video mode */
 		{
@@ -403,34 +400,34 @@ static int main_restore_restart(int &stacked, int &resume_flag)
 	g_tab_mode = 1;
 	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
 
-	if (((g_overlay_3d && !g_initialize_batch) || stacked) && g_init_mode < 0)        /* overlay command failed */
+	if (((g_overlay_3d && !g_initialize_batch) || screen_stacked) && g_init_mode < 0)        /* overlay command failed */
 	{
 		driver_unstack_screen();                  /* restore the graphics screen */
-		stacked = 0;
+		screen_stacked = false;
 		g_overlay_3d = 0;                    /* forget overlays */
 		g_display_3d = DISPLAY3D_NONE;
 		if (g_calculation_status == CALCSTAT_NON_RESUMABLE)
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
-		resume_flag = 1;
-		return TRUE;
+		resume_flag = true;
+		return true;
 	}
 
 	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
-	return FALSE;
+	return false;
 }
 
-static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
+static int main_image_start(bool &screen_stacked, int &kbdchar, bool &resume_flag)
 {
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
 #endif
 
-	if (stacked)
+	if (screen_stacked)
 	{
 		driver_discard_screen();
-		stacked = 0;
+		screen_stacked = false;
 	}
 #ifdef XFRACT
 	g_user_float_flag = 1;
@@ -464,7 +461,7 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 		kbdchar = main_menu(0);
 		if (kbdchar == FIK_INSERT) /* restart pgm on Insert Key  */
 		{
-			return RESTART;
+			return APPSTATE_RESTART;
 		}
 		if (kbdchar == FIK_DELETE)                    /* select video mode list */
 		{
@@ -493,7 +490,7 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 #endif
 #endif
 			driver_shell();
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 
 #ifndef XFRACT
@@ -504,7 +501,7 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 		{
 			if ((get_commands() & Command::ThreeDYes) == 0)
 			{
-				return IMAGESTART;
+				return APPSTATE_IMAGE_START;
 			}
 			kbdchar = '3';                         /* 3d=y so fall thru '3' code */
 		}
@@ -525,75 +522,73 @@ static int main_image_start(int &stacked, int &kbdchar, int &resumeflag)
 			}
 			driver_set_for_text(); /* switch to text mode */
 			g_show_file = -1;
-			return RESTORESTART;
+			return APPSTATE_RESTORE_START;
 		}
 		if (kbdchar == 't')  /* set fractal type */
 		{
-			g_julibrot = FALSE;
+			g_julibrot = false;
 			get_fractal_type();
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == 'x')  /* generic toggle switch */
 		{
 			get_toggles();
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == 'y')  /* generic toggle switch */
 		{
 			get_toggles2();
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == 'z')  /* type specific parms */
 		{
 			get_fractal_parameters(1);
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == 'v')  /* view parameters */
 		{
 			get_view_params();
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == FIK_CTL_B)  /* ctrl B = browse parms*/
 		{
 			get_browse_parameters();
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == FIK_CTL_F)  /* ctrl f = sound parms*/
 		{
 			g_sound_state.get_parameters();
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == 'f')  /* floating pt toggle */
 		{
 			g_user_float_flag = (g_user_float_flag == 0) ? 1 : 0;
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == 'i')  /* set 3d fractal parms */
 		{
 			get_fractal_3d_parameters(); /* get the parameters */
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		if (kbdchar == 'g')
 		{
 			get_command_string(); /* get command string */
-			return IMAGESTART;
+			return APPSTATE_IMAGE_START;
 		}
 		/* buzzer(2); */                          /* unrecognized key */
 	}
 
-	g_zoom_off = TRUE;                 /* zooming is enabled */
+	g_zoom_off = true;                 /* zooming is enabled */
 	set_help_mode(HELPMAIN);         /* now use this help mode */
-	resumeflag = 0;  /* allows taking goto inside big_while_loop() */
+	resume_flag = false;  /* allows taking goto inside big_while_loop() */
 
 	return 0;
 }
 
 int main(int argc, char **argv)
 {
-	int resumeflag;
 	int kbdchar;						/* keyboard key-hit value       */
 	int kbdmore;						/* continuation variable        */
-	int stacked = 0;						/* flag to indicate screen stacked */
 
 	set_exe_path(argv[0]);
 
@@ -623,28 +618,28 @@ int main(int argc, char **argv)
 	/* load fractint.cfg, match against driver supplied modes */
 	load_fractint_config();
 	init_help();
+	bool resume_flag = false;
+	bool screen_stacked = false;
 
-/*********************************************************************************************/
-restart:   /* insert key re-starts here */
-	main_restart(argc, argv, stacked);
+restart:
+	/* insert key re-starts here */
+	main_restart(argc, argv, screen_stacked);
 
-/*********************************************************************************************/
 restorestart:
-	if (main_restore_restart(stacked, resumeflag))
+	if (main_restore_restart(screen_stacked, resume_flag))
 	{
 		goto resumeloop;
 	}
 
-/*********************************************************************************************/
-imagestart:                             /* calc/display a new image */
-	switch (main_image_start(stacked, kbdchar, resumeflag))
+imagestart:
+	/* calc/display a new image */
+	switch (main_image_start(screen_stacked, kbdchar, resume_flag))
 	{
-	case RESTART:		goto restart;
-	case RESTORESTART:	goto restorestart;
-	case IMAGESTART:	goto imagestart;
+	case APPSTATE_RESTART:		goto restart;
+	case APPSTATE_RESTORE_START:	goto restorestart;
+	case APPSTATE_IMAGE_START:	goto imagestart;
 	}
 
-/*********************************************************************************************/
 resumeloop:
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
@@ -652,11 +647,11 @@ resumeloop:
 
 	save_parameter_history();
 	/* this switch processes gotos that are now inside function */
-	switch (big_while_loop(&kbdmore, &stacked, resumeflag))
+	switch (big_while_loop(&kbdmore, screen_stacked, resume_flag))
 	{
-	case RESTART:		goto restart;
-	case IMAGESTART:	goto imagestart;
-	case RESTORESTART:	goto restorestart;
+	case APPSTATE_RESTART:		goto restart;
+	case APPSTATE_IMAGE_START:	goto imagestart;
+	case APPSTATE_RESTORE_START:	goto restorestart;
 	}
 
 	return 0;
@@ -678,7 +673,7 @@ int check_key()
 		driver_get_key();
 		if (!driver_diskp())
 		{
-			g_show_orbit = g_show_orbit ? FALSE : TRUE;
+			g_show_orbit = !g_show_orbit;
 		}
 	}
 	return 0;
@@ -708,10 +703,10 @@ va_dcl
 	subrtn = (int (*)())va_arg(arg_marker, int *);
 #endif
 
-	int do_bench = g_timer_flag; /* record time? */
+	bool do_bench = g_timer_flag; /* record time? */
 	if (timertype == 2)   /* encoder, record time only if debug = 200 */
 	{
-		do_bench = (DEBUGFLAG_TIME_ENCODER == g_debug_flag);
+		do_bench = (DEBUGMODE_TIME_ENCODER == g_debug_mode);
 	}
 	FILE *fp = NULL;
 	if (do_bench)

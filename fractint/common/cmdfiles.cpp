@@ -28,7 +28,7 @@ int     g_show_dot = -1;             /* color to show crawling graphics cursor *
 int     g_size_dot;                /* size of dot crawling cursor */
 char    g_record_colors;           /* default PAR color-writing method */
 char    g_auto_show_dot = 0;          /* dark, medium, bright */
-char    g_start_show_orbit = 0;      /* show orbits on at start of fractal */
+bool g_start_show_orbit = false;      /* show orbits on at start of fractal */
 char    g_read_name[FILE_MAX_PATH]; /* name of fractal input file */
 char    g_temp_dir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
 char    g_work_dir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
@@ -36,23 +36,23 @@ char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for org
 char    g_gif_mask[FILE_MAX_PATH] = {""};
 char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
 char    g_autokey_name[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
-int     g_potential_flag = FALSE;              /* continuous potential enabled? */
-int     g_potential_16bit;               /* store 16 bit continuous potential values */
-int     g_gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
-int     g_dither_flag;            /* 1 if want to dither GIFs */
-int		g_float_flag;
+bool g_potential_flag = false;              /* continuous potential enabled? */
+bool g_potential_16bit;               /* store 16 bit continuous potential values */
+bool g_gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
+bool g_dither_flag;            /* 1 if want to dither GIFs */
+bool g_float_flag;
 int     g_biomorph;               /* flag for g_biomorph */
 int     g_user_biomorph;
 int     g_force_symmetry;          /* force symmetry */
 int     g_show_file;               /* zero if file display pending */
-int g_random_flag;
+bool g_use_fixed_random_seed;
 int g_random_seed;           /* Random number seeding flag and value */
 int     g_decomposition[2];              /* Decomposition coloring */
 long    g_distance_test;
 int     g_distance_test_width;
-int		g_fractal_overwrite = FALSE;	/* 0 if file overwrite not allowed */
-int     g_debug_flag;              /* internal use only - you didn't see this */
-int     g_timer_flag;              /* you didn't see this, either */
+bool g_fractal_overwrite = false;	/* 0 if file overwrite not allowed */
+int     g_debug_mode;              /* internal use only - you didn't see this */
+bool g_timer_flag;              /* you didn't see this, either */
 int     g_cycle_limit;             /* color-rotator upper limit */
 int     g_inside;                 /* inside color: 1=blue     */
 int     g_fill_color;              /* fillcolor: -1=normal     */
@@ -65,10 +65,10 @@ int     g_check_current_dir;            /* flag to check current dir for files *
 int     g_initialize_batch = 0;			/* 1 if batch run (no kbd)  */
 int     g_save_time;           /* autosave minutes         */
 ComplexD  g_initial_orbit_z;              /* initial orbitvalue */
-char    g_use_initial_orbit_z;           /* flag for g_initial_orbit_z */
+InitialZType g_use_initial_orbit_z;           /* flag for g_initial_orbit_z */
 int     g_init_mode;               /* initial video mode       */
 int     g_initial_cycle_limit;         /* initial cycle limit      */
-int		g_use_center_mag;                 /* use center-mag corners   */
+bool g_use_center_mag;                 /* use center-mag corners   */
 long    g_bail_out;                /* user input bailout value */
 enum bailouts g_bail_out_test;       /* test used for determining bailout */
 double  g_inversion[3];           /* radius, xcenter, ycenter */
@@ -80,32 +80,32 @@ BYTE	*g_map_dac_box = NULL;     /* map= (default colors)    */
 int     g_color_state;				/* 0, g_dac_box matches default (bios or map=) */
 									/* 1, g_dac_box matches no known defined map   */
 									/* 2, g_dac_box matches the g_color_file map      */
-int     g_color_preloaded;         /* if g_dac_box preloaded for next mode select */
+bool g_color_preloaded;         /* if g_dac_box preloaded for next mode select */
 int     g_save_release;           /* release creating PAR file*/
-int		g_dont_read_color = FALSE;        /* flag for reading color from GIF */
+bool g_dont_read_color = false;        /* flag for reading color from GIF */
 double  g_math_tolerance[2] = {.05, .05};  /* For math transition */
 int		g_targa_output = 0;              /* 3D fullcolor flag */
 int		g_true_color = 0;              /* escape time truecolor flag */
 int		g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
 char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
-int		g_function_preloaded; /* if function loaded for new bifs, JCO 7/5/92 */
+bool g_function_preloaded; /* if function loaded for new bifurcations */
 float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;   /* aspect ratio of the screen */
 float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  /* how much drift is allowed and */
 								/* still forced to g_screen_aspect_ratio  */
 int		g_fast_restore = 0;          /* 1 - reset viewwindows prior to a restore
 								and do not display warnings when video
 								mode changes during restore */
-int		g_organize_formula_search = FALSE;            /* 1 - user has specified a directory for
+bool g_organize_formula_search = false;            /* 1 - user has specified a directory for
 									Orgform formula compilation files */
 int     g_orbit_save = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
 int		g_orbit_delay;                /* clock ticks delating orbit release */
 int     g_transparent[2];         /* transparency min/max values */
-long    g_log_palette_flag;                /* Logarithmic palette flag: 0 = no */
+long    g_log_palette_mode;                /* Logarithmic palette flag: 0 = no */
 int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;   /* calculate logmap on-the-fly */
-int     g_log_automatic_flag = FALSE;  /* auto calculate logmap */
-int     g_no_bof = FALSE; /* Flag to make inside=bof options not duplicate bof images */
-int		g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
-int		g_command_initialize = TRUE;               /* first time into command_files? */
+bool g_log_automatic_flag = false;  /* auto calculate logmap */
+bool g_no_bof = false; /* Flag to make inside=bof options not duplicate bof images */
+bool g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
+bool g_command_initialize = true;               /* first time into command_files? */
 FractalTypeSpecificData *g_current_fractal_specific = NULL;
 char	g_formula_filename[FILE_MAX_PATH]; /* file to find (type=)formulas in */
 char	g_formula_name[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
@@ -309,9 +309,9 @@ int command_files(int argc, char **argv)
 
 	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
 
-	if (g_debug_flag != DEBUGFLAG_NO_FIRST_INIT)
+	if (g_debug_mode != DEBUGMODE_NO_FIRST_INIT)
 	{
-		g_command_initialize = FALSE;
+		g_command_initialize = false;
 	}
 	/* PAR reads a file and sets color */
 	g_dont_read_color = (g_color_preloaded && (g_show_file == 0));
@@ -366,25 +366,25 @@ static void initialize_variables_restart()          /* <ins> key init */
 	int i;
 	g_record_colors = 'a';                  /* don't use mapfiles in PARs */
 	g_save_release = g_release;            /* this release number */
-	g_gif87a_flag = INIT_GIF87;            /* turn on GIF89a processing */
-	g_dither_flag = 0;                     /* no dithering */
+	g_gif87a_flag = false;            /* turn on GIF89a processing */
+	g_dither_flag = false;                     /* no dithering */
 	g_ui_state.ask_video = true;                        /* turn on video-prompt flag */
-	g_fractal_overwrite = FALSE;                 /* don't overwrite           */
+	g_fractal_overwrite = false;                 /* don't overwrite           */
 	g_sound_state.set_speaker_beep();		/* sound is on to PC speaker */
 	g_initialize_batch = INITBATCH_NONE;			/* not in batch mode         */
 	g_check_current_dir = 0;                     /* flag to check current dire for files */
 	g_save_time = 0;                    /* no auto-save              */
 	g_init_mode = -1;                       /* no initial video mode     */
-	g_view_window = 0;                      /* no view window            */
+	g_view_window = false;
 	g_view_reduction = 4.2f;
-	g_view_crop = 1;
+	g_view_crop = true;
 	g_final_aspect_ratio = g_screen_aspect_ratio;
 	g_view_x_dots = 0;
 	g_view_y_dots = 0;
 	g_orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
-	g_debug_flag = DEBUGFLAG_NONE;				/* debugging flag(s) are off */
-	g_timer_flag = 0;                       /* timer flags are off       */
+	g_debug_mode = DEBUGMODE_NONE;				/* debugging flag(s) are off */
+	g_timer_flag = false;                       /* timer flags are off       */
 	strcpy(g_formula_filename, "fractint.frm"); /* default formula file      */
 	g_formula_name[0] = 0;
 	strcpy(g_l_system_filename, "fractint.l");
@@ -398,13 +398,13 @@ static void initialize_variables_restart()          /* <ins> key init */
 	strcpy(g_ifs_filename, "fractint.ifs");
 	g_ifs_name[0] = 0;
 	reset_ifs_definition();
-	g_random_flag = 0;                           /* not a fixed srand() seed */
+	g_use_fixed_random_seed = false;                           /* not a fixed srand() seed */
 	g_random_seed = s_init_random_seed;
 	strcpy(g_read_name, DOTSLASH);           /* initially current directory */
 	g_show_file = 1;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	g_initial_cycle_limit = 55;                   /* spin-DAC default speed limit */
-	g_map_set = FALSE;                          /* no map= name active */
+	g_map_set = false;                          /* no map= name active */
 	if (g_map_dac_box)
 	{
 		free(g_map_dac_box);
@@ -420,7 +420,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 static void initialize_variables_fractal()          /* init vars affecting calculation */
 {
 	int i;
-	g_escape_exit_flag = FALSE;                     /* don't disable the "are you sure?" screen */
+	g_escape_exit_flag = false;                     /* don't disable the "are you sure?" screen */
 	g_user_periodicity_check = 1;            /* turn on periodicity    */
 	g_inside = 1;                          /* inside color = blue    */
 	g_fill_color = -1;                      /* no special fill color */
@@ -429,7 +429,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_max_iteration = 150;                         /* initial maxiter        */
 	g_user_standard_calculation_mode = 'g';               /* initial solid-guessing */
 	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
-	g_quick_calculate = FALSE;
+	g_quick_calculate = false;
 	g_proximity = 0.01;
 	g_is_mand = true;                          /* default formula mand/jul toggle */
 #ifndef XFRACT
@@ -443,8 +443,8 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	s_initial_corners = false;
 	s_initial_parameters = false;
 	g_bail_out = 0;                         /* no user-entered bailout */
-	g_no_bof = FALSE;  /* use normal bof initialization to make bof images */
-	g_use_initial_orbit_z = 0;
+	g_no_bof = false;  /* use normal bof initialization to make bof images */
+	g_use_initial_orbit_z = INITIALZ_NONE;
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
 		g_parameters[i] = 0.0;     /* initial parameter values */
@@ -469,8 +469,9 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_escape_time_state.m_grid_fp.y_min() = -1.5;
 	g_escape_time_state.m_grid_fp.y_max() = 1.5;						/* initial corner values  */
 	g_bf_math = 0;
-	g_potential_16bit = g_potential_flag = FALSE;
-	g_log_palette_flag = LOGPALETTE_NONE;                         /* no logarithmic palette */
+	g_potential_16bit = false;
+	g_potential_flag = false;
+	g_log_palette_mode = LOGPALETTE_NONE;                         /* no logarithmic palette */
 	set_trig_array(0, "sin");             /* trigfn defaults */
 	set_trig_array(1, "sqr");
 	set_trig_array(2, "sinh");
@@ -480,10 +481,10 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 		free((char *)g_ranges);
 		g_ranges_length = 0;
 	}
-	g_use_center_mag = TRUE;                          /* use center-mag, not corners */
+	g_use_center_mag = true;                          /* use center-mag, not corners */
 
 	g_color_state = COLORSTATE_DEFAULT;
-	g_color_preloaded = FALSE;
+	g_color_preloaded = false;
 	g_rotate_lo = 1; g_rotate_hi = 255;      /* color cycling default range */
 	g_orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
@@ -503,14 +504,15 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_display_3d = DISPLAY3D_NONE;
 	g_overlay_3d = 0;                       /* 3D overlay is off        */
 
-	g_old_demm_colors = 0;
+	g_old_demm_colors = false;
 	g_bail_out_test    = Mod;
 	g_bail_out_fp  = bail_out_mod_fp;
 	g_bail_out_l   = bail_out_mod_l;
 	g_bail_out_bn = bail_out_mod_bn;
 	g_bail_out_bf = bail_out_mod_bf;
 
-	g_function_preloaded = FALSE; /* for old bifs  JCO 7/5/92 */
+	
+	g_function_preloaded = false;			/* old bifurcation function support */
 	g_m_x_min_fp = -.83;
 	g_m_y_min_fp = -.25;
 	g_m_x_max_fp = -.83;
@@ -728,18 +730,18 @@ struct named_int
 	int value;
 };
 
-static int named_value(const named_int *args, int num_args, const char *name, int *value)
+static bool named_value(const named_int *args, int num_args, const char *name, int *value)
 {
 	for (int i = 0; i < num_args; i++)
 	{
 		if (strcmp(name, args[i].name) == 0)
 		{
 			*value = args[i].value;
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 static int batch_arg(const cmd_context &context)
@@ -821,7 +823,8 @@ static int gobble_flag_arg(const cmd_context &context)
 
 static int exit_no_ask_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_escape_exit_flag, Command::FractalParameter	| Command::ThreeDParameter).parse(context);
+	return FlagParser<bool>(g_escape_exit_flag,
+		Command::FractalParameter | Command::ThreeDParameter).parse(context);
 }
 
 static int fpu_arg(const cmd_context &context)
@@ -1103,7 +1106,7 @@ static int warn_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_fractal_overwrite = context.yesnoval[0]^1;
+	g_fractal_overwrite = (context.yesnoval[0] == 0);
 	return Command::OK;
 }
 
@@ -1113,7 +1116,7 @@ static int overwrite_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_fractal_overwrite = context.yesnoval[0];
+	g_fractal_overwrite = (context.yesnoval[0] != 0);
 	return Command::OK;
 }
 
@@ -1258,7 +1261,7 @@ static int function_arg(const cmd_context &context)
 		}
 		++value;
 	}
-	g_function_preloaded = TRUE; /* for old bifs  JCO 7/5/92 */
+	g_function_preloaded = true;			/* old bifurcation function support */
 	return Command::FractalParameter;
 }
 
@@ -1398,7 +1401,7 @@ static int ranges_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	entries = prev = i = 0;
-	g_log_palette_flag = LOGPALETTE_NONE; /* ranges overrides logmap */
+	g_log_palette_mode = LOGPALETTE_NONE; /* ranges overrides logmap */
 	while (i < context.totparms)
 	{
 		j = context.intval[i++];
@@ -1531,14 +1534,14 @@ static int potential_arg(const cmd_context &context)
 		}
 		++value;
 	}
-	g_potential_16bit = FALSE;
+	g_potential_16bit = false;
 	if (k < 99)
 	{
 		if (strcmp(value, "16bit"))
 		{
 			return bad_arg(context.curarg);
 		}
-		g_potential_16bit = TRUE;
+		g_potential_16bit = true;
 	}
 	return Command::FractalParameter;
 }
@@ -1626,7 +1629,7 @@ static int init_orbit_arg(const cmd_context &context)
 {
 	if (strcmp(context.value, "pixel") == 0)
 	{
-		g_use_initial_orbit_z = 2;
+		g_use_initial_orbit_z = INITIALZ_PIXEL;
 	}
 	else
 	{
@@ -1636,7 +1639,7 @@ static int init_orbit_arg(const cmd_context &context)
 		}
 		g_initial_orbit_z.x = context.floatval[0];
 		g_initial_orbit_z.y = context.floatval[1];
-		g_use_initial_orbit_z = 1;
+		g_use_initial_orbit_z = INITIALZ_ORBIT;
 	}
 	return Command::FractalParameter;
 }
@@ -1737,7 +1740,7 @@ static int corners_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_use_center_mag = FALSE;
+	g_use_center_mag = false;
 	if (context.totparms == 0)
 	{
 		return Command::OK; /* turns corners mode on */
@@ -1745,7 +1748,7 @@ static int corners_arg(const cmd_context &context)
 	s_initial_corners = true;
 	/* good first approx, but dec could be too big */
 	dec = get_max_curarg_len((char **) context.floatvalstr, context.totparms) + 1;
-	if ((dec > DBL_DIG + 1 || DEBUGFLAG_NO_BIG_TO_FLOAT == g_debug_flag) && g_debug_flag != DEBUGFLAG_NO_INT_TO_FLOAT)
+	if ((dec > DBL_DIG + 1 || DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode) && g_debug_mode != DEBUGMODE_NO_INT_TO_FLOAT)
 	{
 		int old_bf_math;
 
@@ -1890,10 +1893,10 @@ static int view_windows_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_view_window = 1;
+	g_view_window = true;
 	g_view_reduction = 4.2f;  /* reset default values */
 	g_final_aspect_ratio = g_screen_aspect_ratio;
-	g_view_crop = 1; /* yes */
+	g_view_crop = true;
 	g_view_x_dots = g_view_y_dots = 0;
 
 	if ((context.totparms > 0) && (context.floatval[0] > 0.001))
@@ -1906,7 +1909,7 @@ static int view_windows_arg(const cmd_context &context)
 	}
 	if ((context.totparms > 2) && (context.yesnoval[2] == 0))
 	{
-		g_view_crop = context.yesnoval[2];
+		g_view_crop = false;
 	}
 	if ((context.totparms > 3) && (context.intval[3] > 0))
 	{
@@ -1941,7 +1944,7 @@ static int center_mag_arg(const cmd_context &context)
 	{
 		return Command::FractalParameter; /* skip setting the corners */
 	}
-	g_use_center_mag = TRUE;
+	g_use_center_mag = true;
 	if (context.totparms == 0)
 	{
 		return Command::OK; /* turns center-mag mode on */
@@ -1963,7 +1966,7 @@ static int center_mag_arg(const cmd_context &context)
 
 	dec = get_power_10(Magnification) + 4; /* 4 digits of padding sounds good */
 
-	if ((dec <= DBL_DIG + 1 && g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT) || DEBUGFLAG_NO_INT_TO_FLOAT == g_debug_flag)  /* rough estimate that double is OK */
+	if ((dec <= DBL_DIG + 1 && g_debug_mode != DEBUGMODE_NO_BIG_TO_FLOAT) || DEBUGMODE_NO_INT_TO_FLOAT == g_debug_mode)  /* rough estimate that double is OK */
 	{
 		Xctr = context.floatval[0];
 		Yctr = context.floatval[1];
@@ -2009,7 +2012,7 @@ static int center_mag_arg(const cmd_context &context)
 				floattobf(bfparms[k], g_parameters[k]);
 			}
 		}
-		g_use_center_mag = TRUE;
+		g_use_center_mag = true;
 		saved = save_stack();
 		bXctr            = alloc_stack(bflength + 2);
 		bYctr            = alloc_stack(bflength + 2);
@@ -2083,7 +2086,7 @@ static int float_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 #ifndef XFRACT
-	g_user_float_flag = (char)context.yesnoval[0];
+	g_user_float_flag = context.yesnoval[0];
 #else
 	g_user_float_flag = 1; /* must use floating point */
 #endif
@@ -2107,7 +2110,7 @@ static int organize_formula_dir_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_organize_formula_search = TRUE;
+	g_organize_formula_search = true;
 	strcpy(g_organize_formula_dir, context.value);
 	fix_dir_name(g_organize_formula_dir);
 	return Command::OK;
@@ -2280,22 +2283,22 @@ static int periodicity_arg(const cmd_context &context)
 
 static int log_map_arg(const cmd_context &context)
 {
-	g_log_automatic_flag = FALSE;   /* turn this off if loading a PAR */
+	g_log_automatic_flag = false;   /* turn this off if loading a PAR */
 	if (context.charval[0] == 'y')
 	{
-		g_log_palette_flag = LOGPALETTE_STANDARD;                           /* palette is logarithmic */
+		g_log_palette_mode = LOGPALETTE_STANDARD;                           /* palette is logarithmic */
 	}
 	else if (context.charval[0] == 'n')
 	{
-		g_log_palette_flag = LOGPALETTE_NONE;
+		g_log_palette_mode = LOGPALETTE_NONE;
 	}
 	else if (context.charval[0] == 'o')
 	{
-		g_log_palette_flag = LOGPALETTE_OLD;                          /* old log palette */
+		g_log_palette_mode = LOGPALETTE_OLD;                          /* old log palette */
 	}
 	else
 	{
-		g_log_palette_flag = (long)context.floatval[0];
+		g_log_palette_mode = (long)context.floatval[0];
 	}
 	return Command::FractalParameter;
 }
@@ -2303,7 +2306,7 @@ static int log_map_arg(const cmd_context &context)
 static int log_mode_arg(const cmd_context &context)
 {
 	g_log_dynamic_calculate = LOGDYNAMIC_NONE;                         /* turn off if error */
-	g_log_automatic_flag = FALSE;
+	g_log_automatic_flag = false;
 	if (context.charval[0] == 'f')
 	{
 		g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;                      /* calculate on the fly */
@@ -2314,7 +2317,7 @@ static int log_mode_arg(const cmd_context &context)
 	}
 	else if (context.charval[0] == 'a')
 	{
-		g_log_automatic_flag = TRUE;                     /* force auto calc of logmap */
+		g_log_automatic_flag = true;                     /* force auto calc of logmap */
 	}
 	else
 	{
@@ -2325,16 +2328,16 @@ static int log_mode_arg(const cmd_context &context)
 
 static int debug_flag_arg(const cmd_context &context)
 {
-	g_debug_flag = context.numval;
-	g_timer_flag = g_debug_flag & 1;                /* separate timer flag */
-	g_debug_flag &= ~1;
+	g_debug_mode = context.numval;
+	g_timer_flag = ((g_debug_mode & 1) != 0);                /* separate timer flag */
+	g_debug_mode &= ~1;
 	return Command::OK;
 }
 
 static int random_seed_arg(const cmd_context &context)
 {
 	g_random_seed = context.numval;
-	g_random_flag = 1;
+	g_use_fixed_random_seed = true;
 	return Command::FractalParameter;
 }
 
@@ -2363,7 +2366,7 @@ static int show_dot_arg(const cmd_context &context)
 	g_show_dot = 15;
 	if (context.totparms > 0)
 	{
-		g_auto_show_dot = (char)0;
+		g_auto_show_dot = 0;
 		if (isalpha(context.charval[0]))
 		{
 			if (strchr("abdm", (int)context.charval[0]) != NULL)
@@ -2397,7 +2400,7 @@ static int show_dot_arg(const cmd_context &context)
 
 static int show_orbit_arg(const cmd_context &context)
 {
-	g_start_show_orbit = (char)context.yesnoval[0];
+	g_start_show_orbit = (context.yesnoval[0] != 0);
 	return Command::OK;
 }
 
@@ -2765,7 +2768,7 @@ struct tag_command_processor
 };
 typedef struct tag_command_processor command_processor;
 
-static int named_processor(const command_processor *processors,
+static bool named_processor(const command_processor *processors,
 						   int num_processors,
 						   const cmd_context &context,
 						   const char *command, int *result)
@@ -2776,20 +2779,20 @@ static int named_processor(const command_processor *processors,
 		if (strcmp(processors[i].command, command) == 0)
 		{
 			*result = processors[i].processor(context);
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 static int gif87a_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_gif87a_flag, Command::OK).parse(context);
+	return FlagParser<bool>(g_gif87a_flag, Command::OK).parse(context);
 }
 
 static int dither_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_dither_flag, Command::OK).parse(context);
+	return FlagParser<bool>(g_dither_flag, Command::OK).parse(context);
 }
 
 static int finite_attractor_arg(const cmd_context &context)
@@ -2799,7 +2802,7 @@ static int finite_attractor_arg(const cmd_context &context)
 
 static int no_bof_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_no_bof, Command::FractalParameter).parse(context);
+	return FlagParser<bool>(g_no_bof, Command::FractalParameter).parse(context);
 }
 
 static int is_mand_arg(const cmd_context &context)
@@ -2849,7 +2852,7 @@ static int screencoords_arg(const cmd_context &context)
 
 static int olddemmcolors_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_old_demm_colors, Command::OK).parse(context);
+	return FlagParser<bool>(g_old_demm_colors, Command::OK).parse(context);
 }
 
 static int ask_video_arg(const cmd_context &context)
@@ -3045,7 +3048,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	context.mode = mode;
 	context.variable = variable;
 	/* these commands are allowed only at startup */
-	if (mode != CMDFILE_AT_AFTER_STARTUP || DEBUGFLAG_NO_FIRST_INIT == g_debug_flag)
+	if (mode != CMDFILE_AT_AFTER_STARTUP || DEBUGMODE_NO_FIRST_INIT == g_debug_mode)
 	{
 		command_processor processors[] =
 		{
@@ -3313,7 +3316,7 @@ static int parse_colors(char *value)
 		}
 		if (g_display_3d)
 		{
-			g_map_set = TRUE;
+			g_map_set = true;
 		}
 		else
 		{
@@ -3415,7 +3418,7 @@ static int parse_colors(char *value)
 		}
 		g_color_state = COLORSTATE_UNKNOWN;
 	}
-	g_color_preloaded = TRUE;
+	g_color_preloaded = true;
 	memcpy(g_old_dac_box, g_dac_box, 256*3);
 	return 0;
 

@@ -51,7 +51,7 @@ At the moment these arrays reuse extraseg and g_string_location, respectively.
 static int numsaves = 0;        /* For adjusting 'save-to-disk' filenames */
 static FILE *g_outfile;
 static int last_colorbar;
-static int save16bit;
+static bool s_save_16bit;
 static int outcolor1s, outcolor2s;
 static int startbits;
 
@@ -105,16 +105,16 @@ static int gif_savetodisk(char *filename)      /* save-to-disk routine */
 	int outcolor2;
 
 restart:
-	save16bit = g_disk_16bit;
+	s_save_16bit = g_disk_16bit;
 	if (g_gif87a_flag)             /* not storing non-standard fractal info */
 	{
-		save16bit = 0;
+		s_save_16bit = false;
 	}
 
 	strcpy(openfile, filename);  /* decode and open the filename */
 	strcpy(openfiletype, DEFAULTFRACTALTYPE);    /* determine the file
                                                  * extension */
-	if (save16bit)
+	if (s_save_16bit)
 	{
 		strcpy(openfiletype, ".pot");
 	}
@@ -125,7 +125,7 @@ restart:
 		strcpy(openfiletype, period);
 		*period = 0;
 	}
-	if (g_resave_flag != RESAVE_YES)
+	if (g_resave_mode != RESAVE_YES)
 	{
 		update_save_name(filename); /* for next time */
 	}
@@ -141,11 +141,11 @@ restart:
 	{                                  /* file already exists */
 		if (!g_fractal_overwrite)
 		{
-			if (g_resave_flag == RESAVE_NO)
+			if (g_resave_mode == RESAVE_NO)
 			{
 				goto restart;
 			}
-			if (g_started_resaves == FALSE)
+			if (!g_started_resaves)
 			{                      /* first save of a savetime set */
 				update_save_name(filename);
 				goto restart;
@@ -166,10 +166,10 @@ restart:
 		strcat(tmpfile, "fractint.tmp");
 	}
 
-	g_started_resaves = (g_resave_flag == RESAVE_YES) ? TRUE : FALSE;
-	if (g_resave_flag == RESAVE_DONE)        /* final save of savetime set? */
+	g_started_resaves = (g_resave_mode == RESAVE_YES);
+	if (g_resave_mode == RESAVE_DONE)        /* final save of savetime set? */
 	{
-		g_resave_flag = RESAVE_NO;
+		g_resave_mode = RESAVE_NO;
 	}
 
 	g_outfile = fopen(tmpfile, "wb");
@@ -200,7 +200,7 @@ restart:
 	{
 		BusyMarker marker;
 		/* invoke encoder() via timer */
-		interrupted = (g_debug_flag == DEBUGFLAG_TIME_ENCODER)
+		interrupted = (g_debug_mode == DEBUGMODE_TIME_ENCODER)
 			? timer(TIMER_ENCODER, NULL) : encoder();
 	}
 
@@ -355,7 +355,7 @@ int encoder()
 	}
 #endif
 
-	if (g_gif87a_flag == 1)
+	if (g_gif87a_flag)
 	{
 		if (fwrite("GIF87a", 6, 1, g_outfile) != 1)
 		{
@@ -369,7 +369,7 @@ int encoder()
 
 	width = g_x_dots;
 	rowlimit = g_y_dots;
-	if (save16bit)
+	if (s_save_16bit)
 	{
 		/* g_potential_16bit info is stored as: file:    double width rows, right side
 		* of row is low 8 bits diskvid: g_y_dots rows of colors followed by g_y_dots
@@ -400,7 +400,7 @@ int encoder()
 
 	/* TODO: pixel aspect ratio should be 1:1? */
 	if (g_view_window                               /* less than full screen?  */
-			&& (g_view_x_dots == 0 || g_view_y_dots == 0))   /* and we picked the dots? */
+		&& (g_view_x_dots == 0 || g_view_y_dots == 0))   /* and we picked the dots? */
 	{
 		i = (int) (((double) g_screen_height / (double) g_screen_width)*64.0 / g_screen_aspect_ratio - 14.5);
 	}
@@ -536,7 +536,7 @@ int encoder()
 		goto oops;
 	}
 
-	if (g_gif87a_flag == 0)
+	if (!g_gif87a_flag)
 	{                            /* store non-standard fractal info */
 		/* loadfile.c has notes about extension g_block structure */
 		if (interrupted)
@@ -593,7 +593,7 @@ int encoder()
 		}
 
 		/* Extended parameters g_block 006 */
-		if (g_evolving & EVOLVE_FIELD_MAP)
+		if (g_evolving_flags & EVOLVE_FIELD_MAP)
 		{
 			struct evolution_info esave_info;
 			int i;
@@ -613,7 +613,7 @@ int encoder()
 				esave_info.x_dots           = (short)g_x_dots;
 				esave_info.y_dots           = (short)g_y_dots;
 				esave_info.gridsz          = (short)g_grid_size;
-				esave_info.evolving        = (short) g_evolving;
+				esave_info.evolving = (short) g_evolving_flags;
 				esave_info.this_generation_random_seed  = (unsigned short)g_this_generation_random_seed;
 				esave_info.fiddle_factor    = g_fiddle_factor;
 				esave_info.ecount          = (short) (g_grid_size*g_grid_size); /* flag for done */
@@ -855,10 +855,10 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->potential[0] = (float) g_potential_parameter[0];
 	save_info->potential[1] = (float) g_potential_parameter[1];
 	save_info->potential[2] = (float) g_potential_parameter[2];
-	save_info->random_flag = (short) g_random_flag;
+	save_info->random_flag = (short) g_use_fixed_random_seed ? 1 : 0;
 	save_info->random_seed = (short) g_random_seed;
 	save_info->inside = (short) g_inside;
-	save_info->logmapold = (g_log_palette_flag <= SHRT_MAX) ? (short) g_log_palette_flag : (short) SHRT_MAX;
+	save_info->logmapold = (g_log_palette_mode <= SHRT_MAX) ? (short) g_log_palette_mode : (short) SHRT_MAX;
 	save_info->invert[0] = (float) g_inversion[0];
 	save_info->invert[1] = (float) g_inversion[1];
 	save_info->invert[2] = (float) g_inversion[2];
@@ -885,7 +885,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->calculation_status = (short) g_calculation_status;
 	save_info->stdcalcmode = (char) ((g_three_pass && g_standard_calculation_mode == '3') ? 127 : g_standard_calculation_mode);
 	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;
-	save_info->float_flag = g_float_flag;
+	save_info->float_flag = g_float_flag ? 1 : 0;
 	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? (short) g_bail_out : 0;
 
 	save_info->calculation_time = g_calculation_time;
@@ -896,9 +896,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->finattract = (short) g_finite_attractor;
 	save_info->initial_orbit_z[0] = g_initial_orbit_z.x;
 	save_info->initial_orbit_z[1] = g_initial_orbit_z.y;
-	save_info->use_initial_orbit_z = g_use_initial_orbit_z;
+	save_info->use_initial_orbit_z = static_cast<char>(g_use_initial_orbit_z);
 	save_info->periodicity = (short) g_periodicity_check;
-	save_info->potential_16bit = (short) g_disk_16bit;
+	save_info->potential_16bit = (short) g_disk_16bit ? 1 : 0;
 	save_info->faspectratio = g_final_aspect_ratio;
 	save_info->system = (short) g_save_system;
 
@@ -933,17 +933,17 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->iterations = g_max_iteration;
 	save_info->bflength = (short) bnlength;
 	save_info->bf_math = (short) g_bf_math;
-	save_info->old_demm_colors = (short) g_old_demm_colors;
-	save_info->logmap = g_log_palette_flag;
+	save_info->old_demm_colors = (short) g_old_demm_colors ? 1 : 0;
+	save_info->logmap = g_log_palette_mode;
 	save_info->distance_test = g_distance_test;
 	save_info->dinvert[0] = g_inversion[0];
 	save_info->dinvert[1] = g_inversion[1];
 	save_info->dinvert[2] = g_inversion[2];
 	save_info->logcalc = (short) g_log_dynamic_calculate;
 	save_info->stop_pass = (short) g_stop_pass;
-	save_info->quick_calculate = (short) g_quick_calculate;
+	save_info->quick_calculate = g_quick_calculate ? 1 : 0;
 	save_info->proximity = g_proximity;
-	save_info->no_bof = (short) g_no_bof;
+	save_info->no_bof = (short) g_no_bof ? 1 : 0;
 	save_info->orbit_interval = g_orbit_interval;
 	save_info->orbit_delay = (short) g_orbit_delay;
 	save_info->math_tolerance[0] = g_math_tolerance[0];
@@ -1122,7 +1122,7 @@ static int compress(int rowlimit)
 		{
 			for (xdot = 0; xdot < g_x_dots; xdot++)
 			{
-				color = (save16bit == 0 || ydot < g_y_dots)
+				color = (!s_save_16bit || ydot < g_y_dots)
 					? getcolor(xdot, ydot) : disk_read(xdot + g_sx_offset, ydot + g_sy_offset);
 				if (in_count == 0)
 				{

@@ -2124,7 +2124,8 @@ int plotorbits2dsetup()
 		{
 			return -1;
 		}
-		g_float_flag = g_user_float_flag = TRUE; /* force floating point */
+		g_float_flag = true;
+		g_user_float_flag = 1;
 		g_fractal_type = tofloat;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	}
@@ -2286,7 +2287,7 @@ done:
 		g_sx_offset = g_sy_offset = 0;
 		g_x_dots = g_screen_width;
 		g_y_dots = g_screen_height;
-		g_view_window = 0;
+		g_view_window = false;
 	}
 	return status;
 }
@@ -2857,7 +2858,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 	/* apply perspective if requested */
 	if (g_3d_state.z_viewer())
 	{
-		if ((DEBUGFLAG_LORENZ_FLOAT == g_debug_flag) || (g_3d_state.z_viewer() < 100)) /* use float for small persp */
+		if ((DEBUGMODE_LORENZ_FLOAT == g_debug_mode) || (g_3d_state.z_viewer() < 100)) /* use float for small persp */
 		{
 			/* use float perspective calc */
 			VECTOR tmpv;

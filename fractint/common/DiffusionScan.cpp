@@ -70,16 +70,16 @@ static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
 	2048(x)2048 what means a counter of 24 bits or 3 bytes */
 
 /* Calculate the point */
-static int diffusion_point(int row, int col)
+static bool diffusion_point(int row, int col)
 {
 	g_reset_periodicity = 1;
 	if ((*g_calculate_type)() == -1)
 	{
-		return TRUE;
+		return true;
 	}
 	g_reset_periodicity = 0;
 	(*g_plot_color)(col, row, g_color);
-	return FALSE;
+	return false;
 }
 
 /* little function that plots a filled square of color c, size s with
@@ -93,16 +93,16 @@ static void diffusion_plot_block(int x, int y, int s, int c)
 	}
 }
 
-static int diffusion_block(int row, int col, int sqsz)
+static bool diffusion_block(int row, int col, int sqsz)
 {
 	g_reset_periodicity = 1;
 	if ((*g_calculate_type)() == -1)
 	{
-		return TRUE;
+		return true;
 	}
 	g_reset_periodicity = 0;
 	diffusion_plot_block(col, row, sqsz, g_color);
-	return FALSE;
+	return false;
 }
 
 /* function that does the same as above, but checks the limits in x and y */
@@ -115,16 +115,16 @@ static void plot_block_lim(int x, int y, int s, int c)
 	}
 }
 
-static int diffusion_block_lim(int row, int col, int sqsz)
+static bool diffusion_block_lim(int row, int col, int sqsz)
 {
 	g_reset_periodicity = 1;
 	if ((*g_calculate_type)() == -1)
 	{
-		return TRUE;
+		return true;
 	}
 	g_reset_periodicity = 0;
 	plot_block_lim(col, row, sqsz, g_color);
-	return FALSE;
+	return false;
 }
 
 static int diffusion_engine()

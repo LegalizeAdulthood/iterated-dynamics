@@ -43,8 +43,8 @@
 
 char g_glasses1_map[] = "glasses1.map";
 char g_map_name[FILE_MAX_DIR] = "";
-int  g_map_set = FALSE;
-int g_julibrot;   /* flag for julibrot */
+bool g_map_set = false;
+bool g_julibrot;   /* flag for julibrot */
 
 /* These need to be global because F6 exits full_screen_prompt() */
 static int s_prompt_function_key_mask;
@@ -61,7 +61,7 @@ static char lsysmask[13]    = {"*.l"};
 
 /* Routines in this module      */
 
-static int select_type_params(int newfractype, int oldfractype);
+static bool select_type_params(int newfractype, int oldfractype);
 static  int input_field_list(int attr, char *fld, int vlen, const char **list, int llen,
 							int row, int col, int (*checkkey)(int));
 static  int select_fracttype(int t);
@@ -1186,7 +1186,6 @@ inpfldl_end:
 int get_fractal_type()             /* prompt for and select fractal type */
 {
 	int done;
-	int i;
 	int oldfractype;
 	int t;
 	done = -1;
@@ -1198,17 +1197,17 @@ int get_fractal_type()             /* prompt for and select fractal type */
 		{
 			break;
 		}
-		i = select_type_params(t, g_fractal_type);
-		if (i == 0)  /* ok, all done */
+		bool i = select_type_params(t, g_fractal_type);
+		if (!i)  /* ok, all done */
 		{
 			done = 0;
 			break;
-			}
-		if (i > 0) /* can't return to prior image anymore */
+		}
+		if (i) /* can't return to prior image anymore */
 		{
 			done = 1;
 		}
-		}
+	}
 	if (done < 0)
 	{
 		g_fractal_type = oldfractype;
@@ -1367,7 +1366,7 @@ void set_default_parms()
 			g_parameters[i + 4] = g_more_parameters[extra].paramvalue[i];
 		}
 	}
-	if (g_debug_flag != DEBUGFLAG_NO_BIG_TO_FLOAT)
+	if (g_debug_mode != DEBUGMODE_NO_BIG_TO_FLOAT)
 	{
 		g_bf_math = 0;
 	}
@@ -1381,7 +1380,7 @@ void set_default_parms()
 	prompt for new fractal type parameters
 
 */
-static int select_type_params(int newfractype,		/* new fractal type */
+static bool select_type_params(int newfractype,		/* new fractal type */
 		int oldfractype)					/* previous fractal type */
 {
 sel_type_restart:
@@ -1394,7 +1393,7 @@ sel_type_restart:
 		if (get_file_entry_help(HT_LSYS, GETFILE_L_SYSTEM,
 			"L-System", lsysmask, g_l_system_filename, g_l_system_name))
 		{
-			return 1;
+			return true;
 		}
 		break;
 
@@ -1403,7 +1402,7 @@ sel_type_restart:
 		if (get_file_entry_help(HT_FORMULA, GETFILE_FORMULA,
 			"Formula", formmask, g_formula_filename, g_formula_name))
 		{
-			return 1;
+			return true;
 		}
 		break;
 
@@ -1412,7 +1411,7 @@ sel_type_restart:
 		if (get_file_entry_help(HT_IFS, GETFILE_IFS,
 			"IFS", ifsmask, g_ifs_filename, g_ifs_name))
 		{
-			return 1;
+			return true;
 		}
 		break;
 
@@ -1463,7 +1462,7 @@ sel_type_restart:
 		}
 		else
 		{
-			return 1;
+			return true;
 		}
 	}
 	else
@@ -1475,7 +1474,7 @@ sel_type_restart:
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 #define MAXFRACTALS 25
@@ -1647,11 +1646,11 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	oldbailout = g_bail_out;
 	if (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
 	{
-		g_julibrot = TRUE;
+		g_julibrot = true;
 	}
 	else
 	{
-		g_julibrot = FALSE;
+		g_julibrot = false;
 	}
 	curtype = g_fractal_type;
 	i = g_current_fractal_specific->tofloat;
@@ -1688,7 +1687,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 		else  /* this shouldn't happen */
 		{
 #if defined(_WIN32)
-			_ASSERTE(FALSE);
+			_ASSERTE(false);
 #endif
 			filename = NULL;
 			entryname = NULL;
@@ -1763,7 +1762,7 @@ gfp_top:
 			{
 				ret = -1;
 			}
-			g_julibrot = FALSE;
+			g_julibrot = false;
 			goto gfp_exit;
 		}
 		else
@@ -3475,7 +3474,7 @@ static int check_mapfile()
 			}
 			if (temp1[0] == '*')
 			{
-				g_map_set = FALSE;
+				g_map_set = false;
 				break;
 			}
 		}
@@ -3487,7 +3486,7 @@ static int check_mapfile()
 			askflag = 1;
 			continue;
 		}
-		g_map_set = TRUE;
+		g_map_set = true;
 		merge_path_names(g_map_name, temp1, 0);
 		break;
 	}

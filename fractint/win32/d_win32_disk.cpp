@@ -40,7 +40,7 @@ class Win32DiskDriver : public Win32BaseDriver
 public:
 	Win32DiskDriver(const char *name, const char *description);
 
-	/* initialize the driver */			virtual int initialize(int &argc, char **argv);
+	/* initialize the driver */			virtual bool initialize(int &argc, char **argv);
 
 	/* validate a fractint.cfg mode */	virtual int validate_mode(const VIDEOINFO &mode);
 										virtual void set_video_mode(const VIDEOINFO &mode);
@@ -260,14 +260,14 @@ static void parse_geometry(const char *spec, int *x, int *y, int *width, int *he
 *
 *----------------------------------------------------------------------
 */
-int Win32DiskDriver::initialize(int &argc, char **argv)
+bool Win32DiskDriver::initialize(int &argc, char **argv)
 {
 	LPCTSTR title = "FractInt for Windows";
 
 	m_frame.init(g_instance, title);
 	if (!m_wintext.initialize(g_instance, NULL, title))
 	{
-		return FALSE;
+		return false;
 	}
 
 	initdacbox();
@@ -278,7 +278,7 @@ int Win32DiskDriver::initialize(int &argc, char **argv)
 		add_video_mode(this, s_modes[m]);
 	}
 
-	return TRUE;
+	return true;
 }
 
 /* resize
@@ -534,7 +534,7 @@ void Win32DiskDriver::set_video_mode(const VIDEOINFO &mode)
 	/* initially, set the virtual line to be the scan line length */
 	g_vx_dots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
-	g_ok_to_print = FALSE;
+	g_ok_to_print = false;
 	g_good_mode = 1;
 	if (g_dot_mode != 0)
 	{
@@ -542,7 +542,7 @@ void Win32DiskDriver::set_video_mode(const VIDEOINFO &mode)
 		g_box_count = 0;
 		g_dac_learn = 1;
 		g_dac_count = g_cycle_limit;
-		g_got_real_dac = TRUE;
+		g_got_real_dac = true;
 
 		read_palette();
 	}

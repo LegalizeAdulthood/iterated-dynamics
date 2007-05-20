@@ -72,7 +72,7 @@ long calculate_mandelbrot_fp_asm()
 			if (key == 'o' || key == 'O')
 			{
 				driver_get_key();
-				g_show_orbit = g_show_orbit ? FALSE : TRUE;
+				g_show_orbit = !g_show_orbit;
 			}
 			else
 			{

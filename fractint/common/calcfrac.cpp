@@ -73,18 +73,18 @@ void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
 double g_magnitude;
 double g_rq_limit;
 double g_rq_limit2;
-int g_no_magnitude_calculation = FALSE;
-int g_use_old_periodicity = FALSE;
-int g_use_old_distance_test = FALSE;
-int g_old_demm_colors = FALSE;
+bool g_no_magnitude_calculation = false;
+bool g_use_old_periodicity = false;
+bool g_use_old_distance_test = false;
+bool g_old_demm_colors = false;
 int (*g_calculate_type)() = NULL;
 int (*g_calculate_type_temp)();
-int g_quick_calculate = FALSE;
+bool g_quick_calculate = false;
 double g_proximity = 0.01;
 double g_close_enough;
 unsigned long g_magnitude_limit;               /* magnitude limit (CALCMAND) */
 /* ORBIT variables */
-int g_show_orbit;                     /* flag to turn on and off */
+bool g_show_orbit;                     /* flag to turn on and off */
 int g_orbit_index;                      /* pointer into g_save_orbit array */
 int g_orbit_color = 15;                 /* XOR color */
 int g_x_stop;
@@ -110,7 +110,7 @@ int g_total_passes;
 int g_current_row;
 int g_current_col;
 int g_three_pass;
-int g_next_screen_flag; /* for cellular next screen generation */
+bool g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
 ComplexD  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
 ComplexL g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
@@ -153,7 +153,7 @@ int g_work_sym;                   /* for the sake of calculate_mandelbrot    */
 static double s_dem_delta;
 static double s_dem_width;     /* distance estimator variables */
 static double s_dem_too_big;
-static int s_dem_mandelbrot;
+static bool s_dem_mandelbrot;
 /* static vars for solid_guess & its subroutines */
 static ComplexD s_saved_z;
 static double s_rq_limit_save;
@@ -509,10 +509,10 @@ int calculate_fractal()
 	g_parameter2.x  = g_parameters[2];
 	g_parameter2.y  = g_parameters[3];
 
-	if (g_log_palette_flag && g_colors < 16)
+	if (g_log_palette_mode && g_colors < 16)
 	{
 		stop_message(0, "Need at least 16 colors to use logmap");
-		g_log_palette_flag = LOGPALETTE_NONE;
+		g_log_palette_mode = LOGPALETTE_NONE;
 	}
 
 	if (g_use_old_periodicity)
@@ -536,7 +536,7 @@ int calculate_fractal()
 
 	/* below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint. */
 	/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
-	if (g_log_palette_flag
+	if (g_log_palette_mode
 		&& (((g_max_iteration > 32767) && true) || g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC))
 	{
 		if (g_save_release > 1920)
@@ -555,7 +555,7 @@ int calculate_fractal()
 		g_max_log_table_size = 32766;
 	}
 
-	if ((g_log_palette_flag || g_ranges_length) && !g_log_calculation)
+	if ((g_log_palette_mode || g_ranges_length) && !g_log_calculation)
 	{
 		g_log_table = (BYTE *) malloc(g_max_log_table_size + 1);
 
@@ -578,7 +578,7 @@ int calculate_fractal()
 			int i = 0;
 			int k = 0;
 			int l = 0;
-			g_log_palette_flag = LOGPALETTE_NONE; /* ranges overrides logmap */
+			g_log_palette_mode = LOGPALETTE_NONE; /* ranges overrides logmap */
 			while (i < g_ranges_length)
 			{
 				int m = 0;
@@ -692,11 +692,11 @@ int calculate_fractal()
 	if (!g_resuming) /* free resume_info memory if any is hanging around */
 	{
 		end_resume();
-		if (g_resave_flag)
+		if (g_resave_mode)
 		{
 			update_save_name(g_save_name); /* do the pending increment */
-			g_resave_flag = RESAVE_NO;
-			g_started_resaves = FALSE;
+			g_resave_mode = RESAVE_NO;
+			g_started_resaves = false;
 		}
 		g_calculation_time = 0;
 	}
@@ -847,7 +847,7 @@ static void perform_work_list()
 		{
 			if (disk_start_potential() < 0)
 			{
-				g_potential_16bit = FALSE;       /* disk_start failed or cancelled */
+				g_potential_16bit = false;       /* disk_start failed or cancelled */
 				g_standard_calculation_mode = (char)tmpcalcmode;    /* maybe we can carry on??? */
 			}
 		}
@@ -926,8 +926,7 @@ static void perform_work_list()
 			(g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
 			|| g_use_old_distance_test
 			|| g_fractal_type == FRACTYPE_FORMULA
-			|| g_fractal_type == FRACTYPE_FORMULA_FP) ?
-				TRUE : FALSE;
+			|| g_fractal_type == FRACTYPE_FORMULA_FP);
 
 		s_dem_delta = sqr(g_escape_time_state.m_grid_fp.delta_x()) + sqr(delta_y2_fp);
 		double ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
@@ -1079,9 +1078,9 @@ static void perform_work_list()
 
 		set_symmetry(g_symmetry, true);
 
-		if (!(g_resuming) && (labs(g_log_palette_flag) == 2 || (g_log_palette_flag && g_log_automatic_flag)))
+		if (!(g_resuming) && (labs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
 		{  /* calculate round screen edges to work out best start for logmap */
-			g_log_palette_flag = (automatic_log_map()*(g_log_palette_flag / labs(g_log_palette_flag)));
+			g_log_palette_mode = (automatic_log_map()*(g_log_palette_mode / labs(g_log_palette_mode)));
 			SetupLogTable();
 		}
 
@@ -1089,7 +1088,7 @@ static void perform_work_list()
 		switch (g_standard_calculation_mode)
 		{
 		case 's':
-			if (DEBUGFLAG_SOI_LONG_DOUBLE == g_debug_flag)
+			if (DEBUGMODE_SOI_LONG_DOUBLE == g_debug_mode)
 			{
 				soi_long_double();
 			}
@@ -1367,7 +1366,7 @@ static int draw_orbits()
 	case ORBITDRAW_FUNCTION:	return draw_function_orbits();	break;
 
 	default:
-		assert(FALSE);
+		assert(false);
 	}
 
 	return 0;
@@ -1504,7 +1503,7 @@ int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with r
 					: (int) (((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
-		if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
+		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
 		{
 			if (g_color <= 0 && g_standard_calculation_mode == 'b')   /* fix BTM bug */
 			{
@@ -1568,7 +1567,7 @@ int calculate_mandelbrot_fp()
 					: (int) (((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
-		if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
+		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
 		{
 			if (g_color == 0 && g_standard_calculation_mode == 'b' )   /* fix BTM bug */
 			{
@@ -1612,7 +1611,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	long savedand;
 	int savedincr;       /* for periodicity checking */
 	ComplexL lsaved;
-	int attracted;
+	bool attracted;
 	ComplexL lat;
 	ComplexD  at;
 	ComplexD deriv;
@@ -1668,7 +1667,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	/* really fractal specific, but we'll leave it here */
 	if (!g_integer_fractal)
 	{
-		if (g_use_initial_orbit_z == 1)
+		if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 		{
 			s_saved_z = g_initial_orbit_z;
 		}
@@ -1717,7 +1716,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 	else
 	{
-		if (g_use_initial_orbit_z == 1)
+		if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 		{
 			lsaved = g_init_orbit_l;
 		}
@@ -1760,7 +1759,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 
 	g_current_fractal_specific->per_pixel(); /* initialize the calculations */
 
-	attracted = FALSE;
+	attracted = false;
 
 	ComplexD lastz;
 	if (g_outside == TDIS)
@@ -2049,7 +2048,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 						{
 							if ((lat.x + lat.y) < g_attractor_radius_l)
 							{
-								attracted = TRUE;
+								attracted = true;
 								if (g_finite_attractor < 0)
 								{
 									g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
@@ -2074,7 +2073,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 						{
 							if ((at.x + at.y) < g_attractor_radius_fp)
 							{
-								attracted = TRUE;
+								attracted = true;
 								if (g_finite_attractor < 0)
 								{
 									g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
@@ -2384,7 +2383,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 	}
 
-	if (g_outside >= 0 && attracted == FALSE) /* merge escape-time stripes */
+	if (g_outside >= 0 && !attracted) /* merge escape-time stripes */
 	{
 		g_color_iter = g_outside;
 	}
@@ -2499,7 +2498,7 @@ plot_pixel:
 				: (int) (((g_color_iter - 1) % g_and_color) + 1);
 		}
 	}
-	if (g_debug_flag != DEBUGFLAG_BNDTRACE_NONZERO)
+	if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
 	{
 		if (g_color <= 0 && g_standard_calculation_mode == 'b' )   /* fix BTM bug */
 		{
@@ -3091,9 +3090,9 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	{
 		return;
 	}
-	parmszero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && g_use_initial_orbit_z != 1);
-	parmsnoreal = (g_parameter.x == 0.0 && g_use_initial_orbit_z != 1);
-	parmsnoimag = (g_parameter.y == 0.0 && g_use_initial_orbit_z != 1);
+	parmszero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
+	parmsnoreal = (g_parameter.x == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
+	parmsnoimag = (g_parameter.y == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_L:      /* These need only P1 checked. */
