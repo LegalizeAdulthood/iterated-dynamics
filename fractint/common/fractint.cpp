@@ -418,7 +418,7 @@ static bool main_restore_restart(bool &screen_stacked, bool &resume_flag)
 	return false;
 }
 
-static int main_image_start(bool &screen_stacked, int &kbdchar, bool &resume_flag)
+static int main_image_start(bool &screen_stacked, bool &resume_flag)
 {
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
@@ -458,7 +458,7 @@ static int main_image_start(bool &screen_stacked, int &kbdchar, bool &resume_fla
 			g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; /* exit with error condition set */
 			goodbye();
 		}
-		kbdchar = main_menu(0);
+		int kbdchar = main_menu(false);
 		if (kbdchar == FIK_INSERT) /* restart pgm on Insert Key  */
 		{
 			return APPSTATE_RESTART;
@@ -585,11 +585,8 @@ static int main_image_start(bool &screen_stacked, int &kbdchar, bool &resume_fla
 	return 0;
 }
 
-int application_main(int argc, char **argv)
+void application_initialize(int argc, char **argv)
 {
-	int kbdchar;						/* keyboard key-hit value       */
-	int kbdmore;						/* continuation variable        */
-
 	set_exe_path(argv[0]);
 
 	g_fract_dir1 = getenv("FRACTDIR");
@@ -618,8 +615,15 @@ int application_main(int argc, char **argv)
 	/* load fractint.cfg, match against driver supplied modes */
 	load_fractint_config();
 	init_help();
+}
+
+int application_main(int argc, char **argv)
+{
+	application_initialize(argc, argv);
+
 	bool resume_flag = false;
 	bool screen_stacked = false;
+	int kbdmore;						/* continuation variable        */
 
 restart:
 	/* insert key re-starts here */
@@ -633,7 +637,7 @@ restorestart:
 
 imagestart:
 	/* calc/display a new image */
-	switch (main_image_start(screen_stacked, kbdchar, resume_flag))
+	switch (main_image_start(screen_stacked, resume_flag))
 	{
 	case APPSTATE_RESTART:		goto restart;
 	case APPSTATE_RESTORE_START:	goto restorestart;
