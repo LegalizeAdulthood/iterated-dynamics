@@ -5,6 +5,7 @@
 #include "prototyp.h"
 #include "externs.h"
 #include "drivers.h"
+#include "diskvid.h"
 
 /*
  * This file contains Unix versions of the routines in video.asm

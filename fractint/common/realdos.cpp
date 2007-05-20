@@ -20,6 +20,7 @@
 #include "drivers.h"
 #include "fihelp.h"
 #include "cmdfiles.h"
+#include "diskvid.h"
 
 /* uncomment following for production version */
 /*

@@ -23,6 +23,7 @@
 #include "fihelp.h"
 #include "history.h"
 #include "calcfrac.h"
+#include "diskvid.h"
 #include "editpal.h"
 #include "encoder.h"
 #include "evolve.h"

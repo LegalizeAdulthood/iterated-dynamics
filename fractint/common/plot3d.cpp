@@ -9,6 +9,8 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "diskvid.h"
+
 #include "ThreeDimensionalState.h"
 
 /* Use these palette indices for red/blue - same on ega/vga */

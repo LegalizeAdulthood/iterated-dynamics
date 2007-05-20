@@ -46,6 +46,7 @@
 #include "externs.h"
 #include "fihelp.h"
 #include "drivers.h"
+#include "editpal.h"
 
 #ifdef LINUX
 #ifndef FNDELAY

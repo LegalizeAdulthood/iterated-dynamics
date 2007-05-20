@@ -54,6 +54,7 @@
 #include "drivers.h"
 #include "fihelp.h"
 #include "calcfrac.h"
+#include "diskvid.h"
 #include "editpal.h"
 
 #include "EscapeTime.h"

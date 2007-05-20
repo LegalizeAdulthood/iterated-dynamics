@@ -9,6 +9,9 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "externs.h"
+#include "calmanfp.h"
+#include "fracsubr.h"
+
 #include "MathUtil.h"
 
 extern int get_a_key();

@@ -11,6 +11,7 @@
 #include "drivers.h"
 #include "calcfrac.h"
 #include "fracsubr.h"
+#include "framain2.h"
 
 #include "EscapeTime.h"
 #include "MathUtil.h"
