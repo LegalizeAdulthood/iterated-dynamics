@@ -2006,7 +2006,6 @@ int select_video_mode(int curmode)
 	/* pick default mode */
 	if (curmode < 0)
 	{
-		g_video_entry.videomodeax = 19;  /* vga */
 		g_video_entry.colors = 256;
 	}
 	else
@@ -2016,8 +2015,7 @@ int select_video_mode(int curmode)
 #ifndef XFRACT
 	for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
 	{
-		if (g_video_entry.videomodeax == g_video_table[entnums[i]].videomodeax &&
-			g_video_entry.colors      == g_video_table[entnums[i]].colors &&
+		if (g_video_entry.colors      == g_video_table[entnums[i]].colors &&
 			(curmode < 0 ||
 			memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
 		{
@@ -2189,6 +2187,7 @@ static int entcompare(const void *p1, const void *p2)
 	return 1;
 }
 
+// TODO: revisit this for new driver environment
 static void update_fractint_cfg()
 {
 #ifndef XFRACT
@@ -2266,10 +2265,10 @@ static void update_fractint_cfg()
 			fprintf(outfile, "%-4s,%s,%4x,%4x,%4x,%4x,%4d,%5d,%5d,%s,%s\n",
 				kname,
 				buf,
-				vident.videomodeax,
-				vident.videomodebx,
-				vident.videomodecx,
-				vident.videomodedx,
+				0,
+				0,
+				0,
+				0,
 				vident.dotmode % 1000, /* remove true-color flag, keep g_text_safe */
 				vident.x_dots,
 				vident.y_dots,

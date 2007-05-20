@@ -833,10 +833,10 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->y_max = g_escape_time_state.m_grid_fp.y_max();
 	save_info->c_real = g_parameters[0];
 	save_info->c_imag = g_parameters[1];
-	save_info->videomodeax = (short) g_video_entry.videomodeax;
-	save_info->videomodebx = (short) g_video_entry.videomodebx;
-	save_info->videomodecx = (short) g_video_entry.videomodecx;
-	save_info->videomodedx = (short) g_video_entry.videomodedx;
+	save_info->videomodeax = 0;
+	save_info->videomodebx = 0;
+	save_info->videomodecx = 0;
+	save_info->videomodedx = 0;
 	save_info->dotmode = (short) (g_video_entry.dotmode % 100);
 	save_info->x_dots = (short) g_video_entry.x_dots;
 	save_info->y_dots = (short) g_video_entry.y_dots;
