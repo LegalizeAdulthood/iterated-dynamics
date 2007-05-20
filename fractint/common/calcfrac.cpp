@@ -1114,14 +1114,7 @@ static void perform_work_list()
 		switch (g_standard_calculation_mode)
 		{
 		case 's':
-			if (DEBUGMODE_SOI_LONG_DOUBLE == g_debug_mode)
-			{
-				soi_long_double();
-			}
-			else
-			{
-				soi();
-			}
+			soi();
 			break;
 		case 't':
 			tesseral();
