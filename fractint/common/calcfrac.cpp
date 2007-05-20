@@ -150,7 +150,7 @@ long (*g_calculate_mandelbrot_asm_fp)();
 
 /* routines in this module      */
 static void perform_work_list();
-static int  one_or_two_pass();
+static int one_or_two_pass();
 static int  _fastcall standard_calculate(int);
 static int  _fastcall potential(double, long);
 static void decomposition();
@@ -161,6 +161,13 @@ static void _fastcall put_truecolor_disk(int, int, int);
 static int draw_orbits();
 /* added for testing automatic_log_map() */
 static long automatic_log_map();
+static void _fastcall plot_color_symmetry_pi(int x, int y, int color);
+static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color);
+static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color);
+static void _fastcall plot_color_symmetry_y_axis(int x, int y, int color);
+static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color);
+static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color);
+static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color);
 
 int g_xx_begin;             /* these are same as g_work_list, */
 int g_yy_begin;             /* declared as separate items  */
@@ -775,12 +782,12 @@ int calculate_fractal()
 			{
 				g_standard_calculation_mode = 'g';
 				g_three_pass = 1;
-				timer(TIMER_ENGINE, (int(*)())perform_work_list);
+				timer(TIMER_ENGINE, (int(*)()) perform_work_list);
 				if (g_calculation_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
 					g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
-					timer(TIMER_ENGINE, (int(*)())perform_work_list);
+					timer(TIMER_ENGINE, (int(*)()) perform_work_list);
 					g_three_pass = 0;
 				}
 			}
@@ -794,7 +801,7 @@ int calculate_fractal()
 		else /* main case, much nicer! */
 		{
 			g_three_pass = 0;
-			timer(TIMER_ENGINE, (int(*)())perform_work_list);
+			timer(TIMER_ENGINE, (int(*)()) perform_work_list);
 		}
 	}
 	g_calculation_time += g_timer_interval;
@@ -3474,7 +3481,7 @@ ack: /* bailout here if key is pressed */
 }
 
 /* Symmetry plot for period PI */
-void _fastcall plot_color_symmetry_pi(int x, int y, int color)
+static void _fastcall plot_color_symmetry_pi(int x, int y, int color)
 {
 	while (x <= g_xx_stop)
 	{
@@ -3483,7 +3490,7 @@ void _fastcall plot_color_symmetry_pi(int x, int y, int color)
 	}
 }
 /* Symmetry plot for period PI plus Origin Symmetry */
-void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
+static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
 {
 	int i;
 	int j;
@@ -3503,7 +3510,7 @@ void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
 	}
 }
 /* Symmetry plot for period PI plus Both Axis Symmetry */
-void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
+static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
 {
 	int i;
 	int j;
@@ -3541,7 +3548,7 @@ void _fastcall plot_color_symmetry_x_axis(int x, int y, int color)
 }
 
 /* Symmetry plot for Y Axis Symmetry */
-void _fastcall plot_color_symmetry_y_axis(int x, int y, int color)
+static void _fastcall plot_color_symmetry_y_axis(int x, int y, int color)
 {
 	int i;
 	g_plot_color_put_color(x, y, color);
@@ -3569,7 +3576,7 @@ void _fastcall plot_color_symmetry_origin(int x, int y, int color)
 }
 
 /* Symmetry plot for Both Axis Symmetry */
-void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color)
+static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color)
 {
 	int i;
 	int j;
@@ -3591,7 +3598,7 @@ void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color)
 }
 
 /* Symmetry plot for X Axis Symmetry - Striped Newtbasin version */
-void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color)
+static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color)
 {
 	int i;
 	int stripe;
@@ -3608,7 +3615,7 @@ void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color)
 }
 
 /* Symmetry plot for Both Axis Symmetry  - Newtbasin version */
-void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color)
+static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color)
 {
 	int i;
 	int j;
