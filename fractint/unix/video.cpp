@@ -37,49 +37,8 @@ int g_color_dark = 0;		/* darkest color in palette */
 int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
-int boxcolor = 0;		/* Zoom-Box color */
 bool g_got_real_dac = false;		/* 1 if load_dac has a dacbox */
 int g_row_count = 0;		/* row-counter for decoder and out_line */
-int video_type = 0;		/* actual video adapter type:
-				   0  = type not yet determined
-				   1  = Hercules
-				   2  = CGA (assumed if nothing else)
-				   3  = EGA
-				   4  = MCGA
-				   5  = VGA
-				   6  = VESA (not yet checked)
-				   11  = 8514/A (not yet checked)
-				   12  = TIGA   (not yet checked)
-				   13  = TARGA  (not yet checked)
-				   100 = x monochrome
-				   101 = x 256 colors
-				 */
-int svga_type = 0;		/*  (forced) SVGA type
-				   1 = ahead "A" type
-				   2 = ATI
-				   3 = C&T
-				   4 = Everex
-				   5 = Genoa
-				   6 = Ncr
-				   7 = Oak-Tech
-				   8 = Paradise
-				   9 = Trident
-				   10 = Tseng 3000
-				   11 = Tseng 4000
-				   12 = Video-7
-				   13 = ahead "B" type
-				   14 = "null" type (for testing only) */
-int mode7text = 0;		/* nonzero for egamono and hgc */
-int textaddr = 0xb800;		/* b800 for mode 3, b000 for mode 7 */
-int textsafe = 0;		/* 0 = default, runup chgs to 1
-				   1 = yes
-				   2 = no, use 640x200
-				   3 = bios, yes plus use int 10h-1Ch
-				   4 = save, save entire image */
-int g_text_type = 1;		/* current mode's type of text:
-				   0  = real text, mode 3 (or 7)
-				   1  = 640x200x2, mode 6
-				   2  = some other mode, graphics */
 int g_text_row = 0;		/* for driver_put_string(-1,...) */
 int g_text_col = 0;		/* for driver_put_string(..,-1,...) */
 int g_text_rbase = 0;		/* g_text_row is relative to this */
@@ -91,22 +50,12 @@ int g_video_start_x = 0;
 int g_video_start_y = 0;
 int g_vesa_x_res;
 int g_vesa_y_res;
-int chkd_vvs = 0;
-int video_vram = 0;
-
-/*
-
-;		|--Adapter/Mode-Name------|-------Comments-----------|
-
-;		|------INT 10H------|Dot-|--Resolution---|
-;	    |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
-*/
 
 VIDEOINFO x11_video_table[] =
 {
 	{
 		"xfractint mode           ", "                         ",
-		999, 0, 0, 0, 0, 19, 640, 480, 256
+		999, 19, 640, 480, 256
 	}
 };
 
