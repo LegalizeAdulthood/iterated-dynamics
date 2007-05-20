@@ -1394,4 +1394,12 @@ struct UserInterfaceState
 	bool ask_video;					/* flag for video prompting */
 };
 
+class AbstractDialog
+{
+public:
+	void ProcessInput();
+	virtual bool ProcessWaitingKey(int key) = 0;
+	virtual bool ProcessIdle() = 0;
+};
+
 #endif

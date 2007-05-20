@@ -21,14 +21,6 @@
 extern int slowdisplay;
 #endif
 
-class AbstractDialog
-{
-public:
-	void ProcessInput();
-	virtual bool ProcessWaitingKey(int key) = 0;
-	virtual bool ProcessIdle() = 0;
-};
-
 void AbstractDialog::ProcessInput()
 {
 	bool done = false;
