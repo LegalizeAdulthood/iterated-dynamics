@@ -17,6 +17,7 @@
 #include "drivers.h"
 #include "evolve.h"
 #include "fracsubr.h"
+#include "framain2.h"
 #include "loadfdos.h"
 #include "loadfile.h"
 #include "lorenz.h"

@@ -3,6 +3,7 @@
 
 extern int disk_start_potential();
 extern int disk_start_targa(FILE *, int);
+extern int disk_start();
 extern void disk_end();
 extern int disk_read(int, int);
 extern void disk_write(int, int, int);

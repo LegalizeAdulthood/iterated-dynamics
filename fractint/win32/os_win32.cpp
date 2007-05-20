@@ -499,19 +499,6 @@ void spindac(int dir, int inc)
 }
 
 /*
-; ********* Function gettruecolor(xdot, ydot, &red, &green, &blue) **************
-;       Return the color on the screen at the (xdot, ydot) point
-*/
-void gettruecolor(int xdot, int ydot, int *red, int *green, int *blue)
-{
-	/* TODO */
-	_ASSERTE(false);
-	*red = 0;
-	*green = 0;
-	*blue = 0;
-}
-
-/*
 ; **************** Function home()  ********************************
 
 ;       Home the cursor (called before printfs)
@@ -544,16 +531,6 @@ void initasmvars()
 bool is_a_directory(char *s)
 {
 	return PathIsDirectory(s) != 0;
-}
-
-/*
-; ******* Function puttruecolor(xdot, ydot, red, green, blue) *************
-;       write the color on the screen at the (xdot, ydot) point
-*/
-void puttruecolor(int xdot, int ydot, int red, int green, int blue)
-{
-	/* TODO */
-	_ASSERTE(false);
 }
 
 /* tenths of millisecond timewr routine */
