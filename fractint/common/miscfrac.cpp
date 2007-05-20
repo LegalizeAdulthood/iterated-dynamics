@@ -18,6 +18,7 @@
 #include "fractals.h"
 #include "framain2.h"
 #include "loadmap.h"
+#include "miscfrac.h"
 #include "miscres.h"
 #include "realdos.h"
 #include "testpt.h"

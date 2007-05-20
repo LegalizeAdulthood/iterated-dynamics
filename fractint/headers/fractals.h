@@ -146,7 +146,6 @@ extern int bail_out_or_bf();
 extern int bail_out_and_bf();
 extern int bail_out_manhattan_bf();
 extern int bail_out_manhattan_r_bf();
-extern int ant();
 extern int phoenix_orbit();
 extern int phoenix_orbit_fp();
 extern int phoenix_complex_orbit();

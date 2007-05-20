@@ -24,6 +24,7 @@
 #include "helpdefs.h"
 #include "fihelp.h"
 
+#include "ant.h"
 #include "drivers.h"
 #include "fracsubr.h"
 #include "realdos.h"

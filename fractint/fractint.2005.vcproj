@@ -1049,10 +1049,6 @@
 			Name="headers"
 			>
 			<File
-				RelativePath=".\headers\3d.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\big.h"
 				>
 			</File>
@@ -1061,15 +1057,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\BoundaryTrace.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\busy.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\calcfrac.h"
 				>
 			</File>
 			<File
@@ -1097,10 +1085,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\DiffusionScan.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\diskvid.h"
 				>
 			</File>
@@ -1114,10 +1098,6 @@
 			</File>
 			<File
 				RelativePath=".\headers\encoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\EscapeTime.h"
 				>
 			</File>
 			<File
@@ -1145,26 +1125,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\fracsuba.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\fracsubr.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\fractalb.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\fractalp.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\fractals.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\fractint.h"
 				>
 			</File>
@@ -1177,15 +1137,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\frasetup.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\gifview.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\halley.h"
 				>
 			</File>
 			<File
@@ -1197,23 +1149,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\history.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\intro.h"
 				>
 			</File>
 			<File
-				RelativePath=".\headers\jb.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\jiim.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\line3d.h"
 				>
 			</File>
 			<File
@@ -1226,14 +1166,6 @@
 			</File>
 			<File
 				RelativePath=".\headers\loadmap.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\lorenz.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\lsys.h"
 				>
 			</File>
 			<File
@@ -1250,14 +1182,6 @@
 			</File>
 			<File
 				RelativePath=".\headers\mpmath.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\newton.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\plot3d.h"
 				>
 			</File>
 			<File
@@ -1289,31 +1213,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\soi.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\SolidGuess.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\SoundState.h"
 				>
 			</File>
 			<File
 				RelativePath=".\headers\stereo.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\Tesseral.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\testpt.h"
-				>
-			</File>
-			<File
-				RelativePath=".\headers\ThreeDimensionalState.h"
 				>
 			</File>
 			<File
@@ -1332,6 +1236,122 @@
 				RelativePath=".\headers\zoom.h"
 				>
 			</File>
+			<Filter
+				Name="3d"
+				>
+				<File
+					RelativePath=".\headers\3d.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\line3d.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\plot3d.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\ThreeDimensionalState.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="engine"
+				>
+				<File
+					RelativePath=".\headers\BoundaryTrace.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\calcfrac.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\DiffusionScan.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\EscapeTime.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\fracsuba.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\fracsubr.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\fractalb.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\fractalp.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\fractals.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\frasetup.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\history.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\soi.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\SolidGuess.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\Tesseral.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\testpt.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="fractal specific"
+				>
+				<File
+					RelativePath=".\headers\ant.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\halley.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\jb.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\lorenz.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\lsys.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\miscfrac.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\newton.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="help"

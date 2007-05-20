@@ -22,6 +22,7 @@
 #include "drivers.h"
 #include "fihelp.h"
 
+#include "ant.h"
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "editpal.h"
@@ -37,6 +38,7 @@
 #include "loadfile.h"
 #include "lorenz.h"
 #include "miscovl.h"
+#include "miscfrac.h"
 #include "miscres.h"
 #include "prompts1.h"
 #include "prompts2.h"

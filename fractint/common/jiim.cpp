@@ -58,6 +58,7 @@
 #include "editpal.h"
 #include "jiim.h"
 #include "lorenz.h"
+#include "miscfrac.h"
 #include "prompts2.h"
 #include "realdos.h"
 
