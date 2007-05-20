@@ -1,4 +1,4 @@
-ifndef WINPROT_H
+#ifndef WINPROT_H
 #define WINPROT_H
 
 /* This file contains prototypes for win specific functions. */
