@@ -252,7 +252,7 @@ static void set_cpu_fpu()
 	}
 }
 
-static void main_restart(int argc, char *argv[], bool &screen_stacked)
+static void application_restart(int argc, char *argv[], bool &screen_stacked)
 {
 	g_auto_browse     = false;
 	g_browse_check_type  = true;
@@ -330,7 +330,7 @@ static void main_restart(int argc, char *argv[], bool &screen_stacked)
 	screen_stacked = false;
 }
 
-static bool main_restore_restart(bool &screen_stacked, bool &resume_flag)
+static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 {
 	if (g_color_preloaded)
 	{
@@ -411,7 +411,7 @@ static bool main_restore_restart(bool &screen_stacked, bool &resume_flag)
 	return false;
 }
 
-static ApplicationStateType main_image_start(bool &screen_stacked, bool &resume_flag)
+static ApplicationStateType application_image_start(bool &screen_stacked, bool &resume_flag)
 {
 	if (screen_stacked)
 	{
@@ -624,17 +624,17 @@ int application_main(int argc, char **argv)
 		switch (state)
 		{
 		case APPSTATE_RESTART:
-			main_restart(argc, argv, screen_stacked);
+			application_restart(argc, argv, screen_stacked);
 			state = APPSTATE_RESTORE_START;
 			break;
 
 		case APPSTATE_RESTORE_START:
-			state = main_restore_restart(screen_stacked, resume_flag) ?
+			state = application_restore_restart(screen_stacked, resume_flag) ?
 				APPSTATE_RESUME_LOOP : APPSTATE_IMAGE_START;
 			break;
 
 		case APPSTATE_IMAGE_START:
-			state = main_image_start(screen_stacked, resume_flag);
+			state = application_image_start(screen_stacked, resume_flag);
 			break;
 
 		case APPSTATE_RESUME_LOOP:
