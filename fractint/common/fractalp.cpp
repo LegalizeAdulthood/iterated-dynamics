@@ -12,6 +12,7 @@
 #include "helpdefs.h"
 #include "fractype.h"
 
+#include "ant.h"
 #include "calcfrac.h"
 #include "fractalb.h"
 #include "fractalp.h"
@@ -20,6 +21,7 @@
 #include "jb.h"
 #include "lorenz.h"
 #include "lsys.h"
+#include "miscfrac.h"
 #include "prompts1.h"
 
 #include "Halley.h"
