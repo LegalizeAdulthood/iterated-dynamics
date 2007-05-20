@@ -415,7 +415,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 	}
 }
 
-void _fastcall plot3dcrosseyedA(int x, int y, int color)
+void _fastcall plot_3d_cross_eyed_A(int x, int y, int color)
 {
 	x /= 2;
 	y /= 2;
@@ -434,7 +434,7 @@ void _fastcall plot3dcrosseyedA(int x, int y, int color)
 	g_put_color(x, y, color);
 }
 
-void _fastcall plot3dcrosseyedB(int x, int y, int color)
+void _fastcall plot_3d_cross_eyed_B(int x, int y, int color)
 {
 	x /= 2;
 	y /= 2;
@@ -445,7 +445,7 @@ void _fastcall plot3dcrosseyedB(int x, int y, int color)
 	g_put_color(x, y, color);
 }
 
-void _fastcall plot3dcrosseyedC(int x, int y, int color)
+void _fastcall plot_3d_cross_eyed_C(int x, int y, int color)
 {
 	if (g_row_count >= g_y_dots/2)
 	{
@@ -485,11 +485,11 @@ void plot_setup()
 		if (g_screen_width < 2*g_x_dots)
 		{
 			g_standard_plot = (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0) ? /* use hidden surface kludge */
-				plot3dcrosseyedA : plot3dcrosseyedB;
+				plot_3d_cross_eyed_A : plot_3d_cross_eyed_B;
 		}
 		else if (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0)
 		{
-			g_standard_plot = plot3dcrosseyedC; /* use hidden surface kludge */
+			g_standard_plot = plot_3d_cross_eyed_C; /* use hidden surface kludge */
 		}
 		else
 		{
