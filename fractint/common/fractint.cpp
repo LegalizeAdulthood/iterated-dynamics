@@ -136,7 +136,7 @@ int     g_timed_save = 0;                    /* when doing a timed save */
 int     g_resave_mode = RESAVE_NO;                  /* tells encoder not to incr filename */
 bool g_started_resaves = false;              /* but incr on first resave */
 int     g_save_system;                    /* from and for save files */
-int     g_tab_mode = 1;                    /* tab display enabled */
+bool g_tab_display_enabled = true;                    /* tab display enabled */
 /* for historical reasons (before rotation):         */
 /*    top    left  corner of screen is (g_xx_min, g_yy_max) */
 /*    bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) */
@@ -342,7 +342,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 	while (g_show_file <= 0)              /* image is to be loaded */
 	{
 		char *hdg;
-		g_tab_mode = 0;
+		g_tab_display_enabled = false;
 		if (!g_browsing)     /*RB*/
 		{
 			if (g_overlay_3d)
@@ -375,7 +375,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 		g_view_window = false;
 		g_show_file = 1;
 		set_help_mode(-1);
-		g_tab_mode = 1;
+		g_tab_display_enabled = true;
 		if (screen_stacked)
 		{
 			driver_discard_screen();
@@ -390,7 +390,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 	}
 
 	set_help_mode(HELPMENU);                 /* now use this help mode */
-	g_tab_mode = 1;
+	g_tab_display_enabled = true;
 	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
 
 	if (((g_overlay_3d && !g_initialize_batch) || screen_stacked) && g_init_mode < 0)        /* overlay command failed */

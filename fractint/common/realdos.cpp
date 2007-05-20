@@ -1152,13 +1152,12 @@ int main_menu(bool full_menu)
 	int i;
 	int nextleft;
 	int nextright;
-	int oldtabmode;
 	int showjuliatoggle;
-	oldtabmode = g_tab_mode;
+	bool save_tab_display_enabled = g_tab_display_enabled;
 
 top:
 	s_full_menu = full_menu;
-	g_tab_mode = 0;
+	g_tab_display_enabled = false;
 	showjuliatoggle = 0;
 	for (i = 0; i < 44; ++i)
 	{
@@ -1488,7 +1487,7 @@ top:
 	{
 		i = 0;                 /* don't trigger new calc */
 	}
-	g_tab_mode = oldtabmode;
+	g_tab_display_enabled = save_tab_display_enabled;
 	return i;
 }
 

@@ -149,12 +149,12 @@ int Win32BaseDriver::handle_special_keys(int ch)
 		m_inside_help = false;
 		ch = 0;
 	}
-	else if (FIK_TAB == ch && g_tab_mode)
+	else if (FIK_TAB == ch && g_tab_display_enabled)
 	{
-		int old_tab = g_tab_mode;
-		g_tab_mode = 0;
+		bool save_tab_display_enabled = g_tab_display_enabled;
+		g_tab_display_enabled = false;
 		tab_display();
-		g_tab_mode = old_tab;
+		g_tab_display_enabled = save_tab_display_enabled;
 		ch = 0;
 	}
 

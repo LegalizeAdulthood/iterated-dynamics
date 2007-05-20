@@ -1401,12 +1401,11 @@ void end_resume()
 static void sleep_ms_old(long ms)
 {
 	static long scalems = 0L;
-	int savetabmode;
 	struct timebx t1, t2;
 #define SLEEPINIT 250 /* milliseconds for calibration */
-	savetabmode  = g_tab_mode;
+	bool save_tab_display_enabled = g_tab_display_enabled;
 	HelpModeSaver saved_help(-1);
-	g_tab_mode  = 0;
+	g_tab_display_enabled  = false;
 	if (scalems == 0L) /* g_calibrate */
 	{
 		/* selects a value of scalems that makes the units
@@ -1481,7 +1480,7 @@ static void sleep_ms_old(long ms)
 		}
 	}
 sleepexit:
-	g_tab_mode  = savetabmode;
+	g_tab_display_enabled  = save_tab_display_enabled;
 }
 
 static void sleep_ms_new(long ms)

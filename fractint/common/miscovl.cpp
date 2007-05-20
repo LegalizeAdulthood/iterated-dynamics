@@ -1990,9 +1990,6 @@ int select_video_mode(int curmode)
 	int i;
 	int k;
 	int ret;
-#ifndef XFRACT
-	int oldtabmode;
-#endif
 
 	for (i = 0; i < g_video_table_len; ++i)  /* init tables */
 	{
@@ -2027,15 +2024,15 @@ int select_video_mode(int curmode)
 		i = 0;
 	}
 
-	oldtabmode = g_tab_mode;
+	bool save_tab_display_enabled = g_tab_display_enabled;
 	modes_changed = 0;
-	g_tab_mode = 0;
+	g_tab_display_enabled = false;
 	i = full_screen_choice_help(HELPVIDSEL, CHOICE_HELP,
 		"Select Video Mode",
 		"key...name.......................xdot..ydot.colr.driver......comment......",
 		NULL, g_video_table_len, NULL, attributes,
 		1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
-	g_tab_mode = oldtabmode;
+	g_tab_display_enabled = save_tab_display_enabled;
 	if (i == -1)
 	{
 		/* update fractint.cfg for new key assignments */
