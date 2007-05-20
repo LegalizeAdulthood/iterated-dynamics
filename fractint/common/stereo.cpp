@@ -22,12 +22,14 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
-#include "drivers.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+
+#include "drivers.h"
 #include "encoder.h"
 #include "gifview.h"
 #include "realdos.h"
+#include "rotate.h"
 #include "stereo.h"
 
 #include <malloc.h>

@@ -6,8 +6,11 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
-#include "lsys.h"
+
 #include "drivers.h"
+#include "lsys.h"
+#include "realdos.h"
+
 #include "MathUtil.h"
 
 #ifdef max

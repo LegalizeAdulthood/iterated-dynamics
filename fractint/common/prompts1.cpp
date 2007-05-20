@@ -24,9 +24,10 @@
 #include "fractype.h"
 #include "helpdefs.h"
 #include "fihelp.h"
+
+#include "calcfrac.h"
 #include "drivers.h"
 #include "fracsuba.h"
-#include "calcfrac.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
@@ -37,6 +38,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "zoom.h"
 
 #include "EscapeTime.h"
 #include "ThreeDimensionalState.h"

@@ -21,6 +21,9 @@
 #include "prototyp.h"
 #include "fihelp.h"
 
+#include "miscres.h"
+#include "slideshw.h"
+
 bool g_overflow = false;
 
 int boxx[2304], boxy[1024];
