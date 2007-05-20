@@ -14,8 +14,8 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
-
-/* stuff from fractint */
+#include "intro.h"
+#include "realdos.h"
 
 #ifdef XFRACT
 extern int slowdisplay;

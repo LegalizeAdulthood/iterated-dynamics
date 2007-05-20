@@ -19,6 +19,8 @@ fractal routines.
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+
+#include "fractalb.h"
 #include "fractalp.h"
 
 #include "EscapeTime.h"

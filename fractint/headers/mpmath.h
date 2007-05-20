@@ -361,5 +361,29 @@ extern struct MP * MPadd(struct MP, struct MP);
 extern struct MP * MPdiv(struct MP, struct MP);
 extern struct MP * d2MP(double);  /* Convert double to type MP */
 extern struct MP * fg2MP(long, int); /* Convert fudged to type MP */
+extern struct MP *MPsub(struct MP, struct MP);
+extern struct MP *MPabs(struct MP);
+extern struct MPC MPCsqr(struct MPC);
+extern struct MP MPCmod(struct MPC);
+extern struct MPC MPCmul(struct MPC, struct MPC);
+extern struct MPC MPCdiv(struct MPC, struct MPC);
+extern struct MPC MPCadd(struct MPC, struct MPC);
+extern struct MPC MPCsub(struct MPC, struct MPC);
+extern struct MPC MPCpow(struct MPC, int);
+extern int MPCcmp(struct MPC, struct MPC);
+extern ComplexD MPC2cmplx(struct MPC);
+extern struct MPC cmplx2MPC(ComplexD);
+extern ComplexD ComplexPower(ComplexD, ComplexD);
+extern void SetupLogTable();
+extern long logtablecalc(long);
+extern long ExpFloat14(long);
+extern int complex_basin();
+extern int gaussian_number(int, int);
+extern void Arcsinz(ComplexD z, ComplexD *rz);
+extern void Arccosz(ComplexD z, ComplexD *rz);
+extern void Arcsinhz(ComplexD z, ComplexD *rz);
+extern void Arccoshz(ComplexD z, ComplexD *rz);
+extern void Arctanhz(ComplexD z, ComplexD *rz);
+extern void Arctanz(ComplexD z, ComplexD *rz);
 
 #endif

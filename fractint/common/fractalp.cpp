@@ -11,9 +11,16 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+
 #include "calcfrac.h"
+#include "fractalb.h"
+#include "fractalp.h"
 #include "fractals.h"
 #include "frasetup.h"
+#include "jb.h"
+#include "lorenz.h"
+#include "lsys.h"
+#include "prompts1.h"
 
 #include "Halley.h"
 #include "Newton.h"

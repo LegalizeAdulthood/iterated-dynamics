@@ -15,9 +15,14 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
-#include "drivers.h"
+
 #include "3d.h"
 #include "diskvid.h"
+#include "drivers.h"
+#include "line3d.h"
+#include "miscres.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 #include "ThreeDimensionalState.h"
 #include "MathUtil.h"

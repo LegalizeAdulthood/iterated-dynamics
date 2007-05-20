@@ -23,9 +23,14 @@
 #include "fractype.h"
 #include "drivers.h"
 #include "fihelp.h"
+
 #include "calcfrac.h"
 #include "fracsubr.h"
+#include "fractalb.h"
 #include "fractalp.h"
+#include "miscovl.h"
+#include "miscres.h"
+#include "realdos.h"
 
 #include "EscapeTime.h"
 #include "SoundState.h"

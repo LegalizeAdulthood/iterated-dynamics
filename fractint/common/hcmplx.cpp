@@ -2,6 +2,7 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "hcmplx.h"
 
 void HComplexMult(HyperComplexD *arg1, HyperComplexD *arg2, HyperComplexD *out)
 {

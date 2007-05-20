@@ -14,6 +14,11 @@
 #include "3d.h"
 #include "encoder.h"
 #include "fracsubr.h"
+#include "jiim.h"
+#include "lorenz.h"
+#include "miscres.h"
+#include "plot3d.h"
+#include "realdos.h"
 
 #include "EscapeTime.h"
 #include "SoundState.h"

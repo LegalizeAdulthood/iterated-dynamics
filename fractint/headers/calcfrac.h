@@ -35,4 +35,6 @@ extern int froth_setup();
 extern int logtable_in_extra_ok();
 extern int find_alternate_math(int, int);
 
+extern void (_fastcall *g_plot_color)(int,int,int);
+
 #endif

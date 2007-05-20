@@ -72,4 +72,9 @@ extern struct lsys_cmd *lsysf_size_transform(char *s, struct lsys_turtle_state_f
 extern struct lsys_cmd *lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts);
 extern void _fastcall lsysf_sin_cos();
 
+extern LDBL  _fastcall get_number(char **);
+extern bool _fastcall is_pow2(int);
+extern int l_system();
+extern int l_load();
+
 #endif

@@ -12,6 +12,9 @@
 #include "fihelp.h"
 #include "drivers.h"
 #include "cmdfiles.h"
+#include "miscres.h"
+#include "realdos.h"
+
 #include "SoundState.h"
 #include "CommandParser.h"
 #include "UIChoices.h"

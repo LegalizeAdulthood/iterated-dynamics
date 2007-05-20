@@ -21,6 +21,9 @@
 #include "fihelp.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
+#include "miscres.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 /* uncomment following for production version */
 /*

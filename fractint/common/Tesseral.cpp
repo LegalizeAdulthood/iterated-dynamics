@@ -5,6 +5,7 @@
 #include "prototyp.h"
 #include "externs.h"
 #include "fracsubr.h"
+#include "miscres.h"
 
 #include "Tesseral.h"
 #include "WorkList.h"

@@ -14,6 +14,8 @@
 #include "externs.h"
 #include "drivers.h"
 #include "calcmand.h"
+#include "prompts2.h"
+
 #include "MathUtil.h"
 
 #define FUDGE_FACTOR_BITS 29

@@ -60,6 +60,13 @@
 #include "diskvid.h"
 #include "evolve.h"
 #include "fracsubr.h"
+#include "line3d.h"
+#include "loadfile.h"
+#include "loadmap.h"
+#include "miscres.h"
+#include "prompts1.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 #include "busy.h"
 #include "EscapeTime.h"

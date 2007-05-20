@@ -6,6 +6,7 @@
 #include "externs.h"
 #include "prototyp.h"
 #include "fracsubr.h"
+#include "miscres.h"
 
 #include "DiffusionScan.h"
 #include "WorkList.h"

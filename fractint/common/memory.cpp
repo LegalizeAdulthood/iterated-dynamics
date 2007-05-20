@@ -16,6 +16,8 @@
 #include "port.h"
 #include "prototyp.h"
 #include "drivers.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 /* Memory allocation routines. */
 

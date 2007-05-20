@@ -16,6 +16,10 @@
 #include "diskvid.h"
 #include "encoder.h"
 #include "framain2.h"
+#include "loadfile.h"
+#include "miscres.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 #include "busy.h"
 #include "EscapeTime.h"

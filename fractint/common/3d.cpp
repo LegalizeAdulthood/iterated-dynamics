@@ -59,6 +59,7 @@ ROTZ(i) =           cosi  sini    0     0
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
+
 #include "3d.h"
 
 /* initialize a matrix and set to identity matrix

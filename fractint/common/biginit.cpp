@@ -14,7 +14,10 @@ is in the allocations of memory for the big numbers.
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "biginit.h"
 #include "calcfrac.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 /* globals */
 int bnstep = 0;
