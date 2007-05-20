@@ -21,15 +21,13 @@
 #include "prototyp.h"
 #include "fihelp.h"
 
-int g_overflow = 0;
+bool g_overflow = false;
 
 int boxx[2304], boxy[1024];
 int boxvalues[512];
 BYTE g_dac_box[256][3];
 
 int DivideOverflow = 0;
-int cpu = 0;		/* cpu type: 86, 186, 286, or 386 */
-int fpu = 0;		/* fpu type: 0, 87, 287, 387 */
 
 /* ********************** Mouse Support Variables ************************** */
 
@@ -48,14 +46,14 @@ int get_a_key();
 void
 initasmvars()
 {
-	if (cpu != 0)
+	if (g_cpu != 0)
 	{
 		return;
 	}
 	g_overflow = 0;
 
-	/* set cpu type */
-	cpu = 1;
+	/* set g_cpu type */
+	g_cpu = 1;
 
 	/* set fpu type */
 	/* not needed, set fpu in sstools.ini */

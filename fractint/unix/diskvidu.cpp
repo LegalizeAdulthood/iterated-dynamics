@@ -21,8 +21,8 @@
 
 #define TIMETODISPLAY 10000
 
-int g_disk_16bit = 0;	   /* storing 16 bit values for continuous potential */
-int g_disk_targa = 0;
+bool g_disk_16bit = false; /* storing 16 bit values for continuous potential */
+bool g_disk_targa = false;
 
 static int s_time_to_display = 0;
 static FILE *s_targa_disk_file = NULL;
