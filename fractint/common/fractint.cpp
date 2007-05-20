@@ -254,9 +254,6 @@ static void set_cpu_fpu()
 
 static void main_restart(int argc, char *argv[], bool &screen_stacked)
 {
-#if defined(_WIN32)
-	_ASSERTE(_CrtCheckMemory());
-#endif
 	g_auto_browse     = false;
 	g_browse_check_type  = true;
 	g_browse_check_parameters = true;
@@ -335,10 +332,6 @@ static void main_restart(int argc, char *argv[], bool &screen_stacked)
 
 static bool main_restore_restart(bool &screen_stacked, bool &resume_flag)
 {
-#if defined(_WIN32)
-	_ASSERTE(_CrtCheckMemory());
-#endif
-
 	if (g_color_preloaded)
 	{
 		memcpy(g_dac_box, g_old_dac_box, 256*3);   /* restore in case colors= present */
@@ -418,12 +411,8 @@ static bool main_restore_restart(bool &screen_stacked, bool &resume_flag)
 	return false;
 }
 
-static int main_image_start(bool &screen_stacked, bool &resume_flag)
+static ApplicationStateType main_image_start(bool &screen_stacked, bool &resume_flag)
 {
-#if defined(_WIN32)
-	_ASSERTE(_CrtCheckMemory());
-#endif
-
 	if (screen_stacked)
 	{
 		driver_discard_screen();
@@ -582,7 +571,7 @@ static int main_image_start(bool &screen_stacked, bool &resume_flag)
 	set_help_mode(HELPMAIN);         /* now use this help mode */
 	resume_flag = false;  /* allows taking goto inside big_while_loop() */
 
-	return 0;
+	return APPSTATE_NO_CHANGE;
 }
 
 void application_initialize(int argc, char **argv)
@@ -624,38 +613,35 @@ int application_main(int argc, char **argv)
 	bool resume_flag = false;
 	bool screen_stacked = false;
 	int kbdmore;						/* continuation variable        */
+	ApplicationStateType state = APPSTATE_RESTART;
 
-restart:
-	/* insert key re-starts here */
-	main_restart(argc, argv, screen_stacked);
-
-restorestart:
-	if (main_restore_restart(screen_stacked, resume_flag))
+	while (state != APPSTATE_NO_CHANGE)
 	{
-		goto resumeloop;
-	}
-
-imagestart:
-	/* calc/display a new image */
-	switch (main_image_start(screen_stacked, resume_flag))
-	{
-	case APPSTATE_RESTART:		goto restart;
-	case APPSTATE_RESTORE_START:	goto restorestart;
-	case APPSTATE_IMAGE_START:	goto imagestart;
-	}
-
-resumeloop:
 #if defined(_WIN32)
-	_ASSERTE(_CrtCheckMemory());
+		_ASSERTE(_CrtCheckMemory());
 #endif
 
-	save_parameter_history();
-	/* this switch processes gotos that are now inside function */
-	switch (big_while_loop(&kbdmore, screen_stacked, resume_flag))
-	{
-	case APPSTATE_RESTART:		goto restart;
-	case APPSTATE_IMAGE_START:	goto imagestart;
-	case APPSTATE_RESTORE_START:	goto restorestart;
+		switch (state)
+		{
+		case APPSTATE_RESTART:
+			main_restart(argc, argv, screen_stacked);
+			state = APPSTATE_RESTORE_START;
+			break;
+
+		case APPSTATE_RESTORE_START:
+			state = main_restore_restart(screen_stacked, resume_flag) ?
+				APPSTATE_RESUME_LOOP : APPSTATE_IMAGE_START;
+			break;
+
+		case APPSTATE_IMAGE_START:
+			state = main_image_start(screen_stacked, resume_flag);
+			break;
+
+		case APPSTATE_RESUME_LOOP:
+			save_parameter_history();
+			state = big_while_loop(kbdmore, screen_stacked, resume_flag);
+			break;
+		}
 	}
 
 	return 0;
