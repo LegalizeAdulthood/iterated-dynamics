@@ -773,6 +773,26 @@ struct tag_alternate_math_info
 typedef struct tag_alternate_math_info alternate_math;
 
 /* defines for inside/outside */
+enum ColoringModeType
+{
+	COLORMODE_ITERATION = -1,
+	COLORMODE_REAL = -2,
+	COLORMODE_IMAGINARY = -3,
+	COLORMODE_MULTIPLY = -4,
+	COLORMODE_SUM = -5,
+	COLORMODE_INVERSE_TANGENT = -6,
+	COLORMODE_FLOAT_MODULUS = -7,
+	COLORMODE_T_DISTANCE = -8,
+	COLORMODE_Z_MAGNITUDE = -59,
+	COLORMODE_BEAUTY_OF_FRACTALS_60 = -60,
+	COLORMODE_BEAUTY_OF_FRACTALS_61 = -61,
+	COLORMODE_EPSILON_CROSS = -100,
+	COLORMODE_STAR_TRAIL = -101,
+	COLORMODE_PERIOD = -102,
+	COLORMODE_FLOAT_MODULUS_INTEGER = -103,
+	COLORMODE_INVERSE_TANGENT_INTEGER = -104
+};
+
 #define ITER        -1
 #define REAL        -2
 #define IMAG        -3
@@ -823,13 +843,9 @@ extern FractalTypeSpecificData *g_current_fractal_specific;
 #define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
 #define LCMPLXconj(z)   ((z).y =  -((z).y))
 
-#define PER_IMAGE   (g_fractal_specific[g_fractal_type].per_image)
-#define PER_PIXEL   (g_fractal_specific[g_fractal_type].per_pixel)
-#define ORBITCALC   (g_fractal_specific[g_fractal_type].orbitcalc)
-
 /* 3D stuff - formerly in 3d.h */
-#ifndef dot_product
-#define dot_product(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])  /* TW 7-09-89 */
+#ifndef DOT_PRODUCT
+#define DOT_PRODUCT(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])
 #endif
 
 #define    CMAX    4   /* maximum column (4 x 4 matrix) */

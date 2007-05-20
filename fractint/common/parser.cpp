@@ -3202,7 +3202,7 @@ int Formula::orbit()
 	m_store_ptr = InitStoPtr;
 	m_op_ptr = InitOpPtr;
 	m_jump_index = m_initial_jump_index;
-	/* Set the random number, MCP 11-21-91 */
+	/* Set the random number */
 	if (s_random.random() || s_random.randomized())
 	{
 		switch (m_math_type)
@@ -4334,7 +4334,7 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 {
 
-	/* GGM 5-23-96: replaces FindFormula(). This function sets the
+	/* replaces FindFormula(). This function sets the
 	symmetry and converts a formula into a string  with no spaces,
 	and one comma after each expression except where the ':' is placed
 	and except the final expression in the formula. The open file passed
@@ -4471,7 +4471,7 @@ int Formula::RunFormula(const char *Name, bool report_bad_symmetry)
 		return 1;  /*  and don't reset the pointers  */
 	}
 
-	/* TW 5-31-94 add search for FRM files in directory */
+	/* add search for FRM files in directory */
 	if (find_file_item(g_formula_filename, Name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stop_message(0, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));

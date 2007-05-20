@@ -1594,9 +1594,8 @@ int ifs_load()                   /* read in IFS parameters */
 	}
 	return ret;
 }
-/* TW 5-31-94 - added search of current directory for entry files if
-	entry item not found */
 
+/* added search of current directory for entry files if entry item not found */
 int find_file_item(char *filename, const char *itemname, FILE **fileptr, int itemtype)
 {
 	FILE *infile = NULL;

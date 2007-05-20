@@ -642,7 +642,7 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 			/* we will use this value to shade surface */
 
 			cur->color = (int) (1 + (g_colors - 2) *
-				(1.0 - dot_product(g_cross, s_light_direction)));
+				(1.0 - DOT_PRODUCT(g_cross, s_light_direction)));
 		}
 		/* if colors out of range, set them to min or max color index
 		* but avoid background index. This makes colors "opaque" so

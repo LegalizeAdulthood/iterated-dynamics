@@ -47,7 +47,6 @@ static char s_diffusion_lb[] =
 	6, 6,14
 };
 
-/* function: count_to_int(dif_offset, g_diffusion_counter, colo, rowo) */
 static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
 {
 	*x = s_diffusion_la[C & 0xFF];
@@ -67,11 +66,6 @@ static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
 	*y >>= dif_offset;
 }
 
-/* REMOVED: counter byte 3 */                                                          \
-/* (x) < <= 4; (x) += s_diffusion_la[tC&0(x)FF]; (y) < <= 4; (y) += s_diffusion_lb[tC&0(x)FF]; tC >>= 8;
-	--> eliminated this and made (*) because fractint user coordinates up to
-	2048(x)2048 what means a counter of 24 bits or 3 bytes */
-
 /* Calculate the point */
 static bool diffusion_point(int row, int col)
 {
@@ -85,8 +79,10 @@ static bool diffusion_point(int row, int col)
 	return false;
 }
 
-/* little function that plots a filled square of color c, size s with
-	top left cornet at (x, y) with optimization from sym_fill_line */
+/*
+	little function that plots a filled square of color c, size s with
+	top left cornet at (x, y) with optimization from sym_fill_line
+*/
 static void diffusion_plot_block(int x, int y, int s, int c)
 {
 	memset(g_stack, c, s);
@@ -111,7 +107,7 @@ static bool diffusion_block(int row, int col, int sqsz)
 /* function that does the same as above, but checks the limits in x and y */
 static void plot_block_lim(int x, int y, int s, int c)
 {
-	memset(g_stack, (c), (s));
+	memset(g_stack, c, s);
 	for (int ty = y; ty < min(y + s, g_y_stop + 1); ty++)
 	{
 		sym_fill_line(ty, x, min(x + s - 1, g_x_stop), g_stack);

@@ -258,7 +258,6 @@ static int l_setup_convert_to_screen(l_affine *l_cvt)
 {
 	affine cvt;
 
-	/* MCP 7-7-91, This function should return a something! */
 	if (setup_convert_to_screen(&cvt))
 	{
 		return -1;
@@ -270,7 +269,6 @@ static int l_setup_convert_to_screen(l_affine *l_cvt)
 	l_cvt->e = (long) (cvt.e*g_fudge);
 	l_cvt->f = (long) (cvt.f*g_fudge);
 
-	/* MCP 7-7-91 */
 	return 0;
 }
 
@@ -2122,7 +2120,7 @@ int setup_orbits_to_screen(affine *scrn_cnvt)
 	return 0;
 }
 
-int plotorbits2dsetup()
+int plot_orbits_2d_setup()
 {
 
 #ifndef XFRACT
@@ -2140,7 +2138,7 @@ int plotorbits2dsetup()
 	}
 #endif
 
-	PER_IMAGE();
+	g_fractal_specific[g_fractal_type].per_image();
 
 	/* setup affine screen coord conversion */
 	if (g_keep_screen_coords)
@@ -2207,11 +2205,11 @@ int plotorbits2dfloat()
 		}
 	}
 
-	PER_PIXEL(); /* initialize the calculations */
+	g_fractal_specific[g_fractal_type].per_pixel(); /* initialize the calculations */
 
 	for (count = 0; count < g_max_iteration; count++)
 	{
-		if (ORBITCALC() == 1 && g_periodicity_check)
+		if (g_fractal_specific[g_fractal_type].orbitcalc() == 1 && g_periodicity_check)
 		{
 			continue;  /* bailed out, don't plot */
 		}
