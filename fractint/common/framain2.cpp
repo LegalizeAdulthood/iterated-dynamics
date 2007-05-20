@@ -252,7 +252,7 @@ ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool res
 			if (2224 == g_debug_mode)
 			{
 				char msg[MESSAGE_LEN];
-				sprintf(msg, "floatflag=%d", g_user_float_flag);
+				sprintf(msg, "floatflag=%d", g_user_float_flag ? 1 : 0);
 				stop_message(STOPMSG_NO_BUZZER, (char *)msg);
 			}
 			i = funny_glasses_call(gifview);
@@ -923,11 +923,11 @@ static ApplicationStateType handle_toggle_float()
 {
 	if (!g_user_float_flag)
 	{
-		g_user_float_flag = 1;
+		g_user_float_flag = true;
 	}
 	else if (g_standard_calculation_mode != 'o') /* don't go there */
 	{
-		g_user_float_flag = 0;
+		g_user_float_flag = false;
 	}
 	g_init_mode = g_adapter;
 	return APPSTATE_IMAGE_START;
@@ -1219,12 +1219,12 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		if (g_current_fractal_specific->isinteger != 0
 			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
-			g_user_float_flag = 0;
+			g_user_float_flag = false;
 		}
 		if (g_current_fractal_specific->isinteger == 0
 			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
-			g_user_float_flag = 1;
+			g_user_float_flag = true;
 		}
 		return APPSTATE_IMAGE_START;
 	}
@@ -1789,12 +1789,12 @@ static ApplicationStateType handle_evolver_history(int kbdchar)
 		if (g_current_fractal_specific->isinteger != 0
 			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
-			g_user_float_flag = 0;
+			g_user_float_flag = false;
 		}
 		if (g_current_fractal_specific->isinteger == 0
 			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
-			g_user_float_flag = 1;
+			g_user_float_flag = true;
 		}
 		return APPSTATE_IMAGE_START;
 	}

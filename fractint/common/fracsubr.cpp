@@ -120,13 +120,13 @@ void calculate_fractal_initialize()
 	/* space available in extraseg is 65536 Bytes */
 	{
 		long xytemp = g_x_dots + g_y_dots;
-		if (((g_user_float_flag == 0) && (xytemp*sizeof(long) > 32768))
-			|| ((g_user_float_flag == 1) && (xytemp*sizeof(double) > 32768))
+		if ((!g_user_float_flag && (xytemp*sizeof(long) > 32768))
+			|| (g_user_float_flag && (xytemp*sizeof(double) > 32768))
 			|| DEBUGMODE_NO_PIXEL_GRID == g_debug_mode)
 		{
 			g_escape_time_state.m_use_grid = false;
 			g_float_flag = true;
-			g_user_float_flag = 1;
+			g_user_float_flag = true;
 		}
 		else
 		{
@@ -173,28 +173,28 @@ void calculate_fractal_initialize()
 		g_fractal_type = FRACTYPE_MANDELBROT_FP;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
-		g_user_float_flag = 1;
+		g_user_float_flag = true;
 	}
 	else if ((g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 	{
 		g_fractal_type = FRACTYPE_JULIA_FP;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
-		g_user_float_flag = 1;
+		g_user_float_flag = true;
 	}
 	else if ((g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L || g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 	{
 		g_fractal_type = FRACTYPE_MANDELBROT_Z_POWER_FP;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
-		g_user_float_flag = 1;
+		g_user_float_flag = true;
 	}
 	else if ((g_fractal_type == FRACTYPE_JULIA_Z_POWER_L || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 	{
 		g_fractal_type = FRACTYPE_JULIA_Z_POWER_FP;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		fractal_float_to_bf();
-		g_user_float_flag = 1;
+		g_user_float_flag = true;
 	}
 	else
 	{

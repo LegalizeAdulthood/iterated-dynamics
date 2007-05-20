@@ -944,6 +944,7 @@ extern FractalTypeSpecificData *g_current_fractal_specific;
 #define    RMAX    4   /* maximum row    (4 x 4 matrix) */
 #define    DIM     3   /* number of dimensions */
 
+// TODO: use a template type for different kinds of matrices
 typedef double MATRIX [RMAX] [CMAX];  /* matrix of doubles */
 typedef int   IMATRIX [RMAX] [CMAX];  /* matrix of ints    */
 typedef long  LMATRIX [RMAX] [CMAX];  /* matrix of longs   */
@@ -952,6 +953,7 @@ typedef long  LMATRIX [RMAX] [CMAX];  /* matrix of longs   */
 system to another.  Multiple transformations may be concatenated by
 multiplying their transformation matrices. */
 
+// TODO: use a template type for different kinds of vectors
 typedef double VECTOR [DIM];  /* vector of doubles */
 typedef int   IVECTOR [DIM];  /* vector of ints    */
 typedef long  LVECTOR [DIM];  /* vector of longs   */

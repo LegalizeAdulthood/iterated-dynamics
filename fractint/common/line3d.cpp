@@ -2463,7 +2463,6 @@ static void line3d_cleanup()
 			dir_remove(g_work_dir, s_targa_temp);
 		}
 	}
-	g_user_float_flag &= 1;          /* strip second bit */
 	s_file_error = FILEERROR_NONE;
 	s_targa_safe = 0;
 }
@@ -2477,34 +2476,83 @@ static void set_upr_lwr()
 	s_line_length = 3*g_x_dots;    /* line length @ 3 bytes per pixel  */
 }
 
+static void initialize_trig_tables(int linelen)
+{
+	/* Sphere is on side - north pole on right. Top is -90 degrees
+	* latitude; bottom 90 degrees */
+
+	/* Map X to this LATITUDE range */
+	float theta1 = (float) MathUtil::DegreesToRadians(g_3d_state.theta1());
+	float theta2 = (float) MathUtil::DegreesToRadians(g_3d_state.theta2());
+
+	/* Map Y to this LONGITUDE range */
+	float phi1 = (float) MathUtil::DegreesToRadians(g_3d_state.phi1());
+	float phi2 = (float) MathUtil::DegreesToRadians(g_3d_state.phi2());
+
+	float theta = theta1;
+
+	/*********************************************************************/
+	/* Thanks to Hugh Bray for the following idea: when calculating      */
+	/* a table of evenly spaced sines or cosines, only a few initial     */
+	/* values need be calculated, and the remaining values can be        */
+	/* gotten from a derivative of the sine/cosine angle sum formula     */
+	/* at the cost of one multiplication and one addition per value!     */
+	/*                                                                   */
+	/* This idea is applied once here to get a complete table for        */
+	/* latitude, and near the bottom of this routine to incrementally    */
+	/* calculate longitude.                                              */
+	/*                                                                   */
+	/* Precalculate 2*cos(deltaangle), sin(start) and sin(start + delta).  */
+	/* Then apply recursively:                                           */
+	/* sin(angle + 2*delta) = sin(angle + delta)*2cosdelta - sin(angle)    */
+	/*                                                                   */
+	/* Similarly for cosine. Neat!                                       */
+	/*********************************************************************/
+
+	float deltatheta = (float) (theta2 - theta1)/(float) linelen;
+
+	/* initial sin, cos theta */
+	s_sin_theta_array[0] = (float) sin((double) theta);
+	s_cos_theta_array[0] = (float) cos((double) theta);
+	s_sin_theta_array[1] = (float) sin((double) (theta + deltatheta));
+	s_cos_theta_array[1] = (float) cos((double) (theta + deltatheta));
+
+	/* sin, cos delta theta */
+	float two_cos_delta_theta = (float) (2.0*cos((double) deltatheta));
+
+	/* build table of other sin, cos with trig identity */
+	for (int i = 2; i < (int) linelen; i++)
+	{
+		s_sin_theta_array[i] = s_sin_theta_array[i - 1]*two_cos_delta_theta -
+			s_sin_theta_array[i - 2];
+		s_cos_theta_array[i] = s_cos_theta_array[i - 1]*two_cos_delta_theta -
+			s_cos_theta_array[i - 2];
+	}
+
+	/* now phi - these calculated as we go - get started here */
+	{
+		/* increment of latitude, longitude */
+		float delta_phi = (float) (phi2 - phi1)/(float) g_height;
+
+		/* initial sin, cos phi */
+		s_old_sin_phi1 = (float) sin((double) phi1);
+		s_sin_phi = s_old_sin_phi1;
+		s_old_cos_phi1 = (float) cos((double) phi1);
+		s_cos_phi = s_old_cos_phi1;
+		s_old_sin_phi2 = (float) sin((double) (phi1 + delta_phi));
+		s_old_cos_phi2 = (float) cos((double) (phi1 + delta_phi));
+
+		/* sin, cos delta phi */
+		s_two_cos_delta_phi = (float) (2.0*cos((double) delta_phi));
+	}
+}
 static int first_time(int linelen, VECTOR v)
 {
-	MATRIX lightm;               /* m w/no trans, keeps obj. on screen */
-	double xval;
-	double yval;
-	double zval;     /* rotation values */
-	/* corners of transformed xdotx by ydotx colors box */
-	double x_min;
-	double y_min;
-	double z_min;
-	double x_max;
-	double y_max;
-	double z_max;
-	double v_length;
-	VECTOR origin;
-	VECTOR direct;
-	VECTOR tmp;
-	float theta;
-	float theta1;
-	float theta2; /* current, start, stop latitude */
-	float phi1;
-	float phi2;            /* current start, stop longitude */
-	float deltatheta;            /* increment of latitude */
 	g_out_line_cleanup = line3d_cleanup;
 
 	g_calculation_time = 0;
 	s_even_odd_row = 0;
-	/* mark as in-progress, and enable <tab> timer display */
+	/* mark as in-progress */
 	g_calculation_status = CALCSTAT_IN_PROGRESS;
 
 	s_ambient = (unsigned int) (255*(float) (100 - g_3d_state.ambient())/100.0);
@@ -2537,7 +2585,8 @@ static int first_time(int linelen, VECTOR v)
 		s_targa_safe = 0; /* Not safe yet to mess with the source image */
 	}
 
-	if (g_targa_output && !((g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
+	if (g_targa_output
+		&& !((g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 		&& g_which_image == WHICHIMAGE_BLUE))
 	{
 		if (g_targa_overlay)
@@ -2585,6 +2634,14 @@ static int first_time(int linelen, VECTOR v)
 	/* aspect ratio calculation - assume screen is 4 x 3 */
 	s_aspect = (double) g_x_dots *.75/(double) g_y_dots;
 
+	MATRIX lightm;
+	/* corners of transformed xdotx by ydotx colors box */
+	double x_min;
+	double y_min;
+	double z_min;
+	double x_max;
+	double y_max;
+	double z_max;
 	if (g_3d_state.sphere() == false)         /* skip this slow stuff in sphere case */
 	{
 		/*********************************************************************/
@@ -2612,9 +2669,9 @@ static int first_time(int linelen, VECTOR v)
 		scale(s_scale_x, s_scale_y, s_scale_z, lightm);
 
 		/* rotation values - converting from degrees to radians */
-		xval = MathUtil::DegreesToRadians(g_3d_state.x_rotation());
-		yval = MathUtil::DegreesToRadians(g_3d_state.y_rotation());
-		zval = MathUtil::DegreesToRadians(g_3d_state.z_rotation());
+		double xval = MathUtil::DegreesToRadians(g_3d_state.x_rotation());
+		double yval = MathUtil::DegreesToRadians(g_3d_state.y_rotation());
+		double zval = MathUtil::DegreesToRadians(g_3d_state.z_rotation());
 
 		if (g_3d_state.raytrace_output())
 		{
@@ -2646,7 +2703,7 @@ static int first_time(int linelen, VECTOR v)
 		s_persp = 1;
 		if (g_3d_state.z_viewer() < 80)         /* force float */
 		{
-			g_user_float_flag |= 2;    /* turn on second bit */
+			g_user_float_flag = true;
 		}
 	}
 
@@ -2672,7 +2729,7 @@ static int first_time(int linelen, VECTOR v)
 	s_lview[1] <<= 16;
 	s_lview[2] <<= 16;
 
-	if (g_3d_state.sphere() == false)         /* sphere skips this */
+	if (!g_3d_state.sphere())
 	{
 		/* translate back exactly amount we translated earlier plus enough to
 		* center image so maximum values are non-positive */
@@ -2694,75 +2751,8 @@ static int first_time(int linelen, VECTOR v)
 		}
 	}
 	else
-		/* sphere stuff goes here */
 	{
-		/* Sphere is on side - north pole on right. Top is -90 degrees
-		* latitude; bottom 90 degrees */
-
-		/* Map X to this LATITUDE range */
-		theta1 = (float) MathUtil::DegreesToRadians(g_3d_state.theta1());
-		theta2 = (float) MathUtil::DegreesToRadians(g_3d_state.theta2());
-
-		/* Map Y to this LONGITUDE range */
-		phi1 = (float) MathUtil::DegreesToRadians(g_3d_state.phi1());
-		phi2 = (float) MathUtil::DegreesToRadians(g_3d_state.phi2());
-
-		theta = theta1;
-
-		/*********************************************************************/
-		/* Thanks to Hugh Bray for the following idea: when calculating      */
-		/* a table of evenly spaced sines or cosines, only a few initial     */
-		/* values need be calculated, and the remaining values can be        */
-		/* gotten from a derivative of the sine/cosine angle sum formula     */
-		/* at the cost of one multiplication and one addition per value!     */
-		/*                                                                   */
-		/* This idea is applied once here to get a complete table for        */
-		/* latitude, and near the bottom of this routine to incrementally    */
-		/* calculate longitude.                                              */
-		/*                                                                   */
-		/* Precalculate 2*cos(deltaangle), sin(start) and sin(start + delta).  */
-		/* Then apply recursively:                                           */
-		/* sin(angle + 2*delta) = sin(angle + delta)*2cosdelta - sin(angle)    */
-		/*                                                                   */
-		/* Similarly for cosine. Neat!                                       */
-		/*********************************************************************/
-
-		deltatheta = (float) (theta2 - theta1)/(float) linelen;
-
-		/* initial sin, cos theta */
-		s_sin_theta_array[0] = (float) sin((double) theta);
-		s_cos_theta_array[0] = (float) cos((double) theta);
-		s_sin_theta_array[1] = (float) sin((double) (theta + deltatheta));
-		s_cos_theta_array[1] = (float) cos((double) (theta + deltatheta));
-
-		/* sin, cos delta theta */
-		float two_cos_delta_theta = (float) (2.0*cos((double) deltatheta));
-
-		/* build table of other sin, cos with trig identity */
-		for (int i = 2; i < (int) linelen; i++)
-		{
-			s_sin_theta_array[i] = s_sin_theta_array[i - 1]*two_cos_delta_theta -
-				s_sin_theta_array[i - 2];
-			s_cos_theta_array[i] = s_cos_theta_array[i - 1]*two_cos_delta_theta -
-				s_cos_theta_array[i - 2];
-		}
-
-		/* now phi - these calculated as we go - get started here */
-		{
-			/* increment of latitude, longitude */
-			float delta_phi = (float) (phi2 - phi1)/(float) g_height;
-
-			/* initial sin, cos phi */
-			s_old_sin_phi1 = (float) sin((double) phi1);
-			s_sin_phi = s_old_sin_phi1;
-			s_old_cos_phi1 = (float) cos((double) phi1);
-			s_cos_phi = s_old_cos_phi1;
-			s_old_sin_phi2 = (float) sin((double) (phi1 + delta_phi));
-			s_old_cos_phi2 = (float) cos((double) (phi1 + delta_phi));
-
-			/* sin, cos delta phi */
-			s_two_cos_delta_phi = (float) (2.0*cos((double) delta_phi));
-		}
+		initialize_trig_tables(linelen);
 
 		/* affects how rough planet terrain is */
 		if (g_3d_state.roughness())
@@ -2826,6 +2816,7 @@ static int first_time(int linelen, VECTOR v)
 	}
 
 	/* Both Sphere and Normal 3D */
+	VECTOR direct;
 	direct[0] = g_3d_state.x_light();
 	direct[1] = -g_3d_state.y_light();
 	direct[2] = g_3d_state.z_light();
@@ -2865,6 +2856,7 @@ static int first_time(int linelen, VECTOR v)
 		normalize_vector(direct);
 
 		/* move light vector to be more clear with grey scale maps */
+		VECTOR origin;
 		origin[0] = (3*g_x_dots)/16;
 		origin[1] = (3*g_y_dots)/4;
 		if (g_3d_state.fill_type() == FillType::LightAfter)
@@ -2874,7 +2866,7 @@ static int first_time(int linelen, VECTOR v)
 
 		origin[2] = 0.0;
 
-		v_length = min(g_x_dots, g_y_dots)/2;
+		double v_length = min(g_x_dots, g_y_dots)/2;
 		if (s_persp && g_3d_state.z_viewer() <= PERSPECTIVE_DISTANCE)
 		{
 			v_length *= (long) (PERSPECTIVE_DISTANCE + 600)/((long) (g_3d_state.z_viewer() + 600)*2);
@@ -2890,6 +2882,7 @@ static int first_time(int linelen, VECTOR v)
 		/* center light box */
 		for (int i = 0; i < 2; i++)
 		{
+			VECTOR tmp;
 			tmp[i] = (direct[i] - origin[i])/2;
 			origin[i] -= tmp[i];
 			direct[i] -= tmp[i];

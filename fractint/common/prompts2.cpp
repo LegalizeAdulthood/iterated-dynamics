@@ -171,7 +171,7 @@ int get_toggles()
 	};
 	dialog.push("Passes (1,2,3, g[uess], b[ound], t[ess], d[iffu], o[rbit])",
 		calculation_modes, NUM_OF(calculation_modes), calculation_mode());
-	dialog.push("Floating Point Algorithm", g_user_float_flag ? true : false);
+	dialog.push("Floating Point Algorithm", g_user_float_flag);
 	dialog.push("Maximum Iterations (2 to 2,147,483,647)", g_max_iteration);
 	dialog.push("Inside Color (0-# of colors, if Inside=numb)", (g_inside >= 0) ? g_inside : 0);
 	const char *insidemodes[] =
@@ -243,9 +243,9 @@ int get_toggles()
 		j++;
 	}
 
-	if (dialog.values(++k).uval.ch.val != g_user_float_flag)
+	if (dialog.values(++k).uval.ch.val != (g_user_float_flag ? 1 : 0))
 	{
-		g_user_float_flag = (char) dialog.values(k).uval.ch.val;
+		g_user_float_flag = (dialog.values(k).uval.ch.val != 0);
 		j++;
 	}
 
