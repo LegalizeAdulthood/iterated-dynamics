@@ -39,10 +39,13 @@
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"
-#include "drivers.h"
 #include "fihelp.h"
+
 #include "diskvid.h"
+#include "drivers.h"
 #include "editpal.h"
+#include "prompts2.h"
+#include "zoom.h"
 
 #include "SoundState.h"
 

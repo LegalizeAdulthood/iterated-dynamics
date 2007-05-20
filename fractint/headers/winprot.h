@@ -1,4 +1,4 @@
-#ifndef WINPROT_H
+ifndef WINPROT_H
 #define WINPROT_H
 
 /* This file contains prototypes for win specific functions. */
@@ -58,7 +58,6 @@ extern void win_savedac();
 
 extern void rotate(int);
 extern void find_special_colors();
-extern int show_temp_message(char *);
 extern void clear_temp_message();
 extern void free_temp_message();
 extern int disk_from_memory(long, int, void *);

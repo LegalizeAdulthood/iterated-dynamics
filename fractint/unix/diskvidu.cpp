@@ -12,8 +12,10 @@
 
 #include "port.h"
 #include "prototyp.h"
-#include "drivers.h"
+
 #include "diskvid.h"
+#include "drivers.h"
+#include "realdos.h"
 
 #define BOX_ROW	 6
 #define BOX_COL	 11

@@ -45,8 +45,11 @@
 #include "prototyp.h"
 #include "externs.h"
 #include "fihelp.h"
+
 #include "drivers.h"
 #include "editpal.h"
+#include "prompts2.h"
+#include "zoom.h"
 
 #ifdef LINUX
 #ifndef FNDELAY
