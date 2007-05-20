@@ -19,7 +19,10 @@
 
 #include "port.h"
 #include "prototyp.h"
+
 #include "drivers.h"
+#include "soi.h"
+
 #include "EscapeTime.h"
 
 #define EVERY 15

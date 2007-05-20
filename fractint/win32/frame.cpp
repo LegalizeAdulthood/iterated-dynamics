@@ -7,6 +7,7 @@
 #include "prototyp.h"
 #include "fractint.h"
 #include "drivers.h"
+#include "prompts2.h"
 
 #include "wintext.h"
 #include "frame.h"

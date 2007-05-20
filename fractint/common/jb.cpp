@@ -6,6 +6,9 @@
 #include "drivers.h"
 #include "fracsubr.h"
 #include "fractals.h"
+#include "jb.h"
+#include "loadmap.h"
+#include "realdos.h"
 
 #include "EscapeTime.h"
 

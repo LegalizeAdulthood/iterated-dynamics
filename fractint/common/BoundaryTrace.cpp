@@ -5,6 +5,7 @@
 #include "prototyp.h"
 #include "externs.h"
 #include "fracsubr.h"
+#include "realdos.h"
 
 #include "BoundaryTrace.h"
 #include "WorkList.h"

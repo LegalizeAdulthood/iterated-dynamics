@@ -56,6 +56,10 @@
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "editpal.h"
+#include "jiim.h"
+#include "lorenz.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 #include "EscapeTime.h"
 

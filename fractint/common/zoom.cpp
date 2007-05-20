@@ -8,10 +8,13 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
-#include "drivers.h"
+
 #include "calcfrac.h"
+#include "drivers.h"
 #include "fracsubr.h"
 #include "framain2.h"
+#include "realdos.h"
+#include "zoom.h"
 
 #include "EscapeTime.h"
 #include "MathUtil.h"

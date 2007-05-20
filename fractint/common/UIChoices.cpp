@@ -7,6 +7,8 @@
 #include "fractint.h"
 #include "prototyp.h"
 #include "fihelp.h"
+#include "prompts1.h"
+
 #include "UIChoices.h"
 
 UIChoices::UIChoices(const char *heading, int key_mask)

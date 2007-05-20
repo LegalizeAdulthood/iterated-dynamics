@@ -28,6 +28,9 @@
 #include "drivers.h"
 #include "fpu.h"
 #include "fractals.h"
+#include "jiim.h"
+#include "miscres.h"
+#include "realdos.h"
 
 #include "Formula.h"
 #include "MathUtil.h"

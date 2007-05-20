@@ -11,7 +11,11 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+
 #include "diskvid.h"
+#include "loadmap.h"
+#include "prompts2.h"
+#include "rotate.h"
 
 /* routines in this module      */
 

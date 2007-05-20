@@ -1153,6 +1153,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\fractalb.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\fractalp.h"
 				>
 			</File>
@@ -1185,11 +1189,47 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\hcmplx.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\helpcom.h"
 				>
 			</File>
 			<File
 				RelativePath=".\headers\history.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\intro.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\jb.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\jiim.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\line3d.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\loadfdos.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\loadfile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\loadmap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\lorenz.h"
 				>
 			</File>
 			<File
@@ -1201,6 +1241,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\miscovl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\miscres.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\mpmath.h"
 				>
 			</File>
@@ -1209,11 +1257,39 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\plot3d.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\port.h"
 				>
 			</File>
 			<File
+				RelativePath=".\headers\prompts1.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\prompts2.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\prototyp.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\realdos.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\rotate.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\slideshw.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\soi.h"
 				>
 			</File>
 			<File
@@ -1225,7 +1301,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\stereo.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\Tesseral.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\testpt.h"
 				>
 			</File>
 			<File
@@ -1242,6 +1326,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\WorkList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\zoom.h"
 				>
 			</File>
 		</Filter>

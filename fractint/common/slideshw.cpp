@@ -15,6 +15,9 @@
 #include "prototyp.h"
 #include "drivers.h"
 
+#include "realdos.h"
+#include "slideshw.h"
+
 bool g_busy = false;
 static FILE *s_slide_file = NULL;
 static long s_start_tick = 0;

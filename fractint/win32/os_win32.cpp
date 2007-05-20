@@ -18,9 +18,12 @@
 #include "drivers.h"
 #include "externs.h"
 #include "helpdefs.h"
-#include "frame.h"
 #include "mpmath.h"
 #include "diskvid.h"
+#include "prompts2.h"
+#include "realdos.h"
+
+#include "frame.h"
 
 /* External declarations */
 extern void check_samename();

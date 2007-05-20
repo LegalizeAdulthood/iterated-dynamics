@@ -61,6 +61,12 @@
 #include "evolve.h"
 #include "fracsubr.h"
 #include "framain2.h"
+#include "intro.h"
+#include "loadfile.h"
+#include "miscovl.h"
+#include "prompts1.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 #include "SoundState.h"
 #include "CommandParser.h"

@@ -31,6 +31,11 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "drivers.h"
+#include "fihelp.h"
+#include "miscres.h"
+#include "prompts1.h"
+#include "prompts2.h"
+#include "realdos.h"
 
 #define MAX_HIST           16        /* number of pages we'll remember */
 #define ACTION_CALL         0        /* values returned by help_topic() */

@@ -27,6 +27,8 @@
 #include "fihelp.h"
 #include "encoder.h"
 #include "gifview.h"
+#include "realdos.h"
+#include "stereo.h"
 
 #include <malloc.h>
 

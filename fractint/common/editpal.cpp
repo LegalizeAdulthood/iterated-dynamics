@@ -128,6 +128,11 @@
 #include "helpdefs.h"
 #include "fihelp.h"
 
+#include "editpal.h"
+#include "prompts2.h"
+#include "realdos.h"
+#include "rotate.h"
+
 /*
  * misc. #defines
  */

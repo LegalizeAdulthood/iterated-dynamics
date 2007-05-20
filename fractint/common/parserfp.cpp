@@ -109,6 +109,8 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "realdos.h"
+
 #include "Formula.h"
 
 #if !defined(XFRACT)

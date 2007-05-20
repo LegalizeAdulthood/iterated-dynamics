@@ -12,6 +12,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractint.h"
+#include "plot3d.h"
 
 #include "plot.h"
 #include "ods.h"

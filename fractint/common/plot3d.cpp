@@ -10,6 +10,9 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "diskvid.h"
+#include "line3d.h"
+#include "loadmap.h"
+#include "plot3d.h"
 
 #include "ThreeDimensionalState.h"
 

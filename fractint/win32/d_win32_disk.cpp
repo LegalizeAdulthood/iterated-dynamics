@@ -15,6 +15,8 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "miscres.h"
+#include "plot3d.h"
 
 #include "WinText.h"
 #include "frame.h"

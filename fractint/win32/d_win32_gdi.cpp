@@ -16,6 +16,8 @@
 #include "helpdefs.h"
 #include "drivers.h"
 #include "fihelp.h"
+#include "miscres.h"
+#include "slideshw.h"
 
 #include "WinText.h"
 #include "frame.h"

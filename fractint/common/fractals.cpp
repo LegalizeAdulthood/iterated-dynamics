@@ -55,6 +55,7 @@
 #include "fpu.h"
 #include "fracsubr.h"
 #include "fractals.h"
+#include "hcmplx.h"
 
 #include "EscapeTime.h"
 #include "MathUtil.h"

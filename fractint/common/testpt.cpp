@@ -19,8 +19,7 @@ must not be called by any part of Fractint other than calcfrac.
 The sample code below is a straightforward Mandelbrot routine.
 
 */
-
-int  driver_get_key();
+#include "testpt.h"
 
 int test_start()     /* this routine is called just before the fractal starts */
 {
@@ -60,5 +59,5 @@ int test_per_pixel(double initreal, double initimag, double parm1, double parm2,
 	{
 		color = inside;
 	}
-	return (int)color;
+	return (int) color;
 }

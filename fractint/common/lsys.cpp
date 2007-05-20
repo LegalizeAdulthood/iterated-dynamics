@@ -9,6 +9,10 @@
 #include "lsys.h"
 #include "drivers.h"
 #include "fpu.h"
+#include "lsys.h"
+#include "miscres.h"
+#include "realdos.h"
+
 #include "MathUtil.h"
 
 struct lsys_cmd

@@ -22,6 +22,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fpu.h"
+#include "jiim.h"
 
 #if !defined(XFRACT)
 
