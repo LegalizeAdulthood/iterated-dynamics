@@ -52,9 +52,9 @@ void (*g_out_line_cleanup)();
 
 /* routines in this module      */
 
-ApplicationStateType main_menu_switch(int *kbdchar, bool &frommandel, int *kbdmore, bool &screen_stacked, int axmode);
-ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_manelbrot, int *kbdmore, bool &stacked);
-int big_while_loop(int *kbdmore, bool &stacked, bool resume_flag);
+ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, int &kbdmore, bool &screen_stacked, int axmode);
+ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, int &kbdmore, bool &stacked);
+ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag);
 static void move_zoombox(int);
 static  void note_zoom();
 static  void restore_zoom();
@@ -63,7 +63,7 @@ static  void cmp_line_cleanup();
 
 static char *savezoom;
 
-int big_while_loop(int *kbdmore, bool &screen_stacked, bool resume_flag)
+ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag)
 {
 	int     axmode = 0; /* video mode (BIOS ##)    */
 	double  ftemp;                       /* fp temp                      */
@@ -490,13 +490,13 @@ done:
 			g_dac_learn = 1;
 		}
 
-resumeloop:                             /* return here on failed overlays */
+resumeloop:
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
 #endif
 
-		*kbdmore = 1;
-		while (*kbdmore == 1)
+		kbdmore = 1;
+		while (kbdmore == 1)
 		{           /* loop through command keys */
 			if (g_timed_save != 0)
 			{
@@ -620,8 +620,8 @@ resumeloop:                             /* return here on failed overlays */
 			}
 #endif
 			ApplicationStateType mms_value = g_evolving_flags ?
-				evolver_menu_switch(&kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked)
-				: main_menu_switch(&kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked, axmode);
+				evolver_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked)
+				: main_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked, axmode);
 			if (g_quick_calculate
 				&& (mms_value == APPSTATE_IMAGE_START ||
 					mms_value == APPSTATE_RESTORE_START ||
@@ -642,7 +642,7 @@ resumeloop:                             /* return here on failed overlays */
 			case APPSTATE_CONTINUE:			continue;
 			default:						break;
 			}
-			if (g_zoom_off && *kbdmore == 1) /* draw/clear a zoom box? */
+			if (g_zoom_off && kbdmore == 1) /* draw/clear a zoom box? */
 			{
 				zoom_box_draw(1);
 			}
@@ -767,7 +767,7 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 	return APPSTATE_NO_CHANGE;
 }
 
-static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
+static void handle_options(int kbdchar, int &kbdmore, long *old_maxit)
 {
 	int i;
 	*old_maxit = g_max_iteration;
@@ -826,7 +826,7 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 		g_quick_calculate = true;
 		g_standard_calculation_mode_old = g_user_standard_calculation_mode;
 		g_user_standard_calculation_mode = '1';
-		*kbdmore = 0;
+		kbdmore = 0;
 		g_calculation_status = CALCSTAT_RESUMABLE;
 		i = 0;
 	}
@@ -834,12 +834,12 @@ static void handle_options(int kbdchar, int *kbdmore, long *old_maxit)
 	{              /* time to redraw? */
 		g_quick_calculate = false;
 		save_parameter_history();
-		*kbdmore = 0;
+		kbdmore = 0;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
 }
 
-static void handle_evolver_options(int kbdchar, int *kbdmore)
+static void handle_evolver_options(int kbdchar, int &kbdmore)
 {
 	int i;
 	clear_zoom_box();
@@ -875,12 +875,12 @@ static void handle_evolver_options(int kbdchar, int *kbdmore)
 	if (i > Command::OK)              /* time to redraw? */
 	{
 		save_parameter_history();
-		*kbdmore = 0;
+		kbdmore = 0;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
 }
 
-static bool handle_execute_commands(int *kbdchar, int *kbdmore)
+static bool handle_execute_commands(int &kbdchar, int &kbdmore)
 {
 	int i;
 	driver_stack_screen();
@@ -903,14 +903,14 @@ static bool handle_execute_commands(int *kbdchar, int *kbdmore)
 	}
 	if (i & Command::ThreeDYes)
 	{                         /* 3d = was specified */
-		*kbdchar = '3';
+		kbdchar = '3';
 		driver_unstack_screen();
 		return true;
 	}
 	if (i & Command::FractalParameter)
 	{                         /* fractal parameter changed */
 		driver_discard_screen();
-		*kbdmore = 0;
+		kbdmore = 0;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 	}
 	else
@@ -997,12 +997,12 @@ static ApplicationStateType handle_recalc(int (*continue_check)(), int (*recalc_
 	return APPSTATE_NO_CHANGE;
 }
 
-static void handle_3d_params(int *kbdmore)
+static void handle_3d_params(int &kbdmore)
 {
 	if (get_fractal_3d_parameters() >= 0)    /* get the parameters */
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		*kbdmore = 0;    /* time to redraw */
+		kbdmore = 0;    /* time to redraw */
 	}
 }
 
@@ -1021,7 +1021,7 @@ static void handle_orbits()
 	}
 }
 
-static void handle_mandelbrot_julia_toggle(int *kbdmore, bool &frommandel)
+static void handle_mandelbrot_julia_toggle(int &kbdmore, bool &frommandel)
 {
 	static double  jxxmin, jxxmax, jyymin, jyymax; /* "Julia mode" entry point */
 	static double  jxx3rd, jyy3rd;
@@ -1034,7 +1034,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, bool &frommandel)
 	{
 		g_next_screen_flag = !g_next_screen_flag;
 		g_calculation_status = CALCSTAT_RESUMABLE;
-		*kbdmore = 0;
+		kbdmore = 0;
 		return;
 	}
 
@@ -1109,7 +1109,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, bool &frommandel)
 		}
 		g_zoom_off = true;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		*kbdmore = 0;
+		kbdmore = 0;
 	}
 	else if (g_current_fractal_specific->tomandel != FRACTYPE_NO_FRACTAL)
 	{
@@ -1138,7 +1138,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, bool &frommandel)
 		g_parameters[1] = 0;
 		g_zoom_off = true;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		*kbdmore = 0;
+		kbdmore = 0;
 	}
 	else
 	{
@@ -1146,7 +1146,7 @@ static void handle_mandelbrot_julia_toggle(int *kbdmore, bool &frommandel)
 	}
 }
 
-static void handle_inverse_julia_toggle(int *kbdmore)
+static void handle_inverse_julia_toggle(int &kbdmore)
 {
 	/* if the inverse types proliferate, something more elegant will be
 	* needed */
@@ -1165,7 +1165,7 @@ static void handle_inverse_julia_toggle(int *kbdmore)
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		g_zoom_off = true;
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		*kbdmore = 0;
+		kbdmore = 0;
 	}
 	else
 	{
@@ -1247,13 +1247,13 @@ static ApplicationStateType handle_color_cycling(int kbdchar)
 	return APPSTATE_CONTINUE;
 }
 
-static ApplicationStateType handle_color_editing(int *kbdmore)
+static ApplicationStateType handle_color_editing(int &kbdmore)
 {
 	if (g_is_true_color && !g_initialize_batch) /* don't enter palette editor */
 	{
 		if (load_palette() >= 0)
 		{
-			*kbdmore = 0;
+			kbdmore = 0;
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 			return APPSTATE_NO_CHANGE;
 		}
@@ -1381,7 +1381,7 @@ static ApplicationStateType handle_look_for_files(bool &stacked)
 	return APPSTATE_NO_CHANGE;
 }
 
-static void handle_zoom_in(int *kbdmore)
+static void handle_zoom_in(int &kbdmore)
 {
 #ifdef XFRACT
 	XZoomWaiting = 0;
@@ -1389,20 +1389,20 @@ static void handle_zoom_in(int *kbdmore)
 	if (g_z_width != 0.0)
 	{                         /* do a zoom */
 		init_pan_or_recalc(0);
-		*kbdmore = 0;
+		kbdmore = 0;
 	}
 	if (g_calculation_status != CALCSTAT_COMPLETED)     /* don't restart if image complete */
 	{
-		*kbdmore = 0;
+		kbdmore = 0;
 	}
 }
 
-static void handle_zoom_out(int *kbdmore)
+static void handle_zoom_out(int &kbdmore)
 {
 	if (g_z_width != 0.0)
 	{
 		init_pan_or_recalc(1);
-		*kbdmore = 0;
+		kbdmore = 0;
 		zoom_box_out();                /* calc corners for zooming out */
 	}
 }
@@ -1435,11 +1435,11 @@ static void handle_zoom_skew(int negative)
 	}
 }
 
-static void handle_select_video(int *kbdchar)
+static void handle_select_video(int &kbdchar)
 {
 	driver_stack_screen();
-	*kbdchar = select_video_mode(g_adapter);
-	if (check_video_mode_key(0, *kbdchar) >= 0)  /* picked a new mode? */
+	kbdchar = select_video_mode(g_adapter);
+	if (check_video_mode_key(0, kbdchar) >= 0)  /* picked a new mode? */
 	{
 		driver_discard_screen();
 	}
@@ -1449,7 +1449,7 @@ static void handle_select_video(int *kbdchar)
 	}
 }
 
-static void handle_mutation_level(bool forward, int amount, int *kbdmore)
+static void handle_mutation_level(bool forward, int amount, int &kbdmore)
 {
 	g_view_window = true;
 	g_evolving_flags = EVOLVE_FIELD_MAP;
@@ -1462,11 +1462,11 @@ static void handle_mutation_level(bool forward, int amount, int *kbdmore)
 	{
 		save_parameter_history();
 	}
-	*kbdmore = 0;
+	kbdmore = 0;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
-static ApplicationStateType handle_video_mode(int kbdchar, int *kbdmore)
+static ApplicationStateType handle_video_mode(int kbdchar, int &kbdmore)
 {
 	int k = check_video_mode_key(0, kbdchar);
 	if (k >= 0)
@@ -1477,7 +1477,7 @@ static ApplicationStateType handle_video_mode(int kbdchar, int *kbdmore)
 			g_save_dac = SAVEDAC_NO;
 		}
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		*kbdmore = 0;
+		kbdmore = 0;
 		return APPSTATE_CONTINUE;
 	}
 	return APPSTATE_NO_CHANGE;
@@ -1565,7 +1565,7 @@ static ApplicationStateType handle_restart()
 	return APPSTATE_RESTART;
 }
 
-ApplicationStateType main_menu_switch(int *kbdchar, bool &frommandel, int *kbdmore, bool &screen_stacked, int axmode)
+ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, int &kbdmore, bool &screen_stacked, int axmode)
 {
 	long old_maxit;
 
@@ -1577,7 +1577,7 @@ ApplicationStateType main_menu_switch(int *kbdchar, bool &frommandel, int *kbdmo
 		}
 		g_user_standard_calculation_mode = g_standard_calculation_mode_old;
 	}
-	switch (*kbdchar)
+	switch (kbdchar)
 	{
 	case 't':                    /* new fractal type             */
 		return handle_fractal_type(frommandel);
@@ -1585,7 +1585,7 @@ ApplicationStateType main_menu_switch(int *kbdchar, bool &frommandel, int *kbdmo
 	case FIK_CTL_X:                     /* Ctl-X, Ctl-Y, CTL-Z do flipping */
 	case FIK_CTL_Y:
 	case FIK_CTL_Z:
-		flip_image(*kbdchar);
+		flip_image(kbdchar);
 		break;
 
 	case 'x':                    /* invoke options screen        */
@@ -1597,7 +1597,7 @@ ApplicationStateType main_menu_switch(int *kbdchar, bool &frommandel, int *kbdmo
 	case FIK_CTL_B:
 	case FIK_CTL_E:
 	case FIK_CTL_F:
-		handle_options(*kbdchar, kbdmore, &old_maxit);
+		handle_options(kbdchar, kbdmore, &old_maxit);
 		break;
 
 #ifndef XFRACT
@@ -1646,7 +1646,7 @@ ApplicationStateType main_menu_switch(int *kbdchar, bool &frommandel, int *kbdmo
 	case FIK_CTL_BACKSLASH:
 	case 'h':
 	case FIK_BACKSPACE:
-		return handle_history(screen_stacked, *kbdchar);
+		return handle_history(screen_stacked, kbdchar);
 
 	case 'd':                    /* shell to MS-DOS              */
 		driver_stack_screen();
@@ -1657,7 +1657,7 @@ ApplicationStateType main_menu_switch(int *kbdchar, bool &frommandel, int *kbdmo
 	case 'c':                    /* switch to color cycling      */
 	case '+':                    /* rotate palette               */
 	case '-':                    /* rotate palette               */
-		return handle_color_cycling(*kbdchar);
+		return handle_color_cycling(kbdchar);
 
 	case 'e':                    /* switch to color editing      */
 		return handle_color_editing(kbdmore);
@@ -1679,7 +1679,7 @@ do_3d_transform:
 		/* fall through */
 
 	case 'r':                    /* restore-from                 */
-		return handle_restore_from(frommandel, *kbdchar, screen_stacked);
+		return handle_restore_from(frommandel, kbdchar, screen_stacked);
 
 	case 'l':
 	case 'L':                    /* Look for other files within this view */
@@ -1715,32 +1715,32 @@ do_3d_transform:
 	case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
 	case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
 	case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
-		move_zoombox(*kbdchar);
+		move_zoombox(kbdchar);
 		break;
 
 	case FIK_CTL_HOME:               /* Ctrl-home                    */
 	case FIK_CTL_END:                /* Ctrl-end                     */
-		handle_zoom_skew(*kbdchar == FIK_CTL_HOME);
+		handle_zoom_skew(kbdchar == FIK_CTL_HOME);
 		break;
 
 	case FIK_CTL_PAGE_UP:            /* Ctrl-pgup                    */
 	case FIK_CTL_PAGE_DOWN:          /* Ctrl-pgdn                    */
-		handle_zoom_stretch(FIK_CTL_PAGE_UP == *kbdchar);
+		handle_zoom_stretch(FIK_CTL_PAGE_UP == kbdchar);
 		break;
 
 	case FIK_PAGE_UP:                /* page up                      */
 	case FIK_PAGE_DOWN:              /* page down                    */
-		handle_zoom_resize(FIK_PAGE_UP == *kbdchar);
+		handle_zoom_resize(FIK_PAGE_UP == kbdchar);
 		break;
 
 	case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
 	case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
-		handle_z_rotate(FIK_CTL_MINUS == *kbdchar);
+		handle_z_rotate(FIK_CTL_MINUS == kbdchar);
 		break;
 
 	case FIK_CTL_INSERT:             /* Ctrl-ins                 */
 	case FIK_CTL_DEL:                /* Ctrl-del                 */
-		handle_box_color(FIK_CTL_INSERT == *kbdchar);
+		handle_box_color(FIK_CTL_INSERT == kbdchar);
 		break;
 
 	case FIK_ALT_1: /* alt + number keys set mutation level and start evolution engine */
@@ -1750,7 +1750,7 @@ do_3d_transform:
 	case FIK_ALT_5:
 	case FIK_ALT_6:
 	case FIK_ALT_7:
-		handle_mutation_level(false, *kbdchar - FIK_ALT_1 + 1, kbdmore);
+		handle_mutation_level(false, kbdchar - FIK_ALT_1 + 1, kbdmore);
 		break;
 
 	case FIK_DELETE:         /* select video mode from list */
@@ -1758,30 +1758,30 @@ do_3d_transform:
 		/* fall through */
 
 	default:                     /* other (maybe a valid Fn key) */
-		return handle_video_mode(*kbdchar, kbdmore);
+		return handle_video_mode(kbdchar, kbdmore);
 	}                            /* end of the big switch */
 
 	return APPSTATE_NO_CHANGE;
 }
 
-static void handle_evolver_exit(int *kbdmore)
+static void handle_evolver_exit(int &kbdmore)
 {
 	g_evolving_flags = EVOLVE_NONE;
 	g_view_window = false;
 	save_parameter_history();
-	*kbdmore = 0;
+	kbdmore = 0;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
-static ApplicationStateType handle_evolver_history(int *kbdchar)
+static ApplicationStateType handle_evolver_history(int kbdchar)
 {
 	if (g_max_history > 0 && g_bf_math == 0)
 	{
-		if (*kbdchar == '\\' || *kbdchar == 'h')
+		if (kbdchar == '\\' || kbdchar == 'h')
 		{
 			history_back();
 		}
-		else if (*kbdchar == FIK_CTL_BACKSLASH || *kbdchar == FIK_BACKSPACE)
+		else if (kbdchar == FIK_CTL_BACKSLASH || kbdchar == FIK_BACKSPACE)
 		{
 			history_forward();
 		}
@@ -1803,7 +1803,7 @@ static ApplicationStateType handle_evolver_history(int *kbdchar)
 	return APPSTATE_NO_CHANGE;
 }
 
-static void handle_evolver_move_selection(int *kbdchar)
+static void handle_evolver_move_selection(int kbdchar)
 {
 	/* borrow ctrl cursor keys for moving selection box */
 	/* in evolver mode */
@@ -1812,19 +1812,19 @@ static void handle_evolver_move_selection(int *kbdchar)
 		int grout;
 		if (g_evolving_flags & EVOLVE_FIELD_MAP)
 		{
-			if (*kbdchar == FIK_CTL_LEFT_ARROW)
+			if (kbdchar == FIK_CTL_LEFT_ARROW)
 			{
 				g_px--;
 			}
-			if (*kbdchar == FIK_CTL_RIGHT_ARROW)
+			if (kbdchar == FIK_CTL_RIGHT_ARROW)
 			{
 				g_px++;
 			}
-			if (*kbdchar == FIK_CTL_UP_ARROW)
+			if (kbdchar == FIK_CTL_UP_ARROW)
 			{
 				g_py--;
 			}
-			if (*kbdchar == FIK_CTL_DOWN_ARROW)
+			if (kbdchar == FIK_CTL_DOWN_ARROW)
 			{
 				g_py++;
 			}
@@ -1858,7 +1858,7 @@ static void handle_evolver_move_selection(int *kbdchar)
 	}
 	else                       /* if no zoombox, scroll by arrows */
 	{
-		move_zoombox(*kbdchar);
+		move_zoombox(kbdchar);
 	}
 }
 
@@ -1941,7 +1941,7 @@ static void handle_evolver_zoom(int zoom_in)
 	}
 }
 
-static void handle_evolver_mutation(int halve, int *kbdmore)
+static void handle_evolver_mutation(int halve, int &kbdmore)
 {
 	if (halve)
 	{
@@ -1963,18 +1963,18 @@ static void handle_evolver_mutation(int halve, int *kbdmore)
 		g_parameter_range_y *= 2;
 		g_new_parameter_offset_y = centery - g_parameter_range_y / 2;
 	}
-	*kbdmore = 0;
+	kbdmore = 0;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
-static void handle_evolver_grid_size(int decrement, int *kbdmore)
+static void handle_evolver_grid_size(int decrement, int &kbdmore)
 {
 	if (decrement)
 	{
 		if (g_grid_size > 3)
 		{
 			g_grid_size -= 2;  /* g_grid_size must have odd value only */
-			*kbdmore = 0;
+			kbdmore = 0;
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
 	}
@@ -1983,13 +1983,13 @@ static void handle_evolver_grid_size(int decrement, int *kbdmore)
 		if (g_grid_size < g_screen_width/(MIN_PIXELS << 1))
 		{
 			g_grid_size += 2;
-			*kbdmore = 0;
+			kbdmore = 0;
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
 	}
 }
 
-static void handle_evolver_toggle(int *kbdmore)
+static void handle_evolver_toggle(int &kbdmore)
 {
 	int i;
 	for (i = 0; i < NUMGENES; i++)
@@ -2004,21 +2004,21 @@ static void handle_evolver_toggle(int *kbdmore)
 			g_genes[i].mutate = 5;
 		}
 	}
-	*kbdmore = 0;
+	kbdmore = 0;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
-static void handle_mutation_off(int *kbdmore)
+static void handle_mutation_off(int &kbdmore)
 {
 	g_evolving_flags = EVOLVE_NONE;
 	g_view_window = false;
-	*kbdmore = 0;
+	kbdmore = 0;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
-ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_manelbrot, int *kbdmore, bool &stacked)
+ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, int &kbdmore, bool &stacked)
 {
-	switch (*kbdchar)
+	switch (kbdchar)
 	{
 	case 't':                    /* new fractal type             */
 		if (handle_fractal_type(julia_entered_from_manelbrot))
@@ -2034,7 +2034,7 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 	case 'g':
 	case FIK_CTL_E:
 	case FIK_SPACE:
-		handle_evolver_options(*kbdchar, kbdmore);
+		handle_evolver_options(kbdchar, kbdmore);
 		break;
 
 	case 'b': /* quick exit from evolve mode */
@@ -2053,7 +2053,7 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 	case 'c':                    /* switch to color cycling      */
 	case '+':                    /* rotate palette               */
 	case '-':                    /* rotate palette               */
-		return handle_color_cycling(*kbdchar);
+		return handle_color_cycling(kbdchar);
 
 	case 'e':                    /* switch to color editing      */
 		return handle_color_editing(kbdmore);
@@ -2062,7 +2062,7 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 		return handle_evolver_save_to_disk();
 
 	case 'r':                    /* restore-from                 */
-		return handle_restore_from(julia_entered_from_manelbrot, *kbdchar, stacked);
+		return handle_restore_from(julia_entered_from_manelbrot, kbdchar, stacked);
 
 	case FIK_ENTER:                  /* Enter                        */
 	case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
@@ -2081,7 +2081,7 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 	case FIK_RIGHT_ARROW:            /* cursor right                 */
 	case FIK_UP_ARROW:               /* cursor up                    */
 	case FIK_DOWN_ARROW:             /* cursor down                  */
-		move_zoombox(*kbdchar);
+		move_zoombox(kbdchar);
 		break;
 
 	case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
@@ -2093,27 +2093,27 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 
 	case FIK_CTL_HOME:               /* Ctrl-home                    */
 	case FIK_CTL_END:                /* Ctrl-end                     */
-		handle_zoom_skew(*kbdchar == FIK_CTL_HOME);
+		handle_zoom_skew(kbdchar == FIK_CTL_HOME);
 		break;
 
 	case FIK_CTL_PAGE_UP:
 	case FIK_CTL_PAGE_DOWN:
-		handle_evolver_param_zoom(FIK_CTL_PAGE_UP == *kbdchar);
+		handle_evolver_param_zoom(FIK_CTL_PAGE_UP == kbdchar);
 		break;
 
 	case FIK_PAGE_UP:                /* page up                      */
 	case FIK_PAGE_DOWN:              /* page down                    */
-		handle_evolver_zoom(FIK_PAGE_UP == *kbdchar);
+		handle_evolver_zoom(FIK_PAGE_UP == kbdchar);
 		break;
 
 	case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
 	case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
-		handle_z_rotate(FIK_CTL_MINUS == *kbdchar);
+		handle_z_rotate(FIK_CTL_MINUS == kbdchar);
 		break;
 
 	case FIK_CTL_INSERT:             /* Ctrl-ins                 */
 	case FIK_CTL_DEL:                /* Ctrl-del                 */
-		handle_box_color(FIK_CTL_INSERT == *kbdchar);
+		handle_box_color(FIK_CTL_INSERT == kbdchar);
 		break;
 
 	/* grabbed a couple of video mode keys, user can change to these using
@@ -2121,12 +2121,12 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 
 	case FIK_F2: /* halve mutation params and regen */
 	case FIK_F3: /*double mutation parameters and regenerate */
-		handle_evolver_mutation(FIK_F2 == *kbdchar, kbdmore);
+		handle_evolver_mutation(FIK_F2 == kbdchar, kbdmore);
 		break;
 
 	case FIK_F4: /*decrement  gridsize and regen */
 	case FIK_F5: /* increment gridsize and regen */
-		handle_evolver_grid_size(FIK_F4 == *kbdchar, kbdmore);
+		handle_evolver_grid_size(FIK_F4 == kbdchar, kbdmore);
 		break;
 
 	case FIK_F6: /* toggle all variables selected for random variation to
@@ -2141,7 +2141,7 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 	case FIK_ALT_5:
 	case FIK_ALT_6:
 	case FIK_ALT_7:
-		handle_mutation_level(true, *kbdchar - FIK_ALT_1 + 1, kbdmore);
+		handle_mutation_level(true, kbdchar - FIK_ALT_1 + 1, kbdmore);
 		break;
 
 	case '1':
@@ -2151,7 +2151,7 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 	case '5':
 	case '6':
 	case '7':
-		handle_mutation_level(true, *kbdchar - (int) '1' + 1, kbdmore);
+		handle_mutation_level(true, kbdchar - (int) '1' + 1, kbdmore);
 		break;
 
 	case '0': /* mutation level 0 == turn off evolving */
@@ -2163,7 +2163,7 @@ ApplicationStateType evolver_menu_switch(int *kbdchar, bool &julia_entered_from_
 		/* fall through */
 
 	default:             /* other (maybe valid Fn key */
-		return handle_video_mode(*kbdchar, kbdmore);
+		return handle_video_mode(kbdchar, kbdmore);
 	}                            /* end of the big evolver switch */
 
 	return APPSTATE_NO_CHANGE;
