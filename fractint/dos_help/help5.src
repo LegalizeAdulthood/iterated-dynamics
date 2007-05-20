@@ -3650,11 +3650,11 @@ Version 1.0, 9/88
 ;
 ; FRACTINT intro screen primary authors
 ;
- Primary Authors (current version)
- Timothy Wegner       twegner AT fractint.org
- Jonathan Osuch       josuch AT fractint.org
+ Primary Author (current version)
+ Richard Thomson      legalize AT xmission.com
  Contributing Authors
- ; room for 15 authors at a time here
+ ; room for 16 authors at a time here
+
 
 
 
@@ -3671,7 +3671,7 @@ Version 1.0, 9/88
 
 
  SPACEBAR toggles scrolling off/on
-   Copyright (C) 1990-2006 The Stone Soup Group.  Fractint may be freely copied
+   Copyright (C) 1990-2007 The Stone Soup Group.  Fractint may be freely copied
    and distributed but may not be sold.  See help for more information.
 ;
 ;
@@ -3728,6 +3728,7 @@ Version 1.0, 9/88
  Roy Murphy           Lyapunov Fractals
  Ethan Nagel          Palette editor, integrated help/doc system
  Yavuz Onder          Postscript printer driver
+ Jonathan Osuch       Past primary author
  Kyle Powell          8514/A Support
  Mark Peterson        Parser, julibrot, past primary author
  Marc Reinig          Lots of 3D options
@@ -3745,11 +3746,11 @@ Version 1.0, 9/88
  John Swenson         Postscript printer features
  Chris Taylor         Floating&Fixed-point algorithm speedups, Tesseral Option
  Scott Taylor         PostScript, Kam Torus, many fn types.
- Rich Thomson         Xfractint truecolor support, mailing list
  Bill Townsend        Mandelbrot Speedups
  Bert Tyler           Original Fractint/Fract386 Author 
  Paul Varner          Extended Memory support for Disk Video
  Dave Warker          Integer Mandelbrot Fractals concept
+ Timothy Wegner       Past primary author
  Aaron Williams       Register-compatible 8514/A code
  Phil Wilson          Distance Estimator, Bifurcation fractals
  Nicholas Wilt        Lsystem speedups
