@@ -52,7 +52,7 @@ void (*g_out_line_cleanup)();
 
 /* routines in this module      */
 
-ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, int &kbdmore, bool &screen_stacked, int axmode);
+ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, int &kbdmore, bool &screen_stacked);
 ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, int &kbdmore, bool &stacked);
 ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag);
 static void move_zoombox(int);
@@ -65,7 +65,6 @@ static char *savezoom;
 
 ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag)
 {
-	int     axmode = 0; /* video mode (BIOS ##)    */
 	double  ftemp;                       /* fp temp                      */
 	int     i = 0;                           /* temporary loop counters      */
 	int kbdchar;
@@ -89,7 +88,6 @@ ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool res
 		{
 			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
-			axmode  = g_video_entry.videomodeax; /* video mode (BIOS call)   */
 			g_dot_mode = g_video_entry.dotmode;     /* assembler dot read/write */
 			g_x_dots   = g_video_entry.x_dots;       /* # dots across the screen */
 			g_y_dots   = g_video_entry.y_dots;       /* # dots down the screen   */
@@ -621,7 +619,7 @@ resumeloop:
 #endif
 			ApplicationStateType mms_value = g_evolving_flags ?
 				evolver_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked)
-				: main_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked, axmode);
+				: main_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked);
 			if (g_quick_calculate
 				&& (mms_value == APPSTATE_IMAGE_START ||
 					mms_value == APPSTATE_RESTORE_START ||
@@ -1565,7 +1563,7 @@ static ApplicationStateType handle_restart()
 	return APPSTATE_RESTART;
 }
 
-ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, int &kbdmore, bool &screen_stacked, int axmode)
+ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, int &kbdmore, bool &screen_stacked)
 {
 	long old_maxit;
 

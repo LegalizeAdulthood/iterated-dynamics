@@ -2018,10 +2018,6 @@ void load_fractint_config()
 		strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
 		vident.name[25] = vident.comment[25] = 0;
 		vident.keynum      = keynum;
-		vident.videomodeax = ax;
-		vident.videomodebx = bx;
-		vident.videomodecx = cx;
-		vident.videomodedx = dx;
 		vident.dotmode     = truecolorbits*1000 + textsafe2*100 + dotmode;
 		vident.x_dots       = (short)x_dots;
 		vident.y_dots       = (short)y_dots;
