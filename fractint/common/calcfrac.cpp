@@ -842,19 +842,56 @@ int find_alternate_math(int type, int math)
 
 /**************** general escape-time engine routines *********************/
 
-static void perform_work_list()
+class PerformWorkList
 {
-	int (*save_orbit_calc)() = NULL;  /* function that calculates one orbit */
-	int (*save_per_pixel)() = NULL;  /* once-per-pixel init */
-	int (*save_per_image)() = NULL;  /* once-per-image setup */
-	int alt;
+public:
+	PerformWorkList();
+	~PerformWorkList();
 
-	alt = find_alternate_math(g_fractal_type, g_bf_math);
+	void calculate();
+
+private:
+	void setup_alternate_math();
+	void cleanup_alternate_math();
+	void interrupted_or_completed();
+	void show_dot_finish();
+	void call_escape_time_engine();
+	void common_escape_time_initialization();
+	void show_dot_start();
+	void get_top_work_list_item();
+	void setup_per_image();
+	void setup_distance_estimator();
+	void setup_initial_work_list();
+	void setup_standard_calculation_mode();
+	void setup_potential();
+
+	int (*m_save_orbit_calc)();  /* function that calculates one orbit */
+	int (*m_save_per_pixel)();  /* once-per-pixel init */
+	int (*m_save_per_image)();  /* once-per-image setup */
+};
+
+PerformWorkList::PerformWorkList()
+	: m_save_orbit_calc(NULL),
+	m_save_per_pixel(NULL),
+	m_save_per_image(NULL)
+{
+}
+
+PerformWorkList::~PerformWorkList()
+{
+}
+
+void PerformWorkList::setup_alternate_math()
+{
+	m_save_orbit_calc = NULL;  /* function that calculates one orbit */
+	m_save_per_pixel = NULL;  /* once-per-pixel init */
+	m_save_per_image = NULL;  /* once-per-image setup */
+	int alt = find_alternate_math(g_fractal_type, g_bf_math);
 	if (alt > -1)
 	{
-		save_orbit_calc = g_current_fractal_specific->orbitcalc;
-		save_per_pixel = g_current_fractal_specific->per_pixel;
-		save_per_image = g_current_fractal_specific->per_image;
+		m_save_orbit_calc = g_current_fractal_specific->orbitcalc;
+		m_save_per_pixel = g_current_fractal_specific->per_pixel;
+		m_save_per_image = g_current_fractal_specific->per_image;
 		g_current_fractal_specific->orbitcalc = g_alternate_math[alt].orbitcalc;
 		g_current_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
 		g_current_fractal_specific->per_image = g_alternate_math[alt].per_image;
@@ -863,10 +900,23 @@ static void perform_work_list()
 	{
 		g_bf_math = 0;
 	}
+}
 
+void PerformWorkList::cleanup_alternate_math()
+{
+	if (m_save_orbit_calc != NULL)
+	{
+		g_current_fractal_specific->orbitcalc = m_save_orbit_calc;
+		g_current_fractal_specific->per_pixel = m_save_per_pixel;
+		g_current_fractal_specific->per_image = m_save_per_image;
+	}
+}
+
+void PerformWorkList::setup_potential()
+{
 	if (g_potential_flag && g_potential_16bit)
 	{
-		int tmpcalcmode = g_standard_calculation_mode;
+		char tmpcalcmode = g_standard_calculation_mode;
 
 		g_standard_calculation_mode = '1'; /* force 1 pass */
 		if (!g_resuming)
@@ -874,10 +924,14 @@ static void perform_work_list()
 			if (disk_start_potential() < 0)
 			{
 				g_potential_16bit = false;       /* disk_start failed or cancelled */
-				g_standard_calculation_mode = (char)tmpcalcmode;    /* maybe we can carry on??? */
+				g_standard_calculation_mode = tmpcalcmode;    /* maybe we can carry on??? */
 			}
 		}
 	}
+}
+
+void PerformWorkList::setup_standard_calculation_mode()
+{
 	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_BOUNDARY_TRACING))
 	{
 		g_standard_calculation_mode = '1';
@@ -890,7 +944,10 @@ static void perform_work_list()
 	{
 		g_standard_calculation_mode = '1';
 	}
+}
 
+void PerformWorkList::setup_initial_work_list()
+{
 	/* default setup a new g_work_list */
 	g_num_work_list = 1;
 	g_work_list[0].xx_begin = 0;
@@ -903,8 +960,7 @@ static void perform_work_list()
 	g_work_list[0].sym = 0;
 	if (g_resuming) /* restore g_work_list, if we can't the above will stay in place */
 	{
-		int vsn;
-		vsn = start_resume();
+		int vsn = start_resume();
 		get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
 		end_resume();
 		if (vsn < 2)
@@ -912,244 +968,238 @@ static void perform_work_list()
 			g_xx_begin = 0;
 		}
 	}
+}
 
-	if (g_distance_test) /* setup stuff for distance estimator */
+void PerformWorkList::setup_distance_estimator()
+{
+	double dxsize;
+	double dysize;
+	double aspect;
+	if (g_pseudo_x && g_pseudo_y)
 	{
-		double dxsize;
-		double dysize;
-		double aspect;
-		if (g_pseudo_x && g_pseudo_y)
+		aspect = (double) g_pseudo_y/(double) g_pseudo_x;
+		dxsize = g_pseudo_x-1;
+		dysize = g_pseudo_y-1;
+	}
+	else
+	{
+		aspect = (double) g_y_dots/(double) g_x_dots;
+		dxsize = g_x_dots-1;
+		dysize = g_y_dots-1;
+	}
+
+	double delta_x_fp = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/dxsize; /* calculate stepsizes */
+	double delta_y_fp = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/dysize;
+	double delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/dysize;
+	double delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/dxsize;
+
+	/* in case it's changed with <G> */
+	g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
+
+	g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
+	if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */
+	{
+		if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
 		{
-			aspect = (double)g_pseudo_y/(double)g_pseudo_x;
-			dxsize = g_pseudo_x-1;
-			dysize = g_pseudo_y-1;
+			g_rq_limit = DEM_BAILOUT;
+		}
+	}
+	/* must be mandel type, formula, or old PAR/GIF */
+	s_dem_mandelbrot =
+		(g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
+		|| g_use_old_distance_test
+		|| g_fractal_type == FRACTYPE_FORMULA
+		|| g_fractal_type == FRACTYPE_FORMULA_FP);
+
+	s_dem_delta = sqr(g_escape_time_state.m_grid_fp.delta_x()) + sqr(delta_y2_fp);
+	double ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
+	if (ftemp > s_dem_delta)
+	{
+		s_dem_delta = ftemp;
+	}
+	if (g_distance_test_width == 0)
+	{
+		g_distance_test_width = 1;
+	}
+	ftemp = g_distance_test_width;
+	/* multiply by thickness desired */
+	s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000);
+	s_dem_width = (sqrt(sqr(g_escape_time_state.m_grid_fp.width()) + sqr(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()) )*aspect
+		+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min()) ) )/g_distance_test;
+	ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
+	ftemp += 3; /* bailout plus just a bit */
+	double ftemp2 = log(ftemp);
+	s_dem_too_big = g_use_old_distance_test ?
+		sqr(ftemp)*sqr(ftemp2)*4/s_dem_delta : fabs(ftemp)*fabs(ftemp2)*2/sqrt(s_dem_delta);
+}
+
+void PerformWorkList::setup_per_image()
+{
+	/* per_image can override */
+	g_calculate_type = g_current_fractal_specific->calculate_type;
+	g_symmetry = g_current_fractal_specific->symmetry; /*   calctype & symmetry  */
+	g_plot_color = g_plot_color_put_color; /* defaults when setsymmetry not called or does nothing */
+}
+
+void PerformWorkList::get_top_work_list_item()
+{
+	/* pull top entry off g_work_list */
+	g_xx_start = g_work_list[0].xx_start;
+	g_xx_stop = g_work_list[0].xx_stop;
+	g_ix_start = g_xx_start;
+	g_x_stop  = g_xx_stop;
+	g_xx_begin  = g_work_list[0].xx_begin;
+	g_yy_start = g_work_list[0].yy_start;
+	g_yy_stop = g_work_list[0].yy_stop;
+	g_iy_start = g_yy_start;
+	g_y_stop  = g_yy_stop;
+	g_yy_begin  = g_work_list[0].yy_begin;
+	g_work_pass = g_work_list[0].pass;
+	g_work_sym  = g_work_list[0].sym;
+	--g_num_work_list;
+	for (int i = 0; i < g_num_work_list; ++i)
+	{
+		g_work_list[i] = g_work_list[i + 1];
+	}
+}
+
+void PerformWorkList::show_dot_start()
+{
+	find_special_colors();
+	switch (g_auto_show_dot)
+	{
+	case 'd':
+		s_show_dot_color = g_color_dark % g_colors;
+		break;
+	case 'm':
+		s_show_dot_color = g_color_medium % g_colors;
+		break;
+	case 'b':
+	case 'a':
+		s_show_dot_color = g_color_bright % g_colors;
+		break;
+	default:
+		s_show_dot_color = g_show_dot % g_colors;
+		break;
+	}
+	if (g_size_dot <= 0)
+	{
+		s_show_dot_width = -1;
+	}
+	else
+	{
+		double dshowdot_width = (double) g_size_dot*g_x_dots/1024.0;
+		/*
+			Arbitrary sanity limit, however s_show_dot_width will
+			overflow if dshowdot width gets near 256.
+		*/
+		if (dshowdot_width > 150.0)
+		{
+			s_show_dot_width = 150;
+		}
+		else if (dshowdot_width > 0.0)
+		{
+			s_show_dot_width = (int) dshowdot_width;
 		}
 		else
 		{
-			aspect = (double)g_y_dots/(double)g_x_dots;
-			dxsize = g_x_dots-1;
-			dysize = g_y_dots-1;
+			s_show_dot_width = -1;
 		}
-
-		double delta_x_fp = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / dxsize; /* calculate stepsizes */
-		double delta_y_fp = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / dysize;
-		double delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / dysize;
-		double delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / dxsize;
-
-		/* in case it's changed with <G> */
-		g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
-
-		g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
-		if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */
-		{
-			if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
-			{
-				g_rq_limit = DEM_BAILOUT;
-			}
-		}
-		/* must be mandel type, formula, or old PAR/GIF */
-		s_dem_mandelbrot =
-			(g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
-			|| g_use_old_distance_test
-			|| g_fractal_type == FRACTYPE_FORMULA
-			|| g_fractal_type == FRACTYPE_FORMULA_FP);
-
-		s_dem_delta = sqr(g_escape_time_state.m_grid_fp.delta_x()) + sqr(delta_y2_fp);
-		double ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
-		if (ftemp > s_dem_delta)
-		{
-			s_dem_delta = ftemp;
-		}
-		if (g_distance_test_width == 0)
-		{
-			g_distance_test_width = 1;
-		}
-		ftemp = g_distance_test_width;
-		/* multiply by thickness desired */
-		s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000); 
-		s_dem_width = (sqrt(sqr(g_escape_time_state.m_grid_fp.width()) + sqr(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()) )*aspect
-			+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min()) ) ) / g_distance_test;
-		ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
-		ftemp += 3; /* bailout plus just a bit */
-		double ftemp2 = log(ftemp);
-		s_dem_too_big = g_use_old_distance_test ?
-			sqr(ftemp)*sqr(ftemp2)*4 / s_dem_delta
-			:
-			fabs(ftemp)*fabs(ftemp2)*2 / sqrt(s_dem_delta);
 	}
-
-	while (g_num_work_list > 0)
+	while (s_show_dot_width >= 0)
 	{
-		/* per_image can override */
-		g_calculate_type = g_current_fractal_specific->calculate_type;
-		g_symmetry = g_current_fractal_specific->symmetry; /*   calctype & symmetry  */
-		g_plot_color = g_plot_color_put_color; /* defaults when setsymmetry not called or does nothing */
-
-		/* pull top entry off g_work_list */
-		g_xx_start = g_work_list[0].xx_start;
-		g_xx_stop = g_work_list[0].xx_stop;
-		g_ix_start = g_xx_start;
-		g_x_stop  = g_xx_stop;
-		g_xx_begin  = g_work_list[0].xx_begin;
-		g_yy_start = g_work_list[0].yy_start;
-		g_yy_stop = g_work_list[0].yy_stop;
-		g_iy_start = g_yy_start;
-		g_y_stop  = g_yy_stop;
-		g_yy_begin  = g_work_list[0].yy_begin;
-		g_work_pass = g_work_list[0].pass;
-		g_work_sym  = g_work_list[0].sym;
-		--g_num_work_list;
-		for (int i = 0; i < g_num_work_list; ++i)
+		/*
+		We're using near memory, so get the amount down
+		to something reasonable. The polynomial used to
+		calculate s_save_dots_len is exactly right for the
+		triangular-shaped shotdot cursor. The that cursor
+		is changed, this formula must match.
+		*/
+		while ((s_save_dots_len = sqr(s_show_dot_width) + 5*s_show_dot_width + 4) > 1000)
 		{
-			g_work_list[i] = g_work_list[i + 1];
+			s_show_dot_width--;
 		}
-
-		g_calculation_status = CALCSTAT_IN_PROGRESS; /* mark as in-progress */
-
-		g_current_fractal_specific->per_image();
-		if (g_show_dot >= 0)
+		s_save_dots = (BYTE *)malloc(s_save_dots_len);
+		if (s_save_dots != NULL)
 		{
-			find_special_colors();
-			switch (g_auto_show_dot)
-			{
-			case 'd':
-				s_show_dot_color = g_color_dark % g_colors;
-				break;
-			case 'm':
-				s_show_dot_color = g_color_medium % g_colors;
-				break;
-			case 'b':
-			case 'a':
-				s_show_dot_color = g_color_bright % g_colors;
-				break;
-			default:
-				s_show_dot_color = g_show_dot % g_colors;
-				break;
-			}
-			if (g_size_dot <= 0)
-			{
-				s_show_dot_width = -1;
-			}
-			else
-			{
-				double dshowdot_width;
-				dshowdot_width = (double)g_size_dot*g_x_dots/1024.0;
-				/*
-					Arbitrary sanity limit, however s_show_dot_width will
-					overflow if dshowdot width gets near 256.
-				*/
-				if (dshowdot_width > 150.0)
-				{
-					s_show_dot_width = 150;
-				}
-				else if (dshowdot_width > 0.0)
-				{
-					s_show_dot_width = (int)dshowdot_width;
-				}
-				else
-				{
-					s_show_dot_width = -1;
-				}
-			}
-#ifdef SAVEDOTS_USES_MALLOC
-			while (s_show_dot_width >= 0)
-			{
-				/*
-					We're using near memory, so get the amount down
-					to something reasonable. The polynomial used to
-					calculate s_save_dots_len is exactly right for the
-					triangular-shaped shotdot cursor. The that cursor
-					is changed, this formula must match.
-				*/
-				while ((s_save_dots_len = sqr(s_show_dot_width) + 5*s_show_dot_width + 4) > 1000)
-				{
-					s_show_dot_width--;
-				}
-				s_save_dots = (BYTE *)malloc(s_save_dots_len);
-				if (s_save_dots != NULL)
-				{
-					s_save_dots_len /= 2;
-					s_fill_buffer = s_save_dots + s_save_dots_len;
-					memset(s_fill_buffer, s_show_dot_color, s_save_dots_len);
-					break;
-				}
-				/*
-					There's even less free memory than we thought, so reduce
-					s_show_dot_width still more
-				*/
-				s_show_dot_width--;
-			}
-			if (s_save_dots == NULL)
-			{
-				s_show_dot_width = -1;
-			}
-#else
-			while ((s_save_dots_len = sqr(s_show_dot_width) + 5*s_show_dot_width + 4) > 2048)
-			{
-				s_show_dot_width--;
-			}
-			s_save_dots = (BYTE *)g_decoder_line;
 			s_save_dots_len /= 2;
 			s_fill_buffer = s_save_dots + s_save_dots_len;
 			memset(s_fill_buffer, s_show_dot_color, s_save_dots_len);
-#endif
-			g_calculate_type_temp = g_calculate_type;
-			g_calculate_type    = calculate_type_show_dot;
-		}
-
-		/* some common initialization for escape-time pixel level routines */
-		g_close_enough = g_delta_min_fp*pow(2.0, (double) -abs(g_periodicity_check));
-		g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
-		g_input_counter = g_max_input_counter;
-
-		set_symmetry(g_symmetry, true);
-
-		if (!g_resuming && (labs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
-		{  /* calculate round screen edges to work out best start for logmap */
-			g_log_palette_mode = (automatic_log_map()*(g_log_palette_mode / labs(g_log_palette_mode)));
-			SetupLogTable();
-		}
-
-		/* call the appropriate escape-time engine */
-		switch (g_standard_calculation_mode)
-		{
-		case 's':
-			soi();
-			break;
-		case 't':
-			tesseral();
-			break;
-		case 'b':
-			boundary_trace_main();
-			break;
-		case 'g':
-			solid_guess();
-			break;
-		case 'd':
-			diffusion_scan();
-			break;
-		case 'o':
-			draw_orbits();
-			break;
-		default:
-			one_or_two_pass();
-		}
-#ifdef SAVEDOTS_USES_MALLOC
-		if (s_save_dots != NULL)
-		{
-			free(s_save_dots);
-			s_save_dots = NULL;
-			s_fill_buffer = NULL;
-		}
-#endif
-		if (check_key()) /* interrupted? */
-		{
 			break;
 		}
+		/*
+		There's even less free memory than we thought, so reduce
+		s_show_dot_width still more
+		*/
+		s_show_dot_width--;
 	}
+	if (s_save_dots == NULL)
+	{
+		s_show_dot_width = -1;
+	}
+	g_calculate_type_temp = g_calculate_type;
+	g_calculate_type    = calculate_type_show_dot;
+}
 
+void PerformWorkList::show_dot_finish()
+{
+	if (s_save_dots != NULL)
+	{
+		free(s_save_dots);
+		s_save_dots = NULL;
+		s_fill_buffer = NULL;
+	}
+}
+
+void PerformWorkList::common_escape_time_initialization()
+{
+	/* some common initialization for escape-time pixel level routines */
+	g_close_enough = g_delta_min_fp*pow(2.0, (double) -abs(g_periodicity_check));
+	g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
+	g_input_counter = g_max_input_counter;
+
+	set_symmetry(g_symmetry, true);
+
+	if (!g_resuming && (labs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
+	{
+		/* calculate round screen edges to work out best start for logmap */
+		g_log_palette_mode = (automatic_log_map()*(g_log_palette_mode/labs(g_log_palette_mode)));
+		SetupLogTable();
+	}
+}
+void PerformWorkList::call_escape_time_engine()
+{
+	/* call the appropriate escape-time engine */
+	switch (g_standard_calculation_mode)
+	{
+	case 's':
+		soi();
+		break;
+	case 't':
+		tesseral();
+		break;
+	case 'b':
+		boundary_trace_main();
+		break;
+	case 'g':
+		solid_guess();
+		break;
+	case 'd':
+		diffusion_scan();
+		break;
+	case 'o':
+		draw_orbits();
+		break;
+	default:
+		one_or_two_pass();
+	}
+}
+
+void PerformWorkList::interrupted_or_completed()
+{
 	if (g_num_work_list > 0)
-	{  /* interrupted, resumable */
+	{
+		/* interrupted, resumable */
 		alloc_resume(sizeof(g_work_list) + 20, 2);
 		put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
 	}
@@ -1157,12 +1207,49 @@ static void perform_work_list()
 	{
 		g_calculation_status = CALCSTAT_COMPLETED; /* completed */
 	}
-	if (save_orbit_calc != NULL)
+}
+
+void PerformWorkList::calculate()
+{
+	setup_alternate_math();
+	setup_potential();
+	setup_standard_calculation_mode();
+	setup_initial_work_list();
+	if (g_distance_test)
 	{
-		g_current_fractal_specific->orbitcalc = save_orbit_calc;
-		g_current_fractal_specific->per_pixel = save_per_pixel;
-		g_current_fractal_specific->per_image = save_per_image;
+		setup_distance_estimator();
 	}
+
+	while (g_num_work_list > 0)
+	{
+		setup_per_image();
+		get_top_work_list_item();
+		g_calculation_status = CALCSTAT_IN_PROGRESS;
+
+		g_current_fractal_specific->per_image();
+		if (g_show_dot >= 0)
+		{
+			show_dot_start();
+		}
+
+		common_escape_time_initialization();
+		call_escape_time_engine();
+		show_dot_finish();
+		if (check_key()) /* interrupted? */
+		{
+			break;
+		}
+	}
+
+	interrupted_or_completed();
+	cleanup_alternate_math();
+}
+
+static PerformWorkList s_perform_work_list;
+
+static void perform_work_list()
+{
+	s_perform_work_list.calculate();
 }
 
 static int draw_rectangle_orbits()
@@ -1341,8 +1428,8 @@ static int draw_function_orbits()
 	double Skew;
 	int angle;
 	double theta;
-	double xfactor = g_x_dots / 2.0;
-	double yfactor = g_y_dots / 2.0;
+	double xfactor = g_x_dots/2.0;
+	double yfactor = g_y_dots/2.0;
 
 	angle = g_xx_begin;  /* save angle in x parameter */
 
@@ -1722,10 +1809,12 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			{
 				g_rq_limit = s_rq_limit_save;
 				if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */
+				{
 					if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
 					{
 						g_rq_limit = DEM_BAILOUT;
 					}
+				}
 				dem_color = -1;
 			}
 			deriv.x = 1;
@@ -1785,8 +1874,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		if (g_integer_fractal)
 		{
-			g_old_z.x = ((double)g_old_z_l.x) / g_fudge;
-			g_old_z.y = ((double)g_old_z_l.y) / g_fudge;
+			g_old_z.x = ((double)g_old_z_l.x)/g_fudge;
+			g_old_z.y = ((double)g_old_z_l.y)/g_fudge;
 		}
 		else if (g_bf_math == BIGNUM)
 		{
@@ -1982,8 +2071,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				double mag;
 				if (g_integer_fractal)
 				{
-					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
-					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
+					g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
+					g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
 				}
 				mag = fmod_test();
 				if (mag < g_proximity)
@@ -2000,7 +2089,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 						g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.y);
 					}
 					g_magnitude = g_magnitude_l;
-					g_magnitude = g_magnitude / g_fudge;
+					g_magnitude = g_magnitude/g_fudge;
 				}
 				else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
 				{
@@ -2028,8 +2117,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			{
 				if (g_integer_fractal)
 				{
-					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
-					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
+					g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
+					g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
 				}
 				totaldist += sqrt(sqr(lastz.x-g_new_z.x) + sqr(lastz.y-g_new_z.y));
 				lastz.x = g_new_z.x;
@@ -2040,8 +2129,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				double mag;
 				if (g_integer_fractal)
 				{
-					g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
-					g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
+					g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
+					g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
 				}
 				mag = fmod_test();
 				if (mag < g_proximity)
@@ -2288,8 +2377,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		if (g_integer_fractal)
 		{
-			g_new_z.x = ((double)g_new_z_l.x) / g_fudge;
-			g_new_z.y = ((double)g_new_z_l.y) / g_fudge;
+			g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
+			g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
 		}
 		else if (g_bf_math == BIGNUM)
 		{
@@ -2319,7 +2408,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_outside == FMOD)
 		{
-			g_color_iter = (long)(memvalue*g_colors / g_proximity);
+			g_color_iter = (long)(memvalue*g_colors/g_proximity);
 		}
 		else if (g_outside == TDIS)
 		{
@@ -2342,7 +2431,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else
 		{
-			dist = dist*sqr(log(dist)) / (sqr(deriv.x) + sqr(deriv.y) );
+			dist = dist*sqr(log(dist))/(sqr(deriv.x) + sqr(deriv.y) );
 		}
 		if (dist < s_dem_delta)     /* point is on the edge */
 		{
@@ -2362,15 +2451,15 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		{
 			if (g_old_demm_colors) /* this one is needed for old color scheme */
 			{
-				g_color_iter = (long)sqrt(sqrt(dist) / s_dem_width + 1);
+				g_color_iter = (long)sqrt(sqrt(dist)/s_dem_width + 1);
 			}
 			else if (g_use_old_distance_test)
 			{
-				g_color_iter = (long)sqrt(dist / s_dem_width + 1);
+				g_color_iter = (long)sqrt(dist/s_dem_width + 1);
 			}
 			else
 			{
-				g_color_iter = (long)(dist / s_dem_width + 1);
+				g_color_iter = (long)(dist/s_dem_width + 1);
 			}
 			g_color_iter &= LONG_MAX;  /* oops - color can be negative */
 			goto plot_pixel;       /* no further adjustments apply */
@@ -2466,8 +2555,8 @@ plot_inside: /* we're "inside" */
 		{
 			if (g_integer_fractal)
 			{
-				g_new_z.x = ((double) g_new_z_l.x) / g_fudge;
-				g_new_z.y = ((double) g_new_z_l.y) / g_fudge;
+				g_new_z.x = ((double) g_new_z_l.x)/g_fudge;
+				g_new_z.y = ((double) g_new_z_l.y)/g_fudge;
 			}
 			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
@@ -2861,7 +2950,7 @@ static int _fastcall potential(double mag, long iterations)
 		}
 		else
 		{
-			 /* pot = log(mag) / pow(2.0, (double)pot); */
+			 /* pot = log(mag)/pow(2.0, (double)pot); */
 			if (l_pot < 120 && !g_float_flag) /* empirically determined limit of fShift */
 			{
 				f_mag = (float)mag;
@@ -3157,7 +3246,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	{
 		if (g_bf_math)
 		{
-			/* ftemp = -g_yy_max / (g_yy_min-g_yy_max); */
+			/* ftemp = -g_yy_max/(g_yy_min-g_yy_max); */
 			sub_bf(bft1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 			div_bf(bft1, g_escape_time_state.m_grid_bf.y_max(), bft1);
 			neg_a_bf(bft1);
@@ -3165,7 +3254,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		else
 		{
-			ftemp = -g_escape_time_state.m_grid_fp.y_max() / (g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_max());
+			ftemp = -g_escape_time_state.m_grid_fp.y_max()/(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_max());
 		}
 		ftemp *= (g_y_dots-1);
 		ftemp += 0.25;
@@ -3180,7 +3269,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	{
 		if (g_bf_math)
 		{
-			/* ftemp = -g_xx_min / (g_xx_max-g_xx_min); */
+			/* ftemp = -g_xx_min/(g_xx_max-g_xx_min); */
 			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			div_bf(bft1, g_escape_time_state.m_grid_bf.x_min(), bft1);
 			neg_a_bf(bft1);

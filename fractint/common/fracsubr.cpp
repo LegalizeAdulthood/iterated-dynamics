@@ -239,10 +239,10 @@ init_restart:
 	/* the following variables may be forced to a different setting due to
 		calc routine constraints;  usr_xxx is what the user last said is wanted,
 		xxx is what we actually do in the current situation */
-	g_standard_calculation_mode      = g_user_standard_calculation_mode;
+	g_standard_calculation_mode = g_user_standard_calculation_mode;
 	g_periodicity_check = g_user_periodicity_check;
-	g_distance_test          = g_user_distance_test;
-	g_biomorph         = g_user_biomorph;
+	g_distance_test = g_user_distance_test;
+	g_biomorph = g_user_biomorph;
 
 	g_potential_flag = false;
 	if (g_potential_parameter[0] != 0.0
