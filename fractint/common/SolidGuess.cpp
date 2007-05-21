@@ -63,7 +63,7 @@ static void _fastcall plot_block(BuildRowType buildrow, int x, int y, int color)
 				g_stack[i + OLD_MAX_PIXELS] = (BYTE)color;
 			}
 		}
-		if (x >= g_xx_start) /* when x reduced for alignment, paint those dots too */
+		if (x >= g_WorkList.xx_start()) /* when x reduced for alignment, paint those dots too */
 		{
 			return; /* the usual case */
 		}
@@ -372,12 +372,12 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 		j = y + i;
 		if (j <= g_y_stop)
 		{
-			put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start]);
+			put_line(j, g_WorkList.xx_start(), g_x_stop, &g_stack[g_WorkList.xx_start()]);
 		}
 		j = y + i + s_half_block;
 		if (j <= g_y_stop)
 		{
-			put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLD_MAX_PIXELS]);
+			put_line(j, g_WorkList.xx_start(), g_x_stop, &g_stack[g_WorkList.xx_start() + OLD_MAX_PIXELS]);
 		}
 		if (driver_key_pressed())
 		{
@@ -388,10 +388,10 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	{
 		if (g_plot_color == plot_color_symmetry_origin) /* origin sym, reverse lines */
 		{
-			for (int i = (g_x_stop + g_xx_start + 1)/2; --i >= g_xx_start; )
+			for (int i = (g_x_stop + g_WorkList.xx_start() + 1)/2; --i >= g_WorkList.xx_start(); )
 			{
 				color = g_stack[i];
-				j = g_x_stop-(i-g_xx_start);
+				j = g_x_stop-(i-g_WorkList.xx_start());
 				g_stack[i] = g_stack[j];
 				g_stack[j] = (BYTE)color;
 				j += OLD_MAX_PIXELS;
@@ -402,15 +402,15 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 		}
 		for (int i = 0; i < s_half_block; ++i)
 		{
-			j = g_yy_stop-(y + i-g_yy_start);
+			j = g_WorkList.yy_stop()-(y + i-g_WorkList.yy_start());
 			if (j > g_y_stop && j < g_y_dots)
 			{
-				put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start]);
+				put_line(j, g_WorkList.xx_start(), g_x_stop, &g_stack[g_WorkList.xx_start()]);
 			}
-			j = g_yy_stop-(y + i + s_half_block-g_yy_start);
+			j = g_WorkList.yy_stop()-(y + i + s_half_block-g_WorkList.yy_start());
 			if (j > g_y_stop && j < g_y_dots)
 			{
-				put_line(j, g_xx_start, g_x_stop, &g_stack[g_xx_start + OLD_MAX_PIXELS]);
+				put_line(j, g_WorkList.xx_start(), g_x_stop, &g_stack[g_WorkList.xx_start() + OLD_MAX_PIXELS]);
 			}
 			if (driver_key_pressed())
 			{
@@ -458,7 +458,7 @@ int solid_guess()
 			as larger than it really is if necessary (this is the reason symplot
 			routines must check for > g_x_dots/g_y_dots before plotting sym points) */
 	g_ix_start &= -1 - (s_max_block - 1);
-	g_iy_start = g_yy_begin;
+	g_iy_start = g_WorkList.yy_begin();
 	g_iy_start &= -1 - (s_max_block - 1);
 
 	g_got_status = GOT_STATUS_GUESSING;
@@ -467,7 +467,7 @@ int solid_guess()
 	{
 		/* first pass, calc every blocksize**2 pixel, quarter result & paint it */
 		g_current_pass = 1;
-		if (g_iy_start <= g_yy_start) /* first time for this window, init it */
+		if (g_iy_start <= g_WorkList.yy_start()) /* first time for this window, init it */
 		{
 			g_current_row = 0;
 			memset(&s_t_prefix[1][0][0], 0, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags off */
@@ -477,7 +477,7 @@ int solid_guess()
 			{ /* calc top row */
 				if ((*g_calculate_type)() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_begin(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_begin(), 0, g_work_sym);
 					goto exit_solid_guess;
 				}
 				g_reset_periodicity = 0;
@@ -508,22 +508,22 @@ int solid_guess()
 			g_reset_periodicity = 0;
 			if (i == -1 || guess_row(1, y, blocksize) != 0) /* interrupted? */
 			{
-				if (y < g_yy_start)
+				if (y < g_WorkList.yy_start())
 				{
-					y = g_yy_start;
+					y = g_WorkList.yy_start();
 				}
-				work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, g_work_sym);
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), y, 0, g_work_sym);
 				goto exit_solid_guess;
 			}
 		}
 
-		if (g_num_work_list) /* work list not empty, just do 1st pass */
+		if (g_WorkList.num_items()) /* work list not empty, just do 1st pass */
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), 1, g_work_sym);
 			goto exit_solid_guess;
 		}
 		++g_work_pass;
-		g_iy_start = g_yy_start & (-1 - (s_max_block-1));
+		g_iy_start = g_WorkList.yy_start() & (-1 - (s_max_block-1));
 
 		/* calculate skip flags for skippable blocks */
 		xlim = (g_x_stop + s_max_block)/s_max_block + 1;
@@ -595,22 +595,22 @@ int solid_guess()
 			g_current_row = y;
 			if (guess_row(0, y, blocksize) != 0)
 			{
-				if (y < g_yy_start)
+				if (y < g_WorkList.yy_start())
 				{
-					y = g_yy_start;
+					y = g_WorkList.yy_start();
 				}
-				work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, g_work_pass, g_work_sym);
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), y, g_work_pass, g_work_sym);
 				goto exit_solid_guess;
 			}
 		}
 		++g_work_pass;
-		if (g_num_work_list /* work list not empty, do one pass at a time */
+		if (g_WorkList.num_items() /* work list not empty, do one pass at a time */
 			&& blocksize > 2) /* if 2, we just did last pass */
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), g_work_pass, g_work_sym);
 			goto exit_solid_guess;
 		}
-		g_iy_start = g_yy_start & (-1 - (s_max_block-1));
+		g_iy_start = g_WorkList.yy_start() & (-1 - (s_max_block-1));
 	}
 
 	exit_solid_guess:

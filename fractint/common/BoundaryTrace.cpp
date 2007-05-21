@@ -4,6 +4,8 @@
 #include "fractint.h"
 #include "prototyp.h"
 #include "externs.h"
+
+#include "calcfrac.h"
 #include "fracsubr.h"
 #include "realdos.h"
 
@@ -94,11 +96,11 @@ int boundary_trace_main()
 				{
 					(*g_plot_color)(g_col, g_row, bkcolor);
 				}
-				if (g_y_stop != g_yy_stop)  /* DG */
+				if (g_y_stop != g_WorkList.yy_stop())  /* DG */
 				{
-					g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
+					g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
 				}
-				work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
 				return -1;
 			}
 			g_reset_periodicity = 0; /* normal periodicity checking */
@@ -138,11 +140,11 @@ int boundary_trace_main()
 						{
 							(*g_plot_color)(g_col, g_row, bkcolor);
 						}
-						if (g_y_stop != g_yy_stop)  /* DG */
+						if (g_y_stop != g_WorkList.yy_stop())  /* DG */
 						{
-							g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
+							g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
 						}
-						work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
+						g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
 						return -1;
 					}
 					else if (g_color == trail_color)
@@ -241,11 +243,11 @@ int boundary_trace_main()
 							{
 								if (check_key())
 								{
-									if (g_y_stop != g_yy_stop)
+									if (g_y_stop != g_WorkList.yy_stop())
 									{
-										g_y_stop = g_yy_stop - (g_current_row - g_yy_start); /* allow for sym */
+										g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
 									}
-									work_list_add(g_xx_start, g_xx_stop, g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
+									g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
 									return -1;
 								}
 								g_input_counter = g_max_input_counter;

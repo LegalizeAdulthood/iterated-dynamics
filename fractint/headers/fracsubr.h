@@ -18,8 +18,6 @@ extern void reset_clock();
 extern void plot_orbit_i(long, long, int);
 extern void plot_orbit(double, double, int);
 extern void orbit_scrub();
-extern int work_list_add(int, int, int, int, int, int, int, int);
-extern void work_list_tidy();
 extern void get_julia_attractor(double, double);
 extern int solid_guess_block_size();
 extern void fractal_float_to_bf();

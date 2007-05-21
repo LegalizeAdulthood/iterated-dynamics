@@ -123,7 +123,7 @@ int tesseral()
 		tp->right = tesseral_column(g_x_stop, g_iy_start + 1, g_y_stop-1);  /* Do right column */
 		if (check_key())  /* interrupt before we got properly rolling */
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), 0, g_work_sym);
 			return -1;
 		}
 	}
@@ -137,9 +137,9 @@ int tesseral()
 		int ysize;
 		struct tess *tp2;
 		tp->top = tp->bottom = tp->left = tp->right = -2;
-		cury = g_yy_begin & 0xfff;
+		cury = g_WorkList.yy_begin() & 0xfff;
 		ysize = 1;
-		i = (unsigned)g_yy_begin >> 12;
+		i = (unsigned)g_WorkList.yy_begin() >> 12;
 		while (--i >= 0)
 		{
 			ysize <<= 1;
@@ -290,7 +290,7 @@ int tesseral()
 						put_line(g_row, tp->x1 + 1, tp->x2-1, &g_stack[OLD_MAX_PIXELS]);
 						if (g_plot_color != g_plot_color_put_color) /* symmetry */
 						{
-							j = g_yy_stop-(g_row-g_yy_start);
+							j = g_WorkList.yy_stop()-(g_row-g_WorkList.yy_start());
 							if (j > g_y_stop && j < g_y_dots)
 							{
 								put_line(j, tp->x1 + 1, tp->x2-1, &g_stack[OLD_MAX_PIXELS]);
@@ -404,7 +404,7 @@ tess_end:
 			i <<= 1;
 			++ysize;
 		}
-		work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
+		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(),
 			(ysize << 12) + tp->y1, (xsize << 12) + tp->x1, g_work_sym);
 		return -1;
 	}

@@ -579,7 +579,7 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 	set_help_mode(HELPMAIN);         /* now use this help mode */
 	resume_flag = false;  /* allows taking goto inside big_while_loop() */
 
-	return APPSTATE_NO_CHANGE;
+	return APPSTATE_RESUME_LOOP;
 }
 
 void application_initialize(int argc, char **argv)
