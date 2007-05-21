@@ -719,16 +719,9 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 	}
 	/* solid guessing */
 	start_resume();
-	get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
+	g_WorkList.get_resume();
 	/* don't do end_resume! we're just looking */
-	i = 9;
-	for (j = 0; j < g_num_work_list; ++j) /* find lowest pass in any pending window */
-	{
-		if (g_work_list[j].pass < i)
-		{
-			i = g_work_list[j].pass;
-		}
-	}
+	i = min(9, g_WorkList.get_lowest_pass());
 	j = solid_guess_block_size(); /* worst-case alignment requirement */
 	while (--i >= 0)
 	{
@@ -800,42 +793,34 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 		return 0;
 	}
 	/* pan */
-	g_num_work_list = 0;
+
+	g_WorkList.reset_items();
 	if (g_calculation_status == CALCSTAT_RESUMABLE)
 	{
 		start_resume();
-		get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
+		g_WorkList.get_resume();
 	} /* don't do end_resume! we might still change our mind */
-	/* adjust existing g_work_list entries */
-	for (i = 0; i < g_num_work_list; ++i)
-	{
-		g_work_list[i].yy_start -= row;
-		g_work_list[i].yy_stop  -= row;
-		g_work_list[i].yy_begin -= row;
-		g_work_list[i].xx_start -= col;
-		g_work_list[i].xx_stop  -= col;
-		g_work_list[i].xx_begin -= col;
-	}
+	g_WorkList.offset_items(row, col);
 	/* add g_work_list entries for the new edges */
 	listfull = i = 0;
 	j = g_y_dots-1;
 	if (row < 0)
 	{
-		listfull |= work_list_add(0, g_x_dots-1, 0, 0, -row-1, 0, 0, 0);
+		listfull |= g_WorkList.add(0, g_x_dots-1, 0, 0, -row-1, 0, 0, 0);
 		i = -row;
 	}
 	if (row > 0)
 	{
-		listfull |= work_list_add(0, g_x_dots-1, 0, g_y_dots-row, g_y_dots-1, g_y_dots-row, 0, 0);
+		listfull |= g_WorkList.add(0, g_x_dots-1, 0, g_y_dots-row, g_y_dots-1, g_y_dots-row, 0, 0);
 		j = g_y_dots - row - 1;
 	}
 	if (col < 0)
 	{
-		listfull |= work_list_add(0, -col-1, 0, i, j, i, 0, 0);
+		listfull |= g_WorkList.add(0, -col-1, 0, i, j, i, 0, 0);
 	}
 	if (col > 0)
 	{
-		listfull |= work_list_add(g_x_dots-col, g_x_dots-1, g_x_dots-col, i, j, i, 0, 0);
+		listfull |= g_WorkList.add(g_x_dots-col, g_x_dots-1, g_x_dots-col, i, j, i, 0, 0);
 	}
 	if (listfull != 0)
 	{
@@ -870,174 +855,11 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 		}
 	}
 	fix_work_list(); /* fixup any out of bounds g_work_list entries */
-	alloc_resume(sizeof(g_work_list) + 20, 2); /* post the new g_work_list */
-	put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
+	g_WorkList.put_resume();
 	return 0;
 }
 
-static void _fastcall restart_window(int wknum)
-/* force a g_work_list entry to restart */
-{
-	int yfrom;
-	int yto;
-	int xfrom;
-	int xto;
-	yfrom = g_work_list[wknum].yy_start;
-	if (yfrom < 0)
-	{
-		yfrom = 0;
-	}
-	xfrom = g_work_list[wknum].xx_start;
-	if (xfrom < 0)
-	{
-		xfrom = 0;
-	}
-	yto = g_work_list[wknum].yy_stop;
-	if (yto >= g_y_dots)
-	{
-		yto = g_y_dots - 1;
-	}
-	xto = g_work_list[wknum].xx_stop;
-	if (xto >= g_x_dots)
-	{
-		xto = g_x_dots - 1;
-	}
-	memset(g_stack, 0, g_x_dots); /* use g_stack as a temp for the row; clear it */
-	while (yfrom <= yto)
-	{
-		put_line(yfrom++, xfrom, xto, (BYTE *) g_stack);
-	}
-	g_work_list[wknum].sym = g_work_list[wknum].pass = 0;
-	g_work_list[wknum].yy_begin = g_work_list[wknum].yy_start;
-	g_work_list[wknum].xx_begin = g_work_list[wknum].xx_start;
-}
-
 static void fix_work_list() /* fix out of bounds and symmetry related stuff */
-{   int i, j, k;
-	WORK_LIST *wk;
-	for (i = 0; i < g_num_work_list; ++i)
-	{
-		wk = &g_work_list[i];
-		if (wk->yy_start >= g_y_dots || wk->yy_stop < 0
-			|| wk->xx_start >= g_x_dots || wk->xx_stop < 0)  /* offscreen, delete */
-		{
-			for (j = i + 1; j < g_num_work_list; ++j)
-			{
-				g_work_list[j-1] = g_work_list[j];
-			}
-			--g_num_work_list;
-			--i;
-			continue;
-		}
-		if (wk->yy_start < 0)  /* partly off top edge */
-		{
-			if ((wk->sym&1) == 0)  /* no sym, easy */
-			{
-				wk->yy_start = 0;
-				wk->xx_begin = 0;
-			}
-			else  /* xaxis symmetry */
-			{
-				j = wk->yy_stop + wk->yy_start;
-				if (j > 0 && g_num_work_list < MAX_WORK_LIST)  /* split the sym part */
-				{
-					g_work_list[g_num_work_list] = g_work_list[i];
-					g_work_list[g_num_work_list].yy_start = 0;
-					g_work_list[g_num_work_list++].yy_stop = j;
-					wk->yy_start = j + 1;
-				}
-				else
-				{
-					wk->yy_start = 0;
-				}
-				restart_window(i); /* restart the no-longer sym part */
-			}
-		}
-		if (wk->yy_stop >= g_y_dots)  /* partly off bottom edge */
-		{
-			j = g_y_dots-1;
-			if ((wk->sym&1) != 0)  /* uses xaxis symmetry */
-			{
-				k = wk->yy_start + (wk->yy_stop - j);
-				if (k < j)
-				{
-					if (g_num_work_list >= MAX_WORK_LIST) /* no room to split */
-					{
-						restart_window(i);
-					}
-					else  /* split it */
-					{
-						g_work_list[g_num_work_list] = g_work_list[i];
-						g_work_list[g_num_work_list].yy_start = k;
-						g_work_list[g_num_work_list++].yy_stop = j;
-						j = k-1;
-					}
-				}
-				wk->sym &= -1 - 1;
-			}
-			wk->yy_stop = j;
-		}
-		if (wk->xx_start < 0)  /* partly off left edge */
-		{
-			if ((wk->sym&2) == 0) /* no sym, easy */
-				wk->xx_start = 0;
-			else  /* yaxis symmetry */
-			{
-				j = wk->xx_stop + wk->xx_start;
-				if (j > 0 && g_num_work_list < MAX_WORK_LIST)  /* split the sym part */
-				{
-					g_work_list[g_num_work_list] = g_work_list[i];
-					g_work_list[g_num_work_list].xx_start = 0;
-					g_work_list[g_num_work_list++].xx_stop = j;
-					wk->xx_start = j + 1;
-				}
-				else
-				{
-					wk->xx_start = 0;
-				}
-				restart_window(i); /* restart the no-longer sym part */
-			}
-		}
-		if (wk->xx_stop >= g_x_dots)  /* partly off right edge */
-		{
-			j = g_x_dots-1;
-			if ((wk->sym&2) != 0)  /* uses xaxis symmetry */
-			{
-				k = wk->xx_start + (wk->xx_stop - j);
-				if (k < j)
-				{
-					if (g_num_work_list >= MAX_WORK_LIST) /* no room to split */
-					{
-						restart_window(i);
-					}
-					else  /* split it */
-					{
-						g_work_list[g_num_work_list] = g_work_list[i];
-						g_work_list[g_num_work_list].xx_start = k;
-						g_work_list[g_num_work_list++].xx_stop = j;
-						j = k-1;
-					}
-				}
-				wk->sym &= -1 - 2;
-			}
-			wk->xx_stop = j;
-		}
-		if (wk->yy_begin < wk->yy_start)
-		{
-			wk->yy_begin = wk->yy_start;
-		}
-		if (wk->yy_begin > wk->yy_stop)
-		{
-			wk->yy_begin = wk->yy_stop;
-		}
-		if (wk->xx_begin < wk->xx_start)
-		{
-			wk->xx_begin = wk->xx_start;
-		}
-		if (wk->xx_begin > wk->xx_stop)
-		{
-			wk->xx_begin = wk->xx_stop;
-		}
-	}
-	work_list_tidy(); /* combine where possible, re-sort */
+{
+	g_WorkList.fix();
 }

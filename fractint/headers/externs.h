@@ -294,7 +294,7 @@ extern int					g_num_affine;
 extern unsigned				g_num_colors;
 extern const int			g_num_trig_fn;
 extern int					g_num_fractal_types;
-extern int					g_num_work_list;
+//extern int					g_num_work_list;
 extern bool					g_next_screen_flag;
 extern int					g_gaussian_offset;
 extern bool					g_ok_to_print;

@@ -897,7 +897,7 @@ int tab_display_2(char *msg)
 	write_row(row++, "%dx%d dm=%d %s (%s)", g_x_dots, g_y_dots, g_dot_mode,
 		driver_name(), driver_description());
 	write_row(row++, "xx: start %d, stop %d; yy: start %d, stop %d %s UsesIsMand %d",
-		g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
+		g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.yy_start(), g_WorkList.yy_stop(),
 #if !defined(XFRACT) && !defined(_WIN32)
 		g_current_fractal_specific->orbitcalc == fFormula ? "fast parser" :
 #endif
@@ -1151,7 +1151,7 @@ top:
 		if (g_got_status != GOT_STATUS_3D)
 		{
 			sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
-					g_yy_start, g_xx_start, g_yy_stop, g_xx_stop);
+					g_WorkList.yy_start(), g_WorkList.xx_start(), g_WorkList.yy_stop(), g_WorkList.xx_stop());
 			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
 			if (g_got_status == GOT_STATUS_BOUNDARY_TRACE || g_got_status == GOT_STATUS_TESSERAL)  /* btm or tesseral */
 			{

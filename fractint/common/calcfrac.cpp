@@ -60,8 +60,6 @@
 #define LOWER_LEFT   3
 #define UPPER_LEFT   4
 
-#define DEM_BAILOUT 535.5  /* (pb: not sure if this is special or arbitrary) */
-
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 ComplexL g_init_orbit_l = { 0, 0 };
@@ -114,12 +112,6 @@ int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
 char *g_resume_info = NULL;                    /* resume info if allocated */
 bool g_resuming;                           /* true if resuming after interrupt */
-int g_num_work_list;                       /* resume g_work_list for standard engine */
-WORK_LIST g_work_list[MAX_WORK_LIST];
-int g_xx_start;
-int g_xx_stop;
-int g_yy_start;
-int g_yy_stop;
 /* variables which must be visible for tab_display */
 int g_got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
 			  /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */
@@ -149,7 +141,7 @@ int g_atan_colors = 180;
 long (*g_calculate_mandelbrot_asm_fp)();
 
 /* routines in this module      */
-static void perform_work_list();
+//static void perform_work_list();
 static int one_or_two_pass();
 static int  _fastcall standard_calculate(int);
 static int  _fastcall potential(double, long);
@@ -169,8 +161,6 @@ static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color);
 static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color);
 static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color);
 
-int g_xx_begin;             /* these are same as g_work_list, */
-int g_yy_begin;             /* declared as separate items  */
 int g_ix_start;
 int g_iy_start;						/* start here */
 int g_work_pass;
@@ -258,7 +248,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == plot_color_symmetry_x_axis) /* X-axis symmetry */
 	{
-		int i = g_yy_stop - (row - g_yy_start);
+		int i = g_WorkList.yy_stop() - (row - g_WorkList.yy_start());
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
@@ -267,14 +257,14 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == plot_color_symmetry_y_axis) /* Y-axis symmetry */
 	{
-		put_line(row, g_xx_stop-(right-g_xx_start), g_xx_stop-(left-g_xx_start), str);
+		put_line(row, g_WorkList.xx_stop()-(right-g_WorkList.xx_start()), g_WorkList.xx_stop()-(left-g_WorkList.xx_start()), str);
 		g_input_counter -= length >> 3;
 	}
 	else if (g_plot_color == plot_color_symmetry_origin)  /* Origin symmetry */
 	{
-		int i = g_yy_stop-(row-g_yy_start);
-		int j = min(g_xx_stop-(right-g_xx_start), g_x_dots-1);
-		int k = min(g_xx_stop-(left -g_xx_start), g_x_dots-1);
+		int i = g_WorkList.yy_stop()-(row-g_WorkList.yy_start());
+		int j = min(g_WorkList.xx_stop()-(right-g_WorkList.xx_start()), g_x_dots-1);
+		int k = min(g_WorkList.xx_stop()-(left -g_WorkList.xx_start()), g_x_dots-1);
 		if (i > g_y_stop && i < g_y_dots && j <= k)
 		{
 			put_line(i, j, k, str);
@@ -283,9 +273,9 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == plot_color_symmetry_xy_axis) /* X-axis and Y-axis symmetry */
 	{
-		int i = g_yy_stop-(row-g_yy_start);
-		int j = min(g_xx_stop-(right-g_xx_start), g_x_dots-1);
-		int k = min(g_xx_stop-(left -g_xx_start), g_x_dots-1);
+		int i = g_WorkList.yy_stop()-(row-g_WorkList.yy_start());
+		int j = min(g_WorkList.xx_stop()-(right-g_WorkList.xx_start()), g_x_dots-1);
+		int k = min(g_WorkList.xx_stop()-(left -g_WorkList.xx_start()), g_x_dots-1);
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
@@ -325,7 +315,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == plot_color_symmetry_x_axis) /* X-axis symmetry */
 	{
-		int i = g_yy_stop-(row-g_yy_start);
+		int i = g_WorkList.yy_stop()-(row-g_WorkList.yy_start());
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
@@ -740,14 +730,14 @@ int calculate_fractal()
 		g_plot_color = g_plot_color_put_color;
 		g_iy_start = 0;
 		g_ix_start = 0;
-		g_yy_start = 0;
-		g_xx_start = 0;
-		g_yy_begin = 0;
-		g_xx_begin = 0;
+		g_WorkList.set_yy_start(0);
+		g_WorkList.set_xx_start(0);
+		g_WorkList.set_yy_begin(0);
+		g_WorkList.set_xx_begin(0);
 		g_y_stop = g_y_dots - 1;
-		g_yy_stop = g_y_dots - 1;
+		g_WorkList.set_yy_stop(g_y_dots - 1);
 		g_x_stop = g_x_dots - 1;
-		g_xx_stop = g_x_dots - 1;
+		g_WorkList.set_xx_stop(g_x_dots - 1);
 		g_calculation_status = CALCSTAT_IN_PROGRESS;
 		/* only standard escape time engine supports distest */
 		g_distance_test = 0;
@@ -842,421 +832,11 @@ int find_alternate_math(int type, int math)
 
 /**************** general escape-time engine routines *********************/
 
-class PerformWorkList
-{
-public:
-	PerformWorkList();
-	~PerformWorkList();
-
-	void calculate();
-
-private:
-	void setup_alternate_math();
-	void cleanup_alternate_math();
-	void interrupted_or_completed();
-	void show_dot_finish();
-	void call_escape_time_engine();
-	void common_escape_time_initialization();
-	void show_dot_start();
-	void get_top_work_list_item();
-	void setup_per_image();
-	void setup_distance_estimator();
-	void setup_initial_work_list();
-	void setup_standard_calculation_mode();
-	void setup_potential();
-
-	int (*m_save_orbit_calc)();  /* function that calculates one orbit */
-	int (*m_save_per_pixel)();  /* once-per-pixel init */
-	int (*m_save_per_image)();  /* once-per-image setup */
-};
-
-PerformWorkList::PerformWorkList()
-	: m_save_orbit_calc(NULL),
-	m_save_per_pixel(NULL),
-	m_save_per_image(NULL)
-{
-}
-
-PerformWorkList::~PerformWorkList()
-{
-}
-
-void PerformWorkList::setup_alternate_math()
-{
-	m_save_orbit_calc = NULL;  /* function that calculates one orbit */
-	m_save_per_pixel = NULL;  /* once-per-pixel init */
-	m_save_per_image = NULL;  /* once-per-image setup */
-	int alt = find_alternate_math(g_fractal_type, g_bf_math);
-	if (alt > -1)
-	{
-		m_save_orbit_calc = g_current_fractal_specific->orbitcalc;
-		m_save_per_pixel = g_current_fractal_specific->per_pixel;
-		m_save_per_image = g_current_fractal_specific->per_image;
-		g_current_fractal_specific->orbitcalc = g_alternate_math[alt].orbitcalc;
-		g_current_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
-		g_current_fractal_specific->per_image = g_alternate_math[alt].per_image;
-	}
-	else
-	{
-		g_bf_math = 0;
-	}
-}
-
-void PerformWorkList::cleanup_alternate_math()
-{
-	if (m_save_orbit_calc != NULL)
-	{
-		g_current_fractal_specific->orbitcalc = m_save_orbit_calc;
-		g_current_fractal_specific->per_pixel = m_save_per_pixel;
-		g_current_fractal_specific->per_image = m_save_per_image;
-	}
-}
-
-void PerformWorkList::setup_potential()
-{
-	if (g_potential_flag && g_potential_16bit)
-	{
-		char tmpcalcmode = g_standard_calculation_mode;
-
-		g_standard_calculation_mode = '1'; /* force 1 pass */
-		if (!g_resuming)
-		{
-			if (disk_start_potential() < 0)
-			{
-				g_potential_16bit = false;       /* disk_start failed or cancelled */
-				g_standard_calculation_mode = tmpcalcmode;    /* maybe we can carry on??? */
-			}
-		}
-	}
-}
-
-void PerformWorkList::setup_standard_calculation_mode()
-{
-	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_BOUNDARY_TRACING))
-	{
-		g_standard_calculation_mode = '1';
-	}
-	if (g_standard_calculation_mode == 'g' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_SOLID_GUESSING))
-	{
-		g_standard_calculation_mode = '1';
-	}
-	if (g_standard_calculation_mode == 'o' && (g_current_fractal_specific->calculate_type != standard_fractal))
-	{
-		g_standard_calculation_mode = '1';
-	}
-}
-
-void PerformWorkList::setup_initial_work_list()
-{
-	/* default setup a new g_work_list */
-	g_num_work_list = 1;
-	g_work_list[0].xx_begin = 0;
-	g_work_list[0].xx_start = 0;
-	g_work_list[0].yy_start = 0;
-	g_work_list[0].yy_begin = 0;
-	g_work_list[0].xx_stop = g_x_dots - 1;
-	g_work_list[0].yy_stop = g_y_dots - 1;
-	g_work_list[0].pass = 0;
-	g_work_list[0].sym = 0;
-	if (g_resuming) /* restore g_work_list, if we can't the above will stay in place */
-	{
-		int vsn = start_resume();
-		get_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
-		end_resume();
-		if (vsn < 2)
-		{
-			g_xx_begin = 0;
-		}
-	}
-}
-
-void PerformWorkList::setup_distance_estimator()
-{
-	double dxsize;
-	double dysize;
-	double aspect;
-	if (g_pseudo_x && g_pseudo_y)
-	{
-		aspect = (double) g_pseudo_y/(double) g_pseudo_x;
-		dxsize = g_pseudo_x-1;
-		dysize = g_pseudo_y-1;
-	}
-	else
-	{
-		aspect = (double) g_y_dots/(double) g_x_dots;
-		dxsize = g_x_dots-1;
-		dysize = g_y_dots-1;
-	}
-
-	double delta_x_fp = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/dxsize; /* calculate stepsizes */
-	double delta_y_fp = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/dysize;
-	double delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/dysize;
-	double delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/dxsize;
-
-	/* in case it's changed with <G> */
-	g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
-
-	g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
-	if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */
-	{
-		if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
-		{
-			g_rq_limit = DEM_BAILOUT;
-		}
-	}
-	/* must be mandel type, formula, or old PAR/GIF */
-	s_dem_mandelbrot =
-		(g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
-		|| g_use_old_distance_test
-		|| g_fractal_type == FRACTYPE_FORMULA
-		|| g_fractal_type == FRACTYPE_FORMULA_FP);
-
-	s_dem_delta = sqr(g_escape_time_state.m_grid_fp.delta_x()) + sqr(delta_y2_fp);
-	double ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
-	if (ftemp > s_dem_delta)
-	{
-		s_dem_delta = ftemp;
-	}
-	if (g_distance_test_width == 0)
-	{
-		g_distance_test_width = 1;
-	}
-	ftemp = g_distance_test_width;
-	/* multiply by thickness desired */
-	s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000);
-	s_dem_width = (sqrt(sqr(g_escape_time_state.m_grid_fp.width()) + sqr(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()) )*aspect
-		+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min()) ) )/g_distance_test;
-	ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
-	ftemp += 3; /* bailout plus just a bit */
-	double ftemp2 = log(ftemp);
-	s_dem_too_big = g_use_old_distance_test ?
-		sqr(ftemp)*sqr(ftemp2)*4/s_dem_delta : fabs(ftemp)*fabs(ftemp2)*2/sqrt(s_dem_delta);
-}
-
-void PerformWorkList::setup_per_image()
-{
-	/* per_image can override */
-	g_calculate_type = g_current_fractal_specific->calculate_type;
-	g_symmetry = g_current_fractal_specific->symmetry; /*   calctype & symmetry  */
-	g_plot_color = g_plot_color_put_color; /* defaults when setsymmetry not called or does nothing */
-}
-
-void PerformWorkList::get_top_work_list_item()
-{
-	/* pull top entry off g_work_list */
-	g_xx_start = g_work_list[0].xx_start;
-	g_xx_stop = g_work_list[0].xx_stop;
-	g_ix_start = g_xx_start;
-	g_x_stop  = g_xx_stop;
-	g_xx_begin  = g_work_list[0].xx_begin;
-	g_yy_start = g_work_list[0].yy_start;
-	g_yy_stop = g_work_list[0].yy_stop;
-	g_iy_start = g_yy_start;
-	g_y_stop  = g_yy_stop;
-	g_yy_begin  = g_work_list[0].yy_begin;
-	g_work_pass = g_work_list[0].pass;
-	g_work_sym  = g_work_list[0].sym;
-	--g_num_work_list;
-	for (int i = 0; i < g_num_work_list; ++i)
-	{
-		g_work_list[i] = g_work_list[i + 1];
-	}
-}
-
-void PerformWorkList::show_dot_start()
-{
-	find_special_colors();
-	switch (g_auto_show_dot)
-	{
-	case 'd':
-		s_show_dot_color = g_color_dark % g_colors;
-		break;
-	case 'm':
-		s_show_dot_color = g_color_medium % g_colors;
-		break;
-	case 'b':
-	case 'a':
-		s_show_dot_color = g_color_bright % g_colors;
-		break;
-	default:
-		s_show_dot_color = g_show_dot % g_colors;
-		break;
-	}
-	if (g_size_dot <= 0)
-	{
-		s_show_dot_width = -1;
-	}
-	else
-	{
-		double dshowdot_width = (double) g_size_dot*g_x_dots/1024.0;
-		/*
-			Arbitrary sanity limit, however s_show_dot_width will
-			overflow if dshowdot width gets near 256.
-		*/
-		if (dshowdot_width > 150.0)
-		{
-			s_show_dot_width = 150;
-		}
-		else if (dshowdot_width > 0.0)
-		{
-			s_show_dot_width = (int) dshowdot_width;
-		}
-		else
-		{
-			s_show_dot_width = -1;
-		}
-	}
-	while (s_show_dot_width >= 0)
-	{
-		/*
-		We're using near memory, so get the amount down
-		to something reasonable. The polynomial used to
-		calculate s_save_dots_len is exactly right for the
-		triangular-shaped shotdot cursor. The that cursor
-		is changed, this formula must match.
-		*/
-		while ((s_save_dots_len = sqr(s_show_dot_width) + 5*s_show_dot_width + 4) > 1000)
-		{
-			s_show_dot_width--;
-		}
-		s_save_dots = (BYTE *)malloc(s_save_dots_len);
-		if (s_save_dots != NULL)
-		{
-			s_save_dots_len /= 2;
-			s_fill_buffer = s_save_dots + s_save_dots_len;
-			memset(s_fill_buffer, s_show_dot_color, s_save_dots_len);
-			break;
-		}
-		/*
-		There's even less free memory than we thought, so reduce
-		s_show_dot_width still more
-		*/
-		s_show_dot_width--;
-	}
-	if (s_save_dots == NULL)
-	{
-		s_show_dot_width = -1;
-	}
-	g_calculate_type_temp = g_calculate_type;
-	g_calculate_type    = calculate_type_show_dot;
-}
-
-void PerformWorkList::show_dot_finish()
-{
-	if (s_save_dots != NULL)
-	{
-		free(s_save_dots);
-		s_save_dots = NULL;
-		s_fill_buffer = NULL;
-	}
-}
-
-void PerformWorkList::common_escape_time_initialization()
-{
-	/* some common initialization for escape-time pixel level routines */
-	g_close_enough = g_delta_min_fp*pow(2.0, (double) -abs(g_periodicity_check));
-	g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
-	g_input_counter = g_max_input_counter;
-
-	set_symmetry(g_symmetry, true);
-
-	if (!g_resuming && (labs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
-	{
-		/* calculate round screen edges to work out best start for logmap */
-		g_log_palette_mode = (automatic_log_map()*(g_log_palette_mode/labs(g_log_palette_mode)));
-		SetupLogTable();
-	}
-}
-void PerformWorkList::call_escape_time_engine()
-{
-	/* call the appropriate escape-time engine */
-	switch (g_standard_calculation_mode)
-	{
-	case 's':
-		soi();
-		break;
-	case 't':
-		tesseral();
-		break;
-	case 'b':
-		boundary_trace_main();
-		break;
-	case 'g':
-		solid_guess();
-		break;
-	case 'd':
-		diffusion_scan();
-		break;
-	case 'o':
-		draw_orbits();
-		break;
-	default:
-		one_or_two_pass();
-	}
-}
-
-void PerformWorkList::interrupted_or_completed()
-{
-	if (g_num_work_list > 0)
-	{
-		/* interrupted, resumable */
-		alloc_resume(sizeof(g_work_list) + 20, 2);
-		put_resume(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
-	}
-	else
-	{
-		g_calculation_status = CALCSTAT_COMPLETED; /* completed */
-	}
-}
-
-void PerformWorkList::calculate()
-{
-	setup_alternate_math();
-	setup_potential();
-	setup_standard_calculation_mode();
-	setup_initial_work_list();
-	if (g_distance_test)
-	{
-		setup_distance_estimator();
-	}
-
-	while (g_num_work_list > 0)
-	{
-		setup_per_image();
-		get_top_work_list_item();
-		g_calculation_status = CALCSTAT_IN_PROGRESS;
-
-		g_current_fractal_specific->per_image();
-		if (g_show_dot >= 0)
-		{
-			show_dot_start();
-		}
-
-		common_escape_time_initialization();
-		call_escape_time_engine();
-		show_dot_finish();
-		if (check_key()) /* interrupted? */
-		{
-			break;
-		}
-	}
-
-	interrupted_or_completed();
-	cleanup_alternate_math();
-}
-
-static PerformWorkList s_perform_work_list;
-
-static void perform_work_list()
-{
-	s_perform_work_list.calculate();
-}
-
 static int draw_rectangle_orbits()
 {
 	/* draw a rectangle */
-	g_row = g_yy_begin;
-	g_col = g_xx_begin;
+	g_row = g_WorkList.yy_begin();
+	g_col = g_WorkList.xx_begin();
 
 	while (g_row <= g_y_stop)
 	{
@@ -1265,7 +845,7 @@ static int draw_rectangle_orbits()
 		{
 			if (plotorbits2dfloat() == -1)
 			{
-				work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
 				return -1; /* interrupted */
 			}
 			++g_col;
@@ -1298,15 +878,15 @@ static int draw_line_orbits()
 	{
 		if (dX > 0)         /* determine start point and last column */
 		{
-			g_col = g_xx_begin;
-			g_row = g_yy_begin;
+			g_col = g_WorkList.xx_begin();
+			g_row = g_WorkList.yy_begin();
 			final = g_x_stop;
 		}
 		else
 		{
 			g_col = g_x_stop;
 			g_row = g_y_stop;
-			final = g_xx_begin;
+			final = g_WorkList.xx_begin();
 		}
 		inc1 = 2*abs(dY);            /* determine increments and initial G */
 		G = inc1 - abs(dX);
@@ -1317,7 +897,7 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -1338,7 +918,7 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -1358,15 +938,15 @@ static int draw_line_orbits()
 	{
 		if (dY > 0)             /* determine start point and last row */
 		{
-			g_col = g_xx_begin;
-			g_row = g_yy_begin;
+			g_col = g_WorkList.xx_begin();
+			g_row = g_WorkList.yy_begin();
 			final = g_y_stop;
 		}
 		else
 		{
 			g_col = g_x_stop;
 			g_row = g_y_stop;
-			final = g_yy_begin;
+			final = g_WorkList.yy_begin();
 		}
 		inc1 = 2*abs(dX);            /* determine increments and initial G */
 		G = inc1 - abs(dY);
@@ -1377,7 +957,7 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1398,7 +978,7 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1431,7 +1011,7 @@ static int draw_function_orbits()
 	double xfactor = g_x_dots/2.0;
 	double yfactor = g_y_dots/2.0;
 
-	angle = g_xx_begin;  /* save angle in x parameter */
+	angle = g_WorkList.xx_begin();  /* save angle in x parameter */
 
 	convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	if (Rotation <= 0)
@@ -1446,7 +1026,7 @@ static int draw_function_orbits()
 		g_row = (int) (yfactor + (Yctr + Xmagfactor*sin(theta)));
 		if (plotorbits2dfloat() == -1)
 		{
-			work_list_add(angle, 0, 0, 0, 0, 0, 0, g_work_sym);
+			g_WorkList.add(angle, 0, 0, 0, 0, 0, 0, g_work_sym);
 			return -1; /* interrupted */
 		}
 		angle++;
@@ -1491,27 +1071,27 @@ static int one_or_two_pass()
 	{
 		if (standard_calculate(1) == -1)
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_col, g_yy_start, g_yy_stop, g_row, 0, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
 			return -1;
 		}
-		if (g_num_work_list > 0) /* g_work_list not empty, defer 2nd pass */
+		if (g_WorkList.num_items() > 0) /* g_work_list not empty, defer 2nd pass */
 		{
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), 1, g_work_sym);
 			return 0;
 		}
 		g_work_pass = 1;
-		g_xx_begin = g_xx_start;
-		g_yy_begin = g_yy_start;
+		g_WorkList.set_xx_begin(g_WorkList.xx_start());
+		g_WorkList.set_yy_begin(g_WorkList.yy_start());
 	}
 	/* second or only pass */
 	if (standard_calculate(2) == -1)
 	{
-		i = g_yy_stop;
-		if (g_y_stop != g_yy_stop) /* must be due to symmetry */
+		i = g_WorkList.yy_stop();
+		if (g_y_stop != g_WorkList.yy_stop()) /* must be due to symmetry */
 		{
 			i -= g_row - g_iy_start;
 		}
-		work_list_add(g_xx_start, g_xx_stop, g_col, g_row, i, g_row, g_work_pass, g_work_sym);
+		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_row, i, g_row, g_work_pass, g_work_sym);
 		return -1;
 	}
 
@@ -1522,8 +1102,8 @@ static int _fastcall standard_calculate(int passnum)
 {
 	g_got_status = GOT_STATUS_12PASS;
 	g_current_pass = passnum;
-	g_row = g_yy_begin;
-	g_col = g_xx_begin;
+	g_row = g_WorkList.yy_begin();
+	g_col = g_WorkList.xx_begin();
 
 	while (g_row <= g_y_stop)
 	{
@@ -3033,43 +2613,43 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 	}
 	if ((g_work_sym&1) != 0) /* already decided on sym */
 	{
-		g_y_stop = (g_yy_start + g_yy_stop)/2;
+		g_y_stop = (g_WorkList.yy_start() + g_WorkList.yy_stop())/2;
 	}
 	else /* new window, decide */
 	{
 		g_work_sym |= 0x10;
-		if (xaxis_row <= g_yy_start || xaxis_row >= g_yy_stop)
+		if (xaxis_row <= g_WorkList.yy_start() || xaxis_row >= g_WorkList.yy_stop())
 		{
 			return 1; /* axis not in window */
 		}
-		i = xaxis_row + (xaxis_row - g_yy_start);
+		i = xaxis_row + (xaxis_row - g_WorkList.yy_start());
 		if (xaxis_between)
 		{
 			++i;
 		}
-		if (i > g_yy_stop) /* split into 2 pieces, bottom has the symmetry */
+		if (i > g_WorkList.yy_stop()) /* split into 2 pieces, bottom has the symmetry */
 		{
-			if (g_num_work_list >= MAX_WORK_LIST-1) /* no room to split */
+			if (g_WorkList.num_items() >= MAX_WORK_LIST-1) /* no room to split */
 			{
 				return 1;
 			}
-			g_y_stop = xaxis_row - (g_yy_stop - xaxis_row);
+			g_y_stop = xaxis_row - (g_WorkList.yy_stop() - xaxis_row);
 			if (!xaxis_between)
 			{
 				--g_y_stop;
 			}
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_y_stop + 1, g_yy_stop, g_y_stop + 1, g_work_pass, 0);
-			g_yy_stop = g_y_stop;
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_y_stop + 1, g_WorkList.yy_stop(), g_y_stop + 1, g_work_pass, 0);
+			g_WorkList.set_yy_stop(g_y_stop);
 			return 1; /* tell set_symmetry no sym for current window */
 		}
-		if (i < g_yy_stop) /* split into 2 pieces, top has the symmetry */
+		if (i < g_WorkList.yy_stop()) /* split into 2 pieces, top has the symmetry */
 		{
-			if (g_num_work_list >= MAX_WORK_LIST-1) /* no room to split */
+			if (g_WorkList.num_items() >= MAX_WORK_LIST-1) /* no room to split */
 			{
 				return 1;
 			}
-			work_list_add(g_xx_start, g_xx_stop, g_xx_start, i + 1, g_yy_stop, i + 1, g_work_pass, 0);
-			g_yy_stop = i;
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), i + 1, g_WorkList.yy_stop(), i + 1, g_work_pass, 0);
+			g_WorkList.set_yy_stop(i);
 		}
 		g_y_stop = xaxis_row;
 		g_work_sym |= 1;
@@ -3087,43 +2667,43 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 	}
 	if ((g_work_sym&2) != 0) /* already decided on sym */
 	{
-		g_x_stop = (g_xx_start + g_xx_stop)/2;
+		g_x_stop = (g_WorkList.xx_start() + g_WorkList.xx_stop())/2;
 	}
 	else /* new window, decide */
 	{
 		g_work_sym |= 0x20;
-		if (yaxis_col <= g_xx_start || yaxis_col >= g_xx_stop)
+		if (yaxis_col <= g_WorkList.xx_start() || yaxis_col >= g_WorkList.xx_stop())
 		{
 			return 1; /* axis not in window */
 		}
-		i = yaxis_col + (yaxis_col - g_xx_start);
+		i = yaxis_col + (yaxis_col - g_WorkList.xx_start());
 		if (yaxis_between)
 		{
 			++i;
 		}
-		if (i > g_xx_stop) /* split into 2 pieces, right has the symmetry */
+		if (i > g_WorkList.xx_stop()) /* split into 2 pieces, right has the symmetry */
 		{
-			if (g_num_work_list >= MAX_WORK_LIST-1) /* no room to split */
+			if (g_WorkList.num_items() >= MAX_WORK_LIST-1) /* no room to split */
 			{
 				return 1;
 			}
-			g_x_stop = yaxis_col - (g_xx_stop - yaxis_col);
+			g_x_stop = yaxis_col - (g_WorkList.xx_stop() - yaxis_col);
 			if (!yaxis_between)
 			{
 				--g_x_stop;
 			}
-			work_list_add(g_x_stop + 1, g_xx_stop, g_x_stop + 1, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, 0);
-			g_xx_stop = g_x_stop;
+			g_WorkList.add(g_x_stop + 1, g_WorkList.xx_stop(), g_x_stop + 1, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), g_work_pass, 0);
+			g_WorkList.set_xx_stop(g_x_stop);
 			return 1; /* tell set_symmetry no sym for current window */
 		}
-		if (i < g_xx_stop) /* split into 2 pieces, left has the symmetry */
+		if (i < g_WorkList.xx_stop()) /* split into 2 pieces, left has the symmetry */
 		{
-			if (g_num_work_list >= MAX_WORK_LIST-1) /* no room to split */
+			if (g_WorkList.num_items() >= MAX_WORK_LIST-1) /* no room to split */
 			{
 				return 1;
 			}
-			work_list_add(i + 1, g_xx_stop, i + 1, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, 0);
-			g_xx_stop = i;
+			g_WorkList.add(i + 1, g_WorkList.xx_stop(), i + 1, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), g_work_pass, 0);
+			g_WorkList.set_xx_stop(i);
 		}
 		g_x_stop = yaxis_col;
 		g_work_sym |= 2;
@@ -3341,7 +2921,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		case SYMMETRY_Y_AXIS: /* just yaxis symmetry */
 			if (g_basin) /* got no routine for this case */
 			{
-				g_x_stop = g_xx_stop; /* fix what split should not have done */
+				g_x_stop = g_WorkList.xx_stop(); /* fix what split should not have done */
 				g_symmetry = SYMMETRY_X_AXIS;
 			}
 			else
@@ -3364,11 +2944,11 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
 			g_plot_color = plot_color_symmetry_origin;
-			g_x_stop = g_xx_stop; /* didn't want this changed */
+			g_x_stop = g_WorkList.xx_stop(); /* didn't want this changed */
 		}
 		else
 		{
-			g_y_stop = g_yy_stop; /* in case first split worked */
+			g_y_stop = g_WorkList.yy_stop(); /* in case first split worked */
 			g_symmetry = SYMMETRY_X_AXIS;
 			g_work_sym = 0x30; /* let it recombine with others like it */
 		}
@@ -3407,7 +2987,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		else
 		{
-			g_y_stop = g_yy_stop; /* in case first split worked */
+			g_y_stop = g_WorkList.yy_stop(); /* in case first split worked */
 			g_work_sym = 0x30;  /* don't mark pisym as ysym, just do it unmarked */
 		}
 		if (g_bf_math)
@@ -3421,14 +3001,14 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			s_pixel_pi = (int) (MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width())*g_x_dots); /* PI in pixels */
 		}
 
-		g_x_stop = g_xx_start + s_pixel_pi-1;
-		if (g_x_stop > g_xx_stop)
+		g_x_stop = g_WorkList.xx_start() + s_pixel_pi-1;
+		if (g_x_stop > g_WorkList.xx_stop())
 		{
-			g_x_stop = g_xx_stop;
+			g_x_stop = g_WorkList.xx_stop();
 		}
 		if (g_plot_color == plot_color_symmetry_pi_xy_axis)
 		{
-			i = (g_xx_start + g_xx_stop)/2;
+			i = (g_WorkList.xx_start() + g_WorkList.xx_stop())/2;
 			if (g_x_stop > i)
 			{
 				g_x_stop = i;
@@ -3565,7 +3145,7 @@ ack: /* bailout here if key is pressed */
 /* Symmetry plot for period PI */
 static void _fastcall plot_color_symmetry_pi(int x, int y, int color)
 {
-	while (x <= g_xx_stop)
+	while (x <= g_WorkList.xx_stop())
 	{
 		g_plot_color_put_color(x, y, color);
 		x += s_pixel_pi;
@@ -3576,13 +3156,13 @@ static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
 {
 	int i;
 	int j;
-	while (x <= g_xx_stop)
+	while (x <= g_WorkList.xx_stop())
 	{
 		g_plot_color_put_color(x, y, color);
-		i = g_yy_stop - (y - g_yy_start);
+		i = g_WorkList.yy_stop() - (y - g_WorkList.yy_start());
 		if (i > g_y_stop && i < g_y_dots)
 		{
-			j = g_xx_stop - (x - g_xx_start);
+			j = g_WorkList.xx_stop() - (x - g_WorkList.xx_start());
 			if (j < g_x_dots)
 			{
 				g_plot_color_put_color(j, i, color);
@@ -3596,15 +3176,15 @@ static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
 {
 	int i;
 	int j;
-	while (x <= (g_xx_start + g_xx_stop)/2)
+	while (x <= (g_WorkList.xx_start() + g_WorkList.xx_stop())/2)
 	{
-		j = g_xx_stop-(x-g_xx_start);
+		j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 		g_plot_color_put_color(x , y , color);
 		if (j < g_x_dots)
 		{
 			g_plot_color_put_color(j , y , color);
 		}
-		i = g_yy_stop-(y-g_yy_start);
+		i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			g_plot_color_put_color(x , i , color);
@@ -3622,7 +3202,7 @@ void _fastcall plot_color_symmetry_x_axis(int x, int y, int color)
 {
 	int i;
 	g_plot_color_put_color(x, y, color);
-	i = g_yy_stop-(y-g_yy_start);
+	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_plot_color_put_color(x, i, color);
@@ -3634,7 +3214,7 @@ static void _fastcall plot_color_symmetry_y_axis(int x, int y, int color)
 {
 	int i;
 	g_plot_color_put_color(x, y, color);
-	i = g_xx_stop-(x-g_xx_start);
+	i = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 	if (i < g_x_dots)
 	{
 		g_plot_color_put_color(i, y, color);
@@ -3646,10 +3226,10 @@ void _fastcall plot_color_symmetry_origin(int x, int y, int color)
 {
 	int i;
 	g_plot_color_put_color(x, y, color);
-	i = g_yy_stop-(y-g_yy_start);
+	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
-		int j = g_xx_stop-(x-g_xx_start);
+		int j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 		if (j < g_x_dots)
 		{
 			g_plot_color_put_color(j, i, color);
@@ -3662,13 +3242,13 @@ static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color)
 {
 	int i;
 	int j;
-	j = g_xx_stop-(x-g_xx_start);
+	j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 	g_plot_color_put_color(x , y, color);
 	if (j < g_x_dots)
 	{
 		g_plot_color_put_color(j , y, color);
 	}
-	i = g_yy_stop-(y-g_yy_start);
+	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_plot_color_put_color(x , i, color);
@@ -3686,7 +3266,7 @@ static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color)
 	int stripe;
 	g_plot_color_put_color(x, y, color);
 	stripe = (g_basin == 2 && color > 8) ? 8 : 0;
-	i = g_yy_stop-(y-g_yy_start);
+	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		color -= stripe;                    /* reconstruct unstriped color */
@@ -3712,13 +3292,13 @@ static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color)
 	color -= stripe;               /* reconstruct unstriped color */
 	color1 = (color < g_degree/2 + 2) ?
 		(g_degree/2 + 2 - color) : (g_degree/2 + g_degree + 2 - color);
-	j = g_xx_stop-(x-g_xx_start);
+	j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 	g_plot_color_put_color(x, y, color + stripe);
 	if (j < g_x_dots)
 	{
 		g_plot_color_put_color(j, y, color1 + stripe);
 	}
-	i = g_yy_stop-(y-g_yy_start);
+	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_plot_color_put_color(x, i, stripe + (g_degree + 1 - color) % g_degree + 1);
@@ -3743,4 +3323,377 @@ static void _fastcall put_truecolor_disk(int x, int y, int color)
 void _fastcall plot_color_none(int x, int y, int color)
 {
 	x = y = color = 0;  /* just for warning */
+}
+
+
+class PerformWorkList
+{
+public:
+	PerformWorkList();
+	~PerformWorkList();
+
+	void calculate();
+
+private:
+	void setup_alternate_math();
+	void cleanup_alternate_math();
+	void interrupted_or_completed();
+	void show_dot_finish();
+	void call_escape_time_engine();
+	void common_escape_time_initialization();
+	void show_dot_start();
+	void get_top_work_list_item();
+	void setup_per_image();
+	void setup_distance_estimator();
+	void setup_initial_work_list();
+	void setup_standard_calculation_mode();
+	void setup_potential();
+
+	int (*m_save_orbit_calc)();  /* function that calculates one orbit */
+	int (*m_save_per_pixel)();  /* once-per-pixel init */
+	int (*m_save_per_image)();  /* once-per-image setup */
+};
+
+PerformWorkList::PerformWorkList()
+	: m_save_orbit_calc(NULL),
+	m_save_per_pixel(NULL),
+	m_save_per_image(NULL)
+{
+}
+
+PerformWorkList::~PerformWorkList()
+{
+}
+
+void PerformWorkList::setup_alternate_math()
+{
+	m_save_orbit_calc = NULL;  /* function that calculates one orbit */
+	m_save_per_pixel = NULL;  /* once-per-pixel init */
+	m_save_per_image = NULL;  /* once-per-image setup */
+	int alt = find_alternate_math(g_fractal_type, g_bf_math);
+	if (alt > -1)
+	{
+		m_save_orbit_calc = g_current_fractal_specific->orbitcalc;
+		m_save_per_pixel = g_current_fractal_specific->per_pixel;
+		m_save_per_image = g_current_fractal_specific->per_image;
+		g_current_fractal_specific->orbitcalc = g_alternate_math[alt].orbitcalc;
+		g_current_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
+		g_current_fractal_specific->per_image = g_alternate_math[alt].per_image;
+	}
+	else
+	{
+		g_bf_math = 0;
+	}
+}
+
+void PerformWorkList::cleanup_alternate_math()
+{
+	if (m_save_orbit_calc != NULL)
+	{
+		g_current_fractal_specific->orbitcalc = m_save_orbit_calc;
+		g_current_fractal_specific->per_pixel = m_save_per_pixel;
+		g_current_fractal_specific->per_image = m_save_per_image;
+	}
+}
+
+void PerformWorkList::setup_potential()
+{
+	if (g_potential_flag && g_potential_16bit)
+	{
+		char tmpcalcmode = g_standard_calculation_mode;
+
+		g_standard_calculation_mode = '1'; /* force 1 pass */
+		if (!g_resuming)
+		{
+			if (disk_start_potential() < 0)
+			{
+				g_potential_16bit = false;       /* disk_start failed or cancelled */
+				g_standard_calculation_mode = tmpcalcmode;    /* maybe we can carry on??? */
+			}
+		}
+	}
+}
+
+void PerformWorkList::setup_standard_calculation_mode()
+{
+	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_BOUNDARY_TRACING))
+	{
+		g_standard_calculation_mode = '1';
+	}
+	if (g_standard_calculation_mode == 'g' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_SOLID_GUESSING))
+	{
+		g_standard_calculation_mode = '1';
+	}
+	if (g_standard_calculation_mode == 'o' && (g_current_fractal_specific->calculate_type != standard_fractal))
+	{
+		g_standard_calculation_mode = '1';
+	}
+}
+
+void PerformWorkList::setup_initial_work_list()
+{
+	g_WorkList.setup_initial_work_list();
+}
+
+void PerformWorkList::setup_distance_estimator()
+{
+	double dxsize;
+	double dysize;
+	double aspect;
+	if (g_pseudo_x && g_pseudo_y)
+	{
+		aspect = (double) g_pseudo_y/(double) g_pseudo_x;
+		dxsize = g_pseudo_x-1;
+		dysize = g_pseudo_y-1;
+	}
+	else
+	{
+		aspect = (double) g_y_dots/(double) g_x_dots;
+		dxsize = g_x_dots-1;
+		dysize = g_y_dots-1;
+	}
+
+	double delta_x_fp = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/dxsize; /* calculate stepsizes */
+	double delta_y_fp = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/dysize;
+	double delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/dysize;
+	double delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/dxsize;
+
+	/* in case it's changed with <G> */
+	g_use_old_distance_test = (g_save_release < 1827) ? 1 : 0;
+
+	g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
+	if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */
+	{
+		if (g_rq_limit < DEM_BAILOUT)         /* so go straight for dem bailout */
+		{
+			g_rq_limit = DEM_BAILOUT;
+		}
+	}
+	/* must be mandel type, formula, or old PAR/GIF */
+	s_dem_mandelbrot =
+		(g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
+		|| g_use_old_distance_test
+		|| g_fractal_type == FRACTYPE_FORMULA
+		|| g_fractal_type == FRACTYPE_FORMULA_FP);
+
+	s_dem_delta = sqr(g_escape_time_state.m_grid_fp.delta_x()) + sqr(delta_y2_fp);
+	double ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);
+	if (ftemp > s_dem_delta)
+	{
+		s_dem_delta = ftemp;
+	}
+	if (g_distance_test_width == 0)
+	{
+		g_distance_test_width = 1;
+	}
+	ftemp = g_distance_test_width;
+	/* multiply by thickness desired */
+	s_dem_delta *= (g_distance_test_width > 0) ? sqr(ftemp)/10000 : 1/(sqr(ftemp)*10000);
+	s_dem_width = (sqrt(sqr(g_escape_time_state.m_grid_fp.width()) + sqr(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()) )*aspect
+		+ sqrt(sqr(g_escape_time_state.m_grid_fp.height()) + sqr(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_min()) ) )/g_distance_test;
+	ftemp = (g_rq_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_rq_limit;
+	ftemp += 3; /* bailout plus just a bit */
+	double ftemp2 = log(ftemp);
+	s_dem_too_big = g_use_old_distance_test ?
+		sqr(ftemp)*sqr(ftemp2)*4/s_dem_delta : fabs(ftemp)*fabs(ftemp2)*2/sqrt(s_dem_delta);
+}
+
+void PerformWorkList::setup_per_image()
+{
+	/* per_image can override */
+	g_calculate_type = g_current_fractal_specific->calculate_type;
+	g_symmetry = g_current_fractal_specific->symmetry; /*   calctype & symmetry  */
+	g_plot_color = g_plot_color_put_color; /* defaults when setsymmetry not called or does nothing */
+}
+
+void PerformWorkList::get_top_work_list_item()
+{
+	g_WorkList.get_top_item();
+}
+
+void PerformWorkList::show_dot_start()
+{
+	find_special_colors();
+	switch (g_auto_show_dot)
+	{
+	case 'd':
+		s_show_dot_color = g_color_dark % g_colors;
+		break;
+	case 'm':
+		s_show_dot_color = g_color_medium % g_colors;
+		break;
+	case 'b':
+	case 'a':
+		s_show_dot_color = g_color_bright % g_colors;
+		break;
+	default:
+		s_show_dot_color = g_show_dot % g_colors;
+		break;
+	}
+	if (g_size_dot <= 0)
+	{
+		s_show_dot_width = -1;
+	}
+	else
+	{
+		double dshowdot_width = (double) g_size_dot*g_x_dots/1024.0;
+		/*
+			Arbitrary sanity limit, however s_show_dot_width will
+			overflow if dshowdot width gets near 256.
+		*/
+		if (dshowdot_width > 150.0)
+		{
+			s_show_dot_width = 150;
+		}
+		else if (dshowdot_width > 0.0)
+		{
+			s_show_dot_width = (int) dshowdot_width;
+		}
+		else
+		{
+			s_show_dot_width = -1;
+		}
+	}
+	while (s_show_dot_width >= 0)
+	{
+		/*
+		We're using near memory, so get the amount down
+		to something reasonable. The polynomial used to
+		calculate s_save_dots_len is exactly right for the
+		triangular-shaped shotdot cursor. The that cursor
+		is changed, this formula must match.
+		*/
+		while ((s_save_dots_len = sqr(s_show_dot_width) + 5*s_show_dot_width + 4) > 1000)
+		{
+			s_show_dot_width--;
+		}
+		s_save_dots = (BYTE *)malloc(s_save_dots_len);
+		if (s_save_dots != NULL)
+		{
+			s_save_dots_len /= 2;
+			s_fill_buffer = s_save_dots + s_save_dots_len;
+			memset(s_fill_buffer, s_show_dot_color, s_save_dots_len);
+			break;
+		}
+		/*
+		There's even less free memory than we thought, so reduce
+		s_show_dot_width still more
+		*/
+		s_show_dot_width--;
+	}
+	if (s_save_dots == NULL)
+	{
+		s_show_dot_width = -1;
+	}
+	g_calculate_type_temp = g_calculate_type;
+	g_calculate_type    = calculate_type_show_dot;
+}
+
+void PerformWorkList::show_dot_finish()
+{
+	if (s_save_dots != NULL)
+	{
+		free(s_save_dots);
+		s_save_dots = NULL;
+		s_fill_buffer = NULL;
+	}
+}
+
+void PerformWorkList::common_escape_time_initialization()
+{
+	/* some common initialization for escape-time pixel level routines */
+	g_close_enough = g_delta_min_fp*pow(2.0, (double) -abs(g_periodicity_check));
+	g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
+	g_input_counter = g_max_input_counter;
+
+	set_symmetry(g_symmetry, true);
+
+	if (!g_resuming && (labs(g_log_palette_mode) == 2 || (g_log_palette_mode && g_log_automatic_flag)))
+	{
+		/* calculate round screen edges to work out best start for logmap */
+		g_log_palette_mode = (automatic_log_map()*(g_log_palette_mode/labs(g_log_palette_mode)));
+		SetupLogTable();
+	}
+}
+void PerformWorkList::call_escape_time_engine()
+{
+	/* call the appropriate escape-time engine */
+	switch (g_standard_calculation_mode)
+	{
+	case 's':
+		soi();
+		break;
+	case 't':
+		tesseral();
+		break;
+	case 'b':
+		boundary_trace_main();
+		break;
+	case 'g':
+		solid_guess();
+		break;
+	case 'd':
+		diffusion_scan();
+		break;
+	case 'o':
+		draw_orbits();
+		break;
+	default:
+		one_or_two_pass();
+	}
+}
+
+void PerformWorkList::interrupted_or_completed()
+{
+	if (g_WorkList.num_items() > 0)
+	{
+		g_WorkList.put_resume();
+	}
+	else
+	{
+		g_calculation_status = CALCSTAT_COMPLETED; /* completed */
+	}
+}
+
+void PerformWorkList::calculate()
+{
+	setup_alternate_math();
+	setup_potential();
+	setup_standard_calculation_mode();
+	setup_initial_work_list();
+	if (g_distance_test)
+	{
+		setup_distance_estimator();
+	}
+
+	while (g_WorkList.num_items() > 0)
+	{
+		setup_per_image();
+		get_top_work_list_item();
+		g_calculation_status = CALCSTAT_IN_PROGRESS;
+
+		g_current_fractal_specific->per_image();
+		if (g_show_dot >= 0)
+		{
+			show_dot_start();
+		}
+
+		common_escape_time_initialization();
+		call_escape_time_engine();
+		show_dot_finish();
+		if (check_key()) /* interrupted? */
+		{
+			break;
+		}
+	}
+
+	interrupted_or_completed();
+	cleanup_alternate_math();
+}
+
+static PerformWorkList s_perform_work_list;
+
+void perform_work_list()
+{
+	s_perform_work_list.calculate();
 }

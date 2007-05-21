@@ -61,7 +61,6 @@ static void   _fastcall adjust_to_limits(double);
 static void   _fastcall smallest_add(double *);
 static int    _fastcall ratio_bad(double, double);
 static void   _fastcall plot_orbit_d(double, double, int);
-static int    _fastcall work_list_combine();
 static void   _fastcall adjust_to_limits_bf(double);
 static void   _fastcall smallest_add_bf(bf_t);
 
@@ -1626,113 +1625,6 @@ void orbit_scrub()
 	}
 	g_sx_offset = save_sxoffs;
 	g_sy_offset = save_syoffs;
-}
-
-
-int work_list_add(int xfrom, int xto, int xbegin,
-	int yfrom, int yto, int ybegin,
-	int pass, int sym)
-{
-	if (g_num_work_list >= MAX_WORK_LIST)
-	{
-		return -1;
-	}
-	g_work_list[g_num_work_list].xx_start = xfrom;
-	g_work_list[g_num_work_list].xx_stop  = xto;
-	g_work_list[g_num_work_list].xx_begin = xbegin;
-	g_work_list[g_num_work_list].yy_start = yfrom;
-	g_work_list[g_num_work_list].yy_stop  = yto;
-	g_work_list[g_num_work_list].yy_begin = ybegin;
-	g_work_list[g_num_work_list].pass    = pass;
-	g_work_list[g_num_work_list].sym     = sym;
-	++g_num_work_list;
-	work_list_tidy();
-	return 0;
-}
-
-static int _fastcall work_list_combine() /* look for 2 entries which can freely merge */
-{
-	int i;
-	int j;
-	for (i = 0; i < g_num_work_list; ++i)
-	{
-		if (g_work_list[i].yy_start == g_work_list[i].yy_begin)
-		{
-			for (j = i + 1; j < g_num_work_list; ++j)
-			{
-				if (g_work_list[j].sym == g_work_list[i].sym
-					&& g_work_list[j].yy_start == g_work_list[j].yy_begin
-					&& g_work_list[j].xx_start == g_work_list[j].xx_begin
-					&& g_work_list[i].pass == g_work_list[j].pass)
-				{
-					if (g_work_list[i].xx_start == g_work_list[j].xx_start
-						&& g_work_list[i].xx_begin == g_work_list[j].xx_begin
-						&& g_work_list[i].xx_stop  == g_work_list[j].xx_stop)
-					{
-						if (g_work_list[i].yy_stop + 1 == g_work_list[j].yy_start)
-						{
-							g_work_list[i].yy_stop = g_work_list[j].yy_stop;
-							return j;
-						}
-						if (g_work_list[j].yy_stop + 1 == g_work_list[i].yy_start)
-						{
-							g_work_list[i].yy_start = g_work_list[j].yy_start;
-							g_work_list[i].yy_begin = g_work_list[j].yy_begin;
-							return j;
-						}
-					}
-					if (g_work_list[i].yy_start == g_work_list[j].yy_start
-						&& g_work_list[i].yy_begin == g_work_list[j].yy_begin
-						&& g_work_list[i].yy_stop  == g_work_list[j].yy_stop)
-					{
-						if (g_work_list[i].xx_stop + 1 == g_work_list[j].xx_start)
-						{
-							g_work_list[i].xx_stop = g_work_list[j].xx_stop;
-							return j;
-						}
-						if (g_work_list[j].xx_stop + 1 == g_work_list[i].xx_start)
-						{
-							g_work_list[i].xx_start = g_work_list[j].xx_start;
-							g_work_list[i].xx_begin = g_work_list[j].xx_begin;
-							return j;
-						}
-					}
-				}
-			}
-		}
-	}
-	return 0; /* nothing combined */
-}
-
-void work_list_tidy() /* combine mergeable entries, resort */
-{
-	int i;
-	int j;
-	WORK_LIST tempwork;
-	while ((i = work_list_combine()) != 0)
-	{ /* merged two, delete the gone one */
-		while (++i < g_num_work_list)
-		{
-			g_work_list[i-1] = g_work_list[i];
-		}
-		--g_num_work_list;
-	}
-	for (i = 0; i < g_num_work_list; ++i)
-	{
-		for (j = i + 1; j < g_num_work_list; ++j)
-		{
-			if (g_work_list[j].pass < g_work_list[i].pass
-				|| (g_work_list[j].pass == g_work_list[i].pass
-				&& (g_work_list[j].yy_start < g_work_list[i].yy_start
-				|| (g_work_list[j].yy_start == g_work_list[i].yy_start
-				&& g_work_list[j].xx_start <  g_work_list[i].xx_start))))
-			{ /* dumb sort, swap 2 entries to correct order */
-				tempwork = g_work_list[i];
-				g_work_list[i] = g_work_list[j];
-				g_work_list[j] = tempwork;
-			}
-		}
-	}
 }
 
 void get_julia_attractor(double real, double imag)

@@ -5,6 +5,8 @@
 #include "cmplx.h"
 #include "externs.h"
 #include "prototyp.h"
+
+#include "calcfrac.h"
 #include "fracsubr.h"
 #include "miscres.h"
 
@@ -149,14 +151,14 @@ static int diffusion_engine()
 	rem_x = (g_x_stop - g_ix_start + 1) - nx*s;
 	rem_y = (g_y_stop - g_iy_start + 1) - ny*s;
 
-	if (g_yy_begin == g_iy_start && g_work_pass == 0)  /* if restarting on pan: */
+	if (g_WorkList.yy_begin() == g_iy_start && g_work_pass == 0)  /* if restarting on pan: */
 	{
 		s_diffusion_counter = 0L;
 	}
 	else
 	{
-		/* g_yy_begin and passes contain data for resuming the type: */
-		s_diffusion_counter = (((long) ((unsigned) g_yy_begin)) << 16) | ((unsigned) g_work_pass);
+		/* g_WorkList.yy_begin() and passes contain data for resuming the type: */
+		s_diffusion_counter = (((long) ((unsigned) g_WorkList.yy_begin())) << 16) | ((unsigned) g_work_pass);
 	}
 
 	dif_offset = 12-(s_bits/2); /* offset to adjust coordinates */
@@ -369,7 +371,7 @@ int diffusion_scan()
 
 	if (diffusion_engine() == -1)
 	{
-		work_list_add(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
+		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(),
 			(int) (s_diffusion_counter >> 16),            /* high, */
 			(int) (s_diffusion_counter & 0xffff),         /* low order words */
 			g_work_sym);
