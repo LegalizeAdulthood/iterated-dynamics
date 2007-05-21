@@ -223,7 +223,8 @@ $(COMDIR)/zoom.o $(COMDIR)/Halley.o $(COMDIR)/Newton.o \
 $(COMDIR)/SoundState.o $(COMDIR)/EscapeTime.o \
 $(COMDIR)/ThreeDimensionalState.o $(COMDIR)/MathUtil.o \
 $(COMDIR)/UIChoices.o $(COMDIR)/SolidGuess.o $(COMDIR)/Tesseral.o \
-$(COMDIR)/BoundaryTrace.o $(COMDIR)/DiffusionScan.o
+$(COMDIR)/BoundaryTrace.o $(COMDIR)/DiffusionScan.o \
+$(COMDIR)/WorkList.o
 
 
 ifeq ($(AS),/usr/bin/nasm)

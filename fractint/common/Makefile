@@ -66,7 +66,8 @@ SRCS = \
 	SolidGuess.cpp \
 	Tesseral.cpp \
 	BoundaryTrace.cpp \
-	DiffusionScan.cpp
+	DiffusionScan.cpp \
+	WorkList.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
