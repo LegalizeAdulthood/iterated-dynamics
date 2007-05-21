@@ -2433,7 +2433,7 @@ static int distance_test_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_user_distance_test = (long)context.floatval[0];
+	g_user_distance_test = (long) context.floatval[0];
 	g_distance_test_width = 71;
 	if (context.totparms > 1)
 	{
