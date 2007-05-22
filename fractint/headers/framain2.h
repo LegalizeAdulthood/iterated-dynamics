@@ -3,7 +3,6 @@
 
 extern ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag);
 extern int check_key();
-extern int out_line_compare(BYTE *, int);
 extern int key_count(int);
 #if !defined(XFRACT)
 #if !defined(_WIN32)
