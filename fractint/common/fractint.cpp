@@ -620,7 +620,7 @@ int application_main(int argc, char **argv)
 
 	bool resume_flag = false;
 	bool screen_stacked = false;
-	int kbdmore;						/* continuation variable        */
+	int kbdmore;						/* continuation variable  */
 	ApplicationStateType state = APPSTATE_RESTART;
 
 	while (state != APPSTATE_NO_CHANGE)

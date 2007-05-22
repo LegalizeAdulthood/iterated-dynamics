@@ -472,7 +472,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 	return 0;
 }
 
-int sound_line(BYTE *pixels, int linelen)
+int out_line_sound(BYTE *pixels, int linelen)
 {
 	/* int twidth = gifview_image_twidth; */
 	int twidth = g_x_dots;
@@ -514,7 +514,7 @@ int sound_line(BYTE *pixels, int linelen)
 	return ret;
 }
 
-int potential_line(BYTE *pixels, int linelen)
+int out_line_potential(BYTE *pixels, int line_length)
 {
 	int row;
 	int col;
@@ -534,7 +534,7 @@ int potential_line(BYTE *pixels, int linelen)
 	}
 	else if (!driver_diskp()) /* even line - display the line too */
 	{
-		out_line(pixels, linelen);
+		out_line(pixels, line_length);
 	}
 	for (col = 0; col < g_x_dots; ++col)
 	{
