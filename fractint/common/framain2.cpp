@@ -51,6 +51,42 @@
 #include "SoundState.h"
 #include "CommandParser.h"
 
+/* displays differences between current image file and new image */
+class LineCompare
+{
+public:
+	LineCompare() : m_file(NULL), m_error_count(0)
+	{
+	}
+	~LineCompare()
+	{
+	}
+
+	int compare(BYTE *pixels, int line_length);
+	void cleanup();
+
+private:
+	FILE *m_file;
+	int m_error_count;
+};
+
+class ZoomSaver
+{
+public:
+	ZoomSaver() : m_save_zoom(NULL)
+	{
+	}
+	~ZoomSaver()
+	{
+	}
+
+	void save();
+	void restore();
+
+private:
+	char *m_save_zoom;
+};
+
 #if 0
 /* makes a handly list of jul-man pairs, not for release */
 static void julman()
@@ -82,12 +118,108 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, int &kbdmo
 ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, int &kbdmore, bool &stacked);
 ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag);
 static void move_zoombox(int);
-static  void note_zoom();
-static  void restore_zoom();
-static  void move_zoombox(int keynum);
-static  void cmp_line_cleanup();
+static void move_zoombox(int keynum);
+static int out_line_compare(BYTE *pixels, int line_length);
+static void out_line_cleanup_compare();
 
-static char *savezoom;
+static LineCompare s_line_compare;
+static ZoomSaver s_zoom_saver;
+
+int LineCompare::compare(BYTE *pixels, int line_length)
+{
+	int row = g_row_count++;
+	if (row == 0)
+	{
+		m_error_count = 0;
+		m_file = dir_fopen(g_work_dir, "cmperr", g_initialize_batch ? "a" : "w");
+		g_out_line_cleanup = out_line_cleanup_compare;
+	}
+	if (g_potential_16bit)  /* 16 bit info, ignore odd numbered rows */
+	{
+		if (row & 1)
+		{
+			return 0;
+		}
+		row /= 2;
+	}
+	for (int col = 0; col < line_length; col++)
+	{
+		int old_color = getcolor(col, row);
+		if (old_color == (int) pixels[col])
+		{
+			g_plot_color_put_color(col, row, 0);
+		}
+		else
+		{
+			if (old_color == 0)
+			{
+				g_plot_color_put_color(col, row, 1);
+			}
+			++m_error_count;
+			if (g_initialize_batch == INITBATCH_NONE)
+			{
+				fprintf(m_file, "#%5d col %3d row %3d old %3d new %3d\n",
+					m_error_count, col, row, old_color, pixels[col]);
+			}
+		}
+	}
+	return 0;
+}
+
+void LineCompare::cleanup()
+{
+	if (g_initialize_batch)
+	{
+		time_t ltime;
+		time(&ltime);
+		char *timestring = ctime(&ltime);
+		timestring[24] = 0; /*clobber newline in time string */
+		fprintf(m_file, "%s compare to %s has %5d errs\n",
+							timestring, g_read_name, m_error_count);
+	}
+	fclose(m_file);
+}
+
+static int out_line_compare(BYTE *pixels, int line_length)
+{
+	return s_line_compare.compare(pixels, line_length);
+}
+
+static void out_line_cleanup_compare()
+{
+	s_line_compare.cleanup();
+}
+
+void ZoomSaver::save()
+{
+	if (g_box_count)  /* save zoombox stuff in mem before encode (mem reused) */
+	{
+		m_save_zoom = (char *)malloc((long)(5*g_box_count));
+		if (m_save_zoom == NULL)
+		{
+			clear_zoom_box(); /* not enuf mem so clear the box */
+		}
+		else
+		{
+			reset_zoom_corners(); /* reset these to overall image, not box */
+			memcpy(m_save_zoom, g_box_x, g_box_count*2);
+			memcpy(m_save_zoom + g_box_count*2, g_box_y, g_box_count*2);
+			memcpy(m_save_zoom + g_box_count*4, g_box_values, g_box_count);
+		}
+	}
+}
+
+void ZoomSaver::restore()
+{
+	if (g_box_count)  /* restore zoombox arrays */
+	{
+		memcpy(g_box_x, m_save_zoom, g_box_count*2);
+		memcpy(g_box_y, m_save_zoom + g_box_count*2, g_box_count*2);
+		memcpy(g_box_values, m_save_zoom + g_box_count*4, g_box_count);
+		free(m_save_zoom);
+		zoom_box_draw(1); /* get the g_xx_min etc variables recalc'd by redisplaying */
+	}
+}
 
 ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag)
 {
@@ -245,11 +377,11 @@ ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool res
 			g_out_line_cleanup = NULL;          /* g_out_line routine can set this */
 			if (g_display_3d)                 /* set up 3D decoding */
 			{
-				g_out_line = line3d;
+				g_out_line = out_line_3d;
 			}
 			else if (g_compare_gif)            /* debug 50 */
 			{
-				g_out_line = cmp_line;
+				g_out_line = out_line_compare;
 			}
 			else if (g_potential_16bit)
 			{            /* .pot format input file */
@@ -265,11 +397,11 @@ ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool res
 					/* goto imagestart; */
 					return APPSTATE_IMAGE_START;
 				}
-				g_out_line = potential_line;
+				g_out_line = out_line_potential;
 			}
 			else if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !g_evolving_flags) /* regular gif/fra input file */
 			{
-				g_out_line = sound_line;      /* sound decoding */
+				g_out_line = out_line_sound;      /* sound decoding */
 			}
 			else
 			{
@@ -1308,9 +1440,9 @@ static ApplicationStateType handle_save_to_disk()
 	{
 		return APPSTATE_CONTINUE;  /* disk video and targa, nothing to save */
 	}
-	note_zoom();
+	s_zoom_saver.save();
 	save_to_disk(g_save_name);
-	restore_zoom();
+	s_zoom_saver.restore();
 	return APPSTATE_CONTINUE;
 }
 
@@ -2193,42 +2325,12 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 	return APPSTATE_NO_CHANGE;
 }
 
-static void note_zoom()
-{
-	if (g_box_count)  /* save zoombox stuff in mem before encode (mem reused) */
-	{
-		savezoom = (char *)malloc((long)(5*g_box_count));
-		if (savezoom == NULL)
-		{
-			clear_zoom_box(); /* not enuf mem so clear the box */
-		}
-		else
-		{
-			reset_zoom_corners(); /* reset these to overall image, not box */
-			memcpy(savezoom, g_box_x, g_box_count*2);
-			memcpy(savezoom + g_box_count*2, g_box_y, g_box_count*2);
-			memcpy(savezoom + g_box_count*4, g_box_values, g_box_count);
-		}
-	}
-}
-
-static void restore_zoom()
-{
-	if (g_box_count)  /* restore zoombox arrays */
-	{
-		memcpy(g_box_x, savezoom, g_box_count*2);
-		memcpy(g_box_y, savezoom + g_box_count*2, g_box_count*2);
-		memcpy(g_box_values, savezoom + g_box_count*4, g_box_count);
-		free(savezoom);
-		zoom_box_draw(1); /* get the g_xx_min etc variables recalc'd by redisplaying */
-		}
-}
-
 /* do all pending movement at once for smooth mouse diagonal moves */
 static void move_zoombox(int keynum)
-{  int vertical, horizontal, getmore;
-	vertical = horizontal = 0;
-	getmore = 1;
+{
+	int vertical = 0;
+	int horizontal = 0;
+	int getmore = 1;
 	while (getmore)
 	{
 		switch (keynum)
@@ -2272,70 +2374,8 @@ static void move_zoombox(int keynum)
 	}
 	if (g_box_count)
 	{
-		zoom_box_move((double)horizontal/g_dx_size, (double)vertical/g_dy_size);
+		zoom_box_move((double) horizontal/g_dx_size, (double) vertical/g_dy_size);
 	}
-}
-
-/* displays differences between current image file and new image */
-static FILE *cmp_fp;
-static int errcount;
-int cmp_line(BYTE *pixels, int linelen)
-{
-	int row;
-	int col;
-	int oldcolor;
-	row = g_row_count++;
-	if (row == 0)
-	{
-		errcount = 0;
-		cmp_fp = dir_fopen(g_work_dir, "cmperr", g_initialize_batch ? "a" : "w");
-		g_out_line_cleanup = cmp_line_cleanup;
-		}
-	if (g_potential_16bit)  /* 16 bit info, ignore odd numbered rows */
-	{
-		if ((row & 1) != 0)
-		{
-			return 0;
-		}
-		row >>= 1;
-	}
-	for (col = 0; col < linelen; col++)
-	{
-		oldcolor = getcolor(col, row);
-		if (oldcolor == (int)pixels[col])
-		{
-			g_plot_color_put_color(col, row, 0);
-		}
-		else
-		{
-			if (oldcolor == 0)
-			{
-				g_plot_color_put_color(col, row, 1);
-			}
-			++errcount;
-			if (g_initialize_batch == INITBATCH_NONE)
-			{
-				fprintf(cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
-					errcount, col, row, oldcolor, pixels[col]);
-			}
-		}
-	}
-	return 0;
-}
-
-static void cmp_line_cleanup()
-{
-	char *timestring;
-	time_t ltime;
-	if (g_initialize_batch)
-	{
-		time(&ltime);
-		timestring = ctime(&ltime);
-		timestring[24] = 0; /*clobber newline in time string */
-		fprintf(cmp_fp, "%s compare to %s has %5d errs\n",
-							timestring, g_read_name, errcount);
-		}
-	fclose(cmp_fp);
 }
 
 void clear_zoom_box()

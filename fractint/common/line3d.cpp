@@ -60,7 +60,7 @@ struct minmax
 };
 
 /* routines in this module */
-int line3d(BYTE *, unsigned);
+int out_line_3d(BYTE *pixels, int line_length);
 int targa_color(int, int, int);
 int start_disk1(char *, FILE *, int);
 
@@ -707,7 +707,7 @@ static void line3d_fill(int col, int next, int last_dot, int cross_not_init,
 	}
 }
 
-int line3d(BYTE *pixels, int linelen)
+int out_line_3d(BYTE *pixels, int line_length)
 {
 	int tout;                    /* triangle has been sent to ray trace file */
 	float f_water = 0.0f;        /* transformed WATERLINE for ray trace files */
@@ -749,7 +749,7 @@ int line3d(BYTE *pixels, int linelen)
 	/************************************************************************/
 	if (g_row_count++ == 0)
 	{
-		int error = line3d_init(linelen, &tout, &xcenter0, &ycenter0, cross_avg, v);
+		int error = line3d_init(line_length, &tout, &xcenter0, &ycenter0, cross_avg, v);
 		if (error)
 		{
 			return error;
@@ -762,14 +762,14 @@ int line3d(BYTE *pixels, int linelen)
 	/* copies pixels buffer to float type fraction buffer for fill purposes */
 	if (g_potential_16bit)
 	{
-		if (set_pixel_buff(pixels, s_fraction, linelen))
+		if (set_pixel_buff(pixels, s_fraction, line_length))
 		{
 			return 0;
 		}
 	}
 	else if (g_grayscale_depth)           /* convert color numbers to grayscale values */
 	{
-		for (col = 0; col < (int) linelen; col++)
+		for (col = 0; col < (int) line_length; col++)
 		{
 			int color_num = pixels[col];
 			/* TODO: the following does not work when COLOR_CHANNEL_MAX != 63 */
@@ -798,7 +798,7 @@ int line3d(BYTE *pixels, int linelen)
 	/* copying code here, and to avoid a HUGE "if-then" construct. Besides,  */
 	/* we have ALREADY sinned, so why not sin some more?                     */
 	/*************************************************************************/
-	last_dot = min(g_x_dots - 1, (int) linelen - 1);
+	last_dot = min(g_x_dots - 1, (int) line_length - 1);
 	if (g_3d_state.fill_type() >= FillType::LightBefore)
 	{
 		if (g_3d_state.haze() && g_targa_output)
@@ -838,7 +838,7 @@ int line3d(BYTE *pixels, int linelen)
 		start_object();
 	}
 	/* PROCESS ROW LOOP BEGINS HERE */
-	while (col < (int) linelen)
+	while (col < (int) line_length)
 	{
 		if ((g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 			&& (col != last_dot) /* if this is not the last col */

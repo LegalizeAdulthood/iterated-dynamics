@@ -3,10 +3,8 @@
 
 extern ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag);
 extern int check_key();
-extern int cmp_line(BYTE *, int);
+extern int out_line_compare(BYTE *, int);
 extern int key_count(int);
-extern int potential_line(BYTE *, int);
-extern int sound_line(BYTE *, int);
 #if !defined(XFRACT)
 #if !defined(_WIN32)
 extern int _cdecl _matherr(struct exception *);
