@@ -33,6 +33,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_09DF0349397642A0BF7F7749D4639D84"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0FAE1570CB624F5985ED1800FE6E9D89"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -57,7 +63,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1E503C6007A04C2BABB9C3F1BE21044A"
+        "MsmKey" = "8:_184D8DDEADEC4CAAB3B4508FEE4B58AA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -87,6 +93,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_2A452ADF4965472594E9550089B78390"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_2AD9A4B1DBD54FB4A6B699B02C8257ED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -99,19 +111,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2D29C61B67D9410EA9B6C8E75C380487"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2F81B2867DAB47E9B440BB0258FF3284"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_301057A149E645BB87CEC3C0B2A27E4D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -171,12 +171,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_44DAFAEDF89644A5A595998B48137ED2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_47A793E1D9424266A6583B4B25C74965"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -220,12 +214,6 @@
         "Entry"
         {
         "MsmKey" = "8:_5956FC826A3B4F29B46AD1AFB139E7C3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5C689DA11DAD407387C3B324D855A79C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -333,12 +321,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8D7608BB741245998FCCE7C51C50C41C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_964D3F3CBA304739A9C7CE1FC49EBE24"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -346,12 +328,6 @@
         "Entry"
         {
         "MsmKey" = "8:_9751A73186A94EBCAC845BD93A48B339"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_98ABB15B6A6E4CCE96FECA943E3431C3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -417,12 +393,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C1BD9B147ED64A47AFD061D5AE32C59F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C50CB12BFDA04024A982D196563FE302"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -430,6 +400,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C63BF36F9D7C47FDA4F2DF82438EABA1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CB15F7393F1F4571BEEE5C66404CE4D8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -448,18 +424,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D00FE9AA1EF740328B9ACDA40120FBBA"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D0E8761A2FAA48B8957E605B2543B55B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D674C742C7DD4F669F7816F6CD0EDC6B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -708,6 +672,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_09DF0349397642A0BF7F7749D4639D84"
+            {
+            "SourcePath" = "8:..\\debugfla.txt"
+            "TargetName" = "8:debugfla.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0FAE1570CB624F5985ED1800FE6E9D89"
             {
             "SourcePath" = "8:..\\extra\\all_maps.zip"
@@ -788,10 +772,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1E503C6007A04C2BABB9C3F1BE21044A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_184D8DDEADEC4CAAB3B4508FEE4B58AA"
             {
-            "SourcePath" = "8:..\\fractsrc.doc"
-            "TargetName" = "8:fractsrc.txt"
+            "SourcePath" = "8:..\\hc.txt"
+            "TargetName" = "8:hc.txt"
             "Tag" = "8:"
             "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"
@@ -888,6 +872,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2A452ADF4965472594E9550089B78390"
+            {
+            "SourcePath" = "8:..\\fractsrc.txt"
+            "TargetName" = "8:fractsrc.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2AD9A4B1DBD54FB4A6B699B02C8257ED"
             {
             "SourcePath" = "8:..\\maps\\grid.map"
@@ -928,52 +932,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2D29C61B67D9410EA9B6C8E75C380487"
-            {
-            "SourcePath" = "8:..\\extra\\sschoice.zip"
-            "TargetName" = "8:sschoice.zip"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2F81B2867DAB47E9B440BB0258FF3284"
             {
             "SourcePath" = "8:..\\formulas\\fract003.frm"
             "TargetName" = "8:fract003.frm"
             "Tag" = "8:"
             "Folder" = "8:_BDB98DCABC7743F5B0346DA482AD44D2"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_301057A149E645BB87CEC3C0B2A27E4D"
-            {
-            "SourcePath" = "8:..\\extra\\hc.prj"
-            "TargetName" = "8:hc.prj"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1168,26 +1132,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_44DAFAEDF89644A5A595998B48137ED2"
-            {
-            "SourcePath" = "8:..\\extra\\fractint.prj"
-            "TargetName" = "8:fractint.prj"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_47A793E1D9424266A6583B4B25C74965"
             {
             "SourcePath" = "8:..\\FRACTINT.HLP"
@@ -1334,26 +1278,6 @@
             "TargetName" = "8:fract18.par"
             "Tag" = "8:"
             "Folder" = "8:_AF61B7BF2E214EA2B6D8A77B274A1FE4"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5C689DA11DAD407387C3B324D855A79C"
-            {
-            "SourcePath" = "8:..\\extra\\bc5fract.zip"
-            "TargetName" = "8:bc5fract.zip"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1708,26 +1632,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D7608BB741245998FCCE7C51C50C41C"
-            {
-            "SourcePath" = "8:..\\read.me"
-            "TargetName" = "8:ReadMe.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_964D3F3CBA304739A9C7CE1FC49EBE24"
             {
             "SourcePath" = "8:..\\maps\\firestrm.map"
@@ -1752,26 +1656,6 @@
             {
             "SourcePath" = "8:..\\extra\\tru.c"
             "TargetName" = "8:tru.c"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_98ABB15B6A6E4CCE96FECA943E3431C3"
-            {
-            "SourcePath" = "8:..\\extra\\bc31frac.zip"
-            "TargetName" = "8:bc31frac.zip"
             "Tag" = "8:"
             "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
             "Condition" = "8:"
@@ -1988,26 +1872,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C1BD9B147ED64A47AFD061D5AE32C59F"
-            {
-            "SourcePath" = "8:..\\debugfla.doc"
-            "TargetName" = "8:debugfla.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C50CB12BFDA04024A982D196563FE302"
             {
             "SourcePath" = "8:..\\extra\\if_else.zip"
@@ -2034,6 +1898,26 @@
             "TargetName" = "8:new19-6.key"
             "Tag" = "8:"
             "Folder" = "8:_5D9AF77B3BFD405EA4C27713FF4B4FC5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CB15F7393F1F4571BEEE5C66404CE4D8"
+            {
+            "SourcePath" = "8:..\\ReadMe.txt"
+            "TargetName" = "8:ReadMe.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2094,46 +1978,6 @@
             "TargetName" = "8:gamma1.map"
             "Tag" = "8:"
             "Folder" = "8:_2431143FDB3E413CBADE2C1B97B31D0A"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D0E8761A2FAA48B8957E605B2543B55B"
-            {
-            "SourcePath" = "8:..\\hc.doc"
-            "TargetName" = "8:hc.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D674C742C7DD4F669F7816F6CD0EDC6B"
-            {
-            "SourcePath" = "8:..\\extra\\fractint.dsk"
-            "TargetName" = "8:fractint.dsk"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2810,7 +2654,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_C1BD9B147ED64A47AFD061D5AE32C59F"
+            "Target" = "8:_09DF0349397642A0BF7F7749D4639D84"
             "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
             "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Icon" = "8:"
@@ -2838,7 +2682,7 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_1E503C6007A04C2BABB9C3F1BE21044A"
+            "Target" = "8:_2A452ADF4965472594E9550089B78390"
             "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
             "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Icon" = "8:"
