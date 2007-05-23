@@ -243,6 +243,11 @@ init_restart:
 	g_distance_test = g_user_distance_test;
 	g_biomorph = g_user_biomorph;
 
+	if (g_inside == ATANI && g_save_release >= 2004)
+	{
+		g_periodicity_check = 0;
+	}
+
 	g_potential_flag = false;
 	if (g_potential_parameter[0] != 0.0
 		&& g_colors >= 64
@@ -1195,7 +1200,7 @@ static int _fastcall ratio_bad(double actual, double desired)
 	ftemp = 0;
 	if (desired != 0 && g_debug_mode != DEBUGMODE_NO_INT_TO_FLOAT)
 	{
-		ftemp = actual / desired;
+		ftemp = actual/desired;
 		if (ftemp < (1.0-tol) || ftemp > (1.0 + tol))
 		{
 			return 1;
