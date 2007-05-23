@@ -301,6 +301,8 @@ Tim's changes (5/29/2006)\
   
   Added interation to <tab> screen.
 
+  Added code to force periodicity=0 when the inside=atan feature is used.
+
 Jonathan's changes\
   Fixed the logic for calculating when to switch from using a grid to using
   the on-the-fly calculation of an image's pixels.  The logic was not

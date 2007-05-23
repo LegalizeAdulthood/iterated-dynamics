@@ -375,6 +375,12 @@ good enough for the first few levels of M/J images, where the round-off
 errors stay well within the area covered by a single pixel. Fractint now
 uses 16-bit math where applicable, which makes a big difference on non-32-
 bit PCs.
+
+Failure of the periodicity checking logic appears as horizontal stripes
+that start at the left edge of the lake.  If this happens, the best solution
+is to turn periodicity checking off.  If the image has a high iteration count
+and many pixels in the lake, so that you really do need periodicity turned on,
+try increasing the periodicity value until the stripes disappear.
 ;
 ;
 ~Topic=Limitations of Integer Math (And How We Cope)
@@ -634,7 +640,7 @@ fairly large number of iterations.
 
 inside=atan colors by determining the angle in degrees the last iterated
 value has with respect to the real axis, and using the absolute value.  This
-feature should be used with periodicity=0
+feature should be used with periodicity=0, and this is automatically set.
 ;
 ;
 ;
