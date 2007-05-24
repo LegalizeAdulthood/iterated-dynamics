@@ -200,7 +200,8 @@ void Arcsinz(ComplexD z, ComplexD *rz)
 	tempz1.y = -tempz1.y;			/* tempz1 = 1 - tempz1 */
 	Sqrtz(tempz1, &tempz1);
 
-	tempz2.x = -z.y; tempz2.y = z.x;                /* tempz2 = i*z  */
+	tempz2.x = -z.y;
+	tempz2.y = z.x;                /* tempz2 = i*z  */
 	tempz1.x += tempz2.x;
 	tempz1.y += tempz2.y;    /* tempz1 += tempz2 */
 	FPUcplxlog(&tempz1, &tempz1);

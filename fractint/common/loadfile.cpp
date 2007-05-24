@@ -1600,7 +1600,7 @@ rescan:  /* entry for changed browse parms */
 		{
 			strcpy(winlist.name, g_dta.filename);
 			drawindow(color_of_box, &winlist);
-			g_box_count <<= 1; /*g_box_count*2;*/ /* double for byte count */
+			g_box_count *= 2; /* double for byte count */
 			winlist.box_count = g_box_count;
 			browse_windows[wincount] = winlist;
 
