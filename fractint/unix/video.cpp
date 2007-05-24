@@ -5,6 +5,7 @@
 #include "prototyp.h"
 #include "externs.h"
 
+#include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "realdos.h"
@@ -30,7 +31,6 @@ void (*g_dot_write)(int, int, int);
 int (*g_dot_read)(int, int);	/* read-a-dot routine */
 void (*g_line_write)(int, int, int, BYTE *);		/* write-a-line routine */
 void (*g_line_read)(int, int, int, BYTE *);		/* read-a-line routine */
-int g_and_color = 0;		/* "and" value used for color selection */
 bool g_disk_flag = 0;		/* disk video active flag */
 
 int videoflag = 0;		/* special "your-own-video" flag */
