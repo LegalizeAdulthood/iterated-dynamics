@@ -15,6 +15,7 @@
 #include "helpdefs.h"
 #include "fihelp.h"
 
+#include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "miscres.h"

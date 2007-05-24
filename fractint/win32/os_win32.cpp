@@ -15,11 +15,13 @@
 #include "prototyp.h"
 #include "cmplx.h"
 #include "fractint.h"
-#include "drivers.h"
 #include "externs.h"
 #include "helpdefs.h"
-#include "mpmath.h"
+
+#include "calcfrac.h"
 #include "diskvid.h"
+#include "drivers.h"
+#include "mpmath.h"
 #include "prompts2.h"
 #include "realdos.h"
 
@@ -113,7 +115,6 @@ typedef enum
 
 /* Global variables (yuck!) */
 int g_overflow_mp = 0;
-int g_and_color;
 BYTE g_block[4096] = { 0 };
 int g_checked_vvs = 0;
 int g_color_dark = 0;		/* darkest color in palette */

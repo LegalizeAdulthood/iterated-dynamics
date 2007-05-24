@@ -7,7 +7,6 @@ extern int calculate_fractal();
 extern int calculate_mandelbrot();
 extern int calculate_mandelbrot_fp();
 extern int standard_fractal();
-extern int find_alternate_math(int, int);
 extern void _fastcall plot_color_none(int x, int y, int color);
 extern void _fastcall plot_color_symmetry_x_axis(int x, int y, int color);
 extern void _fastcall plot_color_symmetry_origin(int x, int y, int color);
@@ -19,5 +18,6 @@ extern int g_ix_start;
 extern int g_iy_start;
 extern int g_work_pass;
 extern int g_work_sym;
+extern int g_and_color;					/* AND mask for iteration to get color index */
 
 #endif

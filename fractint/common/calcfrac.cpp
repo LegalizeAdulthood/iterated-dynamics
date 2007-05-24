@@ -31,6 +31,7 @@
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "fracsubr.h"
+#include "fractalp.h"
 #include "fractals.h"
 #include "framain2.h"
 #include "line3d.h"
@@ -63,6 +64,8 @@
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 ComplexL g_init_orbit_l = { 0, 0 };
+
+int g_and_color;
 
 // magnitude of current orbit z
 long g_magnitude_l = 0;
@@ -811,24 +814,6 @@ int calculate_fractal()
 	}
 	return (g_calculation_status == CALCSTAT_COMPLETED) ? 0 : -1;
 }
-
-/* locate alternate math record */
-int find_alternate_math(int type, int math)
-{
-	if (math == 0)
-	{
-		return -1;
-	}
-	for (int i = 0; i < g_alternate_math_len; i++)
-	{
-		if ((type == g_alternate_math[i].type) && g_alternate_math[i].math)
-		{
-			return i;
-		}
-	}
-	return -1;
-}
-
 
 /**************** general escape-time engine routines *********************/
 
@@ -3370,15 +3355,15 @@ void PerformWorkList::setup_alternate_math()
 	m_save_orbit_calc = NULL;  /* function that calculates one orbit */
 	m_save_per_pixel = NULL;  /* once-per-pixel init */
 	m_save_per_image = NULL;  /* once-per-image setup */
-	int alt = find_alternate_math(g_fractal_type, g_bf_math);
-	if (alt > -1)
+	alternate_math *alt = find_alternate_math(g_bf_math);
+	if (alt != NULL)
 	{
 		m_save_orbit_calc = g_current_fractal_specific->orbitcalc;
 		m_save_per_pixel = g_current_fractal_specific->per_pixel;
 		m_save_per_image = g_current_fractal_specific->per_image;
-		g_current_fractal_specific->orbitcalc = g_alternate_math[alt].orbitcalc;
-		g_current_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
-		g_current_fractal_specific->per_image = g_alternate_math[alt].per_image;
+		g_current_fractal_specific->orbitcalc = alt->orbitcalc;
+		g_current_fractal_specific->per_pixel = alt->per_pixel;
+		g_current_fractal_specific->per_image = alt->per_image;
 	}
 	else
 	{
