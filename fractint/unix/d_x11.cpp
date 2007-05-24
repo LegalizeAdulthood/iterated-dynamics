@@ -41,6 +41,7 @@
 #include "externs.h"
 #include "fihelp.h"
 
+#include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
