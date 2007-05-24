@@ -14,8 +14,10 @@ is in the allocations of memory for the big numbers.
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+
 #include "biginit.h"
 #include "calcfrac.h"
+#include "fractalp.h"
 #include "prompts2.h"
 #include "realdos.h"
 
@@ -156,16 +158,16 @@ static void init_bf_2()
 
 	/* at present time one call would suffice, but this logic allows
 		multiple kinds of alternate math eg long double */
-	int i = find_alternate_math(g_fractal_type, BIGNUM);
-	if (i > -1)
+	alternate_math *alt = find_alternate_math(BIGNUM);
+	if (alt != NULL)
 	{
-		g_bf_math = g_alternate_math[i].math;
+		g_bf_math = alt->math;
 	}
 	else
 	{
-		i = find_alternate_math(g_fractal_type, BIGFLT);
+		alt = find_alternate_math(BIGFLT);
 		/* 1 => maybe called from cmdfiles.c and g_fractal_type not set */
-		g_bf_math = (i > -1) ? g_alternate_math[i].math : BIGNUM;
+		g_bf_math = alt ? alt->math : BIGNUM;
 	}
 	g_float_flag = true;
 
@@ -269,7 +271,7 @@ static void init_bf_2()
 	bfymax     = bnroot + ptr; ptr += bflength + 2;
 	bfx3rd     = bnroot + ptr; ptr += bflength + 2;
 	bfy3rd     = bnroot + ptr; ptr += bflength + 2;
-	for (i = 0; i < 10; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		bfparms[i]  = bnroot + ptr; ptr += bflength + 2;
 	}

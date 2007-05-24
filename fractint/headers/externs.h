@@ -12,9 +12,6 @@ extern  void   (_fastcall *plot)(int, int, int);
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int					g_adapter;							/* index into g_video_table[] */
-extern alternate_math		g_alternate_math[];					/* alternate math function pointers */
-extern int					g_alternate_math_len;				/* number of alternate math */
-extern int					g_and_color;						/* AND mask for iteration to get color index */
 extern float				g_aspect_drift;
 extern int					g_num_attractors;
 extern int					g_atan_colors;

@@ -137,26 +137,43 @@ more_parameters g_more_parameters[] =
 /*
 	type  math orbitcalc fnct per_pixel fnct per_image fnct
 	|-----|----|--------------|--------------|--------------| */
-alternate_math g_alternate_math[] =
+static alternate_math s_alternate_math[] =
 {
 #define USEBN
 #ifdef USEBN
-	{ FRACTYPE_JULIA_FP,	BIGNUM, julia_orbit_bn, julia_per_pixel_bn,  mandelbrot_setup_bn },
-	{ FRACTYPE_MANDELBROT_FP,	BIGNUM, julia_orbit_bn, mandelbrot_per_pixel_bn, mandelbrot_setup_bn },
+	{
+		FRACTYPE_JULIA_FP, BIGNUM,
+		julia_orbit_bn, julia_per_pixel_bn, mandelbrot_setup_bn
+	},
+	{
+		FRACTYPE_MANDELBROT_FP, BIGNUM,
+		julia_orbit_bn, mandelbrot_per_pixel_bn, mandelbrot_setup_bn
+	},
 #else
-	{ FRACTYPE_JULIA_FP,	BIGFLT, julia_orbit_bf, julia_per_pixel_bf,  mandelbrot_setup_bf },
-	{ FRACTYPE_MANDELBROT_FP,	BIGFLT, julia_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf },
+	{
+		FRACTYPE_JULIA_FP, BIGFLT,
+		julia_orbit_bf, julia_per_pixel_bf,  mandelbrot_setup_bf
+	},
+	{
+		FRACTYPE_MANDELBROT_FP, BIGFLT,
+		julia_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf
+	},
 #endif
 	/*
-	NOTE: The default precision for g_bf_math=BIGNUM is not high enough
-	for julia_z_power_orbit_bn.  If you want to test BIGNUM (1) instead
-	of the usual BIGFLT (2), then set bfdigits on the command to
-	increase the precision.
+		NOTE: The default precision for g_bf_math=BIGNUM is not high enough
+		for julia_z_power_orbit_bn.  If you want to test BIGNUM (1) instead
+		of the usual BIGFLT (2), then set bfdigits on the command to
+		increase the precision.
 	*/
-	{ FRACTYPE_JULIA_Z_POWER_FP,  BIGFLT, julia_z_power_orbit_bf, julia_per_pixel_bf, mandelbrot_setup_bf },
-	{ FRACTYPE_MANDELBROT_Z_POWER_FP, BIGFLT, julia_z_power_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf }
+	{
+		FRACTYPE_JULIA_Z_POWER_FP, BIGFLT,
+		julia_z_power_orbit_bf, julia_per_pixel_bf, mandelbrot_setup_bf
+	},
+	{
+		FRACTYPE_MANDELBROT_Z_POWER_FP, BIGFLT,
+		julia_z_power_orbit_bf, mandelbrot_per_pixel_bf, mandelbrot_setup_bf
+	}
 };
-int g_alternate_math_len = NUM_OF(g_alternate_math);
 
 /* These are only needed for types with both integer and float variations */
 static char s_barnsleyj1_name[] = "*barnsleyj1";
@@ -2839,4 +2856,21 @@ int type_has_parameter(int type, int parm, char *buf)
 		strcpy(buf, ret);
 	}
 	return ret ? 1 : 0;
+}
+
+/* locate alternate math record */
+alternate_math *find_alternate_math(int math)
+{
+	if (math == 0)
+	{
+		return NULL;
+	}
+	for (int i = 0; i < NUM_OF(s_alternate_math); i++)
+	{
+		if ((g_fractal_type == s_alternate_math[i].type) && s_alternate_math[i].math)
+		{
+			return &s_alternate_math[i];
+		}
+	}
+	return NULL;
 }

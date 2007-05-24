@@ -761,17 +761,6 @@ public:
 	virtual int CalculateType() = 0;
 };
 
-struct tag_alternate_math_info
-{
-	int type;                    /* index in fractalname of the fractal */
-	int math;                    /* kind of math used */
-	int (*orbitcalc)();      /* function that calculates one orbit */
-	int (*per_pixel)();      /* once-per-pixel init */
-	int (*per_image)();      /* once-per-image setup */
-};
-
-typedef struct tag_alternate_math_info alternate_math;
-
 /* defines for inside/outside */
 enum ColoringModeType
 {
