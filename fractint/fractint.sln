@@ -1,44 +1,70 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fractint", "fractint.vcproj", "{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{92025993-C759-4969-8093-3361B2DC4832} = {92025993-C759-4969-8093-3361B2DC4832}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "dos_help\hc.vcproj", "{92025993-C759-4969-8093-3361B2DC4832}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FractIntSetup", "win32\FractIntSetup.vdproj", "{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45} = {63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unused", "unused.vcproj", "{110FB3C3-5D32-432C-B555-F22DD7283CA4}"
-	ProjectSection(ProjectDependencies) = postProject
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F76C3FBF-C241-422E-BE11-CA6593C5FB2B}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "legacy", "..\fractdev\fractint\HEAD\fractint\legacy.vcproj", "{707ECB30-AF74-42A3-81D3-F350C5ED25C6}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "help\hc.vcproj", "{92025993-C759-4969-8093-3361B2DC4832}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Debug.ActiveCfg = Debug|Win32
-		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Debug.Build.0 = Debug|Win32
-		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Release.ActiveCfg = Release|Win32
-		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Release.Build.0 = Release|Win32
-		{92025993-C759-4969-8093-3361B2DC4832}.Debug.ActiveCfg = Debug|Win32
-		{92025993-C759-4969-8093-3361B2DC4832}.Debug.Build.0 = Debug|Win32
-		{92025993-C759-4969-8093-3361B2DC4832}.Release.ActiveCfg = Release|Win32
-		{92025993-C759-4969-8093-3361B2DC4832}.Release.Build.0 = Release|Win32
-		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Debug.ActiveCfg = Debug
-		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Release.ActiveCfg = Release
-		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Release.Build.0 = Release
-		{110FB3C3-5D32-432C-B555-F22DD7283CA4}.Debug.ActiveCfg = Debug|Win32
-		{110FB3C3-5D32-432C-B555-F22DD7283CA4}.Release.ActiveCfg = Release|Win32
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Debug|Win32.ActiveCfg = Debug|Win32
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Debug|Win32.Build.0 = Debug|Win32
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Release|Win32.ActiveCfg = Release|Win32
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}.Release|Win32.Build.0 = Release|Win32
+		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Debug|Win32.ActiveCfg = Debug
+		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Release|Win32.ActiveCfg = Release
+		{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}.Release|Win32.Build.0 = Release
+		{110FB3C3-5D32-432C-B555-F22DD7283CA4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{110FB3C3-5D32-432C-B555-F22DD7283CA4}.Release|Win32.ActiveCfg = Release|Win32
+		{707ECB30-AF74-42A3-81D3-F350C5ED25C6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{707ECB30-AF74-42A3-81D3-F350C5ED25C6}.Release|Win32.ActiveCfg = Release|Win32
+		{92025993-C759-4969-8093-3361B2DC4832}.Debug|Win32.ActiveCfg = Debug|Win32
+		{92025993-C759-4969-8093-3361B2DC4832}.Debug|Win32.Build.0 = Debug|Win32
+		{92025993-C759-4969-8093-3361B2DC4832}.Release|Win32.ActiveCfg = Release|Win32
+		{92025993-C759-4969-8093-3361B2DC4832}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

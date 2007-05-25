@@ -1,7 +1,7 @@
 "DeployProject"
 {
-"VSVersion" = "3:701"
-"ProjectType" = "8:{2C2AF0D9-9B47-4FE5-BEF2-169778172667}"
+"VSVersion" = "3:800"
+"ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
 "ProjectName" = "8:FractIntSetup"
 "LanguageId" = "3:1033"
@@ -33,6 +33,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_09DF0349397642A0BF7F7749D4639D84"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0FAE1570CB624F5985ED1800FE6E9D89"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -57,7 +63,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1E503C6007A04C2BABB9C3F1BE21044A"
+        "MsmKey" = "8:_184D8DDEADEC4CAAB3B4508FEE4B58AA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -87,6 +93,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_2A452ADF4965472594E9550089B78390"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_2AD9A4B1DBD54FB4A6B699B02C8257ED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -99,19 +111,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_2D29C61B67D9410EA9B6C8E75C380487"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_2F81B2867DAB47E9B440BB0258FF3284"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_301057A149E645BB87CEC3C0B2A27E4D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -171,12 +171,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_44DAFAEDF89644A5A595998B48137ED2"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_47A793E1D9424266A6583B4B25C74965"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -220,12 +214,6 @@
         "Entry"
         {
         "MsmKey" = "8:_5956FC826A3B4F29B46AD1AFB139E7C3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_5C689DA11DAD407387C3B324D855A79C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -303,12 +291,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7AC5F16062B340A8A5C0CA1F29427529"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_803C18405986425B9310B94F654833EC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -339,12 +321,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8D7608BB741245998FCCE7C51C50C41C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_964D3F3CBA304739A9C7CE1FC49EBE24"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -352,12 +328,6 @@
         "Entry"
         {
         "MsmKey" = "8:_9751A73186A94EBCAC845BD93A48B339"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_98ABB15B6A6E4CCE96FECA943E3431C3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -423,12 +393,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C1BD9B147ED64A47AFD061D5AE32C59F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_C50CB12BFDA04024A982D196563FE302"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -436,6 +400,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C63BF36F9D7C47FDA4F2DF82438EABA1"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_CB15F7393F1F4571BEEE5C66404CE4D8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -454,18 +424,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D00FE9AA1EF740328B9ACDA40120FBBA"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D0E8761A2FAA48B8957E605B2543B55B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_D674C742C7DD4F669F7816F6CD0EDC6B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -595,6 +553,17 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                }
+            }
         }
         "Release"
         {
@@ -611,6 +580,17 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:1"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:FALSE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                }
+            }
         }
     }
     "Deployable"
@@ -630,12 +610,9 @@
             {
             }
         }
-        "Feature"
-        {
-        }
         "File"
         {
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_0068225B99904BA5A8A9B9FE25DB4002"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0068225B99904BA5A8A9B9FE25DB4002"
             {
             "SourcePath" = "8:..\\pars\\lyapunov.par"
             "TargetName" = "8:lyapunov.par"
@@ -655,7 +632,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_07BDC222BE9F4D15BE55A8474719E505"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_07BDC222BE9F4D15BE55A8474719E505"
             {
             "SourcePath" = "8:..\\maps\\grey.map"
             "TargetName" = "8:grey.map"
@@ -675,7 +652,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_088D6E3FC66B49A491997EB4E0ACD7FE"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_088D6E3FC66B49A491997EB4E0ACD7FE"
             {
             "SourcePath" = "8:..\\key\\new19.key"
             "TargetName" = "8:new19.key"
@@ -695,7 +672,27 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_0FAE1570CB624F5985ED1800FE6E9D89"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_09DF0349397642A0BF7F7749D4639D84"
+            {
+            "SourcePath" = "8:..\\debugfla.txt"
+            "TargetName" = "8:debugfla.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0FAE1570CB624F5985ED1800FE6E9D89"
             {
             "SourcePath" = "8:..\\extra\\all_maps.zip"
             "TargetName" = "8:all_maps.zip"
@@ -715,7 +712,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_11C9DD8C3A424DCEBD505B41F61226F3"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_11C9DD8C3A424DCEBD505B41F61226F3"
             {
             "SourcePath" = "8:..\\pars\\fract205.par"
             "TargetName" = "8:fract205.par"
@@ -735,7 +732,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_174E049469094F4098DC2F75F1A51BA4"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_174E049469094F4098DC2F75F1A51BA4"
             {
             "SourcePath" = "8:..\\maps\\froth6.map"
             "TargetName" = "8:froth6.map"
@@ -755,7 +752,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_17FE68B8E83D4592B490A8DE10B376E9"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_17FE68B8E83D4592B490A8DE10B376E9"
             {
             "SourcePath" = "8:..\\lsystem\\fractint.l"
             "TargetName" = "8:fractint.l"
@@ -775,10 +772,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_1E503C6007A04C2BABB9C3F1BE21044A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_184D8DDEADEC4CAAB3B4508FEE4B58AA"
             {
-            "SourcePath" = "8:..\\fractsrc.doc"
-            "TargetName" = "8:fractsrc.txt"
+            "SourcePath" = "8:..\\hc.txt"
+            "TargetName" = "8:hc.txt"
             "Tag" = "8:"
             "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"
@@ -795,7 +792,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_1E7B7DE56E994379809CCF8D7C340E52"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1E7B7DE56E994379809CCF8D7C340E52"
             {
             "SourcePath" = "8:..\\pars\\demo.par"
             "TargetName" = "8:demo.par"
@@ -815,7 +812,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_1EEA0001A1E04A6DBF165A2815397737"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1EEA0001A1E04A6DBF165A2815397737"
             {
             "SourcePath" = "8:..\\pars\\music.par"
             "TargetName" = "8:music.par"
@@ -835,7 +832,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_220AE84662F248A58CD627C741A8D406"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_220AE84662F248A58CD627C741A8D406"
             {
             "SourcePath" = "8:..\\formulas\\fract200.frm"
             "TargetName" = "8:fract200.frm"
@@ -855,7 +852,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_23F4C1923C5C4B9F832A6A216FBEF898"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_23F4C1923C5C4B9F832A6A216FBEF898"
             {
             "SourcePath" = "8:..\\maps\\glasses2.map"
             "TargetName" = "8:glasses2.map"
@@ -875,7 +872,27 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2AD9A4B1DBD54FB4A6B699B02C8257ED"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2A452ADF4965472594E9550089B78390"
+            {
+            "SourcePath" = "8:..\\fractsrc.txt"
+            "TargetName" = "8:fractsrc.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2AD9A4B1DBD54FB4A6B699B02C8257ED"
             {
             "SourcePath" = "8:..\\maps\\grid.map"
             "TargetName" = "8:grid.map"
@@ -895,7 +912,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2CD7C16206864A7E950BE1BCE5BF4AE5"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2CD7C16206864A7E950BE1BCE5BF4AE5"
             {
             "SourcePath" = "8:..\\ifs\\fract205.ifs"
             "TargetName" = "8:fract205.ifs"
@@ -915,27 +932,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2D29C61B67D9410EA9B6C8E75C380487"
-            {
-            "SourcePath" = "8:..\\extra\\sschoice.zip"
-            "TargetName" = "8:sschoice.zip"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_2F81B2867DAB47E9B440BB0258FF3284"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2F81B2867DAB47E9B440BB0258FF3284"
             {
             "SourcePath" = "8:..\\formulas\\fract003.frm"
             "TargetName" = "8:fract003.frm"
@@ -955,27 +952,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_301057A149E645BB87CEC3C0B2A27E4D"
-            {
-            "SourcePath" = "8:..\\extra\\hc.prj"
-            "TargetName" = "8:hc.prj"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_314E490604FD438EA4574573024FBE2F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_314E490604FD438EA4574573024FBE2F"
             {
             "SourcePath" = "8:..\\formulas\\newton.frm"
             "TargetName" = "8:newton.frm"
@@ -995,7 +972,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3849068028E64DE5AD06378AD8E9CA74"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3849068028E64DE5AD06378AD8E9CA74"
             {
             "SourcePath" = "8:..\\key\\advanced.key"
             "TargetName" = "8:advanced.key"
@@ -1015,7 +992,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3884E42363A849DD9BF2C1EFF14A4F1F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3884E42363A849DD9BF2C1EFF14A4F1F"
             {
             "SourcePath" = "8:..\\demo.bat"
             "TargetName" = "8:demo.bat"
@@ -1035,7 +1012,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_38DCA788CBF34AC38B7E46AB3967F8E2"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_38DCA788CBF34AC38B7E46AB3967F8E2"
             {
             "SourcePath" = "8:..\\fractint.cfg"
             "TargetName" = "8:fractint.cfg"
@@ -1055,7 +1032,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_39D09E38090B48EC9CB2804DD28DC31E"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_39D09E38090B48EC9CB2804DD28DC31E"
             {
             "SourcePath" = "8:..\\maps\\glasses1.map"
             "TargetName" = "8:glasses1.map"
@@ -1075,7 +1052,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_3ABBB13253044DD2BA1070A449818F19"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3ABBB13253044DD2BA1070A449818F19"
             {
             "SourcePath" = "8:..\\maps\\blues.map"
             "TargetName" = "8:blues.map"
@@ -1095,7 +1072,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_41C7AF24CC0444E791DEA4585D084C23"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_41C7AF24CC0444E791DEA4585D084C23"
             {
             "SourcePath" = "8:..\\key\\basic.key"
             "TargetName" = "8:basic.key"
@@ -1115,7 +1092,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_42FA2A49827C4BBFAF85FB40C77ECC32"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_42FA2A49827C4BBFAF85FB40C77ECC32"
             {
             "SourcePath" = "8:..\\formulas\\fract002.frm"
             "TargetName" = "8:fract002.frm"
@@ -1135,7 +1112,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_43642825A18F4449A850A16C385023D0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_43642825A18F4449A850A16C385023D0"
             {
             "SourcePath" = "8:..\\key\\auto.key"
             "TargetName" = "8:auto.key"
@@ -1155,27 +1132,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_44DAFAEDF89644A5A595998B48137ED2"
-            {
-            "SourcePath" = "8:..\\extra\\fractint.prj"
-            "TargetName" = "8:fractint.prj"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_47A793E1D9424266A6583B4B25C74965"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_47A793E1D9424266A6583B4B25C74965"
             {
             "SourcePath" = "8:..\\FRACTINT.HLP"
             "TargetName" = "8:FRACTINT.HLP"
@@ -1195,7 +1152,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_48EAF549DB564CF2893C8DDBAA48717A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_48EAF549DB564CF2893C8DDBAA48717A"
             {
             "SourcePath" = "8:..\\maps\\green.map"
             "TargetName" = "8:green.map"
@@ -1215,7 +1172,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_4BF4A60FAD0549D0A4D49B183FE62F24"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4BF4A60FAD0549D0A4D49B183FE62F24"
             {
             "SourcePath" = "8:..\\maps\\gamma2.map"
             "TargetName" = "8:gamma2.map"
@@ -1235,7 +1192,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_4F51214F76F0449F991D2F8A20B4A510"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4F51214F76F0449F991D2F8A20B4A510"
             {
             "SourcePath" = "8:..\\formulas\\fract001.frm"
             "TargetName" = "8:fract001.frm"
@@ -1255,7 +1212,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_50981C1F3B8443AEA2EE57DA00EDD62C"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_50981C1F3B8443AEA2EE57DA00EDD62C"
             {
             "SourcePath" = "8:..\\lsystem\\penrose.l"
             "TargetName" = "8:penrose.l"
@@ -1275,7 +1232,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_55883A8B89C54FFB8094A4B5839F58C3"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_55883A8B89C54FFB8094A4B5839F58C3"
             {
             "SourcePath" = "8:..\\extra\\simplgif.exe"
             "TargetName" = "8:simplgif.exe"
@@ -1295,7 +1252,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5890750521EC4A42920E3B24FB987D06"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5890750521EC4A42920E3B24FB987D06"
             {
             "SourcePath" = "8:..\\maps\\default.map"
             "TargetName" = "8:default.map"
@@ -1315,7 +1272,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5956FC826A3B4F29B46AD1AFB139E7C3"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5956FC826A3B4F29B46AD1AFB139E7C3"
             {
             "SourcePath" = "8:..\\pars\\fract18.par"
             "TargetName" = "8:fract18.par"
@@ -1335,27 +1292,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5C689DA11DAD407387C3B324D855A79C"
-            {
-            "SourcePath" = "8:..\\extra\\bc5fract.zip"
-            "TargetName" = "8:bc5fract.zip"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_5F3530C92AB649CCB2BE772154B51B82"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5F3530C92AB649CCB2BE772154B51B82"
             {
             "SourcePath" = "8:..\\pars\\phoenix.par"
             "TargetName" = "8:phoenix.par"
@@ -1375,7 +1312,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_66D75ED9593A4D418E93B85F996F5042"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_66D75ED9593A4D418E93B85F996F5042"
             {
             "SourcePath" = "8:..\\maps\\chroma.map"
             "TargetName" = "8:chroma.map"
@@ -1395,7 +1332,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_688F3F2DAD884428BFA2A83329E3CBBB"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_688F3F2DAD884428BFA2A83329E3CBBB"
             {
             "SourcePath" = "8:..\\formulas\\fractint.frm"
             "TargetName" = "8:fractint.frm"
@@ -1415,7 +1352,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_68F0032C9BD048799666CC7733EB34DE"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_68F0032C9BD048799666CC7733EB34DE"
             {
             "SourcePath" = "8:..\\maps\\goodega.map"
             "TargetName" = "8:goodega.map"
@@ -1435,7 +1372,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_69C37606211243FD8478FF33AB269A12"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_69C37606211243FD8478FF33AB269A12"
             {
             "SourcePath" = "8:..\\key\\snddemo1.key"
             "TargetName" = "8:snddemo1.key"
@@ -1455,7 +1392,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6DBB41225582452E9568E7A4A7E52FD3"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6DBB41225582452E9568E7A4A7E52FD3"
             {
             "SourcePath" = "8:Banner.bmp"
             "TargetName" = "8:Banner.bmp"
@@ -1475,7 +1412,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6E9808DF683E4D43B43239D116C106A5"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6E9808DF683E4D43B43239D116C106A5"
             {
             "SourcePath" = "8:..\\key\\new19-5.key"
             "TargetName" = "8:new19-5.key"
@@ -1495,7 +1432,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_6FD171CBC7F14F3296736E12E6902971"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6FD171CBC7F14F3296736E12E6902971"
             {
             "SourcePath" = "8:..\\maps\\froth3.map"
             "TargetName" = "8:froth3.map"
@@ -1515,7 +1452,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7094D60345484A318A2D567FEBC31248"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7094D60345484A318A2D567FEBC31248"
             {
             "SourcePath" = "8:..\\formulas\\fract_sy.frm"
             "TargetName" = "8:fract_sy.frm"
@@ -1535,7 +1472,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7715CE10F979491EA387672ED7444A6A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7715CE10F979491EA387672ED7444A6A"
             {
             "SourcePath" = "8:..\\key\\new19-4.key"
             "TargetName" = "8:new19-4.key"
@@ -1555,7 +1492,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_78545890E87E4AC095A4B963E23886B0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_78545890E87E4AC095A4B963E23886B0"
             {
             "SourcePath" = "8:..\\sschoice.exe"
             "TargetName" = "8:sschoice.exe"
@@ -1575,7 +1512,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7AB829812201473DB37CCE8C78485529"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7AB829812201473DB37CCE8C78485529"
             {
             "SourcePath" = "8:..\\formulas\\fract196.frm"
             "TargetName" = "8:fract196.frm"
@@ -1595,27 +1532,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_7AC5F16062B340A8A5C0CA1F29427529"
-            {
-            "SourcePath" = "8:..\\extra\\makecfg.zip"
-            "TargetName" = "8:makecfg.zip"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_803C18405986425B9310B94F654833EC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_803C18405986425B9310B94F654833EC"
             {
             "SourcePath" = "8:..\\pars\\cellular.par"
             "TargetName" = "8:cellular.par"
@@ -1635,7 +1552,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_85079F80FBC44955ABD9498CD68C044A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_85079F80FBC44955ABD9498CD68C044A"
             {
             "SourcePath" = "8:..\\maps\\headache.map"
             "TargetName" = "8:headache.map"
@@ -1655,7 +1572,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_85DED36392FF49C9B49061124080C63D"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_85DED36392FF49C9B49061124080C63D"
             {
             "SourcePath" = "8:..\\pars\\newphoen.par"
             "TargetName" = "8:newphoen.par"
@@ -1675,7 +1592,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8A0E39F60653465F977C752B85186C7A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8A0E39F60653465F977C752B85186C7A"
             {
             "SourcePath" = "8:..\\formulas\\ikenaga.frm"
             "TargetName" = "8:ikenaga.frm"
@@ -1695,7 +1612,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8B4BB21FFBB0465EBE2FE53E4B2F52E5"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8B4BB21FFBB0465EBE2FE53E4B2F52E5"
             {
             "SourcePath" = "8:..\\maps\\landscap.map"
             "TargetName" = "8:landscap.map"
@@ -1715,27 +1632,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_8D7608BB741245998FCCE7C51C50C41C"
-            {
-            "SourcePath" = "8:..\\read.me"
-            "TargetName" = "8:ReadMe.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_964D3F3CBA304739A9C7CE1FC49EBE24"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_964D3F3CBA304739A9C7CE1FC49EBE24"
             {
             "SourcePath" = "8:..\\maps\\firestrm.map"
             "TargetName" = "8:firestrm.map"
@@ -1755,7 +1652,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_9751A73186A94EBCAC845BD93A48B339"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9751A73186A94EBCAC845BD93A48B339"
             {
             "SourcePath" = "8:..\\extra\\tru.c"
             "TargetName" = "8:tru.c"
@@ -1775,27 +1672,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_98ABB15B6A6E4CCE96FECA943E3431C3"
-            {
-            "SourcePath" = "8:..\\extra\\bc31frac.zip"
-            "TargetName" = "8:bc31frac.zip"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_99E8B2A7954E4BF2BD9E3A03AA775974"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_99E8B2A7954E4BF2BD9E3A03AA775974"
             {
             "SourcePath" = "8:..\\pars\\fract19.par"
             "TargetName" = "8:fract19.par"
@@ -1815,7 +1692,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_9DEA5F452C774E09928DDD3BEC9C7F03"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9DEA5F452C774E09928DDD3BEC9C7F03"
             {
             "SourcePath" = "8:..\\sstools.ini"
             "TargetName" = "8:sstools.ini"
@@ -1835,7 +1712,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_9E1DF28777DB4DC09B587B3D96B5300A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9E1DF28777DB4DC09B587B3D96B5300A"
             {
             "SourcePath" = "8:..\\extra\\frmtut.zip"
             "TargetName" = "8:frmtut.zip"
@@ -1855,7 +1732,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_AD4ABF92B9A748B5A8AC6BE82B689BDC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AD4ABF92B9A748B5A8AC6BE82B689BDC"
             {
             "SourcePath" = "8:..\\formulas\\fend.frm"
             "TargetName" = "8:fend.frm"
@@ -1875,7 +1752,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B313C385B00446B48D72E06C5F0AD4F0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B313C385B00446B48D72E06C5F0AD4F0"
             {
             "SourcePath" = "8:..\\pars\\orbits.par"
             "TargetName" = "8:orbits.par"
@@ -1895,7 +1772,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B66CF0AAD34D4BC183AFE06B49B5C0A7"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B66CF0AAD34D4BC183AFE06B49B5C0A7"
             {
             "SourcePath" = "8:..\\maps\\paintjet.map"
             "TargetName" = "8:paintjet.map"
@@ -1915,7 +1792,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_B9FD658C2BF54479BBFD484436D8D6FF"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B9FD658C2BF54479BBFD484436D8D6FF"
             {
             "SourcePath" = "8:..\\Release\\fractint.exe"
             "TargetName" = "8:fractint.exe"
@@ -1935,7 +1812,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_BA4AD59E9FFB49759F6D3BBDC3905DA1"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BA4AD59E9FFB49759F6D3BBDC3905DA1"
             {
             "SourcePath" = "8:..\\maps\\lyapunov.map"
             "TargetName" = "8:lyapunov.map"
@@ -1955,7 +1832,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_BD3F42EA80E1452BA59B905B58073DC9"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BD3F42EA80E1452BA59B905B58073DC9"
             {
             "SourcePath" = "8:..\\maps\\altern.map"
             "TargetName" = "8:altern.map"
@@ -1975,7 +1852,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_BDA9E5F6A2054E0596D01B14D51C9A60"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BDA9E5F6A2054E0596D01B14D51C9A60"
             {
             "SourcePath" = "8:..\\maps\\volcano.map"
             "TargetName" = "8:volcano.map"
@@ -1995,27 +1872,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_C1BD9B147ED64A47AFD061D5AE32C59F"
-            {
-            "SourcePath" = "8:..\\debugfla.doc"
-            "TargetName" = "8:debugfla.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_C50CB12BFDA04024A982D196563FE302"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C50CB12BFDA04024A982D196563FE302"
             {
             "SourcePath" = "8:..\\extra\\if_else.zip"
             "TargetName" = "8:if_else.zip"
@@ -2035,7 +1892,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_C63BF36F9D7C47FDA4F2DF82438EABA1"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C63BF36F9D7C47FDA4F2DF82438EABA1"
             {
             "SourcePath" = "8:..\\key\\new19-6.key"
             "TargetName" = "8:new19-6.key"
@@ -2055,7 +1912,27 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CC96542E21424992AFBF45884AB7D78F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CB15F7393F1F4571BEEE5C66404CE4D8"
+            {
+            "SourcePath" = "8:..\\ReadMe.txt"
+            "TargetName" = "8:ReadMe.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CC96542E21424992AFBF45884AB7D78F"
             {
             "SourcePath" = "8:..\\maps\\neon.map"
             "TargetName" = "8:neon.map"
@@ -2075,7 +1952,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_CCE3BE32FB264C0EB2ECB948E58E8111"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CCE3BE32FB264C0EB2ECB948E58E8111"
             {
             "SourcePath" = "8:..\\tplus.dat"
             "TargetName" = "8:tplus.dat"
@@ -2095,7 +1972,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_D00FE9AA1EF740328B9ACDA40120FBBA"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D00FE9AA1EF740328B9ACDA40120FBBA"
             {
             "SourcePath" = "8:..\\maps\\gamma1.map"
             "TargetName" = "8:gamma1.map"
@@ -2115,47 +1992,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_D0E8761A2FAA48B8957E605B2543B55B"
-            {
-            "SourcePath" = "8:..\\hc.doc"
-            "TargetName" = "8:hc.txt"
-            "Tag" = "8:"
-            "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_D674C742C7DD4F669F7816F6CD0EDC6B"
-            {
-            "SourcePath" = "8:..\\extra\\fractint.dsk"
-            "TargetName" = "8:fractint.dsk"
-            "Tag" = "8:"
-            "Folder" = "8:_5C304887EE6A4FB6BD26093C7F1C1A75"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DB91098F2DC24CF397C6CE09F1C77121"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DB91098F2DC24CF397C6CE09F1C77121"
             {
             "SourcePath" = "8:..\\pars\\fractint.par"
             "TargetName" = "8:fractint.par"
@@ -2175,7 +2012,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DBD09D4EF50848D0B0B07227529E1BDC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DBD09D4EF50848D0B0B07227529E1BDC"
             {
             "SourcePath" = "8:..\\ifs\\fractint.ifs"
             "TargetName" = "8:fractint.ifs"
@@ -2195,7 +2032,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DCB91FCCA91E435E94B6B86FCCE21AE4"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DCB91FCCA91E435E94B6B86FCCE21AE4"
             {
             "SourcePath" = "8:..\\pars\\icons.par"
             "TargetName" = "8:icons.par"
@@ -2215,7 +2052,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DE1257615E6F4EBEABE5269AD45C784D"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DE1257615E6F4EBEABE5269AD45C784D"
             {
             "SourcePath" = "8:..\\formulas\\julitile.frm"
             "TargetName" = "8:julitile.frm"
@@ -2235,7 +2072,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DEA0417DC8A44D2FBC3085E34348ADE0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DEA0417DC8A44D2FBC3085E34348ADE0"
             {
             "SourcePath" = "8:..\\maps\\topo.map"
             "TargetName" = "8:topo.map"
@@ -2255,7 +2092,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DF59FD1BA00B4B488B19E1206BAE0C1E"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DF59FD1BA00B4B488B19E1206BAE0C1E"
             {
             "SourcePath" = "8:..\\key\\explore.key"
             "TargetName" = "8:explore.key"
@@ -2275,7 +2112,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_DF988E5316FF45AB9402C39B434A910F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DF988E5316FF45AB9402C39B434A910F"
             {
             "SourcePath" = "8:..\\maps\\froth316.map"
             "TargetName" = "8:froth316.map"
@@ -2295,7 +2132,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E00606B3D0AC4566B1B0F68572A953BA"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E00606B3D0AC4566B1B0F68572A953BA"
             {
             "SourcePath" = "8:..\\BUGS.txt"
             "TargetName" = "8:BUGS.txt"
@@ -2315,7 +2152,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E2DC0ED0FF9042F08A5F1D02D0DC8488"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E2DC0ED0FF9042F08A5F1D02D0DC8488"
             {
             "SourcePath" = "8:..\\extra\\phctutor.zip"
             "TargetName" = "8:phctutor.zip"
@@ -2335,7 +2172,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E7497F7FF5074138B80E2F6AC5BDDFCD"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E7497F7FF5074138B80E2F6AC5BDDFCD"
             {
             "SourcePath" = "8:..\\lsystem\\lsysfp.l"
             "TargetName" = "8:lsysfp.l"
@@ -2355,7 +2192,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_E8AE9C345CC6438BBD7F06D6706B76F6"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E8AE9C345CC6438BBD7F06D6706B76F6"
             {
             "SourcePath" = "8:..\\pars\\fract200.par"
             "TargetName" = "8:fract200.par"
@@ -2375,7 +2212,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EDCC115DA3D94C94B47DA44CFFB8FFBA"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EDCC115DA3D94C94B47DA44CFFB8FFBA"
             {
             "SourcePath" = "8:..\\lsystem\\fract205.l"
             "TargetName" = "8:fract205.l"
@@ -2395,7 +2232,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EF5AA3AFF86F424380C8E89A92922250"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EF5AA3AFF86F424380C8E89A92922250"
             {
             "SourcePath" = "8:..\\maps\\royal.map"
             "TargetName" = "8:royal.map"
@@ -2415,7 +2252,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_EF9E356B5BE24FFF8173FF034F363513"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EF9E356B5BE24FFF8173FF034F363513"
             {
             "SourcePath" = "8:..\\lsystem\\tiling.l"
             "TargetName" = "8:tiling.l"
@@ -2435,7 +2272,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F26D4A53D4A24469A9F56F6564E8BE33"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F26D4A53D4A24469A9F56F6564E8BE33"
             {
             "SourcePath" = "8:..\\formulas\\new_if.frm"
             "TargetName" = "8:new_if.frm"
@@ -2455,7 +2292,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F4D78C4C6F0D4D1F933E2A0132000777"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F4D78C4C6F0D4D1F933E2A0132000777"
             {
             "SourcePath" = "8:..\\fract19.bat"
             "TargetName" = "8:fract19.bat"
@@ -2475,7 +2312,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_F730C66FE5B44046A7B4861718C05B46"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F730C66FE5B44046A7B4861718C05B46"
             {
             "SourcePath" = "8:..\\maps\\defaultw.map"
             "TargetName" = "8:defaultw.map"
@@ -2495,7 +2332,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{A582A373-4685-4296-BEFE-614B80A702C3}:_FE88AD91A6A04DEEB0C721337A836DEA"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FE88AD91A6A04DEEB0C721337A836DEA"
             {
             "SourcePath" = "8:..\\maps\\froth616.map"
             "TargetName" = "8:froth616.map"
@@ -2521,7 +2358,7 @@
         }
         "Folder"
         {
-            "{78BAF5CE-F2E5-45BE-83BC-DB6AF387E941}:_180617C009CB43E69B42695A85511DF2"
+            "{1525181F-901A-416C-8A58-119130FE478E}:_180617C009CB43E69B42695A85511DF2"
             {
             "Name" = "8:#1919"
             "AlwaysCreate" = "11:FALSE"
@@ -2530,7 +2367,7 @@
             "Property" = "8:ProgramMenuFolder"
                 "Folders"
                 {
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_BCF6E7E6CB504D90B709B46443259F44"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_BCF6E7E6CB504D90B709B46443259F44"
                     {
                     "Name" = "8:FractInt"
                     "AlwaysCreate" = "11:FALSE"
@@ -2543,7 +2380,7 @@
                     }
                 }
             }
-            "{58C0ADA3-3CEA-43BD-A3B3-2EA121BC8217}:_B98CDCDD524A40CD961F23015E415823"
+            "{3C67513D-01DD-4637-8A68-80971EB9504F}:_B98CDCDD524A40CD961F23015E415823"
             {
             "DefaultLocation" = "8:[ProgramFilesFolder][Manufacturer]\\[ProductName]"
             "Name" = "8:#1925"
@@ -2553,7 +2390,7 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_2431143FDB3E413CBADE2C1B97B31D0A"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_2431143FDB3E413CBADE2C1B97B31D0A"
                     {
                     "Name" = "8:maps"
                     "AlwaysCreate" = "11:FALSE"
@@ -2564,7 +2401,7 @@
                         {
                         }
                     }
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_5C304887EE6A4FB6BD26093C7F1C1A75"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_5C304887EE6A4FB6BD26093C7F1C1A75"
                     {
                     "Name" = "8:extra"
                     "AlwaysCreate" = "11:FALSE"
@@ -2575,7 +2412,7 @@
                         {
                         }
                     }
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_5D9AF77B3BFD405EA4C27713FF4B4FC5"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_5D9AF77B3BFD405EA4C27713FF4B4FC5"
                     {
                     "Name" = "8:key"
                     "AlwaysCreate" = "11:FALSE"
@@ -2586,7 +2423,7 @@
                         {
                         }
                     }
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_7DF00CBEC9F343E0A3A7E926E4368C8F"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_7DF00CBEC9F343E0A3A7E926E4368C8F"
                     {
                     "Name" = "8:lsystem"
                     "AlwaysCreate" = "11:FALSE"
@@ -2597,7 +2434,7 @@
                         {
                         }
                     }
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_8B2EA8A53DD24587BEB8B6F5B5E066C6"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_8B2EA8A53DD24587BEB8B6F5B5E066C6"
                     {
                     "Name" = "8:ifs"
                     "AlwaysCreate" = "11:FALSE"
@@ -2608,7 +2445,7 @@
                         {
                         }
                     }
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_AF61B7BF2E214EA2B6D8A77B274A1FE4"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_AF61B7BF2E214EA2B6D8A77B274A1FE4"
                     {
                     "Name" = "8:pars"
                     "AlwaysCreate" = "11:FALSE"
@@ -2619,7 +2456,7 @@
                         {
                         }
                     }
-                    "{F27BD5C5-A65D-4608-96D4-7C5DA1F76302}:_BDB98DCABC7743F5B0346DA482AD44D2"
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_BDB98DCABC7743F5B0346DA482AD44D2"
                     {
                     "Name" = "8:formulas"
                     "AlwaysCreate" = "11:FALSE"
@@ -2653,6 +2490,7 @@
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
+        "InstallAllUsers" = "11:FALSE"
         "ProductVersion" = "8:20.99.9"
         "Manufacturer" = "8:Stone Soup Group"
         "ARPHELPTELEPHONE" = "8:"
@@ -2667,6 +2505,10 @@
         "ARPIconIndex" = "3:101"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
+        "TargetPlatform" = "3:0"
+        "PreBuildEvent" = "8:"
+        "PostBuildEvent" = "8:"
+        "RunPostBuildEvent" = "3:0"
         }
         "Registry"
         {
@@ -2674,7 +2516,7 @@
             {
                 "Keys"
                 {
-                    "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_3811F9CC40F049C881BEA5D6F3AA1F18"
+                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_3811F9CC40F049C881BEA5D6F3AA1F18"
                     {
                     "Name" = "8:Software"
                     "Condition" = "8:"
@@ -2683,7 +2525,7 @@
                     "Transitive" = "11:FALSE"
                         "Keys"
                         {
-                            "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_B651EF985F614D6F9A04C2B45BE2B171"
+                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_B651EF985F614D6F9A04C2B45BE2B171"
                             {
                             "Name" = "8:[Manufacturer]"
                             "Condition" = "8:"
@@ -2708,7 +2550,7 @@
             {
                 "Keys"
                 {
-                    "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_80C7D74A8AA149B186FA2DAF02FD9D58"
+                    "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_80C7D74A8AA149B186FA2DAF02FD9D58"
                     {
                     "Name" = "8:Software"
                     "Condition" = "8:"
@@ -2717,7 +2559,7 @@
                     "Transitive" = "11:FALSE"
                         "Keys"
                         {
-                            "{6A471EEF-D31B-40F8-BCF6-C9E8EC783F36}:_2CDCBDAB6F094D1BA238819DC3B84780"
+                            "{60EA8692-D2D5-43EB-80DC-7906BF13D6EF}:_2CDCBDAB6F094D1BA238819DC3B84780"
                             {
                             "Name" = "8:[Manufacturer]"
                             "Condition" = "8:"
@@ -2762,7 +2604,7 @@
         }
         "Shortcut"
         {
-            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_53816AFC30FC4418A66B685AA6941E61"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_53816AFC30FC4418A66B685AA6941E61"
             {
             "Name" = "8:Batch File Demo"
             "Arguments" = "8:"
@@ -2776,7 +2618,7 @@
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_77A213C2C03D483B9D9553FCC0B1B0B2"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_77A213C2C03D483B9D9553FCC0B1B0B2"
             {
             "Name" = "8:Batch File FractInt v19"
             "Arguments" = "8:"
@@ -2790,7 +2632,7 @@
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_7E25A07DC50D4A97A4477C134B534A84"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_7E25A07DC50D4A97A4477C134B534A84"
             {
             "Name" = "8:FractInt Files"
             "Arguments" = "8:"
@@ -2804,7 +2646,7 @@
             "Icon" = "8:_B9FD658C2BF54479BBFD484436D8D6FF"
             "Feature" = "8:"
             }
-            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_8C0A615E27D64584A480696F2128E787"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_8C0A615E27D64584A480696F2128E787"
             {
             "Name" = "8:About debug= flags"
             "Arguments" = "8:"
@@ -2812,13 +2654,13 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_C1BD9B147ED64A47AFD061D5AE32C59F"
+            "Target" = "8:_09DF0349397642A0BF7F7749D4639D84"
             "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
             "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_98728C66D6BE46278199A6BBF37D8740"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_98728C66D6BE46278199A6BBF37D8740"
             {
             "Name" = "8:Known Problems"
             "Arguments" = "8:"
@@ -2832,7 +2674,7 @@
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_B22FFD9FEC4D438084D938B62A9EF1BF"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B22FFD9FEC4D438084D938B62A9EF1BF"
             {
             "Name" = "8:About the FractInt source code"
             "Arguments" = "8:"
@@ -2840,13 +2682,13 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_1E503C6007A04C2BABB9C3F1BE21044A"
+            "Target" = "8:_2A452ADF4965472594E9550089B78390"
             "Folder" = "8:_BCF6E7E6CB504D90B709B46443259F44"
             "WorkingFolder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{478F747B-8505-45D1-9AAE-8C3B645C26E3}:_D13CA99B4EC8492699C67DF345D21878"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D13CA99B4EC8492699C67DF345D21878"
             {
             "Name" = "8:FractInt for Windows"
             "Arguments" = "8:"
@@ -2863,14 +2705,14 @@
         }
         "UserInterface"
         {
-            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_19CA5BEA522740AAABA1F96D1266B138"
+            "{DF760B10-853B-4699-99F2-AFF7185B4A62}:_19CA5BEA522740AAABA1F96D1266B138"
             {
             "Name" = "8:#1900"
             "Sequence" = "3:2"
             "Attributes" = "3:1"
                 "Dialogs"
                 {
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_4EFFB7415AF9480FAC67DBD76B7E82C4"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_4EFFB7415AF9480FAC67DBD76B7E82C4"
                     {
                     "Sequence" = "3:300"
                     "DisplayName" = "8:Confirm Installation"
@@ -2893,7 +2735,7 @@
                             }
                         }
                     }
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_AB2B49F50C384BE8921183CBDA781888"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_AB2B49F50C384BE8921183CBDA781888"
                     {
                     "Sequence" = "3:100"
                     "DisplayName" = "8:Welcome"
@@ -2942,7 +2784,7 @@
                             }
                         }
                     }
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_E4B452B1F3154922B7113432F985EC6F"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_E4B452B1F3154922B7113432F985EC6F"
                     {
                     "Sequence" = "3:200"
                     "DisplayName" = "8:Installation Folder"
@@ -2967,14 +2809,14 @@
                     }
                 }
             }
-            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_26DCC8CA743E408187948A862CFA967C"
+            "{DF760B10-853B-4699-99F2-AFF7185B4A62}:_26DCC8CA743E408187948A862CFA967C"
             {
             "Name" = "8:#1900"
             "Sequence" = "3:1"
             "Attributes" = "3:1"
                 "Dialogs"
                 {
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_6A75C46AADDE420A819BCA2C92861550"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_6A75C46AADDE420A819BCA2C92861550"
                     {
                     "Sequence" = "3:400"
                     "DisplayName" = "8:Confirm Installation"
@@ -2997,7 +2839,7 @@
                             }
                         }
                     }
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_ABE25232DCED44CA87C177DC16CB13AE"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_ABE25232DCED44CA87C177DC16CB13AE"
                     {
                     "Sequence" = "3:300"
                     "DisplayName" = "8:Installation Folder"
@@ -3018,9 +2860,22 @@
                             "Value" = "8:_6DBB41225582452E9568E7A4A7E52FD3"
                             "UsePlugInResources" = "11:TRUE"
                             }
+                            "InstallAllUsersVisible"
+                            {
+                            "Name" = "8:InstallAllUsersVisible"
+                            "DisplayName" = "8:#1059"
+                            "Description" = "8:#1159"
+                            "Type" = "3:5"
+                            "ContextData" = "8:1;True=1;False=0"
+                            "Attributes" = "3:0"
+                            "Setting" = "3:0"
+                            "Value" = "3:1"
+                            "DefaultValue" = "3:1"
+                            "UsePlugInResources" = "11:TRUE"
+                            }
                         }
                     }
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_F0DD8615FA274F78AEEC22F91ED19073"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_F0DD8615FA274F78AEEC22F91ED19073"
                     {
                     "Sequence" = "3:100"
                     "DisplayName" = "8:Welcome"
@@ -3071,26 +2926,26 @@
                     }
                 }
             }
-            "{B654A020-6903-4E6A-A86C-75DC463DB54B}:_2DC69B38F5284BEB858810A9F63367F5"
+            "{2479F3F5-0309-486D-8047-8187E2CE5BA0}:_2DC69B38F5284BEB858810A9F63367F5"
             {
             "UseDynamicProperties" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "SourcePath" = "8:<VsdDialogDir>\\VsdUserInterface.wim"
             }
-            "{B654A020-6903-4E6A-A86C-75DC463DB54B}:_58C409E52A434592933B5BAB51532197"
+            "{2479F3F5-0309-486D-8047-8187E2CE5BA0}:_58C409E52A434592933B5BAB51532197"
             {
             "UseDynamicProperties" = "11:FALSE"
             "IsDependency" = "11:FALSE"
             "SourcePath" = "8:<VsdDialogDir>\\VsdBasicDialogs.wim"
             }
-            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_A49F0CF74E16413F82C25817CB360A4E"
+            "{DF760B10-853B-4699-99F2-AFF7185B4A62}:_A49F0CF74E16413F82C25817CB360A4E"
             {
             "Name" = "8:#1901"
             "Sequence" = "3:1"
             "Attributes" = "3:2"
                 "Dialogs"
                 {
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_7BBA8F33014F4867AFBF3124AC6B7EE9"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_7BBA8F33014F4867AFBF3124AC6B7EE9"
                     {
                     "Sequence" = "3:100"
                     "DisplayName" = "8:Progress"
@@ -3128,14 +2983,14 @@
                     }
                 }
             }
-            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_AAB1EA3FE9C24E0A989C0C409118A636"
+            "{DF760B10-853B-4699-99F2-AFF7185B4A62}:_AAB1EA3FE9C24E0A989C0C409118A636"
             {
             "Name" = "8:#1902"
             "Sequence" = "3:2"
             "Attributes" = "3:3"
                 "Dialogs"
                 {
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_87607051817F4B4892F9C5F7C8E407DF"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_87607051817F4B4892F9C5F7C8E407DF"
                     {
                     "Sequence" = "3:100"
                     "DisplayName" = "8:Finished"
@@ -3160,14 +3015,14 @@
                     }
                 }
             }
-            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_B85DD8CF7A044CDCA16DF790D7C8D16B"
+            "{DF760B10-853B-4699-99F2-AFF7185B4A62}:_B85DD8CF7A044CDCA16DF790D7C8D16B"
             {
             "Name" = "8:#1902"
             "Sequence" = "3:1"
             "Attributes" = "3:3"
                 "Dialogs"
                 {
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_0C30E9238B104B0094F3702FD96E6AA0"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_0C30E9238B104B0094F3702FD96E6AA0"
                     {
                     "Sequence" = "3:100"
                     "DisplayName" = "8:Finished"
@@ -3205,14 +3060,14 @@
                     }
                 }
             }
-            "{8D9DEE8B-DD8B-4F48-9072-C4364E4F4011}:_CEE1AFE9DCF44A308C638556302F4298"
+            "{DF760B10-853B-4699-99F2-AFF7185B4A62}:_CEE1AFE9DCF44A308C638556302F4298"
             {
             "Name" = "8:#1901"
             "Sequence" = "3:2"
             "Attributes" = "3:2"
                 "Dialogs"
                 {
-                    "{18ADD6EC-89FE-4ED7-AD3E-211C40278470}:_90025C0D9857415C9A673D27385BB756"
+                    "{688940B3-5CA9-4162-8DEE-2993FA9D8CBC}:_90025C0D9857415C9A673D27385BB756"
                     {
                     "Sequence" = "3:100"
                     "DisplayName" = "8:Progress"
