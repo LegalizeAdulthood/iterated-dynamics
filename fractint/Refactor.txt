@@ -86,3 +86,33 @@ Enhance single document model to multiple document model:
   fractal renderings happening concurrently.
 - Introducing a multiple-document model will be nearly impossible until
   all the global state is sorted out into objects, so don't try until then.
+
+Replace homebrew complex type with std::complex<T>:
+===================================================
+- std::complex<T> implements the basic functions we care about
+- Boost implements more functions on std::complex<T> that we can leverage
+- Any missing functions we need can be implemented for std::complex<T>
+  using our procedural code
+
+Replace use of long integers with FixedPoint class:
+===================================================
+- Encapsulate the concept of a fixed-point integer into a class; this
+  will hide all the use of g_fudge, shifting/multiplying/dividing by
+  the scale factor into a single location.
+- Implement natural arithmetic operators and conversions for the
+  FixedPoint class
+- Recast existing integer fractal code into using FixedPoint class
+- Strive to get the same expression for floating-point code as for
+  fixed-point code.  If this can be obtained, then you can parameterize
+  the whole mess by data type and create a fractal type that can be
+  instantiated for FixedPoint, float, bignum, etc., as long as the
+  underlying numerical type supports all the operators and functions
+  used.
+
+Replace homebrew bignum/bigflt with GNU GMP library and other layers:
+=====================================================================
+- The current bignum library is limited in the way it allocates arbitrary
+  precision objects from an internal fixed-size stack.
+- Eventually replace the bignum code with the GNU GMP library and the
+  C++ layers built on top of it.  Get a bigflt and use std::complex<bigflt>
+  to implement complex bignums.
