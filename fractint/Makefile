@@ -11,7 +11,7 @@ MANDIR = /usr/X11R6/man/man1
 HFD = ./headers
 UDIR = ./unix
 COMDIR = ./common
-DOSHELPDIR = ./dos_help
+DOSHELPDIR = ./help
 
 FDIR = formulas
 IDIR = ifs
