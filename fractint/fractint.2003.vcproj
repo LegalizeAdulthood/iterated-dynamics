@@ -584,18 +584,18 @@
 			Name="help"
 			Filter="">
 			<File
-				RelativePath=".\dos_help\help.src">
+				RelativePath=".\help\help.src">
 				<FileConfiguration
 					Name="Debug|Win32">
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Compiling help files"
-						CommandLine="cd $(ProjectDir)dos_help
+						CommandLine="cd $(ProjectDir)help
 $(ConfigurationName)\hc /c
 copy helpdefs.h $(ProjectDir)headers
 copy fractint.hlp $(ProjectDir)
 "
-						AdditionalDependencies="dos_help\help2.src;dos_help\help3.src;dos_help\help4.src;dos_help\help5.src"
+						AdditionalDependencies="help\help2.src;help\help3.src;help\help4.src;help\help5.src"
 						Outputs="headers\helpdefs.h;fractint.hlp;"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -603,17 +603,17 @@ copy fractint.hlp $(ProjectDir)
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Compiling help files"
-						CommandLine="cd $(ProjectDir)dos_help
+						CommandLine="cd $(ProjectDir)help
 $(ConfigurationName)\hc /c
 copy helpdefs.h $(ProjectDir)headers
 copy fractint.hlp $(ProjectDir)
 "
-						AdditionalDependencies="dos_help\help2.src;dos_help\help3.src;dos_help\help4.src;dos_help\help5.src"
+						AdditionalDependencies="help\help2.src;help\help3.src;help\help4.src;help\help5.src"
 						Outputs="headers\helpdefs.h;fractint.hlp;"/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dos_help\help2.src">
+				RelativePath=".\help\help2.src">
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="TRUE">
@@ -628,7 +628,7 @@ copy fractint.hlp $(ProjectDir)
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dos_help\help3.src">
+				RelativePath=".\help\help3.src">
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="TRUE">
@@ -643,7 +643,7 @@ copy fractint.hlp $(ProjectDir)
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dos_help\help4.src">
+				RelativePath=".\help\help4.src">
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="TRUE">
@@ -658,7 +658,7 @@ copy fractint.hlp $(ProjectDir)
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dos_help\help5.src">
+				RelativePath=".\help\help5.src">
 				<FileConfiguration
 					Name="Debug|Win32"
 					ExcludedFromBuild="TRUE">
