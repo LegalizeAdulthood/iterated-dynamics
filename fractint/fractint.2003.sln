@@ -4,7 +4,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fractint", "fractint.2003.v
 		{92025993-C759-4969-8093-3361B2DC4832} = {92025993-C759-4969-8093-3361B2DC4832}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "dos_help\hc.2003.vcproj", "{92025993-C759-4969-8093-3361B2DC4832}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "help\hc.2003.vcproj", "{92025993-C759-4969-8093-3361B2DC4832}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
