@@ -287,7 +287,7 @@ Version 20.4.5 is an update of Fractint 20.0 based on the developer's
 Patch 5 to Version 20.4.0\
 
 Tim's changes (5/29/2006)\
-  Moved version 20.0 change history to revision history to make room for 
+  Moved version 20.0 change history to revision history to make room
   in help.src.
   
   Changed help screen to show just two main authors - decided
@@ -601,8 +601,8 @@ Fixed a bug which caused the float only version to omit the name of the
 
   Incorporated Gerald Dobiasovsky's fix to make the background= command work.
 
-  Added truecolor support to Xfractint thanks to Rich Thomson and Jean-Pierre
-  Demailly.
+  Added truecolor support to Xfractint thanks to Richard Thomson and
+  Jean-Pierre Demailly.
 
   Additional Xfractint fixes include the mandelcloud type and outside=atan
   when used with type=mandel.

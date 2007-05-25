@@ -1977,7 +1977,7 @@ Fixed bug that caused lockup when extended memory is used without any
 
 Fixed a bug in the spacing of file names in the file selection menu.
 
-Added Rich Thomson's Xfractint fixes for Silicon Graphics. 
+Added Richard Thomson's Xfractint fixes for Silicon Graphics. 
 
 Fixed Julia pointer bug.
 
