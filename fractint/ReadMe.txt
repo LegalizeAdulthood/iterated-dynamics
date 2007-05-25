@@ -1,4 +1,4 @@
-Tip: In VS.NET 2003, select the FractIntSetup project in the Solution
+Tip: In VS.NET 2003/2005, select the FractIntSetup project in the Solution
 explorer.  Then select Project / Unload Project to unload the setup
 project.  It isn't built in the Debug configuration, but processing the
 project itself is slow, so keep it unloaded until you need to build a
@@ -207,7 +207,7 @@ Microsoft C++ express edition compiler.
 4. Compilation
 
 	Launch Visual C++ and select File / Open / Project/Solution... and
-	browse to the fractint.2005.sln solution file where you installed the
+	browse to the fractint.sln solution file where you installed the
 	FractInt for Windows source code.  The code should compile with no
 	warnings or errors.  If you got any errors, particularly on files in
 	the Win32 folder, then check your Platform SDK include and link
