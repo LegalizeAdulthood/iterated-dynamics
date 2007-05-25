@@ -1377,7 +1377,7 @@
 			Name="help"
 			>
 			<File
-				RelativePath=".\dos_help\help.src"
+				RelativePath=".\help\help.src"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1386,7 +1386,7 @@
 						Name="VCCustomBuildTool"
 						Description="Compiling help files"
 						CommandLine="cd help&#x0D;&#x0A;$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy fractint.hlp $(ProjectDir)&#x0D;&#x0A;"
-						AdditionalDependencies="dos_help\help2.src;dos_help\help3.src;dos_help\help4.src;dos_help\help5.src"
+						AdditionalDependencies="help\help2.src;help\help3.src;help\help4.src;help\help5.src"
 						Outputs="headers\helpdefs.h;fractint.hlp;"
 					/>
 				</FileConfiguration>
@@ -1397,13 +1397,13 @@
 						Name="VCCustomBuildTool"
 						Description="Compiling help files"
 						CommandLine="cd help&#x0D;&#x0A;$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy fractint.hlp $(ProjectDir)&#x0D;&#x0A;"
-						AdditionalDependencies="dos_help\help2.src;dos_help\help3.src;dos_help\help4.src;dos_help\help5.src"
+						AdditionalDependencies="help\help2.src;help\help3.src;help\help4.src;help\help5.src"
 						Outputs="headers\helpdefs.h;fractint.hlp;"
 					/>
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dos_help\help2.src"
+				RelativePath=".\help\help2.src"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1423,7 +1423,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dos_help\help3.src"
+				RelativePath=".\help\help3.src"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1443,7 +1443,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dos_help\help4.src"
+				RelativePath=".\help\help4.src"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -1463,7 +1463,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\dos_help\help5.src"
+				RelativePath=".\help\help5.src"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
