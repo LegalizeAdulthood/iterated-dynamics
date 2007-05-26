@@ -1,4 +1,5 @@
 #include <string.h>
+#include <ctype.h>
 #ifndef XFRACT
 #include <direct.h>
 #endif
@@ -26,6 +27,7 @@
 #include "prototyp.h"
 
 #include "filesystem.h"
+#include "miscres.h"
 
 int merge_path_names(char *oldfullpath, char *newfilename, bool copy_directory)
 {
@@ -477,4 +479,123 @@ char *has_extension(char *source)
 	return ret;
 }
 
+#ifndef XFRACT
+/* return full pathnames */
+void findpath(const char *filename, char *fullpathname)
+{
+	char fname[FILE_MAX_FNAME];
+	char ext[FILE_MAX_EXT];
+	char temp_path[FILE_MAX_PATH];
+
+	split_path(filename , NULL, NULL, fname, ext);
+	make_path(temp_path, ""   , "" , fname, ext);
+
+	if (g_check_current_dir != 0 && access(temp_path, 0) == 0)   /* file exists */
+	{
+		strcpy(fullpathname, temp_path);
+		return;
+	}
+
+	strcpy(temp_path, filename);   /* avoid side effect changes to filename */
+
+	if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
+	{
+		if (access(temp_path, 0) == 0)   /* file exists */
+		{
+			strcpy(fullpathname, temp_path);
+			return;
+		}
+		else
+		{
+			split_path(temp_path , NULL, NULL, fname, ext);
+			make_path(temp_path, ""   , "" , fname, ext);
+		}
+	}
+	fullpathname[0] = 0;                         /* indicate none found */
+	_searchenv(temp_path, "PATH", fullpathname);
+	if (!fullpathname[0])
+	{
+		_searchenv(temp_path, "FRACTDIR", fullpathname);
+	}
+	if (fullpathname[0] != 0)                    /* found it! */
+	{
+		if (strncmp(&fullpathname[2], SLASHSLASH, 2) == 0) /* stupid klooge! */
+		{
+			strcpy(&fullpathname[3], temp_path);
+		}
+	}
+}
+#endif
+
+int check_write_file(char *name, const char *ext)
+{
+	/* TODO: change encoder.cpp to also use this routine */
+nextname:
+	char openfile[FILE_MAX_DIR];
+	strcpy(openfile, name);
+	char opentype[20];
+	strcpy(opentype, ext);
+	char *period = has_extension(openfile);
+	if (period != NULL)
+	{
+		strcpy(opentype, period);
+		*period = 0;
+	}
+	strcat(openfile, opentype);
+	if (access(openfile, 0) != 0) /* file doesn't exist */
+	{
+		strcpy(name, openfile);
+		return 0;
+	}
+	/* file already exists */
+	if (!g_fractal_overwrite)
+	{
+		update_save_name(name);
+		goto nextname;
+	}
+	return 1;
+}
+
+void update_save_name(char *filename) /* go to the next file name */
+{
+	char *save;
+	char *hold;
+	char drive[FILE_MAX_DRIVE];
+	char dir[FILE_MAX_DIR];
+	char fname[FILE_MAX_FNAME];
+	char ext[FILE_MAX_EXT];
+
+	split_path(filename , drive, dir, fname, ext);
+
+	hold = fname + strlen(fname) - 1; /* start at the end */
+	while (hold >= fname && (*hold == ' ' || isdigit(*hold))) /* skip backwards */
+	{
+		hold--;
+	}
+	hold++;                      /* recover first digit */
+	while (*hold == '0')         /* skip leading zeros */
+	{
+		hold++;
+	}
+	save = hold;
+	while (*save)  /* check for all nines */
+	{
+		if (*save != '9')
+		{
+			break;
+		}
+		save++;
+		}
+	if (!*save)                  /* if the whole thing is nines then back */
+	{
+		save = hold - 1;          /* up one place. Note that this will eat */
+	}
+								/* your last letter if you go to far.    */
+	else
+	{
+		save = hold;
+	}
+	sprintf(save, "%ld", atol(hold) + 1); /* increment the number */
+	make_path(filename, drive, dir, fname, ext);
+}
 

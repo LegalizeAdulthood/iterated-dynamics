@@ -13,7 +13,7 @@
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fihelp.h"
-#include "miscres.h"
+#include "filesystem.h"
 #include "realdos.h"
 
 #include "SoundState.h"
