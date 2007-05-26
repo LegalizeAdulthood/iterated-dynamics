@@ -67,7 +67,8 @@ SRCS = \
 	Tesseral.cpp \
 	BoundaryTrace.cpp \
 	DiffusionScan.cpp \
-	WorkList.cpp
+	WorkList.cpp \
+	filesystem.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
