@@ -13,5 +13,8 @@ extern int dir_remove(char *, char *);
 extern FILE *dir_fopen(const char *, const char *, const char *);
 extern void extract_filename(char *, char *);
 extern char *has_extension(char *source);
+extern void findpath(const char *, char *);
+extern int check_write_file(char *filename, const char *ext);
+extern void update_save_name(char *);
 
 #endif

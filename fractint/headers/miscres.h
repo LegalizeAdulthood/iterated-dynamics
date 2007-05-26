@@ -4,14 +4,11 @@
 #include "big.h"
 
 extern void restore_active_ovly();
-extern void findpath(const char *, char *);
 extern void not_disk_message();
 extern void convert_center_mag(double *, double *, LDBL *, double *, double *, double *);
 extern void convert_corners(double, double, LDBL, double, double, double);
 extern void convert_center_mag_bf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void convert_corners_bf(bf_t, bf_t, LDBL, double, double, double);
-extern void update_save_name(char *);
-extern int check_write_file(char *filename, const char *ext);
 extern int check_key();
 extern void show_trig(char *);
 extern int set_trig_array(int, const char *);
