@@ -9,10 +9,11 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
-#include "drivers.h"
-#include "fihelp.h"
 
 #include "diskvid.h"
+#include "drivers.h"
+#include "fihelp.h"
+#include "filesystem.h"
 #include "loadmap.h"
 #include "prompts2.h"
 #include "rotate.h"

@@ -24,8 +24,10 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+
 #include "drivers.h"
 #include "fihelp.h"
+#include "filesystem.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "miscres.h"

@@ -11,11 +11,12 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "fihelp.h"
 
 #include "calcfrac.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "fihelp.h"
+#include "filesystem.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "loadfdos.h"

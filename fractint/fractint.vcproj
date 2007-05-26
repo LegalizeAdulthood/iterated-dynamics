@@ -742,6 +742,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\filesystem.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\gifview.cpp"
 					>
 					<FileConfiguration
@@ -1070,6 +1074,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\externs.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\filesystem.h"
 				>
 			</File>
 			<File

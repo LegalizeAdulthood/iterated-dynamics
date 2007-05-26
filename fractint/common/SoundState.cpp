@@ -9,9 +9,10 @@
 #include "fractint.h"
 #include "externs.h"
 #include "helpdefs.h"
-#include "fihelp.h"
-#include "drivers.h"
+
 #include "cmdfiles.h"
+#include "drivers.h"
+#include "fihelp.h"
 #include "miscres.h"
 #include "realdos.h"
 

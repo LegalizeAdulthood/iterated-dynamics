@@ -27,6 +27,7 @@
 #include "calcfrac.h"
 #include "calcmand.h"
 #include "drivers.h"
+#include "filesystem.h"
 #include "fpu.h"
 #include "calcfrac.h"
 #include "diskvid.h"

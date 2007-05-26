@@ -26,9 +26,11 @@
 #include "externs.h"
 #include "fractype.h"
 #include "helpdefs.h"
+
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "fihelp.h"
-#include "cmdfiles.h"
+#include "filesystem.h"
 #include "fractalp.h"
 #include "framain2.h"
 #include "loadfile.h"

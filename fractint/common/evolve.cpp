@@ -6,10 +6,10 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "fihelp.h"
 
 #include "calcfrac.h"
 #include "evolve.h"
+#include "fihelp.h"
 #include "fractalp.h"
 #include "history.h"
 #include "miscres.h"

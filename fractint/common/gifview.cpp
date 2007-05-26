@@ -20,6 +20,7 @@
 
 #include "decoder.h"
 #include "diskvid.h"
+#include "filesystem.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "gifview.h"

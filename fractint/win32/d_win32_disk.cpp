@@ -13,11 +13,11 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "fihelp.h"
 
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "fihelp.h"
 #include "miscres.h"
 #include "plot3d.h"
 

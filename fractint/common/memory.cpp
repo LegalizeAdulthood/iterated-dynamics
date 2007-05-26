@@ -15,7 +15,9 @@
 
 #include "port.h"
 #include "prototyp.h"
+
 #include "drivers.h"
+#include "filesystem.h"
 #include "prompts2.h"
 #include "realdos.h"
 
