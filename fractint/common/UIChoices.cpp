@@ -6,6 +6,7 @@
 #include "port.h"
 #include "fractint.h"
 #include "prototyp.h"
+
 #include "fihelp.h"
 #include "prompts1.h"
 

@@ -22,10 +22,10 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
-#include "fihelp.h"
 
 #include "ant.h"
 #include "drivers.h"
+#include "fihelp.h"
 #include "fracsubr.h"
 #include "realdos.h"
 

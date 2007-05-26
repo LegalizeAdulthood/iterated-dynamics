@@ -30,8 +30,10 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+
 #include "drivers.h"
 #include "fihelp.h"
+#include "filesystem.h"
 #include "miscres.h"
 #include "prompts1.h"
 #include "prompts2.h"

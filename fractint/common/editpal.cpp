@@ -124,11 +124,12 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
-#include "drivers.h"
 #include "helpdefs.h"
-#include "fihelp.h"
 
+#include "drivers.h"
 #include "editpal.h"
+#include "fihelp.h"
+#include "filesystem.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"

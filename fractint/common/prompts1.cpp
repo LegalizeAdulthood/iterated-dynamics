@@ -23,10 +23,11 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "fihelp.h"
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "fihelp.h"
+#include "filesystem.h"
 #include "fracsuba.h"
 #include "fracsubr.h"
 #include "fractalp.h"

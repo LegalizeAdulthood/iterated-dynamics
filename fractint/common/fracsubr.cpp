@@ -21,10 +21,10 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
-#include "drivers.h"
-#include "fihelp.h"
 
 #include "calcfrac.h"
+#include "drivers.h"
+#include "fihelp.h"
 #include "fracsubr.h"
 #include "fractalb.h"
 #include "fractalp.h"

@@ -14,11 +14,11 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
-#include "fihelp.h"
 
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "fihelp.h"
 #include "miscovl.h"
 #include "miscres.h"
 #include "realdos.h"

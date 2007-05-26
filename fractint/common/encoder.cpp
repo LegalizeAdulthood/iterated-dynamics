@@ -12,9 +12,11 @@
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+
 #include "drivers.h"
 #include "diskvid.h"
 #include "encoder.h"
+#include "filesystem.h"
 #include "framain2.h"
 #include "loadfile.h"
 #include "miscres.h"

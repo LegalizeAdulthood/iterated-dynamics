@@ -19,6 +19,7 @@
 #include "3d.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "filesystem.h"
 #include "line3d.h"
 #include "miscres.h"
 #include "prompts2.h"

@@ -23,10 +23,10 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
-#include "fihelp.h"
 
 #include "drivers.h"
 #include "encoder.h"
+#include "fihelp.h"
 #include "gifview.h"
 #include "realdos.h"
 #include "rotate.h"
