@@ -1,7 +1,7 @@
 #if !defined(FRA_MAIN_2_H)
 #define FRA_MAIN_2_H
 
-extern ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool resume_flag);
+extern ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool resume_flag);
 extern int check_key();
 extern int key_count(int);
 #if !defined(XFRACT)
