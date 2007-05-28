@@ -1839,10 +1839,6 @@ do_3d_transform:
 		make_batch_file();
 		break;
 
-	case FIK_CTL_P:                    /* print current image          */
-		driver_buzzer(BUZZER_INTERRUPT);
-		return APPSTATE_CONTINUE;
-
 	case FIK_ENTER:                  /* Enter                        */
 	case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
 		handle_zoom_in(kbdmore);

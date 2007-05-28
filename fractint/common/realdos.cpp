@@ -1522,7 +1522,6 @@ static int menu_check_key(int curkey, int choice)
 	{
 		if (strchr("\\sobpkrh", testkey) || testkey == FIK_TAB
 		|| testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
-		|| testkey == FIK_CTL_P
 		|| testkey == FIK_CTL_S || testkey == FIK_CTL_U) /* ctrl-A, E, H, P, S, U */
 			return -testkey;
 		if (testkey == ' ')
