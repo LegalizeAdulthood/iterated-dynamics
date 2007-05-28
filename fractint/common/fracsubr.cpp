@@ -1665,8 +1665,8 @@ void get_julia_attractor(double real, double imag)
 
 	g_old_z_l.x = g_old_z_l.x << g_bit_shift;
 	g_old_z_l.y = g_old_z_l.y << g_bit_shift;
-	g_temp_sqr_x_l = g_temp_sqr_x_l << g_bit_shift;
-	g_temp_sqr_y_l = g_temp_sqr_y_l << g_bit_shift;
+	g_temp_sqr_x_l <<= g_bit_shift;
+	g_temp_sqr_y_l <<= g_bit_shift;
 
 	if (g_max_iteration < 500)         /* we're going to try at least this hard */
 	{

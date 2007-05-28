@@ -169,7 +169,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 	if (color != 0)         /* Keeps index 0 still 0 */
 	{
 		color = g_colors - color; /*  Reverses color order */
-		color = color / 4;
+		color /= 4;
 		if (color == 0)
 		{
 			color = 1;
@@ -194,7 +194,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
-			color = color <<2;
+			color <<= 2;
 			g_plot_color_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{
@@ -289,7 +289,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
 			/* Overwrite previous blue, don't mess with existing red */
-			color = color <<4;
+			color <<= 4;
 			g_plot_color_put_color(x, y, color|(tmp&15));
 			if (g_targa_output)
 			{
@@ -349,7 +349,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
-			color = color <<4;
+			color <<= 4;
 			g_plot_color_put_color(x, y, color|tmp);
 			if (g_targa_output)
 			{

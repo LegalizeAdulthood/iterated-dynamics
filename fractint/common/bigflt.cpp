@@ -2394,7 +2394,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 		p++;
 		memmove(r + 2, r + 1, dec-1);
 		r[1] = (BYTE)(overflow % 10);
-		overflow = overflow / 10;
+		overflow /= 10;
 	}
 	big_set16(power10, (U16)p); /* save power of ten */
 	r[0] = (BYTE)signflag; /* restore sign flag */
@@ -2481,7 +2481,7 @@ char *bf10tostr_e(char *s, int dec, bf10_t n)
 	/* if p is negative, it is not necessary to show all the decimal places */
 	if (p < 0 && dec > 8) /* 8 sounds like a reasonable value */
 	{
-		dec = dec + p;
+		dec += p;
 		if (dec < 8) /* let's keep at least a few */
 		{
 			dec = 8;
@@ -2538,7 +2538,7 @@ char *bf10tostr_f(char *s, int dec, bf10_t n)
 	/* if p is negative, it is not necessary to show all the decimal places */
 	if (p < 0 && dec > 8) /* 8 sounds like a reasonable value */
 	{
-		dec = dec + p;
+		dec += p;
 		if (dec < 8) /* let's keep at least a few */
 		{
 			dec = 8;

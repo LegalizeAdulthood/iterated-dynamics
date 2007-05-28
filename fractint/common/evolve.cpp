@@ -657,21 +657,23 @@ get_evol_restart:
 			g_fiddle_reduction = 1.0;
 			goto get_evol_restart;
 		case FIK_F2:
-			g_parameter_range_x = g_parameter_range_x / 2;
-			g_parameter_offset_x = g_new_parameter_offset_y = g_parameter_offset_x + g_parameter_range_x / 2;
-			g_parameter_range_y = g_parameter_range_y / 2;
-			g_parameter_offset_y = g_new_parameter_offset_y = g_parameter_offset_y + g_parameter_range_y / 2;
-			g_fiddle_factor = g_fiddle_factor / 2;
+			g_parameter_range_x /= 2;
+			g_parameter_offset_x = g_parameter_offset_x + g_parameter_range_x/2;
+			g_new_parameter_offset_y = g_parameter_offset_x;
+			g_parameter_range_y /= 2;
+			g_parameter_offset_y = g_parameter_offset_y + g_parameter_range_y/2;
+			g_new_parameter_offset_y = g_parameter_offset_y;
+			g_fiddle_factor /= 2;
 			goto get_evol_restart;
 		case FIK_F3:
 			{
 				double centerx = g_parameter_offset_x + g_parameter_range_x / 2;
-				g_parameter_range_x = g_parameter_range_x*2;
+				g_parameter_range_x *= 2;
 				g_parameter_offset_x = g_new_parameter_offset_x = centerx - g_parameter_range_x / 2;
 				double centery = g_parameter_offset_y + g_parameter_range_y / 2;
-				g_parameter_range_y = g_parameter_range_y*2;
+				g_parameter_range_y *= 2;
 				g_parameter_offset_y = g_new_parameter_offset_y = centery - g_parameter_range_y / 2;
-				g_fiddle_factor = g_fiddle_factor*2;
+				g_fiddle_factor *= 2;
 				goto get_evol_restart;
 			}
 		}

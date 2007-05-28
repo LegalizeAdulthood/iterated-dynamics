@@ -1885,7 +1885,7 @@ static int HSVtoRGB(BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsig
 {
 	if (hue >= 23040)
 	{
-		hue = hue % 23040;            /* Makes h circular  */
+		hue %= 23040;            /* Makes h circular  */
 	}
 
 	int I = (int) (hue/3840);

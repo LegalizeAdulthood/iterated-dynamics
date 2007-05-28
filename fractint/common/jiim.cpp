@@ -825,11 +825,11 @@ void Jiim(int which)         /* called by fractint */
 					/* break; */
 				case 'c':   /* circle toggle */
 				case 'C':   /* circle toggle */
-					mode = mode ^ 1;
+					mode ^= 1;
 					break;
 				case 'l':
 				case 'L':
-					mode = mode ^ 2;
+					mode ^= 2;
 					break;
 				case 'n':
 				case 'N':

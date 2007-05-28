@@ -720,7 +720,7 @@ int gaussian_number(int probability, int range)
 		}
 		accum /= g_gaussian_slope;
 		int r = (int) (multiply((long) range << 15, accum, 15) >> 14);
-		r = r - range;
+		r -= range;
 		if (r < 0)
 		{
 			r = -r;

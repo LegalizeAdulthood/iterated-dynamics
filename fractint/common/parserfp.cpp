@@ -1343,8 +1343,8 @@ SkipOptimizer:  /* -------------  end of optimizer ----------------------- */
 	}
 	else
 	{
-		s_stack_count = s_stack_count + Delta;
-		s_real_stack_count = s_real_stack_count + Delta;
+		s_stack_count += Delta;
+		s_real_stack_count += Delta;
 	}
 
 	DBUGMSG3("Stack:  %2d --> %2d,  Real stack:  %2d",

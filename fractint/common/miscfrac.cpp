@@ -290,8 +290,8 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 	S32 pseudorandom;
 	pseudorandom = ((S32)s_iparm_x)*((rand15()-16383));
 	/* pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); */
-	pseudorandom = pseudorandom*s_recur1;
-	pseudorandom = pseudorandom >> s_shift_value;
+	pseudorandom *= s_recur1;
+	pseudorandom >>= s_shift_value;
 	pseudorandom = (((S32) s_get_pixels(xa, ya) + (S32) s_get_pixels(xb, yb) + 1)/2) + pseudorandom;
 	if (s_max_plasma == 0)
 	{
@@ -648,7 +648,7 @@ int plasma()
 		s_recur1 = i = k = 1;
 		while (new_subdivision(0, 0, g_x_dots-1, g_y_dots-1, i) == 0)
 		{
-			k = k*2;
+			k *= 2;
 			if (k  >(int)max(g_x_dots-1, g_y_dots-1))
 			{
 				break;

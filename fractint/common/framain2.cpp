@@ -352,10 +352,10 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				}
 				if (g_evolving_flags & EVOLVE_FIELD_MAP)
 				{
-					g_x_dots = (g_screen_width / g_grid_size)-!((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-					g_x_dots = g_x_dots - (g_x_dots % 4); /* trim to multiple of 4 for SSG */
-					g_y_dots = (g_screen_height / g_grid_size)-!((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-					g_y_dots = g_y_dots - (g_y_dots % 4);
+					g_x_dots = (g_screen_width/g_grid_size) - !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+					g_x_dots -= g_x_dots % 4; /* trim to multiple of 4 for SSG */
+					g_y_dots = (g_screen_height/g_grid_size) - !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+					g_y_dots -= g_y_dots % 4;
 				}
 				else
 				{
@@ -540,7 +540,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					}
 					save_parameter_history();
 					ecount = 0;
-					g_fiddle_factor = g_fiddle_factor*g_fiddle_reduction;
+					g_fiddle_factor *= g_fiddle_reduction;
 					g_parameter_offset_x = g_new_parameter_offset_x;
 					g_parameter_offset_y = g_new_parameter_offset_y;
 					/* odpx used for discrete parms like inside, outside, trigfn etc */

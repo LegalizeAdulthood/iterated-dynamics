@@ -577,10 +577,10 @@ int solid_guess()
 	i = g_work_pass;
 	while (--i > 0) /* allow for already done passes */
 	{
-		blocksize = blocksize >> 1;
+		blocksize >>= 1;
 	}
 	g_reset_periodicity = 0;
-	while ((blocksize = blocksize >> 1) >= 2)
+	while ((blocksize >>= 1) >= 2)
 	{
 		if (g_stop_pass > 0)
 		{

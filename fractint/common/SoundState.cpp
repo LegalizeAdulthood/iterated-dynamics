@@ -353,7 +353,7 @@ void SoundState::buzzer(int tone)
 		{
 			int oldsoundflag = m_flags;
 			sleepms(1); /* to allow quiet timer calibration first time */
-			m_flags = m_flags & 0xf7; /*switch off sound_on stuff for pc spkr */
+			m_flags &= 0xf7; /*switch off sound_on stuff for pc spkr */
 			switch(tone)
 			{
 			case 0:
@@ -427,9 +427,9 @@ get_sound_restart:
 
 		int k = -1;
 		m_flags = dialog.values(++k).uval.ch.val;
-		m_flags = m_flags + (dialog.values(++k).uval.ch.val * SOUNDFLAG_SPEAKER);
-		m_flags = m_flags + (dialog.values(++k).uval.ch.val * SOUNDFLAG_OPL3_FM);
-		m_flags = m_flags + (dialog.values(++k).uval.ch.val * SOUNDFLAG_QUANTIZED);
+		m_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_SPEAKER);
+		m_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_OPL3_FM);
+		m_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_QUANTIZED);
 		g_orbit_delay = dialog.values(++k).uval.ival;
 		m_base_hertz = dialog.values(++k).uval.ival;
 		g_start_show_orbit = (dialog.values(++k).uval.ch.val != 0);

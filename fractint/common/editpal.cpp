@@ -1927,7 +1927,7 @@ static void pal_table_draw_status(pal_table *me, bool stripe_mode)
 				stripe_mode ? 'T' : ' ');
 			driver_display_string(x, y, s_fg_color, s_bg_color, buff);
 
-			y = y - 10;
+			y -= 10;
 			sprintf(buff, "%d", color);
 			driver_display_string(x, y, s_fg_color, s_bg_color, buff);
 		}

@@ -197,7 +197,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 			y[color] = random_number(g_y_dots);
 		}
 	}
-	maxpts = maxpts / (long) INNER_LOOP;
+	maxpts /= (long) INNER_LOOP;
 	long count;
 	for (count = 0; count < maxpts; count++)
 	{
@@ -358,7 +358,7 @@ void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 	/* use this rule when a black pixel is found */
 	rule[0] = 0;
 	int rule_mask = 1;
-	maxpts = maxpts / (long) INNER_LOOP;
+	maxpts /= (long) INNER_LOOP;
 	for (int count = 0; count < maxpts; count++)
 	{
 		/* check for a key only every inner_loop times */
