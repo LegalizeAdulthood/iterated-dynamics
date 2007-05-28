@@ -790,7 +790,6 @@ enum ColoringModeType
 #define ATAN        -6
 #define FMOD        -7
 #define TDIS        -8
-#define PERIOD    -102
 #define FMODI     -103
 #define ATANI     -104
 

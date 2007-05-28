@@ -1315,7 +1315,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		g_old_color_iter = 2147483647L;       /* don't check periodicity at all */
 	}
-	else if (g_inside == PERIOD)   /* for display-periodicity */
+	else if (g_inside == COLORMODE_PERIOD)   /* for display-periodicity */
 	{
 		g_old_color_iter = (g_max_iteration/5)*4;       /* don't check until nearly done */
 	}
@@ -1408,7 +1408,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		g_color_iter = -1;
 	}
 	caught_a_cycle = 0;
-	if (g_inside == PERIOD)
+	if (g_inside == COLORMODE_PERIOD)
 	{
 		savedand = 16;           /* begin checking every 16th cycle */
 	}
@@ -2090,7 +2090,7 @@ plot_inside: /* we're "inside" */
 				}
 			}
 		}
-		else if (g_inside == PERIOD)
+		else if (g_inside == COLORMODE_PERIOD)
 		{
 			g_color_iter = (cyclelen > 0) ? cyclelen : g_max_iteration;
 		}
