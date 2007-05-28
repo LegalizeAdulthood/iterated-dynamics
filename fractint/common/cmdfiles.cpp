@@ -1212,7 +1212,7 @@ static int inside_arg(const cmd_context &context)
 		{ "bof60", COLORMODE_BEAUTY_OF_FRACTALS_60 },
 		{ "bof61", COLORMODE_BEAUTY_OF_FRACTALS_61 },
 		{ "epsiloncross", COLORMODE_EPSILON_CROSS },
-		{ "startrail", STARTRAIL },
+		{ "startrail", COLORMODE_STAR_TRAIL },
 		{ "period", PERIOD },
 		{ "fmod", FMODI },
 		{ "atan", ATANI },

@@ -1300,7 +1300,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		changed[i] = 0L;
 	}
 #endif
-	if (g_inside == STARTRAIL)
+	if (g_inside == COLORMODE_STAR_TRAIL)
 	{
 		for (int i = 0; i < 16; i++)
 		{
@@ -1311,7 +1311,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			g_max_iteration = 16;
 		}
 	}
-	if (g_periodicity_check == 0 || g_inside == COLORMODE_Z_MAGNITUDE || g_inside == STARTRAIL)
+	if (g_periodicity_check == 0 || g_inside == COLORMODE_Z_MAGNITUDE || g_inside == COLORMODE_STAR_TRAIL)
 	{
 		g_old_color_iter = 2147483647L;       /* don't check periodicity at all */
 	}
@@ -1526,7 +1526,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			g_old_z = g_new_z;
 		}
 		/* the usual case */
-		else if ((g_current_fractal_specific->orbitcalc() && g_inside != STARTRAIL)
+		else if ((g_current_fractal_specific->orbitcalc() && g_inside != COLORMODE_STAR_TRAIL)
 				|| g_overflow)
 		{
 			break;
@@ -1560,7 +1560,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			{
 				g_new_z = complex_bf_to_float(&bfnew);
 			}
-			if (g_inside == STARTRAIL)
+			if (g_inside == COLORMODE_STAR_TRAIL)
 			{
 				if (0 < g_color_iter && g_color_iter < 16)
 				{
@@ -2078,7 +2078,7 @@ plot_inside: /* we're "inside" */
 	}
 	else
 	{
-		if (g_inside == STARTRAIL)
+		if (g_inside == COLORMODE_STAR_TRAIL)
 		{
 			g_color_iter = 0;
 			for (int i = 1; i < 16; i++)

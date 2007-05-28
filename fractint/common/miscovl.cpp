@@ -1069,7 +1069,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("epsiloncross");
 			}
-			else if (g_inside == STARTRAIL)
+			else if (g_inside == COLORMODE_STAR_TRAIL)
 			{
 				put_parm("startrail");
 			}
