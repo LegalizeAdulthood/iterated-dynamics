@@ -321,6 +321,18 @@ int save_to_disk(char *filename)
 	}
 }
 
+static int write_byte(int value)
+{
+	return fputc(value & 0xFF, g_outfile);
+}
+
+static int write_short(int value)
+{
+	int count = write_byte(value);
+	count += write_byte(value >> 8);
+	return count;
+}
+
 int encoder()
 {
 	int i;
@@ -388,17 +400,17 @@ int encoder()
 		rowlimit <<= 1;
 		width <<= 1;
 	}
-	if (write2(&width, 2, 1, g_outfile) != 1)
+	if (write_short(width) != 1)
 	{
 		goto oops;                /* screen descriptor */
 	}
-	if (write2(&g_y_dots, 2, 1, g_outfile) != 1)
+	if (write_short(g_y_dots) != 1)
 	{
 		goto oops;
 	}
 	/* color resolution == 6 bits worth */
 	x = (BYTE) (128 + ((6 - 1) << 4) + (bitsperpixel - 1));
-	if (write1(&x, 1, 1, g_outfile) != 1)
+	if (write_byte(x) != 1)
 	{
 		goto oops;
 	}
@@ -506,30 +518,30 @@ int encoder()
 		goto oops;                /* Image Descriptor */
 	}
 	i = 0;
-	if (write2(&i, 2, 1, g_outfile) != 1)
+	if (write_short(i) != 1)
 	{
 		goto oops;
 	}
-	if (write2(&i, 2, 1, g_outfile) != 1)
+	if (write_short(i) != 1)
 	{
 		goto oops;
 	}
-	if (write2(&width, 2, 1, g_outfile) != 1)
+	if (write_short(width) != 1)
 	{
 		goto oops;
 	}
-	if (write2(&g_y_dots, 2, 1, g_outfile) != 1)
+	if (write_short(g_y_dots) != 1)
 	{
 		goto oops;
 	}
-	if (write1(&i, 1, 1, g_outfile) != 1)
+	if (write_byte(i) != 1)
 	{
 		goto oops;
 	}
 
 	bitsperpixel = (BYTE) (startbits - 1);
 
-	if (write1(&bitsperpixel, 1, 1, g_outfile) != 1)
+	if (write_byte(bitsperpixel) != 1)
 	{
 		goto oops;
 	}
