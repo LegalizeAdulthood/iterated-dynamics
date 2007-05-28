@@ -278,7 +278,8 @@ static void vary_inside(GENEBASE gene[], int randval, int i)
 		COLORMODE_BEAUTY_OF_FRACTALS_61,
 		COLORMODE_EPSILON_CROSS,
 		COLORMODE_STAR_TRAIL,
-		-102, -103, -104, -1
+		COLORMODE_PERIOD,
+		-103, -104, -1
 	};
 	if (gene[i].mutate)
 	{

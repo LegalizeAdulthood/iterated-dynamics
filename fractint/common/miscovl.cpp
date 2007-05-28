@@ -1073,7 +1073,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("startrail");
 			}
-			else if (g_inside == PERIOD)
+			else if (g_inside == COLORMODE_PERIOD)
 			{
 				put_parm("period");
 			}
