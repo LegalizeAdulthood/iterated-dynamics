@@ -350,7 +350,7 @@ int julia_setup_fp()
 		}
 		break;
 	case FRACTYPE_CIRCLE_FP:
-		if (g_inside == STARTRAIL) /* FRACTYPE_CIRCLE_FP locks up when used with STARTRAIL */
+		if (g_inside == COLORMODE_STAR_TRAIL) /* FRACTYPE_CIRCLE_FP locks up when used with STARTRAIL */
 		{
 			g_inside = 0; /* arbitrarily set inside = NUMB */
 		}

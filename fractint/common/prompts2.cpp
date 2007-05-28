@@ -111,7 +111,7 @@ static int inside_mode()
 	case COLORMODE_BEAUTY_OF_FRACTALS_60:		return 3;
 	case COLORMODE_BEAUTY_OF_FRACTALS_61:		return 4;
 	case COLORMODE_EPSILON_CROSS:	return 5;
-	case STARTRAIL: return 6;
+	case COLORMODE_STAR_TRAIL: return 6;
 	case PERIOD:	return 7;
 	case ATANI:		return 8;
 	case FMODI:		return 9;
@@ -282,7 +282,7 @@ int get_toggles()
 			COLORMODE_BEAUTY_OF_FRACTALS_60,
 			COLORMODE_BEAUTY_OF_FRACTALS_61,
 			COLORMODE_EPSILON_CROSS,
-			STARTRAIL,
+			COLORMODE_STAR_TRAIL,
 			PERIOD,
 			ATANI,
 			FMODI
