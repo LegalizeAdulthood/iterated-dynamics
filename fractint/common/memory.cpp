@@ -485,7 +485,7 @@ bool MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 		while (tomove > DISKWRITELEN)
 		{
 			memcpy(diskbuf, buffer, (U16)DISKWRITELEN);
-			numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, handletable[handle].Disk.file);
+			numwritten = (U16) fwrite(diskbuf, (U16)DISKWRITELEN, 1, handletable[handle].Disk.file);
 			if (numwritten != 1)
 			{
 				WhichDiskError(3);
@@ -495,7 +495,7 @@ bool MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 			buffer += DISKWRITELEN;
 		}
 		memcpy(diskbuf, buffer, (U16)tomove);
-		numwritten = (U16)write1(diskbuf, (U16)tomove, 1, handletable[handle].Disk.file);
+		numwritten = (U16) fwrite(diskbuf, (U16)tomove, 1, handletable[handle].Disk.file);
 		if (numwritten != 1)
 		{
 			WhichDiskError(3);
@@ -628,7 +628,7 @@ bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
 		fseek(handletable[handle].Disk.file, start, SEEK_SET);
 		while (tomove > DISKWRITELEN)
 		{
-			numwritten = (U16)write1(diskbuf, (U16)DISKWRITELEN, 1, handletable[handle].Disk.file);
+			numwritten = (U16) fwrite(diskbuf, (U16)DISKWRITELEN, 1, handletable[handle].Disk.file);
 			if (numwritten != 1)
 			{
 				WhichDiskError(2);
@@ -636,7 +636,7 @@ bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
 			}
 			tomove -= DISKWRITELEN;
 		}
-		numwritten = (U16)write1(diskbuf, (U16)tomove, 1, handletable[handle].Disk.file);
+		numwritten = (U16) fwrite(diskbuf, (U16)tomove, 1, handletable[handle].Disk.file);
 		if (numwritten != 1)
 		{
 			WhichDiskError(2);

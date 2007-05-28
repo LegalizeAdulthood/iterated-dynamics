@@ -135,8 +135,6 @@ extern long stackavail();
 #		define READMODE        "rb"    /* Correct DOS text-mode        */
 #		define WRITEMODE       "wb"    /* file open "feature".         */
 
-#		define write1(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-#		define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
 #		define rand15() rand()
 
 #		ifndef BYTE_ORDER
@@ -199,8 +197,6 @@ extern long stackavail();
 #		define READMODE        "rb"    /* Correct DOS text-mode        */
 #		define WRITEMODE       "wb"    /* file open "feature".         */
 
-#		define write1(ptr,len,n,stream) fwrite(ptr,len,n,stream)
-#		define write2(ptr,len,n,stream) fwrite(ptr,len,n,stream)
 #		define rand15() rand()
 
 #else                   /* Have to nest because #elif is not portable */
@@ -227,8 +223,6 @@ extern long stackavail();
 #		define READMODE        "rb"
 #		define WRITEMODE       "wb"
 
-#		define write1(ptr,len,n,stream) (fputc(*(ptr),stream),1)
-#		define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr))>>8,stream),1)
 #		define rand15() (rand()&0x7FFF)
 
 #		define BYTE_ORDER BIG_ENDIAN
@@ -293,8 +287,6 @@ extern long stackavail();
 #       define READMODE       "r"
 #       define WRITEMODE        "w"
 
-#       define write1(ptr,len,n,stream) (fputc(*(ptr),stream),1)
-#       define write2(ptr,len,n,stream) (fputc((*(ptr))&255,stream),fputc((*(ptr))>>8,stream),1)
 #       define rand15() (rand()&0x7FFF)
 
 #       include "unix.h"
