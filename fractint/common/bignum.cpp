@@ -878,7 +878,7 @@ bn_t exp_bn(bn_t r, bn_t n)
 /* use Taylor Series (very slow convergence) */
 	inttobn(r, 1); /* start with r = 1.0 */
 	copy_bn(bntmp2, r);
-	while (1)
+	while (true)
 	{
 		/* copy n, if n is negative, mult_bn() alters n */
 		unsafe_mult_bn(bntmp3, bntmp2, copy_bn(bntmp1, n));
@@ -1117,7 +1117,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 	inttobn(c, 1); /* start with c = 1 */
 	copy_bn(bntmp1, n); /* the current x^n/n! */
 
-	while (1)
+	while (true)
 	{
 		/* even terms for cosine */
 		unsafe_mult_bn(bntmp2, bntmp1, n);

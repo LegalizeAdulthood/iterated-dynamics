@@ -500,7 +500,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 		tbloffset = s_cur_cache->hashlink;
 	}
 	/* must load the cache entry from backing store */
-	while (1)  /* look around for something not recently used */
+	while (true)  /* look around for something not recently used */
 	{
 		if (++s_cache_lru >= s_cache_end)
 		{

@@ -931,7 +931,7 @@ int get_random_dot_stereogram_parameters()
 	int ret;
 	static char reuse = 0;
 	driver_stack_screen();
-	while (1)
+	while (true)
 	{
 		ret = 0;
 
@@ -1140,7 +1140,7 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 	ll = (n >> 1) + 1;
 	ir = n;
 
-	while (1)
+	while (true)
 	{
 		if (ll > 1)
 		{

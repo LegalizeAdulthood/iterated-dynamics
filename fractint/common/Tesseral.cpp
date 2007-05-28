@@ -151,7 +151,7 @@ int tesseral()
 		{
 			xsize <<= 1;
 		}
-		while (1)
+		while (true)
 		{
 			tp2 = tp;
 			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* next divide down middle */

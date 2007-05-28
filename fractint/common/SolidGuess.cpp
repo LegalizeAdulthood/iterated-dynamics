@@ -230,7 +230,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			}
 			guessed32 = guessed33 = -1;
 		}
-		while (1) /* go around till none of 23, 32, 33 change anymore */
+		while (true) /* go around till none of 23, 32, 33 change anymore */
 		{
 			if (guessed33 > 0
 				&& (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))

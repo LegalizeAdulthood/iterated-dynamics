@@ -577,7 +577,7 @@ int full_screen_choice(
 		}
 	}
 
-	while (1)
+	while (true)
 	{
 		if (current >= numchoices)  /* no real choice in the list? */
 		{
@@ -775,7 +775,7 @@ int full_screen_choice(
 	}
 	redisplay = 1;
 	topleftrow -= scrunch;
-	while (1) /* main loop */
+	while (true) /* main loop */
 	{
 		if (redisplay)                       /* display the current choices */
 		{
@@ -1085,7 +1085,7 @@ int full_screen_choice(
 				speedstring[0] = 0;
 			}
 		}
-		while (1)
+		while (true)
 		{                 /* adjust to a non-comment choice */
 			if (current < 0 || current >= numchoices)
 			{
@@ -1585,7 +1585,7 @@ int input_field(
 	strcpy(savefld, fld);
 	insert = started = offset = 0;
 	display = 1;
-	while (1)
+	while (true)
 	{
 		strcpy(buf, fld);
 		i = (int) strlen(buf);
@@ -1952,7 +1952,7 @@ void load_fractint_config()
 		tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
 		i = j = -1;
 		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
-		while (1)
+		while (true)
 		{
 			if (tempstring[++i] < ' ')
 			{

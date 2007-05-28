@@ -1472,7 +1472,7 @@ static void sleep_ms_old(long ms)
 	{
 		ms /= 10;
 		ftimex(&t1);
-		while (1)
+		while (true)
 		{
 			if (driver_key_pressed())
 			{

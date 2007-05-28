@@ -645,7 +645,7 @@ bf_t exp_bf(bf_t r, bf_t n)
 	/* use Taylor Series (very slow convergence) */
 	inttobf(r, 1); /* start with r = 1.0 */
 	copy_bf(bftmp2, r);
-	while (1)
+	while (true)
 	{
 		copy_bf(bftmp1, n);
 		unsafe_mult_bf(bftmp3, bftmp2, bftmp1);

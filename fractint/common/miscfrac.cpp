@@ -829,7 +829,7 @@ int diffusion()
 		break;
 	}
 
-	while (1)
+	while (true)
 	{
 		switch (mode)
 		{
