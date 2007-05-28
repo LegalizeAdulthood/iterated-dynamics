@@ -1031,7 +1031,7 @@ int phoenix_setup()
 	}
 	if (g_degree >= 2)
 	{
-		g_degree = g_degree - 1;
+		g_degree--;
 		g_current_fractal_specific->orbitcalc = 
 			g_user_float_flag ? phoenix_plus_orbit_fp : phoenix_plus_orbit;
 	}
@@ -1067,7 +1067,7 @@ int phoenix_complex_setup()
 	}
 	if (g_degree >= 2)
 	{
-		g_degree = g_degree - 1;
+		g_degree--;
 		g_symmetry = (g_parameter.y == 0 && g_parameter2.y == 0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
 		g_current_fractal_specific->orbitcalc = 
 			g_user_float_flag ? phoenix_complex_plus_orbit_fp : phoenix_complex_plus_orbit;
@@ -1100,7 +1100,7 @@ int mandelbrot_phoenix_setup()
 	}
 	if (g_degree >= 2)
 	{
-		g_degree = g_degree - 1;
+		g_degree--;
 		g_current_fractal_specific->orbitcalc = 
 			g_user_float_flag ? phoenix_plus_orbit_fp : phoenix_plus_orbit;
 	}
@@ -1135,7 +1135,7 @@ int mandelbrot_phoenix_complex_setup()
 	}
 	if (g_degree >= 2)
 	{
-		g_degree = g_degree - 1;
+		g_degree--;
 		g_current_fractal_specific->orbitcalc =
 			g_user_float_flag ? phoenix_complex_plus_orbit_fp : phoenix_complex_plus_orbit;
 	}

@@ -1376,9 +1376,9 @@ void mStkTanh()
 void lStkTanh()
 {
 	long x = Arg1->l.x >> s_delta16;
-	x = x << 1;
+	x <<= 1;
 	long y = Arg1->l.y >> s_delta16;
-	y = y << 1;
+	y <<= 1;
 	long siny;
 	long cosy;
 	SinCos086(y, &siny, &cosy);
@@ -1419,9 +1419,9 @@ void mStkCoTan()
 void lStkCoTan()
 {
 	long x = Arg1->l.x >> s_delta16;
-	x = x << 1;
+	x <<= 1;
 	long y = Arg1->l.y >> s_delta16;
-	y = y << 1;
+	y <<= 1;
 	long sinx;
 	long cosx;
 	SinCos086(x, &sinx, &cosx);
@@ -1462,9 +1462,9 @@ void mStkCoTanh()
 void lStkCoTanh()
 {
 	long x = Arg1->l.x >> s_delta16;
-	x = x << 1;
+	x <<= 1;
 	long y = Arg1->l.y >> s_delta16;
-	y = y << 1;
+	y <<= 1;
 	long siny;
 	long cosy;
 	SinCos086(y, &siny, &cosy);
@@ -2394,7 +2394,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 		if (s_ops[m_posp-1].f == StkNeg)
 		{
 			m_posp--;
-			text = text - 1;
+			text -= 1;
 			m_initial_n--;
 			m_variables[m_parser_vsp].len++;
 		}
@@ -5039,7 +5039,7 @@ int Formula::prescan(FILE *open_file)
 				{
 					record_error(PE_SHOULD_BE_OPERATOR);
 				}
-				waiting_for_mod = waiting_for_mod << 1;
+				waiting_for_mod <<= 1;
 				break;
 			case CLOSE_PARENS:
 				if (m_parenthesis_count)
@@ -5057,7 +5057,7 @@ int Formula::prescan(FILE *open_file)
 				}
 				else
 				{
-					waiting_for_mod = waiting_for_mod >> 1;
+					waiting_for_mod >>= 1;
 				}
 				if (ExpectingArg)
 				{
@@ -5341,7 +5341,7 @@ int Formula::prescan(FILE *open_file)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				waiting_for_mod = waiting_for_mod ^ 1L; /*switch right bit*/
+				waiting_for_mod ^= 1L; /*switch right bit*/
 				break;
 			case 9:     /* || */
 				assignment_ok = false;

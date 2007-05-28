@@ -2331,7 +2331,7 @@ int circle_orbit()
 {
 	long i;
 	i = multiply(g_parameter_l.x, (g_temp_sqr_x_l + g_temp_sqr_y_l), g_bit_shift);
-	i = i >> g_bit_shift;
+	i >>= g_bit_shift;
 	g_color_iter = i % g_colors);
 	return 1;
 }

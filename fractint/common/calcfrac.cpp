@@ -1655,7 +1655,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 						g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.y);
 					}
 					g_magnitude = g_magnitude_l;
-					g_magnitude = g_magnitude/g_fudge;
+					g_magnitude /= g_fudge;
 				}
 				else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
 				{
@@ -1997,7 +1997,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else
 		{
-			dist = dist*sqr(log(dist))/(sqr(deriv.x) + sqr(deriv.y) );
+			dist *= sqr(log(dist))/(sqr(deriv.x) + sqr(deriv.y));
 		}
 		if (dist < s_dem_delta)     /* point is on the edge */
 		{

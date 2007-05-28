@@ -725,7 +725,7 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 	j = solid_guess_block_size(); /* worst-case alignment requirement */
 	while (--i >= 0)
 	{
-		j = j >> 1; /* reduce requirement */
+		j >>= 1; /* reduce requirement */
 	}
 	return j;
 }

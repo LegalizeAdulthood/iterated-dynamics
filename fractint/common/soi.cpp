@@ -91,7 +91,7 @@ long iteration(LDBL cr, LDBL ci,
 
 		do
 		{
-			im = im*re;
+			im *= re;
 			re = ren-imn;
 			im += im;
 			re += cr;
@@ -99,7 +99,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -107,7 +107,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -115,7 +115,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -123,7 +123,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -131,7 +131,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -139,7 +139,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -147,7 +147,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -212,7 +212,7 @@ long iteration(LDBL cr, LDBL ci,
 
 		do
 		{
-			im = im*re;
+			im *= re;
 			re = ren-imn;
 			im += im;
 			re += cr;
@@ -220,7 +220,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -228,7 +228,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -236,7 +236,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -244,7 +244,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -252,7 +252,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -260,7 +260,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;
@@ -268,7 +268,7 @@ long iteration(LDBL cr, LDBL ci,
 
 			imn = im*re;
 			ren = re + im;
-			re = re-im;
+			re -= im;
 			imn += imn;
 			re = ren*re;
 			im = imn + ci;

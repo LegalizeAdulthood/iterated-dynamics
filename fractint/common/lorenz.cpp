@@ -1731,7 +1731,7 @@ static int orbit_3d_calc()
 				{
 					double yy;
 					yy = inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
-					yy = yy/g_fudge;
+					yy /= g_fudge;
 					g_sound_state.tone((int) (yy*100 + g_sound_state.base_hertz()));
 				}
 				if (oldcol != -1 && s_connect)
