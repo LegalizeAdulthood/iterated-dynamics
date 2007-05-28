@@ -110,7 +110,7 @@ static int inside_mode()
 	case COLORMODE_Z_MAGNITUDE:		return 2;
 	case COLORMODE_BEAUTY_OF_FRACTALS_60:		return 3;
 	case COLORMODE_BEAUTY_OF_FRACTALS_61:		return 4;
-	case EPSCROSS:	return 5;
+	case COLORMODE_EPSILON_CROSS:	return 5;
 	case STARTRAIL: return 6;
 	case PERIOD:	return 7;
 	case ATANI:		return 8;
@@ -276,7 +276,16 @@ int get_toggles()
 		int tmp = dialog.values(++k).uval.ch.val;
 		int insides[] =
 		{
-			0, -1, COLORMODE_Z_MAGNITUDE, COLORMODE_BEAUTY_OF_FRACTALS_60, COLORMODE_BEAUTY_OF_FRACTALS_61, EPSCROSS, STARTRAIL, PERIOD, ATANI, FMODI
+			0,
+			-1,
+			COLORMODE_Z_MAGNITUDE,
+			COLORMODE_BEAUTY_OF_FRACTALS_60,
+			COLORMODE_BEAUTY_OF_FRACTALS_61,
+			COLORMODE_EPSILON_CROSS,
+			STARTRAIL,
+			PERIOD,
+			ATANI,
+			FMODI
 		};
 		if (tmp > 0 && tmp < NUM_OF(insides))
 		{

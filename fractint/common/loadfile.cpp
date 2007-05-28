@@ -1367,7 +1367,7 @@ void backwards_v20()
 					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960);
 	g_use_old_complex_power = ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 				&& (g_save_release < 1900 || DEBUGMODE_OLD_POWER == g_debug_mode));
-	if (g_inside == EPSCROSS && g_save_release < 1961)
+	if (g_inside == COLORMODE_EPSILON_CROSS && g_save_release < 1961)
 	{
 		g_proximity = 0.01;
 	}
