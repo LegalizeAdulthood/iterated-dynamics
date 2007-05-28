@@ -1993,7 +1993,7 @@ int dynamic_2d_fp()
 	}
 
 	ret = 0;
-	while (1)
+	while (true)
 	{
 		if (driver_key_pressed())
 		{

@@ -986,7 +986,7 @@ static bool move_box_process(move_box *me)
 #ifdef XFRACT
 	cursor_start_mouse_tracking();
 #endif
-	while (1)
+	while (true)
 	{
 		cursor_wait_key();
 		key = driver_get_key();

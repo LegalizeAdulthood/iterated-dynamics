@@ -612,7 +612,7 @@ int FullScreenPrompter::Prompt()
 			: "Press ENTER to exit");
 		driver_hide_text_cursor();
 		g_text_cbase = 2;
-		while (1)
+		while (true)
 		{
 			if (rewrite_footer)
 			{
@@ -985,7 +985,7 @@ int prompt_value_string(char *buf, struct full_screen_values *val)
 	case 'd':
 		ret = 20;
 		i = 16;    /* cellular needs 16 (was 15)*/
-		while (1)
+		while (true)
 		{
 			sprintf(buf, "%.*g", i, val->uval.dval);
 			if ((int)strlen(buf) <= ret)
@@ -1131,7 +1131,7 @@ static int input_field_list(
 	}
 	curval = initval;
 	ret = -1;
-	while (1)
+	while (true)
 	{
 		strcpy(buf, list[curval]);
 		i = (int) strlen(buf);
@@ -1206,7 +1206,7 @@ int get_fractal_type()             /* prompt for and select fractal type */
 	int t;
 	done = -1;
 	oldfractype = g_fractal_type;
-	while (1)
+	while (true)
 	{
 		t = select_fracttype(g_fractal_type);
 		if (t < 0)
@@ -2078,7 +2078,7 @@ gfp_top:
 	}
 	s_scroll_row_status = 0; /* make sure we start at beginning of entry */
 	s_scroll_column_status = 0;
-	while (1)
+	while (true)
 	{
 		i = full_screen_prompt_help(g_current_fractal_specific->helptext, msg,
 			promptnum, choices, paramvalues, fkeymask, g_text_stack);
@@ -2296,7 +2296,7 @@ long get_file_entry(int type, const char *title, char *fmask,
 	int firsttry;
 	long entry_pointer;
 	newfile = 0;
-	while (1)
+	while (true)
 	{
 		firsttry = 0;
 		/* pb: binary mode used here - it is more work, but much faster, */
@@ -2408,7 +2408,7 @@ int scan_entries(FILE *infile, struct entryinfo *choices, const char *itemname)
 	long file_offset = -1;
 	int numentries = 0;
 
-	while (1)
+	while (true)
 	{                            /* scan the file for entry names */
 		int c;
 		int len;
@@ -3477,7 +3477,7 @@ static int check_mapfile()
 		merge_path_names(temp1, funnyglasses_map_name, 0);
 	}
 
-	while (1)
+	while (true)
 	{
 		if (askflag)
 		{

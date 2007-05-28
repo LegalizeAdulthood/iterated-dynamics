@@ -390,7 +390,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 			++g_skip_y_dots;
 		}
 		i = j = 0;
-		while (1)
+		while (true)
 		{
 			tmpxdots = (g_file_x_dots + g_skip_x_dots - 1) / g_skip_x_dots;
 			tmpydots = (g_file_y_dots + g_skip_y_dots - 1) / g_skip_y_dots;

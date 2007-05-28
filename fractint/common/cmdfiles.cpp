@@ -635,7 +635,7 @@ static int next_command(char *cmdbuf, int maxlen,
 	int cmdlen = 0;
 	char *lineptr;
 	lineptr = linebuf + *lineoffset;
-	while (1)
+	while (true)
 	{
 		while (*lineptr <= ' ' || *lineptr == ';')
 		{

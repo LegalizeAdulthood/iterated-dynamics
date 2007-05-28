@@ -237,7 +237,7 @@ ApplicationStateType big_while_loop(int &kbdmore, bool &screen_stacked, bool res
 		goto resumeloop;
 	}
 
-	while (1)                    /* eternal loop */
+	while (true)                    /* eternal loop */
 	{
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());

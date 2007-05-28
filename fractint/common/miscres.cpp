@@ -1337,7 +1337,7 @@ static char seps[] = {" \t\n\r"};
 char *get_ifs_token(char *buf, FILE *ifsfile)
 {
 	char *bufptr;
-	while (1)
+	while (true)
 	{
 		if (file_gets(buf, 200, ifsfile) < 0)
 		{

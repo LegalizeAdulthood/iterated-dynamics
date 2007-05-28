@@ -85,7 +85,7 @@ private:
 
 void Ant::set_wait(long *wait)
 {
-	while (1)
+	while (true)
 	{
 		char msg[30];
 		sprintf(msg, "Delay %4ld", *wait);

@@ -150,7 +150,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 
 	tok = (start_margin >= 0) ? TOK_PARA : -1;
 
-	while (1)
+	while (true)
 	{
 		switch (tok)
 		{
@@ -174,7 +174,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 
 				col = indent;
 
-				while (1)
+				while (true)
 				{
 					tok = find_token_length(ONLINE, curr, len, &size, &width);
 
@@ -288,7 +288,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 		}
 
 		tok = find_token_length(ONLINE, curr, len, &size, &width);
-	} /* while (1) */
+	} /* while (true) */
 
 	g_text_cbase = 0;
 	g_text_rbase = 0;

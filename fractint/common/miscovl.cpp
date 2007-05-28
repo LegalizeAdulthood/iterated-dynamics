@@ -225,7 +225,7 @@ void make_batch_file()
 	}
 
 	video_mode_key_name(g_video_entry.keynum, vidmde);
-	while (1)
+	while (true)
 	{
 prompt_user:
 		promptnum = 0;
@@ -1367,7 +1367,7 @@ docolors:
 				load_dac();
 			}
 #endif
-			while (1)
+			while (true)
 			{
 				/* emit color in rgb 3 char encoded form */
 				for (j = 0; j < 3; ++j)
@@ -1876,7 +1876,7 @@ void edit_text_colors()
 	MouseModeSaver saved_mouse(LOOK_MOUSE_TEXT); /* text mouse sensitivity */
 	row	= col =	bkgrd =	rowt = rowf	= colt = colf =	0;
 
-	while (1)
+	while (true)
 	{
 		if (row	< 0)
 		{
@@ -2430,11 +2430,12 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 			if (xres != allxres || yres != allyres || itbl != allitbl)
 			{
 				/* Oops - our pieces don't match */
+				// TODO: don't use printf!
 				printf("File %s doesn't have the same resolution as its predecessors!\n", gifin);
 				exit(1);
-				}
+			}
 
-			while (1)                       /* process each information g_block */
+			while (true)                       /* process each information g_block */
 			{
 				memset(temp, 0, 10);
 				if (fread(temp, 1, 1, in) != 1)    /* read the g_block identifier */
@@ -2480,7 +2481,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 					{
 						errorflag = 6;
 					}
-					while (1)
+					while (true)
 					{
 						if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
 						{
@@ -2524,7 +2525,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 							errorflag = 9;
 						}
 					}
-					while (1)
+					while (true)
 					{
 						if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
 						{
