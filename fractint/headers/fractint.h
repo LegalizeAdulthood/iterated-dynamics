@@ -790,7 +790,6 @@ enum ColoringModeType
 #define ATAN        -6
 #define FMOD        -7
 #define TDIS        -8
-#define BOF60      -60
 #define BOF61      -61
 #define EPSCROSS  -100
 #define STARTRAIL -101
