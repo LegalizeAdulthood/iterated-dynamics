@@ -34,7 +34,7 @@ int mandelbrot_setup()           /* Mandelbrot Routine */
 	if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& g_bit_shift == 29 && !g_potential_flag
-		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
+		&& g_biomorph == -1 && g_inside > COLORMODE_Z_MAGNITUDE && g_outside >= -1
 		&& g_use_initial_orbit_z != INITIALZ_ORBIT && g_using_jiim == 0 && g_bail_out_test == Mod
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
@@ -54,7 +54,7 @@ int julia_setup()            /* Julia Routine */
 	if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& g_bit_shift == 29 && !g_potential_flag
-		&& g_biomorph == -1 && g_inside > -59 && g_outside >= -1
+		&& g_biomorph == -1 && g_inside > COLORMODE_Z_MAGNITUDE && g_outside >= -1
 		&& !g_finite_attractor && g_using_jiim == 0 && g_bail_out_test == Mod
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{

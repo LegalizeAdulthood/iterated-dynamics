@@ -1053,7 +1053,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("maxiter");
 			}
-			else if (g_inside == ZMAG)
+			else if (g_inside == COLORMODE_Z_MAGNITUDE)
 			{
 				put_parm("zmag");
 			}
