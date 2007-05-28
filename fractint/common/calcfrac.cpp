@@ -1602,7 +1602,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					}
 				}
 			}
-			else if (g_inside == EPSCROSS)
+			else if (g_inside == COLORMODE_EPSILON_CROSS)
 			{
 				hooper = 0;
 				if (g_integer_fractal)
@@ -2094,7 +2094,7 @@ plot_inside: /* we're "inside" */
 		{
 			g_color_iter = (cyclelen > 0) ? cyclelen : g_max_iteration;
 		}
-		else if (g_inside == EPSCROSS)
+		else if (g_inside == COLORMODE_EPSILON_CROSS)
 		{
 			if (hooper == 1)
 			{

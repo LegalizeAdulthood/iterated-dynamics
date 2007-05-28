@@ -1065,7 +1065,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("bof61");
 			}
-			else if (g_inside == EPSCROSS)
+			else if (g_inside == COLORMODE_EPSILON_CROSS)
 			{
 				put_parm("epsiloncross");
 			}
@@ -1090,7 +1090,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 				put_parm("%d", g_inside);
 			}
 		}
-		if (g_proximity != 0.01 && (g_inside == EPSCROSS || g_inside == FMODI
+		if (g_proximity != 0.01 && (g_inside == COLORMODE_EPSILON_CROSS || g_inside == FMODI
 			|| g_outside == FMOD))
 		{
 			put_parm(" proximity=%.15g", g_proximity);
