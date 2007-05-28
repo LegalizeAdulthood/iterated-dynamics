@@ -271,7 +271,7 @@ static int wrapped_positive_vary_int(int randvalue, int limit, int mode)
 
 static void vary_inside(GENEBASE gene[], int randval, int i)
 {
-	int choices[9] = {-59, -60, -61, -100, -101, -102, -103, -104, -1};
+	int choices[9] = {COLORMODE_Z_MAGNITUDE, -60, -61, -100, -101, -102, -103, -104, -1};
 	if (gene[i].mutate)
 	{
 		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 9, gene[i].mutate)];

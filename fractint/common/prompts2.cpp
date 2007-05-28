@@ -107,7 +107,7 @@ static int inside_mode()
 	switch (g_inside)
 	{
 	case -1:		return 1;
-	case ZMAG:		return 2;
+	case COLORMODE_Z_MAGNITUDE:		return 2;
 	case BOF60:		return 3;
 	case BOF61:		return 4;
 	case EPSCROSS:	return 5;
@@ -276,7 +276,7 @@ int get_toggles()
 		int tmp = dialog.values(++k).uval.ch.val;
 		int insides[] =
 		{
-			0, -1, ZMAG, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, ATANI, FMODI
+			0, -1, COLORMODE_Z_MAGNITUDE, BOF60, BOF61, EPSCROSS, STARTRAIL, PERIOD, ATANI, FMODI
 		};
 		if (tmp > 0 && tmp < NUM_OF(insides))
 		{

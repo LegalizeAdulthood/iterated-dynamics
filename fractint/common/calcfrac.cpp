@@ -1311,7 +1311,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			g_max_iteration = 16;
 		}
 	}
-	if (g_periodicity_check == 0 || g_inside == ZMAG || g_inside == STARTRAIL)
+	if (g_periodicity_check == 0 || g_inside == COLORMODE_Z_MAGNITUDE || g_inside == STARTRAIL)
 	{
 		g_old_color_iter = 2147483647L;       /* don't check periodicity at all */
 	}
@@ -2134,7 +2134,7 @@ plot_inside: /* we're "inside" */
 		{
 			g_color_iter = min_index;
 		}
-		else if (g_inside == ZMAG)
+		else if (g_inside == COLORMODE_Z_MAGNITUDE)
 		{
 			g_color_iter = (long) (g_integer_fractal ?
 				(((double) g_magnitude_l/g_fudge)*(g_max_iteration/2) + 1)
