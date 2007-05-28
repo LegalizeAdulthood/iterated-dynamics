@@ -1416,7 +1416,7 @@ int check_back()
 
 static bool fix_bof()
 {
-	if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= BOF61 && g_save_release < 1826)
+	if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61 && g_save_release < 1826)
 	{
 		if ((g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS) == 0) ||
@@ -1430,7 +1430,7 @@ static bool fix_bof()
 
 static bool fix_period_bof()
 {
-	return (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= BOF61 && g_save_release < 1826);
+	return (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61 && g_save_release < 1826);
 }
 
 /* browse code RB*/

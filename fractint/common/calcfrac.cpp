@@ -1423,7 +1423,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 	savedincr = 1;               /* start checking the very first time */
 
-	if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= BOF61)
+	if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61)
 	{
 		g_magnitude = 0;
 		g_magnitude_l = 0;
@@ -1646,7 +1646,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					memvalue = mag;
 				}
 			}
-			else if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= BOF61)
+			else if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61)
 			{
 				if (g_integer_fractal)
 				{
@@ -2130,7 +2130,7 @@ plot_inside: /* we're "inside" */
 		{
 			g_color_iter = (long) (sqrt(min_orbit)*75);
 		}
-		else if (g_inside == BOF61)
+		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61)
 		{
 			g_color_iter = min_index;
 		}

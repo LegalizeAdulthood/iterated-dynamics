@@ -1061,7 +1061,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("bof60");
 			}
-			else if (g_inside == BOF61)
+			else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61)
 			{
 				put_parm("bof61");
 			}
