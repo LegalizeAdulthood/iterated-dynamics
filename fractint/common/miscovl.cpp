@@ -1057,7 +1057,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("zmag");
 			}
-			else if (g_inside == BOF60)
+			else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60)
 			{
 				put_parm("bof60");
 			}

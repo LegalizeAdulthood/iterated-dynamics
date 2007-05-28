@@ -1209,7 +1209,7 @@ static int inside_arg(const cmd_context &context)
 	named_int args[] =
 	{
 		{ "zmag", COLORMODE_Z_MAGNITUDE },
-		{ "bof60", BOF60 },
+		{ "bof60", COLORMODE_BEAUTY_OF_FRACTALS_60 },
 		{ "bof61", BOF61 },
 		{ "epsiloncross", EPSCROSS },
 		{ "startrail", STARTRAIL },
