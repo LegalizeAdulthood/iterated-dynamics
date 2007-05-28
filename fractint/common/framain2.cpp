@@ -714,15 +714,15 @@ resumeloop:
 						}
 #endif
 						if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH ||
-							kbdchar == 'h' || kbdchar == 8 ||
+							kbdchar == 'h' || kbdchar == FIK_BACKSPACE ||
 							check_video_mode_key(0, kbdchar) >= 0)
 						{
 							driver_discard_screen();
 						}
 						else if (kbdchar == 'x' || kbdchar == 'y' ||
 								kbdchar == 'z' || kbdchar == 'g' ||
-								kbdchar == 'v' || kbdchar == 2 ||
-								kbdchar == 5 || kbdchar == 6)
+								kbdchar == 'v' || kbdchar == FIK_CTL_B ||
+								kbdchar == FIK_CTL_E || kbdchar == FIK_CTL_F)
 						{
 							g_from_text_flag = true;
 						}
@@ -770,12 +770,11 @@ resumeloop:
 				}
 			}
 
-#ifndef XFRACT
 			if ('A' <= kbdchar && kbdchar <= 'Z')
 			{
 				kbdchar = tolower(kbdchar);
 			}
-#endif
+
 			ApplicationStateType mms_value = g_evolving_flags ?
 				evolver_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked)
 				: main_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked);
@@ -1564,7 +1563,7 @@ static void handle_zoom_out(bool &kbdmore)
 	}
 }
 
-static void handle_zoom_skew(int negative)
+static void handle_zoom_skew(bool negative)
 {
 	if (negative)
 	{
@@ -1640,7 +1639,7 @@ static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
 	return APPSTATE_NO_CHANGE;
 }
 
-static void handle_z_rotate(int increase)
+static void handle_z_rotate(bool increase)
 {
 	if (g_box_count && (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) == 0)
 	{
@@ -1655,7 +1654,7 @@ static void handle_z_rotate(int increase)
 	}
 }
 
-static void handle_box_color(int increase)
+static void handle_box_color(bool increase)
 {
 	if (increase)
 	{
@@ -1667,7 +1666,7 @@ static void handle_box_color(int increase)
 	}
 }
 
-static void handle_zoom_resize(int zoom_in)
+static void handle_zoom_resize(bool zoom_in)
 {
 	if (zoom_in)
 	{
@@ -1707,7 +1706,7 @@ static void handle_zoom_resize(int zoom_in)
 	}
 }
 
-static void handle_zoom_stretch(int narrower)
+static void handle_zoom_stretch(bool narrower)
 {
 	if (g_box_count)
 	{
@@ -1757,12 +1756,8 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 		handle_options(kbdchar, kbdmore, &old_maxit);
 		break;
 
-#ifndef XFRACT
 	case '@':                    /* execute commands */
 	case '2':                    /* execute commands */
-#else
-	case FIK_F2:                     /* execute commands */
-#endif
 		if (handle_execute_commands(kbdchar, kbdmore))
 		{
 			goto do_3d_transform;  /* pretend '3' was keyed */
@@ -1823,9 +1818,6 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 		return handle_save_to_disk();
 
 	case '#':                    /* 3D overlay                   */
-#ifdef XFRACT
-	case FIK_F3:                     /* 3D overlay                   */
-#endif
 		clear_zoom_box();
 		g_overlay_3d = 1;
 		/* fall through */
