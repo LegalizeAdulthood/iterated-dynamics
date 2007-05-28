@@ -742,7 +742,7 @@ int mandelbrot_per_pixel_bn()
 	copy_bn(bnold.x, bnparm.x);
 	copy_bn(bnold.y, bnparm.y);
 
-	if ((g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == BOF61) && !g_no_bof)
+	if ((g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61) && !g_no_bof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with init rather than 0 */
@@ -788,7 +788,7 @@ int mandelbrot_per_pixel_bf()
 	copy_bf(bfold.x, bfparm.x);
 	copy_bf(bfold.y, bfparm.y);
 
-	if ((g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == BOF61) && !g_no_bof)
+	if ((g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61) && !g_no_bof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with g_initial_z rather than 0 */

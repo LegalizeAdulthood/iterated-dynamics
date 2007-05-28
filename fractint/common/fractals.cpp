@@ -2550,7 +2550,7 @@ int mandelbrot_per_pixel()
 		g_old_z_l = g_initial_z_l;
 	}
 
-	if ((g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == BOF61) && !g_no_bof)
+	if ((g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61) && !g_no_bof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with g_initial_z rather than 0 */
@@ -2727,7 +2727,7 @@ int mandelbrot_per_pixel_fp()
 		g_old_z = g_initial_z;
 	}
 
-	if ((g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == BOF61) && !g_no_bof)
+	if ((g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60 || g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61) && !g_no_bof)
 	{
 		/* kludge to match "Beauty of Fractals" picture since we start
 			Mandelbrot iteration with g_initial_z rather than 0 */
