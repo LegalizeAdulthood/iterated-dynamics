@@ -974,7 +974,6 @@ struct TrigonometricFunctionListItem
 #define FIK_CTL_F			6
 #define FIK_CTL_G			7
 #define FIK_CTL_O			15
-#define FIK_CTL_P			16
 #define FIK_CTL_S			19
 #define FIK_CTL_U			21
 #define FIK_CTL_X			24
