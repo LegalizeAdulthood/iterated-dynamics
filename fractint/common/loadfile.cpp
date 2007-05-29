@@ -318,7 +318,7 @@ static void read_info_pre_version_18(const fractal_info &read_info)
 		if (g_outside == COLORMODE_REAL
 			|| g_outside == COLORMODE_IMAGINARY
 			|| g_outside == COLORMODE_MULTIPLY
-			|| g_outside == SUM
+			|| g_outside == COLORMODE_SUM
 			|| g_outside == ATAN)
 		{
 			if (g_force_symmetry == FORCESYMMETRY_NONE)
@@ -1367,7 +1367,7 @@ void backwards_v20()
 	// See calmanfp.asm and calmanfp5.asm in the DOS code.
 	g_bad_outside = ((g_fractal_type == FRACTYPE_MANDELBROT_FP || g_fractal_type == FRACTYPE_JULIA_FP
 						|| g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)
-					&& (g_outside <= COLORMODE_REAL && g_outside >= SUM) && g_save_release <= 1960);
+					&& (g_outside <= COLORMODE_REAL && g_outside >= COLORMODE_SUM) && g_save_release <= 1960);
 	g_use_old_complex_power = ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 				&& (g_save_release < 1900 || DEBUGMODE_OLD_POWER == g_debug_mode));
 	if (g_inside == COLORMODE_EPSILON_CROSS && g_save_release < 1961)

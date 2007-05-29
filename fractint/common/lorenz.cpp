@@ -1929,7 +1929,7 @@ int dynamic_2d_setup_fp()
 			s_dt = 0.01;
 		}
 	}
-	if (g_outside == SUM)
+	if (g_outside == COLORMODE_SUM)
 	{
 		g_plot_color = plot_color_histogram;
 	}
@@ -2165,7 +2165,7 @@ int plot_orbits_2d_setup()
 
 	s_o_color = 1;
 
-	if (g_outside == SUM)
+	if (g_outside == COLORMODE_SUM)
 	{
 		g_plot_color = plot_color_histogram;
 	}

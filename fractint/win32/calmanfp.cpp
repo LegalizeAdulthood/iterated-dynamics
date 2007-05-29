@@ -230,7 +230,7 @@ over_bailout_87:
 		{
 		g_color_iter = (long) ((double) g_color_iter*(g_new_z.x/g_new_z.y));
 		}
-		else if (g_outside == SUM)
+		else if (g_outside == COLORMODE_SUM)
 		{
 			g_color_iter +=  (long) (g_new_z.x + g_new_z.y);
 		}
