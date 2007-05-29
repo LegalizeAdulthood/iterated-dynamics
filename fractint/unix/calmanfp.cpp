@@ -238,29 +238,29 @@ over_bailout_87:
 	else
 	{
 		/* special_outside */
-		if (g_outside == REAL)
+		if (g_outside == COLORMODE_REAL)
 		{
 			g_color_iter += (long)g_new_z.x + 7;
 		}
-		else if (g_outside == IMAG)
+		else if (g_outside == COLORMODE_IMAGINARY)
 		{
 			g_color_iter += (long)g_new_z.y + 7;
 		}
-		else if ((g_outside == MULT) && (g_new_z.y != 0.0))
+		else if ((g_outside == COLORMODE_MULTIPLY) && (g_new_z.y != 0.0))
 		{
 			  g_color_iter = (long)((double)g_color_iter * (g_new_z.x/g_new_z.y));
 		}
-		else if (g_outside == SUM)
+		else if (g_outside == COLORMODE_SUM)
 		{
 			g_color_iter +=  (long)(g_new_z.x + g_new_z.y);
 		}
-		else if (g_outside == ATAN)
+		else if (g_outside == COLORMODE_INVERSE_TANGENT)
 		{
 			g_color_iter = (long)fabs(atan2(g_new_z.y,g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
 		/* check_color */
 		if (((g_color_iter <= 0) || (g_color_iter > g_max_iteration))
-			&& g_outside != FMOD)
+			&& g_outside != COLORMODE_FLOAT_MODULUS)
 		{
 			if (g_save_release < 1961)
 			{
