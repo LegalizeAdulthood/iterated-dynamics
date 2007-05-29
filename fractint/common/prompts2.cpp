@@ -106,7 +106,7 @@ static int inside_mode()
 	
 	switch (g_inside)
 	{
-	case -1:		return 1;
+	case COLORMODE_ITERATION:		return 1;
 	case COLORMODE_Z_MAGNITUDE:		return 2;
 	case COLORMODE_BEAUTY_OF_FRACTALS_60:		return 3;
 	case COLORMODE_BEAUTY_OF_FRACTALS_61:		return 4;
@@ -277,7 +277,7 @@ int get_toggles()
 		int insides[] =
 		{
 			0,
-			-1,
+			COLORMODE_ITERATION,
 			COLORMODE_Z_MAGNITUDE,
 			COLORMODE_BEAUTY_OF_FRACTALS_60,
 			COLORMODE_BEAUTY_OF_FRACTALS_61,

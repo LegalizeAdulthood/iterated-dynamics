@@ -1049,7 +1049,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		if (g_inside != 1)
 		{
 			put_parm(" inside=");
-			if (g_inside == -1)
+			if (g_inside == COLORMODE_ITERATION)
 			{
 				put_parm("maxiter");
 			}
@@ -1090,8 +1090,10 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 				put_parm("%d", g_inside);
 			}
 		}
-		if (g_proximity != 0.01 && (g_inside == COLORMODE_EPSILON_CROSS || g_inside == COLORMODE_FLOAT_MODULUS_INTEGER
-			|| g_outside == FMOD))
+		if (g_proximity != 0.01
+			&& (g_inside == COLORMODE_EPSILON_CROSS
+				|| g_inside == COLORMODE_FLOAT_MODULUS_INTEGER
+				|| g_outside == COLORMODE_FLOAT_MODULUS))
 		{
 			put_parm(" proximity=%.15g", g_proximity);
 		}
@@ -1118,11 +1120,11 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("atan");
 			}
-			else if (g_outside == FMOD)
+			else if (g_outside == COLORMODE_FLOAT_MODULUS)
 			{
 				put_parm("fmod");
 			}
-			else if (g_outside == TDIS)
+			else if (g_outside == COLORMODE_T_DISTANCE)
 			{
 				put_parm("tdis");
 			}

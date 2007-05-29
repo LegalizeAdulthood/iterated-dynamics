@@ -239,7 +239,7 @@ over_bailout_87:
 			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
 		/* check_color */
-		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != FMOD)
+		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
 		{
 			if (g_save_release < 1961)
 			{
