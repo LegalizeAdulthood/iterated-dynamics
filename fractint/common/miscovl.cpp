@@ -1077,11 +1077,11 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("period");
 			}
-			else if (g_inside == FMODI)
+			else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
 			{
 				put_parm("fmod");
 			}
-			else if (g_inside == ATANI)
+			else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
 			{
 				put_parm("atan");
 			}
@@ -1090,7 +1090,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 				put_parm("%d", g_inside);
 			}
 		}
-		if (g_proximity != 0.01 && (g_inside == COLORMODE_EPSILON_CROSS || g_inside == FMODI
+		if (g_proximity != 0.01 && (g_inside == COLORMODE_EPSILON_CROSS || g_inside == COLORMODE_FLOAT_MODULUS_INTEGER
 			|| g_outside == FMOD))
 		{
 			put_parm(" proximity=%.15g", g_proximity);
