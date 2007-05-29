@@ -189,7 +189,7 @@ pop_stack:
 	return g_color_iter;
 
 over_bailout_87:
-	if (g_outside <= -2)
+	if (g_outside <= COLORMODE_REAL)
 	{
 		g_new_z.x = x;
 		g_new_z.y = y;
@@ -208,25 +208,25 @@ over_bailout_87:
 		g_color_iter = 1;
 	}
 	g_input_counter -= g_real_color_iter;
-	if (g_outside == -1)
+	if (g_outside == COLORMODE_ITERATION)
 	{
 	}
-	else if (g_outside > -2)
+	else if (g_outside > COLORMODE_REAL)
 	{
 		g_color_iter = g_outside;
 	}
 	else
 	{
 		/* special_outside */
-		if (g_outside == REAL)
+		if (g_outside == COLORMODE_REAL)
 		{
 			g_color_iter += (long) g_new_z.x + 7;
 		}
-		else if (g_outside == IMAG)
+		else if (g_outside == COLORMODE_IMAGINARY)
 		{
 			g_color_iter += (long) g_new_z.y + 7;
 		}
-		else if (g_outside == MULT && g_new_z.y != 0.0)
+		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y != 0.0)
 		{
 		g_color_iter = (long) ((double) g_color_iter*(g_new_z.x/g_new_z.y));
 		}

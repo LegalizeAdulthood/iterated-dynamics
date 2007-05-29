@@ -442,7 +442,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_inside = 1;                          /* inside color = blue    */
 	g_fill_color = -1;                      /* no special fill color */
 	g_user_biomorph = -1;                   /* turn off g_biomorph flag */
-	g_outside = -1;                        /* outside color = -1 (not used) */
+	g_outside = COLORMODE_ITERATION;				/* outside color = -1 (not used) */
 	g_max_iteration = 150;                         /* initial maxiter        */
 	g_user_standard_calculation_mode = 'g';               /* initial solid-guessing */
 	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
@@ -1282,10 +1282,10 @@ static int outside_arg(const cmd_context &context)
 {
 	named_int args[] =
 	{
-		{ "iter", ITER },
-		{ "real", REAL },
-		{ "imag", IMAG },
-		{ "mult", MULT },
+		{ "iter", COLORMODE_ITERATION },
+		{ "real", COLORMODE_REAL },
+		{ "imag", COLORMODE_IMAGINARY },
+		{ "mult", COLORMODE_MULTIPLY },
 		{ "summ", SUM },
 		{ "atan", ATAN },
 		{ "fmod", FMOD },

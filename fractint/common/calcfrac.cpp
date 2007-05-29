@@ -1939,7 +1939,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 
 
-	if (g_outside < -1)  /* these options by Richard Hughes modified by TW */
+	if (g_outside < COLORMODE_ITERATION)  /* these options by Richard Hughes modified by TW */
 	{
 		if (g_integer_fractal)
 		{
@@ -1952,15 +1952,15 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			g_new_z.y = (double)bntofloat(bnnew.y);
 		}
 		/* Add 7 to overcome negative values on the MANDEL    */
-		if (g_outside == REAL)               /* "real" */
+		if (g_outside == COLORMODE_REAL)               /* "real" */
 		{
 			g_color_iter += (long)g_new_z.x + 7;
 		}
-		else if (g_outside == IMAG)          /* "imag" */
+		else if (g_outside == COLORMODE_IMAGINARY)          /* "imag" */
 		{
 			g_color_iter += (long)g_new_z.y + 7;
 		}
-		else if (g_outside == MULT  && g_new_z.y)  /* "mult" */
+		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y)  /* "mult" */
 		{
 			g_color_iter = (long)((double)g_color_iter*(g_new_z.x/g_new_z.y));
 		}
@@ -2755,8 +2755,13 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	{
 		g_force_symmetry = symmetry;  /* for backwards compatibility */
 	}
-	else if (g_outside == REAL || g_outside == IMAG || g_outside == MULT || g_outside == SUM
-			|| g_outside == ATAN || g_bail_out_test == Manr || g_outside == FMOD)
+	else if (g_outside == COLORMODE_REAL
+			|| g_outside == COLORMODE_IMAGINARY
+			|| g_outside == COLORMODE_MULTIPLY
+			|| g_outside == SUM
+			|| g_outside == ATAN
+			|| g_bail_out_test == Manr
+			|| g_outside == FMOD)
 	{
 		return;
 	}

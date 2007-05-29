@@ -1095,18 +1095,18 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		{
 			put_parm(" proximity=%.15g", g_proximity);
 		}
-		if (g_outside != -1)
+		if (g_outside != COLORMODE_ITERATION)
 		{
 			put_parm(" outside=");
-			if (g_outside == REAL)
+			if (g_outside == COLORMODE_REAL)
 			{
 				put_parm("real");
 			}
-			else if (g_outside == IMAG)
+			else if (g_outside == COLORMODE_IMAGINARY)
 			{
 				put_parm("imag");
 			}
-			else if (g_outside == MULT)
+			else if (g_outside == COLORMODE_MULTIPLY)
 			{
 				put_parm("mult");
 			}
