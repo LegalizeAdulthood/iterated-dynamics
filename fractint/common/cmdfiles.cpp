@@ -1287,7 +1287,7 @@ static int outside_arg(const cmd_context &context)
 		{ "imag", COLORMODE_IMAGINARY },
 		{ "mult", COLORMODE_MULTIPLY },
 		{ "summ", COLORMODE_SUM },
-		{ "atan", ATAN },
+		{ "atan", COLORMODE_INVERSE_TANGENT },
 		{ "fmod", FMOD },
 		{ "tdis", TDIS }
 	};

@@ -977,7 +977,7 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		&& !(g_user_standard_calculation_mode == 't' && g_fill_color > -1) /* tesseral with fill doesn't work */
 		&& !(g_user_standard_calculation_mode == 'o')
 		&& i == Command::FractalParameter /* nothing else changed */
-		&& g_outside != ATAN)
+		&& g_outside != COLORMODE_INVERSE_TANGENT)
 	{
 		g_quick_calculate = true;
 		g_standard_calculation_mode_old = g_user_standard_calculation_mode;

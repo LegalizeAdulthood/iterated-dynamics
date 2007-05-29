@@ -1968,7 +1968,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		{
 			g_color_iter += (long)(g_new_z.x + g_new_z.y);
 		}
-		else if (g_outside == ATAN)          /* "atan" */
+		else if (g_outside == COLORMODE_INVERSE_TANGENT)          /* "atan" */
 		{
 			g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
@@ -2759,7 +2759,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			|| g_outside == COLORMODE_IMAGINARY
 			|| g_outside == COLORMODE_MULTIPLY
 			|| g_outside == COLORMODE_SUM
-			|| g_outside == ATAN
+			|| g_outside == COLORMODE_INVERSE_TANGENT
 			|| g_bail_out_test == Manr
 			|| g_outside == FMOD)
 	{

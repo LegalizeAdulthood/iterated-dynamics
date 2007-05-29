@@ -319,7 +319,7 @@ static void read_info_pre_version_18(const fractal_info &read_info)
 			|| g_outside == COLORMODE_IMAGINARY
 			|| g_outside == COLORMODE_MULTIPLY
 			|| g_outside == COLORMODE_SUM
-			|| g_outside == ATAN)
+			|| g_outside == COLORMODE_INVERSE_TANGENT)
 		{
 			if (g_force_symmetry == FORCESYMMETRY_NONE)
 			{
@@ -1400,13 +1400,13 @@ int check_back()
 		|| (g_inside == COLORMODE_STAR_TRAIL && g_save_release < 1825)
 		|| (g_max_iteration > 32767 && g_save_release <= 1950)
 		|| (g_distance_test && g_save_release <= 1950)
-		|| ((g_outside <= COLORMODE_REAL && g_outside >= ATAN) && g_save_release <= 1960)
+		|| ((g_outside <= COLORMODE_REAL && g_outside >= COLORMODE_INVERSE_TANGENT) && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_FP && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_L && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_JULIA_FP && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_JULIA_L && g_save_release <= 1960)
 		|| (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER && g_save_release <= 2000)
-		|| ((g_inside == COLORMODE_INVERSE_TANGENT_INTEGER || g_outside == ATAN) && g_save_release <= 2005)
+		|| ((g_inside == COLORMODE_INVERSE_TANGENT_INTEGER || g_outside == COLORMODE_INVERSE_TANGENT) && g_save_release <= 2005)
 		|| (g_fractal_type == FRACTYPE_LAMBDA_FUNC_FP && g_trig_index[0] == EXP && g_save_release <= 2002)
 		|| ((g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
 			&& (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)

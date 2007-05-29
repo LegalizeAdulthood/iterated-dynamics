@@ -1114,7 +1114,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("summ");
 			}
-			else if (g_outside == ATAN)
+			else if (g_outside == COLORMODE_INVERSE_TANGENT)
 			{
 				put_parm("atan");
 			}
