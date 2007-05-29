@@ -793,8 +793,20 @@ enum bailouts
 	BAILOUT_MANHATTAN,
 	BAILOUT_MANHATTAN_R
 };
-enum Major  {breadth_first, depth_first, random_walk, random_run};
-enum Minor  {left_first, right_first};
+
+enum MajorMethodType
+{
+	MAJORMETHOD_BREADTH_FIRST,
+	MAJORMETHOD_DEPTH_FIRST,
+	MAJORMETHOD_RANDOM_WALK,
+	MAJORMETHOD_RANDOM_RUN
+};
+
+enum MinorMethodType
+{
+	left_first,
+	right_first
+};
 
 /* more bitmasks for evolution mode flag */
 #define EVOLVE_NONE			0	/* no evolution */

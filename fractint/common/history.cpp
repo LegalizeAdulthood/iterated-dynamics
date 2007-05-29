@@ -296,8 +296,8 @@ void _fastcall history_restore_info()
 	g_new_orbit_type        = last.orbittype;
 	g_juli_3d_mode			= last.juli3Dmode;
 	g_formula_state.set_max_fn(static_cast<int>(last.max_fn));
-	g_major_method        	= (enum Major) last.major_method;
-	g_minor_method        	= (enum Minor) last.minor_method;
+	g_major_method        	= static_cast<MajorMethodType>(last.major_method);
+	g_minor_method        	= static_cast<MinorMethodType>(last.minor_method);
 	g_bail_out             	= last.bail_out;
 	g_bail_out_test			= (enum bailouts) last.bailoutest;
 	g_max_iteration               	= last.iterations;
