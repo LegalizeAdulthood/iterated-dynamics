@@ -121,7 +121,7 @@ int mandelbrot_setup_fp()
 			&& !g_distance_test
 			&& g_decomposition[0] == 0
 			&& g_biomorph == -1
-			&& (g_inside >= -1)
+			&& (g_inside >= COLORMODE_ITERATION)
 			/* uncomment this next line if more outside options are added */
 			&& g_outside >= -6
 			&& g_use_initial_orbit_z != INITIALZ_ORBIT
@@ -238,7 +238,7 @@ int julia_setup_fp()
 			&& !g_distance_test
 			&& g_decomposition[0] == 0
 			&& g_biomorph == -1
-			&& (g_inside >= -1)
+			&& (g_inside >= COLORMODE_ITERATION)
 			/* uncomment this next line if more outside options are added */
 			&& g_outside >= -6
 			&& g_use_initial_orbit_z != INITIALZ_ORBIT

@@ -1216,7 +1216,7 @@ static int inside_arg(const cmd_context &context)
 		{ "period", COLORMODE_PERIOD },
 		{ "fmod", COLORMODE_FLOAT_MODULUS_INTEGER },
 		{ "atan", COLORMODE_INVERSE_TANGENT_INTEGER },
-		{ "maxiter", -1 }
+		{ "maxiter", COLORMODE_ITERATION }
 	};
 	if (named_value(args, NUM_OF(args), context.value, &g_inside))
 	{
@@ -1288,14 +1288,14 @@ static int outside_arg(const cmd_context &context)
 		{ "mult", COLORMODE_MULTIPLY },
 		{ "summ", COLORMODE_SUM },
 		{ "atan", COLORMODE_INVERSE_TANGENT },
-		{ "fmod", FMOD },
-		{ "tdis", TDIS }
+		{ "fmod", COLORMODE_FLOAT_MODULUS },
+		{ "tdis", COLORMODE_T_DISTANCE }
 	};
 	if (named_value(args, NUM_OF(args), context.value, &g_outside))
 	{
 		return Command::FractalParameter;
 	}
-	if ((context.numval == NON_NUMERIC) || (context.numval < TDIS || context.numval > 255))
+	if ((context.numval == NON_NUMERIC) || (context.numval < COLORMODE_T_DISTANCE || context.numval > 255))
 	{
 		return bad_arg(context.curarg);
 	}

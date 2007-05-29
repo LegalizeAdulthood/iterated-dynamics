@@ -782,9 +782,6 @@ enum ColoringModeType
 	COLORMODE_INVERSE_TANGENT_INTEGER = -104
 };
 
-#define FMOD        -7
-#define TDIS        -8
-
 /* defines for bailoutest */
 enum bailouts { Mod, Real, Imag, Or, And, Manh, Manr };
 enum Major  {breadth_first, depth_first, random_walk, random_run};

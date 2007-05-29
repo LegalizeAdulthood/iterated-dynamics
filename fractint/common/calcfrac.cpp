@@ -185,7 +185,7 @@ static int s_show_dot_color;
 static int s_show_dot_width = 0;
 
 /* FMODTEST routine. */
-/* Makes the test condition for the FMOD coloring type
+/* Makes the test condition for the COLORMODE_FLOAT_MODULUS coloring type
 	that of the current bailout method. 'or' and 'and'
 	methods are not used - in these cases a normal
 	modulus test is used
@@ -1436,7 +1436,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	attracted = false;
 
 	ComplexD lastz;
-	if (g_outside == TDIS)
+	if (g_outside == COLORMODE_T_DISTANCE)
 	{
 		if (g_integer_fractal)
 		{
@@ -1550,7 +1550,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				plot_orbit_i(g_new_z_l.x, g_new_z_l.y, -1);
 			}
 		}
-		if (g_inside < -1)
+		if (g_inside < COLORMODE_ITERATION)
 		{
 			if (g_bf_math == BIGNUM)
 			{
@@ -1669,7 +1669,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			}
 		}
 
-		if (g_outside == TDIS || g_outside == FMOD)
+		if (g_outside == COLORMODE_T_DISTANCE || g_outside == COLORMODE_FLOAT_MODULUS)
 		{
 			if (g_bf_math == BIGNUM)
 			{
@@ -1679,7 +1679,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			{
 				g_new_z = complex_bf_to_float(&bfnew);
 			}
-			if (g_outside == TDIS)
+			if (g_outside == COLORMODE_T_DISTANCE)
 			{
 				if (g_integer_fractal)
 				{
@@ -1690,7 +1690,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				lastz.x = g_new_z.x;
 				lastz.y = g_new_z.y;
 			}
-			else if (g_outside == FMOD)
+			else if (g_outside == COLORMODE_FLOAT_MODULUS)
 			{
 				double mag;
 				if (g_integer_fractal)
@@ -1972,17 +1972,17 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		{
 			g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
-		else if (g_outside == FMOD)
+		else if (g_outside == COLORMODE_FLOAT_MODULUS)
 		{
 			g_color_iter = (long)(memvalue*g_colors/g_proximity);
 		}
-		else if (g_outside == TDIS)
+		else if (g_outside == COLORMODE_T_DISTANCE)
 		{
 			g_color_iter = (long)(totaldist);
 		}
 
 		/* eliminate negative colors & wrap arounds */
-		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != FMOD)
+		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
 		{
 			g_color_iter = (g_save_release < 1961) ? 0 : 1;
 		}
@@ -2761,11 +2761,11 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			|| g_outside == COLORMODE_SUM
 			|| g_outside == COLORMODE_INVERSE_TANGENT
 			|| g_bail_out_test == Manr
-			|| g_outside == FMOD)
+			|| g_outside == COLORMODE_FLOAT_MODULUS)
 	{
 		return;
 	}
-	else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER || g_outside == TDIS)
+	else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER || g_outside == COLORMODE_T_DISTANCE)
 	{
 		return;
 	}
