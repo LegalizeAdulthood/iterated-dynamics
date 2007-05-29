@@ -1110,7 +1110,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("mult");
 			}
-			else if (g_outside == SUM)
+			else if (g_outside == COLORMODE_SUM)
 			{
 				put_parm("summ");
 			}

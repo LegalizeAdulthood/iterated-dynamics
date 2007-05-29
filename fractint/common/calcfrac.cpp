@@ -1952,19 +1952,19 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			g_new_z.y = (double)bntofloat(bnnew.y);
 		}
 		/* Add 7 to overcome negative values on the MANDEL    */
-		if (g_outside == COLORMODE_REAL)               /* "real" */
+		if (g_outside == COLORMODE_REAL)
 		{
 			g_color_iter += (long)g_new_z.x + 7;
 		}
-		else if (g_outside == COLORMODE_IMAGINARY)          /* "imag" */
+		else if (g_outside == COLORMODE_IMAGINARY)
 		{
 			g_color_iter += (long)g_new_z.y + 7;
 		}
-		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y)  /* "mult" */
+		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y)
 		{
 			g_color_iter = (long)((double)g_color_iter*(g_new_z.x/g_new_z.y));
 		}
-		else if (g_outside == SUM)           /* "sum" */
+		else if (g_outside == COLORMODE_SUM)
 		{
 			g_color_iter += (long)(g_new_z.x + g_new_z.y);
 		}
@@ -2758,7 +2758,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	else if (g_outside == COLORMODE_REAL
 			|| g_outside == COLORMODE_IMAGINARY
 			|| g_outside == COLORMODE_MULTIPLY
-			|| g_outside == SUM
+			|| g_outside == COLORMODE_SUM
 			|| g_outside == ATAN
 			|| g_bail_out_test == Manr
 			|| g_outside == FMOD)

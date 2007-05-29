@@ -173,7 +173,7 @@ static long cdecl calculate_mandelbrot_asm1()
 				{
 					g_color_iter = FUDGE_MUL(g_color_iter, g_new_z_l.x) / g_new_z_l.y;
 				}
-				else if (g_outside == SUM)
+				else if (g_outside == COLORMODE_SUM)
 				{
 					g_color_iter += g_new_z_l.x + g_new_z_l.y;
 				}
