@@ -177,7 +177,7 @@ static long cdecl calculate_mandelbrot_asm1()
 				{
 					g_color_iter += g_new_z_l.x + g_new_z_l.y;
 				}
-				else if (g_outside == ATAN)
+				else if (g_outside == COLORMODE_INVERSE_TANGENT)
 				{
 					g_color_iter = (long) fabs(atan2((double) g_new_z_l.y, (double) g_new_z_l.x)*g_atan_colors/MathUtil::Pi);
 				}
