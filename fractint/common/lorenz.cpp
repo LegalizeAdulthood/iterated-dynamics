@@ -378,11 +378,11 @@ int orbit_3d_setup()
 			}
 			switch (g_minor_method)
 			{
-				case left_first:
+				case MINORMETHOD_LEFT_FIRST:
 					PushLong((g_fudge + Sqrt.x) / 2,  Sqrt.y / 2);
 					PushLong((g_fudge - Sqrt.x) / 2, -Sqrt.y / 2);
 					break;
-				case right_first:
+				case MINORMETHOD_RIGHT_FIRST:
 					PushLong((g_fudge - Sqrt.x) / 2, -Sqrt.y / 2);
 					PushLong((g_fudge + Sqrt.x) / 2,  Sqrt.y / 2);
 					break;
@@ -563,11 +563,11 @@ int orbit_3d_setup_fp()
 			}
 			switch (g_minor_method)
 			{
-			case left_first:
+			case MINORMETHOD_LEFT_FIRST:
 				PushFloat((float) ((1 + Sqrt.x) / 2), (float) (Sqrt.y / 2));
 				PushFloat((float) ((1 - Sqrt.x) / 2), (float) (-Sqrt.y / 2));
 				break;
-			case right_first:
+			case MINORMETHOD_RIGHT_FIRST:
 				PushFloat((float) ((1 - Sqrt.x) / 2), (float) (-Sqrt.y / 2));
 				PushFloat((float) ((1 + Sqrt.x) / 2), (float) (Sqrt.y / 2));
 				break;
@@ -731,7 +731,7 @@ int Minverse_julia_orbit()
 		{
 			g_plot_color_put_color(newcol, newrow, color + 1);
 			/* g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy); */
-			if (g_minor_method == left_first)
+			if (g_minor_method == MINORMETHOD_LEFT_FIRST)
 			{
 				if (QueueFullAlmost())
 				{
@@ -912,7 +912,7 @@ int Linverse_julia_orbit()
 		{
 			g_plot_color_put_color(newcol, newrow, color + 1);
 			g_new_z_l = ComplexSqrtLong(g_new_z_l.x - s_x_long, g_new_z_l.y - s_y_long);
-			if (g_minor_method == left_first)
+			if (g_minor_method == MINORMETHOD_LEFT_FIRST)
 			{
 				if (QueueFullAlmost())
 				{

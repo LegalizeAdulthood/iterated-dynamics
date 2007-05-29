@@ -804,17 +804,17 @@ enum MajorMethodType
 
 enum MinorMethodType
 {
-	left_first,
-	right_first
+	MINORMETHOD_LEFT_FIRST,
+	MINORMETHOD_RIGHT_FIRST
 };
 
 /* more bitmasks for evolution mode flag */
-#define EVOLVE_NONE			0	/* no evolution */
-#define EVOLVE_FIELD_MAP	1	/*steady field varyiations across screen */
-#define EVOLVE_RAND_WALK	2	/* newparm = lastparm +- rand()                   */
-#define EVOLVE_RAND_PARAM	4	/* newparm = constant +- rand()                   */
-#define EVOLVE_NO_GROUT		8	/* no gaps between images                                   */
-#define EVOLVE_PARM_BOX		128
+#define EVOLVE_NONE				0	/* no evolution */
+#define EVOLVE_FIELD_MAP		1	/*steady field varyiations across screen */
+#define EVOLVE_RANDOM_WALK		2	/* newparm = lastparm +- rand()                   */
+#define EVOLVE_RANDOM_PARAMETER	4	/* newparm = constant +- rand()                   */
+#define EVOLVE_NO_GROUT			8	/* no gaps between images                                   */
+#define EVOLVE_PARAMETER_BOX			128
 
 
 extern FractalTypeSpecificData g_fractal_specific[];
