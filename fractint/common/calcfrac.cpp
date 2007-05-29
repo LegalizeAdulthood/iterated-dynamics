@@ -192,7 +192,7 @@ static int s_show_dot_width = 0;
 */
 static double fmod_test()
 {
-	if (g_inside == FMODI && g_save_release <= 2000) /* for backwards compatibility */
+	if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER && g_save_release <= 2000) /* for backwards compatibility */
 	{
 		return (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
 			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
@@ -1632,7 +1632,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					}
 				}
 			}
-			else if (g_inside == FMODI)
+			else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
 			{
 				double mag;
 				if (g_integer_fractal)
@@ -2113,11 +2113,11 @@ plot_inside: /* we're "inside" */
 				orbit_scrub();
 			}
 		}
-		else if (g_inside == FMODI)
+		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
 		{
 			g_color_iter = (long) (memvalue*g_colors/g_proximity);
 		}
-		else if (g_inside == ATANI)          /* "atan" */
+		else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
 		{
 			if (g_integer_fractal)
 			{
@@ -2760,7 +2760,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	{
 		return;
 	}
-	else if (g_inside == FMODI || g_outside == TDIS)
+	else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER || g_outside == TDIS)
 	{
 		return;
 	}

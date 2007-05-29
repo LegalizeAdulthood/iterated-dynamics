@@ -790,8 +790,6 @@ enum ColoringModeType
 #define ATAN        -6
 #define FMOD        -7
 #define TDIS        -8
-#define FMODI     -103
-#define ATANI     -104
 
 /* defines for bailoutest */
 enum bailouts { Mod, Real, Imag, Or, And, Manh, Manr };

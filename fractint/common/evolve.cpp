@@ -279,7 +279,9 @@ static void vary_inside(GENEBASE gene[], int randval, int i)
 		COLORMODE_EPSILON_CROSS,
 		COLORMODE_STAR_TRAIL,
 		COLORMODE_PERIOD,
-		-103, -104, -1
+		COLORMODE_FLOAT_MODULUS_INTEGER,
+		COLORMODE_INVERSE_TANGENT_INTEGER,
+		-1
 	};
 	if (gene[i].mutate)
 	{

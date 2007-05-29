@@ -1214,8 +1214,8 @@ static int inside_arg(const cmd_context &context)
 		{ "epsiloncross", COLORMODE_EPSILON_CROSS },
 		{ "startrail", COLORMODE_STAR_TRAIL },
 		{ "period", COLORMODE_PERIOD },
-		{ "fmod", FMODI },
-		{ "atan", ATANI },
+		{ "fmod", COLORMODE_FLOAT_MODULUS_INTEGER },
+		{ "atan", COLORMODE_INVERSE_TANGENT_INTEGER },
 		{ "maxiter", -1 }
 	};
 	if (named_value(args, NUM_OF(args), context.value, &g_inside))

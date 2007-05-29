@@ -243,7 +243,7 @@ init_restart:
 	g_distance_test = g_user_distance_test;
 	g_biomorph = g_user_biomorph;
 
-	if (g_inside == ATANI && g_save_release >= 2004)
+	if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER && g_save_release >= 2004)
 	{
 		g_periodicity_check = 0;
 	}

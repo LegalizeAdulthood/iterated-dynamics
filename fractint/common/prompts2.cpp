@@ -113,8 +113,8 @@ static int inside_mode()
 	case COLORMODE_EPSILON_CROSS:	return 5;
 	case COLORMODE_STAR_TRAIL: return 6;
 	case COLORMODE_PERIOD:	return 7;
-	case ATANI:		return 8;
-	case FMODI:		return 9;
+	case COLORMODE_INVERSE_TANGENT_INTEGER:		return 8;
+	case COLORMODE_FLOAT_MODULUS_INTEGER:		return 9;
 	default:
 		assert(false && "Bad g_inside");
 	}
@@ -284,8 +284,8 @@ int get_toggles()
 			COLORMODE_EPSILON_CROSS,
 			COLORMODE_STAR_TRAIL,
 			COLORMODE_PERIOD,
-			ATANI,
-			FMODI
+			COLORMODE_INVERSE_TANGENT_INTEGER,
+			COLORMODE_FLOAT_MODULUS_INTEGER
 		};
 		if (tmp > 0 && tmp < NUM_OF(insides))
 		{
