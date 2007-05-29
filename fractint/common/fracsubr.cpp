@@ -365,7 +365,7 @@ init_restart:
 			&& (g_outside > COLORMODE_REAL || g_outside < -6)         /* and no funny outside stuff */
 			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	/* and not debugging */
 			&& g_proximity <= 2.0                       /* and g_proximity not too large */
-			&& g_bail_out_test == Mod)                     /* and bailout test = mod */
+			&& g_bail_out_test == BAILOUT_MODULUS)                     /* and bailout test = mod */
 		{
 			g_bit_shift = FUDGE_FACTOR;                  /* use the larger g_bit_shift */
 		}

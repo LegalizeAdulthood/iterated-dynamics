@@ -347,7 +347,7 @@ static void read_info_version_9(const fractal_info &read_info)
 	}
 	else
 	{
-		g_bail_out_test = Mod;
+		g_bail_out_test = BAILOUT_MODULUS;
 	}
 	set_bail_out_formula(g_bail_out_test);
 	if (read_info.version > 9)

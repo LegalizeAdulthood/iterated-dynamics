@@ -201,27 +201,27 @@ static double fmod_test()
 	double result;
 	switch (g_bail_out_test)
 	{
-	case Mod:
+	case BAILOUT_MODULUS:
 		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
 			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
 		break;
-	case Real:
+	case BAILOUT_REAL:
 		result = sqr(g_new_z.x);
 		break;
-	case Imag:
+	case BAILOUT_IMAGINARY:
 		result = sqr(g_new_z.y);
 		break;
-	case Or:
+	case BAILOUT_OR:
 		{
 			double tmpx = sqr(g_new_z.x);
 			double tmpy = sqr(g_new_z.y);
 			result = (tmpx > tmpy) ? tmpx : tmpy;
 		}
 		break;
-	case Manh:
+	case BAILOUT_MANHATTAN:
 		result = sqr(fabs(g_new_z.x) + fabs(g_new_z.y));
 		break;
-	case Manr:
+	case BAILOUT_MANHATTAN_R:
 		result = sqr(g_new_z.x + g_new_z.y);
 		break;
 	default:
@@ -2760,7 +2760,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			|| g_outside == COLORMODE_MULTIPLY
 			|| g_outside == COLORMODE_SUM
 			|| g_outside == COLORMODE_INVERSE_TANGENT
-			|| g_bail_out_test == Manr
+			|| g_bail_out_test == BAILOUT_MANHATTAN_R
 			|| g_outside == COLORMODE_FLOAT_MODULUS)
 	{
 		return;

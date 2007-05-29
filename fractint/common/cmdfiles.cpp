@@ -518,7 +518,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_overlay_3d = 0;                       /* 3D overlay is off        */
 
 	g_old_demm_colors = false;
-	g_bail_out_test    = Mod;
+	g_bail_out_test    = BAILOUT_MODULUS;
 	g_bail_out_fp  = bail_out_mod_fp;
 	g_bail_out_l   = bail_out_mod_l;
 	g_bail_out_bn = bail_out_mod_bn;
@@ -2159,13 +2159,13 @@ static int bail_out_test_arg(const cmd_context &context)
 {
 	named_int args[] =
 	{
-		{ "mod", Mod },
-		{ "real", Real },
-		{ "imag", Imag },
-		{ "or", Or },
-		{ "and", And },
-		{ "manh", Manh },
-		{ "manr", Manr }
+		{ "mod", BAILOUT_MODULUS },
+		{ "real", BAILOUT_REAL },
+		{ "imag", BAILOUT_IMAGINARY },
+		{ "or", BAILOUT_OR },
+		{ "and", BAILOUT_AND },
+		{ "manh", BAILOUT_MANHATTAN },
+		{ "manr", BAILOUT_MANHATTAN_R }
 	};
 	int value;
 	if (named_value(args, NUM_OF(args), context.value, &value))
