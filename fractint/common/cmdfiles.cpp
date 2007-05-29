@@ -429,7 +429,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	}
 
 	g_major_method = MAJORMETHOD_BREADTH_FIRST;        /* default inverse julia methods */
-	g_minor_method = left_first;   /* default inverse julia methods */
+	g_minor_method = MINORMETHOD_LEFT_FIRST;   /* default inverse julia methods */
 	g_true_color = 0;              /* truecolor output flag */
 	g_true_mode = TRUEMODE_DEFAULT;               /* set to default color scheme */
 }
@@ -1613,11 +1613,11 @@ static int miim_arg(const cmd_context &context)
 
 	if (context.charval[1] == 'l')
 	{
-		g_minor_method = left_first;
+		g_minor_method = MINORMETHOD_LEFT_FIRST;
 	}
 	else if (context.charval[1] == 'r')
 	{
-		g_minor_method = right_first;
+		g_minor_method = MINORMETHOD_RIGHT_FIRST;
 	}
 	else
 	{

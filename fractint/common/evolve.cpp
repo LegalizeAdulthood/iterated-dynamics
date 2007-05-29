@@ -618,7 +618,7 @@ int get_evolve_parameters()
 
 get_evol_restart:
 	int j;
-	if ((g_evolving_flags & EVOLVE_RAND_WALK) || (g_evolving_flags & EVOLVE_RAND_PARAM))
+	if ((g_evolving_flags & EVOLVE_RANDOM_WALK) || (g_evolving_flags & EVOLVE_RANDOM_PARAMETER))
 	{
 		/* adjust field param to make some sense when changing from random modes*/
 		/* maybe should adjust for aspect ratio here? */
@@ -635,7 +635,7 @@ get_evol_restart:
 		if (explore_check())  /* test to see if any parms are set to linear */
 		{
 			/* variation 'explore mode' */
-			dialog.push("Show parameter zoom box?", (g_evolving_flags & EVOLVE_PARM_BOX) != 0);
+			dialog.push("Show parameter zoom box?", (g_evolving_flags & EVOLVE_PARAMETER_BOX) != 0);
 			dialog.push("x parameter range (across screen)", static_cast<float>(g_parameter_range_x));
 			dialog.push("x parameter offset (left hand edge)", static_cast<float>(g_parameter_offset_x));
 			dialog.push("y parameter range (up screen)", static_cast<float>(g_parameter_range_y));
@@ -708,7 +708,7 @@ get_evol_restart:
 		g_grid_size |= 1; /* make sure g_grid_size is odd */
 		if (explore_check())
 		{
-			int temp = (EVOLVE_PARM_BOX*dialog.values(++k).uval.ch.val);
+			int temp = (EVOLVE_PARAMETER_BOX*dialog.values(++k).uval.ch.val);
 			if (g_evolving_flags)
 			{
 				g_evolving_flags += temp;
@@ -903,7 +903,7 @@ void draw_parameter_box(int mode)
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
 	Coordinate tl, tr, bl, br;
 	int grout;
-	if (!(g_evolving_flags & EVOLVE_PARM_BOX))
+	if (!(g_evolving_flags & EVOLVE_PARAMETER_BOX))
 	{
 		return; /* don't draw if not asked to! */
 	}
