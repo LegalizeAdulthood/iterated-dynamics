@@ -302,7 +302,10 @@ static void vary_outside(GENEBASE gene[], int randval, int i)
 
 static void vary_bail_out_test(GENEBASE gene[], int randval, int i)
 {
-	int choices[7] = {Mod, Real, Imag, Or, And, Manh, Manr};
+	int choices[7] =
+	{
+		BAILOUT_MODULUS, BAILOUT_REAL, BAILOUT_IMAGINARY, BAILOUT_OR, BAILOUT_AND, BAILOUT_MANHATTAN, BAILOUT_MANHATTAN_R
+	};
 	if (gene[i].mutate)
 	{
 		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 7, gene[i].mutate)];

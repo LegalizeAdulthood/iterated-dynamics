@@ -783,7 +783,16 @@ enum ColoringModeType
 };
 
 /* defines for bailoutest */
-enum bailouts { Mod, Real, Imag, Or, And, Manh, Manr };
+enum bailouts
+{
+	BAILOUT_MODULUS,
+	BAILOUT_REAL,
+	BAILOUT_IMAGINARY,
+	BAILOUT_OR,
+	BAILOUT_AND,
+	BAILOUT_MANHATTAN,
+	BAILOUT_MANHATTAN_R
+};
 enum Major  {breadth_first, depth_first, random_walk, random_run};
 enum Minor  {left_first, right_first};
 

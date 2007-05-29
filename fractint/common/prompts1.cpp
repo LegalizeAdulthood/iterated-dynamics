@@ -2154,7 +2154,7 @@ gfp_top:
 	}
 	else
 	{
-		g_bail_out_test = Mod;
+		g_bail_out_test = BAILOUT_MODULUS;
 	}
 	set_bail_out_formula(g_bail_out_test);
 
@@ -3591,44 +3591,44 @@ void set_bail_out_formula(enum bailouts test)
 {
 	switch (test)
 	{
-	case Mod:
+	case BAILOUT_MODULUS:
 	default:
 		g_bail_out_fp = bail_out_mod_fp;
 		g_bail_out_l = bail_out_mod_l;
 		g_bail_out_bn = bail_out_mod_bn;
 		g_bail_out_bf = bail_out_mod_bf;
 		break;
-	case Real:
+	case BAILOUT_REAL:
 		g_bail_out_fp = bail_out_real_fp;
 		g_bail_out_l = bail_out_real_l;
 		g_bail_out_bn = bail_out_real_bn;
 		g_bail_out_bf = bail_out_real_bf;
 		break;
-	case Imag:
+	case BAILOUT_IMAGINARY:
 		g_bail_out_fp = bail_out_imag_fp;
 		g_bail_out_l = bail_out_imag_l;
 		g_bail_out_bn = bail_out_imag_bn;
 		g_bail_out_bf = bail_out_imag_bf;
 		break;
-	case Or:
+	case BAILOUT_OR:
 		g_bail_out_fp = bail_out_or_fp;
 		g_bail_out_l = bail_out_or_l;
 		g_bail_out_bn = bail_out_or_bn;
 		g_bail_out_bf = bail_out_or_bf;
 		break;
-	case And:
+	case BAILOUT_AND:
 		g_bail_out_fp = bail_out_and_fp;
 		g_bail_out_l = bail_out_and_l;
 		g_bail_out_bn = bail_out_and_bn;
 		g_bail_out_bf = bail_out_and_bf;
 		break;
-	case Manh:
+	case BAILOUT_MANHATTAN:
 		g_bail_out_fp = bail_out_manhattan_fp;
 		g_bail_out_l = bail_out_manhattan_l;
 		g_bail_out_bn = bail_out_manhattan_bn;
 		g_bail_out_bf = bail_out_manhattan_bf;
 		break;
-	case Manr:
+	case BAILOUT_MANHATTAN_R:
 		g_bail_out_fp = bail_out_manhattan_r_fp;
 		g_bail_out_l = bail_out_manhattan_r_l;
 		g_bail_out_bn = bail_out_manhattan_r_bn;
