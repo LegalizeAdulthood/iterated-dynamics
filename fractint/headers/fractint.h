@@ -782,10 +782,6 @@ enum ColoringModeType
 	COLORMODE_INVERSE_TANGENT_INTEGER = -104
 };
 
-#define ITER        -1
-#define REAL        -2
-#define IMAG        -3
-#define MULT        -4
 #define SUM         -5
 #define ATAN        -6
 #define FMOD        -7

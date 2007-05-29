@@ -362,7 +362,7 @@ init_restart:
 			&& !g_invert                                /* and not inverting */
 			&& g_biomorph == -1                         /* and not biomorphing */
 			&& g_rq_limit <= 4.0                           /* and bailout not too high */
-			&& (g_outside > -2 || g_outside < -6)         /* and no funny outside stuff */
+			&& (g_outside > COLORMODE_REAL || g_outside < -6)         /* and no funny outside stuff */
 			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	/* and not debugging */
 			&& g_proximity <= 2.0                       /* and g_proximity not too large */
 			&& g_bail_out_test == Mod)                     /* and bailout test = mod */

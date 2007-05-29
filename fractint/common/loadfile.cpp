@@ -315,7 +315,10 @@ static void read_info_pre_version_18(const fractal_info &read_info)
 	{
 		/* g_force_symmetry==FORCESYMMETRY_SEARCH means we want to force symmetry but don't
 		know which symmetry yet, will find out in setsymmetry() */
-		if (g_outside == REAL || g_outside == IMAG || g_outside == MULT || g_outside == SUM
+		if (g_outside == COLORMODE_REAL
+			|| g_outside == COLORMODE_IMAGINARY
+			|| g_outside == COLORMODE_MULTIPLY
+			|| g_outside == SUM
 			|| g_outside == ATAN)
 		{
 			if (g_force_symmetry == FORCESYMMETRY_NONE)
@@ -1364,7 +1367,7 @@ void backwards_v20()
 	// See calmanfp.asm and calmanfp5.asm in the DOS code.
 	g_bad_outside = ((g_fractal_type == FRACTYPE_MANDELBROT_FP || g_fractal_type == FRACTYPE_JULIA_FP
 						|| g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)
-					&& (g_outside <= REAL && g_outside >= SUM) && g_save_release <= 1960);
+					&& (g_outside <= COLORMODE_REAL && g_outside >= SUM) && g_save_release <= 1960);
 	g_use_old_complex_power = ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
 				&& (g_save_release < 1900 || DEBUGMODE_OLD_POWER == g_debug_mode));
 	if (g_inside == COLORMODE_EPSILON_CROSS && g_save_release < 1961)
@@ -1397,7 +1400,7 @@ int check_back()
 		|| (g_inside == COLORMODE_STAR_TRAIL && g_save_release < 1825)
 		|| (g_max_iteration > 32767 && g_save_release <= 1950)
 		|| (g_distance_test && g_save_release <= 1950)
-		|| ((g_outside <= REAL && g_outside >= ATAN) && g_save_release <= 1960)
+		|| ((g_outside <= COLORMODE_REAL && g_outside >= ATAN) && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_FP && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_L && g_save_release <= 1960)
 		|| (g_fractal_type == FRACTYPE_POPCORN_JULIA_FP && g_save_release <= 1960)
