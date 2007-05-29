@@ -428,7 +428,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 		g_map_dac_box = NULL;
 	}
 
-	g_major_method = breadth_first;        /* default inverse julia methods */
+	g_major_method = MAJORMETHOD_BREADTH_FIRST;        /* default inverse julia methods */
 	g_minor_method = left_first;   /* default inverse julia methods */
 	g_true_color = 0;              /* truecolor output flag */
 	g_true_mode = TRUEMODE_DEFAULT;               /* set to default color scheme */
@@ -1590,20 +1590,20 @@ static int miim_arg(const cmd_context &context)
 	}
 	if (context.charval[0] == 'b')
 	{
-		g_major_method = breadth_first;
+		g_major_method = MAJORMETHOD_BREADTH_FIRST;
 	}
 	else if (context.charval[0] == 'd')
 	{
-		g_major_method = depth_first;
+		g_major_method = MAJORMETHOD_DEPTH_FIRST;
 	}
 	else if (context.charval[0] == 'w')
 	{
-		g_major_method = random_walk;
+		g_major_method = MAJORMETHOD_RANDOM_WALK;
 	}
 #ifdef RANDOM_RUN
 	else if (context.charval[0] == 'r')
 	{
-		g_major_method = random_run;
+		g_major_method = MAJORMETHOD_RANDOM_RUN;
 	}
 #endif
 	else

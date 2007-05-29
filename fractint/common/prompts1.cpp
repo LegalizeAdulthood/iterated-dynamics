@@ -2196,15 +2196,17 @@ gfp_top:
 	}
 	if (curtype == FRACTYPE_INVERSE_JULIA || curtype == FRACTYPE_INVERSE_JULIA_FP)
 	{
-		if (paramvalues[promptnum].uval.ch.val != g_major_method ||
-				paramvalues[promptnum + 1].uval.ch.val != g_minor_method)
+		if (paramvalues[promptnum].uval.ch.val != g_major_method
+			|| paramvalues[promptnum + 1].uval.ch.val != g_minor_method)
+		{
 			ret = 1;
-		g_major_method = (enum Major)paramvalues[promptnum++].uval.ch.val;
-		g_minor_method = (enum Minor)paramvalues[promptnum++].uval.ch.val;
+		}
+		g_major_method = static_cast<MajorMethodType>(paramvalues[promptnum++].uval.ch.val);
+		g_minor_method = static_cast<MinorMethodType>(paramvalues[promptnum++].uval.ch.val);
 	}
 	if ((curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
 	{
-		if ((g_is_mand ? 1 : 0) != paramvalues[promptnum].uval.ch.val)
+		if (g_is_mand != (paramvalues[promptnum].uval.ch.val != 0))
 		{
 			g_is_mand = (paramvalues[promptnum].uval.ch.val != 0);
 			ret = 1;

@@ -261,8 +261,8 @@ static void read_info_version_8(const fractal_info &read_info)
 		g_new_orbit_type = read_info.orbittype;
 		g_juli_3d_mode = read_info.juli3Dmode;
 		g_formula_state.set_max_fn(read_info.max_fn);
-		g_major_method = (enum Major) (read_info.inversejulia >> 8);
-		g_minor_method = (enum Minor) (read_info.inversejulia & 255);
+		g_major_method = static_cast<MajorMethodType>(read_info.inversejulia >> 8);
+		g_minor_method = static_cast<MinorMethodType>(read_info.inversejulia & 255);
 		g_parameters[4] = read_info.dparm5;
 		g_parameters[5] = read_info.dparm6;
 		g_parameters[6] = read_info.dparm7;
