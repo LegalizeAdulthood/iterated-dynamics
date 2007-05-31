@@ -3541,7 +3541,7 @@ int frm_get_param_stuff (char * Name)
      are found which should cause the formula not to be executed
 */
 
-int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
+int frm_check_name_and_sym (FILE * open_file, int from_prompts1c)
 {
    long filepos = ftell(open_file);
    int c, i, done, at_end_of_name;
@@ -3559,7 +3559,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
          case ' ': case '\t':
             at_end_of_name = 1;
             break;
-         case '(': case '{':
+         case '(': case '[': case '{':
             done = 1;
             break;
          default :
@@ -3582,6 +3582,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
       stopmsg(8, msgbuf);
       return 0;
    }
+
       /* get symmetry */
    symmetry = 0;
    if (c == '(') {
@@ -3595,12 +3596,13 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
             case '\r': case '\n':
                stopmsg(8,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
                return 0;
-            case '{':
+            case '{': case '[':
                stopmsg(8,ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
                return 0;
             case ' ': case '\t':
                break;
             case ')':
+               c = getc(open_file); /* get next character */
                done = 1;
                break;
             default :
@@ -3616,7 +3618,7 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
             break;
          }
       }
-      if(SymStr[i].s[0] == (char) 0 && report_bad_sym) {
+      if(SymStr[i].s[0] == (char) 0 && from_prompts1c) {
          char far * msgbuf = (char far*) farmemalloc(far_strlen(ParseErrs(PE_INVALID_SYM_USING_NOSYM))
                             + strlen(sym_buf) + 6);
          far_strcpy(msgbuf, ParseErrs(PE_INVALID_SYM_USING_NOSYM));
@@ -3626,6 +3628,42 @@ int frm_check_name_and_sym (FILE * open_file, int report_bad_sym)
          farmemfree(msgbuf);
       }
    }
+
+   if (from_prompts1c) {
+      while(c == ' ')
+         c = getc(open_file); /* eat spaces */
+
+      /* get preset per-image parameters */
+      if (c == '[') {
+         char par_buf[30];
+         done = i = 0;
+         while(!done) {
+            switch (c = getc(open_file)) {
+               case EOF: case '\032':
+                  stopmsg(0,ParseErrs(PE_UNEXPECTED_EOF));
+                  return 0;
+               case '\r': case '\n':
+                  stopmsg(8,ParseErrs(PE_NO_LEFT_BRACKET_FIRST_LINE));
+                  return 0;
+               case '{':
+                  stopmsg(8,ParseErrs(PE_NO_MATCH_RIGHT_PAREN));
+                  return 0;
+               case ']':
+                  done = 1; /*fall through and set last parameter */
+               case ' ': case '\t':
+                  par_buf[i] = (char) 0;
+                  cmdarg(par_buf, 2);
+                  i = 0;
+                  break;
+               default :
+                  if(i < 29)
+                     par_buf[i++] = (char) (c);
+                  break;
+            } /* switch */
+         }    /* while(!done) */
+      }       /* if (c == '[') */
+   }          /* if (from_prompts1c) */
+
    if (c != '{') {
       done = 0;
       while(!done) {

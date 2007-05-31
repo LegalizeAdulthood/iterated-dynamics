@@ -59,7 +59,7 @@ DeltaLog(XAXIS) {; Mark Peterson
     |z| <= 4
   }
 
-Newton4(XYAXIS) {; Mark Peterson
+Newton4(XYAXIS)[float=y] {; Mark Peterson
   ; Note that floating-point is required to make this compute accurately
   z = pixel, Root = 1:
    z3 = z*z*z
@@ -127,7 +127,7 @@ Julike { ; Ron Barnett, 1993
     |z| <= 4
   }
 
-Mask { ; Ron Barnett, 1993
+Mask [float=y] { ; Ron Barnett, 1993
   ; try fn1 = log, fn2 = sinh, fn3 = cosh
   ;P1 = (0,1), P2 = (0,1)
   ;Use floating point
@@ -185,7 +185,7 @@ FlipLambdaJ { ; Ron Barnett, 1993
     |z| <= 100
   }
 
-REBRefInd2 {  ; Ron Barnett, 1993
+REBRefInd2[float=y] {  ; Ron Barnett, 1993
   ; Use floating point
   z = pixel:
    z = (z*z-1)/(z*z+2)*fn1(z)*fn2(z) + p1
@@ -209,7 +209,7 @@ REB004A {; Ron Barnett, 1993
     |z| <= 100
   }
 
-REB004K {; Ron Barnett, 1993
+REB004K[float=y] {; Ron Barnett, 1993
   ; floating point required
   z = pixel:
    x = flip(pixel + fn1(3/z - z/4))
@@ -217,7 +217,7 @@ REB004K {; Ron Barnett, 1993
     |z| <= 100
   }
 
-REB004L {; Ron Barnett, 1993
+REB004L[float=y] {; Ron Barnett, 1993
   ; floating point required
   z = pixel:
    x = flip(pixel + fn1(p1/z - z/(p2+1)))
@@ -225,7 +225,7 @@ REB004L {; Ron Barnett, 1993
     |z| <= 100
   }
 
-REB004M {; Ron Barnett, 1993
+REB004M[float=y] {; Ron Barnett, 1993
   ; floating point required
   z = pixel:
    x = real(z), y = imag(z)
@@ -238,7 +238,7 @@ REB004M {; Ron Barnett, 1993
     |z| <= 100
   }
 
-REB005A {; Ron Barnett, 1993
+REB005A[float=y] {; Ron Barnett, 1993
   ; floating point required
   z = pixel:
    x = real(z), y = imag(z)
@@ -251,7 +251,7 @@ REB005A {; Ron Barnett, 1993
     |z| <= 100
   }
 
-REB005E {; Ron Barnett, 1993
+REB005E[float=y] {; Ron Barnett, 1993
   ; floating point required
   z = pixel:
    x = real(z), y = imag(z)
@@ -264,7 +264,7 @@ REB005E {; Ron Barnett, 1993
     |z| <= 100
   }
 
-REB005F {; Ron Barnett, 1993
+REB005F[float=y] {; Ron Barnett, 1993
   ; floating point required
   z = pixel:
    x = real(z), y = imag(z)
@@ -277,7 +277,7 @@ REB005F {; Ron Barnett, 1993
     |z| <= 100
   }
 
-REB005G {; Ron Barnett, 1993
+REB005G[float=y] {; Ron Barnett, 1993
   ; floating point required
   z = pixel:
    x = real(z), y = imag(z)
@@ -772,7 +772,7 @@ Gamma(XAXIS) { ; first order gamma function from Prof. Jm
     |z|<=r
   }
 
-ZZ(XAXIS) { ; Prof Jm using Newton-Raphson method
+ZZ(XAXIS)[float=y] { ; Prof Jm using Newton-Raphson method
   ; use floating point with this one
   z=pixel,solution=1:
    z1=z^z
@@ -781,7 +781,7 @@ ZZ(XAXIS) { ; Prof Jm using Newton-Raphson method
     0.001 <= |solution-z1|
   }
 
-ZZa(XAXIS) { ; Prof Jm using Newton-Raphson method
+ZZa(XAXIS)[float=y] { ; Prof Jm using Newton-Raphson method
   ; use floating point with this one
   z=pixel,solution=1:
    z1=z^(z-1)
@@ -950,7 +950,7 @@ Liar3 { ; by Chuck Ebbert.
     |z| <= 1
   }
 
-Liar4 { ; by Chuck Ebbert.
+Liar4[float=y] { ; by Chuck Ebbert.
   ; X: X is as true as (p1+1) times Y
   ; Y: Y is as true as X is false
   ; Calculate new x and y values simultaneously.
@@ -971,7 +971,7 @@ F'Liar1 { ; Generalization by Jon Horner of Chuck Ebbert formula.
     fn1(abs(z))<p1
   }
 
-M-SetInNewton(XAXIS) {; use float=yes
+M-SetInNewton(XAXIS)[float=y] {; use float=yes
   ; jon horner 100112,1700, 12 feb 93
   z = 0,  c = pixel,  cminusone = c-1:
    oldz = z, nm = 3*c-2*z*cminusone, dn = 3*(3*z*z+cminusone)
@@ -979,7 +979,7 @@ M-SetInNewton(XAXIS) {; use float=yes
     |(z-oldz)|>=|0.01|
   }
 
-F'M-SetInNewtonA(XAXIS) {; use float=yes
+F'M-SetInNewtonA(XAXIS)[float=y] {; use float=yes
   ; jon horner 100112,1700, 12 feb 93
   z = 0,  c = fn1(pixel),  cminusone = c-1:
    oldz = z, nm = p1*c-2*z*cminusone, dn = p1*(3*z*z+cminusone)
@@ -987,7 +987,7 @@ F'M-SetInNewtonA(XAXIS) {; use float=yes
     |(z-oldz)|>=|0.01|
   }
 
-F'M-SetInNewtonC(XAXIS) { ; same as F'M-SetInNewtonB except for bailout
+F'M-SetInNewtonC(XAXIS)[float=y periodicity=0] { ; same as F'M-SetInNewtonB except for bailout
   ; use float=yes, periodicity=no
   ; (3 <= p1 <= ?) and (1e-30 < p2 < .01)
   z=0, c=fn1(pixel), cm1=c-1, cm1x2=cm1*2, twoop1=2/p1, p1xc=c*real(p1):
@@ -1010,7 +1010,7 @@ comment {
   Beauty" by Pickover.
   }
 
-Halley (XYAXIS) {; Chris Green. Halley's formula applied to x^7-x=0.
+Halley (XYAXIS) [float=y] {; Chris Green. Halley's formula applied to x^7-x=0.
   ; P1 real usually 1 to 1.5, P1 imag usually zero. Use floating point.
   ; Setting P1 to 1 creates the picture on page 277 of Pickover's book
   z=pixel:
@@ -1021,7 +1021,7 @@ Halley (XYAXIS) {; Chris Green. Halley's formula applied to x^7-x=0.
     0.0001 <= |z7-z|
   }
 
-CGhalley (XYAXIS) {; Chris Green -- Halley's formula
+CGhalley (XYAXIS) [float=y] {; Chris Green -- Halley's formula
   ; P1 real usually 1 to 1.5, P1 imag usually zero. Use floating point.
   z=(1,1):
    z5=z*z*z*z*z
@@ -1031,7 +1031,7 @@ CGhalley (XYAXIS) {; Chris Green -- Halley's formula
     0.0001 <= |z7-z-pixel|
   }
 
-halleySin (XYAXIS) {; Chris Green. Halley's formula applied to sin(x)=0.
+halleySin (XYAXIS) [float=y] {; Chris Green. Halley's formula applied to sin(x)=0.
   ; Use floating point.
   ; P1 real = 0.1 will create the picture from page 281 of Pickover's book.
   z=pixel:
@@ -1040,7 +1040,7 @@ halleySin (XYAXIS) {; Chris Green. Halley's formula applied to sin(x)=0.
     0.0001 <= |s|
   }
 
-NewtonSinExp (XAXIS) {; Chris Green
+NewtonSinExp (XAXIS) [float=y] {; Chris Green
   ; Newton's formula applied to sin(x)+exp(x)-1=0.
   ; Use floating point.
   z=pixel:
@@ -1058,7 +1058,7 @@ CGNewtonSinExp (XAXIS) {
     .0001 < |z2|
   }
 
-CGNewton3 {; Chris Green -- A variation on newton iteration.
+CGNewton3 [float=y] {; Chris Green -- A variation on newton iteration.
   ; The initial guess is fixed at (1,1), but the equation solved
   ; is different at each pixel ( x^3-pixel=0 is solved).
   ; Use floating point.
@@ -1070,7 +1070,7 @@ CGNewton3 {; Chris Green -- A variation on newton iteration.
     0.0001 < |z3-pixel|
   }
 
-HyperMandel {; Chris Green.
+HyperMandel [float=y] {; Chris Green.
   ; A four dimensional version of the mandelbrot set.
   ; Use P1 to select which two-dimensional plane of the
   ; four dimensional set you wish to examine.
@@ -1178,7 +1178,7 @@ LeeMandel3(XAXIS) {; Kevin Lee
 
 {--- RON LEWEN -----------------------------------------------------------}
 
-RCL_Cross1 { ; Ron Lewen
+RCL_Cross1 [float=y] { ; Ron Lewen
   ; Try p1=(0,1), fn1=sin and fn2=sqr.  Set corners at
   ; -10/10/-7.5/7.5 to see a cross shape.  The larger 
   ; lakes at the center of the cross have good detail
@@ -1189,7 +1189,7 @@ RCL_Cross1 { ; Ron Lewen
     |z| <= 4
   }
 
-RCL_Pick13 { ; Ron Lewen
+RCL_Pick13 [float=y] { ; Ron Lewen
   ;  Formula from Frontpiece for Appendix C 
   ;  and Credits in Pickover's book.
   ;  Set p1=(3,0) to generate the Frontpiece
@@ -1200,7 +1200,7 @@ RCL_Pick13 { ; Ron Lewen
     |z| <= 100
   }
 
-RCL_1 (XAXIS) { ; Ron Lewen
+RCL_1 (XAXIS) [float=y] { ; Ron Lewen
   ;  An interesting Biomorph inspired by Pickover's
   ;  Computers, Pattern, Choas and Beauty.
   ;  Use Floating Point
@@ -1209,7 +1209,7 @@ RCL_1 (XAXIS) { ; Ron Lewen
     |real(z)| <= 100 || |imag(z)| <= 100
   }
 
-RCL_Cosh (XAXIS) { ; Ron Lewen, 76376,2567
+RCL_Cosh (XAXIS) [float=y] { ; Ron Lewen, 76376,2567
   ; Try corners=2.008874/-3.811126/-3.980167/3.779833/
   ; -3.811126/3.779833 to see Figure 9.7 (P. 123) in 
   ; Pickover's Computers, Pattern, Chaos and Beauty.
@@ -1239,20 +1239,20 @@ RCL_10 { ; Ron Lewen, 76376,2567
 
 {--- JONATHAN OSUCH ------------------------------------------------------}
 
-BirdOfPrey(XAXIS_NOPARM) {
-  z=p1, x=1:
-   (x<10)*(z=sqr(z)+pixel)
-   (10<=x)*(z=cosxx(z)+pixel)
-   x=x+1
-    |z|<=4
+BirdOfPrey (XAXIS_NOPARM) { ; Optimized by Sylvie Gallet
+  z = p1 :
+   z = cosxx(sqr(z) + pixel) + pixel
+    |z| <= 4
   }
 
-FractalFenderC(XAXIS_NOPARM) {;Spectacular!
-  z=p1,x=|z|:
-   (z=cosh(z)+pixel)*(1<x)+(z=z)*(x<=1)
-   z=sqr(z)+pixel,x=|z|
-    x<=4
-  }
+; Original version
+; BirdOfPrey(XAXIS_NOPARM) {
+;  z=p1, x=1:
+;   (x<10)*(z=sqr(z)+pixel)
+;   (10<=x)*(z=cosxx(z)+pixel)
+;   x=x+1
+;    |z|<=4
+;  }
 
 FractalFenderCa(XAXIS_NOPARM) {;Spectacular!
   z=p1,x=|z|:
@@ -1472,7 +1472,7 @@ test3 {; Michael Theroux [71673,2767]
 
 {--- TIMOTHY WEGNER ------------------------------------------------------}
 
-Newton_poly2 { ; Tim Wegner - use float=yes
+Newton_poly2 [float=y] { ; Tim Wegner - use float=yes
   ; fractal generated by Newton formula z^3 + (c-1)z - c
   ; p1 is c in above formula
   z = pixel, z2 = z*z, z3 = z*z2:
@@ -1482,7 +1482,7 @@ Newton_poly2 { ; Tim Wegner - use float=yes
    .004 <= |z3 + (p1-1)*z - p1|
   }
 
-Newt_ellipt_oops { ; Tim Wegner - use float=yes and periodicity=0
+Newt_ellipt_oops [float=y periodicity=0] { ; Tim Wegner - use float=yes and periodicity=0
   ; fractal generated by Newton formula  (z^3 + c*z^2 +1)^.5
   ; try p1 = 1 and p2 = .1
   ; if p2 is small (say .001), converges very slowly so need large maxit
@@ -1496,7 +1496,7 @@ Newt_ellipt_oops { ; Tim Wegner - use float=yes and periodicity=0
     p2 <= |z3 + p1*z2 + 1|  ; no need for sqrt because sqrt(z)==0 iff z==0
   }
 
-Newton_elliptic { ; Tim Wegner - use float=yes and periodicity=0
+Newton_elliptic [float=y periodicity=0] { ; Tim Wegner - use float=yes and periodicity=0
   ; fractal generated by Newton formula f(z) = (z^3 + c*z^2 +1)^2
   ; try p1 = 1 and p2 = .0001
   z = pixel, z2 = z*z, z3 = z*z2:

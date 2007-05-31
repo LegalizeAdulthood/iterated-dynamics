@@ -528,26 +528,18 @@ Silverado2 { ; Rollo Silver [71174,1453]
     4 > lastsqr
    }
 
-SinEgg(XAXIS_NOPARM) {; Jonathan Osuch [73277,1432]
+SinEgg(XAXIS_NOPARM)[float=y function=sin/sqr] {; Jonathan Osuch
     ; Generalized by Tobey J. E. Reed [76437,375]
     ; Try p1=0, p2=4, fn1=sin, fn2=sqr
     ; Try p1=0, p2=4, fn1=sinh, fn2=sqr
     ; Use floating point.
     z  = p1, x  = |z|:
-    (1 < x) * (z=fn1(z) + pixel),
-    z  = fn2(z)+pixel, x  = |z|,
+    IF (1 < x)
+        z=fn1(z) + pixel
+    ENDIF
+    z  = fn2(z)+pixel
+    x  = |z|
     x <= p2
-   }
-
-SinEggC(XAXIS_NOPARM) {; Jonathan Osuch [73277,1432]
-   ; Generalized by Tobey J. E. Reed [76437,375]
-   ; Try p1=0, p2=4, fn1=sinh, fn2=sqr
-   ; Try p1=0, p2=4, fn1=sin, fn2=sqr
-   ; Use floating point.
-   z=p1, x=|z|:
-   (z=fn1(z)+pixel)*(1<x)+(z=z)*(x<=1),
-   z=fn2(z)+pixel, x=|z|,
-   x<=p2
    }
 
 SinInvZ(XYAXIS) = {
@@ -584,7 +576,7 @@ SymmIcon {; Darell Shaffer [76040,2017]
    }
 
 SymmIconFix {; Darell Shaffer [76040,2017]
-   ; Fix by Jonathan Osuch [73277,1432]
+   ; Fix by Jonathan Osuch
    z = P1, x = P2,
    l = real(P1), a = imag(P2),
    b = .2, g = .1, w = 0, n = 5:
@@ -648,16 +640,6 @@ testm {
   z = sqr(z)+c,
   c=c+(p1 * (|z| <= p2)),
   |z| <= 4
-  }
-
-TestSinMandC(XAXIS_NOPARM) {; Jonathan Osuch [73277,1432]
-    ; Generalized by Tobey J. E. Reed [76437,375]
-    ; Try: p1=4, fn1=sin, fn2=sqr
-    z  = p1, x  = |z|:
-    (z  = fn1(z)) * (1<x)+(z=z) * (x<=1),
-    (z  = fn2(z)+pixel),
-    x  = |z|,
-    x <= p1
   }
 
 TjerCGhalley (XYAXIS) {; Chris Green -- Halley's formula
@@ -744,10 +726,11 @@ TjerMandelTangent {; Fractal Creations example (revised for v.16)
     |real(z)| < 32
   }
 
-TjerMTet (XAXIS) {;Mandelbrot form 1 of the Tetration formula -- Lee Skinner  ; Modified and Generalized by Tobey J. E. Reed [76437,375]
+TjerMTet (XAXIS) {;Mandelbrot form 1 of the Tetration formula -- Lee Skinner  
+  ; Modified and Generalized by Tobey J. E. Reed [76437,375]
   z = pixel:
-   z = (pixel ^ z + pixel) + fn1(pixel),
-    |z| <= (P1 + 3)
+  z = (pixel ^ z + pixel) + fn1(pixel),
+  |z| <= (P1 + 3)
   }
 
 TjerNewton4(XYAXIS) {; Mark Peterson
@@ -905,15 +888,19 @@ TSinh (XAXIS) = {; Lee Skinner [75450,3631]
    z <= (p1 + 3)
    }
 
-TurtleC(XAXIS_NOPARM) {; Jonathan Osuch [73277,1432]
+TurtleC(XAXIS_NOPARM)[float=y function=sqr/sqr] {; Jonathan Osuch
     ; Generalized by Tobey J. E. Reed [76437,375]
     ; Try p1=0, p2=4, fn1=sqr, fn2=sqr
     ; Note:  use floating point
-    z   = p1:
-    x   = real(z),
-   (z   = fn1(z)+pixel) * (x<0) + (z=fn2(z)-pixel) * (0<=x),
-   |z| <= p2
-   }
+    z = p1:
+    x = real(z),
+    IF (x < 0)
+       z = fn1(z) + pixel
+    ELSE
+       z = fn2(z) - pixel
+    ENDIF
+    |z| <= p2
+    }
 
 ULI_1 = {; from ULI.FRM
    z = Pixel:
@@ -951,14 +938,14 @@ ULI_6 = {; from ULI.FRM
    |z| <= p2+16
    }
 
-WaldoTwinsC(XAXIS_NOPARM) {; Jonathan Osuch [73277,1432]
+WaldoTwinsC(XAXIS_NOPARM)[float=y function=cosxx/sin] {; Jonathan Osuch
     ; Generalized by Tobey J. E. Reed [76437,375]
     ; Try p1=0, p2=4, fn1=cosxx, fn2=sin
     ; Note:  use floating point
-    z   = p1:
-    z   = fn1(fn2(z+pixel)) + pixel,
-   |z| <= p2
-   }
+    z = p1:
+    z = fn1(fn2(z+pixel)) + pixel,
+    |z| <= p2
+    }
 
 Whatever_the_name(XAXIS) = {
    z = pixel:

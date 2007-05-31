@@ -2525,25 +2525,46 @@ fractal type in batch mode.
 
 The following documentation is supplied by Mark Peterson, who wrote the
 formula interpreter:
+~OnlineFF
+The general format is:
 
-Formula fractals allow you to create your own fractal formulas.  The
-general format is:
+     Name    Symmetry    Per Image Settings\
+      |         |              |\
+   Mandelbrot(XAXIS)[periodicity=0 float=y] \{       <= single line required\
+      z = Pixel:  z = sqr(z) + pixel, |z| <= 4 \}\
+        |              |                   |\
+     Initial       Iteration            Bailout\
+     Condition                          Criteria\
 
-   Mandelbrot(XAXIS) \{ z = Pixel:  z = sqr(z) + pixel, |z| <= 4 \}\
-      |         |          |                |              |\
-     Name     Symmetry    Initial         Iteration       Bailout\
-                          Condition                       Criteria\
-
-Initial conditions are set, then the iterations performed while the
-bailout criteria remains true or until 'z' turns into a periodic loop.
-All variables are created automatically by their usage and treated as
+When initially selected from the fractal type formula screen, the symmetry and
+any per image settings are enforced.  The per image settings will be saved to
+PARs and GIFs, and can be changed from the appropriate screen.
+For every pixel, initial conditions are set, then the iterations performed
+while the bailout criteria remains true or until 'z' turns into a periodic
+loop.  All variables are created automatically by their usage and treated as
 complex.  If you declare 'v = 2' then the variable 'v' is treated as a
 complex with an imaginary value of zero.
 
 NOTE: For periodicity checking, inside options, outside options, and
 the passes=o option to work correctly it is necessary to leave the result
 of the orbit calculation in the variable z.
+~OnlineFF
+The possible values for symmetry are:\
+XAXIS,  XAXIS_NOPARM\
+YAXIS,  YAXIS_NOPARM\
+XYAXIS, XYAXIS_NOPARM\
+ORIGIN, ORIGIN_NOPARM\
+PI_SYM, PI_SYM_NOPARM\
+XAXIS_NOREAL\
+XAXIS_NOIMAG\
 
+These will force the symmetry even if no symmetry is actually present, so try
+your formulas without symmetry before you use these.
+
+The possible values for per image settings are the same as the parameters
+that appear in PAR files, with the exception of 'params='.  Params can't
+be set in the per image settings section, because they get set to
+zero when the formula is parsed.
 ~OnlineFF
 Sequential processing of the formula can be altered with the flow control\
 instructions
@@ -2680,18 +2701,6 @@ what you think may be a fractal could really be just a limitation of the
 integer math range.  God may work with integers, but God's dynamic range is
 many orders of magnitude greater than our puny 32 bit mathematics!  Always
 verify with the floating point <F> toggle.
-~OnlineFF
-The possible values for symmetry are:\
-XAXIS,  XAXIS_NOPARM\
-YAXIS,  YAXIS_NOPARM\
-XYAXIS, XYAXIS_NOPARM\
-ORIGIN, ORIGIN_NOPARM\
-PI_SYM, PI_SYM_NOPARM\
-XAXIS_NOREAL\
-XAXIS_NOIMAG\
-
-These will force the symmetry even if no symmetry is actually present, so try
-your formulas without symmetry before you use these.
 
 For mathematical formulas of functions used in the parser language, see\
 { Trig Identities}

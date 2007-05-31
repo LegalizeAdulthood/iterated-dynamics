@@ -1876,7 +1876,7 @@ top:
       /* next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf) */
       len = 0;
       /* allow spaces in entry names in next JCO 9/2/2003 */
-      while (c != ' ' && c != '\t' && c != '(' && c != ';'
+      while (c != ' ' && c != '\t' && c != '(' && c != ';' && c != '['
            && c != '{' && c != '\n' && c != '\r' && c != EOF && c != '\032')
       {
          if (len < 40)
