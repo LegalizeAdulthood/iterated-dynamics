@@ -281,8 +281,19 @@ typically have a short life and are updated frequently. They may have
 bug fixes, and thus be more stable, but they may also have new features
 which very likely have new bugs.
 
-Version 20.4.5 is an update of Fractint 20.0 based on the developer's
-  version 20.4.4.  New features include:
+Version 20.4.6 is an update of Fractint 20.0 based on the developer's
+  version 20.4.5.  New features include:
+
+Patch 6 to Version 20.4.0\
+
+Added Per Image Settings to the {formula} parser.
+  When initially selected from the fractal type formula screen, the symmetry and
+  any per image settings are enforced.  The per image settings will be saved to
+  PARs and GIFs, and can be changed from the appropriate screen.
+  The possible values for per image settings are the same as the parameters
+  that appear in PAR files, with the exception of 'params='.  Params can't
+  be set in the per image settings section, because they get set to
+  zero when the formula is parsed.
 
 Patch 5 to Version 20.4.0\
 

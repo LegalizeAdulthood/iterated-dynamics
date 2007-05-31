@@ -5,7 +5,7 @@ later to run.
 foreground, spells out the word 'FRACTINT'.
 }  
 
-fractint   {; Sylvie Gallet [101324,3444], 1996
+fractint [float=y periodicity=0]  {; Sylvie Gallet [101324,3444], 1996
             ; requires 'periodicity=0' 
  z = pixel-0.025 , x=real(z) , y=imag(z) , x1=x*1.8 , x3=3*x
  ty2 = ( (y<0.025) && (y>-0.025) ) || (y>0.175)
@@ -36,7 +36,7 @@ comment {
      where (F'(x_n,y_n))^-1 is the inverse of the Jacobian matrix of F.
 }
  
-Newton_real   { ; Sylvie Gallet [101324,3444], 1996
+Newton_real [float=y]  { ; Sylvie Gallet [101324,3444], 1996
       ; Newton's method applied to   x^3 + y^2 - 1 = 0 
       ;                              y^3 - x^2 + 1 = 0
       ;                              solution (0,-1)

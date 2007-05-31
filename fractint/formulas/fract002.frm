@@ -1,22 +1,16 @@
-IslandOfChaos(XAXIS_NOPARM) {; Jonathan Osuch [73277,1432]
+IslandOfChaos(XAXIS_NOPARM)[float=y function=sqr/sin/cosxx] {; Jonathan Osuch
     ; Generalized by Tobey J. E. Reed [76437,375]
     ; Try p1=0, p2=4, fn1=sqr, fn2=sin, fn3=cosxx
     ; Note:  use floating point
-    z   =  p1, x   =  1:
-   (x  <  10)  * (z=fn1(z) + pixel),
-   (10 <=  x)  * (z=fn2(z) / fn3(z) + pixel),
-    x   = x+1,
-   |z| <= p2
-   }
-
-IslandOfChaosC(XAXIS_NOPARM) {; Jonathan Osuch [73277,1432]
-   ; Generalized by Tobey J. E. Reed [76437,375]
-   ; Try p1=0, p2=4, fn1=sqr, fn2=sin, fn3=cos
-   ; Note:  use floating point
-   z=p1, x=1:
-   (z=fn1(z)+pixel)*(x<10)+(z=fn2(z)/fn3(z)+pixel)*(10<=x),
-   x=x+1, |z|<=4
-   }
+    z = p1, x   =  1:
+    IF (x < 10)
+       z=fn1(z) + pixel
+    ELSE
+       z=fn2(z) / fn3(z) + pixel
+    ENDIF
+    x = x+1,
+    |z| <= p2
+    }
 
 j1 {; from EXPLOD.FRM
    z=pixel, c=p1:
