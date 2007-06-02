@@ -966,7 +966,7 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 	driver_unstack_screen();
 	if (g_evolving_flags && g_true_color)
 	{
-		g_true_color = 0; /* truecolor doesn't play well with the evolver */
+		g_true_color = false; /* truecolor doesn't play well with the evolver */
 	}
 	if (g_max_iteration > *old_maxit
 		&& g_inside >= 0
@@ -1026,7 +1026,7 @@ static void handle_evolver_options(int kbdchar, bool &kbdmore)
 	driver_unstack_screen();
 	if (g_evolving_flags && g_true_color)
 	{
-		g_true_color = 0; /* truecolor doesn't play well with the evolver */
+		g_true_color = false; /* truecolor doesn't play well with the evolver */
 	}
 	if (i > Command::OK)              /* time to redraw? */
 	{

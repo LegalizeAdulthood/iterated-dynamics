@@ -34,109 +34,109 @@
 #include "ThreeDimensionalState.h"
 #include "CommandParser.h"
 
-#define INIT_GIF87      0       /* Turn on GIF 89a processing  */
+#define INIT_GIF87      0						/* Turn on GIF 89a processing  */
 
 /* variables defined by the command line/files processor */
-int     g_stop_pass = 0;             /* stop at this guessing pass early */
-int     g_pseudo_x = 0;              /* g_x_dots to use for video independence */
-int     g_pseudo_y = 0;              /* g_y_dots to use for video independence */
-int     g_bf_digits = 0;             /* digits to use (force) for g_bf_math */
-int     g_show_dot = -1;             /* color to show crawling graphics cursor */
-int     g_size_dot;                /* size of dot crawling cursor */
-char    g_record_colors;           /* default PAR color-writing method */
-char    g_auto_show_dot = 0;          /* dark, medium, bright */
-bool g_start_show_orbit = false;      /* show orbits on at start of fractal */
-char    g_read_name[FILE_MAX_PATH]; /* name of fractal input file */
-char    g_temp_dir[FILE_MAX_DIR] = {""}; /* name of temporary directory */
-char    g_work_dir[FILE_MAX_DIR] = {""}; /* name of directory for misc files */
+int     g_stop_pass = 0;						/* stop at this guessing pass early */
+int     g_pseudo_x = 0;							/* g_x_dots to use for video independence */
+int     g_pseudo_y = 0;							/* g_y_dots to use for video independence */
+int     g_bf_digits = 0;						/* digits to use (force) for g_bf_math */
+int     g_show_dot = -1;						/* color to show crawling graphics cursor */
+int     g_size_dot;								/* size of dot crawling cursor */
+char    g_record_colors;						/* default PAR color-writing method */
+char    g_auto_show_dot = 0;					/* dark, medium, bright */
+bool g_start_show_orbit = false;				/* show orbits on at start of fractal */
+char    g_read_name[FILE_MAX_PATH];				/* name of fractal input file */
+char    g_temp_dir[FILE_MAX_DIR] = {""};		/* name of temporary directory */
+char    g_work_dir[FILE_MAX_DIR] = {""};		/* name of directory for misc files */
 char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
 char    g_gif_mask[FILE_MAX_PATH] = {""};
 char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
 char    g_autokey_name[FILE_MAX_PATH] = {"auto.key"}; /* record auto keystrokes here */
-bool g_potential_flag = false;              /* continuous potential enabled? */
-bool g_potential_16bit;               /* store 16 bit continuous potential values */
-bool g_gif87a_flag;            /* 1 if GIF87a format, 0 otherwise */
-bool g_dither_flag;            /* 1 if want to dither GIFs */
+bool g_potential_flag = false;					/* continuous potential enabled? */
+bool g_potential_16bit;							/* store 16 bit continuous potential values */
+bool g_gif87a_flag;								/* 1 if GIF87a format, 0 otherwise */
+bool g_dither_flag;								/* 1 if want to dither GIFs */
 bool g_float_flag;
-int     g_biomorph;               /* flag for g_biomorph */
+int     g_biomorph;								/* flag for g_biomorph */
 int     g_user_biomorph;
-int     g_force_symmetry;          /* force symmetry */
-int     g_show_file;               /* zero if file display pending */
+int     g_force_symmetry;						/* force symmetry */
+int     g_show_file;							/* zero if file display pending */
 bool g_use_fixed_random_seed;
-int g_random_seed;           /* Random number seeding flag and value */
-int     g_decomposition[2];              /* Decomposition coloring */
+int g_random_seed;								/* Random number seeding flag and value */
+int     g_decomposition[2];						/* Decomposition coloring */
 long    g_distance_test;
 int     g_distance_test_width;
-bool g_fractal_overwrite = false;	/* 0 if file overwrite not allowed */
-int     g_debug_mode;              /* internal use only - you didn't see this */
-bool g_timer_flag;              /* you didn't see this, either */
-int     g_cycle_limit;             /* color-rotator upper limit */
-int     g_inside;                 /* inside color: 1=blue     */
-int     g_fill_color;              /* fillcolor: -1=normal     */
-int     g_outside;                /* outside color    */
-int     g_finite_attractor;             /* finite attractor logic */
-int     g_display_3d;              /* 3D display flag: 0 = OFF */
-int     g_overlay_3d;              /* 3D overlay flag: 0 = OFF */
-int     g_init_3d[20];             /* '3d=nn/nn/nn/...' values */
-int     g_check_current_dir;            /* flag to check current dir for files */
-int     g_initialize_batch = 0;			/* 1 if batch run (no kbd)  */
-int     g_save_time;           /* autosave minutes         */
-ComplexD  g_initial_orbit_z;              /* initial orbitvalue */
-InitialZType g_use_initial_orbit_z;           /* flag for g_initial_orbit_z */
-int     g_init_mode;               /* initial video mode       */
-int     g_initial_cycle_limit;         /* initial cycle limit      */
-bool g_use_center_mag;                 /* use center-mag corners   */
-long    g_bail_out;                /* user input bailout value */
-enum bailouts g_bail_out_test;       /* test used for determining bailout */
-double  g_inversion[3];           /* radius, xcenter, ycenter */
+bool g_fractal_overwrite = false;				/* 0 if file overwrite not allowed */
+int     g_debug_mode;							/* internal use only - you didn't see this */
+bool g_timer_flag;								/* you didn't see this, either */
+int     g_cycle_limit;							/* color-rotator upper limit */
+int     g_inside;								/* inside color: 1=blue     */
+int     g_fill_color;							/* fillcolor: -1=normal     */
+int     g_outside;								/* outside color    */
+int     g_finite_attractor;						/* finite attractor logic */
+int     g_display_3d;							/* 3D display flag: 0 = OFF */
+int     g_overlay_3d;							/* 3D overlay flag: 0 = OFF */
+int     g_init_3d[20];							/* '3d=nn/nn/nn/...' values */
+int     g_check_current_dir;					/* flag to check current dir for files */
+int     g_initialize_batch = 0;					/* 1 if batch run (no kbd)  */
+int     g_save_time;							/* autosave minutes         */
+ComplexD  g_initial_orbit_z;					/* initial orbitvalue */
+InitialZType g_use_initial_orbit_z;				/* flag for g_initial_orbit_z */
+int     g_init_mode;							/* initial video mode       */
+int     g_initial_cycle_limit;					/* initial cycle limit      */
+bool g_use_center_mag;							/* use center-mag corners   */
+long    g_bail_out;								/* user input bailout value */
+enum bailouts g_bail_out_test;					/* test used for determining bailout */
+double  g_inversion[3];							/* radius, xcenter, ycenter */
 int g_rotate_lo;
-int g_rotate_hi;    /* cycling color range      */
-int		*g_ranges;                /* iter->color ranges mapping */
-int     g_ranges_length = 0;          /* size of ranges array     */
-BYTE	*g_map_dac_box = NULL;     /* map= (default colors)    */
-int     g_color_state;				/* 0, g_dac_box matches default (bios or map=) */
-									/* 1, g_dac_box matches no known defined map   */
-									/* 2, g_dac_box matches the g_color_file map      */
-bool g_color_preloaded;         /* if g_dac_box preloaded for next mode select */
-int     g_save_release;           /* release creating PAR file*/
-bool g_dont_read_color = false;        /* flag for reading color from GIF */
-double  g_math_tolerance[2] = {.05, .05};  /* For math transition */
-bool g_targa_output = false;              /* 3D fullcolor flag */
-int		g_true_color = 0;              /* escape time truecolor flag */
-int		g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
-char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
-bool g_function_preloaded; /* if function loaded for new bifurcations */
-float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;   /* aspect ratio of the screen */
-float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;  /* how much drift is allowed and */
-								/* still forced to g_screen_aspect_ratio  */
-bool g_fast_restore = false;          /* true - reset viewwindows prior to a restore
-								and do not display warnings when video
-								mode changes during restore */
-bool g_organize_formula_search = false;            /* 1 - user has specified a directory for
-									Orgform formula compilation files */
-int     g_orbit_save = ORBITSAVE_NONE;          /* for IFS and LORENZ to output acrospin file */
-int		g_orbit_delay;                /* clock ticks delating orbit release */
-int     g_transparent[2];         /* transparency min/max values */
-long    g_log_palette_mode;                /* Logarithmic palette flag: 0 = no */
-int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;   /* calculate logmap on-the-fly */
-bool g_log_automatic_flag = false;  /* auto calculate logmap */
-bool g_no_bof = false; /* Flag to make inside=bof options not duplicate bof images */
-bool g_escape_exit_flag;         /* set to 1 to avoid the "are you sure?" screen */
-bool g_command_initialize = true;               /* first time into command_files? */
+int g_rotate_hi;								/* cycling color range      */
+int		*g_ranges;								/* iter->color ranges mapping */
+int     g_ranges_length = 0;					/* size of ranges array     */
+BYTE	*g_map_dac_box = NULL;					/* map= (default colors)    */
+int     g_color_state;							/* 0, g_dac_box matches default (bios or map=) */
+												/* 1, g_dac_box matches no known defined map   */
+												/* 2, g_dac_box matches the g_color_file map      */
+bool g_color_preloaded;							/* if g_dac_box preloaded for next mode select */
+int     g_save_release;							/* release creating PAR file*/
+bool g_dont_read_color = false;					/* flag for reading color from GIF */
+double  g_math_tolerance[2] = {.05, .05};		/* For math transition */
+bool g_targa_output = false;					/* 3D fullcolor flag */
+bool g_true_color = false;						/* escape time truecolor flag */
+int		g_true_mode = TRUEMODE_DEFAULT;			/* truecolor coloring scheme */
+char    g_color_file[FILE_MAX_PATH];			/* from last <l> <s> or colors=@filename */
+bool g_function_preloaded;						/* if function loaded for new bifurcations */
+float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;	/* aspect ratio of the screen */
+float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;	/* how much drift is allowed and */
+												/* still forced to g_screen_aspect_ratio  */
+bool g_fast_restore = false;					/* true - reset viewwindows prior to a restore
+													and do not display warnings when video
+													mode changes during restore */
+bool g_organize_formula_search = false;			/* 1 - user has specified a directory for
+													Orgform formula compilation files */
+int     g_orbit_save = ORBITSAVE_NONE;			/* for IFS and LORENZ to output acrospin file */
+int		g_orbit_delay;							/* clock ticks delating orbit release */
+int     g_transparent[2];						/* transparency min/max values */
+long    g_log_palette_mode;						/* Logarithmic palette flag: 0 = no */
+int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;	/* calculate logmap on-the-fly */
+bool g_log_automatic_flag = false;				/* auto calculate logmap */
+bool g_no_bof = false;							/* Flag to make inside=bof options not duplicate bof images */
+bool g_escape_exit_flag;						/* set to 1 to avoid the "are you sure?" screen */
+bool g_command_initialize = true;				/* first time into command_files? */
 FractalTypeSpecificData *g_current_fractal_specific = NULL;
-char	g_formula_filename[FILE_MAX_PATH]; /* file to find (type=)formulas in */
-char	g_formula_name[ITEMNAMELEN + 1];    /* Name of the Formula (if not null) */
-char	g_l_system_filename[FILE_MAX_PATH];   /* file to find (type=)L-System's in */
-char	g_l_system_name[ITEMNAMELEN + 1];       /* Name of L-System */
-char	g_command_file[FILE_MAX_PATH]; /* file to find command sets in */
-char	g_command_name[ITEMNAMELEN + 1]; /* Name of Command set */
-char	g_command_comment[4][MAX_COMMENT];    /* comments for command set */
-char	g_ifs_filename[FILE_MAX_PATH]; /* file to find (type=)IFS in */
-char	g_ifs_name[ITEMNAMELEN + 1];    /* Name of the IFS def'n (if not null) */
+char	g_formula_filename[FILE_MAX_PATH];		/* file to find (type=)formulas in */
+char	g_formula_name[ITEMNAMELEN + 1];		/* Name of the Formula (if not null) */
+char	g_l_system_filename[FILE_MAX_PATH];		/* file to find (type=)L-System's in */
+char	g_l_system_name[ITEMNAMELEN + 1];		/* Name of L-System */
+char	g_command_file[FILE_MAX_PATH];			/* file to find command sets in */
+char	g_command_name[ITEMNAMELEN + 1];		/* Name of Command set */
+char	g_command_comment[4][MAX_COMMENT];		/* comments for command set */
+char	g_ifs_filename[FILE_MAX_PATH];			/* file to find (type=)IFS in */
+char	g_ifs_name[ITEMNAMELEN + 1];			/* Name of the IFS def'n (if not null) */
 struct search_path g_search_for;
-float	*g_ifs_definition = NULL;     /* ifs parameters */
-int		g_ifs_type;                  /* 0 = 2d, 1 = 3d */
-int		g_slides = SLIDES_OFF;                /* 1 autokey=play, 2 autokey=record */
+float	*g_ifs_definition = NULL;				/* ifs parameters */
+int		g_ifs_type;								/* 0 = 2d, 1 = 3d */
+int		g_slides = SLIDES_OFF;					/* 1 autokey=play, 2 autokey=record */
 BYTE	g_text_colors[]=
 {
 		BLUE*16 + L_WHITE,    /* C_TITLE           title background */
@@ -420,18 +420,18 @@ static void initialize_variables_restart()          /* <ins> key init */
 	strcpy(g_read_name, DOTSLASH);           /* initially current directory */
 	g_show_file = 1;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
-	g_initial_cycle_limit = 55;                   /* spin-DAC default speed limit */
-	g_map_set = false;                          /* no map= name active */
+	g_initial_cycle_limit = 55;						/* spin-DAC default speed limit */
+	g_map_set = false;								/* no map= name active */
 	if (g_map_dac_box)
 	{
 		free(g_map_dac_box);
 		g_map_dac_box = NULL;
 	}
 
-	g_major_method = MAJORMETHOD_BREADTH_FIRST;        /* default inverse julia methods */
-	g_minor_method = MINORMETHOD_LEFT_FIRST;   /* default inverse julia methods */
-	g_true_color = 0;              /* truecolor output flag */
-	g_true_mode = TRUEMODE_DEFAULT;               /* set to default color scheme */
+	g_major_method = MAJORMETHOD_BREADTH_FIRST;		/* default inverse julia methods */
+	g_minor_method = MINORMETHOD_LEFT_FIRST;		/* default inverse julia methods */
+	g_true_color = false;							/* truecolor output flag */
+	g_true_mode = TRUEMODE_DEFAULT;					/* set to default color scheme */
 }
 
 static void initialize_variables_fractal()          /* init vars affecting calculation */
@@ -2836,7 +2836,7 @@ static int fullcolor_arg(const cmd_context &context)
 
 static int truecolor_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_true_color, Command::ThreeDParameter | Command::FractalParameter).parse(context);
+	return FlagParser<bool>(g_true_color, Command::ThreeDParameter | Command::FractalParameter).parse(context);
 }
 
 static int use_grayscale_depth_arg(const cmd_context &context)

@@ -39,23 +39,23 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 
 {               /* uses Bresenham algorithm to draw a line */
 	int dX;
-	int dY;                     /* vector components */
+	int dY;			/* vector components */
 	int row;
 	int col;
-	int final;					/* final row or column number */
-	int G;                  /* used to test for new row or column */
-	int inc1;           /* G increment when row or column doesn't change */
-	int inc2;               /* G increment when row or column changes */
-	char pos_slope;
+	int final;		/* final row or column number */
+	int G;			/* used to test for new row or column */
+	int inc1;		/* G increment when row or column doesn't change */
+	int inc2;		/* G increment when row or column changes */
+	
 
-	dX = X2 - X1;                   /* find vector components */
+	dX = X2 - X1;							/* find vector components */
 	dY = Y2 - Y1;
-	pos_slope = (char)(dX > 0);                   /* is slope positive? */
+	bool positive_slope = (dX > 0);
 	if (dY < 0)
 	{
-		pos_slope = (char)!pos_slope;
+		positive_slope = !positive_slope;
 	}
-	if (abs (dX) > abs (dY))                /* shallow line case */
+	if (abs(dX) > abs(dY))                /* shallow line case */
 	{
 		if (dX > 0)         /* determine start point and last column */
 		{
@@ -69,10 +69,10 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 			row = Y2;
 			final = X1;
 		}
-		inc1 = 2*abs (dY);            /* determine increments and initial G */
-		G = inc1 - abs (dX);
-		inc2 = 2*(abs (dY) - abs (dX));
-		if (pos_slope)
+		inc1 = 2*abs(dY);            /* determine increments and initial G */
+		G = inc1 - abs(dX);
+		inc2 = 2*(abs(dY) - abs(dX));
+		if (positive_slope)
 		{
 			while (col <= final)    /* step through columns checking for new row */
 			{
@@ -121,10 +121,10 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 			row = Y2;
 			final = Y1;
 		}
-		inc1 = 2*abs (dX);            /* determine increments and initial G */
-		G = inc1 - abs (dY);
-		inc2 = 2*(abs (dX) - abs (dY));
-		if (pos_slope)
+		inc1 = 2*abs(dX);            /* determine increments and initial G */
+		G = inc1 - abs(dY);
+		inc2 = 2*(abs(dX) - abs(dY));
+		if (positive_slope)
 		{
 			while (row <= final)    /* step through rows checking for new column */
 			{
