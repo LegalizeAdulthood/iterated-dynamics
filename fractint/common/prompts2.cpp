@@ -951,7 +951,7 @@ int get_random_dot_stereogram_parameters()
 		uvalues[k].uval.dval = g_auto_stereo_width;
 		uvalues[k++].type = 'f';
 
-		uvalues[k].uval.ch.val = g_grayscale_depth;
+		uvalues[k].uval.ch.val = g_grayscale_depth ? 1 : 0;
 		uvalues[k++].type = 'y';
 
 		uvalues[k].type = 'l';
@@ -1006,7 +1006,7 @@ int get_random_dot_stereogram_parameters()
 			k = 0;
 			g_auto_stereo_depth = uvalues[k++].uval.ival;
 			g_auto_stereo_width = uvalues[k++].uval.dval;
-			g_grayscale_depth = uvalues[k++].uval.ch.val;
+			g_grayscale_depth = (uvalues[k++].uval.ch.val != 0);
 			g_calibrate = (char) uvalues[k++].uval.ch.val;
 			g_image_map = (uvalues[k++].uval.ch.val != 0);
 			if (*g_stereo_map_name && g_image_map)

@@ -101,7 +101,7 @@ bool g_color_preloaded;         /* if g_dac_box preloaded for next mode select *
 int     g_save_release;           /* release creating PAR file*/
 bool g_dont_read_color = false;        /* flag for reading color from GIF */
 double  g_math_tolerance[2] = {.05, .05};  /* For math transition */
-int		g_targa_output = 0;              /* 3D fullcolor flag */
+bool g_targa_output = false;              /* 3D fullcolor flag */
 int		g_true_color = 0;              /* escape time truecolor flag */
 int		g_true_mode = TRUEMODE_DEFAULT;               /* truecolor coloring scheme */
 char    g_color_file[FILE_MAX_PATH]; /* from last <l> <s> or colors=@filename */
@@ -2831,7 +2831,7 @@ static int showbox_arg(const cmd_context &context)
 
 static int fullcolor_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_targa_output, Command::ThreeDParameter).parse(context);
+	return FlagParser<bool>(g_targa_output, Command::ThreeDParameter).parse(context);
 }
 
 static int truecolor_arg(const cmd_context &context)
@@ -2841,7 +2841,7 @@ static int truecolor_arg(const cmd_context &context)
 
 static int use_grayscale_depth_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_grayscale_depth, Command::ThreeDParameter).parse(context);
+	return FlagParser<bool>(g_grayscale_depth, Command::ThreeDParameter).parse(context);
 }
 
 static int targa_overlay_arg(const cmd_context &context)
