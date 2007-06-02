@@ -291,7 +291,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 
 	if (stackavail() < 400)  /* leave some margin for calling subrtns */
 	{
-		ts->stackoflow = 1;
+		ts->stackoflow = true;
 		return NULL;
 	}
 
@@ -433,7 +433,7 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 
 	if (stackavail() < 400)  /* leave some margin for calling subrtns */
 	{
-		ts->stackoflow = 1;
+		ts->stackoflow = true;
 		return NULL;
 	}
 
@@ -537,7 +537,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	ret = (struct lsys_cmd *) malloc((long) max*sizeof(struct lsys_cmd));
 	if (ret == NULL)
 	{
-		ts->stackoflow = 1;
+		ts->stackoflow = true;
 		return NULL;
 	}
 	while (*s)
@@ -605,7 +605,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 			if (doub == NULL)
 			{
 				free(ret);
-				ts->stackoflow = 1;
+				ts->stackoflow = true;
 				return NULL;
 			}
 			memcpy(doub, ret, max*sizeof(struct lsys_cmd));
@@ -624,7 +624,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	if (doub == NULL)
 	{
 		free(ret);
-		ts->stackoflow = 1;
+		ts->stackoflow = true;
 		return NULL;
 	}
 	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
@@ -655,7 +655,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	ret = (struct lsys_cmd *) malloc((long) max*sizeof(struct lsys_cmd));
 	if (ret == NULL)
 	{
-		ts->stackoflow = 1;
+		ts->stackoflow = true;
 		return NULL;
 	}
 	while (*s)
@@ -698,7 +698,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 			if (doub == NULL)
 			{
 				free(ret);
-				ts->stackoflow = 1;
+				ts->stackoflow = true;
 				return NULL;
 			}
 			memcpy(doub, ret, max*sizeof(struct lsys_cmd));
@@ -717,7 +717,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	if (doub == NULL)
 	{
 		free(ret);
-		ts->stackoflow = 1;
+		ts->stackoflow = true;
 		return NULL;
 	}
 	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
