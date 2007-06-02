@@ -501,9 +501,9 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_rotate_lo = 1; g_rotate_hi = 255;      /* color cycling default range */
 	g_orbit_delay = 0;                     /* full speed orbits */
 	g_orbit_interval = 1;                  /* plot all orbits */
-	g_keep_screen_coords = 0;
+	g_keep_screen_coords = false;
 	g_orbit_draw_mode = ORBITDRAW_RECTANGLE; /* passes=orbits draw mode */
-	g_set_orbit_corners = 0;
+	g_set_orbit_corners = false;
 	g_orbit_x_min = g_current_fractal_specific->x_min;
 	g_orbit_x_max = g_current_fractal_specific->x_max;
 	g_orbit_x_3rd = g_current_fractal_specific->x_min;
@@ -1865,7 +1865,7 @@ static int corners_arg(const cmd_context &context)
 
 static int orbit_corners_arg(const cmd_context &context)
 {
-	g_set_orbit_corners = 0;
+	g_set_orbit_corners = false;
 	if (context.floatparms != context.totparms
 		|| (context.totparms != 0 && context.totparms != 4 && context.totparms != 6))
 	{
@@ -1881,8 +1881,8 @@ static int orbit_corners_arg(const cmd_context &context)
 		g_orbit_x_3rd =      context.floatval[4];
 		g_orbit_y_3rd =      context.floatval[5];
 	}
-	g_set_orbit_corners = 1;
-	g_keep_screen_coords = 1;
+	g_set_orbit_corners = true;
+	g_keep_screen_coords = true;
 	return Command::FractalParameter;
 }
 
@@ -2856,7 +2856,7 @@ static int brief_arg(const cmd_context &context)
 
 static int screencoords_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_keep_screen_coords, Command::FractalParameter).parse(context);
+	return FlagParser<bool>(g_keep_screen_coords, Command::FractalParameter).parse(context);
 }
 
 static int olddemmcolors_arg(const cmd_context &context)

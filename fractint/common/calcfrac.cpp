@@ -851,14 +851,13 @@ static int draw_line_orbits()
 		G,                  /* used to test for new row or column */
 		inc1,           /* G increment when row or column doesn't change */
 		inc2;               /* G increment when row or column changes */
-	char pos_slope;
 
 	dX = g_x_stop - g_ix_start;                   /* find vector components */
 	dY = g_y_stop - g_iy_start;
-	pos_slope = (char)(dX > 0);                   /* is slope positive? */
+	bool positive_slope = (dX > 0);                   /* is slope positive? */
 	if (dY < 0)
 	{
-		pos_slope = (char)!pos_slope;
+		positive_slope = !positive_slope;
 	}
 	if (abs(dX) > abs(dY))                /* shallow line case */
 	{
@@ -877,7 +876,7 @@ static int draw_line_orbits()
 		inc1 = 2*abs(dY);            /* determine increments and initial G */
 		G = inc1 - abs(dX);
 		inc2 = 2*(abs(dY) - abs(dX));
-		if (pos_slope)
+		if (positive_slope)
 		{
 			while (g_col <= final)    /* step through columns checking for new row */
 			{
@@ -937,7 +936,7 @@ static int draw_line_orbits()
 		inc1 = 2*abs(dX);            /* determine increments and initial G */
 		G = inc1 - abs(dY);
 		inc2 = 2*(abs(dX) - abs(dY));
-		if (pos_slope)
+		if (positive_slope)
 		{
 			while (g_row <= final)    /* step through rows checking for new column */
 			{
@@ -1279,7 +1278,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	long   min_index = 0;        /* iteration of min_orbit */
 	long cyclelen = -1;
 	long savedcoloriter = 0;
-	int caught_a_cycle;
+	bool caught_a_cycle;
 	long savedand;
 	int savedincr;       /* for periodicity checking */
 	ComplexL lsaved;
@@ -1407,7 +1406,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		g_color_iter = -1;
 	}
-	caught_a_cycle = 0;
+	caught_a_cycle = false;
 	if (g_inside == COLORMODE_PERIOD)
 	{
 		savedand = 16;           /* begin checking every 16th cycle */
@@ -1808,7 +1807,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					{
 						if (labs(lsaved.y - g_new_z_l.y) < g_close_enough_l)
 						{
-							caught_a_cycle = 1;
+							caught_a_cycle = true;
 						}
 					}
 				}
@@ -1818,7 +1817,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					{
 						if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.y, bnnew.y)), bnclosenuff) < 0)
 						{
-							caught_a_cycle = 1;
+							caught_a_cycle = true;
 						}
 					}
 				}
@@ -1828,7 +1827,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					{
 						if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.y, bfnew.y)), bfclosenuff) < 0)
 						{
-							caught_a_cycle = 1;
+							caught_a_cycle = true;
 						}
 					}
 				}
@@ -1838,7 +1837,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					{
 						if (fabs(s_saved_z.y - g_new_z.y) < g_close_enough)
 						{
-							caught_a_cycle = 1;
+							caught_a_cycle = true;
 						}
 					}
 #ifdef NUMSAVED
@@ -2590,7 +2589,7 @@ static int _fastcall potential(double mag, long iterations)
 
 /************************* symmetry plot setup ************************/
 
-static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
+static int _fastcall x_symmetry_split(int xaxis_row, bool xaxis_between)
 {
 	int i;
 	if ((g_work_sym&0x11) == 0x10) /* already decided not sym */
@@ -2644,7 +2643,7 @@ static int _fastcall x_symmetry_split(int xaxis_row, int xaxis_between)
 	return 0; /* tell set_symmetry its a go */
 }
 
-static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
+static int _fastcall y_symmetry_split(int yaxis_col, bool yaxis_between)
 {
 	int i;
 	if ((g_work_sym&0x22) == 0x20) /* already decided not sym */
@@ -2705,15 +2704,12 @@ static int _fastcall y_symmetry_split(int yaxis_col, int yaxis_between)
 static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper symmetrical plot functions */
 {
 	int i;
-	int parmszero;
-	int parmsnoreal;
-	int parmsnoimag;
 	int xaxis_row;
 	int yaxis_col;         /* pixel number for origin */
-	int xaxis_between = 0;
-	int yaxis_between = 0; /* if axis between 2 pixels, not on one */
-	int xaxis_on_screen = 0;
-	int yaxis_on_screen = 0;
+	bool xaxis_between = false;
+	bool yaxis_between = false; /* if axis between 2 pixels, not on one */
+	bool xaxis_on_screen = false;
+	bool yaxis_on_screen = false;
 	double ftemp;
 	bf_t bft1;
 	int saved = 0;
@@ -2769,9 +2765,9 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	{
 		return;
 	}
-	parmszero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
-	parmsnoreal = (g_parameter.x == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
-	parmsnoimag = (g_parameter.y == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
+	bool parameters_are_zero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
+	bool parameters_have_zero_real = (g_parameter.x == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
+	bool parameters_have_zero_imaginary = (g_parameter.y == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_L:      /* These need only P1 checked. */
@@ -2788,17 +2784,17 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		break;
 	case FRACTYPE_FORMULA:  /* Check P2, P3, P4 and P5 */
 	case FRACTYPE_FORMULA_FP:
-		parmszero = (parmszero && g_parameters[2] == 0.0 && g_parameters[3] == 0.0
+		parameters_are_zero = (parameters_are_zero && g_parameters[2] == 0.0 && g_parameters[3] == 0.0
 						&& g_parameters[4] == 0.0 && g_parameters[5] == 0.0
 						&& g_parameters[6] == 0.0 && g_parameters[7] == 0.0
 						&& g_parameters[8] == 0.0 && g_parameters[9] == 0.0);
-		parmsnoreal = (parmsnoreal && g_parameters[2] == 0.0 && g_parameters[4] == 0.0
+		parameters_have_zero_real = (parameters_have_zero_real && g_parameters[2] == 0.0 && g_parameters[4] == 0.0
 						&& g_parameters[6] == 0.0 && g_parameters[8] == 0.0);
-		parmsnoimag = (parmsnoimag && g_parameters[3] == 0.0 && g_parameters[5] == 0.0
+		parameters_have_zero_imaginary = (parameters_have_zero_imaginary && g_parameters[3] == 0.0 && g_parameters[5] == 0.0
 						&& g_parameters[7] == 0.0 && g_parameters[9] == 0.0);
 		break;
 	default:   /* Check P2 for the rest */
-		parmszero = (parmszero && g_parameter2.x == 0.0 && g_parameter2.y == 0.0);
+		parameters_are_zero = (parameters_are_zero && g_parameter2.x == 0.0 && g_parameter2.y == 0.0);
 	}
 	xaxis_row = yaxis_col = -1;
 	if (g_bf_math)
@@ -2862,19 +2858,19 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	switch (symmetry)
 	{
 	case SYMMETRY_X_AXIS_NO_REAL:
-		if (!parmsnoreal)
+		if (!parameters_have_zero_real)
 		{
 			break;
 		}
 		goto xsym;
 	case SYMMETRY_X_AXIS_NO_IMAGINARY:
-		if (!parmsnoimag)
+		if (!parameters_have_zero_imaginary)
 		{
 			break;
 		}
 		goto xsym;
 	case SYMMETRY_X_AXIS_NO_PARAMETER:
-		if (!parmszero)
+		if (!parameters_are_zero)
 		{
 			break;
 		}
@@ -2886,7 +2882,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		break;
 	case SYMMETRY_Y_AXIS_NO_PARAMETER:
-		if (!parmszero)
+		if (!parameters_are_zero)
 		{
 			break;
 		}
@@ -2897,7 +2893,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		break;
 	case SYMMETRY_XY_AXIS_NO_PARAMETER:
-		if (!parmszero)
+		if (!parameters_are_zero)
 		{
 			break;
 		}
@@ -2925,7 +2921,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		break;
 	case SYMMETRY_ORIGIN_NO_PARAMETER:
-		if (!parmszero)
+		if (!parameters_are_zero)
 		{
 			break;
 		}
@@ -2945,7 +2941,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		break;
 	case SYMMETRY_PI_NO_PARAMETER:
-		if (!parmszero)
+		if (!parameters_are_zero)
 		{
 			break;
 		}

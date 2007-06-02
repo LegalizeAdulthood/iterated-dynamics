@@ -91,7 +91,7 @@ static void _fastcall plot_block(BuildRowType buildrow, int x, int y, int color)
 	}
 }
 
-static int _fastcall guess_row(int firstpass, int y, int blocksize)
+static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 {
 	int j;
 	int color;
@@ -131,7 +131,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 	s_half_block = blocksize/2;
 	{
 		int i = y/s_max_block;
-		pfxptr = (unsigned int *) &s_t_prefix[firstpass][(i >> 4) + 1][g_ix_start/s_max_block];
+		pfxptr = (unsigned int *) &s_t_prefix[first_pass ? 1 : 0][(i >> 4) + 1][g_ix_start/s_max_block];
 		pfxmask = 1 << (i & 15);
 	}
 	ylesshalf = y - s_half_block;
@@ -156,7 +156,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 		if ((x & (s_max_block-1)) == 0)  /* time for skip flag stuff */
 		{
 			++pfxptr;
-			if (firstpass == 0 && (*pfxptr&pfxmask) == 0)  /* check for fast skip */
+			if (!first_pass && (*pfxptr&pfxmask) == 0)  /* check for fast skip */
 			{
 				/* next useful in testing to make skips visible */
 				/*
@@ -174,7 +174,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			}
 		}
 
-		if (firstpass)  /* 1st pass, paint topleft corner */
+		if (first_pass)  /* 1st pass, paint topleft corner */
 		{
 			plot_block(BUILDROW_NEW, x, y, c22);
 		}
@@ -256,15 +256,17 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 			break;
 		}
 
-		if (firstpass) /* note whether any of g_block's contents were calculated */
+		if (first_pass) /* note whether any of g_block's contents were calculated */
+		{
 			if (guessed23 == 0 || guessed32 == 0 || guessed33 == 0)
 			{
 				*pfxptr |= pfxmask;
 			}
+		}
 
 		if (s_half_block > 1)  /* not last pass, check if something to display */
 		{
-			if (firstpass)  /* display guessed corners, fill in g_block */
+			if (first_pass)  /* display guessed corners, fill in g_block */
 			{
 				if (s_guess_plot)
 				{
@@ -361,7 +363,7 @@ static int _fastcall guess_row(int firstpass, int y, int blocksize)
 		x += blocksize;
 	} /* end x loop */
 
-	if (firstpass == 0 || s_guess_plot)
+	if (!first_pass || s_guess_plot)
 	{
 		return 0;
 	}
@@ -506,7 +508,7 @@ int solid_guess()
 				}
 			}
 			g_reset_periodicity = 0;
-			if (i == -1 || guess_row(1, y, blocksize) != 0) /* interrupted? */
+			if (i == -1 || guess_row(true, y, blocksize) != 0) /* interrupted? */
 			{
 				if (y < g_WorkList.yy_start())
 				{
@@ -593,7 +595,7 @@ int solid_guess()
 		for (int y = g_iy_start; y <= g_y_stop; y += blocksize)
 		{
 			g_current_row = y;
-			if (guess_row(0, y, blocksize) != 0)
+			if (guess_row(false, y, blocksize) != 0)
 			{
 				if (y < g_WorkList.yy_start())
 				{
