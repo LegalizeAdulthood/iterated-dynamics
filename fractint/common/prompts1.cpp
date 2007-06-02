@@ -3121,11 +3121,11 @@ restart_1:
 
 	prompts3d[++k] = "Targa output?";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_targa_output;
+	uvalues[k].uval.ch.val = g_targa_output ? 1 : 0;
 
 	prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
 	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_grayscale_depth;
+	uvalues[k].uval.ch.val = g_grayscale_depth ? 1 : 0;
 
 	k = full_screen_prompt_help(HELP3DMODE, "3D Mode Selection", k + 1, prompts3d, uvalues, 0, NULL);
 	if (k < 0)
@@ -3153,8 +3153,8 @@ restart_1:
 
 	g_3d_state.set_ray_name(uvalues[k++].uval.sval);
 
-	g_targa_output = uvalues[k++].uval.ch.val;
-	g_grayscale_depth  = uvalues[k++].uval.ch.val;
+	g_targa_output = (uvalues[k++].uval.ch.val != 0);
+	g_grayscale_depth  = (uvalues[k++].uval.ch.val != 0);
 
 	/* check ranges */
 	if (g_3d_state.preview_factor() < 2)

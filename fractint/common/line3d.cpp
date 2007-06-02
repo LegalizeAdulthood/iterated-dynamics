@@ -90,9 +90,10 @@ static int off_screen(struct point);
 static int out_triangle(const struct f_point, const struct f_point, const struct f_point, int, int, int);
 static int raytrace_header();
 static int start_object();
-static void corners(MATRIX, int, double *, double *, double *, double *, double *, double *);
+static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax);
 static void draw_light_box(double *, double *, MATRIX);
-static void draw_rect(VECTOR, VECTOR, VECTOR, VECTOR, int, int);
+static void draw_rectangle(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color);
+static void draw_rectangle_lines(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color);
 static void line3d_cleanup();
 static void plot_color_clip(int, int, int);
 static void interp_color(int, int, int);
@@ -147,7 +148,7 @@ static int s_even_odd_row;
 static float *s_sin_theta_array;			/* all sine thetas go here  */
 static float *s_cos_theta_array;			/* all cosine thetas go here */
 static double s_r_scale_r;					/* precalculation factor */
-static int s_persp;						/* flag for indicating perspective transformations */
+static bool s_persp;						/* flag for indicating perspective transformations */
 static struct point s_p1;
 static struct point s_p2;
 static struct point s_p3;
@@ -566,7 +567,7 @@ static void line3d_fill_bars(int col,
 	driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
 }
 
-static void line3d_fill_light(int col, int next, int last_dot, int cross_not_init,
+static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_init,
 							  VECTOR v1, VECTOR v2,
 							  const struct point *old, const struct f_point *f_old,
 							  struct point *cur, struct f_point *f_cur,
@@ -613,7 +614,7 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 					cross_avg[0] = g_cross[0];
 					cross_avg[1] = g_cross[1];
 					cross_avg[2] = g_cross[2];
-					cross_not_init = 0;
+					cross_not_init = false;
 				}
 				tmpcross[0] = (cross_avg[0]*g_3d_state.light_avg() + g_cross[0]) /
 					(g_3d_state.light_avg() + 1);
@@ -675,7 +676,7 @@ static void line3d_fill_light(int col, int next, int last_dot, int cross_not_ini
 	}
 }
 
-static void line3d_fill(int col, int next, int last_dot, int cross_not_init,
+static void line3d_fill(int col, int next, int last_dot, bool cross_not_init,
 						const struct point *old_last,
 						struct point *old, struct point *cur,
 						struct f_point *f_old, struct f_point *f_cur,
@@ -710,23 +711,23 @@ static void line3d_fill(int col, int next, int last_dot, int cross_not_init,
 
 int out_line_3d(BYTE *pixels, int line_length)
 {
-	int tout;                    /* triangle has been sent to ray trace file */
-	float f_water = 0.0f;        /* transformed WATERLINE for ray trace files */
+	int tout;						/* triangle has been sent to ray trace file */
+	float f_water = 0.0f;			/* transformed WATERLINE for ray trace files */
 	int xcenter0 = 0;
-	int ycenter0 = 0;      /* Unfudged versions */
-	double r;                    /* sphere radius */
-	int next;                    /* used by preview and grid */
-	int col;                     /* current column (original GIF) */
-	struct point cur;            /* current pixels */
-	struct point old;            /* old pixels */
+	int ycenter0 = 0;				/* Unfudged versions */
+	double r;						/* sphere radius */
+	int next;						/* used by preview and grid */
+	int col;						/* current column (original GIF) */
+	struct point cur;				/* current pixels */
+	struct point old;				/* old pixels */
 	struct f_point f_cur;
 	struct f_point f_old;
-	VECTOR v;                    /* double vector */
+	VECTOR v;						/* double vector */
 	VECTOR v1, v2;
 	VECTOR cross_avg;
-	int cross_not_init = 0;           /* flag for cross_avg init indication */
-	LVECTOR lv;                  /* long equivalent of v */
-	LVECTOR lv0;                 /* long equivalent of v */
+	bool cross_not_init = false;	/* flag for cross_avg init indication */
+	LVECTOR lv;						/* long equivalent of v */
+	LVECTOR lv0;					/* long equivalent of v */
 	int last_dot;
 	long g_fudge;
 	static struct point old_last = { 0, 0, 0 }; /* old pixels */
@@ -783,7 +784,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 			pixels[col] = (BYTE) pal;
 		}
 	}
-	cross_not_init = 1;
+	cross_not_init = true;
 	col = 0;
 
 	CO = 0;
@@ -993,7 +994,7 @@ static void vdraw_line(double *v1, double *v2, int color)
 	driver_draw_line((int) v1[0], (int) v1[1], (int) v2[0], (int) v2[1], color);
 }
 
-static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
+static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
 {
 	VECTOR S[2][4];              /* Holds the top an bottom points,
 								* S[0][]=bottom */
@@ -1111,12 +1112,12 @@ static void corners(MATRIX m, int show, double *pxmin, double *pymin, double *pz
 			}
 		}
 
-		draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, 1);      /* Bottom */
+		draw_rectangle(S[0][0], S[0][1], S[0][2], S[0][3], 2);      /* Bottom */
 
-		draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 5, 0);      /* Sides */
-		draw_rect(S[0][2], S[1][2], S[0][3], S[1][3], 6, 0);
+		draw_rectangle_lines(S[0][0], S[1][0], S[0][1], S[1][1], 5);      /* Sides */
+		draw_rectangle_lines(S[0][2], S[1][2], S[0][3], S[1][3], 6);
 
-		draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 8, 1);      /* Top */
+		draw_rectangle(S[1][0], S[1][1], S[1][2], S[1][3], 8);      /* Top */
 	}
 }
 
@@ -1180,15 +1181,15 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	}
 
 	/* draw box connecting transformed points. NOTE order and COLORS */
-	draw_rect(S[0][0], S[0][1], S[0][2], S[0][3], 2, 1);
+	draw_rectangle(S[0][0], S[0][1], S[0][2], S[0][3], 2);
 
 	vdraw_line(S[0][0], S[1][2], 8);
 
 	/* sides */
-	draw_rect(S[0][0], S[1][0], S[0][1], S[1][1], 4, 0);
-	draw_rect(S[0][2], S[1][2], S[0][3], S[1][3], 5, 0);
+	draw_rectangle_lines(S[0][0], S[1][0], S[0][1], S[1][1], 4);
+	draw_rectangle_lines(S[0][2], S[1][2], S[0][3], S[1][3], 5);
 
-	draw_rect(S[1][0], S[1][1], S[1][2], S[1][3], 3, 1);
+	draw_rectangle(S[1][0], S[1][1], S[1][2], S[1][3], 3);
 
 	/* Draw the "arrow head" */
 	for (int i = -3; i < 4; i++)
@@ -1203,11 +1204,8 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 	}
 }
 
-static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int rect)
+static void pack_rectangle_vector(VECTOR V[4], VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3)
 {
-	VECTOR V[4];
-
-	/* Since V[2] is not used by vdraw_line don't bother setting it */
 	for (int i = 0; i < 2; i++)
 	{
 		V[0][i] = V0[i];
@@ -1215,30 +1213,35 @@ static void draw_rect(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color, int
 		V[2][i] = V2[i];
 		V[3][i] = V3[i];
 	}
-	if (rect)                    /* Draw a rectangle */
+}
+
+static void draw_rectangle(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color)
+{
+	VECTOR V[4];
+	pack_rectangle_vector(V, V0, V1, V2, V3);
+
+	for (int i = 0; i < 4; i++)
 	{
-		for (int i = 0; i < 4; i++)
+		if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2*BAD_CHECK &&
+			fabs(V[i][1] - V[(i + 1) % 4][1]) < -2*BAD_CHECK)
 		{
-			if (fabs(V[i][0] - V[(i + 1) % 4][0]) < -2*BAD_CHECK &&
-				fabs(V[i][1] - V[(i + 1) % 4][1]) < -2*BAD_CHECK)
-			{
-				vdraw_line(V[i], V[(i + 1) % 4], color);
-			}
+			vdraw_line(V[i], V[(i + 1) % 4], color);
 		}
 	}
-	else
-		/* Draw 2 lines instead */
+}
+
+static void draw_rectangle_lines(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color)
+{
+	VECTOR V[4];
+	pack_rectangle_vector(V, V0, V1, V2, V3);
+	for (int i = 0; i < 3; i += 2)
 	{
-		for (int i = 0; i < 3; i += 2)
+		if (fabs(V[i][0] - V[i + 1][0]) < -2*BAD_CHECK &&
+			fabs(V[i][1] - V[i + 1][1]) < -2*BAD_CHECK)
 		{
-			if (fabs(V[i][0] - V[i + 1][0]) < -2*BAD_CHECK &&
-				fabs(V[i][1] - V[i + 1][1]) < -2*BAD_CHECK)
-			{
-				vdraw_line(V[i], V[i + 1], color);
-			}
+			vdraw_line(V[i], V[i + 1], color);
 		}
 	}
-	return;
 }
 
 /* replacement for plot - builds a table of min and max x's instead of plot */
@@ -2700,16 +2703,16 @@ static int first_time(int linelen, VECTOR v)
 		/* m current matrix */
 		/* 0 means don't show box */
 		/* returns minimum and maximum values of x, y, z in fractal */
-		corners(s_m, 0, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
+		corners(s_m, false, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
 	}
 
 	/* perspective 3D vector - s_lview[2] == 0 means no perspective */
 
 	/* set perspective flag */
-	s_persp = 0;
+	s_persp = false;
 	if (g_3d_state.z_viewer() != 0)
 	{
-		s_persp = 1;
+		s_persp = true;
 		if (g_3d_state.z_viewer() < 80)         /* force float */
 		{
 			g_user_float_flag = true;
@@ -2904,7 +2907,7 @@ static int first_time(int linelen, VECTOR v)
 		* rotations 1 means show box - g_x_min etc. do nothing here */
 		if (!g_3d_state.sphere())
 		{
-			corners(s_m, 1, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
+			corners(s_m, true, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
 		}
 	}
 

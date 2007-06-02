@@ -37,7 +37,7 @@
 char g_stereo_map_name[FILE_MAX_DIR + 1] = {""};
 int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
-int g_grayscale_depth = 0; /* flag to use gray value rather than color number */
+bool g_grayscale_depth = false; /* flag to use gray value rather than color number */
 char g_calibrate = 1;             /* add calibration bars to image */
 bool g_image_map = false;
 

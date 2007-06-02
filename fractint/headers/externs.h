@@ -161,7 +161,7 @@ extern char					g_glasses1_map[];
 extern int					g_good_mode;						/* video mode ok? */
 extern bool					g_got_real_dac;					/* loaddac worked, really got a dac */
 extern int					g_got_status;
-extern int					g_grayscale_depth;
+extern bool					g_grayscale_depth;
 extern char					g_grey_file[];
 extern bool					g_has_inverse;
 extern unsigned int			g_height;
@@ -423,7 +423,7 @@ extern SymmetryType			g_symmetry;
 extern int					g_sy_offset;
 extern char					g_make_par[];
 extern bool					g_tab_display_enabled;
-extern int					g_targa_output;
+extern bool					g_targa_output;
 extern int					g_targa_overlay;
 extern double				g_temp_sqr_x;
 extern double				g_temp_sqr_y;
