@@ -3074,7 +3074,7 @@ int get_3d_parameters()     /* prompt for 3D parameters */
 restart_1:
 	if (g_targa_output && g_overlay_3d)
 	{
-		g_targa_overlay = 1;
+		g_targa_overlay = true;
 	}
 
 	int k = -1;
@@ -3414,7 +3414,7 @@ static int get_light_params()
 		dialog.push("   Red", (int) g_3d_state.background_red());
 		dialog.push("   Green", (int) g_3d_state.background_green());
 		dialog.push("   Blue", (int) g_3d_state.background_blue());
-		dialog.push("Overlay Targa File? (Y/N)", g_targa_overlay ? true : false);
+		dialog.push("Overlay Targa File? (Y/N)", g_targa_overlay);
 	}
 	dialog.push("");
 	if (dialog.prompt() < 0)
@@ -3447,7 +3447,7 @@ static int get_light_params()
 			(BYTE) (dialog.values(k + 1).uval.ival % 255),
 			(BYTE) (dialog.values(k + 2).uval.ival % 255));
 		k += 3;
-		g_targa_overlay = dialog.values(k).uval.ch.val;
+		g_targa_overlay = (dialog.values(k).uval.ch.val != 0);
 	}
 	return 0;
 }
