@@ -2846,7 +2846,7 @@ static int use_grayscale_depth_arg(const cmd_context &context)
 
 static int targa_overlay_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_targa_overlay, Command::ThreeDParameter).parse(context);
+	return FlagParser<bool>(g_targa_overlay, Command::ThreeDParameter).parse(context);
 }
 
 static int brief_arg(const cmd_context &context)

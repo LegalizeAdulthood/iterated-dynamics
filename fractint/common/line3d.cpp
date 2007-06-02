@@ -69,7 +69,7 @@ int start_disk1(char *file_name2, FILE *Source, bool overlay_file);
 void (*g_plot_color_standard)(int x, int y, int color) = NULL;
 
 char g_light_name[FILE_MAX_PATH] = "fract001";
-int g_targa_overlay = 0;
+bool g_targa_overlay = false;
 int g_xx_adjust = 0;
 int g_yy_adjust = 0;
 int g_x_shift = 0;

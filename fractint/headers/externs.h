@@ -424,7 +424,7 @@ extern int					g_sy_offset;
 extern char					g_make_par[];
 extern bool					g_tab_display_enabled;
 extern bool					g_targa_output;
-extern int					g_targa_overlay;
+extern bool					g_targa_overlay;
 extern double				g_temp_sqr_x;
 extern double				g_temp_sqr_y;
 extern int					g_text_cbase;						/* g_text_col is relative to this */
