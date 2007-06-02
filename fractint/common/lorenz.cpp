@@ -109,9 +109,9 @@ static double s_cx;
 static double s_cy;
 static long   s_x_long, s_y_long;
 /* s_connect, s_euler, s_waste are potential user parameters */
-static int s_connect = 1;    /* flag to connect points with a line */
-static int s_euler = 0;      /* use implicit euler approximation for dynamic system */
-static int s_waste = 100;    /* waste this many points before plotting */
+static bool s_connect = true;		/* flag to connect points with a line */
+static bool s_euler = false;		/* use implicit euler approximation for dynamic system */
+static int s_waste = 100;			/* waste this many points before plotting */
 static int s_run_length;
 static int s_real_time;
 static int s_t;
@@ -280,13 +280,13 @@ static int l_setup_convert_to_screen(l_affine *l_cvt)
 int orbit_3d_setup()
 {
 	g_max_count = 0L;
-	s_connect = 1;
+	s_connect = true;
 	s_waste = 100;
 	s_projection = PROJECTION_XY;
 	if (g_fractal_type == FRACTYPE_HENON_L || g_fractal_type == FRACTYPE_KAM_TORUS || g_fractal_type == FRACTYPE_KAM_TORUS_3D ||
 		g_fractal_type == FRACTYPE_INVERSE_JULIA)
 	{
-		s_connect = 0;
+		s_connect = false;
 	}
 	if (g_fractal_type == FRACTYPE_ROSSLER_L)
 	{
@@ -420,7 +420,7 @@ lrwalk:
 int orbit_3d_setup_fp()
 {
 	g_max_count = 0L;
-	s_connect = 1;
+	s_connect = true;
 	s_waste = 100;
 	s_projection = PROJECTION_XY;
 
@@ -428,7 +428,7 @@ int orbit_3d_setup_fp()
 				|| g_fractal_type == FRACTYPE_KAM_TORUS_FP || g_fractal_type == FRACTYPE_KAM_TORUS_3D_FP
 				|| g_fractal_type == FRACTYPE_HOPALONG_FP || g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
 	{
-		s_connect = 0;
+		s_connect = false;
 	}
 	if (g_fractal_type == FRACTYPE_LORENZ_3D_1_FP || g_fractal_type == FRACTYPE_LORENZ_3D_3_FP ||
 		g_fractal_type == FRACTYPE_LORENZ_3D_4_FP)
@@ -457,13 +457,13 @@ int orbit_3d_setup_fp()
 	{
 		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
 		s_init_orbit_fp[1] = 0.003;
-		s_connect = 0;
+		s_connect = false;
 		s_waste = 2000;
 	}
 
 	if (g_fractal_type == FRACTYPE_LATOOCARFIAN)        /* HB */
 	{
-		s_connect = 0;
+		s_connect = false;
 	}
 
 	if (g_fractal_type == FRACTYPE_HENON_FP || g_fractal_type == FRACTYPE_PICKOVER_FP)
@@ -477,7 +477,7 @@ int orbit_3d_setup_fp()
 	{
 		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
 		s_init_orbit_fp[1] = 0.003;
-		s_connect = 0;
+		s_connect = false;
 		s_waste = 2000;
 		/* Initialize parameters */
 		s_a  =   g_parameters[0];
@@ -508,7 +508,7 @@ int orbit_3d_setup_fp()
 		s_init_orbit_fp[0] = 0;  /* initial conditions */
 		s_init_orbit_fp[1] = 0;
 		s_init_orbit_fp[2] = 0;
-		s_connect = 0;
+		s_connect = false;
 		s_a =  g_parameters[0];
 		s_b =  g_parameters[1];
 		s_c =  g_parameters[2];
@@ -1902,13 +1902,13 @@ static int orbit_3d_calc_fp()
 
 int dynamic_2d_setup_fp()
 {
-	s_connect = 0;
-	s_euler = 0;
+	s_connect = false;
+	s_euler = false;
 	s_d = g_parameters[0]; /* number of intervals */
 	if (s_d < 0)
 	{
 		s_d = -s_d;
-		s_connect = 1;
+		s_connect = true;
 	}
 	else if (s_d == 0)
 	{
@@ -1922,7 +1922,7 @@ int dynamic_2d_setup_fp()
 		if (s_dt < 0)
 		{
 			s_dt = -s_dt;
-			s_euler = 1;
+			s_euler = true;
 		}
 		if (s_dt == 0)
 		{

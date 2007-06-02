@@ -119,8 +119,6 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 	int guessed12;
 	int guessed13;
 	int prev11;
-	int fix21;
-	int fix31;
 	unsigned int *pfxptr;
 	unsigned int pfxmask;
 
@@ -149,7 +147,8 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 	{
 		c24 = -1;
 	}
-	guessed12 = guessed13 = 0;
+	guessed12 = 0;
+	guessed13 = 0;
 
 	for (int x = g_ix_start; x <= g_x_stop; )  /* increment at end, or when doing continue */
 	{
@@ -169,7 +168,8 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 				*/
 				x += s_max_block;
 				prev11 = c31 = c21 = c24 = c12 = c13 = c22;
-				guessed12 = guessed13 = 0;
+				guessed12 = 0;
+				guessed13 = 0;
 				continue;
 			}
 		}
@@ -211,7 +211,9 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 		}
 
 		/* guess or calc the remaining 3 quarters of current g_block */
-		guessed23 = guessed32 = guessed33 = 1;
+		guessed23 = 1;
+		guessed32 = 1;
+		guessed33 = 1;
 		c23 = c32 = c33 = c22;
 		if (yplushalf > g_y_stop)
 		{
@@ -228,7 +230,8 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 			{
 				c32 = c33 = -1;
 			}
-			guessed32 = guessed33 = -1;
+			guessed32 = -1;
+			guessed33 = -1;
 		}
 		while (true) /* go around till none of 23, 32, 33 change anymore */
 		{
@@ -305,13 +308,13 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 		}
 
 		/* check if some calcs in this g_block mean earlier guesses need fixing */
-		fix21 = ((c22 != c12 || c22 != c32)
+		bool fix21 = ((c22 != c12 || c22 != c32)
 			&& c21 == c22 && c21 == c31 && c21 == prev11
 			&& y > 0
 			&& (x == g_ix_start || c21 == getcolor(x-s_half_block, ylessblock))
 			&& (xplushalf > g_x_stop || c21 == getcolor(xplushalf, ylessblock))
 			&& c21 == getcolor(x, ylessblock));
-		fix31 = (c22 != c32
+		bool fix31 = (c22 != c32
 			&& c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
 			&& y > 0 && xplushalf <= g_x_stop
 			&& c31 == getcolor(xplushalf, ylessblock)
