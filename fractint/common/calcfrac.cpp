@@ -494,7 +494,7 @@ int calculate_fractal()
 	if (g_true_color)
 	{
 		check_write_file(g_light_name, ".tga");
-		if (start_disk1(g_light_name, NULL, 0) == 0)
+		if (start_disk1(g_light_name, NULL, false) == 0)
 		{
 			/* Have to force passes = 1 */
 			g_user_standard_calculation_mode = '1';

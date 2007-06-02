@@ -63,7 +63,7 @@ struct minmax
 /* routines in this module */
 int out_line_3d(BYTE *pixels, int line_length);
 int targa_color(int, int, int);
-int start_disk1(char *, FILE *, int);
+int start_disk1(char *file_name2, FILE *Source, bool overlay_file);
 
 /* global variables defined here */
 void (*g_plot_color_standard)(int x, int y, int color) = NULL;
@@ -1624,7 +1624,7 @@ static void file_error(const char *filename, int code)
 /*                                                                      */
 /* **********************************************************************/
 
-int start_disk1(char *file_name2, FILE *Source, int overlay)
+int start_disk1(char *file_name2, FILE *Source, bool overlay_file)
 {
 	int inc;
 	FILE *fps;
@@ -1640,7 +1640,7 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 	inc = 1;                     /* Assume we are overlaying a file */
 
 	/* Write the header */
-	if (overlay)                 /* We are overlaying a file */
+	if (overlay_file)
 	{
 		for (int i = 0; i < s_targa_header_len; i++) /* Copy the header from the Source */
 		{
@@ -1690,7 +1690,7 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 	{
 		for (int j = 0; j < s_line_length; j += inc)
 		{
-			if (overlay)
+			if (overlay_file)
 			{
 				fputc(fgetc(Source), fps);
 			}
@@ -1706,7 +1706,7 @@ int start_disk1(char *file_name2, FILE *Source, int overlay)
 		{
 			/* Almost certainly not enough disk space  */
 			fclose(fps);
-			if (overlay)
+			if (overlay_file)
 			{
 				fclose(Source);
 			}
@@ -1785,7 +1785,7 @@ static int targa_validate(char *file_name)
 	rewind(fp);
 
 	/* Now that we know its a good file, create a working copy */
-	if (start_disk1(s_targa_temp, fp, 1))
+	if (start_disk1(s_targa_temp, fp, true))
 	{
 		return -1;
 	}
@@ -2599,7 +2599,7 @@ static int first_time(int linelen, VECTOR v)
 		else
 		{
 			check_write_file(g_light_name, ".tga");
-			if (start_disk1(g_light_name, NULL, 0))   /* Open new file */
+			if (start_disk1(g_light_name, NULL, false))   /* Open new file */
 			{
 				return -1;
 			}
