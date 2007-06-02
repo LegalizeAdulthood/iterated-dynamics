@@ -205,7 +205,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 		int kbdchar = driver_key_pressed();
 		if (kbdchar || step)
 		{
-			int done = 0;
+			bool done = false;
 			if (kbdchar == 0)
 			{
 				kbdchar = driver_get_key();
@@ -216,7 +216,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 				step = 1 - step;
 				break;
 			case FIK_ESC:
-				done = 1;
+				done = true;
 				break;
 			case FIK_RIGHT_ARROW:
 			case FIK_UP_ARROW:
@@ -229,7 +229,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 				set_wait(&wait);
 				break;
 			default:
-				done = 1;
+				done = true;
 				break;
 			}
 			if (done)
@@ -365,7 +365,7 @@ void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 		int kbdchar = driver_key_pressed();
 		if (kbdchar || step)
 		{
-			int done = 0;
+			bool done = false;
 			if (kbdchar == 0)
 			{
 				kbdchar = driver_get_key();
@@ -376,7 +376,7 @@ void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 				step = 1 - step;
 				break;
 			case FIK_ESC:
-				done = 1;
+				done = true;
 				break;
 			case FIK_RIGHT_ARROW:
 			case FIK_UP_ARROW:
@@ -389,7 +389,7 @@ void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 				set_wait(&wait);
 				break;
 			default:
-				done = 1;
+				done = true;
 				break;
 			}
 			if (done)
