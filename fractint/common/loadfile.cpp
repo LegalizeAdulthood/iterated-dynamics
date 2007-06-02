@@ -627,11 +627,11 @@ static void got_orbits_info(struct ext_blk_orbits_info orbits_info)
 	g_orbit_y_max = orbits_info.oymax;
 	g_orbit_x_3rd = orbits_info.ox3rd;
 	g_orbit_y_3rd = orbits_info.oy3rd;
-	g_keep_screen_coords = orbits_info.keep_scrn_coords;
+	g_keep_screen_coords = (orbits_info.keep_scrn_coords != 0);
 	g_orbit_draw_mode = (int) orbits_info.drawmode;
 	if (g_keep_screen_coords)
 	{
-		g_set_orbit_corners = 1;
+		g_set_orbit_corners = true;
 	}
 }
 

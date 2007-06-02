@@ -906,7 +906,7 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 		g_new_discrete_parameter_offset_x = 0;
 		g_new_discrete_parameter_offset_y = 0;
 		g_fiddle_factor = 1;           /* reset param evolution stuff */
-		g_set_orbit_corners = 0;
+		g_set_orbit_corners = false;
 		save_parameter_history();
 		if (i == 0)
 		{

@@ -227,7 +227,7 @@ static void my_floating_point_err(int sig)
 {
 	if (sig != 0)
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 }
 

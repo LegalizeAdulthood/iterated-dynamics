@@ -138,7 +138,7 @@ void _fastcall history_save_info()
 	current.oymax				= g_orbit_y_max;
 	current.ox3rd				= g_orbit_x_3rd;
 	current.oy3rd				= g_orbit_y_3rd;
-	current.keep_scrn_coords	= (short) g_keep_screen_coords;
+	current.keep_scrn_coords	= g_keep_screen_coords;
 	current.drawmode			= (char) g_orbit_draw_mode;
 	memcpy(current.dac, g_dac_box, 256*3);
 	switch (g_fractal_type)
@@ -320,10 +320,10 @@ void _fastcall history_restore_info()
 	g_orbit_y_max			= last.oymax;
 	g_orbit_x_3rd			= last.ox3rd;
 	g_orbit_y_3rd			= last.oy3rd;
-	g_keep_screen_coords	= last.keep_scrn_coords;
+	g_keep_screen_coords = last.keep_scrn_coords;
 	if (g_keep_screen_coords)
 	{
-		g_set_orbit_corners = 1;
+		g_set_orbit_corners = true;
 	}
 	g_orbit_draw_mode = (int) last.drawmode;
 	g_user_float_flag = (g_current_fractal_specific->isinteger != 0);

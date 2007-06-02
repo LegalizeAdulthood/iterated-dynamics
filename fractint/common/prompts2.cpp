@@ -550,8 +550,7 @@ int passes_options()
 	old_orbit_delay = g_orbit_delay;
 	int old_orbit_interval;
 	old_orbit_interval = (int)g_orbit_interval;
-	int old_keep_scrn_coords;
-	old_keep_scrn_coords = g_keep_screen_coords;
+	bool old_keep_scrn_coords = g_keep_screen_coords;
 	int old_drawmode;
 	old_drawmode = g_orbit_draw_mode;
 
@@ -596,14 +595,14 @@ pass_option_restart:
 		{
 			j = 1;
 		}
-		g_keep_screen_coords = dialog.values(++k).uval.ch.val;
+		g_keep_screen_coords = (dialog.values(++k).uval.ch.val != 0);
 		if (g_keep_screen_coords != old_keep_scrn_coords)
 		{
 			j = 1;
 		}
-		if (g_keep_screen_coords == 0)
+		if (!g_keep_screen_coords)
 		{
-			g_set_orbit_corners = 0;
+			g_set_orbit_corners = false;
 		}
 		g_orbit_draw_mode = dialog.values(++k).uval.ch.val;
 		if (g_orbit_draw_mode != old_drawmode)
@@ -1974,8 +1973,8 @@ gsc_loop:
 		}
 		else
 		{
-			g_set_orbit_corners = 1;
-			g_keep_screen_coords = 1;
+			g_set_orbit_corners = true;
+			g_keep_screen_coords = true;
 			/* restore corners */
 			g_escape_time_state.m_grid_fp.x_min() = svxxmin;
 			g_escape_time_state.m_grid_fp.x_max() = svxxmax;

@@ -209,7 +209,7 @@ extern void (*g_trig3_d)();
 		denom = lsqr((arg).x) + lsqr((arg).y);				\
 		if (denom == 0L)									\
 		{													\
-			g_overflow = 1;									\
+			g_overflow = true;								\
 		}													\
 		else												\
 		{													\

@@ -90,8 +90,8 @@ struct threed_vt_inf_fp /* data used by 3d view transform subroutine */
 long g_max_count;
 MajorMethodType g_major_method;
 MinorMethodType g_minor_method;
-int g_keep_screen_coords = 0;
-int g_set_orbit_corners = 0;
+bool g_keep_screen_coords = false;
+bool g_set_orbit_corners = false;
 long g_orbit_interval;
 double g_orbit_x_min;
 double g_orbit_y_min;

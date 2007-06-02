@@ -268,7 +268,7 @@ long multiply(long x, long y, int n)
 	l = (long) (((float) x)*((float) y)/(float) (1 << n));
 	if (l == 0x7fffffff)
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 	return l;
 }
@@ -520,7 +520,7 @@ void initasmvars()
 	{
 		return;
 	}
-	g_overflow = 0;
+	g_overflow = false;
 
 	/* set g_cpu type */
 	g_cpu = 486;

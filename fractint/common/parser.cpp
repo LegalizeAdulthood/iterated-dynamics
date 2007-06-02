@@ -459,9 +459,6 @@ const char *Formula::error_messages(int which)
 	get MP math and Integer math */
 
 #if !defined(XFRACT)
-#define FUNCT
-#ifdef FUNCT /* use function form save space - isn't really slower */
-
 static void mStkFunct(void (*fct)())   /* call lStk via dStk */
 {
 	Arg1->d = MPC2cmplx(Arg1->m);
@@ -490,32 +487,6 @@ static void lStkFunct(void (*fct)())   /* call lStk via dStk */
 		g_overflow = 1;
 	}
 }
-#else  /* use Macro form for (?) greater speed */
-  /* call lStk via dStk */
-#define mStkFunct(fct)  \
-	Arg1->d = MPC2cmplx(Arg1->m); \
-	(*fct)(); \
-	Arg1->m = cmplx2MPC(Arg1->d);
-
-
-/* call lStk via dStk */
-#define lStkFunct(fct) {\
-	double y; \
-	y = (double)Arg1->l.y / m_fudge; \
-	Arg1->d.x = (double)Arg1->l.x / m_fudge; \
-	Arg1->d.y = y; \
-	(*fct)(); \
-	if (fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit) {\
-		Arg1->l.x = (long)(Arg1->d.x*m_fudge); \
-		Arg1->l.y = (long)(Arg1->d.y*m_fudge); \
-	}\
-	else\
-		g_overflow = 1; \
-}
-
-
-#endif
-
 #endif
 
 unsigned long Random::new_random_number()
@@ -1183,7 +1154,7 @@ void lStkMod()
 	multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
 	if (Arg1->l.x < 0)
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 	Arg1->l.y = 0L;
 }
@@ -1194,7 +1165,7 @@ void lStkModOld()
 	multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
 	if (Arg1->l.x < 0)
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 	Arg1->l.y = 0L;
 }
@@ -1501,7 +1472,7 @@ void mStkRecip()
 	MP mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x), *MPmul(Arg1->m.y, Arg1->m.y));
 	if (mod.Mant == 0L)
 	{
-		g_overflow = 1;
+		g_overflow = true;
 		return;
 	}
 	Arg1->m.x = *MPdiv(Arg1->m.x, mod);
@@ -2136,7 +2107,7 @@ void lStkPwr()
 	}
 	else
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 	Arg1--;
 	Arg2--;

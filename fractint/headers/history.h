@@ -104,7 +104,7 @@ struct history_info
 	double oymax;
 	double ox3rd;
 	double oy3rd;
-	short keep_scrn_coords;
+	bool keep_scrn_coords;
 	char drawmode;
 };
 

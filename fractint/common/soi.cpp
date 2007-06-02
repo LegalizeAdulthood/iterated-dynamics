@@ -46,7 +46,7 @@ int g_minimum_stack = 2200; /* and this much stack to not crash when <tab> is pr
 
 static LDBL twidth;
 static LDBL equal;
-static bool baxinxx = false;
+static bool s_baxinxx = false;
 
 long iteration(LDBL cr, LDBL ci,
 				LDBL re, LDBL im,
@@ -70,7 +70,7 @@ long iteration(LDBL cr, LDBL ci,
 	LDBL d;
 	int exponent;
 
-	if (baxinxx)
+	if (s_baxinxx)
 	{
 		sre = re;
 		sim = im;
@@ -290,7 +290,7 @@ long iteration(LDBL cr, LDBL ci,
 
 	if (iter == 0)
 	{
-		baxinxx = true;
+		s_baxinxx = true;
 		return BASIN_COLOR;
 	}
 	else
@@ -315,7 +315,7 @@ long iteration(LDBL cr, LDBL ci,
 			8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
 		};
 
-		baxinxx = false;
+		s_baxinxx = false;
 #ifdef INTEL
 		d = ren + imn;
 #else

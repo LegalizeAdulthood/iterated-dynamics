@@ -694,7 +694,7 @@ int encoder()
 			osave_info.oymax     = g_orbit_y_max;
 			osave_info.ox3rd     = g_orbit_x_3rd;
 			osave_info.oy3rd     = g_orbit_y_3rd;
-			osave_info.keep_scrn_coords = (short)g_keep_screen_coords;
+			osave_info.keep_scrn_coords = (short) g_keep_screen_coords ? 1 : 0;
 			osave_info.drawmode  = (char) g_orbit_draw_mode;
 			for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
 			{
