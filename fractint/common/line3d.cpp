@@ -1652,7 +1652,7 @@ int start_disk1(char *file_name2, FILE *Source, bool overlay_file)
 		/* ID field size = 0, No color map, Targa type 2 file */
 		for (int i = 0; i < 12; i++)
 		{
-			if (i == 0 && g_true_color != 0)
+			if (i == 0 && g_true_color)
 			{
 				set_upr_lwr();
 				fputc(4, fps); /* make room to write an extra number */

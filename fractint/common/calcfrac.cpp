@@ -503,7 +503,7 @@ int calculate_fractal()
 		}
 		else
 		{
-			g_true_color = 0;
+			g_true_color = false;
 		}
 	}
 	if (!g_escape_time_state.m_use_grid)

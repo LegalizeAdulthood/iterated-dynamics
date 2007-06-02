@@ -444,7 +444,7 @@ extern char					g_temp_dir[];
 extern double				g_too_small;
 extern int					g_total_passes;
 extern BYTE					g_trig_index[];
-extern int					g_true_color;
+extern bool					g_true_color;
 extern int					g_true_mode;
 extern char					g_text_stack[];
 extern double				g_two_pi;
