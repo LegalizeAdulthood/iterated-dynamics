@@ -85,7 +85,7 @@ static bool line_3d_mem();
 static int RGBtoHSV(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static int set_pixel_buff(BYTE *, BYTE *, unsigned);
 static void set_upr_lwr();
-static int end_object(int);
+static int end_object(bool triangle_was_output);
 static int off_screen(struct point);
 static int out_triangle(const struct f_point, const struct f_point, const struct f_point, int, int, int);
 static int raytrace_header();
@@ -162,8 +162,8 @@ static char s_targa_temp[14] = "fractemp.tga";
 static struct point *s_last_row = NULL;	/* this array remembers the previous line */
 static struct minmax *s_minmax_x;			/* array of min and max x values used in triangle fill */
 
-static int line3d_init(unsigned linelen,
-					   int *tout, int *xcenter0, int *ycenter0, VECTOR cross_avg, VECTOR v)
+static int line3d_init(unsigned linelen, bool &triangle_was_output,
+					   int *xcenter0, int *ycenter0, VECTOR cross_avg, VECTOR v)
 {
 	int err = first_time(linelen, v);
 	if (err != 0)
@@ -174,7 +174,7 @@ static int line3d_init(unsigned linelen,
 	{
 		return -1;
 	}
-	*tout = 0;
+	triangle_was_output = false;
 	cross_avg[0] = 0;
 	cross_avg[1] = 0;
 	cross_avg[2] = 0;
@@ -372,7 +372,7 @@ static void line3d_raytrace(int col, int next,
 							const struct point *old, const struct point *cur,
 							const struct f_point *f_old, const struct f_point *f_cur,
 							float f_water, int last_dot,
-							int *tout)
+							bool &triangle_was_output)
 {
 	if (col && g_current_row &&
 		old->x > BAD_CHECK &&
@@ -398,7 +398,7 @@ static void line3d_raytrace(int col, int next,
 				cur->color, old->color, s_last_row[col].color);
 		}
 
-		*tout = 1;
+		triangle_was_output = true;
 
 		driver_draw_line(old->x, old->y, cur->x, cur->y, old->color);
 		driver_draw_line(old->x, old->y, s_last_row[col].x,
@@ -433,7 +433,7 @@ static void line3d_raytrace(int col, int next,
 			out_triangle(*f_cur, s_f_last_row[col], s_f_last_row[next],
 					cur->color, s_last_row[col].color, s_last_row[next].color);
 		}
-		*tout = 1;
+		triangle_was_output = true;
 
 		driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur->x, cur->y,
 			cur->color);
@@ -710,7 +710,7 @@ static void line3d_fill(int col, int next, int last_dot, bool cross_not_init,
 
 int out_line_3d(BYTE *pixels, int line_length)
 {
-	int tout;						/* triangle has been sent to ray trace file */
+	bool triangle_was_output;		/* triangle has been sent to ray trace file */
 	float f_water = 0.0f;			/* transformed WATERLINE for ray trace files */
 	int xcenter0 = 0;
 	int ycenter0 = 0;				/* Unfudged versions */
@@ -750,7 +750,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	/************************************************************************/
 	if (g_row_count++ == 0)
 	{
-		int error = line3d_init(line_length, &tout, &xcenter0, &ycenter0, cross_avg, v);
+		int error = line3d_init(line_length, triangle_was_output, &xcenter0, &ycenter0, cross_avg, v);
 		if (error)
 		{
 			return error;
@@ -817,7 +817,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 
 	s_local_preview_factor = g_y_dots/g_3d_state.preview_factor();
 
-	tout = 0;
+	triangle_was_output = false;
 	/* Insure last line is drawn in preview and filltypes <0  */
 	if ((g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 		&& (g_current_row != g_y_dots - 1)
@@ -927,7 +927,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 
 		if (g_3d_state.raytrace_output())
 		{
-			line3d_raytrace(col, next, &old, &cur, &f_old, &f_cur, f_water, last_dot, &tout);
+			line3d_raytrace(col, next, &old, &cur, &f_old, &f_cur, f_water, last_dot, triangle_was_output);
 			goto loopbottom;
 		}
 
@@ -949,8 +949,8 @@ loopbottom:
 			if (g_current_row && g_3d_state.raytrace_output() && col >= last_dot)
 				/* if we're at the end of a row, close the object */
 			{
-				end_object(tout);
-				tout = 0;
+				end_object(triangle_was_output);
+				triangle_was_output = false;
 				if (ferror(s_raytrace_file))
 				{
 					fclose(s_raytrace_file);
@@ -2343,7 +2343,7 @@ static int start_object()
 /*                                                                  */
 /********************************************************************/
 
-static int end_object(int triout)
+static int end_object(bool triangle_was_output)
 {
 	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 	{
@@ -2351,7 +2351,7 @@ static int end_object(int triout)
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
-		if (triout)
+		if (triangle_was_output)
 		{
 			/* Make sure the bounding box is slightly larger than the object */
 			for (int i = 0; i <= 2; i++)
