@@ -157,7 +157,6 @@ static struct point s_bad;				/* out of range value */
 static long s_num_tris;					/* number of triangles output to ray trace file */
 static struct f_point *s_f_last_row = NULL;
 static MATRIX s_m;						/* transformation matrix */
-static int s_real_v = 0;					/* mrr Actual value of V for fillytpe > 4 monochrome images */
 static int s_file_error = FILEERROR_NONE;
 static char s_targa_temp[14] = "fractemp.tga";
 static struct point *s_last_row = NULL;	/* this array remembers the previous line */
@@ -1465,17 +1464,10 @@ static void interp_color(int x, int y, int color)
 
 		if (g_3d_state.fill_type() >= FillType::LightBefore)
 		{
-			if (s_real_v && g_targa_output)
+			color = (1 + (unsigned) color*s_ambient)/256;
+			if (color == 0)
 			{
-				color = D;
-			}
-			else
-			{
-				color = (1 + (unsigned) color*s_ambient)/256;
-				if (color == 0)
-				{
-					color = 1;
-				}
+				color = 1;
 			}
 		}
 		assert(g_plot_color_standard);
@@ -1552,11 +1544,6 @@ int targa_color(int x, int y, int color)
 	}
 	/* Now lets convert it back to RGB. Original Hue, modified Sat and Val */
 	HSVtoRGB(&rgb[0], &rgb[1], &rgb[2], hue, saturation, value);
-
-	if (s_real_v)
-	{
-		value = (35*(int) rgb[0] + 45*(int) rgb[1] + 20*(int) rgb[2])/100;
-	}
 
 	/* Now write the color triple to its transformed location */
 	/* on the disk. */
