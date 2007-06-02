@@ -113,7 +113,7 @@ static bool s_connect = true;		/* flag to connect points with a line */
 static bool s_euler = false;		/* use implicit euler approximation for dynamic system */
 static int s_waste = 100;			/* waste this many points before plotting */
 static int s_run_length;
-static int s_real_time;
+static bool s_real_time = false;
 static int s_t;
 static long s_l_dx, s_l_dy, s_l_dz, s_l_dt, s_l_a, s_l_b, s_l_c, s_l_d;
 static long s_l_adt, s_l_bdt, s_l_cdt, s_l_xdt, s_l_ydt;
@@ -1587,7 +1587,7 @@ int orbit_2d()
 
 	FILE *fp = open_orbit_save();
 	int ret = 0;
-	int start = 1;
+	bool start = true;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		if (driver_key_pressed())
@@ -1631,7 +1631,7 @@ int orbit_2d()
 			}
 			oldcol = col;
 			oldrow = row;
-			start = 0;
+			start = false;
 		}
 		else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
 		{
@@ -2251,7 +2251,7 @@ int funny_glasses_call(int (*calc)())
 	status = calc();
 	if (s_real_time && g_3d_state.glasses_type() < STEREO_PHOTO)
 	{
-		s_real_time = 0;
+		s_real_time = false;
 		goto done;
 	}
 	if (g_3d_state.glasses_type() && status == 0 && g_display_3d)
@@ -2303,7 +2303,6 @@ done:
 /* double version - mainly for testing */
 static int ifs_3d_float()
 {
-	int color_method;
 	FILE *fp;
 	int color;
 
@@ -2323,7 +2322,7 @@ static int ifs_3d_float()
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&inf.cvt);
 	srand(1);
-	color_method = (int) g_parameters[0];
+	bool color_method = (g_parameters[0] != 0);
 	if (driver_diskp())                /* this would KILL a disk drive! */
 	{
 		not_disk_message();
@@ -2456,7 +2455,6 @@ int ifs()                       /* front-end for ifs_2d and ifs_3d */
 /* IFS logic shamelessly converted to integer math */
 static int ifs_2d()
 {
-	int color_method;
 	FILE *fp;
 	int col;
 	int row;
@@ -2480,7 +2478,7 @@ static int ifs_2d()
 	l_setup_convert_to_screen(&cvt);
 
 	srand(1);
-	color_method = (int) g_parameters[0];
+	bool color_method = (g_parameters[0] != 0);
 	localifs = (long *) malloc(g_num_affine*IFSPARM*sizeof(long));
 	if (localifs == NULL)
 	{
@@ -2568,7 +2566,6 @@ static int ifs_2d()
 
 static int ifs_3d_long()
 {
-	int color_method;
 	FILE *fp;
 	int color;
 	int ret;
@@ -2588,7 +2585,7 @@ static int ifs_3d_long()
 
 	threed_vt_inf inf;
 	srand(1);
-	color_method = (int) g_parameters[0];
+	bool color_method = (g_parameters[0] != 0);
 	localifs = (long *) malloc(g_num_affine*IFS3DPARM*sizeof(long));
 	if (localifs == NULL)
 	{
@@ -2737,7 +2734,7 @@ static void setup_matrix(MATRIX doublemat)
 static int orbit_3d_aux(int (*orbit)())
 {
 	g_display_3d = DISPLAY3D_GENERATED;
-	s_real_time = (STEREO_NONE < g_3d_state.glasses_type() && g_3d_state.glasses_type() < STEREO_PHOTO) ? 1 : 0;
+	s_real_time = (STEREO_NONE < g_3d_state.glasses_type() && g_3d_state.glasses_type() < STEREO_PHOTO);
 	return funny_glasses_call(orbit);
 }
 
@@ -3008,10 +3005,10 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 				tmpy += ((double) g_y_shift1*g_escape_time_state.m_grid_fp.height())/g_y_dots;
 				tmpz = -(inf->maxvals[2]);
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
-				}
 			}
-		return 0;
 		}
+		return 0;
+	}
 
 	/* apply perspective if requested */
 	if (g_3d_state.z_viewer())
