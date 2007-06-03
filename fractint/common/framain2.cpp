@@ -1,16 +1,9 @@
 #include <string.h>
 #include <time.h>
-
 #ifndef XFRACT
 #include <io.h>
 #endif
-
-#ifndef USE_VARARGS
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <ctype.h>
 
 /* see Fractint.cpp for a description of the include hierarchy */

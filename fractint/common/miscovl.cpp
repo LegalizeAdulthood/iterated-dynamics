@@ -5,7 +5,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
-
 #ifndef XFRACT
 #if !defined(_WIN32)
 #include <malloc.h>
@@ -13,12 +12,7 @@
 #include <process.h>
 #include <io.h>
 #endif
-
-#ifndef USE_VARARGS
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
@@ -49,13 +43,7 @@
 
 void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i, int j);
 void expand_comments(char *target, char *source);
-
-#ifndef USE_VARARGS
 static void put_parm(const char *parm, ...);
-#else
-static void put_parm();
-#endif
-
 static void put_parm_line();
 static int getprec(double, double, double);
 int get_precision_bf(int);
@@ -1517,24 +1505,12 @@ static void put_filename(char *keyword, char *fname)
 	}
 }
 
-#ifndef USE_VARARGS
 static void put_parm(const char *parm, ...)
-#else
-static void put_parm(va_alist)
-va_dcl
-#endif
 {
 	char *bufptr;
 	va_list args;
-
-#ifndef USE_VARARGS
 	va_start(args, parm);
-#else
-	const char *parm;
 
-	va_start(args);
-	parm = va_arg(args, const char *);
-#endif
 	if (*parm == ' '             /* starting a new parm */
 			&& s_wbdata.len == 0)       /* skip leading space */
 		++parm;

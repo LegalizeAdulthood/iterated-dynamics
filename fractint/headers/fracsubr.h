@@ -3,13 +3,8 @@
 
 extern void calculate_fractal_initialize();
 extern void adjust_corner();
-#ifndef USE_VARARGS
 extern int put_resume(int, ...);
 extern int get_resume(int, ...);
-#else
-extern int put_resume();
-extern int get_resume();
-#endif
 extern int alloc_resume(int, int);
 extern int start_resume();
 extern void end_resume();

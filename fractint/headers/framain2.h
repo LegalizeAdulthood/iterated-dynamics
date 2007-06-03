@@ -11,12 +11,7 @@ extern int _cdecl _matherr(struct exception *);
 #else
 extern int XZoomWaiting;
 #endif
-#ifndef USE_VARARGS
 extern int timer(int, int (*subrtn)(), ...);
-#else
-extern int timer();
-#endif
-
 extern void clear_zoom_box();
 extern void flip_image(int kbdchar);
 #ifndef WINFRACT

@@ -6,7 +6,6 @@
 #include <string.h>
 #include <time.h>
 #include <signal.h>
-
 /* for getcwd() */
 #if defined(LINUX)
 #include <unistd.h>
@@ -14,17 +13,10 @@
 #if defined(_WIN32)
 #include <direct.h>
 #endif
-
 #ifndef XFRACT
 #include <io.h>
 #endif
-
-#ifndef USE_VARARGS
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include <ctype.h>
 
 /* #include hierarchy for fractint is a follows:
@@ -684,24 +676,10 @@ int check_key()
 	timer(TIMER_DECODER, NULL, int width)	decoder
 	timer(TIMER_ENCODER)					encoder
 */
-#ifndef USE_VARARGS
 int timer(int timertype, int(*subrtn)(), ...)
-#else
-int timer(va_alist)
-va_dcl
-#endif
 {
 	va_list arg_marker;  /* variable arg list */
-
-#ifndef USE_VARARGS
 	va_start(arg_marker, subrtn);
-#else
-	int timertype;
-	int (*subrtn)();
-	va_start(arg_marker);
-	timertype = va_arg(arg_marker, int);
-	subrtn = (int (*)())va_arg(arg_marker, int *);
-#endif
 
 	bool do_bench = g_timer_flag; /* record time? */
 	if (timertype == 2)   /* encoder, record time only if debug = 200 */
