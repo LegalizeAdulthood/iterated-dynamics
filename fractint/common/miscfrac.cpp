@@ -129,7 +129,7 @@ static long s_population_l;
 static long s_rate_l;
 static double s_population;
 static double s_rate;
-static int s_mono;
+static bool s_mono = false;
 static int s_outside_x;
 static long s_pi_l;
 static long s_bifurcation_close_enough_l;
@@ -1068,11 +1068,7 @@ int bifurcation()
 		s_verhulst_array[row] = 0;
 	}
 
-	s_mono = 0;
-	if (g_colors == 2)
-	{
-		s_mono = 1;
-	}
+	s_mono = (g_colors == 2);
 	if (s_mono)
 	{
 		if (g_inside)

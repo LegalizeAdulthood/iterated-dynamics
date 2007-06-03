@@ -35,7 +35,7 @@ bool g_disk_16bit = false;	/* storing 16 bit values for continuous potential */
 
 static int s_time_to_display;
 static FILE *s_file = NULL;
-static int s_disk_targa;
+static bool s_disk_targa = false;
 static struct cache		/* structure of each cache entry */
 {
 	long offset;                    /* pixel offset in image */
@@ -70,7 +70,8 @@ static void _fastcall  mem_seek(long);
 
 int disk_start()
 {
-	s_header_length = s_disk_targa = 0;
+	s_header_length = 0;
+	s_disk_targa = false;
 	return disk_start_common(g_screen_width, g_screen_height, g_colors);
 }
 
@@ -85,7 +86,8 @@ int disk_start_potential()
 	{
 		show_temp_message("clearing 16bit pot work area");
 	}
-	s_header_length = s_disk_targa = 0;
+	s_header_length = 0;
+	s_disk_targa = false;
 	i = disk_start_common(g_screen_width, g_screen_height << 1, g_colors);
 	clear_temp_message();
 	if (i == 0)
@@ -106,7 +108,7 @@ int disk_start_targa(FILE *targafp, int overhead)
 	}
 	s_header_length = overhead;
 	s_file = targafp;
-	s_disk_targa = 1;
+	s_disk_targa = true;
 	i = disk_start_common(g_x_dots*3, g_y_dots, g_colors);
 	s_high_offset = 100000000L; /* targa not necessarily init'd to zeros */
 

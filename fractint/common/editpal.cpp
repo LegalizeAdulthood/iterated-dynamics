@@ -114,12 +114,7 @@
 #endif
 
 #include <string.h>
-
-#ifndef USE_VARARGS
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
@@ -354,33 +349,13 @@ static void rectangle(int x, int y, int width, int depth, int color)
 	vertical_line(x + width-1, y, depth, color);
 }
 
-#ifndef USE_VARARGS
 static void displayf(int x, int y, int fg, int bg, char *format, ...)
-#else
-static void displayf(va_alist)
-va_dcl
-#endif
 {
 	char buff[81];
-
 	va_list arg_list;
-
-#ifndef USE_VARARGS
 	va_start(arg_list, format);
-#else
-	int x, y, fg, bg;
-	char *format;
-
-	va_start(arg_list);
-	x = va_arg(arg_list, int);
-	y = va_arg(arg_list, int);
-	fg = va_arg(arg_list, int);
-	bg = va_arg(arg_list, int);
-	format = va_arg(arg_list, char *);
-#endif
 	vsprintf(buff, format, arg_list);
 	va_end(arg_list);
-
 	driver_display_string(x, y, fg, bg, buff);
 }
 

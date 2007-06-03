@@ -569,7 +569,7 @@ static void reset_ifs_definition()
 {
 	if (g_ifs_definition)
 	{
-		free((char *)g_ifs_definition);
+		free(g_ifs_definition);
 		g_ifs_definition = NULL;
 	}
 }
@@ -3338,8 +3338,8 @@ static int parse_colors(char *value)
 	}
 	else
 	{
-		int smooth;
-		i = smooth = 0;
+		i = 0;
+		int smooth = 0;
 		while (*value)
 		{
 			if (i >= 256)
@@ -3465,8 +3465,7 @@ static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 /* copy a big number from a string, up to slash */
 static int get_bf(bf_t bf, char *curarg)
 {
-	char *s;
-	s = strchr(curarg, '/');
+	char *s = strchr(curarg, '/');
 	if (s)
 	{
 		*s = 0;
@@ -3484,8 +3483,7 @@ static int get_bf(bf_t bf, char *curarg)
 int get_curarg_len(char *curarg)
 {
 	int len;
-	char *s;
-	s = strchr(curarg, '/');
+	char *s = strchr(curarg, '/');
 	if (s)
 	{
 		*s = 0;
