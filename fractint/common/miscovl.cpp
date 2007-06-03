@@ -1112,7 +1112,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			{
 				put_parm("fmod");
 			}
-			else if (g_outside == COLORMODE_T_DISTANCE)
+			else if (g_outside == COLORMODE_TOTAL_DISTANCE)
 			{
 				put_parm("tdis");
 			}

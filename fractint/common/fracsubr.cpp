@@ -1211,17 +1211,17 @@ static int _fastcall ratio_bad(double actual, double desired)
 	Engines which aren't resumable can simply ignore all this.
 
 	Before calling the (per_image, calctype) routines (engine), calculate_fractal sets:
-		"resuming" to 0 if new image, nonzero if resuming a partially done image
+		"g_resuming" to false if new image, true if resuming a partially done image
 		"g_calculation_status" to CALCSTAT_IN_PROGRESS
 	If an engine is interrupted and wants to be able to resume it must:
 		store whatever status info it needs to be able to resume later
 		set g_calculation_status to CALCSTAT_RESUMABLE and return
-	If subsequently called with resuming!=0, the engine must restore status
+	If subsequently called with g_resuming true, the engine must restore status
 	info and continue from where it left off.
 
 	Since the info required for resume can get rather large for some types,
 	it is not stored directly in save_info.  Instead, memory is dynamically
-	allocated as required, and stored in .fra files as a separate g_block.
+	allocated as required, and stored in .gif files as a separate block.
 	To save info for later resume, an engine routine can use:
 		alloc_resume(maxsize, version)
 			Maxsize must be >= max bytes subsequently saved + 2; over-allocation
@@ -1234,7 +1234,6 @@ static int _fastcall ratio_bad(double actual, double desired)
 			(and issues warning to user).
 		put_resume({bytes, &argument, } ... 0)
 			Can be called as often as required to store the info.
-			Arguments must not be far addresses.
 			Is not protected against calls which use more space than allocated.
 	To reload info when resuming, use:
 		start_resume()
@@ -1259,14 +1258,14 @@ static int _fastcall ratio_bad(double actual, double desired)
 	directly set g_resume_info, g_resume_length, g_calculation_status to avoid doubling
 	transient memory needs by using these routines.
 
-	standard_fractal, calculate_mandelbrot, solidguess, and bound_trace_main are a related
+	standard_fractal, calculate_mandelbrot, solid_guess, and boundary_trace_main are a related
 	set of engines for escape-time fractals.  They use a common g_work_list
 	structure for save/resume.  Fractals using these must specify calculate_mandelbrot
 	or standard_fractal as the engine in fractalspecificinfo.
 	Other engines don't get btm nor ssg, don't get off-axis symmetry nor
 	panning (the g_work_list stuff), and are on their own for save/resume.
 
-	*/
+*/
 
 int put_resume(int len, ...)
 {
@@ -1547,69 +1546,58 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	{
 		return;
 	}
-	int save_sxoffs = g_sx_offset;
-	int save_syoffs = g_sy_offset;
-	g_sx_offset = 0;
-	g_sy_offset = 0;
-	/* save orbit value */
-	if (color == -1)
+
 	{
-		*(s_save_orbit + g_orbit_index++) = i;
-		*(s_save_orbit + g_orbit_index++) = j;
-		int c = getcolor(i, j);
-		*(s_save_orbit + g_orbit_index++) = c;
-		g_plot_color_put_color(i, j, c ^ g_orbit_color);
+		ValueSaver<int> save_sxoffs(g_sx_offset, 0);
+		ValueSaver<int> save_syoffs(g_sy_offset, 0);
+		/* save orbit value */
+		if (color == -1)
+		{
+			*(s_save_orbit + g_orbit_index++) = i;
+			*(s_save_orbit + g_orbit_index++) = j;
+			int c = getcolor(i, j);
+			*(s_save_orbit + g_orbit_index++) = c;
+			g_plot_color_put_color(i, j, c ^ g_orbit_color);
+		}
+		else
+		{
+			g_plot_color_put_color(i, j, color);
+		}
 	}
-	else
-	{
-		g_plot_color_put_color(i, j, color);
-	}
-	g_sx_offset = save_sxoffs;
-	g_sy_offset = save_syoffs;
 	g_sound_state.orbit(i, j);
 	/* placing sleep_ms here delays each dot */
 }
 
 void plot_orbit_i(long ix, long iy, int color)
 {
-	plot_orbit_d((double)ix/g_fudge-g_escape_time_state.m_grid_fp.x_min(), (double)iy/g_fudge-g_escape_time_state.m_grid_fp.y_max(), color);
+	plot_orbit_d((double) ix/g_fudge - g_escape_time_state.m_grid_fp.x_min(),
+		(double) iy/g_fudge - g_escape_time_state.m_grid_fp.y_max(),
+		color);
 }
 
 void plot_orbit(double real, double imag, int color)
 {
-	plot_orbit_d(real-g_escape_time_state.m_grid_fp.x_min(), imag-g_escape_time_state.m_grid_fp.y_max(), color);
+	plot_orbit_d(real - g_escape_time_state.m_grid_fp.x_min(),
+		imag - g_escape_time_state.m_grid_fp.y_max(),
+		color);
 }
 
 void orbit_scrub()
 {
-	int i;
-	int j;
-	int c;
-	int save_sxoffs;
-	int save_syoffs;
 	driver_mute();
-	save_sxoffs = g_sx_offset;
-	save_syoffs = g_sy_offset;
-	g_sx_offset = g_sy_offset = 0;
+	ValueSaver<int> save_sxoffs(g_sx_offset, 0);
+	ValueSaver<int> save_syoffs(g_sy_offset, 0);
 	while (g_orbit_index >= 3)
 	{
-		c = *(s_save_orbit + --g_orbit_index);
-		j = *(s_save_orbit + --g_orbit_index);
-		i = *(s_save_orbit + --g_orbit_index);
+		int c = *(s_save_orbit + --g_orbit_index);
+		int j = *(s_save_orbit + --g_orbit_index);
+		int i = *(s_save_orbit + --g_orbit_index);
 		g_plot_color_put_color(i, j, c);
 	}
-	g_sx_offset = save_sxoffs;
-	g_sy_offset = save_syoffs;
 }
 
 void get_julia_attractor(double real, double imag)
 {
-	ComplexL lresult;
-	ComplexD result;
-	int savper;
-	long savmaxit;
-	int i;
-
 	if (g_num_attractors == 0 && g_finite_attractor == 0) /* not magnet & not requested */
 	{
 		return;
@@ -1620,23 +1608,18 @@ void get_julia_attractor(double real, double imag)
 		return;                  /* Bad luck - no room left !    */
 	}
 
-	savper = g_periodicity_check;
-	savmaxit = g_max_iteration;
+	int savper = g_periodicity_check;
+	ValueSaver<long> save_max_iteration(g_max_iteration, g_max_iteration);
 	g_periodicity_check = 0;
 	g_old_z.x = real;                    /* prepare for f.p orbit calc */
 	g_old_z.y = imag;
 	g_temp_sqr_x = sqr(g_old_z.x);
 	g_temp_sqr_y = sqr(g_old_z.y);
 
-	g_old_z_l.x = (long)real;     /* prepare for int orbit calc */
-	g_old_z_l.y = (long)imag;
-	g_temp_sqr_x_l = (long)g_temp_sqr_x;
-	g_temp_sqr_y_l = (long)g_temp_sqr_y;
-
-	g_old_z_l.x = g_old_z_l.x << g_bit_shift;
-	g_old_z_l.y = g_old_z_l.y << g_bit_shift;
-	g_temp_sqr_x_l <<= g_bit_shift;
-	g_temp_sqr_y_l <<= g_bit_shift;
+	g_old_z_l.x = ((long) real) << g_bit_shift;		/* prepare for int orbit calc */
+	g_old_z_l.y = ((long) imag) << g_bit_shift;
+	g_temp_sqr_x_l = ((long) g_temp_sqr_x) << g_bit_shift;
+	g_temp_sqr_y_l = ((long) g_temp_sqr_y) << g_bit_shift;
 
 	if (g_max_iteration < 500)         /* we're going to try at least this hard */
 	{
@@ -1653,23 +1636,25 @@ void get_julia_attractor(double real, double imag)
 	}
 	if (g_color_iter >= g_max_iteration)      /* if orbit stays in the lake */
 	{
+		ComplexL result_l;
+		ComplexD result;
 		if (g_integer_fractal)   /* remember where it went to */
 		{
-			lresult = g_new_z_l;
+			result_l = g_new_z_l;
 		}
 		else
 		{
 			result =  g_new_z;
 		}
-		for (i = 0; i < 10; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			g_overflow = 0;
 			if (!g_current_fractal_specific->orbitcalc() && !g_overflow) /* if it stays in the lake */
 			{                        /* and doesn't move far, probably */
 				if (g_integer_fractal)   /*   found a finite attractor    */
 				{
-					if (labs(lresult.x-g_new_z_l.x) < g_close_enough_l
-						&& labs(lresult.y-g_new_z_l.y) < g_close_enough_l)
+					if (labs(result_l.x - g_new_z_l.x) < g_close_enough_l
+						&& labs(result_l.y - g_new_z_l.y) < g_close_enough_l)
 					{
 						g_attractors_l[g_num_attractors] = g_new_z_l;
 						g_attractor_period[g_num_attractors] = i + 1;
@@ -1679,8 +1664,8 @@ void get_julia_attractor(double real, double imag)
 				}
 				else
 				{
-					if (fabs(result.x-g_new_z.x) < g_close_enough
-						&& fabs(result.y-g_new_z.y) < g_close_enough)
+					if (fabs(result.x - g_new_z.x) < g_close_enough
+						&& fabs(result.y - g_new_z.y) < g_close_enough)
 					{
 						g_attractors[g_num_attractors] = g_new_z;
 						g_attractor_period[g_num_attractors] = i + 1;
@@ -1699,24 +1684,21 @@ void get_julia_attractor(double real, double imag)
 	{
 		g_periodicity_check = savper;
 	}
-	g_max_iteration = savmaxit;
 }
 
 
 int solid_guess_block_size() /* used by solidguessing and by zoom panning */
 {
-	int blocksize;
-	int i;
 	/* blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >= 1200 */
-	blocksize = 4;
-	i = 300;
+	int blocksize = 4;
+	int i = 300;
 	while (i <= g_y_dots)
 	{
 		blocksize *= 2;
 		i *= 2;
 	}
 	/* increase blocksize if prefix array not big enough */
-	while (blocksize*(MAX_X_BLOCK-2) < g_x_dots || blocksize*(MAX_Y_BLOCK-2)*16 < g_y_dots)
+	while (blocksize*(MAX_X_BLOCK - 2) < g_x_dots || blocksize*(MAX_Y_BLOCK - 2)*16 < g_y_dots)
 	{
 		blocksize *= 2;
 	}

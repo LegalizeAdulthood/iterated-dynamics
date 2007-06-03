@@ -1289,13 +1289,13 @@ static int outside_arg(const cmd_context &context)
 		{ "summ", COLORMODE_SUM },
 		{ "atan", COLORMODE_INVERSE_TANGENT },
 		{ "fmod", COLORMODE_FLOAT_MODULUS },
-		{ "tdis", COLORMODE_T_DISTANCE }
+		{ "tdis", COLORMODE_TOTAL_DISTANCE }
 	};
 	if (named_value(args, NUM_OF(args), context.value, &g_outside))
 	{
 		return Command::FractalParameter;
 	}
-	if ((context.numval == NON_NUMERIC) || (context.numval < COLORMODE_T_DISTANCE || context.numval > 255))
+	if ((context.numval == NON_NUMERIC) || (context.numval < COLORMODE_TOTAL_DISTANCE || context.numval > 255))
 	{
 		return bad_arg(context.curarg);
 	}
