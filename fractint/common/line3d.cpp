@@ -115,8 +115,8 @@ static double s_scale_y = 0.0;
 static double s_scale_z = 0.0; /* scale factors */
 static double s_radius = 0.0;			/* radius values */
 static double s_radius_factor = 0.0;	/* for intermediate calculation */
-static LMATRIX s_lm;					/* "" */
-static LVECTOR s_lview;					/* for perspective views */
+static MATRIX_L s_lm;					/* "" */
+static VECTOR_L s_lview;					/* for perspective views */
 static double s_z_cutoff = 0.0;			/* perspective backside cutoff value */
 static float s_two_cos_delta_phi = 0.0;
 static float s_cos_phi;
@@ -186,7 +186,7 @@ static int line3d_init(unsigned linelen, bool &triangle_was_output,
 }
 
 static int line3d_sphere(int col, int xcenter0, int ycenter0,
-						 struct point *cur, struct f_point *f_cur, double *r, LVECTOR lv, VECTOR v)
+						 struct point *cur, struct f_point *f_cur, double *r, VECTOR_L lv, VECTOR v)
 {
 	float cos_theta = s_sin_theta_array[col];
 	float sin_theta = s_cos_theta_array[col];    /* precalculated sin/cos of latitude */
@@ -291,7 +291,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 }
 
 static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
-						 LVECTOR lv0, LVECTOR lv, VECTOR v, float *f_water)
+						 VECTOR_L lv0, VECTOR_L lv, VECTOR v, float *f_water)
 {
 	if (!g_user_float_flag && !g_3d_state.raytrace_output())
 	{
@@ -307,7 +307,7 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 		lv[2] = (long) f_cur->color;
 		lv[2] = lv[2] << 16;
 
-		if (longvmultpersp(lv, s_lm, lv0, lv, s_lview, 16) == -1)
+		if (vmult_perspective_l(lv, s_lm, lv0, lv, s_lview, 16) == -1)
 		{
 			*cur = s_bad;
 			*f_cur = s_f_bad;
@@ -525,7 +525,7 @@ static void line3d_fill_gouraud_flat(int col, int next, int last_dot, const stru
 
 static void line3d_fill_bars(int col,
 	struct point *old, struct point *cur, struct f_point *f_cur,
-	LVECTOR lv, LVECTOR lv0)
+	VECTOR_L lv, VECTOR_L lv0)
 {
 	if (g_3d_state.sphere())
 	{
@@ -550,7 +550,7 @@ static void line3d_fill_bars(int col,
 		lv[1] = lv[1] << 16;
 		/* Since 0, unnecessary lv[2] = lv[2] << 16; */
 
-		if (longvmultpersp(lv, s_lm, lv0, lv, s_lview, 16))
+		if (vmult_perspective_l(lv, s_lm, lv0, lv, s_lview, 16))
 		{
 			*cur = s_bad;
 			*f_cur = s_f_bad;
@@ -679,7 +679,7 @@ static void line3d_fill(int col, int next, int last_dot, bool cross_not_init,
 						const struct point *old_last,
 						struct point *old, struct point *cur,
 						struct f_point *f_old, struct f_point *f_cur,
-						LVECTOR lv, LVECTOR lv0, VECTOR v1, VECTOR v2, VECTOR cross_avg)
+						VECTOR_L lv, VECTOR_L lv0, VECTOR v1, VECTOR v2, VECTOR cross_avg)
 {
 	switch (g_3d_state.fill_type())
 	{
@@ -725,8 +725,8 @@ int out_line_3d(BYTE *pixels, int line_length)
 	VECTOR v1, v2;
 	VECTOR cross_avg;
 	bool cross_not_init = false;	/* flag for cross_avg init indication */
-	LVECTOR lv;						/* long equivalent of v */
-	LVECTOR lv0;					/* long equivalent of v */
+	VECTOR_L lv;						/* long equivalent of v */
+	VECTOR_L lv0;					/* long equivalent of v */
 	int last_dot;
 	long g_fudge;
 	static struct point old_last = { 0, 0, 0 }; /* old pixels */
