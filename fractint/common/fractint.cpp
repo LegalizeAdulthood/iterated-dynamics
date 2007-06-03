@@ -671,15 +671,23 @@ int check_key()
 	return 0;
 }
 
+/* timer type values */
+enum TimerType
+{
+	TIMER_ENGINE	= 0,
+	TIMER_DECODER	= 1,
+	TIMER_ENCODER	= 2
+};
+
 /* timer function:
 	timer(TIMER_ENGINE, (*fractal)())		fractal engine
 	timer(TIMER_DECODER, NULL, int width)	decoder
 	timer(TIMER_ENCODER)					encoder
 */
-int timer(int timertype, int(*subrtn)(), ...)
+static int timer(TimerType timertype, int (*engine)(), ...)
 {
 	va_list arg_marker;  /* variable arg list */
-	va_start(arg_marker, subrtn);
+	va_start(arg_marker, engine);
 
 	bool do_bench = g_timer_flag; /* record time? */
 	if (timertype == 2)   /* encoder, record time only if debug = 200 */
@@ -696,7 +704,7 @@ int timer(int timertype, int(*subrtn)(), ...)
 	switch (timertype)
 	{
 	case TIMER_ENGINE:
-		out = (*(int(*)())subrtn)();
+		out = (*(int (*)()) engine)();
 		break;
 	case TIMER_DECODER:
 		out = (int) decoder((short) va_arg(arg_marker, int)); /* not indirect, safer with overlays */
@@ -736,4 +744,19 @@ int timer(int timertype, int(*subrtn)(), ...)
 		}
 	}
 	return out;
+}
+
+int timer_engine(int (*engine)())
+{
+	return timer(TIMER_ENGINE, engine);
+}
+
+int timer_decoder(int line_width)
+{
+	return timer(TIMER_DECODER, NULL, line_width);
+}
+
+int timer_encoder()
+{
+	return timer(TIMER_ENCODER, NULL);
 }

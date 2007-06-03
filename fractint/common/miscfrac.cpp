@@ -1434,7 +1434,7 @@ int bifurcation_may_setup()
 	}
 	g_parameters[2] = (double)s_beta;
 
-	timer(TIMER_ENGINE, g_current_fractal_specific->calculate_type);
+	timer_engine(g_current_fractal_specific->calculate_type);
 	return 0;
 }
 
@@ -2099,7 +2099,7 @@ int cellular_setup()
 	{
 		g_next_screen_flag = false;
 	}
-	timer(TIMER_ENGINE, g_current_fractal_specific->calculate_type);
+	timer_engine(g_current_fractal_specific->calculate_type);
 	return 0;
 }
 

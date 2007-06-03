@@ -211,7 +211,7 @@ restart:
 		BusyMarker marker;
 		/* invoke encoder() via timer */
 		interrupted = (g_debug_mode == DEBUGMODE_TIME_ENCODER)
-			? timer(TIMER_ENCODER, NULL) : encoder();
+			? timer_encoder() : encoder();
 	}
 
 	fclose(g_outfile);

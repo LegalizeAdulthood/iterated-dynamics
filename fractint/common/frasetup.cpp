@@ -72,7 +72,7 @@ int julia_setup()            /* Julia Routine */
 
 int stand_alone_setup()
 {
-	timer(TIMER_ENGINE, g_current_fractal_specific->calculate_type);
+	timer_engine(g_current_fractal_specific->calculate_type);
 	return 0;           /* effectively disable solid-guessing */
 }
 

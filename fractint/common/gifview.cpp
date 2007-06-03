@@ -318,7 +318,7 @@ int gifview()
 			}
 			{
 				BusyMarker marker;
-				status = timer(TIMER_DECODER, NULL, width);
+				status = timer_decoder(width);
 			}
 			if (g_calculation_status == CALCSTAT_IN_PROGRESS) /* e.g., set by line3d */
 			{

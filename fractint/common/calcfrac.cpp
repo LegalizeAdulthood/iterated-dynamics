@@ -752,7 +752,7 @@ int calculate_fractal()
 			g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
 			g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
 			set_symmetry(g_symmetry, false);
-			timer(TIMER_ENGINE, g_calculate_type); /* non-standard fractal engine */
+			timer_engine(g_calculate_type); /* non-standard fractal engine */
 		}
 		if (check_key())
 		{
@@ -776,26 +776,26 @@ int calculate_fractal()
 			{
 				g_standard_calculation_mode = 'g';
 				g_three_pass = 1;
-				timer(TIMER_ENGINE, (int(*)()) perform_work_list);
+				timer_engine((int (*)()) perform_work_list);
 				if (g_calculation_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
 					g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
-					timer(TIMER_ENGINE, (int(*)()) perform_work_list);
+					timer_engine((int (*)()) perform_work_list);
 					g_three_pass = 0;
 				}
 			}
 			else /* resuming '2' pass */
 			{
 				g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
-				timer(TIMER_ENGINE, (int (*)()) perform_work_list);
+				timer_engine((int (*)()) perform_work_list);
 			}
 			g_standard_calculation_mode = (char)oldcalcmode;
 		}
 		else /* main case, much nicer! */
 		{
 			g_three_pass = 0;
-			timer(TIMER_ENGINE, (int(*)()) perform_work_list);
+			timer_engine((int (*)()) perform_work_list);
 		}
 	}
 	g_calculation_time += g_timer_interval;
