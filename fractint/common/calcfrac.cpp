@@ -1268,36 +1268,14 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	long caught[NUMSAVED];
 	long changed[NUMSAVED];
 	int zctr = 0;
-#endif
-	double tantable[16];
-	int hooper = 0;
-	long lcloseprox;
-	double memvalue = 0.0;
-	double min_orbit = 100000.0; /* orbit value closest to origin */
-	long   min_index = 0;        /* iteration of min_orbit */
-	long cyclelen = -1;
-	long savedcoloriter = 0;
-	bool caught_a_cycle;
-	long savedand;
-	int savedincr;       /* for periodicity checking */
-	ComplexL lsaved;
-	bool attracted;
-	ComplexL lat;
-	ComplexD  at;
-	ComplexD deriv;
-	long dem_color = -1;
-	ComplexD dem_new;
-	int check_freq;
-	double totaldist = 0.0;
-	lcloseprox = (long) (g_proximity*g_fudge);
-	long saved_max_iterations = g_max_iteration;
-#ifdef NUMSAVED
 	for (int i = 0; i < NUMSAVED; i++)
 	{
 		caught[i] = 0L;
 		changed[i] = 0L;
 	}
 #endif
+	double tantable[16];
+	ValueSaver<long> saved_max_iterations(g_max_iteration);
 	if (g_inside == COLORMODE_STAR_TRAIL)
 	{
 		for (int i = 0; i < 16; i++)
@@ -1335,6 +1313,9 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 #endif
 	/* really fractal specific, but we'll leave it here */
+	ComplexL saved_z_l;
+	ComplexD derivative;
+	long dem_color = -1;
 	if (!g_integer_fractal)
 	{
 		if (g_use_initial_orbit_z == INITIALZ_ORBIT)
@@ -1381,8 +1362,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				}
 				dem_color = -1;
 			}
-			deriv.x = 1;
-			deriv.y = 0;
+			derivative.x = 1;
+			derivative.y = 0;
 			g_magnitude = 0;
 		}
 	}
@@ -1390,12 +1371,12 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 		{
-			lsaved = g_init_orbit_l;
+			saved_z_l = g_init_orbit_l;
 		}
 		else
 		{
-			lsaved.x = 0;
-			lsaved.y = 0;
+			saved_z_l.x = 0;
+			saved_z_l.y = 0;
 		}
 		g_initial_z_l.y = g_ly_pixel();
 	}
@@ -1405,10 +1386,11 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		g_color_iter = -1;
 	}
-	caught_a_cycle = false;
+	bool caught_a_cycle = false;
+	long periodicity_cycle_check_size;
 	if (g_inside == COLORMODE_PERIOD)
 	{
-		savedand = 16;           /* begin checking every 16th cycle */
+		periodicity_cycle_check_size = 16;           /* begin checking every 16th cycle */
 	}
 	else
 	{
@@ -1416,25 +1398,23 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 #ifdef MINSAVEDAND
 		savedand = MINSAVEDAND;
 #else
-		savedand = g_first_saved_and;                /* begin checking every other cycle */
+		periodicity_cycle_check_size = g_first_saved_and;                /* begin checking every other cycle */
 #endif
 	}
-	savedincr = 1;               /* start checking the very first time */
+	int periodicity_cycle_check_counter = 1;               /* start checking the very first time */
 
 	if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61)
 	{
 		g_magnitude = 0;
 		g_magnitude_l = 0;
-		min_orbit = 100000.0;
 	}
 	g_overflow = 0;                /* reset integer math overflow flag */
 
 	g_current_fractal_specific->per_pixel(); /* initialize the calculations */
 
-	attracted = false;
-
-	ComplexD lastz;
-	if (g_outside == COLORMODE_T_DISTANCE)
+	bool attracted = false;
+	ComplexD last_z;
+	if (g_outside == COLORMODE_TOTAL_DISTANCE)
 	{
 		if (g_integer_fractal)
 		{
@@ -1449,17 +1429,26 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		{
 			g_old_z = complex_bf_to_float(&bfold);
 		}
-		lastz.x = g_old_z.x;
-		lastz.y = g_old_z.y;
+		last_z.x = g_old_z.x;
+		last_z.y = g_old_z.y;
 	}
 
-	check_freq = (((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
+	int check_freq = (((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
 		? 16 : 2048;
 
 	if (g_show_orbit)
 	{
 		g_sound_state.write_time();
 	}
+	int hooper = 0;
+	double modulus_value = 0.0;
+	double min_orbit = 100000.0;		/* orbit value closest to origin */
+	long min_index = 0;					/* iteration of min_orbit */
+	long cycle_length = -1;
+	long saved_color_iteration = 0;
+	ComplexD dem_new;
+	double total_distance = 0.0;
+	long proximity_l = (long) (g_proximity*g_fudge);
 	while (++g_color_iter < g_max_iteration)
 	{
 		/* calculation of one orbit goes here */
@@ -1479,20 +1468,20 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			/* Original code by Phil Wilson, hacked around by PB */
 			/* Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 */
 			ftemp = s_dem_mandelbrot
-				? 2*(g_old_z.x*deriv.x - g_old_z.y*deriv.y) + 1
-				: 2*(g_old_z.x*deriv.x - g_old_z.y*deriv.y);
-			deriv.y = 2*(g_old_z.y*deriv.x + g_old_z.x*deriv.y);
-			deriv.x = ftemp;
+				? 2*(g_old_z.x*derivative.x - g_old_z.y*derivative.y) + 1
+				: 2*(g_old_z.x*derivative.x - g_old_z.y*derivative.y);
+			derivative.y = 2*(g_old_z.y*derivative.x + g_old_z.x*derivative.y);
+			derivative.x = ftemp;
 			if (g_use_old_distance_test)
 			{
-				if (sqr(deriv.x) + sqr(deriv.y) > s_dem_too_big)
+				if (sqr(derivative.x) + sqr(derivative.y) > s_dem_too_big)
 				{
 					break;
 				}
 			}
 			else if (g_save_release > 1950)
 			{
-				if (max(fabs(deriv.x), fabs(deriv.y)) > s_dem_too_big)
+				if (max(fabs(derivative.x), fabs(derivative.y)) > s_dem_too_big)
 				{
 					break;
 				}
@@ -1605,14 +1594,14 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				hooper = 0;
 				if (g_integer_fractal)
 				{
-					if (labs(g_new_z_l.x) < labs(lcloseprox))
+					if (labs(g_new_z_l.x) < labs(proximity_l))
 					{
-						hooper = (lcloseprox > 0? 1 : -1); /* close to y axis */
+						hooper = (proximity_l > 0 ? 1 : -1); /* close to y axis */
 						goto plot_inside;
 					}
-					else if (labs(g_new_z_l.y) < labs(lcloseprox))
+					else if (labs(g_new_z_l.y) < labs(proximity_l))
 					{
-						hooper = (lcloseprox > 0 ? 2: -2); /* close to x axis */
+						hooper = (proximity_l > 0 ? 2 : -2); /* close to x axis */
 						goto plot_inside;
 					}
 				}
@@ -1620,12 +1609,12 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				{
 					if (fabs(g_new_z.x) < fabs(g_proximity))
 					{
-						hooper = (g_proximity > 0? 1 : -1); /* close to y axis */
+						hooper = (g_proximity > 0 ? 1 : -1); /* close to y axis */
 						goto plot_inside;
 					}
 					else if (fabs(g_new_z.y) < fabs(g_proximity))
 					{
-						hooper = (g_proximity > 0? 2 : -2); /* close to x axis */
+						hooper = (g_proximity > 0 ? 2 : -2); /* close to x axis */
 						goto plot_inside;
 					}
 				}
@@ -1641,7 +1630,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				mag = fmod_test();
 				if (mag < g_proximity)
 				{
-					memvalue = mag;
+					modulus_value = mag;
 				}
 			}
 			else if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61)
@@ -1667,7 +1656,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			}
 		}
 
-		if (g_outside == COLORMODE_T_DISTANCE || g_outside == COLORMODE_FLOAT_MODULUS)
+		if (g_outside == COLORMODE_TOTAL_DISTANCE || g_outside == COLORMODE_FLOAT_MODULUS)
 		{
 			if (g_bf_math == BIGNUM)
 			{
@@ -1677,16 +1666,16 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			{
 				g_new_z = complex_bf_to_float(&bfnew);
 			}
-			if (g_outside == COLORMODE_T_DISTANCE)
+			if (g_outside == COLORMODE_TOTAL_DISTANCE)
 			{
 				if (g_integer_fractal)
 				{
 					g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
 					g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
 				}
-				totaldist += sqrt(sqr(lastz.x-g_new_z.x) + sqr(lastz.y-g_new_z.y));
-				lastz.x = g_new_z.x;
-				lastz.y = g_new_z.y;
+				total_distance += sqrt(sqr(last_z.x-g_new_z.x) + sqr(last_z.y-g_new_z.y));
+				last_z.x = g_new_z.x;
+				last_z.y = g_new_z.y;
 			}
 			else if (g_outside == COLORMODE_FLOAT_MODULUS)
 			{
@@ -1699,7 +1688,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				mag = fmod_test();
 				if (mag < g_proximity)
 				{
-					memvalue = mag;
+					modulus_value = mag;
 				}
 			}
 		}
@@ -1708,17 +1697,18 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		{                         /* NOTE: Integer code is UNTESTED */
 			if (g_integer_fractal)
 			{
+				ComplexL attractor_l;
 				for (int i = 0; i < g_num_attractors; i++)
 				{
-					lat.x = g_new_z_l.x - g_attractors_l[i].x;
-					lat.x = lsqr(lat.x);
-					if (lat.x < g_attractor_radius_l)
+					attractor_l.x = g_new_z_l.x - g_attractors_l[i].x;
+					attractor_l.x = lsqr(attractor_l.x);
+					if (attractor_l.x < g_attractor_radius_l)
 					{
-						lat.y = g_new_z_l.y - g_attractors_l[i].y;
-						lat.y = lsqr(lat.y);
-						if (lat.y < g_attractor_radius_l)
+						attractor_l.y = g_new_z_l.y - g_attractors_l[i].y;
+						attractor_l.y = lsqr(attractor_l.y);
+						if (attractor_l.y < g_attractor_radius_l)
 						{
-							if ((lat.x + lat.y) < g_attractor_radius_l)
+							if ((attractor_l.x + attractor_l.y) < g_attractor_radius_l)
 							{
 								attracted = true;
 								if (g_finite_attractor < 0)
@@ -1733,17 +1723,18 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			}
 			else
 			{
+				ComplexD attractor;
 				for (int i = 0; i < g_num_attractors; i++)
 				{
-					at.x = g_new_z.x - g_attractors[i].x;
-					at.x = sqr(at.x);
-					if (at.x < g_attractor_radius_fp)
+					attractor.x = g_new_z.x - g_attractors[i].x;
+					attractor.x = sqr(attractor.x);
+					if (attractor.x < g_attractor_radius_fp)
 					{
-						at.y = g_new_z.y - g_attractors[i].y;
-						at.y = sqr(at.y);
-						if (at.y < g_attractor_radius_fp)
+						attractor.y = g_new_z.y - g_attractors[i].y;
+						attractor.y = sqr(attractor.y);
+						if (attractor.y < g_attractor_radius_fp)
 						{
-							if ((at.x + at.y) < g_attractor_radius_fp)
+							if ((attractor.x + attractor.y) < g_attractor_radius_fp)
 							{
 								attracted = true;
 								if (g_finite_attractor < 0)
@@ -1764,12 +1755,12 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 
 		if (g_color_iter > g_old_color_iter) /* check periodicity */
 		{
-			if ((g_color_iter & savedand) == 0)            /* time to save a new value */
+			if ((g_color_iter & periodicity_cycle_check_size) == 0)            /* time to save a new value */
 			{
-				savedcoloriter = g_color_iter;
+				saved_color_iteration = g_color_iter;
 				if (g_integer_fractal)
 				{
-					lsaved = g_new_z_l; /* integer fractals */
+					saved_z_l = g_new_z_l; /* integer fractals */
 				}
 				else if (g_bf_math == BIGNUM)
 				{
@@ -1792,19 +1783,19 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					}
 #endif
 				}
-				if (--savedincr == 0)    /* time to lengthen the periodicity? */
+				if (--periodicity_cycle_check_counter == 0)    /* time to lengthen the periodicity? */
 				{
-					savedand = (savedand << 1) + 1;       /* longer periodicity */
-					savedincr = g_next_saved_incr; /* restart counter */
+					periodicity_cycle_check_size = (periodicity_cycle_check_size << 1) + 1;       /* longer periodicity */
+					periodicity_cycle_check_counter = g_next_saved_incr; /* restart counter */
 				}
 			}
 			else                /* check against an old save */
 			{
 				if (g_integer_fractal)     /* floating-pt periodicity chk */
 				{
-					if (labs(lsaved.x - g_new_z_l.x) < g_close_enough_l)
+					if (labs(saved_z_l.x - g_new_z_l.x) < g_close_enough_l)
 					{
-						if (labs(lsaved.y - g_new_z_l.y) < g_close_enough_l)
+						if (labs(saved_z_l.y - g_new_z_l.y) < g_close_enough_l)
 						{
 							caught_a_cycle = true;
 						}
@@ -1867,10 +1858,10 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 						fp = dir_fopen(g_work_dir, "cycles.txt", "w");
 					}
 #endif
-					cyclelen = g_color_iter - savedcoloriter;
+					cycle_length = g_color_iter - saved_color_iteration;
 #ifdef NUMSAVED
 					fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
-						g_row, g_col, cyclelen, g_color_iter, savedand);
+						g_row, g_col, cycle_length, g_color_iter, periodicity_cycle_check_size);
 					if (zctr > 1 && zctr < NUMSAVED)
 					{
 						for (int i = 0; i < zctr; i++)
@@ -1972,11 +1963,11 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_outside == COLORMODE_FLOAT_MODULUS)
 		{
-			g_color_iter = (long)(memvalue*g_colors/g_proximity);
+			g_color_iter = (long)(modulus_value*g_colors/g_proximity);
 		}
-		else if (g_outside == COLORMODE_T_DISTANCE)
+		else if (g_outside == COLORMODE_TOTAL_DISTANCE)
 		{
-			g_color_iter = (long)(totaldist);
+			g_color_iter = (long) total_distance;
 		}
 
 		/* eliminate negative colors & wrap arounds */
@@ -1995,7 +1986,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else
 		{
-			dist *= sqr(log(dist))/(sqr(deriv.x) + sqr(deriv.y));
+			dist *= sqr(log(dist))/(sqr(derivative.x) + sqr(derivative.y));
 		}
 		if (dist < s_dem_delta)     /* point is on the edge */
 		{
@@ -2090,7 +2081,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == COLORMODE_PERIOD)
 		{
-			g_color_iter = (cyclelen > 0) ? cyclelen : g_max_iteration;
+			g_color_iter = (cycle_length > 0) ? cycle_length : g_max_iteration;
 		}
 		else if (g_inside == COLORMODE_EPSILON_CROSS)
 		{
@@ -2113,7 +2104,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
 		{
-			g_color_iter = (long) (memvalue*g_colors/g_proximity);
+			g_color_iter = (long) (modulus_value*g_colors/g_proximity);
 		}
 		else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
 		{
@@ -2179,7 +2170,6 @@ plot_pixel:
 	}
 	(*g_plot_color)(g_col, g_row, g_color);
 
-	g_max_iteration = saved_max_iterations;
 	g_input_counter -= abs((int)g_real_color_iter);
 	if (g_input_counter <= 0)
 	{
@@ -2760,7 +2750,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	{
 		return;
 	}
-	else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER || g_outside == COLORMODE_T_DISTANCE)
+	else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER || g_outside == COLORMODE_TOTAL_DISTANCE)
 	{
 		return;
 	}

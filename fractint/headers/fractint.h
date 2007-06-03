@@ -763,7 +763,7 @@ enum ColoringModeType
 	COLORMODE_SUM = -5,
 	COLORMODE_INVERSE_TANGENT = -6,
 	COLORMODE_FLOAT_MODULUS = -7,
-	COLORMODE_T_DISTANCE = -8,
+	COLORMODE_TOTAL_DISTANCE = -8,
 	COLORMODE_Z_MAGNITUDE = -59,
 	COLORMODE_BEAUTY_OF_FRACTALS_60 = -60,
 	COLORMODE_BEAUTY_OF_FRACTALS_61 = -61,
@@ -1294,6 +1294,30 @@ public:
 	void ProcessInput();
 	virtual bool ProcessWaitingKey(int key) = 0;
 	virtual bool ProcessIdle() = 0;
+};
+
+template <typename T>
+class ValueSaver
+{
+public:
+	ValueSaver(T &variable)
+		: m_variable(variable), m_original_value(variable)
+	{
+	}
+	ValueSaver(T &variable, T new_value)
+		: m_variable(variable), m_original_value(variable)
+	{
+		variable = new_value;
+	}
+
+	~ValueSaver()
+	{
+		m_variable = m_original_value;
+	}
+
+private:
+	T &m_variable;
+	T m_original_value;
 };
 
 extern int timer_engine(int (*engine)());
