@@ -556,8 +556,6 @@ void (*g_trig1_d)() = dStkSqr;
 void (*g_trig2_d)() = dStkSinh;
 void (*g_trig3_d)() = dStkCosh;
 
-/* struct trig_funct_lst trigfn[]  was moved to prompts1.c */
-
 void show_trig(char *buf) /* return display form of active trig functions */
 {
 	char tmpbuf[30];
@@ -590,11 +588,11 @@ static void trigdetails(char *buf)
 	*buf = 0; /* null string if none */
 	if (numfn > 0)
 	{
-		strcpy(buf, trigfn[g_trig_index[0]].name);
+		strcpy(buf, function_list[g_trig_index[0]].name);
 		i = 0;
 		while (++i < numfn)
 		{
-			sprintf(tmpbuf, "/%s", trigfn[g_trig_index[i]].name);
+			sprintf(tmpbuf, "/%s", function_list[g_trig_index[i]].name);
 			strcat(buf, tmpbuf);
 		}
 	}
@@ -617,9 +615,9 @@ int set_trig_array(int k, const char *name)
 
 	strlwr(trigname);
 
-	for (i = 0; i < g_num_trig_fn; i++)
+	for (i = 0; i < g_num_function_list; i++)
 	{
-		if (strcmp(trigname, trigfn[i].name) == 0)
+		if (strcmp(trigname, function_list[i].name) == 0)
 		{
 			g_trig_index[k] = (BYTE)i;
 			set_trig_pointers(k);
@@ -636,31 +634,31 @@ void set_trig_pointers(int which)
 	{
 	case 0:
 #if !defined(XFRACT)
-		g_trig0_l = trigfn[g_trig_index[0]].lfunct;
-		g_trig0_m = trigfn[g_trig_index[0]].mfunct;
+		g_trig0_l = function_list[g_trig_index[0]].lfunct;
+		g_trig0_m = function_list[g_trig_index[0]].mfunct;
 #endif
-		g_trig0_d = trigfn[g_trig_index[0]].dfunct;
+		g_trig0_d = function_list[g_trig_index[0]].dfunct;
 		break;
 	case 1:
 #if !defined(XFRACT)
-		g_trig1_l = trigfn[g_trig_index[1]].lfunct;
-		g_trig1_m = trigfn[g_trig_index[1]].mfunct;
+		g_trig1_l = function_list[g_trig_index[1]].lfunct;
+		g_trig1_m = function_list[g_trig_index[1]].mfunct;
 #endif
-		g_trig1_d = trigfn[g_trig_index[1]].dfunct;
+		g_trig1_d = function_list[g_trig_index[1]].dfunct;
 		break;
 	case 2:
 #if !defined(XFRACT)
-		g_trig2_l = trigfn[g_trig_index[2]].lfunct;
-		g_trig2_m = trigfn[g_trig_index[2]].mfunct;
+		g_trig2_l = function_list[g_trig_index[2]].lfunct;
+		g_trig2_m = function_list[g_trig_index[2]].mfunct;
 #endif
-		g_trig2_d = trigfn[g_trig_index[2]].dfunct;
+		g_trig2_d = function_list[g_trig_index[2]].dfunct;
 		break;
 	case 3:
 #if !defined(XFRACT)
-		g_trig3_l = trigfn[g_trig_index[3]].lfunct;
-		g_trig3_m = trigfn[g_trig_index[3]].mfunct;
+		g_trig3_l = function_list[g_trig_index[3]].lfunct;
+		g_trig3_m = function_list[g_trig_index[3]].mfunct;
 #endif
-		g_trig3_d = trigfn[g_trig_index[3]].dfunct;
+		g_trig3_d = function_list[g_trig_index[3]].dfunct;
 		break;
 	default: /* do 'em all */
 		for (i = 0; i < 4; i++)
