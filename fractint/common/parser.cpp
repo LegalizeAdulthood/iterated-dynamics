@@ -4420,8 +4420,6 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 
 int BadFormula()
 {
-	/*  moved from Parsera.Asm by CAE  12 July 1993  */
-
 	/*  this is called when a formula is bad, instead of calling  */
 	/*     the normal functions which will produce undefined results  */
 	return 1;

@@ -332,9 +332,9 @@ static void vary_trig(GENEBASE gene[], int randval, int i)
 		/* Changed following to BYTE since trigfn is an array of BYTEs and if one */
 		/* of the functions isn't varied, it's value was being zeroed by the high */
 		/* BYTE of the preceeding function.  JCO  2 MAY 2001 */
-		*(BYTE *) gene[i].addr = (BYTE) wrapped_positive_vary_int(randval, g_num_trig_fn, gene[i].mutate);
+		*(BYTE *) gene[i].addr = (BYTE) wrapped_positive_vary_int(randval, g_num_function_list, gene[i].mutate);
 	}
-	/* replaced '30' with g_num_trig_fn, set in prompts1.c */
+	/* replaced '30' with g_num_function_list, set in prompts1.c */
 	set_trig_pointers(5); /*set all trig ptrs up*/
 	return;
 }
