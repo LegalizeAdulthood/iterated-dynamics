@@ -138,14 +138,6 @@ enum TrueModeType
 	TRUEMODE_ITERATES	= 1
 };
 
-/* timer type values */
-enum TimerType
-{
-	TIMER_ENGINE	= 0,
-	TIMER_DECODER	= 1,
-	TIMER_ENCODER	= 2
-};
-
 /* g_debug_mode values */
 enum DebugFlagType
 {
@@ -1303,5 +1295,9 @@ public:
 	virtual bool ProcessWaitingKey(int key) = 0;
 	virtual bool ProcessIdle() = 0;
 };
+
+extern int timer_engine(int (*engine)());
+extern int timer_decoder(int line_width);
+extern int timer_encoder();
 
 #endif
