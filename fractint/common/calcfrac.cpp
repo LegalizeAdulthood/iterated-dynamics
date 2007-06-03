@@ -34,7 +34,6 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
-#include "framain2.h"
 #include "line3d.h"
 #include "lorenz.h"
 #include "miscfrac.h"

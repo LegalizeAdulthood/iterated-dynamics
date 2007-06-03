@@ -17,7 +17,6 @@
 #include "diskvid.h"
 #include "encoder.h"
 #include "filesystem.h"
-#include "framain2.h"
 #include "loadfile.h"
 #include "miscres.h"
 #include "prompts2.h"
