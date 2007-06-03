@@ -171,21 +171,6 @@ int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 	return 0;
 }
 
-/* cross product integer arguments(not fudged) */
-/*** pb, unused
-int icross_product(IVECTOR v, IVECTOR w, IVECTOR cross)
-{
-	IVECTOR tmp;
-	tmp[0] =  v[1]*w[2] - w[1]*v[2];
-	tmp[1] =  w[0]*v[2] - v[0]*w[2];
-	tmp[2] =  v[0]*w[1] - w[0]*v[1];
-	cross[0] = tmp[0];
-	cross[1] = tmp[1];
-	cross[2] = tmp[2];
-	return 0;
-}
-***/
-
 /* normalize a vector to length 1 */
 int normalize_vector(VECTOR v)
 {
@@ -272,8 +257,8 @@ int perspective(VECTOR v)
 }
 
 /* long version of vmult and perspective combined for speed */
-int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
-							  LVECTOR t, LVECTOR lview, int bit_shift)
+int vmult_perspective_l(VECTOR_L s, MATRIX_L m, VECTOR_L t0,
+							  VECTOR_L t, VECTOR_L view_l, int bit_shift)
 {
 	/* s: source vector */
 	/* m: transformation matrix */
@@ -281,11 +266,11 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 	/* t: target vector */
 	/* lview: perspective viewer coordinates */
 	/* bit_shift: fixed point conversion bit_shift */
-	LVECTOR tmp;
+	VECTOR_L tmp;
 	int k;
 	g_overflow = 0;
 	k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
-	if (lview[2] == 0 && t0[0] == 0)
+	if (view_l[2] == 0 && t0[0] == 0)
 	{
 		k--;
 	}
@@ -307,9 +292,9 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 		t0[1] = tmp[1];
 		t0[2] = tmp[2];
 	}
-	if (lview[2] != 0)           /* perspective 3D */
+	if (view_l[2] != 0)           /* perspective 3D */
 	{
-		long denom = lview[2] - tmp[2];
+		long denom = view_l[2] - tmp[2];
 		if (denom >= 0)           /* bail out if point is "behind" us */
 		{
 			t[0] = g_bad_value << bit_shift;
@@ -319,10 +304,10 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 		}
 
 		/* doing math in this order helps prevent overflow */
-		LVECTOR tmpview;
-		tmpview[0] = divide(lview[0], denom, bit_shift);
-		tmpview[1] = divide(lview[1], denom, bit_shift);
-		tmpview[2] = divide(lview[2], denom, bit_shift);
+		VECTOR_L tmpview;
+		tmpview[0] = divide(view_l[0], denom, bit_shift);
+		tmpview[1] = divide(view_l[1], denom, bit_shift);
+		tmpview[2] = divide(view_l[2], denom, bit_shift);
 
 		tmp[0] = multiply(tmp[0], tmpview[2], bit_shift) -
 				multiply(tmpview[0], tmp[2], bit_shift);
@@ -344,7 +329,7 @@ int longvmultpersp(LVECTOR s, LMATRIX m, LVECTOR t0,
 
 /* Long version of perspective. Because of use of fixed point math, there
 	is danger of overflow and underflow */
-int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
+int longpersp(VECTOR_L lv, VECTOR_L lview, int bit_shift)
 {
 	g_overflow = 0;
 	long denom = lview[2] - lv[2];
@@ -358,7 +343,7 @@ int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
 	}
 
 	/* doing math in this order helps prevent overflow */
-	LVECTOR tmpview;
+	VECTOR_L tmpview;
 	tmpview[0] = divide(lview[0], denom, bit_shift);
 	tmpview[1] = divide(lview[1], denom, bit_shift);
 	tmpview[2] = divide(lview[2], denom, bit_shift);
@@ -374,12 +359,12 @@ int longpersp(LVECTOR lv, LVECTOR lview, int bit_shift)
 	return g_overflow;
 }
 
-int longvmult(LVECTOR s, LMATRIX m, LVECTOR t, int bit_shift)
+int longvmult(VECTOR_L s, MATRIX_L m, VECTOR_L t, int bit_shift)
 {
 	g_overflow = 0;
 	int k = CMAX-1;
 
-	LVECTOR tmp;
+	VECTOR_L tmp;
 	for (int j = 0; j < k; j++)
 	{
 		tmp[j] = 0;

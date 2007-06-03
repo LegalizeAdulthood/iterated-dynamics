@@ -838,18 +838,16 @@ extern FractalTypeSpecificData *g_current_fractal_specific;
 #define    DIM     3   /* number of dimensions */
 
 // TODO: use a template type for different kinds of matrices
-typedef double MATRIX [RMAX] [CMAX];  /* matrix of doubles */
-typedef int   IMATRIX [RMAX] [CMAX];  /* matrix of ints    */
-typedef long  LMATRIX [RMAX] [CMAX];  /* matrix of longs   */
+typedef double MATRIX[RMAX][CMAX];  /* matrix of doubles */
+typedef long  MATRIX_L[RMAX][CMAX];  /* matrix of longs   */
 
 /* A MATRIX is used to describe a transformation from one coordinate
 system to another.  Multiple transformations may be concatenated by
 multiplying their transformation matrices. */
 
 // TODO: use a template type for different kinds of vectors
-typedef double VECTOR [DIM];  /* vector of doubles */
-typedef int   IVECTOR [DIM];  /* vector of ints    */
-typedef long  LVECTOR [DIM];  /* vector of longs   */
+typedef double VECTOR[DIM];  /* vector of doubles */
+typedef long  VECTOR_L[DIM];  /* vector of longs   */
 
 /* A VECTOR is an array of three coordinates [x,y,z] representing magnitude
 and direction. A fourth dimension is assumed to always have the value 1, but

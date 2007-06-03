@@ -12,8 +12,8 @@ extern int normalize_vector(VECTOR);
 extern int vmult(VECTOR, MATRIX, VECTOR);
 extern void mult_vec(VECTOR, MATRIX);
 extern int perspective(VECTOR);
-extern int longvmultpersp(LVECTOR, LMATRIX, LVECTOR, LVECTOR, LVECTOR, int);
-extern int longpersp(LVECTOR, LVECTOR, int);
-extern int longvmult(LVECTOR, LMATRIX, LVECTOR, int);
+extern int vmult_perspective_l(VECTOR_L, MATRIX_L, VECTOR_L, VECTOR_L, VECTOR_L, int);
+extern int longpersp(VECTOR_L, VECTOR_L, int);
+extern int longvmult(VECTOR_L, MATRIX_L, VECTOR_L, int);
 
 #endif
