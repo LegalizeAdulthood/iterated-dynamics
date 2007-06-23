@@ -315,7 +315,7 @@ static void application_restart(int argc, char *argv[], bool &screen_stacked)
 	g_max_colors = 256;
 	g_max_input_counter = 80;				/* check the keyboard this often */
 
-	if (g_show_file && g_initial_adapter < 0)
+	if ((g_show_file != SHOWFILE_PENDING) && g_initial_adapter < 0)
 	{
 		intro();                          /* display the credits screen */
 		if (driver_key_pressed() == FIK_ESC)
@@ -341,9 +341,10 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 		memcpy(g_dac_box, g_old_dac_box, 256*3);   /* restore in case colors= present */
 	}
 
-	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
+	driver_set_mouse_mode(LOOK_MOUSE_NONE);			/* ignore mouse */
 
-	while (g_show_file <= 0)              /* image is to be loaded */
+	/* image is to be loaded */
+	while (g_show_file == SHOWFILE_PENDING || g_show_file == SHOWFILE_CANCELLED)
 	{
 		char *hdg;
 		g_tab_display_enabled = false;
@@ -364,9 +365,9 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 				hdg = "Select File to Restore";
 				set_help_mode(HELPSAVEREST);
 			}
-			if (g_show_file < 0 && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
+			if (g_show_file == SHOWFILE_CANCELLED && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
 			{
-				g_show_file = 1;               /* cancelled */
+				g_show_file = SHOWFILE_DONE;               /* cancelled */
 				g_initial_adapter = -1;
 				break;
 			}
@@ -377,7 +378,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 
 		g_evolving_flags = EVOLVE_NONE;
 		g_view_window = false;
-		g_show_file = 1;
+		g_show_file = SHOWFILE_DONE;
 		set_help_mode(-1);
 		g_tab_display_enabled = true;
 		if (screen_stacked)
@@ -390,7 +391,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 		{
 			break;                      /* got it, exit */
 		}
-		g_show_file = g_browsing ? 1 : -1;
+		g_show_file = g_browsing ? SHOWFILE_DONE : SHOWFILE_CANCELLED;
 	}
 
 	set_help_mode(HELPMENU);                 /* now use this help mode */
@@ -424,7 +425,7 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 	}
 	g_got_status = GOT_STATUS_NONE;                     /* for tab_display */
 
-	if (g_show_file)
+	if (g_show_file != SHOWFILE_PENDING)
 	{
 		if (g_calculation_status > CALCSTAT_PARAMS_CHANGED)              /* goto imagestart implies re-calc */
 		{
@@ -511,7 +512,7 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 				memcpy(g_old_dac_box, g_dac_box, 256*3);     /* save in case colors= present */
 			}
 			driver_set_for_text(); /* switch to text mode */
-			g_show_file = -1;
+			g_show_file = SHOWFILE_CANCELLED;
 			return APPSTATE_RESTORE_START;
 		}
 		if (kbdchar == 't')  /* set fractal type */

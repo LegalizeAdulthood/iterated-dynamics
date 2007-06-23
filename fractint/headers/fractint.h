@@ -28,6 +28,13 @@
 
 #define COLOR_CHANNEL_MAX 63
 
+enum ShowFileType
+{
+	SHOWFILE_PENDING = 0,
+	SHOWFILE_DONE = 1,
+	SHOWFILE_CANCELLED = -1
+};
+
 enum FiniteAttractorType
 {
 	FINITE_ATTRACTOR_NO = 0,
@@ -516,7 +523,7 @@ struct fractal_info         /*  for saving data in GIF file     */
 						/* version 5 stuff, release 15 */
 	short potential_16bit;       /* save 16 bit continuous potential info */
 	float faspectratio;   /* g_final_aspect_ratio, y/x */
-	short system;         /* 0 for dos, 1 for windows */
+	short system;         /* DEPRECATED: 0 for dos, 1 for windows */
 	short release;        /* release number, with 2 decimals implied */
 	short flag3d;         /* stored only for now, for future use */
 	short transparent[2];
