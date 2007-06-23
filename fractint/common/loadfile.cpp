@@ -692,8 +692,8 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_b
 
 int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
-	g_show_file = 1;                /* for any abort exit, pretend done */
-	g_initial_adapter = -1;               /* no viewing mode set yet */
+	g_show_file = SHOWFILE_DONE;			/* for any abort exit, pretend done */
+	g_initial_adapter = -1;					/* no viewing mode set yet */
 	bool oldfloatflag = g_user_float_flag;
 	g_loaded_3d = 0;
 	if (g_fast_restore)
@@ -775,7 +775,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	got_evolver_info(read_info, evolver_info);
 	got_orbits_info(orbits_info);
 
-	g_show_file = 0;                   /* trigger the file load */
+	g_show_file = SHOWFILE_PENDING;                   /* trigger the file load */
 
 	return 0;
 }

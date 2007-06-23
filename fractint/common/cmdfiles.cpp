@@ -278,7 +278,7 @@ int command_files(int argc, char **argv)
 					{
 						strcpy(g_read_name, curarg);
 						extract_filename(g_browse_name, g_read_name);
-						g_show_file = 0;
+						g_show_file = SHOWFILE_PENDING;
 						curarg[0] = 0;
 					}
 					fclose(initfile);
@@ -320,8 +320,8 @@ int command_files(int argc, char **argv)
 
 	if (!g_command_initialize)
 	{
-		g_initial_adapter = -1; /* don't set video when <ins> key used */
-		g_show_file = 1;  /* nor startup image file              */
+		g_initial_adapter = -1;			/* don't set video when <ins> key used */
+		g_show_file = SHOWFILE_DONE;	/* nor startup image file              */
 	}
 
 	init_msg("", NULL, 0);
@@ -331,7 +331,7 @@ int command_files(int argc, char **argv)
 		g_command_initialize = false;
 	}
 	/* PAR reads a file and sets color */
-	g_dont_read_color = (g_color_preloaded && (g_show_file == 0));
+	g_dont_read_color = (g_color_preloaded && (g_show_file == SHOWFILE_PENDING));
 
 	/*set structure of search directories*/
 	strcpy(g_search_for.par, g_command_file);
@@ -350,7 +350,7 @@ int load_commands(FILE *infile)
 	s_initial_parameters = false; /* reset flags for type= */
 	ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
 	/* PAR reads a file and sets color */
-	g_dont_read_color = (g_color_preloaded && (g_show_file == 0));
+	g_dont_read_color = (g_color_preloaded && (g_show_file == SHOWFILE_PENDING));
 	return ret;
 }
 
@@ -418,7 +418,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_use_fixed_random_seed = false;                           /* not a fixed srand() seed */
 	g_random_seed = s_init_random_seed;
 	strcpy(g_read_name, DOTSLASH);           /* initially current directory */
-	g_show_file = 1;
+	g_show_file = SHOWFILE_DONE;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	g_initial_cycle_limit = 55;						/* spin-DAC default speed limit */
 	g_map_set = false;								/* no map= name active */
@@ -994,7 +994,7 @@ static int filename_arg(const cmd_context &context)
 	existdir = merge_path_names(g_read_name, context.value, context.mode);
 	if (existdir == 0)
 	{
-		g_show_file = 0;
+		g_show_file = SHOWFILE_PENDING;
 	}
 	else if (existdir < 0)
 	{

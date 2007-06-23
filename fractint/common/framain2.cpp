@@ -236,7 +236,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 		_ASSERTE(_CrtCheckMemory());
 #endif
 
-		if (g_calculation_status != CALCSTAT_RESUMABLE || g_show_file == 0)
+		if (g_calculation_status != CALCSTAT_RESUMABLE || g_show_file == SHOWFILE_PENDING)
 		{
 			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
@@ -366,7 +366,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			driver_set_mouse_mode(-FIK_PAGE_UP);        /* mouse left button == pgup */
 		}
 
-		if (g_show_file == 0)
+		if (g_show_file == SHOWFILE_PENDING)
 		{               /* loading an image */
 			g_out_line_cleanup = NULL;          /* g_out_line routine can set this */
 			if (g_display_3d)                 /* set up 3D decoding */
@@ -381,7 +381,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			{            /* .pot format input file */
 				if (disk_start_potential() < 0)
 				{                           /* pot file failed?  */
-					g_show_file = 1;
+					g_show_file = SHOWFILE_DONE;
 					g_potential_flag  = false;
 					g_potential_16bit = false;
 					g_initial_adapter = -1;
@@ -460,9 +460,9 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 		}
 		history_save_info();
 
-		if (g_show_file == 0)
+		if (g_show_file == SHOWFILE_PENDING)
 		{               /* image has been loaded */
-			g_show_file = 1;
+			g_show_file = SHOWFILE_DONE;
 			if (g_initialize_batch == INITBATCH_NORMAL && g_calculation_status == CALCSTAT_RESUMABLE)
 			{
 				g_initialize_batch = INITBATCH_FINISH_CALC; /* flag to finish calc before save */
@@ -809,9 +809,8 @@ static bool look(bool &stacked)
 	{
 	case FIK_ENTER:
 	case FIK_ENTER_2:
-		g_show_file = 0;       /* trigger load */
-		g_browsing = true;    /* but don't ask for the file name as it's
-							* just been selected */
+		g_show_file = SHOWFILE_PENDING;       /* trigger load */
+		g_browsing = true;    /* but don't ask for the file name as it's just been selected */
 		if (g_name_stack_ptr == 15)
 		{					/* about to run off the end of the file
 							* history stack so shift it all back one to
@@ -849,7 +848,7 @@ static bool look(bool &stacked)
 			strcpy(g_browse_name, g_file_name_stack[g_name_stack_ptr]);
 			merge_path_names(g_read_name, g_browse_name, 2);
 			g_browsing = true;
-			g_show_file = 0;
+			g_show_file = SHOWFILE_PENDING;
 			if (g_ui_state.ask_video)
 			{
 				driver_stack_screen(); /* save graphics image */
@@ -1346,7 +1345,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		merge_path_names(g_read_name, g_browse_name, 2);
 		g_browsing = true;
 		g_no_sub_images = false;
-		g_show_file = 0;
+		g_show_file = SHOWFILE_PENDING;
 		if (g_ui_state.ask_video)
 		{
 			driver_stack_screen();      /* save graphics image */
@@ -1493,7 +1492,7 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 			{
 				driver_stack_screen();   /* save graphics image */
 				strcpy(g_read_name, g_save_name);
-				g_show_file = 0;
+				g_show_file = SHOWFILE_PENDING;
 				return APPSTATE_RESTORE_START;
 			}
 		}
@@ -1512,7 +1511,7 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 		g_resave_mode = RESAVE_NO;
 		g_started_resaves = false;
 	}
-	g_show_file = -1;
+	g_show_file = SHOWFILE_CANCELLED;
 	return APPSTATE_RESTORE_START;
 }
 
