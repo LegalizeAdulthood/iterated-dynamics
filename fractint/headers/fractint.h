@@ -28,6 +28,13 @@
 
 #define COLOR_CHANNEL_MAX 63
 
+enum FiniteAttractorType
+{
+	FINITE_ATTRACTOR_NO = 0,
+	FINITE_ATTRACTOR_YES = 1,
+	FINITE_ATTRACTOR_PHASE = -1
+};
+
 enum InitialZType
 {
 	INITIALZ_NONE = 0,

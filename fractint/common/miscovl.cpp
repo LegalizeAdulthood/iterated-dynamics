@@ -1185,6 +1185,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		}
 		if (g_finite_attractor)
 		{
+			// TODO: not quite right, doesn't allow FINITE_ATTRACTOR_PHASE
 			put_parm(" finattract=y");
 		}
 

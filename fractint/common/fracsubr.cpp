@@ -605,7 +605,7 @@ static double _fastcall fudge_to_double(long l)
 	return d;
 }
 
-void adjust_corner_bf()
+void adjust_corner_bf(float aspect_drift)
 {
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
@@ -626,7 +626,7 @@ void adjust_corner_bf()
 	/* use bftemp, bftemp2 as bfXctr, bfYctr */
 	convert_center_mag_bf(bftemp, bftemp2, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	ftemp = fabs(Xmagfactor);
-	if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1 + g_aspect_drift))
+	if (ftemp != 1 && ftemp >= (1-aspect_drift) && ftemp <= (1 + aspect_drift))
 	{
 		Xmagfactor = sign(Xmagfactor);
 		convert_corners_bf(bftemp, bftemp2, Magnification, Xmagfactor, Rotation, Skew);
@@ -686,7 +686,12 @@ void adjust_corner_bf()
 	restore_stack(saved);
 }
 
-void adjust_corner()
+void adjust_corner_bf()
+{
+	adjust_corner_bf(g_aspect_drift);
+}
+
+void adjust_corner(float aspect_drift)
 {
 	/* make edges very near vert/horiz exact, to ditch rounding errs and */
 	/* to avoid problems when delta per axis makes too large a ratio     */
@@ -703,7 +708,7 @@ void adjust_corner()
 		/* While we're at it, let's adjust the Xmagfactor as well */
 		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 		ftemp = fabs(Xmagfactor);
-		if (ftemp != 1 && ftemp >= (1-g_aspect_drift) && ftemp <= (1 + g_aspect_drift))
+		if (ftemp != 1 && ftemp >= (1-aspect_drift) && ftemp <= (1 + aspect_drift))
 		{
 			Xmagfactor = sign(Xmagfactor);
 			convert_corners(Xctr, Yctr, Magnification, Xmagfactor, Rotation, Skew);
@@ -741,6 +746,11 @@ void adjust_corner()
 		g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_max();
 	}
 
+}
+
+void adjust_corner()
+{
+	adjust_corner(g_aspect_drift);
 }
 
 static void _fastcall adjust_to_limits_bf(double expand)
@@ -1548,8 +1558,8 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	}
 
 	{
-		ValueSaver<int> save_sxoffs(g_sx_offset, 0);
-		ValueSaver<int> save_syoffs(g_sy_offset, 0);
+		ValueSaver<int> save_sx_offset(g_sx_offset, 0);
+		ValueSaver<int> save_sy_offset(g_sy_offset, 0);
 		/* save orbit value */
 		if (color == -1)
 		{
@@ -1585,8 +1595,8 @@ void plot_orbit(double real, double imag, int color)
 void orbit_scrub()
 {
 	driver_mute();
-	ValueSaver<int> save_sxoffs(g_sx_offset, 0);
-	ValueSaver<int> save_syoffs(g_sy_offset, 0);
+	ValueSaver<int> save_sx_offset(g_sx_offset, 0);
+	ValueSaver<int> save_sy_offset(g_sy_offset, 0);
 	while (g_orbit_index >= 3)
 	{
 		int c = *(s_save_orbit + --g_orbit_index);
@@ -1596,19 +1606,19 @@ void orbit_scrub()
 	}
 }
 
-void get_julia_attractor(double real, double imag)
+void get_julia_attractor(double real, double imag, int &num_attractors, int finite_attractor)
 {
-	if (g_num_attractors == 0 && g_finite_attractor == 0) /* not magnet & not requested */
+	if (num_attractors == 0 && finite_attractor == FINITE_ATTRACTOR_NO) /* not magnet & not requested */
 	{
 		return;
 	}
 
-	if (g_num_attractors >= N_ATTR)     /* space for more attractors ?  */
+	if (num_attractors >= N_ATTR)     /* space for more attractors ?  */
 	{
 		return;                  /* Bad luck - no room left !    */
 	}
 
-	int savper = g_periodicity_check;
+	int save_periodicity_check = g_periodicity_check;
 	ValueSaver<long> save_max_iteration(g_max_iteration, g_max_iteration);
 	g_periodicity_check = 0;
 	g_old_z.x = real;                    /* prepare for f.p orbit calc */
@@ -1649,16 +1659,17 @@ void get_julia_attractor(double real, double imag)
 		for (int i = 0; i < 10; i++)
 		{
 			g_overflow = 0;
-			if (!g_current_fractal_specific->orbitcalc() && !g_overflow) /* if it stays in the lake */
-			{                        /* and doesn't move far, probably */
-				if (g_integer_fractal)   /*   found a finite attractor    */
+			if (!g_current_fractal_specific->orbitcalc() && !g_overflow)
+			/* if it stays in the lake and doesn't move far, probably found a finite attractor */
+			{
+				if (g_integer_fractal)
 				{
 					if (labs(result_l.x - g_new_z_l.x) < g_close_enough_l
 						&& labs(result_l.y - g_new_z_l.y) < g_close_enough_l)
 					{
-						g_attractors_l[g_num_attractors] = g_new_z_l;
-						g_attractor_period[g_num_attractors] = i + 1;
-						g_num_attractors++;   /* another attractor - coloured lakes ! */
+						g_attractors_l[num_attractors] = g_new_z_l;
+						g_attractor_period[num_attractors] = i + 1;
+						num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
 					}
 				}
@@ -1667,9 +1678,9 @@ void get_julia_attractor(double real, double imag)
 					if (fabs(result.x - g_new_z.x) < g_close_enough
 						&& fabs(result.y - g_new_z.y) < g_close_enough)
 					{
-						g_attractors[g_num_attractors] = g_new_z;
-						g_attractor_period[g_num_attractors] = i + 1;
-						g_num_attractors++;   /* another attractor - coloured lakes ! */
+						g_attractors[num_attractors] = g_new_z;
+						g_attractor_period[num_attractors] = i + 1;
+						num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
 					}
 				}
@@ -1680,27 +1691,36 @@ void get_julia_attractor(double real, double imag)
 			}
 		}
 	}
-	if (g_num_attractors == 0)
+	if (num_attractors == 0)
 	{
-		g_periodicity_check = savper;
+		g_periodicity_check = save_periodicity_check;
 	}
 }
 
+void get_julia_attractor(double real, double imag)
+{
+	get_julia_attractor(real, imag, g_num_attractors, g_finite_attractor);
+}
 
-int solid_guess_block_size() /* used by solidguessing and by zoom panning */
+int solid_guess_block_size(int width, int height) /* used by solidguessing and by zoom panning */
 {
 	/* blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >= 1200 */
 	int blocksize = 4;
 	int i = 300;
-	while (i <= g_y_dots)
+	while (i <= height)
 	{
 		blocksize *= 2;
 		i *= 2;
 	}
 	/* increase blocksize if prefix array not big enough */
-	while (blocksize*(MAX_X_BLOCK - 2) < g_x_dots || blocksize*(MAX_Y_BLOCK - 2)*16 < g_y_dots)
+	while (blocksize*(MAX_X_BLOCK - 2) < width || blocksize*(MAX_Y_BLOCK - 2)*16 < height)
 	{
 		blocksize *= 2;
 	}
 	return blocksize;
+}
+
+int solid_guess_block_size()
+{
+	return solid_guess_block_size(g_x_dots, g_y_dots);
 }

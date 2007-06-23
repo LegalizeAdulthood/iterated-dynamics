@@ -140,10 +140,9 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 	{
 		g_degree = 3;   /* defaults to 3, but 2 is possible */
 	}
-	g_root = 1;
 
 	/* precalculated values */
-	m_root_over_degree       = (double)g_root / (double)g_degree;
+	m_root_over_degree       = 1.0/(double) g_degree;
 	m_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
 	g_max_color     = 0;
 	g_threshold    = .3*MathUtil::Pi/g_degree; /* less than half distance between roots */

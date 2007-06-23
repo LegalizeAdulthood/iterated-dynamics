@@ -370,7 +370,6 @@ extern bool					g_resuming;
 extern bool					g_use_fixed_random_seed;
 extern char					g_rle_buffer[];
 extern int					g_rhombus_stack[];
-extern int					g_root;
 extern ComplexD				*g_roots;
 extern int					g_rotate_hi;
 extern int					g_rotate_lo;

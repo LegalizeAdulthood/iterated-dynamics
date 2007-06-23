@@ -450,6 +450,14 @@ int get_toggles2()
 	if (dialog.values(++k).uval.ch.val != g_finite_attractor)
 	{
 		g_finite_attractor = dialog.values(k).uval.ch.val;
+		if (g_finite_attractor > 0)
+		{
+			g_finite_attractor = FINITE_ATTRACTOR_YES;
+		}
+		else if (g_finite_attractor < 0)
+		{
+			g_finite_attractor = FINITE_ATTRACTOR_PHASE;
+		}
 		j = 1;
 	}
 
