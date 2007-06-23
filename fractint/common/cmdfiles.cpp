@@ -3256,30 +3256,47 @@ int process_command(char *curarg, int mode) /* process a single argument */
 
 static void parse_text_colors(char *value)
 {
-	int i;
-	int j;
-	int k;
-	int hexval;
 	if (strcmp(value, "mono") == 0)
 	{
-		for (k = 0; k < sizeof(g_text_colors); ++k)
+		for (int k = 0; k < sizeof(g_text_colors); ++k)
 		{
 			g_text_colors[k] = BLACK*16 + WHITE;
 		}
-	/* C_HELP_CURLINK = C_PROMPT_INPUT = C_CHOICE_CURRENT = C_GENERAL_INPUT
-							= C_AUTHDIV1 = C_AUTHDIV2 = WHITE*16 + BLACK; */
-		g_text_colors[6] = g_text_colors[12] = g_text_colors[13] = g_text_colors[14] = g_text_colors[20]
-						= g_text_colors[27] = g_text_colors[28] = WHITE*16 + BLACK;
-		/* C_TITLE = C_HELP_HDG = C_HELP_LINK = C_PROMPT_HI = C_CHOICE_SP_KEYIN
-					= C_GENERAL_HI = C_DVID_HI = C_STOP_ERR
-					= C_STOP_INFO = BLACK*16 + L_WHITE; */
-		g_text_colors[0] = g_text_colors[2] = g_text_colors[5] = g_text_colors[11] = g_text_colors[16]
-						= g_text_colors[17] = g_text_colors[22] = g_text_colors[24]
-						= g_text_colors[25] = BLACK*16 + L_WHITE;
+		/* C_HELP_CURLINK =
+			C_PROMPT_INPUT =
+			C_CHOICE_CURRENT =
+			C_GENERAL_INPUT =
+			C_AUTHDIV1 =
+			C_AUTHDIV2 = WHITE*16 + BLACK; */
+		g_text_colors[6] =
+			g_text_colors[12] =
+			g_text_colors[13] =
+			g_text_colors[14] =
+			g_text_colors[20] =
+			g_text_colors[27] =
+			g_text_colors[28] = WHITE*16 + BLACK;
+		/* C_TITLE =
+			C_HELP_HDG =
+			C_HELP_LINK =
+			C_PROMPT_HI =
+			C_CHOICE_SP_KEYIN =
+			C_GENERAL_HI =
+			C_DVID_HI =
+			C_STOP_ERR =
+			C_STOP_INFO = BLACK*16 + L_WHITE; */
+		g_text_colors[0] =
+			g_text_colors[2] =
+			g_text_colors[5] =
+			g_text_colors[11] =
+			g_text_colors[16] =
+			g_text_colors[17] =
+			g_text_colors[22] =
+			g_text_colors[24] =
+			g_text_colors[25] = BLACK*16 + L_WHITE;
 	}
 	else
 	{
-		k = 0;
+		int k = 0;
 		while (k < sizeof(g_text_colors))
 		{
 			if (*value == 0)
@@ -3288,9 +3305,10 @@ static void parse_text_colors(char *value)
 			}
 			if (*value != '/')
 			{
+				int hexval;
 				sscanf(value, "%x", &hexval);
-				i = (hexval / 16) & 7;
-				j = hexval & 15;
+				int i = (hexval / 16) & 7;
+				int j = hexval & 15;
 				if (i == j || (i == 0 && j == 8)) /* force contrast */
 				{
 					j = 15;
