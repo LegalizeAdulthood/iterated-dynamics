@@ -449,8 +449,8 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_quick_calculate = false;
 	g_proximity = 0.01;
 	g_is_mand = true;                          /* default formula mand/jul toggle */
-	g_user_float_flag = false;                   /* turn off the float flag */
-	g_finite_attractor = 0;                      /* disable finite attractor logic */
+	g_user_float_flag = false;
+	g_finite_attractor = FINITE_ATTRACTOR_NO;
 	g_fractal_type = 0;                        /* initial type Set flag  */
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	s_initial_corners = false;
@@ -2806,6 +2806,7 @@ static int dither_arg(const cmd_context &context)
 
 static int finite_attractor_arg(const cmd_context &context)
 {
+	// TODO: this isn't quite right, should allow FINITE_ATTRACTOR_PHASE
 	return FlagParser<int>(g_finite_attractor, Command::FractalParameter).parse(context);
 }
 

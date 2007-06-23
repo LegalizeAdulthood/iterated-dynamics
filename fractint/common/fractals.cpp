@@ -83,7 +83,6 @@ ComplexL g_parameter2_l = { 0, 0 };
 long g_temp_sqr_x_l = 0;
 long g_temp_sqr_y_l = 0;
 int g_max_color = 0;
-int g_root = 0;
 int g_degree = 0;
 int g_basin = 0;
 double g_threshold = 0.0;

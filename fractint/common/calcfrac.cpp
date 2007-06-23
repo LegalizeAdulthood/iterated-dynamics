@@ -1711,7 +1711,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 							if ((attractor_l.x + attractor_l.y) < g_attractor_radius_l)
 							{
 								attracted = true;
-								if (g_finite_attractor < 0)
+								if (g_finite_attractor == FINITE_ATTRACTOR_PHASE)
 								{
 									g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
 								}
@@ -1737,7 +1737,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 							if ((attractor.x + attractor.y) < g_attractor_radius_fp)
 							{
 								attracted = true;
-								if (g_finite_attractor < 0)
+								if (g_finite_attractor == FINITE_ATTRACTOR_PHASE)
 								{
 									g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
 								}
