@@ -4445,28 +4445,20 @@ int Formula::setup_fp()
 	int RunFormRes;
 	/* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
-	if (g_fpu > 0)
+	MathType = D_MATH;
+	/* CAE changed below for fp */
+	RunFormRes = !RunFormula(g_formula_name, false); /* RunFormula() returns 1 for failure */
+	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
+		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
-		MathType = D_MATH;
-		/* CAE changed below for fp */
-		RunFormRes = !RunFormula(g_formula_name, false); /* RunFormula() returns 1 for failure */
-		if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
-			&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
-		{
-			return CvtStk(); /* run fast assembler code in parsera.asm */
-		}
-		return RunFormRes;
+		return CvtStk(); /* run fast assembler code in parsera.asm */
 	}
-	else
-	{
-		MathType = M_MATH;
-		return !RunFormula(g_formula_name, false);
-	}
+	return RunFormRes;
 #else
 	m_math_type = D_MATH;
 	RunFormRes = !RunFormula(g_formula_name, false); /* RunForm() returns 1 for failure */
 #if 0
-	if (RunFormRes && (g_fpu == -1) && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
+	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
 		return CvtStk(); /* run fast assembler code in parsera.asm */

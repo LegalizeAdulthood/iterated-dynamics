@@ -179,10 +179,10 @@ OLD_FN dStkOne;
 
 typedef void NEW_FN();  /* new 387-only ASM functions  */
 
-NEW_FN fStkPull2;  /* pull up g_fpu stack from 2 to 4  */
-NEW_FN fStkPush2;  /* push down g_fpu stack from 8 to 6  */
-NEW_FN fStkPush2a;  /* push down g_fpu stack from 6 to 4  */
-NEW_FN fStkPush4;  /* push down g_fpu stack from 8 to 4  */
+NEW_FN fStkPull2;  /* pull up fpu stack from 2 to 4  */
+NEW_FN fStkPush2;  /* push down fpu stack from 8 to 6  */
+NEW_FN fStkPush2a;  /* push down fpu stack from 6 to 4  */
+NEW_FN fStkPush4;  /* push down fpu stack from 8 to 4  */
 NEW_FN fStkLodDup;  /* lod, dup  */
 NEW_FN fStkLodSqr;  /* lod, sqr, dont save magnitude(i.e. lastsqr)  */
 NEW_FN fStkLodSqr2;  /* lod, sqr, save lastsqr  */
@@ -194,8 +194,8 @@ NEW_FN fStkStoDbl;  /* store, double  */
 NEW_FN fStkReal2;  /* fast ver. of real  */
 NEW_FN fStkSqr;  /* sqr, save magnitude in lastsqr  */
 NEW_FN fStkSqr0;  /* sqr, no save magnitude  */
-NEW_FN fStkClr1;  /* clear g_fpu  */
-NEW_FN fStkClr2;  /* test stack top, clear g_fpu  */
+NEW_FN fStkClr1;  /* clear fpu  */
+NEW_FN fStkClr2;  /* test stack top, clear fpu  */
 NEW_FN fStkStoClr1;  /* store, clr1  */
 NEW_FN fStkAdd, fStkSub;
 NEW_FN fStkSto, fStkSto2;  /* fast ver. of sto  */
@@ -517,7 +517,7 @@ awful_error:
 
 	/* this if statement inserts a stack push or pull into the token array  */
 	/*   it would be much better to do this *after* optimization  */
-	if (s_stack_count < MinStk)  /* not enough operands on g_fpu stack  */
+	if (s_stack_count < MinStk)  /* not enough operands on fpu stack  */
 	{
 		DBUGMSG2("Inserted pull.  Stack: %2d --> %2d", stkcnt, stkcnt + 2);
 		OPPTR(cvtptrx) = NO_OPERAND;
