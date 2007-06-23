@@ -5,7 +5,7 @@
 	get_video_mode should return with:
 		return code 0 for ok, -1 for error or cancelled by user
 		video parameters setup for the mainline, in the dos case this means
-		setting g_init_mode to video mode, based on this fractint.c will set up
+		setting g_initial_adapter to video mode, based on this fractint.c will set up
 		for and call setvideomode
 		set g_view_window on if file going to be loaded into a view smaller than
 		physical screen, in this case also set g_view_reduction, g_view_x_dots,
@@ -117,7 +117,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 #endif
 	VIDEOINFO *vident;
 
-	g_init_mode = -1;
+	g_initial_adapter = -1;
 
 	/* try to find exact match for vid mode */
 	for (i = 0; i < g_video_table_len; ++i)
@@ -126,18 +126,18 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		if (info->x_dots == vident->x_dots && info->y_dots == vident->y_dots
 			&& g_file_colors == vident->colors)
 		{
-			g_init_mode = i;
+			g_initial_adapter = i;
 			break;
 		}
 	}
 
 	/* exit in makepar mode if no exact match of video mode in file */
-	if (*g_make_par == '\0' && g_init_mode == -1)
+	if (*g_make_par == '\0' && g_initial_adapter == -1)
 	{
 		return 0;
 	}
 
-	if (g_init_mode == -1) /* try to find very good match for vid mode */
+	if (g_initial_adapter == -1) /* try to find very good match for vid mode */
 	{
 		for (i = 0; i < g_video_table_len; ++i)
 		{
@@ -145,7 +145,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 			if (info->x_dots == vident->x_dots && info->y_dots == vident->y_dots
 				&& g_file_colors == vident->colors)
 			{
-				g_init_mode = i;
+				g_initial_adapter = i;
 				break;
 			}
 		}
@@ -185,7 +185,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		{
 			tmpflags |= VI_CBIG;
 		}
-		if (i == g_init_mode)
+		if (i == g_initial_adapter)
 		{
 			tmpflags -= VI_EXACT;
 		}
@@ -204,12 +204,12 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 
 	if (g_fast_restore  && !g_ui_state.ask_video)
 	{
-		g_init_mode = g_adapter;
+		g_initial_adapter = g_adapter;
 	}
 
 #ifndef XFRACT
 	gotrealmode = 0;
-	if ((g_init_mode < 0 || (g_ui_state.ask_video && !g_initialize_batch)) && *g_make_par != '\0')
+	if ((g_initial_adapter < 0 || (g_ui_state.ask_video && !g_initialize_batch)) && *g_make_par != '\0')
 	{
 		char temp1[256];
 		/* no exact match or (askvideo=yes and batch=no), and not
@@ -275,13 +275,13 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		strcat((char *)g_stack, "\n");
 		if (info->info_id[0] != 'G' && g_save_system == 0)
 		{
-			if (g_init_mode < 0)
+			if (g_initial_adapter < 0)
 			{
 				strcat((char *)g_stack, "Saved in unknown video mode.");
 			}
 			else
 			{
-				format_video_info(g_init_mode, "", temp1);
+				format_video_info(g_initial_adapter, "", temp1);
 				strcat((char *)g_stack, temp1);
 			}
 		}
@@ -311,47 +311,47 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 		if (i < 0)  /* returned -100 - g_video_table entry number */
 		{
-			g_init_mode = -100 - i;
+			g_initial_adapter = -100 - i;
 			gotrealmode = 1;
 		}
 		else
 		{
-			g_init_mode = vid[i].index;
+			g_initial_adapter = vid[i].index;
 		}
 	}
 #else
-	g_init_mode = 0;
+	g_initial_adapter = 0;
 	j = g_video_table[0].keynum;
 	gotrealmode = 0;
 #endif
 
 	if (gotrealmode == 0)  /* translate from temp table to permanent */
 	{
-		i = g_init_mode;
+		i = g_initial_adapter;
 		j = g_video_table[i].keynum;
 		if (j != 0)
 		{
-			for (g_init_mode = 0; g_init_mode < MAXVIDEOMODES-1; ++g_init_mode)
+			for (g_initial_adapter = 0; g_initial_adapter < MAXVIDEOMODES-1; ++g_initial_adapter)
 			{
-				if (g_video_table[g_init_mode].keynum == j)
+				if (g_video_table[g_initial_adapter].keynum == j)
 				{
 					break;
 				}
 			}
-			if (g_init_mode >= MAXVIDEOMODES-1)
+			if (g_initial_adapter >= MAXVIDEOMODES-1)
 			{
 				j = 0;
 			}
 		}
 		if (j == 0) /* mode has no key, add to reserved slot at end */
 		{
-			memcpy((char *)&g_video_table[g_init_mode = MAXVIDEOMODES-1],
+			memcpy((char *)&g_video_table[g_initial_adapter = MAXVIDEOMODES-1],
 						(char *)&g_video_table[i], sizeof(*g_video_table));
 		}
 	}
 
 	/* ok, we're going to return with a video mode */
-	memcpy((char *)&g_video_entry, (char *)&g_video_table[g_init_mode],
+	memcpy((char *)&g_video_entry, (char *)&g_video_table[g_initial_adapter],
 				sizeof(g_video_entry));
 
 	if (g_view_window &&
