@@ -140,7 +140,6 @@ int     g_compare_gif = 0;                   /* compare two gif files flag */
 int     g_timed_save = 0;                    /* when doing a timed save */
 int     g_resave_mode = RESAVE_NO;                  /* tells encoder not to incr filename */
 bool g_started_resaves = false;              /* but incr on first resave */
-int     g_save_system;                    /* from and for save files */
 bool g_tab_display_enabled = true;                    /* tab display enabled */
 /* for historical reasons (before rotation):         */
 /*    top    left  corner of screen is (g_xx_min, g_yy_max) */

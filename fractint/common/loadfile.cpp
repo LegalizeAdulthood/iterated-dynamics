@@ -178,7 +178,6 @@ static void read_info_version_3(const fractal_info &read_info)
 static void read_info_version_4(const fractal_info &read_info)
 {
 	g_potential_16bit = false;
-	g_save_system = 0;
 
 	if (read_info.version > 4)
 	{
@@ -192,13 +191,11 @@ static void read_info_version_4(const fractal_info &read_info)
 		{
 			g_file_aspect_ratio = g_screen_aspect_ratio;
 		}
-		g_save_system = read_info.system;
 		g_save_release = read_info.release; /* from fmt 5 on we know real number */
 		if (read_info.version == 5        /* except a few early fmt 5 cases: */
 			&& (g_save_release <= 0 || g_save_release >= 4000))
 		{
 			g_save_release = 1410;
-			g_save_system = 0;
 		}
 		if (!g_display_3d && read_info.flag3d > 0)
 		{

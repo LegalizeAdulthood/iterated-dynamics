@@ -921,7 +921,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->periodicity = (short) g_periodicity_check;
 	save_info->potential_16bit = (short) g_disk_16bit ? 1 : 0;
 	save_info->faspectratio = g_final_aspect_ratio;
-	save_info->system = (short) g_save_system;
+	save_info->system = 1;
 
 	save_info->release = check_back() ? (short) min(g_save_release, g_release) : (short) g_release;
 
