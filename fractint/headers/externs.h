@@ -384,7 +384,6 @@ extern int					g_save_dac;
 extern char					g_save_name[];
 extern long					g_save_ticks;
 extern int					g_save_release;
-extern int					g_save_system;
 extern float				g_screen_aspect_ratio;
 extern char					g_screen_file[];
 extern int					g_screen_height;

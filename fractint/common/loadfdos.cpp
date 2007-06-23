@@ -255,10 +255,6 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 				g_read_name, g_file_x_dots, g_file_y_dots, g_file_colors, temp1);
 		if (info->info_id[0] != 'G')
 		{
-			if (g_save_system)
-			{
-				strcat((char *)g_stack, "WinFract ");
-			}
 			sprintf(temp1, "v%d.%01d", g_save_release/100, (g_save_release%100)/10);
 			if (g_save_release % 100)
 			{
@@ -266,28 +262,28 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 				temp1[i] = (char)((g_save_release % 10) + '0');
 				temp1[i + 1] = 0;
 			}
-			if (g_save_system == 0 && g_save_release <= 1410)
+			if (g_save_release <= 1410)
 			{
 				strcat(temp1, " or earlier");
 			}
 			strcat((char *)g_stack, temp1);
 		}
 		strcat((char *)g_stack, "\n");
-		if (info->info_id[0] != 'G' && g_save_system == 0)
+		if (info->info_id[0] != 'G')
 		{
 			if (g_initial_adapter < 0)
 			{
-				strcat((char *)g_stack, "Saved in unknown video mode.");
+				strcat((char *) g_stack, "Saved in unknown video mode.");
 			}
 			else
 			{
 				format_video_info(g_initial_adapter, "", temp1);
-				strcat((char *)g_stack, temp1);
+				strcat((char *) g_stack, temp1);
 			}
 		}
 		if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect_ratio)
 		{
-			strcat((char *)g_stack,
+			strcat((char *) g_stack,
 				"\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
 		}
 		strcat((char *)g_stack, "\n");
