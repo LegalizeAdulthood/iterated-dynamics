@@ -844,11 +844,6 @@ static int fpu_arg(const cmd_context &context)
 {
 	if (strcmp(context.value, "387") == 0)
 	{
-#ifndef XFRACT
-		g_fpu = 387;
-#else
-		g_fpu = -1;
-#endif
 		return Command::OK;
 	}
 	return bad_arg(context.curarg);

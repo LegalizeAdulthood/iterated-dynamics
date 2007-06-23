@@ -248,14 +248,6 @@ static void set_exe_path(char *path)
 	}
 }
 
-static void set_cpu_fpu()
-{
-	if (DEBUGMODE_NO_FPU == g_debug_mode)
-	{
-		g_fpu =   0; /* for testing purposes */
-	}
-}
-
 static void application_restart(int argc, char *argv[], bool &screen_stacked)
 {
 	g_auto_browse     = false;
@@ -299,8 +291,6 @@ static void application_restart(int argc, char *argv[], bool &screen_stacked)
 	}
 	driver_window();
 	memcpy(g_old_dac_box, g_dac_box, 256*3);      /* save in case colors= present */
-
-	set_cpu_fpu();
 
 	driver_set_for_text();                      /* switch to text mode */
 	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */

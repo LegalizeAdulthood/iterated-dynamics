@@ -122,7 +122,6 @@ int g_color_dark = 0;		/* darkest color in palette */
 int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
-int g_cpu, g_fpu;                        /* g_cpu, g_fpu flags */
 unsigned char g_dac_box[256][3] = { 0 };
 int g_dac_learn = 0;
 int g_dac_count = 0;
@@ -516,17 +515,7 @@ void home()
 */
 void initasmvars()
 {
-	if (g_cpu != 0)
-	{
-		return;
-	}
 	g_overflow = false;
-
-	/* set g_cpu type */
-	g_cpu = 486;
-
-	/* set g_fpu type */
-	g_fpu = 487;
 }
 
 bool is_a_directory(char *s)

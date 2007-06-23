@@ -38,10 +38,6 @@ typedef unsigned char *big_t;
 typedef ComplexT<bn_t> ComplexBigFloat;
 typedef ComplexT<bn_t> ComplexBigNum;
 
-/* globals */
-extern int g_fpu;
-extern int g_cpu;
-
 extern int g_bf_math;
 
 extern int bnstep;

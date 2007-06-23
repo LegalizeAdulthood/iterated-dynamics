@@ -98,27 +98,13 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 #if !defined(XFRACT)
 	if (g_debug_mode != DEBUGMODE_FORCE_FP_NEWTON)
 	{
-		if (g_fpu != 0)
+		if (g_fractal_type == FRACTYPE_NEWTON_MP)
 		{
-			if (g_fractal_type == FRACTYPE_NEWTON_MP)
-			{
-				g_fractal_type = FRACTYPE_NEWTON;
-			}
-			else if (g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
-			{
-				g_fractal_type = FRACTYPE_NEWTON_BASIN;
-			}
+			g_fractal_type = FRACTYPE_NEWTON;
 		}
-		else
+		else if (g_fractal_type == FRACTYPE_NEWTON_BASIN_MP)
 		{
-			if (g_fractal_type == FRACTYPE_NEWTON)
-			{
-				g_fractal_type = FRACTYPE_NEWTON_MP;
-			}
-			else if (g_fractal_type == FRACTYPE_NEWTON_BASIN)
-			{
-				g_fractal_type = FRACTYPE_NEWTON_BASIN_MP;
-			}
+			g_fractal_type = FRACTYPE_NEWTON_BASIN;
 		}
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	}
