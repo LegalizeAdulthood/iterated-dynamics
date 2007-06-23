@@ -91,10 +91,10 @@ struct parameter_history_info      /* for saving evolution data of center image 
 	double invert0;
 	double invert1;
 	double invert2;
-	BYTE trigndx0;
-	BYTE trigndx1;
-	BYTE trigndx2;
-	BYTE trigndx3;
+	BYTE function_index0;
+	BYTE function_index1;
+	BYTE function_index2;
+	BYTE function_index3;
 	int bailoutest;
 };
 typedef struct parameter_history_info    PARAMETER_HISTORY;
@@ -106,7 +106,7 @@ static int wrapped_positive_vary_int(int randvalue, int limit, int mode);
 static void vary_inside(GENEBASE gene[], int randval, int i);
 static void vary_outside(GENEBASE gene[], int randval, int i);
 static void vary_power2(GENEBASE gene[], int randval, int i);
-static void vary_trig(GENEBASE gene[], int randval, int i);
+static void vary_function(GENEBASE gene[], int randval, int i);
 static void vary_bail_out_test(GENEBASE gene[], int randval, int i);
 static void vary_invert(GENEBASE gene[], int randval, int i);
 static bool explore_check();
@@ -134,10 +134,10 @@ GENEBASE g_genes[NUMGENES] =
 	{ &g_inversion[0],		vary_invert,		0, "invert radius", 7 },
 	{ &g_inversion[1],		vary_invert,		0, "invert center x", 7 },
 	{ &g_inversion[2],		vary_invert,		0, "invert center y", 7 },
-	{ &g_trig_index[0],		vary_trig,			0, "trig function 1", 5 },
-	{ &g_trig_index[1],		vary_trig,			0, "trig fn 2", 5 },
-	{ &g_trig_index[2],		vary_trig,			0, "trig fn 3", 5 },
-	{ &g_trig_index[3],		vary_trig,			0, "trig fn 4", 5 },
+	{ &g_function_index[0],	vary_function,		0, "trig function 1", 5 },
+	{ &g_function_index[1],	vary_function,		0, "trig fn 2", 5 },
+	{ &g_function_index[2],	vary_function,		0, "trig fn 3", 5 },
+	{ &g_function_index[3],	vary_function,		0, "trig fn 4", 5 },
 	{ &g_bail_out_test,		vary_bail_out_test,	0, "bailout test", 6 }
 };
 
@@ -160,10 +160,10 @@ void restore_parameter_history()
 	g_inversion[1] = s_old_history.invert1;
 	g_inversion[2] = s_old_history.invert2;
 	g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
-	g_trig_index[0] = s_old_history.trigndx0;
-	g_trig_index[1] = s_old_history.trigndx1;
-	g_trig_index[2] = s_old_history.trigndx2;
-	g_trig_index[3] = s_old_history.trigndx3;
+	g_function_index[0] = s_old_history.function_index0;
+	g_function_index[1] = s_old_history.function_index1;
+	g_function_index[2] = s_old_history.function_index2;
+	g_function_index[3] = s_old_history.function_index3;
 	g_bail_out_test = (bailouts) s_old_history.bailoutest;
 }
 
@@ -185,10 +185,10 @@ void save_parameter_history()
 	s_old_history.invert0 = g_inversion[0];
 	s_old_history.invert1 = g_inversion[1];
 	s_old_history.invert2 = g_inversion[2];
-	s_old_history.trigndx0 = g_trig_index[0];
-	s_old_history.trigndx1 = g_trig_index[1];
-	s_old_history.trigndx2 = g_trig_index[2];
-	s_old_history.trigndx3 = g_trig_index[3];
+	s_old_history.function_index0 = BYTE(g_function_index[0]);
+	s_old_history.function_index1 = BYTE(g_function_index[1]);
+	s_old_history.function_index2 = BYTE(g_function_index[2]);
+	s_old_history.function_index3 = BYTE(g_function_index[3]);
 	s_old_history.bailoutest = g_bail_out_test;
 }
 
@@ -325,7 +325,7 @@ static void vary_power2(GENEBASE gene[], int randval, int i)
 	return;
 }
 
-static void vary_trig(GENEBASE gene[], int randval, int i)
+static void vary_function(GENEBASE gene[], int randval, int i)
 {
 	if (gene[i].mutate)
 	{

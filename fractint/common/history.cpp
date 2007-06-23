@@ -51,7 +51,7 @@ struct HISTORY_ITEM
 	double y_3rd;
 	long distance_test;
 	short bailoutold;
-	BYTE trig_index[4];
+	BYTE function_index[4];
 	short finattract;
 	double initial_orbit_z[2];
 	short periodicity;
@@ -192,10 +192,10 @@ void _fastcall history_save_info()
 	current.three_pass = (char) g_three_pass;
 	current.stop_pass = (short) g_stop_pass;
 	current.distance_test = g_distance_test;
-	current.trig_index[0] = g_trig_index[0];
-	current.trig_index[1] = g_trig_index[1];
-	current.trig_index[2] = g_trig_index[2];
-	current.trig_index[3] = g_trig_index[3];
+	current.function_index[0] = BYTE(g_function_index[0]);
+	current.function_index[1] = BYTE(g_function_index[1]);
+	current.function_index[2] = BYTE(g_function_index[2]);
+	current.function_index[3] = BYTE(g_function_index[3]);
 	current.finattract = (short) g_finite_attractor;
 	current.initial_orbit_z[0] = g_initial_orbit_z.x;
 	current.initial_orbit_z[1] = g_initial_orbit_z.y;
@@ -369,10 +369,10 @@ void _fastcall history_restore_info()
 	g_stop_pass = last.stop_pass;
 	g_distance_test = last.distance_test;
 	g_user_distance_test = last.distance_test;
-	g_trig_index[0] = last.trig_index[0];
-	g_trig_index[1] = last.trig_index[1];
-	g_trig_index[2] = last.trig_index[2];
-	g_trig_index[3] = last.trig_index[3];
+	g_function_index[0] = last.function_index[0];
+	g_function_index[1] = last.function_index[1];
+	g_function_index[2] = last.function_index[2];
+	g_function_index[3] = last.function_index[3];
 	g_finite_attractor = last.finattract;
 	g_initial_orbit_z.x = last.initial_orbit_z[0];
 	g_initial_orbit_z.y = last.initial_orbit_z[1];

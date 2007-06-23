@@ -502,7 +502,7 @@ struct fractal_info         /*  for saving data in GIF file     */
 	short float_flag;
 	short bailoutold;
 	long calculation_time;
-	BYTE trig_index[4];      /* which trig functions selected */
+	BYTE function_index[4];      /* which trig functions selected */
 	short finattract;
 	double initial_orbit_z[2];  /* init Mandelbrot orbit values */
 	short periodicity;    /* periodicity checking */
@@ -923,7 +923,7 @@ struct CoordinateT
 typedef CoordinateT<int> Coordinate;
 typedef CoordinateT<double> CoordinateD;
 
-struct TrigonometricFunctionListItem
+struct FunctionListItem
 {
 	const char *name;
 	void (*lfunct)();

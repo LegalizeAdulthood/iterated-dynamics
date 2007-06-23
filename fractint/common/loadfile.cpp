@@ -163,10 +163,10 @@ static void read_info_version_3(const fractal_info &read_info)
 		g_user_float_flag = (read_info.float_flag != 0);
 		g_bail_out = read_info.bailoutold;
 		g_calculation_time = read_info.calculation_time;
-		g_trig_index[0] = read_info.trig_index[0];
-		g_trig_index[1] = read_info.trig_index[1];
-		g_trig_index[2] = read_info.trig_index[2];
-		g_trig_index[3] = read_info.trig_index[3];
+		g_function_index[0] = read_info.function_index[0];
+		g_function_index[1] = read_info.function_index[1];
+		g_function_index[2] = read_info.function_index[2];
+		g_function_index[3] = read_info.function_index[3];
 		g_finite_attractor = read_info.finattract;
 		g_initial_orbit_z.x = read_info.initial_orbit_z[0];
 		g_initial_orbit_z.y = read_info.initial_orbit_z[1];
@@ -1166,93 +1166,93 @@ static void translate_obsolete_fractal_types(const fractal_info *info)
 	{
 	case FRACTYPE_OBSOLETE_LAMBDA_SINE:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
-		g_trig_index[0] = SIN;
+		g_function_index[0] = FUNCTION_SIN;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_COS    :
+	case FRACTYPE_OBSOLETE_LAMBDA_COS:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
-		g_trig_index[0] = COS;
+		g_function_index[0] = FUNCTION_COSXX;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_EXP    :
+	case FRACTYPE_OBSOLETE_LAMBDA_EXP:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
-		g_trig_index[0] = EXP;
+		g_function_index[0] = FUNCTION_EXP;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_SINE   :
+	case FRACTYPE_OBSOLETE_MANDELBROT_SINE:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
-		g_trig_index[0] = SIN;
+		g_function_index[0] = FUNCTION_SIN;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_COS    :
+	case FRACTYPE_OBSOLETE_MANDELBROT_COS:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
-		g_trig_index[0] = COS;
+		g_function_index[0] = FUNCTION_COSXX;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_EXP    :
+	case FRACTYPE_OBSOLETE_MANDELBROT_EXP:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
-		g_trig_index[0] = EXP;
+		g_function_index[0] = FUNCTION_EXP;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_SINH   :
+	case FRACTYPE_OBSOLETE_MANDELBROT_SINH:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
-		g_trig_index[0] = SINH;
+		g_function_index[0] = FUNCTION_SINH;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_SINH   :
+	case FRACTYPE_OBSOLETE_LAMBDA_SINH:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
-		g_trig_index[0] = SINH;
+		g_function_index[0] = FUNCTION_SINH;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_COSH   :
+	case FRACTYPE_OBSOLETE_MANDELBROT_COSH:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC_FP;
-		g_trig_index[0] = COSH;
+		g_function_index[0] = FUNCTION_COSH;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_COSH   :
+	case FRACTYPE_OBSOLETE_LAMBDA_COSH:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC_FP;
-		g_trig_index[0] = COSH;
+		g_function_index[0] = FUNCTION_COSH;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_SINE_L  :
+	case FRACTYPE_OBSOLETE_MANDELBROT_SINE_L:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
-		g_trig_index[0] = SIN;
+		g_function_index[0] = FUNCTION_SIN;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_SINE_L  :
+	case FRACTYPE_OBSOLETE_LAMBDA_SINE_L:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
-		g_trig_index[0] = SIN;
+		g_function_index[0] = FUNCTION_SIN;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_COS_L   :
+	case FRACTYPE_OBSOLETE_MANDELBROT_COS_L:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
-		g_trig_index[0] = COS;
+		g_function_index[0] = FUNCTION_COSXX;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_COS_L   :
+	case FRACTYPE_OBSOLETE_LAMBDA_COS_L:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
-		g_trig_index[0] = COS;
+		g_function_index[0] = FUNCTION_COSXX;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_SINH_L  :
+	case FRACTYPE_OBSOLETE_MANDELBROT_SINH_L:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
-		g_trig_index[0] = SINH;
+		g_function_index[0] = FUNCTION_SINH;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_SINH_L  :
+	case FRACTYPE_OBSOLETE_LAMBDA_SINH_L:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
-		g_trig_index[0] = SINH;
+		g_function_index[0] = FUNCTION_SINH;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_COSH_L  :
+	case FRACTYPE_OBSOLETE_MANDELBROT_COSH_L:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
-		g_trig_index[0] = COSH;
+		g_function_index[0] = FUNCTION_COSH;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_COSH_L  :
+	case FRACTYPE_OBSOLETE_LAMBDA_COSH_L:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
-		g_trig_index[0] = COSH;
+		g_function_index[0] = FUNCTION_COSH;
 		break;
-	case FRACTYPE_OBSOLETE_MANDELBROT_EXP_L   :
+	case FRACTYPE_OBSOLETE_MANDELBROT_EXP_L:
 		g_fractal_type = FRACTYPE_MANDELBROT_FUNC;
-		g_trig_index[0] = EXP;
+		g_function_index[0] = FUNCTION_EXP;
 		break;
-	case FRACTYPE_OBSOLETE_LAMBDA_EXP_L   :
+	case FRACTYPE_OBSOLETE_LAMBDA_EXP_L:
 		g_fractal_type = FRACTYPE_LAMBDA_FUNC;
-		g_trig_index[0] = EXP;
+		g_function_index[0] = FUNCTION_EXP;
 		break;
-	case FRACTYPE_OBSOLETE_DEM_MANDELBROT         :
+	case FRACTYPE_OBSOLETE_DEM_MANDELBROT:
 		g_fractal_type = FRACTYPE_MANDELBROT_FP;
 		g_user_distance_test = (info->y_dots - 1)*2;
 		break;
-	case FRACTYPE_OBSOLETE_DEM_JULIA         :
+	case FRACTYPE_OBSOLETE_DEM_JULIA:
 		g_fractal_type = FRACTYPE_JULIA_FP;
 		g_user_distance_test = (info->y_dots - 1)*2;
 		break;
-	case FRACTYPE_MANDELBROT_LAMBDA :
+	case FRACTYPE_MANDELBROT_LAMBDA:
 		g_use_initial_orbit_z = INITIALZ_PIXEL;
 		break;
 	}
@@ -1407,7 +1407,7 @@ int check_back()
 		|| (g_fractal_type == FRACTYPE_POPCORN_JULIA_L && g_save_release <= 1960)
 		|| (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER && g_save_release <= 2000)
 		|| ((g_inside == COLORMODE_INVERSE_TANGENT_INTEGER || g_outside == COLORMODE_INVERSE_TANGENT) && g_save_release <= 2005)
-		|| (g_fractal_type == FRACTYPE_LAMBDA_FUNC_FP && g_trig_index[0] == EXP && g_save_release <= 2002)
+		|| (g_fractal_type == FRACTYPE_LAMBDA_FUNC_FP && g_function_index[0] == FUNCTION_EXP && g_save_release <= 2002)
 		|| ((g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
 			&& (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
 			&& g_save_release <= 2002))
@@ -2194,7 +2194,7 @@ static char functionOK(fractal_info *info, int numfn)
 	int mzmatch = 0;
 	for (int i = 0; i < numfn; i++)
 	{
-		if (info->trig_index[i] != g_trig_index[i])
+		if (info->function_index[i] != g_function_index[i])
 		{
 			mzmatch++;
 		}

@@ -6,8 +6,7 @@
 #define DEBUG 1
 #endif
 
-extern BYTE g_trig_index[];
-extern struct TrigonometricFunctionListItem function_list[];
+extern struct FunctionListItem function_list[];
 extern  void   (_fastcall *plot)(int, int, int);
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
@@ -443,7 +442,7 @@ extern ComplexD				g_temp_z;
 extern char					g_temp_dir[];
 extern double				g_too_small;
 extern int					g_total_passes;
-extern BYTE					g_trig_index[];
+extern int					g_function_index[];
 extern bool					g_true_color;
 extern int					g_true_mode;
 extern char					g_text_stack[];
