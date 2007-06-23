@@ -1,13 +1,6 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
 
-#if 0
-/* #ifndef DEBUG */
-#define DEBUG 1
-#endif
-
-extern struct FunctionListItem function_list[];
-extern  void   (_fastcall *plot)(int, int, int);
 
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int					g_adapter;							/* index into g_video_table[] */
@@ -148,6 +141,7 @@ extern char					*g_fract_dir1;
 extern char					*g_fract_dir2;
 extern bool					g_from_text_flag;
 extern long					g_fudge;
+extern FunctionListItem		g_function_list[];
 extern bool					g_function_preloaded;
 extern double				g_attractor_radius_fp;
 extern double				g_f_radius;

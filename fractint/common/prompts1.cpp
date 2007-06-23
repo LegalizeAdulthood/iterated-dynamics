@@ -1543,7 +1543,7 @@ const char *g_jiim_left_right[] =
 	"left", "right"
 };
 
-struct FunctionListItem function_list[] =
+struct FunctionListItem g_function_list[] =
 /* changing the order of these alters meaning of *.fra file */
 /* maximum 6 characters in function names or recheck all related code */
 {
@@ -1614,7 +1614,7 @@ struct FunctionListItem function_list[] =
 #endif
 };
 
-const int g_num_function_list = NUM_OF(function_list);
+const int g_num_function_list = NUM_OF(g_function_list);
 
 /* --------------------------------------------------------------------- */
 int get_fractal_parameters(int caller)        /* prompt for type-specific parms */
@@ -1896,10 +1896,10 @@ gfp_top:
 		numtrig = g_formula_state.max_fn();
 	}
 
-	const char *function_names[NUM_OF(function_list)];
+	const char *function_names[NUM_OF(g_function_list)];
 	for (i = 0; i < g_num_function_list; i++)
 	{
-		function_names[i] = function_list[i].name;
+		function_names[i] = g_function_list[i].name;
 	}
 	for (i = 0; i < numtrig; i++)
 	{
@@ -2125,7 +2125,7 @@ gfp_top:
 	{
 		if (parameter_values[prompt].uval.ch.val != g_function_index[i])
 		{
-			set_trig_array(i, function_list[parameter_values[prompt].uval.ch.val].name);
+			set_trig_array(i, g_function_list[parameter_values[prompt].uval.ch.val].name);
 			ret = 1;
 		}
 		++prompt;
