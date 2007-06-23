@@ -316,7 +316,7 @@ static void application_restart(int argc, char *argv[], bool &screen_stacked)
 	g_max_colors = 256;
 	g_max_input_counter = 80;				/* check the keyboard this often */
 
-	if (g_show_file && g_init_mode < 0)
+	if (g_show_file && g_initial_adapter < 0)
 	{
 		intro();                          /* display the credits screen */
 		if (driver_key_pressed() == FIK_ESC)
@@ -368,7 +368,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 			if (g_show_file < 0 && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
 			{
 				g_show_file = 1;               /* cancelled */
-				g_init_mode = -1;
+				g_initial_adapter = -1;
 				break;
 			}
 
@@ -398,7 +398,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 	g_tab_display_enabled = true;
 	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
 
-	if (((g_overlay_3d && !g_initialize_batch) || screen_stacked) && g_init_mode < 0)        /* overlay command failed */
+	if (((g_overlay_3d && !g_initialize_batch) || screen_stacked) && g_initial_adapter < 0)        /* overlay command failed */
 	{
 		driver_unstack_screen();                  /* restore the graphics screen */
 		screen_stacked = false;
@@ -439,8 +439,8 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 	}
 
 	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */
-	g_adapter = g_init_mode;                  /* set the video adapter up */
-	g_init_mode = -1;                       /* (once)                   */
+	g_adapter = g_initial_adapter;                  /* set the video adapter up */
+	g_initial_adapter = -1;                       /* (once)                   */
 
 	while (g_adapter < 0)                /* cycle through instructions */
 	{

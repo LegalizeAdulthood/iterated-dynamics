@@ -173,7 +173,7 @@ extern bool					g_image_map;
 extern ComplexD				g_initial_z;
 extern int					g_initialize_batch;
 extern int					g_initial_cycle_limit;
-extern int					g_init_mode;
+extern int					g_initial_adapter;
 extern ComplexD				g_initial_orbit_z;
 extern int					g_save_time;
 extern int					g_inside;

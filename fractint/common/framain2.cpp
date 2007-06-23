@@ -268,7 +268,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 						stop_message(0, "That video mode is not available with your adapter.");
 					}
 					g_ui_state.ask_video = true;
-					g_init_mode = -1;
+					g_initial_adapter = -1;
 					driver_set_for_text(); /* switch to text mode */
 					/* goto restorestart; */
 					return APPSTATE_RESTORE_START;
@@ -384,7 +384,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_show_file = 1;
 					g_potential_flag  = false;
 					g_potential_16bit = false;
-					g_init_mode = -1;
+					g_initial_adapter = -1;
 					g_calculation_status = CALCSTAT_RESUMABLE;         /* "resume" without 16-bit */
 					driver_set_for_text();
 					get_fractal_type();
@@ -903,10 +903,10 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 		save_parameter_history();
 		if (i == 0)
 		{
-			g_init_mode = g_adapter;
+			g_initial_adapter = g_adapter;
 			frommandel = false;
 		}
-		else if (g_init_mode < 0) /* it is supposed to be... */
+		else if (g_initial_adapter < 0) /* it is supposed to be... */
 		{
 			driver_set_for_text();     /* reset to text mode      */
 		}
@@ -1034,10 +1034,10 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	int i;
 	driver_stack_screen();
 	i = get_commands();
-	if (g_init_mode != -1)
+	if (g_initial_adapter != -1)
 	{                         /* video= was specified */
-		g_adapter = g_init_mode;
-		g_init_mode = -1;
+		g_adapter = g_initial_adapter;
+		g_initial_adapter = -1;
 		i |= Command::FractalParameter;
 		g_save_dac = SAVEDAC_NO;
 	}
@@ -1080,7 +1080,7 @@ static ApplicationStateType handle_toggle_float()
 	{
 		g_user_float_flag = false;
 	}
-	g_init_mode = g_adapter;
+	g_initial_adapter = g_adapter;
 	return APPSTATE_IMAGE_START;
 }
 
@@ -1366,7 +1366,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		}
 		history_restore_info();
 		g_zoom_off = true;
-		g_init_mode = g_adapter;
+		g_initial_adapter = g_adapter;
 		if (g_current_fractal_specific->isinteger != 0
 			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{
@@ -1925,7 +1925,7 @@ static ApplicationStateType handle_evolver_history(int kbdchar)
 		}
 		history_restore_info();
 		g_zoom_off = true;
-		g_init_mode = g_adapter;
+		g_initial_adapter = g_adapter;
 		if (g_current_fractal_specific->isinteger != 0
 			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
 		{

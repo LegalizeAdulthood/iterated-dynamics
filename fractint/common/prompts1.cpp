@@ -1627,14 +1627,13 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	int i;
 	int j;
 	int k;
-	int curtype;
-	int numparams;
+	int current_fractal_type;
+	int num_parameters;
 	int numtrig;
-	struct full_screen_values paramvalues[30];
+	struct full_screen_values parameter_values[30];
 	const char *choices[30];
-	long oldbailout = 0L;
-	int promptnum;
-	char msg[120];
+	long old_bail_out = 0L;
+	char message[120];
 	char *type_name;
 	char *tmpptr;
 	char bailoutmsg[50];
@@ -1656,8 +1655,8 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	int firstparm = 0;
 	int lastparm  = MAX_PARAMETERS;
 	double oldparam[MAX_PARAMETERS];
-	int fkeymask = 0x40;
-	oldbailout = g_bail_out;
+	int f_key_mask = 0x40;
+	old_bail_out = g_bail_out;
 	if (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
 	{
 		g_julibrot = true;
@@ -1666,15 +1665,15 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	{
 		g_julibrot = false;
 	}
-	curtype = g_fractal_type;
+	current_fractal_type = g_fractal_type;
 	i = g_current_fractal_specific->tofloat;
 	if (g_current_fractal_specific->name[0] == '*'
 		&& i != FRACTYPE_NO_FRACTAL
 		&& g_fractal_specific[i].name[0] != '*')
 	{
-		curtype = i;
+		current_fractal_type = i;
 	}
-	g_current_fractal_specific = &g_fractal_specific[curtype];
+	g_current_fractal_specific = &g_fractal_specific[current_fractal_type];
 	g_text_stack[0] = 0;
 	i = g_current_fractal_specific->helpformula;
 	if (i < -1)
@@ -1756,7 +1755,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 					}
 					k = 0;
 				}
-				g_text_stack[j++] = (char)c;
+				g_text_stack[j++] = (char) c;
 			}
 		}
 		while (--j >= 0 && g_text_stack[j] == '\n')
@@ -1766,7 +1765,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	}
 
 gfp_top:
-	promptnum = 0;
+	int prompt = 0;
 	if (g_julibrot)
 	{
 		i = select_fracttype(g_new_orbit_type);
@@ -1849,14 +1848,14 @@ gfp_top:
 			firstparm = 4;
 		}
 	}
-	numparams = 0;
+	num_parameters = 0;
 	j = 0;
 	for (i = firstparm; i < lastparm; i++)
 	{
 		char tmpbuf[30];
 		if (!type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
 		{
-			if (curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP)
+			if (current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP)
 			{
 				if (parameter_not_used(i))
 				{
@@ -1865,34 +1864,34 @@ gfp_top:
 			}
 			break;
 		}
-		numparams++;
-		choices[promptnum] = parmprompt[j++];
-		paramvalues[promptnum].type = 'd';
+		num_parameters++;
+		choices[prompt] = parmprompt[j++];
+		parameter_values[prompt].type = 'd';
 
-		if (choices[promptnum][0] == '+')
+		if (choices[prompt][0] == '+')
 		{
-			choices[promptnum]++;
-			paramvalues[promptnum].type = 'D';
+			choices[prompt]++;
+			parameter_values[prompt].type = 'D';
 		}
-		else if (choices[promptnum][0] == '#')
+		else if (choices[prompt][0] == '#')
 		{
-			choices[promptnum]++;
+			choices[prompt]++;
 		}
 		sprintf(tmpbuf, "%.17g", g_parameters[i]);
-		paramvalues[promptnum].uval.dval = atof(tmpbuf);
-		oldparam[i] = paramvalues[promptnum++].uval.dval;
+		parameter_values[prompt].uval.dval = atof(tmpbuf);
+		oldparam[i] = parameter_values[prompt++].uval.dval;
 	}
 
 	/* The following is a goofy kludge to make reading in the formula
 	* parameters work.
 	*/
-	if (curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP)
+	if (current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP)
 	{
-		numparams = lastparm - firstparm;
+		num_parameters = lastparm - firstparm;
 	}
 
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
-	if (curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP)
+	if (current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP)
 	{
 		numtrig = g_formula_state.max_fn();
 	}
@@ -1904,12 +1903,12 @@ gfp_top:
 	}
 	for (i = 0; i < numtrig; i++)
 	{
-		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.val  = g_function_index[i];
-		paramvalues[promptnum].uval.ch.llen = g_num_function_list;
-		paramvalues[promptnum].uval.ch.vlen = 6;
-		paramvalues[promptnum].uval.ch.list = function_names;
-		choices[promptnum++] = (char *)trg[i];
+		parameter_values[prompt].type = 'l';
+		parameter_values[prompt].uval.ch.val  = g_function_index[i];
+		parameter_values[prompt].uval.ch.llen = g_num_function_list;
+		parameter_values[prompt].uval.ch.vlen = 6;
+		parameter_values[prompt].uval.ch.list = function_names;
+		choices[prompt++] = (char *)trg[i];
 	}
 	type_name = g_current_fractal_specific->name;
 	if (type_name[0] == '*')
@@ -1922,28 +1921,28 @@ gfp_top:
 	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
 		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 	{
-		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.val  = (int)g_bail_out_test;
-		paramvalues[promptnum].uval.ch.llen = 7;
-		paramvalues[promptnum].uval.ch.vlen = 6;
-		paramvalues[promptnum].uval.ch.list = bailnameptr;
-		choices[promptnum++] = "Bailout Test (mod, real, imag, or, and, manh, manr)";
+		parameter_values[prompt].type = 'l';
+		parameter_values[prompt].uval.ch.val  = (int)g_bail_out_test;
+		parameter_values[prompt].uval.ch.llen = 7;
+		parameter_values[prompt].uval.ch.vlen = 6;
+		parameter_values[prompt].uval.ch.list = bailnameptr;
+		choices[prompt++] = "Bailout Test (mod, real, imag, or, and, manh, manr)";
 	}
 
 	if (i)
 	{
 		if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != 0.0)
 		{
-			paramvalues[promptnum].type = '*';
-			choices[promptnum++] = "Bailout: continuous potential (Y screen) value in use";
+			parameter_values[prompt].type = '*';
+			choices[prompt++] = "Bailout: continuous potential (Y screen) value in use";
 		}
 		else
 		{
-			choices[promptnum] = "Bailout value (0 means use default)";
-			paramvalues[promptnum].type = 'L';
-			oldbailout = g_bail_out;
-			paramvalues[promptnum++].uval.Lval = oldbailout;
-			paramvalues[promptnum].type = '*';
+			choices[prompt] = "Bailout value (0 means use default)";
+			parameter_values[prompt].type = 'L';
+			old_bail_out = g_bail_out;
+			parameter_values[prompt++].uval.Lval = old_bail_out;
+			parameter_values[prompt].type = '*';
 			tmpptr = type_name;
 			if (g_user_biomorph != -1)
 			{
@@ -1951,7 +1950,7 @@ gfp_top:
 				tmpptr = "biomorph";
 			}
 			sprintf(bailoutmsg, "    (%s default is %d)", tmpptr, i);
-			choices[promptnum++] = bailoutmsg;
+			choices[prompt++] = bailoutmsg;
 		}
 	}
 	if (g_julibrot)
@@ -1981,75 +1980,75 @@ gfp_top:
 		}
 
 		g_current_fractal_specific = savespecific;
-		paramvalues[promptnum].uval.dval = g_m_x_max_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = v0;
-		paramvalues[promptnum].uval.dval = g_m_y_max_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = v1;
-		paramvalues[promptnum].uval.dval = g_m_x_min_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = v2;
-		paramvalues[promptnum].uval.dval = g_m_y_min_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = v3;
-		paramvalues[promptnum].uval.ival = g_z_dots;
-		paramvalues[promptnum].type = 'i';
-		choices[promptnum++] = "Number of z pixels";
+		parameter_values[prompt].uval.dval = g_m_x_max_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = v0;
+		parameter_values[prompt].uval.dval = g_m_y_max_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = v1;
+		parameter_values[prompt].uval.dval = g_m_x_min_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = v2;
+		parameter_values[prompt].uval.dval = g_m_y_min_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = v3;
+		parameter_values[prompt].uval.ival = g_z_dots;
+		parameter_values[prompt].type = 'i';
+		choices[prompt++] = "Number of z pixels";
 
-		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.val  = g_juli_3d_mode;
-		paramvalues[promptnum].uval.ch.llen = 4;
-		paramvalues[promptnum].uval.ch.vlen = 9;
-		paramvalues[promptnum].uval.ch.list = g_juli_3d_options;
-		choices[promptnum++] = "3D Mode";
+		parameter_values[prompt].type = 'l';
+		parameter_values[prompt].uval.ch.val  = g_juli_3d_mode;
+		parameter_values[prompt].uval.ch.llen = 4;
+		parameter_values[prompt].uval.ch.vlen = 9;
+		parameter_values[prompt].uval.ch.list = g_juli_3d_options;
+		choices[prompt++] = "3D Mode";
 
-		paramvalues[promptnum].uval.dval = g_eyes_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = "Distance between eyes";
-		paramvalues[promptnum].uval.dval = g_origin_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = "Location of z origin";
-		paramvalues[promptnum].uval.dval = g_depth_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = "Depth of z";
-		paramvalues[promptnum].uval.dval = g_height_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = "Screen height";
-		paramvalues[promptnum].uval.dval = g_width_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = "Screen width";
-		paramvalues[promptnum].uval.dval = g_screen_distance_fp;
-		paramvalues[promptnum].type = 'f';
-		choices[promptnum++] = "Distance to Screen";
+		parameter_values[prompt].uval.dval = g_eyes_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = "Distance between eyes";
+		parameter_values[prompt].uval.dval = g_origin_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = "Location of z origin";
+		parameter_values[prompt].uval.dval = g_depth_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = "Depth of z";
+		parameter_values[prompt].uval.dval = g_height_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = "Screen height";
+		parameter_values[prompt].uval.dval = g_width_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = "Screen width";
+		parameter_values[prompt].uval.dval = g_screen_distance_fp;
+		parameter_values[prompt].type = 'f';
+		choices[prompt++] = "Distance to Screen";
 	}
 
-	if (curtype == FRACTYPE_INVERSE_JULIA || curtype == FRACTYPE_INVERSE_JULIA_FP)
+	if (current_fractal_type == FRACTYPE_INVERSE_JULIA || current_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
 	{
-		choices[promptnum] = JIIMstr1;
-		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.list = g_jiim_method;
-		paramvalues[promptnum].uval.ch.vlen = 7;
+		choices[prompt] = JIIMstr1;
+		parameter_values[prompt].type = 'l';
+		parameter_values[prompt].uval.ch.list = g_jiim_method;
+		parameter_values[prompt].uval.ch.vlen = 7;
 #ifdef RANDOM_RUN
 		paramvalues[promptnum].uval.ch.llen = 4;
 #else
-		paramvalues[promptnum].uval.ch.llen = 3; /* disable random run */
+		parameter_values[prompt].uval.ch.llen = 3; /* disable random run */
 #endif
-		paramvalues[promptnum++].uval.ch.val  = g_major_method;
+		parameter_values[prompt++].uval.ch.val  = g_major_method;
 
-		choices[promptnum] = JIIMstr2;
-		paramvalues[promptnum].type = 'l';
-		paramvalues[promptnum].uval.ch.list = g_jiim_left_right;
-		paramvalues[promptnum].uval.ch.vlen = 5;
-		paramvalues[promptnum].uval.ch.llen = 2;
-		paramvalues[promptnum++].uval.ch.val  = g_minor_method;
+		choices[prompt] = JIIMstr2;
+		parameter_values[prompt].type = 'l';
+		parameter_values[prompt].uval.ch.list = g_jiim_left_right;
+		parameter_values[prompt].uval.ch.vlen = 5;
+		parameter_values[prompt].uval.ch.llen = 2;
+		parameter_values[prompt++].uval.ch.val  = g_minor_method;
 	}
 
-	if ((curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
+	if ((current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
 	{
-		choices[promptnum] = "ismand";
-		paramvalues[promptnum].type = 'y';
-		paramvalues[promptnum++].uval.ch.val = g_is_mand ? 1 : 0;
+		choices[prompt] = "ismand";
+		parameter_values[prompt].type = 'y';
+		parameter_values[prompt++].uval.ch.val = g_is_mand ? 1 : 0;
 	}
 
 	if (caller                           /* <z> command ? */
@@ -2060,26 +2059,26 @@ gfp_top:
 	}
 	if (g_julibrot)
 	{
-		sprintf(msg, "Julibrot Parameters (orbit= %s)", juliorbitname);
+		sprintf(message, "Julibrot Parameters (orbit= %s)", juliorbitname);
 	}
 	else
 	{
-		sprintf(msg, "Parameters for fractal type %s", type_name);
+		sprintf(message, "Parameters for fractal type %s", type_name);
 	}
 	if (g_bf_math == 0)
 	{
-		strcat(msg, "\n(Press "FK_F6" for corner parameters)");
+		strcat(message, "\n(Press "FK_F6" for corner parameters)");
 	}
 	else
 	{
-		fkeymask = 0;
+		f_key_mask = 0;
 	}
 	s_scroll_row_status = 0; /* make sure we start at beginning of entry */
 	s_scroll_column_status = 0;
 	while (true)
 	{
-		i = full_screen_prompt_help(g_current_fractal_specific->helptext, msg,
-			promptnum, choices, paramvalues, fkeymask, g_text_stack);
+		i = full_screen_prompt_help(g_current_fractal_specific->helptext, message,
+			prompt, choices, parameter_values, f_key_mask, g_text_stack);
 		if (i < 0)
 		{
 			if (g_julibrot)
@@ -2104,32 +2103,32 @@ gfp_top:
 			}
 		}
 	}
-	promptnum = 0;
-	for (i = firstparm; i < numparams + firstparm; i++)
+	prompt = 0;
+	for (i = firstparm; i < num_parameters + firstparm; i++)
 	{
-		if (curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP)
+		if (current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP)
 		{
 			if (parameter_not_used(i))
 			{
 				continue;
 			}
 		}
-		if (oldparam[i] != paramvalues[promptnum].uval.dval)
+		if (oldparam[i] != parameter_values[prompt].uval.dval)
 		{
-			g_parameters[i] = paramvalues[promptnum].uval.dval;
+			g_parameters[i] = parameter_values[prompt].uval.dval;
 			ret = 1;
 		}
-		++promptnum;
+		++prompt;
 	}
 
 	for (i = 0; i < numtrig; i++)
 	{
-		if (paramvalues[promptnum].uval.ch.val != g_function_index[i])
+		if (parameter_values[prompt].uval.ch.val != g_function_index[i])
 		{
-			set_trig_array(i, function_list[paramvalues[promptnum].uval.ch.val].name);
+			set_trig_array(i, function_list[parameter_values[prompt].uval.ch.val].name);
 			ret = 1;
 		}
-		++promptnum;
+		++prompt;
 	}
 
 	if (g_julibrot)
@@ -2143,12 +2142,12 @@ gfp_top:
 	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
 		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 	{
-		if (paramvalues[promptnum].uval.ch.val != (int)g_bail_out_test)
+		if (parameter_values[prompt].uval.ch.val != (int)g_bail_out_test)
 		{
-			g_bail_out_test = (enum bailouts)paramvalues[promptnum].uval.ch.val;
+			g_bail_out_test = (enum bailouts)parameter_values[prompt].uval.ch.val;
 			ret = 1;
 		}
-		promptnum++;
+		prompt++;
 	}
 	else
 	{
@@ -2160,56 +2159,56 @@ gfp_top:
 	{
 		if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != 0.0)
 		{
-			promptnum++;
+			prompt++;
 		}
 		else
 		{
-			g_bail_out = paramvalues[promptnum++].uval.Lval;
+			g_bail_out = parameter_values[prompt++].uval.Lval;
 			if (g_bail_out != 0 && (g_bail_out < 1 || g_bail_out > 2100000000L))
 			{
-				g_bail_out = oldbailout;
+				g_bail_out = old_bail_out;
 			}
-			if (g_bail_out != oldbailout)
+			if (g_bail_out != old_bail_out)
 			{
 				ret = 1;
 			}
-			promptnum++;
+			prompt++;
 		}
 	}
 	if (g_julibrot)
 	{
-		g_m_x_max_fp    = paramvalues[promptnum++].uval.dval;
-		g_m_y_max_fp    = paramvalues[promptnum++].uval.dval;
-		g_m_x_min_fp    = paramvalues[promptnum++].uval.dval;
-		g_m_y_min_fp    = paramvalues[promptnum++].uval.dval;
-		g_z_dots      = paramvalues[promptnum++].uval.ival;
-		g_juli_3d_mode = paramvalues[promptnum++].uval.ch.val;
-		g_eyes_fp     = (float)paramvalues[promptnum++].uval.dval;
-		g_origin_fp   = (float)paramvalues[promptnum++].uval.dval;
-		g_depth_fp    = (float)paramvalues[promptnum++].uval.dval;
-		g_height_fp   = (float)paramvalues[promptnum++].uval.dval;
-		g_width_fp    = (float)paramvalues[promptnum++].uval.dval;
-		g_screen_distance_fp     = (float)paramvalues[promptnum++].uval.dval;
+		g_m_x_max_fp    = parameter_values[prompt++].uval.dval;
+		g_m_y_max_fp    = parameter_values[prompt++].uval.dval;
+		g_m_x_min_fp    = parameter_values[prompt++].uval.dval;
+		g_m_y_min_fp    = parameter_values[prompt++].uval.dval;
+		g_z_dots      = parameter_values[prompt++].uval.ival;
+		g_juli_3d_mode = parameter_values[prompt++].uval.ch.val;
+		g_eyes_fp     = (float)parameter_values[prompt++].uval.dval;
+		g_origin_fp   = (float)parameter_values[prompt++].uval.dval;
+		g_depth_fp    = (float)parameter_values[prompt++].uval.dval;
+		g_height_fp   = (float)parameter_values[prompt++].uval.dval;
+		g_width_fp    = (float)parameter_values[prompt++].uval.dval;
+		g_screen_distance_fp     = (float)parameter_values[prompt++].uval.dval;
 		ret = 1;  /* force new calc since not resumable anyway */
 	}
-	if (curtype == FRACTYPE_INVERSE_JULIA || curtype == FRACTYPE_INVERSE_JULIA_FP)
+	if (current_fractal_type == FRACTYPE_INVERSE_JULIA || current_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
 	{
-		if (paramvalues[promptnum].uval.ch.val != g_major_method
-			|| paramvalues[promptnum + 1].uval.ch.val != g_minor_method)
+		if (parameter_values[prompt].uval.ch.val != g_major_method
+			|| parameter_values[prompt + 1].uval.ch.val != g_minor_method)
 		{
 			ret = 1;
 		}
-		g_major_method = static_cast<MajorMethodType>(paramvalues[promptnum++].uval.ch.val);
-		g_minor_method = static_cast<MinorMethodType>(paramvalues[promptnum++].uval.ch.val);
+		g_major_method = static_cast<MajorMethodType>(parameter_values[prompt++].uval.ch.val);
+		g_minor_method = static_cast<MinorMethodType>(parameter_values[prompt++].uval.ch.val);
 	}
-	if ((curtype == FRACTYPE_FORMULA || curtype == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
+	if ((current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
 	{
-		if (g_is_mand != (paramvalues[promptnum].uval.ch.val != 0))
+		if (g_is_mand != (parameter_values[prompt].uval.ch.val != 0))
 		{
-			g_is_mand = (paramvalues[promptnum].uval.ch.val != 0);
+			g_is_mand = (parameter_values[prompt].uval.ch.val != 0);
 			ret = 1;
 		}
-		++promptnum;
+		++prompt;
 	}
 
 gfp_exit:
