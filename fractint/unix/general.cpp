@@ -49,22 +49,12 @@ int get_a_key();
 void
 initasmvars()
 {
-	if (g_cpu != 0)
-	{
-		return;
-	}
-	g_overflow = 0;
-
-	/* set g_cpu type */
-	g_cpu = 1;
-
-	/* set fpu type */
-	/* not needed, set fpu in sstools.ini */
+	g_overflow = false;
 }
 
 void fpe_handler(int signum)
 {
-	g_overflow = 1;
+	g_overflow = true;
 }
 
 /*
@@ -375,7 +365,7 @@ void decode_fractal_info(struct fractal_info *info, int dir)
 	getLong(&info->calculation_time, &bufPtr, dir);
 	for (i = 0; i < 4; i++)
 	{
-		getUChar(&info->trig_index[i], &bufPtr, dir);
+		getUChar(&info->function_index[i], &bufPtr, dir);
 	}
 	getShort(&info->finattract, &bufPtr, dir);
 	getDouble(&info->initial_orbit_z[0], &bufPtr, dir);
