@@ -171,7 +171,7 @@ int mandelbrot_setup_fp()
 	case FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_FP:
 	case FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_FP:
 		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
-		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
+		if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[0] == FUNCTION_FLIP))
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -189,19 +189,19 @@ int mandelbrot_setup_fp()
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
-		if (g_trig_index[0] == 14) /* FLIP */
+		if (g_function_index[0] == FUNCTION_FLIP)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
 		break;
 	case FRACTYPE_TIMS_ERROR_FP:
-		if (g_trig_index[0] == 14) /* FLIP */
+		if (g_function_index[0] == FUNCTION_FLIP)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
 		break;
 	case FRACTYPE_MARKS_MANDELBROT_POWER_FP:
-		if (g_trig_index[0] == 14) /* FLIP */
+		if (g_function_index[0] == FUNCTION_FLIP)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -292,7 +292,7 @@ int julia_setup_fp()
 	case FRACTYPE_JULIA_FUNC_PLUS_EXP_FP:
 	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_FP:
 		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
-		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
+		if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[0] == FUNCTION_FLIP))
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -303,7 +303,7 @@ int julia_setup_fp()
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
-		if (g_trig_index[0] != SQR)
+		if (g_function_index[0] != FUNCTION_SQR)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -319,10 +319,10 @@ int julia_setup_fp()
 	case FRACTYPE_POPCORN_JULIA_FP:
 		{
 			int default_functions = 0;
-			if (g_trig_index[0] == SIN &&
-				g_trig_index[1] == TAN &&
-				g_trig_index[2] == SIN &&
-				g_trig_index[3] == TAN &&
+			if (g_function_index[0] == FUNCTION_SIN &&
+				g_function_index[1] == FUNCTION_TAN &&
+				g_function_index[2] == FUNCTION_SIN &&
+				g_function_index[3] == FUNCTION_TAN &&
 				fabs(g_parameter2.x - 3.0) < .0001 &&
 				g_parameter2.y == 0 &&
 				g_parameter.y == 0)
@@ -404,21 +404,21 @@ int mandelbrot_setup_l()
 	if ((g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_EXP_L) || (g_fractal_type == FRACTYPE_MANDELBROT_FUNC_PLUS_Z_SQUARED_L))
 	{
 		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
-		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
+		if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[0] == FUNCTION_FLIP))
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
 	}
 	if (g_fractal_type == FRACTYPE_TIMS_ERROR)
 	{
-		if (g_trig_index[0] == 14) /* FLIP */
+		if (g_function_index[0] == FUNCTION_FLIP)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
 	}
 	if (g_fractal_type == FRACTYPE_MARKS_MANDELBROT_POWER)
 	{
-		if (g_trig_index[0] == 14) /* FLIP */
+		if (g_function_index[0] == FUNCTION_FLIP)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -456,7 +456,7 @@ int julia_setup_l()
 	case FRACTYPE_JULIA_FUNC_PLUS_EXP_L:
 	case FRACTYPE_JULIA_FUNC_PLUS_Z_SQUARED_L:
 		g_symmetry = (g_parameter.y == 0.0) ? SYMMETRY_X_AXIS : SYMMETRY_NONE;
-		if ((g_trig_index[0] == LOG) || (g_trig_index[0] == 14)) /* LOG or FLIP */
+		if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[0] == FUNCTION_FLIP))
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -466,10 +466,10 @@ int julia_setup_l()
 	case FRACTYPE_POPCORN_JULIA_L:
 		{
 			int default_functions = 0;
-			if (g_trig_index[0] == SIN &&
-				g_trig_index[1] == TAN &&
-				g_trig_index[2] == SIN &&
-				g_trig_index[3] == TAN &&
+			if (g_function_index[0] == FUNCTION_SIN &&
+				g_function_index[1] == FUNCTION_TAN &&
+				g_function_index[2] == FUNCTION_SIN &&
+				g_function_index[3] == FUNCTION_TAN &&
 				fabs(g_parameter2.x - 3.0) < .0001 &&
 				g_parameter2.y == 0 &&
 				g_parameter.y == 0)
@@ -543,23 +543,23 @@ int trig_plus_sqr_setup_fp()
 static int fn_plus_fn_symmetry() /* set symmetry matrix for fn + fn type */
 {
 	static SymmetryType fnplusfn[7][7] =
-	{/* fn2 ->sin     cos    sinh    cosh   exp    log    sqr  */
+	{	/* fn2 -> sin				cos					sinh				cosh				exp					log					sqr  */
 	/* fn1 */
-	/* sin */ {SYMMETRY_PI, SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS},
-	/* cos */ {SYMMETRY_X_AXIS, SYMMETRY_PI, SYMMETRY_X_AXIS,  SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS},
-	/* sinh*/ {SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS},
-	/* cosh*/ {SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS,  SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS},
-	/* exp */ {SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS,  SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS},
-	/* log */ {SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS,  SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS},
-	/* sqr */ {SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS,  SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS, SYMMETRY_XY_AXIS}
+	/* sin */	{ SYMMETRY_PI,		SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
+	/* cos */	{ SYMMETRY_X_AXIS,	SYMMETRY_PI,		SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
+	/* sinh*/	{ SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
+	/* cosh*/	{ SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
+	/* exp */	{ SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
+	/* log */	{ SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS },
+	/* sqr */	{ SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_X_AXIS,	SYMMETRY_XY_AXIS }
 	};
 	if (g_parameter.y == 0.0 && g_parameter2.y == 0.0)
 	{
-		if (g_trig_index[0] < 7 && g_trig_index[1] < 7)
+		if (g_function_index[0] <= NUM_OF(fnplusfn) && g_function_index[1] <= NUM_OF(fnplusfn))
 		{
-			g_symmetry = fnplusfn[g_trig_index[0]][g_trig_index[1]];
+			g_symmetry = fnplusfn[g_function_index[0]][g_function_index[1]];
 		}
-		if (g_trig_index[0] == 14 || g_trig_index[1] == 14) /* FLIP */
+		else if (g_function_index[0] == FUNCTION_FLIP || g_function_index[1] == FUNCTION_FLIP)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -574,7 +574,7 @@ static int fn_plus_fn_symmetry() /* set symmetry matrix for fn + fn type */
 int trig_plus_trig_setup_l()
 {
 	fn_plus_fn_symmetry();
-	if (g_trig_index[1] == SQR)
+	if (g_function_index[1] == FUNCTION_SQR)
 	{
 		return trig_plus_sqr_setup_l();
 	}
@@ -598,7 +598,7 @@ int trig_plus_trig_setup_l()
 int trig_plus_trig_setup_fp()
 {
 	fn_plus_fn_symmetry();
-	if (g_trig_index[1] == SQR)
+	if (g_function_index[1] == FUNCTION_SQR)
 	{
 		return trig_plus_sqr_setup_fp();
 	}
@@ -623,11 +623,11 @@ int lambda_trig_or_trig_setup()
 {
 	g_long_parameter = &g_parameter_l;
 	g_float_parameter = &g_parameter;
-	if ((g_trig_index[0] == EXP) || (g_trig_index[1] == EXP))
+	if ((g_function_index[0] == FUNCTION_EXP) || (g_function_index[1] == FUNCTION_EXP))
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	if ((g_trig_index[0] == LOG) || (g_trig_index[1] == LOG))
+	if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[1] == FUNCTION_LOG))
 	{
 		g_symmetry = SYMMETRY_X_AXIS;
 	}
@@ -644,7 +644,7 @@ int julia_trig_or_trig_setup()
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	if (g_trig_index[0] == 14 || g_trig_index[1] == 14) /* FLIP */
+	if (g_function_index[0] == FUNCTION_FLIP || g_function_index[1] == FUNCTION_FLIP) /* FLIP */
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
@@ -657,11 +657,11 @@ int mandelbrot_lambda_trig_or_trig_setup()
 	/* default symmetry is SYMMETRY_X_AXIS */
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
-	if (g_trig_index[0] == SQR)
+	if (g_function_index[0] == FUNCTION_SQR)
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	if ((g_trig_index[0] == LOG) || (g_trig_index[1] == LOG))
+	if ((g_function_index[0] == FUNCTION_LOG) || (g_function_index[1] == FUNCTION_LOG))
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
@@ -673,7 +673,7 @@ int mandelbrot_trig_or_trig_setup()
 	/* default symmetry is SYMMETRY_XY_AXIS_NO_PARAMETER */
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
-	if ((g_trig_index[0] == 14) || (g_trig_index[1] == 14)) /* FLIP  JCO 5/28/92 */
+	if ((g_function_index[0] == FUNCTION_FLIP) || (g_function_index[1] == FUNCTION_FLIP)) /* FLIP  JCO 5/28/92 */
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
@@ -692,19 +692,19 @@ int z_trig_plus_z_setup()
 
 	if (g_parameters[1] == 0.0 && g_parameters[3] == 0.0)
 	{
-		/*      symmetry = ZXTrigPlusZSym1[g_trig_index[0]]; */
-		switch (g_trig_index[0])
+		/*      symmetry = ZXTrigPlusZSym1[g_function_index[0]]; */
+		switch (g_function_index[0])
 		{
-		case COS:   /* changed to two case statments and made any added */
-		case COSH:  /* functions default to SYMMETRY_X_AXIS symmetry. JCO 5/25/92 */
-		case SQR:
-		case 9:   /* 'real' cos */
+		case FUNCTION_COSXX:
+		case FUNCTION_SINH:
+		case FUNCTION_SQR:
+		case FUNCTION_COS:
 			g_symmetry = SYMMETRY_XY_AXIS;
 			break;
-		case 14:   /* FLIP  JCO 2/29/92 */
+		case FUNCTION_FLIP:
 			g_symmetry = SYMMETRY_Y_AXIS;
 			break;
-		case LOG:
+		case FUNCTION_LOG:
 			g_symmetry = SYMMETRY_NONE;
 			break;
 		default:
@@ -714,16 +714,15 @@ int z_trig_plus_z_setup()
 	}
 	else
 	{
-		/*      symmetry = ZXTrigPlusZSym2[g_trig_index[0]]; */
-		switch (g_trig_index[0])
+		switch (g_function_index[0])
 		{
-		case COS:
-		case COSH:
-		case SQR:
-		case 9:   /* 'real' cos */
+		case FUNCTION_COSXX:
+		case FUNCTION_SINH:
+		case FUNCTION_SQR:
+		case FUNCTION_COS:
 			g_symmetry = SYMMETRY_ORIGIN;
 			break;
-		case 14:   /* FLIP  JCO 2/29/92 */
+		case FUNCTION_FLIP:
 			g_symmetry = SYMMETRY_NONE;
 			break;
 		default:
@@ -772,33 +771,32 @@ int lambda_trig_setup()
 	int isinteger = g_current_fractal_specific->isinteger;
 	g_current_fractal_specific->orbitcalc =  (isinteger != 0)
 		? lambda_trig_orbit : lambda_trig_orbit_fp;
-	switch (g_trig_index[0])
+	switch (g_function_index[0])
 	{
-	case SIN:
-	case COS:
-	case 9:   /* 'real' cos, added this and default for additional functions */
+	case FUNCTION_SIN:
+	case FUNCTION_COSXX:
+	case FUNCTION_COS:
 		g_symmetry = SYMMETRY_PI;
 		g_current_fractal_specific->orbitcalc = 
 			isinteger ? lambda_trig1_orbit : lambda_trig1_orbit_fp;
 		break;
-	case SINH:
-	case COSH:
+	case FUNCTION_SINH:
 		g_symmetry = SYMMETRY_ORIGIN;
 		g_current_fractal_specific->orbitcalc = 
 			isinteger ? lambda_trig2_orbit : lambda_trig2_orbit_fp;
 		break;
-	case SQR:
+	case FUNCTION_SQR:
 		g_symmetry = SYMMETRY_ORIGIN;
 		break;
-	case EXP:
+	case FUNCTION_EXP:
 		g_current_fractal_specific->orbitcalc = 
 			isinteger ? lambda_exponent_orbit : lambda_exponent_orbit_fp;
 		g_symmetry = SYMMETRY_NONE;
 		break;
-	case LOG:
+	case FUNCTION_LOG:
 		g_symmetry = SYMMETRY_NONE;
 		break;
-	default:   /* default for additional functions */
+	default:
 		g_symmetry = SYMMETRY_ORIGIN;
 		break;
 	}
@@ -812,17 +810,15 @@ int julia_fn_plus_z_squared_setup()
 	/* fn1 ->  sin   cos    sinh  cosh   sqr    exp   log  */
 	/* sin    {SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_ORIGIN, SYMMETRY_ORIGIN, SYMMETRY_NONE, SYMMETRY_NONE}; */
 
-	/*   symmetry = fnpluszsqrd[g_trig_index[0]];   JCO  5/8/92 */
-	switch (g_trig_index[0]) /* fix sqr symmetry & add additional functions */
+	switch (g_function_index[0])
 	{
-	case COS: /* cosxx */
-	case COSH:
-	case SQR:
-	case 9:   /* 'real' cos */
-	case 10:  /* tan */
-	case 11:  /* tanh */
+	case FUNCTION_COSXX:
+	case FUNCTION_SINH:
+	case FUNCTION_SQR:
+	case FUNCTION_COS:
+	case FUNCTION_TAN:
+	case FUNCTION_TANH:
 		g_symmetry = SYMMETRY_ORIGIN;
-		/* default is for SYMMETRY_NONE symmetry */
 	}
 	return g_current_fractal_specific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
@@ -832,14 +828,13 @@ int sqr_trig_setup()
 	/*   static char SqrTrigSym[] = */
 	/* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
 	/*           {SYMMETRY_PI, SYMMETRY_PI, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_X_AXIS, SYMMETRY_X_AXIS}; */
-	/*   symmetry = SqrTrigSym[g_trig_index[0]];      JCO  5/9/92 */
-	switch (g_trig_index[0]) /* fix sqr symmetry & add additional functions */
+	/*   symmetry = SqrTrigSym[g_function_index[0]];      JCO  5/9/92 */
+	switch (g_function_index[0])
 	{
-	case SIN:
-	case COS: /* cosxx */
-	case 9:   /* 'real' cos */
+	case FUNCTION_SIN:
+	case FUNCTION_COSXX:
+	case FUNCTION_COS:
 		g_symmetry = SYMMETRY_PI;
-		/* default is for SYMMETRY_X_AXIS symmetry */
 	}
 	return g_current_fractal_specific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
@@ -857,39 +852,29 @@ int fn_fn_setup()
 	/* log */ {SYMMETRY_NONE, SYMMETRY_NONE, SYMMETRY_NONE, SYMMETRY_NONE, SYMMETRY_NONE, SYMMETRY_X_AXIS, SYMMETRY_NONE},
 	/* sqr */ {SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_XY_AXIS, SYMMETRY_NONE, SYMMETRY_XY_AXIS},
 	};
-	/*
-	if (g_trig_index[0] == EXP || g_trig_index[0] == LOG || g_trig_index[1] == EXP || g_trig_index[1] == LOG)
-		g_symmetry = SYMMETRY_X_AXIS;
-	else if ((g_trig_index[0] == SIN && g_trig_index[1] == SIN) || (g_trig_index[0] == COS && g_trig_index[1] == COS))
-		g_symmetry = SYMMETRY_PI;
-	else if ((g_trig_index[0] == SIN && g_trig_index[1] == COS) || (g_trig_index[0] == COS && g_trig_index[1] == SIN))
-		g_symmetry = SYMMETRY_Y_AXIS;
-	else
-		g_symmetry = SYMMETRY_XY_AXIS;
-	*/
-	if (g_trig_index[0] < 7 && g_trig_index[1] < 7)  /* bounds of array JCO 5/22/92*/
+	if (g_function_index[0] < NUM_OF(fnxfn) && g_function_index[1] < NUM_OF(fnxfn))
 	{
-		g_symmetry = fnxfn[g_trig_index[0]][g_trig_index[1]];
+		g_symmetry = fnxfn[g_function_index[0]][g_function_index[1]];
 	}
-	/* defaults to SYMMETRY_X_AXIS symmetry JCO 5/22/92 */
-	else  /* added to complete the symmetry JCO 5/22/92 */
+	else
 	{
-		if (g_trig_index[0] == LOG || g_trig_index[1] == LOG)
+		if (g_function_index[0] == FUNCTION_LOG || g_function_index[1] == FUNCTION_LOG)
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
-		if (g_trig_index[0] == 9 || g_trig_index[1] == 9)  /* 'real' cos */
+		// TODO: this whole if block looks bogus?
+		if (g_function_index[0] == FUNCTION_COS || g_function_index[1] == FUNCTION_COS)
 		{
-			if (g_trig_index[0] == SIN || g_trig_index[1] == SIN)
+			if (g_function_index[0] == FUNCTION_SIN || g_function_index[1] == FUNCTION_SIN)
 			{
 				g_symmetry = SYMMETRY_PI;
 			}
-			if (g_trig_index[0] == COS || g_trig_index[1] == COS)
+			if (g_function_index[0] == FUNCTION_COSXX || g_function_index[1] == FUNCTION_COSXX)
 			{
 				g_symmetry = SYMMETRY_PI;
 			}
 		}
-		if (g_trig_index[0] == 9 && g_trig_index[1] == 9)
+		if (g_function_index[0] == FUNCTION_COS && g_function_index[1] == FUNCTION_COS)
 		{
 			g_symmetry = SYMMETRY_PI;
 		}
@@ -903,24 +888,23 @@ int mandelbrot_trig_setup()
 	g_current_fractal_specific->orbitcalc = 
 		isinteger ? lambda_trig_orbit : lambda_trig_orbit_fp;
 	g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
-	switch (g_trig_index[0])
+	switch (g_function_index[0])
 	{
-	case SIN:
-	case COS:
+	case FUNCTION_SIN:
+	case FUNCTION_COSXX:
 		g_current_fractal_specific->orbitcalc = 
 			isinteger ? lambda_trig1_orbit : lambda_trig1_orbit_fp;
 		break;
-	case SINH:
-	case COSH:
+	case FUNCTION_SINH:
 		g_current_fractal_specific->orbitcalc = 
 			isinteger ? lambda_trig2_orbit : lambda_trig2_orbit_fp;
 		break;
-	case EXP:
+	case FUNCTION_EXP:
 		g_symmetry = SYMMETRY_X_AXIS_NO_PARAMETER;
 		g_current_fractal_specific->orbitcalc = 
 			isinteger ? lambda_exponent_orbit : lambda_exponent_orbit_fp;
 		break;
-	case LOG:
+	case FUNCTION_LOG:
 		g_symmetry = SYMMETRY_X_AXIS_NO_PARAMETER;
 		break;
 	default:   /* added for additional functions, JCO 5/25/92 */

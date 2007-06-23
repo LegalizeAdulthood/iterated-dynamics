@@ -540,7 +540,13 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	return;
 }
 
-BYTE g_trig_index[] = {SIN, SQR, SINH, COSH};
+int g_function_index[] =
+{
+	FUNCTION_SIN,
+	FUNCTION_SQR,
+	FUNCTION_SINH,
+	FUNCTION_SINH
+};
 #if !defined(XFRACT)
 void (*g_trig0_l)() = lStkSin;
 void (*g_trig1_l)() = lStkSqr;
@@ -588,11 +594,11 @@ static void trigdetails(char *buf)
 	*buf = 0; /* null string if none */
 	if (numfn > 0)
 	{
-		strcpy(buf, function_list[g_trig_index[0]].name);
+		strcpy(buf, function_list[g_function_index[0]].name);
 		i = 0;
 		while (++i < numfn)
 		{
-			sprintf(tmpbuf, "/%s", function_list[g_trig_index[i]].name);
+			sprintf(tmpbuf, "/%s", function_list[g_function_index[i]].name);
 			strcat(buf, tmpbuf);
 		}
 	}
@@ -619,7 +625,7 @@ int set_trig_array(int k, const char *name)
 	{
 		if (strcmp(trigname, function_list[i].name) == 0)
 		{
-			g_trig_index[k] = (BYTE)i;
+			g_function_index[k] = i;
 			set_trig_pointers(k);
 			break;
 		}
@@ -634,31 +640,31 @@ void set_trig_pointers(int which)
 	{
 	case 0:
 #if !defined(XFRACT)
-		g_trig0_l = function_list[g_trig_index[0]].lfunct;
-		g_trig0_m = function_list[g_trig_index[0]].mfunct;
+		g_trig0_l = function_list[g_function_index[0]].lfunct;
+		g_trig0_m = function_list[g_function_index[0]].mfunct;
 #endif
-		g_trig0_d = function_list[g_trig_index[0]].dfunct;
+		g_trig0_d = function_list[g_function_index[0]].dfunct;
 		break;
 	case 1:
 #if !defined(XFRACT)
-		g_trig1_l = function_list[g_trig_index[1]].lfunct;
-		g_trig1_m = function_list[g_trig_index[1]].mfunct;
+		g_trig1_l = function_list[g_function_index[1]].lfunct;
+		g_trig1_m = function_list[g_function_index[1]].mfunct;
 #endif
-		g_trig1_d = function_list[g_trig_index[1]].dfunct;
+		g_trig1_d = function_list[g_function_index[1]].dfunct;
 		break;
 	case 2:
 #if !defined(XFRACT)
-		g_trig2_l = function_list[g_trig_index[2]].lfunct;
-		g_trig2_m = function_list[g_trig_index[2]].mfunct;
+		g_trig2_l = function_list[g_function_index[2]].lfunct;
+		g_trig2_m = function_list[g_function_index[2]].mfunct;
 #endif
-		g_trig2_d = function_list[g_trig_index[2]].dfunct;
+		g_trig2_d = function_list[g_function_index[2]].dfunct;
 		break;
 	case 3:
 #if !defined(XFRACT)
-		g_trig3_l = function_list[g_trig_index[3]].lfunct;
-		g_trig3_m = function_list[g_trig_index[3]].mfunct;
+		g_trig3_l = function_list[g_function_index[3]].lfunct;
+		g_trig3_m = function_list[g_function_index[3]].mfunct;
 #endif
-		g_trig3_d = function_list[g_trig_index[3]].dfunct;
+		g_trig3_d = function_list[g_function_index[3]].dfunct;
 		break;
 	default: /* do 'em all */
 		for (i = 0; i < 4; i++)

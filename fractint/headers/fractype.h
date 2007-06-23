@@ -1,14 +1,41 @@
 #ifndef FRACTYPE_H
 #define FRACTYPE_H
 
-#define SIN             0
-#define COS             1   /* Beware this is really COSXX */
-#define SINH            2
-#define COSH            3
-#define EXP             4
-#define LOG             5
-#define SQR             6
-#define TAN            10
+// these are indices into prompts1.cpp:function_list
+enum FunctionType
+{
+	FUNCTION_SIN	= 0,
+	FUNCTION_COSXX	= 1,
+	FUNCTION_SINH	= 2,
+	FUNCTION_COSH	= 3,
+	FUNCTION_EXP	= 4,
+	FUNCTION_LOG	= 5,
+	FUNCTION_SQR	= 6,
+	FUNCTION_RECIP	= 7,
+	FUNCTION_IDENT	= 8,
+	FUNCTION_COS	= 9,
+	FUNCTION_TAN	= 10,
+	FUNCTION_TANH	= 11,
+	FUNCTION_COTAN	= 12,
+	FUNCTION_COTANH	= 13,
+	FUNCTION_FLIP	= 14,
+	FUNCTION_CONJ	= 15,
+	FUNCTION_ZERO	= 16,
+	FUNCTION_ASIN	= 17,
+	FUNCTION_ASINH	= 18,
+	FUNCTION_ACOS	= 19,
+	FUNCTION_ACOSH	= 20,
+	FUNCTION_ATAN	= 21,
+	FUNCTION_ATANH	= 22,
+	FUNCTION_CABS	= 23,
+	FUNCTION_ABS	= 24,
+	FUNCTION_SQRT	= 25,
+	FUNCTION_FLOOR	= 26,
+	FUNCTION_CEIL	= 27,
+	FUNCTION_TRUNC	= 28,
+	FUNCTION_ROUND	= 29,
+	FUNCTION_ONE	= 30
+};
 
 /* These MUST match the corresponding g_fractal_specific record in fractals.c */
 #define FRACTYPE_NO_FRACTAL							-1

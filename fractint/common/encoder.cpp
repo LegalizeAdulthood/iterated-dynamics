@@ -910,10 +910,10 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? (short) g_bail_out : 0;
 
 	save_info->calculation_time = g_calculation_time;
-	save_info->trig_index[0] = g_trig_index[0];
-	save_info->trig_index[1] = g_trig_index[1];
-	save_info->trig_index[2] = g_trig_index[2];
-	save_info->trig_index[3] = g_trig_index[3];
+	save_info->function_index[0] = BYTE(g_function_index[0]);
+	save_info->function_index[1] = BYTE(g_function_index[1]);
+	save_info->function_index[2] = BYTE(g_function_index[2]);
+	save_info->function_index[3] = BYTE(g_function_index[3]);
 	save_info->finattract = (short) g_finite_attractor;
 	save_info->initial_orbit_z[0] = g_initial_orbit_z.x;
 	save_info->initial_orbit_z[1] = g_initial_orbit_z.y;
