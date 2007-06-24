@@ -36,4 +36,6 @@ private:
 
 extern BrowseState g_browse_state;
 
+extern ApplicationStateType handle_look_for_files(bool &stacked);
+
 #endif
