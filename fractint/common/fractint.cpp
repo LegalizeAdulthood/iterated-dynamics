@@ -45,6 +45,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#include "Browse.h"
 #include "cmdfiles.h"
 #include "decoder.h"
 #include "drivers.h"
@@ -178,19 +179,14 @@ long	g_calculation_time;
 int		g_max_colors;                         /* maximum palette size */
 bool g_zoom_off;                     /* = 0 when zoom is disabled    */
 int		g_save_dac;                     /* save-the-Video DAC flag      */
-bool g_browsing;                 /* browse mode flag */
 char	g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while browsing */
 int		g_name_stack_ptr;
 double	g_too_small;
 int		g_cross_hair_box_size;
 bool g_no_sub_images;
-bool g_auto_browse;
 
 UserInterfaceState g_ui_state;
 
-bool g_browse_check_parameters;
-bool g_browse_check_type;
-char	g_browse_mask[FILE_MAX_FNAME];
 char	g_exe_path[FILE_MAX_PATH] = { 0 };
 
 #define CONTINUE          4
@@ -250,15 +246,15 @@ static void set_exe_path(char *path)
 
 static void application_restart(int argc, char *argv[], bool &screen_stacked)
 {
-	g_auto_browse     = false;
-	g_browse_check_type  = true;
-	g_browse_check_parameters = true;
+	g_browse_state.set_auto_browse(false);
+	g_browse_state.set_check_type(true);
+	g_browse_state.set_check_parameters(true);
 	g_ui_state.double_caution = true;
 	g_no_sub_images = false;
 	g_too_small = 6;
 	g_cross_hair_box_size   = 3;
-	strcpy(g_browse_mask, "*.gif");
-	strcpy(g_browse_name, "            ");
+	g_browse_state.set_mask("*.gif");
+	g_browse_state.set_name("            ");
 	g_name_stack_ptr = -1; /* init loaded files stack */
 
 	g_evolving_flags = EVOLVE_NONE;
@@ -315,7 +311,7 @@ static void application_restart(int argc, char *argv[], bool &screen_stacked)
 		}
 	}
 
-	g_browsing = false;
+	g_browse_state.set_browsing(false);
 
 	if (!g_function_preloaded)
 	{
@@ -323,6 +319,11 @@ static void application_restart(int argc, char *argv[], bool &screen_stacked)
 	}
 	screen_stacked = false;
 }
+
+//static void application_restart(int argc, char *argv[], bool &screen_stacked)
+//{
+//	application_restart(argc, argv, screen_stacked);
+//}
 
 static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 {
@@ -338,7 +339,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 	{
 		char *hdg;
 		g_tab_display_enabled = false;
-		if (!g_browsing)     /*RB*/
+		if (!g_browse_state.browsing())     /*RB*/
 		{
 			if (g_overlay_3d)
 			{
@@ -363,7 +364,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 			}
 
 			g_name_stack_ptr = 0; /* 'r' reads first filename for browsing */
-			strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_name);
+			strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_state.name());
 		}
 
 		g_evolving_flags = EVOLVE_NONE;
@@ -381,7 +382,7 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 		{
 			break;                      /* got it, exit */
 		}
-		g_show_file = g_browsing ? SHOWFILE_DONE : SHOWFILE_CANCELLED;
+		g_show_file = g_browse_state.browsing() ? SHOWFILE_DONE : SHOWFILE_CANCELLED;
 	}
 
 	set_help_mode(HELPMENU);                 /* now use this help mode */

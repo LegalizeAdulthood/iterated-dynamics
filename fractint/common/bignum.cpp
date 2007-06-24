@@ -586,7 +586,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 	{
 		bnlength = orig_bnlength;
 	}
-	calc_lengths();
+	calculate_bignum_lengths();
 
 	/* adjust pointers */
 	r = orig_r + orig_bnlength - bnlength;
@@ -604,7 +604,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 		{
 			bnlength = orig_bnlength;
 		}
-		calc_lengths();
+		calculate_bignum_lengths();
 		r = orig_r + orig_bnlength - bnlength;
 		n = orig_n + orig_bnlength - bnlength;
 		/* bntmp1 = orig_bntmp1 + orig_bnlength - bnlength; */
@@ -807,7 +807,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 	{
 		bnlength = orig_bnlength;
 	}
-	calc_lengths();
+	calculate_bignum_lengths();
 
 	/* adjust pointers */
 	r = orig_r + orig_bnlength - bnlength;
@@ -824,7 +824,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 		{
 			bnlength = orig_bnlength;
 		}
-		calc_lengths();
+		calculate_bignum_lengths();
 		r = orig_r + orig_bnlength - bnlength;
 		n = orig_n + orig_bnlength - bnlength;
 
@@ -960,7 +960,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 	{
 		bnlength = orig_bnlength;
 	}
-	calc_lengths();
+	calculate_bignum_lengths();
 
 	/* adjust pointers */
 	r = orig_r + orig_bnlength - bnlength;
@@ -980,7 +980,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 		{
 			bnlength = orig_bnlength;
 		}
-		calc_lengths();
+		calculate_bignum_lengths();
 		r = orig_r + orig_bnlength - bnlength;
 		n = orig_n + orig_bnlength - bnlength;
 		bntmp5 = orig_bntmp5 + orig_bnlength - bnlength;
@@ -1252,7 +1252,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 	{
 		bnlength = orig_bnlength;
 	}
-	calc_lengths();
+	calculate_bignum_lengths();
 
 	/* adjust pointers */
 	r = orig_r + orig_bnlength - bnlength;
@@ -1274,7 +1274,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 		{
 			bnlength = orig_bnlength;
 		}
-		calc_lengths();
+		calculate_bignum_lengths();
 		r = orig_r + orig_bnlength - bnlength;
 		n = orig_n + orig_bnlength - bnlength;
 		bn_pi = orig_bn_pi + orig_bnlength - bnlength;

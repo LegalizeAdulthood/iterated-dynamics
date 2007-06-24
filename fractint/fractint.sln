@@ -36,7 +36,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hc", "help\hc.vcproj", "{92
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "legacy", "..\fractdev\HEAD\fractint\legacy.vcproj", "{707ECB30-AF74-42A3-81D3-F350C5ED25C6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "legacy", "..\fractint-HEAD\legacy.vcproj", "{707ECB30-AF74-42A3-81D3-F350C5ED25C6}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"

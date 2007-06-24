@@ -222,7 +222,7 @@ FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 }
 
 
-int make_path(char *template_str, char *drive, char *dir, char *fname, char *ext)
+int make_path(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)
 {
 	if (template_str)
 	{
@@ -453,7 +453,7 @@ bool is_a_directory(char *s)
 #endif
 
 /* extract just the filename/extension portion of a path */
-void extract_filename(char *target, char *source)
+void extract_filename(char *target, const char *source)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
