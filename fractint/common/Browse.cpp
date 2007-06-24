@@ -9,6 +9,7 @@
 
 #include "Browse.h"
 #include "drivers.h"
+#include "encoder.h"
 #include "EscapeTime.h"
 #include "fihelp.h"
 #include "filesystem.h"
@@ -955,4 +956,88 @@ rescan:  /* entry for changed browse parms */
 	return c;
 }
 
+static bool look(bool &stacked)
+{
+	switch (look_get_window())
+	{
+	case FIK_ENTER:
+	case FIK_ENTER_2:
+		g_show_file = SHOWFILE_PENDING;       /* trigger load */
+		g_browse_state.set_browsing(true);    /* but don't ask for the file name as it's just been selected */
+		if (g_name_stack_ptr == 15)
+		{					/* about to run off the end of the file
+							* history stack so shift it all back one to
+							* make room, lose the 1st one */
+			for (int tmp = 1; tmp < 16; tmp++)
+			{
+				strcpy(g_file_name_stack[tmp - 1], g_file_name_stack[tmp]);
+			}
+			g_name_stack_ptr = 14;
+		}
+		g_name_stack_ptr++;
+		strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_state.name());
+		g_browse_state.merge_path_names(g_read_name);
+		if (g_ui_state.ask_video)
+		{
+				driver_stack_screen();   /* save graphics image */
+				stacked = true;
+		}
+		return true;       /* hop off and do it!! */
 
+	case '\\':
+		if (g_name_stack_ptr >= 1)
+		{
+			/* go back one file if somewhere to go (ie. browsing) */
+			g_name_stack_ptr--;
+			while (g_file_name_stack[g_name_stack_ptr][0] == '\0'
+					&& g_name_stack_ptr >= 0)
+			{
+				g_name_stack_ptr--;
+			}
+			if (g_name_stack_ptr < 0) /* oops, must have deleted first one */
+			{
+				break;
+			}
+			g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr]);
+			g_browse_state.merge_path_names(g_read_name);
+			g_browse_state.set_browsing(true);
+			g_show_file = SHOWFILE_PENDING;
+			if (g_ui_state.ask_video)
+			{
+				driver_stack_screen(); /* save graphics image */
+				stacked = true;
+			}
+			return true;
+		}                   /* otherwise fall through and turn off
+							* browsing */
+	case FIK_ESC:
+	case 'l':              /* turn it off */
+	case 'L':
+		g_browse_state.set_browsing(false);
+		break;
+
+	case 's':
+		g_browse_state.set_browsing(false);
+		save_to_disk(g_save_name);
+		break;
+
+	default:               /* or no files found, leave the state of browsing alone */
+		break;
+	}
+
+	return false;
+}
+
+ApplicationStateType handle_look_for_files(bool &stacked)
+{
+	if ((g_z_width != 0) || driver_diskp())
+	{
+		g_browse_state.set_browsing(false);
+		driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or disk video */
+	}
+	else if (look(stacked))
+	{
+		return APPSTATE_RESTORE_START;
+	}
+	return APPSTATE_NO_CHANGE;
+}
