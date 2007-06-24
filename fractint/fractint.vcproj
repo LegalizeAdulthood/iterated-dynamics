@@ -610,6 +610,10 @@
 				Name="i/o"
 				>
 				<File
+					RelativePath=".\common\Browse.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\cmdfiles.cpp"
 					>
 					<FileConfiguration
@@ -1227,6 +1231,10 @@
 			<Filter
 				Name="i/o"
 				>
+				<File
+					RelativePath=".\headers\Browse.h"
+					>
+				</File>
 				<File
 					RelativePath=".\headers\cmdfiles.h"
 					>

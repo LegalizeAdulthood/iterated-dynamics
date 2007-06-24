@@ -118,8 +118,8 @@ static int save_bf_vars();
 static int restore_bf_vars();
 
 /*********************************************************************/
-/* given bnlength, calc_lengths will calculate all the other lengths */
-void calc_lengths()
+/* given bnlength, calculate_bignum_lengths will calculate all the other lengths */
+void calculate_bignum_lengths()
 {
 	bnstep = 4;  /* use 4 in all cases */
 
@@ -179,7 +179,7 @@ static void init_bf_2()
 {
 	save_bf_vars(); /* copy corners values for conversion */
 
-	calc_lengths();
+	calculate_bignum_lengths();
 
 	bnroot = (bf_t) &s_storage[0];
 

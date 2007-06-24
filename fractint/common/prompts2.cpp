@@ -35,6 +35,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#include "Browse.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
@@ -1526,7 +1527,7 @@ retry_dir:
 			}
 		}
 	}
-	make_path(g_browse_name, "", "", fname, ext);
+	g_browse_state.make_path(fname, ext);
 	return 0;
 }
 
@@ -2000,27 +2001,27 @@ gsc_loop:
 
 int get_browse_parameters()
 {
-	bool old_auto_browse = g_auto_browse;
-	bool old_browse_check_type = g_browse_check_type;
-	bool old_browse_check_parameters = g_browse_check_parameters;
+	bool old_auto_browse = g_browse_state.auto_browse();
+	bool old_browse_check_type = g_browse_state.check_type();
+	bool old_browse_check_parameters = g_browse_state.check_parameters();
 	bool old_double_caution = g_ui_state.double_caution;
 	int old_cross_hair_box_size = g_cross_hair_box_size;
 	double old_too_small = g_too_small;
 	char old_browse_mask[FILE_MAX_FNAME];
-	strcpy(old_browse_mask, g_browse_mask);
+	strcpy(old_browse_mask, g_browse_state.mask());
 
 get_brws_restart:
 	{
 		UIChoices dialog(HELPBRWSPARMS, "Browse ('L'ook) Mode Options", 16);
 
-		dialog.push("Autobrowsing? (y/n)", g_auto_browse);
+		dialog.push("Autobrowsing? (y/n)", g_browse_state.auto_browse());
 		dialog.push("Ask about GIF video mode? (y/n)", g_ui_state.ask_video);
-		dialog.push("Check fractal type? (y/n)", g_browse_check_type);
-		dialog.push("Check fractal parameters (y/n)", g_browse_check_parameters);
+		dialog.push("Check fractal type? (y/n)", g_browse_state.check_type());
+		dialog.push("Check fractal parameters (y/n)", g_browse_state.check_parameters());
 		dialog.push("Confirm file deletes (y/n)", g_ui_state.double_caution);
 		dialog.push("Smallest window to display (size in pixels)", static_cast<float>(g_too_small));
 		dialog.push("Smallest box size shown before crosshairs used (pix)", g_cross_hair_box_size);
-		dialog.push("Browse search filename mask ", g_browse_mask);
+		dialog.push("Browse search filename mask ", g_browse_state.mask());
 		dialog.push("");
 		dialog.push("Press "FK_F4" to reset browse parameters to defaults.");
 
@@ -2033,21 +2034,21 @@ get_brws_restart:
 		if (result == FIK_F4)
 		{
 			g_too_small = 6;
-			g_auto_browse = false;
+			g_browse_state.set_auto_browse(false);
 			g_ui_state.ask_video = true;
-			g_browse_check_parameters = true;
-			g_browse_check_type  = true;
+			g_browse_state.set_check_parameters(true);
+			g_browse_state.set_check_type(true);
 			g_ui_state.double_caution  = true;
 			g_cross_hair_box_size = 3;
-			strcpy(g_browse_mask, "*.gif");
+			g_browse_state.set_mask("*.gif");
 			goto get_brws_restart;
 		}
 
 		int k = -1;
-		g_auto_browse = (dialog.values(++k).uval.ch.val != 0);
+		g_browse_state.set_auto_browse((dialog.values(++k).uval.ch.val != 0));
 		g_ui_state.ask_video = (dialog.values(++k).uval.ch.val != 0);
-		g_browse_check_type = (dialog.values(++k).uval.ch.val != 0);
-		g_browse_check_parameters = (dialog.values(++k).uval.ch.val != 0);
+		g_browse_state.set_check_type((dialog.values(++k).uval.ch.val != 0));
+		g_browse_state.set_check_parameters((dialog.values(++k).uval.ch.val != 0));
 		g_ui_state.double_caution = (dialog.values(++k).uval.ch.val != 0);
 		g_too_small  = dialog.values(++k).uval.dval;
 		if (g_too_small < 0)
@@ -2063,22 +2064,22 @@ get_brws_restart:
 		{
 			g_cross_hair_box_size = 10;
 		}
-		strcpy(g_browse_mask, dialog.values(++k).uval.sval);
+		g_browse_state.set_mask(dialog.values(++k).uval.sval);
 
 		int i = 0;
-		if (g_auto_browse != old_auto_browse ||
-			g_browse_check_type != old_browse_check_type ||
-			g_browse_check_parameters != old_browse_check_parameters ||
+		if (g_browse_state.auto_browse() != old_auto_browse ||
+			g_browse_state.check_type() != old_browse_check_type ||
+			g_browse_state.check_parameters() != old_browse_check_parameters ||
 			g_ui_state.double_caution != old_double_caution ||
 			g_too_small != old_too_small ||
 			g_cross_hair_box_size != old_cross_hair_box_size ||
-			!stricmp(g_browse_mask, old_browse_mask))
+			!stricmp(g_browse_state.mask(), old_browse_mask))
 		{
 			i = -3;
 		}
 		if (g_evolving_flags)  /* can't browse */
 		{
-			g_auto_browse = false;
+			g_browse_state.set_auto_browse(false);
 			i = 0;
 		}
 

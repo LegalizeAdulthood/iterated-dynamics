@@ -14,6 +14,7 @@
 #include "helpdefs.h"
 
 #include "ant.h"
+#include "Browse.h"
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
@@ -481,10 +482,10 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				g_save_ticks = g_save_time*60*1000; /* in milliseconds */
 				g_finish_row = -1;
 			}
-			g_browsing = false;      /* regenerate image, turn off browsing */
+			g_browse_state.set_browsing(false);      /* regenerate image, turn off browsing */
 			/*rb*/
 			g_name_stack_ptr = -1;   /* reset pointer */
-			g_browse_name[0] = '\0';  /* null */
+			g_browse_state.set_name("");
 			if (g_view_window && (g_evolving_flags & EVOLVE_FIELD_MAP) && (g_calculation_status != CALCSTAT_COMPLETED))
 			{
 				/* generate a set of images with varied parameters on each one */
@@ -673,7 +674,7 @@ resumeloop:
 				}
 				else      /* wait for a real keystroke */
 				{
-					if (g_auto_browse && !g_no_sub_images)
+					if (g_browse_state.auto_browse() && !g_no_sub_images)
 					{
 						kbdchar = 'l';
 					}
@@ -810,7 +811,7 @@ static bool look(bool &stacked)
 	case FIK_ENTER:
 	case FIK_ENTER_2:
 		g_show_file = SHOWFILE_PENDING;       /* trigger load */
-		g_browsing = true;    /* but don't ask for the file name as it's just been selected */
+		g_browse_state.set_browsing(true);    /* but don't ask for the file name as it's just been selected */
 		if (g_name_stack_ptr == 15)
 		{					/* about to run off the end of the file
 							* history stack so shift it all back one to
@@ -822,8 +823,8 @@ static bool look(bool &stacked)
 			g_name_stack_ptr = 14;
 		}
 		g_name_stack_ptr++;
-		strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_name);
-		merge_path_names(g_read_name, g_browse_name, 2);
+		strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_state.name());
+		g_browse_state.merge_path_names(g_read_name);
 		if (g_ui_state.ask_video)
 		{
 				driver_stack_screen();   /* save graphics image */
@@ -845,9 +846,9 @@ static bool look(bool &stacked)
 			{
 				break;
 			}
-			strcpy(g_browse_name, g_file_name_stack[g_name_stack_ptr]);
-			merge_path_names(g_read_name, g_browse_name, 2);
-			g_browsing = true;
+			g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr]);
+			g_browse_state.merge_path_names(g_read_name);
+			g_browse_state.set_browsing(true);
 			g_show_file = SHOWFILE_PENDING;
 			if (g_ui_state.ask_video)
 			{
@@ -860,11 +861,11 @@ static bool look(bool &stacked)
 	case FIK_ESC:
 	case 'l':              /* turn it off */
 	case 'L':
-		g_browsing = false;
+		g_browse_state.set_browsing(false);
 		break;
 
 	case 's':
-		g_browsing = false;
+		g_browse_state.set_browsing(false);
 		save_to_disk(g_save_name);
 		break;
 
@@ -1336,14 +1337,9 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		{
 			return APPSTATE_NO_CHANGE;
 		}
-		strcpy(g_browse_name, g_file_name_stack[g_name_stack_ptr]);
-		/*
-		split_path(g_browse_name, NULL, NULL, fname, ext);
-		split_path(g_read_name, drive, dir, NULL, NULL);
-		make_path(g_read_name, drive, dir, fname, ext);
-		*/
-		merge_path_names(g_read_name, g_browse_name, 2);
-		g_browsing = true;
+		g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr]);
+		g_browse_state.merge_path_names(g_read_name);
+		g_browse_state.set_browsing(true);
 		g_no_sub_images = false;
 		g_show_file = SHOWFILE_PENDING;
 		if (g_ui_state.ask_video)
@@ -1481,7 +1477,7 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 {
 	g_compare_gif = 0;
 	frommandel = false;
-	g_browsing = false;
+	g_browse_state.set_browsing(false);
 	if (kbdchar == 'r')
 	{
 		if (DEBUGMODE_COMPARE_RESTORED == g_debug_mode)
@@ -1519,7 +1515,7 @@ static ApplicationStateType handle_look_for_files(bool &stacked)
 {
 	if ((g_z_width != 0) || driver_diskp())
 	{
-		g_browsing = false;
+		g_browse_state.set_browsing(false);
 		driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or disk video */
 	}
 	else if (look(stacked))

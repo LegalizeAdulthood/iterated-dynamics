@@ -83,7 +83,7 @@ extern bf_t bftmp;							/* rbflength  */
 extern bf10_t bf10tmp;						/* dec+4 */
 extern big_t big_pi;
 
-void calc_lengths();
+void calculate_bignum_lengths();
 void init_big_dec(int dec);
 void init_big_length(int bnl);
 void init_big_pi();

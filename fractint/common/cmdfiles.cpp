@@ -12,6 +12,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 
+#include "Browse.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fihelp.h"
@@ -277,7 +278,7 @@ int command_files(int argc, char **argv)
 						&& tempstring[4] >= '0' && tempstring[4] <= '9')
 					{
 						strcpy(g_read_name, curarg);
-						extract_filename(g_browse_name, g_read_name);
+						g_browse_state.extract_read_name();
 						g_show_file = SHOWFILE_PENDING;
 						curarg[0] = 0;
 					}
@@ -997,7 +998,7 @@ static int filename_arg(const cmd_context &context)
 	}
 	else
 	{
-		extract_filename(g_browse_name, g_read_name);
+		g_browse_state.extract_read_name();
 	}
 	return Command::FractalParameter | Command::ThreeDParameter;
 }
