@@ -224,7 +224,7 @@ $(COMDIR)/SoundState.o $(COMDIR)/EscapeTime.o \
 $(COMDIR)/ThreeDimensionalState.o $(COMDIR)/MathUtil.o \
 $(COMDIR)/UIChoices.o $(COMDIR)/SolidGuess.o $(COMDIR)/Tesseral.o \
 $(COMDIR)/BoundaryTrace.o $(COMDIR)/DiffusionScan.o \
-$(COMDIR)/WorkList.o $(COMDIR)/filesystem.o
+$(COMDIR)/WorkList.o $(COMDIR)/filesystem.o $(COMDIR)/Browse.o
 
 
 ifeq ($(AS),/usr/bin/nasm)
