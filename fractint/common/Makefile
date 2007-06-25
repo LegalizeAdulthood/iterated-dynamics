@@ -68,7 +68,8 @@ SRCS = \
 	BoundaryTrace.cpp \
 	DiffusionScan.cpp \
 	WorkList.cpp \
-	filesystem.cpp
+	filesystem.cpp \
+	Browse.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
