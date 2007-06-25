@@ -41,7 +41,7 @@
 
 /* routines in this module      */
 
-void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i, int j);
+void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int i, int j);
 void expand_comments(char *target, char *source);
 static void put_parm(const char *parm, ...);
 static void put_parm_line();
@@ -78,51 +78,17 @@ static const char *truecolor_bits_text(int truecolorbits)
 
 void make_batch_file()
 {
-#define MAXPROMPTS 18
-	int colorsonly = 0;
-	double pdelx = 0.0;
-	double pdely = 0.0;
-	double pdelx2 = 0.0;
-	double pdely2 = 0.0;
-	unsigned int pxdots;
-	unsigned int pydots;
-	unsigned int xm;
-	unsigned int ym;
-	double pxxmin = 0.0;
-	double pyymax = 0.0;
-	char vidmde[5];
-	int promptnum;
-	int piecespromts;
-	int have3rd = 0;
-
-	int i;
-	int j;
-	char inpcommandfile[80];
-	char inpcommandname[ITEMNAMELEN + 1];
-	char inpcomment[4][MAX_COMMENT];
+	const int MAX_PROMPTS = 18;
 	struct full_screen_values paramvalues[18];
-	const char *choices[MAXPROMPTS];
-	int gotinfile;
-	char outname[FILE_MAX_PATH + 1];
-	char buf[256];
-	char buf2[128];
-	FILE *infile = NULL;
-	FILE *fpbat = NULL;
-	char colorspec[14];
+	const char *choices[MAX_PROMPTS];
 	int maxcolor;
 	int maxcolorindex = 0;
-	char *sptr = NULL;
-	char *sptr2;
-
-	if (g_make_par[1] == 0) /* makepar map case */
-	{
-		colorsonly = 1;
-	}
-
+	/* makepar map case */
 	driver_stack_screen();
 	HelpModeSaver saved_help(HELPPARMFILE);
 
 	maxcolor = g_colors;
+	char colorspec[14];
 	strcpy(colorspec, "y");
 #ifndef XFRACT
 	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode))
@@ -157,123 +123,137 @@ void make_batch_file()
 		{
 			maxcolor = 256;
 		}
+		const char *color_spec_name = NULL;
 		if (g_color_state == COLORSTATE_DEFAULT)
 		{                         /* default colors */
 			if (g_map_dac_box)
 			{
 				colorspec[0] = '@';
-				sptr = g_map_name;
+				color_spec_name = g_map_name;
 			}
 		}
 		else if (g_color_state == COLORSTATE_MAP)
 		{                         /* colors match g_color_file */
 			colorspec[0] = '@';
-			sptr = g_color_file;
+			color_spec_name = g_color_file;
 		}
 		else                      /* colors match no .map that we know of */
 		{
-			strcpy (colorspec, "y");
+			strcpy(colorspec, "y");
 		}
 
 		if (colorspec[0] == '@')
 		{
-			sptr2 = strrchr(sptr, SLASHC);
+			const char *sptr2 = strrchr(color_spec_name, SLASHC);
 			if (sptr2 != NULL)
 			{
-				sptr = sptr2 + 1;
+				color_spec_name = sptr2 + 1;
 			}
-			sptr2 = strrchr(sptr, ':');
+			sptr2 = strrchr(color_spec_name, ':');
 			if (sptr2 != NULL)
 			{
-				sptr = sptr2 + 1;
+				color_spec_name = sptr2 + 1;
 			}
-			strncpy(&colorspec[1], sptr, 12);
+			strncpy(&colorspec[1], color_spec_name, 12);
 			colorspec[13] = 0;
 		}
 	}
-	strcpy(inpcommandfile, g_command_file);
-	strcpy(inpcommandname, g_command_name);
-	for (i = 0; i < 4; i++)
+	char in_parameter_command_file[80];
+	strcpy(in_parameter_command_file, g_command_file);
+	char in_parameter_command_name[ITEMNAMELEN + 1];
+	strcpy(in_parameter_command_name, g_command_name);
+	char in_parameter_command_comment[4][MAX_COMMENT];
+	for (int i = 0; i < 4; i++)
 	{
 		expand_comments(g_command_comment[i], par_comment[i]);
-		strcpy(inpcomment[i], g_command_comment[i]);
+		strcpy(in_parameter_command_comment[i], g_command_comment[i]);
 	}
 
 	if (g_command_name[0] == 0)
 	{
-		strcpy(inpcommandname, "test");
+		strcpy(in_parameter_command_name, "test");
 	}
-	/* TW added these  - and Bert moved them */
-	pxdots = g_x_dots;
-	pydots = g_y_dots;
-	xm = ym = 1;
+	unsigned int pxdots = g_x_dots;
+	unsigned int pydots = g_y_dots;
+	unsigned int xm = 1;
+	unsigned int ym = 1;
 	if (*g_make_par == 0)
 	{
 		goto skip_UI;
 	}
 
+	char vidmde[5];
 	video_mode_key_name(g_video_entry.keynum, vidmde);
+	bool colors_only = (g_make_par[1] == 0);
+	double pdelx = 0.0;
+	double pdely = 0.0;
+	double pdelx2 = 0.0;
+	double pdely2 = 0.0;
+	double pxxmin = 0.0;
+	double pyymax = 0.0;
+	bool have_3rd = false;
+	char outname[FILE_MAX_PATH + 1];
 	while (true)
 	{
 prompt_user:
-		promptnum = 0;
-		choices[promptnum] = "Parameter file";
-		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[promptnum++].uval.sbuf = inpcommandfile;
-		choices[promptnum] = "Name";
-		paramvalues[promptnum].type = 0x100 + ITEMNAMELEN;
-		paramvalues[promptnum++].uval.sbuf = inpcommandname;
-		choices[promptnum] = "Main comment";
-		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[promptnum++].uval.sbuf = inpcomment[0];
-		choices[promptnum] = "Second comment";
-		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[promptnum++].uval.sbuf = inpcomment[1];
-		choices[promptnum] = "Third comment";
-		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[promptnum++].uval.sbuf = inpcomment[2];
-		choices[promptnum] = "Fourth comment";
-		paramvalues[promptnum].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[promptnum++].uval.sbuf = inpcomment[3];
+		int prompts = 0;
+		choices[prompts] = "Parameter file";
+		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+		paramvalues[prompts++].uval.sbuf = in_parameter_command_file;
+		choices[prompts] = "Name";
+		paramvalues[prompts].type = 0x100 + ITEMNAMELEN;
+		paramvalues[prompts++].uval.sbuf = in_parameter_command_name;
+		choices[prompts] = "Main comment";
+		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+		paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[0];
+		choices[prompts] = "Second comment";
+		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+		paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[1];
+		choices[prompts] = "Third comment";
+		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+		paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[2];
+		choices[prompts] = "Fourth comment";
+		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+		paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[3];
 #ifndef XFRACT
 		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
 #else
 		if (g_got_real_dac || (g_is_true_color && !g_true_mode) || g_fake_lut)
 #endif
 		{
-			choices[promptnum] = "Record colors?";
-			paramvalues[promptnum].type = 0x100 + 13;
-			paramvalues[promptnum++].uval.sbuf = colorspec;
-			choices[promptnum] = "    (no | yes | only for full info | @filename to point to a map file)";
-			paramvalues[promptnum++].type = '*';
-			choices[promptnum] = "# of colors";
-			maxcolorindex = promptnum;
-			paramvalues[promptnum].type = 'i';
-			paramvalues[promptnum++].uval.ival = maxcolor;
-			choices[promptnum] = "    (if recording full color info)";
-			paramvalues[promptnum++].type = '*';
+			choices[prompts] = "Record colors?";
+			paramvalues[prompts].type = 0x100 + 13;
+			paramvalues[prompts++].uval.sbuf = colorspec;
+			choices[prompts] = "    (no | yes | only for full info | @filename to point to a map file)";
+			paramvalues[prompts++].type = '*';
+			choices[prompts] = "# of colors";
+			maxcolorindex = prompts;
+			paramvalues[prompts].type = 'i';
+			paramvalues[prompts++].uval.ival = maxcolor;
+			choices[prompts] = "    (if recording full color info)";
+			paramvalues[prompts++].type = '*';
 		}
-		choices[promptnum] = "Maximum line length";
-		paramvalues[promptnum].type = 'i';
-		paramvalues[promptnum++].uval.ival = g_max_line_length;
-		choices[promptnum] = "";
-		paramvalues[promptnum++].type = '*';
-		choices[promptnum] = "    **** The following is for generating images in pieces ****";
-		paramvalues[promptnum++].type = '*';
-		choices[promptnum] = "X Multiples";
-		piecespromts = promptnum;
-		paramvalues[promptnum].type = 'i';
-		paramvalues[promptnum++].uval.ival = xm;
-		choices[promptnum] = "Y Multiples";
-		paramvalues[promptnum].type = 'i';
-		paramvalues[promptnum++].uval.ival = ym;
+		choices[prompts] = "Maximum line length";
+		paramvalues[prompts].type = 'i';
+		paramvalues[prompts++].uval.ival = g_max_line_length;
+		choices[prompts] = "";
+		paramvalues[prompts++].type = '*';
+		choices[prompts] = "    **** The following is for generating images in pieces ****";
+		paramvalues[prompts++].type = '*';
+		choices[prompts] = "X Multiples";
+		int pieces_prompts = prompts;
+		paramvalues[prompts].type = 'i';
+		paramvalues[prompts++].uval.ival = xm;
+		choices[prompts] = "Y Multiples";
+		paramvalues[prompts].type = 'i';
+		paramvalues[prompts++].uval.ival = ym;
 #ifndef XFRACT
-		choices[promptnum] = "Video mode";
-		paramvalues[promptnum].type = 0x100 + 4;
-		paramvalues[promptnum++].uval.sbuf = vidmde;
+		choices[prompts] = "Video mode";
+		paramvalues[prompts].type = 0x100 + 4;
+		paramvalues[prompts++].uval.sbuf = vidmde;
 #endif
 
-		if (full_screen_prompt("Save Current Parameters", promptnum, choices, paramvalues, 0, NULL) < 0)
+		if (full_screen_prompt("Save Current Parameters", prompts, choices, paramvalues, 0, NULL) < 0)
 		{
 			break;
 		}
@@ -281,18 +261,18 @@ prompt_user:
 		if (*colorspec == 'o' || g_make_par[1] == 0)
 		{
 			strcpy(colorspec, "y");
-			colorsonly = 1;
+			colors_only = true;
 		}
 
-		strcpy(g_command_file, inpcommandfile);
+		strcpy(g_command_file, in_parameter_command_file);
 		if (has_extension(g_command_file) == NULL)
 		{
 			strcat(g_command_file, ".par");   /* default extension .par */
 		}
-		strcpy(g_command_name, inpcommandname);
-		for (i = 0; i < 4; i++)
+		strcpy(g_command_name, in_parameter_command_name);
+		for (int i = 0; i < 4; i++)
 		{
-			strncpy(g_command_comment[i], inpcomment[i], MAX_COMMENT);
+			strncpy(g_command_comment[i], in_parameter_command_comment[i], MAX_COMMENT);
 		}
 #ifndef XFRACT
 		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
@@ -306,18 +286,18 @@ prompt_user:
 				maxcolor = paramvalues[maxcolorindex].uval.ival;
 			}
 		}
-		promptnum = piecespromts;
+		prompts = pieces_prompts;
 		{
 			int newmaxlinelength;
-			newmaxlinelength = paramvalues[promptnum-3].uval.ival;
+			newmaxlinelength = paramvalues[prompts-3].uval.ival;
 			if (g_max_line_length != newmaxlinelength &&
 					newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
 					newmaxlinelength <= MAX_MAX_LINE_LENGTH)
 				g_max_line_length = newmaxlinelength;
 		}
-		xm = paramvalues[promptnum++].uval.ival;
+		xm = paramvalues[prompts++].uval.ival;
 
-		ym = paramvalues[promptnum++].uval.ival;
+		ym = paramvalues[prompts++].uval.ival;
 
 		/* sanity checks */
 		{
@@ -372,43 +352,48 @@ skip_UI:
 			maxcolor = (g_make_par[1] == 0) ? 256 : g_file_colors;
 		}
 		strcpy(outname, g_command_file);
-		gotinfile = 0;
+		bool got_input_file = false;
+		FILE *input_file = NULL;
 		if (access(g_command_file, 0) == 0)
 		{                         /* file exists */
-			gotinfile = 1;
+			got_input_file = true;
 			if (access(g_command_file, 6))
 			{
+				char buf[256];
 				sprintf(buf, "Can't write %s", g_command_file);
 				stop_message(0, buf);
 				continue;
 			}
-			i = (int) strlen(outname);
+			int i = (int) strlen(outname);
 			while (--i >= 0 && outname[i] != SLASHC)
 			{
 				outname[i] = 0;
 			}
 			strcat(outname, "fractint.tmp");
-			infile = fopen(g_command_file, "rt");
+			input_file = fopen(g_command_file, "rt");
 #ifndef XFRACT
-			setvbuf(infile, g_text_stack, _IOFBF, 4096); /* improves speed */
+			setvbuf(input_file, g_text_stack, _IOFBF, 4096); /* improves speed */
 #endif
 		}
 		parmfile = fopen(outname, "wt");
 		if (parmfile == NULL)
 		{
+			char buf[256];
 			sprintf(buf, "Can't create %s", outname);
 			stop_message(0, buf);
-			if (gotinfile)
+			if (got_input_file)
 			{
-				fclose(infile);
+				fclose(input_file);
 			}
 			continue;
 		}
 
-		if (gotinfile)
+		if (got_input_file)
 		{
-			while (file_gets(buf, 255, infile) >= 0)
+			char buf[256];
+			while (file_gets(buf, NUM_OF(buf)-1, input_file) >= 0)
 			{
+				char buf2[128];
 				if (strchr(buf, '{')/* entry heading? */
 					&& sscanf(buf, " %40[^ \t({]", buf2)
 					&& stricmp(buf2, g_command_name) == 0)
@@ -418,13 +403,13 @@ skip_UI:
 						"... Replacing ..." : "Continue to replace it, Cancel to back out");
 					if (stop_message(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
 					{                /* cancel */
-						fclose(infile);
+						fclose(input_file);
 						fclose(parmfile);
 						unlink(outname);
 						goto prompt_user;
 					}
 					while (strchr(buf, '}') == NULL
-							&& file_gets(buf, 255, infile) > 0)
+							&& file_gets(buf, NUM_OF(buf)-1, input_file) > 0)
 					{
 						/* skip to end of set */
 					}
@@ -435,9 +420,11 @@ skip_UI:
 			}
 		}
 /***** start here*/
+		FILE *fpbat = NULL;
 		if (xm > 1 || ym > 1)
 		{
-			have3rd = (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd() || g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd()) ? 1 : 0;
+			have_3rd = (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd()
+					|| g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd());
 			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
 			if (fpbat == NULL)
 			{
@@ -452,9 +439,9 @@ skip_UI:
 			pxxmin = g_escape_time_state.m_grid_fp.x_min();
 			pyymax = g_escape_time_state.m_grid_fp.y_max();
 		}
-		for (i = 0; i < (int)xm; i++)  /* columns */
+		for (int i = 0; i < (int)xm; i++)  /* columns */
 		{
-			for (j = 0; j < (int)ym; j++)  /* rows    */
+			for (int j = 0; j < (int)ym; j++)  /* rows    */
 			{
 				if (xm > 1 || ym > 1)
 				{
@@ -483,7 +470,7 @@ skip_UI:
 					g_escape_time_state.m_grid_fp.x_max() = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
 					g_escape_time_state.m_grid_fp.y_min() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
 					g_escape_time_state.m_grid_fp.y_max() = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
-					if (have3rd)
+					if (have_3rd)
 					{
 						g_escape_time_state.m_grid_fp.x_3rd() = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
 						g_escape_time_state.m_grid_fp.y_3rd() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
@@ -503,20 +490,19 @@ skip_UI:
 				{
 					/* guarantee that there are no blank comments above the last
 					non-blank par_comment */
-					int i;
-					int last;
-					for (last = -1, i = 0; i < 4; i++)
+					int last = -1;
+					for (int n = 0; n < 4; n++)
 					{
-						if (*par_comment[i])
+						if (*par_comment[n])
 						{
-							last = i;
+							last = n;
 						}
 					}
-					for (i = 0; i < last; i++)
+					for (int n = 0; n < last; n++)
 					{
-						if (*g_command_comment[i] == '\0')
+						if (*g_command_comment[n] == '\0')
 						{
-							strcpy(g_command_comment[i], ";");
+							strcpy(g_command_comment[n], ";");
 						}
 					}
 				}
@@ -526,25 +512,24 @@ skip_UI:
 				}
 				fputc('\n', parmfile);
 				{
-					int k;
 					char buf[25];
 					memset(buf, ' ', 23);
 					buf[23] = 0;
 					buf[21] = ';';
-					for (k = 1; k < 4; k++)
+					for (int k = 1; k < 4; k++)
 					{
 						if (g_command_comment[k][0])
 						{
 							fprintf(parmfile, "%s%s\n", buf, g_command_comment[k]);
 						}
 					}
-					if (g_patch_level != 0 && colorsonly == 0)
+					if (g_patch_level != 0 && !colors_only)
 					{
 						fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
 							Fractint, g_release, g_patch_level);
 					}
 				}
-				write_batch_parms(colorspec, colorsonly, maxcolor, i, j);
+				write_batch_parms(colorspec, colors_only, maxcolor, i, j);
 				if (xm > 1 || ym > 1)
 				{
 					fprintf(parmfile, "  video=%s", vidmde);
@@ -562,23 +547,25 @@ skip_UI:
 		}
 		/*******end here */
 
-		if (gotinfile)
+		if (got_input_file)
 		{                         /* copy the rest of the file */
+			int i;
+			char buf[256];
 			do
 			{
-				i = file_gets(buf, 255, infile);
+				i = file_gets(buf, NUM_OF(buf)-1, input_file);
 			}
 			while (i == 0); /* skip blanks */
 			while (i >= 0)
 			{
 				fputs(buf, parmfile);
 				fputc('\n', parmfile);
-				i = file_gets(buf, 255, infile);
+				i = file_gets(buf, NUM_OF(buf)-1, input_file);
 			}
-			fclose(infile);
+			fclose(input_file);
 		}
 		fclose(parmfile);
-		if (gotinfile)
+		if (got_input_file)
 		{                         /* replace the original file with the new */
 			unlink(g_command_file);   /* success assumed on these lines       */
 			rename(outname, g_command_file);  /* since we checked earlier with access */
@@ -716,7 +703,7 @@ static void write_3d_parameters()
 	}
 }
 
-void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int ii, int jj)
+void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int ii, int jj)
 {
 	int i;
 	int j;
@@ -734,15 +721,15 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 	int saved = save_stack();
 	if (g_bf_math)
 	{
-		bfXctr = alloc_stack(bflength + 2);
-		bfYctr = alloc_stack(bflength + 2);
+		bfXctr = alloc_stack(g_bf_length + 2);
+		bfYctr = alloc_stack(g_bf_length + 2);
 	}
 
 	s_wbdata.len = 0; /* force first parm to start on new line */
 
 	/* Using near string g_box_x for buffer after saving to extraseg */
 
-	if (colorsonly)
+	if (colors_only)
 	{
 		goto docolors;
 	}
@@ -811,7 +798,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			put_parm(" miim=%s/%s", g_jiim_method[g_major_method], g_jiim_left_right[g_minor_method]);
 		}
 
-		show_trig(buf); /* this function is in miscres.c */
+		show_function(buf); /* this function is in miscres.c */
 		if (buf[0])
 		{
 			put_parm(buf);
@@ -1265,7 +1252,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		put_parm("/%d/%d", g_view_x_dots, g_view_y_dots);
 	}
 
-	if (colorsonly == 0)
+	if (!colors_only)
 	{
 		if (g_rotate_lo != 1 || g_rotate_hi != 255)
 		{
@@ -1581,8 +1568,8 @@ int get_precision_mag_bf()
 	int dec;
 
 	saved = save_stack();
-	bXctr            = alloc_stack(bflength + 2);
-	bYctr            = alloc_stack(bflength + 2);
+	bXctr            = alloc_stack(g_bf_length + 2);
+	bYctr            = alloc_stack(g_bf_length + 2);
 	/* this is just to find Magnification */
 	convert_center_mag_bf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	restore_stack(saved);
@@ -1657,13 +1644,13 @@ int get_precision_bf(int rezflag)
 	int saved;
 	int rez;
 	saved    = save_stack();
-	del1     = alloc_stack(bflength + 2);
-	del2     = alloc_stack(bflength + 2);
-	one      = alloc_stack(bflength + 2);
-	bfxxdel   = alloc_stack(bflength + 2);
-	bfxxdel2  = alloc_stack(bflength + 2);
-	bfyydel   = alloc_stack(bflength + 2);
-	bfyydel2  = alloc_stack(bflength + 2);
+	del1     = alloc_stack(g_bf_length + 2);
+	del2     = alloc_stack(g_bf_length + 2);
+	one      = alloc_stack(g_bf_length + 2);
+	bfxxdel   = alloc_stack(g_bf_length + 2);
+	bfxxdel2  = alloc_stack(g_bf_length + 2);
+	bfyydel   = alloc_stack(g_bf_length + 2);
+	bfyydel2  = alloc_stack(g_bf_length + 2);
 	floattobf(one, 1.0);
 	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
 
@@ -2608,126 +2595,135 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 	}
 }
 
+static void reverse_x_axis()
+{
+	for (int i = 0; i < g_x_dots/2; i++)
+	{
+		if (driver_key_pressed())
+		{
+			break;
+		}
+		for (int j = 0; j < g_y_dots; j++)
+		{
+			int temp = getcolor(i, j);
+			g_plot_color_put_color(i, j, getcolor(g_x_dots-1-i, j));
+			g_plot_color_put_color(g_x_dots-1-i, j, temp);
+		}
+	}
+	g_sx_min = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
+	g_sy_max = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
+	g_sx_max = g_escape_time_state.m_grid_fp.x_3rd();
+	g_sy_min = g_escape_time_state.m_grid_fp.y_3rd();
+	g_sx_3rd = g_escape_time_state.m_grid_fp.x_max();
+	g_sy_3rd = g_escape_time_state.m_grid_fp.y_min();
+	if (g_bf_math)
+	{
+		add_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
+		sub_a_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_3rd());
+		add_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; */
+		sub_a_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_3rd());
+		copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_3rd());        /* g_sx_max = g_xx_3rd; */
+		copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_3rd());        /* g_sy_min = g_yy_3rd; */
+		copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_max());        /* g_sx_3rd = g_xx_max; */
+		copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_min());        /* g_sy_3rd = g_yy_min; */
+	}
+}
+
+static void reverse_y_axis()
+{
+	for (int j = 0; j < g_y_dots/2; j++)
+	{
+		if (driver_key_pressed())
+		{
+			break;
+		}
+		for (int i = 0; i < g_x_dots; i++)
+		{
+			int temp = getcolor(i, j);
+			g_plot_color_put_color(i, j, getcolor(i, g_y_dots-1-j));
+			g_plot_color_put_color(i, g_y_dots-1-j, temp);
+		}
+	}
+	g_sx_min = g_escape_time_state.m_grid_fp.x_3rd();
+	g_sy_max = g_escape_time_state.m_grid_fp.y_3rd();
+	g_sx_max = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
+	g_sy_min = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
+	g_sx_3rd = g_escape_time_state.m_grid_fp.x_min();
+	g_sy_3rd = g_escape_time_state.m_grid_fp.y_max();
+	if (g_bf_math)
+	{
+		copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_3rd());        /* g_sx_min = g_xx_3rd; */
+		copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_3rd());        /* g_sy_max = g_yy_3rd; */
+		add_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; */
+		sub_a_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_3rd());
+		add_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; */
+		sub_a_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_3rd());
+		copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_min());        /* g_sx_3rd = g_xx_min; */
+		copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_max());        /* g_sy_3rd = g_yy_max; */
+	}
+}
+
+static void reverse_x_y_axes()
+{
+	for (int i = 0; i < g_x_dots/2; i++)
+	{
+		if (driver_key_pressed())
+		{
+			break;
+		}
+		for (int j = 0; j < g_y_dots; j++)
+		{
+			int temp = getcolor(i, j);
+			g_plot_color_put_color(i, j, getcolor(g_x_dots-1-i, g_y_dots-1-j));
+			g_plot_color_put_color(g_x_dots-1-i, g_y_dots-1-j, temp);
+		}
+	}
+	g_sx_min = g_escape_time_state.m_grid_fp.x_max();
+	g_sy_max = g_escape_time_state.m_grid_fp.y_min();
+	g_sx_max = g_escape_time_state.m_grid_fp.x_min();
+	g_sy_min = g_escape_time_state.m_grid_fp.y_max();
+	g_sx_3rd = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
+	g_sy_3rd = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
+	if (g_bf_math)
+	{
+		copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_max());        /* g_sx_min = g_xx_max; */
+		copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_min());        /* g_sy_max = g_yy_min; */
+		copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_min());        /* g_sx_max = g_xx_min; */
+		copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_max());        /* g_sy_min = g_yy_max; */
+		add_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; */
+		sub_a_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_3rd());
+		add_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; */
+		sub_a_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_3rd());
+	}
+}
 /* This routine copies the current screen to by flipping x-axis, y-axis,
 	or both. Refuses to work if calculation in progress or if fractal
 	non-resumable. Clears zoombox if any. Resets corners so resulting fractal
 	is still valid. */
 void flip_image(int key)
 {
-	int i;
-	int j;
-	int ixhalf;
-	int iyhalf;
-	int tempdot;
-
 	/* fractal must be rotate-able and be finished */
-	if ((g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0
-			|| g_calculation_status == CALCSTAT_IN_PROGRESS
-			|| g_calculation_status == CALCSTAT_RESUMABLE)
+	if (g_current_fractal_specific->no_zoom_box_rotate()
+		|| g_calculation_status == CALCSTAT_IN_PROGRESS
+		|| g_calculation_status == CALCSTAT_RESUMABLE)
+	{
 		return;
+	}
+
 	if (g_bf_math)
 	{
 		clear_zoom_box(); /* clear, don't copy, the zoombox */
 	}
-	ixhalf = g_x_dots / 2;
-	iyhalf = g_y_dots / 2;
 	switch (key)
 	{
 	case FIK_CTL_X:            /* control-X - reverse X-axis */
-		for (i = 0; i < ixhalf; i++)
-		{
-			if (driver_key_pressed())
-			{
-				break;
-			}
-			for (j = 0; j < g_y_dots; j++)
-			{
-				tempdot = getcolor(i, j);
-				g_plot_color_put_color(i, j, getcolor(g_x_dots-1-i, j));
-				g_plot_color_put_color(g_x_dots-1-i, j, tempdot);
-			}
-		}
-		g_sx_min = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
-		g_sy_max = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
-		g_sx_max = g_escape_time_state.m_grid_fp.x_3rd();
-		g_sy_min = g_escape_time_state.m_grid_fp.y_3rd();
-		g_sx_3rd = g_escape_time_state.m_grid_fp.x_max();
-		g_sy_3rd = g_escape_time_state.m_grid_fp.y_min();
-		if (g_bf_math)
-		{
-			add_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_3rd());
-			add_bf(bfsymax, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsymax, g_escape_time_state.m_grid_bf.y_3rd());
-			copy_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_3rd());        /* g_sx_max = g_xx_3rd; */
-			copy_bf(bfsymin, g_escape_time_state.m_grid_bf.y_3rd());        /* g_sy_min = g_yy_3rd; */
-			copy_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_max());        /* g_sx_3rd = g_xx_max; */
-			copy_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_min());        /* g_sy_3rd = g_yy_min; */
-		}
+		reverse_x_axis();
 		break;
-	case FIK_CTL_Y:            /* control-Y - reverse Y-aXis */
-		for (j = 0; j < iyhalf; j++)
-		{
-			if (driver_key_pressed())
-			{
-				break;
-			}
-			for (i = 0; i < g_x_dots; i++)
-			{
-				tempdot = getcolor(i, j);
-				g_plot_color_put_color(i, j, getcolor(i, g_y_dots-1-j));
-				g_plot_color_put_color(i, g_y_dots-1-j, tempdot);
-			}
-		}
-		g_sx_min = g_escape_time_state.m_grid_fp.x_3rd();
-		g_sy_max = g_escape_time_state.m_grid_fp.y_3rd();
-		g_sx_max = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
-		g_sy_min = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
-		g_sx_3rd = g_escape_time_state.m_grid_fp.x_min();
-		g_sy_3rd = g_escape_time_state.m_grid_fp.y_max();
-		if (g_bf_math)
-		{
-			copy_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_3rd());        /* g_sx_min = g_xx_3rd; */
-			copy_bf(bfsymax, g_escape_time_state.m_grid_bf.y_3rd());        /* g_sy_max = g_yy_3rd; */
-			add_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_3rd());
-			add_bf(bfsymin, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsymin, g_escape_time_state.m_grid_bf.y_3rd());
-			copy_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_min());        /* g_sx_3rd = g_xx_min; */
-			copy_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_max());        /* g_sy_3rd = g_yy_max; */
-		}
+	case FIK_CTL_Y:            /* control-Y - reverse Y-axis */
+		reverse_y_axis();
 		break;
-	case FIK_CTL_Z:            /* control-Z - reverse X and Y aXis */
-		for (i = 0; i < ixhalf; i++)
-		{
-			if (driver_key_pressed())
-			{
-				break;
-			}
-			for (j = 0; j < g_y_dots; j++)
-			{
-				tempdot = getcolor(i, j);
-				g_plot_color_put_color(i, j, getcolor(g_x_dots-1-i, g_y_dots-1-j));
-				g_plot_color_put_color(g_x_dots-1-i, g_y_dots-1-j, tempdot);
-			}
-		}
-		g_sx_min = g_escape_time_state.m_grid_fp.x_max();
-		g_sy_max = g_escape_time_state.m_grid_fp.y_min();
-		g_sx_max = g_escape_time_state.m_grid_fp.x_min();
-		g_sy_min = g_escape_time_state.m_grid_fp.y_max();
-		g_sx_3rd = g_escape_time_state.m_grid_fp.x_max() + g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
-		g_sy_3rd = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
-		if (g_bf_math)
-		{
-			copy_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_max());        /* g_sx_min = g_xx_max; */
-			copy_bf(bfsymax, g_escape_time_state.m_grid_bf.y_min());        /* g_sy_max = g_yy_min; */
-			copy_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_min());        /* g_sx_max = g_xx_min; */
-			copy_bf(bfsymin, g_escape_time_state.m_grid_bf.y_max());        /* g_sy_min = g_yy_max; */
-			add_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; */
-			sub_a_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_3rd());
-			add_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; */
-			sub_a_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_3rd());
-		}
+	case FIK_CTL_Z:            /* control-Z - reverse X and Y axis */
+		reverse_x_y_axes();
 		break;
 	}
 	reset_zoom_corners();

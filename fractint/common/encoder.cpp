@@ -604,10 +604,10 @@ int encoder()
 		/* Extended parameters g_block 005 */
 		if (g_bf_math)
 		{
-			save_info.tot_extend_len += extend_blk_len(22*(bflength + 2));
+			save_info.tot_extend_len += extend_blk_len(22*(g_bf_length + 2));
 			/* note: this assumes variables allocated in order starting with
 			 * bfxmin in init_bf2() in BIGNUM.C */
-			if (!put_extend_blk(5, 22*(bflength + 2), (char *) g_escape_time_state.m_grid_bf.x_min()))
+			if (!put_extend_blk(5, 22*(g_bf_length + 2), (char *) g_escape_time_state.m_grid_bf.x_min()))
 			{
 				goto oops;
 			}
@@ -952,7 +952,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->bail_out = g_bail_out;
 	save_info->bailoutest = (short) g_bail_out_test;
 	save_info->iterations = g_max_iteration;
-	save_info->bflength = (short) bnlength;
+	save_info->bflength = (short) g_bn_length;
 	save_info->bf_math = (short) g_bf_math;
 	save_info->old_demm_colors = (short) g_old_demm_colors ? 1 : 0;
 	save_info->logmap = g_log_palette_mode;

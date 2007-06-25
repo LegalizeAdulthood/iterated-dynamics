@@ -140,14 +140,14 @@ void calculate_fractal_initialize()
 
 	g_escape_time_state.set_grids();
 
-	if (!(g_current_fractal_specific->flags & FRACTALFLAG_ARBITRARY_PRECISION))
+	if (!g_current_fractal_specific->arbitrary_precision())
 	{
 		int fractal_type_float = g_current_fractal_specific->tofloat;
 		if (fractal_type_none(fractal_type_float))
 		{
 			g_bf_math = 0;
 		}
-		else if (!(g_fractal_specific[fractal_type_float].flags & FRACTALFLAG_ARBITRARY_PRECISION))
+		else if (!g_fractal_specific[fractal_type_float].arbitrary_precision())
 		{
 			g_bf_math = 0;
 		}
@@ -318,7 +318,7 @@ init_restart:
 	calculate_fractal_initialize_bail_out_limit();
 
 	double ftemp;
-	if ((g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0)
+	if (g_current_fractal_specific->no_zoom_box_rotate())
 	{
 		/* ensure min < max and unrotated rectangle */
 		if (g_escape_time_state.m_grid_fp.x_min() > g_escape_time_state.m_grid_fp.x_max())
@@ -537,7 +537,7 @@ expand_retry:
 					if (ratio_bad(testx_try, testx_exact) ||
 						ratio_bad(testy_try, testy_exact))
 					{
-						if (g_current_fractal_specific->flags & FRACTALFLAG_ARBITRARY_PRECISION)
+						if (g_current_fractal_specific->arbitrary_precision())
 						{
 							fractal_float_to_bf();
 							goto init_restart;
@@ -630,9 +630,9 @@ void adjust_corner_bf(float aspect_drift)
 	bf_t bftemp, bftemp2;
 	bf_t btmp1;
 	int saved = save_stack();
-	bftemp  = alloc_stack(rbflength + 2);
-	bftemp2 = alloc_stack(rbflength + 2);
-	btmp1  =  alloc_stack(rbflength + 2);
+	bftemp  = alloc_stack(g_rbf_length + 2);
+	bftemp2 = alloc_stack(g_rbf_length + 2);
+	btmp1  =  alloc_stack(g_rbf_length + 2);
 
 	/* While we're at it, let's adjust the Xmagfactor as well */
 	/* use bftemp, bftemp2 as bfXctr, bfYctr */
@@ -774,27 +774,27 @@ static void _fastcall adjust_to_limits_bf(double expand)
 	bf_t bexpand;
 	int i;
 	int saved = save_stack();
-	bcornerx[0] = alloc_stack(rbflength + 2);
-	bcornerx[1] = alloc_stack(rbflength + 2);
-	bcornerx[2] = alloc_stack(rbflength + 2);
-	bcornerx[3] = alloc_stack(rbflength + 2);
-	bcornery[0] = alloc_stack(rbflength + 2);
-	bcornery[1] = alloc_stack(rbflength + 2);
-	bcornery[2] = alloc_stack(rbflength + 2);
-	bcornery[3] = alloc_stack(rbflength + 2);
-	blowx       = alloc_stack(rbflength + 2);
-	bhighx      = alloc_stack(rbflength + 2);
-	blowy       = alloc_stack(rbflength + 2);
-	bhighy      = alloc_stack(rbflength + 2);
-	blimit      = alloc_stack(rbflength + 2);
-	bftemp      = alloc_stack(rbflength + 2);
-	bcenterx    = alloc_stack(rbflength + 2);
-	bcentery    = alloc_stack(rbflength + 2);
-	badjx       = alloc_stack(rbflength + 2);
-	badjy       = alloc_stack(rbflength + 2);
-	btmp1       = alloc_stack(rbflength + 2);
-	btmp2       = alloc_stack(rbflength + 2);
-	bexpand     = alloc_stack(rbflength + 2);
+	bcornerx[0] = alloc_stack(g_rbf_length + 2);
+	bcornerx[1] = alloc_stack(g_rbf_length + 2);
+	bcornerx[2] = alloc_stack(g_rbf_length + 2);
+	bcornerx[3] = alloc_stack(g_rbf_length + 2);
+	bcornery[0] = alloc_stack(g_rbf_length + 2);
+	bcornery[1] = alloc_stack(g_rbf_length + 2);
+	bcornery[2] = alloc_stack(g_rbf_length + 2);
+	bcornery[3] = alloc_stack(g_rbf_length + 2);
+	blowx       = alloc_stack(g_rbf_length + 2);
+	bhighx      = alloc_stack(g_rbf_length + 2);
+	blowy       = alloc_stack(g_rbf_length + 2);
+	bhighy      = alloc_stack(g_rbf_length + 2);
+	blimit      = alloc_stack(g_rbf_length + 2);
+	bftemp      = alloc_stack(g_rbf_length + 2);
+	bcenterx    = alloc_stack(g_rbf_length + 2);
+	bcentery    = alloc_stack(g_rbf_length + 2);
+	badjx       = alloc_stack(g_rbf_length + 2);
+	badjy       = alloc_stack(g_rbf_length + 2);
+	btmp1       = alloc_stack(g_rbf_length + 2);
+	btmp2       = alloc_stack(g_rbf_length + 2);
+	bexpand     = alloc_stack(g_rbf_length + 2);
 
 	limit = 32767.99;
 
@@ -1196,7 +1196,7 @@ static void _fastcall smallest_add_bf(bf_t num)
 {
 	bf_t btmp1;
 	int saved = save_stack();
-	btmp1 = alloc_stack(bflength + 2);
+	btmp1 = alloc_stack(g_bf_length + 2);
 	mult_bf(btmp1, floattobf(btmp1, 5.0e-16), num);
 	add_a_bf(num, btmp1);
 	restore_stack(saved);

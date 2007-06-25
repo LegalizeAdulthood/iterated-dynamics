@@ -752,6 +752,31 @@ struct FractalTypeSpecificData
 	int (*per_image)();					/* once-per-image setup */
 	int (*calculate_type)();			/* name of main fractal function */
 	int orbit_bailout;					/* usual bailout value for orbit calc */
+
+	int num_functions() const
+	{
+		return (flags >> FRACTALFLAG_FUNCTION_SHIFT) & FRACTALFLAG_FUNCTION_MASK;
+	}
+
+	bool no_boundary_tracing() const
+	{
+		return (flags & FRACTALFLAG_NO_BOUNDARY_TRACING) != 0;
+	}
+
+	bool no_solid_guessing() const
+	{
+		return (flags & FRACTALFLAG_NO_SOLID_GUESSING) != 0;
+	}
+
+	bool arbitrary_precision() const
+	{
+		return (flags & FRACTALFLAG_ARBITRARY_PRECISION) != 0;
+	}
+
+	bool no_zoom_box_rotate() const
+	{
+		return (flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0;
+	}
 };
 
 class AbstractFractalType

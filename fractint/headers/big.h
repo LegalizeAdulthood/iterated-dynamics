@@ -40,45 +40,45 @@ typedef ComplexT<bn_t> ComplexBigNum;
 
 extern int g_bf_math;
 
-extern int bnstep;
-extern int intlength;
-extern int bnlength;
-extern int rlength;
-extern int padding;
+extern int g_step_bn;
+extern int g_int_length;
+extern int g_bn_length;
+extern int g_r_length;
+extern int g_padding;
 extern int g_decimals;
-extern int shiftfactor;
-extern int bflength;
-extern int rbflength;
-extern int bfpadding;
-extern int bfdecimals;
+extern int g_shift_factor;
+extern int g_bf_length;
+extern int g_rbf_length;
+extern int g_bf_padding;
+extern int g_bf_decimals;
 
 extern bn_t bntmp1;
 extern bn_t bntmp2;
 extern bn_t bntmp3;
 extern bn_t bntmp4;
 extern bn_t bntmp5;
-extern bn_t bntmp6;							/* rlength */
+extern bn_t bntmp6;							/* g_r_length */
 extern bn_t bntest1;
 extern bn_t bntest2;
-extern bn_t bntest3;						/* rlength */
+extern bn_t bntest3;						/* g_r_length */
 extern bn_t bntmpcpy1;
-extern bn_t bntmpcpy2;						/* bnlength */
+extern bn_t bntmpcpy2;						/* g_bn_length */
 extern bn_t bn_pi;
-extern bn_t bntmp;							/* rlength  */
+extern bn_t bntmp;							/* g_r_length  */
 
 extern bf_t bftmp1;
 extern bf_t bftmp2;
 extern bf_t bftmp3;
 extern bf_t bftmp4;
 extern bf_t bftmp5;
-extern bf_t bftmp6;							/* rbflength+2 */
+extern bf_t bftmp6;							/* g_rbf_length+2 */
 extern bf_t bftest1;
 extern bf_t bftest2;
-extern bf_t bftest3;						/* rbflength+2 */
+extern bf_t bftest3;						/* g_rbf_length+2 */
 extern bf_t bftmpcpy1;
-extern bf_t bftmpcpy2;						/* bflength+2  */
+extern bf_t bftmpcpy2;						/* g_bf_length+2  */
 extern bf_t bf_pi;
-extern bf_t bftmp;							/* rbflength  */
+extern bf_t bftmp;							/* g_rbf_length  */
 
 extern bf10_t bf10tmp;						/* dec+4 */
 extern big_t big_pi;

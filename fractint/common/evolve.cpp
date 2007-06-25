@@ -358,11 +358,8 @@ static void vary_invert(GENEBASE gene[], int randval, int i)
 */
 static int get_the_rest()
 {
-	int numtrig = (g_current_fractal_specific->flags >> 6) & 7;
-	if (fractal_type_formula(g_fractal_type))
-	{
-		numtrig = g_formula_state.max_fn();
-	}
+	int num_functions = fractal_type_formula(g_fractal_type) ?
+		g_formula_state.max_fn() : g_current_fractal_specific->num_functions();
 
 choose_vars_restart:
 	{
@@ -375,7 +372,7 @@ choose_vars_restart:
 		{
 			dialog.push(g_genes[num].name, evolvmodes, NUM_OF(evolvmodes), g_genes[num].mutate);
 		}
-		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
+		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + num_functions); num++)
 		{
 			dialog.push(g_genes[num].name, evolvmodes, NUM_OF(evolvmodes), g_genes[num].mutate);
 		}
@@ -422,7 +419,7 @@ choose_vars_restart:
 			g_genes[num].mutate = (char)(dialog.values(++k).uval.ch.val);
 		}
 
-		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + numtrig); num++)
+		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + num_functions); num++)
 		{
 			g_genes[num].mutate = (char)(dialog.values(++k).uval.ch.val);
 		}

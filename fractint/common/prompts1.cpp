@@ -1338,7 +1338,7 @@ static void set_trig_array_bifurcation(int oldfractype, int old_float_type, int 
 	/* Added the following to accommodate fn bifurcations.  JCO 7/2/92 */
 	if (!((oldfractype == old_float_type) || (oldfractype == old_int_type)))
 	{
-		set_trig_array(0, value);
+		set_function_array(0, value);
 	}
 }
 
@@ -1630,7 +1630,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	int k;
 	int current_fractal_type;
 	int num_parameters;
-	int numtrig;
+	int num_functions;
 	struct full_screen_values parameter_values[30];
 	const char *choices[30];
 	long old_bail_out = 0L;
@@ -1891,10 +1891,10 @@ gfp_top:
 		num_parameters = lastparm - firstparm;
 	}
 
-	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
+	num_functions = g_current_fractal_specific->num_functions();
 	if (fractal_type_formula(current_fractal_type))
 	{
-		numtrig = g_formula_state.max_fn();
+		num_functions = g_formula_state.max_fn();
 	}
 
 	const char *function_names[NUM_OF(g_function_list)];
@@ -1902,7 +1902,7 @@ gfp_top:
 	{
 		function_names[i] = g_function_list[i].name;
 	}
-	for (i = 0; i < numtrig; i++)
+	for (i = 0; i < num_functions; i++)
 	{
 		parameter_values[prompt].type = 'l';
 		parameter_values[prompt].uval.ch.val  = g_function_index[i];
@@ -2122,11 +2122,11 @@ gfp_top:
 		++prompt;
 	}
 
-	for (i = 0; i < numtrig; i++)
+	for (i = 0; i < num_functions; i++)
 	{
 		if (parameter_values[prompt].uval.ch.val != g_function_index[i])
 		{
-			set_trig_array(i, g_function_list[parameter_values[prompt].uval.ch.val].name);
+			set_function_array(i, g_function_list[parameter_values[prompt].uval.ch.val].name);
 			ret = 1;
 		}
 		++prompt;
