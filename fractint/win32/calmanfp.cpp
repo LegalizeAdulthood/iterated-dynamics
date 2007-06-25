@@ -92,7 +92,7 @@ long calculate_mandelbrot_fp_asm()
 	double xy;
 	double Cx;
 	double Cy;
-	if (g_fractal_type != FRACTYPE_JULIA_FP && g_fractal_type != FRACTYPE_JULIA)
+	if (!fractal_type_julia(g_fractal_type))
 	{
 		/* Mandelbrot_87 */
 		Cx = g_initial_z.x;

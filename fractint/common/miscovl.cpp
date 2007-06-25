@@ -759,7 +759,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 		}
 		put_parm(" type=%s", sptr);
 
-		if (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
+		if (fractal_type_julibrot(g_fractal_type))
 		{
 			put_parm(" julibrotfromto=%.15g/%.15g/%.15g/%.15g",
 				g_m_x_max_fp, g_m_x_min_fp, g_m_y_max_fp, g_m_y_min_fp);
@@ -787,7 +787,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 				put_parm(" 3dmode=%s", g_juli_3d_options[g_juli_3d_mode]);
 			}
 		}
-		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+		if (fractal_type_formula(g_fractal_type))
 		{
 			put_filename("formulafile", g_formula_filename);
 			put_parm(" formulaname=%s", g_formula_name);
@@ -801,12 +801,12 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			put_filename("lfile", g_l_system_filename);
 			put_parm(" lname=%s", g_l_system_name);
 		}
-		if (g_fractal_type == FRACTYPE_IFS || g_fractal_type == FRACTYPE_IFS_3D)
+		if (fractal_type_ifs(g_fractal_type))
 		{
 			put_filename("ifsfile", g_ifs_filename);
 			put_parm(" ifs=%s", g_ifs_name);
 		}
-		if (g_fractal_type == FRACTYPE_INVERSE_JULIA || g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
+		if (fractal_type_inverse_julia(g_fractal_type))
 		{
 			put_parm(" miim=%s/%s", g_jiim_method[g_major_method], g_jiim_left_right[g_minor_method]);
 		}
@@ -926,8 +926,9 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 
 		for (i = (MAX_PARAMETERS-1); i >= 0; --i)
 		{
-			if (type_has_parameter((g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
-					? g_new_orbit_type : g_fractal_type, i, NULL))
+			if (type_has_parameter(
+				fractal_type_julibrot(g_fractal_type) ? g_new_orbit_type : g_fractal_type,
+				i, NULL))
 			{
 				break;
 			}
@@ -935,7 +936,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 
 		if (i >= 0)
 		{
-			if (g_fractal_type == FRACTYPE_CELLULAR || g_fractal_type == FRACTYPE_ANT)
+			if (fractal_type_ant_or_cellular(g_fractal_type))
 			{
 				put_parm(" params=%.1f", g_parameters[0]);
 			}
@@ -954,7 +955,7 @@ void write_batch_parms(const char *colorinf, int colorsonly, int maxcolor, int i
 			}
 			for (j = 1; j <= i; ++j)
 			{
-				if (g_fractal_type == FRACTYPE_CELLULAR || g_fractal_type == FRACTYPE_ANT)
+				if (fractal_type_ant_or_cellular(g_fractal_type))
 				{
 					put_parm("/%.1f", g_parameters[j]);
 				}

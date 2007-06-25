@@ -576,7 +576,7 @@ int encoder()
 		}
 		/* save_info.fractal_type gets modified in setup_save_info() in float only
 			version, so we need to use g_fractal_type.  JCO 06JAN01 */
-		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+		if (fractal_type_formula(g_fractal_type))
 		{
 			save_info.tot_extend_len += store_item_name(g_formula_name);
 		}
@@ -584,7 +584,7 @@ int encoder()
 		{
 			save_info.tot_extend_len += store_item_name(g_l_system_name);
 		}
-		if (g_fractal_type == FRACTYPE_IFS || g_fractal_type == FRACTYPE_IFS_3D)
+		if (fractal_type_ifs(g_fractal_type))
 		{
 			save_info.tot_extend_len += store_item_name(g_ifs_name);
 		}
@@ -805,7 +805,7 @@ static int _fastcall store_item_name(char *nameptr)
 		fsave_info.form_name[i] = 0;      /* initialize string */
 	}
 	strcpy(fsave_info.form_name, nameptr);
-	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(g_fractal_type))
 	{
 		fsave_info.uses_p1 = (short) g_formula_state.uses_p1();
 		fsave_info.uses_p2 = (short) g_formula_state.uses_p2();
@@ -837,7 +837,7 @@ static int _fastcall store_item_name(char *nameptr)
 static void _fastcall setup_save_info(struct fractal_info *save_info)
 {
 	int i;
-	if (g_fractal_type != FRACTYPE_FORMULA && g_fractal_type != FRACTYPE_FORMULA_FP)
+	if (!fractal_type_formula(g_fractal_type))
 	{
 		g_formula_state.set_max_fn(0);
 	}

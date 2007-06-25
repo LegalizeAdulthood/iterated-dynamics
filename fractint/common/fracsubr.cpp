@@ -142,18 +142,18 @@ void calculate_fractal_initialize()
 
 	if (!(g_current_fractal_specific->flags & FRACTALFLAG_ARBITRARY_PRECISION))
 	{
-		int tofloat = g_current_fractal_specific->tofloat;
-		if (tofloat == FRACTYPE_NO_FRACTAL)
+		int fractal_type_float = g_current_fractal_specific->tofloat;
+		if (fractal_type_none(fractal_type_float))
 		{
 			g_bf_math = 0;
 		}
-		else if (!(g_fractal_specific[tofloat].flags & FRACTALFLAG_ARBITRARY_PRECISION))
+		else if (!(g_fractal_specific[fractal_type_float].flags & FRACTALFLAG_ARBITRARY_PRECISION))
 		{
 			g_bf_math = 0;
 		}
 		else if (g_bf_math)
 		{
-			g_fractal_type = tofloat;
+			g_fractal_type = fractal_type_float;
 			g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 		}
 	}
@@ -172,33 +172,38 @@ void calculate_fractal_initialize()
 			init_bf_dec(gotprec);
 		}
 	}
-	else if ((g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_MANDELBROT_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
+	else if (DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 	{
-		g_fractal_type = FRACTYPE_MANDELBROT_FP;
-		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-		fractal_float_to_bf();
-		g_user_float_flag = true;
-	}
-	else if ((g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
-	{
-		g_fractal_type = FRACTYPE_JULIA_FP;
-		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-		fractal_float_to_bf();
-		g_user_float_flag = true;
-	}
-	else if ((g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L || g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
-	{
-		g_fractal_type = FRACTYPE_MANDELBROT_Z_POWER_FP;
-		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-		fractal_float_to_bf();
-		g_user_float_flag = true;
-	}
-	else if ((g_fractal_type == FRACTYPE_JULIA_Z_POWER_L || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP) && DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
-	{
-		g_fractal_type = FRACTYPE_JULIA_Z_POWER_FP;
-		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-		fractal_float_to_bf();
-		g_user_float_flag = true;
+		if (fractal_type_mandelbrot(g_fractal_type))
+		{
+			g_fractal_type = FRACTYPE_MANDELBROT_FP;
+			g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
+			fractal_float_to_bf();
+			g_user_float_flag = true;
+		}
+		else if (fractal_type_julia(g_fractal_type))
+		{
+			g_fractal_type = FRACTYPE_JULIA_FP;
+			g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
+			fractal_float_to_bf();
+			g_user_float_flag = true;
+		}
+		else if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L
+			|| g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP)
+		{
+			g_fractal_type = FRACTYPE_MANDELBROT_Z_POWER_FP;
+			g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
+			fractal_float_to_bf();
+			g_user_float_flag = true;
+		}
+		else if (g_fractal_type == FRACTYPE_JULIA_Z_POWER_L
+			|| g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP)
+		{
+			g_fractal_type = FRACTYPE_JULIA_Z_POWER_FP;
+			g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
+			fractal_float_to_bf();
+			g_user_float_flag = true;
+		}
 	}
 	else
 	{
@@ -210,13 +215,14 @@ void calculate_fractal_initialize()
 		g_float_flag = (g_current_fractal_specific->isinteger == 0);
 	}
 	/* if floating pt only, set g_float_flag for TAB screen */
-	if (!g_current_fractal_specific->isinteger && g_current_fractal_specific->tofloat == FRACTYPE_NO_FRACTAL)
+	if (!g_current_fractal_specific->isinteger
+		&& fractal_type_none(g_current_fractal_specific->tofloat))
 	{
 		g_float_flag = true;
 	}
 	if (g_user_standard_calculation_mode == 's')
 	{
-		if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_MANDELBROT_FP)
+		if (fractal_type_mandelbrot(g_fractal_type))
 		{
 			g_float_flag = true;
 		}
@@ -264,7 +270,7 @@ init_restart:
 	if (g_float_flag)  /* ensure type matches g_float_flag */
 	{
 		if (g_current_fractal_specific->isinteger != 0
-			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
+			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
 			g_fractal_type = g_current_fractal_specific->tofloat;
 		}
@@ -272,34 +278,37 @@ init_restart:
 	else
 	{
 		if (g_current_fractal_specific->isinteger == 0
-			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
+			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
 			g_fractal_type = g_current_fractal_specific->tofloat;
 		}
 	}
 	/* match Julibrot with integer mode of orbit */
-	if (g_fractal_type == FRACTYPE_JULIBROT_FP && g_fractal_specific[g_new_orbit_type].isinteger)
+	if (g_fractal_type == FRACTYPE_JULIBROT_FP)
 	{
-		int i = g_fractal_specific[g_new_orbit_type].tofloat;
-		if (i != FRACTYPE_NO_FRACTAL)
+		if (g_fractal_specific[g_new_orbit_type].isinteger)
 		{
-			g_new_orbit_type = i;
+			int i = g_fractal_specific[g_new_orbit_type].tofloat;
+			if (!fractal_type_none(i))
+			{
+				g_new_orbit_type = i;
+			}
+			else
+			{
+				g_fractal_type = FRACTYPE_JULIBROT;
+			}
 		}
 		else
 		{
-			g_fractal_type = FRACTYPE_JULIBROT;
-		}
-	}
-	else if (g_fractal_type == FRACTYPE_JULIBROT && g_fractal_specific[g_new_orbit_type].isinteger == 0)
-	{
-		int i = g_fractal_specific[g_new_orbit_type].tofloat;
-		if (i != FRACTYPE_NO_FRACTAL)
-		{
-			g_new_orbit_type = i;
-		}
-		else
-		{
-			g_fractal_type = FRACTYPE_JULIBROT_FP;
+			int i = g_fractal_specific[g_new_orbit_type].tofloat;
+			if (!fractal_type_none(i))
+			{
+				g_new_orbit_type = i;
+			}
+			else
+			{
+				g_fractal_type = FRACTYPE_JULIBROT_FP;
+			}
 		}
 	}
 
@@ -337,7 +346,7 @@ init_restart:
 	if (g_integer_fractal == 0)  /* float? */
 	{
 		int i = g_current_fractal_specific->tofloat;
-		if (i != FRACTYPE_NO_FRACTAL) /* -> int? */
+		if (!fractal_type_none(i)) /* -> int? */
 		{
 			if (g_fractal_specific[i].isinteger > 1) /* specific shift? */
 			{
@@ -349,6 +358,7 @@ init_restart:
 			g_bit_shift = 16;  /* to allow larger corners */
 		}
 	}
+
 	/* We want this code if we're using the assembler calculate_mandelbrot */
 	if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)  /* adust shift bits if.. */
 	{
@@ -387,7 +397,7 @@ init_restart:
 		g_escape_time_state.fill_grid_fp();
 	}
 
-	if (g_fractal_type != FRACTYPE_CELLULAR && g_fractal_type != FRACTYPE_ANT)  /* fudge_to_long fails w >10 digits in double */
+	if (!fractal_type_ant_or_cellular(g_fractal_type))  /* fudge_to_long fails w >10 digits in double */
 	{
 		g_c_real = fudge_to_long(g_parameters[0]); /* integer equivs for it all */
 		g_c_imag = fudge_to_long(g_parameters[1]);
@@ -407,8 +417,10 @@ init_restart:
 	/* skip if g_bf_math to avoid extraseg conflict with g_x0 arrays */
 	/* skip if ifs, ifs3d, or lsystem to avoid crash when mathtolerance */
 	/* is set.  These types don't auto switch between float and integer math */
-	if (g_fractal_type != FRACTYPE_PLASMA && g_bf_math == 0
-		&& g_fractal_type != FRACTYPE_IFS && g_fractal_type != FRACTYPE_IFS_3D && g_fractal_type != FRACTYPE_L_SYSTEM)
+	if (g_fractal_type != FRACTYPE_PLASMA
+		&& g_bf_math == 0
+		&& !fractal_type_ifs(g_fractal_type)
+		&& g_fractal_type != FRACTYPE_L_SYSTEM)
 	{
 		if (g_integer_fractal && !g_invert && g_escape_time_state.m_use_grid)
 		{
@@ -429,7 +441,7 @@ init_restart:
 			{
 expand_retry:
 				if (g_integer_fractal          /* integer fractal type? */
-					&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
+					&& !fractal_type_none(g_current_fractal_specific->tofloat))
 				{
 					g_float_flag = true;           /* switch to floating pt */
 				}

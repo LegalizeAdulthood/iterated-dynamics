@@ -192,7 +192,7 @@ void FullScreenPrompter::PrepareFooterFile()
 	*/
 	if (m_footer && *m_footer)
 	{
-		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+		if (fractal_type_formula(g_fractal_type))
 		{
 			find_file_item(g_formula_filename, g_formula_name, &m_scroll_file, ITEMTYPE_FORMULA);
 			m_in_scrolling_mode = true;
@@ -204,7 +204,7 @@ void FullScreenPrompter::PrepareFooterFile()
 			m_in_scrolling_mode = true;
 			m_scroll_file_start = ftell(m_scroll_file);
 		}
-		else if (g_fractal_type == FRACTYPE_IFS || g_fractal_type == FRACTYPE_IFS_3D)
+		else if (fractal_type_ifs(g_fractal_type))
 		{
 			find_file_item(g_ifs_filename, g_ifs_name, &m_scroll_file, ITEMTYPE_IFS);
 			m_in_scrolling_mode = true;
@@ -1306,7 +1306,7 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	if (done >= 0)
 	{
 		done = choices[done]->num;
-		if ((done == FRACTYPE_FORMULA || done == FRACTYPE_FORMULA_FP) && !strcmp(g_formula_filename, g_command_file))
+		if (fractal_type_formula(done) && !strcmp(g_formula_filename, g_command_file))
 		{
 			strcpy(g_formula_filename, g_search_for.frm);
 		}
@@ -1314,7 +1314,7 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 		{
 			strcpy(g_l_system_filename, g_search_for.lsys);
 		}
-		if ((done == FRACTYPE_IFS || done == FRACTYPE_IFS_3D) && !strcmp(g_ifs_filename, g_command_file))
+		if (fractal_type_ifs(done) && !strcmp(g_ifs_filename, g_command_file))
 		{
 			strcpy(g_ifs_filename, g_search_for.ifs);
 		}
@@ -1370,8 +1370,9 @@ void set_default_parms()
 	for (i = 0; i < 4; i++)
 	{
 		g_parameters[i] = g_current_fractal_specific->paramvalue[i];
-		if (g_fractal_type != FRACTYPE_CELLULAR && g_fractal_type != FRACTYPE_FROTHY_BASIN && g_fractal_type != FRACTYPE_FROTHY_BASIN_FP &&
-				g_fractal_type != FRACTYPE_ANT)
+		if (!fractal_type_ant_or_cellular(g_fractal_type)
+			&& g_fractal_type != FRACTYPE_FROTHY_BASIN
+			&& g_fractal_type != FRACTYPE_FROTHY_BASIN_FP)
 			round_float_d(&g_parameters[i]); /* don't round cellular, frothybasin or ant */
 	}
 	extra = find_extra_parameter(g_fractal_type);
@@ -1470,9 +1471,9 @@ sel_type_restart:
 
 	if (get_fractal_parameters(0) < 0)
 	{
-		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP ||
-			g_fractal_type == FRACTYPE_IFS || g_fractal_type == FRACTYPE_IFS_3D ||
-			g_fractal_type == FRACTYPE_L_SYSTEM)
+		if (fractal_type_formula(g_fractal_type)
+			|| fractal_type_ifs(g_fractal_type)
+			|| g_fractal_type == FRACTYPE_L_SYSTEM)
 		{
 			goto sel_type_restart;
 		}
@@ -1657,7 +1658,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	double oldparam[MAX_PARAMETERS];
 	int f_key_mask = 0x40;
 	old_bail_out = g_bail_out;
-	if (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
+	if (fractal_type_julibrot(g_fractal_type))
 	{
 		g_julibrot = true;
 	}
@@ -1668,7 +1669,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	current_fractal_type = g_fractal_type;
 	i = g_current_fractal_specific->tofloat;
 	if (g_current_fractal_specific->name[0] == '*'
-		&& i != FRACTYPE_NO_FRACTAL
+		&& !fractal_type_none(i)
 		&& g_fractal_specific[i].name[0] != '*')
 	{
 		current_fractal_type = i;
@@ -1709,7 +1710,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 		{
 			load_entry_text(entryfile, g_text_stack, 17, 0, 0);
 			fclose(entryfile);
-			if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+			if (fractal_type_formula(g_fractal_type))
 			{
 				g_formula_state.get_parameter(entryname); /* no error check, should be okay, from above */
 			}
@@ -1786,7 +1787,7 @@ gfp_top:
 		juliorbitname = jborbit->name;
 	}
 
-	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(g_fractal_type))
 	{
 		if (g_formula_state.uses_p1())  /* set first parameter */
 		{
@@ -1855,7 +1856,7 @@ gfp_top:
 		char tmpbuf[30];
 		if (!type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
 		{
-			if (current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP)
+			if (fractal_type_formula(current_fractal_type))
 			{
 				if (parameter_not_used(i))
 				{
@@ -1885,13 +1886,13 @@ gfp_top:
 	/* The following is a goofy kludge to make reading in the formula
 	* parameters work.
 	*/
-	if (current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(current_fractal_type))
 	{
 		num_parameters = lastparm - firstparm;
 	}
 
 	numtrig = (g_current_fractal_specific->flags >> 6) & 7;
-	if (current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(current_fractal_type))
 	{
 		numtrig = g_formula_state.max_fn();
 	}
@@ -2023,7 +2024,7 @@ gfp_top:
 		choices[prompt++] = "Distance to Screen";
 	}
 
-	if (current_fractal_type == FRACTYPE_INVERSE_JULIA || current_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
+	if (fractal_type_inverse_julia(current_fractal_type))
 	{
 		choices[prompt] = JIIMstr1;
 		parameter_values[prompt].type = 'l';
@@ -2044,7 +2045,7 @@ gfp_top:
 		parameter_values[prompt++].uval.ch.val  = g_minor_method;
 	}
 
-	if ((current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
+	if (fractal_type_formula(current_fractal_type) && g_formula_state.uses_is_mand())
 	{
 		choices[prompt] = "ismand";
 		parameter_values[prompt].type = 'y';
@@ -2106,7 +2107,7 @@ gfp_top:
 	prompt = 0;
 	for (i = firstparm; i < num_parameters + firstparm; i++)
 	{
-		if (current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP)
+		if (fractal_type_formula(current_fractal_type))
 		{
 			if (parameter_not_used(i))
 			{
@@ -2191,7 +2192,7 @@ gfp_top:
 		g_screen_distance_fp     = (float)parameter_values[prompt++].uval.dval;
 		ret = 1;  /* force new calc since not resumable anyway */
 	}
-	if (current_fractal_type == FRACTYPE_INVERSE_JULIA || current_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
+	if (fractal_type_inverse_julia(current_fractal_type))
 	{
 		if (parameter_values[prompt].uval.ch.val != g_major_method
 			|| parameter_values[prompt + 1].uval.ch.val != g_minor_method)
@@ -2201,7 +2202,7 @@ gfp_top:
 		g_major_method = static_cast<MajorMethodType>(parameter_values[prompt++].uval.ch.val);
 		g_minor_method = static_cast<MinorMethodType>(parameter_values[prompt++].uval.ch.val);
 	}
-	if ((current_fractal_type == FRACTYPE_FORMULA || current_fractal_type == FRACTYPE_FORMULA_FP) && g_formula_state.uses_is_mand())
+	if (fractal_type_formula(current_fractal_type) && g_formula_state.uses_is_mand())
 	{
 		if (g_is_mand != (parameter_values[prompt].uval.ch.val != 0))
 		{
@@ -2246,7 +2247,7 @@ void load_parameters(int g_fractal_type)
 	for (i = 0; i < 4; ++i)
 	{
 		g_parameters[i] = g_fractal_specific[g_fractal_type].paramvalue[i];
-		if (g_fractal_type != FRACTYPE_CELLULAR && g_fractal_type != FRACTYPE_ANT)
+		if (!fractal_type_ant_or_cellular(g_fractal_type))
 		{
 			round_float_d(&g_parameters[i]); /* don't round cellular or ant */
 		}

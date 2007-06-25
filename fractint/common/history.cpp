@@ -443,7 +443,7 @@ void _fastcall history_restore_info()
 		memcpy(g_map_dac_box, last.dac, 256*3);
 	}
 	spindac(0, 1);
-	g_save_dac = (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP) ? SAVEDAC_NO : SAVEDAC_YES;
+	g_save_dac = fractal_type_julibrot(g_fractal_type) ? SAVEDAC_NO : SAVEDAC_YES;
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_FORMULA:

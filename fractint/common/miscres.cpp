@@ -578,7 +578,7 @@ static void trigdetails(char *buf)
 	int i;
 	int numfn;
 	char tmpbuf[20];
-	if (g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
+	if (fractal_type_julibrot(g_fractal_type))
 	{
 		numfn = (g_fractal_specific[g_new_orbit_type].flags >> 6) & 7;
 	}
@@ -754,7 +754,7 @@ int tab_display_2(char *msg)
 	write_row(row++, "Sizeof g_fractal_specific array %d",
 		g_num_fractal_types*(int)sizeof(FractalTypeSpecificData));
 	write_row(row++, "CalculationStatus %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
-	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(g_fractal_type))
 	{
 		write_row(row++, g_formula_state.info_line1());
 		write_row(row++, g_formula_state.info_line2());
@@ -839,7 +839,7 @@ int tab_display()       /* display the status of the current image */
 		bfXctr = alloc_stack(bflength + 2);
 		bfYctr = alloc_stack(bflength + 2);
 	}
-	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(g_fractal_type))
 	{
 		for (i = 0; i < MAX_PARAMETERS; i += 2)
 		{
@@ -867,7 +867,7 @@ top:
 			g_current_fractal_specific->name[0] == '*' ?
 				&g_current_fractal_specific->name[1] : g_current_fractal_specific->name);
 		i = 0;
-		if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+		if (fractal_type_formula(g_fractal_type))
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_formula_name);
@@ -892,7 +892,7 @@ top:
 			}
 			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_l_system_filename);
 		}
-		if (g_fractal_type == FRACTYPE_IFS || g_fractal_type == FRACTYPE_IFS_3D)
+		if (fractal_type_ifs(g_fractal_type))
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_ifs_name);
@@ -1221,7 +1221,7 @@ top:
 	sprintf(msg, "%f", g_rq_limit);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
 
-	if (g_fractal_type == FRACTYPE_PLASMA || g_fractal_type == FRACTYPE_ANT || g_fractal_type == FRACTYPE_CELLULAR)
+	if (g_fractal_type == FRACTYPE_PLASMA || fractal_type_ant_or_cellular(g_fractal_type))
 	{
 		driver_put_string(++s_row, 2, C_GENERAL_MED, "Current 'rseed': ");
 		sprintf(msg, "%d", g_random_seed);

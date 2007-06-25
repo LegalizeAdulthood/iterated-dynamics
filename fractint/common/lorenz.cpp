@@ -109,9 +109,9 @@ static double s_cx;
 static double s_cy;
 static long   s_x_long, s_y_long;
 /* s_connect, s_euler, s_waste are potential user parameters */
-static bool s_connect = true;		/* flag to connect points with a line */
-static bool s_euler = false;		/* use implicit euler approximation for dynamic system */
-static int s_waste = 100;			/* waste this many points before plotting */
+static bool s_connect_points = true;		/* flag to connect points with a line */
+static bool s_use_euler_approximation = false;		/* use implicit euler approximation for dynamic system */
+static int s_initial_orbit_skip_count = 100;			/* waste this many points before plotting */
 static int s_run_length;
 static bool s_real_time = false;
 static int s_t;
@@ -139,6 +139,16 @@ static int  threed_view_trans(threed_vt_inf *inf);
 static int  threed_view_trans_fp(threed_vt_inf_fp *inf);
 static FILE *open_orbit_save();
 static void _fastcall plot_color_histogram(int x, int y, int color);
+
+static bool fractal_type_kam_torus(int fractal_type)
+{
+	return fractal_type == FRACTYPE_KAM_TORUS || fractal_type == FRACTYPE_KAM_TORUS_3D;
+}
+
+static bool fractal_type_kam_torus_fp(int fractal_type)
+{
+	return fractal_type == FRACTYPE_KAM_TORUS_FP || fractal_type == FRACTYPE_KAM_TORUS_3D_FP;
+}
 
 /******************************************************************/
 /*                 zoom box conversion functions                  */
@@ -280,17 +290,18 @@ static int l_setup_convert_to_screen(l_affine *l_cvt)
 int orbit_3d_setup()
 {
 	g_max_count = 0L;
-	s_connect = true;
-	s_waste = 100;
+	s_connect_points = true;
+	s_initial_orbit_skip_count = 100;
 	s_projection = PROJECTION_XY;
-	if (g_fractal_type == FRACTYPE_HENON_L || g_fractal_type == FRACTYPE_KAM_TORUS || g_fractal_type == FRACTYPE_KAM_TORUS_3D ||
-		g_fractal_type == FRACTYPE_INVERSE_JULIA)
+	if (g_fractal_type == FRACTYPE_HENON_L
+		|| fractal_type_kam_torus(g_fractal_type)
+		|| g_fractal_type == FRACTYPE_INVERSE_JULIA)
 	{
-		s_connect = false;
+		s_connect_points = false;
 	}
 	if (g_fractal_type == FRACTYPE_ROSSLER_L)
 	{
-		s_waste = 500;
+		s_initial_orbit_skip_count = 500;
 	}
 	if (g_fractal_type == FRACTYPE_LORENZ_L)
 	{
@@ -308,7 +319,7 @@ int orbit_3d_setup()
 		s_l_c =  (long) (g_parameters[2]*g_fudge);
 		s_l_d =  (long) (g_parameters[3]*g_fudge);
 	}
-	else if (g_fractal_type == FRACTYPE_KAM_TORUS || g_fractal_type == FRACTYPE_KAM_TORUS_3D)
+	else if (fractal_type_kam_torus(g_fractal_type))
 	{
 		g_max_count = 1L;
 		s_a   = g_parameters[0];           /* angle */
@@ -420,26 +431,30 @@ lrwalk:
 int orbit_3d_setup_fp()
 {
 	g_max_count = 0L;
-	s_connect = true;
-	s_waste = 100;
+	s_connect_points = true;
+	s_initial_orbit_skip_count = 100;
 	s_projection = PROJECTION_XY;
 
-	if (g_fractal_type == FRACTYPE_HENON_FP || g_fractal_type == FRACTYPE_PICKOVER_FP || g_fractal_type == FRACTYPE_GINGERBREAD_FP
-				|| g_fractal_type == FRACTYPE_KAM_TORUS_FP || g_fractal_type == FRACTYPE_KAM_TORUS_3D_FP
-				|| g_fractal_type == FRACTYPE_HOPALONG_FP || g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
+	if (g_fractal_type == FRACTYPE_HENON_FP
+		|| g_fractal_type == FRACTYPE_PICKOVER_FP
+		|| g_fractal_type == FRACTYPE_GINGERBREAD_FP
+		|| fractal_type_kam_torus_fp(g_fractal_type)
+		|| g_fractal_type == FRACTYPE_HOPALONG_FP
+		|| g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
 	{
-		s_connect = false;
+		s_connect_points = false;
 	}
-	if (g_fractal_type == FRACTYPE_LORENZ_3D_1_FP || g_fractal_type == FRACTYPE_LORENZ_3D_3_FP ||
-		g_fractal_type == FRACTYPE_LORENZ_3D_4_FP)
+	else if (g_fractal_type == FRACTYPE_LORENZ_3D_1_FP
+		|| g_fractal_type == FRACTYPE_LORENZ_3D_3_FP
+		|| g_fractal_type == FRACTYPE_LORENZ_3D_4_FP)
 	{
-		s_waste = 750;
+		s_initial_orbit_skip_count = 750;
 	}
-	if (g_fractal_type == FRACTYPE_ROSSLER_FP)
+	else if (g_fractal_type == FRACTYPE_ROSSLER_FP)
 	{
-		s_waste = 500;
+		s_initial_orbit_skip_count = 500;
 	}
-	if (g_fractal_type == FRACTYPE_LORENZ_FP)
+	else if (g_fractal_type == FRACTYPE_LORENZ_FP)
 	{
 		s_projection = PROJECTION_XZ; /* plot x and z */
 	}
@@ -457,13 +472,13 @@ int orbit_3d_setup_fp()
 	{
 		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
 		s_init_orbit_fp[1] = 0.003;
-		s_connect = false;
-		s_waste = 2000;
+		s_connect_points = false;
+		s_initial_orbit_skip_count = 2000;
 	}
 
 	if (g_fractal_type == FRACTYPE_LATOOCARFIAN)        /* HB */
 	{
-		s_connect = false;
+		s_connect_points = false;
 	}
 
 	if (g_fractal_type == FRACTYPE_HENON_FP || g_fractal_type == FRACTYPE_PICKOVER_FP)
@@ -477,15 +492,15 @@ int orbit_3d_setup_fp()
 	{
 		s_init_orbit_fp[0] = 0.01;  /* initial conditions */
 		s_init_orbit_fp[1] = 0.003;
-		s_connect = false;
-		s_waste = 2000;
+		s_connect_points = false;
+		s_initial_orbit_skip_count = 2000;
 		/* Initialize parameters */
 		s_a  =   g_parameters[0];
 		s_b  =   g_parameters[1];
 		s_c  =   g_parameters[2];
 		s_d  =   g_parameters[3];
 	}
-	else if (g_fractal_type == FRACTYPE_KAM_TORUS_FP || g_fractal_type == FRACTYPE_KAM_TORUS_3D_FP)
+	else if (fractal_type_kam_torus_fp(g_fractal_type))
 	{
 		g_max_count = 1L;
 		s_a = g_parameters[0];           /* angle */
@@ -502,13 +517,16 @@ int orbit_3d_setup_fp()
 		s_orbit = 0;
 		s_init_orbit_fp[0] = s_init_orbit_fp[1] = s_init_orbit_fp[2] = 0;
 	}
-	else if (g_fractal_type == FRACTYPE_HOPALONG_FP || g_fractal_type == FRACTYPE_MARTIN_FP || g_fractal_type == FRACTYPE_CHIP
-		|| g_fractal_type == FRACTYPE_QUADRUP_TWO || g_fractal_type == FRACTYPE_THREE_PLY)
+	else if (g_fractal_type == FRACTYPE_HOPALONG_FP
+		|| g_fractal_type == FRACTYPE_MARTIN_FP
+		|| g_fractal_type == FRACTYPE_CHIP
+		|| g_fractal_type == FRACTYPE_QUADRUP_TWO
+		|| g_fractal_type == FRACTYPE_THREE_PLY)
 	{
 		s_init_orbit_fp[0] = 0;  /* initial conditions */
 		s_init_orbit_fp[1] = 0;
 		s_init_orbit_fp[2] = 0;
-		s_connect = false;
+		s_connect_points = false;
 		s_a =  g_parameters[0];
 		s_b =  g_parameters[1];
 		s_c =  g_parameters[2];
@@ -1278,7 +1296,7 @@ int dynamic_orbit_fp(double *x, double *y, double *z)
 	cp.y = 0;
 	CMPLXtrig0(cp, tmp);
 	newy = *y + s_dt*sin(*x + s_a*tmp.x);
-	if (s_euler)
+	if (s_use_euler_approximation)
 	{
 		*y = newy;
 	}
@@ -1491,7 +1509,7 @@ int orbit_2d_fp()
 			g_sound_state.orbit(x, y, z);
 			if ((g_fractal_type != FRACTYPE_ICON) && (g_fractal_type != FRACTYPE_LATOOCARFIAN))
 			{
-				if (oldcol != -1 && s_connect)
+				if (oldcol != -1 && s_connect_points)
 				{
 					driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
 				}
@@ -1621,7 +1639,7 @@ int orbit_2d()
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
 			g_sound_state.orbit(x/g_fudge, y/g_fudge, z/g_fudge);
-			if (oldcol != -1 && s_connect)
+			if (oldcol != -1 && s_connect_points)
 			{
 				driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
 			}
@@ -1734,7 +1752,7 @@ static int orbit_3d_calc()
 					yy /= g_fudge;
 					g_sound_state.tone((int) (yy*100 + g_sound_state.base_hertz()));
 				}
-				if (oldcol != -1 && s_connect)
+				if (oldcol != -1 && s_connect_points)
 				{
 					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color % g_colors);
 				}
@@ -1755,7 +1773,7 @@ static int orbit_3d_calc()
 				/* plot if inside window */
 				if (inf.col1 >= 0)
 				{
-					if (oldcol1 != -1 && s_connect)
+					if (oldcol1 != -1 && s_connect_points)
 					{
 						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color % g_colors);
 					}
@@ -1854,7 +1872,7 @@ static int orbit_3d_calc_fp()
 				{
 					g_sound_state.tone((int) (inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + g_sound_state.base_hertz()));
 				}
-				if (oldcol != -1 && s_connect)
+				if (oldcol != -1 && s_connect_points)
 				{
 					driver_draw_line(inf.col, inf.row, oldcol, oldrow, color % g_colors);
 				}
@@ -1875,7 +1893,7 @@ static int orbit_3d_calc_fp()
 				/* plot if inside window */
 				if (inf.col1 >= 0)
 				{
-					if (oldcol1 != -1 && s_connect)
+					if (oldcol1 != -1 && s_connect_points)
 					{
 						driver_draw_line(inf.col1, inf.row1, oldcol1, oldrow1, color % g_colors);
 					}
@@ -1902,13 +1920,13 @@ static int orbit_3d_calc_fp()
 
 int dynamic_2d_setup_fp()
 {
-	s_connect = false;
-	s_euler = false;
+	s_connect_points = false;
+	s_use_euler_approximation = false;
 	s_d = g_parameters[0]; /* number of intervals */
 	if (s_d < 0)
 	{
 		s_d = -s_d;
-		s_connect = true;
+		s_connect_points = true;
 	}
 	else if (s_d == 0)
 	{
@@ -1922,7 +1940,7 @@ int dynamic_2d_setup_fp()
 		if (s_dt < 0)
 		{
 			s_dt = -s_dt;
-			s_euler = true;
+			s_use_euler_approximation = true;
 		}
 		if (s_dt == 0)
 		{
@@ -2055,7 +2073,7 @@ int dynamic_2d_fp()
 
 				if (count >= g_orbit_delay)
 				{
-					if (oldcol != -1 && s_connect)
+					if (oldcol != -1 && s_connect_points)
 					{
 						driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
 					}
@@ -2128,7 +2146,7 @@ int plot_orbits_2d_setup()
 	if (g_current_fractal_specific->isinteger != 0)
 	{
 		int tofloat = g_current_fractal_specific->tofloat;
-		if (tofloat == FRACTYPE_NO_FRACTAL)
+		if (fractal_type_none(tofloat))
 		{
 			return -1;
 		}
@@ -2795,7 +2813,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 		longvmult(inf->orbit, inf->longmat1, inf->viewvect1, g_bit_shift);
 	}
 
-	if (g_color_iter <= s_waste) /* waste this many points to find minz and maxz */
+	if (g_color_iter <= s_initial_orbit_skip_count) /* waste this many points to find minz and maxz */
 	{
 		/* find minz and maxz */
 		for (i = 0; i < 3; i++)
@@ -2810,7 +2828,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 				inf->maxvals[i] = tmp;
 			}
 		}
-		if (g_color_iter == s_waste) /* time to work it out */
+		if (g_color_iter == s_initial_orbit_skip_count) /* time to work it out */
 		{
 			inf->iview[0] = inf->iview[1] = 0L; /* center viewer on origin */
 
@@ -2963,7 +2981,7 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 		vmult(inf->orbit, inf->doublemat1, inf->viewvect1);
 	}
 
-	if (g_color_iter <= s_waste) /* waste this many points to find minz and maxz */
+	if (g_color_iter <= s_initial_orbit_skip_count) /* waste this many points to find minz and maxz */
 	{
 		/* find minz and maxz */
 		for (i = 0; i < 3; i++)
@@ -2978,7 +2996,7 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 				inf->maxvals[i] = tmp;
 			}
 		}
-		if (g_color_iter == s_waste) /* time to work it out */
+		if (g_color_iter == s_initial_orbit_skip_count) /* time to work it out */
 		{
 			g_view[0] = g_view[1] = 0; /* center on origin */
 			/* z value of user's eye - should be more negative than extreme

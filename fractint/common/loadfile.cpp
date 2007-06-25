@@ -773,12 +773,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 }
 
 int find_fractal_info(char *gif_file, fractal_info *info,
-	struct ext_blk_resume_info *resume_info_blk,
-	struct ext_blk_formula_info *formula_info,
-	struct ext_blk_ranges_info *ranges_info,
-	struct ext_blk_mp_info *mp_info,
-	struct ext_blk_evolver_info *evolver_info,
-	struct ext_blk_orbits_info *orbits_info)
+	ext_blk_resume_info *resume_info_blk,
+	ext_blk_formula_info *formula_info,
+	ext_blk_ranges_info *ranges_info,
+	ext_blk_mp_info *mp_info,
+	ext_blk_evolver_info *evolver_info,
+	ext_blk_orbits_info *orbits_info)
 {
 	int scan_extend;
 	int block_type;
@@ -1339,7 +1339,7 @@ void backwards_v19()
 			g_parameters[2]++;
 		}
 	}
-	if ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP) && g_save_release < 1824)
+	if (fractal_type_formula(g_fractal_type) && g_save_release < 1824)
 	{
 		g_inversion[0] = g_inversion[1] = g_inversion[2] = g_invert = 0;
 	}
@@ -1354,10 +1354,9 @@ void backwards_v20()
 	// TODO: g_bad_outside is a compatability flag with buggy old code,
 	// but the current code doesn't emulate the buggy behavior.
 	// See calmanfp.asm and calmanfp5.asm in the DOS code.
-	g_bad_outside = ((g_fractal_type == FRACTYPE_MANDELBROT_FP || g_fractal_type == FRACTYPE_JULIA_FP
-						|| g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)
+	g_bad_outside = ((fractal_type_mandelbrot(g_fractal_type) || fractal_type_julia(g_fractal_type))
 					&& (g_outside <= COLORMODE_REAL && g_outside >= COLORMODE_SUM) && g_save_release <= 1960);
-	g_use_old_complex_power = ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+	g_use_old_complex_power = (fractal_type_formula(g_fractal_type)
 				&& (g_save_release < 1900 || DEBUGMODE_OLD_POWER == g_debug_mode));
 	if (g_inside == COLORMODE_EPSILON_CROSS && g_save_release < 1961)
 	{
@@ -1382,8 +1381,7 @@ int check_back()
 		|| fix_period_bof()
 		|| g_use_old_distance_test
 		|| g_decomposition[0] == 2
-		|| (g_fractal_type == FRACTYPE_FORMULA && g_save_release <= 1920)
-		|| (g_fractal_type == FRACTYPE_FORMULA_FP && g_save_release <= 1920)
+		|| (fractal_type_formula(g_fractal_type) && g_save_release <= 1920)
 		|| (g_log_palette_mode != 0 && g_save_release <= 2001)
 		|| (g_fractal_type == FRACTYPE_FUNC_SQR && g_save_release < 1900)
 		|| (g_inside == COLORMODE_STAR_TRAIL && g_save_release < 1825)
@@ -1397,7 +1395,7 @@ int check_back()
 		|| (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER && g_save_release <= 2000)
 		|| ((g_inside == COLORMODE_INVERSE_TANGENT_INTEGER || g_outside == COLORMODE_INVERSE_TANGENT) && g_save_release <= 2005)
 		|| (g_fractal_type == FRACTYPE_LAMBDA_FUNC_FP && g_function_index[0] == FUNCTION_EXP && g_save_release <= 2002)
-		|| ((g_fractal_type == FRACTYPE_JULIBROT || g_fractal_type == FRACTYPE_JULIBROT_FP)
+		|| (fractal_type_julibrot(g_fractal_type)
 			&& (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
 			&& g_save_release <= 2002))
 	{
@@ -1410,9 +1408,9 @@ static bool fix_bof()
 {
 	if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61 && g_save_release < 1826)
 	{
-		if ((g_current_fractal_specific->calculate_type == standard_fractal &&
-			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS) == 0) ||
-			(g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP))
+		if ((g_current_fractal_specific->calculate_type == standard_fractal
+				&& (g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS) == 0)
+			|| fractal_type_formula(g_fractal_type))
 		{
 			return true;
 		}

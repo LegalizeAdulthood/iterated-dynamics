@@ -92,7 +92,7 @@ static void julman()
 	i = -1;
 	while (g_fractal_specific[++i].name)
 	{
-		if (g_fractal_specific[i].tojulia != FRACTYPE_NO_FRACTAL && g_fractal_specific[i].name[0] != '*')
+		if (!fractal_type_none(g_fractal_specific[i].tojulia) && g_fractal_specific[i].name[0] != '*')
 		{
 			fprintf(fp, "%s  %s\n", g_fractal_specific[i].name,
 				g_fractal_specific[g_fractal_specific[i].tojulia].name);
@@ -1089,7 +1089,7 @@ static void handle_orbits()
 	if ((g_fractal_specific[g_fractal_type].calculate_type == standard_fractal
 			|| g_fractal_specific[g_fractal_type].calculate_type == froth_calc)
 		&& (g_fractal_specific[g_fractal_type].isinteger == 0
-			|| g_fractal_specific[g_fractal_type].tofloat != FRACTYPE_NO_FRACTAL)
+			|| !fractal_type_none(g_fractal_specific[g_fractal_type].tofloat))
 		&& !g_bf_math /* for now no arbitrary precision support */
 		&& !(g_is_true_color && g_true_mode))
 	{
@@ -1115,7 +1115,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		return;
 	}
 
-	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(g_fractal_type))
 	{
 		if (g_is_mand)
 		{
@@ -1131,17 +1131,15 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		}
 	}
 
-	if (g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
+	if (!fractal_type_none(g_current_fractal_specific->tojulia)
 		&& g_parameters[0] == 0.0
 		&& g_parameters[1] == 0.0)
 	{
 		/* switch to corresponding Julia set */
-		int key;
-		g_has_inverse = (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_MANDELBROT_FP)
-			&& (g_bf_math == 0);
+		g_has_inverse = fractal_type_mandelbrot(g_fractal_type) && (g_bf_math == 0);
 		clear_zoom_box();
 		Jiim(JIIM);
-		key = driver_get_key();    /* flush keyboard buffer */
+		int key = driver_get_key();    /* flush keyboard buffer */
 		if (key != FIK_SPACE)
 		{
 			driver_unget_key(key);
@@ -1188,7 +1186,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		kbdmore = false;
 	}
-	else if (g_current_fractal_specific->tomandel != FRACTYPE_NO_FRACTAL)
+	else if (!fractal_type_none(g_current_fractal_specific->tomandel))
 	{
 		/* switch to corresponding Mandel set */
 		g_fractal_type = g_current_fractal_specific->tomandel;
@@ -1227,15 +1225,15 @@ static void handle_inverse_julia_toggle(bool &kbdmore)
 {
 	/* if the inverse types proliferate, something more elegant will be
 	* needed */
-	if (g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP || g_fractal_type == FRACTYPE_INVERSE_JULIA)
+	if (fractal_type_julia_or_inverse(g_fractal_type))
 	{
 		static int oldtype = -1;
-		if (g_fractal_type == FRACTYPE_JULIA || g_fractal_type == FRACTYPE_JULIA_FP)
+		if (fractal_type_julia(g_fractal_type))
 		{
 			oldtype = g_fractal_type;
 			g_fractal_type = FRACTYPE_INVERSE_JULIA;
 		}
-		else if (g_fractal_type == FRACTYPE_INVERSE_JULIA)
+		else if (fractal_type_inverse_julia(g_fractal_type))
 		{
 			g_fractal_type = (oldtype != -1) ? oldtype : FRACTYPE_JULIA;
 		}
@@ -1291,12 +1289,12 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		g_zoom_off = true;
 		g_initial_adapter = g_adapter;
 		if (g_current_fractal_specific->isinteger != 0
-			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
+			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
 			g_user_float_flag = false;
 		}
 		if (g_current_fractal_specific->isinteger == 0
-			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
+			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
 			g_user_float_flag = true;
 		}
@@ -1836,12 +1834,12 @@ static ApplicationStateType handle_evolver_history(int kbdchar)
 		g_zoom_off = true;
 		g_initial_adapter = g_adapter;
 		if (g_current_fractal_specific->isinteger != 0
-			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
+			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
 			g_user_float_flag = false;
 		}
 		if (g_current_fractal_specific->isinteger == 0
-			&& g_current_fractal_specific->tofloat != FRACTYPE_NO_FRACTAL)
+			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
 			g_user_float_flag = true;
 		}
