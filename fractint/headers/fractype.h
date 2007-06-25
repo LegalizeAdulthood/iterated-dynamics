@@ -236,4 +236,14 @@ enum FunctionType
 #define FRACTYPE_OBSOLETE_MANDELBROT_EXP_L			49
 #define FRACTYPE_OBSOLETE_LAMBDA_EXP_L				50
 
+extern bool fractal_type_formula(int fractal_type);
+extern bool fractal_type_julia(int fractal_type);
+extern bool fractal_type_inverse_julia(int fractal_type);
+extern bool fractal_type_julia_or_inverse(int fractal_type);
+extern bool fractal_type_mandelbrot(int fractal_type);
+extern bool fractal_type_ifs(int fractal_type);
+extern bool fractal_type_none(int fractal_type);
+extern bool fractal_type_ant_or_cellular(int fractal_type);
+extern bool fractal_type_julibrot(int fractal_type);
+
 #endif

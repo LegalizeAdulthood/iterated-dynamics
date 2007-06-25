@@ -13,6 +13,7 @@
 #include "fractype.h"
 
 #include "ant.h"
+#include "Browse.h"
 #include "calcfrac.h"
 #include "fractalb.h"
 #include "fractalp.h"
@@ -2769,7 +2770,7 @@ int parameter_not_used(int parm)
 	int ret = 0;
 
 	/* sanity check */
-	if (g_fractal_type != FRACTYPE_FORMULA && g_fractal_type != FRACTYPE_FORMULA_FP)
+	if (!fractal_type_formula(g_fractal_type))
 	{
 		return 0;
 	}
@@ -2843,7 +2844,7 @@ int type_has_parameter(int type, int parm, char *buf)
 		}
 	}
 
-	if (type == FRACTYPE_FORMULA || type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(type))
 	{
 		if (parameter_not_used(parm))
 		{
@@ -2873,4 +2874,49 @@ alternate_math *find_alternate_math(int math)
 		}
 	}
 	return NULL;
+}
+
+bool fractal_type_formula(int fractal_type)
+{
+	return fractal_type == FRACTYPE_FORMULA || fractal_type == FRACTYPE_FORMULA_FP;
+}
+
+bool fractal_type_julia(int fractal_type)
+{
+	return fractal_type == FRACTYPE_JULIA_FP || fractal_type == FRACTYPE_JULIA;
+}
+
+bool fractal_type_inverse_julia(int fractal_type)
+{
+	return fractal_type == FRACTYPE_INVERSE_JULIA || fractal_type == FRACTYPE_INVERSE_JULIA_FP;
+}
+
+bool fractal_type_julia_or_inverse(int fractal_type)
+{
+	return fractal_type_julia(fractal_type) || fractal_type_inverse_julia(fractal_type);
+}
+
+bool fractal_type_mandelbrot(int fractal_type)
+{
+	return fractal_type == FRACTYPE_MANDELBROT || fractal_type == FRACTYPE_MANDELBROT_FP;
+}
+
+bool fractal_type_ifs(int fractal_type)
+{
+	return fractal_type == FRACTYPE_IFS || fractal_type == FRACTYPE_IFS_3D;
+}
+
+bool fractal_type_none(int fractal_type)
+{
+	return fractal_type == FRACTYPE_NO_FRACTAL;
+}
+
+bool fractal_type_ant_or_cellular(int fractal_type)
+{
+	return fractal_type == FRACTYPE_CELLULAR || fractal_type == FRACTYPE_ANT;
+}
+
+bool fractal_type_julibrot(int fractal_type)
+{
+	return fractal_type == FRACTYPE_JULIBROT || fractal_type == FRACTYPE_JULIBROT_FP;
 }

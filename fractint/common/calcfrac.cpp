@@ -1382,7 +1382,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 	g_orbit_index = 0;
 	g_color_iter = 0;
-	if (g_fractal_type == FRACTYPE_JULIA_FP || g_fractal_type == FRACTYPE_JULIA)
+	if (fractal_type_julia(g_fractal_type))
 	{
 		g_color_iter = -1;
 	}
@@ -3447,10 +3447,9 @@ void PerformWorkList::setup_distance_estimator()
 	}
 	/* must be mandel type, formula, or old PAR/GIF */
 	s_dem_mandelbrot =
-		(g_current_fractal_specific->tojulia != FRACTYPE_NO_FRACTAL
+		(!fractal_type_none(g_current_fractal_specific->tojulia)
 		|| g_use_old_distance_test
-		|| g_fractal_type == FRACTYPE_FORMULA
-		|| g_fractal_type == FRACTYPE_FORMULA_FP);
+		|| fractal_type_formula(g_fractal_type));
 
 	s_dem_delta = sqr(g_escape_time_state.m_grid_fp.delta_x()) + sqr(delta_y2_fp);
 	double ftemp = sqr(delta_y_fp) + sqr(delta_x2_fp);

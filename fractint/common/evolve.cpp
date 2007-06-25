@@ -359,7 +359,7 @@ static void vary_invert(GENEBASE gene[], int randval, int i)
 static int get_the_rest()
 {
 	int numtrig = (g_current_fractal_specific->flags >> 6) & 7;
-	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(g_fractal_type))
 	{
 		numtrig = g_formula_state.max_fn();
 	}
@@ -441,7 +441,7 @@ static int get_variations()
 {
 	int firstparm = 0;
 	int lastparm  = MAX_PARAMETERS;
-	if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+	if (fractal_type_formula(g_fractal_type))
 	{
 		if (g_formula_state.uses_p1())  /* set first parameter */
 		{
@@ -491,7 +491,7 @@ static int get_variations()
 	{
 		if (type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, NULL) == 0)
 		{
-			if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+			if (fractal_type_formula(g_fractal_type))
 			{
 				if (parameter_not_used(i))
 				{
@@ -503,7 +503,7 @@ static int get_variations()
 		numparams++;
 	}
 
-	if (g_fractal_type != FRACTYPE_FORMULA && g_fractal_type != FRACTYPE_FORMULA_FP)
+	if (!fractal_type_formula(g_fractal_type))
 	{
 		lastparm = numparams;
 	}
@@ -517,7 +517,7 @@ choose_vars_restart:
 		};
 		for (int num = firstparm; num < lastparm; num++)
 		{
-			if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+			if (fractal_type_formula(g_fractal_type))
 			{
 				if (parameter_not_used(num))
 				{
@@ -577,7 +577,7 @@ choose_vars_restart:
 		int k = 0;
 		for (int num = firstparm; num < lastparm; num++)
 		{
-			if (g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP)
+			if (fractal_type_formula(g_fractal_type))
 			{
 				if (parameter_not_used(num))
 				{
