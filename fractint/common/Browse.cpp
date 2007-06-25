@@ -54,9 +54,6 @@ static bf_t n_e;
 static bf_t n_f;
 static struct affine *cvt;
 static struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
-static int *boxx_storage = NULL;
-static int *boxy_storage = NULL;
-static int *boxvalues_storage = NULL;
 
 /* prototypes */
 static void check_history(const char *, const char *);
@@ -65,9 +62,9 @@ static void transform_bf(bf_t, bf_t, CoordinateD *);
 static void drawindow(int color, struct window *info);
 static bool is_visible_window(struct window *, fractal_info *, struct ext_blk_mp_info *);
 static void bfsetup_convert_to_screen();
-static char typeOK(fractal_info *, struct ext_blk_formula_info *);
-static char functionOK(fractal_info *, int);
-static char paramsOK(fractal_info *);
+static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_info &formula_info);
+static bool functions_match(const fractal_info &info, int num_functions);
+static bool parameters_match(const fractal_info &info);
 
 void BrowseState::extract_read_name()
 {
@@ -97,8 +94,8 @@ static void transform(CoordinateD *point)
 static void transform_bf(bf_t bt_x, bf_t bt_y, CoordinateD *point)
 {
 	int saved = save_stack();
-	bf_t bt_tmp1 = alloc_stack(rbflength + 2);
-	bf_t bt_tmp2 = alloc_stack(rbflength + 2);
+	bf_t bt_tmp1 = alloc_stack(g_rbf_length + 2);
+	bf_t bt_tmp2 = alloc_stack(g_rbf_length + 2);
 
 	/*  point->x = cvt->a*point->x + cvt->b*point->y + cvt->e; */
 	mult_bf(bt_tmp1, n_a, bt_x);
@@ -155,14 +152,14 @@ static bool is_visible_window(struct window *list, fractal_info *info,
 	int saved = save_stack();
 
 	/* Save original values. */
-	int orig_bflength = bflength;
-	int orig_bnlength = bnlength;
-	int orig_padding = padding;
-	int orig_rlength = rlength;
-	int orig_shiftfactor = shiftfactor;
-	int orig_rbflength = rbflength;
+	int orig_bflength = g_bf_length;
+	int orig_bnlength = g_bn_length;
+	int orig_padding = g_padding;
+	int orig_rlength = g_r_length;
+	int orig_shiftfactor = g_shift_factor;
+	int orig_rbflength = g_rbf_length;
 
-	int two_len = bflength + 2;
+	int two_len = g_bf_length + 2;
 	bf_t bt_x = alloc_stack(two_len);
 	bf_t bt_y = alloc_stack(two_len);
 	bf_t bt_xmin = alloc_stack(two_len);
@@ -174,9 +171,9 @@ static bool is_visible_window(struct window *list, fractal_info *info,
 
 	if (info->bf_math)
 	{
-		int di_bflength = info->bflength + bnstep;
+		int di_bflength = info->bflength + g_step_bn;
 		int two_di_len = di_bflength + 2;
-		int two_rbf = rbflength + 2;
+		int two_rbf = g_rbf_length + 2;
 
 		n_a = alloc_stack(two_rbf);
 		n_b = alloc_stack(two_rbf);
@@ -185,12 +182,12 @@ static bool is_visible_window(struct window *list, fractal_info *info,
 		n_e = alloc_stack(two_rbf);
 		n_f = alloc_stack(two_rbf);
 
-		convert_bf(n_a, bt_a, rbflength, orig_rbflength);
-		convert_bf(n_b, bt_b, rbflength, orig_rbflength);
-		convert_bf(n_c, bt_c, rbflength, orig_rbflength);
-		convert_bf(n_d, bt_d, rbflength, orig_rbflength);
-		convert_bf(n_e, bt_e, rbflength, orig_rbflength);
-		convert_bf(n_f, bt_f, rbflength, orig_rbflength);
+		convert_bf(n_a, bt_a, g_rbf_length, orig_rbflength);
+		convert_bf(n_b, bt_b, g_rbf_length, orig_rbflength);
+		convert_bf(n_c, bt_c, g_rbf_length, orig_rbflength);
+		convert_bf(n_d, bt_d, g_rbf_length, orig_rbflength);
+		convert_bf(n_e, bt_e, g_rbf_length, orig_rbflength);
+		convert_bf(n_f, bt_f, g_rbf_length, orig_rbflength);
 
 		bf_t bt_t1 = alloc_stack(two_di_len);
 		bf_t bt_t2 = alloc_stack(two_di_len);
@@ -252,12 +249,12 @@ static bool is_visible_window(struct window *list, fractal_info *info,
 	/* or too big... */
 
 	/* restore original values */
-	bflength = orig_bflength;
-	bnlength = orig_bnlength;
-	padding = orig_padding;
-	rlength = orig_rlength;
-	shiftfactor = orig_shiftfactor;
-	rbflength = orig_rbflength;
+	g_bf_length = orig_bflength;
+	g_bn_length = orig_bnlength;
+	g_padding = orig_padding;
+	g_r_length = orig_rlength;
+	g_shift_factor = orig_shiftfactor;
+	g_rbf_length = orig_rbflength;
 
 	restore_stack(saved);
 	if (cant_see) /* do it this way so bignum stack is released */
@@ -345,13 +342,13 @@ static void bfsetup_convert_to_screen()
 	/* setup_convert_to_screen() in LORENZ.C, converted to bf_math */
 	/* Call only from within look_get_window() */
 	int saved = save_stack();
-	bf_t bt_inter1 = alloc_stack(rbflength + 2);
-	bf_t bt_inter2 = alloc_stack(rbflength + 2);
-	bf_t bt_det = alloc_stack(rbflength + 2);
-	bf_t bt_xd = alloc_stack(rbflength + 2);
-	bf_t bt_yd = alloc_stack(rbflength + 2);
-	bf_t bt_tmp1 = alloc_stack(rbflength + 2);
-	bf_t bt_tmp2 = alloc_stack(rbflength + 2);
+	bf_t bt_inter1 = alloc_stack(g_rbf_length + 2);
+	bf_t bt_inter2 = alloc_stack(g_rbf_length + 2);
+	bf_t bt_det = alloc_stack(g_rbf_length + 2);
+	bf_t bt_xd = alloc_stack(g_rbf_length + 2);
+	bf_t bt_yd = alloc_stack(g_rbf_length + 2);
+	bf_t bt_tmp1 = alloc_stack(g_rbf_length + 2);
+	bf_t bt_tmp2 = alloc_stack(g_rbf_length + 2);
 
 	/* x3rd-xmin */
 	sub_bf(bt_inter1, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
@@ -424,104 +421,92 @@ static void bfsetup_convert_to_screen()
 	restore_stack(saved);
 }
 
-static char typeOK(fractal_info *info, struct ext_blk_formula_info *formula_info)
+static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_info &formula_info)
 {
-	int numfn;
-	if ((g_fractal_type == FRACTYPE_FORMULA || g_fractal_type == FRACTYPE_FORMULA_FP) &&
-		(info->fractal_type == FRACTYPE_FORMULA || info->fractal_type == FRACTYPE_FORMULA_FP))
+	if (fractal_type_formula(g_fractal_type) && fractal_type_formula(info.fractal_type))
 	{
-		if (!stricmp(formula_info->form_name, g_formula_name))
+		if (!stricmp(formula_info.form_name, g_formula_name))
 		{
-			numfn = g_formula_state.max_fn();
-			return (numfn > 0) ? functionOK(info, numfn) : 1;
+			int num_functions = g_formula_state.max_fn();
+			return (num_functions > 0) ? functions_match(info, num_functions) : true;
 		}
 		else
 		{
-			return 0; /* two formulas but names don't match */
+			return false; /* two formulas but names don't match */
 		}
 	}
-	else if (info->fractal_type == g_fractal_type ||
-			info->fractal_type == g_current_fractal_specific->tofloat)
+	else if (info.fractal_type == g_fractal_type ||
+			info.fractal_type == g_current_fractal_specific->tofloat)
 	{
-		numfn = (g_current_fractal_specific->flags >> 6) & 7;
-		return (numfn > 0) ? functionOK(info, numfn) : 1;
+		int num_functions = g_current_fractal_specific->num_functions();
+		return (num_functions > 0) ? functions_match(info, num_functions) : true;
 	}
-	else
-	{
-		return 0; /* no match */
-	}
+	return false; /* no match */
 }
 
-static char functionOK(fractal_info *info, int numfn)
+static bool functions_match(const fractal_info &info, int num_functions)
 {
-	int mzmatch = 0;
-	for (int i = 0; i < numfn; i++)
+	for (int i = 0; i < num_functions; i++)
 	{
-		if (info->function_index[i] != g_function_index[i])
+		if (info.function_index[i] != g_function_index[i])
 		{
-			mzmatch++;
+			return false;
 		}
 	}
-	return (mzmatch > 0) ? 0 : 1;
+	return true;
 }
 
-static char paramsOK(fractal_info *info)
+static bool epsilon_equal(double x, double y, double epsilon = 0.001)
 {
-#define MINDIF 0.001
+	return fabs(x - y) < epsilon;
+}
 
-	double tmpparm3;
-	double tmpparm4;
-	if (info->version > 6)
+static bool parameters_match(const fractal_info &info)
+{
+	double parameter3;
+	double parameter4;
+	if (info.version > 6)
 	{
-		tmpparm3 = info->dparm3;
-		tmpparm4 = info->dparm4;
+		parameter3 = info.dparm3;
+		parameter4 = info.dparm4;
 	}
 	else
 	{
-		tmpparm3 = info->parm3;
-		round_float_d(&tmpparm3);
-		tmpparm4 = info->parm4;
-		round_float_d(&tmpparm4);
+		parameter3 = info.parm3;
+		round_float_d(&parameter3);
+		parameter4 = info.parm4;
+		round_float_d(&parameter4);
 	}
 
-	double tmpparm5;
-	double tmpparm6;
-	double tmpparm7;
-	double tmpparm8;
-	double tmpparm9;
-	double tmpparm10;
-	if (info->version > 8)
+	double parameter5 = 0.0;
+	double parameter6 = 0.0;
+	double parameter7 = 0.0;
+	double parameter8 = 0.0;
+	double parameter9 = 0.0;
+	double parameter10 = 0.0;
+	if (info.version > 8)
 	{
-		tmpparm5 = info->dparm5;
-		tmpparm6 = info->dparm6;
-		tmpparm7 = info->dparm7;
-		tmpparm8 = info->dparm8;
-		tmpparm9 = info->dparm9;
-		tmpparm10 = info->dparm10;
+		parameter5 = info.dparm5;
+		parameter6 = info.dparm6;
+		parameter7 = info.dparm7;
+		parameter8 = info.dparm8;
+		parameter9 = info.dparm9;
+		parameter10 = info.dparm10;
 	}
-	else
-	{
-		tmpparm5 = 0.0;
-		tmpparm6 = 0.0;
-		tmpparm7 = 0.0;
-		tmpparm8 = 0.0;
-		tmpparm9 = 0.0;
-		tmpparm10 = 0.0;
-	}
+
 	/* parameters are in range? */
 	return
-		(fabs(info->c_real - g_parameters[0]) < MINDIF &&
-		fabs(info->c_imag - g_parameters[1]) < MINDIF &&
-		fabs(tmpparm3 - g_parameters[2]) < MINDIF &&
-		fabs(tmpparm4 - g_parameters[3]) < MINDIF &&
-		fabs(tmpparm5 - g_parameters[4]) < MINDIF &&
-		fabs(tmpparm6 - g_parameters[5]) < MINDIF &&
-		fabs(tmpparm7 - g_parameters[6]) < MINDIF &&
-		fabs(tmpparm8 - g_parameters[7]) < MINDIF &&
-		fabs(tmpparm9 - g_parameters[8]) < MINDIF &&
-		fabs(tmpparm10 - g_parameters[9]) < MINDIF &&
-		info->invert[0] - g_inversion[0] < MINDIF)
-		? 1 : 0;
+		epsilon_equal(info.c_real, g_parameters[0]) &&
+		epsilon_equal(info.c_imag, g_parameters[1]) &&
+		epsilon_equal(parameter3, g_parameters[2]) &&
+		epsilon_equal(parameter4, g_parameters[3]) &&
+		epsilon_equal(parameter5, g_parameters[4]) &&
+		epsilon_equal(parameter6, g_parameters[5]) &&
+		epsilon_equal(parameter7, g_parameters[6]) &&
+		epsilon_equal(parameter8, g_parameters[7]) &&
+		epsilon_equal(parameter9, g_parameters[8]) &&
+		epsilon_equal(parameter10, g_parameters[9]) &&
+		epsilon_equal(info.invert[0], g_inversion[0]);
 }
 
 
@@ -562,7 +547,7 @@ int look_get_window()
 	int done;
 	int wincount;
 	int toggle;
-	int color_of_box;
+	int box_color;
 	window winlist;
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
@@ -587,12 +572,12 @@ int look_get_window()
 		g_calculation_status = oldcalc_status;
 	}
 	saved = save_stack();
-	bt_a = alloc_stack(rbflength + 2);
-	bt_b = alloc_stack(rbflength + 2);
-	bt_c = alloc_stack(rbflength + 2);
-	bt_d = alloc_stack(rbflength + 2);
-	bt_e = alloc_stack(rbflength + 2);
-	bt_f = alloc_stack(rbflength + 2);
+	bt_a = alloc_stack(g_rbf_length + 2);
+	bt_b = alloc_stack(g_rbf_length + 2);
+	bt_c = alloc_stack(g_rbf_length + 2);
+	bt_d = alloc_stack(g_rbf_length + 2);
+	bt_e = alloc_stack(g_rbf_length + 2);
+	bt_f = alloc_stack(g_rbf_length + 2);
 
 	vidlength = g_screen_width + g_screen_height;
 	if (vidlength > 4096)
@@ -604,6 +589,9 @@ int look_get_window()
 #ifdef XFRACT
 	vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
+	int *boxx_storage = NULL;
+	int *boxy_storage = NULL;
+	int *boxvalues_storage = NULL;
 	boxx_storage = (int *) malloc(vidlength*MAX_WINDOWS_OPEN*sizeof(int));
 	boxy_storage = (int *) malloc(vidlength*MAX_WINDOWS_OPEN*sizeof(int));
 	boxvalues_storage = (int *) malloc(vidlength/2*MAX_WINDOWS_OPEN*sizeof(int));
@@ -630,7 +618,7 @@ int look_get_window()
 		floattobf(bt_f, cvt->f);
 	}
 	find_special_colors();
-	color_of_box = g_color_medium;
+	box_color = g_color_medium;
 
 rescan:  /* entry for changed browse parms */
 	time(&lastime);
@@ -653,14 +641,14 @@ rescan:  /* entry for changed browse parms */
 		make_path(tmpmask, drive, dir, fname, ext);
 		if (!find_fractal_info(tmpmask, &read_info, &resume_info_blk, &formula_info,
 				&ranges_info, &mp_info, &evolver_info, &orbits_info)
-			&& (typeOK(&read_info, &formula_info) || !g_browse_state.check_type())
-			&& (paramsOK(&read_info) || !g_browse_state.check_parameters())
+			&& (fractal_types_match(read_info, formula_info) || !g_browse_state.check_type())
+			&& (parameters_match(read_info) || !g_browse_state.check_parameters())
 			&& stricmp(g_browse_state.name(), g_dta.filename)
 			&& evolver_info.got_data != 1
 			&& is_visible_window(&winlist, &read_info, &mp_info))
 		{
 			strcpy(winlist.name, g_dta.filename);
-			drawindow(color_of_box, &winlist);
+			drawindow(box_color, &winlist);
 			g_box_count *= 2; /* double for byte count */
 			winlist.box_count = g_box_count;
 			browse_windows[wincount] = winlist;
@@ -745,7 +733,7 @@ rescan:  /* entry for changed browse parms */
 			case FIK_DOWN_ARROW:
 			case FIK_UP_ARROW:
 				clear_temp_message();
-				drawindow(color_of_box, &winlist); /* dim last window */
+				drawindow(box_color, &winlist); /* dim last window */
 				if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
 				{
 					index++;                     /* shift attention to next window */
@@ -770,25 +758,25 @@ rescan:  /* entry for changed browse parms */
 				break;
 #ifndef XFRACT
 			case FIK_CTL_INSERT:
-				color_of_box += key_count(FIK_CTL_INSERT);
+				box_color += key_count(FIK_CTL_INSERT);
 				for (int i = 0; i < wincount; i++)
 				{
 					winlist = browse_windows[i];
-					drawindow(color_of_box, &winlist);
+					drawindow(box_color, &winlist);
 				}
 				winlist = browse_windows[index];
-				drawindow(color_of_box, &winlist);
+				drawindow(box_color, &winlist);
 				break;
 
 			case FIK_CTL_DEL:
-				color_of_box -= key_count(FIK_CTL_DEL);
+				box_color -= key_count(FIK_CTL_DEL);
 				for (int i = 0; i < wincount; i++)
 				{
 					winlist = browse_windows[i];
-					drawindow(color_of_box, &winlist);
+					drawindow(box_color, &winlist);
 				}
 				winlist = browse_windows[index];
-				drawindow(color_of_box, &winlist);
+				drawindow(box_color, &winlist);
 				break;
 #endif
 			case FIK_ENTER:
@@ -894,7 +882,7 @@ rescan:  /* entry for changed browse parms */
 
 			case 's': /* save image with boxes */
 				g_browse_state.set_auto_browse(false);
-				drawindow(color_of_box, &winlist); /* current window white */
+				drawindow(box_color, &winlist); /* current window white */
 				done = 4;
 				break;
 

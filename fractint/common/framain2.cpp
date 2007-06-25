@@ -452,12 +452,12 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 		if (g_bf_math)
 		{
-			copy_bf(bfsxmin, g_escape_time_state.m_grid_bf.x_min());
-			copy_bf(bfsxmax, g_escape_time_state.m_grid_bf.x_max());
-			copy_bf(bfsymin, g_escape_time_state.m_grid_bf.y_min());
-			copy_bf(bfsymax, g_escape_time_state.m_grid_bf.y_max());
-			copy_bf(bfsx3rd, g_escape_time_state.m_grid_bf.x_3rd());
-			copy_bf(bfsy3rd, g_escape_time_state.m_grid_bf.y_3rd());
+			copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_min());
+			copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_max());
+			copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_min());
+			copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_max());
+			copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_3rd());
+			copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_3rd());
 		}
 		history_save_info();
 
@@ -1467,7 +1467,7 @@ static void handle_zoom_skew(bool negative)
 {
 	if (negative)
 	{
-		if (g_box_count && (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) == 0)
+		if (g_box_count && !g_current_fractal_specific->no_zoom_box_rotate())
 		{
 			int i = key_count(FIK_CTL_HOME);
 			g_z_skew -= 0.02*i;
@@ -1479,7 +1479,7 @@ static void handle_zoom_skew(bool negative)
 	}
 	else
 	{
-		if (g_box_count && (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) == 0)
+		if (g_box_count && !g_current_fractal_specific->no_zoom_box_rotate())
 		{
 			int i = key_count(FIK_CTL_END);
 			g_z_skew += 0.02*i;
@@ -1541,7 +1541,7 @@ static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
 
 static void handle_z_rotate(bool increase)
 {
-	if (g_box_count && (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) == 0)
+	if (g_box_count && !g_current_fractal_specific->no_zoom_box_rotate())
 	{
 		if (increase)
 		{
@@ -2284,12 +2284,12 @@ void reset_zoom_corners()
 	g_escape_time_state.m_grid_fp.y_3rd() = g_sy_3rd;
 	if (g_bf_math)
 	{
-		copy_bf(g_escape_time_state.m_grid_bf.x_min(), bfsxmin);
-		copy_bf(g_escape_time_state.m_grid_bf.x_max(), bfsxmax);
-		copy_bf(g_escape_time_state.m_grid_bf.y_min(), bfsymin);
-		copy_bf(g_escape_time_state.m_grid_bf.y_max(), bfsymax);
-		copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), bfsx3rd);
-		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), bfsy3rd);
+		copy_bf(g_escape_time_state.m_grid_bf.x_min(), g_sx_min_bf);
+		copy_bf(g_escape_time_state.m_grid_bf.x_max(), g_sx_max_bf);
+		copy_bf(g_escape_time_state.m_grid_bf.y_min(), g_sy_min_bf);
+		copy_bf(g_escape_time_state.m_grid_bf.y_max(), g_sy_max_bf);
+		copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_sx_3rd_bf);
+		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_sy_3rd_bf);
 	}
 }
 

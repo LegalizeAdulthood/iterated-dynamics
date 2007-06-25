@@ -2789,7 +2789,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	if (g_bf_math)
 	{
 		saved = save_stack();
-		bft1    = alloc_stack(rbflength + 2);
+		bft1    = alloc_stack(g_rbf_length + 2);
 		xaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.y_min()) != sign_bf(g_escape_time_state.m_grid_bf.y_max()));
 		yaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.x_min()) != sign_bf(g_escape_time_state.m_grid_bf.x_max()));
 	}
@@ -3392,11 +3392,11 @@ void PerformWorkList::setup_potential()
 
 void PerformWorkList::setup_standard_calculation_mode()
 {
-	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_BOUNDARY_TRACING))
+	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->no_boundary_tracing()))
 	{
 		g_standard_calculation_mode = '1';
 	}
-	if (g_standard_calculation_mode == 'g' && (g_current_fractal_specific->flags & FRACTALFLAG_NO_SOLID_GUESSING))
+	if (g_standard_calculation_mode == 'g' && (g_current_fractal_specific->no_solid_guessing()))
 	{
 		g_standard_calculation_mode = '1';
 	}

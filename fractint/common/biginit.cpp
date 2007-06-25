@@ -17,21 +17,22 @@ is in the allocations of memory for the big numbers.
 
 #include "biginit.h"
 #include "calcfrac.h"
+#include "EscapeTime.h"
 #include "fractalp.h"
 #include "prompts2.h"
 #include "realdos.h"
 
 /* globals */
-int bnstep = 0;
-int bnlength = 0;
-int intlength = 0;
-int rlength = 0;
-int padding = 0;
-int shiftfactor = 0;
+int g_step_bn = 0;
+int g_bn_length = 0;
+int g_int_length = 0;
+int g_r_length = 0;
+int g_padding = 0;
+int g_shift_factor = 0;
 int g_decimals = 0;
-int bflength = 0;
-int rbflength = 0;
-int bfdecimals = 0;
+int g_bf_length = 0;
+int g_rbf_length = 0;
+int g_bf_decimals = 0;
 
 /* used internally by bignum.c routines */
 static char s_storage[4096];
@@ -42,9 +43,9 @@ bn_t bntmp2 = NULL;
 bn_t bntmp3 = NULL;
 bn_t bntmp4 = NULL;
 bn_t bntmp5 = NULL;
-bn_t bntmp6 = NULL;						/* rlength  */
+bn_t bntmp6 = NULL;						/* g_r_length  */
 bn_t bntmpcpy1 = NULL;
-bn_t bntmpcpy2 = NULL;					/* bnlength */
+bn_t bntmpcpy2 = NULL;					/* g_bn_length */
 
 /* used by other routines */
 bn_t bnxmin = NULL;
@@ -52,19 +53,19 @@ bn_t bnxmax = NULL;
 bn_t bnymin = NULL;
 bn_t bnymax = NULL;
 bn_t bnx3rd = NULL;
-bn_t bny3rd = NULL;						/* bnlength */
+bn_t bny3rd = NULL;						/* g_bn_length */
 bn_t bnxdel = NULL;
 bn_t bnydel = NULL;
 bn_t bnxdel2 = NULL;
 bn_t bnydel2 = NULL;
-bn_t bnclosenuff = NULL;				/* bnlength */
+bn_t bnclosenuff = NULL;				/* g_bn_length */
 bn_t bntmpsqrx = NULL;
 bn_t bntmpsqry = NULL;
-bn_t bntmp = NULL;						/* rlength  */
+bn_t bntmp = NULL;						/* g_r_length  */
 ComplexBigNum bnold = { NULL, NULL };
 ComplexBigNum bnparm = { NULL, NULL };
-ComplexBigNum bnsaved = { NULL, NULL };		/* bnlength */
-ComplexBigNum bnnew = { NULL, NULL };		/* rlength */
+ComplexBigNum bnsaved = { NULL, NULL };		/* g_bn_length */
+ComplexBigNum bnnew = { NULL, NULL };		/* g_r_length */
 bn_t bn_pi = NULL;						/* TAKES NO SPACE */
 
 bf_t bftmp1 = NULL;
@@ -72,41 +73,41 @@ bf_t bftmp2 = NULL;
 bf_t bftmp3 = NULL;
 bf_t bftmp4 = NULL;
 bf_t bftmp5 = NULL;
-bf_t bftmp6 = NULL;						/* rbflength + 2 */
+bf_t bftmp6 = NULL;						/* g_rbf_length + 2 */
 bf_t bftmpcpy1 = NULL;
-bf_t bftmpcpy2 = NULL;					/* rbflength + 2 */
+bf_t bftmpcpy2 = NULL;					/* g_rbf_length + 2 */
 bf_t bfxdel = NULL;
 bf_t bfydel = NULL;
 bf_t bfxdel2 = NULL;
 bf_t bfydel2 = NULL;
-bf_t bfclosenuff = NULL;				/* rbflength + 2 */
+bf_t bfclosenuff = NULL;				/* g_rbf_length + 2 */
 bf_t bftmpsqrx = NULL;
-bf_t bftmpsqry = NULL;					/* rbflength + 2 */
-ComplexBigFloat bfparm = {NULL, NULL};			/* bflength + 2 */
-										/* bflength + 2 */
+bf_t bftmpsqry = NULL;					/* g_rbf_length + 2 */
+ComplexBigFloat bfparm = {NULL, NULL};			/* g_bf_length + 2 */
+										/* g_bf_length + 2 */
 ComplexBigFloat bfsaved = {NULL, NULL};		/* bfold,  bfnew, */
-										/* bflength + 2 */
+										/* g_bf_length + 2 */
 ComplexBigFloat bfold = {NULL, NULL};
-ComplexBigFloat bfnew = {NULL, NULL};			/* rbflength + 2 */
+ComplexBigFloat bfnew = {NULL, NULL};			/* g_rbf_length + 2 */
 bf_t bf_pi = NULL;						/* TAKES NO SPACE */
-bf_t big_pi = NULL;						/* bflength + 2 */
+bf_t big_pi = NULL;						/* g_bf_length + 2 */
 
 /* for testing only */
 
 /* used by other routines */
-bf_t bfxmin = NULL;
-bf_t bfxmax = NULL;
-bf_t bfymin = NULL;
-bf_t bfymax = NULL;
-bf_t bfx3rd = NULL;
-bf_t bfy3rd = NULL;						/* bflength + 2 */
-bf_t bfsxmin = NULL;
-bf_t bfsxmax = NULL;
-bf_t bfsymin = NULL;
-bf_t bfsymax = NULL;
-bf_t bfsx3rd = NULL;
-bf_t bfsy3rd = NULL;					/* bflength + 2 */
-bf_t bfparms[10];						/* (bflength + 2)*10 */
+//bf_t bfxmin = NULL;
+//bf_t bfxmax = NULL;
+//bf_t bfymin = NULL;
+//bf_t bfymax = NULL;
+//bf_t bfx3rd = NULL;
+//bf_t bfy3rd = NULL;						/* g_bf_length + 2 */
+bf_t g_sx_min_bf = NULL;
+bf_t g_sx_max_bf = NULL;
+bf_t g_sy_min_bf = NULL;
+bf_t g_sy_max_bf = NULL;
+bf_t g_sx_3rd_bf = NULL;
+bf_t g_sy_3rd_bf = NULL;					/* g_bf_length + 2 */
+bf_t bfparms[10];						/* (g_bf_length + 2)*10 */
 bf_t bftmp = NULL;
 
 bf_t bf10tmp = NULL;					/* dec + 4 */
@@ -118,25 +119,25 @@ static int save_bf_vars();
 static int restore_bf_vars();
 
 /*********************************************************************/
-/* given bnlength, calculate_bignum_lengths will calculate all the other lengths */
+/* given g_bn_length, calculate_bignum_lengths will calculate all the other lengths */
 void calculate_bignum_lengths()
 {
-	bnstep = 4;  /* use 4 in all cases */
+	g_step_bn = 4;  /* use 4 in all cases */
 
-	if (bnlength % bnstep != 0)
+	if (g_bn_length % g_step_bn != 0)
 	{
-		bnlength = (bnlength / bnstep + 1)*bnstep;
+		g_bn_length = (g_bn_length / g_step_bn + 1)*g_step_bn;
 	}
-	padding = (bnlength == bnstep) ? bnlength : 2*bnstep;
-	rlength = bnlength + padding;
+	g_padding = (g_bn_length == g_step_bn) ? g_bn_length : 2*g_step_bn;
+	g_r_length = g_bn_length + g_padding;
 
 	/* This shiftfactor assumes non-full multiplications will be performed.*/
-	/* Change to bnlength-intlength for full multiplications.              */
-	shiftfactor = padding - intlength;
+	/* Change to g_bn_length-g_int_length for full multiplications.              */
+	g_shift_factor = g_padding - g_int_length;
 
-	bflength = bnlength + bnstep; /* one extra step for added precision */
-	rbflength = bflength + padding;
-	bfdecimals = (int)((bflength-2)*LOG10_256);
+	g_bf_length = g_bn_length + g_step_bn; /* one extra step for added precision */
+	g_rbf_length = g_bf_length + g_padding;
+	g_bf_decimals = (int)((g_bf_length-2)*LOG10_256);
 }
 
 /************************************************************************/
@@ -157,22 +158,22 @@ static big_t advance_ptr(long &ptr, int length)
 
 static big_t advance_ptr_r_length(long &ptr)
 {
-	return advance_ptr(ptr, rlength);
+	return advance_ptr(ptr, g_r_length);
 }
 
 static big_t advance_ptr_bn_length(long &ptr)
 {
-	return advance_ptr(ptr, bnlength);
+	return advance_ptr(ptr, g_bn_length);
 }
 
 static big_t advance_ptr_bf_length_plus_2(long &ptr)
 {
-	return advance_ptr(ptr, bflength + 2);
+	return advance_ptr(ptr, g_bf_length + 2);
 }
 
 static big_t advance_ptr_rbf_length_plus_2(long &ptr)
 {
-	return advance_ptr(ptr, rbflength + 2);
+	return advance_ptr(ptr, g_rbf_length + 2);
 }
 
 static void init_bf_2()
@@ -215,11 +216,11 @@ static void init_bf_2()
 	bftmp5     = advance_ptr_rbf_length_plus_2(ptr);
 	bftmp6     = advance_ptr_rbf_length_plus_2(ptr);
 
-	bftmpcpy1  = advance_ptr(ptr, (rbflength + 2)*2);
-	bftmpcpy2  = advance_ptr(ptr, (rbflength + 2)*2);
+	bftmpcpy1  = advance_ptr(ptr, (g_rbf_length + 2)*2);
+	bftmpcpy2  = advance_ptr(ptr, (g_rbf_length + 2)*2);
 
-	bntmpcpy1  = advance_ptr(ptr, rlength*2);
-	bntmpcpy2  = advance_ptr(ptr, rlength*2);
+	bntmpcpy1  = advance_ptr(ptr, g_r_length*2);
+	bntmpcpy2  = advance_ptr(ptr, g_r_length*2);
 
 	if (g_bf_math == BIGNUM)
 	{
@@ -266,7 +267,7 @@ static void init_bf_2()
 		big_pi     = advance_ptr_bf_length_plus_2(ptr);
 		bftmp      = advance_ptr_rbf_length_plus_2(ptr);
 	}
-	bf10tmp    = advance_ptr(ptr, bfdecimals + 4);
+	bf10tmp    = advance_ptr(ptr, g_bf_decimals + 4);
 
 	/* ptr needs to be 16-bit aligned on some systems */
 	ptr = (ptr + 1) & ~1;
@@ -275,12 +276,12 @@ static void init_bf_2()
 	startstack = ptr;
 
 	/* max stack offset from bnroot */
-	maxstack = (long) 0x10000l-(bflength + 2)*22;
+	maxstack = (long) 0x10000l-(g_bf_length + 2)*22;
 
 	/* sanity check */
 	/* leave room for NUMVARS variables allocated from stack */
 	/* also leave room for the safe area at top of segment */
-	if (ptr + NUMVARS*(bflength + 2) > maxstack)
+	if (ptr + NUMVARS*(g_bf_length + 2) > maxstack)
 	{
 		char msg[80];
 		sprintf(msg, "Requested precision of %d too high, aborting", g_decimals);
@@ -292,23 +293,23 @@ static void init_bf_2()
 	/* this area is safe - use for variables that are used outside fractal*/
 	/* generation - e.g. zoom box variables */
 	ptr  = maxstack;
-	bfxmin     = advance_ptr_bf_length_plus_2(ptr);
-	bfxmax     = advance_ptr_bf_length_plus_2(ptr);
-	bfymin     = advance_ptr_bf_length_plus_2(ptr);
-	bfymax     = advance_ptr_bf_length_plus_2(ptr);
-	bfx3rd     = advance_ptr_bf_length_plus_2(ptr);
-	bfy3rd     = advance_ptr_bf_length_plus_2(ptr);
+	g_escape_time_state.m_grid_bf.x_min()     = advance_ptr_bf_length_plus_2(ptr);
+	g_escape_time_state.m_grid_bf.x_max()     = advance_ptr_bf_length_plus_2(ptr);
+	g_escape_time_state.m_grid_bf.y_min()     = advance_ptr_bf_length_plus_2(ptr);
+	g_escape_time_state.m_grid_bf.y_max()     = advance_ptr_bf_length_plus_2(ptr);
+	g_escape_time_state.m_grid_bf.x_3rd()     = advance_ptr_bf_length_plus_2(ptr);
+	g_escape_time_state.m_grid_bf.y_3rd()     = advance_ptr_bf_length_plus_2(ptr);
 	for (int i = 0; i < 10; i++)
 	{
 		bfparms[i]  = bnroot + ptr;
-		ptr += bflength + 2;
+		ptr += g_bf_length + 2;
 	}
-	bfsxmin    = advance_ptr_bf_length_plus_2(ptr);
-	bfsxmax    = advance_ptr_bf_length_plus_2(ptr);
-	bfsymin    = advance_ptr_bf_length_plus_2(ptr);
-	bfsymax    = advance_ptr_bf_length_plus_2(ptr);
-	bfsx3rd    = advance_ptr_bf_length_plus_2(ptr);
-	bfsy3rd    = advance_ptr_bf_length_plus_2(ptr);
+	g_sx_min_bf    = advance_ptr_bf_length_plus_2(ptr);
+	g_sx_max_bf    = advance_ptr_bf_length_plus_2(ptr);
+	g_sy_min_bf    = advance_ptr_bf_length_plus_2(ptr);
+	g_sy_max_bf    = advance_ptr_bf_length_plus_2(ptr);
+	g_sx_3rd_bf    = advance_ptr_bf_length_plus_2(ptr);
+	g_sy_3rd_bf    = advance_ptr_bf_length_plus_2(ptr);
 	/* end safe vars */
 
 	/* good citizens initialize variables */
@@ -319,7 +320,7 @@ static void init_bf_2()
 	else /* first time through - nothing saved */
 	{
 		/* high variables */
-		memset(bnroot + maxstack, 0, (bflength + 2)*22);
+		memset(bnroot + maxstack, 0, (g_bf_length + 2)*22);
 		/* low variables */
 		memset(bnroot, 0, (unsigned)startstack);
 	}
@@ -342,11 +343,11 @@ static int save_bf_vars()
 	unsigned int mem;
 	if (bnroot != NULL)
 	{
-		mem = (bflength + 2)*22;  /* 6 corners + 6 save corners + 10 params */
-		g_bf_save_len = bflength;
-		memcpy(bnroot, bfxmin, mem);
+		mem = (g_bf_length + 2)*22;  /* 6 corners + 6 save corners + 10 params */
+		g_bf_save_len = g_bf_length;
+		memcpy(bnroot, g_escape_time_state.m_grid_bf.x_min(), mem);
 		/* scrub old high area */
-		memset(bfxmin, 0, mem);
+		memset(g_escape_time_state.m_grid_bf.x_min(), 0, mem);
 		ret = 0;
 	}
 	else
@@ -368,23 +369,23 @@ static int restore_bf_vars()
 		return -1;
 	}
 	ptr  = bnroot;
-	convert_bf(bfxmin, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfxmax, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfymin, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfymax, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfx3rd, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfy3rd, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_escape_time_state.m_grid_bf.x_min(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_escape_time_state.m_grid_bf.x_max(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_escape_time_state.m_grid_bf.y_min(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_escape_time_state.m_grid_bf.y_max(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_escape_time_state.m_grid_bf.x_3rd(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_escape_time_state.m_grid_bf.y_3rd(), ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
 	for (i = 0; i < 10; i++)
 	{
-		convert_bf(bfparms[i], ptr, bflength, g_bf_save_len);
+		convert_bf(bfparms[i], ptr, g_bf_length, g_bf_save_len);
 		ptr += g_bf_save_len + 2;
 	}
-	convert_bf(bfsxmin, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfsxmax, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfsymin, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfsymax, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfsx3rd, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
-	convert_bf(bfsy3rd, ptr, bflength, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_sx_min_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_sx_max_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_sy_min_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_sy_max_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_sx_3rd_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
+	convert_bf(g_sy_3rd_bf, ptr, g_bf_length, g_bf_save_len); ptr += g_bf_save_len + 2;
 
 	/* scrub save area */
 	memset(bnroot, 0, (g_bf_save_len + 2)*22);
@@ -397,16 +398,16 @@ void free_bf_vars()
 {
 	g_bf_save_len = 0;
 	g_bf_math = 0;
-	bnstep = 0;
-	bnlength = 0;
-	intlength = 0;
-	rlength = 0;
-	padding = 0;
-	shiftfactor = 0;
+	g_step_bn = 0;
+	g_bn_length = 0;
+	g_int_length = 0;
+	g_r_length = 0;
+	g_padding = 0;
+	g_shift_factor = 0;
 	g_decimals = 0;
-	bflength = 0;
-	rbflength = 0;
-	bfdecimals = 0;
+	g_bf_length = 0;
+	g_rbf_length = 0;
+	g_bf_decimals = 0;
 }
 
 /************************************************************************/
@@ -467,24 +468,24 @@ void init_bf_dec(int dec)
 	if (g_bail_out > 10)    /* arbitrary value */
 	{
 		/* using 2 doesn't gain much and requires another test */
-		intlength = 4;
+		g_int_length = 4;
 	}
 	else if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
-		intlength = 2;
+		g_int_length = 2;
 	}
 	/* the bailout tests need greater dynamic range */
 	else if (g_bail_out_test == BAILOUT_REAL || g_bail_out_test == BAILOUT_IMAGINARY || g_bail_out_test == BAILOUT_AND ||
 				g_bail_out_test == BAILOUT_MANHATTAN_R)
 	{
-		intlength = 2;
+		g_int_length = 2;
 	}
 	else
 	{
-		intlength = 1;
+		g_int_length = 1;
 	}
 	/* conservative estimate */
-	bnlength = intlength + (int)(g_decimals/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + (int)(g_decimals/LOG10_256) + 1; /* round up */
 	init_bf_2();
 }
 
@@ -494,29 +495,29 @@ void init_bf_dec(int dec)
 /*   intl = bytes for integer part (1, 2, or 4)                         */
 void init_bf_length(int bnl)
 {
-	bnlength = bnl;
+	g_bn_length = bnl;
 
 	if (g_bail_out > 10)    /* arbitrary value */
 	{
 		/* using 2 doesn't gain much and requires another test */
-		intlength = 4;
+		g_int_length = 4;
 	}
 	else if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_FP || g_fractal_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
-		intlength = 2;
+		g_int_length = 2;
 	}
 	/* the bailout tests need greater dynamic range */
 	else if (g_bail_out_test == BAILOUT_REAL || g_bail_out_test == BAILOUT_IMAGINARY || g_bail_out_test == BAILOUT_AND ||
 				g_bail_out_test == BAILOUT_MANHATTAN_R)
 	{
-		intlength = 2;
+		g_int_length = 2;
 	}
 	else
 	{
-		intlength = 1;
+		g_int_length = 1;
 	}
 	/* conservative estimate */
-	g_decimals = (int)((bnlength-intlength)*LOG10_256);
+	g_decimals = (int)((g_bn_length-g_int_length)*LOG10_256);
 	init_bf_2();
 }
 
@@ -600,16 +601,16 @@ void init_big_pi()
 			0x09, 0xA4, 0x44, 0x73, 0x70, 0x03, 0x2E, 0x8A, 0x19, 0x13,
 			0xD3, 0x08, 0xA3, 0x85, 0x88, 0x6A, 0x3F, 0x24,
 			/* . */  0x03, 0x00, 0x00, 0x00
-			/*  <- up to intlength 4 -> */
+			/*  <- up to g_int_length 4 -> */
 			/* or bf_t int length of 2 + 2 byte exp  */
 			};
 
-	length = bflength + 2; /* 2 byte exp */
+	length = g_bf_length + 2; /* 2 byte exp */
 	pi_offset = sizeof pi_table - length;
 	memcpy(big_pi, pi_table + pi_offset, length);
 
 	/* notice that bf_pi and bn_pi can share the same memory space */
 	bf_pi = big_pi;
-	bn_pi = big_pi + (bflength-2) - (bnlength-intlength);
+	bn_pi = big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
 	return;
 }

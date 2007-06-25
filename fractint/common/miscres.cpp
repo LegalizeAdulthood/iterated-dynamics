@@ -40,7 +40,7 @@ extern long maxstack;
 extern long startstack;
 /* routines in this module      */
 
-static  void trigdetails(char *);
+static  void function_details(char *);
 static void area();
 
 void not_disk_message()
@@ -343,8 +343,8 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 	/* if (x3rd == xmin && y3rd == ymin) */
 	if (!cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()) && !cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()))
 	{ /* no rotation or skewing, but stretching is allowed */
-		bfWidth  = alloc_stack(bflength + 2);
-		bfHeight = alloc_stack(bflength + 2);
+		bfWidth  = alloc_stack(g_bf_length + 2);
+		bfHeight = alloc_stack(g_bf_length + 2);
 		/* Width  = xmax - xmin; */
 		sub_bf(bfWidth, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		Width  = bftofloat(bfWidth);
@@ -364,8 +364,8 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 	}
 	else
 	{
-		bftmpx = alloc_stack(bflength + 2);
-		bftmpy = alloc_stack(bflength + 2);
+		bftmpx = alloc_stack(g_bf_length + 2);
+		bftmpy = alloc_stack(g_bf_length + 2);
 
 		/* set up triangle ABC, having sides abc */
 		/* side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) */
@@ -463,8 +463,8 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	int saved;
 
 	saved = save_stack();
-	bfh = alloc_stack(bflength + 2);
-	bfw = alloc_stack(bflength + 2);
+	bfh = alloc_stack(g_bf_length + 2);
+	bfw = alloc_stack(g_bf_length + 2);
 
 	if (Xmagfactor == 0.0)
 	{
@@ -492,7 +492,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 		return;
 		}
 
-	bftmp = alloc_stack(bflength + 2);
+	bftmp = alloc_stack(g_bf_length + 2);
 	/* in unrotated, untranslated coordinate system */
 	tanskew = tan(MathUtil::DegreesToRadians(Skew));
 	x_min = -w + h*tanskew;
@@ -562,50 +562,41 @@ void (*g_trig1_d)() = dStkSqr;
 void (*g_trig2_d)() = dStkSinh;
 void (*g_trig3_d)() = dStkCosh;
 
-void show_trig(char *buf) /* return display form of active trig functions */
+void show_function(char *message) /* return display form of active trig functions */
 {
-	char tmpbuf[30];
-	*buf = 0; /* null string if none */
-	trigdetails(tmpbuf);
-	if (tmpbuf[0])
+	char buffer[80];
+	*message = 0; /* null string if none */
+	function_details(buffer);
+	if (buffer[0])
 	{
-		sprintf(buf, " function=%s", tmpbuf);
+		sprintf(message, " function=%s", buffer);
 	}
 }
 
-static void trigdetails(char *buf)
+static void function_details(char *message)
 {
-	int i;
-	int numfn;
-	char tmpbuf[20];
-	if (fractal_type_julibrot(g_fractal_type))
-	{
-		numfn = (g_fractal_specific[g_new_orbit_type].flags >> 6) & 7;
-	}
-	else
-	{
-		numfn = (g_current_fractal_specific->flags >> 6) & 7;
-	}
+	int num_functions = fractal_type_julibrot(g_fractal_type) ?
+		g_fractal_specific[g_new_orbit_type].num_functions() : g_current_fractal_specific->num_functions();
 	if (g_current_fractal_specific == &g_fractal_specific[FRACTYPE_FORMULA] ||
 		g_current_fractal_specific == &g_fractal_specific[FRACTYPE_FORMULA_FP])
 	{
-		numfn = g_formula_state.max_fn();
+		num_functions = g_formula_state.max_fn();
 	}
-	*buf = 0; /* null string if none */
-	if (numfn > 0)
+	*message = 0; /* null string if none */
+	if (num_functions > 0)
 	{
-		strcpy(buf, g_function_list[g_function_index[0]].name);
-		i = 0;
-		while (++i < numfn)
+		strcpy(message, g_function_list[g_function_index[0]].name);
+		for (int i = 1; i < num_functions; i++)
 		{
-			sprintf(tmpbuf, "/%s", g_function_list[g_function_index[i]].name);
-			strcat(buf, tmpbuf);
+			char buffer[20];
+			sprintf(buffer, "/%s", g_function_list[g_function_index[i]].name);
+			strcat(message, buffer);
 		}
 	}
 }
 
 /* set array of trig function indices according to "function=" command */
-int set_trig_array(int k, const char *name)
+int set_function_array(int k, const char *name)
 {
 	char trigname[10];
 	int i;
@@ -735,10 +726,10 @@ int tab_display_2(char *msg)
 	write_row(++row, "%ld of %ld bignum memory used", g_bn_max_stack, maxstack);
 	write_row(++row, "   %ld used for bignum globals", startstack);
 	write_row(++row, "   %ld stack used == %ld variables of length %d",
-			g_bn_max_stack-startstack, (long)((g_bn_max_stack-startstack)/(rbflength + 2)), rbflength + 2);
+			g_bn_max_stack-startstack, (long)((g_bn_max_stack-startstack)/(g_rbf_length + 2)), g_rbf_length + 2);
 	if (g_bf_math)
 	{
-		write_row(++row, "intlength %-d bflength %-d ", intlength, bflength);
+		write_row(++row, "intlength %-d bflength %-d ", g_int_length, g_bf_length);
 	}
 	row++;
 	show_str_var("tempdir",     g_temp_dir,      &row, msg);
@@ -836,8 +827,8 @@ int tab_display()       /* display the status of the current image */
 	if (g_bf_math)
 	{
 		saved = save_stack();
-		bfXctr = alloc_stack(bflength + 2);
-		bfYctr = alloc_stack(bflength + 2);
+		bfXctr = alloc_stack(g_bf_length + 2);
+		bfYctr = alloc_stack(g_bf_length + 2);
 	}
 	if (fractal_type_formula(g_fractal_type))
 	{
@@ -879,7 +870,7 @@ top:
 			}
 			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_formula_filename);
 		}
-		trigdetails(msg);
+		function_details(msg);
 		driver_put_string(s_row + 1, 16 + i, C_GENERAL_HI, msg);
 		if (g_fractal_type == FRACTYPE_L_SYSTEM)
 		{

@@ -486,10 +486,10 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_potential_16bit = false;
 	g_potential_flag = false;
 	g_log_palette_mode = LOGPALETTE_NONE;                         /* no logarithmic palette */
-	set_trig_array(0, "sin");             /* trigfn defaults */
-	set_trig_array(1, "sqr");
-	set_trig_array(2, "sinh");
-	set_trig_array(3, "cosh");
+	set_function_array(0, "sin");             /* trigfn defaults */
+	set_function_array(1, "sqr");
+	set_function_array(2, "sinh");
+	set_function_array(3, "cosh");
 	if (g_ranges_length)
 	{
 		free((char *)g_ranges);
@@ -1259,7 +1259,7 @@ static int function_arg(const cmd_context &context)
 
 	while (*value && k < 4)
 	{
-		if (set_trig_array(k++, value))
+		if (set_function_array(k++, value))
 		{
 			return bad_arg(context.curarg);
 		}
@@ -2023,8 +2023,8 @@ static int center_mag_arg(const cmd_context &context)
 		}
 		g_use_center_mag = true;
 		saved = save_stack();
-		bXctr            = alloc_stack(bflength + 2);
-		bYctr            = alloc_stack(bflength + 2);
+		bXctr            = alloc_stack(g_bf_length + 2);
+		bYctr            = alloc_stack(g_bf_length + 2);
 		/* Xctr = context.floatval[0]; */
 		get_bf(bXctr, context.floatvalstr[0]);
 		/* Yctr = context.floatval[1]; */

@@ -37,9 +37,9 @@ static void _fastcall move_row(int fromrow, int torow, int col);
 /* big number declarations */
 static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
 {
-	bf_t btmp1 = alloc_stack(rbflength + 2);
-	bf_t btmp2 = alloc_stack(rbflength + 2);
-	bf_t btmp3 = alloc_stack(rbflength + 2);
+	bf_t btmp1 = alloc_stack(g_rbf_length + 2);
+	bf_t btmp2 = alloc_stack(g_rbf_length + 2);
+	bf_t btmp3 = alloc_stack(g_rbf_length + 2);
 	int saved = save_stack();
 
 	/* use target as temporary variable */
@@ -145,11 +145,11 @@ void zoom_box_draw(int drawit)
 	if (g_bf_math)
 	{
 		saved = save_stack();
-		bffxwidth = alloc_stack(rbflength + 2);
-		bffxskew  = alloc_stack(rbflength + 2);
-		bffydepth = alloc_stack(rbflength + 2);
-		bffyskew  = alloc_stack(rbflength + 2);
-		bffxadj   = alloc_stack(rbflength + 2);
+		bffxwidth = alloc_stack(g_rbf_length + 2);
+		bffxskew  = alloc_stack(g_rbf_length + 2);
+		bffydepth = alloc_stack(g_rbf_length + 2);
+		bffyskew  = alloc_stack(g_rbf_length + 2);
+		bffxadj   = alloc_stack(g_rbf_length + 2);
 	}
 	ftemp1 = MathUtil::Pi*g_z_rotate/72; /* convert to radians */
 	rotcos = cos(ftemp1);   /* sin & cos of rotation */
@@ -165,10 +165,10 @@ void zoom_box_draw(int drawit)
 	if (g_bf_math)
 	{
 		/* do some calcs just once here to reduce fp work a bit */
-		sub_bf(bffxwidth, bfsxmax, bfsx3rd);
-		sub_bf(bffxskew, bfsx3rd, bfsxmin);
-		sub_bf(bffydepth, bfsy3rd, bfsymax);
-		sub_bf(bffyskew, bfsymin, bfsy3rd);
+		sub_bf(bffxwidth, g_sx_max_bf, g_sx_3rd_bf);
+		sub_bf(bffxskew, g_sx_3rd_bf, g_sx_min_bf);
+		sub_bf(bffydepth, g_sy_3rd_bf, g_sy_max_bf);
+		sub_bf(bffyskew, g_sy_min_bf, g_sy_3rd_bf);
 		floattobf(bffxadj, fxadj);
 	}
 
@@ -188,8 +188,8 @@ void zoom_box_draw(int drawit)
 	g_escape_time_state.m_grid_fp.y_max()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
 	{
-		calculate_corner(g_escape_time_state.m_grid_bf.x_min(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calculate_corner(g_escape_time_state.m_grid_bf.y_max(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.x_min(), g_sx_min_bf, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.y_max(), g_sy_max_bf, ftemp2, bffydepth, ftemp1, bffyskew);
 	}
 
 	/* calc co-ords of bottom right */
@@ -201,8 +201,8 @@ void zoom_box_draw(int drawit)
 	g_escape_time_state.m_grid_fp.y_min()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
 	{
-		calculate_corner(g_escape_time_state.m_grid_bf.x_max(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calculate_corner(g_escape_time_state.m_grid_bf.y_min(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.x_max(), g_sx_min_bf, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.y_min(), g_sy_max_bf, ftemp2, bffydepth, ftemp1, bffyskew);
 	}
 	/* do the same for botleft & topright */
 	tmpx = g_z_width/-2 - fxadj;
@@ -217,8 +217,8 @@ void zoom_box_draw(int drawit)
 	g_escape_time_state.m_grid_fp.y_3rd()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
 	{
-		calculate_corner(g_escape_time_state.m_grid_bf.x_3rd(), bfsxmin, ftemp1, bffxwidth, ftemp2, bffxskew);
-		calculate_corner(g_escape_time_state.m_grid_bf.y_3rd(), bfsymax, ftemp2, bffydepth, ftemp1, bffyskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.x_3rd(), g_sx_min_bf, ftemp1, bffxwidth, ftemp2, bffxskew);
+		calculate_corner(g_escape_time_state.m_grid_bf.y_3rd(), g_sy_max_bf, ftemp2, bffydepth, ftemp1, bffyskew);
 		restore_stack(saved);
 	}
 	ftemp1 = g_zbx + g_z_width - dx + fxadj;
@@ -463,14 +463,14 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	big_t btmp4a;
 	int saved = save_stack();
 
-	btmp1  = alloc_stack(rbflength + 2);
-	btmp2  = alloc_stack(rbflength + 2);
-	btmp3  = alloc_stack(rbflength + 2);
-	btmp4  = alloc_stack(rbflength + 2);
-	btmp2a = alloc_stack(rbflength + 2);
-	btmp4a = alloc_stack(rbflength + 2);
-	btempx = alloc_stack(rbflength + 2);
-	btempy = alloc_stack(rbflength + 2);
+	btmp1  = alloc_stack(g_rbf_length + 2);
+	btmp2  = alloc_stack(g_rbf_length + 2);
+	btmp3  = alloc_stack(g_rbf_length + 2);
+	btmp4  = alloc_stack(g_rbf_length + 2);
+	btmp2a = alloc_stack(g_rbf_length + 2);
+	btmp4a = alloc_stack(g_rbf_length + 2);
+	btempx = alloc_stack(g_rbf_length + 2);
+	btempy = alloc_stack(g_rbf_length + 2);
 
 	/* calc cur screen corner relative to zoombox, when zoombox co-ords
 		are taken as (0, 0) topleft thru (1, 1) bottom right */
@@ -487,23 +487,23 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 
 	/* calc new corner by extending from current screen corners */
 	/* *newx = g_sx_min + tempx*(g_sx_max-g_sx_3rd)/ftemp + tempy*(g_sx_3rd-g_sx_min)/ftemp; */
-	sub_bf(btmp1, bfsxmax, bfsx3rd);
+	sub_bf(btmp1, g_sx_max_bf, g_sx_3rd_bf);
 	mult_bf(btmp2, btempx, btmp1);
 	div_bf(btmp2a, btmp2, bfftemp);
-	sub_bf(btmp3, bfsx3rd, bfsxmin);
+	sub_bf(btmp3, g_sx_3rd_bf, g_sx_min_bf);
 	mult_bf(btmp4, btempy, btmp3);
 	div_bf(btmp4a, btmp4, bfftemp);
-	add_bf(bfnewx, bfsxmin, btmp2a);
+	add_bf(bfnewx, g_sx_min_bf, btmp2a);
 	add_a_bf(bfnewx, btmp4a);
 
 	/* *newy = g_sy_max + tempy*(g_sy_3rd-g_sy_max)/ftemp + tempx*(g_sy_min-g_sy_3rd)/ftemp; */
-	sub_bf(btmp1, bfsy3rd, bfsymax);
+	sub_bf(btmp1, g_sy_3rd_bf, g_sy_max_bf);
 	mult_bf(btmp2, btempy, btmp1);
 	div_bf(btmp2a, btmp2, bfftemp);
-	sub_bf(btmp3, bfsymin, bfsy3rd);
+	sub_bf(btmp3, g_sy_min_bf, g_sy_3rd_bf);
 	mult_bf(btmp4, btempx, btmp3);
 	div_bf(btmp4a, btmp4, bfftemp);
-	add_bf(bfnewy, bfsymax, btmp2a);
+	add_bf(bfnewy, g_sy_max_bf, btmp2a);
 	add_a_bf(bfnewy, btmp4a);
 	restore_stack(saved);
 }
@@ -548,19 +548,19 @@ static void zoom_out_bf() /* for ctl-enter, calc corners for zooming out */
 	big_t bfplotmy2;
 	int saved;
 	saved = save_stack();
-	savbfxmin = alloc_stack(rbflength + 2);
-	savbfymax = alloc_stack(rbflength + 2);
-	bfftemp   = alloc_stack(rbflength + 2);
-	tmp1      = alloc_stack(rbflength + 2);
-	tmp2      = alloc_stack(rbflength + 2);
-	tmp3      = alloc_stack(rbflength + 2);
-	tmp4      = alloc_stack(rbflength + 2);
-	tmp5      = alloc_stack(rbflength + 2);
-	tmp6      = alloc_stack(rbflength + 2);
-	bfplotmx1 = alloc_stack(rbflength + 2);
-	bfplotmx2 = alloc_stack(rbflength + 2);
-	bfplotmy1 = alloc_stack(rbflength + 2);
-	bfplotmy2 = alloc_stack(rbflength + 2);
+	savbfxmin = alloc_stack(g_rbf_length + 2);
+	savbfymax = alloc_stack(g_rbf_length + 2);
+	bfftemp   = alloc_stack(g_rbf_length + 2);
+	tmp1      = alloc_stack(g_rbf_length + 2);
+	tmp2      = alloc_stack(g_rbf_length + 2);
+	tmp3      = alloc_stack(g_rbf_length + 2);
+	tmp4      = alloc_stack(g_rbf_length + 2);
+	tmp5      = alloc_stack(g_rbf_length + 2);
+	tmp6      = alloc_stack(g_rbf_length + 2);
+	bfplotmx1 = alloc_stack(g_rbf_length + 2);
+	bfplotmx2 = alloc_stack(g_rbf_length + 2);
+	bfplotmy1 = alloc_stack(g_rbf_length + 2);
+	bfplotmy2 = alloc_stack(g_rbf_length + 2);
 	/* ftemp = (ymin-y3rd)*(x3rd-xmin) - (xmax-x3rd)*(y3rd-ymax); */
 	sub_bf(tmp1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 	sub_bf(tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
@@ -582,16 +582,16 @@ static void zoom_out_bf() /* for ctl-enter, calc corners for zooming out */
 	copy_bf(savbfxmin, g_escape_time_state.m_grid_bf.x_min()); 
 	copy_bf(savbfymax, g_escape_time_state.m_grid_bf.y_max());
 
-	sub_bf(tmp1, bfsxmin, savbfxmin);
-	sub_bf(tmp2, bfsymax, savbfymax);
+	sub_bf(tmp1, g_sx_min_bf, savbfxmin);
+	sub_bf(tmp2, g_sy_max_bf, savbfymax);
 	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.y_max(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
-	sub_bf(tmp1, bfsxmax, savbfxmin);
-	sub_bf(tmp2, bfsymin, savbfymax);
+	sub_bf(tmp1, g_sx_max_bf, savbfxmin);
+	sub_bf(tmp2, g_sy_min_bf, savbfymax);
 	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.y_min(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
-	sub_bf(tmp1, bfsx3rd, savbfxmin);
-	sub_bf(tmp2, bfsy3rd, savbfymax);
+	sub_bf(tmp1, g_sx_3rd_bf, savbfxmin);
+	sub_bf(tmp2, g_sy_3rd_bf, savbfymax);
 	zmo_calcbf(tmp1, tmp2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.y_3rd(), bfplotmx1, bfplotmx2, bfplotmy1,
 					bfplotmy2, bfftemp);
 	restore_stack(saved);
@@ -709,7 +709,7 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 	{
 		return 1; /* btm, align on any pixel */
 	}
-	if (g_standard_calculation_mode != 'g' || (g_current_fractal_specific->flags & FRACTALFLAG_NO_SOLID_GUESSING))
+	if (g_standard_calculation_mode != 'g' || (g_current_fractal_specific->no_solid_guessing()))
 	{
 		if (g_standard_calculation_mode == '2' || g_standard_calculation_mode == '3') /* align on even pixel for 2pass */
 		{

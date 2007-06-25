@@ -1262,14 +1262,14 @@ void set_if_old_bif()
 	case FRACTYPE_BIFURCATION_STEWART_L:
 	case FRACTYPE_BIFURCATION_LAMBDA:
 	case FRACTYPE_BIFURCATION_LAMBDA_L:
-		set_trig_array(0, "ident");
+		set_function_array(0, "ident");
 		break;
 
 	case FRACTYPE_BIFURCATION_EQUAL_FUNC_PI:
 	case FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L:
 	case FRACTYPE_BIFURCATION_PLUS_FUNC_PI:
 	case FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L:
-		set_trig_array(0, "sin");
+		set_function_array(0, "sin");
 		break;
 	}
 }
@@ -1283,16 +1283,16 @@ void set_function_parm_defaults()
 	case FRACTYPE_POPCORN_L:
 	case FRACTYPE_POPCORN_JULIA_FP:
 	case FRACTYPE_POPCORN_JULIA_L:
-		set_trig_array(0, "sin");
-		set_trig_array(1, "tan");
-		set_trig_array(2, "sin");
-		set_trig_array(3, "tan");
+		set_function_array(0, "sin");
+		set_function_array(1, "tan");
+		set_function_array(2, "sin");
+		set_function_array(3, "tan");
 		break;
 	case FRACTYPE_LATOOCARFIAN:
-		set_trig_array(0, "sin");
-		set_trig_array(1, "sin");
-		set_trig_array(2, "sin");
-		set_trig_array(3, "sin");
+		set_function_array(0, "sin");
+		set_function_array(1, "sin");
+		set_function_array(2, "sin");
+		set_function_array(3, "sin");
 		break;
 	}
 }

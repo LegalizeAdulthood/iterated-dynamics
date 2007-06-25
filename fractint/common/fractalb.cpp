@@ -94,11 +94,11 @@ void showbfglobals(char *s)
 	char msg[300];
 	sprintf(msg, "%s\n"
 		"bnstep=%d bnlength=%d intlength=%d rlength=%d padding=%d\n"
-		"shiftfactor=%d g_decimals=%d bflength=%d rbflength=%d \n"
-		"bfdecimals=%d ",
-		s, bnstep, bnlength, intlength, rlength, padding,
-		shiftfactor, g_decimals, bflength, rbflength,
-		bfdecimals);
+		"shiftfactor=%d g_decimals=%d g_bf_length=%d g_rbf_length=%d \n"
+		"g_bf_decimals=%d ",
+		s, g_step_bn, g_bn_length, g_int_length, g_r_length, g_padding,
+		g_shift_factor, g_decimals, g_bf_length, g_rbf_length,
+		g_bf_decimals);
 	if (stop_message(0, msg) == -1)
 	{
 		goodbye();
@@ -115,7 +115,7 @@ void showcornersbf(char *s)
 	}
 	bftostr(msg, dec, g_escape_time_state.m_grid_bf.x_min());
 	sprintf(msg1, "bfxmin=%s\nxxmin= %.20f g_decimals %d bflength %d\n\n",
-		msg, g_escape_time_state.m_grid_fp.x_min(), g_decimals, bflength);
+		msg, g_escape_time_state.m_grid_fp.x_min(), g_decimals, g_bf_length);
 	strcpy(msg3, s);
 	strcat(msg3, "\n");
 	strcat(msg3, msg1);
@@ -144,24 +144,24 @@ void showcornersbfs(char *s)
 {
 	int dec = 20;
 	char msg[100], msg1[100], msg3[500];
-	bftostr(msg, dec, bfsxmin);
+	bftostr(msg, dec, g_sx_min_bf);
 	sprintf(msg1, "bfsxmin=%s\nxxmin= %.20f\n\n", msg, g_escape_time_state.m_grid_fp.x_min());
 	strcpy(msg3, s);
 	strcat(msg3, "\n");
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfsxmax);
+	bftostr(msg, dec, g_sx_max_bf);
 	sprintf(msg1, "bfsxmax=%s\nxxmax= %.20f\n\n", msg, g_escape_time_state.m_grid_fp.x_max());
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfsymin);
+	bftostr(msg, dec, g_sy_min_bf);
 	sprintf(msg1, "bfsymin=%s\nyymin= %.20f\n\n", msg, g_escape_time_state.m_grid_fp.y_min());
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfsymax);
+	bftostr(msg, dec, g_sy_max_bf);
 	sprintf(msg1, "bfsymax=%s\nyymax= %.20f\n\n", msg, g_escape_time_state.m_grid_fp.y_max());
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfsx3rd);
+	bftostr(msg, dec, g_sx_3rd_bf);
 	sprintf(msg1, "bfsx3rd=%s\nxx3rd= %.20f\n\n", msg, g_escape_time_state.m_grid_fp.x_3rd());
 	strcat(msg3, msg1);
-	bftostr(msg, dec, bfsy3rd);
+	bftostr(msg, dec, g_sy_3rd_bf);
 	sprintf(msg1, "bfsy3rd=%s\nyy3rd= %.20f\n\n", msg, g_escape_time_state.m_grid_fp.y_3rd());
 	strcat(msg3, msg1);
 	if (stop_message(0, msg3) == -1)
@@ -201,9 +201,9 @@ void showaspect(char *s)
 	bf_t bt1, bt2, aspect;
 	char msg[100], str[100];
 	int saved = save_stack();
-	bt1    = alloc_stack(rbflength + 2);
-	bt2    = alloc_stack(rbflength + 2);
-	aspect = alloc_stack(rbflength + 2);
+	bt1    = alloc_stack(g_rbf_length + 2);
+	bt2    = alloc_stack(g_rbf_length + 2);
+	aspect = alloc_stack(g_rbf_length + 2);
 	sub_bf(bt1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 	sub_bf(bt2, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
 	div_bf(aspect, bt2, bt1);
@@ -294,7 +294,7 @@ int bail_out_mod_bn()
 
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
-	add_bn(bntmp, bntmpsqrx + shiftfactor, bntmpsqry + shiftfactor);
+	add_bn(bntmp, bntmpsqrx + g_shift_factor, bntmpsqry + g_shift_factor);
 
 	longmagnitude = bntoint(bntmp);  /* works with any fractal type */
 	if (longmagnitude >= (long)g_rq_limit)
@@ -312,7 +312,7 @@ int bail_out_real_bn()
 
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
-	longtempsqrx = bntoint(bntmpsqrx + shiftfactor);
+	longtempsqrx = bntoint(bntmpsqrx + g_shift_factor);
 	if (longtempsqrx >= (long)g_rq_limit)
 	{
 		return 1;
@@ -329,7 +329,7 @@ int bail_out_imag_bn()
 
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
-	longtempsqry = bntoint(bntmpsqry + shiftfactor);
+	longtempsqry = bntoint(bntmpsqry + g_shift_factor);
 	if (longtempsqry >= (long)g_rq_limit)
 	{
 		return 1;
@@ -346,8 +346,8 @@ int bail_out_or_bn()
 
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
-	longtempsqrx = bntoint(bntmpsqrx + shiftfactor);
-	longtempsqry = bntoint(bntmpsqry + shiftfactor);
+	longtempsqrx = bntoint(bntmpsqrx + g_shift_factor);
+	longtempsqry = bntoint(bntmpsqry + g_shift_factor);
 	if (longtempsqrx >= (long)g_rq_limit || longtempsqry >= (long)g_rq_limit)
 	{
 		return 1;
@@ -364,8 +364,8 @@ int bail_out_and_bn()
 
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
-	longtempsqrx = bntoint(bntmpsqrx + shiftfactor);
-	longtempsqry = bntoint(bntmpsqry + shiftfactor);
+	longtempsqrx = bntoint(bntmpsqrx + g_shift_factor);
+	longtempsqry = bntoint(bntmpsqry + g_shift_factor);
 	if (longtempsqrx >= (long)g_rq_limit && longtempsqry >= (long)g_rq_limit)
 	{
 		return 1;
@@ -386,7 +386,7 @@ int bail_out_manhattan_bn()
 	abs_bn(bnold.y, bnnew.y);
 	add_bn(bntmp, bnold.x, bnold.y);
 	square_bn(bnold.x, bntmp);
-	longtempmag = bntoint(bnold.x + shiftfactor);
+	longtempmag = bntoint(bnold.x + g_shift_factor);
 	if (longtempmag >= (long)g_rq_limit)
 	{
 		return 1;
@@ -405,7 +405,7 @@ int bail_out_manhattan_r_bn()
 	add_bn(bntmp, bnnew.x, bnnew.y); /* don't need abs since we square it next */
 	/* note: in next two lines, bnold is just used as a temporary variable */
 	square_bn(bnold.x, bntmp);
-	longtempmag = bntoint(bnold.x + shiftfactor);
+	longtempmag = bntoint(bnold.x + g_shift_factor);
 	if (longtempmag >= (long)g_rq_limit)
 	{
 		return 1;
@@ -546,8 +546,8 @@ int mandelbrot_setup_bn()
 	/* this should be set up dynamically based on corners */
 	bn_t bntemp1, bntemp2;
 	int saved = save_stack();
-	bntemp1 = alloc_stack(bnlength);
-	bntemp2 = alloc_stack(bnlength);
+	bntemp1 = alloc_stack(g_bn_length);
+	bntemp2 = alloc_stack(g_bn_length);
 
 	bftobn(bnxmin, g_escape_time_state.m_grid_bf.x_min());
 	bftobn(bnxmax, g_escape_time_state.m_grid_bf.x_max());
@@ -644,8 +644,8 @@ int mandelbrot_setup_bf()
 	/* this should be set up dynamically based on corners */
 	bf_t bftemp1, bftemp2;
 	int saved = save_stack();
-	bftemp1 = alloc_stack(bflength + 2);
-	bftemp2 = alloc_stack(bflength + 2);
+	bftemp1 = alloc_stack(g_bf_length + 2);
+	bftemp2 = alloc_stack(g_bf_length + 2);
 
 	g_bf_math = BIGFLT;
 
@@ -762,7 +762,7 @@ int mandelbrot_per_pixel_bn()
 	copy_bn(bnnew.x, bnold.x);
 	copy_bn(bnnew.y, bnold.y);
 
-	/* Square these to rlength bytes of precision */
+	/* Square these to g_r_length bytes of precision */
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
 
@@ -808,7 +808,7 @@ int mandelbrot_per_pixel_bf()
 	copy_bf(bfnew.x, bfold.x);
 	copy_bf(bfnew.y, bfold.y);
 
-	/* Square these to rbflength bytes of precision */
+	/* Square these to g_rbf_length bytes of precision */
 	square_bf(bftmpsqrx, bfnew.x);
 	square_bf(bftmpsqry, bfnew.y);
 
@@ -835,7 +835,7 @@ int julia_per_pixel_bn()
 	copy_bn(bnnew.x, bnold.x);
 	copy_bn(bnnew.y, bnold.y);
 
-	/* Square these to rlength bytes of precision */
+	/* Square these to g_r_length bytes of precision */
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
 
@@ -862,7 +862,7 @@ int julia_per_pixel_bf()
 	copy_bf(bfnew.x, bfold.x);
 	copy_bf(bfnew.y, bfold.y);
 
-	/* Square these to rbflength bytes of precision */
+	/* Square these to g_rbf_length bytes of precision */
 	square_bf(bftmpsqrx, bfnew.x);
 	square_bf(bftmpsqry, bfnew.y);
 
@@ -872,19 +872,19 @@ int julia_per_pixel_bf()
 int julia_orbit_bn()
 {
 	/* Don't forget, with bn_t numbers, after multiplying or squaring */
-	/* you must shift over by shiftfactor to get the bn number.          */
+	/* you must shift over by g_shift_factor to get the bn number.          */
 
 	/* bntmpsqrx and bntmpsqry were previously squared before getting to */
 	/* this function, so they must be shifted.                           */
 
 	/* new.x = tmpsqrx - tmpsqry + g_parameter.x;   */
-	sub_a_bn(bntmpsqrx + shiftfactor, bntmpsqry + shiftfactor);
-	add_bn(bnnew.x, bntmpsqrx + shiftfactor, bnparm.x);
+	sub_a_bn(bntmpsqrx + g_shift_factor, bntmpsqry + g_shift_factor);
+	add_bn(bnnew.x, bntmpsqrx + g_shift_factor, bnparm.x);
 
 	/* new.y = 2*bnold.x*bnold.y + g_parameter.y; */
 	mult_bn(bntmp, bnold.x, bnold.y); /* ok to use unsafe here */
-	double_a_bn(bntmp + shiftfactor);
-	add_bn(bnnew.y, bntmp + shiftfactor, bnparm.y);
+	double_a_bn(bntmp + g_shift_factor);
+	add_bn(bnnew.y, bntmp + g_shift_factor, bnparm.y);
 
 	return g_bail_out_bn();
 }
@@ -907,14 +907,14 @@ int julia_z_power_orbit_bn()
 	ComplexBigNum parm2;
 	int saved = save_stack();
 
-	parm2.x = alloc_stack(bnlength);
-	parm2.y = alloc_stack(bnlength);
+	parm2.x = alloc_stack(g_bn_length);
+	parm2.y = alloc_stack(g_bn_length);
 
 	floattobn(parm2.x, g_parameters[2]);
 	floattobn(parm2.y, g_parameters[3]);
 	complex_power_bn(&bnnew, &bnold, &parm2);
-	add_bn(bnnew.x, bnparm.x, bnnew.x + shiftfactor);
-	add_bn(bnnew.y, bnparm.y, bnnew.y + shiftfactor);
+	add_bn(bnnew.x, bnparm.x, bnnew.x + g_shift_factor);
+	add_bn(bnnew.y, bnparm.y, bnnew.y + g_shift_factor);
 	restore_stack(saved);
 	return g_bail_out_bn();
 }
@@ -924,8 +924,8 @@ int julia_z_power_orbit_bf()
 	ComplexBigFloat parm2;
 	int saved = save_stack();
 
-	parm2.x = alloc_stack(bflength + 2);
-	parm2.y = alloc_stack(bflength + 2);
+	parm2.x = alloc_stack(g_bf_length + 2);
+	parm2.y = alloc_stack(g_bf_length + 2);
 
 	floattobf(parm2.x, g_parameters[2]);
 	floattobf(parm2.y, g_parameters[3]);
@@ -951,53 +951,53 @@ julia_orbit_bn()
 
 	/* bnnew.x = bntmpsqrx - bntmpsqry + bnparm.x;   */
 	/*
-	* Since tmpsqrx and tmpsqry where just calculated to rlength bytes of
+	* Since tmpsqrx and tmpsqry where just calculated to g_r_length bytes of
 	* precision, we might as well keep that extra precision in this next
-	* subtraction.  Therefore, use rlength as the length.
+	* subtraction.  Therefore, use g_r_length as the length.
 	*/
 
-	oldbnlength = bnlength;
-	bnlength = rlength;
+	oldbnlength = g_bn_length;
+	g_bn_length = g_r_length;
 	sub_a_bn(bntmpsqrx, bntmpsqry);
-	bnlength = oldbnlength;
+	g_bn_length = oldbnlength;
 
 	/*
 	* Now that bntmpsqry has been sutracted from bntmpsqrx, we need to treat
-	* tmpsqrx as a single width bignumber, so shift to bntmpsqrx + shiftfactor.
+	* tmpsqrx as a single width bignumber, so shift to bntmpsqrx + g_shift_factor.
 	*/
-	add_bn(bnnew.x, bntmpsqrx + shiftfactor, bnparm.x);
+	add_bn(bnnew.x, bntmpsqrx + g_shift_factor, bnparm.x);
 
 	/* new.y = 2*bnold.x*bnold.y + old.y; */
-	/* Multiply bnold.x*bnold.y to rlength precision. */
+	/* Multiply bnold.x*bnold.y to g_r_length precision. */
 	mult_bn(bntmp, bnold.x, bnold.y);
 
 	/*
 	* Double bnold.x*bnold.y by shifting bits, including one of those bits
-	* calculated in the previous mult_bn().  Therefore, use rlength.
+	* calculated in the previous mult_bn().  Therefore, use g_r_length.
 	*/
-	bnlength = rlength;
+	g_bn_length = g_r_length;
 	double_a_bn(bntmp);
-	bnlength = oldbnlength;
+	g_bn_length = oldbnlength;
 
 	/* Convert back to a single width bignumber and add bnparm.y */
-	add_bn(bnnew.y, bntmp + shiftfactor, bnparm.y);
+	add_bn(bnnew.y, bntmp + g_shift_factor, bnparm.y);
 
 	copy_bn(bnold.x, bnnew.x);
 	copy_bn(bnold.y, bnnew.y);
 
-	/* Square these to rlength bytes of precision */
+	/* Square these to g_r_length bytes of precision */
 	square_bn(bntmpsqrx, bnold.x);
 	square_bn(bntmpsqry, bnold.y);
 
-	/* And add the full rlength precision to get those extra bytes */
-	bnlength = rlength;
+	/* And add the full g_r_length precision to get those extra bytes */
+	g_bn_length = g_r_length;
 	add_bn(bntmp, bntmpsqrx, bntmpsqry);
-	bnlength = oldbnlength;
+	g_bn_length = oldbnlength;
 
-	mod = bntmp + (rlength) - (intlength << 1);  /* where int part starts
+	mod = bntmp + (g_r_length) - (g_int_length << 1);  /* where int part starts
 													* after mult */
 	/*
-	* equivalent to, but faster than, mod = bn_int(tmp + shiftfactor);
+	* equivalent to, but faster than, mod = bn_int(tmp + g_shift_factor);
 	*/
 
 	magnitude = *mod;
@@ -1040,7 +1040,7 @@ ComplexBigFloat *cplxmul_bf(ComplexBigFloat *t, ComplexBigFloat *x, ComplexBigFl
 {
 	bf_t tmp1;
 	int saved = save_stack();
-	tmp1 = alloc_stack(rbflength + 2);
+	tmp1 = alloc_stack(g_rbf_length + 2);
 	mult_bf(t->x, x->x, y->x);
 	mult_bf(t->y, x->y, y->y);
 	sub_bf(t->x, t->x, t->y);
@@ -1057,11 +1057,11 @@ ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, Comple
 	ComplexBigFloat tmp;
 	bf_t e2x, siny, cosy;
 	int saved = save_stack();
-	e2x  = alloc_stack(rbflength + 2);
-	siny = alloc_stack(rbflength + 2);
-	cosy = alloc_stack(rbflength + 2);
-	tmp.x = alloc_stack(rbflength + 2);
-	tmp.y = alloc_stack(rbflength + 2);
+	e2x  = alloc_stack(g_rbf_length + 2);
+	siny = alloc_stack(g_rbf_length + 2);
+	cosy = alloc_stack(g_rbf_length + 2);
+	tmp.x = alloc_stack(g_rbf_length + 2);
+	tmp.y = alloc_stack(g_rbf_length + 2);
 
 	/* 0 raised to anything is 0 */
 	if (is_bf_zero(xx->x) && is_bf_zero(xx->y))
@@ -1085,8 +1085,8 @@ ComplexBigNum *complex_log_bn(ComplexBigNum *t, ComplexBigNum *s)
 {
 	square_bn(t->x, s->x);
 	square_bn(t->y, s->y);
-	add_a_bn(t->x + shiftfactor, t->y + shiftfactor);
-	ln_bn(t->x, t->x + shiftfactor);
+	add_a_bn(t->x + g_shift_factor, t->y + g_shift_factor);
+	ln_bn(t->x, t->x + g_shift_factor);
 	half_a_bn(t->x);
 	atan2_bn(t->y, s->y, s->x);
 	return t;
@@ -1096,29 +1096,29 @@ ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBi
 {
 	bn_t tmp1;
 	int saved = save_stack();
-	tmp1 = alloc_stack(rlength);
+	tmp1 = alloc_stack(g_r_length);
 	mult_bn(t->x, x->x, y->x);
 	mult_bn(t->y, x->y, y->y);
-	sub_bn(t->x, t->x + shiftfactor, t->y + shiftfactor);
+	sub_bn(t->x, t->x + g_shift_factor, t->y + g_shift_factor);
 
 	mult_bn(tmp1, x->x, y->y);
 	mult_bn(t->y, x->y, y->x);
-	add_bn(t->y, tmp1 + shiftfactor, t->y + shiftfactor);
+	add_bn(t->y, tmp1 + g_shift_factor, t->y + g_shift_factor);
 	restore_stack(saved);
 	return t;
 }
 
-/* note: complex_power_bn() returns need to be +shiftfactor'ed */
+/* note: complex_power_bn() returns need to be +g_shift_factor'ed */
 ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy)
 {
 	ComplexBigNum tmp;
 	bn_t e2x, siny, cosy;
 	int saved = save_stack();
-	e2x  = alloc_stack(bnlength);
-	siny = alloc_stack(bnlength);
-	cosy = alloc_stack(bnlength);
-	tmp.x = alloc_stack(rlength);
-	tmp.y = alloc_stack(rlength);
+	e2x  = alloc_stack(g_bn_length);
+	siny = alloc_stack(g_bn_length);
+	cosy = alloc_stack(g_bn_length);
+	tmp.x = alloc_stack(g_r_length);
+	tmp.y = alloc_stack(g_r_length);
 
 	/* 0 raised to anything is 0 */
 	if (is_bn_zero(xx->x) && is_bn_zero(xx->y))
