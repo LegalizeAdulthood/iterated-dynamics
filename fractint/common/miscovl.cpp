@@ -196,153 +196,155 @@ void make_batch_file()
 	while (true)
 	{
 prompt_user:
-		int prompts = 0;
-		choices[prompts] = "Parameter file";
-		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[prompts++].uval.sbuf = in_parameter_command_file;
-		choices[prompts] = "Name";
-		paramvalues[prompts].type = 0x100 + ITEMNAMELEN;
-		paramvalues[prompts++].uval.sbuf = in_parameter_command_name;
-		choices[prompts] = "Main comment";
-		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[0];
-		choices[prompts] = "Second comment";
-		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[1];
-		choices[prompts] = "Third comment";
-		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[2];
-		choices[prompts] = "Fourth comment";
-		paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-		paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[3];
-#ifndef XFRACT
-		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
-#else
-		if (g_got_real_dac || (g_is_true_color && !g_true_mode) || g_fake_lut)
-#endif
 		{
-			choices[prompts] = "Record colors?";
-			paramvalues[prompts].type = 0x100 + 13;
-			paramvalues[prompts++].uval.sbuf = colorspec;
-			choices[prompts] = "    (no | yes | only for full info | @filename to point to a map file)";
-			paramvalues[prompts++].type = '*';
-			choices[prompts] = "# of colors";
-			maxcolorindex = prompts;
-			paramvalues[prompts].type = 'i';
-			paramvalues[prompts++].uval.ival = maxcolor;
-			choices[prompts] = "    (if recording full color info)";
-			paramvalues[prompts++].type = '*';
-		}
-		choices[prompts] = "Maximum line length";
-		paramvalues[prompts].type = 'i';
-		paramvalues[prompts++].uval.ival = g_max_line_length;
-		choices[prompts] = "";
-		paramvalues[prompts++].type = '*';
-		choices[prompts] = "    **** The following is for generating images in pieces ****";
-		paramvalues[prompts++].type = '*';
-		choices[prompts] = "X Multiples";
-		int pieces_prompts = prompts;
-		paramvalues[prompts].type = 'i';
-		paramvalues[prompts++].uval.ival = xm;
-		choices[prompts] = "Y Multiples";
-		paramvalues[prompts].type = 'i';
-		paramvalues[prompts++].uval.ival = ym;
-#ifndef XFRACT
-		choices[prompts] = "Video mode";
-		paramvalues[prompts].type = 0x100 + 4;
-		paramvalues[prompts++].uval.sbuf = vidmde;
-#endif
-
-		if (full_screen_prompt("Save Current Parameters", prompts, choices, paramvalues, 0, NULL) < 0)
-		{
-			break;
-		}
-
-		if (*colorspec == 'o' || g_make_par[1] == 0)
-		{
-			strcpy(colorspec, "y");
-			colors_only = true;
-		}
-
-		strcpy(g_command_file, in_parameter_command_file);
-		if (has_extension(g_command_file) == NULL)
-		{
-			strcat(g_command_file, ".par");   /* default extension .par */
-		}
-		strcpy(g_command_name, in_parameter_command_name);
-		for (int i = 0; i < 4; i++)
-		{
-			strncpy(g_command_comment[i], in_parameter_command_comment[i], MAX_COMMENT);
-		}
-#ifndef XFRACT
-		if (g_got_real_dac || (g_is_true_color && !g_true_mode))
-#else
-		if (g_got_real_dac || (g_is_true_color && !g_true_mode) || g_fake_lut)
-#endif
-		{
-			if (paramvalues[maxcolorindex].uval.ival > 0 &&
-				paramvalues[maxcolorindex].uval.ival <= 256)
+			int prompts = 0;
+			choices[prompts] = "Parameter file";
+			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+			paramvalues[prompts++].uval.sbuf = in_parameter_command_file;
+			choices[prompts] = "Name";
+			paramvalues[prompts].type = 0x100 + ITEMNAMELEN;
+			paramvalues[prompts++].uval.sbuf = in_parameter_command_name;
+			choices[prompts] = "Main comment";
+			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[0];
+			choices[prompts] = "Second comment";
+			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[1];
+			choices[prompts] = "Third comment";
+			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[2];
+			choices[prompts] = "Fourth comment";
+			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
+			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[3];
+	#ifndef XFRACT
+			if (g_got_real_dac || (g_is_true_color && !g_true_mode))
+	#else
+			if (g_got_real_dac || (g_is_true_color && !g_true_mode) || g_fake_lut)
+	#endif
 			{
-				maxcolor = paramvalues[maxcolorindex].uval.ival;
+				choices[prompts] = "Record colors?";
+				paramvalues[prompts].type = 0x100 + 13;
+				paramvalues[prompts++].uval.sbuf = colorspec;
+				choices[prompts] = "    (no | yes | only for full info | @filename to point to a map file)";
+				paramvalues[prompts++].type = '*';
+				choices[prompts] = "# of colors";
+				maxcolorindex = prompts;
+				paramvalues[prompts].type = 'i';
+				paramvalues[prompts++].uval.ival = maxcolor;
+				choices[prompts] = "    (if recording full color info)";
+				paramvalues[prompts++].type = '*';
 			}
-		}
-		prompts = pieces_prompts;
-		{
-			int newmaxlinelength;
-			newmaxlinelength = paramvalues[prompts-3].uval.ival;
-			if (g_max_line_length != newmaxlinelength &&
-					newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
-					newmaxlinelength <= MAX_MAX_LINE_LENGTH)
-				g_max_line_length = newmaxlinelength;
-		}
-		xm = paramvalues[prompts++].uval.ival;
+			choices[prompts] = "Maximum line length";
+			paramvalues[prompts].type = 'i';
+			paramvalues[prompts++].uval.ival = g_max_line_length;
+			choices[prompts] = "";
+			paramvalues[prompts++].type = '*';
+			choices[prompts] = "    **** The following is for generating images in pieces ****";
+			paramvalues[prompts++].type = '*';
+			choices[prompts] = "X Multiples";
+			int pieces_prompts = prompts;
+			paramvalues[prompts].type = 'i';
+			paramvalues[prompts++].uval.ival = xm;
+			choices[prompts] = "Y Multiples";
+			paramvalues[prompts].type = 'i';
+			paramvalues[prompts++].uval.ival = ym;
+	#ifndef XFRACT
+			choices[prompts] = "Video mode";
+			paramvalues[prompts].type = 0x100 + 4;
+			paramvalues[prompts++].uval.sbuf = vidmde;
+	#endif
 
-		ym = paramvalues[prompts++].uval.ival;
-
-		/* sanity checks */
-		{
-			long xtotal;
-			long ytotal;
-#ifndef XFRACT
-			int i;
-
-			/* get resolution from the video name (which must be valid) */
-			pxdots = pydots = 0;
-			i = check_vidmode_keyname(vidmde);
-			if (i > 0)
+			if (full_screen_prompt("Save Current Parameters", prompts, choices, paramvalues, 0, NULL) < 0)
 			{
-				i = check_video_mode_key(0, i);
-				if (i >= 0)
+				break;
+			}
+
+			if (*colorspec == 'o' || g_make_par[1] == 0)
+			{
+				strcpy(colorspec, "y");
+				colors_only = true;
+			}
+
+			strcpy(g_command_file, in_parameter_command_file);
+			if (has_extension(g_command_file) == NULL)
+			{
+				strcat(g_command_file, ".par");   /* default extension .par */
+			}
+			strcpy(g_command_name, in_parameter_command_name);
+			for (int i = 0; i < 4; i++)
+			{
+				strncpy(g_command_comment[i], in_parameter_command_comment[i], MAX_COMMENT);
+			}
+	#ifndef XFRACT
+			if (g_got_real_dac || (g_is_true_color && !g_true_mode))
+	#else
+			if (g_got_real_dac || (g_is_true_color && !g_true_mode) || g_fake_lut)
+	#endif
+			{
+				if (paramvalues[maxcolorindex].uval.ival > 0 &&
+					paramvalues[maxcolorindex].uval.ival <= 256)
 				{
-					/* get the resolution of this video mode */
-					pxdots = g_video_table[i].x_dots;
-					pydots = g_video_table[i].y_dots;
+					maxcolor = paramvalues[maxcolorindex].uval.ival;
 				}
 			}
-			if (pxdots == 0 && (xm > 1 || ym > 1))
+			prompts = pieces_prompts;
 			{
-				/* no corresponding video mode! */
-				stop_message(0, "Invalid video mode entry!");
-				goto prompt_user;
+				int newmaxlinelength;
+				newmaxlinelength = paramvalues[prompts-3].uval.ival;
+				if (g_max_line_length != newmaxlinelength &&
+						newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
+						newmaxlinelength <= MAX_MAX_LINE_LENGTH)
+					g_max_line_length = newmaxlinelength;
 			}
-#endif
+			xm = paramvalues[prompts++].uval.ival;
 
-			/* bounds range on xm, ym */
-			if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
-			{
-				stop_message(0, "X and Y components must be 1 to 36");
-				goto prompt_user;
-			}
+			ym = paramvalues[prompts++].uval.ival;
 
-			/* another sanity check: total resolution cannot exceed 65535 */
-			xtotal = xm;
-			ytotal = ym;
-			xtotal *= pxdots;
-			ytotal *= pydots;
-			if (xtotal > 65535L || ytotal > 65535L)
+			/* sanity checks */
 			{
-				stop_message(0, "Total resolution (X or Y) cannot exceed 65535");
-				goto prompt_user;
+				long xtotal;
+				long ytotal;
+	#ifndef XFRACT
+				int i;
+
+				/* get resolution from the video name (which must be valid) */
+				pxdots = pydots = 0;
+				i = check_vidmode_keyname(vidmde);
+				if (i > 0)
+				{
+					i = check_video_mode_key(0, i);
+					if (i >= 0)
+					{
+						/* get the resolution of this video mode */
+						pxdots = g_video_table[i].x_dots;
+						pydots = g_video_table[i].y_dots;
+					}
+				}
+				if (pxdots == 0 && (xm > 1 || ym > 1))
+				{
+					/* no corresponding video mode! */
+					stop_message(0, "Invalid video mode entry!");
+					goto prompt_user;
+				}
+	#endif
+
+				/* bounds range on xm, ym */
+				if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
+				{
+					stop_message(0, "X and Y components must be 1 to 36");
+					goto prompt_user;
+				}
+
+				/* another sanity check: total resolution cannot exceed 65535 */
+				xtotal = xm;
+				ytotal = ym;
+				xtotal *= pxdots;
+				ytotal *= pydots;
+				if (xtotal > 65535L || ytotal > 65535L)
+				{
+					stop_message(0, "Total resolution (X or Y) cannot exceed 65535");
+					goto prompt_user;
+				}
 			}
 		}
 skip_UI:
