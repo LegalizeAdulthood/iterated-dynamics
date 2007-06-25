@@ -177,11 +177,6 @@ void make_batch_file()
 	unsigned int pydots = g_y_dots;
 	unsigned int xm = 1;
 	unsigned int ym = 1;
-	if (*g_make_par == 0)
-	{
-		goto skip_UI;
-	}
-
 	char vidmde[5];
 	video_mode_key_name(g_video_entry.keynum, vidmde);
 	bool colors_only = (g_make_par[1] == 0);
@@ -193,6 +188,10 @@ void make_batch_file()
 	double pyymax = 0.0;
 	bool have_3rd = false;
 	char outname[FILE_MAX_PATH + 1];
+	if (*g_make_par == 0)
+	{
+		goto skip_UI;
+	}
 	while (true)
 	{
 prompt_user:
