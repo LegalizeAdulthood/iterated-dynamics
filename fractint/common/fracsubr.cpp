@@ -29,6 +29,7 @@
 #include "realdos.h"
 
 #include "EscapeTime.h"
+#include "FiniteAttractor.h"
 #include "SoundState.h"
 #include "WorkList.h"
 
@@ -368,7 +369,7 @@ init_restart:
 			&& !g_invert                                /* and not inverting */
 			&& g_biomorph == -1                         /* and not biomorphing */
 			&& g_rq_limit <= 4.0                           /* and bailout not too high */
-			&& (g_outside > COLORMODE_REAL || g_outside < -6)         /* and no funny outside stuff */
+			&& (g_outside > COLORMODE_REAL || g_outside < COLORMODE_INVERSE_TANGENT)         /* and no funny outside stuff */
 			&& g_debug_mode != DEBUGMODE_FORCE_BITSHIFT	/* and not debugging */
 			&& g_proximity <= 2.0                       /* and g_proximity not too large */
 			&& g_bail_out_test == BAILOUT_MODULUS)                     /* and bailout test = mod */
@@ -1618,14 +1619,14 @@ void orbit_scrub()
 	}
 }
 
-void get_julia_attractor(double real, double imag, int &num_attractors, int finite_attractor)
+void get_julia_attractor(double real, double imag)
 {
-	if (num_attractors == 0 && finite_attractor == FINITE_ATTRACTOR_NO) /* not magnet & not requested */
+	if (g_num_attractors == 0 && g_finite_attractor == FINITE_ATTRACTOR_NO) /* not magnet & not requested */
 	{
 		return;
 	}
 
-	if (num_attractors >= N_ATTR)     /* space for more attractors ?  */
+	if (g_num_attractors >= N_ATTR)     /* space for more attractors ?  */
 	{
 		return;                  /* Bad luck - no room left !    */
 	}
@@ -1679,9 +1680,9 @@ void get_julia_attractor(double real, double imag, int &num_attractors, int fini
 					if (labs(result_l.x - g_new_z_l.x) < g_close_enough_l
 						&& labs(result_l.y - g_new_z_l.y) < g_close_enough_l)
 					{
-						g_attractors_l[num_attractors] = g_new_z_l;
-						g_attractor_period[num_attractors] = i + 1;
-						num_attractors++;   /* another attractor - coloured lakes ! */
+						g_attractors_l[g_num_attractors] = g_new_z_l;
+						g_attractor_period[g_num_attractors] = i + 1;
+						g_num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
 					}
 				}
@@ -1690,9 +1691,9 @@ void get_julia_attractor(double real, double imag, int &num_attractors, int fini
 					if (fabs(result.x - g_new_z.x) < g_close_enough
 						&& fabs(result.y - g_new_z.y) < g_close_enough)
 					{
-						g_attractors[num_attractors] = g_new_z;
-						g_attractor_period[num_attractors] = i + 1;
-						num_attractors++;   /* another attractor - coloured lakes ! */
+						g_attractors[g_num_attractors] = g_new_z;
+						g_attractor_period[g_num_attractors] = i + 1;
+						g_num_attractors++;   /* another attractor - coloured lakes ! */
 						break;
 					}
 				}
@@ -1703,15 +1704,10 @@ void get_julia_attractor(double real, double imag, int &num_attractors, int fini
 			}
 		}
 	}
-	if (num_attractors == 0)
+	if (g_num_attractors == 0)
 	{
 		g_periodicity_check = save_periodicity_check;
 	}
-}
-
-void get_julia_attractor(double real, double imag)
-{
-	get_julia_attractor(real, imag, g_num_attractors, g_finite_attractor);
 }
 
 int solid_guess_block_size(int width, int height) /* used by solidguessing and by zoom panning */

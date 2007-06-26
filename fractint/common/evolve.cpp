@@ -281,7 +281,7 @@ static void vary_inside(GENEBASE gene[], int randval, int i)
 		COLORMODE_PERIOD,
 		COLORMODE_FLOAT_MODULUS_INTEGER,
 		COLORMODE_INVERSE_TANGENT_INTEGER,
-		-1
+		COLORMODE_ITERATION
 	};
 	if (gene[i].mutate)
 	{
@@ -292,7 +292,17 @@ static void vary_inside(GENEBASE gene[], int randval, int i)
 
 static void vary_outside(GENEBASE gene[], int randval, int i)
 {
-	int choices[8] = {-1, -2, -3, -4, -5, -6, -7, -8};
+	int choices[8] =
+	{
+		COLORMODE_ITERATION,
+		COLORMODE_REAL,
+		COLORMODE_IMAGINARY,
+		COLORMODE_MULTIPLY,
+		COLORMODE_SUM,
+		COLORMODE_INVERSE_TANGENT,
+		COLORMODE_FLOAT_MODULUS,
+		COLORMODE_TOTAL_DISTANCE
+	};
 	if (gene[i].mutate)
 	{
 		*(int*)gene[i].addr = choices[wrapped_positive_vary_int(randval, 8, gene[i].mutate)];
@@ -304,7 +314,13 @@ static void vary_bail_out_test(GENEBASE gene[], int randval, int i)
 {
 	int choices[7] =
 	{
-		BAILOUT_MODULUS, BAILOUT_REAL, BAILOUT_IMAGINARY, BAILOUT_OR, BAILOUT_AND, BAILOUT_MANHATTAN, BAILOUT_MANHATTAN_R
+		BAILOUT_MODULUS,
+		BAILOUT_REAL,
+		BAILOUT_IMAGINARY,
+		BAILOUT_OR,
+		BAILOUT_AND,
+		BAILOUT_MANHATTAN,
+		BAILOUT_MANHATTAN_R
 	};
 	if (gene[i].mutate)
 	{

@@ -1148,6 +1148,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\headers\FiniteAttractor.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\fracsuba.h"
 					>
 				</File>

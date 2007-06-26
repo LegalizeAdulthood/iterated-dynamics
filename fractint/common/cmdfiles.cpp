@@ -30,10 +30,11 @@
 #include "prompts2.h"
 #include "realdos.h"
 
+#include "CommandParser.h"
 #include "EscapeTime.h"
+#include "FiniteAttractor.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
-#include "CommandParser.h"
 
 #define INIT_GIF87      0						/* Turn on GIF 89a processing  */
 

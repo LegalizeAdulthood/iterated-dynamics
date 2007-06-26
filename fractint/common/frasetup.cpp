@@ -16,6 +16,7 @@
 #include "fractals.h"
 #include "frasetup.h"
 
+#include "FiniteAttractor.h"
 #include "SoundState.h"
 
 #if !defined(XFRACT)
@@ -64,7 +65,7 @@ int julia_setup()            /* Julia Routine */
 		/* special case: use the main processing loop */
 		g_calculate_type = standard_fractal;
 		g_long_parameter = &g_parameter_l;
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 	}
 	return 1;
 }
@@ -122,7 +123,7 @@ int mandelbrot_setup_fp()
 			&& g_biomorph == -1
 			&& (g_inside >= COLORMODE_ITERATION)
 			/* uncomment this next line if more outside options are added */
-			&& g_outside >= -6
+			&& g_outside >= COLORMODE_INVERSE_TANGENT
 			&& g_use_initial_orbit_z != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& g_using_jiim == 0 && g_bail_out_test == BAILOUT_MODULUS
@@ -231,7 +232,6 @@ int julia_setup_fp()
 		calculate_mandelbrot_fp() can currently handle invert, any g_rq_limit, g_potential_flag
 		zmag, epsilon cross, and all the current outside options
 													Wes Loewer 11/03/91
-		Took out support for inside= options, for speed. 7/13/97
 		*/
 		if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 			&& !g_distance_test
@@ -239,7 +239,7 @@ int julia_setup_fp()
 			&& g_biomorph == -1
 			&& (g_inside >= COLORMODE_ITERATION)
 			/* uncomment this next line if more outside options are added */
-			&& g_outside >= -6
+			&& g_outside >= COLORMODE_INVERSE_TANGENT
 			&& g_use_initial_orbit_z != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& (g_finite_attractor == FINITE_ATTRACTOR_NO)
@@ -253,7 +253,7 @@ int julia_setup_fp()
 		{
 			/* special case: use the main processing loop */
 			g_calculate_type = standard_fractal;
-			get_julia_attractor (0.0, 0.0);   /* another attractor? */
+			get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		}
 		break;
 	case FRACTYPE_JULIA_Z_POWER_FP:
@@ -264,7 +264,7 @@ int julia_setup_fp()
 		g_fractal_specific[g_fractal_type].orbitcalc = 
 			(g_parameters[3] == 0.0 && g_debug_mode != DEBUGMODE_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
 			? z_power_orbit_fp : complex_z_power_orbit_fp;
-		get_julia_attractor (g_parameters[0], g_parameters[1]); /* another attractor? */
+		get_julia_attractor(g_parameters[0], g_parameters[1]); /* another attractor? */
 		break;
 	case FRACTYPE_MAGNET_2J:
 		magnet2_precalculate_fp();
@@ -273,11 +273,11 @@ int julia_setup_fp()
 		g_attractors[0].y = 0.0;      /* - both MAGNET1 and MAGNET2 */
 		g_attractor_period[0] = 1;
 		g_num_attractors = 1;
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	case FRACTYPE_LAMBDA_FP:
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
-		get_julia_attractor (0.5, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.5, 0.0);   /* another attractor? */
 		break;
 	/* TODO: should this really be here? */
 	case FRACTYPE_OBSOLETE_LAMBDA_EXP:
@@ -285,7 +285,7 @@ int julia_setup_fp()
 		{
 			g_symmetry = SYMMETRY_X_AXIS;
 		}
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	/* Added to account for symmetry in julfn + exp and julfn + zsqrd */
 
@@ -296,7 +296,7 @@ int julia_setup_fp()
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	case FRACTYPE_HYPERCOMPLEX_JULIA_FP:
 		if (g_parameters[2] != 0)
@@ -345,7 +345,7 @@ int julia_setup_fp()
 			{
 				g_current_fractal_specific->orbitcalc = popcorn_fn_orbit_fp;
 			}
-			get_julia_attractor (0.0, 0.0);   /* another attractor? */
+			get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		}
 		break;
 	case FRACTYPE_CIRCLE_FP:
@@ -353,10 +353,10 @@ int julia_setup_fp()
 		{
 			g_inside = 0; /* arbitrarily set inside = NUMB */
 		}
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	default:
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	}
 	return 1;
@@ -442,8 +442,8 @@ int julia_setup_l()
 			? z_power_orbit : complex_z_power_orbit;
 		break;
 	case FRACTYPE_LAMBDA:
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
-		get_julia_attractor (0.5, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.5, 0.0);   /* another attractor? */
 		break;
 	case FRACTYPE_OBSOLETE_LAMBDA_EXP_L:
 		if (g_parameter_l.y == 0)
@@ -460,7 +460,7 @@ int julia_setup_l()
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	case FRACTYPE_POPCORN_L:
 	case FRACTYPE_POPCORN_JULIA_L:
@@ -492,11 +492,11 @@ int julia_setup_l()
 			{
 				g_current_fractal_specific->orbitcalc = popcorn_fn_orbit;
 			}
-			get_julia_attractor (0.0, 0.0);   /* another attractor? */
+			get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		}
 		break;
 	default:
-		get_julia_attractor (0.0, 0.0);   /* another attractor? */
+		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	}
 	return 1;
@@ -631,7 +631,7 @@ int lambda_trig_or_trig_setup()
 	{
 		g_symmetry = SYMMETRY_X_AXIS;
 	}
-	get_julia_attractor (0.0, 0.0);      /* an attractor? */
+	get_julia_attractor(0.0, 0.0);      /* an attractor? */
 	return 1;
 }
 
@@ -648,7 +648,7 @@ int julia_trig_or_trig_setup()
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	get_julia_attractor (0.0, 0.0);      /* an attractor? */
+	get_julia_attractor(0.0, 0.0);      /* an attractor? */
 	return 1;
 }
 
@@ -800,7 +800,7 @@ int lambda_trig_setup()
 		g_symmetry = SYMMETRY_ORIGIN;
 		break;
 	}
-	get_julia_attractor (0.0, 0.0);      /* an attractor? */
+	get_julia_attractor(0.0, 0.0);      /* an attractor? */
 	return isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
@@ -942,7 +942,7 @@ int marks_julia_setup()
 		g_coefficient_l.x = 1L << g_bit_shift;
 		g_coefficient_l.y = 0L;
 	}
-	get_julia_attractor (0.0, 0.0);      /* an attractor? */
+	get_julia_attractor(0.0, 0.0);      /* an attractor? */
 #endif
 	return 1;
 }
@@ -974,7 +974,7 @@ int marks_julia_setup_fp()
 		g_coefficient.x = 1.0;
 		g_coefficient.y = 0.0;
 	}
-	get_julia_attractor (0.0, 0.0);      /* an attractor? */
+	get_julia_attractor(0.0, 0.0);      /* an attractor? */
 	return 1;
 }
 
