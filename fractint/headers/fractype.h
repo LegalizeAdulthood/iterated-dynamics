@@ -245,5 +245,7 @@ extern bool fractal_type_ifs(int fractal_type);
 extern bool fractal_type_none(int fractal_type);
 extern bool fractal_type_ant_or_cellular(int fractal_type);
 extern bool fractal_type_julibrot(int fractal_type);
+extern bool inside_coloring_beauty_of_fractals();
+extern bool inside_coloring_beauty_of_fractals_allowed();
 
 #endif

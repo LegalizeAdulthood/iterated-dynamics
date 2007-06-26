@@ -25,6 +25,7 @@
 #include "drivers.h"
 #include "fihelp.h"
 #include "filesystem.h"
+#include "FiniteAttractor.h"
 #include "fractalp.h"
 #include "framain2.h"
 #include "loadfile.h"

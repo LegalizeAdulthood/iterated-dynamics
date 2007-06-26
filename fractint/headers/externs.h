@@ -1,14 +1,10 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
 
-
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern int					g_adapter;							/* index into g_video_table[] */
 extern float				g_aspect_drift;
-extern int					g_num_attractors;
 extern int					g_atan_colors;
-extern int					g_attractor_period[];
-extern ComplexD				g_attractors[];
 extern char					g_autokey_name[];
 extern char					g_auto_show_dot;
 extern int					g_auto_stereo_depth;
@@ -118,7 +114,6 @@ extern int					g_file_y_dots;
 extern char					g_file_name_stack[16][FILE_MAX_FNAME];
 extern int					g_fill_color;
 extern float				g_final_aspect_ratio;
-extern int					g_finite_attractor;
 extern int					g_finish_row;
 extern bool					g_command_initialize;
 extern int					g_first_saved_and;
@@ -135,7 +130,6 @@ extern bool					g_from_text_flag;
 extern long					g_fudge;
 extern FunctionListItem		g_function_list[];
 extern bool					g_function_preloaded;
-extern double				g_attractor_radius_fp;
 extern double				g_f_radius;
 extern double				g_f_x_center;
 extern double				g_f_y_center;
@@ -181,7 +175,6 @@ extern bool					g_julibrot;
 extern int					g_input_counter;
 extern bool					g_keep_screen_coords;
 extern int					g_last_orbit_type;
-extern ComplexL				g_attractors_l[];
 extern long					g_close_enough_l;
 extern ComplexL				g_coefficient_l;
 extern bool					g_use_old_complex_power;
@@ -213,7 +206,6 @@ extern long					g_temp_sqr_y_l;
 extern ComplexL				g_tmp_z_l;
 extern long					(_fastcall *g_lx_pixel)(); /* set in FRACTALS.C */
 extern long					(_fastcall *g_ly_pixel)(); /* set in FRACTALS.C */
-extern long					g_attractor_radius_l;
 extern void					(*g_trig0_l)();
 extern void					(*g_trig1_l)();
 extern void					(*g_trig2_l)();

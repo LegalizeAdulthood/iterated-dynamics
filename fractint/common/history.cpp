@@ -12,8 +12,9 @@
 #include "history.h"
 
 #include "EscapeTime.h"
-#include "ThreeDimensionalState.h"
+#include "FiniteAttractor.h"
 #include "Formula.h"
+#include "ThreeDimensionalState.h"
 
 struct HISTORY_ITEM
 {

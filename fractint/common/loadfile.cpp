@@ -16,6 +16,7 @@
 #include "evolve.h"
 #include "fihelp.h"
 #include "filesystem.h"
+#include "FiniteAttractor.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "loadfdos.h"
@@ -1404,9 +1405,14 @@ int check_back()
 	return 0;
 }
 
+static bool fix_period_bof()
+{
+	return (inside_coloring_beauty_of_fractals() && g_save_release < 1826);
+}
+
 static bool fix_bof()
 {
-	if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61 && g_save_release < 1826)
+	if (fix_period_bof())
 	{
 		if ((g_current_fractal_specific->calculate_type == standard_fractal
 				&& (g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS) == 0)
@@ -1416,9 +1422,4 @@ static bool fix_bof()
 		}
 	}
 	return false;
-}
-
-static bool fix_period_bof()
-{
-	return (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61 && g_save_release < 1826);
 }

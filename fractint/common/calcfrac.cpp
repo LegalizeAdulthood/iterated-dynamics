@@ -42,18 +42,22 @@
 #include "realdos.h"
 #include "soi.h"
 
-#include "EscapeTime.h"
-#include "SoundState.h"
-#include "MathUtil.h"
-#include "Formula.h"
-#include "WorkList.h"
-#include "SolidGuess.h"
 #include "BoundaryTrace.h"
-#include "Tesseral.h"
 #include "DiffusionScan.h"
+#include "EscapeTime.h"
+#include "FiniteAttractor.h"
+#include "Formula.h"
+#include "MathUtil.h"
+#include "SolidGuess.h"
+#include "SoundState.h"
+#include "Tesseral.h"
+#include "WorkList.h"
 
-#define SHOWDOT_SAVE    1
-#define SHOWDOT_RESTORE 2
+enum ShowDotType
+{
+	SHOWDOT_SAVE	= 1,
+	SHOWDOT_RESTORE = 2
+};
 
 #define JUST_A_POINT 0
 #define LOWER_RIGHT  1
@@ -1189,6 +1193,77 @@ int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with r
 	return g_color;
 }
 
+/* NOTE: Integer code is UNTESTED */
+bool detect_finite_attractor_l()
+{
+	bool attracted = false;
+
+	ComplexL attractor_l;
+	for (int i = 0; i < g_num_attractors; i++)
+	{
+		attractor_l.x = g_new_z_l.x - g_attractors_l[i].x;
+		attractor_l.x = lsqr(attractor_l.x);
+		if (attractor_l.x < g_attractor_radius_l)
+		{
+			attractor_l.y = g_new_z_l.y - g_attractors_l[i].y;
+			attractor_l.y = lsqr(attractor_l.y);
+			if (attractor_l.y < g_attractor_radius_l)
+			{
+				if ((attractor_l.x + attractor_l.y) < g_attractor_radius_l)
+				{
+					attracted = true;
+					if (g_finite_attractor == FINITE_ATTRACTOR_PHASE)
+					{
+						g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
+					}
+				}
+			}
+		}
+	}
+
+	return attracted;
+}
+
+bool detect_finite_attractor_fp()
+{
+	bool attracted = false;
+
+	ComplexD attractor;
+	for (int i = 0; i < g_num_attractors; i++)
+	{
+		attractor.x = g_new_z.x - g_attractors[i].x;
+		attractor.x = sqr(attractor.x);
+		if (attractor.x < g_attractor_radius_fp)
+		{
+			attractor.y = g_new_z.y - g_attractors[i].y;
+			attractor.y = sqr(attractor.y);
+			if (attractor.y < g_attractor_radius_fp)
+			{
+				if ((attractor.x + attractor.y) < g_attractor_radius_fp)
+				{
+					attracted = true;
+					if (g_finite_attractor == FINITE_ATTRACTOR_PHASE)
+					{
+						g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
+					}
+				}
+			}
+		}
+	}
+
+	return attracted;
+}
+
+bool detect_finite_attractor()
+{
+	if (g_num_attractors == 0)       /* no finite attractor */
+	{
+		return false;
+	}
+
+	return g_integer_fractal ? detect_finite_attractor_l() : detect_finite_attractor_fp();
+}
+
 /************************************************************************/
 /* added by Wes Loewer - sort of a floating point version of calculate_mandelbrot() */
 /* can also handle invert, any g_rq_limit, g_potential_flag, zmag, epsilon cross,     */
@@ -1403,7 +1478,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 	int periodicity_cycle_check_counter = 1;               /* start checking the very first time */
 
-	if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61)
+	if (inside_coloring_beauty_of_fractals())
 	{
 		g_magnitude = 0;
 		g_magnitude_l = 0;
@@ -1633,7 +1708,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					modulus_value = mag;
 				}
 			}
-			else if (g_inside <= COLORMODE_BEAUTY_OF_FRACTALS_60 && g_inside >= COLORMODE_BEAUTY_OF_FRACTALS_61)
+			else if (inside_coloring_beauty_of_fractals())
 			{
 				if (g_integer_fractal)
 				{
@@ -1658,7 +1733,12 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 
 		if (g_outside == COLORMODE_TOTAL_DISTANCE || g_outside == COLORMODE_FLOAT_MODULUS)
 		{
-			if (g_bf_math == BIGNUM)
+			if (g_integer_fractal)
+			{
+				g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
+				g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
+			}
+			else if (g_bf_math == BIGNUM)
 			{
 				g_new_z = complex_bn_to_float(&bnnew);
 			}
@@ -1666,26 +1746,16 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			{
 				g_new_z = complex_bf_to_float(&bfnew);
 			}
+
 			if (g_outside == COLORMODE_TOTAL_DISTANCE)
 			{
-				if (g_integer_fractal)
-				{
-					g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
-					g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
-				}
 				total_distance += sqrt(sqr(last_z.x-g_new_z.x) + sqr(last_z.y-g_new_z.y));
 				last_z.x = g_new_z.x;
 				last_z.y = g_new_z.y;
 			}
 			else if (g_outside == COLORMODE_FLOAT_MODULUS)
 			{
-				double mag;
-				if (g_integer_fractal)
-				{
-					g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
-					g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
-				}
-				mag = fmod_test();
+				double mag = fmod_test();
 				if (mag < g_proximity)
 				{
 					modulus_value = mag;
@@ -1693,64 +1763,10 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			}
 		}
 
-		if (g_num_attractors > 0)       /* finite attractor in the list   */
-		{                         /* NOTE: Integer code is UNTESTED */
-			if (g_integer_fractal)
-			{
-				ComplexL attractor_l;
-				for (int i = 0; i < g_num_attractors; i++)
-				{
-					attractor_l.x = g_new_z_l.x - g_attractors_l[i].x;
-					attractor_l.x = lsqr(attractor_l.x);
-					if (attractor_l.x < g_attractor_radius_l)
-					{
-						attractor_l.y = g_new_z_l.y - g_attractors_l[i].y;
-						attractor_l.y = lsqr(attractor_l.y);
-						if (attractor_l.y < g_attractor_radius_l)
-						{
-							if ((attractor_l.x + attractor_l.y) < g_attractor_radius_l)
-							{
-								attracted = true;
-								if (g_finite_attractor == FINITE_ATTRACTOR_PHASE)
-								{
-									g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
-								}
-								break;
-							}
-						}
-					}
-				}
-			}
-			else
-			{
-				ComplexD attractor;
-				for (int i = 0; i < g_num_attractors; i++)
-				{
-					attractor.x = g_new_z.x - g_attractors[i].x;
-					attractor.x = sqr(attractor.x);
-					if (attractor.x < g_attractor_radius_fp)
-					{
-						attractor.y = g_new_z.y - g_attractors[i].y;
-						attractor.y = sqr(attractor.y);
-						if (attractor.y < g_attractor_radius_fp)
-						{
-							if ((attractor.x + attractor.y) < g_attractor_radius_fp)
-							{
-								attracted = true;
-								if (g_finite_attractor == FINITE_ATTRACTOR_PHASE)
-								{
-									g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
-								}
-								break;
-							}
-						}
-					}
-				}
-			}
-			if (attracted)
-			{
-				break;              /* AHA! Eaten by an attractor */
-			}
+		attracted = detect_finite_attractor();
+		if (attracted)
+		{
+			break;
 		}
 
 		if (g_color_iter > g_old_color_iter) /* check periodicity */

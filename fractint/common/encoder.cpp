@@ -24,8 +24,9 @@
 
 #include "busy.h"
 #include "EscapeTime.h"
-#include "ThreeDimensionalState.h"
+#include "FiniteAttractor.h"
 #include "Formula.h"
+#include "ThreeDimensionalState.h"
 
 static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE *color, int g_num_colors);
