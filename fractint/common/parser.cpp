@@ -1930,10 +1930,12 @@ ConstArg *Formula::is_constant(const char *text, int length)
 	/* m_variables[m_parser_vsp].a should already be zeroed out */
 	switch (m_math_type)
 	{
+#if !defined(XFRACT)
 	case L_MATH:
 		m_variables[m_parser_vsp].a.l.x = 0;
 		m_variables[m_parser_vsp].a.l.y = 0;
 		break;
+#endif
 	}
 
 	if (isdigit(text[0])
