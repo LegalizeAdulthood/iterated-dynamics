@@ -15,20 +15,20 @@ public:
 	int setup();
 	virtual int orbit();
 
-protected:
-	struct MP m_degree_minus_1_over_degree_mp;
-	struct MP m_root_over_degree_mp;
+//protected:
+//	struct MP m_degree_minus_1_over_degree_mp;
+//	struct MP m_root_over_degree_mp;
 
 private:
 	double m_root_over_degree;
 	double m_degree_minus_1_over_degree;
 };
 
-class NewtonMPC : public Newton
-{
-public:
-	virtual int orbit();
-};
+//class NewtonMPC : public Newton
+//{
+//public:
+//	virtual int orbit();
+//};
 
 class NewtonComplex
 {

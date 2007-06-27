@@ -459,13 +459,6 @@ const char *Formula::error_messages(int which)
 	get MP math and Integer math */
 
 #if !defined(XFRACT)
-static void mStkFunct(void (*fct)())   /* call lStk via dStk */
-{
-	Arg1->d = MPC2cmplx(Arg1->m);
-	(*fct)();
-	Arg1->m = cmplx2MPC(Arg1->d);
-}
-
 static void lStkFunct(void (*fct)())   /* call lStk via dStk */
 {
 	double y;
@@ -526,23 +519,6 @@ void Formula::Random_d()
 
 }
 
-void mRandom()
-{
-	g_formula_state.Random_m();
-}
-
-void Formula::Random_m()
-{
-#if !defined(XFRACT)
-	/* Use the same algorithm as for fixed math so that they will generate
-		the same fractals when the srand() function is used. */
-	long x = new_random_number() >> (32 - g_bit_shift);
-	long y = new_random_number() >> (32 - g_bit_shift);
-	m_variables[VARIABLE_RAND].a.m.x = *fg2MP(x, g_bit_shift);
-	m_variables[VARIABLE_RAND].a.m.y = *fg2MP(y, g_bit_shift);
-#endif
-}
-
 void Random::set_random_function()
 {
 	unsigned Seed;
@@ -597,22 +573,6 @@ void Formula::StackStoreRandom_l()
 	SetRandFnct();
 	lRandom();
 	Arg1->l = m_variables[VARIABLE_RAND].a.l;
-#endif
-}
-
-void mStkSRand()
-{
-	g_formula_state.StackStoreRandom_m();
-}
-
-void Formula::StackStoreRandom_m()
-{
-#if !defined(XFRACT)
-	Arg1->l.x = Arg1->m.x.Mant ^ (long)Arg1->m.x.Exp;
-	Arg1->l.y = Arg1->m.y.Mant ^ (long)Arg1->m.y.Exp;
-	SetRandFnct();
-	mRandom();
-	Arg1->m = m_variables[VARIABLE_RAND].a.m;
 #endif
 }
 
@@ -711,18 +671,6 @@ void dStkAbs()
 }
 
 #if !defined(XFRACT)
-void mStkAbs()
-{
-	if (Arg1->m.x.Exp < 0)
-	{
-		Arg1->m.x.Exp = -Arg1->m.x.Exp;
-	}
-	if (Arg1->m.y.Exp < 0)
-	{
-		Arg1->m.y.Exp = -Arg1->m.y.Exp;
-	}
-}
-
 void lStkAbs()
 {
 	Arg1->l.x = labs(Arg1->l.x);
@@ -745,25 +693,6 @@ void Formula::StackSqr_d()
 	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].a.d.x - m_variables[VARIABLE_LAST_SQR].a.d.y;
 	m_variables[VARIABLE_LAST_SQR].a.d.x += m_variables[VARIABLE_LAST_SQR].a.d.y;
 	m_variables[VARIABLE_LAST_SQR].a.d.y = 0;
-}
-
-void mStkSqr()
-{
-	g_formula_state.StackSqr_m();
-}
-
-void Formula::StackSqr_m()
-{
-#if !defined(XFRACT)
-	m_variables[VARIABLE_LAST_SQR].a.m.x = *MPmul(Arg1->m.x, Arg1->m.x);
-	m_variables[VARIABLE_LAST_SQR].a.m.y = *MPmul(Arg1->m.y, Arg1->m.y);
-	Arg1->m.y = *MPmul(Arg1->m.x, Arg1->m.y);
-	Arg1->m.y.Exp++;
-	Arg1->m.x = *MPsub(m_variables[VARIABLE_LAST_SQR].a.m.x, m_variables[VARIABLE_LAST_SQR].a.m.y);
-	m_variables[VARIABLE_LAST_SQR].a.m.x = *MPadd(m_variables[VARIABLE_LAST_SQR].a.m.x, m_variables[VARIABLE_LAST_SQR].a.m.y);
-	m_variables[VARIABLE_LAST_SQR].a.m.y.Exp = 0;
-	m_variables[VARIABLE_LAST_SQR].a.m.y.Mant = 0L;
-#endif
 }
 
 void lStkSqr()
@@ -794,14 +723,6 @@ void dStkAdd()
 }
 
 #if !defined(XFRACT)
-
-void mStkAdd()
-{
-	Arg2->m = MPCadd(Arg2->m, Arg1->m);
-	Arg1--;
-	Arg2--;
-}
-
 void lStkAdd()
 {
 	Arg2->l.x += Arg1->l.x;
@@ -822,13 +743,6 @@ void dStkSub()
 }
 
 #if !defined(XFRACT)
-void mStkSub()
-{
-	Arg2->m = MPCsub(Arg2->m, Arg1->m);
-	Arg1--;
-	Arg2--;
-}
-
 void lStkSub()
 {
 	Arg2->l.x -= Arg1->l.x;
@@ -846,11 +760,6 @@ void dStkConj()
 }
 
 #if !defined(XFRACT)
-void mStkConj()
-{
-	Arg1->m.y.Exp ^= 0x8000;
-}
-
 void lStkConj()
 {
 	Arg1->l.y = -Arg1->l.y;
@@ -866,11 +775,6 @@ void dStkFloor()
 }
 
 #if !defined(XFRACT)
-void mStkFloor()
-{
-	mStkFunct(dStkFloor);   /* call lStk via dStk */
-}
-
 void lStkFloor()
 {
 	/*
@@ -893,11 +797,6 @@ void dStkCeil()
 }
 
 #if !defined(XFRACT)
-void mStkCeil()
-{
-	mStkFunct(dStkCeil);   /* call lStk via dStk */
-}
-
 void lStkCeil()
 {
 	/* the shift operation does the "floor" operation, so we
@@ -918,11 +817,6 @@ void dStkTrunc()
 }
 
 #if !defined(XFRACT)
-void mStkTrunc()
-{
-	mStkFunct(dStkTrunc);   /* call lStk via dStk */
-}
-
 void lStkTrunc()
 {
 	/* shifting and shifting back truncates positive numbers,
@@ -949,11 +843,6 @@ void dStkRound()
 }
 
 #if !defined(XFRACT)
-void mStkRound()
-{
-	mStkFunct(dStkRound);   /* call lStk via dStk */
-}
-
 void lStkRound()
 {
 	/* Add .5 then truncate */
@@ -971,12 +860,6 @@ void dStkZero()
 }
 
 #if !defined(XFRACT)
-void mStkZero()
-{
-	Arg1->m.x.Mant = Arg1->m.x.Exp = 0;
-	Arg1->m.y.Mant = Arg1->m.y.Exp = 0;
-}
-
 void lStkZero()
 {
 	Arg1->l.y = Arg1->l.x = 0;
@@ -992,11 +875,6 @@ void dStkOne()
 }
 
 #if !defined(XFRACT)
-void mStkOne()
-{
-	Arg1->m = g_one_mpc;
-}
-
 void lStkOne()
 {
 	Arg1->l.x = (long) s_fudge;
@@ -1013,12 +891,6 @@ void dStkReal()
 }
 
 #if !defined(XFRACT)
-void mStkReal()
-{
-	Arg1->m.y.Exp = 0;
-	Arg1->m.y.Mant = 0L;
-}
-
 void lStkReal()
 {
 	Arg1->l.y = 0l;
@@ -1034,13 +906,6 @@ void dStkImag()
 }
 
 #if !defined(XFRACT)
-void mStkImag()
-{
-	Arg1->m.x = Arg1->m.y;
-	Arg1->m.y.Exp = 0;
-	Arg1->m.y.Mant = 0L;
-}
-
 void lStkImag()
 {
 	Arg1->l.x = Arg1->l.y;
@@ -1057,12 +922,6 @@ void dStkNeg()
 }
 
 #if !defined(XFRACT)
-void mStkNeg()
-{
-	Arg1->m.x.Exp ^= 0x8000;
-	Arg1->m.y.Exp ^= 0x8000;
-}
-
 void lStkNeg()
 {
 	Arg1->l.x = -Arg1->l.x;
@@ -1080,13 +939,6 @@ void dStkMul()
 }
 
 #if !defined(XFRACT)
-void mStkMul()
-{
-	Arg2->m = MPCmul(Arg2->m, Arg1->m);
-	Arg1--;
-	Arg2--;
-}
-
 void lStkMul()
 {
 	long x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) -
@@ -1110,13 +962,6 @@ void dStkDiv()
 }
 
 #if !defined(XFRACT)
-void mStkDiv()
-{
-	Arg2->m = MPCdiv(Arg2->m, Arg1->m);
-	Arg1--;
-	Arg2--;
-}
-
 void lStkDiv()
 {
 	long mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
@@ -1141,13 +986,6 @@ void dStkMod()
 }
 
 #if !defined(XFRACT)
-void mStkMod()
-{
-	Arg1->m.x = MPCmod(Arg1->m);
-	Arg1->m.y.Exp = 0;
-	Arg1->m.y.Mant = 0L;
-}
-
 void lStkMod()
 {
 	Arg1->l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
@@ -1222,15 +1060,6 @@ void dStkFlip()
 }
 
 #if !defined(XFRACT)
-void mStkFlip()
-{
-	MP t;
-
-	t = Arg1->m.x;
-	Arg1->m.x = Arg1->m.y;
-	Arg1->m.y = t;
-}
-
 void lStkFlip()
 {
 	long t;
@@ -1256,11 +1085,6 @@ void dStkSin()
 }
 
 #if !defined(XFRACT)
-void mStkSin()
-{
-	mStkFunct(dStkSin);   /* call lStk via dStk */
-}
-
 void lStkSin()
 {
 	long x = Arg1->l.x >> s_delta16;
@@ -1298,11 +1122,6 @@ void dStkTan()
 }
 
 #if !defined(XFRACT)
-void mStkTan()
-{
-	mStkFunct(dStkTan);   /* call lStk via dStk */
-}
-
 void lStkTan()
 {
 	long x = (Arg1->l.x >> s_delta16)*2;
@@ -1339,11 +1158,6 @@ void dStkTanh()
 }
 
 #if !defined(XFRACT)
-void mStkTanh()
-{
-	mStkFunct(dStkTanh);   /* call lStk via dStk */
-}
-
 void lStkTanh()
 {
 	long x = Arg1->l.x >> s_delta16;
@@ -1382,11 +1196,6 @@ void dStkCoTan()
 }
 
 #if !defined(XFRACT)
-void mStkCoTan()
-{
-	mStkFunct(dStkCoTan);   /* call lStk via dStk */
-}
-
 void lStkCoTan()
 {
 	long x = Arg1->l.x >> s_delta16;
@@ -1425,11 +1234,6 @@ void dStkCoTanh()
 }
 
 #if !defined(XFRACT)
-void mStkCoTanh()
-{
-	mStkFunct(dStkCoTanh);   /* call lStk via dStk */
-}
-
 void lStkCoTanh()
 {
 	long x = Arg1->l.x >> s_delta16;
@@ -1467,19 +1271,6 @@ void dStkRecip()
 }
 
 #if !defined(XFRACT)
-void mStkRecip()
-{
-	MP mod = *MPadd(*MPmul(Arg1->m.x, Arg1->m.x), *MPmul(Arg1->m.y, Arg1->m.y));
-	if (mod.Mant == 0L)
-	{
-		g_overflow = true;
-		return;
-	}
-	Arg1->m.x = *MPdiv(Arg1->m.x, mod);
-	Arg1->m.y = *MPdiv(Arg1->m.y, mod);
-	Arg1->m.y.Exp ^= 0x8000;
-}
-
 void lStkRecip()
 {
 	long mod;
@@ -1515,11 +1306,6 @@ void dStkSinh()
 }
 
 #if !defined(XFRACT)
-void mStkSinh()
-{
-	mStkFunct(dStkSinh);   /* call lStk via dStk */
-}
-
 void lStkSinh()
 {
 	long x = Arg1->l.x >> s_delta16;
@@ -1550,11 +1336,6 @@ void dStkCos()
 }
 
 #if !defined(XFRACT)
-void mStkCos()
-{
-	mStkFunct(dStkCos);   /* call lStk via dStk */
-}
-
 void lStkCos()
 {
 	long x = Arg1->l.x >> s_delta16;
@@ -1581,11 +1362,6 @@ void dStkCosXX()
 }
 
 #if !defined(XFRACT)
-void mStkCosXX()
-{
-	mStkFunct(dStkCosXX);   /* call lStk via dStk */
-}
-
 void lStkCosXX()
 {
 	lStkCos();
@@ -1608,11 +1384,6 @@ void dStkCosh()
 }
 
 #if !defined(XFRACT)
-void mStkCosh()
-{
-	mStkFunct(dStkCosh);   /* call lStk via dStk */
-}
-
 void lStkCosh()
 {
 	long x = Arg1->l.x >> s_delta16;
@@ -1636,11 +1407,6 @@ void dStkASin()
 }
 
 #if !defined(XFRACT)
-void mStkASin()
-{
-	mStkFunct(dStkASin);
-}
-
 void lStkASin()
 {
 	lStkFunct(dStkASin);
@@ -1655,11 +1421,6 @@ void dStkASinh()
 }
 
 #if !defined(XFRACT)
-void mStkASinh()
-{
-	mStkFunct(dStkASinh);
-}
-
 void lStkASinh()
 {
 	lStkFunct(dStkASinh);
@@ -1674,11 +1435,6 @@ void dStkACos()
 }
 
 #if !defined(XFRACT)
-void mStkACos()
-{
-	mStkFunct(dStkACos);
-}
-
 void lStkACos()
 {
 	lStkFunct(dStkACos);
@@ -1693,11 +1449,6 @@ void dStkACosh()
 }
 
 #if !defined(XFRACT)
-void mStkACosh()
-{
-	mStkFunct(dStkACosh);
-}
-
 void lStkACosh()
 {
 	lStkFunct(dStkACosh);
@@ -1712,11 +1463,6 @@ void dStkATan()
 }
 
 #if !defined(XFRACT)
-void mStkATan()
-{
-	mStkFunct(dStkATan);
-}
-
 void lStkATan()
 {
 	lStkFunct(dStkATan);
@@ -1731,11 +1477,6 @@ void dStkATanh()
 }
 
 #if !defined(XFRACT)
-void mStkATanh()
-{
-	mStkFunct(dStkATanh);
-}
-
 void lStkATanh()
 {
 	lStkFunct(dStkATanh);
@@ -1750,11 +1491,6 @@ void dStkSqrt()
 }
 
 #if !defined(XFRACT)
-void mStkSqrt()
-{
-	mStkFunct(dStkSqrt);
-}
-
 void lStkSqrt()
 {
 	Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
@@ -1770,11 +1506,6 @@ void dStkCAbs()
 }
 
 #if !defined(XFRACT)
-void mStkCAbs()
-{
-	mStkFunct(dStkCAbs);
-}
-
 void lStkCAbs()
 {
 	lStkFunct(dStkCAbs);
@@ -1792,15 +1523,6 @@ void dStkLT()
 }
 
 #if !defined(XFRACT)
-void mStkLT()
-{
-	Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == -1), 0);
-	Arg2->m.y.Exp = 0;
-	Arg2->m.y.Mant = 0L;
-	Arg1--;
-	Arg2--;
-}
-
 void lStkLT()
 {
 	Arg2->l.x = (long)(Arg2->l.x < Arg1->l.x) << g_bit_shift;
@@ -1821,15 +1543,6 @@ void dStkGT()
 }
 
 #if !defined(XFRACT)
-void mStkGT()
-{
-	Arg2->m.x = *fg2MP((long)(MPcmp(Arg2->m.x, Arg1->m.x) == 1), 0);
-	Arg2->m.y.Exp = 0;
-	Arg2->m.y.Mant = 0L;
-	Arg1--;
-	Arg2--;
-}
-
 void lStkGT()
 {
 	Arg2->l.x = (long)(Arg2->l.x > Arg1->l.x) << g_bit_shift;
@@ -1850,18 +1563,6 @@ void dStkLTE()
 }
 
 #if !defined(XFRACT)
-void mStkLTE()
-{
-	int comp;
-
-	comp = MPcmp(Arg2->m.x, Arg1->m.x);
-	Arg2->m.x = *fg2MP((long)(comp == -1 || comp == 0), 0);
-	Arg2->m.y.Exp = 0;
-	Arg2->m.y.Mant = 0L;
-	Arg1--;
-	Arg2--;
-}
-
 void lStkLTE()
 {
 	Arg2->l.x = (long)(Arg2->l.x <= Arg1->l.x) << g_bit_shift;
@@ -1882,18 +1583,6 @@ void dStkGTE()
 }
 
 #if !defined(XFRACT)
-void mStkGTE()
-{
-	int comp;
-
-	comp = MPcmp(Arg2->m.x, Arg1->m.x);
-	Arg2->m.x = *fg2MP((long)(comp == 1 || comp == 0), 0);
-	Arg2->m.y.Exp = 0;
-	Arg2->m.y.Mant = 0L;
-	Arg1--;
-	Arg2--;
-}
-
 void lStkGTE()
 {
 	Arg2->l.x = (long)(Arg2->l.x >= Arg1->l.x) << g_bit_shift;
@@ -1914,18 +1603,6 @@ void dStkEQ()
 }
 
 #if !defined(XFRACT)
-void mStkEQ()
-{
-	int comp;
-
-	comp = MPcmp(Arg2->m.x, Arg1->m.x);
-	Arg2->m.x = *fg2MP((long)(comp == 0), 0);
-	Arg2->m.y.Exp = 0;
-	Arg2->m.y.Mant = 0L;
-	Arg1--;
-	Arg2--;
-}
-
 void lStkEQ()
 {
 	Arg2->l.x = (long)(Arg2->l.x == Arg1->l.x) << g_bit_shift;
@@ -1946,18 +1623,6 @@ void dStkNE()
 }
 
 #if !defined(XFRACT)
-void mStkNE()
-{
-	int comp;
-
-	comp = MPcmp(Arg2->m.x, Arg1->m.x);
-	Arg2->m.x = *fg2MP((long)(comp != 0), 0);
-	Arg2->m.y.Exp = 0;
-	Arg2->m.y.Mant = 0L;
-	Arg1--;
-	Arg2--;
-}
-
 void lStkNE()
 {
 	Arg2->l.x = (long)(Arg2->l.x != Arg1->l.x) << g_bit_shift;
@@ -1978,15 +1643,6 @@ void dStkOR()
 }
 
 #if !defined(XFRACT)
-void mStkOR()
-{
-	Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant || Arg1->m.x.Mant), 0);
-	Arg2->m.y.Exp = 0;
-	Arg2->m.y.Mant = 0L;
-	Arg1--;
-	Arg2--;
-}
-
 void lStkOR()
 {
 	Arg2->l.x = (long)(Arg2->l.x || Arg1->l.x) << g_bit_shift;
@@ -2007,15 +1663,6 @@ void dStkAND()
 }
 
 #if !defined(XFRACT)
-void mStkAND()
-{
-	Arg2->m.x = *fg2MP((long)(Arg2->m.x.Mant && Arg1->m.x.Mant), 0);
-	Arg2->m.y.Exp = 0;
-	Arg2->m.y.Mant = 0L;
-	Arg1--;
-	Arg2--;
-}
-
 void lStkAND()
 {
 	Arg2->l.x = (long)(Arg2->l.x && Arg1->l.x) << g_bit_shift;
@@ -2032,11 +1679,6 @@ void dStkLog()
 }
 
 #if !defined(XFRACT)
-void mStkLog()
-{
-	mStkFunct(dStkLog);   /* call lStk via dStk */
-}
-
 void lStkLog()
 {
 	lStkFunct(dStkLog);
@@ -2056,11 +1698,6 @@ void dStkExp()
 }
 
 #if !defined(XFRACT)
-void mStkExp()
-{
-	mStkFunct(dStkExp);   /* call lStk via dStk */
-}
-
 void lStkExp()
 {
 	lStkFunct(dStkExp);
@@ -2077,19 +1714,6 @@ void dStkPwr()
 }
 
 #if !defined(XFRACT)
-void mStkPwr()
-{
-	ComplexD x;
-	ComplexD y;
-
-	x = MPC2cmplx(Arg2->m);
-	y = MPC2cmplx(Arg1->m);
-	x = ComplexPower(x, y);
-	Arg2->m = cmplx2MPC(x);
-	Arg1--;
-	Arg2--;
-}
-
 void lStkPwr()
 {
 	ComplexD x;
@@ -2152,25 +1776,6 @@ void Formula::StackJumpOnFalse_d()
 	}
 }
 
-void mStkJumpOnFalse()
-{
-	g_formula_state.StackJumpOnFalse_m();
-}
-
-void Formula::StackJumpOnFalse_m()
-{
-#if !defined(XFRACT)
-	if (Arg1->m.x.Mant == 0)
-	{
-		StkJump();
-	}
-	else
-	{
-		m_jump_index++;
-	}
-#endif
-}
-
 void lStkJumpOnFalse()
 {
 	g_formula_state.StackJumpOnFalse_l();
@@ -2205,25 +1810,6 @@ void Formula::StackJumpOnTrue_d()
 	{
 		m_jump_index++;
 	}
-}
-
-void mStkJumpOnTrue()
-{
-	g_formula_state.StackJumpOnTrue_m();
-}
-
-void Formula::StackJumpOnTrue_m()
-{
-#if !defined(XFRACT)
-	if (Arg1->m.x.Mant)
-	{
-		StkJump();
-	}
-	else
-	{
-		m_jump_index++;
-	}
-#endif
 }
 
 void lStkJumpOnTrue()
@@ -2341,22 +1927,14 @@ ConstArg *Formula::is_constant(const char *text, int length)
 	m_variables[m_parser_vsp].a.d.x = 0.0;
 	m_variables[m_parser_vsp].a.d.y = 0.0;
 
-#if !defined(XFRACT)
 	/* m_variables[m_parser_vsp].a should already be zeroed out */
 	switch (m_math_type)
 	{
-	case M_MATH:
-		m_variables[m_parser_vsp].a.m.x.Mant = 0;
-		m_variables[m_parser_vsp].a.m.x.Exp = 0;
-		m_variables[m_parser_vsp].a.m.y.Mant = 0;
-		m_variables[m_parser_vsp].a.m.y.Exp = 0;
-		break;
 	case L_MATH:
 		m_variables[m_parser_vsp].a.l.x = 0;
 		m_variables[m_parser_vsp].a.l.y = 0;
 		break;
 	}
-#endif
 
 	if (isdigit(text[0])
 		|| (text[0] == '-' && (isdigit(text[1]) || text[1] == '.'))
@@ -2402,9 +1980,6 @@ ConstArg *Formula::is_constant(const char *text, int length)
 			m_variables[m_parser_vsp].a.d = z;
 			break;
 #if !defined(XFRACT)
-		case M_MATH:
-			m_variables[m_parser_vsp].a.m = cmplx2MPC(z);
-			break;
 		case L_MATH:
 			m_variables[m_parser_vsp].a.l.x = (long)(z.x*s_fudge);
 			m_variables[m_parser_vsp].a.l.y = (long)(z.y*s_fudge);
@@ -2677,60 +2252,6 @@ int Formula::ParseStr(const char *text, int pass)
 		StkOne = dStkOne;
 		break;
 #if !defined(XFRACT)
-	case M_MATH:
-		StkAdd = mStkAdd;
-		StkSub = mStkSub;
-		StkNeg = mStkNeg;
-		StkMul = mStkMul;
-		StkSin = mStkSin;
-		StkSinh = mStkSinh;
-		StkLT = mStkLT;
-		StkLTE = mStkLTE;
-		StkMod = mStkMod;
-		StkSqr = mStkSqr;
-		StkCos = mStkCos;
-		StkCosh = mStkCosh;
-		StkLog = mStkLog;
-		StkExp = mStkExp;
-		StkPwr = mStkPwr;
-		StkDiv = mStkDiv;
-		StkAbs = mStkAbs;
-		StkReal = mStkReal;
-		StkImag = mStkImag;
-		StkConj = mStkConj;
-		StkTrig0 = g_trig0_m;
-		StkTrig1 = g_trig1_m;
-		StkTrig2 = g_trig2_m;
-		StkTrig3 = g_trig3_m;
-		StkFlip = mStkFlip;
-		StkTan  = mStkTan;
-		StkTanh  = mStkTanh;
-		StkCoTan  = mStkCoTan;
-		StkCoTanh  = mStkCoTanh;
-		StkCosXX = mStkCosXX;
-		StkGT  = mStkGT;
-		StkGTE = mStkGTE;
-		StkEQ  = mStkEQ;
-		StkNE  = mStkNE;
-		StkAND = mStkAND;
-		StkOR  = mStkOR;
-		StkSRand = mStkSRand;
-		StkASin = mStkASin;
-		StkACos = mStkACos;
-		StkACosh = mStkACosh;
-		StkATan = mStkATan;
-		StkATanh = mStkATanh;
-		StkCAbs = mStkCAbs;
-		StkSqrt = mStkSqrt;
-		StkZero = mStkZero;
-		StkFloor = mStkFloor;
-		StkCeil = mStkCeil;
-		StkTrunc = mStkTrunc;
-		StkRound = mStkRound;
-		StkJumpOnTrue  = mStkJumpOnTrue;
-		StkJumpOnFalse = mStkJumpOnFalse;
-		StkOne = mStkOne;
-		break;
 	case L_MATH:
 		s_delta16 = g_bit_shift - 16;
 		s_shift_back = 32 - g_bit_shift;
@@ -2829,28 +2350,6 @@ int Formula::ParseStr(const char *text, int pass)
 		m_variables[VARIABLE_P5].a.d.y = g_parameters[9];
 		break;
 #if !defined(XFRACT)
-	case M_MATH:
-		m_variables[VARIABLE_P1].a.m.x = *d2MP(g_parameters[0]);
-		m_variables[VARIABLE_P1].a.m.y = *d2MP(g_parameters[1]);
-		m_variables[VARIABLE_P2].a.m.x = *d2MP(g_parameters[2]);
-		m_variables[VARIABLE_P2].a.m.y = *d2MP(g_parameters[3]);
-		m_variables[VARIABLE_PI].a.m.x = *d2MP(MathUtil::Pi);
-		m_variables[VARIABLE_PI].a.m.y = *d2MP(0.0);
-		m_variables[VARIABLE_E].a.m.x = *d2MP(MathUtil::e);
-		m_variables[VARIABLE_E].a.m.y = *d2MP(0.0);
-		m_variables[VARIABLE_P3].a.m.x = *d2MP(g_parameters[4]);
-		m_variables[VARIABLE_P3].a.m.y = *d2MP(g_parameters[5]);
-		m_variables[VARIABLE_SCRN_MAX].a.m  = cmplx2MPC(m_variables[VARIABLE_SCRN_MAX].a.d);
-		m_variables[VARIABLE_MAX_IT].a.m  = cmplx2MPC(m_variables[VARIABLE_MAX_IT].a.d);
-		m_variables[VARIABLE_IS_MAND].a.m  = cmplx2MPC(m_variables[VARIABLE_IS_MAND].a.d);
-		m_variables[VARIABLE_CENTER].a.m  = cmplx2MPC(m_variables[VARIABLE_CENTER].a.d);
-		m_variables[VARIABLE_MAG_X_MAG].a.m  = cmplx2MPC(m_variables[VARIABLE_MAG_X_MAG].a.d);
-		m_variables[VARIABLE_ROT_SKEW].a.m  = cmplx2MPC(m_variables[VARIABLE_ROT_SKEW].a.d);
-		m_variables[VARIABLE_P4].a.m.x = *d2MP(g_parameters[6]);
-		m_variables[VARIABLE_P4].a.m.y = *d2MP(g_parameters[7]);
-		m_variables[VARIABLE_P5].a.m.x = *d2MP(g_parameters[8]);
-		m_variables[VARIABLE_P5].a.m.y = *d2MP(g_parameters[9]);
-		break;
 	case L_MATH:
 		m_variables[VARIABLE_P1].a.l.x = (long)(g_parameters[0]*s_fudge);
 		m_variables[VARIABLE_P1].a.l.y = (long)(g_parameters[1]*s_fudge);
@@ -3147,8 +2646,6 @@ int Formula::orbit()
 		case L_MATH:
 			lRandom();
 			break;
-		case M_MATH:
-			mRandom();
 #endif
 		}
 	}
@@ -3159,12 +2656,6 @@ int Formula::orbit()
 	{
 		m_functions[m_op_ptr]();
 		m_op_ptr++;
-#ifdef WATCH_MP
-		x1 = *MP2d(Arg1->m.x);
-		y1 = *MP2d(Arg1->m.y);
-		x2 = *MP2d(Arg2->m.x);
-		y2 = *MP2d(Arg2->m.y);
-#endif
 	}
 
 	switch (m_math_type)
@@ -3173,9 +2664,6 @@ int Formula::orbit()
 		g_old_z = g_new_z = m_variables[VARIABLE_Z].a.d;
 		return Arg1->d.x == 0.0;
 #if !defined(XFRACT)
-	case M_MATH:
-		g_old_z = g_new_z = MPC2cmplx(m_variables[VARIABLE_Z].a.m);
-		return Arg1->m.x.Exp == 0 && Arg1->m.x.Mant == 0;
 	case L_MATH:
 		g_old_z_l = g_new_z_l = m_variables[VARIABLE_Z].a.l;
 		if (g_overflow)
@@ -3219,18 +2707,6 @@ int Formula::per_pixel()
 
 
 #if !defined(XFRACT)
-	case M_MATH:
-		if ((g_row + g_col) & 1)
-		{
-			m_variables[VARIABLE_WHITE_SQ].a.m = g_one_mpc;
-		}
-		else
-		{
-			m_variables[VARIABLE_WHITE_SQ].a.m.x.Mant = m_variables[VARIABLE_WHITE_SQ].a.m.x.Exp = 0;
-			m_variables[VARIABLE_WHITE_SQ].a.m.y.Mant = m_variables[VARIABLE_WHITE_SQ].a.m.y.Exp = 0;
-		}
-		m_variables[VARIABLE_SCRN_PIX].a.m = cmplx2MPC(m_variables[VARIABLE_SCRN_PIX].a.d);
-		break;
 	case L_MATH:
 		m_variables[VARIABLE_WHITE_SQ].a.l.x = (long) (((g_row + g_col) & 1)*s_fudge);
 		m_variables[VARIABLE_WHITE_SQ].a.l.y = 0L;
@@ -3253,10 +2729,6 @@ int Formula::per_pixel()
 			m_variables[VARIABLE_PIXEL].a.d.y = g_old_z.y;
 			break;
 #if !defined(XFRACT)
-		case M_MATH:
-			m_variables[VARIABLE_PIXEL].a.m.x = *d2MP(g_old_z.x);
-			m_variables[VARIABLE_PIXEL].a.m.y = *d2MP(g_old_z.y);
-			break;
 		case L_MATH:
 			/* watch out for overflow */
 			if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
@@ -3281,10 +2753,6 @@ int Formula::per_pixel()
 			m_variables[VARIABLE_PIXEL].a.d.y = g_dy_pixel();
 			break;
 #if !defined(XFRACT)
-		case M_MATH:
-			m_variables[VARIABLE_PIXEL].a.m.x = *d2MP(g_dx_pixel());
-			m_variables[VARIABLE_PIXEL].a.m.y = *d2MP(g_dy_pixel());
-			break;
 		case L_MATH:
 			m_variables[VARIABLE_PIXEL].a.l.x = g_lx_pixel();
 			m_variables[VARIABLE_PIXEL].a.l.y = g_ly_pixel();
@@ -3312,9 +2780,6 @@ int Formula::per_pixel()
 		g_old_z = m_variables[VARIABLE_Z].a.d;
 		break;
 #if !defined(XFRACT)
-	case M_MATH:
-		g_old_z = MPC2cmplx(m_variables[VARIABLE_Z].a.m);
-		break;
 	case L_MATH:
 		g_old_z_l = m_variables[VARIABLE_Z].a.l;
 		break;

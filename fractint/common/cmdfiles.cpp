@@ -2544,7 +2544,7 @@ static int stereo_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_3d_state.set_glasses_type(context.numval);
+	g_3d_state.set_glasses_type(GlassesType(context.numval));
 	return Command::FractalParameter | Command::ThreeDParameter;
 }
 

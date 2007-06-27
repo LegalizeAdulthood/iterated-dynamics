@@ -1549,69 +1549,69 @@ struct FunctionListItem g_function_list[] =
 /* maximum 6 characters in function names or recheck all related code */
 {
 #if !defined(XFRACT)
-	{"sin",   lStkSin,   dStkSin,   mStkSin   },
-	{"cosxx", lStkCosXX, dStkCosXX, mStkCosXX },
-	{"sinh",  lStkSinh,  dStkSinh,  mStkSinh  },
-	{"cosh",  lStkCosh,  dStkCosh,  mStkCosh  },
-	{"exp",   lStkExp,   dStkExp,   mStkExp   },
-	{"log",   lStkLog,   dStkLog,   mStkLog   },
-	{"sqr",   lStkSqr,   dStkSqr,   mStkSqr   },
-	{"recip", lStkRecip, dStkRecip, mStkRecip }, /* from recip on new in v16 */
-	{"ident", StkIdent,  StkIdent,  StkIdent  },
-	{"cos",   lStkCos,   dStkCos,   mStkCos   },
-	{"tan",   lStkTan,   dStkTan,   mStkTan   },
-	{"tanh",  lStkTanh,  dStkTanh,  mStkTanh  },
-	{"cotan", lStkCoTan, dStkCoTan, mStkCoTan },
-	{"cotanh", lStkCoTanh, dStkCoTanh, mStkCoTanh},
-	{"flip",  lStkFlip,  dStkFlip,  mStkFlip  },
-	{"conj",  lStkConj,  dStkConj,  mStkConj  },
-	{"zero",  lStkZero,  dStkZero,  mStkZero  },
-	{"asin",  lStkASin,  dStkASin,  mStkASin  },
-	{"asinh", lStkASinh, dStkASinh, mStkASinh },
-	{"acos",  lStkACos,  dStkACos,  mStkACos  },
-	{"acosh", lStkACosh, dStkACosh, mStkACosh },
-	{"atan",  lStkATan,  dStkATan,  mStkATan  },
-	{"atanh", lStkATanh, dStkATanh, mStkATanh },
-	{"cabs",  lStkCAbs,  dStkCAbs,  mStkCAbs  },
-	{"abs",   lStkAbs,   dStkAbs,   mStkAbs   },
-	{"sqrt",  lStkSqrt,  dStkSqrt,  mStkSqrt  },
-	{"floor", lStkFloor, dStkFloor, mStkFloor },
-	{"ceil",  lStkCeil,  dStkCeil,  mStkCeil  },
-	{"trunc", lStkTrunc, dStkTrunc, mStkTrunc },
-	{"round", lStkRound, dStkRound, mStkRound },
-	{"one",   lStkOne,   dStkOne,   mStkOne   },
+	{"sin",   lStkSin,   dStkSin   },
+	{"cosxx", lStkCosXX, dStkCosXX },
+	{"sinh",  lStkSinh,  dStkSinh  },
+	{"cosh",  lStkCosh,  dStkCosh  },
+	{"exp",   lStkExp,   dStkExp   },
+	{"log",   lStkLog,   dStkLog   },
+	{"sqr",   lStkSqr,   dStkSqr   },
+	{"recip", lStkRecip, dStkRecip }, /* from recip on new in v16 */
+	{"ident", StkIdent,  StkIdent  },
+	{"cos",   lStkCos,   dStkCos   },
+	{"tan",   lStkTan,   dStkTan   },
+	{"tanh",  lStkTanh,  dStkTanh  },
+	{"cotan", lStkCoTan, dStkCoTan },
+	{"cotanh", lStkCoTanh, dStkCoTanh },
+	{"flip",  lStkFlip,  dStkFlip  },
+	{"conj",  lStkConj,  dStkConj  },
+	{"zero",  lStkZero,  dStkZero  },
+	{"asin",  lStkASin,  dStkASin  },
+	{"asinh", lStkASinh, dStkASinh },
+	{"acos",  lStkACos,  dStkACos  },
+	{"acosh", lStkACosh, dStkACosh },
+	{"atan",  lStkATan,  dStkATan  },
+	{"atanh", lStkATanh, dStkATanh },
+	{"cabs",  lStkCAbs,  dStkCAbs  },
+	{"abs",   lStkAbs,   dStkAbs   },
+	{"sqrt",  lStkSqrt,  dStkSqrt  },
+	{"floor", lStkFloor, dStkFloor },
+	{"ceil",  lStkCeil,  dStkCeil  },
+	{"trunc", lStkTrunc, dStkTrunc },
+	{"round", lStkRound, dStkRound },
+	{"one",   lStkOne,   dStkOne   },
 #else
-	{"sin",   dStkSin,   dStkSin,   dStkSin   },
-	{"cosxx", dStkCosXX, dStkCosXX, dStkCosXX },
-	{"sinh",  dStkSinh,  dStkSinh,  dStkSinh  },
-	{"cosh",  dStkCosh,  dStkCosh,  dStkCosh  },
-	{"exp",   dStkExp,   dStkExp,   dStkExp   },
-	{"log",   dStkLog,   dStkLog,   dStkLog   },
-	{"sqr",   dStkSqr,   dStkSqr,   dStkSqr   },
-	{"recip", dStkRecip, dStkRecip, dStkRecip }, /* from recip on new in v16 */
-	{"ident", StkIdent,  StkIdent,  StkIdent  },
-	{"cos",   dStkCos,   dStkCos,   dStkCos   },
-	{"tan",   dStkTan,   dStkTan,   dStkTan   },
-	{"tanh",  dStkTanh,  dStkTanh,  dStkTanh  },
-	{"cotan", dStkCoTan, dStkCoTan, dStkCoTan },
-	{"cotanh", dStkCoTanh, dStkCoTanh, dStkCoTanh},
-	{"flip",  dStkFlip,  dStkFlip,  dStkFlip  },
-	{"conj",  dStkConj,  dStkConj,  dStkConj  },
-	{"zero",  dStkZero,  dStkZero,  dStkZero  },
-	{"asin",  dStkASin,  dStkASin,  dStkASin  },
-	{"asinh", dStkASinh, dStkASinh, dStkASinh },
-	{"acos",  dStkACos,  dStkACos,  dStkACos  },
-	{"acosh", dStkACosh, dStkACosh, dStkACosh },
-	{"atan",  dStkATan,  dStkATan,  dStkATan  },
-	{"atanh", dStkATanh, dStkATanh, dStkATanh },
-	{"cabs",  dStkCAbs,  dStkCAbs,  dStkCAbs  },
-	{"abs",   dStkAbs,   dStkAbs,   dStkAbs   },
-	{"sqrt",  dStkSqrt,  dStkSqrt,  dStkSqrt  },
-	{"floor", dStkFloor, dStkFloor, dStkFloor },
-	{"ceil",  dStkCeil,  dStkCeil,  dStkCeil  },
-	{"trunc", dStkTrunc, dStkTrunc, dStkTrunc },
-	{"round", dStkRound, dStkRound, dStkRound },
-	{"one",   dStkOne,   dStkOne,   dStkOne   },
+	{"sin",   dStkSin,   dStkSin   },
+	{"cosxx", dStkCosXX, dStkCosXX },
+	{"sinh",  dStkSinh,  dStkSinh  },
+	{"cosh",  dStkCosh,  dStkCosh  },
+	{"exp",   dStkExp,   dStkExp   },
+	{"log",   dStkLog,   dStkLog   },
+	{"sqr",   dStkSqr,   dStkSqr   },
+	{"recip", dStkRecip, dStkRecip }, /* from recip on new in v16 */
+	{"ident", StkIdent,  StkIdent  },
+	{"cos",   dStkCos,   dStkCos   },
+	{"tan",   dStkTan,   dStkTan   },
+	{"tanh",  dStkTanh,  dStkTanh  },
+	{"cotan", dStkCoTan, dStkCoTan },
+	{"cotanh", dStkCoTanh, dStkCoTanh },
+	{"flip",  dStkFlip,  dStkFlip  },
+	{"conj",  dStkConj,  dStkConj  },
+	{"zero",  dStkZero,  dStkZero  },
+	{"asin",  dStkASin,  dStkASin  },
+	{"asinh", dStkASinh, dStkASinh },
+	{"acos",  dStkACos,  dStkACos  },
+	{"acosh", dStkACosh, dStkACosh },
+	{"atan",  dStkATan,  dStkATan  },
+	{"atanh", dStkATanh, dStkATanh },
+	{"cabs",  dStkCAbs,  dStkCAbs  },
+	{"abs",   dStkAbs,   dStkAbs   },
+	{"sqrt",  dStkSqrt,  dStkSqrt  },
+	{"floor", dStkFloor, dStkFloor },
+	{"ceil",  dStkCeil,  dStkCeil  },
+	{"trunc", dStkTrunc, dStkTrunc },
+	{"round", dStkRound, dStkRound },
+	{"one",   dStkOne,   dStkOne   },
 #endif
 };
 
@@ -3043,7 +3043,7 @@ static int get_fractal_3d_parameters_aux()
 		{
 			glasses_type = 0;
 		}
-		g_3d_state.set_glasses_type(glasses_type);
+		g_3d_state.set_glasses_type(GlassesType(glasses_type));
 		if (g_3d_state.glasses_type())
 		{
 			if (get_funny_glasses_params() || check_mapfile())
@@ -3137,7 +3137,7 @@ restart_1:
 	g_3d_state.set_show_box(uvalues[k++].uval.ch.val != 0);
 	g_3d_state.set_preview_factor(uvalues[k++].uval.ival);
 	g_3d_state.set_sphere(uvalues[k++].uval.ch.val != 0);
-	g_3d_state.set_glasses_type(uvalues[k++].uval.ival);
+	g_3d_state.set_glasses_type(GlassesType(uvalues[k++].uval.ival));
 	k++;
 
 	g_3d_state.set_raytrace_output(uvalues[k++].uval.ival);
