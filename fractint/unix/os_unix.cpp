@@ -9,8 +9,6 @@
 #include "prototyp.h"
 
 /* Global variables (yuck!) */
-int MPOverflow = 0;
-struct MP Ans = { 0 };
 BYTE block[4096] = { 0 };
 int g_checked_vvs = 0;
 int g_cpu, g_fpu;                        /* cpu, fpu flags */
