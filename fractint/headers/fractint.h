@@ -960,7 +960,7 @@ struct FunctionListItem
 	const char *name;
 	void (*lfunct)();
 	void (*dfunct)();
-	void (*mfunct)();
+	//void (*mfunct)();
 };
 
 #define BIG 100000.0

@@ -24,7 +24,6 @@
 int g_which_image;
 int g_xx_adjust1;
 int g_yy_adjust1;
-//int g_glasses_type = STEREO_NONE;
 int g_x_shift1;
 int g_y_shift1;
 

@@ -360,7 +360,7 @@ void _fastcall history_restore_info()
 	g_3d_state.set_x_adjust(last.xadjust);
 	g_3d_state.set_y_adjust(last.yadjust);
 	g_3d_state.set_eye_separation(last.eyeseparation);
-	g_3d_state.set_glasses_type(last.glassestype);
+	g_3d_state.set_glasses_type(GlassesType(last.glassestype));
 	g_outside = last.outside;
 	g_escape_time_state.m_grid_fp.x_3rd() = last.x_3rd;
 	g_escape_time_state.m_grid_fp.y_3rd() = last.y_3rd;

@@ -117,7 +117,7 @@ static void read_info_version_1(const fractal_info &read_info)
 			g_3d_state.set_blue().set_bright(read_info.blue_bright);
 			g_3d_state.set_x_adjust(read_info.xadjust);
 			g_3d_state.set_eye_separation(read_info.eyeseparation);
-			g_3d_state.set_glasses_type(read_info.glassestype);
+			g_3d_state.set_glasses_type(GlassesType(read_info.glassestype));
 		}
 	}
 }

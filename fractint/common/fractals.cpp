@@ -89,7 +89,6 @@ double g_threshold = 0.0;
 ComplexD g_coefficient = { 0.0, 0.0 };
 ComplexD  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
 ComplexD  *g_roots = g_static_roots;
-struct MPC *g_roots_mpc = NULL;
 ComplexD g_power = { 0.0, 0.0};
 int g_bit_shift_minus_1 = 0;                  /* bit shift less 1 */
 double g_two_pi = MathUtil::Pi*2.0;
@@ -114,7 +113,6 @@ int (*g_bail_out_bn)();
 int (*g_bail_out_bf)();
 long g_one_fudge = 0;
 long g_two_fudge = 0;
-struct MPC g_temp_parameter_mpc;
 double (_fastcall *g_dx_pixel)() = dx_pixel_calc;
 double (_fastcall *g_dy_pixel)() = dy_pixel_calc;
 long   (_fastcall *g_lx_pixel)() = lx_pixel_calc;
@@ -145,13 +143,6 @@ static long s_cos_y_l = 0;
 static long s_sin_y_l = 0;
 static double s_xt;
 static double s_yt;
-
-#if !defined(XFRACT)
-struct MP g_threshold_mp;
-struct MP g_one_mp;
-struct MPC mpcold, mpcnew;
-struct MP g_parameter2_x_mp;
-#endif
 
 void magnet2_precalculate_fp() /* precalculation for Magnet2 (M & J) for speed */
 {
@@ -2766,24 +2757,7 @@ int julia_per_pixel_fp()
 
 int julia_per_pixel_mpc()
 {
-#if !defined(XFRACT)
-	/* floating point julia */
-	/* juliafp */
-	if (g_invert)
-	{
-		invert_z(&g_old_z);
-	}
-	else
-	{
-		g_old_z.x = g_dx_pixel();
-		g_old_z.y = g_dy_pixel();
-	}
-	mpcold.x = *d2MP(g_old_z.x);
-	mpcold.y = *d2MP(g_old_z.y);
 	return 0;
-#else
-	return 0;
-#endif
 }
 
 int other_richard8_per_pixel_fp()
@@ -2830,14 +2804,6 @@ int other_julia_per_pixel_fp()
 	}
 	return 0;
 }
-
-#if 0
-#define Q0 .113
-#define Q1 .01
-#else
-#define Q0 0
-#define Q1 0
-#endif
 
 int quaternion_julia_per_pixel_fp()
 {

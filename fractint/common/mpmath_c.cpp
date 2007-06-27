@@ -24,141 +24,141 @@
 #include "fpu.h"
 #include "jiim.h"
 
-#if !defined(XFRACT)
-
-static struct MP s_answer = { 0 };
-
-struct MPC g_one_mpc =
-{
-	{ 0x3fff, 0x80000000L },
-    { 0, 0L }
-};
-
-struct MP *MPsub(struct MP x, struct MP y)
-{
-	y.Exp ^= 0x8000;
-	return MPadd(x, y);
-}
-
-struct MP *MPabs(struct MP x)
-{
-	s_answer = x;
-	s_answer.Exp &= 0x7fff;
-	return &s_answer;
-}
-
-struct MPC MPCsqr(struct MPC x)
-{
-	struct MPC z;
-
-	z.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
-	z.y = *MPmul(x.x, x.y);
-	z.y.Exp++;
-	return z;
-}
-
-struct MP MPCmod(struct MPC x)
-{
-	return *MPadd(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
-}
-
-struct MPC MPCmul(struct MPC x, struct MPC y)
-{
-	struct MPC z;
-
-	z.x = *MPsub(*MPmul(x.x, y.x), *MPmul(x.y, y.y));
-	z.y = *MPadd(*MPmul(x.x, y.y), *MPmul(x.y, y.x));
-	return z;
-}
-
-struct MPC MPCdiv(struct MPC x, struct MPC y)
-{
-	struct MP mod;
-
-	mod = MPCmod(y);
-	y.y.Exp ^= 0x8000;
-	y.x = *MPdiv(y.x, mod);
-	y.y = *MPdiv(y.y, mod);
-	return MPCmul(x, y);
-}
-
-struct MPC MPCadd(struct MPC x, struct MPC y)
-{
-	struct MPC z;
-
-	z.x = *MPadd(x.x, y.x);
-	z.y = *MPadd(x.y, y.y);
-	return z;
-}
-
-struct MPC MPCsub(struct MPC x, struct MPC y)
-{
-	struct MPC z;
-
-	z.x = *MPsub(x.x, y.x);
-	z.y = *MPsub(x.y, y.y);
-	return z;
-}
-
-struct MPC MPCpow(struct MPC x, int exp)
-{
-	struct MPC z;
-	struct MPC zz;
-
-	z = (exp & 1) ? x : g_one_mpc;
-	exp >>= 1;
-	while (exp)
-	{
-		zz.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
-		zz.y = *MPmul(x.x, x.y);
-		zz.y.Exp++;
-		x = zz;
-		if (exp & 1)
-		{
-			zz.x = *MPsub(*MPmul(z.x, x.x), *MPmul(z.y, x.y));
-			zz.y = *MPadd(*MPmul(z.x, x.y), *MPmul(z.y, x.x));
-			z = zz;
-		}
-		exp >>= 1;
-	}
-	return z;
-}
-
-int MPCcmp(struct MPC x, struct MPC y)
-{
-	struct MPC z;
-
-	if (MPcmp(x.x, y.x) || MPcmp(x.y, y.y))
-	{
-		z.x = MPCmod(x);
-		z.y = MPCmod(y);
-		return MPcmp(z.x, z.y);
-	}
-	else
-	{
-		return 0;
-	}
-}
-
-ComplexD MPC2cmplx(struct MPC x)
-{
-	ComplexD z;
-
-	z.x = *MP2d(x.x);
-	z.y = *MP2d(x.y);
-	return z;
-}
-
-struct MPC cmplx2MPC(ComplexD z)
-{
-	struct MPC x;
-
-	x.x = *d2MP(z.x);
-	x.y = *d2MP(z.y);
-	return x;
-}
-
-#endif /* XFRACT */
+//#if !defined(XFRACT)
+//
+//static struct MP s_answer = { 0 };
+//
+//struct MPC g_one_mpc =
+//{
+//	{ 0x3fff, 0x80000000L },
+//    { 0, 0L }
+//};
+//
+//struct MP *MPsub(struct MP x, struct MP y)
+//{
+//	y.Exp ^= 0x8000;
+//	return MPadd(x, y);
+//}
+//
+//struct MP *MPabs(struct MP x)
+//{
+//	s_answer = x;
+//	s_answer.Exp &= 0x7fff;
+//	return &s_answer;
+//}
+//
+//struct MPC MPCsqr(struct MPC x)
+//{
+//	struct MPC z;
+//
+//	z.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
+//	z.y = *MPmul(x.x, x.y);
+//	z.y.Exp++;
+//	return z;
+//}
+//
+//struct MP MPCmod(struct MPC x)
+//{
+//	return *MPadd(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
+//}
+//
+//struct MPC MPCmul(struct MPC x, struct MPC y)
+//{
+//	struct MPC z;
+//
+//	z.x = *MPsub(*MPmul(x.x, y.x), *MPmul(x.y, y.y));
+//	z.y = *MPadd(*MPmul(x.x, y.y), *MPmul(x.y, y.x));
+//	return z;
+//}
+//
+//struct MPC MPCdiv(struct MPC x, struct MPC y)
+//{
+//	struct MP mod;
+//
+//	mod = MPCmod(y);
+//	y.y.Exp ^= 0x8000;
+//	y.x = *MPdiv(y.x, mod);
+//	y.y = *MPdiv(y.y, mod);
+//	return MPCmul(x, y);
+//}
+//
+//struct MPC MPCadd(struct MPC x, struct MPC y)
+//{
+//	struct MPC z;
+//
+//	z.x = *MPadd(x.x, y.x);
+//	z.y = *MPadd(x.y, y.y);
+//	return z;
+//}
+//
+//struct MPC MPCsub(struct MPC x, struct MPC y)
+//{
+//	struct MPC z;
+//
+//	z.x = *MPsub(x.x, y.x);
+//	z.y = *MPsub(x.y, y.y);
+//	return z;
+//}
+//
+//struct MPC MPCpow(struct MPC x, int exp)
+//{
+//	struct MPC z;
+//	struct MPC zz;
+//
+//	z = (exp & 1) ? x : g_one_mpc;
+//	exp >>= 1;
+//	while (exp)
+//	{
+//		zz.x = *MPsub(*MPmul(x.x, x.x), *MPmul(x.y, x.y));
+//		zz.y = *MPmul(x.x, x.y);
+//		zz.y.Exp++;
+//		x = zz;
+//		if (exp & 1)
+//		{
+//			zz.x = *MPsub(*MPmul(z.x, x.x), *MPmul(z.y, x.y));
+//			zz.y = *MPadd(*MPmul(z.x, x.y), *MPmul(z.y, x.x));
+//			z = zz;
+//		}
+//		exp >>= 1;
+//	}
+//	return z;
+//}
+//
+//int MPCcmp(struct MPC x, struct MPC y)
+//{
+//	struct MPC z;
+//
+//	if (MPcmp(x.x, y.x) || MPcmp(x.y, y.y))
+//	{
+//		z.x = MPCmod(x);
+//		z.y = MPCmod(y);
+//		return MPcmp(z.x, z.y);
+//	}
+//	else
+//	{
+//		return 0;
+//	}
+//}
+//
+//ComplexD MPC2cmplx(struct MPC x)
+//{
+//	ComplexD z;
+//
+//	z.x = *MP2d(x.x);
+//	z.y = *MP2d(x.y);
+//	return z;
+//}
+//
+//struct MPC cmplx2MPC(ComplexD z)
+//{
+//	struct MPC x;
+//
+//	x.x = *d2MP(z.x);
+//	x.y = *d2MP(z.y);
+//	return x;
+//}
+//
+//#endif /* XFRACT */
 
 #ifndef sqr
 #define sqr(x) ((x)*(x))
@@ -732,7 +732,7 @@ int gaussian_number(int probability, int range)
 
 #endif
 
-#if defined(_WIN32)
+//#if defined(_WIN32)
 /*
 d2MP386     PROC     uses si di, x:QWORD
 	mov   si, WORD PTR [x + 6]
@@ -771,14 +771,14 @@ StoreAns:
 	ret
 d2MP386     ENDP
 */
-struct MP *d2MP(double x)
-{
-	/* TODO: implement */
-#if defined(_WIN32)
-	_ASSERTE(0 && "d2MP called.");
-#endif
-	return &s_answer;
-}
+//struct MP *d2MP(double x)
+//{
+//	/* TODO: implement */
+//#if defined(_WIN32)
+//	_ASSERTE(0 && "d2MP called.");
+//#endif
+//	return &s_answer;
+//}
 
 /*
 MP2d386     PROC     uses si di, xExp:WORD, xMant:DWORD
@@ -820,15 +820,15 @@ StoreAns:
 	ret
 MP2d386     ENDP
 */
-double *MP2d(struct MP x)
-{
-	/* TODO: implement */
-	static double ans = 0.0;
-#if defined(_WIN32)
-	_ASSERTE(0 && "MP2d called.");
-#endif
-	return &ans;
-}
+//double *MP2d(struct MP x)
+//{
+//	/* TODO: implement */
+//	static double ans = 0.0;
+//#if defined(_WIN32)
+//	_ASSERTE(0 && "MP2d called.");
+//#endif
+//	return &ans;
+//}
 
 /*
 MPadd386    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, \
@@ -923,14 +923,14 @@ StoreAns:
 	ret
 MPadd386    ENDP
 */
-struct MP *MPadd(struct MP x, struct MP y)
-{
-	/* TODO: implement */
-#if defined(_WIN32)
-	_ASSERTE(0 && "MPadd called.");
-#endif
-	return &s_answer;
-}
+//struct MP *MPadd(struct MP x, struct MP y)
+//{
+//	/* TODO: implement */
+//#if defined(_WIN32)
+//	_ASSERTE(0 && "MPadd called.");
+//#endif
+//	return &s_answer;
+//}
 
 /*
 MPcmp386    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, yMant:DWORD
@@ -988,14 +988,14 @@ ExitCmp:
 	ret
 MPcmp386    ENDP
 */
-int MPcmp(struct MP x, struct MP y)
-{
-	/* TODO: implement */
-#if defined(_WIN32)
-	_ASSERTE(0 && "MPcmp called.");
-#endif
-	return 0;
-}
+//int MPcmp(struct MP x, struct MP y)
+//{
+//	/* TODO: implement */
+//#if defined(_WIN32)
+//	_ASSERTE(0 && "MPcmp called.");
+//#endif
+//	return 0;
+//}
 
 /*
 MPdiv386    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, \
@@ -1052,14 +1052,14 @@ StoreMant:
 	ret
 MPdiv386    ENDP
 */
-struct MP *MPdiv(struct MP x, struct MP y)
-{
-	/* TODO: implement */
-#if defined(_WIN32)
-	_ASSERTE(0 && "MPdiv called.");
-#endif
-	return &s_answer;
-}
+//struct MP *MPdiv(struct MP x, struct MP y)
+//{
+//	/* TODO: implement */
+//#if defined(_WIN32)
+//	_ASSERTE(0 && "MPdiv called.");
+//#endif
+//	return &s_answer;
+//}
 
 /*
 MPmul386    PROC     uses si di, xExp:WORD, xMant:DWORD, yExp:WORD, \
@@ -1118,14 +1118,14 @@ StoreMant:
 	ret
 MPmul386    ENDP
 */
-struct MP *MPmul(struct MP x, struct MP y)
-{
-	/* TODO: implement */
-#if defined(_WIN32)
-	_ASSERTE(0 && "MPmul called.");
-#endif
-	return &s_answer;
-}
+//struct MP *MPmul(struct MP x, struct MP y)
+//{
+//	/* TODO: implement */
+//#if defined(_WIN32)
+//	_ASSERTE(0 && "MPmul called.");
+//#endif
+//	return &s_answer;
+//}
 
 /*
 fg2MP386    PROC     x:DWORD, fg:WORD
@@ -1162,12 +1162,12 @@ StoreAns:
 	ret
 fg2MP386    ENDP
 */
-struct MP *fg2MP(long x, int fg)
-{
-#if defined(_WIN32)
-	_ASSERTE(0 && "fg2MP called");
-#endif
-	return &s_answer;
-}
+//struct MP *fg2MP(long x, int fg)
+//{
+//#if defined(_WIN32)
+//	_ASSERTE(0 && "fg2MP called");
+//#endif
+//	return &s_answer;
+//}
 
-#endif
+//#endif

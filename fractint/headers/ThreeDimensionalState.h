@@ -13,12 +13,15 @@
 #define RAYTRACE_ACROSPIN	6
 #define RAYTRACE_DXF		7
 
-/* g_glasses_type values */
-#define STEREO_NONE			0
-#define STEREO_ALTERNATE	1
-#define STEREO_SUPERIMPOSE	2
-#define STEREO_PHOTO		3
-#define STEREO_PAIR			4
+/* glasses_type values */
+enum GlassesType
+{
+	STEREO_NONE			= 0,
+	STEREO_ALTERNATE	= 1,
+	STEREO_SUPERIMPOSE	= 2,
+	STEREO_PHOTO		= 3,
+	STEREO_PAIR			= 4
+};
 
 /* FILLTYPE values */
 class FillType
@@ -105,7 +108,7 @@ public:
 	int x_adjust() const			{ return m_x_adjust; }
 	int y_adjust() const			{ return m_y_adjust; }
 	int eye_separation() const		{ return m_eye_separation; }
-	int glasses_type() const		{ return m_glasses_type; }
+	GlassesType glasses_type() const { return m_glasses_type; }
 	int preview_factor() const		{ return m_preview_factor; }
 	const RedBlueState &red() const	{ return m_red; }
 	const RedBlueState &blue() const { return m_blue; }
@@ -156,7 +159,7 @@ public:
 	void set_x_adjust(int value)		{ m_x_adjust = value; }
 	void set_y_adjust(int value)		{ m_y_adjust = value; }
 	void set_eye_separation(int value)	{ m_eye_separation = value; }
-	void set_glasses_type(int value)	{ m_glasses_type = value; }
+	void set_glasses_type(GlassesType value) { m_glasses_type = value; }
 	void set_preview_factor(int value)	{ m_preview_factor = value; }
 	void set_transparent0(int value)	{ m_transparent[0] = value; }
 	void set_transparent1(int value)	{ m_transparent[1] = value; }
@@ -269,7 +272,7 @@ private:
 	int m_x_adjust;
 	int m_y_adjust;
 	int m_eye_separation;
-	int m_glasses_type;
+	GlassesType m_glasses_type;
 	int m_preview_factor;
 	RedBlueState m_red;
 	RedBlueState m_blue;

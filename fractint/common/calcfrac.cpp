@@ -148,7 +148,6 @@ int g_atan_colors = 180;
 long (*g_calculate_mandelbrot_asm_fp)();
 
 /* routines in this module      */
-//static void perform_work_list();
 static int one_or_two_pass();
 static int  _fastcall standard_calculate(int);
 static int  _fastcall potential(double, long);
