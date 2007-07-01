@@ -28,6 +28,13 @@
 
 #define COLOR_CHANNEL_MAX 63
 
+enum StereogramCalibrateType
+{
+	CALIBRATE_NONE = 0,
+	CALIBRATE_MIDDLE,
+	CALIBRATE_TOP
+};
+
 enum ShowFileType
 {
 	SHOWFILE_PENDING = 0,

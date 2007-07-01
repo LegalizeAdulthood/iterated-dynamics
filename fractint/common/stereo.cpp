@@ -38,7 +38,7 @@ char g_stereo_map_name[FILE_MAX_DIR + 1] = {""};
 int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 bool g_grayscale_depth = false; /* flag to use gray value rather than color number */
-char g_calibrate = 1;             /* add calibration bars to image */
+StereogramCalibrateType g_stereogram_calibrate = CALIBRATE_MIDDLE;	/* add calibration bars to image */
 bool g_image_map = false;
 
 static long s_average;
@@ -244,7 +244,7 @@ int auto_stereo()
 	s_average = s_average_count = 0L;
 	s_bar_height = 1 + g_y_dots / 20;
 	s_x_center = g_x_dots/2;
-	s_y_center = (g_calibrate > 1) ? s_bar_height/2 : g_y_dots/2;
+	s_y_center = (g_stereogram_calibrate == CALIBRATE_TOP) ? s_bar_height/2 : g_y_dots/2;
 
 	/* box to average for calibration bars */
 	s_x1 = s_x_center - g_x_dots/16;
@@ -297,7 +297,7 @@ int auto_stereo()
 				colour[ct++] = getcolor(i - (int) s_average, j);
 			}
 		}
-		bool bars = (g_calibrate != 0);
+		bool bars = (g_stereogram_calibrate != CALIBRATE_NONE);
 		toggle_bars(bars, barwidth, colour);
 		int done = 0;
 		while (done == 0)

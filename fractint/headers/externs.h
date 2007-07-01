@@ -35,7 +35,7 @@ extern long					g_calculation_time;
 extern long					(*g_calculate_mandelbrot_asm_fp)();
 extern int					(*g_calculate_type)();
 extern int					g_calculation_status;
-extern char					g_calibrate;
+extern StereogramCalibrateType	g_stereogram_calibrate;
 extern int					g_cfg_line_nums[];
 extern int					g_check_current_dir;
 extern int					g_checked_vvs;
