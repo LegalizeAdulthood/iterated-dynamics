@@ -1411,7 +1411,7 @@ static void sleep_ms_old(long ms)
 	bool save_tab_display_enabled = g_tab_display_enabled;
 	HelpModeSaver saved_help(-1);
 	g_tab_display_enabled  = false;
-	if (scalems == 0L) /* g_calibrate */
+	if (scalems == 0L) /* calibrate */
 	{
 		/* selects a value of scalems that makes the units
 			10000 per sec independent of CPU speed */
@@ -1422,7 +1422,7 @@ static void sleep_ms_old(long ms)
 		{
 			goto sleepexit;
 		}
-		/* g_calibrate, assume slow computer first */
+		/* calibrate, assume slow computer first */
 		show_temp_message("Calibrating timer");
 		do
 		{
