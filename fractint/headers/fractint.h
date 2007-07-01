@@ -1318,12 +1318,17 @@ struct UserInterfaceState
 	bool ask_video;					/* flag for video prompting */
 };
 
-class AbstractDialog
+class IInputContext
+{
+public:
+	virtual bool ProcessWaitingKey(int key) = 0;
+	virtual bool ProcessIdle() = 0;
+};
+
+class AbstractDialog : public IInputContext
 {
 public:
 	void ProcessInput();
-	virtual bool ProcessWaitingKey(int key) = 0;
-	virtual bool ProcessIdle() = 0;
 };
 
 template <typename T>

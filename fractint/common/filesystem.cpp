@@ -29,108 +29,101 @@
 #include "filesystem.h"
 #include "miscres.h"
 
-int merge_path_names(char *oldfullpath, char *newfilename, bool copy_directory)
+int merge_path_names(char *old_full_path, char *new_filename, bool copy_directory)
 {
-	int isadir = 0;
-	int isafile = 0;
-	int len;
+	/* no dot or slash so assume a file */
+	bool isafile = (strchr(new_filename, '.') == NULL && strchr(new_filename, SLASHC) == NULL);
+	int isadir = is_a_directory(new_filename);
+	if (isadir != 0)
+	{
+		ensure_slash_on_directory(new_filename);
+	}
+#ifndef XFRACT
+	/* if drive, colon, slash, is a directory */
+	if ((int) strlen(new_filename) == 3 &&
+			new_filename[1] == ':' &&
+			new_filename[2] == SLASHC)
+	{
+		isadir = 1;
+	}
+	/* if drive, colon, with no slash, is a directory */
+	if ((int) strlen(new_filename) == 2 && new_filename[1] == ':')
+	{
+		new_filename[2] = SLASHC;
+		new_filename[3] = 0;
+		isadir = 1;
+	}
+	/* if dot, slash, '0', its the current directory, set up full path */
+	if (new_filename[0] == '.' && new_filename[1] == SLASHC && new_filename[2] == 0)
+	{
+		char temp_path[FILE_MAX_PATH];
+		temp_path[0] = (char)('a' + _getdrive() - 1);
+		temp_path[1] = ':';
+		temp_path[2] = 0;
+		expand_dirname(new_filename, temp_path);
+		strcat(temp_path, new_filename);
+		strcpy(new_filename, temp_path);
+		isadir = 1;
+	}
+	/* if dot, slash, its relative to the current directory, set up full path */
+	if (new_filename[0] == '.' && new_filename[1] == SLASHC)
+	{
+		int len;
+		int test_dir = 0;
+		char temp_path[FILE_MAX_PATH];
+		temp_path[0] = (char)('a' + _getdrive() - 1);
+		temp_path[1] = ':';
+		temp_path[2] = 0;
+		if (strrchr(new_filename, '.') == new_filename)
+		{
+			test_dir = 1;  /* only one '.' assume its a directory */
+		}
+		expand_dirname(new_filename, temp_path);
+		strcat(temp_path, new_filename);
+		strcpy(new_filename, temp_path);
+		if (!test_dir)
+		{
+			len = (int) strlen(new_filename);
+			new_filename[len-1] = 0; /* get rid of slash added by expand_dirname */
+		}
+	}
+#else
+	{
+		char temp_path[FILE_MAX_PATH];
+		find_path(newfilename, temp_path);
+		strcpy(newfilename, temp_path);
+	}
+#endif
+	/* check existence */
+	if (isadir == 0 || isafile)
+	{
+		if (fr_find_first(new_filename) == 0)
+		{
+			if (g_dta.attribute & SUBDIR) /* exists and is dir */
+			{
+				ensure_slash_on_directory(new_filename);  /* add trailing slash */
+				isadir = 1;
+				isafile = false;
+			}
+			else
+			{
+				isafile = true;
+			}
+		}
+	}
+
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
-	char temp_path[FILE_MAX_PATH];
+	split_path(new_filename, drive, dir, fname, ext);
 
 	char drive1[FILE_MAX_DRIVE];
 	char dir1[FILE_MAX_DIR];
 	char fname1[FILE_MAX_FNAME];
 	char ext1[FILE_MAX_EXT];
+	split_path(old_full_path, drive1, dir1, fname1, ext1);
 
-	/* no dot or slash so assume a file */
-	if (strchr(newfilename, '.') == NULL && strchr(newfilename, SLASHC) == NULL)
-	{
-		isafile = 1;
-	}
-	isadir = is_a_directory(newfilename);
-	if (isadir != 0)
-	{
-		fix_dir_name(newfilename);
-	}
-#if 0
-	/* if slash by itself, it's a directory */
-	if (strcmp(newfilename, SLASH) == 0)
-	{
-		isadir = 1;
-	}
-#endif
-#ifndef XFRACT
-	/* if drive, colon, slash, is a directory */
-	if ((int) strlen(newfilename) == 3 &&
-			newfilename[1] == ':' &&
-			newfilename[2] == SLASHC)
-		isadir = 1;
-	/* if drive, colon, with no slash, is a directory */
-	if ((int) strlen(newfilename) == 2 && newfilename[1] == ':')
-	{
-		newfilename[2] = SLASHC;
-		newfilename[3] = 0;
-		isadir = 1;
-	}
-	/* if dot, slash, '0', its the current directory, set up full path */
-	if (newfilename[0] == '.' && newfilename[1] == SLASHC && newfilename[2] == 0)
-	{
-		temp_path[0] = (char)('a' + _getdrive() - 1);
-		temp_path[1] = ':';
-		temp_path[2] = 0;
-		expand_dirname(newfilename, temp_path);
-		strcat(temp_path, newfilename);
-		strcpy(newfilename, temp_path);
-		isadir = 1;
-	}
-	/* if dot, slash, its relative to the current directory, set up full path */
-	if (newfilename[0] == '.' && newfilename[1] == SLASHC)
-	{
-		int len;
-		int test_dir = 0;
-		temp_path[0] = (char)('a' + _getdrive() - 1);
-		temp_path[1] = ':';
-		temp_path[2] = 0;
-		if (strrchr(newfilename, '.') == newfilename)
-		{
-			test_dir = 1;  /* only one '.' assume its a directory */
-		}
-		expand_dirname(newfilename, temp_path);
-		strcat(temp_path, newfilename);
-		strcpy(newfilename, temp_path);
-		if (!test_dir)
-		{
-			len = (int) strlen(newfilename);
-			newfilename[len-1] = 0; /* get rid of slash added by expand_dirname */
-		}
-	}
-#else
-	findpath(newfilename, temp_path);
-	strcpy(newfilename, temp_path);
-#endif
-	/* check existence */
-	if (isadir == 0 || isafile == 1)
-	{
-		if (fr_find_first(newfilename) == 0)
-		{
-			if (g_dta.attribute & SUBDIR) /* exists and is dir */
-			{
-				fix_dir_name(newfilename);  /* add trailing slash */
-				isadir = 1;
-				isafile = 0;
-			}
-			else
-			{
-				isafile = 1;
-			}
-		}
-	}
-
-	split_path(newfilename, drive, dir, fname, ext);
-	split_path(oldfullpath, drive1, dir1, fname1, ext1);
 	if ((int) strlen(drive) != 0 && copy_directory)
 	{
 		strcpy(drive1, drive);
@@ -147,40 +140,40 @@ int merge_path_names(char *oldfullpath, char *newfilename, bool copy_directory)
 	{
 		strcpy(ext1, ext);
 	}
-	if (isadir == 0 && isafile == 0 && copy_directory)
+	if (isadir == 0 && !isafile && copy_directory)
 	{
-		make_path(oldfullpath, drive1, dir1, NULL, NULL);
-		len = (int) strlen(oldfullpath);
+		make_path(old_full_path, drive1, dir1, NULL, NULL);
+		int len = (int) strlen(old_full_path);
 		if (len > 0)
 		{
 			char save;
 			/* strip trailing slash */
-			save = oldfullpath[len-1];
+			save = old_full_path[len-1];
 			if (save == SLASHC)
 			{
-				oldfullpath[len-1] = 0;
+				old_full_path[len-1] = 0;
 			}
-			if (access(oldfullpath, 0))
+			if (access(old_full_path, 0))
 			{
 				isadir = -1;
 			}
-			oldfullpath[len-1] = save;
+			old_full_path[len-1] = save;
 		}
 	}
-	make_path(oldfullpath, drive1, dir1, fname1, ext1);
+	make_path(old_full_path, drive1, dir1, fname1, ext1);
 	return isadir;
 }
 
 /* copies the proposed new filename to the fullpath variable */
 /* does not copy directories for PAR files (modes 2 and 3)   */
 /* attempts to extract directory and test for existence (modes 0 and 1) */
-int merge_path_names(char *oldfullpath, char *newfilename, int mode)
+int merge_path_names(char *old_full_path, char *new_filename, int mode)
 {
-	return merge_path_names(oldfullpath, newfilename, mode < 2);
+	return merge_path_names(old_full_path, new_filename, mode < 2);
 }
 
-/* fix up directory names */
-void fix_dir_name(char *dirname)
+/* ensure directory names end in a slash character */
+void ensure_slash_on_directory(char *dirname)
 {
 	int length = (int) strlen(dirname); /* index of last character */
 
@@ -222,16 +215,14 @@ FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 }
 
 
-int make_path(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)
+void make_path(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)
 {
-	if (template_str)
+	if (!template_str)
 	{
-		*template_str = 0;
+		return;
 	}
-	else
-	{
-		return -1;
-	}
+
+	*template_str = 0;
 #ifndef XFRACT
 	if (drive)
 	{
@@ -250,123 +241,124 @@ int make_path(char *template_str, const char *drive, const char *dir, const char
 	{
 		strcat(template_str, ext);
 	}
-	return 0;
 }
 
 #ifndef XFRACT  /* This routine moved to unix.c so we can use it in hc.c */
 
-int split_path(const char *file_template, char *drive, char *dir, char *fname, char *ext)
+static void get_drive(char const *file_template, char *drive, int length, int &offset)
 {
-	int length;
-	int len;
-	int offset;
-	const char *tmp;
+	/* get drive */
 	if (drive)
 	{
 		drive[0] = 0;
 	}
-	if (dir)
-	{
-		dir[0]   = 0;
-	}
-	if (fname)
-	{
-		fname[0] = 0;
-	}
-	if (ext)
-	{
-		ext[0]   = 0;
-	}
-
-	length = (int) strlen(file_template);
-	if (length == 0)
-	{
-		return 0;
-	}
-
-	offset = 0;
-
-	/* get drive */
 	if (length >= 2)
 	{
 		if (file_template[1] == ':')
 		{
 			if (drive)
 			{
-				drive[0] = file_template[offset++];
-				drive[1] = file_template[offset++];
+				drive[0] = file_template[offset];
+				drive[1] = file_template[offset + 1];
 				drive[2] = 0;
+			}
+			offset += 2;
+		}
+	}
+}
+
+static void get_dir(char const *file_template, char *dir, int &offset)
+{
+	if (!dir)
+	{
+		return;
+	}
+
+	dir[0] = 0;
+	const char *tmp = strrchr(file_template, SLASHC);
+	if (tmp)
+	{
+		tmp++;  /* first character after slash */
+		int len = (int) (tmp - (char *) &file_template[offset]);
+		if (len >= 0 && len < FILE_MAX_DIR)
+		{
+			::strncpy(dir, &file_template[offset], min(len, FILE_MAX_DIR));
+		}
+		if (len < FILE_MAX_DIR)
+		{
+			dir[len] = 0;
+		}
+		offset += len;
+	}
+}
+
+static void get_filename_ext(char const *file_template, char *fname, char *ext, int length, int offset)
+{
+	if (fname)
+	{
+		fname[0] = 0;
+	}
+	const char *tmp = strrchr(file_template, '.');
+	if (tmp < strrchr(file_template, SLASHC) || tmp < strrchr(file_template, ':'))
+	{
+		tmp = 0; /* in this case the '.' must be a directory */
+	}
+	if (tmp)
+	{
+		/* first character past "." */
+		int len = (int) (tmp - (char *)&file_template[offset]);
+		if ((len > 0) && (offset + len < length) && fname)
+		{
+			strncpy(fname, &file_template[offset], min(len, FILE_MAX_FNAME));
+			if (len < FILE_MAX_FNAME)
+			{
+				fname[len] = 0;
 			}
 			else
 			{
-				offset++;
-				offset++;
+				fname[FILE_MAX_FNAME-1] = 0;
 			}
 		}
-	}
-
-	/* get dir */
-	if (offset < length)
-	{
-		tmp = strrchr(file_template, SLASHC);
-		if (tmp)
+		offset += len;
+		if (ext)
 		{
-			tmp++;  /* first character after slash */
-			len = (int) (tmp - (char *)&file_template[offset]);
-			if (len >= 0 && len < FILE_MAX_DIR && dir)
-			{
-				::strncpy(dir, &file_template[offset], min(len, FILE_MAX_DIR));
-			}
-			if (len < FILE_MAX_DIR && dir)
-			{
-				dir[len] = 0;
-			}
-			offset += len;
-		}
-	}
-	else
-	{
-		return 0;
-	}
-
-	/* get fname */
-	if (offset < length)
-	{
-		tmp = strrchr(file_template, '.');
-		if (tmp < strrchr(file_template, SLASHC) || tmp < strrchr(file_template, ':'))
-		{
-			tmp = 0; /* in this case the '.' must be a directory */
-		}
-		if (tmp)
-		{
-			/* tmp++; */ /* first character past "." */
-			len = (int) (tmp - (char *)&file_template[offset]);
-			if ((len > 0) && (offset + len < length) && fname)
-			{
-				strncpy(fname, &file_template[offset], min(len, FILE_MAX_FNAME));
-				if (len < FILE_MAX_FNAME)
-				{
-					fname[len] = 0;
-				}
-				else
-				{
-					fname[FILE_MAX_FNAME-1] = 0;
-				}
-			}
-			offset += len;
-			if ((offset < length) && ext)
+			ext[0] = 0;
+			if (offset < length)
 			{
 				strncpy(ext, &file_template[offset], FILE_MAX_EXT);
 				ext[FILE_MAX_EXT-1] = 0;
 			}
 		}
-		else if ((offset < length) && fname)
-		{
-			strncpy(fname, &file_template[offset], FILE_MAX_FNAME);
-			fname[FILE_MAX_FNAME-1] = 0;
-		}
 	}
-	return 0;
+	else if ((offset < length) && fname)
+	{
+		strncpy(fname, &file_template[offset], FILE_MAX_FNAME);
+		fname[FILE_MAX_FNAME-1] = 0;
+	}
+}
+
+void split_path(const char *file_template, char *drive, char *dir, char *filename, char *extension)
+{
+	int length = (int) strlen(file_template);
+	if (length == 0)
+	{
+		return;
+	}
+
+	int offset = 0;
+	get_drive(file_template, drive, length, offset);
+	if (offset >= length)
+	{
+		return;
+	}
+
+	get_dir(file_template, dir, offset);
+	if (offset >= length)
+	{
+		return;
+	}
+
+	get_filename_ext(file_template, filename, extension, length, offset);
 }
 #endif
 
@@ -481,7 +473,7 @@ char *has_extension(char *source)
 
 #ifndef XFRACT
 /* return full pathnames */
-void findpath(const char *filename, char *fullpathname)
+void find_path(const char *filename, char *fullpathname)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
@@ -558,16 +550,14 @@ nextname:
 
 void update_save_name(char *filename) /* go to the next file name */
 {
-	char *save;
-	char *hold;
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
 
-	split_path(filename , drive, dir, fname, ext);
+	split_path(filename, drive, dir, fname, ext);
 
-	hold = fname + strlen(fname) - 1; /* start at the end */
+	char *hold = fname + strlen(fname) - 1; /* start at the end */
 	while (hold >= fname && (*hold == ' ' || isdigit(*hold))) /* skip backwards */
 	{
 		hold--;
@@ -577,7 +567,7 @@ void update_save_name(char *filename) /* go to the next file name */
 	{
 		hold++;
 	}
-	save = hold;
+	char *save = hold;
 	while (*save)  /* check for all nines */
 	{
 		if (*save != '9')
@@ -585,7 +575,7 @@ void update_save_name(char *filename) /* go to the next file name */
 			break;
 		}
 		save++;
-		}
+	}
 	if (!*save)                  /* if the whole thing is nines then back */
 	{
 		save = hold - 1;          /* up one place. Note that this will eat */
@@ -598,4 +588,3 @@ void update_save_name(char *filename) /* go to the next file name */
 	sprintf(save, "%ld", atol(hold) + 1); /* increment the number */
 	make_path(filename, drive, dir, fname, ext);
 }
-

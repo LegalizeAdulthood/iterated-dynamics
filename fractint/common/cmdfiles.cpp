@@ -235,7 +235,7 @@ int command_files(int argc, char **argv)
 	initialize_variables_fractal();                  /* image initialization */
 
 	strcpy(curarg, "sstools.ini");
-	findpath(curarg, tempstring); /* look for SSTOOLS.INI */
+	find_path(curarg, tempstring); /* look for SSTOOLS.INI */
 	if (tempstring[0] != 0)              /* found it! */
 	{
 		initfile = fopen(tempstring, "r");
@@ -297,7 +297,7 @@ int command_files(int argc, char **argv)
 			if (sptr != NULL)  /* @filename/setname? */
 			{
 				*sptr = 0;
-				if (merge_path_names(g_command_file, &curarg[1], 0) < 0)
+				if (merge_path_names(g_command_file, &curarg[1], true) < 0)
 				{
 					init_msg("", g_command_file, 0);
 				}
@@ -371,7 +371,7 @@ static void initialize_variables_once()              /* once per run init */
 		if (is_a_directory(p) != 0)
 		{
 			strcpy(g_temp_dir, p);
-			fix_dir_name(g_temp_dir);
+			ensure_slash_on_directory(g_temp_dir);
 		}
 	}
 	else
@@ -1504,7 +1504,7 @@ static int temp_dir_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	strcpy(g_temp_dir, context.value);
-	fix_dir_name(g_temp_dir);
+	ensure_slash_on_directory(g_temp_dir);
 	return Command::OK;
 }
 
@@ -1519,7 +1519,7 @@ static int work_dir_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	strcpy(g_work_dir, context.value);
-	fix_dir_name(g_work_dir);
+	ensure_slash_on_directory(g_work_dir);
 	return Command::OK;
 }
 
@@ -2118,7 +2118,7 @@ static int organize_formula_dir_arg(const cmd_context &context)
 	}
 	g_organize_formula_search = true;
 	strcpy(g_organize_formula_dir, context.value);
-	fix_dir_name(g_organize_formula_dir);
+	ensure_slash_on_directory(g_organize_formula_dir);
 	return Command::OK;
 }
 
@@ -3331,7 +3331,7 @@ static int parse_colors(char *value)
 	int k;
 	if (*value == '@')
 	{
-		if (merge_path_names(g_map_name, &value[1], 3) < 0)
+		if (merge_path_names(g_map_name, &value[1], false) < 0)
 		{
 			init_msg("", &value[1], 3);
 		}
@@ -3345,7 +3345,7 @@ static int parse_colors(char *value)
 		}
 		else
 		{
-			if (merge_path_names(g_color_file, &value[1], 3) < 0)
+			if (merge_path_names(g_color_file, &value[1], false) < 0)
 			{
 				init_msg("", &value[1], 3);
 			}

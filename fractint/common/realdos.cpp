@@ -1925,7 +1925,7 @@ void load_fractint_config()
 	char tempstring[150];
 	int truecolorbits;
 
-	findpath("fractint.cfg", tempstring);
+	find_path("fractint.cfg", tempstring);
 	if (tempstring[0] == 0                            /* can't find the file */
 		|| (cfgfile = fopen(tempstring, "r")) == NULL)   /* can't open it */
 	{

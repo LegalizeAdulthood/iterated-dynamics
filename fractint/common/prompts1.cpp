@@ -3474,7 +3474,7 @@ static int check_mapfile()
 	}
 	else
 	{
-		merge_path_names(temp1, funnyglasses_map_name, 0);
+		merge_path_names(temp1, funnyglasses_map_name, true);
 	}
 
 	while (true)
@@ -3503,7 +3503,7 @@ static int check_mapfile()
 			continue;
 		}
 		g_map_set = true;
-		merge_path_names(g_map_name, temp1, 0);
+		merge_path_names(g_map_name, temp1, true);
 		break;
 	}
 	return 0;

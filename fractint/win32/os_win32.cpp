@@ -701,7 +701,7 @@ int expand_dirname(char *dirname, char *drive)
 			strcpy(dirname, absolute);
 		}
 	}
-	fix_dir_name(dirname);
+	ensure_slash_on_directory(dirname);
 
 	return 0;
 }

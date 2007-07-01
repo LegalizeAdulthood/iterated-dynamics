@@ -1270,7 +1270,7 @@ retry_dir:
 	}
 	expand_dirname(dir, drive);
 	make_path(tmpmask, drive, dir, "", "");
-	fix_dir_name(tmpmask);
+	ensure_slash_on_directory(tmpmask);
 	if (retried == 0 && strcmp(dir, SLASH) && strcmp(dir, DOTSLASH))
 	{
 		j = (int) strlen(tmpmask) - 1;
@@ -1423,7 +1423,7 @@ retry_dir:
 		{
 			strcpy(dir, g_fract_dir2);
 		}
-		fix_dir_name(dir);
+		ensure_slash_on_directory(dir);
 		make_path(flname, drive, dir, "", "");
 		lastdir = 1 - lastdir;
 		goto restart;
@@ -1462,7 +1462,7 @@ retry_dir:
 			{
 				strcat(dir, choices[i]->full_name);
 			}
-			fix_dir_name(dir);
+			ensure_slash_on_directory(dir);
 			make_path(flname, drive, dir, "", "");
 			goto restart;
 		}
@@ -1505,14 +1505,14 @@ retry_dir:
 			}
 			else if (is_a_directory(flname))
 			{
-				fix_dir_name(flname);
+				ensure_slash_on_directory(flname);
 			}
 			goto restart;
 		}
 		else /* speedstate == SEARCHPATH */
 		{
 			char fullpath[FILE_MAX_DIR];
-			findpath(speedstr, fullpath);
+			find_path(speedstr, fullpath);
 			if (fullpath[0])
 			{
 				strcpy(flname, fullpath);

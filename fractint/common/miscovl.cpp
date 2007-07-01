@@ -2182,7 +2182,7 @@ static void update_fractint_cfg()
 	int nextmode;
 	struct video_info vident;
 
-	findpath("fractint.cfg", cfgname);
+	find_path("fractint.cfg", cfgname);
 
 	if (access(cfgname, 6))
 	{
