@@ -146,10 +146,10 @@ static void read_info_version_3(const fractal_info &read_info)
 		g_escape_time_state.m_grid_fp.y_3rd() = read_info.y_3rd;
 		g_calculation_status = read_info.calculation_status;
 		g_user_standard_calculation_mode = read_info.stdcalcmode;
-		g_three_pass = 0;
+		g_three_pass = false;
 		if (g_user_standard_calculation_mode == 127)
 		{
-			g_three_pass = 1;
+			g_three_pass = true;
 			g_user_standard_calculation_mode = '3';
 		}
 		g_user_distance_test = read_info.distestold;

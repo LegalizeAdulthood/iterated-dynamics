@@ -127,7 +127,7 @@ int g_current_pass;
 int g_total_passes;
 int g_current_row;
 int g_current_col;
-int g_three_pass;
+bool g_three_pass;
 bool g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
 ComplexD  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
@@ -777,14 +777,14 @@ int calculate_fractal()
 			if (!g_resuming || g_three_pass)
 			{
 				g_standard_calculation_mode = 'g';
-				g_three_pass = 1;
+				g_three_pass = true;
 				timer_engine((int (*)()) perform_work_list);
 				if (g_calculation_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
 					g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
 					timer_engine((int (*)()) perform_work_list);
-					g_three_pass = 0;
+					g_three_pass = false;
 				}
 			}
 			else /* resuming '2' pass */
@@ -796,7 +796,7 @@ int calculate_fractal()
 		}
 		else /* main case, much nicer! */
 		{
-			g_three_pass = 0;
+			g_three_pass = false;
 			timer_engine((int (*)()) perform_work_list);
 		}
 	}

@@ -905,7 +905,8 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	save_info->y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
 	save_info->calculation_status = (short) g_calculation_status;
-	save_info->stdcalcmode = (char) ((g_three_pass && g_standard_calculation_mode == '3') ? 127 : g_standard_calculation_mode);
+	save_info->stdcalcmode = (char) ((g_three_pass && g_standard_calculation_mode == '3') ?
+		127 : g_standard_calculation_mode);
 	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;
 	save_info->float_flag = g_float_flag ? 1 : 0;
 	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? (short) g_bail_out : 0;
