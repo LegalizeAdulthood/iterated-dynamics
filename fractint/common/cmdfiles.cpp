@@ -81,7 +81,7 @@ int     g_display_3d;							/* 3D display flag: 0 = OFF */
 int     g_overlay_3d;							/* 3D overlay flag: 0 = OFF */
 int     g_init_3d[20];							/* '3d=nn/nn/nn/...' values */
 int     g_check_current_dir;					/* flag to check current dir for files */
-int     g_initialize_batch = 0;					/* 1 if batch run (no kbd)  */
+int     g_initialize_batch = INITBATCH_NONE;	/* 1 if batch run (no kbd)  */
 int     g_save_time;							/* autosave minutes         */
 ComplexD  g_initial_orbit_z;					/* initial orbitvalue */
 InitialZType g_use_initial_orbit_z;				/* flag for g_initial_orbit_z */
@@ -3536,7 +3536,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        3 command line @filename/setname */
 /* this is like stop_message() but can be used in command_files()      */
 /* call with NULL for badfilename to get pause for driver_get_key() */
-int init_msg(const char *cmdstr, char *badfilename, int mode)
+int init_msg(const char *cmdstr, char *bad_filename, int mode)
 {
 	char *modestr[4] =
 	{
@@ -3548,11 +3548,8 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 
 	if (g_initialize_batch == INITBATCH_NORMAL)  /* in batch mode */
 	{
-		if (badfilename)
+		if (bad_filename)
 		{
-			/* uncomment next if wish to cause abort in batch mode for
-			errors in CMDFILES.C such as parsing SSTOOLS.INI */
-			/* g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; */ /* used to set errorlevel */
 			return -1;
 		}
 	}
@@ -3563,18 +3560,18 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 	{
 		strcat(cmd, "=");
 	}
-	if (badfilename)
+	if (bad_filename)
 	{
-		sprintf(msg, "Can't find %s%s, please check %s", cmd, badfilename, modestr[mode]);
+		sprintf(msg, "Can't find %s%s, please check %s", cmd, bad_filename, modestr[mode]);
 	}
 	if (g_command_initialize)  /* & command_files hasn't finished 1st try */
 	{
-		if (row == 1 && badfilename)
+		if (row == 1 && bad_filename)
 		{
 			driver_set_for_text();
 			driver_put_string(0, 0, 15, "Fractint found the following problems when parsing commands: ");
 		}
-		if (badfilename)
+		if (bad_filename)
 		{
 			driver_put_string(row++, 0, 7, msg);
 		}
@@ -3585,7 +3582,7 @@ int init_msg(const char *cmdstr, char *badfilename, int mode)
 			pause_error(PAUSE_ERROR_GOODBYE);  /* defer getakeynohelp until after parsing */
 		}
 	}
-	else if (badfilename)
+	else if (bad_filename)
 	{
 		stop_message(0, msg);
 	}

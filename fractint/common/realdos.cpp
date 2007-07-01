@@ -1906,33 +1906,19 @@ int show_vid_length()
  */
 void load_fractint_config()
 {
-	FILE *cfgfile;
-	VIDEOINFO vident;
-	int linenum;
-	long x_dots;
-	long y_dots;
-	int i;
-	int j;
-	int keynum;
-	int ax;
-	int bx;
-	int cx;
-	int dx;
-	int dotmode;
-	int g_colors;
-	char *fields[11];
-	int textsafe2;
 	char tempstring[150];
-	int truecolorbits;
-
 	find_path("fractint.cfg", tempstring);
+
+	FILE *cfgfile;
 	if (tempstring[0] == 0                            /* can't find the file */
 		|| (cfgfile = fopen(tempstring, "r")) == NULL)   /* can't open it */
 	{
 		goto bad_fractint_cfg;
 	}
 
-	linenum = 0;
+	int linenum = 0;
+	VIDEOINFO vident;
+	char *fields[11];
 	while (g_video_table_len < MAXVIDEOMODES
 		&& fgets(tempstring, 120, cfgfile))
 	{
@@ -1950,8 +1936,9 @@ void load_fractint_config()
 		}
 		tempstring[120] = 0;
 		tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
-		i = j = -1;
 		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
+		int i = -1;
+		int j = -1;
 		while (true)
 		{
 			if (tempstring[++i] < ' ')
@@ -1969,50 +1956,47 @@ void load_fractint_config()
 				tempstring[i] = 0;   /* make field a separate string */
 			}
 		}
-		keynum = check_vidmode_keyname(tempstring);
-		sscanf(fields[1], "%x", &ax);
-		sscanf(fields[2], "%x", &bx);
-		sscanf(fields[3], "%x", &cx);
-		sscanf(fields[4], "%x", &dx);
-		dotmode     = atoi(fields[5]);
-		x_dots       = atol(fields[6]);
-		y_dots       = atol(fields[7]);
-		g_colors      = atoi(fields[8]);
-		if (g_colors == 4 && strchr(strlwr(fields[8]), 'g'))
+		int dotmode = atoi(fields[5]);
+		long x_dots = atol(fields[6]);
+		long y_dots = atol(fields[7]);
+		int colors = atoi(fields[8]);
+		int true_color_bits;
+		if (colors == 4 && strchr(strlwr(fields[8]), 'g'))
 		{
-			g_colors = 256;
-			truecolorbits = 4; /* 32 bits */
+			colors = 256;
+			true_color_bits = 4; /* 32 bits */
 		}
-		else if (g_colors == 16 && strchr(fields[8], 'm'))
+		else if (colors == 16 && strchr(fields[8], 'm'))
 		{
-			g_colors = 256;
-			truecolorbits = 3; /* 24 bits */
+			colors = 256;
+			true_color_bits = 3; /* 24 bits */
 		}
-		else if (g_colors == 64 && strchr(fields[8], 'k'))
+		else if (colors == 64 && strchr(fields[8], 'k'))
 		{
-			g_colors = 256;
-			truecolorbits = 2; /* 16 bits */
+			colors = 256;
+			true_color_bits = 2; /* 16 bits */
 		}
-		else if (g_colors == 32 && strchr(fields[8], 'k'))
+		else if (colors == 32 && strchr(fields[8], 'k'))
 		{
-			g_colors = 256;
-			truecolorbits = 1; /* 15 bits */
+			colors = 256;
+			true_color_bits = 1; /* 15 bits */
 		}
 		else
 		{
-			truecolorbits = 0;
+			true_color_bits = 0;
 		}
 
-		textsafe2   = dotmode / 100;
-		dotmode    %= 100;
+		int textsafe2 = dotmode/100;
+		dotmode %= 100;
+		int keynum = check_vidmode_keyname(tempstring);
 		if (j < 9 ||
 			keynum < 0 ||
 			dotmode < 0 || dotmode > 30 ||
 			textsafe2 < 0 || textsafe2 > 4 ||
 			x_dots < MIN_PIXELS || x_dots > MAX_PIXELS ||
 			y_dots < MIN_PIXELS || y_dots > MAX_PIXELS ||
-			(g_colors != 0 && g_colors != 2 && g_colors != 4 && g_colors != 16 &&
-				g_colors != 256))
+			(colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
+				colors != 256))
 		{
 			goto bad_fractint_cfg;
 		}
@@ -2022,11 +2006,11 @@ void load_fractint_config()
 		strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
 		strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
 		vident.name[25] = vident.comment[25] = 0;
-		vident.keynum      = keynum;
-		vident.dotmode     = truecolorbits*1000 + textsafe2*100 + dotmode;
-		vident.x_dots       = (short)x_dots;
-		vident.y_dots       = (short)y_dots;
-		vident.colors      = g_colors;
+		vident.keynum = keynum;
+		vident.dotmode = true_color_bits*1000 + textsafe2*100 + dotmode;
+		vident.x_dots = (short)x_dots;
+		vident.y_dots = (short)y_dots;
+		vident.colors = colors;
 
 		/* if valid, add to supported modes */
 		vident.driver = DriverManager::find_by_name(fields[10]);
@@ -2035,9 +2019,8 @@ void load_fractint_config()
 			if (vident.driver->validate_mode(vident))
 			{
 				/* look for a synonym mode and if found, overwite its key */
-				int m;
 				int synonym_found = false;
-				for (m = 0; m < g_video_table_len; m++)
+				for (int m = 0; m < g_video_table_len; m++)
 				{
 					VIDEOINFO *mode = &g_video_table[m];
 					if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
