@@ -580,7 +580,7 @@ void Jiim(int which)         /* called by fractint */
 	oldsyoffs = g_sy_offset;
 	oldcalctype = g_calculate_type;
 	show_numbers = 0;
-	g_using_jiim = 1;
+	g_using_jiim = true;
 	g_line_buffer = (BYTE *) malloc(max(g_screen_width, g_screen_height));
 	aspect = ((double)g_x_dots*3)/((double)g_y_dots*4);  /* assumes 4:3 */
 	actively_computing = 1;
@@ -1317,7 +1317,7 @@ finish:
 		rect_buff = NULL;
 	}
 
-	g_using_jiim = 0;
+	g_using_jiim = false;
 	g_calculate_type = oldcalctype;
 	g_debug_mode = old_debugflag; /* yo Chuck! */
 	if (kbdchar == 's' || kbdchar == 'S')

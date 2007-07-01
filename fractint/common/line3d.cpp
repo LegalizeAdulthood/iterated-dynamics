@@ -1495,19 +1495,18 @@ int targa_color(int x, int y, int color)
 	}
 
 	BYTE rgb[3];
-	switch (g_true_mode)
+	if (g_true_mode_iterates)
 	{
-	case TRUEMODE_DEFAULT:
+		rgb[0] = (BYTE) ((g_real_color_iter >> 16) & 0xff);  /* red   */
+		rgb[1] = (BYTE) ((g_real_color_iter >> 8) & 0xff);  /* green */
+		rgb[2] = (BYTE) ((g_real_color_iter) & 0xff);  /* blue  */
+	}
+	else
+	{
 		/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
 		rgb[0] = (BYTE) (g_dac_box[s_real_color][0] << 2); /* Move color space to */
 		rgb[1] = (BYTE) (g_dac_box[s_real_color][1] << 2); /* 256 color primaries */
 		rgb[2] = (BYTE) (g_dac_box[s_real_color][2] << 2); /* from 64 colors */
-		break;
-	case TRUEMODE_ITERATES:
-		rgb[0] = (BYTE) ((g_real_color_iter >> 16) & 0xff);  /* red   */
-		rgb[1] = (BYTE) ((g_real_color_iter >> 8) & 0xff);  /* green */
-		rgb[2] = (BYTE) ((g_real_color_iter) & 0xff);  /* blue  */
-		break;
 	}
 
 	/* Now lets convert it to HSV */

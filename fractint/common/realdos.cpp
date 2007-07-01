@@ -257,7 +257,7 @@ void clear_temp_message()
 		{
 			put_line(i, 0, s_text_x_dots-1, &s_temp_text_save[i*s_text_x_dots]);
 		}
-		if (g_using_jiim == 0)  /* jiim frees memory with free_temp_message() */
+		if (!g_using_jiim)  /* jiim frees memory with free_temp_message() */
 		{
 			free(s_temp_text_save);
 			s_temp_text_save = NULL;
