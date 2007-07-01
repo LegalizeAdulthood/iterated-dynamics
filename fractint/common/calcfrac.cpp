@@ -487,7 +487,7 @@ int calculate_fractal()
 	g_basin = 0;
 	/* added yet another level of indirection to g_plot_color_put_color!!! TW */
 	g_plot_color_put_color = putcolor_a;
-	if (g_is_true_color && g_true_mode)
+	if (g_is_true_color && g_true_mode_iterates)
 	{
 		/* Have to force passes = 1 */
 		g_user_standard_calculation_mode = '1';

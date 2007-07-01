@@ -35,7 +35,7 @@ int mandelbrot_setup()           /* Mandelbrot Routine */
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& g_bit_shift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && g_inside > COLORMODE_Z_MAGNITUDE && g_outside >= COLORMODE_ITERATION
-		&& g_use_initial_orbit_z != INITIALZ_ORBIT && g_using_jiim == 0 && g_bail_out_test == BAILOUT_MODULUS
+		&& g_use_initial_orbit_z != INITIALZ_ORBIT && !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
@@ -55,7 +55,7 @@ int julia_setup()            /* Julia Routine */
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& g_bit_shift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && g_inside > COLORMODE_Z_MAGNITUDE && g_outside >= COLORMODE_ITERATION
-		&& (g_finite_attractor == FINITE_ATTRACTOR_NO) && g_using_jiim == 0 && g_bail_out_test == BAILOUT_MODULUS
+		&& (g_finite_attractor == FINITE_ATTRACTOR_NO) && !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
@@ -126,7 +126,7 @@ int mandelbrot_setup_fp()
 			&& g_outside >= COLORMODE_INVERSE_TANGENT
 			&& g_use_initial_orbit_z != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
-			&& g_using_jiim == 0 && g_bail_out_test == BAILOUT_MODULUS
+			&& !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */
@@ -243,7 +243,7 @@ int julia_setup_fp()
 			&& g_use_initial_orbit_z != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& (g_finite_attractor == FINITE_ATTRACTOR_NO)
-			&& g_using_jiim == 0 && g_bail_out_test == BAILOUT_MODULUS
+			&& !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 		{
 			g_calculate_type = calculate_mandelbrot_fp; /* the normal case - use calculate_mandelbrot_fp */

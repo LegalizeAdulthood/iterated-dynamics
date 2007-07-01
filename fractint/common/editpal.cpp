@@ -153,7 +153,7 @@ int g_edit_pal_cursor = 0;
 #endif
 char g_screen_file[] = "FRACTINT.$$1";  /* file where screen portion is stored */
 BYTE     *g_line_buffer;   /* must be alloced!!! */
-int g_using_jiim = 0;
+bool g_using_jiim = false;
 
 static char s_undo_file[] = "FRACTINT.$$2";  /* file where undo list is stored */
 static BYTE		s_fg_color,

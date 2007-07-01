@@ -60,7 +60,7 @@ void display_box()
 	int rgb[3];
 	for (i = 0; i < g_box_count; i++)
 	{
-		if (g_is_true_color && g_true_mode)
+		if (g_is_true_color && g_true_mode_iterates)
 		{
 			int alpha = 0;
 			driver_get_truecolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, rgb[0], rgb[1], rgb[2], alpha);
@@ -73,7 +73,7 @@ void display_box()
 		}
 	}
 	/* There is an interaction between getcolor and g_plot_color_put_color, so separate them */
-	if (!(g_is_true_color && g_true_mode)) /* don't need this for truecolor with truemode set */
+	if (!(g_is_true_color && g_true_mode_iterates)) /* don't need this for truecolor with truemode set */
 	{
 		for (i = 0; i < g_box_count; i++)
 		{
@@ -92,7 +92,7 @@ void display_box()
 void clear_box()
 {
 	int i;
-	if (g_is_true_color && g_true_mode)
+	if (g_is_true_color && g_true_mode_iterates)
 	{
 		display_box();
 	}

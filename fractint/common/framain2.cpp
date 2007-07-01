@@ -1091,7 +1091,7 @@ static void handle_orbits()
 		&& (g_fractal_specific[g_fractal_type].isinteger == 0
 			|| !fractal_type_none(g_fractal_specific[g_fractal_type].tofloat))
 		&& !g_bf_math /* for now no arbitrary precision support */
-		&& !(g_is_true_color && g_true_mode))
+		&& !(g_is_true_color && g_true_mode_iterates))
 	{
 		clear_zoom_box();
 		Jiim(ORBIT);

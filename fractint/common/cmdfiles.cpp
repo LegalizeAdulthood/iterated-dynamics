@@ -105,7 +105,7 @@ bool g_dont_read_color = false;					/* flag for reading color from GIF */
 double  g_math_tolerance[2] = {.05, .05};		/* For math transition */
 bool g_targa_output = false;					/* 3D fullcolor flag */
 bool g_true_color = false;						/* escape time truecolor flag */
-int		g_true_mode = TRUEMODE_DEFAULT;			/* truecolor coloring scheme */
+bool g_true_mode_iterates = false;				/* truecolor iterates coloring scheme */
 char    g_color_file[FILE_MAX_PATH];			/* from last <l> <s> or colors=@filename */
 bool g_function_preloaded;						/* if function loaded for new bifurcations */
 float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;	/* aspect ratio of the screen */
@@ -433,7 +433,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_major_method = MAJORMETHOD_BREADTH_FIRST;		/* default inverse julia methods */
 	g_minor_method = MINORMETHOD_LEFT_FIRST;		/* default inverse julia methods */
 	g_true_color = false;							/* truecolor output flag */
-	g_true_mode = TRUEMODE_DEFAULT;					/* set to default color scheme */
+	g_true_mode_iterates = false;					/* set to default color scheme */
 }
 
 static void initialize_variables_fractal()          /* init vars affecting calculation */
@@ -2711,14 +2711,14 @@ static int haze_arg(const cmd_context &context)
 
 static int true_mode_arg(const cmd_context &context)
 {
-	g_true_mode = TRUEMODE_DEFAULT;				/* use default if error */
+	g_true_mode_iterates = false;				/* use default if error */
 	if (context.charval[0] == 'd')
 	{
-		g_true_mode = TRUEMODE_DEFAULT;			/* use default color output */
+		g_true_mode_iterates = false;			/* use default color output */
 	}
 	if (context.charval[0] == 'i' || context.intval[0] == 1)
 	{
-		g_true_mode = TRUEMODE_ITERATES;			/* use iterates output */
+		g_true_mode_iterates = true;			/* use iterates output */
 	}
 	return Command::FractalParameter | Command::ThreeDParameter;
 }

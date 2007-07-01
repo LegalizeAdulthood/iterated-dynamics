@@ -92,9 +92,9 @@ void make_batch_file()
 	char colorspec[14];
 	strcpy(colorspec, "y");
 #ifndef XFRACT
-	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode))
+	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode_iterates))
 #else
-	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode) || g_fake_lut)
+	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut)
 #endif
 	{
 		--maxcolor;
@@ -217,9 +217,9 @@ prompt_user:
 			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
 			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[3];
 	#ifndef XFRACT
-			if (g_got_real_dac || (g_is_true_color && !g_true_mode))
+			if (g_got_real_dac || (g_is_true_color && !g_true_mode_iterates))
 	#else
-			if (g_got_real_dac || (g_is_true_color && !g_true_mode) || g_fake_lut)
+			if (g_got_real_dac || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut)
 	#endif
 			{
 				choices[prompts] = "Record colors?";
@@ -276,9 +276,9 @@ prompt_user:
 				strncpy(g_command_comment[i], in_parameter_command_comment[i], MAX_COMMENT);
 			}
 	#ifndef XFRACT
-			if (g_got_real_dac || (g_is_true_color && !g_true_mode))
+			if (g_got_real_dac || (g_is_true_color && !g_true_mode_iterates))
 	#else
-			if (g_got_real_dac || (g_is_true_color && !g_true_mode) || g_fake_lut)
+			if (g_got_real_dac || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut)
 	#endif
 			{
 				if (paramvalues[maxcolorindex].uval.ival > 0 &&
@@ -1343,7 +1343,7 @@ docolors:
 			int diff2[4][3];
 			curc = force = 0;
 #ifdef XFRACT
-			if (g_fake_lut && !g_true_mode) /* stupid kludge JCO 6/23/2001  */
+			if (g_fake_lut && !g_true_mode_iterates) /* stupid kludge JCO 6/23/2001  */
 			{
 				load_dac();
 			}
