@@ -137,7 +137,7 @@ int     g_view_x_dots;
 int		g_view_y_dots;    /* explicit view sizing */
 int		g_max_history = 10;
 /* variables defined by the command line/files processor */
-int     g_compare_gif = 0;					/* compare two gif files flag */
+bool g_compare_gif = false;					/* compare two gif files flag */
 TimedSaveType g_timed_save = TIMEDSAVE_DONE;/* when doing a timed save */
 int     g_resave_mode = RESAVE_NO;			/* tells encoder not to incr filename */
 bool g_started_resaves = false;				/* but incr on first resave */
