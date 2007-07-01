@@ -1401,14 +1401,14 @@ static ApplicationStateType handle_evolver_save_to_disk()
 
 static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, bool &stacked)
 {
-	g_compare_gif = 0;
+	g_compare_gif = false;
 	frommandel = false;
 	g_browse_state.set_browsing(false);
 	if (kbdchar == 'r')
 	{
 		if (DEBUGMODE_COMPARE_RESTORED == g_debug_mode)
 		{
-			g_compare_gif = 1;
+			g_compare_gif = true;
 			g_overlay_3d = 1;
 			if (g_initialize_batch == INITBATCH_SAVE)
 			{
@@ -1420,7 +1420,7 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 		}
 		else
 		{
-			g_compare_gif = 0;
+			g_compare_gif = false;
 			g_overlay_3d = 0;
 		}
 		g_display_3d = DISPLAY3D_NONE;

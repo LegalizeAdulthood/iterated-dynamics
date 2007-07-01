@@ -56,7 +56,7 @@ extern int					g_color_medium;					/* nearest to medbright grey in palette */
 extern char					g_command_comment[4][MAX_COMMENT];
 extern char					g_command_file[FILE_MAX_PATH];
 extern char					g_command_name[ITEMNAMELEN + 1];
-extern int					g_compare_gif;
+extern bool					g_compare_gif;
 extern long					g_gaussian_constant;
 extern double				g_cos_x;
 extern long					g_c_real;
