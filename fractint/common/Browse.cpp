@@ -78,7 +78,7 @@ void BrowseState::make_path(const char *fname, const char *ext)
 
 void BrowseState::merge_path_names(char *read_name)
 {
-	::merge_path_names(read_name, m_name, 2);
+	::merge_path_names(read_name, m_name, false);
 }
 
 

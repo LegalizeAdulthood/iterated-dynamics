@@ -503,7 +503,7 @@ void save_palette()
 		{
 			strcat(temp1, ".map");
 		}
-		merge_path_names(palname, temp1, 2);
+		merge_path_names(palname, temp1, false);
 		FILE *dacfile = fopen(palname, "w");
 		if (dacfile == NULL)
 		{
@@ -544,7 +544,7 @@ int load_palette()
 		{
 			memcpy(g_old_dac_box, g_dac_box, 256*3);
 		}
-		merge_path_names(g_map_name, filename, 0);
+		merge_path_names(g_map_name, filename, true);
 	}
 	return i;
 }

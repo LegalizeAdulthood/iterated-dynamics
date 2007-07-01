@@ -22,16 +22,16 @@ int validate_luts(const char *fn)
 	char temp_fn[FILE_MAX_PATH];
 	strcpy(temp_fn, fn);
 #ifdef XFRACT
-	merge_path_names(temp, temp_fn, 3);
+	merge_path_names(temp, temp_fn, false);
 #else
-	merge_path_names(temp, temp_fn, 0);
+	merge_path_names(temp, temp_fn, true);
 #endif
 	if (has_extension(temp) == NULL) /* Did name have an extension? */
 	{
 		strcat(temp, ".map");  /* No? Then add .map */
 	}
 	char line[160];
-	findpath(temp, line);        /* search the dos path */
+	find_path(temp, line);        /* search the dos path */
 	FILE *f = fopen(line, "r");
 	if (f == NULL)
 	{

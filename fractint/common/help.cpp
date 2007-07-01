@@ -972,7 +972,7 @@ static int find_file(char *filename, char *path)
 			return 1;
 		}
 	}
-	findpath(filename, path);
+	find_path(filename, path);
 	return path[0] ? 1 : 0;
 }
 
