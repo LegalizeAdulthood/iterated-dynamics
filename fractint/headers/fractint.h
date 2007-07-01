@@ -290,6 +290,13 @@ enum PauseErrorType
 	PAUSE_ERROR_GOODBYE = 2
 };
 
+enum TimedSaveType
+{
+	TIMEDSAVE_DONE = 0,
+	TIMEDSAVE_START = 1,
+	TIMEDSAVE_PENDING = 2
+};
+
 /* g_initialize_batch values */
 enum InitBatchType
 {

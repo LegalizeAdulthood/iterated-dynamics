@@ -96,7 +96,7 @@ int Win32BaseDriver::handle_timed_save(int ch)
 			}
 			else if (g_current_row != g_finish_row)
 			{
-				g_timed_save = 1;
+				g_timed_save = TIMEDSAVE_START;
 				return FIK_SAVE_TIME;
 			}
 		}

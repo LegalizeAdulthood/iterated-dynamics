@@ -281,7 +281,7 @@ restart:
 		}
 		return -1;
 	}
-	if (g_timed_save == 0)
+	if (g_timed_save == TIMEDSAVE_DONE)
 	{
 		driver_buzzer(BUZZER_COMPLETE);
 		if (g_initialize_batch == INITBATCH_NONE)

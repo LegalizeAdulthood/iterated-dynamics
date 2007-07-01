@@ -410,7 +410,7 @@ extern int					g_text_row;						/* current row in text mode */
 extern unsigned int			g_this_generation_random_seed;
 extern int					g_three_pass;
 extern double				g_threshold;
-extern int					g_timed_save;
+extern TimedSaveType		g_timed_save;
 extern bool					g_timer_flag;
 extern long					g_timer_interval;
 extern long					g_timer_start;
