@@ -649,18 +649,18 @@ resumeloop:
 		kbdmore = true;
 		while (kbdmore)
 		{           /* loop through command keys */
-			if (g_timed_save != 0)
+			if (g_timed_save != TIMEDSAVE_DONE)
 			{
-				if (g_timed_save == 1)
+				if (g_timed_save == TIMEDSAVE_START)
 				{       /* woke up for timed save */
 					driver_get_key();     /* eat the dummy char */
 					kbdchar = 's'; /* do the save */
 					g_resave_mode = RESAVE_YES;
-					g_timed_save = 2;
+					g_timed_save = TIMEDSAVE_PENDING;
 				}
 				else
 				{                      /* save done, resume */
-					g_timed_save = 0;
+					g_timed_save = TIMEDSAVE_DONE;
 					g_resave_mode = RESAVE_DONE;
 					kbdchar = FIK_ENTER;
 				}
