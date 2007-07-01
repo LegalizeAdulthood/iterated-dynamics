@@ -408,7 +408,7 @@ extern BYTE					g_text_colors[];
 extern int					g_text_rbase;						/* g_text_row is relative to this */
 extern int					g_text_row;						/* current row in text mode */
 extern unsigned int			g_this_generation_random_seed;
-extern int					g_three_pass;
+extern bool					g_three_pass;
 extern double				g_threshold;
 extern TimedSaveType		g_timed_save;
 extern bool					g_timer_flag;

@@ -429,14 +429,6 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 /************************ super solid guessing *****************************/
 int solid_guess()
 {
-	int i;
-	int xlim;
-	int ylim;
-	int blocksize;
-	unsigned int *pfxp0;
-	unsigned int *pfxp1;
-	unsigned int u;
-
 	s_guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis && g_plot_color != plot_color_symmetry_origin);
 	/* check if guessing at bottom & right edges is ok */
 	s_bottom_guess = (g_plot_color == plot_color_symmetry_x_axis || (g_plot_color == g_plot_color_put_color && g_y_stop + 1 == g_y_dots));
@@ -450,8 +442,8 @@ int solid_guess()
 		s_right_guess = false;  /* TIW march 1995 */
 	}
 
-	blocksize = solid_guess_block_size();
-	i = blocksize;
+	int blocksize = solid_guess_block_size();
+	int i = blocksize;
 	s_max_block = blocksize;
 	g_total_passes = 1;
 	while ((i >>= 1) > 1)
@@ -483,7 +475,7 @@ int solid_guess()
 				if ((*g_calculate_type)() == -1)
 				{
 					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_begin(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_begin(), 0, g_work_sym);
-					goto exit_solid_guess;
+					return 0;
 				}
 				g_reset_periodicity = 0;
 			}
@@ -518,21 +510,21 @@ int solid_guess()
 					y = g_WorkList.yy_start();
 				}
 				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), y, 0, g_work_sym);
-				goto exit_solid_guess;
+				return 0;
 			}
 		}
 
 		if (g_WorkList.num_items()) /* work list not empty, just do 1st pass */
 		{
 			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), 1, g_work_sym);
-			goto exit_solid_guess;
+			return 0;
 		}
 		++g_work_pass;
 		g_iy_start = g_WorkList.yy_start() & (-1 - (s_max_block-1));
 
 		/* calculate skip flags for skippable blocks */
-		xlim = (g_x_stop + s_max_block)/s_max_block + 1;
-		ylim = ((g_y_stop + s_max_block)/s_max_block + 15)/16 + 1;
+		int xlim = (g_x_stop + s_max_block)/s_max_block + 1;
+		int ylim = ((g_y_stop + s_max_block)/s_max_block + 15)/16 + 1;
 		if (!s_right_guess) /* no right edge guessing, zap border */
 		{
 			for (int y = 0; y <= ylim; ++y)
@@ -553,12 +545,12 @@ int solid_guess()
 		/* set each bit in s_t_prefix[0] to OR of it & surrounding 8 in s_t_prefix[1] */
 		for (int y = 0; ++y < ylim; )
 		{
-			pfxp0 = (unsigned int *)&s_t_prefix[0][y][0];
-			pfxp1 = (unsigned int *)&s_t_prefix[1][y][0];
+			unsigned int *pfxp0 = (unsigned int *)&s_t_prefix[0][y][0];
+			unsigned int *pfxp1 = (unsigned int *)&s_t_prefix[1][y][0];
 			for (int x = 0; ++x < xlim; )
 			{
 				++pfxp1;
-				u = *(pfxp1-1)|*pfxp1|*(pfxp1 + 1);
+				unsigned int u = *(pfxp1-1)|*pfxp1|*(pfxp1 + 1);
 				*(++pfxp0) = u | (u >> 1) | (u << 1)
 					| ((*(pfxp1-(MAX_X_BLOCK + 1))
 					| *(pfxp1-MAX_X_BLOCK)
@@ -575,7 +567,7 @@ int solid_guess()
 	}
 	if (g_three_pass)
 	{
-		goto exit_solid_guess;
+		return 0;
 	}
 
 	/* remaining pass(es), halve blocksize & quarter each blocksize**2 */
@@ -591,7 +583,7 @@ int solid_guess()
 		{
 			if (g_work_pass >= g_stop_pass)
 			{
-				goto exit_solid_guess;
+				return 0;
 			}
 		}
 		g_current_pass = g_work_pass + 1;
@@ -605,7 +597,7 @@ int solid_guess()
 					y = g_WorkList.yy_start();
 				}
 				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), y, g_work_pass, g_work_sym);
-				goto exit_solid_guess;
+				return 0;
 			}
 		}
 		++g_work_pass;
@@ -613,11 +605,10 @@ int solid_guess()
 			&& blocksize > 2) /* if 2, we just did last pass */
 		{
 			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), g_work_pass, g_work_sym);
-			goto exit_solid_guess;
+			return 0;
 		}
 		g_iy_start = g_WorkList.yy_start() & (-1 - (s_max_block-1));
 	}
 
-	exit_solid_guess:
 	return 0;
 }

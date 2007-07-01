@@ -190,7 +190,7 @@ void _fastcall history_save_info()
 	current.x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	current.y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
 	current.stdcalcmode = g_user_standard_calculation_mode;
-	current.three_pass = (char) g_three_pass;
+	current.three_pass = (char) g_three_pass ? 1 : 0;
 	current.stop_pass = (short) g_stop_pass;
 	current.distance_test = g_distance_test;
 	current.function_index[0] = BYTE(g_function_index[0]);
@@ -366,7 +366,7 @@ void _fastcall history_restore_info()
 	g_escape_time_state.m_grid_fp.y_3rd() = last.y_3rd;
 	g_user_standard_calculation_mode = last.stdcalcmode;
 	g_standard_calculation_mode = last.stdcalcmode;
-	g_three_pass = (int) last.three_pass;
+	g_three_pass = (last.three_pass != 0);
 	g_stop_pass = last.stop_pass;
 	g_distance_test = last.distance_test;
 	g_user_distance_test = last.distance_test;
