@@ -105,15 +105,7 @@ static short code_mask[13] =
 };
 
 /***** External Variables ***********************************************/
-/* extern short g_bad_code_count;
- *
- * This value is the only other global required by the using program, and
- * is incremented each time an out of range code is read by the decoder.
- * When this value is non-zero after a decode, your GIF file is probably
- * corrupt in some way...
- *
- * whups, here are more globals, added by PB:
- * extern short g_skip_x_dots;  0 to get every dot, 1 for every 2nd, 2 every 3rd, ...
+/* extern short g_skip_x_dots;  0 to get every dot, 1 for every 2nd, 2 every 3rd, ...
  * extern short g_skip_y_dots;
  *
  * All external declarations now in PROTOTYPE.H
@@ -274,7 +266,6 @@ short decoder(short linewidth)
 			{
 				if (code > slot)
 				{
-					++g_bad_code_count;
 					c = slot;
 				}
 				code = old_code;

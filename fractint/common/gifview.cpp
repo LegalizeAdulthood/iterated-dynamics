@@ -36,7 +36,6 @@
 
 unsigned int g_height;
 unsigned g_num_colors;
-int g_bad_code_count = 0;         /* needed by decoder module */
 
 static FILE *fpin = NULL;       /* FILE pointer           */
 static int colcount; /* keeps track of current column for wide images */

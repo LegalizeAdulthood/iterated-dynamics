@@ -10,7 +10,6 @@ extern char					g_auto_show_dot;
 extern int					g_auto_stereo_depth;
 extern double				g_auto_stereo_width;
 extern int					g_bad_config;
-extern int					g_bad_code_count;
 extern bool					g_bad_outside;
 extern int					g_bad_value;
 extern long					g_bail_out;
