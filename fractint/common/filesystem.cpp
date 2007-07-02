@@ -482,7 +482,7 @@ void find_path(const char *filename, char *fullpathname)
 	split_path(filename , NULL, NULL, fname, ext);
 	make_path(temp_path, ""   , "" , fname, ext);
 
-	if (g_check_current_dir != 0 && access(temp_path, 0) == 0)   /* file exists */
+	if (g_check_current_dir && access(temp_path, 0) == 0)   /* file exists */
 	{
 		strcpy(fullpathname, temp_path);
 		return;

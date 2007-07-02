@@ -35,7 +35,7 @@ extern int					(*g_calculate_type)();
 extern int					g_calculation_status;
 extern StereogramCalibrateType	g_stereogram_calibrate;
 extern int					g_cfg_line_nums[];
-extern int					g_check_current_dir;
+extern bool					g_check_current_dir;
 extern long					g_c_imag;
 extern double				g_close_enough;
 extern double				g_proximity;
