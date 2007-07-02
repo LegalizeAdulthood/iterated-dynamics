@@ -379,7 +379,6 @@ void Win32BaseDriver::set_video_mode(const VIDEOINFO &mode)
 	{
 		g_and_color = g_colors-1;
 		g_box_count = 0;
-		g_dac_learn = 1;
 		g_dac_count = g_cycle_limit;
 		g_got_real_dac = true;			/* we are "VGA" */
 
