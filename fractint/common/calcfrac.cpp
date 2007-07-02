@@ -2707,16 +2707,8 @@ static int _fastcall y_symmetry_split(int yaxis_col, bool yaxis_between)
 
 static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper symmetrical plot functions */
 {
-	int i;
-	int xaxis_row;
-	int yaxis_col;         /* pixel number for origin */
-	bool xaxis_between = false;
-	bool yaxis_between = false; /* if axis between 2 pixels, not on one */
-	bool xaxis_on_screen = false;
-	bool yaxis_on_screen = false;
-	double ftemp;
-	bf_t bft1;
-	int saved = 0;
+	/* pixel number for origin */
+	/* if axis between 2 pixels, not on one */
 	g_symmetry = SYMMETRY_X_AXIS;
 	if (g_standard_calculation_mode == 's' || g_standard_calculation_mode == 'o')
 	{
@@ -2800,7 +2792,12 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	default:   /* Check P2 for the rest */
 		parameters_are_zero = (parameters_are_zero && g_parameter2.x == 0.0 && g_parameter2.y == 0.0);
 	}
-	xaxis_row = yaxis_col = -1;
+	int xaxis_row = -1;
+	int yaxis_col = -1;
+	bool xaxis_on_screen = false;
+	bool yaxis_on_screen = false;
+	bf_t bft1;
+	int saved = 0;
 	if (g_bf_math)
 	{
 		saved = save_stack();
@@ -2813,8 +2810,10 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		xaxis_on_screen = (sign(g_escape_time_state.m_grid_fp.y_min()) != sign(g_escape_time_state.m_grid_fp.y_max()));
 		yaxis_on_screen = (sign(g_escape_time_state.m_grid_fp.x_min()) != sign(g_escape_time_state.m_grid_fp.x_max()));
 	}
+	bool xaxis_between = false;
 	if (xaxis_on_screen) /* axis is on screen */
 	{
+		double ftemp;
 		if (g_bf_math)
 		{
 			/* ftemp = -g_yy_max/(g_yy_min-g_yy_max); */
@@ -2836,8 +2835,10 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			xaxis_row = -1; /* can't split screen, so dead center or not at all */
 		}
 	}
+	bool yaxis_between = false;
 	if (yaxis_on_screen) /* axis is on screen */
 	{
+		double ftemp;
 		if (g_bf_math)
 		{
 			/* ftemp = -g_xx_min/(g_xx_max-g_xx_min); */
@@ -2999,7 +3000,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		if (g_plot_color == plot_color_symmetry_pi_xy_axis)
 		{
-			i = (g_WorkList.xx_start() + g_WorkList.xx_stop())/2;
+			int i = (g_WorkList.xx_start() + g_WorkList.xx_stop())/2;
 			if (g_x_stop > i)
 			{
 				g_x_stop = i;
@@ -3023,15 +3024,15 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 /* insert at end of CALCFRAC.C */
 
 static long automatic_log_map()   /*RB*/
-{  /* calculate round screen edges to avoid wasted colours in logmap */
-	long mincolour;
-	int xstop = g_x_dots - 1; /* don't use symetry */
-	int ystop = g_y_dots - 1; /* don't use symetry */
-	long old_maxit;
-	mincolour = LONG_MAX;
+{
+	/* calculate round screen edges to avoid wasted colours in logmap */
+	/* don't use symetry */
+	/* don't use symetry */
 	g_row = 0;
 	g_reset_periodicity = 0;
-	old_maxit = g_max_iteration;
+	long old_maxit = g_max_iteration;
+	int xstop = g_x_dots - 1;
+	long mincolour = LONG_MAX;
 	for (g_col = 0; g_col < xstop; g_col++) /* top row */
 	{
 		g_color = (*g_calculate_type)();
@@ -3055,6 +3056,7 @@ static long automatic_log_map()   /*RB*/
 	}
 
 	g_col = xstop;
+	int ystop = g_y_dots - 1;
 	for (g_row = 0; g_row < ystop; g_row++) /* right  side */
 	{
 		g_color = (*g_calculate_type)();
@@ -3145,15 +3147,13 @@ static void _fastcall plot_color_symmetry_pi(int x, int y, int color)
 /* Symmetry plot for period PI plus Origin Symmetry */
 static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
 {
-	int i;
-	int j;
 	while (x <= g_WorkList.xx_stop())
 	{
 		g_plot_color_put_color(x, y, color);
-		i = g_WorkList.yy_stop() - (y - g_WorkList.yy_start());
+		int i = g_WorkList.yy_stop() - (y - g_WorkList.yy_start());
 		if (i > g_y_stop && i < g_y_dots)
 		{
-			j = g_WorkList.xx_stop() - (x - g_WorkList.xx_start());
+			int j = g_WorkList.xx_stop() - (x - g_WorkList.xx_start());
 			if (j < g_x_dots)
 			{
 				g_plot_color_put_color(j, i, color);
@@ -3165,17 +3165,15 @@ static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
 /* Symmetry plot for period PI plus Both Axis Symmetry */
 static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
 {
-	int i;
-	int j;
 	while (x <= (g_WorkList.xx_start() + g_WorkList.xx_stop())/2)
 	{
-		j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
+		int j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 		g_plot_color_put_color(x , y , color);
 		if (j < g_x_dots)
 		{
 			g_plot_color_put_color(j , y , color);
 		}
-		i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
+		int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			g_plot_color_put_color(x , i , color);
@@ -3191,9 +3189,8 @@ static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
 /* Symmetry plot for X Axis Symmetry */
 void _fastcall plot_color_symmetry_x_axis(int x, int y, int color)
 {
-	int i;
 	g_plot_color_put_color(x, y, color);
-	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
+	int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_plot_color_put_color(x, i, color);
@@ -3203,9 +3200,8 @@ void _fastcall plot_color_symmetry_x_axis(int x, int y, int color)
 /* Symmetry plot for Y Axis Symmetry */
 static void _fastcall plot_color_symmetry_y_axis(int x, int y, int color)
 {
-	int i;
 	g_plot_color_put_color(x, y, color);
-	i = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
+	int i = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 	if (i < g_x_dots)
 	{
 		g_plot_color_put_color(i, y, color);
@@ -3215,9 +3211,8 @@ static void _fastcall plot_color_symmetry_y_axis(int x, int y, int color)
 /* Symmetry plot for Origin Symmetry */
 void _fastcall plot_color_symmetry_origin(int x, int y, int color)
 {
-	int i;
 	g_plot_color_put_color(x, y, color);
-	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
+	int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		int j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
@@ -3231,15 +3226,13 @@ void _fastcall plot_color_symmetry_origin(int x, int y, int color)
 /* Symmetry plot for Both Axis Symmetry */
 static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color)
 {
-	int i;
-	int j;
-	j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
+	int j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 	g_plot_color_put_color(x , y, color);
 	if (j < g_x_dots)
 	{
 		g_plot_color_put_color(j , y, color);
 	}
-	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
+	int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_plot_color_put_color(x , i, color);
@@ -3253,11 +3246,9 @@ static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color)
 /* Symmetry plot for X Axis Symmetry - Striped Newtbasin version */
 static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color)
 {
-	int i;
-	int stripe;
 	g_plot_color_put_color(x, y, color);
-	stripe = (g_basin == 2 && color > 8) ? 8 : 0;
-	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
+	int stripe = (g_basin == 2 && color > 8) ? 8 : 0;
+	int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		color -= stripe;                    /* reconstruct unstriped color */
@@ -3270,26 +3261,22 @@ static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color)
 /* Symmetry plot for Both Axis Symmetry  - Newtbasin version */
 static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color)
 {
-	int i;
-	int j;
-	int color1;
-	int stripe;
 	if (color == 0) /* assumed to be "inside" color */
 	{
 		plot_color_symmetry_xy_axis(x, y, color);
 		return;
 	}
-	stripe = (g_basin == 2 && color > 8) ? 8 : 0;
+	int stripe = (g_basin == 2 && color > 8) ? 8 : 0;
 	color -= stripe;               /* reconstruct unstriped color */
-	color1 = (color < g_degree/2 + 2) ?
+	int color1 = (color < g_degree/2 + 2) ?
 		(g_degree/2 + 2 - color) : (g_degree/2 + g_degree + 2 - color);
-	j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
+	int j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 	g_plot_color_put_color(x, y, color + stripe);
 	if (j < g_x_dots)
 	{
 		g_plot_color_put_color(j, y, color1 + stripe);
 	}
-	i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
+	int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
 	if (i > g_y_stop && i < g_y_dots)
 	{
 		g_plot_color_put_color(x, i, stripe + (g_degree + 1 - color) % g_degree + 1);
@@ -3313,7 +3300,9 @@ static void _fastcall put_truecolor_disk(int x, int y, int color)
 
 void _fastcall plot_color_none(int x, int y, int color)
 {
-	x = y = color = 0;  /* just for warning */
+	x = 0;
+	y = 0;
+	color = 0;  /* just for warning */
 }
 
 
