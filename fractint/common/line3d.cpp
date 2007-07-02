@@ -76,7 +76,7 @@ int g_x_shift = 0;
 int g_y_shift = 0;
 VECTOR g_view;                /* position of observer for perspective */
 VECTOR g_cross;
-int g_bad_value = -10000; /* set bad values to this */
+const int g_bad_value = -10000; /* set bad values to this */
 
 static int targa_validate(char *);
 static int first_time(int, VECTOR);

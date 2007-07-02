@@ -61,6 +61,7 @@ ROTZ(i) =           cosi  sini    0     0
 #include "prototyp.h"
 
 #include "3d.h"
+#include "line3d.h"
 
 /* initialize a matrix and set to identity matrix
 	(all 0's, 1's on diagonal) */
