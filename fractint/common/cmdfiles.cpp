@@ -80,7 +80,7 @@ int     g_finite_attractor;						/* finite attractor logic */
 int     g_display_3d;							/* 3D display flag: 0 = OFF */
 int     g_overlay_3d;							/* 3D overlay flag: 0 = OFF */
 int     g_init_3d[20];							/* '3d=nn/nn/nn/...' values */
-int     g_check_current_dir;					/* flag to check current dir for files */
+bool g_check_current_dir;						/* flag to check current dir for files */
 int     g_initialize_batch = INITBATCH_NONE;	/* 1 if batch run (no kbd)  */
 int     g_save_time;							/* autosave minutes         */
 ComplexD  g_initial_orbit_z;					/* initial orbitvalue */
@@ -391,7 +391,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_fractal_overwrite = false;                 /* don't overwrite           */
 	g_sound_state.set_speaker_beep();		/* sound is on to PC speaker */
 	g_initialize_batch = INITBATCH_NONE;			/* not in batch mode         */
-	g_check_current_dir = 0;                     /* flag to check current dire for files */
+	g_check_current_dir = false;		/* flag to check current dir for files */
 	g_save_time = 0;                    /* no auto-save              */
 	g_initial_adapter = -1;                       /* no initial video mode     */
 	g_view_window = false;
@@ -2869,7 +2869,7 @@ static int ask_video_arg(const cmd_context &context)
 
 static int cur_dir_arg(const cmd_context &context)
 {
-	return FlagParser<int>(g_check_current_dir, Command::OK).parse(context);
+	return FlagParser<bool>(g_check_current_dir, Command::OK).parse(context);
 }
 
 /*
