@@ -48,7 +48,7 @@ extern bool					g_color_preloaded;
 extern int					g_colors;
 extern int					g_color_state;
 extern int					g_color_bright;					/* brightest color in palette */
-extern int					g_color_dark;						/* darkest color in palette */
+extern int					g_color_dark;					/* darkest color in palette */
 extern int					g_color_medium;					/* nearest to medbright grey in palette */
 extern char					g_command_comment[4][MAX_COMMENT];
 extern char					g_command_file[FILE_MAX_PATH];
@@ -64,7 +64,6 @@ extern int					g_cycle_limit;
 extern int					g_c_exp;
 extern BYTE					g_dac_box[256][3];
 extern int					g_dac_count;
-extern int					g_dac_learn;
 extern double				g_delta_min_fp;
 extern int					g_debug_mode;
 extern int					g_decimals;

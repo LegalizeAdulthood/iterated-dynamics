@@ -638,7 +638,6 @@ done:
 		{
 			g_cycle_limit = 256;              /* plasma clouds need quick spins */
 			g_dac_count = 256;
-			g_dac_learn = 1;
 		}
 
 resumeloop:

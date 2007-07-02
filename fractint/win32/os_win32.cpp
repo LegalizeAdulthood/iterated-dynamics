@@ -122,7 +122,6 @@ int g_color_bright = 0;		/* brightest color in palette */
 int g_color_medium = 0;		/* nearest to medbright grey in palette
 				   Zoom-Box values (2K x 2K screens max) */
 unsigned char g_dac_box[256][3] = { 0 };
-int g_dac_learn = 0;
 int g_dac_count = 0;
 bool g_disk_flag = false;
 bool g_disk_targa = false;

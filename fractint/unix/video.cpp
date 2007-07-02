@@ -23,7 +23,6 @@ extern int get_a_key();
 
 int g_fake_lut = 0;
 int g_is_true_color = 0;
-int g_dac_learn = 0;
 int g_dac_count = 0;
 int g_good_mode = 0;		/* if non-zero, OK to read/write pixels */
 void (*g_dot_write)(int, int, int);

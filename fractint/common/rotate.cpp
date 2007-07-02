@@ -166,14 +166,12 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			incr = 999;
 			break;
 		case FIK_UP_ARROW:                 /* UpArrow means speed up       */
-			g_dac_learn = 1;
 			if (++g_dac_count >= g_colors)
 			{
 				--g_dac_count;
 			}
 			break;
 		case FIK_DOWN_ARROW:               /* DownArrow means slow down    */
-			g_dac_learn = 1;
 			if (g_dac_count > 1)
 			{
 				g_dac_count--;
