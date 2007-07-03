@@ -1191,7 +1191,7 @@ int readvideopalette()
 {
 
 	int i;
-	if (g_got_real_dac == 0 && g_is_true_color && g_true_mode)
+	if (g_got_real_dac == 0 && g_is_true_color)
 	{
 		return -1;
 	}
