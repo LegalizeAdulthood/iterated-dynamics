@@ -291,7 +291,7 @@ int memicmp(const char *s1, const char *s2, int n)
 /*
  *----------------------------------------------------------------------
  *
- * findpath --
+ * find_path --
  *
  *      Find where a file is.
  *	We return filename if it is an absolute path.
@@ -306,7 +306,7 @@ int memicmp(const char *s1, const char *s2, int n)
  *
  *----------------------------------------------------------------------
  */
-void findpath(const char *filename, char *fullpathname)
+void find_path(const char *filename, char *fullpathname)
 {
 	int fd;
 	char *fractdir;
