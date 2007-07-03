@@ -365,7 +365,7 @@ void spindac(int dir, int inc)
 	{
 		return;
 	}
-	if (g_is_true_color && g_true_mode)
+	if (g_is_true_color)
 	{
 		return;
 	}
