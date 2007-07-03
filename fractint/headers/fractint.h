@@ -1342,6 +1342,9 @@ public:
 class AbstractDialog : public IInputContext
 {
 public:
+	AbstractDialog() {}
+	virtual ~AbstractDialog() {}
+
 	void ProcessInput();
 };
 

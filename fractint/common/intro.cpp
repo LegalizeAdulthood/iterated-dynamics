@@ -5,8 +5,10 @@
  *
  *
  */
+#include <cassert>
 #include <cstring>
 #include <time.h>
+#include <vector>
 
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
@@ -39,7 +41,39 @@ void AbstractDialog::ProcessInput()
 	}
 }
 
-class Introduction : AbstractDialog
+class FractIntDialog : public AbstractDialog
+{
+public:
+	FractIntDialog() : m_contexts()
+	{
+	}
+
+	virtual ~FractIntDialog()
+	{
+		assert(m_contexts.size() == 0);
+	}
+
+	void PushContext(IInputContext *context)	{ m_contexts.push_back(context); }
+	void PopContext()							{ m_contexts.pop_back(); }
+
+	virtual bool ProcessWaitingKey(int key);
+	virtual bool ProcessIdle();
+
+private:
+	std::vector<IInputContext *> m_contexts;
+};
+
+bool FractIntDialog::ProcessWaitingKey(int key)
+{
+	return (m_contexts.size() > 0) ? m_contexts.back()->ProcessWaitingKey(key) : false;
+}
+
+bool FractIntDialog::ProcessIdle()
+{
+	return (m_contexts.size() > 0) ? m_contexts.back()->ProcessIdle() : false;
+}
+
+class Introduction : public FractIntDialog
 {
 public:
 	Introduction();
@@ -82,10 +116,12 @@ Introduction::Introduction()
 	}
 	::memset(m_credits, 0, NUM_OF(m_credits));
 	::memset(m_screen_text, 0, NUM_OF(m_screen_text));
+	PushContext(this);
 }
 
 Introduction::~Introduction()
 {
+	PopContext();
 }
 
 void Introduction::GetCredits()
