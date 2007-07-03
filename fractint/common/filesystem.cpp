@@ -337,8 +337,20 @@ static void get_filename_ext(char const *file_template, char *fname, char *ext, 
 	}
 }
 
+void empty_string(char *text)
+{
+	if (text)
+	{
+		text[0] = 0;
+	}
+}
+
 void split_path(const char *file_template, char *drive, char *dir, char *filename, char *extension)
 {
+	empty_string(drive);
+	empty_string(dir);
+	empty_string(filename);
+	empty_string(extension);
 	int length = (int) strlen(file_template);
 	if (length == 0)
 	{
