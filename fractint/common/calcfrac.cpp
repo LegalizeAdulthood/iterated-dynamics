@@ -3056,73 +3056,75 @@ static long automatic_log_map()   /*RB*/
 	}
 
 	g_col = xstop;
-	int ystop = g_y_dots - 1;
-	for (g_row = 0; g_row < ystop; g_row++) /* right  side */
 	{
-		g_color = (*g_calculate_type)();
-		if (g_color == -1)
+		int ystop = g_y_dots - 1;
+		for (g_row = 0; g_row < ystop; g_row++) /* right  side */
 		{
-			goto ack; /* key pressed, bailout */
+			g_color = (*g_calculate_type)();
+			if (g_color == -1)
+			{
+				goto ack; /* key pressed, bailout */
+			}
+			if (g_real_color_iter < mincolour)
+			{
+				mincolour = g_real_color_iter;
+				g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+			}
+			if (g_row >= 32)
+			{
+				(*g_plot_color)(g_col, g_row-32, 0);
+			}
 		}
-		if (g_real_color_iter < mincolour)
+		for (int lag = 32; lag > 0; lag--)
 		{
-			mincolour = g_real_color_iter;
-			g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+			(*g_plot_color)(g_col, g_row-lag, 0);
 		}
-		if (g_row >= 32)
-		{
-			(*g_plot_color)(g_col, g_row-32, 0);
-		}
-	}
-	for (int lag = 32; lag > 0; lag--)
-	{
-		(*g_plot_color)(g_col, g_row-lag, 0);
-	}
 
-	g_col = 0;
-	for (g_row = 0; g_row < ystop; g_row++) /* left  side */
-	{
-		g_color = (*g_calculate_type)();
-		if (g_color == -1)
+		g_col = 0;
+		for (g_row = 0; g_row < ystop; g_row++) /* left  side */
 		{
-			goto ack; /* key pressed, bailout */
+			g_color = (*g_calculate_type)();
+			if (g_color == -1)
+			{
+				goto ack; /* key pressed, bailout */
+			}
+			if (g_real_color_iter < mincolour)
+			{
+				mincolour = g_real_color_iter;
+				g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+			}
+			if (g_row >= 32)
+			{
+				(*g_plot_color)(g_col, g_row-32, 0);
+			}
 		}
-		if (g_real_color_iter < mincolour)
+		for (int lag = 32; lag > 0; lag--)
 		{
-			mincolour = g_real_color_iter;
-			g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+			(*g_plot_color)(g_col, g_row-lag, 0);
 		}
-		if (g_row >= 32)
-		{
-			(*g_plot_color)(g_col, g_row-32, 0);
-		}
-	}
-	for (int lag = 32; lag > 0; lag--)
-	{
-		(*g_plot_color)(g_col, g_row-lag, 0);
-	}
 
-	g_row = ystop;
-	for (g_col = 0; g_col < xstop; g_col++) /* bottom row */
-	{
-		g_color = (*g_calculate_type)();
-		if (g_color == -1)
+		g_row = ystop;
+		for (g_col = 0; g_col < xstop; g_col++) /* bottom row */
 		{
-			goto ack; /* key pressed, bailout */
+			g_color = (*g_calculate_type)();
+			if (g_color == -1)
+			{
+				goto ack; /* key pressed, bailout */
+			}
+			if (g_real_color_iter < mincolour)
+			{
+				mincolour = g_real_color_iter;
+				g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+			}
+			if (g_col >= 32)
+			{
+				(*g_plot_color)(g_col-32, g_row, 0);
+			}
 		}
-		if (g_real_color_iter < mincolour)
+		for (int lag = 32; lag > 0; lag--)
 		{
-			mincolour = g_real_color_iter;
-			g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+			(*g_plot_color)(g_col-lag, g_row, 0);
 		}
-		if (g_col >= 32)
-		{
-			(*g_plot_color)(g_col-32, g_row, 0);
-		}
-	}
-	for (int lag = 32; lag > 0; lag--)
-	{
-		(*g_plot_color)(g_col-lag, g_row, 0);
 	}
 
 ack: /* bailout here if key is pressed */
