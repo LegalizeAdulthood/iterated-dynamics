@@ -90,8 +90,8 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 #else
 	{
 		char temp_path[FILE_MAX_PATH];
-		find_path(newfilename, temp_path);
-		strcpy(newfilename, temp_path);
+		find_path(new_filename, temp_path);
+		strcpy(new_filename, temp_path);
 	}
 #endif
 	/* check existence */
