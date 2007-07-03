@@ -1916,135 +1916,137 @@ void load_fractint_config()
 		goto bad_fractint_cfg;
 	}
 
-	int linenum = 0;
-	VIDEOINFO vident;
-	char *fields[11];
-	while (g_video_table_len < MAXVIDEOMODES
-		&& fgets(tempstring, 120, cfgfile))
 	{
-		if (strchr(tempstring, '\n') == NULL)
+		int linenum = 0;
+		VIDEOINFO vident;
+		char *fields[11];
+		while (g_video_table_len < MAXVIDEOMODES
+			&& fgets(tempstring, 120, cfgfile))
 		{
-			/* finish reading the line */
-			while (fgetc(cfgfile) != '\n' && !feof(cfgfile))
+			if (strchr(tempstring, '\n') == NULL)
 			{
-			}
-		}
-		++linenum;
-		if (tempstring[0] == ';')
-		{
-			continue;   /* comment line */
-		}
-		tempstring[120] = 0;
-		tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
-		/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
-		int i = -1;
-		int j = -1;
-		while (true)
-		{
-			if (tempstring[++i] < ' ')
-			{
-				if (tempstring[i] == 0)
+				/* finish reading the line */
+				while (fgetc(cfgfile) != '\n' && !feof(cfgfile))
 				{
-					break;
 				}
-				tempstring[i] = ' '; /* convert tab (or whatever) to blank */
 			}
-			else if (tempstring[i] == ',' && ++j < 11)
+			++linenum;
+			if (tempstring[0] == ';')
 			{
-				assert(j >= 0 && j < 11);
-				fields[j] = &tempstring[i + 1]; /* remember start of next field */
-				tempstring[i] = 0;   /* make field a separate string */
+				continue;   /* comment line */
 			}
-		}
-		int dotmode = atoi(fields[5]);
-		long x_dots = atol(fields[6]);
-		long y_dots = atol(fields[7]);
-		int colors = atoi(fields[8]);
-		int true_color_bits;
-		if (colors == 4 && strchr(strlwr(fields[8]), 'g'))
-		{
-			colors = 256;
-			true_color_bits = 4; /* 32 bits */
-		}
-		else if (colors == 16 && strchr(fields[8], 'm'))
-		{
-			colors = 256;
-			true_color_bits = 3; /* 24 bits */
-		}
-		else if (colors == 64 && strchr(fields[8], 'k'))
-		{
-			colors = 256;
-			true_color_bits = 2; /* 16 bits */
-		}
-		else if (colors == 32 && strchr(fields[8], 'k'))
-		{
-			colors = 256;
-			true_color_bits = 1; /* 15 bits */
-		}
-		else
-		{
-			true_color_bits = 0;
-		}
-
-		int textsafe2 = dotmode/100;
-		dotmode %= 100;
-		int keynum = check_vidmode_keyname(tempstring);
-		if (j < 9 ||
-			keynum < 0 ||
-			dotmode < 0 || dotmode > 30 ||
-			textsafe2 < 0 || textsafe2 > 4 ||
-			x_dots < MIN_PIXELS || x_dots > MAX_PIXELS ||
-			y_dots < MIN_PIXELS || y_dots > MAX_PIXELS ||
-			(colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
-				colors != 256))
-		{
-			goto bad_fractint_cfg;
-		}
-		g_cfg_line_nums[g_video_table_len] = linenum; /* for update_fractint_cfg */
-
-		memset(&vident, 0, sizeof(vident));
-		strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
-		strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
-		vident.name[25] = vident.comment[25] = 0;
-		vident.keynum = keynum;
-		vident.dotmode = true_color_bits*1000 + textsafe2*100 + dotmode;
-		vident.x_dots = (short)x_dots;
-		vident.y_dots = (short)y_dots;
-		vident.colors = colors;
-
-		/* if valid, add to supported modes */
-		vident.driver = DriverManager::find_by_name(fields[10]);
-		if (vident.driver != NULL)
-		{
-			if (vident.driver->validate_mode(vident))
+			tempstring[120] = 0;
+			tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
+			/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
+			int i = -1;
+			int j = -1;
+			while (true)
 			{
-				/* look for a synonym mode and if found, overwite its key */
-				int synonym_found = false;
-				for (int m = 0; m < g_video_table_len; m++)
+				if (tempstring[++i] < ' ')
 				{
-					VIDEOINFO *mode = &g_video_table[m];
-					if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
-						(mode->x_dots == vident.x_dots) && (mode->y_dots == vident.y_dots) &&
-						(mode->dotmode == vident.dotmode))
+					if (tempstring[i] == 0)
 					{
-						if (0 == mode->keynum)
-						{
-							mode->keynum = vident.keynum;
-						}
-						synonym_found = true;
 						break;
 					}
+					tempstring[i] = ' '; /* convert tab (or whatever) to blank */
 				}
-				/* no synonym found, append it to current list of video modes */
-				if (!synonym_found)
+				else if (tempstring[i] == ',' && ++j < 11)
 				{
-					add_video_mode(vident.driver, vident);
+					assert(j >= 0 && j < 11);
+					fields[j] = &tempstring[i + 1]; /* remember start of next field */
+					tempstring[i] = 0;   /* make field a separate string */
+				}
+			}
+			int dotmode = atoi(fields[5]);
+			long x_dots = atol(fields[6]);
+			long y_dots = atol(fields[7]);
+			int colors = atoi(fields[8]);
+			int true_color_bits;
+			if (colors == 4 && strchr(strlwr(fields[8]), 'g'))
+			{
+				colors = 256;
+				true_color_bits = 4; /* 32 bits */
+			}
+			else if (colors == 16 && strchr(fields[8], 'm'))
+			{
+				colors = 256;
+				true_color_bits = 3; /* 24 bits */
+			}
+			else if (colors == 64 && strchr(fields[8], 'k'))
+			{
+				colors = 256;
+				true_color_bits = 2; /* 16 bits */
+			}
+			else if (colors == 32 && strchr(fields[8], 'k'))
+			{
+				colors = 256;
+				true_color_bits = 1; /* 15 bits */
+			}
+			else
+			{
+				true_color_bits = 0;
+			}
+
+			int textsafe2 = dotmode/100;
+			dotmode %= 100;
+			int keynum = check_vidmode_keyname(tempstring);
+			if (j < 9 ||
+				keynum < 0 ||
+				dotmode < 0 || dotmode > 30 ||
+				textsafe2 < 0 || textsafe2 > 4 ||
+				x_dots < MIN_PIXELS || x_dots > MAX_PIXELS ||
+				y_dots < MIN_PIXELS || y_dots > MAX_PIXELS ||
+				(colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
+					colors != 256))
+			{
+				goto bad_fractint_cfg;
+			}
+			g_cfg_line_nums[g_video_table_len] = linenum; /* for update_fractint_cfg */
+
+			memset(&vident, 0, sizeof(vident));
+			strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
+			strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
+			vident.name[25] = vident.comment[25] = 0;
+			vident.keynum = keynum;
+			vident.dotmode = true_color_bits*1000 + textsafe2*100 + dotmode;
+			vident.x_dots = (short)x_dots;
+			vident.y_dots = (short)y_dots;
+			vident.colors = colors;
+
+			/* if valid, add to supported modes */
+			vident.driver = DriverManager::find_by_name(fields[10]);
+			if (vident.driver != NULL)
+			{
+				if (vident.driver->validate_mode(vident))
+				{
+					/* look for a synonym mode and if found, overwite its key */
+					int synonym_found = false;
+					for (int m = 0; m < g_video_table_len; m++)
+					{
+						VIDEOINFO *mode = &g_video_table[m];
+						if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
+							(mode->x_dots == vident.x_dots) && (mode->y_dots == vident.y_dots) &&
+							(mode->dotmode == vident.dotmode))
+						{
+							if (0 == mode->keynum)
+							{
+								mode->keynum = vident.keynum;
+							}
+							synonym_found = true;
+							break;
+						}
+					}
+					/* no synonym found, append it to current list of video modes */
+					if (!synonym_found)
+					{
+						add_video_mode(vident.driver, vident);
+					}
 				}
 			}
 		}
+		fclose(cfgfile);
+		return;
 	}
-	fclose(cfgfile);
-	return;
 
 bad_fractint_cfg:
 	g_bad_config = -1; /* bad, no message issued yet */
