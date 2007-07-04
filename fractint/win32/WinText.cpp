@@ -403,7 +403,6 @@ void WinText::OnSetFocus(HWND window, HWND old_focus)
 		s_me->m_cursor_owned = 1;
 		::CreateCaret(s_me->m_window, s_me->m_bitmap[s_me->m_cursor_type], s_me->m_char_width, s_me->m_char_height);
 		::SetCaretPos(s_me->m_cursor_x*s_me->m_char_width, s_me->m_cursor_y*s_me->m_char_height);
-		//::SetCaretBlinkTime(500);
 		::ShowCaret(s_me->m_window);
 	}
 }

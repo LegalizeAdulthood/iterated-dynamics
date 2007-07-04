@@ -974,7 +974,6 @@ struct FunctionListItem
 	const char *name;
 	void (*lfunct)();
 	void (*dfunct)();
-	//void (*mfunct)();
 };
 
 #define BIG 100000.0
@@ -1332,14 +1331,14 @@ struct UserInterfaceState
 	bool ask_video;					/* flag for video prompting */
 };
 
-class IInputContext
+class AbstractInputContext
 {
 public:
 	virtual bool ProcessWaitingKey(int key) = 0;
 	virtual bool ProcessIdle() = 0;
 };
 
-class AbstractDialog : public IInputContext
+class AbstractDialog : public AbstractInputContext
 {
 public:
 	AbstractDialog() {}

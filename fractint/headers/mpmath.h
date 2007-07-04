@@ -15,23 +15,6 @@
 #endif
 
 
-//#if !defined(XFRACT)
-//struct MP
-//{
-//	int Exp;
-//	unsigned long Mant;
-//};
-//#else
-//struct MP {
-//   double val;
-//};
-//#endif
-//
-//struct MPC
-//{
-//	struct MP x, y;
-//};
-
 extern int g_overflow_mp;
 extern int DivideOverflow;
 
@@ -73,11 +56,7 @@ enum MATH_TYPE { D_MATH};
 union Arg
 {
    ComplexD     d;
-   /*struct MPC m;*/
    ComplexL    l;
-/*
-   _DHCMPLX   dh;
-   _LHCMPLX   lh; */
 };
 
 struct ConstArg
@@ -358,25 +337,6 @@ extern void (*g_trig3_d)();
 	}						\
 	while (0)
 
-//extern double *    MP2d(struct MP);
-//extern int         MPcmp(struct MP, struct MP);
-//extern struct MP * MPmul(struct MP, struct MP);
-//extern struct MP * MPadd(struct MP, struct MP);
-//extern struct MP * MPdiv(struct MP, struct MP);
-//extern struct MP * d2MP(double);  /* Convert double to type MP */
-//extern struct MP * fg2MP(long, int); /* Convert fudged to type MP */
-//extern struct MP *MPsub(struct MP, struct MP);
-//extern struct MP *MPabs(struct MP);
-//extern struct MPC MPCsqr(struct MPC);
-//extern struct MP MPCmod(struct MPC);
-//extern struct MPC MPCmul(struct MPC, struct MPC);
-//extern struct MPC MPCdiv(struct MPC, struct MPC);
-//extern struct MPC MPCadd(struct MPC, struct MPC);
-//extern struct MPC MPCsub(struct MPC, struct MPC);
-//extern struct MPC MPCpow(struct MPC, int);
-//extern int MPCcmp(struct MPC, struct MPC);
-//extern ComplexD MPC2cmplx(struct MPC);
-//extern struct MPC cmplx2MPC(ComplexD);
 extern ComplexD ComplexPower(ComplexD, ComplexD);
 extern void SetupLogTable();
 extern long logtablecalc(long);

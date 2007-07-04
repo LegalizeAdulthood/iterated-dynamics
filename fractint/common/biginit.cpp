@@ -95,12 +95,6 @@ bf_t big_pi = NULL;						/* g_bf_length + 2 */
 /* for testing only */
 
 /* used by other routines */
-//bf_t bfxmin = NULL;
-//bf_t bfxmax = NULL;
-//bf_t bfymin = NULL;
-//bf_t bfymax = NULL;
-//bf_t bfx3rd = NULL;
-//bf_t bfy3rd = NULL;						/* g_bf_length + 2 */
 bf_t g_sx_min_bf = NULL;
 bf_t g_sx_max_bf = NULL;
 bf_t g_sy_min_bf = NULL;

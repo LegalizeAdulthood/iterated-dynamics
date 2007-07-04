@@ -146,12 +146,6 @@ bool g_tab_display_enabled = true;			/* tab display enabled */
 /*    top    left  corner of screen is (g_xx_min, g_yy_max) */
 /*    bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) */
 /*    bottom right corner of screen is (g_xx_max, g_yy_min) */
-//double  g_xx_min;
-//double	g_xx_max;
-//double	g_yy_min;
-//double	g_yy_max;
-//double	g_xx_3rd;
-//double	g_yy_3rd; /* selected screen corners  */
 long    g_x_min;
 long	g_x_max;
 long	g_y_min;
@@ -319,11 +313,6 @@ static void application_restart(int argc, char *argv[], bool &screen_stacked)
 	}
 	screen_stacked = false;
 }
-
-//static void application_restart(int argc, char *argv[], bool &screen_stacked)
-//{
-//	application_restart(argc, argv, screen_stacked);
-//}
 
 static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 {
