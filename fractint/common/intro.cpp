@@ -53,24 +53,24 @@ public:
 		assert(m_contexts.size() == 0);
 	}
 
-	void PushContext(IInputContext *context)	{ m_contexts.push_back(context); }
-	void PopContext()							{ m_contexts.pop_back(); }
+	void PushContext(AbstractInputContext *context)	{ m_contexts.push_back(context); }
+	void PopContext()								{ m_contexts.pop_back(); }
 
 	virtual bool ProcessWaitingKey(int key);
 	virtual bool ProcessIdle();
 
 private:
-	std::vector<IInputContext *> m_contexts;
+	std::vector<AbstractInputContext *> m_contexts;
 };
 
 bool FractIntDialog::ProcessWaitingKey(int key)
 {
-	return (m_contexts.size() > 0) ? m_contexts.back()->ProcessWaitingKey(key) : false;
+	return (m_contexts.size() > 0) ? m_contexts.back()->ProcessWaitingKey(key) : true;
 }
 
 bool FractIntDialog::ProcessIdle()
 {
-	return (m_contexts.size() > 0) ? m_contexts.back()->ProcessIdle() : false;
+	return (m_contexts.size() > 0) ? m_contexts.back()->ProcessIdle() : true;
 }
 
 class Introduction : public FractIntDialog

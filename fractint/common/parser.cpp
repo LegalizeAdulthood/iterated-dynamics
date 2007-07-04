@@ -3950,7 +3950,6 @@ int Formula::setup_int()
 
 void Formula::init_misc()
 {
-	//static Arg argfirst, argsecond;
 	Arg1 = &m_arg1;
 	Arg2 = &m_arg2; /* needed by all the ?Stk* functions */
 	s_fudge = (double) (1L << g_bit_shift);

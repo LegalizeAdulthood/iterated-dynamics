@@ -23,9 +23,6 @@
 #define DISKWRITELEN 2048L /* max # bytes transferred to/from disk mem at once */
 
 BYTE *charbuf = NULL;
-//int numEXThandles;
-//long ext_xfer_size;
-//U16 start_avail_extra = 0;
 
 #define MAXHANDLES 256   /* arbitrary #, suitably big */
 char memfile[] = "handle.$$$";

@@ -552,10 +552,6 @@ void (*g_trig0_l)() = lStkSin;
 void (*g_trig1_l)() = lStkSqr;
 void (*g_trig2_l)() = lStkSinh;
 void (*g_trig3_l)() = lStkCosh;
-//void (*g_trig0_m)() = mStkSin;
-//void (*g_trig1_m)() = mStkSqr;
-//void (*g_trig2_m)() = mStkSinh;
-//void (*g_trig3_m)() = mStkCosh;
 #endif
 void (*g_trig0_d)() = dStkSin;
 void (*g_trig1_d)() = dStkSqr;
@@ -632,28 +628,24 @@ void set_trig_pointers(int which)
 	case 0:
 #if !defined(XFRACT)
 		g_trig0_l = g_function_list[g_function_index[0]].lfunct;
-		//g_trig0_m = g_function_list[g_function_index[0]].mfunct;
 #endif
 		g_trig0_d = g_function_list[g_function_index[0]].dfunct;
 		break;
 	case 1:
 #if !defined(XFRACT)
 		g_trig1_l = g_function_list[g_function_index[1]].lfunct;
-		//g_trig1_m = g_function_list[g_function_index[1]].mfunct;
 #endif
 		g_trig1_d = g_function_list[g_function_index[1]].dfunct;
 		break;
 	case 2:
 #if !defined(XFRACT)
 		g_trig2_l = g_function_list[g_function_index[2]].lfunct;
-		//g_trig2_m = g_function_list[g_function_index[2]].mfunct;
 #endif
 		g_trig2_d = g_function_list[g_function_index[2]].dfunct;
 		break;
 	case 3:
 #if !defined(XFRACT)
 		g_trig3_l = g_function_list[g_function_index[3]].lfunct;
-		//g_trig3_m = g_function_list[g_function_index[3]].mfunct;
 #endif
 		g_trig3_d = g_function_list[g_function_index[3]].dfunct;
 		break;
