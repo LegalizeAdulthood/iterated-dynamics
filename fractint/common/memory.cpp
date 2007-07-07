@@ -205,8 +205,7 @@ static int CheckBounds (long start, long length, U16 handle)
 		DisplayHandle(handle);
 		return 1;
 	}
-	if (handletable[handle].Nowhere.stored_at == DISK &&
-			(stackavail() <= DISKWRITELEN))
+	if (handletable[handle].Nowhere.stored_at == DISK)
 	{
 		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Stack space insufficient for disk memory.");
 		DisplayHandle(handle);
