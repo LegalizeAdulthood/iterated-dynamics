@@ -221,15 +221,6 @@ static fractint_event keyboard_event(int key)
 	return FE_UNKNOWN;
 }
 
-static char *g_tos = NULL;
-#define WIN32_STACK_SIZE 1024*1024
-/* Return available stack space ... shouldn't be needed in Win32, should it? */
-long stackavail()
-{
-	char junk;
-	return WIN32_STACK_SIZE - (long) (((char *) g_tos) - &junk);
-}
-
 /*
 ;
 ;       32-bit integer divide routine with an 'n'-bit shift.
@@ -643,7 +634,6 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 	__try
 #endif
 	{
-		g_tos = (char *) &result;
 		g_instance = instance;
 		_CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);
 		result = application_main(__argc, __argv);

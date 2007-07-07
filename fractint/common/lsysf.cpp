@@ -289,13 +289,6 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 		return NULL;
 	}
 
-	if (stackavail() < 400)  /* leave some margin for calling subrtns */
-	{
-		ts->stackoflow = true;
-		return NULL;
-	}
-
-
 	while (command->ch && command->ch != ']')
 	{
 		if (! (ts->counter++))
@@ -429,14 +422,6 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 	{
 		return NULL;
 	}
-
-
-	if (stackavail() < 400)  /* leave some margin for calling subrtns */
-	{
-		ts->stackoflow = true;
-		return NULL;
-	}
-
 
 	while (command->ch && command->ch != ']')
 	{

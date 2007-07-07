@@ -34,10 +34,6 @@
 #include <math.h>
 #include <float.h>
 
-#if defined(_WIN32)
-extern long stackavail();
-#endif
-
 #if (defined(__STDC__) || defined(__cplusplus) || defined(_MSC_VER)) && !defined(STDC)
 #  define STDC
 #endif
