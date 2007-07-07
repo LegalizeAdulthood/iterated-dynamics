@@ -742,15 +742,6 @@ int tab_display_2(char *msg)
 		write_row(row++, g_formula_state.info_line1());
 		write_row(row++, g_formula_state.info_line2());
 	}
-	else if (g_rhombus_stack[0])
-	{
-		write_row(row++, "SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
-			g_max_rhombus_depth + 1,
-			g_rhombus_stack[0], g_rhombus_stack[1], g_rhombus_stack[2],
-			g_rhombus_stack[3], g_rhombus_stack[4], g_rhombus_stack[5],
-			g_rhombus_stack[6], g_rhombus_stack[7], g_rhombus_stack[8],
-			g_rhombus_stack[9]);
-	}
 
 	write_row(row++, "%dx%d dm=%d %s (%s)", g_x_dots, g_y_dots, g_dot_mode,
 		driver_name(), driver_description());
@@ -770,8 +761,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d g_bit_shift %d",
 	ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
 	*/
-	write_row(row++, "g_minimum_stack_available %d g_limit2_l %ld g_use_grid %s",
-		g_minimum_stack_available, g_limit2_l, g_escape_time_state.m_use_grid ? "true" : "false");
+	write_row(row++, "g_limit2_l %ld g_use_grid %s",
+		g_limit2_l, g_escape_time_state.m_use_grid ? "true" : "false");
 	put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 

@@ -1472,7 +1472,6 @@ static int min_stack_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_minimum_stack = context.intval[0];
 	return Command::OK;
 }
 

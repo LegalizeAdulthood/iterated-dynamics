@@ -37,12 +37,7 @@
 #define EVERY 15
 #define BASIN_COLOR 0
 
-int g_rhombus_stack[10];
 int rhombus_depth;
-int g_max_rhombus_depth;
-int g_minimum_stack_available;
-/* int g_minimum_stack = 1700; */ /* need this much stack to recurse */
-int g_minimum_stack = 2200; /* and this much stack to not crash when <tab> is pressed */
 
 static LDBL twidth;
 static LDBL equal;
@@ -485,195 +480,138 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 	static int y;
 	static int z;
 	static int savex;
-
-#if 0
-	static LDBL re, im, restep, imstep, interstep, helpre;
+	static LDBL re;
+	static LDBL im;
+	static LDBL restep;
+	static LDBL imstep;
+	static LDBL interstep;
+	static LDBL helpre;
 	static LDBL zre, zim;
 	/* interpolation coefficients */
-	static LDBL br10, br11, br12, br20, br21, br22, br30, br31, br32;
-	static LDBL bi10, bi11, bi12, bi20, bi21, bi22, bi30, bi31, bi32;
+	static LDBL br10;
+	static LDBL br11;
+	static LDBL br12;
+	static LDBL br20;
+	static LDBL br21;
+	static LDBL br22;
+	static LDBL br30;
+	static LDBL br31;
+	static LDBL br32;
+	static LDBL bi10;
+	static LDBL bi11;
+	static LDBL bi12;
+	static LDBL bi20;
+	static LDBL bi21;
+	static LDBL bi22;
+	static LDBL bi30;
+	static LDBL bi31;
+	static LDBL bi32;
 	/* ratio of interpolated test point to iterated one */
-	static LDBL l1, l2;
+	static LDBL l1;
+	static LDBL l2;
 	/* squares of key values */
-	static LDBL rq1, iq1;
-	static LDBL rq2, iq2;
-	static LDBL rq3, iq3;
-	static LDBL rq4, iq4;
-	static LDBL rq5, iq5;
-	static LDBL rq6, iq6;
-	static LDBL rq7, iq7;
-	static LDBL rq8, iq8;
-	static LDBL rq9, iq9;
+	static LDBL rq1;
+	static LDBL iq1;
+	static LDBL rq2;
+	static LDBL iq2;
+	static LDBL rq3;
+	static LDBL iq3;
+	static LDBL rq4;
+	static LDBL iq4;
+	static LDBL rq5;
+	static LDBL iq5;
+	static LDBL rq6;
+	static LDBL iq6;
+	static LDBL rq7;
+	static LDBL iq7;
+	static LDBL rq8;
+	static LDBL iq8;
+	static LDBL rq9;
+	static LDBL iq9;
 
 	/* test points */
-	static LDBL cr1, cr2;
-	static LDBL ci1, ci2;
-	static LDBL tzr1, tzi1, tzr2, tzi2, tzr3, tzi3, tzr4, tzi4;
-	static LDBL trq1, tiq1, trq2, tiq2, trq3, tiq3, trq4, tiq4;
-#else
-#define re        mem_static[ 0]
-#define im        mem_static[ 1]
-#define restep    mem_static[ 2]
-#define imstep    mem_static[ 3]
-#define interstep mem_static[ 4]
-#define helpre    mem_static[ 5]
-#define zre       mem_static[ 6]
-#define zim       mem_static[ 7]
-#define br10      mem_static[ 8]
-#define br11      mem_static[ 9]
-#define br12      mem_static[10]
-#define br20      mem_static[11]
-#define br21      mem_static[12]
-#define br22      mem_static[13]
-#define br30      mem_static[14]
-#define br31      mem_static[15]
-#define br32      mem_static[16]
-#define bi10      mem_static[17]
-#define bi11      mem_static[18]
-#define bi12      mem_static[19]
-#define bi20      mem_static[20]
-#define bi21      mem_static[21]
-#define bi22      mem_static[22]
-#define bi30      mem_static[23]
-#define bi31      mem_static[24]
-#define bi32      mem_static[25]
-#define l1        mem_static[26]
-#define l2        mem_static[27]
-#define rq1       mem_static[28]
-#define iq1       mem_static[29]
-#define rq2       mem_static[30]
-#define iq2       mem_static[31]
-#define rq3       mem_static[32]
-#define iq3       mem_static[33]
-#define rq4       mem_static[34]
-#define iq4       mem_static[35]
-#define rq5       mem_static[36]
-#define iq5       mem_static[37]
-#define rq6       mem_static[38]
-#define iq6       mem_static[39]
-#define rq7       mem_static[40]
-#define iq7       mem_static[41]
-#define rq8       mem_static[42]
-#define iq8       mem_static[43]
-#define rq9       mem_static[44]
-#define iq9       mem_static[45]
-#define cr1       mem_static[46]
-#define cr2       mem_static[47]
-#define ci1       mem_static[48]
-#define ci2       mem_static[49]
-#define tzr1      mem_static[50]
-#define tzi1      mem_static[51]
-#define tzr2      mem_static[52]
-#define tzi2      mem_static[53]
-#define tzr3      mem_static[54]
-#define tzi3      mem_static[55]
-#define tzr4      mem_static[56]
-#define tzi4      mem_static[57]
-#define trq1      mem_static[58]
-#define tiq1      mem_static[59]
-#define trq2      mem_static[60]
-#define tiq2      mem_static[61]
-#define trq3      mem_static[62]
-#define tiq3      mem_static[63]
-#define trq4      mem_static[64]
-#define tiq4      mem_static[65]
-
-#endif
+	static LDBL cr1;
+	static LDBL cr2;
+	static LDBL ci1;
+	static LDBL ci2;
+	static LDBL tzr1;
+	static LDBL tzi1;
+	static LDBL tzr2;
+	static LDBL tzi2;
+	static LDBL tzr3;
+	static LDBL tzi3;
+	static LDBL tzr4;
+	static LDBL tzi4;
+	static LDBL trq1;
+	static LDBL tiq1;
+	static LDBL trq2;
+	static LDBL tiq2;
+	static LDBL trq3;
+	static LDBL tiq3;
+	static LDBL trq4;
+	static LDBL tiq4;
 	/* number of iterations before SOI iteration cycle */
 	static long before;
 	static int avail;
 
-	/* the variables below need to have local copis for recursive calls */
-	LDBL *mem;
-	LDBL *mem_static;
 	/* center of rectangle */
 	LDBL midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
 
-#if 0
 	/* saved values of key values */
-	LDBL sr1, si1, sr2, si2, sr3, si3, sr4, si4;
-	LDBL sr5, si5, sr6, si6, sr7, si7, sr8, si8, sr9, si9;
+	LDBL sr1;
+	LDBL si1;
+	LDBL sr2;
+	LDBL si2;
+	LDBL sr3;
+	LDBL si3;
+	LDBL sr4;
+	LDBL si4;
+	LDBL sr5;
+	LDBL si5;
+	LDBL sr6;
+	LDBL si6;
+	LDBL sr7;
+	LDBL si7;
+	LDBL sr8;
+	LDBL si8;
+	LDBL sr9;
+	LDBL si9;
 	/* key values for subsequent rectangles */
-	LDBL re10, re11, re12, re13, re14, re15, re16, re17, re18, re19, re20, re21;
-	LDBL im10, im11, im12, im13, im14, im15, im16, im17, im18, im19, im20, im21;
-	LDBL re91, re92, re93, re94, im91, im92, im93, im94;
-#else
-#define sr1  mem[ 0]
-#define si1  mem[ 1]
-#define sr2  mem[ 2]
-#define si2  mem[ 3]
-#define sr3  mem[ 4]
-#define si3  mem[ 5]
-#define sr4  mem[ 6]
-#define si4  mem[ 7]
-#define sr5  mem[ 8]
-#define si5  mem[ 9]
-#define sr6  mem[10]
-#define si6  mem[11]
-#define sr7  mem[12]
-#define si7  mem[13]
-#define sr8  mem[14]
-#define si8  mem[15]
-#define sr9  mem[16]
-#define si9  mem[17]
-#define re10 mem[18]
-#define re11 mem[19]
-#define re12 mem[20]
-#define re13 mem[21]
-#define re14 mem[22]
-#define re15 mem[23]
-#define re16 mem[24]
-#define re17 mem[25]
-#define re18 mem[26]
-#define re19 mem[27]
-#define re20 mem[28]
-#define re21 mem[29]
-#define im10 mem[30]
-#define im11 mem[31]
-#define im12 mem[32]
-#define im13 mem[33]
-#define im14 mem[34]
-#define im15 mem[35]
-#define im16 mem[36]
-#define im17 mem[37]
-#define im18 mem[38]
-#define im19 mem[39]
-#define im20 mem[40]
-#define im21 mem[41]
-#define re91 mem[42]
-#define re92 mem[43]
-#define re93 mem[44]
-#define re94 mem[45]
-#define im91 mem[46]
-#define im92 mem[47]
-#define im93 mem[48]
-#define im94 mem[49]
-#endif
+	LDBL re10;
+	LDBL re11;
+	LDBL re12;
+	LDBL re13;
+	LDBL re14;
+	LDBL re15;
+	LDBL re16;
+	LDBL re17;
+	LDBL re18;
+	LDBL re19;
+	LDBL re20;
+	LDBL re21;
+	LDBL im10;
+	LDBL im11;
+	LDBL im12;
+	LDBL im13;
+	LDBL im14;
+	LDBL im15;
+	LDBL im16;
+	LDBL im17;
+	LDBL im18;
+	LDBL im19;
+	LDBL im20;
+	LDBL im21;
+	LDBL re91;
+	LDBL re92;
+	LDBL re93;
+	LDBL re94;
+	LDBL im91;
+	LDBL im92;
+	LDBL im93;
+	LDBL im94;
 
 	int status = 0;
 	rhombus_depth++;
-
-#if 1
-	/* TODO: eliminate this memory aliasing monstrosity */
-	/* what we go through under DOS to deal with memory! We re-use
-		the g_size_of_string array (8k). The first 660 bytes is for
-		static variables, then we make our own "stack" with copies
-		for each recursive call of rhombus() for the rest.
-		*/
-	mem_static = (LDBL *)g_size_of_string;
-	mem = mem_static+ 66 + 50*rhombus_depth;
-#endif
-
-	avail = stackavail();
-	if (avail < g_minimum_stack_available)
-	{
-		g_minimum_stack_available = avail;
-	}
-	if (rhombus_depth > g_max_rhombus_depth)
-	{
-		g_max_rhombus_depth = rhombus_depth;
-	}
-	g_rhombus_stack[rhombus_depth] = avail;
 
 	if (driver_key_pressed())
 	{
@@ -687,7 +625,7 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 		goto rhombus_done;
 	}
 
-	if ((y2-y1 <= SCAN) || (avail < g_minimum_stack))
+	if (y2-y1 <= SCAN)
 	{
 		/* finish up the image by scanning the rectangle */
 scan:
@@ -1135,9 +1073,7 @@ void soi_long_double()
 	LDBL xxmaxl;
 	LDBL yyminl;
 	LDBL yymaxl;
-	g_minimum_stack_available = 30000;
 	rhombus_depth = -1;
-	g_max_rhombus_depth = 0;
 	if (g_bf_math)
 	{
 		xxminl = bftofloat(g_escape_time_state.m_grid_bf.x_min());
