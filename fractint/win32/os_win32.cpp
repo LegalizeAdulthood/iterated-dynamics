@@ -499,13 +499,6 @@ void home()
 	g_text_col = 0;
 }
 
-/*
-; ****************** Function initasmvars() *****************************
-*/
-void initasmvars()
-{
-	g_overflow = false;
-}
 
 bool is_a_directory(char *s)
 {

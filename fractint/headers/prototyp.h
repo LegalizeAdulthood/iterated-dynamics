@@ -13,7 +13,6 @@ extern int get_corners();
 extern int getakeynohelp();
 extern void set_null_video();
 extern void spindac(int, int);
-extern void initasmvars();
 
 /* maintain the common prototypes in this file
  * split the dos/win/unix prototypes into separate files.

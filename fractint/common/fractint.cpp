@@ -574,7 +574,7 @@ void application_initialize(int argc, char **argv)
 	/* this traps non-math library floating point errors */
 	signal(SIGFPE, my_floating_point_err);
 
-	initasmvars();                       /* initialize ASM stuff */
+	g_overflow = false;
 	InitMemory();
 
 	/* let drivers add their video modes */
