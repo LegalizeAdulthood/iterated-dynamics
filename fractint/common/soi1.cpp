@@ -28,42 +28,10 @@
 #define EVERY 15
 #define BASIN_COLOR 0
 
-extern int g_rhombus_stack[10];
 extern int rhombus_depth;
-extern int g_max_rhombus_depth;
-extern int g_minimum_stack_available;
-extern int g_minimum_stack; /* need this much stack to recurse */
 
 static double twidth;
 static double equal;
-
-#if 0
-static long iteration1(double cr, double ci,
-	     	double re, double im,
-	     	long start)
-{
-	double oldreal, oldimag, newreal, newimag, magnitude;
-	long color;
-	magnitude = 0.0;
-	color = start;
-	oldreal = re;
-	oldimag = im;
-	while ((magnitude < 16.0) && (color < g_max_iteration))
-	{
-		newreal = oldreal*oldreal - oldimag*oldimag + cr;
-		newimag = 2*oldreal*oldimag + ci;
-		color++;
-		oldreal = newreal;
-		oldimag = newimag;
-		magnitude = newreal*newreal + newimag*newimag;
-	}
-	if (color >= g_max_iteration)
-	{
-		color = BASIN_COLOR;
-	}
-	return (int)color;
-}
-#endif
 
 static long iteration(double cr, double ci,
 	     	double re, double im,
@@ -209,8 +177,24 @@ static double interpolate(double x0, double x1, double x2,
 
 	  iter       : current number of iterations
 	  */
-static double zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
-				zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
+static double zre1;
+static double zim1;
+static double zre2;
+static double zim2;
+static double zre3;
+static double zim3;
+static double zre4;
+static double zim4;
+static double zre5;
+static double zim5;
+static double zre6;
+static double zim6;
+static double zre7;
+static double zim7;
+static double zre8;
+static double zim8;
+static double zre9;
+static double zim9;
 /*
 	The purpose of this macro is to reduce the number of parameters of the
 	function rhombus(), since this is a recursive function, and stack space
@@ -246,210 +230,149 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
 	static int y;
 	static int z;
 	static int savex;
-
-#if 0
-	static double re, im, restep, imstep, interstep, helpre;
-	static double zre, zim;
+	static double re;
+	static double im;
+	static double restep;
+	static double imstep;
+	static double interstep;
+	static double helpre;
+	static double zre;
+	static double zim;
 	/* interpolation coefficients */
-	static double br10, br11, br12, br20, br21, br22, br30, br31, br32;
-	static double bi10, bi11, bi12, bi20, bi21, bi22, bi30, bi31, bi32;
+	static double br10;
+	static double br11;
+	static double br12;
+	static double br20;
+	static double br21;
+	static double br22;
+	static double br30;
+	static double br31;
+	static double br32;
+	static double bi10;
+	static double bi11;
+	static double bi12;
+	static double bi20;
+	static double bi21;
+	static double bi22;
+	static double bi30;
+	static double bi31;
+	static double bi32;
 	/* ratio of interpolated test point to iterated one */
-	static double l1, l2;
+	static double l1;
+	static double l2;
 	/* squares of key values */
-	static double rq1, iq1;
-	static double rq2, iq2;
-	static double rq3, iq3;
-	static double rq4, iq4;
-	static double rq5, iq5;
-	static double rq6, iq6;
-	static double rq7, iq7;
-	static double rq8, iq8;
-	static double rq9, iq9;
+	static double rq1;
+	static double iq1;
+	static double rq2;
+	static double iq2;
+	static double rq3;
+	static double iq3;
+	static double rq4;
+	static double iq4;
+	static double rq5;
+	static double iq5;
+	static double rq6;
+	static double iq6;
+	static double rq7;
+	static double iq7;
+	static double rq8;
+	static double iq8;
+	static double rq9;
+	static double iq9;
 
 	/* test points */
-	static double cr1, cr2;
-	static double ci1, ci2;
-	static double tzr1, tzi1, tzr2, tzi2, tzr3, tzi3, tzr4, tzi4;
-	static double trq1, tiq1, trq2, tiq2, trq3, tiq3, trq4, tiq4;
-#else
-#define re        mem_static[ 0]
-#define im        mem_static[ 1]
-#define restep    mem_static[ 2]
-#define imstep    mem_static[ 3]
-#define interstep mem_static[ 4]
-#define helpre    mem_static[ 5]
-#define zre       mem_static[ 6]
-#define zim       mem_static[ 7]
-#define br10      mem_static[ 8]
-#define br11      mem_static[ 9]
-#define br12      mem_static[10]
-#define br20      mem_static[11]
-#define br21      mem_static[12]
-#define br22      mem_static[13]
-#define br30      mem_static[14]
-#define br31      mem_static[15]
-#define br32      mem_static[16]
-#define bi10      mem_static[17]
-#define bi11      mem_static[18]
-#define bi12      mem_static[19]
-#define bi20      mem_static[20]
-#define bi21      mem_static[21]
-#define bi22      mem_static[22]
-#define bi30      mem_static[23]
-#define bi31      mem_static[24]
-#define bi32      mem_static[25]
-#define l1        mem_static[26]
-#define l2        mem_static[27]
-#define rq1       mem_static[28]
-#define iq1       mem_static[29]
-#define rq2       mem_static[30]
-#define iq2       mem_static[31]
-#define rq3       mem_static[32]
-#define iq3       mem_static[33]
-#define rq4       mem_static[34]
-#define iq4       mem_static[35]
-#define rq5       mem_static[36]
-#define iq5       mem_static[37]
-#define rq6       mem_static[38]
-#define iq6       mem_static[39]
-#define rq7       mem_static[40]
-#define iq7       mem_static[41]
-#define rq8       mem_static[42]
-#define iq8       mem_static[43]
-#define rq9       mem_static[44]
-#define iq9       mem_static[45]
-#define cr1       mem_static[46]
-#define cr2       mem_static[47]
-#define ci1       mem_static[48]
-#define ci2       mem_static[49]
-#define tzr1      mem_static[50]
-#define tzi1      mem_static[51]
-#define tzr2      mem_static[52]
-#define tzi2      mem_static[53]
-#define tzr3      mem_static[54]
-#define tzi3      mem_static[55]
-#define tzr4      mem_static[56]
-#define tzi4      mem_static[57]
-#define trq1      mem_static[58]
-#define tiq1      mem_static[59]
-#define trq2      mem_static[60]
-#define tiq2      mem_static[61]
-#define trq3      mem_static[62]
-#define tiq3      mem_static[63]
-#define trq4      mem_static[64]
-#define tiq4      mem_static[65]
+	static double cr1;
+	static double cr2;
+	static double ci1;
+	static double ci2;
+	static double tzr1;
+	static double tzi1;
+	static double tzr2;
+	static double tzi2;
+	static double tzr3;
+	static double tzi3;
+	static double tzr4;
+	static double tzi4;
+	static double trq1;
+	static double tiq1;
+	static double trq2;
+	static double tiq2;
+	static double trq3;
+	static double tiq3;
+	static double trq4;
+	static double tiq4;
 
-#endif
-	/* number of iterations before SOI iteration cycle */
-	static long before;
-	static int avail;
-
-	/* the variables below need to have local copies for recursive calls */
-	int  *mem_int;
-	double *mem;
-	double *mem_static;
 	/* center of rectangle */
 	double midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
 
-#if 0
 	/* saved values of key values */
-	double sr1, si1, sr2, si2, sr3, si3, sr4, si4;
-	double sr5, si5, sr6, si6, sr7, si7, sr8, si8, sr9, si9;
+	double sr1;
+	double si1;
+	double sr2;
+	double si2;
+	double sr3;
+	double si3;
+	double sr4;
+	double si4;
+	double sr5;
+	double si5;
+	double sr6;
+	double si6;
+	double sr7;
+	double si7;
+	double sr8;
+	double si8;
+	double sr9;
+	double si9;
 	/* key values for subsequent rectangles */
-	double re10, re11, re12, re13, re14, re15, re16, re17, re18, re19, re20, re21;
-	double im10, im11, im12, im13, im14, im15, im16, im17, im18, im19, im20, im21;
-	double re91, re92, re93, re94, im91, im92, im93, im94;
-#else
-#define esc1  mem_int[0]
-#define esc2  mem_int[1]
-#define esc3  mem_int[2]
-#define esc4  mem_int[3]
-#define esc5  mem_int[4]
-#define esc6  mem_int[5]
-#define esc7  mem_int[6]
-#define esc8  mem_int[7]
-#define esc9  mem_int[8]
-#define tesc1 mem_int[9]
-#define tesc2 mem_int[10]
-#define tesc3 mem_int[11]
-#define tesc4 mem_int[12]
-
-#define sr1  mem[ 0]
-#define si1  mem[ 1]
-#define sr2  mem[ 2]
-#define si2  mem[ 3]
-#define sr3  mem[ 4]
-#define si3  mem[ 5]
-#define sr4  mem[ 6]
-#define si4  mem[ 7]
-#define sr5  mem[ 8]
-#define si5  mem[ 9]
-#define sr6  mem[10]
-#define si6  mem[11]
-#define sr7  mem[12]
-#define si7  mem[13]
-#define sr8  mem[14]
-#define si8  mem[15]
-#define sr9  mem[16]
-#define si9  mem[17]
-#define re10 mem[18]
-#define re11 mem[19]
-#define re12 mem[20]
-#define re13 mem[21]
-#define re14 mem[22]
-#define re15 mem[23]
-#define re16 mem[24]
-#define re17 mem[25]
-#define re18 mem[26]
-#define re19 mem[27]
-#define re20 mem[28]
-#define re21 mem[29]
-#define im10 mem[30]
-#define im11 mem[31]
-#define im12 mem[32]
-#define im13 mem[33]
-#define im14 mem[34]
-#define im15 mem[35]
-#define im16 mem[36]
-#define im17 mem[37]
-#define im18 mem[38]
-#define im19 mem[39]
-#define im20 mem[40]
-#define im21 mem[41]
-#define re91 mem[42]
-#define re92 mem[43]
-#define re93 mem[44]
-#define re94 mem[45]
-#define im91 mem[46]
-#define im92 mem[47]
-#define im93 mem[48]
-#define im94 mem[49]
-#endif
+	double re10;
+	double re11;
+	double re12;
+	double re13;
+	double re14;
+	double re15;
+	double re16;
+	double re17;
+	double re18;
+	double re19;
+	double re20;
+	double re21;
+	double im10;
+	double im11;
+	double im12;
+	double im13;
+	double im14;
+	double im15;
+	double im16;
+	double im17;
+	double im18;
+	double im19;
+	double im20;
+	double im21;
+	double re91;
+	double re92;
+	double re93;
+	double re94;
+	double im91;
+	double im92;
+	double im93;
+	double im94;
+	double esc1;
+	double esc2;
+	double esc3;
+	double esc4;
+	double esc5;
+	double esc6;
+	double esc7;
+	double esc8;
+	double esc9;
+	double tesc1;
+	double tesc2;
+	double tesc3;
+	double tesc4;
 
 	int status = 0;
 	rhombus_depth++;
-
-#if 1
-	/* what we go through under DOS to deal with memory! We re-use
-		the g_size_of_string array (8k). The first 660 bytes is for
-		static variables, then we make our own "stack" with copies
-		for each recursive call of rhombus() for the rest.
-		*/
-	mem_int    = (int *)g_size_of_string;
-	mem_static = (double *)(mem_int + 13);
-	mem = mem_static+ 66 + 50*rhombus_depth;
-#endif
-
-	avail = stackavail();
-	if (avail < g_minimum_stack_available)
-	{
-		g_minimum_stack_available = avail;
-	}
-	if (rhombus_depth > g_max_rhombus_depth)
-	{
-		g_max_rhombus_depth = rhombus_depth;
-	}
-	g_rhombus_stack[rhombus_depth] = avail;
 
 	if (driver_key_pressed())
 	{
@@ -463,7 +386,7 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
 		goto rhombus_done;
 	}
 
-	if ((y2-y1 <= SCAN) || (avail < g_minimum_stack))
+	if (y2-y1 <= SCAN)
 	{
 		/* finish up the image by scanning the rectangle */
 scan:
@@ -611,6 +534,7 @@ scan:
 	trq4 = tzr4*tzr4;
 	tiq4 = tzi4*tzi4;
 
+	static long before;
 	before = iter;
 
 	while (true)
@@ -976,9 +900,7 @@ static void soi_double()
 	double xxmaxl;
 	double yyminl;
 	double yymaxl;
-	g_minimum_stack_available = 30000;
 	rhombus_depth = -1;
-	g_max_rhombus_depth = 0;
 	if (g_bf_math)
 	{
 		xxminl = (double)bftofloat(g_escape_time_state.m_grid_bf.x_min());

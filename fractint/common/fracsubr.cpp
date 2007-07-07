@@ -115,10 +115,6 @@ void calculate_fractal_initialize()
 {
 	int tries = 0;
 	g_color_iter = g_old_color_iter = 0L;
-	for (int i = 0; i < 10; i++)
-	{
-		g_rhombus_stack[i] = 0;
-	}
 
 	/* set up grid array compactly leaving space at end */
 	/* space req for grid is 2(g_x_dots + g_y_dots)*sizeof(long or double) */
