@@ -332,6 +332,8 @@ private:
 	void peephole_optimize_abs(t_function_pointer &function);
 	void peephole_optimize_sqr(t_function_pointer &function);
 	void peephole_optimize_power(t_function_pointer &function);
+	void peephole_optimize_power_load_real_constant(t_function_pointer &function);
+	void peephole_optimize_power_load_real(t_function_pointer &function);
 	void peephole_optimize_less_equal(t_function_pointer &function);
 	void peephole_optimize_less(t_function_pointer &function);
 	void peephole_optimize_greater(t_function_pointer &function);

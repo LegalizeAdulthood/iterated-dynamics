@@ -710,6 +710,7 @@ void Formula::peephole_optimize_add_load_imaginary(t_function_pointer &function)
 	}
 	function = fStkLodImagAdd;
 }
+
 void Formula::peephole_optimize_add(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLodDup) /* there is never a push before add  */
@@ -1032,6 +1033,7 @@ void Formula::peephole_optimize_store_clear(t_function_pointer &function)
 		function = fStkStoClr1;
 	}
 }
+
 void Formula::peephole_optimize_divide(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLodRealC && m_parser_vsp < m_formula_max_args - 1)
@@ -1056,6 +1058,7 @@ void Formula::peephole_optimize_divide(t_function_pointer &function)
 		function = fStkLodRealMul;
 	}
 }
+
 void Formula::peephole_optimize_real(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod)
@@ -1070,6 +1073,7 @@ void Formula::peephole_optimize_real(t_function_pointer &function)
 		function = fStkReal2;
 	}
 }
+
 void Formula::peephole_optimize_load_imaginary(t_function_pointer &function)
 {
 	DBUGMSG("lod (*imag) -> lodimag");
@@ -1112,6 +1116,7 @@ void Formula::peephole_optimize_modulus(t_function_pointer &function)
 		function = fStkSqr3;
 	}
 }
+
 void Formula::peephole_optimize_flip(t_function_pointer &function)
 {
 	if (s_previous_function == fStkReal || s_previous_function == fStkReal2)
@@ -1139,6 +1144,7 @@ void Formula::peephole_optimize_flip(t_function_pointer &function)
 		function = fStkLodImagFlip;
 	}
 }
+
 void Formula::peephole_optimize_abs(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLodReal)
@@ -1154,6 +1160,7 @@ void Formula::peephole_optimize_abs(t_function_pointer &function)
 		function = fStkLodImagAbs;
 	}
 }
+
 void Formula::peephole_optimize_sqr(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod && !is_function(s_convert_index-1, fStkPush2))
@@ -1192,74 +1199,86 @@ void Formula::peephole_optimize_sqr(t_function_pointer &function)
 		}
 	}
 }
+
+void Formula::peephole_optimize_power_load_real_constant(t_function_pointer &function)
+{
+	double dTemp = m_load[m_load_ptr-1]->d.x;
+	if (dTemp == 2.0 || dTemp == 1.0 || dTemp == -1.0 || dTemp == 0.0)
+	{
+		/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr */
+		if (is_function(s_convert_index-1, fStkPush2))
+		{
+			DBUGMSG("LodRealC[-1,0,1,2] Push (*Pwr)"
+				" -> (*[recip,1,ident,Sqr0]), stk+=2");
+			REMOVE_PUSH;  /* lod[?] (push) *pwr */
+		}
+		else
+		{
+			DBUGMSG("LodRealC[-1,0,1,2] (*Pwr)"
+				" -> (*[recip,1,ident,sqr0])");
+		}
+		--s_convert_index;
+		set_no_operand(s_convert_index);
+		if (dTemp == 2.0)
+		{
+			DBUGMSG("[]=Sqr0");
+			function = fStkSqr0;  /* no need to compute lastsqr here  */
+			if (is_function(s_convert_index-1, fStkLod))
+			{
+				DBUGMSG("Lod (*Sqr0) -> (*LodSqr)");
+				--s_convert_index;
+				function = fStkLodSqr;  /* dont save lastsqr  */
+			}
+			else if (is_function(s_convert_index-1, fStkSto2))
+			{
+				DBUGMSG("Sto2 (*Sqr0) -> (*StoSqr0)");
+				--s_convert_index;
+				function = fStkStoSqr0;  /* dont save lastsqr  */
+			}
+		}
+		else if (dTemp == 1.0)
+		{
+			DBUGMSG("[]=Ident");
+			function = fStkIdent;
+		}
+		else if (dTemp == 0.0)
+		{
+			DBUGMSG("[]=One");
+			function = fStkOne;
+		}
+		else if (dTemp == -1.0)
+		{
+			DBUGMSG("[]=Recip");
+			function = fStkRecip;
+		}
+	}
+	else if (is_function(s_convert_index-1, s_previous_function))
+	{
+		--s_convert_index;
+		function = fStkLodRealPwr;  /* see comments below  */
+	}
+}
+
+void Formula::peephole_optimize_power_load_real(t_function_pointer &function)
+{
+	/* don't handle pushes here, lodrealpwr needs 4 free  */
+	DBUGMSG("LodReal (*Pwr) -> (*LodRealPwr)");
+	--s_convert_index;
+	function = fStkLodRealPwr;
+}
+
 void Formula::peephole_optimize_power(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLodRealC)
 	{
-		double dTemp = m_load[m_load_ptr-1]->d.x;
-		if (dTemp == 2.0 || dTemp == 1.0 || dTemp == -1.0 || dTemp == 0.0)
-		{
-			/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr */
-			if (is_function(s_convert_index-1, fStkPush2))
-			{
-				DBUGMSG("LodRealC[-1,0,1,2] Push (*Pwr)"
-					" -> (*[recip,1,ident,Sqr0]), stk+=2");
-				REMOVE_PUSH;  /* lod[?] (push) *pwr */
-			}
-			else
-			{
-				DBUGMSG("LodRealC[-1,0,1,2] (*Pwr)"
-					" -> (*[recip,1,ident,sqr0])");
-			}
-			--s_convert_index;
-			set_no_operand(s_convert_index);
-			if (dTemp == 2.0)
-			{
-				DBUGMSG("[]=Sqr0");
-				function = fStkSqr0;  /* no need to compute lastsqr here  */
-				if (is_function(s_convert_index-1, fStkLod))
-				{
-					DBUGMSG("Lod (*Sqr0) -> (*LodSqr)");
-					--s_convert_index;
-					function = fStkLodSqr;  /* dont save lastsqr  */
-				}
-				else if (is_function(s_convert_index-1, fStkSto2))
-				{
-					DBUGMSG("Sto2 (*Sqr0) -> (*StoSqr0)");
-					--s_convert_index;
-					function = fStkStoSqr0;  /* dont save lastsqr  */
-				}
-			}
-			else if (dTemp == 1.0)
-			{
-				DBUGMSG("[]=Ident");
-				function = fStkIdent;
-			}
-			else if (dTemp == 0.0)
-			{
-				DBUGMSG("[]=One");
-				function = fStkOne;
-			}
-			else if (dTemp == -1.0)
-			{
-				DBUGMSG("[]=Recip");
-				function = fStkRecip;
-			}
-		}
-		else if (is_function(s_convert_index-1, s_previous_function))
-		{
-			--s_convert_index;
-			function = fStkLodRealPwr;  /* see comments below  */
-		}
+		peephole_optimize_power_load_real_constant(function);
 	}
 	else if (s_previous_function == fStkLodReal && is_function(s_convert_index-1, s_previous_function))
 	{
-		/* don't handle pushes here, lodrealpwr needs 4 free  */
-		DBUGMSG("LodReal (*Pwr) -> (*LodRealPwr)");
-		--s_convert_index;
-		function = fStkLodRealPwr;
+		peephole_optimize_power_load_real(function);
 	}
 }
+
 void Formula::peephole_optimize_less_equal(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod
@@ -1271,6 +1290,7 @@ void Formula::peephole_optimize_less_equal(t_function_pointer &function)
 		function = fStkLodLTE;
 	}
 }
+
 void Formula::peephole_optimize_less(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod
@@ -1282,6 +1302,7 @@ void Formula::peephole_optimize_less(t_function_pointer &function)
 		function = fStkLodLT;
 	}
 }
+
 void Formula::peephole_optimize_greater(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod
@@ -1293,6 +1314,7 @@ void Formula::peephole_optimize_greater(t_function_pointer &function)
 		function = fStkLodGT;
 	}
 }
+
 void Formula::peephole_optimize_greater_equal(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod
@@ -1304,6 +1326,7 @@ void Formula::peephole_optimize_greater_equal(t_function_pointer &function)
 		function = fStkLodGTE;
 	}
 }
+
 void Formula::peephole_optimize_not_equal(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod
@@ -1315,6 +1338,7 @@ void Formula::peephole_optimize_not_equal(t_function_pointer &function)
 		function = fStkLodNE;
 	}
 }
+
 void Formula::peephole_optimize_equal(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod
@@ -1695,13 +1719,10 @@ void Formula::CvtStk()  /* convert the array of ptrs  */
 		}
 	} /* end for  */
 
-	if (DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode)
+	if (DEBUGMODE_SKIP_OPTIMIZER != g_debug_mode)
 	{
-		goto skipfinalopt;
+		FinalOptimizations(out_function);
 	}
-	FinalOptimizations(out_function);
-
-skipfinalopt:  /* -------------- end of final optimizations ------------ */
 
 	m_last_op = s_convert_index;  /* save the new operator count  */
 	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0.0;  /* do this once per image  */
