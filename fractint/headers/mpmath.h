@@ -18,11 +18,6 @@
 extern int g_overflow_mp;
 extern int DivideOverflow;
 
-/* Mark Peterson's expanded floating point operators.  Automatically uses
-   either the 8086 or 80386 processor type specified in global 'g_cpu'. If
-   the operation results in an overflow (result < 2**(2**14), or division
-   by zero) the global 'MPoverflow' is set to one. */
-
 /*** Formula Declarations ***/
 enum MathType
 {
