@@ -55,8 +55,8 @@ enum MATH_TYPE { D_MATH};
 /* to 2D */
 union Arg
 {
-   ComplexD     d;
-   ComplexL    l;
+   ComplexD d;
+   ComplexL l;
 };
 
 struct ConstArg

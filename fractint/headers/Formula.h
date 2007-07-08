@@ -132,7 +132,7 @@ public:
 	bool uses_p3() const				{ return m_uses_p3; }
 	bool uses_p4() const				{ return m_uses_p4; }
 	bool uses_p5() const				{ return m_uses_p5; }
-	int max_fn() const					{ return m_max_fn; }
+	int max_fn() const					{ return m_max_function_number; }
 
 	void set_uses_is_mand(bool value)	{ m_uses_is_mand = value; }
 	void set_uses_p1(bool value)		{ m_uses_p1 = value; }
@@ -140,7 +140,7 @@ public:
 	void set_uses_p3(bool value)		{ m_uses_p3 = value; }
 	void set_uses_p4(bool value)		{ m_uses_p4 = value; }
 	void set_uses_p5(bool value)		{ m_uses_p5 = value; }
-	void set_max_fn(int value)			{ m_max_fn = value; }
+	void set_max_fn(int value)			{ m_max_function_number = value; }
 
 private:
 	enum MATH_TYPE m_math_type;
@@ -157,7 +157,7 @@ private:
 	int m_next_operation;
 	int m_initial_n;
 	int m_parenthesis_count;
-	int m_expecting_arg;
+	bool m_expecting_arg;
 	int m_set_random;
 	var_list_st *m_variable_list;
 	const_list_st *m_complex_list;
@@ -181,7 +181,7 @@ private:
 	bool m_uses_p3;
 	bool m_uses_p4;
 	bool m_uses_p5;
-	int m_max_fn;
+	int m_max_function_number;
 	function_load_store *m_function_load_store_pointers;
 	ConstArg *m_variables;
 	Arg **m_store;
@@ -198,7 +198,12 @@ private:
 	char m_prepare_formula_text[16384];
 
 	ConstArg *is_constant(const char *text, int length);
-	int ParseStr(const char *text, int pass);
+	bool ParseStr(const char *text, int pass);
+	void StoreFunction(void (*function)(), int offset, int store_count);
+	void StoreFunction(void (*function)(), int p);
+
+	int GetP(int offset, int store_count);
+
 	void allocate();
 	void count_lists();
 	int prescan(FILE *open_file);
