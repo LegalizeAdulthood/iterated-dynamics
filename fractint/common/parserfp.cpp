@@ -809,7 +809,7 @@ void Formula::peephole_optimize_mul_store_dup(t_function_pointer &function)
 	function = fStkStoSqr0;  /* dont save lastsqr here ever  */
 }
 
-void Formula::peephole_optimize_mul_load(t_function_pointer &function)
+void Formula::peephole_optimize_mul_load_push2(t_function_pointer &function)
 {
 	--s_convert_index;  /*  lod *? (mul)  */
 	if (is_function(s_convert_index, fStkPush2)) /*  lod *push (mul))  */
@@ -834,7 +834,10 @@ void Formula::peephole_optimize_mul_load(t_function_pointer &function)
 		DBUGMSG("*lod (mul) -> (*lodmul)");
 	}
 	function = fStkLodMul;
+}
 
+void Formula::peephole_optimize_mul_load_swap_loads()
+{
 	/*  change loadreal a, lodmul b --> lod b, lodrealmul a  */
 	set_no_function(s_convert_index);  /* mark the pending fn as null  */
 	if (is_function(s_convert_index-1, fStkPush4)
@@ -842,75 +845,94 @@ void Formula::peephole_optimize_mul_load(t_function_pointer &function)
 	{
 		--s_convert_index;  /* look back past this push  */
 	}
+}
 
-	if (is_function(s_convert_index-1, fStkLodRealC)
-		&& m_load[m_load_ptr-2]->d.x == 2.0)
-	{
-		/* -- Convert '2*a' into 'a + a'. */
-		if (is_no_function(s_convert_index))
-		{
-			DBUGMSG("lodreal[2] (*lodmul[b])"
-				" -> (*loddbl[b])");
-			set_operand(s_convert_index-1, get_operand(s_convert_index));
-		}
-		else if (is_function(s_convert_index, fStkPush2a))
-		{
-			DBUGMSG("lodreal[2] *pusha (lodmul[b])"
-				" -> loddbl[b],stk+=2");
-			set_operand_prev_next(s_convert_index);
-			s_stack_count += 2;
-		}
-		else if (is_function(s_convert_index, fStkPush4))
-		{
-			DBUGMSG("lodreal[2] *push4 (lodmul[b])"
-				" -> loddbl[b],stk+=4");
-			set_operand_prev_next(s_convert_index);
-			s_stack_count += 4;
-		}
-		set_no_function(--s_convert_index);  /* so no increment later  */
-		function = fStkLodDbl;
-	}
-	else if (is_function(s_convert_index-1, fStkLodReal)
-		|| is_function(s_convert_index-1, fStkLodRealC))
-	{
-		/* lodreal *?push?? (*?lodmul)  */
-		Arg *otemp = get_operand(s_convert_index-1);  /* save previous fn's operand  */
-		set_function(s_convert_index-1, fStkLod);  /* prev fn = lod  */
-		/* Moved setting of prev lodptr to below */
-		/* This was a bug causing a bad loadptr to be set here  */
-		/* 3 lines marked 'prev lodptr = this' below replace this line  */
-		if (is_no_function(s_convert_index))
-		{
-			DBUGMSG("lodreal[a] (*lodmul[b])"
-				" -> lod[b] (*lodrealmul[a])");
-			set_operand(s_convert_index-1, get_operand(s_convert_index));  /* prev lodptr = this  */
-		}
-		else if (is_function(s_convert_index, fStkPush2a))
-		{
-			DBUGMSG("lodreal[a] *pusha (lodmul[b])"
-				" -> lod[b] (*lodrealmul[a]),stk+=2");
-			/* set this fn ptr to null so cvtptrx won't be incr later  */
-			set_no_function(s_convert_index);
-			set_operand_prev_next(s_convert_index);  /* prev lodptr = this  */
-			s_stack_count += 2;
-		}
-		else if (is_function(s_convert_index, fStkPush4))
-		{
-			DBUGMSG("lodreal[a] *push4 (lodmul[b])"
-				" -> lod[b] push2 (*lodrealmul[a]),stk+=2");
-			set_function(s_convert_index++, fStkPush2);
-			set_operand(s_convert_index-2, get_operand(s_convert_index));  /* prev lodptr = this  */
-			/* we know cvtptrx points to a null function now  */
-			s_stack_count += 2;
-		}
-		set_operand(s_convert_index, otemp);  /* switch the operands  */
-		function = fStkLodRealMul;  /* next fn is now lodrealmul  */
-	}
-
+void Formula::peephole_optimize_mul_load_adjust_index()
+{
 	if (!is_no_function(s_convert_index))
 	{
 		s_convert_index++;  /* adjust cvtptrx back to normal if needed  */
 	}
+}
+
+void Formula::peephole_optimize_mul_load_2(t_function_pointer &function)
+{
+	/* -- Convert '2*a' into 'a + a'. */
+	if (is_no_function(s_convert_index))
+	{
+		DBUGMSG("lodreal[2] (*lodmul[b])"
+			" -> (*loddbl[b])");
+		set_operand(s_convert_index-1, get_operand(s_convert_index));
+	}
+	else if (is_function(s_convert_index, fStkPush2a))
+	{
+		DBUGMSG("lodreal[2] *pusha (lodmul[b])"
+			" -> loddbl[b],stk+=2");
+		set_operand_prev_next(s_convert_index);
+		s_stack_count += 2;
+	}
+	else if (is_function(s_convert_index, fStkPush4))
+	{
+		DBUGMSG("lodreal[2] *push4 (lodmul[b])"
+			" -> loddbl[b],stk+=4");
+		set_operand_prev_next(s_convert_index);
+		s_stack_count += 4;
+	}
+	set_no_function(--s_convert_index);  /* so no increment later  */
+	function = fStkLodDbl;
+}
+
+void Formula::peephole_optimize_mul_load_real(t_function_pointer &function)
+{
+	/* lodreal *?push?? (*?lodmul)  */
+	Arg *otemp = get_operand(s_convert_index-1);  /* save previous fn's operand  */
+	set_function(s_convert_index-1, fStkLod);  /* prev fn = lod  */
+	/* Moved setting of prev lodptr to below */
+	/* This was a bug causing a bad loadptr to be set here  */
+	/* 3 lines marked 'prev lodptr = this' below replace this line  */
+	if (is_no_function(s_convert_index))
+	{
+		DBUGMSG("lodreal[a] (*lodmul[b])"
+			" -> lod[b] (*lodrealmul[a])");
+		set_operand(s_convert_index-1, get_operand(s_convert_index));  /* prev lodptr = this  */
+	}
+	else if (is_function(s_convert_index, fStkPush2a))
+	{
+		DBUGMSG("lodreal[a] *pusha (lodmul[b])"
+			" -> lod[b] (*lodrealmul[a]),stk+=2");
+		/* set this fn ptr to null so cvtptrx won't be incr later  */
+		set_no_function(s_convert_index);
+		set_operand_prev_next(s_convert_index);  /* prev lodptr = this  */
+		s_stack_count += 2;
+	}
+	else if (is_function(s_convert_index, fStkPush4))
+	{
+		DBUGMSG("lodreal[a] *push4 (lodmul[b])"
+			" -> lod[b] push2 (*lodrealmul[a]),stk+=2");
+		set_function(s_convert_index++, fStkPush2);
+		set_operand(s_convert_index-2, get_operand(s_convert_index));  /* prev lodptr = this  */
+		/* we know cvtptrx points to a null function now  */
+		s_stack_count += 2;
+	}
+	set_operand(s_convert_index, otemp);  /* switch the operands  */
+	function = fStkLodRealMul;  /* next fn is now lodrealmul  */
+}
+
+void Formula::peephole_optimize_mul_load(t_function_pointer &function)
+{
+	peephole_optimize_mul_load_push2(function);
+	peephole_optimize_mul_load_swap_loads();
+
+	if (is_function(s_convert_index-1, fStkLodRealC) && (m_load[m_load_ptr-2]->d.x == 2.0))
+	{
+		peephole_optimize_mul_load_2(function);
+	}
+	else if (is_function(s_convert_index-1, fStkLodRealC) || is_function(s_convert_index-1, fStkLodReal))
+	{
+		peephole_optimize_mul_load_real(function);
+	}
+
+	peephole_optimize_mul_load_adjust_index();
 }
 
 void Formula::peephole_optimize_mul_real(t_function_pointer &function)
