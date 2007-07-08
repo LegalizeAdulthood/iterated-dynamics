@@ -631,82 +631,106 @@ void Formula::peephole_optimize_load(t_function_pointer &function)
 	set_operand(s_convert_index, m_load[m_load_ptr++]);
 }
 
+void Formula::peephole_optimize_add_load_dup(t_function_pointer &function)
+{
+	--s_convert_index;  /* found  ? *loddup (add)  */
+	if (s_convert_index != 0 && is_function(s_convert_index-1, fStkPush2a))
+	{
+		/* because  push lod lod  is impossible so is  push loddup  */
+		DBUGMSG("pusha *loddup (add) -> (*loddbl),stk += 2");
+		REMOVE_PUSH;
+		set_operand_next(s_convert_index);
+	}
+	else if (s_convert_index != 0 && is_function(s_convert_index-1, fStkPush4))
+	{
+		DBUGMSG("push4 *loddup (add) -> push2 (*loddbl),stk+=2");
+		set_function(s_convert_index-1, fStkPush2);
+		s_stack_count += 2;
+	}
+	else
+	{
+		DBUGMSG("op *loddup (add) -> op (*loddbl)");
+	}
+	function = fStkLodDbl;
+}
+
+void Formula::peephole_optimize_add_store_dup(t_function_pointer &function)
+{
+	DBUGMSG("stodup (*add) -> (*stodbl)");
+	/* there are always exactly 4 on stack here  */
+	--s_convert_index;
+	function = fStkStoDbl;
+}
+
+void Formula::peephole_optimize_add_load(t_function_pointer &function)
+{
+	--s_convert_index;     /*  ? *lod (add)  */
+	if (is_function(s_convert_index-1, fStkPush2))
+	{
+		DBUGMSG("*push load (add) -> (*plodadd),stk+=2");
+		REMOVE_PUSH;
+		set_operand_next(s_convert_index);
+		function = fStkPLodAdd;
+	}
+	else
+	{
+		DBUGMSG("op *lod (add) -> op (*lodadd)");
+		function = fStkLodAdd;
+	}
+}
+
+void Formula::peephole_optimize_add_load_real(t_function_pointer &function)
+{
+	--s_convert_index;  /* found  ? *lodreal (add)  */
+	if (is_function(s_convert_index-1, fStkPush2))
+	{
+		DBUGMSG("*push lodreal (add) -> (*lodrealadd),stk+=2");
+		REMOVE_PUSH;
+		set_operand_next(s_convert_index);
+	}
+	else
+	{
+		DBUGMSG("*lodreal (add) -> (*lodrealadd)");
+	}
+	function = fStkLodRealAdd;
+}
+
+void Formula::peephole_optimize_add_load_imaginary(t_function_pointer &function)
+{
+	--s_convert_index;  /* found  ? *lodimag (add)  */
+	if (is_function(s_convert_index-1, fStkPush2))
+	{
+		DBUGMSG("*push lodimag (add) -> (*lodimagadd),stk+=2");
+		REMOVE_PUSH;
+		set_operand_next(s_convert_index);
+	}
+	else
+	{
+		DBUGMSG("*lodimag (add) -> (*lodimagadd)");
+	}
+	function = fStkLodImagAdd;
+}
 void Formula::peephole_optimize_add(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLodDup) /* there is never a push before add  */
 	{
-		--s_convert_index;  /* found  ? *loddup (add)  */
-		if (s_convert_index != 0 && is_function(s_convert_index-1, fStkPush2a))
-		{
-			/* because  push lod lod  is impossible so is  push loddup  */
-			DBUGMSG("pusha *loddup (add) -> (*loddbl),stk += 2");
-			REMOVE_PUSH;
-			set_operand_next(s_convert_index);
-		}
-		else if (s_convert_index != 0 && is_function(s_convert_index-1, fStkPush4))
-		{
-			DBUGMSG("push4 *loddup (add) -> push2 (*loddbl),stk+=2");
-			set_function(s_convert_index-1, fStkPush2);
-			s_stack_count += 2;
-		}
-		else
-		{
-			DBUGMSG("op *loddup (add) -> op (*loddbl)");
-		}
-		function = fStkLodDbl;
+		peephole_optimize_add_load_dup(function);
 	}
 	else if (s_previous_function == fStkStoDup)
 	{
-		DBUGMSG("stodup (*add) -> (*stodbl)");
-		/* there are always exactly 4 on stack here  */
-		--s_convert_index;
-		function = fStkStoDbl;
+		peephole_optimize_add_store_dup(function);
 	}
 	else if (s_previous_function == fStkLod) /* have found  lod (*add)  */
 	{
-		--s_convert_index;     /*  ? *lod (add)  */
-		if (is_function(s_convert_index-1, fStkPush2))
-		{
-			DBUGMSG("*push load (add) -> (*plodadd),stk+=2");
-			REMOVE_PUSH;
-			set_operand_next(s_convert_index);
-			function = fStkPLodAdd;
-		}
-		else
-		{
-			DBUGMSG("op *lod (add) -> op (*lodadd)");
-			function = fStkLodAdd;
-		}
+		peephole_optimize_add_load(function);
 	}
 	else if (s_previous_function == fStkLodReal || s_previous_function == fStkLodRealC)
 	{
-		--s_convert_index;  /* found  ? *lodreal (add)  */
-		if (is_function(s_convert_index-1, fStkPush2))
-		{
-			DBUGMSG("*push lodreal (add) -> (*lodrealadd),stk+=2");
-			REMOVE_PUSH;
-			set_operand_next(s_convert_index);
-		}
-		else
-		{
-			DBUGMSG("*lodreal (add) -> (*lodrealadd)");
-		}
-		function = fStkLodRealAdd;
+		peephole_optimize_add_load_real(function);
 	}
 	else if (s_previous_function == fStkLodImag)
 	{
-		--s_convert_index;  /* found  ? *lodimag (add)  */
-		if (is_function(s_convert_index-1, fStkPush2))
-		{
-			DBUGMSG("*push lodimag (add) -> (*lodimagadd),stk+=2");
-			REMOVE_PUSH;
-			set_operand_next(s_convert_index);
-		}
-		else
-		{
-			DBUGMSG("*lodimag (add) -> (*lodimagadd)");
-		}
-		function = fStkLodImagAdd;
+		peephole_optimize_add_load_imaginary(function);
 	}
 }
 
