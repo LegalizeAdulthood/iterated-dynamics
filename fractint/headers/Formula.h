@@ -17,11 +17,43 @@ struct JUMP_PTRS
 	int JumpStoPtr;
 };
 
+enum JumpType
+{
+	JUMPTYPE_NONE = 0,
+	JUMPTYPE_IF = 1,
+	JUMPTYPE_ELSEIF = 2,
+	JUMPTYPE_ELSE = 3,
+	JUMPTYPE_ENDIF = 4
+};
+
 struct JUMP_CONTROL
 {
-	int type;
+	JumpType type;
 	JUMP_PTRS ptrs;
 	int DestJumpIndex;
+};
+
+enum VariableNames
+{
+	VARIABLE_PIXEL = 0,
+	VARIABLE_P1,
+	VARIABLE_P2,
+	VARIABLE_Z,
+	VARIABLE_LAST_SQR,
+	VARIABLE_PI,
+	VARIABLE_E,
+	VARIABLE_RAND,
+	VARIABLE_P3,
+	VARIABLE_WHITE_SQ,
+	VARIABLE_SCRN_PIX,
+	VARIABLE_SCRN_MAX,
+	VARIABLE_MAX_IT,
+	VARIABLE_IS_MAND,
+	VARIABLE_CENTER,
+	VARIABLE_MAG_X_MAG,
+	VARIABLE_ROT_SKEW,
+	VARIABLE_P4,
+	VARIABLE_P5
 };
 
 /* function, load, store pointers */
@@ -166,7 +198,7 @@ private:
 	int m_parser_vsp;
 	int m_formula_max_ops;
 	int m_formula_max_args;
-	int m_op_ptr;
+	int m_op_index;
 	bool m_uses_jump;
 	int m_jump_index;
 	int m_store_ptr;
@@ -196,6 +228,42 @@ private:
 	long m_statement_pos;
 	int m_errors_found;
 	char m_prepare_formula_text[16384];
+	int m_initial_load_pointer;
+	int m_initial_store_pointer;
+	int m_initial_op_pointer;
+
+	void set_function(int idx, t_function_pointer function)
+	{
+		m_function_load_store_pointers[idx].function = function;
+	}
+	bool is_function(int idx, t_function_pointer function)
+	{
+		return m_function_load_store_pointers[idx].function == function;
+	}
+	t_function_pointer get_function(int idx)
+	{
+		return m_function_load_store_pointers[idx].function;
+	}
+	void set_no_operand(int idx)
+	{
+		m_function_load_store_pointers[idx].operand = NULL;
+	}
+	void set_operand_next(int idx)
+	{
+		m_function_load_store_pointers[idx].operand = m_function_load_store_pointers[idx + 1].operand;
+	}
+	void set_operand_prev_next(int idx)
+	{
+		m_function_load_store_pointers[idx - 1].operand = m_function_load_store_pointers[idx + 1].operand;
+	}
+	Arg *get_operand(int idx)
+	{
+		return m_function_load_store_pointers[idx].operand;
+	}
+	void set_operand(int idx, Arg *operand)
+	{
+		m_function_load_store_pointers[idx].operand = operand;
+	}
 
 	ConstArg *is_constant(const char *text, int length);
 	bool ParseStr(const char *text, int pass);
@@ -206,30 +274,48 @@ private:
 
 	void allocate();
 	void count_lists();
-	int prescan(FILE *open_file);
+	bool prescan(FILE *open_file);
 	void RecSortPrec();
 	void display_var_list();
 	void display_const_lists();
 	void init_var_list();
 	void init_const_lists();
 	const char *error_messages(int which);
-	int check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry);
+	bool check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry);
 	void frm_error(FILE *open_file, long begin_frm);
-	int fill_jump_struct();
-	int fill_jump_struct_fp();
-	int CvtStk();
-	int CvtFptr(void (* ffptr)(), int MinStk, int FreeStk, int Delta);
+	bool fill_jump_struct();
+	bool fill_jump_struct_fp();
+	void CvtStk();
+	bool CvtFptr(void (*function)(), int MinStk, int FreeStk, int Delta);
 	t_function *is_function(const char *str, int len);
 	int fill_if_group(int endif_index, JUMP_PTRS *jump_data);
 	void record_error(int error_code);
+	void peephole_optimizer(t_function_pointer &function);
+	void peephole_optimize_load(t_function_pointer &function);
+	void peephole_optimize_add(t_function_pointer &function);
+	void peephole_optimize_sub(t_function_pointer &function);
+	void peephole_optimize_store_clear(t_function_pointer &function);
+	void peephole_optimize_mul(t_function_pointer &function);
+	void peephole_optimize_divide(t_function_pointer &function);
+	void peephole_optimize_real(t_function_pointer &function);
+	void peephole_optimize_load_imaginary(t_function_pointer &function);
+	void peephole_optimize_load_conjugate(t_function_pointer &function);
+	void peephole_optimize_modulus(t_function_pointer &function);
+	void peephole_optimize_flip(t_function_pointer &function);
+	void peephole_optimize_abs(t_function_pointer &function);
+	void peephole_optimize_sqr(t_function_pointer &function);
+	void peephole_optimize_power(t_function_pointer &function);
+	void peephole_optimize_less_equal(t_function_pointer &function);
+	void peephole_optimize_less(t_function_pointer &function);
+	void peephole_optimize_greater(t_function_pointer &function);
+	void peephole_optimize_greater_equal(t_function_pointer &function);
+	void peephole_optimize_not_equal(t_function_pointer &function);
+	void peephole_optimize_equal(t_function_pointer &function);
 };
 
 extern Arg *Arg1;
 extern Arg *Arg2;
 extern Arg s[20];
-extern int InitLodPtr;
-extern int InitStoPtr;
-extern int InitOpPtr;
 extern Formula g_formula_state;
 
 extern void dStkAbs();

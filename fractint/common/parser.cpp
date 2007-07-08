@@ -59,50 +59,28 @@ struct PEND_OP
 	int p;
 };
 
-enum VariableNames
-{
-	VARIABLE_PIXEL = 0,
-	VARIABLE_P1,
-	VARIABLE_P2,
-	VARIABLE_Z,
-	VARIABLE_LAST_SQR,
-	VARIABLE_PI,
-	VARIABLE_E,
-	VARIABLE_RAND,
-	VARIABLE_P3,
-	VARIABLE_WHITE_SQ,
-	VARIABLE_SCRN_PIX,
-	VARIABLE_SCRN_MAX,
-	VARIABLE_MAX_IT,
-	VARIABLE_IS_MAND,
-	VARIABLE_CENTER,
-	VARIABLE_MAG_X_MAG,
-	VARIABLE_ROT_SKEW,
-	VARIABLE_P4,
-	VARIABLE_P5
-};
-
+// indices correspond to VariableNames enum
 static const char *Constants[] =
 {
-	"pixel",        /* m_variables[0] */
-	"p1",           /* m_variables[1] */
-	"p2",           /* m_variables[2] */
-	"z",            /* m_variables[3] */
-	"LastSqr",      /* m_variables[4] */
-	"pi",           /* m_variables[5] */
-	"e",            /* m_variables[6] */
-	"rand",         /* m_variables[7] */
-	"p3",           /* m_variables[8] */
-	"whitesq",      /* m_variables[9] */
-	"scrnpix",      /* m_variables[10] */
-	"scrnmax",      /* m_variables[11] */
-	"maxit",        /* m_variables[12] */
-	"ismand",       /* m_variables[13] */
-	"center",       /* m_variables[14] */
-	"magxmag",      /* m_variables[15] */
-	"rotskew",      /* m_variables[16] */
-	"p4",           /* m_variables[17] */
-	"p5"            /* m_variables[18] */
+	"pixel",
+	"p1",
+	"p2",
+	"z",
+	"LastSqr",
+	"pi",
+	"e",
+	"rand",
+	"p3",
+	"whitesq",
+	"scrnpix",
+	"scrnmax",
+	"maxit",
+	"ismand",
+	"center",
+	"magxmag",
+	"rotskew",
+	"p4",
+	"p5"
 };
 
 struct SYMMETRY
@@ -191,7 +169,7 @@ Formula::Formula()
 	m_parser_vsp(0),
 	m_formula_max_ops(MAX_OPS),
 	m_formula_max_args(MAX_ARGS),
-	m_op_ptr(0),
+	m_op_index(0),
 	m_uses_jump(false),
 	m_jump_index(0),
 	m_store_ptr(0),
@@ -217,27 +195,30 @@ Formula::Formula()
 	m_formula_text(NULL),
 	m_file_pos(0),
 	m_statement_pos(0),
-	m_errors_found(0)
+	m_errors_found(0),
+	m_initial_load_pointer(0),
+	m_initial_store_pointer(0),
+	m_initial_op_pointer(0)
 {
 	{
-		Arg zero = { 0 };
+		Arg zero_arg = { 0 };
 		for (int i = 0; i < NUM_OF(m_argument_stack); i++)
 		{
-			m_argument_stack[i] = zero;
+			m_argument_stack[i] = zero_arg;
 		}
 	}
 	{
-		JUMP_CONTROL zero = { 0 };
+		JUMP_CONTROL zero_jump_control = { JUMPTYPE_NONE };
 		for (int i = 0; i < NUM_OF(m_jump_control); i++)
 		{
-			m_jump_control[i] = zero;
+			m_jump_control[i] = zero_jump_control;
 		}
 	}
 	{
-		error_data zero = { 0 };
+		error_data zero_error_data = { 0 };
 		for (int i = 0; i < NUM_OF(m_errors); i++)
 		{
-			m_errors[i] = zero;
+			m_errors[i] = zero_error_data;
 		}
 	}
 	m_prepare_formula_text[0] = 0;
@@ -326,17 +307,12 @@ enum TokenIdType
 /* TW made dependent on m_formula_max_ops */
 
 #define MAX_STORES ((m_formula_max_ops/4)*2)  /* at most only half the ops can be stores */
-#define MAX_LOADS ((unsigned)(m_formula_max_ops*.8))  /* and 80% can be loads */
+#define MAX_LOADS (unsigned(m_formula_max_ops*.8))  /* and 80% can be loads */
 
 static PEND_OP s_ops[2300];
 
 Arg *Arg1;
 Arg *Arg2;
-
-/* Some of these variables should be renamed for safety */
-int InitLodPtr;
-int InitStoPtr;
-int InitOpPtr;
 
 #if !defined(XFRACT)
 #define ChkLongDenom(denom)\
@@ -461,14 +437,19 @@ const char *Formula::error_messages(int which)
 	return error_strings[which > last_error ? last_error : which];
 }
 
-double double_from_fixpoint(long quantity)
+static double double_from_fixpoint(long quantity)
 {
 	return double(quantity)/s_fudge;
 }
 
-long fixpoint_from_double(double quantity)
+static long fixpoint_from_double(double quantity)
 {
 	return long(quantity*s_fudge);
+}
+
+static int int_strlen(const char *text)
+{
+	return int(strlen(text));
 }
 
 /* use the following when only float functions are implemented to
@@ -520,8 +501,8 @@ static long fixpoint_to_long(long quantity)
 
 void Formula::Random_l()
 {
-	m_variables[VARIABLE_RAND].a.l.x = fixpoint_to_long(new_random_number());
-	m_variables[VARIABLE_RAND].a.l.y = fixpoint_to_long(new_random_number());
+	m_variables[VARIABLE_RAND].argument.l.x = fixpoint_to_long(new_random_number());
+	m_variables[VARIABLE_RAND].argument.l.y = fixpoint_to_long(new_random_number());
 }
 
 void dRandom()
@@ -535,8 +516,8 @@ void Formula::Random_d()
           the same fractals when the srand() function is used. */
 	long x = fixpoint_to_long(new_random_number());
 	long y = fixpoint_to_long(new_random_number());
-	m_variables[VARIABLE_RAND].a.d.x = ((double)x / (1L << g_bit_shift));
-	m_variables[VARIABLE_RAND].a.d.y = ((double)y / (1L << g_bit_shift));
+	m_variables[VARIABLE_RAND].argument.d.x = (double(x) / (1L << g_bit_shift));
+	m_variables[VARIABLE_RAND].argument.d.y = (double(y) / (1L << g_bit_shift));
 
 }
 
@@ -549,7 +530,7 @@ void Random::set_random_function()
 		m_random_number = Arg1->l.x ^ Arg1->l.y;
 	}
 
-	Seed = (unsigned) m_random_number ^ (unsigned) (m_random_number >> 16);
+	Seed = unsigned(m_random_number)^unsigned(m_random_number >> 16);
 	srand(Seed);
 	m_set_random = true;
 
@@ -565,7 +546,7 @@ void Random::seed()
 
 	/* Use the current time to randomize the random number sequence. */
 	time(&ltime);
-	srand((unsigned int)ltime);
+	srand(unsigned int(ltime));
 
 	new_random_number();
 	new_random_number();
@@ -593,7 +574,7 @@ void Formula::StackStoreRandom_l()
 #if !defined(XFRACT)
 	SetRandFnct();
 	lRandom();
-	Arg1->l = m_variables[VARIABLE_RAND].a.l;
+	Arg1->l = m_variables[VARIABLE_RAND].argument.l;
 #endif
 }
 
@@ -604,11 +585,11 @@ void dStkSRand()
 
 void Formula::StackStoreRandom_d()
 {
-	Arg1->l.x = (long)(Arg1->d.x*(1L << g_bit_shift));
-	Arg1->l.y = (long)(Arg1->d.y*(1L << g_bit_shift));
+	Arg1->l.x = long(Arg1->d.x*(1L << g_bit_shift));
+	Arg1->l.y = long(Arg1->d.y*(1L << g_bit_shift));
 	SetRandFnct();
 	dRandom();
-	Arg1->d = m_variables[VARIABLE_RAND].a.d;
+	Arg1->d = m_variables[VARIABLE_RAND].argument.d;
 }
 
 void (*StkSRand)() = dStkSRand;
@@ -645,12 +626,12 @@ void Formula::StackLoadSqr2_d()
 {
 	Arg1++;
 	Arg2++;
-	m_variables[VARIABLE_LAST_SQR].a.d.x = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x;
-	m_variables[VARIABLE_LAST_SQR].a.d.y = m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.x = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x;
+	m_variables[VARIABLE_LAST_SQR].argument.d.y = m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y;
 	Arg1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
-	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].a.d.x - m_variables[VARIABLE_LAST_SQR].a.d.y;
-	m_variables[VARIABLE_LAST_SQR].a.d.x += m_variables[VARIABLE_LAST_SQR].a.d.y;
-	m_variables[VARIABLE_LAST_SQR].a.d.y = 0;
+	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].argument.d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.x += m_variables[VARIABLE_LAST_SQR].argument.d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0;
 	m_load_ptr++;
 }
 
@@ -675,9 +656,9 @@ void dStkSqr0()
 
 void Formula::StackSqr0()
 {
-	m_variables[VARIABLE_LAST_SQR].a.d.y = Arg1->d.y*Arg1->d.y; /* use LastSqr as temp storage */
+	m_variables[VARIABLE_LAST_SQR].argument.d.y = Arg1->d.y*Arg1->d.y; /* use LastSqr as temp storage */
 	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
-	Arg1->d.x = Arg1->d.x*Arg1->d.x - m_variables[VARIABLE_LAST_SQR].a.d.y;
+	Arg1->d.x = Arg1->d.x*Arg1->d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
 }
 
 void dStkSqr3()
@@ -708,12 +689,12 @@ void dStkSqr()
 
 void Formula::StackSqr_d()
 {
-	m_variables[VARIABLE_LAST_SQR].a.d.x = Arg1->d.x*Arg1->d.x;
-	m_variables[VARIABLE_LAST_SQR].a.d.y = Arg1->d.y*Arg1->d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.x = Arg1->d.x*Arg1->d.x;
+	m_variables[VARIABLE_LAST_SQR].argument.d.y = Arg1->d.y*Arg1->d.y;
 	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
-	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].a.d.x - m_variables[VARIABLE_LAST_SQR].a.d.y;
-	m_variables[VARIABLE_LAST_SQR].a.d.x += m_variables[VARIABLE_LAST_SQR].a.d.y;
-	m_variables[VARIABLE_LAST_SQR].a.d.y = 0;
+	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].argument.d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.x += m_variables[VARIABLE_LAST_SQR].argument.d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0;
 }
 
 void lStkSqr()
@@ -724,12 +705,12 @@ void lStkSqr()
 void Formula::StackSqr_l()
 {
 #if !defined(XFRACT)
-	m_variables[VARIABLE_LAST_SQR].a.l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift);
-	m_variables[VARIABLE_LAST_SQR].a.l.y = multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
+	m_variables[VARIABLE_LAST_SQR].argument.l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift);
+	m_variables[VARIABLE_LAST_SQR].argument.l.y = multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
 	Arg1->l.y = multiply(Arg1->l.x, Arg1->l.y, g_bit_shift) << 1;
-	Arg1->l.x = m_variables[VARIABLE_LAST_SQR].a.l.x - m_variables[VARIABLE_LAST_SQR].a.l.y;
-	m_variables[VARIABLE_LAST_SQR].a.l.x += m_variables[VARIABLE_LAST_SQR].a.l.y;
-	m_variables[VARIABLE_LAST_SQR].a.l.y = 0L;
+	Arg1->l.x = m_variables[VARIABLE_LAST_SQR].argument.l.x - m_variables[VARIABLE_LAST_SQR].argument.l.y;
+	m_variables[VARIABLE_LAST_SQR].argument.l.x += m_variables[VARIABLE_LAST_SQR].argument.l.y;
+	m_variables[VARIABLE_LAST_SQR].argument.l.y = 0L;
 #endif
 }
 
@@ -833,8 +814,8 @@ void (*StkCeil)() = dStkCeil;
 
 void dStkTrunc()
 {
-	Arg1->d.x = (int)(Arg1->d.x);
-	Arg1->d.y = (int)(Arg1->d.y);
+	Arg1->d.x = int(Arg1->d.x);
+	Arg1->d.y = int(Arg1->d.y);
 }
 
 #if !defined(XFRACT)
@@ -898,7 +879,7 @@ void dStkOne()
 #if !defined(XFRACT)
 void lStkOne()
 {
-	Arg1->l.x = (long) s_fudge;
+	Arg1->l.x = long(s_fudge);
 	Arg1->l.y = 0L;
 }
 #endif
@@ -1537,7 +1518,7 @@ void (*StkCAbs)() = dStkCAbs;
 
 void dStkLT()
 {
-	Arg2->d.x = (double)(Arg2->d.x < Arg1->d.x);
+	Arg2->d.x = double(Arg2->d.x < Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
 	Arg2--;
@@ -1546,7 +1527,7 @@ void dStkLT()
 #if !defined(XFRACT)
 void lStkLT()
 {
-	Arg2->l.x = (long)(Arg2->l.x < Arg1->l.x) << g_bit_shift;
+	Arg2->l.x = long(Arg2->l.x < Arg1->l.x) << g_bit_shift;
 	Arg2->l.y = 0l;
 	Arg1--;
 	Arg2--;
@@ -1557,7 +1538,7 @@ void (*StkLT)() = dStkLT;
 
 void dStkGT()
 {
-	Arg2->d.x = (double)(Arg2->d.x > Arg1->d.x);
+	Arg2->d.x = double(Arg2->d.x > Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
 	Arg2--;
@@ -1566,7 +1547,7 @@ void dStkGT()
 #if !defined(XFRACT)
 void lStkGT()
 {
-	Arg2->l.x = (long)(Arg2->l.x > Arg1->l.x) << g_bit_shift;
+	Arg2->l.x = long(Arg2->l.x > Arg1->l.x) << g_bit_shift;
 	Arg2->l.y = 0l;
 	Arg1--;
 	Arg2--;
@@ -1577,7 +1558,7 @@ void (*StkGT)() = dStkGT;
 
 void dStkLTE()
 {
-	Arg2->d.x = (double)(Arg2->d.x <= Arg1->d.x);
+	Arg2->d.x = double(Arg2->d.x <= Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
 	Arg2--;
@@ -1586,7 +1567,7 @@ void dStkLTE()
 #if !defined(XFRACT)
 void lStkLTE()
 {
-	Arg2->l.x = (long)(Arg2->l.x <= Arg1->l.x) << g_bit_shift;
+	Arg2->l.x = long(Arg2->l.x <= Arg1->l.x) << g_bit_shift;
 	Arg2->l.y = 0l;
 	Arg1--;
 	Arg2--;
@@ -1597,7 +1578,7 @@ void (*StkLTE)() = dStkLTE;
 
 void dStkGTE()
 {
-	Arg2->d.x = (double)(Arg2->d.x >= Arg1->d.x);
+	Arg2->d.x = double(Arg2->d.x >= Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
 	Arg2--;
@@ -1606,7 +1587,7 @@ void dStkGTE()
 #if !defined(XFRACT)
 void lStkGTE()
 {
-	Arg2->l.x = (long)(Arg2->l.x >= Arg1->l.x) << g_bit_shift;
+	Arg2->l.x = long(Arg2->l.x >= Arg1->l.x) << g_bit_shift;
 	Arg2->l.y = 0l;
 	Arg1--;
 	Arg2--;
@@ -1617,7 +1598,7 @@ void (*StkGTE)() = dStkGTE;
 
 void dStkEQ()
 {
-	Arg2->d.x = (double)(Arg2->d.x == Arg1->d.x);
+	Arg2->d.x = double(Arg2->d.x == Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
 	Arg2--;
@@ -1626,7 +1607,7 @@ void dStkEQ()
 #if !defined(XFRACT)
 void lStkEQ()
 {
-	Arg2->l.x = (long)(Arg2->l.x == Arg1->l.x) << g_bit_shift;
+	Arg2->l.x = long(Arg2->l.x == Arg1->l.x) << g_bit_shift;
 	Arg2->l.y = 0l;
 	Arg1--;
 	Arg2--;
@@ -1637,7 +1618,7 @@ void (*StkEQ)() = dStkEQ;
 
 void dStkNE()
 {
-	Arg2->d.x = (double)(Arg2->d.x != Arg1->d.x);
+	Arg2->d.x = double(Arg2->d.x != Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
 	Arg2--;
@@ -1646,7 +1627,7 @@ void dStkNE()
 #if !defined(XFRACT)
 void lStkNE()
 {
-	Arg2->l.x = (long)(Arg2->l.x != Arg1->l.x) << g_bit_shift;
+	Arg2->l.x = long(Arg2->l.x != Arg1->l.x) << g_bit_shift;
 	Arg2->l.y = 0l;
 	Arg1--;
 	Arg2--;
@@ -1657,7 +1638,7 @@ void (*StkNE)() = dStkNE;
 
 void dStkOR()
 {
-	Arg2->d.x = (double)(Arg2->d.x || Arg1->d.x);
+	Arg2->d.x = double(Arg2->d.x || Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
 	Arg2--;
@@ -1666,7 +1647,7 @@ void dStkOR()
 #if !defined(XFRACT)
 void lStkOR()
 {
-	Arg2->l.x = (long)(Arg2->l.x || Arg1->l.x) << g_bit_shift;
+	Arg2->l.x = long(Arg2->l.x || Arg1->l.x) << g_bit_shift;
 	Arg2->l.y = 0l;
 	Arg1--;
 	Arg2--;
@@ -1677,7 +1658,7 @@ void (*StkOR)() = dStkOR;
 
 void dStkAND()
 {
-	Arg2->d.x = (double)(Arg2->d.x && Arg1->d.x);
+	Arg2->d.x = double(Arg2->d.x && Arg1->d.x);
 	Arg2->d.y = 0.0;
 	Arg1--;
 	Arg2--;
@@ -1686,7 +1667,7 @@ void dStkAND()
 #if !defined(XFRACT)
 void lStkAND()
 {
-	Arg2->l.x = (long)(Arg2->l.x && Arg1->l.x) << g_bit_shift;
+	Arg2->l.x = long(Arg2->l.x && Arg1->l.x) << g_bit_shift;
 	Arg2->l.y = 0l;
 	Arg1--;
 	Arg2--;
@@ -1763,7 +1744,7 @@ void (*StkPwr)() = dStkPwr;
 
 void Formula::end_init()
 {
-	m_last_init_op = m_op_ptr;
+	m_last_init_op = m_op_index;
 	m_initial_jump_index = m_jump_index;
 }
 
@@ -1774,7 +1755,7 @@ void StkJump()
 
 void Formula::StackJump()
 {
-	m_op_ptr =  m_jump_control[m_jump_index].ptrs.JumpOpPtr;
+	m_op_index =  m_jump_control[m_jump_index].ptrs.JumpOpPtr;
 	m_load_ptr = m_jump_control[m_jump_index].ptrs.JumpLodPtr;
 	m_store_ptr = m_jump_control[m_jump_index].ptrs.JumpStoPtr;
 	m_jump_index = m_jump_control[m_jump_index].DestJumpIndex;
@@ -1862,26 +1843,14 @@ void Formula::StackJumpLabel()
 	m_jump_index++;
 }
 
-
-static unsigned count_white_space(const char *text)
+static int count_white_space(const char *text)
 {
-	unsigned n;
-	unsigned done;
-
-	for (done = n = 0; !done; n++)
+	int n = 0;
+	while (text[n] && isspace(text[n]))
 	{
-		switch (text[n])
-		{
-		case ' ':
-		case '\t':
-		case '\n':
-		case '\r':
-			break;
-		default:
-			done = 1;
-		}
+		n++;
 	}
-	return n - 1;
+	return n;
 }
 
 /* detect if constant is part of a (a, b) construct */
@@ -1912,9 +1881,9 @@ ConstArg *Formula::is_constant(const char *text, int length)
 	/* next line enforces variable vs constant naming convention */
 	for (int n = 0; n < m_parser_vsp; n++)
 	{
-		if (m_variables[n].len == length)
+		if (m_variables[n].name_length == length)
 		{
-			if (!strnicmp(m_variables[n].s, text, length))
+			if (!strnicmp(m_variables[n].name, text, length))
 			{
 				switch (n)
 				{
@@ -1943,18 +1912,18 @@ ConstArg *Formula::is_constant(const char *text, int length)
 			}
 		}
 	}
-	m_variables[m_parser_vsp].s = text;
-	m_variables[m_parser_vsp].len = length;
-	m_variables[m_parser_vsp].a.d.x = 0.0;
-	m_variables[m_parser_vsp].a.d.y = 0.0;
+	m_variables[m_parser_vsp].name = text;
+	m_variables[m_parser_vsp].name_length = length;
+	m_variables[m_parser_vsp].argument.d.x = 0.0;
+	m_variables[m_parser_vsp].argument.d.y = 0.0;
 
 	/* m_variables[m_parser_vsp].a should already be zeroed out */
 	switch (m_math_type)
 	{
 #if !defined(XFRACT)
 	case L_MATH:
-		m_variables[m_parser_vsp].a.l.x = 0;
-		m_variables[m_parser_vsp].a.l.y = 0;
+		m_variables[m_parser_vsp].argument.l.x = 0;
+		m_variables[m_parser_vsp].argument.l.y = 0;
 		break;
 #endif
 	}
@@ -1968,7 +1937,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 			m_posp--;
 			text -= 1;
 			m_initial_n--;
-			m_variables[m_parser_vsp].len++;
+			m_variables[m_parser_vsp].name_length++;
 		}
 		int n;
 		for (n = 1; isdigit(text[n]) || text[n] == '.'; n++)
@@ -1985,7 +1954,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 				for (; isdigit(text[j]) || text[j] == '.' || text[j] == '-'; j++)
 				{
 				}
-				m_variables[m_parser_vsp].len = j;
+				m_variables[m_parser_vsp].name_length = j;
 			}
 			else
 			{
@@ -2000,16 +1969,16 @@ ConstArg *Formula::is_constant(const char *text, int length)
 		switch (m_math_type)
 		{
 		case D_MATH:
-			m_variables[m_parser_vsp].a.d = z;
+			m_variables[m_parser_vsp].argument.d = z;
 			break;
 #if !defined(XFRACT)
 		case L_MATH:
-			m_variables[m_parser_vsp].a.l.x = fixpoint_from_double(z.x);
-			m_variables[m_parser_vsp].a.l.y = fixpoint_from_double(z.y);
+			m_variables[m_parser_vsp].argument.l.x = fixpoint_from_double(z.x);
+			m_variables[m_parser_vsp].argument.l.y = fixpoint_from_double(z.y);
 			break;
 #endif
 		}
-		m_variables[m_parser_vsp].s = text;
+		m_variables[m_parser_vsp].name = text;
 	}
 	return &m_variables[m_parser_vsp++];
 }
@@ -2025,15 +1994,6 @@ void (*StkTrig1)() = dStkSqr;
 void (*StkTrig2)() = dStkSinh;
 void (*StkTrig3)() = dStkCosh;
 
-enum JumpType
-{
-	JUMPTYPE_NONE = 0,
-	JUMPTYPE_IF = 1,
-	JUMPTYPE_ELSEIF = 2,
-	JUMPTYPE_ELSE = 3,
-	JUMPTYPE_ENDIF = 4
-};
-
 static const char *s_jump_keywords[] =
 {
 	"if",
@@ -2046,7 +2006,7 @@ static JumpType is_jump_keyword(const char *Str, int Len)
 {
 	for (int i = 0; i < NUM_OF(s_jump_keywords); i++)
 	{
-		if ((int) strlen(s_jump_keywords[i]) == Len)
+		if (int_strlen(s_jump_keywords[i]) == Len)
 		{
 			if (!strnicmp(s_jump_keywords[i], Str, Len))
 			{
@@ -2057,7 +2017,7 @@ static JumpType is_jump_keyword(const char *Str, int Len)
 	return JUMPTYPE_NONE;
 }
 
-static function_list_item function_list[] =
+static function_list_item s_function_list[] =
 {
 	{"sin",    &StkSin },
 	{"sinh",   &StkSinh },
@@ -2116,7 +2076,7 @@ enum OperatorType
 	OPERATOR_RAISE_POWER
 };
 
-static const char *operator_list[] =
+static const char *s_operator_list[] =
 {
 	",",	/*  0 */
 	"!=",	/*  1 */
@@ -2167,11 +2127,11 @@ t_function *Formula::is_function(const char *text, int length)
 	unsigned n = count_white_space(&text[length]);
 	if (text[length + n] == '(')
 	{
-		for (int i = 0; i < NUM_OF(function_list); i++)
+		for (int i = 0; i < NUM_OF(s_function_list); i++)
 		{
-			if ((int) strlen(function_list[i].name) == length)
+			if (int_strlen(s_function_list[i].name) == length)
 			{
-				if (!strnicmp(function_list[i].name, text, length))
+				if (!strnicmp(s_function_list[i].name, text, length))
 				{
 					/* count function variables */
 					int function_number = which_function(text, length);
@@ -2182,7 +2142,7 @@ t_function *Formula::is_function(const char *text, int length)
 							m_max_function_number = function_number;
 						}
 					}
-					return *function_list[i].function;
+					return *s_function_list[i].function;
 				}
 			}
 		}
@@ -2198,7 +2158,7 @@ void Formula::RecSortPrec()
 	{
 		RecSortPrec();
 	}
-	m_functions[m_op_ptr++] = s_ops[current].function;
+	m_functions[m_op_index++] = s_ops[current].function;
 }
 
 int Formula::GetP(int offset, int store_count)
@@ -2351,8 +2311,8 @@ bool Formula::ParseStr(const char *text, int pass)
 	m_max_function_number = 0;
 	for (m_parser_vsp = 0; m_parser_vsp < NUM_OF(Constants); m_parser_vsp++)
 	{
-		m_variables[m_parser_vsp].s = Constants[m_parser_vsp];
-		m_variables[m_parser_vsp].len = (int) strlen(Constants[m_parser_vsp]);
+		m_variables[m_parser_vsp].name = Constants[m_parser_vsp];
+		m_variables[m_parser_vsp].name_length = int_strlen(Constants[m_parser_vsp]);
 	}
 	double center_real;
 	double center_imag;
@@ -2361,73 +2321,73 @@ bool Formula::ParseStr(const char *text, int pass)
 	double rotation;
 	double skew;
 	convert_center_mag(&center_real, &center_imag, &magnification, &x_magnification_factor, &rotation, &skew);
-	m_variables[VARIABLE_RAND].a.d.x = m_variables[VARIABLE_RAND].a.d.y = 0.0;
-	m_variables[VARIABLE_SCRN_MAX].a.d.x = (double) g_x_dots;
-	m_variables[VARIABLE_SCRN_MAX].a.d.y = (double) g_y_dots;
-	m_variables[VARIABLE_MAX_IT].a.d.x = (double) g_max_iteration;
-	m_variables[VARIABLE_MAX_IT].a.d.y = 0;
-	m_variables[VARIABLE_IS_MAND].a.d.x = g_is_mand ? 1.0 : 0.0;
-	m_variables[VARIABLE_IS_MAND].a.d.y = 0;
-	m_variables[VARIABLE_CENTER].a.d.x = center_real;
-	m_variables[VARIABLE_CENTER].a.d.y = center_imag;
-	m_variables[VARIABLE_MAG_X_MAG].a.d.x = (double) magnification;
-	m_variables[VARIABLE_MAG_X_MAG].a.d.y = x_magnification_factor;
-	m_variables[VARIABLE_ROT_SKEW].a.d.x = rotation;
-	m_variables[VARIABLE_ROT_SKEW].a.d.y = skew;
+	m_variables[VARIABLE_RAND].argument.d.x = m_variables[VARIABLE_RAND].argument.d.y = 0.0;
+	m_variables[VARIABLE_SCRN_MAX].argument.d.x = double(g_x_dots);
+	m_variables[VARIABLE_SCRN_MAX].argument.d.y = double(g_y_dots);
+	m_variables[VARIABLE_MAX_IT].argument.d.x = double(g_max_iteration);
+	m_variables[VARIABLE_MAX_IT].argument.d.y = 0;
+	m_variables[VARIABLE_IS_MAND].argument.d.x = g_is_mand ? 1.0 : 0.0;
+	m_variables[VARIABLE_IS_MAND].argument.d.y = 0;
+	m_variables[VARIABLE_CENTER].argument.d.x = center_real;
+	m_variables[VARIABLE_CENTER].argument.d.y = center_imag;
+	m_variables[VARIABLE_MAG_X_MAG].argument.d.x = double(magnification);
+	m_variables[VARIABLE_MAG_X_MAG].argument.d.y = x_magnification_factor;
+	m_variables[VARIABLE_ROT_SKEW].argument.d.x = rotation;
+	m_variables[VARIABLE_ROT_SKEW].argument.d.y = skew;
 
 	switch (m_math_type)
 	{
 	case D_MATH:
-		m_variables[VARIABLE_P1].a.d.x = g_parameters[0];
-		m_variables[VARIABLE_P1].a.d.y = g_parameters[1];
-		m_variables[VARIABLE_P2].a.d.x = g_parameters[2];
-		m_variables[VARIABLE_P2].a.d.y = g_parameters[3];
-		m_variables[VARIABLE_PI].a.d.x = MathUtil::Pi;
-		m_variables[VARIABLE_PI].a.d.y = 0.0;
-		m_variables[VARIABLE_E].a.d.x = MathUtil::e;
-		m_variables[VARIABLE_E].a.d.y = 0.0;
-		m_variables[VARIABLE_P3].a.d.x = g_parameters[4];
-		m_variables[VARIABLE_P3].a.d.y = g_parameters[5];
-		m_variables[VARIABLE_P4].a.d.x = g_parameters[6];
-		m_variables[VARIABLE_P4].a.d.y = g_parameters[7];
-		m_variables[VARIABLE_P5].a.d.x = g_parameters[8];
-		m_variables[VARIABLE_P5].a.d.y = g_parameters[9];
+		m_variables[VARIABLE_P1].argument.d.x = g_parameters[0];
+		m_variables[VARIABLE_P1].argument.d.y = g_parameters[1];
+		m_variables[VARIABLE_P2].argument.d.x = g_parameters[2];
+		m_variables[VARIABLE_P2].argument.d.y = g_parameters[3];
+		m_variables[VARIABLE_PI].argument.d.x = MathUtil::Pi;
+		m_variables[VARIABLE_PI].argument.d.y = 0.0;
+		m_variables[VARIABLE_E].argument.d.x = MathUtil::e;
+		m_variables[VARIABLE_E].argument.d.y = 0.0;
+		m_variables[VARIABLE_P3].argument.d.x = g_parameters[4];
+		m_variables[VARIABLE_P3].argument.d.y = g_parameters[5];
+		m_variables[VARIABLE_P4].argument.d.x = g_parameters[6];
+		m_variables[VARIABLE_P4].argument.d.y = g_parameters[7];
+		m_variables[VARIABLE_P5].argument.d.x = g_parameters[8];
+		m_variables[VARIABLE_P5].argument.d.y = g_parameters[9];
 		break;
 #if !defined(XFRACT)
 	case L_MATH:
-		m_variables[VARIABLE_P1].a.l.x = fixpoint_from_double(g_parameters[0]);
-		m_variables[VARIABLE_P1].a.l.y = fixpoint_from_double(g_parameters[1]);
-		m_variables[VARIABLE_P2].a.l.x = fixpoint_from_double(g_parameters[2]);
-		m_variables[VARIABLE_P2].a.l.y = fixpoint_from_double(g_parameters[3]);
-		m_variables[VARIABLE_PI].a.l.x = fixpoint_from_double(MathUtil::Pi);
-		m_variables[VARIABLE_PI].a.l.y = 0L;
-		m_variables[VARIABLE_E].a.l.x = fixpoint_from_double(MathUtil::e);
-		m_variables[VARIABLE_E].a.l.y = 0L;
-		m_variables[VARIABLE_P3].a.l.x = fixpoint_from_double(g_parameters[4]);
-		m_variables[VARIABLE_P3].a.l.y = fixpoint_from_double(g_parameters[5]);
-		m_variables[VARIABLE_SCRN_MAX].a.l.x = g_x_dots << g_bit_shift;
-		m_variables[VARIABLE_SCRN_MAX].a.l.y = g_y_dots << g_bit_shift;
-		m_variables[VARIABLE_MAX_IT].a.l.x = g_max_iteration << g_bit_shift;
-		m_variables[VARIABLE_MAX_IT].a.l.y = 0L;
-		m_variables[VARIABLE_IS_MAND].a.l.x = (g_is_mand ? 1 : 0) << g_bit_shift;
-		m_variables[VARIABLE_IS_MAND].a.l.y = 0L;
-		m_variables[VARIABLE_CENTER].a.l.x = fixpoint_from_double(m_variables[VARIABLE_CENTER].a.d.x);
-		m_variables[VARIABLE_CENTER].a.l.y = fixpoint_from_double(m_variables[VARIABLE_CENTER].a.d.y);
-		m_variables[VARIABLE_MAG_X_MAG].a.l.x = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].a.d.x);
-		m_variables[VARIABLE_MAG_X_MAG].a.l.y = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].a.d.y);
-		m_variables[VARIABLE_ROT_SKEW].a.l.x = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].a.d.x);
-		m_variables[VARIABLE_ROT_SKEW].a.l.y = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].a.d.y);
-		m_variables[VARIABLE_P4].a.l.x = fixpoint_from_double(g_parameters[6]);
-		m_variables[VARIABLE_P4].a.l.y = fixpoint_from_double(g_parameters[7]);
-		m_variables[VARIABLE_P5].a.l.x = fixpoint_from_double(g_parameters[8]);
-		m_variables[VARIABLE_P5].a.l.y = fixpoint_from_double(g_parameters[9]);
+		m_variables[VARIABLE_P1].argument.l.x = fixpoint_from_double(g_parameters[0]);
+		m_variables[VARIABLE_P1].argument.l.y = fixpoint_from_double(g_parameters[1]);
+		m_variables[VARIABLE_P2].argument.l.x = fixpoint_from_double(g_parameters[2]);
+		m_variables[VARIABLE_P2].argument.l.y = fixpoint_from_double(g_parameters[3]);
+		m_variables[VARIABLE_PI].argument.l.x = fixpoint_from_double(MathUtil::Pi);
+		m_variables[VARIABLE_PI].argument.l.y = 0L;
+		m_variables[VARIABLE_E].argument.l.x = fixpoint_from_double(MathUtil::e);
+		m_variables[VARIABLE_E].argument.l.y = 0L;
+		m_variables[VARIABLE_P3].argument.l.x = fixpoint_from_double(g_parameters[4]);
+		m_variables[VARIABLE_P3].argument.l.y = fixpoint_from_double(g_parameters[5]);
+		m_variables[VARIABLE_SCRN_MAX].argument.l.x = g_x_dots << g_bit_shift;
+		m_variables[VARIABLE_SCRN_MAX].argument.l.y = g_y_dots << g_bit_shift;
+		m_variables[VARIABLE_MAX_IT].argument.l.x = g_max_iteration << g_bit_shift;
+		m_variables[VARIABLE_MAX_IT].argument.l.y = 0L;
+		m_variables[VARIABLE_IS_MAND].argument.l.x = (g_is_mand ? 1 : 0) << g_bit_shift;
+		m_variables[VARIABLE_IS_MAND].argument.l.y = 0L;
+		m_variables[VARIABLE_CENTER].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.x);
+		m_variables[VARIABLE_CENTER].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.y);
+		m_variables[VARIABLE_MAG_X_MAG].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.x);
+		m_variables[VARIABLE_MAG_X_MAG].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.y);
+		m_variables[VARIABLE_ROT_SKEW].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.x);
+		m_variables[VARIABLE_ROT_SKEW].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.y);
+		m_variables[VARIABLE_P4].argument.l.x = fixpoint_from_double(g_parameters[6]);
+		m_variables[VARIABLE_P4].argument.l.y = fixpoint_from_double(g_parameters[7]);
+		m_variables[VARIABLE_P5].argument.l.x = fixpoint_from_double(g_parameters[8]);
+		m_variables[VARIABLE_P5].argument.l.y = fixpoint_from_double(g_parameters[9]);
 		break;
 #endif
 	}
 
 	m_last_init_op = 0;
 	m_parenthesis_count = 0;
-	m_op_ptr = 0;
+	m_op_index = 0;
 	m_load_ptr = 0;
 	m_store_ptr = 0;
 	m_posp = 0;
@@ -2589,24 +2549,24 @@ bool Formula::ParseStr(const char *text, int pass)
 				{
 				case JUMPTYPE_IF:
 					m_expecting_arg = true;
-					m_jump_control[m_jump_index++].type = 1;
+					m_jump_control[m_jump_index++].type = JUMPTYPE_IF;
 					StoreFunction(StkJumpOnFalse, 1);
 					break;
 				case JUMPTYPE_ELSEIF:
 					m_expecting_arg = true;
-					m_jump_control[m_jump_index++].type = 2;
-					m_jump_control[m_jump_index++].type = 2;
+					m_jump_control[m_jump_index++].type = JUMPTYPE_ELSEIF;
+					m_jump_control[m_jump_index++].type = JUMPTYPE_ELSEIF;
 					StoreFunction(StkJump, 1);
 					StoreFunction(NULL, 15);
 					StoreFunction(StkClr, -30000);
 					StoreFunction(StkJumpOnFalse, 1);
 					break;
 				case JUMPTYPE_ELSE:
-					m_jump_control[m_jump_index++].type = 3;
+					m_jump_control[m_jump_index++].type = JUMPTYPE_ELSE;
 					StoreFunction(StkJump, 1);
 					break;
 				case JUMPTYPE_ENDIF:
-					m_jump_control[m_jump_index++].type = 4;
+					m_jump_control[m_jump_index++].type = JUMPTYPE_ENDIF;
 					StoreFunction(StkJumpLabel, 1);
 					break;
 				default:
@@ -2625,9 +2585,9 @@ bool Formula::ParseStr(const char *text, int pass)
 				else
 				{
 					ConstArg *c = is_constant(&text[m_initial_n], length);
-					m_load[m_load_ptr++] = &(c->a);
+					m_load[m_load_ptr++] = &(c->argument);
 					StoreFunction(StkLod, 1, store_count);
-					n = m_initial_n + c->len - 1;
+					n = m_initial_n + c->name_length - 1;
 				}
 			}
 			break;
@@ -2659,9 +2619,9 @@ int Formula::orbit()
 		return 1;
 	}
 
-	m_load_ptr = InitLodPtr;
-	m_store_ptr = InitStoPtr;
-	m_op_ptr = InitOpPtr;
+	m_load_ptr = m_initial_load_pointer;
+	m_store_ptr = m_initial_store_pointer;
+	m_op_index = m_initial_op_pointer;
 	m_jump_index = m_initial_jump_index;
 	/* Set the random number */
 	if (s_random.random() || s_random.randomized())
@@ -2681,20 +2641,20 @@ int Formula::orbit()
 
 	Arg1 = &m_argument_stack[0];
 	Arg2 = Arg1-1;
-	while (m_op_ptr < m_last_op)
+	while (m_op_index < m_last_op)
 	{
-		m_functions[m_op_ptr]();
-		m_op_ptr++;
+		m_functions[m_op_index]();
+		m_op_index++;
 	}
 
 	switch (m_math_type)
 	{
 	case D_MATH:
-		g_old_z = g_new_z = m_variables[VARIABLE_Z].a.d;
+		g_old_z = g_new_z = m_variables[VARIABLE_Z].argument.d;
 		return Arg1->d.x == 0.0;
 #if !defined(XFRACT)
 	case L_MATH:
-		g_old_z_l = g_new_z_l = m_variables[VARIABLE_Z].a.l;
+		g_old_z_l = g_new_z_l = m_variables[VARIABLE_Z].argument.l;
 		if (g_overflow)
 		{
 			return 1;
@@ -2717,32 +2677,32 @@ int Formula::per_pixel()
 	g_overflow = false;
 	m_load_ptr = 0;
 	m_store_ptr = 0;
-	m_op_ptr = 0;
+	m_op_index = 0;
 	m_jump_index = 0;
 	Arg1 = &m_argument_stack[0];
 	Arg2 = Arg1;
 	Arg2--;
 
 
-	m_variables[VARIABLE_SCRN_PIX].a.d.x = (double)g_col;
-	m_variables[VARIABLE_SCRN_PIX].a.d.y = (double)g_row;
+	m_variables[VARIABLE_SCRN_PIX].argument.d.x = double(g_col);
+	m_variables[VARIABLE_SCRN_PIX].argument.d.y = double(g_row);
 
 	switch (m_math_type)
 	{
 	case D_MATH:
-		m_variables[VARIABLE_WHITE_SQ].a.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
-		m_variables[VARIABLE_WHITE_SQ].a.d.y = 0.0;
+		m_variables[VARIABLE_WHITE_SQ].argument.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
+		m_variables[VARIABLE_WHITE_SQ].argument.d.y = 0.0;
 		break;
 
 
 #if !defined(XFRACT)
 	case L_MATH:
-		m_variables[VARIABLE_WHITE_SQ].a.l.x = fixpoint_from_double((g_row + g_col) & 1);
-		m_variables[VARIABLE_WHITE_SQ].a.l.y = 0L;
-		m_variables[VARIABLE_SCRN_PIX].a.l.x = g_col;
-		m_variables[VARIABLE_SCRN_PIX].a.l.x <<= g_bit_shift;
-		m_variables[VARIABLE_SCRN_PIX].a.l.y = g_row;
-		m_variables[VARIABLE_SCRN_PIX].a.l.y <<= g_bit_shift;
+		m_variables[VARIABLE_WHITE_SQ].argument.l.x = fixpoint_from_double((g_row + g_col) & 1);
+		m_variables[VARIABLE_WHITE_SQ].argument.l.y = 0L;
+		m_variables[VARIABLE_SCRN_PIX].argument.l.x = g_col;
+		m_variables[VARIABLE_SCRN_PIX].argument.l.x <<= g_bit_shift;
+		m_variables[VARIABLE_SCRN_PIX].argument.l.y = g_row;
+		m_variables[VARIABLE_SCRN_PIX].argument.l.y <<= g_bit_shift;
 		break;
 #endif
 	}
@@ -2754,8 +2714,8 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case D_MATH:
-			m_variables[VARIABLE_PIXEL].a.d.x = g_old_z.x;
-			m_variables[VARIABLE_PIXEL].a.d.y = g_old_z.y;
+			m_variables[VARIABLE_PIXEL].argument.d.x = g_old_z.x;
+			m_variables[VARIABLE_PIXEL].argument.d.y = g_old_z.y;
 			break;
 #if !defined(XFRACT)
 		case L_MATH:
@@ -2766,8 +2726,8 @@ int Formula::per_pixel()
 				g_old_z.y = 8;
 			}
 			/* convert to fudged longs */
-			m_variables[VARIABLE_PIXEL].a.l.x = fixpoint_from_double(g_old_z.x);
-			m_variables[VARIABLE_PIXEL].a.l.y = fixpoint_from_double(g_old_z.y);
+			m_variables[VARIABLE_PIXEL].argument.l.x = fixpoint_from_double(g_old_z.x);
+			m_variables[VARIABLE_PIXEL].argument.l.y = fixpoint_from_double(g_old_z.y);
 			break;
 #endif
 		}
@@ -2778,13 +2738,13 @@ int Formula::per_pixel()
 		switch (m_math_type)
 		{
 		case D_MATH:
-			m_variables[VARIABLE_PIXEL].a.d.x = g_dx_pixel();
-			m_variables[VARIABLE_PIXEL].a.d.y = g_dy_pixel();
+			m_variables[VARIABLE_PIXEL].argument.d.x = g_dx_pixel();
+			m_variables[VARIABLE_PIXEL].argument.d.y = g_dy_pixel();
 			break;
 #if !defined(XFRACT)
 		case L_MATH:
-			m_variables[VARIABLE_PIXEL].a.l.x = g_lx_pixel();
-			m_variables[VARIABLE_PIXEL].a.l.y = g_ly_pixel();
+			m_variables[VARIABLE_PIXEL].argument.l.x = g_lx_pixel();
+			m_variables[VARIABLE_PIXEL].argument.l.y = g_ly_pixel();
 			break;
 #endif
 		}
@@ -2794,23 +2754,23 @@ int Formula::per_pixel()
 	{
 		m_last_init_op = m_last_op;
 	}
-	while (m_op_ptr < m_last_init_op)
+	while (m_op_index < m_last_init_op)
 	{
-		m_functions[m_op_ptr]();
-		m_op_ptr++;
+		m_functions[m_op_index]();
+		m_op_index++;
 	}
-	InitLodPtr = m_load_ptr;
-	InitStoPtr = m_store_ptr;
-	InitOpPtr = m_op_ptr;
+	m_initial_load_pointer = m_load_ptr;
+	m_initial_store_pointer = m_store_ptr;
+	m_initial_op_pointer = m_op_index;
 	/* Set old variable for orbits */
 	switch (m_math_type)
 	{
 	case D_MATH:
-		g_old_z = m_variables[VARIABLE_Z].a.d;
+		g_old_z = m_variables[VARIABLE_Z].argument.d;
 		break;
 #if !defined(XFRACT)
 	case L_MATH:
-		g_old_z_l = m_variables[VARIABLE_Z].a.l;
+		g_old_z_l = m_variables[VARIABLE_Z].argument.l;
 		break;
 #endif
 	}
@@ -2820,108 +2780,114 @@ int Formula::per_pixel()
 
 int Formula::fill_if_group(int endif_index, JUMP_PTRS *jump_data)
 {
-	int i   = endif_index;
+	int i = endif_index;
 	int last_jump_processed = endif_index;
 	while (i > 0)
 	{
 		i--;
 		switch (m_jump_control[i].type)
 		{
-		case 1:    /*if (); this concludes processing of this group*/
+		case JUMPTYPE_IF:    /*if (); this concludes processing of this group*/
 			m_jump_control[i].ptrs = jump_data[last_jump_processed];
 			m_jump_control[i].DestJumpIndex = last_jump_processed + 1;
 			return i;
-		case 2:    /*elseif* (2 jumps, the else and the if*/
-				/* first, the "if" part */
+
+		case JUMPTYPE_ELSEIF:    /*elseif* (2 jumps, the else and the if*/
+			/* first, the "if" part */
 			m_jump_control[i].ptrs = jump_data[last_jump_processed];
 			m_jump_control[i].DestJumpIndex = last_jump_processed + 1;
 
-				/* then, the else part */
+			/* then, the else part */
 			i--; /*fall through to "else" is intentional*/
-		case 3:
+
+		case JUMPTYPE_ELSE:
 			m_jump_control[i].ptrs = jump_data[endif_index];
 			m_jump_control[i].DestJumpIndex = endif_index + 1;
 			last_jump_processed = i;
 			break;
-		case 4:    /*endif*/
-				i = fill_if_group(i, jump_data);
+
+		case JUMPTYPE_ENDIF:
+			i = fill_if_group(i, jump_data);
 			break;
+
 		default:
 			break;
 		}
 	}
-	return -1; /* should never get here */
+	assert(false && "should never get here");
+	return -1;
 }
 
-int Formula::fill_jump_struct()
-{ /* Completes all entries in jump structure. Returns 1 on error) */
-  /* On entry, m_jump_index is the number of jump functions in the formula*/
+bool Formula::fill_jump_struct()
+{
+	/* Completes all entries in jump structure. Returns 1 on error) */
+	/* On entry, m_jump_index is the number of jump functions in the formula*/
 	int i = 0;
-	int loadcount = 0;
-	int storecount = 0;
-	int checkforelse = 0;
+	int load_count = 0;
+	int store_count = 0;
+	bool check_for_else = false;
 	void (*JumpFunc)() = NULL;
-	int find_new_func = 1;
+	bool find_new_func = true;
 
 	JUMP_PTRS jump_data[MAX_JUMPS];
 
-	for (m_op_ptr = 0; m_op_ptr < m_last_op; m_op_ptr++)
+	for (m_op_index = 0; m_op_index < m_last_op; m_op_index++)
 	{
 		if (find_new_func)
 		{
 			switch (m_jump_control[i].type)
 			{
-			case 1:
+			case JUMPTYPE_IF:
 				JumpFunc = StkJumpOnFalse;
 				break;
-			case 2:
-				checkforelse = !checkforelse;
-				JumpFunc = checkforelse ? StkJump : StkJumpOnFalse;
+			case JUMPTYPE_ELSEIF:
+				check_for_else = !check_for_else;
+				JumpFunc = check_for_else ? StkJump : StkJumpOnFalse;
 				break;
-			case 3:
+			case JUMPTYPE_ELSE:
 				JumpFunc = StkJump;
 				break;
-			case 4:
+			case JUMPTYPE_ENDIF:
 				JumpFunc = StkJumpLabel;
 				break;
 			default:
 				break;
 			}
-			find_new_func = 0;
+			find_new_func = false;
 		}
-		if (*(m_functions[m_op_ptr]) == StkLod)
+		if (*(m_functions[m_op_index]) == StkLod)
 		{
-			loadcount++;
+			load_count++;
 		}
-		else if (*(m_functions[m_op_ptr]) == StkSto)
+		else if (*(m_functions[m_op_index]) == StkSto)
 		{
-			storecount++;
+			store_count++;
 		}
-		else if (*(m_functions[m_op_ptr]) == JumpFunc)
+		else if (*(m_functions[m_op_index]) == JumpFunc)
 		{
-			jump_data[i].JumpOpPtr = m_op_ptr;
-			jump_data[i].JumpLodPtr = loadcount;
-			jump_data[i].JumpStoPtr = storecount;
+			jump_data[i].JumpOpPtr = m_op_index;
+			jump_data[i].JumpLodPtr = load_count;
+			jump_data[i].JumpStoPtr = store_count;
 			i++;
-			find_new_func = 1;
+			find_new_func = true;
 		}
 	}
 
 	/* Following for safety only; all should always be false */
-	if (i != m_jump_index || m_jump_control[i - 1].type != 4
-		|| m_jump_control[0].type != 1)
+	if (i != m_jump_index || m_jump_control[i - 1].type != JUMPTYPE_ENDIF
+		|| m_jump_control[0].type != JUMPTYPE_IF)
 	{
-		return 1;
+		return true;
 	}
 
 	while (i > 0)
 	{
 		i = fill_if_group(i-1, jump_data);
 	}
-	return i < 0 ? 1 : 0;
+	return (i < 0);
 }
 
-int frmgetchar(FILE *openfile)
+static int formula_get_char(FILE *openfile)
 {
 	int c;
 	int done = 0;
@@ -2963,12 +2929,12 @@ int frmgetchar(FILE *openfile)
 
 /* This function also gets flow control info */
 
-void getfuncinfo(token_st *tok)
+static void get_function_information(token_st *tok)
 {
 	int i;
-	for (i = 0; i < NUM_OF(function_list); i++)
+	for (i = 0; i < NUM_OF(s_function_list); i++)
 	{
-		if (!strcmp(function_list[i].name, tok->token_str))
+		if (!strcmp(s_function_list[i].name, tok->token_str))
 		{
 			tok->token_id = i;
 			tok->token_type = (i >= 11 && i <= 14) ? TOKENTYPE_PARAMETER_FUNCTION : TOKENTYPE_FUNCTION;
@@ -2990,7 +2956,7 @@ void getfuncinfo(token_st *tok)
 	return;
 }
 
-void getvarinfo(token_st *tok)
+static void get_variable_information(token_st *tok)
 {
 	int i;
 
@@ -3018,10 +2984,8 @@ void getvarinfo(token_st *tok)
 /* fills in token structure where numeric constant is indicated */
 /* Note - this function will be called twice to fill in the components
 		of a complex constant. See is_complex_constant() below. */
-
-/* returns 1 on success, 0 on TOKENTYPE_NONE */
-
-int frmgetconstant(FILE *openfile, token_st *tok)
+/* returns true on success, false on TOKENTYPE_NONE */
+static bool formula_get_constant(FILE *openfile, token_st *tok)
 {
 	int c;
 	int i = 1;
@@ -3037,30 +3001,30 @@ int frmgetconstant(FILE *openfile, token_st *tok)
 	}
 	while (!done)
 	{
-		c = frmgetchar(openfile);
+		c = formula_get_char(openfile);
 		switch (c)
 		{
 		case EOF: case '\032':
-			tok->token_str[i] = (char) 0;
+			tok->token_str[i] = 0;
 			tok->token_type = TOKENTYPE_NONE;
 			tok->token_id   = TOKENID_END_OF_FILE;
-			return 0;
+			return false;
 		CASE_NUM:
-			tok->token_str[i++] = (char) c;
+			tok->token_str[i++] = char(c);
 			filepos = ftell(openfile);
 			break;
 		case '.':
 			if (got_decimal_already || !getting_base)
 			{
-				tok->token_str[i++] = (char) c;
-				tok->token_str[i++] = (char) 0;
+				tok->token_str[i++] = char(c);
+				tok->token_str[i++] = 0;
 				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id = TOKENID_ILL_FORMED_CONSTANT;
-				return 0;
+				return false;
 			}
 			else
 			{
-				tok->token_str[i++] = (char) c;
+				tok->token_str[i++] = char(c);
 				got_decimal_already = 1;
 				filepos = ftell(openfile);
 			}
@@ -3068,14 +3032,14 @@ int frmgetconstant(FILE *openfile, token_st *tok)
 		default :
 			if (c == 'e' && getting_base && (isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1)))
 			{
-				tok->token_str[i++] = (char) c;
+				tok->token_str[i++] = char(c);
 				getting_base = 0;
 				got_decimal_already = 0;
 				filepos = ftell(openfile);
-				c = frmgetchar(openfile);
+				c = formula_get_char(openfile);
 				if (c == '-' || c == '+')
 				{
-					tok->token_str[i++] = (char) c;
+					tok->token_str[i++] = char(c);
 					filepos = ftell(openfile);
 				}
 				else
@@ -3085,43 +3049,43 @@ int frmgetconstant(FILE *openfile, token_st *tok)
 			}
 			else if (isalpha(c) || c == '_')
 			{
-				tok->token_str[i++] = (char) c;
-				tok->token_str[i++] = (char) 0;
+				tok->token_str[i++] = char(c);
+				tok->token_str[i++] = 0;
 				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id = TOKENID_ILL_FORMED_CONSTANT;
-				return 0;
+				return false;
 			}
 			else if (tok->token_str[i-1] == 'e' || (tok->token_str[i-1] == '.' && i == 1))
 			{
-				tok->token_str[i++] = (char) c;
-				tok->token_str[i++] = (char) 0;
+				tok->token_str[i++] = char(c);
+				tok->token_str[i++] = 0;
 				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id = TOKENID_ILL_FORMED_CONSTANT;
-				return 0;
+				return false;
 			}
 			else
 			{
 				fseek(openfile, filepos, SEEK_SET);
-				tok->token_str[i++] = (char) 0;
+				tok->token_str[i++] = 0;
 				done = 1;
 			}
 			break;
 		}
 		if (i == 33 && tok->token_str[32])
 		{
-			tok->token_str[33] = (char) 0;
+			tok->token_str[33] = 0;
 			tok->token_type = TOKENTYPE_NONE;
 			tok->token_id = TOKENID_TOKEN_TOO_LONG;
-			return 0;
+			return false;
 		}
 	}    /* end of while loop. Now fill in the value */
 	tok->token_const.x = atof(tok->token_str);
 	tok->token_type = TOKENTYPE_REAL_CONSTANT;
 	tok->token_id   = 0;
-	return 1;
+	return true;
 }
 
-void is_complex_constant(FILE *openfile, token_st *tok)
+static void is_complex_constant(FILE *openfile, token_st *tok)
 {
 	/* should test to make sure tok->token_str[0] == '(' */
 	token_st temp_tok;
@@ -3131,7 +3095,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 	int done = 0;
 	int getting_real = 1;
 	FILE *debug_token = NULL;
-	tok->token_str[1] = (char) 0;  /* so we can concatenate later */
+	tok->token_str[1] = 0;  /* so we can concatenate later */
 
 	filepos = ftell(openfile);
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
@@ -3141,7 +3105,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 
 	while (!done)
 	{
-		c = frmgetchar(openfile);
+		c = formula_get_char(openfile);
 		switch (c)
 		{
 		CASE_NUM : case '.':
@@ -3149,7 +3113,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 			{
 				fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 			}
-			temp_tok.token_str[0] = (char) c;
+			temp_tok.token_str[0] = char(c);
 			break;
 		case '-' :
 			if (debug_token != NULL)
@@ -3157,14 +3121,14 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 				fprintf(debug_token,  "First char is a minus\n");
 			}
 			sign_value = -1;
-			c = frmgetchar(openfile);
+			c = formula_get_char(openfile);
 			if (c == '.' || isdigit(c))
 			{
 				if (debug_token != NULL)
 				{
 					fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 				}
-				temp_tok.token_str[0] = (char) c;
+				temp_tok.token_str[0] = char(c);
 			}
 			else
 			{
@@ -3187,9 +3151,9 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 		{
 				fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", done);
 		}
-		if (!done && frmgetconstant(openfile, &temp_tok))
+		if (!done && formula_get_constant(openfile, &temp_tok))
 		{
-			c = frmgetchar(openfile);
+			c = formula_get_char(openfile);
 			if (debug_token != NULL)
 			{
 				fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
@@ -3235,7 +3199,7 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 		}
 	}
 	fseek(openfile, filepos, SEEK_SET);
-	tok->token_str[1] = (char) 0;
+	tok->token_str[1] = 0;
 	tok->token_const.y = tok->token_const.x = 0.0;
 	tok->token_type = TOKENTYPE_PARENTHESIS;
 	tok->token_id = TOKENID_OPEN_PARENS;
@@ -3247,14 +3211,14 @@ void is_complex_constant(FILE *openfile, token_st *tok)
 	return;
 }
 
-int frmgetalpha(FILE *openfile, token_st *tok)
+static bool formula_get_alpha(FILE *openfile, token_st *tok)
 {
 	int c;
 	int i = 1;
 	int var_name_too_long = 0;
 	long filepos;
 	long last_filepos = ftell(openfile);
-	while ((c = frmgetchar(openfile)) != EOF && c != '\032')
+	while ((c = formula_get_char(openfile)) != EOF && c != '\032')
 	{
 		filepos = ftell(openfile);
 		switch (c)
@@ -3262,11 +3226,11 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 		CASE_ALPHA: CASE_NUM: case '_':
 			if (i < 79)
 			{
-				tok->token_str[i++] = (char) c;
+				tok->token_str[i++] = char(c);
 			}
 			else
 			{
-				tok->token_str[i] = (char) 0;
+				tok->token_str[i] = 0;
 			}
 			if (i == 33)
 			{
@@ -3280,35 +3244,35 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id   = TOKENID_ILLEGAL_VARIABLE_NAME;
 				tok->token_str[i++] = '.';
-				tok->token_str[i] = (char) 0;
-				return 0;
+				tok->token_str[i] = 0;
+				return false;
 			}
 			else if (var_name_too_long)
 			{
 				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id   = TOKENID_TOKEN_TOO_LONG;
-				tok->token_str[i] = (char) 0;
+				tok->token_str[i] = 0;
 				fseek(openfile, last_filepos, SEEK_SET);
-				return 0;
+				return false;
 			}
-			tok->token_str[i] = (char) 0;
+			tok->token_str[i] = 0;
 			fseek(openfile, last_filepos, SEEK_SET);
-			getfuncinfo(tok);
+			get_function_information(tok);
 			if (c == '(')  /*getfuncinfo() correctly filled structure*/
 			{
 				if (tok->token_type == TOKENTYPE_NONE)
 				{
-					return 0;
+					return false;
 				}
 				else if (tok->token_type == TOKENTYPE_FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
 				{
 					tok->token_type = TOKENTYPE_NONE;
 					tok->token_id   = TOKENID_JUMP_WITH_ILLEGAL_CHAR;
-					return 0;
+					return false;
 				}
 				else
 				{
-					return 1;
+					return true;
 				}
 			}
 			/*can't use function names as variables*/
@@ -3316,46 +3280,46 @@ int frmgetalpha(FILE *openfile, token_st *tok)
 			{
 				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id   = TOKENID_FUNC_USED_AS_VAR;
-				return 0;
+				return false;
 			}
 			else if (tok->token_type == TOKENTYPE_FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
 			{
 				tok->token_type = TOKENTYPE_NONE;
 				tok->token_id   = TOKENID_JUMP_MISSING_BOOLEAN;
-				return 0;
+				return false;
 			}
 			else if (tok->token_type == TOKENTYPE_FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
 			{
 				if (c == ',' || c == '\n' || c == ':')
 				{
-					return 1;
+					return true;
 				}
 				else
 				{
 					tok->token_type = TOKENTYPE_NONE;
 					tok->token_id   = TOKENID_JUMP_WITH_ILLEGAL_CHAR;
-					return 0;
+					return false;
 				}
 			}
 			else
 			{
-				getvarinfo(tok);
-				return 1;
+				get_variable_information(tok);
+				return true;
 			}
 		}
 	}
-	tok->token_str[0] = (char) 0;
+	tok->token_str[0] = 0;
 	tok->token_type = TOKENTYPE_NONE;
 	tok->token_id   = TOKENID_END_OF_FILE;
-	return 0;
+	return false;
 }
 
-void frm_get_eos(FILE *openfile, token_st *this_token)
+static void formula_get_end_of_string(FILE *openfile, token_st *this_token)
 {
 	long last_filepos = ftell(openfile);
 	int c;
 
-	for (c = frmgetchar(openfile); (c == '\n' || c == ',' || c == ':'); c = frmgetchar(openfile))
+	for (c = formula_get_char(openfile); (c == '\n' || c == ',' || c == ':'); c = formula_get_char(openfile))
 	{
 		if (c == ':')
 		{
@@ -3379,33 +3343,32 @@ void frm_get_eos(FILE *openfile, token_st *this_token)
 	}
 }
 
-/* fills token structure; returns 1 on success and 0 on
+/* fills token structure; returns true on success and false on
   TOKENTYPE_NONE and TOKENTYPE_END_OF_FORMULA
 */
-
-static int formula_get_token(FILE *openfile, token_st *this_token)
+static bool formula_get_token(FILE *openfile, token_st *this_token)
 {
 	long filepos;
 	int i = 1;
-	int c = frmgetchar(openfile);
+	int c = formula_get_char(openfile);
 	switch (c)
 	{
 	CASE_NUM: case '.':
-		this_token->token_str[0] = (char) c;
-		return frmgetconstant(openfile, this_token);
+		this_token->token_str[0] = char(c);
+		return formula_get_constant(openfile, this_token);
 	CASE_ALPHA: case '_':
-		this_token->token_str[0] = (char) c;
-		return frmgetalpha(openfile, this_token);
+		this_token->token_str[0] = char(c);
+		return formula_get_alpha(openfile, this_token);
 	CASE_TERMINATOR:
 		this_token->token_type = TOKENTYPE_OPERATOR; /* this may be changed below */
-		this_token->token_str[0] = (char) c;
+		this_token->token_str[0] = char(c);
 		filepos = ftell(openfile);
 		if (c == '<' || c == '>' || c == '=')
 		{
-			c = frmgetchar(openfile);
+			c = formula_get_char(openfile);
 			if (c == '=')
 			{
-				this_token->token_str[i++] = (char) c;
+				this_token->token_str[i++] = char(c);
 			}
 			else
 			{
@@ -3414,26 +3377,26 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 		}
 		else if (c == '!')
 		{
-			c = frmgetchar(openfile);
+			c = formula_get_char(openfile);
 			if (c == '=')
 			{
-				this_token->token_str[i++] = (char) c;
+				this_token->token_str[i++] = char(c);
 			}
 			else
 			{
 				fseek(openfile, filepos, SEEK_SET);
-				this_token->token_str[1] = (char) 0;
+				this_token->token_str[1] = 0;
 				this_token->token_type = TOKENTYPE_NONE;
 				this_token->token_id = TOKENID_ILLEGAL_OPERATOR;
-				return 0;
+				return false;
 			}
 		}
 		else if (c == '|')
 		{
-			c = frmgetchar(openfile);
+			c = formula_get_char(openfile);
 			if (c == '|')
 			{
-				this_token->token_str[i++] = (char) c;
+				this_token->token_str[i++] = char(c);
 			}
 			else
 			{
@@ -3442,18 +3405,18 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 		}
 		else if (c == '&')
 		{
-			c = frmgetchar(openfile);
+			c = formula_get_char(openfile);
 			if (c == '&')
 			{
-				this_token->token_str[i++] = (char) c;
+				this_token->token_str[i++] = char(c);
 			}
 			else
 			{
 				fseek(openfile, filepos, SEEK_SET);
-				this_token->token_str[1] = (char) 0;
+				this_token->token_str[1] = 0;
 				this_token->token_type = TOKENTYPE_NONE;
 				this_token->token_id = TOKENID_ILLEGAL_OPERATOR;
-				return 0;
+				return false;
 			}
 		}
 		else if (this_token->token_str[0] == '}')
@@ -3465,7 +3428,7 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 			|| this_token->token_str[0] == ','
 			|| this_token->token_str[0] == ':')
 		{
-			frm_get_eos(openfile, this_token);
+			formula_get_end_of_string(openfile, this_token);
 		}
 		else if (this_token->token_str[0] == ')')
 		{
@@ -3478,31 +3441,31 @@ static int formula_get_token(FILE *openfile, token_st *this_token)
 				token_id to OPEN_PARENS if this is not the start of a
 				complex constant */
 			is_complex_constant(openfile, this_token);
-				return 1;
+			return true;
 		}
-		this_token->token_str[i] = (char) 0;
+		this_token->token_str[i] = 0;
 		if (this_token->token_type == TOKENTYPE_OPERATOR)
 		{
-			for (i = 0; i < NUM_OF(operator_list); i++)
+			for (i = 0; i < NUM_OF(s_operator_list); i++)
 			{
-				if (!strcmp(operator_list[i], this_token->token_str))
+				if (!strcmp(s_operator_list[i], this_token->token_str))
 				{
 					this_token->token_id = i;
 				}
 			}
 		}
-		return this_token->token_str[0] == '}' ? 0 : 1;
+		return (this_token->token_str[0] != '}');
 	case EOF: case '\032':
-		this_token->token_str[0] = (char) 0;
+		this_token->token_str[0] = 0;
 		this_token->token_type = TOKENTYPE_NONE;
 		this_token->token_id = TOKENID_END_OF_FILE;
-		return 0;
+		return false;
 	default:
-		this_token->token_str[0] = (char) c;
-		this_token->token_str[1] = (char) 0;
+		this_token->token_str[0] = char(c);
+		this_token->token_str[1] = 0;
 		this_token->token_type = TOKENTYPE_NONE;
 		this_token->token_id = TOKENID_ILLEGAL_CHARACTER;
-		return 0;
+		return false;
 	}
 }
 
@@ -3532,7 +3495,7 @@ int Formula::get_parameter(const char *Name)
 		int c;
 		do
 		{
-			c = frmgetchar(entry_file);
+			c = formula_get_char(entry_file);
 		}
 		while (c != '{' && c != EOF && c != '\032');
 		if (c != '{')
@@ -3598,7 +3561,7 @@ int Formula::get_parameter(const char *Name)
 		case TOKENTYPE_PARAMETER_FUNCTION:
 			if ((current_token.token_id - 10) > m_max_function_number)
 			{
-				m_max_function_number = (char) (current_token.token_id - 10);
+				m_max_function_number = current_token.token_id - 10;
 			}
 			break;
 		}
@@ -3623,12 +3586,13 @@ int Formula::get_parameter(const char *Name)
 }
 
 /* check_name_and_symmetry():
-	error checking to the open brace on the first line; return 1
-	on success, 2 if an invalid symmetry is found, and 0 if errors
-	are found which should cause the formula not to be executed
+	error checking to the open brace on the first line;
+	return true on success
+	return false if errors are found which should cause
+	the formula not to be executed
 */
 
-int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
+bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 {
 	long filepos = ftell(open_file);
 	int c;
@@ -3645,10 +3609,10 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		{
 		case EOF: case '\032':
 			stop_message(0, error_messages(PE_UNEXPECTED_EOF));
-			return 0;
+			return false;
 		case '\r': case '\n':
 			stop_message(0, error_messages(PE_NO_LEFT_BRACKET_FIRST_LINE));
-			return 0;
+			return false;
 		case ' ': case '\t':
 			at_end_of_name = 1;
 			break;
@@ -3667,20 +3631,20 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 	if (i > ITEMNAMELEN)
 	{
 		int j;
-		int k = (int) strlen(error_messages(PE_FORMULA_NAME_TOO_LARGE));
+		int k = int_strlen(error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		char msgbuf[100];
 		strcpy(msgbuf, error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		strcat(msgbuf, ":\n   ");
 		fseek(open_file, filepos, SEEK_SET);
 		for (j = 0; j < i && j < 25; j++)
 		{
-			msgbuf[j + k + 2] = (char) getc(open_file);
+			msgbuf[j + k + 2] = char(getc(open_file));
 		}
-		msgbuf[j + k + 2] = (char) 0;
+		msgbuf[j + k + 2] = 0;
 		stop_message(STOPMSG_FIXED_FONT, msgbuf);
-		return 0;
+		return false;
 	}
-		/* get symmetry */
+	/* get symmetry */
 	g_symmetry = SYMMETRY_NONE;
 	if (c == '(')
 	{
@@ -3693,13 +3657,13 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 			{
 			case EOF: case '\032':
 				stop_message(0, error_messages(PE_UNEXPECTED_EOF));
-				return 0;
+				return false;
 			case '\r': case '\n':
 				stop_message(STOPMSG_FIXED_FONT, error_messages(PE_NO_LEFT_BRACKET_FIRST_LINE));
-				return 0;
+				return false;
 			case '{':
 				stop_message(STOPMSG_FIXED_FONT, error_messages(PE_NO_MATCH_RIGHT_PAREN));
-				return 0;
+				return false;
 			case ' ': case '\t':
 				break;
 			case ')':
@@ -3708,12 +3672,12 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 			default :
 				if (i < 19)
 				{
-					sym_buf[i++] = (char) toupper(c);
+					sym_buf[i++] = char(toupper(c));
 				}
 				break;
 			}
 		}
-		sym_buf[i] = (char) 0;
+		sym_buf[i] = 0;
 		for (i = 0; SymStr[i].s[0]; i++)
 		{
 			if (!stricmp(SymStr[i].s, sym_buf))
@@ -3722,10 +3686,10 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 				break;
 			}
 		}
-		if (SymStr[i].s[0] == (char) 0 && report_bad_symmetry)
+		if (SymStr[i].s[0] == 0 && report_bad_symmetry)
 		{
-			char *msgbuf = (char *) malloc((int) strlen(error_messages(PE_INVALID_SYM_USING_NOSYM))
-							+ (int) strlen(sym_buf) + 6);
+			char *msgbuf = (char *) malloc(int_strlen(error_messages(PE_INVALID_SYM_USING_NOSYM))
+							+ int_strlen(sym_buf) + 6);
 			strcpy(msgbuf, error_messages(PE_INVALID_SYM_USING_NOSYM));
 			strcat(msgbuf, ":\n   ");
 			strcat(msgbuf, sym_buf);
@@ -3743,10 +3707,10 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 			{
 			case EOF: case '\032':
 				stop_message(STOPMSG_FIXED_FONT, error_messages(PE_UNEXPECTED_EOF));
-				return 0;
+				return false;
 			case '\r': case '\n':
 				stop_message(STOPMSG_FIXED_FONT, error_messages(PE_NO_LEFT_BRACKET_FIRST_LINE));
-				return 0;
+				return false;
 			case '{':
 				done = 1;
 				break;
@@ -3755,13 +3719,12 @@ int Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 			}
 		}
 	}
-	return 1;
+	return true;
 }
 
 const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 {
-
-	/* replaces FindFormula(). This function sets the
+	/* This function sets the
 	symmetry and converts a formula into a string  with no spaces,
 	and one comma after each expression except where the ':' is placed
 	and except the final expression in the formula. The open file passed
@@ -3775,13 +3738,8 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 	int Done;
 	long filepos = ftell(file);
 
-	/*
-	char debugmsg[500];
-	*/
-
 	/*Test for a repeat*/
-
-	if (check_name_and_symmetry(file, report_bad_symmetry) == 0)
+	if (!check_name_and_symmetry(file, report_bad_symmetry))
 	{
 		fseek(file, filepos, SEEK_SET);
 		return NULL;
@@ -3811,7 +3769,7 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		}
 	}
 
-	m_prepare_formula_text[0] = (char) 0; /* To permit concantenation later */
+	m_prepare_formula_text[0] = 0; /* To permit concantenation later */
 
 	Done = 0;
 
@@ -3915,7 +3873,7 @@ int Formula::RunFormula(const char *Name, bool report_bad_symmetry)
 		}
 		else
 		{
-			if (m_uses_jump && fill_jump_struct() == 1)
+			if (m_uses_jump && fill_jump_struct())
 			{
 				stop_message(0, error_messages(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
 				return 1;
@@ -3945,7 +3903,8 @@ int Formula::setup_fp()
 	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
-		return CvtStk(); /* run fast assembler code in parsera.asm */
+		CvtStk(); /* run fast assembler code in parsera.asm */
+		return 1;
 	}
 	return RunFormRes;
 #else
@@ -3955,7 +3914,8 @@ int Formula::setup_fp()
 	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
-		return CvtStk(); /* run fast assembler code in parsera.asm */
+		CvtStk(); /* run fast assembler code in parsera.asm */
+		return 1;
 	}
 #endif
 	return RunFormRes;
@@ -3968,7 +3928,7 @@ int Formula::setup_int()
 	return integer_unsupported();
 #else
 	m_math_type = L_MATH;
-	s_fudge = (double) (1L << g_bit_shift);
+	s_fudge = double(1L << g_bit_shift);
 	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;
 	return !RunFormula(g_formula_name, false);
@@ -3979,7 +3939,7 @@ void Formula::init_misc()
 {
 	Arg1 = &m_arg1;
 	Arg2 = &m_arg2; /* needed by all the ?Stk* functions */
-	s_fudge = (double) (1L << g_bit_shift);
+	s_fudge = double(1L << g_bit_shift);
 	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;
 	s_delta16 = g_bit_shift - 16;
@@ -4091,8 +4051,9 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 				return;
 			}
 		}
-		sprintf(&msgbuf[(int) strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ", m_errors[j].error_number, line_number, error_messages(m_errors[j].error_number));
-		i = (int) strlen(msgbuf);
+		sprintf(&msgbuf[int_strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ",
+			m_errors[j].error_number, line_number, error_messages(m_errors[j].error_number));
+		i = int_strlen(msgbuf);
 		fseek(open_file, m_errors[j].start_pos, SEEK_SET);
 		int statement_len = 0;
 		token_count = 0;
@@ -4104,14 +4065,14 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 			{
 				chars_to_error = statement_len;
 				formula_get_token(open_file, &tok);
-				chars_in_error = (int) strlen(tok.token_str);
+				chars_in_error = int_strlen(tok.token_str);
 				statement_len += chars_in_error;
 				token_count++;
 			}
 			else
 			{
 				formula_get_token(open_file, &tok);
-				statement_len += (int) strlen(tok.token_str);
+				statement_len += int_strlen(tok.token_str);
 				token_count++;
 			}
 			if ((tok.token_type == TOKENTYPE_END_OF_FORMULA)
@@ -4132,7 +4093,7 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 			while (chars_to_error + chars_in_error > 74)
 			{
 				formula_get_token(open_file, &tok);
-				chars_to_error -= (int) strlen(tok.token_str);
+				chars_to_error -= int_strlen(tok.token_str);
 				token_count--;
 			}
 		}
@@ -4142,19 +4103,19 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 			chars_to_error = 0;
 			token_count = 1;
 		}
-		while ((int) strlen(&msgbuf[i]) <= 74 && token_count--)
+		while (int_strlen(&msgbuf[i]) <= 74 && token_count--)
 		{
 			formula_get_token(open_file, &tok);
 			strcat(msgbuf, tok.token_str);
 		}
 		fseek(open_file, m_errors[j].error_pos, SEEK_SET);
 		formula_get_token(open_file, &tok);
-		if ((int) strlen(&msgbuf[i]) > 74)
+		if (int_strlen(&msgbuf[i]) > 74)
 		{
-			msgbuf[i + 74] = (char) 0;
+			msgbuf[i + 74] = 0;
 		}
 		strcat(msgbuf, "\n");
-		i = (int) strlen(msgbuf);
+		i = int_strlen(msgbuf);
 		while (chars_to_error-- > -2)
 		{
 			strcat(msgbuf, " ");
@@ -4163,7 +4124,7 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 		{
 			chars_in_error = 33;
 		}
-		while (chars_in_error-- && (int) strlen(&msgbuf[i]) <= 74)
+		while (chars_in_error-- && int_strlen(&msgbuf[i]) <= 74)
 		{
 			strcat(msgbuf, "^");
 		}
@@ -4306,9 +4267,6 @@ const_list_st *const_list_st::add(const_list_st *p, token_st tok)
 
 void Formula::count_lists()
 {
-	/*
-	char msgbuf[800];
-	*/
 	var_list_st *p;
 	const_list_st *q;
 
@@ -4328,10 +4286,6 @@ void Formula::count_lists()
 	{
 		m_real_count++;
 	}
-	/*
-	sprintf(msgbuf, "Number of vars is %d\nNumber of complx is %d\nNumber of real is %d\n", m_variable_count, m_complex_count, m_real_count);
-	stop_message(0, msgbuf);
-	*/
 }
 
 
@@ -4354,7 +4308,7 @@ void Formula::record_error(int error_code)
 	}
 }
 
-int Formula::prescan(FILE *open_file)
+bool Formula::prescan(FILE *open_file)
 {
 	int i;
 	long orig_pos;
@@ -4369,10 +4323,6 @@ int Formula::prescan(FILE *open_file)
 	unsigned long waiting_for_mod = 0;
 	int waiting_for_endif = 0;
 	int max_parens = sizeof(long)*8;
-	/*
-	char debugmsg[800];
-	stop_message(0, "Entering prescan");
-	*/
 
 	m_number_of_ops = 0;
 	m_number_of_loads = 0;
@@ -4397,7 +4347,7 @@ int Formula::prescan(FILE *open_file)
 	{
 		m_file_pos = ftell(open_file);
 		formula_get_token(open_file, &this_token);
-		m_chars_in_formula += (int) strlen(this_token.token_str);
+		m_chars_in_formula += int_strlen(this_token.token_str);
 		switch (this_token.token_type)
 		{
 		case TOKENTYPE_NONE:
@@ -4407,7 +4357,7 @@ int Formula::prescan(FILE *open_file)
 			case TOKENID_END_OF_FILE:
 				stop_message(0, error_messages(PE_UNEXPECTED_EOF));
 				fseek(open_file, orig_pos, SEEK_SET);
-				return 0;
+				return false;
 			case TOKENID_ILLEGAL_CHARACTER:
 				record_error(PE_ILLEGAL_CHAR);
 				break;
@@ -4438,7 +4388,7 @@ int Formula::prescan(FILE *open_file)
 			default:
 				stop_message(0, "Unexpected arrival at default case in prescan()");
 				fseek(open_file, orig_pos, SEEK_SET);
-				return 0;
+				return false;
 			}
 			break;
 		case TOKENTYPE_PARENTHESIS:
@@ -4510,7 +4460,7 @@ int Formula::prescan(FILE *open_file)
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();
-				return 0;
+				return false;
 			}
 			break;
 		case TOKENTYPE_PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
@@ -4540,7 +4490,7 @@ int Formula::prescan(FILE *open_file)
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();
-				return 0;
+				return false;
 			}
 			break;
 		case TOKENTYPE_COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
@@ -4560,7 +4510,7 @@ int Formula::prescan(FILE *open_file)
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();
-				return 0;
+				return false;
 			}
 			break;
 		case TOKENTYPE_FUNCTION:
@@ -4865,30 +4815,15 @@ int Formula::prescan(FILE *open_file)
 	}
 	if (m_errors[0].start_pos)
 	{
-		/*
-		sprintf (debugmsg, "Errors structure on entering frm_error\n 0: %ld, %ld, %d\n1: %ld, %ld, %d\n2: %ld, %ld, %d\n\n",
-				m_errors[0].start_pos, m_errors[0].error_pos, m_errors[0].error_number,
-				m_errors[1].start_pos, m_errors[1].error_pos, m_errors[1].error_number,
-				m_errors[2].start_pos, m_errors[2].error_pos, m_errors[2].error_number);
-			stop_message (0, debugmsg);
-		*/
 		frm_error(open_file, orig_pos);
 		fseek(open_file, orig_pos, SEEK_SET);
-		return 0;
+		return false;
 	}
 	fseek(open_file, orig_pos, SEEK_SET);
 
-	/*
-	display_var_list();
-	display_const_lists();
-	*/
 	count_lists();
 
-	/*
-	sprintf(debugmsg, "Chars in formula per prescan() is %u.\n", chars_in_formula);
-	stop_message(0, debugmsg);
-	*/
-	return 1;
+	return true;
 }
 
 const char *Formula::info_line1() const
