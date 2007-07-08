@@ -61,9 +61,9 @@ union Arg
 
 struct ConstArg
 {
-   const char *s;
-   int len;
-   union Arg a;
+   const char *name;
+   int name_length;
+   union Arg argument;
 };
 
 extern Arg *Arg1;
