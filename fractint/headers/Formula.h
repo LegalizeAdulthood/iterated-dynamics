@@ -175,7 +175,7 @@ public:
 	void set_max_fn(int value)			{ m_max_function_number = value; }
 
 private:
-	enum MATH_TYPE m_math_type;
+	enum MathType m_math_type;
 	int m_number_of_ops;
 	int m_number_of_loads;
 	int m_number_of_stores;
@@ -267,6 +267,13 @@ private:
 
 	ConstArg *is_constant(const char *text, int length);
 	bool ParseStr(const char *text, int pass);
+	void parse_string_set_variables();
+	void parse_string_set_parameters_int();
+	void parse_string_set_parameters_float();
+	void parse_string_set_center_magnification_variables();
+	void parse_string_set_constants();
+	void parse_string_set_math();
+
 	void StoreFunction(void (*function)(), int offset, int store_count);
 	void StoreFunction(void (*function)(), int p);
 

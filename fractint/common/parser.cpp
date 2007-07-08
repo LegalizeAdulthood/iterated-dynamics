@@ -147,7 +147,7 @@ static int s_delta16 = 0;
 static int s_shift_back = 0;
 
 Formula::Formula()
-	: m_math_type(D_MATH),
+	: m_math_type(FLOATING_POINT_MATH),
 	m_number_of_ops(0),
 	m_number_of_loads(0),
 	m_number_of_stores(0),
@@ -1898,7 +1898,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 				case VARIABLE_SCRN_MAX:
 				case VARIABLE_MAX_IT:
 #if !defined(XFRACT)
-					if (m_math_type == L_MATH)
+					if (m_math_type == FIXED_POINT_MATH)
 					{
 						driver_unget_key('f');
 					}
@@ -1921,7 +1921,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 	switch (m_math_type)
 	{
 #if !defined(XFRACT)
-	case L_MATH:
+	case FIXED_POINT_MATH:
 		m_variables[m_parser_vsp].argument.l.x = 0;
 		m_variables[m_parser_vsp].argument.l.y = 0;
 		break;
@@ -1968,11 +1968,11 @@ ConstArg *Formula::is_constant(const char *text, int length)
 		z.x = atof(text);
 		switch (m_math_type)
 		{
-		case D_MATH:
+		case FLOATING_POINT_MATH:
 			m_variables[m_parser_vsp].argument.d = z;
 			break;
 #if !defined(XFRACT)
-		case L_MATH:
+		case FIXED_POINT_MATH:
 			m_variables[m_parser_vsp].argument.l.x = fixpoint_from_double(z.x);
 			m_variables[m_parser_vsp].argument.l.y = fixpoint_from_double(z.y);
 			break;
@@ -2177,24 +2177,11 @@ void Formula::StoreFunction(void (*function)(), int offset, int store_count)
 	StoreFunction(function, GetP(offset, store_count));
 }
 
-bool Formula::ParseStr(const char *text, int pass)
+void Formula::parse_string_set_math()
 {
-	int modulus_flag = 999;
-	int store_count = 0;
-	int modulus[20];
-	int modulus_stack = 0;
-	s_random.set_random(false);
-	s_random.set_randomized(false);
-	m_uses_jump = false;
-	m_jump_index = 0;
-	if (!m_store || !m_load || !m_functions)
-	{
-		stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-		return true;
-	}
 	switch (m_math_type)
 	{
-	case D_MATH:
+	case FLOATING_POINT_MATH:
 		StkAdd = dStkAdd;
 		StkSub = dStkSub;
 		StkNeg = dStkNeg;
@@ -2250,7 +2237,7 @@ bool Formula::ParseStr(const char *text, int pass)
 		StkOne = dStkOne;
 		break;
 #if !defined(XFRACT)
-	case L_MATH:
+	case FIXED_POINT_MATH:
 		s_delta16 = g_bit_shift - 16;
 		s_shift_back = 32 - g_bit_shift;
 		StkAdd = lStkAdd;
@@ -2308,12 +2295,17 @@ bool Formula::ParseStr(const char *text, int pass)
 		break;
 #endif
 	}
-	m_max_function_number = 0;
+}
+void Formula::parse_string_set_constants()
+{
 	for (m_parser_vsp = 0; m_parser_vsp < NUM_OF(Constants); m_parser_vsp++)
 	{
 		m_variables[m_parser_vsp].name = Constants[m_parser_vsp];
 		m_variables[m_parser_vsp].name_length = int_strlen(Constants[m_parser_vsp]);
 	}
+}
+void Formula::parse_string_set_center_magnification_variables()
+{
 	double center_real;
 	double center_imag;
 	LDBL magnification;
@@ -2334,57 +2326,88 @@ bool Formula::ParseStr(const char *text, int pass)
 	m_variables[VARIABLE_MAG_X_MAG].argument.d.y = x_magnification_factor;
 	m_variables[VARIABLE_ROT_SKEW].argument.d.x = rotation;
 	m_variables[VARIABLE_ROT_SKEW].argument.d.y = skew;
+}
+void Formula::parse_string_set_parameters_float()
+{
+	m_variables[VARIABLE_P1].argument.d.x = g_parameters[0];
+	m_variables[VARIABLE_P1].argument.d.y = g_parameters[1];
+	m_variables[VARIABLE_P2].argument.d.x = g_parameters[2];
+	m_variables[VARIABLE_P2].argument.d.y = g_parameters[3];
+	m_variables[VARIABLE_PI].argument.d.x = MathUtil::Pi;
+	m_variables[VARIABLE_PI].argument.d.y = 0.0;
+	m_variables[VARIABLE_E].argument.d.x = MathUtil::e;
+	m_variables[VARIABLE_E].argument.d.y = 0.0;
+	m_variables[VARIABLE_P3].argument.d.x = g_parameters[4];
+	m_variables[VARIABLE_P3].argument.d.y = g_parameters[5];
+	m_variables[VARIABLE_P4].argument.d.x = g_parameters[6];
+	m_variables[VARIABLE_P4].argument.d.y = g_parameters[7];
+	m_variables[VARIABLE_P5].argument.d.x = g_parameters[8];
+	m_variables[VARIABLE_P5].argument.d.y = g_parameters[9];
+}
+void Formula::parse_string_set_parameters_int()
+{
+#if !defined(XFRACT)
+	m_variables[VARIABLE_P1].argument.l.x = fixpoint_from_double(g_parameters[0]);
+	m_variables[VARIABLE_P1].argument.l.y = fixpoint_from_double(g_parameters[1]);
+	m_variables[VARIABLE_P2].argument.l.x = fixpoint_from_double(g_parameters[2]);
+	m_variables[VARIABLE_P2].argument.l.y = fixpoint_from_double(g_parameters[3]);
+	m_variables[VARIABLE_PI].argument.l.x = fixpoint_from_double(MathUtil::Pi);
+	m_variables[VARIABLE_PI].argument.l.y = 0L;
+	m_variables[VARIABLE_E].argument.l.x = fixpoint_from_double(MathUtil::e);
+	m_variables[VARIABLE_E].argument.l.y = 0L;
+	m_variables[VARIABLE_P3].argument.l.x = fixpoint_from_double(g_parameters[4]);
+	m_variables[VARIABLE_P3].argument.l.y = fixpoint_from_double(g_parameters[5]);
+	m_variables[VARIABLE_SCRN_MAX].argument.l.x = g_x_dots << g_bit_shift;
+	m_variables[VARIABLE_SCRN_MAX].argument.l.y = g_y_dots << g_bit_shift;
+	m_variables[VARIABLE_MAX_IT].argument.l.x = g_max_iteration << g_bit_shift;
+	m_variables[VARIABLE_MAX_IT].argument.l.y = 0L;
+	m_variables[VARIABLE_IS_MAND].argument.l.x = (g_is_mand ? 1 : 0) << g_bit_shift;
+	m_variables[VARIABLE_IS_MAND].argument.l.y = 0L;
+	m_variables[VARIABLE_CENTER].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.x);
+	m_variables[VARIABLE_CENTER].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.y);
+	m_variables[VARIABLE_MAG_X_MAG].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.x);
+	m_variables[VARIABLE_MAG_X_MAG].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.y);
+	m_variables[VARIABLE_ROT_SKEW].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.x);
+	m_variables[VARIABLE_ROT_SKEW].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.y);
+	m_variables[VARIABLE_P4].argument.l.x = fixpoint_from_double(g_parameters[6]);
+	m_variables[VARIABLE_P4].argument.l.y = fixpoint_from_double(g_parameters[7]);
+	m_variables[VARIABLE_P5].argument.l.x = fixpoint_from_double(g_parameters[8]);
+	m_variables[VARIABLE_P5].argument.l.y = fixpoint_from_double(g_parameters[9]);
+#endif
+}
 
+void Formula::parse_string_set_variables()
+{
+	parse_string_set_constants();
+	parse_string_set_center_magnification_variables();
 	switch (m_math_type)
 	{
-	case D_MATH:
-		m_variables[VARIABLE_P1].argument.d.x = g_parameters[0];
-		m_variables[VARIABLE_P1].argument.d.y = g_parameters[1];
-		m_variables[VARIABLE_P2].argument.d.x = g_parameters[2];
-		m_variables[VARIABLE_P2].argument.d.y = g_parameters[3];
-		m_variables[VARIABLE_PI].argument.d.x = MathUtil::Pi;
-		m_variables[VARIABLE_PI].argument.d.y = 0.0;
-		m_variables[VARIABLE_E].argument.d.x = MathUtil::e;
-		m_variables[VARIABLE_E].argument.d.y = 0.0;
-		m_variables[VARIABLE_P3].argument.d.x = g_parameters[4];
-		m_variables[VARIABLE_P3].argument.d.y = g_parameters[5];
-		m_variables[VARIABLE_P4].argument.d.x = g_parameters[6];
-		m_variables[VARIABLE_P4].argument.d.y = g_parameters[7];
-		m_variables[VARIABLE_P5].argument.d.x = g_parameters[8];
-		m_variables[VARIABLE_P5].argument.d.y = g_parameters[9];
+	case FLOATING_POINT_MATH:
+		parse_string_set_parameters_float();
 		break;
-#if !defined(XFRACT)
-	case L_MATH:
-		m_variables[VARIABLE_P1].argument.l.x = fixpoint_from_double(g_parameters[0]);
-		m_variables[VARIABLE_P1].argument.l.y = fixpoint_from_double(g_parameters[1]);
-		m_variables[VARIABLE_P2].argument.l.x = fixpoint_from_double(g_parameters[2]);
-		m_variables[VARIABLE_P2].argument.l.y = fixpoint_from_double(g_parameters[3]);
-		m_variables[VARIABLE_PI].argument.l.x = fixpoint_from_double(MathUtil::Pi);
-		m_variables[VARIABLE_PI].argument.l.y = 0L;
-		m_variables[VARIABLE_E].argument.l.x = fixpoint_from_double(MathUtil::e);
-		m_variables[VARIABLE_E].argument.l.y = 0L;
-		m_variables[VARIABLE_P3].argument.l.x = fixpoint_from_double(g_parameters[4]);
-		m_variables[VARIABLE_P3].argument.l.y = fixpoint_from_double(g_parameters[5]);
-		m_variables[VARIABLE_SCRN_MAX].argument.l.x = g_x_dots << g_bit_shift;
-		m_variables[VARIABLE_SCRN_MAX].argument.l.y = g_y_dots << g_bit_shift;
-		m_variables[VARIABLE_MAX_IT].argument.l.x = g_max_iteration << g_bit_shift;
-		m_variables[VARIABLE_MAX_IT].argument.l.y = 0L;
-		m_variables[VARIABLE_IS_MAND].argument.l.x = (g_is_mand ? 1 : 0) << g_bit_shift;
-		m_variables[VARIABLE_IS_MAND].argument.l.y = 0L;
-		m_variables[VARIABLE_CENTER].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.x);
-		m_variables[VARIABLE_CENTER].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.y);
-		m_variables[VARIABLE_MAG_X_MAG].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.x);
-		m_variables[VARIABLE_MAG_X_MAG].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_MAG_X_MAG].argument.d.y);
-		m_variables[VARIABLE_ROT_SKEW].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.x);
-		m_variables[VARIABLE_ROT_SKEW].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_ROT_SKEW].argument.d.y);
-		m_variables[VARIABLE_P4].argument.l.x = fixpoint_from_double(g_parameters[6]);
-		m_variables[VARIABLE_P4].argument.l.y = fixpoint_from_double(g_parameters[7]);
-		m_variables[VARIABLE_P5].argument.l.x = fixpoint_from_double(g_parameters[8]);
-		m_variables[VARIABLE_P5].argument.l.y = fixpoint_from_double(g_parameters[9]);
+	case FIXED_POINT_MATH:
+		parse_string_set_parameters_int();
 		break;
-#endif
 	}
-
+}
+bool Formula::ParseStr(const char *text, int pass)
+{
+	int modulus_flag = 999;
+	int store_count = 0;
+	int modulus[20];
+	int modulus_stack = 0;
+	s_random.set_random(false);
+	s_random.set_randomized(false);
+	m_uses_jump = false;
+	m_jump_index = 0;
+	if (!m_store || !m_load || !m_functions)
+	{
+		stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+		return true;
+	}
+	parse_string_set_math();
+	m_max_function_number = 0;
+	parse_string_set_variables();
 	m_last_init_op = 0;
 	m_parenthesis_count = 0;
 	m_op_index = 0;
@@ -2394,10 +2417,6 @@ bool Formula::ParseStr(const char *text, int pass)
 	m_expecting_arg = true;
 	for (int n = 0; text[n]; n++)
 	{
-		if (!text[n])
-		{
-			break;
-		}
 		m_initial_n = n;
 		switch (text[n])
 		{
@@ -2628,11 +2647,11 @@ int Formula::orbit()
 	{
 		switch (m_math_type)
 		{
-		case D_MATH:
+		case FLOATING_POINT_MATH:
 			dRandom();
 			break;
 #if !defined(XFRACT)
-		case L_MATH:
+		case FIXED_POINT_MATH:
 			lRandom();
 			break;
 #endif
@@ -2649,11 +2668,11 @@ int Formula::orbit()
 
 	switch (m_math_type)
 	{
-	case D_MATH:
+	case FLOATING_POINT_MATH:
 		g_old_z = g_new_z = m_variables[VARIABLE_Z].argument.d;
 		return Arg1->d.x == 0.0;
 #if !defined(XFRACT)
-	case L_MATH:
+	case FIXED_POINT_MATH:
 		g_old_z_l = g_new_z_l = m_variables[VARIABLE_Z].argument.l;
 		if (g_overflow)
 		{
@@ -2689,14 +2708,14 @@ int Formula::per_pixel()
 
 	switch (m_math_type)
 	{
-	case D_MATH:
+	case FLOATING_POINT_MATH:
 		m_variables[VARIABLE_WHITE_SQ].argument.d.x = ((g_row + g_col) & 1) ? 1.0 : 0.0;
 		m_variables[VARIABLE_WHITE_SQ].argument.d.y = 0.0;
 		break;
 
 
 #if !defined(XFRACT)
-	case L_MATH:
+	case FIXED_POINT_MATH:
 		m_variables[VARIABLE_WHITE_SQ].argument.l.x = fixpoint_from_double((g_row + g_col) & 1);
 		m_variables[VARIABLE_WHITE_SQ].argument.l.y = 0L;
 		m_variables[VARIABLE_SCRN_PIX].argument.l.x = g_col;
@@ -2713,12 +2732,12 @@ int Formula::per_pixel()
 		invert_z(&g_old_z);
 		switch (m_math_type)
 		{
-		case D_MATH:
+		case FLOATING_POINT_MATH:
 			m_variables[VARIABLE_PIXEL].argument.d.x = g_old_z.x;
 			m_variables[VARIABLE_PIXEL].argument.d.y = g_old_z.y;
 			break;
 #if !defined(XFRACT)
-		case L_MATH:
+		case FIXED_POINT_MATH:
 			/* watch out for overflow */
 			if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
 			{
@@ -2737,12 +2756,12 @@ int Formula::per_pixel()
 		/* TW end of inversion support changes here 4/17/94 */
 		switch (m_math_type)
 		{
-		case D_MATH:
+		case FLOATING_POINT_MATH:
 			m_variables[VARIABLE_PIXEL].argument.d.x = g_dx_pixel();
 			m_variables[VARIABLE_PIXEL].argument.d.y = g_dy_pixel();
 			break;
 #if !defined(XFRACT)
-		case L_MATH:
+		case FIXED_POINT_MATH:
 			m_variables[VARIABLE_PIXEL].argument.l.x = g_lx_pixel();
 			m_variables[VARIABLE_PIXEL].argument.l.y = g_ly_pixel();
 			break;
@@ -2765,11 +2784,11 @@ int Formula::per_pixel()
 	/* Set old variable for orbits */
 	switch (m_math_type)
 	{
-	case D_MATH:
+	case FLOATING_POINT_MATH:
 		g_old_z = m_variables[VARIABLE_Z].argument.d;
 		break;
 #if !defined(XFRACT)
-	case L_MATH:
+	case FIXED_POINT_MATH:
 		g_old_z_l = m_variables[VARIABLE_Z].argument.l;
 		break;
 #endif
@@ -3908,7 +3927,7 @@ int Formula::setup_fp()
 	}
 	return RunFormRes;
 #else
-	m_math_type = D_MATH;
+	m_math_type = FLOATING_POINT_MATH;
 	RunFormRes = !RunFormula(g_formula_name, false); /* RunForm() returns 1 for failure */
 #if 0
 	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
@@ -3927,7 +3946,7 @@ int Formula::setup_int()
 #if defined(XFRACT)
 	return integer_unsupported();
 #else
-	m_math_type = L_MATH;
+	m_math_type = FIXED_POINT_MATH;
 	s_fudge = double(1L << g_bit_shift);
 	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;

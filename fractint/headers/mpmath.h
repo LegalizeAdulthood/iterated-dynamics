@@ -24,15 +24,11 @@ extern int DivideOverflow;
    by zero) the global 'MPoverflow' is set to one. */
 
 /*** Formula Declarations ***/
-#if !defined(XFRACT)
-enum MATH_TYPE
+enum MathType
 {
-	D_MATH,
-	L_MATH
+	FLOATING_POINT_MATH,
+	FIXED_POINT_MATH
 };
-#else
-enum MATH_TYPE { D_MATH};
-#endif
 
 #define fDiv(x, y, z)		((*(long *) &z) = RegDivFloat(*(long *) &x, *(long *) &y))
 #define fMul16(x, y, z)		((*(long *) &z) = r16Mul(*(long *) &x, *(long *) &y))
