@@ -546,7 +546,7 @@ void Random::seed()
 
 	/* Use the current time to randomize the random number sequence. */
 	time(&ltime);
-	srand(unsigned int(ltime));
+	srand(unsigned(ltime));
 
 	new_random_number();
 	new_random_number();
