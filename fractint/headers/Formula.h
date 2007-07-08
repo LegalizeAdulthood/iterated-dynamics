@@ -319,6 +319,11 @@ private:
 	void peephole_optimize_mul_load_dup(t_function_pointer &function);
 	void peephole_optimize_mul_store_dup(t_function_pointer &function);
 	void peephole_optimize_mul_load(t_function_pointer &function);
+	void peephole_optimize_mul_load_push2(t_function_pointer &function);
+	void peephole_optimize_mul_load_swap_loads();
+	void peephole_optimize_mul_load_adjust_index();
+	void peephole_optimize_mul_load_2(t_function_pointer &function);
+	void peephole_optimize_mul_load_real(t_function_pointer &function);
 	void peephole_optimize_mul_real(t_function_pointer &function);
 	void peephole_optimize_mul_load_imaginary(t_function_pointer &function);
 	void peephole_optimize_mul_load_less(t_function_pointer &function);
