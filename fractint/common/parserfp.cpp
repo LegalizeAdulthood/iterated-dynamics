@@ -761,204 +761,239 @@ void Formula::peephole_optimize_sub(t_function_pointer &function)
 		function = fStkLodImagSub;
 	}
 }
-void Formula::peephole_optimize_mul(t_function_pointer &function)
+
+void Formula::peephole_optimize_mul_load_dup(t_function_pointer &function)
 {
-	Arg *otemp;
-	if (s_previous_function == fStkLodDup)
+	/* found  loddup ? (*mul)  */
+	if (is_function(--s_convert_index, fStkPush2))
 	{
-		/* found  loddup ? (*mul)  */
-		if (is_function(--s_convert_index, fStkPush2))
+		DBUGMSG("loddup *push (mul) -> (*lodsqr),stk+=2");
+		REMOVE_PUSH;
+	}
+	else
+	{
+		DBUGMSG("*loddup (mul) -> (*lodsqr)");
+	}
+	function = fStkLodSqr;
+}
+
+void Formula::peephole_optimize_mul_store_dup(t_function_pointer &function)
+{
+	DBUGMSG("stodup (mul) -> (*stosqr0)");
+	--s_convert_index;
+	function = fStkStoSqr0;  /* dont save lastsqr here ever  */
+}
+
+void Formula::peephole_optimize_mul_load(t_function_pointer &function)
+{
+	--s_convert_index;  /*  lod *? (mul)  */
+	if (is_function(s_convert_index, fStkPush2)) /*  lod *push (mul))  */
+	{
+		--s_convert_index;  /* ? *lod push (mul)  */
+		if (is_function(s_convert_index-1, fStkPush2))
 		{
-			DBUGMSG("loddup *push (mul) -> (*lodsqr),stk+=2");
+			DBUGMSG("push *lod push (mul) -> push4 (*lodmul)");
+			set_function(s_convert_index-1, fStkPush4);
+		}
+		else
+		{
+			DBUGMSG("op *lod push (mul) -> op pusha (*lodmul)");
+			set_operand(s_convert_index + 1, get_operand(s_convert_index));  /* fix operand ptr  */
+			set_function(s_convert_index, fStkPush2a);
+			set_no_operand(s_convert_index);
+			s_convert_index++;
+		}
+	}
+	else
+	{
+		DBUGMSG("*lod (mul) -> (*lodmul)");
+	}
+	function = fStkLodMul;
+
+	/*  change loadreal a, lodmul b --> lod b, lodrealmul a  */
+	set_no_function(s_convert_index);  /* mark the pending fn as null  */
+	if (is_function(s_convert_index-1, fStkPush4)
+		|| is_function(s_convert_index-1, fStkPush2a))
+	{
+		--s_convert_index;  /* look back past this push  */
+	}
+
+	if (is_function(s_convert_index-1, fStkLodRealC)
+		&& m_load[m_load_ptr-2]->d.x == 2.0)
+	{
+		/* -- Convert '2*a' into 'a + a'. */
+		if (is_no_function(s_convert_index))
+		{
+			DBUGMSG("lodreal[2] (*lodmul[b])"
+				" -> (*loddbl[b])");
+			set_operand(s_convert_index-1, get_operand(s_convert_index));
+		}
+		else if (is_function(s_convert_index, fStkPush2a))
+		{
+			DBUGMSG("lodreal[2] *pusha (lodmul[b])"
+				" -> loddbl[b],stk+=2");
+			set_operand_prev_next(s_convert_index);
+			s_stack_count += 2;
+		}
+		else if (is_function(s_convert_index, fStkPush4))
+		{
+			DBUGMSG("lodreal[2] *push4 (lodmul[b])"
+				" -> loddbl[b],stk+=4");
+			set_operand_prev_next(s_convert_index);
+			s_stack_count += 4;
+		}
+		set_no_function(--s_convert_index);  /* so no increment later  */
+		function = fStkLodDbl;
+	}
+	else if (is_function(s_convert_index-1, fStkLodReal)
+		|| is_function(s_convert_index-1, fStkLodRealC))
+	{
+		/* lodreal *?push?? (*?lodmul)  */
+		Arg *otemp = get_operand(s_convert_index-1);  /* save previous fn's operand  */
+		set_function(s_convert_index-1, fStkLod);  /* prev fn = lod  */
+		/* Moved setting of prev lodptr to below */
+		/* This was a bug causing a bad loadptr to be set here  */
+		/* 3 lines marked 'prev lodptr = this' below replace this line  */
+		if (is_no_function(s_convert_index))
+		{
+			DBUGMSG("lodreal[a] (*lodmul[b])"
+				" -> lod[b] (*lodrealmul[a])");
+			set_operand(s_convert_index-1, get_operand(s_convert_index));  /* prev lodptr = this  */
+		}
+		else if (is_function(s_convert_index, fStkPush2a))
+		{
+			DBUGMSG("lodreal[a] *pusha (lodmul[b])"
+				" -> lod[b] (*lodrealmul[a]),stk+=2");
+			/* set this fn ptr to null so cvtptrx won't be incr later  */
+			set_no_function(s_convert_index);
+			set_operand_prev_next(s_convert_index);  /* prev lodptr = this  */
+			s_stack_count += 2;
+		}
+		else if (is_function(s_convert_index, fStkPush4))
+		{
+			DBUGMSG("lodreal[a] *push4 (lodmul[b])"
+				" -> lod[b] push2 (*lodrealmul[a]),stk+=2");
+			set_function(s_convert_index++, fStkPush2);
+			set_operand(s_convert_index-2, get_operand(s_convert_index));  /* prev lodptr = this  */
+			/* we know cvtptrx points to a null function now  */
+			s_stack_count += 2;
+		}
+		set_operand(s_convert_index, otemp);  /* switch the operands  */
+		function = fStkLodRealMul;  /* next fn is now lodrealmul  */
+	}
+
+	if (!is_no_function(s_convert_index))
+	{
+		s_convert_index++;  /* adjust cvtptrx back to normal if needed  */
+	}
+}
+
+void Formula::peephole_optimize_mul_real(t_function_pointer &function)
+{
+	--s_convert_index;  /* found  lodreal *? (mul)  */
+	if (is_function(s_convert_index, fStkPush2))
+	{
+		DBUGMSG("lodreal *push2 (mul) -> (*lodrealmul),stk+=2");
+		REMOVE_PUSH;
+	}
+	else
+	{
+		DBUGMSG("*lodreal (mul) -> (*lodrealmul)");
+	}
+	function = fStkLodRealMul;
+
+	if (s_previous_function == fStkLodRealC  /* use s_previous_function here  */
+		&& m_load[m_load_ptr-1]->d.x == 2.0)
+	{
+		if (is_function(s_convert_index, fStkPush2))
+		{
+			DBUGMSG("push (*lodrealmul[2]) -> (*dbl),stk+=2");
 			REMOVE_PUSH;
 		}
 		else
 		{
-			DBUGMSG("*loddup (mul) -> (*lodsqr)");
+			DBUGMSG("*lodrealmul[2] -> (*dbl)");
 		}
-		function = fStkLodSqr;
+		set_no_operand(s_convert_index);
+		function = fStkDbl;
+
+		if (is_function(s_convert_index-1, fStkLod))
+		{
+			DBUGMSG("lod (*dbl) -> (*loddbl)");
+			--s_convert_index;
+			function = fStkLodDbl;
+		}
+		else if (is_function(s_convert_index-1, fStkSto2))
+		{
+			DBUGMSG("sto2 (*dbl) -> (*stodbl)");
+			--s_convert_index;
+			function = fStkStoDbl;
+		}
+	}
+}
+
+void Formula::peephole_optimize_mul_load_imaginary(t_function_pointer &function)
+{
+	--s_convert_index;  /* found  lodimag *? (mul)  */
+	if (is_function(s_convert_index, fStkPush2))
+	{
+		DBUGMSG("lodimag *push2 (mul) -> (*lodimagmul),stk+=2");
+		REMOVE_PUSH;
+	}
+	else
+	{
+		DBUGMSG("*lodimag (mul) -> (*lodimagmul)");
+	}
+	function = fStkLodImagMul;
+}
+
+void Formula::peephole_optimize_mul_load_less(t_function_pointer &function)
+{
+	/* this shortcut fails if  Lod LT Pull Mul  found  */
+	DBUGMSG("LodLT (*Mul) -> (*LodLTMul)");
+	--s_convert_index;  /* never  lod LT Push Mul  here  */
+	function = fStkLodLTMul;
+}
+
+void Formula::peephole_optimize_mul_load_less_equal(t_function_pointer &function)
+{
+	DBUGMSG("LodLTE (*mul) -> (*LodLTEmul)");
+	--s_convert_index;
+	function = fStkLodLTEMul;
+}
+
+void Formula::peephole_optimize_mul(t_function_pointer &function)
+{
+	if (s_previous_function == fStkLodDup)
+	{
+		peephole_optimize_mul_load_dup(function);
 	}
 	else if (s_previous_function == fStkStoDup) /* no pushes here, 4 on stk.  */
 	{
-		DBUGMSG("stodup (mul) -> (*stosqr0)");
-		--s_convert_index;
-		function = fStkStoSqr0;  /* dont save lastsqr here ever  */
+		peephole_optimize_mul_store_dup(function);
 	}
 	else if (s_previous_function == fStkLod)
 	{
-		--s_convert_index;  /*  lod *? (mul)  */
-		if (is_function(s_convert_index, fStkPush2)) /*  lod *push (mul))  */
-		{
-			--s_convert_index;  /* ? *lod push (mul)  */
-			if (is_function(s_convert_index-1, fStkPush2))
-			{
-				DBUGMSG("push *lod push (mul) -> push4 (*lodmul)");
-				set_function(s_convert_index-1, fStkPush4);
-			}
-			else
-			{
-				DBUGMSG("op *lod push (mul) -> op pusha (*lodmul)");
-				set_operand(s_convert_index + 1, get_operand(s_convert_index));  /* fix operand ptr  */
-				set_function(s_convert_index, fStkPush2a);
-				set_no_operand(s_convert_index);
-				s_convert_index++;
-			}
-		}
-		else
-		{
-			DBUGMSG("*lod (mul) -> (*lodmul)");
-		}
-		function = fStkLodMul;
-
-		/*  change loadreal a, lodmul b --> lod b, lodrealmul a  */
-		set_no_function(s_convert_index);  /* mark the pending fn as null  */
-		if (is_function(s_convert_index-1, fStkPush4)
-			|| is_function(s_convert_index-1, fStkPush2a))
-		{
-			--s_convert_index;  /* look back past this push  */
-		}
-
-		if (is_function(s_convert_index-1, fStkLodRealC)
-			&& m_load[m_load_ptr-2]->d.x == 2.0)
-		{
-			/* -- Convert '2*a' into 'a + a'. */
-			if (is_no_function(s_convert_index))
-			{
-				DBUGMSG("lodreal[2] (*lodmul[b])"
-					" -> (*loddbl[b])");
-				set_operand(s_convert_index-1, get_operand(s_convert_index));
-			}
-			else if (is_function(s_convert_index, fStkPush2a))
-			{
-				DBUGMSG("lodreal[2] *pusha (lodmul[b])"
-					" -> loddbl[b],stk+=2");
-				set_operand_prev_next(s_convert_index);
-				s_stack_count += 2;
-			}
-			else if (is_function(s_convert_index, fStkPush4))
-			{
-				DBUGMSG("lodreal[2] *push4 (lodmul[b])"
-					" -> loddbl[b],stk+=4");
-				set_operand_prev_next(s_convert_index);
-				s_stack_count += 4;
-			}
-			set_no_function(--s_convert_index);  /* so no increment later  */
-			function = fStkLodDbl;
-		}
-		else if (is_function(s_convert_index-1, fStkLodReal)
-			|| is_function(s_convert_index-1, fStkLodRealC))
-		{
-			/* lodreal *?push?? (*?lodmul)  */
-			otemp = get_operand(s_convert_index-1);  /* save previous fn's operand  */
-			set_function(s_convert_index-1, fStkLod);  /* prev fn = lod  */
-			/* Moved setting of prev lodptr to below */
-			/* This was a bug causing a bad loadptr to be set here  */
-			/* 3 lines marked 'prev lodptr = this' below replace this line  */
-			if (is_no_function(s_convert_index))
-			{
-				DBUGMSG("lodreal[a] (*lodmul[b])"
-					" -> lod[b] (*lodrealmul[a])");
-				set_operand(s_convert_index-1, get_operand(s_convert_index));  /* prev lodptr = this  */
-			}
-			else if (is_function(s_convert_index, fStkPush2a))
-			{
-				DBUGMSG("lodreal[a] *pusha (lodmul[b])"
-					" -> lod[b] (*lodrealmul[a]),stk+=2");
-				/* set this fn ptr to null so cvtptrx won't be incr later  */
-				set_no_function(s_convert_index);
-				set_operand_prev_next(s_convert_index);  /* prev lodptr = this  */
-				s_stack_count += 2;
-			}
-			else if (is_function(s_convert_index, fStkPush4))
-			{
-				DBUGMSG("lodreal[a] *push4 (lodmul[b])"
-					" -> lod[b] push2 (*lodrealmul[a]),stk+=2");
-				set_function(s_convert_index++, fStkPush2);
-				set_operand(s_convert_index-2, get_operand(s_convert_index));  /* prev lodptr = this  */
-				/* we know cvtptrx points to a null function now  */
-				s_stack_count += 2;
-			}
-			set_operand(s_convert_index, otemp);  /* switch the operands  */
-			function = fStkLodRealMul;  /* next fn is now lodrealmul  */
-		}
-
-		if (!is_no_function(s_convert_index))
-		{
-			s_convert_index++;  /* adjust cvtptrx back to normal if needed  */
-		}
+		peephole_optimize_mul_load(function);
 	}
 	else if (s_previous_function == fStkLodReal || s_previous_function == fStkLodRealC)
 	{
-
-		--s_convert_index;  /* found  lodreal *? (mul)  */
-		if (is_function(s_convert_index, fStkPush2))
-		{
-			DBUGMSG("lodreal *push2 (mul) -> (*lodrealmul),stk+=2");
-			REMOVE_PUSH;
-		}
-		else
-		{
-			DBUGMSG("*lodreal (mul) -> (*lodrealmul)");
-		}
-		function = fStkLodRealMul;
-
-		if (s_previous_function == fStkLodRealC  /* use s_previous_function here  */
-			&& m_load[m_load_ptr-1]->d.x == 2.0)
-		{
-			if (is_function(s_convert_index, fStkPush2))
-			{
-				DBUGMSG("push (*lodrealmul[2]) -> (*dbl),stk+=2");
-				REMOVE_PUSH;
-			}
-			else
-			{
-				DBUGMSG("*lodrealmul[2] -> (*dbl)");
-			}
-			set_no_operand(s_convert_index);
-			function = fStkDbl;
-
-			if (is_function(s_convert_index-1, fStkLod))
-			{
-				DBUGMSG("lod (*dbl) -> (*loddbl)");
-				--s_convert_index;
-				function = fStkLodDbl;
-			}
-			else if (is_function(s_convert_index-1, fStkSto2))
-			{
-				DBUGMSG("sto2 (*dbl) -> (*stodbl)");
-				--s_convert_index;
-				function = fStkStoDbl;
-			}
-		}
+		peephole_optimize_mul_real(function);
 	}
 	else if (s_previous_function == fStkLodImag)
 	{
-		--s_convert_index;  /* found  lodimag *? (mul)  */
-		if (is_function(s_convert_index, fStkPush2))
-		{
-			DBUGMSG("lodimag *push2 (mul) -> (*lodimagmul),stk+=2");
-			REMOVE_PUSH;
-		}
-		else
-		{
-			DBUGMSG("*lodimag (mul) -> (*lodimagmul)");
-		}
-		function = fStkLodImagMul;
+		peephole_optimize_mul_load_imaginary(function);
 	}
 	else if (s_previous_function == fStkLodLT && !is_function(s_convert_index-1, fStkPull2))
 	{
-		/* this shortcut fails if  Lod LT Pull Mul  found  */
-		DBUGMSG("LodLT (*Mul) -> (*LodLTMul)");
-		--s_convert_index;  /* never  lod LT Push Mul  here  */
-		function = fStkLodLTMul;
+		peephole_optimize_mul_load_less(function);
 	}
 	else if (s_previous_function == fStkLodLTE && !is_function(s_convert_index-1, fStkPull2))
 	{
-		DBUGMSG("LodLTE (*mul) -> (*LodLTEmul)");
-		--s_convert_index;
-		function = fStkLodLTEMul;
+		peephole_optimize_mul_load_less_equal(function);
 	}
 }
+
 void Formula::peephole_optimize_store_clear(t_function_pointer &function)
 {
 	--s_convert_index;
@@ -1434,6 +1469,72 @@ int fform_per_pixel();       /* these fns are in parsera.asm  */
 int BadFormula();
 void Img_Setup();
 
+void Formula::FinalOptimizations(t_function_pointer &out_function)
+{
+	/* ------------------------------ final optimizations ---------- */
+
+	/* cvtptrx -> one past last operator (always clr2)  */
+	--s_convert_index;  /* now it points to the last operator  */
+	out_function = get_function(s_convert_index-1);
+	/* ntst is the next-to-last operator  */
+
+	if (out_function == fStkLT)
+	{
+		DBUGMSG("LT Clr2 -> LT2");
+		set_function(s_convert_index-1, fStkLT2);
+	}
+	else if (out_function == fStkLodLT)
+	{
+		DBUGMSG("LodLT Clr2 -> LodLT2");
+		set_function(s_convert_index-1, fStkLodLT2);
+	}
+	else if (out_function == fStkLTE)
+	{
+		DBUGMSG("LTE Clr2 -> LTE2");
+		set_function(s_convert_index-1, fStkLTE2);
+	}
+	else if (out_function == fStkLodLTE)
+	{
+		DBUGMSG("LodLTE Clr2 -> LodLTE2");
+		set_function(s_convert_index-1, fStkLodLTE2);
+	}
+	else if (out_function == fStkGT)
+	{
+		DBUGMSG("GT Clr2 -> GT2");
+		set_function(s_convert_index-1, fStkGT2);
+	}
+	else if (out_function == fStkLodGT)
+	{
+		DBUGMSG("LodGT Clr2 -> LodGT2");
+		set_function(s_convert_index-1, fStkLodGT2);
+	}
+	else if (out_function == fStkLodGTE)
+	{
+		DBUGMSG("LodGTE Clr2 -> LodGTE2");
+		set_function(s_convert_index-1, fStkLodGTE2);
+	}
+	else if (out_function == fStkAND)
+	{
+		DBUGMSG("AND Clr2 -> ANDClr2");
+		set_function(s_convert_index-1, fStkANDClr2);
+		out_function = get_function(s_convert_index-2);
+		if (out_function == fStkLodLTE)
+		{
+			DBUGMSG("LodLTE ANDClr2 -> LodLTEAnd2");
+			--s_convert_index;
+			set_function(s_convert_index-1, fStkLodLTEAnd2);
+		}
+	}
+	else if (out_function == fStkOR)
+	{
+		DBUGMSG("OR Clr2 -> ORClr2");
+		set_function(s_convert_index-1, fStkORClr2);
+	}
+	else
+	{
+		++s_convert_index;  /* adjust this back since no optimization was found  */
+	}
+}
 void Formula::CvtStk()  /* convert the array of ptrs  */
 {
 	extern char g_formula_name[];
@@ -1573,69 +1674,8 @@ void Formula::CvtStk()  /* convert the array of ptrs  */
 	if (DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode)
 	{
 		goto skipfinalopt;
-	} /* ------------------------------ final optimizations ---------- */
-
-	/* cvtptrx -> one past last operator (always clr2)  */
-	--s_convert_index;  /* now it points to the last operator  */
-	out_function = get_function(s_convert_index-1);
-	/* ntst is the next-to-last operator  */
-
-	if (out_function == fStkLT)
-	{
-		DBUGMSG("LT Clr2 -> LT2");
-		set_function(s_convert_index-1, fStkLT2);
 	}
-	else if (out_function == fStkLodLT)
-	{
-		DBUGMSG("LodLT Clr2 -> LodLT2");
-		set_function(s_convert_index-1, fStkLodLT2);
-	}
-	else if (out_function == fStkLTE)
-	{
-		DBUGMSG("LTE Clr2 -> LTE2");
-		set_function(s_convert_index-1, fStkLTE2);
-	}
-	else if (out_function == fStkLodLTE)
-	{
-		DBUGMSG("LodLTE Clr2 -> LodLTE2");
-		set_function(s_convert_index-1, fStkLodLTE2);
-	}
-	else if (out_function == fStkGT)
-	{
-		DBUGMSG("GT Clr2 -> GT2");
-		set_function(s_convert_index-1, fStkGT2);
-	}
-	else if (out_function == fStkLodGT)
-	{
-		DBUGMSG("LodGT Clr2 -> LodGT2");
-		set_function(s_convert_index-1, fStkLodGT2);
-	}
-	else if (out_function == fStkLodGTE)
-	{
-		DBUGMSG("LodGTE Clr2 -> LodGTE2");
-		set_function(s_convert_index-1, fStkLodGTE2);
-	}
-	else if (out_function == fStkAND)
-	{
-		DBUGMSG("AND Clr2 -> ANDClr2");
-		set_function(s_convert_index-1, fStkANDClr2);
-		out_function = get_function(s_convert_index-2);
-		if (out_function == fStkLodLTE)
-		{
-			DBUGMSG("LodLTE ANDClr2 -> LodLTEAnd2");
-			--s_convert_index;
-			set_function(s_convert_index-1, fStkLodLTEAnd2);
-		}
-	}
-	else if (out_function == fStkOR)
-	{
-		DBUGMSG("OR Clr2 -> ORClr2");
-		set_function(s_convert_index-1, fStkORClr2);
-	}
-	else
-	{
-		++s_convert_index;  /* adjust this back since no optimization was found  */
-	}
+	FinalOptimizations(out_function);
 
 skipfinalopt:  /* -------------- end of final optimizations ------------ */
 

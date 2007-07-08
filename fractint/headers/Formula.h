@@ -311,6 +311,13 @@ private:
 	void peephole_optimize_sub(t_function_pointer &function);
 	void peephole_optimize_store_clear(t_function_pointer &function);
 	void peephole_optimize_mul(t_function_pointer &function);
+	void peephole_optimize_mul_load_dup(t_function_pointer &function);
+	void peephole_optimize_mul_store_dup(t_function_pointer &function);
+	void peephole_optimize_mul_load(t_function_pointer &function);
+	void peephole_optimize_mul_real(t_function_pointer &function);
+	void peephole_optimize_mul_load_imaginary(t_function_pointer &function);
+	void peephole_optimize_mul_load_less(t_function_pointer &function);
+	void peephole_optimize_mul_load_less_equal(t_function_pointer &function);
 	void peephole_optimize_divide(t_function_pointer &function);
 	void peephole_optimize_real(t_function_pointer &function);
 	void peephole_optimize_load_imaginary(t_function_pointer &function);
@@ -326,6 +333,7 @@ private:
 	void peephole_optimize_greater_equal(t_function_pointer &function);
 	void peephole_optimize_not_equal(t_function_pointer &function);
 	void peephole_optimize_equal(t_function_pointer &function);
+	void FinalOptimizations(t_function_pointer &out_function);
 };
 
 extern Arg *Arg1;
