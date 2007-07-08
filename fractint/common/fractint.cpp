@@ -185,6 +185,33 @@ char	g_exe_path[FILE_MAX_PATH] = { 0 };
 
 #define CONTINUE          4
 
+class FractInt
+{
+public:
+	FractInt();
+	~FractInt();
+	void Main(int argc, char **argv);
+
+private:
+	void Initialize(int argc, char **argv);
+	void Restart(int argc, char *argv[], bool &screen_stacked);
+	void RestoreStart(bool &screen_stacked, bool &resume_flag);
+	void ImageStart(bool &screen_stacked, bool &resume_flag);
+
+	ApplicationStateType m_state;
+};
+
+static FractInt s_fractint;
+
+FractInt::FractInt()
+	: m_state(APPSTATE_RESTART)
+{
+}
+
+FractInt::~FractInt()
+{
+}
+
 void check_same_name()
 {
 	char drive[FILE_MAX_DRIVE];
@@ -238,7 +265,7 @@ static void set_exe_path(char *path)
 	}
 }
 
-static void application_restart(int argc, char *argv[], bool &screen_stacked)
+void FractInt::Restart(int argc, char *argv[], bool &screen_stacked)
 {
 	g_browse_state.set_auto_browse(false);
 	g_browse_state.set_check_type(true);
@@ -312,9 +339,11 @@ static void application_restart(int argc, char *argv[], bool &screen_stacked)
 		set_if_old_bif();
 	}
 	screen_stacked = false;
+
+	m_state = APPSTATE_RESTORE_START;
 }
 
-static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
+void FractInt::RestoreStart(bool &screen_stacked, bool &resume_flag)
 {
 	if (g_color_preloaded)
 	{
@@ -389,14 +418,14 @@ static bool application_restore_restart(bool &screen_stacked, bool &resume_flag)
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
 		resume_flag = true;
-		return true;
+		m_state = APPSTATE_RESUME_LOOP;
 	}
 
 	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
-	return false;
+	m_state = APPSTATE_IMAGE_START;
 }
 
-static ApplicationStateType application_image_start(bool &screen_stacked, bool &resume_flag)
+void FractInt::ImageStart(bool &screen_stacked, bool &resume_flag)
 {
 	if (screen_stacked)
 	{
@@ -432,7 +461,8 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 		int kbdchar = main_menu(false);
 		if (kbdchar == FIK_INSERT) /* restart pgm on Insert Key  */
 		{
-			return APPSTATE_RESTART;
+			m_state = APPSTATE_RESTART;
+			return;
 		}
 		if (kbdchar == FIK_DELETE)                    /* select video mode list */
 		{
@@ -461,7 +491,8 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 #endif
 #endif
 			driver_shell();
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 
 #ifndef XFRACT
@@ -472,7 +503,8 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 		{
 			if ((get_commands() & Command::ThreeDYes) == 0)
 			{
-				return APPSTATE_IMAGE_START;
+				m_state = APPSTATE_IMAGE_START;
+				return;
 			}
 			kbdchar = '3';                         /* 3d=y so fall thru '3' code */
 		}
@@ -493,58 +525,69 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 			}
 			driver_set_for_text(); /* switch to text mode */
 			g_show_file = SHOWFILE_CANCELLED;
-			return APPSTATE_RESTORE_START;
+			m_state = APPSTATE_RESTORE_START;
+			return;
 		}
 		if (kbdchar == 't')  /* set fractal type */
 		{
 			g_julibrot = false;
 			get_fractal_type();
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == 'x')  /* generic toggle switch */
 		{
 			get_toggles();
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == 'y')  /* generic toggle switch */
 		{
 			get_toggles2();
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == 'z')  /* type specific parms */
 		{
 			get_fractal_parameters(1);
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == 'v')  /* view parameters */
 		{
 			get_view_params();
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == FIK_CTL_B)  /* ctrl B = browse parms*/
 		{
 			get_browse_parameters();
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == FIK_CTL_F)  /* ctrl f = sound parms*/
 		{
 			g_sound_state.get_parameters();
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == 'f')  /* floating pt toggle */
 		{
 			g_user_float_flag = !g_user_float_flag;
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == 'i')  /* set 3d fractal parms */
 		{
 			get_fractal_3d_parameters(); /* get the parameters */
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		if (kbdchar == 'g')
 		{
 			get_command_string(); /* get command string */
-			return APPSTATE_IMAGE_START;
+			m_state = APPSTATE_IMAGE_START;
+			return;
 		}
 		/* buzzer(2); */                          /* unrecognized key */
 	}
@@ -553,10 +596,10 @@ static ApplicationStateType application_image_start(bool &screen_stacked, bool &
 	set_help_mode(HELPMAIN);         /* now use this help mode */
 	resume_flag = false;  /* allows taking goto inside big_while_loop() */
 
-	return APPSTATE_RESUME_LOOP;
+	m_state = APPSTATE_RESUME_LOOP;
 }
 
-void application_initialize(int argc, char **argv)
+void FractInt::Initialize(int argc, char **argv)
 {
 	set_exe_path(argv[0]);
 
@@ -590,43 +633,45 @@ void application_initialize(int argc, char **argv)
 
 int application_main(int argc, char **argv)
 {
-	application_initialize(argc, argv);
+	s_fractint.Main(argc, argv);
+	return 0;
+}
+
+void FractInt::Main(int argc, char **argv)
+{
+	Initialize(argc, argv);
 
 	bool resume_flag = false;
 	bool screen_stacked = false;
 	bool kbdmore;						/* continuation variable  */
-	ApplicationStateType state = APPSTATE_RESTART;
+	m_state = APPSTATE_RESTART;
 
-	while (state != APPSTATE_NO_CHANGE)
+	while (m_state != APPSTATE_NO_CHANGE)
 	{
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
 #endif
 
-		switch (state)
+		switch (m_state)
 		{
 		case APPSTATE_RESTART:
-			application_restart(argc, argv, screen_stacked);
-			state = APPSTATE_RESTORE_START;
+			Restart(argc, argv, screen_stacked);
 			break;
 
 		case APPSTATE_RESTORE_START:
-			state = application_restore_restart(screen_stacked, resume_flag) ?
-				APPSTATE_RESUME_LOOP : APPSTATE_IMAGE_START;
+			RestoreStart(screen_stacked, resume_flag);
 			break;
 
 		case APPSTATE_IMAGE_START:
-			state = application_image_start(screen_stacked, resume_flag);
+			ImageStart(screen_stacked, resume_flag);
 			break;
 
 		case APPSTATE_RESUME_LOOP:
 			save_parameter_history();
-			state = big_while_loop(kbdmore, screen_stacked, resume_flag);
+			m_state = big_while_loop(kbdmore, screen_stacked, resume_flag);
 			break;
 		}
 	}
-
-	return 0;
 }
 
 int check_key()
