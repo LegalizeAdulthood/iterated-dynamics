@@ -236,9 +236,17 @@ private:
 	{
 		m_function_load_store_pointers[idx].function = function;
 	}
+	void set_no_function(int idx)
+	{
+		set_function(idx, NULL);
+	}
 	bool is_function(int idx, t_function_pointer function)
 	{
 		return m_function_load_store_pointers[idx].function == function;
+	}
+	bool is_no_function(int idx)
+	{
+		return is_function(idx, NULL);
 	}
 	t_function_pointer get_function(int idx)
 	{

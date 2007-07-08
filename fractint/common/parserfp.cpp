@@ -232,19 +232,6 @@ NEW_FN fStkJumpOnFalse;
 NEW_FN fStkJumpLabel; /* flow */
 NEW_FN fStkOne;   /* to support new parser fn.  */
 
-/* check to see if a const is being loaded  */
-/* the really awful hack below gets the first char of the name  */
-/*    of the variable being accessed  */
-/* if first char not alpha, or const p1, p2, or p3 are being accessed  */
-/*    then this is a const.  */
-#define IS_CONST(x) \
-		(!isalpha(**(((char **)x) - 2)) \
-		|| (x == &m_variables[VARIABLE_P1].argument && p1const) \
-		|| (x == &m_variables[VARIABLE_P2].argument && p2const) \
-		|| (x == &m_variables[VARIABLE_P3].argument && p3const) \
-		|| (x == &m_variables[VARIABLE_P4].argument && p4const) \
-		|| (x == &m_variables[VARIABLE_P5].argument && p5const))
-
 /* remove push operator from stack top  */
 #define REMOVE_PUSH			\
 	do						\
@@ -255,8 +242,6 @@ NEW_FN fStkOne;   /* to support new parser fn.  */
 	while (0)
 
 #define CLEAR_STK 127
-#define NO_OPERAND (Arg  *)0
-#define NO_FUNCTION 0
 #define MAX_STACK 8   /* max # of stack register avail  */
 
 #ifdef TESTFP
@@ -826,7 +811,7 @@ void Formula::peephole_optimize_mul(t_function_pointer &function)
 		function = fStkLodMul;
 
 		/*  change loadreal a, lodmul b --> lod b, lodrealmul a  */
-		set_function(s_convert_index, NO_FUNCTION);  /* mark the pending fn as null  */
+		set_no_function(s_convert_index);  /* mark the pending fn as null  */
 		if (is_function(s_convert_index-1, fStkPush4)
 			|| is_function(s_convert_index-1, fStkPush2a))
 		{
@@ -837,7 +822,7 @@ void Formula::peephole_optimize_mul(t_function_pointer &function)
 			&& m_load[m_load_ptr-2]->d.x == 2.0)
 		{
 			/* -- Convert '2*a' into 'a + a'. */
-			if (is_function(s_convert_index, NO_FUNCTION))
+			if (is_no_function(s_convert_index))
 			{
 				DBUGMSG("lodreal[2] (*lodmul[b])"
 					" -> (*loddbl[b])");
@@ -857,7 +842,7 @@ void Formula::peephole_optimize_mul(t_function_pointer &function)
 				set_operand_prev_next(s_convert_index);
 				s_stack_count += 4;
 			}
-			set_function(--s_convert_index, NO_FUNCTION);  /* so no increment later  */
+			set_no_function(--s_convert_index);  /* so no increment later  */
 			function = fStkLodDbl;
 		}
 		else if (is_function(s_convert_index-1, fStkLodReal)
@@ -869,7 +854,7 @@ void Formula::peephole_optimize_mul(t_function_pointer &function)
 			/* Moved setting of prev lodptr to below */
 			/* This was a bug causing a bad loadptr to be set here  */
 			/* 3 lines marked 'prev lodptr = this' below replace this line  */
-			if (is_function(s_convert_index, NO_FUNCTION))
+			if (is_no_function(s_convert_index))
 			{
 				DBUGMSG("lodreal[a] (*lodmul[b])"
 					" -> lod[b] (*lodrealmul[a])");
@@ -880,7 +865,7 @@ void Formula::peephole_optimize_mul(t_function_pointer &function)
 				DBUGMSG("lodreal[a] *pusha (lodmul[b])"
 					" -> lod[b] (*lodrealmul[a]),stk+=2");
 				/* set this fn ptr to null so cvtptrx won't be incr later  */
-				set_function(s_convert_index, NO_FUNCTION);
+				set_no_function(s_convert_index);
 				set_operand_prev_next(s_convert_index);  /* prev lodptr = this  */
 				s_stack_count += 2;
 			}
@@ -897,7 +882,7 @@ void Formula::peephole_optimize_mul(t_function_pointer &function)
 			function = fStkLodRealMul;  /* next fn is now lodrealmul  */
 		}
 
-		if (!is_function(s_convert_index, NO_FUNCTION))
+		if (!is_no_function(s_convert_index))
 		{
 			s_convert_index++;  /* adjust cvtptrx back to normal if needed  */
 		}
