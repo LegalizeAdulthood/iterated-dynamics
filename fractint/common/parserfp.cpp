@@ -1244,62 +1244,72 @@ void Formula::peephole_optimize_sqr(t_function_pointer &function)
 	}
 }
 
+void Formula::peephole_optimize_power_load_real_constant_special(t_function_pointer &function, double constant)
+{
+	/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr */
+	if (is_function(s_convert_index-1, fStkPush2))
+	{
+		DBUGMSG("LodRealC[-1,0,1,2] Push (*Pwr)"
+			" -> (*[recip,1,ident,Sqr0]), stk+=2");
+		REMOVE_PUSH;  /* lod[?] (push) *pwr */
+	}
+	else
+	{
+		DBUGMSG("LodRealC[-1,0,1,2] (*Pwr)"
+			" -> (*[recip,1,ident,sqr0])");
+	}
+	--s_convert_index;
+	set_no_operand(s_convert_index);
+	if (constant == 2.0)
+	{
+		DBUGMSG("[]=Sqr0");
+		function = fStkSqr0;  /* no need to compute lastsqr here  */
+		if (is_function(s_convert_index-1, fStkLod))
+		{
+			DBUGMSG("Lod (*Sqr0) -> (*LodSqr)");
+			--s_convert_index;
+			function = fStkLodSqr;  /* dont save lastsqr  */
+		}
+		else if (is_function(s_convert_index-1, fStkSto2))
+		{
+			DBUGMSG("Sto2 (*Sqr0) -> (*StoSqr0)");
+			--s_convert_index;
+			function = fStkStoSqr0;  /* dont save lastsqr  */
+		}
+	}
+	else if (constant == 1.0)
+	{
+		DBUGMSG("[]=Ident");
+		function = fStkIdent;
+	}
+	else if (constant == 0.0)
+	{
+		DBUGMSG("[]=One");
+		function = fStkOne;
+	}
+	else if (constant == -1.0)
+	{
+		DBUGMSG("[]=Recip");
+		function = fStkRecip;
+	}
+}
+
+void Formula::peephole_optimize_power_load_real_constant_other(t_function_pointer &function)
+{
+	--s_convert_index;
+	function = fStkLodRealPwr;  /* see comments below  */
+}
+
 void Formula::peephole_optimize_power_load_real_constant(t_function_pointer &function)
 {
-	double dTemp = m_load[m_load_ptr-1]->d.x;
-	if (dTemp == 2.0 || dTemp == 1.0 || dTemp == -1.0 || dTemp == 0.0)
+	double constant = m_load[m_load_ptr-1]->d.x;
+	if (constant == 2.0 || constant == 1.0 || constant == -1.0 || constant == 0.0)
 	{
-		/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr */
-		if (is_function(s_convert_index-1, fStkPush2))
-		{
-			DBUGMSG("LodRealC[-1,0,1,2] Push (*Pwr)"
-				" -> (*[recip,1,ident,Sqr0]), stk+=2");
-			REMOVE_PUSH;  /* lod[?] (push) *pwr */
-		}
-		else
-		{
-			DBUGMSG("LodRealC[-1,0,1,2] (*Pwr)"
-				" -> (*[recip,1,ident,sqr0])");
-		}
-		--s_convert_index;
-		set_no_operand(s_convert_index);
-		if (dTemp == 2.0)
-		{
-			DBUGMSG("[]=Sqr0");
-			function = fStkSqr0;  /* no need to compute lastsqr here  */
-			if (is_function(s_convert_index-1, fStkLod))
-			{
-				DBUGMSG("Lod (*Sqr0) -> (*LodSqr)");
-				--s_convert_index;
-				function = fStkLodSqr;  /* dont save lastsqr  */
-			}
-			else if (is_function(s_convert_index-1, fStkSto2))
-			{
-				DBUGMSG("Sto2 (*Sqr0) -> (*StoSqr0)");
-				--s_convert_index;
-				function = fStkStoSqr0;  /* dont save lastsqr  */
-			}
-		}
-		else if (dTemp == 1.0)
-		{
-			DBUGMSG("[]=Ident");
-			function = fStkIdent;
-		}
-		else if (dTemp == 0.0)
-		{
-			DBUGMSG("[]=One");
-			function = fStkOne;
-		}
-		else if (dTemp == -1.0)
-		{
-			DBUGMSG("[]=Recip");
-			function = fStkRecip;
-		}
+		peephole_optimize_power_load_real_constant_special(function, constant);
 	}
 	else if (is_function(s_convert_index-1, s_previous_function))
 	{
-		--s_convert_index;
-		function = fStkLodRealPwr;  /* see comments below  */
+		peephole_optimize_power_load_real_constant_other(function);
 	}
 }
 
@@ -1563,8 +1573,6 @@ void Img_Setup();
 
 void Formula::FinalOptimizations(t_function_pointer &out_function)
 {
-	/* ------------------------------ final optimizations ---------- */
-
 	/* cvtptrx -> one past last operator (always clr2)  */
 	--s_convert_index;  /* now it points to the last operator  */
 	out_function = get_function(s_convert_index-1);
@@ -1627,6 +1635,7 @@ void Formula::FinalOptimizations(t_function_pointer &out_function)
 		++s_convert_index;  /* adjust this back since no optimization was found  */
 	}
 }
+
 void Formula::CvtStk()  /* convert the array of ptrs  */
 {
 	extern char g_formula_name[];
