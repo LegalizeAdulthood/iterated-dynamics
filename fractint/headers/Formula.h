@@ -307,6 +307,11 @@ private:
 	void record_error(int error_code);
 	void peephole_optimizer(t_function_pointer &function);
 	void peephole_optimize_load(t_function_pointer &function);
+	void peephole_optimize_load_load(t_function_pointer &function);
+	void peephole_optimize_load_store_same_value(t_function_pointer &function);
+	void peephole_optimize_load_clear_load_same_value(t_function_pointer &function);
+	void peephole_optimize_load_lastsqr_real(t_function_pointer &function);
+	void peephole_optimize_load_real_constant(t_function_pointer &function);
 	void peephole_optimize_add(t_function_pointer &function);
 	void peephole_optimize_add_load_dup(t_function_pointer &function);
 	void peephole_optimize_add_store_dup(t_function_pointer &function);

@@ -562,44 +562,76 @@ void Formula::peephole_optimizer(t_function_pointer &function)
 	}
 }
 
+void Formula::peephole_optimize_load_load(t_function_pointer &function)
+{
+	/* previous non-adjust operator was Lod of same operand  */
+	/* ? lodx ? (*lodx)  */
+	if (is_function(--s_convert_index, fStkPush2)) /* prev fn was push  */
+	{
+		/* ? lod *push (lod)  */
+		--s_convert_index;  /* found  *lod push (lod)  */
+		if (is_function(s_convert_index-1, fStkPush2)) /* always more ops here  */
+		{
+			DBUGMSG("push *lod push (lod) -> push4 (*loddup)");
+			set_function(s_convert_index-1, fStkPush4);
+		}
+		else  /* prev op not push  */
+		{
+			DBUGMSG("op *lod push (lod) -> op pusha(p=0) (*loddup)");
+			set_no_operand(s_convert_index);  /* use 'alternate' push fn.  */
+			set_function(s_convert_index++, fStkPush2a);  /* push w/2 free on stack  */
+			/* operand ptr will be set below  */
+		}
+	}
+	else  /* never  push *lod (lod)  so must be  */
+	{
+		DBUGMSG("op *lod (lod) -> op (*loddup)");
+	}
+	function = fStkLodDup;
+}
+
+void Formula::peephole_optimize_load_store_same_value(t_function_pointer &function)
+{
+	/* store, load of same value  */
+	/* only one operand on stack here when prev oper is Sto2  */
+	DBUGMSG("*sto2 (lod) -> (*stodup)");
+	--s_convert_index;
+	function = fStkStoDup;
+}
+
+void Formula::peephole_optimize_load_clear_load_same_value(t_function_pointer &function)
+{
+	/* store, clear, load same value found  */
+	/* only one operand was on stack so this is safe  */
+	DBUGMSG("*StoClr2 (Lod) -> (*Sto2)");
+	--s_convert_index;
+	function = fStkSto2;  /* use different Sto fn  */
+}
+
+void Formula::peephole_optimize_load_lastsqr_real(t_function_pointer &function)
+{
+	/* -- LastSqr is a real. */
+	DBUGMSG("(*lod[lastsqr]) -> (*lodreal)");
+	function = fStkLodReal;
+}
+
+void Formula::peephole_optimize_load_real_constant(t_function_pointer &function)
+{
+	DBUGMSG("(*lod) -> (*lodrealc)");
+	function = fStkLodRealC;  /* a real const is being loaded  */
+}
+
 void Formula::peephole_optimize_load(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod
 		&& m_load[m_load_ptr-1] == m_load[m_load_ptr])
 	{
-		/* previous non-adjust operator was Lod of same operand  */
-		/* ? lodx ? (*lodx)  */
-		if (is_function(--s_convert_index, fStkPush2)) /* prev fn was push  */
-		{
-			/* ? lod *push (lod)  */
-			--s_convert_index;  /* found  *lod push (lod)  */
-			if (is_function(s_convert_index-1, fStkPush2)) /* always more ops here  */
-			{
-				DBUGMSG("push *lod push (lod) -> push4 (*loddup)");
-				set_function(s_convert_index-1, fStkPush4);
-			}
-			else  /* prev op not push  */
-			{
-				DBUGMSG("op *lod push (lod) -> op pusha(p=0) (*loddup)");
-				set_no_operand(s_convert_index);  /* use 'alternate' push fn.  */
-				set_function(s_convert_index++, fStkPush2a);  /* push w/2 free on stack  */
-				/* operand ptr will be set below  */
-			}
-		}
-		else  /* never  push *lod (lod)  so must be  */
-		{
-			DBUGMSG("op *lod (lod) -> op (*loddup)");
-		}
-		function = fStkLodDup;
+		peephole_optimize_load_load(function);
 	}
 	else if (s_previous_function == fStkSto2
 		&& m_store[m_store_ptr-1] == m_load[m_load_ptr])
 	{
-		/* store, load of same value  */
-		/* only one operand on stack here when prev oper is Sto2  */
-		DBUGMSG("*sto2 (lod) -> (*stodup)");
-		--s_convert_index;
-		function = fStkStoDup;
+		peephole_optimize_load_store_same_value(function);
 	}
 	/* This may cause roundoff problems when later operators  */
 	/*  use the rounded value that was stored here, while the next  */
@@ -607,26 +639,16 @@ void Formula::peephole_optimize_load(t_function_pointer &function)
 	else if (s_previous_function == fStkStoClr2
 		&& m_store[m_store_ptr-1] == m_load[m_load_ptr])
 	{
-		/* store, clear, load same value found  */
-		/* only one operand was on stack so this is safe  */
-		DBUGMSG("*StoClr2 (Lod) -> (*Sto2)");
-		--s_convert_index;
-		function = fStkSto2;  /* use different Sto fn  */
+		peephole_optimize_load_clear_load_same_value(function);
 	}
-	else
+	else if (m_load[m_load_ptr] == &m_variables[VARIABLE_LAST_SQR].argument
+		&& s_last_sqr_stored)
 	{
-		if (m_load[m_load_ptr] == &m_variables[VARIABLE_LAST_SQR].argument
-			&& s_last_sqr_stored)
-		{
-			/* -- LastSqr is a real. */
-			DBUGMSG("(*lod[lastsqr]) -> (*lodreal)");
-			function = fStkLodReal;
-		}
-		else if (s_p1_constant && m_load[m_load_ptr]->d.y == 0.0)
-		{
-			DBUGMSG("(*lod) -> (*lodrealc)");
-			function = fStkLodRealC;  /* a real const is being loaded  */
-		}
+		peephole_optimize_load_lastsqr_real(function);
+	}
+	else if (s_p1_constant && m_load[m_load_ptr]->d.y == 0.0)
+	{
+		peephole_optimize_load_real_constant(function);
 	}
 	set_operand(s_convert_index, m_load[m_load_ptr++]);
 }
