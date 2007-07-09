@@ -32,7 +32,7 @@ static int compress(int rowlimit);
 static int _fastcall shftwrite(BYTE *color, int g_num_colors);
 static int _fastcall extend_blk_len(int datalen);
 static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data);
-static int _fastcall store_item_name(char *);
+static int _fastcall store_item_name(const char *name);
 static void _fastcall setup_save_info(struct fractal_info *save_info);
 
 /*
@@ -106,7 +106,6 @@ static int gif_savetodisk(char *filename)      /* save-to-disk routine */
 	char openfile[FILE_MAX_PATH];
 	char openfiletype[10];
 	char tmpfile[FILE_MAX_PATH];
-	char *period;
 	int newfile;
 	int i;
 	int j;
@@ -129,18 +128,14 @@ restart:
 		strcpy(openfiletype, ".pot");
 	}
 
-	period = has_extension(openfile);
-	if (period != NULL)
+	if (has_extension(openfile) == NULL)
 	{
-		strcpy(openfiletype, period);
-		*period = 0;
+		strcat(openfile, openfiletype);
 	}
 	if (g_resave_mode != RESAVE_YES)
 	{
 		update_save_name(filename); /* for next time */
 	}
-
-	strcat(openfile, openfiletype);
 
 	strcpy(tmpfile, openfile);
 	if (access(openfile, 0) != 0)/* file doesn't exist */
@@ -579,7 +574,7 @@ int encoder()
 			version, so we need to use g_fractal_type.  JCO 06JAN01 */
 		if (fractal_type_formula(g_fractal_type))
 		{
-			save_info.tot_extend_len += store_item_name(g_formula_name);
+			save_info.tot_extend_len += store_item_name(g_formula_state.get_formula());
 		}
 		if (g_fractal_type == FRACTYPE_L_SYSTEM)
 		{
@@ -797,7 +792,7 @@ static int _fastcall put_extend_blk(int block_id, int block_len, char *block_dat
 	return 1;
 }
 
-static int _fastcall store_item_name(char *nameptr)
+static int _fastcall store_item_name(const char *nameptr)
 {
 	struct formula_info fsave_info;
 	int i;

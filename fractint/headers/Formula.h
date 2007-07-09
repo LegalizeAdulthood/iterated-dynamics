@@ -150,8 +150,10 @@ public:
 	void StackSqr0();
 	void StackSqr_d();
 	void StackSqr_l();
-
 	int get_parameter(const char *name);
+	int find_item(FILE **file);
+	long get_file_entry(char *wildcard);
+	bool merge_formula_filename(char *new_filename, int mode);
 
 	int parser_vsp() const				{ return m_parser_vsp; }
 	int max_ops() const					{ return m_formula_max_ops; }
@@ -165,6 +167,8 @@ public:
 	bool uses_p4() const				{ return m_uses_p4; }
 	bool uses_p5() const				{ return m_uses_p5; }
 	int max_fn() const					{ return m_max_function_number; }
+	const char *get_filename() const	{ return m_filename; }
+	const char *get_formula() const		{ return m_formula_name; }
 
 	void set_uses_is_mand(bool value)	{ m_uses_is_mand = value; }
 	void set_uses_p1(bool value)		{ m_uses_p1 = value; }
@@ -173,6 +177,8 @@ public:
 	void set_uses_p4(bool value)		{ m_uses_p4 = value; }
 	void set_uses_p5(bool value)		{ m_uses_p5 = value; }
 	void set_max_fn(int value)			{ m_max_function_number = value; }
+	void set_filename(const char *value);
+	void set_formula(const char *value);
 
 private:
 	enum MathType m_math_type;
@@ -231,7 +237,13 @@ private:
 	int m_initial_load_pointer;
 	int m_initial_store_pointer;
 	int m_initial_op_pointer;
+	char m_filename[FILE_MAX_PATH];		/* file to find (type=)formulas in */
+	char m_formula_name[ITEMNAMELEN + 1];		/* Name of the Formula (if not null) */
 
+	bool formula_defined() const
+	{
+		return m_formula_name[0] != 0;
+	}
 	void set_function(int idx, t_function_pointer function)
 	{
 		m_function_load_store_pointers[idx].function = function;

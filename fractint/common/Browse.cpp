@@ -425,7 +425,7 @@ static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_
 {
 	if (fractal_type_formula(g_fractal_type) && fractal_type_formula(info.fractal_type))
 	{
-		if (!stricmp(formula_info.form_name, g_formula_name))
+		if (!stricmp(formula_info.form_name, g_formula_state.get_formula()))
 		{
 			int num_functions = g_formula_state.max_fn();
 			return (num_functions > 0) ? functions_match(info, num_functions) : true;

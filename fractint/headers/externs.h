@@ -117,8 +117,6 @@ extern bool					g_float_flag;
 extern ComplexD				*g_float_parameter;
 extern const BYTE			g_font_8x8[8][1024/8];
 extern int					g_force_symmetry;
-extern char					g_formula_filename[];
-extern char					g_formula_name[];
 extern int					g_fractal_type;
 extern char					*g_fract_dir1;
 extern char					*g_fract_dir2;

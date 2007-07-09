@@ -14,7 +14,7 @@ extern void show_function(char *message);
 extern int set_function_array(int, const char *);
 extern void set_trig_pointers(int);
 extern int tab_display();
-extern int ends_with_slash(char *);
+extern bool ends_with_slash(const char *text);
 extern int ifs_load();
 extern int find_file_item(char *, const char *item_name, FILE **, int);
 extern int file_gets(char *, int, FILE *);

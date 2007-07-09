@@ -61,22 +61,25 @@
 #include "UIChoices.h"
 #include "MathUtil.h"
 
-/* Routines in this module      */
-
-static  int check_f6_key(int curkey, int choice);
-static  int filename_speedstr(int, int, int, char *, int);
-static  int get_screen_corners();
-
 /* speed key state values */
-#define MATCHING         0      /* string matches list - speed key mode */
-#define TEMPLATE        -2      /* wild cards present - buiding template */
-#define SEARCHPATH      -3      /* no match - building path search name */
+enum SpeedStateType
+{
+	SPEEDSTATE_MATCHING = 0,		/* string matches list - speed key mode */
+	SPEEDSTATE_TEMPLATE = -2,		/* wild cards present - buiding template */
+	SPEEDSTATE_SEARCH_PATH = -3		/* no match - building path search name */
+};
 
 #define   FILEATTR       0x37      /* File attributes; select all but volume labels */
 #define   HIDDEN         2
 #define   SYSTEM         4
 #define   SUBDIR         16
 #define   MAXNUMFILES    2977L
+
+static  int check_f6_key(int curkey, int choice);
+static  int filename_speedstr(int, int, int, char *, int);
+static  int get_screen_corners();
+
+static int s_speed_state;
 
 struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
 
@@ -1214,13 +1217,11 @@ int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 }
 
 
-static int speedstate;
-int get_a_filename(char *hdg, char *file_template, char *flname)
+int get_a_filename(const char *hdg, char *file_template, char *flname)
 {
 	int rds;  /* if getting an RDS image map */
 	char instr[80];
 	int masklen;
-	char filename[FILE_MAX_PATH];
 	char speedstr[81];
 	char tmpmask[FILE_MAX_PATH];   /* used to locate next file in list */
 	char old_flname[FILE_MAX_PATH];
@@ -1259,7 +1260,8 @@ restart:  /* return here if template or directory changes */
 	{
 		strcpy(flname, DOTSLASH);
 	}
-	split_path(flname , drive, dir, fname, ext);
+	split_path(flname, drive, dir, fname, ext);
+	char filename[FILE_MAX_PATH];
 	make_path(filename, ""   , "" , fname, ext);
 	retried = 0;
 
@@ -1434,7 +1436,7 @@ retry_dir:
 		strcpy(flname, old_flname);
 		return -1;
 	}
-	if (speedstr[0] == 0 || speedstate == MATCHING)
+	if (speedstr[0] == 0 || s_speed_state == SPEEDSTATE_MATCHING)
 	{
 		if (choices[i]->type)
 		{
@@ -1471,15 +1473,15 @@ retry_dir:
 	}
 	else
 	{
-		if (speedstate == SEARCHPATH
+		if (s_speed_state == SPEEDSTATE_SEARCH_PATH
 			&& strchr(speedstr, '*') == 0 && strchr(speedstr, '?') == 0
 			&& ((fr_find_first(speedstr) == 0
 			&& (g_dta.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) /* it is a directory */
 		{
-			speedstate = TEMPLATE;
+			s_speed_state = SPEEDSTATE_TEMPLATE;
 		}
 
-		if (speedstate == TEMPLATE)
+		if (s_speed_state == SPEEDSTATE_TEMPLATE)
 		{
 			/* extract from tempstr the pathname and template information,
 				being careful not to overwrite drive and directory if not
@@ -1501,6 +1503,8 @@ retry_dir:
 			if (strchr(fname1, '*') || strchr(fname1, '?') ||
 				strchr(ext1,   '*') || strchr(ext1,   '?'))
 			{
+				// TODO: can't do this when file_template is constant string
+				// like "*.frm"!!!
 				make_path(file_template, "", "", fname1, ext1);
 			}
 			else if (is_a_directory(flname))
@@ -1509,7 +1513,7 @@ retry_dir:
 			}
 			goto restart;
 		}
-		else /* speedstate == SEARCHPATH */
+		else /* speedstate == SPEEDSTATE_SEARCH_PATH */
 		{
 			char fullpath[FILE_MAX_DIR];
 			find_path(speedstr, fullpath);
@@ -1558,17 +1562,17 @@ static int filename_speedstr(int row, int col, int vid,
 		|| strchr(speedstring, '*') || strchr(speedstring, '*')
 		|| strchr(speedstring, '?'))
 	{
-		speedstate = TEMPLATE;  /* template */
+		s_speed_state = SPEEDSTATE_TEMPLATE;  /* template */
 		prompt = "File Template";
 	}
 	else if (speed_match)
 	{
-		speedstate = SEARCHPATH; /* does not match list */
+		s_speed_state = SPEEDSTATE_SEARCH_PATH; /* does not match list */
 		prompt = "Search Path for";
 	}
 	else
 	{
-		speedstate = MATCHING;
+		s_speed_state = SPEEDSTATE_MATCHING;
 		prompt = "Speed key string";
 	}
 	driver_put_string(row, col, vid, prompt);

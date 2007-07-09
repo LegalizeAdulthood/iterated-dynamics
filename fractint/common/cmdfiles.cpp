@@ -33,6 +33,7 @@
 #include "CommandParser.h"
 #include "EscapeTime.h"
 #include "FiniteAttractor.h"
+#include "Formula.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
 
@@ -126,8 +127,6 @@ bool g_no_bof = false;							/* Flag to make inside=bof options not duplicate bo
 bool g_escape_exit_flag;						/* set to 1 to avoid the "are you sure?" screen */
 bool g_command_initialize = true;				/* first time into command_files? */
 FractalTypeSpecificData *g_current_fractal_specific = NULL;
-char	g_formula_filename[FILE_MAX_PATH];		/* file to find (type=)formulas in */
-char	g_formula_name[ITEMNAMELEN + 1];		/* Name of the Formula (if not null) */
 char	g_l_system_filename[FILE_MAX_PATH];		/* file to find (type=)L-System's in */
 char	g_l_system_name[ITEMNAMELEN + 1];		/* Name of L-System */
 char	g_command_file[FILE_MAX_PATH];			/* file to find command sets in */
@@ -337,7 +336,7 @@ int command_files(int argc, char **argv)
 
 	/*set structure of search directories*/
 	strcpy(g_search_for.par, g_command_file);
-	strcpy(g_search_for.frm, g_formula_filename);
+	strcpy(g_search_for.frm, g_formula_state.get_filename());
 	strcpy(g_search_for.lsys, g_l_system_filename);
 	strcpy(g_search_for.ifs, g_ifs_filename);
 	return 0;
@@ -404,8 +403,8 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_orbit_interval = 1;                  /* plot all orbits */
 	g_debug_mode = DEBUGMODE_NONE;				/* debugging flag(s) are off */
 	g_timer_flag = false;                       /* timer flags are off       */
-	strcpy(g_formula_filename, "fractint.frm"); /* default formula file      */
-	g_formula_name[0] = 0;
+	g_formula_state.set_filename("fractint.frm"); /* default formula file      */
+	g_formula_state.set_formula(NULL);
 	strcpy(g_l_system_filename, "fractint.l");
 	g_l_system_name[0] = 0;
 	strcpy(g_command_file, "fractint.par");
@@ -2454,7 +2453,7 @@ static int formula_file_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	if (merge_path_names(g_formula_filename, context.value, context.mode) < 0)
+	if (g_formula_state.merge_formula_filename(context.value, context.mode))
 	{
 		init_msg(context.variable, context.value, context.mode);
 	}
@@ -2467,7 +2466,7 @@ static int formula_name_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	strcpy(g_formula_name, context.value);
+	g_formula_state.set_formula(context.value);
 	return Command::FractalParameter;
 }
 
