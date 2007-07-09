@@ -1638,7 +1638,6 @@ void Formula::FinalOptimizations(t_function_pointer &out_function)
 
 void Formula::CvtStk()  /* convert the array of ptrs  */
 {
-	extern char g_formula_name[];
 	void (*out_function)();
 	Arg *testoperand;
 	s_last_sqr_stored = true;  /* assume lastsqr is real (not stored explicitly)  */
@@ -1781,7 +1780,7 @@ void Formula::CvtStk()  /* convert the array of ptrs  */
 	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0.0;  /* do this once per image  */
 
 	/* now change the pointers  */
-	if (g_formula_name[0] != 0 &&
+	if (formula_defined() &&
 		(m_uses_jump == 0 || !fill_jump_struct_fp())) /* but only if parse succeeded  */
 	{
 		g_current_fractal_specific->per_pixel = fform_per_pixel;

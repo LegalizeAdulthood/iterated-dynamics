@@ -36,6 +36,7 @@
 #include "realdos.h"
 
 #include "EscapeTime.h"
+#include "Formula.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
 #include "Formula.h"
@@ -50,7 +51,7 @@ static int getprec(double, double, double);
 int get_precision_bf(int);
 static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
-static void put_filename(char *keyword, char *fname);
+static void put_filename(const char *keyword, const char *fname);
 #ifndef XFRACT
 static int check_modekey(int curkey, int choice);
 #endif
@@ -778,8 +779,8 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 		}
 		if (fractal_type_formula(g_fractal_type))
 		{
-			put_filename("formulafile", g_formula_filename);
-			put_parm(" formulaname=%s", g_formula_name);
+			put_filename("formulafile", g_formula_state.get_filename());
+			put_parm(" formulaname=%s", g_formula_state.get_formula());
 			if (g_formula_state.uses_is_mand())
 			{
 				put_parm(" ismand=%c", g_is_mand ? 'y' : 'n');
@@ -1478,12 +1479,11 @@ docolors:
 	restore_stack(saved);
 }
 
-static void put_filename(char *keyword, char *fname)
+static void put_filename(const char *keyword, const char *fname)
 {
-	char *p;
 	if (*fname && !ends_with_slash(fname))
 	{
-		p = strrchr(fname, SLASHC);
+		const char *p = strrchr(fname, SLASHC);
 		if (p != NULL)
 		{
 			fname = p + 1;

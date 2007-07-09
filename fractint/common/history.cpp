@@ -253,8 +253,8 @@ void _fastcall history_save_info()
 	{
 	case FRACTYPE_FORMULA:
 	case FRACTYPE_FORMULA_FP:
-		strncpy(current.filename, g_formula_filename, FILE_MAX_PATH);
-		strncpy(current.itemname, g_formula_name, ITEMNAMELEN + 1);
+		strncpy(current.filename, g_formula_state.get_filename(), FILE_MAX_PATH);
+		strncpy(current.itemname, g_formula_state.get_formula(), ITEMNAMELEN + 1);
 		break;
 	case FRACTYPE_IFS:
 	case FRACTYPE_IFS_3D:
@@ -449,8 +449,8 @@ void _fastcall history_restore_info()
 	{
 	case FRACTYPE_FORMULA:
 	case FRACTYPE_FORMULA_FP:
-		strncpy(g_formula_filename, last.filename, FILE_MAX_PATH);
-		strncpy(g_formula_name, last.itemname, ITEMNAMELEN + 1);
+		g_formula_state.set_filename(last.filename);
+		g_formula_state.set_formula(last.itemname);
 		break;
 	case FRACTYPE_IFS:
 	case FRACTYPE_IFS_3D:

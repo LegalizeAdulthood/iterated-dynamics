@@ -677,7 +677,7 @@ void get_calculation_time(char *msg, long ctime)
 	}
 }
 
-static void show_str_var(char *name, char *var, int *row, char *msg)
+static void show_str_var(const char *name, const char *var, int &row, char *msg)
 {
 	if (var == NULL)
 	{
@@ -686,7 +686,7 @@ static void show_str_var(char *name, char *var, int *row, char *msg)
 	if (*var != 0)
 	{
 		sprintf(msg, "%s=%s", name, var);
-		driver_put_string((*row)++, 2, C_GENERAL_HI, msg);
+		driver_put_string(row++, 2, C_GENERAL_HI, msg);
 	}
 }
 
@@ -724,16 +724,16 @@ int tab_display_2(char *msg)
 		write_row(++row, "intlength %-d bflength %-d ", g_int_length, g_bf_length);
 	}
 	row++;
-	show_str_var("tempdir",     g_temp_dir,      &row, msg);
-	show_str_var("workdir",     g_work_dir,      &row, msg);
-	show_str_var("filename",    g_read_name,     &row, msg);
-	show_str_var("formulafile", g_formula_filename, &row, msg);
-	show_str_var("savename",    g_save_name,     &row, msg);
-	show_str_var("parmfile",    g_command_file,  &row, msg);
-	show_str_var("ifsfile",     g_ifs_filename,  &row, msg);
-	show_str_var("autokeyname", g_autokey_name,     &row, msg);
-	show_str_var("lightname",   g_light_name,   &row, msg);
-	show_str_var("map",         g_map_name,     &row, msg);
+	show_str_var("tempdir", g_temp_dir, row, msg);
+	show_str_var("workdir", g_work_dir, row, msg);
+	show_str_var("filename", g_read_name, row, msg);
+	show_str_var("formulafile", g_formula_state.get_filename(), row, msg);
+	show_str_var("savename", g_save_name, row, msg);
+	show_str_var("parmfile", g_command_file, row, msg);
+	show_str_var("ifsfile", g_ifs_filename, row, msg);
+	show_str_var("autokeyname", g_autokey_name, row, msg);
+	show_str_var("lightname", g_light_name, row, msg);
+	show_str_var("map", g_map_name, row, msg);
 	write_row(row++, "Sizeof g_fractal_specific array %d",
 		g_num_fractal_types*(int)sizeof(FractalTypeSpecificData));
 	write_row(row++, "CalculationStatus %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
@@ -844,14 +844,14 @@ top:
 		if (fractal_type_formula(g_fractal_type))
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_formula_name);
-			i = (int) strlen(g_formula_name) + 1;
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_formula_state.get_formula());
+			i = (int) strlen(g_formula_state.get_formula()) + 1;
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if ((int) strlen(g_formula_filename) >= 29)
+			if ((int) strlen(g_formula_state.get_filename()) >= 29)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_formula_filename);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_formula_state.get_filename());
 		}
 		function_details(msg);
 		driver_put_string(s_row + 1, 16 + i, C_GENERAL_HI, msg);
@@ -1290,18 +1290,10 @@ static void area()
 	stop_message(STOPMSG_NO_BUZZER, buf);
 }
 
-int ends_with_slash(char *fl)
+bool ends_with_slash(const char *text)
 {
-	int len;
-	len = (int) strlen(fl);
-	if (len)
-	{
-		if (fl[--len] == SLASHC)
-		{
-			return 1;
-		}
-	}
-	return 0;
+	int len = int(strlen(text));
+	return len && (text[--len] == SLASHC);
 }
 
 /* --------------------------------------------------------------------- */

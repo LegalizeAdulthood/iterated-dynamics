@@ -194,7 +194,7 @@ void FullScreenPrompter::PrepareFooterFile()
 	{
 		if (fractal_type_formula(g_fractal_type))
 		{
-			find_file_item(g_formula_filename, g_formula_name, &m_scroll_file, ITEMTYPE_FORMULA);
+			g_formula_state.find_item(&m_scroll_file);
 			m_in_scrolling_mode = true;
 			m_scroll_file_start = ftell(m_scroll_file);
 		}
@@ -1306,9 +1306,9 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	if (done >= 0)
 	{
 		done = choices[done]->num;
-		if (fractal_type_formula(done) && !strcmp(g_formula_filename, g_command_file))
+		if (fractal_type_formula(done) && !strcmp(g_formula_state.get_filename(), g_command_file))
 		{
-			strcpy(g_formula_filename, g_search_for.frm);
+			g_formula_state.set_filename(g_search_for.frm);
 		}
 		if (done == FRACTYPE_L_SYSTEM && !strcmp(g_l_system_filename, g_command_file))
 		{
@@ -1416,8 +1416,7 @@ sel_type_restart:
 
 	case FRACTYPE_FORMULA:
 	case FRACTYPE_FORMULA_FP:
-		if (get_file_entry_help(HT_FORMULA, GETFILE_FORMULA,
-			"Formula", formmask, g_formula_filename, g_formula_name))
+		if (g_formula_state.get_file_entry(formmask))
 		{
 			return true;
 		}
@@ -1682,37 +1681,46 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 		int itemtype = ITEMTYPE_PARAMETER;
 		if (i == -2)  /* special for formula */
 		{
-			filename = g_formula_filename;
-			entryname = g_formula_name;
-			itemtype = ITEMTYPE_FORMULA;
-		}
-		else if (i == -3)   /* special for lsystem */
-		{
-			filename = g_l_system_filename;
-			entryname = g_l_system_name;
-			itemtype = ITEMTYPE_L_SYSTEM;
-		}
-		else if (i == -4)   /* special for ifs */
-		{
-			filename = g_ifs_filename;
-			entryname = g_ifs_name;
-			itemtype = ITEMTYPE_IFS;
-		}
-		else  /* this shouldn't happen */
-		{
-#if defined(_WIN32)
-			_ASSERTE(false);
-#endif
-			filename = NULL;
-			entryname = NULL;
-		}
-		if (find_file_item(filename, entryname, &entryfile, itemtype) == 0)
-		{
-			load_entry_text(entryfile, g_text_stack, 17, 0, 0);
-			fclose(entryfile);
-			if (fractal_type_formula(g_fractal_type))
+			if (g_formula_state.find_item(&entryfile) == 0)
 			{
-				g_formula_state.get_parameter(entryname); /* no error check, should be okay, from above */
+				load_entry_text(entryfile, g_text_stack, 17, 0, 0);
+				fclose(entryfile);
+				if (fractal_type_formula(g_fractal_type))
+				{
+					g_formula_state.get_parameter(g_formula_state.get_formula()); /* no error check, should be okay, from above */
+				}
+			}
+		}
+		else
+		{
+			if (i == -3)   /* special for lsystem */
+			{
+				filename = g_l_system_filename;
+				entryname = g_l_system_name;
+				itemtype = ITEMTYPE_L_SYSTEM;
+			}
+			else if (i == -4)   /* special for ifs */
+			{
+				filename = g_ifs_filename;
+				entryname = g_ifs_name;
+				itemtype = ITEMTYPE_IFS;
+			}
+			else  /* this shouldn't happen */
+			{
+#if defined(_WIN32)
+				_ASSERTE(false);
+#endif
+				filename = NULL;
+				entryname = NULL;
+			}
+			if (find_file_item(filename, entryname, &entryfile, itemtype) == 0)
+			{
+				load_entry_text(entryfile, g_text_stack, 17, 0, 0);
+				fclose(entryfile);
+				if (fractal_type_formula(g_fractal_type))
+				{
+					g_formula_state.get_parameter(entryname); /* no error check, should be okay, from above */
+				}
 			}
 		}
 	}

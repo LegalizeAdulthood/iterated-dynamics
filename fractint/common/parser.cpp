@@ -25,8 +25,11 @@
 /* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
+#include "helpdefs.h"
 
 #include "drivers.h"
+#include "fihelp.h"
+#include "filesystem.h"
 #include "fpu.h"
 #include "fractals.h"
 #include "jiim.h"
@@ -222,11 +225,39 @@ Formula::Formula()
 		}
 	}
 	m_prepare_formula_text[0] = 0;
+	m_filename[0] = 0;
+	m_formula_name[0] = 0;
 }
 
 Formula::~Formula()
 {
 	free_work_area();
+}
+
+void Formula::set_filename(const char *value)
+{
+	::strncpy(m_filename, value, NUM_OF(m_filename));
+}
+
+void Formula::set_formula(const char *value)
+{
+	::strncpy(m_formula_name, value, NUM_OF(m_formula_name));
+}
+
+bool Formula::merge_formula_filename(char *new_filename, int mode)
+{
+	return ::merge_path_names(m_filename, new_filename, mode) < 0;
+}
+
+int Formula::find_item(FILE **file)
+{
+	return ::find_file_item(m_filename, m_formula_name, file, ITEMTYPE_FORMULA);
+}
+
+long Formula::get_file_entry(char *wildcard)
+{
+	return get_file_entry_help(HT_FORMULA, GETFILE_FORMULA,
+		"Formula", wildcard, m_filename, m_formula_name);
 }
 
 #define CASE_TERMINATOR case',':\
@@ -2630,10 +2661,9 @@ bool Formula::ParseStr(const char *text, int pass)
 	return false;
 }
 
-
 int Formula::orbit()
 {
-	if (g_formula_name[0] == 0 || g_overflow)
+	if (!formula_defined() || g_overflow)
 	{
 		return 1;
 	}
@@ -2689,7 +2719,7 @@ int Formula::per_pixel()
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
 #endif
-	if (g_formula_name[0] == 0)
+	if (!formula_defined())
 	{
 		return 1;
 	}
@@ -3488,7 +3518,7 @@ static bool formula_get_token(FILE *openfile, token_st *this_token)
 	}
 }
 
-int Formula::get_parameter(const char *Name)
+int Formula::get_parameter(const char *name)
 {
 	m_uses_p1 = false;
 	m_uses_p2 = false;
@@ -3498,13 +3528,13 @@ int Formula::get_parameter(const char *Name)
 	m_uses_is_mand = false;
 	m_max_function_number = 0;
 
-	if (g_formula_name[0] == 0)
+	if (!formula_defined())
 	{
 		return 0;  /*  and don't reset the pointers  */
 	}
 
 	FILE *entry_file = NULL;
-	if (find_file_item(g_formula_filename, Name, &entry_file, ITEMTYPE_FORMULA))
+	if (find_file_item(m_filename, name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stop_message(0, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 0;
@@ -3531,7 +3561,7 @@ int Formula::get_parameter(const char *Name)
 		debug_token = fopen("frmtokens.txt", "at");
 		if (debug_token != NULL)
 		{
-			fprintf(debug_token, "%s\n", Name);
+			fprintf(debug_token, "%s\n", name);
 		}
 	}
 	token_st current_token;
@@ -3780,7 +3810,7 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		debug_fp = fopen("debugfrm.txt", "at");
 		if (debug_fp != NULL)
 		{
-			fprintf(debug_fp, "%s\n", g_formula_name);
+			fprintf(debug_fp, "%s\n", g_formula_state.get_formula());
 			if (g_symmetry != 0)
 			{
 				fprintf(debug_fp, "%s\n", SymStr[g_symmetry].s);
@@ -3858,7 +3888,7 @@ int BadFormula()
 	return 1;
 }
 
-int Formula::RunFormula(const char *Name, bool report_bad_symmetry)
+int Formula::RunFormula(const char *name, bool report_bad_symmetry)
 {
 	FILE *entry_file = NULL;
 
@@ -3868,13 +3898,13 @@ int Formula::RunFormula(const char *Name, bool report_bad_symmetry)
 	g_current_fractal_specific->per_pixel = BadFormula;
 	g_current_fractal_specific->orbitcalc = BadFormula;
 
-	if (g_formula_name[0] == 0)
+	if (!formula_defined())
 	{
 		return 1;  /*  and don't reset the pointers  */
 	}
 
 	/* add search for FRM files in directory */
-	if (find_file_item(g_formula_filename, Name, &entry_file, ITEMTYPE_FORMULA))
+	if (find_file_item(m_filename, name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stop_message(0, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return 1;
@@ -3918,7 +3948,7 @@ int Formula::setup_fp()
 #if !defined(XFRACT) && !defined(_WIN32)
 	MathType = D_MATH;
 	/* CAE changed below for fp */
-	RunFormRes = !RunFormula(g_formula_name, false); /* RunFormula() returns 1 for failure */
+	RunFormRes = !RunFormula(g_formula_state.get_formula(), false); /* RunFormula() returns 1 for failure */
 	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
@@ -3928,7 +3958,7 @@ int Formula::setup_fp()
 	return RunFormRes;
 #else
 	m_math_type = FLOATING_POINT_MATH;
-	RunFormRes = !RunFormula(g_formula_name, false); /* RunForm() returns 1 for failure */
+	RunFormRes = !RunFormula(g_formula_state.get_formula(), false); /* RunForm() returns 1 for failure */
 #if 0
 	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
@@ -3950,7 +3980,7 @@ int Formula::setup_int()
 	s_fudge = double(1L << g_bit_shift);
 	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;
-	return !RunFormula(g_formula_name, false);
+	return !RunFormula(g_formula_state.get_formula(), false);
 #endif
 }
 

@@ -451,20 +451,19 @@ static void got_formula_info(const fractal_info &read_info, struct ext_blk_formu
 		return;
 	}
 
-	char *nameptr;
+	formula_info.form_name[ITEMNAMELEN] = 0;
 	switch (read_info.fractal_type)
 	{
 	case FRACTYPE_L_SYSTEM:
-		nameptr = g_l_system_name;
+		strcpy(g_l_system_name, formula_info.form_name);
 		break;
 
 	case FRACTYPE_IFS:
 	case FRACTYPE_IFS_3D:
-		nameptr = g_ifs_name;
+		strcpy(g_ifs_name, formula_info.form_name);
 		break;
 
 	default:
-		nameptr = g_formula_name;
 		g_formula_state.set_uses_p1(formula_info.uses_p1 != 0);
 		g_formula_state.set_uses_p2(formula_info.uses_p2 != 0);
 		g_formula_state.set_uses_p3(formula_info.uses_p3 != 0);
@@ -472,10 +471,9 @@ static void got_formula_info(const fractal_info &read_info, struct ext_blk_formu
 		g_formula_state.set_uses_p5(formula_info.uses_p5 != 0);
 		g_formula_state.set_uses_is_mand(formula_info.uses_is_mand != 0);
 		g_is_mand = formula_info.ismand != 0;
+		g_formula_state.set_formula(formula_info.form_name);
 		break;
 	}
-	formula_info.form_name[ITEMNAMELEN] = 0;
-	strcpy(nameptr, formula_info.form_name);
 	/* perhaps in future add more here, check block_len for backward compatibility */
 }
 

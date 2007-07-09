@@ -467,20 +467,12 @@ void extract_filename(char *target, const char *source)
 
 /* tells if filename has extension */
 /* returns pointer to period or NULL */
-char *has_extension(char *source)
+const char *has_extension(const char *source)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
-	char *ret = NULL;
 	split_path(source, NULL, NULL, fname, ext);
-	if (ext != NULL)
-	{
-		if (*ext != 0)
-		{
-			ret = strrchr(source, '.');
-		}
-	}
-	return ret;
+	return (ext[0] != 0) ? strrchr(source, '.') : NULL;
 }
 
 #ifndef XFRACT
@@ -531,25 +523,21 @@ void find_path(const char *filename, char *fullpathname)
 }
 #endif
 
-int check_write_file(char *name, const char *ext)
+void check_write_file(char *name, const char *ext)
 {
 	/* TODO: change encoder.cpp to also use this routine */
 nextname:
 	char openfile[FILE_MAX_DIR];
 	strcpy(openfile, name);
-	char opentype[20];
-	strcpy(opentype, ext);
-	char *period = has_extension(openfile);
-	if (period != NULL)
+
+	if (has_extension(openfile) == NULL)
 	{
-		strcpy(opentype, period);
-		*period = 0;
+		strcat(openfile, ext);
 	}
-	strcat(openfile, opentype);
 	if (access(openfile, 0) != 0) /* file doesn't exist */
 	{
 		strcpy(name, openfile);
-		return 0;
+		return;
 	}
 	/* file already exists */
 	if (!g_fractal_overwrite)
@@ -557,7 +545,6 @@ nextname:
 		update_save_name(name);
 		goto nextname;
 	}
-	return 1;
 }
 
 void update_save_name(char *filename) /* go to the next file name */
