@@ -19,3 +19,6 @@ Fractals that don't render properly in integer mode:
 	fractint.par/AtomicGlow
 	fractint.par/Batman
 	fractint.par/Blue? (different images?)
+
+Eliminate arbitrary limits on lengths of names, etc., created in order
+to conserve memory.  ITEMNAMELEN, L-system limits, etc.
