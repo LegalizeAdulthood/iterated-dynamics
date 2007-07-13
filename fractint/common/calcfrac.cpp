@@ -1154,7 +1154,9 @@ int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with r
 	{
 		if ((g_log_table || g_log_calculation) /* map color, but not if maxit & adjusted for inside, etc */
 				&& (g_real_color_iter < g_max_iteration || (g_inside < 0 && g_color_iter == g_max_iteration)))
+		{
 			g_color_iter = logtablecalc(g_color_iter);
+		}
 		g_color = abs((int)g_color_iter);
 		if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
 		{
