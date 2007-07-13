@@ -92,7 +92,7 @@ static void julman()
 	i = -1;
 	while (g_fractal_specific[++i].name)
 	{
-		if (!fractal_type_none(g_fractal_specific[i].tojulia) && g_fractal_specific[i].name[0] != '*')
+		if (!fractal_type_none(g_fractal_specific[i].tojulia) && !g_fractal_specific[i].is_hidden())
 		{
 			fprintf(fp, "%s  %s\n", g_fractal_specific[i].name,
 				g_fractal_specific[g_fractal_specific[i].tojulia].name);

@@ -784,6 +784,15 @@ struct FractalTypeSpecificData
 	{
 		return (flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0;
 	}
+
+	const char *get_type() const
+	{
+		return is_hidden() ? &name[1] : name;
+	}
+	bool is_hidden() const
+	{
+		return (name[0] == '*');
+	}
 };
 
 class AbstractFractalType
