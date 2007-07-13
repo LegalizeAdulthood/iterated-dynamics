@@ -708,7 +708,6 @@ static void write_3d_parameters()
 
 void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int ii, int jj)
 {
-	int i;
 	int j;
 	int k;
 	double Xctr;
@@ -717,8 +716,6 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 	double Xmagfactor;
 	double Rotation;
 	double Skew;
-	char *sptr;
-	char buf[81];
 	bf_t bfXctr = NULL;
 	bf_t bfYctr = NULL;
 	int saved = save_stack();
@@ -736,18 +733,15 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 	{
 		goto docolors;
 	}
+	int i;
+	char buf[81];
 	if (g_display_3d == DISPLAY3D_NONE || g_display_3d == DISPLAY3D_GENERATED)
 	{
 		/****** fractal only parameters in this section *******/
 		put_parm(" reset=%d", check_back() ?
 			min(g_save_release, g_release) : g_release);
 
-		sptr = g_current_fractal_specific->name;
-		if (*sptr == '*')
-		{
-			++sptr;
-		}
-		put_parm(" type=%s", sptr);
+		put_parm(" type=%s", g_current_fractal_specific->get_type());
 
 		if (fractal_type_julibrot(g_fractal_type))
 		{
@@ -764,13 +758,7 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 			}
 			if (g_new_orbit_type != FRACTYPE_JULIA)
 			{
-				char *name;
-				name = g_fractal_specific[g_new_orbit_type].name;
-				if (*name == '*')
-				{
-					name++;
-				}
-				put_parm(" orbitname=%s", name);
+				put_parm(" orbitname=%s", g_fractal_specific[g_new_orbit_type].get_type());
 			}
 			if (g_juli_3d_mode != JULI3DMODE_MONOCULAR)
 			{

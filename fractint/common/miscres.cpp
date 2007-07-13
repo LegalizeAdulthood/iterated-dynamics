@@ -837,9 +837,7 @@ top:
 	}
 	else
 	{
-		driver_put_string(s_row, 16, C_GENERAL_HI,
-			g_current_fractal_specific->name[0] == '*' ?
-				&g_current_fractal_specific->name[1] : g_current_fractal_specific->name);
+		driver_put_string(s_row, 16, C_GENERAL_HI, g_current_fractal_specific->get_type());
 		i = 0;
 		if (fractal_type_formula(g_fractal_type))
 		{

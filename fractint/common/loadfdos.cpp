@@ -111,9 +111,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	int tmpxdots;
 	int tmpydots;
 	float tmpreduce;
-#ifndef XFRACT
-	char *nameptr;
-	int  *attributes;
+#if !defined(XFRACT)
 #endif
 	VIDEOINFO *vident;
 
@@ -217,7 +215,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 
 		qsort(vid, g_video_table_len, sizeof(vid[0]), video_mode_compare); /* sort modes */
 
-		attributes = (int *)&g_stack[1000];
+		int *attributes = new int[g_video_table_len];
 		for (i = 0; i < g_video_table_len; ++i)
 		{
 			attributes[i] = 1;
@@ -231,11 +229,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 		else
 		{
-			nameptr = g_current_fractal_specific->name;
-			if (*nameptr == '*')
-			{
-				++nameptr;
-			}
+			const char *nameptr = g_current_fractal_specific->get_type();
 			if (g_display_3d)
 			{
 				nameptr = "3D Transform";
@@ -301,6 +295,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 			"key...name......................err...xdot..ydot.clr.comment..................",
 			temp1, g_video_table_len, NULL, attributes,
 			1, 13, 78, 0, format_item, NULL, NULL, check_mode_key);
+		delete[] attributes;
 		if (i == -1)
 		{
 			return -1;

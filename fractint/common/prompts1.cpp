@@ -1273,12 +1273,12 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	{
 		if (g_julibrot)
 		{
-			if (!((g_fractal_specific[i].flags & FRACTALFLAG_JULIBROT) && g_fractal_specific[i].name[0] != '*'))
+			if (!((g_fractal_specific[i].flags & FRACTALFLAG_JULIBROT) && !g_fractal_specific[i].is_hidden()))
 			{
 				continue;
 			}
 		}
-		if (g_fractal_specific[i].name[0] == '*')
+		if (g_fractal_specific[i].is_hidden())
 		{
 			continue;
 		}
@@ -1503,7 +1503,7 @@ int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
 	numfractals = 0;
 	for (i = 0; i < g_num_fractal_types; i++)
 	{
-		if ((g_fractal_specific[i].flags & FRACTALFLAG_JULIBROT) && g_fractal_specific[i].name[0] != '*')
+		if ((g_fractal_specific[i].flags & FRACTALFLAG_JULIBROT) && !g_fractal_specific[i].is_hidden())
 		{
 			fractals[numfractals] = i;
 			if (i == g_new_orbit_type || i == g_fractal_specific[g_new_orbit_type].tofloat)
@@ -1634,8 +1634,6 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	const char *choices[30];
 	long old_bail_out = 0L;
 	char message[120];
-	char *type_name;
-	char *tmpptr;
 	char bailoutmsg[50];
 	int ret = 0;
 	char parmprompt[MAX_PARAMETERS][55];
@@ -1667,9 +1665,9 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	}
 	current_fractal_type = g_fractal_type;
 	i = g_current_fractal_specific->tofloat;
-	if (g_current_fractal_specific->name[0] == '*'
+	if (g_current_fractal_specific->is_hidden()
 		&& !fractal_type_none(i)
-		&& g_fractal_specific[i].name[0] != '*')
+		&& !g_fractal_specific[i].is_hidden())
 	{
 		current_fractal_type = i;
 	}
@@ -1919,11 +1917,7 @@ gfp_top:
 		parameter_values[prompt].uval.ch.list = function_names;
 		choices[prompt++] = (char *)trg[i];
 	}
-	type_name = g_current_fractal_specific->name;
-	if (type_name[0] == '*')
-	{
-		++type_name;
-	}
+	char const *type_name = g_current_fractal_specific->get_type();
 
 	i = g_current_fractal_specific->orbit_bailout;
 
@@ -1952,7 +1946,7 @@ gfp_top:
 			old_bail_out = g_bail_out;
 			parameter_values[prompt++].uval.Lval = old_bail_out;
 			parameter_values[prompt].type = '*';
-			tmpptr = type_name;
+			const char *tmpptr = type_name;
 			if (g_user_biomorph != -1)
 			{
 				i = 100;
