@@ -2088,23 +2088,29 @@ void (*StkTrig1)() = dStkSqr;
 void (*StkTrig2)() = dStkSinh;
 void (*StkTrig3)() = dStkCosh;
 
-static const char *s_jump_keywords[] =
+struct jump_list_item
 {
-	"if",
-	"elseif",
-	"else",
-	"endif"
+	const char *name;
+	JumpType jumpType;
+};
+
+static const jump_list_item s_jump_list[] =
+{
+	{ "if", JUMPTYPE_IF },
+	{ "elseif", JUMPTYPE_ELSEIF },
+	{ "else", JUMPTYPE_ELSE },
+	{ "endif", JUMPTYPE_ENDIF }
 };
 
 static JumpType is_jump_keyword(const char *Str, int Len)
 {
-	for (int i = 0; i < NUM_OF(s_jump_keywords); i++)
+	for (int i = 0; i < NUM_OF(s_jump_list); i++)
 	{
-		if (int_strlen(s_jump_keywords[i]) == Len)
+		if (int_strlen(s_jump_list[i].name) == Len)
 		{
-			if (!strnicmp(s_jump_keywords[i], Str, Len))
+			if (!strnicmp(s_jump_list[i].name, Str, Len))
 			{
-				return JumpType(i + 1);
+				return s_jump_list[i].jumpType;
 			}
 		}
 	}
@@ -3064,12 +3070,12 @@ static bool get_function_information(FormulaToken *token)
 }
 static bool get_flow_control_information(FormulaToken *token)
 {
-	for (int i = 0; i < NUM_OF(s_jump_keywords); i++)  /*pick up flow control*/
+	for (int i = 0; i < NUM_OF(s_jump_list); i++)  /*pick up flow control*/
 	{
-		if (!strcmp(s_jump_keywords[i], token->text))
+		if (!strcmp(s_jump_list[i].name, token->text))
 		{
 			token->type = TOKENTYPE_FLOW_CONTROL;
-			token->id   = i + 1;
+			token->id   = s_jump_list[i].jumpType;
 			return true;
 		}
 	}
@@ -3140,8 +3146,11 @@ static bool formula_get_constant(FILE *openfile, FormulaToken *token)
 				filepos = ftell(openfile);
 			}
 			break;
-		default :
-			if (c == 'e' && getting_base && (isdigit(token->text[i-1]) || (token->text[i-1] == '.' && i > 1)))
+		default:
+			if (c == 'e'
+				&& getting_base
+				&& (isdigit(token->text[i-1])
+					|| (token->text[i-1] == '.' && i > 1)))
 			{
 				token->text[i++] = char(c);
 				getting_base = false;
@@ -3223,7 +3232,7 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 		int c = formula_get_char(openfile);
 		switch (c)
 		{
-CASE_NUM:
+		CASE_NUM:
 		case '.':
 			if (debug_token != NULL)
 			{
@@ -3314,7 +3323,6 @@ CASE_NUM:
 		fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
 		fclose(debug_token);
 	}
-	return;
 }
 
 static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
@@ -3322,24 +3330,16 @@ static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
 	int c;
 	int i = 1;
 	bool variable_name_too_long = false;
-	long filepos;
 	long last_filepos = ftell(openfile);
 	while ((c = formula_get_char(openfile)) != EOF && c != CTRL_Z)
 	{
-		filepos = ftell(openfile);
+		long filepos = ftell(openfile);
 		switch (c)
 		{
 		CASE_ALPHA:
 		CASE_NUM:
 		case '_':
-			if (i < 79)
-			{
-				token->text[i++] = char(c);
-			}
-			else
-			{
-				token->text[i] = 0;
-			}
+			token->text[i++] = (i < NUM_OF(token->text)) ? char(c) : 0;
 			if (i == MAX_TOKEN_LENGTH+1)
 			{
 				variable_name_too_long = true;
@@ -3371,7 +3371,7 @@ static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
 					return false;
 				}
 				else if (token->type == TOKENTYPE_FLOW_CONTROL
-					&& (token->id == 3 || token->id == 4))
+					&& (token->id == JUMPTYPE_ELSE || token->id == JUMPTYPE_ENDIF))
 				{
 					token->SetError(TOKENID_ERROR_JUMP_WITH_ILLEGAL_CHAR);
 					return false;
@@ -3384,12 +3384,14 @@ static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
 				token->SetError(TOKENID_ERROR_FUNC_USED_AS_VAR);
 				return false;
 			}
-			else if (token->type == TOKENTYPE_FLOW_CONTROL && (token->id == 1 || token->id == 2))
+			else if (token->type == TOKENTYPE_FLOW_CONTROL
+				&& (token->id == JUMPTYPE_IF || token->id == JUMPTYPE_ELSEIF))
 			{
 				token->SetError(TOKENID_ERROR_JUMP_MISSING_BOOLEAN);
 				return false;
 			}
-			else if (token->type == TOKENTYPE_FLOW_CONTROL && (token->id == 3 || token->id == 4))
+			else if (token->type == TOKENTYPE_FLOW_CONTROL
+				&& (token->id == JUMPTYPE_ELSE || token->id == JUMPTYPE_ENDIF))
 			{
 				if (c == ',' || c == '\n' || c == ':')
 				{
@@ -4413,15 +4415,11 @@ void Formula::record_error(int error_code)
 
 bool Formula::prescan(FILE *open_file)
 {
-	int i;
-	long orig_pos;
-	bool done = false;
-	FormulaToken this_token;
 	m_errors_found = 0;
-	bool ExpectingArg = true;
-	int NewStatement = true;
-	int assignment_ok = true;
-	int already_got_colon = false;
+	bool expecting_argument = true;
+	bool new_statement = true;
+	bool assignment_ok = true;
+	bool already_got_colon = false;
 	unsigned long else_has_been_used = 0;
 	unsigned long waiting_for_mod = 0;
 	int waiting_for_endif = 0;
@@ -4438,14 +4436,18 @@ bool Formula::prescan(FILE *open_file)
 	init_var_list();
 	init_const_lists();
 
-	orig_pos = m_statement_pos = ftell(open_file);
-	for (i = 0; i < 3; i++)
+	long orig_pos = ftell(open_file);
+	m_statement_pos = orig_pos;
+	
+	for (int i = 0; i < 3; i++)
 	{
 		m_errors[i].start_pos    = 0L;
 		m_errors[i].error_pos    = 0L;
 		m_errors[i].error_number = 0;
 	}
 
+	FormulaToken this_token;
+	bool done = false;
 	while (!done)
 	{
 		m_file_pos = ftell(open_file);
@@ -4496,7 +4498,7 @@ bool Formula::prescan(FILE *open_file)
 			break;
 		case TOKENTYPE_PARENTHESIS:
 			assignment_ok = false;
-			NewStatement = false;
+			new_statement = false;
 			switch (this_token.id)
 			{
 			case TOKENID_OPEN_PARENS:
@@ -4504,7 +4506,7 @@ bool Formula::prescan(FILE *open_file)
 				{
 					record_error(PE_NESTING_TOO_DEEP);
 				}
-				else if (!ExpectingArg)
+				else if (!expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_OPERATOR);
 				}
@@ -4528,7 +4530,7 @@ bool Formula::prescan(FILE *open_file)
 				{
 					waiting_for_mod >>= 1;
 				}
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
@@ -4540,22 +4542,22 @@ bool Formula::prescan(FILE *open_file)
 		case TOKENTYPE_PARAMETER_VARIABLE: /*i.e. p1, p2, p3, p4 or p5*/
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = false;
-			if (!ExpectingArg)
+			new_statement = false;
+			if (!expecting_argument)
 			{
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
-			ExpectingArg = false;
+			expecting_argument = false;
 			break;
 		case TOKENTYPE_USER_VARIABLE: /* i.e. c, iter, etc. */
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = false;
-			if (!ExpectingArg)
+			new_statement = false;
+			if (!expecting_argument)
 			{
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
-			ExpectingArg = false;
+			expecting_argument = false;
 			m_variable_list = var_list_st::add(m_variable_list, this_token);
 			if (m_variable_list == NULL)
 			{
@@ -4569,23 +4571,23 @@ bool Formula::prescan(FILE *open_file)
 		case TOKENTYPE_PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = false;
-			if (!ExpectingArg)
+			new_statement = false;
+			if (!expecting_argument)
 			{
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
-			ExpectingArg = false;
+			expecting_argument = false;
 			break;
 		case TOKENTYPE_REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
 			assignment_ok = false;
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = false;
-			if (!ExpectingArg)
+			new_statement = false;
+			if (!expecting_argument)
 			{
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
-			ExpectingArg = false;
+			expecting_argument = false;
 			m_real_list = const_list_st::add(m_real_list, this_token);
 			if (m_real_list == NULL)
 			{
@@ -4600,12 +4602,12 @@ bool Formula::prescan(FILE *open_file)
 			assignment_ok = false;
 			m_number_of_ops++;
 			m_number_of_loads++;
-			NewStatement = false;
-			if (!ExpectingArg)
+			new_statement = false;
+			if (!expecting_argument)
 			{
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
-			ExpectingArg = false;
+			expecting_argument = false;
 			m_complex_list = const_list_st::add(m_complex_list, this_token);
 			if (m_complex_list == NULL)
 			{
@@ -4618,28 +4620,28 @@ bool Formula::prescan(FILE *open_file)
 			break;
 		case TOKENTYPE_FUNCTION:
 			assignment_ok = false;
-			NewStatement = false;
+			new_statement = false;
 			m_number_of_ops++;
-			if (!ExpectingArg)
+			if (!expecting_argument)
 			{
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			break;
 		case TOKENTYPE_PARAMETER_FUNCTION:
 			assignment_ok = false;
-			NewStatement = false;
+			new_statement = false;
 			m_number_of_ops++;
-			if (!ExpectingArg)
+			if (!expecting_argument)
 			{
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
-			NewStatement = false;
+			new_statement = false;
 			break;
 		case TOKENTYPE_FLOW_CONTROL:
 			assignment_ok = false;
 			m_number_of_ops++;
 			m_number_of_jumps++;
-			if (!NewStatement)
+			if (!new_statement)
 			{
 				record_error(PE_JUMP_NOT_FIRST);
 			}
@@ -4648,11 +4650,11 @@ bool Formula::prescan(FILE *open_file)
 				m_uses_jump = true;
 				switch (this_token.id)
 				{
-				case 1:  /* if */
+				case JUMPTYPE_IF:
 					else_has_been_used <<= 1;
 					waiting_for_endif++;
 					break;
-				case 2: /*ELSEIF*/
+				case JUMPTYPE_ELSEIF:
 					m_number_of_ops += 3; /*else + two clear statements*/
 					m_number_of_jumps++;  /* this involves two jumps */
 					if (else_has_been_used & 1)
@@ -4664,7 +4666,7 @@ bool Formula::prescan(FILE *open_file)
 						record_error(PE_MISPLACED_ELSE_OR_ELSEIF);
 					}
 					break;
-				case 3: /*ELSE*/
+				case JUMPTYPE_ELSE:
 					if (else_has_been_used & 1)
 					{
 						record_error(PE_ENDIF_REQUIRED_AFTER_ELSE);
@@ -4675,7 +4677,7 @@ bool Formula::prescan(FILE *open_file)
 					}
 					else_has_been_used |= 1;
 					break;
-				case 4: /*ENDIF*/
+				case JUMPTYPE_ENDIF:
 					else_has_been_used >>= 1;
 					waiting_for_endif--;
 					if (waiting_for_endif < 0)
@@ -4706,7 +4708,7 @@ bool Formula::prescan(FILE *open_file)
 					record_error(PE_UNMATCHED_MODULUS);
 					waiting_for_mod = 0;
 				}
-				if (!ExpectingArg)
+				if (!expecting_argument)
 				{
 					if (this_token.id == 11)
 					{
@@ -4717,7 +4719,7 @@ bool Formula::prescan(FILE *open_file)
 						m_number_of_ops++;
 					}
 				}
-				else if (!NewStatement)
+				else if (!new_statement)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
@@ -4734,18 +4736,18 @@ bool Formula::prescan(FILE *open_file)
 				{
 					already_got_colon = true;
 				}
-				NewStatement = true;
+				new_statement = true;
 				assignment_ok = true;
-				ExpectingArg = true;
+				expecting_argument = true;
 				m_statement_pos = ftell(open_file);
 				break;
 			case 1:     /* != */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 2:     /* = */
 				m_number_of_ops--; /*this just converts a load to a store*/
@@ -4755,47 +4757,47 @@ bool Formula::prescan(FILE *open_file)
 				{
 					record_error(PE_ILLEGAL_ASSIGNMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 3:     /* == */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 4:     /* < */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 5:     /* <= */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 6:     /* > */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 7:     /* >= */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 8:     /* | */ /* (half of the modulus operator */
 				assignment_ok = false;
@@ -4803,11 +4805,11 @@ bool Formula::prescan(FILE *open_file)
 				{
 					m_number_of_ops--;
 				}
-				if (!(waiting_for_mod & 1L) && !ExpectingArg)
+				if (!(waiting_for_mod & 1L) && !expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_OPERATOR);
 				}
-				else if ((waiting_for_mod & 1L) && ExpectingArg)
+				else if ((waiting_for_mod & 1L) && expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
@@ -4815,51 +4817,51 @@ bool Formula::prescan(FILE *open_file)
 				break;
 			case 9:     /* || */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 10:    /* && */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 12:    /* + */ /* case 11 (":") is up with case 0 */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 13:    /* - */
 				assignment_ok = false;
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 14:    /* * */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 15:    /* / */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			case 16:    /* ^ */
 				assignment_ok = false;
-				if (ExpectingArg)
+				if (expecting_argument)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
@@ -4873,7 +4875,7 @@ bool Formula::prescan(FILE *open_file)
 				{
 					fseek(open_file, m_file_pos, SEEK_SET);
 				}
-				ExpectingArg = true;
+				expecting_argument = true;
 				break;
 			default:
 				break;
@@ -4896,7 +4898,7 @@ bool Formula::prescan(FILE *open_file)
 				record_error(PE_IF_WITH_NO_ENDIF);
 				waiting_for_endif = 0;
 			}
-			if (ExpectingArg && !NewStatement)
+			if (expecting_argument && !new_statement)
 			{
 				record_error(PE_SHOULD_BE_ARGUMENT);
 				m_statement_pos = ftell(open_file);
