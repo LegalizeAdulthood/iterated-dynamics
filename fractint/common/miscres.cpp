@@ -751,7 +751,7 @@ int tab_display_2(char *msg)
 		g_current_fractal_specific->orbitcalc == fFormula ? "fast parser" :
 #endif
 		g_current_fractal_specific->orbitcalc ==  formula_orbit ? "slow parser" :
-		g_current_fractal_specific->orbitcalc ==  BadFormula ? "bad formula" :
+		g_current_fractal_specific->orbitcalc ==  bad_formula ? "bad formula" :
 		"", g_formula_state.uses_is_mand() ? 1 : 0);
 	/*
 	char message[80] = { 0 };
