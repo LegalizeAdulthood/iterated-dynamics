@@ -125,7 +125,7 @@ public:
 	void StackSqr0();
 	void StackSqr_d();
 	void StackSqr_l();
-	int get_parameter(const char *name);
+	void get_parameter(const char *name);
 	int find_item(FILE **file);
 	long get_file_entry(char *wildcard);
 	bool merge_formula_filename(char *new_filename, int mode);
