@@ -56,6 +56,7 @@ double y2;
 #define MAX_ARGS 100
 #define MAX_BOXX 8192  /* max size of g_box_x array */
 
+static const int MAX_TOKEN_LENGTH = 32;
 static const int CTRL_Z = 26;
 static const int BITS_PER_BYTE = 8;
 
@@ -82,21 +83,33 @@ struct PEND_OP
 	int p;
 };
 
-struct token_st
+struct FormulaToken
 {
-	char token_str[80];
-	FormulaTokenType token_type;
-	int token_id;
-	ComplexD token_const;
+	char text[MAX_TOKEN_LENGTH+1];
+	FormulaTokenType type;
+	int id;
+	ComplexD value;
 
-	void set_error(TokenIdType id)
+	void SetError(TokenIdType tokenId)
 	{
-		token_type = TOKENTYPE_ERROR;
-		token_id = int(id);
+		type = TOKENTYPE_ERROR;
+		id = int(tokenId);
 	}
-	bool is_error(TokenIdType id) const
+	bool IsError(TokenIdType tokenId) const
 	{
-		return (token_type == TOKENTYPE_ERROR) && (token_id == int(id));
+		return (type == TOKENTYPE_ERROR) && (id == int(tokenId));
+	}
+	void SetValue(double real)
+	{
+		value.x = real;
+		value.y = 0.0;
+		type = TOKENTYPE_REAL_CONSTANT;
+	}
+	void SetValue(double real, double imaginary)
+	{
+		value.x = real;
+		value.y = imaginary;
+		type = TOKENTYPE_COMPLEX_CONSTANT;
 	}
 };
 
@@ -107,7 +120,7 @@ struct var_list_st
 
 	void display() const;
 
-	static var_list_st *add(var_list_st *list, token_st tok);
+	static var_list_st *add(var_list_st *list, FormulaToken token);
 };
 
 struct const_list_st
@@ -117,7 +130,7 @@ struct const_list_st
 
 	void display(const char *title) const;
 
-	static const_list_st *add(const_list_st *p, token_st tok);
+	static const_list_st *add(const_list_st *p, FormulaToken token);
 };
 
 // indices correspond to VariableNames enum
@@ -152,11 +165,11 @@ static constant_list_item s_constants[] =
 
 struct SYMMETRY
 {
-	const char *s;
+	const char *symmetry;
 	SymmetryType n;
 };
 
-static SYMMETRY SymStr[] =
+static SYMMETRY s_symmetry_list[] =
 {
 	{ "XAXIS_NOIMAG",	SYMMETRY_X_AXIS_NO_IMAGINARY },
 	{ "PI_SYM_NOPARM",	SYMMETRY_PI_NO_PARAMETER },
@@ -936,13 +949,15 @@ void (*StkRound)() = dStkRound;
 
 void dStkZero()
 {
-	Arg1->d.y = Arg1->d.x = 0.0;
+	Arg1->d.y = 0.0;
+	Arg1->d.x = 0.0;
 }
 
 #if !defined(XFRACT)
 void lStkZero()
 {
-	Arg1->l.y = Arg1->l.x = 0;
+	Arg1->l.y = 0;
+	Arg1->l.x = 0;
 }
 #endif
 
@@ -2993,37 +3008,39 @@ bool Formula::fill_jump_struct()
 static int formula_get_char(FILE *openfile)
 {
 	int c;
-	int done = 0;
-	int linewrap = 0;
+	bool done = false;
+	bool line_wrap = false;
 	while (!done)
 	{
 		c = getc(openfile);
 		switch (c)
 		{
-		case '\r': case ' ' : case '\t' :
+		case '\r':
+		case ' ' :
+		case '\t' :
 			break;
 		case '\\':
-			linewrap = 1;
+			line_wrap = true;
 			break;
 		case ';' :
 			do
 			{
 				c = getc(openfile);
 			}
-			while (c != '\n' && c != EOF && c != '\032');
-			if (c == EOF || c == '\032')
+			while (c != '\n' && c != EOF && c != CTRL_Z);
+			if (c == EOF || c == CTRL_Z)
 			{
-				done = 1;
+				done = true;
 			}
 		case '\n' :
-			if (!linewrap)
+			if (!line_wrap)
 			{
-				done = 1;
+				done = true;
 			}
-			linewrap = 0;
+			line_wrap = false;
 			break;
 		default:
-			done = 1;
+			done = true;
 			break;
 		}
 	}
@@ -3032,72 +3049,68 @@ static int formula_get_char(FILE *openfile)
 
 /* This function also gets flow control info */
 
-static bool get_function_information(token_st *tok)
+static bool get_function_information(FormulaToken *token)
 {
 	for (int i = 0; i < NUM_OF(s_function_list); i++)
 	{
-		if (!strcmp(s_function_list[i].name, tok->token_str))
+		if (!strcmp(s_function_list[i].name, token->text))
 		{
-			tok->token_id = i;
-			tok->token_type = s_function_list[i].tokenType;
+			token->id = i;
+			token->type = s_function_list[i].tokenType;
 			return true;
 		}
 	}
 	return false;
 }
-static bool get_flow_control_information(token_st *tok)
+static bool get_flow_control_information(FormulaToken *token)
 {
 	for (int i = 0; i < NUM_OF(s_jump_keywords); i++)  /*pick up flow control*/
 	{
-		if (!strcmp(s_jump_keywords[i], tok->token_str))
+		if (!strcmp(s_jump_keywords[i], token->text))
 		{
-			tok->token_type = TOKENTYPE_FLOW_CONTROL;
-			tok->token_id   = i + 1;
+			token->type = TOKENTYPE_FLOW_CONTROL;
+			token->id   = i + 1;
 			return true;
 		}
 	}
 	return false;
 }
-static void get_function_or_flow_control_information(token_st *tok)
+static void get_function_or_flow_control_information(FormulaToken *token)
 {
-	if (!get_function_information(tok) && !get_flow_control_information(tok))
+	if (!get_function_information(token) && !get_flow_control_information(token))
 	{
-		tok->set_error(TOKENID_ERROR_UNDEFINED_FUNCTION);
+		token->SetError(TOKENID_ERROR_UNDEFINED_FUNCTION);
 	}
 }
 
-static void get_variable_information(token_st *tok)
+static void get_variable_information(FormulaToken *token)
 {
 	for (int i = 0; i < NUM_OF(s_constants); i++)
 	{
-		if (!strcmp(s_constants[i].name, tok->token_str))
+		if (!strcmp(s_constants[i].name, token->text))
 		{
-			tok->token_id = i;
-			tok->token_type = s_constants[i].tokenType;
+			token->id = i;
+			token->type = s_constants[i].tokenType;
 			return;
 		}
 	}
-	tok->token_type = TOKENTYPE_USER_VARIABLE;
-	tok->token_id   = 0;
+	token->type = TOKENTYPE_USER_VARIABLE;
+	token->id = 0;
 }
 
 /* fills in token structure where numeric constant is indicated */
 /* Note - this function will be called twice to fill in the components
 		of a complex constant. See is_complex_constant() below. */
 /* returns true on success, false on TOKENTYPE_NONE */
-static bool formula_get_constant(FILE *openfile, token_st *tok)
+static bool formula_get_constant(FILE *openfile, FormulaToken *token)
 {
 	int i = 1;
 	bool getting_base = true;
 	long filepos = ftell(openfile);
-	bool got_decimal_already = false;
+	token->value.x = 0.0;          /*initialize values to 0*/
+	token->value.y = 0.0;
+	bool got_decimal_already = (token->text[0] == '.');
 	bool done = false;
-	tok->token_const.x = 0.0;          /*initialize values to 0*/
-	tok->token_const.y = 0.0;
-	if (tok->token_str[0] == '.')
-	{
-		got_decimal_already = true;
-	}
 	while (!done)
 	{
 		int c = formula_get_char(openfile);
@@ -3105,39 +3118,39 @@ static bool formula_get_constant(FILE *openfile, token_st *tok)
 		{
 		case EOF:
 		case CTRL_Z:
-			tok->token_str[i] = 0;
-			tok->set_error(TOKENID_ERROR_END_OF_FILE);
+			token->text[i] = 0;
+			token->SetError(TOKENID_ERROR_END_OF_FILE);
 			return false;
 		CASE_NUM:
-			tok->token_str[i++] = char(c);
+			token->text[i++] = char(c);
 			filepos = ftell(openfile);
 			break;
 		case '.':
 			if (got_decimal_already || !getting_base)
 			{
-				tok->token_str[i++] = char(c);
-				tok->token_str[i++] = 0;
-				tok->set_error(TOKENID_ERROR_ILL_FORMED_CONSTANT);
+				token->text[i++] = char(c);
+				token->text[i++] = 0;
+				token->SetError(TOKENID_ERROR_ILL_FORMED_CONSTANT);
 				return false;
 			}
 			else
 			{
-				tok->token_str[i++] = char(c);
+				token->text[i++] = char(c);
 				got_decimal_already = true;
 				filepos = ftell(openfile);
 			}
 			break;
 		default :
-			if (c == 'e' && getting_base && (isdigit(tok->token_str[i-1]) || (tok->token_str[i-1] == '.' && i > 1)))
+			if (c == 'e' && getting_base && (isdigit(token->text[i-1]) || (token->text[i-1] == '.' && i > 1)))
 			{
-				tok->token_str[i++] = char(c);
+				token->text[i++] = char(c);
 				getting_base = false;
 				got_decimal_already = false;
 				filepos = ftell(openfile);
 				c = formula_get_char(openfile);
 				if (c == '-' || c == '+')
 				{
-					tok->token_str[i++] = char(c);
+					token->text[i++] = char(c);
 					filepos = ftell(openfile);
 				}
 				else
@@ -3147,70 +3160,78 @@ static bool formula_get_constant(FILE *openfile, token_st *tok)
 			}
 			else if (isalpha(c) || c == '_')
 			{
-				tok->token_str[i++] = char(c);
-				tok->token_str[i++] = 0;
-				tok->set_error(TOKENID_ERROR_ILL_FORMED_CONSTANT);
+				token->text[i++] = char(c);
+				token->text[i++] = 0;
+				token->SetError(TOKENID_ERROR_ILL_FORMED_CONSTANT);
 				return false;
 			}
-			else if (tok->token_str[i-1] == 'e' || (tok->token_str[i-1] == '.' && i == 1))
+			else if (token->text[i-1] == 'e' || (token->text[i-1] == '.' && i == 1))
 			{
-				tok->token_str[i++] = char(c);
-				tok->token_str[i++] = 0;
-				tok->set_error(TOKENID_ERROR_ILL_FORMED_CONSTANT);
+				token->text[i++] = char(c);
+				token->text[i++] = 0;
+				token->SetError(TOKENID_ERROR_ILL_FORMED_CONSTANT);
 				return false;
 			}
 			else
 			{
 				fseek(openfile, filepos, SEEK_SET);
-				tok->token_str[i++] = 0;
+				token->text[i++] = 0;
 				done = true;
 			}
 			break;
 		}
-		if (i == 33 && tok->token_str[32])
+		if (i == MAX_TOKEN_LENGTH && token->text[MAX_TOKEN_LENGTH-1])
 		{
-			tok->token_str[33] = 0;
-			tok->set_error(TOKENID_ERROR_TOKEN_TOO_LONG);
+			token->text[MAX_TOKEN_LENGTH] = 0;
+			token->SetError(TOKENID_ERROR_TOKEN_TOO_LONG);
 			return false;
 		}
 	}    /* end of while loop. Now fill in the value */
-	tok->token_const.x = atof(tok->token_str);
-	tok->token_type = TOKENTYPE_REAL_CONSTANT;
-	tok->token_id   = 0;
+	token->SetValue(atof(token->text));
+	token->id = 0;
 	return true;
 }
 
-static void is_complex_constant(FILE *openfile, token_st *tok)
+static void append_value(FormulaToken *token, const FormulaToken &temp_tok, int sign_value,
+						 const char *suffix)
 {
-	/* should test to make sure tok->token_str[0] == '(' */
-	token_st temp_tok;
-	long filepos;
-	int c;
-	int sign_value = 1;
-	int done = 0;
-	int getting_real = 1;
-	FILE *debug_token = NULL;
-	tok->token_str[1] = 0;  /* so we can concatenate later */
+	if (sign_value == -1)
+	{
+		strcat(token->text, "-");
+	}
+	strcat(token->text, temp_tok.text);
+	strcat(token->text, suffix);
+}
+static void is_complex_constant(FILE *openfile, FormulaToken *token)
+{
+	/* should test to make sure token->token_str[0] == '(' */
+	token->text[1] = 0;  /* so we can concatenate later */
 
-	filepos = ftell(openfile);
+	long filepos = ftell(openfile);
+	FILE *debug_token = NULL;
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
 		debug_token = fopen("frmconst.txt", "at");
 	}
 
+	FormulaToken temp_tok;
+	int sign_value = 1;
+	bool getting_real = true;
+	bool done = false;
 	while (!done)
 	{
-		c = formula_get_char(openfile);
+		int c = formula_get_char(openfile);
 		switch (c)
 		{
-		CASE_NUM : case '.':
+CASE_NUM:
+		case '.':
 			if (debug_token != NULL)
 			{
 				fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 			}
-			temp_tok.token_str[0] = char(c);
+			temp_tok.text[0] = char(c);
 			break;
-		case '-' :
+		case '-':
 			if (debug_token != NULL)
 			{
 				fprintf(debug_token,  "First char is a minus\n");
@@ -3223,7 +3244,7 @@ static void is_complex_constant(FILE *openfile, token_st *tok)
 				{
 					fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 				}
-				temp_tok.token_str[0] = char(c);
+				temp_tok.text[0] = char(c);
 			}
 			else
 			{
@@ -3231,7 +3252,7 @@ static void is_complex_constant(FILE *openfile, token_st *tok)
 				{
 					fprintf(debug_token,  "First char not a . or NUM\n");
 				}
-				done = 1;
+				done = true;
 			}
 			break;
 		default:
@@ -3239,12 +3260,12 @@ static void is_complex_constant(FILE *openfile, token_st *tok)
 			{
 				fprintf(debug_token,  "First char not a . or NUM\n");
 			}
-			done = 1;
+			done = true;
 			break;
 		}
 		if (debug_token != NULL)
 		{
-				fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", done);
+			fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", int(done));
 		}
 		if (!done && formula_get_constant(openfile, &temp_tok))
 		{
@@ -3255,49 +3276,39 @@ static void is_complex_constant(FILE *openfile, token_st *tok)
 			}
 			if (getting_real && c == ',')  /*we have the real part now*/
 			{
-				if (sign_value == -1)
-				{
-					strcat(tok->token_str, "-");
-				}
-				strcat(tok->token_str, temp_tok.token_str);
-				strcat(tok->token_str, ",");
-				tok->token_const.x = temp_tok.token_const.x*sign_value;
-				getting_real = 0;
+				append_value(token, temp_tok, sign_value, ",");
+				token->value.x = temp_tok.value.x*sign_value;
+				getting_real = false;
 				sign_value = 1;
 			}
 			else if (!getting_real && c == ')')  /* we have the complex part */
 			{
-				if (sign_value == -1)
-				{
-					strcat(tok->token_str, "-");
-				}
-				strcat(tok->token_str, temp_tok.token_str);
-				strcat(tok->token_str, ")");
-				tok->token_const.y = temp_tok.token_const.x*sign_value;
-				tok->token_type = tok->token_const.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT;
-				tok->token_id   = 0;
+				append_value(token, temp_tok, sign_value, ")");
+				token->value.y = temp_tok.value.x*sign_value;
+				token->type = token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT;
+				token->id   = 0;
 				if (debug_token != NULL)
 				{
-					fprintf(debug_token,  "Exiting with type set to %d\n", tok->token_const.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT);
+					fprintf(debug_token,  "Exiting with type set to %d\n", token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT);
 					fclose(debug_token);
 				}
 				return;
 			}
 			else
 			{
-				done = 1;
+				done = true;
 			}
 		}
 		else
 		{
-			done = 1;
+			done = true;
 		}
 	}
 	fseek(openfile, filepos, SEEK_SET);
-	tok->token_str[1] = 0;
-	tok->token_const.y = tok->token_const.x = 0.0;
-	tok->token_type = TOKENTYPE_PARENTHESIS;
-	tok->token_id = TOKENID_OPEN_PARENS;
+	token->text[1] = 0;
+	token->value.y = token->value.x = 0.0;
+	token->type = TOKENTYPE_PARENTHESIS;
+	token->id = TOKENID_OPEN_PARENS;
 	if (debug_token != NULL)
 	{
 		fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
@@ -3306,77 +3317,79 @@ static void is_complex_constant(FILE *openfile, token_st *tok)
 	return;
 }
 
-static bool formula_get_alpha(FILE *openfile, token_st *tok)
+static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
 {
 	int c;
 	int i = 1;
-	int var_name_too_long = 0;
+	bool variable_name_too_long = false;
 	long filepos;
 	long last_filepos = ftell(openfile);
-	while ((c = formula_get_char(openfile)) != EOF && c != '\032')
+	while ((c = formula_get_char(openfile)) != EOF && c != CTRL_Z)
 	{
 		filepos = ftell(openfile);
 		switch (c)
 		{
-		CASE_ALPHA: CASE_NUM: case '_':
+		CASE_ALPHA:
+		CASE_NUM:
+		case '_':
 			if (i < 79)
 			{
-				tok->token_str[i++] = char(c);
+				token->text[i++] = char(c);
 			}
 			else
 			{
-				tok->token_str[i] = 0;
+				token->text[i] = 0;
 			}
-			if (i == 33)
+			if (i == MAX_TOKEN_LENGTH+1)
 			{
-				var_name_too_long = 1;
+				variable_name_too_long = true;
 			}
 			last_filepos = filepos;
 			break;
 		default:
 			if (c == '.')  /*illegal character in variable or func name*/
 			{
-				tok->set_error(TOKENID_ERROR_ILLEGAL_VARIABLE_NAME);
-				tok->token_str[i++] = '.';
-				tok->token_str[i] = 0;
+				token->SetError(TOKENID_ERROR_ILLEGAL_VARIABLE_NAME);
+				token->text[i++] = '.';
+				token->text[i] = 0;
 				return false;
 			}
-			else if (var_name_too_long)
+			else if (variable_name_too_long)
 			{
-				tok->set_error(TOKENID_ERROR_TOKEN_TOO_LONG);
-				tok->token_str[i] = 0;
+				token->SetError(TOKENID_ERROR_TOKEN_TOO_LONG);
+				token->text[i] = 0;
 				fseek(openfile, last_filepos, SEEK_SET);
 				return false;
 			}
-			tok->token_str[i] = 0;
+			token->text[i] = 0;
 			fseek(openfile, last_filepos, SEEK_SET);
-			get_function_or_flow_control_information(tok);
+			get_function_or_flow_control_information(token);
 			if (c == '(')  /*getfuncinfo() correctly filled structure*/
 			{
-				if (tok->token_type == TOKENTYPE_ERROR)
+				if (token->type == TOKENTYPE_ERROR)
 				{
 					return false;
 				}
-				else if (tok->token_type == TOKENTYPE_FLOW_CONTROL
-					&& (tok->token_id == 3 || tok->token_id == 4))
+				else if (token->type == TOKENTYPE_FLOW_CONTROL
+					&& (token->id == 3 || token->id == 4))
 				{
-					tok->set_error(TOKENID_ERROR_JUMP_WITH_ILLEGAL_CHAR);
+					token->SetError(TOKENID_ERROR_JUMP_WITH_ILLEGAL_CHAR);
 					return false;
 				}
 				return true;
 			}
 			/*can't use function names as variables*/
-			else if (tok->token_type == TOKENTYPE_FUNCTION || tok->token_type == TOKENTYPE_PARAMETER_FUNCTION)
+			else if (token->type == TOKENTYPE_FUNCTION || token->type == TOKENTYPE_PARAMETER_FUNCTION)
 			{
-				tok->set_error(TOKENID_ERROR_FUNC_USED_AS_VAR);
+				token->SetError(TOKENID_ERROR_FUNC_USED_AS_VAR);
 				return false;
 			}
-			else if (tok->token_type == TOKENTYPE_FLOW_CONTROL && (tok->token_id == 1 || tok->token_id == 2))
+			else if (token->type == TOKENTYPE_FLOW_CONTROL && (token->id == 1 || token->id == 2))
 			{
-				tok->set_error(TOKENID_ERROR_JUMP_MISSING_BOOLEAN);
+				token->SetError(TOKENID_ERROR_JUMP_MISSING_BOOLEAN);
 				return false;
 			}
-			else if (tok->token_type == TOKENTYPE_FLOW_CONTROL && (tok->token_id == 3 || tok->token_id == 4))
+			else if (token->type == TOKENTYPE_FLOW_CONTROL && (token->id == 3 || token->id == 4))
 			{
 				if (c == ',' || c == '\n' || c == ':')
 				{
@@ -3384,23 +3397,23 @@ static bool formula_get_alpha(FILE *openfile, token_st *tok)
 				}
 				else
 				{
-					tok->set_error(TOKENID_ERROR_JUMP_WITH_ILLEGAL_CHAR);
+					token->SetError(TOKENID_ERROR_JUMP_WITH_ILLEGAL_CHAR);
 					return false;
 				}
 			}
 			else
 			{
-				get_variable_information(tok);
+				get_variable_information(token);
 				return true;
 			}
 		}
 	}
-	tok->token_str[0] = 0;
-	tok->set_error(TOKENID_ERROR_END_OF_FILE);
+	token->text[0] = 0;
+	token->SetError(TOKENID_ERROR_END_OF_FILE);
 	return false;
 }
 
-static void formula_get_end_of_string(FILE *openfile, token_st *this_token)
+static void formula_get_end_of_string(FILE *openfile, FormulaToken *this_token)
 {
 	long last_filepos = ftell(openfile);
 	int c;
@@ -3409,22 +3422,22 @@ static void formula_get_end_of_string(FILE *openfile, token_st *this_token)
 	{
 		if (c == ':')
 		{
-			this_token->token_str[0] = ':';
+			this_token->text[0] = ':';
 		}
 		last_filepos = ftell(openfile);
 	}
 	if (c == '}')
 	{
-		this_token->token_str[0] = '}';
-		this_token->token_type = TOKENTYPE_END_OF_FORMULA;
-		this_token->token_id   = 0;
+		this_token->text[0] = '}';
+		this_token->type = TOKENTYPE_END_OF_FORMULA;
+		this_token->id   = 0;
 	}
 	else
 	{
 		fseek(openfile, last_filepos, SEEK_SET);
-		if (this_token->token_str[0] == '\n')
+		if (this_token->text[0] == '\n')
 		{
-			this_token->token_str[0] = ',';
+			this_token->text[0] = ',';
 		}
 	}
 }
@@ -3432,29 +3445,31 @@ static void formula_get_end_of_string(FILE *openfile, token_st *this_token)
 /* fills token structure; returns true on success and false on
   TOKENTYPE_NONE and TOKENTYPE_END_OF_FORMULA
 */
-static bool formula_get_token(FILE *openfile, token_st *this_token)
+static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 {
 	long filepos;
 	int i = 1;
 	int c = formula_get_char(openfile);
 	switch (c)
 	{
-	CASE_NUM: case '.':
-		this_token->token_str[0] = char(c);
+	CASE_NUM:
+	case '.':
+		this_token->text[0] = char(c);
 		return formula_get_constant(openfile, this_token);
-	CASE_ALPHA: case '_':
-		this_token->token_str[0] = char(c);
+	CASE_ALPHA:
+	case '_':
+		this_token->text[0] = char(c);
 		return formula_get_alpha(openfile, this_token);
 	CASE_TERMINATOR:
-		this_token->token_type = TOKENTYPE_OPERATOR; /* this may be changed below */
-		this_token->token_str[0] = char(c);
+		this_token->type = TOKENTYPE_OPERATOR; /* this may be changed below */
+		this_token->text[0] = char(c);
 		filepos = ftell(openfile);
 		if (c == '<' || c == '>' || c == '=')
 		{
 			c = formula_get_char(openfile);
 			if (c == '=')
 			{
-				this_token->token_str[i++] = char(c);
+				this_token->text[i++] = char(c);
 			}
 			else
 			{
@@ -3466,13 +3481,13 @@ static bool formula_get_token(FILE *openfile, token_st *this_token)
 			c = formula_get_char(openfile);
 			if (c == '=')
 			{
-				this_token->token_str[i++] = char(c);
+				this_token->text[i++] = char(c);
 			}
 			else
 			{
 				fseek(openfile, filepos, SEEK_SET);
-				this_token->token_str[1] = 0;
-				this_token->set_error(TOKENID_ERROR_ILLEGAL_OPERATOR);
+				this_token->text[1] = 0;
+				this_token->SetError(TOKENID_ERROR_ILLEGAL_OPERATOR);
 				return false;
 			}
 		}
@@ -3481,7 +3496,7 @@ static bool formula_get_token(FILE *openfile, token_st *this_token)
 			c = formula_get_char(openfile);
 			if (c == '|')
 			{
-				this_token->token_str[i++] = char(c);
+				this_token->text[i++] = char(c);
 			}
 			else
 			{
@@ -3493,33 +3508,33 @@ static bool formula_get_token(FILE *openfile, token_st *this_token)
 			c = formula_get_char(openfile);
 			if (c == '&')
 			{
-				this_token->token_str[i++] = char(c);
+				this_token->text[i++] = char(c);
 			}
 			else
 			{
 				fseek(openfile, filepos, SEEK_SET);
-				this_token->token_str[1] = 0;
-				this_token->set_error(TOKENID_ERROR_ILLEGAL_OPERATOR);
+				this_token->text[1] = 0;
+				this_token->SetError(TOKENID_ERROR_ILLEGAL_OPERATOR);
 				return false;
 			}
 		}
-		else if (this_token->token_str[0] == '}')
+		else if (this_token->text[0] == '}')
 		{
-			this_token->token_type = TOKENTYPE_END_OF_FORMULA;
-			this_token->token_id   = 0;
+			this_token->type = TOKENTYPE_END_OF_FORMULA;
+			this_token->id   = 0;
 		}
-		else if (this_token->token_str[0] == '\n'
-			|| this_token->token_str[0] == ','
-			|| this_token->token_str[0] == ':')
+		else if (this_token->text[0] == '\n'
+			|| this_token->text[0] == ','
+			|| this_token->text[0] == ':')
 		{
 			formula_get_end_of_string(openfile, this_token);
 		}
-		else if (this_token->token_str[0] == ')')
+		else if (this_token->text[0] == ')')
 		{
-			this_token->token_type = TOKENTYPE_PARENTHESIS;
-			this_token->token_id = TOKENID_CLOSE_PARENS;
+			this_token->type = TOKENTYPE_PARENTHESIS;
+			this_token->id = TOKENID_CLOSE_PARENS;
 		}
-		else if (this_token->token_str[0] == '(')
+		else if (this_token->text[0] == '(')
 		{
 			/* the following function will set token_type to TOKENTYPE_PARENTHESIS and
 				token_id to OPEN_PARENS if this is not the start of a
@@ -3527,26 +3542,27 @@ static bool formula_get_token(FILE *openfile, token_st *this_token)
 			is_complex_constant(openfile, this_token);
 			return true;
 		}
-		this_token->token_str[i] = 0;
-		if (this_token->token_type == TOKENTYPE_OPERATOR)
+		this_token->text[i] = 0;
+		if (this_token->type == TOKENTYPE_OPERATOR)
 		{
 			for (i = 0; i < NUM_OF(s_operator_list); i++)
 			{
-				if (!strcmp(s_operator_list[i], this_token->token_str))
+				if (!strcmp(s_operator_list[i], this_token->text))
 				{
-					this_token->token_id = i;
+					this_token->id = i;
 				}
 			}
 		}
-		return (this_token->token_str[0] != '}');
-	case EOF: case '\032':
-		this_token->token_str[0] = 0;
-		this_token->set_error(TOKENID_ERROR_END_OF_FILE);
+		return (this_token->text[0] != '}');
+	case EOF:
+	case CTRL_Z:
+		this_token->text[0] = 0;
+		this_token->SetError(TOKENID_ERROR_END_OF_FILE);
 		return false;
 	default:
-		this_token->token_str[0] = char(c);
-		this_token->token_str[1] = 0;
-		this_token->set_error(TOKENID_ERROR_ILLEGAL_CHARACTER);
+		this_token->text[0] = char(c);
+		this_token->text[1] = 0;
+		this_token->SetError(TOKENID_ERROR_ILLEGAL_CHARACTER);
 		return false;
 	}
 }
@@ -3579,7 +3595,7 @@ int Formula::get_parameter(const char *name)
 		{
 			c = formula_get_char(entry_file);
 		}
-		while (c != '{' && c != EOF && c != '\032');
+		while (c != '{' && c != EOF && c != CTRL_Z);
 		if (c != '{')
 		{
 			stop_message(0, error_messages(PE_UNEXPECTED_EOF));
@@ -3597,53 +3613,53 @@ int Formula::get_parameter(const char *name)
 			fprintf(debug_token, "%s\n", name);
 		}
 	}
-	token_st current_token;
+	FormulaToken current_token;
 	while (formula_get_token(entry_file, &current_token))
 	{
 		if (debug_token != NULL)
 		{
-			fprintf(debug_token, "%s\n", current_token.token_str);
-			fprintf(debug_token, "token_type is %d\n", current_token.token_type);
-			fprintf(debug_token, "token_id is %d\n", current_token.token_id);
-			if (current_token.token_type == TOKENTYPE_REAL_CONSTANT || current_token.token_type == TOKENTYPE_COMPLEX_CONSTANT)
+			fprintf(debug_token, "%s\n", current_token.text);
+			fprintf(debug_token, "token_type is %d\n", current_token.type);
+			fprintf(debug_token, "token_id is %d\n", current_token.id);
+			if (current_token.type == TOKENTYPE_REAL_CONSTANT || current_token.type == TOKENTYPE_COMPLEX_CONSTANT)
 			{
-				fprintf(debug_token, "Real value is %f\n", current_token.token_const.x);
-				fprintf(debug_token, "Imag value is %f\n", current_token.token_const.y);
+				fprintf(debug_token, "Real value is %f\n", current_token.value.x);
+				fprintf(debug_token, "Imag value is %f\n", current_token.value.y);
 			}
 			fprintf(debug_token, "\n");
 		}
-		switch (current_token.token_type)
+		switch (current_token.type)
 		{
 		case TOKENTYPE_PARAMETER_VARIABLE:
-			if (current_token.token_id == 1)
+			if (current_token.id == 1)
 			{
 				m_uses_p1 = true;
 			}
-			else if (current_token.token_id == 2)
+			else if (current_token.id == 2)
 			{
 				m_uses_p2 = true;
 			}
-			else if (current_token.token_id == 8)
+			else if (current_token.id == 8)
 			{
 				m_uses_p3 = true;
 			}
-			else if (current_token.token_id == 13)
+			else if (current_token.id == 13)
 			{
 				m_uses_is_mand = true;
 			}
-			else if (current_token.token_id == 17)
+			else if (current_token.id == 17)
 			{
 				m_uses_p4 = true;
 			}
-			else if (current_token.token_id == 18)
+			else if (current_token.id == 18)
 			{
 				m_uses_p5 = true;
 			}
 			break;
 		case TOKENTYPE_PARAMETER_FUNCTION:
-			if ((current_token.token_id - 10) > m_max_function_number)
+			if ((current_token.id - 10) > m_max_function_number)
 			{
-				m_max_function_number = current_token.token_id - 10;
+				m_max_function_number = current_token.id - 10;
 			}
 			break;
 		}
@@ -3653,7 +3669,7 @@ int Formula::get_parameter(const char *name)
 	{
 		fclose(debug_token);
 	}
-	if (current_token.token_type != TOKENTYPE_END_OF_FORMULA)
+	if (current_token.type != TOKENTYPE_END_OF_FORMULA)
 	{
 		m_uses_p1 = false;
 		m_uses_p2 = false;
@@ -3677,29 +3693,31 @@ int Formula::get_parameter(const char *name)
 bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 {
 	long filepos = ftell(open_file);
-	int c;
-	int i;
-	int done;
-	int at_end_of_name;
-
 	/* first, test name */
-	done = at_end_of_name = i = 0;
+	bool at_end_of_name = false;
+	int i = 0;
+	int c;
+	bool done = false;
 	while (!done)
 	{
 		c = getc(open_file);
 		switch (c)
 		{
-		case EOF: case '\032':
+		case EOF:
+		case CTRL_Z:
 			stop_message(0, error_messages(PE_UNEXPECTED_EOF));
 			return false;
-		case '\r': case '\n':
+		case '\r':
+		case '\n':
 			stop_message(0, error_messages(PE_NO_LEFT_BRACKET_FIRST_LINE));
 			return false;
-		case ' ': case '\t':
-			at_end_of_name = 1;
+		case ' ':
+		case '\t':
+			at_end_of_name = true;
 			break;
-		case '(': case '{':
-			done = 1;
+		case '(':
+		case '{':
+			done = true;
 			break;
 		default :
 			if (!at_end_of_name)
@@ -3712,12 +3730,12 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 
 	if (i > ITEMNAMELEN)
 	{
-		int j;
 		int k = int_strlen(error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		char msgbuf[100];
 		strcpy(msgbuf, error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		strcat(msgbuf, ":\n   ");
 		fseek(open_file, filepos, SEEK_SET);
+		int j;
 		for (j = 0; j < i && j < 25; j++)
 		{
 			msgbuf[j + k + 2] = char(getc(open_file));
@@ -3730,71 +3748,77 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 	g_symmetry = SYMMETRY_NONE;
 	if (c == '(')
 	{
-		char sym_buf[20];
-		done = i = 0;
+		char symmetry_buffer[20];
+		done = false;
+		i = 0;
 		while (!done)
 		{
 			c = getc(open_file);
 			switch (c)
 			{
-			case EOF: case '\032':
+			case EOF:
+			case CTRL_Z:
 				stop_message(0, error_messages(PE_UNEXPECTED_EOF));
 				return false;
-			case '\r': case '\n':
+			case '\r':
+			case '\n':
 				stop_message(STOPMSG_FIXED_FONT, error_messages(PE_NO_LEFT_BRACKET_FIRST_LINE));
 				return false;
 			case '{':
 				stop_message(STOPMSG_FIXED_FONT, error_messages(PE_NO_MATCH_RIGHT_PAREN));
 				return false;
-			case ' ': case '\t':
+			case ' ':
+			case '\t':
 				break;
 			case ')':
-				done = 1;
+				done = true;
 				break;
 			default :
-				if (i < 19)
+				if (i < NUM_OF(symmetry_buffer)-1)
 				{
-					sym_buf[i++] = char(toupper(c));
+					symmetry_buffer[i++] = char(toupper(c));
 				}
 				break;
 			}
 		}
-		sym_buf[i] = 0;
-		for (i = 0; SymStr[i].s[0]; i++)
+		symmetry_buffer[i] = 0;
+		for (i = 0; s_symmetry_list[i].symmetry[0]; i++)
 		{
-			if (!stricmp(SymStr[i].s, sym_buf))
+			if (!stricmp(s_symmetry_list[i].symmetry, symmetry_buffer))
 			{
-				g_symmetry = SymStr[i].n;
+				g_symmetry = s_symmetry_list[i].n;
 				break;
 			}
 		}
-		if (SymStr[i].s[0] == 0 && report_bad_symmetry)
+		if (s_symmetry_list[i].symmetry[0] == 0 && report_bad_symmetry)
 		{
 			char *msgbuf = (char *) malloc(int_strlen(error_messages(PE_INVALID_SYM_USING_NOSYM))
-							+ int_strlen(sym_buf) + 6);
+							+ int_strlen(symmetry_buffer) + 6);
 			strcpy(msgbuf, error_messages(PE_INVALID_SYM_USING_NOSYM));
 			strcat(msgbuf, ":\n   ");
-			strcat(msgbuf, sym_buf);
+			strcat(msgbuf, symmetry_buffer);
 			stop_message(STOPMSG_FIXED_FONT, msgbuf);
 			free(msgbuf);
 		}
 	}
 	if (c != '{')
 	{
-		done = 0;
+		done = false;
 		while (!done)
 		{
 			c = getc(open_file);
 			switch (c)
 			{
-			case EOF: case '\032':
+			case EOF:
+			case CTRL_Z:
 				stop_message(STOPMSG_FIXED_FONT, error_messages(PE_UNEXPECTED_EOF));
 				return false;
-			case '\r': case '\n':
+			case '\r':
+			case '\n':
 				stop_message(STOPMSG_FIXED_FONT, error_messages(PE_NO_LEFT_BRACKET_FIRST_LINE));
 				return false;
 			case '{':
-				done = 1;
+				done = true;
 				break;
 			default :
 				break;
@@ -3816,8 +3840,7 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 	*/
 
 	FILE *debug_fp = NULL;
-	token_st temp_tok;
-	int Done;
+	FormulaToken temp_tok;
 	long filepos = ftell(file);
 
 	/*Test for a repeat*/
@@ -3846,58 +3869,56 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 			fprintf(debug_fp, "%s\n", g_formula_state.get_formula());
 			if (g_symmetry != 0)
 			{
-				fprintf(debug_fp, "%s\n", SymStr[g_symmetry].s);
+				fprintf(debug_fp, "%s\n", s_symmetry_list[g_symmetry].symmetry);
 			}
 		}
 	}
-
 	m_prepare_formula_text[0] = 0; /* To permit concantenation later */
 
-	Done = 0;
-
 	/*skip opening end-of-lines */
-	while (!Done)
+	bool done = false;
+	while (!done)
 	{
 		formula_get_token(file, &temp_tok);
-		if (temp_tok.token_type == TOKENTYPE_ERROR)
+		if (temp_tok.type == TOKENTYPE_ERROR)
 		{
 			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
 			fseek(file, filepos, SEEK_SET);
 			return NULL;
 		}
-		else if (temp_tok.token_type == TOKENTYPE_END_OF_FORMULA)
+		else if (temp_tok.type == TOKENTYPE_END_OF_FORMULA)
 		{
 			stop_message(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
 			fseek(file, filepos, SEEK_SET);
 			return NULL;
 		}
-		if (temp_tok.token_str[0] == ',')
+		if (temp_tok.text[0] == ',')
 		{
 			;
 		}
 		else
 		{
-			strcat(m_prepare_formula_text, temp_tok.token_str);
-			Done = 1;
+			strcat(m_prepare_formula_text, temp_tok.text);
+			done = true;
 		}
 	}
 
-	Done = 0;
-	while (!Done)
+	done = false;
+	while (!done)
 	{
 		formula_get_token(file, &temp_tok);
-		switch (temp_tok.token_type)
+		switch (temp_tok.type)
 		{
 		case TOKENTYPE_ERROR:
 			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
 			fseek(file, filepos, SEEK_SET);
 			return NULL;
 		case TOKENTYPE_END_OF_FORMULA:
-			Done = 1;
+			done = true;
 			fseek(file, filepos, SEEK_SET);
 			break;
 		default:
-			strcat(m_prepare_formula_text, temp_tok.token_str);
+			strcat(m_prepare_formula_text, temp_tok.text);
 			break;
 		}
 	}
@@ -4108,7 +4129,7 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 	char msgbuf[900];
 	strcpy(msgbuf, "\n");
 
-	token_st tok;
+	FormulaToken token;
 	int token_count;
 	int chars_to_error = 0;
 	int chars_in_error = 0;
@@ -4129,7 +4150,7 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 			{
 				stop_message(0, "Unexpected EOF or end-of-formula in error function.\n");
 				fseek(open_file, m_errors[j].error_pos, SEEK_SET);
-				formula_get_token(open_file, &tok); /*reset file to end of error token */
+				formula_get_token(open_file, &token); /*reset file to end of error token */
 				return;
 			}
 		}
@@ -4146,21 +4167,21 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 			if (filepos == m_errors[j].error_pos)
 			{
 				chars_to_error = statement_len;
-				formula_get_token(open_file, &tok);
-				chars_in_error = int_strlen(tok.token_str);
+				formula_get_token(open_file, &token);
+				chars_in_error = int_strlen(token.text);
 				statement_len += chars_in_error;
 				token_count++;
 			}
 			else
 			{
-				formula_get_token(open_file, &tok);
-				statement_len += int_strlen(tok.token_str);
+				formula_get_token(open_file, &token);
+				statement_len += int_strlen(token.text);
 				token_count++;
 			}
-			if ((tok.token_type == TOKENTYPE_END_OF_FORMULA)
-				|| (tok.token_type == TOKENTYPE_OPERATOR
-					&& (tok.token_id == 0 || tok.token_id == 11))
-				|| tok.is_error(TOKENID_ERROR_END_OF_FILE))
+			if ((token.type == TOKENTYPE_END_OF_FORMULA)
+				|| (token.type == TOKENTYPE_OPERATOR
+					&& (token.id == 0 || token.id == 11))
+				|| token.IsError(TOKENID_ERROR_END_OF_FILE))
 			{
 				done = true;
 				if (token_count > 1 && !initialization_error)
@@ -4174,8 +4195,8 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 		{
 			while (chars_to_error + chars_in_error > 74)
 			{
-				formula_get_token(open_file, &tok);
-				chars_to_error -= int_strlen(tok.token_str);
+				formula_get_token(open_file, &token);
+				chars_to_error -= int_strlen(token.text);
 				token_count--;
 			}
 		}
@@ -4187,11 +4208,11 @@ void Formula::frm_error(FILE *open_file, long begin_frm)
 		}
 		while (int_strlen(&msgbuf[i]) <= 74 && token_count--)
 		{
-			formula_get_token(open_file, &tok);
-			strcat(msgbuf, tok.token_str);
+			formula_get_token(open_file, &token);
+			strcat(msgbuf, token.text);
 		}
 		fseek(open_file, m_errors[j].error_pos, SEEK_SET);
-		formula_get_token(open_file, &tok);
+		formula_get_token(open_file, &token);
 		if (int_strlen(&msgbuf[i]) > 74)
 		{
 			msgbuf[i + 74] = 0;
@@ -4296,7 +4317,7 @@ void Formula::init_const_lists()
 	m_real_list = NULL;
 }
 
-var_list_st *var_list_st::add(var_list_st *p, token_st tok)
+var_list_st *var_list_st::add(var_list_st *p, FormulaToken token)
 {
 	if (p == NULL)
 	{
@@ -4305,15 +4326,15 @@ var_list_st *var_list_st::add(var_list_st *p, token_st tok)
 		{
 			return NULL;
 		}
-		strcpy(p->name, tok.token_str);
+		strcpy(p->name, token.text);
 		p->next_item = NULL;
 	}
-	else if (strcmp(p->name, tok.token_str) == 0)
+	else if (strcmp(p->name, token.text) == 0)
 	{
 	}
 	else
 	{
-		p->next_item = add(p->next_item, tok);
+		p->next_item = add(p->next_item, token);
 		if (p->next_item == NULL)
 		{
 			return NULL;
@@ -4322,7 +4343,7 @@ var_list_st *var_list_st::add(var_list_st *p, token_st tok)
 	return p;
 }
 
-const_list_st *const_list_st::add(const_list_st *p, token_st tok)
+const_list_st *const_list_st::add(const_list_st *p, FormulaToken token)
 {
 	if (p == NULL)
 	{
@@ -4331,14 +4352,14 @@ const_list_st *const_list_st::add(const_list_st *p, token_st tok)
 		{
 			return NULL;
 		}
-		p->complex_const.x = tok.token_const.x;
-		p->complex_const.y = tok.token_const.y;
+		p->complex_const.x = token.value.x;
+		p->complex_const.y = token.value.y;
 		p->next_item = NULL;
 	}
-	else if (p->complex_const.x != tok.token_const.x
-			 || p->complex_const.y != tok.token_const.y)
+	else if (p->complex_const.x != token.value.x
+			 || p->complex_const.y != token.value.y)
 	{
-		p->next_item = add(p->next_item, tok);
+		p->next_item = add(p->next_item, token);
 		if (p->next_item == NULL)
 		{
 			return NULL;
@@ -4394,8 +4415,8 @@ bool Formula::prescan(FILE *open_file)
 {
 	int i;
 	long orig_pos;
-	int done = 0;
-	token_st this_token;
+	bool done = false;
+	FormulaToken this_token;
 	m_errors_found = 0;
 	bool ExpectingArg = true;
 	int NewStatement = true;
@@ -4429,12 +4450,12 @@ bool Formula::prescan(FILE *open_file)
 	{
 		m_file_pos = ftell(open_file);
 		formula_get_token(open_file, &this_token);
-		m_chars_in_formula += int_strlen(this_token.token_str);
-		switch (this_token.token_type)
+		m_chars_in_formula += int_strlen(this_token.text);
+		switch (this_token.type)
 		{
 		case TOKENTYPE_ERROR:
 			assignment_ok = false;
-			switch (this_token.token_id)
+			switch (this_token.id)
 			{
 			case TOKENID_ERROR_END_OF_FILE:
 				stop_message(0, error_messages(PE_UNEXPECTED_EOF));
@@ -4476,7 +4497,7 @@ bool Formula::prescan(FILE *open_file)
 		case TOKENTYPE_PARENTHESIS:
 			assignment_ok = false;
 			NewStatement = false;
-			switch (this_token.token_id)
+			switch (this_token.id)
 			{
 			case TOKENID_OPEN_PARENS:
 				if (++m_parenthesis_count > max_parens)
@@ -4625,7 +4646,7 @@ bool Formula::prescan(FILE *open_file)
 			else
 			{
 				m_uses_jump = true;
-				switch (this_token.token_id)
+				switch (this_token.id)
 				{
 				case 1:  /* if */
 					else_has_been_used <<= 1;
@@ -4670,9 +4691,10 @@ bool Formula::prescan(FILE *open_file)
 			break;
 		case TOKENTYPE_OPERATOR:
 			m_number_of_ops++; /*This will be corrected below in certain cases*/
-			switch (this_token.token_id)
+			switch (this_token.id)
 			{
-			case 0: case 11:    /* end of statement and : */
+			case 0:
+			case 11:    /* end of statement and : */
 				m_number_of_ops++; /* ParseStr inserts a dummy op*/
 				if (m_parenthesis_count)
 				{
@@ -4686,7 +4708,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				if (!ExpectingArg)
 				{
-					if (this_token.token_id == 11)
+					if (this_token.id == 11)
 					{
 						m_number_of_ops += 2;
 					}
@@ -4699,16 +4721,16 @@ bool Formula::prescan(FILE *open_file)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				if (this_token.token_id == 11 && waiting_for_endif)
+				if (this_token.id == 11 && waiting_for_endif)
 				{
 					record_error(PE_UNMATCHED_IF_IN_INIT_SECTION);
 					waiting_for_endif = 0;
 				}
-				if (this_token.token_id == 11 && already_got_colon)
+				if (this_token.id == 11 && already_got_colon)
 				{
 					record_error(PE_SECOND_COLON);
 				}
-				if (this_token.token_id == 11)
+				if (this_token.id == 11)
 				{
 					already_got_colon = true;
 				}
@@ -4843,7 +4865,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				m_file_pos = ftell(open_file);
 				formula_get_token (open_file, &this_token);
-				if (this_token.token_str[0] == '-')
+				if (this_token.text[0] == '-')
 				{
 					record_error(PE_NO_NEG_AFTER_EXPONENT);
 				}
@@ -4884,7 +4906,7 @@ bool Formula::prescan(FILE *open_file)
 			{
 				record_error(PE_TOO_MANY_JUMPS);
 			}
-			done = 1;
+			done = true;
 			break;
 
 		default:
@@ -4892,7 +4914,7 @@ bool Formula::prescan(FILE *open_file)
 		}
 		if (m_errors_found == NUM_OF(m_errors))
 		{
-			done = 1;
+			done = true;
 		}
 	}
 	if (m_errors[0].start_pos)
