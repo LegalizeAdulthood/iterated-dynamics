@@ -3,6 +3,8 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "parsera.h"
+
 #define FN(name_) void fStk##name_() { assert(0 && "Called " #name_); }
 
 FN(Abs)
@@ -128,9 +130,9 @@ FN(StoSqr0)
 
 #undef FN
 
-int fform_per_pixel()
+int formula_per_pixel_fp()
 {
-	assert(0 && "fform_per_pixel called.");
+	assert(0 && "formula_per_pixel_fp called.");
 	return 0;
 }
 
@@ -177,9 +179,9 @@ past_loop:
 	ret                              ; return AX unmodified
 _fFormula          endp
 */
-int fFormula()
+int formula_fp()
 {
-	assert(0 && "fFormula called.");
+	assert(0 && "formula_fp called.");
 	return 0;
 }
 
@@ -212,7 +214,7 @@ _Img_Setup         proc far
 	ret
 _Img_Setup         endp
 */
-void Img_Setup()
+void image_setup()
 {
 	assert(0 && "Img_Setup called.");
 }

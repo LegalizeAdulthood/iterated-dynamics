@@ -1284,6 +1284,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\headers\parser.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\parsera.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\rotate.h"
 					>
 				</File>

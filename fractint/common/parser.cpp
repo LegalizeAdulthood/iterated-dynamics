@@ -34,6 +34,7 @@
 #include "fractals.h"
 #include "jiim.h"
 #include "miscres.h"
+#include "parser.h"
 #include "prompts2.h"
 #include "realdos.h"
 
@@ -3675,7 +3676,6 @@ void Formula::get_parameter(const char *name)
 	return false if errors are found which should cause
 	the formula not to be executed
 */
-
 bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 {
 	long filepos = ftell(open_file);
@@ -3716,12 +3716,12 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 
 	if (i > ITEMNAMELEN)
 	{
-		int k = int_strlen(error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		char msgbuf[100];
 		strcpy(msgbuf, error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		strcat(msgbuf, ":\n   ");
 		fseek(open_file, filepos, SEEK_SET);
 		int j;
+		int k = int_strlen(error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		for (j = 0; j < i && j < 25; j++)
 		{
 			msgbuf[j + k + 2] = char(getc(open_file));
@@ -3814,6 +3814,32 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 	return true;
 }
 
+class FilePositionTransaction
+{
+public:
+	FilePositionTransaction(FILE *file)
+		: m_file(file),
+		m_position(ftell(file)),
+		m_committed(false)
+	{
+	}
+	~FilePositionTransaction()
+	{
+		if (!m_committed)
+		{
+			fseek(m_file, m_position, SEEK_SET);
+		}
+	}
+	void Commit()
+	{
+		m_committed = true;
+	}
+private:
+	FILE *m_file;
+	long m_position;
+	bool m_committed;
+};
+
 const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 {
 	/* This function sets the
@@ -3827,23 +3853,20 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 
 	FILE *debug_fp = NULL;
 	FormulaToken temp_tok;
-	long filepos = ftell(file);
+	FilePositionTransaction transaction(file);
 
 	/*Test for a repeat*/
 	if (!check_name_and_symmetry(file, report_bad_symmetry))
 	{
-		fseek(file, filepos, SEEK_SET);
 		return NULL;
 	}
 	if (!prescan(file))
 	{
-		fseek(file, filepos, SEEK_SET);
 		return NULL;
 	}
 
 	if (m_chars_in_formula > 8190)
 	{
-		fseek(file, filepos, SEEK_SET);
 		return NULL;
 	}
 
@@ -3869,13 +3892,11 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		if (temp_tok.type == TOKENTYPE_ERROR)
 		{
 			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-			fseek(file, filepos, SEEK_SET);
 			return NULL;
 		}
 		else if (temp_tok.type == TOKENTYPE_END_OF_FORMULA)
 		{
 			stop_message(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
-			fseek(file, filepos, SEEK_SET);
 			return NULL;
 		}
 		if (temp_tok.text[0] == ',')
@@ -3897,11 +3918,9 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		{
 		case TOKENTYPE_ERROR:
 			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-			fseek(file, filepos, SEEK_SET);
 			return NULL;
 		case TOKENTYPE_END_OF_FORMULA:
 			done = true;
-			fseek(file, filepos, SEEK_SET);
 			break;
 		default:
 			strcat(m_prepare_formula_text, temp_tok.text);
@@ -3918,36 +3937,35 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		fclose(debug_fp);
 	}
 
+	transaction.Commit();
 	return m_prepare_formula_text;
 }
 
-int BadFormula()
+int bad_formula()
 {
 	/*  this is called when a formula is bad, instead of calling  */
 	/*     the normal functions which will produce undefined results  */
 	return 1;
 }
 
-int Formula::RunFormula(const char *name, bool report_bad_symmetry)
+bool Formula::RunFormula(const char *name, bool report_bad_symmetry)
 {
 	FILE *entry_file = NULL;
 
-	/*  CAE changed fn 12 July 1993 to fix problem when formula not found  */
-
 	/*  first set the pointers so they point to a fn which always returns 1  */
-	g_current_fractal_specific->per_pixel = BadFormula;
-	g_current_fractal_specific->orbitcalc = BadFormula;
+	g_current_fractal_specific->per_pixel = bad_formula;
+	g_current_fractal_specific->orbitcalc = bad_formula;
 
 	if (!formula_defined())
 	{
-		return 1;  /*  and don't reset the pointers  */
+		return true;  /*  and don't reset the pointers  */
 	}
 
 	/* add search for FRM files in directory */
 	if (find_file_item(m_filename, name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stop_message(0, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
-		return 1;
+		return true;
 	}
 
 	m_formula_text = PrepareFormula(entry_file, report_bad_symmetry);
@@ -3958,32 +3976,32 @@ int Formula::RunFormula(const char *name, bool report_bad_symmetry)
 		allocate();  /*  ParseStr() will test if this alloc worked  */
 		if (ParseStr(m_formula_text, 1))
 		{
-			return 1;   /*  parse failed, don't change fn pointers  */
+			return true;   /*  parse failed, don't change fn pointers  */
 		}
 		else
 		{
 			if (m_uses_jump && fill_jump_struct())
 			{
 				stop_message(0, error_messages(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
-				return 1;
+				return true;
 			}
 
 			/* all parses succeeded so set the pointers back to good functions*/
 			g_current_fractal_specific->per_pixel = form_per_pixel;
 			g_current_fractal_specific->orbitcalc = formula_orbit;
-			return 0;
+			return false;
 		}
 	}
 	else
 	{
-		return 1;   /* error in making string*/
+		return true;   /* error in making string*/
 	}
 }
 
 
-int Formula::setup_fp()
+bool Formula::setup_fp()
 {
-	int RunFormRes;
+	bool RunFormRes;
 	/* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
 	MathType = D_MATH;
@@ -3993,25 +4011,25 @@ int Formula::setup_fp()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
 		CvtStk(); /* run fast assembler code in parsera.asm */
-		return 1;
+		return true;
 	}
 	return RunFormRes;
 #else
 	m_math_type = FLOATING_POINT_MATH;
-	RunFormRes = !RunFormula(g_formula_state.get_formula(), false); /* RunForm() returns 1 for failure */
+	RunFormRes = !RunFormula(g_formula_state.get_formula(), false); /* RunForm() returns true for failure */
 #if 0
 	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
 		CvtStk(); /* run fast assembler code in parsera.asm */
-		return 1;
+		return true;
 	}
 #endif
 	return RunFormRes;
 #endif
 }
 
-int Formula::setup_int()
+bool Formula::setup_int()
 {
 #if defined(XFRACT)
 	return integer_unsupported();
@@ -4044,10 +4062,10 @@ void Formula::init_misc()
 
 
 /*
-		Allocate sub-arrays from one main malloc, using global variable
-		g_type_specific_work_area; calcfrac.c releases this area when calculation
-		ends or is terminated.
-		Moved the "f" array to be allocated as part of this.
+	Allocate sub-arrays from one main malloc, using global variable
+	g_type_specific_work_area; calcfrac.c releases this area when calculation
+	ends or is terminated.
+	Moved the "f" array to be allocated as part of this.
 */
 
 void Formula::allocate()
@@ -4094,21 +4112,22 @@ void free_work_area()
 	g_formula_state.free_work_area();
 }
 
-void Formula::free_work_area()
+template <typename T>
+static void delete_array_and_null(T &pointer)
 {
-	delete[] m_functions;
-	delete[] m_store;
-	delete[] m_load;
-	delete[] m_variables;
-	delete[] m_function_load_store_pointers;
-
-	m_functions = NULL;
-	m_store = NULL;
-	m_load = NULL;
-	m_variables = NULL;
-	m_function_load_store_pointers = NULL;
+	delete[] pointer;
+	pointer = NULL;
 }
 
+void Formula::free_work_area()
+{
+	delete_array_and_null(m_functions);
+	delete_array_and_null(m_functions);
+	delete_array_and_null(m_store);
+	delete_array_and_null(m_load);
+	delete_array_and_null(m_variables);
+	delete_array_and_null(m_function_load_store_pointers);
+}
 
 void Formula::frm_error(FILE *open_file, long begin_frm)
 {
@@ -4961,12 +4980,12 @@ int form_per_pixel()
 
 int formula_setup_fp()
 {
-	return g_formula_state.setup_fp();
+	return g_formula_state.setup_fp() ? 1 : 0;
 }
 
 int formula_setup_int()
 {
-	return g_formula_state.setup_int();
+	return g_formula_state.setup_int() ? 1 : 0;
 }
 
 void dStkLodDup()

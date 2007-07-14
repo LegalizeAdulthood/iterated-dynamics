@@ -97,11 +97,11 @@ public:
 	int per_pixel();
 
 	void end_init();
-	int RunFormula(const char *name, bool report_bad_symmetry);
+	bool RunFormula(const char *name, bool report_bad_symmetry);
 	const char *PrepareFormula(FILE *file, bool report_bad_symmetry);
 
-	int setup_fp();
-	int setup_int();
+	bool setup_fp();
+	bool setup_int();
 	void init_misc();
 	void free_work_area();
 
@@ -448,7 +448,7 @@ extern void dStkRound();
 extern void lStkRound();
 extern int fFormula();
 extern int formula_orbit();
-extern int BadFormula();
+extern int bad_formula();
 extern int form_per_pixel();
 extern int formula_setup_fp();
 extern int formula_setup_int();
