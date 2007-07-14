@@ -64,9 +64,9 @@ struct function_load_store
 };
 
 /* token_type definitions */
-enum TokenType
+enum FormulaTokenType
 {
-	TOKENTYPE_NONE = 0,
+	TOKENTYPE_ERROR = 0,
 	TOKENTYPE_PARENTHESIS,
 	TOKENTYPE_PARAMETER_VARIABLE,
 	TOKENTYPE_USER_VARIABLE,
@@ -80,36 +80,11 @@ enum TokenType
 	TOKENTYPE_END_OF_FORMULA
 };
 
-struct token_st
-{
-	char token_str[80];
-	TokenType token_type;
-	int token_id;
-	ComplexD token_const;
-};
-
-struct var_list_st
-{
-	char name[34];
-	var_list_st *next_item;
-
-	void display() const;
-
-	static var_list_st *add(var_list_st *list, token_st tok);
-};
-
-struct const_list_st
-{
-	ComplexD complex_const;
-	const_list_st *next_item;
-
-	void display(const char *title) const;
-
-	static const_list_st *add(const_list_st *p, token_st tok);
-};
-
 typedef void t_function();
 typedef t_function *t_function_pointer;
+
+struct var_list_st;
+struct const_list_st;
 
 // TODO: Separate parsing and formula execution responsibilities into two classes
 class Formula
