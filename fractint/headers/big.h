@@ -9,8 +9,6 @@
 /* does not effect floating point math at all. */
 #define BN_INT_LENGTH 4
 
-/* #define CALCULATING_BIG_PI */ /* define for generating big_pi[] table */
-
 /****************************************************************
  The rest is handled by the compiler
 ****************************************************************/
@@ -142,7 +140,6 @@ extern S16 big_setS16(S16 *addr, S16 val);
 #define big_setS16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
 
-extern void bn_hexdump(bn_t r);
 extern bn_t strtobn(bn_t r, char *s);
 extern char *unsafe_bntostr(char *s, int dec, bn_t r);
 extern bn_t inttobn(bn_t r, long longval);
@@ -181,7 +178,6 @@ extern bn_t floattobn(bn_t r, LDBL f);
 
 /************/
 /* bigflt.c */
-extern void bf_hexdump(bf_t r);
 extern bf_t strtobf(bf_t r, char *s);
 extern int strlen_needed_bf();
 extern char *unsafe_bftostr(char *s, int dec, bf_t r);

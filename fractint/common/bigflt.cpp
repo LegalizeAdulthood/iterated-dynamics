@@ -15,22 +15,6 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
 
-/********************************************************************/
-/* bf_hexdump() - for debugging, dumps to stdout                    */
-
-void bf_hexdump(bf_t r)
-{
-	int i;
-
-	for (i = 0; i < g_bf_length; i++)
-	{
-		printf("%02X ", *(r + i));
-	}
-	printf(" e %04hX ", (S16)big_access16(r + g_bf_length));
-	printf("\n");
-	return;
-}
-
 /**********************************************************************/
 /* strtobf() - converts a string into a bigfloat                       */
 /*   r - pointer to a bigfloat                                        */
@@ -802,7 +786,6 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 	cexp = (S16 *)(c + g_bf_length);
 	sexp = (S16 *)(s + g_bf_length);
 
-#ifndef CALCULATING_BIG_PI
 	/* assure range 0 <= x < pi/4 */
 
 	if (is_bf_zero(n))
@@ -866,20 +849,19 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 	}
 
 
-/* at this point, the double angle trig identities could be used as many  */
-/* times as desired to reduce the range to pi/8, pi/16, etc...  Each time */
-/* the range is cut in half, the number of iterations required is reduced */
-/* by "quite a bit."  It's just a matter of testing to see what gives the */
-/* optimal results.                                                       */
+	/* at this point, the double angle trig identities could be used as many  */
+	/* times as desired to reduce the range to pi/8, pi/16, etc...  Each time */
+	/* the range is cut in half, the number of iterations required is reduced */
+	/* by "quite a bit."  It's just a matter of testing to see what gives the */
+	/* optimal results.                                                       */
 	/* halves = g_bf_length / 10; */ /* this is experimental */
 	halves = 1;
 	for (i = 0; i < halves; i++)
 	{
 		half_a_bf(n);
 	}
-#endif
 
-/* use Taylor Series (very slow convergence) */
+	/* use Taylor Series (very slow convergence) */
 	copy_bf(s, n); /* start with s = n */
 	inttobf(c, 1); /* start with c = 1 */
 	copy_bf(bftmp1, n); /* the current x^n/n! */
@@ -925,13 +907,9 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 			}
 		}
 		k = !k; /* toggle */
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-		printf("."); /* lets you know it's doing something */
-#endif
 	}
 	while (!cos_done || !sin_done);
 
-#ifndef CALCULATING_BIG_PI
 	/* now need to undo what was done by cutting angles in half */
 	for (i = 0; i < halves; i++)
 	{
@@ -957,7 +935,6 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 	{
 		neg_a_bf(c);
 	}
-#endif
 
 	return s; /* return sine I guess */
 }
@@ -1058,9 +1035,6 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 		bf_pi = orig_bf_pi + orig_bflength - g_bf_length;
 		bftmp3 = orig_bftmp3 + orig_bflength - g_bf_length;
 
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-		printf("\natan() loop #%i, bflength=%i\nsincos() loops\n", i, g_bf_length);
-#endif
 		unsafe_sincos_bf(bftmp4, bftmp5, bftmp3);   /* sin(r), cos(r) */
 		copy_bf(bftmp3, r); /* restore bftmp3 from sincos_bf() */
 		copy_bf(bftmp1, bftmp5);
@@ -1069,18 +1043,11 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 		unsafe_mult_bf(bftmp1, bftmp5, bftmp4); /* cos(r)*(sin(r) - n*cos(r)) */
 		copy_bf(bftmp3, r);
 		unsafe_sub_a_bf(r, bftmp1); /* r - cos(r)*(sin(r) - n*cos(r)) */
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-		putchar('\n');
-		bf_hexdump(r);
-#endif
 		if (g_bf_length == orig_bflength)
 		{
 			comp = abs(cmp_bf(r, bftmp3));
 			if (comp < 8) /* if match or almost match */
 			{
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-				printf("atan() loop comp=%i\n", comp);
-#endif
 				if (comp < 4  /* perfect or near perfect match */
 					|| almost_match == 1) /* close enough for 2nd time */
 				{
@@ -1092,13 +1059,6 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 				}
 			}
 		}
-
-#if defined(CALCULATING_BIG_PI) && !defined(_WIN32)
-		if (g_bf_length == orig_bflength && comp >= 8)
-		{
-			printf("atan() loop comp=%i\n", comp);
-		}
-#endif
 
 		copy_bf(bftmp3, r); /* make a copy for later comparison */
 	}

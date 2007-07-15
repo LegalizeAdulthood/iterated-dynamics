@@ -1126,7 +1126,6 @@ void goodbye()                  /* we done.  Bail out */
 	}
 #ifdef XFRACT
 	UnixDone();
-	printf("\n\n\n%s\n", goodbyemessage); /* printf takes pointer */
 #endif
 	if (*g_make_par != 0)
 	{

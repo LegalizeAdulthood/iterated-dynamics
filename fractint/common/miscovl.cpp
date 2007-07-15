@@ -65,7 +65,10 @@ char par_comment[4][MAX_COMMENT];
 
 static FILE *parmfile;
 
-#define PAR_KEY(x)  (x < 10 ? '0' + x : 'a' - 10 + x)
+static char par_key(int x)
+{
+	return (x < 10) ? ('0' + x) : ('a' - 10 + x);
+}
 
 #ifdef _MSC_VER
 #pragma optimize("e", off)  /* MSC 6.00A messes up next rtn with "e" on */
@@ -372,7 +375,7 @@ void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
 		PCommandName[w] = 0;
 		{
 			char buf[20];
-			sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
+			sprintf(buf, "_%c%c", par_key(i), par_key(j));
 			strcat(PCommandName, buf);
 		}
 		fprintf(parmfile, "%-19s{", PCommandName);
@@ -447,7 +450,7 @@ void MakeBatchFile::execute_step3(int i, int j)
 	if (m_xm > 1 || m_ym > 1)
 	{
 		fprintf(parmfile, "  video=%s", m_video_mode);
-		fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
+		fprintf(parmfile, " savename=frmig_%c%c\n", par_key(i), par_key(j));
 	}
 	fprintf(parmfile, "  }\n\n");
 }
@@ -2544,320 +2547,378 @@ static void update_fractint_cfg()
 	invoked by the "batch=stitchmode/x/y" option, and is called
 	with the 'x' and 'y' parameters
 */
+// TODO: don't use printf
+class MakeMIG
+{
+public:
+	MakeMIG(unsigned int xmult, unsigned int ymult)
+		: m_xmult(xmult), m_ymult(ymult)
+	{
+	}
+	~MakeMIG()
+	{
+	}
+
+	void execute();
+
+private:
+	void process_input_image(unsigned int y_step, unsigned int x_step);
+	void extension_block(unsigned int y_step, unsigned int x_step);
+	void image_descriptor_block(unsigned int y_step, unsigned int x_step);
+	void read_block_header();
+	void display_error_messages();
+	void delete_input_files();
+	void finish_output_file();
+	void write_image_header();
+	void read_header();
+	bool find_color_table_size(unsigned int y_step, unsigned int x_step);
+
+	unsigned int m_xmult;
+	unsigned int m_ymult;
+	int m_error_flag;
+	int m_input_error_flag;
+	unsigned int m_all_x_res;
+	unsigned int m_all_y_res;
+	unsigned int m_all_i_table;
+	FILE *m_out;
+	FILE *m_in;
+	unsigned char m_buffer[4096];
+	char m_gif_output_filename[FILE_MAX_PATH];
+	char m_gif_input_filename[FILE_MAX_PATH];
+	unsigned int m_x_res;
+	unsigned int m_y_res;
+	unsigned int m_input_color_table_size;
+};
 
 void make_mig(unsigned int xmult, unsigned int ymult)
 {
-	unsigned int xstep;
-	unsigned int ystep;
-	unsigned int xres;
-	unsigned int yres;
-	unsigned int allxres;
-	unsigned int allyres;
-	unsigned int xtot;
-	unsigned int ytot;
+	MakeMIG(xmult, ymult).execute();
+}
+
+bool MakeMIG::find_color_table_size(unsigned int y_step, unsigned int x_step)
+{
+	unsigned char input_char = char(m_buffer[10] & 0x07);
+
+	/* find the color table size */
+	m_input_color_table_size = 1 << (++input_char);
+	input_char = char(m_buffer[10] & 0x80);        /* is there a global color table? */
+	if (x_step == 0 && y_step == 0)   /* first time through? */
+	{
+		m_all_i_table = m_input_color_table_size;             /* save the color table size */
+	}
+	if (input_char != 0)                /* yup */
+	{
+		/* (read, but only copy this if it's the first time through) */
+		if (fread(m_buffer, 3*m_input_color_table_size, 1, m_in) != 1)    /* read the global color table */
+		{
+			m_input_error_flag = 2;
+		}
+		if (x_step == 0 && y_step == 0)       /* first time through? */
+		{
+			if (fwrite(m_buffer, 3*m_input_color_table_size, 1, m_out) != 1)     /* write out the GCT */
+			{
+				m_error_flag = 2;
+			}
+		}
+	}
+	return (m_x_res != m_all_x_res || m_y_res != m_all_y_res || m_input_color_table_size != m_all_i_table);
+}
+
+void MakeMIG::read_header()
+{
+	/* (read, but only copy this if it's the first time through) */
+	if (fread(m_buffer, 13, 1, m_in) != 1)   /* read the header and LDS */
+	{
+		m_input_error_flag = 1;
+	}
+	// TODO: byte order dependent
+	memcpy(&m_x_res, &m_buffer[6], 2);     /* X-resolution */
+	memcpy(&m_y_res, &m_buffer[8], 2);     /* Y-resolution */
+}
+void MakeMIG::write_image_header()
+{
+	m_all_x_res = m_x_res;             /* save the "master" resolution */
+	m_all_y_res = m_y_res;
+	unsigned int x_total = m_x_res*m_xmult;
+	unsigned int y_total = m_y_res*m_ymult;        /* adjust the image size */
+	// TODO: byte ordering
+	memcpy(&m_buffer[6], &x_total, 2);
+	memcpy(&m_buffer[8], &y_total, 2);
+	if (g_gif87a_flag)
+	{
+		m_buffer[3] = '8';
+		m_buffer[4] = '7';
+		m_buffer[5] = 'a';
+	}
+	m_buffer[12] = 0; /* reserved */
+	if (fwrite(m_buffer, 13, 1, m_out) != 1)     /* write out the header */
+	{
+		m_error_flag = 1;
+	}
+}
+void MakeMIG::finish_output_file()
+{
+	m_buffer[0] = 0x3b;                 /* end-of-stream indicator */
+	if (fwrite(m_buffer, 1, 1, m_out) != 1)
+	{
+		m_error_flag = 12;
+	}
+	fclose(m_out);                    /* done with the output GIF */
+}
+void MakeMIG::delete_input_files()
+{
+	if (m_error_flag == 0 && m_input_error_flag == 0)
+	{
+		for (unsigned int y_step = 0; y_step < m_ymult; y_step++)
+		{
+			for (unsigned int x_step = 0; x_step < m_xmult; x_step++)
+			{
+				sprintf(m_gif_input_filename, "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
+				remove(m_gif_input_filename);
+			}
+		}
+		printf("File %s has been created (and its component files deleted)\n", m_gif_output_filename);
+	}
+}
+void MakeMIG::display_error_messages()
+{
+	if (m_input_error_flag != 0)       /* uh-oh - something failed */
+	{
+		printf("\007 Process failed = early EOF on input file %s\n", m_gif_input_filename);
+	}
+
+	if (m_error_flag != 0)            /* uh-oh - something failed */
+	{
+		printf("\007 Process failed = out of disk space?\n");
+	}
+}
+void MakeMIG::read_block_header()
+{
+	memset(m_buffer, 0, 10);
+	if (fread(m_buffer, 1, 1, m_in) != 1)    /* read the block identifier */
+	{
+		m_input_error_flag = 3;
+	}
+}
+void MakeMIG::image_descriptor_block(unsigned int y_step, unsigned int x_step)
+{
+	if (fread(&m_buffer[1], 9, 1, m_in) != 1)    /* read the Image Descriptor */
+	{
+		m_input_error_flag = 4;
+	}
 	unsigned int xloc;
+	// TODO: byte order dependent
+	memcpy(&xloc, &m_buffer[1], 2); /* X-location */
 	unsigned int yloc;
-	unsigned char ichar;
-	unsigned int allitbl;
-	unsigned int itbl;
-	unsigned int i;
-	char gifin[15];
-	char gifout[15];
-	int errorflag;
-	int inputerrorflag;
-	unsigned char *temp;
-	FILE *out;
-	FILE *in;
+	// TODO: byte order dependent
+	memcpy(&yloc, &m_buffer[3], 2); /* Y-location */
+	xloc += (x_step*m_x_res);     /* adjust the locations */
+	yloc += (y_step*m_y_res);
+	// TODO: byte order dependent
+	memcpy(&m_buffer[1], &xloc, 2);
+	memcpy(&m_buffer[3], &yloc, 2);
+	if (fwrite(m_buffer, 10, 1, m_out) != 1)     /* write out the Image Descriptor */
+	{
+		m_error_flag = 4;
+	}
 
-	errorflag = 0;                          /* no errors so */
-	inputerrorflag = 0;
-	allxres = allyres = allitbl = 0;
-	out = in = NULL;
+	unsigned char input_char = char(m_buffer[9] & 0x80);     /* is there a local color table? */
+	if (input_char != 0)            /* yup */
+	{
+		if (fread(m_buffer, 3*m_input_color_table_size, 1, m_in) != 1)       /* read the local color table */
+		{
+			m_input_error_flag = 5;
+		}
+		if (fwrite(m_buffer, 3*m_input_color_table_size, 1, m_out) != 1)     /* write out the LCT */
+		{
+			m_error_flag = 5;
+		}
+	}
 
-	strcpy(gifout, "fractmig.gif");
+	if (fread(m_buffer, 1, 1, m_in) != 1)        /* LZH table size */
+	{
+		m_input_error_flag = 6;
+	}
+	if (fwrite(m_buffer, 1, 1, m_out) != 1)
+	{
+		m_error_flag = 6;
+	}
+	while (true)
+	{
+		if (m_error_flag != 0 || m_input_error_flag != 0)      /* oops - did something go wrong? */
+		{
+			break;
+		}
+		if (fread(m_buffer, 1, 1, m_in) != 1)    /* block size */
+		{
+			m_input_error_flag = 7;
+		}
+		if (fwrite(m_buffer, 1, 1, m_out) != 1)
+		{
+			m_error_flag = 7;
+		}
+		unsigned char input_char = m_buffer[0];
+		if (input_char == 0)
+		{
+			break;
+		}
+		if (fread(m_buffer, input_char, 1, m_in) != 1)    /* LZH data block */
+		{
+			m_input_error_flag = 8;
+		}
+		if (fwrite(m_buffer, input_char, 1, m_out) != 1)
+		{
+			m_error_flag = 8;
+		}
+	}
+}
+void MakeMIG::extension_block(unsigned int y_step, unsigned int x_step)
+{
+	/* (read, but only copy this if it's the last time through) */
+	if (fread(&m_buffer[2], 1, 1, m_in) != 1)    /* read the block type */
+	{
+		m_input_error_flag = 9;
+	}
+	if (!g_gif87a_flag && (x_step == m_xmult-1) && (y_step == m_ymult-1))
+	{
+		if (fwrite(m_buffer, 2, 1, m_out) != 1)
+		{
+			m_error_flag = 9;
+		}
+	}
+	while (true)
+	{
+		if (m_error_flag != 0 || m_input_error_flag != 0)      /* oops - did something go wrong? */
+		{
+			break;
+		}
+		if (fread(m_buffer, 1, 1, m_in) != 1)    /* block size */
+		{
+			m_input_error_flag = 10;
+		}
+		if ((!g_gif87a_flag) && x_step == m_xmult-1 && y_step == m_ymult-1)
+		{
+			if (fwrite(m_buffer, 1, 1, m_out) != 1)
+			{
+				m_error_flag = 10;
+			}
+		}
+		unsigned int input_char = m_buffer[0];
+		if (input_char == 0)
+		{
+			break;
+		}
+		if (fread(m_buffer, input_char, 1, m_in) != 1)    /* data block */
+		{
+			m_input_error_flag = 11;
+		}
+		if (!g_gif87a_flag && (x_step == m_xmult-1) && (y_step == m_ymult-1))
+		{
+			if (fwrite(m_buffer, input_char, 1, m_out) != 1)
+			{
+				m_error_flag = 11;
+			}
+		}
+	}
+}
+void MakeMIG::process_input_image(unsigned int y_step, unsigned int x_step)
+{
+	while (true)                       /* process each information block */
+	{
+		read_block_header();
+		if (m_buffer[0] == 0x2c)           /* image descriptor block */
+		{
+			image_descriptor_block(y_step, x_step);
+		}
 
-	temp = &g_old_dac_box[0][0];                 /* a safe place for our temp data */
+		if (m_buffer[0] == 0x21)           /* extension block */
+		{
+			extension_block(y_step, x_step);
+		}
+
+		if (m_buffer[0] == 0x3b)           /* end-of-stream indicator */
+		{
+			break;                      /* done with this file */
+		}
+
+		if (m_error_flag != 0 || m_input_error_flag != 0)      /* oops - did something go wrong? */
+		{
+			break;
+		}
+	}
+	fclose(m_in);                     /* done with an input GIF */
+}
+void MakeMIG::execute()
+{
+	m_error_flag = 0;
+	m_input_error_flag = 0;
+	m_all_x_res = 0;
+	m_all_y_res = 0;
+	m_all_i_table = 0;
+	m_out = NULL;
+	m_in = NULL;
+
+	strcpy(m_gif_output_filename, "fractmig.gif");
 
 	g_gif87a_flag = true;                        /* for now, force this */
 
 	/* process each input image, one at a time */
-	for (ystep = 0; ystep < ymult; ystep++)
+	for (unsigned int y_step = 0; y_step < m_ymult; y_step++)
 	{
-		for (xstep = 0; xstep < xmult; xstep++)
+		for (unsigned int x_step = 0; x_step < m_xmult; x_step++)
 		{
-			if (xstep == 0 && ystep == 0)          /* first time through? */
+			if (x_step == 0 && y_step == 0)          /* first time through? */
 			{
-				printf(" \n Generating multi-image GIF file %s using", gifout);
-				printf(" %d X and %d Y components\n\n", xmult, ymult);
+				printf(" \n Generating multi-image GIF file %s using", m_gif_output_filename);
+				printf(" %d X and %d Y components\n\n", m_xmult, m_ymult);
 				/* attempt to create the output file */
-				out = fopen(gifout, "wb");
-				if (out == NULL)
+				m_out = fopen(m_gif_output_filename, "wb");
+				if (m_out == NULL)
 				{
-					printf("Cannot create output file %s!\n", gifout);
-					exit(1);
+					printf("Cannot create output file %s!\n", m_gif_output_filename);
+					return;
 				}
 			}
 
-			sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
+			sprintf(m_gif_input_filename, "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
 
-			in = fopen(gifin, "rb");
-			if (in == NULL)
+			m_in = fopen(m_gif_input_filename, "rb");
+			if (m_in == NULL)
 			{
-				printf("Can't open file %s!\n", gifin);
-				exit(1);
-				}
-
-			/* (read, but only copy this if it's the first time through) */
-			if (fread(temp, 13, 1, in) != 1)   /* read the header and LDS */
-			{
-				inputerrorflag = 1;
-			}
-			memcpy(&xres, &temp[6], 2);     /* X-resolution */
-			memcpy(&yres, &temp[8], 2);     /* Y-resolution */
-
-			if (xstep == 0 && ystep == 0)  /* first time through? */
-			{
-				allxres = xres;             /* save the "master" resolution */
-				allyres = yres;
-				xtot = xres*xmult;        /* adjust the image size */
-				ytot = yres*ymult;
-				memcpy(&temp[6], &xtot, 2);
-				memcpy(&temp[8], &ytot, 2);
-				if (g_gif87a_flag)
-				{
-					temp[3] = '8';
-					temp[4] = '7';
-					temp[5] = 'a';
-				}
-				temp[12] = 0; /* reserved */
-				if (fwrite(temp, 13, 1, out) != 1)     /* write out the header */
-				{
-					errorflag = 1;
-				}
-			}                           /* end of first-time-through */
-
-			ichar = char(temp[10] & 0x07);        /* find the color table size */
-			itbl = 1 << (++ichar);
-			ichar = char(temp[10] & 0x80);        /* is there a global color table? */
-			if (xstep == 0 && ystep == 0)   /* first time through? */
-			{
-				allitbl = itbl;             /* save the color table size */
-			}
-			if (ichar != 0)                /* yup */
-			{
-				/* (read, but only copy this if it's the first time through) */
-				if (fread(temp, 3*itbl, 1, in) != 1)    /* read the global color table */
-				{
-					inputerrorflag = 2;
-				}
-				if (xstep == 0 && ystep == 0)       /* first time through? */
-				{
-					if (fwrite(temp, 3*itbl, 1, out) != 1)     /* write out the GCT */
-					{
-						errorflag = 2;
-					}
-				}
+				printf("Can't open file %s!\n", m_gif_input_filename);
+				return;
 			}
 
-			if (xres != allxres || yres != allyres || itbl != allitbl)
+			read_header();
+			if (x_step == 0 && y_step == 0)
+			{
+				write_image_header();
+			}
+
+			if (find_color_table_size(y_step, x_step))
 			{
 				/* Oops - our pieces don't match */
 				// TODO: don't use printf!
-				printf("File %s doesn't have the same resolution as its predecessors!\n", gifin);
-				exit(1);
+				printf("File %s doesn't have the same resolution as its predecessors!\n", m_gif_input_filename);
+				return;
 			}
 
-			while (true)                       /* process each information g_block */
-			{
-				memset(temp, 0, 10);
-				if (fread(temp, 1, 1, in) != 1)    /* read the g_block identifier */
-				{
-					inputerrorflag = 3;
-				}
-
-				if (temp[0] == 0x2c)           /* image descriptor g_block */
-				{
-					if (fread(&temp[1], 9, 1, in) != 1)    /* read the Image Descriptor */
-					{
-						inputerrorflag = 4;
-					}
-					memcpy(&xloc, &temp[1], 2); /* X-location */
-					memcpy(&yloc, &temp[3], 2); /* Y-location */
-					xloc += (xstep*xres);     /* adjust the locations */
-					yloc += (ystep*yres);
-					memcpy(&temp[1], &xloc, 2);
-					memcpy(&temp[3], &yloc, 2);
-					if (fwrite(temp, 10, 1, out) != 1)     /* write out the Image Descriptor */
-					{
-						errorflag = 4;
-					}
-
-					ichar = char(temp[9] & 0x80);     /* is there a local color table? */
-					if (ichar != 0)            /* yup */
-					{
-						if (fread(temp, 3*itbl, 1, in) != 1)       /* read the local color table */
-						{
-							inputerrorflag = 5;
-						}
-						if (fwrite(temp, 3*itbl, 1, out) != 1)     /* write out the LCT */
-						{
-							errorflag = 5;
-						}
-					}
-
-					if (fread(temp, 1, 1, in) != 1)        /* LZH table size */
-					{
-						inputerrorflag = 6;
-					}
-					if (fwrite(temp, 1, 1, out) != 1)
-					{
-						errorflag = 6;
-					}
-					while (true)
-					{
-						if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
-						{
-							break;
-						}
-						if (fread(temp, 1, 1, in) != 1)    /* g_block size */
-						{
-							inputerrorflag = 7;
-						}
-						if (fwrite(temp, 1, 1, out) != 1)
-						{
-							errorflag = 7;
-						}
-						i = temp[0];
-						if (i == 0)
-						{
-							break;
-						}
-						if (fread(temp, i, 1, in) != 1)    /* LZH data g_block */
-						{
-							inputerrorflag = 8;
-						}
-						if (fwrite(temp, i, 1, out) != 1)
-						{
-							errorflag = 8;
-						}
-					}
-				}
-
-				if (temp[0] == 0x21)           /* extension g_block */
-				{
-					/* (read, but only copy this if it's the last time through) */
-					if (fread(&temp[2], 1, 1, in) != 1)    /* read the g_block type */
-					{
-						inputerrorflag = 9;
-					}
-					if (!g_gif87a_flag && (xstep == xmult-1) && (ystep == ymult-1))
-					{
-						if (fwrite(temp, 2, 1, out) != 1)
-						{
-							errorflag = 9;
-						}
-					}
-					while (true)
-					{
-						if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
-						{
-							break;
-						}
-						if (fread(temp, 1, 1, in) != 1)    /* g_block size */
-						{
-							inputerrorflag = 10;
-						}
-						if ((!g_gif87a_flag) && xstep == xmult-1 && ystep == ymult-1)
-						{
-							if (fwrite(temp, 1, 1, out) != 1)
-							{
-								errorflag = 10;
-							}
-						}
-						i = temp[0];
-						if (i == 0)
-						{
-							break;
-						}
-						if (fread(temp, i, 1, in) != 1)    /* data g_block */
-						{
-							inputerrorflag = 11;
-						}
-						if (!g_gif87a_flag && (xstep == xmult-1) && (ystep == ymult-1))
-						{
-							if (fwrite(temp, i, 1, out) != 1)
-							{
-								errorflag = 11;
-							}
-						}
-					}
-				}
-
-				if (temp[0] == 0x3b)           /* end-of-stream indicator */
-				{
-					break;                      /* done with this file */
-				}
-
-				if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
-				{
-					break;
-				}
-			}
-			fclose(in);                     /* done with an input GIF */
-
-			if (errorflag != 0 || inputerrorflag != 0)      /* oops - did something go wrong? */
+			process_input_image(y_step, x_step);
+			if (m_error_flag != 0 || m_input_error_flag != 0)      /* oops - did something go wrong? */
 			{
 				break;
 			}
 		}
 
-		if (errorflag != 0 || inputerrorflag != 0)  /* oops - did something go wrong? */
+		if (m_error_flag != 0 || m_input_error_flag != 0)  /* oops - did something go wrong? */
 		{
 			break;
 		}
 	}
 
-	temp[0] = 0x3b;                 /* end-of-stream indicator */
-	if (fwrite(temp, 1, 1, out) != 1)
-	{
-		errorflag = 12;
-	}
-	fclose(out);                    /* done with the output GIF */
-
-	if (inputerrorflag != 0)       /* uh-oh - something failed */
-	{
-		printf("\007 Process failed = early EOF on input file %s\n", gifin);
-		/* following line was for debugging
-			printf("inputerrorflag = %d\n", inputerrorflag);
-		*/
-	}
-
-	if (errorflag != 0)            /* uh-oh - something failed */
-	{
-		printf("\007 Process failed = out of disk space?\n");
-		/* following line was for debugging
-			printf("errorflag = %d\n", errorflag);
-		*/
-	}
-
-	/* now delete each input image, one at a time */
-	if (errorflag == 0 && inputerrorflag == 0)
-	{
-		for (ystep = 0; ystep < ymult; ystep++)
-		{
-			for (xstep = 0; xstep < xmult; xstep++)
-			{
-				sprintf(gifin, "frmig_%c%c.gif", PAR_KEY(xstep), PAR_KEY(ystep));
-				remove(gifin);
-			}
-		}
-	}
-
-	/* tell the world we're done */
-	if (errorflag == 0 && inputerrorflag == 0)
-	{
-		printf("File %s has been created (and its component files deleted)\n", gifout);
-	}
+	finish_output_file();
+	display_error_messages();
+	delete_input_files();
 }
 
 static void reverse_x_axis()
