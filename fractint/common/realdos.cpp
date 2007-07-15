@@ -197,7 +197,9 @@ int show_temp_message(char *msgparm)
 	if (g_command_initialize)      /* & command_files hasn't finished 1st try */
 	{
 		// TODO : don't use printf!
+#if 0
 		printf("%s\n", msg);
+#endif
 		return 0;
 	}
 

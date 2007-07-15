@@ -1738,11 +1738,6 @@ static int corners_arg(const cmd_context &context)
 	{
 		return COMMANDRESULT_FRACTAL_PARAMETER; /* skip setting the corners */
 	}
-#if 0
-	/* use a debugger and OutputDebugString instead of standard I/O on Windows */
-	printf("totparms %d floatparms %d\n", totparms, context.floatparms);
-	getch();
-#endif
 	if (context.floatparms != context.totparms
 		|| (context.totparms != 0 && context.totparms != 4 && context.totparms != 6))
 	{

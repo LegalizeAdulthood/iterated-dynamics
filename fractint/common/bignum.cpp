@@ -222,21 +222,6 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 	return 0;
 }
 
-/********************************************************************/
-/* bn_hexdump() - for debugging, dumps to stdout                    */
-
-void bn_hexdump(bn_t r)
-{
-	int i;
-
-	for (i = 0; i < g_bn_length; i++)
-	{
-		printf("%02X ", r[i]);
-	}
-	printf("\n");
-	return;
-}
-
 /**********************************************************************/
 /* strtobn() - converts a string into a bignumer                       */
 /*   r - pointer to a bignumber                                       */
@@ -1038,7 +1023,6 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 	int signsin = 0;
 	int switch_sincos = 0;
 
-#ifndef CALCULATING_BIG_PI
 	/* assure range 0 <= x < pi/4 */
 
 	if (is_bn_zero(n))
@@ -1099,20 +1083,19 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 	}
 
 
-/* at this point, the double angle trig identities could be used as many  */
-/* times as desired to reduce the range to pi/8, pi/16, etc...  Each time */
-/* the range is cut in half, the number of iterations required is reduced */
-/* by "quite a bit."  It's just a matter of testing to see what gives the */
-/* optimal results.                                                       */
+	/* at this point, the double angle trig identities could be used as many  */
+	/* times as desired to reduce the range to pi/8, pi/16, etc...  Each time */
+	/* the range is cut in half, the number of iterations required is reduced */
+	/* by "quite a bit."  It's just a matter of testing to see what gives the */
+	/* optimal results.                                                       */
 	/* halves = g_bn_length / 10; */ /* this is experimental */
 	halves = 1;
 	for (i = 0; i < halves; i++)
 	{
 		half_a_bn(n);
 	}
-#endif
 
-/* use Taylor Series (very slow convergence) */
+	/* use Taylor Series (very slow convergence) */
 	copy_bn(s, n); /* start with s = n */
 	inttobn(c, 1); /* start with c = 1 */
 	copy_bn(bntmp1, n); /* the current x^n/n! */
@@ -1153,12 +1136,8 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 			sub_a_bn(s, bntmp1);
 		}
 		k = !k; /* toggle */
-#ifdef CALCULATING_BIG_PI
-		printf("."); /* lets you know it's doing something */
-#endif
 	}
 
-#ifndef CALCULATING_BIG_PI
 	/* now need to undo what was done by cutting angles in half */
 	inttobn(bntmp1, 1);
 	for (i = 0; i < halves; i++)
@@ -1184,7 +1163,6 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 	{
 		neg_a_bn(c);
 	}
-#endif
 
 	return s; /* return sine I guess */
 }
@@ -1280,9 +1258,6 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 		bn_pi = orig_bn_pi + orig_bnlength - g_bn_length;
 		bntmp3 = orig_bntmp3 + orig_bnlength - g_bn_length;
 
-#ifdef CALCULATING_BIG_PI
-		printf("\natan() loop #%i, bnlength=%i\nsincos() loops\n", i, g_bn_length);
-#endif
 		unsafe_sincos_bn(bntmp4, bntmp5, bntmp3);   /* sin(r), cos(r) */
 		copy_bn(bntmp3, r); /* restore bntmp3 from sincos_bn() */
 		copy_bn(bntmp1, bntmp5);
@@ -1291,18 +1266,11 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 		unsafe_mult_bn(bntmp1, bntmp5, bntmp4); /* cos(r)*(sin(r) - n*cos(r)) */
 		sub_a_bn(r, bntmp1 + g_shift_factor); /* r - cos(r)*(sin(r) - n*cos(r)) */
 
-#ifdef CALCULATING_BIG_PI
-		putchar('\n');
-		bn_hexdump(r);
-#endif
 		if (g_bn_length == orig_bnlength)
 		{
 			comp = abs(cmp_bn(r, bntmp3));
 			if (comp < 8) /* if match or almost match */
 			{
-#ifdef CALCULATING_BIG_PI
-				printf("atan() loop comp=%i\n", comp);
-#endif
 				if (comp < 4  /* perfect or near perfect match */
 					|| almost_match == 1) /* close enough for 2nd time */
 				{
@@ -1314,13 +1282,6 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 				}
 			}
 		}
-
-#ifdef CALCULATING_BIG_PI
-		if (g_bn_length == orig_bnlength && comp >= 8)
-		{
-			printf("atan() loop comp=%i\n", comp);
-		}
-#endif
 
 		copy_bn(bntmp3, r); /* make a copy for later comparison */
 	}
