@@ -261,7 +261,7 @@ private:
 	}
 
 	ConstArg *is_constant(const char *text, int length);
-	bool ParseStr(const char *text, int pass);
+	bool parse_string(const char *text, int pass);
 	void parse_string_set_variables();
 	void parse_string_set_parameters_int();
 	void parse_string_set_parameters_float();
@@ -269,10 +269,10 @@ private:
 	void parse_string_set_constants();
 	void parse_string_set_math();
 
-	void StoreFunction(void (*function)(), int offset, int store_count);
-	void StoreFunction(void (*function)(), int p);
+	void store_function(void (*function)(), int offset, int store_count);
+	void store_function(void (*function)(), int p);
 
-	int GetP(int offset, int store_count);
+	int get_prec(int offset, int store_count);
 
 	void allocate();
 	void count_lists();
