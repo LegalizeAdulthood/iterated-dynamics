@@ -3953,8 +3953,12 @@ bool Formula::RunFormula(const char *name, bool report_bad_symmetry)
 	FILE *entry_file = NULL;
 
 	/*  first set the pointers so they point to a fn which always returns 1  */
-	g_current_fractal_specific->per_pixel = bad_formula;
-	g_current_fractal_specific->orbitcalc = bad_formula;
+	{
+		// TODO: eliminate writing to g_current_fractal_specific
+		FractalTypeSpecificData *target = g_current_fractal_specific;
+		target->per_pixel = bad_formula;
+		target->orbitcalc = bad_formula;
+	}
 
 	if (!formula_defined())
 	{
@@ -3987,8 +3991,10 @@ bool Formula::RunFormula(const char *name, bool report_bad_symmetry)
 			}
 
 			/* all parses succeeded so set the pointers back to good functions*/
-			g_current_fractal_specific->per_pixel = form_per_pixel;
-			g_current_fractal_specific->orbitcalc = formula_orbit;
+			// TODO: eliminate writing to g_current_fractal_specific
+			FractalTypeSpecificData *target = g_current_fractal_specific;
+			target->per_pixel = form_per_pixel;
+			target->orbitcalc = formula_orbit;
 			return false;
 		}
 	}

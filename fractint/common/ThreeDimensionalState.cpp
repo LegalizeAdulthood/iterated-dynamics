@@ -163,7 +163,7 @@ void ThreeDimensionalState::set_raytrace_parameters(const short *values)
 }
 int ThreeDimensionalState::parse_sphere(const cmd_context &context)
 {
-	return FlagParser<bool>(m_sphere, Command::ThreeDParameter).parse(context);
+	return FlagParser<bool>(m_sphere, COMMANDRESULT_3D_PARAMETER).parse(context);
 }
 
 int ThreeDimensionalState::parse_rotation(const cmd_context &context)
@@ -175,7 +175,7 @@ int ThreeDimensionalState::parse_rotation(const cmd_context &context)
 	m_planar.m_x_rotation = context.intval[0];
 	m_planar.m_y_rotation = context.intval[1];
 	m_planar.m_z_rotation = context.intval[2];
-	return Command::FractalParameter | Command::ThreeDParameter;
+	return COMMANDRESULT_FRACTAL_PARAMETER | COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_perspective(const cmd_context &context)
@@ -185,7 +185,7 @@ int ThreeDimensionalState::parse_perspective(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_z_viewer = context.numval;
-	return Command::FractalParameter | Command::ThreeDParameter;
+	return COMMANDRESULT_FRACTAL_PARAMETER | COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_xy_shift(const cmd_context &context)
@@ -196,7 +196,7 @@ int ThreeDimensionalState::parse_xy_shift(const cmd_context &context)
 	}
 	m_x_shift = context.intval[0];
 	m_y_shift = context.intval[1];
-	return Command::FractalParameter | Command::ThreeDParameter;
+	return COMMANDRESULT_FRACTAL_PARAMETER | COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_xy_translate(const cmd_context &context)
@@ -207,7 +207,7 @@ int ThreeDimensionalState::parse_xy_translate(const cmd_context &context)
 	}
 	m_x_trans = context.intval[0];
 	m_y_trans = context.intval[1];
-	return Command::FractalParameter | Command::ThreeDParameter;
+	return COMMANDRESULT_FRACTAL_PARAMETER | COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_xyz_scale(const cmd_context &context)
@@ -222,14 +222,14 @@ int ThreeDimensionalState::parse_xyz_scale(const cmd_context &context)
 	{
 		m_roughness = context.intval[2];
 	}
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_roughness(const cmd_context &context)
 {
 	/* "rough" is really scale z, but we add it here for convenience */
 	m_roughness = context.numval;
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_water_line(const cmd_context &context)
@@ -239,7 +239,7 @@ int ThreeDimensionalState::parse_water_line(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_water_line = context.numval;
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_fill_type(const cmd_context &context)
@@ -249,7 +249,7 @@ int ThreeDimensionalState::parse_fill_type(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_fill_type = context.numval;
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_light_source(const cmd_context &context)
@@ -261,7 +261,7 @@ int ThreeDimensionalState::parse_light_source(const cmd_context &context)
 	m_x_light = context.intval[0];
 	m_y_light = context.intval[1];
 	m_z_light = context.intval[2];
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_smoothing(const cmd_context &context)
@@ -271,7 +271,7 @@ int ThreeDimensionalState::parse_smoothing(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_light_average = context.numval;
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_lattitude(const cmd_context &context)
@@ -282,7 +282,7 @@ int ThreeDimensionalState::parse_lattitude(const cmd_context &context)
 	}
 	m_spherical.m_theta1 = context.intval[0];
 	m_spherical.m_theta2 = context.intval[1];
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_longitude(const cmd_context &context)
@@ -293,7 +293,7 @@ int ThreeDimensionalState::parse_longitude(const cmd_context &context)
 	}
 	m_spherical.m_phi1 = context.intval[0];
 	m_spherical.m_phi2 = context.intval[1];
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_radius(const cmd_context &context)
@@ -303,7 +303,7 @@ int ThreeDimensionalState::parse_radius(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_spherical.m_radius = context.numval;
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_randomize_colors(const cmd_context &context)
@@ -313,7 +313,7 @@ int ThreeDimensionalState::parse_randomize_colors(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_randomize_colors = (context.numval != 0);
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_ambient(const cmd_context &context)
@@ -323,7 +323,7 @@ int ThreeDimensionalState::parse_ambient(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_ambient = context.numval;
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_haze(const cmd_context &context)
@@ -333,7 +333,7 @@ int ThreeDimensionalState::parse_haze(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_haze = context.numval;
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_background_color(const cmd_context &context)
@@ -354,7 +354,7 @@ int ThreeDimensionalState::parse_background_color(const cmd_context &context)
 	m_background_color[0] = (BYTE)context.intval[0];
 	m_background_color[1] = (BYTE)context.intval[1];
 	m_background_color[2] = (BYTE)context.intval[2];
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_raytrace_output(const cmd_context &context)
@@ -364,22 +364,22 @@ int ThreeDimensionalState::parse_raytrace_output(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_raytrace_output = context.numval;
-	return Command::ThreeDParameter;
+	return COMMANDRESULT_3D_PARAMETER;
 }
 
 int ThreeDimensionalState::parse_raytrace_brief(const cmd_context &context)
 {
-	return FlagParser<bool>(m_raytrace_brief, Command::ThreeDParameter).parse(context);
+	return FlagParser<bool>(m_raytrace_brief, COMMANDRESULT_3D_PARAMETER).parse(context);
 }
 
 int ThreeDimensionalState::parse_preview(const cmd_context &context)
 {
-	return FlagParser<bool>(m_preview, Command::ThreeDParameter).parse(context);
+	return FlagParser<bool>(m_preview, COMMANDRESULT_3D_PARAMETER).parse(context);
 }
 
 int ThreeDimensionalState::parse_show_box(const cmd_context &context)
 {
-	return FlagParser<bool>(m_show_box, Command::ThreeDParameter).parse(context);
+	return FlagParser<bool>(m_show_box, COMMANDRESULT_3D_PARAMETER).parse(context);
 }
 
 void ThreeDimensionalState::set_ray_name(const char *value)

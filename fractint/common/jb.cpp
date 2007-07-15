@@ -438,12 +438,19 @@ static int z_line_fp(double x, double y)
 	return 0;
 }
 
+void standard_4d_fractal_set_orbit_calc(
+	int (*orbit_function)(void), int (*complex_orbit_function)(void))
+{
+	// TODO: do not write to g_fractal_specific
+	g_fractal_specific[g_new_orbit_type].orbitcalc =
+			(g_parameters[3] == 0.0
+			&& g_debug_mode != DEBUGMODE_UNOPT_POWER
+			&& (double) g_c_exp == g_parameters[2])
+		? orbit_function : complex_orbit_function;
+}
+
 int standard_4d_fractal()
 {
-	long x;
-	long y;
-	int xdot;
-	int ydot;
 	g_c_exp = (int)g_parameters[2];
 	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_L)
 	{
@@ -451,16 +458,15 @@ int standard_4d_fractal()
 		{
 			g_c_exp = 1;
 		}
-		g_fractal_specific[g_new_orbit_type].orbitcalc =
-			(g_parameters[3] == 0.0 && g_debug_mode != DEBUGMODE_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
-			? z_power_orbit : complex_z_power_orbit;
+		standard_4d_fractal_set_orbit_calc(z_power_orbit, complex_z_power_orbit);
 	}
 
-	for (y = 0, ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot)
+	long y = 0;
+	for (int ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot)
 	{
 		s_plotted = 0;
-		x = -(s_width >> 1);
-		for (xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot)
+		long x = -(s_width >> 1);
+		for (int xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot)
 		{
 			g_col = xdot;
 			g_row = ydot;
@@ -492,25 +498,24 @@ int standard_4d_fractal()
 
 int standard_4d_fractal_fp()
 {
-	double x;
-	double y;
-	int xdot;
-	int ydot;
 	g_c_exp = (int)g_parameters[2];
 
 	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{
-		g_fractal_specific[g_new_orbit_type].orbitcalc =
-			(g_parameters[3] == 0.0 && g_debug_mode != DEBUGMODE_UNOPT_POWER && (double)g_c_exp == g_parameters[2])
-			? z_power_orbit_fp : complex_z_power_orbit_fp;
+		if (g_c_exp < 1)
+		{
+			g_c_exp = 1;
+		}
+		standard_4d_fractal_set_orbit_calc(z_power_orbit_fp, complex_z_power_orbit_fp);
 		get_julia_attractor (g_parameters[0], g_parameters[1]); /* another attractor? */
 	}
 
-	for (y = 0, ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot_fp)
+	double y = 0;
+	for (int ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot_fp)
 	{
 		s_plotted = 0;
-		x = -g_width_fp / 2;
-		for (xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot_fp)
+		double x = -g_width_fp / 2;
+		for (int xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot_fp)
 		{
 			g_col = xdot;
 			g_row = ydot;
