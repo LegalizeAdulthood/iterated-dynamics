@@ -97,7 +97,7 @@ public:
 	int per_pixel();
 
 	void end_init();
-	bool RunFormula(const char *name, bool report_bad_symmetry);
+	bool run_formula(const char *name, bool report_bad_symmetry);
 	const char *PrepareFormula(FILE *file, bool report_bad_symmetry);
 
 	bool setup_fp();
@@ -284,11 +284,11 @@ private:
 	void init_const_lists();
 	const char *error_messages(int which);
 	bool check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry);
-	void frm_error(FILE *open_file, long begin_frm);
+	void formula_error(FILE *open_file, long begin_frm);
 	bool fill_jump_struct();
 	bool fill_jump_struct_fp();
-	void CvtStk();
-	bool CvtFptr(void (*function)(), int MinStk, int FreeStk, int Delta);
+	void convert_stack();
+	bool convert_functions(void (*function)(), int MinStk, int FreeStk, int Delta);
 	t_function *is_function(const char *str, int len);
 	int fill_if_group(int endif_index, JUMP_PTRS *jump_data);
 	void record_error(int error_code);
@@ -339,7 +339,7 @@ private:
 	void peephole_optimize_greater_equal(t_function_pointer &function);
 	void peephole_optimize_not_equal(t_function_pointer &function);
 	void peephole_optimize_equal(t_function_pointer &function);
-	void FinalOptimizations(t_function_pointer &out_function);
+	void final_optimizations(t_function_pointer &out_function);
 };
 
 extern Arg *Arg1;

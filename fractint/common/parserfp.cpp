@@ -1225,7 +1225,7 @@ void Formula::peephole_optimize_equal(t_function_pointer &function)
 	}
 }
 
-bool Formula::CvtFptr(void (*function)(), int minimum_stack, int free_stack, int delta_stack)
+bool Formula::convert_functions(void (*function)(), int minimum_stack, int free_stack, int delta_stack)
 {
 #ifdef TESTFP
 	int previous_stack_count;
@@ -1387,7 +1387,7 @@ bool Formula::fill_jump_struct_fp()
 	return (i < 0);
 }
 
-void Formula::FinalOptimizations(t_function_pointer &out_function)
+void Formula::final_optimizations(t_function_pointer &out_function)
 {
 	/* cvtptrx -> one past last operator (always clr2)  */
 	--s_convert_index;  /* now it points to the last operator  */
@@ -1452,7 +1452,7 @@ void Formula::FinalOptimizations(t_function_pointer &out_function)
 	}
 }
 
-void Formula::CvtStk()  /* convert the array of ptrs  */
+void Formula::convert_stack()  /* convert the array of ptrs  */
 {
 	void (*out_function)();
 	Arg *testoperand;
@@ -1574,7 +1574,7 @@ void Formula::CvtStk()  /* convert the array of ptrs  */
 							(int)(function.minimum_registers),
 							(int)(function.free_registers),
 							(int)(function.stack_delta));
-					if (!CvtFptr(out_function, function.minimum_registers, function.free_registers, function.stack_delta))
+					if (!convert_functions(out_function, function.minimum_registers, function.free_registers, function.stack_delta))
 					{
 						return;
 					}
@@ -1589,7 +1589,7 @@ void Formula::CvtStk()  /* convert the array of ptrs  */
 
 	if (DEBUGMODE_SKIP_OPTIMIZER != g_debug_mode)
 	{
-		FinalOptimizations(out_function);
+		final_optimizations(out_function);
 	}
 
 	m_last_op = s_convert_index;  /* save the new operator count  */
