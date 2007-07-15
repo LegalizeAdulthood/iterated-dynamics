@@ -2142,44 +2142,46 @@ get_fractal_parameters_top:
 		g_current_fractal_specific = julibrot_orbit;
 	}
 
-	int i = g_current_fractal_specific->orbit_bailout;
+	{
+		int i = g_current_fractal_specific->orbit_bailout;
 
-	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
-		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
-	{
-		if (parameter_values[prompt].uval.ch.val != (int)g_bail_out_test)
+		if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
+			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 		{
-			g_bail_out_test = (enum bailouts)parameter_values[prompt].uval.ch.val;
-			command_result = COMMANDRESULT_FRACTAL_PARAMETER;
-		}
-		prompt++;
-	}
-	else
-	{
-		g_bail_out_test = BAILOUT_MODULUS;
-	}
-	set_bail_out_formula(g_bail_out_test);
-
-	if (i)
-	{
-		if (g_potential_parameter[0] != 0.0
-			&& g_potential_parameter[2] != 0.0)
-		{
+			if (parameter_values[prompt].uval.ch.val != (int)g_bail_out_test)
+			{
+				g_bail_out_test = (enum bailouts)parameter_values[prompt].uval.ch.val;
+				command_result = COMMANDRESULT_FRACTAL_PARAMETER;
+			}
 			prompt++;
 		}
 		else
 		{
-			g_bail_out = parameter_values[prompt++].uval.Lval;
-			if (g_bail_out != 0
-				&& (g_bail_out < 1 || g_bail_out > 2100000000L))
+			g_bail_out_test = BAILOUT_MODULUS;
+		}
+		set_bail_out_formula(g_bail_out_test);
+
+		if (i)
+		{
+			if (g_potential_parameter[0] != 0.0
+				&& g_potential_parameter[2] != 0.0)
 			{
-				g_bail_out = old_bail_out;
+				prompt++;
 			}
-			if (g_bail_out != old_bail_out)
+			else
 			{
-				command_result = COMMANDRESULT_FRACTAL_PARAMETER;
+				g_bail_out = parameter_values[prompt++].uval.Lval;
+				if (g_bail_out != 0
+					&& (g_bail_out < 1 || g_bail_out > 2100000000L))
+				{
+					g_bail_out = old_bail_out;
+				}
+				if (g_bail_out != old_bail_out)
+				{
+					command_result = COMMANDRESULT_FRACTAL_PARAMETER;
+				}
+				prompt++;
 			}
-			prompt++;
 		}
 	}
 	if (g_julibrot)
