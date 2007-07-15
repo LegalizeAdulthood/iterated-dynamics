@@ -10,8 +10,9 @@ struct alternate_math
 	int (*per_image)();      /* once-per-image setup */
 };
 
-extern int type_has_parameter(int, int, char *);
-extern int parameter_not_used(int);
+extern bool type_has_parameter(int type, int parameter);
+extern const char *parameter_prompt(int type, int parameter);
+extern bool parameter_not_used(int);
 extern alternate_math *find_alternate_math(int math_type);
 
 #endif

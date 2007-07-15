@@ -274,7 +274,7 @@ void corners_bf_to_float()
 	}
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
-		if (type_has_parameter(g_fractal_type, i, NULL))
+		if (type_has_parameter(g_fractal_type, i))
 		{
 			g_parameters[i] = (double)bftofloat(bfparms[i]);
 		}

@@ -1146,14 +1146,15 @@ top:
 		}
 	}
 
-	if (type_has_parameter(g_fractal_type, 0, msg) || hasformparam)
+	if (type_has_parameter(g_fractal_type, 0) || hasformparam)
 	{
 		for (i = 0; i < MAX_PARAMETERS; i++)
 		{
-			int col;
-			char p[50];
-			if (type_has_parameter(g_fractal_type, i, p))
+			if (type_has_parameter(g_fractal_type, i))
 			{
+				char prompt[50];
+				::strcpy(prompt, parameter_prompt(g_fractal_type, i));
+				int col;
 				if (k % 4 == 0)
 				{
 					s_row++;
@@ -1169,11 +1170,11 @@ top:
 				}
 				sprintf(msg, "%3d: ", i + 1);
 				driver_put_string(s_row, col, C_GENERAL_MED, msg);
-				if (*p == '+')
+				if (prompt[0] == '+')
 				{
 					sprintf(msg, "%-12d", (int)g_parameters[i]);
 				}
-				else if (*p == '#')
+				else if (prompt[0] == '#')
 				{
 					sprintf(msg, "%-12lu", (U32)g_parameters[i]);
 				}

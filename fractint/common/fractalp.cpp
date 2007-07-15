@@ -2767,57 +2767,26 @@ FractalTypeSpecificData g_fractal_specific[] =
 int g_num_fractal_types = NUM_OF(g_fractal_specific)-1;
 
 /*
- *  Returns 1 if the formula parameter is not used in the current
+ *  Returns true if the formula parameter is not used in the current
  *  formula.  If the parameter is used, or not a formula fractal,
- *  a 0 is returned.  Note: this routine only works for formula types.
+ *  false is returned.  Note: this routine only works for formula types.
  */
-int parameter_not_used(int parm)
+bool parameter_not_used(int parm)
 {
-	int ret = 0;
-
-	/* sanity check */
 	if (!fractal_type_formula(g_fractal_type))
 	{
-		return 0;
+		return false;
 	}
 
 	switch (parm/2)
 	{
-	case 0:
-		if (!g_formula_state.uses_p1())
-		{
-			ret = 1;
-		}
-		break;
-	case 1:
-		if (!g_formula_state.uses_p2())
-		{
-			ret = 1;
-		}
-		break;
-	case 2:
-		if (!g_formula_state.uses_p3())
-		{
-			ret = 1;
-		}
-		break;
-	case 3:
-		if (!g_formula_state.uses_p4())
-		{
-			ret = 1;
-		}
-		break;
-	case 4:
-		if (!g_formula_state.uses_p5())
-		{
-			ret = 1;
-		}
-		break;
-	default:
-		ret = 0;
-		break;
+	case 0: return !g_formula_state.uses_p1();
+	case 1: return !g_formula_state.uses_p2();
+	case 2: return !g_formula_state.uses_p3();
+	case 3: return !g_formula_state.uses_p4();
+	case 4: return !g_formula_state.uses_p5();
 	}
-	return ret;
+	return false;
 }
 
 /*
@@ -2826,43 +2795,36 @@ int parameter_not_used(int parm)
  *  Pass in NULL for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
-int type_has_parameter(int type, int parm, char *buf)
+const char *parameter_prompt(int type, int parameter)
 {
-	int extra;
-	char *ret = NULL;
-	if (0 <= parm && parm < 4)
+	const char *parameter_prompt = NULL;
+	if (0 <= parameter && parameter < 4)
 	{
-		ret = g_fractal_specific[type].parameters[parm];
+		parameter_prompt = g_fractal_specific[type].parameters[parameter];
 	}
-	else if (parm >= 4 && parm < MAX_PARAMETERS)
+	else if (parameter >= 4 && parameter < MAX_PARAMETERS)
 	{
-		extra = find_extra_parameter(type);
+		int extra = find_extra_parameter(type);
 		if (extra > -1)
 		{
-			ret = g_more_parameters[extra].parameters[parm-4];
+			parameter_prompt = g_more_parameters[extra].parameters[parameter-4];
 		}
 	}
-	if (ret)
+	if (parameter_prompt && *parameter_prompt == 0)
 	{
-		if (*ret == 0)
-		{
-			ret = NULL;
-		}
+		parameter_prompt = NULL;
+	}
+	if (fractal_type_formula(type) && parameter_not_used(parameter))
+	{
+		parameter_prompt = NULL;
 	}
 
-	if (fractal_type_formula(type))
-	{
-		if (parameter_not_used(parm))
-		{
-			ret = NULL;
-		}
-	}
+	return parameter_prompt;
+}
 
-	if (ret && buf != NULL)
-	{
-		strcpy(buf, ret);
-	}
-	return ret ? 1 : 0;
+bool type_has_parameter(int type, int parameter)
+{
+	return (parameter_prompt(type, parameter) != NULL);
 }
 
 /* locate alternate math record */
