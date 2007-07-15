@@ -708,14 +708,6 @@ static void write_3d_parameters()
 
 void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int ii, int jj)
 {
-	int j;
-	int k;
-	double Xctr;
-	double Yctr;
-	LDBL Magnification;
-	double Xmagfactor;
-	double Rotation;
-	double Skew;
 	bf_t bfXctr = NULL;
 	bf_t bfYctr = NULL;
 	int saved = save_stack();
@@ -807,6 +799,10 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 
 		if (g_use_center_mag)
 		{
+			LDBL Magnification;
+			double Xmagfactor;
+			double Rotation;
+			double Skew;
 			if (g_bf_math)
 			{
 				int digits;
@@ -818,6 +814,8 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 			}
 			else /* !g_bf_math */
 			{
+				double Xctr;
+				double Yctr;
 				convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 				put_parm(" center-mag=");
 				/* convert 1000 fudged long to double, 1000/1<<24 = 6e-5 */
@@ -930,7 +928,7 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 					put_parm(" params=%.17g", g_parameters[0]);
 				}
 			}
-			for (j = 1; j <= i; ++j)
+			for (int j = 1; j <= i; ++j)
 			{
 				if (fractal_type_ant_or_cellular(g_fractal_type))
 				{
@@ -1326,10 +1324,10 @@ docolors:
 			int scanc;
 			int force;
 			int diffmag = -1;
-			int delta;
 			int diff1[4][3];
 			int diff2[4][3];
-			curc = force = 0;
+			curc = 0;
+			force = 0;
 #ifdef XFRACT
 			if (g_fake_lut && !g_true_mode_iterates) /* stupid kludge JCO 6/23/2001  */
 			{
@@ -1339,9 +1337,9 @@ docolors:
 			while (true)
 			{
 				/* emit color in rgb 3 char encoded form */
-				for (j = 0; j < 3; ++j)
+				for (int j = 0; j < 3; ++j)
 				{
-					k = g_dac_box[curc][j];
+					int k = g_dac_box[curc][j];
 					if (k < 10)
 					{
 						k += '0';
@@ -1379,8 +1377,9 @@ docolors:
 				{
 					--force;
 					continue;
-					}
+				}
 				scanc = curc;
+				int k;
 				while (scanc < maxcolor)  /* scan while same diff to next */
 				{
 					i = scanc - curc;
@@ -1390,9 +1389,9 @@ docolors:
 					}
 					for (k = 0; k <= i; ++k)
 					{
+						int j;
 						for (j = 0; j < 3; ++j)  /* check pattern of chg per color */
 						{
-							/* Sylvie Gallet's fix */
 							if (g_debug_mode != DEBUGMODE_NO_COLORS_FIX && scanc > (curc + 4) && scanc < maxcolor-5)
 							{
 								if (abs(2*g_dac_box[scanc][j] - g_dac_box[scanc-5][j]
@@ -1401,11 +1400,11 @@ docolors:
 									break;
 								}
 							}
-							/* end Sylvie's fix */
-							delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
+							int delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
 							if (k == scanc - curc)
 							{
-								diff1[k][j] = diff2[k][j] = delta;
+								diff1[k][j] = delta;
+								diff2[k][j] = delta;
 							}
 							else if (delta != diff1[k][j] && delta != diff2[k][j])
 							{
