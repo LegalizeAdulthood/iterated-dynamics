@@ -3848,7 +3848,7 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 	and except the final expression in the formula. The open file passed
 	as an argument is open in "rb" mode and is positioned at the first
 	letter of the name of the formula to be prepared. This function
-	is called from RunFormula() below.
+	is called from run_formula() below.
 	*/
 
 	FILE *debug_fp = NULL;
@@ -3944,7 +3944,7 @@ int bad_formula()
 	return 1;
 }
 
-bool Formula::RunFormula(const char *name, bool report_bad_symmetry)
+bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 {
 	FILE *entry_file = NULL;
 
@@ -3997,31 +3997,31 @@ bool Formula::RunFormula(const char *name, bool report_bad_symmetry)
 
 bool Formula::setup_fp()
 {
-	bool RunFormRes;
+	bool result;
 	/* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
 #if !defined(XFRACT) && !defined(_WIN32)
 	MathType = D_MATH;
 	/* CAE changed below for fp */
-	RunFormRes = !RunFormula(g_formula_state.get_formula(), false); /* RunFormula() returns 1 for failure */
-	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
+	result = !run_formula(g_formula_state.get_formula(), false); /* run_formula() returns 1 for failure */
+	if (result && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
-		CvtStk(); /* run fast assembler code in parsera.asm */
+		convert_stack(); /* run fast assembler code in parsera.asm */
 		return true;
 	}
-	return RunFormRes;
+	return result;
 #else
 	m_math_type = FLOATING_POINT_MATH;
-	RunFormRes = !RunFormula(g_formula_state.get_formula(), false); /* RunForm() returns true for failure */
+	result = !run_formula(g_formula_state.get_formula(), false); /* run_formula() returns true for failure */
 #if 0
-	if (RunFormRes && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
+	if (result && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
-		CvtStk(); /* run fast assembler code in parsera.asm */
+		convert_stack(); /* run fast assembler code in parsera.asm */
 		return true;
 	}
 #endif
-	return RunFormRes;
+	return result;
 #endif
 }
 
@@ -4034,7 +4034,7 @@ bool Formula::setup_int()
 	s_fudge = double(1L << g_bit_shift);
 	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;
-	return !RunFormula(g_formula_state.get_formula(), false);
+	return !run_formula(g_formula_state.get_formula(), false);
 #endif
 }
 
@@ -4125,7 +4125,7 @@ void Formula::free_work_area()
 	delete_array_and_null(m_function_load_store_pointers);
 }
 
-void Formula::frm_error(FILE *open_file, long begin_frm)
+void Formula::formula_error(FILE *open_file, long begin_frm)
 {
 	char msgbuf[900];
 	strcpy(msgbuf, "\n");
@@ -4920,7 +4920,7 @@ bool Formula::prescan(FILE *open_file)
 	}
 	if (m_errors[0].start_pos)
 	{
-		frm_error(open_file, orig_pos);
+		formula_error(open_file, orig_pos);
 		fseek(open_file, orig_pos, SEEK_SET);
 		return false;
 	}
