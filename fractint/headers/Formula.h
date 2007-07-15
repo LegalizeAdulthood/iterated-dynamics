@@ -277,7 +277,7 @@ private:
 	void allocate();
 	void count_lists();
 	bool prescan(FILE *open_file);
-	void RecSortPrec();
+	void sort_prec();
 	void display_var_list();
 	void display_const_lists();
 	void init_var_list();

@@ -2258,12 +2258,12 @@ t_function *Formula::is_function(const char *text, int length)
 	return not_a_function;
 }
 
-void Formula::RecSortPrec()
+void Formula::sort_prec()
 {
 	int current = m_next_operation++;
 	while (s_ops[current].prec > s_ops[m_next_operation].prec && m_next_operation < m_posp)
 	{
-		RecSortPrec();
+		sort_prec();
 	}
 	m_functions[m_op_index++] = s_ops[current].function;
 }
@@ -2726,7 +2726,7 @@ bool Formula::parse_string(const char *text, int pass)
 	{
 		if (s_ops[m_next_operation].function)
 		{
-			RecSortPrec();
+			sort_prec();
 		}
 		else
 		{
