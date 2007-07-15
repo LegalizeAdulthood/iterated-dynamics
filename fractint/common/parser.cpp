@@ -81,7 +81,7 @@ enum TokenIdType
 struct PEND_OP
 {
 	void (*function)();
-	int p;
+	int prec;
 };
 
 struct FormulaToken
@@ -2261,27 +2261,27 @@ t_function *Formula::is_function(const char *text, int length)
 void Formula::RecSortPrec()
 {
 	int current = m_next_operation++;
-	while (s_ops[current].p > s_ops[m_next_operation].p && m_next_operation < m_posp)
+	while (s_ops[current].prec > s_ops[m_next_operation].prec && m_next_operation < m_posp)
 	{
 		RecSortPrec();
 	}
 	m_functions[m_op_index++] = s_ops[current].function;
 }
 
-int Formula::GetP(int offset, int store_count)
+int Formula::get_prec(int offset, int store_count)
 {
 	return offset - (m_parenthesis_count + store_count)*15;
 }
 
-void Formula::StoreFunction(void (*function)(), int p)
+void Formula::store_function(void (*function)(), int p)
 {
 	s_ops[m_posp].function = function;
-	s_ops[m_posp++].p = p;
+	s_ops[m_posp++].prec = p;
 }
 
-void Formula::StoreFunction(void (*function)(), int offset, int store_count)
+void Formula::store_function(void (*function)(), int offset, int store_count)
 {
-	StoreFunction(function, GetP(offset, store_count));
+	store_function(function, get_prec(offset, store_count));
 }
 
 void Formula::parse_string_set_math()
@@ -2497,7 +2497,7 @@ void Formula::parse_string_set_variables()
 		break;
 	}
 }
-bool Formula::ParseStr(const char *text, int pass)
+bool Formula::parse_string(const char *text, int pass)
 {
 	int modulus_flag = 999;
 	int store_count = 0;
@@ -2543,7 +2543,7 @@ bool Formula::ParseStr(const char *text, int pass)
 			{
 				m_expecting_arg = true;
 				n++;
-				StoreFunction(StkOR, 7, store_count);
+				store_function(StkOR, 7, store_count);
 			}
 			else if (modulus_flag == m_parenthesis_count-1)
 			{
@@ -2553,7 +2553,7 @@ bool Formula::ParseStr(const char *text, int pass)
 			else
 			{
 				modulus[modulus_stack++] = modulus_flag;
-				StoreFunction(StkMod, 2, store_count);
+				store_function(StkMod, 2, store_count);
 				modulus_flag = m_parenthesis_count++;
 			}
 			break;
@@ -2562,44 +2562,44 @@ bool Formula::ParseStr(const char *text, int pass)
 			if (!m_expecting_arg)
 			{
 				m_expecting_arg = true;
-				StoreFunction(NULL, 15);
-				StoreFunction(StkClr, -30000);
+				store_function(NULL, 15);
+				store_function(StkClr, -30000);
 				store_count = 0;
 				m_parenthesis_count = 0;
 			}
 			break;
 		case ':':
 			m_expecting_arg = true;
-			StoreFunction(NULL, 15);
-			StoreFunction(EndInit, -30000);
+			store_function(NULL, 15);
+			store_function(EndInit, -30000);
 			store_count = 0;
 			m_parenthesis_count = 0;
 			m_last_init_op = 10000;
 			break;
 		case '+':
 			m_expecting_arg = true;
-			StoreFunction(StkAdd, 4, store_count);
+			store_function(StkAdd, 4, store_count);
 			break;
 		case '-':
 			if (m_expecting_arg)
 			{
-				StoreFunction(StkNeg, 2, store_count);
+				store_function(StkNeg, 2, store_count);
 			}
 			else
 			{
-				StoreFunction(StkSub, 4, store_count);
+				store_function(StkSub, 4, store_count);
 				m_expecting_arg = true;
 			}
 			break;
 		case '&':
 			m_expecting_arg = true;
 			n++;
-			StoreFunction(StkAND, 7, store_count);
+			store_function(StkAND, 7, store_count);
 			break;
 		case '!':
 			m_expecting_arg = true;
 			n++;
-			StoreFunction(StkNE, 6, store_count);
+			store_function(StkNE, 6, store_count);
 			break;
 		case '<':
 			m_expecting_arg = true;
@@ -2614,7 +2614,7 @@ bool Formula::ParseStr(const char *text, int pass)
 				{
 					function = StkLT;
 				}
-				StoreFunction(function, 6, store_count);
+				store_function(function, 6, store_count);
 			}
 			break;
 		case '>':
@@ -2630,32 +2630,32 @@ bool Formula::ParseStr(const char *text, int pass)
 				{
 					function = StkGT;
 				}
-				StoreFunction(function, 6, store_count);
+				store_function(function, 6, store_count);
 			}
 			break;
 		case '*':
 			m_expecting_arg = true;
-			StoreFunction(StkMul, 3, store_count);
+			store_function(StkMul, 3, store_count);
 			break;
 		case '/':
 			m_expecting_arg = true;
-			StoreFunction(StkDiv, 3, store_count);
+			store_function(StkDiv, 3, store_count);
 			break;
 		case '^':
 			m_expecting_arg = true;
-			StoreFunction(StkPwr, 2, store_count);
+			store_function(StkPwr, 2, store_count);
 			break;
 		case '=':
 			m_expecting_arg = true;
 			if (text[n + 1] == '=')
 			{
 				n++;
-				StoreFunction(StkEQ, 6, store_count);
+				store_function(StkEQ, 6, store_count);
 			}
 			else
 			{
 				s_ops[m_posp-1].function = StkSto;
-				s_ops[m_posp-1].p = GetP(5, store_count);
+				s_ops[m_posp-1].prec = get_prec(5, store_count);
 				m_store[m_store_ptr++] = m_load[--m_load_ptr];
 				store_count++;
 			}
@@ -2676,24 +2676,24 @@ bool Formula::ParseStr(const char *text, int pass)
 				case JUMPTYPE_IF:
 					m_expecting_arg = true;
 					m_jump_control[m_jump_index++].type = JUMPTYPE_IF;
-					StoreFunction(StkJumpOnFalse, 1);
+					store_function(StkJumpOnFalse, 1);
 					break;
 				case JUMPTYPE_ELSEIF:
 					m_expecting_arg = true;
 					m_jump_control[m_jump_index++].type = JUMPTYPE_ELSEIF;
 					m_jump_control[m_jump_index++].type = JUMPTYPE_ELSEIF;
-					StoreFunction(StkJump, 1);
-					StoreFunction(NULL, 15);
-					StoreFunction(StkClr, -30000);
-					StoreFunction(StkJumpOnFalse, 1);
+					store_function(StkJump, 1);
+					store_function(NULL, 15);
+					store_function(StkClr, -30000);
+					store_function(StkJumpOnFalse, 1);
 					break;
 				case JUMPTYPE_ELSE:
 					m_jump_control[m_jump_index++].type = JUMPTYPE_ELSE;
-					StoreFunction(StkJump, 1);
+					store_function(StkJump, 1);
 					break;
 				case JUMPTYPE_ENDIF:
 					m_jump_control[m_jump_index++].type = JUMPTYPE_ENDIF;
-					StoreFunction(StkJumpLabel, 1);
+					store_function(StkJumpLabel, 1);
 					break;
 				default:
 					assert(false && "Bad jump type");
@@ -2705,21 +2705,21 @@ bool Formula::ParseStr(const char *text, int pass)
 				s_ops[m_posp].function = is_function(&text[m_initial_n], length);
 				if (s_ops[m_posp].function != not_a_function)
 				{
-					s_ops[m_posp++].p = GetP(1, store_count);
+					s_ops[m_posp++].prec = get_prec(1, store_count);
 					m_expecting_arg = true;
 				}
 				else
 				{
 					ConstArg *c = is_constant(&text[m_initial_n], length);
 					m_load[m_load_ptr++] = &(c->argument);
-					StoreFunction(StkLod, 1, store_count);
+					store_function(StkLod, 1, store_count);
 					n = m_initial_n + c->name_length - 1;
 				}
 			}
 			break;
 		}
 	}
-	StoreFunction(NULL, 16);
+	store_function(NULL, 16);
 	m_next_operation = 0;
 	m_last_op = m_posp;
 	while (m_next_operation < m_posp)
@@ -3420,8 +3420,8 @@ static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
 static void formula_get_end_of_string(FILE *openfile, FormulaToken *this_token)
 {
 	long last_filepos = ftell(openfile);
-	int c;
 
+	int c;
 	for (c = formula_get_char(openfile); (c == '\n' || c == ',' || c == ':'); c = formula_get_char(openfile))
 	{
 		if (c == ':')
@@ -3876,7 +3876,7 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		if (debug_fp != NULL)
 		{
 			fprintf(debug_fp, "%s\n", g_formula_state.get_formula());
-			if (g_symmetry != 0)
+			if (g_symmetry != SYMMETRY_NONE)
 			{
 				fprintf(debug_fp, "%s\n", s_symmetry_list[g_symmetry].symmetry);
 			}
@@ -3899,11 +3899,7 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 			stop_message(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
 			return NULL;
 		}
-		if (temp_tok.text[0] == ',')
-		{
-			;
-		}
-		else
+		if (temp_tok.text[0] != ',')
 		{
 			strcat(m_prepare_formula_text, temp_tok.text);
 			done = true;
@@ -3953,12 +3949,9 @@ bool Formula::RunFormula(const char *name, bool report_bad_symmetry)
 	FILE *entry_file = NULL;
 
 	/*  first set the pointers so they point to a fn which always returns 1  */
-	{
-		// TODO: eliminate writing to g_current_fractal_specific
-		FractalTypeSpecificData *target = g_current_fractal_specific;
-		target->per_pixel = bad_formula;
-		target->orbitcalc = bad_formula;
-	}
+	// TODO: eliminate writing to g_current_fractal_specific
+	g_current_fractal_specific->per_pixel = bad_formula;
+	g_current_fractal_specific->orbitcalc = bad_formula;
 
 	if (!formula_defined())
 	{
@@ -3975,33 +3968,30 @@ bool Formula::RunFormula(const char *name, bool report_bad_symmetry)
 	m_formula_text = PrepareFormula(entry_file, report_bad_symmetry);
 	fclose(entry_file);
 
-	if (m_formula_text)  /*  No errors while making string */
-	{
-		allocate();  /*  ParseStr() will test if this alloc worked  */
-		if (ParseStr(m_formula_text, 1))
-		{
-			return true;   /*  parse failed, don't change fn pointers  */
-		}
-		else
-		{
-			if (m_uses_jump && fill_jump_struct())
-			{
-				stop_message(0, error_messages(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
-				return true;
-			}
-
-			/* all parses succeeded so set the pointers back to good functions*/
-			// TODO: eliminate writing to g_current_fractal_specific
-			FractalTypeSpecificData *target = g_current_fractal_specific;
-			target->per_pixel = form_per_pixel;
-			target->orbitcalc = formula_orbit;
-			return false;
-		}
-	}
-	else
+	if (!m_formula_text)
 	{
 		return true;   /* error in making string*/
 	}
+
+	/*  No errors while making string */
+	allocate();  /*  ParseStr() will test if this alloc worked  */
+	if (parse_string(m_formula_text, 1))
+	{
+		return true;   /*  parse failed, don't change fn pointers  */
+	}
+
+	if (m_uses_jump && fill_jump_struct())
+	{
+		stop_message(0, error_messages(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
+		return true;
+	}
+
+	/* all parses succeeded so set the pointers back to good functions*/
+	// TODO: eliminate writing to g_current_fractal_specific
+	FractalTypeSpecificData *target = g_current_fractal_specific;
+	target->per_pixel = form_per_pixel;
+	target->orbitcalc = formula_orbit;
+	return false;
 }
 
 
@@ -4095,7 +4085,7 @@ void Formula::allocate()
 
 		if (pass == 0)
 		{
-			if (!ParseStr(m_formula_text, pass))
+			if (!parse_string(m_formula_text, pass))
 			{
 				/* per Chuck Ebbert, fudge these up a little */
 				m_formula_max_ops = m_posp + 4;
