@@ -120,3 +120,8 @@ Replace homebrew bignum/bigflt with GNU GMP library and other layers:
 == Replace sound output with cross-platform sound library
 
 == Refactor g_current_fractal_specific and g_fractal_specific to be const, read-only
+
+== Replace magic leading character in parameter prompts with a set of flags
+   for each prompt:
+		'#' implies %-12lu formatting (unsigned integer),
+		'+' implies %-12d formatting (signed integer)
