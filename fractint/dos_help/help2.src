@@ -44,7 +44,7 @@ SUMMARY OF FRACTAL TYPES
 {=HT_BARNS barnsleyj2}
 ~Label=HF_BARNSJ2
       z(0) = pixel;
-      if real(z(n)) * imag(c) + real(c) * imag(z((n)) >= 0
+      if real(z(n)) * imag(c) + real(c) * imag(z(n)) >= 0
          z(n+1) = (z(n)-1)*c
       else
          z(n+1) = (z(n)+1)*c
@@ -53,10 +53,10 @@ SUMMARY OF FRACTAL TYPES
 {=HT_BARNS barnsleyj3}
 ~Label=HF_BARNSJ3
       z(0) = pixel;
-      if real(z(n) > 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
-         + i * (2*real(z((n)) * imag(z((n))) else
+      if real(z(n)) > 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
+         + i * (2*real(z(n)) * imag(z(n))) else
       z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1 + real(c) * real(z(n))
-             + i * (2*real(z((n)) * imag(z((n)) + imag(c) * real(z(n))
+             + i * (2*real(z(n)) * imag(z(n)) + imag(c) * real(z(n)))
     Two parameters: real and imaginary parts of c.
 
 {=HT_BARNS barnsleym1}
@@ -79,10 +79,10 @@ SUMMARY OF FRACTAL TYPES
 {=HT_BARNS barnsleym3}
 ~Label=HF_BARNSM3
       z(0) = c = pixel;
-      if real(z(n) > 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
-         + i * (2*real(z((n)) * imag(z((n))) else
+      if real(z(n)) > 0 then z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1)
+         + i * (2*real(z(n)) * imag(z(n))) else
       z(n+1) = (real(z(n))^2 - imag(z(n))^2 - 1 + real(c) * real(z(n))
-         + i * (2*real(z((n)) * imag(z((n)) + imag(c) * real(z(n))
+         + i * (2*real(z(n)) * imag(z(n)) + imag(c) * real(z(n)))
     Parameters are perturbations of z(0)
 
 {=HT_BIF bifurcation}
@@ -201,6 +201,7 @@ SUMMARY OF FRACTAL TYPES
     Two parameters: real and imaginary parts of c
     Iteration count and bailout size apply to both Julia sets.
 
+~OnlineFF
 {=HT_SCOTSKIN fn(z)+fn(pix)}
 ~Label=HF_FNPLUSFNPIX
       c = z(0) = pixel;
@@ -214,12 +215,12 @@ SUMMARY OF FRACTAL TYPES
       z(n+1) = fn(z(n)*z(n))
     One parameter: the function fn.
 
-~OnlineFF
 {=HT_SCOTSKIN fn*fn}
 ~Label=HF_FNTIMESFN
       z(0) = pixel; z(n+1) = fn1(n)*fn2(n)
     Two parameters: the functions fn1 and fn2.
 
+~OnlineFF
 {=HT_SCOTSKIN fn*z+z}
 ~Label=HF_FNXZPLUSZ
       z(0) = pixel; z(n+1) = p1*fn(z(n))*z(n) + p2*z(n)
