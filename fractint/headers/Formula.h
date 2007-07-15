@@ -342,8 +342,8 @@ private:
 	void final_optimizations(t_function_pointer &out_function);
 };
 
-extern Arg *Arg1;
-extern Arg *Arg2;
+extern Arg *g_argument1;
+extern Arg *g_argument2;
 extern Arg s[20];
 extern Formula g_formula_state;
 

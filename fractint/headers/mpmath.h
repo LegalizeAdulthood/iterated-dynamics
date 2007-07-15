@@ -57,8 +57,8 @@ struct ConstArg
    union Arg argument;
 };
 
-extern Arg *Arg1;
-extern Arg *Arg2;
+extern Arg *g_argument1;
+extern Arg *g_argument2;
 
 extern void lStkSin();
 extern void lStkCos();
@@ -95,22 +95,22 @@ extern void (*g_trig3_d)();
 #define LCMPLXconj(z)	((z).y =  -((z).y))
 
 
-#define LCMPLXtrig0(arg, out) do { Arg1->l = (arg); g_trig0_l(); (out)=Arg1->l; } while (0)
-#define LCMPLXtrig1(arg, out) do { Arg1->l = (arg); g_trig1_l(); (out)=Arg1->l; } while (0)
-#define LCMPLXtrig2(arg, out) do { Arg1->l = (arg); g_trig2_l(); (out)=Arg1->l; } while (0)
-#define LCMPLXtrig3(arg, out) do { Arg1->l = (arg); g_trig3_l(); (out)=Arg1->l; } while (0)
+#define LCMPLXtrig0(arg, out) do { g_argument1->l = (arg); g_trig0_l(); (out)=g_argument1->l; } while (0)
+#define LCMPLXtrig1(arg, out) do { g_argument1->l = (arg); g_trig1_l(); (out)=g_argument1->l; } while (0)
+#define LCMPLXtrig2(arg, out) do { g_argument1->l = (arg); g_trig2_l(); (out)=g_argument1->l; } while (0)
+#define LCMPLXtrig3(arg, out) do { g_argument1->l = (arg); g_trig3_l(); (out)=g_argument1->l; } while (0)
 
-#define  CMPLXtrig0(arg, out) do { Arg1->d = (arg); g_trig0_d(); (out)=Arg1->d; } while (0)
-#define  CMPLXtrig1(arg, out) do { Arg1->d = (arg); g_trig1_d(); (out)=Arg1->d; } while (0)
-#define  CMPLXtrig2(arg, out) do { Arg1->d = (arg); g_trig2_d(); (out)=Arg1->d; } while (0)
-#define  CMPLXtrig3(arg, out) do { Arg1->d = (arg); g_trig3_d(); (out)=Arg1->d; } while (0)
+#define  CMPLXtrig0(arg, out) do { g_argument1->d = (arg); g_trig0_d(); (out)=g_argument1->d; } while (0)
+#define  CMPLXtrig1(arg, out) do { g_argument1->d = (arg); g_trig1_d(); (out)=g_argument1->d; } while (0)
+#define  CMPLXtrig2(arg, out) do { g_argument1->d = (arg); g_trig2_d(); (out)=g_argument1->d; } while (0)
+#define  CMPLXtrig3(arg, out) do { g_argument1->d = (arg); g_trig3_d(); (out)=g_argument1->d; } while (0)
 
-#define LCMPLXsin(arg, out)   do { Arg1->l = (arg); lStkSin();  (out) = Arg1->l; } while (0)
-#define LCMPLXcos(arg, out)   do { Arg1->l = (arg); lStkCos();  (out) = Arg1->l; } while (0)
-#define LCMPLXsinh(arg, out)  do { Arg1->l = (arg); lStkSinh(); (out) = Arg1->l; } while (0)
-#define LCMPLXcosh(arg, out)  do { Arg1->l = (arg); lStkCosh(); (out) = Arg1->l; } while (0)
-#define LCMPLXlog(arg, out)   do { Arg1->l = (arg); lStkLog();  (out) = Arg1->l; } while (0)
-#define LCMPLXexp(arg, out)   do { Arg1->l = (arg); lStkExp();  (out) = Arg1->l; } while (0)
+#define LCMPLXsin(arg, out)   do { g_argument1->l = (arg); lStkSin();  (out) = g_argument1->l; } while (0)
+#define LCMPLXcos(arg, out)   do { g_argument1->l = (arg); lStkCos();  (out) = g_argument1->l; } while (0)
+#define LCMPLXsinh(arg, out)  do { g_argument1->l = (arg); lStkSinh(); (out) = g_argument1->l; } while (0)
+#define LCMPLXcosh(arg, out)  do { g_argument1->l = (arg); lStkCosh(); (out) = g_argument1->l; } while (0)
+#define LCMPLXlog(arg, out)   do { g_argument1->l = (arg); lStkLog();  (out) = g_argument1->l; } while (0)
+#define LCMPLXexp(arg, out)   do { g_argument1->l = (arg); lStkExp();  (out) = g_argument1->l; } while (0)
 
 #define LCMPLXsqr(arg, out)											\
 	do																\
@@ -131,24 +131,24 @@ extern void (*g_trig3_d)();
 #define LCMPLXpwr(arg1, arg2, out)	\
 	do								\
 	{								\
-		Arg2->l = (arg1);			\
-		Arg1->l = (arg2);			\
+		g_argument2->l = (arg1);			\
+		g_argument1->l = (arg2);			\
 		lStkPwr();					\
-		Arg1++;						\
-		Arg2++;						\
-		(out) = Arg2->l;			\
+		g_argument1++;						\
+		g_argument2++;						\
+		(out) = g_argument2->l;			\
 	}								\
 	while (0)
 
 #define LCMPLXmult(arg1, arg2, out)	\
 	do								\
 	{								\
-		Arg2->l = (arg1);			\
-		Arg1->l = (arg2);			\
+		g_argument2->l = (arg1);			\
+		g_argument1->l = (arg2);			\
 		lStkMul();					\
-		Arg1++;						\
-		Arg2++;						\
-		(out) = Arg2->l;			\
+		g_argument1++;						\
+		g_argument2++;						\
+		(out) = g_argument2->l;			\
 	}								\
 	while (0)
 
@@ -196,45 +196,45 @@ extern void (*g_trig3_d)();
 #define CMPLXsin(arg, out)	\
 	do						\
 	{						\
-		Arg1->d = (arg);	\
+		g_argument1->d = (arg);	\
 		dStkSin();			\
-		(out) = Arg1->d;	\
+		(out) = g_argument1->d;	\
 	}						\
 	while (0)
 
 #define CMPLXcos(arg, out)	\
 	do						\
 	{						\
-		Arg1->d = (arg);	\
+		g_argument1->d = (arg);	\
 		dStkCos();			\
-		(out) = Arg1->d;	\
+		(out) = g_argument1->d;	\
 	}						\
 	while (0)
 
 #define CMPLXsinh(arg, out)	\
 	do						\
 	{						\
-		Arg1->d = (arg);	\
+		g_argument1->d = (arg);	\
 		dStkSinh();			\
-		(out) = Arg1->d;	\
+		(out) = g_argument1->d;	\
 	}						\
 	while (0)
 
 #define CMPLXcosh(arg, out)	\
 	do						\
 	{						\
-		Arg1->d = (arg);	\
+		g_argument1->d = (arg);	\
 		dStkCosh();			\
-		(out) = Arg1->d;	\
+		(out) = g_argument1->d;	\
 	}						\
 	while (0)
 
 #define CMPLXlog(arg, out)	\
 	do						\
 	{						\
-		Arg1->d = (arg);	\
+		g_argument1->d = (arg);	\
 		dStkLog();			\
-		(out) = Arg1->d;	\
+		(out) = g_argument1->d;	\
 	}						\
 	while (0)
 
@@ -260,12 +260,12 @@ extern void (*g_trig3_d)();
 #define CMPLXmult1(arg1, arg2, out)	\
 	do								\
 	{								\
-		Arg2->d = (arg1);			\
-		Arg1->d = (arg2);			\
+		g_argument2->d = (arg1);			\
+		g_argument1->d = (arg2);			\
 		dStkMul();					\
-		Arg1++;						\
-		Arg2++;						\
-		(out) = Arg2->d;			\
+		g_argument1++;						\
+		g_argument2++;						\
+		(out) = g_argument2->d;			\
 	}								\
 	while (0)
 

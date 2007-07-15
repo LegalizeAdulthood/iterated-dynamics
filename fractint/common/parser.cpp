@@ -403,30 +403,30 @@ long Formula::get_file_entry(char *wildcard)
 
 static PEND_OP s_ops[2300];
 
-Arg *Arg1;
-Arg *Arg2;
+Arg *g_argument1;
+Arg *g_argument2;
 
 #if !defined(XFRACT)
-#define ChkLongDenom(denom)\
-	do \
-	{ \
+#define ChkLongDenom(denom)										\
+	do															\
+	{															\
 		if ((denom == 0 || g_overflow) && g_save_release > 1920) \
-		{\
-			g_overflow = 1; \
-			return; \
-		}\
-		else if (denom == 0) \
-		{ \
-			return; \
-		} \
-	} \
+		{														\
+			g_overflow = 1;										\
+			return;												\
+		}														\
+		else if (denom == 0)									\
+		{														\
+			return;												\
+		}														\
+	}															\
 	while (0)
 
 #endif
 
-#define ChkFloatDenom(denom)\
-	do \
-	{ \
+#define ChkFloatDenom(denom)			\
+	do									\
+	{									\
 		if (fabs(denom) <= DBL_MIN)		\
 		{								\
 			if (g_save_release > 1920)	\
@@ -434,8 +434,8 @@ Arg *Arg2;
 				g_overflow = 1;			\
 			}							\
 			return;						\
-		} \
-	} \
+		}								\
+	}									\
 	while (0)
 
 /* error_messages() defines; all calls to error_messages(), or any variable which will
@@ -554,14 +554,14 @@ static void lStkFunct(void (*function)())   /* call lStk via dStk */
 		intermediate variable needed for safety because of
 		different size of double and long in Arg union
 	*/
-	double y = double_from_fixpoint(Arg1->l.y);
-	Arg1->d.x = double_from_fixpoint(Arg1->l.x);
-	Arg1->d.y = y;
+	double y = double_from_fixpoint(g_argument1->l.y);
+	g_argument1->d.x = double_from_fixpoint(g_argument1->l.x);
+	g_argument1->d.y = y;
 	(*function)();
-	if (fabs(Arg1->d.x) < g_fudge_limit && fabs(Arg1->d.y) < g_fudge_limit)
+	if (fabs(g_argument1->d.x) < g_fudge_limit && fabs(g_argument1->d.y) < g_fudge_limit)
 	{
-		Arg1->l.x = fixpoint_from_double(Arg1->d.x);
-		Arg1->l.y = fixpoint_from_double(Arg1->d.y);
+		g_argument1->l.x = fixpoint_from_double(g_argument1->d.x);
+		g_argument1->l.y = fixpoint_from_double(g_argument1->d.y);
 	}
 	else
 	{
@@ -619,7 +619,7 @@ void Random::set_random_function()
 
 	if (!m_set_random)
 	{
-		m_random_number = Arg1->l.x ^ Arg1->l.y;
+		m_random_number = g_argument1->l.x ^ g_argument1->l.y;
 	}
 
 	Seed = unsigned(m_random_number)^unsigned(m_random_number >> 16);
@@ -666,7 +666,7 @@ void Formula::StackStoreRandom_l()
 #if !defined(XFRACT)
 	SetRandFnct();
 	lRandom();
-	Arg1->l = m_variables[VARIABLE_RAND].argument.l;
+	g_argument1->l = m_variables[VARIABLE_RAND].argument.l;
 #endif
 }
 
@@ -677,11 +677,11 @@ void dStkSRand()
 
 void Formula::StackStoreRandom_d()
 {
-	Arg1->l.x = long(Arg1->d.x*(1L << g_bit_shift));
-	Arg1->l.y = long(Arg1->d.y*(1L << g_bit_shift));
+	g_argument1->l.x = long(g_argument1->d.x*(1L << g_bit_shift));
+	g_argument1->l.y = long(g_argument1->d.y*(1L << g_bit_shift));
 	SetRandFnct();
 	dRandom();
-	Arg1->d = m_variables[VARIABLE_RAND].argument.d;
+	g_argument1->d = m_variables[VARIABLE_RAND].argument.d;
 }
 
 void (*StkSRand)() = dStkSRand;
@@ -689,9 +689,9 @@ void (*StkSRand)() = dStkSRand;
 
 void Formula::StackLoadDup_d()
 {
-	Arg1 += 2;
-	Arg2 += 2;
-	*Arg2 = *Arg1 = *m_load[m_load_ptr];
+	g_argument1 += 2;
+	g_argument2 += 2;
+	*g_argument2 = *g_argument1 = *m_load[m_load_ptr];
 	m_load_ptr += 2;
 }
 
@@ -702,10 +702,10 @@ void dStkLodSqr()
 
 void Formula::StackLoadSqr_d()
 {
-	Arg1++;
-	Arg2++;
-	Arg1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
-	Arg1->d.x = (m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x) - (m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y);
+	g_argument1++;
+	g_argument2++;
+	g_argument1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
+	g_argument1->d.x = (m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x) - (m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y);
 	m_load_ptr++;
 }
 
@@ -716,12 +716,12 @@ void dStkLodSqr2()
 
 void Formula::StackLoadSqr2_d()
 {
-	Arg1++;
-	Arg2++;
+	g_argument1++;
+	g_argument2++;
 	m_variables[VARIABLE_LAST_SQR].argument.d.x = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.x;
 	m_variables[VARIABLE_LAST_SQR].argument.d.y = m_load[m_load_ptr]->d.y*m_load[m_load_ptr]->d.y;
-	Arg1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
-	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].argument.d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
+	g_argument1->d.y = m_load[m_load_ptr]->d.x*m_load[m_load_ptr]->d.y*2.0;
+	g_argument1->d.x = m_variables[VARIABLE_LAST_SQR].argument.d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
 	m_variables[VARIABLE_LAST_SQR].argument.d.x += m_variables[VARIABLE_LAST_SQR].argument.d.y;
 	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0;
 	m_load_ptr++;
@@ -734,10 +734,10 @@ void dStkLodDbl()
 
 void Formula::StackLoadDouble()
 {
-	Arg1++;
-	Arg2++;
-	Arg1->d.x = m_load[m_load_ptr]->d.x*2.0;
-	Arg1->d.y = m_load[m_load_ptr]->d.y*2.0;
+	g_argument1++;
+	g_argument2++;
+	g_argument1->d.x = m_load[m_load_ptr]->d.x*2.0;
+	g_argument1->d.y = m_load[m_load_ptr]->d.y*2.0;
 	m_load_ptr++;
 }
 
@@ -748,27 +748,27 @@ void dStkSqr0()
 
 void Formula::StackSqr0()
 {
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = Arg1->d.y*Arg1->d.y; /* use LastSqr as temp storage */
-	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
-	Arg1->d.x = Arg1->d.x*Arg1->d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.y = g_argument1->d.y*g_argument1->d.y; /* use LastSqr as temp storage */
+	g_argument1->d.y = g_argument1->d.x*g_argument1->d.y*2.0;
+	g_argument1->d.x = g_argument1->d.x*g_argument1->d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
 }
 
 void dStkSqr3()
 {
-	Arg1->d.x = Arg1->d.x*Arg1->d.x;
+	g_argument1->d.x = g_argument1->d.x*g_argument1->d.x;
 }
 
 void dStkAbs()
 {
-	Arg1->d.x = fabs(Arg1->d.x);
-	Arg1->d.y = fabs(Arg1->d.y);
+	g_argument1->d.x = fabs(g_argument1->d.x);
+	g_argument1->d.y = fabs(g_argument1->d.y);
 }
 
 #if !defined(XFRACT)
 void lStkAbs()
 {
-	Arg1->l.x = labs(Arg1->l.x);
-	Arg1->l.y = labs(Arg1->l.y);
+	g_argument1->l.x = labs(g_argument1->l.x);
+	g_argument1->l.y = labs(g_argument1->l.y);
 }
 #endif
 
@@ -781,10 +781,10 @@ void dStkSqr()
 
 void Formula::StackSqr_d()
 {
-	m_variables[VARIABLE_LAST_SQR].argument.d.x = Arg1->d.x*Arg1->d.x;
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = Arg1->d.y*Arg1->d.y;
-	Arg1->d.y = Arg1->d.x*Arg1->d.y*2.0;
-	Arg1->d.x = m_variables[VARIABLE_LAST_SQR].argument.d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
+	m_variables[VARIABLE_LAST_SQR].argument.d.x = g_argument1->d.x*g_argument1->d.x;
+	m_variables[VARIABLE_LAST_SQR].argument.d.y = g_argument1->d.y*g_argument1->d.y;
+	g_argument1->d.y = g_argument1->d.x*g_argument1->d.y*2.0;
+	g_argument1->d.x = m_variables[VARIABLE_LAST_SQR].argument.d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
 	m_variables[VARIABLE_LAST_SQR].argument.d.x += m_variables[VARIABLE_LAST_SQR].argument.d.y;
 	m_variables[VARIABLE_LAST_SQR].argument.d.y = 0;
 }
@@ -797,10 +797,10 @@ void lStkSqr()
 void Formula::StackSqr_l()
 {
 #if !defined(XFRACT)
-	m_variables[VARIABLE_LAST_SQR].argument.l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift);
-	m_variables[VARIABLE_LAST_SQR].argument.l.y = multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
-	Arg1->l.y = multiply(Arg1->l.x, Arg1->l.y, g_bit_shift) << 1;
-	Arg1->l.x = m_variables[VARIABLE_LAST_SQR].argument.l.x - m_variables[VARIABLE_LAST_SQR].argument.l.y;
+	m_variables[VARIABLE_LAST_SQR].argument.l.x = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift);
+	m_variables[VARIABLE_LAST_SQR].argument.l.y = multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
+	g_argument1->l.y = multiply(g_argument1->l.x, g_argument1->l.y, g_bit_shift) << 1;
+	g_argument1->l.x = m_variables[VARIABLE_LAST_SQR].argument.l.x - m_variables[VARIABLE_LAST_SQR].argument.l.y;
 	m_variables[VARIABLE_LAST_SQR].argument.l.x += m_variables[VARIABLE_LAST_SQR].argument.l.y;
 	m_variables[VARIABLE_LAST_SQR].argument.l.y = 0L;
 #endif
@@ -810,19 +810,19 @@ void (*StkSqr)() = dStkSqr;
 
 void dStkAdd()
 {
-	Arg2->d.x += Arg1->d.x;
-	Arg2->d.y += Arg1->d.y;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x += g_argument1->d.x;
+	g_argument2->d.y += g_argument1->d.y;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkAdd()
 {
-	Arg2->l.x += Arg1->l.x;
-	Arg2->l.y += Arg1->l.y;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x += g_argument1->l.x;
+	g_argument2->l.y += g_argument1->l.y;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -830,19 +830,19 @@ void (*StkAdd)() = dStkAdd;
 
 void dStkSub()
 {
-	Arg2->d.x -= Arg1->d.x;
-	Arg2->d.y -= Arg1->d.y;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x -= g_argument1->d.x;
+	g_argument2->d.y -= g_argument1->d.y;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkSub()
 {
-	Arg2->l.x -= Arg1->l.x;
-	Arg2->l.y -= Arg1->l.y;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x -= g_argument1->l.x;
+	g_argument2->l.y -= g_argument1->l.y;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -850,13 +850,13 @@ void (*StkSub)() = dStkSub;
 
 void dStkConj()
 {
-	Arg1->d.y = -Arg1->d.y;
+	g_argument1->d.y = -g_argument1->d.y;
 }
 
 #if !defined(XFRACT)
 void lStkConj()
 {
-	Arg1->l.y = -Arg1->l.y;
+	g_argument1->l.y = -g_argument1->l.y;
 }
 #endif
 
@@ -864,8 +864,8 @@ void (*StkConj)() = dStkConj;
 
 void dStkFloor()
 {
-	Arg1->d.x = floor(Arg1->d.x);
-	Arg1->d.y = floor(Arg1->d.y);
+	g_argument1->d.x = floor(g_argument1->d.x);
+	g_argument1->d.y = floor(g_argument1->d.y);
 }
 
 #if !defined(XFRACT)
@@ -875,10 +875,10 @@ void lStkFloor()
 	* Kill fractional part. This operation truncates negative numbers
 	* toward negative infinity as desired.
 	*/
-	Arg1->l.x = (Arg1->l.x) >> g_bit_shift;
-	Arg1->l.y = (Arg1->l.y) >> g_bit_shift;
-	Arg1->l.x = (Arg1->l.x) << g_bit_shift;
-	Arg1->l.y = (Arg1->l.y) << g_bit_shift;
+	g_argument1->l.x = (g_argument1->l.x) >> g_bit_shift;
+	g_argument1->l.y = (g_argument1->l.y) >> g_bit_shift;
+	g_argument1->l.x = (g_argument1->l.x) << g_bit_shift;
+	g_argument1->l.y = (g_argument1->l.y) << g_bit_shift;
 }
 #endif
 
@@ -886,8 +886,8 @@ void (*StkFloor)() = dStkFloor;
 
 void dStkCeil()
 {
-	Arg1->d.x = ceil(Arg1->d.x);
-	Arg1->d.y = ceil(Arg1->d.y);
+	g_argument1->d.x = ceil(g_argument1->d.x);
+	g_argument1->d.y = ceil(g_argument1->d.y);
 }
 
 #if !defined(XFRACT)
@@ -895,10 +895,10 @@ void lStkCeil()
 {
 	/* the shift operation does the "floor" operation, so we
 		negate everything before the operation */
-	Arg1->l.x = (-Arg1->l.x) >> g_bit_shift;
-	Arg1->l.y = (-Arg1->l.y) >> g_bit_shift;
-	Arg1->l.x = -((Arg1->l.x) << g_bit_shift);
-	Arg1->l.y = -((Arg1->l.y) << g_bit_shift);
+	g_argument1->l.x = (-g_argument1->l.x) >> g_bit_shift;
+	g_argument1->l.y = (-g_argument1->l.y) >> g_bit_shift;
+	g_argument1->l.x = -((g_argument1->l.x) << g_bit_shift);
+	g_argument1->l.y = -((g_argument1->l.y) << g_bit_shift);
 }
 #endif
 
@@ -906,8 +906,8 @@ void (*StkCeil)() = dStkCeil;
 
 void dStkTrunc()
 {
-	Arg1->d.x = int(Arg1->d.x);
-	Arg1->d.y = int(Arg1->d.y);
+	g_argument1->d.x = int(g_argument1->d.x);
+	g_argument1->d.y = int(g_argument1->d.y);
 }
 
 #if !defined(XFRACT)
@@ -915,16 +915,16 @@ void lStkTrunc()
 {
 	/* shifting and shifting back truncates positive numbers,
 		so we make the numbers positive */
-	int signx = sign(Arg1->l.x);
-	int signy = sign(Arg1->l.y);
-	Arg1->l.x = labs(Arg1->l.x);
-	Arg1->l.y = labs(Arg1->l.y);
-	Arg1->l.x = (Arg1->l.x) >> g_bit_shift;
-	Arg1->l.y = (Arg1->l.y) >> g_bit_shift;
-	Arg1->l.x = (Arg1->l.x) << g_bit_shift;
-	Arg1->l.y = (Arg1->l.y) << g_bit_shift;
-	Arg1->l.x = signx*Arg1->l.x;
-	Arg1->l.y = signy*Arg1->l.y;
+	int signx = sign(g_argument1->l.x);
+	int signy = sign(g_argument1->l.y);
+	g_argument1->l.x = labs(g_argument1->l.x);
+	g_argument1->l.y = labs(g_argument1->l.y);
+	g_argument1->l.x = (g_argument1->l.x) >> g_bit_shift;
+	g_argument1->l.y = (g_argument1->l.y) >> g_bit_shift;
+	g_argument1->l.x = (g_argument1->l.x) << g_bit_shift;
+	g_argument1->l.y = (g_argument1->l.y) << g_bit_shift;
+	g_argument1->l.x = signx*g_argument1->l.x;
+	g_argument1->l.y = signy*g_argument1->l.y;
 }
 #endif
 
@@ -932,16 +932,16 @@ void (*StkTrunc)() = dStkTrunc;
 
 void dStkRound()
 {
-	Arg1->d.x = floor(Arg1->d.x + .5);
-	Arg1->d.y = floor(Arg1->d.y + .5);
+	g_argument1->d.x = floor(g_argument1->d.x + .5);
+	g_argument1->d.y = floor(g_argument1->d.y + .5);
 }
 
 #if !defined(XFRACT)
 void lStkRound()
 {
 	/* Add .5 then truncate */
-	Arg1->l.x += (1L << g_bit_shift_minus_1);
-	Arg1->l.y += (1L << g_bit_shift_minus_1);
+	g_argument1->l.x += (1L << g_bit_shift_minus_1);
+	g_argument1->l.y += (1L << g_bit_shift_minus_1);
 	lStkFloor();
 }
 #endif
@@ -950,15 +950,15 @@ void (*StkRound)() = dStkRound;
 
 void dStkZero()
 {
-	Arg1->d.y = 0.0;
-	Arg1->d.x = 0.0;
+	g_argument1->d.y = 0.0;
+	g_argument1->d.x = 0.0;
 }
 
 #if !defined(XFRACT)
 void lStkZero()
 {
-	Arg1->l.y = 0;
-	Arg1->l.x = 0;
+	g_argument1->l.y = 0;
+	g_argument1->l.x = 0;
 }
 #endif
 
@@ -966,15 +966,15 @@ void (*StkZero)() = dStkZero;
 
 void dStkOne()
 {
-	Arg1->d.x = 1.0;
-	Arg1->d.y = 0.0;
+	g_argument1->d.x = 1.0;
+	g_argument1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
 void lStkOne()
 {
-	Arg1->l.x = long(s_fudge);
-	Arg1->l.y = 0L;
+	g_argument1->l.x = long(s_fudge);
+	g_argument1->l.y = 0L;
 }
 #endif
 
@@ -983,13 +983,13 @@ void (*StkOne)() = dStkOne;
 
 void dStkReal()
 {
-	Arg1->d.y = 0.0;
+	g_argument1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
 void lStkReal()
 {
-	Arg1->l.y = 0l;
+	g_argument1->l.y = 0l;
 }
 #endif
 
@@ -997,15 +997,15 @@ void (*StkReal)() = dStkReal;
 
 void dStkImag()
 {
-	Arg1->d.x = Arg1->d.y;
-	Arg1->d.y = 0.0;
+	g_argument1->d.x = g_argument1->d.y;
+	g_argument1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
 void lStkImag()
 {
-	Arg1->l.x = Arg1->l.y;
-	Arg1->l.y = 0l;
+	g_argument1->l.x = g_argument1->l.y;
+	g_argument1->l.y = 0l;
 }
 #endif
 
@@ -1013,15 +1013,15 @@ void (*StkImag)() = dStkImag;
 
 void dStkNeg()
 {
-	Arg1->d.x = -Arg1->d.x;
-	Arg1->d.y = -Arg1->d.y;
+	g_argument1->d.x = -g_argument1->d.x;
+	g_argument1->d.y = -g_argument1->d.y;
 }
 
 #if !defined(XFRACT)
 void lStkNeg()
 {
-	Arg1->l.x = -Arg1->l.x;
-	Arg1->l.y = -Arg1->l.y;
+	g_argument1->l.x = -g_argument1->l.x;
+	g_argument1->l.y = -g_argument1->l.y;
 }
 #endif
 
@@ -1029,22 +1029,22 @@ void (*StkNeg)() = dStkNeg;
 
 void dStkMul()
 {
-	FPUcplxmul(&Arg2->d, &Arg1->d, &Arg2->d);
-	Arg1--;
-	Arg2--;
+	FPUcplxmul(&g_argument2->d, &g_argument1->d, &g_argument2->d);
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkMul()
 {
-	long x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) -
-		multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
-	long y = multiply(Arg2->l.y, Arg1->l.x, g_bit_shift) +
-		multiply(Arg2->l.x, Arg1->l.y, g_bit_shift);
-	Arg2->l.x = x;
-	Arg2->l.y = y;
-	Arg1--;
-	Arg2--;
+	long x = multiply(g_argument2->l.x, g_argument1->l.x, g_bit_shift) -
+		multiply(g_argument2->l.y, g_argument1->l.y, g_bit_shift);
+	long y = multiply(g_argument2->l.y, g_argument1->l.x, g_bit_shift) +
+		multiply(g_argument2->l.x, g_argument1->l.y, g_bit_shift);
+	g_argument2->l.x = x;
+	g_argument2->l.y = y;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1052,24 +1052,24 @@ void (*StkMul)() = dStkMul;
 
 void dStkDiv()
 {
-	FPUcplxdiv(&Arg2->d, &Arg1->d, &Arg2->d);
-	Arg1--;
-	Arg2--;
+	FPUcplxdiv(&g_argument2->d, &g_argument1->d, &g_argument2->d);
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkDiv()
 {
-	long mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
-		multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
-	long x = divide(Arg1->l.x, mod, g_bit_shift);
-	long y = -divide(Arg1->l.y, mod, g_bit_shift);
-	long x2 = multiply(Arg2->l.x, x, g_bit_shift) - multiply(Arg2->l.y, y, g_bit_shift);
-	long y2 = multiply(Arg2->l.y, x, g_bit_shift) + multiply(Arg2->l.x, y, g_bit_shift);
-	Arg2->l.x = x2;
-	Arg2->l.y = y2;
-	Arg1--;
-	Arg2--;
+	long mod = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift) +
+		multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
+	long x = divide(g_argument1->l.x, mod, g_bit_shift);
+	long y = -divide(g_argument1->l.y, mod, g_bit_shift);
+	long x2 = multiply(g_argument2->l.x, x, g_bit_shift) - multiply(g_argument2->l.y, y, g_bit_shift);
+	long y2 = multiply(g_argument2->l.y, x, g_bit_shift) + multiply(g_argument2->l.x, y, g_bit_shift);
+	g_argument2->l.x = x2;
+	g_argument2->l.y = y2;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1077,31 +1077,31 @@ void (*StkDiv)() = dStkDiv;
 
 void dStkMod()
 {
-	Arg1->d.x = (Arg1->d.x*Arg1->d.x) + (Arg1->d.y*Arg1->d.y);
-	Arg1->d.y = 0.0;
+	g_argument1->d.x = (g_argument1->d.x*g_argument1->d.x) + (g_argument1->d.y*g_argument1->d.y);
+	g_argument1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
 void lStkMod()
 {
-	Arg1->l.x = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift) +
-	multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
-	if (Arg1->l.x < 0)
+	g_argument1->l.x = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift) +
+	multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
+	if (g_argument1->l.x < 0)
 	{
 		g_overflow = true;
 	}
-	Arg1->l.y = 0L;
+	g_argument1->l.y = 0L;
 }
 
 void lStkModOld()
 {
-	Arg1->l.x = multiply(Arg2->l.x, Arg1->l.x, g_bit_shift) +
-	multiply(Arg2->l.y, Arg1->l.y, g_bit_shift);
-	if (Arg1->l.x < 0)
+	g_argument1->l.x = multiply(g_argument2->l.x, g_argument1->l.x, g_bit_shift) +
+	multiply(g_argument2->l.y, g_argument1->l.y, g_bit_shift);
+	if (g_argument1->l.x < 0)
 	{
 		g_overflow = true;
 	}
-	Arg1->l.y = 0L;
+	g_argument1->l.y = 0L;
 }
 #endif
 
@@ -1114,7 +1114,7 @@ void StkSto()
 
 void Formula::StackStore()
 {
-	*m_store[m_store_ptr++] = *Arg1;
+	*m_store[m_store_ptr++] = *g_argument1;
 }
 
 void (*PtrStkSto)() = StkSto;
@@ -1126,9 +1126,9 @@ void StkLod()
 
 void Formula::StackLoad()
 {
-	Arg1++;
-	Arg2++;
-	*Arg1 = *m_load[m_load_ptr++];
+	g_argument1++;
+	g_argument2++;
+	*g_argument1 = *m_load[m_load_ptr++];
 }
 
 void StkClr()
@@ -1138,10 +1138,10 @@ void StkClr()
 
 void Formula::StackClear()
 {
-	m_argument_stack[0] = *Arg1;
-	Arg1 = &m_argument_stack[0];
-	Arg2 = Arg1;
-	Arg2--;
+	m_argument_stack[0] = *g_argument1;
+	g_argument1 = &m_argument_stack[0];
+	g_argument2 = g_argument1;
+	g_argument2--;
 }
 
 void (*PtrStkClr)() = StkClr;
@@ -1150,9 +1150,9 @@ void dStkFlip()
 {
 	double t;
 
-	t = Arg1->d.x;
-	Arg1->d.x = Arg1->d.y;
-	Arg1->d.y = t;
+	t = g_argument1->d.x;
+	g_argument1->d.x = g_argument1->d.y;
+	g_argument1->d.y = t;
 }
 
 #if !defined(XFRACT)
@@ -1160,9 +1160,9 @@ void lStkFlip()
 {
 	long t;
 
-	t = Arg1->l.x;
-	Arg1->l.x = Arg1->l.y;
-	Arg1->l.y = t;
+	t = g_argument1->l.x;
+	g_argument1->l.x = g_argument1->l.y;
+	g_argument1->l.y = t;
 }
 #endif
 
@@ -1172,27 +1172,27 @@ void dStkSin()
 {
 	double sinx;
 	double cosx;
-	FPUsincos(&Arg1->d.x, &sinx, &cosx);
+	FPUsincos(&g_argument1->d.x, &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
-	Arg1->d.x = sinx*coshy;
-	Arg1->d.y = cosx*sinhy;
+	FPUsinhcosh(&g_argument1->d.y, &sinhy, &coshy);
+	g_argument1->d.x = sinx*coshy;
+	g_argument1->d.y = cosx*sinhy;
 }
 
 #if !defined(XFRACT)
 void lStkSin()
 {
-	long x = Arg1->l.x >> s_delta16;
-	long y = Arg1->l.y >> s_delta16;
+	long x = g_argument1->l.x >> s_delta16;
+	long y = g_argument1->l.y >> s_delta16;
 	long sinx;
 	long cosx;
 	SinCos086(x, &sinx, &cosx);
 	long sinhy;
 	long coshy;
 	SinhCosh086(y, &sinhy, &coshy);
-	Arg1->l.x = multiply(sinx, coshy, s_shift_back);
-	Arg1->l.y = multiply(cosx, sinhy, s_shift_back);
+	g_argument1->l.x = multiply(sinx, coshy, s_shift_back);
+	g_argument1->l.y = multiply(cosx, sinhy, s_shift_back);
 }
 #endif
 
@@ -1203,25 +1203,25 @@ void (*StkSin)() = dStkSin;
 
 void dStkTan()
 {
-	Arg1->d.x *= 2;
-	Arg1->d.y *= 2;
+	g_argument1->d.x *= 2;
+	g_argument1->d.y *= 2;
 	double sinx;
 	double cosx;
-	FPUsincos(&Arg1->d.x, &sinx, &cosx);
+	FPUsincos(&g_argument1->d.x, &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
+	FPUsinhcosh(&g_argument1->d.y, &sinhy, &coshy);
 	double denom = cosx + coshy;
 	ChkFloatDenom(denom);
-	Arg1->d.x = sinx/denom;
-	Arg1->d.y = sinhy/denom;
+	g_argument1->d.x = sinx/denom;
+	g_argument1->d.y = sinhy/denom;
 }
 
 #if !defined(XFRACT)
 void lStkTan()
 {
-	long x = (Arg1->l.x >> s_delta16)*2;
-	long y = (Arg1->l.y >> s_delta16)*2;
+	long x = (g_argument1->l.x >> s_delta16)*2;
+	long y = (g_argument1->l.y >> s_delta16)*2;
 	long sinx;
 	long cosx;
 	SinCos086(x, &sinx, &cosx);
@@ -1230,8 +1230,8 @@ void lStkTan()
 	SinhCosh086(y, &sinhy, &coshy);
 	long denom = cosx + coshy;
 	ChkLongDenom(denom);
-	Arg1->l.x = divide(sinx, denom, g_bit_shift);
-	Arg1->l.y = divide(sinhy, denom, g_bit_shift);
+	g_argument1->l.x = divide(sinx, denom, g_bit_shift);
+	g_argument1->l.y = divide(sinhy, denom, g_bit_shift);
 }
 #endif
 
@@ -1239,26 +1239,26 @@ void (*StkTan)() = dStkTan;
 
 void dStkTanh()
 {
-	Arg1->d.x *= 2;
-	Arg1->d.y *= 2;
+	g_argument1->d.x *= 2;
+	g_argument1->d.y *= 2;
 	double siny;
 	double cosy;
-	FPUsincos(&Arg1->d.y, &siny, &cosy);
+	FPUsincos(&g_argument1->d.y, &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
+	FPUsinhcosh(&g_argument1->d.x, &sinhx, &coshx);
 	double denom = coshx + cosy;
 	ChkFloatDenom(denom);
-	Arg1->d.x = sinhx/denom;
-	Arg1->d.y = siny/denom;
+	g_argument1->d.x = sinhx/denom;
+	g_argument1->d.y = siny/denom;
 }
 
 #if !defined(XFRACT)
 void lStkTanh()
 {
-	long x = Arg1->l.x >> s_delta16;
+	long x = g_argument1->l.x >> s_delta16;
 	x <<= 1;
-	long y = Arg1->l.y >> s_delta16;
+	long y = g_argument1->l.y >> s_delta16;
 	y <<= 1;
 	long siny;
 	long cosy;
@@ -1268,8 +1268,8 @@ void lStkTanh()
 	SinhCosh086(x, &sinhx, &coshx);
 	long denom = coshx + cosy;
 	ChkLongDenom(denom);
-	Arg1->l.x = divide(sinhx, denom, g_bit_shift);
-	Arg1->l.y = divide(siny, denom, g_bit_shift);
+	g_argument1->l.x = divide(sinhx, denom, g_bit_shift);
+	g_argument1->l.y = divide(siny, denom, g_bit_shift);
 }
 #endif
 
@@ -1277,26 +1277,26 @@ void (*StkTanh)() = dStkTanh;
 
 void dStkCoTan()
 {
-	Arg1->d.x *= 2;
-	Arg1->d.y *= 2;
+	g_argument1->d.x *= 2;
+	g_argument1->d.y *= 2;
 	double sinx;
 	double cosx;
-	FPUsincos(&Arg1->d.x, &sinx, &cosx);
+	FPUsincos(&g_argument1->d.x, &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
+	FPUsinhcosh(&g_argument1->d.y, &sinhy, &coshy);
 	double denom = coshy - cosx;
 	ChkFloatDenom(denom);
-	Arg1->d.x = sinx/denom;
-	Arg1->d.y = -sinhy/denom;
+	g_argument1->d.x = sinx/denom;
+	g_argument1->d.y = -sinhy/denom;
 }
 
 #if !defined(XFRACT)
 void lStkCoTan()
 {
-	long x = Arg1->l.x >> s_delta16;
+	long x = g_argument1->l.x >> s_delta16;
 	x <<= 1;
-	long y = Arg1->l.y >> s_delta16;
+	long y = g_argument1->l.y >> s_delta16;
 	y <<= 1;
 	long sinx;
 	long cosx;
@@ -1306,8 +1306,8 @@ void lStkCoTan()
 	SinhCosh086(y, &sinhy, &coshy);
 	long denom = coshy - cosx;
 	ChkLongDenom(denom);
-	Arg1->l.x = divide(sinx, denom, g_bit_shift);
-	Arg1->l.y = -divide(sinhy, denom, g_bit_shift);
+	g_argument1->l.x = divide(sinx, denom, g_bit_shift);
+	g_argument1->l.y = -divide(sinhy, denom, g_bit_shift);
 }
 #endif
 
@@ -1315,26 +1315,26 @@ void (*StkCoTan)() = dStkCoTan;
 
 void dStkCoTanh()
 {
-	Arg1->d.x *= 2;
-	Arg1->d.y *= 2;
+	g_argument1->d.x *= 2;
+	g_argument1->d.y *= 2;
 	double siny;
 	double cosy;
-	FPUsincos(&Arg1->d.y, &siny, &cosy);
+	FPUsincos(&g_argument1->d.y, &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
+	FPUsinhcosh(&g_argument1->d.x, &sinhx, &coshx);
 	double denom = coshx - cosy;
 	ChkFloatDenom(denom);
-	Arg1->d.x = sinhx/denom;
-	Arg1->d.y = -siny/denom;
+	g_argument1->d.x = sinhx/denom;
+	g_argument1->d.y = -siny/denom;
 }
 
 #if !defined(XFRACT)
 void lStkCoTanh()
 {
-	long x = Arg1->l.x >> s_delta16;
+	long x = g_argument1->l.x >> s_delta16;
 	x <<= 1;
-	long y = Arg1->l.y >> s_delta16;
+	long y = g_argument1->l.y >> s_delta16;
 	y <<= 1;
 	long siny;
 	long cosy;
@@ -1344,8 +1344,8 @@ void lStkCoTanh()
 	SinhCosh086(x, &sinhx, &coshx);
 	long denom = coshx - cosy;
 	ChkLongDenom(denom);
-	Arg1->l.x = divide(sinhx, denom, g_bit_shift);
-	Arg1->l.y = -divide(siny, denom, g_bit_shift);
+	g_argument1->l.x = divide(sinhx, denom, g_bit_shift);
+	g_argument1->l.y = -divide(siny, denom, g_bit_shift);
 }
 #endif
 
@@ -1360,18 +1360,18 @@ void (*StkCoTanh)() = dStkCoTanh;
 void dStkRecip()
 {
 	double mod;
-	mod = Arg1->d.x*Arg1->d.x + Arg1->d.y*Arg1->d.y;
+	mod = g_argument1->d.x*g_argument1->d.x + g_argument1->d.y*g_argument1->d.y;
 	ChkFloatDenom(mod);
-	Arg1->d.x =  Arg1->d.x/mod;
-	Arg1->d.y = -Arg1->d.y/mod;
+	g_argument1->d.x =  g_argument1->d.x/mod;
+	g_argument1->d.y = -g_argument1->d.y/mod;
 }
 
 #if !defined(XFRACT)
 void lStkRecip()
 {
 	long mod;
-	mod = multiply(Arg1->l.x, Arg1->l.x, g_bit_shift)
-		+ multiply(Arg1->l.y, Arg1->l.y, g_bit_shift);
+	mod = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift)
+		+ multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
 	if (g_save_release > 1920)
 	{
 		ChkLongDenom(mod);
@@ -1380,8 +1380,8 @@ void lStkRecip()
 	{
 		return;
 	}
-	Arg1->l.x =  divide(Arg1->l.x, mod, g_bit_shift);
-	Arg1->l.y = -divide(Arg1->l.y, mod, g_bit_shift);
+	g_argument1->l.x =  divide(g_argument1->l.x, mod, g_bit_shift);
+	g_argument1->l.y = -divide(g_argument1->l.y, mod, g_bit_shift);
 }
 #endif
 
@@ -1393,27 +1393,27 @@ void dStkSinh()
 {
 	double siny;
 	double cosy;
-	FPUsincos(&Arg1->d.y, &siny, &cosy);
+	FPUsincos(&g_argument1->d.y, &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
-	Arg1->d.x = sinhx*cosy;
-	Arg1->d.y = coshx*siny;
+	FPUsinhcosh(&g_argument1->d.x, &sinhx, &coshx);
+	g_argument1->d.x = sinhx*cosy;
+	g_argument1->d.y = coshx*siny;
 }
 
 #if !defined(XFRACT)
 void lStkSinh()
 {
-	long x = Arg1->l.x >> s_delta16;
-	long y = Arg1->l.y >> s_delta16;
+	long x = g_argument1->l.x >> s_delta16;
+	long y = g_argument1->l.y >> s_delta16;
 	long siny;
 	long cosy;
 	SinCos086(y, &siny, &cosy);
 	long sinhx;
 	long coshx;
 	SinhCosh086(x, &sinhx, &coshx);
-	Arg1->l.x = multiply(cosy, sinhx, s_shift_back);
-	Arg1->l.y = multiply(siny, coshx, s_shift_back);
+	g_argument1->l.x = multiply(cosy, sinhx, s_shift_back);
+	g_argument1->l.y = multiply(siny, coshx, s_shift_back);
 }
 #endif
 
@@ -1423,27 +1423,27 @@ void dStkCos()
 {
 	double sinx;
 	double cosx;
-	FPUsincos(&Arg1->d.x, &sinx, &cosx);
+	FPUsincos(&g_argument1->d.x, &sinx, &cosx);
 	double sinhy;
 	double coshy;
-	FPUsinhcosh(&Arg1->d.y, &sinhy, &coshy);
-	Arg1->d.x = cosx*coshy;
-	Arg1->d.y = -sinx*sinhy;
+	FPUsinhcosh(&g_argument1->d.y, &sinhy, &coshy);
+	g_argument1->d.x = cosx*coshy;
+	g_argument1->d.y = -sinx*sinhy;
 }
 
 #if !defined(XFRACT)
 void lStkCos()
 {
-	long x = Arg1->l.x >> s_delta16;
-	long y = Arg1->l.y >> s_delta16;
+	long x = g_argument1->l.x >> s_delta16;
+	long y = g_argument1->l.y >> s_delta16;
 	long sinx;
 	long cosx;
 	SinCos086(x, &sinx, &cosx);
 	long sinhy;
 	long coshy;
 	SinhCosh086(y, &sinhy, &coshy);
-	Arg1->l.x = multiply(cosx, coshy, s_shift_back);
-	Arg1->l.y = -multiply(sinx, sinhy, s_shift_back);
+	g_argument1->l.x = multiply(cosx, coshy, s_shift_back);
+	g_argument1->l.y = -multiply(sinx, sinhy, s_shift_back);
 }
 #endif
 
@@ -1454,14 +1454,14 @@ void (*StkCos)() = dStkCos;
 void dStkCosXX()
 {
 	dStkCos();
-	Arg1->d.y = -Arg1->d.y;
+	g_argument1->d.y = -g_argument1->d.y;
 }
 
 #if !defined(XFRACT)
 void lStkCosXX()
 {
 	lStkCos();
-	Arg1->l.y = -Arg1->l.y;
+	g_argument1->l.y = -g_argument1->l.y;
 }
 #endif
 
@@ -1471,27 +1471,27 @@ void dStkCosh()
 {
 	double siny;
 	double cosy;
-	FPUsincos(&Arg1->d.y, &siny, &cosy);
+	FPUsincos(&g_argument1->d.y, &siny, &cosy);
 	double sinhx;
 	double coshx;
-	FPUsinhcosh(&Arg1->d.x, &sinhx, &coshx);
-	Arg1->d.x = coshx*cosy;
-	Arg1->d.y = sinhx*siny;
+	FPUsinhcosh(&g_argument1->d.x, &sinhx, &coshx);
+	g_argument1->d.x = coshx*cosy;
+	g_argument1->d.y = sinhx*siny;
 }
 
 #if !defined(XFRACT)
 void lStkCosh()
 {
-	long x = Arg1->l.x >> s_delta16;
-	long y = Arg1->l.y >> s_delta16;
+	long x = g_argument1->l.x >> s_delta16;
+	long y = g_argument1->l.y >> s_delta16;
 	long siny;
 	long cosy;
 	SinCos086(y, &siny, &cosy);
 	long sinhx;
 	long coshx;
 	SinhCosh086(x, &sinhx, &coshx);
-	Arg1->l.x = multiply(cosy, coshx, s_shift_back);
-	Arg1->l.y = multiply(siny, sinhx, s_shift_back);
+	g_argument1->l.x = multiply(cosy, coshx, s_shift_back);
+	g_argument1->l.y = multiply(siny, sinhx, s_shift_back);
 }
 #endif
 
@@ -1499,7 +1499,7 @@ void (*StkCosh)() = dStkCosh;
 
 void dStkASin()
 {
-	Arcsinz(Arg1->d, &(Arg1->d));
+	Arcsinz(g_argument1->d, &(g_argument1->d));
 }
 
 #if !defined(XFRACT)
@@ -1513,7 +1513,7 @@ void (*StkASin)() = dStkASin;
 
 void dStkASinh()
 {
-	Arcsinhz(Arg1->d, &(Arg1->d));
+	Arcsinhz(g_argument1->d, &(g_argument1->d));
 }
 
 #if !defined(XFRACT)
@@ -1527,7 +1527,7 @@ void (*StkASinh)() = dStkASinh;
 
 void dStkACos()
 {
-	Arccosz(Arg1->d, &(Arg1->d));
+	Arccosz(g_argument1->d, &(g_argument1->d));
 }
 
 #if !defined(XFRACT)
@@ -1541,7 +1541,7 @@ void (*StkACos)() = dStkACos;
 
 void dStkACosh()
 {
-	Arccoshz(Arg1->d, &(Arg1->d));
+	Arccoshz(g_argument1->d, &(g_argument1->d));
 }
 
 #if !defined(XFRACT)
@@ -1555,7 +1555,7 @@ void (*StkACosh)() = dStkACosh;
 
 void dStkATan()
 {
-	Arctanz(Arg1->d, &(Arg1->d));
+	Arctanz(g_argument1->d, &(g_argument1->d));
 }
 
 #if !defined(XFRACT)
@@ -1569,7 +1569,7 @@ void (*StkATan)() = dStkATan;
 
 void dStkATanh()
 {
-	Arctanhz(Arg1->d, &(Arg1->d));
+	Arctanhz(g_argument1->d, &(g_argument1->d));
 }
 
 #if !defined(XFRACT)
@@ -1583,13 +1583,13 @@ void (*StkATanh)() = dStkATanh;
 
 void dStkSqrt()
 {
-	Arg1->d = ComplexSqrtFloat(Arg1->d.x, Arg1->d.y);
+	g_argument1->d = ComplexSqrtFloat(g_argument1->d.x, g_argument1->d.y);
 }
 
 #if !defined(XFRACT)
 void lStkSqrt()
 {
-	Arg1->l = ComplexSqrtLong(Arg1->l.x, Arg1->l.y);
+	g_argument1->l = ComplexSqrtLong(g_argument1->l.x, g_argument1->l.y);
 }
 #endif
 
@@ -1597,8 +1597,8 @@ void (*StkSqrt)() = dStkSqrt;
 
 void dStkCAbs()
 {
-	Arg1->d.x = sqrt(sqr(Arg1->d.x) + sqr(Arg1->d.y));
-	Arg1->d.y = 0.0;
+	g_argument1->d.x = sqrt(sqr(g_argument1->d.x) + sqr(g_argument1->d.y));
+	g_argument1->d.y = 0.0;
 }
 
 #if !defined(XFRACT)
@@ -1612,19 +1612,19 @@ void (*StkCAbs)() = dStkCAbs;
 
 void dStkLT()
 {
-	Arg2->d.x = double(Arg2->d.x < Arg1->d.x);
-	Arg2->d.y = 0.0;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x = double(g_argument2->d.x < g_argument1->d.x);
+	g_argument2->d.y = 0.0;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkLT()
 {
-	Arg2->l.x = long(Arg2->l.x < Arg1->l.x) << g_bit_shift;
-	Arg2->l.y = 0l;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x = long(g_argument2->l.x < g_argument1->l.x) << g_bit_shift;
+	g_argument2->l.y = 0l;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1632,19 +1632,19 @@ void (*StkLT)() = dStkLT;
 
 void dStkGT()
 {
-	Arg2->d.x = double(Arg2->d.x > Arg1->d.x);
-	Arg2->d.y = 0.0;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x = double(g_argument2->d.x > g_argument1->d.x);
+	g_argument2->d.y = 0.0;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkGT()
 {
-	Arg2->l.x = long(Arg2->l.x > Arg1->l.x) << g_bit_shift;
-	Arg2->l.y = 0l;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x = long(g_argument2->l.x > g_argument1->l.x) << g_bit_shift;
+	g_argument2->l.y = 0l;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1652,19 +1652,19 @@ void (*StkGT)() = dStkGT;
 
 void dStkLTE()
 {
-	Arg2->d.x = double(Arg2->d.x <= Arg1->d.x);
-	Arg2->d.y = 0.0;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x = double(g_argument2->d.x <= g_argument1->d.x);
+	g_argument2->d.y = 0.0;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkLTE()
 {
-	Arg2->l.x = long(Arg2->l.x <= Arg1->l.x) << g_bit_shift;
-	Arg2->l.y = 0l;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x = long(g_argument2->l.x <= g_argument1->l.x) << g_bit_shift;
+	g_argument2->l.y = 0l;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1672,19 +1672,19 @@ void (*StkLTE)() = dStkLTE;
 
 void dStkGTE()
 {
-	Arg2->d.x = double(Arg2->d.x >= Arg1->d.x);
-	Arg2->d.y = 0.0;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x = double(g_argument2->d.x >= g_argument1->d.x);
+	g_argument2->d.y = 0.0;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkGTE()
 {
-	Arg2->l.x = long(Arg2->l.x >= Arg1->l.x) << g_bit_shift;
-	Arg2->l.y = 0l;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x = long(g_argument2->l.x >= g_argument1->l.x) << g_bit_shift;
+	g_argument2->l.y = 0l;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1692,19 +1692,19 @@ void (*StkGTE)() = dStkGTE;
 
 void dStkEQ()
 {
-	Arg2->d.x = double(Arg2->d.x == Arg1->d.x);
-	Arg2->d.y = 0.0;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x = double(g_argument2->d.x == g_argument1->d.x);
+	g_argument2->d.y = 0.0;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkEQ()
 {
-	Arg2->l.x = long(Arg2->l.x == Arg1->l.x) << g_bit_shift;
-	Arg2->l.y = 0l;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x = long(g_argument2->l.x == g_argument1->l.x) << g_bit_shift;
+	g_argument2->l.y = 0l;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1712,19 +1712,19 @@ void (*StkEQ)() = dStkEQ;
 
 void dStkNE()
 {
-	Arg2->d.x = double(Arg2->d.x != Arg1->d.x);
-	Arg2->d.y = 0.0;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x = double(g_argument2->d.x != g_argument1->d.x);
+	g_argument2->d.y = 0.0;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkNE()
 {
-	Arg2->l.x = long(Arg2->l.x != Arg1->l.x) << g_bit_shift;
-	Arg2->l.y = 0l;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x = long(g_argument2->l.x != g_argument1->l.x) << g_bit_shift;
+	g_argument2->l.y = 0l;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1732,19 +1732,19 @@ void (*StkNE)() = dStkNE;
 
 void dStkOR()
 {
-	Arg2->d.x = double(Arg2->d.x || Arg1->d.x);
-	Arg2->d.y = 0.0;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x = double(g_argument2->d.x || g_argument1->d.x);
+	g_argument2->d.y = 0.0;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkOR()
 {
-	Arg2->l.x = long(Arg2->l.x || Arg1->l.x) << g_bit_shift;
-	Arg2->l.y = 0l;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x = long(g_argument2->l.x || g_argument1->l.x) << g_bit_shift;
+	g_argument2->l.y = 0l;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1752,26 +1752,26 @@ void (*StkOR)() = dStkOR;
 
 void dStkAND()
 {
-	Arg2->d.x = double(Arg2->d.x && Arg1->d.x);
-	Arg2->d.y = 0.0;
-	Arg1--;
-	Arg2--;
+	g_argument2->d.x = double(g_argument2->d.x && g_argument1->d.x);
+	g_argument2->d.y = 0.0;
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
 void lStkAND()
 {
-	Arg2->l.x = long(Arg2->l.x && Arg1->l.x) << g_bit_shift;
-	Arg2->l.y = 0l;
-	Arg1--;
-	Arg2--;
+	g_argument2->l.x = long(g_argument2->l.x && g_argument1->l.x) << g_bit_shift;
+	g_argument2->l.y = 0l;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
 void (*StkAND)() = dStkAND;
 void dStkLog()
 {
-	FPUcplxlog(&Arg1->d, &Arg1->d);
+	FPUcplxlog(&g_argument1->d, &g_argument1->d);
 }
 
 #if !defined(XFRACT)
@@ -1790,7 +1790,7 @@ void FPUcplxexp(ComplexD *x, ComplexD *z)
 
 void dStkExp()
 {
-	FPUcplxexp(&Arg1->d, &Arg1->d);
+	FPUcplxexp(&g_argument1->d, &g_argument1->d);
 }
 
 #if !defined(XFRACT)
@@ -1804,9 +1804,9 @@ void (*StkExp)() = dStkExp;
 
 void dStkPwr()
 {
-	Arg2->d = ComplexPower(Arg2->d, Arg1->d);
-	Arg1--;
-	Arg2--;
+	g_argument2->d = ComplexPower(g_argument2->d, g_argument1->d);
+	g_argument1--;
+	g_argument2--;
 }
 
 #if !defined(XFRACT)
@@ -1815,22 +1815,22 @@ void lStkPwr()
 	ComplexD x;
 	ComplexD y;
 
-	x.x = double_from_fixpoint(Arg2->l.x);
-	x.y = double_from_fixpoint(Arg2->l.y);
-	y.x = double_from_fixpoint(Arg1->l.x);
-	y.y = double_from_fixpoint(Arg1->l.y);
+	x.x = double_from_fixpoint(g_argument2->l.x);
+	x.y = double_from_fixpoint(g_argument2->l.y);
+	y.x = double_from_fixpoint(g_argument1->l.x);
+	y.y = double_from_fixpoint(g_argument1->l.y);
 	x = ComplexPower(x, y);
 	if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
 	{
-		Arg2->l.x = fixpoint_from_double(x.x);
-		Arg2->l.y = fixpoint_from_double(x.y);
+		g_argument2->l.x = fixpoint_from_double(x.x);
+		g_argument2->l.y = fixpoint_from_double(x.y);
 	}
 	else
 	{
 		g_overflow = true;
 	}
-	Arg1--;
-	Arg2--;
+	g_argument1--;
+	g_argument2--;
 }
 #endif
 
@@ -1862,7 +1862,7 @@ void dStkJumpOnFalse()
 
 void Formula::StackJumpOnFalse_d()
 {
-	if (Arg1->d.x == 0)
+	if (g_argument1->d.x == 0)
 	{
 		StkJump();
 	}
@@ -1879,7 +1879,7 @@ void lStkJumpOnFalse()
 
 void Formula::StackJumpOnFalse_l()
 {
-	if (Arg1->l.x == 0)
+	if (g_argument1->l.x == 0)
 	{
 		StkJump();
 	}
@@ -1898,7 +1898,7 @@ void dStkJumpOnTrue()
 
 void Formula::StackJumpOnTrue_d()
 {
-	if (Arg1->d.x)
+	if (g_argument1->d.x)
 	{
 		StkJump();
 	}
@@ -1915,7 +1915,7 @@ void lStkJumpOnTrue()
 
 void Formula::StackJumpOnTrue_l()
 {
-	if (Arg1->l.x)
+	if (g_argument1->l.x)
 	{
 		StkJump();
 	}
@@ -2183,25 +2183,31 @@ enum OperatorType
 	OPERATOR_RAISE_POWER
 };
 
-static const char *s_operator_list[] =
+struct operator_list_item
 {
-	",",	/*  0 */
-	"!=",	/*  1 */
-	"=",	/*  2 */
-	"==",	/*  3 */
-	"<",	/*  4 */
-	"<=",	/*  5 */
-	">",	/*  6 */
-	">=",	/*  7 */
-	"|",	/*  8 */
-	"||",	/*  9 */
-	"&&",	/* 10 */
-	":",	/* 11 */
-	"+",	/* 12 */
-	"-",	/* 13 */
-	"*",	/* 14 */
-	"/",	/* 15 */
-	"^"		/* 16 */
+	const char *name;
+	OperatorType type;
+};
+
+static const operator_list_item s_operator_list[] =
+{
+	{ ",",	OPERATOR_COMMA },	/*  0 */
+	{ "!=",	OPERATOR_NOT_EQUAL },	/*  1 */
+	{ "=",	OPERATOR_ASSIGNMENT },	/*  2 */
+	{ "==",	OPERATOR_EQUAL },	/*  3 */
+	{ "<",	OPERATOR_LESS },	/*  4 */
+	{ "<=",	OPERATOR_LESS_EQUAL },	/*  5 */
+	{ ">",	OPERATOR_GREATER },	/*  6 */
+	{ ">=",	OPERATOR_GREATER_EQUAL },	/*  7 */
+	{ "|",	OPERATOR_MODULUS },	/*  8 */
+	{ "||",	OPERATOR_OR },	/*  9 */
+	{ "&&",	OPERATOR_AND },	/* 10 */
+	{ ":",	OPERATOR_COLON },	/* 11 */
+	{ "+",	OPERATOR_PLUS },	/* 12 */
+	{ "-",	OPERATOR_MINUS },	/* 13 */
+	{ "*",	OPERATOR_MULTIPLY },	/* 14 */
+	{ "/",	OPERATOR_DIVIDE },	/* 15 */
+	{ "^",	OPERATOR_RAISE_POWER },	/* 16 */
 };
 
 static void not_a_function()
@@ -2764,8 +2770,8 @@ int Formula::orbit()
 		}
 	}
 
-	Arg1 = &m_argument_stack[0];
-	Arg2 = Arg1-1;
+	g_argument1 = &m_argument_stack[0];
+	g_argument2 = g_argument1-1;
 	while (m_op_index < m_last_op)
 	{
 		m_functions[m_op_index]();
@@ -2776,7 +2782,7 @@ int Formula::orbit()
 	{
 	case FLOATING_POINT_MATH:
 		g_old_z = g_new_z = m_variables[VARIABLE_Z].argument.d;
-		return Arg1->d.x == 0.0;
+		return g_argument1->d.x == 0.0;
 #if !defined(XFRACT)
 	case FIXED_POINT_MATH:
 		g_old_z_l = g_new_z_l = m_variables[VARIABLE_Z].argument.l;
@@ -2784,7 +2790,7 @@ int Formula::orbit()
 		{
 			return 1;
 		}
-		return Arg1->l.x == 0L;
+		return g_argument1->l.x == 0L;
 #endif
 	}
 	return 1;
@@ -2804,9 +2810,9 @@ int Formula::per_pixel()
 	m_store_ptr = 0;
 	m_op_index = 0;
 	m_jump_index = 0;
-	Arg1 = &m_argument_stack[0];
-	Arg2 = Arg1;
-	Arg2--;
+	g_argument1 = &m_argument_stack[0];
+	g_argument2 = g_argument1;
+	g_argument2--;
 
 
 	m_variables[VARIABLE_SCRN_PIX].argument.d.x = double(g_col);
@@ -3550,9 +3556,9 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 			{
 				for (int i = 0; i < NUM_OF(s_operator_list); i++)
 				{
-					if (!strcmp(s_operator_list[i], this_token->text))
+					if (!strcmp(s_operator_list[i].name, this_token->text))
 					{
-						this_token->id = i;
+						this_token->id = s_operator_list[i].type;
 					}
 				}
 			}
@@ -4040,8 +4046,8 @@ bool Formula::setup_int()
 
 void Formula::init_misc()
 {
-	Arg1 = &m_arg1;
-	Arg2 = &m_arg2; /* needed by all the ?Stk* functions */
+	g_argument1 = &m_arg1;
+	g_argument2 = &m_arg2; /* needed by all the ?Stk* functions */
 	s_fudge = double(1L << g_bit_shift);
 	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;
@@ -4694,8 +4700,8 @@ bool Formula::prescan(FILE *open_file)
 			m_number_of_ops++; /*This will be corrected below in certain cases*/
 			switch (this_token.id)
 			{
-			case 0:
-			case 11:    /* end of statement and : */
+			case OPERATOR_COMMA:
+			case OPERATOR_COLON:
 				m_number_of_ops++; /* ParseStr inserts a dummy op*/
 				if (m_parenthesis_count)
 				{
@@ -4740,7 +4746,7 @@ bool Formula::prescan(FILE *open_file)
 				expecting_argument = true;
 				m_statement_pos = ftell(open_file);
 				break;
-			case 1:     /* != */
+			case OPERATOR_NOT_EQUAL:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4748,7 +4754,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 2:     /* = */
+			case OPERATOR_ASSIGNMENT:
 				m_number_of_ops--; /*this just converts a load to a store*/
 				m_number_of_loads--;
 				m_number_of_stores++;
@@ -4758,7 +4764,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 3:     /* == */
+			case OPERATOR_EQUAL:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4766,7 +4772,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 4:     /* < */
+			case OPERATOR_LESS:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4774,7 +4780,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 5:     /* <= */
+			case OPERATOR_LESS_EQUAL:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4782,7 +4788,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 6:     /* > */
+			case OPERATOR_GREATER:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4790,7 +4796,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 7:     /* >= */
+			case OPERATOR_GREATER_EQUAL:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4798,7 +4804,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 8:     /* | */ /* (half of the modulus operator */
+			case OPERATOR_MODULUS:
 				assignment_ok = false;
 				if (!waiting_for_mod & 1L)
 				{
@@ -4814,7 +4820,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				waiting_for_mod ^= 1L; /*switch right bit*/
 				break;
-			case 9:     /* || */
+			case OPERATOR_OR:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4822,7 +4828,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 10:    /* && */
+			case OPERATOR_AND:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4830,7 +4836,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 12:    /* + */ /* case 11 (":") is up with case 0 */
+			case OPERATOR_PLUS:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4838,19 +4844,11 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 13:    /* - */
+			case OPERATOR_MINUS:
 				assignment_ok = false;
 				expecting_argument = true;
 				break;
-			case 14:    /* * */
-				assignment_ok = false;
-				if (expecting_argument)
-				{
-					record_error(PE_SHOULD_BE_ARGUMENT);
-				}
-				expecting_argument = true;
-				break;
-			case 15:    /* / */
+			case OPERATOR_MULTIPLY:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
@@ -4858,7 +4856,15 @@ bool Formula::prescan(FILE *open_file)
 				}
 				expecting_argument = true;
 				break;
-			case 16:    /* ^ */
+			case OPERATOR_DIVIDE:
+				assignment_ok = false;
+				if (expecting_argument)
+				{
+					record_error(PE_SHOULD_BE_ARGUMENT);
+				}
+				expecting_argument = true;
+				break;
+			case OPERATOR_RAISE_POWER:
 				assignment_ok = false;
 				if (expecting_argument)
 				{
