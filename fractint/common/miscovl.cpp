@@ -48,7 +48,7 @@ void expand_comments(char *target, char *source);
 static void put_parm(const char *parm, ...);
 static void put_parm_line();
 static int getprec(double, double, double);
-int get_precision_bf(int);
+int get_precision_bf(int rezflag);
 static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(const char *keyword, const char *fname);
@@ -78,283 +78,449 @@ static const char *truecolor_bits_text(int truecolorbits)
 	return bits_text[index];
 }
 
+class MakeBatchFile
+{
+public:
+	MakeBatchFile()		{}
+	~MakeBatchFile()	{}
+
+	void execute();
+
+private:
+	void execute_step1(FILE *fpbat, int i, int j);
+	void execute_step2();
+	void execute_step3(int i, int j);
+	bool check_resolution();
+	bool check_bounds_xm_ym();
+	bool check_video_mode();
+	void fill_prompts();
+	void initialize();
+	void set_color_spec();
+	void set_max_color();
+	bool has_clut();
+
+	enum
+	{
+		MAX_PROMPTS = 18
+	};
+	const char *m_choices[MAX_PROMPTS];
+	struct full_screen_values m_param_values[18];
+	int m_max_color;
+	char m_color_spec[14];
+	char m_in_parameter_command_file[80];
+	char m_in_parameter_command_name[ITEMNAMELEN + 1];
+	char m_in_parameter_command_comment[4][MAX_COMMENT];
+	unsigned int m_pxdots;
+	unsigned int m_pydots;
+	unsigned int m_xm;
+	unsigned int m_ym;
+	char m_video_mode[5];
+	bool m_colors_only;
+	double m_pdelx;
+	double m_pdely;
+	double m_pdelx2;
+	double m_pdely2;
+	double m_pxxmin;
+	double m_pyymax;
+	bool m_have_3rd;
+	char m_out_name[FILE_MAX_PATH + 1];
+	int m_max_color_index;
+	int m_prompts;
+	int m_pieces_prompts;
+};
+
+bool MakeBatchFile::has_clut()
+{
+	return
+#ifndef XFRACT
+		(g_got_real_dac) || (g_is_true_color && !g_true_mode_iterates);
+#else
+		(g_got_real_dac) || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut;
+#endif
+}
+
 void make_batch_file()
 {
-	const int MAX_PROMPTS = 18;
-	struct full_screen_values paramvalues[18];
-	const char *choices[MAX_PROMPTS];
-	int maxcolor;
-	int maxcolorindex = 0;
+	MakeBatchFile().execute();
+}
+
+void MakeBatchFile::set_max_color()
+{
+	--m_max_color;
+	/* if (g_max_iteration < maxcolor)  remove 2 lines */
+	/* maxcolor = g_max_iteration;   so that whole palette is always saved */
+	if (g_inside > 0 && g_inside > m_max_color)
+	{
+		m_max_color = g_inside;
+	}
+	if (g_outside > 0 && g_outside > m_max_color)
+	{
+		m_max_color = g_outside;
+	}
+	if (g_distance_test < 0 && -g_distance_test > m_max_color)
+	{
+		m_max_color = int(-g_distance_test);
+	}
+	if (g_decomposition[0] > m_max_color)
+	{
+		m_max_color = g_decomposition[0] - 1;
+	}
+	if (g_potential_flag && g_potential_parameter[0] >= m_max_color)
+	{
+		m_max_color = int(g_potential_parameter[0]);
+	}
+	if (++m_max_color > 256)
+	{
+		m_max_color = 256;
+	}
+}
+
+void MakeBatchFile::set_color_spec()
+{
+	const char *color_spec_name = NULL;
+	if (g_color_state == COLORSTATE_DEFAULT)
+	{                         /* default colors */
+		if (g_map_dac_box)
+		{
+			m_color_spec[0] = '@';
+			color_spec_name = g_map_name;
+		}
+	}
+	else if (g_color_state == COLORSTATE_MAP)
+	{                         /* colors match g_color_file */
+		m_color_spec[0] = '@';
+		color_spec_name = g_color_file;
+	}
+	else                      /* colors match no .map that we know of */
+	{
+		strcpy(m_color_spec, "y");
+	}
+
+	if (m_color_spec[0] == '@')
+	{
+		const char *sptr2 = strrchr(color_spec_name, SLASHC);
+		if (sptr2 != NULL)
+		{
+			color_spec_name = sptr2 + 1;
+		}
+		sptr2 = strrchr(color_spec_name, ':');
+		if (sptr2 != NULL)
+		{
+			color_spec_name = sptr2 + 1;
+		}
+		strncpy(&m_color_spec[1], color_spec_name, 12);
+		m_color_spec[13] = 0;
+	}
+}
+
+void MakeBatchFile::initialize()
+{
 	/* makepar map case */
 	driver_stack_screen();
 	HelpModeSaver saved_help(HELPPARMFILE);
 
-	maxcolor = g_colors;
-	char colorspec[14];
-	strcpy(colorspec, "y");
-#ifndef XFRACT
-	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode_iterates))
-#else
-	if ((g_got_real_dac) || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut)
-#endif
+	m_max_color = g_colors;
+	strcpy(m_color_spec, "y");
+	if (has_clut())
 	{
-		--maxcolor;
-		/* if (g_max_iteration < maxcolor)  remove 2 lines */
-		/* maxcolor = g_max_iteration;   so that whole palette is always saved */
-		if (g_inside > 0 && g_inside > maxcolor)
-		{
-			maxcolor = g_inside;
-		}
-		if (g_outside > 0 && g_outside > maxcolor)
-		{
-			maxcolor = g_outside;
-		}
-		if (g_distance_test < 0 && -g_distance_test > maxcolor)
-		{
-			maxcolor = (int) -g_distance_test;
-		}
-		if (g_decomposition[0] > maxcolor)
-		{
-			maxcolor = g_decomposition[0] - 1;
-		}
-		if (g_potential_flag && g_potential_parameter[0] >= maxcolor)
-		{
-			maxcolor = (int)g_potential_parameter[0];
-		}
-		if (++maxcolor > 256)
-		{
-			maxcolor = 256;
-		}
-		const char *color_spec_name = NULL;
-		if (g_color_state == COLORSTATE_DEFAULT)
-		{                         /* default colors */
-			if (g_map_dac_box)
-			{
-				colorspec[0] = '@';
-				color_spec_name = g_map_name;
-			}
-		}
-		else if (g_color_state == COLORSTATE_MAP)
-		{                         /* colors match g_color_file */
-			colorspec[0] = '@';
-			color_spec_name = g_color_file;
-		}
-		else                      /* colors match no .map that we know of */
-		{
-			strcpy(colorspec, "y");
-		}
-
-		if (colorspec[0] == '@')
-		{
-			const char *sptr2 = strrchr(color_spec_name, SLASHC);
-			if (sptr2 != NULL)
-			{
-				color_spec_name = sptr2 + 1;
-			}
-			sptr2 = strrchr(color_spec_name, ':');
-			if (sptr2 != NULL)
-			{
-				color_spec_name = sptr2 + 1;
-			}
-			strncpy(&colorspec[1], color_spec_name, 12);
-			colorspec[13] = 0;
-		}
+		set_max_color();
+		set_color_spec();
 	}
-	char in_parameter_command_file[80];
-	strcpy(in_parameter_command_file, g_command_file);
-	char in_parameter_command_name[ITEMNAMELEN + 1];
-	strcpy(in_parameter_command_name, g_command_name);
-	char in_parameter_command_comment[4][MAX_COMMENT];
+	strcpy(m_in_parameter_command_file, g_command_file);
+	strcpy(m_in_parameter_command_name, g_command_name);
 	for (int i = 0; i < 4; i++)
 	{
 		expand_comments(g_command_comment[i], par_comment[i]);
-		strcpy(in_parameter_command_comment[i], g_command_comment[i]);
+		strcpy(m_in_parameter_command_comment[i], g_command_comment[i]);
 	}
 
 	if (g_command_name[0] == 0)
 	{
-		strcpy(in_parameter_command_name, "test");
+		strcpy(m_in_parameter_command_name, "test");
 	}
-	unsigned int pxdots = g_x_dots;
-	unsigned int pydots = g_y_dots;
-	unsigned int xm = 1;
-	unsigned int ym = 1;
-	char vidmde[5];
-	video_mode_key_name(g_video_entry.keynum, vidmde);
-	bool colors_only = (g_make_par[1] == 0);
-	double pdelx = 0.0;
-	double pdely = 0.0;
-	double pdelx2 = 0.0;
-	double pdely2 = 0.0;
-	double pxxmin = 0.0;
-	double pyymax = 0.0;
-	bool have_3rd = false;
-	char outname[FILE_MAX_PATH + 1];
+	m_pxdots = g_x_dots;
+	m_pydots = g_y_dots;
+	m_xm = 1;
+	m_ym = 1;
+	video_mode_key_name(g_video_entry.keynum, m_video_mode);
+	m_colors_only = (g_make_par[1] == 0);
+	m_pdelx = 0.0;
+	m_pdely = 0.0;
+	m_pdelx2 = 0.0;
+	m_pdely2 = 0.0;
+	m_pxxmin = 0.0;
+	m_pyymax = 0.0;
+	m_have_3rd = false;
+}
+void MakeBatchFile::fill_prompts()
+{
+	m_prompts = 0;
+	m_choices[m_prompts] = "Parameter file";
+	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
+	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_file;
+	m_choices[m_prompts] = "Name";
+	m_param_values[m_prompts].type = 0x100 + ITEMNAMELEN;
+	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_name;
+	m_choices[m_prompts] = "Main comment";
+	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
+	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_comment[0];
+	m_choices[m_prompts] = "Second comment";
+	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
+	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_comment[1];
+	m_choices[m_prompts] = "Third comment";
+	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
+	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_comment[2];
+	m_choices[m_prompts] = "Fourth comment";
+	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
+	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_comment[3];
+	if (has_clut())
+	{
+		m_choices[m_prompts] = "Record colors?";
+		m_param_values[m_prompts].type = 0x100 + 13;
+		m_param_values[m_prompts++].uval.sbuf = m_color_spec;
+		m_choices[m_prompts] = "    (no | yes | only for full info | @filename to point to a map file)";
+		m_param_values[m_prompts++].type = '*';
+		m_choices[m_prompts] = "# of colors";
+		m_max_color_index = m_prompts;
+		m_param_values[m_prompts].type = 'i';
+		m_param_values[m_prompts++].uval.ival = m_max_color;
+		m_choices[m_prompts] = "    (if recording full color info)";
+		m_param_values[m_prompts++].type = '*';
+	}
+	m_choices[m_prompts] = "Maximum line length";
+	m_param_values[m_prompts].type = 'i';
+	m_param_values[m_prompts++].uval.ival = g_max_line_length;
+	m_choices[m_prompts] = "";
+	m_param_values[m_prompts++].type = '*';
+	m_choices[m_prompts] = "    **** The following is for generating images in pieces ****";
+	m_param_values[m_prompts++].type = '*';
+	m_choices[m_prompts] = "X Multiples";
+	m_pieces_prompts = m_prompts;
+	m_param_values[m_prompts].type = 'i';
+	m_param_values[m_prompts++].uval.ival = m_xm;
+	m_choices[m_prompts] = "Y Multiples";
+	m_param_values[m_prompts].type = 'i';
+	m_param_values[m_prompts++].uval.ival = m_ym;
+#ifndef XFRACT
+	m_choices[m_prompts] = "Video mode";
+	m_param_values[m_prompts].type = 0x100 + 4;
+	m_param_values[m_prompts++].uval.sbuf = m_video_mode;
+#endif
+}
+bool MakeBatchFile::check_video_mode()
+{
+	/* get resolution from the video name (which must be valid) */
+	m_pxdots = 0;
+	m_pydots = 0;
+	int i = check_vidmode_keyname(m_video_mode);
+	if (i > 0)
+	{
+		i = check_video_mode_key(0, i);
+		if (i >= 0)
+		{
+			/* get the resolution of this video mode */
+			m_pxdots = g_video_table[i].x_dots;
+			m_pydots = g_video_table[i].y_dots;
+		}
+	}
+	if (m_pxdots == 0 && (m_xm > 1 || m_ym > 1))
+	{
+		/* no corresponding video mode! */
+		stop_message(0, "Invalid video mode entry!");
+		return true;
+	}
+	return false;
+}
+bool MakeBatchFile::check_bounds_xm_ym()
+{
+	/* bounds range on xm, ym */
+	if (m_xm < 1 || m_xm > 36 || m_ym < 1 || m_ym > 36)
+	{
+		stop_message(0, "X and Y components must be 1 to 36");
+		return true;
+	}
+	return false;
+}
+bool MakeBatchFile::check_resolution()
+{
+	/* another sanity check: total resolution cannot exceed 65535 */
+	if (m_xm*m_pxdots > 65535L || m_ym*m_pydots > 65535L)
+	{
+		stop_message(0, "Total resolution (X or Y) cannot exceed 65535");
+		return true;
+	}
+	return false;
+}
+void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
+{
+	if (m_xm > 1 || m_ym > 1)
+	{
+		int w;
+		char c;
+		char PCommandName[80];
+		w = 0;
+		while (w < int(strlen(g_command_name)))
+		{
+			c = g_command_name[w];
+			if (isspace(c) || c == 0)
+			{
+				break;
+			}
+			PCommandName[w] = c;
+			w++;
+		}
+		PCommandName[w] = 0;
+		{
+			char buf[20];
+			sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
+			strcat(PCommandName, buf);
+		}
+		fprintf(parmfile, "%-19s{", PCommandName);
+		g_escape_time_state.m_grid_fp.x_min() = m_pxxmin + m_pdelx*(i*m_pxdots) + m_pdelx2*(j*m_pydots);
+		g_escape_time_state.m_grid_fp.x_max() = m_pxxmin + m_pdelx*((i + 1)*m_pxdots - 1) + m_pdelx2*((j + 1)*m_pydots - 1);
+		g_escape_time_state.m_grid_fp.y_min() = m_pyymax - m_pdely*((j + 1)*m_pydots - 1) - m_pdely2*((i + 1)*m_pxdots - 1);
+		g_escape_time_state.m_grid_fp.y_max() = m_pyymax - m_pdely*(j*m_pydots) - m_pdely2*(i*m_pxdots);
+		if (m_have_3rd)
+		{
+			g_escape_time_state.m_grid_fp.x_3rd() = m_pxxmin + m_pdelx*(i*m_pxdots) + m_pdelx2*((j + 1)*m_pydots - 1);
+			g_escape_time_state.m_grid_fp.y_3rd() = m_pyymax - m_pdely*((j + 1)*m_pydots - 1) - m_pdely2*(i*m_pxdots);
+		}
+		else
+		{
+			g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
+			g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
+		}
+		fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
+		fprintf(fpbat, "If Errorlevel 2 goto oops\n");
+	}
+	else
+	{
+		fprintf(parmfile, "%-19s{", g_command_name);
+	}
+}
+void MakeBatchFile::execute_step2()
+{
+	/* guarantee that there are no blank comments above the last
+	non-blank par_comment */
+	int last = -1;
+	for (int n = 0; n < 4; n++)
+	{
+		if (*par_comment[n])
+		{
+			last = n;
+		}
+	}
+	for (int n = 0; n < last; n++)
+	{
+		if (*g_command_comment[n] == '\0')
+		{
+			strcpy(g_command_comment[n], ";");
+		}
+	}
+}
+void MakeBatchFile::execute_step3(int i, int j)
+{
+	if (g_command_comment[0][0])
+	{
+		fprintf(parmfile, " ; %s", g_command_comment[0]);
+	}
+	fputc('\n', parmfile);
+	{
+		char buf[25];
+		memset(buf, ' ', 23);
+		buf[23] = 0;
+		buf[21] = ';';
+		for (int k = 1; k < 4; k++)
+		{
+			if (g_command_comment[k][0])
+			{
+				fprintf(parmfile, "%s%s\n", buf, g_command_comment[k]);
+			}
+		}
+		if (g_patch_level != 0 && !m_colors_only)
+		{
+			fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
+				Fractint, g_release, g_patch_level);
+		}
+	}
+	write_batch_parms(m_color_spec, m_colors_only, m_max_color, i, j);
+	if (m_xm > 1 || m_ym > 1)
+	{
+		fprintf(parmfile, "  video=%s", m_video_mode);
+		fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
+	}
+	fprintf(parmfile, "  }\n\n");
+}
+void MakeBatchFile::execute()
+{
+	initialize();
 	if (*g_make_par == 0)
 	{
 		goto skip_UI;
 	}
+	m_max_color_index = 0;
 	while (true)
 	{
 prompt_user:
 		{
-			int prompts = 0;
-			choices[prompts] = "Parameter file";
-			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-			paramvalues[prompts++].uval.sbuf = in_parameter_command_file;
-			choices[prompts] = "Name";
-			paramvalues[prompts].type = 0x100 + ITEMNAMELEN;
-			paramvalues[prompts++].uval.sbuf = in_parameter_command_name;
-			choices[prompts] = "Main comment";
-			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[0];
-			choices[prompts] = "Second comment";
-			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[1];
-			choices[prompts] = "Third comment";
-			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[2];
-			choices[prompts] = "Fourth comment";
-			paramvalues[prompts].type = 0x100 + MAX_COMMENT - 1;
-			paramvalues[prompts++].uval.sbuf = in_parameter_command_comment[3];
-	#ifndef XFRACT
-			if (g_got_real_dac || (g_is_true_color && !g_true_mode_iterates))
-	#else
-			if (g_got_real_dac || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut)
-	#endif
-			{
-				choices[prompts] = "Record colors?";
-				paramvalues[prompts].type = 0x100 + 13;
-				paramvalues[prompts++].uval.sbuf = colorspec;
-				choices[prompts] = "    (no | yes | only for full info | @filename to point to a map file)";
-				paramvalues[prompts++].type = '*';
-				choices[prompts] = "# of colors";
-				maxcolorindex = prompts;
-				paramvalues[prompts].type = 'i';
-				paramvalues[prompts++].uval.ival = maxcolor;
-				choices[prompts] = "    (if recording full color info)";
-				paramvalues[prompts++].type = '*';
-			}
-			choices[prompts] = "Maximum line length";
-			paramvalues[prompts].type = 'i';
-			paramvalues[prompts++].uval.ival = g_max_line_length;
-			choices[prompts] = "";
-			paramvalues[prompts++].type = '*';
-			choices[prompts] = "    **** The following is for generating images in pieces ****";
-			paramvalues[prompts++].type = '*';
-			choices[prompts] = "X Multiples";
-			int pieces_prompts = prompts;
-			paramvalues[prompts].type = 'i';
-			paramvalues[prompts++].uval.ival = xm;
-			choices[prompts] = "Y Multiples";
-			paramvalues[prompts].type = 'i';
-			paramvalues[prompts++].uval.ival = ym;
-	#ifndef XFRACT
-			choices[prompts] = "Video mode";
-			paramvalues[prompts].type = 0x100 + 4;
-			paramvalues[prompts++].uval.sbuf = vidmde;
-	#endif
+			fill_prompts();
 
-			if (full_screen_prompt("Save Current Parameters", prompts, choices, paramvalues, 0, NULL) < 0)
+			if (full_screen_prompt("Save Current Parameters", m_prompts, m_choices, m_param_values, 0, NULL) < 0)
 			{
 				break;
 			}
 
-			if (*colorspec == 'o' || g_make_par[1] == 0)
+			if (m_color_spec[0] == 'o' || g_make_par[1] == 0)
 			{
-				strcpy(colorspec, "y");
-				colors_only = true;
+				strcpy(m_color_spec, "y");
+				m_colors_only = true;
 			}
 
-			strcpy(g_command_file, in_parameter_command_file);
+			strcpy(g_command_file, m_in_parameter_command_file);
 			if (has_extension(g_command_file) == NULL)
 			{
 				strcat(g_command_file, ".par");   /* default extension .par */
 			}
-			strcpy(g_command_name, in_parameter_command_name);
+			strcpy(g_command_name, m_in_parameter_command_name);
 			for (int i = 0; i < 4; i++)
 			{
-				strncpy(g_command_comment[i], in_parameter_command_comment[i], MAX_COMMENT);
+				strncpy(g_command_comment[i], m_in_parameter_command_comment[i], MAX_COMMENT);
 			}
-	#ifndef XFRACT
-			if (g_got_real_dac || (g_is_true_color && !g_true_mode_iterates))
-	#else
-			if (g_got_real_dac || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut)
-	#endif
+			if (has_clut())
 			{
-				if (paramvalues[maxcolorindex].uval.ival > 0 &&
-					paramvalues[maxcolorindex].uval.ival <= 256)
+				if (m_param_values[m_max_color_index].uval.ival > 0 &&
+					m_param_values[m_max_color_index].uval.ival <= 256)
 				{
-					maxcolor = paramvalues[maxcolorindex].uval.ival;
+					m_max_color = m_param_values[m_max_color_index].uval.ival;
 				}
 			}
-			prompts = pieces_prompts;
+			m_prompts = m_pieces_prompts;
 			{
 				int newmaxlinelength;
-				newmaxlinelength = paramvalues[prompts-3].uval.ival;
+				newmaxlinelength = m_param_values[m_prompts-3].uval.ival;
 				if (g_max_line_length != newmaxlinelength &&
-						newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
-						newmaxlinelength <= MAX_MAX_LINE_LENGTH)
+					newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
+					newmaxlinelength <= MAX_MAX_LINE_LENGTH)
+				{
 					g_max_line_length = newmaxlinelength;
+				}
 			}
-			xm = paramvalues[prompts++].uval.ival;
-
-			ym = paramvalues[prompts++].uval.ival;
+			m_xm = m_param_values[m_prompts++].uval.ival;
+			m_ym = m_param_values[m_prompts++].uval.ival;
 
 			/* sanity checks */
+			if (check_video_mode() || check_bounds_xm_ym() || check_resolution())
 			{
-				long xtotal;
-				long ytotal;
-	#ifndef XFRACT
-				int i;
-
-				/* get resolution from the video name (which must be valid) */
-				pxdots = pydots = 0;
-				i = check_vidmode_keyname(vidmde);
-				if (i > 0)
-				{
-					i = check_video_mode_key(0, i);
-					if (i >= 0)
-					{
-						/* get the resolution of this video mode */
-						pxdots = g_video_table[i].x_dots;
-						pydots = g_video_table[i].y_dots;
-					}
-				}
-				if (pxdots == 0 && (xm > 1 || ym > 1))
-				{
-					/* no corresponding video mode! */
-					stop_message(0, "Invalid video mode entry!");
-					goto prompt_user;
-				}
-	#endif
-
-				/* bounds range on xm, ym */
-				if (xm < 1 || xm > 36 || ym < 1 || ym > 36)
-				{
-					stop_message(0, "X and Y components must be 1 to 36");
-					goto prompt_user;
-				}
-
-				/* another sanity check: total resolution cannot exceed 65535 */
-				xtotal = xm;
-				ytotal = ym;
-				xtotal *= pxdots;
-				ytotal *= pydots;
-				if (xtotal > 65535L || ytotal > 65535L)
-				{
-					stop_message(0, "Total resolution (X or Y) cannot exceed 65535");
-					goto prompt_user;
-				}
+				goto prompt_user;
 			}
 		}
 skip_UI:
-		if (*g_make_par == 0)
+		if (g_make_par[0] == 0)
 		{
-			strcpy(colorspec, (g_file_colors > 0) ? "y" : "n");
-			maxcolor = (g_make_par[1] == 0) ? 256 : g_file_colors;
+			strcpy(m_color_spec, (g_file_colors > 0) ? "y" : "n");
+			m_max_color = (g_make_par[1] == 0) ? 256 : g_file_colors;
 		}
-		strcpy(outname, g_command_file);
+		strcpy(m_out_name, g_command_file);
 		bool got_input_file = false;
 		FILE *input_file = NULL;
 		if (access(g_command_file, 0) == 0)
@@ -367,22 +533,22 @@ skip_UI:
 				stop_message(0, buf);
 				continue;
 			}
-			int i = (int) strlen(outname);
-			while (--i >= 0 && outname[i] != SLASHC)
+			int i = int(strlen(m_out_name));
+			while (--i >= 0 && m_out_name[i] != SLASHC)
 			{
-				outname[i] = 0;
+				m_out_name[i] = 0;
 			}
-			strcat(outname, "fractint.tmp");
+			strcat(m_out_name, "fractint.tmp");
 			input_file = fopen(g_command_file, "rt");
 #ifndef XFRACT
 			setvbuf(input_file, g_text_stack, _IOFBF, 4096); /* improves speed */
 #endif
 		}
-		parmfile = fopen(outname, "wt");
+		parmfile = fopen(m_out_name, "wt");
 		if (parmfile == NULL)
 		{
 			char buf[256];
-			sprintf(buf, "Can't create %s", outname);
+			sprintf(buf, "Can't create %s", m_out_name);
 			stop_message(0, buf);
 			if (got_input_file)
 			{
@@ -408,7 +574,7 @@ skip_UI:
 					{                /* cancel */
 						fclose(input_file);
 						fclose(parmfile);
-						unlink(outname);
+						unlink(m_out_name);
 						goto prompt_user;
 					}
 					while (strchr(buf, '}') == NULL
@@ -424,126 +590,36 @@ skip_UI:
 		}
 /***** start here*/
 		FILE *fpbat = NULL;
-		if (xm > 1 || ym > 1)
+		if (m_xm > 1 || m_ym > 1)
 		{
-			have_3rd = (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd()
+			m_have_3rd = (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd()
 					|| g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd());
 			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
 			if (fpbat == NULL)
 			{
-				xm = ym = 0;
+				m_xm = m_ym = 0;
 			}
-			pdelx  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / (xm*pxdots - 1);   /* calculate stepsizes */
-			pdely  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / (ym*pydots - 1);
-			pdelx2 = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / (ym*pydots - 1);
-			pdely2 = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / (xm*pxdots - 1);
+			m_pdelx  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / (m_xm*m_pxdots - 1);   /* calculate stepsizes */
+			m_pdely  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / (m_ym*m_pydots - 1);
+			m_pdelx2 = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / (m_ym*m_pydots - 1);
+			m_pdely2 = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / (m_xm*m_pxdots - 1);
 
 			/* save corners */
-			pxxmin = g_escape_time_state.m_grid_fp.x_min();
-			pyymax = g_escape_time_state.m_grid_fp.y_max();
+			m_pxxmin = g_escape_time_state.m_grid_fp.x_min();
+			m_pyymax = g_escape_time_state.m_grid_fp.y_max();
 		}
-		for (int i = 0; i < (int)xm; i++)  /* columns */
+		for (int i = 0; i < int(m_xm); i++)  /* columns */
 		{
-			for (int j = 0; j < (int)ym; j++)  /* rows    */
+			for (int j = 0; j < int(m_ym); j++)  /* rows    */
 			{
-				if (xm > 1 || ym > 1)
-				{
-					int w;
-					char c;
-					char PCommandName[80];
-					w = 0;
-					while (w < (int)strlen(g_command_name))
-					{
-						c = g_command_name[w];
-						if (isspace(c) || c == 0)
-						{
-							break;
-						}
-						PCommandName[w] = c;
-						w++;
-					}
-					PCommandName[w] = 0;
-					{
-						char buf[20];
-						sprintf(buf, "_%c%c", PAR_KEY(i), PAR_KEY(j));
-						strcat(PCommandName, buf);
-					}
-					fprintf(parmfile, "%-19s{", PCommandName);
-					g_escape_time_state.m_grid_fp.x_min() = pxxmin + pdelx*(i*pxdots) + pdelx2*(j*pydots);
-					g_escape_time_state.m_grid_fp.x_max() = pxxmin + pdelx*((i + 1)*pxdots - 1) + pdelx2*((j + 1)*pydots - 1);
-					g_escape_time_state.m_grid_fp.y_min() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*((i + 1)*pxdots - 1);
-					g_escape_time_state.m_grid_fp.y_max() = pyymax - pdely*(j*pydots) - pdely2*(i*pxdots);
-					if (have_3rd)
-					{
-						g_escape_time_state.m_grid_fp.x_3rd() = pxxmin + pdelx*(i*pxdots) + pdelx2*((j + 1)*pydots - 1);
-						g_escape_time_state.m_grid_fp.y_3rd() = pyymax - pdely*((j + 1)*pydots - 1) - pdely2*(i*pxdots);
-					}
-					else
-					{
-						g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
-						g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
-					}
-					fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
-					fprintf(fpbat, "If Errorlevel 2 goto oops\n");
-				}
-				else
-				{
-					fprintf(parmfile, "%-19s{", g_command_name);
-				}
-				{
-					/* guarantee that there are no blank comments above the last
-					non-blank par_comment */
-					int last = -1;
-					for (int n = 0; n < 4; n++)
-					{
-						if (*par_comment[n])
-						{
-							last = n;
-						}
-					}
-					for (int n = 0; n < last; n++)
-					{
-						if (*g_command_comment[n] == '\0')
-						{
-							strcpy(g_command_comment[n], ";");
-						}
-					}
-				}
-				if (g_command_comment[0][0])
-				{
-					fprintf(parmfile, " ; %s", g_command_comment[0]);
-				}
-				fputc('\n', parmfile);
-				{
-					char buf[25];
-					memset(buf, ' ', 23);
-					buf[23] = 0;
-					buf[21] = ';';
-					for (int k = 1; k < 4; k++)
-					{
-						if (g_command_comment[k][0])
-						{
-							fprintf(parmfile, "%s%s\n", buf, g_command_comment[k]);
-						}
-					}
-					if (g_patch_level != 0 && !colors_only)
-					{
-						fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
-							Fractint, g_release, g_patch_level);
-					}
-				}
-				write_batch_parms(colorspec, colors_only, maxcolor, i, j);
-				if (xm > 1 || ym > 1)
-				{
-					fprintf(parmfile, "  video=%s", vidmde);
-					fprintf(parmfile, " savename=frmig_%c%c\n", PAR_KEY(i), PAR_KEY(j));
-				}
-				fprintf(parmfile, "  }\n\n");
+				execute_step1(fpbat, i, j);
+				execute_step2();
+				execute_step3(i, j);
 			}
 		}
-		if (xm > 1 || ym > 1)
+		if (m_xm > 1 || m_ym > 1)
 		{
-			fprintf(fpbat, "Fractint makemig=%d/%d\n", xm, ym);
+			fprintf(fpbat, "Fractint makemig=%d/%d\n", m_xm, m_ym);
 			fprintf(fpbat, "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
 			fprintf(fpbat, ":oops\n");
 			fclose(fpbat);
@@ -571,7 +647,7 @@ skip_UI:
 		if (got_input_file)
 		{                         /* replace the original file with the new */
 			unlink(g_command_file);   /* success assumed on these lines       */
-			rename(outname, g_command_file);  /* since we checked earlier with access */
+			rename(m_out_name, g_command_file);  /* since we checked earlier with access */
 		}
 		break;
 	}
@@ -934,7 +1010,7 @@ void write_batch_parms_passes()
 	}
 	if (g_stop_pass != 0)
 	{
-		put_parm(" passes=%c%c", g_user_standard_calculation_mode, (char)g_stop_pass + '0');
+		put_parm(" passes=%c%c", g_user_standard_calculation_mode, char(g_stop_pass + '0'));
 	}
 }
 
@@ -1185,7 +1261,7 @@ void write_batch_parms_potential()
 	if (g_potential_flag)
 	{
 		put_parm(" potential=%d/%g/%d",
-			(int)g_potential_parameter[0], g_potential_parameter[1], (int)g_potential_parameter[2]);
+			int(g_potential_parameter[0]), g_potential_parameter[1], int(g_potential_parameter[2]));
 		if (g_potential_16bit)
 		{
 			put_parm("/16bit");
@@ -1450,7 +1526,7 @@ void write_batch_parms_colors_table(int maxcolor)
 			{
 				k += ('_' - 36);
 			}
-			buf[j] = (char)k;
+			buf[j] = char(k);
 		}
 		buf[3] = 0;
 		put_parm(buf);
@@ -1500,7 +1576,7 @@ void write_batch_parms_colors_table(int maxcolor)
 							break;
 						}
 					}
-					int delta = (int)g_dac_box[scanc][j] - (int)g_dac_box[scanc-k-1][j];
+					int delta = int(g_dac_box[scanc][j]) - int(g_dac_box[scanc-k-1][j]);
 					if (k == scanc - curc)
 					{
 						diff1[k][j] = delta;
@@ -1691,7 +1767,7 @@ static void put_parm(const char *parm, ...)
 	va_list args;
 	va_start(args, parm);
 
-	if (*parm == ' '             /* starting a new parm */
+	if (parm[0] == ' '             /* starting a new parm */
 			&& s_wbdata.len == 0)       /* skip leading space */
 		++parm;
 	bufptr = s_wbdata.buf + s_wbdata.len;
@@ -1738,7 +1814,7 @@ static void put_parm_line()
 		fputc('\\', parmfile);
 	}
 	fputc('\n', parmfile);
-	s_wbdata.buf[len] = (char)c;
+	s_wbdata.buf[len] = char(c);
 	if (c == ' ')
 	{
 		++len;
@@ -1974,14 +2050,13 @@ static void strip_zeros(char *buf)
 }
 
 static void put_float(int slash, double fnum, int prec)
-{  char buf[40];
-	char *bptr;
-	bptr = buf;
+{
+	char buf[40];
+	char *bptr = buf;
 	if (slash)
 	{
 		*(bptr++) = '/';
 	}
-/*   sprintf(bptr, "%1.*f", prec, fnum); */
 #ifdef USE_LONG_DOUBLE
 	/* Idea of long double cast is to squeeze out another digit or two
 		which might be needed (we have found cases where this digit makes
@@ -1993,7 +2068,7 @@ static void put_float(int slash, double fnum, int prec)
 	else
 #endif
 	{
-		sprintf(bptr, "%1.*g", prec, (double)fnum);
+		sprintf(bptr, "%1.*g", prec, double(fnum));
 	}
 	strip_zeros(bptr);
 	put_parm(buf);
@@ -2003,7 +2078,6 @@ static void put_bf(int slash, bf_t r, int prec)
 {
 	char *buf; /* "/-1.xxxxxxE-1234" */
 	char *bptr;
-	/* buf = malloc(g_decimals + 11); */
 	buf = s_wbdata.buf + 5000;  /* end of use g_suffix buffer, 5000 bytes safe */
 	bptr = buf;
 	if (slash)
@@ -2380,7 +2454,7 @@ static void update_fractint_cfg()
 		return;
 		}
 	strcpy(outname, cfgname);
-	i = (int) strlen(outname);
+	i = int(strlen(outname));
 	while (--i >= 0 && outname[i] != SLASHC)
 	{
 		outname[i] = 0;
@@ -2408,7 +2482,7 @@ static void update_fractint_cfg()
 					sizeof(g_video_entry));
 			video_mode_key_name(vident.keynum, kname);
 			strcpy(buf, vident.name);
-			i = (int) strlen(buf);
+			i = int(strlen(buf));
 			while (i && buf[i-1] == ' ') /* strip trailing spaces to compress */
 			{
 				--i;
@@ -2562,9 +2636,9 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 				}
 			}                           /* end of first-time-through */
 
-			ichar = (char)(temp[10] & 0x07);        /* find the color table size */
+			ichar = char(temp[10] & 0x07);        /* find the color table size */
 			itbl = 1 << (++ichar);
-			ichar = (char)(temp[10] & 0x80);        /* is there a global color table? */
+			ichar = char(temp[10] & 0x80);        /* is there a global color table? */
 			if (xstep == 0 && ystep == 0)   /* first time through? */
 			{
 				allitbl = itbl;             /* save the color table size */
@@ -2618,7 +2692,7 @@ void make_mig(unsigned int xmult, unsigned int ymult)
 						errorflag = 4;
 					}
 
-					ichar = (char)(temp[9] & 0x80);     /* is there a local color table? */
+					ichar = char(temp[9] & 0x80);     /* is there a local color table? */
 					if (ichar != 0)            /* yup */
 					{
 						if (fread(temp, 3*itbl, 1, in) != 1)       /* read the local color table */
@@ -3066,7 +3140,7 @@ void expand_comments(char *target, char *source)
 			varname[k] = 0;
 			char *varstr = expand_var(varname, buf);
 			strncpy(target + j, varstr, MAX_COMMENT-j-1);
-			j += (int) strlen(varstr);
+			j += int(strlen(varstr));
 		}
 		else if (c == esc_char && escape && oldc != '\\')
 		{
