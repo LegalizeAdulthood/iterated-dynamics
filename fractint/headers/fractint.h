@@ -723,6 +723,14 @@ typedef struct tag_more_parameters more_parameters;
 #define FRACTALFLAG_ARBITRARY_PRECISION		0x4000		/* supports arbitrary precision        */
 #define FRACTALFLAG_DONT_DISPLAY			0x10000		/* don't display in fractal type list */
 
+enum SpecialHelpFormulaType
+{
+	SPECIALHF_IFS = -4,
+	SPECIALHF_L_SYSTEM = -3,
+	SPECIALHF_FORMULA = -2,
+	SPECIALHF_JULIBROT = -1
+};
+
 struct FractalTypeSpecificData
 {
 	int fractal_type;

@@ -116,3 +116,7 @@ Replace homebrew bignum/bigflt with GNU GMP library and other layers:
 - Eventually replace the bignum code with the GNU GMP library and the
   C++ layers built on top of it.  Get a bigflt and use std::complex<bigflt>
   to implement complex bignums.
+
+== Replace sound output with cross-platform sound library
+
+== Refactor g_current_fractal_specific and g_fractal_specific to be const, read-only

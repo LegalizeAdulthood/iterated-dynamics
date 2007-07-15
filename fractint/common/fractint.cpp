@@ -501,7 +501,7 @@ void FractInt::ImageStart(bool &screen_stacked, bool &resume_flag)
 		if (kbdchar == FIK_F2 || kbdchar == '@')  /* We mapped @ to F2 */
 #endif
 		{
-			if ((get_commands() & Command::ThreeDYes) == 0)
+			if ((get_commands() & COMMANDRESULT_3D_YES) == 0)
 			{
 				m_state = APPSTATE_IMAGE_START;
 				return;
@@ -549,7 +549,7 @@ void FractInt::ImageStart(bool &screen_stacked, bool &resume_flag)
 		}
 		if (kbdchar == 'z')  /* type specific parms */
 		{
-			get_fractal_parameters(1);
+			get_fractal_parameters(true);
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}

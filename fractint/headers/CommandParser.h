@@ -24,18 +24,14 @@ struct cmd_context
 };
 
 /* process_command(), AbstractCommandParser::parse() return values */
-class Command
+enum CommandResultType
 {
-public:
-	enum
-	{
-		Error = -1,
-		OK = 0,
-		FractalParameter = 1,
-		ThreeDParameter = 2,
-		ThreeDYes = 4,
-		Reset = 8
-	};
+	COMMANDRESULT_ERROR = -1,
+	COMMANDRESULT_OK = 0,
+	COMMANDRESULT_FRACTAL_PARAMETER = 1,
+	COMMANDRESULT_3D_PARAMETER = 2,
+	COMMANDRESULT_3D_YES = 4,
+	COMMANDRESULT_RESET = 8
 };
 
 class AbstractCommandParser

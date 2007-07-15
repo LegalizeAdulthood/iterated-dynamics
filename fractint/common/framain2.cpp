@@ -845,7 +845,6 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 
 static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 {
-	int i;
 	*old_maxit = g_max_iteration;
 	clear_zoom_box();
 	if (g_from_text_flag)
@@ -856,12 +855,13 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 	{
 		driver_stack_screen();
 	}
+	int i;
 	switch (kbdchar)
 	{
 	case 'x':		i = get_toggles();			break;
 	case 'y':		i = get_toggles2();			break;
 	case 'p':		i = passes_options();		break;
-	case 'z':		i = get_fractal_parameters(1);	break;
+	case 'z':		i = get_fractal_parameters(true);	break;
 	case 'v':		i = get_view_params();		break;
 	case FIK_CTL_B:	i = get_browse_parameters();	break;
 
@@ -896,7 +896,7 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		&& !g_true_color /* recalc not yet implemented with truecolor */
 		&& !(g_user_standard_calculation_mode == 't' && g_fill_color > -1) /* tesseral with fill doesn't work */
 		&& !(g_user_standard_calculation_mode == 'o')
-		&& i == Command::FractalParameter /* nothing else changed */
+		&& i == COMMANDRESULT_FRACTAL_PARAMETER /* nothing else changed */
 		&& g_outside != COLORMODE_INVERSE_TANGENT)
 	{
 		g_quick_calculate = true;
@@ -904,7 +904,6 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		g_user_standard_calculation_mode = '1';
 		kbdmore = false;
 		g_calculation_status = CALCSTAT_RESUMABLE;
-		i = 0;
 	}
 	else if (i > 0)
 	{              /* time to redraw? */
@@ -932,7 +931,7 @@ static void handle_evolver_options(int kbdchar, bool &kbdmore)
 	case 'x': i = get_toggles(); break;
 	case 'y': i = get_toggles2(); break;
 	case 'p': i = passes_options(); break;
-	case 'z': i = get_fractal_parameters(1); break;
+	case 'z': i = get_fractal_parameters(true); break;
 
 	case FIK_CTL_E:
 	case FIK_SPACE:
@@ -948,7 +947,7 @@ static void handle_evolver_options(int kbdchar, bool &kbdmore)
 	{
 		g_true_color = false; /* truecolor doesn't play well with the evolver */
 	}
-	if (i > Command::OK)              /* time to redraw? */
+	if (i > COMMANDRESULT_OK)              /* time to redraw? */
 	{
 		save_parameter_history();
 		kbdmore = false;
@@ -965,7 +964,7 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	{                         /* video= was specified */
 		g_adapter = g_initial_adapter;
 		g_initial_adapter = -1;
-		i |= Command::FractalParameter;
+		i |= COMMANDRESULT_FRACTAL_PARAMETER;
 		g_save_dac = SAVEDAC_NO;
 	}
 	else if (g_color_preloaded)
@@ -973,17 +972,17 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 		spindac(0, 1);
 		g_color_preloaded = false;
 	}
-	else if (i & Command::Reset)         /* reset was specified */
+	else if (i & COMMANDRESULT_RESET)         /* reset was specified */
 	{
 		g_save_dac = SAVEDAC_NO;
 	}
-	if (i & Command::ThreeDYes)
+	if (i & COMMANDRESULT_3D_YES)
 	{                         /* 3d = was specified */
 		kbdchar = '3';
 		driver_unstack_screen();
 		return true;
 	}
-	if (i & Command::FractalParameter)
+	if (i & COMMANDRESULT_FRACTAL_PARAMETER)
 	{                         /* fractal parameter changed */
 		driver_discard_screen();
 		kbdmore = false;
@@ -1035,7 +1034,7 @@ static ApplicationStateType handle_ant()
 		driver_stack_screen();
 	}
 	g_from_text_flag = false;
-	err = get_fractal_parameters(2);
+	err = get_fractal_parameters(true);
 	if (err >= 0)
 	{
 		driver_unstack_screen();
@@ -1097,6 +1096,15 @@ static void handle_orbits()
 	}
 }
 
+static void set_fractal_specific_to_julia_mandelbrot(int to_julia_type, int to_mandelbrot_type)
+{
+	// TODO: eliminate writing to g_fractal_specific
+	FractalTypeSpecificData &target = g_fractal_specific[g_fractal_type];
+	target.tojulia = to_julia_type;
+	target.tomandel = to_mandelbrot_type;
+	g_is_mand = (to_mandelbrot_type == FRACTYPE_NO_FRACTAL);
+}
+
 static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 {
 	static double  jxxmin, jxxmax, jyymin, jyymax; /* "Julia mode" entry point */
@@ -1118,15 +1126,11 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 	{
 		if (g_is_mand)
 		{
-			g_fractal_specific[g_fractal_type].tojulia = g_fractal_type;
-			g_fractal_specific[g_fractal_type].tomandel = FRACTYPE_NO_FRACTAL;
-			g_is_mand = false;
+			set_fractal_specific_to_julia_mandelbrot(g_fractal_type, FRACTYPE_NO_FRACTAL);
 		}
 		else
 		{
-			g_fractal_specific[g_fractal_type].tojulia = FRACTYPE_NO_FRACTAL;
-			g_fractal_specific[g_fractal_type].tomandel = g_fractal_type;
-			g_is_mand = true;
+			set_fractal_specific_to_julia_mandelbrot(FRACTYPE_NO_FRACTAL, g_fractal_type);
 		}
 	}
 
@@ -1634,10 +1638,10 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 	}
 	switch (kbdchar)
 	{
-	case 't':                    /* new fractal type             */
+	case 't':
 		return handle_fractal_type(frommandel);
 
-	case FIK_CTL_X:                     /* Ctl-X, Ctl-Y, CTL-Z do flipping */
+	case FIK_CTL_X:
 	case FIK_CTL_Y:
 	case FIK_CTL_Z:
 		flip_image(kbdchar);
@@ -1655,8 +1659,8 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 		handle_options(kbdchar, kbdmore, &old_maxit);
 		break;
 
-	case '@':                    /* execute commands */
-	case '2':                    /* execute commands */
+	case '@':
+	case '2':
 		if (handle_execute_commands(kbdchar, kbdmore))
 		{
 			goto do_3d_transform;  /* pretend '3' was keyed */
@@ -1666,57 +1670,57 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 	case 'f':
 		return handle_toggle_float();
 
-	case 'i':                    /* 3d fractal parms */
+	case 'i':
 		handle_3d_params(kbdmore);
 		break;
 
-	case FIK_CTL_A:                     /* ^a Ant */
+	case FIK_CTL_A:
 		return handle_ant();
 
-	case 'k':                    /* ^s is irritating, give user a single key */
-	case FIK_CTL_S:                     /* ^s RDS */
+	case 'k':
+	case FIK_CTL_S:
 		return handle_recalc(get_random_dot_stereogram_parameters, auto_stereo);
 
-	case 'a':                    /* starfield parms               */
+	case 'a':
 		return handle_recalc(get_starfield_params, starfield);
 
-	case FIK_CTL_O:                     /* ctrl-o */
+	case FIK_CTL_O:
 	case 'o':
 		handle_orbits();
 		break;
 
-	case FIK_SPACE:                  /* spacebar, toggle mand/julia   */
+	case FIK_SPACE:
 		handle_mandelbrot_julia_toggle(kbdmore, frommandel);
 		break;
 
-	case 'j':                    /* inverse julia toggle */
+	case 'j':
 		handle_inverse_julia_toggle(kbdmore);
 		break;
 
-	case '\\':                   /* return to prev image    */
+	case '\\':
 	case FIK_CTL_BACKSLASH:
 	case 'h':
 	case FIK_BACKSPACE:
 		return handle_history(screen_stacked, kbdchar);
 
-	case 'd':                    /* shell to MS-DOS              */
+	case 'd':
 		driver_stack_screen();
 		driver_shell();
 		driver_unstack_screen();
 		break;
 
-	case 'c':                    /* switch to color cycling      */
-	case '+':                    /* rotate palette               */
-	case '-':                    /* rotate palette               */
+	case 'c':
+	case '+':
+	case '-':
 		return handle_color_cycling(kbdchar);
 
-	case 'e':                    /* switch to color editing      */
+	case 'e':
 		return handle_color_editing(kbdmore);
 
-	case 's':                    /* save-to-disk                 */
+	case 's':
 		return handle_save_to_disk();
 
-	case '#':                    /* 3D overlay                   */
+	case '#':
 		clear_zoom_box();
 		g_overlay_3d = 1;
 		/* fall through */
@@ -1730,60 +1734,60 @@ do_3d_transform:
 		return handle_restore_from(frommandel, kbdchar, screen_stacked);
 
 	case 'l':
-	case 'L':                    /* Look for other files within this view */
+	case 'L':
 		return handle_look_for_files(screen_stacked);
 		break;
 
-	case 'b':                    /* make batch file              */
+	case 'b':
 		make_batch_file();
 		break;
 
-	case FIK_ENTER:                  /* Enter                        */
-	case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
+	case FIK_ENTER:
+	case FIK_ENTER_2:
 		handle_zoom_in(kbdmore);
 		break;
 
-	case FIK_CTL_ENTER:              /* control-Enter                */
-	case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
+	case FIK_CTL_ENTER:
+	case FIK_CTL_ENTER_2:
 		handle_zoom_out(kbdmore);
 		break;
 
-	case FIK_INSERT:         /* insert                       */
+	case FIK_INSERT:
 		return handle_restart();
 
-	case FIK_LEFT_ARROW:             /* cursor left                  */
-	case FIK_RIGHT_ARROW:            /* cursor right                 */
-	case FIK_UP_ARROW:               /* cursor up                    */
-	case FIK_DOWN_ARROW:             /* cursor down                  */
-	case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
-	case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
-	case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
-	case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
+	case FIK_LEFT_ARROW:
+	case FIK_RIGHT_ARROW:
+	case FIK_UP_ARROW:
+	case FIK_DOWN_ARROW:
+	case FIK_CTL_LEFT_ARROW:
+	case FIK_CTL_RIGHT_ARROW:
+	case FIK_CTL_UP_ARROW:
+	case FIK_CTL_DOWN_ARROW:
 		move_zoombox(kbdchar);
 		break;
 
-	case FIK_CTL_HOME:               /* Ctrl-home                    */
-	case FIK_CTL_END:                /* Ctrl-end                     */
+	case FIK_CTL_HOME:
+	case FIK_CTL_END:
 		handle_zoom_skew(kbdchar == FIK_CTL_HOME);
 		break;
 
-	case FIK_CTL_PAGE_UP:            /* Ctrl-pgup                    */
-	case FIK_CTL_PAGE_DOWN:          /* Ctrl-pgdn                    */
+	case FIK_CTL_PAGE_UP:
+	case FIK_CTL_PAGE_DOWN:
 		handle_zoom_stretch(FIK_CTL_PAGE_UP == kbdchar);
 		break;
 
-	case FIK_PAGE_UP:                /* page up                      */
-	case FIK_PAGE_DOWN:              /* page down                    */
+	case FIK_PAGE_UP:
+	case FIK_PAGE_DOWN:
 		handle_zoom_resize(FIK_PAGE_UP == kbdchar);
 		break;
 
-	case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
-	case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
+	case FIK_CTL_MINUS:
+	case FIK_CTL_PLUS:
 		handle_z_rotate(FIK_CTL_MINUS == kbdchar);
 		break;
 
-	case FIK_CTL_INSERT:             /* Ctrl-ins                 */
-	case FIK_CTL_DEL:                /* Ctrl-del                 */
+	case FIK_CTL_INSERT:
+	case FIK_CTL_DEL:
 		handle_box_color(FIK_CTL_INSERT == kbdchar);
 		break;
 
@@ -1797,7 +1801,7 @@ do_3d_transform:
 		handle_mutation_level(false, kbdchar - FIK_ALT_1 + 1, kbdmore);
 		break;
 
-	case FIK_DELETE:         /* select video mode from list */
+	case FIK_DELETE:
 		handle_select_video(kbdchar);
 		/* fall through */
 
@@ -2081,62 +2085,62 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 		handle_evolver_options(kbdchar, kbdmore);
 		break;
 
-	case 'b': /* quick exit from evolve mode */
+	case 'b':
 		handle_evolver_exit(kbdmore);
 		break;
 
-	case 'f':                    /* floating pt toggle           */
+	case 'f':
 		return handle_toggle_float();
 
-	case '\\':                   /* return to prev image    */
+	case '\\':
 	case FIK_CTL_BACKSLASH:
 	case 'h':
 	case FIK_BACKSPACE:
 		return handle_evolver_history(kbdchar);
 
-	case 'c':                    /* switch to color cycling      */
-	case '+':                    /* rotate palette               */
-	case '-':                    /* rotate palette               */
+	case 'c':
+	case '+':
+	case '-':
 		return handle_color_cycling(kbdchar);
 
-	case 'e':                    /* switch to color editing      */
+	case 'e':
 		return handle_color_editing(kbdmore);
 
-	case 's':                    /* save-to-disk                 */
+	case 's':
 		return handle_evolver_save_to_disk();
 
-	case 'r':                    /* restore-from                 */
+	case 'r':
 		return handle_restore_from(julia_entered_from_manelbrot, kbdchar, stacked);
 
-	case FIK_ENTER:                  /* Enter                        */
-	case FIK_ENTER_2:                /* Numeric-Keypad Enter         */
+	case FIK_ENTER:
+	case FIK_ENTER_2:
 		handle_zoom_in(kbdmore);
 		break;
 
-	case FIK_CTL_ENTER:              /* control-Enter                */
-	case FIK_CTL_ENTER_2:            /* Control-Keypad Enter         */
+	case FIK_CTL_ENTER:
+	case FIK_CTL_ENTER_2:
 		handle_zoom_out(kbdmore);
 		break;
 
-	case FIK_INSERT:         /* insert                       */
+	case FIK_INSERT:
 		return handle_restart();
 
-	case FIK_LEFT_ARROW:             /* cursor left                  */
-	case FIK_RIGHT_ARROW:            /* cursor right                 */
-	case FIK_UP_ARROW:               /* cursor up                    */
-	case FIK_DOWN_ARROW:             /* cursor down                  */
+	case FIK_LEFT_ARROW:
+	case FIK_RIGHT_ARROW:
+	case FIK_UP_ARROW:
+	case FIK_DOWN_ARROW:
 		move_zoombox(kbdchar);
 		break;
 
-	case FIK_CTL_LEFT_ARROW:           /* Ctrl-cursor left             */
-	case FIK_CTL_RIGHT_ARROW:          /* Ctrl-cursor right            */
-	case FIK_CTL_UP_ARROW:             /* Ctrl-cursor up               */
-	case FIK_CTL_DOWN_ARROW:           /* Ctrl-cursor down             */
+	case FIK_CTL_LEFT_ARROW:
+	case FIK_CTL_RIGHT_ARROW:
+	case FIK_CTL_UP_ARROW:
+	case FIK_CTL_DOWN_ARROW:
 		handle_evolver_move_selection(kbdchar);
 		break;
 
-	case FIK_CTL_HOME:               /* Ctrl-home                    */
-	case FIK_CTL_END:                /* Ctrl-end                     */
+	case FIK_CTL_HOME:
+	case FIK_CTL_END:
 		handle_zoom_skew(kbdchar == FIK_CTL_HOME);
 		break;
 
@@ -2145,18 +2149,18 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 		handle_evolver_param_zoom(FIK_CTL_PAGE_UP == kbdchar);
 		break;
 
-	case FIK_PAGE_UP:                /* page up                      */
-	case FIK_PAGE_DOWN:              /* page down                    */
+	case FIK_PAGE_UP:
+	case FIK_PAGE_DOWN:
 		handle_evolver_zoom(FIK_PAGE_UP == kbdchar);
 		break;
 
-	case FIK_CTL_MINUS:              /* Ctrl-kpad-                  */
-	case FIK_CTL_PLUS:               /* Ctrl-kpad+               */
+	case FIK_CTL_MINUS:
+	case FIK_CTL_PLUS:
 		handle_z_rotate(FIK_CTL_MINUS == kbdchar);
 		break;
 
-	case FIK_CTL_INSERT:             /* Ctrl-ins                 */
-	case FIK_CTL_DEL:                /* Ctrl-del                 */
+	case FIK_CTL_INSERT:
+	case FIK_CTL_DEL:
 		handle_box_color(FIK_CTL_INSERT == kbdchar);
 		break;
 
@@ -2198,11 +2202,11 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 		handle_mutation_level(true, kbdchar - (int) '1' + 1, kbdmore);
 		break;
 
-	case '0': /* mutation level 0 == turn off evolving */
+	case '0':
 		handle_mutation_off(kbdmore);
 		break;
 
-	case FIK_DELETE:         /* select video mode from list */
+	case FIK_DELETE:
 		handle_select_video(kbdchar);
 		/* fall through */
 
@@ -2223,28 +2227,28 @@ static void move_zoombox(int keynum)
 	{
 		switch (keynum)
 		{
-		case FIK_LEFT_ARROW:               /* cursor left */
+		case FIK_LEFT_ARROW:
 			--horizontal;
 			break;
-		case FIK_RIGHT_ARROW:              /* cursor right */
+		case FIK_RIGHT_ARROW:
 			++horizontal;
 			break;
-		case FIK_UP_ARROW:                 /* cursor up */
+		case FIK_UP_ARROW:
 			--vertical;
 			break;
-		case FIK_DOWN_ARROW:               /* cursor down */
+		case FIK_DOWN_ARROW:
 			++vertical;
 			break;
-		case FIK_CTL_LEFT_ARROW:             /* Ctrl-cursor left */
+		case FIK_CTL_LEFT_ARROW:
 			horizontal -= 8;
 			break;
-		case FIK_CTL_RIGHT_ARROW:             /* Ctrl-cursor right */
+		case FIK_CTL_RIGHT_ARROW:
 			horizontal += 8;
 			break;
-		case FIK_CTL_UP_ARROW:               /* Ctrl-cursor up */
+		case FIK_CTL_UP_ARROW:
 			vertical -= 8;
 			break;
-		case FIK_CTL_DOWN_ARROW:             /* Ctrl-cursor down */
+		case FIK_CTL_DOWN_ARROW:
 			vertical += 8;
 			break;                      /* += 8 needed by VESA scrolling */
 		default:

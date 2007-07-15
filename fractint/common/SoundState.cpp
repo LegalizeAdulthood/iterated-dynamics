@@ -871,19 +871,19 @@ int SoundState::parse_sound(const cmd_context &context)
 			}
 		}
 	}
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_hertz(const cmd_context &context)
 {
 	m_base_hertz = context.numval;
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_volume(const cmd_context &context)
 {
 	m_fm_volume = (context.numval > 63) ? 63 : context.numval;
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_attenuation(const cmd_context &context)
@@ -908,7 +908,7 @@ int SoundState::parse_attenuation(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_polyphony(const cmd_context &context)
@@ -918,37 +918,37 @@ int SoundState::parse_polyphony(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	m_polyphony = abs(context.numval-1);
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_wave_type(const cmd_context &context)
 {
 	m_fm_wave_type = context.numval & 0x0F;
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_attack(const cmd_context &context)
 {
 	m_fm_attack = context.numval & 0x0F;
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_decay(const cmd_context &context)
 {
 	m_fm_decay = context.numval & 0x0F;
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_sustain(const cmd_context &context)
 {
 	m_fm_sustain = context.numval & 0x0F;
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_release(const cmd_context &context)
 {
 	m_fm_release = context.numval & 0x0F;
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }
 
 int SoundState::parse_scale_map(const cmd_context &context)
@@ -966,5 +966,5 @@ int SoundState::parse_scale_map(const cmd_context &context)
 			m_scale_map[counter] = context.intval[counter];
 		}
 	}
-	return Command::OK;
+	return COMMANDRESULT_OK;
 }

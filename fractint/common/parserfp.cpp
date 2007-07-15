@@ -1599,13 +1599,17 @@ void Formula::CvtStk()  /* convert the array of ptrs  */
 	if (formula_defined() &&
 		(m_uses_jump == 0 || !fill_jump_struct_fp())) /* but only if parse succeeded  */
 	{
-		g_current_fractal_specific->per_pixel = formula_per_pixel_fp;
-		g_current_fractal_specific->orbitcalc = formula_fp;
+		// TODO: eliminate writing to g_current_fractal_specific
+		FractalTypeSpecificData *target = g_current_fractal_specific;
+		target->per_pixel = formula_per_pixel_fp;
+		target->orbitcalc = formula_fp;
 	}
 	else
 	{
-		g_current_fractal_specific->per_pixel = bad_formula;
-		g_current_fractal_specific->orbitcalc = bad_formula;
+		// TODO: eliminate writing to g_current_fractal_specific
+		FractalTypeSpecificData *target = g_current_fractal_specific;
+		target->per_pixel = bad_formula;
+		target->orbitcalc = bad_formula;
 	}
 
 	image_setup();  /* call assembler setup code  */

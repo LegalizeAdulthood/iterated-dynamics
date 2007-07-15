@@ -1468,7 +1468,7 @@ sel_type_restart:
 
 	set_default_parms();
 
-	if (get_fractal_parameters(0) < 0)
+	if (get_fractal_parameters(false) < 0)
 	{
 		if (fractal_type_formula(g_fractal_type)
 			|| fractal_type_ifs(g_fractal_type)
@@ -1617,16 +1617,21 @@ struct FunctionListItem g_function_list[] =
 const int g_num_function_list = NUM_OF(g_function_list);
 
 /* --------------------------------------------------------------------- */
-int get_fractal_parameters(int caller)        /* prompt for type-specific parms */
+int get_fractal_parameters_current_fractal_type()
 {
-	char *v0 = "From cx (real part)";
-	char *v1 = "From cy (imaginary part)";
-	char *v2 = "To   cx (real part)";
-	char *v3 = "To   cy (imaginary part)";
-	char *juliorbitname = NULL;
-	int i;
+	int current_fractal_type = g_fractal_type;
+	int i = g_current_fractal_specific->tofloat;
+	if (g_current_fractal_specific->is_hidden()
+		&& !fractal_type_none(i)
+		&& !g_fractal_specific[i].is_hidden())
+	{
+		current_fractal_type = i;
+	}
+	return current_fractal_type;
+}
+int get_fractal_parameters(bool type_specific)        /* prompt for type-specific parms */
+{
 	int j;
-	int k;
 	int current_fractal_type;
 	int num_parameters;
 	int num_functions;
@@ -1635,7 +1640,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	long old_bail_out = 0L;
 	char message[120];
 	char bailoutmsg[50];
-	int ret = 0;
+	int command_result = COMMANDRESULT_OK;
 	char parmprompt[MAX_PARAMETERS][55];
 	static char *trg[] =
 	{
@@ -1648,7 +1653,6 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	static /* Can't initialize aggregates on the stack */
 #endif
 	const char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
-	FractalTypeSpecificData *jborbit = NULL;
 	FractalTypeSpecificData *savespecific;
 	int firstparm = 0;
 	int lastparm  = MAX_PARAMETERS;
@@ -1663,21 +1667,14 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 	{
 		g_julibrot = false;
 	}
-	current_fractal_type = g_fractal_type;
-	i = g_current_fractal_specific->tofloat;
-	if (g_current_fractal_specific->is_hidden()
-		&& !fractal_type_none(i)
-		&& !g_fractal_specific[i].is_hidden())
-	{
-		current_fractal_type = i;
-	}
+	current_fractal_type = get_fractal_parameters_current_fractal_type();
 	g_current_fractal_specific = &g_fractal_specific[current_fractal_type];
 	g_text_stack[0] = 0;
-	i = g_current_fractal_specific->helpformula;
-	if (i < -1)
+	int help_formula = g_current_fractal_specific->helpformula;
+	if (help_formula < SPECIALHF_JULIBROT)
 	{
 		int itemtype = ITEMTYPE_PARAMETER;
-		if (i == -2)  /* special for formula */
+		if (help_formula == SPECIALHF_FORMULA)
 		{
 			if (g_formula_state.find_item(&entryfile) == 0)
 			{
@@ -1691,13 +1688,13 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 		}
 		else
 		{
-			if (i == -3)   /* special for lsystem */
+			if (help_formula == SPECIALHF_L_SYSTEM)
 			{
 				filename = g_l_system_filename;
 				entryname = g_l_system_name;
 				itemtype = ITEMTYPE_L_SYSTEM;
 			}
-			else if (i == -4)   /* special for ifs */
+			else if (help_formula == SPECIALHF_IFS)
 			{
 				filename = g_ifs_filename;
 				entryname = g_ifs_name;
@@ -1722,25 +1719,26 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 			}
 		}
 	}
-	else if (i >= 0)
+	else if (help_formula >= 0)
 	{
+		read_help_topic(help_formula, 0, 2000, g_text_stack); /* need error handling here ?? */
+		g_text_stack[2000-help_formula] = 0;
+		int source = 0;
+		int destination = 0;
+		int lines = 0;
+		int blank_line_count = 1;
 		int c;
-		int lines;
-		read_help_topic(i, 0, 2000, g_text_stack); /* need error handling here ?? */
-		g_text_stack[2000-i] = 0;
-		i = j = lines = 0;
-		k = 1;
-		while ((c = g_text_stack[i++]) != 0)
+		while ((c = g_text_stack[source++]) != 0)
 		{
 			/* stop at ctl, blank, or line with col 1 nonblank, max 16 lines */
-			if (k && c == ' ' && ++k <= 5)
+			if (blank_line_count && c == ' ' && ++blank_line_count <= 5)
 			{
 			} /* skip 4 blanks at start of line */
 			else
 			{
 				if (c == '\n')
 				{
-					if (k) /* blank line  */
+					if (blank_line_count) /* blank line  */
 					{
 						break;
 					}
@@ -1748,7 +1746,7 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 					{
 						break;
 					}
-					k = 1;
+					blank_line_count = 1;
 				}
 				else if (c < 16) /* a special help format control char */
 				{
@@ -1756,43 +1754,42 @@ int get_fractal_parameters(int caller)        /* prompt for type-specific parms 
 				}
 				else
 				{
-					if (k == 1) /* line starts in column 1 */
+					if (blank_line_count == 1) /* line starts in column 1 */
 					{
 						break;
 					}
-					k = 0;
+					blank_line_count = 0;
 				}
-				g_text_stack[j++] = (char) c;
+				g_text_stack[destination++] = (char) c;
 			}
 		}
-		while (--j >= 0 && g_text_stack[j] == '\n')
+		while (--destination >= 0 && g_text_stack[destination] == '\n')
 		{
 		}
-		g_text_stack[j + 1] = 0;
+		g_text_stack[destination + 1] = 0;
 	}
 
-gfp_top:
+get_fractal_parameters_top:
 	int prompt = 0;
+	FractalTypeSpecificData *julibrot_orbit = NULL;
 	if (g_julibrot)
 	{
-		i = select_fracttype(g_new_orbit_type);
-		if (i < 0)
+		int new_type = select_fracttype(g_new_orbit_type);
+		if (new_type < 0)
 		{
-			if (ret == 0)
+			if (command_result == COMMANDRESULT_OK)
 			{
-				ret = -1;
+				command_result = COMMANDRESULT_ERROR;
 			}
 			g_julibrot = false;
-			goto gfp_exit;
+			goto get_fractal_parameters_exit;
 		}
 		else
 		{
-			g_new_orbit_type = i;
+			g_new_orbit_type = new_type;
 		}
-		jborbit = &g_fractal_specific[g_new_orbit_type];
-		juliorbitname = jborbit->name;
+		julibrot_orbit = &g_fractal_specific[g_new_orbit_type];
 	}
-
 	if (fractal_type_formula(g_fractal_type))
 	{
 		if (g_formula_state.uses_p1())  /* set first parameter */
@@ -1841,7 +1838,7 @@ gfp_top:
 	savespecific = g_current_fractal_specific;
 	if (g_julibrot)
 	{
-		g_current_fractal_specific = jborbit;
+		g_current_fractal_specific = julibrot_orbit;
 		firstparm = 2; /* in most case Julibrot does not need first two parms */
 		if (g_new_orbit_type == FRACTYPE_QUATERNION_JULIA_FP     ||   /* all parameters needed */
 			g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_JULIA_FP)
@@ -1857,7 +1854,7 @@ gfp_top:
 	}
 	num_parameters = 0;
 	j = 0;
-	for (i = firstparm; i < lastparm; i++)
+	for (int i = firstparm; i < lastparm; i++)
 	{
 		char tmpbuf[30];
 		if (!type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
@@ -1888,7 +1885,6 @@ gfp_top:
 		parameter_values[prompt].uval.dval = atof(tmpbuf);
 		oldparam[i] = parameter_values[prompt++].uval.dval;
 	}
-
 	/* The following is a goofy kludge to make reading in the formula
 	* parameters work.
 	*/
@@ -1904,11 +1900,11 @@ gfp_top:
 	}
 
 	const char *function_names[NUM_OF(g_function_list)];
-	for (i = 0; i < g_num_function_list; i++)
+	for (int i = 0; i < g_num_function_list; i++)
 	{
 		function_names[i] = g_function_list[i].name;
 	}
-	for (i = 0; i < num_functions; i++)
+	for (int i = 0; i < num_functions; i++)
 	{
 		parameter_values[prompt].type = 'l';
 		parameter_values[prompt].uval.ch.val  = g_function_index[i];
@@ -1917,156 +1913,163 @@ gfp_top:
 		parameter_values[prompt].uval.ch.list = function_names;
 		choices[prompt++] = (char *)trg[i];
 	}
-	char const *type_name = g_current_fractal_specific->get_type();
-
-	i = g_current_fractal_specific->orbit_bailout;
-
-	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
-		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 	{
-		parameter_values[prompt].type = 'l';
-		parameter_values[prompt].uval.ch.val  = (int)g_bail_out_test;
-		parameter_values[prompt].uval.ch.llen = 7;
-		parameter_values[prompt].uval.ch.vlen = 6;
-		parameter_values[prompt].uval.ch.list = bailnameptr;
-		choices[prompt++] = "Bailout Test (mod, real, imag, or, and, manh, manr)";
-	}
+		char const *type_name = g_current_fractal_specific->get_type();
 
-	if (i)
-	{
-		if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != 0.0)
+		int bail_out_value = g_current_fractal_specific->orbit_bailout;
+
+		if (bail_out_value != 0
+			&& g_current_fractal_specific->calculate_type == standard_fractal
+			&& (g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 		{
-			parameter_values[prompt].type = '*';
-			choices[prompt++] = "Bailout: continuous potential (Y screen) value in use";
+			parameter_values[prompt].type = 'l';
+			parameter_values[prompt].uval.ch.val  = int(g_bail_out_test);
+			parameter_values[prompt].uval.ch.llen = 7;
+			parameter_values[prompt].uval.ch.vlen = 6;
+			parameter_values[prompt].uval.ch.list = bailnameptr;
+			choices[prompt++] = "Bailout Test (mod, real, imag, or, and, manh, manr)";
+		}
+
+		if (bail_out_value)
+		{
+			if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != 0.0)
+			{
+				parameter_values[prompt].type = '*';
+				choices[prompt++] = "Bailout: continuous potential (Y screen) value in use";
+			}
+			else
+			{
+				choices[prompt] = "Bailout value (0 means use default)";
+				parameter_values[prompt].type = 'L';
+				old_bail_out = g_bail_out;
+				parameter_values[prompt++].uval.Lval = old_bail_out;
+				parameter_values[prompt].type = '*';
+				const char *tmpptr = type_name;
+				if (g_user_biomorph != -1)
+				{
+					bail_out_value = 100;
+					tmpptr = "biomorph";
+				}
+				sprintf(bailoutmsg, "    (%s default is %d)", tmpptr, bail_out_value);
+				choices[prompt++] = bailoutmsg;
+			}
+		}
+		if (g_julibrot)
+		{
+			const char *v0 = "From cx (real part)";
+			const char *v1 = "From cy (imaginary part)";
+			const char *v2 = "To   cx (real part)";
+			const char *v3 = "To   cy (imaginary part)";
+			switch (g_new_orbit_type)
+			{
+			case FRACTYPE_QUATERNION_FP:
+			case FRACTYPE_HYPERCOMPLEX_FP:
+				v0 = "From cj (3rd dim)";
+				v1 = "From ck (4th dim)";
+				v2 = "To   cj (3rd dim)";
+				v3 = "To   ck (4th dim)";
+				break;
+			case FRACTYPE_QUATERNION_JULIA_FP:
+			case FRACTYPE_HYPERCOMPLEX_JULIA_FP:
+				v0 = "From zj (3rd dim)";
+				v1 = "From zk (4th dim)";
+				v2 = "To   zj (3rd dim)";
+				v3 = "To   zk (4th dim)";
+				break;
+			default:
+				v0 = "From cx (real part)";
+				v1 = "From cy (imaginary part)";
+				v2 = "To   cx (real part)";
+				v3 = "To   cy (imaginary part)";
+				break;
+			}
+
+			g_current_fractal_specific = savespecific;
+			parameter_values[prompt].uval.dval = g_m_x_max_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = v0;
+			parameter_values[prompt].uval.dval = g_m_y_max_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = v1;
+			parameter_values[prompt].uval.dval = g_m_x_min_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = v2;
+			parameter_values[prompt].uval.dval = g_m_y_min_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = v3;
+			parameter_values[prompt].uval.ival = g_z_dots;
+			parameter_values[prompt].type = 'i';
+			choices[prompt++] = "Number of z pixels";
+
+			parameter_values[prompt].type = 'l';
+			parameter_values[prompt].uval.ch.val  = g_juli_3d_mode;
+			parameter_values[prompt].uval.ch.llen = 4;
+			parameter_values[prompt].uval.ch.vlen = 9;
+			parameter_values[prompt].uval.ch.list = g_juli_3d_options;
+			choices[prompt++] = "3D Mode";
+
+			parameter_values[prompt].uval.dval = g_eyes_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = "Distance between eyes";
+			parameter_values[prompt].uval.dval = g_origin_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = "Location of z origin";
+			parameter_values[prompt].uval.dval = g_depth_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = "Depth of z";
+			parameter_values[prompt].uval.dval = g_height_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = "Screen height";
+			parameter_values[prompt].uval.dval = g_width_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = "Screen width";
+			parameter_values[prompt].uval.dval = g_screen_distance_fp;
+			parameter_values[prompt].type = 'f';
+			choices[prompt++] = "Distance to Screen";
+		}
+
+		if (fractal_type_inverse_julia(current_fractal_type))
+		{
+			choices[prompt] = JIIMstr1;
+			parameter_values[prompt].type = 'l';
+			parameter_values[prompt].uval.ch.list = g_jiim_method;
+			parameter_values[prompt].uval.ch.vlen = 7;
+	#ifdef RANDOM_RUN
+			paramvalues[promptnum].uval.ch.llen = 4;
+	#else
+			parameter_values[prompt].uval.ch.llen = 3; /* disable random run */
+	#endif
+			parameter_values[prompt++].uval.ch.val  = g_major_method;
+
+			choices[prompt] = JIIMstr2;
+			parameter_values[prompt].type = 'l';
+			parameter_values[prompt].uval.ch.list = g_jiim_left_right;
+			parameter_values[prompt].uval.ch.vlen = 5;
+			parameter_values[prompt].uval.ch.llen = 2;
+			parameter_values[prompt++].uval.ch.val  = g_minor_method;
+		}
+
+		if (fractal_type_formula(current_fractal_type) && g_formula_state.uses_is_mand())
+		{
+			choices[prompt] = "ismand";
+			parameter_values[prompt].type = 'y';
+			parameter_values[prompt++].uval.ch.val = g_is_mand ? 1 : 0;
+		}
+
+		if (type_specific                           /* <z> command ? */
+			&& (g_display_3d > DISPLAY3D_NONE))
+		{
+			stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
+			goto get_fractal_parameters_exit;
+		}
+		if (g_julibrot)
+		{
+			sprintf(message, "Julibrot Parameters (orbit= %s)", julibrot_orbit->name);
 		}
 		else
 		{
-			choices[prompt] = "Bailout value (0 means use default)";
-			parameter_values[prompt].type = 'L';
-			old_bail_out = g_bail_out;
-			parameter_values[prompt++].uval.Lval = old_bail_out;
-			parameter_values[prompt].type = '*';
-			const char *tmpptr = type_name;
-			if (g_user_biomorph != -1)
-			{
-				i = 100;
-				tmpptr = "biomorph";
-			}
-			sprintf(bailoutmsg, "    (%s default is %d)", tmpptr, i);
-			choices[prompt++] = bailoutmsg;
+			sprintf(message, "Parameters for fractal type %s", type_name);
 		}
-	}
-	if (g_julibrot)
-	{
-		switch (g_new_orbit_type)
-		{
-		case FRACTYPE_QUATERNION_FP:
-		case FRACTYPE_HYPERCOMPLEX_FP:
-			v0 = "From cj (3rd dim)";
-			v1 = "From ck (4th dim)";
-			v2 = "To   cj (3rd dim)";
-			v3 = "To   ck (4th dim)";
-			break;
-		case FRACTYPE_QUATERNION_JULIA_FP:
-		case FRACTYPE_HYPERCOMPLEX_JULIA_FP:
-			v0 = "From zj (3rd dim)";
-			v1 = "From zk (4th dim)";
-			v2 = "To   zj (3rd dim)";
-			v3 = "To   zk (4th dim)";
-			break;
-		default:
-			v0 = "From cx (real part)";
-			v1 = "From cy (imaginary part)";
-			v2 = "To   cx (real part)";
-			v3 = "To   cy (imaginary part)";
-			break;
-		}
-
-		g_current_fractal_specific = savespecific;
-		parameter_values[prompt].uval.dval = g_m_x_max_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = v0;
-		parameter_values[prompt].uval.dval = g_m_y_max_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = v1;
-		parameter_values[prompt].uval.dval = g_m_x_min_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = v2;
-		parameter_values[prompt].uval.dval = g_m_y_min_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = v3;
-		parameter_values[prompt].uval.ival = g_z_dots;
-		parameter_values[prompt].type = 'i';
-		choices[prompt++] = "Number of z pixels";
-
-		parameter_values[prompt].type = 'l';
-		parameter_values[prompt].uval.ch.val  = g_juli_3d_mode;
-		parameter_values[prompt].uval.ch.llen = 4;
-		parameter_values[prompt].uval.ch.vlen = 9;
-		parameter_values[prompt].uval.ch.list = g_juli_3d_options;
-		choices[prompt++] = "3D Mode";
-
-		parameter_values[prompt].uval.dval = g_eyes_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = "Distance between eyes";
-		parameter_values[prompt].uval.dval = g_origin_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = "Location of z origin";
-		parameter_values[prompt].uval.dval = g_depth_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = "Depth of z";
-		parameter_values[prompt].uval.dval = g_height_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = "Screen height";
-		parameter_values[prompt].uval.dval = g_width_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = "Screen width";
-		parameter_values[prompt].uval.dval = g_screen_distance_fp;
-		parameter_values[prompt].type = 'f';
-		choices[prompt++] = "Distance to Screen";
-	}
-
-	if (fractal_type_inverse_julia(current_fractal_type))
-	{
-		choices[prompt] = JIIMstr1;
-		parameter_values[prompt].type = 'l';
-		parameter_values[prompt].uval.ch.list = g_jiim_method;
-		parameter_values[prompt].uval.ch.vlen = 7;
-#ifdef RANDOM_RUN
-		paramvalues[promptnum].uval.ch.llen = 4;
-#else
-		parameter_values[prompt].uval.ch.llen = 3; /* disable random run */
-#endif
-		parameter_values[prompt++].uval.ch.val  = g_major_method;
-
-		choices[prompt] = JIIMstr2;
-		parameter_values[prompt].type = 'l';
-		parameter_values[prompt].uval.ch.list = g_jiim_left_right;
-		parameter_values[prompt].uval.ch.vlen = 5;
-		parameter_values[prompt].uval.ch.llen = 2;
-		parameter_values[prompt++].uval.ch.val  = g_minor_method;
-	}
-
-	if (fractal_type_formula(current_fractal_type) && g_formula_state.uses_is_mand())
-	{
-		choices[prompt] = "ismand";
-		parameter_values[prompt].type = 'y';
-		parameter_values[prompt++].uval.ch.val = g_is_mand ? 1 : 0;
-	}
-
-	if (caller                           /* <z> command ? */
-		&& (g_display_3d > DISPLAY3D_NONE))
-	{
-		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
-		goto gfp_exit;
-	}
-	if (g_julibrot)
-	{
-		sprintf(message, "Julibrot Parameters (orbit= %s)", juliorbitname);
-	}
-	else
-	{
-		sprintf(message, "Parameters for fractal type %s", type_name);
 	}
 	if (g_bf_math == 0)
 	{
@@ -2080,21 +2083,21 @@ gfp_top:
 	s_scroll_column_status = 0;
 	while (true)
 	{
-		i = full_screen_prompt_help(g_current_fractal_specific->helptext, message,
+		int result = full_screen_prompt_help(g_current_fractal_specific->helptext, message,
 			prompt, choices, parameter_values, f_key_mask, g_text_stack);
-		if (i < 0)
+		if (result < 0)
 		{
 			if (g_julibrot)
 			{
-				goto gfp_top;
+				goto get_fractal_parameters_top;
 			}
-			if (ret == 0)
+			if (command_result == COMMANDRESULT_OK)
 			{
-				ret = -1;
+				command_result = COMMANDRESULT_ERROR;
 			}
-			goto gfp_exit;
+			goto get_fractal_parameters_exit;
 		}
-		if (i != FIK_F6)
+		if (result != FIK_F6)
 		{
 			break;
 		}
@@ -2102,12 +2105,12 @@ gfp_top:
 		{
 			if (get_corners() > 0)
 			{
-				ret = 1;
+				command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 			}
 		}
 	}
 	prompt = 0;
-	for (i = firstparm; i < num_parameters + firstparm; i++)
+	for (int i = firstparm; i < num_parameters + firstparm; i++)
 	{
 		if (fractal_type_formula(current_fractal_type))
 		{
@@ -2119,28 +2122,27 @@ gfp_top:
 		if (oldparam[i] != parameter_values[prompt].uval.dval)
 		{
 			g_parameters[i] = parameter_values[prompt].uval.dval;
-			ret = 1;
+			command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 		}
 		++prompt;
 	}
 
-	for (i = 0; i < num_functions; i++)
+	for (int i = 0; i < num_functions; i++)
 	{
 		if (parameter_values[prompt].uval.ch.val != g_function_index[i])
 		{
 			set_function_array(i, g_function_list[parameter_values[prompt].uval.ch.val].name);
-			ret = 1;
+			command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 		}
 		++prompt;
 	}
-
 	if (g_julibrot)
 	{
 		savespecific = g_current_fractal_specific;
-		g_current_fractal_specific = jborbit;
+		g_current_fractal_specific = julibrot_orbit;
 	}
 
-	i = g_current_fractal_specific->orbit_bailout;
+	int i = g_current_fractal_specific->orbit_bailout;
 
 	if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
 		(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
@@ -2148,7 +2150,7 @@ gfp_top:
 		if (parameter_values[prompt].uval.ch.val != (int)g_bail_out_test)
 		{
 			g_bail_out_test = (enum bailouts)parameter_values[prompt].uval.ch.val;
-			ret = 1;
+			command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 		}
 		prompt++;
 	}
@@ -2160,20 +2162,22 @@ gfp_top:
 
 	if (i)
 	{
-		if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != 0.0)
+		if (g_potential_parameter[0] != 0.0
+			&& g_potential_parameter[2] != 0.0)
 		{
 			prompt++;
 		}
 		else
 		{
 			g_bail_out = parameter_values[prompt++].uval.Lval;
-			if (g_bail_out != 0 && (g_bail_out < 1 || g_bail_out > 2100000000L))
+			if (g_bail_out != 0
+				&& (g_bail_out < 1 || g_bail_out > 2100000000L))
 			{
 				g_bail_out = old_bail_out;
 			}
 			if (g_bail_out != old_bail_out)
 			{
-				ret = 1;
+				command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 			}
 			prompt++;
 		}
@@ -2192,14 +2196,14 @@ gfp_top:
 		g_height_fp   = (float)parameter_values[prompt++].uval.dval;
 		g_width_fp    = (float)parameter_values[prompt++].uval.dval;
 		g_screen_distance_fp     = (float)parameter_values[prompt++].uval.dval;
-		ret = 1;  /* force new calc since not resumable anyway */
+		command_result = COMMANDRESULT_FRACTAL_PARAMETER;  /* force new calc since not resumable anyway */
 	}
 	if (fractal_type_inverse_julia(current_fractal_type))
 	{
 		if (parameter_values[prompt].uval.ch.val != g_major_method
 			|| parameter_values[prompt + 1].uval.ch.val != g_minor_method)
 		{
-			ret = 1;
+			command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 		}
 		g_major_method = static_cast<MajorMethodType>(parameter_values[prompt++].uval.ch.val);
 		g_minor_method = static_cast<MinorMethodType>(parameter_values[prompt++].uval.ch.val);
@@ -2209,14 +2213,14 @@ gfp_top:
 		if (g_is_mand != (parameter_values[prompt].uval.ch.val != 0))
 		{
 			g_is_mand = (parameter_values[prompt].uval.ch.val != 0);
-			ret = 1;
+			command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 		}
 		++prompt;
 	}
 
-gfp_exit:
+get_fractal_parameters_exit:
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-	return ret;
+	return command_result;
 }
 
 int find_extra_parameter(int type)
