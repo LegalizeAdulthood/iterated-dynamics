@@ -1857,7 +1857,8 @@ get_fractal_parameters_top:
 	for (int i = firstparm; i < lastparm; i++)
 	{
 		char tmpbuf[30];
-		if (!type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, parmprompt[j]))
+		int fractal_type = g_julibrot ? g_new_orbit_type : g_fractal_type;
+		if (!type_has_parameter(fractal_type, i))
 		{
 			if (fractal_type_formula(current_fractal_type))
 			{
@@ -1868,6 +1869,7 @@ get_fractal_parameters_top:
 			}
 			break;
 		}
+		::strcpy(parmprompt[j], parameter_prompt(fractal_type, i));
 		num_parameters++;
 		choices[prompt] = parmprompt[j++];
 		parameter_values[prompt].type = 'd';

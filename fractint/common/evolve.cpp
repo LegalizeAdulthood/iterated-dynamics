@@ -502,7 +502,7 @@ static int get_variations()
 	int numparams = 0;
 	for (int i = firstparm; i < lastparm; i++)
 	{
-		if (type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i, NULL) == 0)
+		if (type_has_parameter(g_julibrot ? g_new_orbit_type : g_fractal_type, i) == 0)
 		{
 			if (fractal_type_formula(g_fractal_type))
 			{
