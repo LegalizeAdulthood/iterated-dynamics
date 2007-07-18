@@ -183,18 +183,6 @@
 			Name="Main"
 			>
 			<File
-				RelativePath=".\demo.bat"
-				>
-			</File>
-			<File
-				RelativePath=".\file_id.diz"
-				>
-			</File>
-			<File
-				RelativePath=".\fract19.bat"
-				>
-			</File>
-			<File
 				RelativePath=".\fractint.cfg"
 				>
 			</File>
@@ -203,15 +191,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\sschoice.exe"
-				>
-			</File>
-			<File
 				RelativePath=".\sstools.ini"
-				>
-			</File>
-			<File
-				RelativePath=".\tplus.dat"
 				>
 			</File>
 		</Filter>
