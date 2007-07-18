@@ -54,7 +54,7 @@ headers
 
 help
 	Help source files with a custom build step on help.src to run the help
-	compiler on the source to generate new FRACTINT.HLP and HELPDEFS.H
+	compiler on the source to generate new id.hlp and HELPDEFS.H
 	files.
 
 main

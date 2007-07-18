@@ -141,10 +141,6 @@ Rotation angles indicate how much the IMAGE has been rotated, not the
 zoom box.  Same goes for the Skew angles
 */
 
-#ifdef _MSC_VER
-#pragma optimize("", off)
-#endif
-
 void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
 	double Width;

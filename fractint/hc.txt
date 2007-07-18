@@ -61,7 +61,7 @@
 
     The .HLP file is the binary file where compiled help informnation is
   stored.  See HC.C and HELP.C if you're interested in the file format.  In
-  FRACTINT the file is named FRACTINT.HLP.  This file may be appended to
+  FRACTINT the file is named id.hlp.  This file may be appended to
   FRACTINT.EXE for distribution, see the Help Compiler command-line help
   (type "HC" at the DOS prompt) more info.
 

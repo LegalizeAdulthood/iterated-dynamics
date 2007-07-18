@@ -1,6 +1,6 @@
 SHELL=/bin/sh
 
-# SRCDIR should be a path to the directory that will hold fractint.hlp
+# SRCDIR should be a path to the directory that will hold id.hlp
 # SRCDIR should also hold the .par, .frm, etc. files
 SRCDIR = /usr/share/xfractint
 # BINDIR is where you put your X11 binaries
@@ -252,12 +252,12 @@ HOBJS = hc.o unix.o
 .SUFFIXES:
 .SUFFIXES: .o .cpp .s .h .asm
 
-xfractint: fractint.hlp .WAIT
+id: id.hlp .WAIT
 	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "HFD=.${HFD}"
 	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
 	          "AS=${AS}" "AFLAGS=${AFLAGS}" "HFD=.${HFD}"
-	$(CXX) -o xfractint $(CFLAGS) $(OBJS) $(U_OBJS) $(LIBS)
+	$(CXX) -o id $(CFLAGS) $(OBJS) $(U_OBJS) $(LIBS)
 #	strip xfractint
 
 tar:	$(FILES)
@@ -269,16 +269,16 @@ tidy:
 	cd unix ; ${MAKE} tidy
 
 clean:
-	rm -f $(HOBJS) fractint.doc fractint.hlp hc xfractint
+	rm -f $(HOBJS) fractint.doc id.hlp hc xfractint
 	rm -f $(HFD)/helpdefs.h
 	cd $(COMDIR) ; ${MAKE} clean
 	cd $(UDIR) ; ${MAKE} clean
 
-depend: fractint.hlp
+depend: id.hlp
 	cd $(COMDIR) ; ${MAKE} depend "CFLAGS=${DEPFLAGS}"
 	cd $(UDIR) ; ${MAKE} depend "CFLAGS=${DEPFLAGS}"
 
-install: xfractint fractint.hlp
+install: xfractint id.hlp
 	strip xfractint
 # only next 4 lines might need su
 	cp xfractint $(BINDIR)/xfractint;
@@ -294,7 +294,7 @@ install: xfractint fractint.hlp
 	if [ ! -d $(SRCDIR)/$(MDIR) ] ; then mkdir $(SRCDIR)/$(MDIR) ; fi
 	if [ ! -d $(SRCDIR)/$(XDIR) ] ; then mkdir $(SRCDIR)/$(XDIR) ; fi
 # copy all the files to the appropriate directories
-	cp fractint.hlp sstools.ini $(DOCS) $(SRCDIR)
+	cp id.hlp sstools.ini $(DOCS) $(SRCDIR)
 	cd ./$(PDIR); cp $(PARFILES) $(SRCDIR)/$(PDIR)
 	cd ./$(FDIR); cp $(FRMFILES) $(SRCDIR)/$(FDIR)
 	cd ./$(IDIR); cp $(IFSFILES) $(SRCDIR)/$(IDIR)
@@ -303,7 +303,7 @@ install: xfractint fractint.hlp
 	cd ./$(XDIR); cp $(XTRAFILES) $(SRCDIR)/$(XDIR)
 # set permissions
 	cd $(SRCDIR); cd ..; chmod -R a+rw $(SRCDIR)
-	cd $(SRCDIR); chmod a+r fractint.hlp
+	cd $(SRCDIR); chmod a+r id.hlp
 	cd $(SRCDIR); chmod a+rw sstools.ini
 	cd $(SRCDIR)/$(PDIR); chmod a+rw $(PARFILES)
 	cd $(SRCDIR)/$(FDIR); chmod a+rw $(FRMFILES)
@@ -319,14 +319,14 @@ uninstall:
 	cd $(SRCDIR)/$(LDIR); rm -f $(LFILES)
 	cd $(SRCDIR)/$(MDIR); rm -f $(MAPFILES)
 	cd $(SRCDIR)/$(XDIR); rm -f $(XTRAFILES)
-	cd $(SRCDIR); rm -f fractint.hlp sstools.ini $(DOCS)
+	cd $(SRCDIR); rm -f id.hlp sstools.ini $(DOCS)
 	cd $(SRCDIR); rmdir $(PDIR) $(FDIR) $(IDIR) $(LDIR) $(MDIR) $(XDIR)
 	cd $(SRCDIR); cd ..; rmdir $(SRCDIR)
 # only next might need su
 	rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
 
-fractint.hlp: hc $(HELP)
-	cd $(DOSHELPDIR); ../hc /c; mv fractint.hlp ..
+id.hlp: hc $(HELP)
+	cd $(DOSHELPDIR); ../hc /c; mv id.hlp ..
 	if [ -f $(DOSHELPDIR)/helpdefs.h ] ; then mv -f $(DOSHELPDIR)/helpdefs.h $(HFD) ; fi
 
 .WAIT:

@@ -1479,9 +1479,9 @@ int init_help()
 #endif
 #endif
 
-	if (s_help_file == NULL)            /* look for FRACTINT.HLP */
+	if (s_help_file == NULL)            /* look for id.hlp */
 	{
-		if (find_file("fractint.hlp", path))
+		if (find_file("id.hlp", path))
 		{
 			s_help_file = fopen(path, "rb");
 			if (s_help_file != NULL)
@@ -1491,12 +1491,12 @@ int init_help()
 				if (hs.sig != HELP_SIG)
 				{
 					fclose(s_help_file);
-					stop_message(STOPMSG_NO_STACK, "Invalid help signature in FRACTINT.HLP!\n");
+					stop_message(STOPMSG_NO_STACK, "Invalid help signature in id.hlp!\n");
 				}
 				else if (hs.version != FIHELP_VERSION)
 				{
 					fclose(s_help_file);
-					stop_message(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.HLP!\n");
+					stop_message(STOPMSG_NO_STACK, "Wrong help version in id.hlp!\n");
 				}
 				else
 				{
@@ -1510,9 +1510,9 @@ int init_help()
 	{
 		static char msg[] =
 #if !defined(XFRACT) && !defined(_WIN32)
-			{"Help Files aren't in FRACTINT.EXE, and couldn't find FRACTINT.HLP!\n"};
+			{"Help Files aren't in FRACTINT.EXE, and couldn't find id.hlp!\n"};
 #else
-			{"Couldn't find fractint.hlp; set FRACTDIR to proper directory with setenv.\n"};
+			{"Couldn't find id.hlp; set FRACTDIR to proper directory with setenv.\n"};
 #endif
 		stop_message(STOPMSG_NO_STACK, msg);
 	}

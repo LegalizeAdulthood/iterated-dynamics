@@ -2904,7 +2904,7 @@ New options/features:
  capability if compiled under MSC7.
 
  Fractint now looks first any embedded help inside FRACTINT.EXE, and then
- for an external FRACTINT.HLP file before giving up. Previous releases
+ for an external id.hlp file before giving up. Previous releases
  required that the help text be embedded inside FRACTINT.EXE.
 
 Bug fixes:
