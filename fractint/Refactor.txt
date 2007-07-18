@@ -134,3 +134,8 @@ Replace homebrew bignum/bigflt with GNU GMP library and other layers:
 == Replace CGA dialogs with wxWidgets dialogs
 
 == Replace bitmap output with OpenGL output
+
+== Eliminate sstools.ini processing
+
+== Eliminate fractint.cfg processing
+
