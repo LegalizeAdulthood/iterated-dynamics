@@ -128,7 +128,7 @@ create a new fractint.exe - see notes in next section.
 Borland C++ 3.0 and 3.1 Users
 -----------------------------
 Rename the BCFRACT.PRJ and BCHELP.PRJ files to FRACTINT.PRJ and HC.PRJ.
-The project file will generate the FRACTINT.HLP file, but you will still
+The project file will generate the id.hlp file, but you will still
 have to run "hc /a" from the DOS command line to append the help
 information.
 
@@ -145,9 +145,9 @@ need to do anything special.
 
 TC++ users should:
   start by creating HC.EXE using the supplied HC.PRJ file
-  run "hc /c" to create the file FRACTINT.HLP
+  run "hc /c" to create the file id.hlp
   each time you create a new fractint.exe, afterward run "hc /a" to append
-    FRACTINT.HLP to the new FRACTINT.EXE
+    id.hlp to the new id.exe
 
 You don't need to understand the rest of this section unless you have a
 problem.
@@ -159,8 +159,8 @@ The program HC.C ("help compiler") is used to convert the help text into
 the form Fractint uses at run time.
 
 Running "hc /c" compiles HELPx.SRC.  It produces the file HELPDEFS.H for
-use when compiling Fractint, and the file FRACTINT.HLP.
-Running "hc /a" appends the FRACTINT.HLP file to FRACTINT.EXE to make the
+use when compiling Fractint, and the file id.hlp.
+Running "hc /a" appends the id.hlp file to FRACTINT.EXE to make the
 compiled help info available at run time.
 
 

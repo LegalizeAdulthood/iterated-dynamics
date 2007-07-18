@@ -113,9 +113,9 @@ extern int _splitpath(char *,char *,char *,char *,char *);
 
 
 #define DEFAULT_SRC_FNAME "help.src"
-#define DEFAULT_HLP_FNAME "fractint.hlp"
-#define DEFAULT_EXE_FNAME "fractint.exe"
-#define DEFAULT_DOC_FNAME "fractint.doc"
+#define DEFAULT_HLP_FNAME "id.hlp"
+#define DEFAULT_EXE_FNAME "id.exe"
+#define DEFAULT_DOC_FNAME "id.doc"
 
 #define TEMP_FNAME        "HC.$$$"
 #define SWAP_FNAME        "HCSWAP.$$$"

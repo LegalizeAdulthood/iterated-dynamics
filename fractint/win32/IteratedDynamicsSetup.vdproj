@@ -1104,8 +1104,8 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_47A793E1D9424266A6583B4B25C74965"
             {
-            "SourcePath" = "8:..\\FRACTINT.HLP"
-            "TargetName" = "8:FRACTINT.HLP"
+            "SourcePath" = "8:..\\id.hlp"
+            "TargetName" = "8:id.hlp"
             "Tag" = "8:"
             "Folder" = "8:_B98CDCDD524A40CD961F23015E415823"
             "Condition" = "8:"

@@ -3,7 +3,7 @@
 ;
 ;
 ~HdrFile=HELPDEFS.H
-~HlpFile=FRACTINT.HLP
+~HlpFile=id.hlp
 ~Version=100
 ~FormatExclude=8
 ;
@@ -2123,11 +2123,11 @@ Uses simpler keyboard handling, which makes debugging easier.
 
 Common problems:
 
-If you get the message "Couldn't find fractint.hlp", you can\
+If you get the message "Couldn't find id.hlp", you can\
 a) Do "setenv FRACTDIR /foo", replacing /foo with the directory containing
-fractint.hlp.\
-b) Run Xfractint from the directory containing fractint.hlp, or\
-c) Copy fractint.hlp to /usr/local/bin/X11/fractint
+id.hlp.\
+b) Run Xfractint from the directory containing id.hlp, or\
+c) Copy id.hlp to /usr/local/bin/X11/fractint
 
 If you get the message "Invalid help signature", the problem is due to
 byteorder.  You are probably using a Sun help file on a Dec machine or
