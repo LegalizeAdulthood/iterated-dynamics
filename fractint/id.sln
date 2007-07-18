@@ -9,7 +9,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "id", "id.vcproj", "{63F5EF2
 		{92025993-C759-4969-8093-3361B2DC4832} = {92025993-C759-4969-8093-3361B2DC4832}
 	EndProjectSection
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "FractIntSetup", "win32\FractIntSetup.vdproj", "{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "IteratedDynamicsSetup", "win32\IteratedDynamicsSetup.vdproj", "{9A565A3C-CAB7-4C1A-8A69-7DF7676FDE4A}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
