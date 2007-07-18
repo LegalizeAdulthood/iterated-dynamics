@@ -6,11 +6,11 @@
 #endif
 #endif
 
-/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
 #include "fractype.h"
+
 #include "calcfrac.h"
 #include "fracsubr.h"
 #include "fractals.h"
