@@ -118,6 +118,7 @@ Replace homebrew bignum/bigflt with GNU GMP library and other layers:
   to implement complex bignums.
 
 == Replace sound output with cross-platform sound library
+   <http://www.portaudio.com>
 
 == Refactor g_current_fractal_specific and g_fractal_specific to be const, read-only
 
@@ -125,3 +126,11 @@ Replace homebrew bignum/bigflt with GNU GMP library and other layers:
    for each prompt:
 		'#' implies %-12lu formatting (unsigned integer),
 		'+' implies %-12d formatting (signed integer)
+
+== Replace .HLP help system with HTML-based system with wxWidgets
+
+== Convert application to wxWidgets
+
+== Replace CGA dialogs with wxWidgets dialogs
+
+== Replace bitmap output with OpenGL output
