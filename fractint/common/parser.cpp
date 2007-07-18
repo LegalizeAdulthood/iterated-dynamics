@@ -318,7 +318,7 @@ void Formula::set_filename(const char *value)
 
 void Formula::set_formula(const char *value)
 {
-	::strncpy(m_formula_name, value, NUM_OF(m_formula_name));
+	::strncpy(m_formula_name, value ? value : "", NUM_OF(m_formula_name));
 }
 
 bool Formula::merge_formula_filename(char *new_filename, int mode)
