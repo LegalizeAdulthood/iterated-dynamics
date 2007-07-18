@@ -11,7 +11,6 @@
 
 #include <string.h>
 
-/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"

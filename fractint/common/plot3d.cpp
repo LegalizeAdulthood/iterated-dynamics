@@ -5,10 +5,10 @@
 */
 #include <assert.h>
 
-/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+
 #include "diskvid.h"
 #include "line3d.h"
 #include "loadmap.h"

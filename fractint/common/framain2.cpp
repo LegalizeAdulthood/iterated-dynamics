@@ -6,7 +6,6 @@
 #include <stdarg.h>
 #include <ctype.h>
 
-/* see Fractint.cpp for a description of the include hierarchy */
 #include "port.h"
 #include "fractint.h"
 #include "prototyp.h"

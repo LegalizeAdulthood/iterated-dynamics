@@ -2,7 +2,6 @@
 	History routines taken out of framain2.c to make them accessable
 	to WinFract */
 
-/* see Fractint.cpp for a description of the include hierarchy */
 #include <string.h>
 
 #include "port.h"
