@@ -1413,7 +1413,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Compiling help files"
-						CommandLine="cd help&#x0D;&#x0A;$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy id.hlp $(ProjectDir)&#x0D;&#x0A;"
+						CommandLine="cd help&#x0D;&#x0A;del helpdefs.h&#x0D;&#x0A;$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy id.hlp $(ProjectDir)&#x0D;&#x0A;"
 						AdditionalDependencies="help\help2.src;help\help3.src;help\help4.src;help\help5.src"
 						Outputs="headers\helpdefs.h;id.hlp;"
 					/>
@@ -1424,7 +1424,7 @@
 					<Tool
 						Name="VCCustomBuildTool"
 						Description="Compiling help files"
-						CommandLine="cd help&#x0D;&#x0A;$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy id.hlp $(ProjectDir)&#x0D;&#x0A;"
+						CommandLine="cd help&#x0D;&#x0A;del helpdefs.h&#x0D;&#x0A;$(ConfigurationName)\hc /c help.src&#x0D;&#x0A;copy helpdefs.h $(ProjectDir)headers&#x0D;&#x0A;copy id.hlp $(ProjectDir)&#x0D;&#x0A;"
 						AdditionalDependencies="help\help2.src;help\help3.src;help\help4.src;help\help5.src"
 						Outputs="headers\helpdefs.h;id.hlp;"
 					/>
