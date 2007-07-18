@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="fractint"
+	Name="id"
 	ProjectGUID="{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}"
-	RootNamespace="fractint"
+	RootNamespace="id"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -65,10 +65,10 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="gdi32.lib user32.lib shlwapi.lib"
-				OutputFile="$(OutDir)/fractint.exe"
+				OutputFile="$(OutDir)/id.exe"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				ProgramDatabaseFile="$(OutDir)/fractint.pdb"
+				ProgramDatabaseFile="$(OutDir)/id.pdb"
 				SubSystem="2"
 				TargetMachine="1"
 			/>
@@ -142,7 +142,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="gdi32.lib user32.lib shlwapi.lib dbghelp.lib"
-				OutputFile="$(OutDir)/fractint.exe"
+				OutputFile="$(OutDir)/id.exe"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="2"
