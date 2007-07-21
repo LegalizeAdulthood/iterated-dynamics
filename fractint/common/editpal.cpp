@@ -383,11 +383,11 @@ static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, 
 		else
 		{
 			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-				(int) (p1->red   + pow(curr/(double)(num-1), (double) s_gamma_val)*num*rm));
+				(int) (p1->red   + pow(curr/(double)(num-1), double(s_gamma_val))*num*rm));
 			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-				(int) (p1->green + pow(curr/(double)(num-1), (double) s_gamma_val)*num*gm));
+				(int) (p1->green + pow(curr/(double)(num-1), double(s_gamma_val))*num*gm));
 			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-				(int) (p1->blue  + pow(curr/(double)(num-1), (double) s_gamma_val)*num*bm));
+				(int) (p1->blue  + pow(curr/(double)(num-1), double(s_gamma_val))*num*bm));
 		}
 	}
 }
@@ -886,6 +886,7 @@ static void move_box_move(move_box *me, int key)
 	int xoff = 0;
 	int yoff = 0;
 
+	// TODO: refactor to IInputContext
 	while (!done)
 	{
 		switch (key)
@@ -1186,6 +1187,7 @@ static int color_editor_edit(color_editor *me)
 #ifdef XFRACT
 	cursor_start_mouse_tracking();
 #endif
+	// TODO: refactor to IInputContext
 	while (!me->done)
 	{
 		cursor_wait_key();

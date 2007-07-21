@@ -248,7 +248,7 @@ int SoundState::sound_on(int freq)
 
 	if (m_flags & 64)
 	{
-		freq = (int) (exp(((double) note/12.0)*log(2.0))*8.176);
+		freq = (int) (exp((double(note)/12.0)*log(2.0))*8.176);
 	}
 	/* pitch quantize note for FM and speaker */
 
@@ -607,11 +607,11 @@ void SoundState::old_orbit(int i, int j)
 {
 	if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 	{
-		tone((int)(i*1000/g_x_dots + m_base_hertz));
+		tone(int(i*1000/g_x_dots + m_base_hertz));
 	}
 	else if ((m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
 	{
-		tone((int)(j*1000/g_y_dots + m_base_hertz));
+		tone(int(j*1000/g_y_dots + m_base_hertz));
 	}
 	else if (g_orbit_delay > 0)
 	{

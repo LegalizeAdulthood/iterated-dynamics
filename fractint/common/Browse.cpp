@@ -215,23 +215,23 @@ static bool is_visible_window(struct window *list, fractal_info *info,
 		see above */
 	CoordinateD tl;
 	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, tl);
-	list->itl.x = (int)(tl.x + 0.5);
-	list->itl.y = (int)(tl.y + 0.5);
+	list->itl.x = int(tl.x + 0.5);
+	list->itl.y = int(tl.y + 0.5);
 
 	CoordinateD tr;
 	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, tr);
-	list->itr.x = (int)(tr.x + 0.5);
-	list->itr.y = (int)(tr.y + 0.5);
+	list->itr.x = int(tr.x + 0.5);
+	list->itr.y = int(tr.y + 0.5);
 
 	CoordinateD bl;
 	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, bl);
-	list->ibl.x = (int)(bl.x + 0.5);
-	list->ibl.y = (int)(bl.y + 0.5);
+	list->ibl.x = int(bl.x + 0.5);
+	list->ibl.y = int(bl.y + 0.5);
 
 	CoordinateD br;
 	is_visible_window_corner(*info, bt_x, bt_y, bt_xmin, bt_xmax, bt_ymin, bt_ymax, bt_x3rd, bt_y3rd, br);
-	list->ibr.x = (int)(br.x + 0.5);
-	list->ibr.y = (int)(br.y + 0.5);
+	list->ibr.x = int(br.x + 0.5);
+	list->ibr.y = int(br.y + 0.5);
 
 	double tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
 	list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */
@@ -705,6 +705,7 @@ rescan:  /* entry for changed browse parms */
 #ifdef XFRACT
 			blinks = 1;
 #endif
+			// TODO: refactor to IInputContext
 			while (!driver_key_pressed())
 			{
 				time(&thistime);

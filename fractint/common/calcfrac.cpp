@@ -543,7 +543,7 @@ int calculate_fractal()
 	}
 	else
 	{
-		g_next_saved_incr = (int) log10((double) g_max_iteration); /* works better than log() */
+		g_next_saved_incr = int(log10(double(g_max_iteration))); /* works better than log() */
 		if (g_next_saved_incr < 4)
 		{
 			g_next_saved_incr = 4; /* maintains image with low iterations */
@@ -611,9 +611,9 @@ int calculate_fractal()
 					altern = g_ranges[i++];    /* sub-range iterations */
 					numval = g_ranges[i++];
 				}
-				if ((numval > (int) g_max_log_table_size) || (i >= g_ranges_length))
+				if ((numval > int(g_max_log_table_size)) || (i >= g_ranges_length))
 				{
-					numval = (int) g_max_log_table_size;
+					numval = int(g_max_log_table_size);
 				}
 				while (l <= numval)
 				{
@@ -1916,8 +1916,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		if (g_integer_fractal)       /* adjust integer fractals */
 		{
-			g_new_z.x = ((double) g_new_z_l.x)/g_fudge;
-			g_new_z.y = ((double) g_new_z_l.y)/g_fudge;
+			g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+			g_new_z.y = (double(g_new_z_l.y))/g_fudge;
 		}
 		else if (g_bf_math == BIGNUM)
 		{
@@ -2126,8 +2126,8 @@ plot_inside: /* we're "inside" */
 		{
 			if (g_integer_fractal)
 			{
-				g_new_z.x = ((double) g_new_z_l.x)/g_fudge;
-				g_new_z.y = ((double) g_new_z_l.y)/g_fudge;
+				g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+				g_new_z.y = (double(g_new_z_l.y))/g_fudge;
 			}
 			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
 		}
@@ -2142,7 +2142,7 @@ plot_inside: /* we're "inside" */
 		else if (g_inside == COLORMODE_Z_MAGNITUDE)
 		{
 			g_color_iter = (long) (g_integer_fractal ?
-				(((double) g_magnitude_l/g_fudge)*(g_max_iteration/2) + 1)
+				((double(g_magnitude_l)/g_fudge)*(g_max_iteration/2) + 1)
 				: ((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration/2) + 1));
 		}
 		else /* inside == -1 */
@@ -3425,13 +3425,13 @@ void PerformWorkList::setup_distance_estimator()
 	double aspect;
 	if (g_pseudo_x && g_pseudo_y)
 	{
-		aspect = (double) g_pseudo_y/(double) g_pseudo_x;
+		aspect = double(g_pseudo_y)/double(g_pseudo_x);
 		dxsize = g_pseudo_x-1;
 		dysize = g_pseudo_y-1;
 	}
 	else
 	{
-		aspect = (double) g_y_dots/(double) g_x_dots;
+		aspect = double(g_y_dots)/double(g_x_dots);
 		dxsize = g_x_dots-1;
 		dysize = g_y_dots-1;
 	}
@@ -3518,7 +3518,7 @@ void PerformWorkList::show_dot_start()
 	}
 	else
 	{
-		double dshowdot_width = (double) g_size_dot*g_x_dots/1024.0;
+		double dshowdot_width = double(g_size_dot)*g_x_dots/1024.0;
 		/*
 			Arbitrary sanity limit, however s_show_dot_width will
 			overflow if dshowdot width gets near 256.

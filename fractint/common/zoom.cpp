@@ -445,7 +445,7 @@ void zoom_box_resize(int steps)
 
 void zoom_box_change_i(int dw, int dd)
 {   /* change size by pixels */
-	chgboxf((double) dw/g_dx_size, (double) dd/g_dy_size );
+	chgboxf(double(dw)/g_dx_size, double(dd)/g_dy_size );
 }
 
 static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,

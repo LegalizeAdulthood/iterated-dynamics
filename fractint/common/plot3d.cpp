@@ -502,27 +502,27 @@ void plot_setup()
 	}
 	assert(g_plot_color_standard);
 
-	g_x_shift = (int) ((g_3d_state.x_shift()*(double) g_x_dots)/100);
-	g_y_shift = (int) ((g_3d_state.y_shift()*(double) g_y_dots)/100);
+	g_x_shift = (int) ((g_3d_state.x_shift()*double(g_x_dots))/100);
+	g_y_shift = (int) ((g_3d_state.y_shift()*double(g_y_dots))/100);
 	g_x_shift1 = g_x_shift;
 	g_y_shift1 = g_y_shift;
 
 	if (g_3d_state.glasses_type())
 	{
-		s_red_local_left  =   (int) ((g_3d_state.red().crop_left()*(double) g_x_dots)/100.0);
-		s_red_local_right =   (int) (((100 - g_3d_state.red().crop_right())*(double) g_x_dots)/100.0);
-		s_blue_local_left =   (int) ((g_3d_state.blue().crop_left()*(double) g_x_dots)/100.0);
-		s_blue_local_right =  (int) (((100 - g_3d_state.blue().crop_right())*(double) g_x_dots)/100.0);
+		s_red_local_left  =   (int) ((g_3d_state.red().crop_left()*double(g_x_dots))/100.0);
+		s_red_local_right =   (int) (((100 - g_3d_state.red().crop_right())*double(g_x_dots))/100.0);
+		s_blue_local_left =   (int) ((g_3d_state.blue().crop_left()*double(g_x_dots))/100.0);
+		s_blue_local_right =  (int) (((100 - g_3d_state.blue().crop_right())*double(g_x_dots))/100.0);
 		d_red_bright    =   (double) g_3d_state.red().bright()/100.0;
 		d_blue_bright   =   (double) g_3d_state.blue().bright()/100.0;
 
 		switch (g_which_image)
 		{
 		case WHICHIMAGE_RED:
-			g_x_shift  += (int) ((g_3d_state.eye_separation()*(double) g_x_dots)/200);
-			g_xx_adjust = (int) (((g_3d_state.x_trans() + g_3d_state.x_adjust())*(double) g_x_dots)/100);
-			g_x_shift1 -= (int) ((g_3d_state.eye_separation()*(double) g_x_dots)/200);
-			g_xx_adjust1 = (int) (((g_3d_state.x_trans() - g_3d_state.x_adjust())*(double) g_x_dots)/100);
+			g_x_shift  += (int) ((g_3d_state.eye_separation()*double(g_x_dots))/200);
+			g_xx_adjust = (int) (((g_3d_state.x_trans() + g_3d_state.x_adjust())*double(g_x_dots))/100);
+			g_x_shift1 -= (int) ((g_3d_state.eye_separation()*double(g_x_dots))/200);
+			g_xx_adjust1 = (int) (((g_3d_state.x_trans() - g_3d_state.x_adjust())*double(g_x_dots))/100);
 			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2 - g_x_dots;
@@ -541,9 +541,9 @@ void plot_setup()
 	}
 	else
 	{
-		g_xx_adjust = (int) ((g_3d_state.x_trans()*(double) g_x_dots)/100);
+		g_xx_adjust = (int) ((g_3d_state.x_trans()*double(g_x_dots))/100);
 	}
-	g_yy_adjust = (int) (-(g_3d_state.y_trans()*(double) g_y_dots)/100);
+	g_yy_adjust = (int) (-(g_3d_state.y_trans()*double(g_y_dots))/100);
 
 	if (g_map_set)
 	{

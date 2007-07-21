@@ -28,7 +28,7 @@
  ==    '*g_out_line()' for flexibility (in particular, 3D transformations)
  ==
  == 4) A call to 'driver_key_pressed()' has been added after the 'g_out_line()' calls
- ==    to check for the presenc of a key-press as a bail-out signal
+ ==    to check for the presence of a key-press as a bail-out signal
  ==
  == (Bert Tyler and Timothy Wegner)
  */
@@ -304,6 +304,7 @@ short decoder(short linewidth)
 							}
 							yskip = g_skip_y_dots;
 						}
+						// TODO: just do it all, don't abort in the middle anymore
 						if (driver_key_pressed())
 						{
 							return -1;
@@ -366,6 +367,7 @@ short decoder(short linewidth)
 					}
 					yskip = g_skip_y_dots;
 				}
+				// TODO: just do it all, don't abort in the middle anymore
 				if (driver_key_pressed())
 				{
 					return -1;

@@ -389,7 +389,7 @@ bf_t unsafe_inv_bf(bf_t r, bf_t n)
 	/* orig_bftmp1        = bftmp1; */
 
 	/* calculate new starting values */
-	g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; /* round up */
 	if (g_bn_length > orig_bnlength)
 	{
 		g_bn_length = orig_bnlength;
@@ -550,7 +550,7 @@ bf_t unsafe_sqrt_bf(bf_t r, bf_t n)
 	orig_n             = n;
 
 	/* calculate new starting values */
-	g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; /* round up */
 	if (g_bn_length > orig_bnlength)
 	{
 		g_bn_length = orig_bnlength;
@@ -694,7 +694,7 @@ bf_t unsafe_ln_bf(bf_t r, bf_t n)
 	orig_bftmp5        = bftmp5;
 
 	/* calculate new starting values */
-	g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; /* round up */
 	if (g_bn_length > orig_bnlength)
 	{
 		g_bn_length = orig_bnlength;
@@ -1002,7 +1002,7 @@ bf_t unsafe_atan_bf(bf_t r, bf_t n)
 	orig_bftmp3        = bftmp3;
 
 	/* calculate new starting values */
-	g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; /* round up */
 	if (g_bn_length > orig_bnlength)
 	{
 		g_bn_length = orig_bnlength;

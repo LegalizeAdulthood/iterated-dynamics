@@ -1683,8 +1683,8 @@ jumpout:
 	else
 	{
 		lyap = g_log_palette_mode
-			? -temp/((double) s_lyapunov_length*i)
-			: 1 - exp(temp/((double) s_lyapunov_length*i));
+			? -temp/(double(s_lyapunov_length)*i)
+			: 1 - exp(temp/(double(s_lyapunov_length)*i));
 		color = 1 + (int)(lyap*(g_colors-1));
 	}
 	return color;

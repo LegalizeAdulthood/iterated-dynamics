@@ -289,6 +289,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		for (offset = 0; offset < memorysize; offset++)
 		{
 			SetMemory(0, (U16)BLOCK_LEN, 1L, offset, s_disk_video_handle);
+			// TODO: just do it all, don't abort in the middle
 			if (driver_key_pressed())           /* user interrupt */
 			{
 				/* esc to cancel, else continue */

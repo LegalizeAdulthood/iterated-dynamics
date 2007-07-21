@@ -131,7 +131,7 @@ void calculate_bignum_lengths()
 
 	g_bf_length = g_bn_length + g_step_bn; /* one extra step for added precision */
 	g_rbf_length = g_bf_length + g_padding;
-	g_bf_decimals = (int)((g_bf_length-2)*LOG10_256);
+	g_bf_decimals = int((g_bf_length-2)*LOG10_256);
 }
 
 /************************************************************************/
@@ -436,7 +436,7 @@ bn_t alloc_stack(size_t size)
 /* Returns stack pointer offset so it can be saved.                            */
 int save_stack()
 {
-	return (int) (stack_ptr - bnroot);
+	return int(stack_ptr - bnroot);
 }
 
 /************************************************************************/
@@ -479,7 +479,7 @@ void init_bf_dec(int dec)
 		g_int_length = 1;
 	}
 	/* conservative estimate */
-	g_bn_length = g_int_length + (int)(g_decimals/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(g_decimals/LOG10_256) + 1; /* round up */
 	init_bf_2();
 }
 
@@ -511,7 +511,7 @@ void init_bf_length(int bnl)
 		g_int_length = 1;
 	}
 	/* conservative estimate */
-	g_decimals = (int)((g_bn_length-g_int_length)*LOG10_256);
+	g_decimals = int((g_bn_length-g_int_length)*LOG10_256);
 	init_bf_2();
 }
 

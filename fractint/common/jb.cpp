@@ -444,7 +444,7 @@ void standard_4d_fractal_set_orbit_calc(
 	g_fractal_specific[g_new_orbit_type].orbitcalc =
 			(g_parameters[3] == 0.0
 			&& g_debug_mode != DEBUGMODE_UNOPT_POWER
-			&& (double) g_c_exp == g_parameters[2])
+			&& double(g_c_exp) == g_parameters[2])
 		? orbit_function : complex_orbit_function;
 }
 

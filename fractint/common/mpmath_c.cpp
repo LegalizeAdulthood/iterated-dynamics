@@ -330,7 +330,7 @@ void SetupLogTable()
 		}
 		else if (g_log_palette_mode == LOGPALETTE_OLD)  /* old log function */
 		{
-			mlf = (g_colors - 1)/log((double) g_max_log_table_size);
+			mlf = (g_colors - 1)/log(double(g_max_log_table_size));
 		}
 		else if (g_log_palette_mode <= -2)  /* sqrt function */
 		{
