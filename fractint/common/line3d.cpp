@@ -253,8 +253,8 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 				*f_cur = s_f_bad;
 				return 1;
 			}
-			cur->x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
-			cur->y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
+			cur->x = int(((lv[0] + 32768L) >> 16) + g_xx_adjust);
+			cur->y = int(((lv[1] + 32768L) >> 16) + g_yy_adjust);
 		}
 		if (g_user_float_flag || g_overflow || g_3d_state.raytrace_output())
 		{
@@ -265,8 +265,8 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 			v[1] /= g_fudge;
 			v[2] /= g_fudge;
 			perspective(v);
-			cur->x = (int) (v[0] + .5 + g_xx_adjust);
-			cur->y = (int) (v[1] + .5 + g_yy_adjust);
+			cur->x = int(v[0] + .5 + g_xx_adjust);
+			cur->y = int(v[1] + .5 + g_yy_adjust);
 		}
 	}
 	/* mrr Not sure how this an 3rd if above relate */
@@ -275,8 +275,8 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		/* mrr Why the xx- and g_yy_adjust here and not above? */
 		f_cur->x = (float) (s_x_center + sin_theta*s_scale_x*(*r) + g_xx_adjust);
 		f_cur->y = (float) (s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r) + g_yy_adjust);
-		cur->x = (int) f_cur->x;
-		cur->y = (int) f_cur->y;
+		cur->x = int(f_cur->x);
+		cur->y = int(f_cur->y);
 		/* mrr why do we do this for filltype > 5? */
 		if (g_3d_state.fill_type() >= FillType::LightBefore || g_3d_state.raytrace_output())
 		{
@@ -313,8 +313,8 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 			return 1;
 		}
 
-		cur->x = (int) (((lv[0] + 32768L) >> 16) + g_xx_adjust);
-		cur->y = (int) (((lv[1] + 32768L) >> 16) + g_yy_adjust);
+		cur->x = int(((lv[0] + 32768L) >> 16) + g_xx_adjust);
+		cur->y = int(((lv[1] + 32768L) >> 16) + g_yy_adjust);
 		if (g_3d_state.fill_type() >= FillType::LightBefore && !g_overflow)
 		{
 			f_cur->x = (float) lv0[0];
@@ -354,8 +354,8 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 		{
 			perspective(v);
 		}
-		cur->x = (int) (v[0] + g_xx_adjust + .5);
-		cur->y = (int) (v[1] + g_yy_adjust + .5);
+		cur->x = int(v[0] + g_xx_adjust + .5);
+		cur->y = int(v[1] + g_yy_adjust + .5);
 
 		v[0] = 0;
 		v[1] = 0;
@@ -530,8 +530,8 @@ static void line3d_fill_bars(int col,
 	{
 		if (s_persp)
 		{
-			old->x = (int) (s_x_center >> 16);
-			old->y = (int) (s_y_center >> 16);
+			old->x = int(s_x_center >> 16);
+			old->y = int(s_y_center >> 16);
 		}
 		else
 		{
@@ -557,8 +557,8 @@ static void line3d_fill_bars(int col,
 		}
 
 		/* Round and g_fudge back to original  */
-		old->x = (int) ((lv[0] + 32768L) >> 16);
-		old->y = (int) ((lv[1] + 32768L) >> 16);
+		old->x = int((lv[0] + 32768L) >> 16);
+		old->y = int((lv[1] + 32768L) >> 16);
 	}
 	old->x = MathUtil::Clamp(old->x, 0, g_x_dots - 1);
 	old->y = MathUtil::Clamp(old->y, 0, g_y_dots - 1);
@@ -641,7 +641,7 @@ static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_in
 			/* dot product of unit vectors is cos of angle between */
 			/* we will use this value to shade surface */
 
-			cur->color = (int) (1 + (g_colors - 2) *
+			cur->color = int(1 + (g_colors - 2)*
 				(1.0 - DOT_PRODUCT(g_cross, s_light_direction)));
 		}
 		/* if colors out of range, set them to min or max color index
@@ -774,9 +774,9 @@ int out_line_3d(BYTE *pixels, int line_length)
 			int color_num = pixels[col];
 			/* TODO: the following does not work when COLOR_CHANNEL_MAX != 63 */
 			/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-			int pal = ((int) g_dac_box[color_num][0]*77 +
-					(int) g_dac_box[color_num][1]*151 +
-					(int) g_dac_box[color_num][2]*28);
+			int pal = (int(g_dac_box[color_num][0])*77 +
+					int(g_dac_box[color_num][1])*151 +
+					int(g_dac_box[color_num][2])*28);
 
 			pal >>= 6;
 			pixels[col] = (BYTE) pal;

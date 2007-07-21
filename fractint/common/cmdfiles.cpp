@@ -3400,7 +3400,7 @@ static int parse_colors(char *value)
 						int spread = smooth + 1;
 						int start = i - spread;
 						int cnum = 0;
-						if ((k - (int) g_dac_box[start][j]) == 0)
+						if ((k - int(g_dac_box[start][j])) == 0)
 						{
 							while (++cnum < spread)
 							{
