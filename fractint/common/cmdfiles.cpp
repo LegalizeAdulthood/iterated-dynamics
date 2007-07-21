@@ -3447,10 +3447,10 @@ static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 {
 	char msg[300];
 	char spillover[71];
-	if (int(strlen(bad_arg)) > 70)
+	if (int(strlen(bad_arg)) > NUM_OF(spillover) - 1)
 	{
-		strncpy(spillover, bad_arg, 70);
-		spillover[70] = 0;
+		strncpy(spillover, bad_arg, NUM_OF(spillover) - 1);
+		spillover[NUM_OF(spillover) - 1] = 0;
 		bad_arg = spillover;
 	}
 	sprintf(msg, "Oops. I couldn't understand the argument:\n  %s", bad_arg);
