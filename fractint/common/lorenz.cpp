@@ -376,8 +376,8 @@ int orbit_3d_setup()
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
 				goto lrwalk;
 			}
-			EnQueueLong((g_fudge + Sqrt.x) / 2,  Sqrt.y / 2);
-			EnQueueLong((g_fudge - Sqrt.x) / 2, -Sqrt.y / 2);
+			EnQueueLong((g_fudge + Sqrt.x)/2,  Sqrt.y/2);
+			EnQueueLong((g_fudge - Sqrt.x)/2, -Sqrt.y/2);
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:
 			if (Init_Queue((long)32*1024) == 0)
@@ -389,23 +389,23 @@ int orbit_3d_setup()
 			switch (g_minor_method)
 			{
 				case MINORMETHOD_LEFT_FIRST:
-					PushLong((g_fudge + Sqrt.x) / 2,  Sqrt.y / 2);
-					PushLong((g_fudge - Sqrt.x) / 2, -Sqrt.y / 2);
+					PushLong((g_fudge + Sqrt.x)/2,  Sqrt.y/2);
+					PushLong((g_fudge - Sqrt.x)/2, -Sqrt.y/2);
 					break;
 				case MINORMETHOD_RIGHT_FIRST:
-					PushLong((g_fudge - Sqrt.x) / 2, -Sqrt.y / 2);
-					PushLong((g_fudge + Sqrt.x) / 2,  Sqrt.y / 2);
+					PushLong((g_fudge - Sqrt.x)/2, -Sqrt.y/2);
+					PushLong((g_fudge + Sqrt.x)/2,  Sqrt.y/2);
 					break;
 			}
 			break;
 		case MAJORMETHOD_RANDOM_WALK:
 lrwalk:
-			g_new_z_l.x = s_init_orbit_long[0] = g_fudge + Sqrt.x / 2;
-			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y / 2;
+			g_new_z_l.x = s_init_orbit_long[0] = g_fudge + Sqrt.x/2;
+			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y/2;
 			break;
 		case MAJORMETHOD_RANDOM_RUN:
-			g_new_z_l.x = s_init_orbit_long[0] = g_fudge + Sqrt.x / 2;
-			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y / 2;
+			g_new_z_l.x = s_init_orbit_long[0] = g_fudge + Sqrt.x/2;
+			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y/2;
 			break;
 		}
 	}
@@ -568,8 +568,8 @@ int orbit_3d_setup_fp()
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
 				goto rwalk;
 			}
-			EnQueueFloat((float) ((1 + Sqrt.x) / 2), (float) (Sqrt.y / 2));
-			EnQueueFloat((float) ((1 - Sqrt.x) / 2), (float) (-Sqrt.y / 2));
+			EnQueueFloat((float) ((1 + Sqrt.x)/2), (float) (Sqrt.y/2));
+			EnQueueFloat((float) ((1 - Sqrt.x)/2), (float) (-Sqrt.y/2));
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:                      /* depth first (choose direction) */
 			if (Init_Queue((long)32*1024) == 0)
@@ -581,24 +581,24 @@ int orbit_3d_setup_fp()
 			switch (g_minor_method)
 			{
 			case MINORMETHOD_LEFT_FIRST:
-				PushFloat((float) ((1 + Sqrt.x) / 2), (float) (Sqrt.y / 2));
-				PushFloat((float) ((1 - Sqrt.x) / 2), (float) (-Sqrt.y / 2));
+				PushFloat((float) ((1 + Sqrt.x)/2), (float) (Sqrt.y/2));
+				PushFloat((float) ((1 - Sqrt.x)/2), (float) (-Sqrt.y/2));
 				break;
 			case MINORMETHOD_RIGHT_FIRST:
-				PushFloat((float) ((1 - Sqrt.x) / 2), (float) (-Sqrt.y / 2));
-				PushFloat((float) ((1 + Sqrt.x) / 2), (float) (Sqrt.y / 2));
+				PushFloat((float) ((1 - Sqrt.x)/2), (float) (-Sqrt.y/2));
+				PushFloat((float) ((1 + Sqrt.x)/2), (float) (Sqrt.y/2));
 				break;
 			}
 			break;
 		case MAJORMETHOD_RANDOM_WALK:
 rwalk:
-			g_new_z.x = s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
-			g_new_z.y = s_init_orbit_fp[1] = Sqrt.y / 2;
+			g_new_z.x = s_init_orbit_fp[0] = 1 + Sqrt.x/2;
+			g_new_z.y = s_init_orbit_fp[1] = Sqrt.y/2;
 			break;
 		case MAJORMETHOD_RANDOM_RUN:       /* random run, choose intervals */
 			g_major_method = MAJORMETHOD_RANDOM_RUN;
-			g_new_z.x = s_init_orbit_fp[0] = 1 + Sqrt.x / 2;
-			g_new_z.y = s_init_orbit_fp[1] = Sqrt.y / 2;
+			g_new_z.x = s_init_orbit_fp[0] = 1 + Sqrt.x/2;
+			g_new_z.y = s_init_orbit_fp[1] = Sqrt.y/2;
 			break;
 		}
 	}
@@ -1030,10 +1030,10 @@ int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
 
 	/* 3-lobe Lorenz */
 	norm = sqrt((*x)*(*x) + (*y)*(*y));
-	s_dx   = (-(s_adt + s_dt)*(*x) + (s_adt-s_bdt + s_zdt)*(*y)) / 3 +
+	s_dx   = (-(s_adt + s_dt)*(*x) + (s_adt-s_bdt + s_zdt)*(*y))/3 +
 			((s_dt-s_adt)*((*x)*(*x)-(*y)*(*y)) +
 			2*(s_bdt + s_adt-s_zdt)*(*x)*(*y))/(3*norm);
-	s_dy   = ((s_bdt-s_adt-s_zdt)*(*x) - (s_adt + s_dt)*(*y)) / 3 +
+	s_dy   = ((s_bdt-s_adt-s_zdt)*(*x) - (s_adt + s_dt)*(*y))/3 +
 			(2*(s_adt-s_dt)*(*x)*(*y) +
 			(s_bdt + s_adt-s_zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
 	s_dz   = (3*s_xdt*(*x)*(*y)-s_ydt*(*y)*(*y))/2 - s_cdt*(*z);
@@ -1666,7 +1666,7 @@ int orbit_2d()
 		}
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double) *p0/g_fudge, (double) *p1/g_fudge, 0.0);
+			fprintf(fp, "%g %g %g 15\n", double(*p0)/g_fudge, double(*p1)/g_fudge, 0.0);
 		}
 	}
 	if (fp)
@@ -1733,7 +1733,10 @@ static int orbit_3d_calc()
 		LORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double)inf.orbit[0]/g_fudge, (double)inf.orbit[1]/g_fudge, (double)inf.orbit[2]/g_fudge);
+			fprintf(fp, "%g %g %g 15\n",
+				double(inf.orbit[0])/g_fudge,
+				double(inf.orbit[1])/g_fudge,
+				double(inf.orbit[2])/g_fudge);
 		}
 		if (threed_view_trans(&inf))
 		{
@@ -2039,8 +2042,8 @@ int dynamic_2d_fp()
 
 		xpixel = g_dx_size*(xstep + .5)/s_d;
 		ypixel = g_dy_size*(ystep + .5)/s_d;
-		x = (double) ((g_escape_time_state.m_grid_fp.x_min() + g_escape_time_state.m_grid_fp.delta_x()*xpixel) + (g_escape_time_state.m_grid_fp.delta_x2()*ypixel));
-		y = (double) ((g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.delta_y()*ypixel) + (-g_escape_time_state.m_grid_fp.delta_y2()*xpixel));
+		x = double((g_escape_time_state.m_grid_fp.x_min() + g_escape_time_state.m_grid_fp.delta_x()*xpixel) + (g_escape_time_state.m_grid_fp.delta_x2()*ypixel));
+		y = double((g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.delta_y()*ypixel) + (-g_escape_time_state.m_grid_fp.delta_y2()*xpixel));
 		z = 0.0;
 		if (g_fractal_type == FRACTYPE_MANDELBROT_CLOUD)
 		{
@@ -2511,7 +2514,7 @@ static int ifs_2d()
 		}
 	}
 
-	tempr = g_fudge / 32767;        /* find the proper rand() g_fudge */
+	tempr = g_fudge/32767;        /* find the proper rand() g_fudge */
 
 	fp = open_orbit_save();
 
@@ -2621,7 +2624,7 @@ static int ifs_3d_long()
 		}
 	}
 
-	tempr = g_fudge / 32767;        /* find the proper rand() g_fudge */
+	tempr = g_fudge/32767;        /* find the proper rand() g_fudge */
 
 	inf.orbit[0] = 0;
 	inf.orbit[1] = 0;
@@ -2739,13 +2742,9 @@ static void setup_matrix(MATRIX doublemat)
 
 	/* apply rotations - uses the same rotation variables as line3d.c */
 	const double scale_factor = 57.29577;
-	xrot((double) g_3d_state.x_rotation()/scale_factor, doublemat);
-	yrot((double) g_3d_state.y_rotation()/scale_factor, doublemat);
-	zrot((double) g_3d_state.z_rotation()/scale_factor, doublemat);
-
-	/* apply scale */
-/*   scale((double)g_3d_state.x_scale()/100.0, (double)g_3d_state.y_scale()/100.0, double(ROUGH)/100.0, doublemat); */
-
+	xrot(double(g_3d_state.x_rotation())/scale_factor, doublemat);
+	yrot(double(g_3d_state.y_rotation())/scale_factor, doublemat);
+	zrot(double(g_3d_state.z_rotation())/scale_factor, doublemat);
 }
 
 static int orbit_3d_aux(int (*orbit)())
@@ -2833,7 +2832,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 
 			/* z value of user's eye - should be more negative than extreme
 								negative part of image */
-			inf->iview[2] = (long) ((inf->minvals[2]-inf->maxvals[2])*(double)g_3d_state.z_viewer()/100.0);
+			inf->iview[2] = (long) ((inf->minvals[2]-inf->maxvals[2])*double(g_3d_state.z_viewer())/100.0);
 
 			/* center image on origin */
 			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); /* center x */
@@ -2842,7 +2841,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 			/* apply perspective shift */
 			tmpx += (double(g_x_shift)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
 			tmpy += (double(g_y_shift)*g_escape_time_state.m_grid_fp.height())/g_y_dots;
-			tmpz = -((double) inf->maxvals[2])/g_fudge;
+			tmpz = -(double(inf->maxvals[2]))/g_fudge;
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
 			if (s_real_time)
@@ -2853,12 +2852,12 @@ static int threed_view_trans(threed_vt_inf *inf)
 
 				tmpx += (double(g_x_shift1)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
 				tmpy += (double(g_y_shift1)*g_escape_time_state.m_grid_fp.height())/g_y_dots;
-				tmpz = -((double) inf->maxvals[2])/g_fudge;
+				tmpz = -(double(inf->maxvals[2]))/g_fudge;
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
 			for (i = 0; i < 3; i++)
 			{
-				g_view[i] = (double)inf->iview[i] / g_fudge;
+				g_view[i] = double(inf->iview[i])/g_fudge;
 			}
 
 			/* copy xform matrix to long for for fixed point math */
@@ -2886,7 +2885,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 			VECTOR tmpv;
 			for (i = 0; i < 3; i++)
 			{
-				tmpv[i] = (double)inf->viewvect[i] / g_fudge;
+				tmpv[i] = double(inf->viewvect[i])/g_fudge;
 			}
 			perspective(tmpv);
 			for (i = 0; i < 3; i++)
@@ -2897,7 +2896,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 			{
 				for (i = 0; i < 3; i++)
 				{
-					tmpv[i] = (double)inf->viewvect1[i] / g_fudge;
+					tmpv[i] = double(inf->viewvect1[i])/g_fudge;
 				}
 				perspective(tmpv);
 				for (i = 0; i < 3; i++)
@@ -3000,7 +2999,7 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 			g_view[0] = g_view[1] = 0; /* center on origin */
 			/* z value of user's eye - should be more negative than extreme
 									negative part of image */
-			g_view[2] = (inf->minvals[2]-inf->maxvals[2])*(double)g_3d_state.z_viewer()/100.0;
+			g_view[2] = (inf->minvals[2]-inf->maxvals[2])*double(g_3d_state.z_viewer())/100.0;
 
 			/* center image on origin */
 			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */

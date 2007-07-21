@@ -257,9 +257,9 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 	{
 		color = g_colors - color; /*  Reverses color order */
 		color = (g_max_colors == 236) ?
-			(1 + color / 21) /*  Maps colors 1-255 to 13 even ranges */
+			(1 + color/21) /*  Maps colors 1-255 to 13 even ranges */
 			: 
-			(1 + color / 18); /*  Maps colors 1-255 to 15 even ranges */
+			(1 + color/18); /*  Maps colors 1-255 to 15 even ranges */
 	}
 
 	tmp = getcolor(x, y);
@@ -318,9 +318,9 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 		/* my mind is fried - lower indices = darker colors is EASIER! */
 		color = g_colors - color; /*  Reverses color order */
 		color = (g_max_colors == 236) ?
-			(1 + color / 21) /*  Maps colors 1-255 to 13 even ranges */
+			(1 + color/21) /*  Maps colors 1-255 to 13 even ranges */
 			:
-			(1 + color / 18); /*  Looks weird but maps colors 1-255 to 15
+			(1 + color/18); /*  Looks weird but maps colors 1-255 to 15
 								relatively even ranges */
 	}
 
@@ -525,7 +525,7 @@ void plot_setup()
 			g_xx_adjust1 = (int) (((g_3d_state.x_trans() - g_3d_state.x_adjust())*double(g_x_dots))/100);
 			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
-				g_sx_offset = g_screen_width / 2 - g_x_dots;
+				g_sx_offset = g_screen_width/2 - g_x_dots;
 			}
 			break;
 
@@ -534,7 +534,7 @@ void plot_setup()
 			g_xx_adjust = (int) (((g_3d_state.x_trans() - g_3d_state.x_adjust())* double(g_x_dots))/100);
 			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
-				g_sx_offset = g_screen_width / 2;
+				g_sx_offset = g_screen_width/2;
 			}
 			break;
 		}

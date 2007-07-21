@@ -94,7 +94,7 @@ void SetAspect(double aspect)
 	{
 		if (aspect > 1.0)
 		{
-			yAspect = (unsigned int)(65536.0 / aspect);
+			yAspect = (unsigned int)(65536.0/aspect);
 		}
 		else
 		{
@@ -293,7 +293,7 @@ int Init_Queue(unsigned long request)
 	if (xmmquery() && g_debug_mode != DEBUGMODE_USE_DISK)  /* use LARGEST extended mem */
 	{
 		largest = xmmlongest();
-		if (largest > request / 128)
+		if (largest > request/128)
 		{
 			request   = (unsigned long) largest*128L;
 		}
@@ -629,12 +629,12 @@ void Jiim(int which)         /* called by fractint */
 		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
 			the physical screen */
 		windows = 0; /* full screen or large view window */
-		xd = g_screen_width / 3;
-		yd = g_screen_height / 3;
+		xd = g_screen_width/3;
+		yd = g_screen_height/3;
 		xc = xd*2;
 		yc = yd*2;
-		xoff = xd*5 / 2;
-		yoff = yd*5 / 2;
+		xoff = xd*5/2;
+		yoff = yd*5/2;
 	}
 	else if (g_x_dots > g_screen_width/3 && g_y_dots > g_screen_height/3)
 	{
@@ -975,10 +975,10 @@ void Jiim(int which)         /* called by fractint */
 				ComplexD Sqrt;        /* Fixed points of Julia */
 
 				Sqrt = ComplexSqrtFloat(1 - 4*cr, -4*ci);
-				f1.x = (1 + Sqrt.x) / 2;
-				f2.x = (1 - Sqrt.x) / 2;
-				f1.y =  Sqrt.y / 2;
-				f2.y = -Sqrt.y / 2;
+				f1.x = (1 + Sqrt.x)/2;
+				f2.x = (1 - Sqrt.x)/2;
+				f1.y =  Sqrt.y/2;
+				f2.y = -Sqrt.y/2;
 
 				ClearQueue();
 				maxhits = 1;
@@ -994,7 +994,7 @@ void Jiim(int which)         /* called by fractint */
 			{
 				RestoreRect(xc, yc, xd, yd);
 				xc = (xc == xd*2) ? 2 : xd*2;
-				xoff = xc + xd /  2;
+				xoff = xc + xd/2;
 				SaveRect(xc, yc, xd, yd);
 			}
 			if (windows == 2)

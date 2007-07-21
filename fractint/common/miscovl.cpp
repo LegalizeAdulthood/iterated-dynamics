@@ -601,10 +601,10 @@ skip_UI:
 			{
 				m_xm = m_ym = 0;
 			}
-			m_pdelx  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd()) / (m_xm*m_pxdots - 1);   /* calculate stepsizes */
-			m_pdely  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd()) / (m_ym*m_pydots - 1);
-			m_pdelx2 = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min()) / (m_ym*m_pydots - 1);
-			m_pdely2 = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min()) / (m_xm*m_pxdots - 1);
+			m_pdelx  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/(m_xm*m_pxdots - 1);   /* calculate stepsizes */
+			m_pdely  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/(m_ym*m_pydots - 1);
+			m_pdelx2 = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/(m_ym*m_pydots - 1);
+			m_pdely2 = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/(m_xm*m_pxdots - 1);
 
 			/* save corners */
 			m_pxxmin = g_escape_time_state.m_grid_fp.x_min();
@@ -867,7 +867,7 @@ void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
 	/* Don't round Xmagfactor if it's small */
 	if (fabs(Xmagfactor) > 0.5) /* or so, exact value isn't important */
 	{
-		Xmagfactor = (sign(Xmagfactor)*(long)(fabs(Xmagfactor)*1e4 + 0.5)) / 1e4;
+		Xmagfactor = (sign(Xmagfactor)*(long)(fabs(Xmagfactor)*1e4 + 0.5))/1e4;
 	}
 	/* Just truncate these angles.  Who cares about 1/1000 of a degree */
 	/* Somebody does.  Some rotated and/or skewed images are slightly */

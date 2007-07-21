@@ -273,7 +273,7 @@ int get_toggles()
 	}
 	if (g_inside >= g_colors)
 	{
-		g_inside = (g_inside % g_colors) + (g_inside / g_colors);
+		g_inside = (g_inside % g_colors) + (g_inside/g_colors);
 	}
 
 	{
@@ -308,7 +308,7 @@ int get_toggles()
 	}
 	if (g_outside >= g_colors)
 	{
-		g_outside = (g_outside % g_colors) + (g_outside / g_colors);
+		g_outside = (g_outside % g_colors) + (g_outside/g_colors);
 	}
 	{
 		int tmp = dialog.values(++k).uval.ch.val;
@@ -349,7 +349,7 @@ int get_toggles()
 	g_user_biomorph = dialog.values(++k).uval.ival;
 	if (g_user_biomorph >= g_colors)
 	{
-		g_user_biomorph = (g_user_biomorph % g_colors) + (g_user_biomorph / g_colors);
+		g_user_biomorph = (g_user_biomorph % g_colors) + (g_user_biomorph/g_colors);
 	}
 	if (g_user_biomorph != old_biomorph)
 	{
@@ -376,7 +376,7 @@ int get_toggles()
 	}
 	if (g_fill_color >= g_colors)
 	{
-		g_fill_color = (g_fill_color % g_colors) + (g_fill_color / g_colors);
+		g_fill_color = (g_fill_color % g_colors) + (g_fill_color/g_colors);
 	}
 	if (g_fill_color != old_fill_color)
 	{
@@ -864,7 +864,7 @@ int starfield()
 	}
 
 	g_gaussian_distribution = (int)(starfield_values[0]);
-	g_gaussian_constant  = (long)(((starfield_values[1]) / 100.0)*(1L << 16));
+	g_gaussian_constant  = (long)(((starfield_values[1])/100.0)*(1L << 16));
 	g_gaussian_slope = (int)(starfield_values[2]);
 
 	if (validate_luts(g_grey_file) != 0)

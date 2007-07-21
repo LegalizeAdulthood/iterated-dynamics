@@ -517,7 +517,7 @@ int plasma()
 	{
 		s_iparm_x = 800;
 	}
-	g_parameters[0] = double(s_iparm_x) / 8.0;  /* let user know what was used */
+	g_parameters[0] = double(s_iparm_x)/8.0;  /* let user know what was used */
 	if (g_parameters[1] < 0) /* limit parameter values  */
 	{
 		g_parameters[1] = 0;
@@ -759,15 +759,15 @@ int diffusion()
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL:
-		x_max = g_x_dots / 2 + border;  /* Initial box */
-		x_min = g_x_dots / 2 - border;
-		y_max = g_y_dots / 2 + border;
-		y_min = g_y_dots / 2 - border;
+		x_max = g_x_dots/2 + border;  /* Initial box */
+		x_min = g_x_dots/2 - border;
+		y_max = g_y_dots/2 + border;
+		y_min = g_y_dots/2 - border;
 		break;
 
 	case DIFFUSION_LINE:
-		x_max = g_x_dots / 2 + border;  /* Initial box */
-		x_min = g_x_dots / 2 - border;
+		x_max = g_x_dots/2 + border;  /* Initial box */
+		x_min = g_x_dots/2 - border;
 		y_min = g_y_dots - border;
 		break;
 
@@ -795,7 +795,7 @@ int diffusion()
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL: /* Single seed point in the center */
-		g_plot_color_put_color(g_x_dots / 2, g_y_dots / 2, currentcolor);
+		g_plot_color_put_color(g_x_dots/2, g_y_dots/2, currentcolor);
 		break;
 	case DIFFUSION_LINE: /* Line along the bottom */
 		for (i = 0; i <= g_x_dots; i++)
@@ -832,7 +832,7 @@ int diffusion()
 		switch (mode)
 		{
 		case DIFFUSION_CENTRAL: /* Release new point on a circle inside the box */
-			angle = 2*(double)rand()/(RAND_MAX/MathUtil::Pi);
+			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
 			x = (int)(cosine*(x_max-x_min) + g_x_dots);
 			y = (int)(sine  *(y_max-y_min) + g_y_dots);
@@ -845,7 +845,7 @@ int diffusion()
 			break;
 		case DIFFUSION_SQUARE: /* Release new point on a circle inside the box with radius
 					given by the radius variable */
-			angle = 2*(double)rand()/(RAND_MAX/MathUtil::Pi);
+			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
 			x = (int)(cosine*radius + g_x_dots);
 			y = (int)(sine  *radius + g_y_dots);
@@ -1084,7 +1084,7 @@ int bifurcation()
 	s_half_time_check = false;
 	if (g_periodicity_check && (unsigned long)g_max_iteration < s_filter_cycles)
 	{
-		s_filter_cycles = (s_filter_cycles - g_max_iteration + 1) / 2;
+		s_filter_cycles = (s_filter_cycles - g_max_iteration + 1)/2;
 		s_half_time_check = true;
 	}
 
@@ -1094,7 +1094,7 @@ int bifurcation()
 	}
 	else
 	{
-		g_initial_z.y = (double)(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_escape_time_state.m_grid_fp.delta_y()); /* bottom pixels */
+		g_initial_z.y = double(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_escape_time_state.m_grid_fp.delta_y()); /* bottom pixels */
 	}
 
 	while (column <= g_x_stop)
@@ -1113,7 +1113,7 @@ int bifurcation()
 		}
 		else
 		{
-			s_rate = (double)(g_escape_time_state.m_grid_fp.x_min() + column*g_escape_time_state.m_grid_fp.delta_x());
+			s_rate = double(g_escape_time_state.m_grid_fp.x_min() + column*g_escape_time_state.m_grid_fp.delta_x());
 		}
 		verhulst();        /* calculate array once per column */
 
@@ -1210,8 +1210,8 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = g_integer_fractal
-			? (g_y_stop - (int)((s_population_l - g_initial_z_l.y) / g_escape_time_state.m_grid_l.delta_y()))
-			: (g_y_stop - (int)((s_population - g_initial_z.y) / g_escape_time_state.m_grid_fp.delta_y()));
+			? (g_y_stop - (int)((s_population_l - g_initial_z_l.y)/g_escape_time_state.m_grid_l.delta_y()))
+			: (g_y_stop - (int)((s_population - g_initial_z.y)/g_escape_time_state.m_grid_fp.delta_y()));
 
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)g_y_stop)
@@ -1234,12 +1234,12 @@ static void bifurcation_period_init()
 	if (g_integer_fractal)
 	{
 		s_bifurcation_saved_population_l = -1;
-		s_bifurcation_close_enough_l = g_escape_time_state.m_grid_l.delta_y() / 8;
+		s_bifurcation_close_enough_l = g_escape_time_state.m_grid_l.delta_y()/8;
 	}
 	else
 	{
 		s_bifurcation_saved_population = -1.0;
-		s_bifurcation_close_enough = (double) g_escape_time_state.m_grid_fp.delta_y() / 8.0;
+		s_bifurcation_close_enough = double(g_escape_time_state.m_grid_fp.delta_y())/8.0;
 	}
 }
 
@@ -1401,7 +1401,7 @@ int bifurcation_lambda_trig()
 
 int bifurcation_may_fp()
 {
-	/* X = (lambda * X) / (1 + X)^s_beta, from R.May as described in Pickover,
+	/* X = (lambda * X)/(1 + X)^s_beta, from R.May as described in Pickover,
 				Computers, Pattern, Chaos, and Beauty, page 153 */
 	g_temp_z.x = 1.0 + s_population;
 	g_temp_z.x = pow(g_temp_z.x, -s_beta); /* pow in math.h included with mpmath.h */
@@ -1741,7 +1741,7 @@ static void abort_cellular(int err, int t)
 	case RULELENGTH:
 		{
 			static char msg[] = {"Rule must be    digits long" };
-			i = s_rule_digits / 10;
+			i = s_rule_digits/10;
 			if (i == 0)
 			{
 				msg[14] = (char)(s_rule_digits + 48);
@@ -1813,7 +1813,7 @@ int cellular()
 	}
 
 	s_r = (S16)(kr % 10); /* Number of nearest neighbors to sum */
-	k = (U16)(kr / 10); /* Number of different states, k = 3 has states 0, 1, 2 */
+	k = (U16)(kr/10); /* Number of different states, k = 3 has states 0, 1, 2 */
 	s_k_1 = (S16)(k - 1); /* Highest state value, k = 3 has highest state value of 2 */
 	s_rule_digits = (S16)((s_r*2 + 1)*s_k_1 + 1); /* Number of digits in the rule */
 
@@ -2236,7 +2236,7 @@ int froth_setup()
 	}
 
 	/* if 2 attractors, use same shades as 3 attractors */
-	s_frothy_data.shades = (g_colors-1) / max(3, s_frothy_data.attractors);
+	s_frothy_data.shades = (g_colors-1)/max(3, s_frothy_data.attractors);
 
 	/* g_rq_limit needs to be at least sq(1 + sqrt(1 + sq(a))), */
 	/* which is never bigger than 6.93..., so we'll call it 7.0 */
@@ -2538,7 +2538,7 @@ int froth_calc()   /* per pixel 1/2/g, called with row & col set */
 			}
 			else
 			{
-				g_color_iter = s_frothy_data.shades*g_color_iter / g_max_iteration;
+				g_color_iter = s_frothy_data.shades*g_color_iter/g_max_iteration;
 			}
 			if (g_color_iter == 0)
 			{

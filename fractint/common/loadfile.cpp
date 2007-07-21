@@ -815,8 +815,8 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 	g_file_aspect_ratio = 0; /* unknown */
 	if (gifstart[12])  /* calc reasonably close value from gif header */
 	{
-		g_file_aspect_ratio = (float)((64.0 / ((double)(gifstart[12]) + 15.0))
-						*double(g_file_y_dots) / double(g_file_x_dots));
+		g_file_aspect_ratio = (float)((64.0/((double)(gifstart[12]) + 15.0))
+						*double(g_file_y_dots)/double(g_file_x_dots));
 		if (g_file_aspect_ratio > g_screen_aspect_ratio-0.03
 			&& g_file_aspect_ratio < g_screen_aspect_ratio + 0.03)
 		{

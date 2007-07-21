@@ -1,5 +1,5 @@
 /*
-		Command-line / Command-File Parser Routines
+		Command-line/Command-File Parser Routines
 */
 #include <assert.h>
 #include <string.h>
@@ -3297,7 +3297,7 @@ static void parse_text_colors(char *value)
 			{
 				int hexval;
 				sscanf(value, "%x", &hexval);
-				int i = (hexval / 16) & 7;
+				int i = (hexval/16) & 7;
 				int j = hexval & 15;
 				if (i == j || (i == 0 && j == 8)) /* force contrast */
 				{
@@ -3415,7 +3415,7 @@ static int parse_colors(char *value)
 									(BYTE) ((cnum*g_dac_box[i][j]
 												+ (i - (start + cnum))*g_dac_box[start][j]
 												+ spread/2)
-											/ (BYTE) spread);
+											/(BYTE) spread);
 							}
 						}
 					}

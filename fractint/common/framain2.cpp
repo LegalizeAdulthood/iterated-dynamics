@@ -310,13 +310,13 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				}
 				else if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 				{
-					g_x_dots = (int)(double(g_screen_width) / g_view_reduction + 0.5);
+					g_x_dots = (int)(double(g_screen_width)/g_view_reduction + 0.5);
 					g_y_dots = (int)(double(g_x_dots)*ftemp + 0.5);
 				}
 				else
 				{
-					g_y_dots = (int)(double(g_screen_height) / g_view_reduction + 0.5);
-					g_x_dots = (int)(double(g_y_dots) / ftemp + 0.5);
+					g_y_dots = (int)(double(g_screen_height)/g_view_reduction + 0.5);
+					g_x_dots = (int)(double(g_y_dots)/ftemp + 0.5);
 				}
 				if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
 				{
@@ -352,8 +352,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				}
 				else
 				{
-					g_sx_offset = (g_screen_width - g_x_dots) / 2;
-					g_sy_offset = (g_screen_height - g_y_dots) / 3;
+					g_sx_offset = (g_screen_width - g_x_dots)/2;
+					g_sy_offset = (g_screen_height - g_y_dots)/3;
 				}
 			}
 			g_dx_size = g_x_dots - 1;            /* convert just once now */
@@ -527,7 +527,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				}
 				else
 				{ /* not resuming, start from the beginning */
-					int mid = g_grid_size / 2;
+					int mid = g_grid_size/2;
 					if ((g_px != mid) || (g_py != mid))
 					{
 						g_this_generation_random_seed = (unsigned int)clock_ticks(); /* time for new set */
@@ -1386,7 +1386,7 @@ static ApplicationStateType handle_evolver_save_to_disk()
 	g_sx_offset = g_sy_offset = 0;
 	g_x_dots = g_screen_width;
 	g_y_dots = g_screen_height; /* for full screen save and pointer move stuff */
-	g_px = g_py = g_grid_size / 2;
+	g_px = g_py = g_grid_size/2;
 	restore_parameter_history();
 	fiddle_parameters(g_genes, 0);
 	draw_parameter_box(1);
@@ -1954,7 +1954,7 @@ static void handle_evolver_zoom(int zoom_in)
 				{
 					/* set screen view params back (previously changed to allow
 					   full screen saves in g_view_window mode) */
-					int grout = !((g_evolving_flags & EVOLVE_NO_GROUT) / EVOLVE_NO_GROUT);
+					int grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 					g_sx_offset = g_px*(int) (g_dx_size + 1 + grout);
 					g_sy_offset = g_py*(int) (g_dy_size + 1 + grout);
 					setup_parameter_box();
@@ -1995,21 +1995,21 @@ static void handle_evolver_mutation(int halve, bool &kbdmore)
 	{
 		g_fiddle_factor /= 2;
 		g_parameter_range_x /= 2;
-		g_new_parameter_offset_x = g_parameter_offset_x + g_parameter_range_x / 2;
+		g_new_parameter_offset_x = g_parameter_offset_x + g_parameter_range_x/2;
 		g_parameter_range_y /= 2;
-		g_new_parameter_offset_y = g_parameter_offset_y + g_parameter_range_y / 2;
+		g_new_parameter_offset_y = g_parameter_offset_y + g_parameter_range_y/2;
 	}
 	else
 	{
 		double centerx;
 		double centery;
 		g_fiddle_factor *= 2;
-		centerx = g_parameter_offset_x + g_parameter_range_x / 2;
+		centerx = g_parameter_offset_x + g_parameter_range_x/2;
 		g_parameter_range_x *= 2;
-		g_new_parameter_offset_x = centerx - g_parameter_range_x / 2;
-		centery = g_parameter_offset_y + g_parameter_range_y / 2;
+		g_new_parameter_offset_x = centerx - g_parameter_range_x/2;
+		centery = g_parameter_offset_y + g_parameter_range_y/2;
 		g_parameter_range_y *= 2;
-		g_new_parameter_offset_y = centery - g_parameter_range_y / 2;
+		g_new_parameter_offset_y = centery - g_parameter_range_y/2;
 	}
 	kbdmore = false;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;

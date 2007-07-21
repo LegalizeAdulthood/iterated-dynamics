@@ -321,7 +321,7 @@ static void drawindow(int color, struct window *info)
 	else  /* draw crosshairs */
 	{
 #ifndef XFRACT
-		cross_size = g_y_dots / 45;
+		cross_size = g_y_dots/45;
 		if (cross_size < 2)
 		{
 			cross_size = 2;

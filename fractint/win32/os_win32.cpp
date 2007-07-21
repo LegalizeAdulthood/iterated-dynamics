@@ -226,11 +226,11 @@ static fractint_event keyboard_event(int key)
 ;       32-bit integer divide routine with an 'n'-bit shift.
 ;       Overflow condition returns 0x7fffh with g_overflow = 1;
 ;
-;       z = divide(x, y, n);       z = x / y;
+;       z = divide(x, y, n);       z = x/y;
 */
 long divide(long x, long y, int n)
 {
-	return (long) (((float) x) / ((float) y)*(float) (1 << n));
+	return (long) (((float) x)/((float) y)*(float) (1 << n));
 }
 
 /*
@@ -324,10 +324,10 @@ void find_special_colors()
 			{
 				mingun = (int) g_dac_box[i][2];
 			}
-			if (brt - (maxgun - mingun) / 2 > med)
+			if (brt - (maxgun - mingun)/2 > med)
 			{
 				g_color_medium = i;
-				med = brt - (maxgun - mingun) / 2;
+				med = brt - (maxgun - mingun)/2;
 			}
 		}
 	}

@@ -171,7 +171,7 @@ static long cdecl calculate_mandelbrot_asm1()
 				}
 				else if (g_outside == COLORMODE_MULTIPLY && g_new_z_l.y != 0)
 				{
-					g_color_iter = FUDGE_MUL(g_color_iter, g_new_z_l.x) / g_new_z_l.y;
+					g_color_iter = FUDGE_MUL(g_color_iter, g_new_z_l.x)/g_new_z_l.y;
 				}
 				else if (g_outside == COLORMODE_SUM)
 				{
@@ -411,18 +411,18 @@ kloop386_16:   ; ecx=g_bit_shift-16, ebp=overflow.mask
 		jnz		short end386_16				;  (oops.  We done.)
 		shr		edx, cl						; get result down to 16 bits
 
-		mov		eax, ebx					; compute (x*x -	y*y) / g_fudge
+		mov		eax, ebx					; compute (x*x -	y*y)/g_fudge
 		sub		ebx, edx					;  for the next iteration
 
-		add		eax, edx					; compute (x*x +	y*y) / g_fudge
+		add		eax, edx					; compute (x*x +	y*y)/g_fudge
 
 		cmp		eax, dword ptr g_magnitude_limit + 4			; while (xx + yy <	g_magnitude_limit)
 		jae		short end386_16				;  ...
 
 		imul	edi, esi					; compute (y *	x)
-		shl		edi, 1						; ( * 2 / g_fudge)
+		shl		edi, 1						; ( * 2/g_fudge)
 		sar		edi, cl
-		add		edi, dword ptr g_initial_y_l + 4		; (2*y*x) / g_fudge + g_initial_y_l
+		add		edi, dword ptr g_initial_y_l + 4		; (2*y*x)/g_fudge + g_initial_y_l
 		movsx	edi, edi					;	save as	y
 
 		add		ebx, dword ptr g_initial_x_l + 4		; (from above) (x*x - y*y)/g_fudge	+ g_initial_x_l
@@ -497,16 +497,16 @@ kloop:										; for (k = 0; k	<= maxit; k++)
 		shr		edx, FUDGE_FACTOR_BITS-1			; (complete 64-bit	shift and check
 		jne		short kloopend1				; bail out if too high
 
-		mov		ecx, ebx					; compute (x*x	- y*y) / g_fudge
+		mov		ecx, ebx					; compute (x*x	- y*y)/g_fudge
 		sub		ebx, eax					;	for	the	next iteration
 
-		add		ecx, eax					; compute (x*x	+ y*y) / g_fudge
+		add		ecx, eax					; compute (x*x	+ y*y)/g_fudge
 		cmp		ecx, g_magnitude_limit						; while (lr < g_magnitude_limit)
 		jae		short kloopend1				;  ...
 
 		mov		eax, edi					; compute (y *	x)
 		imul	esi							;  ...
-		shrd	eax, edx, FUDGE_FACTOR_BITS-1		;	 ( * 2 / g_fudge)
+		shrd	eax, edx, FUDGE_FACTOR_BITS-1		;	 ( * 2/g_fudge)
 		add		eax, g_initial_y_l					;	(above)	+ g_initial_y_l
 		mov		edi, eax					;	save this as y
 
@@ -702,10 +702,10 @@ not_end16bit3:
 		rcl		edx, 1						;	 ...
 		jo		end16bit					;  (oops.  overflow)
 
-		mov		ecx, ebx					; compute (x*x -	y*y) / g_fudge
+		mov		ecx, ebx					; compute (x*x -	y*y)/g_fudge
 		sub		ebx, edx					;  for the next iteration
 
-		add		ecx, edx					; compute (x*x +	y*y) / g_fudge
+		add		ecx, edx					; compute (x*x +	y*y)/g_fudge
 		jo		end16bit					; bail out if too high
 
 		cmp		ecx, dword ptr g_magnitude_limit + 4			; while (xx + yy <	g_magnitude_limit)
@@ -722,7 +722,7 @@ notdoneyet:
 		rcl		edx, 1						;	 ...
 		shl		eax, 1						;	 shift two bits
 		rcl		edx, 1						;	 cannot	overflow as	|x| <= 2,	|y| <= 2
-		add		edx, dword ptr g_initial_y_l + 4		; (2*y*x) / g_fudge + g_initial_y_l
+		add		edx, dword ptr g_initial_y_l + 4		; (2*y*x)/g_fudge + g_initial_y_l
 		jo		end16bit					; bail out if too high
 		mov		edi, edx					; save as y
 

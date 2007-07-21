@@ -607,8 +607,8 @@ void Formula::Random_d()
           the same fractals when the srand() function is used. */
 	long x = fixpoint_to_long(new_random_number());
 	long y = fixpoint_to_long(new_random_number());
-	m_variables[VARIABLE_RAND].argument.d.x = (double(x) / (1L << g_bit_shift));
-	m_variables[VARIABLE_RAND].argument.d.y = (double(y) / (1L << g_bit_shift));
+	m_variables[VARIABLE_RAND].argument.d.x = (double(x)/(1L << g_bit_shift));
+	m_variables[VARIABLE_RAND].argument.d.y = (double(y)/(1L << g_bit_shift));
 
 }
 

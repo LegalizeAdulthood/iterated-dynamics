@@ -137,7 +137,7 @@ static void lsysf_at(struct lsys_turtle_state_fp *cmd)
 
 static void lsysf_pipe(struct lsys_turtle_state_fp *cmd)
 {
-	cmd->angle = (char)(cmd->angle + cmd->max_angle / 2);
+	cmd->angle = (char)(cmd->angle + cmd->max_angle/2);
 	cmd->angle %= cmd->max_angle;
 }
 
@@ -154,7 +154,7 @@ static void lsysf_exclamation(struct lsys_turtle_state_fp *cmd)
 
 static void lsysf_size_dm(struct lsys_turtle_state_fp *cmd)
 {
-	double angle = (double) cmd->realangle;
+	double angle = double(cmd->realangle);
 	double s;
 	double c;
 
@@ -207,7 +207,7 @@ static void lsysf_size_gf(struct lsys_turtle_state_fp *cmd)
 
 static void lsysf_draw_d(struct lsys_turtle_state_fp *cmd)
 {
-	double angle = (double) cmd->realangle;
+	double angle = double(cmd->realangle);
 	double s;
 	double c;
 	int lastx;
@@ -226,7 +226,7 @@ static void lsysf_draw_d(struct lsys_turtle_state_fp *cmd)
 
 static void lsysf_draw_m(struct lsys_turtle_state_fp *cmd)
 {
-	double angle = (double) cmd->realangle;
+	double angle = double(cmd->realangle);
 	double s;
 	double c;
 
@@ -718,7 +718,7 @@ void _fastcall lsysf_sin_cos()
 	int i;
 
 	locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
-	twopimax = TWOPI / g_max_angle;
+	twopimax = TWOPI/g_max_angle;
 	for (i = 0; i < g_max_angle; i++)
 	{
 		twopimaxi = i*twopimax;

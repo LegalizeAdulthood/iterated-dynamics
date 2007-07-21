@@ -977,10 +977,10 @@ int complex_z_power_orbit()
 	ComplexD x;
 	ComplexD y;
 
-	x.x = double(g_old_z_l.x) / g_fudge;
-	x.y = double(g_old_z_l.y) / g_fudge;
-	y.x = double(g_parameter2_l.x) / g_fudge;
-	y.y = double(g_parameter2_l.y) / g_fudge;
+	x.x = double(g_old_z_l.x)/g_fudge;
+	x.y = double(g_old_z_l.y)/g_fudge;
+	y.x = double(g_parameter2_l.x)/g_fudge;
+	y.y = double(g_parameter2_l.y)/g_fudge;
 	x = ComplexPower(x, y);
 	if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
 	{
@@ -2113,7 +2113,7 @@ int magnet1_orbit_fp()    /*    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2    */
 	return g_bail_out_fp();
 }
 
-/* Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)) /      */
+/* Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2))/     */
 /*       (3Z**2 + 3(C-2)Z + (C-1)(C-2) + 1))**2  */
 int magnet2_orbit_fp()
 {
@@ -2339,7 +2339,7 @@ void invert_z(ComplexD *z)
 	z->y -= g_f_y_center;  /* Normalize values to center of circle */
 
 	g_temp_sqr_x = sqr(z->x) + sqr(z->y);  /* Get old radius */
-	g_temp_sqr_x = (fabs(g_temp_sqr_x) > FLT_MIN) ? (g_f_radius / g_temp_sqr_x) : FLT_MAX;
+	g_temp_sqr_x = (fabs(g_temp_sqr_x) > FLT_MIN) ? (g_f_radius/g_temp_sqr_x) : FLT_MAX;
 	z->x *= g_temp_sqr_x;
 	z->y *= g_temp_sqr_x;      /* Perform inversion */
 	z->x += g_f_x_center;
@@ -3248,7 +3248,7 @@ static double _fastcall dx_pixel_grid()
 /* Real component, calculation version - does not require arrays */
 static double _fastcall dx_pixel_calc()
 {
-	return (double) (g_escape_time_state.m_grid_fp.x_min() + g_col*g_escape_time_state.m_grid_fp.delta_x() + g_row*g_escape_time_state.m_grid_fp.delta_x2());
+	return double(g_escape_time_state.m_grid_fp.x_min() + g_col*g_escape_time_state.m_grid_fp.delta_x() + g_row*g_escape_time_state.m_grid_fp.delta_x2());
 }
 
 /* Imaginary component, grid lookup version - requires g_y0/g_y1 arrays */
@@ -3260,7 +3260,7 @@ static double _fastcall dy_pixel_grid()
 /* Imaginary component, calculation version - does not require arrays */
 static double _fastcall dy_pixel_calc()
 {
-	return (double)(g_escape_time_state.m_grid_fp.y_max() - g_row*g_escape_time_state.m_grid_fp.delta_y() - g_col*g_escape_time_state.m_grid_fp.delta_y2());
+	return double(g_escape_time_state.m_grid_fp.y_max() - g_row*g_escape_time_state.m_grid_fp.delta_y() - g_col*g_escape_time_state.m_grid_fp.delta_y2());
 }
 
 /* Real component, grid lookup version - requires g_x0_l/g_x1_l arrays */

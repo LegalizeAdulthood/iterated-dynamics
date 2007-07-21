@@ -733,7 +733,7 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 		break;
 	}
 	/* next assumes CLK_TCK is 10^n, n >= 2 */
-	g_timer_interval = (clock_ticks() - g_timer_start) / (CLK_TCK/100);
+	g_timer_interval = (clock_ticks() - g_timer_start)/(CLK_TCK/100);
 
 	if (do_bench)
 	{

@@ -365,9 +365,9 @@ static void displayf(int x, int y, int fg, int bg, char *format, ...)
 static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
 	int    curr;
-	double rm = (double)((int)p2->red - (int)p1->red) / num;
-	double gm = (double)((int)p2->green - (int)p1->green) / num;
-	double bm = (double)((int)p2->blue - (int)p1->blue) / num;
+	double rm = double((int)p2->red - (int)p1->red)/num;
+	double gm = double((int)p2->green - (int)p1->green)/num;
+	double bm = double((int)p2->blue - (int)p1->blue)/num;
 
 	for (curr = 0; curr < num; curr += skip)
 	{
@@ -444,7 +444,7 @@ static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
 
 	for (curr = &pal[first]; how_many > 0; how_many--, curr++)
 	{
-		val = (BYTE) (((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
+		val = (BYTE) (((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11)/100);
 		curr->red = curr->green = curr->blue = (BYTE)val;
 	}
 }
@@ -1000,8 +1000,8 @@ static bool move_box_process(move_box *me)
 
 				change = me->csize - t;
 				me->csize = t;
-				me->x += (change*16) / 2;
-				me->y += (change*16) / 2;
+				me->x += (change*16)/2;
+				me->y += (change*16)/2;
 				move_box_draw(me);
 			}
 			break;
@@ -1014,8 +1014,8 @@ static bool move_box_process(move_box *me)
 					me->base_width + (me->csize + CSIZE_INC)*16 + 1 < max_width)
 				{
 					move_box_erase(me);
-					me->x -= (CSIZE_INC*16) / 2;
-					me->y -= (CSIZE_INC*16) / 2;
+					me->x -= (CSIZE_INC*16)/2;
+					me->y -= (CSIZE_INC*16)/2;
 					me->csize += CSIZE_INC;
 					if (me->y + me->base_depth + me->csize*16 + 1 > g_screen_height)
 					{
@@ -1914,7 +1914,7 @@ static void pal_table_draw_status(pal_table *me, bool stripe_mode)
 static void pal_table_highlight_pal(pal_table *me, int pnum, int color)
 {
 	int x = me->x + PALTABLE_PALX + (pnum % 16) * me->csize;
-	int y = me->y + PALTABLE_PALY + (pnum / 16) * me->csize;
+	int y = me->y + PALTABLE_PALY + (pnum/16) * me->csize;
 	int size = me->csize;
 
 	if (me->hidden)
@@ -1955,7 +1955,7 @@ static void pal_table_draw(pal_table *me)
 	horizontal_line(me->x, me->y + PALTABLE_PALY-1, width, s_fg_color);
 	if (width - (RGB_EDITOR_WIDTH*2 + 4) >= TITLE_LEN*8)
 	{
-		int center = (width - TITLE_LEN*8) / 2;
+		int center = (width - TITLE_LEN*8)/2;
 
 		displayf(me->x + center, me->y + RGB_EDITOR_DEPTH/2-6, s_fg_color, s_bg_color, TITLE);
 	}
@@ -3161,7 +3161,7 @@ static pal_table *pal_table_new()
 	rgb_editor_set_rgb(me->rgb[1], me->curr[1], &me->pal[me->curr[0]]);
 
 	pal_table_set_position(me, 0, 0);
-	csize = ((g_screen_height-(PALTABLE_PALY + 1 + 1)) / 2) / 16;
+	csize = ((g_screen_height-(PALTABLE_PALY + 1 + 1))/2)/16;
 
 	if (csize < CSIZE_MIN)
 	{

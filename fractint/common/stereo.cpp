@@ -155,9 +155,9 @@ int out_line_stereo(BYTE *pixels, int linelen)
 	for (int x = 0; x < g_x_dots; ++x)
 	{
 		s_separation = s_reverse
-			? (s_ground - (int) (s_depth*(getdepth(x, s_y) - s_min_c) / s_max_cc))
-			: (s_ground - (int) (s_depth*(s_max_cc - (getdepth(x, s_y) - s_min_c)) / s_max_cc));
-		s_separation =  (int) ((s_separation*10.0) / s_width);        /* adjust for media s_width */
+			? (s_ground - (int) (s_depth*(getdepth(x, s_y) - s_min_c)/s_max_cc))
+			: (s_ground - (int) (s_depth*(s_max_cc - (getdepth(x, s_y) - s_min_c))/s_max_cc));
+		s_separation =  (int) ((s_separation*10.0)/s_width);        /* adjust for media s_width */
 
 		/* get average value under calibration bars */
 		if (s_x1 <= x && x <= s_x2 && s_y1 <= s_y && s_y <= s_y2)
@@ -165,7 +165,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 			s_average += s_separation;
 			(s_average_count)++;
 		}
-		int i = x - (s_separation + (s_separation & s_y & 1)) / 2;
+		int i = x - (s_separation + (s_separation & s_y & 1))/2;
 		int j = i + s_separation;
 		if (0 <= i && j < g_x_dots)
 		{
@@ -229,9 +229,9 @@ int auto_stereo()
 	{
 		s_width = 1;
 	}
-	s_ground = g_x_dots / 8;
+	s_ground = g_x_dots/8;
 	s_reverse = (g_auto_stereo_depth < 0) ? 1 : 0;
-	s_depth = ((long) g_x_dots*(long) g_auto_stereo_depth) / 4000L;
+	s_depth = ((long) g_x_dots*(long) g_auto_stereo_depth)/4000L;
 	s_depth = labs(s_depth) + 1;
 	if (get_min_max())
 	{
@@ -241,7 +241,7 @@ int auto_stereo()
 	}
 	s_max_cc = s_max_c - s_min_c + 1;
 	s_average = s_average_count = 0L;
-	s_bar_height = 1 + g_y_dots / 20;
+	s_bar_height = 1 + g_y_dots/20;
 	s_x_center = g_x_dots/2;
 	s_y_center = (g_stereogram_calibrate == CALIBRATE_TOP) ? s_bar_height/2 : g_y_dots/2;
 
@@ -287,7 +287,7 @@ int auto_stereo()
 		s_average /= 2*s_average_count;
 		int ct = 0;
 		int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
-		int barwidth = 1 + g_x_dots / 200;
+		int barwidth = 1 + g_x_dots/200;
 		for (int i = s_x_center; i < s_x_center + barwidth; i++)
 		{
 			for (int j = s_y_center; j < s_y_center + s_bar_height; j++)
