@@ -1220,7 +1220,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			memmove(line + ((width-(int)(strlen(buff)))/2)-4, buff, strlen(buff));
 
 			sprintf(buff, "Page %d", pd->pnum);
-			memmove(line + (width - (int)strlen(buff)), buff, strlen(buff));
+			memmove(line + (width - int(strlen(buff))), buff, strlen(buff));
 
 			printerc(info, '\n', 1);
 			printers(info, line, width);

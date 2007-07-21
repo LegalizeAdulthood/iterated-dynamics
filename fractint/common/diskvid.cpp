@@ -759,7 +759,7 @@ void disk_video_status(int line, char *msg)
 	char buf[41];
 	int attrib;
 	memset(buf, ' ', 40);
-	memcpy(buf, msg, (int) strlen(msg));
+	memcpy(buf, msg, int(strlen(msg)));
 	buf[40] = 0;
 	attrib = C_DVID_HI;
 	if (line >= 100)

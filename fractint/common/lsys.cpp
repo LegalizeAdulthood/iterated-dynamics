@@ -158,7 +158,7 @@ static int _fastcall read_l_system_file(char *str)
 		}
 		strlwr(inline1);
 
-		if ((int)strspn(inline1, " \t\n") < (int)strlen(inline1)) /* not a blank line */
+		if ((int)strspn(inline1, " \t\n") < int(strlen(inline1))) /* not a blank line */
 		{
 			word = strtok(inline1, " =\t\n");
 			if (!strcmp(word, "axiom"))
@@ -415,7 +415,7 @@ static int _fastcall save_rule(char *rule, char **saveptr)
 {
 	int i;
 	char *tmpfar;
-	i = (int) strlen(rule) + 1;
+	i = int(strlen(rule)) + 1;
 	tmpfar = (char *) malloc(i);
 	if (tmpfar == NULL)
 	{
@@ -442,7 +442,7 @@ static int _fastcall append_rule(char *rule, int index)
 	{
 		;
 	}
-	j = (int) strlen(rule) + 1;
+	j = int(strlen(rule)) + 1;
 	dst = (char *)malloc((long)(i + j));
 	if (dst == NULL)
 	{

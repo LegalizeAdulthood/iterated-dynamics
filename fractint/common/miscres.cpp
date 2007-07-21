@@ -68,7 +68,7 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
 	int done;
 	done = 0;
 	startrow = *row;
-	length = (int) strlen(str);
+	length = int(strlen(str));
 	padding = 3; /* space between col1 and decimal. */
 	/* find decimal point */
 	for (decpt = 0; decpt < length; decpt++)
@@ -853,7 +853,7 @@ top:
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_l_system_name);
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if ((int) strlen(g_l_system_filename) >= 28)
+			if (int(strlen(g_l_system_filename)) >= 28)
 			{
 				addrow = 1;
 			}
@@ -864,7 +864,7 @@ top:
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_ifs_name);
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if ((int) strlen(g_ifs_filename) >= 28)
+			if (int(strlen(g_ifs_filename)) >= 28)
 			{
 				addrow = 1;
 			}

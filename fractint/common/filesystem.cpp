@@ -40,14 +40,14 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 	}
 #ifndef XFRACT
 	/* if drive, colon, slash, is a directory */
-	if ((int) strlen(new_filename) == 3 &&
+	if (int(strlen(new_filename)) == 3 &&
 			new_filename[1] == ':' &&
 			new_filename[2] == SLASHC)
 	{
 		isadir = 1;
 	}
 	/* if drive, colon, with no slash, is a directory */
-	if ((int) strlen(new_filename) == 2 && new_filename[1] == ':')
+	if (int(strlen(new_filename)) == 2 && new_filename[1] == ':')
 	{
 		new_filename[2] = SLASHC;
 		new_filename[3] = 0;
@@ -83,7 +83,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 		strcpy(new_filename, temp_path);
 		if (!test_dir)
 		{
-			len = (int) strlen(new_filename);
+			len = int(strlen(new_filename));
 			new_filename[len-1] = 0; /* get rid of slash added by expand_dirname */
 		}
 	}
@@ -124,26 +124,26 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 	char ext1[FILE_MAX_EXT];
 	split_path(old_full_path, drive1, dir1, fname1, ext1);
 
-	if ((int) strlen(drive) != 0 && copy_directory)
+	if (int(strlen(drive)) != 0 && copy_directory)
 	{
 		strcpy(drive1, drive);
 	}
-	if ((int) strlen(dir) != 0 && copy_directory)
+	if (int(strlen(dir)) != 0 && copy_directory)
 	{
 		strcpy(dir1, dir);
 	}
-	if ((int) strlen(fname) != 0)
+	if (int(strlen(fname)) != 0)
 	{
 		strcpy(fname1, fname);
 	}
-	if ((int) strlen(ext) != 0)
+	if (int(strlen(ext)) != 0)
 	{
 		strcpy(ext1, ext);
 	}
 	if (isadir == 0 && !isafile && copy_directory)
 	{
 		make_path(old_full_path, drive1, dir1, NULL, NULL);
-		int len = (int) strlen(old_full_path);
+		int len = int(strlen(old_full_path));
 		if (len > 0)
 		{
 			char save;
@@ -175,7 +175,7 @@ int merge_path_names(char *old_full_path, char *new_filename, int mode)
 /* ensure directory names end in a slash character */
 void ensure_slash_on_directory(char *dirname)
 {
-	int length = (int) strlen(dirname); /* index of last character */
+	int length = int(strlen(dirname)); /* index of last character */
 
 	/* make sure dirname ends with a slash */
 	if (length > 0)
@@ -351,7 +351,7 @@ void split_path(const char *file_template, char *drive, char *dir, char *filenam
 	empty_string(dir);
 	empty_string(filename);
 	empty_string(extension);
-	int length = (int) strlen(file_template);
+	int length = int(strlen(file_template));
 	if (length == 0)
 	{
 		return;
@@ -387,7 +387,7 @@ bool is_a_directory(char *s)
 		return false; /* for my purposes, not a directory */
 	}
 
-	len = (int) strlen(s);
+	len = int(strlen(s));
 	if (len > 0)
 	{
 		sv = s[len-1];   /* last char */
