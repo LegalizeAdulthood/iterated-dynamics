@@ -944,7 +944,7 @@ void Jiim(int which)         /* called by fractint */
 				{
 					/* show temp msg will clear self if new msg is a
 						different length - pad to length 40*/
-					while ((int)strlen(str) < 40)
+					while (int(strlen(str)) < 40)
 					{
 						strcat(str, " ");
 					}

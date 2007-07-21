@@ -251,7 +251,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 			sprintf(temp1, "v%d.%01d", g_save_release/100, (g_save_release%100)/10);
 			if (g_save_release % 100)
 			{
-				i = (int) strlen(temp1);
+				i = int(strlen(temp1));
 				temp1[i] = (char)((g_save_release % 10) + '0');
 				temp1[i + 1] = 0;
 			}

@@ -204,7 +204,7 @@ int show_temp_message(char *msgparm)
 
 	xrepeat = (g_screen_width >= 640) ? 2 : 1;
 	yrepeat = (g_screen_height >= 300) ? 2 : 1;
-	s_text_x_dots = (int) strlen(msg)*xrepeat*8;
+	s_text_x_dots = int(strlen(msg))*xrepeat*8;
 	s_text_y_dots = yrepeat*8;
 
 	/* worst case needs 10k */
@@ -413,7 +413,7 @@ static void show_speed_string(int speedrow,
 			j = sizeof("Speed key string")-1;
 		}
 		strcpy(buf, speedstring);
-		i = (int) strlen(buf);
+		i = int(strlen(buf));
 		while (i < 30)
 		{
 			buf[i++] = ' ';
@@ -421,7 +421,7 @@ static void show_speed_string(int speedrow,
 		buf[i] = 0;
 		driver_put_string(speedrow, 16 + j, C_CHOICE_SP_INSTR, " ");
 		driver_put_string(speedrow, 17 + j, C_CHOICE_SP_KEYIN, buf);
-		driver_move_cursor(speedrow, 17 + j + (int) strlen(speedstring));
+		driver_move_cursor(speedrow, 17 + j + int(strlen(speedstring)));
 		}
 	else
 	{
@@ -439,7 +439,7 @@ static void process_speed_string(char    *speedstring,
 	int i;
 	int comp_result;
 
-	i = (int) strlen(speedstring);
+	i = int(strlen(speedstring));
 	if (curkey == 8 && i > 0) /* backspace */
 		speedstring[--i] = 0;
 	if (33 <= curkey && curkey <= 126 && i < 30)
@@ -544,7 +544,7 @@ int full_screen_choice(
 	/* preset current to passed string */
 	if (speedstring && *speedstring)
 	{
-		i = (int) strlen(speedstring);
+		i = int(strlen(speedstring));
 		current = 0;
 		if (options & CHOICE_NOT_SORTED)
 		{
@@ -615,7 +615,7 @@ int full_screen_choice(
 	{
 		for (i = 0; i < numchoices; ++i)
 		{
-			int len = (int) strlen(choices[i]);
+			int len = int(strlen(choices[i]));
 			if (len > colwidth)
 			{
 				colwidth = len;
@@ -1589,7 +1589,7 @@ int input_field(
 	while (true)
 	{
 		strcpy(buf, fld);
-		i = (int) strlen(buf);
+		i = int(strlen(buf));
 		while (i < len)
 		{
 			buf[i++] = ' ';
@@ -1632,7 +1632,7 @@ int input_field(
 			started = 1;
 			break;
 		case FIK_END:
-			offset = (int) strlen(fld);
+			offset = int(strlen(fld));
 			started = 1;
 			break;
 		case FIK_BACKSPACE:
@@ -1642,7 +1642,7 @@ int input_field(
 #endif
 			if (offset > 0)
 			{
-				j = (int) strlen(fld);
+				j = int(strlen(fld));
 				for (i = offset-1; i < j; ++i)
 				{
 					fld[i] = fld[i + 1];
@@ -1652,7 +1652,7 @@ int input_field(
 			started = display = 1;
 			break;
 		case FIK_DELETE:                           /* delete */
-			j = (int) strlen(fld);
+			j = int(strlen(fld));
 			for (i = offset; i < j; ++i)
 			{
 				fld[i] = fld[i + 1];
@@ -1711,7 +1711,7 @@ int input_field(
 			}
 			if (insert)
 			{
-				j = (int) strlen(fld);
+				j = int(strlen(fld));
 				while (j >= offset)
 				{
 					fld[j + 1] = fld[j];
@@ -1937,7 +1937,7 @@ void load_fractint_config()
 				continue;   /* comment line */
 			}
 			tempstring[120] = 0;
-			tempstring[(int) strlen(tempstring)-1] = 0; /* zap trailing \n */
+			tempstring[int(strlen(tempstring))-1] = 0; /* zap trailing \n */
 			/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
 			int i = -1;
 			int j = -1;

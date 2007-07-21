@@ -162,7 +162,7 @@ restart:
 			return -1;
 		}
 		newfile = 0;
-		i = (int) strlen(tmpfile);
+		i = int(strlen(tmpfile));
 		while (--i >= 0 && tmpfile[i] != SLASHC)
 		{
 			tmpfile[i] = 0;

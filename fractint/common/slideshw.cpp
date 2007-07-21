@@ -246,7 +246,7 @@ start:
 			char buf[41];
 			buf[40] = 0;
 			fgets(buf, 40, s_slide_file);
-			int len = (int) strlen(buf);
+			int len = int(strlen(buf));
 			buf[len - 1] = 0; /* zap newline */
 			message(secs, (char *) buf);
 		}

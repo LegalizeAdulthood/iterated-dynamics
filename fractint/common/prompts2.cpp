@@ -988,7 +988,7 @@ int get_random_dot_stereogram_parameters()
 			}
 			p = strrchr(g_stereo_map_name, SLASHC);
 			if (p == NULL ||
-				(int) strlen(g_stereo_map_name) < sizeof(rds6)-2)
+				int(strlen(g_stereo_map_name)) < sizeof(rds6)-2)
 			{
 				p = strlwr(g_stereo_map_name);
 			}
@@ -997,7 +997,7 @@ int get_random_dot_stereogram_parameters()
 				p++;
 			}
 			/* center file name */
-			rds6[(sizeof(rds6)-(int) strlen(p) + 2)/2] = 0;
+			rds6[(sizeof(rds6)-int(strlen(p)) + 2)/2] = 0;
 			strcat(rds6, "[");
 			strcat(rds6, p);
 			strcat(rds6, "]");
@@ -1273,7 +1273,7 @@ retry_dir:
 	ensure_slash_on_directory(tmpmask);
 	if (retried == 0 && strcmp(dir, SLASH) && strcmp(dir, DOTSLASH))
 	{
-		j = (int) strlen(tmpmask) - 1;
+		j = int(strlen(tmpmask)) - 1;
 		tmpmask[j] = 0; /* strip trailing \ */
 		if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
 			|| fr_find_first(tmpmask) != 0
@@ -1298,7 +1298,7 @@ retry_dir:
 	dircount  = 0;
 	notroot   = 0;
 	j = 0;
-	masklen = (int) strlen(tmpmask);
+	masklen = int(strlen(tmpmask));
 	strcat(tmpmask, "*.*");
 	out = fr_find_first(tmpmask);
 	while (out == 0 && filecount < MAXNUMFILES)
@@ -1574,7 +1574,7 @@ static int filename_speedstr(int row, int col, int vid,
 		prompt = "Speed key string";
 	}
 	driver_put_string(row, col, vid, prompt);
-	return (int) strlen(prompt);
+	return int(strlen(prompt));
 }
 
 /*

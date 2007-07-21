@@ -663,7 +663,7 @@ static int next_command(char *cmdbuf, int maxlen,
 					}
 					if (*lineptr)
 					{
-						if ((int)strlen(lineptr) >= MAX_COMMENT)
+						if (int(strlen(lineptr)) >= MAX_COMMENT)
 						{
 							*(lineptr + MAX_COMMENT-1) = 0;
 						}
@@ -2917,7 +2917,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	}
 	else
 	{
-		j = (int) strlen(curarg);
+		j = int(strlen(curarg));
 		context.value = curarg + j;
 	}
 	if (j > 20)
@@ -2926,7 +2926,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	}
 	strncpy(variable, curarg, j);          /* get the variable name  */
 	variable[j] = 0;                     /* truncate variable name */
-	context.valuelen = (int) strlen(context.value);            /* note value's length    */
+	context.valuelen = int(strlen(context.value));            /* note value's length    */
 	context.charval[0] = context.value[0];               /* first letter of value  */
 	context.yesnoval[0] = -1;                    /* note yes|no value      */
 	if (context.charval[0] == 'n')
@@ -3023,7 +3023,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			}
 		}
 		/* using arbitrary precision and above failed */
-		else if (((int) strlen(argptr) > 513)  /* very long command */
+		else if ((int(strlen(argptr)) > 513)  /* very long command */
 					|| (context.totparms > 0 && context.floatval[context.totparms-1] == FLT_MAX
 						&& context.totparms < 6)
 					|| is_a_big_float(argptr))
@@ -3327,7 +3327,7 @@ static int parse_colors(char *value)
 		{
 			init_msg("", &value[1], 3);
 		}
-		if ((int)strlen(value) > FILE_MAX_PATH || validate_luts(g_map_name) != 0)
+		if (int(strlen(value)) > FILE_MAX_PATH || validate_luts(g_map_name) != 0)
 		{
 			goto badcolor;
 		}
@@ -3447,7 +3447,7 @@ static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 {
 	char msg[300];
 	char spillover[71];
-	if ((int) strlen(bad_arg) > 70)
+	if (int(strlen(bad_arg)) > 70)
 	{
 		strncpy(spillover, bad_arg, 70);
 		spillover[70] = 0;
@@ -3496,7 +3496,7 @@ int get_curarg_len(char *curarg)
 	{
 		*s = 0;
 	}
-	len = (int) strlen(curarg);
+	len = int(strlen(curarg));
 	if (s)
 	{
 		*s = '/';

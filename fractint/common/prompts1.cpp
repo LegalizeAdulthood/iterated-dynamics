@@ -393,7 +393,7 @@ void FullScreenPrompter::WorkOutHorizontalPositioning()
 			m_values[i].uval.ch.list = noyes;
 			m_values[i].uval.ch.llen = 2;
 		}
-		int j = (int) strlen(m_prompts[i]);
+		int j = int(strlen(m_prompts[i]));
 		if (m_values[i].type == '*')
 		{
 			if (j > m_max_comment)
@@ -831,7 +831,7 @@ int FullScreenPrompter::Prompt()
 		}
 
 		driver_put_string(m_prompt_row + current_choice, m_prompt_column, C_PROMPT_LO, m_prompts[current_choice]);
-		j = (int) strlen(buffer);
+		j = int(strlen(buffer));
 		memset(&buffer[j], ' ', 80-j);
 		buffer[current_length] = 0;
 		driver_put_string(m_prompt_row + current_choice, m_value_column, C_PROMPT_LO,  buffer);
@@ -987,7 +987,7 @@ int prompt_value_string(char *buf, struct full_screen_values *val)
 		while (true)
 		{
 			sprintf(buf, "%.*g", i, val->uval.dval);
-			if ((int)strlen(buf) <= ret)
+			if (int(strlen(buf)) <= ret)
 			{
 				break;
 			}
@@ -1133,7 +1133,7 @@ static int input_field_list(
 	while (true)
 	{
 		strcpy(buf, list[curval]);
-		i = (int) strlen(buf);
+		i = int(strlen(buf));
 		while (i < vlen)
 		{
 			buf[i++] = ' ';
