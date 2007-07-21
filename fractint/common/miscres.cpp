@@ -838,9 +838,9 @@ top:
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
 			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_formula_state.get_formula());
-			i = (int) strlen(g_formula_state.get_formula()) + 1;
+			i = int(strlen(g_formula_state.get_formula())) + 1;
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if ((int) strlen(g_formula_state.get_filename()) >= 29)
+			if (int(strlen(g_formula_state.get_filename())) >= 29)
 			{
 				addrow = 1;
 			}
