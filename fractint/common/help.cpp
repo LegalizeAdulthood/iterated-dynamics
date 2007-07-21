@@ -495,7 +495,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 		}
 	}
 
-	return (best == NULL) ? -1 : (int)(best-link);
+	return (best == NULL) ? -1 : int(best-link);
 }
 
 static int find_link_leftright(LINK *link, int num_link, int curr_link, int left)
@@ -547,7 +547,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 		}
 	} /* for */
 
-	return (best == NULL) ? -1 : (int) (best-link);
+	return (best == NULL) ? -1 : int(best-link);
 }
 
 #ifdef __CLINT__
@@ -1300,7 +1300,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 		driver_hide_text_cursor();
 	}
 
-	sprintf(temp, "%d%%", (int)((100.0/num_pages)*pnum));
+	sprintf(temp, "%d%%", int((100.0/num_pages)*pnum));
 	driver_put_string(7, 41, C_HELP_LINK, temp);
 
 	while (driver_key_pressed())
@@ -1322,7 +1322,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 
 	if (pnum >= 0)
 	{
-		sprintf(s_buffer, "\rcompleted %d%%", (int) ((100.0/num_pages)*pnum));
+		sprintf(s_buffer, "\rcompleted %d%%", int((100.0/num_pages)*pnum));
 		result = 1;
 	}
 	else if (pnum == -2)

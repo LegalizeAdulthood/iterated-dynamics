@@ -305,18 +305,18 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_y_dots = g_view_y_dots;
 					if (g_y_dots == 0) /* calc g_y_dots? */
 					{
-						g_y_dots = (int)(double(g_x_dots)*ftemp + 0.5);
+						g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
 					}
 				}
 				else if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 				{
-					g_x_dots = (int)(double(g_screen_width)/g_view_reduction + 0.5);
-					g_y_dots = (int)(double(g_x_dots)*ftemp + 0.5);
+					g_x_dots = int(double(g_screen_width)/g_view_reduction + 0.5);
+					g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
 				}
 				else
 				{
-					g_y_dots = (int)(double(g_screen_height)/g_view_reduction + 0.5);
-					g_x_dots = (int)(double(g_y_dots)/ftemp + 0.5);
+					g_y_dots = int(double(g_screen_height)/g_view_reduction + 0.5);
+					g_x_dots = int(double(g_y_dots)/ftemp + 0.5);
 				}
 				if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
 				{
@@ -1893,8 +1893,8 @@ static void handle_evolver_move_selection(int kbdchar)
 				g_py = 0;
 			}
 			grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-			g_sx_offset = g_px*(int)(g_dx_size + 1 + grout);
-			g_sy_offset = g_py*(int)(g_dy_size + 1 + grout);
+			g_sx_offset = g_px*int(g_dx_size + 1 + grout);
+			g_sy_offset = g_py*int(g_dy_size + 1 + grout);
 
 			restore_parameter_history();
 			fiddle_parameters(g_genes, unspiral_map()); /* change all parameters */
@@ -1955,8 +1955,8 @@ static void handle_evolver_zoom(int zoom_in)
 					/* set screen view params back (previously changed to allow
 					   full screen saves in g_view_window mode) */
 					int grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-					g_sx_offset = g_px*(int) (g_dx_size + 1 + grout);
-					g_sy_offset = g_py*(int) (g_dy_size + 1 + grout);
+					g_sx_offset = g_px*int(g_dx_size + 1 + grout);
+					g_sy_offset = g_py*int(g_dy_size + 1 + grout);
 					setup_parameter_box();
 					draw_parameter_box(0);
 				}

@@ -642,7 +642,7 @@ static int next_command(char *cmdbuf, int maxlen,
 			if (cmdlen)  /* space or ; marks end of command */
 			{
 				cmdbuf[cmdlen] = 0;
-				*lineoffset = (int) (lineptr - linebuf);
+				*lineoffset = int(lineptr - linebuf);
 				return cmdlen;
 			}
 			while (*lineptr && *lineptr <= ' ')
@@ -2909,7 +2909,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	context.value = strchr(&curarg[1], '=');
 	if (context.value != NULL)
 	{
-		j = (int) ((context.value++) - curarg);
+		j = int((context.value++) - curarg);
 		if (j > 1 && curarg[j-1] == ':')
 		{
 			--j;                           /* treat := same as =     */

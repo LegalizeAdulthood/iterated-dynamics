@@ -1570,9 +1570,9 @@ void Formula::convert_stack()  /* convert the array of ptrs  */
 				{
 					DBUGMSG4("fn=%s, minstk=%1i, freestk=%1i, delta=%3i",
 							function.name,
-							(int)(function.minimum_registers),
-							(int)(function.free_registers),
-							(int)(function.stack_delta));
+							int(function.minimum_registers),
+							int(function.free_registers),
+							int(function.stack_delta));
 					if (!convert_functions(out_function, function.minimum_registers, function.free_registers, function.stack_delta))
 					{
 						return;

@@ -374,20 +374,20 @@ static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, 
 		if (s_gamma_val == 1)
 		{
 			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-				(int) p1->red   + (int) (rm*curr));
+				(int) p1->red   + int(rm*curr));
 			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-				(int) p1->green + (int) (gm*curr));
+				(int) p1->green + int(gm*curr));
 			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-				(int) p1->blue  + (int) (bm*curr));
+				(int) p1->blue  + int(bm*curr));
 		}
 		else
 		{
 			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-				(int) (p1->red   + pow(curr/double(num-1), double(s_gamma_val))*num*rm));
+				int(p1->red   + pow(curr/double(num-1), double(s_gamma_val))*num*rm));
 			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-				(int) (p1->green + pow(curr/double(num-1), double(s_gamma_val))*num*gm));
+				int(p1->green + pow(curr/double(num-1), double(s_gamma_val))*num*gm));
 			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-				(int) (p1->blue  + pow(curr/double(num-1), double(s_gamma_val))*num*bm));
+				int(p1->blue  + pow(curr/double(num-1), double(s_gamma_val))*num*bm));
 		}
 	}
 }

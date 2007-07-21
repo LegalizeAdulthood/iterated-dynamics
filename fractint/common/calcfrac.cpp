@@ -1008,8 +1008,8 @@ static int draw_function_orbits()
 	while (angle < Rotation)
 	{
 		theta = MathUtil::DegreesToRadians(angle);
-		g_col = (int) (xfactor + (Xctr + Xmagfactor*cos(theta)));
-		g_row = (int) (yfactor + (Yctr + Xmagfactor*sin(theta)));
+		g_col = int(xfactor + (Xctr + Xmagfactor*cos(theta)));
+		g_row = int(yfactor + (Yctr + Xmagfactor*sin(theta)));
 		if (plotorbits2dfloat() == -1)
 		{
 			g_WorkList.add(angle, 0, 0, 0, 0, 0, 0, g_work_sym);
@@ -1173,8 +1173,8 @@ int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with r
 			else
 			{
 				g_color = (g_colors < 16)
-					? (int) (g_color_iter & g_and_color)
-					: (int) (((g_color_iter - 1) % g_and_color) + 1);
+					? int(g_color_iter & g_and_color)
+					: int(((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
 		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
@@ -1308,8 +1308,8 @@ int calculate_mandelbrot_fp()
 			else
 			{
 				g_color = (g_colors < 16)
-					? (int) (g_color_iter & g_and_color)
-					: (int) (((g_color_iter - 1) % g_and_color) + 1);
+					? int(g_color_iter & g_and_color)
+					: int(((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
 		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
@@ -1659,7 +1659,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					}
 					{
 						int tmpcolor;
-						tmpcolor = (int) (((g_color_iter - 1) % g_and_color) + 1);
+						tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
 						tantable[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
 					}
 				}
@@ -2173,8 +2173,8 @@ plot_pixel:
 		else
 		{
 			g_color = (g_colors < 16)
-				? (int) (g_color_iter & g_and_color)
-				: (int) (((g_color_iter - 1) % g_and_color) + 1);
+				? int(g_color_iter & g_and_color)
+				: int(((g_color_iter - 1) % g_and_color) + 1);
 		}
 	}
 	if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
@@ -2572,7 +2572,7 @@ static int _fastcall potential(double mag, long iterations)
 	}
 
 	l_pot = long(pot)*256;
-	i_pot = (int) (l_pot >> 8);
+	i_pot = int(l_pot >> 8);
 	if (i_pot >= g_colors)
 	{
 		i_pot = g_colors - 1;

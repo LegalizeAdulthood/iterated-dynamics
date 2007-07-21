@@ -863,9 +863,9 @@ int starfield()
 		starfield_values[2] = 100.0;
 	}
 
-	g_gaussian_distribution = (int)(starfield_values[0]);
+	g_gaussian_distribution = int(starfield_values[0]);
 	g_gaussian_constant  = (long)(((starfield_values[1])/100.0)*(1L << 16));
-	g_gaussian_slope = (int)(starfield_values[2]);
+	g_gaussian_slope = int(starfield_values[2]);
 
 	if (validate_luts(g_grey_file) != 0)
 	{

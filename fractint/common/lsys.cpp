@@ -656,11 +656,11 @@ static void lsysi_draw_d(struct lsys_turtle_state *cmd)
 	fixedsin = (long) (s*FIXEDLT1);
 	fixedcos = (long) (c*FIXEDLT1);
 
-	lastx = (int) (cmd->xpos >> 19);
-	lasty = (int) (cmd->ypos >> 19);
+	lastx = int(cmd->xpos >> 19);
+	lasty = int(cmd->ypos >> 19);
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
-	driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
+	driver_draw_line(lastx, lasty, int(cmd->xpos >> 19), int(cmd->ypos >> 19), cmd->curcolor);
 }
 
 static void lsysi_draw_m(struct lsys_turtle_state *cmd)
@@ -689,13 +689,13 @@ static void lsysi_draw_g(struct lsys_turtle_state *cmd)
 
 static void lsysi_draw_f(struct lsys_turtle_state *cmd)
 {
-	int lastx = (int) (cmd->xpos >> 19);
-	int lasty = (int) (cmd->ypos >> 19);
+	int lastx = int(cmd->xpos >> 19);
+	int lasty = int(cmd->ypos >> 19);
 	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
 	/* xpos += size*coss[angle]; */
 	/* ypos += size*sins[angle]; */
-	driver_draw_line(lastx, lasty, (int)(cmd->xpos >> 19), (int)(cmd->ypos >> 19), cmd->curcolor);
+	driver_draw_line(lastx, lasty, int(cmd->xpos >> 19), int(cmd->ypos >> 19), cmd->curcolor);
 }
 
 static void lsysi_draw_c(struct lsys_turtle_state *cmd)

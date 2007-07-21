@@ -681,7 +681,7 @@ bn_t unsafe_div_bn(bn_t r, bn_t n1, bn_t n2)
 	}
 
 	/* scale n1 and n2 so: |n| >= 1/256 */
-	/* scale = (int)(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|) */
+	/* scale = int(log(1/fabs(a))/LOG_256) = LOG_256(1/|a|) */
 	i = g_bn_length-1;
 	while (i >= 0 && n1[i] == 0)
 	{

@@ -287,7 +287,7 @@ static int z_line(long x, long y)
 		{
 			if (g_juli_3d_mode == JULI3DMODE_RED_BLUE)
 			{
-				g_color = (int) (128l*z_pixel/g_z_dots);
+				g_color = int(128l*z_pixel/g_z_dots);
 				if ((g_row + g_col) & 1)
 				{
 
@@ -295,7 +295,7 @@ static int z_line(long x, long y)
 				}
 				else
 				{
-					g_color = (int) (multiply(long(g_color) << 16, s_br_ratio, 16) >> 16);
+					g_color = int(multiply(long(g_color) << 16, s_br_ratio, 16) >> 16);
 					if (g_color < 1)
 					{
 						g_color = 1;
@@ -309,7 +309,7 @@ static int z_line(long x, long y)
 			}
 			else
 			{
-				g_color = (int) (254l*z_pixel/g_z_dots);
+				g_color = int(254l*z_pixel/g_z_dots);
 				(*g_plot_color)(g_col, g_row, g_color + 1);
 			}
 			s_plotted = 1;
@@ -403,7 +403,7 @@ static int z_line_fp(double x, double y)
 		{
 			if (g_juli_3d_mode == 3)
 			{
-				g_color = (int) (128l*z_pixel/g_z_dots);
+				g_color = int(128l*z_pixel/g_z_dots);
 				if ((g_row + g_col) & 1)
 				{
 					(*g_plot_color)(g_col, g_row, 127 - g_color);
@@ -423,7 +423,7 @@ static int z_line_fp(double x, double y)
 			}
 			else
 			{
-				g_color = (int) (254l*z_pixel/g_z_dots);
+				g_color = int(254l*z_pixel/g_z_dots);
 				(*g_plot_color)(g_col, g_row, g_color + 1);
 			}
 			s_plotted = 1;

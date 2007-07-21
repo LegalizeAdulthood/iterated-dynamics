@@ -279,7 +279,7 @@ static void get_dir(char const *file_template, char *dir, int &offset)
 	if (tmp)
 	{
 		tmp++;  /* first character after slash */
-		int len = (int) (tmp - (char *) &file_template[offset]);
+		int len = int(tmp - (char *) &file_template[offset]);
 		if (len >= 0 && len < FILE_MAX_DIR)
 		{
 			::strncpy(dir, &file_template[offset], min(len, FILE_MAX_DIR));
@@ -306,7 +306,7 @@ static void get_filename_ext(char const *file_template, char *fname, char *ext, 
 	if (tmp)
 	{
 		/* first character past "." */
-		int len = (int) (tmp - (char *)&file_template[offset]);
+		int len = int(tmp - (char *)&file_template[offset]);
 		if ((len > 0) && (offset + len < length) && fname)
 		{
 			strncpy(fname, &file_template[offset], min(len, FILE_MAX_FNAME));
