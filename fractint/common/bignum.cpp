@@ -251,7 +251,7 @@ bn_t strtobn(bn_t r, char *s)
 
 	if (strchr(s, '.') != NULL) /* is there a decimal point? */
 	{
-		l = (int) strlen(s) - 1;      /* start with the last digit */
+		l = int(strlen(s)) - 1;      /* start with the last digit */
 		while (s[l] >= '0' && s[l] <= '9') /* while a digit */
 		{
 				*onesbyte = (BYTE)(s[l--] - '0');
@@ -366,7 +366,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
 		break;
 	}
 	ltoa(longval, s, 10);
-	l = (int) strlen(s);
+	l = int(strlen(s));
 	s[l++] = '.';
 	for (d = 0; d < dec; d++)
 	{
@@ -566,7 +566,7 @@ bn_t unsafe_inv_bn(bn_t r, bn_t n)
 	/* orig_bntmp1        = bntmp1; */
 
 	/* calculate new starting values */
-	g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; /* round up */
 	if (g_bn_length > orig_bnlength)
 	{
 		g_bn_length = orig_bnlength;
@@ -787,7 +787,7 @@ bn_t sqrt_bn(bn_t r, bn_t n)
 	orig_n             = n;
 
 	/* calculate new starting values */
-	g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; /* round up */
 	if (g_bn_length > orig_bnlength)
 	{
 		g_bn_length = orig_bnlength;
@@ -940,7 +940,7 @@ bn_t unsafe_ln_bn(bn_t r, bn_t n)
 	inttobn(bntmp4, 1); /* set before setting new values */
 
 	/* calculate new starting values */
-	g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; /* round up */
 	if (g_bn_length > orig_bnlength)
 	{
 		g_bn_length = orig_bnlength;
@@ -1225,7 +1225,7 @@ bn_t unsafe_atan_bn(bn_t r, bn_t n)
 	orig_bntmp3        = bntmp3;
 
 	/* calculate new starting values */
-	g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; /* round up */
+	g_bn_length = g_int_length + int(LDBL_DIG/LOG10_256) + 1; /* round up */
 	if (g_bn_length > orig_bnlength)
 	{
 		g_bn_length = orig_bnlength;

@@ -298,7 +298,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			if (g_view_window)
 			{
 				/* bypass for VESA virtual screen */
-				ftemp = g_final_aspect_ratio*(((double) g_screen_height)/((double) g_screen_width)/g_screen_aspect_ratio);
+				ftemp = g_final_aspect_ratio*((double(g_screen_height))/(double(g_screen_width))/g_screen_aspect_ratio);
 				g_x_dots = g_view_x_dots;
 				if (g_x_dots != 0)
 				{	/* g_x_dots specified */
@@ -419,6 +419,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			else
 			{
 				g_calculation_status = CALCSTAT_NO_FRACTAL;
+				// TODO: don't support aborting of load
 				if (driver_key_pressed())
 				{
 					driver_buzzer(BUZZER_INTERRUPT);
@@ -1926,9 +1927,9 @@ static void handle_evolver_param_zoom(int zoom_out)
 		else
 		{
 			g_parameter_zoom += 1.0;
-			if (g_parameter_zoom > (double) g_grid_size/2.0)
+			if (g_parameter_zoom > double(g_grid_size)/2.0)
 			{
-				g_parameter_zoom = (double) g_grid_size/2.0;
+				g_parameter_zoom = double(g_grid_size)/2.0;
 			}
 			draw_parameter_box(0);
 			set_evolve_ranges();
@@ -2222,6 +2223,7 @@ static void move_zoombox(int keynum)
 	int vertical = 0;
 	int horizontal = 0;
 	int getmore = 1;
+	// TODO: refactor to IInputContext
 	while (getmore)
 	{
 		switch (keynum)
@@ -2265,7 +2267,7 @@ static void move_zoombox(int keynum)
 	}
 	if (g_box_count)
 	{
-		zoom_box_move((double) horizontal/g_dx_size, (double) vertical/g_dy_size);
+		zoom_box_move(double(horizontal)/g_dx_size, double(vertical)/g_dy_size);
 	}
 }
 

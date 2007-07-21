@@ -324,6 +324,7 @@ void FractInt::Restart(int argc, char *argv[], bool &screen_stacked)
 
 	if ((g_show_file != SHOWFILE_PENDING) && g_initial_adapter < 0)
 	{
+		// TODO: refactor to IInputContext
 		intro();                          /* display the credits screen */
 		if (driver_key_pressed() == FIK_ESC)
 		{
@@ -668,6 +669,7 @@ void FractInt::Main(int argc, char **argv)
 
 int check_key()
 {
+	// TODO: refactor to IInputContext
 	int key = driver_key_pressed();
 	if (key != 0)
 	{

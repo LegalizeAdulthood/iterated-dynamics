@@ -2509,13 +2509,13 @@ static void initialize_trig_tables(int linelen)
 	float deltatheta = (float) (theta2 - theta1)/(float) linelen;
 
 	/* initial sin, cos theta */
-	s_sin_theta_array[0] = (float) sin((double) theta);
-	s_cos_theta_array[0] = (float) cos((double) theta);
+	s_sin_theta_array[0] = (float) sin(double(theta));
+	s_cos_theta_array[0] = (float) cos(double(theta));
 	s_sin_theta_array[1] = (float) sin((double) (theta + deltatheta));
 	s_cos_theta_array[1] = (float) cos((double) (theta + deltatheta));
 
 	/* sin, cos delta theta */
-	float two_cos_delta_theta = (float) (2.0*cos((double) deltatheta));
+	float two_cos_delta_theta = (float) (2.0*cos(double(deltatheta)));
 
 	/* build table of other sin, cos with trig identity */
 	for (int i = 2; i < (int) linelen; i++)
@@ -2532,15 +2532,15 @@ static void initialize_trig_tables(int linelen)
 		float delta_phi = (float) (phi2 - phi1)/(float) g_height;
 
 		/* initial sin, cos phi */
-		s_old_sin_phi1 = (float) sin((double) phi1);
+		s_old_sin_phi1 = (float) sin(double(phi1));
 		s_sin_phi = s_old_sin_phi1;
-		s_old_cos_phi1 = (float) cos((double) phi1);
+		s_old_cos_phi1 = (float) cos(double(phi1));
 		s_cos_phi = s_old_cos_phi1;
 		s_old_sin_phi2 = (float) sin((double) (phi1 + delta_phi));
 		s_old_cos_phi2 = (float) cos((double) (phi1 + delta_phi));
 
 		/* sin, cos delta phi */
-		s_two_cos_delta_phi = (float) (2.0*cos((double) delta_phi));
+		s_two_cos_delta_phi = (float) (2.0*cos(double(delta_phi)));
 	}
 }
 static int first_time(int linelen, VECTOR v)
@@ -2629,7 +2629,7 @@ static int first_time(int linelen, VECTOR v)
 	}
 
 	/* aspect ratio calculation - assume screen is 4 x 3 */
-	s_aspect = (double) g_x_dots *.75/(double) g_y_dots;
+	s_aspect = double(g_x_dots) *.75/double(g_y_dots);
 
 	MATRIX lightm;
 	/* corners of transformed xdotx by ydotx colors box */
@@ -2658,8 +2658,8 @@ static int first_time(int linelen, VECTOR v)
 
 		/* translate so origin is in center of box, so that when we rotate */
 		/* it, we do so through the center */
-		trans((double) g_x_dots/-2.0, (double) g_y_dots/-2.0, (double) s_z_coord/-2.0, s_m);
-		trans((double) g_x_dots/-2.0, (double) g_y_dots/-2.0, (double) s_z_coord/-2.0, lightm);
+		trans(double(g_x_dots)/-2.0, double(g_y_dots)/-2.0, double(s_z_coord)/-2.0, s_m);
+		trans(double(g_x_dots)/-2.0, double(g_y_dots)/-2.0, double(s_z_coord)/-2.0, lightm);
 
 		/* apply scale factors */
 		scale(s_scale_x, s_scale_y, s_scale_z, s_m);
@@ -2712,7 +2712,7 @@ static int first_time(int linelen, VECTOR v)
 	* part of image */
 	if (g_3d_state.sphere())                  /* sphere case */
 	{
-		s_lview[2] = -(long) ((double) g_y_dots*(double) g_3d_state.z_viewer()/100.0);
+		s_lview[2] = -(long) (double(g_y_dots)*(double) g_3d_state.z_viewer()/100.0);
 	}
 	else                         /* non-sphere case */
 	{
@@ -2730,10 +2730,10 @@ static int first_time(int linelen, VECTOR v)
 	{
 		/* translate back exactly amount we translated earlier plus enough to
 		* center image so maximum values are non-positive */
-		trans(((double) g_x_dots - x_max - x_min)/2, ((double) g_y_dots - y_max - y_min)/2, -z_max, s_m);
+		trans((double(g_x_dots) - x_max - x_min)/2, (double(g_y_dots) - y_max - y_min)/2, -z_max, s_m);
 
 		/* Keep the box centered and on screen regardless of shifts */
-		trans(((double) g_x_dots - x_max - x_min)/2, ((double) g_y_dots - y_max - y_min)/2, -z_max, lightm);
+		trans((double(g_x_dots) - x_max - x_min)/2, (double(g_y_dots) - y_max - y_min)/2, -z_max, lightm);
 
 		trans((double) (g_x_shift), (double) (-g_y_shift), 0.0, s_m);
 
@@ -2771,7 +2771,7 @@ static int first_time(int linelen, VECTOR v)
 		s_scale_x *= s_aspect;
 
 		/* precalculation factor used in sphere calc */
-		s_radius_factor = s_r_scale*s_radius/(double) s_z_coord;
+		s_radius_factor = s_r_scale*s_radius/double(s_z_coord);
 
 		if (s_persp)                /* precalculate g_fudge factor */
 		{
@@ -2787,7 +2787,7 @@ static int first_time(int linelen, VECTOR v)
 
 			/* calculate z cutoff factor attempt to prevent out-of-view surfaces
 			* from being written */
-			zview = -(long) ((double) g_y_dots*(double) g_3d_state.z_viewer()/100.0);
+			zview = -(long) (double(g_y_dots)*(double) g_3d_state.z_viewer()/100.0);
 			radius = (double) (g_y_dots)/2;
 			angle = atan(-radius/(zview + radius));
 			s_z_cutoff = -radius - sin(angle)*radius;

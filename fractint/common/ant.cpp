@@ -78,7 +78,7 @@ private:
 	/* Generate Random Number 0 <= r < n */
 	static int random_number(long n)
 	{
-		return (int) (((long) rand()*n) >> 15);
+		return int(((long) rand()*n) >> 15);
 	}
 };
 
@@ -88,7 +88,7 @@ void Ant::set_wait(long *wait)
 	{
 		char msg[30];
 		sprintf(msg, "Delay %4ld", *wait);
-		while ((int) strlen(msg) < 15)
+		while (int(strlen(msg)) < 15)
 		{
 			strcat(msg, " ");
 		}
@@ -130,7 +130,7 @@ void Ant::set_wait(long *wait)
  */
 void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 {
-	int step = (int) wait;
+	int step = int(wait);
 	if (step == 1)
 	{
 		wait = 0;
@@ -200,6 +200,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 	long count;
 	for (count = 0; count < maxpts; count++)
 	{
+		// TODO: refactor to IInputContext
 		/* check for a key only every inner_loop times */
 		int kbdchar = driver_key_pressed();
 		if (kbdchar || step)
@@ -308,7 +309,7 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 /* this one ignore the color of the current cell is more like a white ant */
 void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 {
-	int step = (int) wait;
+	int step = int(wait);
 	if (step == 1)
 	{
 		wait = 0;
@@ -522,7 +523,7 @@ int Ant::compute()
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
 	sprintf(m_rule, "%.17g", g_parameters[0]);
-	rule_len = (int) strlen(m_rule);
+	rule_len = int(strlen(m_rule));
 	if (rule_len > 1)
 	{                            /* if rule_len == 0 random rule */
 		for (int i = 0; i < rule_len; i++)
@@ -542,7 +543,7 @@ int Ant::compute()
 	}
 	if (g_parameters[5] != 0 && g_parameters[5] != 1)
 	{
-		g_random_seed = (int) g_parameters[5];
+		g_random_seed = int(g_parameters[5]);
 	}
 
 	srand(g_random_seed);
@@ -551,7 +552,7 @@ int Ant::compute()
 		++g_random_seed;
 	}
 
-	m_max_ants = (int) g_parameters[2];
+	m_max_ants = int(g_parameters[2]);
 	if (m_max_ants < 1)             /* if m_max_ants == 0 maxants random */
 	{
 		m_max_ants = 2 + random_number(MAX_ANTS - 2);
@@ -562,7 +563,7 @@ int Ant::compute()
 		g_parameters[2] = m_max_ants;
 			
 	}
-	int type = (int) g_parameters[3] - 1;
+	int type = int(g_parameters[3]) - 1;
 	if (type < ANTTYPE_MOVE_COLOR || type > ANTTYPE_MOVE_RULE)
 	{
 		type = random_number(2);         /* if parma[3] == 0 choose a random type */

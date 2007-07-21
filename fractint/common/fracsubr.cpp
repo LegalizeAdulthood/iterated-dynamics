@@ -1588,8 +1588,8 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 
 void plot_orbit_i(long ix, long iy, int color)
 {
-	plot_orbit_d((double) ix/g_fudge - g_escape_time_state.m_grid_fp.x_min(),
-		(double) iy/g_fudge - g_escape_time_state.m_grid_fp.y_max(),
+	plot_orbit_d(double(ix)/g_fudge - g_escape_time_state.m_grid_fp.x_min(),
+		double(iy)/g_fudge - g_escape_time_state.m_grid_fp.y_max(),
 		color);
 }
 

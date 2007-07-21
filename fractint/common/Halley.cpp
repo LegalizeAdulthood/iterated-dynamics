@@ -56,7 +56,7 @@ int Halley::setup()
 	{
 		g_degree = 2;
 	}
-	g_parameters[0] = (double) g_degree;
+	g_parameters[0] = double(g_degree);
 
 	/*  precalculated values */
 	m_a_plus_1 = g_degree + 1; /* a + 1 */

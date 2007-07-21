@@ -1374,7 +1374,7 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	g_old_z.x = yold*PAR_B;
 	g_old_z.y = 0;          /* old = (y*B) + 0i (in the complex)*/
 	CMPLXtrig0(g_old_z, g_new_z);
-	tmp = (double) g_new_z.x;
+	tmp = double(g_new_z.x);
 	g_old_z.x = xold*PAR_B;
 	g_old_z.y = 0;          /* old = (x*B) + 0i */
 	CMPLXtrig1(g_old_z, g_new_z);
@@ -1384,7 +1384,7 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	g_old_z.x = xold*PAR_A;
 	g_old_z.y = 0;          /* old = (y*A) + 0i (in the complex)*/
 	CMPLXtrig2(g_old_z, g_new_z);
-	tmp = (double) g_new_z.x;
+	tmp = double(g_new_z.x);
 	g_old_z.x = yold*PAR_A;
 	g_old_z.y = 0;          /* old = (x*B) + 0i */
 	CMPLXtrig3(g_old_z, g_new_z);
@@ -2840,8 +2840,8 @@ static int threed_view_trans(threed_vt_inf *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double) g_x_shift*g_escape_time_state.m_grid_fp.width())/g_x_dots;
-			tmpy += ((double) g_y_shift*g_escape_time_state.m_grid_fp.height())/g_y_dots;
+			tmpx += (double(g_x_shift)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
+			tmpy += (double(g_y_shift)*g_escape_time_state.m_grid_fp.height())/g_y_dots;
 			tmpz = -((double) inf->maxvals[2])/g_fudge;
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -2851,8 +2851,8 @@ static int threed_view_trans(threed_vt_inf *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); /* center y */
 
-				tmpx += ((double) g_x_shift1*g_escape_time_state.m_grid_fp.width())/g_x_dots;
-				tmpy += ((double) g_y_shift1*g_escape_time_state.m_grid_fp.height())/g_y_dots;
+				tmpx += (double(g_x_shift1)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
+				tmpy += (double(g_y_shift1)*g_escape_time_state.m_grid_fp.height())/g_y_dots;
 				tmpz = -((double) inf->maxvals[2])/g_fudge;
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
@@ -3007,8 +3007,8 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
 			/* apply perspective shift */
-			tmpx += ((double) g_x_shift*g_escape_time_state.m_grid_fp.width())/g_x_dots;
-			tmpy += ((double) g_y_shift*g_escape_time_state.m_grid_fp.height())/g_y_dots;
+			tmpx += (double(g_x_shift)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
+			tmpy += (double(g_y_shift)*g_escape_time_state.m_grid_fp.height())/g_y_dots;
 			tmpz = -(inf->maxvals[2]);
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
@@ -3018,8 +3018,8 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0); /* center x */
 				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0); /* center y */
 
-				tmpx += ((double) g_x_shift1*g_escape_time_state.m_grid_fp.width())/g_x_dots;
-				tmpy += ((double) g_y_shift1*g_escape_time_state.m_grid_fp.height())/g_y_dots;
+				tmpx += (double(g_x_shift1)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
+				tmpy += (double(g_y_shift1)*g_escape_time_state.m_grid_fp.height())/g_y_dots;
 				tmpz = -(inf->maxvals[2]);
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
