@@ -255,7 +255,7 @@ int SoundState::sound_on(int freq)
 	/* fm flag set */
 	if (m_flags & 16)
 	{
-		double temp_freq = (double)freq * (double)1048576;
+		double temp_freq = double(freq) * (double)1048576;
 		unsigned int block = 0;
 		mult = 1;
 		unsigned int fn = (int)(temp_freq / (1 << block) / mult / 50000.0);

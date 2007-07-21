@@ -91,8 +91,8 @@ static void format_video_info(int i, char *err, char *buf)
 
 static double video_mode_aspect_ratio(int width, int height)
 {  /* calc resulting aspect ratio for specified dots in current mode */
-	return (double)height / (double)width
-		*(double)g_video_entry.x_dots / (double)g_video_entry.y_dots
+	return double(height) / double(width)
+		*double(g_video_entry.x_dots) / double(g_video_entry.y_dots)
 		*g_screen_aspect_ratio;
 	}
 
@@ -445,21 +445,21 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		/* image not exactly same size as screen */
 		g_view_window = true;
 		ftemp = g_final_aspect_ratio*
-			(double)g_video_entry.y_dots / (double)g_video_entry.x_dots
+			double(g_video_entry.y_dots) / double(g_video_entry.x_dots)
 				/ g_screen_aspect_ratio;
 		if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 		{
-			i = (int)((double)g_video_entry.x_dots / (double)g_file_x_dots*20.0 + 0.5);
+			i = (int)(double(g_video_entry.x_dots) / double(g_file_x_dots)*20.0 + 0.5);
 			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
-			i = (int)((double)g_video_entry.x_dots / tmpreduce + 0.5);
-			j = (int)((double)i*ftemp + 0.5);
+			i = (int)(double(g_video_entry.x_dots) / tmpreduce + 0.5);
+			j = (int)(double(i)*ftemp + 0.5);
 		}
 		else
 		{
-			i = (int)((double)g_video_entry.y_dots / (double)g_file_y_dots*20.0 + 0.5);
+			i = (int)(double(g_video_entry.y_dots) / double(g_file_y_dots)*20.0 + 0.5);
 			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
-			j = (int)((double)g_video_entry.y_dots / tmpreduce + 0.5);
-			i = (int)((double)j / ftemp + 0.5);
+			j = (int)(double(g_video_entry.y_dots) / tmpreduce + 0.5);
+			i = (int)(double(j) / ftemp + 0.5);
 		}
 		if (i != g_file_x_dots || j != g_file_y_dots)  /* too bad, must be explicit */
 		{

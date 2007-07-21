@@ -2546,7 +2546,7 @@ static int ifs_2d()
 		y = newy;
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge, (double)newy/g_fudge, 0.0);
+			fprintf(fp, "%g %g %g 15\n", double(newx)/g_fudge, double(newy)/g_fudge, 0.0);
 		}
 
 		/* plot if inside window */
@@ -2673,7 +2673,7 @@ static int ifs_3d_long()
 		inf.orbit[2] = newz;
 		if (fp)
 		{
-			fprintf(fp, "%g %g %g 15\n", (double)newx/g_fudge, (double)newy/g_fudge, (double)newz/g_fudge);
+			fprintf(fp, "%g %g %g 15\n", double(newx)/g_fudge, double(newy)/g_fudge, double(newz)/g_fudge);
 		}
 
 		if (threed_view_trans(&inf))
@@ -2744,7 +2744,7 @@ static void setup_matrix(MATRIX doublemat)
 	zrot((double) g_3d_state.z_rotation()/scale_factor, doublemat);
 
 	/* apply scale */
-/*   scale((double)g_3d_state.x_scale()/100.0, (double)g_3d_state.y_scale()/100.0, (double)ROUGH/100.0, doublemat); */
+/*   scale((double)g_3d_state.x_scale()/100.0, (double)g_3d_state.y_scale()/100.0, double(ROUGH)/100.0, doublemat); */
 
 }
 

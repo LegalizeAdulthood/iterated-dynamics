@@ -213,13 +213,13 @@ static void vary_double(GENEBASE gene[], int randval, int i) /* routine to vary 
 		*(double *)gene[i].addr = (g_px*g_delta_parameter_image_x + g_parameter_offset_x)-(lclpy*g_delta_parameter_image_y + g_parameter_offset_y); /*and x-y*/
 		break;
 	case VARYINT_RANDOM:
-		*(double *)gene[i].addr += (((double)randval / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor;
+		*(double *)gene[i].addr += ((double(randval) / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor;
 		break;
 	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
 			int mid = g_grid_size /2;
 			double radius =  sqrt((double) (sqr(g_px - mid) + sqr(lclpy - mid)));
-			*(double *)gene[i].addr += ((((double)randval / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius;
+			*(double *)gene[i].addr += (((double(randval) / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius;
 		}
 		break;
 	}
@@ -786,7 +786,7 @@ void setup_parameter_box()
 {
 	int vidsize;
 	g_parameter_box_count = 0;
-	g_parameter_zoom = ((double)g_grid_size-1.0)/2.0;
+	g_parameter_zoom = (double(g_grid_size)-1.0)/2.0;
 	/* need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values */
 	vidsize = (g_x_dots + g_y_dots)*4*sizeof(int);
 	vidsize += g_x_dots + g_y_dots + 2;
@@ -997,8 +997,8 @@ void set_evolve_ranges()
 	/* set up ranges and offsets for parameter explorer/evolver */
 	g_parameter_range_x = g_delta_parameter_image_x*(g_parameter_zoom*2.0);
 	g_parameter_range_y = g_delta_parameter_image_y*(g_parameter_zoom*2.0);
-	g_new_parameter_offset_x = g_parameter_offset_x + (((double)g_px-g_parameter_zoom)*g_delta_parameter_image_x);
-	g_new_parameter_offset_y = g_parameter_offset_y + (((double)lclpy-g_parameter_zoom)*g_delta_parameter_image_y);
+	g_new_parameter_offset_x = g_parameter_offset_x + ((double(g_px)-g_parameter_zoom)*g_delta_parameter_image_x);
+	g_new_parameter_offset_y = g_parameter_offset_y + ((double(lclpy)-g_parameter_zoom)*g_delta_parameter_image_y);
 
 	g_new_discrete_parameter_offset_x = g_discrete_parameter_offset_x + g_px - g_grid_size/2;
 	g_new_discrete_parameter_offset_y = g_discrete_parameter_offset_y + lclpy - g_grid_size/2;

@@ -305,18 +305,18 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_y_dots = g_view_y_dots;
 					if (g_y_dots == 0) /* calc g_y_dots? */
 					{
-						g_y_dots = (int)((double)g_x_dots*ftemp + 0.5);
+						g_y_dots = (int)(double(g_x_dots)*ftemp + 0.5);
 					}
 				}
 				else if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 				{
-					g_x_dots = (int)((double)g_screen_width / g_view_reduction + 0.5);
-					g_y_dots = (int)((double)g_x_dots*ftemp + 0.5);
+					g_x_dots = (int)(double(g_screen_width) / g_view_reduction + 0.5);
+					g_y_dots = (int)(double(g_x_dots)*ftemp + 0.5);
 				}
 				else
 				{
-					g_y_dots = (int)((double)g_screen_height / g_view_reduction + 0.5);
-					g_x_dots = (int)((double)g_y_dots / ftemp + 0.5);
+					g_y_dots = (int)(double(g_screen_height) / g_view_reduction + 0.5);
+					g_x_dots = (int)(double(g_y_dots) / ftemp + 0.5);
 				}
 				if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
 				{

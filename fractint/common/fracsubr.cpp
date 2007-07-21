@@ -52,7 +52,7 @@ static int s_save_orbit[1500] = { 0 };	/* array to save orbit values */
 
 /* routines in this module      */
 static long   _fastcall fudge_to_long(double d);
-static double _fastcall fudge_to_double(long l);
+static double _fastcall fudge_to_double(long value);
 static void   _fastcall adjust_to_limits(double);
 static void   _fastcall smallest_add(double *);
 static int    _fastcall ratio_bad(double, double);
@@ -604,11 +604,11 @@ static long _fastcall fudge_to_long(double d)
 	return (long)d;
 }
 
-static double _fastcall fudge_to_double(long l)
+static double _fastcall fudge_to_double(long value)
 {
 	char buf[30];
 	double d;
-	sprintf(buf, "%.9g", (double)l / g_fudge);
+	sprintf(buf, "%.9g", double(value)/g_fudge);
 	sscanf(buf, "%lg", &d);
 	return d;
 }

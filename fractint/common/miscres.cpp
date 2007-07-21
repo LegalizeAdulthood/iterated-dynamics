@@ -391,7 +391,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		{
 			tmpy = tmpy1/tmpx1*signx;    /* tmpy = tmpy / |tmpx| */
 		}
-		*Rotation = (double)(-MathUtil::RadiansToDegrees(atan2((double)tmpy, signx))); /* negative for image rotation */
+		*Rotation = (double)(-MathUtil::RadiansToDegrees(atan2(double(tmpy), signx))); /* negative for image rotation */
 
 		/* tmpx = xmin - x3rd; */
 		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd());

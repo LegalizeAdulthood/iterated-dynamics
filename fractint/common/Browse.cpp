@@ -102,14 +102,14 @@ static void transform_bf(bf_t bt_x, bf_t bt_y, CoordinateD *point)
 	mult_bf(bt_tmp2, n_b, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_e);
-	point->x = (double) bftofloat(bt_tmp1);
+	point->x = double(bftofloat(bt_tmp1));
 
 	/*  point->y = cvt->c*point->x + cvt->d*point->y + cvt->f; */
 	mult_bf(bt_tmp1, n_c, bt_x);
 	mult_bf(bt_tmp2, n_d, bt_y);
 	add_a_bf(bt_tmp1, bt_tmp2);
 	add_a_bf(bt_tmp1, n_f);
-	point->y = (double) bftofloat(bt_tmp1);
+	point->y = double(bftofloat(bt_tmp1));
 
 	restore_stack(saved);
 }
@@ -148,7 +148,7 @@ static void is_visible_window_corner(const fractal_info &info,
 static bool is_visible_window(struct window *list, fractal_info *info,
 	struct ext_blk_mp_info *mp_info)
 {
-	double toobig = sqrt(sqr((double)g_screen_width) + sqr((double)g_screen_height))*1.5;
+	double toobig = sqrt(sqr(double(g_screen_width)) + sqr(double(g_screen_height)))*1.5;
 	int saved = save_stack();
 
 	/* Save original values. */

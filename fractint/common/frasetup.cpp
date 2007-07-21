@@ -140,7 +140,7 @@ int mandelbrot_setup_fp()
 		}
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
-		if ((double)g_c_exp == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
+		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
@@ -272,7 +272,7 @@ int julia_setup_fp()
 		}
 		break;
 	case FRACTYPE_JULIA_Z_POWER_FP:
-		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || (double)g_c_exp != g_parameters[2])
+		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || double(g_c_exp) != g_parameters[2])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -399,7 +399,7 @@ int mandelbrot_setup_l()
 	if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L)
 	{
 		standard_4d_fractal_set_orbit_calc(z_power_orbit, complex_z_power_orbit);
-		if (g_parameters[3] != 0 || (double)g_c_exp != g_parameters[2])
+		if (g_parameters[3] != 0 || double(g_c_exp) != g_parameters[2])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -438,7 +438,7 @@ int julia_setup_l()
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_JULIA_Z_POWER_L:
-		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || (double)g_c_exp != g_parameters[2])
+		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || double(g_c_exp) != g_parameters[2])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -1019,7 +1019,7 @@ int phoenix_setup()
 	{
 		g_degree = 0;
 	}
-	g_parameters[2] = (double)g_degree;
+	g_parameters[2] = double(g_degree);
 	int (*orbit_calc)(void) = NULL;
 	if (g_degree == 0)
 	{
@@ -1050,7 +1050,7 @@ int phoenix_complex_setup()
 	{
 		g_degree = 0;
 	}
-	g_parameters[4] = (double)g_degree;
+	g_parameters[4] = double(g_degree);
 	int (*orbit_calc)(void) = NULL;
 	if (g_degree == 0)
 	{
@@ -1088,7 +1088,7 @@ int mandelbrot_phoenix_setup()
 	{
 		g_degree = 0;
 	}
-	g_parameters[2] = (double)g_degree;
+	g_parameters[2] = double(g_degree);
 	int (*orbit_calc)(void) = NULL;
 	if (g_degree == 0)
 	{
@@ -1119,7 +1119,7 @@ int mandelbrot_phoenix_complex_setup()
 	{
 		g_degree = 0;
 	}
-	g_parameters[4] = (double)g_degree;
+	g_parameters[4] = double(g_degree);
 	if (g_parameter.y != 0 || g_parameter2.y != 0)
 	{
 		g_symmetry = SYMMETRY_NONE;

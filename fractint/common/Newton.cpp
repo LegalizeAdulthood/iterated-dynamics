@@ -101,7 +101,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 
 	/* precalculated values */
 	m_root_over_degree       = 1.0/double(g_degree);
-	m_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
+	m_degree_minus_1_over_degree      = (double)(g_degree - 1) / double(g_degree);
 	g_max_color     = 0;
 	g_threshold    = .3*MathUtil::Pi/g_degree; /* less than half distance between roots */
 
@@ -132,12 +132,12 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 		/* list of roots to discover where we converged for newtbasin */
 		for (i = 0; i < g_degree; i++)
 		{
-			g_roots[i].x = cos(i*g_two_pi/(double)g_degree);
-			g_roots[i].y = sin(i*g_two_pi/(double)g_degree);
+			g_roots[i].x = cos(i*g_two_pi/double(g_degree));
+			g_roots[i].y = sin(i*g_two_pi/double(g_degree));
 		}
 	}
 
-	g_parameters[0] = (double)g_degree;
+	g_parameters[0] = double(g_degree);
 	g_symmetry = (g_degree % 4 == 0) ? SYMMETRY_XY_AXIS : SYMMETRY_X_AXIS;
 
 	g_calculate_type = standard_fractal;

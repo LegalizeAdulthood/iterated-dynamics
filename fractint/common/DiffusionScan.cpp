@@ -130,7 +130,7 @@ static bool diffusion_block_lim(int row, int col, int sqsz)
 
 static int diffusion_engine()
 {
-	double log2 = (double) log (2.0);
+	double log2 = double(log(2.0));
 	int i;
 	int j;
 	int nx;
@@ -145,8 +145,8 @@ static int diffusion_engine()
 	int rowo; /* original col and row */
 	int s = 1 << (s_bits/2); /* size of the square */
 
-	nx = (int) floor((double) (g_x_stop - g_ix_start + 1)/s );
-	ny = (int) floor((double) (g_y_stop - g_iy_start + 1)/s );
+	nx = (int) floor(double(g_x_stop - g_ix_start + 1)/s );
+	ny = (int) floor(double(g_y_stop - g_iy_start + 1)/s );
 
 	rem_x = (g_x_stop - g_ix_start + 1) - nx*s;
 	rem_y = (g_y_stop - g_iy_start + 1) - ny*s;
@@ -354,9 +354,7 @@ static int diffusion_engine()
 
 int diffusion_scan()
 {
-	double log2;
-
-	log2 = (double) log (2.0);
+	double log2 = double(log(2.0));
 
 	g_got_status = GOT_STATUS_DIFFUSION;
 
@@ -364,8 +362,8 @@ int diffusion_scan()
 	/* fit any 32 bit architecture, the maxinum limit for this case would  */
 	/* be 65536x65536 (HB) */
 
-	s_bits = (unsigned) (min(log((double) (g_y_stop - g_iy_start + 1)),
-							 log((double) (g_x_stop - g_ix_start + 1)))/log2);
+	s_bits = (unsigned) (min(log(double(g_y_stop - g_iy_start + 1)),
+							 log(double(g_x_stop - g_ix_start + 1)))/log2);
 	s_bits <<= 1; /* double for two axes */
 	s_diffusion_limit = 1l << s_bits;
 

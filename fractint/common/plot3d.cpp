@@ -513,8 +513,8 @@ void plot_setup()
 		s_red_local_right =   (int) (((100 - g_3d_state.red().crop_right())*double(g_x_dots))/100.0);
 		s_blue_local_left =   (int) ((g_3d_state.blue().crop_left()*double(g_x_dots))/100.0);
 		s_blue_local_right =  (int) (((100 - g_3d_state.blue().crop_right())*double(g_x_dots))/100.0);
-		d_red_bright    =   (double) g_3d_state.red().bright()/100.0;
-		d_blue_bright   =   (double) g_3d_state.blue().bright()/100.0;
+		d_red_bright = double(g_3d_state.red().bright())/100.0;
+		d_blue_bright = double(g_3d_state.blue().bright())/100.0;
 
 		switch (g_which_image)
 		{
@@ -530,8 +530,8 @@ void plot_setup()
 			break;
 
 		case WHICHIMAGE_BLUE:
-			g_x_shift  -= (int) ((g_3d_state.eye_separation()* (double)g_x_dots)/200);
-			g_xx_adjust = (int) (((g_3d_state.x_trans() - g_3d_state.x_adjust())* (double)g_x_dots)/100);
+			g_x_shift  -= (int) ((g_3d_state.eye_separation()* double(g_x_dots))/200);
+			g_xx_adjust = (int) (((g_3d_state.x_trans() - g_3d_state.x_adjust())* double(g_x_dots))/100);
 			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 			{
 				g_sx_offset = g_screen_width / 2;
