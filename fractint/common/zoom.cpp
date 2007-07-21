@@ -181,8 +181,8 @@ void zoom_box_draw(int drawit)
 	ftemp1 = g_zbx + dx + fxadj;
 	ftemp2 = g_zby + dy/g_final_aspect_ratio;
 
-	tl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND)); /* screen co-ords */
-	tl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
+	tl.x   = int(ftemp1*(g_dx_size + PIXELROUND)); /* screen co-ords */
+	tl.y   = int(ftemp2*(g_dy_size + PIXELROUND));
 	g_escape_time_state.m_grid_fp.x_min()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew; /* real co-ords */
 	g_escape_time_state.m_grid_fp.y_max()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
@@ -194,8 +194,8 @@ void zoom_box_draw(int drawit)
 	/* calc co-ords of bottom right */
 	ftemp1 = g_zbx + g_z_width - dx - fxadj;
 	ftemp2 = g_zby - dy/g_final_aspect_ratio + g_z_depth;
-	br.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
-	br.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
+	br.x   = int(ftemp1*(g_dx_size + PIXELROUND));
+	br.y   = int(ftemp2*(g_dy_size + PIXELROUND));
 	g_escape_time_state.m_grid_fp.x_max()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
 	g_escape_time_state.m_grid_fp.y_min()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
@@ -210,8 +210,8 @@ void zoom_box_draw(int drawit)
 	dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
 	ftemp1 = g_zbx + dx - fxadj;
 	ftemp2 = g_zby + dy/g_final_aspect_ratio + g_z_depth;
-	bl.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
-	bl.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
+	bl.x   = int(ftemp1*(g_dx_size + PIXELROUND));
+	bl.y   = int(ftemp2*(g_dy_size + PIXELROUND));
 	g_escape_time_state.m_grid_fp.x_3rd()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
 	g_escape_time_state.m_grid_fp.y_3rd()  = g_sy_max + ftemp2*fydepth + ftemp1*fyskew;
 	if (g_bf_math)
@@ -222,8 +222,8 @@ void zoom_box_draw(int drawit)
 	}
 	ftemp1 = g_zbx + g_z_width - dx + fxadj;
 	ftemp2 = g_zby - dy/g_final_aspect_ratio;
-	tr.x   = (int)(ftemp1*(g_dx_size + PIXELROUND));
-	tr.y   = (int)(ftemp2*(g_dy_size + PIXELROUND));
+	tr.x   = int(ftemp1*(g_dx_size + PIXELROUND));
+	tr.y   = int(ftemp2*(g_dy_size + PIXELROUND));
 
 	if (g_box_count != 0)  /* remove the old box from display */
 	{
@@ -367,7 +367,7 @@ void zoom_box_move(double dx, double dy)
 			g_zbx = 1.0 - g_z_width/2;
 		}
 		if (align != 0
-			&& ((col = (int)(g_zbx*(g_dx_size + PIXELROUND))) & (align-1)) != 0)
+			&& ((col = int(g_zbx*(g_dx_size + PIXELROUND))) & (align-1)) != 0)
 		{
 			if (dx > 0)
 			{
@@ -389,7 +389,7 @@ void zoom_box_move(double dx, double dy)
 			g_zby = 1.0 - g_z_depth/2;
 		}
 		if (align != 0
-			&& ((row = (int)(g_zby*(g_dy_size + PIXELROUND))) & (align-1)) != 0)
+			&& ((row = int(g_zby*(g_dy_size + PIXELROUND))) & (align-1)) != 0)
 		{
 			if (dy > 0)
 			{
@@ -399,8 +399,8 @@ void zoom_box_move(double dx, double dy)
 			g_zby = double(row)/g_dy_size;
 		}
 	}
-	col = (int)((g_zbx + g_z_width/2)*(g_dx_size + PIXELROUND)) + g_sx_offset;
-	row = (int)((g_zby + g_z_depth/2)*(g_dy_size + PIXELROUND)) + g_sy_offset;
+	col = int((g_zbx + g_z_width/2)*(g_dx_size + PIXELROUND)) + g_sx_offset;
+	row = int((g_zby + g_z_depth/2)*(g_dy_size + PIXELROUND)) + g_sy_offset;
 }
 
 static void _fastcall chgboxf(double dwidth, double ddepth)
@@ -779,8 +779,8 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 		clear_box();
 		return 0; /* box is full screen, leave g_calculation_status as is */
 	}
-	col = (int)(g_zbx*(g_dx_size + PIXELROUND)); /* calc dest col, row of topleft pixel */
-	row = (int)(g_zby*(g_dy_size + PIXELROUND));
+	col = int(g_zbx*(g_dx_size + PIXELROUND)); /* calc dest col, row of topleft pixel */
+	row = int(g_zby*(g_dy_size + PIXELROUND));
 	if (do_zoomout)  /* invert row and col */
 	{
 		row = -row;

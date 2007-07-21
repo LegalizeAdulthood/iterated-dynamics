@@ -450,16 +450,16 @@ scan:
 					{
 						break;
 					}
-					(*g_plot_color)(z, y, (int)(helpcolor&255));
+					(*g_plot_color)(z, y, int(helpcolor&255));
 				}
 
 				if (savex < z)
 				{
-					put_horizontal_line(savex, y, z, (int)(savecolor&255));
+					put_horizontal_line(savex, y, z, int(savecolor&255));
 				}
 				else
 				{
-					(*g_plot_color)(savex, y, (int)(savecolor&255));
+					(*g_plot_color)(savex, y, int(savecolor&255));
 				}
 
 				savex = x;
@@ -481,16 +481,16 @@ scan:
 					break;
 				}
 
-				(*g_plot_color)(z, y, (int)(helpcolor&255));
+				(*g_plot_color)(z, y, int(helpcolor&255));
 			}
 
 			if (savex < z)
 			{
-				put_horizontal_line(savex, y, z, (int)(savecolor&255));
+				put_horizontal_line(savex, y, z, int(savecolor&255));
 			}
 			else
 			{
-				(*g_plot_color)(savex, y, (int)(savecolor&255));
+				(*g_plot_color)(savex, y, int(savecolor&255));
 			}
 		}
 		status = 0;

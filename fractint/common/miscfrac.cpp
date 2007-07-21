@@ -330,7 +330,7 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 
 	static struct sub subx, suby;
 
-	s_recur1 = (int) (320L >> recur);
+	s_recur1 = int(320L >> recur);
 	suby.t = 2;
 	ny   = suby.v[0] = y2;
 	ny1 = suby.v[2] = y1;
@@ -446,7 +446,7 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2)
 		return;
 	}
 	s_recur_level++;
-	s_recur1 = (int)(320L >> s_recur_level);
+	s_recur1 = int(320L >> s_recur_level);
 
 	x = (x1 + x2)/2;
 	y = (y1 + y2)/2;
@@ -508,7 +508,7 @@ int plasma()
 		"640x350x16 mode]).");
 		return -1;
 	}
-	s_iparm_x = (int)(g_parameters[0]*8);
+	s_iparm_x = int(g_parameters[0]*8);
 	if (g_parameter.x <= 0.0)
 	{
 		s_iparm_x = 0;
@@ -834,8 +834,8 @@ int diffusion()
 		case DIFFUSION_CENTRAL: /* Release new point on a circle inside the box */
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
-			x = (int)(cosine*(x_max-x_min) + g_x_dots);
-			y = (int)(sine  *(y_max-y_min) + g_y_dots);
+			x = int(cosine*(x_max-x_min) + g_x_dots);
+			y = int(sine  *(y_max-y_min) + g_y_dots);
 			x /= 2;
 			y /= 2;
 			break;
@@ -847,8 +847,8 @@ int diffusion()
 					given by the radius variable */
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
-			x = (int)(cosine*radius + g_x_dots);
-			y = (int)(sine  *radius + g_y_dots);
+			x = int(cosine*radius + g_x_dots);
+			y = int(sine  *radius + g_y_dots);
 			x /= 2;
 			y /= 2;
 			break;
@@ -1210,8 +1210,8 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 
 		/* assign population value to Y coordinate in pixels */
 		pixel_row = g_integer_fractal
-			? (g_y_stop - (int)((s_population_l - g_initial_z_l.y)/g_escape_time_state.m_grid_l.delta_y()))
-			: (g_y_stop - (int)((s_population - g_initial_z.y)/g_escape_time_state.m_grid_fp.delta_y()));
+			? (g_y_stop - int((s_population_l - g_initial_z_l.y)/g_escape_time_state.m_grid_l.delta_y()))
+			: (g_y_stop - int((s_population - g_initial_z.y)/g_escape_time_state.m_grid_fp.delta_y()));
 
 		/* if it's visible on the screen, save it in the column array */
 		if (pixel_row <= (unsigned int)g_y_stop)
@@ -1685,7 +1685,7 @@ jumpout:
 		lyap = g_log_palette_mode
 			? -temp/(double(s_lyapunov_length)*i)
 			: 1 - exp(temp/(double(s_lyapunov_length)*i));
-		color = 1 + (int)(lyap*(g_colors-1));
+		color = 1 + int(lyap*(g_colors-1));
 	}
 	return color;
 }
@@ -2596,7 +2596,7 @@ int froth_calc()   /* per pixel 1/2/g, called with row & col set */
 		g_color_iter = 0;
 	}
 
-	g_color = abs((int)(g_color_iter));
+	g_color = abs(int(g_color_iter));
 
 	(*g_plot_color)(g_col, g_row, g_color);
 

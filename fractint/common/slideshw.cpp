@@ -286,7 +286,7 @@ start:
 	{
 		float fticks;
 		int err = fscanf(s_slide_file, "%f", &fticks); /* how many ticks to wait */
-		driver_set_keyboard_timeout((int) (fticks*1000.f));
+		driver_set_keyboard_timeout(int(fticks*1000.f));
 		fticks *= CLK_TCK;             /* convert from seconds to ticks */
 		if (err == 1)
 		{

@@ -574,7 +574,7 @@ int gaussian_number(int probability, int range)
 	long p = divide(long(probability) << 16, long(range) << 16, 16);
 	p = multiply(p, g_gaussian_constant, 16);
 	p = multiply(long(g_gaussian_distribution) << 16, p, 16);
-	if (!(rand15() % (g_gaussian_distribution - (int) (p >> 16) + 1)))
+	if (!(rand15() % (g_gaussian_distribution - int(p >> 16) + 1)))
 	{
 		long accum = 0;
 		for (int n = 0; n < g_gaussian_slope; n++)
@@ -582,7 +582,7 @@ int gaussian_number(int probability, int range)
 			accum += rand15();
 		}
 		accum /= g_gaussian_slope;
-		int r = (int) (multiply(long(range) << 15, accum, 15) >> 14);
+		int r = int(multiply(long(range) << 15, accum, 15) >> 14);
 		r -= range;
 		if (r < 0)
 		{

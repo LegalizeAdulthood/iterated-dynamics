@@ -155,9 +155,9 @@ int out_line_stereo(BYTE *pixels, int linelen)
 	for (int x = 0; x < g_x_dots; ++x)
 	{
 		s_separation = s_reverse
-			? (s_ground - (int) (s_depth*(getdepth(x, s_y) - s_min_c)/s_max_cc))
-			: (s_ground - (int) (s_depth*(s_max_cc - (getdepth(x, s_y) - s_min_c))/s_max_cc));
-		s_separation =  (int) ((s_separation*10.0)/s_width);        /* adjust for media s_width */
+			? (s_ground - int(s_depth*(getdepth(x, s_y) - s_min_c)/s_max_cc))
+			: (s_ground - int(s_depth*(s_max_cc - (getdepth(x, s_y) - s_min_c))/s_max_cc));
+		s_separation =  int((s_separation*10.0)/s_width);        /* adjust for media s_width */
 
 		/* get average value under calibration bars */
 		if (s_x1 <= x && x <= s_x2 && s_y1 <= s_y && s_y <= s_y2)

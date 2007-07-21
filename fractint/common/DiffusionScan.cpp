@@ -231,7 +231,7 @@ static int diffusion_engine()
 		/* with progressive filling :    */
 		while (s_diffusion_counter < (s_diffusion_limit >> 1))
 		{
-			sqsz = 1 << ((int) (s_bits - (int) (log(s_diffusion_counter + 0.5)/log2 )-1)/2 );
+			sqsz = 1 << (int(s_bits - int(log(s_diffusion_counter + 0.5)/log2 )-1)/2 );
 			count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
 
 			i = 0;
@@ -370,8 +370,8 @@ int diffusion_scan()
 	if (diffusion_engine() == -1)
 	{
 		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(),
-			(int) (s_diffusion_counter >> 16),            /* high, */
-			(int) (s_diffusion_counter & 0xffff),         /* low order words */
+			int(s_diffusion_counter >> 16),            /* high, */
+			int(s_diffusion_counter & 0xffff),         /* low order words */
 			g_work_sym);
 		return -1;
 	}

@@ -240,7 +240,7 @@ int SoundState::sound_on(int freq)
 
 	/* convert tone to note number for midi */
 	double logbase = log(8.176);
-	int note = (int)(12 * (log(static_cast<double>(freq)) - logbase)/log(2.0) + 0.5);
+	int note = int(12 * (log(static_cast<double>(freq)) - logbase)/log(2.0) + 0.5);
 
 	int oct = (note/12) * 12; /* round to nearest octave */
 	int chrome = note % 12; /* extract which note in octave it was */
@@ -248,7 +248,7 @@ int SoundState::sound_on(int freq)
 
 	if (m_flags & 64)
 	{
-		freq = (int) (exp((double(note)/12.0)*log(2.0))*8.176);
+		freq = int(exp((double(note)/12.0)*log(2.0))*8.176);
 	}
 	/* pitch quantize note for FM and speaker */
 
@@ -258,7 +258,7 @@ int SoundState::sound_on(int freq)
 		double temp_freq = double(freq)*1048576.0;
 		unsigned int block = 0;
 		mult = 1;
-		unsigned int fn = (int)(temp_freq/(1 << block)/mult/50000.0);
+		unsigned int fn = int(temp_freq/(1 << block)/mult/50000.0);
 		while (fn > 1023) /* fn must have ten bit value so tweak mult and block until it fits */
 		{
 			if (block < 8)
@@ -270,7 +270,7 @@ int SoundState::sound_on(int freq)
 				mult++; /* if we're out of octaves then increment the multiplier*/
 				block = 0; /* reset the block */
 			}
-			fn = (int) (temp_freq/((1 << block)*mult*50000.0));
+			fn = int(temp_freq/((1 << block)*mult*50000.0));
 		}
 
 		/* then send the right values to the fm registers */
@@ -623,15 +623,15 @@ void SoundState::new_orbit(int i, int j)
 {
 	if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 	{
-		tone((int)(i + m_base_hertz));
+		tone(int(i + m_base_hertz));
 	}
 	else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
 	{
-		tone((int)(j + m_base_hertz));
+		tone(int(j + m_base_hertz));
 	}
 	else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
 	{
-		tone((int)(i + j + m_base_hertz));
+		tone(int(i + j + m_base_hertz));
 	}
 	else if (g_orbit_delay > 0)
 	{
@@ -662,7 +662,7 @@ void SoundState::orbit(double x, double y, double z)
 		case SOUNDFLAG_Y: value = y; break;
 		case SOUNDFLAG_Z: value = z; break;
 		}
-		tone((int) (value*100 + m_base_hertz));
+		tone(int(value*100 + m_base_hertz));
 	}
 }
 

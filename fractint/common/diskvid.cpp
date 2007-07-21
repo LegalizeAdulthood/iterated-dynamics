@@ -231,7 +231,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		fwd_link = &s_hash_ptr[(((unsigned short)longtmp >> BLOCK_SHIFT) & (HASH_SIZE-1))];
 		ptr1->offset = longtmp;
 		ptr1->hashlink = *fwd_link;
-		*fwd_link = (int) ((char *)ptr1 - (char *)s_cache_start);
+		*fwd_link = int((char *)ptr1 - (char *)s_cache_start);
 	}
 
 	memorysize = (long)(newcolsize)*newrowsize + s_header_length;
@@ -387,7 +387,7 @@ int disk_read(int col, int row)
 
 int disk_from_memory(long offset, int size, void *dest)
 {
-	int col_subscr = (int) (offset & (BLOCK_LEN - 1));
+	int col_subscr = int(offset & (BLOCK_LEN - 1));
 	if (col_subscr + size > BLOCK_LEN)            /* access violates  a */
 	{
 		return 0;                                 /*   cache boundary   */
@@ -454,7 +454,7 @@ void disk_write(int col, int row, int color)
 
 int disk_to_memory(long offset, int size, void *src)
 {
-	int col_subscr =  (int)(offset & (BLOCK_LEN - 1));
+	int col_subscr =  int(offset & (BLOCK_LEN - 1));
 
 	if (col_subscr + size > BLOCK_LEN)            /* access violates  a */
 	{
@@ -520,7 +520,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 	}
 	/* remove g_block at s_cache_lru from its hash chain */
 	fwd_link = &s_hash_ptr[(((unsigned short)s_cache_lru->offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
-	tbloffset = (int) ((char *)s_cache_lru - (char *)s_cache_start);
+	tbloffset = int((char *)s_cache_lru - (char *)s_cache_start);
 	while (*fwd_link != tbloffset)
 	{
 		fwd_link = &((struct cache *)((char *)s_cache_start + *fwd_link))->hashlink;
@@ -586,7 +586,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 	/* add new g_block to its hash chain */
 	fwd_link = &s_hash_ptr[(((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
 	s_cache_lru->hashlink = *fwd_link;
-	*fwd_link = (int) ((char *)s_cache_lru - (char *)s_cache_start);
+	*fwd_link = int((char *)s_cache_lru - (char *)s_cache_start);
 	s_cur_cache = s_cache_lru;
 #endif
 }

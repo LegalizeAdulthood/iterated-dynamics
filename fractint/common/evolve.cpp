@@ -254,7 +254,7 @@ static int vary_int(int randvalue, int limit, int mode)
 		{
 			int mid = g_grid_size /2;
 			double radius =  sqrt(double(sqr(g_px - mid) + sqr(lclpy - mid)));
-			ret = (int)((((randvalue/RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius);
+			ret = int((((randvalue/RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius);
 			ret %= limit;
 		}
 		break;
@@ -948,10 +948,10 @@ void draw_parameter_box(int mode)
 
 	g_box_count = 0;
 	/*draw larger box to show parm zooming range */
-	tl.x = bl.x = ((g_px -int(g_parameter_zoom))*(int)(g_dx_size + 1 + grout))-g_sx_offset-1;
-	tl.y = tr.y = ((g_py -int(g_parameter_zoom))*(int)(g_dy_size + 1 + grout))-g_sy_offset-1;
-	br.x = tr.x = ((g_px +1 + int(g_parameter_zoom))*(int)(g_dx_size + 1 + grout))-g_sx_offset;
-	br.y = bl.y = ((g_py +1 + int(g_parameter_zoom))*(int)(g_dy_size + 1 + grout))-g_sy_offset;
+	tl.x = bl.x = ((g_px -int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_sx_offset-1;
+	tl.y = tr.y = ((g_py -int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_sy_offset-1;
+	br.x = tr.x = ((g_px +1 + int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_sx_offset;
+	br.y = bl.y = ((g_py +1 + int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_sy_offset;
 #ifndef XFRACT
 	add_box(br);
 	add_box(tr);

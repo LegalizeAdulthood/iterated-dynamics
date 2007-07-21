@@ -803,7 +803,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	{
 		if (g_3d_state.haze() && g_targa_output)
 		{
-			s_haze_mult = (int) (g_3d_state.haze()*((float) ((long) (g_y_dots - 1 - g_current_row)*(long) (g_y_dots - 1 - g_current_row))
+			s_haze_mult = int(g_3d_state.haze()*((float) ((long) (g_y_dots - 1 - g_current_row)*(long) (g_y_dots - 1 - g_current_row))
 									/(float) ((long) (g_y_dots - 1)*(long) (g_y_dots - 1))));
 			s_haze_mult = 100 - s_haze_mult;
 		}
@@ -842,7 +842,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	{
 		if ((g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 			&& (col != last_dot) /* if this is not the last col */
-			&&  (col % (int) (s_aspect*s_local_preview_factor)) /* if not the 1st or mod factor col */
+			&&  (col % int(s_aspect*s_local_preview_factor)) /* if not the 1st or mod factor col */
 			&& (!(!g_3d_state.raytrace_output() && g_3d_state.fill_type() > FillType::Bars && col == 1)))
 		{
 			goto loopbottom;
@@ -854,7 +854,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 
 		if (g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 		{
-			next = (int) (col + s_aspect*s_local_preview_factor);
+			next = int(col + s_aspect*s_local_preview_factor);
 			if (next == col)
 			{
 				next = col + 1;
@@ -908,11 +908,11 @@ int out_line_3d(BYTE *pixels, int line_length)
 					rnd = -rnd;   /* Make +/- n-bit number */
 				}
 
-				if ((int) (cur.color) + rnd >= g_colors)
+				if (int(cur.color) + rnd >= g_colors)
 				{
 					cur.color = g_colors - 2;
 				}
-				else if ((int) (cur.color) + rnd <= g_3d_state.water_line())
+				else if (int(cur.color) + rnd <= g_3d_state.water_line())
 				{
 					cur.color = g_3d_state.water_line() + 1;
 				}
@@ -989,7 +989,7 @@ reallythebottom:
 /* vector version of line draw */
 static void vdraw_line(double *v1, double *v2, int color)
 {
-	driver_draw_line((int) v1[0], (int) v1[1], (int) v2[0], (int) v2[1], color);
+	driver_draw_line(int(v1[0]), int(v1[1]), int(v2[0]), int(v2[1]), color);
 }
 
 static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax)
@@ -1196,7 +1196,7 @@ static void draw_light_box(double *origin, double *direct, MATRIX light_m)
 		{
 			if (abs(i) + abs(j) < 6)
 			{
-				g_plot_color((int) (S[1][2][0] + i), (int) (S[1][2][1] + j), 10);
+				g_plot_color(int(S[1][2][0] + i), int(S[1][2][1] + j), 10);
 			}
 		}
 	}
@@ -1441,7 +1441,7 @@ static void interp_color(int x, int y, int color)
 	if (D)
 	{  /* calculate a weighted average of colors long casts prevent integer
 			overflow. This can evaluate to zero */
-		color = (int) (((long) (d2 + d3)*(long) s_p1.color +
+		color = int(((long) (d2 + d3)*(long) s_p1.color +
 				(long) (d1 + d3)*(long) s_p2.color +
 				(long) (d1 + d2)*(long) s_p3.color)/D);
 	}
@@ -1547,7 +1547,7 @@ int targa_color(int x, int y, int color)
 	/* on the disk. */
 	disk_write_targa(x + g_sx_offset, y + g_sy_offset, rgb[0], rgb[1], rgb[2]);
 
-	return (int) (255 - value);
+	return int(255 - value);
 }
 
 static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
@@ -1767,15 +1767,15 @@ static int targa_validate(char *file_name)
 	/* Check Image specs */
 	for (int i = 0; i < 4; i++)
 	{
-		if (fgetc(fp) != (int) s_targa_size[i])
+		if (fgetc(fp) != int(s_targa_size[i]))
 		{
 			file_error(file_name, FILEERROR_BAD_IMAGE_SIZE);
 			return -1;
 		}
 	}
 
-	if ((fgetc(fp) != (int) TARGA_24)			/* Is it a targa 24 file? */
-		|| (fgetc(fp) != (int) TARGA_32))		/* Is the origin at the upper left? */
+	if ((fgetc(fp) != int(TARGA_24))			/* Is it a targa 24 file? */
+		|| (fgetc(fp) != int(TARGA_32)))		/* Is the origin at the upper left? */
 	{
 		file_error(file_name, FILEERROR_BAD_FILE_TYPE);
 		return -1;
@@ -1876,8 +1876,8 @@ static int HSVtoRGB(BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsig
 		hue %= 23040;            /* Makes h circular  */
 	}
 
-	int I = (int) (hue/3840);
-	int RMD = (int) (hue % 3840);      /* RMD = fractional part of hue    */
+	int I = int(hue/3840);
+	int RMD = int(hue % 3840);      /* RMD = fractional part of hue    */
 
 	unsigned long P1 = ((value*(65535L - saturation))/65280L) >> 8;
 	unsigned long P2 = (((value*(65535L - (saturation*RMD)/3840))/65280L) - 1) >> 8;

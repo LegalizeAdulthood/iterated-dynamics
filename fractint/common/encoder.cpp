@@ -418,11 +418,11 @@ int encoder()
 	if (g_view_window                               /* less than full screen?  */
 		&& (g_view_x_dots == 0 || g_view_y_dots == 0))   /* and we picked the dots? */
 	{
-		i = (int) ((double(g_screen_height)/double(g_screen_width))*64.0/g_screen_aspect_ratio - 14.5);
+		i = int((double(g_screen_height)/double(g_screen_width))*64.0/g_screen_aspect_ratio - 14.5);
 	}
 	else   /* must risk loss of precision if numbers low */
 	{
-		i = (int) (((double(g_y_dots)/double(g_x_dots))/g_final_aspect_ratio)*64 - 14.5);
+		i = int(((double(g_y_dots)/double(g_x_dots))/g_final_aspect_ratio)*64 - 14.5);
 	}
 	if (i < 1)
 	{

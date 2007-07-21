@@ -696,8 +696,8 @@ int Minverse_julia_orbit()
 	/*
 	* Next, find its pixel position
 	*/
-	newcol = (int) (s_cvt.a*g_new_z.x + s_cvt.b*g_new_z.y + s_cvt.e);
-	newrow = (int) (s_cvt.c*g_new_z.x + s_cvt.d*g_new_z.y + s_cvt.f);
+	newcol = int(s_cvt.a*g_new_z.x + s_cvt.b*g_new_z.y + s_cvt.e);
+	newrow = int(s_cvt.c*g_new_z.x + s_cvt.d*g_new_z.y + s_cvt.f);
 
 	/*
 	* Now find the next point(s), and flip a coin to choose one.
@@ -877,9 +877,9 @@ int Linverse_julia_orbit()
 	* otherwise the values of s_lcvt were truncated.  Used g_bit_shift
 	* of 24 otherwise, for increased precision.
 	*/
-	newcol = (int) ((multiply(s_lcvt.a, g_new_z_l.x >> (g_bit_shift - 21), 21) +
+	newcol = int((multiply(s_lcvt.a, g_new_z_l.x >> (g_bit_shift - 21), 21) +
 			multiply(s_lcvt.b, g_new_z_l.y >> (g_bit_shift - 21), 21) + s_lcvt.e) >> 21);
-	newrow = (int) ((multiply(s_lcvt.c, g_new_z_l.x >> (g_bit_shift - 21), 21) +
+	newrow = int((multiply(s_lcvt.c, g_new_z_l.x >> (g_bit_shift - 21), 21) +
 			multiply(s_lcvt.d, g_new_z_l.y >> (g_bit_shift - 21), 21) + s_lcvt.f) >> 21);
 
 	if (newcol < 1 || newcol >= g_x_dots || newrow < 1 || newrow >= g_y_dots)
@@ -1501,8 +1501,8 @@ int orbit_2d_fp()
 			}
 		}
 
-		col = (int) (cvt.a*x + cvt.b*y + cvt.e);
-		row = (int) (cvt.c*x + cvt.d*y + cvt.f);
+		col = int(cvt.a*x + cvt.b*y + cvt.e);
+		row = int(cvt.c*x + cvt.d*y + cvt.f);
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
 			g_sound_state.orbit(x, y, z);
@@ -1628,8 +1628,8 @@ int orbit_2d()
 			}
 		}
 
-		int col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
-		int row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
+		int col = int((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
+		int row = int((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
 		if (g_overflow)
 		{
 			g_overflow = 0;
@@ -1752,7 +1752,7 @@ static int orbit_3d_calc()
 					double yy;
 					yy = inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
 					yy /= g_fudge;
-					g_sound_state.tone((int) (yy*100 + g_sound_state.base_hertz()));
+					g_sound_state.tone(int(yy*100 + g_sound_state.base_hertz()));
 				}
 				if (oldcol != -1 && s_connect_points)
 				{
@@ -1872,7 +1872,7 @@ static int orbit_3d_calc_fp()
 				}
 				if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					g_sound_state.tone((int) (inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + g_sound_state.base_hertz()));
+					g_sound_state.tone(int(inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]*100 + g_sound_state.base_hertz()));
 				}
 				if (oldcol != -1 && s_connect_points)
 				{
@@ -2067,8 +2067,8 @@ int dynamic_2d_fp()
 				}
 			}
 
-			col = (int) (cvt.a*x + cvt.b*y + cvt.e);
-			row = (int) (cvt.c*x + cvt.d*y + cvt.f);
+			col = int(cvt.a*x + cvt.b*y + cvt.e);
+			row = int(cvt.c*x + cvt.d*y + cvt.f);
 			if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 			{
 				g_sound_state.orbit(x, y, z);
@@ -2180,7 +2180,7 @@ int plot_orbits_2d_setup()
 
 	if (g_orbit_delay >= g_max_iteration) /* make sure we get an image */
 	{
-		g_orbit_delay = (int) (g_max_iteration - 1);
+		g_orbit_delay = int(g_max_iteration - 1);
 	}
 
 	s_o_color = 1;
@@ -2241,8 +2241,8 @@ int plotorbits2dfloat()
 		}
 
 		/* else count >= g_orbit_delay and we want to plot it */
-		col = (int) (s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
-		row = (int) (s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
+		col = int(s_o_cvt.a*g_new_z.x + s_o_cvt.b*g_new_z.y + s_o_cvt.e);
+		row = int(s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{             /* plot if on the screen */
 			(*g_plot_color)(col, row, s_o_color % g_colors);
@@ -2553,8 +2553,8 @@ static int ifs_2d()
 		}
 
 		/* plot if inside window */
-		col = (int) ((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
-		row = (int) ((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
+		col = int((multiply(cvt.a, x, g_bit_shift) + multiply(cvt.b, y, g_bit_shift) + cvt.e) >> g_bit_shift);
+		row = int((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
 			/* color is count of hits on this pixel */
@@ -2916,11 +2916,11 @@ static int threed_view_trans(threed_vt_inf *inf)
 	}
 
 	/* work out the screen positions */
-	inf->row = (int) (((multiply(inf->cvt.c, inf->viewvect[0], g_bit_shift) +
+	inf->row = int(((multiply(inf->cvt.c, inf->viewvect[0], g_bit_shift) +
 			multiply(inf->cvt.d, inf->viewvect[1], g_bit_shift) + inf->cvt.f)
 			>> g_bit_shift)
 		+ g_yy_adjust);
-	inf->col = (int) (((multiply(inf->cvt.a, inf->viewvect[0], g_bit_shift) +
+	inf->col = int(((multiply(inf->cvt.a, inf->viewvect[0], g_bit_shift) +
 			multiply(inf->cvt.b, inf->viewvect[1], g_bit_shift) + inf->cvt.e)
 			>> g_bit_shift)
 		+ g_xx_adjust);
@@ -2932,11 +2932,11 @@ static int threed_view_trans(threed_vt_inf *inf)
 	}
 	if (s_real_time)
 	{
-		inf->row1 = (int) (((multiply(inf->cvt.c, inf->viewvect1[0], g_bit_shift) +
+		inf->row1 = int(((multiply(inf->cvt.c, inf->viewvect1[0], g_bit_shift) +
 						multiply(inf->cvt.d, inf->viewvect1[1], g_bit_shift) +
 						inf->cvt.f) >> g_bit_shift)
 						+ g_yy_adjust1);
-		inf->col1 = (int) (((multiply(inf->cvt.a, inf->viewvect1[0], g_bit_shift) +
+		inf->col1 = int(((multiply(inf->cvt.a, inf->viewvect1[0], g_bit_shift) +
 						multiply(inf->cvt.b, inf->viewvect1[1], g_bit_shift) +
 						inf->cvt.e) >> g_bit_shift)
 						+ g_xx_adjust1);
@@ -3035,9 +3035,9 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 			perspective(inf->viewvect1);
 		}
 	}
-	inf->row = (int) (inf->cvt.c*inf->viewvect[0] + inf->cvt.d*inf->viewvect[1]
+	inf->row = int(inf->cvt.c*inf->viewvect[0] + inf->cvt.d*inf->viewvect[1]
 				+ inf->cvt.f + g_yy_adjust);
-	inf->col = (int) (inf->cvt.a*inf->viewvect[0] + inf->cvt.b*inf->viewvect[1]
+	inf->col = int(inf->cvt.a*inf->viewvect[0] + inf->cvt.b*inf->viewvect[1]
 				+ inf->cvt.e + g_xx_adjust);
 	if (inf->col < 0 || inf->col >= g_x_dots || inf->row < 0 || inf->row >= g_y_dots)
 	{
@@ -3047,9 +3047,9 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 	}
 	if (s_real_time)
 	{
-		inf->row1 = (int) (inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
+		inf->row1 = int(inf->cvt.c*inf->viewvect1[0] + inf->cvt.d*inf->viewvect1[1]
 					+ inf->cvt.f + g_yy_adjust1);
-		inf->col1 = (int) (inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
+		inf->col1 = int(inf->cvt.a*inf->viewvect1[0] + inf->cvt.b*inf->viewvect1[1]
 					+ inf->cvt.e + g_xx_adjust1);
 		if (inf->col1 < 0 || inf->col1 >= g_x_dots || inf->row1 < 0 || inf->row1 >= g_y_dots)
 		{

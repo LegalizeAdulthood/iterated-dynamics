@@ -1436,7 +1436,7 @@ static void sleep_ms_old(long ms)
 				clear_temp_message();
 				goto sleepexit;
 			}
-			elapsed = (int) (t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
+			elapsed = int(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
 		}
 		while (elapsed < SLEEPINIT);
 		/* once more to see if faster (eg multi-tasking) */
@@ -1447,7 +1447,7 @@ static void sleep_ms_old(long ms)
 		while (t2.time == t1.time && t2.millitm == t1.millitm);
 		sleep_ms_old(10L*SLEEPINIT);
 		ftimex(&t2);
-		i = (int) (t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
+		i = int(t2.time-t1.time)*1000 + t2.millitm-t1.millitm;
 		if (i < elapsed)
 		{
 			elapsed = (i == 0) ? 1 : i;
@@ -1554,12 +1554,12 @@ static void _fastcall plot_orbit_d(double dx, double dy, int color)
 	{
 		return;
 	}
-	int i = (int) (dy*g_plot_mx1 - dx*g_plot_mx2) + g_sx_offset;
+	int i = int(dy*g_plot_mx1 - dx*g_plot_mx2) + g_sx_offset;
 	if (i < 0 || i >= g_screen_width)
 	{
 		return;
 	}
-	int j = (int) (dx*g_plot_my1 - dy*g_plot_my2) + g_sy_offset;
+	int j = int(dx*g_plot_my1 - dy*g_plot_my2) + g_sy_offset;
 	if (j < 0 || j >= g_screen_height)
 	{
 		return;
