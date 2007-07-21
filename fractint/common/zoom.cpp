@@ -374,7 +374,7 @@ void zoom_box_move(double dx, double dy)
 				col += align;
 			}
 			col -= col & (align-1); /* adjust col to pass alignment */
-			g_zbx = (double)col/g_dx_size;
+			g_zbx = double(col)/g_dx_size;
 		}
 	}
 	if (dy != 0.0)
@@ -396,7 +396,7 @@ void zoom_box_move(double dx, double dy)
 				row += align;
 			}
 			row -= row & (align-1);
-			g_zby = (double)row/g_dy_size;
+			g_zby = double(row)/g_dy_size;
 		}
 	}
 	col = (int)((g_zbx + g_z_width/2)*(g_dx_size + PIXELROUND)) + g_sx_offset;

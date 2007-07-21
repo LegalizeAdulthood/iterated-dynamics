@@ -199,10 +199,10 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 	/************************************************************/
 	/* KEEP THIS FOR DOCS - original formula --                 */
 	/* if (s_r_scale < 0.0)                                         */
-	/* r = 1.0 + ((double)cur.color/(double)s_z_coord)*s_r_scale;       */
+	/* r = 1.0 + (double(cur.color)/double(s_z_coord))*s_r_scale;       */
 	/* else                                                     */
-	/* r = 1.0-s_r_scale + ((double)cur.color/(double)s_z_coord)*s_r_scale;*/
-	/* s_radius = (double)g_y_dots/2;                                     */
+	/* r = 1.0-s_r_scale + (double(cur.color)/double(s_z_coord))*s_r_scale;*/
+	/* s_radius = double(g_y_dots)/2;                                     */
 	/* r = r*s_radius;                                                 */
 	/* cur.x = g_x_dots/2 + s_scale_x*r*sin_theta*s_aspect + xup;         */
 	/* cur.y = g_y_dots/2 + s_scale_y*r*cos_theta*s_cos_phi - yup;         */
@@ -214,7 +214,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 	}
 	else if (s_r_scale > 0.0)
 	{
-		*r = s_radius - s_r_scale_r + s_radius_factor*(double) f_cur->color*cos_theta;
+		*r = s_radius - s_r_scale_r + s_radius_factor*double(f_cur->color)*cos_theta;
 	}
 	else
 	{
@@ -2511,8 +2511,8 @@ static void initialize_trig_tables(int linelen)
 	/* initial sin, cos theta */
 	s_sin_theta_array[0] = (float) sin(double(theta));
 	s_cos_theta_array[0] = (float) cos(double(theta));
-	s_sin_theta_array[1] = (float) sin((double) (theta + deltatheta));
-	s_cos_theta_array[1] = (float) cos((double) (theta + deltatheta));
+	s_sin_theta_array[1] = (float) sin(double(theta + deltatheta));
+	s_cos_theta_array[1] = (float) cos(double(theta + deltatheta));
 
 	/* sin, cos delta theta */
 	float two_cos_delta_theta = (float) (2.0*cos(double(deltatheta)));
@@ -2536,8 +2536,8 @@ static void initialize_trig_tables(int linelen)
 		s_sin_phi = s_old_sin_phi1;
 		s_old_cos_phi1 = (float) cos(double(phi1));
 		s_cos_phi = s_old_cos_phi1;
-		s_old_sin_phi2 = (float) sin((double) (phi1 + delta_phi));
-		s_old_cos_phi2 = (float) cos((double) (phi1 + delta_phi));
+		s_old_sin_phi2 = (float) sin(double(phi1 + delta_phi));
+		s_old_cos_phi2 = (float) cos(double(phi1 + delta_phi));
 
 		/* sin, cos delta phi */
 		s_two_cos_delta_phi = (float) (2.0*cos(double(delta_phi)));
@@ -2712,11 +2712,11 @@ static int first_time(int linelen, VECTOR v)
 	* part of image */
 	if (g_3d_state.sphere())                  /* sphere case */
 	{
-		s_lview[2] = -(long) (double(g_y_dots)*(double) g_3d_state.z_viewer()/100.0);
+		s_lview[2] = -(long) (double(g_y_dots)*double(g_3d_state.z_viewer())/100.0);
 	}
 	else                         /* non-sphere case */
 	{
-		s_lview[2] = (long) ((z_min - z_max)*(double) g_3d_state.z_viewer()/100.0);
+		s_lview[2] = (long) ((z_min - z_max)*double(g_3d_state.z_viewer())/100.0);
 	}
 
 	g_view[0] = s_lview[0];
@@ -2735,7 +2735,7 @@ static int first_time(int linelen, VECTOR v)
 		/* Keep the box centered and on screen regardless of shifts */
 		trans((double(g_x_dots) - x_max - x_min)/2, (double(g_y_dots) - y_max - y_min)/2, -z_max, lightm);
 
-		trans((double) (g_x_shift), (double) (-g_y_shift), 0.0, s_m);
+		trans(double(g_x_shift), double(-g_y_shift), 0.0, s_m);
 
 		/* matrix s_m now contains ALL those transforms composed together !!
 		* convert s_m to long integers shifted 16 bits */
@@ -2758,7 +2758,7 @@ static int first_time(int linelen, VECTOR v)
 		}
 
 		/* radius of planet */
-		s_radius = (double) (g_y_dots)/2;
+		s_radius = double(g_y_dots)/2;
 
 		/* precalculate factor */
 		s_r_scale_r = s_radius*s_r_scale;
@@ -2787,8 +2787,8 @@ static int first_time(int linelen, VECTOR v)
 
 			/* calculate z cutoff factor attempt to prevent out-of-view surfaces
 			* from being written */
-			zview = -(long) (double(g_y_dots)*(double) g_3d_state.z_viewer()/100.0);
-			radius = (double) (g_y_dots)/2;
+			zview = -(long) (double(g_y_dots)*double(g_3d_state.z_viewer())/100.0);
+			radius = double(g_y_dots)/2;
 			angle = atan(-radius/(zview + radius));
 			s_z_cutoff = -radius - sin(angle)*radius;
 			s_z_cutoff *= 1.1;        /* for safety */

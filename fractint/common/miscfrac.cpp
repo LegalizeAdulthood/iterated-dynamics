@@ -517,7 +517,7 @@ int plasma()
 	{
 		s_iparm_x = 800;
 	}
-	g_parameters[0] = (double)s_iparm_x / 8.0;  /* let user know what was used */
+	g_parameters[0] = double(s_iparm_x) / 8.0;  /* let user know what was used */
 	if (g_parameters[1] < 0) /* limit parameter values  */
 	{
 		g_parameters[1] = 0;
@@ -1430,7 +1430,7 @@ int bifurcation_may_setup()
 	{
 		s_beta = 2;
 	}
-	g_parameters[2] = (double)s_beta;
+	g_parameters[2] = double(s_beta);
 
 	timer_engine(g_current_fractal_specific->calculate_type);
 	return 0;

@@ -147,7 +147,7 @@ static double interpolate(double x0, double x1, double x2,
 	b1 = (r1*b2-r2*b1)/(x2-x1);
 	b0 = (r0*b1-r2*b0)/(x2-x0);
 
-	return (double)b0; */
+	return double(b0); */
 	double b = (b1-b0)/(x1-x0);
 	return (double)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
 	/*

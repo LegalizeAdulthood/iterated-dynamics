@@ -581,7 +581,7 @@ void Jiim(int which)         /* called by fractint */
 	show_numbers = 0;
 	g_using_jiim = true;
 	g_line_buffer = (BYTE *) malloc(max(g_screen_width, g_screen_height));
-	aspect = ((double)g_x_dots*3)/((double)g_y_dots*4);  /* assumes 4:3 */
+	aspect = (double(g_x_dots)*3)/(double(g_y_dots)*4);  /* assumes 4:3 */
 	actively_computing = 1;
 	SetAspect(aspect);
 	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);

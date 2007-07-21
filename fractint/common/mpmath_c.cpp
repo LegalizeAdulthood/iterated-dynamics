@@ -259,7 +259,7 @@ ComplexL ComplexSqrtLong(long x, long y)
 #else
 	maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift) + multiply(y, y, g_bit_shift)));
 #endif
-	theta     = atan2((double) y/g_fudge, (double) x/g_fudge)/2;
+	theta     = atan2(double(y)/g_fudge, double(x)/g_fudge)/2;
 	thetalong = (long)(theta*SinCosFudge);
 	SinCos086(thetalong, &result.y, &result.x);
 	result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);

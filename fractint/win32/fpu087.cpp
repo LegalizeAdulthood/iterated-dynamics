@@ -97,7 +97,7 @@ void SinhCosh086(long x, long *sinx, long *cosx)
 
 long Exp086(long x)
 {
-	return (long) (exp((double) x / (double) (1 << 16))*(double) (1 << 16));
+	return (long) (exp(double(x) / (double) (1 << 16))*(double) (1 << 16));
 }
 
 #define em2float(l) (*(float *) &(l))
@@ -108,7 +108,7 @@ long Exp086(long x)
  */
 unsigned long ExpFudged(long x, int Fudge)
 {
-	return (long) (exp((double) x / (double) (1 << 16))*(double) (1 << Fudge));
+	return (long) (exp(double(x) / (double) (1 << 16))*(double) (1 << Fudge));
 }
 
 /* This multiplies two e/m numbers and returns an e/m number. */

@@ -178,7 +178,7 @@ static bool s_dem_mandelbrot;
 /* static vars for solid_guess & its subroutines */
 static ComplexD s_saved_z;
 static double s_rq_limit_save;
-static int s_pixel_pi; /* value of pi in pixels */
+static int s_pi_in_pixels; /* value of pi in pixels */
 static BYTE *s_save_dots = NULL;
 static BYTE *s_fill_buffer;
 static int s_save_dots_len;
@@ -690,7 +690,7 @@ int calculate_fractal()
 		g_invert = 3; /* so values will not be changed if we come back */
 	}
 
-	g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
+	g_close_enough = g_delta_min_fp*pow(2.0, -double(abs(g_periodicity_check)));
 	s_rq_limit_save = g_rq_limit;
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (g_integer_fractal)          /* for integer routines (lambda) */
@@ -750,7 +750,7 @@ int calculate_fractal()
 		{
 			/* not a stand-alone */
 			/* next two lines in case periodicity changed */
-			g_close_enough = g_delta_min_fp*pow(2.0, -(double)(abs(g_periodicity_check)));
+			g_close_enough = g_delta_min_fp*pow(2.0, -double(abs(g_periodicity_check)));
 			g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
 			set_symmetry(g_symmetry, false);
 			timer_engine(g_calculate_type); /* non-standard fractal engine */
@@ -1493,8 +1493,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		if (g_integer_fractal)
 		{
-			g_old_z.x = ((double)g_old_z_l.x)/g_fudge;
-			g_old_z.y = ((double)g_old_z_l.y)/g_fudge;
+			g_old_z.x = (double(g_old_z_l.x))/g_fudge;
+			g_old_z.y = (double(g_old_z_l.y))/g_fudge;
 		}
 		else if (g_bf_math == BIGNUM)
 		{
@@ -1699,8 +1699,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				double mag;
 				if (g_integer_fractal)
 				{
-					g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
-					g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
+					g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+					g_new_z.y = (double(g_new_z_l.y))/g_fudge;
 				}
 				mag = fmod_test();
 				if (mag < g_proximity)
@@ -1735,8 +1735,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		{
 			if (g_integer_fractal)
 			{
-				g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
-				g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
+				g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+				g_new_z.y = (double(g_new_z_l.y))/g_fudge;
 			}
 			else if (g_bf_math == BIGNUM)
 			{
@@ -1921,13 +1921,13 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_bf_math == BIGNUM)
 		{
-			g_new_z.x = (double) bntofloat(bnnew.x);
-			g_new_z.y = (double) bntofloat(bnnew.y);
+			g_new_z.x = double(bntofloat(bnnew.x));
+			g_new_z.y = double(bntofloat(bnnew.y));
 		}
 		else if (g_bf_math == BIGFLT)
 		{
-			g_new_z.x = (double) bftofloat(bfnew.x);
-			g_new_z.y = (double) bftofloat(bfnew.y);
+			g_new_z.x = double(bftofloat(bfnew.x));
+			g_new_z.y = double(bftofloat(bfnew.y));
 		}
 		g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
 		g_color_iter = potential(g_magnitude, g_color_iter);
@@ -1948,13 +1948,13 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		if (g_integer_fractal)
 		{
-			g_new_z.x = ((double)g_new_z_l.x)/g_fudge;
-			g_new_z.y = ((double)g_new_z_l.y)/g_fudge;
+			g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+			g_new_z.y = (double(g_new_z_l.y))/g_fudge;
 		}
 		else if (g_bf_math == BIGNUM)
 		{
-			g_new_z.x = (double)bntofloat(bnnew.x);
-			g_new_z.y = (double)bntofloat(bnnew.y);
+			g_new_z.x = double(bntofloat(bnnew.x));
+			g_new_z.y = double(bntofloat(bnnew.y));
 		}
 		/* Add 7 to overcome negative values on the MANDEL    */
 		if (g_outside == COLORMODE_REAL)
@@ -1967,7 +1967,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y)
 		{
-			g_color_iter = (long)((double)g_color_iter*(g_new_z.x/g_new_z.y));
+			g_color_iter = (long)(double(g_color_iter)*(g_new_z.x/g_new_z.y));
 		}
 		else if (g_outside == COLORMODE_SUM)
 		{
@@ -2520,7 +2520,7 @@ static int _fastcall potential(double mag, long iterations)
 		}
 		else
 		{
-			 /* pot = log(mag)/pow(2.0, (double)pot); */
+			 /* pot = log(mag)/pow(2.0, double(pot)); */
 			if (l_pot < 120 && !g_float_flag) /* empirically determined limit of fShift */
 			{
 				f_mag = (float)mag;
@@ -2529,7 +2529,7 @@ static int _fastcall potential(double mag, long iterations)
 			}
 			else
 			{
-				d_tmp = log(mag)/(double)pow(2.0, (double)pot);
+				d_tmp = log(mag)/(double)pow(2.0, double(pot));
 				/* prevent float type underflow */
 				pot = (d_tmp > FLT_MIN) ? (float) d_tmp : 0.0f;
 			}
@@ -2544,7 +2544,7 @@ static int _fastcall potential(double mag, long iterations)
 		{
 			if (g_float_flag)
 			{
-				pot = (float)sqrt((double)pot);
+				pot = (float)sqrt(double(pot));
 			}
 			else
 			{
@@ -2821,7 +2821,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			sub_bf(bft1, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 			div_bf(bft1, g_escape_time_state.m_grid_bf.y_max(), bft1);
 			neg_a_bf(bft1);
-			ftemp = (double)bftofloat(bft1);
+			ftemp = double(bftofloat(bft1));
 		}
 		else
 		{
@@ -2846,7 +2846,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			div_bf(bft1, g_escape_time_state.m_grid_bf.x_min(), bft1);
 			neg_a_bf(bft1);
-			ftemp = (double)bftofloat(bft1);
+			ftemp = double(bftofloat(bft1));
 		}
 		else
 		{
@@ -2987,14 +2987,14 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		{
 			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			abs_a_bf(bft1);
-			s_pixel_pi = (int) (MathUtil::Pi/(double) bftofloat(bft1)*g_x_dots); /* PI in pixels */
+			s_pi_in_pixels = (int) (MathUtil::Pi/double(bftofloat(bft1))*g_x_dots);
 		}
 		else
 		{
-			s_pixel_pi = (int) (MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width())*g_x_dots); /* PI in pixels */
+			s_pi_in_pixels = (int) (MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width())*g_x_dots);
 		}
 
-		g_x_stop = g_WorkList.xx_start() + s_pixel_pi-1;
+		g_x_stop = g_WorkList.xx_start() + s_pi_in_pixels-1;
 		if (g_x_stop > g_WorkList.xx_stop())
 		{
 			g_x_stop = g_WorkList.xx_stop();
@@ -3144,7 +3144,7 @@ static void _fastcall plot_color_symmetry_pi(int x, int y, int color)
 	while (x <= g_WorkList.xx_stop())
 	{
 		g_plot_color_put_color(x, y, color);
-		x += s_pixel_pi;
+		x += s_pi_in_pixels;
 	}
 }
 /* Symmetry plot for period PI plus Origin Symmetry */
@@ -3162,7 +3162,7 @@ static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
 				g_plot_color_put_color(j, i, color);
 			}
 		}
-		x += s_pixel_pi;
+		x += s_pi_in_pixels;
 	}
 }
 /* Symmetry plot for period PI plus Both Axis Symmetry */
@@ -3185,7 +3185,7 @@ static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
 				g_plot_color_put_color(j , i , color);
 			}
 		}
-		x += s_pixel_pi;
+		x += s_pi_in_pixels;
 	}
 }
 

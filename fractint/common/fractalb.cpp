@@ -264,18 +264,18 @@ void corners_bf_to_float()
 	int i;
 	if (g_bf_math)
 	{
-		g_escape_time_state.m_grid_fp.x_min() = (double) bftofloat(g_escape_time_state.m_grid_bf.x_min());
-		g_escape_time_state.m_grid_fp.y_min() = (double) bftofloat(g_escape_time_state.m_grid_bf.y_min());
-		g_escape_time_state.m_grid_fp.x_max() = (double) bftofloat(g_escape_time_state.m_grid_bf.x_max());
-		g_escape_time_state.m_grid_fp.y_max() = (double) bftofloat(g_escape_time_state.m_grid_bf.y_max());
-		g_escape_time_state.m_grid_fp.x_3rd() = (double) bftofloat(g_escape_time_state.m_grid_bf.x_3rd());
-		g_escape_time_state.m_grid_fp.y_3rd() = (double) bftofloat(g_escape_time_state.m_grid_bf.y_3rd());
+		g_escape_time_state.m_grid_fp.x_min() = double(bftofloat(g_escape_time_state.m_grid_bf.x_min()));
+		g_escape_time_state.m_grid_fp.y_min() = double(bftofloat(g_escape_time_state.m_grid_bf.y_min()));
+		g_escape_time_state.m_grid_fp.x_max() = double(bftofloat(g_escape_time_state.m_grid_bf.x_max()));
+		g_escape_time_state.m_grid_fp.y_max() = double(bftofloat(g_escape_time_state.m_grid_bf.y_max()));
+		g_escape_time_state.m_grid_fp.x_3rd() = double(bftofloat(g_escape_time_state.m_grid_bf.x_3rd()));
+		g_escape_time_state.m_grid_fp.y_3rd() = double(bftofloat(g_escape_time_state.m_grid_bf.y_3rd()));
 	}
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
 		if (type_has_parameter(g_fractal_type, i))
 		{
-			g_parameters[i] = (double)bftofloat(bfparms[i]);
+			g_parameters[i] = double(bftofloat(bfparms[i]));
 		}
 	}
 }
@@ -607,7 +607,7 @@ int mandelbrot_setup_bn()
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		init_big_pi();
-		if ((double)g_c_exp == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
+		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
@@ -620,7 +620,7 @@ int mandelbrot_setup_bn()
 		init_big_pi();
 		bftobn(bnparm.x, bfparms[0]);
 		bftobn(bnparm.y, bfparms[1]);
-		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || (double)g_c_exp != g_parameters[2])
+		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || double(g_c_exp) != g_parameters[2])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -698,7 +698,7 @@ int mandelbrot_setup_bf()
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		init_big_pi();
-		if ((double)g_c_exp == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
+		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
@@ -711,7 +711,7 @@ int mandelbrot_setup_bf()
 		init_big_pi();
 		copy_bf(bfparm.x, bfparms[0]);
 		copy_bf(bfparm.y, bfparms[1]);
-		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || (double)g_c_exp != g_parameters[2])
+		if ((g_c_exp & 1) || g_parameters[3] != 0.0 || double(g_c_exp) != g_parameters[2])
 		{
 			g_symmetry = SYMMETRY_NONE;
 		}
@@ -1021,16 +1021,16 @@ julia_orbit_bn()
 ComplexD complex_bn_to_float(ComplexBigNum *s)
 {
 	ComplexD t;
-	t.x = (double)bntofloat(s->x);
-	t.y = (double)bntofloat(s->y);
+	t.x = double(bntofloat(s->x));
+	t.y = double(bntofloat(s->y));
 	return t;
 }
 
 ComplexD complex_bf_to_float(ComplexBigFloat *s)
 {
 	ComplexD t;
-	t.x = (double)bftofloat(s->x);
-	t.y = (double)bftofloat(s->y);
+	t.x = double(bftofloat(s->x));
+	t.y = double(bftofloat(s->y));
 	return t;
 }
 

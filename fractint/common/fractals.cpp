@@ -977,10 +977,10 @@ int complex_z_power_orbit()
 	ComplexD x;
 	ComplexD y;
 
-	x.x = (double)g_old_z_l.x / g_fudge;
-	x.y = (double)g_old_z_l.y / g_fudge;
-	y.x = (double)g_parameter2_l.x / g_fudge;
-	y.y = (double)g_parameter2_l.y / g_fudge;
+	x.x = double(g_old_z_l.x) / g_fudge;
+	x.y = double(g_old_z_l.y) / g_fudge;
+	y.x = double(g_parameter2_l.x) / g_fudge;
+	y.y = double(g_parameter2_l.y) / g_fudge;
 	x = ComplexPower(x, y);
 	if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
 	{
