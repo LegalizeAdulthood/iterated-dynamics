@@ -294,7 +294,7 @@ void find_special_colors()
 
 	for (i = 0; i < g_colors; i++)
 	{
-		brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
+		brt = int(g_dac_box[i][0]) + int(g_dac_box[i][1]) + int(g_dac_box[i][2]);
 		if (brt > maxb)
 		{
 			maxb = brt;
@@ -307,22 +307,22 @@ void find_special_colors()
 		}
 		if (brt < 150 && brt > 80)
 		{
-			maxgun = mingun = (int) g_dac_box[i][0];
-			if ((int) g_dac_box[i][1] > (int) g_dac_box[i][0])
+			maxgun = mingun = int(g_dac_box[i][0]);
+			if (int(g_dac_box[i][1]) > int(g_dac_box[i][0]))
 			{
-				maxgun = (int) g_dac_box[i][1];
+				maxgun = int(g_dac_box[i][1]);
 			}
 			else
 			{
-				mingun = (int) g_dac_box[i][1];
+				mingun = int(g_dac_box[i][1]);
 			}
-			if ((int) g_dac_box[i][2] > maxgun)
+			if (int(g_dac_box[i][2]) > maxgun)
 			{
-				maxgun = (int) g_dac_box[i][2];
+				maxgun = int(g_dac_box[i][2]);
 			}
-			if ((int) g_dac_box[i][2] < mingun)
+			if (int(g_dac_box[i][2]) < mingun)
 			{
-				mingun = (int) g_dac_box[i][2];
+				mingun = int(g_dac_box[i][2]);
 			}
 			if (brt - (maxgun - mingun)/2 > med)
 			{
