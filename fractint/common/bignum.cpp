@@ -462,7 +462,7 @@ bn_t floattobn(bn_t r, LDBL f)
 		break;
 	}
 
-	f -= (long)f; /* keep only the decimal part */
+	f -= long(f); /* keep only the decimal part */
 	for (i = g_bn_length - g_int_length - 1; i >= 0 && f != 0.0; i--)
 	{
 		f *= 256;

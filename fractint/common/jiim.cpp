@@ -156,12 +156,12 @@ void circleplot(int x, int y, int color)
 		}
 		else
 		{
-			plot_color_clip(x + xbase, (short)(ybase + (((long) y*(long) yAspect) >> 16)), color);
+			plot_color_clip(x + xbase, (short)(ybase + ((long(y)*long(yAspect)) >> 16)), color);
 		}
 	}
 	else
 	{
-		plot_color_clip((int)(xbase + (((long) x*(long) xAspect) >> 16)), y + ybase, color);
+		plot_color_clip((int)(xbase + ((long(x)*long(xAspect)) >> 16)), y + ybase, color);
 	}
 }
 
@@ -1216,7 +1216,7 @@ void Jiim(int which)         /* called by fractint */
 		{
 			if (iter < g_max_iteration)
 			{
-				color = (int)iter % g_colors;
+				color = int(iter) % g_colors;
 				if (g_integer_fractal)
 				{
 					g_old_z.x = g_old_z_l.x;

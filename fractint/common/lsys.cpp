@@ -947,7 +947,7 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 	void (*at)(lsys_turtle_state *) =     lsysi_at;
 	void (*dogf)(lsys_turtle_state *) =   lsysi_size_gf;
 
-	ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
+	ret = (struct lsys_cmd *) malloc(long(maxval)*sizeof(struct lsys_cmd));
 	if (ret == NULL)
 	{
 		ts->stackoflow = true;
@@ -981,7 +981,7 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 		ret[n].n = num;
 		if (++n == maxval)
 		{
-			doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
+			doub = (struct lsys_cmd *) malloc(long(maxval)*2*sizeof(struct lsys_cmd));
 			if (doub == NULL)
 			{
 				free(ret);
@@ -1000,7 +1000,7 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 	ret[n].n = 0;
 	n++;
 
-	doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
+	doub = (struct lsys_cmd *) malloc(long(n)*sizeof(struct lsys_cmd));
 	if (doub == NULL)
 	{
 		free(ret);
@@ -1031,7 +1031,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 	void (*at)(lsys_turtle_state *) =     lsysi_at;
 	void (*drawg)(lsys_turtle_state *) =  lsysi_draw_g;
 
-	ret = (struct lsys_cmd *) malloc((long) maxval*sizeof(struct lsys_cmd));
+	ret = (struct lsys_cmd *) malloc(long(maxval)*sizeof(struct lsys_cmd));
 	if (ret == NULL)
 	{
 		ts->stackoflow = true;
@@ -1068,7 +1068,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 		ret[n].n = num;
 		if (++n == maxval)
 		{
-			doub = (struct lsys_cmd *) malloc((long) maxval*2*sizeof(struct lsys_cmd));
+			doub = (struct lsys_cmd *) malloc(long(maxval)*2*sizeof(struct lsys_cmd));
 			if (doub == NULL)
 			{
 				free(ret);
@@ -1087,7 +1087,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 	ret[n].n = 0;
 	n++;
 
-	doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
+	doub = (struct lsys_cmd *) malloc(long(n)*sizeof(struct lsys_cmd));
 	if (doub == NULL)
 	{
 		free(ret);

@@ -1156,7 +1156,7 @@ int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with r
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
-		g_color = abs((int)g_color_iter);
+		g_color = abs(int(g_color_iter));
 		if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
 		{
 			if (g_save_release <= 1950)
@@ -1188,7 +1188,7 @@ int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with r
 	}
 	else
 	{
-		g_color = (int)g_color_iter;
+		g_color = int(g_color_iter);
 	}
 	return g_color;
 }
@@ -1291,7 +1291,7 @@ int calculate_mandelbrot_fp()
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
-		g_color = abs((int)g_color_iter);
+		g_color = abs(int(g_color_iter));
 		if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
 		{
 			if (g_save_release <= 1950)
@@ -1323,7 +1323,7 @@ int calculate_mandelbrot_fp()
 	}
 	else
 	{
-		g_color = (int)g_color_iter;
+		g_color = int(g_color_iter);
 	}
 	return g_color;
 }
@@ -2156,7 +2156,7 @@ plot_inside: /* we're "inside" */
 	}
 
 plot_pixel:
-	g_color = abs((int)g_color_iter);
+	g_color = abs(int(g_color_iter));
 	if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
 	{
 		if (g_save_release <= 1950)
@@ -2186,7 +2186,7 @@ plot_pixel:
 	}
 	(*g_plot_color)(g_col, g_row, g_color);
 
-	g_input_counter -= abs((int)g_real_color_iter);
+	g_input_counter -= abs(int(g_real_color_iter));
 	if (g_input_counter <= 0)
 	{
 		if (check_key())
@@ -2571,7 +2571,7 @@ static int _fastcall potential(double mag, long iterations)
 		pot = (float)g_potential_parameter[0];
 	}
 
-	l_pot = (long) pot*256;
+	l_pot = long(pot)*256;
 	i_pot = (int) (l_pot >> 8);
 	if (i_pot >= g_colors)
 	{
@@ -2585,7 +2585,7 @@ static int _fastcall potential(double mag, long iterations)
 		{
 			disk_write(g_col + g_sx_offset, g_row + g_sy_offset, i_pot);
 		}
-		disk_write(g_col + g_sx_offset, g_row + g_screen_height + g_sy_offset, (int)l_pot);
+		disk_write(g_col + g_sx_offset, g_row + g_screen_height + g_sy_offset, int(l_pot));
 	}
 
 	return i_pot;
@@ -2829,7 +2829,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		ftemp *= (g_y_dots-1);
 		ftemp += 0.25;
-		xaxis_row = (int)ftemp;
+		xaxis_row = int(ftemp);
 		xaxis_between = (ftemp - xaxis_row >= 0.5);
 		if (!use_list && (!xaxis_between || (xaxis_row + 1)*2 != g_y_dots))
 		{
@@ -2854,7 +2854,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		ftemp *= (g_x_dots-1);
 		ftemp += 0.25;
-		yaxis_col = (int)ftemp;
+		yaxis_col = int(ftemp);
 		yaxis_between = (ftemp - yaxis_col >= 0.5);
 		if (!use_list && (!yaxis_between || (yaxis_col + 1)*2 != g_x_dots))
 		{
@@ -3531,7 +3531,7 @@ void PerformWorkList::show_dot_start()
 		}
 		else if (dshowdot_width > 0.0)
 		{
-			s_show_dot_width = (int) dshowdot_width;
+			s_show_dot_width = int(dshowdot_width);
 		}
 		else
 		{

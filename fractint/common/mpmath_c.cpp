@@ -253,8 +253,8 @@ ComplexL ComplexSqrtLong(long x, long y)
 	ComplexL    result;
 
 #ifndef LONGSQRT
-	mag       = sqrt(sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge +
-						((double) multiply(y, y, g_bit_shift))/g_fudge));
+	mag       = sqrt(sqrt((double(multiply(x, x, g_bit_shift)))/g_fudge +
+						(double(multiply(y, y, g_bit_shift)))/g_fudge));
 	maglong   = (long)(mag*g_fudge);
 #else
 	maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift) + multiply(y, y, g_bit_shift)));
@@ -326,7 +326,7 @@ void SetupLogTable()
 			{
 				lf = g_max_log_table_size - 1;
 			}
-			mlf = (g_colors - (lf ? 2 : 1 ))/log((double) (g_max_log_table_size - lf));
+			mlf = (g_colors - (lf ? 2 : 1 ))/log(double(g_max_log_table_size - lf));
 		}
 		else if (g_log_palette_mode == LOGPALETTE_OLD)  /* old log function */
 		{
@@ -339,7 +339,7 @@ void SetupLogTable()
 			{
 				lf = g_max_log_table_size - 1;
 			}
-			mlf = (g_colors - 2)/sqrt((double) (g_max_log_table_size - lf));
+			mlf = (g_colors - 2)/sqrt(double(g_max_log_table_size - lf));
 		}
 	}
 
@@ -353,7 +353,7 @@ void SetupLogTable()
 		g_log_calculation = 1;   /* turn it on */
 		for (prev = 0; prev <= (unsigned long)g_max_log_table_size; prev++)
 		{
-			g_log_table[prev] = (BYTE)logtablecalc((long)prev);
+			g_log_table[prev] = (BYTE)logtablecalc(long(prev));
 		}
 		g_log_calculation = 0;   /* turn it off, again */
 		return;
@@ -376,7 +376,7 @@ void SetupLogTable()
 		}
 		for (n = (lf ? 2 : 1); n < (unsigned int)g_colors; n++)
 		{
-			Fg2Float((long)n, 0, f);
+			Fg2Float(long(n), 0, f);
 			fMul16(f, m, f);
 			fExp14(f, l);
 			limit = (unsigned long)Float2Fg(l, 0) + lf;
@@ -407,7 +407,7 @@ void SetupLogTable()
 		}
 		for (n = 2; n < (unsigned int)g_colors; n++)
 		{
-			Fg2Float((long)n, 0, f);
+			Fg2Float(long(n), 0, f);
 			fMul16(f, m, f);
 			fMul16(f, f, l);
 			limit = (unsigned long)(Float2Fg(l, 0) + lf);
@@ -453,13 +453,13 @@ long logtablecalc(long citer)
 		{
 			ret = 1;
 		}
-		else if ((citer - lf)/log((double) (citer - lf)) <= mlf)
+		else if ((citer - lf)/log(double(citer - lf)) <= mlf)
 		{
 			ret = (g_save_release < 2002) ? ((long) (citer - lf + (lf ? 1 : 0))) : ((long) (citer - lf));
 		}
 		else
 		{
-			ret = (long)(mlf*log((double) (citer - lf))) + 1;
+			ret = (long)(mlf*log(double(citer - lf))) + 1;
 		}
 	}
 	else if (g_log_palette_mode == LOGPALETTE_OLD)  /* old log function */
@@ -524,7 +524,7 @@ int complex_basin()
 		FPUcplxlog(&g_old_z, &temp);
 		FPUcplxmul(&temp, &cdegree, &g_temp_z);
 		mod = g_temp_z.y/TwoPi;
-		g_color_iter = (long)mod;
+		g_color_iter = long(mod);
 		if (fabs(mod - g_color_iter) > 0.5)
 		{
 			if (mod < 0.0)
@@ -571,9 +571,9 @@ int complex_basin()
  */
 int gaussian_number(int probability, int range)
 {
-	long p = divide((long) probability << 16, (long) range << 16, 16);
+	long p = divide(long(probability) << 16, long(range) << 16, 16);
 	p = multiply(p, g_gaussian_constant, 16);
-	p = multiply((long) g_gaussian_distribution << 16, p, 16);
+	p = multiply(long(g_gaussian_distribution) << 16, p, 16);
 	if (!(rand15() % (g_gaussian_distribution - (int) (p >> 16) + 1)))
 	{
 		long accum = 0;
@@ -582,7 +582,7 @@ int gaussian_number(int probability, int range)
 			accum += rand15();
 		}
 		accum /= g_gaussian_slope;
-		int r = (int) (multiply((long) range << 15, accum, 15) >> 14);
+		int r = (int) (multiply(long(range) << 15, accum, 15) >> 14);
 		r -= range;
 		if (r < 0)
 		{

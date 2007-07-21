@@ -654,7 +654,7 @@ void WinText::paintscreen(
 			}
 			foreground = (k & 15);
 			background = (k >> 4);
-			if (i > x_max || foreground != (int)oldfg || background != (int)oldbk)
+			if (i > x_max || foreground != int(oldfg) || background != int(oldbk))
 			{
 				if (length > 0)
 				{

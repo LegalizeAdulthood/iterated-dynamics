@@ -745,7 +745,7 @@ static int _fastcall shftwrite(BYTE *color, int g_num_colors)
 			thiscolor = color[3*i + j];
 			thiscolor = (BYTE) (thiscolor << 2);
 			thiscolor = (BYTE) (thiscolor + (BYTE) (thiscolor >> 6));
-			if (fputc(thiscolor, g_outfile) != (int) thiscolor)
+			if (fputc(thiscolor, g_outfile) != int(thiscolor))
 			{
 				return 0;
 			}
@@ -1122,7 +1122,7 @@ static int compress(int rowlimit)
 
 	a_count = 0;
 	hshift = 0;
-	for (fcode = (long) HSIZE;  fcode < 65536L; fcode *= 2L)
+	for (fcode = long(HSIZE);  fcode < 65536L; fcode *= 2L)
 	{
 		hshift++;
 	}
@@ -1131,7 +1131,7 @@ static int compress(int rowlimit)
 	memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
 	hsize_reg = HSIZE;
 
-	output((int)ClearCode);
+	output(int(ClearCode));
 
 	for (rownum = 0; rownum < g_y_dots; rownum++)
 	{                            /* scan through the dots */
@@ -1147,8 +1147,8 @@ static int compress(int rowlimit)
 					ent = color;
 					continue;
 				}
-				fcode = (long) (((long) color << maxbits) + ent);
-				i = (((int)color << hshift) ^ ent);    /* xor hashing */
+				fcode = (long) ((long(color) << maxbits) + ent);
+				i = ((int(color) << hshift) ^ ent);    /* xor hashing */
 
 				if (htab[i] == fcode)
 				{
@@ -1181,7 +1181,7 @@ probe:
 					goto probe;
 				}
 nomatch:
-				output ((int) ent);
+				output (int(ent));
 				ent = color;
 				if (free_ent < maxmaxcode)
 				{
@@ -1234,8 +1234,8 @@ nomatch:
 	/*
 	* Put out the final code.
 	*/
-	output((int)ent);
-	output((int) EOFCode);
+	output(int(ent));
+	output(int(EOFCode));
 	return interrupted;
 }
 
@@ -1245,7 +1245,7 @@ nomatch:
  * Output the given code.
  * Inputs:
  *      code:   A n_bits-bit integer.  If == -1, then EOF.  This assumes
- *              that n_bits =< (long)wordsize - 1.
+ *              that n_bits =< long(wordsize) - 1.
  * Outputs:
  *      Outputs code to the file.
  * Assumptions:
@@ -1271,7 +1271,7 @@ static void _fastcall output(int code)
 
 	if (cur_bits > 0)
 	{
-		cur_accum |= ((long)code << cur_bits);
+		cur_accum |= (long(code) << cur_bits);
 	}
 	else
 	{
@@ -1333,7 +1333,7 @@ static void _fastcall cl_block()             /* table clear for g_block compress
 		memset(htab, 0xff, (unsigned)HSIZE*sizeof(long));
 		free_ent = ClearCode + 2;
 		clear_flg = 1;
-		output((int)ClearCode);
+		output(int(ClearCode));
 }
 
 /*

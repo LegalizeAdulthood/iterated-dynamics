@@ -1870,11 +1870,11 @@ int cellular()
 #endif
 	if (n == 0)  /* calculate a random rule */
 	{
-		n = rand() % (int)k;
+		n = rand() % int(k);
 		for (i = 1; i < (U16)s_rule_digits; i++)
 		{
 			n *= 10;
-			n += rand() % (int)k;
+			n += rand() % int(k);
 		}
 		g_parameters[1] = n;
 	}
@@ -1933,7 +1933,7 @@ int cellular()
 		{
 			for (g_col = 0; g_col <= g_x_stop; g_col++)
 			{
-				s_cell_array[filled][g_col] = (BYTE)(rand() % (int)k);
+				s_cell_array[filled][g_col] = (BYTE)(rand() % int(k));
 			}
 		} /* end of if random */
 		else
@@ -1967,8 +1967,8 @@ int cellular()
 				/* Use a random border */
 				for (i = 0; i <= (U16) s_r; i++)
 				{
-						s_cell_array[notfilled][i] = (BYTE)(rand() % (int)k);
-						s_cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % (int)k);
+						s_cell_array[notfilled][i] = (BYTE)(rand() % int(k));
+						s_cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % int(k));
 				}
 			}
 			else
@@ -2030,8 +2030,8 @@ contloop:
 			/* Use a random border */
 			for (i = 0; i <= (U16) s_r; i++)
 			{
-				s_cell_array[notfilled][i] = (BYTE)(rand() % (int)k);
-				s_cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % (int)k);
+				s_cell_array[notfilled][i] = (BYTE)(rand() % int(k));
+				s_cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % int(k));
 			}
 		}
 		else
@@ -2512,7 +2512,7 @@ int froth_calc()   /* per pixel 1/2/g, called with row & col set */
 	}
 
 	g_real_color_iter = g_color_iter;
-	g_input_counter -= abs((int)g_real_color_iter);
+	g_input_counter -= abs(int(g_real_color_iter));
 	if (g_input_counter <= 0)
 	{
 		if (check_key())

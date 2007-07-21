@@ -1464,7 +1464,7 @@ void Formula::convert_stack()  /* convert the array of ptrs  */
 	s_last_sqr_used = false;  /* ... and LastSqr is not used  */
 
 	/* now see if the above assumptions are true */
-	for (m_op_index = m_load_ptr = m_store_ptr = 0; m_op_index < (int)m_last_op; m_op_index++)
+	for (m_op_index = m_load_ptr = m_store_ptr = 0; m_op_index < int(m_last_op); m_op_index++)
 	{
 		void (*op_function)() = m_functions[m_op_index];
 		if (op_function == StkLod)

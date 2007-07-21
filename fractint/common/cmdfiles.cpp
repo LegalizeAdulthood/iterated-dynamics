@@ -3001,11 +3001,11 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			}
 			if (context.totparms < 64)
 			{
-				context.intval[context.totparms] = (int) ll;
+				context.intval[context.totparms] = int(ll);
 			}
 			if (context.totparms == 0)
 			{
-				context.numval = (int) ll;
+				context.numval = int(ll);
 			}
 		}
 #ifndef XFRACT

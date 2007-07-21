@@ -199,7 +199,7 @@ static int CheckBounds (long start, long length, U16 handle)
 		DisplayHandle(handle);
 		return 1;
 	}
-	if (length > (long)USHRT_MAX)
+	if (length > long(USHRT_MAX))
 	{
 		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Tried to move > 65,535 bytes.");
 		DisplayHandle(handle);
@@ -445,8 +445,8 @@ bool MoveToMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 	bool success;
 
 	success = false;
-	start = (long)offset*size;
-	tomove = (long)count*size;
+	start = long(offset)*size;
+	tomove = long(count)*size;
 	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		if (CheckBounds(start, tomove, handle))
@@ -515,8 +515,8 @@ bool MoveFromMemory(BYTE *buffer, U16 size, long count, long offset, U16 handle)
 	bool success;
 
 	success = false;
-	start = (long)offset*size;
-	tomove = (long)count*size;
+	start = long(offset)*size;
+	tomove = long(count)*size;
 	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		if (CheckBounds(start, tomove, handle))
@@ -587,8 +587,8 @@ bool SetMemory(int value, U16 size, long count, long offset, U16 handle)
 	bool success;
 
 	success = false;
-	start = (long)offset*size;
-	tomove = (long)count*size;
+	start = long(offset)*size;
+	tomove = long(count)*size;
 	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		if (CheckBounds(start, tomove, handle))

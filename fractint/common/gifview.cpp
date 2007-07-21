@@ -158,7 +158,7 @@ int gifview()
 		g_out_line = out_line_dither;
 	}
 
-	for (i = 0; i < (int)g_num_colors; i++)
+	for (i = 0; i < int(g_num_colors); i++)
 	{
 		for (j = 0; j < 3; j++)
 		{

@@ -389,7 +389,7 @@ int bail_out_manhattan_r_fp()
 			tmp /= g_fudge;				\
 			tmp = fmod(tmp, g_two_pi);	\
 			tmp *= g_fudge;				\
-			(_x) = (long) tmp;			\
+			(_x) = long(tmp);			\
 		}								\
 	}									\
 	while (0)

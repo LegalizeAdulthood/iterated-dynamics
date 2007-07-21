@@ -518,7 +518,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	void (*at)(lsys_turtle_state_fp *) =     lsysf_at;
 	void (*dogf)(lsys_turtle_state_fp *) =   lsysf_size_gf;
 
-	ret = (struct lsys_cmd *) malloc((long) max*sizeof(struct lsys_cmd));
+	ret = (struct lsys_cmd *) malloc(long(max)*sizeof(struct lsys_cmd));
 	if (ret == NULL)
 	{
 		ts->stackoflow = true;
@@ -585,7 +585,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 		ret[n].ptype = ptype;
 		if (++n == max)
 		{
-			doub = (struct lsys_cmd *) malloc((long) max*2*sizeof(struct lsys_cmd));
+			doub = (struct lsys_cmd *) malloc(long(max)*2*sizeof(struct lsys_cmd));
 			if (doub == NULL)
 			{
 				free(ret);
@@ -604,7 +604,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	ret[n].parm.n = 0;
 	n++;
 
-	doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
+	doub = (struct lsys_cmd *) malloc(long(n)*sizeof(struct lsys_cmd));
 	if (doub == NULL)
 	{
 		free(ret);
@@ -636,7 +636,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	void (*at)(lsys_turtle_state_fp *) =     lsysf_at;
 	void (*drawg)(lsys_turtle_state_fp *) =  lsysf_draw_g;
 
-	ret = (struct lsys_cmd *) malloc((long) max*sizeof(struct lsys_cmd));
+	ret = (struct lsys_cmd *) malloc(long(max)*sizeof(struct lsys_cmd));
 	if (ret == NULL)
 	{
 		ts->stackoflow = true;
@@ -673,12 +673,12 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 		ret[n].f = (void (*)(struct lsys_turtle_state_fp *))f;
 		if (ptype == 4)
 		{
-			ret[n].parm.n = (long)num;
+			ret[n].parm.n = long(num);
 		}
 		ret[n].ptype = ptype;
 		if (++n == max)
 		{
-			doub = (struct lsys_cmd *) malloc((long) max*2*sizeof(struct lsys_cmd));
+			doub = (struct lsys_cmd *) malloc(long(max)*2*sizeof(struct lsys_cmd));
 			if (doub == NULL)
 			{
 				free(ret);
@@ -697,7 +697,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	ret[n].parm.n = 0;
 	n++;
 
-	doub = (struct lsys_cmd *) malloc((long) n*sizeof(struct lsys_cmd));
+	doub = (struct lsys_cmd *) malloc(long(n)*sizeof(struct lsys_cmd));
 	if (doub == NULL)
 	{
 		free(ret);

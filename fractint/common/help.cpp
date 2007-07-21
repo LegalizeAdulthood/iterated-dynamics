@@ -806,7 +806,7 @@ int help(int action)
 		return 0;
 	}
 
-	s_buffer = (char *) malloc((long) MAX_PAGE_SIZE);
+	s_buffer = (char *) malloc(long(MAX_PAGE_SIZE));
 	s_link_table = (LINK *) malloc(sizeof(LINK)*s_max_links);
 	s_page_table = (PAGE *) malloc(sizeof(PAGE)*s_max_pages);
 

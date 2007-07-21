@@ -2149,7 +2149,7 @@ get_fractal_parameters_top:
 		if (i != 0 && g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 		{
-			if (parameter_values[prompt].uval.ch.val != (int)g_bail_out_test)
+			if (parameter_values[prompt].uval.ch.val != int(g_bail_out_test))
 			{
 				g_bail_out_test = (enum bailouts)parameter_values[prompt].uval.ch.val;
 				command_result = COMMANDRESULT_FRACTAL_PARAMETER;
@@ -2522,7 +2522,7 @@ top:
 			{
 				if (stricmp(buf, itemname) == 0)
 				{
-					fseek(infile, name_offset + (long) exclude_entry, SEEK_SET);
+					fseek(infile, name_offset + long(exclude_entry), SEEK_SET);
 					return -1;
 				}
 			}
