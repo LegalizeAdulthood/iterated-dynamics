@@ -570,7 +570,7 @@ static void lsysi_at(struct lsys_turtle_state *cmd)
 
 static void lsysi_pipe(struct lsys_turtle_state *cmd)
 {
-	cmd->angle = (char)(cmd->angle + (char)(cmd->max_angle / 2));
+	cmd->angle = (char)(cmd->angle + (char)(cmd->max_angle/2));
 	cmd->angle %= cmd->max_angle;
 }
 
@@ -587,7 +587,7 @@ static void lsysi_exclamation(struct lsys_turtle_state *cmd)
 
 static void lsysi_size_dm(struct lsys_turtle_state *cmd)
 {
-	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
+	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
 	double s;
 	double c;
 	long fixedsin;
@@ -644,7 +644,7 @@ static void lsysi_size_gf(struct lsys_turtle_state *cmd)
 
 static void lsysi_draw_d(struct lsys_turtle_state *cmd)
 {
-	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
+	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
 	double s;
 	double c;
 	long fixedsin;
@@ -665,7 +665,7 @@ static void lsysi_draw_d(struct lsys_turtle_state *cmd)
 
 static void lsysi_draw_m(struct lsys_turtle_state *cmd)
 {
-	double angle = (double) cmd->realangle*ANGLE2DOUBLE;
+	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
 	double s;
 	double c;
 	long fixedsin;
@@ -828,10 +828,10 @@ lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct 
 	ts->size = FIXEDPT(1L);
 	fsret = find_size(command, ts, rules, depth);
 	thinking(0, NULL); /* erase thinking message if any */
-	x_min = (double) ts->x_min / FIXEDMUL;
-	x_max = (double) ts->x_max / FIXEDMUL;
-	y_min = (double) ts->y_min / FIXEDMUL;
-	y_max = (double) ts->y_max / FIXEDMUL;
+	x_min = double(ts->x_min)/FIXEDMUL;
+	x_max = double(ts->x_max)/FIXEDMUL;
+	y_min = double(ts->y_min)/FIXEDMUL;
+	y_max = double(ts->y_max)/FIXEDMUL;
 	if (fsret == NULL)
 	{
 		return 0;
@@ -1102,7 +1102,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 static void _fastcall lsysi_sin_cos()
 {
 	double locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
-	double twopimax = 2.0*MathUtil::Pi / g_max_angle;
+	double twopimax = 2.0*MathUtil::Pi/g_max_angle;
 	for (int i = 0; i < g_max_angle; i++)
 	{
 		double twopimaxi = i*twopimax;

@@ -1088,7 +1088,7 @@ bn_t unsafe_sincos_bn(bn_t s, bn_t c, bn_t n)
 	/* the range is cut in half, the number of iterations required is reduced */
 	/* by "quite a bit."  It's just a matter of testing to see what gives the */
 	/* optimal results.                                                       */
-	/* halves = g_bn_length / 10; */ /* this is experimental */
+	/* halves = g_bn_length/10; */ /* this is experimental */
 	halves = 1;
 	for (i = 0; i < halves; i++)
 	{

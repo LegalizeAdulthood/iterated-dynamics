@@ -123,7 +123,7 @@ static unsigned char fmtemp[9];/*temporary vars used to store value used
  * This equation shows how to calculate the required frequency number (to
  * program into registers A0H - A8H and B0H - B8H) to get the desired
  * frequency:
- *                fn=(long)f * 1048576 / b / m /50000L
+ *                fn=(long)f * 1048576/b/m /50000L
  * where f is the frequency in Hz,
  *       b is the block (octave) number between 0 and 7 inclusive, and
  *       m is the multiple number between 0 and 15 inclusive.
@@ -240,9 +240,9 @@ int SoundState::sound_on(int freq)
 
 	/* convert tone to note number for midi */
 	double logbase = log(8.176);
-	int note = (int)(12 * (log(static_cast<double>(freq)) - logbase) / log(2.0) + 0.5);
+	int note = (int)(12 * (log(static_cast<double>(freq)) - logbase)/log(2.0) + 0.5);
 
-	int oct = (note / 12) * 12; /* round to nearest octave */
+	int oct = (note/12) * 12; /* round to nearest octave */
 	int chrome = note % 12; /* extract which note in octave it was */
 	note = oct + m_scale_map[chrome]; /* remap using scale mapping array */
 
@@ -258,7 +258,7 @@ int SoundState::sound_on(int freq)
 		double temp_freq = double(freq) * (double)1048576;
 		unsigned int block = 0;
 		mult = 1;
-		unsigned int fn = (int)(temp_freq / (1 << block) / mult / 50000.0);
+		unsigned int fn = (int)(temp_freq/(1 << block)/mult/50000.0);
 		while (fn > 1023) /* fn must have ten bit value so tweak mult and block until it fits */
 		{
 			if (block < 8)

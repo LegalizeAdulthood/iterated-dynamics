@@ -359,8 +359,8 @@ int put_string_center(int row, int col, int width, int attr, const char *msg)
 	{
 		i = width - 1;
 	}
-	j = (width - i) / 2;
-	j -= (width + 10 - i) / 20; /* when wide a bit left of center looks better */
+	j = (width - i)/2;
+	j -= (width + 10 - i)/20; /* when wide a bit left of center looks better */
 	memset(buf, ' ', width);
 	buf[width] = 0;
 	i = 0;
@@ -666,11 +666,11 @@ int full_screen_choice(
 		}
 		else
 		{                      /* sort-of-wide is 2nd choice */
-			boxwidth = 60 / (colwidth + 1);
+			boxwidth = 60/(colwidth + 1);
 			if (boxwidth == 0
 			|| (boxdepth = (numchoices + boxwidth - 1)/boxwidth) > i - 2)
 			{
-				boxwidth = 80 / (colwidth + 1); /* last gasp, full width */
+				boxwidth = 80/(colwidth + 1); /* last gasp, full width */
 				boxdepth = (numchoices + boxwidth - 1)/boxwidth;
 				if (boxdepth > i)
 				{
@@ -679,7 +679,7 @@ int full_screen_choice(
 			}
 		}
 	}
-	i = (80 / boxwidth - colwidth) / 2 - 1;
+	i = (80/boxwidth - colwidth)/2 - 1;
 	if (i == 0) /* to allow wider prompts */
 	{
 		i = 1;
@@ -706,11 +706,11 @@ int full_screen_choice(
 		++j;
 		++colwidth;
 	}
-	k = (80 - j) / 2;                       /* center the box */
-	k -= (90 - j) / 20;
+	k = (80 - j)/2;                       /* center the box */
+	k -= (90 - j)/20;
 	topleftcol = k + i;                     /* column of topleft choice */
-	i = (25 - reqdrows - boxdepth) / 2;
-	i -= i / 4;                             /* higher is better if lots extra */
+	i = (25 - reqdrows - boxdepth)/2;
+	i -= i/4;                             /* higher is better if lots extra */
 	topleftrow = 3 + titlelines + i;        /* row of topleft choice */
 
 	/* now set up the overall display */
@@ -722,8 +722,8 @@ int full_screen_choice(
 	}
 	if (hdg)
 	{
-		g_text_cbase = (80 - titlewidth) / 2;   /* set left margin for driver_put_string */
-		g_text_cbase -= (90 - titlewidth) / 20; /* put heading into box */
+		g_text_cbase = (80 - titlewidth)/2;   /* set left margin for driver_put_string */
+		g_text_cbase -= (90 - titlewidth)/20; /* put heading into box */
 		driver_put_string(topleftrow - titlelines - 1, 0, C_PROMPT_HI, hdg);
 		g_text_cbase = 0;
 	}
@@ -1799,10 +1799,10 @@ int field_prompt(
 		boxwidth = len;
 	}
 	i = titlelines + 4;                    /* total rows in box */
-	titlerow = (25 - i) / 2;               /* top row of it all when centered */
-	titlerow -= titlerow / 4;              /* higher is better if lots extra */
-	titlecol = (80 - boxwidth) / 2;        /* center the box */
-	titlecol -= (90 - boxwidth) / 20;
+	titlerow = (25 - i)/2;               /* top row of it all when centered */
+	titlerow -= titlerow/4;              /* higher is better if lots extra */
+	titlecol = (80 - boxwidth)/2;        /* center the box */
+	titlecol -= (90 - boxwidth)/20;
 	promptcol = titlecol - (boxwidth-len)/2;
 	j = titlecol;                          /* add margin at each side of box */
 	i = (82-boxwidth)/4;

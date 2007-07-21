@@ -495,7 +495,7 @@ void Win32BaseDriver::stack_screen()
 void Win32BaseDriver::unstack_screen()
 {
 	_ASSERTE(m_screen_count >= 0);
-	g_text_row = m_saved_cursor[m_screen_count] / 80;
+	g_text_row = m_saved_cursor[m_screen_count]/80;
 	g_text_col = m_saved_cursor[m_screen_count] % 80;
 	if (--m_screen_count >= 0)
 	{

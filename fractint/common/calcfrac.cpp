@@ -2529,7 +2529,7 @@ static int _fastcall potential(double mag, long iterations)
 			}
 			else
 			{
-				d_tmp = log(mag)/(double)pow(2.0, double(pot));
+				d_tmp = log(mag)/double(pow(2.0, double(pot)));
 				/* prevent float type underflow */
 				pot = (d_tmp > FLT_MIN) ? (float) d_tmp : 0.0f;
 			}
@@ -2954,7 +2954,9 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	case SYMMETRY_PI:                      /* PI symmetry */
 		if (g_bf_math)
 		{
-			if ((double)bftofloat(abs_a_bf(sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()))) < MathUtil::Pi/4)
+			if (double(bftofloat(abs_a_bf(sub_bf(bft1,
+					g_escape_time_state.m_grid_bf.x_max(),
+					g_escape_time_state.m_grid_bf.x_min())))) < MathUtil::Pi/4)
 			{
 				break; /* no point in pi symmetry if values too close */
 			}
@@ -2987,11 +2989,11 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		{
 			sub_bf(bft1, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 			abs_a_bf(bft1);
-			s_pi_in_pixels = (int) (MathUtil::Pi/double(bftofloat(bft1))*g_x_dots);
+			s_pi_in_pixels = int(MathUtil::Pi/double(bftofloat(bft1))*g_x_dots);
 		}
 		else
 		{
-			s_pi_in_pixels = (int) (MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width())*g_x_dots);
+			s_pi_in_pixels = int(MathUtil::Pi/fabs(g_escape_time_state.m_grid_fp.width())*g_x_dots);
 		}
 
 		g_x_stop = g_WorkList.xx_start() + s_pi_in_pixels-1;
@@ -3584,7 +3586,7 @@ void PerformWorkList::show_dot_finish()
 void PerformWorkList::common_escape_time_initialization()
 {
 	/* some common initialization for escape-time pixel level routines */
-	g_close_enough = g_delta_min_fp*pow(2.0, (double) -abs(g_periodicity_check));
+	g_close_enough = g_delta_min_fp*pow(2.0, double(-abs(g_periodicity_check)));
 	g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
 	g_input_counter = g_max_input_counter;
 

@@ -347,7 +347,7 @@ int encoder()
 	setup_save_info(&save_info);
 
 #ifndef XFRACT
-	bitsperpixel = 0;            /* calculate bits / pixel */
+	bitsperpixel = 0;            /* calculate bits/pixel */
 	for (i = g_colors; i >= 2; i /= 2)
 	{
 		bitsperpixel++;
@@ -418,11 +418,11 @@ int encoder()
 	if (g_view_window                               /* less than full screen?  */
 		&& (g_view_x_dots == 0 || g_view_y_dots == 0))   /* and we picked the dots? */
 	{
-		i = (int) ((double(g_screen_height) / double(g_screen_width))*64.0 / g_screen_aspect_ratio - 14.5);
+		i = (int) ((double(g_screen_height)/double(g_screen_width))*64.0/g_screen_aspect_ratio - 14.5);
 	}
 	else   /* must risk loss of precision if numbers low */
 	{
-		i = (int) (((double(g_y_dots) / double(g_x_dots)) / g_final_aspect_ratio)*64 - 14.5);
+		i = (int) (((double(g_y_dots)/double(g_x_dots))/g_final_aspect_ratio)*64 - 14.5);
 	}
 	if (i < 1)
 	{
@@ -660,7 +660,7 @@ int encoder()
 				esave_info.mutate[i] = (short)g_genes[i].mutate;
 			}
 
-			for (i = 0; i < sizeof(esave_info.future) / sizeof(short); i++)
+			for (i = 0; i < sizeof(esave_info.future)/sizeof(short); i++)
 			{
 				esave_info.future[i] = 0;
 			}
@@ -690,7 +690,7 @@ int encoder()
 			osave_info.oy3rd     = g_orbit_y_3rd;
 			osave_info.keep_scrn_coords = (short) g_keep_screen_coords ? 1 : 0;
 			osave_info.drawmode  = (char) g_orbit_draw_mode;
-			for (i = 0; i < sizeof(osave_info.future) / sizeof(short); i++)
+			for (i = 0; i < sizeof(osave_info.future)/sizeof(short); i++)
 			{
 				osave_info.future[i] = 0;
 			}
@@ -756,7 +756,7 @@ static int _fastcall shftwrite(BYTE *color, int g_num_colors)
 
 static int _fastcall extend_blk_len(int datalen)
 {
-	return datalen + (datalen + 254) / 255 + 15;
+	return datalen + (datalen + 254)/255 + 15;
 	/* data   +     1.per.block   + 14 for id + 1 for null at end  */
 }
 
@@ -771,7 +771,7 @@ static int _fastcall put_extend_blk(int block_id, int block_len, char *block_dat
 	{
 		return 0;
 	}
-	i = (block_len + 254) / 255;
+	i = (block_len + 254)/255;
 	while (--i >= 0)
 	{
 		block_len -= (j = min(block_len, 255));
@@ -820,7 +820,7 @@ static int _fastcall store_item_name(const char *nameptr)
 		fsave_info.uses_p4 = 0;
 		fsave_info.uses_p5 = 0;
 	}
-	for (i = 0; i < sizeof(fsave_info.future) / sizeof(short); i++)
+	for (i = 0; i < sizeof(fsave_info.future)/sizeof(short); i++)
 	{
 		fsave_info.future[i] = 0;
 	}
@@ -965,7 +965,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->orbit_delay = (short) g_orbit_delay;
 	save_info->math_tolerance[0] = g_math_tolerance[0];
 	save_info->math_tolerance[1] = g_math_tolerance[1];
-	for (i = 0; i < sizeof(save_info->future) / sizeof(short); i++)
+	for (i = 0; i < sizeof(save_info->future)/sizeof(short); i++)
 	{
 		save_info->future[i] = 0;
 	}
@@ -1046,7 +1046,7 @@ static int clear_flg = 0;
  * compress stdin to stdout
  *
  * Algorithm:  use open addressing double hashing (no chaining) on the
- * prefix code / next character combination.  We do a variant of Knuth's
+ * prefix code/next character combination.  We do a variant of Knuth's
  * algorithm D (vol. 3, sec. 6.4) along with G. Knott's relatively-prime
  * secondary probe.  Here, the modular division first probe is gives way
  * to a faster exclusive-or manipulation.  Also do g_block compression with

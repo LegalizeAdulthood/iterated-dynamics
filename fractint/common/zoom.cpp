@@ -432,13 +432,13 @@ void zoom_box_resize(int steps)
 	double deltay;
 	if (g_z_depth*g_screen_aspect_ratio > g_z_width)  /* box larger on y axis */
 	{
-		deltay = steps*0.036 / g_screen_aspect_ratio;
-		deltax = g_z_width*deltay / g_z_depth;
+		deltay = steps*0.036/g_screen_aspect_ratio;
+		deltax = g_z_width*deltay/g_z_depth;
 	}
 	else  /* box larger on x axis */
 	{
 		deltax = steps*0.036;
-		deltay = g_z_depth*deltax / g_z_width;
+		deltay = g_z_depth*deltax/g_z_width;
 	}
 	chgboxf(deltax, deltay);
 }
@@ -641,7 +641,7 @@ void aspect_ratio_crop(float oldaspect, float newaspect)
 	double ymargin;
 	if (newaspect > oldaspect)  /* new ratio is taller, crop x */
 	{
-		ftemp = (1.0 - oldaspect / newaspect) / 2;
+		ftemp = (1.0 - oldaspect/newaspect)/2;
 		xmargin = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())*ftemp;
 		ymargin = (g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd())*ftemp;
 		g_escape_time_state.m_grid_fp.x_3rd() += xmargin;
@@ -649,7 +649,7 @@ void aspect_ratio_crop(float oldaspect, float newaspect)
 	}
 	else                        /* new ratio is wider, crop y */
 	{
-		ftemp = (1.0 - newaspect / oldaspect) / 2;
+		ftemp = (1.0 - newaspect/oldaspect)/2;
 		xmargin = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())*ftemp;
 		ymargin = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_max())*ftemp;
 		g_escape_time_state.m_grid_fp.x_3rd() -= xmargin;

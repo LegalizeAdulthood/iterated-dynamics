@@ -164,7 +164,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		*Xctr = g_escape_time_state.m_grid_fp.x_center();
 		*Yctr = g_escape_time_state.m_grid_fp.y_center();
 		*Magnification  = 2.0/Height;
-		*Xmagfactor =  Height / (DEFAULT_ASPECT_RATIO*Width);
+		*Xmagfactor =  Height/(DEFAULT_ASPECT_RATIO*Width);
 		*Rotation = 0.0;
 		*Skew = 0.0;
 	}
@@ -196,7 +196,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		Height = b*sin(tmpa);
 
 		*Magnification  = 2.0/Height; /* 1/(h/2) */
-		*Xmagfactor = Height / (DEFAULT_ASPECT_RATIO*a);
+		*Xmagfactor = Height/(DEFAULT_ASPECT_RATIO*a);
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
@@ -263,7 +263,7 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	}
 
 	h = (double)(1/Magnification);
-	w = h / (DEFAULT_ASPECT_RATIO*Xmagfactor);
+	w = h/(DEFAULT_ASPECT_RATIO*Xmagfactor);
 
 	if (Rotation == 0.0 && Skew == 0.0)
 		{ /* simple, faster case */
@@ -353,7 +353,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		add_bf(Yctr, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 		half_a_bf(Yctr);
 		*Magnification  = 2/Height;
-		*Xmagfactor =  (double)(Height / (DEFAULT_ASPECT_RATIO*Width));
+		*Xmagfactor =  (double)(Height/(DEFAULT_ASPECT_RATIO*Width));
 		*Rotation = 0.0;
 		*Skew = 0.0;
 	}
@@ -389,7 +389,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		signx = sign(tmpx1);
 		if (signx)
 		{
-			tmpy = tmpy1/tmpx1*signx;    /* tmpy = tmpy / |tmpx| */
+			tmpy = tmpy1/tmpx1*signx;    /* tmpy = tmpy/|tmpx| */
 		}
 		*Rotation = (double)(-MathUtil::RadiansToDegrees(atan2(double(tmpy), signx))); /* negative for image rotation */
 
@@ -415,7 +415,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 
 		Height = b*sin(tmpa);
 		*Magnification  = 2/Height; /* 1/(h/2) */
-		*Xmagfactor = (double)(Height / (DEFAULT_ASPECT_RATIO*a));
+		*Xmagfactor = (double)(Height/(DEFAULT_ASPECT_RATIO*a));
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
@@ -468,7 +468,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 
 	h = 1/Magnification;
 	floattobf(bfh, h);
-	w = h / (DEFAULT_ASPECT_RATIO*Xmagfactor);
+	w = h/(DEFAULT_ASPECT_RATIO*Xmagfactor);
 	floattobf(bfw, w);
 
 	if (Rotation == 0.0 && Skew == 0.0)
@@ -799,7 +799,7 @@ int tab_display()       /* display the status of the current image */
 	}
 	if (g_calculation_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n >= 2 */
 	{
-		g_calculation_time += (clock_ticks() - g_timer_start) / (CLK_TCK/100);
+		g_calculation_time += (clock_ticks() - g_timer_start)/(CLK_TCK/100);
 	}
 	driver_stack_screen();
 	if (g_bf_math)

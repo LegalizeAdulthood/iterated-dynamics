@@ -254,7 +254,7 @@ ComplexL ComplexSqrtLong(long x, long y)
 
 #ifndef LONGSQRT
 	mag       = sqrt(sqrt(((double) multiply(x, x, g_bit_shift))/g_fudge +
-						((double) multiply(y, y, g_bit_shift))/ g_fudge));
+						((double) multiply(y, y, g_bit_shift))/g_fudge));
 	maglong   = (long)(mag*g_fudge);
 #else
 	maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift) + multiply(y, y, g_bit_shift)));

@@ -120,7 +120,7 @@ void calculate_bignum_lengths()
 
 	if (g_bn_length % g_step_bn != 0)
 	{
-		g_bn_length = (g_bn_length / g_step_bn + 1)*g_step_bn;
+		g_bn_length = (g_bn_length/g_step_bn + 1)*g_step_bn;
 	}
 	g_padding = (g_bn_length == g_step_bn) ? g_bn_length : 2*g_step_bn;
 	g_r_length = g_bn_length + g_padding;

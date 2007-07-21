@@ -149,7 +149,7 @@ static double interpolate(double x0, double x1, double x2,
 
 	return double(b0); */
 	double b = (b1-b0)/(x1-x0);
-	return (double)((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
+	return double((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
 	/*
 	if (t < x1)
 		return w0 + ((t-x0)/(x1-x0))*(w1-w0);
@@ -903,10 +903,10 @@ static void soi_double()
 	rhombus_depth = -1;
 	if (g_bf_math)
 	{
-		xxminl = (double)bftofloat(g_escape_time_state.m_grid_bf.x_min());
-		yyminl = (double)bftofloat(g_escape_time_state.m_grid_bf.y_min());
-		xxmaxl = (double)bftofloat(g_escape_time_state.m_grid_bf.x_max());
-		yymaxl = (double)bftofloat(g_escape_time_state.m_grid_bf.y_max());
+		xxminl = double(bftofloat(g_escape_time_state.m_grid_bf.x_min()));
+		yyminl = double(bftofloat(g_escape_time_state.m_grid_bf.y_min()));
+		xxmaxl = double(bftofloat(g_escape_time_state.m_grid_bf.x_max()));
+		yymaxl = double(bftofloat(g_escape_time_state.m_grid_bf.y_max()));
 	}
 	else
 	{
@@ -916,8 +916,8 @@ static void soi_double()
 		yymaxl = g_escape_time_state.m_grid_fp.y_max();
 	}
 	twidth = tolerance/(g_x_dots-1);
-	stepx = (xxmaxl - xxminl) / g_x_dots;
-	stepy = (yyminl - yymaxl) / g_y_dots;
+	stepx = (xxmaxl - xxminl)/g_x_dots;
+	stepy = (yyminl - yymaxl)/g_y_dots;
 	equal = (stepx < stepy ? stepx : stepy);
 
 	RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,

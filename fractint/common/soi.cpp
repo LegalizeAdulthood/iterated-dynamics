@@ -1089,8 +1089,8 @@ void soi_long_double()
 		yymaxl = g_escape_time_state.m_grid_fp.y_max();
 	}
 	twidth = tolerance/(g_x_dots-1);
-	stepx = (xxmaxl - xxminl) / g_x_dots;
-	stepy = (yyminl - yymaxl) / g_y_dots;
+	stepx = (xxmaxl - xxminl)/g_x_dots;
+	stepy = (yyminl - yymaxl)/g_y_dots;
 	equal = (stepx < stepy ? stepx : stepy);
 
 	RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,

@@ -836,7 +836,7 @@ bn_t mult_a_bn_int(bn_t r, U16 u)
 }
 
 /********************************************************************/
-/* r = n / u  where u is an unsigned integer */
+/* r = n/u  where u is an unsigned integer */
 bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 {
 	int i;
@@ -864,7 +864,7 @@ bn_t unsafe_div_bn_int(bn_t r, bn_t n,  U16 u)
 	for (i = g_bn_length-2; i >= 0; i -= 2)
 	{
 		full_number = ((U32)rem << 16) + (U32)big_access16(n + i);
-		quot = (U16)(full_number / u);
+		quot = (U16)(full_number/u);
 		rem  = (U16)(full_number % u);
 		big_set16(r + i, quot);
 	}
@@ -905,7 +905,7 @@ bn_t div_a_bn_int(bn_t r, U16 u)
 	for (i = g_bn_length-2; i >= 0; i -= 2)
 	{
 		full_number = ((U32)rem << 16) + (U32)big_access16(r + i);
-		quot = (U16)(full_number / u);
+		quot = (U16)(full_number/u);
 		rem  = (U16)(full_number % u);
 		big_set16(r + i, quot);
 	}

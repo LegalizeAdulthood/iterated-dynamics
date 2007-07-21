@@ -854,7 +854,7 @@ bf_t unsafe_sincos_bf(bf_t s, bf_t c, bf_t n)
 	/* the range is cut in half, the number of iterations required is reduced */
 	/* by "quite a bit."  It's just a matter of testing to see what gives the */
 	/* optimal results.                                                       */
-	/* halves = g_bf_length / 10; */ /* this is experimental */
+	/* halves = g_bf_length/10; */ /* this is experimental */
 	halves = 1;
 	for (i = 0; i < halves; i++)
 	{
@@ -2012,7 +2012,7 @@ multiplication is performed.
 }
 
 /********************************************************************/
-/* r = n / u  where u is an unsigned integer */
+/* r = n/u  where u is an unsigned integer */
 bf_t unsafe_div_bf_int(bf_t r, bf_t n,  U16 u)
 {
 	int bnl;
@@ -2347,7 +2347,7 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 	{
 		value = r[d]*n + overflow;
 		r[d] = (BYTE)(value % 10);
-		overflow = value / 10;
+		overflow = value/10;
 	}
 	while (overflow)
 	{
@@ -2388,7 +2388,7 @@ bf10_t div_a_bf10_int (bf10_t r, int dec, U16 n)
 	for (src = dest = 1; src <= dec; dest++, src++)
 	{
 		value = 10*remainder + r[src];
-		r[dest] = (BYTE)(value / n);
+		r[dest] = (BYTE)(value/n);
 		remainder = value % n;
 		if (dest == 1 && r[dest] == 0)
 		{
@@ -2399,7 +2399,7 @@ bf10_t div_a_bf10_int (bf10_t r, int dec, U16 n)
 	for (; dest <= dec; dest++)
 	{
 		value = 10*remainder;
-		r[dest] = (BYTE)(value / n);
+		r[dest] = (BYTE)(value/n);
 		remainder = value % n;
 		if (dest == 1 && r[dest] == 0)
 		{

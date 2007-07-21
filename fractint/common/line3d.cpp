@@ -804,7 +804,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 		if (g_3d_state.haze() && g_targa_output)
 		{
 			s_haze_mult = (int) (g_3d_state.haze()*((float) ((long) (g_y_dots - 1 - g_current_row)*(long) (g_y_dots - 1 - g_current_row))
-									/ (float) ((long) (g_y_dots - 1)*(long) (g_y_dots - 1))));
+									/(float) ((long) (g_y_dots - 1)*(long) (g_y_dots - 1))));
 			s_haze_mult = 100 - s_haze_mult;
 		}
 	}
@@ -2123,7 +2123,7 @@ static int out_triangle(const struct f_point pt1,
 		for (int i = 0; i <= 2; i++)
 		{
 			c[i] = (float) (g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
-				/ (3*COLOR_CHANNEL_MAX);
+				/(3*COLOR_CHANNEL_MAX);
 		}
 	}
 

@@ -112,15 +112,15 @@ int julibrot_setup()
 
 	s_x_offset_fp = g_escape_time_state.m_grid_fp.x_center();     /* Calculate average */
 	s_y_offset_fp = g_escape_time_state.m_grid_fp.y_center();     /* Calculate average */
-	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp) / g_z_dots;
-	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp) / g_z_dots;
+	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp)/g_z_dots;
+	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp)/g_z_dots;
 	g_float_parameter = &s_jbc_fp;
 	s_x_per_inch_fp = -g_escape_time_state.m_grid_fp.width()/g_width_fp;
 	s_y_per_inch_fp = g_escape_time_state.m_grid_fp.height()/g_height_fp;
-	s_inch_per_x_dot_fp = g_width_fp / g_x_dots;
-	s_inch_per_y_dot_fp = g_height_fp / g_y_dots;
-	s_init_z_fp = g_origin_fp - (g_depth_fp / 2);
-	s_right_eye_fp.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0.0 : (g_eyes_fp / 2);
+	s_inch_per_x_dot_fp = g_width_fp/g_x_dots;
+	s_inch_per_y_dot_fp = g_height_fp/g_y_dots;
+	s_init_z_fp = g_origin_fp - (g_depth_fp/2);
+	s_right_eye_fp.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0.0 : (g_eyes_fp/2);
 	s_left_eye_fp.x = -s_right_eye_fp.x;
 	s_left_eye_fp.y = s_right_eye_fp.y = 0;
 	s_left_eye_fp.zx = s_right_eye_fp.zx = g_screen_distance_fp;
@@ -144,14 +144,14 @@ int julibrot_setup()
 		{
 			g_bit_shift = g_fractal_specific[g_new_orbit_type].isinteger;
 		}
-		s_fg = (double) (1L << g_bit_shift);
-		s_fg16 = (double) (1L << 16);
+		s_fg = double(1L << g_bit_shift);
+		s_fg16 = double(1L << 16);
 		jxmin = (long) (g_escape_time_state.m_grid_fp.x_min()*s_fg);
 		jxmax = (long) (g_escape_time_state.m_grid_fp.x_max()*s_fg);
-		s_x_offset = (jxmax + jxmin) / 2;    /* Calculate average */
+		s_x_offset = (jxmax + jxmin)/2;    /* Calculate average */
 		jymin = (long) (g_escape_time_state.m_grid_fp.y_min()*s_fg);
 		jymax = (long) (g_escape_time_state.m_grid_fp.y_max()*s_fg);
-		s_y_offset = (jymax + jymin) / 2;    /* Calculate average */
+		s_y_offset = (jymax + jymin)/2;    /* Calculate average */
 		s_m_x_min = (long) (g_m_x_min_fp*s_fg);
 		mxmax = (long) (g_m_x_max_fp*s_fg);
 		s_m_y_min = (long) (g_m_y_min_fp*s_fg);
@@ -162,15 +162,15 @@ int julibrot_setup()
 		s_dist = (long) (g_screen_distance_fp*s_fg16);
 		s_eyes = (long) (g_eyes_fp*s_fg16);
 		s_br_ratio = (long) s_fg16;
-		s_dmx = (mxmax - s_m_x_min) / g_z_dots;
-		s_dmy = (mymax - s_m_y_min) / g_z_dots;
+		s_dmx = (mxmax - s_m_x_min)/g_z_dots;
+		s_dmy = (mymax - s_m_y_min)/g_z_dots;
 		g_long_parameter = &s_jbc;
 
 		s_x_per_inch = (long) (-g_escape_time_state.m_grid_fp.width()/g_width_fp*s_fg);
 		s_y_per_inch = (long) (g_escape_time_state.m_grid_fp.height()/g_height_fp*s_fg);
-		s_inch_per_x_dot = (long) ((g_width_fp / g_x_dots)*s_fg16);
-		s_inch_per_y_dot = (long) ((g_height_fp / g_y_dots)*s_fg16);
-		s_init_z = origin - (s_depth / 2);
+		s_inch_per_x_dot = (long) ((g_width_fp/g_x_dots)*s_fg16);
+		s_inch_per_y_dot = (long) ((g_height_fp/g_y_dots)*s_fg16);
+		s_init_z = origin - (s_depth/2);
 		s_right_eye.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0L : (s_eyes/2);
 		s_left_eye.x = -s_right_eye.x;
 		s_left_eye.y = s_right_eye.y = 0l;
@@ -213,7 +213,7 @@ int julibrot_per_pixel()
 	s_jx += s_x_offset;
 	s_djx = divide(s_depth, s_dist, 16);
 	s_djx = multiply(s_djx, s_per->x - s_x_pixel, 16) << (g_bit_shift - 16);
-	s_djx = multiply(s_djx, s_x_per_inch, g_bit_shift) / g_z_dots;
+	s_djx = multiply(s_djx, s_x_per_inch, g_bit_shift)/g_z_dots;
 
 	s_jy = multiply(s_per->y - s_y_pixel, s_init_z, 16);
 	s_jy = divide(s_jy, s_dist, 16) - s_y_pixel;
@@ -221,20 +221,20 @@ int julibrot_per_pixel()
 	s_jy += s_y_offset;
 	s_djy = divide(s_depth, s_dist, 16);
 	s_djy = multiply(s_djy, s_per->y - s_y_pixel, 16) << (g_bit_shift - 16);
-	s_djy = multiply(s_djy, s_y_per_inch, g_bit_shift) / g_z_dots;
+	s_djy = multiply(s_djy, s_y_per_inch, g_bit_shift)/g_z_dots;
 
 	return 1;
 }
 
 int julibrot_per_pixel_fp()
 {
-	s_jx_fp = ((s_per_fp->x - s_x_pixel_fp)*s_init_z_fp / g_screen_distance_fp - s_x_pixel_fp)*s_x_per_inch_fp;
+	s_jx_fp = ((s_per_fp->x - s_x_pixel_fp)*s_init_z_fp/g_screen_distance_fp - s_x_pixel_fp)*s_x_per_inch_fp;
 	s_jx_fp += s_x_offset_fp;
-	s_djx_fp = (g_depth_fp / g_screen_distance_fp)*(s_per_fp->x - s_x_pixel_fp)*s_x_per_inch_fp / g_z_dots;
+	s_djx_fp = (g_depth_fp/g_screen_distance_fp)*(s_per_fp->x - s_x_pixel_fp)*s_x_per_inch_fp/g_z_dots;
 
-	s_jy_fp = ((s_per_fp->y - s_y_pixel_fp)*s_init_z_fp / g_screen_distance_fp - s_y_pixel_fp)*s_y_per_inch_fp;
+	s_jy_fp = ((s_per_fp->y - s_y_pixel_fp)*s_init_z_fp/g_screen_distance_fp - s_y_pixel_fp)*s_y_per_inch_fp;
 	s_jy_fp += s_y_offset_fp;
-	s_djy_fp = g_depth_fp / g_screen_distance_fp*(s_per_fp->y - s_y_pixel_fp)*s_y_per_inch_fp / g_z_dots;
+	s_djy_fp = g_depth_fp/g_screen_distance_fp*(s_per_fp->y - s_y_pixel_fp)*s_y_per_inch_fp/g_z_dots;
 
 	return 1;
 }
@@ -287,7 +287,7 @@ static int z_line(long x, long y)
 		{
 			if (g_juli_3d_mode == JULI3DMODE_RED_BLUE)
 			{
-				g_color = (int) (128l*z_pixel / g_z_dots);
+				g_color = (int) (128l*z_pixel/g_z_dots);
 				if ((g_row + g_col) & 1)
 				{
 
@@ -309,7 +309,7 @@ static int z_line(long x, long y)
 			}
 			else
 			{
-				g_color = (int) (254l*z_pixel / g_z_dots);
+				g_color = (int) (254l*z_pixel/g_z_dots);
 				(*g_plot_color)(g_col, g_row, g_color + 1);
 			}
 			s_plotted = 1;
@@ -403,7 +403,7 @@ static int z_line_fp(double x, double y)
 		{
 			if (g_juli_3d_mode == 3)
 			{
-				g_color = (int) (128l*z_pixel / g_z_dots);
+				g_color = (int) (128l*z_pixel/g_z_dots);
 				if ((g_row + g_col) & 1)
 				{
 					(*g_plot_color)(g_col, g_row, 127 - g_color);
@@ -423,7 +423,7 @@ static int z_line_fp(double x, double y)
 			}
 			else
 			{
-				g_color = (int) (254l*z_pixel / g_z_dots);
+				g_color = (int) (254l*z_pixel/g_z_dots);
 				(*g_plot_color)(g_col, g_row, g_color + 1);
 			}
 			s_plotted = 1;
@@ -513,7 +513,7 @@ int standard_4d_fractal_fp()
 	for (int ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot_fp)
 	{
 		s_plotted = 0;
-		double x = -g_width_fp / 2;
+		double x = -g_width_fp/2;
 		for (int xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot_fp)
 		{
 			g_col = xdot;

@@ -334,8 +334,8 @@ void FullScreenPrompter::PrepareHeader()
 void FullScreenPrompter::WorkOutVerticalPositioning()
 {
 	int total_rows = m_num_prompts + m_title_lines + m_footer_lines + 3;
-	int j = (25 - total_rows) / 2;                   /* top row of it all when centered */
-	j -= j / 4;                         /* higher is better if lots extra */
+	int j = (25 - total_rows)/2;                   /* top row of it all when centered */
+	j -= j/4;                         /* higher is better if lots extra */
 	m_box_lines = m_num_prompts;
 	m_title_row = 1 + j;
 	m_box_row = m_title_row + m_title_lines;
@@ -426,7 +426,7 @@ void FullScreenPrompter::WorkOutHorizontalPositioning()
 	{
 		m_box_width = 80;
 	}
-	m_box_column = (80 - m_box_width) / 2;       /* center the box */
+	m_box_column = (80 - m_box_width)/2;       /* center the box */
 	m_prompt_column = m_box_column + 2;
 	m_value_column = m_box_column + m_box_width - m_max_field_width - 2;
 	if (m_box_width <= 76)  /* make margin a bit wider if we can */
@@ -447,9 +447,9 @@ void FullScreenPrompter::WorkOutHorizontalPositioning()
 			i = 80 - m_box_width;
 		}
 		m_box_width += i;
-		m_box_column -= i / 2;
+		m_box_column -= i/2;
 	}
-	i = (90 - m_box_width) / 20;
+	i = (90 - m_box_width)/20;
 	m_box_column    -= i;
 	m_prompt_column -= i;
 	m_value_column  -= i;
@@ -476,7 +476,7 @@ void FullScreenPrompter::DisplayHeader()
 		}
 		*next = '\0';
 		m_title_width = (int) ::strlen(heading_line);
-		g_text_cbase = m_box_column + (m_box_width - m_title_width) / 2;
+		g_text_cbase = m_box_column + (m_box_width - m_title_width)/2;
 		driver_put_string(m_title_row + i, 0, C_PROMPT_HI, heading_line);
 		*next = '\n';
 		heading_line = next + 1;
@@ -489,7 +489,7 @@ void FullScreenPrompter::DisplayHeader()
 	}
 
 	m_title_width = (int) ::strlen(heading_line);
-	g_text_cbase = m_box_column + (m_box_width - m_title_width) / 2;
+	g_text_cbase = m_box_column + (m_box_width - m_title_width)/2;
 	driver_put_string(m_title_row + i, 0, C_PROMPT_HI, heading_line);
 }
 
@@ -535,7 +535,7 @@ void FullScreenPrompter::DisplayFooter()
 		driver_put_string(m_footer_row + i, 0, C_PROMPT_BKGRD, S4);
 		driver_put_string(m_footer_row + i, m_box_width-1, C_PROMPT_BKGRD, S4);
 	}
-	g_text_cbase += (m_box_width - m_footer_width) / 2;
+	g_text_cbase += (m_box_width - m_footer_width)/2;
 	driver_put_string(m_footer_row + 1, 0, C_PROMPT_TEXT, m_footer);
 }
 

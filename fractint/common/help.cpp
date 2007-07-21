@@ -1217,7 +1217,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			memset(line, ' ', 81);
 			sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release % 100)/10,
 				((g_release % 10) ? '0'+(g_release % 10) : ' '));
-			memmove(line + ((width-(int)(strlen(buff))) / 2)-4, buff, strlen(buff));
+			memmove(line + ((width-(int)(strlen(buff)))/2)-4, buff, strlen(buff));
 
 			sprintf(buff, "Page %d", pd->pnum);
 			memmove(line + (width - (int)strlen(buff)), buff, strlen(buff));
@@ -1300,7 +1300,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 		driver_hide_text_cursor();
 	}
 
-	sprintf(temp, "%d%%", (int)((100.0 / num_pages)*pnum));
+	sprintf(temp, "%d%%", (int)((100.0/num_pages)*pnum));
 	driver_put_string(7, 41, C_HELP_LINK, temp);
 
 	while (driver_key_pressed())
@@ -1322,7 +1322,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 
 	if (pnum >= 0)
 	{
-		sprintf(s_buffer, "\rcompleted %d%%", (int) ((100.0 / num_pages)*pnum));
+		sprintf(s_buffer, "\rcompleted %d%%", (int) ((100.0/num_pages)*pnum));
 		result = 1;
 	}
 	else if (pnum == -2)

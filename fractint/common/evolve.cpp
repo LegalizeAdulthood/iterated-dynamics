@@ -213,13 +213,13 @@ static void vary_double(GENEBASE gene[], int randval, int i) /* routine to vary 
 		*(double *)gene[i].addr = (g_px*g_delta_parameter_image_x + g_parameter_offset_x)-(lclpy*g_delta_parameter_image_y + g_parameter_offset_y); /*and x-y*/
 		break;
 	case VARYINT_RANDOM:
-		*(double *)gene[i].addr += ((double(randval) / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor;
+		*(double *)gene[i].addr += ((double(randval)/RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor;
 		break;
 	case VARYINT_RANDOM_WEIGHTED:  /* weighted random mutation, further out = further change */
 		{
 			int mid = g_grid_size /2;
 			double radius =  sqrt((double) (sqr(g_px - mid) + sqr(lclpy - mid)));
-			*(double *)gene[i].addr += (((double(randval) / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius;
+			*(double *)gene[i].addr += (((double(randval)/RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius;
 		}
 		break;
 	}
@@ -254,7 +254,7 @@ static int vary_int(int randvalue, int limit, int mode)
 		{
 			int mid = g_grid_size /2;
 			double radius =  sqrt((double) (sqr(g_px - mid) + sqr(lclpy - mid)));
-			ret = (int)((((randvalue / RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius);
+			ret = (int)((((randvalue/RAND_MAX)*2*g_fiddle_factor) - g_fiddle_factor)*radius);
 			ret %= limit;
 		}
 		break;
@@ -694,12 +694,12 @@ get_evol_restart:
 			goto get_evol_restart;
 		case FIK_F3:
 			{
-				double centerx = g_parameter_offset_x + g_parameter_range_x / 2;
+				double centerx = g_parameter_offset_x + g_parameter_range_x/2;
 				g_parameter_range_x *= 2;
-				g_parameter_offset_x = g_new_parameter_offset_x = centerx - g_parameter_range_x / 2;
-				double centery = g_parameter_offset_y + g_parameter_range_y / 2;
+				g_parameter_offset_x = g_new_parameter_offset_x = centerx - g_parameter_range_x/2;
+				double centery = g_parameter_offset_y + g_parameter_range_y/2;
 				g_parameter_range_y *= 2;
-				g_parameter_offset_y = g_new_parameter_offset_y = centery - g_parameter_range_y / 2;
+				g_parameter_offset_y = g_new_parameter_offset_y = centery - g_parameter_range_y/2;
 				g_fiddle_factor *= 2;
 				goto get_evol_restart;
 			}
@@ -715,9 +715,9 @@ get_evol_restart:
 		}
 
 		g_grid_size = dialog.values(++k).uval.ival;
-		/* (g_screen_width / 20), max # of subimages @ 20 pixels per subimage */
-		/* MAX_GRID_SIZE == 1024 / 20 == 51 */
-		g_grid_size = MathUtil::Clamp(g_grid_size, 3, std::min(MAX_GRID_SIZE, g_screen_width / (MIN_PIXELS << 1)));
+		/* (g_screen_width/20), max # of subimages @ 20 pixels per subimage */
+		/* MAX_GRID_SIZE == 1024/20 == 51 */
+		g_grid_size = MathUtil::Clamp(g_grid_size, 3, std::min(MAX_GRID_SIZE, g_screen_width/(MIN_PIXELS << 1)));
 		g_grid_size |= 1; /* make sure g_grid_size is odd */
 		if (explore_check())
 		{
@@ -738,8 +738,8 @@ get_evol_restart:
 			g_evolving_flags |= EVOLVE_NO_GROUT;
 		}
 	}
-	g_view_x_dots = (g_screen_width / g_grid_size)-2;
-	g_view_y_dots = (g_screen_height / g_grid_size)-2;
+	g_view_x_dots = (g_screen_width/g_grid_size)-2;
+	g_view_y_dots = (g_screen_height/g_grid_size)-2;
 	if (!g_view_window)
 	{
 		g_view_x_dots = 0;
@@ -801,7 +801,7 @@ void setup_parameter_box()
 	}
 	g_parameter_box_count = 0;
 
-	/* vidsize = (vidsize / g_grid_size) + 3; */ /* allocate less mem for smaller box */
+	/* vidsize = (vidsize/g_grid_size) + 3; */ /* allocate less mem for smaller box */
 	/* taken out above as *all* pixels get plotted in small boxes */
 	if (!s_image_box)
 	{
@@ -830,9 +830,9 @@ void release_parameter_box()
 void set_current_parameters()
 {
 	g_parameter_range_x = g_current_fractal_specific->x_max - g_current_fractal_specific->x_min;
-	g_parameter_offset_x = g_new_parameter_offset_x = - (g_parameter_range_x / 2);
+	g_parameter_offset_x = g_new_parameter_offset_x = - (g_parameter_range_x/2);
 	g_parameter_range_y = g_current_fractal_specific->y_max - g_current_fractal_specific->y_min;
-	g_parameter_offset_y = g_new_parameter_offset_y = - (g_parameter_range_y / 2);
+	g_parameter_offset_y = g_new_parameter_offset_y = - (g_parameter_range_y/2);
 	return;
 }
 
@@ -861,7 +861,7 @@ void fiddle_parameters(GENEBASE gene[], int ecount)
 	the variables referenced in the gene array and call the functions required
 	to vary them, aren't pointers marvellous! */
 
-	if ((g_px == g_grid_size / 2) && (g_py == g_grid_size / 2)) /* return if middle image */
+	if ((g_px == g_grid_size/2) && (g_py == g_grid_size/2)) /* return if middle image */
 	{
 		return;
 	}
@@ -1015,7 +1015,7 @@ void spiral_map(int count)
 	int mid;
 	int offset;
 	i = 0;
-	mid = g_grid_size / 2;
+	mid = g_grid_size/2;
 	if (count == 0)  /* start in the middle */
 	{
 		g_px = g_py = mid;
@@ -1071,7 +1071,7 @@ int unspiral_map()
 	int mid;
 	static int last_grid_size = 0;
 
-	mid = g_grid_size / 2;
+	mid = g_grid_size/2;
 	if ((g_px == mid && g_py == mid) || (last_grid_size != g_grid_size))
 	{
 		int i;
