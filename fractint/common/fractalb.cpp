@@ -296,7 +296,7 @@ int bail_out_mod_bn()
 	add_bn(bntmp, bntmpsqrx + g_shift_factor, bntmpsqry + g_shift_factor);
 
 	longmagnitude = bntoint(bntmp);  /* works with any fractal type */
-	if (longmagnitude >= (long)g_rq_limit)
+	if (longmagnitude >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -312,7 +312,7 @@ int bail_out_real_bn()
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
 	longtempsqrx = bntoint(bntmpsqrx + g_shift_factor);
-	if (longtempsqrx >= (long)g_rq_limit)
+	if (longtempsqrx >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -329,7 +329,7 @@ int bail_out_imag_bn()
 	square_bn(bntmpsqrx, bnnew.x);
 	square_bn(bntmpsqry, bnnew.y);
 	longtempsqry = bntoint(bntmpsqry + g_shift_factor);
-	if (longtempsqry >= (long)g_rq_limit)
+	if (longtempsqry >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -347,7 +347,7 @@ int bail_out_or_bn()
 	square_bn(bntmpsqry, bnnew.y);
 	longtempsqrx = bntoint(bntmpsqrx + g_shift_factor);
 	longtempsqry = bntoint(bntmpsqry + g_shift_factor);
-	if (longtempsqrx >= (long)g_rq_limit || longtempsqry >= (long)g_rq_limit)
+	if (longtempsqrx >= long(g_rq_limit) || longtempsqry >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -365,7 +365,7 @@ int bail_out_and_bn()
 	square_bn(bntmpsqry, bnnew.y);
 	longtempsqrx = bntoint(bntmpsqrx + g_shift_factor);
 	longtempsqry = bntoint(bntmpsqry + g_shift_factor);
-	if (longtempsqrx >= (long)g_rq_limit && longtempsqry >= (long)g_rq_limit)
+	if (longtempsqrx >= long(g_rq_limit) && longtempsqry >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -386,7 +386,7 @@ int bail_out_manhattan_bn()
 	add_bn(bntmp, bnold.x, bnold.y);
 	square_bn(bnold.x, bntmp);
 	longtempmag = bntoint(bnold.x + g_shift_factor);
-	if (longtempmag >= (long)g_rq_limit)
+	if (longtempmag >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -405,7 +405,7 @@ int bail_out_manhattan_r_bn()
 	/* note: in next two lines, bnold is just used as a temporary variable */
 	square_bn(bnold.x, bntmp);
 	longtempmag = bntoint(bnold.x + g_shift_factor);
-	if (longtempmag >= (long)g_rq_limit)
+	if (longtempmag >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -423,7 +423,7 @@ int bail_out_mod_bf()
 	add_bf(bftmp, bftmpsqrx, bftmpsqry);
 
 	longmagnitude = bftoint(bftmp);
-	if (longmagnitude >= (long)g_rq_limit)
+	if (longmagnitude >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -439,7 +439,7 @@ int bail_out_real_bf()
 	square_bf(bftmpsqrx, bfnew.x);
 	square_bf(bftmpsqry, bfnew.y);
 	longtempsqrx = bftoint(bftmpsqrx);
-	if (longtempsqrx >= (long)g_rq_limit)
+	if (longtempsqrx >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -455,7 +455,7 @@ int bail_out_imag_bf()
 	square_bf(bftmpsqrx, bfnew.x);
 	square_bf(bftmpsqry, bfnew.y);
 	longtempsqry = bftoint(bftmpsqry);
-	if (longtempsqry >= (long)g_rq_limit)
+	if (longtempsqry >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -473,7 +473,7 @@ int bail_out_or_bf()
 	square_bf(bftmpsqry, bfnew.y);
 	longtempsqrx = bftoint(bftmpsqrx);
 	longtempsqry = bftoint(bftmpsqry);
-	if (longtempsqrx >= (long)g_rq_limit || longtempsqry >= (long)g_rq_limit)
+	if (longtempsqrx >= long(g_rq_limit) || longtempsqry >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -491,7 +491,7 @@ int bail_out_and_bf()
 	square_bf(bftmpsqry, bfnew.y);
 	longtempsqrx = bftoint(bftmpsqrx);
 	longtempsqry = bftoint(bftmpsqry);
-	if (longtempsqrx >= (long)g_rq_limit && longtempsqry >= (long)g_rq_limit)
+	if (longtempsqrx >= long(g_rq_limit) && longtempsqry >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -512,7 +512,7 @@ int bail_out_manhattan_bf()
 	add_bf(bftmp, bfold.x, bfold.y);
 	square_bf(bfold.x, bftmp);
 	longtempmag = bftoint(bfold.x);
-	if (longtempmag >= (long)g_rq_limit)
+	if (longtempmag >= long(g_rq_limit))
 	{
 		return 1;
 	}
@@ -531,7 +531,7 @@ int bail_out_manhattan_r_bf()
 	/* note: in next two lines, bfold is just used as a temporary variable */
 	square_bf(bfold.x, bftmp);
 	longtempmag = bftoint(bfold.x);
-	if (longtempmag >= (long)g_rq_limit)
+	if (longtempmag >= long(g_rq_limit))
 	{
 		return 1;
 	}

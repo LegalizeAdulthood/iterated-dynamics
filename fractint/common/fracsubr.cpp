@@ -601,7 +601,7 @@ static long _fastcall fudge_to_long(double d)
 	{
 		d -= 0.5;
 	}
-	return (long)d;
+	return long(d);
 }
 
 static double _fastcall fudge_to_double(long value)
@@ -1634,10 +1634,10 @@ void get_julia_attractor(double real, double imag)
 	g_temp_sqr_x = sqr(g_old_z.x);
 	g_temp_sqr_y = sqr(g_old_z.y);
 
-	g_old_z_l.x = ((long) real) << g_bit_shift;		/* prepare for int orbit calc */
-	g_old_z_l.y = ((long) imag) << g_bit_shift;
-	g_temp_sqr_x_l = ((long) g_temp_sqr_x) << g_bit_shift;
-	g_temp_sqr_y_l = ((long) g_temp_sqr_y) << g_bit_shift;
+	g_old_z_l.x = (long(real)) << g_bit_shift;		/* prepare for int orbit calc */
+	g_old_z_l.y = (long(imag)) << g_bit_shift;
+	g_temp_sqr_x_l = (long(g_temp_sqr_x)) << g_bit_shift;
+	g_temp_sqr_y_l = (long(g_temp_sqr_y)) << g_bit_shift;
 
 	if (g_max_iteration < 500)         /* we're going to try at least this hard */
 	{

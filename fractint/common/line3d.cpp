@@ -179,8 +179,8 @@ static int line3d_init(unsigned linelen, bool &triangle_was_output,
 	cross_avg[2] = 0;
 	s_x_center = g_x_dots/2 + g_x_shift;
 	s_y_center = g_y_dots/2 - g_y_shift;
-	*xcenter0 = (int) s_x_center;
-	*ycenter0 = (int) s_y_center;
+	*xcenter0 = int(s_x_center);
+	*ycenter0 = int(s_y_center);
 	return 0;
 }
 
@@ -535,8 +535,8 @@ static void line3d_fill_bars(int col,
 		}
 		else
 		{
-			old->x = (int) s_x_center;
-			old->y = (int) s_y_center;
+			old->x = int(s_x_center);
+			old->y = int(s_y_center);
 		}
 	}
 	else
@@ -769,7 +769,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	}
 	else if (g_grayscale_depth)           /* convert color numbers to grayscale values */
 	{
-		for (col = 0; col < (int) line_length; col++)
+		for (col = 0; col < int(line_length); col++)
 		{
 			int color_num = pixels[col];
 			/* TODO: the following does not work when COLOR_CHANNEL_MAX != 63 */
@@ -798,7 +798,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	/* copying code here, and to avoid a HUGE "if-then" construct. Besides,  */
 	/* we have ALREADY sinned, so why not sin some more?                     */
 	/*************************************************************************/
-	last_dot = min(g_x_dots - 1, (int) line_length - 1);
+	last_dot = min(g_x_dots - 1, int(line_length) - 1);
 	if (g_3d_state.fill_type() >= FillType::LightBefore)
 	{
 		if (g_3d_state.haze() && g_targa_output)
@@ -838,7 +838,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 		start_object();
 	}
 	/* PROCESS ROW LOOP BEGINS HERE */
-	while (col < (int) line_length)
+	while (col < int(line_length))
 	{
 		if ((g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 			&& (col != last_dot) /* if this is not the last col */
@@ -1001,12 +1001,12 @@ static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *p
 	* "bottom" - these points are the corners of the screen in the x-y plane.
 	* The "t"'s stand for Top - they are the top of the cube where 255 color
 	* points hit. */
-	*pxmin = (int) INT_MAX;
-	*pymin = (int) INT_MAX;
-	*pzmin = (int) INT_MAX;
-	*pxmax = (int) INT_MIN;
-	*pymax = (int) INT_MIN;
-	*pzmax = (int) INT_MIN;
+	*pxmin = int(INT_MAX);
+	*pymin = int(INT_MAX);
+	*pzmin = int(INT_MAX);
+	*pxmax = int(INT_MIN);
+	*pymax = int(INT_MIN);
+	*pzmax = int(INT_MIN);
 
 	for (int j = 0; j < 4; ++j)
 	{
@@ -1334,8 +1334,8 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 
 	for (int y = miny; y <= maxy; y++)
 	{
-		s_minmax_x[y].minx = (int) INT_MAX;
-		s_minmax_x[y].maxx = (int) INT_MIN;
+		s_minmax_x[y].minx = int(INT_MAX);
+		s_minmax_x[y].maxx = int(INT_MIN);
 	}
 
 	/* set plot to "fake" plot function */
@@ -1449,8 +1449,8 @@ static void interp_color(int x, int y, int color)
 	if (0 <= x && x < g_x_dots &&
 		0 <= y && y < g_y_dots &&
 		0 <= color && color < g_colors &&
-		(g_3d_state.transparent1() == 0 || (int) s_real_color > g_3d_state.transparent1() ||
-			g_3d_state.transparent0() > (int) s_real_color))
+		(g_3d_state.transparent1() == 0 || int(s_real_color) > g_3d_state.transparent1() ||
+			g_3d_state.transparent0() > int(s_real_color)))
 	{
 		if (g_targa_output)
 		{
@@ -1554,7 +1554,7 @@ static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 {
 	if ((s_even_odd_row++ & 1) == 0) /* even rows are color value */
 	{
-		for (int i = 0; i < (int) linelen; i++)       /* add the fractional part in odd row */
+		for (int i = 0; i < int(linelen); i++)       /* add the fractional part in odd row */
 		{
 			fraction[i] = pixels[i];
 		}
@@ -1564,7 +1564,7 @@ static int set_pixel_buff(BYTE *pixels, BYTE *fraction, unsigned linelen)
 		/* swap */
 	{
 		BYTE tmp;
-		for (int i = 0; i < (int) linelen; i++)       /* swap so pixel has color */
+		for (int i = 0; i < int(linelen); i++)       /* swap so pixel has color */
 		{
 			tmp = pixels[i];
 			pixels[i] = fraction[i];
@@ -2518,7 +2518,7 @@ static void initialize_trig_tables(int linelen)
 	float two_cos_delta_theta = (float) (2.0*cos(double(deltatheta)));
 
 	/* build table of other sin, cos with trig identity */
-	for (int i = 2; i < (int) linelen; i++)
+	for (int i = 2; i < int(linelen); i++)
 	{
 		s_sin_theta_array[i] = s_sin_theta_array[i - 1]*two_cos_delta_theta -
 			s_sin_theta_array[i - 2];
@@ -2903,7 +2903,7 @@ static int first_time(int linelen, VECTOR v)
 	s_f_bad.x = (float) s_bad.x;
 	s_f_bad.y = (float) s_bad.y;
 	s_f_bad.color = (float) s_bad.color;
-	for (int i = 0; i < (int) linelen; i++)
+	for (int i = 0; i < int(linelen); i++)
 	{
 		s_last_row[i] = s_bad;
 		s_f_last_row[i] = s_f_bad;

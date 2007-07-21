@@ -210,12 +210,12 @@ int show_temp_message(char *msgparm)
 	/* worst case needs 10k */
 	if (s_temp_text_save != NULL)
 	{
-		if (size != (long) s_text_x_dots*s_text_y_dots)
+		if (size != long(s_text_x_dots)*s_text_y_dots)
 		{
 			free_temp_message();
 		}
 	}
-	size = (long) s_text_x_dots*s_text_y_dots;
+	size = long(s_text_x_dots)*s_text_y_dots;
 	save_sxoffs = g_sx_offset;
 	save_syoffs = g_sy_offset;
 	g_sx_offset = g_sy_offset = 0;

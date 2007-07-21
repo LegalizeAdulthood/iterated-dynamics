@@ -262,7 +262,7 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 		Xmagfactor = 1.0;
 	}
 
-	h = (double)(1/Magnification);
+	h = double(1/Magnification);
 	w = h/(DEFAULT_ASPECT_RATIO*Xmagfactor);
 
 	if (Rotation == 0.0 && Skew == 0.0)
@@ -353,7 +353,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		add_bf(Yctr, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 		half_a_bf(Yctr);
 		*Magnification  = 2/Height;
-		*Xmagfactor =  (double)(Height/(DEFAULT_ASPECT_RATIO*Width));
+		*Xmagfactor =  double(Height/(DEFAULT_ASPECT_RATIO*Width));
 		*Rotation = 0.0;
 		*Skew = 0.0;
 	}
@@ -391,7 +391,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		{
 			tmpy = tmpy1/tmpx1*signx;    /* tmpy = tmpy/|tmpx| */
 		}
-		*Rotation = (double)(-MathUtil::RadiansToDegrees(atan2(double(tmpy), signx))); /* negative for image rotation */
+		*Rotation = double(-MathUtil::RadiansToDegrees(atan2(double(tmpy), signx))); /* negative for image rotation */
 
 		/* tmpx = xmin - x3rd; */
 		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd());
@@ -402,7 +402,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
 		b = sqrtl(b2);
 
-		tmpa = acos((double)((a2 + b2-c2)/(2*a*b))); /* save tmpa for later use */
+		tmpa = acos(double((a2 + b2-c2)/(2*a*b))); /* save tmpa for later use */
 		*Skew = 90 - MathUtil::RadiansToDegrees(tmpa);
 
 		/* these are the only two variables that must use big precision */
@@ -415,7 +415,7 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 
 		Height = b*sin(tmpa);
 		*Magnification  = 2/Height; /* 1/(h/2) */
-		*Xmagfactor = (double)(Height/(DEFAULT_ASPECT_RATIO*a));
+		*Xmagfactor = double(Height/(DEFAULT_ASPECT_RATIO*a));
 
 		/* if vector_a cross vector_b is negative */
 		/* then adjust for left-hand coordinate system */
@@ -1279,7 +1279,7 @@ static void area()
 		msg = "";
 	}
 	sprintf(buf, "%s%ld inside pixels of %ld%s%f",
-			msg, cnt, (long)g_x_dots*(long)g_y_dots, ".  Total area ",
+			msg, cnt, long(g_x_dots)*long(g_y_dots), ".  Total area ",
 			cnt/((float)g_x_dots*(float)g_y_dots)*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min())*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()));
 	stop_message(STOPMSG_NO_BUZZER, buf);
 }

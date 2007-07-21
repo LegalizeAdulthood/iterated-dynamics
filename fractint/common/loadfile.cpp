@@ -815,7 +815,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 	g_file_aspect_ratio = 0; /* unknown */
 	if (gifstart[12])  /* calc reasonably close value from gif header */
 	{
-		g_file_aspect_ratio = (float)((64.0/((double)(gifstart[12]) + 15.0))
+		g_file_aspect_ratio = (float)((64.0/(double(gifstart[12]) + 15.0))
 						*double(g_file_y_dots)/double(g_file_x_dots));
 		if (g_file_aspect_ratio > g_screen_aspect_ratio-0.03
 			&& g_file_aspect_ratio < g_screen_aspect_ratio + 0.03)
@@ -1003,7 +1003,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					break;
 				case BLOCKTYPE_RANGES_INFO: /* ranges info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					ranges_info->range_data = (int *)malloc((long)data_len);
+					ranges_info->range_data = (int *)malloc(long(data_len));
 					if (ranges_info->range_data != NULL)
 					{
 						fseek(s_gif_file, (long) -block_len, SEEK_CUR);
@@ -1014,7 +1014,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					break;
 				case BLOCKTYPE_MP_INFO: /* extended precision parameters  */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					mp_info->apm_data = (char *)malloc((long)data_len);
+					mp_info->apm_data = (char *)malloc(long(data_len));
 					if (mp_info->apm_data != NULL)
 					{
 						fseek(s_gif_file, (long) -block_len, SEEK_CUR);
@@ -1139,7 +1139,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 	*block_len = 1;
 	while ((len = fgetc(s_gif_file)) > 0)
 	{
-		fseek(s_gif_file, (long)len, SEEK_CUR);
+		fseek(s_gif_file, long(len), SEEK_CUR);
 		*data_len += len;
 		*block_len += len + 1;
 	}

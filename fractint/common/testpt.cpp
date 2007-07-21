@@ -59,5 +59,5 @@ int test_per_pixel(double initreal, double initimag, double parm1, double parm2,
 	{
 		color = inside;
 	}
-	return (int) color;
+	return int(color);
 }

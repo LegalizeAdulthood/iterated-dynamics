@@ -126,13 +126,13 @@ static void toggle_bars(bool &bars, int barwidth, int *colour)
 		{
 			if (bars)
 			{
-				g_plot_color_put_color(i + (int) s_average, j , g_color_bright);
-				g_plot_color_put_color(i - (int) s_average, j , g_color_bright);
+				g_plot_color_put_color(i + int(s_average), j , g_color_bright);
+				g_plot_color_put_color(i - int(s_average), j , g_color_bright);
 			}
 			else
 			{
-				g_plot_color_put_color(i + (int) s_average, j, colour[ct++]);
-				g_plot_color_put_color(i - (int) s_average, j, colour[ct++]);
+				g_plot_color_put_color(i + int(s_average), j, colour[ct++]);
+				g_plot_color_put_color(i - int(s_average), j, colour[ct++]);
 			}
 		}
 	}
@@ -231,7 +231,7 @@ int auto_stereo()
 	}
 	s_ground = g_x_dots/8;
 	s_reverse = (g_auto_stereo_depth < 0) ? 1 : 0;
-	s_depth = ((long) g_x_dots*(long) g_auto_stereo_depth)/4000L;
+	s_depth = (long(g_x_dots)*long(g_auto_stereo_depth))/4000L;
 	s_depth = labs(s_depth) + 1;
 	if (get_min_max())
 	{
@@ -292,8 +292,8 @@ int auto_stereo()
 		{
 			for (int j = s_y_center; j < s_y_center + s_bar_height; j++)
 			{
-				colour[ct++] = getcolor(i + (int) s_average, j);
-				colour[ct++] = getcolor(i - (int) s_average, j);
+				colour[ct++] = getcolor(i + int(s_average), j);
+				colour[ct++] = getcolor(i - int(s_average), j);
 			}
 		}
 		bool bars = (g_stereogram_calibrate != CALIBRATE_NONE);

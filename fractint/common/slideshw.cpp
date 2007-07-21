@@ -290,7 +290,7 @@ start:
 		fticks *= CLK_TCK;             /* convert from seconds to ticks */
 		if (err == 1)
 		{
-			s_ticks = (long) fticks;
+			s_ticks = long(fticks);
 			s_start_tick = clock_ticks();  /* start timing */
 		}
 		else
@@ -412,7 +412,7 @@ void record_show(int key)
 static void sleep_secs(int secs)
 {
 	long stop;
-	stop = clock_ticks() + (long)secs*CLK_TCK;
+	stop = clock_ticks() + long(secs)*CLK_TCK;
 	while (clock_ticks() < stop && kbhit() == 0)
 	{
 	} /* bailout if key hit */

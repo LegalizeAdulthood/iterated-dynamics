@@ -295,7 +295,7 @@ static int z_line(long x, long y)
 				}
 				else
 				{
-					g_color = (int) (multiply((long) g_color << 16, s_br_ratio, 16) >> 16);
+					g_color = (int) (multiply(long(g_color) << 16, s_br_ratio, 16) >> 16);
 					if (g_color < 1)
 					{
 						g_color = 1;

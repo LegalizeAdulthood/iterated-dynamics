@@ -123,7 +123,7 @@ static unsigned char fmtemp[9];/*temporary vars used to store value used
  * This equation shows how to calculate the required frequency number (to
  * program into registers A0H - A8H and B0H - B8H) to get the desired
  * frequency:
- *                fn=(long)f * 1048576/b/m /50000L
+ *                fn=long(f) * 1048576/b/m /50000L
  * where f is the frequency in Hz,
  *       b is the block (octave) number between 0 and 7 inclusive, and
  *       m is the multiple number between 0 and 15 inclusive.
@@ -255,7 +255,7 @@ int SoundState::sound_on(int freq)
 	/* fm flag set */
 	if (m_flags & 16)
 	{
-		double temp_freq = double(freq) * (double)1048576;
+		double temp_freq = double(freq)*1048576.0;
 		unsigned int block = 0;
 		mult = 1;
 		unsigned int fn = (int)(temp_freq/(1 << block)/mult/50000.0);

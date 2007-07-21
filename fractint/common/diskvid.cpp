@@ -187,8 +187,8 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	{
 		for (cache_size = CACHE_MAX; cache_size >= CACHE_MIN; --cache_size)
 		{
-			longtmp = ((int)cache_size < freemem) ?
-				(long)cache_size << 11 : (long)(cache_size + freemem) << 10;
+			longtmp = (int(cache_size) < freemem) ?
+				long(cache_size) << 11 : (long)(cache_size + freemem) << 10;
 			tempfar = (BYTE *) malloc(longtmp);
 			if (tempfar != NULL)
 			{
@@ -197,7 +197,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			}
 		}
 	}
-	longtmp = (long)cache_size << 10;
+	longtmp = long(cache_size) << 10;
 	s_cache_start = (struct cache *)malloc(longtmp);
 	if (cache_size == 64)
 	{
@@ -205,7 +205,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	}
 	s_cache_lru = s_cache_start;
 	s_cache_end = s_cache_lru + longtmp/sizeof(*s_cache_start);
-	s_memory_buffer = (BYTE *)malloc((long)BLOCK_LEN);
+	s_memory_buffer = (BYTE *)malloc(long(BLOCK_LEN));
 	if (s_cache_start == NULL || s_memory_buffer == NULL)
 	{
 		stop_message(0, "*** insufficient free memory for cache buffers ***");
@@ -370,7 +370,7 @@ int disk_read(int col, int row)
 			return 0;
 		}
 		s_cur_row = row;
-		s_cur_row_base = (long) s_cur_row*s_row_size;
+		s_cur_row_base = long(s_cur_row)*s_row_size;
 	}
 	if (col >= s_row_size)
 	{
@@ -433,7 +433,7 @@ void disk_write(int col, int row, int color)
 			return;
 		}
 		s_cur_row = row;
-		s_cur_row_base = (long) s_cur_row*s_row_size;
+		s_cur_row_base = long(s_cur_row)*s_row_size;
 	}
 	if (col >= s_row_size)
 	{

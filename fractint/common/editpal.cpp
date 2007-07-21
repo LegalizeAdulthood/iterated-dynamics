@@ -383,11 +383,11 @@ static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, 
 		else
 		{
 			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-				(int) (p1->red   + pow(curr/(double)(num-1), double(s_gamma_val))*num*rm));
+				(int) (p1->red   + pow(curr/double(num-1), double(s_gamma_val))*num*rm));
 			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-				(int) (p1->green + pow(curr/(double)(num-1), double(s_gamma_val))*num*gm));
+				(int) (p1->green + pow(curr/double(num-1), double(s_gamma_val))*num*gm));
 			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-				(int) (p1->blue  + pow(curr/(double)(num-1), double(s_gamma_val))*num*bm));
+				(int) (p1->blue  + pow(curr/double(num-1), double(s_gamma_val))*num*bm));
 		}
 	}
 }
@@ -506,7 +506,7 @@ static void dotted_rectangle(int x, int y, int width, int depth)
  */
 static bool is_reserved(int color)
 {
-	return s_reserve_colors && (color == (int) s_fg_color || color == (int) s_bg_color);
+	return s_reserve_colors && (color == int(s_fg_color) || color == int(s_bg_color));
 }
 
 static bool is_in_box(int x, int y, int bx, int by, int bw, int bd)
@@ -2135,7 +2135,7 @@ static void pal_table_save_rect(pal_table *me)
 
 	/* allocate space and store the rectangle */
 
-	if (pal_table_memory_alloc(me, (long)width*depth))
+	if (pal_table_memory_alloc(me, long(width)*depth))
 	{
 		char  *ptr = me->memory;
 		char  *bufptr = buff; /* MSC needs me indirection to get it right */

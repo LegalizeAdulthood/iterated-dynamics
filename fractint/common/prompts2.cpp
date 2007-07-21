@@ -561,7 +561,7 @@ int passes_options()
 	int old_orbit_delay;
 	old_orbit_delay = g_orbit_delay;
 	int old_orbit_interval;
-	old_orbit_interval = (int)g_orbit_interval;
+	old_orbit_interval = int(g_orbit_interval);
 	bool old_keep_scrn_coords = g_keep_screen_coords;
 	int old_drawmode;
 	old_drawmode = g_orbit_draw_mode;
@@ -739,7 +739,7 @@ get_view_restart:
 			g_screen_height = dialog.values(++k).uval.ival;
 			if ((x_max != -1) && (g_screen_width > x_max))
 			{
-				g_screen_width = (int) x_max;
+				g_screen_width = int(x_max);
 			}
 			if (g_screen_width < 2)
 			{
