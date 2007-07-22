@@ -354,11 +354,11 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 		if (g_view_x_dots)
 		{
-			g_view_reduction = (float) (g_video_entry.x_dots/g_view_x_dots);
+			g_view_reduction = float(g_video_entry.x_dots/g_view_x_dots);
 			g_view_x_dots = g_view_y_dots = 0; /* easier to use auto reduction */
 		}
-		g_view_reduction = (float)(int(g_view_reduction + 0.5)); /* need integer value */
-		g_skip_x_dots = g_skip_y_dots = (short)(g_view_reduction - 1);
+		g_view_reduction = float(int(g_view_reduction + 0.5)); /* need integer value */
+		g_skip_x_dots = g_skip_y_dots = short(g_view_reduction - 1);
 		return 0;
 	}
 
@@ -434,7 +434,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		g_final_aspect_ratio = g_screen_aspect_ratio;
 	}
 	i = int(g_final_aspect_ratio*1000.0 + 0.5);
-	g_final_aspect_ratio = (float)(i/1000.0); /* chop precision to 3 decimals */
+	g_final_aspect_ratio = float(i/1000.0); /* chop precision to 3 decimals */
 
 	/* setup view window stuff */
 	g_view_window = false;
@@ -450,14 +450,14 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 		{
 			i = int(double(g_video_entry.x_dots)/double(g_file_x_dots)*20.0 + 0.5);
-			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
+			tmpreduce = float(i/20.0); /* chop precision to nearest .05 */
 			i = int(double(g_video_entry.x_dots)/tmpreduce + 0.5);
 			j = int(double(i)*ftemp + 0.5);
 		}
 		else
 		{
 			i = int(double(g_video_entry.y_dots)/double(g_file_y_dots)*20.0 + 0.5);
-			tmpreduce = (float)(i/20.0); /* chop precision to nearest .05 */
+			tmpreduce = float(i/20.0); /* chop precision to nearest .05 */
 			j = int(double(g_video_entry.y_dots)/tmpreduce + 0.5);
 			i = int(double(j)/ftemp + 0.5);
 		}

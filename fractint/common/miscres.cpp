@@ -730,7 +730,7 @@ int tab_display_2(char *msg)
 	show_str_var("lightname", g_light_name, row, msg);
 	show_str_var("map", g_map_name, row, msg);
 	write_row(row++, "Sizeof g_fractal_specific array %d",
-		g_num_fractal_types*(int)sizeof(FractalTypeSpecificData));
+		g_num_fractal_types*int(sizeof(FractalTypeSpecificData)));
 	write_row(row++, "CalculationStatus %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
 	if (fractal_type_formula(g_fractal_type))
 	{
@@ -1167,7 +1167,7 @@ top:
 				driver_put_string(s_row, col, C_GENERAL_MED, msg);
 				if (prompt[0] == '+')
 				{
-					sprintf(msg, "%-12d", (int)g_parameters[i]);
+					sprintf(msg, "%-12d", int(g_parameters[i]));
 				}
 				else if (prompt[0] == '#')
 				{
@@ -1413,7 +1413,7 @@ int ifs_load()                   /* read in IFS parameters */
 	if (ret == 0)
 	{
 		g_num_affine = i/rowsize;
-		g_ifs_definition = (float *) malloc((long) ((NUMIFS + 1)*IFS3DPARM*sizeof(float)));
+		g_ifs_definition = (float *) malloc(long((NUMIFS + 1)*IFS3DPARM*sizeof(float)));
 		if (g_ifs_definition == NULL)
 		{
 			stop_message(0, g_insufficient_ifs_memory);

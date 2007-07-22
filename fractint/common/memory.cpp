@@ -67,7 +67,7 @@ static bool CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
 static U16 next_handle();
 static int CheckBounds (long start, long length, U16 handle);
-static void WhichDiskError(int);
+static void WhichDiskError(int I_O);
 static void DisplayError(int stored_at, long howmuch);
 static void DisplayHandle (U16 handle);
 static void DisplayMemory();
@@ -339,9 +339,9 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
 	default:
 	case DISK: /* MemoryAlloc */
-		memfile[9] = (char)(handle % 10 + (int)'0');
-		memfile[8] = (char)((handle % 100)/10 + (int)'0');
-		memfile[7] = (char)((handle % 1000)/100 + (int)'0');
+		memfile[9] = (char)(handle % 10 + int('0'));
+		memfile[8] = (char)((handle % 100)/10 + int('0'));
+		memfile[7] = (char)((handle % 1000)/100 + int('0'));
 		if (g_disk_targa)
 		{
 			handletable[handle].Disk.file = dir_fopen(g_work_dir, g_light_name, "a+b");
@@ -417,9 +417,9 @@ void MemoryRelease(U16 handle)
 		break;
 
 	case DISK: /* MemoryRelease */
-		memfile[9] = (char)(handle % 10 + (int)'0');
-		memfile[8] = (char)((handle % 100)/10 + (int)'0');
-		memfile[7] = (char)((handle % 1000)/100 + (int)'0');
+		memfile[9] = (char)(handle % 10 + int('0'));
+		memfile[8] = (char)((handle % 100)/10 + int('0'));
+		memfile[7] = (char)((handle % 1000)/100 + int('0'));
 		fclose(handletable[handle].Disk.file);
 		dir_remove(g_temp_dir, memfile);
 		handletable[handle].Disk.file = NULL;

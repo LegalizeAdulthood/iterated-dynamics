@@ -156,7 +156,7 @@ void circleplot(int x, int y, int color)
 		}
 		else
 		{
-			plot_color_clip(x + xbase, (short)(ybase + ((long(y)*long(yAspect)) >> 16)), color);
+			plot_color_clip(x + xbase, short(ybase + ((long(y)*long(yAspect)) >> 16)), color);
 		}
 	}
 	else

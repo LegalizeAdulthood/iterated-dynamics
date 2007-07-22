@@ -65,7 +65,7 @@ bf_t strtobf(bf_t r, char *s)
 	{
 		while (*l >= '0' && *l <= '9') /* while a digit */
 		{
-			onesbyte = (BYTE)(*(l--) - '0');
+			onesbyte = BYTE(*(l--) - '0');
 			inttobf(bftmp1, onesbyte);
 			unsafe_add_a_bf(r, bftmp1);
 			div_a_bf_int(r, 10);
@@ -76,7 +76,7 @@ bf_t strtobf(bf_t r, char *s)
 			keeplooping = *l >= '0' && *l <= '9' && l >= s;
 			while (keeplooping) /* while a digit */
 			{
-				onesbyte = (BYTE)(*(l--) - '0');
+				onesbyte = BYTE(*(l--) - '0');
 				inttobf(bftmp1, onesbyte);
 				unsafe_add_a_bf(r, bftmp1);
 				keeplooping = *l >= '0' && *l <= '9' && l >= s;
@@ -93,7 +93,7 @@ bf_t strtobf(bf_t r, char *s)
 		keeplooping = *l >= '0' && *l <= '9' && l >= s;
 		while (keeplooping) /* while a digit */
 		{
-			onesbyte = (BYTE)(*(l--) - '0');
+			onesbyte = BYTE(*(l--) - '0');
 			inttobf(bftmp1, onesbyte);
 			unsafe_add_a_bf(r, bftmp1);
 			keeplooping = *l >= '0' && *l <= '9' && l >= s;
@@ -263,7 +263,7 @@ bf_t bntobf(bf_t f, bn_t n)
 {
 	memcpy(f + g_bf_length-g_bn_length-1, n, g_bn_length);
 	memset(f, 0, g_bf_length - g_bn_length - 1);
-	*(f + g_bf_length-1) = (BYTE)(is_bn_neg(n) ? 0xFF : 0x00); /* sign extend */
+	*(f + g_bf_length-1) = BYTE(is_bn_neg(n) ? 0xFF : 0x00); /* sign extend */
 	big_set16(f + g_bf_length, (S16)(g_int_length - 1)); /* exp */
 	norm_bf(f);
 	return f;
@@ -1361,7 +1361,7 @@ bf_t norm_bf(bf_t r)
 	if (hi_byte != 0x00 && hi_byte != 0xFF)
 	{
 		memmove(r, r + 1, g_bf_length-1);
-		r[g_bf_length-1] = (BYTE)(hi_byte & 0x80 ? 0xFF : 0x00);
+		r[g_bf_length-1] = BYTE(hi_byte & 0x80 ? 0xFF : 0x00);
 		big_setS16(rexp, big_accessS16(rexp) + (S16)1);   /* exp */
 	}
 
@@ -1398,7 +1398,7 @@ bf_t norm_bf(bf_t r)
 void norm_sign_bf(bf_t r, int positive)
 {
 	norm_bf(r);
-	r[g_bf_length-1] = (BYTE)(positive ? 0x00 : 0xFF);
+	r[g_bf_length-1] = BYTE(positive ? 0x00 : 0xFF);
 }
 /******************************************************/
 /* adjust n1, n2 for before addition or subtraction   */
@@ -2346,14 +2346,14 @@ bf10_t mult_a_bf10_int(bf10_t r, int dec, U16 n)
 	for (d = dec; d > 0; d--)
 	{
 		value = r[d]*n + overflow;
-		r[d] = (BYTE)(value % 10);
+		r[d] = BYTE(value % 10);
 		overflow = value/10;
 	}
 	while (overflow)
 	{
 		p++;
 		memmove(r + 2, r + 1, dec-1);
-		r[1] = (BYTE)(overflow % 10);
+		r[1] = BYTE(overflow % 10);
 		overflow /= 10;
 	}
 	big_set16(power10, (U16)p); /* save power of ten */
@@ -2388,7 +2388,7 @@ bf10_t div_a_bf10_int (bf10_t r, int dec, U16 n)
 	for (src = dest = 1; src <= dec; dest++, src++)
 	{
 		value = 10*remainder + r[src];
-		r[dest] = (BYTE)(value/n);
+		r[dest] = BYTE(value/n);
 		remainder = value % n;
 		if (dest == 1 && r[dest] == 0)
 		{
@@ -2399,7 +2399,7 @@ bf10_t div_a_bf10_int (bf10_t r, int dec, U16 n)
 	for (; dest <= dec; dest++)
 	{
 		value = 10*remainder;
-		r[dest] = (BYTE)(value/n);
+		r[dest] = BYTE(value/n);
 		remainder = value % n;
 		if (dest == 1 && r[dest] == 0)
 		{

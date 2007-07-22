@@ -357,7 +357,7 @@ int load_commands(FILE *infile)
 static void initialize_variables_once()              /* once per run init */
 {
 	char *p;
-	s_init_random_seed = (int) time(NULL);
+	s_init_random_seed = int(time(NULL));
 	init_comments();
 	p = getenv("TMP");
 	if (p == NULL)
@@ -1330,7 +1330,7 @@ static int passes_arg(const cmd_context &context)
 	g_user_standard_calculation_mode = context.charval[0];
 	if (context.charval[0] == 'g')
 	{
-		g_stop_pass = ((int)context.value[1] - (int)'0');
+		g_stop_pass = (int(context.value[1]) - int('0'));
 		if (g_stop_pass < 0 || g_stop_pass > 6)
 		{
 			g_stop_pass = 0;
@@ -1682,7 +1682,7 @@ static int julibrot_3d_arg(const cmd_context &context)
 	}
 	if (context.totparms > 0)
 	{
-		g_z_dots = (int)context.floatval[0];
+		g_z_dots = int(context.floatval[0]);
 	}
 	if (context.totparms > 1)
 	{
@@ -2367,7 +2367,7 @@ static int show_dot_arg(const cmd_context &context)
 		g_auto_show_dot = 0;
 		if (isalpha(context.charval[0]))
 		{
-			if (strchr("abdm", (int)context.charval[0]) != NULL)
+			if (strchr("abdm", int(context.charval[0])) != NULL)
 			{
 				g_auto_show_dot = context.charval[0];
 			}
@@ -3303,7 +3303,7 @@ static void parse_text_colors(char *value)
 				{
 					j = 15;
 				}
-				g_text_colors[k] = (BYTE) (i*16 + j);
+				g_text_colors[k] = BYTE(i*16 + j);
 				value = strchr(value, '/');
 				if (value == NULL)
 				{
@@ -3412,7 +3412,7 @@ static int parse_colors(char *value)
 							while (++cnum < spread)
 							{
 								g_dac_box[start + cnum][j] =
-									(BYTE) ((cnum*g_dac_box[i][j]
+									BYTE((cnum*g_dac_box[i][j]
 												+ (i - (start + cnum))*g_dac_box[start][j]
 												+ spread/2)
 											/(BYTE) spread);

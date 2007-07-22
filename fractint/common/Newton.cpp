@@ -93,7 +93,7 @@ int Newton::setup()           /* Newton/NewtBasin Routines */
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 #endif
 	/* set up table of roots of 1 along unit circle */
-	g_degree = (int)g_parameter.x;
+	g_degree = int(g_parameter.x);
 	if (g_degree < 2)
 	{
 		g_degree = 3;   /* defaults to 3, but 2 is possible */

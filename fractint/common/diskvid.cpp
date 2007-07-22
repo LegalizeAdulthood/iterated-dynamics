@@ -557,8 +557,8 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 			for (i = 0; i < BLOCK_LEN/2; ++i)
 			{
 				tmpchar = mem_getc();
-				*(pixelptr++) = (BYTE)(tmpchar >> 4);
-				*(pixelptr++) = (BYTE)(tmpchar & 15);
+				*(pixelptr++) = BYTE(tmpchar >> 4);
+				*(pixelptr++) = BYTE(tmpchar & 15);
 			}
 			break;
 		case 2:
@@ -567,7 +567,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 				tmpchar = mem_getc();
 				for (j = 6; j >= 0; j -= 2)
 				{
-					*(pixelptr++) = (BYTE)((tmpchar >> j) & 3);
+					*(pixelptr++) = BYTE((tmpchar >> j) & 3);
 				}
 			}
 			break;
@@ -577,7 +577,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 				tmpchar = mem_getc();
 				for (j = 7; j >= 0; --j)
 				{
-					*(pixelptr++) = (BYTE)((tmpchar >> j) & 1);
+					*(pixelptr++) = BYTE((tmpchar >> j) & 1);
 				}
 			}
 			break;
@@ -652,8 +652,8 @@ write_stuff:
 	case 1:
 		for (i = 0; i < BLOCK_LEN/2; ++i)
 		{
-			tmpchar = (BYTE)(*(pixelptr++) << 4);
-			tmpchar = (BYTE)(tmpchar + *(pixelptr++));
+			tmpchar = BYTE(*(pixelptr++) << 4);
+			tmpchar = BYTE(tmpchar + *(pixelptr++));
 			mem_putc(tmpchar);
 		}
 		break;
@@ -662,7 +662,7 @@ write_stuff:
 		{
 			for (j = 6; j >= 0; j -= 2)
 			{
-				tmpchar = (BYTE)((tmpchar << 2) + *(pixelptr++));
+				tmpchar = BYTE((tmpchar << 2) + *(pixelptr++));
 			}
 			mem_putc(tmpchar);
 		}

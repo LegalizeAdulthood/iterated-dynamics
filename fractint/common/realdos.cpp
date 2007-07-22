@@ -1567,7 +1567,7 @@ int input_field(
 		int len,              /* field length (declare as 1 larger for \0) */
 		int row,              /* display row */
 		int col,              /* display column */
-		int (*checkkey)(int)  /* routine to check non data keys, or NULL */
+		int (*checkkey)(int key)  /* routine to check non data keys, or NULL */
 		)
 {
 	char savefld[81];
@@ -1765,7 +1765,7 @@ int field_prompt(
 		char *instr,    /* additional instructions or NULL */
 		char *fld,          /* the field itself */
 		int len,            /* field length (declare as 1 larger for \0) */
-		int (*checkkey)(int)   /* routine to check non data keys, or NULL */
+		int (*checkkey)(int key)   /* routine to check non data keys, or NULL */
 		)
 {
 	char *charptr;

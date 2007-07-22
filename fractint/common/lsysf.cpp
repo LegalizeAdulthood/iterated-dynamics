@@ -184,8 +184,8 @@ static void lsysf_size_dm(struct lsys_turtle_state_fp *cmd)
 
 static void lsysf_size_gf(struct lsys_turtle_state_fp *cmd)
 {
-	cmd->xpos += cmd->size*coss_f[(int)cmd->angle];
-	cmd->ypos += cmd->size*sins_f[(int)cmd->angle];
+	cmd->xpos += cmd->size*coss_f[int(cmd->angle)];
+	cmd->ypos += cmd->size*sins_f[int(cmd->angle)];
 
 	if (cmd->xpos > cmd->x_max)
 	{
@@ -215,13 +215,13 @@ static void lsysf_draw_d(struct lsys_turtle_state_fp *cmd)
 	s = sin(angle);
 	c = cos(angle);
 
-	lastx = (int) cmd->xpos;
-	lasty = (int) cmd->ypos;
+	lastx = int(cmd->xpos);
+	lasty = int(cmd->ypos);
 
 	cmd->xpos += cmd->size*cmd->aspect*c;
 	cmd->ypos += cmd->size*s;
 
-	driver_draw_line(lastx, lasty, (int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
+	driver_draw_line(lastx, lasty, int(cmd->xpos), int(cmd->ypos), cmd->curcolor);
 }
 
 static void lsysf_draw_m(struct lsys_turtle_state_fp *cmd)
@@ -239,22 +239,22 @@ static void lsysf_draw_m(struct lsys_turtle_state_fp *cmd)
 
 static void lsysf_draw_g(struct lsys_turtle_state_fp *cmd)
 {
-	cmd->xpos += cmd->size*coss_f[(int)cmd->angle];
-	cmd->ypos += cmd->size*sins_f[(int)cmd->angle];
+	cmd->xpos += cmd->size*coss_f[int(cmd->angle)];
+	cmd->ypos += cmd->size*sins_f[int(cmd->angle)];
 }
 
 static void lsysf_draw_f(struct lsys_turtle_state_fp *cmd)
 {
-	int lastx = (int) cmd->xpos;
-	int lasty = (int) cmd->ypos;
-	cmd->xpos += cmd->size*coss_f[(int)cmd->angle];
-	cmd->ypos += cmd->size*sins_f[(int)cmd->angle];
-	driver_draw_line(lastx, lasty, (int) cmd->xpos, (int) cmd->ypos, cmd->curcolor);
+	int lastx = int(cmd->xpos);
+	int lasty = int(cmd->ypos);
+	cmd->xpos += cmd->size*coss_f[int(cmd->angle)];
+	cmd->ypos += cmd->size*sins_f[int(cmd->angle)];
+	driver_draw_line(lastx, lasty, int(cmd->xpos), int(cmd->ypos), cmd->curcolor);
 }
 
 static void lsysf_draw_c(struct lsys_turtle_state_fp *cmd)
 {
-	cmd->curcolor = (char)(((int) cmd->parm.n) % g_colors);
+	cmd->curcolor = (char)((int(cmd->parm.n)) % g_colors);
 }
 
 static void lsysf_draw_gt(struct lsys_turtle_state_fp *cmd)
@@ -400,8 +400,8 @@ lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, stru
 	{
 		return 0;
 	}
-	horiz = (x_max == x_min) ? 1.0e37f : (float)((g_x_dots-10)/(x_max-x_min));
-	vert  = (y_max == y_min) ? 1.0e37f : (float)((g_y_dots-6) /(y_max-y_min));
+	horiz = (x_max == x_min) ? 1.0e37f : float((g_x_dots-10)/(x_max-x_min));
+	vert  = (y_max == y_min) ? 1.0e37f : float((g_y_dots-6) /(y_max-y_min));
 	locsize = (vert < horiz) ? vert : horiz;
 
 	ts->xpos = (horiz == 1.0e37f) ? g_x_dots/2 : (g_x_dots-locsize*(x_max + x_min))/2;

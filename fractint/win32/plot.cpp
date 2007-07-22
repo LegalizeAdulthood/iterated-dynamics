@@ -323,7 +323,7 @@ void Plot::write_pixel(int x, int y, int color)
 	_ASSERTE(m_pixels);
 	_ASSERTE(x >= 0 && x < m_width);
 	_ASSERTE(y >= 0 && y < m_height);
-	m_pixels[(m_height - y - 1)*m_row_len + x] = (BYTE) (color & 0xFF);
+	m_pixels[(m_height - y - 1)*m_row_len + x] = BYTE(color & 0xFF);
 	set_dirty_region(x, y, x + 1, y + 1);
 }
 
@@ -332,7 +332,7 @@ int Plot::read_pixel(int x, int y)
 	_ASSERTE(m_pixels);
 	_ASSERTE(x >= 0 && x < m_width);
 	_ASSERTE(y >= 0 && y < m_height);
-	return (int) m_pixels[(m_height - 1 - y)*m_row_len + x];
+	return int(m_pixels[(m_height - 1 - y)*m_row_len + x]);
 }
 
 void Plot::write_span(int y, int x, int lastx, const BYTE *pixels)

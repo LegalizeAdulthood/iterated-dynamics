@@ -148,7 +148,7 @@ long (*g_calculate_mandelbrot_asm_fp)();
 
 /* routines in this module      */
 static int one_or_two_pass();
-static int  _fastcall standard_calculate(int);
+static int  _fastcall standard_calculate(int passnum);
 static int  _fastcall potential(double, long);
 static void decomposition();
 static void _fastcall set_symmetry(int symmetry, bool use_list);
@@ -548,7 +548,7 @@ int calculate_fractal()
 		{
 			g_next_saved_incr = 4; /* maintains image with low iterations */
 		}
-		g_first_saved_and = (long) (g_next_saved_incr*2 + 1);
+		g_first_saved_and = long(g_next_saved_incr*2 + 1);
 	}
 
 	g_log_table = NULL;
@@ -617,7 +617,7 @@ int calculate_fractal()
 				}
 				while (l <= numval)
 				{
-					g_log_table[l++] = (BYTE) (k + flip);
+					g_log_table[l++] = BYTE(k + flip);
 					if (++m >= altern)
 					{
 						flip ^= 1;            /* Alternate colors */
@@ -695,19 +695,19 @@ int calculate_fractal()
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (g_integer_fractal)          /* for integer routines (lambda) */
 	{
-		g_parameter_l.x = (long) (g_parameter.x*g_fudge);    /* real portion of Lambda */
-		g_parameter_l.y = (long) (g_parameter.y*g_fudge);    /* imaginary portion of Lambda */
-		g_parameter2_l.x = (long) (g_parameter2.x*g_fudge);  /* real portion of Lambda2 */
-		g_parameter2_l.y = (long) (g_parameter2.y*g_fudge);  /* imaginary portion of Lambda2 */
-		g_limit_l = (long) (g_rq_limit*g_fudge);      /* stop if magnitude exceeds this */
+		g_parameter_l.x = long(g_parameter.x*g_fudge);    /* real portion of Lambda */
+		g_parameter_l.y = long(g_parameter.y*g_fudge);    /* imaginary portion of Lambda */
+		g_parameter2_l.x = long(g_parameter2.x*g_fudge);  /* real portion of Lambda2 */
+		g_parameter2_l.y = long(g_parameter2.y*g_fudge);  /* imaginary portion of Lambda2 */
+		g_limit_l = long(g_rq_limit*g_fudge);      /* stop if magnitude exceeds this */
 		if (g_limit_l <= 0)
 		{
 			g_limit_l = 0x7fffffffL; /* klooge for integer math */
 		}
-		g_limit2_l = (long) (g_rq_limit2*g_fudge);    /* stop if magnitude exceeds this */
-		g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
-		g_init_orbit_l.x = (long) (g_initial_orbit_z.x*g_fudge);
-		g_init_orbit_l.y = (long) (g_initial_orbit_z.y*g_fudge);
+		g_limit2_l = long(g_rq_limit2*g_fudge);    /* stop if magnitude exceeds this */
+		g_close_enough_l = long(g_close_enough*g_fudge); /* "close enough" value */
+		g_init_orbit_l.x = long(g_initial_orbit_z.x*g_fudge);
+		g_init_orbit_l.y = long(g_initial_orbit_z.y*g_fudge);
 	}
 	g_resuming = (g_calculation_status == CALCSTAT_RESUMABLE);
 	if (!g_resuming) /* free resume_info memory if any is hanging around */
@@ -751,7 +751,7 @@ int calculate_fractal()
 			/* not a stand-alone */
 			/* next two lines in case periodicity changed */
 			g_close_enough = g_delta_min_fp*pow(2.0, -double(abs(g_periodicity_check)));
-			g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
+			g_close_enough_l = long(g_close_enough*g_fudge); /* "close enough" value */
 			set_symmetry(g_symmetry, false);
 			timer_engine(g_calculate_type); /* non-standard fractal engine */
 		}
@@ -1523,7 +1523,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	long saved_color_iteration = 0;
 	ComplexD dem_new;
 	double total_distance = 0.0;
-	long proximity_l = (long) (g_proximity*g_fudge);
+	long proximity_l = long(g_proximity*g_fudge);
 	while (++g_color_iter < g_max_iteration)
 	{
 		/* calculation of one orbit goes here */
@@ -2120,7 +2120,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
 		{
-			g_color_iter = (long) (modulus_value*g_colors/g_proximity);
+			g_color_iter = long(modulus_value*g_colors/g_proximity);
 		}
 		else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
 		{
@@ -2133,7 +2133,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60)
 		{
-			g_color_iter = (long) (sqrt(min_orbit)*75);
+			g_color_iter = long(sqrt(min_orbit)*75);
 		}
 		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61)
 		{
@@ -2141,7 +2141,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == COLORMODE_Z_MAGNITUDE)
 		{
-			g_color_iter = (long) (g_integer_fractal ?
+			g_color_iter = long(g_integer_fractal ?
 				((double(g_magnitude_l)/g_fudge)*(g_max_iteration/2) + 1)
 				: ((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration/2) + 1));
 		}
@@ -2551,11 +2551,11 @@ static int _fastcall potential(double mag, long iterations)
 				fSqrt14(pot, f_tmp);
 				pot = f_tmp;
 			}
-			pot = (float)(g_potential_parameter[0] - pot*g_potential_parameter[1] - 1.0);
+			pot = float(g_potential_parameter[0] - pot*g_potential_parameter[1] - 1.0);
 		}
 		else
 		{
-			pot = (float)(g_potential_parameter[0] - 1.0);
+			pot = float(g_potential_parameter[0] - 1.0);
 		}
 		if (pot < 1.0)
 		{
@@ -3587,7 +3587,7 @@ void PerformWorkList::common_escape_time_initialization()
 {
 	/* some common initialization for escape-time pixel level routines */
 	g_close_enough = g_delta_min_fp*pow(2.0, double(-abs(g_periodicity_check)));
-	g_close_enough_l = (long) (g_close_enough*g_fudge); /* "close enough" value */
+	g_close_enough_l = long(g_close_enough*g_fudge); /* "close enough" value */
 	g_input_counter = g_max_input_counter;
 
 	set_symmetry(g_symmetry, true);

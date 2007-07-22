@@ -226,7 +226,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		/* mrr how do lv[] and cur and f_cur all relate */
 		/* NOTE: g_fudge was pre-calculated above in r and s_radius */
 		/* (almost) guarantee negative */
-		lv[2] = (long) (-s_radius - (*r)*cos_theta*s_sin_phi);     /* z */
+		lv[2] = long(-s_radius - (*r)*cos_theta*s_sin_phi);     /* z */
 		// TODO: what should this really be?  Was: !FILLTYPE < FillTypePoints
 		if ((lv[2] > s_z_cutoff) && g_3d_state.fill_type() < FillType::Points)
 		{
@@ -234,16 +234,16 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 			*f_cur = s_f_bad;
 			return 1;
 		}
-		lv[0] = (long) (s_x_center + sin_theta*s_scale_x*(*r));  /* x */
-		lv[1] = (long) (s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r)); /* y */
+		lv[0] = long(s_x_center + sin_theta*s_scale_x*(*r));  /* x */
+		lv[1] = long(s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r)); /* y */
 
 		if ((g_3d_state.fill_type() >= FillType::LightBefore) || g_3d_state.raytrace_output())
 		{
 			/* calculate illumination normal before s_persp */
 			double r0 = (*r)/65536L;
-			f_cur->x = (float) (xcenter0 + sin_theta*s_scale_x*r0);
-			f_cur->y = (float) (ycenter0 + cos_theta*s_cos_phi*s_scale_y*r0);
-			f_cur->color = (float) (-r0*cos_theta*s_sin_phi);
+			f_cur->x = float(xcenter0 + sin_theta*s_scale_x*r0);
+			f_cur->y = float(ycenter0 + cos_theta*s_cos_phi*s_scale_y*r0);
+			f_cur->color = float(-r0*cos_theta*s_sin_phi);
 		}
 		if (!(g_user_float_flag || g_3d_state.raytrace_output()))
 		{
@@ -273,14 +273,14 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 	else if (!(s_persp && g_3d_state.raytrace_output()))
 	{
 		/* mrr Why the xx- and g_yy_adjust here and not above? */
-		f_cur->x = (float) (s_x_center + sin_theta*s_scale_x*(*r) + g_xx_adjust);
-		f_cur->y = (float) (s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r) + g_yy_adjust);
+		f_cur->x = float(s_x_center + sin_theta*s_scale_x*(*r) + g_xx_adjust);
+		f_cur->y = float(s_y_center + cos_theta*s_cos_phi*s_scale_y*(*r) + g_yy_adjust);
 		cur->x = int(f_cur->x);
 		cur->y = int(f_cur->y);
 		/* mrr why do we do this for filltype > 5? */
 		if (g_3d_state.fill_type() >= FillType::LightBefore || g_3d_state.raytrace_output())
 		{
-			f_cur->color = (float) (-(*r)*cos_theta*s_sin_phi*s_scale_z);
+			f_cur->color = float(-(*r)*cos_theta*s_sin_phi*s_scale_z);
 		}
 		v[0] = 0;
 		v[1] = 0;
@@ -803,8 +803,8 @@ int out_line_3d(BYTE *pixels, int line_length)
 	{
 		if (g_3d_state.haze() && g_targa_output)
 		{
-			s_haze_mult = int(g_3d_state.haze()*((float) ((long) (g_y_dots - 1 - g_current_row)*(long) (g_y_dots - 1 - g_current_row))
-									/(float) ((long) (g_y_dots - 1)*(long) (g_y_dots - 1))));
+			s_haze_mult = int(g_3d_state.haze()*(float(long(g_y_dots - 1 - g_current_row)*long(g_y_dots - 1 - g_current_row))
+									/float(long(g_y_dots - 1)*long(g_y_dots - 1))));
 			s_haze_mult = 100 - s_haze_mult;
 		}
 	}
@@ -877,7 +877,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 		}
 		else if (g_potential_16bit)
 		{
-			f_cur.color += ((float) s_fraction[col])/(float) (1 << 8);
+			f_cur.color += ((float) s_fraction[col])/float(1 << 8);
 		}
 
 		if (g_3d_state.sphere())            /* sphere case */
@@ -1441,9 +1441,9 @@ static void interp_color(int x, int y, int color)
 	if (D)
 	{  /* calculate a weighted average of colors long casts prevent integer
 			overflow. This can evaluate to zero */
-		color = int(((long) (d2 + d3)*(long) s_p1.color +
-				(long) (d1 + d3)*(long) s_p2.color +
-				(long) (d1 + d2)*(long) s_p3.color)/D);
+		color = int((long(d2 + d3)*(long) s_p1.color +
+				long(d1 + d3)*(long) s_p2.color +
+				long(d1 + d2)*(long) s_p3.color)/D);
 	}
 
 	if (0 <= x && x < g_x_dots &&
@@ -1496,16 +1496,16 @@ int targa_color(int x, int y, int color)
 	BYTE rgb[3];
 	if (g_true_mode_iterates)
 	{
-		rgb[0] = (BYTE) ((g_real_color_iter >> 16) & 0xff);  /* red   */
-		rgb[1] = (BYTE) ((g_real_color_iter >> 8) & 0xff);  /* green */
-		rgb[2] = (BYTE) ((g_real_color_iter) & 0xff);  /* blue  */
+		rgb[0] = BYTE((g_real_color_iter >> 16) & 0xff);  /* red   */
+		rgb[1] = BYTE((g_real_color_iter >> 8) & 0xff);  /* green */
+		rgb[2] = BYTE((g_real_color_iter) & 0xff);  /* blue  */
 	}
 	else
 	{
 		/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
-		rgb[0] = (BYTE) (g_dac_box[s_real_color][0] << 2); /* Move color space to */
-		rgb[1] = (BYTE) (g_dac_box[s_real_color][1] << 2); /* 256 color primaries */
-		rgb[2] = (BYTE) (g_dac_box[s_real_color][2] << 2); /* from 64 colors */
+		rgb[0] = BYTE(g_dac_box[s_real_color][0] << 2); /* Move color space to */
+		rgb[1] = BYTE(g_dac_box[s_real_color][1] << 2); /* 256 color primaries */
+		rgb[2] = BYTE(g_dac_box[s_real_color][2] << 2); /* from 64 colors */
 	}
 
 	/* Now lets convert it to HSV */
@@ -1677,10 +1677,10 @@ int start_disk1(char *file_name2, FILE *Source, bool overlay_file)
 
 	if (g_true_color) /* write maxit */
 	{
-		fputc((BYTE)(g_max_iteration       & 0xff), fps);
-		fputc((BYTE)((g_max_iteration >> 8) & 0xff), fps);
-		fputc((BYTE)((g_max_iteration >> 16) & 0xff), fps);
-		fputc((BYTE)((g_max_iteration >> 24) & 0xff), fps);
+		fputc(BYTE(g_max_iteration       & 0xff), fps);
+		fputc(BYTE((g_max_iteration >> 8) & 0xff), fps);
+		fputc(BYTE((g_max_iteration >> 16) & 0xff), fps);
+		fputc(BYTE((g_max_iteration >> 24) & 0xff), fps);
 	}
 
 	/* Finished with the header, now lets work on the display area  */
@@ -2122,7 +2122,7 @@ static int out_triangle(const struct f_point pt1,
 	{
 		for (int i = 0; i <= 2; i++)
 		{
-			c[i] = (float) (g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
+			c[i] = float(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
 				/(3*COLOR_CHANNEL_MAX);
 		}
 	}
@@ -2466,10 +2466,10 @@ static void line3d_cleanup()
 
 static void set_upr_lwr()
 {
-	s_targa_size[0] = (BYTE)(g_x_dots & 0xff);
-	s_targa_size[1] = (BYTE)(g_x_dots >> 8);
-	s_targa_size[2] = (BYTE)(g_y_dots & 0xff);
-	s_targa_size[3] = (BYTE)(g_y_dots >> 8);
+	s_targa_size[0] = BYTE(g_x_dots & 0xff);
+	s_targa_size[1] = BYTE(g_x_dots >> 8);
+	s_targa_size[2] = BYTE(g_y_dots & 0xff);
+	s_targa_size[3] = BYTE(g_y_dots >> 8);
 	s_line_length = 3*g_x_dots;    /* line length @ 3 bytes per pixel  */
 }
 
@@ -2506,7 +2506,7 @@ static void initialize_trig_tables(int linelen)
 	/* Similarly for cosine. Neat!                                       */
 	/*********************************************************************/
 
-	float deltatheta = (float) (theta2 - theta1)/(float) linelen;
+	float deltatheta = float(theta2 - theta1)/(float) linelen;
 
 	/* initial sin, cos theta */
 	s_sin_theta_array[0] = (float) sin(double(theta));
@@ -2515,7 +2515,7 @@ static void initialize_trig_tables(int linelen)
 	s_cos_theta_array[1] = (float) cos(double(theta + deltatheta));
 
 	/* sin, cos delta theta */
-	float two_cos_delta_theta = (float) (2.0*cos(double(deltatheta)));
+	float two_cos_delta_theta = float(2.0*cos(double(deltatheta)));
 
 	/* build table of other sin, cos with trig identity */
 	for (int i = 2; i < int(linelen); i++)
@@ -2529,7 +2529,7 @@ static void initialize_trig_tables(int linelen)
 	/* now phi - these calculated as we go - get started here */
 	{
 		/* increment of latitude, longitude */
-		float delta_phi = (float) (phi2 - phi1)/(float) g_height;
+		float delta_phi = float(phi2 - phi1)/(float) g_height;
 
 		/* initial sin, cos phi */
 		s_old_sin_phi1 = (float) sin(double(phi1));
@@ -2540,7 +2540,7 @@ static void initialize_trig_tables(int linelen)
 		s_old_cos_phi2 = (float) cos(double(phi1 + delta_phi));
 
 		/* sin, cos delta phi */
-		s_two_cos_delta_phi = (float) (2.0*cos(double(delta_phi)));
+		s_two_cos_delta_phi = float(2.0*cos(double(delta_phi)));
 	}
 }
 static int first_time(int linelen, VECTOR v)
@@ -2552,7 +2552,7 @@ static int first_time(int linelen, VECTOR v)
 	/* mark as in-progress */
 	g_calculation_status = CALCSTAT_IN_PROGRESS;
 
-	s_ambient = (unsigned int) (255*(float) (100 - g_3d_state.ambient())/100.0);
+	s_ambient = (unsigned int) (255*float(100 - g_3d_state.ambient())/100.0);
 	if (s_ambient < 1)
 	{
 		s_ambient = 1;
@@ -2712,11 +2712,11 @@ static int first_time(int linelen, VECTOR v)
 	* part of image */
 	if (g_3d_state.sphere())                  /* sphere case */
 	{
-		s_lview[2] = -(long) (double(g_y_dots)*double(g_3d_state.z_viewer())/100.0);
+		s_lview[2] = -long(double(g_y_dots)*double(g_3d_state.z_viewer())/100.0);
 	}
 	else                         /* non-sphere case */
 	{
-		s_lview[2] = (long) ((z_min - z_max)*double(g_3d_state.z_viewer())/100.0);
+		s_lview[2] = long((z_min - z_max)*double(g_3d_state.z_viewer())/100.0);
 	}
 
 	g_view[0] = s_lview[0];
@@ -2743,7 +2743,7 @@ static int first_time(int linelen, VECTOR v)
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				s_lm[i][j] = (long) (s_m[i][j]*65536.0);
+				s_lm[i][j] = long(s_m[i][j]*65536.0);
 			}
 		}
 	}
@@ -2787,7 +2787,7 @@ static int first_time(int linelen, VECTOR v)
 
 			/* calculate z cutoff factor attempt to prevent out-of-view surfaces
 			* from being written */
-			zview = -(long) (double(g_y_dots)*double(g_3d_state.z_viewer())/100.0);
+			zview = -long(double(g_y_dots)*double(g_3d_state.z_viewer())/100.0);
 			radius = double(g_y_dots)/2;
 			angle = atan(-radius/(zview + radius));
 			s_z_cutoff = -radius - sin(angle)*radius;
@@ -2866,7 +2866,7 @@ static int first_time(int linelen, VECTOR v)
 		double v_length = min(g_x_dots, g_y_dots)/2;
 		if (s_persp && g_3d_state.z_viewer() <= PERSPECTIVE_DISTANCE)
 		{
-			v_length *= (long) (PERSPECTIVE_DISTANCE + 600)/((long) (g_3d_state.z_viewer() + 600)*2);
+			v_length *= long(PERSPECTIVE_DISTANCE + 600)/(long(g_3d_state.z_viewer() + 600)*2);
 		}
 
 		/* Set direct[] to point from origin[] in direction of untransformed

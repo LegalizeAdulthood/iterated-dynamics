@@ -434,7 +434,7 @@ void _fastcall history_restore_info()
 	{
 		g_set_orbit_corners = true;
 	}
-	g_orbit_draw_mode = (int) last.draw_mode;
+	g_orbit_draw_mode = int(last.draw_mode);
 	g_user_float_flag = (g_current_fractal_specific->isinteger != 0);
 	memcpy(g_dac_box, last.dac, 256*3);
 	memcpy(g_old_dac_box, last.dac, 256*3);

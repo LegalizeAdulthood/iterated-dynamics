@@ -78,7 +78,7 @@ static char lsysmask[13]    = {"*.l"};
 
 static bool select_type_params(int newfractype, int oldfractype);
 static  int input_field_list(int attr, char *fld, int vlen, const char **list, int llen,
-							int row, int col, int (*checkkey)(int));
+							int row, int col, int (*checkkey)(int key));
 static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
 static  long gfe_choose_entry(int type, const char *title, char *filename, char *entryname);
@@ -475,7 +475,7 @@ void FullScreenPrompter::DisplayHeader()
 			break; /* shouldn't happen */
 		}
 		*next = '\0';
-		m_title_width = (int) ::strlen(heading_line);
+		m_title_width = int(::strlen(heading_line));
 		g_text_cbase = m_box_column + (m_box_width - m_title_width)/2;
 		driver_put_string(m_title_row + i, 0, C_PROMPT_HI, heading_line);
 		*next = '\n';
@@ -488,7 +488,7 @@ void FullScreenPrompter::DisplayHeader()
 		::strcat(heading_line, ". CTRL+(direction key) to scroll text.)");
 	}
 
-	m_title_width = (int) ::strlen(heading_line);
+	m_title_width = int(::strlen(heading_line));
 	g_text_cbase = m_box_column + (m_box_width - m_title_width)/2;
 	driver_put_string(m_title_row + i, 0, C_PROMPT_HI, heading_line);
 }
@@ -1105,7 +1105,7 @@ static int input_field_list(
 		int llen,             /* number of entries in list */
 		int row,              /* display row */
 		int col,              /* display column */
-		int (*checkkey)(int)  /* routine to check non data keys, or NULL */
+		int (*checkkey)(int key)  /* routine to check non data keys, or NULL */
 )
 {
 	int initval;
@@ -3418,9 +3418,9 @@ static int get_light_params()
 		}
 		dialog.push("Targa File Name  (Assume .tga)", g_light_name);
 		dialog.push("Back Ground Color (0 - 255)");
-		dialog.push("   Red", (int) g_3d_state.background_red());
-		dialog.push("   Green", (int) g_3d_state.background_green());
-		dialog.push("   Blue", (int) g_3d_state.background_blue());
+		dialog.push("   Red", int(g_3d_state.background_red()));
+		dialog.push("   Green", int(g_3d_state.background_green()));
+		dialog.push("   Blue", int(g_3d_state.background_blue()));
 		dialog.push("Overlay Targa File? (Y/N)", g_targa_overlay);
 	}
 	dialog.push("");
@@ -3450,9 +3450,9 @@ static int get_light_params()
 						again in line3d */
 		k++;
 		g_3d_state.set_background_color(
-			(BYTE) (dialog.values(k + 0).uval.ival % 255),
-			(BYTE) (dialog.values(k + 1).uval.ival % 255),
-			(BYTE) (dialog.values(k + 2).uval.ival % 255));
+			BYTE(dialog.values(k + 0).uval.ival % 255),
+			BYTE(dialog.values(k + 1).uval.ival % 255),
+			BYTE(dialog.values(k + 2).uval.ival % 255));
 		k += 3;
 		g_targa_overlay = (dialog.values(k).uval.ch.val != 0);
 	}

@@ -327,7 +327,7 @@ static void vertical_put_row(int x, int y, int depth, char *buff)
 {
 	while (depth-- > 0)
 	{
-		clip_put_color(x, y++, (BYTE)(*buff++));
+		clip_put_color(x, y++, BYTE(*buff++));
 	}
 }
 
@@ -365,28 +365,28 @@ static void displayf(int x, int y, int fg, int bg, char *format, ...)
 static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
 	int    curr;
-	double rm = double((int)p2->red - (int)p1->red)/num;
-	double gm = double((int)p2->green - (int)p1->green)/num;
-	double bm = double((int)p2->blue - (int)p1->blue)/num;
+	double rm = double(int(p2->red) - int(p1->red))/num;
+	double gm = double(int(p2->green) - int(p1->green))/num;
+	double bm = double(int(p2->blue) - int(p1->blue))/num;
 
 	for (curr = 0; curr < num; curr += skip)
 	{
 		if (s_gamma_val == 1)
 		{
-			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
-				(int) p1->red   + int(rm*curr));
-			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
-				(int) p1->green + int(gm*curr));
-			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
-				(int) p1->blue  + int(bm*curr));
+			pal[curr].red   = BYTE((p1->red   == p2->red) ? p1->red   :
+				int(p1->red)   + int(rm*curr));
+			pal[curr].green = BYTE((p1->green == p2->green) ? p1->green :
+				int(p1->green) + int(gm*curr));
+			pal[curr].blue  = BYTE((p1->blue  == p2->blue) ? p1->blue  :
+				int(p1->blue)  + int(bm*curr));
 		}
 		else
 		{
-			pal[curr].red   = (BYTE)((p1->red   == p2->red) ? p1->red   :
+			pal[curr].red   = BYTE((p1->red   == p2->red) ? p1->red   :
 				int(p1->red   + pow(curr/double(num-1), double(s_gamma_val))*num*rm));
-			pal[curr].green = (BYTE)((p1->green == p2->green) ? p1->green :
+			pal[curr].green = BYTE((p1->green == p2->green) ? p1->green :
 				int(p1->green + pow(curr/double(num-1), double(s_gamma_val))*num*gm));
-			pal[curr].blue  = (BYTE)((p1->blue  == p2->blue) ? p1->blue  :
+			pal[curr].blue  = BYTE((p1->blue  == p2->blue) ? p1->blue  :
 				int(p1->blue  + pow(curr/double(num-1), double(s_gamma_val))*num*bm));
 		}
 	}
@@ -444,7 +444,7 @@ static void pal_range_to_grey(PALENTRY pal[], int first, int how_many)
 
 	for (curr = &pal[first]; how_many > 0; how_many--, curr++)
 	{
-		val = (BYTE) (((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11)/100);
+		val = BYTE((int(curr->red)*30 + int(curr->green)*59 + int(curr->blue)*11)/100);
 		curr->red = curr->green = curr->blue = (BYTE)val;
 	}
 }
@@ -458,9 +458,9 @@ static void pal_range_to_negative(PALENTRY pal[], int first, int how_many)
 
 	for (curr = &pal[first]; how_many > 0; how_many--, curr++)
 	{
-		curr->red   = (BYTE) (COLOR_CHANNEL_MAX - curr->red);
-		curr->green = (BYTE) (COLOR_CHANNEL_MAX - curr->green);
-		curr->blue  = (BYTE) (COLOR_CHANNEL_MAX - curr->blue);
+		curr->red   = BYTE(COLOR_CHANNEL_MAX - curr->red);
+		curr->green = BYTE(COLOR_CHANNEL_MAX - curr->green);
+		curr->blue  = BYTE(COLOR_CHANNEL_MAX - curr->blue);
 	}
 }
 
@@ -474,7 +474,7 @@ static void horizontal_dotted_line(int x, int y, int width)
 
 	for (ctr = 0, ptr = g_line_buffer; ctr < width; ctr++, ptr++)
 	{
-		*ptr = (BYTE)((ctr&2) ? s_bg_color : s_fg_color);
+		*ptr = BYTE((ctr&2) ? s_bg_color : s_fg_color);
 	}
 
 	put_row(x, y, width, (char *)g_line_buffer);
@@ -1845,7 +1845,7 @@ static void pal_table_undo(pal_table *me)
 		return;
 	}
 
-	fseek(me->undo_file, -(int)sizeof(int), SEEK_CUR);  /* go back to get size */
+	fseek(me->undo_file, -int(sizeof(int)), SEEK_CUR);  /* go back to get size */
 	size = getw(me->undo_file);
 	fseek(me->undo_file, -size, SEEK_CUR);   /* go to start of undo */
 
@@ -2723,7 +2723,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 				{
 					s_gamma_val = 0.0000000001f;
 				}
-				s_gamma_val = (float)(1./s_gamma_val);
+				s_gamma_val = float(1./s_gamma_val);
 			}
 		}
 		break;
@@ -3334,8 +3334,8 @@ void palette_edit()       /* called by fractint */
 
 	s_reserve_colors = true;
 	s_inverse = false;
-	s_fg_color = (BYTE)(255 % g_colors);
-	s_bg_color = (BYTE)(s_fg_color-1);
+	s_fg_color = BYTE(255 % g_colors);
+	s_bg_color = BYTE(s_fg_color-1);
 
 	cursor_new();
 	pt = pal_table_new();

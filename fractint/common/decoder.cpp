@@ -176,11 +176,11 @@ short decoder(short linewidth)
 		return BAD_CODE_SIZE;
 	}
 
-	curr_size = (short) (size + 1);
-	top_slot = (short) (1 << curr_size);
-	clear = (short) (1 << size);
-	ending = (short) (clear + 1);
-	slot = newcodes = (short) (ending + 1);
+	curr_size = short(size + 1);
+	top_slot = short(1 << curr_size);
+	clear = short(1 << size);
+	ending = short(clear + 1);
+	slot = newcodes = short(ending + 1);
 	navail_bytes = nbits_left = g_size_of_string[slot] = xskip = yskip = old_code = 0;
 	out_value = 0;
 	for (i = 0; i < slot; i++)
@@ -214,10 +214,10 @@ short decoder(short linewidth)
 		/* If the code is a clear code, reinitialize all necessary items. */
 		if (c == clear)
 		{
-			curr_size = (short) (size + 1);
+			curr_size = short(size + 1);
 			slot = newcodes;
 			g_size_of_string[slot] = 0;
-			top_slot = (short) (1 << curr_size);
+			top_slot = short(1 << curr_size);
 
 			/* Continue reading codes until we get a non-clear code (Another
 			* unlikely, but possible case...) */
@@ -297,7 +297,7 @@ short decoder(short linewidth)
 					{
 						if (--yskip < 0)
 						{
-							ret = (short) ((*g_out_line) (g_decoder_line, int(bufptr - g_decoder_line)));
+							ret = short((*g_out_line) (g_decoder_line, int(bufptr - g_decoder_line)));
 							if (ret < 0)
 							{
 								return ret;
@@ -334,7 +334,7 @@ short decoder(short linewidth)
 
 			if (slot < top_slot)
 			{
-				g_size_of_string[slot] = (short) (g_size_of_string[old_code] + 1);
+				g_size_of_string[slot] = short(g_size_of_string[old_code] + 1);
 				g_suffix[slot] = out_value = (BYTE) code;
 				prefix[slot++] = old_code;
 				old_code = c;
@@ -360,7 +360,7 @@ short decoder(short linewidth)
 			{
 				if (--yskip < 0)
 				{
-					ret = (short) ((*g_out_line) (g_decoder_line, int(bufptr - g_decoder_line)));
+					ret = short((*g_out_line) (g_decoder_line, int(bufptr - g_decoder_line)));
 					if (ret < 0)
 					{
 						return ret;
@@ -416,7 +416,7 @@ static short get_next_code()
 		--navail_bytes;
 	}
 
-	ret_code = (short) (b1 >> (8 - nbits_left));
+	ret_code = short(b1 >> (8 - nbits_left));
 	while (curr_size > nbits_left)
 	{
 		if (navail_bytes <= 0)
@@ -440,7 +440,7 @@ static short get_next_code()
 		--navail_bytes;
 	}
 	nbits_left -= curr_size;
-	return (short) (ret_code & code_mask[curr_size]);
+	return short(ret_code & code_mask[curr_size]);
 }
 
 /* called in parent reoutine to set byte_buff */

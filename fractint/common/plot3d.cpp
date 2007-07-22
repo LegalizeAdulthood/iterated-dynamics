@@ -251,7 +251,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 	int tmp;
 	BYTE t_c;
 
-	t_c = (BYTE)(255-color);
+	t_c = BYTE(255-color);
 
 	if (color != 0)         /* Keeps index 0 still 0 */
 	{
@@ -311,7 +311,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 	int tmp;
 	BYTE t_c;
 
-	t_c = (BYTE)(255-color);
+	t_c = BYTE(255-color);
 
 	if (color != 0)         /* Keeps index 0 still 0 */
 	{
@@ -370,7 +370,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 {
 	BYTE t_c;
 
-	t_c = (BYTE)(255-color);
+	t_c = BYTE(255-color);
 	/* lorez high color red/blue 3D plot function */
 	/* if which image = 1, compresses color to lower 128 colors */
 
@@ -566,8 +566,8 @@ void plot_setup()
 			}
 			for (int i = 0; i < 256; i++)
 			{
-				g_dac_box[i][0] = (BYTE)(g_dac_box[i][0]*d_red_bright);
-				g_dac_box[i][2] = (BYTE)(g_dac_box[i][2]*d_blue_bright);
+				g_dac_box[i][0] = BYTE(g_dac_box[i][0]*d_red_bright);
+				g_dac_box[i][2] = BYTE(g_dac_box[i][2]*d_blue_bright);
 			}
 		}
 		spindac(0, 1); /* load it, but don't spin */

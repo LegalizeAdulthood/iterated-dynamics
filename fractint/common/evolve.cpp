@@ -110,9 +110,9 @@ static void vary_function(GENEBASE gene[], int randval, int i);
 static void vary_bail_out_test(GENEBASE gene[], int randval, int i);
 static void vary_invert(GENEBASE gene[], int randval, int i);
 static bool explore_check();
-void spiral_map(int);
-static void set_random(int);
-void set_mutation_level(int);
+void spiral_map(int count);
+static void set_random(int ecount);
+void set_mutation_level(int strength);
 void setup_parameter_box();
 void release_parameter_box();
 

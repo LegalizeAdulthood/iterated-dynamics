@@ -598,7 +598,7 @@ int mandelbrot_setup_bn()
 		}
 	}
 
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_JULIA_FP:
@@ -689,7 +689,7 @@ int mandelbrot_setup_bf()
 		}
 	}
 
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_JULIA_FP:

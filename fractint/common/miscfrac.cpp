@@ -362,7 +362,7 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 			ny   = suby.v[suby.t-2];
 			suby.r[suby.t] = suby.r[suby.t-1];
 			y    = suby.v[suby.t-1]   = (ny1 + ny)/2;
-			suby.r[suby.t-1]   = (BYTE)(max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
+			suby.r[suby.t-1]   = BYTE(max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
 		}
 		subx.t = 2;
 		nx  = subx.v[0] = x2;
@@ -380,7 +380,7 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 				nx   = subx.v[subx.t-2];
 				subx.r[subx.t] = subx.r[subx.t-1];
 				x    = subx.v[subx.t-1]   = (nx1 + nx)/2;
-				subx.r[subx.t-1]   = (BYTE)(max(subx.r[subx.t],
+				subx.r[subx.t-1]   = BYTE(max(subx.r[subx.t],
 				subx.r[subx.t-2]) + 1);
 			}
 
@@ -415,13 +415,13 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 
 			if (subx.r[subx.t-1] == (BYTE)recur)
 			{
-				subx.t = (BYTE)(subx.t - 2);
+				subx.t = BYTE(subx.t - 2);
 			}
 		}
 
 		if (suby.r[suby.t-1] == (BYTE)recur)
 		{
-			suby.t = (BYTE)(suby.t - 2);
+			suby.t = BYTE(suby.t - 2);
 		}
 	}
 	return 0;
@@ -549,7 +549,7 @@ int plasma()
 	}
 	if (g_parameters[2] != 0 && g_parameters[2] != 1)
 	{
-		g_random_seed = (int)g_parameters[2];
+		g_random_seed = int(g_parameters[2]);
 	}
 	s_max_plasma = (U16)g_parameters[3];  /* s_max_plasma is used as a flag for potential */
 
@@ -647,7 +647,7 @@ int plasma()
 		while (new_subdivision(0, 0, g_x_dots-1, g_y_dots-1, i) == 0)
 		{
 			k *= 2;
-			if (k  >(int)max(g_x_dots-1, g_y_dots-1))
+			if (k  >int(max(g_x_dots-1, g_y_dots-1)))
 			{
 				break;
 			}
@@ -690,9 +690,9 @@ static void set_plasma_palette()
 		{
 			for (j = 0; j < 3; j++)
 			{
-				g_dac_box[i][j]			= (BYTE) ((i*green[j] + (86 - i)*blue[j])/85);
-				g_dac_box[i + 85][j]    = (BYTE) ((i*red[j]   + (86 - i)*green[j])/85);
-				g_dac_box[i + 170][j]	= (BYTE) ((i*blue[j]  + (86 - i)*red[j])/85);
+				g_dac_box[i][j]			= BYTE((i*green[j] + (86 - i)*blue[j])/85);
+				g_dac_box[i + 85][j]    = BYTE((i*red[j]   + (86 - i)*green[j])/85);
+				g_dac_box[i + 170][j]	= BYTE((i*blue[j]  + (86 - i)*red[j])/85);
 			}
 		}
 		spindac(0, 1);
@@ -733,9 +733,9 @@ int diffusion()
 	g_bit_shift = 16;
 	g_fudge = 1L << 16;
 
-	border = (int) g_parameters[0];
-	mode = (int) g_parameters[1];
-	colorshift = (int) g_parameters[2];
+	border = int(g_parameters[0]);
+	mode = int(g_parameters[1]);
+	colorshift = int(g_parameters[2]);
 
 	colorcount = colorshift; /* Counts down from colorshift */
 	currentcolor = 1;  /* Start at color 1 (color 0 is probably invisible)*/
@@ -772,7 +772,7 @@ int diffusion()
 		break;
 
 	case DIFFUSION_SQUARE:
-		radius = (g_x_dots > g_y_dots) ? (float) (g_y_dots - border) : (float) (g_x_dots - border);
+		radius = (g_x_dots > g_y_dots) ? float(g_y_dots - border) : float(g_x_dots - border);
 		break;
 	}
 
@@ -1933,7 +1933,7 @@ int cellular()
 		{
 			for (g_col = 0; g_col <= g_x_stop; g_col++)
 			{
-				s_cell_array[filled][g_col] = (BYTE)(rand() % int(k));
+				s_cell_array[filled][g_col] = BYTE(rand() % int(k));
 			}
 		} /* end of if random */
 		else
@@ -1967,8 +1967,8 @@ int cellular()
 				/* Use a random border */
 				for (i = 0; i <= (U16) s_r; i++)
 				{
-						s_cell_array[notfilled][i] = (BYTE)(rand() % int(k));
-						s_cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % int(k));
+						s_cell_array[notfilled][i] = BYTE(rand() % int(k));
+						s_cell_array[notfilled][g_x_stop-i] = BYTE(rand() % int(k));
 				}
 			}
 			else
@@ -2030,8 +2030,8 @@ contloop:
 			/* Use a random border */
 			for (i = 0; i <= (U16) s_r; i++)
 			{
-				s_cell_array[notfilled][i] = (BYTE)(rand() % int(k));
-				s_cell_array[notfilled][g_x_stop-i] = (BYTE)(rand() % int(k));
+				s_cell_array[notfilled][i] = BYTE(rand() % int(k));
+				s_cell_array[notfilled][g_x_stop-i] = BYTE(rand() % int(k));
 			}
 		}
 		else
@@ -2169,8 +2169,8 @@ int froth_setup()
 	{
 		/* use old release parameters */
 
-		s_frothy_data.repeat_mapping = ((int)g_parameters[0] == 6 || (int)g_parameters[0] == 2); /* map 1 or 2 times (3 or 6 basins)  */
-		s_frothy_data.altcolor = (int)g_parameters[1];
+		s_frothy_data.repeat_mapping = (int(g_parameters[0]) == 6 || int(g_parameters[0]) == 2); /* map 1 or 2 times (3 or 6 basins)  */
+		s_frothy_data.altcolor = int(g_parameters[1]);
 		g_parameters[2] = 0; /* throw away any value used prior to 18.20 */
 
 		s_frothy_data.attractors = !s_frothy_data.repeat_mapping ? 3 : 6;
@@ -2201,12 +2201,12 @@ int froth_setup()
 		{
 			g_parameters[0] = 1;
 		}
-		s_frothy_data.repeat_mapping = (int)g_parameters[0] == 2;
+		s_frothy_data.repeat_mapping = int(g_parameters[0]) == 2;
 		if (g_parameters[1] != 0)
 		{
 			g_parameters[1] = 1;
 		}
-		s_frothy_data.altcolor = (int)g_parameters[1];
+		s_frothy_data.altcolor = int(g_parameters[1]);
 		s_frothy_data.f.a = g_parameters[2];
 
 		s_frothy_data.attractors = fabs(s_frothy_data.f.a) <= FROTH_CRITICAL_A ? (!s_frothy_data.repeat_mapping ? 3 : 6)

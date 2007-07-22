@@ -51,9 +51,9 @@ int validate_luts(const char *fn)
 		sscanf(line, "%u %u %u", &r, &g, &b);
 		/** load global dac values **/
 		// TODO: review when COLOR_CHANNEL_MAX != 63
-		dac[index].red   = (BYTE)((r % 256) >> 2); /* maps default to 8 bits */
-		dac[index].green = (BYTE)((g % 256) >> 2); /* DAC wants 6 bits */
-		dac[index].blue  = (BYTE)((b % 256) >> 2);
+		dac[index].red   = BYTE((r % 256) >> 2); /* maps default to 8 bits */
+		dac[index].green = BYTE((g % 256) >> 2); /* DAC wants 6 bits */
+		dac[index].blue  = BYTE((b % 256) >> 2);
 	}
 	fclose(f);
 	while (index < 256)   /* zap unset entries */
