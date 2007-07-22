@@ -3551,7 +3551,7 @@ void PerformWorkList::show_dot_start()
 		{
 			s_show_dot_width--;
 		}
-		s_save_dots = (BYTE *)malloc(s_save_dots_len);
+		s_save_dots = new BYTE[s_save_dots_len];
 		if (s_save_dots != NULL)
 		{
 			s_save_dots_len /= 2;
@@ -3577,7 +3577,7 @@ void PerformWorkList::show_dot_finish()
 {
 	if (s_save_dots != NULL)
 	{
-		free(s_save_dots);
+		delete[] s_save_dots;
 		s_save_dots = NULL;
 		s_fill_buffer = NULL;
 	}
