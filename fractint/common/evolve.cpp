@@ -69,7 +69,13 @@ int  g_new_discrete_parameter_offset_y;
 int g_parameter_box_count = 0;
 
 static int ecountbox[MAX_GRID_SIZE][MAX_GRID_SIZE];
-static int *s_parameter_box = NULL;
+struct ParameterBox
+{
+	int *box_x;
+	int *box_y;
+	int *box_values;
+};
+static ParameterBox s_parameter_box = { 0, 0, 0};
 static int *s_image_box = NULL;
 static int s_image_box_count;
 
@@ -790,11 +796,13 @@ void setup_parameter_box()
 	/* need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values */
 	vidsize = (g_x_dots + g_y_dots)*4*sizeof(int);
 	vidsize += g_x_dots + g_y_dots + 2;
-	if (!s_parameter_box)
+	if (!s_parameter_box.box_x)
 	{
-		s_parameter_box = (int *) malloc(vidsize);
+		s_parameter_box.box_x = new int[g_x_dots*2];
+		s_parameter_box.box_y = new int[g_y_dots*2];
+		s_parameter_box.box_values = new int[g_x_dots + g_y_dots + 2];
 	}
-	if (!s_parameter_box)
+	if (!s_parameter_box.box_x)
 	{
 		text_temp_message("Sorry...can't allocate mem for parmbox");
 		g_evolving_flags = EVOLVE_NONE;
@@ -815,10 +823,14 @@ void setup_parameter_box()
 
 void release_parameter_box()
 {
-	if (s_parameter_box)
+	if (s_parameter_box.box_x)
 	{
-		free(s_parameter_box);
-		s_parameter_box = NULL;
+		delete[] s_parameter_box.box_x;
+		s_parameter_box.box_x = 0;
+		delete[] s_parameter_box.box_y;
+		s_parameter_box.box_y = 0;
+		delete[] s_parameter_box.box_values;
+		s_parameter_box.box_values = 0;
 	}
 	if (s_image_box)
 	{
@@ -933,9 +945,9 @@ void draw_parameter_box(int mode)
 	if (g_parameter_box_count != 0)   /* clear last parmbox */
 	{
 		g_box_count = g_parameter_box_count;
-		memcpy(&g_box_x[0], &s_parameter_box[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(&g_box_y[0], &s_parameter_box[g_box_count], g_box_count*sizeof(g_box_y[0]));
-		memcpy(&g_box_values[0], &s_parameter_box[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
+		memcpy(&g_box_x[0], s_parameter_box.box_x, g_box_count*sizeof(g_box_x[0]));
+		memcpy(&g_box_y[0], s_parameter_box.box_y, g_box_count*sizeof(g_box_y[0]));
+		memcpy(&g_box_values[0], s_parameter_box.box_values, g_box_count*sizeof(g_box_values[0]));
 		clear_box();
 	}
 
@@ -974,9 +986,9 @@ void draw_parameter_box(int mode)
 	{
 		display_box();
 		/* stash pixel values for later */
-		memcpy(&s_parameter_box[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(&s_parameter_box[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
-		memcpy(&s_parameter_box[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
+		memcpy(s_parameter_box.box_x, &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(s_parameter_box.box_y, &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
+		memcpy(s_parameter_box.box_values, &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
 	}
 	g_parameter_box_count = g_box_count;
 	g_box_count = s_image_box_count;
