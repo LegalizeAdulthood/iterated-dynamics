@@ -658,15 +658,15 @@ rescan:  /* entry for changed browse parms */
 
 		if (resume_info_blk.got_data == 1) /* Clean up any memory allocated */
 		{
-			free(resume_info_blk.resume_data);
+			delete[] resume_info_blk.resume_data;
 		}
 		if (ranges_info.got_data == 1) /* Clean up any memory allocated */
 		{
-			free(ranges_info.range_data);
+			delete[] ranges_info.range_data;
 		}
 		if (mp_info.got_data == 1) /* Clean up any memory allocated */
 		{
-			free(mp_info.apm_data);
+			delete[] mp_info.apm_data;
 		}
 
 		done = (fr_find_next() || wincount >= MAX_WINDOWS_OPEN);

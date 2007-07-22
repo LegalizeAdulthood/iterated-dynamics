@@ -1657,7 +1657,7 @@ BYTE *X11Driver::find_font(int parm)
 		XGCValues values;
 		GC font_gc;
 
-		m_font_table = (unsigned char *) malloc(128*8);
+		m_font_table = new unsigned char[128*8];
 		bzero(m_font_table, 128*8);
 
 		m_xlastcolor = -1;
@@ -1674,7 +1674,7 @@ BYTE *X11Driver::find_font(int parm)
 			m_font_info->max_bounds.width != m_font_info->min_bounds.width)
 		{
 			fprintf(stderr, "Bad font\n");
-			free(m_font_table);
+			delete[] m_font_table;
 			m_font_table = NULL;
 			return NULL;
 		}
@@ -2049,12 +2049,12 @@ int X11Driver::resize()
 		Xmwidth = (m_Xdepth > 1) ? g_screen_width: (1 + g_screen_width/8);
 		if (m_pixbuf != NULL)
 		{
-			free(m_pixbuf);
+			delete[] m_pixbuf;
 		}
-		m_pixbuf = (BYTE *) malloc(m_Xwinwidth *sizeof(BYTE));
+		m_pixbuf = new BYTE[m_Xwinwidth];
 		if (m_Ximage != NULL)
 		{
-			free(m_Ximage->data);
+			delete[] m_Ximage->data;
 			XDestroyImage(m_Ximage);
 		}
 		m_Ximage = XCreateImage(m_Xdp, m_Xvi, m_Xdepth, ZPixmap, 0, NULL, g_screen_width, 
@@ -2065,7 +2065,7 @@ int X11Driver::resize()
 			terminate();
 			exit(-1);
 		}
-		m_Ximage->data = (char *) malloc(m_Ximage->bytes_per_line * m_Ximage->height);
+		m_Ximage->data = new char[m_Ximage->bytes_per_line*m_Ximage->height];
 		if (m_Ximage->data == NULL)
 		{
 			fprintf(stderr, "Malloc failed: %d\n", m_Ximage->bytes_per_line *

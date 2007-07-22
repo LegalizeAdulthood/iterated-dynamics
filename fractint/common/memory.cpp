@@ -153,10 +153,10 @@ static int check_for_mem(int stored_at, long howmuch)
 	case MEMORY: /* check_for_mem */
 		if (maxmem > howmuch)
 		{
-			temp = (BYTE *) malloc(howmuch);
+			temp = new BYTE[howmuch];
 			if (temp != NULL) /* minimum free space + requested amount */
 			{
-				free(temp);
+				delete[] temp;
 				use_this_type = MEMORY;
 				break;
 			}
@@ -330,7 +330,7 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
 	case MEMORY: /* MemoryAlloc */
 		/* Availability of memory checked in check_for_mem() */
-		handletable[handle].Linearmem.memory = (BYTE *)malloc(toallocate);
+		handletable[handle].Linearmem.memory = new BYTE[toallocate];
 		handletable[handle].Linearmem.size = toallocate;
 		handletable[handle].Linearmem.stored_at = MEMORY;
 		numTOTALhandles++;
@@ -409,7 +409,7 @@ void MemoryRelease(U16 handle)
 		break;
 
 	case MEMORY: /* MemoryRelease */
-		free(handletable[handle].Linearmem.memory);
+		delete[] handletable[handle].Linearmem.memory;
 		handletable[handle].Linearmem.memory = NULL;
 		handletable[handle].Linearmem.size = 0;
 		handletable[handle].Linearmem.stored_at = NOWHERE;
