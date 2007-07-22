@@ -124,7 +124,6 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	struct cache *ptr1 = NULL;
 	long longtmp;
 	unsigned int cache_size;
-	BYTE *tempfar = NULL;
 	if (g_disk_flag)
 	{
 		disk_end();
@@ -189,23 +188,23 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		{
 			longtmp = (int(cache_size) < freemem) ?
 				long(cache_size) << 11 : long(cache_size + freemem) << 10;
-			tempfar = (BYTE *) malloc(longtmp);
+			BYTE *tempfar = new BYTE[longtmp];
 			if (tempfar != NULL)
 			{
-				free(tempfar);
+				delete[] tempfar;
 				break;
 			}
 		}
 	}
 	longtmp = long(cache_size) << 10;
-	s_cache_start = (struct cache *)malloc(longtmp);
+	s_cache_start = reinterpret_cast<cache *>(new BYTE[longtmp]);
 	if (cache_size == 64)
 	{
 		--longtmp; /* safety for next line */
 	}
 	s_cache_lru = s_cache_start;
 	s_cache_end = s_cache_lru + longtmp/sizeof(*s_cache_start);
-	s_memory_buffer = (BYTE *)malloc(long(BLOCK_LEN));
+	s_memory_buffer = new BYTE[BLOCK_LEN];
 	if (s_cache_start == NULL || s_memory_buffer == NULL)
 	{
 		stop_message(0, "*** insufficient free memory for cache buffers ***");
@@ -335,12 +334,12 @@ void disk_end()
 	}
 	if (s_cache_start != NULL)
 	{
-		free((void *)s_cache_start);
+		delete[] reinterpret_cast<BYTE *>(s_cache_start);
 		s_cache_start = NULL;
 	}
 	if (s_memory_buffer != NULL)
 	{
-		free((void *)s_memory_buffer);
+		delete[] s_memory_buffer;
 		s_memory_buffer = NULL;
 	}
 	g_disk_flag = false;

@@ -491,7 +491,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	set_function_array(3, "cosh");
 	if (g_ranges_length)
 	{
-		free((char *)g_ranges);
+		delete[] g_ranges;
 		g_ranges_length = 0;
 	}
 	g_use_center_mag = true;                          /* use center-mag, not corners */
@@ -1434,7 +1434,7 @@ static int ranges_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_ranges = (int *)malloc(sizeof(int)*entries);
+	g_ranges = new int[entries];
 	if (g_ranges == NULL)
 	{
 		stop_message(STOPMSG_NO_STACK, "Insufficient memory for ranges=");

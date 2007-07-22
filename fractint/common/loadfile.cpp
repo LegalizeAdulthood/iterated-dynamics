@@ -426,7 +426,7 @@ void free_ranges()
 {
 	if (g_ranges_length) /* free prior ranges */
 	{
-		free(g_ranges);
+		delete[] g_ranges;
 		g_ranges = NULL;
 		g_ranges_length = 0;
 	}

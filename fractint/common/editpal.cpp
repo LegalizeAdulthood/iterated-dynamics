@@ -144,7 +144,6 @@
 #define MAX_WIDTH        1024     /* palette editor cannot be wider than this */
 #define TITLE   "FRACTINT"
 #define TITLE_LEN (8)
-#define NEWC(class_)	((class_ *) malloc(sizeof(class_)))
 #define DELETE(g_block)	(free(g_block), g_block = NULL)  /* just for warning */
 
 #ifdef XFRACT
@@ -568,7 +567,7 @@ bool cursor_new()
 		return false;
 	}
 
-	s_the_cursor = NEWC(cursor);
+	s_the_cursor = new cursor;
 
 	s_the_cursor->x          = g_screen_width/2;
 	s_the_cursor->y          = g_screen_height/2;
@@ -583,7 +582,7 @@ void cursor_destroy()
 {
 	if (s_the_cursor != NULL)
 	{
-		DELETE(s_the_cursor);
+		delete s_the_cursor;
 	}
 
 	s_the_cursor = NULL;
@@ -781,7 +780,7 @@ static void     move_box_set_csize   (move_box *me, int csize);
 
 static move_box *move_box_new(int x, int y, int csize, int base_width, int base_depth)
 {
-	move_box *me = NEWC(move_box);
+	move_box *me = new move_box;
 
 	me->x           = x;
 	me->y           = y;
@@ -800,11 +799,16 @@ static move_box *move_box_new(int x, int y, int csize, int base_width, int base_
 
 static void move_box_destroy(move_box *me)
 {
-	DELETE(me->t);
-	DELETE(me->b);
-	DELETE(me->l);
-	DELETE(me->r);
-	DELETE(me);
+	delete me->t;
+	me->t = 0;;
+	delete me->b;
+	me->b = 0;
+	delete me->l;
+	me->l = 0;
+	delete me->r;
+	me->r = 0;
+	delete me;
+	me = 0;
 }
 
 static bool move_box_moved(move_box *me)
@@ -1109,7 +1113,7 @@ static color_editor *color_editor_new(int x, int y, char letter,
 					void (*other_key)(int, color_editor*, VOIDPTR),
 					void (*change)(color_editor*, VOIDPTR), VOIDPTR info)
 {
-	color_editor *me = NEWC(color_editor);
+	color_editor *me = new color_editor;
 
 	me->x         = x;
 	me->y         = y;
@@ -1129,7 +1133,8 @@ static color_editor *color_editor_new(int x, int y, char letter,
 
 static void color_editor_destroy(color_editor *me)
 {
-	DELETE(me);
+	delete me;
+	me = 0;
 }
 
 static void color_editor_draw(color_editor *me)
@@ -1346,7 +1351,7 @@ static PALENTRY rgb_editor_get_rgb   (rgb_editor *me);
 static rgb_editor *rgb_editor_new(int x, int y, void (*other_key)(int, rgb_editor*, void*),
 									void (*change)(rgb_editor*, void*), VOIDPTR info)
 {
-	rgb_editor      *me     = NEWC(rgb_editor);
+	rgb_editor *me = new rgb_editor;
 	static char letter[] = "RGB";
 	int             ctr;
 
@@ -1372,7 +1377,8 @@ static void rgb_editor_destroy(rgb_editor *me)
 	color_editor_destroy(me->color[0]);
 	color_editor_destroy(me->color[1]);
 	color_editor_destroy(me->color[2]);
-	DELETE(me);
+	delete me;
+	me = 0;
 }
 
 static void rgb_editor_set_done(rgb_editor *me, bool done)
@@ -3099,7 +3105,7 @@ static void pal_table_make_default_palettes(pal_table *me)  /* creates default F
 
 static pal_table *pal_table_new()
 {
-	pal_table     *me = NEWC(pal_table);
+	pal_table *me = new pal_table;
 	int           csize;
 	int           ctr;
 	PALENTRY *mem_block;
@@ -3241,7 +3247,8 @@ static void pal_table_destroy(pal_table *me)
 	rgb_editor_destroy(me->rgb[0]);
 	rgb_editor_destroy(me->rgb[1]);
 	move_box_destroy(me->movebox);
-	DELETE(me);
+	delete me;
+	me = 0;
 	}
 
 
@@ -3328,7 +3335,7 @@ void palette_edit()       /* called by fractint */
 
 	g_plot_color = g_plot_color_put_color;
 
-	g_line_buffer = (BYTE *) malloc(max(g_screen_width, g_screen_height));
+	g_line_buffer = new BYTE[max(g_screen_width, g_screen_height)];
 
 	g_sx_offset = g_sy_offset = 0;
 
@@ -3345,5 +3352,6 @@ void palette_edit()       /* called by fractint */
 
 	g_sx_offset = oldsxoffs;
 	g_sy_offset = oldsyoffs;
-	DELETE(g_line_buffer);
+	delete[] g_line_buffer;
+	g_line_buffer = 0;
 }
