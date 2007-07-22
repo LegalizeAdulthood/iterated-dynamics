@@ -580,14 +580,14 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	{
 		for (int i = 0; i < NUMGENES; i++)
 		{
-			g_genes[i].mutate = (int) evolver_info.mutate[i];
+			g_genes[i].mutate = int(evolver_info.mutate[i]);
 		}
 	}
 	else
 	{
 		for (int i = 0; i < 6; i++)
 		{
-			g_genes[i].mutate = (int) evolver_info.mutate[i];
+			g_genes[i].mutate = int(evolver_info.mutate[i]);
 		}
 		for (int i = 6; i < 10; i++)
 		{
@@ -595,7 +595,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 		}
 		for (int i = 10; i < NUMGENES; i++)
 		{
-			g_genes[i].mutate = (int) evolver_info.mutate[i-4];
+			g_genes[i].mutate = int(evolver_info.mutate[i-4]);
 		}
 	}
 	save_parameter_history();
@@ -615,7 +615,7 @@ static void got_orbits_info(struct ext_blk_orbits_info orbits_info)
 	g_orbit_x_3rd = orbits_info.ox3rd;
 	g_orbit_y_3rd = orbits_info.oy3rd;
 	g_keep_screen_coords = (orbits_info.keep_scrn_coords != 0);
-	g_orbit_draw_mode = (int) orbits_info.drawmode;
+	g_orbit_draw_mode = int(orbits_info.drawmode);
 	if (g_keep_screen_coords)
 	{
 		g_set_orbit_corners = true;
@@ -815,7 +815,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 	g_file_aspect_ratio = 0; /* unknown */
 	if (gifstart[12])  /* calc reasonably close value from gif header */
 	{
-		g_file_aspect_ratio = (float)((64.0/(double(gifstart[12]) + 15.0))
+		g_file_aspect_ratio = float((64.0/(double(gifstart[12]) + 15.0))
 						*double(g_file_y_dots)/double(g_file_x_dots));
 		if (g_file_aspect_ratio > g_screen_aspect_ratio-0.03
 			&& g_file_aspect_ratio < g_screen_aspect_ratio + 0.03)
@@ -840,7 +840,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					break;
 				}
 				/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
-				g_dac_box[i][j] = (BYTE)(k >> 2);
+				g_dac_box[i][j] = BYTE(k >> 2);
 			}
 			if (k < 0)
 			{

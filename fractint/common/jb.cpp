@@ -146,30 +146,30 @@ int julibrot_setup()
 		}
 		s_fg = double(1L << g_bit_shift);
 		s_fg16 = double(1L << 16);
-		jxmin = (long) (g_escape_time_state.m_grid_fp.x_min()*s_fg);
-		jxmax = (long) (g_escape_time_state.m_grid_fp.x_max()*s_fg);
+		jxmin = long(g_escape_time_state.m_grid_fp.x_min()*s_fg);
+		jxmax = long(g_escape_time_state.m_grid_fp.x_max()*s_fg);
 		s_x_offset = (jxmax + jxmin)/2;    /* Calculate average */
-		jymin = (long) (g_escape_time_state.m_grid_fp.y_min()*s_fg);
-		jymax = (long) (g_escape_time_state.m_grid_fp.y_max()*s_fg);
+		jymin = long(g_escape_time_state.m_grid_fp.y_min()*s_fg);
+		jymax = long(g_escape_time_state.m_grid_fp.y_max()*s_fg);
 		s_y_offset = (jymax + jymin)/2;    /* Calculate average */
-		s_m_x_min = (long) (g_m_x_min_fp*s_fg);
-		mxmax = (long) (g_m_x_max_fp*s_fg);
-		s_m_y_min = (long) (g_m_y_min_fp*s_fg);
-		mymax = (long) (g_m_y_max_fp*s_fg);
-		origin = (long) (g_origin_fp*s_fg16);
-		s_depth = (long) (g_depth_fp*s_fg16);
-		s_width = (long) (g_width_fp*s_fg16);
-		s_dist = (long) (g_screen_distance_fp*s_fg16);
-		s_eyes = (long) (g_eyes_fp*s_fg16);
+		s_m_x_min = long(g_m_x_min_fp*s_fg);
+		mxmax = long(g_m_x_max_fp*s_fg);
+		s_m_y_min = long(g_m_y_min_fp*s_fg);
+		mymax = long(g_m_y_max_fp*s_fg);
+		origin = long(g_origin_fp*s_fg16);
+		s_depth = long(g_depth_fp*s_fg16);
+		s_width = long(g_width_fp*s_fg16);
+		s_dist = long(g_screen_distance_fp*s_fg16);
+		s_eyes = long(g_eyes_fp*s_fg16);
 		s_br_ratio = (long) s_fg16;
 		s_dmx = (mxmax - s_m_x_min)/g_z_dots;
 		s_dmy = (mymax - s_m_y_min)/g_z_dots;
 		g_long_parameter = &s_jbc;
 
-		s_x_per_inch = (long) (-g_escape_time_state.m_grid_fp.width()/g_width_fp*s_fg);
-		s_y_per_inch = (long) (g_escape_time_state.m_grid_fp.height()/g_height_fp*s_fg);
-		s_inch_per_x_dot = (long) ((g_width_fp/g_x_dots)*s_fg16);
-		s_inch_per_y_dot = (long) ((g_height_fp/g_y_dots)*s_fg16);
+		s_x_per_inch = long(-g_escape_time_state.m_grid_fp.width()/g_width_fp*s_fg);
+		s_y_per_inch = long(g_escape_time_state.m_grid_fp.height()/g_height_fp*s_fg);
+		s_inch_per_x_dot = long((g_width_fp/g_x_dots)*s_fg16);
+		s_inch_per_y_dot = long((g_height_fp/g_y_dots)*s_fg16);
 		s_init_z = origin - (s_depth/2);
 		s_right_eye.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0L : (s_eyes/2);
 		s_left_eye.x = -s_right_eye.x;
@@ -450,7 +450,7 @@ void standard_4d_fractal_set_orbit_calc(
 
 int standard_4d_fractal()
 {
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_L)
 	{
 		if (g_c_exp < 1)
@@ -497,7 +497,7 @@ int standard_4d_fractal()
 
 int standard_4d_fractal_fp()
 {
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 
 	if (g_new_orbit_type == FRACTYPE_JULIA_Z_POWER_FP)
 	{

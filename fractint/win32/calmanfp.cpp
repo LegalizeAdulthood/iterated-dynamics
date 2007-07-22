@@ -228,11 +228,11 @@ over_bailout_87:
 		}
 		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y != 0.0)
 		{
-		g_color_iter = (long) (double(g_color_iter)*(g_new_z.x/g_new_z.y));
+		g_color_iter = long(double(g_color_iter)*(g_new_z.x/g_new_z.y));
 		}
 		else if (g_outside == COLORMODE_SUM)
 		{
-			g_color_iter +=  (long) (g_new_z.x + g_new_z.y);
+			g_color_iter +=  long(g_new_z.x + g_new_z.y);
 		}
 		else if (g_outside == COLORMODE_INVERSE_TANGENT)
 		{

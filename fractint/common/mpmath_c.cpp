@@ -428,7 +428,7 @@ void SetupLogTable()
 		{
 			if (g_log_table[sptop] > g_log_table[sptop-1])
 			{
-				g_log_table[sptop] = (BYTE)(g_log_table[sptop-1] + 1);
+				g_log_table[sptop] = BYTE(g_log_table[sptop-1] + 1);
 			}
 		}
 	}
@@ -455,7 +455,7 @@ long logtablecalc(long citer)
 		}
 		else if ((citer - lf)/log(double(citer - lf)) <= mlf)
 		{
-			ret = (g_save_release < 2002) ? ((long) (citer - lf + (lf ? 1 : 0))) : ((long) (citer - lf));
+			ret = (g_save_release < 2002) ? (long(citer - lf + (lf ? 1 : 0))) : (long(citer - lf));
 		}
 		else
 		{
@@ -487,7 +487,7 @@ long logtablecalc(long citer)
 long ExpFloat14(long xx)
 {
 	static float fLogTwo = 0.6931472f;
-	int f = 23 - (int) RegFloat2Fg(RegDivFloat(xx, *(long*) &fLogTwo), 0);
+	int f = 23 - int(RegFloat2Fg(RegDivFloat(xx, *(long*) &fLogTwo), 0));
 	long answer = ExpFudged(RegFloat2Fg(xx, 16), f);
 	return RegFg2Float(answer, (char) f);
 }

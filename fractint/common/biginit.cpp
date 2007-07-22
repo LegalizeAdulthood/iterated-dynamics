@@ -416,7 +416,7 @@ bn_t alloc_stack(size_t size)
 		stop_message(0, "alloc_stack called with g_bf_math == 0");
 		return 0;
 	}
-	stack_addr = (long) (stack_ptr - bnroot + size); /* part of bnroot */
+	stack_addr = long(stack_ptr - bnroot + size); /* part of bnroot */
 
 	if (stack_addr > maxstack)
 	{

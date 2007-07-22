@@ -949,7 +949,7 @@ int mandel4_orbit_fp()
 
 int z_to_z_plus_z_orbit_fp()
 {
-	complex_power(&g_old_z, (int)g_parameters[2], &g_new_z);
+	complex_power(&g_old_z, int(g_parameters[2]), &g_new_z);
 	g_old_z = ComplexPower(g_old_z, g_old_z);
 	g_new_z.x = g_new_z.x + g_old_z.x +g_float_parameter->x;
 	g_new_z.y = g_new_z.y + g_old_z.y +g_float_parameter->y;

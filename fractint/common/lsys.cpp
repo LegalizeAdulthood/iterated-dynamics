@@ -158,7 +158,7 @@ static int _fastcall read_l_system_file(char *str)
 		}
 		strlwr(inline1);
 
-		if ((int)strspn(inline1, " \t\n") < int(strlen(inline1))) /* not a blank line */
+		if (int(strspn(inline1, " \t\n")) < int(strlen(inline1))) /* not a blank line */
 		{
 			word = strtok(inline1, " =\t\n");
 			if (!strcmp(word, "axiom"))
@@ -278,7 +278,7 @@ int l_system()
 
 	g_overflow = 0;                /* reset integer math overflow flag */
 
-	order = (int)g_parameters[0];
+	order = int(g_parameters[0]);
 	if (order <= 0)
 	{
 		order = 0;
@@ -594,8 +594,8 @@ static void lsysi_size_dm(struct lsys_turtle_state *cmd)
 	long fixedcos;
 
 	FPUsincos(&angle, &s, &c);
-	fixedsin = (long) (s*FIXEDLT1);
-	fixedcos = (long) (c*FIXEDLT1);
+	fixedsin = long(s*FIXEDLT1);
+	fixedcos = long(c*FIXEDLT1);
 
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
@@ -620,8 +620,8 @@ static void lsysi_size_dm(struct lsys_turtle_state *cmd)
 
 static void lsysi_size_gf(struct lsys_turtle_state *cmd)
 {
-	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
-	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
+	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[int(cmd->angle)], 29));
+	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[int(cmd->angle)], 29));
 	/* xpos += size*coss[angle]; */
 	/* ypos += size*sins[angle]; */
 	if (cmd->xpos > cmd->x_max)
@@ -653,8 +653,8 @@ static void lsysi_draw_d(struct lsys_turtle_state *cmd)
 	int lasty;
 
 	FPUsincos(&angle, &s, &c);
-	fixedsin = (long) (s*FIXEDLT1);
-	fixedcos = (long) (c*FIXEDLT1);
+	fixedsin = long(s*FIXEDLT1);
+	fixedcos = long(c*FIXEDLT1);
 
 	lastx = int(cmd->xpos >> 19);
 	lasty = int(cmd->ypos >> 19);
@@ -672,8 +672,8 @@ static void lsysi_draw_m(struct lsys_turtle_state *cmd)
 	long fixedcos;
 
 	FPUsincos(&angle, &s, &c);
-	fixedsin = (long) (s*FIXEDLT1);
-	fixedcos = (long) (c*FIXEDLT1);
+	fixedsin = long(s*FIXEDLT1);
+	fixedcos = long(c*FIXEDLT1);
 
 	cmd->xpos = cmd->xpos + (multiply(multiply(cmd->size, cmd->aspect, 19), fixedcos, 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
@@ -681,8 +681,8 @@ static void lsysi_draw_m(struct lsys_turtle_state *cmd)
 
 static void lsysi_draw_g(struct lsys_turtle_state *cmd)
 {
-	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
-	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
+	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[int(cmd->angle)], 29));
+	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[int(cmd->angle)], 29));
 	/* xpos += size*coss[angle]; */
 	/* ypos += size*sins[angle]; */
 }
@@ -691,8 +691,8 @@ static void lsysi_draw_f(struct lsys_turtle_state *cmd)
 {
 	int lastx = int(cmd->xpos >> 19);
 	int lasty = int(cmd->ypos >> 19);
-	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[(int)cmd->angle], 29));
-	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[(int)cmd->angle], 29));
+	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[int(cmd->angle)], 29));
+	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[int(cmd->angle)], 29));
 	/* xpos += size*coss[angle]; */
 	/* ypos += size*sins[angle]; */
 	driver_draw_line(lastx, lasty, int(cmd->xpos >> 19), int(cmd->ypos >> 19), cmd->curcolor);
@@ -700,7 +700,7 @@ static void lsysi_draw_f(struct lsys_turtle_state *cmd)
 
 static void lsysi_draw_c(struct lsys_turtle_state *cmd)
 {
-	cmd->curcolor = (char)(((int) cmd->num) % g_colors);
+	cmd->curcolor = (char)(int(cmd->num) % g_colors);
 }
 
 static void lsysi_draw_gt(struct lsys_turtle_state *cmd)
@@ -836,8 +836,8 @@ lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct 
 	{
 		return 0;
 	}
-	horiz = (x_max == x_min) ? 1.0e37f : (float)((g_x_dots-10)/(x_max-x_min));
-	vert  = (y_max == y_min) ? 1.0e37f : (float)((g_y_dots-6) /(y_max-y_min));
+	horiz = (x_max == x_min) ? 1.0e37f : float((g_x_dots-10)/(x_max-x_min));
+	vert  = (y_max == y_min) ? 1.0e37f : float((g_y_dots-6) /(y_max-y_min));
 	locsize = (vert < horiz) ? vert : horiz;
 
 	ts->xpos = (horiz == 1e37) ?
@@ -962,8 +962,8 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
-		case '/': f = slash;           num = (long) (get_number(&s)*11930465L);    break;
-		case '\\': f = bslash;         num = (long) (get_number(&s)*11930465L);    break;
+		case '/': f = slash;           num = long(get_number(&s)*11930465L);    break;
+		case '\\': f = bslash;         num = long(get_number(&s)*11930465L);    break;
 		case '@': f = at;              num = FIXEDPT(get_number(&s));    break;
 		case '|': f = pipe;            break;
 		case '!': f = lsysi_exclamation;     break;
@@ -1046,8 +1046,8 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 		{
 		case '+': f = plus;            break;
 		case '-': f = minus;           break;
-		case '/': f = slash;           num = (long) (get_number(&s)*11930465L);    break;
-		case '\\': f = bslash;         num = (long) (get_number(&s)*11930465L);    break;
+		case '/': f = slash;           num = long(get_number(&s)*11930465L);    break;
+		case '\\': f = bslash;         num = long(get_number(&s)*11930465L);    break;
 		case '@': f = at;              num = FIXEDPT(get_number(&s));    break;
 		case '|': f = pipe;            break;
 		case '!': f = lsysi_exclamation;     break;
@@ -1109,7 +1109,7 @@ static void _fastcall lsysi_sin_cos()
 		double s;
 		double c;
 		FPUsincos(&twopimaxi, &s, &c);
-		sins[i] = (long) (s*FIXEDLT1);
-		coss[i] = (long) ((locaspect*c)*FIXEDLT1);
+		sins[i] = long(s*FIXEDLT1);
+		coss[i] = long((locaspect*c)*FIXEDLT1);
 	}
 }

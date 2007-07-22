@@ -27,7 +27,7 @@ static bool s_calc_wait = false;
 static int s_repeats = 0;
 static int s_last1 = 0;
 
-static void sleep_secs(int);
+static void sleep_secs(int secs);
 static void showtempmsg_txt(int, int, int, int, char *);
 static void message(int secs, char *buf);
 static void slideshowerr(char *msg);

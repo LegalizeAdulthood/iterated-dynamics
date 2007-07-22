@@ -88,7 +88,7 @@ int unity_setup()
 int mandelbrot_setup_fp()
 {
 	g_bf_math = 0;
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	g_power.x = g_parameters[2] - 1.0;
 	g_power.y = g_parameters[3];
 	g_float_parameter = &g_initial_z;
@@ -230,7 +230,7 @@ void current_fractal_specific_set_per_pixel(int (*per_pixel)(void))
 
 int julia_setup_fp()
 {
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	g_float_parameter = &g_parameter;
 	if (g_fractal_type == FRACTYPE_MARKS_JULIA_COMPLEX)
 	{
@@ -376,7 +376,7 @@ int julia_setup_fp()
 
 int mandelbrot_setup_l()
 {
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	if (g_fractal_type == FRACTYPE_MARKS_MANDELBROT && g_c_exp < 1)
 	{
 		g_c_exp = 1;
@@ -433,7 +433,7 @@ int mandelbrot_setup_l()
 
 int julia_setup_l()
 {
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	g_long_parameter = &g_parameter_l;
 	switch (g_fractal_type)
 	{
@@ -934,7 +934,7 @@ int marks_julia_setup()
 	{
 		g_parameters[2] = 1;
 	}
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	g_long_parameter = &g_parameter_l;
 	g_old_z_l = *g_long_parameter;
 	if (g_c_exp > 3)
@@ -966,7 +966,7 @@ int marks_julia_setup_fp()
 	{
 		g_parameters[2] = 1;
 	}
-	g_c_exp = (int)g_parameters[2];
+	g_c_exp = int(g_parameters[2]);
 	g_float_parameter = &g_parameter;
 	g_old_z = *g_float_parameter;
 	if (g_c_exp > 3)
@@ -1014,7 +1014,7 @@ int phoenix_setup()
 {
 	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_parameter;
-	g_degree = (int)g_parameter2.x;
+	g_degree = int(g_parameter2.x);
 	if (g_degree < 2 && g_degree > -3)
 	{
 		g_degree = 0;
@@ -1045,7 +1045,7 @@ int phoenix_complex_setup()
 {
 	g_long_parameter = &g_parameter_l;
 	g_float_parameter = &g_parameter;
-	g_degree = (int)g_parameters[4];
+	g_degree = int(g_parameters[4]);
 	if (g_degree < 2 && g_degree > -3)
 	{
 		g_degree = 0;
@@ -1083,7 +1083,7 @@ int mandelbrot_phoenix_setup()
 {
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
-	g_degree = (int)g_parameter2.x;
+	g_degree = int(g_parameter2.x);
 	if (g_degree < 2 && g_degree > -3)
 	{
 		g_degree = 0;
@@ -1114,7 +1114,7 @@ int mandelbrot_phoenix_complex_setup()
 {
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
-	g_degree = (int)g_parameters[4];
+	g_degree = int(g_parameters[4]);
 	if (g_degree < 2 && g_degree > -3)
 	{
 		g_degree = 0;

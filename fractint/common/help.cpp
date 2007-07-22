@@ -519,7 +519,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 		temp_c2 = temp->c + temp->width - 1;
 
 		if (ctr != curr_link &&
-			((left && temp_c2 < (int) curr->c) || (!left && (int) temp->c > curr_c2)))
+			((left && temp_c2 < int(curr->c)) || (!left && int(temp->c) > curr_c2)))
 		{
 			temp_dist = dist1(curr->r, temp->r);
 
@@ -1340,8 +1340,7 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 	FILE *temp_file = NULL;
 	char      *msg = NULL;
 
-/*   help_seek((long)sizeof(int) + sizeof(long));         Strange -- should be 8 -- CWM */
-	help_seek(16L);                               /* indeed it should - Bert */
+	help_seek(16L);
 	fread(&info.num_contents, sizeof(int), 1, s_help_file);
 	fread(&info.num_page, sizeof(int), 1, s_help_file);
 
@@ -1604,7 +1603,7 @@ int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, cons
 }
 
 int field_prompt_help(int help_mode,
-	char *hdg, char *instr, char *fld, int len, int (*checkkey)(int))
+	char *hdg, char *instr, char *fld, int len, int (*checkkey)(int key))
 {
 	int result;
 	push_help_mode(help_mode);

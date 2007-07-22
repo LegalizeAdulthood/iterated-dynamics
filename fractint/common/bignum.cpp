@@ -163,24 +163,24 @@ S16 big_accessS16(S16 *addr)
 
 U32 big_set32(BYTE *addr, U32 val)
 {
-	addr[0] = (BYTE)(val&0xff);
-	addr[1] = (BYTE)((val >> 8)&0xff);
-	addr[2] = (BYTE)((val >> 16)&0xff);
-	addr[3] = (BYTE)((val >> 24)&0xff);
+	addr[0] = BYTE(val&0xff);
+	addr[1] = BYTE((val >> 8)&0xff);
+	addr[2] = BYTE((val >> 16)&0xff);
+	addr[3] = BYTE((val >> 24)&0xff);
 	return val;
 }
 
 U16 big_set16(BYTE *addr, U16 val)
 {
-	addr[0] = (BYTE)(val&0xff);
-	addr[1] = (BYTE)((val >> 8)&0xff);
+	addr[0] = BYTE(val&0xff);
+	addr[1] = BYTE((val >> 8)&0xff);
 	return val;
 }
 
 S16 big_setS16(S16 *addr, S16 val)
 {
-	((BYTE *)addr)[0] = (BYTE)(val&0xff);
-	((BYTE *)addr)[1] = (BYTE)((val >> 8)&0xff);
+	((BYTE *)addr)[0] = BYTE(val&0xff);
+	((BYTE *)addr)[1] = BYTE((val >> 8)&0xff);
 	return val;
 }
 
@@ -254,7 +254,7 @@ bn_t strtobn(bn_t r, char *s)
 		l = int(strlen(s)) - 1;      /* start with the last digit */
 		while (s[l] >= '0' && s[l] <= '9') /* while a digit */
 		{
-				*onesbyte = (BYTE)(s[l--] - '0');
+				*onesbyte = BYTE(s[l--] - '0');
 				div_a_bn_int(r, 10);
 		}
 
@@ -376,7 +376,7 @@ char *unsafe_bntostr(char *s, int dec, bn_t r)
 		{
 			break;
 		}
-		s[l++] = (BYTE)(*onesbyte + '0');
+		s[l++] = BYTE(*onesbyte + '0');
 	}
 	s[l] = '\0'; /* don't forget nul char */
 

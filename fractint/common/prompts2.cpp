@@ -225,7 +225,7 @@ int get_toggles()
 	int k = -1;
 	int j = 0;
 	g_user_standard_calculation_mode = calculation_modes[dialog.values(++k).uval.ch.val][0];
-	g_stop_pass = (int) calculation_modes[dialog.values(k).uval.ch.val][1] - (int) '0';
+	g_stop_pass = int(calculation_modes[dialog.values(k).uval.ch.val][1]) - int('0');
 	if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_standard_calculation_mode != 'g')
 	{
 		g_stop_pass = 0;
@@ -414,9 +414,9 @@ int get_toggles2()
 
 	UIChoices dialog(HELPYOPTS, "Extended Options\n(not all combinations make sense)", 0);
 	dialog.push("Look for finite attractor (0=no,>0=yes,<0=phase)", g_finite_attractor);
-	dialog.push("Potential Max Color (0 means off)", (int) old_potparam[0]);
+	dialog.push("Potential Max Color (0 means off)", int(old_potparam[0]));
 	dialog.push("          Slope", old_potparam[1]);
-	dialog.push("          Bailout", (int) old_potparam[2]);
+	dialog.push("          Bailout", int(old_potparam[2]));
 	dialog.push("          16 bit values", g_potential_16bit);
 	dialog.push("Distance Estimator (0=off, <0=edge, >0=on):", g_user_distance_test);
 	dialog.push("          width factor:", g_distance_test_width);

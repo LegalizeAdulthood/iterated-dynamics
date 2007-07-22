@@ -403,7 +403,7 @@ int encoder()
 		goto oops;
 	}
 	/* color resolution == 6 bits worth */
-	x = (BYTE) (128 + ((6 - 1) << 4) + (bitsperpixel - 1));
+	x = BYTE(128 + ((6 - 1) << 4) + (bitsperpixel - 1));
 	if (write_byte(x) != 1)
 	{
 		goto oops;
@@ -533,7 +533,7 @@ int encoder()
 		goto oops;
 	}
 
-	bitsperpixel = (BYTE) (startbits - 1);
+	bitsperpixel = BYTE(startbits - 1);
 
 	if (write_byte(bitsperpixel) != 1)
 	{
@@ -632,7 +632,7 @@ int encoder()
 				esave_info.evolving = (short) g_evolving_flags;
 				esave_info.this_generation_random_seed  = (unsigned short)g_this_generation_random_seed;
 				esave_info.fiddle_factor    = g_fiddle_factor;
-				esave_info.ecount          = (short) (g_grid_size*g_grid_size); /* flag for done */
+				esave_info.ecount          = short(g_grid_size*g_grid_size); /* flag for done */
 			}
 			else  /* we will need the resuming information */
 			{
@@ -743,8 +743,8 @@ static int _fastcall shftwrite(BYTE *color, int g_num_colors)
 		for (j = 0; j < 3; j++)
 		{
 			thiscolor = color[3*i + j];
-			thiscolor = (BYTE) (thiscolor << 2);
-			thiscolor = (BYTE) (thiscolor + (BYTE) (thiscolor >> 6));
+			thiscolor = BYTE(thiscolor << 2);
+			thiscolor = BYTE(thiscolor + BYTE(thiscolor >> 6));
 			if (fputc(thiscolor, g_outfile) != int(thiscolor))
 			{
 				return 0;
@@ -853,7 +853,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->videomodebx = 0;
 	save_info->videomodecx = 0;
 	save_info->videomodedx = 0;
-	save_info->dotmode = (short) (g_video_entry.dotmode % 100);
+	save_info->dotmode = short(g_video_entry.dotmode % 100);
 	save_info->x_dots = (short) g_video_entry.x_dots;
 	save_info->y_dots = (short) g_video_entry.y_dots;
 	save_info->colors = (short) g_video_entry.colors;
@@ -944,7 +944,7 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->orbittype = (short) g_new_orbit_type;
 	save_info->juli3Dmode = (short) g_juli_3d_mode;
 	save_info->max_fn = static_cast<char>(g_formula_state.max_fn());
-	save_info->inversejulia = (short) ((g_major_method << 8) + g_minor_method);      /* MVS */
+	save_info->inversejulia = short((g_major_method << 8) + g_minor_method);      /* MVS */
 	save_info->bail_out = g_bail_out;
 	save_info->bailoutest = (short) g_bail_out_test;
 	save_info->iterations = g_max_iteration;
@@ -1010,8 +1010,8 @@ static void _fastcall cl_block();
 static int n_bits;                        /* number of bits/code */
 static int maxbits = BITSF;                /* user settable max # bits/code */
 static int maxcode;                  /* maximum code, given n_bits */
-static int maxmaxcode = (int)1 << BITSF; /* should NEVER generate this code */
-# define MAXCODE(n_bits)        (((int) 1 << (n_bits)) - 1)
+static int maxmaxcode = 1 << BITSF; /* should NEVER generate this code */
+#define MAXCODE(n_bits)        ((1 << (n_bits)) - 1)
 
 #ifdef XFRACT
 unsigned int g_string_location[10240];
@@ -1032,7 +1032,7 @@ static unsigned short *codetab = (unsigned short *)g_string_location;
 
 #define tab_prefixof(i)   codetab[i]
 #define tab_suffixof(i)   ((char_type *)(htab))[i]
-#define de_stack          ((char_type *)&tab_suffixof((int)1 << BITSF))
+#define de_stack          ((char_type *)&tab_suffixof(1 << BITSF))
 
 static int free_ent;                  /* first unused entry */
 
@@ -1147,7 +1147,7 @@ static int compress(int rowlimit)
 					ent = color;
 					continue;
 				}
-				fcode = (long) ((long(color) << maxbits) + ent);
+				fcode = long((long(color) << maxbits) + ent);
 				i = ((int(color) << hshift) ^ ent);    /* xor hashing */
 
 				if (htab[i] == fcode)
@@ -1218,13 +1218,13 @@ nomatch:
 				last_colorbar = ydot;
 			} /* end if !driver_diskp() */
 			tempkey = driver_key_pressed();
-			if (tempkey && (tempkey != (int) 's'))  /* keyboard hit - bail out */
+			if (tempkey && (tempkey != int('s')))  /* keyboard hit - bail out */
 			{
 				interrupted = 1;
 				rownum = g_y_dots;
 				break;
 			}
-			if (tempkey == (int) 's')
+			if (tempkey == int('s'))
 			{
 				driver_get_key();   /* eat the keystroke */
 			}

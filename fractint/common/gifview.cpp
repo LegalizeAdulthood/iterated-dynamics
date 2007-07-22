@@ -52,9 +52,9 @@ int get_byte()
 	return getc(fpin); /* EOF is -1, as desired */
 }
 
-int get_bytes(BYTE *where, int how_many)
+int get_bytes(BYTE *destination, int how_many)
 {
-	return (int) fread((char *)where, 1, how_many, fpin); /* EOF is -1, as desired */
+	return int(fread((char *) destination, 1, how_many, fpin)); /* EOF is -1, as desired */
 }
 
 /*
@@ -171,7 +171,7 @@ int gifview()
 			if ((!g_display_3d || (g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE))
 				&& !g_dont_read_color)
 			{
-				g_dac_box[i][j] = (BYTE)(k >> 2); /* TODO: don't right shift color table by 2 */
+				g_dac_box[i][j] = BYTE(k >> 2); /* TODO: don't right shift color table by 2 */
 			}
 		}
 	}

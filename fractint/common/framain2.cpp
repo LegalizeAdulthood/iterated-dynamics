@@ -111,7 +111,6 @@ void (*g_out_line_cleanup)();
 ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdmore, bool &screen_stacked);
 ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, bool &kbdmore, bool &stacked);
 ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool resume_flag);
-static void move_zoombox(int);
 static void move_zoombox(int keynum);
 static int out_line_compare(BYTE *pixels, int line_length);
 static void out_line_cleanup_compare();
@@ -139,7 +138,7 @@ int LineCompare::compare(BYTE *pixels, int line_length)
 	for (int col = 0; col < line_length; col++)
 	{
 		int old_color = getcolor(col, row);
-		if (old_color == (int) pixels[col])
+		if (old_color == int(pixels[col]))
 		{
 			g_plot_color_put_color(col, row, 0);
 		}
@@ -2199,7 +2198,7 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 	case '5':
 	case '6':
 	case '7':
-		handle_mutation_level(true, kbdchar - (int) '1' + 1, kbdmore);
+		handle_mutation_level(true, kbdchar - int('1') + 1, kbdmore);
 		break;
 
 	case '0':

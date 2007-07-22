@@ -74,9 +74,9 @@ static int getdepth(int xd, int yd)
 	if (g_grayscale_depth)
 	{
 		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-		pal = ((int) s_save_dac[pal][0]*77 +
-				(int) s_save_dac[pal][1]*151 +
-				(int) s_save_dac[pal][2]*28);
+		pal = (int(s_save_dac[pal][0])*77 +
+				int(s_save_dac[pal][1])*151 +
+				int(s_save_dac[pal][2])*28);
 		pal >>= 6;
 	}
 	return pal;
@@ -189,7 +189,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 	}
 	for (int x = g_x_dots - 1; x >= 0; x--)
 	{
-		colour[x] = (same[x] == x) ? (int) pixels[x % linelen] : colour[same[x]];
+		colour[x] = (same[x] == x) ? int(pixels[x % linelen]) : colour[same[x]];
 		g_plot_color_put_color(x, s_y, colour[x]);
 	}
 	(s_y)++;

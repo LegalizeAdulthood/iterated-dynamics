@@ -726,7 +726,7 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 		out = (*(int (*)()) engine)();
 		break;
 	case TIMER_DECODER:
-		out = (int) decoder((short) va_arg(arg_marker, int)); /* not indirect, safer with overlays */
+		out = int(decoder((short) va_arg(arg_marker, int))); /* not indirect, safer with overlays */
 		break;
 	case TIMER_ENCODER:
 		out = encoder();            /* not indirect, safer with overlays */

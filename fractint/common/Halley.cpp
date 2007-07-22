@@ -51,7 +51,7 @@ int Halley::setup()
 
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 
-	g_degree = (int) g_parameter.x;
+	g_degree = int(g_parameter.x);
 	if (g_degree < 2)
 	{
 		g_degree = 2;

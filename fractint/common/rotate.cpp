@@ -122,9 +122,9 @@ void rotate(int direction)      /* rotate-the-palette routine */
 						toblue    = rand15() >> 9;
 					}
 					/* TODO: revirew for case when COLOR_CHANNEL_MAX != 63 */
-					g_dac_box[jstep][0] = (BYTE)(fromred   + (((tored    - fromred)*incr)/fstep));
-					g_dac_box[jstep][1] = (BYTE)(fromgreen + (((togreen - fromgreen)*incr)/fstep));
-					g_dac_box[jstep][2] = (BYTE)(fromblue  + (((toblue  - fromblue)*incr)/fstep));
+					g_dac_box[jstep][0] = BYTE(fromred   + (((tored    - fromred)*incr)/fstep));
+					g_dac_box[jstep][1] = BYTE(fromgreen + (((togreen - fromgreen)*incr)/fstep));
+					g_dac_box[jstep][2] = BYTE(fromblue  + (((toblue  - fromblue)*incr)/fstep));
 				}
 			}
 			if (step >= rotate_size)
@@ -273,7 +273,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			}
 			for (int i = 1; i < 256; i++)
 			{
-				g_dac_box[i][change_color] = (BYTE) (g_dac_box[i][change_color] + change_direction);
+				g_dac_box[i][change_color] = BYTE(g_dac_box[i][change_color] + change_direction);
 				if (g_dac_box[i][change_color] == COLOR_CHANNEL_MAX+1)
 				{
 					g_dac_box[i][change_color] = COLOR_CHANNEL_MAX;
@@ -448,7 +448,7 @@ static void set_palette(BYTE start[3], BYTE finish[3])
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			g_dac_box[i][j] = (BYTE)((i*start[j] + (256-i)*finish[j])/255);
+			g_dac_box[i][j] = BYTE((i*start[j] + (256-i)*finish[j])/255);
 		}
 	}
 }
@@ -463,8 +463,8 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			g_dac_box[i][j]       = (BYTE)((i*finish[j] + (128 - i)*start[j])/128);
-			g_dac_box[i + 127][j] = (BYTE)((i*start[j]  + (128 - i)*finish[j])/128);
+			g_dac_box[i][j]       = BYTE((i*finish[j] + (128 - i)*start[j])/128);
+			g_dac_box[i + 127][j] = BYTE((i*start[j]  + (128 - i)*finish[j])/128);
 		}
 	}
 }
@@ -479,9 +479,9 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			g_dac_box[i][j]       = (BYTE)((i*middle[j] + (86 - i)*start[j])/85);
-			g_dac_box[i + 85][j]  = (BYTE)((i*finish[j] + (86 - i)*middle[j])/85);
-			g_dac_box[i + 170][j] = (BYTE)((i*start[j]  + (86 - i)*finish[j])/85);
+			g_dac_box[i][j]       = BYTE((i*middle[j] + (86 - i)*start[j])/85);
+			g_dac_box[i + 85][j]  = BYTE((i*finish[j] + (86 - i)*middle[j])/85);
+			g_dac_box[i + 170][j] = BYTE((i*start[j]  + (86 - i)*finish[j])/85);
 		}
 	}
 }

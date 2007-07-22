@@ -145,8 +145,8 @@ static int diffusion_engine()
 	int rowo; /* original col and row */
 	int s = 1 << (s_bits/2); /* size of the square */
 
-	nx = (int) floor(double(g_x_stop - g_ix_start + 1)/s );
-	ny = (int) floor(double(g_y_stop - g_iy_start + 1)/s );
+	nx = int(floor(double(g_x_stop - g_ix_start + 1)/s));
+	ny = int(floor(double(g_y_stop - g_iy_start + 1)/s));
 
 	rem_x = (g_x_stop - g_ix_start + 1) - nx*s;
 	rem_y = (g_y_stop - g_iy_start + 1) - ny*s;
@@ -158,7 +158,7 @@ static int diffusion_engine()
 	else
 	{
 		/* g_WorkList.yy_begin() and passes contain data for resuming the type: */
-		s_diffusion_counter = (((long) ((unsigned) g_WorkList.yy_begin())) << 16) | ((unsigned) g_work_pass);
+		s_diffusion_counter = ((long((unsigned) g_WorkList.yy_begin())) << 16) | ((unsigned) g_work_pass);
 	}
 
 	dif_offset = 12-(s_bits/2); /* offset to adjust coordinates */

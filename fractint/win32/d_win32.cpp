@@ -183,7 +183,7 @@ void Win32BaseDriver::flush_output()
 			long now_ticks = read_ticker();
 			if (now > m_start)
 			{
-				m_ticks_per_second = (now_ticks - m_last)/((long) (now - m_start));
+				m_ticks_per_second = (now_ticks - m_last)/(long(now - m_start));
 			}
 		}
 	}
