@@ -303,7 +303,7 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 		lv[0] = lv[0] << 16;
 		lv[1] = g_current_row;
 		lv[1] = lv[1] << 16;
-		lv[2] = (long) f_cur->color;
+		lv[2] = long(f_cur->color);
 		lv[2] = lv[2] << 16;
 
 		if (vmult_perspective_l(lv, s_lm, lv0, lv, s_lview, 16) == -1)
@@ -877,7 +877,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 		}
 		else if (g_potential_16bit)
 		{
-			f_cur.color += ((float) s_fraction[col])/float(1 << 8);
+			f_cur.color += float(s_fraction[col])/float(1 << 8);
 		}
 
 		if (g_3d_state.sphere())            /* sphere case */
@@ -1441,9 +1441,9 @@ static void interp_color(int x, int y, int color)
 	if (D)
 	{  /* calculate a weighted average of colors long casts prevent integer
 			overflow. This can evaluate to zero */
-		color = int((long(d2 + d3)*(long) s_p1.color +
-				long(d1 + d3)*(long) s_p2.color +
-				long(d1 + d2)*(long) s_p3.color)/D);
+		color = int((long(d2 + d3)*long(s_p1.color) +
+				long(d1 + d3)*long(s_p2.color) +
+				long(d1 + d2)*long(s_p3.color))/D);
 	}
 
 	if (0 <= x && x < g_x_dots &&

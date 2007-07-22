@@ -1959,19 +1959,19 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		/* Add 7 to overcome negative values on the MANDEL    */
 		if (g_outside == COLORMODE_REAL)
 		{
-			g_color_iter += (long)g_new_z.x + 7;
+			g_color_iter += long(g_new_z.x) + 7;
 		}
 		else if (g_outside == COLORMODE_IMAGINARY)
 		{
-			g_color_iter += (long)g_new_z.y + 7;
+			g_color_iter += long(g_new_z.y) + 7;
 		}
 		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y)
 		{
-			g_color_iter = (long)(double(g_color_iter)*(g_new_z.x/g_new_z.y));
+			g_color_iter = long(double(g_color_iter)*(g_new_z.x/g_new_z.y));
 		}
 		else if (g_outside == COLORMODE_SUM)
 		{
-			g_color_iter += (long)(g_new_z.x + g_new_z.y);
+			g_color_iter += long(g_new_z.x + g_new_z.y);
 		}
 		else if (g_outside == COLORMODE_INVERSE_TANGENT)          /* "atan" */
 		{
@@ -1979,7 +1979,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_outside == COLORMODE_FLOAT_MODULUS)
 		{
-			g_color_iter = (long)(modulus_value*g_colors/g_proximity);
+			g_color_iter = long(modulus_value*g_colors/g_proximity);
 		}
 		else if (g_outside == COLORMODE_TOTAL_DISTANCE)
 		{
@@ -2030,7 +2030,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			}
 			else
 			{
-				g_color_iter = (long)(dist/s_dem_width + 1);
+				g_color_iter = long(dist/s_dem_width + 1);
 			}
 			g_color_iter &= LONG_MAX;  /* oops - color can be negative */
 			goto plot_pixel;       /* no further adjustments apply */
@@ -2243,19 +2243,19 @@ static void decomposition()
 		if (reset_fudge != g_fudge)
 		{
 			reset_fudge = g_fudge;
-			/* lcos45     = (long)(cos45*g_fudge); */
-			lsin45     = (long)(sin45*g_fudge);
-			lcos22_5   = (long)(cos22_5*g_fudge);
-			lsin22_5   = (long)(sin22_5*g_fudge);
-			lcos11_25  = (long)(cos11_25*g_fudge);
-			lsin11_25  = (long)(sin11_25*g_fudge);
-			lcos5_625  = (long)(cos5_625*g_fudge);
-			lsin5_625  = (long)(sin5_625*g_fudge);
-			ltan22_5   = (long)(tan22_5*g_fudge);
-			ltan11_25  = (long)(tan11_25*g_fudge);
-			ltan5_625  = (long)(tan5_625*g_fudge);
-			ltan2_8125 = (long)(tan2_8125*g_fudge);
-			ltan1_4063 = (long)(tan1_4063*g_fudge);
+			/* lcos45     = long(cos45*g_fudge); */
+			lsin45     = long(sin45*g_fudge);
+			lcos22_5   = long(cos22_5*g_fudge);
+			lsin22_5   = long(sin22_5*g_fudge);
+			lcos11_25  = long(cos11_25*g_fudge);
+			lsin11_25  = long(sin11_25*g_fudge);
+			lcos5_625  = long(cos5_625*g_fudge);
+			lsin5_625  = long(sin5_625*g_fudge);
+			ltan22_5   = long(tan22_5*g_fudge);
+			ltan11_25  = long(tan11_25*g_fudge);
+			ltan5_625  = long(tan5_625*g_fudge);
+			ltan2_8125 = long(tan2_8125*g_fudge);
+			ltan1_4063 = long(tan1_4063*g_fudge);
 		}
 		if (g_new_z_l.y < 0)
 		{
@@ -2531,7 +2531,7 @@ static int _fastcall potential(double mag, long iterations)
 			{
 				d_tmp = log(mag)/double(pow(2.0, double(pot)));
 				/* prevent float type underflow */
-				pot = (d_tmp > FLT_MIN) ? (float) d_tmp : 0.0f;
+				pot = (d_tmp > FLT_MIN) ? float(d_tmp) : 0.0f;
 			}
 		}
 		/* following transformation strictly for aesthetic reasons */

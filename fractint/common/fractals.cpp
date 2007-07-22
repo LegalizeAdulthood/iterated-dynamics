@@ -984,8 +984,8 @@ int complex_z_power_orbit()
 	x = ComplexPower(x, y);
 	if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
 	{
-		g_new_z_l.x = (long)(x.x*g_fudge);
-		g_new_z_l.y = (long)(x.y*g_fudge);
+		g_new_z_l.x = long(x.x*g_fudge);
+		g_new_z_l.y = long(x.y*g_fudge);
 	}
 	else
 	{
@@ -1925,13 +1925,13 @@ int try_float_fractal(int (*fpFractal)())
 	fpFractal();
 	if (g_save_release < 1900)  /* for backwards compatibility */
 	{
-		g_new_z_l.x = (long)(g_new_z.x/g_fudge); /* this error has been here a long time */
-		g_new_z_l.y = (long)(g_new_z.y/g_fudge);
+		g_new_z_l.x = long(g_new_z.x/g_fudge); /* this error has been here a long time */
+		g_new_z_l.y = long(g_new_z.y/g_fudge);
 	}
 	else
 	{
-		g_new_z_l.x = (long)(g_new_z.x*g_fudge);
-		g_new_z_l.y = (long)(g_new_z.y*g_fudge);
+		g_new_z_l.x = long(g_new_z.x*g_fudge);
+		g_new_z_l.y = long(g_new_z.y*g_fudge);
 	}
 	return 0;
 }
@@ -2310,7 +2310,7 @@ int tims_error_orbit()
 int circle_orbit_fp()
 {
 	long i;
-	i = (long)(g_parameters[0]*(g_temp_sqr_x + g_temp_sqr_y));
+	i = long(g_parameters[0]*(g_temp_sqr_x + g_temp_sqr_y));
 	g_color_iter = i % g_colors;
 	return 1;
 }
@@ -2367,8 +2367,8 @@ int julia_per_pixel_l()
 		}
 
 		/* convert to fudged longs */
-		g_old_z_l.x = (long)(g_old_z.x*g_fudge);
-		g_old_z_l.y = (long)(g_old_z.y*g_fudge);
+		g_old_z_l.x = long(g_old_z.x*g_fudge);
+		g_old_z_l.y = long(g_old_z.y*g_fudge);
 	}
 	else
 	{
@@ -2418,8 +2418,8 @@ int mandelbrot_per_pixel_l()
 		}
 
 		/* convert to fudged longs */
-		g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
-		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
+		g_initial_z_l.x = long(g_initial_z.x*g_fudge);
+		g_initial_z_l.y = long(g_initial_z.y*g_fudge);
 	}
 
 	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;
@@ -2457,8 +2457,8 @@ int julia_per_pixel()
 		}
 
 		/* convert to fudged longs */
-		g_old_z_l.x = (long)(g_old_z.x*g_fudge);
-		g_old_z_l.y = (long)(g_old_z.y*g_fudge);
+		g_old_z_l.x = long(g_old_z.x*g_fudge);
+		g_old_z_l.y = long(g_old_z.y*g_fudge);
 	}
 	else
 	{
@@ -2507,8 +2507,8 @@ int mandelbrot_per_pixel()
 		}
 
 		/* convert to fudged longs */
-		g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
-		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
+		g_initial_z_l.x = long(g_initial_z.x*g_fudge);
+		g_initial_z_l.y = long(g_initial_z.y*g_fudge);
 	}
 	else
 	{
@@ -2574,8 +2574,8 @@ int marks_mandelbrot_per_pixel()
 		}
 
 		/* convert to fudged longs */
-		g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
-		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
+		g_initial_z_l.x = long(g_initial_z.x*g_fudge);
+		g_initial_z_l.y = long(g_initial_z.y*g_fudge);
 	}
 	else
 	{
@@ -2868,8 +2868,8 @@ int phoenix_per_pixel()
 		}
 
 		/* convert to fudged longs */
-		g_old_z_l.x = (long)(g_old_z.x*g_fudge);
-		g_old_z_l.y = (long)(g_old_z.y*g_fudge);
+		g_old_z_l.x = long(g_old_z.x*g_fudge);
+		g_old_z_l.y = long(g_old_z.y*g_fudge);
 	}
 	else
 	{
@@ -2926,8 +2926,8 @@ int mandelbrot_phoenix_per_pixel()
 		}
 
 		/* convert to fudged longs */
-		g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
-		g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
+		g_initial_z_l.x = long(g_initial_z.x*g_fudge);
+		g_initial_z_l.y = long(g_initial_z.y*g_fudge);
 	}
 
 	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;

@@ -1452,7 +1452,7 @@ static void sleep_ms_old(long ms)
 		{
 			elapsed = (i == 0) ? 1 : i;
 		}
-		scalems = (long)((float)SLEEPINIT/float(elapsed)*scalems);
+		scalems = long(float(SLEEPINIT)/float(elapsed)*scalems);
 		clear_temp_message();
 	}
 	if (ms > 10L*SLEEPINIT)  /* using ftime is probably more accurate */
@@ -1466,7 +1466,7 @@ static void sleep_ms_old(long ms)
 				break;
 			}
 			ftimex(&t2);
-			if ((long)((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms)
+			if (long((t2.time-t1.time)*1000 + t2.millitm-t1.millitm) >= ms)
 			{
 				break;
 			}

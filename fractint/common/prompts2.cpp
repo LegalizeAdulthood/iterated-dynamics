@@ -760,7 +760,7 @@ get_view_restart:
 		{
 			if (g_view_x_dots != 0 && g_view_y_dots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
 			{
-				g_final_aspect_ratio = ((float) g_view_y_dots)/((float) g_view_x_dots);
+				g_final_aspect_ratio = (float(g_view_y_dots))/(float(g_view_x_dots));
 			}
 			else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
 			{
@@ -776,7 +776,7 @@ get_view_restart:
 		{
 			g_video_entry.x_dots = g_screen_width;
 			g_video_entry.y_dots = g_screen_height;
-			g_final_aspect_ratio = ((float) g_screen_height)/((float) g_screen_width);
+			g_final_aspect_ratio = (float(g_screen_height))/(float(g_screen_width));
 			memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
 		}
 
@@ -864,7 +864,7 @@ int starfield()
 	}
 
 	g_gaussian_distribution = int(starfield_values[0]);
-	g_gaussian_constant  = (long)(((starfield_values[1])/100.0)*(1L << 16));
+	g_gaussian_constant  = long(((starfield_values[1])/100.0)*(1L << 16));
 	g_gaussian_slope = int(starfield_values[2]);
 
 	if (validate_luts(g_grey_file) != 0)

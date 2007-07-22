@@ -877,7 +877,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 
 	memset(info, 0, FRACTAL_INFO_SIZE);
 	fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE + 254)/255;
-	fseek(s_gif_file, (long)(-1-fractinf_len), SEEK_END);
+	fseek(s_gif_file, long(-1-fractinf_len), SEEK_END);
 	/* TODO: revise this to read members one at a time so we get natural alignment
 		of fields within the FRACTAL_INFO structure for the platform */
 	fread(info, 1, FRACTAL_INFO_SIZE, s_gif_file);
@@ -905,7 +905,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 				if (!strcmp(INFO_ID, &tmpbuf[i]))  /* found header? */
 				{
 					strcpy(info->info_id, INFO_ID);
-					fseek(s_gif_file, (long)(hdr_offset = i-offset), SEEK_END);
+					fseek(s_gif_file, long(hdr_offset = i-offset), SEEK_END);
 					/* TODO: revise this to read members one at a time so we get natural alignment
 						of fields within the FRACTAL_INFO structure for the platform */
 					fread(info, 1, FRACTAL_INFO_SIZE, s_gif_file);
@@ -928,7 +928,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 			might be over 255 chars, and thus earlier load might be bad
 			find exact endpoint, so scan back to start of ext blks works
 			*/
-			fseek(s_gif_file, (long)(hdr_offset-15), SEEK_END);
+			fseek(s_gif_file, long(hdr_offset-15), SEEK_END);
 			scan_extend = 1;
 			while (scan_extend)
 			{

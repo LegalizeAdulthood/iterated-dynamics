@@ -139,7 +139,7 @@ long RegDivFloat(long x, long y)
  */
 long RegFg2Float(long x, int FudgeFact)
 {
-	float f = (float) x/float(1 << FudgeFact);
+	float f = float(x)/float(1 << FudgeFact);
 	return float2em(f);
 }
 

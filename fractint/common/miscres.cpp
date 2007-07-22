@@ -713,7 +713,7 @@ int tab_display_2(char *msg)
 	write_row(++row, "%ld of %ld bignum memory used", g_bn_max_stack, maxstack);
 	write_row(++row, "   %ld used for bignum globals", startstack);
 	write_row(++row, "   %ld stack used == %ld variables of length %d",
-			g_bn_max_stack-startstack, (long)((g_bn_max_stack-startstack)/(g_rbf_length + 2)), g_rbf_length + 2);
+			g_bn_max_stack-startstack, long((g_bn_max_stack-startstack)/(g_rbf_length + 2)), g_rbf_length + 2);
 	if (g_bf_math)
 	{
 		write_row(++row, "intlength %-d bflength %-d ", g_int_length, g_bf_length);
@@ -1280,7 +1280,7 @@ static void area()
 	}
 	sprintf(buf, "%s%ld inside pixels of %ld%s%f",
 			msg, cnt, long(g_x_dots)*long(g_y_dots), ".  Total area ",
-			cnt/((float)g_x_dots*(float)g_y_dots)*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min())*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()));
+			cnt/(float(g_x_dots)*float(g_y_dots))*(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_min())*(g_escape_time_state.m_grid_fp.y_max()-g_escape_time_state.m_grid_fp.y_min()));
 	stop_message(STOPMSG_NO_BUZZER, buf);
 }
 

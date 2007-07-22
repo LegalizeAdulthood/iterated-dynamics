@@ -997,11 +997,11 @@ int prompt_value_string(char *buf, struct full_screen_values *val)
 	case 'D':
 		if (val->uval.dval < 0)  /* We have to round the right way */
 		{
-			sprintf(buf, "%ld", (long)(val->uval.dval-.5));
+			sprintf(buf, "%ld", long(val->uval.dval-.5));
 		}
 		else
 		{
-			sprintf(buf, "%ld", (long)(val->uval.dval + .5));
+			sprintf(buf, "%ld", long(val->uval.dval + .5));
 		}
 		ret = 20;
 		break;

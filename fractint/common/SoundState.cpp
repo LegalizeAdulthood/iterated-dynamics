@@ -221,7 +221,7 @@ void SoundState::write_time()
 {
 	if (open())
 	{
-		fprintf(m_fp, "time=%-ld\n", (long)clock()*1000/CLK_TCK);
+		fprintf(m_fp, "time=%-ld\n", long(clock())*1000/CLK_TCK);
 	}
 }
 

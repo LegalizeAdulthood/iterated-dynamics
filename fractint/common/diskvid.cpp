@@ -188,7 +188,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		for (cache_size = CACHE_MAX; cache_size >= CACHE_MIN; --cache_size)
 		{
 			longtmp = (int(cache_size) < freemem) ?
-				long(cache_size) << 11 : (long)(cache_size + freemem) << 10;
+				long(cache_size) << 11 : long(cache_size + freemem) << 10;
 			tempfar = (BYTE *) malloc(longtmp);
 			if (tempfar != NULL)
 			{
@@ -234,7 +234,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		*fwd_link = int((char *)ptr1 - (char *)s_cache_start);
 	}
 
-	memorysize = (long)(newcolsize)*newrowsize + s_header_length;
+	memorysize = long(newcolsize)*newrowsize + s_header_length;
 	i = (short) memorysize & (BLOCK_LEN-1);
 	if (i != 0)
 	{
