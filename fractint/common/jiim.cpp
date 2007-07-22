@@ -340,8 +340,8 @@ PushLong(long x, long y)
 			if (++lsize > lmax)
 			{
 				lmax   = lsize;
-				luckyx = (float)x;
-				luckyy = (float)y;
+				luckyx = float(x);
+				luckyy = float(y);
 			}
 			return 1;
 		}

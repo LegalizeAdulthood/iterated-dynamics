@@ -727,8 +727,8 @@ get_view_restart:
 		if (!driver_diskp())
 		{
 			g_view_window = (dialog.values(++k).uval.ch.val != 0);
-			g_view_reduction = (float) dialog.values(++k).uval.dval;
-			g_final_aspect_ratio = (float) dialog.values(++k).uval.dval;
+			g_view_reduction = float(dialog.values(++k).uval.dval);
+			g_final_aspect_ratio = float(dialog.values(++k).uval.dval);
 			g_view_crop = (dialog.values(++k).uval.ch.val != 0);
 			g_view_x_dots = dialog.values(++k).uval.ival;
 			g_view_y_dots = dialog.values(++k).uval.ival;

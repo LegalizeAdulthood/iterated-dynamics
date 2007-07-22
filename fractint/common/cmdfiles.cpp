@@ -1686,23 +1686,23 @@ static int julibrot_3d_arg(const cmd_context &context)
 	}
 	if (context.totparms > 1)
 	{
-		g_origin_fp = (float)context.floatval[1];
+		g_origin_fp = float(context.floatval[1]);
 	}
 	if (context.totparms > 2)
 	{
-		g_depth_fp = (float)context.floatval[2];
+		g_depth_fp = float(context.floatval[2]);
 	}
 	if (context.totparms > 3)
 	{
-		g_height_fp = (float)context.floatval[3];
+		g_height_fp = float(context.floatval[3]);
 	}
 	if (context.totparms > 4)
 	{
-		g_width_fp = (float)context.floatval[4];
+		g_width_fp = float(context.floatval[4]);
 	}
 	if (context.totparms > 5)
 	{
-		g_screen_distance_fp = (float)context.floatval[5];
+		g_screen_distance_fp = float(context.floatval[5]);
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
@@ -1713,7 +1713,7 @@ static int julibrot_eyes_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_eyes_fp =  (float)context.floatval[0];
+	g_eyes_fp =  float(context.floatval[0]);
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 
@@ -1903,11 +1903,11 @@ static int view_windows_arg(const cmd_context &context)
 
 	if ((context.totparms > 0) && (context.floatval[0] > 0.001))
 	{
-		g_view_reduction = (float)context.floatval[0];
+		g_view_reduction = float(context.floatval[0]);
 	}
 	if ((context.totparms > 1) && (context.floatval[1] > 0.001))
 	{
-		g_final_aspect_ratio = (float)context.floatval[1];
+		g_final_aspect_ratio = float(context.floatval[1]);
 	}
 	if ((context.totparms > 2) && (context.yesnoval[2] == 0))
 	{
@@ -2056,7 +2056,7 @@ static int aspect_drift_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_aspect_drift = (float)context.floatval[0];
+	g_aspect_drift = float(context.floatval[0]);
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 

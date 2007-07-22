@@ -351,7 +351,7 @@ void stop_slide_show()
 
 void record_show(int key)
 {
-	float dt = (float) s_ticks;      /* save time of last call */
+	float dt = float(s_ticks);      /* save time of last call */
 	s_ticks = clock_ticks();  /* current time */
 	if (s_slide_file == NULL)
 	{

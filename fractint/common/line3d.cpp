@@ -317,11 +317,11 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 		cur->y = int(((lv[1] + 32768L) >> 16) + g_yy_adjust);
 		if (g_3d_state.fill_type() >= FillType::LightBefore && !g_overflow)
 		{
-			f_cur->x = (float) lv0[0];
+			f_cur->x = float(lv0[0]);
 			f_cur->x /= 65536.0f;
-			f_cur->y = (float) lv0[1];
+			f_cur->y = float(lv0[1]);
 			f_cur->y /= 65536.0f;
-			f_cur->color = (float) lv0[2];
+			f_cur->color = float(lv0[2]);
 			f_cur->color /= 65536.0f;
 		}
 	}
@@ -338,9 +338,9 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 
 		if (g_3d_state.fill_type() > FillType::Bars || g_3d_state.raytrace_output())
 		{
-			f_cur->x = (float) v[0];
-			f_cur->y = (float) v[1];
-			f_cur->color = (float) v[2];
+			f_cur->x = float(v[0]);
+			f_cur->y = float(v[1]);
+			f_cur->color = float(v[2]);
 
 			if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 			{
@@ -361,7 +361,7 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 		v[1] = 0;
 		v[2] = g_3d_state.water_line();
 		mult_vec(v, s_m);
-		*f_water = (float) v[2];
+		*f_water = float(v[2]);
 	}
 
 	return 0;
@@ -597,7 +597,7 @@ static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_in
 			{
 				stop_message(0, "debug, cur->color=bad");
 			}
-			f_cur->color = (float) s_bad.color;
+			f_cur->color = float(s_bad.color);
 			cur->color = s_bad.color;
 		}
 		else
@@ -630,7 +630,7 @@ static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_in
 					{
 						stop_message(0, "debug, normal vector err2");
 					}
-					f_cur->color = (float) g_colors;
+					f_cur->color = float(g_colors);
 					cur->color = g_colors;
 				}
 			}
@@ -850,7 +850,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 
 		s_real_color = pixels[col];
 		cur.color = s_real_color;
-		f_cur.color = (float) cur.color;
+		f_cur.color = float(cur.color);
 
 		if (g_3d_state.raytrace_output() || g_3d_state.preview() || g_3d_state.fill_type() < FillType::Points)
 		{
@@ -873,7 +873,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 		{
 			s_real_color = (BYTE) g_3d_state.water_line();
 			cur.color = s_real_color;
-			f_cur.color = (float) cur.color; /* "lake" */
+			f_cur.color = float(cur.color); /* "lake" */
 		}
 		else if (g_potential_16bit)
 		{
@@ -2479,12 +2479,12 @@ static void initialize_trig_tables(int linelen)
 	* latitude; bottom 90 degrees */
 
 	/* Map X to this LATITUDE range */
-	float theta1 = (float) MathUtil::DegreesToRadians(g_3d_state.theta1());
-	float theta2 = (float) MathUtil::DegreesToRadians(g_3d_state.theta2());
+	float theta1 = float(MathUtil::DegreesToRadians(g_3d_state.theta1()));
+	float theta2 = float(MathUtil::DegreesToRadians(g_3d_state.theta2()));
 
 	/* Map Y to this LONGITUDE range */
-	float phi1 = (float) MathUtil::DegreesToRadians(g_3d_state.phi1());
-	float phi2 = (float) MathUtil::DegreesToRadians(g_3d_state.phi2());
+	float phi1 = float(MathUtil::DegreesToRadians(g_3d_state.phi1()));
+	float phi2 = float(MathUtil::DegreesToRadians(g_3d_state.phi2()));
 
 	float theta = theta1;
 
@@ -2506,13 +2506,13 @@ static void initialize_trig_tables(int linelen)
 	/* Similarly for cosine. Neat!                                       */
 	/*********************************************************************/
 
-	float deltatheta = float(theta2 - theta1)/(float) linelen;
+	float deltatheta = float(theta2 - theta1)/float(linelen);
 
 	/* initial sin, cos theta */
-	s_sin_theta_array[0] = (float) sin(double(theta));
-	s_cos_theta_array[0] = (float) cos(double(theta));
-	s_sin_theta_array[1] = (float) sin(double(theta + deltatheta));
-	s_cos_theta_array[1] = (float) cos(double(theta + deltatheta));
+	s_sin_theta_array[0] = float(sin(double(theta)));
+	s_cos_theta_array[0] = float(cos(double(theta)));
+	s_sin_theta_array[1] = float(sin(double(theta + deltatheta)));
+	s_cos_theta_array[1] = float(cos(double(theta + deltatheta)));
 
 	/* sin, cos delta theta */
 	float two_cos_delta_theta = float(2.0*cos(double(deltatheta)));
@@ -2529,15 +2529,15 @@ static void initialize_trig_tables(int linelen)
 	/* now phi - these calculated as we go - get started here */
 	{
 		/* increment of latitude, longitude */
-		float delta_phi = float(phi2 - phi1)/(float) g_height;
+		float delta_phi = float(phi2 - phi1)/float(g_height);
 
 		/* initial sin, cos phi */
-		s_old_sin_phi1 = (float) sin(double(phi1));
+		s_old_sin_phi1 = float(sin(double(phi1)));
 		s_sin_phi = s_old_sin_phi1;
-		s_old_cos_phi1 = (float) cos(double(phi1));
+		s_old_cos_phi1 = float(cos(double(phi1)));
 		s_cos_phi = s_old_cos_phi1;
-		s_old_sin_phi2 = (float) sin(double(phi1 + delta_phi));
-		s_old_cos_phi2 = (float) cos(double(phi1 + delta_phi));
+		s_old_sin_phi2 = float(sin(double(phi1 + delta_phi)));
+		s_old_cos_phi2 = float(cos(double(phi1 + delta_phi)));
 
 		/* sin, cos delta phi */
 		s_two_cos_delta_phi = float(2.0*cos(double(delta_phi)));
@@ -2900,9 +2900,9 @@ static int first_time(int linelen, VECTOR v)
 	s_bad.x = g_bad_value;
 	s_bad.y = g_bad_value;
 	s_bad.color = g_bad_value;
-	s_f_bad.x = (float) s_bad.x;
-	s_f_bad.y = (float) s_bad.y;
-	s_f_bad.color = (float) s_bad.color;
+	s_f_bad.x = float(s_bad.x);
+	s_f_bad.y = float(s_bad.y);
+	s_f_bad.color = float(s_bad.color);
 	for (int i = 0; i < int(linelen); i++)
 	{
 		s_last_row[i] = s_bad;

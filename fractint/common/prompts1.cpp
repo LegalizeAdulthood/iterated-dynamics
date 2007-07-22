@@ -2193,12 +2193,12 @@ get_fractal_parameters_top:
 		g_m_y_min_fp    = parameter_values[prompt++].uval.dval;
 		g_z_dots      = parameter_values[prompt++].uval.ival;
 		g_juli_3d_mode = parameter_values[prompt++].uval.ch.val;
-		g_eyes_fp     = (float)parameter_values[prompt++].uval.dval;
-		g_origin_fp   = (float)parameter_values[prompt++].uval.dval;
-		g_depth_fp    = (float)parameter_values[prompt++].uval.dval;
-		g_height_fp   = (float)parameter_values[prompt++].uval.dval;
-		g_width_fp    = (float)parameter_values[prompt++].uval.dval;
-		g_screen_distance_fp     = (float)parameter_values[prompt++].uval.dval;
+		g_eyes_fp     = float(parameter_values[prompt++].uval.dval);
+		g_origin_fp   = float(parameter_values[prompt++].uval.dval);
+		g_depth_fp    = float(parameter_values[prompt++].uval.dval);
+		g_height_fp   = float(parameter_values[prompt++].uval.dval);
+		g_width_fp    = float(parameter_values[prompt++].uval.dval);
+		g_screen_distance_fp     = float(parameter_values[prompt++].uval.dval);
 		command_result = COMMANDRESULT_FRACTAL_PARAMETER;  /* force new calc since not resumable anyway */
 	}
 	if (fractal_type_inverse_julia(current_fractal_type))
