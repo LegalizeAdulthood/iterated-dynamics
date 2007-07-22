@@ -578,7 +578,7 @@ int calculate_fractal()
 
 	if ((g_log_palette_mode || g_ranges_length) && !g_log_calculation)
 	{
-		g_log_table = (BYTE *) malloc(g_max_log_table_size + 1);
+		g_log_table = new BYTE[g_max_log_table_size + 1];
 
 		if (g_log_table == NULL)
 		{
@@ -803,7 +803,7 @@ int calculate_fractal()
 
 	if (g_log_table && !g_log_calculation)
 	{
-		free(g_log_table);   /* free if not using extraseg */
+		delete[] g_log_table;
 		g_log_table = NULL;
 	}
 	g_formula_state.free_work_area();

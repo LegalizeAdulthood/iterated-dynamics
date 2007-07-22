@@ -293,7 +293,7 @@ ComplexD ComplexSqrtFloat(double x, double y)
 
 #ifndef TESTING_MATH
 
-BYTE *g_log_table = (BYTE *)0;
+BYTE *g_log_table = 0;
 long g_max_log_table_size;
 int  g_log_calculation = 0;
 static double mlf;
@@ -353,7 +353,7 @@ void SetupLogTable()
 		g_log_calculation = 1;   /* turn it on */
 		for (prev = 0; prev <= (unsigned long)g_max_log_table_size; prev++)
 		{
-			g_log_table[prev] = (BYTE)logtablecalc(long(prev));
+			g_log_table[prev] = BYTE(logtablecalc(long(prev)));
 		}
 		g_log_calculation = 0;   /* turn it off, again */
 		return;
@@ -386,7 +386,7 @@ void SetupLogTable()
 			}
 			while (prev <= limit)
 			{
-				g_log_table[prev++] = (BYTE)n;
+				g_log_table[prev++] = BYTE(n);
 			}
 		}
 	}
@@ -417,7 +417,7 @@ void SetupLogTable()
 			}
 			while (prev <= limit)
 			{
-				g_log_table[prev++] = (BYTE)n;
+				g_log_table[prev++] = BYTE(n);
 			}
 		}
 	}
