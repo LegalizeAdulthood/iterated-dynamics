@@ -1105,7 +1105,7 @@ void goodbye()                  /* we done.  Bail out */
 	}
 	if (g_evolve_handle != NULL)
 	{
-		free(g_evolve_handle);
+		delete g_evolve_handle;
 	}
 	release_parameter_box();
 	history_free();

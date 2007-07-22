@@ -102,7 +102,7 @@ static void julman()
 #endif
 
 bool g_from_text_flag = false;         /* = 1 if we're in graphics mode */
-void *g_evolve_handle = NULL;
+evolution_info *g_evolve_handle = NULL;
 char g_standard_calculation_mode_old;
 void (*g_out_line_cleanup)();
 
@@ -521,7 +521,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 						g_view_window = true;
 					}
 					ecount       = resume_e_info.ecount;
-					free(g_evolve_handle);  /* We're done with it, release it. */
+					delete g_evolve_handle;  /* We're done with it, release it. */
 					g_evolve_handle = NULL;
 				}
 				else
@@ -575,7 +575,7 @@ done:
 				{	/* interrupted screen generation, save info */
 					if (g_evolve_handle == NULL)
 					{
-						g_evolve_handle = malloc(sizeof(resume_e_info));
+						g_evolve_handle = new evolution_info;
 					}
 					resume_e_info.parameter_range_x     = g_parameter_range_x;
 					resume_e_info.parameter_range_y     = g_parameter_range_y;
