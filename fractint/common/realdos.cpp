@@ -170,7 +170,7 @@ void free_temp_message()
 {
 	if (s_temp_text_save != NULL)
 	{
-		free(s_temp_text_save);
+		delete[] s_temp_text_save;
 		s_temp_text_save = NULL;
 	}
 }
@@ -221,7 +221,7 @@ int show_temp_message(char *msgparm)
 	g_sx_offset = g_sy_offset = 0;
 	if (s_temp_text_save == NULL) /* only save screen first time called */
 	{
-		s_temp_text_save = (BYTE *) malloc(s_text_x_dots*s_text_y_dots);
+		s_temp_text_save = new BYTE[s_text_x_dots*s_text_y_dots];
 		if (s_temp_text_save == NULL)
 		{
 			return -1; /* sorry, message not displayed */
@@ -260,7 +260,7 @@ void clear_temp_message()
 		}
 		if (!g_using_jiim)  /* jiim frees memory with free_temp_message() */
 		{
-			free(s_temp_text_save);
+			delete[] s_temp_text_save;
 			s_temp_text_save = NULL;
 		}
 		g_sx_offset = save_sxoffs;
