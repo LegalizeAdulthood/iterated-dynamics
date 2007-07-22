@@ -1096,7 +1096,7 @@ void goodbye()                  /* we done.  Bail out */
 	line_3d_free();
 	if (g_map_dac_box)
 	{
-		free(g_map_dac_box);
+		delete[] g_map_dac_box;
 		g_map_dac_box = NULL;
 	}
 	if (g_resume_info != NULL)

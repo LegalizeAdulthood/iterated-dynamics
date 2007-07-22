@@ -79,7 +79,7 @@ int set_color_palette_name(char *fn)
 	}
 	if (g_map_dac_box == NULL)
 	{
-		g_map_dac_box = (BYTE *) malloc(256*3*sizeof(BYTE));
+		g_map_dac_box = new BYTE[256*3];
 		if (g_map_dac_box == NULL)
 		{
 			stop_message(0, "Insufficient memory for color map.");
