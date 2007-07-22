@@ -1975,7 +1975,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_outside == COLORMODE_INVERSE_TANGENT)          /* "atan" */
 		{
-			g_color_iter = (long)fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
+			g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
 		}
 		else if (g_outside == COLORMODE_FLOAT_MODULUS)
 		{
@@ -1983,7 +1983,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_outside == COLORMODE_TOTAL_DISTANCE)
 		{
-			g_color_iter = (long) total_distance;
+			g_color_iter = long(total_distance);
 		}
 
 		/* eliminate negative colors & wrap arounds */
@@ -2022,11 +2022,11 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		{
 			if (g_old_demm_colors) /* this one is needed for old color scheme */
 			{
-				g_color_iter = (long)sqrt(sqrt(dist)/s_dem_width + 1);
+				g_color_iter = long(sqrt(sqrt(dist)/s_dem_width + 1));
 			}
 			else if (g_use_old_distance_test)
 			{
-				g_color_iter = (long)sqrt(dist/s_dem_width + 1);
+				g_color_iter = long(sqrt(dist/s_dem_width + 1));
 			}
 			else
 			{
@@ -2129,7 +2129,7 @@ plot_inside: /* we're "inside" */
 				g_new_z.x = (double(g_new_z_l.x))/g_fudge;
 				g_new_z.y = (double(g_new_z_l.y))/g_fudge;
 			}
-			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
+			g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
 		}
 		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60)
 		{

@@ -161,7 +161,7 @@ int julibrot_setup()
 		s_width = long(g_width_fp*s_fg16);
 		s_dist = long(g_screen_distance_fp*s_fg16);
 		s_eyes = long(g_eyes_fp*s_fg16);
-		s_br_ratio = (long) s_fg16;
+		s_br_ratio = long(s_fg16);
 		s_dmx = (mxmax - s_m_x_min)/g_z_dots;
 		s_dmy = (mymax - s_m_y_min)/g_z_dots;
 		g_long_parameter = &s_jbc;

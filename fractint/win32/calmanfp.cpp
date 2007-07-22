@@ -220,11 +220,11 @@ over_bailout_87:
 		/* special_outside */
 		if (g_outside == COLORMODE_REAL)
 		{
-			g_color_iter += (long) g_new_z.x + 7;
+			g_color_iter += long(g_new_z.x + 7);
 		}
 		else if (g_outside == COLORMODE_IMAGINARY)
 		{
-			g_color_iter += (long) g_new_z.y + 7;
+			g_color_iter += long(g_new_z.y + 7);
 		}
 		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y != 0.0)
 		{
@@ -236,7 +236,7 @@ over_bailout_87:
 		}
 		else if (g_outside == COLORMODE_INVERSE_TANGENT)
 		{
-			g_color_iter = (long) fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi);
+			g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
 		}
 		/* check_color */
 		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)

@@ -1055,9 +1055,9 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 		case 'm': f = lsysi_draw_m;    break;
 		case 'g': f = drawg;           break;
 		case 'f': f = lsysi_draw_f;    break;
-		case 'c': f = lsysi_draw_c;    num = (long) get_number(&s);    break;
-		case '<': f = lsysi_draw_lt;   num = (long) get_number(&s);    break;
-		case '>': f = lsysi_draw_gt;   num = (long) get_number(&s);    break;
+		case 'c': f = lsysi_draw_c;    num = long(get_number(&s));    break;
+		case '<': f = lsysi_draw_lt;   num = long(get_number(&s));    break;
+		case '>': f = lsysi_draw_gt;   num = long(get_number(&s));    break;
 		case '[': num = 1;        break;
 		case ']': num = 2;        break;
 		default:

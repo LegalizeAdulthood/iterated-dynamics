@@ -370,7 +370,7 @@ int orbit_3d_setup()
 		switch (g_major_method)
 		{
 		case MAJORMETHOD_BREADTH_FIRST:
-			if (Init_Queue((long)32*1024) == 0)
+			if (Init_Queue(32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
 				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
@@ -380,7 +380,7 @@ int orbit_3d_setup()
 			EnQueueLong((g_fudge - Sqrt.x)/2, -Sqrt.y/2);
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:
-			if (Init_Queue((long)32*1024) == 0)
+			if (Init_Queue(32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
 				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
@@ -562,7 +562,7 @@ int orbit_3d_setup_fp()
 		switch (g_major_method)
 		{
 		case MAJORMETHOD_BREADTH_FIRST:
-			if (Init_Queue((long)32*1024) == 0)
+			if (Init_Queue(32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
 				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
@@ -572,7 +572,7 @@ int orbit_3d_setup_fp()
 			EnQueueFloat(float((1 - Sqrt.x)/2), float(-Sqrt.y/2));
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:                      /* depth first (choose direction) */
-			if (Init_Queue((long)32*1024) == 0)
+			if (Init_Queue(32*1024) == 0)
 			{ /* can't get queue memory: fall back to random walk */
 				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
@@ -1530,7 +1530,7 @@ int orbit_2d_fp()
 			oldcol = col;
 			oldrow = row;
 		}
-		else if ((long) abs(row) + (long) abs(col) > BAD_PIXEL) /* sanity check */
+		else if (long(abs(row)) + long(abs(col)) > BAD_PIXEL) /* sanity check */
 		{
 			return ret;
 		}
@@ -1650,7 +1650,7 @@ int orbit_2d()
 			oldrow = row;
 			start = false;
 		}
-		else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
+		else if (long(abs(row)) + long(abs(col)) > BAD_PIXEL) /* sanity check */
 		{
 			return ret;
 		}
@@ -2087,7 +2087,7 @@ int dynamic_2d_fp()
 				oldcol = col;
 				oldrow = row;
 			}
-			else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
+			else if (long(abs(row)) + long(abs(col)) > BAD_PIXEL) /* sanity check */
 			{
 				return ret;
 			}
@@ -2499,7 +2499,7 @@ static int ifs_2d()
 
 	srand(1);
 	bool color_method = (g_parameters[0] != 0);
-	localifs = (long *) malloc(g_num_affine*IFSPARM*sizeof(long));
+	localifs = static_cast<long *>(malloc(g_num_affine*IFSPARM*sizeof(long)));
 	if (localifs == NULL)
 	{
 		stop_message(0, g_insufficient_ifs_memory);
@@ -2571,7 +2571,7 @@ static int ifs_2d()
 				(*g_plot_color)(col, row, color);
 			}
 		}
-		else if ((long)abs(row) + (long)abs(col) > BAD_PIXEL) /* sanity check */
+		else if (long(abs(row)) + long(abs(col)) > BAD_PIXEL) /* sanity check */
 		{
 				return ret;
 		}
@@ -2606,7 +2606,7 @@ static int ifs_3d_long()
 	threed_vt_inf inf;
 	srand(1);
 	bool color_method = (g_parameters[0] != 0);
-	localifs = (long *) malloc(g_num_affine*IFS3DPARM*sizeof(long));
+	localifs = static_cast<long *>(malloc(g_num_affine*IFS3DPARM*sizeof(long)));
 	if (localifs == NULL)
 	{
 		stop_message(0, g_insufficient_ifs_memory);
@@ -2681,7 +2681,7 @@ static int ifs_3d_long()
 
 		if (threed_view_trans(&inf))
 		{
-			if ((long)abs(inf.row) + (long)abs(inf.col) > BAD_PIXEL) /* sanity check */
+			if (long(abs(inf.row)) + long(abs(inf.col)) > BAD_PIXEL) /* sanity check */
 			{
 				return ret;
 			}
@@ -2927,7 +2927,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 	if (inf->col < 0 || inf->col >= g_x_dots || inf->row < 0 || inf->row >= g_y_dots)
 	{
 		inf->col = inf->row =
-			((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
+			(long(abs(inf->col)) + long(abs(inf->row)) > BAD_PIXEL)
 			? -2 : -1;
 	}
 	if (s_real_time)
@@ -2943,7 +2943,7 @@ static int threed_view_trans(threed_vt_inf *inf)
 		if (inf->col1 < 0 || inf->col1 >= g_x_dots || inf->row1 < 0 || inf->row1 >= g_y_dots)
 		{
 			inf->col1 = inf->row1 =
-				((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
+				(long(abs(inf->col1)) + long(abs(inf->row1)) > BAD_PIXEL)
 				? -2 : -1;
 		}
 	}
@@ -3042,7 +3042,7 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 	if (inf->col < 0 || inf->col >= g_x_dots || inf->row < 0 || inf->row >= g_y_dots)
 	{
 		inf->col = inf->row =
-			((long)abs(inf->col) + (long)abs(inf->row) > BAD_PIXEL)
+			(long(abs(inf->col)) + long(abs(inf->row)) > BAD_PIXEL)
 			? -2 : -1;
 	}
 	if (s_real_time)
@@ -3054,7 +3054,7 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 		if (inf->col1 < 0 || inf->col1 >= g_x_dots || inf->row1 < 0 || inf->row1 >= g_y_dots)
 		{
 			inf->col1 = inf->row1 =
-				((long)abs(inf->col1) + (long)abs(inf->row1) > BAD_PIXEL)
+				(long(abs(inf->col1)) + long(abs(inf->row1)) > BAD_PIXEL)
 				? -2 : -1;
 		}
 	}

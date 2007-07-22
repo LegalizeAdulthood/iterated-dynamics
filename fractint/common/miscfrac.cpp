@@ -153,7 +153,7 @@ static void _fastcall subdivide(int x1, int y1, int x2, int y2);
 static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur);
 static void verhulst();
 static void bifurcation_period_init();
-static int _fastcall bifurcation_periodic(long);
+static int _fastcall bifurcation_periodic(long time);
 static void set_cellular_palette();
 static int lyapunov_cycles(long, double, double);
 

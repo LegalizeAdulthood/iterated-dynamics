@@ -444,7 +444,7 @@ long logtablecalc(long citer)
 	}
 	if (g_log_table && !g_log_calculation)
 	{
-		return g_log_table[(long)min(citer, g_max_log_table_size)];
+		return g_log_table[min(citer, g_max_log_table_size)];
 	}
 
 	if (g_log_palette_mode > LOGPALETTE_NONE)  /* new log function */
