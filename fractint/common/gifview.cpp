@@ -71,7 +71,7 @@ int get_bytes(BYTE *destination, int how_many)
 BYTE g_decoder_line[MAX_PIXELS + 1]; /* write-line routines use this */
 #define DECODERLINE_WIDTH MAX_PIXELS
 
-static char *ditherbuf = NULL;
+static char *s_dither_buffer = NULL;
 
 /* Main entry decoder */
 int gifview()
@@ -351,10 +351,10 @@ int gifview()
 		disk_video_status(1, "");
 	}
 
-	if (ditherbuf != NULL)  /* we're done, free dither memory */
+	if (s_dither_buffer != NULL)  /* we're done, free dither memory */
 	{
-		free(ditherbuf);
-		ditherbuf = NULL;
+		delete[] s_dither_buffer;
+		s_dither_buffer = NULL;
 	}
 
 	return status;
@@ -389,11 +389,11 @@ static int out_line_dither(BYTE *pixels, int linelen)
 	int nexterr;
 	int brt;
 	int err;
-	if (ditherbuf == NULL)
+	if (s_dither_buffer == NULL)
 	{
-		ditherbuf = (char *) malloc(linelen + 1);
+		s_dither_buffer = new char[linelen + 1];
 	}
-	memset(ditherbuf, 0, linelen + 1);
+	memset(s_dither_buffer, 0, linelen + 1);
 
 	nexterr = (rand()&0x1f)-16;
 	for (i = 0; i < linelen; i++)
@@ -413,9 +413,9 @@ static int out_line_dither(BYTE *pixels, int linelen)
 			pixels[i] = 0;
 			err = brt;
 		}
-		nexterr = ditherbuf[i + 1] + err/3;
-		ditherbuf[i] = (char)(err/3);
-		ditherbuf[i + 1] = (char)(err/3);
+		nexterr = s_dither_buffer[i + 1] + err/3;
+		s_dither_buffer[i] = (char)(err/3);
+		s_dither_buffer[i + 1] = (char)(err/3);
 	}
 	return out_line(pixels, linelen);
 }

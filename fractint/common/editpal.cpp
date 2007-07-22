@@ -789,23 +789,23 @@ static move_box *move_box_new(int x, int y, int csize, int base_width, int base_
 	me->base_depth  = base_depth;
 	me->moved       = false;
 	me->should_hide = false;
-	me->t           = (char *) malloc(g_screen_width);
-	me->b           = (char *) malloc(g_screen_width);
-	me->l           = (char *) malloc(g_screen_height);
-	me->r           = (char *) malloc(g_screen_height);
+	me->t           = new char[g_screen_width];
+	me->b           = new char[g_screen_width];
+	me->l           = new char[g_screen_height];
+	me->r           = new char[g_screen_height];
 
 	return me;
 }
 
 static void move_box_destroy(move_box *me)
 {
-	delete me->t;
-	me->t = 0;;
-	delete me->b;
+	delete[] me->t;
+	me->t = 0;
+	delete[] me->b;
 	me->b = 0;
-	delete me->l;
+	delete[] me->l;
 	me->l = 0;
-	delete me->r;
+	delete[] me->r;
 	me->r = 0;
 	delete me;
 	me = 0;
@@ -1634,10 +1634,7 @@ struct tag_pal_table
 	int           stored_at;
 	FILE         *file;
 	char     *memory;
-
 	PALENTRY *save_pal[8];
-
-
 	PALENTRY      fs_color;
 	int top;
 	int bottom; /* top and bottom colours of freestyle band */
@@ -2080,25 +2077,21 @@ static bool pal_table_set_current(pal_table *me, int which, int curr)
 
 static bool pal_table_memory_alloc(pal_table *me, long size)
 {
-	char *temp;
-
 	if (DEBUGMODE_USE_DISK == g_debug_mode)
 	{
 		me->stored_at = NOWHERE;
 		return false;   /* can't do it */
 	}
-	temp = (char *)malloc(FAR_RESERVE);   /* minimum free space */
 
+	char *temp = new char[FAR_RESERVE];   /* minimum free space */
 	if (temp == NULL)
 	{
 		me->stored_at = NOWHERE;
 		return false;   /* can't do it */
 	}
+	delete[] temp;
 
-	me->memory = (char *)malloc(size);
-
-	free(temp);
-
+	me->memory = new char[size];
 	if (me->memory == NULL)
 	{
 		me->stored_at = NOWHERE;
@@ -2133,7 +2126,7 @@ static void pal_table_save_rect(pal_table *me)
 	case MEMORY:
 		if (me->memory != NULL)
 		{
-			free(me->memory);
+			delete[] me->memory;
 		}
 		me->memory = NULL;
 		break;
@@ -3108,30 +3101,9 @@ static pal_table *pal_table_new()
 	pal_table *me = new pal_table;
 	int           csize;
 	int           ctr;
-	PALENTRY *mem_block;
-	void     *temp;
-
-	temp = (void *)malloc(FAR_RESERVE);
-
-	if (temp != NULL)
+	for (ctr = 0; ctr < 8; ctr++)
 	{
-		mem_block = (PALENTRY *)malloc(256L*3*8);
-
-		if (mem_block == NULL)
-		{
-			for (ctr = 0; ctr < 8; ctr++)
-			{
-				me->save_pal[ctr] = NULL;
-			}
-		}
-		else
-		{
-			for (ctr = 0; ctr < 8; ctr++)
-			{
-				me->save_pal[ctr] = mem_block + (256*ctr);
-			}
-		}
-		free(temp);
+		me->save_pal[ctr] = new PALENTRY[256];
 	}
 
 	me->rgb[0] = rgb_editor_new(0, 0, pal_table_other_key,
@@ -3220,28 +3192,32 @@ static void pal_table_hide(pal_table *me, rgb_editor *rgb, bool hidden)
 
 
 static void pal_table_destroy(pal_table *me)
-	{
+{
 
 	if (me->file != NULL)
-		{
+	{
 		fclose(me->file);
 		dir_remove(g_temp_dir, g_screen_file);
-		}
+	}
 
 	if (me->undo_file != NULL)
-		{
+	{
 		fclose(me->undo_file);
 		dir_remove(g_temp_dir, s_undo_file);
-		}
+	}
 
 	if (me->memory != NULL)
 	{
-		free(me->memory);
+		delete[] me->memory;
 	}
 
-	if (me->save_pal[0] != NULL)
+	for (int i = 0; i < 8; i++)
 	{
-		free((BYTE *)me->save_pal[0]);
+		if (me->save_pal[i])
+		{
+			delete[] me->save_pal[i];
+			me->save_pal[i] = 0;
+		}
 	}
 
 	rgb_editor_destroy(me->rgb[0]);
@@ -3249,17 +3225,16 @@ static void pal_table_destroy(pal_table *me)
 	move_box_destroy(me->movebox);
 	delete me;
 	me = 0;
-	}
+}
 
 
 static void pal_table_process(pal_table *me)
 {
-	int ctr;
-
 	get_pal_range(0, g_colors, me->pal);
 
 	/* Make sure all palette entries are 0-COLOR_CHANNEL_MAX */
 
+	int ctr;
 	for (ctr = 0; ctr < 768; ctr++)
 	{
 		((char *)me->pal)[ctr] &= COLOR_CHANNEL_MAX;
