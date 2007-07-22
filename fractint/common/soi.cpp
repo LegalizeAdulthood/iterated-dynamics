@@ -317,7 +317,7 @@ long iteration(LDBL cr, LDBL ci,
 		d = mag;
 #endif
 		FREXP(d, &exponent);
-		return g_max_iteration + offset - (((iter - 1) << 3) + (long) adjust[exponent >> 3]);
+		return g_max_iteration + offset - (((iter - 1) << 3) + long(adjust[exponent >> 3]));
 	}
 }
 

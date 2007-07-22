@@ -381,7 +381,7 @@ int diffusion_scan()
 
 void diffusion_get_calculation_time(char *msg)
 {
-	get_calculation_time(msg, (long)(g_calculation_time*((s_diffusion_limit*1.0)/s_diffusion_counter)));
+	get_calculation_time(msg, long(g_calculation_time*((s_diffusion_limit*1.0)/s_diffusion_counter)));
 }
 
 void diffusion_get_status(char *msg)

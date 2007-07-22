@@ -51,7 +51,7 @@
 
 /* frothy basin type */
 #define FROTH_BITSHIFT      28
-#define FROTH_D_TO_L(x)     ((long)((x)*(1L << FROTH_BITSHIFT)))
+#define FROTH_D_TO_L(x)     (long((x)*(1L << FROTH_BITSHIFT)))
 #define FROTH_CLOSE         1e-6      /* seems like a good value */
 #define FROTH_LCLOSE        FROTH_D_TO_L(FROTH_CLOSE)
 #define SQRT3               1.732050807568877193
@@ -990,7 +990,7 @@ int diffusion()
 			break;
 		case DIFFUSION_SQUARE: /* Decrease the radius where points are released to stay away
 					from the fractal.  It might be decreased by 1 or 2 */
-			r = sqr((float)x-g_x_dots/2) + sqr((float)y-g_y_dots/2);
+			r = sqr(float(x)-g_x_dots/2) + sqr(float(y)-g_y_dots/2);
 			if (r <= border*border)
 			{
 				return 0;
@@ -1059,7 +1059,7 @@ int bifurcation()
 		return -1;
 	}
 
-	s_pi_l = (long)(MathUtil::Pi*g_fudge);
+	s_pi_l = long(MathUtil::Pi*g_fudge);
 
 	for (row = 0; row <= g_y_stop; row++) /* should be g_y_stop */
 	{
@@ -1080,7 +1080,7 @@ int bifurcation()
 		}
 	}
 
-	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULT_FILTER : (long)g_parameter.x;
+	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULT_FILTER : long(g_parameter.x);
 	s_half_time_check = false;
 	if (g_periodicity_check && (unsigned long)g_max_iteration < s_filter_cycles)
 	{
@@ -1150,7 +1150,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 
 	if (g_integer_fractal)
 	{
-		s_population_l = (g_parameter.y == 0) ? (long)(SEED*g_fudge) : (long)(g_parameter.y*g_fudge);
+		s_population_l = (g_parameter.y == 0) ? long(SEED*g_fudge) : long(g_parameter.y*g_fudge);
 	}
 	else
 	{
@@ -1425,7 +1425,7 @@ int bifurcation_may()
 int bifurcation_may_setup()
 {
 
-	s_beta = (long)g_parameters[2];
+	s_beta = long(g_parameters[2]);
 	if (s_beta < 2)
 	{
 		s_beta = 2;
@@ -1564,14 +1564,14 @@ int lyapunov_setup()
 	long i;
 	int t;
 
-	s_filter_cycles = (long)g_parameters[2];
+	s_filter_cycles = long(g_parameters[2]);
 	if (s_filter_cycles == 0)
 	{
 		s_filter_cycles = g_max_iteration/2;
 	}
 	s_lyapunov_length = 1;
 
-	i = (long)g_parameters[0];
+	i = long(g_parameters[0]);
 #if !defined(XFRACT)
 	if (g_save_release < 1732) /* make it a short to reproduce prior stuff */
 	{
@@ -2400,8 +2400,8 @@ int froth_calc()   /* per pixel 1/2/g, called with row & col set */
 		if (g_invert)
 		{
 			invert_z(&g_temp_z);
-			g_old_z_l.x = (long)(g_temp_z.x*g_fudge);
-			g_old_z_l.y = (long)(g_temp_z.y*g_fudge);
+			g_old_z_l.x = long(g_temp_z.x*g_fudge);
+			g_old_z_l.y = long(g_temp_z.y*g_fudge);
 		}
 		else
 		{

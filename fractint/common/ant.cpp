@@ -78,7 +78,7 @@ private:
 	/* Generate Random Number 0 <= r < n */
 	static int random_number(long n)
 	{
-		return int(((long) rand()*n) >> 15);
+		return int((long(rand())*n) >> 15);
 	}
 };
 
@@ -519,7 +519,7 @@ int Ant::compute()
 	initialize_increments();
 
 	HelpModeSaver saved_help(ANTCOMMANDS);
-	maxpts = (long) g_parameters[1];
+	maxpts = long(g_parameters[1]);
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
 	sprintf(m_rule, "%.17g", g_parameters[0]);

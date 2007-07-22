@@ -328,7 +328,7 @@ int orbit_3d_setup()
 		}
 		s_l_b =  long(g_parameters[1]*g_fudge);    /* stepsize */
 		s_l_c =  long(g_parameters[2]*g_fudge);    /* stop */
-		s_l_d =  (long) g_parameters[3];
+		s_l_d =  long(g_parameters[3]);
 		s_t = int(s_l_d);     /* points per orbit */
 
 		s_l_sinx = long(sin(s_a)*g_fudge);
@@ -509,7 +509,7 @@ int orbit_3d_setup_fp()
 		}
 		s_b =  g_parameters[1];    /* stepsize */
 		s_c =  g_parameters[2];    /* stop */
-		s_l_d =  (long) g_parameters[3];
+		s_l_d =  long(g_parameters[3]);
 		s_t = int(s_l_d);     /* points per orbit */
 		g_sin_x = sin(s_a);
 		g_cos_x = cos(s_a);
@@ -739,8 +739,8 @@ int Minverse_julia_orbit()
 		{
 			g_plot_color_put_color(newcol, newrow, color + 1);
 			/* g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy); */
-			EnQueueFloat((float)g_new_z.x, (float)g_new_z.y);
-			EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
+			EnQueueFloat(float(g_new_z.x), float(g_new_z.y));
+			EnQueueFloat(float(-g_new_z.x), float(-g_new_z.y));
 		}
 		break;
 	case MAJORMETHOD_DEPTH_FIRST:
@@ -752,24 +752,24 @@ int Minverse_julia_orbit()
 			{
 				if (QueueFullAlmost())
 				{
-					PushFloat((float)-g_new_z.x, (float)-g_new_z.y);
+					PushFloat(float(-g_new_z.x), float(-g_new_z.y));
 				}
 				else
 				{
-					PushFloat((float)g_new_z.x, (float)g_new_z.y);
-					PushFloat((float)-g_new_z.x, (float)-g_new_z.y);
+					PushFloat(float(g_new_z.x), float(g_new_z.y));
+					PushFloat(float(-g_new_z.x), float(-g_new_z.y));
 				}
 			}
 			else
 			{
 				if (QueueFullAlmost())
 				{
-					PushFloat((float)g_new_z.x, (float)g_new_z.y);
+					PushFloat(float(g_new_z.x), float(g_new_z.y));
 				}
 				else
 				{
-					PushFloat((float)-g_new_z.x, (float)-g_new_z.y);
-					PushFloat((float)g_new_z.x, (float)g_new_z.y);
+					PushFloat(float(-g_new_z.x), float(-g_new_z.y));
+					PushFloat(float(g_new_z.x), float(g_new_z.y));
 				}
 			}
 		}

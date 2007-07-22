@@ -187,7 +187,7 @@ void ZoomSaver::save()
 {
 	if (g_box_count)  /* save zoombox stuff in mem before encode (mem reused) */
 	{
-		m_save_zoom = (char *)malloc((long)(5*g_box_count));
+		m_save_zoom = (char *)malloc(long(5*g_box_count));
 		if (m_save_zoom == NULL)
 		{
 			clear_zoom_box(); /* not enuf mem so clear the box */

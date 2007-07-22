@@ -230,7 +230,7 @@ static fractint_event keyboard_event(int key)
 */
 long divide(long x, long y, int n)
 {
-	return long(((float) x)/((float) y)*float(1 << n));
+	return long((float(x))/(float(y))*float(1 << n));
 }
 
 /*
@@ -253,7 +253,7 @@ long divide(long x, long y, int n)
 long multiply(long x, long y, int n)
 {
 	register long l;
-	l = long(((float) x)*((float) y)/float(1 << n));
+	l = long((float(x))*(float(y))/float(1 << n));
 	if (l == 0x7fffffff)
 	{
 		g_overflow = true;
@@ -415,7 +415,7 @@ int fr_find_next()
 */
 long read_ticker()
 {
-	return (long) GetTickCount();
+	return long(GetTickCount());
 }
 
 /*

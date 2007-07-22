@@ -213,9 +213,9 @@ long lsqrt(long f)
 
 	if (a == 0)                                   /* one-time compute consts */
 	{
-		a = (long)(g_fudge*.41731);
-		b = (long)(g_fudge*.59016);
-		c = (long)(g_fudge*.7071067811);
+		a = long(g_fudge*.41731);
+		b = long(g_fudge*.59016);
+		c = long(g_fudge*.7071067811);
 	}
 
 	N  = 0;
@@ -255,12 +255,12 @@ ComplexL ComplexSqrtLong(long x, long y)
 #ifndef LONGSQRT
 	mag       = sqrt(sqrt((double(multiply(x, x, g_bit_shift)))/g_fudge +
 						(double(multiply(y, y, g_bit_shift)))/g_fudge));
-	maglong   = (long)(mag*g_fudge);
+	maglong   = long(mag*g_fudge);
 #else
 	maglong   = lsqrt(lsqrt(multiply(x, x, g_bit_shift) + multiply(y, y, g_bit_shift)));
 #endif
 	theta     = atan2(double(y)/g_fudge, double(x)/g_fudge)/2;
-	thetalong = (long)(theta*SinCosFudge);
+	thetalong = long(theta*SinCosFudge);
 	SinCos086(thetalong, &result.y, &result.x);
 	result.x  = multiply(result.x << (g_bit_shift - 16), maglong, g_bit_shift);
 	result.y  = multiply(result.y << (g_bit_shift - 16), maglong, g_bit_shift);
@@ -366,9 +366,9 @@ void SetupLogTable()
 		{
 			lf = g_max_log_table_size - 1;
 		}
-		Fg2Float((long)(g_max_log_table_size-lf), 0, m);
+		Fg2Float(long(g_max_log_table_size-lf), 0, m);
 		fLog14(m, m);
-		Fg2Float((long)(g_colors - (lf ? 2 : 1)), 0, c);
+		Fg2Float(long(g_colors - (lf ? 2 : 1)), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 		{
@@ -397,9 +397,9 @@ void SetupLogTable()
 		{
 			lf = g_max_log_table_size - 1;
 		}
-		Fg2Float((long)(g_max_log_table_size-lf), 0, m);
+		Fg2Float(long(g_max_log_table_size-lf), 0, m);
 		fSqrt14(m, m);
-		Fg2Float((long)(g_colors-2), 0, c);
+		Fg2Float(long(g_colors-2), 0, c);
 		fDiv(m, c, m);
 		for (prev = 1; prev <= lf; prev++)
 		{
@@ -459,12 +459,12 @@ long logtablecalc(long citer)
 		}
 		else
 		{
-			ret = (long)(mlf*log(double(citer - lf))) + 1;
+			ret = long(mlf*log(double(citer - lf))) + 1;
 		}
 	}
 	else if (g_log_palette_mode == LOGPALETTE_OLD)  /* old log function */
 	{
-		ret = (citer == 0) ? 1 : (long)(mlf*log(static_cast<double>(citer))) + 1;
+		ret = (citer == 0) ? 1 : long(mlf*log(static_cast<double>(citer))) + 1;
 	}
 	else if (g_log_palette_mode <= -2)  /* sqrt function */
 	{
@@ -474,11 +474,11 @@ long logtablecalc(long citer)
 		}
 		else if ((unsigned long)(citer - lf) <= (unsigned long)(mlf*mlf))
 		{
-			ret = (long)(citer - lf + 1);
+			ret = long(citer - lf + 1);
 		}
 		else
 		{
-			ret = (long)(mlf*sqrt(static_cast<double>(citer - lf))) + 1;
+			ret = long(mlf*sqrt(static_cast<double>(citer - lf))) + 1;
 		}
 	}
 	return ret;

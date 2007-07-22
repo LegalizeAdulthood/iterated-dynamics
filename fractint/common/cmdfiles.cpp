@@ -1314,7 +1314,7 @@ static int max_iter_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_max_iteration = (long) context.floatval[0];
+	g_max_iteration = long(context.floatval[0]);
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 
@@ -2140,7 +2140,7 @@ static int bail_out_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_bail_out = (long)context.floatval[0];
+	g_bail_out = long(context.floatval[0]);
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 
@@ -2296,7 +2296,7 @@ static int log_map_arg(const cmd_context &context)
 	}
 	else
 	{
-		g_log_palette_mode = (long)context.floatval[0];
+		g_log_palette_mode = long(context.floatval[0]);
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
@@ -2423,7 +2423,7 @@ static int distance_test_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_user_distance_test = (long) context.floatval[0];
+	g_user_distance_test = long(context.floatval[0]);
 	g_distance_test_width = 71;
 	if (context.totparms > 1)
 	{

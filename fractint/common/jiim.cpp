@@ -963,8 +963,8 @@ void Jiim(int which)         /* called by fractint */
 			g_old_z.x = g_old_z.y = g_old_z_l.x = g_old_z_l.y = 0;
 			g_save_c.x = g_initial_z.x =  cr;
 			g_save_c.y = g_initial_z.y =  ci;
-			g_initial_z_l.x = (long)(g_initial_z.x*g_fudge);
-			g_initial_z_l.y = (long)(g_initial_z.y*g_fudge);
+			g_initial_z_l.x = long(g_initial_z.x*g_fudge);
+			g_initial_z_l.y = long(g_initial_z.y*g_fudge);
 
 			old_x = old_y = -1;
 			/* compute fixed points and use them as starting points of JIIM */
@@ -982,8 +982,8 @@ void Jiim(int which)         /* called by fractint */
 
 				ClearQueue();
 				maxhits = 1;
-				EnQueueFloat((float)f1.x, (float)f1.y);
-				EnQueueFloat((float)f2.x, (float)f2.y);
+				EnQueueFloat(float(f1.x), float(f1.y));
+				EnQueueFloat(float(f2.x), float(f2.y));
 			}
 			if (which == ORBIT)
 			{
@@ -1032,8 +1032,8 @@ void Jiim(int which)         /* called by fractint */
 						{
 							g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
 							g_new_z = ComplexSqrtFloat(g_new_z.x - cr, g_new_z.y - ci);
-							EnQueueFloat((float)g_new_z.x,  (float)g_new_z.y);
-							EnQueueFloat((float)-g_old_z.x, (float)-g_old_z.y);
+							EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
+							EnQueueFloat(float(-g_old_z.x), float(-g_old_z.y));
 						}
 						maxhits++;
 					}
@@ -1051,8 +1051,8 @@ void Jiim(int which)         /* called by fractint */
 				{
 					plot_color_clip(x, y, color + 1);
 					g_new_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
-					EnQueueFloat((float)g_new_z.x,  (float)g_new_z.y);
-					EnQueueFloat((float)-g_new_z.x, (float)-g_new_z.y);
+					EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
+					EnQueueFloat(float(-g_new_z.x), float(-g_new_z.y));
 				}
 			}
 			else

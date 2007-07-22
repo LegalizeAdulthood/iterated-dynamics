@@ -443,7 +443,7 @@ static int _fastcall append_rule(char *rule, int index)
 		;
 	}
 	j = int(strlen(rule)) + 1;
-	dst = (char *)malloc((long)(i + j));
+	dst = (char *)malloc(long(i + j));
 	if (dst == NULL)
 	{
 		return -1;

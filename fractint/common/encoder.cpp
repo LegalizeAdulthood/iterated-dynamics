@@ -1155,7 +1155,7 @@ static int compress(int rowlimit)
 					ent = codetab[i];
 					continue;
 				}
-				else if ((long)htab[i] < 0)      /* empty slot */
+				else if (long(htab[i]) < 0)      /* empty slot */
 				{
 					goto nomatch;
 				}
@@ -1176,7 +1176,7 @@ probe:
 					ent = codetab[i];
 					continue;
 				}
-				if ((long)htab[i] > 0)
+				if (long(htab[i]) > 0)
 				{
 					goto probe;
 				}
