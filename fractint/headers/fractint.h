@@ -1238,7 +1238,7 @@ struct ext_blk_ranges_info
 {
 	char got_data;
 	int length;
-	int *range_data;
+	short *range_data;
 };
 
 struct ext_blk_mp_info {

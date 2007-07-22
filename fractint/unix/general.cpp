@@ -283,13 +283,13 @@ void decode_fractal_info(struct fractal_info *info, int dir)
 
 	if (dir == 1)
 	{
-		buf = (unsigned char *)malloc(FRACTAL_INFO_SIZE);
+		buf = new unsigned char[FRACTAL_INFO_SIZE];
 		bufPtr = buf;
 		bcopy((char *)info, (char *)buf, FRACTAL_INFO_SIZE);
 	}
 	else
 	{
-		buf = (unsigned char *)malloc(sizeof(struct fractal_info));
+		buf = new unsigned char[sizeof(struct fractal_info)];
 		bufPtr = buf;
 		bcopy((char *)info, (char *)buf, sizeof(struct fractal_info));
 	}
@@ -445,7 +445,7 @@ void decode_fractal_info(struct fractal_info *info, int dir)
 		bcopy((char *)buf, (char *)info, FRACTAL_INFO_SIZE);
 	}
 
-	free(buf);
+	delete[] buf;
 }
 
 /*
@@ -746,13 +746,13 @@ void fix_ranges(int *ranges, int num, int dir)
 
 	if (dir == 1)
 	{
-		buf = (unsigned char *) malloc(num*2);
+		buf = new unsigned char[num*2];
 		bufPtr = buf;
 		bcopy((char *)ranges, (char *)buf, num*2);
 	}
 	else
 	{
-		buf = (unsigned char *) malloc(num*sizeof(int));
+		buf = new unsigned char[num*sizeof(int)];
 		bufPtr = buf;
 		bcopy((char *)ranges, (char *)buf, num*sizeof(int));
 	}
@@ -760,7 +760,7 @@ void fix_ranges(int *ranges, int num, int dir)
 	{
 		getInt(&ranges[i], &bufPtr, dir);
 	}
-	free(buf);
+	delete[] buf;
 }
 
 void decode_evolver_info(struct evolution_info *info, int dir)
@@ -771,13 +771,13 @@ void decode_evolver_info(struct evolution_info *info, int dir)
 
 	if (dir == 1)
 	{
-		buf = (unsigned char *)malloc(EVOLVER_INFO_SIZE);
+		buf = new unsigned char[EVOLVER_INFO_SIZE];
 		bufPtr = buf;
 		bcopy((char *)info, (char *)buf, EVOLVER_INFO_SIZE);
 	}
 	else
 	{
-		buf = (unsigned char *)malloc(sizeof(struct evolution_info));
+		buf = new unsigned char[sizeof(struct evolution_info)];
 		bufPtr = buf;
 		bcopy((char *)info, (char *)buf, sizeof(struct evolution_info));
 	}
@@ -819,7 +819,7 @@ void decode_evolver_info(struct evolution_info *info, int dir)
 		bcopy((char *)buf, (char *)info, EVOLVER_INFO_SIZE);
 	}
 
-	free(buf);
+	delete[] buf;
 }
 
 void decode_orbits_info(struct orbits_info *info, int dir)
@@ -830,13 +830,13 @@ void decode_orbits_info(struct orbits_info *info, int dir)
 
 	if (dir == 1)
 	{
-		buf = (unsigned char *)malloc(ORBITS_INFO_SIZE);
+		buf = new unsigned char[ORBITS_INFO_SIZE];
 		bufPtr = buf;
 		bcopy((char *)info, (char *)buf, ORBITS_INFO_SIZE);
 	}
 	else
 	{
-		buf = (unsigned char *)malloc(sizeof(struct orbits_info));
+		buf = new unsigned char[sizeof(struct orbits_info)];
 		bufPtr = buf;
 		bcopy((char *)info, (char *)buf, sizeof(struct orbits_info));
 	}
@@ -866,5 +866,5 @@ void decode_orbits_info(struct orbits_info *info, int dir)
 		bcopy((char *)buf, (char *)info, ORBITS_INFO_SIZE);
 	}
 
-	free(buf);
+	delete[] buf;
 }

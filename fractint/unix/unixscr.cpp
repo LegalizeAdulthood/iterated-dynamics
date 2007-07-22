@@ -855,9 +855,9 @@ int resizeWindow()
 		}
 		if (pixbuf != NULL)
 		{
-			free(pixbuf);
+			delete[] pixbuf;
 		}
-		pixbuf = (BYTE *) malloc(Xwinwidth *sizeof(BYTE));
+		pixbuf = new BYTE[Xwinwidth];
 		if (Ximage != NULL)
 		{
 			XDestroyImage(Ximage);
@@ -870,7 +870,7 @@ int resizeWindow()
 			UnixDone();
 			exit(-1);
 		}
-		Ximage->data = (char *) malloc(Ximage->bytes_per_line * Ximage->height);
+		Ximage->data = new char[Ximage->bytes_per_line*Ximage->height];
 		if (Ximage->data == NULL)
 		{
 			fprintf(stderr, "Malloc failed: %d\n", Ximage->bytes_per_line *
@@ -2426,7 +2426,7 @@ unsigned char *x_get_font()
 	XGCValues values;
 	GC font_gc;
 
-	fontPtr = (unsigned char *) malloc(128*8);
+	fontPtr = new unsigned char[128*8];
 	bzero(fontPtr, 128*8);
 
 	xlastcolor = -1;

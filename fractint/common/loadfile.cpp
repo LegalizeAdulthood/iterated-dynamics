@@ -496,7 +496,7 @@ static void got_multiple_precision_info(const fractal_info &read_info, struct ex
 		g_bf_math = BIGNUM;
 		init_bf_length(read_info.bflength);
 		memcpy((char *) g_escape_time_state.m_grid_bf.x_min(), mp_info.apm_data, mp_info.length);
-		free(mp_info.apm_data);
+		delete[] mp_info.apm_data;
 	}
 	else
 	{
@@ -654,7 +654,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_b
 		{
 			if (resume_info_blk.got_data == 1)
 			{
-				free(resume_info_blk.resume_data);
+				delete[] resume_info_blk.resume_data;
 				resume_info_blk.length = 0;
 			}
 			g_initial_adapter = -1;
@@ -959,7 +959,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					break;
 				case BLOCKTYPE_RESUME_INFO: /* resume info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					resume_info_blk->resume_data = (char *) malloc(data_len);
+					resume_info_blk->resume_data = new char[data_len];
 					if (resume_info_blk->resume_data == 0)
 					{
 						info->calculation_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
@@ -1003,18 +1003,18 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					break;
 				case BLOCKTYPE_RANGES_INFO: /* ranges info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					ranges_info->range_data = (int *)malloc(long(data_len));
+					ranges_info->range_data = new short[data_len/sizeof(short)];
 					if (ranges_info->range_data != NULL)
 					{
 						fseek(s_gif_file, long(-block_len), SEEK_CUR);
 						load_ext_blk((char *)ranges_info->range_data, data_len);
-						ranges_info->length = data_len/2;
+						ranges_info->length = data_len/sizeof(short);
 						ranges_info->got_data = 1; /* got data */
 					}
 					break;
 				case BLOCKTYPE_MP_INFO: /* extended precision parameters  */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					mp_info->apm_data = (char *)malloc(long(data_len));
+					mp_info->apm_data = new char[data_len];
 					if (mp_info->apm_data != NULL)
 					{
 						fseek(s_gif_file, long(-block_len), SEEK_CUR);

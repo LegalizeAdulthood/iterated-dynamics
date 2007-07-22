@@ -732,7 +732,7 @@ void stackscreen()
 			exit(1);
 		}
 
-		savescreen[i] = (BYTE *) malloc(sizeof(int *));
+		savescreen[i] = new BYTE[sizeof(int *)];
 		ptr = savescreen[i];
 		if (ptr)
 		{
@@ -762,7 +762,7 @@ void unstackscreen()
 	{
 		ptr = savescreen[screenctr];
 		restorecurses((WINDOW **)ptr);
-		free(ptr);
+		delete[] ptr;
 	}
 	else
 	{
@@ -779,7 +779,7 @@ void discardscreen()
 		if (savescreen[screenctr])
 		{
 #ifdef USE_XFRACT_STACK_FUNCTIONS
-			free(savescreen[screenctr]);
+			delete[] savescreen[screenctr];
 #endif
 		}
 	}

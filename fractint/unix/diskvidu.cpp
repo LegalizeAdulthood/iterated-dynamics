@@ -126,9 +126,9 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 
 	if (s_disk_data != NULL)
 	{
-	   free(s_disk_data);
+	   delete[] s_disk_data;
 	}
-	s_disk_data = (BYTE *) malloc(memorysize);
+	s_disk_data = new BYTE[memorysize];
 
 	bzero(s_disk_data, memorysize);
 
