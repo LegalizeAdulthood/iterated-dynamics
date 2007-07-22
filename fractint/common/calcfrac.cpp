@@ -2513,7 +2513,7 @@ static int _fastcall potential(double mag, long iterations)
 	if (iterations < g_max_iteration)
 	{
 		l_pot = iterations + 2;
-		pot = (float) l_pot;
+		pot = float(l_pot);
 		if (l_pot <= 0 || mag <= 1.0)
 		{
 			pot = 0.0f;
@@ -2523,7 +2523,7 @@ static int _fastcall potential(double mag, long iterations)
 			 /* pot = log(mag)/pow(2.0, double(pot)); */
 			if (l_pot < 120 && !g_float_flag) /* empirically determined limit of fShift */
 			{
-				f_mag = (float)mag;
+				f_mag = float(mag);
 				fLog14(f_mag, f_tmp); /* this SHOULD be non-negative */
 				fShift(f_tmp, (char)-l_pot, pot);
 			}
@@ -2544,7 +2544,7 @@ static int _fastcall potential(double mag, long iterations)
 		{
 			if (g_float_flag)
 			{
-				pot = (float)sqrt(double(pot));
+				pot = float(sqrt(double(pot)));
 			}
 			else
 			{
@@ -2564,11 +2564,11 @@ static int _fastcall potential(double mag, long iterations)
 	}
 	else if (g_inside >= 0)
 	{
-		pot = (float) g_inside;
+		pot = float(g_inside);
 	}
 	else /* inside < 0 implies inside = maxit, so use 1st pot param instead */
 	{
-		pot = (float)g_potential_parameter[0];
+		pot = float(g_potential_parameter[0]);
 	}
 
 	l_pot = long(pot)*256;

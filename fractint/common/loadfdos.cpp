@@ -426,7 +426,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	g_final_aspect_ratio = g_file_aspect_ratio;
 	if (g_final_aspect_ratio == 0) /* assume display correct */
 	{
-		g_final_aspect_ratio = (float) video_mode_aspect_ratio(g_file_x_dots, g_file_y_dots);
+		g_final_aspect_ratio = float(video_mode_aspect_ratio(g_file_x_dots, g_file_y_dots));
 	}
 	if (g_final_aspect_ratio >= g_screen_aspect_ratio-0.02
 		&& g_final_aspect_ratio <= g_screen_aspect_ratio + 0.02)
