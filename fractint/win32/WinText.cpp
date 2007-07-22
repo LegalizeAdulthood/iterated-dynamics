@@ -764,7 +764,7 @@ void WinText::clear()
 BYTE *WinText::screen_get()
 {
 	size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
-	BYTE *copy = (BYTE *) malloc(count*2);
+	BYTE *copy = new BYTE[count*2];
 	_ASSERTE(copy);
 	::memcpy(copy, m_chars, count);
 	::memcpy(copy + count, m_attrs, count);

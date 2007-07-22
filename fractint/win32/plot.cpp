@@ -70,12 +70,12 @@ void Plot::init_pixels()
 {
 	if (m_pixels != NULL)
 	{
-		::free(m_pixels);
+		delete[] m_pixels;
 		m_pixels = NULL;
 	}
 	if (m_saved_pixels != NULL)
 	{
-		::free(m_saved_pixels);
+		delete[] m_saved_pixels;
 		m_saved_pixels = NULL;
 	}
 	m_width = g_screen_width;
@@ -84,7 +84,7 @@ void Plot::init_pixels()
 	m_row_len = ((m_row_len + 3)/4)*4;
 	m_pixels_len = m_row_len*m_height;
 	_ASSERTE(m_pixels_len > 0);
-	m_pixels = (BYTE *) ::malloc(m_pixels_len);
+	m_pixels = new BYTE[m_pixels_len];
 	memset(m_pixels, 0, m_pixels_len);
 	m_dirty = false;
 	{
@@ -258,12 +258,12 @@ void Plot::terminate()
 {
 	if (m_pixels)
 	{
-		::free(m_pixels);
+		delete[] m_pixels;
 		m_pixels = NULL;
 	}
 	if (m_saved_pixels)
 	{
-		::free(m_saved_pixels);
+		delete[] m_saved_pixels;
 		m_saved_pixels = NULL;
 	}
 
@@ -500,7 +500,7 @@ void Plot::save_graphics()
 {
 	if (NULL == m_saved_pixels)
 	{
-		m_saved_pixels = (BYTE *) ::malloc(m_pixels_len);
+		m_saved_pixels = new BYTE[m_pixels_len];
 		::memset(m_saved_pixels, 0, m_pixels_len);
 	}
 	::memcpy(m_saved_pixels, m_pixels, m_pixels_len);

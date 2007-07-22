@@ -225,7 +225,7 @@ void Win32BaseDriver::terminate()
 	{
 		if (NULL != m_saved_screens[i])
 		{
-			free(m_saved_screens[i]);
+			delete[] m_saved_screens[i];
 			m_saved_screens[i] = NULL;
 		}
 	}
@@ -501,7 +501,7 @@ void Win32BaseDriver::unstack_screen()
 	{
 		/* unstack */
 		m_wintext.screen_set(m_saved_screens[m_screen_count]);
-		free(m_saved_screens[m_screen_count]);
+		delete[] m_saved_screens[m_screen_count];
 		m_saved_screens[m_screen_count] = NULL;
 		move_cursor(-1, -1);
 	}
@@ -518,7 +518,7 @@ void Win32BaseDriver::discard_screen()
 		/* unstack */
 		if (m_saved_screens[m_screen_count])
 		{
-			free(m_saved_screens[m_screen_count]);
+			delete[] m_saved_screens[m_screen_count];
 			m_saved_screens[m_screen_count] = NULL;
 		}
 		set_clear();
