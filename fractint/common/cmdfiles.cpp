@@ -424,7 +424,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_map_set = false;								/* no map= name active */
 	if (g_map_dac_box)
 	{
-		free(g_map_dac_box);
+		delete[] g_map_dac_box;
 		g_map_dac_box = NULL;
 	}
 

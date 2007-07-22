@@ -3783,13 +3783,13 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		}
 		if (s_symmetry_list[i].symmetry[0] == 0 && report_bad_symmetry)
 		{
-			char *msgbuf = (char *) malloc(int_strlen(error_messages(PE_INVALID_SYM_USING_NOSYM))
-							+ int_strlen(symmetry_buffer) + 6);
+			char *msgbuf = new char[int_strlen(error_messages(PE_INVALID_SYM_USING_NOSYM))
+							+ int_strlen(symmetry_buffer) + 6];
 			strcpy(msgbuf, error_messages(PE_INVALID_SYM_USING_NOSYM));
 			strcat(msgbuf, ":\n   ");
 			strcat(msgbuf, symmetry_buffer);
 			stop_message(STOPMSG_FIXED_FONT, msgbuf);
-			free(msgbuf);
+			delete[] msgbuf;
 		}
 	}
 	if (c != '{')
@@ -4283,24 +4283,13 @@ void const_list_st::display(const char *title) const
 	}
 }
 
-var_list_st *var_list_alloc()
-{
-	return (var_list_st *) malloc(sizeof(var_list_st));
-}
-
-
-const_list_st *const_list_alloc()
-{
-	return (const_list_st *) malloc(sizeof(const_list_st));
-}
-
 void Formula::init_var_list()
 {
 	var_list_st *temp, *p;
 	for (p = m_variable_list; p; p = temp)
 	{
 		temp = p->next_item;
-		free(p);
+		delete p;
 	}
 	m_variable_list = NULL;
 }
@@ -4312,13 +4301,13 @@ void Formula::init_const_lists()
 	for (p = m_complex_list; p; p = temp)
 	{
 		temp = p->next_item;
-		free(p);
+		delete p;
 	}
 	m_complex_list = NULL;
 	for (p = m_real_list; p; p = temp)
 	{
 		temp = p->next_item;
-		free(p);
+		delete p;
 	}
 	m_real_list = NULL;
 }
@@ -4327,7 +4316,7 @@ var_list_st *var_list_st::add(var_list_st *p, FormulaToken token)
 {
 	if (p == NULL)
 	{
-		p = var_list_alloc();
+		p = new var_list_st;
 		if (p == NULL)
 		{
 			return NULL;
@@ -4353,7 +4342,7 @@ const_list_st *const_list_st::add(const_list_st *p, FormulaToken token)
 {
 	if (p == NULL)
 	{
-		p = const_list_alloc();
+		p = new const_list_st;
 		if (p == NULL)
 		{
 			return NULL;
