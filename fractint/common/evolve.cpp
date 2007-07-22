@@ -76,7 +76,7 @@ struct ParameterBox
 	int *box_values;
 };
 static ParameterBox s_parameter_box = { 0, 0, 0};
-static int *s_image_box = NULL;
+static ParameterBox s_image_box = { 0, 0, 0 };
 static int s_image_box_count;
 
 struct parameter_history_info      /* for saving evolution data of center image */
@@ -811,11 +811,13 @@ void setup_parameter_box()
 
 	/* vidsize = (vidsize/g_grid_size) + 3; */ /* allocate less mem for smaller box */
 	/* taken out above as *all* pixels get plotted in small boxes */
-	if (!s_image_box)
+	if (!s_image_box.box_x)
 	{
-		s_image_box = (int *) malloc(vidsize);
+		s_image_box.box_x = new int[g_x_dots*2];
+		s_image_box.box_y = new int[g_y_dots*2];
+		s_image_box.box_values = new int[g_x_dots + g_y_dots + 2];
 	}
-	if (!s_image_box)
+	if (!s_image_box.box_x)
 	{
 		text_temp_message("Sorry...can't allocate mem for imagebox");
 	}
@@ -832,10 +834,14 @@ void release_parameter_box()
 		delete[] s_parameter_box.box_values;
 		s_parameter_box.box_values = 0;
 	}
-	if (s_image_box)
+	if (s_image_box.box_x)
 	{
-		free(s_image_box);
-		s_image_box = NULL;
+		delete[] s_image_box.box_x;
+		s_image_box.box_x = 0;
+		delete[] s_image_box.box_y;
+		s_image_box.box_y = 0;
+		delete[] s_image_box.box_values;
+		s_image_box.box_values = 0;
 	}
 }
 
@@ -937,9 +943,9 @@ void draw_parameter_box(int mode)
 	if (g_box_count)
 	{
 		/* stash normal zoombox pixels */
-		memcpy(&s_image_box[0], &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(&s_image_box[g_box_count], &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
-		memcpy(&s_image_box[g_box_count*2], &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
+		memcpy(s_image_box.box_x, &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
+		memcpy(s_image_box.box_y, &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
+		memcpy(s_image_box.box_values, &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
 		clear_box(); /* to avoid probs when one box overlaps the other */
 	}
 	if (g_parameter_box_count != 0)   /* clear last parmbox */
@@ -995,9 +1001,9 @@ void draw_parameter_box(int mode)
 	if (s_image_box_count)
 	{
 		/* and move back old values so that everything can proceed as normal */
-		memcpy(&g_box_x[0], &s_image_box[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(&g_box_y[0], &s_image_box[g_box_count], g_box_count*sizeof(g_box_y[0]));
-		memcpy(&g_box_values[0], &s_image_box[g_box_count*2], g_box_count*sizeof(g_box_values[0]));
+		memcpy(&g_box_x[0], s_image_box.box_x, g_box_count*sizeof(g_box_x[0]));
+		memcpy(&g_box_y[0], s_image_box.box_y, g_box_count*sizeof(g_box_y[0]));
+		memcpy(&g_box_values[0], s_image_box.box_values, g_box_count*sizeof(g_box_values[0]));
 		display_box();
 	}
 	return;
