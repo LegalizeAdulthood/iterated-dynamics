@@ -60,12 +60,12 @@ static long s_memory_offset = 0;
 static long s_old_memory_offset = 0;
 static BYTE *s_memory_buffer_ptr;
 
-static void _fastcall  find_load_cache(long);
-static struct cache *_fastcall  find_cache(long);
+static void _fastcall  find_load_cache(long offset);
+static struct cache *_fastcall  find_cache(long offset);
 static void  write_cache_lru();
 static void _fastcall  mem_putc(BYTE);
 static BYTE  mem_getc();
-static void _fastcall  mem_seek(long);
+static void _fastcall  mem_seek(long offset);
 
 int disk_start()
 {

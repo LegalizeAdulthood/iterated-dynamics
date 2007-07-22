@@ -601,7 +601,7 @@ void Jiim(int which)         /* called by fractint */
 	OKtoMIIM  = 0;
 	if (which == JIIM && !(g_debug_mode == DEBUGMODE_NO_MIIM_QUEUE))
 	{
-		OKtoMIIM = Init_Queue((long)8*1024); /* Queue Set-up Successful? */
+		OKtoMIIM = Init_Queue(8*1024); /* Queue Set-up Successful? */
 	}
 
 	maxhits = 1;

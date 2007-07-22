@@ -898,7 +898,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 		while (offset < fractinf_len + 513)  /* allow 512 garbage at eof */
 		{
 			offset += 100; /* go back 100 bytes at a time */
-			fseek(s_gif_file, (long) -offset, SEEK_END);
+			fseek(s_gif_file, long(-offset), SEEK_END);
 			fread(tmpbuf, 1, 110, s_gif_file); /* read 10 extra for string compare */
 			for (int i = 0; i < 100; ++i)
 			{
@@ -966,7 +966,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					}
 					else
 					{
-						fseek(s_gif_file, (long) -block_len, SEEK_CUR);
+						fseek(s_gif_file, long(-block_len), SEEK_CUR);
 						load_ext_blk(resume_info_blk->resume_data, data_len);
 						resume_info_blk->length = data_len;
 						resume_info_blk->got_data = 1; /* got data */
@@ -975,7 +975,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 				case BLOCKTYPE_FORMULA_INFO: /* formula info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 					/* check data_len for backward compatibility */
-					fseek(s_gif_file, (long) -block_len, SEEK_CUR);
+					fseek(s_gif_file, long(-block_len), SEEK_CUR);
 					load_ext_blk((char *)&fload_info, data_len);
 					strcpy(formula_info->form_name, fload_info.form_name);
 					formula_info->length = data_len;
@@ -1006,7 +1006,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					ranges_info->range_data = (int *)malloc(long(data_len));
 					if (ranges_info->range_data != NULL)
 					{
-						fseek(s_gif_file, (long) -block_len, SEEK_CUR);
+						fseek(s_gif_file, long(-block_len), SEEK_CUR);
 						load_ext_blk((char *)ranges_info->range_data, data_len);
 						ranges_info->length = data_len/2;
 						ranges_info->got_data = 1; /* got data */
@@ -1017,7 +1017,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					mp_info->apm_data = (char *)malloc(long(data_len));
 					if (mp_info->apm_data != NULL)
 					{
-						fseek(s_gif_file, (long) -block_len, SEEK_CUR);
+						fseek(s_gif_file, long(-block_len), SEEK_CUR);
 						load_ext_blk(mp_info->apm_data, data_len);
 						mp_info->length = data_len;
 						mp_info->got_data = 1; /* got data */
@@ -1025,7 +1025,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					break;
 				case BLOCKTYPE_EVOLVER_INFO: /* evolver params */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					fseek(s_gif_file, (long) -block_len, SEEK_CUR);
+					fseek(s_gif_file, long(-block_len), SEEK_CUR);
 					load_ext_blk((char *)&eload_info, data_len);
 					/* XFRACT processing of doubles here */
 #ifdef XFRACT
@@ -1058,7 +1058,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					break;
 				case BLOCKTYPE_ORBITS_INFO: /* orbits parameters  */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					fseek(s_gif_file, (long) -block_len, SEEK_CUR);
+					fseek(s_gif_file, long(-block_len), SEEK_CUR);
 					load_ext_blk((char *)&oload_info, data_len);
 					/* XFRACT processing of doubles here */
 #ifdef XFRACT

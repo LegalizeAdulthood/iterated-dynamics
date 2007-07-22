@@ -270,7 +270,7 @@ static void init_bf_2()
 	startstack = ptr;
 
 	/* max stack offset from bnroot */
-	maxstack = (long) 0x10000l-(g_bf_length + 2)*22;
+	maxstack = long(0x10000l-(g_bf_length + 2)*22);
 
 	/* sanity check */
 	/* leave room for NUMVARS variables allocated from stack */
