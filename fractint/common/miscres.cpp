@@ -1330,7 +1330,7 @@ int ifs_load()                   /* read in IFS parameters */
 
 	if (g_ifs_definition)  /* release prior parms */
 	{
-		free((char *)g_ifs_definition);
+		delete[] g_ifs_definition;
 		g_ifs_definition = NULL;
 	}
 
@@ -1413,7 +1413,7 @@ int ifs_load()                   /* read in IFS parameters */
 	if (ret == 0)
 	{
 		g_num_affine = i/rowsize;
-		g_ifs_definition = (float *) malloc(long((NUMIFS + 1)*IFS3DPARM*sizeof(float)));
+		g_ifs_definition = new float[(NUMIFS + 1)*IFS3DPARM];
 		if (g_ifs_definition == NULL)
 		{
 			stop_message(0, g_insufficient_ifs_memory);
@@ -1423,6 +1423,7 @@ int ifs_load()                   /* read in IFS parameters */
 		{
 			for (i = 0; i < (NUMIFS + 1)*IFS3DPARM; ++i)
 			{
+				// TODO: eliminate memory aliasing
 				g_ifs_definition[i] = ((float *)g_text_stack)[i];
 			}
 		}

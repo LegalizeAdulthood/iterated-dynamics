@@ -99,7 +99,7 @@ static int s_curr_hist = 0;				/* current pos in history */
 /* these items alloc'ed in init_help... */
 static long      *s_topic_offset;        /* 4*s_num_topic */
 static LABEL     *s_label;               /* 4*s_num_label */
-static HIST      *s_hist;                /* 6*MAX_HIST (96 bytes) */
+static HIST      s_hist[MAX_HIST];                /* 6*MAX_HIST (96 bytes) */
 /* these items alloc'ed only while help is active... */
 static char       *s_buffer;           /* MAX_PAGE_SIZE (2048 bytes) */
 static LINK       *s_link_table;       /* 10*s_max_links */
@@ -806,9 +806,9 @@ int help(int action)
 		return 0;
 	}
 
-	s_buffer = (char *) malloc(long(MAX_PAGE_SIZE));
-	s_link_table = (LINK *) malloc(sizeof(LINK)*s_max_links);
-	s_page_table = (PAGE *) malloc(sizeof(PAGE)*s_max_pages);
+	s_buffer = new char[MAX_PAGE_SIZE];
+	s_link_table = new LINK[s_max_links];
+	s_page_table = new PAGE[s_max_pages];
 
 	if ((s_buffer == NULL) || (NULL == s_link_table) || (NULL == s_page_table))
 	{
@@ -930,9 +930,9 @@ int help(int action)
 	}
 	while (action != ACTION_QUIT);
 
-	free(s_buffer);
-	free(s_link_table);
-	free(s_page_table);
+	delete[] s_buffer;
+	delete[] s_link_table;
+	delete[] s_page_table;
 
 	driver_unstack_screen();
 	s_help_mode = oldhelpmode;
@@ -1530,9 +1530,8 @@ int init_help()
 	assert(s_num_label > 0);
 
 	/* allocate all three arrays */
-	s_topic_offset = (long *) malloc(sizeof(long)*s_num_topic);
-	s_label = (LABEL *) malloc(sizeof(LABEL)*s_num_label);
-	s_hist = (HIST *) malloc(sizeof(HIST)*MAX_HIST);
+	s_topic_offset = new long[s_num_topic];
+	s_label = new LABEL[s_num_label];
 
 	if ((s_topic_offset == NULL) || (NULL == s_label) || (NULL == s_hist))
 	{
@@ -1557,9 +1556,8 @@ void end_help()
 	if (s_help_file != NULL)
 	{
 		fclose(s_help_file);
-		free(s_topic_offset);
-		free(s_label);
-		free(s_hist);
+		delete[] s_topic_offset;
+		delete[] s_label;
 		s_help_file = NULL;
 	}
 }
