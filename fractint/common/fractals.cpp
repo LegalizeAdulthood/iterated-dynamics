@@ -86,8 +86,6 @@ int g_degree = 0;
 int g_basin = 0;
 double g_threshold = 0.0;
 ComplexD g_coefficient = { 0.0, 0.0 };
-ComplexD  g_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
-ComplexD  *g_roots = g_static_roots;
 ComplexD g_power = { 0.0, 0.0};
 int g_bit_shift_minus_1 = 0;                  /* bit shift less 1 */
 double g_two_pi = MathUtil::Pi*2.0;
@@ -3075,43 +3073,41 @@ int escher_orbit_fp()
 	}
 }
 
-/* re-use static roots variable
-	memory for mandelmix4 */
-#define A g_static_roots[ 0]
-#define B g_static_roots[ 1]
-#define C g_static_roots[ 2]
-#define D g_static_roots[ 3]
-#define F g_static_roots[ 4]
-#define G g_static_roots[ 5]
-#define H g_static_roots[ 6]
-#define J g_static_roots[ 7]
-#define K g_static_roots[ 8]
-#define L g_static_roots[ 9]
-#define Z g_static_roots[10]
+static ComplexD s_mandelmix4_a;
+static ComplexD s_mandelmix4_b;
+static ComplexD s_mandelmix4_c;
+static ComplexD s_mandelmix4_d;
+static ComplexD s_mandelmix4_f;
+static ComplexD s_mandelmix4_g;
+static ComplexD s_mandelmix4_h;
+static ComplexD s_mandelmix4_j;
+static ComplexD s_mandelmix4_k;
+static ComplexD s_mandelmix4_l;
+static ComplexD s_mandelmix4_z;
 
 int mandelbrot_mix4_setup()
 {
 	int sign_array = 0;
-	A.x = g_parameters[0];
-	A.y = 0.0;						/* a = real(p1),     */
-	B.x = g_parameters[1];
-	B.y = 0.0;						/* b = imag(p1),     */
-	D.x = g_parameters[2];
-	D.y = 0.0;						/* d = real(p2),     */
-	F.x = g_parameters[3];
-	F.y = 0.0;						/* f = imag(p2),     */
-	K.x = g_parameters[4] + 1.0;
-	K.y = 0.0;						/* k = real(p3) + 1,   */
-	L.x = g_parameters[5] + 100.0;
-	L.y = 0.0;						/* l = imag(p3) + 100, */
-	CMPLXrecip(F, G);				/* g = 1/f,          */
-	CMPLXrecip(D, H);				/* h = 1/d,          */
-	CMPLXsub(F, B, g_temp_z);			/* tmp = f-b       */
-	CMPLXrecip(g_temp_z, J);				/* j = 1/(f-b)     */
-	CMPLXneg(A, g_temp_z);
-	CMPLXmult(g_temp_z, B, g_temp_z);			/* z = (-a*b*g*h)^j, */
-	CMPLXmult(g_temp_z, G, g_temp_z);
-	CMPLXmult(g_temp_z, H, g_temp_z);
+	s_mandelmix4_a.x = g_parameters[0];
+	s_mandelmix4_a.y = 0.0;						/* a = real(p1),     */
+	s_mandelmix4_b.x = g_parameters[1];
+	s_mandelmix4_b.y = 0.0;						/* b = imag(p1),     */
+	s_mandelmix4_d.x = g_parameters[2];
+	s_mandelmix4_d.y = 0.0;						/* d = real(p2),     */
+	s_mandelmix4_f.x = g_parameters[3];
+	s_mandelmix4_f.y = 0.0;						/* f = imag(p2),     */
+	s_mandelmix4_k.x = g_parameters[4] + 1.0;
+	s_mandelmix4_k.y = 0.0;						/* k = real(p3) + 1,   */
+	s_mandelmix4_l.x = g_parameters[5] + 100.0;
+	s_mandelmix4_l.y = 0.0;						/* l = imag(p3) + 100, */
+	CMPLXrecip(s_mandelmix4_f, s_mandelmix4_g);				/* g = 1/f,          */
+	CMPLXrecip(s_mandelmix4_d, s_mandelmix4_h);				/* h = 1/d,          */
+	CMPLXsub(s_mandelmix4_f, s_mandelmix4_b, g_temp_z);			/* tmp = f-b       */
+	CMPLXrecip(g_temp_z, s_mandelmix4_j);				/* j = 1/(f-b)     */
+	CMPLXneg(s_mandelmix4_a, g_temp_z);
+	CMPLXmult(g_temp_z, s_mandelmix4_b, g_temp_z);			/* z = (-a*b*g*h)^j, */
+	CMPLXmult(g_temp_z, s_mandelmix4_g, g_temp_z);
+	CMPLXmult(g_temp_z, s_mandelmix4_h, g_temp_z);
 
 	/*
 		This code kludge attempts to duplicate the behavior
@@ -3125,19 +3121,19 @@ int mandelbrot_mix4_setup()
 		First create a number encoding the signs of a, b, g , h. Our
 		kludge assumes that those signs determine the behavior.
 	*/
-	if (A.x < 0.0)
+	if (s_mandelmix4_a.x < 0.0)
 	{
 		sign_array += 8;
 	}
-	if (B.x < 0.0)
+	if (s_mandelmix4_b.x < 0.0)
 	{
 		sign_array += 4;
 	}
-	if (G.x < 0.0)
+	if (s_mandelmix4_g.x < 0.0)
 	{
 		sign_array += 2;
 	}
-	if (H.x < 0.0)
+	if (s_mandelmix4_h.x < 0.0)
 	{
 		sign_array += 1;
 	}
@@ -3166,7 +3162,7 @@ int mandelbrot_mix4_setup()
 		}
 	}
 
-	CMPLXpwr(g_temp_z, J, g_temp_z);   /* note: z is old */
+	CMPLXpwr(g_temp_z, s_mandelmix4_j, g_temp_z);   /* note: z is old */
 	/* in case our kludge failed, let the user fix it */
 	if (g_parameters[6] < 0.0)
 	{
@@ -3175,7 +3171,7 @@ int mandelbrot_mix4_setup()
 
 	if (g_bail_out == 0)
 	{
-		g_rq_limit = L.x;
+		g_rq_limit = s_mandelmix4_l.x;
 		g_rq_limit2 = g_rq_limit*g_rq_limit;
 	}
 	return 1;
@@ -3193,7 +3189,7 @@ int mandelbrot_mix4_per_pixel_fp()
 		g_initial_z.y = g_dy_pixel();
 	}
 	g_old_z = g_temp_z;
-	CMPLXtrig0(g_initial_z, C);        /* c = fn1(pixel): */
+	CMPLXtrig0(g_initial_z, s_mandelmix4_c);        /* c = fn1(pixel): */
 	return 0; /* 1st iteration has been NOT been done */
 }
 
@@ -3202,22 +3198,12 @@ int mandelbrot_mix4_orbit_fp() /* from formula by Jim Muth */
 	/* z = k*((a*(z^b)) + (d*(z^f))) + c, */
 	ComplexD z_b;
 	ComplexD z_f;
-	CMPLXpwr(g_old_z, B, z_b);     /* (z^b)     */
-	CMPLXpwr(g_old_z, F, z_f);     /* (z^f)     */
-	g_new_z.x = K.x*A.x*z_b.x + K.x*D.x*z_f.x + C.x;
-	g_new_z.y = K.x*A.x*z_b.y + K.x*D.x*z_f.y + C.y;
+	CMPLXpwr(g_old_z, s_mandelmix4_b, z_b);     /* (z^b)     */
+	CMPLXpwr(g_old_z, s_mandelmix4_f, z_f);     /* (z^f)     */
+	g_new_z.x = s_mandelmix4_k.x*s_mandelmix4_a.x*z_b.x + s_mandelmix4_k.x*s_mandelmix4_d.x*z_f.x + s_mandelmix4_c.x;
+	g_new_z.y = s_mandelmix4_k.x*s_mandelmix4_a.x*z_b.y + s_mandelmix4_k.x*s_mandelmix4_d.x*z_f.y + s_mandelmix4_c.y;
 	return g_bail_out_fp();
 }
-#undef A
-#undef B
-#undef C
-#undef D
-#undef F
-#undef G
-#undef H
-#undef J
-#undef K
-#undef L
 
 /*
  * The following functions calculate the real and imaginary complex
