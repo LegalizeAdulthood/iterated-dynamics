@@ -469,7 +469,7 @@ void history_allocate()
 {
 	while (g_max_history > 0) /* decrease history if necessary */
 	{
-		s_history = (HISTORY_ITEM *) malloc(sizeof(HISTORY_ITEM)*g_max_history);
+		s_history = new HISTORY_ITEM[g_max_history];
 		if (s_history)
 		{
 			break;
@@ -482,7 +482,8 @@ void history_free()
 {
 	if (s_history != NULL)
 	{
-		free(s_history);
+		delete[] s_history;
+		s_history = NULL;
 	}
 }
 

@@ -298,7 +298,7 @@ int l_system()
 		sc = rules2;
 		for (rulesc = ruleptrs; *rulesc; rulesc++)
 		{
-				*sc++ = lsysi_size_transform(*rulesc, &ts);
+			*sc++ = lsysi_size_transform(*rulesc, &ts);
 		}
 		*sc = NULL;
 
@@ -343,7 +343,7 @@ int l_system()
 		sc = rules2;
 		for (rulesc = ruleptrs; *rulesc; rulesc++)
 		{
-				*sc++ = lsysf_size_transform(*rulesc, &ts);
+			*sc++ = lsysf_size_transform(*rulesc, &ts);
 		}
 		*sc = NULL;
 
@@ -390,12 +390,11 @@ int l_load()
 
 static void _fastcall free_rules_mem()
 {
-	int i;
-	for (i = 0; i < MAXRULES; ++i)
+	for (int i = 0; i < MAXRULES; ++i)
 	{
 		if (ruleptrs[i])
 		{
-			free(ruleptrs[i]);
+			delete[] ruleptrs[i];
 		}
 	}
 }
@@ -403,7 +402,6 @@ static void _fastcall free_rules_mem()
 static int _fastcall rule_present(char symbol)
 {
 	int i;
-
 	for (i = 1; i < MAXRULES && ruleptrs[i] && *ruleptrs[i] != symbol; i++)
 	{
 		;
@@ -414,9 +412,8 @@ static int _fastcall rule_present(char symbol)
 static int _fastcall save_rule(char *rule, char **saveptr)
 {
 	int i;
-	char *tmpfar;
 	i = int(strlen(rule)) + 1;
-	tmpfar = (char *) malloc(i);
+	char *tmpfar = new char[i];
 	if (tmpfar == NULL)
 	{
 		return -1;
@@ -431,19 +428,16 @@ static int _fastcall save_rule(char *rule, char **saveptr)
 
 static int _fastcall append_rule(char *rule, int index)
 {
-	char *dst;
-	char *old;
-	char *sav;
-	int i;
-	int j;
+	char *sav = ruleptrs[index];
+	char *old = sav;
 
-	old = sav = ruleptrs[index];
+	int i;
 	for (i = 0; *(old++); i++)
 	{
 		;
 	}
-	j = int(strlen(rule)) + 1;
-	dst = (char *)malloc(long(i + j));
+	int j = int(strlen(rule)) + 1;
+	char *dst = new char[i + j];
 	if (dst == NULL)
 	{
 		return -1;
@@ -459,7 +453,7 @@ static int _fastcall append_rule(char *rule, int index)
 	{
 		*(dst++) = *(rule++);
 	}
-	free(sav);
+	delete[] sav;
 	return 0;
 }
 
@@ -469,7 +463,7 @@ static void free_l_cmds()
 
 	while (*sc)
 	{
-		free(*sc++);
+		delete[] (*sc++);
 	}
 }
 
@@ -947,7 +941,7 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 	void (*at)(lsys_turtle_state *) =     lsysi_at;
 	void (*dogf)(lsys_turtle_state *) =   lsysi_size_gf;
 
-	ret = (struct lsys_cmd *) malloc(long(maxval)*sizeof(struct lsys_cmd));
+	ret = new lsys_cmd[maxval];
 	if (ret == NULL)
 	{
 		ts->stackoflow = true;
@@ -981,15 +975,15 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 		ret[n].n = num;
 		if (++n == maxval)
 		{
-			doub = (struct lsys_cmd *) malloc(long(maxval)*2*sizeof(struct lsys_cmd));
+			doub = new lsys_cmd[maxval*2];
 			if (doub == NULL)
 			{
-				free(ret);
+				delete[] ret;
 				ts->stackoflow = true;
 				return NULL;
 			}
 			memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
-			free(ret);
+			delete[] ret;
 			ret = doub;
 			maxval <<= 1;
 		}
@@ -1000,15 +994,15 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 	ret[n].n = 0;
 	n++;
 
-	doub = (struct lsys_cmd *) malloc(long(n)*sizeof(struct lsys_cmd));
+	doub = new lsys_cmd[n];
 	if (doub == NULL)
 	{
-		free(ret);
+		delete[] ret;
 		ts->stackoflow = true;
 		return NULL;
 	}
 	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
-	free(ret);
+	delete[] ret;
 	return doub;
 }
 
@@ -1031,7 +1025,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 	void (*at)(lsys_turtle_state *) =     lsysi_at;
 	void (*drawg)(lsys_turtle_state *) =  lsysi_draw_g;
 
-	ret = (struct lsys_cmd *) malloc(long(maxval)*sizeof(struct lsys_cmd));
+	ret = new lsys_cmd[maxval];
 	if (ret == NULL)
 	{
 		ts->stackoflow = true;
@@ -1068,15 +1062,15 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 		ret[n].n = num;
 		if (++n == maxval)
 		{
-			doub = (struct lsys_cmd *) malloc(long(maxval)*2*sizeof(struct lsys_cmd));
+			doub = new lsys_cmd[maxval*2];
 			if (doub == NULL)
 			{
-				free(ret);
+				delete[] ret;
 				ts->stackoflow = true;
 				return NULL;
 			}
 			memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
-			free(ret);
+			delete[] ret;
 			ret = doub;
 			maxval <<= 1;
 		}
@@ -1087,15 +1081,15 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 	ret[n].n = 0;
 	n++;
 
-	doub = (struct lsys_cmd *) malloc(long(n)*sizeof(struct lsys_cmd));
+	doub = new lsys_cmd[n];
 	if (doub == NULL)
 	{
-		free(ret);
+		delete[] ret;
 		ts->stackoflow = true;
 		return NULL;
 	}
 	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
-	free(ret);
+	delete[] ret;
 	return doub;
 }
 

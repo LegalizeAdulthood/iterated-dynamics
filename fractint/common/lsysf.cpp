@@ -518,7 +518,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	void (*at)(lsys_turtle_state_fp *) =     lsysf_at;
 	void (*dogf)(lsys_turtle_state_fp *) =   lsysf_size_gf;
 
-	ret = (struct lsys_cmd *) malloc(long(max)*sizeof(struct lsys_cmd));
+	ret = new lsys_cmd[max];
 	if (ret == NULL)
 	{
 		ts->stackoflow = true;
@@ -585,15 +585,15 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 		ret[n].ptype = ptype;
 		if (++n == max)
 		{
-			doub = (struct lsys_cmd *) malloc(long(max)*2*sizeof(struct lsys_cmd));
+			doub = new lsys_cmd[max*2];
 			if (doub == NULL)
 			{
-				free(ret);
+				delete[] ret;
 				ts->stackoflow = true;
 				return NULL;
 			}
 			memcpy(doub, ret, max*sizeof(struct lsys_cmd));
-			free(ret);
+			delete[] ret;
 			ret = doub;
 			max <<= 1;
 		}
@@ -604,15 +604,15 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 	ret[n].parm.n = 0;
 	n++;
 
-	doub = (struct lsys_cmd *) malloc(long(n)*sizeof(struct lsys_cmd));
+	doub = new lsys_cmd[n];
 	if (doub == NULL)
 	{
-		free(ret);
+		delete[] ret;
 		ts->stackoflow = true;
 		return NULL;
 	}
 	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
-	free(ret);
+	delete[] ret;
 	return doub;
 }
 
@@ -636,7 +636,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	void (*at)(lsys_turtle_state_fp *) =     lsysf_at;
 	void (*drawg)(lsys_turtle_state_fp *) =  lsysf_draw_g;
 
-	ret = (struct lsys_cmd *) malloc(long(max)*sizeof(struct lsys_cmd));
+	ret = new lsys_cmd[max];
 	if (ret == NULL)
 	{
 		ts->stackoflow = true;
@@ -678,15 +678,15 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 		ret[n].ptype = ptype;
 		if (++n == max)
 		{
-			doub = (struct lsys_cmd *) malloc(long(max)*2*sizeof(struct lsys_cmd));
+			doub = new lsys_cmd[max*2];
 			if (doub == NULL)
 			{
-				free(ret);
+				delete[] ret;
 				ts->stackoflow = true;
 				return NULL;
 			}
 			memcpy(doub, ret, max*sizeof(struct lsys_cmd));
-			free(ret);
+			delete[] ret;
 			ret = doub;
 			max <<= 1;
 		}
@@ -697,15 +697,15 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 	ret[n].parm.n = 0;
 	n++;
 
-	doub = (struct lsys_cmd *) malloc(long(n)*sizeof(struct lsys_cmd));
+	doub = new lsys_cmd[n];
 	if (doub == NULL)
 	{
-		free(ret);
+		delete[] ret;
 		ts->stackoflow = true;
 		return NULL;
 	}
 	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
-	free(ret);
+	delete[] ret;
 	return doub;
 }
 

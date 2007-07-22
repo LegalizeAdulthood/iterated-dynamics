@@ -120,7 +120,7 @@ static int s_recur_level = 0;
 static int s_plasma_check;                        /* to limit kbd checking */
 static U16 (_fastcall *s_get_pixels)(int, int)  = (U16(_fastcall *)(int, int))getcolor;
 static U16 s_max_plasma;
-static int *s_verhulst_array;
+static int *s_verhulst_array = 0;
 static unsigned long s_filter_cycles;
 static bool s_half_time_check;
 static long s_population_l;
@@ -139,7 +139,7 @@ static long s_bifurcation_saved_mask;
 static long s_beta;
 static int s_lyapunov_length;
 static int s_lyapunov_r_xy[34];
-static BYTE *s_cell_array[2];
+static BYTE *s_cell_array[2] = { 0, 0 };
 static S16 s_r;
 static S16 s_k_1;
 static S16 s_rule_digits;
@@ -1052,7 +1052,7 @@ int bifurcation()
 		end_resume();
 	}
 	array_size =  (g_y_stop + 1)*sizeof(int); /* should be g_y_stop + 1 */
-	s_verhulst_array = (int *) malloc(array_size);
+	s_verhulst_array = new int[array_size];
 	if (s_verhulst_array == NULL)
 	{
 		stop_message(0, "Insufficient free memory for calculation.");
@@ -1101,7 +1101,7 @@ int bifurcation()
 	{
 		if (driver_key_pressed())
 		{
-			free((char *)s_verhulst_array);
+			delete[] s_verhulst_array;
 			alloc_resume(10, 1);
 			put_resume(sizeof(column), &column, 0);
 			return -1;
@@ -1138,7 +1138,7 @@ int bifurcation()
 		}
 		column++;
 	}
-	free((char *)s_verhulst_array);
+	delete[] s_verhulst_array;
 	return 0;
 }
 
@@ -1221,7 +1221,9 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		if (g_periodicity_check && bifurcation_periodic(counter))
 		{
 			if (pixel_row <= (unsigned int)g_y_stop)
+			{
 				s_verhulst_array[pixel_row] --;
+			}
 			break;
 		}
 	}
@@ -1762,11 +1764,11 @@ static void abort_cellular(int err, int t)
 	}
 	if (s_cell_array[0] != NULL)
 	{
-		free((char *) s_cell_array[0]);
+		delete[] s_cell_array[0];
 	}
 	if (s_cell_array[1] != NULL)
 	{
-		free((char *) s_cell_array[1]);
+		delete[] s_cell_array[1];
 	}
 }
 
@@ -1900,8 +1902,8 @@ int cellular()
 	}
 
 	start_row = 0;
-	s_cell_array[0] = (BYTE *)malloc(g_x_stop + 1);
-	s_cell_array[1] = (BYTE *)malloc(g_x_stop + 1);
+	s_cell_array[0] = new BYTE[g_x_stop + 1];
+	s_cell_array[1] = new BYTE[g_x_stop + 1];
 	if (s_cell_array[0] == NULL || s_cell_array[1] == NULL)
 	{
 		abort_cellular(BAD_MEM, 0);
@@ -1935,7 +1937,7 @@ int cellular()
 			{
 				s_cell_array[filled][g_col] = BYTE(rand() % int(k));
 			}
-		} /* end of if random */
+		}
 		else
 		{
 			for (g_col = 0; g_col <= g_x_stop; g_col++)  /* Clear from end to end */
