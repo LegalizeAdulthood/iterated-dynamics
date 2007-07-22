@@ -38,10 +38,10 @@ UIChoices::~UIChoices()
 
 void UIChoices::push(const char *label, const char *values[], int num_values, int existing)
 {
-	int widest_value = static_cast<int>(::strlen(values[0]));
+	int widest_value = int(::strlen(values[0]));
 	for (int i = 1; i < num_values; i++)
 	{
-		int len = static_cast<int>(::strlen(values[i]));
+		int len = int(::strlen(values[i]));
 		if (len > widest_value)
 		{
 			widest_value = len;
@@ -121,12 +121,12 @@ int UIChoices::prompt()
 	if (m_help_mode != -1)
 	{
 		return full_screen_prompt_help(m_help_mode, m_heading,
-			static_cast<int>(m_choices.size()),
+			int(m_choices.size()),
 			&m_choices[0], &m_values[0], m_key_mask, m_extra_info);
 	}
 	else
 	{
-		return full_screen_prompt(m_heading, static_cast<int>(m_choices.size()),
+		return full_screen_prompt(m_heading, int(m_choices.size()),
 			&m_choices[0], &m_values[0], m_key_mask, m_extra_info);
 	}
 }

@@ -649,13 +649,13 @@ get_evol_restart:
 		{
 			/* variation 'explore mode' */
 			dialog.push("Show parameter zoom box?", (g_evolving_flags & EVOLVE_PARAMETER_BOX) != 0);
-			dialog.push("x parameter range (across screen)", static_cast<float>(g_parameter_range_x));
-			dialog.push("x parameter offset (left hand edge)", static_cast<float>(g_parameter_offset_x));
-			dialog.push("y parameter range (up screen)", static_cast<float>(g_parameter_range_y));
-			dialog.push("y parameter offset (lower edge)", static_cast<float>(g_parameter_offset_y));
+			dialog.push("x parameter range (across screen)", float(g_parameter_range_x));
+			dialog.push("x parameter offset (left hand edge)", float(g_parameter_offset_x));
+			dialog.push("y parameter range (up screen)", float(g_parameter_range_y));
+			dialog.push("y parameter offset (lower edge)", float(g_parameter_offset_y));
 		}
-		dialog.push("Max random mutation", static_cast<float>(g_fiddle_factor));
-		dialog.push("Mutation reduction factor (between generations)", static_cast<float>(g_fiddle_reduction));
+		dialog.push("Max random mutation", float(g_fiddle_factor));
+		dialog.push("Mutation reduction factor (between generations)", float(g_fiddle_reduction));
 		dialog.push("Grouting? ", (g_evolving_flags & EVOLVE_NO_GROUT) == 0);
 		dialog.push("");
 		dialog.push("Press F4 to reset view parameters to defaults.");

@@ -464,7 +464,7 @@ long logtablecalc(long citer)
 	}
 	else if (g_log_palette_mode == LOGPALETTE_OLD)  /* old log function */
 	{
-		ret = (citer == 0) ? 1 : long(mlf*log(static_cast<double>(citer))) + 1;
+		ret = (citer == 0) ? 1 : long(mlf*log(double(citer))) + 1;
 	}
 	else if (g_log_palette_mode <= -2)  /* sqrt function */
 	{
@@ -478,7 +478,7 @@ long logtablecalc(long citer)
 		}
 		else
 		{
-			ret = long(mlf*sqrt(static_cast<double>(citer - lf))) + 1;
+			ret = long(mlf*sqrt(double(citer - lf))) + 1;
 		}
 	}
 	return ret;

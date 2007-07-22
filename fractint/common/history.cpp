@@ -199,7 +199,7 @@ void _fastcall history_save_info()
 	current.finattract = (short) g_finite_attractor;
 	current.initial_orbit_z[0] = g_initial_orbit_z.x;
 	current.initial_orbit_z[1] = g_initial_orbit_z.y;
-	current.use_initial_orbit_z = static_cast<char>(g_use_initial_orbit_z);
+	current.use_initial_orbit_z = char(g_use_initial_orbit_z);
 	current.periodicity = (short) g_periodicity_check;
 	current.potential_16bit = g_disk_16bit;
 	current.release = (short) g_release;
@@ -226,7 +226,7 @@ void _fastcall history_save_info()
 	current.eyesfp = g_eyes_fp;
 	current.orbittype = (short) g_new_orbit_type;
 	current.juli3Dmode = (short) g_juli_3d_mode;
-	current.max_fn = static_cast<char>(g_formula_state.max_fn());
+	current.max_fn = char(g_formula_state.max_fn());
 	current.major_method = (short) g_major_method;
 	current.minor_method = (short) g_minor_method;
 	current.bail_out = g_bail_out;
@@ -376,7 +376,7 @@ void _fastcall history_restore_info()
 	g_finite_attractor = last.finattract;
 	g_initial_orbit_z.x = last.initial_orbit_z[0];
 	g_initial_orbit_z.y = last.initial_orbit_z[1];
-	g_use_initial_orbit_z = static_cast<InitialZType>(last.use_initial_orbit_z);
+	g_use_initial_orbit_z = InitialZType(last.use_initial_orbit_z);
 	g_periodicity_check = last.periodicity;
 	g_user_periodicity_check = last.periodicity;
 	g_disk_16bit = last.potential_16bit;
@@ -404,9 +404,9 @@ void _fastcall history_restore_info()
 	g_eyes_fp = last.eyesfp;
 	g_new_orbit_type = last.orbittype;
 	g_juli_3d_mode = last.juli3Dmode;
-	g_formula_state.set_max_fn(static_cast<int>(last.max_fn));
-	g_major_method = static_cast<MajorMethodType>(last.major_method);
-	g_minor_method = static_cast<MinorMethodType>(last.minor_method);
+	g_formula_state.set_max_fn(int(last.max_fn));
+	g_major_method = MajorMethodType(last.major_method);
+	g_minor_method = MinorMethodType(last.minor_method);
 	g_bail_out = last.bail_out;
 	g_bail_out_test = (enum bailouts) last.bailoutest;
 	g_max_iteration = last.iterations;

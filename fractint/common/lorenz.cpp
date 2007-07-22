@@ -1336,7 +1336,7 @@ int icon_orbit_fp(double *x, double *y, double *z)
 	zreal = oldx;
 	zimag = oldy;
 
-	int degree = static_cast<int>(g_parameters[5]);
+	int degree = int(g_parameters[5]);
 	for (int i = 1; i <= degree-2; i++)
 	{
 		za = zreal*oldx - zimag*oldy;

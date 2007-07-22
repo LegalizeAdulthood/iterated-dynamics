@@ -2208,8 +2208,8 @@ get_fractal_parameters_top:
 		{
 			command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 		}
-		g_major_method = static_cast<MajorMethodType>(parameter_values[prompt++].uval.ch.val);
-		g_minor_method = static_cast<MinorMethodType>(parameter_values[prompt++].uval.ch.val);
+		g_major_method = MajorMethodType(parameter_values[prompt++].uval.ch.val);
+		g_minor_method = MinorMethodType(parameter_values[prompt++].uval.ch.val);
 	}
 	if (fractal_type_formula(current_fractal_type) && g_formula_state.uses_is_mand())
 	{
