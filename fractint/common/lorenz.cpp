@@ -2480,7 +2480,6 @@ static int ifs_2d()
 	int row;
 	int color;
 	int ret;
-	long *localifs;
 	long *lfptr;
 	long x;
 	long y;
@@ -2499,7 +2498,7 @@ static int ifs_2d()
 
 	srand(1);
 	bool color_method = (g_parameters[0] != 0);
-	localifs = static_cast<long *>(malloc(g_num_affine*IFSPARM*sizeof(long)));
+	long *localifs = new long[g_num_affine*IFSPARM];
 	if (localifs == NULL)
 	{
 		stop_message(0, g_insufficient_ifs_memory);
@@ -2573,14 +2572,15 @@ static int ifs_2d()
 		}
 		else if (long(abs(row)) + long(abs(col)) > BAD_PIXEL) /* sanity check */
 		{
-				return ret;
+			delete[] localifs;
+			return ret;
 		}
 	}
 	if (fp)
 	{
 		fclose(fp);
 	}
-	free(localifs);
+	delete[] localifs;
 	return ret;
 }
 
@@ -2590,7 +2590,6 @@ static int ifs_3d_long()
 	int color;
 	int ret;
 
-	long *localifs;
 	long *lfptr;
 	long newx;
 	long newy;
@@ -2606,7 +2605,7 @@ static int ifs_3d_long()
 	threed_vt_inf inf;
 	srand(1);
 	bool color_method = (g_parameters[0] != 0);
-	localifs = static_cast<long *>(malloc(g_num_affine*IFS3DPARM*sizeof(long)));
+	long *localifs = new long[g_num_affine*IFS3DPARM];
 	if (localifs == NULL)
 	{
 		stop_message(0, g_insufficient_ifs_memory);
@@ -2683,6 +2682,7 @@ static int ifs_3d_long()
 		{
 			if (long(abs(inf.row)) + long(abs(inf.col)) > BAD_PIXEL) /* sanity check */
 			{
+				delete[] localifs;
 				return ret;
 			}
 			/* plot if inside window */
@@ -2731,7 +2731,7 @@ static int ifs_3d_long()
 	{
 		fclose(fp);
 	}
-	free(localifs);
+	delete[] localifs;
 	return ret;
 }
 
