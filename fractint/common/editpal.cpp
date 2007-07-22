@@ -144,7 +144,6 @@
 #define MAX_WIDTH        1024     /* palette editor cannot be wider than this */
 #define TITLE   "FRACTINT"
 #define TITLE_LEN (8)
-#define DELETE(g_block)	(free(g_block), g_block = NULL)  /* just for warning */
 
 #ifdef XFRACT
 int g_edit_pal_cursor = 0;

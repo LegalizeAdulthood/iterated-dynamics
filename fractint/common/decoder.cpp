@@ -20,7 +20,7 @@
  ==    down the number of files we were dealing with.
  ==
  == 2) The 'g_stack', 'g_suffix', 'prefix', and 'g_decoder_line' arrays were
- ==    changed from static and 'malloc()'ed to external only so that
+ ==    changed from static and malloc'ed to external only so that
  ==    the assembler program could use the same array space for several
  ==    independent chunks of code.
  ==
