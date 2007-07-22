@@ -216,7 +216,7 @@ int get_toggles()
 		sprintf(fill_buffer, "%d", g_fill_color);
 	}
 	dialog.push("Fill Color (normal,#) (works with passes=t, b and d)", fill_buffer);
-	dialog.push("Proximity value for inside=epscross and fmod", static_cast<float>(g_proximity));
+	dialog.push("Proximity value for inside=epscross and fmod", float(g_proximity));
 	if (dialog.prompt() < 0)
 	{
 		return -1;
@@ -574,7 +574,7 @@ pass_option_restart:
 			"(Press "FK_F6" for calculation parameters)", 0x44);
 		dialog.push("Periodicity (0=off, <0=show, >0=on, -255..+255)", g_user_periodicity_check);
 		dialog.push("Orbit delay (0 = none)", g_orbit_delay);
-		dialog.push("Orbit interval (1 ... 255)", static_cast<int>(g_orbit_interval));
+		dialog.push("Orbit interval (1 ... 255)", int(g_orbit_interval));
 		dialog.push("Maintain screen coordinates", g_keep_screen_coords);
 		const char *passcalcmodes[] =
 		{
@@ -911,7 +911,7 @@ int get_starfield_params()
 	};
 	for (int i = 0; i < 3; i++)
 	{
-		dialog.push(starfield_prompts[i], static_cast<float>(starfield_values[i]));
+		dialog.push(starfield_prompts[i], float(starfield_values[i]));
 	}
 	ScreenStacker stacker;
 	if (dialog.prompt() < 0)
@@ -1626,7 +1626,7 @@ gc_loop:
 		{
 			dialog.push("Center X", Xctr);
 			dialog.push("Center Y", Yctr);
-			dialog.push("Magnification", static_cast<double>(Magnification));
+			dialog.push("Magnification", double(Magnification));
 			dialog.push("X Magnification Factor", Xmagfactor);
 			dialog.push("Rotation Angle (degrees)", Rotation);
 			dialog.push("Skew Angle (degrees)", Skew);
@@ -1702,7 +1702,7 @@ gc_loop:
 		{
 			if (cmpdbl(Xctr, dialog.values(0).uval.dval)
 				|| cmpdbl(Yctr, dialog.values(1).uval.dval)
-				|| cmpdbl(static_cast<double>(Magnification), dialog.values(2).uval.dval)
+				|| cmpdbl(double(Magnification), dialog.values(2).uval.dval)
 				|| cmpdbl(Xmagfactor, dialog.values(3).uval.dval)
 				|| cmpdbl(Rotation, dialog.values(4).uval.dval)
 				|| cmpdbl(Skew, dialog.values(5).uval.dval))
@@ -1831,7 +1831,7 @@ gsc_loop:
 		{
 			dialog.push("Center X", Xctr);
 			dialog.push("Center Y", Yctr);
-			dialog.push("Magnification", static_cast<double>(Magnification));
+			dialog.push("Magnification", double(Magnification));
 			dialog.push("X Magnification Factor", Xmagfactor);
 			dialog.push("Rotation Angle (degrees)", Rotation);
 			dialog.push("Skew Angle (degrees)", Skew);
@@ -1907,7 +1907,7 @@ gsc_loop:
 		{
 			if (cmpdbl(Xctr, dialog.values(0).uval.dval)
 				|| cmpdbl(Yctr, dialog.values(1).uval.dval)
-				|| cmpdbl(static_cast<double>(Magnification), dialog.values(2).uval.dval)
+				|| cmpdbl(double(Magnification), dialog.values(2).uval.dval)
 				|| cmpdbl(Xmagfactor, dialog.values(3).uval.dval)
 				|| cmpdbl(Rotation, dialog.values(4).uval.dval)
 				|| cmpdbl(Skew, dialog.values(5).uval.dval))
@@ -2022,7 +2022,7 @@ get_brws_restart:
 		dialog.push("Check fractal type? (y/n)", g_browse_state.check_type());
 		dialog.push("Check fractal parameters (y/n)", g_browse_state.check_parameters());
 		dialog.push("Confirm file deletes (y/n)", g_ui_state.double_caution);
-		dialog.push("Smallest window to display (size in pixels)", static_cast<float>(g_too_small));
+		dialog.push("Smallest window to display (size in pixels)", float(g_too_small));
 		dialog.push("Smallest box size shown before crosshairs used (pix)", g_cross_hair_box_size);
 		dialog.push("Browse search filename mask ", g_browse_state.mask());
 		dialog.push("");

@@ -240,7 +240,7 @@ int SoundState::sound_on(int freq)
 
 	/* convert tone to note number for midi */
 	double logbase = log(8.176);
-	int note = int(12 * (log(static_cast<double>(freq)) - logbase)/log(2.0) + 0.5);
+	int note = int(12 * (log(double(freq)) - logbase)/log(2.0) + 0.5);
 
 	int oct = (note/12) * 12; /* round to nearest octave */
 	int chrome = note % 12; /* extract which note in octave it was */

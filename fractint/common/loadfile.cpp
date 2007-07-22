@@ -162,7 +162,7 @@ static void read_info_version_3(const fractal_info &read_info)
 		g_finite_attractor = read_info.finattract;
 		g_initial_orbit_z.x = read_info.initial_orbit_z[0];
 		g_initial_orbit_z.y = read_info.initial_orbit_z[1];
-		g_use_initial_orbit_z = static_cast<InitialZType>(read_info.use_initial_orbit_z);
+		g_use_initial_orbit_z = InitialZType(read_info.use_initial_orbit_z);
 		g_user_periodicity_check = read_info.periodicity;
 	}
 }
@@ -250,8 +250,8 @@ static void read_info_version_8(const fractal_info &read_info)
 		g_new_orbit_type = read_info.orbittype;
 		g_juli_3d_mode = read_info.juli3Dmode;
 		g_formula_state.set_max_fn(read_info.max_fn);
-		g_major_method = static_cast<MajorMethodType>(read_info.inversejulia >> 8);
-		g_minor_method = static_cast<MinorMethodType>(read_info.inversejulia & 255);
+		g_major_method = MajorMethodType(read_info.inversejulia >> 8);
+		g_minor_method = MinorMethodType(read_info.inversejulia & 255);
 		g_parameters[4] = read_info.dparm5;
 		g_parameters[5] = read_info.dparm6;
 		g_parameters[6] = read_info.dparm7;
