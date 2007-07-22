@@ -1111,7 +1111,7 @@ void goodbye()                  /* we done.  Bail out */
 	history_free();
 	if (g_ifs_definition != NULL)
 	{
-		free(g_ifs_definition);
+		delete[] g_ifs_definition;
 		g_ifs_definition = NULL;
 	}
 	disk_end();

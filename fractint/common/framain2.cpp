@@ -187,7 +187,7 @@ void ZoomSaver::save()
 {
 	if (g_box_count)  /* save zoombox stuff in mem before encode (mem reused) */
 	{
-		m_save_zoom = (char *)malloc(long(5*g_box_count));
+		m_save_zoom = new char[5*g_box_count];
 		if (m_save_zoom == NULL)
 		{
 			clear_zoom_box(); /* not enuf mem so clear the box */
@@ -209,7 +209,7 @@ void ZoomSaver::restore()
 		memcpy(g_box_x, m_save_zoom, g_box_count*2);
 		memcpy(g_box_y, m_save_zoom + g_box_count*2, g_box_count*2);
 		memcpy(g_box_values, m_save_zoom + g_box_count*4, g_box_count);
-		free(m_save_zoom);
+		delete[] m_save_zoom;
 		zoom_box_draw(1); /* get the g_xx_min etc variables recalc'd by redisplaying */
 	}
 }

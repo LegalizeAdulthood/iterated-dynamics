@@ -71,7 +71,7 @@
 #define SECRETMODE_RANDOM_RUN			9
 
 static int show_numbers = 0;              /* toggle for display of coords */
-static char *rect_buff = NULL;
+static char *s_rect_buff = NULL;
 static FILE *file;
 static int windows = 0;               /* windows management system */
 
@@ -488,10 +488,10 @@ static void SaveRect(int x, int y, int width, int height)
 	{
 		return;
 	}
-	rect_buff = (char *) malloc(width*height);
-	if (rect_buff != NULL)
+	s_rect_buff = new char[width*height];
+	if (s_rect_buff != NULL)
 	{
-		char *buff = rect_buff;
+		char *buff = s_rect_buff;
 		int yoff;
 
 		cursor_hide();
@@ -508,7 +508,7 @@ static void SaveRect(int x, int y, int width, int height)
 
 static void RestoreRect(int x, int y, int width, int height)
 {
-	char *buff = rect_buff;
+	char *buff = s_rect_buff;
 	int  yoff;
 
 	if (!g_has_inverse)
@@ -1310,10 +1310,10 @@ finish:
 		g_line_buffer = NULL;
 	}
 
-	if (rect_buff)
+	if (s_rect_buff)
 	{
-		free(rect_buff);
-		rect_buff = NULL;
+		delete[] s_rect_buff;
+		s_rect_buff = NULL;
 	}
 
 	g_using_jiim = false;

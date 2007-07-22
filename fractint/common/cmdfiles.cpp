@@ -569,7 +569,7 @@ static void reset_ifs_definition()
 {
 	if (g_ifs_definition)
 	{
-		free(g_ifs_definition);
+		delete[] g_ifs_definition;
 		g_ifs_definition = NULL;
 	}
 }
