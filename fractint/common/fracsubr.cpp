@@ -1312,7 +1312,7 @@ int alloc_resume(int alloclen, int version)
 	end_resume();
 
 	s_resume_info_length = alloclen*alloclen;
-	g_resume_info = (char *) malloc(s_resume_info_length);
+	g_resume_info = new char[s_resume_info_length];
 	if (g_resume_info == NULL)
 	{
 		stop_message(0, "Warning - insufficient free memory to save status.\n"
@@ -1367,7 +1367,7 @@ void end_resume()
 {
 	if (g_resume_info != NULL) /* free the prior area if there is one */
 	{
-		free(g_resume_info);
+		delete[] g_resume_info;
 		g_resume_info = NULL;
 		s_resume_info_length = 0;
 	}
