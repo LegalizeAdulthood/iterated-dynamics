@@ -525,7 +525,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 		struct evolution_info resume_e_info;
 		if (g_evolve_handle == NULL)
 		{
-			g_evolve_handle = malloc(sizeof(resume_e_info));
+			g_evolve_handle = new evolution_info;
 		}
 		resume_e_info.parameter_range_x = evolver_info.parameter_range_x;
 		resume_e_info.parameter_range_y = evolver_info.parameter_range_y;
@@ -550,7 +550,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	{
 		if (g_evolve_handle != NULL)  /* Image completed, release it. */
 		{
-			free(g_evolve_handle);
+			delete g_evolve_handle;
 			g_evolve_handle = NULL;
 		}
 		g_calculation_status = CALCSTAT_COMPLETED;

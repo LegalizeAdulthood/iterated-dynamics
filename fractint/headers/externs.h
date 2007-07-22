@@ -94,7 +94,7 @@ extern double				g_dy_size;
 extern bool					g_escape_exit_flag;
 extern char					g_exe_path[];
 extern int					g_evolving_flags;
-extern void					*g_evolve_handle;
+extern evolution_info		*g_evolve_handle;
 extern float				g_eyes_fp;
 extern bool					g_fast_restore;
 extern double				g_fudge_limit;
