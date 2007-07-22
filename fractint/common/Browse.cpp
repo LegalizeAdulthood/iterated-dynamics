@@ -589,12 +589,9 @@ int look_get_window()
 #ifdef XFRACT
 	vidlength = 4; /* Xfractint only needs the 4 corners saved. */
 #endif
-	int *boxx_storage = NULL;
-	int *boxy_storage = NULL;
-	int *boxvalues_storage = NULL;
-	boxx_storage = (int *) malloc(vidlength*MAX_WINDOWS_OPEN*sizeof(int));
-	boxy_storage = (int *) malloc(vidlength*MAX_WINDOWS_OPEN*sizeof(int));
-	boxvalues_storage = (int *) malloc(vidlength/2*MAX_WINDOWS_OPEN*sizeof(int));
+	int *boxx_storage = new int[vidlength*MAX_WINDOWS_OPEN];
+	int *boxy_storage = new int[vidlength*MAX_WINDOWS_OPEN];
+	int *boxvalues_storage = new int[vidlength/2*MAX_WINDOWS_OPEN];
 	if (!boxx_storage || !boxy_storage || !boxvalues_storage)
 	{
 		no_memory = 1;
@@ -931,9 +928,9 @@ rescan:  /* entry for changed browse parms */
 		g_no_sub_images = true;
 	}
 
-	free(boxx_storage);
-	free(boxy_storage);
-	free(boxvalues_storage);
+	delete[] boxx_storage;
+	delete[] boxy_storage;
+	delete[] boxvalues_storage;
 	restore_stack(saved);
 	if (!oldbf_math)
 	{

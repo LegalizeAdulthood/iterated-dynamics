@@ -580,7 +580,7 @@ void Jiim(int which)         /* called by fractint */
 	oldcalctype = g_calculate_type;
 	show_numbers = 0;
 	g_using_jiim = true;
-	g_line_buffer = (BYTE *) malloc(max(g_screen_width, g_screen_height));
+	g_line_buffer = new BYTE[max(g_screen_width, g_screen_height)];
 	aspect = (double(g_x_dots)*3)/(double(g_y_dots)*4);  /* assumes 4:3 */
 	actively_computing = 1;
 	SetAspect(aspect);
@@ -1306,7 +1306,7 @@ finish:
 #endif
 	if (g_line_buffer)
 	{
-		free(g_line_buffer);
+		delete[] g_line_buffer;
 		g_line_buffer = NULL;
 	}
 
