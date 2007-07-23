@@ -332,7 +332,8 @@ static int Xdepth;
 static XImage *Ximage =NULL;
 static int Xdscreen;
 static Pixmap	Xpixmap = 0;
-static int Xwinwidth = DEFX, Xwinheight = DEFY;
+static int Xwinwidth = DEFX;
+static int Xwinheight = DEFY;
 static XSizeHints *size_hints = NULL;
 static int gravity;
 static Window Xroot;
@@ -410,7 +411,8 @@ void initUnixWindow()
 {
 	XSetWindowAttributes Xwatt;
 	XGCValues Xgcvals;
-	int Xwinx = 0, Xwiny = 0;
+	int Xwinx = 0;
+	int Xwiny = 0;
 	int i;
 
 	if (Xdp != NULL)
@@ -740,15 +742,22 @@ static void initdacbox()
 	}
 	else
 	{
+		// TODO: COLOR_CHANNEL_MAX
 		for (i = 0; i < 256; i++)
 		{
 			g_dac_box[i][0] = (i >> 5)*8 + 7;
 			g_dac_box[i][1] = (((i + 16) & 28) >> 2)*8 + 7;
 			g_dac_box[i][2] = (((i + 2) & 3))*16 + 15;
 		}
-		g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-		g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
-		g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
+		g_dac_box[0][0] = 0;
+		g_dac_box[0][1] = 0;
+		g_dac_box[0][2] = 0;
+		g_dac_box[1][0] = 63;
+		g_dac_box[1][1] = 63;
+		g_dac_box[1][2] = 63;
+		g_dac_box[2][0] = 47;
+		g_dac_box[2][1] = 63;
+		g_dac_box[2][2] = 63;
 	}
 	if (s0)
 	{
@@ -792,7 +801,8 @@ int endvideo()
 */
 int resizeWindow()
 {
-	static int oldx = -1, oldy = -1;
+	static int oldx = -1;
+	static int oldy = -1;
 	int junki;
 	unsigned int junkui;
 	Window junkw;
@@ -982,8 +992,10 @@ static int xcmapstuff()
 
 	if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(Xsc) != 0)
 	{
-		pixtab[0] = ipixtab[0] = 1;
-		pixtab[1] = ipixtab[1] = 0;
+		pixtab[0] = 1;
+		ipixtab[0] = 1;
+		pixtab[1] = 0;
+		ipixtab[1] = 0;
 		usepixtab = 1;
 	}
 
@@ -2111,8 +2123,10 @@ static void OnButtonPress(XEvent *xevent,
 		*lasty = xevent->xbutton.y;
 		return;
 	}
-	*bandx1 = *bandx0 = xevent->xbutton.x;
-	*bandy1 = *bandy0 = xevent->xbutton.y;
+	*bandx1 = xevent->xbutton.x;
+	*bandx0 = xevent->xbutton.x;
+	*bandy1 = xevent->xbutton.y;
+	*bandy0 = xevent->xbutton.y;
 	while (!done)
 	{
 		XNextEvent(Xdp, xevent);
@@ -2169,7 +2183,7 @@ static void OnButtonPress(XEvent *xevent,
 	}
 	if (!banding)
 	{
-	  return;
+		return;
 	}
 	XDrawRectangle(Xdp, Xw, Xgc, MIN(*bandx0, *bandx1),
 		MIN(*bandy0, *bandy1), ABS(*bandx1-*bandx0),

@@ -2203,7 +2203,7 @@ static void pal_table_restore_rect(pal_table *me)
 			{
 				driver_buzzer(BUZZER_ERROR);
 				break;
-				}
+			}
 			put_row(me->x, me->y + yoff, width, buff);
 		}
 		cursor_show();
@@ -2366,7 +2366,7 @@ static void pal_table_change(rgb_editor *rgb, VOIDPTR info)
 	me->pal[pnum] = rgb_editor_get_rgb(rgb);
 
 	if (me->curr[0] == me->curr[1])
-		{
+	{
 		int      other = me->active == 0 ? 1 : 0;
 		PALENTRY color;
 
@@ -2376,8 +2376,7 @@ static void pal_table_change(rgb_editor *rgb, VOIDPTR info)
 		cursor_hide();
 		rgb_editor_update(me->rgb[other]);
 		cursor_show();
-		}
-
+	}
 }
 
 
@@ -3311,7 +3310,8 @@ void palette_edit()       /* called by fractint */
 
 	g_line_buffer = new BYTE[max(g_screen_width, g_screen_height)];
 
-	g_sx_offset = g_sy_offset = 0;
+	g_sx_offset = 0;
+	g_sy_offset = 0;
 
 	s_reserve_colors = true;
 	s_inverse = false;

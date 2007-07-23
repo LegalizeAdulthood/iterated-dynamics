@@ -661,9 +661,9 @@ int fr_find_next()
 		dirEntry = readdir(currdir);
 		if (dirEntry == NULL)
 		{
-		 closedir(currdir);
-		 currdir = NULL;
-		 return -1;
+			closedir(currdir);
+			currdir = NULL;
+			return -1;
 		}
 		else if (dirEntry->d_ino != 0)
 		{

@@ -251,8 +251,8 @@ void zoom_box_draw(int drawit)
 		g_box_count = 1;
 #endif
 		display_box();
-		}
 	}
+}
 
 void _fastcall draw_lines(Coordinate fr, Coordinate to,
 						int dx, int dy)
@@ -298,7 +298,7 @@ void _fastcall draw_lines(Coordinate fr, Coordinate to,
 			}
 			add_box(line1);
 			add_box(line2);
-			}
+		}
 	}
 
 	else  /* delta.y > delta.x */
@@ -738,7 +738,8 @@ static void _fastcall move_row(int fromrow, int torow, int col)
 	memset(g_stack, 0, g_x_dots); /* use g_stack as a temp for the row; clear it */
 	if (fromrow >= 0 && fromrow < g_y_dots)
 	{
-		tocol = startcol = 0;
+		tocol = 0;
+		startcol = 0;
 		endcol = g_x_dots - 1;
 		if (col < 0)
 		{
@@ -801,7 +802,8 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	} /* don't do end_resume! we might still change our mind */
 	g_WorkList.offset_items(row, col);
 	/* add g_work_list entries for the new edges */
-	listfull = i = 0;
+	listfull = 0;
+	i = 0;
 	j = g_y_dots-1;
 	if (row < 0)
 	{

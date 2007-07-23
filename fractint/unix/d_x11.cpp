@@ -425,6 +425,7 @@ void X11Driver::doneXwindow()
  */
 void X11Driver::initdacbox()
 {
+	// TODO: COLOR_CHANNEL_MAX
 	int i;
 	for (i = 0; i < 256; i++)
 	{
@@ -432,9 +433,15 @@ void X11Driver::initdacbox()
 		g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
 		g_dac_box[i][2] = (((i+2) & 3))*16+15;
 	}
-	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-	g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 63;
-	g_dac_box[2][0] = 47; g_dac_box[2][1] = g_dac_box[2][2] = 63;
+	g_dac_box[0][0] = 0;
+	g_dac_box[0][1] = 0;
+	g_dac_box[0][2] = 0;
+	g_dac_box[1][0] = 63;
+	g_dac_box[1][1] = 63;
+	g_dac_box[1][2] = 63;
+	g_dac_box[2][0] = 47;
+	g_dac_box[2][1] = 63;
+	g_dac_box[2][2] = 63;
 }
 
 void X11Driver::erase_text_screen()
@@ -713,8 +720,10 @@ int X11Driver::xcmapstuff()
 
 	if (!g_got_real_dac && g_colors == 2 && BlackPixelOfScreen(m_Xsc) != 0)
 	{
-		m_pixtab[0] = m_ipixtab[0] = 1;
-		m_pixtab[1] = m_ipixtab[1] = 0;
+		m_pixtab[0] = 1;
+		m_ipixtab[0] = 1;
+		m_pixtab[1] = 0;
+		m_ipixtab[1] = 0;
 		m_usepixtab = 1;
 	}
 
@@ -1227,7 +1236,7 @@ void X11Driver::ev_expose(XExposeEvent *xevent)
 		if (x < g_screen_width && y < g_screen_height && w > 0 && h > 0)
 		{
 			XPutImage(m_Xdp, m_Xw, m_Xgc, m_Ximage, x, y, x, y,
-		xevent->width, xevent->height);
+			xevent->width, xevent->height);
 		}
 	}
 }
@@ -1248,8 +1257,10 @@ void X11Driver::ev_button_press(XEvent *xevent)
 		return;
 	}
 
-	bandx1 = bandx0 = xevent->xbutton.x;
-	bandy1 = bandy0 = xevent->xbutton.y;
+	bandx1 = xevent->xbutton.x;
+	bandx0 = xevent->xbutton.x;
+	bandy1 = xevent->xbutton.y;
+	bandy0 = xevent->xbutton.y;
 	while (!done)
 	{
 		XNextEvent(m_Xdp, xevent);
@@ -1907,7 +1918,8 @@ void X11Driver::window()
 {
 	XSetWindowAttributes Xwatt;
 	XGCValues Xgcvals;
-	int Xwinx = 0, Xwiny = 0;
+	int Xwinx = 0;
+	int Xwiny = 0;
 	int i;
 
 	g_adapter = 0;
@@ -2023,7 +2035,8 @@ void X11Driver::window()
  */
 int X11Driver::resize()
 {
-	static int oldx = -1, oldy = -1;
+	static int oldx = -1;
+	static int oldy = -1;
 	int junki;
 	unsigned int junkui;
 	Window junkw;

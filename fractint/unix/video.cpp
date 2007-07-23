@@ -557,7 +557,8 @@ void find_special_colors()
 		}
 		if (brt < 150 && brt > 80)
 		{
-			maxgun = mingun = (int) g_dac_box[i][0];
+			maxgun = (int) g_dac_box[i][0];
+			mingun = (int) g_dac_box[i][0];
 			if ((int) g_dac_box[i][1] > (int) g_dac_box[i][0])
 			{
 				maxgun = (int) g_dac_box[i][1];

@@ -201,7 +201,8 @@ void GDIDriver::max_size(int &width, int &height, bool &center_x, bool &center_y
 
 void GDIDriver::center_windows(bool center_x, bool center_y)
 {
-	POINT text_pos = { 0 }, plot_pos = { 0 };
+	POINT text_pos = { 0 };
+	POINT plot_pos = { 0 };
 
 	if (center_x)
 	{

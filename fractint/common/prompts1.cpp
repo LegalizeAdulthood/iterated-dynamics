@@ -698,7 +698,8 @@ int FullScreenPrompter::Prompt()
 			case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
 				if (m_in_scrolling_mode)
 				{
-					s_scroll_row_status = s_scroll_column_status = 0;
+					s_scroll_row_status = 0;
+					s_scroll_column_status = 0;
 					rewrite_footer = true;
 				}
 				break;
@@ -938,7 +939,8 @@ int FullScreenPrompter::Prompt()
 		case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
 			if (m_in_scrolling_mode)
 			{
-				s_scroll_row_status = s_scroll_column_status = 0;
+				s_scroll_row_status = 0;
+				s_scroll_column_status = 0;
 				rewrite_footer = true;
 			}
 			break;
@@ -1235,7 +1237,7 @@ struct FT_CHOICE
 {
 		char name[15];
 		int  num;
-		};
+};
 static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
 
 static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
@@ -1267,7 +1269,8 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	{
 		t = FRACTYPE_IFS;
 	}
-	i = j = -1;
+	i = -1;
+	j = -1;
 	while (g_fractal_specific[++i].name)
 	{
 		if (g_julibrot)
@@ -1485,7 +1488,9 @@ sel_type_restart:
 		if (newfractype != oldfractype)
 		{
 			g_invert = 0;
-			g_inversion[0] = g_inversion[1] = g_inversion[2] = 0;
+			g_inversion[0] = 0;
+			g_inversion[1] = 0;
+			g_inversion[2] = 0;
 		}
 	}
 
@@ -2432,7 +2437,8 @@ top:
 			}
 			continue;
 		}
-		name_offset = temp_offset = file_offset;
+		name_offset = file_offset;
+		temp_offset = file_offset;
 		/* next equiv roughly to fscanf(.., "%40[^* \n\r\t({\032]", buf) */
 		len = 0;
 		/* allow spaces in entry names in next JCO 9/2/2003 */
@@ -2607,7 +2613,9 @@ retry:
 	strcpy(buf, entryname); /* preset to last choice made */
 	sprintf(temp1, "%s Selection\nFile: %s", title, filename);
 	formatitem = NULL;
-	boxwidth = colwidth = boxdepth = 0;
+	boxwidth = 0;
+	colwidth = 0;
+	boxdepth = 0;
 	if (type == GETFILE_PARAMETER)
 	{
 		formatitem = format_parmfile_line;
@@ -2739,14 +2747,14 @@ static int check_gfe_key(int curkey, int choice)
 				driver_put_string(4, 0, C_GENERAL_MED, infbuf);
 			}
 			i = getakeynohelp();
-			if (i == FIK_DOWN_ARROW		|| i == FIK_CTL_DOWN_ARROW
-					|| i == FIK_UP_ARROW		|| i == FIK_CTL_UP_ARROW
-					|| i == FIK_LEFT_ARROW		|| i == FIK_CTL_LEFT_ARROW
-					|| i == FIK_RIGHT_ARROW	|| i == FIK_CTL_RIGHT_ARROW
-					|| i == FIK_HOME			|| i == FIK_CTL_HOME
+			if (i == FIK_DOWN_ARROW			|| i == FIK_CTL_DOWN_ARROW
+					|| i == FIK_UP_ARROW	|| i == FIK_CTL_UP_ARROW
+					|| i == FIK_LEFT_ARROW	|| i == FIK_CTL_LEFT_ARROW
+					|| i == FIK_RIGHT_ARROW || i == FIK_CTL_RIGHT_ARROW
+					|| i == FIK_HOME		|| i == FIK_CTL_HOME
 					|| i == FIK_END			|| i == FIK_CTL_END
 					|| i == FIK_PAGE_UP		|| i == FIK_CTL_PAGE_UP
-					|| i == FIK_PAGE_DOWN		|| i == FIK_CTL_PAGE_DOWN)
+					|| i == FIK_PAGE_DOWN	|| i == FIK_CTL_PAGE_DOWN)
 			{
 				switch (i)
 				{
@@ -2811,7 +2819,8 @@ static int check_gfe_key(int curkey, int choice)
 				case FIK_HOME: case FIK_CTL_HOME:     /* to beginning of entry */
 					if (in_scrolling_mode)
 					{
-						top_line = left_column = 0;
+						top_line = 0;
+						left_column = 0;
 						rewrite_infbuf = 1;
 					}
 					break;
@@ -2884,7 +2893,10 @@ static void load_entry_text(
 		/* write maxlines of entry */
 	while (maxlines-- > 0)
 	{
-		comment = linelen = i = c = 0;
+		comment = 0;
+		linelen = 0;
+		i = 0;
+		c = 0;
 
 		/* skip line up to startcol */
 		while (i++ < startcol && (c = fgetc(entfile)) != EOF && c != '\032')

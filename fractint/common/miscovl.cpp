@@ -599,7 +599,8 @@ skip_UI:
 			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
 			if (fpbat == NULL)
 			{
-				m_xm = m_ym = 0;
+				m_xm = 0;
+				m_ym = 0;
 			}
 			m_pdelx  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/(m_xm*m_pxdots - 1);   /* calculate stepsizes */
 			m_pdely  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/(m_ym*m_pydots - 1);
@@ -2093,7 +2094,7 @@ static void put_bf(int slash, bf_t r, int prec)
 
 void edit_text_colors()
 {
-	int	save_debugflag;
+	int save_debugflag;
 	int row;
 	int col;
 	int bkgrd;
@@ -2106,19 +2107,25 @@ void edit_text_colors()
 	int k;
 
 	save_debugflag = g_debug_mode;
-	g_debug_mode =	0;	 /*	don't get called recursively */
+	g_debug_mode = 0;	 /*	don't get called recursively */
 	MouseModeSaver saved_mouse(LOOK_MOUSE_TEXT); /* text mouse sensitivity */
-	row	= col =	bkgrd =	rowt = rowf	= colt = colf =	0;
+	row = 0;
+	col = 0;
+	bkgrd = 0;
+	rowt = 0;
+	rowf = 0;
+	colt = 0;
+	colf = 0;
 
 	while (true)
 	{
-		if (row	< 0)
+		if (row < 0)
 		{
 			row = 0;
 		}
 		else if (row > 24)
 		{
-			row =	24;
+			row = 24;
 		}
 		if (col < 0)
 		{
@@ -2126,28 +2133,28 @@ void edit_text_colors()
 		}
 		else if (col > 79)
 		{
-			col =	79;
+			col = 79;
 		}
 		driver_move_cursor(row, col);
-		i =	toupper(driver_get_key());
+		i = toupper(driver_get_key());
 
 		switch (i)
 		{
 		case FIK_ESC:
-			g_debug_mode =	save_debugflag;
+			g_debug_mode = save_debugflag;
 			driver_hide_text_cursor();
 			return;
 		case '/':
 			driver_hide_text_cursor();
 			driver_stack_screen();
-			for	(i = 0;	i <	8; ++i)		  /* 8 bkgrd attrs */
+			for (i = 0; i < 8; ++i)		  /* 8 bkgrd attrs */
 			{
-				for	(j = 0;	j <	16;	++j) /*	16 fgrd	attrs */
+				for (j = 0; j < 16; ++j) /*	16 fgrd	attrs */
 				{
 #if defined(_WIN32)
 					_ASSERTE(_CrtCheckMemory());
 #endif
-					k =	(i*16 + j);
+					k = (i*16 + j);
 					driver_put_char_attr_rowcol(i*2, j*5, (' ' << 8) | k);
 					driver_put_char_attr_rowcol(i*2, j*5 + 1, ((i + '0') << 8)| k);
 					driver_put_char_attr_rowcol(i*2, j*5 + 2, (((j < 10) ? j + '0' : j + 'A'-10) << 8) | k);
@@ -2166,10 +2173,10 @@ void edit_text_colors()
 			rowt = row;
 			colt = col;
 			break;
-		case ' ': /* next color is	background */
-			bkgrd =	1;
+		case ' ': /* next color is background */
+			bkgrd = 1;
 			break;
-		case FIK_LEFT_ARROW: /* cursor	left  */
+		case FIK_LEFT_ARROW: /* cursor left  */
 			--col;
 			break;
 		case FIK_RIGHT_ARROW: /* cursor right */
@@ -2178,10 +2185,10 @@ void edit_text_colors()
 		case FIK_UP_ARROW:	/* cursor up	*/
 			--row;
 			break;
-		case FIK_DOWN_ARROW: /* cursor	down  */
+		case FIK_DOWN_ARROW: /* cursor down  */
 			++row;
 			break;
-		case FIK_ENTER:   /* enter	*/
+		case FIK_ENTER:   /* enter */
 			{
 				int char_attr = driver_get_char_attr_rowcol(row, col);
 				char_attr &= ~0xFF;
@@ -2190,11 +2197,11 @@ void edit_text_colors()
 			}
 			break;
 		default:
-			if (i >= '0' &&	i <= '9')
+			if (i >= '0' && i <= '9')
 			{
 				i -= '0';
 			}
-			else if	(i >= 'A' && i <= 'F')
+			else if (i >= 'A' && i <= 'F')
 			{
 				i -= 'A' - 10;
 			}
@@ -2202,7 +2209,7 @@ void edit_text_colors()
 			{
 				break;
 			}
-			for	(j = rowf; j <=	rowt; ++j)
+			for (j = rowf; j <= rowt; ++j)
 			{
 				for (k = colf; k <= colt; ++k)
 				{
@@ -2221,7 +2228,7 @@ void edit_text_colors()
 					driver_put_char_attr_rowcol(j, k, char_attr);
 				}
 			}
-			bkgrd =	0;
+			bkgrd = 0;
 		}
 	}
 }
@@ -2384,8 +2391,8 @@ static int check_modekey(int curkey, int choice)
 				{
 					g_video_table[i].keynum = 0;
 					modes_changed = 1;
-					}
 				}
+			}
 			else  /* assign key? */
 			{
 				j = getakeynohelp();
@@ -2399,8 +2406,8 @@ static int check_modekey(int curkey, int choice)
 							ret = -1; /* force redisplay */
 							}
 						}
-					g_video_table[i].keynum = j;
-					modes_changed = 1;
+						g_video_table[i].keynum = j;
+						modes_changed = 1;
 					}
 				}
 			}
@@ -2454,7 +2461,7 @@ static void update_fractint_cfg()
 		sprintf(buf, "Can't write %s", cfgname);
 		stop_message(0, buf);
 		return;
-		}
+	}
 	strcpy(outname, cfgname);
 	i = int(strlen(outname));
 	while (--i >= 0 && outname[i] != SLASHC)
@@ -2471,7 +2478,8 @@ static void update_fractint_cfg()
 	}
 	cfgfile = fopen(cfgname, "r");
 
-	linenum = nextmode = 0;
+	linenum = 0;
+	nextmode = 0;
 	nextlinenum = g_cfg_line_nums[0];
 	while (fgets(buf, 120, cfgfile))
 	{
@@ -3166,8 +3174,11 @@ void expand_comments(char *target, char *source)
 	char c;
 	char oldc;
 	char varname[MAXVNAME];
-	i = j = k = 0;
-	c = oldc = 0;
+	i = 0;
+	j = 0;
+	k = 0;
+	c = 0;
+	oldc = 0;
 	bool escape = false;
 	while (i < MAX_COMMENT && j < MAX_COMMENT && (c = *(source + i++)) != '\0')
 	{

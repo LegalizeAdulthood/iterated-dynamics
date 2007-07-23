@@ -688,7 +688,8 @@ rescan:  /* entry for changed browse parms */
 	if (wincount)
 	{
 		driver_buzzer(BUZZER_COMPLETE); /*let user know we've finished */
-		index = 0; done = 0;
+		index = 0;
+		done = 0;
 		winlist = browse_windows[index];
 		memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
 		memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));

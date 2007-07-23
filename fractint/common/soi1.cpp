@@ -34,8 +34,8 @@ static double twidth;
 static double equal;
 
 static long iteration(double cr, double ci,
-	     	double re, double im,
-	     	long start)
+			double re, double im,
+			long start)
 {
 	g_old_z.x = re;
 	g_old_z.y = im;

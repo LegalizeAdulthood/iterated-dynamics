@@ -504,8 +504,10 @@ void WinText::putstring(int xpos, int ypos, int attrib, const char *text, int *e
 	ODS("wintext_putstring");
 
 	xa = (attrib & 0x0ff);
-	j = maxrow = ypos;
-	k = maxcol = xpos-1;
+	j = ypos;
+	k = xpos-1;
+	maxrow = ypos;
+	maxcol = xpos-1;
 
 	for (int i = 0; (xc = text[i]) != 0; i++)
 	{
@@ -732,8 +734,10 @@ void WinText::set_attr(int row, int col, int attr, int count)
 {
 	int i;
 	int x_min, x_max, y_min, y_max;
-	x_min = x_max = col;
-	y_min = y_max = row;
+	x_min = col;
+	x_max = col;
+	y_min = row;
+	y_max = row;
 	for (i = 0; i < count; i++)
 	{
 		m_attrs[row][col + i] = (unsigned char) (attr & 0xFF);

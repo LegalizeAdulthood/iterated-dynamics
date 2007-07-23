@@ -95,7 +95,8 @@ int gifview()
 	status = 0;
 
 	/* initialize the col and row count for write-lines */
-	colcount = g_row_count = 0;
+	colcount = 0;
+	g_row_count = 0;
 
 	/* Open the file */
 	strcpy(temp1, (g_out_line == out_line_stereo) ? g_stereo_map_name : g_read_name);
@@ -117,7 +118,7 @@ int gifview()
 	if (fpin == NULL)
 	{
 		return -1;
-		}
+	}
 
 	/* Get the screen description */
 	for (i = 0; i < 13; i++)

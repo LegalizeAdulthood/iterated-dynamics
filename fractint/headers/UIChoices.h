@@ -31,7 +31,7 @@ public:
 
 	int prompt();
 
-	const full_screen_values &values(int i)	const
+	const full_screen_values &values(int i) const
 	{
 		return m_values[i];
 	}

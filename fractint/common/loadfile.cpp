@@ -1339,7 +1339,10 @@ void backwards_v19()
 	}
 	if (fractal_type_formula(g_fractal_type) && g_save_release < 1824)
 	{
-		g_inversion[0] = g_inversion[1] = g_inversion[2] = g_invert = 0;
+		g_inversion[0] = 0;
+		g_inversion[1] = 0;
+		g_inversion[2] = 0;
+		g_invert = 0;
 	}
 	g_no_magnitude_calculation = fix_bof(); /* fractal has old bof60/61 problem with magnitude */
 	g_use_old_periodicity = fix_period_bof(); /* fractal uses old periodicity method */

@@ -165,7 +165,8 @@ int test()
 	int startrow;
 	int startpass;
 	int numpasses;
-	startrow = startpass = 0;
+	startrow = 0;
+	startpass = 0;
 	if (g_resuming)
 	{
 		start_resume();
@@ -332,11 +333,15 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 
 	s_recur1 = int(320L >> recur);
 	suby.t = 2;
-	ny   = suby.v[0] = y2;
-	ny1 = suby.v[2] = y1;
-	suby.r[0] = suby.r[2] = 0;
+	ny = y2;
+	ny1 = y1;
+	suby.v[0] = y2;
+	suby.v[2] = y1;
+	suby.r[0] = 0;
+	suby.r[2] = 0;
 	suby.r[1] = 1;
-	y = suby.v[1] = (ny1 + ny)/2;
+	suby.v[1] = (ny1 + ny)/2;
+	y = suby.v[1];
 
 	while (suby.t >= 1)
 	{
@@ -365,9 +370,12 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 			suby.r[suby.t-1]   = BYTE(max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
 		}
 		subx.t = 2;
-		nx  = subx.v[0] = x2;
-		nx1 = subx.v[2] = x1;
-		subx.r[0] = subx.r[2] = 0;
+		nx  = x2;
+		nx1 = x1;
+		subx.v[0] = x2;
+		subx.v[2] = x1;
+		subx.r[0] = 0;
+		subx.r[2] = 0;
 		subx.r[1] = 1;
 		x = subx.v[1] = (nx1 + nx)/2;
 
@@ -643,7 +651,9 @@ int plasma()
 	}
 	else
 	{
-		s_recur1 = i = k = 1;
+		s_recur1 = 1;
+		i = 1;
+		k = 1;
 		while (new_subdivision(0, 0, g_x_dots-1, g_y_dots-1, i) == 0)
 		{
 			k *= 2;
@@ -691,7 +701,7 @@ static void set_plasma_palette()
 			for (j = 0; j < 3; j++)
 			{
 				g_dac_box[i][j]			= BYTE((i*green[j] + (86 - i)*blue[j])/85);
-				g_dac_box[i + 85][j]    = BYTE((i*red[j]   + (86 - i)*green[j])/85);
+				g_dac_box[i + 85][j]	= BYTE((i*red[j]   + (86 - i)*green[j])/85);
 				g_dac_box[i + 170][j]	= BYTE((i*blue[j]  + (86 - i)*red[j])/85);
 			}
 		}
@@ -729,7 +739,8 @@ int diffusion()
 		not_disk_message();
 	}
 
-	x = y = -1;
+	x = -1;
+	y = -1;
 	g_bit_shift = 16;
 	g_fudge = 1L << 16;
 

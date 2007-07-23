@@ -126,7 +126,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 
 	if (s_disk_data != NULL)
 	{
-	   delete[] s_disk_data;
+		delete[] s_disk_data;
 	}
 	s_disk_data = new BYTE[memorysize];
 
@@ -141,7 +141,9 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 
 void disk_end()
 {
-	g_disk_flag = s_row_size = g_disk_16bit = 0;
+	g_disk_flag = 0;
+	s_row_size = 0;
+	g_disk_16bit = 0;
 	s_targa_disk_file = NULL;
 }
 

@@ -203,7 +203,8 @@ start:
 			|| s_repeats <= 1 || s_repeats >= 256 || feof(s_slide_file))
 		{
 			slideshowerr("error in * argument");
-			s_last1 = s_repeats = 0;
+			s_last1 = 0;
+			s_repeats = 0;
 		}
 		s_repeats -= 2;
 		return out = s_last1;

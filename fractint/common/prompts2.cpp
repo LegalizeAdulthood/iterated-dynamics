@@ -1880,10 +1880,12 @@ gsc_loop:
 
 		if (prompt_ret == FIK_F4)  /* reset to type defaults */
 		{
-			g_orbit_x_3rd = g_orbit_x_min = g_current_fractal_specific->x_min;
+			g_orbit_x_min = g_current_fractal_specific->x_min;
 			g_orbit_x_max = g_current_fractal_specific->x_max;
-			g_orbit_y_3rd = g_orbit_y_min = g_current_fractal_specific->y_min;
+			g_orbit_y_min = g_current_fractal_specific->y_min;
 			g_orbit_y_max = g_current_fractal_specific->y_max;
+			g_orbit_x_3rd = g_current_fractal_specific->x_min;
+			g_orbit_y_3rd = g_current_fractal_specific->y_min;
 			g_escape_time_state.m_grid_fp.x_min() = g_orbit_x_min;
 			g_escape_time_state.m_grid_fp.x_max() = g_orbit_x_max;
 			g_escape_time_state.m_grid_fp.y_min() = g_orbit_y_min;

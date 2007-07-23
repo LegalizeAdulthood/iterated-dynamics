@@ -145,7 +145,8 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 	row = 0;
 	col = 0;
 
-	size = width = 0;
+	size = 0;
+	width = 0;
 
 	tok = (start_margin >= 0) ? TOK_PARA : -1;
 
@@ -233,9 +234,10 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 					len -= size;
 				}
 
-				width = size = 0;
+				width = 0;
+				size = 0;
 				break;
-				}
+			}
 
 		case TOK_CENTER:
 			col = find_line_width(ONLINE, curr, len);
@@ -255,13 +257,13 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 				display_text(row, col, C_HELP_LINK, curr + 1 + 3*sizeof(int), width);
 				if (num_link != NULL)
 				{
-				link[*num_link].r         = (BYTE)row;
-				link[*num_link].c         = (BYTE)col;
-				link[*num_link].topic_num = getint(curr + 1);
-				link[*num_link].topic_off = getint(curr + 1 + sizeof(int));
-				link[*num_link].offset    = (unsigned) ((curr + 1 + 3*sizeof(int)) - text);
-				link[*num_link].width     = width;
-				++(*num_link);
+					link[*num_link].r         = (BYTE)row;
+					link[*num_link].c         = (BYTE)col;
+					link[*num_link].topic_num = getint(curr + 1);
+					link[*num_link].topic_off = getint(curr + 1 + sizeof(int));
+					link[*num_link].offset    = (unsigned) ((curr + 1 + 3*sizeof(int)) - text);
+					link[*num_link].width     = width;
+					++(*num_link);
 				}
 				break;
 
@@ -524,7 +526,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 			temp_dist = dist1(curr->r, temp->r);
 
 			if (best != NULL)
-				{
+			{
 				if (best_dist == 0 && temp_dist == 0)  /* if both on curr's line... */
 				{
 					if ((left && dist1(curr->c, best_c2) > dist1(curr->c, temp_c2)) ||
@@ -1344,7 +1346,8 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 	fread(&info.num_contents, sizeof(int), 1, s_help_file);
 	fread(&info.num_page, sizeof(int), 1, s_help_file);
 
-	info.cnum = info.tnum = -1;
+	info.cnum = -1;
+	info.tnum = -1;
 	info.content_pos = 6*sizeof(int) + s_num_topic*sizeof(long) + s_num_label*2*sizeof(int);
 	info.msg_func = msg_func;
 

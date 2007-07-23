@@ -136,7 +136,10 @@ int tesseral()
 		int xsize;
 		int ysize;
 		struct tess *tp2;
-		tp->top = tp->bottom = tp->left = tp->right = -2;
+		tp->top = -2;
+		tp->bottom = -2;
+		tp->left = -2;
+		tp->right = -2;
 		cury = g_WorkList.yy_begin() & 0xfff;
 		ysize = 1;
 		i = (unsigned)g_WorkList.yy_begin() >> 12;
@@ -391,7 +394,8 @@ tess_end:
 		int i;
 		int xsize;
 		int ysize;
-		xsize = ysize = 1;
+		xsize = 1;
+		ysize = 1;
 		i = 2;
 		while (tp->x2 - tp->x1 - 2 >= i)
 		{

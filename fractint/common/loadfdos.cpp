@@ -362,7 +362,8 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		return 0;
 	}
 
-	g_skip_x_dots = g_skip_y_dots = 0; /* set for no reduction */
+	g_skip_x_dots = 0;
+	g_skip_y_dots = 0; /* set for no reduction */
 	if (g_video_entry.x_dots < g_file_x_dots || g_video_entry.y_dots < g_file_y_dots)
 	{
 		/* set up to load only every nth pixel to make image fit */
@@ -370,7 +371,8 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
-		g_skip_x_dots = g_skip_y_dots = 1;
+		g_skip_x_dots = 1;
+		g_skip_y_dots = 1;
 		while (g_skip_x_dots*g_video_entry.x_dots < g_file_x_dots)
 		{
 			++g_skip_x_dots;
@@ -379,7 +381,8 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		{
 			++g_skip_y_dots;
 		}
-		i = j = 0;
+		i = 0;
+		j = 0;
 		while (true)
 		{
 			tmpxdots = (g_file_x_dots + g_skip_x_dots - 1)/g_skip_x_dots;

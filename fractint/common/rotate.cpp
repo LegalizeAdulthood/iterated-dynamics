@@ -443,7 +443,9 @@ static void pause_rotate()               /* pause-the-rotate routine */
 /* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
-	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
+	g_dac_box[0][0] = 0;
+	g_dac_box[0][1] = 0;
+	g_dac_box[0][2] = 0;
 	for (int i = 1; i <= 255; i++)                  /* fill the palette     */
 	{
 		for (int j = 0; j < 3; j++)

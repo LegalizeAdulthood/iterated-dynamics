@@ -222,7 +222,8 @@ over_bailout_87:
 	{
 		g_old_color_iter = 0;
 	}
-	g_color_iter = g_real_color_iter = g_max_iteration-cx;
+	g_color_iter = g_max_iteration-cx;
+	g_real_color_iter = g_max_iteration-cx;
 	if (g_color_iter == 0)
 	{
 		g_color_iter = 1;

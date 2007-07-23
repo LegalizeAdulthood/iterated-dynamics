@@ -82,7 +82,8 @@ long iteration(LDBL cr, LDBL ci,
 		{
 			iter = g_max_iteration >> 3;
 		}
-		k = n = 8;
+		k = 8;
+		n = 8;
 
 		do
 		{
@@ -451,21 +452,30 @@ static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 	under DOS is extremely limited.
 */
 
-#define RHOMBUS(CRE1, CRE2, CIM1, CIM2,X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
-				ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
-	do \
-	{ \
-		zre1 = (ZRE1); zim1 = (ZIM1); \
-		zre2 = (ZRE2); zim2 = (ZIM2); \
-		zre3 = (ZRE3); zim3 = (ZIM3); \
-		zre4 = (ZRE4); zim4 = (ZIM4); \
-		zre5 = (ZRE5); zim5 = (ZIM5); \
-		zre6 = (ZRE6); zim6 = (ZIM6); \
-		zre7 = (ZRE7); zim7 = (ZIM7); \
-		zre8 = (ZRE8); zim8 = (ZIM8); \
-		zre9 = (ZRE9); zim9 = (ZIM9); \
-		status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)); \
-	} \
+#define RHOMBUS(CRE1, CRE2, CIM1, CIM2,X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3,	\
+		ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER)		\
+	do																						\
+	{																						\
+		zre1 = (ZRE1);																		\
+		zim1 = (ZIM1);																		\
+		zre2 = (ZRE2);																		\
+		zim2 = (ZIM2);																		\
+		zre3 = (ZRE3);																		\
+		zim3 = (ZIM3);																		\
+		zre4 = (ZRE4);																		\
+		zim4 = (ZIM4);																		\
+		zre5 = (ZRE5);																		\
+		zim5 = (ZIM5);																		\
+		zre6 = (ZRE6);																		\
+		zim6 = (ZIM6);																		\
+		zre7 = (ZRE7);																		\
+		zim7 = (ZIM7);																		\
+		zre8 = (ZRE8);																		\
+		zim8 = (ZIM8);																		\
+		zre9 = (ZRE9);																		\
+		zim9 = (ZIM9);																		\
+		status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER));	\
+	}																						\
 	while (0)
 
 static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
@@ -555,7 +565,8 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 	static int avail;
 
 	/* center of rectangle */
-	LDBL midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
+	LDBL midr = (cre1 + cre2) / 2;
+	LDBL midi = (cim1 + cim2) / 2;
 
 	/* saved values of key values */
 	LDBL sr1;
@@ -736,18 +747,29 @@ scan:
 		goto rhombus_done;
 	}
 
-	rq1 = zre1*zre1; iq1 = zim1*zim1;
-	rq2 = zre2*zre2; iq2 = zim2*zim2;
-	rq3 = zre3*zre3; iq3 = zim3*zim3;
-	rq4 = zre4*zre4; iq4 = zim4*zim4;
-	rq5 = zre5*zre5; iq5 = zim5*zim5;
-	rq6 = zre6*zre6; iq6 = zim6*zim6;
-	rq7 = zre7*zre7; iq7 = zim7*zim7;
-	rq8 = zre8*zre8; iq8 = zim8*zim8;
-	rq9 = zre9*zre9; iq9 = zim9*zim9;
+	rq1 = zre1*zre1;
+	iq1 = zim1*zim1;
+	rq2 = zre2*zre2;
+	iq2 = zim2*zim2;
+	rq3 = zre3*zre3;
+	iq3 = zim3*zim3;
+	rq4 = zre4*zre4;
+	iq4 = zim4*zim4;
+	rq5 = zre5*zre5;
+	iq5 = zim5*zim5;
+	rq6 = zre6*zre6;
+	iq6 = zim6*zim6;
+	rq7 = zre7*zre7;
+	iq7 = zim7*zim7;
+	rq8 = zre8*zre8;
+	iq8 = zim8*zim8;
+	rq9 = zre9*zre9;
+	iq9 = zim9*zim9;
 
-	cr1 = 0.75*cre1 + 0.25*cre2; cr2 = 0.25*cre1 + 0.75*cre2;
-	ci1 = 0.75*cim1 + 0.25*cim2; ci2 = 0.25*cim1 + 0.75*cim2;
+	cr1 = 0.75*cre1 + 0.25*cre2;
+	cr2 = 0.25*cre1 + 0.75*cre2;
+	ci1 = 0.75*cim1 + 0.25*cim2;
+	ci2 = 0.25*cim1 + 0.75*cim2;
 
 	tzr1 = GET_REAL(cr1, ci1);
 	tzi1 = GET_IMAG(cr1, ci1);
@@ -777,15 +799,24 @@ scan:
 
 	while (true)
 	{
-		sr1 = zre1; si1 = zim1;
-		sr2 = zre2; si2 = zim2;
-		sr3 = zre3; si3 = zim3;
-		sr4 = zre4; si4 = zim4;
-		sr5 = zre5; si5 = zim5;
-		sr6 = zre6; si6 = zim6;
-		sr7 = zre7; si7 = zim7;
-		sr8 = zre8; si8 = zim8;
-		sr9 = zre9; si9 = zim9;
+		sr1 = zre1;
+		si1 = zim1;
+		sr2 = zre2;
+		si2 = zim2;
+		sr3 = zre3;
+		si3 = zim3;
+		sr4 = zre4;
+		si4 = zim4;
+		sr5 = zre5;
+		si5 = zim5;
+		sr6 = zre6;
+		si6 = zim6;
+		sr7 = zre7;
+		si7 = zim7;
+		sr8 = zre8;
+		si8 = zim8;
+		sr9 = zre9;
+		si9 = zim9;
 
 		/* iterate key values */
 		zim1 = (zim1 + zim1)*zre1 + cim1;
