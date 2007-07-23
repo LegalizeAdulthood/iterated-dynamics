@@ -1330,32 +1330,82 @@ int calculate_mandelbrot_fp()
 #define STARTRAILMAX FLT_MAX   /* just a convenient large number */
 #define green 2
 #define yellow 6
-#if 1
-#define NUMSAVED 40     /* define this to save periodicity analysis to file */
-#endif
 #if 0
 #define MINSAVEDAND 3   /* if not defined, old method used */
 #endif
+
+class ColoringMethod
+{
+public:
+	ColoringMethod() {}
+	virtual ~ColoringMethod() {}
+
+	virtual void initialize();
+};
+
+class StandardFractal
+{
+public:
+	StandardFractal()
+	{
+	}
+	~StandardFractal()
+	{
+	}
+
+	int execute();
+	void set_new_z_if_bigmath();
+
+	void show_orbit();
+
+	bool interrupted();
+
+	void initialize();
+
+
+private:
+	double m_tangent_table[16];
+	int m_colormode_epsilon_cross_hooper;
+	double m_colormode_modulus_value;
+	double m_colormode_bof60_min_magnitude;
+	long m_colormode_bof61_min_index;
+	long m_colormode_period_cycle_length;
+	long m_colormode_period_cycle_start_iteration;
+	ComplexD m_dem_new_z;
+	double m_colormode_total_distance;
+	bool m_attracted;
+	ComplexL m_saved_z_l;
+	ComplexD m_distance_test_derivative;
+	long m_dem_color;
+	bool m_caught_a_cycle;
+	long m_periodicity_cycle_check_size;
+	ComplexD m_colormode_total_distance_last_z;
+	int m_check_freq;
+	long m_colormode_epsilon_cross_proximity_l;
+	int m_periodicity_cycle_check_counter;
+};
+
+enum EpsilonCrossHooperType
+{
+	HOOPER_NEGATIVE_X_AXIS = -2,
+	HOOPER_NEGATIVE_Y_AXIS = -1,
+	HOOPER_NONE = 0,
+	HOOPER_POSITIVE_Y_AXIS = 1,
+	HOOPER_POSITIVE_X_AXIS = 2
+};
+
 int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 {
-#ifdef NUMSAVED
-	ComplexD savedz[NUMSAVED];
-	long caught[NUMSAVED];
-	long changed[NUMSAVED];
-	int zctr = 0;
-	for (int i = 0; i < NUMSAVED; i++)
-	{
-		caught[i] = 0L;
-		changed[i] = 0L;
-	}
-#endif
-	double tantable[16];
-	ValueSaver<long> saved_max_iterations(g_max_iteration);
+	return StandardFractal().execute();
+}
+
+void StandardFractal::initialize()
+{
 	if (g_inside == COLORMODE_STAR_TRAIL)
 	{
 		for (int i = 0; i < 16; i++)
 		{
-			tantable[i] = 0.0;
+			m_tangent_table[i] = 0.0;
 		}
 		if (g_save_release > 1824)
 		{
@@ -1388,9 +1438,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 #endif
 	/* really fractal specific, but we'll leave it here */
-	ComplexL saved_z_l;
-	ComplexD derivative;
-	long dem_color = -1;
+	m_dem_color = -1;
 	if (!g_integer_fractal)
 	{
 		if (g_use_initial_orbit_z == INITIALZ_ORBIT)
@@ -1402,9 +1450,6 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			s_saved_z.x = 0;
 			s_saved_z.y = 0;
 		}
-#ifdef NUMSAVED
-		savedz[zctr++] = s_saved_z;
-#endif
 		if (g_bf_math)
 		{
 			if (g_decimals > 200)
@@ -1435,10 +1480,10 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 						g_rq_limit = DEM_BAILOUT;
 					}
 				}
-				dem_color = -1;
+				m_dem_color = -1;
 			}
-			derivative.x = 1;
-			derivative.y = 0;
+			m_distance_test_derivative.x = 1;
+			m_distance_test_derivative.y = 0;
 			g_magnitude = 0;
 		}
 	}
@@ -1446,12 +1491,12 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 		{
-			saved_z_l = g_init_orbit_l;
+			m_saved_z_l = g_init_orbit_l;
 		}
 		else
 		{
-			saved_z_l.x = 0;
-			saved_z_l.y = 0;
+			m_saved_z_l.x = 0;
+			m_saved_z_l.y = 0;
 		}
 		g_initial_z_l.y = g_ly_pixel();
 	}
@@ -1461,11 +1506,10 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	{
 		g_color_iter = -1;
 	}
-	bool caught_a_cycle = false;
-	long periodicity_cycle_check_size;
+	m_caught_a_cycle = false;
 	if (g_inside == COLORMODE_PERIOD)
 	{
-		periodicity_cycle_check_size = 16;           /* begin checking every 16th cycle */
+		m_periodicity_cycle_check_size = 16;           /* begin checking every 16th cycle */
 	}
 	else
 	{
@@ -1473,10 +1517,10 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 #ifdef MINSAVEDAND
 		savedand = MINSAVEDAND;
 #else
-		periodicity_cycle_check_size = g_first_saved_and;                /* begin checking every other cycle */
+		m_periodicity_cycle_check_size = g_first_saved_and;                /* begin checking every other cycle */
 #endif
 	}
-	int periodicity_cycle_check_counter = 1;               /* start checking the very first time */
+	m_periodicity_cycle_check_counter = 1;               /* start checking the very first time */
 
 	if (inside_coloring_beauty_of_fractals())
 	{
@@ -1487,8 +1531,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 
 	g_current_fractal_specific->per_pixel(); /* initialize the calculations */
 
-	bool attracted = false;
-	ComplexD last_z;
+	m_attracted = false;
 	if (g_outside == COLORMODE_TOTAL_DISTANCE)
 	{
 		if (g_integer_fractal)
@@ -1498,65 +1541,100 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_bf_math == BIGNUM)
 		{
-			g_old_z = complex_bn_to_float(&bnold);
+			g_old_z = complex_bn_to_float(&g_old_z_bn);
 		}
 		else if (g_bf_math == BIGFLT)
 		{
-			g_old_z = complex_bf_to_float(&bfold);
+			g_old_z = complex_bf_to_float(&g_old_z_bf);
 		}
-		last_z.x = g_old_z.x;
-		last_z.y = g_old_z.y;
+		m_colormode_total_distance_last_z.x = g_old_z.x;
+		m_colormode_total_distance_last_z.y = g_old_z.y;
 	}
 
-	int check_freq = (((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
+	m_check_freq = (((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
 		? 16 : 2048;
 
 	if (g_show_orbit)
 	{
 		g_sound_state.write_time();
 	}
-	int hooper = 0;
-	double modulus_value = 0.0;
-	double min_orbit = 100000.0;		/* orbit value closest to origin */
-	long min_index = 0;					/* iteration of min_orbit */
-	long cycle_length = -1;
-	long saved_color_iteration = 0;
-	ComplexD dem_new;
-	double total_distance = 0.0;
-	long proximity_l = long(g_proximity*g_fudge);
+	m_colormode_epsilon_cross_hooper = HOOPER_NONE;
+	m_colormode_modulus_value = 0.0;
+	m_colormode_bof60_min_magnitude = 100000.0;		/* orbit value closest to origin */
+	m_colormode_bof61_min_index = 0;					/* iteration of min_orbit */
+	m_colormode_period_cycle_length = -1;
+	m_colormode_period_cycle_start_iteration = 0;
+	m_colormode_total_distance = 0.0;
+	m_colormode_epsilon_cross_proximity_l = long(g_proximity*g_fudge);
+}
+bool StandardFractal::interrupted()
+{
+	return (g_color_iter % m_check_freq == 0) && check_key();
+}
+void StandardFractal::show_orbit()
+{
+	if (!g_integer_fractal)
+	{
+		if (g_bf_math == BIGNUM)
+		{
+			g_new_z = complex_bn_to_float(&g_new_z_bn);
+		}
+		else if (g_bf_math == BIGFLT)
+		{
+			g_new_z = complex_bf_to_float(&g_new_z_bf);
+		}
+		plot_orbit(g_new_z.x, g_new_z.y, -1);
+	}
+	else
+	{
+		plot_orbit_i(g_new_z_l.x, g_new_z_l.y, -1);
+	}
+}
+void StandardFractal::set_new_z_if_bigmath()
+{
+	if (g_bf_math == BIGNUM)
+	{
+		g_new_z = complex_bn_to_float(&g_new_z_bn);
+	}
+	else if (g_bf_math == BIGFLT)
+	{
+		g_new_z = complex_bf_to_float(&g_new_z_bf);
+	}
+}
+int StandardFractal::execute()
+{
+	ValueSaver<long> saved_max_iterations(g_max_iteration);
+
+	initialize();
 	while (++g_color_iter < g_max_iteration)
 	{
 		/* calculation of one orbit goes here */
 		/* input in "g_old_z" -- output in "g_new_z" */
-		if (g_color_iter % check_freq == 0)
+		if (interrupted())
 		{
-			if (check_key())
-			{
-				return -1;
-			}
+			return -1;
 		}
 
 		if (g_distance_test)
 		{
-			double ftemp;
 			/* Distance estimator for points near Mandelbrot set */
 			/* Original code by Phil Wilson, hacked around by PB */
 			/* Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 */
-			ftemp = s_dem_mandelbrot
-				? 2*(g_old_z.x*derivative.x - g_old_z.y*derivative.y) + 1
-				: 2*(g_old_z.x*derivative.x - g_old_z.y*derivative.y);
-			derivative.y = 2*(g_old_z.y*derivative.x + g_old_z.x*derivative.y);
-			derivative.x = ftemp;
+			double ftemp = s_dem_mandelbrot
+				? 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y) + 1
+				: 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y);
+			m_distance_test_derivative.y = 2*(g_old_z.y*m_distance_test_derivative.x + g_old_z.x*m_distance_test_derivative.y);
+			m_distance_test_derivative.x = ftemp;
 			if (g_use_old_distance_test)
 			{
-				if (sqr(derivative.x) + sqr(derivative.y) > s_dem_too_big)
+				if (sqr(m_distance_test_derivative.x) + sqr(m_distance_test_derivative.y) > s_dem_too_big)
 				{
 					break;
 				}
 			}
 			else if (g_save_release > 1950)
 			{
-				if (max(fabs(derivative.x), fabs(derivative.y)) > s_dem_too_big)
+				if (max(fabs(m_distance_test_derivative.x), fabs(m_distance_test_derivative.y)) > s_dem_too_big)
 				{
 					break;
 				}
@@ -1568,10 +1646,10 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			{
 				if (g_use_old_distance_test)
 				{
-					if (dem_color < 0)
+					if (m_dem_color < 0)
 					{
-						dem_color = g_color_iter;
-						dem_new = g_new_z;
+						m_dem_color = g_color_iter;
+						m_dem_new_z = g_new_z;
 					}
 					if (g_rq_limit >= DEM_BAILOUT
 						|| g_magnitude >= (g_rq_limit = DEM_BAILOUT)
@@ -1595,33 +1673,11 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		if (g_show_orbit)
 		{
-			if (!g_integer_fractal)
-			{
-				if (g_bf_math == BIGNUM)
-				{
-					g_new_z = complex_bn_to_float(&bnnew);
-				}
-				else if (g_bf_math == BIGFLT)
-				{
-					g_new_z = complex_bf_to_float(&bfnew);
-				}
-				plot_orbit(g_new_z.x, g_new_z.y, -1);
-			}
-			else
-			{
-				plot_orbit_i(g_new_z_l.x, g_new_z_l.y, -1);
-			}
+			show_orbit();
 		}
 		if (g_inside < COLORMODE_ITERATION)
 		{
-			if (g_bf_math == BIGNUM)
-			{
-				g_new_z = complex_bn_to_float(&bnnew);
-			}
-			else if (g_bf_math == BIGFLT)
-			{
-				g_new_z = complex_bf_to_float(&bfnew);
-			}
+			set_new_z_if_bigmath();
 			if (g_inside == COLORMODE_STAR_TRAIL)
 			{
 				if (0 < g_color_iter && g_color_iter < 16)
@@ -1660,23 +1716,27 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					{
 						int tmpcolor;
 						tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
-						tantable[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
+						m_tangent_table[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
 					}
 				}
 			}
 			else if (g_inside == COLORMODE_EPSILON_CROSS)
 			{
-				hooper = 0;
+				m_colormode_epsilon_cross_hooper = HOOPER_NONE;
 				if (g_integer_fractal)
 				{
-					if (labs(g_new_z_l.x) < labs(proximity_l))
+					if (labs(g_new_z_l.x) < labs(m_colormode_epsilon_cross_proximity_l))
 					{
-						hooper = (proximity_l > 0 ? 1 : -1); /* close to y axis */
+						/* close to y axis */
+						m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
+							HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
 						goto plot_inside;
 					}
-					else if (labs(g_new_z_l.y) < labs(proximity_l))
+					else if (labs(g_new_z_l.y) < labs(m_colormode_epsilon_cross_proximity_l))
 					{
-						hooper = (proximity_l > 0 ? 2 : -2); /* close to x axis */
+						/* close to x axis */
+						m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
+							HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS; 
 						goto plot_inside;
 					}
 				}
@@ -1684,12 +1744,16 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				{
 					if (fabs(g_new_z.x) < fabs(g_proximity))
 					{
-						hooper = (g_proximity > 0 ? 1 : -1); /* close to y axis */
+						/* close to y axis */
+						m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
+							HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS; 
 						goto plot_inside;
 					}
 					else if (fabs(g_new_z.y) < fabs(g_proximity))
 					{
-						hooper = (g_proximity > 0 ? 2 : -2); /* close to x axis */
+						/* close to x axis */
+						m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
+							HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS; 
 						goto plot_inside;
 					}
 				}
@@ -1705,7 +1769,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				mag = fmod_test();
 				if (mag < g_proximity)
 				{
-					modulus_value = mag;
+					m_colormode_modulus_value = mag;
 				}
 			}
 			else if (inside_coloring_beauty_of_fractals())
@@ -1723,10 +1787,10 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 				{
 					g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
 				}
-				if (g_magnitude < min_orbit)
+				if (g_magnitude < m_colormode_bof60_min_magnitude)
 				{
-					min_orbit = g_magnitude;
-					min_index = g_color_iter + 1;
+					m_colormode_bof60_min_magnitude = g_magnitude;
+					m_colormode_bof61_min_index = g_color_iter + 1;
 				}
 			}
 		}
@@ -1740,100 +1804,93 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 			}
 			else if (g_bf_math == BIGNUM)
 			{
-				g_new_z = complex_bn_to_float(&bnnew);
+				g_new_z = complex_bn_to_float(&g_new_z_bn);
 			}
 			else if (g_bf_math == BIGFLT)
 			{
-				g_new_z = complex_bf_to_float(&bfnew);
+				g_new_z = complex_bf_to_float(&g_new_z_bf);
 			}
 
 			if (g_outside == COLORMODE_TOTAL_DISTANCE)
 			{
-				total_distance += sqrt(sqr(last_z.x-g_new_z.x) + sqr(last_z.y-g_new_z.y));
-				last_z.x = g_new_z.x;
-				last_z.y = g_new_z.y;
+				m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.x-g_new_z.x) + sqr(m_colormode_total_distance_last_z.y-g_new_z.y));
+				m_colormode_total_distance_last_z.x = g_new_z.x;
+				m_colormode_total_distance_last_z.y = g_new_z.y;
 			}
 			else if (g_outside == COLORMODE_FLOAT_MODULUS)
 			{
 				double mag = fmod_test();
 				if (mag < g_proximity)
 				{
-					modulus_value = mag;
+					m_colormode_modulus_value = mag;
 				}
 			}
 		}
 
-		attracted = detect_finite_attractor();
-		if (attracted)
+		m_attracted = detect_finite_attractor();
+		if (m_attracted)
 		{
 			break;
 		}
 
 		if (g_color_iter > g_old_color_iter) /* check periodicity */
 		{
-			if ((g_color_iter & periodicity_cycle_check_size) == 0)            /* time to save a new value */
+			if ((g_color_iter & m_periodicity_cycle_check_size) == 0)            /* time to save a new value */
 			{
-				saved_color_iteration = g_color_iter;
+				m_colormode_period_cycle_start_iteration = g_color_iter;
 				if (g_integer_fractal)
 				{
-					saved_z_l = g_new_z_l; /* integer fractals */
+					m_saved_z_l = g_new_z_l; /* integer fractals */
 				}
 				else if (g_bf_math == BIGNUM)
 				{
-					copy_bn(bnsaved.x, bnnew.x);
-					copy_bn(bnsaved.y, bnnew.y);
+					copy_bn(bnsaved.x, g_new_z_bn.x);
+					copy_bn(bnsaved.y, g_new_z_bn.y);
 				}
 				else if (g_bf_math == BIGFLT)
 				{
-					copy_bf(bfsaved.x, bfnew.x);
-					copy_bf(bfsaved.y, bfnew.y);
+					copy_bf(bfsaved.x, g_new_z_bf.x);
+					copy_bf(bfsaved.y, g_new_z_bf.y);
 				}
 				else
 				{
 					s_saved_z = g_new_z;  /* floating pt fractals */
-#ifdef NUMSAVED
-					if (zctr < NUMSAVED)
-					{
-						changed[zctr]  = g_color_iter;
-						savedz[zctr++] = s_saved_z;
-					}
-#endif
 				}
-				if (--periodicity_cycle_check_counter == 0)    /* time to lengthen the periodicity? */
+				if (--m_periodicity_cycle_check_counter == 0)    /* time to lengthen the periodicity? */
 				{
-					periodicity_cycle_check_size = (periodicity_cycle_check_size << 1) + 1;       /* longer periodicity */
-					periodicity_cycle_check_counter = g_next_saved_incr; /* restart counter */
+					m_periodicity_cycle_check_size = (m_periodicity_cycle_check_size << 1) + 1;       /* longer periodicity */
+					m_periodicity_cycle_check_counter = g_next_saved_incr; /* restart counter */
 				}
 			}
 			else                /* check against an old save */
 			{
 				if (g_integer_fractal)     /* floating-pt periodicity chk */
 				{
-					if (labs(saved_z_l.x - g_new_z_l.x) < g_close_enough_l)
+					if (labs(m_saved_z_l.x - g_new_z_l.x) < g_close_enough_l)
 					{
-						if (labs(saved_z_l.y - g_new_z_l.y) < g_close_enough_l)
+						if (labs(m_saved_z_l.y - g_new_z_l.y) < g_close_enough_l)
 						{
-							caught_a_cycle = true;
+							m_caught_a_cycle = true;
 						}
 					}
 				}
 				else if (g_bf_math == BIGNUM)
 				{
-					if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.x, bnnew.x)), bnclosenuff) < 0)
+					if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.x, g_new_z_bn.x)), bnclosenuff) < 0)
 					{
-						if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.y, bnnew.y)), bnclosenuff) < 0)
+						if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.y, g_new_z_bn.y)), bnclosenuff) < 0)
 						{
-							caught_a_cycle = true;
+							m_caught_a_cycle = true;
 						}
 					}
 				}
 				else if (g_bf_math == BIGFLT)
 				{
-					if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.x, bfnew.x)), bfclosenuff) < 0)
+					if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.x, g_new_z_bf.x)), bfclosenuff) < 0)
 					{
-						if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.y, bfnew.y)), bfclosenuff) < 0)
+						if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.y, g_new_z_bf.y)), bfclosenuff) < 0)
 						{
-							caught_a_cycle = true;
+							m_caught_a_cycle = true;
 						}
 					}
 				}
@@ -1843,50 +1900,13 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 					{
 						if (fabs(s_saved_z.y - g_new_z.y) < g_close_enough)
 						{
-							caught_a_cycle = true;
+							m_caught_a_cycle = true;
 						}
 					}
-#ifdef NUMSAVED
-					{
-						for (int i = 0; i <= zctr; i++)
-						{
-							if (caught[i] == 0)
-							{
-								if (fabs(savedz[i].x - g_new_z.x) < g_close_enough)
-								{
-									if (fabs(savedz[i].y - g_new_z.y) < g_close_enough)
-									{
-										caught[i] = g_color_iter;
-									}
-								}
-							}
-						}
-					}
-#endif
 				}
-				if (caught_a_cycle)
+				if (m_caught_a_cycle)
 				{
-#ifdef NUMSAVED
-					static FILE *fp = NULL;
-					static char c;
-					if (fp == NULL)
-					{
-						fp = dir_fopen(g_work_dir, "cycles.txt", "w");
-					}
-#endif
-					cycle_length = g_color_iter - saved_color_iteration;
-#ifdef NUMSAVED
-					fprintf(fp, "row %3d col %3d len %6ld iter %6ld savedand %6ld\n",
-						g_row, g_col, cycle_length, g_color_iter, periodicity_cycle_check_size);
-					if (zctr > 1 && zctr < NUMSAVED)
-					{
-						for (int i = 0; i < zctr; i++)
-						{
-							fprintf(fp, "   caught %2d saved %6ld iter %6ld\n", i, changed[i], caught[i]);
-						}
-					}
-					fflush(fp);
-#endif
+					m_colormode_period_cycle_length = g_color_iter - m_colormode_period_cycle_start_iteration;
 					g_color_iter = g_max_iteration - 1;
 				}
 			}
@@ -1921,13 +1941,13 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_bf_math == BIGNUM)
 		{
-			g_new_z.x = double(bntofloat(bnnew.x));
-			g_new_z.y = double(bntofloat(bnnew.y));
+			g_new_z.x = double(bntofloat(g_new_z_bn.x));
+			g_new_z.y = double(bntofloat(g_new_z_bn.y));
 		}
 		else if (g_bf_math == BIGFLT)
 		{
-			g_new_z.x = double(bftofloat(bfnew.x));
-			g_new_z.y = double(bftofloat(bfnew.y));
+			g_new_z.x = double(bftofloat(g_new_z_bf.x));
+			g_new_z.y = double(bftofloat(g_new_z_bf.y));
 		}
 		g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
 		g_color_iter = potential(g_magnitude, g_color_iter);
@@ -1944,7 +1964,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	}
 
 
-	if (g_outside < COLORMODE_ITERATION)  /* these options by Richard Hughes modified by TW */
+	if (g_outside < COLORMODE_ITERATION)
 	{
 		if (g_integer_fractal)
 		{
@@ -1953,8 +1973,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_bf_math == BIGNUM)
 		{
-			g_new_z.x = double(bntofloat(bnnew.x));
-			g_new_z.y = double(bntofloat(bnnew.y));
+			g_new_z.x = double(bntofloat(g_new_z_bn.x));
+			g_new_z.y = double(bntofloat(g_new_z_bn.y));
 		}
 		/* Add 7 to overcome negative values on the MANDEL    */
 		if (g_outside == COLORMODE_REAL)
@@ -1979,11 +1999,11 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else if (g_outside == COLORMODE_FLOAT_MODULUS)
 		{
-			g_color_iter = long(modulus_value*g_colors/g_proximity);
+			g_color_iter = long(m_colormode_modulus_value*g_colors/g_proximity);
 		}
 		else if (g_outside == COLORMODE_TOTAL_DISTANCE)
 		{
-			g_color_iter = long(total_distance);
+			g_color_iter = long(m_colormode_total_distance);
 		}
 
 		/* eliminate negative colors & wrap arounds */
@@ -2002,7 +2022,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		else
 		{
-			dist *= sqr(log(dist))/(sqr(derivative.x) + sqr(derivative.y));
+			dist *= sqr(log(dist))/(sqr(m_distance_test_derivative.x) + sqr(m_distance_test_derivative.y));
 		}
 		if (dist < s_dem_delta)     /* point is on the edge */
 		{
@@ -2037,8 +2057,8 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 		if (g_use_old_distance_test)
 		{
-			g_color_iter = dem_color;
-			g_new_z = dem_new;
+			g_color_iter = m_dem_color;
+			g_new_z = m_dem_new_z;
 		}
 		/* use pixel's "regular" color */
 	}
@@ -2062,7 +2082,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 		}
 	}
 
-	if (g_outside >= 0 && !attracted) /* merge escape-time stripes */
+	if (g_outside >= 0 && !m_attracted) /* merge escape-time stripes */
 	{
 		g_color_iter = g_outside;
 	}
@@ -2073,7 +2093,7 @@ int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 	goto plot_pixel;
 
 plot_inside: /* we're "inside" */
-	if (g_periodicity_check < 0 && caught_a_cycle)
+	if (g_periodicity_check < 0 && m_caught_a_cycle)
 	{
 		g_color_iter = 7;           /* show periodicity */
 	}
@@ -2088,7 +2108,7 @@ plot_inside: /* we're "inside" */
 			g_color_iter = 0;
 			for (int i = 1; i < 16; i++)
 			{
-				if (fabs(tantable[0] - tantable[i]) < .05)
+				if (fabs(m_tangent_table[0] - m_tangent_table[i]) < .05)
 				{
 					g_color_iter = i;
 					break;
@@ -2097,19 +2117,19 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == COLORMODE_PERIOD)
 		{
-			g_color_iter = (cycle_length > 0) ? cycle_length : g_max_iteration;
+			g_color_iter = (m_colormode_period_cycle_length > 0) ? m_colormode_period_cycle_length : g_max_iteration;
 		}
 		else if (g_inside == COLORMODE_EPSILON_CROSS)
 		{
-			if (hooper == 1)
+			if (m_colormode_epsilon_cross_hooper == HOOPER_POSITIVE_Y_AXIS)
 			{
 				g_color_iter = green;
 			}
-			else if (hooper == 2)
+			else if (m_colormode_epsilon_cross_hooper == HOOPER_POSITIVE_X_AXIS)
 			{
 				g_color_iter = yellow;
 			}
-			else if (hooper == 0)
+			else if (m_colormode_epsilon_cross_hooper == HOOPER_NONE)
 			{
 				g_color_iter = g_max_iteration;
 			}
@@ -2120,7 +2140,7 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
 		{
-			g_color_iter = long(modulus_value*g_colors/g_proximity);
+			g_color_iter = long(m_colormode_modulus_value*g_colors/g_proximity);
 		}
 		else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
 		{
@@ -2133,11 +2153,11 @@ plot_inside: /* we're "inside" */
 		}
 		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60)
 		{
-			g_color_iter = long(sqrt(min_orbit)*75);
+			g_color_iter = long(sqrt(m_colormode_bof60_min_magnitude)*75);
 		}
 		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61)
 		{
-			g_color_iter = min_index;
+			g_color_iter = m_colormode_bof61_min_index;
 		}
 		else if (g_inside == COLORMODE_Z_MAGNITUDE)
 		{

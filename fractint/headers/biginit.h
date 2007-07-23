@@ -51,10 +51,10 @@ extern bn_t bnclosenuff;      /* g_bn_length */
 extern bn_t bntmpsqrx;
 extern bn_t bntmpsqry;
 extern bn_t bntmp;                        /* g_r_length  */
-extern ComplexBigNum bnold;
+extern ComplexBigNum g_old_z_bn;
 extern ComplexBigNum bnparm;
 extern ComplexBigNum bnsaved;            /* g_bn_length */
-extern ComplexBigNum bnnew;                                           /* g_r_length */
+extern ComplexBigNum g_new_z_bn;                                           /* g_r_length */
 extern bn_t bn_pi;                                        /* TAKES NO SPACE */
 
 extern bf_t bftmp1;
@@ -74,8 +74,8 @@ extern bf_t bftmpsqrx;
 extern bf_t bftmpsqry;                            /* g_rbf_length+2 */
 extern ComplexBigFloat bfparm;
 extern ComplexBigFloat bfsaved;         /* g_bf_length+2 */
-extern ComplexBigFloat bfold;
-extern ComplexBigFloat bfnew;                               /* g_rbf_length+2 */
+extern ComplexBigFloat g_old_z_bf;
+extern ComplexBigFloat g_new_z_bf;                               /* g_rbf_length+2 */
 extern bf_t bf_pi;                                        /* TAKES NO SPACE */
 extern bf_t big_pi;                                           /* g_bf_length+2 */
 

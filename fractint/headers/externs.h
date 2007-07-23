@@ -38,7 +38,7 @@ extern int					g_cfg_line_nums[];
 extern bool					g_check_current_dir;
 extern long					g_c_imag;
 extern double				g_close_enough;
-extern double				g_proximity;
+extern double				g_proximity; // escape time parameter for epscross and fmod coloring methods
 extern ComplexD				g_coefficient;
 extern int					g_col;
 extern int					g_color;
