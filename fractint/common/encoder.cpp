@@ -354,21 +354,9 @@ int encoder()
 	}
 
 	startbits = bitsperpixel + 1; /* start coding with this many bits */
-	if (g_colors == 2)
-	{
-		startbits++;              /* B&W Klooge */
-	}
 #else
-	if (g_colors == 2)
-	{
-		bitsperpixel = 1;
-		startbits = 3;
-	}
-	else
-	{
-		bitsperpixel = 8;
-		startbits = 9;
-	}
+	bitsperpixel = 8;
+	startbits = 9;
 #endif
 
 	if (g_gif87a_flag)
@@ -443,69 +431,32 @@ int encoder()
 	}
 
 #ifndef XFRACT
-	if (g_colors == 256)
-	{                            /* write out the 256-color palette */
-		if (g_got_real_dac)
-		{                         /* got a DAC - must be a VGA */
-			if (!shftwrite((BYTE *) g_dac_box, g_colors))
-			{
-				goto oops;
-			}
+	/* write out the 256-color palette */
+	if (g_got_real_dac)
+	{                         /* got a DAC - must be a VGA */
+		if (!shftwrite((BYTE *) g_dac_box, g_colors))
+		{
+			goto oops;
+		}
 #else
-	if (g_colors > 2)
-	{
-		if (g_got_real_dac || g_fake_lut)
-		{                         /* got a DAC - must be a VGA */
-			if (!shftwrite((BYTE *) g_dac_box, 256))
-			{
-				goto oops;
-			}
-#endif
-		}
-		else
-		{                         /* uh oh - better fake it */
-			for (i = 0; i < 256; i += 16)
-			{
-				if (!shftwrite((BYTE *)paletteEGA, 16))
-				{
-					goto oops;
-				}
-			}
-		}
-	}
-	if (g_colors == 2)
-	{                            /* write out the B&W palette */
-		if (!shftwrite((BYTE *)paletteBW, g_colors))
+	if (g_got_real_dac || g_fake_lut)
+	{                         /* got a DAC - must be a VGA */
+		if (!shftwrite((BYTE *) g_dac_box, 256))
 		{
 			goto oops;
 		}
-	}
-#ifndef XFRACT
-	if (g_colors == 4)
-	{                            /* write out the CGA palette */
-		if (!shftwrite((BYTE *)paletteCGA, g_colors))
-		{
-			goto oops;
-		}
-	}
-	if (g_colors == 16)
-	{                            /* Either EGA or VGA */
-		if (g_got_real_dac)
-		{
-			if (!shftwrite((BYTE *) g_dac_box, g_colors))
-			{
-				goto oops;
-			}
-		}
-		else
-		{                         /* no DAC - must be an EGA */
-			if (!shftwrite((BYTE *)paletteEGA, g_colors))
-			{
-				goto oops;
-			}
-		}
-	}
 #endif
+	}
+	else
+	{                         /* uh oh - better fake it */
+		for (i = 0; i < 256; i += 16)
+		{
+			if (!shftwrite((BYTE *)paletteEGA, 16))
+			{
+				goto oops;
+			}
+		}
+	}
 
 	if (fwrite(",", 1, 1, g_outfile) != 1)
 	{
@@ -1089,14 +1040,9 @@ static int compress(int rowlimit)
 	char accum_stack[256];
 	accum = accum_stack;
 
-	outcolor1 = 0;               /* use these colors to show progress */
-	outcolor2 = 1;               /* (this has nothing to do with GIF) */
+	outcolor1 = 2;               /* use these colors to show progress */
+	outcolor2 = 3;               /* (this has nothing to do with GIF) */
 
-	if (g_colors > 2)
-	{
-		outcolor1 = 2;
-		outcolor2 = 3;
-	}
 	if (((++numsaves) & 1) == 0)
 	{                            /* reverse the colors on alt saves */
 		i = outcolor1;

@@ -40,11 +40,10 @@ void rotate(int direction)      /* rotate-the-palette routine */
 	static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
 
 #ifndef XFRACT
-	if (g_got_real_dac == 0                  /* ??? no DAC to rotate! */
+	if (g_got_real_dac == 0)					/* ??? no DAC to rotate! */
 #else
-	if (!(g_got_real_dac || g_fake_lut)        /* ??? no DAC to rotate! */
+	if (!(g_got_real_dac || g_fake_lut))		/* ??? no DAC to rotate! */
 #endif
-		|| g_colors < 16)  /* strange things happen in 2x modes */
 	{
 		driver_buzzer(BUZZER_ERROR);
 		return;

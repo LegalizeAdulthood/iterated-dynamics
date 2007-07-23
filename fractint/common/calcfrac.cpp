@@ -530,12 +530,6 @@ int calculate_fractal()
 	g_parameter2.x  = g_parameters[2];
 	g_parameter2.y  = g_parameters[3];
 
-	if (g_log_palette_mode && g_colors < 16)
-	{
-		stop_message(0, "Need at least 16 colors to use logmap");
-		g_log_palette_mode = LOGPALETTE_NONE;
-	}
-
 	if (g_use_old_periodicity)
 	{
 		g_next_saved_incr = 1;
@@ -644,10 +638,6 @@ int calculate_fractal()
 	g_show_orbit = g_start_show_orbit;
 	g_orbit_index = 0;
 	g_orbit_color = 15;
-	if (g_colors < 16)
-	{
-		g_orbit_color = 1;
-	}
 
 	if (g_inversion[0] != 0.0)
 	{
@@ -1161,20 +1151,11 @@ int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with r
 		{
 			if (g_save_release <= 1950)
 			{
-				if (g_colors < 16)
-				{
-					g_color &= g_and_color;
-				}
-				else
-				{
-					g_color = ((g_color - 1) % g_and_color) + 1;  /* skip color zero */
-				}
+				g_color = ((g_color - 1) % g_and_color) + 1;  /* skip color zero */
 			}
 			else
 			{
-				g_color = (g_colors < 16)
-					? int(g_color_iter & g_and_color)
-					: int(((g_color_iter - 1) % g_and_color) + 1);
+				g_color = int(((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
 		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
@@ -1296,20 +1277,11 @@ int calculate_mandelbrot_fp()
 		{
 			if (g_save_release <= 1950)
 			{
-				if (g_colors < 16)
-				{
-					g_color &= g_and_color;
-				}
-				else
-				{
-					g_color = ((g_color - 1) % g_and_color) + 1;  /* skip color zero */
-				}
+				g_color = ((g_color - 1) % g_and_color) + 1;  /* skip color zero */
 			}
 			else
 			{
-				g_color = (g_colors < 16)
-					? int(g_color_iter & g_and_color)
-					: int(((g_color_iter - 1) % g_and_color) + 1);
+				g_color = int(((g_color_iter - 1) % g_and_color) + 1);
 			}
 		}
 		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
@@ -1334,15 +1306,6 @@ int calculate_mandelbrot_fp()
 #define MINSAVEDAND 3   /* if not defined, old method used */
 #endif
 
-class ColoringMethod
-{
-public:
-	ColoringMethod() {}
-	virtual ~ColoringMethod() {}
-
-	virtual void initialize();
-};
-
 class StandardFractal
 {
 public:
@@ -1354,16 +1317,53 @@ public:
 	}
 
 	int execute();
-	void set_new_z_if_bigmath();
-
-	void show_orbit();
-
-	bool interrupted();
-
-	void initialize();
-
 
 private:
+	int check_if_interrupted();
+	void set_final_color_and_plot();
+	void inside_colormode_final();
+	void adjust_color_log_map();
+	void inside_colormode_z_magnitude_final();
+	void inside_colormode_beauty_of_fractals_61_final();
+	void inside_colormode_beauty_of_fractals_60_final();
+	void inside_colormode_float_modulus_final();
+	void inside_colormode_inverse_tangent_final();
+	void inside_colormode_epsilon_cross_final();
+	void inside_colormode_period_final();
+	void inside_colormode_star_trail_final();
+	void merge_escape_time_stripes();
+	void compute_decomposition_and_biomorph();
+	bool distance_get_color(double dist);
+	double distance_compute();
+	void outside_colormode_final();
+	void eliminate_negative_colors_and_wrap_arounds();
+	void outside_colormode_total_distance_final();
+	void outside_colormode_float_modulus_final();
+	void outside_colormode_inverse_tangent_final();
+	void outside_colormode_sum_final();
+	void outside_colormode_multiply_final();
+	void outside_colormode_imaginary_final();
+	void outside_colormode_real_final();
+	void outside_colormode_set_new_z_update();
+	bool distance_test_compute();
+	void potential_compute();
+	void potential_set_new_z();
+	void outside_colormode_update();
+	void outside_colormode_float_modulus_update();
+	void outside_colormode_total_distance_update();
+	void outside_colormode_set_new_z_final();
+	bool inside_colormode_update();
+	void colormode_beauty_of_fractals_update();
+	void colormode_float_modulus_integer_update();
+	bool colormode_epsilon_cross_update();
+	void colormode_star_trail_update();
+	void colormode_star_trail_clamp(double &x);
+	void check_periodicity();
+	void set_new_z_if_bigmath();
+	void show_orbit();
+	bool interrupted();
+	void initialize();
+
 	double m_tangent_table[16];
 	int m_colormode_epsilon_cross_hooper;
 	double m_colormode_modulus_value;
@@ -1473,7 +1473,7 @@ void StandardFractal::initialize()
 			if (g_use_old_distance_test)
 			{
 				g_rq_limit = s_rq_limit_save;
-				if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */
+				if (g_distance_test != 1) /* not doing regular outside colors */
 				{
 					if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
 					{
@@ -1601,11 +1601,674 @@ void StandardFractal::set_new_z_if_bigmath()
 		g_new_z = complex_bf_to_float(&g_new_z_bf);
 	}
 }
+void StandardFractal::check_periodicity()
+{
+	if (g_color_iter > g_old_color_iter) /* check periodicity */
+	{
+		if ((g_color_iter & m_periodicity_cycle_check_size) == 0)            /* time to save a new value */
+		{
+			m_colormode_period_cycle_start_iteration = g_color_iter;
+			if (g_integer_fractal)
+			{
+				m_saved_z_l = g_new_z_l; /* integer fractals */
+			}
+			else if (g_bf_math == BIGNUM)
+			{
+				copy_bn(bnsaved.x, g_new_z_bn.x);
+				copy_bn(bnsaved.y, g_new_z_bn.y);
+			}
+			else if (g_bf_math == BIGFLT)
+			{
+				copy_bf(bfsaved.x, g_new_z_bf.x);
+				copy_bf(bfsaved.y, g_new_z_bf.y);
+			}
+			else
+			{
+				s_saved_z = g_new_z;  /* floating pt fractals */
+			}
+			if (--m_periodicity_cycle_check_counter == 0)    /* time to lengthen the periodicity? */
+			{
+				m_periodicity_cycle_check_size = (m_periodicity_cycle_check_size << 1) + 1;       /* longer periodicity */
+				m_periodicity_cycle_check_counter = g_next_saved_incr; /* restart counter */
+			}
+		}
+		else                /* check against an old save */
+		{
+			if (g_integer_fractal)     /* floating-pt periodicity chk */
+			{
+				if (labs(m_saved_z_l.x - g_new_z_l.x) < g_close_enough_l)
+				{
+					if (labs(m_saved_z_l.y - g_new_z_l.y) < g_close_enough_l)
+					{
+						m_caught_a_cycle = true;
+					}
+				}
+			}
+			else if (g_bf_math == BIGNUM)
+			{
+				if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.x, g_new_z_bn.x)), bnclosenuff) < 0)
+				{
+					if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.y, g_new_z_bn.y)), bnclosenuff) < 0)
+					{
+						m_caught_a_cycle = true;
+					}
+				}
+			}
+			else if (g_bf_math == BIGFLT)
+			{
+				if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.x, g_new_z_bf.x)), bfclosenuff) < 0)
+				{
+					if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.y, g_new_z_bf.y)), bfclosenuff) < 0)
+					{
+						m_caught_a_cycle = true;
+					}
+				}
+			}
+			else
+			{
+				if (fabs(s_saved_z.x - g_new_z.x) < g_close_enough)
+				{
+					if (fabs(s_saved_z.y - g_new_z.y) < g_close_enough)
+					{
+						m_caught_a_cycle = true;
+					}
+				}
+			}
+			if (m_caught_a_cycle)
+			{
+				m_colormode_period_cycle_length = g_color_iter - m_colormode_period_cycle_start_iteration;
+				g_color_iter = g_max_iteration - 1;
+			}
+		}
+	}
+}
+void StandardFractal::colormode_star_trail_clamp(double &x)
+{
+	if (x > STARTRAILMAX)
+	{
+		x = STARTRAILMAX;
+	}
+	else if (x < -STARTRAILMAX)
+	{
+		x = -STARTRAILMAX;
+	}
+}
+void StandardFractal::colormode_star_trail_update()
+{
+	if (0 < g_color_iter && g_color_iter < 16)
+	{
+		if (g_integer_fractal)
+		{
+			g_new_z.x = g_new_z_l.x;
+			g_new_z.x /= g_fudge;
+			g_new_z.y = g_new_z_l.y;
+			g_new_z.y /= g_fudge;
+		}
+
+		if (g_save_release > 1824)
+		{
+			colormode_star_trail_clamp(g_new_z.x);
+			colormode_star_trail_clamp(g_new_z.y);
+			g_temp_sqr_x = g_new_z.x*g_new_z.x;
+			g_temp_sqr_y = g_new_z.y*g_new_z.y;
+			g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+			g_old_z = g_new_z;
+		}
+		{
+			int tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
+			m_tangent_table[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
+		}
+	}
+}
+bool StandardFractal::colormode_epsilon_cross_update()
+{
+	bool go_plot_inside;
+	go_plot_inside = false;
+	m_colormode_epsilon_cross_hooper = HOOPER_NONE;
+	if (g_integer_fractal)
+	{
+		if (labs(g_new_z_l.x) < labs(m_colormode_epsilon_cross_proximity_l))
+		{
+			/* close to y axis */
+			m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
+HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
+			go_plot_inside = true;
+		}
+		else if (labs(g_new_z_l.y) < labs(m_colormode_epsilon_cross_proximity_l))
+		{
+			/* close to x axis */
+			m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
+HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS;
+			go_plot_inside = true;
+		}
+	}
+	else
+	{
+		if (fabs(g_new_z.x) < fabs(g_proximity))
+		{
+			/* close to y axis */
+			m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
+HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
+			go_plot_inside = true;
+		}
+		else if (fabs(g_new_z.y) < fabs(g_proximity))
+		{
+			/* close to x axis */
+			m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
+HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS;
+			go_plot_inside = true;
+		}
+	}
+	return go_plot_inside;
+}
+void StandardFractal::colormode_float_modulus_integer_update()
+{
+	if (g_integer_fractal)
+	{
+		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+	}
+	double mag = fmod_test();
+	if (mag < g_proximity)
+	{
+		m_colormode_modulus_value = mag;
+	}
+}
+void StandardFractal::colormode_beauty_of_fractals_update()
+{
+	if (g_integer_fractal)
+	{
+		if (g_magnitude_l == 0 || !g_no_magnitude_calculation)
+		{
+			g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.y);
+		}
+		g_magnitude = g_magnitude_l;
+		g_magnitude /= g_fudge;
+	}
+	else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
+	{
+		g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
+	}
+	if (g_magnitude < m_colormode_bof60_min_magnitude)
+	{
+		m_colormode_bof60_min_magnitude = g_magnitude;
+		m_colormode_bof61_min_index = g_color_iter + 1;
+	}
+}
+bool StandardFractal::inside_colormode_update()
+{
+	bool go_plot_inside = false;
+	if (g_inside < COLORMODE_ITERATION)
+	{
+		set_new_z_if_bigmath();
+		if (g_inside == COLORMODE_STAR_TRAIL)
+		{
+			colormode_star_trail_update();
+		}
+		else if (g_inside == COLORMODE_EPSILON_CROSS)
+		{
+			go_plot_inside = colormode_epsilon_cross_update();
+		}
+		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
+		{
+			colormode_float_modulus_integer_update();
+		}
+		else if (inside_coloring_beauty_of_fractals())
+		{
+			colormode_beauty_of_fractals_update();
+		}
+	}
+	return go_plot_inside;
+}
+void StandardFractal::outside_colormode_set_new_z_update()
+{
+	if (g_integer_fractal)
+	{
+		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+	}
+	else if (g_bf_math == BIGNUM)
+	{
+		g_new_z = complex_bn_to_float(&g_new_z_bn);
+	}
+	else if (g_bf_math == BIGFLT)
+	{
+		g_new_z = complex_bf_to_float(&g_new_z_bf);
+	}
+}
+void StandardFractal::outside_colormode_total_distance_update()
+{
+	m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.x-g_new_z.x) + sqr(m_colormode_total_distance_last_z.y-g_new_z.y));
+	m_colormode_total_distance_last_z.x = g_new_z.x;
+	m_colormode_total_distance_last_z.y = g_new_z.y;
+}
+void StandardFractal::outside_colormode_float_modulus_update()
+{
+	double mag = fmod_test();
+	if (mag < g_proximity)
+	{
+		m_colormode_modulus_value = mag;
+	}
+}
+void StandardFractal::outside_colormode_update()
+{
+	if (g_outside == COLORMODE_TOTAL_DISTANCE || g_outside == COLORMODE_FLOAT_MODULUS)
+	{
+		outside_colormode_set_new_z_update();
+		if (g_outside == COLORMODE_TOTAL_DISTANCE)
+		{
+			outside_colormode_total_distance_update();
+		}
+		else if (g_outside == COLORMODE_FLOAT_MODULUS)
+		{
+			outside_colormode_float_modulus_update();
+		}
+	}
+}
+void StandardFractal::potential_set_new_z()
+{
+	if (g_integer_fractal)       /* adjust integer fractals */
+	{
+		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+	}
+	else if (g_bf_math == BIGNUM)
+	{
+		g_new_z.x = double(bntofloat(g_new_z_bn.x));
+		g_new_z.y = double(bntofloat(g_new_z_bn.y));
+	}
+	else if (g_bf_math == BIGFLT)
+	{
+		g_new_z.x = double(bftofloat(g_new_z_bf.x));
+		g_new_z.y = double(bftofloat(g_new_z_bf.y));
+	}
+}
+void StandardFractal::potential_compute()
+{
+	potential_set_new_z();
+	g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
+	g_color_iter = potential(g_magnitude, g_color_iter);
+	if (g_log_table || g_log_calculation)
+	{
+		g_color_iter = logtablecalc(g_color_iter);
+	}
+}
+bool StandardFractal::distance_test_compute()
+{
+	/* Distance estimator for points near Mandelbrot set */
+	/* Original code by Phil Wilson, hacked around by PB */
+	/* Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 */
+	double ftemp = s_dem_mandelbrot
+		? 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y) + 1
+		: 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y);
+	m_distance_test_derivative.y = 2*(g_old_z.y*m_distance_test_derivative.x + g_old_z.x*m_distance_test_derivative.y);
+	m_distance_test_derivative.x = ftemp;
+	if (g_use_old_distance_test)
+	{
+		if (sqr(m_distance_test_derivative.x) + sqr(m_distance_test_derivative.y) > s_dem_too_big)
+		{
+			return true;
+		}
+	}
+	else if (g_save_release > 1950)
+	{
+		if (max(fabs(m_distance_test_derivative.x), fabs(m_distance_test_derivative.y)) > s_dem_too_big)
+		{
+			return true;
+		}
+	}
+	/* if above exit taken, the later test vs s_dem_delta will place this
+	point on the boundary, because mag(g_old_z) < bailout just now */
+	if (g_current_fractal_specific->orbitcalc() || (g_overflow && g_save_release > 1826))
+	{
+		if (g_use_old_distance_test)
+		{
+			if (m_dem_color < 0)
+			{
+				m_dem_color = g_color_iter;
+				m_dem_new_z = g_new_z;
+			}
+			if (g_rq_limit >= DEM_BAILOUT
+				|| g_magnitude >= (g_rq_limit = DEM_BAILOUT)
+				|| g_magnitude == 0)
+			{
+				return true;
+			}
+		}
+		else
+		{
+			return true;
+		}
+	}
+	g_old_z = g_new_z;
+	return false;
+}
+void StandardFractal::outside_colormode_set_new_z_final()
+{
+	if (g_integer_fractal)
+	{
+		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+	}
+	else if (g_bf_math == BIGNUM)
+	{
+		g_new_z.x = double(bntofloat(g_new_z_bn.x));
+		g_new_z.y = double(bntofloat(g_new_z_bn.y));
+	}
+}
+void StandardFractal::outside_colormode_real_final()
+{
+	/* Add 7 to overcome negative values on the MANDEL    */
+	g_color_iter += long(g_new_z.x) + 7;
+}
+void StandardFractal::outside_colormode_imaginary_final()
+{
+	/* Add 7 to overcome negative values on the MANDEL    */
+	g_color_iter += long(g_new_z.y) + 7;
+}
+void StandardFractal::outside_colormode_multiply_final()
+{
+	g_color_iter = long(double(g_color_iter)*(g_new_z.x/g_new_z.y));
+}
+void StandardFractal::outside_colormode_sum_final()
+{
+	g_color_iter += long(g_new_z.x + g_new_z.y);
+}
+void StandardFractal::outside_colormode_inverse_tangent_final()
+{
+	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
+}
+void StandardFractal::outside_colormode_float_modulus_final()
+{
+	g_color_iter = long(m_colormode_modulus_value*g_colors/g_proximity);
+}
+void StandardFractal::outside_colormode_total_distance_final()
+{
+	g_color_iter = long(m_colormode_total_distance);
+}
+void StandardFractal::eliminate_negative_colors_and_wrap_arounds()
+{
+	/* eliminate negative colors & wrap arounds */
+	if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
+	{
+		g_color_iter = (g_save_release < 1961) ? 0 : 1;
+	}
+}
+void StandardFractal::outside_colormode_final()
+{
+	outside_colormode_set_new_z_final();
+	if (g_outside == COLORMODE_REAL)
+	{
+		outside_colormode_real_final();
+	}
+	else if (g_outside == COLORMODE_IMAGINARY)
+	{
+		outside_colormode_imaginary_final();
+	}
+	else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y)
+	{
+		outside_colormode_multiply_final();
+	}
+	else if (g_outside == COLORMODE_SUM)
+	{
+		outside_colormode_sum_final();
+	}
+	else if (g_outside == COLORMODE_INVERSE_TANGENT)          /* "atan" */
+	{
+		outside_colormode_inverse_tangent_final();
+	}
+	else if (g_outside == COLORMODE_FLOAT_MODULUS)
+	{
+		outside_colormode_float_modulus_final();
+	}
+	else if (g_outside == COLORMODE_TOTAL_DISTANCE)
+	{
+		outside_colormode_total_distance_final();
+	}
+
+	eliminate_negative_colors_and_wrap_arounds();
+}
+double StandardFractal::distance_compute()
+{
+	double dist;
+	dist = (g_new_z.x) + sqr(g_new_z.y);
+	if (dist == 0 || g_overflow)
+	{
+		dist = 0;
+	}
+	else
+	{
+		dist *= sqr(log(dist))/(sqr(m_distance_test_derivative.x) + sqr(m_distance_test_derivative.y));
+	}
+	return dist;
+}
+bool StandardFractal::distance_get_color(double dist)
+{
+	if (dist < s_dem_delta)
+	{
+		g_color_iter = -g_distance_test;       /* show boundary as specified color */
+		return true;       /* no further adjustments apply */
+	}
+	if (g_distance_test > 1)          /* pick color based on distance */
+	{
+		if (g_old_demm_colors) /* this one is needed for old color scheme */
+		{
+			g_color_iter = long(sqrt(sqrt(dist)/s_dem_width + 1));
+		}
+		else if (g_use_old_distance_test)
+		{
+			g_color_iter = long(sqrt(dist/s_dem_width + 1));
+		}
+		else
+		{
+			g_color_iter = long(dist/s_dem_width + 1);
+		}
+		g_color_iter &= LONG_MAX;  /* oops - color can be negative */
+		return true;       /* no further adjustments apply */
+	}
+	if (g_use_old_distance_test)
+	{
+		g_color_iter = m_dem_color;
+		g_new_z = m_dem_new_z;
+	}
+	return false;
+}
+void StandardFractal::compute_decomposition_and_biomorph()
+{
+	if (g_decomposition[0] > 0)
+	{
+		decomposition();
+	}
+	else if (g_biomorph != -1)
+	{
+		if (g_integer_fractal)
+		{
+			if (labs(g_new_z_l.x) < g_limit2_l || labs(g_new_z_l.y) < g_limit2_l)
+			{
+				g_color_iter = g_biomorph;
+			}
+		}
+		else if (fabs(g_new_z.x) < g_rq_limit2 || fabs(g_new_z.y) < g_rq_limit2)
+		{
+			g_color_iter = g_biomorph;
+		}
+	}
+}
+void StandardFractal::merge_escape_time_stripes()
+{
+	if (g_outside >= 0 && !m_attracted) /* merge escape-time stripes */
+	{
+		g_color_iter = g_outside;
+	}
+	else if (g_log_table || g_log_calculation)
+	{
+		g_color_iter = logtablecalc(g_color_iter);
+	}
+}
+void StandardFractal::inside_colormode_star_trail_final()
+{
+	g_color_iter = 0;
+	for (int i = 1; i < 16; i++)
+	{
+		if (fabs(m_tangent_table[0] - m_tangent_table[i]) < .05)
+		{
+			g_color_iter = i;
+			break;
+		}
+	}
+}
+void StandardFractal::inside_colormode_period_final()
+{
+	g_color_iter = (m_colormode_period_cycle_length > 0) ? m_colormode_period_cycle_length : g_max_iteration;
+}
+void StandardFractal::inside_colormode_epsilon_cross_final()
+{
+	if (m_colormode_epsilon_cross_hooper == HOOPER_POSITIVE_Y_AXIS)
+	{
+		g_color_iter = green;
+	}
+	else if (m_colormode_epsilon_cross_hooper == HOOPER_POSITIVE_X_AXIS)
+	{
+		g_color_iter = yellow;
+	}
+	else if (m_colormode_epsilon_cross_hooper == HOOPER_NONE)
+	{
+		g_color_iter = g_max_iteration;
+	}
+	if (g_show_orbit)
+	{
+		orbit_scrub();
+	}
+}
+void StandardFractal::inside_colormode_inverse_tangent_final()
+{
+	if (g_integer_fractal)
+	{
+		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
+		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+	}
+	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
+}
+void StandardFractal::inside_colormode_float_modulus_final()
+{
+	g_color_iter = long(m_colormode_modulus_value*g_colors/g_proximity);
+}
+void StandardFractal::inside_colormode_beauty_of_fractals_60_final()
+{
+	g_color_iter = long(sqrt(m_colormode_bof60_min_magnitude)*75);
+}
+void StandardFractal::inside_colormode_beauty_of_fractals_61_final()
+{
+	g_color_iter = m_colormode_bof61_min_index;
+}
+void StandardFractal::inside_colormode_z_magnitude_final()
+{
+	g_color_iter = long(g_integer_fractal ?
+		((double(g_magnitude_l)/g_fudge)*(g_max_iteration/2) + 1)
+		: ((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration/2) + 1));
+}
+void StandardFractal::adjust_color_log_map()
+{
+	if (g_log_table || g_log_calculation)
+	{
+		g_color_iter = logtablecalc(g_color_iter);
+	}
+}
+void StandardFractal::inside_colormode_final()
+{
+	if (g_periodicity_check < 0 && m_caught_a_cycle)
+	{
+		g_color_iter = 7;           /* show periodicity */
+	}
+	else if (g_inside >= 0)
+	{
+		g_color_iter = g_inside;              /* set to specified color, ignore logpal */
+	}
+	else
+	{
+		if (g_inside == COLORMODE_STAR_TRAIL)
+		{
+			inside_colormode_star_trail_final();
+		}
+		else if (g_inside == COLORMODE_PERIOD)
+		{
+			inside_colormode_period_final();
+		}
+		else if (g_inside == COLORMODE_EPSILON_CROSS)
+		{
+			inside_colormode_epsilon_cross_final();
+		}
+		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
+		{
+			inside_colormode_float_modulus_final();
+		}
+		else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
+		{
+			inside_colormode_inverse_tangent_final();
+		}
+		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60)
+		{
+			inside_colormode_beauty_of_fractals_60_final();
+		}
+		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61)
+		{
+			inside_colormode_beauty_of_fractals_61_final();
+		}
+		else if (g_inside == COLORMODE_Z_MAGNITUDE)
+		{
+			inside_colormode_z_magnitude_final();
+		}
+		else /* inside == -1 */
+		{
+			g_color_iter = g_max_iteration;
+		}
+		adjust_color_log_map();
+	}
+}
+void StandardFractal::set_final_color_and_plot()
+{
+	g_color = abs(int(g_color_iter));
+	if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
+	{
+		if (g_save_release <= 1950)
+		{
+			g_color = ((g_color - 1) % g_and_color) + 1;  /* skip color zero */
+		}
+		else
+		{
+			g_color = int(((g_color_iter - 1) % g_and_color) + 1);
+		}
+	}
+	if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
+	{
+		if (g_color <= 0 && g_standard_calculation_mode == 'b' )   /* fix BTM bug */
+		{
+			g_color = 1;
+		}
+	}
+	(*g_plot_color)(g_col, g_row, g_color);
+}
+int StandardFractal::check_if_interrupted()
+{
+	int result;
+	result = g_color;
+	g_input_counter -= abs(int(g_real_color_iter));
+	if (g_input_counter <= 0)
+	{
+		if (check_key())
+		{
+			result = -1;
+		}
+		g_input_counter = g_max_input_counter;
+	}
+	return result;
+}
 int StandardFractal::execute()
 {
 	ValueSaver<long> saved_max_iterations(g_max_iteration);
 
 	initialize();
+
 	while (++g_color_iter < g_max_iteration)
 	{
 		/* calculation of one orbit goes here */
@@ -1615,55 +2278,9 @@ int StandardFractal::execute()
 			return -1;
 		}
 
-		if (g_distance_test)
+		if (g_distance_test && distance_test_compute())
 		{
-			/* Distance estimator for points near Mandelbrot set */
-			/* Original code by Phil Wilson, hacked around by PB */
-			/* Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198 */
-			double ftemp = s_dem_mandelbrot
-				? 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y) + 1
-				: 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y);
-			m_distance_test_derivative.y = 2*(g_old_z.y*m_distance_test_derivative.x + g_old_z.x*m_distance_test_derivative.y);
-			m_distance_test_derivative.x = ftemp;
-			if (g_use_old_distance_test)
-			{
-				if (sqr(m_distance_test_derivative.x) + sqr(m_distance_test_derivative.y) > s_dem_too_big)
-				{
-					break;
-				}
-			}
-			else if (g_save_release > 1950)
-			{
-				if (max(fabs(m_distance_test_derivative.x), fabs(m_distance_test_derivative.y)) > s_dem_too_big)
-				{
-					break;
-				}
-			}
-			/* if above exit taken, the later test vs s_dem_delta will place this
-				point on the boundary, because mag(g_old_z) < bailout just now */
-
-			if (g_current_fractal_specific->orbitcalc() || (g_overflow && g_save_release > 1826))
-			{
-				if (g_use_old_distance_test)
-				{
-					if (m_dem_color < 0)
-					{
-						m_dem_color = g_color_iter;
-						m_dem_new_z = g_new_z;
-					}
-					if (g_rq_limit >= DEM_BAILOUT
-						|| g_magnitude >= (g_rq_limit = DEM_BAILOUT)
-						|| g_magnitude == 0)
-					{
-						break;
-					}
-				}
-				else
-				{
-					break;
-				}
-			}
-			g_old_z = g_new_z;
+			break;
 		}
 		/* the usual case */
 		else if ((g_current_fractal_specific->orbitcalc() && g_inside != COLORMODE_STAR_TRAIL)
@@ -1675,157 +2292,11 @@ int StandardFractal::execute()
 		{
 			show_orbit();
 		}
-		if (g_inside < COLORMODE_ITERATION)
+		if (inside_colormode_update())
 		{
-			set_new_z_if_bigmath();
-			if (g_inside == COLORMODE_STAR_TRAIL)
-			{
-				if (0 < g_color_iter && g_color_iter < 16)
-				{
-					if (g_integer_fractal)
-					{
-						g_new_z.x = g_new_z_l.x;
-						g_new_z.x /= g_fudge;
-						g_new_z.y = g_new_z_l.y;
-						g_new_z.y /= g_fudge;
-					}
-
-					if (g_save_release > 1824)
-					{
-						if (g_new_z.x > STARTRAILMAX)
-						{
-							g_new_z.x = STARTRAILMAX;
-						}
-						if (g_new_z.x < -STARTRAILMAX)
-						{
-							g_new_z.x = -STARTRAILMAX;
-						}
-						if (g_new_z.y > STARTRAILMAX)
-						{
-							g_new_z.y = STARTRAILMAX;
-						}
-						if (g_new_z.y < -STARTRAILMAX)
-						{
-							g_new_z.y = -STARTRAILMAX;
-						}
-						g_temp_sqr_x = g_new_z.x*g_new_z.x;
-						g_temp_sqr_y = g_new_z.y*g_new_z.y;
-						g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-						g_old_z = g_new_z;
-					}
-					{
-						int tmpcolor;
-						tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
-						m_tangent_table[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
-					}
-				}
-			}
-			else if (g_inside == COLORMODE_EPSILON_CROSS)
-			{
-				m_colormode_epsilon_cross_hooper = HOOPER_NONE;
-				if (g_integer_fractal)
-				{
-					if (labs(g_new_z_l.x) < labs(m_colormode_epsilon_cross_proximity_l))
-					{
-						/* close to y axis */
-						m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
-							HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
-						goto plot_inside;
-					}
-					else if (labs(g_new_z_l.y) < labs(m_colormode_epsilon_cross_proximity_l))
-					{
-						/* close to x axis */
-						m_colormode_epsilon_cross_hooper = (m_colormode_epsilon_cross_proximity_l > 0) ?
-							HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS; 
-						goto plot_inside;
-					}
-				}
-				else
-				{
-					if (fabs(g_new_z.x) < fabs(g_proximity))
-					{
-						/* close to y axis */
-						m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
-							HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS; 
-						goto plot_inside;
-					}
-					else if (fabs(g_new_z.y) < fabs(g_proximity))
-					{
-						/* close to x axis */
-						m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
-							HOOPER_POSITIVE_X_AXIS : HOOPER_NEGATIVE_X_AXIS; 
-						goto plot_inside;
-					}
-				}
-			}
-			else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
-			{
-				double mag;
-				if (g_integer_fractal)
-				{
-					g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-					g_new_z.y = (double(g_new_z_l.y))/g_fudge;
-				}
-				mag = fmod_test();
-				if (mag < g_proximity)
-				{
-					m_colormode_modulus_value = mag;
-				}
-			}
-			else if (inside_coloring_beauty_of_fractals())
-			{
-				if (g_integer_fractal)
-				{
-					if (g_magnitude_l == 0 || !g_no_magnitude_calculation)
-					{
-						g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.y);
-					}
-					g_magnitude = g_magnitude_l;
-					g_magnitude /= g_fudge;
-				}
-				else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
-				{
-					g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
-				}
-				if (g_magnitude < m_colormode_bof60_min_magnitude)
-				{
-					m_colormode_bof60_min_magnitude = g_magnitude;
-					m_colormode_bof61_min_index = g_color_iter + 1;
-				}
-			}
+			goto plot_inside;
 		}
-
-		if (g_outside == COLORMODE_TOTAL_DISTANCE || g_outside == COLORMODE_FLOAT_MODULUS)
-		{
-			if (g_integer_fractal)
-			{
-				g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-				g_new_z.y = (double(g_new_z_l.y))/g_fudge;
-			}
-			else if (g_bf_math == BIGNUM)
-			{
-				g_new_z = complex_bn_to_float(&g_new_z_bn);
-			}
-			else if (g_bf_math == BIGFLT)
-			{
-				g_new_z = complex_bf_to_float(&g_new_z_bf);
-			}
-
-			if (g_outside == COLORMODE_TOTAL_DISTANCE)
-			{
-				m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.x-g_new_z.x) + sqr(m_colormode_total_distance_last_z.y-g_new_z.y));
-				m_colormode_total_distance_last_z.x = g_new_z.x;
-				m_colormode_total_distance_last_z.y = g_new_z.y;
-			}
-			else if (g_outside == COLORMODE_FLOAT_MODULUS)
-			{
-				double mag = fmod_test();
-				if (mag < g_proximity)
-				{
-					m_colormode_modulus_value = mag;
-				}
-			}
-		}
+		outside_colormode_update();
 
 		m_attracted = detect_finite_attractor();
 		if (m_attracted)
@@ -1833,85 +2304,8 @@ int StandardFractal::execute()
 			break;
 		}
 
-		if (g_color_iter > g_old_color_iter) /* check periodicity */
-		{
-			if ((g_color_iter & m_periodicity_cycle_check_size) == 0)            /* time to save a new value */
-			{
-				m_colormode_period_cycle_start_iteration = g_color_iter;
-				if (g_integer_fractal)
-				{
-					m_saved_z_l = g_new_z_l; /* integer fractals */
-				}
-				else if (g_bf_math == BIGNUM)
-				{
-					copy_bn(bnsaved.x, g_new_z_bn.x);
-					copy_bn(bnsaved.y, g_new_z_bn.y);
-				}
-				else if (g_bf_math == BIGFLT)
-				{
-					copy_bf(bfsaved.x, g_new_z_bf.x);
-					copy_bf(bfsaved.y, g_new_z_bf.y);
-				}
-				else
-				{
-					s_saved_z = g_new_z;  /* floating pt fractals */
-				}
-				if (--m_periodicity_cycle_check_counter == 0)    /* time to lengthen the periodicity? */
-				{
-					m_periodicity_cycle_check_size = (m_periodicity_cycle_check_size << 1) + 1;       /* longer periodicity */
-					m_periodicity_cycle_check_counter = g_next_saved_incr; /* restart counter */
-				}
-			}
-			else                /* check against an old save */
-			{
-				if (g_integer_fractal)     /* floating-pt periodicity chk */
-				{
-					if (labs(m_saved_z_l.x - g_new_z_l.x) < g_close_enough_l)
-					{
-						if (labs(m_saved_z_l.y - g_new_z_l.y) < g_close_enough_l)
-						{
-							m_caught_a_cycle = true;
-						}
-					}
-				}
-				else if (g_bf_math == BIGNUM)
-				{
-					if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.x, g_new_z_bn.x)), bnclosenuff) < 0)
-					{
-						if (cmp_bn(abs_a_bn(sub_bn(bntmp, bnsaved.y, g_new_z_bn.y)), bnclosenuff) < 0)
-						{
-							m_caught_a_cycle = true;
-						}
-					}
-				}
-				else if (g_bf_math == BIGFLT)
-				{
-					if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.x, g_new_z_bf.x)), bfclosenuff) < 0)
-					{
-						if (cmp_bf(abs_a_bf(sub_bf(bftmp, bfsaved.y, g_new_z_bf.y)), bfclosenuff) < 0)
-						{
-							m_caught_a_cycle = true;
-						}
-					}
-				}
-				else
-				{
-					if (fabs(s_saved_z.x - g_new_z.x) < g_close_enough)
-					{
-						if (fabs(s_saved_z.y - g_new_z.y) < g_close_enough)
-						{
-							m_caught_a_cycle = true;
-						}
-					}
-				}
-				if (m_caught_a_cycle)
-				{
-					m_colormode_period_cycle_length = g_color_iter - m_colormode_period_cycle_start_iteration;
-					g_color_iter = g_max_iteration - 1;
-				}
-			}
-		}
-	}  /* end while (g_color_iter++ < g_max_iteration) */
+		check_periodicity();
+	}
 
 	if (g_show_orbit)
 	{
@@ -1934,27 +2328,7 @@ int StandardFractal::execute()
 
 	if (g_potential_flag)
 	{
-		if (g_integer_fractal)       /* adjust integer fractals */
-		{
-			g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-			g_new_z.y = (double(g_new_z_l.y))/g_fudge;
-		}
-		else if (g_bf_math == BIGNUM)
-		{
-			g_new_z.x = double(bntofloat(g_new_z_bn.x));
-			g_new_z.y = double(bntofloat(g_new_z_bn.y));
-		}
-		else if (g_bf_math == BIGFLT)
-		{
-			g_new_z.x = double(bftofloat(g_new_z_bf.x));
-			g_new_z.y = double(bftofloat(g_new_z_bf.y));
-		}
-		g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
-		g_color_iter = potential(g_magnitude, g_color_iter);
-		if (g_log_table || g_log_calculation)
-		{
-			g_color_iter = logtablecalc(g_color_iter);
-		}
+		potential_compute();
 		goto plot_pixel;          /* skip any other adjustments */
 	}
 
@@ -1963,259 +2337,37 @@ int StandardFractal::execute()
 		goto plot_inside;         /* distest, decomp, biomorph don't apply */
 	}
 
-
 	if (g_outside < COLORMODE_ITERATION)
 	{
-		if (g_integer_fractal)
-		{
-			g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-			g_new_z.y = (double(g_new_z_l.y))/g_fudge;
-		}
-		else if (g_bf_math == BIGNUM)
-		{
-			g_new_z.x = double(bntofloat(g_new_z_bn.x));
-			g_new_z.y = double(bntofloat(g_new_z_bn.y));
-		}
-		/* Add 7 to overcome negative values on the MANDEL    */
-		if (g_outside == COLORMODE_REAL)
-		{
-			g_color_iter += long(g_new_z.x) + 7;
-		}
-		else if (g_outside == COLORMODE_IMAGINARY)
-		{
-			g_color_iter += long(g_new_z.y) + 7;
-		}
-		else if (g_outside == COLORMODE_MULTIPLY && g_new_z.y)
-		{
-			g_color_iter = long(double(g_color_iter)*(g_new_z.x/g_new_z.y));
-		}
-		else if (g_outside == COLORMODE_SUM)
-		{
-			g_color_iter += long(g_new_z.x + g_new_z.y);
-		}
-		else if (g_outside == COLORMODE_INVERSE_TANGENT)          /* "atan" */
-		{
-			g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
-		}
-		else if (g_outside == COLORMODE_FLOAT_MODULUS)
-		{
-			g_color_iter = long(m_colormode_modulus_value*g_colors/g_proximity);
-		}
-		else if (g_outside == COLORMODE_TOTAL_DISTANCE)
-		{
-			g_color_iter = long(m_colormode_total_distance);
-		}
-
-		/* eliminate negative colors & wrap arounds */
-		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
-		{
-			g_color_iter = (g_save_release < 1961) ? 0 : 1;
-		}
+		outside_colormode_final();
 	}
 
 	if (g_distance_test)
 	{
-		double dist = (g_new_z.x) + sqr(g_new_z.y);
-		if (dist == 0 || g_overflow)
+		double dist = distance_compute();
+		if ((dist < s_dem_delta) && (g_distance_test > 0))
 		{
-			dist = 0;
+			goto plot_inside;
 		}
-		else
+		if (distance_get_color(dist))
 		{
-			dist *= sqr(log(dist))/(sqr(m_distance_test_derivative.x) + sqr(m_distance_test_derivative.y));
-		}
-		if (dist < s_dem_delta)     /* point is on the edge */
-		{
-			if (g_distance_test > 0)
-			{
-				goto plot_inside;   /* show it as an inside point */
-			}
-			g_color_iter = -g_distance_test;       /* show boundary as specified color */
-			goto plot_pixel;       /* no further adjustments apply */
-		}
-		if (g_colors == 2)
-		{
-			g_color_iter = !g_inside;   /* the only useful distest 2 color use */
-			goto plot_pixel;       /* no further adjustments apply */
-		}
-		if (g_distance_test > 1)          /* pick color based on distance */
-		{
-			if (g_old_demm_colors) /* this one is needed for old color scheme */
-			{
-				g_color_iter = long(sqrt(sqrt(dist)/s_dem_width + 1));
-			}
-			else if (g_use_old_distance_test)
-			{
-				g_color_iter = long(sqrt(dist/s_dem_width + 1));
-			}
-			else
-			{
-				g_color_iter = long(dist/s_dem_width + 1);
-			}
-			g_color_iter &= LONG_MAX;  /* oops - color can be negative */
-			goto plot_pixel;       /* no further adjustments apply */
-		}
-		if (g_use_old_distance_test)
-		{
-			g_color_iter = m_dem_color;
-			g_new_z = m_dem_new_z;
+			goto plot_pixel;
 		}
 		/* use pixel's "regular" color */
 	}
 
-	if (g_decomposition[0] > 0)
-	{
-		decomposition();
-	}
-	else if (g_biomorph != -1)
-	{
-		if (g_integer_fractal)
-		{
-			if (labs(g_new_z_l.x) < g_limit2_l || labs(g_new_z_l.y) < g_limit2_l)
-			{
-				g_color_iter = g_biomorph;
-			}
-		}
-		else if (fabs(g_new_z.x) < g_rq_limit2 || fabs(g_new_z.y) < g_rq_limit2)
-		{
-			g_color_iter = g_biomorph;
-		}
-	}
+	compute_decomposition_and_biomorph();
+	merge_escape_time_stripes();
 
-	if (g_outside >= 0 && !m_attracted) /* merge escape-time stripes */
-	{
-		g_color_iter = g_outside;
-	}
-	else if (g_log_table || g_log_calculation)
-	{
-		g_color_iter = logtablecalc(g_color_iter);
-	}
 	goto plot_pixel;
 
 plot_inside: /* we're "inside" */
-	if (g_periodicity_check < 0 && m_caught_a_cycle)
-	{
-		g_color_iter = 7;           /* show periodicity */
-	}
-	else if (g_inside >= 0)
-	{
-		g_color_iter = g_inside;              /* set to specified color, ignore logpal */
-	}
-	else
-	{
-		if (g_inside == COLORMODE_STAR_TRAIL)
-		{
-			g_color_iter = 0;
-			for (int i = 1; i < 16; i++)
-			{
-				if (fabs(m_tangent_table[0] - m_tangent_table[i]) < .05)
-				{
-					g_color_iter = i;
-					break;
-				}
-			}
-		}
-		else if (g_inside == COLORMODE_PERIOD)
-		{
-			g_color_iter = (m_colormode_period_cycle_length > 0) ? m_colormode_period_cycle_length : g_max_iteration;
-		}
-		else if (g_inside == COLORMODE_EPSILON_CROSS)
-		{
-			if (m_colormode_epsilon_cross_hooper == HOOPER_POSITIVE_Y_AXIS)
-			{
-				g_color_iter = green;
-			}
-			else if (m_colormode_epsilon_cross_hooper == HOOPER_POSITIVE_X_AXIS)
-			{
-				g_color_iter = yellow;
-			}
-			else if (m_colormode_epsilon_cross_hooper == HOOPER_NONE)
-			{
-				g_color_iter = g_max_iteration;
-			}
-			if (g_show_orbit)
-			{
-				orbit_scrub();
-			}
-		}
-		else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER)
-		{
-			g_color_iter = long(m_colormode_modulus_value*g_colors/g_proximity);
-		}
-		else if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
-		{
-			if (g_integer_fractal)
-			{
-				g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-				g_new_z.y = (double(g_new_z_l.y))/g_fudge;
-			}
-			g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
-		}
-		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_60)
-		{
-			g_color_iter = long(sqrt(m_colormode_bof60_min_magnitude)*75);
-		}
-		else if (g_inside == COLORMODE_BEAUTY_OF_FRACTALS_61)
-		{
-			g_color_iter = m_colormode_bof61_min_index;
-		}
-		else if (g_inside == COLORMODE_Z_MAGNITUDE)
-		{
-			g_color_iter = long(g_integer_fractal ?
-				((double(g_magnitude_l)/g_fudge)*(g_max_iteration/2) + 1)
-				: ((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration/2) + 1));
-		}
-		else /* inside == -1 */
-		{
-			g_color_iter = g_max_iteration;
-		}
-		if (g_log_table || g_log_calculation)
-		{
-			g_color_iter = logtablecalc(g_color_iter);
-		}
-	}
+	inside_colormode_final();
 
 plot_pixel:
-	g_color = abs(int(g_color_iter));
-	if (g_color_iter >= g_colors)  /* don't use color 0 unless from inside/outside */
-	{
-		if (g_save_release <= 1950)
-		{
-			if (g_colors < 16)
-			{
-				g_color &= g_and_color;
-			}
-			else
-			{
-				g_color = ((g_color - 1) % g_and_color) + 1;  /* skip color zero */
-			}
-		}
-		else
-		{
-			g_color = (g_colors < 16)
-				? int(g_color_iter & g_and_color)
-				: int(((g_color_iter - 1) % g_and_color) + 1);
-		}
-	}
-	if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
-	{
-		if (g_color <= 0 && g_standard_calculation_mode == 'b' )   /* fix BTM bug */
-		{
-			g_color = 1;
-		}
-	}
-	(*g_plot_color)(g_col, g_row, g_color);
+	set_final_color_and_plot();
 
-	g_input_counter -= abs(int(g_real_color_iter));
-	if (g_input_counter <= 0)
-	{
-		if (check_key())
-		{
-			return -1;
-		}
-		g_input_counter = g_max_input_counter;
-	}
-	return g_color;
+	return check_if_interrupted();
 }
 #undef green
 #undef yellow
@@ -2484,10 +2636,6 @@ static void decomposition()
 	if (g_decomposition[0] == 2 && g_save_release >= 1827)
 	{
 		g_color_iter = (save_temp & 2) ? 1 : 0;
-		if (g_colors == 2)
-		{
-			g_color_iter++;
-		}
 	}
 	else if (g_decomposition[0] == 2 && g_save_release < 1827)
 	{

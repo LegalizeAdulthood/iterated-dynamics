@@ -69,11 +69,6 @@ int boundary_trace_main()
 		stop_message(0, "Boundary tracing cannot be used with inside=0 or outside=0");
 		return -1;
 	}
-	if (g_colors < 16)
-	{
-		stop_message(0, "Boundary tracing cannot be used with < 16 colors");
-		return -1;
-	}
 
 	g_got_status = GOT_STATUS_BOUNDARY_TRACE;
 	max_putline_length = 0; /* reset max_putline_length */

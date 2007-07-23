@@ -280,13 +280,6 @@ void find_special_colors()
 	g_color_medium = 7;
 	g_color_bright = 15;
 
-	if (g_colors == 2)
-	{
-		g_color_medium = 1;
-		g_color_bright = 1;
-		return;
-	}
-
 	if (!g_got_real_dac)
 	{
 		return;
@@ -427,10 +420,6 @@ long read_ticker()
 */
 void spindac(int dir, int inc)
 {
-	if (g_colors < 16)
-	{
-		return;
-	}
 	if (g_is_true_color && g_true_mode_iterates)
 	{
 		return;

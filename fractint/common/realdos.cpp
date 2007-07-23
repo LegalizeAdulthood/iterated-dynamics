@@ -1392,9 +1392,9 @@ top:
 	choices[nextright] = "restart "FRACTINT"        <ins> ";
 
 #ifdef XFRACT
-	if (full_menu && (g_got_real_dac || g_fake_lut) && g_colors >= 16)
+	if (full_menu && (g_got_real_dac || g_fake_lut))
 #else
-	if (full_menu && g_got_real_dac && g_colors >= 16)
+	if (full_menu && g_got_real_dac)
 #endif
 	{
 		nextright += 2;
@@ -1411,18 +1411,15 @@ top:
 		attributes[nextright] = MENU_ITEM;
 		choices[nextright] = "rotate palette      <+>, <->  ";
 
-		if (g_colors > 16)
-		{
-			nextright += 2;
-			choicekey[nextright] = 'e';
-			attributes[nextright] = MENU_ITEM;
-			choices[nextright] = "palette editing mode     <e>  ";
+		nextright += 2;
+		choicekey[nextright] = 'e';
+		attributes[nextright] = MENU_ITEM;
+		choices[nextright] = "palette editing mode     <e>  ";
 
-			nextright += 2;
-			choicekey[nextright] = 'a';
-			attributes[nextright] = MENU_ITEM;
-			choices[nextright] = "make starfield           <a>  ";
-		}
+		nextright += 2;
+		choicekey[nextright] = 'a';
+		attributes[nextright] = MENU_ITEM;
+		choices[nextright] = "make starfield           <a>  ";
 	}
 
 	nextright += 2;
@@ -1542,14 +1539,13 @@ static int menu_check_key(int curkey, int choice)
 				return -testkey;
 			}
 		}
-		if (g_got_real_dac && g_colors >= 16)
+		if (g_got_real_dac)
 		{
 			if (strchr("c+-", testkey))
 			{
 				return -testkey;
 			}
-			if (g_colors > 16
-					&& (testkey == 'a' || (testkey == 'e')))
+			if (testkey == 'a' || (testkey == 'e'))
 			{
 				return -testkey;
 			}
