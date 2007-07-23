@@ -1530,7 +1530,6 @@ const char *g_juli_3d_options[] =
 	"monocular", "lefteye", "righteye", "red-blue"
 };
 
-/* JIIM */
 #ifdef RANDOM_RUN
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
 const char *g_jiim_method[] = {"breadth", "depth", "walk", "run"};

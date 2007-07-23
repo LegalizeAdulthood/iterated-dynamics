@@ -106,7 +106,7 @@ bool g_quick_calculate = false;
 double g_proximity = 0.01;
 double g_close_enough;
 unsigned long g_magnitude_limit;               /* magnitude limit (CALCMAND) */
-/* ORBIT variables */
+/* orbit variables */
 bool g_show_orbit;                     /* flag to turn on and off */
 int g_orbit_index;                      /* pointer into g_save_orbit array */
 int g_orbit_color = 15;                 /* XOR color */
@@ -634,7 +634,7 @@ int calculate_fractal()
 
 	g_atan_colors = (g_save_release > 2002) ? g_colors : 180;
 
-	/* ORBIT stuff */
+	/* orbit stuff */
 	g_show_orbit = g_start_show_orbit;
 	g_orbit_index = 0;
 	g_orbit_color = 15;

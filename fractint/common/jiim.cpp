@@ -1,5 +1,5 @@
 /*
- * JIIM.C
+ * jiim.cpp
  *
  * Generates Inverse Julia in real time, lets move a cursor which determines
  * the J-set.
@@ -70,35 +70,38 @@
 #define SECRETMODE_ZIGZAG				8
 #define SECRETMODE_RANDOM_RUN			9
 
-static int show_numbers = 0;              /* toggle for display of coords */
+static int s_show_numbers = 0;              /* toggle for display of coords */
 static char *s_rect_buff = NULL;
-static FILE *file;
-static int windows = 0;               /* windows management system */
+static int s_windows = 0;               /* windows management system */
 
-static int xc, yc;                       /* corners of the window */
-static int xd, yd;                       /* dots in the window    */
+static int s_window_corner_x;
+static int s_window_corner_y;                       /* corners of the window */
+static int s_window_dots_x;
+static int s_window_dots_y;                       /* dots in the window    */
 
 double g_julia_c_x = BIG;
 double g_julia_c_y = BIG;
 
 /* circle routines from Dr. Dobbs June 1990 */
-static int xbase, ybase;
-static unsigned int xAspect, yAspect;
+static int s_x_base;
+static int s_y_base;
+static unsigned int s_x_aspect;
+static unsigned int s_y_aspect;
 
 void SetAspect(double aspect)
 {
-	xAspect = 0;
-	yAspect = 0;
+	s_x_aspect = 0;
+	s_y_aspect = 0;
 	aspect = fabs(aspect);
 	if (aspect != 1.0)
 	{
 		if (aspect > 1.0)
 		{
-			yAspect = (unsigned int)(65536.0/aspect);
+			s_y_aspect = (unsigned int)(65536.0/aspect);
 		}
 		else
 		{
-			xAspect = (unsigned int)(65536.0*aspect);
+			s_x_aspect = (unsigned int)(65536.0*aspect);
 		}
 	}
 }
@@ -106,15 +109,15 @@ void SetAspect(double aspect)
 static void _fastcall plot_color_clip(int x, int y, int color)
 {
 	/* avoid writing outside window */
-	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+	if (x < s_window_corner_x || y < s_window_corner_y || x >= s_window_corner_x + s_window_dots_x || y >= s_window_corner_y + s_window_dots_y)
 	{
 		return;
 	}
-	if (y >= g_screen_height - show_numbers) /* avoid overwriting coords */
+	if (y >= g_screen_height - s_show_numbers) /* avoid overwriting coords */
 	{
 		return;
 	}
-	if (windows == 2) /* avoid overwriting fractal */
+	if (s_windows == 2) /* avoid overwriting fractal */
 	{
 		if (0 <= x && x < g_x_dots && 0 <= y && y < g_y_dots)
 		{
@@ -128,15 +131,15 @@ static void _fastcall plot_color_clip(int x, int y, int color)
 int  c_getcolor(int x, int y)
 {
 	/* avoid reading outside window */
-	if (x < xc || y < yc || x >= xc + xd || y >= yc + yd)
+	if (x < s_window_corner_x || y < s_window_corner_y || x >= s_window_corner_x + s_window_dots_x || y >= s_window_corner_y + s_window_dots_y)
 	{
 		return 1000;
 	}
-	if (y >= g_screen_height - show_numbers) /* avoid overreading coords */
+	if (y >= g_screen_height - s_show_numbers) /* avoid overreading coords */
 	{
 		return 1000;
 	}
-	if (windows == 2) /* avoid overreading fractal */
+	if (s_windows == 2) /* avoid overreading fractal */
 	{
 		if (0 <= x && x < g_x_dots && 0 <= y && y < g_y_dots)
 		{
@@ -148,20 +151,20 @@ int  c_getcolor(int x, int y)
 
 void circleplot(int x, int y, int color)
 {
-	if (xAspect == 0)
+	if (s_x_aspect == 0)
 	{
-		if (yAspect == 0)
+		if (s_y_aspect == 0)
 		{
-			plot_color_clip(x + xbase, y + ybase, color);
+			plot_color_clip(x + s_x_base, y + s_y_base, color);
 		}
 		else
 		{
-			plot_color_clip(x + xbase, short(ybase + ((long(y)*long(yAspect)) >> 16)), color);
+			plot_color_clip(x + s_x_base, short(s_y_base + ((long(y)*long(s_y_aspect)) >> 16)), color);
 		}
 	}
 	else
 	{
-		plot_color_clip(int(xbase + ((long(x)*long(xAspect)) >> 16)), y + ybase, color);
+		plot_color_clip(int(s_x_base + ((long(x)*long(s_x_aspect)) >> 16)), y + s_y_base, color);
 	}
 }
 
@@ -213,16 +216,16 @@ void circle(int radius, int color)
  */
 
 
-long ListFront;
-long ListBack;
-long ListSize;  /* head, tail, size of MIIM Queue */
-long lsize;
-long lmax;                    /* how many in queue (now, ever) */
-int    maxhits = 1;
-int    OKtoMIIM;
-static int    SecretExperimentalMode;
-float luckyx = 0;
-float luckyy = 0;
+static long s_list_front;
+static long s_list_back;
+static long s_list_size;  /* head, tail, size of MIIM Queue */
+static long s_l_size;
+static long s_l_max;                    /* how many in queue (now, ever) */
+static int s_max_hits = 1;
+static bool s_ok_to_miim;
+static int s_secret_experimental_mode;
+static float s_lucky_x = 0;
+static float s_lucky_y = 0;
 
 static void fillrect(int x, int y, int width, int height, int color)
 {
@@ -251,7 +254,7 @@ static void fillrect(int x, int y, int width, int height, int color)
 int
 QueueEmpty()            /* True if NO points remain in queue */
 {
-	return ListFront == ListBack;
+	return s_list_front == s_list_back;
 }
 
 #if 0 /* not used */
@@ -265,31 +268,31 @@ QueueFull()             /* True if room for NO more points in queue */
 int
 QueueFullAlmost()       /* True if room for ONE more point in queue */
 {
-	return ((ListFront + 2) % ListSize) == ListBack;
+	return ((s_list_front + 2) % s_list_size) == s_list_back;
 }
 
 void
 ClearQueue()
 {
-	ListFront = 0;
-	ListBack = 0;
-	lsize = 0;
-	lmax = 0;
+	s_list_front = 0;
+	s_list_back = 0;
+	s_l_size = 0;
+	s_l_max = 0;
 }
 
 
 /*
  * Queue functions for MIIM julia:
- * move to JIIM.C when done
+ * move to jiim.cpp when done
  */
 
-int Init_Queue(unsigned long request)
+bool Init_Queue(unsigned long request)
 {
 	if (driver_diskp())
 	{
 		stop_message(0, "Don't try this in disk video mode, kids...\n");
-		ListSize = 0;
-		return 0;
+		s_list_size = 0;
+		return false;
 	}
 
 #if 0
@@ -303,54 +306,54 @@ int Init_Queue(unsigned long request)
 	}
 #endif
 
-	for (ListSize = request; ListSize > 1024; ListSize /= 2)
+	for (s_list_size = request; s_list_size > 1024; s_list_size /= 2)
 	{
-		switch (disk_start_common(ListSize*8, 1, 256))
+		switch (disk_start_common(s_list_size*8, 1, 256))
 		{
 		case 0:                        /* success */
-			ListFront = 0;
-			ListBack = 0;
-			lsize = 0;
-			lmax = 0;
-			return 1;
+			s_list_front = 0;
+			s_list_back = 0;
+			s_l_size = 0;
+			s_l_max = 0;
+			return true;
 		case -1:
 			continue;                   /* try smaller queue size */
 		case -2:
-			ListSize = 0;               /* cancelled by user      */
-			return 0;
+			s_list_size = 0;               /* cancelled by user      */
+			return false;
 		}
 	}
 
 	/* failed to get memory for MIIM Queue */
-	ListSize = 0;
-	return 0;
+	s_list_size = 0;
+	return false;
 }
 
 void
 Free_Queue()
 {
 	disk_end();
-	ListFront = 0;
-	ListBack = 0;
-	ListSize = 0;
-	lsize = 0;
-	lmax = 0;
+	s_list_front = 0;
+	s_list_back = 0;
+	s_list_size = 0;
+	s_l_size = 0;
+	s_l_max = 0;
 }
 
 int
 PushLong(long x, long y)
 {
-	if (((ListFront + 1) % ListSize) != ListBack)
+	if (((s_list_front + 1) % s_list_size) != s_list_back)
 	{
-		if (disk_to_memory(8*ListFront, sizeof(x), &x) &&
-			disk_to_memory(8*ListFront +sizeof(x), sizeof(y), &y))
+		if (disk_to_memory(8*s_list_front, sizeof(x), &x) &&
+			disk_to_memory(8*s_list_front +sizeof(x), sizeof(y), &y))
 		{
-			ListFront = (ListFront + 1) % ListSize;
-			if (++lsize > lmax)
+			s_list_front = (s_list_front + 1) % s_list_size;
+			if (++s_l_size > s_l_max)
 			{
-				lmax   = lsize;
-				luckyx = float(x);
-				luckyy = float(y);
+				s_l_max   = s_l_size;
+				s_lucky_x = float(x);
+				s_lucky_y = float(y);
 			}
 			return 1;
 		}
@@ -361,17 +364,17 @@ PushLong(long x, long y)
 int
 PushFloat(float x, float y)
 {
-	if (((ListFront + 1) % ListSize) != ListBack)
+	if (((s_list_front + 1) % s_list_size) != s_list_back)
 	{
-		if (disk_to_memory(8*ListFront, sizeof(x), &x) &&
-			disk_to_memory(8*ListFront +sizeof(x), sizeof(y), &y))
+		if (disk_to_memory(8*s_list_front, sizeof(x), &x) &&
+			disk_to_memory(8*s_list_front +sizeof(x), sizeof(y), &y))
 		{
-			ListFront = (ListFront + 1) % ListSize;
-			if (++lsize > lmax)
+			s_list_front = (s_list_front + 1) % s_list_size;
+			if (++s_l_size > s_l_max)
 			{
-				lmax   = lsize;
-				luckyx = x;
-				luckyy = y;
+				s_l_max   = s_l_size;
+				s_lucky_x = x;
+				s_lucky_y = y;
 			}
 			return 1;
 		}
@@ -388,17 +391,17 @@ PopFloat()
 
 	if (!QueueEmpty())
 	{
-		ListFront--;
-		if (ListFront < 0)
+		s_list_front--;
+		if (s_list_front < 0)
 		{
-			ListFront = ListSize - 1;
+			s_list_front = s_list_size - 1;
 		}
-		if (disk_from_memory(8*ListFront, sizeof(popx), &popx) &&
-			disk_from_memory(8*ListFront +sizeof(popx), sizeof(popy), &popy))
+		if (disk_from_memory(8*s_list_front, sizeof(popx), &popx) &&
+			disk_from_memory(8*s_list_front +sizeof(popx), sizeof(popy), &popy))
 		{
 			pop.x = popx;
 			pop.y = popy;
-			--lsize;
+			--s_l_size;
 		}
 		return pop;
 	}
@@ -414,15 +417,15 @@ PopLong()
 
 	if (!QueueEmpty())
 	{
-		ListFront--;
-		if (ListFront < 0)
+		s_list_front--;
+		if (s_list_front < 0)
 		{
-			ListFront = ListSize - 1;
+			s_list_front = s_list_size - 1;
 		}
-		if (disk_from_memory(8*ListFront, sizeof(pop.x), &pop.x) &&
-			disk_from_memory(8*ListFront +sizeof(pop.x), sizeof(pop.y), &pop.y))
+		if (disk_from_memory(8*s_list_front, sizeof(pop.x), &pop.x) &&
+			disk_from_memory(8*s_list_front +sizeof(pop.x), sizeof(pop.y), &pop.y))
 		{
-			--lsize;
+			--s_l_size;
 		}
 		return pop;
 	}
@@ -450,15 +453,15 @@ DeQueueFloat()
 	float outx;
 	float outy;
 
-	if (ListBack != ListFront)
+	if (s_list_back != s_list_front)
 	{
-		if (disk_from_memory(8*ListBack, sizeof(outx), &outx) &&
-			disk_from_memory(8*ListBack +sizeof(outx), sizeof(outy), &outy))
+		if (disk_from_memory(8*s_list_back, sizeof(outx), &outx) &&
+			disk_from_memory(8*s_list_back +sizeof(outx), sizeof(outy), &outy))
 		{
-			ListBack = (ListBack + 1) % ListSize;
+			s_list_back = (s_list_back + 1) % s_list_size;
 			out.x = outx;
 			out.y = outy;
-			lsize--;
+			s_l_size--;
 		}
 		return out;
 	}
@@ -474,13 +477,13 @@ DeQueueLong()
 	out.x = 0;
 	out.y = 0;
 
-	if (ListBack != ListFront)
+	if (s_list_back != s_list_front)
 	{
-		if (disk_from_memory(8*ListBack, sizeof(out.x), &out.x) &&
-			disk_from_memory(8*ListBack +sizeof(out.x), sizeof(out.y), &out.y))
+		if (disk_from_memory(8*s_list_back, sizeof(out.x), &out.x) &&
+			disk_from_memory(8*s_list_back +sizeof(out.x), sizeof(out.y), &out.y))
 		{
-			ListBack = (ListBack + 1) % ListSize;
-			lsize--;
+			s_list_back = (s_list_back + 1) % s_list_size;
+			s_l_size--;
 		}
 		return out;
 	}
@@ -540,19 +543,40 @@ static void RestoreRect(int x, int y, int width, int height)
 
 ComplexD g_save_c = {-3000.0, -3000.0};
 
-void Jiim(int which)         /* called by fractint */
+class JIIM
 {
-	struct affine cvt;
+public:
+	JIIM(bool which)
+		: m_orbits(which)
+	{
+	}
+	~JIIM()
+	{
+	}
+	void execute();
+
+private:
+	bool m_orbits;
+};
+
+void Jiim(bool which)
+{
+	JIIM(which).execute();
+}
+
+void JIIM::execute()
+{
+	affine m_cvt;
 	int exact = 0;
 	int count = 0;            /* coloring julia */
 	static int mode = 0;      /* point, circle, ... */
 	double cr;
 	double ci;
 	double r;
-	int xfactor;
-	int yfactor;             /* aspect ratio          */
-	int xoff;
-	int yoff;                   /* center of the window  */
+	int x_factor;
+	int y_factor;             /* aspect ratio          */
+	int x_offset;
+	int y_offset;                   /* center of the window  */
 	int x;
 	int y;
 	int still;
@@ -560,42 +584,42 @@ void Jiim(int which)         /* called by fractint */
 	long iter;
 	int color;
 	float zoom;
-	int oldsxoffs;
-	int oldsyoffs;
-	bool savehasinverse;
-	int (*oldcalctype)();
+	int old_sx_offset;
+	int old_sy_offset;
+	bool save_has_inverse;
+	int (*old_calculate_type)();
 	int old_x;
 	int old_y;
 	double aspect;
-	static int randir = 0;
-	static int rancnt = 0;
-	int actively_computing = 1;
-	int first_time = 1;
+	static int random_direction = 0;
+	static int random_count = 0;
+	bool actively_computing = true;
+	bool first_time = true;
 	int old_debugflag = g_debug_mode;
 
 	/* must use standard fractal or be froth_calc */
 	if (g_fractal_specific[g_fractal_type].calculate_type != standard_fractal
-			&& g_fractal_specific[g_fractal_type].calculate_type != froth_calc)
+		&& g_fractal_specific[g_fractal_type].calculate_type != froth_calc)
 	{
 		return;
 	}
-	HelpModeSaver saved_help(JIIM == which ? HELP_JIIM : HELP_ORBITS);
-	if (which != JIIM)
+	HelpModeSaver saved_help(!m_orbits ? HELP_JIIM : HELP_ORBITS);
+	if (m_orbits)
 	{
 		g_has_inverse = true;
 	}
-	oldsxoffs = g_sx_offset;
-	oldsyoffs = g_sy_offset;
-	oldcalctype = g_calculate_type;
-	show_numbers = 0;
+	old_sx_offset = g_sx_offset;
+	old_sy_offset = g_sy_offset;
+	old_calculate_type = g_calculate_type;
+	s_show_numbers = 0;
 	g_using_jiim = true;
 	g_line_buffer = new BYTE[max(g_screen_width, g_screen_height)];
 	aspect = (double(g_x_dots)*3)/(double(g_y_dots)*4);  /* assumes 4:3 */
-	actively_computing = 1;
+	actively_computing = true;
 	SetAspect(aspect);
 	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
-	if (which == ORBIT)
+	if (m_orbits)
 	{
 		(*g_fractal_specific[g_fractal_type].per_image)();
 	}
@@ -607,27 +631,27 @@ void Jiim(int which)         /* called by fractint */
 	cursor_new();
 
 	/* Grab memory for Queue/Stack before SaveRect gets it. */
-	OKtoMIIM  = 0;
-	if (which == JIIM && !(g_debug_mode == DEBUGMODE_NO_MIIM_QUEUE))
+	s_ok_to_miim  = false;
+	if (!m_orbits && !(g_debug_mode == DEBUGMODE_NO_MIIM_QUEUE))
 	{
-		OKtoMIIM = Init_Queue(8*1024); /* Queue Set-up Successful? */
+		s_ok_to_miim = Init_Queue(8*1024); /* Queue Set-up Successful? */
 	}
 
-	maxhits = 1;
-	if (which == ORBIT)
+	s_max_hits = 1;
+	if (m_orbits)
 	{
 		g_plot_color = plot_color_clip;                /* for line with clipping */
 	}
 
 	if (g_sx_offset != 0 || g_sy_offset != 0) /* we're in view windows */
 	{
-		savehasinverse = g_has_inverse;
+		save_has_inverse = g_has_inverse;
 		g_has_inverse = true;
 		SaveRect(0, 0, g_x_dots, g_y_dots);
 		g_sx_offset = 0;
 		g_sy_offset = 0;
 		RestoreRect(0, 0, g_x_dots, g_y_dots);
-		g_has_inverse = savehasinverse;
+		g_has_inverse = save_has_inverse;
 	}
 
 	if (g_x_dots == g_screen_width || g_y_dots == g_screen_height ||
@@ -637,59 +661,59 @@ void Jiim(int which)         /* called by fractint */
 	{
 		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
 			the physical screen */
-		windows = 0; /* full screen or large view window */
-		xd = g_screen_width/3;
-		yd = g_screen_height/3;
-		xc = xd*2;
-		yc = yd*2;
-		xoff = xd*5/2;
-		yoff = yd*5/2;
+		s_windows = 0; /* full screen or large view window */
+		s_window_dots_x = g_screen_width/3;
+		s_window_dots_y = g_screen_height/3;
+		s_window_corner_x = s_window_dots_x*2;
+		s_window_corner_y = s_window_dots_y*2;
+		x_offset = s_window_dots_x*5/2;
+		y_offset = s_window_dots_y*5/2;
 	}
 	else if (g_x_dots > g_screen_width/3 && g_y_dots > g_screen_height/3)
 	{
 		/* Julia/orbit and fractal don't overlap */
-		windows = 1;
-		xd = g_screen_width-g_x_dots;
-		yd = g_screen_height-g_y_dots;
-		xc = g_x_dots;
-		yc = g_y_dots;
-		xoff = xc + xd/2;
-		yoff = yc + yd/2;
+		s_windows = 1;
+		s_window_dots_x = g_screen_width-g_x_dots;
+		s_window_dots_y = g_screen_height-g_y_dots;
+		s_window_corner_x = g_x_dots;
+		s_window_corner_y = g_y_dots;
+		x_offset = s_window_corner_x + s_window_dots_x/2;
+		y_offset = s_window_corner_y + s_window_dots_y/2;
 	}
 	else
 	{
 		/* Julia/orbit takes whole screen */
-		windows = 2;
-		xd = g_screen_width;
-		yd = g_screen_height;
-		xc = 0;
-		yc = 0;
-		xoff = xd/2;
-		yoff = yd/2;
+		s_windows = 2;
+		s_window_dots_x = g_screen_width;
+		s_window_dots_y = g_screen_height;
+		s_window_corner_x = 0;
+		s_window_corner_y = 0;
+		x_offset = s_window_dots_x/2;
+		y_offset = s_window_dots_y/2;
 	}
 
-	xfactor = int(xd/5.33);
-	yfactor = int(-yd/4);
+	x_factor = int(s_window_dots_x/5.33);
+	y_factor = int(-s_window_dots_y/4);
 
-	if (windows == 0)
+	if (s_windows == 0)
 	{
-		SaveRect(xc, yc, xd, yd);
+		SaveRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 	}
-	else if (windows == 2)  /* leave the fractal */
+	else if (s_windows == 2)  /* leave the fractal */
 	{
-		fillrect(g_x_dots, yc, xd-g_x_dots, yd, g_color_dark);
-		fillrect(xc   , g_y_dots, g_x_dots, yd-g_y_dots, g_color_dark);
+		fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y, g_color_dark);
+		fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots, g_color_dark);
 	}
 	else  /* blank whole window */
 	{
-		fillrect(xc, yc, xd, yd, g_color_dark);
+		fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_color_dark);
 	}
 
-	setup_convert_to_screen(&cvt);
+	setup_convert_to_screen(&m_cvt);
 
 	/* reuse last location if inside window */
-	g_col = int(cvt.a*g_save_c.x + cvt.b*g_save_c.y + cvt.e + .5);
-	g_row = int(cvt.c*g_save_c.x + cvt.d*g_save_c.y + cvt.f + .5);
+	g_col = int(m_cvt.a*g_save_c.x + m_cvt.b*g_save_c.y + m_cvt.e + .5);
+	g_row = int(m_cvt.c*g_save_c.x + m_cvt.d*g_save_c.y + m_cvt.f + .5);
 	if (g_col < 0 || g_col >= g_x_dots ||
 		g_row < 0 || g_row >= g_y_dots)
 	{
@@ -705,8 +729,8 @@ void Jiim(int which)         /* called by fractint */
 	old_x = -1;
 	old_y = -1;
 
-	g_col = int(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-	g_row = int(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+	g_col = int(m_cvt.a*cr + m_cvt.b*ci + m_cvt.e + .5);
+	g_row = int(m_cvt.c*cr + m_cvt.d*ci + m_cvt.f + .5);
 
 	/* possible extraseg arrays have been trashed, so set up again */
 	// TODO: is this necessary anymore?  extraseg is dead!
@@ -731,15 +755,15 @@ void Jiim(int which)         /* called by fractint */
 
 		if (actively_computing)
 		{
-				cursor_check_blink();
+			cursor_check_blink();
 		}
 		else
 		{
-				cursor_wait_key();
+			cursor_wait_key();
 		}
 		if (driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
 		{
-			first_time = 0;
+			first_time = false;
 			while (driver_key_pressed())
 			{
 				cursor_wait_key();
@@ -837,8 +861,8 @@ void Jiim(int which)         /* called by fractint */
 					break;
 				case 'n':
 				case 'N':
-					show_numbers = 8 - show_numbers;
-					if (windows == 0 && show_numbers == 0)
+					s_show_numbers = 8 - s_show_numbers;
+					if (s_windows == 0 && s_show_numbers == 0)
 					{
 						cursor_hide();
 						clear_temp_message();
@@ -849,21 +873,21 @@ void Jiim(int which)         /* called by fractint */
 				case 'P':
 					get_a_number(&cr, &ci);
 					exact = 1;
-					g_col = int(cvt.a*cr + cvt.b*ci + cvt.e + .5);
-					g_row = int(cvt.c*cr + cvt.d*ci + cvt.f + .5);
+					g_col = int(m_cvt.a*cr + m_cvt.b*ci + m_cvt.e + .5);
+					g_row = int(m_cvt.c*cr + m_cvt.d*ci + m_cvt.f + .5);
 					dcol = 0;
 					drow = 0;
 					break;
 				case 'h':   /* hide fractal toggle */
 				case 'H':   /* hide fractal toggle */
-					if (windows == 2)
+					if (s_windows == 2)
 					{
-						windows = 3;
+						s_windows = 3;
 					}
-					else if (windows == 3 && xd == g_screen_width)
+					else if (s_windows == 3 && s_window_dots_x == g_screen_width)
 					{
 						RestoreRect(0, 0, g_x_dots, g_y_dots);
-						windows = 2;
+						s_windows = 2;
 					}
 					break;
 #ifdef XFRACT
@@ -879,9 +903,9 @@ void Jiim(int which)         /* called by fractint */
 				case '7':
 				case '8':
 				case '9':
-					if (which == JIIM)
+					if (!m_orbits)
 					{
-						SecretExperimentalMode = kbdchar - '0';
+						s_secret_experimental_mode = kbdchar - '0';
 						break;
 					}
 				default:
@@ -947,12 +971,12 @@ void Jiim(int which)         /* called by fractint */
 					ci = g_dy_pixel();
 				}
 			}
-			actively_computing = 1;
-			if (show_numbers) /* write coordinates on screen */
+			actively_computing = true;
+			if (s_show_numbers) /* write coordinates on screen */
 			{
 				char str[41];
 				sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
-				if (windows == 0)
+				if (s_windows == 0)
 				{
 					/* show temp msg will clear self if new msg is a
 						different length - pad to length 40*/
@@ -962,13 +986,13 @@ void Jiim(int which)         /* called by fractint */
 					}
 					str[40] = 0;
 					cursor_hide();
-					actively_computing = 1;
+					actively_computing = true;
 					show_temp_message(str);
 					cursor_show();
 				}
 				else
 				{
-					driver_display_string(5, g_screen_height-show_numbers, WHITE, BLACK, str);
+					driver_display_string(5, g_screen_height-s_show_numbers, WHITE, BLACK, str);
 				}
 			}
 			iter = 1;
@@ -986,7 +1010,7 @@ void Jiim(int which)         /* called by fractint */
 			old_x = -1;
 			old_y = -1;
 			/* compute fixed points and use them as starting points of JIIM */
-			if (which == JIIM && OKtoMIIM)
+			if (!m_orbits && s_ok_to_miim)
 			{
 				ComplexD f1;
 				ComplexD f2;
@@ -999,57 +1023,57 @@ void Jiim(int which)         /* called by fractint */
 				f2.y = -Sqrt.y/2;
 
 				ClearQueue();
-				maxhits = 1;
+				s_max_hits = 1;
 				EnQueueFloat(float(f1.x), float(f1.y));
 				EnQueueFloat(float(f2.x), float(f2.y));
 			}
-			if (which == ORBIT)
+			if (m_orbits)
 			{
 				g_fractal_specific[g_fractal_type].per_pixel();
 			}
 			/* move window if bumped */
-			if (windows == 0 && g_col > xc && g_col < xc + xd && g_row > yc && g_row < yc + yd)
+			if (s_windows == 0 && g_col > s_window_corner_x && g_col < s_window_corner_x + s_window_dots_x && g_row > s_window_corner_y && g_row < s_window_corner_y + s_window_dots_y)
 			{
-				RestoreRect(xc, yc, xd, yd);
-				xc = (xc == xd*2) ? 2 : xd*2;
-				xoff = xc + xd/2;
-				SaveRect(xc, yc, xd, yd);
+				RestoreRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
+				s_window_corner_x = (s_window_corner_x == s_window_dots_x*2) ? 2 : s_window_dots_x*2;
+				x_offset = s_window_corner_x + s_window_dots_x/2;
+				SaveRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 			}
-			if (windows == 2)
+			if (s_windows == 2)
 			{
-				fillrect(g_x_dots, yc, xd-g_x_dots, yd-show_numbers, g_color_dark);
-				fillrect(xc   , g_y_dots, g_x_dots, yd-g_y_dots-show_numbers, g_color_dark);
+				fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y-s_show_numbers, g_color_dark);
+				fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots-s_show_numbers, g_color_dark);
 			}
 			else
 			{
-				fillrect(xc, yc, xd, yd, g_color_dark);
+				fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_color_dark);
 			}
 		} /* end if (driver_key_pressed) */
 
-		if (which == JIIM)
+		if (!m_orbits)
 		{
 			if (!g_has_inverse)
 			{
 				continue;
 			}
 			/* If we have MIIM queue allocated, then use MIIM method. */
-			if (OKtoMIIM)
+			if (s_ok_to_miim)
 			{
 				if (QueueEmpty())
 				{
-					if (maxhits < g_colors - 1 && maxhits < 5 &&
-						(luckyx != 0.0 || luckyy != 0.0))
+					if (s_max_hits < g_colors - 1 && s_max_hits < 5 &&
+						(s_lucky_x != 0.0 || s_lucky_y != 0.0))
 					{
 						int i;
 
-						lsize = 0;
-						lmax = 0;
-						g_old_z.x = luckyx;
-						g_old_z.y = luckyy;
-						g_new_z.x = luckyx;
-						g_new_z.y = luckyy;
-						luckyx = 0.0f;
-						luckyy = 0.0f;
+						s_l_size = 0;
+						s_l_max = 0;
+						g_old_z.x = s_lucky_x;
+						g_old_z.y = s_lucky_y;
+						g_new_z.x = s_lucky_x;
+						g_new_z.y = s_lucky_y;
+						s_lucky_x = 0.0f;
+						s_lucky_y = 0.0f;
 						for (i = 0; i < 199; i++)
 						{
 							g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
@@ -1057,7 +1081,7 @@ void Jiim(int which)         /* called by fractint */
 							EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
 							EnQueueFloat(float(-g_old_z.x), float(-g_old_z.y));
 						}
-						maxhits++;
+						s_max_hits++;
 					}
 					else
 					{
@@ -1066,10 +1090,10 @@ void Jiim(int which)         /* called by fractint */
 				}
 
 				g_old_z = DeQueueFloat();
-				x = int(g_old_z.x*xfactor*zoom + xoff);
-				y = int(g_old_z.y*yfactor*zoom + yoff);
+				x = int(g_old_z.x*x_factor*zoom + x_offset);
+				y = int(g_old_z.y*y_factor*zoom + y_offset);
 				color = c_getcolor(x, y);
-				if (color < maxhits)
+				if (color < s_max_hits)
 				{
 					plot_color_clip(x, y, color + 1);
 					g_new_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
@@ -1107,7 +1131,7 @@ void Jiim(int which)         /* called by fractint */
 
 				g_new_z.y = sqrt(fabs((r - g_old_z.x)/2));
 
-				switch (SecretExperimentalMode)
+				switch (s_secret_experimental_mode)
 				{
 				case SECRETMODE_RANDOM_WALK:                     /* unmodified random walk */
 				default:
@@ -1116,8 +1140,8 @@ void Jiim(int which)         /* called by fractint */
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(g_new_z.x*xfactor*zoom + xoff);
-					y = int(g_new_z.y*yfactor*zoom + yoff);
+					x = int(g_new_z.x*x_factor*zoom + x_offset);
+					y = int(g_new_z.y*y_factor*zoom + y_offset);
 					break;
 
 				case SECRETMODE_ONE_DIRECTION:                     /* always go one direction */
@@ -1126,8 +1150,8 @@ void Jiim(int which)         /* called by fractint */
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(g_new_z.x*xfactor*zoom + xoff);
-					y = int(g_new_z.y*yfactor*zoom + yoff);
+					x = int(g_new_z.x*x_factor*zoom + x_offset);
+					y = int(g_new_z.y*y_factor*zoom + y_offset);
 					break;
 				case SECRETMODE_ONE_DIR_DRAW_OTHER:                     /* go one dir, draw the other */
 					if (g_save_c.y < 0)
@@ -1135,29 +1159,29 @@ void Jiim(int which)         /* called by fractint */
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(-g_new_z.x*xfactor*zoom + xoff);
-					y = int(-g_new_z.y*yfactor*zoom + yoff);
+					x = int(-g_new_z.x*x_factor*zoom + x_offset);
+					y = int(-g_new_z.y*y_factor*zoom + y_offset);
 					break;
 				case SECRETMODE_NEGATIVE_MAX_COLOR:                     /* go negative if max color */
-					x = int(g_new_z.x*xfactor*zoom + xoff);
-					y = int(g_new_z.y*yfactor*zoom + yoff);
+					x = int(g_new_z.x*x_factor*zoom + x_offset);
+					y = int(g_new_z.y*y_factor*zoom + y_offset);
 					if (c_getcolor(x, y) == g_colors - 1)
 					{
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
-						x = int(g_new_z.x*xfactor*zoom + xoff);
-						y = int(g_new_z.y*yfactor*zoom + yoff);
+						x = int(g_new_z.x*x_factor*zoom + x_offset);
+						y = int(g_new_z.y*y_factor*zoom + y_offset);
 					}
 					break;
 				case SECRETMODE_POSITIVE_MAX_COLOR:                     /* go positive if max color */
 					g_new_z.x = -g_new_z.x;
 					g_new_z.y = -g_new_z.y;
-					x = int(g_new_z.x*xfactor*zoom + xoff);
-					y = int(g_new_z.y*yfactor*zoom + yoff);
+					x = int(g_new_z.x*x_factor*zoom + x_offset);
+					y = int(g_new_z.y*y_factor*zoom + y_offset);
 					if (c_getcolor(x, y) == g_colors - 1)
 					{
-						x = int(g_new_z.x*xfactor*zoom + xoff);
-						y = int(g_new_z.y*yfactor*zoom + yoff);
+						x = int(g_new_z.x*x_factor*zoom + x_offset);
+						y = int(g_new_z.y*y_factor*zoom + y_offset);
 					}
 					break;
 				case SECRETMODE_7:
@@ -1166,8 +1190,8 @@ void Jiim(int which)         /* called by fractint */
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(-g_new_z.x*xfactor*zoom + xoff);
-					y = int(-g_new_z.y*yfactor*zoom + yoff);
+					x = int(-g_new_z.x*x_factor*zoom + x_offset);
+					y = int(-g_new_z.y*y_factor*zoom + y_offset);
 					if (iter > 10)
 					{
 						if (mode == 0)                        /* pixels  */
@@ -1176,9 +1200,9 @@ void Jiim(int which)         /* called by fractint */
 						}
 						else if (mode & 1)            /* circles */
 						{
-							xbase = x;
-							ybase = y;
-							circle(int(zoom*(xd >> 1)/iter), color);
+							s_x_base = x;
+							s_y_base = y;
+							circle(int(zoom*(s_window_dots_x >> 1)/iter), color);
 						}
 						if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
 						{
@@ -1187,24 +1211,24 @@ void Jiim(int which)         /* called by fractint */
 						old_x = x;
 						old_y = y;
 					}
-					x = int(g_new_z.x*xfactor*zoom + xoff);
-					y = int(g_new_z.y*yfactor*zoom + yoff);
+					x = int(g_new_z.x*x_factor*zoom + x_offset);
+					y = int(g_new_z.y*y_factor*zoom + y_offset);
 					break;
 				case SECRETMODE_ZIGZAG:                     /* go in long zig zags */
-					if (rancnt >= 300)
+					if (random_count >= 300)
 					{
-						rancnt = -300;
+						random_count = -300;
 					}
-					if (rancnt < 0)
+					if (random_count < 0)
 					{
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(g_new_z.x*xfactor*zoom + xoff);
-					y = int(g_new_z.y*yfactor*zoom + yoff);
+					x = int(g_new_z.x*x_factor*zoom + x_offset);
+					y = int(g_new_z.y*y_factor*zoom + y_offset);
 					break;
 				case SECRETMODE_RANDOM_RUN:                     /* "random run" */
-					switch (randir)
+					switch (random_direction)
 					{
 					case 0:             /* go random direction for a while */
 						if (rand() % 2)
@@ -1212,10 +1236,10 @@ void Jiim(int which)         /* called by fractint */
 							g_new_z.x = -g_new_z.x;
 							g_new_z.y = -g_new_z.y;
 						}
-						if (++rancnt > 1024)
+						if (++random_count > 1024)
 						{
-							rancnt = 0;
-							randir = (rand() % 2) ? 1 : -1;
+							random_count = 0;
+							random_direction = (rand() % 2) ? 1 : -1;
 						}
 						break;
 					case 1:             /* now go negative dir for a while */
@@ -1223,15 +1247,15 @@ void Jiim(int which)         /* called by fractint */
 						g_new_z.y = -g_new_z.y;
 						/* fall through */
 					case -1:            /* now go positive dir for a while */
-						if (++rancnt > 512)
+						if (++random_count > 512)
 						{
-							randir = 0;
-							rancnt = 0;
+							random_direction = 0;
+							random_count = 0;
 						}
 						break;
 					}
-					x = int(g_new_z.x*xfactor*zoom + xoff);
-					y = int(g_new_z.y*yfactor*zoom + yoff);
+					x = int(g_new_z.x*x_factor*zoom + x_offset);
+					y = int(g_new_z.y*y_factor*zoom + y_offset);
 					break;
 				} /* end switch SecretMode (sorry about the indentation) */
 			} /* end if not MIIM */
@@ -1248,8 +1272,8 @@ void Jiim(int which)         /* called by fractint */
 					g_old_z.y = g_old_z_l.y;
 					g_old_z.y /= g_fudge;
 				}
-				x = int((g_old_z.x - g_initial_z.x)*xfactor*3*zoom + xoff);
-				y = int((g_old_z.y - g_initial_z.y)*yfactor*3*zoom + yoff);
+				x = int((g_old_z.x - g_initial_z.x)*x_factor*3*zoom + x_offset);
+				y = int((g_old_z.y - g_initial_z.y)*y_factor*3*zoom + y_offset);
 				if ((*g_fractal_specific[g_fractal_type].orbitcalc)())
 				{
 					iter = g_max_iteration;
@@ -1263,10 +1287,10 @@ void Jiim(int which)         /* called by fractint */
 			{
 				x = -1;
 				y = -1;
-				actively_computing = 0;
+				actively_computing = false;
 			}
 		}
-		if (which == ORBIT || iter > 10)
+		if (m_orbits || iter > 10)
 		{
 			if (mode == 0)                  /* pixels  */
 			{
@@ -1274,9 +1298,9 @@ void Jiim(int which)         /* called by fractint */
 			}
 			else if (mode & 1)            /* circles */
 			{
-				xbase = x;
-				ybase = y;
-				circle(int(zoom*(xd >> 1)/iter), color);
+				s_x_base = x;
+				s_y_base = y;
+				circle(int(zoom*(s_window_dots_x >> 1)/iter), color);
 			}
 			if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
 			{
@@ -1295,34 +1319,34 @@ finish:
 	if (kbdchar != 's' && kbdchar != 'S')
 	{
 		cursor_hide();
-		if (windows == 0)
+		if (s_windows == 0)
 		{
-			RestoreRect(xc, yc, xd, yd);
+			RestoreRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 		}
-		else if (windows >= 2)
+		else if (s_windows >= 2)
 		{
-			if (windows == 2)
+			if (s_windows == 2)
 			{
-				fillrect(g_x_dots, yc, xd-g_x_dots, yd, g_color_dark);
-				fillrect(xc   , g_y_dots, g_x_dots, yd-g_y_dots, g_color_dark);
+				fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y, g_color_dark);
+				fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots, g_color_dark);
 			}
 			else
 			{
-				fillrect(xc, yc, xd, yd, g_color_dark);
+				fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_color_dark);
 			}
-			if (windows == 3 && xd == g_screen_width) /* unhide */
+			if (s_windows == 3 && s_window_dots_x == g_screen_width) /* unhide */
 			{
 				RestoreRect(0, 0, g_x_dots, g_y_dots);
-				windows = 2;
+				s_windows = 2;
 			}
 			cursor_hide();
-			savehasinverse = g_has_inverse;
+			save_has_inverse = g_has_inverse;
 			g_has_inverse = true;
 			SaveRect(0, 0, g_x_dots, g_y_dots);
-			g_sx_offset = oldsxoffs;
-			g_sy_offset = oldsyoffs;
+			g_sx_offset = old_sx_offset;
+			g_sy_offset = old_sy_offset;
 			RestoreRect(0, 0, g_x_dots, g_y_dots);
-			g_has_inverse = savehasinverse;
+			g_has_inverse = save_has_inverse;
 		}
 	}
 	cursor_destroy();
@@ -1342,7 +1366,7 @@ finish:
 	}
 
 	g_using_jiim = false;
-	g_calculate_type = oldcalctype;
+	g_calculate_type = old_calculate_type;
 	g_debug_mode = old_debugflag; /* yo Chuck! */
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
@@ -1364,12 +1388,6 @@ finish:
 	{
 		clear_temp_message();
 	}
-	if (file != NULL)
-	{
-		fclose(file);
-		file = NULL;
-		dir_remove(g_temp_dir, g_screen_file);
-	}
-	show_numbers = 0;
+	s_show_numbers = 0;
 	driver_unget_key(kbdchar);
 }

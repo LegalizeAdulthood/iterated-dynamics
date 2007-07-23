@@ -1,14 +1,14 @@
 #if !defined(JIIM_H)
 #define JIIM_H
 
-extern void Jiim(int);
+extern void Jiim(bool which);
 extern ComplexL PopLong();
 extern ComplexD PopFloat();
 extern ComplexL DeQueueLong();
 extern ComplexD DeQueueFloat();
 extern ComplexL ComplexSqrtLong(long,  long);
 extern ComplexD ComplexSqrtFloat(double, double);
-extern int    Init_Queue(unsigned long);
+extern bool Init_Queue(unsigned long request);
 extern void   Free_Queue();
 extern void   ClearQueue();
 extern int    QueueEmpty();
