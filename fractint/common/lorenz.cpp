@@ -372,7 +372,7 @@ int orbit_3d_setup()
 		switch (g_major_method)
 		{
 		case MAJORMETHOD_BREADTH_FIRST:
-			if (Init_Queue(32*1024) == 0)
+			if (!Init_Queue(32*1024))
 			{ /* can't get queue memory: fall back to random walk */
 				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
@@ -382,7 +382,7 @@ int orbit_3d_setup()
 			EnQueueLong((g_fudge - Sqrt.x)/2, -Sqrt.y/2);
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:
-			if (Init_Queue(32*1024) == 0)
+			if (!Init_Queue(32*1024))
 			{ /* can't get queue memory: fall back to random walk */
 				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
@@ -570,7 +570,7 @@ int orbit_3d_setup_fp()
 		switch (g_major_method)
 		{
 		case MAJORMETHOD_BREADTH_FIRST:
-			if (Init_Queue(32*1024) == 0)
+			if (!Init_Queue(32*1024))
 			{ /* can't get queue memory: fall back to random walk */
 				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
@@ -580,7 +580,7 @@ int orbit_3d_setup_fp()
 			EnQueueFloat(float((1 - Sqrt.x)/2), float(-Sqrt.y/2));
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:                      /* depth first (choose direction) */
-			if (Init_Queue(32*1024) == 0)
+			if (!Init_Queue(32*1024))
 			{ /* can't get queue memory: fall back to random walk */
 				stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, s_no_queue);
 				g_major_method = MAJORMETHOD_RANDOM_WALK;

@@ -60,8 +60,6 @@ static void strip_zeros(char *buf);
 
 char par_comment[4][MAX_COMMENT];
 
-/* JIIM */
-
 static FILE *parmfile;
 
 static char par_key(int x)

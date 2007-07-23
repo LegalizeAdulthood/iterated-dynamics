@@ -973,9 +973,6 @@ is not in the data structure */
 #define FRACTINT  "XFRACTINT"
 #endif
 
-#define JIIM  0
-#define ORBIT 1
-
 template <typename T>
 struct CoordinateT
 {

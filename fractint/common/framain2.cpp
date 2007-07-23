@@ -1098,7 +1098,7 @@ static void handle_orbits()
 		&& !(g_is_true_color && g_true_mode_iterates))
 	{
 		clear_zoom_box();
-		Jiim(ORBIT);
+		Jiim(true);
 	}
 }
 
@@ -1147,7 +1147,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		/* switch to corresponding Julia set */
 		g_has_inverse = fractal_type_mandelbrot(g_fractal_type) && (g_bf_math == 0);
 		clear_zoom_box();
-		Jiim(JIIM);
+		Jiim(false);
 		int key = driver_get_key();    /* flush keyboard buffer */
 		if (key != FIK_SPACE)
 		{
