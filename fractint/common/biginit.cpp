@@ -62,10 +62,10 @@ bn_t bnclosenuff = NULL;				/* g_bn_length */
 bn_t bntmpsqrx = NULL;
 bn_t bntmpsqry = NULL;
 bn_t bntmp = NULL;						/* g_r_length  */
-ComplexBigNum bnold = { NULL, NULL };
+ComplexBigNum g_old_z_bn = { NULL, NULL };
 ComplexBigNum bnparm = { NULL, NULL };
 ComplexBigNum bnsaved = { NULL, NULL };		/* g_bn_length */
-ComplexBigNum bnnew = { NULL, NULL };		/* g_r_length */
+ComplexBigNum g_new_z_bn = { NULL, NULL };		/* g_r_length */
 bn_t bn_pi = NULL;						/* TAKES NO SPACE */
 
 bf_t bftmp1 = NULL;
@@ -85,10 +85,10 @@ bf_t bftmpsqrx = NULL;
 bf_t bftmpsqry = NULL;					/* g_rbf_length + 2 */
 ComplexBigFloat bfparm = {NULL, NULL};			/* g_bf_length + 2 */
 										/* g_bf_length + 2 */
-ComplexBigFloat bfsaved = {NULL, NULL};		/* bfold,  bfnew, */
+ComplexBigFloat bfsaved = {NULL, NULL};		/* g_old_z_bf,  g_new_z_bf, */
 										/* g_bf_length + 2 */
-ComplexBigFloat bfold = {NULL, NULL};
-ComplexBigFloat bfnew = {NULL, NULL};			/* g_rbf_length + 2 */
+ComplexBigFloat g_old_z_bf = {NULL, NULL};
+ComplexBigFloat g_new_z_bf = {NULL, NULL};			/* g_rbf_length + 2 */
 bf_t bf_pi = NULL;						/* TAKES NO SPACE */
 bf_t big_pi = NULL;						/* g_bf_length + 2 */
 
@@ -228,10 +228,10 @@ static void init_bf_2()
 		bnydel     = advance_ptr_bn_length(ptr);
 		bnxdel2    = advance_ptr_bn_length(ptr);
 		bnydel2    = advance_ptr_bn_length(ptr);
-		bnold.x    = advance_ptr_r_length(ptr);
-		bnold.y    = advance_ptr_r_length(ptr);
-		bnnew.x    = advance_ptr_r_length(ptr);
-		bnnew.y    = advance_ptr_r_length(ptr);
+		g_old_z_bn.x    = advance_ptr_r_length(ptr);
+		g_old_z_bn.y    = advance_ptr_r_length(ptr);
+		g_new_z_bn.x    = advance_ptr_r_length(ptr);
+		g_new_z_bn.y    = advance_ptr_r_length(ptr);
 		bnsaved.x  = advance_ptr_bn_length(ptr);
 		bnsaved.y  = advance_ptr_bn_length(ptr);
 		bnclosenuff = advance_ptr_bn_length(ptr);
@@ -247,10 +247,10 @@ static void init_bf_2()
 		bfydel     = advance_ptr_bf_length_plus_2(ptr);
 		bfxdel2    = advance_ptr_bf_length_plus_2(ptr);
 		bfydel2    = advance_ptr_bf_length_plus_2(ptr);
-		bfold.x    = advance_ptr_rbf_length_plus_2(ptr);
-		bfold.y    = advance_ptr_rbf_length_plus_2(ptr);
-		bfnew.x    = advance_ptr_rbf_length_plus_2(ptr);
-		bfnew.y    = advance_ptr_rbf_length_plus_2(ptr);
+		g_old_z_bf.x    = advance_ptr_rbf_length_plus_2(ptr);
+		g_old_z_bf.y    = advance_ptr_rbf_length_plus_2(ptr);
+		g_new_z_bf.x    = advance_ptr_rbf_length_plus_2(ptr);
+		g_new_z_bf.y    = advance_ptr_rbf_length_plus_2(ptr);
 		bfsaved.x  = advance_ptr_bf_length_plus_2(ptr);
 		bfsaved.y  = advance_ptr_bf_length_plus_2(ptr);
 		bfclosenuff = advance_ptr_bf_length_plus_2(ptr);
