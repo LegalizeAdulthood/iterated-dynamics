@@ -2903,10 +2903,6 @@ static int _fastcall y_symmetry_split(int yaxis_col, bool yaxis_between)
 	return 0; /* tell set_symmetry its a go */
 }
 
-#ifdef _MSC_VER
-#pragma optimize ("ea", off)
-#endif
-
 static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper symmetrical plot functions */
 {
 	/* pixel number for origin */
@@ -2926,14 +2922,17 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	/* also any rotation other than 180deg and any off-axis stretch */
 	if (g_bf_math)
 	{
-		if (cmp_bf(g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd()) || cmp_bf(g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd()))
+		if (cmp_bf(g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd())
+			|| cmp_bf(g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd()))
 		{
 			return;
 		}
 	}
-	if ((g_potential_flag && g_potential_16bit) || (g_invert && g_inversion[2] != 0.0)
-			|| g_decomposition[0] != 0
-			|| g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd() || g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd())
+	if ((g_potential_flag && g_potential_16bit)
+		|| (g_invert && g_inversion[2] != 0.0)
+		|| g_decomposition[0] != 0
+		|| g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd()
+		|| g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd())
 	{
 		return;
 	}
@@ -2994,8 +2993,6 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	default:   /* Check P2 for the rest */
 		parameters_are_zero = (parameters_are_zero && g_parameter2.x == 0.0 && g_parameter2.y == 0.0);
 	}
-	int xaxis_row = -1;
-	int yaxis_col = -1;
 	bool xaxis_on_screen = false;
 	bool yaxis_on_screen = false;
 	bf_t bft1;
@@ -3013,6 +3010,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		yaxis_on_screen = (sign(g_escape_time_state.m_grid_fp.x_min()) != sign(g_escape_time_state.m_grid_fp.x_max()));
 	}
 	bool xaxis_between = false;
+	int xaxis_row = -1;
 	if (xaxis_on_screen) /* axis is on screen */
 	{
 		double ftemp;
@@ -3026,7 +3024,8 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 		else
 		{
-			ftemp = -g_escape_time_state.m_grid_fp.y_max()/(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_max());
+			ftemp = -g_escape_time_state.m_grid_fp.y_max()/(g_escape_time_state.m_grid_fp.y_min()
+				- g_escape_time_state.m_grid_fp.y_max());
 		}
 		ftemp *= (g_y_dots-1);
 		ftemp += 0.25;
@@ -3038,6 +3037,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		}
 	}
 	bool yaxis_between = false;
+	int yaxis_col = -1;
 	if (yaxis_on_screen) /* axis is on screen */
 	{
 		double ftemp;
@@ -3081,7 +3081,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		{
 			break;
 		}
-		xsym:
+xsym:
 	case SYMMETRY_X_AXIS:
 		if (x_symmetry_split(xaxis_row, xaxis_between) == 0)
 		{
@@ -3133,7 +3133,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			break;
 		}
 	case SYMMETRY_ORIGIN:
-		originsym:
+originsym:
 		if (x_symmetry_split(xaxis_row, xaxis_between) == 0
 			&& y_symmetry_split(yaxis_col, yaxis_between) == 0)
 		{
@@ -3219,13 +3219,6 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 		restore_stack(saved);
 	}
 }
-
-#ifdef _MSC_VER
-#pragma optimize ("ea", on)
-#endif
-
-/* added for testing automatic_log_map() */ /* CAE 9211 fixed missing comment */
-/* insert at end of CALCFRAC.C */
 
 static long automatic_log_map()   /*RB*/
 {
