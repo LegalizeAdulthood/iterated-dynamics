@@ -146,7 +146,8 @@ static int _fastcall read_l_system_file(char *str)
 		ruleptrs[linenum] = NULL;
 	}
 	rulind = &ruleptrs[1];
-	msgbuf[0] = (char)(linenum = 0);
+	linenum = 0;
+	msgbuf[0] = 0;
 
 	while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  /* Max line length chars */
 	{
@@ -305,7 +306,9 @@ int l_system()
 		lsysi_sin_cos();
 		if (lsysi_find_scale(rules2[0], &ts, &rules2[1], order))
 		{
-			ts.realangle = ts.angle = ts.reverse = 0;
+			ts.realangle = 0;
+			ts.angle = 0;
+			ts.reverse = 0;
 
 			free_l_cmds();
 			sc = rules2;
@@ -350,7 +353,9 @@ int l_system()
 		lsysf_sin_cos();
 		if (lsysf_find_scale(rules2[0], &ts, &rules2[1], order))
 		{
-			ts.realangle = ts.angle = ts.reverse = 0;
+			ts.realangle = 0;
+			ts.angle = 0;
+			ts.reverse = 0;
 
 			free_l_cmds();
 			sc = rules2;
@@ -969,7 +974,7 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 		case ']': num = 2;        break;
 		default:
 			num = 3;
-		break;
+			break;
 		}
 		ret[n].f = (void (*)(struct lsys_turtle_state *))f;
 		ret[n].n = num;
@@ -1056,7 +1061,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 		case ']': num = 2;        break;
 		default:
 			num = 3;
-		break;
+			break;
 		}
 		ret[n].f = (void (*)(struct lsys_turtle_state *))f;
 		ret[n].n = num;

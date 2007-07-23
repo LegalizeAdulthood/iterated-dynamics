@@ -44,21 +44,21 @@ struct linearmem
 	enum stored_at_values stored_at;
 	long size;
 	BYTE *memory;
-	};
+};
 
 struct disk
 {
 	enum stored_at_values stored_at;
 	long size;
 	FILE *file;
-	};
+};
 
 union mem
 {
 	struct nowhere Nowhere;
 	struct linearmem Linearmem;
 	struct disk Disk;
-	};
+};
 
 union mem handletable[MAXHANDLES];
 

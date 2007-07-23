@@ -1317,7 +1317,8 @@ awful_error:
 #endif
 	if (delta_stack == CLEAR_STK)
 	{
-		s_real_stack_count = s_stack_count = 0;
+		s_real_stack_count = 0;
+		s_stack_count = 0;
 	}
 	else
 	{
@@ -1541,7 +1542,9 @@ void Formula::convert_stack()  /* convert the array of ptrs  */
 	}
 
 	s_previous_function = 0;
-	s_convert_index = s_real_stack_count = s_stack_count = 0;
+	s_convert_index = 0;
+	s_real_stack_count = 0;
+	s_stack_count = 0;
 
 	m_load_ptr = 0;
 	m_store_ptr = 0;

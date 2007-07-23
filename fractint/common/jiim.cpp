@@ -271,7 +271,10 @@ QueueFullAlmost()       /* True if room for ONE more point in queue */
 void
 ClearQueue()
 {
-	ListFront = ListBack = lsize = lmax = 0;
+	ListFront = 0;
+	ListBack = 0;
+	lsize = 0;
+	lmax = 0;
 }
 
 
@@ -305,8 +308,10 @@ int Init_Queue(unsigned long request)
 		switch (disk_start_common(ListSize*8, 1, 256))
 		{
 		case 0:                        /* success */
-			ListFront = ListBack = 0;
-			lsize = lmax = 0;
+			ListFront = 0;
+			ListBack = 0;
+			lsize = 0;
+			lmax = 0;
 			return 1;
 		case -1:
 			continue;                   /* try smaller queue size */
@@ -325,7 +330,11 @@ void
 Free_Queue()
 {
 	disk_end();
-	ListFront = ListBack = ListSize = lsize = lmax = 0;
+	ListFront = 0;
+	ListBack = 0;
+	ListSize = 0;
+	lsize = 0;
+	lmax = 0;
 }
 
 int
@@ -693,7 +702,8 @@ void Jiim(int which)         /* called by fractint */
 		ci = g_save_c.y;
 	}
 
-	old_x = old_y = -1;
+	old_x = -1;
+	old_y = -1;
 
 	g_col = int(cvt.a*cr + cvt.b*ci + cvt.e + .5);
 	g_row = int(cvt.c*cr + cvt.d*ci + cvt.f + .5);
@@ -735,7 +745,8 @@ void Jiim(int which)         /* called by fractint */
 				cursor_wait_key();
 				kbdchar = driver_get_key();
 
-				dcol = drow = 0;
+				dcol = 0;
+				drow = 0;
 				g_julia_c_x = BIG;
 				g_julia_c_y = BIG;
 				switch (kbdchar)
@@ -840,7 +851,8 @@ void Jiim(int which)         /* called by fractint */
 					exact = 1;
 					g_col = int(cvt.a*cr + cvt.b*ci + cvt.e + .5);
 					g_row = int(cvt.c*cr + cvt.d*ci + cvt.f + .5);
-					dcol = drow = 0;
+					dcol = 0;
+					drow = 0;
 					break;
 				case 'h':   /* hide fractal toggle */
 				case 'H':   /* hide fractal toggle */
@@ -960,13 +972,19 @@ void Jiim(int which)         /* called by fractint */
 				}
 			}
 			iter = 1;
-			g_old_z.x = g_old_z.y = g_old_z_l.x = g_old_z_l.y = 0;
-			g_save_c.x = g_initial_z.x =  cr;
-			g_save_c.y = g_initial_z.y =  ci;
+			g_old_z.x = 0;
+			g_old_z.y = 0;
+			g_old_z_l.x = 0;
+			g_old_z_l.y = 0;
+			g_save_c.x = cr;
+			g_save_c.y = ci;
+			g_initial_z.y =  ci;
+			g_initial_z.x =  cr;
 			g_initial_z_l.x = long(g_initial_z.x*g_fudge);
 			g_initial_z_l.y = long(g_initial_z.y*g_fudge);
 
-			old_x = old_y = -1;
+			old_x = -1;
+			old_y = -1;
 			/* compute fixed points and use them as starting points of JIIM */
 			if (which == JIIM && OKtoMIIM)
 			{
@@ -1024,10 +1042,14 @@ void Jiim(int which)         /* called by fractint */
 					{
 						int i;
 
-						lsize  = lmax   = 0;
-						g_old_z.x  = g_new_z.x  = luckyx;
-						g_old_z.y  = g_new_z.y  = luckyy;
-						luckyx = luckyy = 0.0f;
+						lsize = 0;
+						lmax = 0;
+						g_old_z.x = luckyx;
+						g_old_z.y = luckyy;
+						g_new_z.x = luckyx;
+						g_new_z.y = luckyy;
+						luckyx = 0.0f;
+						luckyy = 0.0f;
 						for (i = 0; i < 199; i++)
 						{
 							g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
@@ -1063,7 +1085,8 @@ void Jiim(int which)         /* called by fractint */
 				r = g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y;
 				if (r > 10.0)
 				{
-					g_old_z.x = g_old_z.y = 0.0; /* avoids math error */
+					g_old_z.x = 0.0;
+					g_old_z.y = 0.0; /* avoids math error */
 					iter = 1;
 					r = 0;
 				}
@@ -1202,7 +1225,8 @@ void Jiim(int which)         /* called by fractint */
 					case -1:            /* now go positive dir for a while */
 						if (++rancnt > 512)
 						{
-							randir = rancnt = 0;
+							randir = 0;
+							rancnt = 0;
 						}
 						break;
 					}
@@ -1237,7 +1261,8 @@ void Jiim(int which)         /* called by fractint */
 			}
 			else
 			{
-				x = y = -1;
+				x = -1;
+				y = -1;
 				actively_computing = 0;
 			}
 		}
@@ -1322,7 +1347,8 @@ finish:
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
 		g_view_window = false;
-		g_view_x_dots = g_view_y_dots = 0;
+		g_view_x_dots = 0;
+		g_view_y_dots = 0;
 		g_view_reduction = 4.2f;
 		g_view_crop = true;
 		g_final_aspect_ratio = g_screen_aspect_ratio;

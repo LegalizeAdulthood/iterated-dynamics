@@ -1661,7 +1661,8 @@ void read_src(char *fname)
 		lformat_exclude = format_exclude,
 		again;
 
-	xonline = xdoc = 0;
+	xonline = 0;
+	xdoc = 0;
 
 	src_cfname = fname;
 
@@ -1809,7 +1810,8 @@ void read_src(char *fname)
 					state = S_Start;
 					in_para = 0;
 					num_spaces = 0;
-					xonline = xdoc = 0;
+					xonline = 0;
+					xdoc = 0;
 					lformat_exclude = format_exclude;
 					compress_spaces = 1;
 					continue;
@@ -1867,7 +1869,8 @@ void read_src(char *fname)
 					state = S_Start;
 					in_para = 0;
 					num_spaces = 0;
-					xonline = xdoc = 0;
+					xonline = 0;
+					xdoc = 0;
 					lformat_exclude = format_exclude;
 					compress_spaces = 0;
 					continue;
@@ -2970,7 +2973,8 @@ void paginate_online(void)    /* paginate the text for on-line help */
 					}
 
 					skip_blanks = 0;
-					width = size = 0;
+					width = 0;
+					size = 0;
 					break;
 				}
 
@@ -3068,7 +3072,8 @@ LABEL *find_next_label_by_topic(int t)
 	LABEL *temp, *g, *p;
 	int    ctr;
 
-	g = p = NULL;
+	g = NULL;
+	p = NULL;
 
 	for (temp=label, ctr=0; ctr<num_label; ctr++, temp++)
 		if (temp->topic_num == t && temp->doc_page == -1)
@@ -3282,7 +3287,8 @@ void paginate_document(void)
 
 	msg("Paginating document.");
 
-	info.cnum = info.tnum = -1;
+	info.cnum = -1;
+	info.tnum = -1;
 	info.link_dest_warn = 1;
 
 	process_document((PD_FUNC)pd_get_info, (PD_FUNC)paginate_doc_output, &info);
@@ -3753,7 +3759,8 @@ void print_document(const char *fname)
 
 	msg("Printing to: %s", fname);
 
-	info.cnum = info.tnum = -1;
+	info.cnum = -1;
+	info.tnum = -1;
 	info.link_dest_warn = 0;
 
 	if ((info.file = fopen(fname, "wt")) == NULL)
@@ -3993,7 +4000,9 @@ int main(int argc, char *argv[])
 		fname2[81];
 	char   swappath[81];
 
-	fname1[0] = fname2[0] = swappath[0] = 0;
+	fname1[0] = 0;
+	fname2[0] = 0;
+	swappath[0] = 0;
 
 	printf("HC - FRACTINT Help Compiler.\n\n");
 

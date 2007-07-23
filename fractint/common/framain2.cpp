@@ -246,7 +246,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			g_dot_mode  %= 100;
 			g_screen_width  = g_x_dots;
 			g_screen_height  = g_y_dots;
-			g_sx_offset = g_sy_offset = 0;
+			g_sx_offset = 0;
+			g_sy_offset = 0;
 			g_rotate_hi = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors - 1;
 
 			memcpy(g_old_dac_box, g_dac_box, 256*3); /* save the DAC */
@@ -321,8 +322,10 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				{
 					stop_message(0, "View window too large; using full screen.");
 					g_view_window = false;
-					g_x_dots = g_view_x_dots = g_screen_width;
-					g_y_dots = g_view_y_dots = g_screen_height;
+					g_x_dots = g_screen_width;
+					g_y_dots = g_screen_height;
+					g_view_x_dots = g_screen_width;
+					g_view_y_dots = g_screen_height;
 				}
 				else if (((g_x_dots <= 1) /* changed test to 1, so a 2x2 window will */
 					|| (g_y_dots <= 1)) /* work with the sound feature */
@@ -500,8 +503,10 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					memcpy(&resume_e_info, g_evolve_handle, sizeof(resume_e_info));
 					g_parameter_range_x  = resume_e_info.parameter_range_x;
 					g_parameter_range_y  = resume_e_info.parameter_range_y;
-					g_parameter_offset_x = g_new_parameter_offset_x = resume_e_info.opx;
-					g_parameter_offset_y = g_new_parameter_offset_y = resume_e_info.opy;
+					g_parameter_offset_x = resume_e_info.opx;
+					g_parameter_offset_y = resume_e_info.opy;
+					g_new_parameter_offset_x = resume_e_info.opx;
+					g_new_parameter_offset_y = resume_e_info.opy;
 					g_new_discrete_parameter_offset_x = resume_e_info.odpx;
 					g_new_discrete_parameter_offset_y = resume_e_info.odpy;
 					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x;
@@ -596,12 +601,14 @@ done:
 					resume_e_info.ecount          = (short) ecount;
 					memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
 				}
-				g_sx_offset = g_sy_offset = 0;
+				g_sx_offset = 0;
+				g_sy_offset = 0;
 				g_x_dots = g_screen_width;
 				g_y_dots = g_screen_height; /* otherwise save only saves a sub image and boxes get clipped */
 
 				/* set up for 1st selected image, this reuses px and py */
-				g_px = g_py = g_grid_size/2;
+				g_px = g_grid_size/2;
+				g_py = g_grid_size/2;
 				unspiral_map(); /* first time called, w/above line sets up array */
 				restore_parameter_history();
 				fiddle_parameters(g_genes, 0);
@@ -1158,7 +1165,8 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		{
 			g_parameters[0] = g_julia_c_x;
 			g_parameters[1] = g_julia_c_y;
-			g_julia_c_x = g_julia_c_y = BIG;
+			g_julia_c_x = BIG;
+			g_julia_c_y = BIG;
 		}
 		jxxmin = g_sx_min;
 		jxxmax = g_sx_max;
@@ -1204,10 +1212,12 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		}
 		else
 		{
-			g_escape_time_state.m_grid_fp.x_min() = g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
+			g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
 			g_escape_time_state.m_grid_fp.x_max() = g_current_fractal_specific->x_max;
-			g_escape_time_state.m_grid_fp.y_min() = g_escape_time_state.m_grid_fp.y_3rd() = g_current_fractal_specific->y_min;
+			g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
 			g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
+			g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
+			g_escape_time_state.m_grid_fp.y_3rd() = g_current_fractal_specific->y_min;
 		}
 		g_save_c.x = g_parameters[0];
 		g_save_c.y = g_parameters[1];
@@ -1382,10 +1392,12 @@ static ApplicationStateType handle_evolver_save_to_disk()
 	oldydots = g_y_dots;
 	oldpx = g_px;
 	oldpy = g_py;
-	g_sx_offset = g_sy_offset = 0;
+	g_sx_offset = 0;
+	g_sy_offset = 0;
 	g_x_dots = g_screen_width;
 	g_y_dots = g_screen_height; /* for full screen save and pointer move stuff */
-	g_px = g_py = g_grid_size/2;
+	g_px = g_grid_size/2;
+	g_py = g_grid_size/2;
 	restore_parameter_history();
 	fiddle_parameters(g_genes, 0);
 	draw_parameter_box(1);
@@ -1576,13 +1588,16 @@ static void handle_zoom_resize(bool zoom_in)
 		{
 			if (g_z_width == 0)
 			{                      /* start zoombox */
-				g_z_width = g_z_depth = 1.0;
+				g_z_width = 1.0;
+				g_z_depth = 1.0;
 				g_z_skew = 0.0;
 				g_z_rotate = 0;
-				g_zbx = g_zby = 0.0;
+				g_zbx = 0.0;
+				g_zby = 0.0;
 				find_special_colors();
 				g_box_color = g_color_bright;
-				g_px = g_py = g_grid_size/2;
+				g_px = g_grid_size/2;
+				g_py = g_grid_size/2;
 				zoom_box_move(0.0, 0.0); /* force scrolling */
 			}
 			else
@@ -1944,9 +1959,12 @@ static void handle_evolver_zoom(int zoom_in)
 		{
 			if (g_z_width == 0)
 			{                      /* start zoombox */
-				g_z_width = g_z_depth = 1;
-				g_z_skew = g_z_rotate = 0;
-				g_zbx = g_zby = 0;
+				g_z_width = 1;
+				g_z_depth = 1;
+				g_z_skew = 0;
+				g_z_rotate = 0;
+				g_zbx = 0;
+				g_zby = 0;
 				find_special_colors();
 				g_box_color = g_color_bright;
 				if (g_evolving_flags & EVOLVE_FIELD_MAP) /*rb*/

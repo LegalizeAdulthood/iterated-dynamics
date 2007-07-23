@@ -334,7 +334,9 @@ int orbit_3d_setup()
 		s_l_sinx = long(sin(s_a)*g_fudge);
 		s_l_cosx = long(cos(s_a)*g_fudge);
 		s_l_orbit = 0;
-		s_init_orbit_long[0] = s_init_orbit_long[1] = s_init_orbit_long[2] = 0;
+		s_init_orbit_long[0] = 0;
+		s_init_orbit_long[1] = 0;
+		s_init_orbit_long[2] = 0;
 	}
 	else if (g_fractal_type == FRACTYPE_INVERSE_JULIA)
 	{
@@ -400,12 +402,16 @@ int orbit_3d_setup()
 			break;
 		case MAJORMETHOD_RANDOM_WALK:
 lrwalk:
-			g_new_z_l.x = s_init_orbit_long[0] = g_fudge + Sqrt.x/2;
-			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y/2;
+			s_init_orbit_long[0] = g_fudge + Sqrt.x/2;
+			s_init_orbit_long[1] =         Sqrt.y/2;
+			g_new_z_l.x = s_init_orbit_long[0];
+			g_new_z_l.y = s_init_orbit_long[1];
 			break;
 		case MAJORMETHOD_RANDOM_RUN:
-			g_new_z_l.x = s_init_orbit_long[0] = g_fudge + Sqrt.x/2;
-			g_new_z_l.y = s_init_orbit_long[1] =         Sqrt.y/2;
+			s_init_orbit_long[0] = g_fudge + Sqrt.x/2;
+			s_init_orbit_long[1] =         Sqrt.y/2;
+			g_new_z_l.x = s_init_orbit_long[0];
+			g_new_z_l.y = s_init_orbit_long[1];
 			break;
 		}
 	}
@@ -514,7 +520,9 @@ int orbit_3d_setup_fp()
 		g_sin_x = sin(s_a);
 		g_cos_x = cos(s_a);
 		s_orbit = 0;
-		s_init_orbit_fp[0] = s_init_orbit_fp[1] = s_init_orbit_fp[2] = 0;
+		s_init_orbit_fp[0] = 0;
+		s_init_orbit_fp[1] = 0;
+		s_init_orbit_fp[2] = 0;
 	}
 	else if (g_fractal_type == FRACTYPE_HOPALONG_FP
 		|| g_fractal_type == FRACTYPE_MARTIN_FP
@@ -592,13 +600,17 @@ int orbit_3d_setup_fp()
 			break;
 		case MAJORMETHOD_RANDOM_WALK:
 rwalk:
-			g_new_z.x = s_init_orbit_fp[0] = 1 + Sqrt.x/2;
-			g_new_z.y = s_init_orbit_fp[1] = Sqrt.y/2;
+			s_init_orbit_fp[0] = 1 + Sqrt.x/2;
+			s_init_orbit_fp[1] = Sqrt.y/2;
+			g_new_z.y = s_init_orbit_fp[1];
+			g_new_z.x = s_init_orbit_fp[0];
 			break;
 		case MAJORMETHOD_RANDOM_RUN:       /* random run, choose intervals */
 			g_major_method = MAJORMETHOD_RANDOM_RUN;
-			g_new_z.x = s_init_orbit_fp[0] = 1 + Sqrt.x/2;
-			g_new_z.y = s_init_orbit_fp[1] = Sqrt.y/2;
+			s_init_orbit_fp[0] = 1 + Sqrt.x/2;
+			s_init_orbit_fp[1] = Sqrt.y/2;
+			g_new_z.x = s_init_orbit_fp[0];
+			g_new_z.y = s_init_orbit_fp[1];
 			break;
 		}
 	}
@@ -1160,7 +1172,8 @@ int kam_torus_orbit_fp(double *r, double *s, double *z)
 	if (s_t++ >= s_l_d)
 	{
 		s_orbit += s_b;
-		(*r) = (*s) = s_orbit/3;
+		(*s) = s_orbit/3;
+		(*r) = (*s);
 		s_t = 0;
 		*z = s_orbit;
 		if (s_orbit > s_c)
@@ -1180,7 +1193,8 @@ int kam_torus_orbit(long *r, long *s, long *z)
 	if (s_t++ >= s_l_d)
 	{
 		s_l_orbit += s_l_b;
-		(*r) = (*s) = s_l_orbit/3;
+		(*s) = s_l_orbit/3;
+		(*r) = (*s);
 		s_t = 0;
 		*z = s_l_orbit;
 		if (s_l_orbit > s_l_c)
@@ -1459,12 +1473,14 @@ int orbit_2d_fp()
 
 	color = (g_inside > 0) ? g_inside : 2;
 
-	oldcol = oldrow = -1;
+	oldcol = -1;
+	oldrow = -1;
 	x = s_init_orbit_fp[0];
 	y = s_init_orbit_fp[1];
 	z = s_init_orbit_fp[2];
 	g_color_iter = 0L;
-	count = ret = 0;
+	count = 0;
+	ret = 0;
 	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
 
 	if (g_resuming)
@@ -1536,7 +1552,8 @@ int orbit_2d_fp()
 		}
 		else
 		{
-			oldrow = oldcol = -1;
+			oldrow = -1;
+			oldcol = -1;
 		}
 
 		if (FORBIT(p0, p1, p2))
@@ -1583,7 +1600,8 @@ int orbit_2d()
 	}
 	int oldcol;
 	int oldrow;
-	oldcol = oldrow = -1;
+	oldcol = -1;
+	oldrow = -1;
 	x = s_init_orbit_long[0];
 	y = s_init_orbit_long[1];
 	z = s_init_orbit_long[2];
@@ -1656,7 +1674,8 @@ int orbit_2d()
 		}
 		else
 		{
-			oldrow = oldcol = -1;
+			oldrow = -1;
+			oldcol = -1;
 		}
 
 		/* Calculate the next point */
@@ -1691,7 +1710,10 @@ static int orbit_3d_calc()
 	/* setup affine screen coord conversion */
 	l_setup_convert_to_screen(&inf.cvt);
 
-	oldcol1 = oldrow1 = oldcol = oldrow = -1;
+	oldcol1 = -1;
+	oldrow1 = -1;
+	oldcol = -1;
+	oldrow = -1;
 	color = 2;
 	if (color >= g_colors)
 	{
@@ -1709,7 +1731,8 @@ static int orbit_3d_calc()
 
 	fp = open_orbit_save();
 
-	count = ret = 0;
+	count = 0;
+	ret = 0;
 	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
 	g_color_iter = 0L;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
@@ -1816,8 +1839,10 @@ static int orbit_3d_calc_fp()
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&inf.cvt);
 
-	oldcol = oldrow = -1;
-	oldcol1 = oldrow1 = -1;
+	oldcol = -1;
+	oldrow = -1;
+	oldcol1 = -1;
+	oldrow1 = -1;
 	color = 2;
 	if (color >= g_colors)
 	{
@@ -1836,7 +1861,8 @@ static int orbit_3d_calc_fp()
 
 	ret = 0;
 	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
-	count = g_color_iter = 0L;
+	count = 0;
+	g_color_iter = 0L;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
 	{
 		/* calc goes here */
@@ -1997,8 +2023,8 @@ int dynamic_2d_fp()
 	{
 		color = 1;
 	}
-	oldcol = oldrow = -1;
-
+	oldcol = -1;
+	oldrow = -1;
 	xstep = -1;
 	ystep = 0;
 
@@ -2312,7 +2338,8 @@ done:
 	if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 	{
 		/* turn off view windows so will save properly */
-		g_sx_offset = g_sy_offset = 0;
+		g_sx_offset = 0;
+		g_sy_offset = 0;
 		g_x_dots = g_screen_width;
 		g_y_dots = g_screen_height;
 		g_view_window = false;
@@ -2517,7 +2544,8 @@ static int ifs_2d()
 
 	fp = open_orbit_save();
 
-	x = y = 0;
+	x = 0;
+	y = 0;
 	ret = 0;
 	g_max_count = (g_max_iteration > 0x1fffffL) ? 0x7fffffffL : g_max_iteration*1024L;
 	g_color_iter = 0L;
@@ -2828,7 +2856,8 @@ static int threed_view_trans(threed_vt_inf *inf)
 		}
 		if (g_color_iter == s_initial_orbit_skip_count) /* time to work it out */
 		{
-			inf->iview[0] = inf->iview[1] = 0L; /* center viewer on origin */
+			inf->iview[0] = 0;
+			inf->iview[1] = 0L; /* center viewer on origin */
 
 			/* z value of user's eye - should be more negative than extreme
 								negative part of image */
@@ -2996,7 +3025,8 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 		}
 		if (g_color_iter == s_initial_orbit_skip_count) /* time to work it out */
 		{
-			g_view[0] = g_view[1] = 0; /* center on origin */
+			g_view[0] = 0;
+			g_view[1] = 0; /* center on origin */
 			/* z value of user's eye - should be more negative than extreme
 									negative part of image */
 			g_view[2] = (inf->minvals[2]-inf->maxvals[2])*double(g_3d_state.z_viewer())/100.0;

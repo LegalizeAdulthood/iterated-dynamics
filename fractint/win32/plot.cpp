@@ -221,9 +221,15 @@ static void init_clut(BYTE clut[256][3])
 		clut[i][1] = (((i + 16) & 28) >> 2)*8 + 7;
 		clut[i][2] = (((i + 2) & 3))*16 + 15;
 	}
-	clut[0][0] = clut[0][1] = clut[0][2] = 0;
-	clut[1][0] = clut[1][1] = clut[1][2] = COLOR_CHANNEL_MAX;
-	clut[2][0] = 3*COLOR_CHANNEL_MAX/4; clut[2][1] = clut[2][2] = COLOR_CHANNEL_MAX;
+	clut[0][0] = 0;
+	clut[0][1] = 0;
+	clut[0][2] = 0;
+	clut[1][0] = COLOR_CHANNEL_MAX;
+	clut[1][1] = COLOR_CHANNEL_MAX;
+	clut[1][2] = COLOR_CHANNEL_MAX;
+	clut[2][0] = 3*COLOR_CHANNEL_MAX/4;
+	clut[2][1] = COLOR_CHANNEL_MAX;
+	clut[2][2] = COLOR_CHANNEL_MAX;
 }
 
 int Plot::initialize(HINSTANCE instance, LPCSTR title)

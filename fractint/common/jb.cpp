@@ -122,9 +122,12 @@ int julibrot_setup()
 	s_init_z_fp = g_origin_fp - (g_depth_fp/2);
 	s_right_eye_fp.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0.0 : (g_eyes_fp/2);
 	s_left_eye_fp.x = -s_right_eye_fp.x;
-	s_left_eye_fp.y = s_right_eye_fp.y = 0;
-	s_left_eye_fp.zx = s_right_eye_fp.zx = g_screen_distance_fp;
-	s_left_eye_fp.zy = s_right_eye_fp.zy = g_screen_distance_fp;
+	s_left_eye_fp.y = 0;
+	s_right_eye_fp.y = 0;
+	s_left_eye_fp.zx = g_screen_distance_fp;
+	s_right_eye_fp.zx = g_screen_distance_fp;
+	s_left_eye_fp.zy = g_screen_distance_fp;
+	s_right_eye_fp.zy = g_screen_distance_fp;
 	s_b_base = 128;
 
 #ifndef XFRACT
@@ -173,9 +176,12 @@ int julibrot_setup()
 		s_init_z = origin - (s_depth/2);
 		s_right_eye.x = (g_juli_3d_mode == JULI3DMODE_MONOCULAR) ? 0L : (s_eyes/2);
 		s_left_eye.x = -s_right_eye.x;
-		s_left_eye.y = s_right_eye.y = 0l;
-		s_left_eye.zx = s_right_eye.zx = s_dist;
-		s_left_eye.zy = s_right_eye.zy = s_dist;
+		s_left_eye.y = 0l;
+		s_right_eye.y = 0l;
+		s_left_eye.zx = s_dist;
+		s_right_eye.zx = s_dist;
+		s_left_eye.zy = s_dist;
+		s_right_eye.zy = s_dist;
 		s_b_base = 128;
 	}
 #endif

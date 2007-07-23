@@ -2985,8 +2985,10 @@ int quaternion_orbit_fp()
 	{
 		return 1;
 	}
-	g_old_z.x = g_new_z.x = n0;
-	g_old_z.y = g_new_z.y = n1;
+	g_old_z.x = n0;
+	g_new_z.x = n0;
+	g_old_z.y = n1;
+	g_new_z.y = n1;
 	g_float_parameter->x = n2;
 	g_float_parameter->y = n3;
 	return 0;
@@ -3009,8 +3011,10 @@ int hyper_complex_orbit_fp()
 	hnew.z += g_quaternion_cj;
 	hnew.t += g_quaternion_ck;
 
-	g_old_z.x = g_new_z.x = hnew.x;
-	g_old_z.y = g_new_z.y = hnew.y;
+	g_old_z.x = hnew.x;
+	g_new_z.x = hnew.x;
+	g_old_z.y = hnew.y;
+	g_new_z.y = hnew.y;
 	g_float_parameter->x = hnew.z;
 	g_float_parameter->y = hnew.t;
 

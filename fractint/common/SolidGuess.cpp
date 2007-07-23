@@ -137,8 +137,12 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 	yplushalf = y + s_half_block;
 	yplusblock = y + blocksize;
 	prev11 = -1;
-	c24 = c12 = c13 = c22 = getcolor(g_ix_start, y);
-	c31 = c21 = getcolor(g_ix_start, (y > 0) ? ylesshalf : 0);
+	c22 = getcolor(g_ix_start, y);
+	c24 = c22;
+	c12 = c22;
+	c13 = c22;
+	c21 = getcolor(g_ix_start, (y > 0) ? ylesshalf : 0);
+	c31 = c21;
 	if (yplusblock <= g_y_stop)
 	{
 		c24 = getcolor(g_ix_start, yplusblock);
@@ -167,7 +171,12 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 				}
 				*/
 				x += s_max_block;
-				prev11 = c31 = c21 = c24 = c12 = c13 = c22;
+				prev11 = c22;
+				c31 = c22;
+				c21 = c22;
+				c24 = c22;
+				c12 = c22;
+				c13 = c22;
 				guessed12 = 0;
 				guessed13 = 0;
 				continue;
@@ -203,7 +212,9 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 		}
 		else if (!s_right_guess)
 		{
-			c41 = c42 = c44 = -1;
+			c41 = -1;
+			c42 = -1;
+			c44 = -1;
 		}
 		if (yplusblock > g_y_stop)
 		{
@@ -214,21 +225,26 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 		guessed23 = 1;
 		guessed32 = 1;
 		guessed33 = 1;
-		c23 = c32 = c33 = c22;
+		c23 = c22;
+		c32 = c22;
+		c33 = c22;
 		if (yplushalf > g_y_stop)
 		{
 			if (!s_bottom_guess)
 			{
-				c23 = c33 = -1;
+				c23 = -1;
+				c33 = -1;
 			}
-			guessed23 = guessed33 = -1;
+			guessed23 = -1;
+			guessed33 = -1;
 			guessed13 = 0; /* fix for g_y_dots not divisible by four bug TW 2/16/97 */
 		}
 		if (xplushalf > g_x_stop)
 		{
 			if (!s_right_guess)
 			{
-				c32 = c33 = -1;
+				c32 = -1;
+				c33 = -1;
 			}
 			guessed32 = -1;
 			guessed33 = -1;
@@ -359,7 +375,8 @@ static int _fastcall guess_row(bool first_pass, int y, int blocksize)
 		c22 = c42;
 		c24 = c44;
 		c13 = c33;
-		c31 = c21 = c41;
+		c31 = c41;
+		c21 = c41;
 		c12 = c32;
 		guessed12 = guessed32;
 		guessed13 = guessed33;

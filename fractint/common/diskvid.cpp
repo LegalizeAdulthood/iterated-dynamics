@@ -155,7 +155,9 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		driver_put_string(BOX_ROW + 10, BOX_COL + 4, C_DVID_LO, "Status:");
 		disk_video_status(0, "clearing the 'screen'");
 	}
-	s_cur_offset = s_seek_offset = s_high_offset = -1;
+	s_cur_offset = -1;
+	s_seek_offset = -1;
+	s_high_offset = -1;
 	s_cur_row    = -1;
 	if (s_disk_targa)
 	{
@@ -225,7 +227,8 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	longtmp = 100000000L;
 	for (ptr1 = s_cache_start; ptr1 < s_cache_end; ++ptr1)
 	{
-		ptr1->dirty = ptr1->lru = 0;
+		ptr1->dirty = 0;
+		ptr1->lru = 0;
 		longtmp += BLOCK_LEN;
 		fwd_link = &s_hash_ptr[(((unsigned short)longtmp >> BLOCK_SHIFT) & (HASH_SIZE-1))];
 		ptr1->offset = longtmp;

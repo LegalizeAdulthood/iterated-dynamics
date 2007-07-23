@@ -39,7 +39,8 @@ ComplexD ComplexPower(ComplexD xx, ComplexD yy)
 	{
 		if (xx.x == 0 && xx.y == 0)
 		{
-			z.x = z.y = 0.0;
+			z.x = 0.0;
+			z.y = 0.0;
 			return z;
 		}
 	}
@@ -163,7 +164,8 @@ void Arctanz(ComplexD z, ComplexD *rz)
 	ComplexD temp3;
 	if (z.x == 0.0 && z.y == 0.0)
 	{
-		rz->x = rz->y = 0;
+		rz->x = 0;
+		rz->y = 0;
 	}
 	else if (z.x != 0.0 && z.y == 0.0)
 	{
@@ -275,7 +277,8 @@ ComplexD ComplexSqrtFloat(double x, double y)
 
 	if (x == 0.0 && y == 0.0)
 	{
-		result.x = result.y = 0.0;
+		result.x = 0.0;
+		result.y = 0.0;
 	}
 	else
 	{

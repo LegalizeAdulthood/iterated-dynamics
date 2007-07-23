@@ -1408,7 +1408,9 @@ static int ranges_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	entries = prev = i = 0;
+	entries = 0;
+	prev = 0;
+	i = 0;
 	g_log_palette_mode = LOGPALETTE_NONE; /* ranges overrides logmap */
 	while (i < context.totparms)
 	{
@@ -1428,7 +1430,8 @@ static int ranges_arg(const cmd_context &context)
 		{
 			return bad_arg(context.curarg);
 		}
-		tmpranges[entries++] = prev = j;
+		tmpranges[entries++] = j;
+		prev = j;
 	}
 	if (prev == 0)
 	{
@@ -1899,7 +1902,8 @@ static int view_windows_arg(const cmd_context &context)
 	g_view_reduction = 4.2f;  /* reset default values */
 	g_final_aspect_ratio = g_screen_aspect_ratio;
 	g_view_crop = true;
-	g_view_x_dots = g_view_y_dots = 0;
+	g_view_x_dots = 0;
+	g_view_y_dots = 0;
 
 	if ((context.totparms > 0) && (context.floatval[0] > 0.001))
 	{
@@ -2436,7 +2440,8 @@ static int distance_test_arg(const cmd_context &context)
 	}
 	else
 	{
-		g_pseudo_x = g_pseudo_y = 0;
+		g_pseudo_x = 0;
+		g_pseudo_y = 0;
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }

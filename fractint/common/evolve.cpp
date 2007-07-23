@@ -1036,7 +1036,8 @@ void spiral_map(int count)
 	mid = g_grid_size/2;
 	if (count == 0)  /* start in the middle */
 	{
-		g_px = g_py = mid;
+		g_px = mid;
+		g_py = mid;
 		return;
 	}
 	for (offset = 1; offset <= mid; offset ++)

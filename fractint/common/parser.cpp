@@ -2425,7 +2425,8 @@ void Formula::parse_string_set_center_magnification_variables()
 	double rotation;
 	double skew;
 	convert_center_mag(&center_real, &center_imag, &magnification, &x_magnification_factor, &rotation, &skew);
-	m_variables[VARIABLE_RAND].argument.d.x = m_variables[VARIABLE_RAND].argument.d.y = 0.0;
+	m_variables[VARIABLE_RAND].argument.d.x = 0.0;
+	m_variables[VARIABLE_RAND].argument.d.y = 0.0;
 	m_variables[VARIABLE_SCRN_MAX].argument.d.x = double(g_x_dots);
 	m_variables[VARIABLE_SCRN_MAX].argument.d.y = double(g_y_dots);
 	m_variables[VARIABLE_MAX_IT].argument.d.x = double(g_max_iteration);
@@ -3321,7 +3322,8 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 	}
 	fseek(openfile, filepos, SEEK_SET);
 	token->text[1] = 0;
-	token->value.y = token->value.x = 0.0;
+	token->value.y = 0.0;
+	token->value.x = 0.0;
 	token->type = TOKENTYPE_PARENTHESIS;
 	token->id = TOKENID_OPEN_PARENS;
 	if (debug_token != NULL)

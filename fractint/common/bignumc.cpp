@@ -398,7 +398,8 @@ bn_t unsafe_full_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	g_bn_length <<= 1;
 	clear_bn(r);        /* double width */
 	g_bn_length >>= 1;
-	rp1 = rp2 = r;
+	rp1 = r;
+	rp2 = r;
 	for (i = 0; i < steps; i++)
 	{
 		n2p = n2;
@@ -488,7 +489,8 @@ bn_t unsafe_mult_bn(bn_t r, bn_t n1, bn_t n2)
 	steps = (g_r_length-g_bn_length) >> 1;
 	skips = (g_bn_length >> 1) - steps;
 	carry_steps = doublesteps = (g_r_length >> 1)-2;
-	rp2 = rp1 = r;
+	rp2 = r;
+	rp1 = r;
 	for (i = g_bn_length >> 1; i > 0; i--)
 	{
 		n2p = n2;
@@ -577,7 +579,8 @@ bn_t unsafe_full_square_bn(bn_t r, bn_t n)
 
 	steps = (g_bn_length >> 1)-1;
 	carry_steps = doublesteps = (steps << 1) - 1;
-	rp2 = rp1 = r + 2;  /* start with second two-byte word */
+	rp2 = r + 2;
+	rp1 = r + 2;  /* start with second two-byte word */
 	n1p = n;
 	if (steps != 0) /* if zero, then skip all the middle term calculations */
 	{
@@ -704,7 +707,8 @@ bn_t unsafe_square_bn(bn_t r, bn_t n)
 	steps = (g_r_length-g_bn_length) >> 1;
 	carry_steps = doublesteps = (g_bn_length >> 1) + steps-2;
 	skips = (i - steps) >> 1;     /* how long to skip over pointer shifts */
-	rp2 = rp1 = r;
+	rp2 = r;
+	rp1 = r;
 	n1p = n;
 	n3p = n2p = n1p + (((g_bn_length >> 1)-steps) << 1);    /* n2p = n1p + 2*(g_bn_length/2 - steps) */
 	if (i != 0) /* if zero, skip middle term calculations */

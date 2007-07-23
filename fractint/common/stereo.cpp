@@ -240,7 +240,8 @@ int auto_stereo()
 		goto exit_stereo;
 	}
 	s_max_cc = s_max_c - s_min_c + 1;
-	s_average = s_average_count = 0L;
+	s_average = 0;
+	s_average_count = 0L;
 	s_bar_height = 1 + g_y_dots/20;
 	s_x_center = g_x_dots/2;
 	s_y_center = (g_stereogram_calibrate == CALIBRATE_TOP) ? s_bar_height/2 : g_y_dots/2;

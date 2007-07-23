@@ -218,7 +218,8 @@ int show_temp_message(char *msgparm)
 	size = long(s_text_x_dots)*s_text_y_dots;
 	save_sxoffs = g_sx_offset;
 	save_syoffs = g_sy_offset;
-	g_sx_offset = g_sy_offset = 0;
+	g_sx_offset = 0;
+	g_sy_offset = 0;
 	if (s_temp_text_save == NULL) /* only save screen first time called */
 	{
 		s_temp_text_save = new BYTE[s_text_x_dots*s_text_y_dots];
@@ -253,7 +254,8 @@ void clear_temp_message()
 	{
 		save_sxoffs = g_sx_offset;
 		save_syoffs = g_sy_offset;
-		g_sx_offset = g_sy_offset = 0;
+		g_sx_offset = 0;
+		g_sy_offset = 0;
 		for (i = 0; i < s_text_y_dots; ++i)
 		{
 			put_line(i, 0, s_text_x_dots-1, &s_temp_text_save[i*s_text_x_dots]);
@@ -422,7 +424,7 @@ static void show_speed_string(int speedrow,
 		driver_put_string(speedrow, 16 + j, C_CHOICE_SP_INSTR, " ");
 		driver_put_string(speedrow, 17 + j, C_CHOICE_SP_KEYIN, buf);
 		driver_move_cursor(speedrow, 17 + j + int(strlen(speedstring)));
-		}
+	}
 	else
 	{
 		driver_hide_text_cursor();
@@ -591,7 +593,8 @@ int full_screen_choice(
 		++current;                  /* scan for a real choice */
 	}
 
-	titlelines = titlewidth = 0;
+	titlelines = 0;
+	titlewidth = 0;
 	if (hdg)
 	{
 		charptr = hdg;              /* count title lines, find widest */
@@ -1021,11 +1024,13 @@ int full_screen_choice(
 			break;
 		case FIK_HOME:
 			current = -1;
-			increment = rev_increment = 1;
+			increment = 1;
+			rev_increment = 1;
 			break;
 		case FIK_CTL_HOME:
 			current = -1;
-			increment = rev_increment = 1;
+			increment = 1;
+			rev_increment = 1;
 			{
 				int newcurrent;
 				for (newcurrent = 0; newcurrent < numchoices; ++newcurrent)
@@ -1040,11 +1045,13 @@ int full_screen_choice(
 			break;
 		case FIK_END:
 			current = numchoices;
-			increment = rev_increment = -1;
+			increment = -1;
+			rev_increment = -1;
 			break;
 		case FIK_CTL_END:
 			current = numchoices;
-			increment = rev_increment = -1;
+			increment = -1;
+			rev_increment = -1;
 			{
 				int newcurrent;
 				for (newcurrent = numchoices - 1; newcurrent >= 0; --newcurrent)
@@ -1584,7 +1591,9 @@ int input_field(
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
 	ret = -1;
 	strcpy(savefld, fld);
-	insert = started = offset = 0;
+	insert = 0;
+	started = 0;
+	offset = 0;
 	display = 1;
 	while (true)
 	{
@@ -1649,7 +1658,8 @@ int input_field(
 				}
 				--offset;
 			}
-			started = display = 1;
+			started = 1;
+			display = 1;
 			break;
 		case FIK_DELETE:                           /* delete */
 			j = int(strlen(fld));
@@ -1657,7 +1667,8 @@ int input_field(
 			{
 				fld[i] = fld[i + 1];
 			}
-			started = display = 1;
+			started = 1;
+			display = 1;
 			break;
 		case FIK_INSERT:                           /* insert */
 			insert ^= 0x8000;
@@ -1665,7 +1676,9 @@ int input_field(
 			break;
 		case FIK_F5:
 			strcpy(fld, savefld);
-			insert = started = offset = 0;
+			insert = 0;
+			started = 0;
+			offset = 0;
 			display = 1;
 			break;
 		default:
@@ -1752,7 +1765,8 @@ int input_field(
 					offset = 0;
 				}
 			}
-			started = display = 1;
+			started = 1;
+			display = 1;
 		}
 	}
 
@@ -1780,7 +1794,8 @@ int field_prompt(
 	help_title();                           /* clear screen, display title */
 	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);     /* init rest to background */
 	charptr = hdg;                         /* count title lines, find widest */
-	i = boxwidth = 0;
+	i = 0;
+	boxwidth = 0;
 	titlelines = 1;
 	while (*charptr)
 	{
@@ -2007,7 +2022,8 @@ void load_fractint_config()
 			memset(&vident, 0, sizeof(vident));
 			strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
 			strncpy(&vident.comment[0], fields[9], NUM_OF(vident.comment));
-			vident.name[25] = vident.comment[25] = 0;
+			vident.name[25] = 0;
+			vident.comment[25] = 0;
 			vident.keynum = keynum;
 			vident.dotmode = true_color_bits*1000 + textsafe2*100 + dotmode;
 			vident.x_dots = (short)x_dots;

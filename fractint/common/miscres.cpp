@@ -266,13 +266,15 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	w = h/(DEFAULT_ASPECT_RATIO*Xmagfactor);
 
 	if (Rotation == 0.0 && Skew == 0.0)
-		{ /* simple, faster case */
-		g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min() = Xctr - w;
+	{ /* simple, faster case */
+		g_escape_time_state.m_grid_fp.x_min() = Xctr - w;
 		g_escape_time_state.m_grid_fp.x_max() = Xctr + w;
-		g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min() = Yctr - h;
+		g_escape_time_state.m_grid_fp.y_min() = Yctr - h;
 		g_escape_time_state.m_grid_fp.y_max() = Yctr + h;
+		g_escape_time_state.m_grid_fp.x_3rd() = Xctr - w;
+		g_escape_time_state.m_grid_fp.y_3rd() = Yctr - h;
 		return;
-		}
+	}
 
 	/* in unrotated, untranslated coordinate system */
 	tanskew = tan(MathUtil::DegreesToRadians(Skew));
@@ -280,7 +282,8 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	g_escape_time_state.m_grid_fp.x_max() =  w - h*tanskew;
 	g_escape_time_state.m_grid_fp.x_3rd() = -w - h*tanskew;
 	g_escape_time_state.m_grid_fp.y_max() = h;
-	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min() = -h;
+	g_escape_time_state.m_grid_fp.y_3rd() = -h;
+	g_escape_time_state.m_grid_fp.y_min() = -h;
 
 	/* rotate coord system and then translate it */
 	Rotation = MathUtil::DegreesToRadians(Rotation);
@@ -472,7 +475,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	floattobf(bfw, w);
 
 	if (Rotation == 0.0 && Skew == 0.0)
-		{ /* simple, faster case */
+	{ /* simple, faster case */
 		/* x3rd = xmin = Xctr - w; */
 		sub_bf(g_escape_time_state.m_grid_bf.x_min(), Xctr, bfw);
 		copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
@@ -485,7 +488,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 		add_bf(g_escape_time_state.m_grid_bf.y_max(), Yctr, bfh);
 		restore_stack(saved);
 		return;
-		}
+	}
 
 	bftmp = alloc_stack(g_bf_length + 2);
 	/* in unrotated, untranslated coordinate system */
@@ -494,7 +497,8 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	x_max =  w - h*tanskew;
 	x_3rd = -w - h*tanskew;
 	y_max = h;
-	y_3rd = y_min = -h;
+	y_3rd = -h;
+	y_min = -h;
 
 	/* rotate coord system and then translate it */
 	Rotation = MathUtil::DegreesToRadians(Rotation);
@@ -895,7 +899,8 @@ top:
 	/* if (g_bf_math == 0) */
 	++s_row;
 
-	i = j = 0;
+	i = 0;
+	j = 0;
 	if (g_display_3d > DISPLAY3D_NONE)
 	{
 		if (g_user_float_flag)
@@ -1364,7 +1369,8 @@ int ifs_load()                   /* read in IFS parameters */
 	{
 		((float *)g_text_stack)[i] = 0;
 	}
-	i = ret = 0;
+	i = 0;
+	ret = 0;
 	bufptr = get_ifs_token(buf, ifsfile);
 	while (bufptr != NULL)
 	{
@@ -1402,12 +1408,12 @@ int ifs_load()                   /* read in IFS parameters */
 	{
 		stop_message(0, "invalid IFS definition");
 		ret = -1;
-		}
+	}
 	if (i == 0 && ret == 0)
 	{
 		stop_message(0, "Empty IFS definition");
 		ret = -1;
-		}
+	}
 	fclose(ifsfile);
 
 	if (ret == 0)
@@ -1675,7 +1681,7 @@ int file_gets(char *buf, int maxlen, FILE *infile)
 				break;
 			}
 			return -1;
-			}
+		}
 		if (c == '\n') /* linefeed is end of line  */
 		{
 			break;

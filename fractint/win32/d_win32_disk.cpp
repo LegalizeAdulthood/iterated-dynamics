@@ -94,7 +94,9 @@ Win32DiskDriver::Win32DiskDriver(const char *name, const char *description)
 {
 	for (int i = 0; i < 256; i++)
 	{
-		m_clut[i][0] = m_clut[i][1] = m_clut[i][2] = 0;
+		m_clut[i][0] = 0;
+		m_clut[i][1] = 0;
+		m_clut[i][2] = 0;
 	}
 }
 	
@@ -175,9 +177,15 @@ static void initdacbox()
 		g_dac_box[i][1] = (((i + 16) & 28) >> 2)*8 + 7;
 		g_dac_box[i][2] = (((i + 2) & 3))*16 + 15;
 	}
-	g_dac_box[0][0] = g_dac_box[0][1] = g_dac_box[0][2] = 0;
-	g_dac_box[1][0] = g_dac_box[1][1] = g_dac_box[1][2] = 255;
-	g_dac_box[2][0] = 190; g_dac_box[2][1] = g_dac_box[2][2] = 255;
+	g_dac_box[0][0] = 0;
+	g_dac_box[0][1] = 0;
+	g_dac_box[0][2] = 0;
+	g_dac_box[1][0] = 255;
+	g_dac_box[1][1] = 255;
+	g_dac_box[1][2] = 255;
+	g_dac_box[2][0] = 190;
+	g_dac_box[2][1] = 255;
+	g_dac_box[2][2] = 255;
 }
 
 /* handle_help_tab

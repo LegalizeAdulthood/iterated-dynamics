@@ -692,7 +692,7 @@ static void line3d_fill(int col, int next, int last_dot, bool cross_not_init,
 	case FillType::WireFrame:
 		line3d_fill_wire_frame(col, old, cur);
 		break;
-	case FillType::Gouraud:		
+	case FillType::Gouraud:
 	case FillType::Flat:
 		line3d_fill_gouraud_flat(col, next, last_dot, old, cur, old_last);
 		break;

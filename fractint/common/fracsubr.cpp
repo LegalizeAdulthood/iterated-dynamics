@@ -113,7 +113,8 @@ void calculate_fractal_initialize_bail_out_limit()
 void calculate_fractal_initialize()
 {
 	int tries = 0;
-	g_color_iter = g_old_color_iter = 0L;
+	g_color_iter = 0;
+	g_old_color_iter = 0;
 
 	/* set up grid array compactly leaving space at end */
 	/* space req for grid is 2(g_x_dots + g_y_dots)*sizeof(long or double) */
@@ -810,7 +811,7 @@ static void _fastcall adjust_to_limits_bf(double expand)
 		smallest_add_bf(g_escape_time_state.m_grid_bf.x_max());
 		/* bfxmin -= bfxmax-centerx; */
 		sub_a_bf(g_escape_time_state.m_grid_bf.x_min(), sub_bf(btmp1, g_escape_time_state.m_grid_bf.x_max(), bcenterx));
-		}
+	}
 
 	/* if (bfymin == centery) */
 	if (cmp_bf(g_escape_time_state.m_grid_bf.y_min(), bcentery) == 0)
@@ -818,7 +819,7 @@ static void _fastcall adjust_to_limits_bf(double expand)
 		smallest_add_bf(g_escape_time_state.m_grid_bf.y_max());
 		/* bfymin -= bfymax-centery; */
 		sub_a_bf(g_escape_time_state.m_grid_bf.y_min(), sub_bf(btmp1, g_escape_time_state.m_grid_bf.y_max(), bcentery));
-		}
+	}
 
 	/* if (bfx3rd == centerx) */
 	if (cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), bcenterx) == 0)
@@ -1089,8 +1090,10 @@ static void _fastcall adjust_to_limits(double expand)
 		}
 	}
 	/* get min/max x/y values */
-	lowx = highx = cornerx[0];
-	lowy = highy = cornery[0];
+	lowx = cornerx[0];
+	highx = cornerx[0];
+	lowy = cornery[0];
+	highy = cornery[0];
 
 	for (i = 1; i < 4; ++i)
 	{
@@ -1132,7 +1135,8 @@ static void _fastcall adjust_to_limits(double expand)
 	}
 
 	/* if any corner has x or y past limit, move the image */
-	adjx = adjy = 0;
+	adjx = 0;
+	adjy = 0;
 
 	for (i = 0; i < 4; ++i)
 	{
