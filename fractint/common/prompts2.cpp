@@ -896,12 +896,6 @@ int starfield()
 
 int get_starfield_params()
 {
-	if (g_colors < 255)
-	{
-		stop_message(0, "starfield requires 256 color mode");
-		return -1;
-	}
-
 	UIChoices dialog(HELPSTARFLD, "Starfield Parameters", 0);
 	const char *starfield_prompts[3] =
 	{

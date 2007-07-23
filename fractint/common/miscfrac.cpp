@@ -197,14 +197,7 @@ int test()
 				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, g_max_iteration, g_inside);
 				if (color >= g_colors)  /* avoid trouble if color is 0 */
 				{
-					if (g_colors < 16)
-					{
-						color &= g_and_color;
-					}
-					else
-					{
-						color = ((color-1) % g_and_color) + 1; /* skip color zero */
-					}
+					color = ((color-1) % g_and_color) + 1; /* skip color zero */
 				}
 				(*g_plot_color)(g_col, g_row, color);
 				if (numpasses && (g_passes == 0))
@@ -508,14 +501,6 @@ int plasma()
 	OldPot16bit = false;
 	s_plasma_check = 0;
 
-	if (g_colors < 4)
-	{
-		stop_message(0,
-		"Plasma Clouds can currently only be run in a 4-or-more-color video\n"
-		"mode (and color-cycled only on VGA adapters [or EGA adapters in their\n"
-		"640x350x16 mode]).");
-		return -1;
-	}
 	s_iparm_x = int(g_parameters[0]*8);
 	if (g_parameter.x <= 0.0)
 	{
@@ -591,26 +576,9 @@ int plasma()
 		++g_random_seed;
 	}
 
-	if (g_colors == 256)                   /* set the (256-color) palette */
-	{
-		set_plasma_palette();             /* skip this if < 256 colors */
-	}
+	set_plasma_palette();
 
-	if (g_colors > 16)
-	{
-		s_shift_value = 18;
-	}
-	else
-	{
-		if (g_colors > 4)
-		{
-			s_shift_value = 22;
-		}
-		else
-		{
-			s_shift_value = (g_colors > 2) ? 24 : 25;
-		}
-	}
+	s_shift_value = 18;
 	if (s_max_plasma != 0)
 	{
 		s_shift_value = 10;
@@ -1077,7 +1045,7 @@ int bifurcation()
 		s_verhulst_array[row] = 0;
 	}
 
-	s_mono = (g_colors == 2);
+	s_mono = false;
 	if (s_mono)
 	{
 		if (g_inside)
@@ -2150,14 +2118,7 @@ static void set_froth_palette()
 	{
 		const char *mapname;
 
-		if (g_colors >= 256)
-		{
-			mapname = (s_frothy_data.attractors == 6) ? "froth6.map" : "froth3.map";
-		}
-		else /* g_colors >= 16 */
-		{
-			mapname = (s_frothy_data.attractors == 6) ? "froth616.map" : "froth316.map";
-		}
+		mapname = (s_frothy_data.attractors == 6) ? "froth6.map" : "froth3.map";
 		if (validate_luts(mapname) != 0)
 		{
 			return;
@@ -2540,68 +2501,22 @@ int froth_calc()   /* per pixel 1/2/g, called with row & col set */
 	/* color maps in attempt to replicate the images of James Alexander.       */
 	if (found_attractor)
 	{
-		if (g_colors >= 256)
+		if (!s_frothy_data.altcolor)
 		{
-			if (!s_frothy_data.altcolor)
+			if (g_color_iter > s_frothy_data.shades)
 			{
-				if (g_color_iter > s_frothy_data.shades)
-				{
-					g_color_iter = s_frothy_data.shades;
-				}
-			}
-			else
-			{
-				g_color_iter = s_frothy_data.shades*g_color_iter/g_max_iteration;
-			}
-			if (g_color_iter == 0)
-			{
-				g_color_iter = 1;
-			}
-			g_color_iter += s_frothy_data.shades*(found_attractor-1);
-		}
-		else if (g_colors >= 16)
-		{ /* only alternate coloring scheme available for 16 g_colors */
-			long lshade;
-
-			/* Trying to make a better 16 color distribution. */
-			/* Since their are only a few possiblities, just handle each case. */
-			/* This is a mostly guess work here. */
-			lshade = (g_color_iter << 16)/g_max_iteration;
-			if (s_frothy_data.attractors != 6) /* either 2 or 3 attractors */
-			{
-				if (lshade < 2622)       /* 0.04 */
-				{
-					g_color_iter = 1;
-				}
-				else if (lshade < 10486) /* 0.16 */
-				{
-					g_color_iter = 2;
-				}
-				else if (lshade < 23593) /* 0.36 */
-				{
-					g_color_iter = 3;
-				}
-				else if (lshade < 41943L) /* 0.64 */
-				{
-					g_color_iter = 4;
-				}
-				else
-				{
-					g_color_iter = 5;
-				}
-				g_color_iter += 5*(found_attractor-1);
-			}
-			else /* 6 attractors */
-			{
-				/* 10486 <=> 0.16 */
-				g_color_iter = (lshade < 10486) ? 1 : 2;
-				g_color_iter += 2*(found_attractor-1);
+				g_color_iter = s_frothy_data.shades;
 			}
 		}
-		else /* use a color corresponding to the attractor */
+		else
 		{
-			g_color_iter = found_attractor;
+			g_color_iter = s_frothy_data.shades*g_color_iter/g_max_iteration;
 		}
+		if (g_color_iter == 0)
+		{
+			g_color_iter = 1;
+		}
+		g_color_iter += s_frothy_data.shades*(found_attractor-1);
 		g_old_color_iter = g_color_iter;
 	}
 	else /* outside, or inside but didn't get sucked in by attractor. */

@@ -102,14 +102,6 @@ int julibrot_setup()
 	int r = 0;
 	char *mapname;
 
-#ifndef XFRACT
-	if (g_colors < 255)
-	{
-		stop_message(0, "Sorry, but Julibrots require a 256-color video mode");
-		return 0;
-	}
-#endif
-
 	s_x_offset_fp = g_escape_time_state.m_grid_fp.x_center();     /* Calculate average */
 	s_y_offset_fp = g_escape_time_state.m_grid_fp.y_center();     /* Calculate average */
 	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp)/g_z_dots;

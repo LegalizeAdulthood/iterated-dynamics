@@ -1346,7 +1346,6 @@ static ApplicationStateType handle_color_editing(bool &kbdmore)
 	}
 	clear_zoom_box();
 	if (g_dac_box[0][0] != 255
-		&& g_colors >= 16
 		&& !driver_diskp())
 	{
 		memcpy(g_old_dac_box, g_dac_box, 256*3);

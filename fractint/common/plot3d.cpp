@@ -470,14 +470,8 @@ void plot_setup()
 		break;
 
 	case STEREO_SUPERIMPOSE:
-		if (g_colors == 256)
-		{
-			g_plot_color_standard = (g_fractal_type != FRACTYPE_IFS_3D) ? plot_3d_superimpose_256 : plot_ifs_3d_superimpose_256;
-		}
-		else
-		{
-			g_plot_color_standard = plot_3d_superimpose_16;
-		}
+		g_plot_color_standard = (g_fractal_type != FRACTYPE_IFS_3D) ?
+			plot_3d_superimpose_256 : plot_ifs_3d_superimpose_256;
 		break;
 
 	case STEREO_PAIR: /* crosseyed mode */

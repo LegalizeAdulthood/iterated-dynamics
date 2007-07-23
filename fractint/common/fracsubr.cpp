@@ -249,7 +249,6 @@ init_restart:
 
 	g_potential_flag = false;
 	if (g_potential_parameter[0] != 0.0
-		&& g_colors >= 64
 		&& (g_current_fractal_specific->calculate_type == standard_fractal
 			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot
 			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot_fp))

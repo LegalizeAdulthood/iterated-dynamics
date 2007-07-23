@@ -76,14 +76,7 @@ void display_box()
 	{
 		for (i = 0; i < g_box_count; i++)
 		{
-			if (g_colors == 2)
-			{
-				g_plot_color_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, (1 - values[i]));
-			}
-			else
-			{
-				g_plot_color_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, boxc);
-			}
+			g_plot_color_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, boxc);
 		}
 	}
 }
