@@ -69,10 +69,6 @@ static char par_key(int x)
 	return (x < 10) ? ('0' + x) : ('a' - 10 + x);
 }
 
-#ifdef _MSC_VER
-#pragma optimize("e", off)  /* MSC 6.00A messes up next rtn with "e" on */
-#endif
-
 static const char *truecolor_bits_text(int truecolorbits)
 {
 	static const char *bits_text[] = { "???", "32k", "64k", "16m", " 4g" };
@@ -656,10 +652,6 @@ skip_UI:
 	}
 	driver_unstack_screen();
 }
-
-#ifdef C6
-#pragma optimize("e", on)  /* back to normal */
-#endif
 
 static struct write_batch_data /* buffer for parms to break lines nicely */
 {
@@ -1968,10 +1960,6 @@ int get_precision_bf(int rezflag)
 	return max(digits, dec);
 }
 
-#ifdef _MSC_VER
-#pragma optimize("e", off)  /* MSC 7.00 messes up next with "e" on */
-#endif
-
 /* This function calculates the precision needed to distiguish adjacent
 	pixels at Fractint's maximum resolution of MAX_PIXELS by MAX_PIXELS
 	(if rez == MAXREZ) or at current resolution (if rez == CURRENTREZ)    */
@@ -2016,10 +2004,6 @@ int get_precision_dbl(int rezflag)
 	digits = max(digits, 3);
 	return digits;
 }
-
-#ifdef _MSC_VER
-#pragma optimize("e", on)
-#endif
 
 /*
 	Strips zeros from the non-exponent part of a number. This logic

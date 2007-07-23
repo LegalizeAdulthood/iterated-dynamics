@@ -3243,12 +3243,6 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	return bad_arg(context.curarg);
 }
 
-#ifdef _MSC_VER
-#if (_MSC_VER >= 600)
-#pragma optimize("el", on)
-#endif
-#endif
-
 static void parse_text_colors(char *value)
 {
 	if (strcmp(value, "mono") == 0)
