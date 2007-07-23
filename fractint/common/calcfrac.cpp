@@ -1306,6 +1306,15 @@ int calculate_mandelbrot_fp()
 #define MINSAVEDAND 3   /* if not defined, old method used */
 #endif
 
+enum EpsilonCrossHooperType
+{
+	HOOPER_NEGATIVE_X_AXIS = -2,
+	HOOPER_NEGATIVE_Y_AXIS = -1,
+	HOOPER_NONE = 0,
+	HOOPER_POSITIVE_Y_AXIS = 1,
+	HOOPER_POSITIVE_X_AXIS = 2
+};
+
 class StandardFractal
 {
 public:
@@ -1363,9 +1372,16 @@ private:
 	void show_orbit();
 	bool interrupted();
 	void initialize();
+	void outside_colormode_total_distance_initialize();
+	void inside_colormode_beauty_of_fractals_initialize();
+	void initialize_periodicity_cycle_check_size();
+	void initialize_integer();
+	void initialize_float();
+	void initialize_periodicity();
+	void inside_colormode_star_trail_initialize();
 
 	double m_tangent_table[16];
-	int m_colormode_epsilon_cross_hooper;
+	EpsilonCrossHooperType m_colormode_epsilon_cross_hooper;
 	double m_colormode_modulus_value;
 	double m_colormode_bof60_min_magnitude;
 	long m_colormode_bof61_min_index;
@@ -1385,21 +1401,12 @@ private:
 	int m_periodicity_cycle_check_counter;
 };
 
-enum EpsilonCrossHooperType
-{
-	HOOPER_NEGATIVE_X_AXIS = -2,
-	HOOPER_NEGATIVE_Y_AXIS = -1,
-	HOOPER_NONE = 0,
-	HOOPER_POSITIVE_Y_AXIS = 1,
-	HOOPER_POSITIVE_X_AXIS = 2
-};
-
 int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 {
 	return StandardFractal().execute();
 }
 
-void StandardFractal::initialize()
+void StandardFractal::inside_colormode_star_trail_initialize()
 {
 	if (g_inside == COLORMODE_STAR_TRAIL)
 	{
@@ -1412,6 +1419,9 @@ void StandardFractal::initialize()
 			g_max_iteration = 16;
 		}
 	}
+}
+void StandardFractal::initialize_periodicity()
+{
 	if (g_periodicity_check == 0 || g_inside == COLORMODE_Z_MAGNITUDE || g_inside == COLORMODE_STAR_TRAIL)
 	{
 		g_old_color_iter = 2147483647L;       /* don't check periodicity at all */
@@ -1424,89 +1434,70 @@ void StandardFractal::initialize()
 	{
 		g_old_color_iter = 255;               /* don't check periodicity 1st 250 iterations */
 	}
-
-	/* Jonathan - how about this idea ? skips first saved value which never works */
-#ifdef MINSAVEDAND
-	if (g_old_color_iter < MINSAVEDAND)
+}
+void StandardFractal::initialize_float()
+{
+	if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 	{
-		g_old_color_iter = MINSAVEDAND;
-	}
-#else
-	if (g_old_color_iter < g_first_saved_and) /* I like it! */
-	{
-		g_old_color_iter = g_first_saved_and;
-	}
-#endif
-	/* really fractal specific, but we'll leave it here */
-	m_dem_color = -1;
-	if (!g_integer_fractal)
-	{
-		if (g_use_initial_orbit_z == INITIALZ_ORBIT)
-		{
-			s_saved_z = g_initial_orbit_z;
-		}
-		else
-		{
-			s_saved_z.x = 0;
-			s_saved_z.y = 0;
-		}
-		if (g_bf_math)
-		{
-			if (g_decimals > 200)
-			{
-				g_input_counter = -1;
-			}
-			if (g_bf_math == BIGNUM)
-			{
-				clear_bn(bnsaved.x);
-				clear_bn(bnsaved.y);
-			}
-			else if (g_bf_math == BIGFLT)
-			{
-				clear_bf(bfsaved.x);
-				clear_bf(bfsaved.y);
-			}
-		}
-		g_initial_z.y = g_dy_pixel();
-		if (g_distance_test)
-		{
-			if (g_use_old_distance_test)
-			{
-				g_rq_limit = s_rq_limit_save;
-				if (g_distance_test != 1) /* not doing regular outside colors */
-				{
-					if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
-					{
-						g_rq_limit = DEM_BAILOUT;
-					}
-				}
-				m_dem_color = -1;
-			}
-			m_distance_test_derivative.x = 1;
-			m_distance_test_derivative.y = 0;
-			g_magnitude = 0;
-		}
+		s_saved_z = g_initial_orbit_z;
 	}
 	else
 	{
-		if (g_use_initial_orbit_z == INITIALZ_ORBIT)
-		{
-			m_saved_z_l = g_init_orbit_l;
-		}
-		else
-		{
-			m_saved_z_l.x = 0;
-			m_saved_z_l.y = 0;
-		}
-		g_initial_z_l.y = g_ly_pixel();
+		s_saved_z.x = 0;
+		s_saved_z.y = 0;
 	}
-	g_orbit_index = 0;
-	g_color_iter = 0;
-	if (fractal_type_julia(g_fractal_type))
+	if (g_bf_math)
 	{
-		g_color_iter = -1;
+		if (g_decimals > 200)
+		{
+			g_input_counter = -1;
+		}
+		if (g_bf_math == BIGNUM)
+		{
+			clear_bn(bnsaved.x);
+			clear_bn(bnsaved.y);
+		}
+		else if (g_bf_math == BIGFLT)
+		{
+			clear_bf(bfsaved.x);
+			clear_bf(bfsaved.y);
+		}
 	}
-	m_caught_a_cycle = false;
+	g_initial_z.y = g_dy_pixel();
+	if (g_distance_test)
+	{
+		if (g_use_old_distance_test)
+		{
+			g_rq_limit = s_rq_limit_save;
+			if (g_distance_test != 1) /* not doing regular outside colors */
+			{
+				if (g_rq_limit < DEM_BAILOUT)   /* so go straight for dem bailout */
+				{
+					g_rq_limit = DEM_BAILOUT;
+				}
+			}
+			m_dem_color = -1;
+		}
+		m_distance_test_derivative.x = 1;
+		m_distance_test_derivative.y = 0;
+		g_magnitude = 0;
+	}
+}
+void StandardFractal::initialize_integer()
+{
+	if (g_use_initial_orbit_z == INITIALZ_ORBIT)
+	{
+		m_saved_z_l = g_init_orbit_l;
+	}
+	else
+	{
+		m_saved_z_l.x = 0;
+		m_saved_z_l.y = 0;
+	}
+	g_initial_z_l.y = g_ly_pixel();
+}
+void StandardFractal::initialize_periodicity_cycle_check_size()
+{
 	if (g_inside == COLORMODE_PERIOD)
 	{
 		m_periodicity_cycle_check_size = 16;           /* begin checking every 16th cycle */
@@ -1521,17 +1512,17 @@ void StandardFractal::initialize()
 #endif
 	}
 	m_periodicity_cycle_check_counter = 1;               /* start checking the very first time */
-
+}
+void StandardFractal::inside_colormode_beauty_of_fractals_initialize()
+{
 	if (inside_coloring_beauty_of_fractals())
 	{
 		g_magnitude = 0;
 		g_magnitude_l = 0;
 	}
-	g_overflow = 0;                /* reset integer math overflow flag */
-
-	g_current_fractal_specific->per_pixel(); /* initialize the calculations */
-
-	m_attracted = false;
+}
+void StandardFractal::outside_colormode_total_distance_initialize()
+{
 	if (g_outside == COLORMODE_TOTAL_DISTANCE)
 	{
 		if (g_integer_fractal)
@@ -1550,21 +1541,63 @@ void StandardFractal::initialize()
 		m_colormode_total_distance_last_z.x = g_old_z.x;
 		m_colormode_total_distance_last_z.y = g_old_z.y;
 	}
+}
+void StandardFractal::initialize()
+{
+	inside_colormode_star_trail_initialize();
+	initialize_periodicity();
+	/* Jonathan - how about this idea ? skips first saved value which never works */
+#ifdef MINSAVEDAND
+	if (g_old_color_iter < MINSAVEDAND)
+	{
+		g_old_color_iter = MINSAVEDAND;
+	}
+#else
+	if (g_old_color_iter < g_first_saved_and) /* I like it! */
+	{
+		g_old_color_iter = g_first_saved_and;
+	}
+#endif
+	/* really fractal specific, but we'll leave it here */
+	m_dem_color = -1;
+	if (!g_integer_fractal)
+	{
+		initialize_float();
+	}
+	else
+	{
+		initialize_integer();
+	}
+	g_orbit_index = 0;
+	g_color_iter = 0;
+	if (fractal_type_julia(g_fractal_type))
+	{
+		g_color_iter = -1;
+	}
+	m_caught_a_cycle = false;
+	initialize_periodicity_cycle_check_size();
+	inside_colormode_beauty_of_fractals_initialize();
+	g_overflow = 0;                /* reset integer math overflow flag */
 
-	m_check_freq = (((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
-		? 16 : 2048;
+	g_current_fractal_specific->per_pixel(); /* initialize the calculations */
+
+	m_attracted = false;
+	outside_colormode_total_distance_initialize();
+	m_check_freq = (((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X || g_show_dot >= 0)
+			&& g_orbit_delay > 0) ?
+		16 : 2048;
 
 	if (g_show_orbit)
 	{
 		g_sound_state.write_time();
 	}
-	m_colormode_epsilon_cross_hooper = HOOPER_NONE;
 	m_colormode_modulus_value = 0.0;
 	m_colormode_bof60_min_magnitude = 100000.0;		/* orbit value closest to origin */
 	m_colormode_bof61_min_index = 0;					/* iteration of min_orbit */
 	m_colormode_period_cycle_length = -1;
 	m_colormode_period_cycle_start_iteration = 0;
 	m_colormode_total_distance = 0.0;
+	m_colormode_epsilon_cross_hooper = HOOPER_NONE;
 	m_colormode_epsilon_cross_proximity_l = long(g_proximity*g_fudge);
 }
 bool StandardFractal::interrupted()
