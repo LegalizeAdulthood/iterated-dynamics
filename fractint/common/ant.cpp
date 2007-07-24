@@ -528,7 +528,7 @@ int Ant::compute()
 	{                            /* if rule_len == 0 random rule */
 		for (int i = 0; i < rule_len; i++)
 		{
-			m_rule[i] = (m_rule[i] != '1') ? (char) 0 : (char) 1;
+			m_rule[i] = (m_rule[i] != '1') ? 0 : 1;
 		}
 	}
 	else

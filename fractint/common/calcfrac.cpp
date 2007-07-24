@@ -781,7 +781,7 @@ int calculate_fractal()
 				g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
 				timer_engine((int (*)()) perform_work_list);
 			}
-			g_standard_calculation_mode = (char)oldcalcmode;
+			g_standard_calculation_mode = char(oldcalcmode);
 		}
 		else /* main case, much nicer! */
 		{
@@ -2726,7 +2726,7 @@ static int _fastcall potential(double mag, long iterations)
 			{
 				f_mag = float(mag);
 				fLog14(f_mag, f_tmp); /* this SHOULD be non-negative */
-				fShift(f_tmp, (char)-l_pot, pot);
+				fShift(f_tmp, char(-l_pot), pot);
 			}
 			else
 			{
