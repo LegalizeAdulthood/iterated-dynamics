@@ -33,11 +33,7 @@
 #define MAX_LSYS_LINE_LEN 255 /* this limits line length to 255 */
 
 template <typename T>
-struct turtle_state
-{
-};
-
-struct lsys_turtle_state_l
+struct lsys_turtle_state_base
 {
 	char counter;
 	char angle;
@@ -48,38 +44,24 @@ struct lsys_turtle_state_l
 	char dmaxangle;
 	char curcolor;
 	char dummy;  /* dummy ensures longword alignment */
-    long size;
-    long realangle;
-	long xpos;
-	long ypos; /* xpos and ypos are long, not fixed point */
-	long x_min;
-	long y_min;
-	long x_max;
-	long y_max; /* as are these */
-    long aspect; /* aspect ratio of each pixel, ysize/xsize */
+    T size;
+    T realangle;
+	T xpos;
+	T ypos; /* xpos and ypos are T, not fixed point */
+	T x_min;
+	T y_min;
+	T x_max;
+	T y_max; /* as are these */
+    T aspect; /* aspect ratio of each pixel, ysize/xsize */
+};
+
+struct lsys_turtle_state_l : lsys_turtle_state_base<long>
+{
     long num;
 };
 
-struct lsys_turtle_state_fp
+struct lsys_turtle_state_fp : lsys_turtle_state_base<LDBL>
 {
-	char counter;
-	char angle;
-	char reverse;
-	bool stackoflow;
-    /* dmaxangle is max_angle - 1 */
-	char max_angle;
-	char dmaxangle;
-	char curcolor;
-	char dummy;  /* dummy ensures longword alignment */
-    LDBL size;
-    LDBL realangle;
-	LDBL xpos;
-	LDBL ypos;
-	LDBL x_min;
-	LDBL y_min;
-	LDBL x_max;
-	LDBL y_max;
-    LDBL aspect; /* aspect ratio of each pixel, ysize/xsize */
     union
 	{
         long n;
@@ -91,10 +73,11 @@ extern int g_max_angle;
 
 /* routines in lsysf.c */
 
-extern struct lsys_cmd * _fastcall draw_lsysf(struct lsys_cmd *command,struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules,int depth);
-extern int _fastcall lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth);
-extern struct lsys_cmd *lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts);
-extern struct lsys_cmd *lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts);
+struct lsys_cmd;
+extern lsys_cmd * _fastcall draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth);
+extern int _fastcall lsysf_find_scale(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth);
+extern lsys_cmd *lsysf_size_transform(char *s, lsys_turtle_state_fp *ts);
+extern lsys_cmd *lsysf_draw_transform(char *s, lsys_turtle_state_fp *ts);
 extern void _fastcall lsysf_sin_cos();
 
 extern LDBL  _fastcall get_number(char **);
