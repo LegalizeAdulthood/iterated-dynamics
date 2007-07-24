@@ -16,7 +16,7 @@
 
 struct lsys_cmd
 {
-	void (*f)(struct lsys_turtle_state *);
+	void (*function)(lsys_turtle_state_l *);
 	long n;
 	char ch;
 };
@@ -27,7 +27,7 @@ struct lsys_cmd
 int g_max_angle;
 
 static char *ruleptrs[MAXRULES];
-static struct lsys_cmd *rules2[MAXRULES];
+static lsys_cmd *rules2[MAXRULES];
 static char loaded = 0;
 
 static int _fastcall read_l_system_file(char *);
@@ -36,25 +36,25 @@ static int _fastcall rule_present(char symbol);
 static int _fastcall save_rule(char *, char **);
 static int _fastcall append_rule(char *rule, int index);
 static void free_l_cmds();
-static struct lsys_cmd *_fastcall find_size(struct lsys_cmd *, struct lsys_turtle_state *, struct lsys_cmd **, int);
-static struct lsys_cmd *draw_lsysi(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cmd **rules, int depth);
-static int lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cmd **rules, int depth);
-static struct lsys_cmd *lsysi_size_transform(char *s, struct lsys_turtle_state *ts);
-static struct lsys_cmd *lsysi_draw_transform(char *s, struct lsys_turtle_state *ts);
+static lsys_cmd *_fastcall find_size(lsys_cmd *, lsys_turtle_state_l *, lsys_cmd **, int);
+static lsys_cmd *draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth);
+static int lsysi_find_scale(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth);
+static lsys_cmd *lsysi_size_transform(char *s, lsys_turtle_state_l *ts);
+static lsys_cmd *lsysi_draw_transform(char *s, lsys_turtle_state_l *ts);
 static void _fastcall lsysi_sin_cos();
-static void lsysi_slash(struct lsys_turtle_state *cmd);
-static void lsysi_backslash(struct lsys_turtle_state *cmd);
-static void lsysi_at(struct lsys_turtle_state *cmd);
-static void lsysi_pipe(struct lsys_turtle_state *cmd);
-static void lsysi_size_dm(struct lsys_turtle_state *cmd);
-static void lsysi_size_gf(struct lsys_turtle_state *cmd);
-static void lsysi_draw_d(struct lsys_turtle_state *cmd);
-static void lsysi_draw_m(struct lsys_turtle_state *cmd);
-static void lsysi_draw_g(struct lsys_turtle_state *cmd);
-static void lsysi_draw_f(struct lsys_turtle_state *cmd);
-static void lsysi_draw_c(struct lsys_turtle_state *cmd);
-static void lsysi_draw_gt(struct lsys_turtle_state *cmd);
-static void lsysi_draw_lt(struct lsys_turtle_state *cmd);
+static void lsysi_slash(lsys_turtle_state_l *cmd);
+static void lsysi_backslash(lsys_turtle_state_l *cmd);
+static void lsysi_at(lsys_turtle_state_l *cmd);
+static void lsysi_pipe(lsys_turtle_state_l *cmd);
+static void lsysi_size_dm(lsys_turtle_state_l *cmd);
+static void lsysi_size_gf(lsys_turtle_state_l *cmd);
+static void lsysi_draw_d(lsys_turtle_state_l *cmd);
+static void lsysi_draw_m(lsys_turtle_state_l *cmd);
+static void lsysi_draw_g(lsys_turtle_state_l *cmd);
+static void lsysi_draw_f(lsys_turtle_state_l *cmd);
+static void lsysi_draw_c(lsys_turtle_state_l *cmd);
+static void lsysi_draw_gt(lsys_turtle_state_l *cmd);
+static void lsysi_draw_lt(lsys_turtle_state_l *cmd);
 
 bool _fastcall is_pow2(int n)
 {
@@ -174,7 +174,7 @@ static int _fastcall read_l_system_file(char *str)
 			}
 			else if (!strcmp(word, "angle"))
 			{
-				g_max_angle = (char)atoi(strtok(NULL, " \t\n"));
+				g_max_angle = char(atoi(strtok(NULL, " \t\n")));
 				check = 1;
 			}
 			else if (!strcmp(word, "}"))
@@ -269,7 +269,7 @@ int l_system()
 {
 	int order;
 	char **rulesc;
-	struct lsys_cmd **sc;
+	lsys_cmd **sc;
 	bool stackoflow = false;
 
 	if ((!loaded) && l_load())
@@ -290,11 +290,11 @@ int l_system()
 	}
 	else
 	{
-		struct lsys_turtle_state ts;
+		lsys_turtle_state_l ts;
 
 		ts.stackoflow = false;
 		ts.max_angle = g_max_angle;
-		ts.dmaxangle = (char)(g_max_angle - 1);
+		ts.dmaxangle = char(g_max_angle - 1);
 
 		sc = rules2;
 		for (rulesc = ruleptrs; *rulesc; rulesc++)
@@ -322,7 +322,7 @@ int l_system()
 			ts.curcolor = 15;
 			if (ts.curcolor > g_colors)
 			{
-				ts.curcolor = (char)(g_colors-1);
+				ts.curcolor = char(g_colors-1);
 			}
 			draw_lsysi(rules2[0], &ts, &rules2[1], order);
 		}
@@ -335,13 +335,13 @@ int l_system()
 	}
 	else if (g_overflow)
 	{
-		struct lsys_turtle_state_fp ts;
+		lsys_turtle_state_fp ts;
 
 		g_overflow = 0;
 
 		ts.stackoflow = false;
 		ts.max_angle = g_max_angle;
-		ts.dmaxangle = (char)(g_max_angle - 1);
+		ts.dmaxangle = char(g_max_angle - 1);
 
 		sc = rules2;
 		for (rulesc = ruleptrs; *rulesc; rulesc++)
@@ -369,7 +369,7 @@ int l_system()
 			ts.curcolor = 15;
 			if (ts.curcolor > g_colors)
 			{
-				ts.curcolor = (char)(g_colors-1);
+				ts.curcolor = char(g_colors-1);
 			}
 			draw_lsysf(rules2[0], &ts, &rules2[1], order);
 		}
@@ -464,7 +464,7 @@ static int _fastcall append_rule(char *rule, int index)
 
 static void free_l_cmds()
 {
-	struct lsys_cmd **sc = rules2;
+	lsys_cmd **sc = rules2;
 
 	while (*sc)
 	{
@@ -473,7 +473,7 @@ static void free_l_cmds()
 }
 
 /* integer specific routines */
-static void lsysi_plus(struct lsys_turtle_state *cmd)
+static void lsysi_plus(lsys_turtle_state_l *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -496,7 +496,7 @@ static void lsysi_plus(struct lsys_turtle_state *cmd)
 }
 
 /* This is the same as lsys_doplus, except max_angle is a power of 2. */
-static void lsysi_plus_pow2(struct lsys_turtle_state *cmd)
+static void lsysi_plus_pow2(lsys_turtle_state_l *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -510,7 +510,7 @@ static void lsysi_plus_pow2(struct lsys_turtle_state *cmd)
 	}
 }
 
-static void lsysi_minus(struct lsys_turtle_state *cmd)
+static void lsysi_minus(lsys_turtle_state_l *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -532,13 +532,13 @@ static void lsysi_minus(struct lsys_turtle_state *cmd)
 	}
 }
 
-static void lsysi_minus_pow2(struct lsys_turtle_state *cmd)
+static void lsysi_minus_pow2(lsys_turtle_state_l *cmd)
 {
 	cmd->reverse ? cmd->angle-- : cmd->angle++;
 	cmd->angle &= cmd->dmaxangle;
 }
 
-static void lsysi_slash(struct lsys_turtle_state *cmd)
+static void lsysi_slash(lsys_turtle_state_l *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -550,7 +550,7 @@ static void lsysi_slash(struct lsys_turtle_state *cmd)
 	}
 }
 
-static void lsysi_backslash(struct lsys_turtle_state *cmd)
+static void lsysi_backslash(lsys_turtle_state_l *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -562,29 +562,29 @@ static void lsysi_backslash(struct lsys_turtle_state *cmd)
 	}
 }
 
-static void lsysi_at(struct lsys_turtle_state *cmd)
+static void lsysi_at(lsys_turtle_state_l *cmd)
 {
 	cmd->size = multiply(cmd->size, cmd->num, 19);
 }
 
-static void lsysi_pipe(struct lsys_turtle_state *cmd)
+static void lsysi_pipe(lsys_turtle_state_l *cmd)
 {
-	cmd->angle = (char)(cmd->angle + (char)(cmd->max_angle/2));
+	cmd->angle += cmd->angle + char(cmd->max_angle/2);
 	cmd->angle %= cmd->max_angle;
 }
 
-static void lsysi_pipe_pow2(struct lsys_turtle_state *cmd)
+static void lsysi_pipe_pow2(lsys_turtle_state_l *cmd)
 {
 	cmd->angle += cmd->max_angle >> 1;
 	cmd->angle &= cmd->dmaxangle;
 }
 
-static void lsysi_exclamation(struct lsys_turtle_state *cmd)
+static void lsysi_exclamation(lsys_turtle_state_l *cmd)
 {
 	cmd->reverse = ! cmd->reverse;
 }
 
-static void lsysi_size_dm(struct lsys_turtle_state *cmd)
+static void lsysi_size_dm(lsys_turtle_state_l *cmd)
 {
 	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
 	double s;
@@ -617,7 +617,7 @@ static void lsysi_size_dm(struct lsys_turtle_state *cmd)
 	}
 }
 
-static void lsysi_size_gf(struct lsys_turtle_state *cmd)
+static void lsysi_size_gf(lsys_turtle_state_l *cmd)
 {
 	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[int(cmd->angle)], 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[int(cmd->angle)], 29));
@@ -641,7 +641,7 @@ static void lsysi_size_gf(struct lsys_turtle_state *cmd)
 	}
 }
 
-static void lsysi_draw_d(struct lsys_turtle_state *cmd)
+static void lsysi_draw_d(lsys_turtle_state_l *cmd)
 {
 	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
 	double s;
@@ -662,7 +662,7 @@ static void lsysi_draw_d(struct lsys_turtle_state *cmd)
 	driver_draw_line(lastx, lasty, int(cmd->xpos >> 19), int(cmd->ypos >> 19), cmd->curcolor);
 }
 
-static void lsysi_draw_m(struct lsys_turtle_state *cmd)
+static void lsysi_draw_m(lsys_turtle_state_l *cmd)
 {
 	double angle = double(cmd->realangle)*ANGLE2DOUBLE;
 	double s;
@@ -678,7 +678,7 @@ static void lsysi_draw_m(struct lsys_turtle_state *cmd)
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, fixedsin, 29));
 }
 
-static void lsysi_draw_g(struct lsys_turtle_state *cmd)
+static void lsysi_draw_g(lsys_turtle_state_l *cmd)
 {
 	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[int(cmd->angle)], 29));
 	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[int(cmd->angle)], 29));
@@ -686,7 +686,7 @@ static void lsysi_draw_g(struct lsys_turtle_state *cmd)
 	/* ypos += size*sins[angle]; */
 }
 
-static void lsysi_draw_f(struct lsys_turtle_state *cmd)
+static void lsysi_draw_f(lsys_turtle_state_l *cmd)
 {
 	int lastx = int(cmd->xpos >> 19);
 	int lasty = int(cmd->ypos >> 19);
@@ -697,24 +697,24 @@ static void lsysi_draw_f(struct lsys_turtle_state *cmd)
 	driver_draw_line(lastx, lasty, int(cmd->xpos >> 19), int(cmd->ypos >> 19), cmd->curcolor);
 }
 
-static void lsysi_draw_c(struct lsys_turtle_state *cmd)
+static void lsysi_draw_c(lsys_turtle_state_l *cmd)
 {
-	cmd->curcolor = (char)(int(cmd->num) % g_colors);
+	cmd->curcolor = char(int(cmd->num) % g_colors);
 }
 
-static void lsysi_draw_gt(struct lsys_turtle_state *cmd)
+static void lsysi_draw_gt(lsys_turtle_state_l *cmd)
 {
-	cmd->curcolor = (char)(cmd->curcolor - (char)cmd->num);
+	cmd->curcolor -= char(cmd->num);
 	cmd->curcolor %= g_colors;
 	if (cmd->curcolor == 0)
 	{
-		cmd->curcolor = (char)(g_colors-1);
+		cmd->curcolor = char(g_colors-1);
 	}
 }
 
-static void lsysi_draw_lt(struct lsys_turtle_state *cmd)
+static void lsysi_draw_lt(lsys_turtle_state_l *cmd)
 {
-	cmd->curcolor = (char)(cmd->curcolor + (char)cmd->num);
+	cmd->curcolor += char(cmd->num);
 	cmd->curcolor %= g_colors;
 	if (cmd->curcolor == 0)
 	{
@@ -722,10 +722,10 @@ static void lsysi_draw_lt(struct lsys_turtle_state *cmd)
 	}
 }
 
-static struct lsys_cmd *_fastcall
-find_size(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cmd **rules, int depth)
+static lsys_cmd *_fastcall
+find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth)
 {
-	struct lsys_cmd **rulind;
+	lsys_cmd **rulind;
 	int tran;
 
 	if (g_overflow)     /* integer math routines overflowed */
@@ -761,10 +761,10 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cm
 		}
 		if (!depth || !tran)
 		{
-			if (command->f)
+			if (command->function)
 			{
 				ts->num = command->n;
-				(*command->f)(ts);
+				(*command->function)(ts);
 			}
 			else if (command->ch == '[')
 			{
@@ -800,7 +800,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cm
 }
 
 static int
-lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cmd **rules, int depth)
+lsysi_find_scale(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth)
 {
 	float horiz;
 	float vert;
@@ -810,7 +810,7 @@ lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct 
 	double y_max;
 	double locsize;
 	double locaspect;
-	struct lsys_cmd *fsret;
+	lsys_cmd *fsret;
 
 	locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
 	ts->aspect = FIXEDPT(locaspect);
@@ -848,10 +848,10 @@ lsysi_find_scale(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct 
 	return 1;
 }
 
-static struct lsys_cmd *
-draw_lsysi(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_cmd **rules, int depth)
+static lsys_cmd *
+draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth)
 {
-	struct lsys_cmd **rulind;
+	lsys_cmd **rulind;
 	int tran;
 
 	if (g_overflow)     /* integer math routines overflowed */
@@ -886,10 +886,10 @@ draw_lsysi(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_c
 		}
 		if (!depth || !tran)
 		{
-			if (command->f)
+			if (command->function)
 			{
 				ts->num = command->n;
-				(*command->f)(ts);
+				(*command->function)(ts);
 			}
 			else if (command->ch == '[')
 			{
@@ -927,24 +927,24 @@ draw_lsysi(struct lsys_cmd *command, struct lsys_turtle_state *ts, struct lsys_c
 	return command;
 }
 
-static struct lsys_cmd *
-lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
+static lsys_cmd *
+lsysi_size_transform(char *s, lsys_turtle_state_l *ts)
 {
-	struct lsys_cmd *ret;
-	struct lsys_cmd *doub;
+	lsys_cmd *ret;
+	lsys_cmd *doub;
 	int maxval = 10;
 	int n = 0;
-	void (*f)(lsys_turtle_state *);
+	void (*function)(lsys_turtle_state_l *);
 	long num;
 
-	void (*plus)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_plus_pow2 : lsysi_plus;
-	void (*minus)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_minus_pow2 : lsysi_minus;
-	void (*pipe)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_pipe_pow2 : lsysi_pipe;
+	void (*plus)(lsys_turtle_state_l *) = (is_pow2(ts->max_angle)) ? lsysi_plus_pow2 : lsysi_plus;
+	void (*minus)(lsys_turtle_state_l *) = (is_pow2(ts->max_angle)) ? lsysi_minus_pow2 : lsysi_minus;
+	void (*pipe)(lsys_turtle_state_l *) = (is_pow2(ts->max_angle)) ? lsysi_pipe_pow2 : lsysi_pipe;
 
-	void (*slash)(lsys_turtle_state *) =  lsysi_slash;
-	void (*bslash)(lsys_turtle_state *) = lsysi_backslash;
-	void (*at)(lsys_turtle_state *) =     lsysi_at;
-	void (*dogf)(lsys_turtle_state *) =   lsysi_size_gf;
+	void (*slash)(lsys_turtle_state_l *) =  lsysi_slash;
+	void (*bslash)(lsys_turtle_state_l *) = lsysi_backslash;
+	void (*at)(lsys_turtle_state_l *) =     lsysi_at;
+	void (*dogf)(lsys_turtle_state_l *) =   lsysi_size_gf;
 
 	ret = new lsys_cmd[maxval];
 	if (ret == NULL)
@@ -954,29 +954,29 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 	}
 	while (*s)
 	{
-		f = NULL;
+		function = NULL;
 		num = 0;
 		ret[n].ch = *s;
 		switch (*s)
 		{
-		case '+': f = plus;            break;
-		case '-': f = minus;           break;
-		case '/': f = slash;           num = long(get_number(&s)*11930465L);    break;
-		case '\\': f = bslash;         num = long(get_number(&s)*11930465L);    break;
-		case '@': f = at;              num = FIXEDPT(get_number(&s));    break;
-		case '|': f = pipe;            break;
-		case '!': f = lsysi_exclamation;     break;
+		case '+': function = plus;            break;
+		case '-': function = minus;           break;
+		case '/': function = slash;           num = long(get_number(&s)*11930465L);    break;
+		case '\\': function = bslash;         num = long(get_number(&s)*11930465L);    break;
+		case '@': function = at;              num = FIXEDPT(get_number(&s));    break;
+		case '|': function = pipe;            break;
+		case '!': function = lsysi_exclamation;     break;
 		case 'd':
-		case 'm': f = lsysi_size_dm;   break;
+		case 'm': function = lsysi_size_dm;   break;
 		case 'g':
-		case 'f': f = dogf;       break;
+		case 'f': function = dogf;       break;
 		case '[': num = 1;        break;
 		case ']': num = 2;        break;
 		default:
 			num = 3;
 			break;
 		}
-		ret[n].f = (void (*)(struct lsys_turtle_state *))f;
+		ret[n].function = function;
 		ret[n].n = num;
 		if (++n == maxval)
 		{
@@ -987,7 +987,7 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 				ts->stackoflow = true;
 				return NULL;
 			}
-			memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
+			memcpy(doub, ret, maxval*sizeof(lsys_cmd));
 			delete[] ret;
 			ret = doub;
 			maxval <<= 1;
@@ -995,7 +995,7 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 		s++;
 	}
 	ret[n].ch = 0;
-	ret[n].f = NULL;
+	ret[n].function = NULL;
 	ret[n].n = 0;
 	n++;
 
@@ -1006,29 +1006,29 @@ lsysi_size_transform(char *s, struct lsys_turtle_state *ts)
 		ts->stackoflow = true;
 		return NULL;
 	}
-	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
+	memcpy(doub, ret, n*sizeof(lsys_cmd));
 	delete[] ret;
 	return doub;
 }
 
-static struct lsys_cmd *
-lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
+static lsys_cmd *
+lsysi_draw_transform(char *s, lsys_turtle_state_l *ts)
 {
-	struct lsys_cmd *ret;
-	struct lsys_cmd *doub;
+	lsys_cmd *ret;
+	lsys_cmd *doub;
 	int maxval = 10;
 	int n = 0;
-	void (*f)(lsys_turtle_state *);
+	void (*function)(lsys_turtle_state_l *);
 	long num;
 
-	void (*plus)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_plus_pow2 : lsysi_plus;
-	void (*minus)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_minus_pow2 : lsysi_minus;
-	void (*pipe)(lsys_turtle_state *) = (is_pow2(ts->max_angle)) ? lsysi_pipe_pow2 : lsysi_pipe;
+	void (*plus)(lsys_turtle_state_l *) = (is_pow2(ts->max_angle)) ? lsysi_plus_pow2 : lsysi_plus;
+	void (*minus)(lsys_turtle_state_l *) = (is_pow2(ts->max_angle)) ? lsysi_minus_pow2 : lsysi_minus;
+	void (*pipe)(lsys_turtle_state_l *) = (is_pow2(ts->max_angle)) ? lsysi_pipe_pow2 : lsysi_pipe;
 
-	void (*slash)(lsys_turtle_state *) =  lsysi_slash;
-	void (*bslash)(lsys_turtle_state *) = lsysi_backslash;
-	void (*at)(lsys_turtle_state *) =     lsysi_at;
-	void (*drawg)(lsys_turtle_state *) =  lsysi_draw_g;
+	void (*slash)(lsys_turtle_state_l *) =  lsysi_slash;
+	void (*bslash)(lsys_turtle_state_l *) = lsysi_backslash;
+	void (*at)(lsys_turtle_state_l *) =     lsysi_at;
+	void (*drawg)(lsys_turtle_state_l *) =  lsysi_draw_g;
 
 	ret = new lsys_cmd[maxval];
 	if (ret == NULL)
@@ -1038,32 +1038,32 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 	}
 	while (*s)
 	{
-		f = NULL;
+		function = NULL;
 		num = 0;
 		ret[n].ch = *s;
 		switch (*s)
 		{
-		case '+': f = plus;            break;
-		case '-': f = minus;           break;
-		case '/': f = slash;           num = long(get_number(&s)*11930465L);    break;
-		case '\\': f = bslash;         num = long(get_number(&s)*11930465L);    break;
-		case '@': f = at;              num = FIXEDPT(get_number(&s));    break;
-		case '|': f = pipe;            break;
-		case '!': f = lsysi_exclamation;     break;
-		case 'd': f = lsysi_draw_d;    break;
-		case 'm': f = lsysi_draw_m;    break;
-		case 'g': f = drawg;           break;
-		case 'f': f = lsysi_draw_f;    break;
-		case 'c': f = lsysi_draw_c;    num = long(get_number(&s));    break;
-		case '<': f = lsysi_draw_lt;   num = long(get_number(&s));    break;
-		case '>': f = lsysi_draw_gt;   num = long(get_number(&s));    break;
+		case '+': function = plus;            break;
+		case '-': function = minus;           break;
+		case '/': function = slash;           num = long(get_number(&s)*11930465L);    break;
+		case '\\': function = bslash;         num = long(get_number(&s)*11930465L);    break;
+		case '@': function = at;              num = FIXEDPT(get_number(&s));    break;
+		case '|': function = pipe;            break;
+		case '!': function = lsysi_exclamation;     break;
+		case 'd': function = lsysi_draw_d;    break;
+		case 'm': function = lsysi_draw_m;    break;
+		case 'g': function = drawg;           break;
+		case 'f': function = lsysi_draw_f;    break;
+		case 'c': function = lsysi_draw_c;    num = long(get_number(&s));    break;
+		case '<': function = lsysi_draw_lt;   num = long(get_number(&s));    break;
+		case '>': function = lsysi_draw_gt;   num = long(get_number(&s));    break;
 		case '[': num = 1;        break;
 		case ']': num = 2;        break;
 		default:
 			num = 3;
 			break;
 		}
-		ret[n].f = (void (*)(struct lsys_turtle_state *))f;
+		ret[n].function = function;
 		ret[n].n = num;
 		if (++n == maxval)
 		{
@@ -1074,7 +1074,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 				ts->stackoflow = true;
 				return NULL;
 			}
-			memcpy(doub, ret, maxval*sizeof(struct lsys_cmd));
+			memcpy(doub, ret, maxval*sizeof(lsys_cmd));
 			delete[] ret;
 			ret = doub;
 			maxval <<= 1;
@@ -1082,7 +1082,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 		s++;
 	}
 	ret[n].ch = 0;
-	ret[n].f = NULL;
+	ret[n].function = NULL;
 	ret[n].n = 0;
 	n++;
 
@@ -1093,7 +1093,7 @@ lsysi_draw_transform(char *s, struct lsys_turtle_state *ts)
 		ts->stackoflow = true;
 		return NULL;
 	}
-	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
+	memcpy(doub, ret, n*sizeof(lsys_cmd));
 	delete[] ret;
 	return doub;
 }

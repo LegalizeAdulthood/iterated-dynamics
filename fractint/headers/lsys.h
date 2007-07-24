@@ -32,30 +32,53 @@
 #define MAXRULES 27 /* this limits rules to 25 */
 #define MAX_LSYS_LINE_LEN 255 /* this limits line length to 255 */
 
-struct lsys_turtle_state
+template <typename T>
+struct turtle_state
 {
-    char counter, angle, reverse;
+};
+
+struct lsys_turtle_state_l
+{
+	char counter;
+	char angle;
+	char reverse;
 	bool stackoflow;
     /* dmaxangle is max_angle - 1 */
-    char max_angle, dmaxangle, curcolor, dummy;  /* dummy ensures longword alignment */
+	char max_angle;
+	char dmaxangle;
+	char curcolor;
+	char dummy;  /* dummy ensures longword alignment */
     long size;
     long realangle;
-    long xpos, ypos; /* xpos and ypos are long, not fixed point */
-    long x_min, y_min, x_max, y_max; /* as are these */
+	long xpos;
+	long ypos; /* xpos and ypos are long, not fixed point */
+	long x_min;
+	long y_min;
+	long x_max;
+	long y_max; /* as are these */
     long aspect; /* aspect ratio of each pixel, ysize/xsize */
     long num;
 };
 
 struct lsys_turtle_state_fp
 {
-    char counter, angle, reverse;
+	char counter;
+	char angle;
+	char reverse;
 	bool stackoflow;
     /* dmaxangle is max_angle - 1 */
-    char max_angle, dmaxangle, curcolor, dummy;  /* dummy ensures longword alignment */
+	char max_angle;
+	char dmaxangle;
+	char curcolor;
+	char dummy;  /* dummy ensures longword alignment */
     LDBL size;
     LDBL realangle;
-    LDBL xpos, ypos;
-    LDBL x_min, y_min, x_max, y_max;
+	LDBL xpos;
+	LDBL ypos;
+	LDBL x_min;
+	LDBL y_min;
+	LDBL x_max;
+	LDBL y_max;
     LDBL aspect; /* aspect ratio of each pixel, ysize/xsize */
     union
 	{

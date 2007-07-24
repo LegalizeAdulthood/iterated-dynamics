@@ -18,7 +18,7 @@
 
 struct lsys_cmd
 {
-	void (*f)(struct lsys_turtle_state_fp *);
+	void (*function)(lsys_turtle_state_fp *);
 	int ptype;
 	union
 	{
@@ -31,9 +31,9 @@ struct lsys_cmd
 #define sins_f ((LDBL *) g_box_y)
 #define coss_f ((LDBL *) g_box_y + 50)
 
-static struct lsys_cmd *_fastcall find_size(struct lsys_cmd *, struct lsys_turtle_state_fp *, struct lsys_cmd **, int);
+static lsys_cmd *_fastcall find_size(lsys_cmd *, lsys_turtle_state_fp *, lsys_cmd **, int);
 
-static void lsysf_plus(struct lsys_turtle_state_fp *cmd)
+static void lsysf_plus(lsys_turtle_state_fp *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -56,7 +56,7 @@ static void lsysf_plus(struct lsys_turtle_state_fp *cmd)
 }
 
 /* This is the same as lsys_doplus, except max_angle is a power of 2. */
-static void lsysf_plus_pow2(struct lsys_turtle_state_fp *cmd)
+static void lsysf_plus_pow2(lsys_turtle_state_fp *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -70,7 +70,7 @@ static void lsysf_plus_pow2(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static void lsysf_minus(struct lsys_turtle_state_fp *cmd)
+static void lsysf_minus(lsys_turtle_state_fp *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -92,7 +92,7 @@ static void lsysf_minus(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static void lsysf_minus_pow2(struct lsys_turtle_state_fp *cmd)
+static void lsysf_minus_pow2(lsys_turtle_state_fp *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -106,7 +106,7 @@ static void lsysf_minus_pow2(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static void lsysf_slash(struct lsys_turtle_state_fp *cmd)
+static void lsysf_slash(lsys_turtle_state_fp *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -118,7 +118,7 @@ static void lsysf_slash(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static void lsysf_backslash(struct lsys_turtle_state_fp *cmd)
+static void lsysf_backslash(lsys_turtle_state_fp *cmd)
 {
 	if (cmd->reverse)
 	{
@@ -130,29 +130,29 @@ static void lsysf_backslash(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static void lsysf_at(struct lsys_turtle_state_fp *cmd)
+static void lsysf_at(lsys_turtle_state_fp *cmd)
 {
 	cmd->size *= cmd->parm.nf;
 }
 
-static void lsysf_pipe(struct lsys_turtle_state_fp *cmd)
+static void lsysf_pipe(lsys_turtle_state_fp *cmd)
 {
-	cmd->angle = (char)(cmd->angle + cmd->max_angle/2);
+	cmd->angle += char(cmd->max_angle/2);
 	cmd->angle %= cmd->max_angle;
 }
 
-static void lsysf_pipe_pow2(struct lsys_turtle_state_fp *cmd)
+static void lsysf_pipe_pow2(lsys_turtle_state_fp *cmd)
 {
 	cmd->angle += cmd->max_angle >> 1;
 	cmd->angle &= cmd->dmaxangle;
 }
 
-static void lsysf_exclamation(struct lsys_turtle_state_fp *cmd)
+static void lsysf_exclamation(lsys_turtle_state_fp *cmd)
 {
 	cmd->reverse = ! cmd->reverse;
 }
 
-static void lsysf_size_dm(struct lsys_turtle_state_fp *cmd)
+static void lsysf_size_dm(lsys_turtle_state_fp *cmd)
 {
 	double angle = double(cmd->realangle);
 	double s;
@@ -182,7 +182,7 @@ static void lsysf_size_dm(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static void lsysf_size_gf(struct lsys_turtle_state_fp *cmd)
+static void lsysf_size_gf(lsys_turtle_state_fp *cmd)
 {
 	cmd->xpos += cmd->size*coss_f[int(cmd->angle)];
 	cmd->ypos += cmd->size*sins_f[int(cmd->angle)];
@@ -205,7 +205,7 @@ static void lsysf_size_gf(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static void lsysf_draw_d(struct lsys_turtle_state_fp *cmd)
+static void lsysf_draw_d(lsys_turtle_state_fp *cmd)
 {
 	double angle = double(cmd->realangle);
 	double s;
@@ -224,7 +224,7 @@ static void lsysf_draw_d(struct lsys_turtle_state_fp *cmd)
 	driver_draw_line(lastx, lasty, int(cmd->xpos), int(cmd->ypos), cmd->curcolor);
 }
 
-static void lsysf_draw_m(struct lsys_turtle_state_fp *cmd)
+static void lsysf_draw_m(lsys_turtle_state_fp *cmd)
 {
 	double angle = double(cmd->realangle);
 	double s;
@@ -237,13 +237,13 @@ static void lsysf_draw_m(struct lsys_turtle_state_fp *cmd)
 	cmd->ypos += cmd->size*s;
 }
 
-static void lsysf_draw_g(struct lsys_turtle_state_fp *cmd)
+static void lsysf_draw_g(lsys_turtle_state_fp *cmd)
 {
 	cmd->xpos += cmd->size*coss_f[int(cmd->angle)];
 	cmd->ypos += cmd->size*sins_f[int(cmd->angle)];
 }
 
-static void lsysf_draw_f(struct lsys_turtle_state_fp *cmd)
+static void lsysf_draw_f(lsys_turtle_state_fp *cmd)
 {
 	int lastx = int(cmd->xpos);
 	int lasty = int(cmd->ypos);
@@ -252,14 +252,14 @@ static void lsysf_draw_f(struct lsys_turtle_state_fp *cmd)
 	driver_draw_line(lastx, lasty, int(cmd->xpos), int(cmd->ypos), cmd->curcolor);
 }
 
-static void lsysf_draw_c(struct lsys_turtle_state_fp *cmd)
+static void lsysf_draw_c(lsys_turtle_state_fp *cmd)
 {
-	cmd->curcolor = (char)((int(cmd->parm.n)) % g_colors);
+	cmd->curcolor = char(int(cmd->parm.n) % g_colors);
 }
 
-static void lsysf_draw_gt(struct lsys_turtle_state_fp *cmd)
+static void lsysf_draw_gt(lsys_turtle_state_fp *cmd)
 {
-	cmd->curcolor = (char)(cmd->curcolor - cmd->parm.n);
+	cmd->curcolor -= char(cmd->parm.n);
 	cmd->curcolor %= g_colors;
 	if (cmd->curcolor == 0)
 	{
@@ -267,7 +267,7 @@ static void lsysf_draw_gt(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static void lsysf_draw_lt(struct lsys_turtle_state_fp *cmd)
+static void lsysf_draw_lt(lsys_turtle_state_fp *cmd)
 {
 	cmd->curcolor = (char)(cmd->curcolor + cmd->parm.n);
 	cmd->curcolor %= g_colors;
@@ -277,10 +277,10 @@ static void lsysf_draw_lt(struct lsys_turtle_state_fp *cmd)
 	}
 }
 
-static struct lsys_cmd *_fastcall
-find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
+static lsys_cmd *_fastcall
+find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
-	struct lsys_cmd **rulind;
+	lsys_cmd **rulind;
 	int tran;
 
 	if (g_overflow)     /* integer math routines overflowed */
@@ -316,7 +316,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 		}
 		if (!depth || !tran)
 		{
-			if (command->f)
+			if (command->function)
 			{
 				switch (command->ptype)
 				{
@@ -329,7 +329,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 				default:
 					break;
 				}
-				(*command->f)(ts);
+				(*command->function)(ts);
 			}
 			else if (command->ch == '[')
 			{
@@ -365,7 +365,7 @@ find_size(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys
 }
 
 int _fastcall
-lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
+lsysf_find_scale(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
 	float horiz;
 	float vert;
@@ -375,7 +375,7 @@ lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, stru
 	LDBL y_max;
 	LDBL locsize;
 	LDBL locaspect;
-	struct lsys_cmd *fsret;
+	lsys_cmd *fsret;
 
 	locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
 	ts->aspect = locaspect;
@@ -411,10 +411,10 @@ lsysf_find_scale(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, stru
 	return 1;
 }
 
-struct lsys_cmd *_fastcall
-draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsys_cmd **rules, int depth)
+lsys_cmd *_fastcall
+draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
-	struct lsys_cmd **rulind;
+	lsys_cmd **rulind;
 	int tran;
 
 	if (g_overflow)     /* integer math routines overflowed */
@@ -449,7 +449,7 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 		}
 		if (!depth || !tran)
 		{
-			if (command->f)
+			if (command->function)
 			{
 				switch (command->ptype)
 				{
@@ -462,7 +462,7 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 				default:
 					break;
 				}
-				(*command->f)(ts);
+				(*command->function)(ts);
 			}
 			else if (command->ch == '[')
 			{
@@ -498,11 +498,11 @@ draw_lsysf(struct lsys_cmd *command, struct lsys_turtle_state_fp *ts, struct lsy
 	return command;
 }
 
-struct lsys_cmd *
-lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
+lsys_cmd *
+lsysf_size_transform(char *s, lsys_turtle_state_fp *ts)
 {
-	struct lsys_cmd *ret;
-	struct lsys_cmd *doub;
+	lsys_cmd *ret;
+	lsys_cmd *doub;
 	int max = 10;
 	int n = 0;
 	void (*f)(lsys_turtle_state_fp *);
@@ -577,7 +577,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 			num = 3;
 			break;
 		}
-		ret[n].f = f;
+		ret[n].function = f;
 		if (ptype == 4)
 		{
 			ret[n].parm.n = num;
@@ -592,7 +592,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 				ts->stackoflow = true;
 				return NULL;
 			}
-			memcpy(doub, ret, max*sizeof(struct lsys_cmd));
+			memcpy(doub, ret, max*sizeof(lsys_cmd));
 			delete[] ret;
 			ret = doub;
 			max <<= 1;
@@ -600,7 +600,7 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 		s++;
 	}
 	ret[n].ch = 0;
-	ret[n].f = NULL;
+	ret[n].function = NULL;
 	ret[n].parm.n = 0;
 	n++;
 
@@ -611,16 +611,16 @@ lsysf_size_transform(char *s, struct lsys_turtle_state_fp *ts)
 		ts->stackoflow = true;
 		return NULL;
 	}
-	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
+	memcpy(doub, ret, n*sizeof(lsys_cmd));
 	delete[] ret;
 	return doub;
 }
 
-struct lsys_cmd *
-lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
+lsys_cmd *
+lsysf_draw_transform(char *s, lsys_turtle_state_fp *ts)
 {
-	struct lsys_cmd *ret;
-	struct lsys_cmd *doub;
+	lsys_cmd *ret;
+	lsys_cmd *doub;
 	int max = 10;
 	int n = 0;
 	void (*f)(lsys_turtle_state_fp *);
@@ -670,7 +670,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 			num = 3;
 			break;
 		}
-		ret[n].f = (void (*)(struct lsys_turtle_state_fp *))f;
+		ret[n].function = (void (*)(lsys_turtle_state_fp *))f;
 		if (ptype == 4)
 		{
 			ret[n].parm.n = long(num);
@@ -685,7 +685,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 				ts->stackoflow = true;
 				return NULL;
 			}
-			memcpy(doub, ret, max*sizeof(struct lsys_cmd));
+			memcpy(doub, ret, max*sizeof(lsys_cmd));
 			delete[] ret;
 			ret = doub;
 			max <<= 1;
@@ -693,7 +693,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 		s++;
 	}
 	ret[n].ch = 0;
-	ret[n].f = NULL;
+	ret[n].function = NULL;
 	ret[n].parm.n = 0;
 	n++;
 
@@ -704,7 +704,7 @@ lsysf_draw_transform(char *s, struct lsys_turtle_state_fp *ts)
 		ts->stackoflow = true;
 		return NULL;
 	}
-	memcpy(doub, ret, n*sizeof(struct lsys_cmd));
+	memcpy(doub, ret, n*sizeof(lsys_cmd));
 	delete[] ret;
 	return doub;
 }

@@ -189,7 +189,7 @@ void _fastcall history_save_info()
 	current.x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	current.y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
 	current.stdcalcmode = g_user_standard_calculation_mode;
-	current.three_pass = (char) g_three_pass ? 1 : 0;
+	current.three_pass = g_three_pass ? 1 : 0;
 	current.stop_pass = short(g_stop_pass);
 	current.distance_test = g_distance_test;
 	current.function_index[0] = BYTE(g_function_index[0]);
@@ -246,7 +246,7 @@ void _fastcall history_save_info()
 	current.ox3rd = g_orbit_x_3rd;
 	current.oy3rd = g_orbit_y_3rd;
 	current.keep_screen_coordinates = g_keep_screen_coords;
-	current.draw_mode = (char) g_orbit_draw_mode;
+	current.draw_mode = char(g_orbit_draw_mode);
 	memcpy(current.dac, g_dac_box, 256*3);
 	switch (g_fractal_type)
 	{
