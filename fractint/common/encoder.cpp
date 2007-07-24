@@ -571,16 +571,16 @@ int encoder()
 				esave_info.parameter_range_y     = g_parameter_range_y;
 				esave_info.opx             = g_parameter_offset_x;
 				esave_info.opy             = g_parameter_offset_y;
-				esave_info.odpx            = (short)g_discrete_parameter_offset_x;
-				esave_info.odpy            = (short)g_discrete_parameter_offset_y;
-				esave_info.px              = (short) g_px;
-				esave_info.py              = (short) g_py;
-				esave_info.sxoffs          = (short)g_sx_offset;
-				esave_info.syoffs          = (short)g_sy_offset;
-				esave_info.x_dots           = (short)g_x_dots;
-				esave_info.y_dots           = (short)g_y_dots;
-				esave_info.gridsz          = (short)g_grid_size;
-				esave_info.evolving = (short) g_evolving_flags;
+				esave_info.odpx            = short(g_discrete_parameter_offset_x);
+				esave_info.odpy            = short(g_discrete_parameter_offset_y);
+				esave_info.px              = short(g_px);
+				esave_info.py              = short(g_py);
+				esave_info.sxoffs          = short(g_sx_offset);
+				esave_info.syoffs          = short(g_sy_offset);
+				esave_info.x_dots           = short(g_x_dots);
+				esave_info.y_dots           = short(g_y_dots);
+				esave_info.gridsz          = short(g_grid_size);
+				esave_info.evolving = short(g_evolving_flags);
 				esave_info.this_generation_random_seed  = (unsigned short)g_this_generation_random_seed;
 				esave_info.fiddle_factor    = g_fiddle_factor;
 				esave_info.ecount          = short(g_grid_size*g_grid_size); /* flag for done */
@@ -592,26 +592,26 @@ int encoder()
 				esave_info.parameter_range_y     = resume_e_info.parameter_range_y;
 				esave_info.opx             = resume_e_info.opx;
 				esave_info.opy             = resume_e_info.opy;
-				esave_info.odpx            = (short)resume_e_info.odpx;
-				esave_info.odpy            = (short)resume_e_info.odpy;
-				esave_info.px              = (short)resume_e_info.px;
-				esave_info.py              = (short)resume_e_info.py;
-				esave_info.sxoffs          = (short)resume_e_info.sxoffs;
-				esave_info.syoffs          = (short)resume_e_info.syoffs;
-				esave_info.x_dots           = (short)resume_e_info.x_dots;
-				esave_info.y_dots           = (short)resume_e_info.y_dots;
-				esave_info.gridsz          = (short)resume_e_info.gridsz;
-				esave_info.evolving        = (short) resume_e_info.evolving;
+				esave_info.odpx            = short(resume_e_info.odpx);
+				esave_info.odpy            = short(resume_e_info.odpy);
+				esave_info.px              = short(resume_e_info.px);
+				esave_info.py              = short(resume_e_info.py);
+				esave_info.sxoffs          = short(resume_e_info.sxoffs);
+				esave_info.syoffs          = short(resume_e_info.syoffs);
+				esave_info.x_dots           = short(resume_e_info.x_dots);
+				esave_info.y_dots           = short(resume_e_info.y_dots);
+				esave_info.gridsz          = short(resume_e_info.gridsz);
+				esave_info.evolving        = short(resume_e_info.evolving);
 				esave_info.this_generation_random_seed  = (unsigned short)resume_e_info.this_generation_random_seed;
 				esave_info.fiddle_factor    = resume_e_info.fiddle_factor;
 				esave_info.ecount          = resume_e_info.ecount;
 			}
 			for (i = 0; i < NUMGENES; i++)
 			{
-				esave_info.mutate[i] = (short)g_genes[i].mutate;
+				esave_info.mutate[i] = short(g_genes[i].mutate);
 			}
 
-			for (i = 0; i < sizeof(esave_info.future)/sizeof(short); i++)
+			for (i = 0; i < NUM_OF(esave_info.future); i++)
 			{
 				esave_info.future[i] = 0;
 			}
@@ -639,9 +639,9 @@ int encoder()
 			osave_info.oymax     = g_orbit_y_max;
 			osave_info.ox3rd     = g_orbit_x_3rd;
 			osave_info.oy3rd     = g_orbit_y_3rd;
-			osave_info.keep_scrn_coords = (short) g_keep_screen_coords ? 1 : 0;
+			osave_info.keep_scrn_coords = short(g_keep_screen_coords) ? 1 : 0;
 			osave_info.drawmode  = (char) g_orbit_draw_mode;
-			for (i = 0; i < sizeof(osave_info.future)/sizeof(short); i++)
+			for (i = 0; i < NUM_OF(osave_info.future); i++)
 			{
 				osave_info.future[i] = 0;
 			}
@@ -753,13 +753,13 @@ static int _fastcall store_item_name(const char *nameptr)
 	strcpy(fsave_info.form_name, nameptr);
 	if (fractal_type_formula(g_fractal_type))
 	{
-		fsave_info.uses_p1 = (short) g_formula_state.uses_p1();
-		fsave_info.uses_p2 = (short) g_formula_state.uses_p2();
-		fsave_info.uses_p3 = (short) g_formula_state.uses_p3();
-		fsave_info.uses_is_mand = (short) g_formula_state.uses_is_mand() ? 1 : 0;
-		fsave_info.ismand = (short) g_is_mand ? 1 : 0;
-		fsave_info.uses_p4 = (short) g_formula_state.uses_p4();
-		fsave_info.uses_p5 = (short) g_formula_state.uses_p5();
+		fsave_info.uses_p1 = short(g_formula_state.uses_p1());
+		fsave_info.uses_p2 = short(g_formula_state.uses_p2());
+		fsave_info.uses_p3 = short(g_formula_state.uses_p3());
+		fsave_info.uses_is_mand = g_formula_state.uses_is_mand() ? 1 : 0;
+		fsave_info.ismand = g_is_mand ? 1 : 0;
+		fsave_info.uses_p4 = short(g_formula_state.uses_p4());
+		fsave_info.uses_p5 = short(g_formula_state.uses_p5());
 	}
 	else
 	{
@@ -771,7 +771,7 @@ static int _fastcall store_item_name(const char *nameptr)
 		fsave_info.uses_p4 = 0;
 		fsave_info.uses_p5 = 0;
 	}
-	for (i = 0; i < sizeof(fsave_info.future)/sizeof(short); i++)
+	for (i = 0; i < NUM_OF(fsave_info.future); i++)
 	{
 		fsave_info.future[i] = 0;
 	}
@@ -791,9 +791,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	strcpy(save_info->info_id, INFO_ID);
 	save_info->version = FRACTAL_INFO_VERSION;
 
-	save_info->iterationsold = (g_max_iteration <= SHRT_MAX) ? (short) g_max_iteration : (short) SHRT_MAX;
+	save_info->iterationsold = (g_max_iteration <= SHRT_MAX) ? short(g_max_iteration) : short(SHRT_MAX);
 
-	save_info->fractal_type = (short) g_fractal_type;
+	save_info->fractal_type = short(g_fractal_type);
 	save_info->x_min = g_escape_time_state.m_grid_fp.x_min();
 	save_info->x_max = g_escape_time_state.m_grid_fp.x_max();
 	save_info->y_min = g_escape_time_state.m_grid_fp.y_min();
@@ -805,9 +805,9 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->videomodecx = 0;
 	save_info->videomodedx = 0;
 	save_info->dotmode = short(g_video_entry.dotmode % 100);
-	save_info->x_dots = (short) g_video_entry.x_dots;
-	save_info->y_dots = (short) g_video_entry.y_dots;
-	save_info->colors = (short) g_video_entry.colors;
+	save_info->x_dots = short(g_video_entry.x_dots);
+	save_info->y_dots = short(g_video_entry.y_dots);
+	save_info->colors = short(g_video_entry.colors);
 	save_info->parm3 = 0;        /* pre version == 7 fields */
 	save_info->parm4 = 0;
 	save_info->dparm3 = g_parameters[2];
@@ -818,105 +818,105 @@ static void _fastcall setup_save_info(struct fractal_info *save_info)
 	save_info->dparm8 = g_parameters[7];
 	save_info->dparm9 = g_parameters[8];
 	save_info->dparm10 = g_parameters[9];
-	save_info->fill_color = (short) g_fill_color;
+	save_info->fill_color = short(g_fill_color);
 	save_info->potential[0] = float(g_potential_parameter[0]);
 	save_info->potential[1] = float(g_potential_parameter[1]);
 	save_info->potential[2] = float(g_potential_parameter[2]);
-	save_info->random_flag = (short) g_use_fixed_random_seed ? 1 : 0;
-	save_info->random_seed = (short) g_random_seed;
-	save_info->inside = (short) g_inside;
-	save_info->logmapold = (g_log_palette_mode <= SHRT_MAX) ? (short) g_log_palette_mode : (short) SHRT_MAX;
+	save_info->random_flag = short(g_use_fixed_random_seed) ? 1 : 0;
+	save_info->random_seed = short(g_random_seed);
+	save_info->inside = short(g_inside);
+	save_info->logmapold = (g_log_palette_mode <= SHRT_MAX) ? short(g_log_palette_mode) : short(SHRT_MAX);
 	save_info->invert[0] = float(g_inversion[0]);
 	save_info->invert[1] = float(g_inversion[1]);
 	save_info->invert[2] = float(g_inversion[2]);
-	save_info->decomposition[0] = (short) g_decomposition[0];
-	save_info->biomorph = (short) g_user_biomorph;
-	save_info->symmetry = (short) g_force_symmetry;
+	save_info->decomposition[0] = short(g_decomposition[0]);
+	save_info->biomorph = short(g_user_biomorph);
+	save_info->symmetry = short(g_force_symmetry);
 	g_3d_state.get_raytrace_parameters(&save_info->init_3d[0]);
-	save_info->previewfactor = (short) g_3d_state.preview_factor();
-	save_info->xtrans = (short) g_3d_state.x_trans();
-	save_info->ytrans = (short) g_3d_state.y_trans();
-	save_info->red_crop_left = (short) g_3d_state.red().crop_left();
-	save_info->red_crop_right = (short) g_3d_state.red().crop_right();
-	save_info->blue_crop_left = (short) g_3d_state.blue().crop_left();
-	save_info->blue_crop_right = (short) g_3d_state.blue().crop_right();
-	save_info->red_bright = (short) g_3d_state.red().bright();
-	save_info->blue_bright = (short) g_3d_state.blue().bright();
-	save_info->xadjust = (short) g_3d_state.x_adjust();
-	save_info->yadjust = (short) g_3d_state.y_adjust();
-	save_info->eyeseparation = (short) g_3d_state.eye_separation();
-	save_info->glassestype = (short) g_3d_state.glasses_type();
-	save_info->outside = (short) g_outside;
+	save_info->previewfactor = short(g_3d_state.preview_factor());
+	save_info->xtrans = short(g_3d_state.x_trans());
+	save_info->ytrans = short(g_3d_state.y_trans());
+	save_info->red_crop_left = short(g_3d_state.red().crop_left());
+	save_info->red_crop_right = short(g_3d_state.red().crop_right());
+	save_info->blue_crop_left = short(g_3d_state.blue().crop_left());
+	save_info->blue_crop_right = short(g_3d_state.blue().crop_right());
+	save_info->red_bright = short(g_3d_state.red().bright());
+	save_info->blue_bright = short(g_3d_state.blue().bright());
+	save_info->xadjust = short(g_3d_state.x_adjust());
+	save_info->yadjust = short(g_3d_state.y_adjust());
+	save_info->eyeseparation = short(g_3d_state.eye_separation());
+	save_info->glassestype = short(g_3d_state.glasses_type());
+	save_info->outside = short(g_outside);
 	save_info->x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	save_info->y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
-	save_info->calculation_status = (short) g_calculation_status;
+	save_info->calculation_status = short(g_calculation_status);
 	save_info->stdcalcmode = (char) ((g_three_pass && g_standard_calculation_mode == '3') ?
 		127 : g_standard_calculation_mode);
-	save_info->distestold = (g_distance_test <= 32000) ? (short) g_distance_test : 32000;
+	save_info->distestold = (g_distance_test <= 32000) ? short(g_distance_test) : 32000;
 	save_info->float_flag = g_float_flag ? 1 : 0;
-	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? (short) g_bail_out : 0;
+	save_info->bailoutold = (g_bail_out >= 4 && g_bail_out <= 32000) ? short(g_bail_out) : 0;
 
 	save_info->calculation_time = g_calculation_time;
 	save_info->function_index[0] = BYTE(g_function_index[0]);
 	save_info->function_index[1] = BYTE(g_function_index[1]);
 	save_info->function_index[2] = BYTE(g_function_index[2]);
 	save_info->function_index[3] = BYTE(g_function_index[3]);
-	save_info->finattract = (short) g_finite_attractor;
+	save_info->finattract = short(g_finite_attractor);
 	save_info->initial_orbit_z[0] = g_initial_orbit_z.x;
 	save_info->initial_orbit_z[1] = g_initial_orbit_z.y;
 	save_info->use_initial_orbit_z = char(g_use_initial_orbit_z);
-	save_info->periodicity = (short) g_periodicity_check;
-	save_info->potential_16bit = (short) g_disk_16bit ? 1 : 0;
+	save_info->periodicity = short(g_periodicity_check);
+	save_info->potential_16bit = short(g_disk_16bit) ? 1 : 0;
 	save_info->faspectratio = g_final_aspect_ratio;
 	save_info->system = 1;
 
-	save_info->release = check_back() ? (short) min(g_save_release, g_release) : (short) g_release;
+	save_info->release = check_back() ? short(min(g_save_release, g_release)) : short(g_release);
 
-	save_info->flag3d = (short) g_display_3d;
-	save_info->ambient = (short) g_3d_state.ambient();
-	save_info->randomize = (short) g_3d_state.randomize_colors();
-	save_info->haze = (short) g_3d_state.haze();
-	save_info->transparent[0] = (short) g_3d_state.transparent0();
-	save_info->transparent[1] = (short) g_3d_state.transparent1();
-	save_info->rotate_lo = (short) g_rotate_lo;
-	save_info->rotate_hi = (short) g_rotate_hi;
-	save_info->distance_test_width = (short) g_distance_test_width;
+	save_info->flag3d = short(g_display_3d);
+	save_info->ambient = short(g_3d_state.ambient());
+	save_info->randomize = short(g_3d_state.randomize_colors());
+	save_info->haze = short(g_3d_state.haze());
+	save_info->transparent[0] = short(g_3d_state.transparent0());
+	save_info->transparent[1] = short(g_3d_state.transparent1());
+	save_info->rotate_lo = short(g_rotate_lo);
+	save_info->rotate_hi = short(g_rotate_hi);
+	save_info->distance_test_width = short(g_distance_test_width);
 	save_info->mxmaxfp = g_m_x_max_fp;
 	save_info->mxminfp = g_m_x_min_fp;
 	save_info->mymaxfp = g_m_y_max_fp;
 	save_info->myminfp = g_m_y_min_fp;
-	save_info->zdots = (short) g_z_dots;
+	save_info->zdots = short(g_z_dots);
 	save_info->originfp = g_origin_fp;
 	save_info->depthfp = g_depth_fp;
 	save_info->heightfp = g_height_fp;
 	save_info->widthfp = g_width_fp;
 	save_info->screen_distance_fp = g_screen_distance_fp;
 	save_info->eyesfp = g_eyes_fp;
-	save_info->orbittype = (short) g_new_orbit_type;
-	save_info->juli3Dmode = (short) g_juli_3d_mode;
+	save_info->orbittype = short(g_new_orbit_type);
+	save_info->juli3Dmode = short(g_juli_3d_mode);
 	save_info->max_fn = char(g_formula_state.max_fn());
 	save_info->inversejulia = short((g_major_method << 8) + g_minor_method);      /* MVS */
 	save_info->bail_out = g_bail_out;
-	save_info->bailoutest = (short) g_bail_out_test;
+	save_info->bailoutest = short(g_bail_out_test);
 	save_info->iterations = g_max_iteration;
-	save_info->bflength = (short) g_bn_length;
-	save_info->bf_math = (short) g_bf_math;
-	save_info->old_demm_colors = (short) g_old_demm_colors ? 1 : 0;
+	save_info->bflength = short(g_bn_length);
+	save_info->bf_math = short(g_bf_math);
+	save_info->old_demm_colors = short(g_old_demm_colors) ? 1 : 0;
 	save_info->logmap = g_log_palette_mode;
 	save_info->distance_test = g_distance_test;
 	save_info->dinvert[0] = g_inversion[0];
 	save_info->dinvert[1] = g_inversion[1];
 	save_info->dinvert[2] = g_inversion[2];
-	save_info->logcalc = (short) g_log_dynamic_calculate;
-	save_info->stop_pass = (short) g_stop_pass;
+	save_info->logcalc = short(g_log_dynamic_calculate);
+	save_info->stop_pass = short(g_stop_pass);
 	save_info->quick_calculate = g_quick_calculate ? 1 : 0;
 	save_info->proximity = g_proximity;
-	save_info->no_bof = (short) g_no_bof ? 1 : 0;
+	save_info->no_bof = short(g_no_bof) ? 1 : 0;
 	save_info->orbit_interval = g_orbit_interval;
-	save_info->orbit_delay = (short) g_orbit_delay;
+	save_info->orbit_delay = short(g_orbit_delay);
 	save_info->math_tolerance[0] = g_math_tolerance[0];
 	save_info->math_tolerance[1] = g_math_tolerance[1];
-	for (i = 0; i < sizeof(save_info->future)/sizeof(short); i++)
+	for (i = 0; i < NUM_OF(save_info->future); i++)
 	{
 		save_info->future[i] = 0;
 	}

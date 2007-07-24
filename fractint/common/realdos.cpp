@@ -2022,8 +2022,8 @@ void load_fractint_config()
 			vident.comment[25] = 0;
 			vident.keynum = keynum;
 			vident.dotmode = true_color_bits*1000 + textsafe2*100 + dotmode;
-			vident.x_dots = (short)x_dots;
-			vident.y_dots = (short)y_dots;
+			vident.x_dots = short(x_dots);
+			vident.y_dots = short(y_dots);
 			vident.colors = colors;
 
 			/* if valid, add to supported modes */

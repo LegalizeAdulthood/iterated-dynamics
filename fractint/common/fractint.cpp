@@ -275,7 +275,7 @@ void FractInt::Restart(int argc, char *argv[], bool &screen_stacked)
 	g_too_small = 6;
 	g_cross_hair_box_size   = 3;
 	g_browse_state.set_mask("*.gif");
-	g_browse_state.set_name("            ");
+	g_browse_state.set_name("");
 	g_name_stack_ptr = -1; /* init loaded files stack */
 
 	g_evolving_flags = EVOLVE_NONE;
@@ -726,7 +726,7 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 		out = (*(int (*)()) engine)();
 		break;
 	case TIMER_DECODER:
-		out = int(decoder((short) va_arg(arg_marker, int))); /* not indirect, safer with overlays */
+		out = int(decoder(short(va_arg(arg_marker, int)))); /* not indirect, safer with overlays */
 		break;
 	case TIMER_ENCODER:
 		out = encoder();            /* not indirect, safer with overlays */
