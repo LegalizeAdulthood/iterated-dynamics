@@ -166,7 +166,7 @@ short decoder(short linewidth)
 
 	/* Initialize for decoding a new image... */
 
-	size = (short) get_byte();
+	size = short(get_byte());
 	if (size < 0)
 	{
 		return size;
@@ -401,7 +401,7 @@ static short get_next_code()
 
 			/* Out of bytes in current g_block, so read next g_block */
 			pbytes = byte_buff;
-			navail_bytes = (short) get_byte();
+			navail_bytes = short(get_byte());
 			if (navail_bytes < 0)
 			{
 				return navail_bytes;
@@ -424,7 +424,7 @@ static short get_next_code()
 
 			/* Out of bytes in current g_block, so read next g_block */
 			pbytes = byte_buff;
-			navail_bytes = (short) get_byte();
+			navail_bytes = short(get_byte());
 			if (navail_bytes < 0)
 			{
 				return navail_bytes;

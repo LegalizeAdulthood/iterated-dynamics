@@ -1103,9 +1103,9 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 	info->videomodecx = 0;
 	info->videomodedx = 0;
 	info->dotmode = 0;
-	info->x_dots = (short)g_file_x_dots;
-	info->y_dots = (short)g_file_y_dots;
-	info->colors = (short)g_file_colors;
+	info->x_dots = short(g_file_x_dots);
+	info->y_dots = short(g_file_y_dots);
+	info->colors = short(g_file_colors);
 	info->version = 0; /* this forces lots more init at calling end too */
 
 	/* zero means we won */

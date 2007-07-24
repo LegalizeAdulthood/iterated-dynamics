@@ -237,7 +237,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	}
 
 	memorysize = long(newcolsize)*newrowsize + s_header_length;
-	i = (short) memorysize & (BLOCK_LEN-1);
+	i = memorysize & (BLOCK_LEN-1);
 	if (i != 0)
 	{
 		memorysize += BLOCK_LEN - i;
@@ -379,7 +379,7 @@ int disk_read(int col, int row)
 		return 0;
 	}
 	offset = s_cur_row_base + col;
-	col_subscr = (short) offset & (BLOCK_LEN-1); /* offset within cache entry */
+	col_subscr = offset & (BLOCK_LEN-1); /* offset within cache entry */
 	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) /* same entry as last ref? */
 	{
 		find_load_cache(offset & (0L-BLOCK_LEN));
@@ -442,7 +442,7 @@ void disk_write(int col, int row, int color)
 		return;
 	}
 	offset = s_cur_row_base + col;
-	col_subscr = (short) offset & (BLOCK_LEN-1);
+	col_subscr = offset & (BLOCK_LEN-1);
 	if (s_cur_offset != (offset & (0L-BLOCK_LEN))) /* same entry as last ref? */
 	{
 		find_load_cache(offset & (0L-BLOCK_LEN));
