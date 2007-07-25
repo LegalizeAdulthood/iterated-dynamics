@@ -137,5 +137,4 @@ Replace homebrew bignum/bigflt with GNU GMP library and other layers:
 
 == Eliminate sstools.ini processing
 
-== Eliminate fractint.cfg processing
-
+== Use gSOAP toolkit for XML web services
