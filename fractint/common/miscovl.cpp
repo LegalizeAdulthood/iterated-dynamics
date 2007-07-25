@@ -55,7 +55,6 @@ static void put_filename(const char *keyword, const char *fname);
 static int check_modekey(int curkey, int choice);
 #endif
 static int entcompare(const void *p1, const void *p2);
-static void update_fractint_cfg();
 static void strip_zeros(char *buf);
 
 char par_comment[4][MAX_COMMENT];
@@ -2215,12 +2214,11 @@ void edit_text_colors()
 	}
 }
 
-static int *entsptr;
-static int modes_changed;
+static const int *s_entries;
 
 int select_video_mode(int curmode)
 {
-	int entnums[MAXVIDEOMODES];
+	int entries[MAXVIDEOMODES];
 	int attributes[MAXVIDEOMODES];
 	int i;
 	int k;
@@ -2228,12 +2226,12 @@ int select_video_mode(int curmode)
 
 	for (i = 0; i < g_video_table_len; ++i)  /* init tables */
 	{
-		entnums[i] = i;
+		entries[i] = i;
 		attributes[i] = 1;
 	}
-	entsptr = entnums;           /* for indirectly called subroutines */
+	s_entries = entries;           /* for indirectly called subroutines */
 
-	qsort(entnums, g_video_table_len, sizeof(entnums[0]), entcompare); /* sort modes */
+	qsort(entries, g_video_table_len, sizeof(entries[0]), entcompare); /* sort modes */
 
 	/* pick default mode */
 	if (curmode < 0)
@@ -2247,9 +2245,9 @@ int select_video_mode(int curmode)
 #ifndef XFRACT
 	for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
 	{
-		if (g_video_entry.colors      == g_video_table[entnums[i]].colors &&
+		if (g_video_entry.colors      == g_video_table[entries[i]].colors &&
 			(curmode < 0 ||
-			memcmp((char *) &g_video_entry, (char *) &g_video_table[entnums[i]], sizeof(g_video_entry)) == 0))
+			memcmp((char *) &g_video_entry, (char *) &g_video_table[entries[i]], sizeof(g_video_entry)) == 0))
 		{
 			break;
 		}
@@ -2260,7 +2258,6 @@ int select_video_mode(int curmode)
 	}
 
 	bool save_tab_display_enabled = g_tab_display_enabled;
-	modes_changed = 0;
 	g_tab_display_enabled = false;
 	i = full_screen_choice_help(HELPVIDSEL, CHOICE_HELP,
 		"Select Video Mode",
@@ -2270,17 +2267,10 @@ int select_video_mode(int curmode)
 	g_tab_display_enabled = save_tab_display_enabled;
 	if (i == -1)
 	{
-		/* update fractint.cfg for new key assignments */
-		if (modes_changed && g_bad_config == 0 &&
-			stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER | STOPMSG_INFO_ONLY,
-				"Save new function key assignments or cancel changes?") == 0)
-		{
-			update_fractint_cfg();
-		}
 		return -1;
 	}
 	/* picked by function key or ENTER key */
-	i = (i < 0) ? (-1 - i) : entnums[i];
+	i = (i < 0) ? (-1 - i) : entries[i];
 #endif
 	/* the selected entry now in g_video_entry */
 	memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
@@ -2310,12 +2300,6 @@ int select_video_mode(int curmode)
 		ret = 1400; /* special value for check_video_mode_key */
 	}
 
-	/* update fractint.cfg for new key assignments */
-	if (modes_changed && g_bad_config == 0)
-	{
-		update_fractint_cfg();
-	}
-
 	return ret;
 }
 
@@ -2323,7 +2307,7 @@ void format_vid_table(int choice, char *buf)
 {
 	char local_buf[81];
 	char kname[5];
-	memcpy((char *)&g_video_entry, (char *)&g_video_table[entsptr[choice]],
+	memcpy((char *)&g_video_entry, (char *)&g_video_table[s_entries[choice]],
 		sizeof(g_video_entry));
 	video_mode_key_name(g_video_entry.keynum, kname);
 	sprintf(buf, "%-5s %-25s %5d %5d ",  /* 44 chars */
@@ -2346,44 +2330,35 @@ static int check_modekey(int curkey, int choice)
 	{
 		return -1-i;
 	}
-	i = entsptr[choice];
+	i = s_entries[choice];
 	ret = 0;
 	if ((curkey == '-' || curkey == '+')
 		&& (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= FIK_SF1))
 	{
-		if (g_bad_config)
+		if (curkey == '-')  /* deassign key? */
 		{
-			stop_message(0, "Missing or bad FRACTINT.CFG file. Can't reassign keys.");
-		}
-		else
-		{
-			if (curkey == '-')  /* deassign key? */
+			if (g_video_table[i].keynum >= FIK_SF1)
 			{
-				if (g_video_table[i].keynum >= FIK_SF1)
-				{
-					g_video_table[i].keynum = 0;
-					modes_changed = 1;
-				}
+				g_video_table[i].keynum = 0;
 			}
-			else  /* assign key? */
+		}
+		else  /* assign key? */
+		{
+			j = getakeynohelp();
+			if (j >= FIK_SF1 && j <= FIK_ALT_F10)
 			{
-				j = getakeynohelp();
-				if (j >= FIK_SF1 && j <= FIK_ALT_F10)
+				for (k = 0; k < g_video_table_len; ++k)
 				{
-					for (k = 0; k < g_video_table_len; ++k)
+					if (g_video_table[k].keynum == j)
 					{
-						if (g_video_table[k].keynum == j)
-						{
-							g_video_table[k].keynum = 0;
-							ret = -1; /* force redisplay */
-							}
-						}
-						g_video_table[i].keynum = j;
-						modes_changed = 1;
+						g_video_table[k].keynum = 0;
+						ret = -1; /* force redisplay */
 					}
 				}
+				g_video_table[i].keynum = j;
 			}
 		}
+	}
 	return ret;
 }
 #endif
@@ -2407,109 +2382,6 @@ static int entcompare(const void *p1, const void *p2)
 		return -1;
 	}
 	return 1;
-}
-
-// TODO: revisit this for new driver environment
-static void update_fractint_cfg()
-{
-	return;
-#ifndef XFRACT
-	char cfgname[100];
-	char outname[100];
-	char buf[121];
-	char kname[5];
-	FILE *cfgfile;
-	FILE *outfile;
-	int i;
-	int j;
-	int linenum;
-	int nextlinenum;
-	int nextmode;
-	struct video_info vident;
-
-	find_path("fractint.cfg", cfgname);
-
-	if (access(cfgname, 6))
-	{
-		sprintf(buf, "Can't write %s", cfgname);
-		stop_message(0, buf);
-		return;
-	}
-	strcpy(outname, cfgname);
-	i = int(strlen(outname));
-	while (--i >= 0 && outname[i] != SLASHC)
-	{
-		outname[i] = 0;
-	}
-	strcat(outname, "fractint.tmp");
-	outfile = fopen(outname, "w");
-	if (outfile == NULL)
-	{
-		sprintf(buf, "Can't create %s", outname);
-		stop_message(0, buf);
-		return;
-	}
-	cfgfile = fopen(cfgname, "r");
-
-	linenum = 0;
-	nextmode = 0;
-	nextlinenum = g_cfg_line_nums[0];
-	while (fgets(buf, 120, cfgfile))
-	{
-		int truecolorbits;
-		char colorsbuf[10];
-		++linenum;
-		if (linenum == nextlinenum)  /* replace this line */
-		{
-			memcpy((char *)&vident, (char *)&g_video_table[nextmode],
-					sizeof(g_video_entry));
-			video_mode_key_name(vident.keynum, kname);
-			strcpy(buf, vident.name);
-			i = int(strlen(buf));
-			while (i && buf[i-1] == ' ') /* strip trailing spaces to compress */
-			{
-				--i;
-			}
-			j = i + 5;
-			while (j < 32)  /* tab to column 33 */
-			{
-				buf[i++] = '\t';
-				j += 8;
-			}
-			buf[i] = 0;
-			sprintf(colorsbuf, "%3d", vident.colors);
-			fprintf(outfile, "%-4s,%s,%4x,%4x,%4x,%4x,%4d,%5d,%5d,%s,%s\n",
-				kname,
-				buf,
-				0,
-				0,
-				0,
-				0,
-				0,
-				vident.x_dots,
-				vident.y_dots,
-				colorsbuf,
-				vident.comment);
-			if (++nextmode >= g_video_table_len)
-			{
-				nextlinenum = 32767;
-			}
-			else
-			{
-				nextlinenum = g_cfg_line_nums[nextmode];
-			}
-			}
-		else
-		{
-			fputs(buf, outfile);
-		}
-		}
-
-	fclose(cfgfile);
-	fclose(outfile);
-	unlink(cfgname);         /* success assumed on these lines       */
-	rename(outname, cfgname); /* since we checked earlier with access */
-#endif
 }
 
 /* make_mig() takes a collection of individual GIF images (all

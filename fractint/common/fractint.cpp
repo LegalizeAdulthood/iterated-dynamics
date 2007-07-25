@@ -108,7 +108,6 @@ long    g_attractor_radius_l;               /* finite attractor radius  */
 double  g_attractor_radius_fp;               /* finite attractor radius  */
 int     g_bit_shift;               /* fudgefactor              */
 
-int     g_bad_config = 0;          /* 'fractint.cfg' ok?       */
 bool g_has_inverse = false;
 /* note that integer grid is set when g_integer_fractal && !invert;    */
 /* otherwise the floating point grid is set; never both at once     */
@@ -309,13 +308,6 @@ void FractInt::Restart(int argc, char *argv[], bool &screen_stacked)
 
 	driver_set_for_text();                      /* switch to text mode */
 	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
-
-#ifndef XFRACT
-	if (g_bad_config < 0)                   /* fractint.cfg bad, no msg yet */
-	{
-		bad_fractint_cfg_msg();
-	}
-#endif
 
 	g_max_colors = 256;
 	g_max_input_counter = 80;				/* check the keyboard this often */
@@ -617,8 +609,6 @@ void FractInt::Initialize(int argc, char **argv)
 		init_failure("Sorry, I couldn't find any working video drivers for your system\n");
 		exit(-1);
 	}
-	/* load fractint.cfg, match against driver supplied modes */
-	load_fractint_config();
 	init_help();
 }
 
