@@ -12,7 +12,7 @@ public:
 	virtual ~Newton()
 	{
 	}
-	int setup();
+	bool setup();
 	virtual int orbit();
 
 private:
@@ -23,14 +23,14 @@ private:
 class NewtonComplex
 {
 public:
-	int setup();
+	bool setup();
 	int orbit();
 };
 
 extern int newton2_orbit();
 extern int newton_orbit_mpc();
-extern int newton_setup();
-extern int complex_newton_setup();
+extern bool newton_setup();
+extern bool complex_newton_setup();
 extern int complex_newton();
 
 #endif

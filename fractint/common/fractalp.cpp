@@ -1605,7 +1605,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_SPIDER_FP, SYMMETRY_X_AXIS_NO_PARAMETER,
 		spider_orbit, mandelbrot_per_pixel,
-		mandelbrot_setup_l, standard_fractal,
+		spider_setup_l, standard_fractal,
 		ORBIT_BAILOUT_STANDARD
 	},
 

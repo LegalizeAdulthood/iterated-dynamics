@@ -7,7 +7,7 @@ extern void set_function_parm_defaults();
 extern void backwards_v18();
 extern void backwards_v19();
 extern void backwards_v20();
-extern int check_back();
+extern bool check_back();
 int find_fractal_info(char *, fractal_info *,
 							struct ext_blk_resume_info *,
 							struct ext_blk_formula_info *,

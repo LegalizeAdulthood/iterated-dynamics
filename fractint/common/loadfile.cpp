@@ -1369,13 +1369,13 @@ void backwards_v20()
 	}
 }
 
-int check_back()
+bool check_back()
 {
 	/*
 		put the features that need to save the value in g_save_release for backwards
 		compatibility in this routine
 	*/
-	if (g_fractal_type == FRACTYPE_LYAPUNOV
+	return (g_fractal_type == FRACTYPE_LYAPUNOV
 		|| g_fractal_type == FRACTYPE_FROTHY_BASIN
 		|| g_fractal_type == FRACTYPE_FROTHY_BASIN_FP
 		|| fix_bof()
@@ -1398,11 +1398,7 @@ int check_back()
 		|| (g_fractal_type == FRACTYPE_LAMBDA_FUNC_FP && g_function_index[0] == FUNCTION_EXP && g_save_release <= 2002)
 		|| (fractal_type_julibrot(g_fractal_type)
 			&& (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
-			&& g_save_release <= 2002))
-	{
-		return 1;
-	}
-	return 0;
+			&& g_save_release <= 2002));
 }
 
 static bool fix_period_bof()

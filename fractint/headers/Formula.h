@@ -450,8 +450,8 @@ extern int fFormula();
 extern int formula_orbit();
 extern int bad_formula();
 extern int form_per_pixel();
-extern int formula_setup_fp();
-extern int formula_setup_int();
+extern bool formula_setup_fp();
+extern bool formula_setup_int();
 extern void EndInit();
 
 #endif

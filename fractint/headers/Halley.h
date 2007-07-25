@@ -13,7 +13,7 @@ public:
 	{
 	}
 
-	virtual int setup();
+	virtual bool setup();
 	virtual int orbit();
 	virtual int per_pixel();
 
@@ -25,7 +25,7 @@ private:
 	int bail_out();
 };
 
-extern int halley_setup();
+extern bool halley_setup();
 extern int halley_orbit_fp();
 extern int halley_per_pixel();
 extern int halley_orbit_mpc();

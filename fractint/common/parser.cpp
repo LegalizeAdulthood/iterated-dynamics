@@ -4970,14 +4970,14 @@ int form_per_pixel()
 	return g_formula_state.per_pixel();
 }
 
-int formula_setup_fp()
+bool formula_setup_fp()
 {
-	return g_formula_state.setup_fp() ? 1 : 0;
+	return g_formula_state.setup_fp();
 }
 
-int formula_setup_int()
+bool formula_setup_int()
 {
-	return g_formula_state.setup_int() ? 1 : 0;
+	return g_formula_state.setup_int();
 }
 
 void dStkLodDup()

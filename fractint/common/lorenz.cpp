@@ -286,7 +286,7 @@ static int l_setup_convert_to_screen(l_affine *l_cvt)
 /*   setup functions - put in g_fractal_specific[g_fractal_type].per_image */
 /******************************************************************/
 
-int orbit_3d_setup()
+bool orbit_3d_setup()
 {
 	g_max_count = 0L;
 	s_connect_points = true;
@@ -427,13 +427,13 @@ lrwalk:
 	s_l_adt = multiply(s_l_a, s_l_dt, g_bit_shift);
 	s_l_bdt = multiply(s_l_b, s_l_dt, g_bit_shift);
 	s_l_cdt = multiply(s_l_c, s_l_dt, g_bit_shift);
-	return 1;
+	return true;
 }
 
 #define COSB   s_dx
 #define SINABC s_dy
 
-int orbit_3d_setup_fp()
+bool orbit_3d_setup_fp()
 {
 	g_max_count = 0L;
 	s_connect_points = true;
@@ -628,7 +628,7 @@ rwalk:
 	s_bdt = s_b*s_dt;
 	s_cdt = s_c*s_dt;
 
-	return 1;
+	return true;
 }
 
 /******************************************************************/
@@ -1946,7 +1946,7 @@ static int orbit_3d_calc_fp()
 	return ret;
 }
 
-int dynamic_2d_setup_fp()
+bool dynamic_2d_setup_fp()
 {
 	s_connect_points = false;
 	s_use_euler_approximation = false;
@@ -1979,7 +1979,7 @@ int dynamic_2d_setup_fp()
 	{
 		g_plot_color = plot_color_histogram;
 	}
-	return 1;
+	return true;
 }
 
 /*

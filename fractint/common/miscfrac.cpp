@@ -1403,9 +1403,8 @@ int bifurcation_may()
 	return g_overflow;
 }
 
-int bifurcation_may_setup()
+bool bifurcation_may_setup()
 {
-
 	s_beta = long(g_parameters[2]);
 	if (s_beta < 2)
 	{
@@ -1414,7 +1413,7 @@ int bifurcation_may_setup()
 	g_parameters[2] = double(s_beta);
 
 	timer_engine(g_current_fractal_specific->calculate_type);
-	return 0;
+	return false;
 }
 
 /******************* standalone engine for "popcorn" ********************/
@@ -1512,7 +1511,7 @@ int lyapunov()
 	return g_color;
 }
 
-int lyapunov_setup()
+bool lyapunov_setup()
 {
 	/*
 		This routine sets up the sequence for forcing the s_rate parameter
@@ -1597,7 +1596,7 @@ int lyapunov_setup()
 		g_user_standard_calculation_mode = '1';  /* doesn't use new & breaks orbits */
 		g_standard_calculation_mode = '1';
 	}
-	return 1;
+	return true;
 }
 
 static int lyapunov_cycles(long filter_cycles, double a, double b)
@@ -2072,14 +2071,14 @@ contloop:
 	return 1;
 }
 
-int cellular_setup()
+bool cellular_setup()
 {
 	if (!g_resuming)
 	{
 		g_next_screen_flag = false;
 	}
 	timer_engine(g_current_fractal_specific->calculate_type);
-	return 0;
+	return false;
 }
 
 static void set_cellular_palette()
@@ -2128,7 +2127,7 @@ static void set_froth_palette()
 	}
 }
 
-int froth_setup()
+bool froth_setup()
 {
 	double sin_theta;
 	double cos_theta;
@@ -2246,7 +2245,7 @@ int froth_setup()
 
 		s_frothy_data.l = tmp_l;
 	}
-	return 1;
+	return true;
 }
 
 /* Froth Fractal type */
