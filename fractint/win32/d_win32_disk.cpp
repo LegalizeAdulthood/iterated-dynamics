@@ -110,9 +110,9 @@ Win32DiskDriver::Win32DiskDriver(const char *name, const char *description)
 /*         int     y_dots;          number of dots down the screen       */
 /*         int     colors;         number of g_colors available           */
 
-#define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
-	{ name_, comment_, key_, /* 0, 0, 0, 0, */ mode_, width_, height_, 256 }
-#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 19)
+#define DRIVER_MODE(name_, comment_, key_, width_, height_) \
+	{ name_, comment_, key_, width_, height_, 256 }
+#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_)
 VIDEOINFO Win32DiskDriver::s_modes[] =
 {
 	MODE19("Win32 Disk Video         ", "                        ", 0,  320,  240),
@@ -517,9 +517,6 @@ void Win32DiskDriver::window()
 ;       (SPECIAL "TWEAKED" VGA VALUES:  if AX==BX==CX==0, assume we have a
 ;       genuine VGA or register compatable adapter and program the registers
 ;       directly using the coded value in DX)
-
-; Unix: We ignore ax, bx, cx, dx.  g_dot_mode is the "mode" field in the video
-; table.  We use mode 19 for the X window.
 */
 void Win32DiskDriver::set_video_mode(const VIDEOINFO &mode)
 {
@@ -528,15 +525,12 @@ void Win32DiskDriver::set_video_mode(const VIDEOINFO &mode)
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = false;
 	g_good_mode = 1;
-	if (g_dot_mode != 0)
-	{
-		g_and_color = g_colors-1;
-		g_box_count = 0;
-		g_dac_count = g_cycle_limit;
-		g_got_real_dac = true;
+	g_and_color = g_colors-1;
+	g_box_count = 0;
+	g_dac_count = g_cycle_limit;
+	g_got_real_dac = true;
 
-		read_palette();
-	}
+	read_palette();
 
 	resize();
 
@@ -564,10 +558,8 @@ int Win32DiskDriver::diskp()
 
 int Win32DiskDriver::validate_mode(const VIDEOINFO &mode)
 {
-	/* allow modes of any size with 256 colors and g_dot_mode = 19
-	   ax/bx/cx/dx must be zero. */
-	return (mode.colors == 256) &&
-		(mode.dotmode == 19);
+	/* allow modes of any size */
+	return true;
 }
 
 void Win32DiskDriver::get_truecolor(int x, int y, int &r, int &g, int &b, int &a)

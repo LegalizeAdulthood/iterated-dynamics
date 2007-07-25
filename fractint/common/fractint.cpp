@@ -76,7 +76,6 @@ char *g_fract_dir2 = "";
 	the following variables are out here only so
 	that the calculate_fractal() and assembler routines can get at them easily
 */
-int     g_dot_mode;                /* video access method      */
 int     textsafe2;              /* textsafe override from g_video_table */
 bool g_ok_to_print;              /* 0 if printf() won't work */
 int     g_screen_width;

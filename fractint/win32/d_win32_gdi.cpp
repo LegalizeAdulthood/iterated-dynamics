@@ -88,14 +88,13 @@ private:
 /*         char    comment[26];    Comments (UNTESTED, etc)             */
 /*         int     keynum;         key number used to invoked this mode */
 /*                                 2-10 = F2-10, 11-40 = S, C, A{F1-F10}  */
-/*         int     dotmode;        video access method used by asm code */
 /*         int     x_dots;          number of dots across the screen     */
 /*         int     y_dots;          number of dots down the screen       */
 /*         int     colors;         number of g_colors available           */
 
-#define DRIVER_MODE(name_, comment_, key_, width_, height_, mode_) \
-	{ name_, comment_, key_, /* 0, 0, 0, 0, */ mode_, width_, height_, 256 }
-#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_, 19)
+#define DRIVER_MODE(name_, comment_, key_, width_, height_) \
+	{ name_, comment_, key_, width_, height_, 256 }
+#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_)
 VIDEOINFO GDIDriver::s_modes[] =
 {
 	MODE19("Win32 GDI Video          ", "                        ", 0,  320,  240),
@@ -577,15 +576,12 @@ void GDIDriver::set_video_mode(const VIDEOINFO &mode)
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = false;
 	g_good_mode = 1;
-	if (g_dot_mode != 0)
-	{
-		g_and_color = g_colors-1;
-		g_box_count = 0;
-		g_dac_count = g_cycle_limit;
-		g_got_real_dac = true;
+	g_and_color = g_colors-1;
+	g_box_count = 0;
+	g_dac_count = g_cycle_limit;
+	g_got_real_dac = true;
 
-		driver_read_palette();
-	}
+	driver_read_palette();
 
 	resize();
 	m_plot.clear();
@@ -610,9 +606,7 @@ int GDIDriver::validate_mode(const VIDEOINFO &mode)
 	/* allow modes <= size of screen with 256 colors and g_dot_mode = 19
 	   ax/bx/cx/dx must be zero. */
 	return (mode.x_dots <= width) &&
-		(mode.y_dots <= height) &&
-		(mode.colors == 256) &&
-		(mode.dotmode == 19);
+		(mode.y_dots <= height);
 }
 
 void GDIDriver::pause()

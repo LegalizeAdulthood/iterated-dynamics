@@ -239,11 +239,9 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 		{
 			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
 					sizeof(g_video_entry));
-			g_dot_mode = g_video_entry.dotmode;     /* assembler dot read/write */
 			g_x_dots   = g_video_entry.x_dots;       /* # dots across the screen */
 			g_y_dots   = g_video_entry.y_dots;       /* # dots down the screen   */
 			g_colors  = g_video_entry.colors;      /* # colors available */
-			g_dot_mode  %= 100;
 			g_screen_width  = g_x_dots;
 			g_screen_height  = g_y_dots;
 			g_sx_offset = 0;

@@ -2323,23 +2323,13 @@ void format_vid_table(int choice, char *buf)
 {
 	char local_buf[81];
 	char kname[5];
-	int truecolorbits;
 	memcpy((char *)&g_video_entry, (char *)&g_video_table[entsptr[choice]],
 		sizeof(g_video_entry));
 	video_mode_key_name(g_video_entry.keynum, kname);
 	sprintf(buf, "%-5s %-25s %5d %5d ",  /* 44 chars */
 		kname, g_video_entry.name, g_video_entry.x_dots, g_video_entry.y_dots);
-	truecolorbits = g_video_entry.dotmode/1000;
-	if (truecolorbits == 0)
-	{
-		sprintf(local_buf, "%s%3d",  /* 47 chars */
-			buf, g_video_entry.colors);
-	}
-	else
-	{
-		sprintf(local_buf, "%s%3s",  /* 47 chars */
-			buf, truecolor_bits_text(truecolorbits));
-	}
+	sprintf(local_buf, "%s%3d",  /* 47 chars */
+		buf, g_video_entry.colors);
 	sprintf(buf, "%s %.12s %.12s",  /* 74 chars */
 		local_buf, g_video_entry.driver->name(), g_video_entry.comment);
 }
@@ -2422,6 +2412,7 @@ static int entcompare(const void *p1, const void *p2)
 // TODO: revisit this for new driver environment
 static void update_fractint_cfg()
 {
+	return;
 #ifndef XFRACT
 	char cfgname[100];
 	char outname[100];
@@ -2486,15 +2477,7 @@ static void update_fractint_cfg()
 				j += 8;
 			}
 			buf[i] = 0;
-			truecolorbits = vident.dotmode/1000;
-			if (truecolorbits == 0)
-			{
-				sprintf(colorsbuf, "%3d", vident.colors);
-			}
-			else
-			{
-				strcat(colorsbuf, truecolor_bits_text(truecolorbits));
-			}
+			sprintf(colorsbuf, "%3d", vident.colors);
 			fprintf(outfile, "%-4s,%s,%4x,%4x,%4x,%4x,%4d,%5d,%5d,%s,%s\n",
 				kname,
 				buf,
@@ -2502,7 +2485,7 @@ static void update_fractint_cfg()
 				0,
 				0,
 				0,
-				vident.dotmode % 1000, /* remove true-color flag, keep g_text_safe */
+				0,
 				vident.x_dots,
 				vident.y_dots,
 				colorsbuf,
