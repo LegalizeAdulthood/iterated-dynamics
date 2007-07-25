@@ -16,7 +16,7 @@ static double modulus(const ComplexD &z)
 	return sqr(z.x) + sqr(z.y);
 }
 
-int halley_setup()
+bool halley_setup()
 {
 	return s_halley.setup();
 }
@@ -43,7 +43,7 @@ int halley_orbit_mpc()
 	return 0;
 }
 
-int Halley::setup()
+bool Halley::setup()
 {
 	g_periodicity_check = 0;
 
@@ -63,7 +63,7 @@ int Halley::setup()
 	m_a_plus_1_degree = m_a_plus_1*g_degree;
 
 	g_symmetry = (g_degree % 2) ? SYMMETRY_X_AXIS : SYMMETRY_XY_AXIS;   /* odd, even */
-	return 1;
+	return true;
 }
 
 int Halley::bail_out()

@@ -1316,6 +1316,93 @@ enum EpsilonCrossHooperType
 	HOOPER_POSITIVE_X_AXIS = 2
 };
 
+class ColorModeStarTrail
+{
+public:
+	ColorModeStarTrail()
+	{
+	}
+	~ColorModeStarTrail()
+	{
+	}
+
+	void initialize();
+	void update();
+	void final();
+
+private:
+	double m_tangent_table[16];
+
+	void clamp(double x)
+	{
+		if (x > STARTRAILMAX)
+		{
+			x = STARTRAILMAX;
+		}
+		else if (x < -STARTRAILMAX)
+		{
+			x = -STARTRAILMAX;
+		}
+	}
+};
+
+void ColorModeStarTrail::initialize()
+{
+	for (int i = 0; i < 16; i++)
+	{
+		m_tangent_table[i] = 0.0;
+	}
+	if (g_save_release > 1824)
+	{
+		g_max_iteration = 16;
+	}
+}
+
+void new_z_integer_to_float()
+{
+	g_new_z.x = double(g_new_z_l.x)/g_fudge;
+	g_new_z.y = double(g_new_z_l.y)/g_fudge;
+}
+
+void ColorModeStarTrail::update()
+{
+	if (0 < g_color_iter && g_color_iter < 16)
+	{
+		if (g_integer_fractal)
+		{
+			g_new_z.x = double(g_new_z_l.x)/g_fudge;
+			g_new_z.y = double(g_new_z_l.y)/g_fudge;
+		}
+
+		if (g_save_release > 1824)
+		{
+			clamp(g_new_z.x);
+			clamp(g_new_z.y);
+			g_temp_sqr_x = g_new_z.x*g_new_z.x;
+			g_temp_sqr_y = g_new_z.y*g_new_z.y;
+			g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+			g_old_z = g_new_z;
+		}
+		{
+			int tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
+			m_tangent_table[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
+		}
+	}
+}
+
+void ColorModeStarTrail::final()
+{
+	g_color_iter = 0;
+	for (int i = 1; i < 16; i++)
+	{
+		if (fabs(m_tangent_table[0] - m_tangent_table[i]) < .05)
+		{
+			g_color_iter = i;
+			break;
+		}
+	}
+}
+
 class StandardFractal
 {
 public:
@@ -1733,10 +1820,8 @@ void StandardFractal::colormode_star_trail_update()
 	{
 		if (g_integer_fractal)
 		{
-			g_new_z.x = g_new_z_l.x;
-			g_new_z.x /= g_fudge;
-			g_new_z.y = g_new_z_l.y;
-			g_new_z.y /= g_fudge;
+			g_new_z.x = double(g_new_z_l.x)/g_fudge;
+			g_new_z.y = double(g_new_z_l.y)/g_fudge;
 		}
 
 		if (g_save_release > 1824)
@@ -1799,8 +1884,8 @@ void StandardFractal::colormode_float_modulus_integer_update()
 {
 	if (g_integer_fractal)
 	{
-		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+		g_new_z.x = double(g_new_z_l.x)/g_fudge;
+		g_new_z.y = double(g_new_z_l.y)/g_fudge;
 	}
 	double mag = fmod_test();
 	if (mag < g_proximity)
@@ -1858,8 +1943,8 @@ void StandardFractal::outside_colormode_set_new_z_update()
 {
 	if (g_integer_fractal)
 	{
-		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+		g_new_z.x = double(g_new_z_l.x)/g_fudge;
+		g_new_z.y = double(g_new_z_l.y)/g_fudge;
 	}
 	else if (g_bf_math == BIGNUM)
 	{
@@ -1903,8 +1988,8 @@ void StandardFractal::potential_set_new_z()
 {
 	if (g_integer_fractal)       /* adjust integer fractals */
 	{
-		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+		g_new_z.x = double(g_new_z_l.x)/g_fudge;
+		g_new_z.y = double(g_new_z_l.y)/g_fudge;
 	}
 	else if (g_bf_math == BIGNUM)
 	{
@@ -1981,8 +2066,8 @@ void StandardFractal::outside_colormode_set_new_z_final()
 {
 	if (g_integer_fractal)
 	{
-		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+		g_new_z.x = double(g_new_z_l.x)/g_fudge;
+		g_new_z.y = double(g_new_z_l.y)/g_fudge;
 	}
 	else if (g_bf_math == BIGNUM)
 	{
@@ -2178,8 +2263,8 @@ void StandardFractal::inside_colormode_inverse_tangent_final()
 {
 	if (g_integer_fractal)
 	{
-		g_new_z.x = (double(g_new_z_l.x))/g_fudge;
-		g_new_z.y = (double(g_new_z_l.y))/g_fudge;
+		g_new_z.x = double(g_new_z_l.x)/g_fudge;
+		g_new_z.y = double(g_new_z_l.y)/g_fudge;
 	}
 	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
 }
@@ -3529,7 +3614,7 @@ private:
 
 	int (*m_save_orbit_calc)();  /* function that calculates one orbit */
 	int (*m_save_per_pixel)();  /* once-per-pixel init */
-	int (*m_save_per_image)();  /* once-per-image setup */
+	bool (*m_save_per_image)();  /* once-per-image setup */
 };
 
 PerformWorkList::PerformWorkList()

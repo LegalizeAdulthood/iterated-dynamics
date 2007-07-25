@@ -40,7 +40,7 @@ static int complex_multiply(ComplexD arg1, ComplexD arg2, ComplexD *pz)
 	return 0;
 }
 
-int newton_setup()
+bool newton_setup()
 {
 	return s_newton.setup();
 }
@@ -56,7 +56,7 @@ int newton_orbit_mpc()
 	return 0;
 }
 
-int complex_newton_setup()
+bool complex_newton_setup()
 {
 	return s_newton_complex.setup();
 }
@@ -66,7 +66,7 @@ int complex_newton()
 	return s_newton_complex.orbit();
 }
 
-int Newton::setup()           /* Newton/NewtBasin Routines */
+bool Newton::setup()           /* Newton/NewtBasin Routines */
 {
 	int i;
 #if !defined(XFRACT)
@@ -194,7 +194,7 @@ int Newton::orbit()
 	return 0;
 }
 
-int NewtonComplex::setup()
+bool NewtonComplex::setup()
 {
 	g_threshold = 0.001;
 	g_periodicity_check = 0;
@@ -208,7 +208,7 @@ int NewtonComplex::setup()
 		FPUcplxlog(&croot, &BaseLog);
 		TwoPi = asin(1.0)*4;
 	}
-	return 1;
+	return true;
 }
 
 int NewtonComplex::orbit()

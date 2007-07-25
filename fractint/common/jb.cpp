@@ -94,7 +94,7 @@ static long s_br_ratio;
 static long s_eyes;
 #endif
 
-int julibrot_setup()
+bool julibrot_setup()
 {
 #ifndef XFRACT
 	long origin;

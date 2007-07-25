@@ -30,7 +30,7 @@ long calculate_mandelbrot_fp_asm();
 /*              Setup (once per fractal image) routines                 */
 /* -------------------------------------------------------------------- */
 
-int mandelbrot_setup()           /* Mandelbrot Routine */
+bool mandelbrot_setup()           /* Mandelbrot Routine */
 {
 	if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
@@ -47,10 +47,10 @@ int mandelbrot_setup()           /* Mandelbrot Routine */
 		g_calculate_type = standard_fractal;
 		g_long_parameter = &g_initial_z_l;
 	}
-	return 1;
+	return true;
 }
 
-int julia_setup()            /* Julia Routine */
+bool julia_setup()            /* Julia Routine */
 {
 	if (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
@@ -68,24 +68,24 @@ int julia_setup()            /* Julia Routine */
 		g_long_parameter = &g_parameter_l;
 		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 	}
-	return 1;
+	return true;
 }
 
-int stand_alone_setup()
+bool stand_alone_setup()
 {
 	timer_engine(g_current_fractal_specific->calculate_type);
-	return 0;           /* effectively disable solid-guessing */
+	return false;           /* effectively disable solid-guessing */
 }
 
-int unity_setup()
+bool unity_setup()
 {
 	g_periodicity_check = 0;
 	g_one_fudge = (1L << g_bit_shift);
 	g_two_fudge = g_one_fudge + g_one_fudge;
-	return 1;
+	return true;
 }
 
-int mandelbrot_setup_fp()
+bool mandelbrot_setup_fp()
 {
 	g_bf_math = 0;
 	g_c_exp = int(g_parameters[2]);
@@ -209,7 +209,7 @@ int mandelbrot_setup_fp()
 	default:
 		break;
 	}
-	return 1;
+	return true;
 }
 
 void current_fractal_specific_set_orbit_calc(int (*orbit_calc)(void))
@@ -228,7 +228,7 @@ void current_fractal_specific_set_per_pixel(int (*per_pixel)(void))
 	}
 }
 
-int julia_setup_fp()
+bool julia_setup_fp()
 {
 	g_c_exp = int(g_parameters[2]);
 	g_float_parameter = &g_parameter;
@@ -371,10 +371,10 @@ int julia_setup_fp()
 		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	}
-	return 1;
+	return true;
 }
 
-int mandelbrot_setup_l()
+bool mandelbrot_setup_l()
 {
 	g_c_exp = int(g_parameters[2]);
 	if (g_fractal_type == FRACTYPE_MARKS_MANDELBROT && g_c_exp < 1)
@@ -390,10 +390,6 @@ int mandelbrot_setup_l()
 	if ((g_fractal_type == FRACTYPE_MARKS_MANDELBROT && (g_c_exp & 1)) || g_fractal_type == FRACTYPE_OBSOLETE_MANDELBROT_EXP_L)
 	{
 		g_symmetry = SYMMETRY_X_AXIS_NO_PARAMETER;
-	}
-	if (g_fractal_type == FRACTYPE_SPIDER && g_periodicity_check == 1)
-	{
-		g_periodicity_check = 4;
 	}
 	g_long_parameter = &g_initial_z_l;
 	if (g_fractal_type == FRACTYPE_MANDELBROT_Z_POWER_L)
@@ -428,10 +424,24 @@ int mandelbrot_setup_l()
 			g_symmetry = SYMMETRY_NONE;
 		}
 	}
-	return 1;
+	return true;
 }
 
-int julia_setup_l()
+bool spider_setup_l()
+{
+	if (!mandelbrot_setup_l())
+	{
+		return false;
+	}
+
+	if (g_periodicity_check == 1)
+	{
+		g_periodicity_check = 4;
+	}
+	return true;
+}
+
+bool julia_setup_l()
 {
 	g_c_exp = int(g_parameters[2]);
 	g_long_parameter = &g_parameter_l;
@@ -501,10 +511,10 @@ int julia_setup_l()
 		get_julia_attractor(0.0, 0.0);   /* another attractor? */
 		break;
 	}
-	return 1;
+	return true;
 }
 
-int trig_plus_sqr_setup_l()
+bool trig_plus_sqr_setup_l()
 {
 	int (*per_pixel)(void) = julia_per_pixel;
 	int (*orbit_calc)(void) = trig_plus_sqr_orbit;
@@ -526,7 +536,7 @@ int trig_plus_sqr_setup_l()
 	return julia_setup_l();
 }
 
-int trig_plus_sqr_setup_fp()
+bool trig_plus_sqr_setup_fp()
 {
 	int (*per_pixel)(void) = julia_per_pixel_fp;
 	int (*orbit_calc)(void) = trig_plus_sqr_orbit_fp;
@@ -579,7 +589,7 @@ static int fn_plus_fn_symmetry() /* set symmetry matrix for fn + fn type */
 	return 0;
 }
 
-int trig_plus_trig_setup_l()
+bool trig_plus_trig_setup_l()
 {
 	fn_plus_fn_symmetry();
 	if (g_function_index[1] == FUNCTION_SQR)
@@ -607,7 +617,7 @@ int trig_plus_trig_setup_l()
 	return julia_setup_l();
 }
 
-int trig_plus_trig_setup_fp()
+bool trig_plus_trig_setup_fp()
 {
 	fn_plus_fn_symmetry();
 	if (g_function_index[1] == FUNCTION_SQR)
@@ -634,7 +644,7 @@ int trig_plus_trig_setup_fp()
 	return julia_setup_fp();
 }
 
-int lambda_trig_or_trig_setup()
+bool lambda_trig_or_trig_setup()
 {
 	g_long_parameter = &g_parameter_l;
 	g_float_parameter = &g_parameter;
@@ -647,10 +657,10 @@ int lambda_trig_or_trig_setup()
 		g_symmetry = SYMMETRY_X_AXIS;
 	}
 	get_julia_attractor(0.0, 0.0);      /* an attractor? */
-	return 1;
+	return true;
 }
 
-int julia_trig_or_trig_setup()
+bool julia_trig_or_trig_setup()
 {
 	/* default symmetry is SYMMETRY_X_AXIS */
 	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
@@ -664,10 +674,10 @@ int julia_trig_or_trig_setup()
 		g_symmetry = SYMMETRY_NONE;
 	}
 	get_julia_attractor(0.0, 0.0);      /* an attractor? */
-	return 1;
+	return true;
 }
 
-int mandelbrot_lambda_trig_or_trig_setup()
+bool mandelbrot_lambda_trig_or_trig_setup()
 { /* psuedo */
 	/* default symmetry is SYMMETRY_X_AXIS */
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
@@ -680,10 +690,10 @@ int mandelbrot_lambda_trig_or_trig_setup()
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	return 1;
+	return true;
 }
 
-int mandelbrot_trig_or_trig_setup()
+bool mandelbrot_trig_or_trig_setup()
 {
 	/* default symmetry is SYMMETRY_XY_AXIS_NO_PARAMETER */
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
@@ -692,11 +702,10 @@ int mandelbrot_trig_or_trig_setup()
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	return 1;
+	return true;
 }
 
-
-int z_trig_plus_z_setup()
+bool z_trig_plus_z_setup()
 {
 	/*   static char ZXTrigPlusZSym1[] = */
 	/* fn1 ->  sin   cos    sinh  cosh exp   log   sqr */
@@ -783,7 +792,7 @@ int z_trig_plus_z_setup()
 	return julia_setup_fp();
 }
 
-int lambda_trig_setup()
+bool lambda_trig_setup()
 {
 	bool is_integer = (g_current_fractal_specific->isinteger != 0);
 	int (*orbit_calc)(void) = is_integer ? lambda_trig_orbit : lambda_trig_orbit_fp;
@@ -819,7 +828,7 @@ int lambda_trig_setup()
 	return is_integer ? julia_setup_l() : julia_setup_fp();
 }
 
-int julia_fn_plus_z_squared_setup()
+bool julia_fn_plus_z_squared_setup()
 {
 	/*   static char fnpluszsqrd[] = */
 	/* fn1 ->  sin   cos    sinh  cosh   sqr    exp   log  */
@@ -838,7 +847,7 @@ int julia_fn_plus_z_squared_setup()
 	return g_current_fractal_specific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
-int sqr_trig_setup()
+bool sqr_trig_setup()
 {
 	/*   static char SqrTrigSym[] = */
 	/* fn1 ->  sin    cos    sinh   cosh   sqr    exp   log  */
@@ -854,7 +863,7 @@ int sqr_trig_setup()
 	return g_current_fractal_specific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
-int fn_fn_setup()
+bool fn_fn_setup()
 {
 	static SymmetryType fnxfn[7][7] =
 	{/* fn2 ->sin     cos    sinh    cosh  exp    log    sqr */
@@ -897,7 +906,7 @@ int fn_fn_setup()
 	return g_current_fractal_specific->isinteger ? julia_setup_l() : julia_setup_fp();
 }
 
-int mandelbrot_trig_setup()
+bool mandelbrot_trig_setup()
 {
 	bool is_integer = (g_current_fractal_specific->isinteger != 0);
 	int (*orbit_calc)(void) = is_integer ? lambda_trig_orbit : lambda_trig_orbit_fp;
@@ -927,7 +936,7 @@ int mandelbrot_trig_setup()
 	return is_integer ? mandelbrot_setup_l() : mandelbrot_setup_fp();
 }
 
-int marks_julia_setup()
+bool marks_julia_setup()
 {
 #if !defined(XFRACT)
 	if (g_parameters[2] < 1)
@@ -957,10 +966,10 @@ int marks_julia_setup()
 	}
 	get_julia_attractor(0.0, 0.0);      /* an attractor? */
 #endif
-	return 1;
+	return true;
 }
 
-int marks_julia_setup_fp()
+bool marks_julia_setup_fp()
 {
 	if (g_parameters[2] < 1)
 	{
@@ -988,29 +997,29 @@ int marks_julia_setup_fp()
 		g_coefficient.y = 0.0;
 	}
 	get_julia_attractor(0.0, 0.0);      /* an attractor? */
-	return 1;
+	return true;
 }
 
-int sierpinski_setup()
+bool sierpinski_setup()
 {
 	/* sierpinski */
-	g_periodicity_check = 0;                /* disable periodicity checks */
+	g_periodicity_check = 0;					/* disable periodicity checks */
 	g_tmp_z_l.x = 1;
-	g_tmp_z_l.x = g_tmp_z_l.x << g_bit_shift; /* g_tmp_z_l.x = 1 */
-	g_tmp_z_l.y = g_tmp_z_l.x >> 1;                        /* g_tmp_z_l.y = .5 */
-	return 1;
+	g_tmp_z_l.x = g_tmp_z_l.x << g_bit_shift;	/* g_tmp_z_l.x = 1 */
+	g_tmp_z_l.y = g_tmp_z_l.x >> 1;				/* g_tmp_z_l.y = .5 */
+	return true;
 }
 
-int sierpinski_setup_fp()
+bool sierpinski_setup_fp()
 {
 	/* sierpinski */
 	g_periodicity_check = 0;                /* disable periodicity checks */
 	g_temp_z.x = 1;
 	g_temp_z.y = 0.5;
-	return 1;
+	return true;
 }
 
-int phoenix_setup()
+bool phoenix_setup()
 {
 	g_long_parameter = &g_parameter_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_parameter;
@@ -1038,10 +1047,10 @@ int phoenix_setup()
 	// TODO: don't write to g_current_fractal_specific
 	current_fractal_specific_set_orbit_calc(orbit_calc);
 
-	return 1;
+	return true;
 }
 
-int phoenix_complex_setup()
+bool phoenix_complex_setup()
 {
 	g_long_parameter = &g_parameter_l;
 	g_float_parameter = &g_parameter;
@@ -1076,10 +1085,10 @@ int phoenix_complex_setup()
 	// TODO: don't write to g_current_fractal_specific
 	current_fractal_specific_set_orbit_calc(orbit_calc);
 
-	return 1;
+	return true;
 }
 
-int mandelbrot_phoenix_setup()
+bool mandelbrot_phoenix_setup()
 {
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
@@ -1107,10 +1116,10 @@ int mandelbrot_phoenix_setup()
 	// TODO: don't write to g_current_fractal_specific
 	current_fractal_specific_set_orbit_calc(orbit_calc);
 
-	return 1;
+	return true;
 }
 
-int mandelbrot_phoenix_complex_setup()
+bool mandelbrot_phoenix_complex_setup()
 {
 	g_long_parameter = &g_initial_z_l; /* added to consolidate code 10/1/92 JCO */
 	g_float_parameter = &g_initial_z;
@@ -1142,19 +1151,19 @@ int mandelbrot_phoenix_complex_setup()
 	// TODO: don't write to g_current_fractal_specific
 	current_fractal_specific_set_orbit_calc(orbit_calc);
 
-	return 1;
+	return true;
 }
 
-int standard_setup()
+bool standard_setup()
 {
 	if (g_fractal_type == FRACTYPE_UNITY_FP)
 	{
 		g_periodicity_check = 0;
 	}
-	return 1;
+	return true;
 }
 
-int volterra_lotka_setup()
+bool volterra_lotka_setup()
 {
 	if (g_parameters[0] < 0.0)
 	{
@@ -1173,5 +1182,5 @@ int volterra_lotka_setup()
 		g_parameters[1] = 1.0;
 	}
 	g_float_parameter = &g_parameter;
-	return 1;
+	return true;
 }

@@ -540,7 +540,7 @@ int bail_out_manhattan_r_bf()
 	return 0;
 }
 
-int mandelbrot_setup_bn()
+bool mandelbrot_setup_bn()
 {
 	/* this should be set up dynamically based on corners */
 	bn_t bntemp1, bntemp2;
@@ -590,8 +590,7 @@ int mandelbrot_setup_bn()
 		copy_bn(bnclosenuff, bntemp2);
 	}
 	{
-		int t;
-		t = abs(g_periodicity_check);
+		int t = abs(g_periodicity_check);
 		while (t--)
 		{
 			half_a_bn(bnclosenuff);
@@ -627,18 +626,11 @@ int mandelbrot_setup_bn()
 		break;
 	}
 
-	/* at the present time, parameters are kept in float, but want to keep
-		the arbitrary precision logic intact. The next two lines, if used,
-		would disguise and breaking of the arbitrary precision logic */
-	/*
-	floattobn(bnparm.x, g_parameters[0]);
-	floattobn(bnparm.y, g_parameters[1]);
-	*/
 	restore_stack(saved);
-	return 1;
+	return true;
 }
 
-int mandelbrot_setup_bf()
+bool mandelbrot_setup_bf()
 {
 	/* this should be set up dynamically based on corners */
 	bf_t bftemp1, bftemp2;
@@ -681,8 +673,7 @@ int mandelbrot_setup_bf()
 		copy_bf(bfclosenuff, bftemp2);
 	}
 	{
-		int t;
-		t = abs(g_periodicity_check);
+		int t = abs(g_periodicity_check);
 		while (t--)
 		{
 			half_a_bf(bfclosenuff);
@@ -719,7 +710,7 @@ int mandelbrot_setup_bf()
 	}
 
 	restore_stack(saved);
-	return 1;
+	return true;
 }
 
 bool inside_coloring_beauty_of_fractals()

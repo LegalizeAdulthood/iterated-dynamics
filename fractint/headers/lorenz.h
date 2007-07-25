@@ -1,8 +1,8 @@
 #if !defined(LORENZ_H)
 #define LORENZ_H
 
-extern int orbit_3d_setup();
-extern int orbit_3d_setup_fp();
+extern bool orbit_3d_setup();
+extern bool orbit_3d_setup_fp();
 extern int lorenz_3d_orbit(long *, long *, long *);
 extern int lorenz_3d_orbit_fp(double *, double *, double *);
 extern int lorenz_3d1_orbit_fp(double *, double *, double *);
