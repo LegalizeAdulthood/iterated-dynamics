@@ -575,7 +575,6 @@ void initUnixWindow()
 	x11_video_table[0].x_dots = g_screen_width;
 	x11_video_table[0].y_dots = g_screen_height;
 	x11_video_table[0].colors = g_colors;
-	x11_video_table[0].dotmode = (unixDisk) ? 11 : 19;
 }
 /*
 *----------------------------------------------------------------------

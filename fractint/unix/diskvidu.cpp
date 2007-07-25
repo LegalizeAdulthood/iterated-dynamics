@@ -52,7 +52,7 @@ int disk_start()
 int disk_start_potential()
 {
 	int i;
-	if (g_dot_mode == 11) /* ditch the original disk file */
+	if (driver_diskp()) /* ditch the original disk file */
 	{
 		disk_end();
 	}
@@ -71,7 +71,7 @@ int disk_start_targa(FILE *targafp, int overhead)
 {
 	int i;
 	/* ditch the original disk file, make just the targa */
-	if (g_dot_mode == 11)
+	if (driver_diskp())
 	{
 		disk_end();      /* close the 'screen' */
 		set_null_video(); /* set readdot and writedot routines to do nothing */
@@ -91,7 +91,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 	{
 		disk_end();
 	}
-	if (g_dot_mode == 11) /* otherwise, real screen also in use, don't hit it */
+	if (driver_diskp()) /* otherwise, real screen also in use, don't hit it */
 	{
 		char buf[20];
 		help_title();
@@ -132,7 +132,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int colors)
 
 	bzero(s_disk_data, memorysize);
 
-	if (g_dot_mode == 11)
+	if (driver_diskp())
 	{
 		disk_video_status(0, "");
 	}
@@ -152,7 +152,7 @@ int disk_read(int col, int row)
 	char buf[41];
 	if (--s_time_to_display < 0)  /* time to display status? */
 	{
-		if (g_dot_mode == 11)
+		if (driver_diskp())
 		{
 			sprintf(buf, " reading line %4d",
 				(row >= g_screen_height) ? row - g_screen_height : row);
@@ -188,7 +188,7 @@ void disk_write(int col, int row, int color)
 	char buf[41];
 	if (--s_time_to_display < 0)  /* time to display status? */
 	{
-		if (g_dot_mode == 11)
+		if (driver_diskp())
 		{
 			sprintf(buf, " writing line %4d",
 				(row >= g_screen_height) ? row - g_screen_height : row);

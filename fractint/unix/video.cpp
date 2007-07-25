@@ -57,7 +57,7 @@ VIDEOINFO x11_video_table[] =
 {
 	{
 		"xfractint mode           ", "                         ",
-		999, 19, 640, 480, 256
+		999, 640, 480, 256
 	}
 };
 
@@ -96,7 +96,6 @@ void put_prompt()
 */
 void set_video_text()
 {
-	g_dot_mode = 0;
 	setvideomode(3, 0, 0, 0);
 }
 
@@ -115,9 +114,6 @@ void load_dac()
 ;       (SPECIAL "TWEAKED" VGA VALUES:  if AX==BX==CX==0, assume we have a
 ;       genuine VGA or register compatable adapter and program the registers
 ;       directly using the coded value in DX)
-
-; Unix: We ignore ax,bx,cx,dx.  g_dot_mode is the "mode" field in the video
-; table.  We use mode 19 for the X window.
 */
 void setvideomode(int ax, int bx, int cx, int dx)
 {
@@ -131,20 +127,16 @@ void setvideomode(int ax, int bx, int cx, int dx)
 		videoflag = 0;
 	}
 	g_good_mode = 1;
-	switch (g_dot_mode)
+	if (driver_diskp())
 	{
-	case 0:			/* text */
-		clear();
-		wrefresh(g_current_window);
-		break;
-	case 11:
 		disk_start();
 		g_dot_write = disk_write;
 		g_dot_read = disk_read;
 		g_line_read = normal_line_read;
 		g_line_write = normal_line_write;
-		break;
-	case 19:			/* X window */
+	}
+	else
+	{
 		put_prompt();
 		g_dot_write = writevideo;
 		g_dot_read = readvideo;
@@ -153,17 +145,10 @@ void setvideomode(int ax, int bx, int cx, int dx)
 		videoflag = 1;
 		startvideo();
 		setforgraphics();
-		break;
-	default:
-		printf("Bad mode %d\n", g_dot_mode);
-		exit(-1);
 	}
-	if (g_dot_mode != 0)
-	{
-		load_dac();
-		g_and_color = g_colors - 1;
-		g_box_count = 0;
-	}
+	load_dac();
+	g_and_color = g_colors - 1;
+	g_box_count = 0;
 	g_vesa_x_res = g_screen_width;
 	g_vesa_y_res = g_screen_height;
 }
