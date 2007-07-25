@@ -679,7 +679,7 @@ resumeloop:
 				}
 				else      /* wait for a real keystroke */
 				{
-					if (g_browse_state.auto_browse() && !g_no_sub_images)
+					if (g_browse_state.auto_browse() && g_browse_state.sub_images())
 					{
 						kbdchar = 'l';
 					}
@@ -1278,7 +1278,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr]);
 		g_browse_state.merge_path_names(g_read_name);
 		g_browse_state.set_browsing(true);
-		g_no_sub_images = false;
+		g_browse_state.set_sub_images(true);
 		g_show_file = SHOWFILE_PENDING;
 		if (g_ui_state.ask_video)
 		{
