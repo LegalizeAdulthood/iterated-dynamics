@@ -169,7 +169,7 @@ static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color)
 int g_ix_start;
 int g_iy_start;						/* start here */
 int g_work_pass;
-int g_work_sym;                   /* for the sake of calculate_mandelbrot    */
+int g_work_sym;                   /* for the sake of calculate_mandelbrot_l */
 
 static double s_dem_delta;
 static double s_dem_width;     /* distance estimator variables */
@@ -713,7 +713,7 @@ int calculate_fractal()
 	}
 
 	if (g_current_fractal_specific->calculate_type != standard_fractal
-		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot
+		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot_l
 		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot_fp
 		&& g_current_fractal_specific->calculate_type != lyapunov
 		&& g_current_fractal_specific->calculate_type != froth_calc)
@@ -1099,7 +1099,7 @@ static int _fastcall standard_calculate(int passnum)
 			}
 			if (passnum == 1 || g_standard_calculation_mode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
 			{
-				if ((*g_calculate_type)() == -1) /* standard_fractal(), calculate_mandelbrot() or calculate_mandelbrot_fp() */
+				if ((*g_calculate_type)() == -1) /* standard_fractal(), calculate_mandelbrot_l() or calculate_mandelbrot_fp() */
 				{
 					return -1; /* interrupted */
 				}
@@ -1134,7 +1134,7 @@ static int _fastcall standard_calculate(int passnum)
 }
 
 
-int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with row & col set */
+int calculate_mandelbrot_l()              /* fast per pixel 1/2/b/g, called with row & col set */
 {
 	/* setup values from array to avoid using es reg in calcmand.asm */
 	g_initial_x_l = g_lx_pixel();
@@ -1142,7 +1142,8 @@ int calculate_mandelbrot()              /* fast per pixel 1/2/b/g, called with r
 	if (calculate_mandelbrot_asm() >= 0)
 	{
 		if ((g_log_table || g_log_calculation) /* map color, but not if maxit & adjusted for inside, etc */
-				&& (g_real_color_iter < g_max_iteration || (g_inside < 0 && g_color_iter == g_max_iteration)))
+			&& (g_real_color_iter < g_max_iteration
+				|| (g_inside < 0 && g_color_iter == g_max_iteration)))
 		{
 			g_color_iter = logtablecalc(g_color_iter);
 		}
@@ -1246,7 +1247,7 @@ bool detect_finite_attractor()
 }
 
 /************************************************************************/
-/* added by Wes Loewer - sort of a floating point version of calculate_mandelbrot() */
+/* added by Wes Loewer - sort of a floating point version of calculate_mandelbrot_l() */
 /* can also handle invert, any g_rq_limit, g_potential_flag, zmag, epsilon cross,     */
 /* and all the current outside options    -Wes Loewer 11/03/91          */
 /************************************************************************/
@@ -2046,7 +2047,7 @@ void StandardFractal::outside_colormode_final()
 	{
 		outside_colormode_sum_final();
 	}
-	else if (g_outside == COLORMODE_INVERSE_TANGENT)          /* "atan" */
+	else if (g_outside == COLORMODE_INVERSE_TANGENT)
 	{
 		outside_colormode_inverse_tangent_final();
 	}
@@ -2355,7 +2356,7 @@ int StandardFractal::execute()
 		g_old_color_iter = g_color_iter + 10;    /* check when past this + 10 next time */
 		if (g_color_iter == 0)
 		{
-			g_color_iter = 1;         /* needed to make same as calculate_mandelbrot */
+			g_color_iter = 1;         /* needed to make same as calculate_mandelbrot_l */
 		}
 	}
 
@@ -2953,12 +2954,10 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 			|| g_outside == COLORMODE_MULTIPLY
 			|| g_outside == COLORMODE_SUM
 			|| g_outside == COLORMODE_INVERSE_TANGENT
-			|| g_bail_out_test == BAILOUT_MANHATTAN_R
-			|| g_outside == COLORMODE_FLOAT_MODULUS)
-	{
-		return;
-	}
-	else if (g_inside == COLORMODE_FLOAT_MODULUS_INTEGER || g_outside == COLORMODE_TOTAL_DISTANCE)
+			|| g_outside == COLORMODE_FLOAT_MODULUS
+			|| g_outside == COLORMODE_TOTAL_DISTANCE
+			|| g_inside == COLORMODE_FLOAT_MODULUS_INTEGER
+			|| g_bail_out_test == BAILOUT_MANHATTAN_R)
 	{
 		return;
 	}

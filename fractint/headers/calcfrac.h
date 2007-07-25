@@ -4,7 +4,7 @@
 #define DEM_BAILOUT 535.5  /* (pb: not sure if this is special or arbitrary) */
 
 extern int calculate_fractal();
-extern int calculate_mandelbrot();
+extern int calculate_mandelbrot_l();
 extern int calculate_mandelbrot_fp();
 extern int standard_fractal();
 extern void _fastcall plot_color_none(int x, int y, int color);
