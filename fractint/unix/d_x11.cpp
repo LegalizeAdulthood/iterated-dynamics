@@ -280,7 +280,7 @@ extern void (*g_line_read)(int, int, int, BYTE *);	/* read-a-line routine */
 static const VIDEOINFO x11_info =
 {
 	"xfractint mode           ","                         ",
-	999, 19, 640, 480,  256
+	999, 640, 480,  256
 };
 
 unsigned long X11Driver::do_fake_lut(int idx)
@@ -2016,7 +2016,6 @@ void X11Driver::window()
 	x11_video_table[0].x_dots = g_screen_width;
 	x11_video_table[0].y_dots = g_screen_height;
 	x11_video_table[0].colors = g_colors;
-	x11_video_table[0].dotmode = 19;
 }
 
 /*----------------------------------------------------------------------
@@ -2652,9 +2651,6 @@ void X11Driver::shell()
 ;       (SPECIAL "TWEAKED" VGA VALUES:  if AX==BX==CX==0, assume we have a
 ;       genuine VGA or register compatable adapter and program the registers
 ;       directly using the coded value in DX)
-
-; Unix: We ignore ax,bx,cx,dx.  g_dot_mode is the "mode" field in the video
-; table.  We use mode 19 for the X window.
 */
 void X11Driver::set_video_mode(const VIDEOINFO &mode)
 {
@@ -2664,33 +2660,15 @@ void X11Driver::set_video_mode(const VIDEOINFO &mode)
 	}
 	end_video();
 	g_good_mode = 1;
-	switch (g_dot_mode)
-	{
-	case 0:				/* text */
-#if 0
-		clear();
-#endif
-		break;
-
-	case 19: /* X window */
-		g_dot_write = driver_write_pixel;
-		g_dot_read = driver_read_pixel;
-		g_line_read = driver_read_span;
-		g_line_write = driver_write_span;
-		start_video();
-		set_for_graphics();
-		break;
-
-	default:
-		printf("Bad mode %d\n", g_dot_mode);
-		exit(-1);
-	} 
-	if (g_dot_mode !=0)
-	{
-		read_palette();
-		g_and_color = g_colors-1;
-		g_box_count =0;
-	}
+	g_dot_write = driver_write_pixel;
+	g_dot_read = driver_read_pixel;
+	g_line_read = driver_read_span;
+	g_line_write = driver_write_span;
+	start_video();
+	set_for_graphics();
+	read_palette();
+	g_and_color = g_colors-1;
+	g_box_count =0;
 }
 
 void X11Driver::put_string(int row, int col, int attr, const char *msg)

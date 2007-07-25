@@ -311,11 +311,6 @@ void decode_fractal_info(struct fractal_info *info, int dir)
 	getDouble(&info->y_max, &bufPtr, dir);
 	getDouble(&info->c_real, &bufPtr, dir);
 	getDouble(&info->c_imag, &bufPtr, dir);
-	getShort(&info->videomodeax, &bufPtr, dir);
-	getShort(&info->videomodebx, &bufPtr, dir);
-	getShort(&info->videomodecx, &bufPtr, dir);
-	getShort(&info->videomodedx, &bufPtr, dir);
-	getShort(&info->dotmode, &bufPtr, dir);
 	getShort(&info->x_dots, &bufPtr, dir);
 	getShort(&info->y_dots, &bufPtr, dir);
 	getShort(&info->colors, &bufPtr, dir);
