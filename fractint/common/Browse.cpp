@@ -621,7 +621,7 @@ rescan:  /* entry for changed browse parms */
 	time(&lastime);
 	toggle = 0;
 	wincount = 0;
-	g_no_sub_images = false;
+	g_browse_state.set_sub_images(true);
 	split_path(g_read_name, drive, dir, NULL, NULL);
 	split_path(g_browse_state.mask(), NULL, NULL, fname, ext);
 	make_path(tmpmask, drive, dir, fname, ext);
@@ -926,7 +926,7 @@ rescan:  /* entry for changed browse parms */
 	{
 		driver_buzzer(BUZZER_INTERRUPT); /*no suitable files in directory! */
 		text_temp_message("Sorry.. I can't find anything");
-		g_no_sub_images = true;
+		g_browse_state.set_sub_images(false);
 	}
 
 	delete[] boxx_storage;

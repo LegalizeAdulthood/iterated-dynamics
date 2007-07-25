@@ -177,7 +177,6 @@ char	g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while br
 int		g_name_stack_ptr;
 double	g_too_small;
 int		g_cross_hair_box_size;
-bool g_no_sub_images;
 
 UserInterfaceState g_ui_state;
 
@@ -271,7 +270,7 @@ void FractInt::Restart(int argc, char *argv[], bool &screen_stacked)
 	g_browse_state.set_check_type(true);
 	g_browse_state.set_check_parameters(true);
 	g_ui_state.double_caution = true;
-	g_no_sub_images = false;
+	g_browse_state.set_sub_images(true);
 	g_too_small = 6;
 	g_cross_hair_box_size   = 3;
 	g_browse_state.set_mask("*.gif");

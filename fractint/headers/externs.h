@@ -241,7 +241,6 @@ extern double				g_new_parameter_offset_x;
 extern double				g_new_parameter_offset_y;
 extern int					g_new_orbit_type;
 extern int					g_next_saved_incr;
-extern bool					g_no_sub_images; // TODO: migrate to g_browse_state
 extern bool					g_no_magnitude_calculation;
 extern bool					g_no_bof;
 extern int					g_num_affine;
