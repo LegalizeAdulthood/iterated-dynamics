@@ -9,7 +9,6 @@ extern char					g_autokey_name[];
 extern char					g_auto_show_dot;
 extern int					g_auto_stereo_depth;
 extern double				g_auto_stereo_width;
-extern int					g_bad_config;
 extern bool					g_bad_outside;
 extern long					g_bail_out;
 extern int					(*g_bail_out_fp)();
