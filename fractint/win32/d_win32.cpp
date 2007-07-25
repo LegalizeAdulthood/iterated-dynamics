@@ -375,15 +375,12 @@ void Win32BaseDriver::set_video_mode(const VIDEOINFO &mode)
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = false;
 	g_good_mode = 1;
-	if (g_dot_mode != 0)
-	{
-		g_and_color = g_colors-1;
-		g_box_count = 0;
-		g_dac_count = g_cycle_limit;
-		g_got_real_dac = true;			/* we are "VGA" */
+	g_and_color = g_colors-1;
+	g_box_count = 0;
+	g_dac_count = g_cycle_limit;
+	g_got_real_dac = true;			/* we are "VGA" */
 
-		read_palette();
-	}
+	read_palette();
 
 	resize();
 

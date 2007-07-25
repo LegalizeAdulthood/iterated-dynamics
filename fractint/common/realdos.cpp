@@ -1918,6 +1918,7 @@ int show_vid_length()
  */
 void load_fractint_config()
 {
+	return;
 	char tempstring[150];
 	find_path("fractint.cfg", tempstring);
 
@@ -1949,7 +1950,7 @@ void load_fractint_config()
 			}
 			tempstring[120] = 0;
 			tempstring[int(strlen(tempstring))-1] = 0; /* zap trailing \n */
-			/* key, mode name, ax, bx, cx, dx, dotmode, x, y, colors, comments, driver */
+			/* key, mode name, ax, bx, cx, dx, 0, x, y, colors, comments, driver */
 			int i = -1;
 			int j = -1;
 			while (true)
@@ -2013,7 +2014,7 @@ void load_fractint_config()
 			{
 				goto bad_fractint_cfg;
 			}
-			g_cfg_line_nums[g_video_table_len] = linenum; /* for update_fractint_cfg */
+			g_cfg_line_nums[g_video_table_len] = linenum;
 
 			memset(&vident, 0, sizeof(vident));
 			strncpy(&vident.name[0], fields[0], NUM_OF(vident.name));
@@ -2021,7 +2022,6 @@ void load_fractint_config()
 			vident.name[25] = 0;
 			vident.comment[25] = 0;
 			vident.keynum = keynum;
-			vident.dotmode = true_color_bits*1000 + textsafe2*100 + dotmode;
 			vident.x_dots = short(x_dots);
 			vident.y_dots = short(y_dots);
 			vident.colors = colors;
@@ -2038,8 +2038,7 @@ void load_fractint_config()
 					{
 						VIDEOINFO *mode = &g_video_table[m];
 						if ((mode->driver == vident.driver) && (mode->colors == vident.colors) &&
-							(mode->x_dots == vident.x_dots) && (mode->y_dots == vident.y_dots) &&
-							(mode->dotmode == vident.dotmode))
+							(mode->x_dots == vident.x_dots) && (mode->y_dots == vident.y_dots))
 						{
 							if (0 == mode->keynum)
 							{

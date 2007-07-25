@@ -1098,11 +1098,11 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 	info->y_3rd = -1;
 	info->c_real = 0;
 	info->c_imag = 0;
-	info->videomodeax = 0;
-	info->videomodebx = 0;
-	info->videomodecx = 0;
-	info->videomodedx = 0;
-	info->dotmode = 0;
+	info->deprecated_video_mode_ax = 0;
+	info->deprecated_video_mode_bx = 0;
+	info->deprecated_video_mode_cx = 0;
+	info->deprecated_video_mode_dx = 0;
+	info->deprecated_dotmode = 0;
 	info->x_dots = short(g_file_x_dots);
 	info->y_dots = short(g_file_y_dots);
 	info->colors = short(g_file_colors);

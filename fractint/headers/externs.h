@@ -82,7 +82,6 @@ extern float				g_screen_distance_fp;
 extern int					g_gaussian_distribution;
 extern bool					g_dither_flag;
 extern bool					g_dont_read_color;
-extern int					g_dot_mode;
 extern double				g_delta_parameter_image_x;
 extern double				g_delta_parameter_image_y;
 extern struct DIR_SEARCH	g_dta;   /* Disk Transfer Area */

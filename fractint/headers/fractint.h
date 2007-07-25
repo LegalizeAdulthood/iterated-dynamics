@@ -433,8 +433,6 @@ struct video_info
 	char    comment[26];    /* Comments (UNTESTED, etc)             */
 	int     keynum;         /* key number used to invoked this mode */
 							/* 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
-	int     dotmode;        /* video access method used */
-							/*      11 = "disk video" (no screen)   */
 	int     x_dots;          /* number of dots across the screen     */
 	int     y_dots;          /* number of dots down the screen       */
 	int     colors;         /* number of colors available           */
@@ -476,11 +474,11 @@ struct fractal_info         /*  for saving data in GIF file     */
 	double y_max;
 	double c_real;
 	double c_imag;
-	short videomodeax;
-	short videomodebx;
-	short videomodecx;
-	short videomodedx;
-	short dotmode;
+	short deprecated_video_mode_ax;
+	short deprecated_video_mode_bx;
+	short deprecated_video_mode_cx;
+	short deprecated_video_mode_dx;
+	short deprecated_dotmode;
 	short x_dots;
 	short y_dots;
 	short colors;

@@ -742,8 +742,7 @@ int tab_display_2(char *msg)
 		write_row(row++, g_formula_state.info_line2());
 	}
 
-	write_row(row++, "%dx%d dm=%d %s (%s)", g_x_dots, g_y_dots, g_dot_mode,
-		driver_name(), driver_description());
+	write_row(row++, "%dx%d %s (%s)", g_x_dots, g_y_dots, driver_name(), driver_description());
 	write_row(row++, "xx: start %d, stop %d; yy: start %d, stop %d %s UsesIsMand %d",
 		g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.yy_start(), g_WorkList.yy_stop(),
 #if !defined(XFRACT) && !defined(_WIN32)
