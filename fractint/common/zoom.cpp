@@ -663,7 +663,7 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 		return 0; /* not resumable, not complete */
 	}
 	if (g_current_fractal_specific->calculate_type != standard_fractal
-		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot
+		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot_l
 		&& g_current_fractal_specific->calculate_type != calculate_mandelbrot_fp
 		&& g_current_fractal_specific->calculate_type != lyapunov
 		&& g_current_fractal_specific->calculate_type != froth_calc)

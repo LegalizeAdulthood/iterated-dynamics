@@ -24,18 +24,10 @@ void calculate_mandelbrot_start_fp_asm()
 
 #define ABS(x) ((x) < 0?-(x):(x))
 
-/* If USE_NEW is 1, the magnitude is used for periodicity checking instead
-	of the x and y values.  This is experimental. */
-#define USE_NEW 0
-
 long calculate_mandelbrot_fp_asm()
 {
-#if USE_NEW
-	double savedmag;
-#else
 	double savedx;
 	double savedy;
-#endif
 
 	if (g_periodicity_check == 0)
 	{
@@ -55,12 +47,8 @@ long calculate_mandelbrot_fp_asm()
 	}
 
 	/* initparms */
-#if USE_NEW
-	savedmag = 0;
-#else
 	savedx = 0;
 	savedy = 0;
-#endif
 	g_orbit_index = 0;
 	long savedand = g_first_saved_and;
 	int savedincr = 1;             /* start checking the very first time */
@@ -137,12 +125,8 @@ long calculate_mandelbrot_fp_asm()
 		{
 			if (((g_max_iteration - cx) & savedand) == 0)
 			{
-#if USE_NEW
-				savedmag = g_magnitude;
-#else
 				savedx = x;
 				savedy = y;
-#endif
 				savedincr--;
 				if (savedincr == 0)
 				{
@@ -152,11 +136,7 @@ long calculate_mandelbrot_fp_asm()
 			}
 			else
 			{
-#if USE_NEW
-				if (ABS(g_magnitude-savedmag) < g_close_enough)
-#else
 				if (ABS(savedx-x) < g_close_enough && ABS(savedy-y) < g_close_enough)
-#endif
 				{
 					g_old_color_iter = g_max_iteration;
 					g_real_color_iter = g_max_iteration;

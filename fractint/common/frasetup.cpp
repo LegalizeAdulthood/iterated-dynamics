@@ -39,7 +39,7 @@ int mandelbrot_setup()           /* Mandelbrot Routine */
 		&& g_use_initial_orbit_z != INITIALZ_ORBIT && !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
-		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
+		g_calculate_type = calculate_mandelbrot_l; /* the normal case - use CALCMAND */
 	}
 	else
 	{
@@ -59,7 +59,7 @@ int julia_setup()            /* Julia Routine */
 		&& (g_finite_attractor == FINITE_ATTRACTOR_NO) && !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
-		g_calculate_type = calculate_mandelbrot; /* the normal case - use CALCMAND */
+		g_calculate_type = calculate_mandelbrot_l; /* the normal case - use CALCMAND */
 	}
 	else
 	{

@@ -99,7 +99,7 @@ int     g_fractal_type;               /* if == 0, use Mandelbrot  */
 char    g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
 long    g_c_real;
 long	g_c_imag;           /* real, imag'ry parts of C */
-long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot    */
+long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot_l */
 double  g_delta_min_fp;                /* same as a double         */
 double  g_parameters[MAX_PARAMETERS];       /* parameters               */
 double  g_potential_parameter[3];            /* three potential parameters*/

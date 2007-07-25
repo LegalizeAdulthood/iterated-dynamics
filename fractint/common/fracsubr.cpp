@@ -250,7 +250,7 @@ init_restart:
 	g_potential_flag = false;
 	if (g_potential_parameter[0] != 0.0
 		&& (g_current_fractal_specific->calculate_type == standard_fractal
-			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot
+			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot_l
 			|| g_current_fractal_specific->calculate_type == calculate_mandelbrot_fp))
 	{
 		g_potential_flag = true;
@@ -355,7 +355,7 @@ init_restart:
 		}
 	}
 
-	/* We want this code if we're using the assembler calculate_mandelbrot */
+	/* We want this code if we're using the assembler calculate_mandelbrot_l */
 	if (g_fractal_type == FRACTYPE_MANDELBROT || g_fractal_type == FRACTYPE_JULIA)  /* adust shift bits if.. */
 	{
 		if (!g_potential_flag                            /* not using potential */
@@ -1279,9 +1279,9 @@ static int _fastcall ratio_bad(double actual, double desired)
 	directly set g_resume_info, g_resume_length, g_calculation_status to avoid doubling
 	transient memory needs by using these routines.
 
-	standard_fractal, calculate_mandelbrot, solid_guess, and boundary_trace_main are a related
+	standard_fractal, calculate_mandelbrot_l, solid_guess, and boundary_trace_main are a related
 	set of engines for escape-time fractals.  They use a common g_work_list
-	structure for save/resume.  Fractals using these must specify calculate_mandelbrot
+	structure for save/resume.  Fractals using these must specify calculate_mandelbrot_l
 	or standard_fractal as the engine in fractalspecificinfo.
 	Other engines don't get btm nor ssg, don't get off-axis symmetry nor
 	panning (the g_work_list stuff), and are on their own for save/resume.
