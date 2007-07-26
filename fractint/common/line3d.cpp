@@ -134,7 +134,7 @@ static unsigned int s_ambient;
 static int s_rand_factor;
 static int s_haze_mult;
 static BYTE s_targa_size[4];
-static int s_targa_safe;						/* Original Targa Image successfully copied to s_targa_temp */
+static bool s_targa_safe;						/* Original Targa Image successfully copied to s_targa_temp */
 static VECTOR s_light_direction;
 static BYTE s_real_color;					/* Actual color of cur pixel */
 static int RO;
@@ -1790,7 +1790,7 @@ static int targa_validate(char *file_name)
 
 	fclose(fp);                  /* Close the source */
 
-	s_targa_safe = 1;                  /* Original file successfully copied to
+	s_targa_safe = true;                  /* Original file successfully copied to
 									* s_targa_temp */
 	return 0;
 }
@@ -2461,7 +2461,7 @@ static void line3d_cleanup()
 		}
 	}
 	s_file_error = FILEERROR_NONE;
-	s_targa_safe = 0;
+	s_targa_safe = false;
 }
 
 static void set_upr_lwr()
@@ -2579,7 +2579,7 @@ static int first_time(int linelen, VECTOR v)
 
 	if (g_which_image < WHICHIMAGE_BLUE)
 	{
-		s_targa_safe = 0; /* Not safe yet to mess with the source image */
+		s_targa_safe = false; /* Not safe yet to mess with the source image */
 	}
 
 	if (g_targa_output
