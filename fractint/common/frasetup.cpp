@@ -331,7 +331,7 @@ bool julia_setup_fp()
 	case FRACTYPE_POPCORN_FP:
 	case FRACTYPE_POPCORN_JULIA_FP:
 		{
-			int default_functions = 0;
+			bool default_functions = false;
 			if (g_function_index[0] == FUNCTION_SIN &&
 				g_function_index[1] == FUNCTION_TAN &&
 				g_function_index[2] == FUNCTION_SIN &&
@@ -340,7 +340,7 @@ bool julia_setup_fp()
 				g_parameter2.y == 0 &&
 				g_parameter.y == 0)
 			{
-				default_functions = 1;
+				default_functions = true;
 				if (g_fractal_type == FRACTYPE_POPCORN_JULIA_FP)
 				{
 					g_symmetry = SYMMETRY_ORIGIN;
@@ -474,7 +474,7 @@ bool julia_setup_l()
 	case FRACTYPE_POPCORN_L:
 	case FRACTYPE_POPCORN_JULIA_L:
 		{
-			int default_functions = 0;
+			bool default_functions = false;
 			if (g_function_index[0] == FUNCTION_SIN &&
 				g_function_index[1] == FUNCTION_TAN &&
 				g_function_index[2] == FUNCTION_SIN &&
@@ -483,7 +483,7 @@ bool julia_setup_l()
 				g_parameter2.y == 0 &&
 				g_parameter.y == 0)
 			{
-				default_functions = 1;
+				default_functions = true;
 				if (g_fractal_type == FRACTYPE_POPCORN_JULIA_L)
 				{
 					g_symmetry = SYMMETRY_ORIGIN;

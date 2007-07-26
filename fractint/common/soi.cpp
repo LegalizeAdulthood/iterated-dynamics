@@ -478,7 +478,7 @@ static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
 	}																						\
 	while (0)
 
-static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
+static bool rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 				int x1, int x2, int y1, int y2, long iter)
 {
 	/* The following variables do not need their values saved */
@@ -621,18 +621,18 @@ static int rhombus(LDBL cre1, LDBL cre2, LDBL cim1, LDBL cim2,
 	LDBL im93;
 	LDBL im94;
 
-	int status = 0;
+	bool status = false;
 	rhombus_depth++;
 
 	if (driver_key_pressed())
 	{
-		status = 1;
+		status = true;
 		goto rhombus_done;
 	}
 	if (iter > g_max_iteration)
 	{
 		put_box(x1, y1, x2, y2, 0);
-		status = 0;
+		status = false;
 		goto rhombus_done;
 	}
 
@@ -656,7 +656,7 @@ scan:
 		{
 			if (driver_key_pressed())
 			{
-				status = 1;
+				status = true;
 				goto rhombus_done;
 			}
 			zre = GET_SCAN_REAL(cre1, im);
@@ -664,7 +664,7 @@ scan:
 			savecolor = iteration(cre1, im, zre, zim, iter);
 			if (savecolor < 0)
 			{
-				status = 1;
+				status = true;
 				goto rhombus_done;
 			}
 			savex = x1;
@@ -678,7 +678,7 @@ scan:
 				color = iteration(re, im, zre, zim, iter);
 				if (color < 0)
 				{
-					status = 1;
+					status = true;
 					goto rhombus_done;
 				}
 				else if (color == savecolor)
@@ -693,7 +693,7 @@ scan:
 					helpcolor = iteration(helpre, im, zre, zim, iter);
 					if (helpcolor < 0)
 					{
-						status = 1;
+						status = true;
 						goto rhombus_done;
 					}
 					else if (helpcolor == savecolor)
@@ -723,7 +723,7 @@ scan:
 				helpcolor = iteration(helpre, im, zre, zim, iter);
 				if (helpcolor < 0)
 				{
-					status = 1;
+					status = true;
 					goto rhombus_done;
 				}
 				else if (helpcolor == savecolor)

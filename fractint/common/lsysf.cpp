@@ -281,7 +281,7 @@ static lsys_cmd *_fastcall
 find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
 	lsys_cmd **rulind;
-	int tran;
+	bool tran;
 
 	if (g_overflow)     /* integer math routines overflowed */
 	{
@@ -299,14 +299,14 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 				return NULL;
 			}
 		}
-		tran = 0;
+		tran = false;
 		if (depth)
 		{
 			for (rulind = rules; *rulind; rulind++)
 			{
 				if ((*rulind)->ch == command->ch)
 				{
-					tran = 1;
+					tran = true;
 					if (find_size((*rulind) + 1, ts, rules, depth-1) == NULL)
 					{
 						return NULL;
@@ -415,7 +415,7 @@ lsys_cmd *_fastcall
 draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
 	lsys_cmd **rulind;
-	int tran;
+	bool tran;
 
 	if (g_overflow)     /* integer math routines overflowed */
 	{
@@ -432,14 +432,14 @@ draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int de
 				return NULL;
 			}
 		}
-		tran = 0;
+		tran = false;
 		if (depth)
 		{
 			for (rulind = rules; *rulind; rulind++)
 			{
 				if ((*rulind)->ch == command->ch)
 				{
-					tran = 1;
+					tran = true;
 					if (draw_lsysf((*rulind) + 1, ts, rules, depth-1) == NULL)
 					{
 						return NULL;

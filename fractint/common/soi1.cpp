@@ -218,7 +218,7 @@ static double zim9;
 	} \
 	while (0)
 
-static int rhombus(double cre1, double cre2, double cim1, double cim2,
+static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	int x1, int x2, int y1, int y2, long iter)
 {
 	/* The following variables do not need their values saved */
@@ -371,18 +371,18 @@ static int rhombus(double cre1, double cre2, double cim1, double cim2,
 	double tesc3;
 	double tesc4;
 
-	int status = 0;
+	bool status = false;
 	rhombus_depth++;
 
 	if (driver_key_pressed())
 	{
-		status = 1;
+		status = true;
 		goto rhombus_done;
 	}
 	if (iter > g_max_iteration)
 	{
 		put_box(x1, y1, x2, y2, 0);
-		status = 0;
+		status = false;
 		goto rhombus_done;
 	}
 
@@ -406,7 +406,7 @@ scan:
 		{
 			if (driver_key_pressed())
 			{
-				status = 1;
+				status = true;
 				goto rhombus_done;
 			}
 			zre = GET_SCAN_REAL(cre1, im);
@@ -414,7 +414,7 @@ scan:
 			savecolor = iteration(cre1, im, zre, zim, iter);
 			if (savecolor < 0)
 			{
-				status = 1;
+				status = true;
 				goto rhombus_done;
 			}
 			savex = x1;
@@ -428,7 +428,7 @@ scan:
 				color = iteration(re, im, zre, zim, iter);
 				if (color < 0)
 				{
-					status = 1;
+					status = true;
 					goto rhombus_done;
 				}
 				else if (color == savecolor)
@@ -443,7 +443,7 @@ scan:
 					helpcolor = iteration(helpre, im, zre, zim, iter);
 					if (helpcolor < 0)
 					{
-						status = 1;
+						status = true;
 						goto rhombus_done;
 					}
 					else if (helpcolor == savecolor)
@@ -473,7 +473,7 @@ scan:
 				helpcolor = iteration(helpre, im, zre, zim, iter);
 				if (helpcolor < 0)
 				{
-					status = 1;
+					status = true;
 					goto rhombus_done;
 				}
 				else if (helpcolor == savecolor)
@@ -493,7 +493,7 @@ scan:
 				(*g_plot_color)(savex, y, int(savecolor&255));
 			}
 		}
-		status = 0;
+		status = false;
 		goto rhombus_done;
 	}
 
@@ -704,7 +704,7 @@ scan:
 		if (iter > g_max_iteration)
 		{
 			put_box(x1, y1, x2, y2, 0);
-			status = 0;
+			status = false;
 			goto rhombus_done;
 		}
 
@@ -892,7 +892,7 @@ rhombus_done:
 
 static void soi_double()
 {
-	int status;
+	bool status;
 	double tolerance = 0.1;
 	double stepx;
 	double stepy;

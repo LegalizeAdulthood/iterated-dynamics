@@ -28,7 +28,7 @@ int g_max_angle;
 
 static char *ruleptrs[MAXRULES];
 static lsys_cmd *rules2[MAXRULES];
-static char loaded = 0;
+static bool s_loaded = false;
 
 static int _fastcall read_l_system_file(char *);
 static void _fastcall free_rules_mem();
@@ -122,7 +122,7 @@ static int _fastcall read_l_system_file(char *str)
 	char **rulind;
 	int err = 0;
 	int linenum;
-	int check = 0;
+	bool check = false;
 	char inline1[MAX_LSYS_LINE_LEN + 1];
 	char fixed[MAX_LSYS_LINE_LEN + 1];
 	char *word;
@@ -170,12 +170,12 @@ static int _fastcall read_l_system_file(char *str)
 					++err;
 					break;
 				}
-				check = 1;
+				check = true;
 			}
 			else if (!strcmp(word, "angle"))
 			{
 				g_max_angle = char(atoi(strtok(NULL, " \t\n")));
-				check = 1;
+				check = true;
 			}
 			else if (!strcmp(word, "}"))
 			{
@@ -217,7 +217,7 @@ static int _fastcall read_l_system_file(char *str)
 					++err;
 					break;
 				}
-				check = 1;
+				check = true;
 			}
 			else
 			{
@@ -230,7 +230,7 @@ static int _fastcall read_l_system_file(char *str)
 			}
 			if (check)
 			{
-				check = 0;
+				check = false;
 				word = strtok(NULL, " \t\n");
 				if (word != NULL)
 				{
@@ -272,7 +272,7 @@ int l_system()
 	lsys_cmd **sc;
 	bool stackoflow = false;
 
-	if ((!loaded) && l_load())
+	if (!s_loaded && l_load())
 	{
 		return -1;
 	}
@@ -377,7 +377,7 @@ int l_system()
 	}
 	free_rules_mem();
 	free_l_cmds();
-	loaded = 0;
+	s_loaded = false;
 	return 0;
 }
 
@@ -386,10 +386,10 @@ int l_load()
 	if (read_l_system_file(g_l_system_name))  /* error occurred */
 	{
 		free_rules_mem();
-		loaded = 0;
+		s_loaded = false;
 		return -1;
 	}
-	loaded = 1;
+	s_loaded = true;
 	return 0;
 }
 
@@ -726,7 +726,7 @@ static lsys_cmd *_fastcall
 find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth)
 {
 	lsys_cmd **rulind;
-	int tran;
+	bool tran;
 
 	if (g_overflow)     /* integer math routines overflowed */
 	{
@@ -744,14 +744,14 @@ find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int dept
 				return NULL;
 			}
 		}
-		tran = 0;
+		tran = false;
 		if (depth)
 		{
 			for (rulind = rules; *rulind; rulind++)
 			{
 				if ((*rulind)->ch == command->ch)
 				{
-					tran = 1;
+					tran = true;
 					if (find_size((*rulind) + 1, ts, rules, depth-1) == NULL)
 					{
 						return NULL;
@@ -852,7 +852,7 @@ static lsys_cmd *
 draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth)
 {
 	lsys_cmd **rulind;
-	int tran;
+	bool tran;
 
 	if (g_overflow)     /* integer math routines overflowed */
 	{
@@ -869,14 +869,14 @@ draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int dep
 				return NULL;
 			}
 		}
-		tran = 0;
+		tran = false;
 		if (depth)
 		{
 			for (rulind = rules; *rulind; rulind++)
 			{
 				if ((*rulind)->ch == command->ch)
 				{
-					tran = 1;
+					tran = true;
 					if (draw_lsysi((*rulind) + 1, ts, rules, depth-1) == NULL)
 					{
 						return NULL;
