@@ -33,7 +33,7 @@ long calculate_mandelbrot_fp_asm()
 	{
 		g_old_color_iter = 0;      /* don't check periodicity */
 	}
-	else if (g_reset_periodicity != 0)
+	else if (g_reset_periodicity)
 	{
 		g_old_color_iter = g_max_iteration - 255;
 	}

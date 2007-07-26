@@ -317,7 +317,7 @@ extern long					g_real_color_iter;
 extern char					g_record_colors;
 extern int					g_release;
 extern int					g_resave_mode;
-extern int					g_reset_periodicity;
+extern bool					g_reset_periodicity;
 extern char					*g_resume_info;
 extern int					g_resume_length;
 extern bool					g_resuming;

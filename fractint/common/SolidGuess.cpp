@@ -485,7 +485,7 @@ int solid_guess()
 		{
 			g_current_row = 0;
 			memset(&s_t_prefix[1][0][0], 0, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags off */
-			g_reset_periodicity = 1;
+			g_reset_periodicity = true;
 			g_row = g_iy_start;
 			for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
 			{ /* calc top row */
@@ -494,7 +494,7 @@ int solid_guess()
 					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_begin(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_begin(), 0, g_work_sym);
 					return 0;
 				}
-				g_reset_periodicity = 0;
+				g_reset_periodicity = false;
 			}
 		}
 		else
@@ -508,7 +508,7 @@ int solid_guess()
 			if (y + blocksize <= g_y_stop)
 			{ /* calc the row below */
 				g_row = y + blocksize;
-				g_reset_periodicity = 1;
+				g_reset_periodicity = true;
 				for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
 				{
 					i = (*g_calculate_type)();
@@ -516,10 +516,10 @@ int solid_guess()
 					{
 						break;
 					}
-					g_reset_periodicity = 0;
+					g_reset_periodicity = false;
 				}
 			}
-			g_reset_periodicity = 0;
+			g_reset_periodicity = false;
 			if (i == -1 || guess_row(true, y, blocksize) != 0) /* interrupted? */
 			{
 				if (y < g_WorkList.yy_start())
@@ -593,7 +593,7 @@ int solid_guess()
 	{
 		blocksize >>= 1;
 	}
-	g_reset_periodicity = 0;
+	g_reset_periodicity = false;
 	while ((blocksize >>= 1) >= 2)
 	{
 		if (g_stop_pass > 0)

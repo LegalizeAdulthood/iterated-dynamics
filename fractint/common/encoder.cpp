@@ -105,7 +105,6 @@ static int gif_savetodisk(char *filename)      /* save-to-disk routine */
 	char openfile[FILE_MAX_PATH];
 	char openfiletype[10];
 	char tmpfile[FILE_MAX_PATH];
-	int newfile;
 	int i;
 	int j;
 	int interrupted;
@@ -137,9 +136,10 @@ restart:
 	}
 
 	strcpy(tmpfile, openfile);
+	bool new_file;
 	if (access(openfile, 0) != 0)/* file doesn't exist */
 	{
-		newfile = 1;
+		new_file = true;
 	}
 	else
 	{                                  /* file already exists */
@@ -161,7 +161,7 @@ restart:
 			stop_message(0, tmpmsg);
 			return -1;
 		}
-		newfile = 0;
+		new_file = false;
 		i = int(strlen(tmpfile));
 		while (--i >= 0 && tmpfile[i] != SLASHC)
 		{
@@ -214,7 +214,7 @@ restart:
 	{
 		char buf[200];
 		sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
-		if (newfile)
+		if (new_file)
 		{
 			strcat(buf, "delete the file,\ncontinue to keep the partial image.");
 		}
@@ -230,7 +230,7 @@ restart:
 		}
 	}
 
-	if (newfile == 0 && interrupted >= 0)
+	if (!new_file && interrupted >= 0)
 	{                            /* replace the real file */
 		unlink(openfile);         /* success assumed since we checked */
 		rename(tmpfile, openfile); /* earlier with access              */
@@ -292,18 +292,17 @@ restart:
 	return 0;
 }
 
-enum tag_save_format
+enum SaveFormatType
 {
 	SAVEFORMAT_GIF = 0,
 	SAVEFORMAT_PNG,
 	SAVEFORMAT_JPEG
 };
-typedef enum tag_save_format e_save_format;
 
 /* TODO: implement PNG case */
 int save_to_disk(char *filename)
 {
-	e_save_format format = SAVEFORMAT_GIF;
+	SaveFormatType format = SAVEFORMAT_GIF;
 
 	switch (format)
 	{

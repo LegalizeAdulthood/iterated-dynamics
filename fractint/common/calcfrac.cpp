@@ -112,7 +112,7 @@ int g_orbit_color = 15;                 /* XOR color */
 int g_x_stop;
 int g_y_stop;							/* stop here */
 SymmetryType g_symmetry;
-int g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
+bool g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
 int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
 char *g_resume_info = NULL;                    /* resume info if allocated */
@@ -1069,7 +1069,7 @@ static int _fastcall standard_calculate(int passnum)
 	while (g_row <= g_y_stop)
 	{
 		g_current_row = g_row;
-		g_reset_periodicity = 1;
+		g_reset_periodicity = true;
 		while (g_col <= g_x_stop)
 		{
 			/* on 2nd pass of two, skip even pts */
@@ -1089,7 +1089,7 @@ static int _fastcall standard_calculate(int passnum)
 					return -1; /* interrupted */
 				}
 				g_resuming = false; /* reset so g_quick_calculate works */
-				g_reset_periodicity = 0;
+				g_reset_periodicity = false;
 				if (passnum == 1) /* first pass, copy pixel and bump col */
 				{
 					if ((g_row&1) == 0 && g_row < g_y_stop)
@@ -3210,7 +3210,7 @@ static long automatic_log_map()   /*RB*/
 	/* don't use symetry */
 	/* don't use symetry */
 	g_row = 0;
-	g_reset_periodicity = 0;
+	g_reset_periodicity = false;
 	long old_maxit = g_max_iteration;
 	int xstop = g_x_dots - 1;
 	long mincolour = LONG_MAX;
