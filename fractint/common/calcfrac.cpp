@@ -540,14 +540,14 @@ int calculate_fractal()
 
 	g_log_table = NULL;
 	g_max_log_table_size = g_max_iteration;
-	g_log_calculation = 0;
+	g_log_calculation = false;
 
 	/* below, INT_MAX = 32767 only when an integer is two bytes.  Which is not true for Xfractint. */
 	/* Since 32767 is what was meant, replaced the instances of INT_MAX with 32767. */
 	if (g_log_palette_mode
 		&& (((g_max_iteration > 32767) && true) || g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC))
 	{
-		g_log_calculation = 1; /* calculate on the fly */
+		g_log_calculation = true; /* calculate on the fly */
 		SetupLogTable();
 	}
 	else if (g_ranges_length && (g_max_iteration >= 32767))
@@ -569,7 +569,7 @@ int calculate_fractal()
 			{
 				stop_message(0, "Insufficient memory for logTable, using on-the-fly routine");
 				g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;
-				g_log_calculation = 1; /* calculate on the fly */
+				g_log_calculation = true; /* calculate on the fly */
 				SetupLogTable();
 			}
 		}
