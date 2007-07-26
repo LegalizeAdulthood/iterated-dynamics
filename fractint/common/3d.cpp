@@ -258,7 +258,7 @@ int perspective(VECTOR v)
 
 /* long version of vmult and perspective combined for speed */
 int vmult_perspective_l(VECTOR_L s, MATRIX_L m, VECTOR_L t0,
-							  VECTOR_L t, VECTOR_L view_l, int bit_shift)
+	VECTOR_L t, VECTOR_L view_l, int bit_shift)
 {
 	/* s: source vector */
 	/* m: transformation matrix */
@@ -268,7 +268,7 @@ int vmult_perspective_l(VECTOR_L s, MATRIX_L m, VECTOR_L t0,
 	/* bit_shift: fixed point conversion bit_shift */
 	VECTOR_L tmp;
 	int k;
-	g_overflow = 0;
+	g_overflow = false;
 	k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
 	if (view_l[2] == 0 && t0[0] == 0)
 	{
@@ -331,7 +331,7 @@ int vmult_perspective_l(VECTOR_L s, MATRIX_L m, VECTOR_L t0,
 	is danger of overflow and underflow */
 int longpersp(VECTOR_L lv, VECTOR_L lview, int bit_shift)
 {
-	g_overflow = 0;
+	g_overflow = false;
 	long denom = lview[2] - lv[2];
 	if (denom >= 0)              /* bail out if point is "behind" us */
 	{
@@ -361,7 +361,7 @@ int longpersp(VECTOR_L lv, VECTOR_L lview, int bit_shift)
 
 int longvmult(VECTOR_L s, MATRIX_L m, VECTOR_L t, int bit_shift)
 {
-	g_overflow = 0;
+	g_overflow = false;
 	int k = CMAX-1;
 
 	VECTOR_L tmp;
