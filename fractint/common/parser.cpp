@@ -409,9 +409,9 @@ Arg *g_argument2;
 #define ChkLongDenom(denom)										\
 	do															\
 	{															\
-		if (denom == 0 || g_overflow) \
+		if (denom == 0 || g_overflow)							\
 		{														\
-			g_overflow = 1;										\
+			g_overflow = true;									\
 			return;												\
 		}														\
 		else if (denom == 0)									\
@@ -428,7 +428,7 @@ Arg *g_argument2;
 	{									\
 		if (fabs(denom) <= DBL_MIN)		\
 		{								\
-			g_overflow = 1;				\
+			g_overflow = true;			\
 			return;						\
 		}								\
 	}									\
@@ -561,7 +561,7 @@ static void lStkFunct(void (*function)())   /* call lStk via dStk */
 	}
 	else
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 }
 #endif

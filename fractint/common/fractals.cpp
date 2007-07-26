@@ -435,12 +435,12 @@ int complex_power_l(ComplexL *base, int exp, ComplexL *result, int g_bit_shift)
 
 	if (exp < 0)
 	{
-		g_overflow = complex_power_l(base, -exp, result, g_bit_shift) != 0;
+		g_overflow = (complex_power_l(base, -exp, result, g_bit_shift) != 0);
 		LCMPLXrecip(*result, *result);
 		return g_overflow;
 	}
 
-	g_overflow = 0;
+	g_overflow = false;
 	lxt = base->x;
 	lyt = base->y;
 
@@ -480,7 +480,7 @@ int complex_power_l(ComplexL *base, int exp, ComplexL *result, int g_bit_shift)
 	}
 	if (result->x == 0 && result->y == 0)
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 	return g_overflow;
 }
@@ -966,7 +966,7 @@ int complex_z_power_orbit()
 	}
 	else
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 	g_new_z_l.x += g_long_parameter->x;
 	g_new_z_l.y += g_long_parameter->y;
@@ -1315,7 +1315,7 @@ int popcorn_fn_orbit_fp()
 		{						\
 			(arg_).x = g_fudge; \
 			(arg_).y = 0;		\
-			g_overflow = 0;		\
+			g_overflow = false;	\
 		}						\
 	}							\
 	while (0)
@@ -1325,7 +1325,7 @@ int popcorn_fn_orbit()
 #if !defined(XFRACT)
 	ComplexL ltmpx, ltmpy;
 
-	g_overflow = 0;
+	g_overflow = false;
 
 	/* ltmpx contains the generalized value of the old real "x" equation */
 	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.y, g_tmp_z_l); /* tmp = (C*old.y)         */
@@ -1891,7 +1891,7 @@ int trig_trig_orbit_fp()
 /* call float version of fractal if integer math overflow */
 int try_float_fractal(int (*fpFractal)())
 {
-	g_overflow = 0;
+	g_overflow = false;
 	/* g_old_z_l had better not be changed! */
 	g_old_z.x = g_old_z_l.x;
 	g_old_z.x /= g_fudge;
@@ -2016,7 +2016,7 @@ int trig_z_squared_orbit() /* this doesn't work very well */
 	LCMPLXsqr_old(g_tmp_z_l);
 	if (labs(g_tmp_z_l.x) > l16triglim_2 || labs(g_tmp_z_l.y) > l16triglim_2)
 	{
-		g_overflow = 1;
+		g_overflow = true;
 	}
 
 	if (g_overflow)

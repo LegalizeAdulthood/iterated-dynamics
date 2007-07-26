@@ -277,7 +277,7 @@ int l_system()
 		return -1;
 	}
 
-	g_overflow = 0;                /* reset integer math overflow flag */
+	g_overflow = false;                /* reset integer math overflow flag */
 
 	order = int(g_parameters[0]);
 	if (order <= 0)
@@ -337,7 +337,7 @@ int l_system()
 	{
 		lsys_turtle_state_fp ts;
 
-		g_overflow = 0;
+		g_overflow = false;
 
 		ts.stackoflow = false;
 		ts.max_angle = g_max_angle;
@@ -373,7 +373,7 @@ int l_system()
 			}
 			draw_lsysf(rules2[0], &ts, &rules2[1], order);
 		}
-		g_overflow = 0;
+		g_overflow = false;
 	}
 	free_rules_mem();
 	free_l_cmds();

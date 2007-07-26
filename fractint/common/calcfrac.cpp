@@ -1615,7 +1615,7 @@ void StandardFractal::initialize()
 	m_caught_a_cycle = false;
 	initialize_periodicity_cycle_check_size();
 	inside_colormode_beauty_of_fractals_initialize();
-	g_overflow = 0;                /* reset integer math overflow flag */
+	g_overflow = false;                /* reset integer math overflow flag */
 
 	g_current_fractal_specific->per_pixel(); /* initialize the calculations */
 

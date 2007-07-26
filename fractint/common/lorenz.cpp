@@ -1650,7 +1650,7 @@ int orbit_2d()
 		int row = int((multiply(cvt.c, x, g_bit_shift) + multiply(cvt.d, y, g_bit_shift) + cvt.f) >> g_bit_shift);
 		if (g_overflow)
 		{
-			g_overflow = 0;
+			g_overflow = false;
 			return ret;
 		}
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)

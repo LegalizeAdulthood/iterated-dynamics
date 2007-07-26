@@ -10,7 +10,7 @@ int bail_out_mod_l()
 	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0 || labs(g_new_z_l.x) > g_limit2_l
 		|| labs(g_new_z_l.y) > g_limit2_l || g_overflow)
 	{
-		g_overflow = 0;
+		g_overflow = false;
 		return 1;
 	}
 	g_old_z_l = g_new_z_l;
@@ -23,7 +23,7 @@ int bail_out_real_l()
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	if (g_temp_sqr_x_l >= g_limit_l || g_overflow)
 	{
-		g_overflow = 0;
+		g_overflow = false;
 		return 1;
 	}
 	g_old_z_l = g_new_z_l;
@@ -36,7 +36,7 @@ int bail_out_imag_l()
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	if (g_temp_sqr_y_l >= g_limit_l || g_overflow)
 	{
-		g_overflow = 0;
+		g_overflow = false;
 		return 1;
 	}
 	g_old_z_l = g_new_z_l;
@@ -49,7 +49,7 @@ int bail_out_or_l()
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	if (g_temp_sqr_x_l >= g_limit_l || g_temp_sqr_y_l >= g_limit_l || g_overflow)
 	{
-		g_overflow = 0;
+		g_overflow = false;
 		return 1;
 	}
 	g_old_z_l = g_new_z_l;
@@ -62,7 +62,7 @@ int bail_out_and_l()
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	if ((g_temp_sqr_x_l >= g_limit_l && g_temp_sqr_y_l >= g_limit_l) || g_overflow)
 	{
-		g_overflow = 0;
+		g_overflow = false;
 		return 1;
 	}
 	g_old_z_l = g_new_z_l;
