@@ -242,7 +242,7 @@ init_restart:
 	g_distance_test = g_user_distance_test;
 	g_biomorph = g_user_biomorph;
 
-	if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER && g_save_release >= 2004)
+	if (g_inside == COLORMODE_INVERSE_TANGENT_INTEGER)
 	{
 		g_periodicity_check = 0;
 	}
@@ -1029,10 +1029,7 @@ static void _fastcall adjust_to_limits(double expand)
 
 	if (g_integer_fractal)
 	{
-		if (g_save_release > 1940) /* let user reproduce old GIF's and PAR's */
-		{
-			limit = 1023.99;
-		}
+		limit = 1023.99;
 		if (g_bit_shift >= 24)
 		{
 			limit = 31.99;

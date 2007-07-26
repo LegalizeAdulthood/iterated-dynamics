@@ -135,10 +135,7 @@ int Halley::per_pixel()
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (g_save_release >= 2004)
-		{
-			g_initial_z.y = g_dy_pixel();
-		}
+		g_initial_z.y = g_dy_pixel();
 	}
 
 	g_old_z = g_initial_z;

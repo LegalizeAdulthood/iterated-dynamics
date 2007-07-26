@@ -1346,7 +1346,6 @@ void backwards_v19()
 	}
 	g_no_magnitude_calculation = fix_bof(); /* fractal has old bof60/61 problem with magnitude */
 	g_use_old_periodicity = fix_period_bof(); /* fractal uses old periodicity method */
-	g_use_old_distance_test = (g_save_release < 1827 && g_distance_test); /* use old distest code */
 }
 
 void backwards_v20()
@@ -1380,7 +1379,6 @@ bool check_back()
 		|| g_fractal_type == FRACTYPE_FROTHY_BASIN_FP
 		|| fix_bof()
 		|| fix_period_bof()
-		|| g_use_old_distance_test
 		|| g_decomposition[0] == 2
 		|| (fractal_type_formula(g_fractal_type) && g_save_release <= 1920)
 		|| (g_log_palette_mode != 0 && g_save_release <= 2001)
@@ -1403,7 +1401,7 @@ bool check_back()
 
 static bool fix_period_bof()
 {
-	return (inside_coloring_beauty_of_fractals() && g_save_release < 1826);
+	return false;
 }
 
 static bool fix_bof()

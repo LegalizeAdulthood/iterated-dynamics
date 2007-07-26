@@ -347,11 +347,7 @@ bool julia_setup_fp()
 				}
 			}
 			int (*orbit_calc)(void) = popcorn_fn_orbit_fp;
-			if (g_save_release <= 1960)
-			{
-				orbit_calc = popcorn_old_orbit_fp;
-			}
-			else if (default_functions && DEBUGMODE_REAL_POPCORN == g_debug_mode)
+			if (default_functions && DEBUGMODE_REAL_POPCORN == g_debug_mode)
 			{
 				orbit_calc = popcorn_orbit_fp;
 			}
@@ -494,11 +490,7 @@ bool julia_setup_l()
 				}
 			}
 			int (*orbit_calc)(void) = popcorn_fn_orbit;
-			if (g_save_release <= 1960)
-			{
-				orbit_calc = popcorn_old_orbit;
-			}
-			else if (default_functions && DEBUGMODE_REAL_POPCORN == g_debug_mode)
+			if (default_functions && DEBUGMODE_REAL_POPCORN == g_debug_mode)
 			{
 				orbit_calc = popcorn_orbit;
 			}

@@ -325,20 +325,6 @@ int bail_out_manhattan_r_fp()
 	}									\
 	while (0)
 
-#define BAIL_OUT_EXP_OLD_FP()			\
-	do									\
-	{									\
-		if (fabs(g_old_z.y) >= 1.0e8)	\
-		{								\
-			return 1;					\
-		}								\
-		if (fabs(g_old_z.x) >= 6.4e2)	\
-		{								\
-			return 1;					\
-		}								\
-	}									\
-	while (0)
-
 #define BAIL_OUT_EXP_FP()				\
 	do									\
 	{									\
@@ -740,14 +726,7 @@ int sierpinski_orbit_fp()
 int lambda_exponent_orbit_fp()
 {
 	/* found this in  "Science of Fractal Images" */
-	if (g_save_release > 2002)  /* need braces since these are macros */
-	{
-		BAIL_OUT_EXP_FP();
-	}
-	else
-	{
-		BAIL_OUT_EXP_OLD_FP();
-	}
+	BAIL_OUT_EXP_FP();
 	FPUsincos  (&g_old_z.y, &s_sin_y, &s_cos_y);
 
 	if (g_old_z.x >= g_rq_limit && s_cos_y >= 0.0)
@@ -1921,16 +1900,8 @@ int try_float_fractal(int (*fpFractal)())
 	g_temp_sqr_x = sqr(g_old_z.x);
 	g_temp_sqr_y = sqr(g_old_z.y);
 	fpFractal();
-	if (g_save_release < 1900)  /* for backwards compatibility */
-	{
-		g_new_z_l.x = long(g_new_z.x/g_fudge); /* this error has been here a long time */
-		g_new_z_l.y = long(g_new_z.y/g_fudge);
-	}
-	else
-	{
-		g_new_z_l.x = long(g_new_z.x*g_fudge);
-		g_new_z_l.y = long(g_new_z.y*g_fudge);
-	}
+	g_new_z_l.x = long(g_new_z.x*g_fudge);
+	g_new_z_l.y = long(g_new_z.y*g_fudge);
 	return 0;
 }
 #endif
@@ -2043,15 +2014,11 @@ int trig_z_squared_orbit() /* this doesn't work very well */
 	/* { z = pixel: z = trig(z*z), |z|<TEST } */
 	long l16triglim_2 = 8L << 15;
 	LCMPLXsqr_old(g_tmp_z_l);
-	if ((labs(g_tmp_z_l.x) > l16triglim_2 || labs(g_tmp_z_l.y) > l16triglim_2) &&
-		g_save_release > 1900)
+	if (labs(g_tmp_z_l.x) > l16triglim_2 || labs(g_tmp_z_l.y) > l16triglim_2)
 	{
 		g_overflow = 1;
 	}
-	else
-	{
-		LCMPLXtrig0(g_tmp_z_l, g_new_z_l);
-	}
+
 	if (g_overflow)
 	{
 		try_float_fractal(trig_z_squared_orbit_fp);
@@ -2398,10 +2365,7 @@ int mandelbrot_per_pixel_l()
 	/* barnsleym1 */
 	/* barnsleym2 */
 	g_initial_z_l.x = g_lx_pixel();
-	if (g_save_release >= 2004)
-	{
-		g_initial_z_l.y = g_ly_pixel();
-	}
+	g_initial_z_l.y = g_ly_pixel();
 
 	if (g_invert)
 	{
@@ -2511,10 +2475,7 @@ int mandelbrot_per_pixel()
 	else
 	{
 		g_initial_z_l.x = g_lx_pixel();
-		if (g_save_release >= 2004)
-		{
-			g_initial_z_l.y = g_ly_pixel();
-		}
+		g_initial_z_l.y = g_ly_pixel();
 	}
 	switch (g_fractal_type)
 	{
@@ -2578,10 +2539,7 @@ int marks_mandelbrot_per_pixel()
 	else
 	{
 		g_initial_z_l.x = g_lx_pixel();
-		if (g_save_release >= 2004)
-		{
-			g_initial_z_l.y = g_ly_pixel();
-		}
+		g_initial_z_l.y = g_ly_pixel();
 	}
 
 	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;
@@ -2626,10 +2584,7 @@ int marks_mandelbrot_per_pixel_fp()
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (g_save_release >= 2004)
-		{
-			g_initial_z.y = g_dy_pixel();
-		}
+		g_initial_z.y = g_dy_pixel();
 	}
 
 	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
@@ -2683,10 +2638,7 @@ int mandelbrot_per_pixel_fp()
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (g_save_release >= 2004)
-		{
-			g_initial_z.y = g_dy_pixel();
-		}
+		g_initial_z.y = g_dy_pixel();
 	}
 	switch (g_fractal_type)
 	{
@@ -2774,10 +2726,7 @@ int other_mandelbrot_per_pixel_fp()
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (g_save_release >= 2004)
-		{
-			g_initial_z.y = g_dy_pixel();
-		}
+		g_initial_z.y = g_dy_pixel();
 	}
 
 	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
@@ -2837,10 +2786,7 @@ int marks_complex_mandelbrot_per_pixel()
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (g_save_release >= 2004)
-		{
-			g_initial_z.y = g_dy_pixel();
-		}
+		g_initial_z.y = g_dy_pixel();
 	}
 	g_old_z.x = g_initial_z.x + g_parameter.x; /* initial pertubation of parameters set */
 	g_old_z.y = g_initial_z.y + g_parameter.y;
@@ -2906,10 +2852,7 @@ int mandelbrot_phoenix_per_pixel()
 {
 #if !defined(XFRACT)
 	g_initial_z_l.x = g_lx_pixel();
-	if (g_save_release >= 2004)
-	{
-		g_initial_z_l.y = g_ly_pixel();
-	}
+	g_initial_z_l.y = g_ly_pixel();
 
 	if (g_invert)
 	{
@@ -2951,10 +2894,7 @@ int mandelbrot_phoenix_per_pixel_fp()
 	else
 	{
 		g_initial_z.x = g_dx_pixel();
-		if (g_save_release >= 2004)
-		{
-			g_initial_z.y = g_dy_pixel();
-		}
+		g_initial_z.y = g_dy_pixel();
 	}
 
 	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;

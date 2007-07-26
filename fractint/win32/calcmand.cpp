@@ -184,7 +184,7 @@ static long cdecl calculate_mandelbrot_asm1()
 				/* check_color */
 				if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
 				{
-					g_color_iter = (g_save_release < 1961) ? 0 : 1;
+					g_color_iter = 1;
 				}
 			}
 

@@ -255,10 +255,6 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 				temp1[i] = (char)((g_save_release % 10) + '0');
 				temp1[i + 1] = 0;
 			}
-			if (g_save_release <= 1410)
-			{
-				strcat(temp1, " or earlier");
-			}
 			strcat((char *)g_stack, temp1);
 		}
 		strcat((char *)g_stack, "\n");
