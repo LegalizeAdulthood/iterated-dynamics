@@ -185,7 +185,7 @@ extern ComplexL				g_new_z_l;
 extern int					g_loaded_3d;
 extern int					g_lod_ptr;
 extern bool					g_log_automatic_flag;
-extern int					g_log_calculation;
+extern bool					g_log_calculation;
 extern int					g_log_dynamic_calculate;
 extern long					g_log_palette_mode;
 extern BYTE					*g_log_table;

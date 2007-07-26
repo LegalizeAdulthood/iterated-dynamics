@@ -298,7 +298,7 @@ ComplexD ComplexSqrtFloat(double x, double y)
 
 BYTE *g_log_table = 0;
 long g_max_log_table_size;
-int  g_log_calculation = 0;
+bool g_log_calculation = false;
 static double mlf;
 static unsigned long lf;
 
@@ -344,12 +344,12 @@ void SetupLogTable()
 		return; /* g_log_table not defined, bail out now */
 	}
 
-	g_log_calculation = 1;   /* turn it on */
+	g_log_calculation = true;   /* turn it on */
 	for (prev = 0; prev <= (unsigned long)g_max_log_table_size; prev++)
 	{
 		g_log_table[prev] = BYTE(logtablecalc(long(prev)));
 	}
-	g_log_calculation = 0;   /* turn it off, again */
+	g_log_calculation = false;   /* turn it off, again */
 }
 
 long logtablecalc(long citer)
