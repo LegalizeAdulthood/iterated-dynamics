@@ -63,6 +63,7 @@ static void read_info_version_0(const fractal_info &read_info)
 {
 	g_invert = 0;
 
+	// TODO: handle old crap or abort?
 	if (read_info.version > 0)
 	{
 		g_parameters[2] = read_info.parm3;
@@ -97,6 +98,7 @@ static void read_info_version_0(const fractal_info &read_info)
 
 static void read_info_version_1(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 1)
 	{
 		g_save_release = 1200;
@@ -123,6 +125,7 @@ static void read_info_version_1(const fractal_info &read_info)
 
 static void read_info_version_2(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 2)
 	{
 		g_save_release = 1300;
@@ -138,6 +141,7 @@ static void read_info_version_3(const fractal_info &read_info)
 	g_user_distance_test = 0;
 	g_calculation_time = 0;
 
+	// TODO: handle old crap or abort?
 	if (read_info.version > 3)
 	{
 		g_save_release = 1400;
@@ -171,6 +175,7 @@ static void read_info_version_4(const fractal_info &read_info)
 {
 	g_potential_16bit = false;
 
+	// TODO: handle old crap or abort?
 	if (read_info.version > 4)
 	{
 		g_potential_16bit = (read_info.potential_16bit != 0);
@@ -187,6 +192,7 @@ static void read_info_version_4(const fractal_info &read_info)
 		if (read_info.version == 5        /* except a few early fmt 5 cases: */
 			&& (g_save_release <= 0 || g_save_release >= 4000))
 		{
+			// TODO: handle old crap or abort?
 			g_save_release = 1410;
 		}
 		if (!g_display_3d && read_info.flag3d > 0)
@@ -207,6 +213,7 @@ static void read_info_version_5(const fractal_info &read_info)
 	g_rotate_hi = 255;
 	g_distance_test_width = 71;
 
+	// TODO: handle old crap or abort?
 	if (read_info.version > 5)
 	{
 		g_rotate_lo = read_info.rotate_lo;
@@ -217,6 +224,7 @@ static void read_info_version_5(const fractal_info &read_info)
 
 static void read_info_version_6(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 6)
 	{
 		g_parameters[2] = read_info.dparm3;
@@ -226,6 +234,7 @@ static void read_info_version_6(const fractal_info &read_info)
 
 static void read_info_version_7(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 7)
 	{
 		g_fill_color = read_info.fill_color;
@@ -234,6 +243,7 @@ static void read_info_version_7(const fractal_info &read_info)
 
 static void read_info_version_8(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 8)
 	{
 		g_m_x_max_fp = read_info.mxmaxfp;
@@ -263,6 +273,7 @@ static void read_info_version_8(const fractal_info &read_info)
 
 static void read_info_pre_version_14(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
 	{
 		translate_obsolete_fractal_types(&read_info);
@@ -276,6 +287,7 @@ static void read_info_pre_version_14(const fractal_info &read_info)
 
 static void read_info_pre_version_15(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
 	{
 		if (g_log_palette_mode == 2) /* logmap = old changed again in format 5! */
@@ -300,6 +312,7 @@ static void read_info_pre_version_15(const fractal_info &read_info)
 
 static void read_info_pre_version_18(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version < 9 && read_info.version != 0) /* pre-version 18.0? */
 	{
 		/* g_force_symmetry==FORCESYMMETRY_SEARCH means we want to force symmetry but don't
@@ -320,6 +333,7 @@ static void read_info_pre_version_18(const fractal_info &read_info)
 
 static void read_info_pre_version_17_25(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (g_save_release < 1725 && read_info.version != 0) /* pre-version 17.25 */
 	{
 		set_if_old_bif(); /* translate bifurcation types */
@@ -329,6 +343,7 @@ static void read_info_pre_version_17_25(const fractal_info &read_info)
 
 static void read_info_version_9(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 9)
 	{ /* post-version 18.22 */
 		g_bail_out = read_info.bail_out; /* use long bailout */
@@ -350,6 +365,7 @@ static void read_info_version_9(const fractal_info &read_info)
 
 static void read_info_version_10(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 10) /* post-version 19.20 */
 	{
 		g_log_palette_mode = read_info.logmap;
@@ -359,6 +375,7 @@ static void read_info_version_10(const fractal_info &read_info)
 
 static void read_info_version_11(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 11) /* post-version 19.20, inversion fix */
 	{
 		g_inversion[0] = read_info.dinvert[0];
@@ -371,6 +388,7 @@ static void read_info_version_11(const fractal_info &read_info)
 
 static void read_info_version_12(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	if (read_info.version > 12) /* post-version 19.60 */
 	{
 		g_quick_calculate = (read_info.quick_calculate != 0);
@@ -386,6 +404,7 @@ static void read_info_version_12(const fractal_info &read_info)
 
 static void read_info_version_13(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	g_no_bof = false;
 	if (read_info.version > 13) /* post-version 20.1.2 */
 	{
@@ -395,6 +414,7 @@ static void read_info_version_13(const fractal_info &read_info)
 
 static void read_info_version_14()
 {
+	// TODO: handle old crap or abort?
 	/* if (read_info.version > 14)  post-version 20.1.12 */
 	/* modified saved evolver structure JCO 12JUL01 */
 	g_log_automatic_flag = false;  /* make sure it's turned off */
@@ -402,6 +422,7 @@ static void read_info_version_14()
 
 static void read_info_version_15(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	g_orbit_interval = 1;
 	if (read_info.version > 15) /* post-version 20.3.2 */
 	{
@@ -411,6 +432,7 @@ static void read_info_version_15(const fractal_info &read_info)
 
 static void read_info_version_16(const fractal_info &read_info)
 {
+	// TODO: handle old crap or abort?
 	g_orbit_delay = 0;
 	g_math_tolerance[0] = 0.05;
 	g_math_tolerance[1] = 0.05;
@@ -512,6 +534,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 		return;
 	}
 
+	// TODO: handle old crap or abort?
 	if (read_info.version < 15)
 	{
 		/* Increasing NUMGENES moves ecount in the data structure */
@@ -921,7 +944,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 
 	if (hdr_offset)  /* we found INFO_ID */
 	{
-
+		// TODO: handle old crap or abort?
 		if (info->version >= 4)
 		{
 			/* first reload main extension g_block, reasons:
