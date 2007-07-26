@@ -1455,11 +1455,6 @@ int popcorn()   /* subset of std engine */
 /***    Fall '92 integration of Nicholas Wilt's ASM speedups            ***/
 /***    Jan 93' integration with calcfrac() yielding boundary tracing,  ***/
 /***    tesseral, and solid guessing, and inversion, inside=nnn         ***/
-/*** g_save_release behavior:                                             ***/
-/***    1730 & prior: ignores inside=, calcmode='1', (a, b)->(x, y)       ***/
-/***    1731: other calcmodes and inside=nnn                            ***/
-/***    1732: the infamous axis swap: (b, a)->(x, y),                     ***/
-/***            the order parameter becomes a long int                  ***/
 /**************************************************************************/
 int lyapunov()
 {
@@ -1552,12 +1547,6 @@ bool lyapunov_setup()
 	s_lyapunov_length = 1;
 
 	i = long(g_parameters[0]);
-#if !defined(XFRACT)
-	if (g_save_release < 1732) /* make it a short to reproduce prior stuff */
-	{
-		i &= 0x0FFFFL;
-	}
-#endif
 	s_lyapunov_r_xy[0] = 1;
 	for (t = 31; t >= 0; t--)
 	{
@@ -1571,21 +1560,6 @@ bool lyapunov_setup()
 		s_lyapunov_r_xy[s_lyapunov_length++] = (i & (1 << t)) != 0;
 	}
 	s_lyapunov_r_xy[s_lyapunov_length++] = 0;
-	if (g_save_release < 1732)              /* swap axes prior to 1732 */
-	{
-		for (t = s_lyapunov_length; t >= 0; t--)
-		{
-				s_lyapunov_r_xy[t] = !s_lyapunov_r_xy[t];
-		}
-	}
-	if (g_save_release < 1731)  /* ignore inside=, g_standard_calculation_mode */
-	{
-		g_standard_calculation_mode = '1';
-		if (g_inside == 1)
-		{
-			g_inside = 0;
-		}
-	}
 	if (g_inside < 0)
 	{
 		stop_message(0, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
@@ -2138,37 +2112,6 @@ bool froth_setup()
 	cos_theta = -0.5;    /* cos(2*PI/3) */
 
 	/* for the all important backwards compatibility */
-	if (g_save_release <= 1821)   /* book version is 18.21 */
-	{
-		/* use old release parameters */
-
-		s_frothy_data.repeat_mapping = (int(g_parameters[0]) == 6 || int(g_parameters[0]) == 2); /* map 1 or 2 times (3 or 6 basins)  */
-		s_frothy_data.altcolor = int(g_parameters[1]);
-		g_parameters[2] = 0; /* throw away any value used prior to 18.20 */
-
-		s_frothy_data.attractors = !s_frothy_data.repeat_mapping ? 3 : 6;
-
-		/* use old values */                /* old names */
-		s_frothy_data.f.a = 1.02871376822;          /* A     */
-		s_frothy_data.f.halfa = s_frothy_data.f.a/2;      /* A/2   */
-
-		s_frothy_data.f.top_x1 = -1.04368901270;    /* X1MIN */
-		s_frothy_data.f.top_x2 =  1.33928675524;    /* X1MAX */
-		s_frothy_data.f.top_x3 = -0.339286755220;   /* XMIDT */
-		s_frothy_data.f.top_x4 = -0.339286755220;   /* XMIDT */
-
-		s_frothy_data.f.left_x1 =  0.07639837810;   /* X3MAX2 */
-		s_frothy_data.f.left_x2 = -1.11508950586;   /* X2MIN2 */
-		s_frothy_data.f.left_x3 = -0.27580275066;   /* XMIDL  */
-		s_frothy_data.f.left_x4 = -0.27580275066;   /* XMIDL  */
-
-		s_frothy_data.f.right_x1 =  0.96729063460;  /* X2MAX1 */
-		s_frothy_data.f.right_x2 = -0.22419724936;  /* X3MIN1 */
-		s_frothy_data.f.right_x3 =  0.61508950585;  /* XMIDR  */
-		s_frothy_data.f.right_x4 =  0.61508950585;  /* XMIDR  */
-
-	}
-	else /* use new code */
 	{
 		if (g_parameters[0] != 2)
 		{

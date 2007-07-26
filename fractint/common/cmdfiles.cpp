@@ -956,10 +956,6 @@ static int reset_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	if (g_save_release == 0)
-	{
-		g_save_release = 1730; /* before start of lyapunov wierdness */
-	}
 	return COMMANDRESULT_RESET | COMMANDRESULT_FRACTAL_PARAMETER;
 }
 

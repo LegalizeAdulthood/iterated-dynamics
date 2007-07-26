@@ -311,16 +311,9 @@ static unsigned long lf;
 
 void SetupLogTable()
 {
-	float l;
-	float f;
-	float c;
-	float m;
 	unsigned long prev;
-	unsigned long limit;
-	unsigned long sptop;
-	unsigned n;
 
-	if (g_save_release > 1920 || g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)  /* set up on-the-fly variables */
+	if (g_log_dynamic_calculate == LOGDYNAMIC_DYNAMIC)  /* set up on-the-fly variables */
 	{
 		if (g_log_palette_mode > LOGPALETTE_NONE)  /* new log function */
 		{
@@ -351,90 +344,12 @@ void SetupLogTable()
 		return; /* g_log_table not defined, bail out now */
 	}
 
-	if (g_save_release > 1920 && !g_log_calculation)
+	g_log_calculation = 1;   /* turn it on */
+	for (prev = 0; prev <= (unsigned long)g_max_log_table_size; prev++)
 	{
-		g_log_calculation = 1;   /* turn it on */
-		for (prev = 0; prev <= (unsigned long)g_max_log_table_size; prev++)
-		{
-			g_log_table[prev] = BYTE(logtablecalc(long(prev)));
-		}
-		g_log_calculation = 0;   /* turn it off, again */
-		return;
+		g_log_table[prev] = BYTE(logtablecalc(long(prev)));
 	}
-
-	if (g_log_palette_mode > -2)
-	{
-		lf = (g_log_palette_mode > LOGPALETTE_STANDARD) ? g_log_palette_mode : 0;
-		if (lf >= (unsigned long)g_max_log_table_size)
-		{
-			lf = g_max_log_table_size - 1;
-		}
-		Fg2Float(long(g_max_log_table_size-lf), 0, m);
-		fLog14(m, m);
-		Fg2Float(long(g_colors - (lf ? 2 : 1)), 0, c);
-		fDiv(m, c, m);
-		for (prev = 1; prev <= lf; prev++)
-		{
-			g_log_table[prev] = 1;
-		}
-		for (n = (lf ? 2 : 1); n < (unsigned int)g_colors; n++)
-		{
-			Fg2Float(long(n), 0, f);
-			fMul16(f, m, f);
-			fExp14(f, l);
-			limit = (unsigned long)Float2Fg(l, 0) + lf;
-			if (limit > (unsigned long)g_max_log_table_size || n == (unsigned int)(g_colors-1))
-			{
-				limit = g_max_log_table_size;
-			}
-			while (prev <= limit)
-			{
-				g_log_table[prev++] = BYTE(n);
-			}
-		}
-	}
-	else
-	{
-		lf = -g_log_palette_mode;
-		if (lf >= (unsigned long)g_max_log_table_size)
-		{
-			lf = g_max_log_table_size - 1;
-		}
-		Fg2Float(long(g_max_log_table_size-lf), 0, m);
-		fSqrt14(m, m);
-		Fg2Float(long(g_colors-2), 0, c);
-		fDiv(m, c, m);
-		for (prev = 1; prev <= lf; prev++)
-		{
-			g_log_table[prev] = 1;
-		}
-		for (n = 2; n < (unsigned int)g_colors; n++)
-		{
-			Fg2Float(long(n), 0, f);
-			fMul16(f, m, f);
-			fMul16(f, f, l);
-			limit = (unsigned long)(Float2Fg(l, 0) + lf);
-			if (limit > (unsigned long)g_max_log_table_size || n == (unsigned int)(g_colors-1))
-			{
-				limit = g_max_log_table_size;
-			}
-			while (prev <= limit)
-			{
-				g_log_table[prev++] = BYTE(n);
-			}
-		}
-	}
-	g_log_table[0] = 0;
-	if (g_log_palette_mode != LOGPALETTE_OLD)
-	{
-		for (sptop = 1; sptop < (unsigned long)g_max_log_table_size; sptop++) /* spread top to incl unused g_colors */
-		{
-			if (g_log_table[sptop] > g_log_table[sptop-1])
-			{
-				g_log_table[sptop] = BYTE(g_log_table[sptop-1] + 1);
-			}
-		}
-	}
+	g_log_calculation = 0;   /* turn it off, again */
 }
 
 long logtablecalc(long citer)
@@ -458,7 +373,7 @@ long logtablecalc(long citer)
 		}
 		else if ((citer - lf)/log(double(citer - lf)) <= mlf)
 		{
-			ret = (g_save_release < 2002) ? (long(citer - lf + (lf ? 1 : 0))) : (long(citer - lf));
+			ret = long(citer - lf);
 		}
 		else
 		{

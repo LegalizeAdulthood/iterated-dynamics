@@ -349,8 +349,7 @@ static int z_line_fp(double x, double y)
 	for (z_pixel = 0; z_pixel < g_z_dots; z_pixel++)
 	{
 		/* Special initialization for Mandelbrot types */
-		if ((g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
-			&& g_save_release > 2002)
+		if (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
 		{
 			g_old_z.x = 0.0;
 			g_old_z.y = 0.0;
@@ -360,17 +359,6 @@ static int z_line_fp(double x, double y)
 			g_quaternion_ci = s_jy_fp;
 			g_quaternion_cj = s_mx_fp;
 			g_quaternion_ck = s_my_fp;
-		}
-		else
-		{
-			g_old_z.x = s_jx_fp;
-			g_old_z.y = s_jy_fp;
-			s_jbc_fp.x = s_mx_fp;
-			s_jbc_fp.y = s_my_fp;
-			g_quaternion_c = g_parameters[0];
-			g_quaternion_ci = g_parameters[1];
-			g_quaternion_cj = g_parameters[2];
-			g_quaternion_ck = g_parameters[3];
 		}
 #ifdef XFRACT
 		if (keychk++ > 500)

@@ -401,7 +401,6 @@ extern double				g_two_pi;
 extern UserInterfaceState	g_ui_state;
 extern InitialZType			g_use_initial_orbit_z;
 extern bool					g_use_center_mag;
-extern bool					g_use_old_distance_test;
 extern bool					g_use_old_periodicity;
 extern bool					g_using_jiim;
 extern int					g_user_biomorph;

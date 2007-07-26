@@ -409,7 +409,7 @@ Arg *g_argument2;
 #define ChkLongDenom(denom)										\
 	do															\
 	{															\
-		if ((denom == 0 || g_overflow) && g_save_release > 1920) \
+		if (denom == 0 || g_overflow) \
 		{														\
 			g_overflow = 1;										\
 			return;												\
@@ -428,10 +428,7 @@ Arg *g_argument2;
 	{									\
 		if (fabs(denom) <= DBL_MIN)		\
 		{								\
-			if (g_save_release > 1920)	\
-			{							\
-				g_overflow = 1;			\
-			}							\
+			g_overflow = 1;				\
 			return;						\
 		}								\
 	}									\
@@ -1371,14 +1368,7 @@ void lStkRecip()
 	long mod;
 	mod = multiply(g_argument1->l.x, g_argument1->l.x, g_bit_shift)
 		+ multiply(g_argument1->l.y, g_argument1->l.y, g_bit_shift);
-	if (g_save_release > 1920)
-	{
-		ChkLongDenom(mod);
-	}
-	else if (mod <= 0L)
-	{
-		return;
-	}
+	ChkLongDenom(mod);
 	g_argument1->l.x =  divide(g_argument1->l.x, mod, g_bit_shift);
 	g_argument1->l.y = -divide(g_argument1->l.y, mod, g_bit_shift);
 }
@@ -2360,7 +2350,7 @@ void Formula::parse_string_set_math()
 		StkSinh = lStkSinh;
 		StkLT = lStkLT;
 		StkLTE = lStkLTE;
-		StkMod = (g_save_release > 1826) ? lStkMod : lStkModOld;
+		StkMod = lStkMod;
 		StkSqr = lStkSqr;
 		StkCos = lStkCos;
 		StkCosh = lStkCosh;
