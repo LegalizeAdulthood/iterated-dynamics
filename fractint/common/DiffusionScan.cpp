@@ -71,12 +71,12 @@ static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
 /* Calculate the point */
 static bool diffusion_point(int row, int col)
 {
-	g_reset_periodicity = 1;
+	g_reset_periodicity = true;
 	if ((*g_calculate_type)() == -1)
 	{
 		return true;
 	}
-	g_reset_periodicity = 0;
+	g_reset_periodicity = false;
 	(*g_plot_color)(col, row, g_color);
 	return false;
 }
@@ -96,12 +96,12 @@ static void diffusion_plot_block(int x, int y, int s, int c)
 
 static bool diffusion_block(int row, int col, int sqsz)
 {
-	g_reset_periodicity = 1;
+	g_reset_periodicity = true;
 	if ((*g_calculate_type)() == -1)
 	{
 		return true;
 	}
-	g_reset_periodicity = 0;
+	g_reset_periodicity = false;
 	diffusion_plot_block(col, row, sqsz, g_color);
 	return false;
 }
@@ -118,12 +118,12 @@ static void plot_block_lim(int x, int y, int s, int c)
 
 static bool diffusion_block_lim(int row, int col, int sqsz)
 {
-	g_reset_periodicity = 1;
+	g_reset_periodicity = true;
 	if ((*g_calculate_type)() == -1)
 	{
 		return true;
 	}
-	g_reset_periodicity = 0;
+	g_reset_periodicity = false;
 	plot_block_lim(col, row, sqsz, g_color);
 	return false;
 }

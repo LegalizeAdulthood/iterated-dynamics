@@ -1432,7 +1432,7 @@ int popcorn()   /* subset of std engine */
 	g_temp_sqr_x = g_temp_sqr_x_l = 0; /* PB added this to cover weird BAILOUTs */
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
-		g_reset_periodicity = 1;
+		g_reset_periodicity = true;
 		for (g_col = 0; g_col <= g_x_stop; g_col++)
 		{
 			if (standard_fractal() == -1) /* interrupted */
@@ -1441,7 +1441,7 @@ int popcorn()   /* subset of std engine */
 				put_resume(sizeof(g_row), &g_row, 0);
 				return -1;
 			}
-			g_reset_periodicity = 0;
+			g_reset_periodicity = false;
 		}
 	}
 	g_calculation_status = CALCSTAT_COMPLETED;

@@ -62,9 +62,9 @@ static int _fastcall tesseral_column(int x, int y1, int y2)
 	int i;
 	g_col = x;
 	g_row = y1;
-	g_reset_periodicity = 1;
+	g_reset_periodicity = true;
 	colcolor = (*g_calculate_type)();
-	g_reset_periodicity = 0;
+	g_reset_periodicity = false;
 	while (++g_row <= y2)  /* generate the column */
 	{
 		i = (*g_calculate_type)();
@@ -86,9 +86,9 @@ static int _fastcall tesseral_row(int x1, int x2, int y)
 	int i;
 	g_row = y;
 	g_col = x1;
-	g_reset_periodicity = 1;
+	g_reset_periodicity = true;
 	rowcolor = (*g_calculate_type)();
-	g_reset_periodicity = 0;
+	g_reset_periodicity = false;
 	while (++g_col <= x2)  /* generate the row */
 	{
 		i = (*g_calculate_type)();

@@ -74,7 +74,7 @@ int boundary_trace_main()
 	max_putline_length = 0; /* reset max_putline_length */
 	for (g_current_row = g_iy_start; g_current_row <= g_y_stop; g_current_row++)
 	{
-		g_reset_periodicity = 1; /* reset for a new row */
+		g_reset_periodicity = true; /* reset for a new row */
 		g_color = bkcolor;
 		for (g_current_col = g_ix_start; g_current_col <= g_x_stop; g_current_col++)
 		{
@@ -98,7 +98,7 @@ int boundary_trace_main()
 				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
 				return -1;
 			}
-			g_reset_periodicity = 0; /* normal periodicity checking */
+			g_reset_periodicity = false; /* normal periodicity checking */
 
 			/*
 			This next line may cause a few more pixels to be calculated,
@@ -170,7 +170,7 @@ int boundary_trace_main()
 			{
 				/* no hole */
 				g_color = bkcolor;
-				g_reset_periodicity = 1;
+				g_reset_periodicity = true;
 				continue;
 			}
 
@@ -270,7 +270,7 @@ int boundary_trace_main()
 				}
 			}
 			while (s_trail_col != g_current_col || s_trail_row != g_current_row);
-			g_reset_periodicity = 1; /* reset after a trace/fill */
+			g_reset_periodicity = true; /* reset after a trace/fill */
 			g_color = bkcolor;
 		}
 	}
