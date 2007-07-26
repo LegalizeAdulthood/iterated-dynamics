@@ -555,7 +555,7 @@ int look_get_window()
 	char ext[FILE_MAX_EXT];
 	char tmpmask[FILE_MAX_PATH];
 	int vid_too_big = 0;
-	int no_memory = 0;
+	bool no_memory = false;
 	int vidlength;
 	int saved;
 #ifdef XFRACT
@@ -594,7 +594,7 @@ int look_get_window()
 	int *boxvalues_storage = new int[vidlength/2*MAX_WINDOWS_OPEN];
 	if (!boxx_storage || !boxy_storage || !boxvalues_storage)
 	{
-		no_memory = 1;
+		no_memory = true;
 	}
 
 	/* set up complex-plane-to-screen transformation */

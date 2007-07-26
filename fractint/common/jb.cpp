@@ -237,7 +237,7 @@ int julibrot_per_pixel_fp()
 	return 1;
 }
 
-static int s_plotted;
+static bool s_plotted;
 
 static int z_line(long x, long y)
 {
@@ -310,7 +310,7 @@ static int z_line(long x, long y)
 				g_color = int(254l*z_pixel/g_z_dots);
 				(*g_plot_color)(g_col, g_row, g_color + 1);
 			}
-			s_plotted = 1;
+			s_plotted = true;
 			break;
 		}
 		s_mx += s_dmx;
@@ -412,7 +412,7 @@ static int z_line_fp(double x, double y)
 				g_color = int(254l*z_pixel/g_z_dots);
 				(*g_plot_color)(g_col, g_row, g_color + 1);
 			}
-			s_plotted = 1;
+			s_plotted = true;
 			break;
 		}
 		s_mx_fp += s_dmx_fp;
@@ -449,7 +449,7 @@ int standard_4d_fractal()
 	long y = 0;
 	for (int ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot)
 	{
-		s_plotted = 0;
+		s_plotted = false;
 		long x = -(s_width >> 1);
 		for (int xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot)
 		{
@@ -466,11 +466,11 @@ int standard_4d_fractal()
 				return -1;
 			}
 		}
-		if (s_plotted == 0)
+		if (!s_plotted)
 		{
 			if (y == 0)
 			{
-				s_plotted = -1;  /* no points first pass; don't give up */
+				s_plotted = true;  /* no points first pass; don't give up */
 			}
 			else
 			{
@@ -498,7 +498,7 @@ int standard_4d_fractal_fp()
 	double y = 0;
 	for (int ydot = (g_y_dots >> 1) - 1; ydot >= 0; ydot--, y -= s_inch_per_y_dot_fp)
 	{
-		s_plotted = 0;
+		s_plotted = false;
 		double x = -g_width_fp/2;
 		for (int xdot = 0; xdot < g_x_dots; xdot++, x += s_inch_per_x_dot_fp)
 		{
@@ -515,11 +515,11 @@ int standard_4d_fractal_fp()
 				return -1;
 			}
 		}
-		if (s_plotted == 0)
+		if (!s_plotted)
 		{
 			if (y == 0)
 			{
-				s_plotted = -1;  /* no points first pass; don't give up */
+				s_plotted = true;  /* no points first pass; don't give up */
 			}
 			else
 			{

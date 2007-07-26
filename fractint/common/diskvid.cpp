@@ -37,11 +37,11 @@ static FILE *s_file = NULL;
 static bool s_disk_targa = false;
 static struct cache		/* structure of each cache entry */
 {
-	long offset;                    /* pixel offset in image */
-	BYTE pixel[BLOCK_LEN];  /* one pixel per byte (this *is* faster) */
-	unsigned int hashlink;          /* ptr to next cache entry with same hash */
-	unsigned int dirty : 1;         /* changed since read? */
-	unsigned int lru : 1;           /* recently used? */
+	long offset;				/* pixel offset in image */
+	BYTE pixel[BLOCK_LEN];		/* one pixel per byte (this *is* faster) */
+	unsigned int hashlink;		/* ptr to next cache entry with same hash */
+	bool dirty;					/* changed since read? */
+	bool lru;					/* recently used? */
 } *s_cache_end, *s_cache_lru, *s_cur_cache;
 static struct cache *s_cache_start = NULL;
 static long s_high_offset;           /* highwater mark of writes */
@@ -227,8 +227,8 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	longtmp = 100000000L;
 	for (ptr1 = s_cache_start; ptr1 < s_cache_end; ++ptr1)
 	{
-		ptr1->dirty = 0;
-		ptr1->lru = 0;
+		ptr1->dirty = false;
+		ptr1->lru = false;
 		longtmp += BLOCK_LEN;
 		fwd_link = &s_hash_ptr[(((unsigned short)longtmp >> BLOCK_SHIFT) & (HASH_SIZE-1))];
 		ptr1->offset = longtmp;
@@ -399,7 +399,7 @@ int disk_from_memory(long offset, int size, void *dest)
 		find_load_cache(offset & (0L-BLOCK_LEN));
 	}
 	memcpy(dest, (void *) &s_cur_cache->pixel[col_subscr], size);
-	s_cur_cache->dirty = 0;
+	s_cur_cache->dirty = false;
 	return 1;
 }
 
@@ -450,7 +450,7 @@ void disk_write(int col, int row, int color)
 	if (s_cur_cache->pixel[col_subscr] != (color & 0xff))
 	{
 		s_cur_cache->pixel[col_subscr] = (BYTE) color;
-		s_cur_cache->dirty = 1;
+		s_cur_cache->dirty = true;
 	}
 }
 
@@ -469,7 +469,7 @@ int disk_to_memory(long offset, int size, void *src)
 	}
 
 	memcpy((void *) &s_cur_cache->pixel[col_subscr], src, size);
-	s_cur_cache->dirty = 1;
+	s_cur_cache->dirty = true;
 	return 1;
 }
 
@@ -498,7 +498,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 		s_cur_cache = (struct cache *)((char *)s_cache_start + tbloffset);
 		if (s_cur_cache->offset == offset)  /* great, it is in the cache */
 		{
-			s_cur_cache->lru = 1;
+			s_cur_cache->lru = true;
 			return;
 		}
 		tbloffset = s_cur_cache->hashlink;
@@ -510,11 +510,11 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 		{
 			s_cache_lru = s_cache_start;
 		}
-		if (s_cache_lru->lru == 0)
+		if (!s_cache_lru->lru)
 		{
 			break;
 		}
-		s_cache_lru->lru = 0;
+		s_cache_lru->lru = false;
 	}
 	if (s_cache_lru->dirty) /* must write this g_block before reusing it */
 	{
@@ -529,8 +529,8 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 	}
 	*fwd_link = s_cache_lru->hashlink;
 	/* load g_block */
-	s_cache_lru->dirty  = 0;
-	s_cache_lru->lru    = 1;
+	s_cache_lru->dirty  = false;
+	s_cache_lru->lru    = true;
 	s_cache_lru->offset = offset;
 	pixelptr = &s_cache_lru->pixel[0];
 	if (offset > s_high_offset)  /* never been this high before, just clear it */
@@ -692,10 +692,10 @@ write_stuff:
 		}
 		break;
 	}
-	ptr1->dirty = 0;
+	ptr1->dirty = false;
 	offset = ptr1->offset + BLOCK_LEN;
 	ptr1 = find_cache(offset);
-	if (ptr1 != NULL && ptr1->dirty != 0)
+	if (ptr1 != NULL && ptr1->dirty)
 	{
 		goto write_stuff;
 	}
@@ -703,7 +703,7 @@ write_stuff:
 	while (++i <= WRITEGAP)
 	{
 		ptr1 = find_cache(offset += BLOCK_LEN);
-		if (ptr1 != NULL && ptr1->dirty != 0)
+		if (ptr1 != NULL && ptr1->dirty)
 		{
 			goto write_seek;
 		}
