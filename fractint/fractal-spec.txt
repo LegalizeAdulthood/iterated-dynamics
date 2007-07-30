@@ -1,0 +1,544 @@
+Comments/questions regarding this file should be directed to me (Damien
+M. Jones, dmj@fractalus.com).  Please do not distribute this file.
+
+Addenda to the original file are indicated with square brackets [ ].
+
+This is an outline of a fractal program I'd like to create (or use,
+if it or something similar exists).  Over the years I have noticed two
+main types of fractal programs: those which have tons of features,
+but are not easy to use or learn; and those which are easy to use,
+but have few features.  Personally, I want both. :)
+
+Let me start by covering some of the ultimate objectives of such
+a program.  Not all of these would be reached immediately, but they
+are the goal.  And besides, without a few "glittering generalities"
+this would be a pretty dry spec.
+
+ 1. It should be a superset of features from virtually all fractal programs
+    for any platform.
+ 2. It should be easy enough to use that a fractal novice can produce results
+    immediately, but powerful enough that an experienced user should not feel
+    limited.
+ 3. The program's interface should be aesthetically pleasing.
+ 4. Insofar as possible, it should not be necessary to use other programs to
+    produce input for the fractal program.  It should be self-contained.
+ 5. The program should be oriented more towards creating fractal-based art,
+    rather than simply a way to visualize mathematics.
+ 6. It should be a clear successor to FractInt.
+
+I know this last point sounds a little bold.  I respect the authors of
+FractInt for producing such a capable and useful program.  I use FractInt
+because nothing else really offers the features, and few are as fast.
+But FractInt is old; it runs in DOS; its interface is quirky.  It is not
+easy to use.  And I do not think that simply porting FractInt to Windows
+is sufficient; WinFract is just as miserable to use as FractInt because
+it doesn't really do anything to the interface.  Making windowed dialogs
+out of FractInt's options screens doesn't cut it.  The entire program
+needs to be redesigned, reorganized.  New capabilities that do not fit
+into the FractInt mold can then be introduced.
+
+FRACTAL TYPES
+
+Technically, some things FractInt can create are not fractal, but
+they are chaotic.  FractInt offers numerous fractal types.  The most
+often used (especially for creating art) are escape-time fractals.
+This broad category includes Mandelbrot/Julia, Newton, Phoenix, Nova,
+and related types.  Other categories would include the 3D strange
+attractors, logistic equation graphs, IFS fractals, and L-systems.
+Within each category (especially the escape-time category) there are many
+sub-categories and way to organize the various types.  For example, Newton
+and Nova fractals are related.  For this reason, I think a hierarchical
+fractal type organization should be adopted, and not restricted to just
+a one-level categorization.
+
+Primarily I am concerned with escape-time fractals, and I think initially
+the other fractal types need not be supported.  Still, the hierarchical
+organization for fractal types is necessary, especially when interpreted
+formulae are considered.  For the remainder of this document, I will
+focus on escape-time fractals.
+
+FRACTAL GENERATION CONCEPT
+
+For escape time fractals, there are three main stages to creating a
+fractal image.  First, each pixel on the screen is mapped to a number,
+be it complex, hypercomplex, quaternion, whatever.  Second, these numbers
+are iterated through some equation until a bailout condition is met.
+Third, the point is colored based on the results of the iteration.
+
+Step 1. Mapping the screen to numbers
+
+Traditionally (as if anything with a scant 20-year history can claim
+anything is traditional) each pixel is mapped to a complex number in
+a rectangular fashion.  The mapped rectangle is zoomed or rotated.
+FractInt allows the rectangle to be skewed or arbitrarily stretched.
+
+An alternative (also allowed by FractInt) is to map an everted rectangle
+to the screen.  This is the 1/z mapping "inversion" available on the
+"y" parameters screen.  The center of the eversion and an overall
+scale can be adjusted.  There are two ways the eversion can be done.
+I dub the first "algebraic", which is simply to take the non-everted
+complex number and evaluate c+1/(z-c)--that is, compute the reciprocal
+of its distance from the center point, and add the center point back in.
+The second more closely follows the description from FractInt's help;
+I dub it the "geometric" method, and involves taking the complex number
+and using the reciprocal of its distance from the center point, without
+changing the direction.  The two differ in that the algebraic method
+creates an inverted imaginary component; the geometric method does not.
+[Addendum: not too long ago I experimented with re-writing the 1/(z-c)
+expression as (z-c)^(-1), and then varying the -1 exponent to use
+arbitrary powers, including complex values.]
+
+One option I have not seen, in regards to the Mandelbrot set, is to split
+the main cardioid at the "butt zipper" and "unwrap" it.  The loose ends
+would be scaled so that the continuing circles were close to the same
+size.  The result would be an infinitely long thin strip.  At the center
+of the strip would be the perfectly symmetrical first circle and the spire
+coming out of it which normally extends to (-2+0i).  The order of main
+circles to either side would then increase linearly over distance.  I have
+seen such a mapping in a book, but it didn't provide the equations to
+generate the mapping.  I don't think this would be difficult. [Addendum:
+inverting at the right spot can do something similar, but not identical.]
+
+Further options would be the toroidal mapping discussed in Fractal-Art,
+and perhaps generalized oblique slices through 4D space (as Jim Muth has
+been doing).  Radial mappings and non-circular eversion are possible.
+I've even considered a "Mandelbrot" mapping, where the end result of
+a Mandelbrot point (potential as one axis, absolute decomposition
+as another) can be used as the start point for some other fractal.
+This would "wrap" the other fractal around the Mandelbrot set.
+
+The point to Step 1 is to take some arbitrary complex number (representing
+the coordinate on the screen, or the traditional linear mapping) and
+possibly transform it to another complex number.  The iteration loop
+doesn't care what complex number it starts from--it just needs *a*
+complex number, and it will produce a result.  And by using a complex
+number as the "source" for a mapping transformation, you can do all the
+zoombox rotation in the normal linear, rectangular mapping, and have it
+transformed properly.
+
+With this goal in mind, it makes sense to make the mapping options a type
+of plug-in.  Everything besides a rectangular mapping would be a plug-in,
+including a formula interpreter for custom jobs.
+
+Now take this one step further.  Ordinarily, you would just use a single
+mapping option (or none for normal mapping).  But since the mapping module
+just takes one complex number and makes another complex number, why not
+let the user chain them?  Initially they might start with an unwrapped
+M-set, and when they find a spot they like, apply an eversion mapping
+centered at the point to turn it inside out?  This would be impossible
+without the chaining or "layering" ability, but it opens up whole new
+realms of possibilities.
+
+Step 2. Iterating a formula until a bailout condition is met.
+
+This step usually gets the most attention--especially the first part,
+iterating a formula.  There are a glut of different formulae.  Fine;
+make these plug-ins.  And of course, include a formula interpreter.
+It should of course read FractInt FRM files, but it should probably also
+have its own enhanced format.  Ideally, it should have a JIT (Just In
+Time) compiler to accelerate it.  Initially, though, converting it to a
+post-fix RPN byte-code sequence should work fast enough.  [Maybe not--I
+have to see how much FractInt's JIT compiler optimizes.]
+
+This capability is fairly run-of-the-mill; I don't think this needs to
+be discussed much, other than stressing it should be plug-in oriented
+and support as many formulae as possible.  I'd also like to point out
+that Mandelbrot and Julia flavors of each formula should be definitely
+linked, even in interpreted types.  Currently in FractInt there is
+no way to make M and J variations of a single interpreted formula,
+and have FractInt link them with the spacebar toggle.  [Addendum: The
+ismand variable will address this in FractInt 20.]
+
+What I'd rather focus on in this section is the bailout condition.
+Most escape-time fractals have either infinity or fixed points as
+attractors.  Infinity is an easy attractor to deal with, and several of
+FractInt's built-in types have a nice set of options for dealing with it.
+FractInt doesn't allow non-integer bailout values, an easy thing to
+allow.  And for types which have fixed points for attractors, there is
+no way to control the bailout for these attractors.  (There should be.)
+Fixed attractor points and infinity-attractor bailouts can be considered
+special cases of general-purpose orbit traps, in a variety of shapes
+and sizes.  Some of these would be set up by the fractal type; others
+might be set by the user.  Like mappings, multiple bailout conditions
+should be allowed.  And in case there's an orbit trap not provided by
+the program, there should be a formula interpreter for bailouts, so the
+user can come up with their own.
+
+Step 3. Coloring the image based on the iterating.
+
+One of the most obvious areas of fractal art generation.  There are three
+broad categories of coloring methods.  First is coloring based solely on
+(integer) escape time; this is the traditional iteration-band coloring.
+Second are those that also take into account the final iteration value
+when the bailout condition is met; this includes continuous potential,
+FractInt's type of decomposition, real/imag/summ/mult/atan coloring from
+FractInt, traditional orbit trap coloring methods, and no doubt many of
+the options in Iterations and Flarium which I have not explored fully.
+The third basic type of coloring scheme is one which considers *all*
+iteration values, not just the last one.  FractInt's bof60, bof61,
+distance estimator method, absolute decomposition, [triangle inequality,
+many other Iterations/Flarium methods] and a few schemes I've concocted.
+
+In case you hadn't guessed yet, I think coloring methods should be
+plug-ins.  (Have I gone plug-in happy?  Yep.)  And I think there should
+be a formula interpreter so the user can create their own coloring
+algorithms.
+
+Generally, a coloring plug-in would take the iteration count, or the
+last point, or the entire sequence of points, and produce either a 32-bit
+integer or a 32-bit fixed-point value (with the 2^-1 occupying bit 31).
+This number would be retained in RAM, and in some manner transformed into
+an image which is then displayed on-screen.  By retaining the results
+of the color plug-in in RAM, the colors or transformation method can be
+changed without requiring the fractal to be regenerated.  Colors would be
+stored as point-to-point gradients; each color in the gradient would be
+listed along with its distance from the start.  256-color palettes could
+be represented as a gradient with 256 equally-spaced entries.  I'll talk
+more about the gradients later; for now, just envision that for any real
+number between 0 and 1, a color can be extracted from the gradient.
+The transformation of color plug-in data to that 0-1 range could be
+linear, logarithmic, parabolic, hyperbolic, trigonometric, or whatever.
+This is one place where I'm not suggesting a formula interpreter. :)
+Just a comprehensive set of options.  Key in that set of options would
+be to allow the gradient to repeat an arbitrary (and not necessarily
+integer) number of times.
+
+LAYERING, TAKE 2
+
+One of the things I've hit on several times is the ability to use not
+just one option, but to combine several options of the same type.
+Ultimately, though, it's nice to be able to combine entire fractal
+images in various fashions.  So on top of all the other capabilities I've
+outlined, I'd include the ability to do true 24-bit layering of fractals.
+Most images would be a single layer, but more sophisticated images would
+add one or two or more layers on "top" of the base layer.
+
+Combination modes would primarily be done on the final colored images.
+The basic overlaying technique for two images would be to treat the
+top layer as 50% transparent, thus allowing half the color to come from
+the top image, and half from the bottom.  Naturally I'd make the blend
+amount adjustable.  Then I'd allow other merge modes; such as taking
+just the luminance value from the top image, or just the color.  Perhaps
+multiplying pixel values, or screening them.  In case these don't sound
+familiar, I basically want all the Photoshop layer merge modes, along with
+the ability to choose the merge amount.  For truly sophisticated merging,
+I'd allow the inclusion and interpolation of alpha values in gradients,
+so that some segments of the gradient can be transparent, and some not.
+See KPT 3's Gradient Designer for examples.
+
+I'd also allow combinations to be done on the output of the coloring
+plug-ins, before it's transformed and color-mapped.  Addition,
+subtraction, multiplication, and so on.  Care must be taken in how this
+is set up so that numbers do not go "out of range" of the gradient mapper.
+That is, care both in the software implementation and from the end user.
+
+PROGRAM INTERFACE
+
+The features described above are beyond what is currently available in
+any fractal program I know of.  Without a good program interface, they
+would be incomprehensible to the user and thus, ultimately, pointless.
+So I'm going to explain a bit about the interface I envision for such a
+fractal program, to show that they can be organized in an intelligent
+fashion.  This is not the only possible good interface; this is just
+how I would approach the task.
+
+Basic interface model: MDI
+
+There are two main approaches to application programs in Windows.
+There is "single document interface" (SDI) and "multiple document
+interface" (MDI).
+
+In SDI, you get one window for each document.  Each window contains
+its own menu bar, its own toolbar(s), and is totally independent of the
+other windows.  It is basically its own little applications.  The Windows
+applet Notepad is like this.  Microsoft suggests this is the direction
+applications should be headed, since it keeps the user's focus on their
+data, and not on which application they are using.  Typically, an SDI
+window is just big enough to hold the single document or item within it.
+You can still see and access your desktop around the SDI window.
+
+With MDI, you get one window for each document, but they are all contained
+within a big window (typically full-screen).  There is one centralized
+menu bar; one set of toolbars.
+
+I think MDI is a better choice for my ideal fractal app, for several
+reasons.  Mainly, it's because the fractal app should be able to edit
+several different types of document.  Primarily, it's a fractal program;
+you can click and explore fractals.  However, it should also be able to
+open formula files, parameter files, and color maps.  Since changing one
+of these might trigger a change in another window, I think the MDI model
+helps keep the relationship between windows in mind.  The MDI model is
+also somewhat more considerate of system resources (excluding screen
+real estate) and it allows all fractal work to be easily hidden from
+the screen with a single click.
+
+Fractal Documents
+
+New fractal documents should be created from a "template" parameter set
+that the user would be able to edit.  Once open and in a window, I'd
+suggest double-clicking to zoom in, dragging to scroll, SHIFT-clicking to
+recenter, CTRL-clicking to rotate, and ALT-clicking for Julia versions.
+(More on the Julia interface in a bit.)  Double right-clicking would
+zoom out.  Yes, this is a rip of the Fractal eXtreme interface.  It works.
+I'd also include a right-click context-menu with commonly used commands.
+
+I'd also have the option to show a zoombox with handles in the window;
+using the handles, the box could be rotated, scaled, moved, skewed, or
+otherwise distorted.  Double-clicking inside the box would zoom; double
+right-clicking would zoom out (putting the contents of the window into
+the box).  Right-clicking would provide a context-menu for the zoombox.
+Selecting the zoombox option from the menu/toolbar would remove the
+zoombox, re-enabling simple click controls.
+
+Adjustment of virtually all fractal parameters would be done through
+a single menu option: Properties.  This would present a tabbed dialog
+containing all options for working with a fractal image.  Tabs would
+include Layer, Location, [coordinate] Mapping, Fractal Type, Generation,
+Outside [color], Inside [color], Image, and Stats.  This dialog should
+be modeless; that is, you can still access menu items while this dialog
+is open.  Changes to the dialog result in immediate changes in the image.
+The dialog should open to whichever tab it was last open to.
+
+The Layer tab would contain a list of each layer and controls to
+choose its merge mode and transparency.  Options to add, remove, and
+reorder layers would be present, and the ability to name layers would be
+necessary.  This tab is just overall layer management.  By default, new
+layers would receive parameters identical to the currently selected layer.
+
+The Location tab would contain information about the original complex
+rectangular coordinates, prior to any mapping transformations.  At the
+top would be a Layer drop-down, to choose which layer the settings
+apply to.  Center-mag and corner coordinates would be provided, and would
+be editable.  For informational purposes, the number of extra-precision
+bits will be displayed in this tab, although this will not be editable.
+
+The Mapping tab would contain information about the mapping
+transformations done on the initial coordinate to produce the final z
+value that is iterated.  This tab would also have a Layer drop-down.
+All the Layer drop-downs would be linked, so that changing one would
+change it in all tabs.  That way, the user can switch tabs and still
+be editing the same layer.  Mapping transformations would be shown in a
+list; new ones could be added, old ones removed, existing ones reordered,
+and parameters (if any) for each one edited from this tab.
+
+The Fractal Type tab would show the basic fractal type for the layer
+(Layer drop-down, of course).  Any special parameters for the fractal
+type, such as Julia value or Mandelbrot perturbation, could be
+entered here.  Ideally, parameters which are a complex point should
+have a "sample" button, which would allow one to be selected from an
+already-open image (any image).  Real-time previews for this capability
+would be nice.  (Sample buttons might also be useful in other tabs.)
+Selecting the fractal type should be done with a special fractal type
+browser (discussed later).
+
+The Generation tab would show various generation options, such as the
+number of guessing passes, whether or not guessing should actually be used
+(regardless of the number of passes used), whether periodicity checking
+is to be used, the iteration limit, and the bailout condition(s).
+Bailout tests could be added, removed, or reordered from this list.
+[Simultaneous Orbit Iteration (SOI) should figure in here somewhere too.]
+
+The Outside and Inside tabs would allow changing of outside and
+inside coloring parameters.  This would include the coloring method,
+the gradient used, and the mapping of coloring data to the gradient.
+A visual representation of the gradient should be included in the dialog.
+Choosing a gradient should be done with a Gradient browser (discussed
+later).  These tabs would have Layer drop-downs too.
+
+The Image tab would allow adjustment of overall image parameters.
+Unlike previous tabs, it does NOT have a Layer drop-down.  From here,
+image size could be changed (including poster-size renders to disk).
+I think editable fields, with a quick drop-down to choose common sizes,
+would be good here.  An anti-aliasing toggle should be here--this would
+be a global option, affecting the whole image, used for final renders.
+The anti-aliasing threshold (assuming dynamic anti-aliasing) should be
+adjustable.  Also, a dpi setting, filename, and extra comments should be
+on this tab.  An informational display on file size would also be useful.
+
+The Stats tab would be entirely informational.  Mainly it's to show
+the things like how long the fractal took to generate, how many pixels
+were skipped by guessing, how much time guessing saved, and so on.
+Maybe even an estimated brute-force time--how long the image WOULD have
+taken without guessing. :)
+
+Fractal documents should be savable primarily in GIF, BMP, JPG, [PNG]
+and PSD (Photoshop Document) formats.  GIF would of course be limited
+to 8-bit color; images which are 24-bit would have to be reduced to
+8-bit color, along with a warning that this might not be the best idea.
+One advantage to saving in PSD format is that the individual layers
+can be saved separately, so when the image is loaded into Photoshop,
+the individual layers are still editable.  Also, full fractal generation
+parameters can be included in the PSD file (as they can in the GIF file).
+Currently PSD is the only "standard" multi-layer 24-bit format, unless
+PNG also supports this (I haven't checked).  Opening images should be
+done with an image browser (discussed later).
+
+The fractal program should be able to read any image, although it would
+only be able to interpret, regenerate, and zoom from files (its own or
+FractInt's) that contained fractal generation information.  Insofar as
+possible, when saving to a GIF [or PNG] file, FractInt-compatible
+parameters should be written.
+
+Gradient Documents
+
+Probably second in importance, a good gradient editor is crucial.
+It's cumbersome to create palettes in FractInt's editor.  Fractal eXtreme
+has a good palette editor, almost good enough.  What I'd like to have,
+though, is basically the KPT Gradient Designer, with a better interface.
+Each gradient is represented as a sequence of points, consisting of
+a location (0-1) and a color.  The segments between points would be
+interpolated.  Linear interpolation in RGB space would be the simplest,
+but there's no reason more sophisticated interpolation methods couldn't
+be used, and there's no reason the interpolation has to be done in RGB
+space (HSL or HSV might be nice).  Such options should be selectable on
+a segment-by-segment basis.
+
+To support "striping", a gradient would consist of more than one "layer".
+(I heard that groan!)  In one layer, the colors would sweep one way;
+in another layer, the other.  Each gradient is still fully continuous,
+there are just multiple paths.  Which path is used is determined by
+the color->gradient mapping (which would probably need a "stripe width"
+parameter).
+
+Gradients should be importable and exportable in the following formats:
+FractInt palettes, Fractal eXtreme palettes, and KPT gradients (2 and 3).
+
+PAR Files
+
+Opening a PAR file should open window which shows each entry in the
+PAR file.  Ideally, a 64x48x65K thumbnail for each image should be shown.
+Thumbnails should be cached, permanently, but if they're not available,
+they should be generated in the background (while the window is open).
+Double-clicking a thumbnail/name should create a new fractal document
+using those parameters.  Right-clicking should provide a context-menu.
+Entries in PAR files should be rearrangeable by dragging, and sorting
+options should also be available.  If the file is in the "new" format,
+entries should also be groupable into folders, and folders should be
+collapsible (Windows 95 tree control).
+
+This fractal program should read and write PAR files for FractInt,
+Fractal eXtreme, Iterations, Flarium, ZPlot, Fractal Orbits, and any other
+fractal program you can think of.  The interface for each parameter file
+type should be as consistent as possible.  When a parameter that is not
+understood (or better yet, understood but not supported) the user should
+be warned and, if possible, images still generated.
+
+FRM Files
+
+As with PAR files, opening a FRM file should open a window which
+shows each entry in the FRM file.  Thumbnails should be retained.
+Formulae should be rearrangeable and sortable, and in the new format,
+hierarchical.  Reading/writing of as many types as possible would also
+be nice.  Double-clicking on a formula would open a formula editor window,
+*not* create a new fractal of that type (although that would appear on
+the context menu).
+
+Formula Documents
+
+The fractal program should have a built-in text editor to allow editing
+of formulae without using another program.  Formulae would be stored in
+plain ASCII files, though, so they *could* be edited with a more powerful
+text editor, should the user so desire.  Ideally, text in formula windows
+should be syntax-colored.  Editing of both original FractInt FRM types
+and new FRM types (mapping, equation, or coloring) should be allowed.
+
+3D Transformations
+
+An extra document type, this can be added later.  True ray-tracing
+should be used here (along with all the techniques to accelerate this).
+Basically, pick a source image and allow interactive adjustment of
+the 3D parameters.  If the source image is open in another window,
+changes to it should trigger an automatic re-render of the 3D window.
+This is not an essential element to the program.
+
+Animations
+
+Haven't given a whole lot of thought to these, but at some point they
+should be added.  These would be keyframe based, of course; output to
+AVI or FLC would be nice.  Since this is just another document type,
+adding them later isn't terribly hard (in that it won't require rewriting
+other portions of the program).
+
+Fractal Type Browser
+
+As mentioned before, this browser should be a hierarchical list.
+And as with opening a FRM file, thumbnails should be available for
+each fractal type.  FRM files should appear listed under the "formula"
+type, and they should be expandable just like a folder or other type
+category--that is, the transition from plug-in to FRM file should
+be transparent.  In this sense, the formula interpreter is the only
+plug-in the program makes a special case for, and the only one required
+to be present.  Fractal types should be reorganizable by the user,
+not fixed in location.  Copies of fractal types could even be made
+[as shortcuts], so if the user has a list of "favorite" types, they can
+keep those together without having to disturb the original organization.
+[This actually would be the recommended, default approach.]
+
+Gradient Browser
+
+Like the fractal type browser, it should be a hierarchical list; it
+should be rearrangeable; and the transition between internal hierarchy
+and file-based collections (KPT stores multiple gradients in a single
+file) should be transparent.  Thumbnails should be provided.
+
+Image Browser
+
+When opening/saving images, the default should be to use an image browser
+dialog which keeps and maintains thumbnails for images.  As with the
+other browsers, whenever thumbnails are not available, they should be
+generated in the background while the browser is open.  Image thumbnails
+would ordinarily be stored in an internal database on the hard drive,
+but should be exportable to a separate file so that thumbnails for CD
+collections would be possible.  (The thumbnail searcher would then have
+to check for these thumbnail files, and pull thumbnails from these files
+rather than the central database.)
+
+As an option, the user should be able to choose the standard Windows
+File Open/Save As dialog, if they don't want to use the image browser.
+As much as possible, basic file maintenance should be possible from the
+image browser (as it is from the Windows Open/Save As dialog).
+
+Overall Appearance
+
+Generally, the fractal program should look like a professional, polished
+application.  Help should be available for all menu items (few though
+there will be) and for all dialog controls.
+
+If possible, background textures for windows and dialogs should be tilable
+textures (user-selectable) in the same color as the Windows scheme.
+This will probably only be available when running in a 16-bit color or
+better environment.
+
+OTHER GOODIES
+
+A few other features are worth mentioning, since they haven't been
+covered here.  Extended precision for deepzooming, of course.  Since a
+32x32 multiply is just as fast as an 8x8, and an 64x64 FPU multiply is
+ten times faster than the 32x32, extended precision should be implemented
+using the FPU [tests will need to be done to verify that this is faster].
+Plug-ins should be written to provide both a simple FPU version and a
+slower extended-precision version whenever possible.
+
+The generator code should be decoupled from the interface and run
+multi-threaded.  First, this allows generation to proceed in the
+background (and just what its priority is should be user-selectable).
+Second, it allows more than one fractal to be generated at a time
+(priority should always be given to the top window).  Third, it offers
+performance benefits to those lucky enough to have an SMP (Symmetric
+Multi-Processor) machine.  Fourth, it simplifies the implementation of
+network rendering, for those lucky enough to be running the program on
+a LAN [like me].  This last point bears thinking about: somebody at
+an office in a big company, maybe after hours... fires up a bunch of
+machines, starts the generator module (which could be just a little icon
+in the taskbar), then starts the main app on his/her machine.  Now they
+have not just the computing power of their 133MHz Pentium, but *fifty*
+133MHz Pentiums.  Deepzooms, anyone?
+
+ADDENDUM
+
+Thoughts not fully explained:
+
+ - combined status/console window to allow direct typed commands
+   good for animation programming & low-level commands
+ - orbit boost as an extra option, rather than as a formula tweak
+ 
