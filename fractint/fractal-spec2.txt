@@ -1,0 +1,419 @@
+Comments/questions regarding this file should be directed to me (Damien
+M. Jones, dmj@fractalus.com).  Please do not distribute this file.
+
+Fractal art is not what it used to be. In the past four years, the
+tools have evolved rapidly, and the art form has begun the process of
+maturing. The introduction of UF2 sparked a major shift in fractal art,
+resisted by some, that heavily emphasized the artistic aspects more than
+the mathematical aspects.
+
+UF3 continues in the same vein, improving the interface, adding network
+rendering, and extending the rendering capabilities by including arbitrary
+precision support, direct RGB coloring methods, and mask layers. UF4 may
+include animation capabilities and layering trees. But these changes--very
+necessary and welcomed--are evolutionary, not revolutionary. UF2 was
+revolutionary, and it begs the question: what will the next revolutionary
+change in fractal software be?
+
+One of the reasons UF2 is so different--and so important--is that it
+breaks the monolith of the fractal formula. Software prior to it focused
+almost exclusively on the fractal formula, with coloring choices being
+of secondary importance. While the programs often allowed user-editable
+formulas, the coloring methods and transformations were hard-coded
+into the program, because these weren't viewed as important parts
+of the fractal image generation process. UF2's mathematical model is
+fundamentally different, in that it looks at the way images are generated
+and allows the user to alter almost all parts of the process, instead of
+just one. Instead of treating transformations and colorings as special
+cases, things only the software author should handle, it generalizes
+the process to the point where users can write their own formulas for
+these things.
+
+CONCEPT
+
+In thinking of what the next revolution might be, I went back to this
+original paradigm shift that makes UF2 so important. Is there something
+in the mathematical model that can be extended, changed, altered to
+allow a more flexible tool? I thought of the ideas already suggested for
+extending the rendering capabilities: transformations that can run with
+every iteration, formulas capable of initiating several points for fractal
+calculation for a single pixel. These do not seem elegant; while they
+would give the extra capabilities, they do so by complicating the program
+and increasing complexity. Such additions have narrow applicability and
+are hard to learn to use well; they also produce byzantine code that is
+very difficult to maintain.
+
+Clearly, then, a more generalized approach is needed, something where
+these new capabilities are possible, but are just one configuration in a
+broad new spectrum of capabilities. The approach that I think will work
+is a more complete generalization of the mathematical model--placing
+not only the formulas under the user's control, but also the connections
+between them.
+
+Here is the mathematical model for FractInt:
+
+pixel coordinates --> linear transform --> [ inversion module ]
+                                                    |
+      +---------------------------------------------+
+      v
+( fractal formula init )
+      |                                                   not bailed out
+      | <-------------------------------------------------------+
+      v                                                         |
+( fractal formula loop ) --> [ coloring loop ] --> ( fractal formula bailout )
+                                                                |
+      +---------------------------------------------------------+
+      v                                                     bailed out
+final color index selection
+      |
+      |
+      v
+[ logarithmic / square root color scaling ] --> paletted display --> RGB
+
+In the above flow, square brackets [] indicate optional elements
+the software may activate; parentheses () indicate user-editable
+portions. FractInt's flow is typical in two ways: first, the flow is
+hard-coded; second, while it appears that a substantial portion of the
+math is user-editable, it's because in this conceptual model the other
+pieces are considered unimportant and are thus underdeveloped.
+
+Creative users have worked around these limitations by setting the
+coloring algorithms to known, predictable settings, and then forcing the
+output from the fractal formula to produce the desired color. Similarly,
+additional transformations could be included by coding them into the
+fractal formula initialization. However, the drawback is that every
+combination of fractal formula, coloring formula, and transformation
+had to be coded separately.
+
+UF2's model (per layer) is this:
+
+pixel coordinates --> linear transform
+                             |
+      +----------------------+
+      v
+[ ( transformation formula ) ] --> [ ( transformation formula ) ] ...
+                                                                      |
+      +---------------------------------------------------------------+
+      v
+( fractal formula init )
+      |
+      |
+      v
+( coloring formula init )
+      |                                                   not bailed out
+      | <-------------------------------------------------------+
+      v                                                         |
+( fractal formula loop ) --> ( coloring loop ) --> ( fractal formula bailout )
+                                                                |
+      +---------------------------------------------------------+
+      v                                                     bailed out
+( final color index selection )
+      |
+      |
+      v
+index transformation --> gradient lookup --> RGB
+
+This model isn't enormously different from FractInt, which is one
+reason it was possible to convert FractInt PARs to Ultra Fractal
+UPRs. The biggest differences are that transformations and coloring
+formulas are placed under user control, and that an arbitrary number of
+transformations can be used. Small conceptual differences, but with a
+huge impact: an explosion of activity, new formulas (fractal, coloring,
+and transformation), and clever ways to stretch the engine.
+
+UF3's model is virtually identical to UF2's, except that coloring formulas
+have the option to produce RGB values directly rather than use a color
+index, transformation, and gradient lookup.
+
+Notice how the evolution focuses on the blocks themselves. The connections
+between them are not considered important enough to put under a user's
+control; the software needs a framework in order to operate. Well, I'm
+challenging that notion: if we already have user-defined formulas being
+compiled on the fly, why can't we have user-defined connections between
+these formulas?
+
+Look at the flows again. Pixel coordinates have to be pixel coordinates,
+since we're working with rectangular displays. The linear transform can
+stay, since that is what allows zooming, panning, and rotating, which
+users expect and require for exploration. But the output from the linear
+transform is just a complex value. Transformations are nothing more than
+formulas which take a complex value as input and produce another complex
+value as output. They also have a "solid" boolean value as output.
+
+A fractal formula is just a formula that takes a complex number as input
+and produces a sequence of complex numbers as output. A coloring formula
+is just a formula that takes a sequence of complex numbers as input and
+produces either a color index or an RGB color as a result, with another
+boolean output for "solid". The index transformation simply accepts a
+real value as input and produces a real value as output, and the gradient
+lookup accepts a real value as input and produces an RGB value as output.
+
+Categorized this way, it becomes easier to see why it might be useful
+to be able to edit the flow in a more freeform fashion. I might add
+a transformation formula in between the fractal formula loop and the
+coloring loop, so that the coloring formula sees a transformed version of
+the iterated value. If the iterating process is visualized as an output
+from the fractal formula back to its input for the next iteration, I
+could then insert a transformation into that loopback and do with general
+formulas what I'm doing right now with orbit boosts and custom formulas. I
+might use a multiplexer (mux) to switch between fractal formulas on the
+fly, based on some criteria (letting me do with component formulas what
+FractInt does with some of its monolithic formulas--the fn||fn types).
+
+These capabilities are important. When UF2 was new, nobody knew the limits
+of what we could do. We were liberated; where before we were confined, now
+we had new ways to explore and create. But we're three years wiser now;
+we see the rise of enormous, monolithic coloring formulas that include
+everything from Sierpinski gaskets to fBm calculations. We are reaching
+again the limits that we had before, of needing to code everything into
+one algorithm. By putting the mathematical model under user control,
+we allow formula authors to build simpler blocks, which the user can
+then insert as they need. We give them a toolbox instead of a single
+wondertool that does everything.
+
+INTERFACE
+
+Of course none of this does any good if the interface is so complex
+that nobody can figure it out. UF2/3's interface was a refactoring of
+options to deal with its increased flexibility. Now, however, there
+are many more options to deal with--and many more users whose only
+introduction to fractals has been through Ultra Fractal. To completely
+redo the interface will unnerve them completely.
+
+UF2/3 has a Layer Properties window with tabs for Location, Mapping,
+Formula, Inside, and Outside. I propose that the tabs be dropped, and
+that the dialog be split in two vertically. The top portion contains
+a flowchart showing the mathematical model for the current layer; the
+bottom portion contains all the options for the currently selected block
+in the flowchart. By default, the model would be populated with the basic
+setup for UF2/3's model, except for transformations (since there are no
+transformations by default). Blocks represent the different parts of the
+model. The blocks should be fairly large (at least 48x48 pixels). The
+default setup, then, would look like this:
+
+                      +------------------------+
+                      |                        |
++------+    +------+  |  +------+    +------+  |  +------+    +------+
+|      |>-->|      |>-+  |Out.  |>-->|Index |  +->|Multi-|>-->|Grad. |>--> STOP
+| Loc. |    |Fract.|     |Color |    |xform |>--->|plexer|    |Lookup|
+|      | +->|      |>-+->|      |    |      |  +->|      |    |      |
++------+ |  +------+  |  +------+    +------+  |  +------+    +------+
+         |            |                        |
+         +------------+  +------+    +------+  |
+                      +->|Inside|>-->|Index |>-+
+                         |Color |    |xform |
+                         |      |    |      |
+                         +------+    +------+
+
+Now I know this looks a little bit scary, so let me explain. The first
+block is the Location, the part that includes the pixel generation and
+linear transform. This is everything currently on the Location tab;
+selecting this block shows the same parameters below the diagram. This
+block has one output, a complex value.
+
+The second block is the fractal formula block. Everything that appears
+on the Formula tab in UF2/3 appears below the diagram when this block
+is selected. It accepts as input two complex numbers ("pixel" and "z")
+and has as outputs a boolean indicating inside or outside and a sequence
+of complex numbers ("z"). The output sequence is fed back into the "z"
+input by default, showing the feedback nature of fractal processing.
+
+The sequence of z is also fed into both the inside and outside color
+blocks. Selecting either of these blocks would make all the color
+formula options appear below the diagram, except for the color density,
+transfer function, solid color, and gradient offset. These blocks accept
+the complex sequence as input, and have as output a single float value.
+
+Each of the coloring formula blocks has with it an index transform block;
+this provides the transfer parameters not included with the coloring
+formula blocks. It accepts as input a float value, and outputs a float
+value.
+
+The outputs of the index transform blocks are both fed into a multiplexer,
+along with the inside/outside boolean flag from the fractal formula. The
+multiplexer just looks at the value of the flag and decides which of its
+other inputs to use. The multiplexer doesn't have any user-selectable
+options, but it's part of the flow (and so might be moved or removed)
+so it's shown.
+
+The final step is to take the float value and do a gradient lookup;
+this produces a final RGB value. This also has no parameters.
+
+Using this isn't terribly different from using UF2/3. Instead of clicking
+tabs, the user clicks blocks in the model to choose which item they
+want to modify. Once a block is selected, the user could replace it
+with an equivalent formula (that is, one which accepts the same inputs
+and has the same outputs), thus behaving like UF2/3's select formula
+buttons. Another button might display a menu with "Add Transformation"
+as one of the options; the user could select a transformation formula
+and the software would automatically place it after the Location block,
+shifting everything else down. In this way the program behaves much like
+UF2/3, just rearranged a bit.
+
+For the more adventurous, things become a lot more interesting. On the
+menu along with "Add Transformation" are things like "Add Fractal Formula"
+and "Add Coloring Formula"; these would allow the user to select the
+appropriate formula, which is then placed, unconnected, near the flow. The
+user can drag it to a more useful place (automatically snapping to grid
+locations) and start connecting it. Inputs and outputs are marked, and
+color-coded by type. If the user drags a formula block over an existing
+link where it can be inserted, that link should highlight to let the
+user know that's a valid position; releasing the mouse at that point
+would move the formula there, shifting everything else as needed to
+make room. If the formula block is dragged over another formula block
+of equivalent type, it highlights; releasing the mouse then swaps the
+position of the two formulas.
+
+Any output can be connected to multiple inputs, but every input can have
+only one source. To connect multiple outputs to a single input requires a
+multiplexer, which can either switch based on another input, or perform
+a mathematical combination on its inputs. Note that the output from a
+multiplexer will need to be the same type as its inputs; otherwise it's
+not a true multiplexer. Of course someone could write a multiplexer-like
+formula that had a different kind of output; it's just a general-purpose
+formula, after all.
+
+To accomodate sophisticated multiplexers which have an arbitrary number
+of inputs, some inputs could be declared to be of array type. The
+interface would always show one open input in that category. (Think of a
+multiplexer with an integer input to select from an arbitrary number of
+complex inputs.) As soon as something is connected to the last available
+input, the software adds another visible input to the interface, so that
+another one can always be connected. These inputs would be accessed by
+the formula with the same variable name, but differing array subscripts.
+
+The software doesn't really care what is in the mathematical model. All
+it cares about is that an RGB value is fed into the "STOP" block, which
+represents the result. If the user wanted to delete the fractal formula
+entirely and just directly go from location to RGB value with a general
+formula type, they can do that. If nothing is connected to the STOP
+block, a warning can be displayed, but otherwise the software should
+render what it's been told to render.
+
+Some formulas will no longer fit into fractal, coloring, and
+transformation categories. These would be "general" formulas which could
+do anything; they simply have an arbitrary set of inputs and outputs. Any
+such formula with a loop: section can produce a sequence. General formulas
+will need to indicate which of their variables are output, either in the
+declaration or with a special output: section in the formula (I prefer
+the latter).
+
+If a sequence of numbers is connected to a formula which normally only
+accepts a single value of the same type, that formula would simply be
+invoked for each item. In this way, the software automatically "upgrades"
+such a formula to handle a sequence, and each of its outputs produces a
+sequence as well. How to handle outputs that normally produce sequences
+in this case is something to be explored.
+
+The user should be able to select any of the normal parameters to a
+formula and make it an input, rather than a fixed value. They could
+then feed in the results from other formulas, if they wanted. That means
+the mathematical model will not necessarily be a straightforward flow;
+it might have several branches that need to execute in parallel.
+
+The user should be able to select a group of formulas and "collapse" them
+to a single black box. When collapsed, only the inputs and outputs of the
+box as a whole should be shown. However, the user can at any time elect to
+see the contents of the box (without losing the box boundary definition)
+and tinker with what's inside it. Black boxes should be savable, so that
+users can re-use them or exchange them with other users. Black boxes
+should also be nestable; however, when a nested black box is saved,
+its entire contents should be saved as well. Think of a black box as a
+parameter "fragment"; they are analagous to presets for layers, coloring
+formulas, and so on, but on a slightly larger scale.
+
+Black boxes will need to be able to be tagged as to author and date,
+much as parameters can be. If someone takes a UPR and creates a black box
+from it, that black box needs to be tagged with the author information
+from the original UPR. This could be manually cleared, but the idea is
+that the user should need to intentionally not give credit, rather than
+inadvertently do so.
+
+SUMMARY
+
+It may seem like I've turned the entire fractal generation process on
+its head. Maybe I did, but there are still some things that are constant,
+some anchors the software can use to build a foundation with. The software
+still does a "reverse mapping", where color is determined for each pixel,
+much like raytracing. The alternative is a "forward mapping", where data
+is rendered into an image buffer in arbitrary order, like 3D polygon
+rendering or flame fractals; I'm not suggesting that the software support
+a forward mapping. This means the software still drives the selection
+of pixels and coordinates into the mathematical model, so the code for
+doing anti-aliased renders would still function without major overhaul.
+
+This isn't an easy concept to grasp, to explain, or to build. I think
+it will be easier to learn when the software is done, and I think that
+with the right approach, it will be possible for existing users to
+transition to the new system. At the moment, I don't see any other ways
+to substantially extend the fractal rendering process that are simple and
+flexible. I think this is the right way to go. But it's just my opinion.
+
+OTHER STUFF
+
+Of course that isn't everything that should be in a next-generation
+tool. There are other features which are more evolutionary than
+revolutionary, but necessary nonetheless. One of the most often asked-for
+seems to be subroutines. But after wading through ten years of DLL
+hell in Windows, I think the dangers of upgrading partially-documented
+interfaces willy-nilly are fully explored. If I write a library of
+routines, and various other formula authors call upon them, when I update
+my code, I no longer am responsible for just verifying the integrity and
+backwards-compatibility with my own formulas; I'm suddenly responsible
+for supporting formulas written by legions of other formula authors. This
+would quickly degenerate into an unmanageable mess of conflicting versions
+and interdependent files; nobody can hope to maintain it or rely on
+being able to reproduce images later, and this very reproducibility is
+critical to serious use of the software.
+
+My suggestion is to allow subroutines, but only from within the same
+file. That way, if another formula author wishes to use my routines,
+they include the version they want within their own file. I can upgrade
+my version and ensure my formulas are compatible; other authors can then
+incorporate my upgraded formulas when they choose. If I have four separate
+formula files, I will need up to four copies, but I can accept that as
+a trade-off for having re-usable code without the maintenance nightmare.
+
+It might be nice to add support for hypercomplex and quaternion data
+types. This would simplify writing formulas using them, and it would
+make the interface a bit nicer too, as people would be able to input
+them directly. Of course the formula itself would need to render only a
+2D slice; there's no reason someone couldn't write a generic 2D slice
+extractor transform which produces a 4D number from the 2D location
+output; then any 4D formula could be used with a common set of controls
+for rotations (thus improving usability, as explorers need learn only
+one set of rotation tools).
+
+It would be very useful to have text layers (layers containing no fractal
+formula, but only text in a user-selected font). In the interests of
+exchanging parameters, these would need to be encoded as both source
+form (original text and font selection) and outline form (containing
+the letterforms directly). That way, even if I don't have the font, I
+can render the UPR. Having text as a layer would allow me to use it not
+only as adornment on the image, but also as a mask layer for composition
+work. Such layers would not have coloring algorithms, only two colors:
+inside and outside. Anything more sophisticated would involve compositing.
+
+In a similar vein, it would be extremely useful to be able to write
+formulas that referred to an existing image. The parameter type is
+"image", which when clicked offers a file browser. The formula could then
+poll the image for RGB values from arbitrary pixels; fractional pixel
+locations would yield interpolated values. Yes, this means rendering an
+image that uses such formulas at high resolution would look grainy unless
+the resolution on the image were also increased; this will require more
+RAM, and a bit of user education on the limitations of the feature. It
+also means UPRs referring to such images would need the image along
+with the UPR in order to render correctly; the software can assist in
+this by reminding the user of this fact when they copy such a UPR to
+the clipboard.
+
+The presence of such a feature would make writing a "null transform"
+for images trivial, so that incorporating flat images into a fractal
+becomes easy. This does move the software more towards an image processor
+than a fractal generator, but currently there is no good software that
+allows arbitrary mapping of images into other images, especially with
+user-defined formulas. Photoshop's plugin environment provides this
+kind of access by plugins to images but writing such plugins requires a
+complete development kit and not a small bit of know-how. Putting it into
+a fractal generator makes it far more accessible, with the side-effect
+of making it easy to turn UF into a post-processing maniac's fantasy.
