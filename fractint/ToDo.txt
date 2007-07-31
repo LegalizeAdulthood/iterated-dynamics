@@ -51,6 +51,7 @@ Fractal Types
 - Add 2D cellular automata
 - Add continuously valued automata, a la CAPOW
 - Various 3D fractal types that could be added
+- 3D strange attractors like <http://www.chaoscope.org>
 - Volume rendered fractal types (3D projection of quaternion julia set)
 - dL-systems (need more research first)
 - HIFS (Hierachical IFS) seems easy.
