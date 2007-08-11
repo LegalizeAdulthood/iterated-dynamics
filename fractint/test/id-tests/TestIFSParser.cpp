@@ -203,4 +203,5 @@ TEST(ParseFile, IFSParser)
 	IFSParser parser = IFSParser::StackInstance();
 
 	CHECK(parser.Parse(s_ifs_file));
+	LONGS_EQUAL(20, parser.Count());
 }
