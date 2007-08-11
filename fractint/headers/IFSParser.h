@@ -3,6 +3,8 @@
 
 #include <string>
 
+class IFSParserImpl;
+
 class IFSParser
 {
 public:
@@ -10,18 +12,14 @@ public:
 	{
 		return IFSParser();
 	}
-	~IFSParser()
-	{}
+	~IFSParser();
 
 	bool Parse(const std::string &text);
 	int Count() const;
 
 private:
-	IFSParser()
-		: m_count(0)
-	{}
-
-	int m_count;
+	IFSParser();
+	IFSParserImpl *m_impl;
 };
 
 #endif
