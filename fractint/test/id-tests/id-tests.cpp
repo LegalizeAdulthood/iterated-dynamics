@@ -181,6 +181,11 @@ private:
 	std::vector<Failure> m_failures;
 };
 
+SimpleString StringFrom(const std::string &text)
+{
+	return SimpleString(text.c_str());
+}
+
 int main(int argc, char *argv[])
 {
 	idTestResult results;
