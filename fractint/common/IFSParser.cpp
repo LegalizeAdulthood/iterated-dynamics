@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <boost/mem_fn.hpp>
 #include <boost/spirit.hpp>
 
 #include "IFSParser.h"
@@ -13,41 +12,6 @@ using namespace std;
 using namespace boost::spirit;
 
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
-
-class IFSTransformation
-{
-public:
-	virtual ~IFSTransformation() {}
-
-	virtual int GetCoefficientCount() const = 0;
-	virtual const double *GetCoefficients() const = 0;
-	virtual double GetCoefficient(int index) const = 0;
-};
-
-class IFSEntry
-{
-public:
-	IFSEntry(string id, const vector<IFSTransformation *> &transforms)
-		: m_id(id),
-		m_transforms(transforms)
-	{
-	}
-	~IFSEntry()
-	{
-		for (size_t i = 0; i < m_transforms.size(); i++)
-		{
-			delete m_transforms[i];
-		}
-	}
-
-	const string &Id() const { return m_id; }
-	const vector<IFSTransformation *> Transforms() const { return m_transforms; }
-
-private:
-	string m_id;
-	vector<IFSTransformation *> m_transforms;
-};
-
 
 template <int Count>
 class IFSTransformationN : public IFSTransformation
@@ -128,6 +92,10 @@ public:
 	{
 		return int(m_entries.size());
 	}
+	const IFSEntry *Entry(int index) const
+	{
+		return const_cast<const IFSEntry *>(m_entries[index]);
+	}
 
 private:
 	string m_id;
@@ -174,27 +142,27 @@ void IFSParserImpl::AssignEntry(string::const_iterator first, string::const_iter
 	m_transforms.clear();
 }
 
-void AssignId(string::const_iterator first, string::const_iterator last)
+static void AssignId(string::const_iterator first, string::const_iterator last)
 {
 	s_impl->AssignId(first, last);
 }
-void Assign2D(double value)
+static void Assign2D(double value)
 {
 	s_impl->Assign2D(value);
 }
-void Assign3D(double value)
+static void Assign3D(double value)
 {
 	s_impl->Assign3D(value);
 }
-void Output2D(string::const_iterator first, string::const_iterator last)
+static void Output2D(string::const_iterator first, string::const_iterator last)
 {
 	s_impl->Output2D(first, last);
 }
-void Output3D(string::const_iterator first, string::const_iterator last)
+static void Output3D(string::const_iterator first, string::const_iterator last)
 {
 	s_impl->Output3D(first, last);
 }
-void AssignEntry(string::const_iterator first, string::const_iterator last)
+static void AssignEntry(string::const_iterator first, string::const_iterator last)
 {
 	s_impl->AssignEntry(first, last);
 }
@@ -268,4 +236,9 @@ bool IFSParser::Parse(const string &text)
 int IFSParser::Count() const
 {
 	return m_impl->EntriesParsed();
+}
+
+const IFSEntry *IFSParser::Entry(int index) const
+{
+	return m_impl->Entry(index);
 }

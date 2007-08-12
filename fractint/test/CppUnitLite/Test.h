@@ -53,16 +53,16 @@ protected:
 	}																			\
 	while (0)
 
-#define CHECK_EQUAL(expected,actual)							\
-	do															\
-	{															\
-		if ((expected) == (actual))								\
-		{														\
-			return;												\
-		}														\
-		result_.addFailure(Failure(name_, __FILE__, __LINE__,	\
-			StringFrom(expected), StringFrom(actual)));			\
-	}															\
+#define CHECK_EQUAL(expected,actual)								\
+	do																\
+	{																\
+		if ((expected) != (actual))									\
+		{															\
+			result_.addFailure(Failure(name_, __FILE__, __LINE__,	\
+				StringFrom(expected), StringFrom(actual)));			\
+				return;												\
+		}															\
+	}																\
 	while (0)
 
 #define LONGS_EQUAL(expected,actual)								\

@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="IFSParser.obj"
+				AdditionalDependencies="IFSParser.obj LSystemParser.obj"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="IFSParser.obj"
+				AdditionalDependencies="IFSParser.obj LSystemParser.obj"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -191,6 +191,10 @@
 			</File>
 			<File
 				RelativePath=".\TestIFSParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestLSystemParser.cpp"
 				>
 			</File>
 		</Filter>

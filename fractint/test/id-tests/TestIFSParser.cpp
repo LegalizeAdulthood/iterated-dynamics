@@ -1,12 +1,8 @@
 #include "stdafx.h"
 
-#include <boost/spirit.hpp>
-
 #include "IFSParser.h"
 
-using namespace boost::spirit;
-
-const std::string s_binary_definition =
+static const std::string s_binary_definition =
 	"\n"
 	" binary { ; comment allowed here\n"
 	"  ; and here\n"
@@ -15,12 +11,20 @@ const std::string s_binary_definition =
 	"  .0 -.5 .5 .0	4.873085  7.563492 .333333\n"
 	"  }\n";
 
-const std::string s_bad_definition =
+static const std::string s_bad_definition =
 	"\n"
 	" goopy\n"
 	"\n";
 
-const std::string s_ifs_file =
+static const std::string s_3d_definition =
+	"3dfern (3D) {\n"
+	"   .00	.00 0 .0 .18 .0 0  0.0 0.00 0 0.0 0 .01\n"
+	"   .85	.00 0 .0 .85 .1 0 -0.1 0.85 0 1.6 0 .85\n"
+	"   .20 -.20 0 .2 .20 .0 0  0.0 0.30 0 0.8 0 .07\n"
+	"  -.20	.20 0 .2 .20 .0 0  0.0 0.30 0 0.8 0 .07\n"
+	"  }\n";
+
+static const std::string s_ifs_file =
 	"\n"
 	" binary { ; comment allowed here\n"
 	"  ; and here\n"
@@ -182,12 +186,34 @@ const std::string s_ifs_file =
 	"  }\n"
 	"\n";
 
+//void foo()
 TEST(ParseBinary, IFSParser)
 {
 	IFSParser parser = IFSParser::StackInstance();
 
 	CHECK(parser.Parse(s_binary_definition));
 	LONGS_EQUAL(1, parser.Count());
+	const IFSEntry *entry = parser.Entry(0);
+	CHECK_EQUAL("binary", entry->Id());
+	const int rowCount = 3;
+	LONGS_EQUAL(rowCount, long(entry->Transforms().size()));
+
+	const int coefficientCount = 7;
+	double data[rowCount][coefficientCount] =
+	{
+		{ .5, .0, .0, .5, -2.563477, -0.000003, .333333 },
+		{ .5, .0, .0, .5, 2.436544, -0.000003, .333333 },
+		{ .0, -.5, .5, .0, 4.873085, 7.563492, .333333 }
+	};
+	for (int row = 0; row < rowCount; row++)
+	{
+		const IFSTransformation *transform = entry->Transforms()[row];
+		const double *coefficients = transform->GetCoefficients();
+		for (int coefficient = 0; coefficient < coefficientCount; coefficient++)
+		{
+			DOUBLES_EQUAL(coefficients[coefficient], data[row][coefficient], 1e-6);
+		}
+	}
 }
 
 TEST(ParseBad, IFSParser)
@@ -204,4 +230,37 @@ TEST(ParseFile, IFSParser)
 
 	CHECK(parser.Parse(s_ifs_file));
 	LONGS_EQUAL(20, parser.Count());
+	CHECK_EQUAL("binary", parser.Entry(0)->Id());
+	CHECK_EQUAL("fractint", parser.Entry(parser.Count()-1)->Id());
+}
+
+TEST(Parse3D, IFSParser)
+{
+	IFSParser parser = IFSParser::StackInstance();
+
+	CHECK(parser.Parse(s_3d_definition));
+	LONGS_EQUAL(1, parser.Count());
+
+	const IFSEntry *entry = parser.Entry(0);
+	CHECK_EQUAL("3dfern", entry->Id());
+	const int rowCount = 4;
+	LONGS_EQUAL(rowCount, long(entry->Transforms().size()));
+
+	const int coefficientCount = 13;
+	double data[rowCount][coefficientCount] =
+	{
+		{ .00, .00, 0, .0, .18, .0, 0, 0.0, 0.00, 0, 0.0, 0, .01 },
+		{ .85, .00, 0, .0, .85, .1, 0, -0.1, 0.85, 0, 1.6, 0, .85 },
+		{ .20, -.20, 0, .2, .20, .0, 0, 0.0, 0.30, 0, 0.8, 0, .07 },
+		{ -.20, .20, 0, .2, .20, .0, 0, 0.0, 0.30, 0, 0.8, 0, .07 }
+	};
+	for (int row = 0; row < rowCount; row++)
+	{
+		const IFSTransformation *transform = entry->Transforms()[row];
+		const double *coefficients = transform->GetCoefficients();
+		for (int coefficient = 0; coefficient < coefficientCount; coefficient++)
+		{
+			DOUBLES_EQUAL(coefficients[coefficient], data[row][coefficient], 1e-6);
+		}
+	}
 }

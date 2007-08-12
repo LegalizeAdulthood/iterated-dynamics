@@ -822,6 +822,18 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\LSystemParser.cpp"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="BOOST_SPIRIT_DEBUG"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath=".\common\parser.cpp"
 					>
 					<FileConfiguration
@@ -1272,6 +1284,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\headers\LSystemParser.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\parser.h"
 					>
 				</File>
@@ -1676,6 +1692,24 @@
 				<File
 					RelativePath=".\lsystem\fractint.l"
 					>
+				</File>
+				<File
+					RelativePath=".\lsystem\lsysfp.l"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\lsystem\penrose.l"
