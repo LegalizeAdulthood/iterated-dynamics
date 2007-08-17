@@ -76,7 +76,7 @@ void identity(MATRIX m)
 }
 
 /* Multiply two matrices */
-static void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
+static void mat_mul(MATRIX left, MATRIX right, MATRIX destination)
 {
 	/* result stored in MATRIX new to avoid problems
 		in case parameter mat3 == mat2 or mat 1 */
@@ -85,13 +85,13 @@ static void mat_mul(MATRIX mat1, MATRIX mat2, MATRIX mat3)
 	{
 		for (int j = 0; j < 4; j++)
 		{
-			newmat[j][i] =  mat1[j][0]*mat2[0][i]+
-							mat1[j][1]*mat2[1][i]+
-							mat1[j][2]*mat2[2][i]+
-							mat1[j][3]*mat2[3][i];
+			newmat[j][i] =  left[j][0]*right[0][i]+
+							left[j][1]*right[1][i]+
+							left[j][2]*right[2][i]+
+							left[j][3]*right[3][i];
 		}
 	}
-	memcpy(mat3, newmat, sizeof(newmat));
+	memcpy(destination, newmat, sizeof(newmat));
 }
 
 /* multiply a matrix by a scalar */
@@ -106,7 +106,7 @@ void scale(double sx, double sy, double sz, MATRIX m)
 }
 
 /* rotate about X axis  */
-void xrot(double theta, MATRIX m)
+void xrot(double theta, MATRIX destination)
 {
 	MATRIX rot;
 	double sintheta = sin(theta);
@@ -116,11 +116,11 @@ void xrot(double theta, MATRIX m)
 	rot[1][2] = -sintheta;
 	rot[2][1] = sintheta;
 	rot[2][2] = costheta;
-	mat_mul(m, rot, m);
+	mat_mul(destination, rot, destination);
 }
 
 /* rotate about Y axis  */
-void yrot(double theta, MATRIX m)
+void yrot(double theta, MATRIX destination)
 {
 	MATRIX rot;
 	double sintheta = sin(theta);
@@ -130,7 +130,7 @@ void yrot(double theta, MATRIX m)
 	rot[0][2] = sintheta;
 	rot[2][0] = -sintheta;
 	rot[2][2] = costheta;
-	mat_mul(m, rot, m);
+	mat_mul(destination, rot, destination);
 }
 
 /* rotate about Z axis  */
