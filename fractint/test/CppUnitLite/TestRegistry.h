@@ -21,7 +21,7 @@ private:
 	void add(Test *test);
 	void run(TestResult &result);
 
-	Test *tests;
+	Test *m_tests;
 };
 
 #endif

@@ -20,21 +20,25 @@ TestRegistry &TestRegistry::instance()
 
 void TestRegistry::add(Test *test)
 {
-	if (tests == 0)
+	if (!m_tests)
 	{
-		tests = test;
+		m_tests = test;
 		return;
 	}
 
-	test->setNext(tests);
-	tests = test;
+	Test *node = m_tests;
+	while (node->getNext())
+	{
+		node = node->getNext();
+	}
+	node->setNext(test);
 }
 
 void TestRegistry::run(TestResult &result)
 {
 	result.testsStarted();
 
-	for (Test *test = tests; test != 0; test = test->getNext())
+	for (Test *test = m_tests; test != 0; test = test->getNext())
 	{
 		test->run(result);
 	}
