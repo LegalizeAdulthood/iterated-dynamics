@@ -40,10 +40,24 @@ public:
 	void AssignProduction(string::const_iterator first, string::const_iterator last)
 	{
 		m_production.assign(first, last);
+		PushProduction();
 	}
 	void AssignEntry(string::const_iterator first, string::const_iterator last)
 	{
-		m_entries.push_back(new LSystemEntry(m_id));
+		m_entries.push_back(new LSystemEntry(m_id, m_angle, m_axiom, m_productions));
+		m_id = "";
+		m_angle = 0;
+		m_axiom = "";
+		m_productions.clear();
+	}
+	void AssignProductionSymbol(const std::string &symbol)
+	{
+		m_productionSymbol = symbol;
+	}
+	void AssignRule(const std::string &production)
+	{
+		m_production = production;
+		PushProduction();
 	}
 
 	int EntriesParsed() const
@@ -56,11 +70,19 @@ public:
 	}
 
 private:
+	void PushProduction()
+	{
+		m_productions.push_back(LSystemProduction(m_productionSymbol, m_production));
+		m_productionSymbol = "";
+		m_production = "";
+	}
+
 	string m_id;
 	int m_angle;
 	string m_axiom;
 	string m_production;
-	vector<string> m_productions;
+	string m_productionSymbol;
+	vector<LSystemProduction> m_productions;
 	vector<LSystemEntry *> m_entries;
 };
 
@@ -74,8 +96,25 @@ static void AssignAngle(int value)
 { s_impl->AssignAngle(value); }
 static void AssignAxiom(string::const_iterator first, string::const_iterator last)
 { s_impl->AssignAxiom(first, last); }
+static void AssignProductionSymbol(char symbol) //string::const_iterator first, string::const_iterator last)
+{
+	//std::string symbol;
+	//symbol.assign(first, last);
+	//if (symbol.length() > 1)
+	//{
+	//	return;
+	//}
+	char text[2] = { symbol, 0 };
+	s_impl->AssignProductionSymbol(text);
+}
 static void AssignProduction(string::const_iterator first, string::const_iterator last)
 { s_impl->AssignProduction(first, last); }
+static void AssignRule(string::const_iterator first, string::const_iterator last)
+{
+	std::string production;
+	production.assign(first, last);
+	s_impl->AssignRule(production);
+}
 
 
 
@@ -99,21 +138,22 @@ struct LSystemGrammar : public grammar<LSystemGrammar>
 		{
 			lsystem_file = *lsystem_entry >> end_p;
 
-			lsystem_entry = (lsystem_id >> '{' >> lsystem_body >> '}')[&AssignEntry];
+			lsystem_entry = (lsystem_id >> lsystem_body)[&AssignEntry];
 			
-			lsystem_id = lexeme_d[+(print_p - blank_p - eol_p - '(' - '{')][&AssignId];
+			lsystem_id = lexeme_d[+(print_p - blank_p - eol_p - '{')][&AssignId];
 
-			lsystem_body = *(lsystem_statement >> eol_p);
+			lsystem_body = '{' >> eol_p >> *(lsystem_statement >> eol_p) >> '}' >> eol_p;
 
 			lsystem_statement = lsystem_angle | lsystem_axiom | lsystem_production;
 
-			lsystem_angle = as_lower_d["angle"] >> int_p[&AssignAngle];
+			lsystem_angle = lexeme_d[as_lower_d["angle"]] >> int_p[&AssignAngle];
 
-			lsystem_symbols = (*(anychar_p - eol_p));
+			lsystem_symbols = lexeme_d[*(range_p('A', 'Z') | '-' | '+')];
 
-			lsystem_axiom = as_lower_d["axiom"] >> lsystem_symbols[&AssignAxiom];
+			lsystem_axiom = lexeme_d[as_lower_d["axiom"]] >> lsystem_symbols[&AssignAxiom];
 
-			lsystem_production = as_lower_d[range_p('a', 'z')] >> '=' >> lsystem_symbols[&AssignProduction];
+			lsystem_production =
+				range_p('A', 'Z')[&AssignProductionSymbol] >> '=' >> lsystem_symbols[&AssignProduction];
 
 			BOOST_SPIRIT_DEBUG_NODE(lsystem_file);
 			BOOST_SPIRIT_DEBUG_NODE(lsystem_entry);
@@ -148,7 +188,7 @@ bool LSystemParser::Parse(const string &text)
 	LSystemGrammar g;
 	s_impl = m_impl;
 	parse_info<string::const_iterator> results =
-		parse(text.begin(), text.end(), g, space_p | comment_p(";"));
+		parse(text.begin(), text.end(), g, (space_p | comment_p(";")) - eol_p);
 	s_impl = NULL;
 	
 	return results.full;
