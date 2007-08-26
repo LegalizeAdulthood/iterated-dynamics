@@ -1,0 +1,26 @@
+ Michael Abrash       360x480x256, 320x400x256 VGA video modes
+ Rees Acheson         (Author of MandelB) pentium speedups
+ Joseph Albrecht      Tandy video, CGA video speedup
+ Scott D. Boyd        Xfractint user interface cleanup
+ Mike Burkey          376x564x256, 400x564x256, and 832x612x256 VGA video modes
+ John Bridges         superVGA support, 360x480x256 mode
+ Charlie Chernohorsky Virtual VESA screen sizes & speedup
+ Brian Corbino        Tandy 1000 640x200x16 video mode
+ Jean-Pierre Demailly Xfractint truecolor
+ Frank Fussenegger    Mandelbrot speedups
+ Mike Gelvin          Mandelbrot speedups
+ Lawrence Gozum       Tseng 640x400x256 Video Mode
+ Jay Hill             Windows notes
+ Damien M. Jones      Windows notes, web hosting
+ Charles Marslett     VESA video and IIT math chip support
+ Andrew McCarthy      European keyboard support
+ Bob Montgomery       (Author of VPIC) Fast text I/O routines
+ Yavuz Onder          Postscript printer driver
+ Kyle Powell          8514/A Support
+ Matt Saucier         Printer Support
+ Dean Souleles        Hercules Support
+ Kurt Sowa            Color Printer Support
+ John Swenson         Postscript printer features
+ Bill Townsend        Mandelbrot Speedups
+ Paul Varner          Extended Memory support for Disk Video
+ Richard Wilton       Tweaked VGA Video modes

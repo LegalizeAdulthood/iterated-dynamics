@@ -216,16 +216,7 @@
 
 {Appendix F, 0, "Other Programs", FF}
 
-{Appendix G, 0, "Revision History",
-                   "Version 20",
-                   "Version 19",
-                   "Version 18",
-                   "Version 17",
-                   "Version 16",
-                   "Version 15",
-                   "Versions 12 through 14",
-                   "Versions  1 through 11",
-                   FF}
+{Appendix G, 0, "Revision History", FF}
 
 ;
 ; End of DoContents

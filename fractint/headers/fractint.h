@@ -1343,22 +1343,6 @@ struct UserInterfaceState
 	bool ask_video;					/* flag for video prompting */
 };
 
-class AbstractInputContext
-{
-public:
-	virtual bool ProcessWaitingKey(int key) = 0;
-	virtual bool ProcessIdle() = 0;
-};
-
-class AbstractDialog : public AbstractInputContext
-{
-public:
-	AbstractDialog() {}
-	virtual ~AbstractDialog() {}
-
-	void ProcessInput();
-};
-
 template <typename T>
 class ValueSaver
 {
