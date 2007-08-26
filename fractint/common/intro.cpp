@@ -19,26 +19,11 @@
 #include "intro.h"
 #include "realdos.h"
 
+#include "AbstractInput.h"
+
 #ifdef XFRACT
 extern int slowdisplay;
 #endif
-
-void AbstractDialog::ProcessInput()
-{
-	bool done = false;
-	while (!done)
-	{
-		int key = driver_key_pressed();
-		if (key)
-		{
-			done = ProcessWaitingKey(key);
-		}
-		else
-		{
-			done = ProcessIdle();
-		}
-	}
-}
 
 class FractIntDialog : public AbstractDialog
 {
