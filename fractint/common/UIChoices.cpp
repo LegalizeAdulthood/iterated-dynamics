@@ -98,6 +98,7 @@ void UIChoices::push(const char *label, const char *value)
 	full_screen_values fsv;
 	fsv.type = 's';
 	::strcpy(fsv.uval.sval, value);
+	m_values.push_back(fsv);
 }
 
 void UIChoices::push(const char *label, float value)
@@ -106,6 +107,7 @@ void UIChoices::push(const char *label, float value)
 	full_screen_values fsv;
 	fsv.type = 'f';
 	fsv.uval.dval = value;
+	m_values.push_back(fsv);
 }
 
 void UIChoices::push(const char *label, double value)
@@ -114,6 +116,7 @@ void UIChoices::push(const char *label, double value)
 	full_screen_values fsv;
 	fsv.type = 'd';
 	fsv.uval.dval = value;
+	m_values.push_back(fsv);
 }
 
 int UIChoices::prompt()
