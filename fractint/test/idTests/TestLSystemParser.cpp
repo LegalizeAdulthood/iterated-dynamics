@@ -16,9 +16,24 @@ TEST(Empty, LSystemParser)
 	CHECK_EQUAL("Empty", parser.Entry(0)->Id());
 }
 
+TEST(Comments1, LSystemParser)
+{
+	const std::string comments = "Comments1 { ; Comment on head\n"
+		"}\n";
+	LSystemParser parser = LSystemParser::StackInstance();
+	CHECK(parser.Parse(comments));
+	LONGS_EQUAL(1, parser.Count());
+	const LSystemEntry *entry = parser.Entry(0);
+	CHECK_EQUAL("Comments1", entry->Id());
+}
+
+#if 0
 TEST(Angle, LSystemParser)
 {
-	const std::string angle = "Angle {\nangle 15\n;\n}\n";
+	const std::string angle = "Angle {\n"
+		"  angle 15\n"
+		";\n"
+		"}\n";
 	LSystemParser parser = LSystemParser::StackInstance();
 	CHECK(parser.Parse(angle));
 	LONGS_EQUAL(1, parser.Count());
@@ -28,7 +43,6 @@ TEST(Angle, LSystemParser)
 }
 
 TEST(Axiom, LSystemParser)
-//void foo()
 {
 	const std::string axiom = "Axiom {\naxiom F-F\n;\n}\n";
 	LSystemParser parser = LSystemParser::StackInstance();
@@ -83,7 +97,6 @@ TEST(Production2, LSystemParser)
 	}
 }
 
-#if 0
 TEST(Koch1, LSystemParser)
 {
 	const std::string koch1 =
@@ -103,11 +116,12 @@ TEST(Koch1, LSystemParser)
 	LONGS_EQUAL(6, entry->Angle());
 	CHECK_EQUAL("F--F--F", entry->Axiom());
 	LONGS_EQUAL(1, entry->ProductionCount());
-	CHECK_EQUAL("F=F+F--F+F", entry->Production(0));
+	const LSystemProduction rule = entry->Production(0);
+	CHECK_EQUAL("F", rule.Symbol());
+	CHECK_EQUAL("F+F--F+F", rule.Production());
 }
 
 TEST(Snowflake2, LSystemParser)
-//void foo()
 {
 	const std::string snowflake2 =
 		"Snowflake2 { ; Adrian Mariano\n"
@@ -137,17 +151,37 @@ TEST(Snowflake2, LSystemParser)
 	LONGS_EQUAL(12, entry0->Angle());
 	CHECK_EQUAL("F", entry0->Axiom());
 	LONGS_EQUAL(2, entry0->ProductionCount());
-	CHECK_EQUAL("F=++!F!F--F--F@IQ3|+F!F--", entry0->Production(0));
-	CHECK_EQUAL("F=F--F!+++@Q3F@QI3|+F!F@Q3|+F!F", entry0->Production(1));
+	{
+		const LSystemProduction rule = entry0->Production(0);
+		CHECK_EQUAL("F", rule.Symbol());
+		CHECK_EQUAL("++!F!F--F--F@IQ3|+F!F--", rule.Production());
+	}
+	{
+		const LSystemProduction rule = entry0->Production(1);
+		CHECK_EQUAL("F", rule.Symbol());
+		CHECK_EQUAL("F--F!+++@Q3F@QI3|+F!F@Q3|+F!F", rule.Production());
+	}
 
 	const LSystemEntry *entry1 = parser.Entry(1);
 	CHECK_EQUAL("SnowflakeColor", entry1->Id());
 	LONGS_EQUAL(12, entry1->Angle());
 	CHECK_EQUAL("F", entry1->Axiom());
 	LONGS_EQUAL(3, entry1->ProductionCount());
-	CHECK_EQUAL("F=--!F<1!F<1++F<1++F<1@IQ3|-F<1!F<1++", entry1->Production(0));
-	CHECK_EQUAL("F=F<1++F<1!---@Q3F<1@QI3|-F<1!F<1@Q3|-F<1!F<1", entry1->Production(1));
-	CHECK_EQUAL("F=", entry1->Production(2));
+	{
+		const LSystemProduction rule = entry1->Production(0);
+		CHECK_EQUAL("F", rule.Symbol());
+		CHECK_EQUAL("--!F<1!F<1++F<1++F<1@IQ3|-F<1!F<1++", rule.Production());
+	}
+	{
+		const LSystemProduction rule = entry1->Production(1);
+		CHECK_EQUAL("F", rule.Symbol());
+		CHECK_EQUAL("F<1++F<1!---@Q3F<1@QI3|-F<1!F<1@Q3|-F<1!F<1", rule.Production());
+	}
+	{
+		const LSystemProduction rule = entry1->Production(2);
+		CHECK_EQUAL("F", rule.Symbol());
+		CHECK_EQUAL("", rule.Production());
+	}
 }
 #endif
 

@@ -10,7 +10,5 @@ extern void aspect_ratio_crop(float, float);
 extern int init_pan_or_recalc(int);
 extern void _fastcall draw_lines(Coordinate, Coordinate, int, int);
 extern void _fastcall add_box(Coordinate);
-extern void clear_box();
-extern void display_box();
 
 #endif

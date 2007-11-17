@@ -88,7 +88,6 @@ double  g_dx_size;
 double	g_dy_size;         /* g_x_dots-1, g_y_dots-1         */
 int     g_colors = 256;           /* maximum colors available */
 long    g_max_iteration;                  /* try this many iterations */
-int     g_box_count;               /* 0 if no zoom-box yet     */
 int     g_z_rotate;                /* zoombox rotation         */
 double  g_zbx;
 double	g_zby;                /* topleft of zoombox       */

@@ -96,16 +96,11 @@ static void AssignAngle(int value)
 { s_impl->AssignAngle(value); }
 static void AssignAxiom(string::const_iterator first, string::const_iterator last)
 { s_impl->AssignAxiom(first, last); }
-static void AssignProductionSymbol(char symbol) //string::const_iterator first, string::const_iterator last)
+static void AssignProductionSymbol(string::const_iterator first, string::const_iterator last)
 {
-	//std::string symbol;
-	//symbol.assign(first, last);
-	//if (symbol.length() > 1)
-	//{
-	//	return;
-	//}
-	char text[2] = { symbol, 0 };
-	s_impl->AssignProductionSymbol(text);
+	std::string symbol;
+	symbol.assign(first, last);
+	s_impl->AssignProductionSymbol(symbol);
 }
 static void AssignProduction(string::const_iterator first, string::const_iterator last)
 { s_impl->AssignProduction(first, last); }
@@ -116,59 +111,85 @@ static void AssignRule(string::const_iterator first, string::const_iterator last
 	s_impl->AssignRule(production);
 }
 
-
-
 struct LSystemGrammar : public grammar<LSystemGrammar>
 {
     template <typename ScannerT>
     struct definition
     {
 		typedef rule<ScannerT> rule_t;
-		rule_t lsystem_file;
-		rule_t lsystem_entry;
-		rule_t lsystem_id;
-		rule_t lsystem_body;
-		rule_t lsystem_statement;
-		rule_t lsystem_angle;
-		rule_t lsystem_symbols;
-		rule_t lsystem_axiom;
-		rule_t lsystem_production;
+		rule_t file;
+		rule_t entry;
+		rule_t id;
+		rule_t body;
+		rule_t statement;
+		rule_t angle;
+		rule_t symbols;
+		rule_t axiom;
+		rule_t production;
+		rule_t letter;
+		rule_t symbol_increase_angle;
+		rule_t symbol_decrease_angle;
+		rule_t symbol_select_color;
+		rule_t symbol_increment_color;
+		rule_t symbol_decrement_color;
+		rule_t symbol_segment_size;
 
         definition(LSystemGrammar const &self)
 		{
-			lsystem_file = *lsystem_entry >> end_p;
+			file = *entry >> end_p;
 
-			lsystem_entry = (lsystem_id >> lsystem_body)[&AssignEntry];
+			entry = (id >> body)[&AssignEntry];
 			
-			lsystem_id = lexeme_d[+(print_p - blank_p - eol_p - '{')][&AssignId];
+			id = lexeme_d[+(print_p - blank_p - eol_p - '{')][&AssignId];
 
-			lsystem_body = '{' >> eol_p >> *(lsystem_statement >> eol_p) >> '}' >> eol_p;
+			body = '{' >> eol_p >> *(statement >> eol_p) >> '}' >> eol_p;
 
-			lsystem_statement = lsystem_angle | lsystem_axiom | lsystem_production;
+			statement = angle | axiom | production;
 
-			lsystem_angle = lexeme_d[as_lower_d["angle"]] >> int_p[&AssignAngle];
+			angle = lexeme_d[as_lower_d["angle"]] >> int_p[&AssignAngle];
 
-			lsystem_symbols = lexeme_d[*(range_p('A', 'Z') | '-' | '+')];
+			letter = range_p('A', 'Z');
 
-			lsystem_axiom = lexeme_d[as_lower_d["axiom"]] >> lsystem_symbols[&AssignAxiom];
+			symbol_increase_angle = lexeme_d[ch_p('\\') >> int_p];
+			symbol_decrease_angle = lexeme_d[ch_p('/') >> int_p];
+			symbol_select_color = lexeme_d[ch_p('C') >> int_p];
+			symbol_increment_color = lexeme_d[ch_p('>') >> int_p];
+			symbol_decrement_color = lexeme_d[ch_p('<') >> int_p];
+			symbol_segment_size = lexeme_d[(ch_p('@') >> int_p)
+				|	('I' >> int_p) | ('Q' >> int_p)
+				|	("IQ" >> int_p) | ("QI" >> int_p)];
 
-			lsystem_production =
-				range_p('A', 'Z')[&AssignProductionSymbol] >> '=' >> lsystem_symbols[&AssignProduction];
+			symbols = *(letter | '-' | '+' | '|' | '!' | '[' | ']'
+				| symbol_increase_angle | symbol_decrease_angle
+				| symbol_select_color | symbol_increment_color | symbol_decrement_color
+				| symbol_segment_size);
 
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_file);
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_entry);
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_id);
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_body);
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_statement);
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_angle);
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_symbols);
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_axiom);
-			BOOST_SPIRIT_DEBUG_NODE(lsystem_production);
+			axiom = lexeme_d[as_lower_d["axiom"]] >> symbols[&AssignAxiom];
+
+			production =
+				letter[&AssignProductionSymbol] >> '=' >> symbols[&AssignProduction];
+
+			BOOST_SPIRIT_DEBUG_NODE(file);
+			BOOST_SPIRIT_DEBUG_NODE(entry);
+			BOOST_SPIRIT_DEBUG_NODE(id);
+			BOOST_SPIRIT_DEBUG_NODE(body);
+			BOOST_SPIRIT_DEBUG_NODE(statement);
+			BOOST_SPIRIT_DEBUG_NODE(angle);
+			BOOST_SPIRIT_DEBUG_NODE(symbols);
+			BOOST_SPIRIT_DEBUG_NODE(axiom);
+			BOOST_SPIRIT_DEBUG_NODE(production);
+			BOOST_SPIRIT_DEBUG_NODE(letter);
+			BOOST_SPIRIT_DEBUG_NODE(symbol_increase_angle);
+			BOOST_SPIRIT_DEBUG_NODE(symbol_decrease_angle);
+			BOOST_SPIRIT_DEBUG_NODE(symbol_select_color);
+			BOOST_SPIRIT_DEBUG_NODE(symbol_increment_color);
+			BOOST_SPIRIT_DEBUG_NODE(symbol_decrement_color);
+			BOOST_SPIRIT_DEBUG_NODE(symbol_segment_size);
 		}
 		
         rule_t const &start() const
 		{
-			return lsystem_file;
+			return file;
 		}
     };
 };
@@ -183,12 +204,36 @@ LSystemParser::~LSystemParser()
 	delete m_impl;
 }
 
+struct SpaceGrammar : public grammar<SpaceGrammar>
+{
+    template <typename ScannerT>
+    struct definition
+    {
+		typedef rule<ScannerT> rule_t;
+		rule_t space;
+
+        definition(SpaceGrammar const &self)
+		{
+			space = (space_p | comment_p(";")) - eol_p;
+
+			BOOST_SPIRIT_DEBUG_NODE(space);
+		}
+		
+        rule_t const &start() const
+		{
+			return space;
+		}
+    };
+};
+
 bool LSystemParser::Parse(const string &text)
 {
-	LSystemGrammar g;
+	LSystemGrammar systems;
+	SpaceGrammar spaces;
+
 	s_impl = m_impl;
 	parse_info<string::const_iterator> results =
-		parse(text.begin(), text.end(), g, (space_p | comment_p(";")) - eol_p);
+		parse(text.begin(), text.end(), systems, blank_p | (";" >> *(anychar_p - eol_p)));
 	s_impl = NULL;
 	
 	return results.full;

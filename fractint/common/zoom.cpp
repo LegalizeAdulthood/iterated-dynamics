@@ -2,7 +2,7 @@
 	zoom.c - routines for zoombox manipulation and for panning
 
 */
-
+#include <vector>
 #include <string.h>
 
 #include "port.h"
@@ -19,13 +19,9 @@
 #include "EscapeTime.h"
 #include "MathUtil.h"
 #include "WorkList.h"
+#include "ZoomBox.h"
 
 #define PIXELROUND 0.00001
-
-int g_box_x[NUM_BOXES] = { 0 };
-int g_box_y[NUM_BOXES] = { 0 };
-int g_box_values[NUM_BOXES] = { 0 };
-int g_box_color;
 
 static void _fastcall zmo_calc(double, double, double *, double *, double);
 static void _fastcall zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
@@ -49,55 +45,6 @@ static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4
 	add_a_bf(target, p1);
 	restore_stack(saved);
 }
-
-#ifndef XFRACT
-void display_box()
-{
-	int i;
-	int boxc = (g_colors-1)&g_box_color;
-	unsigned char *values = (unsigned char *)g_box_values;
-	int rgb[3];
-	for (i = 0; i < g_box_count; i++)
-	{
-		if (g_is_true_color && g_true_mode_iterates)
-		{
-			int alpha = 0;
-			driver_get_truecolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, rgb[0], rgb[1], rgb[2], alpha);
-			driver_put_truecolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset,
-				rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
-		}
-		else
-		{
-			values[i] = (unsigned char)getcolor(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset);
-		}
-	}
-	/* There is an interaction between getcolor and g_plot_color_put_color, so separate them */
-	if (!(g_is_true_color && g_true_mode_iterates)) /* don't need this for truecolor with truemode set */
-	{
-		for (i = 0; i < g_box_count; i++)
-		{
-			g_plot_color_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, boxc);
-		}
-	}
-}
-
-void clear_box()
-{
-	int i;
-	if (g_is_true_color && g_true_mode_iterates)
-	{
-		display_box();
-	}
-	else
-	{
-		unsigned char *values = (unsigned char *)g_box_values;
-		for (i = 0; i < g_box_count; i++)
-		{
-			g_plot_color_put_color(g_box_x[i]-g_sx_offset, g_box_y[i]-g_sy_offset, values[i]);
-		}
-	}
-}
-#endif
 
 void zoom_box_draw(int drawit)
 {
@@ -126,10 +73,10 @@ void zoom_box_draw(int drawit)
 	int saved = 0;
 	if (g_z_width == 0)  /* no box to draw */
 	{
-		if (g_box_count != 0)  /* remove the old box from display */
+		if (g_zoomBox.count() != 0)  /* remove the old box from display */
 		{
-			clear_box();
-			g_box_count = 0;
+			g_zoomBox.clear();
+			g_zoomBox.set_count(0);
 		}
 		reset_zoom_corners();
 		return;
@@ -218,10 +165,10 @@ void zoom_box_draw(int drawit)
 	tr.x   = int(ftemp1*(g_dx_size + PIXELROUND));
 	tr.y   = int(ftemp2*(g_dy_size + PIXELROUND));
 
-	if (g_box_count != 0)  /* remove the old box from display */
+	if (g_zoomBox.count() != 0)  /* remove the old box from display */
 	{
-		clear_box();
-		g_box_count = 0;
+		g_zoomBox.clear();
+		g_zoomBox.set_count(0);
 	}
 
 	if (drawit)  /* caller wants box drawn as well as co-ords calc'd */
@@ -241,9 +188,9 @@ void zoom_box_draw(int drawit)
 		g_box_y[2] = br.y + g_sy_offset;
 		g_box_x[3] = bl.x + g_sx_offset;
 		g_box_y[3] = bl.y + g_sy_offset;
-		g_box_count = 1;
+		g_zoomBox.set_count(1);
 #endif
-		display_box();
+		g_zoomBox.display();
 	}
 }
 
@@ -332,16 +279,14 @@ void _fastcall draw_lines(Coordinate fr, Coordinate to,
 void _fastcall add_box(Coordinate point)
 {
 #if defined(_WIN32)
-	_ASSERTE(g_box_count < NUM_BOXES);
+	_ASSERTE(g_zoomBox.count() < NUM_BOXES);
 #endif
 	point.x += g_sx_offset;
 	point.y += g_sy_offset;
 	if (point.x >= 0 && point.x < g_screen_width &&
 		point.y >= 0 && point.y < g_screen_height)
 	{
-		g_box_x[g_box_count] = point.x;
-		g_box_y[g_box_count] = point.y;
-		++g_box_count;
+		g_zoomBox.push(point);
 	}
 }
 
@@ -770,7 +715,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	if (g_zbx == 0.0 && g_zby == 0.0)
 	{
-		clear_box();
+		g_zoomBox.clear();
 		return 0; /* box is full screen, leave g_calculation_status as is */
 	}
 	col = int(g_zbx*(g_dx_size + PIXELROUND)); /* calc dest col, row of topleft pixel */
@@ -833,7 +778,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	/* now we're committed */
 	g_calculation_status = CALCSTAT_RESUMABLE;
-	clear_box();
+	g_zoomBox.clear();
 	if (row > 0) /* move image up */
 	{
 		for (y = 0; y < g_y_dots; ++y)

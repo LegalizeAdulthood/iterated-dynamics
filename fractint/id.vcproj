@@ -1370,6 +1370,10 @@
 					RelativePath=".\common\zoom.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\common\ZoomBox.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<Filter
@@ -1724,6 +1728,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\zoom.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\ZoomBox.h"
 					>
 				</File>
 			</Filter>
