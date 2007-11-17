@@ -1,3 +1,4 @@
+#include <vector>
 #include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>
@@ -28,8 +29,8 @@ struct lsys_cmd
 	char ch;
 };
 
-#define sins_f ((LDBL *) g_box_y)
-#define coss_f ((LDBL *) g_box_y + 50)
+static std::vector<LDBL> s_sinf;
+static std::vector<LDBL> s_cosf;
 
 static lsys_cmd *_fastcall find_size(lsys_cmd *, lsys_turtle_state_fp *, lsys_cmd **, int);
 
@@ -184,8 +185,8 @@ static void lsysf_size_dm(lsys_turtle_state_fp *cmd)
 
 static void lsysf_size_gf(lsys_turtle_state_fp *cmd)
 {
-	cmd->xpos += cmd->size*coss_f[int(cmd->angle)];
-	cmd->ypos += cmd->size*sins_f[int(cmd->angle)];
+	cmd->xpos += cmd->size*s_cosf[int(cmd->angle)];
+	cmd->ypos += cmd->size*s_sinf[int(cmd->angle)];
 
 	if (cmd->xpos > cmd->x_max)
 	{
@@ -239,16 +240,16 @@ static void lsysf_draw_m(lsys_turtle_state_fp *cmd)
 
 static void lsysf_draw_g(lsys_turtle_state_fp *cmd)
 {
-	cmd->xpos += cmd->size*coss_f[int(cmd->angle)];
-	cmd->ypos += cmd->size*sins_f[int(cmd->angle)];
+	cmd->xpos += cmd->size*s_cosf[int(cmd->angle)];
+	cmd->ypos += cmd->size*s_sinf[int(cmd->angle)];
 }
 
 static void lsysf_draw_f(lsys_turtle_state_fp *cmd)
 {
 	int lastx = int(cmd->xpos);
 	int lasty = int(cmd->ypos);
-	cmd->xpos += cmd->size*coss_f[int(cmd->angle)];
-	cmd->ypos += cmd->size*sins_f[int(cmd->angle)];
+	cmd->xpos += cmd->size*s_cosf[int(cmd->angle)];
+	cmd->ypos += cmd->size*s_sinf[int(cmd->angle)];
 	driver_draw_line(lastx, lasty, int(cmd->xpos), int(cmd->ypos), cmd->curcolor);
 }
 
@@ -719,10 +720,12 @@ void _fastcall lsysf_sin_cos()
 
 	locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
 	twopimax = TWOPI/g_max_angle;
+	s_sinf.resize(g_max_angle);
+	s_cosf.resize(g_max_angle);
 	for (i = 0; i < g_max_angle; i++)
 	{
 		twopimaxi = i*twopimax;
-		sins_f[i] = sinl(twopimaxi);
-		coss_f[i] = locaspect*cosl(twopimaxi);
+		s_sinf[i] = sinl(twopimaxi);
+		s_cosf[i] = locaspect*cosl(twopimaxi);
 	}
 }

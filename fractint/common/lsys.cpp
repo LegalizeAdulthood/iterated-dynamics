@@ -1,4 +1,5 @@
 #include <string.h>
+#include <vector>
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
@@ -21,8 +22,8 @@ struct lsys_cmd
 	char ch;
 };
 
-#define sins ((long *) g_box_y)
-#define coss ((long *) g_box_y + 50) /* 50 after the start of sins */
+static std::vector<long> s_sins;
+static std::vector<long> s_coss;
 
 int g_max_angle;
 
@@ -619,8 +620,8 @@ static void lsysi_size_dm(lsys_turtle_state_l *cmd)
 
 static void lsysi_size_gf(lsys_turtle_state_l *cmd)
 {
-	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[int(cmd->angle)], 29));
-	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[int(cmd->angle)], 29));
+	cmd->xpos = cmd->xpos + (multiply(cmd->size, s_coss[int(cmd->angle)], 29));
+	cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sins[int(cmd->angle)], 29));
 	/* xpos += size*coss[angle]; */
 	/* ypos += size*sins[angle]; */
 	if (cmd->xpos > cmd->x_max)
@@ -680,8 +681,8 @@ static void lsysi_draw_m(lsys_turtle_state_l *cmd)
 
 static void lsysi_draw_g(lsys_turtle_state_l *cmd)
 {
-	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[int(cmd->angle)], 29));
-	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[int(cmd->angle)], 29));
+	cmd->xpos = cmd->xpos + (multiply(cmd->size, s_coss[int(cmd->angle)], 29));
+	cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sins[int(cmd->angle)], 29));
 	/* xpos += size*coss[angle]; */
 	/* ypos += size*sins[angle]; */
 }
@@ -690,8 +691,8 @@ static void lsysi_draw_f(lsys_turtle_state_l *cmd)
 {
 	int lastx = int(cmd->xpos >> 19);
 	int lasty = int(cmd->ypos >> 19);
-	cmd->xpos = cmd->xpos + (multiply(cmd->size, coss[int(cmd->angle)], 29));
-	cmd->ypos = cmd->ypos + (multiply(cmd->size, sins[int(cmd->angle)], 29));
+	cmd->xpos = cmd->xpos + (multiply(cmd->size, s_coss[int(cmd->angle)], 29));
+	cmd->ypos = cmd->ypos + (multiply(cmd->size, s_sins[int(cmd->angle)], 29));
 	/* xpos += size*coss[angle]; */
 	/* ypos += size*sins[angle]; */
 	driver_draw_line(lastx, lasty, int(cmd->xpos >> 19), int(cmd->ypos >> 19), cmd->curcolor);
@@ -1102,13 +1103,15 @@ static void _fastcall lsysi_sin_cos()
 {
 	double locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
 	double twopimax = 2.0*MathUtil::Pi/g_max_angle;
+	s_sins.resize(g_max_angle);
+	s_coss.resize(g_max_angle);
 	for (int i = 0; i < g_max_angle; i++)
 	{
 		double twopimaxi = i*twopimax;
 		double s;
 		double c;
 		FPUsincos(&twopimaxi, &s, &c);
-		sins[i] = long(s*FIXEDLT1);
-		coss[i] = long((locaspect*c)*FIXEDLT1);
+		s_sins[i] = long(s*FIXEDLT1);
+		s_coss[i] = long((locaspect*c)*FIXEDLT1);
 	}
 }
