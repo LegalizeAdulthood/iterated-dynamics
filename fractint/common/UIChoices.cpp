@@ -47,76 +47,74 @@ void UIChoices::push(const char *label, const char *values[], int num_values, in
 			widest_value = len;
 		}
 	}
-	m_choices.push_back(label);
 	full_screen_values fsv;
 	fsv.type = 'l';
 	fsv.uval.ch.vlen = widest_value;
 	fsv.uval.ch.llen = num_values;
 	fsv.uval.ch.list = values;
 	fsv.uval.ch.val = existing;
-	m_values.push_back(fsv);
+	push(label, fsv);
 }
 
 void UIChoices::push(const char *label, bool value)
 {
-	m_choices.push_back(label);
 	full_screen_values fsv;
 	fsv.type = 'y';
 	fsv.uval.ch.val = value ? 1 : 0;
-	m_values.push_back(fsv);
+	push(label, fsv);
 }
 
 void UIChoices::push(const char *label, int value)
 {
-	m_choices.push_back(label);
 	full_screen_values fsv;
 	fsv.type = 'i';
 	fsv.uval.ival = value;
-	m_values.push_back(fsv);
+	push(label, fsv);
 }
 
 void UIChoices::push(const char *label, long value)
 {
-	m_choices.push_back(label);
 	full_screen_values fsv;
 	fsv.type = 'L';
 	fsv.uval.Lval = value;
-	m_values.push_back(fsv);
+	push(label, fsv);
 }
 
 void UIChoices::push(const char *label)
 {
-	m_choices.push_back(label);
 	full_screen_values fsv;
 	fsv.type = '*';
-	m_values.push_back(fsv);
+	push(label, fsv);
 }
 
 void UIChoices::push(const char *label, const char *value)
 {
-	m_choices.push_back(label);
 	full_screen_values fsv;
 	fsv.type = 's';
 	::strcpy(fsv.uval.sval, value);
-	m_values.push_back(fsv);
+	push(label, fsv);
 }
 
 void UIChoices::push(const char *label, float value)
 {
-	m_choices.push_back(label);
 	full_screen_values fsv;
 	fsv.type = 'f';
 	fsv.uval.dval = value;
-	m_values.push_back(fsv);
+	push(label, fsv);
 }
 
 void UIChoices::push(const char *label, double value)
 {
-	m_choices.push_back(label);
 	full_screen_values fsv;
 	fsv.type = 'd';
 	fsv.uval.dval = value;
-	m_values.push_back(fsv);
+	push(label, fsv);
+}
+
+void UIChoices::push(const char *label, const full_screen_values &value)
+{
+	m_choices.push_back(label);
+	m_values.push_back(value);
 }
 
 int UIChoices::prompt()

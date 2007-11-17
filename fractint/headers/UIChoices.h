@@ -37,6 +37,8 @@ public:
 	}
 
 private:
+	void push(const char *label, const full_screen_values &value);
+
 	int m_help_mode;
 	const char *m_heading;
 	int m_key_mask;
