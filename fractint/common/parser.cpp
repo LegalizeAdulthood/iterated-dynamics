@@ -3449,6 +3449,7 @@ static void formula_get_end_of_string(FILE *openfile, FormulaToken *this_token)
 static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 {
 	int c = formula_get_char(openfile);
+	int i = 1;
 	switch (c)
 	{
 	CASE_NUM:
@@ -3469,7 +3470,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				c = formula_get_char(openfile);
 				if (c == '=')
 				{
-					this_token->text[1] = char(c);
+					this_token->text[i++] = char(c);
 				}
 				else
 				{
@@ -3481,7 +3482,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				c = formula_get_char(openfile);
 				if (c == '=')
 				{
-					this_token->text[1] = char(c);
+					this_token->text[i++] = char(c);
 				}
 				else
 				{
@@ -3496,7 +3497,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				c = formula_get_char(openfile);
 				if (c == '|')
 				{
-					this_token->text[1] = char(c);
+					this_token->text[i++] = char(c);
 				}
 				else
 				{
@@ -3508,7 +3509,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				c = formula_get_char(openfile);
 				if (c == '&')
 				{
-					this_token->text[1] = char(c);
+					this_token->text[i++] = char(c);
 				}
 				else
 				{
@@ -3542,14 +3543,14 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				is_complex_constant(openfile, this_token);
 				return true;
 			}
-			this_token->text[2] = 0;
+			this_token->text[i] = 0;
 			if (this_token->type == TOKENTYPE_OPERATOR)
 			{
-				for (int i = 0; i < NUM_OF(s_operator_list); i++)
+				for (int n = 0; n < NUM_OF(s_operator_list); n++)
 				{
-					if (!strcmp(s_operator_list[i].name, this_token->text))
+					if (!strcmp(s_operator_list[n].name, this_token->text))
 					{
-						this_token->id = s_operator_list[i].type;
+						this_token->id = s_operator_list[n].type;
 					}
 				}
 			}
@@ -4424,7 +4425,7 @@ bool Formula::prescan(FILE *open_file)
 	long orig_pos = ftell(open_file);
 	m_statement_pos = orig_pos;
 	
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < NUM_OF(m_errors); i++)
 	{
 		m_errors[i].start_pos    = 0L;
 		m_errors[i].error_pos    = 0L;
