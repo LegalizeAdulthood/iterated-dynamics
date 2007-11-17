@@ -22,6 +22,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "zoom.h"
+#include "ZoomBox.h"
 
 #define MAX_WINDOWS_OPEN 450
 
@@ -292,8 +293,8 @@ static void drawindow(int color, struct window *info)
 	Coordinate itr;
 #endif
 
-	g_box_color = color;
-	g_box_count = 0;
+	g_zoomBox.set_color(color);
+	g_zoomBox.set_count(0);
 	if (info->win_size >= g_cross_hair_box_size)
 	{
 		/* big enough on screen to show up as a box so draw it */
@@ -314,9 +315,9 @@ static void drawindow(int color, struct window *info)
 		g_box_y[2] = info->ibr.y + g_sy_offset;
 		g_box_x[3] = info->ibl.x + g_sx_offset;
 		g_box_y[3] = info->ibl.y + g_sy_offset;
-		g_box_count = 4;
+		g_zoomBox.set_count(4);
 #endif
-		display_box();
+		g_zoomBox.display();
 	}
 	else  /* draw crosshairs */
 	{
@@ -332,7 +333,7 @@ static void drawindow(int color, struct window *info)
 		ibl.x = info->itl.x;
 		draw_lines(info->itl, itr, ibl.x-itr.x, 0); /* top & bottom lines */
 		draw_lines(info->itl, ibl, 0, itr.y-ibl.y); /* left & right lines */
-		display_box();
+		g_zoomBox.display();
 #endif
 	}
 }
@@ -626,7 +627,7 @@ rescan:  /* entry for changed browse parms */
 	split_path(g_browse_state.mask(), NULL, NULL, fname, ext);
 	make_path(tmpmask, drive, dir, fname, ext);
 	done = (vid_too_big == 2) || no_memory || fr_find_first(tmpmask);
-								/* draw all visible windows */
+	/* draw all visible windows */
 	while (!done)
 	{
 		if (driver_key_pressed())
@@ -637,7 +638,7 @@ rescan:  /* entry for changed browse parms */
 		split_path(g_dta.filename, NULL, NULL, fname, ext);
 		make_path(tmpmask, drive, dir, fname, ext);
 		if (!find_fractal_info(tmpmask, &read_info, &resume_info_blk, &formula_info,
-				&ranges_info, &mp_info, &evolver_info, &orbits_info)
+			&ranges_info, &mp_info, &evolver_info, &orbits_info)
 			&& (fractal_types_match(read_info, formula_info) || !g_browse_state.check_type())
 			&& (parameters_match(read_info) || !g_browse_state.check_parameters())
 			&& stricmp(g_browse_state.name(), g_dta.filename)
@@ -646,13 +647,13 @@ rescan:  /* entry for changed browse parms */
 		{
 			strcpy(winlist.name, g_dta.filename);
 			drawindow(box_color, &winlist);
-			g_box_count *= 2; /* double for byte count */
-			winlist.box_count = g_box_count;
+			g_zoomBox.set_count(g_zoomBox.count()*2); /* double for byte count */
+			winlist.box_count = g_zoomBox.count();
 			browse_windows[wincount] = winlist;
 
-			memcpy(&boxx_storage[wincount*vidlength], g_box_x, vidlength*sizeof(int));
-			memcpy(&boxy_storage[wincount*vidlength], g_box_y, vidlength*sizeof(int));
-			memcpy(&boxvalues_storage[wincount*vidlength/2], g_box_values, vidlength/2*sizeof(int));
+			g_zoomBox.save(&boxx_storage[wincount*vidlength],
+				&boxy_storage[wincount*vidlength],
+				&boxvalues_storage[wincount*vidlength/2], vidlength);
 			wincount++;
 		}
 
@@ -691,14 +692,14 @@ rescan:  /* entry for changed browse parms */
 		index = 0;
 		done = 0;
 		winlist = browse_windows[index];
-		memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
-		memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
-		memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
+		g_zoomBox.restore(&boxx_storage[index*vidlength],
+			&boxy_storage[index*vidlength],
+			&boxvalues_storage[index*vidlength/2], vidlength);
 		show_temp_message(winlist.name);
 		while (!done)  /* on exit done = 1 for quick exit,
-						done = 2 for erase boxes and  exit
-						done = 3 for rescan
-						done = 4 for set boxes and exit to save image */
+					   done = 2 for erase boxes and  exit
+					   done = 3 for rescan
+					   done = 4 for set boxes and exit to save image */
 		{
 #ifdef XFRACT
 			blinks = 1;
@@ -750,9 +751,9 @@ rescan:  /* entry for changed browse parms */
 					}
 				}
 				winlist = browse_windows[index];
-				memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
-				memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
-				memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
+				g_zoomBox.restore(&boxx_storage[index*vidlength],
+					&boxy_storage[index*vidlength], 
+					&boxvalues_storage[index*vidlength/2], vidlength);
 				show_temp_message(winlist.name);
 				break;
 #ifndef XFRACT
@@ -901,18 +902,18 @@ rescan:  /* entry for changed browse parms */
 			for (index = wincount-1; index >= 0; index--) /* don't need index, reuse it */
 			{
 				winlist = browse_windows[index];
-				g_box_count = winlist.box_count;
-				memcpy(g_box_x, &boxx_storage[index*vidlength], vidlength*sizeof(int));
-				memcpy(g_box_y, &boxy_storage[index*vidlength], vidlength*sizeof(int));
-				memcpy(g_box_values, &boxvalues_storage[index*vidlength/2], vidlength/2*sizeof(int));
-				g_box_count >>= 1;
-				if (g_box_count > 0)
+				g_zoomBox.set_count(winlist.box_count);
+				g_zoomBox.restore(&boxx_storage[index*vidlength], 
+					&boxy_storage[index*vidlength], 
+					&boxvalues_storage[index*vidlength/2], vidlength);
+				g_zoomBox.set_count(g_zoomBox.count()*2);
+				if (g_zoomBox.count() > 0)
 				{
 #ifdef XFRACT
 					/* Turn all boxes off */
 					drawindow(g_color_bright, &winlist);
 #else
-					clear_box();
+					g_zoomBox.clear();
 #endif
 				}
 			}

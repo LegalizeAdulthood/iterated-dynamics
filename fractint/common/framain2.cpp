@@ -40,6 +40,7 @@
 #include "rotate.h"
 #include "stereo.h"
 #include "zoom.h"
+#include "ZoomBox.h"
 
 #include "EscapeTime.h"
 #include "SoundState.h"
@@ -67,7 +68,7 @@ private:
 class ZoomSaver
 {
 public:
-	ZoomSaver() : m_save_zoom(NULL)
+	ZoomSaver() : m_save_zoom(0)
 	{
 	}
 	~ZoomSaver()
@@ -78,7 +79,7 @@ public:
 	void restore();
 
 private:
-	char *m_save_zoom;
+	int *m_save_zoom;
 };
 
 #if 0
@@ -185,9 +186,9 @@ static void out_line_cleanup_compare()
 
 void ZoomSaver::save()
 {
-	if (g_box_count)  /* save zoombox stuff in mem before encode (mem reused) */
+	if (g_zoomBox.count() > 0)  /* save zoombox stuff in mem before encode (mem reused) */
 	{
-		m_save_zoom = new char[5*g_box_count];
+		m_save_zoom = new int[3*g_zoomBox.count()];
 		if (m_save_zoom == NULL)
 		{
 			clear_zoom_box(); /* not enuf mem so clear the box */
@@ -195,20 +196,20 @@ void ZoomSaver::save()
 		else
 		{
 			reset_zoom_corners(); /* reset these to overall image, not box */
-			memcpy(m_save_zoom, g_box_x, g_box_count*2);
-			memcpy(m_save_zoom + g_box_count*2, g_box_y, g_box_count*2);
-			memcpy(m_save_zoom + g_box_count*4, g_box_values, g_box_count);
+			g_zoomBox.save(m_save_zoom,
+				m_save_zoom + g_zoomBox.count(),
+				m_save_zoom + g_zoomBox.count()*2, g_zoomBox.count());
 		}
 	}
 }
 
 void ZoomSaver::restore()
 {
-	if (g_box_count)  /* restore zoombox arrays */
+	if (g_zoomBox.count() > 0)  /* restore zoombox arrays */
 	{
-		memcpy(g_box_x, m_save_zoom, g_box_count*2);
-		memcpy(g_box_y, m_save_zoom + g_box_count*2, g_box_count*2);
-		memcpy(g_box_values, m_save_zoom + g_box_count*4, g_box_count);
+		g_zoomBox.restore(m_save_zoom,
+			m_save_zoom + g_zoomBox.count(),
+			m_save_zoom + g_zoomBox.count()*2, g_zoomBox.count());
 		delete[] m_save_zoom;
 		zoom_box_draw(1); /* get the g_xx_min etc variables recalc'd by redisplaying */
 	}
@@ -628,12 +629,12 @@ done:
 			}
 		}
 #ifndef XFRACT
-		g_box_count = 0;                     /* no zoom box yet  */
+		g_zoomBox.set_count(0);                     /* no zoom box yet  */
 		g_z_width = 0;
 #else
 		if (!XZoomWaiting)
 		{
-			g_box_count = 0;                 /* no zoom box yet  */
+			g_zoomBox.set_count(0);                 /* no zoom box yet  */
 			g_z_width = 0;
 		}
 #endif
@@ -1478,7 +1479,7 @@ static void handle_zoom_skew(bool negative)
 {
 	if (negative)
 	{
-		if (g_box_count && !g_current_fractal_specific->no_zoom_box_rotate())
+		if (g_zoomBox.count() && !g_current_fractal_specific->no_zoom_box_rotate())
 		{
 			int i = key_count(FIK_CTL_HOME);
 			g_z_skew -= 0.02*i;
@@ -1490,7 +1491,7 @@ static void handle_zoom_skew(bool negative)
 	}
 	else
 	{
-		if (g_box_count && !g_current_fractal_specific->no_zoom_box_rotate())
+		if (g_zoomBox.count() && !g_current_fractal_specific->no_zoom_box_rotate())
 		{
 			int i = key_count(FIK_CTL_END);
 			g_z_skew += 0.02*i;
@@ -1552,7 +1553,7 @@ static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
 
 static void handle_z_rotate(bool increase)
 {
-	if (g_box_count && !g_current_fractal_specific->no_zoom_box_rotate())
+	if (g_zoomBox.count() && !g_current_fractal_specific->no_zoom_box_rotate())
 	{
 		if (increase)
 		{
@@ -1569,11 +1570,11 @@ static void handle_box_color(bool increase)
 {
 	if (increase)
 	{
-		g_box_color += key_count(FIK_CTL_INSERT);
+		g_zoomBox.set_color(g_zoomBox.color() + key_count(FIK_CTL_INSERT));
 	}
 	else
 	{
-		g_box_color -= key_count(FIK_CTL_DEL);
+		g_zoomBox.set_color(g_zoomBox.color() - key_count(FIK_CTL_DEL));
 	}
 }
 
@@ -1592,7 +1593,7 @@ static void handle_zoom_resize(bool zoom_in)
 				g_zbx = 0.0;
 				g_zby = 0.0;
 				find_special_colors();
-				g_box_color = g_color_bright;
+				g_zoomBox.set_color(g_color_bright);
 				g_px = g_grid_size/2;
 				g_py = g_grid_size/2;
 				zoom_box_move(0.0, 0.0); /* force scrolling */
@@ -1606,7 +1607,7 @@ static void handle_zoom_resize(bool zoom_in)
 	else
 	{
 		/* zoom out */
-		if (g_box_count)
+		if (g_zoomBox.count())
 		{
 			if (g_z_width >= 0.999 && g_z_depth >= 0.999) /* end zoombox */
 			{
@@ -1622,7 +1623,7 @@ static void handle_zoom_resize(bool zoom_in)
 
 static void handle_zoom_stretch(bool narrower)
 {
-	if (g_box_count)
+	if (g_zoomBox.count())
 	{
 		zoom_box_change_i(0, narrower ?
 			-2*key_count(FIK_CTL_PAGE_UP) : 2*key_count(FIK_CTL_PAGE_DOWN));
@@ -1866,7 +1867,7 @@ static void handle_evolver_move_selection(int kbdchar)
 {
 	/* borrow ctrl cursor keys for moving selection box */
 	/* in evolver mode */
-	if (g_box_count)
+	if (g_zoomBox.count())
 	{
 		int grout;
 		if (g_evolving_flags & EVOLVE_FIELD_MAP)
@@ -1963,7 +1964,7 @@ static void handle_evolver_zoom(int zoom_in)
 				g_zbx = 0;
 				g_zby = 0;
 				find_special_colors();
-				g_box_color = g_color_bright;
+				g_zoomBox.set_color(g_color_bright);
 				if (g_evolving_flags & EVOLVE_FIELD_MAP) /*rb*/
 				{
 					/* set screen view params back (previously changed to allow
@@ -1984,7 +1985,7 @@ static void handle_evolver_zoom(int zoom_in)
 	}
 	else
 	{
-		if (g_box_count)
+		if (g_zoomBox.count())
 		{
 			if (g_z_width >= 0.999 && g_z_depth >= 0.999) /* end zoombox */
 			{
@@ -2279,7 +2280,7 @@ static void move_zoombox(int keynum)
 			keynum = driver_key_pressed();         /* next pending key */
 		}
 	}
-	if (g_box_count)
+	if (g_zoomBox.count())
 	{
 		zoom_box_move(double(horizontal)/g_dx_size, double(vertical)/g_dy_size);
 	}

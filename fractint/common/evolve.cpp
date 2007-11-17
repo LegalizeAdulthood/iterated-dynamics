@@ -20,6 +20,7 @@
 #include "Formula.h"
 #include "UIChoices.h"
 #include "MathUtil.h"
+#include "ZoomBox.h"
 
 enum VaryIntType
 {
@@ -939,32 +940,30 @@ void draw_parameter_box(int mode)
 		return; /* don't draw if not asked to! */
 	}
 	grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-	s_image_box_count = g_box_count;
-	if (g_box_count)
+	s_image_box_count = g_zoomBox.count();
+	if (g_zoomBox.count())
 	{
 		/* stash normal zoombox pixels */
-		memcpy(s_image_box.box_x, &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(s_image_box.box_y, &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
-		memcpy(s_image_box.box_values, &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
-		clear_box(); /* to avoid probs when one box overlaps the other */
+		g_zoomBox.save(s_image_box.box_x, s_image_box.box_y,
+			s_image_box.box_values, g_zoomBox.count());
+		g_zoomBox.clear(); /* to avoid probs when one box overlaps the other */
 	}
 	if (g_parameter_box_count != 0)   /* clear last parmbox */
 	{
-		g_box_count = g_parameter_box_count;
-		memcpy(&g_box_x[0], s_parameter_box.box_x, g_box_count*sizeof(g_box_x[0]));
-		memcpy(&g_box_y[0], s_parameter_box.box_y, g_box_count*sizeof(g_box_y[0]));
-		memcpy(&g_box_values[0], s_parameter_box.box_values, g_box_count*sizeof(g_box_values[0]));
-		clear_box();
+		g_zoomBox.set_count(g_parameter_box_count);
+		g_zoomBox.restore(s_parameter_box.box_x, s_parameter_box.box_y,
+			s_parameter_box.box_values, g_zoomBox.count());
+		g_zoomBox.clear();
 	}
 
 	if (mode == 1)
 	{
-		g_box_count = s_image_box_count;
+		g_zoomBox.set_count(s_image_box_count);
 		g_parameter_box_count = 0;
 		return;
 	}
 
-	g_box_count = 0;
+	g_zoomBox.set_count(0);
 	/*draw larger box to show parm zooming range */
 	tl.x = bl.x = ((g_px -int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_sx_offset-1;
 	tl.y = tr.y = ((g_py -int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_sy_offset-1;
@@ -986,25 +985,23 @@ void draw_parameter_box(int mode)
 	g_box_y[2] = br.y + g_sy_offset;
 	g_box_x[3] = bl.x + g_sx_offset;
 	g_box_y[3] = bl.y + g_sy_offset;
-	g_box_count = 8;
+	g_zoomBox.set_count(8);
 #endif
-	if (g_box_count)
+	if (g_zoomBox.count())
 	{
-		display_box();
+		g_zoomBox.display();
 		/* stash pixel values for later */
-		memcpy(s_parameter_box.box_x, &g_box_x[0], g_box_count*sizeof(g_box_x[0]));
-		memcpy(s_parameter_box.box_y, &g_box_y[0], g_box_count*sizeof(g_box_y[0]));
-		memcpy(s_parameter_box.box_values, &g_box_values[0], g_box_count*sizeof(g_box_values[0]));
+		g_zoomBox.save(s_parameter_box.box_x, s_parameter_box.box_y,
+			s_parameter_box.box_values, g_zoomBox.count());
 	}
-	g_parameter_box_count = g_box_count;
-	g_box_count = s_image_box_count;
+	g_parameter_box_count = g_zoomBox.count();
+	g_zoomBox.set_count(s_image_box_count);
 	if (s_image_box_count)
 	{
 		/* and move back old values so that everything can proceed as normal */
-		memcpy(&g_box_x[0], s_image_box.box_x, g_box_count*sizeof(g_box_x[0]));
-		memcpy(&g_box_y[0], s_image_box.box_y, g_box_count*sizeof(g_box_y[0]));
-		memcpy(&g_box_values[0], s_image_box.box_values, g_box_count*sizeof(g_box_values[0]));
-		display_box();
+		g_zoomBox.restore(s_image_box.box_x, s_image_box.box_y,
+			s_image_box.box_values, g_zoomBox.count());
+		g_zoomBox.display();
 	}
 	return;
 }

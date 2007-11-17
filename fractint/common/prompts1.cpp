@@ -109,6 +109,8 @@ private:
 	void PrepareFooterSize();
 	void WorkOutVerticalPositioning();
 	void WorkOutHorizontalPositioning();
+	void ComputeMaxWidths();
+
 	void DisplayHeader();
 	void DisplayFooter();
 	void DisplayInitialScreen();
@@ -368,14 +370,8 @@ void FullScreenPrompter::WorkOutVerticalPositioning()
 	}
 }
 
-void FullScreenPrompter::WorkOutHorizontalPositioning()
+void FullScreenPrompter::ComputeMaxWidths()
 {
-	if (m_in_scrolling_mode)  /* set box to max width if in scrolling mode */
-	{
-		m_footer_width = 76;
-	}
-
-	/* work out horizontal positioning */
 	m_max_field_width = 0;
 	m_max_prompt_width = 0;
 	m_max_comment = 0;
@@ -385,7 +381,7 @@ void FullScreenPrompter::WorkOutHorizontalPositioning()
 		if (m_values[i].type == 'y')
 		{
 			static const char *noyes[2] =
-			{ 
+			{
 				"no", "yes"
 			};
 			m_values[i].type = 'l';
@@ -393,29 +389,40 @@ void FullScreenPrompter::WorkOutHorizontalPositioning()
 			m_values[i].uval.ch.list = noyes;
 			m_values[i].uval.ch.llen = 2;
 		}
-		int j = int(strlen(m_prompts[i]));
+		int promptLength = int(strlen(m_prompts[i]));
 		if (m_values[i].type == '*')
 		{
-			if (j > m_max_comment)
+			if (promptLength > m_max_comment)
 			{
-				m_max_comment = j;
+				m_max_comment = promptLength;
 			}
 		}
 		else
 		{
 			m_any_input = true;
-			if (j > m_max_prompt_width)
+			if (promptLength > m_max_prompt_width)
 			{
-				m_max_prompt_width = j;
+				m_max_prompt_width = promptLength;
 			}
 			char buffer[81];
-			j = prompt_value_string(buffer, &m_values[i]);
-			if (j > m_max_field_width)
+			promptLength = prompt_value_string(buffer, &m_values[i]);
+			if (promptLength > m_max_field_width)
 			{
-				m_max_field_width = j;
+				m_max_field_width = promptLength;
 			}
 		}
 	}
+}
+
+void FullScreenPrompter::WorkOutHorizontalPositioning()
+{
+	if (m_in_scrolling_mode)  /* set box to max width if in scrolling mode */
+	{
+		m_footer_width = 76;
+	}
+
+	/* work out horizontal positioning */
+	ComputeMaxWidths();
 	m_box_width = m_max_prompt_width + m_max_field_width + 2;
 	if (m_max_comment > m_box_width)
 	{

@@ -24,7 +24,6 @@
 #endif
 
 #define TRIG_LIMIT_16 (8L << 16)		/* domain limit of fast trig functions */
-#define NUM_BOXES 4096
 
 #define COLOR_CHANNEL_MAX 63
 
