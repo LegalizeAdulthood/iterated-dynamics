@@ -39,7 +39,7 @@
 #ifdef XFRACT
 int g_edit_pal_cursor = 0;
 #endif
-char g_screen_file[] = "FRACTINT.$$1";  /* file where screen portion is stored */
+std::string g_screen_file = "FRACTINT.$$1";  /* file where screen portion is stored */
 BYTE     *g_line_buffer;   /* must be alloced!!! */
 bool g_using_jiim = false;
 
@@ -2034,7 +2034,7 @@ static void pal_table_save_rect(pal_table *me)
 
 		if (me->file == NULL)
 		{
-			me->file = dir_fopen(g_temp_dir, g_screen_file, "w + b");
+			me->file = dir_fopen(g_temp_dir, g_screen_file, "wb");
 			if (me->file == NULL)
 			{
 				me->stored_at = NOWHERE;

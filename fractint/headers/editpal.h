@@ -1,6 +1,8 @@
 #if !defined(EDIT_PAL_H)
 #define EDIT_PAL_H
 
+extern std::string g_screen_file;
+
 extern void palette_edit();
 void put_row(int x, int y, int width, char *buff);
 void get_row(int x, int y, int width, char *buff);
