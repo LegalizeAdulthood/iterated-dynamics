@@ -54,6 +54,7 @@
 #include "evolve.h"
 #include "fihelp.h"
 #include "filesystem.h"
+#include "fimain.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "history.h"
@@ -71,8 +72,8 @@ VIDEOINFO g_video_entry;
 long g_timer_start;
 long g_timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */
-char *g_fract_dir1 = "";
-char *g_fract_dir2 = "";
+std::string g_fract_dir1;
+std::string g_fract_dir2;
 /*
 	the following variables are out here only so
 	that the calculate_fractal() and assembler routines can get at them easily
@@ -587,7 +588,7 @@ void FractInt::Initialize(int argc, char **argv)
 	set_exe_path(argv[0]);
 
 	g_fract_dir1 = getenv("FRACTDIR");
-	if (g_fract_dir1 == NULL)
+	if (g_fract_dir1.length() == 0)
 	{
 		g_fract_dir1 = ".";
 	}

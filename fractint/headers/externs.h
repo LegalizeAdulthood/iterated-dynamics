@@ -104,8 +104,6 @@ extern ComplexD				*g_float_parameter;
 extern const BYTE			g_font_8x8[8][1024/8];
 extern int					g_force_symmetry;
 extern int					g_fractal_type;
-extern char					*g_fract_dir1;
-extern char					*g_fract_dir2;
 extern bool					g_from_text_flag;
 extern long					g_fudge;
 extern FunctionListItem		g_function_list[];
