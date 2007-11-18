@@ -929,17 +929,15 @@ static bool explore_check()
 	return nonrandom;
 }
 
-void draw_parameter_box(int mode)
+void draw_parameter_box(bool clear_not_redraw)
 {
 	/* draws parameter zoom box in evolver mode */
 	/* clears boxes off screen if mode = 1, otherwise, redraws boxes */
-	Coordinate tl, tr, bl, br;
-	int grout;
 	if (!(g_evolving_flags & EVOLVE_PARAMETER_BOX))
 	{
 		return; /* don't draw if not asked to! */
 	}
-	grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+	int grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 	s_image_box_count = g_zoomBox.count();
 	if (g_zoomBox.count())
 	{
@@ -956,7 +954,7 @@ void draw_parameter_box(int mode)
 		g_zoomBox.clear();
 	}
 
-	if (mode == 1)
+	if (clear_not_redraw)
 	{
 		g_zoomBox.set_count(s_image_box_count);
 		g_parameter_box_count = 0;
@@ -965,8 +963,12 @@ void draw_parameter_box(int mode)
 
 	g_zoomBox.set_count(0);
 	/*draw larger box to show parm zooming range */
+	Coordinate tl;
+	Coordinate bl;
 	tl.x = bl.x = ((g_px -int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_sx_offset-1;
+	Coordinate tr;
 	tl.y = tr.y = ((g_py -int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_sy_offset-1;
+	Coordinate br;
 	br.x = tr.x = ((g_px +1 + int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_sx_offset;
 	br.y = bl.y = ((g_py +1 + int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_sy_offset;
 #ifndef XFRACT

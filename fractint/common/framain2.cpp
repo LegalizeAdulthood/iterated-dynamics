@@ -1398,7 +1398,7 @@ static ApplicationStateType handle_evolver_save_to_disk()
 	g_py = g_grid_size/2;
 	restore_parameter_history();
 	fiddle_parameters(g_genes, 0);
-	draw_parameter_box(1);
+	draw_parameter_box(true);
 	save_to_disk(g_save_name);
 	g_px = oldpx;
 	g_py = oldpy;
@@ -1913,7 +1913,7 @@ static void handle_evolver_move_selection(int kbdchar)
 						/* to values appropriate to the image selected */
 			set_evolve_ranges();
 			zoom_box_change_i(0, 0);
-			draw_parameter_box(0);
+			draw_parameter_box(false);
 		}
 	}
 	else                       /* if no zoombox, scroll by arrows */
@@ -1933,7 +1933,7 @@ static void handle_evolver_param_zoom(int zoom_out)
 			{
 				g_parameter_zoom = 1.0;
 			}
-			draw_parameter_box(0);
+			draw_parameter_box(false);
 			set_evolve_ranges();
 		}
 		else
@@ -1943,7 +1943,7 @@ static void handle_evolver_param_zoom(int zoom_out)
 			{
 				g_parameter_zoom = double(g_grid_size)/2.0;
 			}
-			draw_parameter_box(0);
+			draw_parameter_box(false);
 			set_evolve_ranges();
 		}
 	}
@@ -1973,7 +1973,7 @@ static void handle_evolver_zoom(int zoom_in)
 					g_sx_offset = g_px*int(g_dx_size + 1 + grout);
 					g_sy_offset = g_py*int(g_dy_size + 1 + grout);
 					setup_parameter_box();
-					draw_parameter_box(0);
+					draw_parameter_box(false);
 				}
 				zoom_box_move(0.0, 0.0); /* force scrolling */
 			}
@@ -1992,7 +1992,7 @@ static void handle_evolver_zoom(int zoom_in)
 				g_z_width = 0;
 				if (g_evolving_flags & EVOLVE_FIELD_MAP)
 				{
-					draw_parameter_box(1); /* clear boxes off screen */
+					draw_parameter_box(true); /* clear boxes off screen */
 					release_parameter_box();
 				}
 			}
