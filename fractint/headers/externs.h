@@ -309,7 +309,6 @@ extern int					g_save_dac;
 extern long					g_save_ticks;
 extern int					g_save_release;
 extern float				g_screen_aspect_ratio;
-extern char					g_screen_file[];
 extern int					g_screen_height;
 extern int					g_screen_width;
 extern struct search_path	g_search_for;
