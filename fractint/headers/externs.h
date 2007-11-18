@@ -186,7 +186,6 @@ extern unsigned long		g_magnitude_limit;
 extern MajorMethodType			g_major_method;
 extern BYTE					*g_map_dac_box;
 extern bool					g_map_set;
-extern char					g_map_name[];
 extern int					g_math_error_count;
 extern double				g_math_tolerance[2];
 extern int					g_max_color;

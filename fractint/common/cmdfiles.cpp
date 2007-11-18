@@ -890,7 +890,7 @@ static int make_par_arg(const cmd_context &context)
 		{
 			extract_filename(g_command_name, g_read_name);
 		}
-		else if (*g_map_name != 0)
+		else if (g_map_name.length() != 0)
 		{
 			extract_filename(g_command_name, g_map_name);
 		}
@@ -911,7 +911,7 @@ static int make_par_arg(const cmd_context &context)
 			goodbye();
 		}
 	}
-	else if (*g_map_name != 0)
+	else if (g_map_name.length() != 0)
 	{
 		g_make_par[1] = 0; /* second char is flag for map */
 	}
@@ -932,10 +932,10 @@ static int make_par_arg(const cmd_context &context)
 		printf("copying fractal info in GIF %s to PAR %s/%s\n",
 			g_read_name, g_command_file, g_command_name);
 	}
-	else if (*g_map_name != 0)
+	else if (g_map_name.length() != 0)
 	{
 		printf("copying color info in map %s to PAR %s/%s\n",
-			g_map_name, g_command_file, g_command_name);
+			g_map_name.c_str(), g_command_file, g_command_name);
 	}
 #endif
 #endif
