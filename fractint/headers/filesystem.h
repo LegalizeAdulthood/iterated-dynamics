@@ -16,12 +16,14 @@ extern int get_a_filename(const char *hdg, char *file_template, std::string &fil
 extern int get_a_filename(const char *hdg, std::string &file_template, std::string &filename);
 extern int dir_remove(const std::string &dir, const std::string &filename);
 extern FILE *dir_fopen(const char *dir, const char *filename, const char *mode);
+extern FILE *dir_fopen(const std::string &dir, const std::string &filename, const std::string &mode);
 extern void extract_filename(char *target, const char *source);
 extern void extract_filename(std::string &target, const std::string &source);
 extern const char *has_extension(const char *source);
 extern const char *has_extension(const std::string &source);
 extern void find_path(const char *filename, char *fullpathname);
 extern void check_write_file(char *filename, const char *ext);
+extern void check_write_file(std::string &name, const char *ext);
 extern void update_save_name(char *filename);
 
 #endif

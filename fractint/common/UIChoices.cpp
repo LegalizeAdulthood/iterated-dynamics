@@ -95,6 +95,11 @@ void UIChoices::push(const char *label, const char *value)
 	push(label, fsv);
 }
 
+void UIChoices::push(const char *label, const std::string &value)
+{
+	push(label, value.c_str());
+}
+
 void UIChoices::push(const char *label, float value)
 {
 	full_screen_values fsv;

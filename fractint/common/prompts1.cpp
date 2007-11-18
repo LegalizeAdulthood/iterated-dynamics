@@ -31,6 +31,7 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
+#include "line3d.h"
 #include "loadfile.h"
 #include "loadmap.h"
 #include "lsys.h"
@@ -3465,7 +3466,7 @@ static int get_light_params()
 	if (g_targa_output && !g_3d_state.raytrace_output())
 	{
 		g_3d_state.set_haze(MathUtil::Clamp(dialog.values(k++).uval.ival, 0, 100));
-		strcpy(g_light_name, dialog.values(k++).uval.sval);
+		g_light_name = dialog.values(k++).uval.sval;
         /* In case g_light_name conflicts with an existing name it is checked
 						again in line3d */
 		k++;

@@ -148,7 +148,6 @@ extern int					g_last_orbit_type;
 extern long					g_close_enough_l;
 extern ComplexL				g_coefficient_l;
 extern bool					g_use_old_complex_power;
-extern char					g_light_name[];
 extern BYTE					*g_line_buffer;
 extern ComplexL				g_initial_z_l;
 extern ComplexL				g_init_orbit_l;

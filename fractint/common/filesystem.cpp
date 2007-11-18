@@ -238,6 +238,11 @@ FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 	return fopen(tmp, mode);
 }
 
+FILE *dir_fopen(const std::string &dir, const std::string &filename, const std::string &mode)
+{
+	return dir_fopen(dir.c_str(), filename.c_str(), mode.c_str());
+}
+
 
 void make_path(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)
 {
@@ -545,6 +550,14 @@ void find_path(const char *filename, char *fullpathname)
 	}
 }
 #endif
+
+void check_write_file(std::string &name, const char *ext)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, name.c_str());
+	check_write_file(buffer, ext);
+	name = buffer;
+}
 
 void check_write_file(char *name, const char *ext)
 {

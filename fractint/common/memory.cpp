@@ -13,6 +13,7 @@
 
 #include "drivers.h"
 #include "filesystem.h"
+#include "line3d.h"
 #include "prompts2.h"
 #include "realdos.h"
 
