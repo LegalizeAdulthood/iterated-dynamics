@@ -18,6 +18,7 @@
 #endif
 #include <stdarg.h>
 #include <ctype.h>
+#include <string>
 
 /* #include hierarchy for fractint is a follows:
 		Each module should include port.h as the first fractint specific

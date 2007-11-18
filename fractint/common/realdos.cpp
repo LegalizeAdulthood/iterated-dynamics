@@ -11,6 +11,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <ctype.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

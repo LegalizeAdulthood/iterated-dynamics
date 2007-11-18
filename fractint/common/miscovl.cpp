@@ -13,6 +13,7 @@
 #include <io.h>
 #endif
 #include <stdarg.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

@@ -18,6 +18,7 @@
 #include <string.h>
 #include <limits.h>
 #include <time.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <sys/timeb.h>
 #include <time.h>
+#include <string>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT

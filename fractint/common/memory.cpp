@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include <errno.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"
