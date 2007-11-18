@@ -902,7 +902,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 	fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE + 254)/255;
 	fseek(s_gif_file, long(-1-fractinf_len), SEEK_END);
 	/* TODO: revise this to read members one at a time so we get natural alignment
-		of fields within the FRACTAL_INFO structure for the platform */
+		of fields within the fractal_info structure for the platform */
 	fread(info, 1, FRACTAL_INFO_SIZE, s_gif_file);
 	if (strcmp(INFO_ID, info->info_id) == 0)
 	{
@@ -930,7 +930,7 @@ int find_fractal_info(char *gif_file, fractal_info *info,
 					strcpy(info->info_id, INFO_ID);
 					fseek(s_gif_file, long(hdr_offset = i-offset), SEEK_END);
 					/* TODO: revise this to read members one at a time so we get natural alignment
-						of fields within the FRACTAL_INFO structure for the platform */
+						of fields within the fractal_info structure for the platform */
 					fread(info, 1, FRACTAL_INFO_SIZE, s_gif_file);
 #ifdef XFRACT
 					decode_fractal_info(info, 1);

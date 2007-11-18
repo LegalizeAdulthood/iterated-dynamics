@@ -44,34 +44,34 @@
 #define MAX_PAGE_SIZE       (80*25)  /* no page of text may be larger */
 #define TEXT_START_ROW      2        /* start print the help text here */
 
-typedef struct
+struct LINK
 {
 	BYTE r, c;
 	int           width;
 	unsigned      offset;
 	int           topic_num;
 	unsigned      topic_off;
-} LINK;
+};
 
-typedef struct
+struct LABEL
 {
 	int      topic_num;
 	unsigned topic_off;
-} LABEL;
+};
 
-typedef struct
+struct PAGE
 {
 	unsigned      offset;
 	unsigned      len;
 	int           margin;
-} PAGE;
+};
 
-typedef struct
+struct HIST
 {
 	int      topic_num;
 	unsigned topic_off;
 	int      link;
-} HIST;
+};
 
 struct help_sig_info
 {

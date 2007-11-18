@@ -93,12 +93,10 @@
 /*
  * struct PD_INFO used by process_document()
  */
-
-typedef struct
+struct PD_INFO
 {
 	/* used by process_document -- look but don't touch! */
-	int       pnum,
-				lnum;
+	int pnum, lnum;
 
 	/* PD_GET_TOPIC is allowed to change these */
 	char *curr;
@@ -107,12 +105,12 @@ typedef struct
 	/* PD_GET_CONTENT is allowed to change these */
 	char *id;
 	char *title;
-	int       new_page;
+	int new_page;
 
 	/* general parameters */
 	char *s;
 	int       i;
-} PD_INFO;
+};
 
 
 /*
