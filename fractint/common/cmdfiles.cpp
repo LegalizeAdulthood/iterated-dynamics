@@ -49,7 +49,7 @@ int     g_size_dot;								/* size of dot crawling cursor */
 char    g_record_colors;						/* default PAR color-writing method */
 char    g_auto_show_dot = 0;					/* dark, medium, bright */
 bool g_start_show_orbit = false;				/* show orbits on at start of fractal */
-char    g_read_name[FILE_MAX_PATH];				/* name of fractal input file */
+std::string g_read_name;						/* name of fractal input file */
 char    g_temp_dir[FILE_MAX_DIR] = {""};		/* name of temporary directory */
 char    g_work_dir[FILE_MAX_DIR] = {""};		/* name of directory for misc files */
 char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
@@ -277,7 +277,7 @@ int command_files(int argc, char **argv)
 						&& tempstring[3] >= '8' && tempstring[3] <= '9'
 						&& tempstring[4] >= '0' && tempstring[4] <= '9')
 					{
-						strcpy(g_read_name, curarg);
+						g_read_name = curarg;
 						g_browse_state.extract_read_name();
 						g_show_file = SHOWFILE_PENDING;
 						curarg[0] = 0;
@@ -418,7 +418,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	reset_ifs_definition();
 	g_use_fixed_random_seed = false;                           /* not a fixed srand() seed */
 	g_random_seed = s_init_random_seed;
-	strcpy(g_read_name, DOTSLASH);           /* initially current directory */
+	g_read_name = DOTSLASH;           /* initially current directory */
 	g_show_file = SHOWFILE_DONE;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	g_initial_cycle_limit = 55;						/* spin-DAC default speed limit */
@@ -879,15 +879,15 @@ static int make_par_arg(const cmd_context &context)
 	{
 		strcat(g_command_file, ".par");
 	}
-	if (strcmp(g_read_name, DOTSLASH) == 0)
+	if (strcmp(g_read_name.c_str(), DOTSLASH) == 0)
 	{
-		*g_read_name = 0;
+		g_read_name = "";
 	}
 	if (next == NULL)
 	{
-		if (*g_read_name != 0)
+		if (g_read_name.length() != 0)
 		{
-			extract_filename(g_command_name, g_read_name);
+			extract_filename(g_command_name, g_read_name.c_str());
 		}
 		else if (*g_map_name != 0)
 		{
@@ -904,7 +904,7 @@ static int make_par_arg(const cmd_context &context)
 		g_command_name[ITEMNAMELEN] = 0;
 	}
 	*g_make_par = 0; /* used as a flag for makepar case */
-	if (*g_read_name != 0)
+	if (g_read_name.length() != 0)
 	{
 		if (read_overlay() != 0)
 		{

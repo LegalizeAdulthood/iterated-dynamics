@@ -19,6 +19,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "fihelp.h"
 #include "filesystem.h"
@@ -688,6 +689,11 @@ static void show_str_var(const char *name, const char *var, int &row, char *msg)
 		sprintf(msg, "%s=%s", name, var);
 		driver_put_string(row++, 2, C_GENERAL_HI, msg);
 	}
+}
+
+static void show_str_var(const char *name, const std::string &var, int &row, char *msg)
+{
+	show_str_var(name, var.c_str(), row, msg);
 }
 
 static void

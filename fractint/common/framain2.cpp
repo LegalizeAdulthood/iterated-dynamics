@@ -1426,7 +1426,7 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 			if (g_initialize_batch == INITBATCH_SAVE)
 			{
 				driver_stack_screen();   /* save graphics image */
-				strcpy(g_read_name, g_save_name);
+				g_read_name = g_save_name;
 				g_show_file = SHOWFILE_PENDING;
 				return APPSTATE_RESTORE_START;
 			}
