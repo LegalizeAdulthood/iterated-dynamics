@@ -1,12 +1,12 @@
 /*
 		encoder.c - GIF Encoder and associated routines
 */
-
 #include <string.h>
 #include <limits.h>
 #ifndef XFRACT
 #include <io.h>
 #endif
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

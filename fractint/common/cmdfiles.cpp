@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <math.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

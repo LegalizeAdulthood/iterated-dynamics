@@ -5,6 +5,7 @@
 #endif
 #include <stdarg.h>
 #include <ctype.h>
+#include <string>
 
 #include "port.h"
 #include "fractint.h"

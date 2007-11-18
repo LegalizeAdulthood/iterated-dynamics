@@ -1,3 +1,4 @@
+#include <string>
 #include <string.h>
 #include <ctype.h>
 #ifndef XFRACT
@@ -188,6 +189,11 @@ void ensure_slash_on_directory(char *dirname)
 	strcat(dirname, SLASH);
 }
 
+static void dir_name(std::string &target, const std::string &dir, const std::string &name)
+{
+	target = dir + name;
+}
+
 static void dir_name(char *target, const char *dir, const char *name)
 {
 	*target = 0;
@@ -199,11 +205,11 @@ static void dir_name(char *target, const char *dir, const char *name)
 }
 
 /* removes file in dir directory */
-int dir_remove(const char *dir, const char *filename)
+int dir_remove(const std::string &dir, const std::string &filename)
 {
-	char tmp[FILE_MAX_PATH];
+	std::string tmp;
 	dir_name(tmp, dir, filename);
-	return remove(tmp);
+	return _unlink(tmp.c_str());
 }
 
 /* fopens file in dir directory */

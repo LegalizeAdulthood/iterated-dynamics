@@ -1,9 +1,9 @@
 /*
 	rotate.c - Routines that manipulate the Video DAC on VGA Adapters
 */
-
 #include <string.h>
 #include <time.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

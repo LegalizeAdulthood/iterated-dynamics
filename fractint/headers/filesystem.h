@@ -9,7 +9,7 @@ extern void make_path(char *file_template, const char *drive, const char *dir, c
 extern void split_path(const char *file_template, char *drive, char *dir, char *filename, char *extension);
 extern bool is_a_directory(char *s);
 extern int get_a_filename(const char *hdg, char *file_template, char *flname);
-extern int dir_remove(const char *dir, const char *filename);
+extern int dir_remove(const std::string &dir, const std::string &filename);
 extern FILE *dir_fopen(const char *dir, const char *filename, const char *mode);
 extern void extract_filename(char *target, const char *source);
 extern const char *has_extension(const char *source);
