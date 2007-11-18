@@ -1544,7 +1544,7 @@ static char JIIMstr1[] = "Breadth first, Depth first, Random Walk, Random Run?";
 const char *g_jiim_method[] = {"breadth", "depth", "walk", "run"};
 #else
 static char JIIMstr1[] = "Breadth first, Depth first, Random Walk";
-const char *g_jiim_method[] =
+const char *g_jiim_method[3] =
 {
 	"breadth", "depth", "walk"
 };
