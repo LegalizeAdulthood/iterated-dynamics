@@ -3,6 +3,8 @@
 
 #include "big.h"
 
+extern const std::string g_insufficient_ifs_memory;
+
 extern void restore_active_ovly();
 extern void not_disk_message();
 extern void convert_center_mag(double *, double *, LDBL *, double *, double *, double *);

@@ -130,7 +130,6 @@ extern int					g_initial_adapter;
 extern ComplexD				g_initial_orbit_z;
 extern int					g_save_time;
 extern int					g_inside;
-extern char					g_insufficient_ifs_memory[];
 extern int					g_integer_fractal;
 extern double				g_inversion[];
 extern int					g_invert;

@@ -1,4 +1,5 @@
 #include <cstring>
+#include <string>
 
 #include "port.h"
 #include "fractint.h"
