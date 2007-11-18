@@ -813,7 +813,7 @@ void write_batch_parms_formula()
 void write_batch_parms_l_system()
 {
 	put_filename("lfile", g_l_system_filename);
-	put_parm(" lname=%s", g_l_system_name);
+	put_parm(" lname=%s", g_l_system_name.c_str());
 }
 
 void write_batch_parms_ifs()

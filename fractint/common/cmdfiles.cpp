@@ -127,8 +127,8 @@ bool g_no_bof = false;							/* Flag to make inside=bof options not duplicate bo
 bool g_escape_exit_flag;						/* set to 1 to avoid the "are you sure?" screen */
 bool g_command_initialize = true;				/* first time into command_files? */
 FractalTypeSpecificData *g_current_fractal_specific = NULL;
-char	g_l_system_filename[FILE_MAX_PATH];		/* file to find (type=)L-System's in */
-char	g_l_system_name[ITEMNAMELEN + 1];		/* Name of L-System */
+std::string g_l_system_filename;				/* file to find (type=)L-System's in */
+std::string g_l_system_name;					/* Name of L-System */
 std::string g_command_file;						/* file to find command sets in */
 std::string g_command_name;						/* Name of Command set */
 std::string g_command_comment[4];				/* comments for command set */
@@ -337,7 +337,7 @@ int command_files(int argc, char **argv)
 	/*set structure of search directories*/
 	strcpy(g_search_for.par, g_command_file.c_str());
 	strcpy(g_search_for.frm, g_formula_state.get_filename());
-	strcpy(g_search_for.lsys, g_l_system_filename);
+	strcpy(g_search_for.lsys, g_l_system_filename.c_str());
 	strcpy(g_search_for.ifs, g_ifs_filename.c_str());
 	return 0;
 }
@@ -405,8 +405,8 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_timer_flag = false;                       /* timer flags are off       */
 	g_formula_state.set_filename("fractint.frm"); /* default formula file      */
 	g_formula_state.set_formula(NULL);
-	strcpy(g_l_system_filename, "fractint.l");
-	g_l_system_name[0] = 0;
+	g_l_system_filename = "fractint.l";
+	g_l_system_name = "";
 	g_command_file = "fractint.par";
 	g_command_name[0] = 0;
 	for (i = 0; i < 4; i++)
@@ -2483,7 +2483,7 @@ static int l_name_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	strcpy(g_l_system_name, context.value);
+	g_l_system_name = context.value;
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 

@@ -6,7 +6,8 @@
 
 #include "port.h"
 #include "prototyp.h"
-#include "lsys.h"
+
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "fpu.h"
 #include "lsys.h"
@@ -31,18 +32,18 @@ static char *ruleptrs[MAXRULES];
 static lsys_cmd *rules2[MAXRULES];
 static bool s_loaded = false;
 
-static int _fastcall read_l_system_file(char *);
-static void _fastcall free_rules_mem();
-static int _fastcall rule_present(char symbol);
-static int _fastcall save_rule(char *, char **);
-static int _fastcall append_rule(char *rule, int index);
+static int read_l_system_file(std::string &item);
+static void free_rules_mem();
+static int rule_present(char symbol);
+static int save_rule(char *, char **);
+static int append_rule(char *rule, int index);
 static void free_l_cmds();
-static lsys_cmd *_fastcall find_size(lsys_cmd *, lsys_turtle_state_l *, lsys_cmd **, int);
+static lsys_cmd *find_size(lsys_cmd *, lsys_turtle_state_l *, lsys_cmd **, int);
 static lsys_cmd *draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth);
 static int lsysi_find_scale(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth);
 static lsys_cmd *lsysi_size_transform(char *s, lsys_turtle_state_l *ts);
 static lsys_cmd *lsysi_draw_transform(char *s, lsys_turtle_state_l *ts);
-static void _fastcall lsysi_sin_cos();
+static void lsysi_sin_cos();
 static void lsysi_slash(lsys_turtle_state_l *cmd);
 static void lsysi_backslash(lsys_turtle_state_l *cmd);
 static void lsysi_at(lsys_turtle_state_l *cmd);
@@ -57,12 +58,12 @@ static void lsysi_draw_c(lsys_turtle_state_l *cmd);
 static void lsysi_draw_gt(lsys_turtle_state_l *cmd);
 static void lsysi_draw_lt(lsys_turtle_state_l *cmd);
 
-bool _fastcall is_pow2(int n)
+bool is_pow2(int n)
 {
 	return n == (n & -n);
 }
 
-LDBL _fastcall get_number(char **str)
+LDBL get_number(char **str)
 {
 	char numstr[30];
 	LDBL ret;
@@ -117,7 +118,7 @@ LDBL _fastcall get_number(char **str)
 	return ret;
 }
 
-static int _fastcall read_l_system_file(char *str)
+static int read_l_system_file(std::string &item)
 {
 	int c;
 	char **rulind;
@@ -130,7 +131,7 @@ static int _fastcall read_l_system_file(char *str)
 	FILE *infile;
 	char msgbuf[481]; /* enough for 6 full lines */
 
-	if (find_file_item(g_l_system_filename, str, &infile, ITEMTYPE_L_SYSTEM) < 0)
+	if (find_file_item(g_l_system_filename, item, &infile, ITEMTYPE_L_SYSTEM) < 0)
 	{
 		return -1;
 	}
@@ -394,7 +395,7 @@ int l_load()
 	return 0;
 }
 
-static void _fastcall free_rules_mem()
+static void free_rules_mem()
 {
 	for (int i = 0; i < MAXRULES; ++i)
 	{
@@ -405,7 +406,7 @@ static void _fastcall free_rules_mem()
 	}
 }
 
-static int _fastcall rule_present(char symbol)
+static int rule_present(char symbol)
 {
 	int i;
 	for (i = 1; i < MAXRULES && ruleptrs[i] && *ruleptrs[i] != symbol; i++)
@@ -415,7 +416,7 @@ static int _fastcall rule_present(char symbol)
 	return (i < MAXRULES && ruleptrs[i]) ? i : 0;
 }
 
-static int _fastcall save_rule(char *rule, char **saveptr)
+static int save_rule(char *rule, char **saveptr)
 {
 	int i;
 	i = int(strlen(rule)) + 1;
@@ -432,7 +433,7 @@ static int _fastcall save_rule(char *rule, char **saveptr)
 	return 0;
 }
 
-static int _fastcall append_rule(char *rule, int index)
+static int append_rule(char *rule, int index)
 {
 	char *sav = ruleptrs[index];
 	char *old = sav;
@@ -1099,7 +1100,7 @@ lsysi_draw_transform(char *s, lsys_turtle_state_l *ts)
 	return doub;
 }
 
-static void _fastcall lsysi_sin_cos()
+static void lsysi_sin_cos()
 {
 	double locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
 	double twopimax = 2.0*MathUtil::Pi/g_max_angle;

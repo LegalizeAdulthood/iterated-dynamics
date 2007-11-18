@@ -1321,9 +1321,9 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 		{
 			g_formula_state.set_filename(g_search_for.frm);
 		}
-		if (done == FRACTYPE_L_SYSTEM && !strcmp(g_l_system_filename, g_command_file.c_str()))
+		if (done == FRACTYPE_L_SYSTEM && !strcmp(g_l_system_filename.c_str(), g_command_file.c_str()))
 		{
-			strcpy(g_l_system_filename, g_search_for.lsys);
+			g_l_system_filename = g_search_for.lsys;
 		}
 		if (fractal_type_ifs(done) && !strcmp(g_ifs_filename.c_str(), g_command_file.c_str()))
 		{
