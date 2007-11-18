@@ -9,6 +9,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 
+#include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
 #include "fihelp.h"
@@ -523,7 +524,7 @@ void save_palette()
 			}
 			memcpy(g_old_dac_box, g_dac_box, 256*3);
 			g_color_state = COLORSTATE_MAP;
-			strcpy(g_color_file, temp1);
+			g_color_file = temp1;
 		}
 		fclose(dacfile);
 	}

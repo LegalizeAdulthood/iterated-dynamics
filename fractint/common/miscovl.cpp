@@ -44,7 +44,8 @@
 /* routines in this module      */
 
 void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int i, int j);
-void expand_comments(char *target, char *source);
+void expand_comments(char *target, const char *source);
+void expand_comments(std::string &target, const char *source);
 static void put_parm(const char *parm, ...);
 static void put_parm_line();
 static int getprec(double, double, double);
@@ -174,7 +175,7 @@ void MakeBatchFile::set_max_color()
 
 void MakeBatchFile::set_color_spec()
 {
-	const char *color_spec_name = NULL;
+	std::string color_spec_name;
 	if (g_color_state == COLORSTATE_DEFAULT)
 	{                         /* default colors */
 		if (g_map_dac_box)
@@ -195,17 +196,17 @@ void MakeBatchFile::set_color_spec()
 
 	if (m_color_spec[0] == '@')
 	{
-		const char *sptr2 = strrchr(color_spec_name, SLASHC);
+		const char *sptr2 = strrchr(color_spec_name.c_str(), SLASHC);
 		if (sptr2 != NULL)
 		{
 			color_spec_name = sptr2 + 1;
 		}
-		sptr2 = strrchr(color_spec_name, ':');
+		sptr2 = strrchr(color_spec_name.c_str(), ':');
 		if (sptr2 != NULL)
 		{
 			color_spec_name = sptr2 + 1;
 		}
-		strncpy(&m_color_spec[1], color_spec_name, 12);
+		strncpy(&m_color_spec[1], color_spec_name.c_str(), 12);
 		m_color_spec[13] = 0;
 	}
 }
@@ -228,7 +229,7 @@ void MakeBatchFile::initialize()
 	for (int i = 0; i < 4; i++)
 	{
 		expand_comments(g_command_comment[i], par_comment[i]);
-		strcpy(m_in_parameter_command_comment[i], g_command_comment[i]);
+		strcpy(m_in_parameter_command_comment[i], g_command_comment[i].c_str());
 	}
 
 	if (g_command_name[0] == 0)
@@ -409,17 +410,17 @@ void MakeBatchFile::execute_step2()
 	}
 	for (int n = 0; n < last; n++)
 	{
-		if (*g_command_comment[n] == '\0')
+		if (g_command_comment[n].length() == 0)
 		{
-			strcpy(g_command_comment[n], ";");
+			g_command_comment[n] = ";";
 		}
 	}
 }
 void MakeBatchFile::execute_step3(int i, int j)
 {
-	if (g_command_comment[0][0])
+	if (g_command_comment[0].length() > 0)
 	{
-		fprintf(parmfile, " ; %s", g_command_comment[0]);
+		fprintf(parmfile, " ; %s", g_command_comment[0].c_str());
 	}
 	fputc('\n', parmfile);
 	{
@@ -429,9 +430,9 @@ void MakeBatchFile::execute_step3(int i, int j)
 		buf[21] = ';';
 		for (int k = 1; k < 4; k++)
 		{
-			if (g_command_comment[k][0])
+			if (g_command_comment[k].length() > 0)
 			{
-				fprintf(parmfile, "%s%s\n", buf, g_command_comment[k]);
+				fprintf(parmfile, "%s%s\n", buf, g_command_comment[k].c_str());
 			}
 		}
 		if (g_patch_level != 0 && !m_colors_only)
@@ -481,7 +482,7 @@ prompt_user:
 			strcpy(g_command_name, m_in_parameter_command_name);
 			for (int i = 0; i < 4; i++)
 			{
-				strncpy(g_command_comment[i], m_in_parameter_command_comment[i], MAX_COMMENT);
+				g_command_comment[i] = m_in_parameter_command_comment[i];
 			}
 			if (has_clut())
 			{
@@ -3010,7 +3011,7 @@ static char *expand_var(char *var, char *buf)
 static const char esc_char = '$';
 
 /* extract comments from the comments= command */
-void expand_comments(char *target, char *source)
+void expand_comments(char *target, const char *source)
 {
 	int i;
 	int j;
@@ -3071,6 +3072,14 @@ void expand_comments(char *target, char *source)
 	{
 		*(target + min(j, MAX_COMMENT-1)) = '\0';
 	}
+}
+
+void expand_comments(std::string &dest, const char *source)
+{
+	char buffer[MAX_COMMENT];
+	strcpy(buffer, dest.c_str());
+	expand_comments(buffer, source);
+	dest = buffer;
 }
 
 /* extract comments from the comments= command */
