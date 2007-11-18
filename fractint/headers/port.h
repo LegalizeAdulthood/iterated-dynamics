@@ -65,9 +65,7 @@
 #      endif
 #      define __far
 #else
-#  ifdef XFRACT           /* XFRACT forces unix configuration! --CWM-- */
-/* XFRACT forces unix configuration! --CWM-- */
-
+#  ifdef XFRACT
 #    ifndef unix
 #      define unix
 #    endif
