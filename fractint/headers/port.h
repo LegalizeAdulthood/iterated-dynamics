@@ -34,20 +34,6 @@
 #include <math.h>
 #include <float.h>
 
-#if (defined(__STDC__) || defined(__cplusplus) || defined(_MSC_VER)) && !defined(STDC)
-#  define STDC
-#endif
-
-#if (defined(LINUX)) && !defined(STDC)
-#  define STDC
-#endif
-
-#ifndef STDC
-#  ifndef const /* cannot use !defined(STDC) && !defined(const) on Mac */
-#    define const
-#  endif
-#endif
-
 /* If endian.h is not present, it can be handled in the code below, */
 /* but if you have this file, it can make it more fool proof. */
 #if (defined(XFRACT) && !defined(__sun))
