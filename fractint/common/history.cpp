@@ -257,8 +257,8 @@ void _fastcall history_save_info()
 		break;
 	case FRACTYPE_IFS:
 	case FRACTYPE_IFS_3D:
-		strncpy(current.filename, g_ifs_filename, FILE_MAX_PATH);
-		strncpy(current.itemname, g_ifs_name, ITEMNAMELEN + 1);
+		strncpy(current.filename, g_ifs_filename.c_str(), FILE_MAX_PATH);
+		strncpy(current.itemname, g_ifs_name.c_str(), ITEMNAMELEN + 1);
 		break;
 	case FRACTYPE_L_SYSTEM:
 		strncpy(current.filename, g_l_system_filename, FILE_MAX_PATH);
@@ -453,8 +453,8 @@ void _fastcall history_restore_info()
 		break;
 	case FRACTYPE_IFS:
 	case FRACTYPE_IFS_3D:
-		strncpy(g_ifs_filename, last.filename, FILE_MAX_PATH);
-		strncpy(g_ifs_name, last.itemname, ITEMNAMELEN + 1);
+		g_ifs_filename = last.filename;
+		g_ifs_name = last.itemname;
 		break;
 	case FRACTYPE_L_SYSTEM:
 		strncpy(g_l_system_filename, last.filename, FILE_MAX_PATH);

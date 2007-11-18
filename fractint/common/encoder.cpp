@@ -28,11 +28,12 @@
 #include "ThreeDimensionalState.h"
 
 static int compress(int rowlimit);
-static int _fastcall shftwrite(BYTE *color, int g_num_colors);
-static int _fastcall extend_blk_len(int datalen);
-static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data);
-static int _fastcall store_item_name(const char *name);
-static void _fastcall setup_save_info(fractal_info *save_info);
+static int shftwrite(BYTE *color, int g_num_colors);
+static int extend_blk_len(int datalen);
+static int put_extend_blk(int block_id, int block_len, char *block_data);
+static int store_item_name(const char *name);
+static int store_item_name(const std::string &name);
+static void setup_save_info(fractal_info *save_info);
 
 /*
 								Save-To-Disk Routines (GIF)
@@ -683,7 +684,7 @@ oops:
 
 /* TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. */
 /* shift IBM colors to GIF */
-static int _fastcall shftwrite(BYTE *color, int g_num_colors)
+static int shftwrite(BYTE *color, int g_num_colors)
 {
 	BYTE thiscolor;
 	int i;
@@ -704,13 +705,13 @@ static int _fastcall shftwrite(BYTE *color, int g_num_colors)
 	return 1;
 }
 
-static int _fastcall extend_blk_len(int datalen)
+static int extend_blk_len(int datalen)
 {
 	return datalen + (datalen + 254)/255 + 15;
 	/* data   +     1.per.block   + 14 for id + 1 for null at end  */
 }
 
-static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data)
+static int put_extend_blk(int block_id, int block_len, char *block_data)
 {
 	int i;
 	int j;
@@ -741,7 +742,12 @@ static int _fastcall put_extend_blk(int block_id, int block_len, char *block_dat
 	return 1;
 }
 
-static int _fastcall store_item_name(const char *nameptr)
+static int store_item_name(const std::string &name)
+{
+	return store_item_name(name.c_str());
+}
+
+static int store_item_name(const char *nameptr)
 {
 	struct formula_info fsave_info;
 	int i;
@@ -779,7 +785,7 @@ static int _fastcall store_item_name(const char *nameptr)
 	return extend_blk_len(sizeof(fsave_info));
 }
 
-static void _fastcall setup_save_info(fractal_info *save_info)
+static void setup_save_info(fractal_info *save_info)
 {
 	int i;
 	if (!fractal_type_formula(g_fractal_type))
@@ -952,10 +958,10 @@ static void _fastcall setup_save_info(fractal_info *save_info)
 
 /* prototypes */
 
-static void _fastcall output(int code);
-static void _fastcall char_out(int c);
-static void _fastcall flush_char();
-static void _fastcall cl_block();
+static void output(int code);
+static void char_out(int c);
+static void flush_char();
+static void cl_block();
 
 static int n_bits;                        /* number of bits/code */
 static int maxbits = BITSF;                /* user settable max # bits/code */
@@ -1202,7 +1208,7 @@ nomatch:
  */
 
 
-static void _fastcall output(int code)
+static void output(int code)
 {
 	static unsigned long masks[] =
 	{
@@ -1273,7 +1279,7 @@ static void _fastcall output(int code)
 /*
  * Clear out the hash table
  */
-static void _fastcall cl_block()             /* table clear for g_block compress */
+static void cl_block()             /* table clear for g_block compress */
 {
 		memset(htab, 0xff, unsigned(HSIZE)*sizeof(long));
 		free_ent = ClearCode + 2;
@@ -1285,7 +1291,7 @@ static void _fastcall cl_block()             /* table clear for g_block compress
  * Add a character to the end of the current packet, and if it is 254
  * characters, flush the packet to disk.
  */
-static void _fastcall char_out(int c)
+static void char_out(int c)
 {
 	accum[ a_count++ ] = (char)c;
 	if (a_count >= 254)
@@ -1297,7 +1303,7 @@ static void _fastcall char_out(int c)
 /*
  * Flush the packet to disk, and reset the accumulator
  */
-static void _fastcall flush_char()
+static void flush_char()
 {
 	if (a_count > 0)
 	{

@@ -209,7 +209,7 @@ void FullScreenPrompter::PrepareFooterFile()
 		}
 		else if (fractal_type_ifs(g_fractal_type))
 		{
-			find_file_item(g_ifs_filename, g_ifs_name, &m_scroll_file, ITEMTYPE_IFS);
+			find_file_item(g_ifs_filename, g_ifs_name.c_str(), &m_scroll_file, ITEMTYPE_IFS);
 			m_in_scrolling_mode = true;
 			m_scroll_file_start = ftell(m_scroll_file);
 		}
@@ -1325,9 +1325,9 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 		{
 			strcpy(g_l_system_filename, g_search_for.lsys);
 		}
-		if (fractal_type_ifs(done) && !strcmp(g_ifs_filename, g_command_file.c_str()))
+		if (fractal_type_ifs(done) && !strcmp(g_ifs_filename.c_str(), g_command_file.c_str()))
 		{
-			strcpy(g_ifs_filename, g_search_for.ifs);
+			g_ifs_filename = g_search_for.ifs;
 		}
 	}
 
@@ -1658,8 +1658,8 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 	{
 		"First Function", "Second Function", "Third Function", "Fourth Function"
 	};
-	char *filename;
-	char *entryname;
+	std::string filename;
+	std::string entryname;
 	FILE *entryfile;
 #ifdef XFRACT
 	static /* Can't initialize aggregates on the stack */
@@ -1717,8 +1717,8 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 #if defined(_WIN32)
 				_ASSERTE(false);
 #endif
-				filename = NULL;
-				entryname = NULL;
+				filename = "";
+				entryname = "";
 			}
 			if (find_file_item(filename, entryname, &entryfile, itemtype) == 0)
 			{
@@ -1726,7 +1726,7 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 				fclose(entryfile);
 				if (fractal_type_formula(g_fractal_type))
 				{
-					g_formula_state.get_parameter(entryname); /* no error check, should be okay, from above */
+					g_formula_state.get_parameter(entryname.c_str()); /* no error check, should be okay, from above */
 				}
 			}
 		}

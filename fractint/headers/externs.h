@@ -120,8 +120,6 @@ extern bool					g_grayscale_depth;
 extern bool					g_has_inverse;
 extern unsigned int			g_height;
 extern float				g_height_fp;
-extern char					g_ifs_filename[];
-extern char					g_ifs_name[];
 extern float				*g_ifs_definition;
 extern int					g_ifs_type;
 extern bool					g_image_map;
