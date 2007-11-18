@@ -1459,7 +1459,7 @@ top:
 			if (-10 == i)
 			{
 				set_help_mode(HELPZOOM);
-				help(0);
+				help(ACTION_CALL);
 				i = 0;
 			}
 		}
