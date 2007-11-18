@@ -64,11 +64,8 @@
 #  define LITTLE_ENDIAN 1234
 #endif
 
-#define MSDOS 1
-
 #if defined(_WIN32)
 /* _WIN32 uses a flat model */
-#  define BIG_ANSI_C
 #      ifdef far
 #        undef far
 #      endif
@@ -81,26 +78,9 @@
 #        undef __far
 #      endif
 #      define __far
-#      ifndef USE_BIGNUM_C_CODE
-#        define USE_BIGNUM_C_CODE
-#      endif
-#  ifdef MSDOS
-#    undef MSDOS
-#  endif
-#  ifdef __MSDOS__
-#    undef __MSDOS__
-#  endif
 #else
 #  ifdef XFRACT           /* XFRACT forces unix configuration! --CWM-- */
 /* XFRACT forces unix configuration! --CWM-- */
-
-#    ifdef MSDOS
-#      undef MSDOS
-#    endif
-
-#    ifdef __MSDOS__
-#      undef __MSDOS__
-#    endif
 
 #    ifndef unix
 #      define unix
@@ -119,8 +99,6 @@
         typedef unsigned char  BYTE;
         typedef void          *VOIDPTR;
 
-#		define CONST          const
-#		define PRINTER        "PRT:"
 #		define LOBYTEFIRST    1
 #		define SLASHC         '\\'
 #		define SLASH          "\\"
@@ -142,89 +120,12 @@
 #		endif
 #		endif
 
-#		ifndef USE_BIGNUM_C_CODE
-#		define USE_BIGNUM_C_CODE
-#		endif
-#		ifndef BIG_ANSI_C
-#		define BIG_ANSI_C
-#		endif
-
 		/* TODO: we should refactor this into something better instead of using unix.h */
 #		include "unix.h"
 
 		/*================================== Win32 definitions */
 
 #else
-#ifdef MSDOS            /* Microsoft C 5.1 for OS/2 and MSDOS */
-                        /* NOTE: this is always true on DOS!  */
-                        /*       (MSDOS is defined above)  */
-#  define timebx timeb
-
-#  ifndef BYTE_ORDER
-#    define BYTE_ORDER LITTLE_ENDIAN
-#  endif
-
-#  ifdef _MSC_VER         /* MSC assert does nothing under MSDOS */
-#    ifdef assert
-#      undef assert
-#      define assert(X)
-#    endif
-#  endif
-
-        typedef unsigned char  U8;
-        typedef signed char    S8;
-        typedef unsigned short U16;
-        typedef signed short   S16;
-        typedef unsigned long  U32;
-        typedef signed long    S32;
-        typedef unsigned char  BYTE;
-        typedef unsigned char  CHAR;
-        typedef void          *VOIDPTR;
-
-#		define CONST          const
-#		define PRINTER        "/dev/prn"
-#		define LOBYTEFIRST    1
-#		define SLASHC         '\\'
-#		define SLASH          "\\"
-#		define SLASHSLASH     "\\\\"
-#		define SLASHDOT       "\\."
-#		define DOTSLASH       ".\\"
-#		define DOTDOTSLASH    "..\\"
-#		define READMODE        "rb"    /* Correct DOS text-mode        */
-#		define WRITEMODE       "wb"    /* file open "feature".         */
-
-#		define rand15() rand()
-
-#else                   /* Have to nest because #elif is not portable */
-#  ifdef AMIGA            /* Lattice C 3.02 for Amiga */
-        typedef UBYTE          U8;
-        typedef BYTE           S8;
-        typedef UWORD          U16;
-        typedef WORD           S16;
-        typedef unsigned int   U32;
-        typedef int            S32;
-        typedef UBYTE          BYTE;
-        typedef UBYTE          CHAR;
-
-        typedef void          *VOIDPTR;
-
-#		define PRINTER        "PRT:"
-#		define LOBYTEFIRST    0
-#		define SLASHC         '/'
-#		define SLASH          "/"
-#		define SLASHSLASH     "//"
-#		define SLASHDOT       "/."
-#		define DOTSLASH       "./"
-#		define DOTDOTSLASH    "../"
-#		define READMODE        "rb"
-#		define WRITEMODE       "wb"
-
-#		define rand15() (rand()&0x7FFF)
-
-#		define BYTE_ORDER BIG_ENDIAN
-#		define USE_BIGNUM_C_CODE
-#		define BIG_ANSI_C
-#  else
 #    ifdef unix                     /* Unix machine */
         typedef unsigned char  U8;
         typedef signed char    S8;
@@ -265,15 +166,6 @@
 #		endif
 #		endif
 
-#		ifndef USE_BIGNUM_C_CODE
-#		define USE_BIGNUM_C_CODE
-#		endif
-#		ifndef BIG_ANSI_C
-#		define BIG_ANSI_C
-#		endif
-
-#       define CONST          const
-#       define PRINTER        "/dev/lp"
 #       define SLASHC         '/'
 #       define SLASH          "/"
 #       define SLASHSLASH     "//"
@@ -289,8 +181,6 @@
 
 
 #    endif /* unix */
-#  endif /* AMIGA */
-#endif /* MSDOS */
 #endif /* _WIN32 */
 
 /* Uses big_access32(), big_set32(),... functions instead of macros. */
@@ -312,7 +202,6 @@
 /*   scanf("%Lf", &longdoublevar);                            */
 /* to read in a long double, then uncomment this next line    */
 /* #define DO_NOT_USE_LONG_DOUBLE */
-/* #define USE_BIGNUM_C_CODE */  /* ASM code requires using long double */
 
 /* HP-UX support long doubles and allows them to be read in with  */
 /*   scanf(), but does not support the functions sinl, cosl, fabsl, etc.  */
