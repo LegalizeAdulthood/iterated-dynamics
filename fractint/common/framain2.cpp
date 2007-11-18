@@ -211,7 +211,7 @@ void ZoomSaver::restore()
 			m_save_zoom + g_zoomBox.count(),
 			m_save_zoom + g_zoomBox.count()*2, g_zoomBox.count());
 		delete[] m_save_zoom;
-		zoom_box_draw(1); /* get the g_xx_min etc variables recalc'd by redisplaying */
+		zoom_box_draw(true); /* get the g_xx_min etc variables recalc'd by redisplaying */
 	}
 }
 
@@ -798,7 +798,7 @@ resumeloop:
 			}
 			if (g_zoom_off && kbdmore) /* draw/clear a zoom box? */
 			{
-				zoom_box_draw(1);
+				zoom_box_draw(true);
 			}
 			if (driver_resize())
 			{
@@ -1456,7 +1456,7 @@ static void handle_zoom_in(bool &kbdmore)
 #endif
 	if (g_z_width != 0.0)
 	{                         /* do a zoom */
-		init_pan_or_recalc(0);
+		init_pan_or_recalc(false);
 		kbdmore = false;
 	}
 	if (g_calculation_status != CALCSTAT_COMPLETED)     /* don't restart if image complete */
@@ -1469,7 +1469,7 @@ static void handle_zoom_out(bool &kbdmore)
 {
 	if (g_z_width != 0.0)
 	{
-		init_pan_or_recalc(1);
+		init_pan_or_recalc(true);
 		kbdmore = false;
 		zoom_box_out();                /* calc corners for zooming out */
 	}
@@ -2289,7 +2289,7 @@ static void move_zoombox(int keynum)
 void clear_zoom_box()
 {
 	g_z_width = 0;
-	zoom_box_draw(0);
+	zoom_box_draw(false);
 	reset_zoom_corners();
 }
 

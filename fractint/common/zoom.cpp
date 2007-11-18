@@ -46,7 +46,7 @@ static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4
 	restore_stack(saved);
 }
 
-void zoom_box_draw(int drawit)
+void zoom_box_draw(bool drawit)
 {
 	Coordinate tl;
 	Coordinate bl;
@@ -674,7 +674,7 @@ static void move_row(int fromrow, int torow, int col)
 	put_line(torow, 0, g_x_dots-1, (BYTE *)g_stack);
 }
 
-int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_list & pan */
+void init_pan_or_recalc(bool do_zoomout) /* decide to recalc, or to chg g_work_list & pan */
 {
 	int i;
 	int j;
@@ -685,19 +685,19 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	int listfull;
 	if (g_z_width == 0.0)
 	{
-		return 0; /* no zoombox, leave g_calculation_status as is */
+		return; /* no zoombox, leave g_calculation_status as is */
 	}
 	/* got a zoombox */
 	alignmask = check_pan()-1;
 	if (alignmask < 0 || g_evolving_flags)
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED; /* can't pan, trigger recalc */
-		return 0;
+		return;
 	}
 	if (g_zbx == 0.0 && g_zby == 0.0)
 	{
 		g_zoomBox.clear();
-		return 0; /* box is full screen, leave g_calculation_status as is */
+		return; /* box is full screen, leave g_calculation_status as is */
 	}
 	col = int(g_zbx*(g_dx_size + PIXELROUND)); /* calc dest col, row of topleft pixel */
 	row = int(g_zby*(g_dy_size + PIXELROUND));
@@ -709,7 +709,7 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	if ((row&alignmask) != 0 || (col&alignmask) != 0)
 	{
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED; /* not on useable pixel alignment, trigger recalc */
-		return 0;
+		return;
 	}
 	/* pan */
 
@@ -749,13 +749,13 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 				"Cancel resumes old image, continue pans and calculates a new one."))
 		{
 			g_z_width = 0; /* cancel the zoombox */
-			zoom_box_draw(1);
+			zoom_box_draw(true);
 		}
 		else
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED; /* trigger recalc */
 		}
-		return 0;
+		return;
 	}
 	/* now we're committed */
 	g_calculation_status = CALCSTAT_RESUMABLE;
@@ -776,7 +776,6 @@ int init_pan_or_recalc(int do_zoomout) /* decide to recalc, or to chg g_work_lis
 	}
 	fix_work_list(); /* fixup any out of bounds g_work_list entries */
 	g_WorkList.put_resume();
-	return 0;
 }
 
 static void fix_work_list() /* fix out of bounds and symmetry related stuff */
