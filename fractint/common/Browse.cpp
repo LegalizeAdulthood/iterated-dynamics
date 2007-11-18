@@ -530,9 +530,9 @@ static void check_history(const char *oldname, const char *newname)
 	/*  g_file_name_stack[]. */
 	for (int i = 0; i < g_name_stack_ptr; i++)
 	{
-		if (stricmp(g_file_name_stack[i], oldname) == 0) /* we have a match */
+		if (stricmp(g_file_name_stack[i].c_str(), oldname) == 0) /* we have a match */
 		{
-			strcpy(g_file_name_stack[i], newname);    /* insert the new name */
+			g_file_name_stack[i] = newname;    /* insert the new name */
 		}
 	}
 }
@@ -967,12 +967,12 @@ static bool look(bool &stacked)
 							* make room, lose the 1st one */
 			for (int tmp = 1; tmp < 16; tmp++)
 			{
-				strcpy(g_file_name_stack[tmp - 1], g_file_name_stack[tmp]);
+				g_file_name_stack[tmp - 1] = g_file_name_stack[tmp];
 			}
 			g_name_stack_ptr = 14;
 		}
 		g_name_stack_ptr++;
-		strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_state.name());
+		g_file_name_stack[g_name_stack_ptr] = g_browse_state.name();
 		g_browse_state.merge_path_names(g_read_name);
 		if (g_ui_state.ask_video)
 		{
@@ -986,7 +986,7 @@ static bool look(bool &stacked)
 		{
 			/* go back one file if somewhere to go (ie. browsing) */
 			g_name_stack_ptr--;
-			while (g_file_name_stack[g_name_stack_ptr][0] == '\0'
+			while (g_file_name_stack[g_name_stack_ptr].length() == 0
 					&& g_name_stack_ptr >= 0)
 			{
 				g_name_stack_ptr--;
@@ -995,7 +995,7 @@ static bool look(bool &stacked)
 			{
 				break;
 			}
-			g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr]);
+			g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr].c_str());
 			g_browse_state.merge_path_names(g_read_name);
 			g_browse_state.set_browsing(true);
 			g_show_file = SHOWFILE_PENDING;
