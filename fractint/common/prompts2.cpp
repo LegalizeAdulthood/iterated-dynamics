@@ -833,7 +833,7 @@ double starfield_values[4] =
 	30.0, 100.0, 5.0, 0.0
 };
 
-char g_grey_file[] = "altern.map";
+const std::string GREY_MAP = "altern.map";
 
 int starfield()
 {
@@ -868,7 +868,7 @@ int starfield()
 	g_gaussian_constant  = long(((starfield_values[1])/100.0)*(1L << 16));
 	g_gaussian_slope = int(starfield_values[2]);
 
-	if (validate_luts(g_grey_file) != 0)
+	if (validate_luts(GREY_MAP.c_str()) != 0)
 	{
 		stop_message(0, "Unable to load ALTERN.MAP");
 		return -1;

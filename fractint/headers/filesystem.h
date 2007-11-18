@@ -3,6 +3,7 @@
 
 extern int merge_path_names(char *old_full_path, char *new_filename, int mode);
 extern int merge_path_names(std::string &old_full_path, char *new_filename, int mode);
+extern int merge_path_names(char *old_full_path, std::string &new_filename, int mode);
 extern void ensure_slash_on_directory(char *dirname);
 extern int fr_find_first(char *path);
 extern int fr_find_next();

@@ -1,6 +1,9 @@
 #if !defined(PROMPTS_1_H)
 #define PROMPTS_1_H
 
+extern const std::string GLASSES1_MAP;
+extern const std::string GLASSES2_MAP;
+
 extern int full_screen_prompt(const char *heading, int num_prompts, const char **prompts,
 	struct full_screen_values *values, int function_key_mask, char *footer);
 extern long get_file_entry(int type, const char *title, char *fmask,

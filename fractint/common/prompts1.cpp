@@ -56,7 +56,9 @@
 #define getwd(a) getcwd(a, MAXPATHLEN)
 #endif
 
-char g_glasses1_map[] = "glasses1.map";
+const std::string GLASSES1_MAP = "glasses1.map";
+const std::string GLASSES2_MAP = "glasses2.map";
+
 char g_map_name[FILE_MAX_DIR] = "";
 bool g_map_set = false;
 bool g_julibrot;   /* flag for julibrot */
@@ -69,7 +71,7 @@ static int s_scroll_row_status;
 static int s_scroll_column_status;
 static FILE *s_gfe_file;
 
-static char funnyglasses_map_name[16];
+static std::string s_funny_glasses_map_name;
 static char ifsmask[13]     = {"*.ifs"};
 static char formmask[13]    = {"*.frm"};
 static char lsysmask[13]    = {"*.l"};
@@ -3501,7 +3503,7 @@ static int check_mapfile()
 	}
 	else
 	{
-		merge_path_names(temp1, funnyglasses_map_name, true);
+		merge_path_names(temp1, s_funny_glasses_map_name, true);
 	}
 
 	while (true)
@@ -3561,18 +3563,17 @@ static int get_funny_glasses_params()
 
 	if (g_3d_state.glasses_type() == STEREO_ALTERNATE)
 	{
-		strcpy(funnyglasses_map_name, g_glasses1_map);
+		s_funny_glasses_map_name = GLASSES1_MAP;
 	}
 	else if (g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
 		if (g_3d_state.fill_type() == FillType::SurfaceGrid)
 		{
-			strcpy(funnyglasses_map_name, "grid.map");
+			s_funny_glasses_map_name = "grid.map";
 		}
 		else
 		{
-			strcpy(funnyglasses_map_name, g_glasses1_map);
-			funnyglasses_map_name[7] = '2';
+			s_funny_glasses_map_name = GLASSES2_MAP;
 		}
 	}
 
@@ -3589,7 +3590,7 @@ static int get_funny_glasses_params()
 	if (g_3d_state.glasses_type() == STEREO_ALTERNATE
 		|| g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
-		dialog.push("Map File name", funnyglasses_map_name);
+		dialog.push("Map File name", s_funny_glasses_map_name.c_str());
 	}
 
 	if (dialog.prompt() < 0)
@@ -3609,7 +3610,7 @@ static int get_funny_glasses_params()
 
 	if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
-		strcpy(funnyglasses_map_name, dialog.values(k).uval.sval);
+		s_funny_glasses_map_name = dialog.values(k).uval.sval;
 	}
 	return 0;
 }

@@ -1,3 +1,5 @@
+#include <string>
+
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -7,6 +9,8 @@
 #include "fractals.h"
 #include "jb.h"
 #include "loadmap.h"
+#include "prompts1.h"
+#include "prompts2.h"
 #include "realdos.h"
 
 #include "EscapeTime.h"
@@ -100,8 +104,6 @@ bool julibrot_setup()
 	long origin;
 #endif
 	int r = 0;
-	char *mapname;
-
 	s_x_offset_fp = g_escape_time_state.m_grid_fp.x_center();     /* Calculate average */
 	s_y_offset_fp = g_escape_time_state.m_grid_fp.y_center();     /* Calculate average */
 	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp)/g_z_dots;
@@ -178,18 +180,19 @@ bool julibrot_setup()
 	}
 #endif
 
+	std::string map_name;
 	if (g_juli_3d_mode == JULI3DMODE_RED_BLUE)
 	{
 		g_save_dac = SAVEDAC_NO;
-		mapname = g_glasses1_map;
+		map_name = GLASSES1_MAP;
 	}
 	else
 	{
-		mapname = g_grey_file;
+		map_name = GREY_MAP;
 	}
 	if (g_save_dac != SAVEDAC_YES)
 	{
-		if (validate_luts(mapname) != 0)
+		if (validate_luts(map_name.c_str()) != 0)
 		{
 			return 0;
 		}
