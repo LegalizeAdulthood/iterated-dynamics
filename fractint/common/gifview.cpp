@@ -24,6 +24,7 @@
 #include "framain2.h"
 #include "gifview.h"
 #include "loadmap.h"
+#include "prompts1.h"
 #include "prompts2.h"
 #include "stereo.h"
 

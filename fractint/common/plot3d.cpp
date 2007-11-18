@@ -14,6 +14,7 @@
 #include "line3d.h"
 #include "loadmap.h"
 #include "plot3d.h"
+#include "prompts1.h"
 
 #include "ThreeDimensionalState.h"
 

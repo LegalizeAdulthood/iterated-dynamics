@@ -15,6 +15,7 @@
 #include "fihelp.h"
 #include "filesystem.h"
 #include "loadmap.h"
+#include "prompts1.h"
 #include "prompts2.h"
 #include "rotate.h"
 
@@ -491,7 +492,7 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 void save_palette()
 {
 	char palname[FILE_MAX_PATH];
-	strcpy(palname, g_map_name);
+	strcpy(palname, g_map_name.c_str());
 	driver_stack_screen();
 	char temp1[256] = { 0 };
 	int i = field_prompt_help(HELPCOLORMAP, "Name of map file to write", NULL, temp1, 60, NULL);
@@ -533,7 +534,7 @@ void save_palette()
 int load_palette()
 {
 	char filename[FILE_MAX_PATH];
-	strcpy(filename, g_map_name);
+	strcpy(filename, g_map_name.c_str());
 	driver_stack_screen();
 	int i = get_a_filename_help(HELPCOLORMAP, "Select a MAP File", mapmask, filename);
 	driver_unstack_screen();

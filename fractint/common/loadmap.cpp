@@ -9,6 +9,7 @@
 #include "filesystem.h"
 #include "loadmap.h"
 #include "miscres.h"
+#include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
 
@@ -16,10 +17,15 @@
 
 #define dac ((Palettetype *)g_dac_box)
 
+int validate_luts(const std::string &filename)
+{
+	return validate_luts(filename.c_str());
+}
+
 int validate_luts(const char *fn)
 {
 	char temp[FILE_MAX_PATH + 1];
-	strcpy(temp, g_map_name);
+	strcpy(temp, g_map_name.c_str());
 	char temp_fn[FILE_MAX_PATH];
 	strcpy(temp_fn, fn);
 #ifdef XFRACT
@@ -72,12 +78,11 @@ int validate_luts(const char *fn)
 
 
 /***************************************************************************/
-
-int set_color_palette_name(char *fn)
+void set_color_palette_name(const std::string &filename)
 {
-	if (validate_luts(fn) != 0)
+	if (validate_luts(filename) != 0)
 	{
-		return 1;
+		return;
 	}
 	if (g_map_dac_box == NULL)
 	{
@@ -85,10 +90,9 @@ int set_color_palette_name(char *fn)
 		if (g_map_dac_box == NULL)
 		{
 			stop_message(0, "Insufficient memory for color map.");
-			return 1;
+			return;
 		}
 	}
 	memcpy((char *) g_map_dac_box, (char *) g_dac_box, 768);
-	return 0;
 }
 

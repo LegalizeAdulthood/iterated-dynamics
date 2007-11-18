@@ -6,6 +6,7 @@ extern const std::string GLASSES2_MAP;
 
 extern const char *g_jiim_left_right[2];
 extern const char *g_jiim_method[3];
+extern std::string g_map_name;
 
 extern int full_screen_prompt(const char *heading, int num_prompts, const char **prompts,
 	struct full_screen_values *values, int function_key_mask, char *footer);
