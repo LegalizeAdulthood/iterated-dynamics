@@ -5,6 +5,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
 #include "filesystem.h"
 #include "loadmap.h"
 #include "miscres.h"
@@ -65,7 +66,7 @@ int validate_luts(const char *fn)
 		++index;
 	}
 	g_color_state = COLORSTATE_MAP;
-	strcpy(g_color_file, fn);
+	g_color_file = fn;
 	return 0;
 }
 

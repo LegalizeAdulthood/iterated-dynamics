@@ -107,7 +107,7 @@ double  g_math_tolerance[2] = {.05, .05};		/* For math transition */
 bool g_targa_output = false;					/* 3D fullcolor flag */
 bool g_true_color = false;						/* escape time truecolor flag */
 bool g_true_mode_iterates = false;				/* truecolor iterates coloring scheme */
-char    g_color_file[FILE_MAX_PATH];			/* from last <l> <s> or colors=@filename */
+std::string g_color_file;						/* from last <l> <s> or colors=@filename */
 bool g_function_preloaded;						/* if function loaded for new bifurcations */
 float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;	/* aspect ratio of the screen */
 float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;	/* how much drift is allowed and */
@@ -131,7 +131,7 @@ char	g_l_system_filename[FILE_MAX_PATH];		/* file to find (type=)L-System's in *
 char	g_l_system_name[ITEMNAMELEN + 1];		/* Name of L-System */
 char	g_command_file[FILE_MAX_PATH];			/* file to find command sets in */
 char	g_command_name[ITEMNAMELEN + 1];		/* Name of Command set */
-char	g_command_comment[4][MAX_COMMENT];		/* comments for command set */
+std::string g_command_comment[4];				/* comments for command set */
 char	g_ifs_filename[FILE_MAX_PATH];			/* file to find (type=)IFS in */
 char	g_ifs_name[ITEMNAMELEN + 1];			/* Name of the IFS def'n (if not null) */
 struct search_path g_search_for;
@@ -411,7 +411,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_command_name[0] = 0;
 	for (i = 0; i < 4; i++)
 	{
-		g_command_comment[i][0] = 0;
+		g_command_comment[i] = "";
 	}
 	strcpy(g_ifs_filename, "fractint.ifs");
 	g_ifs_name[0] = 0;
@@ -599,7 +599,7 @@ static int command_file(FILE *handle, int mode)
 		while (i != '{' && i != EOF);
 		for (i = 0; i < 4; i++)
 		{
-			g_command_comment[i][0] = 0;
+			g_command_comment[i] = "";
 		}
 	}
 	linebuf[0] = 0;
@@ -654,8 +654,8 @@ static int next_command(char *cmdbuf, int maxlen,
 			{
 				if (*lineptr == ';'
 					&& (mode == CMDFILE_AT_AFTER_STARTUP || mode == CMDFILE_AT_CMDLINE_SETNAME)
-					&& (g_command_comment[0][0] == 0 || g_command_comment[1][0] == 0 ||
-						g_command_comment[2][0] == 0 || g_command_comment[3][0] == 0))
+					&& (g_command_comment[0].length() == 0 || g_command_comment[1].length() == 0 ||
+						g_command_comment[2].length() == 0 || g_command_comment[3].length() == 0))
 				{
 					/* save comment */
 					while (*(++lineptr)
@@ -670,9 +670,9 @@ static int next_command(char *cmdbuf, int maxlen,
 						}
 						for (i = 0; i < 4; i++)
 						{
-							if (g_command_comment[i][0] == 0)
+							if (g_command_comment[i].length() == 0)
 							{
-								strcpy(g_command_comment[i], lineptr);
+								g_command_comment[i] = lineptr;
 								break;
 							}
 						}

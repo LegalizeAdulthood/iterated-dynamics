@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include <time.h>
+#include <string>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT

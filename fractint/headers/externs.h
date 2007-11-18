@@ -35,7 +35,6 @@ extern double				g_proximity; // escape time parameter for epscross and fmod col
 extern ComplexD				g_coefficient;
 extern int					g_col;
 extern int					g_color;
-extern char					g_color_file[];
 extern long					g_color_iter;
 extern bool					g_color_preloaded;
 extern int					g_colors;
@@ -43,7 +42,6 @@ extern int					g_color_state;
 extern int					g_color_bright;					/* brightest color in palette */
 extern int					g_color_dark;					/* darkest color in palette */
 extern int					g_color_medium;					/* nearest to medbright grey in palette */
-extern char					g_command_comment[4][MAX_COMMENT];
 extern char					g_command_file[FILE_MAX_PATH];
 extern char					g_command_name[ITEMNAMELEN + 1];
 extern bool					g_compare_gif;
