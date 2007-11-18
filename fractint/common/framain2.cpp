@@ -1266,7 +1266,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 	{
 		/* go back one file if somewhere to go (ie. browsing) */
 		g_name_stack_ptr--;
-		while (g_file_name_stack[g_name_stack_ptr][0] == '\0'
+		while (g_file_name_stack[g_name_stack_ptr].length() == 0
 			&& g_name_stack_ptr >= 0)
 		{
 			g_name_stack_ptr--;
@@ -1275,7 +1275,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		{
 			return APPSTATE_NO_CHANGE;
 		}
-		g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr]);
+		g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr].c_str());
 		g_browse_state.merge_path_names(g_read_name);
 		g_browse_state.set_browsing(true);
 		g_browse_state.set_sub_images(true);

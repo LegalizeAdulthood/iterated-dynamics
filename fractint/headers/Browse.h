@@ -50,6 +50,7 @@ private:
 };
 
 extern BrowseState g_browse_state;
+extern std::string g_file_name_stack[16];
 
 extern ApplicationStateType handle_look_for_files(bool &stacked);
 

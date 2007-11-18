@@ -171,7 +171,7 @@ long	g_calculation_time;
 int		g_max_colors;                         /* maximum palette size */
 bool g_zoom_off;                     /* = 0 when zoom is disabled    */
 int		g_save_dac;                     /* save-the-Video DAC flag      */
-char	g_file_name_stack[16][FILE_MAX_FNAME]; /* array of file names used while browsing */
+std::string g_file_name_stack[16];		/* array of file names used while browsing */
 int		g_name_stack_ptr;
 double	g_too_small;
 int		g_cross_hair_box_size;
@@ -373,7 +373,7 @@ void FractInt::RestoreStart(bool &screen_stacked, bool &resume_flag)
 			}
 
 			g_name_stack_ptr = 0; /* 'r' reads first filename for browsing */
-			strcpy(g_file_name_stack[g_name_stack_ptr], g_browse_state.name());
+			g_file_name_stack[g_name_stack_ptr] = g_browse_state.name();
 		}
 
 		g_evolving_flags = EVOLVE_NONE;
