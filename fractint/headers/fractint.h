@@ -426,7 +426,7 @@ names. So for now humor us and let's keep the names short.
 
 class AbstractDriver;
 
-struct video_info
+struct VIDEOINFO
 {              /* All we need to know about a Video Adapter */
 	char    name[26];       /* Adapter name (IBM EGA, etc)          */
 	char    comment[26];    /* Comments (UNTESTED, etc)             */
@@ -438,9 +438,7 @@ struct video_info
 	AbstractDriver *driver;
 };
 
-typedef struct video_info VIDEOINFO;
 #define INFO_ID         "Fractal"
-typedef    struct fractal_info FRACTAL_INFO;
 
 /*
  * Note: because non-MSDOS machines store structures differently, we have
@@ -448,7 +446,7 @@ typedef    struct fractal_info FRACTAL_INFO;
  * Make sure changes to the structure here get reflected there.
  */
 #ifndef XFRACT
-#define FRACTAL_INFO_SIZE sizeof(FRACTAL_INFO)
+#define FRACTAL_INFO_SIZE sizeof(fractal_info)
 #else
 /* This value should be the MSDOS size, not the Unix size. */
 #define FRACTAL_INFO_SIZE 504
@@ -614,7 +612,6 @@ enum stored_at_values
 
 #define NUMGENES 21
 
-typedef    struct evolution_info EVOLUTION_INFO;
 /*
  * Note: because non-MSDOS machines store structures differently, we have
  * to do special processing of the evolution_info structure in loadfile.c and
@@ -651,8 +648,6 @@ struct evolution_info      /* for saving evolution data in a GIF file */
 	short future[68 - NUMGENES];      /* total of 200 bytes */
 };
 
-
-typedef    struct orbits_info ORBITS_INFO;
 /*
  * Note: because non-MSDOS machines store structures differently, we have
  * to do special processing of the orbits_info structure in loadfile.c and
@@ -693,13 +688,12 @@ extern  double   g_attractor_radius_fp;      /* finite attractor radius  */
 #define IFSPARM    7     /* number of ifs parameters */
 #define IFS3DPARM 13     /* number of ifs 3D parameters */
 
-struct tag_more_parameters
+struct more_parameters
 {
 	int      type;                       /* index in fractalname of the fractal */
 	char     *parameters[MAX_PARAMETERS-4];    /* name of the parameters */
 	double   paramvalue[MAX_PARAMETERS-4];    /* default parameter values */
 };
-typedef struct tag_more_parameters more_parameters;
 
 /* bitmask defines for g_fractal_specific flags */
 #define FRACTALFLAG_NO_ZOOM					1			/* zoombox not allowed at all          */
@@ -1196,13 +1190,12 @@ struct DIR_SEARCH				/* Allocate	DTA	and	define structure */
 	char filename[FILE_MAX_PATH];	/* Filename	and	extension */
 };
 
-typedef struct palett
+struct Palettetype
 {
 	BYTE red;
 	BYTE green;
 	BYTE blue;
-}
-Palettetype;
+};
 
 #if defined(_WIN32)
 #pragma pack(push, 1)

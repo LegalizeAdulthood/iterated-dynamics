@@ -1192,13 +1192,12 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 }
 #endif
 
-struct tagCHOICE
+struct CHOICE
 {
 	char name[13];
 	char full_name[FILE_MAX_PATH];
 	char type;
 };
-typedef struct tagCHOICE CHOICE;
 
 int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 {

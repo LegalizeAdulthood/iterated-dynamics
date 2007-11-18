@@ -162,10 +162,10 @@ static float    s_gamma_val = 1;
 /*
  * basic data types
  */
-typedef struct
+struct PALENTRY
 {
 	BYTE red, green, blue;
-} PALENTRY;
+};
 
 /*
  * Interface to FRACTINT's graphics stuff
@@ -532,25 +532,18 @@ static void draw_diamond(int x, int y, int color)
  *            deallocate memory.
  */
 
-struct tag_cursor
+struct cursor
 {
 	int x;
 	int y;
 	int     hidden;       /* >0 if mouse hidden */
 	long    last_blink;
 	bool blink;
-#if 0
-	char    t[CURSOR_SIZE],        /* save line segments here */
-			b[CURSOR_SIZE],
-			l[CURSOR_SIZE],
-			r[CURSOR_SIZE];
-#endif
 	char    t[CURSOR_SIZE];        /* save line segments here */
 	char    b[CURSOR_SIZE];
 	char    l[CURSOR_SIZE];
 	char    r[CURSOR_SIZE];
 };
-typedef struct tag_cursor cursor;
 
 /* private: */
 static void cursor_draw();
@@ -746,7 +739,7 @@ int cursor_wait_key()   /* blink cursor while waiting for a key */
  * Purpose:   Handles the rectangular move/resize box.
  */
 
-struct tag_move_box
+struct move_box
 {
 	int x;
 	int y;
@@ -760,7 +753,6 @@ struct tag_move_box
 	char *l;
 	char *r;
 };
-typedef struct tag_move_box move_box;
 
 static void     move_box_draw     (move_box *me);
 static void     move_box_erase    (move_box *me);
@@ -1063,8 +1055,7 @@ static bool move_box_process(move_box *me)
  *            The "change" function is called whenever the value is changed
  *            by the color_editor.
  */
-typedef struct tag_color_editor color_editor;
-struct tag_color_editor
+struct color_editor
 {
 	int       x, y;
 	char      letter;
@@ -1309,7 +1300,7 @@ static int color_editor_edit(color_editor *me)
  * Purpose:   Edits a complete color using three CEditors for R, G and B
  */
 
-struct tag_rgb_editor
+struct rgb_editor
 {
 	int x;
 	int y;            /* position */
@@ -1318,11 +1309,10 @@ struct tag_rgb_editor
 	bool done;
 	bool hidden;
 	color_editor  *color[3];        /* color editors 0 = r, 1 = g, 2 = b */
-	void    (*other_key)(int key, struct tag_rgb_editor *e, VOIDPTR info);
-	void    (*change)(struct tag_rgb_editor *e, VOIDPTR info);
+	void    (*other_key)(int key, rgb_editor *e, VOIDPTR info);
+	void    (*change)(rgb_editor *e, VOIDPTR info);
 	void     *info;
 };
-typedef struct tag_rgb_editor rgb_editor;
 
 static void      rgb_editor_other_key (int key, color_editor *ceditor, VOIDPTR info);
 static void      rgb_editor_change    (color_editor *ceditor, VOIDPTR info);
@@ -1613,7 +1603,7 @@ Modes:
 #define EXCLUDE_CURRENT	1
 #define EXCLUDE_RANGE	2
 
-struct tag_pal_table
+struct pal_table
 {
 	int x;
 	int y;
@@ -1640,7 +1630,6 @@ struct tag_pal_table
 	int           bandwidth; /*size of freestyle colour band */
 	bool freestyle;
 };
-typedef struct tag_pal_table pal_table;
 
 static void    pal_table_draw_status  (pal_table *me, bool stripe_mode);
 static void    pal_table_highlight_pal       (pal_table *me, int pnum, int color);

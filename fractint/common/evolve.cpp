@@ -80,7 +80,7 @@ static ParameterBox s_parameter_box = { 0, 0, 0};
 static ParameterBox s_image_box = { 0, 0, 0 };
 static int s_image_box_count;
 
-struct parameter_history_info      /* for saving evolution data of center image */
+struct PARAMETER_HISTORY      /* for saving evolution data of center image */
 {
 	double param0;
 	double param1;
@@ -104,7 +104,6 @@ struct parameter_history_info      /* for saving evolution data of center image 
 	BYTE function_index3;
 	int bailoutest;
 };
-typedef struct parameter_history_info    PARAMETER_HISTORY;
 static PARAMETER_HISTORY s_old_history = { 0 };
 
 static void vary_double(GENEBASE gene[], int randval, int i);

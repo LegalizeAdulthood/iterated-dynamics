@@ -66,7 +66,7 @@
 #include "SoundState.h"
 #include "CommandParser.h"
 
-struct video_info g_video_entry;
+VIDEOINFO g_video_entry;
 long g_timer_start;
 long g_timer_interval;        /* timer(...) start & total */
 int     g_adapter;                /* Video Adapter chosen from list in ...h */

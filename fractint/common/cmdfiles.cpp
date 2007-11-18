@@ -2760,12 +2760,11 @@ static int release_arg(const cmd_context &context)
 	return COMMANDRESULT_3D_PARAMETER;
 }
 
-struct tag_command_processor
+struct command_processor
 {
 	const char *command;
 	int (*processor)(const cmd_context &context);
 };
-typedef struct tag_command_processor command_processor;
 
 static bool named_processor(const command_processor *processors,
 						   int num_processors,

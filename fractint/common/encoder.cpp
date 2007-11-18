@@ -32,7 +32,7 @@ static int _fastcall shftwrite(BYTE *color, int g_num_colors);
 static int _fastcall extend_blk_len(int datalen);
 static int _fastcall put_extend_blk(int block_id, int block_len, char *block_data);
 static int _fastcall store_item_name(const char *name);
-static void _fastcall setup_save_info(struct fractal_info *save_info);
+static void _fastcall setup_save_info(fractal_info *save_info);
 
 /*
 								Save-To-Disk Routines (GIF)
@@ -333,7 +333,7 @@ int encoder()
 	int rowlimit;
 	int interrupted;
 	BYTE bitsperpixel, x;
-	struct fractal_info save_info;
+	fractal_info save_info;
 
 	if (g_initialize_batch)               /* flush any impending keystrokes */
 	{
@@ -779,7 +779,7 @@ static int _fastcall store_item_name(const char *nameptr)
 	return extend_blk_len(sizeof(fsave_info));
 }
 
-static void _fastcall setup_save_info(struct fractal_info *save_info)
+static void _fastcall setup_save_info(fractal_info *save_info)
 {
 	int i;
 	if (!fractal_type_formula(g_fractal_type))
