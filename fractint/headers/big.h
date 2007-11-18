@@ -13,10 +13,6 @@
  The rest is handled by the compiler
 ****************************************************************/
 
-#ifndef BIG_ANSI_C
-#error BIG_ANSI_C must be defined.
-#endif
-
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
 
