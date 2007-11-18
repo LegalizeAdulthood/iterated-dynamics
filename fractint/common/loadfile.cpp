@@ -715,7 +715,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 	if (has_extension(g_read_name) == NULL)
 	{
-		strcat(g_read_name, ".gif");
+		g_read_name += ".gif";
 	}
 
 	char msg[110];
@@ -726,7 +726,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	struct ext_blk_mp_info mp_info;
 	struct ext_blk_evolver_info evolver_info;
 	struct ext_blk_orbits_info orbits_info;
-	if (find_fractal_info(g_read_name, &read_info, &resume_info_blk, &formula_info,
+	if (find_fractal_info(g_read_name.c_str(), &read_info, &resume_info_blk, &formula_info,
 		&ranges_info, &mp_info, &evolver_info, &orbits_info))
 	{
 		/* didn't find a useable file */
@@ -793,7 +793,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	return 0;
 }
 
-int find_fractal_info(char *gif_file, fractal_info *info,
+int find_fractal_info(const char *gif_file, fractal_info *info,
 	ext_blk_resume_info *resume_info_blk,
 	ext_blk_formula_info *formula_info,
 	ext_blk_ranges_info *ranges_info,

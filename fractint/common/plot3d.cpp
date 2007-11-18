@@ -4,6 +4,7 @@
 	By Tim Wegner and Marc Reinig.
 */
 #include <assert.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

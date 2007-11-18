@@ -173,6 +173,15 @@ int merge_path_names(char *old_full_path, char *new_filename, int mode)
 	return merge_path_names(old_full_path, new_filename, mode < 2);
 }
 
+int merge_path_names(std::string &old_full_path, char *new_filename, int mode)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, old_full_path.c_str());
+	int result = merge_path_names(buffer, new_filename, mode);
+	old_full_path = buffer;
+	return result;
+}
+
 /* ensure directory names end in a slash character */
 void ensure_slash_on_directory(char *dirname)
 {
@@ -457,6 +466,11 @@ const char *has_extension(const char *source)
 	char ext[FILE_MAX_EXT];
 	split_path(source, NULL, NULL, fname, ext);
 	return (ext[0] != 0) ? strrchr(source, '.') : NULL;
+}
+
+const char *has_extension(const std::string &source)
+{
+	return has_extension(source.c_str());
 }
 
 #ifndef XFRACT

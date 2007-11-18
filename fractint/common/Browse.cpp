@@ -9,6 +9,7 @@
 #include "helpdefs.h"
 
 #include "Browse.h"
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "encoder.h"
 #include "EscapeTime.h"
@@ -70,7 +71,7 @@ static bool parameters_match(const fractal_info &info);
 
 void BrowseState::extract_read_name()
 {
-	::extract_filename(m_name, g_read_name);
+	::extract_filename(m_name, g_read_name.c_str());
 }
 
 void BrowseState::make_path(const char *fname, const char *ext)
@@ -83,6 +84,13 @@ void BrowseState::merge_path_names(char *read_name)
 	::merge_path_names(read_name, m_name, false);
 }
 
+void BrowseState::merge_path_names(std::string &read_name)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, read_name.c_str());
+	merge_path_names(buffer);
+	read_name = buffer;
+}
 
 /* maps points onto view screen*/
 static void transform(CoordinateD *point)
@@ -624,7 +632,7 @@ rescan:  /* entry for changed browse parms */
 	toggle = 0;
 	wincount = 0;
 	g_browse_state.set_sub_images(true);
-	split_path(g_read_name, drive, dir, NULL, NULL);
+	split_path(g_read_name.c_str(), drive, dir, NULL, NULL);
 	split_path(g_browse_state.mask(), NULL, NULL, fname, ext);
 	make_path(tmpmask, drive, dir, fname, ext);
 	done = (vid_too_big == 2) || no_memory || fr_find_first(tmpmask);
@@ -814,7 +822,7 @@ rescan:  /* entry for changed browse parms */
 				}
 				if (c == 'Y')
 				{
-					split_path(g_read_name, drive, dir, NULL, NULL);
+					split_path(g_read_name.c_str(), drive, dir, NULL, NULL);
 					split_path(winlist.name, NULL, NULL, fname, ext);
 					make_path(tmpmask, drive, dir, fname, ext);
 					if (!unlink(tmpmask))
@@ -842,7 +850,7 @@ rescan:  /* entry for changed browse parms */
 				driver_stack_screen();
 				newname[0] = 0;
 				strcpy(mesg, "Enter the new filename for ");
-				split_path(g_read_name, drive, dir, NULL, NULL);
+				split_path(g_read_name.c_str(), drive, dir, NULL, NULL);
 				split_path(winlist.name, NULL, NULL, fname, ext);
 				make_path(tmpmask, drive, dir, fname, ext);
 				strcpy(newname, tmpmask);

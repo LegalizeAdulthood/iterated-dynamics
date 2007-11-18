@@ -1207,6 +1207,14 @@ int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 	return stricmp(*choice1, *choice2);
 }
 
+int get_a_filename(const char *hdg, char *file_template, std::string &filename)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, filename.c_str());
+	int result = get_a_filename(hdg, file_template, buffer);
+	filename = buffer;
+	return result;
+}
 
 int get_a_filename(const char *hdg, char *file_template, char *flname)
 {

@@ -52,6 +52,7 @@ int get_precision_bf(int rezflag);
 static void put_float(int, double, int);
 static void put_bf(int slash, bf_t r, int prec);
 static void put_filename(const char *keyword, const char *fname);
+static void put_filename(const char *keyword, const std::string &fname);
 #ifndef XFRACT
 static int check_modekey(int curkey, int choice);
 #endif
@@ -1752,6 +1753,11 @@ static void put_filename(const char *keyword, const char *fname)
 		}
 		put_parm(" %s=%s", keyword, fname);
 	}
+}
+
+static void put_filename(const char *keyword, const std::string &fname)
+{
+	put_filename(keyword, fname.c_str());
 }
 
 static void put_parm(const char *parm, ...)

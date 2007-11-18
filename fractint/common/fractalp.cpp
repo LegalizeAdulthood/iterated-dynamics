@@ -3,6 +3,7 @@
 		and a *slew* of defines needed to get it to compile
 */
 #include <string.h>
+#include <string>
 
 /* includes needed for g_fractal_specific */
 

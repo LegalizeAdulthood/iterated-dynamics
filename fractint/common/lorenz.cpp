@@ -5,6 +5,7 @@
 */
 #include <assert.h>
 #include <string.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

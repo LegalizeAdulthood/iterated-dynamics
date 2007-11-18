@@ -4,14 +4,13 @@
 */
 #include <assert.h>
 #include <memory.h>
-
 #include <stdarg.h>
-
 #ifndef XFRACT
 #include <sys/timeb.h>
 #endif
 #include <sys/types.h>
 #include <time.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

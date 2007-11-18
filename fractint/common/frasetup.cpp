@@ -5,6 +5,7 @@
 #include <malloc.h>
 #endif
 #endif
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

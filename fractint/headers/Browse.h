@@ -37,6 +37,7 @@ public:
 	void extract_read_name();
 	void make_path(const char *fname, const char *ext);
 	void merge_path_names(char *read_name);
+	void merge_path_names(std::string &read_name);
 
 private:
 	char m_mask[FILE_MAX_FNAME];

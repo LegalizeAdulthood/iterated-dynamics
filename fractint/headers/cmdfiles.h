@@ -1,6 +1,8 @@
 #if !defined(CMD_FILES_H)
 #define CMD_FILES_H
 
+extern std::string g_read_name;
+
 extern int command_files(int, char **);
 extern int load_commands(FILE *);
 extern int get_curarg_len(char *curarg);
