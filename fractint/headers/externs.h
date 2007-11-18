@@ -137,7 +137,6 @@ extern int					g_is_true_color;
 extern bool					g_is_mand;
 extern int					g_x_stop;
 extern int					g_y_stop;
-extern const char			*g_jiim_left_right[];
 extern const char			*g_jiim_method[];
 extern double				g_julia_c_x;
 extern double				g_julia_c_y;
