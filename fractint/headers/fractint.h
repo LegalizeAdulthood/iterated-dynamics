@@ -1302,10 +1302,10 @@ struct affine
 	double f;
 };
 
-struct baseunit  /* smallest part of a fractint 'gene' */
+struct GENEBASE  /* smallest part of a fractint 'gene' */
 {
 	void *addr; /* address of variable to be referenced */
-	void (*varyfunc)(struct baseunit*,int,int); /* pointer to func used to vary it */
+	void (*varyfunc)(GENEBASE *,int,int); /* pointer to func used to vary it */
 							  /* takes random number and pointer to var*/
 	int mutate;  /* flag to switch on variation of this variable */
 				  /* 0 for no mutation, 1 for x axis, 2 for y axis */
@@ -1313,8 +1313,6 @@ struct baseunit  /* smallest part of a fractint 'gene' */
 	char name[16]; /* name of variable (for menu ) */
 	char level;    /* mutation level at which this should become active */
 };
-
-typedef struct baseunit    GENEBASE;
 
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
 
