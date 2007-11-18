@@ -872,13 +872,13 @@ top:
 		if (fractal_type_ifs(g_fractal_type))
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_ifs_name);
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_ifs_name.c_str());
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if (int(strlen(g_ifs_filename)) >= 28)
+			if (g_ifs_filename.length() >= 28)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_ifs_filename);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_ifs_filename.c_str());
 		}
 	}
 
@@ -1347,7 +1347,7 @@ int ifs_load()                   /* read in IFS parameters */
 
 	g_ifs_type = IFSTYPE_2D;
 	rowsize = IFSPARM;
-	if (find_file_item(g_ifs_filename, g_ifs_name, &ifsfile, ITEMTYPE_IFS) < 0)
+	if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifsfile, ITEMTYPE_IFS) < 0)
 	{
 		return -1;
 	}
@@ -1673,6 +1673,15 @@ int find_file_item(std::string &filename, const char *itemname, FILE **fileptr, 
 	strcpy(buffer, filename.c_str());
 	int result = find_file_item(buffer, itemname, fileptr, itemtype);
 	filename = buffer;
+	return result;
+}
+
+int find_file_item(std::string &filename, std::string &itemname, FILE **fileptr, int itemtype)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, itemname.c_str());
+	int result = find_file_item(filename, buffer, fileptr, itemtype);
+	itemname = buffer;
 	return result;
 }
 

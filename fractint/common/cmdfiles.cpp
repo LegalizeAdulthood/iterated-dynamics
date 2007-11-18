@@ -132,8 +132,8 @@ char	g_l_system_name[ITEMNAMELEN + 1];		/* Name of L-System */
 std::string g_command_file;						/* file to find command sets in */
 std::string g_command_name;						/* Name of Command set */
 std::string g_command_comment[4];				/* comments for command set */
-char	g_ifs_filename[FILE_MAX_PATH];			/* file to find (type=)IFS in */
-char	g_ifs_name[ITEMNAMELEN + 1];			/* Name of the IFS def'n (if not null) */
+std::string g_ifs_filename;						/* file to find (type=)IFS in */
+std::string g_ifs_name;							/* Name of the IFS def'n (if not null) */
 struct search_path g_search_for;
 float	*g_ifs_definition = NULL;				/* ifs parameters */
 int		g_ifs_type;								/* 0 = 2d, 1 = 3d */
@@ -338,7 +338,7 @@ int command_files(int argc, char **argv)
 	strcpy(g_search_for.par, g_command_file.c_str());
 	strcpy(g_search_for.frm, g_formula_state.get_filename());
 	strcpy(g_search_for.lsys, g_l_system_filename);
-	strcpy(g_search_for.ifs, g_ifs_filename);
+	strcpy(g_search_for.ifs, g_ifs_filename.c_str());
 	return 0;
 }
 
@@ -413,8 +413,8 @@ static void initialize_variables_restart()          /* <ins> key init */
 	{
 		g_command_comment[i] = "";
 	}
-	strcpy(g_ifs_filename, "fractint.ifs");
-	g_ifs_name[0] = 0;
+	g_ifs_filename = "fractint.ifs";
+	g_ifs_name = "";
 	reset_ifs_definition();
 	g_use_fixed_random_seed = false;                           /* not a fixed srand() seed */
 	g_random_seed = s_init_random_seed;
@@ -2512,7 +2512,7 @@ static int ifs_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	strcpy(g_ifs_name, context.value);
+	g_ifs_name = context.value;
 	reset_ifs_definition();
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }

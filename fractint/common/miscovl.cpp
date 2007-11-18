@@ -819,7 +819,7 @@ void write_batch_parms_l_system()
 void write_batch_parms_ifs()
 {
 	put_filename("ifsfile", g_ifs_filename);
-	put_parm(" ifs=%s", g_ifs_name);
+	put_parm(" ifs=%s", g_ifs_name.c_str());
 }
 
 void write_batch_parms_inverse_julia()

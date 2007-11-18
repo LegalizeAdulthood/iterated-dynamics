@@ -481,7 +481,7 @@ static void got_formula_info(const fractal_info &read_info, struct ext_blk_formu
 
 	case FRACTYPE_IFS:
 	case FRACTYPE_IFS_3D:
-		strcpy(g_ifs_name, formula_info.form_name);
+		g_ifs_name = formula_info.form_name;
 		break;
 
 	default:
