@@ -22,6 +22,7 @@
 #include "fractalb.h"
 #include "fractals.h"
 #include "history.h"
+#include "line3d.h"
 #include "loadfile.h"
 #include "loadmap.h"
 #include "miscovl.h"
@@ -2738,7 +2739,7 @@ static int light_name_arg(const cmd_context &context)
 	}
 	if (g_command_initialize || context.mode == CMDFILE_AT_AFTER_STARTUP)
 	{
-		strcpy(g_light_name, context.value);
+		g_light_name = context.value;
 	}
 	return COMMANDRESULT_OK;
 }

@@ -26,6 +26,7 @@ public:
 	void push(const char *label, long value);
 	void push(const char *label);
 	void push(const char *label, const char *value);
+	void push(const char *label, const std::string &value);
 	void push(const char *label, float value);
 	void push(const char *label, double value);
 

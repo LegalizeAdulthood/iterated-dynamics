@@ -55,6 +55,7 @@ ROTZ(i) =           cosi  sini    0     0
                       --  Tim Wegner  April 22, 1989
 */
 #include <string.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

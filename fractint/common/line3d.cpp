@@ -63,12 +63,12 @@ struct minmax
 /* routines in this module */
 int out_line_3d(BYTE *pixels, int line_length);
 int targa_color(int, int, int);
-int start_disk1(char *file_name2, FILE *Source, bool overlay_file);
+int start_disk1(const std::string &file_name2, FILE *Source, bool overlay_file);
 
 /* global variables defined here */
 void (*g_plot_color_standard)(int x, int y, int color) = NULL;
 
-char g_light_name[FILE_MAX_PATH] = "fract001";
+std::string g_light_name = "fract001";
 bool g_targa_overlay = false;
 int g_xx_adjust = 0;
 int g_yy_adjust = 0;
@@ -78,7 +78,7 @@ VECTOR g_view;                /* position of observer for perspective */
 VECTOR g_cross;
 const int g_bad_value = -10000; /* set bad values to this */
 
-static int targa_validate(char *);
+static int targa_validate(const std::string &filename);
 static int first_time(int, VECTOR);
 static int HSVtoRGB(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
 static bool line_3d_mem();
@@ -104,7 +104,7 @@ static void plot_color_transparent_clip(int, int, int);
 static void vdraw_line(double *, double *, int color);
 static void (*s_plot_color_fill)(int, int, int);
 static void (*s_plot_color_normal)(int, int, int);
-static void file_error(const char *filename, int code);
+static void file_error(const std::string &filename, int code);
 
 /* static variables */
 static double s_r_scale = 0.0;			/* surface roughness factor */
@@ -954,7 +954,7 @@ loopbottom:
 				if (ferror(s_raytrace_file))
 				{
 					fclose(s_raytrace_file);
-					remove(g_light_name);
+					remove(g_light_name.c_str());
 					file_error(g_3d_state.ray_name(), FILEERROR_NO_SPACE);
 					return -1;
 				}
@@ -1582,7 +1582,7 @@ and other files
 
 **************************************************************************/
 
-static void file_error(const char *filename, int code)
+static void file_error(const std::string &filename, int code)
 {
 	char msgbuf[200];
 
@@ -1590,10 +1590,10 @@ static void file_error(const char *filename, int code)
 	switch (code)
 	{
 	case FILEERROR_OPEN:                      /* Can't Open */
-		sprintf(msgbuf, "OOPS, couldn't open  < %s >", filename);
+		sprintf(msgbuf, "OOPS, couldn't open  < %s >", filename.c_str());
 		break;
 	case FILEERROR_NO_SPACE:                      /* Not enough room */
-		sprintf(msgbuf, "OOPS, ran out of disk space. < %s >", filename);
+		sprintf(msgbuf, "OOPS, ran out of disk space. < %s >", filename.c_str());
 		break;
 	case FILEERROR_BAD_IMAGE_SIZE:                      /* Image wrong size */
 		sprintf(msgbuf, "OOPS, image wrong size\n");
@@ -1623,7 +1623,7 @@ static void file_error(const char *filename, int code)
 /*                                                                      */
 /* **********************************************************************/
 
-int start_disk1(char *file_name2, FILE *Source, bool overlay_file)
+int start_disk1(const std::string &file_name2, FILE *Source, bool overlay_file)
 {
 	int inc;
 	FILE *fps;
@@ -1728,7 +1728,7 @@ int start_disk1(char *file_name2, FILE *Source, bool overlay_file)
 	return 0;
 }
 
-static int targa_validate(char *file_name)
+static int targa_validate(const std::string &file_name)
 {
 	FILE *fp;
 
@@ -2454,7 +2454,7 @@ static void line3d_cleanup()
 		if (!g_debug_mode && (!s_targa_safe || s_file_error) && g_targa_overlay)
 		{
 			dir_remove(g_work_dir, g_light_name);
-			rename(s_targa_temp, g_light_name);
+			rename(s_targa_temp, g_light_name.c_str());
 		}
 		if (!g_debug_mode && g_targa_overlay)
 		{
