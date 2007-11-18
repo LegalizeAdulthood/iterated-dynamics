@@ -23,11 +23,11 @@
 
 #define PIXELROUND 0.00001
 
-static void _fastcall zmo_calc(double, double, double *, double *, double);
-static void _fastcall zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
+static void zmo_calc(double, double, double *, double *, double);
+static void zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);
 static int  check_pan();
 static void fix_work_list();
-static void _fastcall move_row(int fromrow, int torow, int col);
+static void move_row(int fromrow, int torow, int col);
 
 /* big number declarations */
 static void calculate_corner(bf_t target, bf_t p1, double p2, bf_t p3, double p4, bf_t p5)
@@ -194,7 +194,7 @@ void zoom_box_draw(int drawit)
 	}
 }
 
-void _fastcall draw_lines(Coordinate fr, Coordinate to,
+void draw_lines(Coordinate fr, Coordinate to,
 						int dx, int dy)
 {
 	int xincr;
@@ -276,7 +276,7 @@ void _fastcall draw_lines(Coordinate fr, Coordinate to,
 	}
 }
 
-void _fastcall add_box(Coordinate point)
+void add_box(Coordinate point)
 {
 #if defined(_WIN32)
 	_ASSERTE(g_zoomBox.count() < NUM_BOXES);
@@ -290,77 +290,57 @@ void _fastcall add_box(Coordinate point)
 	}
 }
 
-void zoom_box_move(double dx, double dy)
-{   int align, row, col;
-	align = check_pan();
-	if (dx != 0.0)
+static void zoom_box_move_coordinate(double delta, int alignment, double &coordinate, double half_size, double size)
+{
+	if (delta != 0.0)
 	{
-		g_zbx += dx;
-		if (g_zbx + g_z_width/2 < 0)  /* center must stay onscreen */
+		coordinate += delta;
+		if (coordinate + half_size < 0)  /* center must stay onscreen */
 		{
-			g_zbx = g_z_width/-2;
+			coordinate = -half_size;
 		}
-		if (g_zbx + g_z_width/2 > 1)
+		if (coordinate + half_size > 1)
 		{
-			g_zbx = 1.0 - g_z_width/2;
+			coordinate = 1.0 - half_size;
 		}
-		if (align != 0
-			&& ((col = int(g_zbx*(g_dx_size + PIXELROUND))) & (align-1)) != 0)
+		int pos;
+		if (alignment != 0
+			&& ((pos = int(coordinate*(size + PIXELROUND))) & (alignment-1)) != 0)
 		{
-			if (dx > 0)
+			if (delta > 0)
 			{
-				col += align;
+				pos += alignment;
 			}
-			col -= col & (align-1); /* adjust col to pass alignment */
-			g_zbx = double(col)/g_dx_size;
+			pos -= pos & (alignment-1); /* adjust col to pass alignment */
+			coordinate = pos/size;
 		}
 	}
-	if (dy != 0.0)
-	{
-		g_zby += dy;
-		if (g_zby + g_z_depth/2 < 0)
-		{
-			g_zby = g_z_depth/-2;
-		}
-		if (g_zby + g_z_depth/2 > 1)
-		{
-			g_zby = 1.0 - g_z_depth/2;
-		}
-		if (align != 0
-			&& ((row = int(g_zby*(g_dy_size + PIXELROUND))) & (align-1)) != 0)
-		{
-			if (dy > 0)
-			{
-				row += align;
-			}
-			row -= row & (align-1);
-			g_zby = double(row)/g_dy_size;
-		}
-	}
-	col = int((g_zbx + g_z_width/2)*(g_dx_size + PIXELROUND)) + g_sx_offset;
-	row = int((g_zby + g_z_depth/2)*(g_dy_size + PIXELROUND)) + g_sy_offset;
 }
 
-static void _fastcall chgboxf(double dwidth, double ddepth)
+void zoom_box_move(double dx, double dy)
 {
-	if (g_z_width + dwidth > 1)
+	int align = check_pan();
+	zoom_box_move_coordinate(dx, align, g_zbx, g_z_width/2.0, g_dx_size);
+	zoom_box_move_coordinate(dy, align, g_zby, g_z_depth/2.0, g_dy_size);
+}
+
+static void change_box_adjust(double &delta_length, double &length)
+{
+	if (length + delta_length > 1.0)
 	{
-		dwidth = 1.0-g_z_width;
+		delta_length = 1.0 - length;
 	}
-	if (g_z_width + dwidth < 0.05)
+	if (length + delta_length < 0.05)
 	{
-		dwidth = 0.05-g_z_width;
+		delta_length = 0.05 - length;
 	}
-	g_z_width += dwidth;
-	if (g_z_depth + ddepth > 1)
-	{
-		ddepth = 1.0-g_z_depth;
-	}
-	if (g_z_depth + ddepth < 0.05)
-	{
-		ddepth = 0.05-g_z_depth;
-	}
-	g_z_depth += ddepth;
+	length += delta_length;
+}
+
+static void change_box(double dwidth, double ddepth)
+{
+	change_box_adjust(dwidth, g_z_width);
+	change_box_adjust(ddepth, g_z_depth);
 	zoom_box_move(dwidth/-2, ddepth/-2); /* keep it centered & check limits */
 }
 
@@ -378,15 +358,16 @@ void zoom_box_resize(int steps)
 		deltax = steps*0.036;
 		deltay = g_z_depth*deltax/g_z_width;
 	}
-	chgboxf(deltax, deltay);
+	change_box(deltax, deltay);
 }
 
 void zoom_box_change_i(int dw, int dd)
-{   /* change size by pixels */
-	chgboxf(double(dw)/g_dx_size, double(dd)/g_dy_size );
+{
+	/* change size by pixels */
+	change_box(double(dw)/g_dx_size, double(dd)/g_dy_size);
 }
 
-static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
+static void zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	bf_t bfnewx, bf_t bfnewy, bf_t bfplotmx1, bf_t bfplotmx2, bf_t bfplotmy1,
 	bf_t bfplotmy2, bf_t bfftemp)
 {
@@ -445,7 +426,7 @@ static void _fastcall zmo_calcbf(bf_t bfdx, bf_t bfdy,
 	restore_stack(saved);
 }
 
-static void _fastcall zmo_calc(double dx, double dy, double *newx, double *newy, double ftemp)
+static void zmo_calc(double dx, double dy, double *newx, double *newy, double ftemp)
 {
 	double tempx;
 	double tempy;
@@ -667,8 +648,8 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 	return j;
 }
 
-static void _fastcall move_row(int fromrow, int torow, int col)
 /* move a row on the screen */
+static void move_row(int fromrow, int torow, int col)
 {
 	int startcol;
 	int endcol;
