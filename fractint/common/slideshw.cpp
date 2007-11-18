@@ -9,11 +9,13 @@
 #ifndef XFRACT
 #include <conio.h>
 #endif
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"
-#include "drivers.h"
 
+#include "cmdfiles.h"
+#include "drivers.h"
 #include "realdos.h"
 #include "slideshw.h"
 
@@ -328,7 +330,7 @@ start:
 
 int start_slide_show()
 {
-	s_slide_file = fopen(g_autokey_name, "r");
+	s_slide_file = fopen(g_autokey_name.c_str(), "r");
 	if (s_slide_file == NULL)
 	{
 		g_slides = SLIDES_OFF;
@@ -356,7 +358,7 @@ void record_show(int key)
 	s_ticks = clock_ticks();  /* current time */
 	if (s_slide_file == NULL)
 	{
-		s_slide_file = fopen(g_autokey_name, "w");
+		s_slide_file = fopen(g_autokey_name.c_str(), "w");
 		if (s_slide_file == NULL)
 		{
 			return;
