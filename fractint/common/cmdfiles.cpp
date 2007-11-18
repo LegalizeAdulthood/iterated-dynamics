@@ -130,7 +130,7 @@ FractalTypeSpecificData *g_current_fractal_specific = NULL;
 char	g_l_system_filename[FILE_MAX_PATH];		/* file to find (type=)L-System's in */
 char	g_l_system_name[ITEMNAMELEN + 1];		/* Name of L-System */
 std::string g_command_file;						/* file to find command sets in */
-char	g_command_name[ITEMNAMELEN + 1];		/* Name of Command set */
+std::string g_command_name;						/* Name of Command set */
 std::string g_command_comment[4];				/* comments for command set */
 char	g_ifs_filename[FILE_MAX_PATH];			/* file to find (type=)IFS in */
 char	g_ifs_name[ITEMNAMELEN + 1];			/* Name of the IFS def'n (if not null) */
@@ -300,8 +300,8 @@ int command_files(int argc, char **argv)
 				{
 					init_msg("", g_command_file.c_str(), 0);
 				}
-				strcpy(g_command_name, sptr + 1);
-				if (find_file_item(g_command_file, g_command_name, &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
+				g_command_name = &sptr[1];
+				if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
 				{
 					arg_error(curarg);
 				}
@@ -887,7 +887,7 @@ static int make_par_arg(const cmd_context &context)
 	{
 		if (g_read_name.length() != 0)
 		{
-			extract_filename(g_command_name, g_read_name.c_str());
+			extract_filename(g_command_name, g_read_name);
 		}
 		else if (*g_map_name != 0)
 		{
@@ -900,8 +900,7 @@ static int make_par_arg(const cmd_context &context)
 	}
 	else
 	{
-		strncpy(g_command_name, next, ITEMNAMELEN);
-		g_command_name[ITEMNAMELEN] = 0;
+		g_command_name = next;
 	}
 	*g_make_par = 0; /* used as a flag for makepar case */
 	if (g_read_name.length() != 0)

@@ -225,7 +225,7 @@ void MakeBatchFile::initialize()
 		set_color_spec();
 	}
 	strcpy(m_in_parameter_command_file, g_command_file.c_str());
-	strcpy(m_in_parameter_command_name, g_command_name);
+	strcpy(m_in_parameter_command_name, g_command_name.c_str());
 	for (int i = 0; i < 4; i++)
 	{
 		expand_comments(g_command_comment[i], par_comment[i]);
@@ -357,7 +357,7 @@ void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
 		char c;
 		char PCommandName[80];
 		w = 0;
-		while (w < int(strlen(g_command_name)))
+		while (w < int(strlen(g_command_name.c_str())))
 		{
 			c = g_command_name[w];
 			if (isspace(c) || c == 0)
@@ -479,7 +479,7 @@ prompt_user:
 			{
 				g_command_file.append(".par");   /* default extension .par */
 			}
-			strcpy(g_command_name, m_in_parameter_command_name);
+			g_command_name = m_in_parameter_command_name;
 			for (int i = 0; i < 4; i++)
 			{
 				g_command_comment[i] = m_in_parameter_command_comment[i];
@@ -563,7 +563,7 @@ skip_UI:
 				char buf2[128];
 				if (strchr(buf, '{')/* entry heading? */
 					&& sscanf(buf, " %40[^ \t({]", buf2)
-					&& stricmp(buf2, g_command_name) == 0)
+					&& stricmp(buf2, g_command_name.c_str()) == 0)
 				{                   /* entry with same name */
 					_snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
 						g_command_name, (*g_make_par == 0) ?
