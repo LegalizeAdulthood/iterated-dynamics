@@ -1,12 +1,10 @@
-/* calcmand.c
+/* calcmand.cpp
  * This file contains routines to replace calcmand.asm.
- *
- * This file Copyright 1991 Ken Shirriff.  It may be used according to the
- * fractint license conditions, blah blah blah.
  */
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
 #include <windows.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

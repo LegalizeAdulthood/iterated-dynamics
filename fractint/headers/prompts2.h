@@ -1,6 +1,8 @@
 #if !defined(PROMPTS_2_H)
 #define PROMPTS_2_H
 
+extern const std::string GREY_MAP;
+
 extern int get_toggles();
 extern int get_toggles2();
 extern int passes_options();

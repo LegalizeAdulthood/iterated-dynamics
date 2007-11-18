@@ -113,12 +113,10 @@ extern double				g_f_x_center;
 extern double				g_f_y_center;
 extern GENEBASE				g_genes[NUMGENES];
 extern bool					g_gif87a_flag;
-extern char					g_glasses1_map[];
 extern int					g_good_mode;						/* video mode ok? */
 extern bool					g_got_real_dac;					/* loaddac worked, really got a dac */
 extern int					g_got_status;
 extern bool					g_grayscale_depth;
-extern char					g_grey_file[];
 extern bool					g_has_inverse;
 extern unsigned int			g_height;
 extern float				g_height_fp;

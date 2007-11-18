@@ -1,15 +1,9 @@
-/* biginit.c - C routines for bignumbers */
-
-/*
-Note: This is NOT the biginit.c file that come the standard BigNum library,
-but is a customized version specific to Fractint.  The biggest difference
-is in the allocations of memory for the big numbers.
-*/
-
+/* biginit.cpp - routines for bignumbers */
 #include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

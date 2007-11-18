@@ -182,6 +182,15 @@ int merge_path_names(std::string &old_full_path, char *new_filename, int mode)
 	return result;
 }
 
+int merge_path_names(char *old_full_path, std::string &new_filename, int mode)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, new_filename.c_str());
+	int result = merge_path_names(old_full_path, buffer, mode);
+	new_filename = buffer;
+	return result;
+}
+
 /* ensure directory names end in a slash character */
 void ensure_slash_on_directory(char *dirname)
 {
