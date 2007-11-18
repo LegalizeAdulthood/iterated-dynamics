@@ -53,7 +53,7 @@ std::string g_read_name;						/* name of fractal input file */
 char    g_temp_dir[FILE_MAX_DIR] = {""};		/* name of temporary directory */
 char    g_work_dir[FILE_MAX_DIR] = {""};		/* name of directory for misc files */
 char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
-char    g_gif_mask[FILE_MAX_PATH] = {""};
+std::string g_gif_mask;
 char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
 std::string g_autokey_name = "auto.key";		/* record auto keystrokes here */
 bool g_potential_flag = false;					/* continuous potential enabled? */
@@ -968,9 +968,8 @@ static int filename_arg(const cmd_context &context)
 		{
 			return bad_arg(context.curarg);
 		}
-		g_gif_mask[0] = '*';
-		g_gif_mask[1] = 0;
-		strcat(g_gif_mask, context.value);
+		g_gif_mask = "*";
+		g_gif_mask.append(context.value);
 		return COMMANDRESULT_OK;
 	}
 	if (context.valuelen > (FILE_MAX_PATH-1))

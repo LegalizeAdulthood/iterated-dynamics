@@ -12,6 +12,7 @@ extern void split_path(const char *file_template, char *drive, std::string &dir,
 extern bool is_a_directory(char *s);
 extern int get_a_filename(const char *hdg, char *file_template, char *flname);
 extern int get_a_filename(const char *hdg, char *file_template, std::string &filename);
+extern int get_a_filename(const char *hdg, std::string &file_template, std::string &filename);
 extern int dir_remove(const std::string &dir, const std::string &filename);
 extern FILE *dir_fopen(const char *dir, const char *filename, const char *mode);
 extern void extract_filename(char *target, const char *source);
