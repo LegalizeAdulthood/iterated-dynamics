@@ -1,15 +1,8 @@
 /*
 	"Disk-Video" (and RAM-Video and Expanded-Memory Video) routines
-
-	Reworked with fast caching July '90 by Pieter Branderhorst.
-	(I'm proud of this cache handler, had to get my name on it!)
-	Caution when modifying any code in here:  bugs are possible which
-	slow the cache substantially but don't cause incorrect results.
-	Do timing tests for a variety of situations after any change.
-
 */
-
 #include <string.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

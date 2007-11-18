@@ -1,20 +1,15 @@
-/* PARSERFP.C  -- Part of FRACTINT fractal drawer.  */
-
+/* parserfp.cpp */
 /*   By Chuck Ebbert  CompuServe [76306, 1226]  */
 /*                     internet: 76306.1226@compuserve.com  */
-
 /* Fast floating-point parser code.  The functions beginning with  */
 /*    "fStk" are in PARSERA.ASM.  PARSER.C calls this code after  */
 /*    it has parsed the formula.  */
-
 /*   Converts the function pointers/load pointers/store pointers  */
 /*       built by parsestr() into an optimized array of function  */
 /*       pointer/operand pointer pairs.  */
-
 /*   Also generates executable code in memory.  */
 /*       Define the varible COMPILER to generate executable code.  */
 /*       COMPILER must also be defined in PARSERA.ASM. */
-
 /* ******************************************************************* */
 /*                                                                     */
 /*  (c) Copyright 1992-1995 Chuck Ebbert.  All rights reserved.        */
@@ -34,8 +29,8 @@
 
 /* Use startup parameter "debugflag = 324" to show debug messages after  */
 /*    compiling with above #define uncommented.  */
-
 #include <ctype.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

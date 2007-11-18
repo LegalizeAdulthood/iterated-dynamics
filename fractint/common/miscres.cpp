@@ -1328,7 +1328,7 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
 	}
 }
 
-char g_insufficient_ifs_memory[] = {"Insufficient memory for IFS"};
+const std::string g_insufficient_ifs_memory = "Insufficient memory for IFS";
 int g_num_affine;
 int ifs_load()                   /* read in IFS parameters */
 {

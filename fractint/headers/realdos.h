@@ -2,7 +2,8 @@
 #define REAL_DOS_H
 
 extern int show_vid_length();
-extern int stop_message(int, const char *);
+extern int stop_message(int flags, const char *message);
+extern int stop_message(int flags, const std::string &message);
 extern void blank_rows(int, int, int);
 extern int text_temp_message(char *);
 extern int full_screen_choice(int options, const char *hdg, char *hdg2,
