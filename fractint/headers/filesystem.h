@@ -14,6 +14,7 @@ extern int get_a_filename(const char *hdg, char *file_template, std::string &fil
 extern int dir_remove(const std::string &dir, const std::string &filename);
 extern FILE *dir_fopen(const char *dir, const char *filename, const char *mode);
 extern void extract_filename(char *target, const char *source);
+extern void extract_filename(std::string &target, const std::string &source);
 extern const char *has_extension(const char *source);
 extern const char *has_extension(const std::string &source);
 extern void find_path(const char *filename, char *fullpathname);

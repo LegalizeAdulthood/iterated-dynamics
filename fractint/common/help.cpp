@@ -1617,12 +1617,15 @@ long get_file_entry_help(int help_mode, int type,
 }
 
 long get_file_entry_help(int help_mode, int type,
-	const char *title, char *fmask, std::string &filename, char *entryname)
+	const char *title, char *fmask, std::string &filename, std::string &entryname)
 {
-	char buffer[FILE_MAX_PATH];
-	strcpy(buffer, filename.c_str());
-	long result = get_file_entry_help(help_mode, type, title, fmask, buffer, entryname);
-	filename = buffer;
+	char filename_buffer[FILE_MAX_PATH];
+	char entryname_buffer[80];
+	strcpy(filename_buffer, filename.c_str());
+	strcpy(entryname_buffer, entryname.c_str());
+	long result = get_file_entry_help(help_mode, type, title, fmask, filename_buffer, entryname_buffer);
+	filename = filename_buffer;
+	entryname = entryname_buffer;
 	return result;
 }
 

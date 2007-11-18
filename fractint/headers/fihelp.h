@@ -30,7 +30,7 @@ extern int field_prompt_help(int help_mode,
 extern long get_file_entry_help(int help_mode, int type,
 	const char *title, char *fmask, char *filename, char *entryname);
 long get_file_entry_help(int help_mode, int type,
-	const char *title, char *fmask, std::string &filename, char *entryname);
+	const char *title, char *fmask, std::string &filename, std::string &entryname);
 extern int get_a_filename_help(int help_mode, char *hdg, char *file_template, char *flname);
 
 class HelpModeSaver

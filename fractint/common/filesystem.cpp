@@ -458,6 +458,14 @@ void extract_filename(char *target, const char *source)
 	make_path(target, "", "", fname, ext);
 }
 
+void extract_filename(std::string &target, const std::string &source)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, target.c_str());
+	extract_filename(buffer, source.c_str());
+	target = buffer;
+}
+
 /* tells if filename has extension */
 /* returns pointer to period or NULL */
 const char *has_extension(const char *source)
