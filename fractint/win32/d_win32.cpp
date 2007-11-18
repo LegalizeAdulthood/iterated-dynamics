@@ -153,7 +153,7 @@ int Win32BaseDriver::handle_special_keys(int ch)
 	if (FIK_F1 == ch && get_help_mode() && !m_inside_help)
 	{
 		m_inside_help = true;
-		help(0);
+		help(ACTION_CALL);
 		m_inside_help = false;
 		ch = 0;
 	}

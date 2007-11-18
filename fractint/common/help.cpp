@@ -39,11 +39,6 @@
 #include "realdos.h"
 
 #define MAX_HIST           16        /* number of pages we'll remember */
-#define ACTION_CALL         0        /* values returned by help_topic() */
-#define ACTION_PREV         1
-#define ACTION_PREV2        2        /* special - go back two topics */
-#define ACTION_INDEX        3
-#define ACTION_QUIT         4
 #define F_HIST              (1 << 0)   /* flags for help_topic() */
 #define F_INDEX             (1 << 1)
 #define MAX_PAGE_SIZE       (80*25)  /* no page of text may be larger */
@@ -586,7 +581,7 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
 	return 0;
 }
 
-static int help_topic(HIST *curr, HIST *next, int flags)
+static HelpAction help_topic(HIST *curr, HIST *next, int flags)
 	{
 	int       len;
 	int       key;
@@ -597,7 +592,6 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 	char      title[81];
 	long      where;
 	int       draw_page;
-	int       action;
 	BYTE ch;
 
 	where     = s_topic_offset[curr->topic_num] + sizeof(int); /* to skip flags */
@@ -629,7 +623,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 
 	assert(page < num_pages);
 
-	action = -1;
+	HelpAction action = HelpAction(-1);
 	draw_page = 2;
 
 	do
@@ -782,7 +776,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 			break;
 		} /* switch */
 	}
-	while (action == -1);
+	while (action == HelpAction(-1));
 
 	curr->topic_off = s_page_table[page].offset;
 	curr->link      = curr_link;
@@ -790,7 +784,7 @@ static int help_topic(HIST *curr, HIST *next, int flags)
 	return action;
 }
 
-int help(int action)
+void help(HelpAction action)
 {
 	HIST      curr;
 	int       oldhelpmode;
@@ -799,13 +793,13 @@ int help(int action)
 
 	if (s_help_mode == -1)   /* is help disabled? */
 	{
-		return 0;
+		return;
 	}
 
 	if (s_help_file == NULL)
 	{
 		driver_buzzer(BUZZER_ERROR);
-		return 0;
+		return;
 	}
 
 	s_buffer = new char[MAX_PAGE_SIZE];
@@ -815,7 +809,7 @@ int help(int action)
 	if ((s_buffer == NULL) || (NULL == s_link_table) || (NULL == s_page_table))
 	{
 		driver_buzzer(BUZZER_ERROR);
-		return 0;
+		return;
 	}
 
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
@@ -901,8 +895,8 @@ int help(int action)
 			else
 			{
 				display_page("Unknown Help Topic", NULL, 0, 0, 1, 0, NULL, NULL);
-				action = -1;
-				while (action == -1)
+				action = HelpAction(-1);
+				while (action == HelpAction(-1))
 				{
 					switch (driver_get_key())
 					{
@@ -939,8 +933,6 @@ int help(int action)
 	driver_unstack_screen();
 	s_help_mode = oldhelpmode;
 	g_timer_start += clock_ticks();
-
-	return 0;
 }
 
 static int can_read_file(char *path)

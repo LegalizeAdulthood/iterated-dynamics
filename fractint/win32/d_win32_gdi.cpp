@@ -151,7 +151,7 @@ static int handle_special_keys(int ch)
 	if (FIK_F1 == ch && get_help_mode() && !inside_help)
 	{
 		inside_help = 1;
-		help(0);
+		help(ACTION_CALL);
 		inside_help = 0;
 		ch = 0;
 	}

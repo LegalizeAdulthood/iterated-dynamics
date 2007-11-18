@@ -1337,7 +1337,7 @@ static int sel_fractype_help(int curkey, int choice)
 	if (curkey == FIK_F2)
 	{
 		HelpModeSaver saved_help(g_fractal_specific[(*(ft_choices + choice))->num].helptext);
-		help(0);
+		help(ACTION_CALL);
 	}
 	return 0;
 }
