@@ -1217,6 +1217,15 @@ int get_a_filename(const char *hdg, char *file_template, std::string &filename)
 	return result;
 }
 
+int get_a_filename(const char *hdg, std::string &file_template, std::string &filename)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, file_template.c_str());
+	int result = get_a_filename(hdg, buffer, filename);
+	file_template = buffer;
+	return result;
+}
+
 int get_a_filename(const char *hdg, char *file_template, char *flname)
 {
 	int rds;  /* if getting an RDS image map */

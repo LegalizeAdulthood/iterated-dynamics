@@ -6,6 +6,7 @@ extern std::string g_color_file;
 extern std::string g_command_comment[4];
 extern std::string g_command_file;
 extern std::string g_command_name;
+extern std::string g_gif_mask;
 extern std::string g_read_name;
 
 extern int command_files(int, char **);
