@@ -207,6 +207,14 @@ void ensure_slash_on_directory(char *dirname)
 	strcat(dirname, SLASH);
 }
 
+void ensure_slash_on_directory(std::string &dirname)
+{
+	if ((dirname.length() == 0) || (dirname[dirname.length()-1] != '/'))
+	{
+		dirname.append(SLASH);
+	}
+}
+
 static void dir_name(std::string &target, const std::string &dir, const std::string &name)
 {
 	target = dir + name;

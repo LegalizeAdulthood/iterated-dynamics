@@ -53,7 +53,7 @@ bool g_start_show_orbit = false;				/* show orbits on at start of fractal */
 std::string g_read_name;						/* name of fractal input file */
 char    g_temp_dir[FILE_MAX_DIR] = {""};		/* name of temporary directory */
 char    g_work_dir[FILE_MAX_DIR] = {""};		/* name of directory for misc files */
-char    g_organize_formula_dir[FILE_MAX_DIR] = {""}; /*name of directory for orgfrm files*/
+std::string g_organize_formula_dir = "";		/*name of directory for orgfrm files*/
 std::string g_gif_mask;
 char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
 std::string g_autokey_name = "auto.key";		/* record auto keystrokes here */
@@ -2109,7 +2109,7 @@ static int organize_formula_dir_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_organize_formula_search = true;
-	strcpy(g_organize_formula_dir, context.value);
+	g_organize_formula_dir = context.value;
 	ensure_slash_on_directory(g_organize_formula_dir);
 	return COMMANDRESULT_OK;
 }

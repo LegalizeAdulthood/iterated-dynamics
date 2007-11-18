@@ -237,7 +237,6 @@ extern int					g_orbit_delay;
 extern int					g_orbit_draw_mode;
 extern long					g_orbit_interval;
 extern int					g_orbit_index;
-extern char					g_organize_formula_dir[];
 extern bool					g_organize_formula_search;
 extern float				g_origin_fp;
 extern int					(*g_out_line) (BYTE *, int);
