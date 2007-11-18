@@ -80,7 +80,6 @@ extern double				g_dx_size;
 extern double				(_fastcall *g_dy_pixel)(); /* set in FRACTALS.C */
 extern double				g_dy_size;
 extern bool					g_escape_exit_flag;
-extern char					g_exe_path[];
 extern int					g_evolving_flags;
 extern evolution_info		*g_evolve_handle;
 extern float				g_eyes_fp;

@@ -178,7 +178,7 @@ int		g_cross_hair_box_size;
 
 UserInterfaceState g_ui_state;
 
-char	g_exe_path[FILE_MAX_PATH] = { 0 };
+std::string g_exe_path;
 
 #define CONTINUE          4
 
@@ -251,13 +251,13 @@ static void set_exe_path(char *path)
 			{
 				strcat(end, SLASH);
 			}
-			strcat(end, g_exe_path);
-			strcpy(g_exe_path, end);
+			strcat(end, g_exe_path.c_str());
+			g_exe_path = end;
 		}
 		else
 		{
-			strcpy(g_exe_path, DOTSLASH);
-			strcat(g_exe_path, path);
+			g_exe_path = DOTSLASH;
+			g_exe_path.append(path);
 		}
 	}
 }
