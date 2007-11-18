@@ -9,6 +9,8 @@ extern std::string g_command_name;
 extern std::string g_gif_mask;
 extern std::string g_ifs_filename;
 extern std::string g_ifs_name;
+extern std::string g_l_system_filename;
+extern std::string g_l_system_name;
 extern std::string g_read_name;
 
 extern int command_files(int, char **);

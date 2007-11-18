@@ -861,13 +861,13 @@ top:
 		if (g_fractal_type == FRACTYPE_L_SYSTEM)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
-			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_l_system_name);
+			driver_put_string(s_row + 1, 16, C_GENERAL_HI, g_l_system_name.c_str());
 			driver_put_string(s_row + 2, 3, C_GENERAL_MED, "Item file:");
-			if (int(strlen(g_l_system_filename)) >= 28)
+			if (g_l_system_filename.length() >= 28)
 			{
 				addrow = 1;
 			}
-			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_l_system_filename);
+			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_l_system_filename.c_str());
 		}
 		if (fractal_type_ifs(g_fractal_type))
 		{

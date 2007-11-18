@@ -476,7 +476,7 @@ static void got_formula_info(const fractal_info &read_info, struct ext_blk_formu
 	switch (read_info.fractal_type)
 	{
 	case FRACTYPE_L_SYSTEM:
-		strcpy(g_l_system_name, formula_info.form_name);
+		g_l_system_name = formula_info.form_name;
 		break;
 
 	case FRACTYPE_IFS:
