@@ -1070,7 +1070,7 @@ int get_commands()              /* execute commands from file */
 		commandmask, g_command_file, g_command_name);
 	if (point >= 0)
 	{
-		parmfile = fopen(g_command_file, "rb");
+		parmfile = fopen(g_command_file.c_str(), "rb");
 		if (parmfile != NULL)
 		{
 			fseek(parmfile, point, SEEK_SET);

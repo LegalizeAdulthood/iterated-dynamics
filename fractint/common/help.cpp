@@ -1606,13 +1606,23 @@ int field_prompt_help(int help_mode,
 	return result;
 }
 
-long get_file_entry_help(int help_mode,
-	int type, char *title, char *fmask, char *filename, char *entryname)
+long get_file_entry_help(int help_mode, int type,
+	const char *title, char *fmask, char *filename, char *entryname)
 {
 	int result;
 	push_help_mode(help_mode);
 	result = get_file_entry(type, title, fmask, filename, entryname);
 	pop_help_mode();
+	return result;
+}
+
+long get_file_entry_help(int help_mode, int type,
+	const char *title, char *fmask, std::string &filename, char *entryname)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, filename.c_str());
+	long result = get_file_entry_help(help_mode, type, title, fmask, buffer, entryname);
+	filename = buffer;
 	return result;
 }
 

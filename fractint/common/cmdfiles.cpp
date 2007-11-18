@@ -129,7 +129,7 @@ bool g_command_initialize = true;				/* first time into command_files? */
 FractalTypeSpecificData *g_current_fractal_specific = NULL;
 char	g_l_system_filename[FILE_MAX_PATH];		/* file to find (type=)L-System's in */
 char	g_l_system_name[ITEMNAMELEN + 1];		/* Name of L-System */
-char	g_command_file[FILE_MAX_PATH];			/* file to find command sets in */
+std::string g_command_file;						/* file to find command sets in */
 char	g_command_name[ITEMNAMELEN + 1];		/* Name of Command set */
 std::string g_command_comment[4];				/* comments for command set */
 char	g_ifs_filename[FILE_MAX_PATH];			/* file to find (type=)IFS in */
@@ -298,7 +298,7 @@ int command_files(int argc, char **argv)
 				*sptr = 0;
 				if (merge_path_names(g_command_file, &curarg[1], true) < 0)
 				{
-					init_msg("", g_command_file, 0);
+					init_msg("", g_command_file.c_str(), 0);
 				}
 				strcpy(g_command_name, sptr + 1);
 				if (find_file_item(g_command_file, g_command_name, &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
@@ -335,7 +335,7 @@ int command_files(int argc, char **argv)
 	g_dont_read_color = (g_color_preloaded && (g_show_file == SHOWFILE_PENDING));
 
 	/*set structure of search directories*/
-	strcpy(g_search_for.par, g_command_file);
+	strcpy(g_search_for.par, g_command_file.c_str());
 	strcpy(g_search_for.frm, g_formula_state.get_filename());
 	strcpy(g_search_for.lsys, g_l_system_filename);
 	strcpy(g_search_for.ifs, g_ifs_filename);
@@ -407,7 +407,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_formula_state.set_formula(NULL);
 	strcpy(g_l_system_filename, "fractint.l");
 	g_l_system_name[0] = 0;
-	strcpy(g_command_file, "fractint.par");
+	g_command_file = "fractint.par";
 	g_command_name[0] = 0;
 	for (i = 0; i < 4; i++)
 	{
@@ -874,10 +874,10 @@ static int make_par_arg(const cmd_context &context)
 		next = slash + 1;
 	}
 
-	strcpy(g_command_file, context.value);
-	if (strchr(g_command_file, '.') == NULL)
+	g_command_file = context.value;
+	if (strchr(g_command_file.c_str(), '.') == 0)
 	{
-		strcat(g_command_file, ".par");
+		g_command_file.append(".par");
 	}
 	if (strcmp(g_read_name.c_str(), DOTSLASH) == 0)
 	{
@@ -3523,7 +3523,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        3 command line @filename/setname */
 /* this is like stop_message() but can be used in command_files()      */
 /* call with NULL for badfilename to get pause for driver_get_key() */
-int init_msg(const char *cmdstr, char *bad_filename, int mode)
+int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 {
 	char *modestr[4] =
 	{

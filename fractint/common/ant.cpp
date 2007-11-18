@@ -3,20 +3,9 @@
  * This routine is a major rewrite by Luciano Genero & Fulvio Cappelli using
  * tables for speed, and adds a second ant type, multiple ants, and random
  * rules.
- *
- * Revision history:
- * 20 Mar 95 LG/FC First release of table driven version
- * 31 Mar 95 LG/FC Fixed a bug that writes one pixel off the screen
- * 31 Mar 95 LG/FC Changed ant type 1 to produce the same pattern as the
- *                   original implementation (they were mirrored on the
- *                   x axis)
- * 04 Apr 95 TW    Added wrap option and further modified the code to match
- *                   the original algorithm. It now matches exactly.
- * 10 Apr 95 TW    Suffix array does not contain enough memory. Crashes at
- *                   over 1024x768. Changed to extraseg.
- * 12 Apr 95 TW    Added maxants range check.
  */
 #include <string.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

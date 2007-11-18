@@ -1,23 +1,10 @@
 /*
-	STEREO.C a module to view 3D images.
-	Written in Borland 'C++' by Paul de Leeuw.
+	stereo.cpp a module to view 3D images.
 	From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
-
-	Change History:
-		11 June 94 - Modified to reuse existing Fractint arrays        TW
-		11 July 94 - Added depth parameter                             PDL
-		14 July 94 - Added grayscale option and did general cleanup    TW
-		19 July 94 - Fixed negative depth                              PDL
-		19 July 94 - Added calibration bars, get_min_max()             TW
-		24 Sep  94 - Added image save/restore, color cycle, and save   TW
-		28 Sep  94 - Added image map                                   TW
-		20 Mar  95 - Fixed endless loop bug with bad depth values      TW
-		23 Mar  95 - Allow arbitrary dimension image maps              TW
-
-		(TW is Tim Wegner, PDL is Paul de Leeuw)
 */
 #include <string.h>
 #include <time.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

@@ -3,7 +3,8 @@
 
 extern int full_screen_prompt(const char *heading, int num_prompts, const char **prompts,
 	struct full_screen_values *values, int function_key_mask, char *footer);
-extern long get_file_entry(int type, const char *title, char *fmask, char *filename, char *entryname);
+extern long get_file_entry(int type, const char *title, char *fmask,
+					char *filename, char *entryname);
 extern int get_fractal_type();
 extern int get_fractal_parameters(bool type_specific);
 extern int get_fractal_3d_parameters();

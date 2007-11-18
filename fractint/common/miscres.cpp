@@ -1459,7 +1459,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 
 	split_path(filename, drive, dir, fname, ext);
 	make_path(fullpath, "", "", fname, ext);
-	if (stricmp(filename, g_command_file))
+	if (stricmp(filename, g_command_file.c_str()))
 	{
 		infile = fopen(filename, "rb");
 		if (infile != NULL)
@@ -1528,12 +1528,12 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 
 	if (!found)
 	{
-		infile = fopen(g_command_file, "rb");
+		infile = fopen(g_command_file.c_str(), "rb");
 		if (infile != NULL)
 		{
 			if (scan_entries(infile, NULL, parsearchname) == -1)
 			{
-				strcpy(filename, g_command_file);
+				strcpy(filename, g_command_file.c_str());
 				found = 1;
 			}
 			else
@@ -1667,6 +1667,14 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 	return 0;
 }
 
+int find_file_item(std::string &filename, const char *itemname, FILE **fileptr, int itemtype)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, filename.c_str());
+	int result = find_file_item(buffer, itemname, fileptr, itemtype);
+	filename = buffer;
+	return result;
+}
 
 int file_gets(char *buf, int maxlen, FILE *infile)
 {

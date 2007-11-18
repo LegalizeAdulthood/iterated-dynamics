@@ -1,10 +1,11 @@
-/* d_win32.c
+/* d_win32.cpp
  *
  * Routines for a Win32 GDI driver for fractint.
  */
 #include <assert.h>
 #include <stdio.h>
 #include <time.h>
+#include <string>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT

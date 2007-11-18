@@ -4,13 +4,14 @@
 extern std::string g_autokey_name;
 extern std::string g_color_file;
 extern std::string g_command_comment[4];
+extern std::string g_command_file;
 extern std::string g_read_name;
 
 extern int command_files(int, char **);
 extern int load_commands(FILE *);
 extern int get_curarg_len(char *curarg);
 extern int get_max_curarg_len(char *floatvalstr[], int totparm);
-extern int init_msg(const char *, char *, int);
+extern int init_msg(const char *, const char *bad_filename, int mode);
 extern int process_command(char *curarg, int mode);
 extern int get_power_10(LDBL x);
 extern void pause_error(int);

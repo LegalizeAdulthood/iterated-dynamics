@@ -1,9 +1,10 @@
-/* d_win32_disk.c
+/* d_win32_disk.cpp
  *
  * Routines for a Win32 disk video mode driver for fractint.
  */
 #include <assert.h>
 #include <stdio.h>
+#include <string>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT

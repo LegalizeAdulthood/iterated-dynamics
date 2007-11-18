@@ -42,7 +42,6 @@ extern int					g_color_state;
 extern int					g_color_bright;					/* brightest color in palette */
 extern int					g_color_dark;					/* darkest color in palette */
 extern int					g_color_medium;					/* nearest to medbright grey in palette */
-extern char					g_command_file[FILE_MAX_PATH];
 extern char					g_command_name[ITEMNAMELEN + 1];
 extern bool					g_compare_gif;
 extern long					g_gaussian_constant;
