@@ -41,6 +41,7 @@
 #include "evolve.h"
 #include "fihelp.h"
 #include "filesystem.h"
+#include "fimain.h"
 #include "FiniteAttractor.h"
 #include "fracsubr.h"
 #include "history.h"
@@ -1418,11 +1419,11 @@ retry_dir:
 		static int lastdir = 0;
 		if (lastdir == 0)
 		{
-			strcpy(dir, g_fract_dir1);
+			strcpy(dir, g_fract_dir1.c_str());
 		}
 		else
 		{
-			strcpy(dir, g_fract_dir2);
+			strcpy(dir, g_fract_dir2.c_str());
 		}
 		ensure_slash_on_directory(dir);
 		make_path(flname, drive, dir, "", "");

@@ -1400,6 +1400,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\headers\fimain.h"
+				>
+			</File>
+			<File
 				RelativePath=".\headers\fractint.h"
 				>
 			</File>
