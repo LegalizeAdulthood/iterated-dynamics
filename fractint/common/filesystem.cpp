@@ -591,6 +591,14 @@ nextname:
 	}
 }
 
+void update_save_name(std::string &filename)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, filename.c_str());
+	update_save_name(buffer);
+	filename = buffer;
+}
+
 void update_save_name(char *filename) /* go to the next file name */
 {
 	char drive[FILE_MAX_DRIVE];

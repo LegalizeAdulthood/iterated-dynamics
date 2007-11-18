@@ -13,6 +13,7 @@ extern std::string g_l_system_filename;
 extern std::string g_l_system_name;
 extern std::string g_organize_formula_dir;
 extern std::string g_read_name;
+extern std::string g_save_name;
 
 extern int command_files(int, char **);
 extern int load_commands(FILE *);

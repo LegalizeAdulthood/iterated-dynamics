@@ -55,7 +55,7 @@ char    g_temp_dir[FILE_MAX_DIR] = {""};		/* name of temporary directory */
 char    g_work_dir[FILE_MAX_DIR] = {""};		/* name of directory for misc files */
 std::string g_organize_formula_dir = "";		/*name of directory for orgfrm files*/
 std::string g_gif_mask;
-char    g_save_name[FILE_MAX_PATH] = {"fract001"};  /* save files using this name */
+std::string g_save_name = "id001";			/* save files using this name */
 std::string g_autokey_name = "auto.key";		/* record auto keystrokes here */
 bool g_potential_flag = false;					/* continuous potential enabled? */
 bool g_potential_16bit;							/* store 16 bit continuous potential values */

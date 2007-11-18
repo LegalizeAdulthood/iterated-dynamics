@@ -315,6 +315,15 @@ int save_to_disk(char *filename)
 	}
 }
 
+int save_to_disk(std::string &filename)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, filename.c_str());
+	int result = save_to_disk(buffer);
+	filename = buffer;
+	return result;
+}
+
 static int write_byte(int value)
 {
 	return fputc(value & 0xFF, g_outfile);

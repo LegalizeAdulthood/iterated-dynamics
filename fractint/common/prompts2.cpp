@@ -126,10 +126,10 @@ static int inside_mode()
 	return -1;
 }
 
-static char *save_name()
+static std::string save_name()
 {
-	char *result = ::strrchr(g_save_name, SLASHC);
-	return (result == NULL) ? g_save_name : result+1;
+	std::string::size_type pos = g_save_name.find_last_of(SLASHC);
+	return (pos == std::string::npos) ? g_save_name : g_save_name.substr(pos + 1);
 }
 
 /* --------------------------------------------------------------------- */
@@ -156,8 +156,7 @@ int get_toggles()
 	long old_max_iteration = g_max_iteration;
 	int old_inside = g_inside;
 	int old_outside = g_outside;
-	char previous_save_name[FILE_MAX_DIR + 1];
-	strcpy(previous_save_name, g_save_name);
+	std::string previous_save_name = g_save_name;
 	int old_sound_flags = g_sound_state.flags();
 	long old_log_palette_flag = g_log_palette_mode;
 	int old_biomorph = g_user_biomorph;
@@ -192,8 +191,7 @@ int get_toggles()
 	};
 	dialog.push("Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)",
 		outsidemodes, NUM_OF(outsidemodes), g_outside >= 0 ? 0 : -g_outside);
-	char *savenameptr = save_name();
-	dialog.push("Savename (.GIF implied)", savenameptr);
+	dialog.push("Savename (.GIF implied)", save_name().c_str());
 	dialog.push("File Overwrite ('overwrite=')", g_fractal_overwrite);
 	const char *soundmodes[5] =
 	{
@@ -323,8 +321,18 @@ int get_toggles()
 		j++;
 	}
 
-	::strcpy(savenameptr, dialog.values(++k).uval.sval);
-	if (::strcmp(g_save_name, previous_save_name))
+	{
+		std::string::size_type pos = g_save_name.find_last_of(SLASHC);
+		if (pos != std::string::npos)
+		{
+			g_save_name.replace(pos+1, std::string::npos, dialog.values(++k).uval.sval);
+		}
+		else
+		{
+			g_save_name = dialog.values(++k).uval.sval;
+		}
+	}
+	if (g_save_name != previous_save_name)
 	{
 		g_resave_mode = RESAVE_NO;
 		g_started_resaves = false; /* forget pending increment */
