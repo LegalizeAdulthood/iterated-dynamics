@@ -1293,6 +1293,10 @@ struct search_path
 
 struct affine
 {
+	/*
+		x' = [ a b ]*x + [ e ]
+			 [ c d ]     [ f ]
+	*/
 	/* weird order so a,b,e and c,d,f are vectors */
 	double a;
 	double b;
