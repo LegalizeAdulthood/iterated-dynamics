@@ -81,7 +81,7 @@ static  int input_field_list(int attr, char *fld, int vlen, const char **list, i
 							int row, int col, int (*checkkey)(int key));
 static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
-static  long gfe_choose_entry(int type, const char *title, char *filename, char *entryname);
+static long gfe_choose_entry(int type, const char *title, const char *filename, char *entryname);
 static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int, char *);
@@ -1315,15 +1315,15 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	if (done >= 0)
 	{
 		done = choices[done]->num;
-		if (fractal_type_formula(done) && !strcmp(g_formula_state.get_filename(), g_command_file))
+		if (fractal_type_formula(done) && !strcmp(g_formula_state.get_filename(), g_command_file.c_str()))
 		{
 			g_formula_state.set_filename(g_search_for.frm);
 		}
-		if (done == FRACTYPE_L_SYSTEM && !strcmp(g_l_system_filename, g_command_file))
+		if (done == FRACTYPE_L_SYSTEM && !strcmp(g_l_system_filename, g_command_file.c_str()))
 		{
 			strcpy(g_l_system_filename, g_search_for.lsys);
 		}
-		if (fractal_type_ifs(done) && !strcmp(g_ifs_filename, g_command_file))
+		if (fractal_type_ifs(done) && !strcmp(g_ifs_filename, g_command_file.c_str()))
 		{
 			strcpy(g_ifs_filename, g_search_for.ifs);
 		}
@@ -2562,7 +2562,7 @@ top:
 }
 
 /* subrtn of get_file_entry, separated so that storage gets freed up */
-static long gfe_choose_entry(int type, const char *title, char *filename, char *entryname)
+static long gfe_choose_entry(int type, const char *title, const char *filename, char *entryname)
 {
 #ifdef XFRACT
 	char *o_instr = "Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort ";

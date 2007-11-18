@@ -27,8 +27,10 @@ extern int full_screen_prompt_help(int help_mode, const char *hdg, int numprompt
 	struct full_screen_values *values, int fkeymask, char *extrainfo);
 extern int field_prompt_help(int help_mode,
 	char *hdg, char *instr, char *fld, int len, int (*checkkey)(int));
-extern long get_file_entry_help(int help_mode,
-	int type, char *title, char *fmask, char *filename, char *entryname);
+extern long get_file_entry_help(int help_mode, int type,
+	const char *title, char *fmask, char *filename, char *entryname);
+long get_file_entry_help(int help_mode, int type,
+	const char *title, char *fmask, std::string &filename, char *entryname);
 extern int get_a_filename_help(int help_mode, char *hdg, char *file_template, char *flname);
 
 class HelpModeSaver

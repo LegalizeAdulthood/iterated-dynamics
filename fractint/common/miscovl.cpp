@@ -224,7 +224,7 @@ void MakeBatchFile::initialize()
 		set_max_color();
 		set_color_spec();
 	}
-	strcpy(m_in_parameter_command_file, g_command_file);
+	strcpy(m_in_parameter_command_file, g_command_file.c_str());
 	strcpy(m_in_parameter_command_name, g_command_name);
 	for (int i = 0; i < 4; i++)
 	{
@@ -474,10 +474,10 @@ prompt_user:
 				m_colors_only = true;
 			}
 
-			strcpy(g_command_file, m_in_parameter_command_file);
+			g_command_file = m_in_parameter_command_file;
 			if (has_extension(g_command_file) == NULL)
 			{
-				strcat(g_command_file, ".par");   /* default extension .par */
+				g_command_file.append(".par");   /* default extension .par */
 			}
 			strcpy(g_command_name, m_in_parameter_command_name);
 			for (int i = 0; i < 4; i++)
@@ -518,13 +518,13 @@ skip_UI:
 			strcpy(m_color_spec, (g_file_colors > 0) ? "y" : "n");
 			m_max_color = (g_make_par[1] == 0) ? 256 : g_file_colors;
 		}
-		strcpy(m_out_name, g_command_file);
+		strcpy(m_out_name, g_command_file.c_str());
 		bool got_input_file = false;
 		FILE *input_file = NULL;
-		if (access(g_command_file, 0) == 0)
+		if (access(g_command_file.c_str(), 0) == 0)
 		{                         /* file exists */
 			got_input_file = true;
-			if (access(g_command_file, 6))
+			if (access(g_command_file.c_str(), 6))
 			{
 				char buf[256];
 				sprintf(buf, "Can't write %s", g_command_file);
@@ -537,7 +537,7 @@ skip_UI:
 				m_out_name[i] = 0;
 			}
 			strcat(m_out_name, "fractint.tmp");
-			input_file = fopen(g_command_file, "rt");
+			input_file = fopen(g_command_file.c_str(), "rt");
 #ifndef XFRACT
 			setvbuf(input_file, g_text_stack, _IOFBF, 4096); /* improves speed */
 #endif
@@ -645,8 +645,8 @@ skip_UI:
 		fclose(parmfile);
 		if (got_input_file)
 		{                         /* replace the original file with the new */
-			unlink(g_command_file);   /* success assumed on these lines       */
-			rename(m_out_name, g_command_file);  /* since we checked earlier with access */
+			_unlink(g_command_file.c_str());   /* success assumed on these lines       */
+			rename(m_out_name, g_command_file.c_str());  /* since we checked earlier with access */
 		}
 		break;
 	}

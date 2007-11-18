@@ -1,9 +1,9 @@
 /*
 	Miscellaneous fractal-specific code
 */
-
 #include <string.h>
 #include <limits.h>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"
