@@ -1604,7 +1604,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 
 	if (!found && g_organize_formula_search && itemtype == 1)
 	{
-		split_path(g_organize_formula_dir, drive, dir, NULL, NULL);
+		split_path(g_organize_formula_dir.c_str(), drive, dir, NULL, NULL);
 		fname[0] = '_';
 		fname[1] = (char) 0;
 		if (isalpha(itemname[0]))
