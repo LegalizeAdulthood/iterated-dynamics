@@ -1317,17 +1317,6 @@ struct GENEBASE  /* smallest part of a fractint 'gene' */
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
 
 
-#if _MSC_VER == 800
-#ifndef FIXTAN_DEFINED
-/* !!!!! stupid MSVC tan(x) bug fix !!!!!!!!            */
-/* tan(x) can return -tan(x) if -pi/2 < x < pi/2       */
-/* if tan(x) has been called before outside this range. */
-double fixtan( double x );
-#define tan fixtan
-#define FIXTAN_DEFINED
-#endif
-#endif
-
 struct entryinfo
 {
 	char name[ITEMNAMELEN + 2];

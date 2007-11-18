@@ -379,9 +379,6 @@ bool is_a_directory(char *s)
 {
 	int len;
 	char sv;
-#ifdef _MSC_VER
-	unsigned attrib = 0;
-#endif
 	if (strchr(s, '*') || strchr(s, '?'))
 	{
 		return false; /* for my purposes, not a directory */
@@ -397,24 +394,6 @@ bool is_a_directory(char *s)
 		sv = 0;
 	}
 
-#ifdef _MSC_VER
-	if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
-	{
-		return true;  /* not a directory or doesn't exist */
-	}
-	else if (sv == SLASHC)
-	{
-		/* strip trailing slash and try again */
-		s[len-1] = 0;
-		if (_dos_getfileattr(s, &attrib) == 0 && ((attrib&_A_SUBDIR) != 0))
-		{
-			s[len-1] = sv;
-			return true;
-		}
-		s[len-1] = sv;
-	}
-	return false;
-#else
 	if (fr_find_first(s) != 0) /* couldn't find it */
 	{
 		/* any better ideas?? */
@@ -452,7 +431,6 @@ bool is_a_directory(char *s)
 		}
 	}
 	return false;
-#endif
 }
 #endif
 
