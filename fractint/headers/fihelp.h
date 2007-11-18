@@ -1,6 +1,8 @@
 #if !defined(FRACTINT_HELP_H)
 #define FRACTINT_HELP_H
 
+extern std::string g_exe_path;
+
 enum HelpAction
 {
 	ACTION_CALL = 0,

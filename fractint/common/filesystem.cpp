@@ -387,6 +387,14 @@ void split_path(const char *file_template, char *drive, char *dir, char *filenam
 
 	get_filename_ext(file_template, filename, extension, length, offset);
 }
+
+void split_path(const char *file_template, char *drive, std::string &dir, char *filename, char *extension)
+{
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, dir.c_str());
+	split_path(file_template, drive, buffer, filename, extension);
+	dir = buffer;
+}
 #endif
 
 #if !defined(_WIN32)

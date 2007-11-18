@@ -952,7 +952,7 @@ static int can_read_file(char *path)
 
 static int exe_path(char *filename, char *path)
 {
-	strcpy(path, g_exe_path);
+	strcpy(path, g_exe_path.c_str());
 	strcat(path, filename);
 	return 1;
 }
