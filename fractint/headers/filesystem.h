@@ -26,5 +26,6 @@ extern void find_path(const char *filename, char *fullpathname);
 extern void check_write_file(char *filename, const char *ext);
 extern void check_write_file(std::string &name, const char *ext);
 extern void update_save_name(char *filename);
+extern void update_save_name(std::string &filename);
 
 #endif

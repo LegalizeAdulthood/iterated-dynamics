@@ -306,7 +306,6 @@ extern int					g_random_seed;
 extern long					g_save_base;
 extern ComplexD				g_save_c;
 extern int					g_save_dac;
-extern char					g_save_name[];
 extern long					g_save_ticks;
 extern int					g_save_release;
 extern float				g_screen_aspect_ratio;

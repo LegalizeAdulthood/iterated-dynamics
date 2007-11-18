@@ -953,7 +953,7 @@ top:
 	}
 	s_row += addrow;
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Savename: ");
-	driver_put_string(s_row, -1, C_GENERAL_HI, g_save_name);
+	driver_put_string(s_row, -1, C_GENERAL_HI, g_save_name.c_str());
 
 	++s_row;
 

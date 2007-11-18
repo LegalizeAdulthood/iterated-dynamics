@@ -7,8 +7,9 @@
 #include "port.h"
 #include "prototyp.h"
 #include "externs.h"
-#include "drivers.h"
 
+#include "cmdfiles.h"
+#include "drivers.h"
 #include "diskvid.h"
 #include "realdos.h"
 
@@ -143,7 +144,7 @@ int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			sprintf(buf, "%d", g_colors);
 			driver_put_string(-1, -1, C_DVID_LO, buf);
 		}
-		sprintf(buf, "Save name: %s", g_save_name);
+		sprintf(buf, "Save name: %s", g_save_name.c_str());
 		driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, buf);
 		driver_put_string(BOX_ROW + 10, BOX_COL + 4, C_DVID_LO, "Status:");
 		disk_video_status(0, "clearing the 'screen'");
