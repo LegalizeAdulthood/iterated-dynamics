@@ -2,6 +2,7 @@
 #define CMD_FILES_H
 
 extern std::string g_read_name;
+extern std::string g_autokey_name;
 
 extern int command_files(int, char **);
 extern int load_commands(FILE *);
