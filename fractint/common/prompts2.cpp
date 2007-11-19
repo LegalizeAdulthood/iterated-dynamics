@@ -1122,14 +1122,14 @@ void goodbye()                  /* we done.  Bail out */
 #ifdef WINFRACT
 	return;
 #endif
-	if (*g_make_par != 0)
+	if (g_make_par_flag)
 	{
 		driver_set_for_text();
 	}
 #ifdef XFRACT
 	UnixDone();
 #endif
-	if (*g_make_par != 0)
+	if (g_make_par_flag)
 	{
 		driver_move_cursor(6, 0);
 	}

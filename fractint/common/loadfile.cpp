@@ -73,7 +73,7 @@ static void read_info_version_0(const fractal_info &read_info)
 		g_potential_parameter[0] = read_info.potential[0];
 		g_potential_parameter[1] = read_info.potential[1];
 		g_potential_parameter[2] = read_info.potential[2];
-		if (*g_make_par == '\0')
+		if (!g_make_par_flag)
 		{
 			g_colors = read_info.colors;
 		}
@@ -851,7 +851,7 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 		g_file_aspect_ratio = g_screen_aspect_ratio;
 	}
 
-	if (*g_make_par == 0 && (gifstart[10] & 0x80) != 0)
+	if (!g_make_par_flag && (gifstart[10] & 0x80) != 0)
 	{
 		for (int i = 0; i < g_file_colors; i++)
 		{

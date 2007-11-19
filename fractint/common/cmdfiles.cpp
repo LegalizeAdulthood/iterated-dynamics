@@ -173,7 +173,8 @@ BYTE	g_text_colors[]=
 		BLACK*16 + L_WHITE,   /* C_PRIMARY         primary authors */
 		BLACK*16 + WHITE      /* C_CONTRIB         contributing authors */
 };
-char	g_make_par[] =          "makepar";
+bool g_make_par_flag = true;
+bool g_make_par_colors_only = true;
 
 int  process_command(char *, int);
 
@@ -903,7 +904,7 @@ static int make_par_arg(const cmd_context &context)
 	{
 		g_command_name = next;
 	}
-	*g_make_par = 0; /* used as a flag for makepar case */
+	g_make_par_flag = false;
 	if (g_read_name.length() != 0)
 	{
 		if (read_overlay() != 0)
@@ -913,7 +914,7 @@ static int make_par_arg(const cmd_context &context)
 	}
 	else if (g_map_name.length() != 0)
 	{
-		g_make_par[1] = 0; /* second char is flag for map */
+		g_make_par_colors_only = false;
 	}
 	g_x_dots = g_file_x_dots;
 	g_y_dots = g_file_y_dots;
