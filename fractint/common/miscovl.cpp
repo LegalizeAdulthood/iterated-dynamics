@@ -21,6 +21,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fihelp.h"
@@ -999,13 +1000,13 @@ void write_batch_parms_initial_orbit()
 
 void write_batch_parms_passes()
 {
-	if (g_user_standard_calculation_mode != 'g')
+	if (g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
 	{
-		put_parm(" passes=%c", g_user_standard_calculation_mode);
+		put_parm(" passes=%c", char(g_user_standard_calculation_mode));
 	}
 	if (g_stop_pass != 0)
 	{
-		put_parm(" passes=%c%c", g_user_standard_calculation_mode, char(g_stop_pass + '0'));
+		put_parm(" passes=%c%c", char(g_user_standard_calculation_mode), char(g_stop_pass + '0'));
 	}
 }
 
@@ -1469,7 +1470,7 @@ void write_batch_parms_screen_coords()
 
 void write_batch_parms_orbit_corners()
 {
-	if (g_user_standard_calculation_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
+	if (g_user_standard_calculation_mode == CALCMODE_ORBITS && g_set_orbit_corners && g_keep_screen_coords)
 	{
 		put_parm(" orbitcorners=");
 		int xdigits = getprec(g_orbit_x_min, g_orbit_x_max, g_orbit_x_3rd);

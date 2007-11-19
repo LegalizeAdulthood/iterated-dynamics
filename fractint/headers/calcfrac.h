@@ -3,6 +3,23 @@
 
 #define DEM_BAILOUT 535.5  /* (pb: not sure if this is special or arbitrary) */
 
+enum CalculationMode
+{
+	CALCMODE_SINGLE_PASS = '1',
+	CALCMODE_DUAL_PASS = '2',
+	CALCMODE_TRIPLE_PASS = '3',
+	CALCMODE_SOLID_GUESS = 'g',
+	CALCMODE_BOUNDARY_TRACE = 'b',
+	CALCMODE_DIFFUSION = 'd',
+	CALCMODE_TESSERAL = 't',
+	CALCMODE_SYNCHRONOUS_ORBITS = 's',
+	CALCMODE_ORBITS = 'o'
+};
+
+extern CalculationMode g_user_standard_calculation_mode;
+extern CalculationMode g_standard_calculation_mode_old;
+extern CalculationMode g_standard_calculation_mode;
+
 extern int calculate_fractal();
 extern int calculate_mandelbrot_l();
 extern int calculate_mandelbrot_fp();

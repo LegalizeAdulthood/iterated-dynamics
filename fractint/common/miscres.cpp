@@ -19,6 +19,7 @@
 #include "fractype.h"
 #include "helpdefs.h"
 
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fihelp.h"
@@ -965,14 +966,14 @@ top:
 		case GOT_STATUS_12PASS:
 			sprintf(msg, "%d Pass Mode", g_total_passes);
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
-			if (g_user_standard_calculation_mode == '3')
+			if (g_user_standard_calculation_mode == CALCMODE_TRIPLE_PASS)
 			{
 				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
 			break;
 		case GOT_STATUS_GUESSING:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Solid Guessing");
-			if (g_user_standard_calculation_mode == '3')
+			if (g_user_standard_calculation_mode == CALCMODE_TRIPLE_PASS)
 			{
 				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
