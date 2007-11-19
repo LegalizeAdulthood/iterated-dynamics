@@ -1637,7 +1637,7 @@ void write_batch_parms_flush()
 
 void write_batch_parms_colors_header(char const *colorinf)
 {
-	if (g_record_colors == 'c' && colorinf[0] == '@')
+	if (g_record_colors == RECORDCOLORS_COMMENT && colorinf[0] == '@')
 	{
 		put_parm_line();
 		put_parm("; colors=");
@@ -1648,7 +1648,9 @@ void write_batch_parms_colors_header(char const *colorinf)
 
 void write_batch_parms_colors(const char *colorinf, int maxcolor)
 {
-	if (g_record_colors != 'c' && g_record_colors != 'y' && colorinf[0] == '@')
+	if (g_record_colors != RECORDCOLORS_COMMENT
+		&& g_record_colors != RECORDCOLORS_YES
+		&& colorinf[0] == '@')
 	{
 		put_parm(colorinf);
 	}

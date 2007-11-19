@@ -285,7 +285,6 @@ extern bool					g_quick_calculate;
 extern int					*g_ranges;
 extern int					g_ranges_length;
 extern long					g_real_color_iter;
-extern char					g_record_colors;
 extern int					g_release;
 extern int					g_resave_mode;
 extern bool					g_reset_periodicity;

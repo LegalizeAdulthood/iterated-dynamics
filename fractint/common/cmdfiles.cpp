@@ -47,7 +47,7 @@ int     g_pseudo_y = 0;							/* g_y_dots to use for video independence */
 int     g_bf_digits = 0;						/* digits to use (force) for g_bf_math */
 int     g_show_dot = -1;						/* color to show crawling graphics cursor */
 int     g_size_dot;								/* size of dot crawling cursor */
-char    g_record_colors;						/* default PAR color-writing method */
+RecordColorsKind g_record_colors;				/* default PAR color-writing method */
 AutoShowDotKind g_auto_show_dot = AUTOSHOWDOT_DEFAULT; /* dark, medium, bright */
 bool g_start_show_orbit = false;				/* show orbits on at start of fractal */
 std::string g_read_name;						/* name of fractal input file */
@@ -384,28 +384,28 @@ static void initialize_variables_once()              /* once per run init */
 static void initialize_variables_restart()          /* <ins> key init */
 {
 	int i;
-	g_record_colors = 'a';                  /* don't use mapfiles in PARs */
-	g_save_release = g_release;            /* this release number */
-	g_gif87a_flag = false;            /* turn on GIF89a processing */
-	g_dither_flag = false;                     /* no dithering */
-	g_ui_state.ask_video = true;                        /* turn on video-prompt flag */
-	g_fractal_overwrite = false;                 /* don't overwrite           */
-	g_sound_state.set_speaker_beep();		/* sound is on to PC speaker */
+	g_record_colors = RECORDCOLORS_AUTO;			/* don't use mapfiles in PARs */
+	g_save_release = g_release;						/* this release number */
+	g_gif87a_flag = false;							/* turn on GIF89a processing */
+	g_dither_flag = false;							/* no dithering */
+	g_ui_state.ask_video = true;					/* turn on video-prompt flag */
+	g_fractal_overwrite = false;					/* don't overwrite           */
+	g_sound_state.set_speaker_beep();				/* sound is on to PC speaker */
 	g_initialize_batch = INITBATCH_NONE;			/* not in batch mode         */
-	g_check_current_dir = false;		/* flag to check current dir for files */
-	g_save_time = 0;                    /* no auto-save              */
-	g_initial_adapter = -1;                       /* no initial video mode     */
+	g_check_current_dir = false;					/* flag to check current dir for files */
+	g_save_time = 0;								/* no auto-save              */
+	g_initial_adapter = -1;							/* no initial video mode     */
 	g_view_window = false;
 	g_view_reduction = 4.2f;
 	g_view_crop = true;
 	g_final_aspect_ratio = g_screen_aspect_ratio;
 	g_view_x_dots = 0;
 	g_view_y_dots = 0;
-	g_orbit_delay = 0;                     /* full speed orbits */
-	g_orbit_interval = 1;                  /* plot all orbits */
-	g_debug_mode = DEBUGMODE_NONE;				/* debugging flag(s) are off */
-	g_timer_flag = false;                       /* timer flags are off       */
-	g_formula_state.set_filename("fractint.frm"); /* default formula file      */
+	g_orbit_delay = 0;								/* full speed orbits */
+	g_orbit_interval = 1;							/* plot all orbits */
+	g_debug_mode = DEBUGMODE_NONE;					/* debugging flag(s) are off */
+	g_timer_flag = false;							/* timer flags are off       */
+	g_formula_state.set_filename("fractint.frm");	/* default formula file      */
 	g_formula_state.set_formula(NULL);
 	g_l_system_filename = "fractint.l";
 	g_l_system_name = "";
@@ -418,9 +418,9 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_ifs_filename = "fractint.ifs";
 	g_ifs_name = "";
 	reset_ifs_definition();
-	g_use_fixed_random_seed = false;                           /* not a fixed srand() seed */
+	g_use_fixed_random_seed = false;				/* not a fixed srand() seed */
 	g_random_seed = s_init_random_seed;
-	g_read_name = DOTSLASH;           /* initially current directory */
+	g_read_name = DOTSLASH;							/* initially current directory */
 	g_show_file = SHOWFILE_DONE;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	g_initial_cycle_limit = 55;						/* spin-DAC default speed limit */
@@ -1060,7 +1060,7 @@ static int record_colors_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_record_colors = *context.value;
+	g_record_colors = RecordColorsKind(*context.value);
 	return COMMANDRESULT_OK;
 }
 
