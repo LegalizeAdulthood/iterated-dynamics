@@ -83,26 +83,6 @@ private:
 	int *m_save_zoom;
 };
 
-#if 0
-/* makes a handly list of jul-man pairs, not for release */
-static void julman()
-{
-	FILE *fp;
-	int i;
-	fp = dir_fopen(g_work_dir, "toggle.txt", "w");
-	i = -1;
-	while (g_fractal_specific[++i].name)
-	{
-		if (!fractal_type_none(g_fractal_specific[i].tojulia) && !g_fractal_specific[i].is_hidden())
-		{
-			fprintf(fp, "%s  %s\n", g_fractal_specific[i].name,
-				g_fractal_specific[g_fractal_specific[i].tojulia].name);
-		}
-	}
-	fclose(fp);
-}
-#endif
-
 bool g_from_text_flag = false;         /* = 1 if we're in graphics mode */
 evolution_info *g_evolve_handle = NULL;
 char g_standard_calculation_mode_old;
