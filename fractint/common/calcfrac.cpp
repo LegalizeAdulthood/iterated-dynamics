@@ -3674,14 +3674,14 @@ void PerformWorkList::show_dot_start()
 	find_special_colors();
 	switch (g_auto_show_dot)
 	{
-	case 'd':
+	case AUTOSHOWDOT_DARK:
 		s_show_dot_color = g_color_dark % g_colors;
 		break;
-	case 'm':
+	case AUTOSHOWDOT_MEDIUM:
 		s_show_dot_color = g_color_medium % g_colors;
 		break;
-	case 'b':
-	case 'a':
+	case AUTOSHOWDOT_BRIGHT:
+	case AUTOSHOWDOT_AUTO:
 		s_show_dot_color = g_color_bright % g_colors;
 		break;
 	default:

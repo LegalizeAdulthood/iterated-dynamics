@@ -48,7 +48,7 @@ int     g_bf_digits = 0;						/* digits to use (force) for g_bf_math */
 int     g_show_dot = -1;						/* color to show crawling graphics cursor */
 int     g_size_dot;								/* size of dot crawling cursor */
 char    g_record_colors;						/* default PAR color-writing method */
-char    g_auto_show_dot = 0;					/* dark, medium, bright */
+AutoShowDotKind g_auto_show_dot = AUTOSHOWDOT_DEFAULT; /* dark, medium, bright */
 bool g_start_show_orbit = false;				/* show orbits on at start of fractal */
 std::string g_read_name;						/* name of fractal input file */
 std::string g_temp_dir = "";					/* name of temporary directory */
@@ -2365,12 +2365,12 @@ static int show_dot_arg(const cmd_context &context)
 	g_show_dot = 15;
 	if (context.totparms > 0)
 	{
-		g_auto_show_dot = 0;
+		g_auto_show_dot = AUTOSHOWDOT_DEFAULT;
 		if (isalpha(context.charval[0]))
 		{
 			if (strchr("abdm", int(context.charval[0])) != NULL)
 			{
-				g_auto_show_dot = context.charval[0];
+				g_auto_show_dot = AutoShowDotKind(context.charval[0]);
 			}
 			else
 			{

@@ -5,7 +5,6 @@
 extern int					g_adapter;							/* index into g_video_table[] */
 extern float				g_aspect_drift;
 extern int					g_atan_colors;
-extern char					g_auto_show_dot;
 extern int					g_auto_stereo_depth;
 extern double				g_auto_stereo_width;
 extern bool					g_bad_outside;

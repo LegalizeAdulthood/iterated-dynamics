@@ -1,6 +1,15 @@
 #if !defined(CMD_FILES_H)
 #define CMD_FILES_H
 
+enum AutoShowDotKind
+{
+	AUTOSHOWDOT_DEFAULT = 0,
+	AUTOSHOWDOT_DARK = 'd',
+	AUTOSHOWDOT_MEDIUM = 'm',
+	AUTOSHOWDOT_BRIGHT = 'b',
+	AUTOSHOWDOT_AUTO = 'a'
+};
+
 extern std::string g_autokey_name;
 extern std::string g_color_file;
 extern std::string g_command_comment[4];
@@ -17,6 +26,7 @@ extern std::string g_save_name;
 extern std::string g_temp_dir;
 extern std::string g_work_dir;
 
+extern AutoShowDotKind g_auto_show_dot;
 extern bool g_make_par_flag;
 extern bool g_make_par_colors_only;
 
