@@ -241,7 +241,7 @@ void MakeBatchFile::initialize()
 	m_xm = 1;
 	m_ym = 1;
 	video_mode_key_name(g_video_entry.keynum, m_video_mode);
-	m_colors_only = (g_make_par[1] == 0);
+	m_colors_only = (g_make_par_colors_only == false);
 	m_pdelx = 0.0;
 	m_pdely = 0.0;
 	m_pdelx2 = 0.0;
@@ -452,7 +452,7 @@ void MakeBatchFile::execute_step3(int i, int j)
 void MakeBatchFile::execute()
 {
 	initialize();
-	if (*g_make_par == 0)
+	if (!g_make_par_flag)
 	{
 		goto skip_UI;
 	}
@@ -468,7 +468,7 @@ prompt_user:
 				break;
 			}
 
-			if (m_color_spec[0] == 'o' || g_make_par[1] == 0)
+			if (m_color_spec[0] == 'o' || !g_make_par_colors_only)
 			{
 				strcpy(m_color_spec, "y");
 				m_colors_only = true;
@@ -513,10 +513,10 @@ prompt_user:
 			}
 		}
 skip_UI:
-		if (g_make_par[0] == 0)
+		if (!g_make_par_flag)
 		{
 			strcpy(m_color_spec, (g_file_colors > 0) ? "y" : "n");
-			m_max_color = (g_make_par[1] == 0) ? 256 : g_file_colors;
+			m_max_color = (!g_make_par_colors_only) ? 256 : g_file_colors;
 		}
 		strcpy(m_out_name, g_command_file.c_str());
 		bool got_input_file = false;
@@ -566,7 +566,7 @@ skip_UI:
 					&& stricmp(buf2, g_command_name.c_str()) == 0)
 				{                   /* entry with same name */
 					_snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-						g_command_name, (*g_make_par == 0) ?
+						g_command_name, (!g_make_par_flag) ?
 						"... Replacing ..." : "Continue to replace it, Cancel to back out");
 					if (stop_message(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
 					{                /* cancel */

@@ -341,7 +341,6 @@ extern double				g_sy_max;
 extern double				g_sy_min;
 extern SymmetryType			g_symmetry;
 extern int					g_sy_offset;
-extern char					g_make_par[];
 extern bool					g_tab_display_enabled;
 extern bool					g_targa_output;
 extern bool					g_targa_overlay;

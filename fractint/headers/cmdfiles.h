@@ -15,6 +15,9 @@ extern std::string g_organize_formula_dir;
 extern std::string g_read_name;
 extern std::string g_save_name;
 
+extern bool g_make_par_flag;
+extern bool g_make_par_colors_only;
+
 extern int command_files(int, char **);
 extern int load_commands(FILE *);
 extern int get_curarg_len(char *curarg);
