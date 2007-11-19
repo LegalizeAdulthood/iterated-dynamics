@@ -11,6 +11,7 @@
 #include "port.h"
 #include "prototyp.h"
 
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "filesystem.h"
 #include "line3d.h"
