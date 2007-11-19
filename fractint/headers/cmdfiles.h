@@ -15,6 +15,7 @@ extern std::string g_organize_formula_dir;
 extern std::string g_read_name;
 extern std::string g_save_name;
 extern std::string g_temp_dir;
+extern std::string g_work_dir;
 
 extern bool g_make_par_flag;
 extern bool g_make_par_colors_only;

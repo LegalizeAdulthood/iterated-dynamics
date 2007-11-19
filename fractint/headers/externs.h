@@ -389,7 +389,6 @@ extern int					g_view_y_dots;
 extern int					g_vx_dots;
 extern int					g_which_image;
 extern float				g_width_fp;
-extern char					g_work_dir[];
 extern int					g_x_dots;
 extern int					g_x_shift1;
 extern int					g_x_shift;
