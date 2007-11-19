@@ -483,8 +483,8 @@ int calculate_fractal()
 	if (g_is_true_color && g_true_mode_iterates)
 	{
 		/* Have to force passes = 1 */
-		g_user_standard_calculation_mode = '1';
-		g_standard_calculation_mode = '1';
+		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 	}
 	if (g_true_color)
 	{
@@ -492,8 +492,8 @@ int calculate_fractal()
 		if (start_disk1(g_light_name, NULL, false) == 0)
 		{
 			/* Have to force passes = 1 */
-			g_user_standard_calculation_mode = '1';
-			g_standard_calculation_mode = '1';
+			g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+			g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 			g_plot_color_put_color = put_truecolor_disk;
 		}
 		else
@@ -503,10 +503,10 @@ int calculate_fractal()
 	}
 	if (!g_escape_time_state.m_use_grid)
 	{
-		if (g_user_standard_calculation_mode != 'o')
+		if (g_user_standard_calculation_mode != CALCMODE_ORBITS)
 		{
-			g_user_standard_calculation_mode = '1';
-			g_standard_calculation_mode = '1';
+			g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+			g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 		}
 	}
 
@@ -745,29 +745,28 @@ int calculate_fractal()
 	}
 	else /* standard escape-time engine */
 	{
-		if (g_standard_calculation_mode == '3')  /* convoluted 'g' + '2' hybrid */
+		if (g_standard_calculation_mode == CALCMODE_TRIPLE_PASS)  /* convoluted 'g' + '2' hybrid */
 		{
-			int oldcalcmode;
-			oldcalcmode = g_standard_calculation_mode;
+			CalculationMode oldcalcmode = g_standard_calculation_mode;
 			if (!g_resuming || g_three_pass)
 			{
-				g_standard_calculation_mode = 'g';
+				g_standard_calculation_mode = CALCMODE_SOLID_GUESS;
 				g_three_pass = true;
 				timer_engine((int (*)()) perform_work_list);
 				if (g_calculation_status == CALCSTAT_COMPLETED)
 				{
 					/* '2' is silly after 'g' for low rez */
-					g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
+					g_standard_calculation_mode = (g_x_dots >= 640) ? CALCMODE_DUAL_PASS : CALCMODE_SINGLE_PASS;
 					timer_engine((int (*)()) perform_work_list);
 					g_three_pass = false;
 				}
 			}
 			else /* resuming '2' pass */
 			{
-				g_standard_calculation_mode = (g_x_dots >= 640) ? '2' : '1';
+				g_standard_calculation_mode = (g_x_dots >= 640) ? CALCMODE_DUAL_PASS : CALCMODE_SINGLE_PASS;
 				timer_engine((int (*)()) perform_work_list);
 			}
-			g_standard_calculation_mode = char(oldcalcmode);
+			g_standard_calculation_mode = oldcalcmode;
 		}
 		else /* main case, much nicer! */
 		{
@@ -1003,7 +1002,7 @@ static int draw_orbits()
 
 	if (plot_orbits_2d_setup() == -1)
 	{
-		g_standard_calculation_mode = 'g';
+		g_standard_calculation_mode = CALCMODE_SOLID_GUESS;
 		return -1;
 	}
 
@@ -1025,11 +1024,11 @@ static int one_or_two_pass()
 	int i;
 
 	g_total_passes = 1;
-	if (g_standard_calculation_mode == '2')
+	if (g_standard_calculation_mode == CALCMODE_DUAL_PASS)
 	{
 		g_total_passes = 2;
 	}
-	if (g_standard_calculation_mode == '2' && g_work_pass == 0) /* do 1st pass of two */
+	if (g_standard_calculation_mode == CALCMODE_DUAL_PASS && g_work_pass == 0) /* do 1st pass of two */
 	{
 		if (standard_calculate(1) == -1)
 		{
@@ -1083,7 +1082,7 @@ static int _fastcall standard_calculate(int passnum)
 					continue;
 				}
 			}
-			if (passnum == 1 || g_standard_calculation_mode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
+			if (passnum == 1 || g_standard_calculation_mode == CALCMODE_SINGLE_PASS || (g_row&1) != 0 || (g_col&1) != 0)
 			{
 				if ((*g_calculate_type)() == -1) /* standard_fractal(), calculate_mandelbrot_l() or calculate_mandelbrot_fp() */
 				{
@@ -1140,7 +1139,7 @@ int calculate_mandelbrot_l()              /* fast per pixel 1/2/b/g, called with
 		}
 		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
 		{
-			if (g_color <= 0 && g_standard_calculation_mode == 'b')   /* fix BTM bug */
+			if (g_color <= 0 && g_standard_calculation_mode == CALCMODE_BOUNDARY_TRACE)
 			{
 				g_color = 1;
 			}
@@ -1259,7 +1258,7 @@ int calculate_mandelbrot_fp()
 		}
 		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
 		{
-			if (g_color == 0 && g_standard_calculation_mode == 'b' )   /* fix BTM bug */
+			if (g_color == 0 && g_standard_calculation_mode == CALCMODE_BOUNDARY_TRACE)
 			{
 				g_color = 1;
 			}
@@ -2265,7 +2264,7 @@ void StandardFractal::set_final_color_and_plot()
 	}
 	if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
 	{
-		if (g_color <= 0 && g_standard_calculation_mode == 'b' )   /* fix BTM bug */
+		if (g_color <= 0 && g_standard_calculation_mode == CALCMODE_BOUNDARY_TRACE)
 		{
 			g_color = 1;
 		}
@@ -2895,7 +2894,7 @@ static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper
 	/* pixel number for origin */
 	/* if axis between 2 pixels, not on one */
 	g_symmetry = SYMMETRY_X_AXIS;
-	if (g_standard_calculation_mode == 's' || g_standard_calculation_mode == 'o')
+	if (g_standard_calculation_mode == CALCMODE_SYNCHRONOUS_ORBITS || g_standard_calculation_mode == CALCMODE_ORBITS)
 	{
 		return;
 	}
@@ -3564,9 +3563,9 @@ void PerformWorkList::setup_potential()
 {
 	if (g_potential_flag && g_potential_16bit)
 	{
-		char tmpcalcmode = g_standard_calculation_mode;
+		CalculationMode tmpcalcmode = g_standard_calculation_mode;
 
-		g_standard_calculation_mode = '1'; /* force 1 pass */
+		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 		if (!g_resuming)
 		{
 			if (disk_start_potential() < 0)
@@ -3580,17 +3579,20 @@ void PerformWorkList::setup_potential()
 
 void PerformWorkList::setup_standard_calculation_mode()
 {
-	if (g_standard_calculation_mode == 'b' && (g_current_fractal_specific->no_boundary_tracing()))
+	if (g_standard_calculation_mode == CALCMODE_BOUNDARY_TRACE
+		&& (g_current_fractal_specific->no_boundary_tracing()))
 	{
-		g_standard_calculation_mode = '1';
+		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 	}
-	if (g_standard_calculation_mode == 'g' && (g_current_fractal_specific->no_solid_guessing()))
+	if (g_standard_calculation_mode == CALCMODE_SOLID_GUESS
+		&& (g_current_fractal_specific->no_solid_guessing()))
 	{
-		g_standard_calculation_mode = '1';
+		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 	}
-	if (g_standard_calculation_mode == 'o' && (g_current_fractal_specific->calculate_type != standard_fractal))
+	if (g_standard_calculation_mode == CALCMODE_ORBITS
+		&& (g_current_fractal_specific->calculate_type != standard_fractal))
 	{
-		g_standard_calculation_mode = '1';
+		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 	}
 }
 

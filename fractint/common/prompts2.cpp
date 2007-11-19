@@ -1,32 +1,25 @@
 /*
 		Various routines that prompt for things.
 */
-
 #include <string.h>
 #include <ctype.h>
-
 #if !defined(__386BSD__)
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
 #endif
-
 #ifdef XFRACT
 #include <fcntl.h>
 #endif
-
 #ifdef __hpux
 #include <sys/param.h>
 #endif
-
 #ifdef __SVR4
 #include <sys/param.h>
 #endif
-
 #if defined(_WIN32)
 #include <direct.h>
 #endif
-
 #include <string>
 
 #include "port.h"
@@ -35,6 +28,7 @@
 #include "helpdefs.h"
 
 #include "Browse.h"
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "diskvid.h"
 #include "drivers.h"
@@ -87,15 +81,15 @@ static int calculation_mode()
 {
 	switch (g_user_standard_calculation_mode)
 	{
-	case '1': return 0;
-	case '2': return 1;
-	case '3': return 2;
-	case 'g': return 3 + g_stop_pass;
-	case 'b': return 10;
-	case 's': return 11;
-	case 't': return 12;
-	case 'd': return 13;
-	case 'o': return 14;
+	case CALCMODE_SINGLE_PASS:			return 0;
+	case CALCMODE_DUAL_PASS:			return 1;
+	case CALCMODE_TRIPLE_PASS:			return 2;
+	case CALCMODE_SOLID_GUESS:			return 3 + g_stop_pass;
+	case CALCMODE_BOUNDARY_TRACE:		return 10;
+	case CALCMODE_SYNCHRONOUS_ORBITS:	return 11;
+	case CALCMODE_TESSERAL:				return 12;
+	case CALCMODE_DIFFUSION:			return 13;
+	case CALCMODE_ORBITS:				return 14;
 	default:
 		assert(false && "Bad g_user_standard_calculation_mode");
 	}
@@ -151,7 +145,7 @@ static std::string save_name()
 
 int get_toggles()
 {
-	char old_user_standard_calculation_mode = g_user_standard_calculation_mode;
+	CalculationMode old_user_standard_calculation_mode = g_user_standard_calculation_mode;
 	int old_stop_pass = g_stop_pass;
 	long old_max_iteration = g_max_iteration;
 	int old_inside = g_inside;
@@ -223,14 +217,14 @@ int get_toggles()
 
 	int k = -1;
 	int j = 0;
-	g_user_standard_calculation_mode = calculation_modes[dialog.values(++k).uval.ch.val][0];
+	g_user_standard_calculation_mode = CalculationMode(calculation_modes[dialog.values(++k).uval.ch.val][0]);
 	g_stop_pass = int(calculation_modes[dialog.values(k).uval.ch.val][1]) - int('0');
-	if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_standard_calculation_mode != 'g')
+	if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
 	{
 		g_stop_pass = 0;
 	}
 	/* Oops, lyapunov type doesn't use 'new' & breaks orbits */
-	if (g_user_standard_calculation_mode == 'o'
+	if (g_user_standard_calculation_mode == CALCMODE_ORBITS
 		&& g_fractal_type == FRACTYPE_LYAPUNOV)
 	{
 		g_user_standard_calculation_mode = old_user_standard_calculation_mode;

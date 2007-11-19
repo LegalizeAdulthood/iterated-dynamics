@@ -12,6 +12,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 
+#include "calcfrac.h"
 #include "drivers.h"
 #include "diskvid.h"
 #include "encoder.h"
@@ -638,7 +639,7 @@ int encoder()
 		}
 
 		/* Extended parameters g_block 007 */
-		if (g_standard_calculation_mode == 'o')
+		if (g_standard_calculation_mode == CALCMODE_ORBITS)
 		{
 			struct orbits_info osave_info;
 			int i;

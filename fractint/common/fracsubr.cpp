@@ -216,7 +216,7 @@ void calculate_fractal_initialize()
 	{
 		g_float_flag = true;
 	}
-	if (g_user_standard_calculation_mode == 's')
+	if (g_user_standard_calculation_mode == CALCMODE_SYNCHRONOUS_ORBITS)
 	{
 		if (fractal_type_mandelbrot(g_fractal_type))
 		{
@@ -224,7 +224,7 @@ void calculate_fractal_initialize()
 		}
 		else
 		{
-			g_user_standard_calculation_mode = '1';
+			g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 		}
 	}
 

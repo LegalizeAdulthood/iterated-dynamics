@@ -85,7 +85,7 @@ private:
 
 bool g_from_text_flag = false;         /* = 1 if we're in graphics mode */
 evolution_info *g_evolve_handle = NULL;
-char g_standard_calculation_mode_old;
+CalculationMode g_standard_calculation_mode_old;
 void (*g_out_line_cleanup)();
 
 /* routines in this module      */
@@ -767,7 +767,7 @@ resumeloop:
 			}
 			if (g_quick_calculate && g_calculation_status != CALCSTAT_COMPLETED)
 			{
-				g_user_standard_calculation_mode = '1';
+				g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 			}
 			switch (mms_value)
 			{
@@ -880,14 +880,14 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		&& g_current_fractal_specific->calculate_type == standard_fractal
 		&& !g_log_palette_mode
 		&& !g_true_color /* recalc not yet implemented with truecolor */
-		&& !(g_user_standard_calculation_mode == 't' && g_fill_color > -1) /* tesseral with fill doesn't work */
-		&& !(g_user_standard_calculation_mode == 'o')
+		&& !(g_user_standard_calculation_mode == CALCMODE_TESSERAL && g_fill_color > -1) /* tesseral with fill doesn't work */
+		&& !(g_user_standard_calculation_mode == CALCMODE_ORBITS)
 		&& i == COMMANDRESULT_FRACTAL_PARAMETER /* nothing else changed */
 		&& g_outside != COLORMODE_INVERSE_TANGENT)
 	{
 		g_quick_calculate = true;
 		g_standard_calculation_mode_old = g_user_standard_calculation_mode;
-		g_user_standard_calculation_mode = '1';
+		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 		kbdmore = false;
 		g_calculation_status = CALCSTAT_RESUMABLE;
 	}

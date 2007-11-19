@@ -47,6 +47,7 @@
 #include "helpdefs.h"
 
 #include "Browse.h"
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "decoder.h"
 #include "drivers.h"
@@ -97,7 +98,7 @@ double  g_z_width;
 double	g_z_depth;
 double	g_z_skew;    /* zoombox size & shape     */
 int     g_fractal_type;               /* if == 0, use Mandelbrot  */
-char    g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
+CalculationMode g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
 long    g_c_real;
 long	g_c_imag;           /* real, imag'ry parts of C */
 long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot_l */
@@ -124,7 +125,7 @@ double	*g_x1;
 double	*g_y1;
 int     g_integer_fractal;         /* true if fractal uses integer math */
 /* usr_xxx is what the user wants, vs what we may be forced to do */
-char    g_user_standard_calculation_mode;
+CalculationMode g_user_standard_calculation_mode;
 int     g_user_periodicity_check;
 long    g_user_distance_test;
 bool g_user_float_flag;

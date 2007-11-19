@@ -13,6 +13,7 @@
 #include "fractype.h"
 
 #include "Browse.h"
+#include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
 #include "fihelp.h"
@@ -447,7 +448,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_user_biomorph = -1;                   /* turn off g_biomorph flag */
 	g_outside = COLORMODE_ITERATION;				/* outside color = -1 (not used) */
 	g_max_iteration = 150;                         /* initial maxiter        */
-	g_user_standard_calculation_mode = 'g';               /* initial solid-guessing */
+	g_user_standard_calculation_mode = CALCMODE_SOLID_GUESS;
 	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
 	g_quick_calculate = false;
 	g_proximity = 0.01;
@@ -1324,7 +1325,7 @@ static int passes_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_user_standard_calculation_mode = context.charval[0];
+	g_user_standard_calculation_mode = CalculationMode(context.charval[0]);
 	if (context.charval[0] == 'g')
 	{
 		g_stop_pass = (int(context.value[1]) - int('0'));
