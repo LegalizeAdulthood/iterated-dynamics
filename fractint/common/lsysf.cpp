@@ -32,7 +32,7 @@ struct lsys_cmd
 static std::vector<LDBL> s_sinf;
 static std::vector<LDBL> s_cosf;
 
-static lsys_cmd *_fastcall find_size(lsys_cmd *, lsys_turtle_state_fp *, lsys_cmd **, int);
+static lsys_cmd *find_size(lsys_cmd *, lsys_turtle_state_fp *, lsys_cmd **, int);
 
 static void lsysf_plus(lsys_turtle_state_fp *cmd)
 {
@@ -278,7 +278,7 @@ static void lsysf_draw_lt(lsys_turtle_state_fp *cmd)
 	}
 }
 
-static lsys_cmd *_fastcall
+static lsys_cmd *
 find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
 	lsys_cmd **rulind;
@@ -365,7 +365,7 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 	return command;
 }
 
-int _fastcall
+int 
 lsysf_find_scale(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
 	float horiz;
@@ -412,7 +412,7 @@ lsysf_find_scale(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, 
 	return 1;
 }
 
-lsys_cmd *_fastcall
+lsys_cmd *
 draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth)
 {
 	lsys_cmd **rulind;
@@ -710,7 +710,7 @@ lsysf_draw_transform(char *s, lsys_turtle_state_fp *ts)
 	return doub;
 }
 
-void _fastcall lsysf_sin_cos()
+void lsysf_sin_cos()
 {
 	LDBL locaspect;
 	LDBL TWOPI = 2.0*MathUtil::Pi;

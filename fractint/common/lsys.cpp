@@ -724,8 +724,7 @@ static void lsysi_draw_lt(lsys_turtle_state_l *cmd)
 	}
 }
 
-static lsys_cmd *_fastcall
-find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth)
+static lsys_cmd *find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth)
 {
 	lsys_cmd **rulind;
 	bool tran;

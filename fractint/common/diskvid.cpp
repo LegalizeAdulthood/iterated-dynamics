@@ -54,12 +54,12 @@ static long s_memory_offset = 0;
 static long s_old_memory_offset = 0;
 static BYTE *s_memory_buffer_ptr;
 
-static void _fastcall  find_load_cache(long offset);
-static struct cache *_fastcall  find_cache(long offset);
+static void find_load_cache(long offset);
+static struct cache *find_cache(long offset);
 static void  write_cache_lru();
-static void _fastcall  mem_putc(BYTE);
+static void mem_putc(BYTE);
 static BYTE  mem_getc();
-static void _fastcall  mem_seek(long offset);
+static void mem_seek(long offset);
 
 int disk_start()
 {
@@ -108,7 +108,7 @@ int disk_start_targa(FILE *targafp, int overhead)
 	return i;
 }
 
-int _fastcall disk_start_common(long newrowsize, long newcolsize, int g_colors)
+int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 {
 	int i;
 	int freemem;
@@ -475,7 +475,7 @@ void disk_write_targa(unsigned int col, unsigned int row,
 	disk_write(col + 1, row, red);
 }
 
-static void _fastcall  find_load_cache(long offset) /* used by read/write */
+static void find_load_cache(long offset) /* used by read/write */
 {
 #ifndef XFRACT
 	unsigned int tbloffset;
@@ -588,7 +588,7 @@ static void _fastcall  find_load_cache(long offset) /* used by read/write */
 }
 
 /* lookup for write_cache_lru */
-static struct cache *_fastcall  find_cache(long offset)
+static struct cache *find_cache(long offset)
 {
 #ifndef XFRACT
 	unsigned int tbloffset;
@@ -710,7 +710,7 @@ write_stuff:
 	sequences with a seek between them.  A mem_getc is never followed by
 	a mem_putc nor v.v. without a seek between them.
 	*/
-static void _fastcall  mem_seek(long offset)        /* mem seek */
+static void mem_seek(long offset)        /* mem seek */
 {
 	offset += s_header_length;
 	s_memory_offset = offset >> BLOCK_SHIFT;
@@ -736,7 +736,7 @@ static BYTE mem_getc()                     /* memory get_char */
 	return *(s_memory_buffer_ptr++);
 }
 
-static void _fastcall mem_putc(BYTE c)     /* memory get_char */
+static void mem_putc(BYTE c)     /* memory get_char */
 {
 	if (s_memory_buffer_ptr - s_memory_buffer >= BLOCK_LEN)
 	{

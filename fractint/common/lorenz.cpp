@@ -138,7 +138,7 @@ static void setup_matrix(MATRIX);
 static int  threed_view_trans(threed_vt_inf *inf);
 static int  threed_view_trans_fp(threed_vt_inf_fp *inf);
 static FILE *open_orbit_save();
-static void _fastcall plot_color_histogram(int x, int y, int color);
+static void plot_color_histogram(int x, int y, int color);
 
 static bool fractal_type_kam_torus(int fractal_type)
 {
@@ -3107,7 +3107,7 @@ static FILE *open_orbit_save()
 }
 
 /* Plot a histogram by incrementing the pixel each time it it touched */
-static void _fastcall plot_color_histogram(int x, int y, int color)
+static void plot_color_histogram(int x, int y, int color)
 {
 	color = getcolor(x, y) + 1;
 	if (color >= g_colors)

@@ -24,11 +24,11 @@ extern int calculate_fractal();
 extern int calculate_mandelbrot_l();
 extern int calculate_mandelbrot_fp();
 extern int standard_fractal();
-extern void _fastcall plot_color_none(int x, int y, int color);
-extern void _fastcall plot_color_symmetry_x_axis(int x, int y, int color);
-extern void _fastcall plot_color_symmetry_origin(int x, int y, int color);
+extern void plot_color_none(int x, int y, int color);
+extern void plot_color_symmetry_x_axis(int x, int y, int color);
+extern void plot_color_symmetry_origin(int x, int y, int color);
 
-extern void (_fastcall *g_plot_color)(int x, int y, int color);
+extern void (*g_plot_color)(int x, int y, int color);
 extern void sym_fill_line(int row, int left, int right, BYTE *str);
 
 extern int g_ix_start;

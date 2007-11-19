@@ -107,7 +107,7 @@ void SetAspect(double aspect)
 	}
 }
 
-static void _fastcall plot_color_clip(int x, int y, int color)
+static void plot_color_clip(int x, int y, int color)
 {
 	/* avoid writing outside window */
 	if (x < s_window_corner_x || y < s_window_corner_y || x >= s_window_corner_x + s_window_dots_x || y >= s_window_corner_y + s_window_dots_y)

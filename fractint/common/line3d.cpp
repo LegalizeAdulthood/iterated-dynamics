@@ -158,7 +158,7 @@ static long s_num_tris;					/* number of triangles output to ray trace file */
 static struct f_point *s_f_last_row = NULL;
 static MATRIX s_m;						/* transformation matrix */
 static int s_file_error = FILEERROR_NONE;
-static char s_targa_temp[14] = "fractemp.tga";
+static char s_targa_temp[] = "fractemp.tga";
 static struct point *s_last_row = NULL;	/* this array remembers the previous line */
 static struct minmax *s_minmax_x;			/* array of min and max x values used in triangle fill */
 

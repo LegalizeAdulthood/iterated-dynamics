@@ -66,10 +66,10 @@
 #define conjugate(pz)		((pz)->y = - (pz)->y)
 #define pMPsqr(z)			(*MPmul((z), (z)))
 
-static double _fastcall dx_pixel_calc();
-static double _fastcall dy_pixel_calc();
-static long _fastcall lx_pixel_calc();
-static long _fastcall ly_pixel_calc();
+static double dx_pixel_calc();
+static double dy_pixel_calc();
+static long lx_pixel_calc();
+static long ly_pixel_calc();
 
 ComplexL g_coefficient_l = { 0, 0 };
 ComplexL g_old_z_l = { 0, 0 };
@@ -110,10 +110,10 @@ int (*g_bail_out_bn)();
 int (*g_bail_out_bf)();
 long g_one_fudge = 0;
 long g_two_fudge = 0;
-double (_fastcall *g_dx_pixel)() = dx_pixel_calc;
-double (_fastcall *g_dy_pixel)() = dy_pixel_calc;
-long   (_fastcall *g_lx_pixel)() = lx_pixel_calc;
-long   (_fastcall *g_ly_pixel)() = ly_pixel_calc;
+double (*g_dx_pixel)() = dx_pixel_calc;
+double (*g_dy_pixel)() = dy_pixel_calc;
+long   (*g_lx_pixel)() = lx_pixel_calc;
+long   (*g_ly_pixel)() = ly_pixel_calc;
 
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
@@ -3159,60 +3159,52 @@ int mandelbrot_mix4_orbit_fp() /* from formula by Jim Muth */
  * dimensions. The other calculates the complex coordinates at a
  * cost of two additions and two multiplications for each component,
  * but works at any resolution.
- *
- * With Microsoft C's _fastcall keyword, the function call overhead
- * appears to be negligible. It also appears that the speed advantage
- * of the lookup vs the calculation is negligible on machines with
- * coprocessors. Bert Tyler's original implementation was designed for
- * machines with no coprocessor; on those machines the saving was
- * significant. For the time being, the table lookup capability will
- * be maintained.
  */
 
 /* Real component, grid lookup version - requires g_x0/g_x1 arrays */
-static double _fastcall dx_pixel_grid()
+static double dx_pixel_grid()
 {
 	return g_escape_time_state.m_grid_fp.x_pixel_grid(g_col, g_row);
 }
 
 /* Real component, calculation version - does not require arrays */
-static double _fastcall dx_pixel_calc()
+static double dx_pixel_calc()
 {
 	return double(g_escape_time_state.m_grid_fp.x_min() + g_col*g_escape_time_state.m_grid_fp.delta_x() + g_row*g_escape_time_state.m_grid_fp.delta_x2());
 }
 
 /* Imaginary component, grid lookup version - requires g_y0/g_y1 arrays */
-static double _fastcall dy_pixel_grid()
+static double dy_pixel_grid()
 {
 	return g_escape_time_state.m_grid_fp.y_pixel_grid(g_col, g_row);
 }
 
 /* Imaginary component, calculation version - does not require arrays */
-static double _fastcall dy_pixel_calc()
+static double dy_pixel_calc()
 {
 	return double(g_escape_time_state.m_grid_fp.y_max() - g_row*g_escape_time_state.m_grid_fp.delta_y() - g_col*g_escape_time_state.m_grid_fp.delta_y2());
 }
 
 /* Real component, grid lookup version - requires g_x0_l/g_x1_l arrays */
-static long _fastcall lx_pixel_grid()
+static long lx_pixel_grid()
 {
 	return g_escape_time_state.m_grid_l.x_pixel_grid(g_col, g_row);
 }
 
 /* Real component, calculation version - does not require arrays */
-static long _fastcall lx_pixel_calc()
+static long lx_pixel_calc()
 {
 	return g_escape_time_state.m_grid_l.x_min() + g_col*g_escape_time_state.m_grid_l.delta_x() + g_row*g_escape_time_state.m_grid_l.delta_x2();
 }
 
 /* Imaginary component, grid lookup version - requires g_y0_l/g_y1_l arrays */
-static long _fastcall ly_pixel_grid()
+static long ly_pixel_grid()
 {
 	return g_escape_time_state.m_grid_l.y_pixel_grid(g_col, g_row);
 }
 
 /* Imaginary component, calculation version - does not require arrays */
-static long _fastcall ly_pixel_calc()
+static long ly_pixel_calc()
 {
 	return g_escape_time_state.m_grid_l.y_max() - g_row*g_escape_time_state.m_grid_l.delta_y() - g_col*g_escape_time_state.m_grid_l.delta_y2();
 }

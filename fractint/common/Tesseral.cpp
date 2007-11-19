@@ -28,7 +28,7 @@ struct tess  /* one of these per box to be done gets stacked */
 	int right;  /* edge colors, -1 mixed, -2 unknown */
 };
 
-static int _fastcall tesseral_check_column(int x, int y1, int y2)
+static int tesseral_check_column(int x, int y1, int y2)
 {
 	int i;
 	i = getcolor(x, ++y1);
@@ -42,7 +42,7 @@ static int _fastcall tesseral_check_column(int x, int y1, int y2)
 	return i;
 }
 
-static int _fastcall tesseral_check_row(int x1, int x2, int y)
+static int tesseral_check_row(int x1, int x2, int y)
 {
 	int i;
 	i = getcolor(x1, y);
@@ -57,7 +57,7 @@ static int _fastcall tesseral_check_row(int x1, int x2, int y)
 	return i;
 }
 
-static int _fastcall tesseral_column(int x, int y1, int y2)
+static int tesseral_column(int x, int y1, int y2)
 {
 	int colcolor;
 	int i;
@@ -81,7 +81,7 @@ static int _fastcall tesseral_column(int x, int y1, int y2)
 	return colcolor;
 }
 
-static int _fastcall tesseral_row(int x1, int x2, int y)
+static int tesseral_row(int x1, int x2, int y)
 {
 	int rowcolor;
 	int i;

@@ -50,14 +50,14 @@ static int s_resume_info_length = 0;
 static int s_save_orbit[1500] = { 0 };	/* array to save orbit values */
 
 /* routines in this module      */
-static long   _fastcall fudge_to_long(double d);
-static double _fastcall fudge_to_double(long value);
-static void   _fastcall adjust_to_limits(double expand);
-static void   _fastcall smallest_add(double *);
-static int    _fastcall ratio_bad(double, double);
-static void   _fastcall plot_orbit_d(double, double, int);
-static void   _fastcall adjust_to_limits_bf(double expand);
-static void   _fastcall smallest_add_bf(bf_t);
+static long   fudge_to_long(double d);
+static double fudge_to_double(long value);
+static void   adjust_to_limits(double expand);
+static void   smallest_add(double *);
+static int    ratio_bad(double, double);
+static void   plot_orbit_d(double, double, int);
+static void   adjust_to_limits_bf(double expand);
+static void   smallest_add_bf(bf_t);
 
 void fractal_float_to_bf()
 {
@@ -589,7 +589,7 @@ expand_retry:
 	}
 }
 
-static long _fastcall fudge_to_long(double d)
+static long fudge_to_long(double d)
 {
 	d *= g_fudge;
 	if (d > 0)
@@ -603,7 +603,7 @@ static long _fastcall fudge_to_long(double d)
 	return long(d);
 }
 
-static double _fastcall fudge_to_double(long value)
+static double fudge_to_double(long value)
 {
 	char buf[30];
 	double d;
@@ -760,7 +760,7 @@ void adjust_corner()
 	adjust_corner(g_aspect_drift);
 }
 
-static void _fastcall adjust_to_limits_bf(double expand)
+static void adjust_to_limits_bf(double expand)
 {
 	LDBL limit;
 	bf_t bcornerx[4], bcornery[4];
@@ -1008,7 +1008,7 @@ static void _fastcall adjust_to_limits_bf(double expand)
 	restore_stack(saved);
 }
 
-static void _fastcall adjust_to_limits(double expand)
+static void adjust_to_limits(double expand)
 {
 	double cornerx[4];
 	double cornery[4];
@@ -1182,12 +1182,12 @@ static void _fastcall adjust_to_limits(double expand)
 	adjust_corner(); /* make 3rd corner exact if very near other co-ords */
 }
 
-static void _fastcall smallest_add(double *num)
+static void smallest_add(double *num)
 {
 	*num += *num*5.0e-16;
 }
 
-static void _fastcall smallest_add_bf(bf_t num)
+static void smallest_add_bf(bf_t num)
 {
 	bf_t btmp1;
 	int saved = save_stack();
@@ -1197,7 +1197,7 @@ static void _fastcall smallest_add_bf(bf_t num)
 	restore_stack(saved);
 }
 
-static int _fastcall ratio_bad(double actual, double desired)
+static int ratio_bad(double actual, double desired)
 {
 	double ftemp;
 	double tol;
@@ -1547,7 +1547,7 @@ void reset_clock()
 #define LOG2  0.693147180f
 #define LOG32 3.465735902f
 
-static void _fastcall plot_orbit_d(double dx, double dy, int color)
+static void plot_orbit_d(double dx, double dy, int color)
 {
 	if (g_orbit_index >= 1500-3)
 	{
