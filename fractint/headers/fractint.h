@@ -1270,14 +1270,6 @@ struct ext_blk_orbits_info
 #pragma pack(pop)
 #endif
 
-struct search_path
-{
-	char par[FILE_MAX_PATH];
-	char frm[FILE_MAX_PATH];
-	char ifs[FILE_MAX_PATH];
-	char lsys[FILE_MAX_PATH];
-};
-
 struct affine
 {
 	/*

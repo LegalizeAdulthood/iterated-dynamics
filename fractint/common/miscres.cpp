@@ -1458,7 +1458,6 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 	char fullpath[FILE_MAX_PATH];
 	char defaultextension[5];
 
-
 	split_path(filename, drive, dir, fname, ext);
 	make_path(fullpath, "", "", fname, ext);
 	if (stricmp(filename, g_command_file.c_str()))
@@ -1504,27 +1503,27 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".frm");
-		split_path(g_search_for.frm, drive, dir, NULL, NULL);
+		split_path(g_search_for.frm.c_str(), drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_L_SYSTEM:
 		strcpy(parsearchname, "lsys:");
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".l");
-		split_path(g_search_for.lsys, drive, dir, NULL, NULL);
+		split_path(g_search_for.lsys.c_str(), drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_IFS:
 		strcpy(parsearchname, "ifs:");
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".ifs");
-		split_path(g_search_for.ifs, drive, dir, NULL, NULL);
+		split_path(g_search_for.ifs.c_str(), drive, dir, NULL, NULL);
 		break;
 	case ITEMTYPE_PARAMETER:
 		strcpy(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".par");
-		split_path(g_search_for.par, drive, dir, NULL, NULL);
+		split_path(g_search_for.par.c_str(), drive, dir, NULL, NULL);
 		break;
 	}
 

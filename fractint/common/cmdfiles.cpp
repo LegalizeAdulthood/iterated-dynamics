@@ -136,7 +136,7 @@ std::string g_command_name;						/* Name of Command set */
 std::string g_command_comment[4];				/* comments for command set */
 std::string g_ifs_filename;						/* file to find (type=)IFS in */
 std::string g_ifs_name;							/* Name of the IFS def'n (if not null) */
-struct search_path g_search_for;
+search_path g_search_for;
 float	*g_ifs_definition = NULL;				/* ifs parameters */
 int		g_ifs_type;								/* 0 = 2d, 1 = 3d */
 int		g_slides = SLIDES_OFF;					/* 1 autokey=play, 2 autokey=record */
@@ -338,10 +338,10 @@ int command_files(int argc, char **argv)
 	g_dont_read_color = (g_color_preloaded && (g_show_file == SHOWFILE_PENDING));
 
 	/*set structure of search directories*/
-	strcpy(g_search_for.par, g_command_file.c_str());
-	strcpy(g_search_for.frm, g_formula_state.get_filename());
-	strcpy(g_search_for.lsys, g_l_system_filename.c_str());
-	strcpy(g_search_for.ifs, g_ifs_filename.c_str());
+	g_search_for.par = g_command_file;
+	g_search_for.frm = g_formula_state.get_filename();
+	g_search_for.lsys = g_l_system_filename;
+	g_search_for.ifs = g_ifs_filename;
 	return 0;
 }
 

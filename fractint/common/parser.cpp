@@ -313,12 +313,12 @@ Formula::~Formula()
 
 void Formula::set_filename(const char *value)
 {
-	::strncpy(m_filename, value, NUM_OF(m_filename));
+	m_filename = value;
 }
 
 void Formula::set_formula(const char *value)
 {
-	::strncpy(m_formula_name, value ? value : "", NUM_OF(m_formula_name));
+	m_formula_name = value ? value : "";
 }
 
 bool Formula::merge_formula_filename(char *new_filename, int mode)

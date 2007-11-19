@@ -308,7 +308,6 @@ extern int					g_save_release;
 extern float				g_screen_aspect_ratio;
 extern int					g_screen_height;
 extern int					g_screen_width;
-extern struct search_path	g_search_for;
 extern bool					g_set_orbit_corners;
 extern int					g_show_dot;
 extern int					g_show_file;

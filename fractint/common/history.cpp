@@ -129,9 +129,6 @@ static bool s_history_flag;				/* are we backing off in history? */
 
 void history_save_info()
 {
-	HISTORY_ITEM current = { 0 };
-	HISTORY_ITEM last;
-
 	if (g_max_history <= 0 || g_bf_math || !s_history)
 	{
 		return;
@@ -139,9 +136,9 @@ void history_save_info()
 #if defined(_WIN32)
 	_ASSERTE(s_save_index >= 0 && s_save_index < g_max_history);
 #endif
-	last = s_history[s_save_index];
+	HISTORY_ITEM last = s_history[s_save_index];
 
-	memset((void *) &current, 0, sizeof(HISTORY_ITEM));
+	HISTORY_ITEM current = { 0 };
 	current.fractal_type = short(g_fractal_type);
 	current.x_min = g_escape_time_state.m_grid_fp.x_min();
 	current.x_max = g_escape_time_state.m_grid_fp.x_max();
@@ -480,11 +477,8 @@ void history_allocate()
 
 void history_free()
 {
-	if (s_history != NULL)
-	{
-		delete[] s_history;
-		s_history = NULL;
-	}
+	delete[] s_history;
+	s_history = NULL;
 }
 
 void history_back()

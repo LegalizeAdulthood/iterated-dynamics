@@ -142,8 +142,8 @@ public:
 	bool uses_p4() const				{ return m_uses_p4; }
 	bool uses_p5() const				{ return m_uses_p5; }
 	int max_fn() const					{ return m_max_function_number; }
-	const char *get_filename() const	{ return m_filename; }
-	const char *get_formula() const		{ return m_formula_name; }
+	const char *get_filename() const	{ return m_filename.c_str(); }
+	const char *get_formula() const		{ return m_formula_name.c_str(); }
 
 	void set_uses_is_mand(bool value)	{ m_uses_is_mand = value; }
 	void set_uses_p1(bool value)		{ m_uses_p1 = value; }
@@ -153,7 +153,9 @@ public:
 	void set_uses_p5(bool value)		{ m_uses_p5 = value; }
 	void set_max_fn(int value)			{ m_max_function_number = value; }
 	void set_filename(const char *value);
+	void set_filename(const std::string &value) { m_filename = value; }
 	void set_formula(const char *value);
+	void set_formula(const std::string &value) { m_formula_name = value; }
 
 private:
 	enum MathType m_math_type;
@@ -212,8 +214,8 @@ private:
 	int m_initial_load_pointer;
 	int m_initial_store_pointer;
 	int m_initial_op_pointer;
-	char m_filename[FILE_MAX_PATH];		/* file to find (type=)formulas in */
-	char m_formula_name[ITEMNAMELEN + 1];		/* Name of the Formula (if not null) */
+	std::string m_filename;					/* file to find (type=)formulas in */
+	std::string m_formula_name;				/* Name of the Formula (if not null) */
 
 	bool formula_defined() const
 	{
