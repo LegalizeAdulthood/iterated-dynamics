@@ -51,7 +51,7 @@ char    g_record_colors;						/* default PAR color-writing method */
 char    g_auto_show_dot = 0;					/* dark, medium, bright */
 bool g_start_show_orbit = false;				/* show orbits on at start of fractal */
 std::string g_read_name;						/* name of fractal input file */
-char    g_temp_dir[FILE_MAX_DIR] = {""};		/* name of temporary directory */
+std::string g_temp_dir = "";					/* name of temporary directory */
 char    g_work_dir[FILE_MAX_DIR] = {""};		/* name of directory for misc files */
 std::string g_organize_formula_dir = "";		/*name of directory for orgfrm files*/
 std::string g_gif_mask;
@@ -371,13 +371,13 @@ static void initialize_variables_once()              /* once per run init */
 	{
 		if (is_a_directory(p) != 0)
 		{
-			strcpy(g_temp_dir, p);
+			g_temp_dir = p;
 			ensure_slash_on_directory(g_temp_dir);
 		}
 	}
 	else
 	{
-		*g_temp_dir = 0;
+		g_temp_dir = "";
 	}
 }
 
@@ -1500,7 +1500,7 @@ static int temp_dir_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	strcpy(g_temp_dir, context.value);
+	g_temp_dir = context.value;
 	ensure_slash_on_directory(g_temp_dir);
 	return COMMANDRESULT_OK;
 }

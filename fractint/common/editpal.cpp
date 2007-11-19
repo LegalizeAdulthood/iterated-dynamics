@@ -11,6 +11,7 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 
+#include "cmdfiles.h"
 #include "drivers.h"
 #include "editpal.h"
 #include "fihelp.h"
