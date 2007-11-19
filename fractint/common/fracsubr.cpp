@@ -605,6 +605,8 @@ static long fudge_to_long(double d)
 
 static double fudge_to_double(long value)
 {
+	// TODO: why is this doing a printf and then a scanf?  Should just return
+	// double(value)/g_fudge, but more investigation needed first.
 	char buf[30];
 	double d;
 	sprintf(buf, "%.9g", double(value)/g_fudge);

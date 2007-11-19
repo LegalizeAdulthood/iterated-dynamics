@@ -37,7 +37,6 @@
 
 	--------------------------------------------------------------------
 */
-
 #include <limits.h>
 #include <string.h>
 #if !defined(__386BSD__)
@@ -45,6 +44,7 @@
 #include <malloc.h>
 #endif
 #endif
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

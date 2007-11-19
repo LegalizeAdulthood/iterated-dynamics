@@ -17,6 +17,14 @@ enum RecordColorsKind
 	RECORDCOLORS_YES = 'y'
 };
 
+struct search_path
+{
+	std::string par;
+	std::string frm;
+	std::string ifs;
+	std::string lsys;
+};
+
 extern std::string g_autokey_name;
 extern std::string g_color_file;
 extern std::string g_command_comment[4];
@@ -35,6 +43,8 @@ extern std::string g_work_dir;
 
 extern AutoShowDotKind g_auto_show_dot;
 extern RecordColorsKind g_record_colors;
+
+extern search_path g_search_for;
 
 extern bool g_make_par_flag;
 extern bool g_make_par_colors_only;
