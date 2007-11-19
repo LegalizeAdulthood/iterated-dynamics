@@ -40,7 +40,7 @@ enum BuildRowType
 	BUILDROW_NONE = -1
 };
 
-static void _fastcall plot_block(BuildRowType buildrow, int x, int y, int color)
+static void plot_block(BuildRowType buildrow, int x, int y, int color)
 {
 	int xlim = x + s_half_block;
 	if (xlim > g_x_stop)
@@ -91,7 +91,7 @@ static void _fastcall plot_block(BuildRowType buildrow, int x, int y, int color)
 	}
 }
 
-static int _fastcall guess_row(bool first_pass, int y, int blocksize)
+static int guess_row(bool first_pass, int y, int blocksize)
 {
 	int j;
 	int color;

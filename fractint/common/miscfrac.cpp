@@ -107,7 +107,7 @@ struct froth_struct
 	struct froth_long_struct l;
 };
 
-typedef void (_fastcall *PLOT)(int, int, int);
+typedef void (*PLOT)(int, int, int);
 
 /* global data */
 
@@ -118,7 +118,7 @@ static int s_recur1 = 1;
 static int s_plasma_colors;
 static int s_recur_level = 0;
 static int s_plasma_check;                        /* to limit kbd checking */
-static U16 (_fastcall *s_get_pixels)(int, int)  = (U16(_fastcall *)(int, int))getcolor;
+static U16 (*s_get_pixels)(int, int)  = (U16(*)(int, int))getcolor;
 static U16 s_max_plasma;
 static int *s_verhulst_array = 0;
 static unsigned long s_filter_cycles;
@@ -148,12 +148,12 @@ static struct froth_struct s_frothy_data = { 0 };
 
 /* routines local to this module */
 static void set_plasma_palette();
-static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb);
-static void _fastcall subdivide(int x1, int y1, int x2, int y2);
-static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur);
+static U16 adjust(int xa, int ya, int x, int y, int xb, int yb);
+static void subdivide(int x1, int y1, int x2, int y2);
+static int new_subdivision(int x1, int y1, int x2, int y2, int recur);
 static void verhulst();
 static void bifurcation_period_init();
-static int _fastcall bifurcation_periodic(long time);
+static int bifurcation_periodic(long time);
 static void set_cellular_palette();
 static int lyapunov_cycles(long, double, double);
 
@@ -228,7 +228,7 @@ static U16 rand16()
 	return value;
 }
 
-static void _fastcall put_potential(int x, int y, U16 color)
+static void put_potential(int x, int y, U16 color)
 {
 	if (color < 1)
 	{
@@ -245,7 +245,7 @@ static void _fastcall put_potential(int x, int y, U16 color)
 }
 
 /* fixes border */
-static void _fastcall put_potential_border(int x, int y, U16 color)
+static void put_potential_border(int x, int y, U16 color)
 {
 	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
 	{
@@ -255,7 +255,7 @@ static void _fastcall put_potential_border(int x, int y, U16 color)
 }
 
 /* fixes border */
-static void _fastcall put_color_border(int x, int y, int color)
+static void put_color_border(int x, int y, int color)
 {
 	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
 	{
@@ -268,7 +268,7 @@ static void _fastcall put_color_border(int x, int y, int color)
 	g_plot_color_put_color(x, y, color);
 }
 
-static U16 _fastcall get_potential(int x, int y)
+static U16 get_potential(int x, int y)
 {
 	U16 color;
 
@@ -277,7 +277,7 @@ static U16 _fastcall get_potential(int x, int y)
 	return color;
 }
 
-static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
+static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
 	S32 pseudorandom;
 	pseudorandom = ((S32)s_iparm_x)*((rand15()-16383));
@@ -305,7 +305,7 @@ static U16 _fastcall adjust(int xa, int ya, int x, int y, int xb, int yb)
 }
 
 
-static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
+static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 {
 	int x;
 	int y;
@@ -428,7 +428,7 @@ static int _fastcall new_subdivision(int x1, int y1, int x2, int y2, int recur)
 	return 0;
 }
 
-static void _fastcall subdivide(int x1, int y1, int x2, int y2)
+static void subdivide(int x1, int y1, int x2, int y2)
 {
 	int x;
 	int y;
@@ -562,13 +562,13 @@ int plasma()
 			s_max_plasma = 0;        /* can't do potential (disk_start failed) */
 			g_parameters[3]   = 0;
 			g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
-			s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
+			s_get_pixels  = (U16(*)(int, int))getcolor;
 		}
 	}
 	else
 	{
 		g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
-		s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
+		s_get_pixels  = (U16(*)(int, int))getcolor;
 	}
 	srand(g_random_seed);
 	if (!g_use_fixed_random_seed)
@@ -645,7 +645,7 @@ done:
 		g_potential_16bit = OldPot16bit;
 	}
 	g_plot_color    = g_plot_color_put_color;
-	s_get_pixels  = (U16(_fastcall *)(int, int))getcolor;
+	s_get_pixels  = (U16(*)(int, int))getcolor;
 	return n;
 }
 
@@ -1226,7 +1226,7 @@ static void bifurcation_period_init()
 
 /* Bifurcation s_population Periodicity Check */
 /* Returns : 1 if periodicity found, else 0 */
-static int _fastcall bifurcation_periodic(long time)
+static int bifurcation_periodic(long time)
 {
 	if ((time & s_bifurcation_saved_mask) == 0)      /* time to save a new value */
 	{

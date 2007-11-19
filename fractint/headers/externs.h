@@ -74,9 +74,9 @@ extern double				g_delta_parameter_image_x;
 extern double				g_delta_parameter_image_y;
 extern struct DIR_SEARCH	g_dta;   /* Disk Transfer Area */
 extern BYTE					g_stack[];
-extern double				(_fastcall *g_dx_pixel)(); /* set in FRACTALS.C */
+extern double				(*g_dx_pixel)(); /* set in FRACTALS.C */
 extern double				g_dx_size;
-extern double				(_fastcall *g_dy_pixel)(); /* set in FRACTALS.C */
+extern double				(*g_dy_pixel)(); /* set in FRACTALS.C */
 extern double				g_dy_size;
 extern bool					g_escape_exit_flag;
 extern int					g_evolving_flags;
@@ -170,8 +170,8 @@ extern ComplexL				g_parameter_l;
 extern long					g_temp_sqr_x_l;
 extern long					g_temp_sqr_y_l;
 extern ComplexL				g_tmp_z_l;
-extern long					(_fastcall *g_lx_pixel)(); /* set in FRACTALS.C */
-extern long					(_fastcall *g_ly_pixel)(); /* set in FRACTALS.C */
+extern long					(*g_lx_pixel)(); /* set in FRACTALS.C */
+extern long					(*g_ly_pixel)(); /* set in FRACTALS.C */
 extern void					(*g_trig0_l)();
 extern void					(*g_trig1_l)();
 extern void					(*g_trig2_l)();
@@ -258,7 +258,7 @@ extern ComplexD				g_parameter;
 extern int					g_passes;
 extern int					g_patch_level;
 extern int					g_periodicity_check;
-extern void					(_fastcall *g_plot_color)(int,int,int);
+extern void					(*g_plot_color)(int,int,int);
 extern double				g_plot_mx1;
 extern double				g_plot_mx2;
 extern double				g_plot_my1;
@@ -274,7 +274,7 @@ extern int					g_py;
 extern int					g_parameter_box_count;
 extern int					g_pseudo_x;
 extern int					g_pseudo_y;
-extern void					(_fastcall *g_plot_color_put_color)(int,int,int);
+extern void					(*g_plot_color_put_color)(int,int,int);
 extern ComplexD				g_power;
 extern double				g_quaternion_c;
 extern double				g_quaternion_ci;
@@ -320,7 +320,7 @@ extern short				g_skip_x_dots;
 extern short				g_skip_y_dots;
 extern int					g_slides;
 extern int					g_gaussian_slope;
-extern void					(_fastcall *g_plot_color_standard)(int x, int y, int color);
+extern void					(*g_plot_color_standard)(int x, int y, int color);
 extern bool					g_start_show_orbit;
 extern bool					g_started_resaves;
 extern ComplexD				g_static_roots[];

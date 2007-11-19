@@ -92,8 +92,8 @@ int g_invert;
 double g_f_radius;
 double g_f_x_center;
 double g_f_y_center; /* for inversion */
-void (_fastcall *g_plot_color_put_color)(int, int, int) = putcolor_a;
-void (_fastcall *g_plot_color)(int, int, int) = putcolor_a;
+void (*g_plot_color_put_color)(int, int, int) = putcolor_a;
+void (*g_plot_color)(int, int, int) = putcolor_a;
 double g_magnitude;
 double g_rq_limit;
 double g_rq_limit2;
@@ -148,23 +148,23 @@ long (*g_calculate_mandelbrot_asm_fp)();
 
 /* routines in this module      */
 static int one_or_two_pass();
-static int  _fastcall standard_calculate(int passnum);
-static int  _fastcall potential(double, long);
+static int  standard_calculate(int passnum);
+static int  potential(double, long);
 static void decomposition();
-static void _fastcall set_symmetry(int symmetry, bool use_list);
-static int  _fastcall x_symmetry_split(int, int);
-static int  _fastcall y_symmetry_split(int, int);
-static void _fastcall put_truecolor_disk(int, int, int);
+static void set_symmetry(int symmetry, bool use_list);
+static int  x_symmetry_split(int, int);
+static int  y_symmetry_split(int, int);
+static void put_truecolor_disk(int, int, int);
 static int draw_orbits();
 /* added for testing automatic_log_map() */
 static long automatic_log_map();
-static void _fastcall plot_color_symmetry_pi(int x, int y, int color);
-static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color);
-static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color);
-static void _fastcall plot_color_symmetry_y_axis(int x, int y, int color);
-static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color);
-static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color);
-static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color);
+static void plot_color_symmetry_pi(int x, int y, int color);
+static void plot_color_symmetry_pi_origin(int x, int y, int color);
+static void plot_color_symmetry_pi_xy_axis(int x, int y, int color);
+static void plot_color_symmetry_y_axis(int x, int y, int color);
+static void plot_color_symmetry_xy_axis(int x, int y, int color);
+static void plot_color_symmetry_x_axis_basin(int x, int y, int color);
+static void plot_color_symmetry_xy_axis_basin(int x, int y, int color);
 
 int g_ix_start;
 int g_iy_start;						/* start here */
@@ -1059,7 +1059,7 @@ static int one_or_two_pass()
 	return 0;
 }
 
-static int _fastcall standard_calculate(int passnum)
+static int standard_calculate(int passnum)
 {
 	g_got_status = GOT_STATUS_12PASS;
 	g_current_pass = passnum;
@@ -2688,7 +2688,7 @@ static void decomposition()
 /*                                                                */
 /******************************************************************/
 
-static int _fastcall potential(double mag, long iterations)
+static int potential(double mag, long iterations)
 {
 	float f_mag;
 	float f_tmp;
@@ -2781,7 +2781,7 @@ static int _fastcall potential(double mag, long iterations)
 
 /************************* symmetry plot setup ************************/
 
-static int _fastcall x_symmetry_split(int xaxis_row, bool xaxis_between)
+static int x_symmetry_split(int xaxis_row, bool xaxis_between)
 {
 	int i;
 	if ((g_work_sym&0x11) == 0x10) /* already decided not sym */
@@ -2835,7 +2835,7 @@ static int _fastcall x_symmetry_split(int xaxis_row, bool xaxis_between)
 	return 0; /* tell set_symmetry its a go */
 }
 
-static int _fastcall y_symmetry_split(int yaxis_col, bool yaxis_between)
+static int y_symmetry_split(int yaxis_col, bool yaxis_between)
 {
 	int i;
 	if ((g_work_sym&0x22) == 0x20) /* already decided not sym */
@@ -2889,7 +2889,7 @@ static int _fastcall y_symmetry_split(int yaxis_col, bool yaxis_between)
 	return 0; /* tell set_symmetry its a go */
 }
 
-static void _fastcall set_symmetry(int symmetry, bool use_list) /* set up proper symmetrical plot functions */
+static void set_symmetry(int symmetry, bool use_list) /* set up proper symmetrical plot functions */
 {
 	/* pixel number for origin */
 	/* if axis between 2 pixels, not on one */
@@ -3319,7 +3319,7 @@ ack: /* bailout here if key is pressed */
 }
 
 /* Symmetry plot for period PI */
-static void _fastcall plot_color_symmetry_pi(int x, int y, int color)
+static void plot_color_symmetry_pi(int x, int y, int color)
 {
 	while (x <= g_WorkList.xx_stop())
 	{
@@ -3328,7 +3328,7 @@ static void _fastcall plot_color_symmetry_pi(int x, int y, int color)
 	}
 }
 /* Symmetry plot for period PI plus Origin Symmetry */
-static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
+static void plot_color_symmetry_pi_origin(int x, int y, int color)
 {
 	while (x <= g_WorkList.xx_stop())
 	{
@@ -3346,7 +3346,7 @@ static void _fastcall plot_color_symmetry_pi_origin(int x, int y, int color)
 	}
 }
 /* Symmetry plot for period PI plus Both Axis Symmetry */
-static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
+static void plot_color_symmetry_pi_xy_axis(int x, int y, int color)
 {
 	while (x <= (g_WorkList.xx_start() + g_WorkList.xx_stop())/2)
 	{
@@ -3370,7 +3370,7 @@ static void _fastcall plot_color_symmetry_pi_xy_axis(int x, int y, int color)
 }
 
 /* Symmetry plot for X Axis Symmetry */
-void _fastcall plot_color_symmetry_x_axis(int x, int y, int color)
+void plot_color_symmetry_x_axis(int x, int y, int color)
 {
 	g_plot_color_put_color(x, y, color);
 	int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
@@ -3381,7 +3381,7 @@ void _fastcall plot_color_symmetry_x_axis(int x, int y, int color)
 }
 
 /* Symmetry plot for Y Axis Symmetry */
-static void _fastcall plot_color_symmetry_y_axis(int x, int y, int color)
+static void plot_color_symmetry_y_axis(int x, int y, int color)
 {
 	g_plot_color_put_color(x, y, color);
 	int i = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
@@ -3392,7 +3392,7 @@ static void _fastcall plot_color_symmetry_y_axis(int x, int y, int color)
 }
 
 /* Symmetry plot for Origin Symmetry */
-void _fastcall plot_color_symmetry_origin(int x, int y, int color)
+void plot_color_symmetry_origin(int x, int y, int color)
 {
 	g_plot_color_put_color(x, y, color);
 	int i = g_WorkList.yy_stop()-(y-g_WorkList.yy_start());
@@ -3407,7 +3407,7 @@ void _fastcall plot_color_symmetry_origin(int x, int y, int color)
 }
 
 /* Symmetry plot for Both Axis Symmetry */
-static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color)
+static void plot_color_symmetry_xy_axis(int x, int y, int color)
 {
 	int j = g_WorkList.xx_stop()-(x-g_WorkList.xx_start());
 	g_plot_color_put_color(x , y, color);
@@ -3427,7 +3427,7 @@ static void _fastcall plot_color_symmetry_xy_axis(int x, int y, int color)
 }
 
 /* Symmetry plot for X Axis Symmetry - Striped Newtbasin version */
-static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color)
+static void plot_color_symmetry_x_axis_basin(int x, int y, int color)
 {
 	g_plot_color_put_color(x, y, color);
 	int stripe = (g_basin == 2 && color > 8) ? 8 : 0;
@@ -3442,7 +3442,7 @@ static void _fastcall plot_color_symmetry_x_axis_basin(int x, int y, int color)
 }
 
 /* Symmetry plot for Both Axis Symmetry  - Newtbasin version */
-static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color)
+static void plot_color_symmetry_xy_axis_basin(int x, int y, int color)
 {
 	if (color == 0) /* assumed to be "inside" color */
 	{
@@ -3470,7 +3470,7 @@ static void _fastcall plot_color_symmetry_xy_axis_basin(int x, int y, int color)
 	}
 }
 
-static void _fastcall put_truecolor_disk(int x, int y, int color)
+static void put_truecolor_disk(int x, int y, int color)
 {
 	putcolor_a(x, y, color);
 	targa_color(x, y, color);
@@ -3481,7 +3481,7 @@ static void _fastcall put_truecolor_disk(int x, int y, int color)
 #pragma argsused
 #endif
 
-void _fastcall plot_color_none(int x, int y, int color)
+void plot_color_none(int x, int y, int color)
 {
 	x = 0;
 	y = 0;

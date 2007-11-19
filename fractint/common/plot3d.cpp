@@ -164,7 +164,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 
 #if 0
 /* use this for continuous colors later */
-void _fastcall plot3dsuperimpose16b(int x, int y, int color)
+void plot3dsuperimpose16b(int x, int y, int color)
 {
 	int tmp;
 	if (color != 0)         /* Keeps index 0 still 0 */
@@ -207,7 +207,7 @@ void _fastcall plot3dsuperimpose16b(int x, int y, int color)
 
 #endif
 
-void _fastcall plot_3d_superimpose_16(int x, int y, int color)
+void plot_3d_superimpose_16(int x, int y, int color)
 {
 	int tmp;
 
@@ -248,7 +248,7 @@ void _fastcall plot_3d_superimpose_16(int x, int y, int color)
 }
 
 
-void _fastcall plot_3d_superimpose_256(int x, int y, int color)
+void plot_3d_superimpose_256(int x, int y, int color)
 {
 	int tmp;
 	BYTE t_c;
@@ -308,7 +308,7 @@ void _fastcall plot_3d_superimpose_256(int x, int y, int color)
 	}
 }
 
-void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
+void plot_ifs_3d_superimpose_256(int x, int y, int color)
 {
 	int tmp;
 	BYTE t_c;
@@ -368,7 +368,7 @@ void _fastcall plot_ifs_3d_superimpose_256(int x, int y, int color)
 	}
 }
 
-void _fastcall plot_3d_alternate(int x, int y, int color)
+void plot_3d_alternate(int x, int y, int color)
 {
 	BYTE t_c;
 
@@ -416,7 +416,7 @@ void _fastcall plot_3d_alternate(int x, int y, int color)
 	}
 }
 
-void _fastcall plot_3d_cross_eyed_A(int x, int y, int color)
+void plot_3d_cross_eyed_A(int x, int y, int color)
 {
 	x /= 2;
 	y /= 2;
@@ -435,7 +435,7 @@ void _fastcall plot_3d_cross_eyed_A(int x, int y, int color)
 	g_plot_color_put_color(x, y, color);
 }
 
-void _fastcall plot_3d_cross_eyed_B(int x, int y, int color)
+void plot_3d_cross_eyed_B(int x, int y, int color)
 {
 	x /= 2;
 	y /= 2;
@@ -446,7 +446,7 @@ void _fastcall plot_3d_cross_eyed_B(int x, int y, int color)
 	g_plot_color_put_color(x, y, color);
 }
 
-void _fastcall plot_3d_cross_eyed_C(int x, int y, int color)
+void plot_3d_cross_eyed_C(int x, int y, int color)
 {
 	if (g_row_count >= g_y_dots/2)
 	{

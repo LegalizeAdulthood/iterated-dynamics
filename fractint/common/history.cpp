@@ -127,7 +127,7 @@ static int s_history_index = -1;			/* user pointer into history tbl  */
 static int s_save_index = 0;				/* save ptr into history tbl      */
 static bool s_history_flag;				/* are we backing off in history? */
 
-void _fastcall history_save_info()
+void history_save_info()
 {
 	HISTORY_ITEM current = { 0 };
 	HISTORY_ITEM last;
@@ -301,7 +301,7 @@ void _fastcall history_save_info()
 	}
 }
 
-void _fastcall history_restore_info()
+void history_restore_info()
 {
 	HISTORY_ITEM last;
 	if (g_max_history <= 0 || g_bf_math || !s_history)

@@ -3,12 +3,6 @@
 #ifndef FRACTINT_H
 #define FRACTINT_H
 
-#ifndef C6
-#ifndef _fastcall
-#define _fastcall       /* _fastcall is a Microsoft C6.00 extension */
-#endif
-#endif
-
 /* Returns the number of items in an array declared of fixed size, i.e:
 	int stuff[100];
 	NUM_OF(stuff) returns 100.
