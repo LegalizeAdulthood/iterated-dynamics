@@ -221,13 +221,29 @@ int get_power_10(LDBL x)
 	return p;
 }
 
+bool is_gif_file(const char *path)
+{
+	FILE *file = fopen(path, "rb");
+	if (!file)
+	{
+		return false;
+	}
+
+	char buffer[6] = { 0 };
+	size_t count = fread(buffer, 1, NUM_OF(buffer), file);
+	fclose(file);
+	if (NUM_OF(buffer) != count)
+	{
+		return false;
+	}
+
+	return (buffer[0] == 'G' && buffer[1] == 'I' && buffer[2] == 'F'
+		&& buffer[3] >= '8' && buffer[3] <= '9'
+		&& buffer[4] >= '0' && buffer[4] <= '9');
+}
+
 void command_files(int argc, char **argv)
 {
-	char    curarg[141];
-	char    tempstring[101];
-	char    *sptr;
-	FILE    *initfile;
-
 	if (g_command_initialize) /* once per run initialization  */
 	{
 		initialize_variables_once();
@@ -235,8 +251,11 @@ void command_files(int argc, char **argv)
 	initialize_variables_restart();                  /* <ins> key initialization */
 	initialize_variables_fractal();                  /* image initialization */
 
+	char    curarg[141];
 	strcpy(curarg, "sstools.ini");
+	char    tempstring[101];
 	find_path(curarg, tempstring); /* look for SSTOOLS.INI */
+	FILE    *initfile;
 	if (tempstring[0] != 0)              /* found it! */
 	{
 		initfile = fopen(tempstring, "r");
@@ -269,22 +288,12 @@ void command_files(int argc, char **argv)
 				{
 					strcat(tempstring, ".gif");
 				}
-				initfile = fopen(tempstring, "rb");
-				if (initfile != NULL)
+				if (is_gif_file(tempstring))
 				{
-					fread(tempstring, 6, 1, initfile);
-					if (tempstring[0] == 'G'
-						&& tempstring[1] == 'I'
-						&& tempstring[2] == 'F'
-						&& tempstring[3] >= '8' && tempstring[3] <= '9'
-						&& tempstring[4] >= '0' && tempstring[4] <= '9')
-					{
-						g_read_name = curarg;
-						g_browse_state.extract_read_name();
-						g_show_file = SHOWFILE_PENDING;
-						curarg[0] = 0;
-					}
-					fclose(initfile);
+					g_read_name = curarg;
+					g_browse_state.extract_read_name();
+					g_show_file = SHOWFILE_PENDING;
+					curarg[0] = 0;
 				}
 			}
 			if (curarg[0])
@@ -294,7 +303,7 @@ void command_files(int argc, char **argv)
 		}
 		else
 		{
-			sptr = strchr(curarg, '/');
+			char *sptr = strchr(curarg, '/');
 			if (sptr != NULL)  /* @filename/setname? */
 			{
 				*sptr = 0;
