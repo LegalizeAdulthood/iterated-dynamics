@@ -49,7 +49,7 @@ extern search_path g_search_for;
 extern bool g_make_par_flag;
 extern bool g_make_par_colors_only;
 
-extern int command_files(int, char **);
+extern void command_files(int, char **);
 extern int load_commands(FILE *);
 extern int get_curarg_len(char *curarg);
 extern int get_max_curarg_len(char *floatvalstr[], int totparm);
