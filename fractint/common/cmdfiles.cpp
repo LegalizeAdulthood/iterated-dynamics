@@ -221,9 +221,8 @@ int get_power_10(LDBL x)
 	return p;
 }
 
-int command_files(int argc, char **argv)
+void command_files(int argc, char **argv)
 {
-	int     i;
 	char    curarg[141];
 	char    tempstring[101];
 	char    *sptr;
@@ -247,7 +246,7 @@ int command_files(int argc, char **argv)
 		}
 	}
 
-	for (i = 1; i < argc; i++)  /* cycle through args */
+	for (int i = 1; i < argc; i++)  /* cycle through args */
 	{
 #ifdef XFRACT
 		/* Let the xfract code take a look at the argument */
@@ -342,7 +341,6 @@ int command_files(int argc, char **argv)
 	g_search_for.frm = g_formula_state.get_filename();
 	g_search_for.lsys = g_l_system_filename;
 	g_search_for.ifs = g_ifs_filename;
-	return 0;
 }
 
 int load_commands(FILE *infile)
