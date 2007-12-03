@@ -1230,7 +1230,7 @@ int get_a_filename(const char *hdg, std::string &file_template, std::string &fil
 
 int get_a_filename(const char *hdg, char *file_template, char *flname)
 {
-	int rds;  /* if getting an RDS image map */
+	/* if getting an RDS image map */
 	char instr[80];
 	int masklen;
 	char speedstr[81];
@@ -1256,7 +1256,7 @@ int get_a_filename(const char *hdg, char *file_template, char *flname)
 	static int numtemplates = 1;
 	static int dosort = 1;
 
-	rds = (g_stereo_map_name == flname) ? 1 : 0;
+	bool rds = (g_stereo_map_name == flname);
 	for (i = 0; i < MAXNUMFILES; i++)
 	{
 		attributes[i] = 1;
