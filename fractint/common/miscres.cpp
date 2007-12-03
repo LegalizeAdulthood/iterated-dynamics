@@ -1,6 +1,8 @@
 /*
 		Resident odds and ends that don't fit anywhere else.
 */
+#include <algorithm>
+#include <string>
 
 #include <string.h>
 #include <ctype.h>
@@ -12,7 +14,6 @@
 #include <io.h>
 #endif
 #include <stdarg.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"
@@ -1074,7 +1075,7 @@ top:
 		{
 			int truncate;
 			int truncaterow;
-			dec = min(320, g_decimals);
+			dec = std::min(320, g_decimals);
 			adjust_corner_bf(); /* make bottom left exact if very near exact */
 			convert_center_mag_bf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 			/* find alignment information */

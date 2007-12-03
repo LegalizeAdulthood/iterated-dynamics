@@ -8,10 +8,12 @@
 /*                to eliminate compiler warnings. Did a long-overdue    */
 /*                formatting cleanup.                                   */
 /************************************************************************/
-#include <cmath>
+#include <algorithm>
 #include <cassert>
-#include <limits.h>
+#include <cmath>
 #include <string>
+
+#include <limits.h>
 
 #include "port.h"
 #include "prototyp.h"
@@ -799,7 +801,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	/* copying code here, and to avoid a HUGE "if-then" construct. Besides,  */
 	/* we have ALREADY sinned, so why not sin some more?                     */
 	/*************************************************************************/
-	last_dot = min(g_x_dots - 1, int(line_length) - 1);
+	last_dot = std::min(g_x_dots - 1, int(line_length) - 1);
 	if (g_3d_state.fill_type() >= FillType::LightBefore)
 	{
 		if (g_3d_state.haze() && g_targa_output)
@@ -812,7 +814,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 
 	if (g_3d_state.preview_factor() >= g_y_dots || g_3d_state.preview_factor() > last_dot)
 	{
-		g_3d_state.set_preview_factor(min(g_y_dots - 1, last_dot));
+		g_3d_state.set_preview_factor(std::min(g_y_dots - 1, last_dot));
 	}
 
 	s_local_preview_factor = g_y_dots/g_3d_state.preview_factor();
@@ -2184,7 +2186,7 @@ static int out_triangle(const struct f_point pt1,
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 	{
-		fprintf(s_raytrace_file, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", min(255, max(1, c1)));
+		fprintf(s_raytrace_file, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
 	}
 
 	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
@@ -2852,7 +2854,7 @@ static int first_time(int linelen, VECTOR v)
 
 		origin[2] = 0.0;
 
-		double v_length = min(g_x_dots, g_y_dots)/2;
+		double v_length = std::min(g_x_dots, g_y_dots)/2;
 		if (s_persp && g_3d_state.z_viewer() <= PERSPECTIVE_DISTANCE)
 		{
 			v_length *= long(PERSPECTIVE_DISTANCE + 600)/(long(g_3d_state.z_viewer() + 600)*2);

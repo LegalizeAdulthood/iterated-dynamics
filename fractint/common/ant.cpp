@@ -4,8 +4,10 @@
  * tables for speed, and adds a second ant type, multiple ants, and random
  * rules.
  */
-#include <string.h>
+#include <algorithm>
 #include <string>
+
+#include <string.h>
 
 #include "port.h"
 #include "prototyp.h"
@@ -328,7 +330,7 @@ void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 	{
 		/* the same rule the user wants for every
 		* turkmite (max rule_len = 16 bit) */
-		rule_len = min(rule_len, 8*sizeof(int));
+		rule_len = std::min(rule_len, 8*int(sizeof(int)));
 		rule[0] = 0;
 		for (int i = 0; i < rule_len; i++)
 		{

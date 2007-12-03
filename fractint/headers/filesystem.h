@@ -1,5 +1,7 @@
-#if !defined(FILESYSTEM_H)
-#define FILESYSTEM_H
+#pragma once
+
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
 
 extern int merge_path_names(char *old_full_path, char *new_filename, int mode);
 extern int merge_path_names(std::string &old_full_path, char *new_filename, int mode);
@@ -28,5 +30,4 @@ extern void check_write_file(char *filename, const char *ext);
 extern void check_write_file(std::string &name, const char *ext);
 extern void update_save_name(char *filename);
 extern void update_save_name(std::string &filename);
-
-#endif
+extern void ensure_extension(fs::path &path, const char *extension);

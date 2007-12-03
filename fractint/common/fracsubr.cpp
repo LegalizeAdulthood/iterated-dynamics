@@ -1,7 +1,10 @@
 /*
-	FRACSUBR.C contains subroutines which belong primarily to CALCFRAC.C and
-	FRACTALS.C, i.e. which are non-fractal-specific fractal engine subroutines.
+	fracsubr.cpp contains subroutines which belong primarily to calcfrac.cpp and
+	fractals.cpp, i.e. which are non-fractal-specific fractal engine subroutines.
 */
+#include <algorithm>
+#include <string>
+
 #include <assert.h>
 #include <memory.h>
 #include <stdarg.h>
@@ -10,7 +13,6 @@
 #endif
 #include <sys/types.h>
 #include <time.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"
@@ -554,7 +556,7 @@ expand_retry:
 	} /* end if not plasma */
 
 	/* for periodicity close-enough, and for unity: */
-	/*     min(max(g_delta_x, g_delta_x2), max(g_delta_y, g_delta_y2)      */
+	/*     std::min(std::max(g_delta_x, g_delta_x2), std::max(g_delta_y, g_delta_y2)      */
 	g_delta_min_fp = fabs(double(g_escape_time_state.m_grid_fp.delta_x()));
 	if (fabs(double(g_escape_time_state.m_grid_fp.delta_x2())) > g_delta_min_fp)
 	{

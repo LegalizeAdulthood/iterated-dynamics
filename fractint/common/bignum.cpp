@@ -129,6 +129,7 @@ double wide number can then be ignored.
 /* 3) bignumc.c - portable C versions of routines in bignuma.asm        */
 /*                                                                      */
 /************************************************************************/
+#include <algorithm>
 
 #include <string.h>
 
@@ -203,14 +204,14 @@ int convert_bn(bn_t newnum, bn_t old, int newbnlength, int newintlength,
 	{
 
 		/* This will keep the integer part from overflowing past the array. */
-		g_bn_length = oldbnlength - oldintlength + min(oldintlength, newintlength);
+		g_bn_length = oldbnlength - oldintlength + std::min(oldintlength, newintlength);
 
 		memcpy(newnum + newbnlength-newintlength-oldbnlength + oldintlength,
 					old, g_bn_length);
 	}
 	else
 	{
-		g_bn_length = newbnlength - newintlength + min(oldintlength, newintlength);
+		g_bn_length = newbnlength - newintlength + std::min(oldintlength, newintlength);
 		memcpy(newnum, old + oldbnlength-oldintlength-newbnlength + newintlength,
 					g_bn_length);
 	}

@@ -2,6 +2,7 @@
 	zoom.c - routines for zoombox manipulation and for panning
 
 */
+#include <algorithm>
 #include <vector>
 #include <string.h>
 
@@ -639,7 +640,7 @@ static int check_pan() /* return 0 if can't, alignment requirement if can */
 	start_resume();
 	g_WorkList.get_resume();
 	/* don't do end_resume! we're just looking */
-	i = min(9, g_WorkList.get_lowest_pass());
+	i = std::min(9, g_WorkList.get_lowest_pass());
 	j = solid_guess_block_size(); /* worst-case alignment requirement */
 	while (--i >= 0)
 	{

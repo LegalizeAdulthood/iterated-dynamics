@@ -1,24 +1,26 @@
 /*
-	CALCFRAC.C contains the high level ("engine") code for calculating the
+	calcfrac.cpp contains the high level ("engine") code for calculating the
 	fractal images (well, SOMEBODY had to do it!).
 	Original author Tim Wegner, but just about ALL the authors have contributed
 	SOME code to this routine at one time or another, or contributed to one of
 	the many massive restructurings.
 	The following modules work very closely with CALCFRAC.C:
-	  FRACTALS.C    the fractal-specific code for escape-time fractals.
-	  FRACSUBR.C    assorted subroutines belonging mainly to calcfrac.
-	  CALCMAND.ASM  fast Mandelbrot/Julia integer implementation
+	  fractals.cpp    the fractal-specific code for escape-time fractals.
+	  fracsubr.cpp    assorted subroutines belonging mainly to calcfrac.
+	  calcmand.asm    fast Mandelbrot/Julia integer implementation
 	Additional fractal-specific modules are also invoked from CALCFRAC:
-	  LORENZ.C      engine level and fractal specific code for attractors.
-	  JB.C          julibrot logic
-	  PARSER.C      formula fractals
+	  lorenz.cpp      engine level and fractal specific code for attractors.
+	  jb.cpp          julibrot logic
+	  parser.cpp      formula fractals
 	  and more
  -------------------------------------------------------------------- */
+#include <algorithm>
+#include <string>
+
 #include <assert.h>
 #include <string.h>
 #include <limits.h>
 #include <time.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"
@@ -262,8 +264,8 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 	else if (g_plot_color == plot_color_symmetry_origin)  /* Origin symmetry */
 	{
 		int i = g_WorkList.yy_stop()-(row-g_WorkList.yy_start());
-		int j = min(g_WorkList.xx_stop()-(right-g_WorkList.xx_start()), g_x_dots-1);
-		int k = min(g_WorkList.xx_stop()-(left -g_WorkList.xx_start()), g_x_dots-1);
+		int j = std::min(g_WorkList.xx_stop()-(right-g_WorkList.xx_start()), g_x_dots-1);
+		int k = std::min(g_WorkList.xx_stop()-(left -g_WorkList.xx_start()), g_x_dots-1);
 		if (i > g_y_stop && i < g_y_dots && j <= k)
 		{
 			put_line(i, j, k, str);
@@ -273,8 +275,8 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 	else if (g_plot_color == plot_color_symmetry_xy_axis) /* X-axis and Y-axis symmetry */
 	{
 		int i = g_WorkList.yy_stop()-(row-g_WorkList.yy_start());
-		int j = min(g_WorkList.xx_stop()-(right-g_WorkList.xx_start()), g_x_dots-1);
-		int k = min(g_WorkList.xx_stop()-(left -g_WorkList.xx_start()), g_x_dots-1);
+		int j = std::min(g_WorkList.xx_stop()-(right-g_WorkList.xx_start()), g_x_dots-1);
+		int k = std::min(g_WorkList.xx_stop()-(left -g_WorkList.xx_start()), g_x_dots-1);
 		if (i > g_y_stop && i < g_y_dots)
 		{
 			put_line(i, left, right, str);
@@ -633,7 +635,7 @@ int calculate_fractal()
 
 		if (g_inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
 		{
-			g_inversion[0] = min(fabs(g_escape_time_state.m_grid_fp.width()),
+			g_inversion[0] = std::min(fabs(g_escape_time_state.m_grid_fp.width()),
 								fabs(g_escape_time_state.m_grid_fp.height()))/6.0;
 			fix_inversion(&g_inversion[0]);
 			g_f_radius = g_inversion[0];
@@ -1969,7 +1971,7 @@ bool StandardFractal::distance_test_compute()
 		: 2*(g_old_z.x*m_distance_test_derivative.x - g_old_z.y*m_distance_test_derivative.y);
 	m_distance_test_derivative.y = 2*(g_old_z.y*m_distance_test_derivative.x + g_old_z.x*m_distance_test_derivative.y);
 	m_distance_test_derivative.x = ftemp;
-	if (max(fabs(m_distance_test_derivative.x), fabs(m_distance_test_derivative.y)) > s_dem_too_big)
+	if (std::max(fabs(m_distance_test_derivative.x), fabs(m_distance_test_derivative.y)) > s_dem_too_big)
 	{
 		return true;
 	}
@@ -3218,7 +3220,7 @@ static long automatic_log_map()   /*RB*/
 		if (g_real_color_iter < mincolour)
 		{
 			mincolour = g_real_color_iter;
-			g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+			g_max_iteration = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
 		}
 		if (g_col >= 32)
 		{
@@ -3243,7 +3245,7 @@ static long automatic_log_map()   /*RB*/
 			if (g_real_color_iter < mincolour)
 			{
 				mincolour = g_real_color_iter;
-				g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+				g_max_iteration = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
 			}
 			if (g_row >= 32)
 			{
@@ -3266,7 +3268,7 @@ static long automatic_log_map()   /*RB*/
 			if (g_real_color_iter < mincolour)
 			{
 				mincolour = g_real_color_iter;
-				g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+				g_max_iteration = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
 			}
 			if (g_row >= 32)
 			{
@@ -3289,7 +3291,7 @@ static long automatic_log_map()   /*RB*/
 			if (g_real_color_iter < mincolour)
 			{
 				mincolour = g_real_color_iter;
-				g_max_iteration = max(2, mincolour); /*speedup for when edges overlap lakes */
+				g_max_iteration = std::max(2L, mincolour); /*speedup for when edges overlap lakes */
 			}
 			if (g_col >= 32)
 			{
@@ -3597,26 +3599,26 @@ void PerformWorkList::setup_initial_work_list()
 
 void PerformWorkList::setup_distance_estimator()
 {
-	double dxsize;
-	double dysize;
+	double dx_size;
+	double dy_size;
 	double aspect;
 	if (g_pseudo_x && g_pseudo_y)
 	{
 		aspect = double(g_pseudo_y)/double(g_pseudo_x);
-		dxsize = g_pseudo_x-1;
-		dysize = g_pseudo_y-1;
+		dx_size = g_pseudo_x-1;
+		dy_size = g_pseudo_y-1;
 	}
 	else
 	{
 		aspect = double(g_y_dots)/double(g_x_dots);
-		dxsize = g_x_dots-1;
-		dysize = g_y_dots-1;
+		dx_size = g_x_dots-1;
+		dy_size = g_y_dots-1;
 	}
 
-	double delta_x_fp = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/dxsize; /* calculate stepsizes */
-	double delta_y_fp = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/dysize;
-	double delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/dysize;
-	double delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/dxsize;
+	double delta_x_fp = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/dx_size; /* calculate stepsizes */
+	double delta_y_fp = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/dy_size;
+	double delta_x2_fp = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/dy_size;
+	double delta_y2_fp = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/dx_size;
 
 	g_rq_limit = s_rq_limit_save; /* just in case changed to DEM_BAILOUT earlier */
 	if (g_distance_test != 1 || g_colors == 2) /* not doing regular outside colors */

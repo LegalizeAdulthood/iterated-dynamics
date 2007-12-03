@@ -1,12 +1,14 @@
 /*
-		encoder.c - GIF Encoder and associated routines
-*/
+ * encoder.c - GIF Encoder and associated routines
+ */
+#include <algorithm>
+#include <string>
+
 #include <string.h>
 #include <limits.h>
 #ifndef XFRACT
 #include <io.h>
 #endif
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"
@@ -731,7 +733,7 @@ static int put_extend_blk(int block_id, int block_len, char *block_data)
 	i = (block_len + 254)/255;
 	while (--i >= 0)
 	{
-		block_len -= (j = min(block_len, 255));
+		block_len -= (j = std::min(block_len, 255));
 		if (fputc(j, g_outfile) != j)
 		{
 			return 0;
@@ -881,7 +883,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->faspectratio = g_final_aspect_ratio;
 	save_info->system = 1;
 
-	save_info->release = check_back() ? short(min(g_save_release, g_release)) : short(g_release);
+	save_info->release = check_back() ? short(std::min(g_save_release, g_release)) : short(g_release);
 
 	save_info->flag3d = short(g_display_3d);
 	save_info->ambient = short(g_3d_state.ambient());

@@ -1,7 +1,7 @@
 /*
- * hc.c
+ * hc.cpp
  *
- * Stand-alone FRACTINT help compiler.  Compile in the COMPACT memory model.
+ * Stand-alone FRACTINT help compiler.
  *
  * See HC.DOC for source file syntax.
  *
@@ -44,7 +44,7 @@
  *   11-03-94 TIW     Increased buffer size.
  *
  */
-
+#include <algorithm>
 
 #define HC_C
 
@@ -83,9 +83,9 @@
 #   define FNSPLIT _splitpath
 #endif
 
-
 #include <assert.h>
-  /* see Fractint.c for a description of the "include"  hierarchy */
+
+/* see Fractint.c for a description of the "include"  hierarchy */
 #include "port.h"
 #include "helpcom.h"
 
@@ -3928,7 +3928,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
 	for (count=0; count<len;)
 	{
-		size = (int) min((long)BUFFER_SIZE, len-count);
+		size = (int) std::min((long)BUFFER_SIZE, len-count);
 		read(hlp, buffer, size);
 		write(exe, buffer, size);
 		count += size;

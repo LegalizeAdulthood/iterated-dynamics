@@ -1778,9 +1778,9 @@ bool X11Driver::initialize(int &argc, char **argv)
 		fprintf(stderr, "Error: need short to be 2 bytes\n");
 		exit(-1);
 	}
-	if (sizeof(long) < sizeof(FLOAT4))
+	if (sizeof(long) < sizeof(float))
 	{
-		fprintf(stderr, "Error: need sizeof(long) >= sizeof(FLOAT4)\n");
+		fprintf(stderr, "Error: need sizeof(long) >= sizeof(float)\n");
 		exit(-1);
 	}
 

@@ -1,5 +1,4 @@
 /*
- *
  * This GIF decoder is designed for use with the FRACTINT program.
  * This decoder code lacks full generality in the following respects:
  * supports non-interlaced GIF files only, and calmly ignores any
@@ -8,10 +7,12 @@
  * GIF and 'Graphics Interchange Format' are trademarks (tm) of
  * Compuserve, Incorporated, an H&R Block Company.
  *
- *                                                                                      Tim Wegner
+ * Tim Wegner
  */
-#include <string.h>
+#include <algorithm>
 #include <string>
+
+#include <string.h>
 
 #include "port.h"
 #include "prototyp.h"
@@ -314,7 +315,7 @@ int gifview()
 			*/
 			if (g_skip_x_dots == 0)
 			{
-				width = min(width, DECODERLINE_WIDTH);
+				width = std::min(width, unsigned(DECODERLINE_WIDTH));
 			}
 			{
 				BusyMarker marker;

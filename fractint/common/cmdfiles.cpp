@@ -1,12 +1,13 @@
 /*
 		Command-line/Command-File Parser Routines
 */
+#include <string>
+
 #include <assert.h>
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
 #include <math.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"

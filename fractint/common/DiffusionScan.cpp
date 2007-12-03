@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cstring>
 #include <string>
 
@@ -111,9 +112,9 @@ static bool diffusion_block(int row, int col, int sqsz)
 static void plot_block_lim(int x, int y, int s, int c)
 {
 	memset(g_stack, c, s);
-	for (int ty = y; ty < min(y + s, g_y_stop + 1); ty++)
+	for (int ty = y; ty < std::min(y + s, g_y_stop + 1); ty++)
 	{
-		sym_fill_line(ty, x, min(x + s - 1, g_x_stop), g_stack);
+		sym_fill_line(ty, x, std::min(x + s - 1, g_x_stop), g_stack);
 	}
 }
 
@@ -363,7 +364,7 @@ int diffusion_scan()
 	/* fit any 32 bit architecture, the maxinum limit for this case would  */
 	/* be 65536x65536 (HB) */
 
-	s_bits = (unsigned) (min(log(double(g_y_stop - g_iy_start + 1)),
+	s_bits = (unsigned) (std::min(log(double(g_y_stop - g_iy_start + 1)),
 							 log(double(g_x_stop - g_ix_start + 1)))/log2);
 	s_bits <<= 1; /* double for two axes */
 	s_diffusion_limit = 1l << s_bits;

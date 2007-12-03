@@ -3,9 +3,11 @@
  *
  * Edits VGA 256-color palettes.
  */
+#include <algorithm>
+#include <string>
+
 #include <string.h>
 #include <stdarg.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"
@@ -895,7 +897,7 @@ static bool move_box_process(move_box *me)
 
 		case FIK_PAGE_DOWN:   /* grow */
 			{
-				int max_width = min(g_screen_width, MAX_WIDTH);
+				int max_width = std::min(g_screen_width, MAX_WIDTH);
 
 				if (me->base_depth + (me->csize + CSIZE_INC)*16 + 1 < g_screen_height  &&
 					me->base_width + (me->csize + CSIZE_INC)*16 + 1 < max_width)
@@ -3189,7 +3191,7 @@ void palette_edit()       /* called by fractint */
 
 	g_plot_color = g_plot_color_put_color;
 
-	g_line_buffer = new BYTE[max(g_screen_width, g_screen_height)];
+	g_line_buffer = new BYTE[std::max(g_screen_width, g_screen_height)];
 
 	g_sx_offset = 0;
 	g_sy_offset = 0;
