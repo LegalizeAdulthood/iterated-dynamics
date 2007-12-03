@@ -1,7 +1,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "cmplx.h"
-#include "fractint.h"
+#include "id.h"
 #include "externs.h"
 #include "fractype.h"
 #include "fpu.h"

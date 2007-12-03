@@ -1319,15 +1319,15 @@
 					>
 				</File>
 				<File
-					RelativePath=".\common\fractint.cpp"
-					>
-				</File>
-				<File
 					RelativePath=".\common\framain2.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\common\help.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\id.cpp"
 					>
 				</File>
 				<File
@@ -1400,15 +1400,15 @@
 				>
 			</File>
 			<File
-				RelativePath=".\headers\fractint.h"
-				>
-			</File>
-			<File
 				RelativePath=".\headers\fractype.h"
 				>
 			</File>
 			<File
 				RelativePath=".\headers\helpcom.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\id.h"
 				>
 			</File>
 			<File

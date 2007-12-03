@@ -1,6 +1,6 @@
 #include "port.h"
 #include "cmplx.h"
-#include "fractint.h"
+#include "id.h"
 #include "prototyp.h"
 #include "externs.h"
 #include "fractype.h"

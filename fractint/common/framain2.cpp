@@ -8,7 +8,7 @@
 #include <string>
 
 #include "port.h"
-#include "fractint.h"
+#include "id.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"

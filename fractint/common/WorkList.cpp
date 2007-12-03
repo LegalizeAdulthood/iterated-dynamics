@@ -3,7 +3,7 @@
 
 #include "port.h"
 #include "cmplx.h"
-#include "fractint.h"
+#include "id.h"
 #include "externs.h"
 #include "fractype.h"
 #include "prototyp.h"
