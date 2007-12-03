@@ -240,7 +240,7 @@ static void my_floating_point_err(int sig)
 
 static void set_exe_path(char *path)
 {
-	split_path(path, NULL, g_exe_path, NULL, NULL);
+	split_path(path, 0, g_exe_path, 0, 0);
 	if (g_exe_path[0] != SLASHC)
 	{
 		/* relative path */
@@ -297,7 +297,7 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 
 	command_files(argc, argv);         /* process the command-line */
 	pause_error(PAUSE_ERROR_NO_BATCH); /* pause for error msg if not batch */
-	init_msg("", NULL, 0);  /* this causes driver_get_key if init_msg called on runup */
+	init_msg("", 0, 0);  /* this causes driver_get_key if init_msg called on runup */
 
 	history_allocate();
 
@@ -702,7 +702,7 @@ enum TimerType
 
 /* timer function:
 	timer(TIMER_ENGINE, (*fractal)())		fractal engine
-	timer(TIMER_DECODER, NULL, int width)	decoder
+	timer(TIMER_DECODER, 0, int width)	decoder
 	timer(TIMER_ENCODER)					encoder
 */
 static int timer(TimerType timertype, int (*engine)(), ...)
@@ -715,7 +715,7 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 	{
 		do_bench = (DEBUGMODE_TIME_ENCODER == g_debug_mode);
 	}
-	FILE *fp = NULL;
+	FILE *fp = 0;
 	if (do_bench)
 	{
 		fp = dir_fopen(g_work_dir, "bench", "a");
@@ -759,7 +759,7 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 			g_y_dots,
 			g_max_iteration);
 		fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval/100, g_timer_interval%100);
-		if (fp != NULL)
+		if (fp != 0)
 		{
 			fclose(fp);
 		}
@@ -774,10 +774,10 @@ int timer_engine(int (*engine)())
 
 int timer_decoder(int line_width)
 {
-	return timer(TIMER_DECODER, NULL, line_width);
+	return timer(TIMER_DECODER, 0, line_width);
 }
 
 int timer_encoder()
 {
-	return timer(TIMER_ENCODER, NULL);
+	return timer(TIMER_ENCODER, 0);
 }

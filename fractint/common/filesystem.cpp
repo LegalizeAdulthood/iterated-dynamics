@@ -33,7 +33,7 @@
 int merge_path_names(char *old_full_path, char *new_filename, bool copy_directory)
 {
 	/* no dot or slash so assume a file */
-	bool isafile = (strchr(new_filename, '.') == NULL && strchr(new_filename, SLASHC) == NULL);
+	bool isafile = (strchr(new_filename, '.') == 0 && strchr(new_filename, SLASHC) == 0);
 	int isadir = is_a_directory(new_filename);
 	if (isadir != 0)
 	{
@@ -143,7 +143,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 	}
 	if (isadir == 0 && !isafile && copy_directory)
 	{
-		make_path(old_full_path, drive1, dir1, NULL, NULL);
+		make_path(old_full_path, drive1, dir1, 0, 0);
 		int len = int(strlen(old_full_path));
 		if (len > 0)
 		{
@@ -484,7 +484,7 @@ void extract_filename(char *target, const char *source)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
-	split_path(source, NULL, NULL, fname, ext);
+	split_path(source, 0, 0, fname, ext);
 	make_path(target, "", "", fname, ext);
 }
 
@@ -497,13 +497,13 @@ void extract_filename(std::string &target, const std::string &source)
 }
 
 /* tells if filename has extension */
-/* returns pointer to period or NULL */
+/* returns pointer to period or 0 */
 const char *has_extension(const char *source)
 {
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
-	split_path(source, NULL, NULL, fname, ext);
-	return (ext[0] != 0) ? strrchr(source, '.') : NULL;
+	split_path(source, 0, 0, fname, ext);
+	return (ext[0] != 0) ? strrchr(source, '.') : 0;
 }
 
 const char *has_extension(const std::string &source)
@@ -519,7 +519,7 @@ void find_path(const char *filename, char *fullpathname)
 	char ext[FILE_MAX_EXT];
 	char temp_path[FILE_MAX_PATH];
 
-	split_path(filename , NULL, NULL, fname, ext);
+	split_path(filename , 0, 0, fname, ext);
 	make_path(temp_path, ""   , "" , fname, ext);
 
 	if (g_check_current_dir && access(temp_path, 0) == 0)   /* file exists */
@@ -539,7 +539,7 @@ void find_path(const char *filename, char *fullpathname)
 		}
 		else
 		{
-			split_path(temp_path , NULL, NULL, fname, ext);
+			split_path(temp_path , 0, 0, fname, ext);
 			make_path(temp_path, ""   , "" , fname, ext);
 		}
 	}
@@ -574,7 +574,7 @@ nextname:
 	char openfile[FILE_MAX_DIR];
 	strcpy(openfile, name);
 
-	if (has_extension(openfile) == NULL)
+	if (has_extension(openfile) == 0)
 	{
 		strcat(openfile, ext);
 	}

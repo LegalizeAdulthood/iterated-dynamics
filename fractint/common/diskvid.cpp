@@ -27,7 +27,7 @@
 bool g_disk_16bit = false;	/* storing 16 bit values for continuous potential */
 
 static int s_time_to_display;
-static FILE *s_file = NULL;
+static FILE *s_file = 0;
 static bool s_disk_targa = false;
 static struct cache		/* structure of each cache entry */
 {
@@ -37,7 +37,7 @@ static struct cache		/* structure of each cache entry */
 	bool dirty;					/* changed since read? */
 	bool lru;					/* recently used? */
 } *s_cache_end, *s_cache_lru, *s_cur_cache;
-static struct cache *s_cache_start = NULL;
+static struct cache *s_cache_start = 0;
 static long s_high_offset;           /* highwater mark of writes */
 static long s_seek_offset;           /* what we'll get next if we don't seek */
 static long s_cur_offset;            /* offset of last g_block referenced */
@@ -114,8 +114,8 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	int freemem;
 	long memorysize;
 	long offset;
-	unsigned int *fwd_link = NULL;
-	struct cache *ptr1 = NULL;
+	unsigned int *fwd_link = 0;
+	struct cache *ptr1 = 0;
 	long longtmp;
 	unsigned int cache_size;
 	if (g_disk_flag)
@@ -185,7 +185,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			longtmp = (int(cache_size) < freemem) ?
 				long(cache_size) << 11 : long(cache_size + freemem) << 10;
 			BYTE *tempfar = new BYTE[longtmp];
-			if (tempfar != NULL)
+			if (tempfar != 0)
 			{
 				delete[] tempfar;
 				break;
@@ -201,7 +201,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	s_cache_lru = s_cache_start;
 	s_cache_end = s_cache_lru + longtmp/sizeof(*s_cache_start);
 	s_memory_buffer = new BYTE[BLOCK_LEN];
-	if (s_cache_start == NULL || s_memory_buffer == NULL)
+	if (s_cache_start == 0 || s_memory_buffer == 0)
 	{
 		stop_message(0, "*** insufficient free memory for cache buffers ***");
 		return -1;
@@ -308,7 +308,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 
 void disk_end()
 {
-	if (s_file != NULL)
+	if (s_file != 0)
 	{
 		if (s_disk_targa) /* flush the cache */
 		{
@@ -321,7 +321,7 @@ void disk_end()
 			}
 		}
 		fclose(s_file);
-		s_file = NULL;
+		s_file = 0;
 	}
 
 	if (s_disk_video_handle != 0)
@@ -329,15 +329,15 @@ void disk_end()
 		MemoryRelease(s_disk_video_handle);
 		s_disk_video_handle = 0;
 	}
-	if (s_cache_start != NULL)
+	if (s_cache_start != 0)
 	{
 		delete[] reinterpret_cast<BYTE *>(s_cache_start);
-		s_cache_start = NULL;
+		s_cache_start = 0;
 	}
-	if (s_memory_buffer != NULL)
+	if (s_memory_buffer != 0)
 	{
 		delete[] s_memory_buffer;
-		s_memory_buffer = NULL;
+		s_memory_buffer = 0;
 	}
 	g_disk_flag = false;
 	s_row_size = 0;
@@ -603,7 +603,7 @@ static struct cache *find_cache(long offset)
 		}
 		tbloffset = ptr1->hashlink;
 	}
-	return NULL;
+	return 0;
 #endif
 }
 
@@ -623,7 +623,7 @@ static void  write_cache_lru()
 	while (++i <= WRITEGAP)
 	{
 		ptr2 = find_cache(offset -= BLOCK_LEN);
-		if (ptr2 != NULL && ptr2->dirty)
+		if (ptr2 != 0 && ptr2->dirty)
 		{
 			ptr1 = ptr2;
 			i = 0;
@@ -689,7 +689,7 @@ write_stuff:
 	ptr1->dirty = false;
 	offset = ptr1->offset + BLOCK_LEN;
 	ptr1 = find_cache(offset);
-	if (ptr1 != NULL && ptr1->dirty)
+	if (ptr1 != 0 && ptr1->dirty)
 	{
 		goto write_stuff;
 	}
@@ -697,7 +697,7 @@ write_stuff:
 	while (++i <= WRITEGAP)
 	{
 		ptr1 = find_cache(offset += BLOCK_LEN);
-		if (ptr1 != NULL && ptr1->dirty)
+		if (ptr1 != 0 && ptr1->dirty)
 		{
 			goto write_seek;
 		}

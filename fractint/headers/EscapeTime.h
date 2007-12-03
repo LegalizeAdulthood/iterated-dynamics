@@ -10,10 +10,10 @@ public:
 	SampleGrid<T>() :
 		m_width(0),
 		m_height(0),
-		m_x0(NULL),
-		m_y0(NULL),
-		m_x1(NULL),
-		m_y1(NULL),
+		m_x0(0),
+		m_y0(0),
+		m_x1(0),
+		m_y1(0),
 		m_x_min(0),
 		m_x_max(0),
 		m_x_3rd(0),
@@ -39,10 +39,10 @@ public:
 		delete[] m_y0;
 		delete[] m_x1;
 		delete[] m_y1;
-		m_x0 = NULL;
-		m_x1 = NULL;
-		m_y0 = NULL;
-		m_y1 = NULL;
+		m_x0 = 0;
+		m_x1 = 0;
+		m_y0 = 0;
+		m_y1 = 0;
 	}
 
 	void set_grid_pointers(int width, int height)

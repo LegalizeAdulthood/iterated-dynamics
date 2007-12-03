@@ -28,8 +28,8 @@ public:
 	{
 		for (int i = 0; i < DIRS; i++)
 		{
-			m_incx[i] = NULL;
-			m_incy[i] = NULL;
+			m_incx[i] = 0;
+			m_incy[i] = 0;
 		}
 	};
 	~Ant()
@@ -443,8 +443,8 @@ void Ant::free_storage()
 	{
 		delete[] m_incx[i];
 		delete[] m_incy[i];
-		m_incx[i] = NULL;
-		m_incy[i] = NULL;
+		m_incx[i] = 0;
+		m_incy[i] = 0;
 	}
 }
 

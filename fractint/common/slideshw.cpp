@@ -20,7 +20,7 @@
 #include "slideshw.h"
 
 bool g_busy = false;
-static FILE *s_slide_file = NULL;
+static FILE *s_slide_file = 0;
 static long s_start_tick = 0;
 static long s_ticks = 0;
 static int s_slow_count = 0;
@@ -136,7 +136,7 @@ int slide_show()
 		}
 		s_calc_wait = false;
 	}
-	if (s_slide_file == NULL)   /* open files first time through */
+	if (s_slide_file == 0)   /* open files first time through */
 	{
 		if (start_slide_show() == 0)
 		{
@@ -331,7 +331,7 @@ start:
 int start_slide_show()
 {
 	s_slide_file = fopen(g_autokey_name.c_str(), "r");
-	if (s_slide_file == NULL)
+	if (s_slide_file == 0)
 	{
 		g_slides = SLIDES_OFF;
 	}
@@ -348,7 +348,7 @@ void stop_slide_show()
 	{
 		fclose(s_slide_file);
 	}
-	s_slide_file = NULL;
+	s_slide_file = 0;
 	g_slides = SLIDES_OFF;
 }
 
@@ -356,10 +356,10 @@ void record_show(int key)
 {
 	float dt = float(s_ticks);      /* save time of last call */
 	s_ticks = clock_ticks();  /* current time */
-	if (s_slide_file == NULL)
+	if (s_slide_file == 0)
 	{
 		s_slide_file = fopen(g_autokey_name.c_str(), "w");
-		if (s_slide_file == NULL)
+		if (s_slide_file == 0)
 		{
 			return;
 		}

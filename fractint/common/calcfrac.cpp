@@ -100,7 +100,7 @@ double g_rq_limit2;
 bool g_no_magnitude_calculation = false;
 bool g_use_old_periodicity = false;
 bool g_old_demm_colors = false;
-int (*g_calculate_type)() = NULL;
+int (*g_calculate_type)() = 0;
 int (*g_calculate_type_temp)();
 bool g_quick_calculate = false;
 double g_proximity = 0.01;
@@ -116,7 +116,7 @@ SymmetryType g_symmetry;
 bool g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
 int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
-char *g_resume_info = NULL;                    /* resume info if allocated */
+char *g_resume_info = 0;                    /* resume info if allocated */
 bool g_resuming;                           /* true if resuming after interrupt */
 /* variables which must be visible for tab_display */
 int g_got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
@@ -179,7 +179,7 @@ static bool s_dem_mandelbrot;
 static ComplexD s_saved_z;
 static double s_rq_limit_save;
 static int s_pi_in_pixels; /* value of pi in pixels */
-static BYTE *s_save_dots = NULL;
+static BYTE *s_save_dots = 0;
 static BYTE *s_fill_buffer;
 static int s_save_dots_len;
 static int s_show_dot_color;
@@ -335,14 +335,14 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 {
 	if (direction != JUST_A_POINT)
 	{
-		if (s_save_dots == NULL)
+		if (s_save_dots == 0)
 		{
-			stop_message(0, "s_save_dots NULL");
+			stop_message(0, "s_save_dots 0");
 			exit(0);
 		}
-		if (s_fill_buffer == NULL)
+		if (s_fill_buffer == 0)
 		{
-			stop_message(0, "s_fill_buffer NULL");
+			stop_message(0, "s_fill_buffer 0");
 			exit(0);
 		}
 	}
@@ -489,7 +489,7 @@ int calculate_fractal()
 	if (g_true_color)
 	{
 		check_write_file(g_light_name, ".tga");
-		if (start_disk1(g_light_name, NULL, false) == 0)
+		if (start_disk_targa(g_light_name, 0, false) == 0)
 		{
 			/* Have to force passes = 1 */
 			g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
@@ -539,7 +539,7 @@ int calculate_fractal()
 		g_first_saved_and = long(g_next_saved_incr*2 + 1);
 	}
 
-	g_log_table = NULL;
+	g_log_table = 0;
 	g_max_log_table_size = g_max_iteration;
 	g_log_calculation = false;
 
@@ -560,7 +560,7 @@ int calculate_fractal()
 	{
 		g_log_table = new BYTE[g_max_log_table_size + 1];
 
-		if (g_log_table == NULL)
+		if (g_log_table == 0)
 		{
 			if (g_ranges_length || g_log_dynamic_calculate == LOGDYNAMIC_TABLE)
 			{
@@ -779,7 +779,7 @@ int calculate_fractal()
 	if (g_log_table && !g_log_calculation)
 	{
 		delete[] g_log_table;
-		g_log_table = NULL;
+		g_log_table = 0;
 	}
 	g_formula_state.free_work_area();
 
@@ -3512,9 +3512,9 @@ private:
 };
 
 PerformWorkList::PerformWorkList()
-	: m_save_orbit_calc(NULL),
-	m_save_per_pixel(NULL),
-	m_save_per_image(NULL)
+	: m_save_orbit_calc(0),
+	m_save_per_pixel(0),
+	m_save_per_image(0)
 {
 }
 
@@ -3524,11 +3524,11 @@ PerformWorkList::~PerformWorkList()
 
 void PerformWorkList::setup_alternate_math()
 {
-	m_save_orbit_calc = NULL;  /* function that calculates one orbit */
-	m_save_per_pixel = NULL;  /* once-per-pixel init */
-	m_save_per_image = NULL;  /* once-per-image setup */
+	m_save_orbit_calc = 0;  /* function that calculates one orbit */
+	m_save_per_pixel = 0;  /* once-per-pixel init */
+	m_save_per_image = 0;  /* once-per-image setup */
 	alternate_math *alt = find_alternate_math(g_bf_math);
-	if (alt != NULL)
+	if (alt != 0)
 	{
 		m_save_orbit_calc = g_current_fractal_specific->orbitcalc;
 		m_save_per_pixel = g_current_fractal_specific->per_pixel;
@@ -3545,7 +3545,7 @@ void PerformWorkList::setup_alternate_math()
 
 void PerformWorkList::cleanup_alternate_math()
 {
-	if (m_save_orbit_calc != NULL)
+	if (m_save_orbit_calc != 0)
 	{
 		g_current_fractal_specific->orbitcalc = m_save_orbit_calc;
 		g_current_fractal_specific->per_pixel = m_save_per_pixel;
@@ -3722,7 +3722,7 @@ void PerformWorkList::show_dot_start()
 			s_show_dot_width--;
 		}
 		s_save_dots = new BYTE[s_save_dots_len];
-		if (s_save_dots != NULL)
+		if (s_save_dots != 0)
 		{
 			s_save_dots_len /= 2;
 			s_fill_buffer = s_save_dots + s_save_dots_len;
@@ -3735,7 +3735,7 @@ void PerformWorkList::show_dot_start()
 		*/
 		s_show_dot_width--;
 	}
-	if (s_save_dots == NULL)
+	if (s_save_dots == 0)
 	{
 		s_show_dot_width = -1;
 	}
@@ -3745,11 +3745,11 @@ void PerformWorkList::show_dot_start()
 
 void PerformWorkList::show_dot_finish()
 {
-	if (s_save_dots != NULL)
+	if (s_save_dots != 0)
 	{
 		delete[] s_save_dots;
-		s_save_dots = NULL;
-		s_fill_buffer = NULL;
+		s_save_dots = 0;
+		s_fill_buffer = 0;
 	}
 }
 

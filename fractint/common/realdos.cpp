@@ -76,7 +76,7 @@ int stop_message(int flags, const char *msg)
 	static unsigned char batchmode = 0;
 	if (g_debug_mode || g_initialize_batch >= INITBATCH_NORMAL)
 	{
-		FILE *fp = NULL;
+		FILE *fp = 0;
 		if (g_initialize_batch == INITBATCH_NONE)
 		{
 			fp = dir_fopen(g_work_dir, "stop_message.txt", "w");
@@ -85,7 +85,7 @@ int stop_message(int flags, const char *msg)
 		{
 			fp = dir_fopen(g_work_dir, "stop_message.txt", "a");
 		}
-		if (fp != NULL)
+		if (fp != 0)
 		{
 			fprintf(fp, "%s\n", msg);
 			fclose(fp);
@@ -174,10 +174,10 @@ int text_temp_message(char *msgparm)
 
 void free_temp_message()
 {
-	if (s_temp_text_save != NULL)
+	if (s_temp_text_save != 0)
 	{
 		delete[] s_temp_text_save;
-		s_temp_text_save = NULL;
+		s_temp_text_save = 0;
 	}
 }
 
@@ -185,7 +185,7 @@ int show_temp_message(char *msgparm)
 {
 	static long size = 0;
 	char msg[41];
-	BYTE *fontptr = NULL;
+	BYTE *fontptr = 0;
 	int i;
 	int xrepeat = 0;
 	int yrepeat = 0;
@@ -214,7 +214,7 @@ int show_temp_message(char *msgparm)
 	s_text_y_dots = yrepeat*8;
 
 	/* worst case needs 10k */
-	if (s_temp_text_save != NULL)
+	if (s_temp_text_save != 0)
 	{
 		if (size != long(s_text_x_dots)*s_text_y_dots)
 		{
@@ -226,10 +226,10 @@ int show_temp_message(char *msgparm)
 	save_syoffs = g_sy_offset;
 	g_sx_offset = 0;
 	g_sy_offset = 0;
-	if (s_temp_text_save == NULL) /* only save screen first time called */
+	if (s_temp_text_save == 0) /* only save screen first time called */
 	{
 		s_temp_text_save = new BYTE[s_text_x_dots*s_text_y_dots];
-		if (s_temp_text_save == NULL)
+		if (s_temp_text_save == 0)
 		{
 			return -1; /* sorry, message not displayed */
 		}
@@ -256,7 +256,7 @@ void clear_temp_message()
 	{
 		disk_video_status(0, "");
 	}
-	else if (s_temp_text_save != NULL)
+	else if (s_temp_text_save != 0)
 	{
 		save_sxoffs = g_sx_offset;
 		save_syoffs = g_sy_offset;
@@ -269,7 +269,7 @@ void clear_temp_message()
 		if (!g_using_jiim)  /* jiim frees memory with free_temp_message() */
 		{
 			delete[] s_temp_text_save;
-			s_temp_text_save = NULL;
+			s_temp_text_save = 0;
 		}
 		g_sx_offset = save_sxoffs;
 		g_sy_offset = save_syoffs;
@@ -503,8 +503,8 @@ int full_screen_choice(
 									/* &8 add caller's instr after normal set */
 									/* &16 menu items up one line             */
 	const char *hdg,				/* heading info, \n delimited             */
-	char *hdg2,						/* column heading or NULL                 */
-	char *instr,					/* instructions, \n delimited, or NULL    */
+	char *hdg2,						/* column heading or 0                 */
+	char *instr,					/* instructions, \n delimited, or 0    */
 	int numchoices,					/* How many choices in list               */
 	char **choices,					/* array of choice strings                */
 	int *attributes,				/* &3: 0 normal color, 1, 3 highlight      */
@@ -513,10 +513,10 @@ int full_screen_choice(
 	int boxdepth,					/* box depth, 0 for calc, 99 for max      */
 	int colwidth,					/* data width of a column, 0 for calc     */
 	int current,					/* start with this item                   */
-	void (*formatitem)(int, char*), /* routine to display an item or NULL     */
-	char *speedstring,				/* returned speed key value, or NULL      */
-	int (*speedprompt)(int, int, int, char *, int), /* routine to display prompt or NULL      */
-	int (*checkkey)(int, int)		/* routine to check keystroke or NULL     */
+	void (*formatitem)(int, char*), /* routine to display an item or 0     */
+	char *speedstring,				/* returned speed key value, or 0      */
+	int (*speedprompt)(int, int, int, char *, int), /* routine to display prompt or 0      */
+	int (*checkkey)(int, int)		/* routine to check keystroke or 0     */
 )
 	/* return is: n >= 0 for choice n selected,
 						-1 for escape
@@ -741,7 +741,7 @@ int full_screen_choice(
 		driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_MED, hdg2);
 	}
 	i = topleftrow + boxdepth + 1;
-	if (instr == NULL || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
+	if (instr == 0 || (options & CHOICE_INSTRUCTIONS))   /* display default instructions */
 	{
 		if (i < 20)
 		{
@@ -829,7 +829,7 @@ int full_screen_choice(
 			...  be 72 when detail toggle available?  (2 grey margin each
 			...  side, 1 blue margin each side)
 			***/
-			if (topleftchoice > 0 && hdg2 == NULL)
+			if (topleftchoice > 0 && hdg2 == 0)
 			{
 				driver_put_string(topleftrow - 1, topleftcol, C_PROMPT_LO, "(more)");
 			}
@@ -1449,8 +1449,8 @@ top:
 		set_help_mode(HELPMAIN);
 		i = full_screen_choice(CHOICE_MENU | CHOICE_CRUNCH,
 			"MAIN MENU",
-			NULL, NULL, nextleft, (char **) choices, attributes,
-			2, nextleft/2, 29, 0, NULL, NULL, NULL, menu_check_key);
+			0, 0, nextleft, (char **) choices, attributes,
+			2, nextleft/2, 29, 0, 0, 0, 0, menu_check_key);
 		if (i == -1)     /* escape */
 		{
 			i = FIK_ESC;
@@ -1576,7 +1576,7 @@ int input_field(
 		int len,              /* field length (declare as 1 larger for \0) */
 		int row,              /* display row */
 		int col,              /* display column */
-		int (*checkkey)(int key)  /* routine to check non data keys, or NULL */
+		int (*checkkey)(int key)  /* routine to check non data keys, or 0 */
 		)
 {
 	char savefld[81];
@@ -1778,10 +1778,10 @@ inpfld_end:
 
 int field_prompt(
 		char *hdg,      /* heading, \n delimited lines */
-		char *instr,    /* additional instructions or NULL */
+		char *instr,    /* additional instructions or 0 */
 		char *fld,          /* the field itself */
 		int len,            /* field length (declare as 1 larger for \0) */
-		int (*checkkey)(int key)   /* routine to check non data keys, or NULL */
+		int (*checkkey)(int key)   /* routine to check non data keys, or 0 */
 		)
 {
 	char *charptr;
@@ -1865,7 +1865,7 @@ int field_prompt(
 		if thinking message not yet on display, it is displayed;
 		otherwise the wheel is updated
 		returns 0 to keep going, -1 if keystroke pending
-	thinking(0, NULL):
+	thinking(0, 0):
 		call this when thinking phase is done
 	*/
 

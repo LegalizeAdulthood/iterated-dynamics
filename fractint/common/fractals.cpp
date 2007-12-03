@@ -93,8 +93,8 @@ int g_c_exp = 0;
 /* These are local but I don't want to pass them as parameters */
 ComplexD g_parameter = { 0, 0 };
 ComplexD g_parameter2 = { 0, 0 };
-ComplexD *g_float_parameter = NULL;
-ComplexL *g_long_parameter = NULL; /* used here and in jb.c */
+ComplexD *g_float_parameter = 0;
+ComplexL *g_long_parameter = 0; /* used here and in jb.c */
 double g_cos_x = 0.0;
 double g_sin_x = 0.0;
 double g_temp_sqr_x = 0.0;

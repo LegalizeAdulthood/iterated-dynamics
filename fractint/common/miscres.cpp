@@ -604,7 +604,7 @@ int set_function_array(int k, const char *name)
 	trigname[6] = 0; /* safety first */
 
 	slash = strchr(trigname, '/');
-	if (slash != NULL)
+	if (slash != 0)
 	{
 		*slash = 0;
 	}
@@ -682,7 +682,7 @@ void get_calculation_time(char *msg, long ctime)
 
 static void show_str_var(const char *name, const char *var, int &row, char *msg)
 {
-	if (var == NULL)
+	if (var == 0)
 	{
 		return;
 	}
@@ -795,8 +795,8 @@ int tab_display()       /* display the status of the current image */
 	double Xmagfactor;
 	double Rotation;
 	double Skew;
-	big_t bfXctr = NULL;
-	big_t bfYctr = NULL;
+	big_t bfXctr = 0;
+	big_t bfYctr = 0;
 	char msg[350];
 	char *msgptr;
 	int key;
@@ -1312,17 +1312,17 @@ char *get_ifs_token(char *buf, FILE *ifsfile)
 	{
 		if (file_gets(buf, 200, ifsfile) < 0)
 		{
-			return NULL;
+			return 0;
 		}
 		else
 		{
 			bufptr = strchr(buf, ';');
-			if (bufptr != NULL) /* use ';' as comment to eol */
+			if (bufptr != 0) /* use ';' as comment to eol */
 			{
 				*bufptr = 0;
 			}
 			bufptr = strtok(buf, seps);
-			if (bufptr != NULL)
+			if (bufptr != 0)
 			{
 				return bufptr;
 			}
@@ -1344,7 +1344,7 @@ int ifs_load()                   /* read in IFS parameters */
 	if (g_ifs_definition)  /* release prior parms */
 	{
 		delete[] g_ifs_definition;
-		g_ifs_definition = NULL;
+		g_ifs_definition = 0;
 	}
 
 	g_ifs_type = IFSTYPE_2D;
@@ -1356,7 +1356,7 @@ int ifs_load()                   /* read in IFS parameters */
 
 	file_gets(buf, 200, ifsfile);
 	bufptr = strchr(buf, ';');
-	if (bufptr != NULL) /* use ';' as comment to eol */
+	if (bufptr != 0) /* use ';' as comment to eol */
 	{
 		*bufptr = 0;
 	}
@@ -1380,7 +1380,7 @@ int ifs_load()                   /* read in IFS parameters */
 	i = 0;
 	ret = 0;
 	bufptr = get_ifs_token(buf, ifsfile);
-	while (bufptr != NULL)
+	while (bufptr != 0)
 	{
 		if (sscanf(bufptr, " %f ", &((float *)g_text_stack)[i]) != 1)
 		{
@@ -1392,11 +1392,11 @@ int ifs_load()                   /* read in IFS parameters */
 				ret = -1;
 				break;
 		}
-		bufptr = strtok(NULL, seps);
-		if (bufptr == NULL)
+		bufptr = strtok(0, seps);
+		if (bufptr == 0)
 		{
 			bufptr = get_ifs_token(buf, ifsfile);
-			if (bufptr == NULL)
+			if (bufptr == 0)
 			{
 				ret = -1;
 				break;
@@ -1428,7 +1428,7 @@ int ifs_load()                   /* read in IFS parameters */
 	{
 		g_num_affine = i/rowsize;
 		g_ifs_definition = new float[(NUMIFS + 1)*IFS3DPARM];
-		if (g_ifs_definition == NULL)
+		if (g_ifs_definition == 0)
 		{
 			stop_message(0, g_insufficient_ifs_memory);
 			ret = -1;
@@ -1448,7 +1448,7 @@ int ifs_load()                   /* read in IFS parameters */
 /* added search of current directory for entry files if entry item not found */
 int find_file_item(char *filename, const char *itemname, FILE **fileptr, int itemtype)
 {
-	FILE *infile = NULL;
+	FILE *infile = 0;
 	int found = 0;
 	char parsearchname[ITEMNAMELEN + 6];
 	char drive[FILE_MAX_DRIVE];
@@ -1463,16 +1463,16 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 	if (stricmp(filename, g_command_file.c_str()))
 	{
 		infile = fopen(filename, "rb");
-		if (infile != NULL)
+		if (infile != 0)
 		{
-			if (scan_entries(infile, NULL, itemname) == -1)
+			if (scan_entries(infile, 0, itemname) == -1)
 			{
 				found = 1;
 			}
 			else
 			{
 				fclose(infile);
-				infile = NULL;
+				infile = 0;
 			}
 		}
 
@@ -1480,9 +1480,9 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 		{
 			make_path(fullpath, "", DOTSLASH, fname, ext);
 			infile = fopen(fullpath, "rb");
-			if (infile != NULL)
+			if (infile != 0)
 			{
-				if (scan_entries(infile, NULL, itemname) == -1)
+				if (scan_entries(infile, 0, itemname) == -1)
 				{
 					strcpy(filename, fullpath);
 					found = 1;
@@ -1490,7 +1490,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 				else
 				{
 					fclose(infile);
-					infile = NULL;
+					infile = 0;
 				}
 			}
 		}
@@ -1503,36 +1503,36 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".frm");
-		split_path(g_search_for.frm.c_str(), drive, dir, NULL, NULL);
+		split_path(g_search_for.frm.c_str(), drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_L_SYSTEM:
 		strcpy(parsearchname, "lsys:");
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".l");
-		split_path(g_search_for.lsys.c_str(), drive, dir, NULL, NULL);
+		split_path(g_search_for.lsys.c_str(), drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_IFS:
 		strcpy(parsearchname, "ifs:");
 		strcat(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".ifs");
-		split_path(g_search_for.ifs.c_str(), drive, dir, NULL, NULL);
+		split_path(g_search_for.ifs.c_str(), drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_PARAMETER:
 		strcpy(parsearchname, itemname);
 		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
 		strcpy(defaultextension, ".par");
-		split_path(g_search_for.par.c_str(), drive, dir, NULL, NULL);
+		split_path(g_search_for.par.c_str(), drive, dir, 0, 0);
 		break;
 	}
 
 	if (!found)
 	{
 		infile = fopen(g_command_file.c_str(), "rb");
-		if (infile != NULL)
+		if (infile != 0)
 		{
-			if (scan_entries(infile, NULL, parsearchname) == -1)
+			if (scan_entries(infile, 0, parsearchname) == -1)
 			{
 				strcpy(filename, g_command_file.c_str());
 				found = 1;
@@ -1540,7 +1540,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 			else
 			{
 				fclose(infile);
-				infile = NULL;
+				infile = 0;
 			}
 		}
 	}
@@ -1549,9 +1549,9 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 	{
 		make_path(fullpath, drive, dir, fname, ext);
 		infile = fopen(fullpath, "rb");
-		if (infile != NULL)
+		if (infile != 0)
 		{
-			if (scan_entries(infile, NULL, itemname) == -1)
+			if (scan_entries(infile, 0, itemname) == -1)
 			{
 				strcpy(filename, fullpath);
 				found = 1;
@@ -1559,7 +1559,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 			else
 			{
 				fclose(infile);
-				infile = NULL;
+				infile = 0;
 			}
 		}
 	}
@@ -1579,12 +1579,12 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 				strcmp(g_dta.filename, ".")&&
 				strcmp(g_dta.filename, ".."))
 			{
-				split_path(g_dta.filename, NULL, NULL, fname, ext);
+				split_path(g_dta.filename, 0, 0, fname, ext);
 				make_path(fullpath, drive, dir, fname, ext);
 				infile = fopen(fullpath, "rb");
-				if (infile != NULL)
+				if (infile != 0)
 				{
-					if (scan_entries(infile, NULL, itemname) == -1)
+					if (scan_entries(infile, 0, itemname) == -1)
 					{
 						strcpy(filename, fullpath);
 						found = 1;
@@ -1593,7 +1593,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 					else
 					{
 						fclose(infile);
-						infile = NULL;
+						infile = 0;
 					}
 				}
 			}
@@ -1604,7 +1604,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 
 	if (!found && g_organize_formula_search && itemtype == 1)
 	{
-		split_path(g_organize_formula_dir.c_str(), drive, dir, NULL, NULL);
+		split_path(g_organize_formula_dir.c_str(), drive, dir, 0, 0);
 		fname[0] = '_';
 		fname[1] = (char) 0;
 		if (isalpha(itemname[0]))
@@ -1635,9 +1635,9 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 		}
 		make_path(fullpath, drive, dir, fname, defaultextension);
 		infile = fopen(fullpath, "rb");
-		if (infile != NULL)
+		if (infile != 0)
 		{
-			if (scan_entries(infile, NULL, itemname) == -1)
+			if (scan_entries(infile, 0, itemname) == -1)
 			{
 				strcpy(filename, fullpath);
 				found = 1;
@@ -1645,7 +1645,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 			else
 			{
 				fclose(infile);
-				infile = NULL;
+				infile = 0;
 			}
 		}
 	}
@@ -1657,11 +1657,11 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 		return -1;
 	}
 	/* found file */
-	if (fileptr != NULL)
+	if (fileptr != 0)
 	{
 		*fileptr = infile;
 	}
-	else if (infile != NULL)
+	else if (infile != 0)
 	{
 		fclose(infile);
 	}
@@ -1732,7 +1732,7 @@ int _cdecl _matherr(struct exception *except)
 {
 	if (g_debug_mode)
 	{
-		static FILE *fp = NULL;
+		static FILE *fp = 0;
 		if (g_math_error_count++ == 0)
 		{
 			if (DEBUGMODE_SHOW_MATH_ERRORS == g_debug_mode || DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
@@ -1740,7 +1740,7 @@ int _cdecl _matherr(struct exception *except)
 				stop_message(0, "Math error, but we'll try to keep going");
 			}
 		}
-		if (fp == NULL)
+		if (fp == 0)
 		{
 			fp = fopen("matherr.txt", "wt");
 		}

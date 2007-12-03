@@ -86,7 +86,7 @@ private:
 	vector<LSystemEntry *> m_entries;
 };
 
-static LSystemParserImpl *s_impl = NULL;
+static LSystemParserImpl *s_impl = 0;
 
 static void AssignId(string::const_iterator first, string::const_iterator last)
 { s_impl->AssignId(first, last); }
@@ -234,7 +234,7 @@ bool LSystemParser::Parse(const string &text)
 	s_impl = m_impl;
 	parse_info<string::const_iterator> results =
 		parse(text.begin(), text.end(), systems, blank_p | (";" >> *(anychar_p - eol_p)));
-	s_impl = NULL;
+	s_impl = 0;
 	
 	return results.full;
 }

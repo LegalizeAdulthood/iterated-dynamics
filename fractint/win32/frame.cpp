@@ -90,7 +90,7 @@ private:
 	static FrameImpl *s_frame;
 };
 
-FrameImpl *FrameImpl::s_frame = NULL;
+FrameImpl *FrameImpl::s_frame = 0;
 
 FrameImpl::FrameImpl() :
 	m_instance(0),
@@ -194,10 +194,10 @@ int FrameImpl::mod_key(int modifier, int code, int fik, unsigned int *j)
 	return 1000 + code;
 }
 
-#define ALT_KEY(fik_)		mod_key(VK_MENU, i, fik_, NULL)
-#define CTL_KEY(fik_)		mod_key(VK_CONTROL, i, fik_, NULL)
+#define ALT_KEY(fik_)		mod_key(VK_MENU, i, fik_, 0)
+#define CTL_KEY(fik_)		mod_key(VK_CONTROL, i, fik_, 0)
 #define CTL_KEY2(fik_, j_)	mod_key(VK_CONTROL, i, fik_, j_)
-#define SHF_KEY(fik_)		mod_key(VK_SHIFT, i, fik_, NULL)
+#define SHF_KEY(fik_)		mod_key(VK_SHIFT, i, fik_, 0)
 
 void FrameImpl::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
@@ -441,8 +441,8 @@ void FrameImpl::init(HINSTANCE instance, LPCSTR title)
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
 		wc.hInstance = m_instance;
-		wc.hIcon = NULL;
-		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+		wc.hIcon = 0;
+		wc.hCursor = ::LoadCursor(0, IDC_ARROW);
 		wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BACKGROUND + 1);
 		wc.lpszMenuName = m_title;
 		wc.lpszClassName = windowClass;
@@ -463,7 +463,7 @@ int FrameImpl::pump_messages(bool wait_flag)
 
 	while (!quitting)
 	{
-		if (::PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) == 0)
+		if (::PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE) == 0)
 		{
 			/* no messages waiting */
 			if (!wait_flag
@@ -475,7 +475,7 @@ int FrameImpl::pump_messages(bool wait_flag)
 		}
 
 		{
-			int result = ::GetMessage(&msg, NULL, 0, 0);
+			int result = ::GetMessage(&msg, 0, 0, 0);
 			if (result > 0)
 			{
 				// translate accelerator here?
@@ -549,7 +549,7 @@ void FrameImpl::adjust_size(int width, int height)
 
 void FrameImpl::create(int width, int height)
 {
-	if (NULL == m_window)
+	if (0 == m_window)
 	{
 		s_frame = this;
 		adjust_size(width, height);
@@ -560,8 +560,8 @@ void FrameImpl::create(int width, int height)
 			CW_USEDEFAULT,               /* default vertical position */
 			m_nc_width,
 			m_nc_height,
-			NULL, NULL, m_instance,
-			NULL);
+			0, 0, m_instance,
+			0);
 		::ShowWindow(m_window, SW_SHOWNORMAL);
 	}
 	else
@@ -575,7 +575,7 @@ void FrameImpl::resize(int width, int height)
 	BOOL status;
 
 	adjust_size(width, height);
-	status = ::SetWindowPos(m_window, NULL,
+	status = ::SetWindowPos(m_window, 0,
 		0, 0, m_nc_width, m_nc_height,
 		SWP_NOZORDER | SWP_NOMOVE);
 	_ASSERTE(status);
@@ -584,7 +584,7 @@ void FrameImpl::resize(int width, int height)
 
 void FrameImpl::set_keyboard_timeout(int ms)
 {
-	UINT_PTR result = ::SetTimer(m_window, FRAME_TIMER_ID, ms, NULL);
+	UINT_PTR result = ::SetTimer(m_window, FRAME_TIMER_ID, ms, 0);
 	if (!result)
 	{
 		DWORD error = ::GetLastError();

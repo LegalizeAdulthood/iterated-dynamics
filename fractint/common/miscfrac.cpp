@@ -1032,7 +1032,7 @@ int bifurcation()
 	}
 	array_size =  (g_y_stop + 1)*sizeof(int); /* should be g_y_stop + 1 */
 	s_verhulst_array = new int[array_size];
-	if (s_verhulst_array == NULL)
+	if (s_verhulst_array == 0)
 	{
 		stop_message(0, "Insufficient free memory for calculation.");
 		return -1;
@@ -1714,11 +1714,11 @@ static void abort_cellular(int err, int t)
 	case CELLULAR_DONE:
 		break;
 	}
-	if (s_cell_array[0] != NULL)
+	if (s_cell_array[0] != 0)
 	{
 		delete[] s_cell_array[0];
 	}
-	if (s_cell_array[1] != NULL)
+	if (s_cell_array[1] != 0)
 	{
 		delete[] s_cell_array[1];
 	}
@@ -1856,7 +1856,7 @@ int cellular()
 	start_row = 0;
 	s_cell_array[0] = new BYTE[g_x_stop + 1];
 	s_cell_array[1] = new BYTE[g_x_stop + 1];
-	if (s_cell_array[0] == NULL || s_cell_array[1] == NULL)
+	if (s_cell_array[0] == 0 || s_cell_array[1] == 0)
 	{
 		abort_cellular(BAD_MEM, 0);
 		return -1;
@@ -1942,7 +1942,7 @@ int cellular()
 			}
 			if (t > s_rule_digits || t < 0)
 			{
-				thinking(0, NULL);
+				thinking(0, 0);
 				abort_cellular(BAD_T, t);
 				return -1;
 			}
@@ -1954,7 +1954,7 @@ int cellular()
 				t = (S16)(t + s_cell_array[filled][g_col + s_r] - s_cell_array[filled][g_col - s_r - 1]);
 				if (t > s_rule_digits || t < 0)
 				{
-					thinking(0, NULL);
+					thinking(0, 0);
 					abort_cellular(BAD_T, t);
 					return -1;
 				}
@@ -1965,13 +1965,13 @@ int cellular()
 			notfilled = (S16)(1 - filled);
 			if (driver_key_pressed())
 			{
-				thinking(0, NULL);
+				thinking(0, 0);
 				abort_cellular(INTERUPT, 0);
 				return -1;
 			}
 		}
 		start_row = 0;
-		thinking(0, NULL);
+		thinking(0, 0);
 		s_last_screen_flag = 0;
 	}
 
@@ -2005,7 +2005,7 @@ contloop:
 		}
 		if (t > s_rule_digits || t < 0)
 		{
-			thinking(0, NULL);
+			thinking(0, 0);
 			abort_cellular(BAD_T, t);
 			return -1;
 		}
@@ -2017,7 +2017,7 @@ contloop:
 			t = (S16)(t + s_cell_array[filled][g_col + s_r] - s_cell_array[filled][g_col - s_r - 1]);
 			if (t > s_rule_digits || t < 0)
 			{
-				thinking(0, NULL);
+				thinking(0, 0);
 				abort_cellular(BAD_T, t);
 				return -1;
 			}

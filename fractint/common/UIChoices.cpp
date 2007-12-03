@@ -16,7 +16,7 @@ UIChoices::UIChoices(const char *heading, int key_mask)
 	: m_help_mode(-1),
 	m_heading(heading),
 	m_key_mask(key_mask),
-	m_extra_info(NULL),
+	m_extra_info(0),
 	m_choices(),
 	m_values()
 {

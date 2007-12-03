@@ -132,7 +132,7 @@ more_parameters g_more_parameters[] =
 	{FRACTYPE_FORMULA_FP , { s_p3_real, s_p3_imag, s_p4_real, s_p4_imag, s_p5_real, s_p5_imag}, {0, 0, 0, 0, 0, 0}},
 	{FRACTYPE_ANT              , { "+Wrap?", s_random_seed, "", "", "", ""}, {1, 0, 0, 0, 0, 0}},
 	{FRACTYPE_MANDELBROT_MIX4   , { s_p3_real, s_p3_imag,        "", "", "", ""}, {0, 0, 0, 0, 0, 0}},
-	{-1               , { NULL, NULL, NULL, NULL, NULL, NULL    }, {0, 0, 0, 0, 0, 0}}
+	{-1               , { 0, 0, 0, 0, 0, 0    }, {0, 0, 0, 0, 0, 0}}
 };
 
 /*
@@ -378,7 +378,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
+		0, 0,
 		stand_alone_setup, plasma,
 		ORBIT_BAILOUT_NONE
 	},
@@ -438,7 +438,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
+		0, 0,
 		stand_alone_setup, test,
 		ORBIT_BAILOUT_STANDARD
 	},
@@ -648,7 +648,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-8.0f, 8.0f, -1.0f, 11.0f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
+		0, 0,
 		stand_alone_setup, ifs,
 		ORBIT_BAILOUT_NONE
 	},
@@ -662,7 +662,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-11.0f, 11.0f, -11.0f, 11.0f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
+		0, 0,
 		stand_alone_setup, ifs,
 		ORBIT_BAILOUT_NONE
 	},
@@ -732,7 +732,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		1.9f, 3.0f, 0.0f, 1.34f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_L, SYMMETRY_NONE,
-		bifurcation_verhulst_trig_fp, NULL,
+		bifurcation_verhulst_trig_fp, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -844,7 +844,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-1.0f, 1.0f, -.75f, .75f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_KAM_TORUS, SYMMETRY_NONE,
-		(VF) kam_torus_orbit_fp, NULL,
+		(VF) kam_torus_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -858,7 +858,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-1.0f, 1.0f, -.75f, .75f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_KAM_TORUS_FP, SYMMETRY_NONE,
-		(VF) kam_torus_orbit, NULL,
+		(VF) kam_torus_orbit, 0,
 		orbit_3d_setup, orbit_2d,
 		ORBIT_BAILOUT_NONE
 	},
@@ -872,7 +872,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-3.0f, 3.0f, -1.0f, 3.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_KAM_TORUS_3D, SYMMETRY_NONE,
-		(VF) kam_torus_orbit_fp, NULL,
+		(VF) kam_torus_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_3d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -886,7 +886,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-3.0f, 3.0f, -1.0f, 3.5f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_KAM_TORUS_3D_FP, SYMMETRY_NONE,
-		(VF) kam_torus_orbit, NULL,
+		(VF) kam_torus_orbit, 0,
 		orbit_3d_setup, orbit_3d,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1165,7 +1165,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-15.0f, 15.0f, 0.0f, 30.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_LORENZ_L, SYMMETRY_NONE,
-		(VF) lorenz_3d_orbit_fp, NULL,
+		(VF) lorenz_3d_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1179,7 +1179,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-15.0f, 15.0f, 0.0f, 30.0f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_LORENZ_FP, SYMMETRY_NONE,
-		(VF) lorenz_3d_orbit, NULL,
+		(VF) lorenz_3d_orbit, 0,
 		orbit_3d_setup, orbit_2d,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1193,7 +1193,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-30.0f, 30.0f, -30.0f, 30.0f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_LORENZ_3D_FP, SYMMETRY_NONE,
-		(VF) lorenz_3d_orbit, NULL,
+		(VF) lorenz_3d_orbit, 0,
 		orbit_3d_setup, orbit_3d,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1461,7 +1461,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-30.0f, 30.0f, -30.0f, 30.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_LORENZ_3D_L, SYMMETRY_NONE,
-		(VF) lorenz_3d_orbit_fp, NULL,
+		(VF) lorenz_3d_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_3d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1475,7 +1475,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-30.0f, 30.0f, -20.0f, 40.0f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_ROSSLER_FP, SYMMETRY_NONE,
-		(VF) rossler_orbit, NULL,
+		(VF) rossler_orbit, 0,
 		orbit_3d_setup, orbit_3d,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1489,7 +1489,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-30.0f, 30.0f, -20.0f, 40.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_ROSSLER_L, SYMMETRY_NONE,
-		(VF) rossler_orbit_fp, NULL,
+		(VF) rossler_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_3d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1503,7 +1503,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-1.4f, 1.4f, -.5f, .5f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_HENON_FP, SYMMETRY_NONE,
-		(VF) henon_orbit, NULL,
+		(VF) henon_orbit, 0,
 		orbit_3d_setup, orbit_2d,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1517,7 +1517,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-1.4f, 1.4f, -.5f, .5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_HENON_L, SYMMETRY_NONE,
-		(VF) henon_orbit_fp, NULL,
+		(VF) henon_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1531,7 +1531,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-8.0f/3.0f, 8.0f/3.0f, -2.0f, 2.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) pickover_orbit_fp, NULL,
+		(VF) pickover_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_3d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1545,7 +1545,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-4.5f, 8.5f, -4.5f, 8.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) gingerbread_orbit_fp, NULL,
+		(VF) gingerbread_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1563,7 +1563,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
+		0, 0,
 		stand_alone_setup, diffusion,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1689,7 +1689,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		1.9f, 3.0f, 0.0f, 1.34f,
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION, SYMMETRY_NONE,
-		bifurcation_verhulst_trig, NULL,
+		bifurcation_verhulst_trig, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1703,7 +1703,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 4.0f, -1.0f, 2.0f,
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_LAMBDA, SYMMETRY_NONE,
-		bifurcation_lambda_trig, NULL,
+		bifurcation_lambda_trig, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1717,7 +1717,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 4.0f, -1.0f, 2.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_LAMBDA_L, SYMMETRY_NONE,
-		bifurcation_lambda_trig_fp, NULL,
+		bifurcation_lambda_trig_fp, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1731,7 +1731,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		0.275f, 1.45f, 0.0f, 2.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L, SYMMETRY_NONE,
-		bifurcation_add_trig_pi_fp, NULL,
+		bifurcation_add_trig_pi_fp, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1745,7 +1745,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.5f, 2.5f, -3.5f, 3.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L, SYMMETRY_NONE,
-		bifurcation_set_trig_pi_fp, NULL,
+		bifurcation_set_trig_pi_fp, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1787,7 +1787,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-1.0f, 1.0f, -1.0f, 1.0f,
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
+		0, 0,
 		stand_alone_setup, l_system,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1913,7 +1913,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.5f, 2.5f, -3.5f, 3.5f,
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_EQUAL_FUNC_PI, SYMMETRY_NONE,
-		bifurcation_set_trig_pi, NULL,
+		bifurcation_set_trig_pi, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1927,7 +1927,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		0.275f, 1.45f, 0.0f, 2.0f,
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_PLUS_FUNC_PI, SYMMETRY_NONE,
-		bifurcation_add_trig_pi, NULL,
+		bifurcation_add_trig_pi, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1941,7 +1941,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		0.7f, 2.0f, -1.1f, 1.1f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_STEWART_L, SYMMETRY_NONE,
-		bifurcation_stewart_trig_fp, NULL,
+		bifurcation_stewart_trig_fp, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1955,7 +1955,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		0.7f, 2.0f, -1.1f, 1.1f,
 		1, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_STEWART, SYMMETRY_NONE,
-		bifurcation_stewart_trig, NULL,
+		bifurcation_stewart_trig, 0,
 		stand_alone_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1969,7 +1969,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 3.0f, -1.625f, 2.625f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) hopalong_2d_orbit_fp, NULL,
+		(VF) hopalong_2d_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -1997,7 +1997,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-32.0f, 32.0f, -24.0f, 24.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) martin_2d_orbit_fp, NULL,
+		(VF) martin_2d_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2011,7 +2011,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-8.0f, 8.0f, -6.0f, 6.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		bifurcation_lambda, NULL,
+		bifurcation_lambda, 0,
 		lyapunov_setup, lyapunov,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2025,7 +2025,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-30.0f, 30.0f, -30.0f, 30.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) lorenz_3d1_orbit_fp, NULL,
+		(VF) lorenz_3d1_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_3d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2039,7 +2039,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-30.0f, 30.0f, -30.0f, 30.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) lorenz_3d3_orbit_fp, NULL,
+		(VF) lorenz_3d3_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_3d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2053,7 +2053,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-30.0f, 30.0f, -30.0f, 30.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) lorenz_3d4_orbit_fp, NULL,
+		(VF) lorenz_3d4_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_3d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2179,7 +2179,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-3.5f, -0.9f, -0.5f, 3.2f,
 		16, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_MAY, SYMMETRY_NONE,
-		bifurcation_may, NULL,
+		bifurcation_may, 0,
 		bifurcation_may_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2193,7 +2193,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-3.5f, -0.9f, -0.5f, 3.2f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_BIFURCATION_MAY_L, SYMMETRY_NONE,
-		bifurcation_may_fp, NULL,
+		bifurcation_may_fp, 0,
 		bifurcation_may_setup, bifurcation,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2237,7 +2237,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-20.0f, 20.0f, -20.0f, 20.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) dynamic_orbit_fp, NULL,
+		(VF) dynamic_orbit_fp, 0,
 		dynamic_2d_setup_fp, dynamic_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2284,7 +2284,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-1.0f, 1.0f, -1.0f, 1.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
+		0, 0,
 		cellular_setup, cellular,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2313,7 +2313,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		24, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT,
 		FRACTYPE_INVERSE_JULIA_FP, SYMMETRY_NONE,
-		Linverse_julia_orbit, NULL,
+		Linverse_julia_orbit, 0,
 		orbit_3d_setup, inverse_julia_per_image,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2327,7 +2327,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT,
 		FRACTYPE_INVERSE_JULIA, SYMMETRY_NONE,
-		Minverse_julia_orbit, NULL,
+		Minverse_julia_orbit, 0,
 		orbit_3d_setup_fp, inverse_julia_per_image,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2341,7 +2341,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		24, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT,
 		FRACTYPE_INVERSE_JULIA_FP, SYMMETRY_NONE,
-		Linverse_julia_orbit, NULL,
+		Linverse_julia_orbit, 0,
 		orbit_3d_setup, inverse_julia_per_image,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2355,7 +2355,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_MANDELBROT,
 		FRACTYPE_INVERSE_JULIA, SYMMETRY_NONE,
-		Minverse_julia_orbit, NULL,
+		Minverse_julia_orbit, 0,
 		orbit_3d_setup_fp, inverse_julia_per_image,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2371,7 +2371,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.5f, 1.5f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) mandel_cloud_orbit_fp, NULL,
+		(VF) mandel_cloud_orbit_fp, 0,
 		dynamic_2d_setup_fp, dynamic_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2554,7 +2554,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) icon_orbit_fp, NULL,
+		(VF) icon_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2569,7 +2569,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) icon_orbit_fp, NULL,
+		(VF) icon_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_3d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2643,7 +2643,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-1.0f, 1.0f, -1.0f, 1.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
+		0, 0,
 		stand_alone_setup, ant,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2657,7 +2657,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-760.0f, 760.0f, -570.0f, 570.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) chip_2d_orbit_fp, NULL,
+		(VF) chip_2d_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2671,7 +2671,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-82.93367f, 112.2749f, -55.76383f, 90.64257f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) quadrup_two_2d_orbit_fp, NULL,
+		(VF) quadrup_two_2d_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2685,7 +2685,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-8000.0f, 8000.0f, -6000.0f, 6000.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) three_ply_2d_orbit_fp, NULL,
+		(VF) three_ply_2d_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2730,7 +2730,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		(VF) latoo_orbit_fp, NULL,
+		(VF) latoo_orbit_fp, 0,
 		orbit_3d_setup_fp, orbit_2d_fp,
 		ORBIT_BAILOUT_NONE
 	},
@@ -2751,15 +2751,15 @@ FractalTypeSpecificData g_fractal_specific[] =
 #endif
 	{
 		0,
-		NULL,            /* marks the END of the list */
-		{NULL, NULL, NULL, NULL},
+		0,            /* marks the END of the list */
+		{0, 0, 0, 0},
 		{0, 0, 0, 0},
 		-1, -1, 0,
 		0.0f, 0.0f, 0.0f, 0.0f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
 		FRACTYPE_NO_FRACTAL, SYMMETRY_NONE,
-		NULL, NULL,
-		NULL, NULL,
+		0, 0,
+		0, 0,
 		0
 	}
 };
@@ -2792,12 +2792,12 @@ bool parameter_not_used(int parm)
 /*
  *  Returns 1 if parameter number parm exists for type. If the
  *  parameter exists, the parameter prompt string is copied to buf.
- *  Pass in NULL for buf if only the existence of the parameter is
+ *  Pass in 0 for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
 const char *parameter_prompt(int type, int parameter)
 {
-	const char *parameter_prompt = NULL;
+	const char *parameter_prompt = 0;
 	if (0 <= parameter && parameter < 4)
 	{
 		parameter_prompt = g_fractal_specific[type].parameters[parameter];
@@ -2812,11 +2812,11 @@ const char *parameter_prompt(int type, int parameter)
 	}
 	if (parameter_prompt && *parameter_prompt == 0)
 	{
-		parameter_prompt = NULL;
+		parameter_prompt = 0;
 	}
 	if (fractal_type_formula(type) && parameter_not_used(parameter))
 	{
-		parameter_prompt = NULL;
+		parameter_prompt = 0;
 	}
 
 	return parameter_prompt;
@@ -2824,7 +2824,7 @@ const char *parameter_prompt(int type, int parameter)
 
 bool type_has_parameter(int type, int parameter)
 {
-	return (parameter_prompt(type, parameter) != NULL);
+	return (parameter_prompt(type, parameter) != 0);
 }
 
 /* locate alternate math record */
@@ -2832,7 +2832,7 @@ alternate_math *find_alternate_math(int math)
 {
 	if (math == 0)
 	{
-		return NULL;
+		return 0;
 	}
 	for (int i = 0; i < NUM_OF(s_alternate_math); i++)
 	{
@@ -2841,7 +2841,7 @@ alternate_math *find_alternate_math(int math)
 			return &s_alternate_math[i];
 		}
 	}
-	return NULL;
+	return 0;
 }
 
 bool fractal_type_formula(int fractal_type)

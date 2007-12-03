@@ -259,7 +259,7 @@ bool Win32DiskDriver::initialize(int &argc, char **argv)
 	LPCTSTR title = "FractInt for Windows";
 
 	m_frame.init(g_instance, title);
-	if (!m_wintext.initialize(g_instance, NULL, title))
+	if (!m_wintext.initialize(g_instance, 0, title))
 	{
 		return false;
 	}

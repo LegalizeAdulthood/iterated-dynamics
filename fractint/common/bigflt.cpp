@@ -44,11 +44,11 @@ bf_t strtobf(bf_t r, char *s)
 
 	d = strchr(s, '.');
 	e = strchr(s, 'e');
-	if (e == NULL)
+	if (e == 0)
 	{
 		e = strchr(s, 'E');
 	}
-	if (e != NULL)
+	if (e != 0)
 	{
 		powerten = atoi(e + 1);    /* read in the e (x10^) part */
 		l = e - 1; /* just before e */
@@ -58,7 +58,7 @@ bf_t strtobf(bf_t r, char *s)
 		l = s + strlen(s) - 1;  /* last digit */
 	}
 
-	if (d != NULL) /* is there a decimal point? */
+	if (d != 0) /* is there a decimal point? */
 	{
 		while (*l >= '0' && *l <= '9') /* while a digit */
 		{

@@ -72,7 +72,7 @@
 #define SECRETMODE_RANDOM_RUN			9
 
 static int s_show_numbers = 0;              /* toggle for display of coords */
-static char *s_rect_buff = NULL;
+static char *s_rect_buff = 0;
 static int s_windows = 0;               /* windows management system */
 
 static int s_window_corner_x;
@@ -502,7 +502,7 @@ static void SaveRect(int x, int y, int width, int height)
 		return;
 	}
 	s_rect_buff = new char[width*height];
-	if (s_rect_buff != NULL)
+	if (s_rect_buff != 0)
 	{
 		char *buff = s_rect_buff;
 		int yoff;
@@ -1357,13 +1357,13 @@ finish:
 	if (g_line_buffer)
 	{
 		delete[] g_line_buffer;
-		g_line_buffer = NULL;
+		g_line_buffer = 0;
 	}
 
 	if (s_rect_buff)
 	{
 		delete[] s_rect_buff;
-		s_rect_buff = NULL;
+		s_rect_buff = 0;
 	}
 
 	g_using_jiim = false;

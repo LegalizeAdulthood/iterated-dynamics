@@ -322,11 +322,11 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 		} /* switch */
 	}
 
-	if (size  != NULL)
+	if (size  != 0)
 	{
 		*size  = _size;
 	}
-	if (width != NULL)
+	if (width != 0)
 	{
 		*width = _width;
 	}
@@ -354,7 +354,7 @@ int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
 			len   -= t;
 			_size += t;
 
-			tok = _find_token_length(curr, len, &t, NULL);
+			tok = _find_token_length(curr, len, &t, 0);
 
 			if ((tok == TOK_XONLINE && mode == ONLINE) ||
 				(tok == TOK_XDOC    && mode == DOC)    ||
@@ -371,7 +371,7 @@ int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
 		_size = t;
 	}
 
-	if (size != NULL)
+	if (size != 0)
 	{
 		*size = _size;
 	}
@@ -525,7 +525,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 			{
 				while (pd.len > 0)
 				{
-					tok = find_token_length(DOC, pd.curr, pd.len, &size, NULL);
+					tok = find_token_length(DOC, pd.curr, pd.len, &size, 0);
 					if (tok != TOK_XDOC && tok != TOK_XONLINE &&
 						tok != TOK_NL   && tok != TOK_DONE)
 					{

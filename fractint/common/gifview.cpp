@@ -37,7 +37,7 @@
 unsigned int g_height;
 unsigned g_num_colors;
 
-static FILE *fpin = NULL;       /* FILE pointer           */
+static FILE *fpin = 0;       /* FILE pointer           */
 static int colcount; /* keeps track of current column for wide images */
 static unsigned int gifview_image_top;    /* (for migs) */
 static unsigned int gifview_image_left;   /* (for migs) */
@@ -72,7 +72,7 @@ int get_bytes(BYTE *destination, int how_many)
 BYTE g_decoder_line[MAX_PIXELS + 1]; /* write-line routines use this */
 #define DECODERLINE_WIDTH MAX_PIXELS
 
-static char *s_dither_buffer = NULL;
+static char *s_dither_buffer = 0;
 
 /* Main entry decoder */
 int gifview()
@@ -101,11 +101,11 @@ int gifview()
 
 	/* Open the file */
 	strcpy(temp1, (g_out_line == out_line_stereo) ? g_stereo_map_name : g_read_name.c_str());
-	if (has_extension(temp1) == NULL)
+	if (has_extension(temp1) == 0)
 	{
 		strcat(temp1, DEFAULTFRACTALTYPE);
 		fpin = fopen(temp1, "rb");
-		if (fpin != NULL)
+		if (fpin != 0)
 		{
 			fclose(fpin);
 		}
@@ -116,7 +116,7 @@ int gifview()
 		}
 	}
 	fpin = fopen(temp1, "rb");
-	if (fpin == NULL)
+	if (fpin == 0)
 	{
 		return -1;
 	}
@@ -195,8 +195,8 @@ int gifview()
 		char ext[FILE_MAX_EXT];
 		char tmpname[15];
 		char msg[40];
-		split_path(temp1, NULL, NULL, fname, ext);
-		make_path(tmpname, NULL, NULL, fname, ext);
+		split_path(temp1, 0, 0, fname, ext);
+		make_path(tmpname, 0, 0, fname, ext);
 		sprintf(msg, "restoring %s", tmpname);
 		disk_video_status(1, msg);
 	}
@@ -353,10 +353,10 @@ int gifview()
 		disk_video_status(1, "");
 	}
 
-	if (s_dither_buffer != NULL)  /* we're done, free dither memory */
+	if (s_dither_buffer != 0)  /* we're done, free dither memory */
 	{
 		delete[] s_dither_buffer;
-		s_dither_buffer = NULL;
+		s_dither_buffer = 0;
 	}
 
 	return status;
@@ -365,7 +365,7 @@ int gifview()
 static void close_file()
 {
 	fclose(fpin);
-	fpin = NULL;
+	fpin = 0;
 }
 
 /* routine for MIGS that generates partial output lines */
@@ -391,7 +391,7 @@ static int out_line_dither(BYTE *pixels, int linelen)
 	int nexterr;
 	int brt;
 	int err;
-	if (s_dither_buffer == NULL)
+	if (s_dither_buffer == 0)
 	{
 		s_dither_buffer = new char[linelen + 1];
 	}

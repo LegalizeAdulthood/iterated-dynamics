@@ -1291,7 +1291,7 @@ int put_resume(int len, ...)
 	va_list arg_marker;  /* variable arg list */
 	BYTE *source_ptr;
 
-	if (g_resume_info == NULL)
+	if (g_resume_info == 0)
 	{
 		return -1;
 	}
@@ -1314,7 +1314,7 @@ int alloc_resume(int alloclen, int version)
 
 	s_resume_info_length = alloclen*alloclen;
 	g_resume_info = new char[s_resume_info_length];
-	if (g_resume_info == NULL)
+	if (g_resume_info == 0)
 	{
 		stop_message(0, "Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
@@ -1333,7 +1333,7 @@ int get_resume(int len, ...)
 	va_list arg_marker;  /* variable arg list */
 	BYTE *dest_ptr;
 
-	if (g_resume_info == NULL)
+	if (g_resume_info == 0)
 	{
 		return -1;
 	}
@@ -1355,7 +1355,7 @@ int get_resume(int len, ...)
 int start_resume()
 {
 	int version;
-	if (g_resume_info == NULL)
+	if (g_resume_info == 0)
 	{
 		return -1;
 	}
@@ -1366,10 +1366,10 @@ int start_resume()
 
 void end_resume()
 {
-	if (g_resume_info != NULL) /* free the prior area if there is one */
+	if (g_resume_info != 0) /* free the prior area if there is one */
 	{
 		delete[] g_resume_info;
-		g_resume_info = NULL;
+		g_resume_info = 0;
 		s_resume_info_length = 0;
 	}
 }

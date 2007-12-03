@@ -227,7 +227,7 @@ private:
 	}
 	void set_no_function(int idx)
 	{
-		set_function(idx, NULL);
+		set_function(idx, 0);
 	}
 	bool is_function(int idx, t_function_pointer function)
 	{
@@ -235,7 +235,7 @@ private:
 	}
 	bool is_no_function(int idx)
 	{
-		return is_function(idx, NULL);
+		return is_function(idx, 0);
 	}
 	t_function_pointer get_function(int idx)
 	{
@@ -243,7 +243,7 @@ private:
 	}
 	void set_no_operand(int idx)
 	{
-		m_function_load_store_pointers[idx].operand = NULL;
+		m_function_load_store_pointers[idx].operand = 0;
 	}
 	void set_operand_next(int idx)
 	{

@@ -632,8 +632,8 @@ rescan:  /* entry for changed browse parms */
 	toggle = 0;
 	wincount = 0;
 	g_browse_state.set_sub_images(true);
-	split_path(g_read_name.c_str(), drive, dir, NULL, NULL);
-	split_path(g_browse_state.mask(), NULL, NULL, fname, ext);
+	split_path(g_read_name.c_str(), drive, dir, 0, 0);
+	split_path(g_browse_state.mask(), 0, 0, fname, ext);
 	make_path(tmpmask, drive, dir, fname, ext);
 	done = (vid_too_big == 2) || no_memory || fr_find_first(tmpmask);
 	/* draw all visible windows */
@@ -644,7 +644,7 @@ rescan:  /* entry for changed browse parms */
 			driver_get_key();
 			break;
 		}
-		split_path(g_dta.filename, NULL, NULL, fname, ext);
+		split_path(g_dta.filename, 0, 0, fname, ext);
 		make_path(tmpmask, drive, dir, fname, ext);
 		if (!find_fractal_info(tmpmask, &read_info, &resume_info_blk, &formula_info,
 			&ranges_info, &mp_info, &evolver_info, &orbits_info)
@@ -822,8 +822,8 @@ rescan:  /* entry for changed browse parms */
 				}
 				if (c == 'Y')
 				{
-					split_path(g_read_name.c_str(), drive, dir, NULL, NULL);
-					split_path(winlist.name, NULL, NULL, fname, ext);
+					split_path(g_read_name.c_str(), drive, dir, 0, 0);
+					split_path(winlist.name, 0, 0, fname, ext);
 					make_path(tmpmask, drive, dir, fname, ext);
 					if (!unlink(tmpmask))
 					{
@@ -850,13 +850,13 @@ rescan:  /* entry for changed browse parms */
 				driver_stack_screen();
 				newname[0] = 0;
 				strcpy(mesg, "Enter the new filename for ");
-				split_path(g_read_name.c_str(), drive, dir, NULL, NULL);
-				split_path(winlist.name, NULL, NULL, fname, ext);
+				split_path(g_read_name.c_str(), drive, dir, 0, 0);
+				split_path(winlist.name, 0, 0, fname, ext);
 				make_path(tmpmask, drive, dir, fname, ext);
 				strcpy(newname, tmpmask);
 				strcat(mesg, tmpmask);
 				{
-					int i = field_prompt(mesg, NULL, newname, 60, NULL);
+					int i = field_prompt(mesg, 0, newname, 60, 0);
 					driver_unstack_screen();
 					if (i != -1)
 					{
@@ -868,8 +868,8 @@ rescan:  /* entry for changed browse parms */
 							}
 							else
 							{
-								split_path(newname, NULL, NULL, fname, ext);
-								make_path(tmpmask, NULL, NULL, fname, ext);
+								split_path(newname, 0, 0, fname, ext);
+								make_path(tmpmask, 0, 0, fname, ext);
 								strcpy(oldname, winlist.name);
 								check_history(oldname, tmpmask);
 								strcpy(winlist.name, tmpmask);

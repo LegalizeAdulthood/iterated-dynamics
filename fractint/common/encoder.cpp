@@ -127,7 +127,7 @@ restart:
 		strcpy(openfiletype, ".pot");
 	}
 
-	if (has_extension(openfile) == NULL)
+	if (has_extension(openfile) == 0)
 	{
 		strcat(openfile, openfiletype);
 	}
@@ -178,7 +178,7 @@ restart:
 	}
 
 	g_outfile = fopen(tmpfile, "wb");
-	if (g_outfile == NULL)
+	if (g_outfile == 0)
 	{
 		sprintf(tmpmsg, "Can't create %s", tmpfile);
 		stop_message(0, tmpmsg);
@@ -520,7 +520,7 @@ int encoder()
 			save_info.calculation_status = CALCSTAT_PARAMS_CHANGED;     /* partial save is not resumable */
 		}
 		save_info.tot_extend_len = 0;
-		if (g_resume_info != NULL && save_info.calculation_status == CALCSTAT_RESUMABLE)
+		if (g_resume_info != 0 && save_info.calculation_status == CALCSTAT_RESUMABLE)
 		{
 			/* resume info g_block, 002 */
 			save_info.tot_extend_len += extend_blk_len(g_resume_length);
@@ -574,7 +574,7 @@ int encoder()
 			struct evolution_info esave_info;
 			int i;
 			struct evolution_info resume_e_info;
-			if (g_evolve_handle == NULL || g_calculation_status == CALCSTAT_COMPLETED)
+			if (g_evolve_handle == 0 || g_calculation_status == CALCSTAT_COMPLETED)
 			{
 				esave_info.parameter_range_x     = g_parameter_range_x;
 				esave_info.parameter_range_y     = g_parameter_range_y;

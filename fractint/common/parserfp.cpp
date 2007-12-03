@@ -61,8 +61,8 @@
 #ifdef TESTFP
 int pstopmsg(int x, char *msg)
 {
-	static FILE *fp = NULL;
-	if (fp == NULL)
+	static FILE *fp = 0;
+	if (fp == 0)
 	{
 		fp = fopen("fpdebug.txt", "wt");
 	}
@@ -908,7 +908,7 @@ void Formula::peephole_optimize_divide(t_function_pointer &function)
 		{
 			DBUGMSG("*lodrealc (div) -> (*lodrealmul)");
 		}
-		m_variables[m_parser_vsp].name = NULL;  /* this constant has no name  */
+		m_variables[m_parser_vsp].name = 0;  /* this constant has no name  */
 		m_variables[m_parser_vsp].name_length = 0;
 		m_variables[m_parser_vsp].argument.d.x = 1.0/m_load[m_load_ptr - 1]->d.x;
 		m_variables[m_parser_vsp].argument.d.y = 0.0;
@@ -1335,7 +1335,7 @@ bool Formula::fill_jump_struct_fp()
 	bool check_for_else = false;
 	bool find_new_func = true;
 	JUMP_PTRS jump_data[MAX_JUMPS];
-	NEW_FN *jump_function = NULL;
+	NEW_FN *jump_function = 0;
 	for (m_op_index = 0; m_op_index < m_last_op; m_op_index++)
 	{
 		if (find_new_func)

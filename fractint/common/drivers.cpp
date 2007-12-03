@@ -20,7 +20,7 @@ extern AbstractDriver *gdi_driver;
 extern AbstractDriver *disk_driver;
 #endif
 
-static AbstractDriver *s_current = NULL;
+static AbstractDriver *s_current = 0;
 
 int DriverManager::s_num_drivers = 0;
 AbstractDriver *DriverManager::s_drivers[DriverManager::MAX_DRIVERS] = { 0 };
@@ -89,11 +89,11 @@ void DriverManager::close_drivers()
 		if (s_drivers[i])
 		{
 			s_drivers[i]->terminate();
-			s_drivers[i] = NULL;
+			s_drivers[i] = 0;
 		}
 	}
 
-	s_current = NULL;
+	s_current = 0;
 }
 
 AbstractDriver *DriverManager::find_by_name(const char *name)
@@ -107,7 +107,7 @@ AbstractDriver *DriverManager::find_by_name(const char *name)
 			return s_drivers[i];
 		}
 	}
-	return NULL;
+	return 0;
 }
 
 void DriverManager::change_video_mode(VIDEOINFO &mode)

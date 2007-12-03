@@ -120,7 +120,7 @@ bool Newton::setup()           /* Newton/NewtBasin Routines */
 		if (g_degree > 16)
 		{
 			s_roots = new ComplexD[g_degree];
-			if (s_roots == NULL)
+			if (s_roots == 0)
 			{
 				s_roots = s_static_roots;
 				g_degree = 16;

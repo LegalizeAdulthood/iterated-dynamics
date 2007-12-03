@@ -223,10 +223,10 @@ void GDIDriver::center_windows(bool center_x, bool center_y)
 		text_pos.y = (m_frame.height() - m_wintext.max_height())/2;
 	}
 
-	BOOL status = SetWindowPos(m_plot.window(), NULL,
+	BOOL status = SetWindowPos(m_plot.window(), 0,
 		plot_pos.x, plot_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	_ASSERTE(status);
-	status = SetWindowPos(m_wintext.window(), NULL,
+	status = SetWindowPos(m_wintext.window(), 0,
 		text_pos.x, text_pos.y, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
 	_ASSERTE(status);
 }

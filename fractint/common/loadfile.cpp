@@ -449,7 +449,7 @@ void free_ranges()
 	if (g_ranges_length) /* free prior ranges */
 	{
 		delete[] g_ranges;
-		g_ranges = NULL;
+		g_ranges = 0;
 		g_ranges_length = 0;
 	}
 }
@@ -546,7 +546,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	{
 		g_calculation_status = CALCSTAT_RESUMABLE;
 		struct evolution_info resume_e_info;
-		if (g_evolve_handle == NULL)
+		if (g_evolve_handle == 0)
 		{
 			g_evolve_handle = new evolution_info;
 		}
@@ -571,10 +571,10 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	}
 	else
 	{
-		if (g_evolve_handle != NULL)  /* Image completed, release it. */
+		if (g_evolve_handle != 0)  /* Image completed, release it. */
 		{
 			delete g_evolve_handle;
-			g_evolve_handle = NULL;
+			g_evolve_handle = 0;
 		}
 		g_calculation_status = CALCSTAT_COMPLETED;
 	}
@@ -713,7 +713,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	{
 		g_view_window = false;
 	}
-	if (has_extension(g_read_name) == NULL)
+	if (has_extension(g_read_name) == 0)
 	{
 		g_read_name += ".gif";
 	}
@@ -820,7 +820,7 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 	orbits_info->got_data = 0; /* initialize to no data */
 
 	s_gif_file = fopen(gif_file, "rb");
-	if (s_gif_file == NULL)
+	if (s_gif_file == 0)
 	{
 		return -1;
 	}
@@ -1027,7 +1027,7 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 				case BLOCKTYPE_RANGES_INFO: /* ranges info */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 					ranges_info->range_data = new short[data_len/sizeof(short)];
-					if (ranges_info->range_data != NULL)
+					if (ranges_info->range_data != 0)
 					{
 						fseek(s_gif_file, long(-block_len), SEEK_CUR);
 						load_ext_blk((char *)ranges_info->range_data, data_len);
@@ -1038,7 +1038,7 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 				case BLOCKTYPE_MP_INFO: /* extended precision parameters  */
 					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 					mp_info->apm_data = new char[data_len];
-					if (mp_info->apm_data != NULL)
+					if (mp_info->apm_data != 0)
 					{
 						fseek(s_gif_file, long(-block_len), SEEK_CUR);
 						load_ext_blk(mp_info->apm_data, data_len);
