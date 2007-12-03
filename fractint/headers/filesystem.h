@@ -12,7 +12,7 @@ extern int fr_find_next();
 extern void make_path(char *file_template, const char *drive, const char *dir, const char *fname, const char *ext);
 extern void split_path(const char *file_template, char *drive, char *dir, char *filename, char *extension);
 extern void split_path(const char *file_template, char *drive, std::string &dir, char *filename, char *extension);
-extern bool is_a_directory(char *s);
+extern bool is_a_directory(const char *s);
 extern int get_a_filename(const char *hdg, char *file_template, char *flname);
 extern int get_a_filename(const char *hdg, char *file_template, std::string &filename);
 extern int get_a_filename(const char *hdg, std::string &file_template, std::string &filename);
