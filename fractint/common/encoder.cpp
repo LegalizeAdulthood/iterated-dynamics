@@ -6,9 +6,6 @@
 
 #include <string.h>
 #include <limits.h>
-#ifndef XFRACT
-#include <io.h>
-#endif
 
 #include "port.h"
 #include "prototyp.h"
@@ -103,7 +100,7 @@ static BYTE paletteEGA[] =
 	COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX, COLOR_CHANNEL_MAX
 };
 
-static int gif_savetodisk(char *filename)      /* save-to-disk routine */
+static int gif_save_to_disk(char *filename)      /* save-to-disk routine */
 {
 	char tmpmsg[41];                 /* before openfile in case of overrun */
 	char openfile[FILE_MAX_PATH];
@@ -137,7 +134,7 @@ restart:
 
 	strcpy(tmpfile, openfile);
 	bool new_file;
-	if (access(openfile, 0) != 0)/* file doesn't exist */
+	if (!exists(openfile)) /* file doesn't exist */
 	{
 		new_file = true;
 	}
@@ -155,7 +152,7 @@ restart:
 				goto restart;
 			}
 		}
-		if (access(openfile, 2) != 0)
+		if (write_access(openfile))
 		{
 			sprintf(tmpmsg, "Can't write %s", openfile);
 			stop_message(0, tmpmsg);
@@ -307,7 +304,7 @@ int save_to_disk(char *filename)
 	switch (format)
 	{
 	case SAVEFORMAT_GIF:
-		return gif_savetodisk(filename);
+		return gif_save_to_disk(filename);
 
 	default:
 		return -1;

@@ -49,3 +49,5 @@ extern void check_write_file(std::string &name, const char *ext);
 extern void update_save_name(char *filename);
 extern void update_save_name(std::string &filename);
 extern void ensure_extension(fs::path &path, const char *extension);
+extern bool write_access(const char *path);
+extern bool exists(const char *path);
