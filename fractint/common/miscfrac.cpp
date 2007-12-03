@@ -1,9 +1,11 @@
 /*
 	Miscellaneous fractal-specific code
 */
+#include <algorithm>
+#include <string>
+
 #include <string.h>
 #include <limits.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"
@@ -360,7 +362,7 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 			ny   = suby.v[suby.t-2];
 			suby.r[suby.t] = suby.r[suby.t-1];
 			y    = suby.v[suby.t-1]   = (ny1 + ny)/2;
-			suby.r[suby.t-1]   = BYTE(max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
+			suby.r[suby.t-1]   = BYTE(std::max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
 		}
 		subx.t = 2;
 		nx  = x2;
@@ -381,7 +383,7 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 				nx   = subx.v[subx.t-2];
 				subx.r[subx.t] = subx.r[subx.t-1];
 				x    = subx.v[subx.t-1]   = (nx1 + nx)/2;
-				subx.r[subx.t-1]   = BYTE(max(subx.r[subx.t],
+				subx.r[subx.t-1]   = BYTE(std::max(subx.r[subx.t],
 				subx.r[subx.t-2]) + 1);
 			}
 
@@ -586,7 +588,7 @@ int plasma()
 
 	if (s_max_plasma == 0)
 	{
-		s_plasma_colors = min(g_colors, g_max_colors);
+		s_plasma_colors = std::min(g_colors, g_max_colors);
 		for (n = 0; n < 4; n++)
 		{
 			rnd[n] = (U16) (1 + (((rand15()/s_plasma_colors)*(s_plasma_colors-1)) >> (s_shift_value-11)));
@@ -625,7 +627,7 @@ int plasma()
 		while (new_subdivision(0, 0, g_x_dots-1, g_y_dots-1, i) == 0)
 		{
 			k *= 2;
-			if (k  >int(max(g_x_dots-1, g_y_dots-1)))
+			if (k  >int(std::max(g_x_dots-1, g_y_dots-1)))
 			{
 				break;
 			}
@@ -2152,7 +2154,7 @@ bool froth_setup()
 	}
 
 	/* if 2 attractors, use same shades as 3 attractors */
-	s_frothy_data.shades = (g_colors-1)/max(3, s_frothy_data.attractors);
+	s_frothy_data.shades = (g_colors-1)/std::max(3, s_frothy_data.attractors);
 
 	/* g_rq_limit needs to be at least sq(1 + sqrt(1 + sq(a))), */
 	/* which is never bigger than 6.93..., so we'll call it 7.0 */

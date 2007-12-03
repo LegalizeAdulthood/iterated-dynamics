@@ -1,5 +1,7 @@
+#include <algorithm>
 #include <string>
 #include <sstream>
+
 #include <string.h>
 #include <ctype.h>
 #ifndef XFRACT
@@ -22,16 +24,12 @@
 #endif
 #endif
 
-#include <boost/filesystem.hpp>
-
 #include "port.h"
 #include "id.h"
 #include "prototyp.h"
 
 #include "filesystem.h"
 #include "miscres.h"
-
-using namespace boost::filesystem;
 
 int merge_path_names(char *old_full_path, char *new_filename, bool copy_directory)
 {
@@ -230,9 +228,8 @@ static void dir_name(char *target, const char *dir, const char *name)
 /* removes file in dir directory */
 int dir_remove(const std::string &dir, const std::string &filename)
 {
-	std::string tmp;
-	dir_name(tmp, dir, filename);
-	return _unlink(tmp.c_str());
+	fs::path p = fs::path(dir) / filename;
+	return fs::remove(p);
 }
 
 /* fopens file in dir directory */
@@ -316,7 +313,7 @@ static void get_dir(char const *file_template, char *dir, int &offset)
 		int len = int(tmp - (char *) &file_template[offset]);
 		if (len >= 0 && len < FILE_MAX_DIR)
 		{
-			::strncpy(dir, &file_template[offset], min(len, FILE_MAX_DIR));
+			::strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
 		}
 		if (len < FILE_MAX_DIR)
 		{
@@ -343,7 +340,7 @@ static void get_filename_ext(char const *file_template, char *fname, char *ext, 
 		int len = int(tmp - (char *)&file_template[offset]);
 		if ((len > 0) && (offset + len < length) && fname)
 		{
-			strncpy(fname, &file_template[offset], min(len, FILE_MAX_FNAME));
+			strncpy(fname, &file_template[offset], std::min(len, FILE_MAX_FNAME));
 			if (len < FILE_MAX_FNAME)
 			{
 				fname[len] = 0;
@@ -413,66 +410,6 @@ void split_path(const char *file_template, char *drive, std::string &dir, char *
 	strcpy(buffer, dir.c_str());
 	split_path(file_template, drive, buffer, filename, extension);
 	dir = buffer;
-}
-#endif
-
-#if !defined(_WIN32)
-bool is_a_directory(char *s)
-{
-	int len;
-	char sv;
-	if (strchr(s, '*') || strchr(s, '?'))
-	{
-		return false; /* for my purposes, not a directory */
-	}
-
-	len = int(strlen(s));
-	if (len > 0)
-	{
-		sv = s[len-1];   /* last char */
-	}
-	else
-	{
-		sv = 0;
-	}
-
-	if (fr_find_first(s) != 0) /* couldn't find it */
-	{
-		/* any better ideas?? */
-		if (sv == SLASHC) /* we'll guess it is a directory */
-		{
-			return true;
-		}
-		else
-		{
-			return false;  /* no slashes - we'll guess it's a file */
-		}
-	}
-	else if ((g_dta.attribute & SUBDIR) != 0)
-	{
-		if (sv == SLASHC)
-		{
-			/* strip trailing slash and try again */
-			s[len-1] = 0;
-			if (fr_find_first(s) != 0) /* couldn't find it */
-			{
-				return false;
-			}
-			else if ((g_dta.attribute & SUBDIR) != 0)
-			{
-				return true;   /* we're SURE it's a directory */
-			}
-			else
-			{
-				return false;
-			}
-		}
-		else
-		{
-			return true;   /* we're SURE it's a directory */
-		}
-	}
-	return false;
 }
 #endif
 
@@ -634,11 +571,11 @@ void update_save_name(char *filename) /* go to the next file name */
 	make_path(filename, drive, dir, fname, ext);
 }
 
-boost::filesystem::path make_path(const char *dir, const char *fname, const char *ext)
+fs::path make_path(const char *drive, const char *dir, const char *fname, const char *ext)
 {
 	std::ostringstream filename;
 	filename << fname << ext << std::ends;
-	return path(dir) / path(filename.str());
+	return fs::path(drive) / dir / filename.str();
 }
 
 void ensure_extension(char *filename, const char *extension)
@@ -648,3 +585,17 @@ void ensure_extension(char *filename, const char *extension)
 		strcat(filename, extension);
 	}
 }
+
+void ensure_extension(fs::path &path, const char *extension)
+{
+	if (fs::extension(path).length() == 0)
+	{
+		path /= extension;
+	}
+}
+
+bool is_a_directory(const char *s)
+{
+	return fs::is_directory(fs::path(s));
+}
+

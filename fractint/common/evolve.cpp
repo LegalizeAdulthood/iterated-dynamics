@@ -1,6 +1,7 @@
-#include <string.h>
-
+#include <algorithm>
 #include <string>
+
+#include <string.h>
 
 #include "port.h"
 #include "prototyp.h"

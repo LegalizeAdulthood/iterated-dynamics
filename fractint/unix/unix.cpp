@@ -1,10 +1,10 @@
-/* Unix.c
+/* unix.cpp
  * This file contains compatibility routines.
  *
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
-
+#include <algorithm>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
@@ -473,7 +473,7 @@ int split_path(const char *file_template,
 			len = tmp - &file_template[offset];
 			if (len >=0 && len < FILE_MAX_DIR && dir)
 			{
-				strncpy(dir, &file_template[offset], min(len, FILE_MAX_DIR));
+				strncpy(dir, &file_template[offset], std::min(len, FILE_MAX_DIR));
 			}
 			if (len < FILE_MAX_DIR && dir)
 			{
@@ -503,7 +503,7 @@ int split_path(const char *file_template,
 			if ((len > 0) && (offset+len < length) && fname)
 			{
 				strncpy(fname, &file_template[offset],
-					min(len, FILE_MAX_FNAME));
+					std::min(len, FILE_MAX_FNAME));
 				if (len < FILE_MAX_FNAME)
 				{
 					fname[len] = 0;

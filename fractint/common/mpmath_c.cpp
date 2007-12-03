@@ -16,7 +16,7 @@
      Southington, CT 06489
      (203) 276-9721
 */
-
+#include <algorithm>
 
 #include "port.h"
 #include "prototyp.h"
@@ -362,7 +362,7 @@ long logtablecalc(long citer)
 	}
 	if (g_log_table && !g_log_calculation)
 	{
-		return g_log_table[min(citer, g_max_log_table_size)];
+		return g_log_table[std::min(citer, g_max_log_table_size)];
 	}
 
 	if (g_log_palette_mode > LOGPALETTE_NONE)  /* new log function */

@@ -1,6 +1,9 @@
 /*
 		Overlayed odds and ends that don't fit anywhere else.
 */
+#include <algorithm>
+#include <string>
+
 #include <assert.h>
 #include <string.h>
 #include <ctype.h>
@@ -13,7 +16,6 @@
 #include <io.h>
 #endif
 #include <stdarg.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"
@@ -1013,7 +1015,7 @@ void write_batch_parms_passes()
 void write_batch_parms_reset()
 {
 	put_parm(" reset=%d", check_back() ?
-		min(g_save_release, g_release) : g_release);
+		std::min(g_save_release, g_release) : g_release);
 }
 
 void write_batch_parms_type()
@@ -1962,10 +1964,10 @@ int get_precision_bf(int rezflag)
 		digits++;
 		mult_a_bf_int(del1, 10);
 	}
-	digits = max(digits, 3);
+	digits = std::max(digits, 3);
 	restore_stack(saved);
 	dec = get_precision_mag_bf();
-	return max(digits, dec);
+	return std::max(digits, dec);
 }
 
 /* This function calculates the precision needed to distiguish adjacent
@@ -2009,7 +2011,7 @@ int get_precision_dbl(int rezflag)
 		digits++;
 		del1 *= 10;
 	}
-	digits = max(digits, 3);
+	digits = std::max(digits, 3);
 	return digits;
 }
 
@@ -3073,7 +3075,7 @@ void expand_comments(char *target, const char *source)
 	}
 	if (*source != '\0')
 	{
-		*(target + min(j, MAX_COMMENT-1)) = '\0';
+		*(target + std::min(j, MAX_COMMENT-1)) = '\0';
 	}
 }
 

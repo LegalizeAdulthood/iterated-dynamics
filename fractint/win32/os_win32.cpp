@@ -1,10 +1,11 @@
+#include <string>
+
 #include <assert.h>
 #include <direct.h>
 #include <string.h>
 #include <signal.h>
 #include <sys/timeb.h>
 #include <time.h>
-#include <string>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
@@ -490,11 +491,6 @@ void home()
 	g_text_col = 0;
 }
 
-
-bool is_a_directory(const char *s)
-{
-	return PathIsDirectory(s) != 0;
-}
 
 /* tenths of millisecond timewr routine */
 /* static struct timeval tv_start; */
