@@ -491,7 +491,7 @@ void home()
 }
 
 
-bool is_a_directory(char *s)
+bool is_a_directory(const char *s)
 {
 	return PathIsDirectory(s) != 0;
 }
