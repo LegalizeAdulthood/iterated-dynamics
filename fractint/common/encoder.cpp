@@ -127,10 +127,7 @@ restart:
 		strcpy(openfiletype, ".pot");
 	}
 
-	if (has_extension(openfile) == 0)
-	{
-		strcat(openfile, openfiletype);
-	}
+	ensure_extension(openfile, openfiletype);
 	if (g_resave_mode != RESAVE_YES)
 	{
 		update_save_name(filename); /* for next time */
