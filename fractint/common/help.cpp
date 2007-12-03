@@ -1,31 +1,18 @@
 /*
  * help.cpp
- *
- *
- *
- * Revision history:
- *
- *   2-26-90  EAN     Initial version.
- *
- *
  */
 
 #ifndef TEST /* kills all those assert macros in production version */
 #define NDEBUG
 #endif
 
+
 #define INCLUDE_COMMON  /* include common code in helpcom.h */
 
-#if !defined(XFRACT)
-#include <io.h>
-#endif
-#include <fcntl.h>
-#include <string.h>
-#include <time.h>
-#include <assert.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <string>
+
+#include <assert.h>
+#include <string.h>
 
 #include "port.h"
 #include "prototyp.h"
@@ -936,20 +923,6 @@ void help(HelpAction action)
 	g_timer_start += clock_ticks();
 }
 
-static int can_read_file(char *path)
-{
-	int handle = open(path, O_RDONLY);
-	if (handle != -1)
-	{
-		close(handle);
-		return 1;
-	}
-	else
-	{
-		return 0;
-	}
-}
-
 static int exe_path(char *filename, char *path)
 {
 	strcpy(path, g_exe_path.c_str());
@@ -961,7 +934,7 @@ static int find_file(char *filename, char *path)
 {
 	if (exe_path(filename, path))
 	{
-		if (can_read_file(path))
+		if (read_access(path))
 		{
 			return 1;
 		}

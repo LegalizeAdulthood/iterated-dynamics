@@ -10,9 +10,6 @@
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
-#ifndef XFRACT
-#include <io.h>
-#endif
 #include <stdarg.h>
 
 #include "port.h"
