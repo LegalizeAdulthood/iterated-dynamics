@@ -198,12 +198,12 @@ void MakeBatchFile::set_color_spec()
 	if (m_color_spec[0] == '@')
 	{
 		const char *sptr2 = strrchr(color_spec_name.c_str(), SLASHC);
-		if (sptr2 != NULL)
+		if (sptr2 != 0)
 		{
 			color_spec_name = sptr2 + 1;
 		}
 		sptr2 = strrchr(color_spec_name.c_str(), ':');
-		if (sptr2 != NULL)
+		if (sptr2 != 0)
 		{
 			color_spec_name = sptr2 + 1;
 		}
@@ -464,7 +464,7 @@ prompt_user:
 		{
 			fill_prompts();
 
-			if (full_screen_prompt("Save Current Parameters", m_prompts, m_choices, m_param_values, 0, NULL) < 0)
+			if (full_screen_prompt("Save Current Parameters", m_prompts, m_choices, m_param_values, 0, 0) < 0)
 			{
 				break;
 			}
@@ -476,7 +476,7 @@ prompt_user:
 			}
 
 			g_command_file = m_in_parameter_command_file;
-			if (has_extension(g_command_file) == NULL)
+			if (has_extension(g_command_file) == 0)
 			{
 				g_command_file.append(".par");   /* default extension .par */
 			}
@@ -521,7 +521,7 @@ skip_UI:
 		}
 		strcpy(m_out_name, g_command_file.c_str());
 		bool got_input_file = false;
-		FILE *input_file = NULL;
+		FILE *input_file = 0;
 		if (access(g_command_file.c_str(), 0) == 0)
 		{                         /* file exists */
 			got_input_file = true;
@@ -544,7 +544,7 @@ skip_UI:
 #endif
 		}
 		parmfile = fopen(m_out_name, "wt");
-		if (parmfile == NULL)
+		if (parmfile == 0)
 		{
 			char buf[256];
 			sprintf(buf, "Can't create %s", m_out_name);
@@ -576,7 +576,7 @@ skip_UI:
 						unlink(m_out_name);
 						goto prompt_user;
 					}
-					while (strchr(buf, '}') == NULL
+					while (strchr(buf, '}') == 0
 							&& file_gets(buf, NUM_OF(buf)-1, input_file) > 0)
 					{
 						/* skip to end of set */
@@ -588,13 +588,13 @@ skip_UI:
 			}
 		}
 /***** start here*/
-		FILE *fpbat = NULL;
+		FILE *fpbat = 0;
 		if (m_xm > 1 || m_ym > 1)
 		{
 			m_have_3rd = (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd()
 					|| g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd());
 			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
-			if (fpbat == NULL)
+			if (fpbat == 0)
 			{
 				m_xm = 0;
 				m_ym = 0;
@@ -1663,8 +1663,8 @@ void write_batch_parms_colors(const char *colorinf, int maxcolor)
 
 void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int ii, int jj)
 {
-	bf_t bfXctr = NULL;
-	bf_t bfYctr = NULL;
+	bf_t bfXctr = 0;
+	bf_t bfYctr = 0;
 	int saved = save_stack();
 	if (g_bf_math)
 	{
@@ -1747,7 +1747,7 @@ static void put_filename(const char *keyword, const char *fname)
 	if (*fname && !ends_with_slash(fname))
 	{
 		const char *p = strrchr(fname, SLASHC);
-		if (p != NULL)
+		if (p != 0)
 		{
 			fname = p + 1;
 			if (*fname == 0)
@@ -2273,8 +2273,8 @@ int select_video_mode(int curmode)
 	i = full_screen_choice_help(HELPVIDSEL, CHOICE_HELP,
 		"Select Video Mode",
 		"key...name.......................xdot..ydot.colr.driver......comment......",
-		NULL, g_video_table_len, NULL, attributes,
-		1, 16, 74, i, format_vid_table, NULL, NULL, check_modekey);
+		0, g_video_table_len, 0, attributes,
+		1, 16, 74, i, format_vid_table, 0, 0, check_modekey);
 	g_tab_display_enabled = save_tab_display_enabled;
 	if (i == -1)
 	{
@@ -2710,8 +2710,8 @@ void MakeMIG::execute()
 	m_all_x_res = 0;
 	m_all_y_res = 0;
 	m_all_i_table = 0;
-	m_out = NULL;
-	m_in = NULL;
+	m_out = 0;
+	m_in = 0;
 
 	strcpy(m_gif_output_filename, "fractmig.gif");
 
@@ -2728,7 +2728,7 @@ void MakeMIG::execute()
 				printf(" %d X and %d Y components\n\n", m_xmult, m_ymult);
 				/* attempt to create the output file */
 				m_out = fopen(m_gif_output_filename, "wb");
-				if (m_out == NULL)
+				if (m_out == 0)
 				{
 					printf("Cannot create output file %s!\n", m_gif_output_filename);
 					return;
@@ -2738,7 +2738,7 @@ void MakeMIG::execute()
 			sprintf(m_gif_input_filename, "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
 
 			m_in = fopen(m_gif_input_filename, "rb");
-			if (m_in == NULL)
+			if (m_in == 0)
 			{
 				printf("Can't open file %s!\n", m_gif_input_filename);
 				return;
@@ -3101,14 +3101,14 @@ void parse_comments(char *value)
 		next = strchr(value, '/');
 		if (*value != '/')
 		{
-			if (next != NULL)
+			if (next != 0)
 			{
 				save = *next;
 				*next = '\0';
 			}
 			strncpy(par_comment[i], value, MAX_COMMENT);
 		}
-		if (next == NULL)
+		if (next == 0)
 		{
 			break;
 		}

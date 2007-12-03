@@ -105,7 +105,7 @@ private:
 	vector<IFSEntry *> m_entries;
 };
 
-static IFSParserImpl *s_impl = NULL;
+static IFSParserImpl *s_impl = 0;
 
 void IFSParserImpl::AssignId(string::const_iterator first, string::const_iterator last)
 {
@@ -228,7 +228,7 @@ bool IFSParser::Parse(const string &text)
 	s_impl = m_impl;
 	parse_info<string::const_iterator> results =
 		parse(text.begin(), text.end(), g, space_p | comment_p(";"));
-	s_impl = NULL;
+	s_impl = 0;
 	
 	return results.full;
 }

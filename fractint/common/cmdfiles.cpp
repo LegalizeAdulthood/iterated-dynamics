@@ -98,7 +98,7 @@ int g_rotate_lo;
 int g_rotate_hi;								/* cycling color range      */
 int		*g_ranges;								/* iter->color ranges mapping */
 int     g_ranges_length = 0;					/* size of ranges array     */
-BYTE	*g_map_dac_box = NULL;					/* map= (default colors)    */
+BYTE	*g_map_dac_box = 0;					/* map= (default colors)    */
 int     g_color_state;							/* 0, g_dac_box matches default (bios or map=) */
 												/* 1, g_dac_box matches no known defined map   */
 												/* 2, g_dac_box matches the g_color_file map      */
@@ -128,7 +128,7 @@ bool g_log_automatic_flag = false;				/* auto calculate logmap */
 bool g_no_bof = false;							/* Flag to make inside=bof options not duplicate bof images */
 bool g_escape_exit_flag;						/* set to 1 to avoid the "are you sure?" screen */
 bool g_command_initialize = true;				/* first time into command_files? */
-FractalTypeSpecificData *g_current_fractal_specific = NULL;
+FractalTypeSpecificData *g_current_fractal_specific = 0;
 std::string g_l_system_filename;				/* file to find (type=)L-System's in */
 std::string g_l_system_name;					/* Name of L-System */
 std::string g_command_file;						/* file to find command sets in */
@@ -137,7 +137,7 @@ std::string g_command_comment[4];				/* comments for command set */
 std::string g_ifs_filename;						/* file to find (type=)IFS in */
 std::string g_ifs_name;							/* Name of the IFS def'n (if not null) */
 search_path g_search_for;
-float	*g_ifs_definition = NULL;				/* ifs parameters */
+float	*g_ifs_definition = 0;				/* ifs parameters */
 int		g_ifs_type;								/* 0 = 2d, 1 = 3d */
 int		g_slides = SLIDES_OFF;					/* 1 autokey=play, 2 autokey=record */
 BYTE	g_text_colors[]=
@@ -259,7 +259,7 @@ void command_files(int argc, char **argv)
 	if (tempstring[0] != 0)              /* found it! */
 	{
 		initfile = fopen(tempstring, "r");
-		if (initfile != NULL)
+		if (initfile != 0)
 		{
 			command_file(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
 		}
@@ -281,10 +281,10 @@ void command_files(int argc, char **argv)
 		}
 		if (curarg[0] != '@')  /* simple command? */
 		{
-			if (strchr(curarg, '=') == NULL)  /* not xxx = yyy, so check for gif */
+			if (strchr(curarg, '=') == 0)  /* not xxx = yyy, so check for gif */
 			{
 				strcpy(tempstring, curarg);
-				if (has_extension(curarg) == NULL)
+				if (has_extension(curarg) == 0)
 				{
 					strcat(tempstring, ".gif");
 				}
@@ -304,7 +304,7 @@ void command_files(int argc, char **argv)
 		else
 		{
 			char *sptr = strchr(curarg, '/');
-			if (sptr != NULL)  /* @filename/setname? */
+			if (sptr != 0)  /* @filename/setname? */
 			{
 				*sptr = 0;
 				if (merge_path_names(g_command_file, &curarg[1], true) < 0)
@@ -312,7 +312,7 @@ void command_files(int argc, char **argv)
 					init_msg("", g_command_file.c_str(), 0);
 				}
 				g_command_name = &sptr[1];
-				if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == NULL)
+				if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == 0)
 				{
 					arg_error(curarg);
 				}
@@ -321,7 +321,7 @@ void command_files(int argc, char **argv)
 			else  /* @filename */
 			{
 				initfile = fopen(&curarg[1], "r");
-				if (initfile == NULL)
+				if (initfile == 0)
 				{
 					arg_error(curarg);
 				}
@@ -336,7 +336,7 @@ void command_files(int argc, char **argv)
 		g_show_file = SHOWFILE_DONE;	/* nor startup image file              */
 	}
 
-	init_msg("", NULL, 0);
+	init_msg("", 0, 0);
 
 	if (g_debug_mode != DEBUGMODE_NO_FIRST_INIT)
 	{
@@ -368,14 +368,14 @@ int load_commands(FILE *infile)
 static void initialize_variables_once()              /* once per run init */
 {
 	char *p;
-	s_init_random_seed = int(time(NULL));
+	s_init_random_seed = int(time(0));
 	init_comments();
 	p = getenv("TMP");
-	if (p == NULL)
+	if (p == 0)
 	{
 		p = getenv("TEMP");
 	}
-	if (p != NULL)
+	if (p != 0)
 	{
 		if (is_a_directory(p) != 0)
 		{
@@ -414,7 +414,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_debug_mode = DEBUGMODE_NONE;					/* debugging flag(s) are off */
 	g_timer_flag = false;							/* timer flags are off       */
 	g_formula_state.set_filename("id.frm");			/* default formula file      */
-	g_formula_state.set_formula(NULL);
+	g_formula_state.set_formula(0);
 	g_l_system_filename = "id.l";
 	g_l_system_name = "";
 	g_command_file = "id.par";
@@ -436,7 +436,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	if (g_map_dac_box)
 	{
 		delete[] g_map_dac_box;
-		g_map_dac_box = NULL;
+		g_map_dac_box = 0;
 	}
 
 	g_major_method = MAJORMETHOD_BREADTH_FIRST;		/* default inverse julia methods */
@@ -581,7 +581,7 @@ static void reset_ifs_definition()
 	if (g_ifs_definition)
 	{
 		delete[] g_ifs_definition;
-		g_ifs_definition = NULL;
+		g_ifs_definition = 0;
 	}
 }
 
@@ -872,13 +872,13 @@ static int make_doc_arg(const cmd_context &context)
 static int make_par_arg(const cmd_context &context)
 {
 	char *slash;
-	char *next = NULL;
+	char *next = 0;
 	if (context.totparms < 1 || context.totparms > 2)
 	{
 		return bad_arg(context.curarg);
 	}
 	slash = strchr(context.value, '/');
-	if (slash != NULL)
+	if (slash != 0)
 	{
 		*slash = 0;
 		next = slash + 1;
@@ -893,7 +893,7 @@ static int make_par_arg(const cmd_context &context)
 	{
 		g_read_name = "";
 	}
-	if (next == NULL)
+	if (next == 0)
 	{
 		if (g_read_name.length() != 0)
 		{
@@ -1175,14 +1175,14 @@ static int type_arg(const cmd_context &context)
 	{
 		value[3] = 0;
 	}
-	for (k = 0; g_fractal_specific[k].name != NULL; k++)
+	for (k = 0; g_fractal_specific[k].name != 0; k++)
 	{
 		if (strcmp(value, g_fractal_specific[k].name) == 0)
 		{
 			break;
 		}
 	}
-	if (g_fractal_specific[k].name == NULL)
+	if (g_fractal_specific[k].name == 0)
 	{
 		return bad_arg(context.curarg);
 	}
@@ -1268,7 +1268,7 @@ static int function_arg(const cmd_context &context)
 			return bad_arg(context.curarg);
 		}
 		value = strchr(value, '/');
-		if (value == NULL)
+		if (value == 0)
 		{
 			break;
 		}
@@ -1443,7 +1443,7 @@ static int ranges_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_ranges = new int[entries];
-	if (g_ranges == NULL)
+	if (g_ranges == 0)
 	{
 		stop_message(STOPMSG_NO_STACK, "Insufficient memory for ranges=");
 		return -1;
@@ -1543,7 +1543,7 @@ static int potential_arg(const cmd_context &context)
 		g_potential_parameter[k] = (k == 1) ? atof(value) : atoi(value);
 		k++;
 		value = strchr(value, '/');
-		if (value == NULL)
+		if (value == 0)
 		{
 			k = 99;
 		}
@@ -2376,7 +2376,7 @@ static int show_dot_arg(const cmd_context &context)
 		g_auto_show_dot = AUTOSHOWDOT_DEFAULT;
 		if (isalpha(context.charval[0]))
 		{
-			if (strchr("abdm", int(context.charval[0])) != NULL)
+			if (strchr("abdm", int(context.charval[0])) != 0)
 			{
 				g_auto_show_dot = AutoShowDotKind(context.charval[0]);
 			}
@@ -2916,7 +2916,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	}
 
 	context.value = strchr(&curarg[1], '=');
-	if (context.value != NULL)
+	if (context.value != 0)
 	{
 		j = int((context.value++) - curarg);
 		if (j > 1 && curarg[j-1] == ':')
@@ -2954,7 +2954,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 		long ll;
 		lastarg = 0;
 		argptr2 = strchr(argptr, '/');
-		if (argptr2 == NULL)     /* find next '/' */
+		if (argptr2 == 0)     /* find next '/' */
 		{
 			argptr2 = argptr + strlen(argptr);
 			*argptr2 = '/';
@@ -2978,7 +2978,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 			}
 		}
 		j = 0;
-		if (sscanf(argptr, "%c%c", (char *) &j, &tmpc) > 0    /* NULL entry */
+		if (sscanf(argptr, "%c%c", (char *) &j, &tmpc) > 0    /* 0 entry */
 			&& ((char) j == '/' || (char) j == '=') && tmpc == '/')
 		{
 			j = 0;
@@ -3308,7 +3308,7 @@ static void parse_text_colors(char *value)
 				}
 				g_text_colors[k] = BYTE(i*16 + j);
 				value = strchr(value, '/');
-				if (value == NULL)
+				if (value == 0)
 				{
 					break;
 				}
@@ -3361,7 +3361,7 @@ static int parse_colors(char *value)
 			{
 				if (i == 0 || smooth
 					|| (smooth = atoi(value + 1)) < 2
-					|| (value = strchr(value, '>')) == NULL)
+					|| (value = strchr(value, '>')) == 0)
 				{
 					goto badcolor;
 				}
@@ -3530,7 +3530,7 @@ int get_max_curarg_len(char *floatvalstr[], int totparms)
 /*        2 <@> command after startup      */
 /*        3 command line @filename/setname */
 /* this is like stop_message() but can be used in command_files()      */
-/* call with NULL for badfilename to get pause for driver_get_key() */
+/* call with 0 for badfilename to get pause for driver_get_key() */
 int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 {
 	char *modestr[4] =

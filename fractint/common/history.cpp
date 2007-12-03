@@ -122,7 +122,7 @@ struct HISTORY_ITEM
 	char draw_mode;
 };
 
-static HISTORY_ITEM *s_history = NULL;		/* history storage */
+static HISTORY_ITEM *s_history = 0;		/* history storage */
 static int s_history_index = -1;			/* user pointer into history tbl  */
 static int s_save_index = 0;				/* save ptr into history tbl      */
 static bool s_history_flag;				/* are we backing off in history? */
@@ -478,7 +478,7 @@ void history_allocate()
 void history_free()
 {
 	delete[] s_history;
-	s_history = NULL;
+	s_history = 0;
 }
 
 void history_back()

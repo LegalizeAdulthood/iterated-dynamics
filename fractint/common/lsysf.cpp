@@ -286,7 +286,7 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 
 	if (g_overflow)     /* integer math routines overflowed */
 	{
-		return NULL;
+		return 0;
 	}
 
 	while (command->ch && command->ch != ']')
@@ -297,7 +297,7 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 			if (thinking(1, "L-System thinking (higher orders take longer)"))
 			{
 				ts->counter--;
-				return NULL;
+				return 0;
 			}
 		}
 		tran = false;
@@ -308,9 +308,9 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = true;
-					if (find_size((*rulind) + 1, ts, rules, depth-1) == NULL)
+					if (find_size((*rulind) + 1, ts, rules, depth-1) == 0)
 					{
-						return NULL;
+						return 0;
 					}
 				}
 			}
@@ -348,9 +348,9 @@ find_size(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int dep
 				savex = ts->xpos;
 				savey = ts->ypos;
 				command = find_size(command + 1, ts, rules, depth);
-				if (command == NULL)
+				if (command == 0)
 				{
-					return NULL;
+					return 0;
 				}
 				ts->angle = saveang;
 				ts->reverse = saverev;
@@ -392,12 +392,12 @@ lsysf_find_scale(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, 
 	ts->realangle = 0;
 	ts->size = 1;
 	fsret = find_size(command, ts, rules, depth);
-	thinking(0, NULL); /* erase thinking message if any */
+	thinking(0, 0); /* erase thinking message if any */
 	x_min = ts->x_min;
 	x_max = ts->x_max;
 	y_min = ts->y_min;
 	y_max = ts->y_max;
-	if (fsret == NULL)
+	if (fsret == 0)
 	{
 		return 0;
 	}
@@ -420,7 +420,7 @@ draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int de
 
 	if (g_overflow)     /* integer math routines overflowed */
 	{
-		return NULL;
+		return 0;
 	}
 
 	while (command->ch && command->ch != ']')
@@ -430,7 +430,7 @@ draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int de
 			if (driver_key_pressed())
 			{
 				ts->counter--;
-				return NULL;
+				return 0;
 			}
 		}
 		tran = false;
@@ -441,9 +441,9 @@ draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int de
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = true;
-					if (draw_lsysf((*rulind) + 1, ts, rules, depth-1) == NULL)
+					if (draw_lsysf((*rulind) + 1, ts, rules, depth-1) == 0)
 					{
-						return NULL;
+						return 0;
 					}
 				}
 			}
@@ -483,8 +483,8 @@ draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int de
 				savey = ts->ypos;
 				savecolor = ts->curcolor;
 				command = draw_lsysf(command + 1, ts, rules, depth);
-				if (command == NULL)
-					return NULL;
+				if (command == 0)
+					return 0;
 				ts->angle = saveang;
 				ts->reverse = saverev;
 				ts->size = savesize;
@@ -520,14 +520,14 @@ lsysf_size_transform(char *s, lsys_turtle_state_fp *ts)
 	void (*dogf)(lsys_turtle_state_fp *) =   lsysf_size_gf;
 
 	ret = new lsys_cmd[max];
-	if (ret == NULL)
+	if (ret == 0)
 	{
 		ts->stackoflow = true;
-		return NULL;
+		return 0;
 	}
 	while (*s)
 	{
-		f = NULL;
+		f = 0;
 		num = 0;
 		ptype = 4;
 		ret[n].ch = *s;
@@ -587,11 +587,11 @@ lsysf_size_transform(char *s, lsys_turtle_state_fp *ts)
 		if (++n == max)
 		{
 			doub = new lsys_cmd[max*2];
-			if (doub == NULL)
+			if (doub == 0)
 			{
 				delete[] ret;
 				ts->stackoflow = true;
-				return NULL;
+				return 0;
 			}
 			memcpy(doub, ret, max*sizeof(lsys_cmd));
 			delete[] ret;
@@ -601,16 +601,16 @@ lsysf_size_transform(char *s, lsys_turtle_state_fp *ts)
 		s++;
 	}
 	ret[n].ch = 0;
-	ret[n].function = NULL;
+	ret[n].function = 0;
 	ret[n].parm.n = 0;
 	n++;
 
 	doub = new lsys_cmd[n];
-	if (doub == NULL)
+	if (doub == 0)
 	{
 		delete[] ret;
 		ts->stackoflow = true;
-		return NULL;
+		return 0;
 	}
 	memcpy(doub, ret, n*sizeof(lsys_cmd));
 	delete[] ret;
@@ -638,14 +638,14 @@ lsysf_draw_transform(char *s, lsys_turtle_state_fp *ts)
 	void (*drawg)(lsys_turtle_state_fp *) =  lsysf_draw_g;
 
 	ret = new lsys_cmd[max];
-	if (ret == NULL)
+	if (ret == 0)
 	{
 		ts->stackoflow = true;
-		return NULL;
+		return 0;
 	}
 	while (*s)
 	{
-		f = NULL;
+		f = 0;
 		num = 0;
 		ptype = 4;
 		ret[n].ch = *s;
@@ -680,11 +680,11 @@ lsysf_draw_transform(char *s, lsys_turtle_state_fp *ts)
 		if (++n == max)
 		{
 			doub = new lsys_cmd[max*2];
-			if (doub == NULL)
+			if (doub == 0)
 			{
 				delete[] ret;
 				ts->stackoflow = true;
-				return NULL;
+				return 0;
 			}
 			memcpy(doub, ret, max*sizeof(lsys_cmd));
 			delete[] ret;
@@ -694,16 +694,16 @@ lsysf_draw_transform(char *s, lsys_turtle_state_fp *ts)
 		s++;
 	}
 	ret[n].ch = 0;
-	ret[n].function = NULL;
+	ret[n].function = 0;
 	ret[n].parm.n = 0;
 	n++;
 
 	doub = new lsys_cmd[n];
-	if (doub == NULL)
+	if (doub == 0)
 	{
 		delete[] ret;
 		ts->stackoflow = true;
-		return NULL;
+		return 0;
 	}
 	memcpy(doub, ret, n*sizeof(lsys_cmd));
 	delete[] ret;

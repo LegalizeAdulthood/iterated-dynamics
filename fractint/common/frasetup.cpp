@@ -215,7 +215,7 @@ bool mandelbrot_setup_fp()
 
 void current_fractal_specific_set_orbit_calc(int (*orbit_calc)(void))
 {
-	if (orbit_calc != NULL)
+	if (orbit_calc != 0)
 	{
 		g_current_fractal_specific->orbitcalc = orbit_calc;
 	}
@@ -223,7 +223,7 @@ void current_fractal_specific_set_orbit_calc(int (*orbit_calc)(void))
 
 void current_fractal_specific_set_per_pixel(int (*per_pixel)(void))
 {
-	if (per_pixel != NULL)
+	if (per_pixel != 0)
 	{
 		g_current_fractal_specific->per_pixel = per_pixel;
 	}
@@ -1022,7 +1022,7 @@ bool phoenix_setup()
 		g_degree = 0;
 	}
 	g_parameters[2] = double(g_degree);
-	int (*orbit_calc)(void) = NULL;
+	int (*orbit_calc)(void) = 0;
 	if (g_degree == 0)
 	{
 		orbit_calc = g_user_float_flag ? phoenix_orbit_fp : phoenix_orbit;
@@ -1053,7 +1053,7 @@ bool phoenix_complex_setup()
 		g_degree = 0;
 	}
 	g_parameters[4] = double(g_degree);
-	int (*orbit_calc)(void) = NULL;
+	int (*orbit_calc)(void) = 0;
 	if (g_degree == 0)
 	{
 		g_symmetry = (g_parameter2.x != 0 || g_parameter2.y != 0) ? SYMMETRY_NONE : SYMMETRY_ORIGIN;
@@ -1091,7 +1091,7 @@ bool mandelbrot_phoenix_setup()
 		g_degree = 0;
 	}
 	g_parameters[2] = double(g_degree);
-	int (*orbit_calc)(void) = NULL;
+	int (*orbit_calc)(void) = 0;
 	if (g_degree == 0)
 	{
 		orbit_calc = g_user_float_flag ? phoenix_orbit_fp : phoenix_orbit;
@@ -1126,7 +1126,7 @@ bool mandelbrot_phoenix_complex_setup()
 	{
 		g_symmetry = SYMMETRY_NONE;
 	}
-	int (*orbit_calc)(void) = NULL;
+	int (*orbit_calc)(void) = 0;
 	if (g_degree == 0)
 	{
 		orbit_calc = g_user_float_flag ? phoenix_complex_orbit_fp : phoenix_complex_orbit;

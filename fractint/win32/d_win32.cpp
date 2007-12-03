@@ -55,7 +55,7 @@ Win32BaseDriver::Win32BaseDriver(const char *name, const char *description)
 {
 	for (int i = 0; i < WIN32_MAXSCREENS; i++)
 	{
-		m_saved_screens[i] = NULL;
+		m_saved_screens[i] = 0;
 	}
 	for (int i = 0; i < WIN32_MAXSCREENS + 1; i++)
 	{
@@ -181,7 +181,7 @@ void Win32BaseDriver::flush_output()
 		}
 		else
 		{
-			time_t now = time(NULL);
+			time_t now = time(0);
 			long now_ticks = read_ticker();
 			if (now > m_start)
 			{
@@ -225,10 +225,10 @@ void Win32BaseDriver::terminate()
 	m_wintext.destroy();
 	for (int i = 0; i < NUM_OF(m_saved_screens); i++)
 	{
-		if (NULL != m_saved_screens[i])
+		if (0 != m_saved_screens[i])
 		{
 			delete[] m_saved_screens[i];
-			m_saved_screens[i] = NULL;
+			m_saved_screens[i] = 0;
 		}
 	}
 }
@@ -253,7 +253,7 @@ bool Win32BaseDriver::initialize(int &argc, char **argv)
 
 	ODS("win32_init");
 	m_frame.init(g_instance, title);
-	if (!m_wintext.initialize(g_instance, NULL, "Text"))
+	if (!m_wintext.initialize(g_instance, 0, "Text"))
 	{
 		return false;
 	}
@@ -339,11 +339,11 @@ void Win32BaseDriver::shell()
 	PROCESS_INFORMATION pi = { 0 };
 	char *comspec = getenv("COMSPEC");
 
-	if (NULL == comspec)
+	if (0 == comspec)
 	{
 		comspec = "cmd.exe";
 	}
-	if (CreateProcess(NULL, comspec, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &si, &pi))
+	if (CreateProcess(0, comspec, 0, 0, FALSE, CREATE_NEW_CONSOLE, 0, 0, &si, &pi))
 	{
 		DWORD status = WaitForSingleObject(pi.hProcess, 1000);
 		while (WAIT_TIMEOUT == status)
@@ -501,7 +501,7 @@ void Win32BaseDriver::unstack_screen()
 		/* unstack */
 		m_wintext.screen_set(m_saved_screens[m_screen_count]);
 		delete[] m_saved_screens[m_screen_count];
-		m_saved_screens[m_screen_count] = NULL;
+		m_saved_screens[m_screen_count] = 0;
 		move_cursor(-1, -1);
 	}
 	else
@@ -518,7 +518,7 @@ void Win32BaseDriver::discard_screen()
 		if (m_saved_screens[m_screen_count])
 		{
 			delete[] m_saved_screens[m_screen_count];
-			m_saved_screens[m_screen_count] = NULL;
+			m_saved_screens[m_screen_count] = 0;
 		}
 		set_clear();
 	}

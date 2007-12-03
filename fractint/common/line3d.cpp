@@ -63,10 +63,10 @@ struct minmax
 /* routines in this module */
 int out_line_3d(BYTE *pixels, int line_length);
 int targa_color(int, int, int);
-int start_disk1(const std::string &file_name2, FILE *Source, bool overlay_file);
+int start_disk_targa(const std::string &file_name2, FILE *Source, bool overlay_file);
 
 /* global variables defined here */
-void (*g_plot_color_standard)(int x, int y, int color) = NULL;
+void (*g_plot_color_standard)(int x, int y, int color) = 0;
 
 std::string g_light_name = "fract001";
 bool g_targa_overlay = false;
@@ -125,12 +125,12 @@ static float s_old_cos_phi1;
 static float s_old_sin_phi1;
 static float s_old_cos_phi2;
 static float s_old_sin_phi2;
-static BYTE *s_fraction = NULL;			/* float version of pixels array */
+static BYTE *s_fraction = 0;			/* float version of pixels array */
 static float s_min_xyz[3];
 static float s_max_xyz[3];	/* For Raytrace output */
 static int s_line_length;
 static int s_targa_header_len = 18;			/* Size of current Targa-24 header */
-static FILE *s_raytrace_file = NULL;
+static FILE *s_raytrace_file = 0;
 static unsigned int s_ambient;
 static int s_rand_factor;
 static int s_haze_mult;
@@ -155,11 +155,11 @@ static struct point s_p3;
 static struct f_point s_f_bad;			/* out of range value */
 static struct point s_bad;				/* out of range value */
 static long s_num_tris;					/* number of triangles output to ray trace file */
-static struct f_point *s_f_last_row = NULL;
+static struct f_point *s_f_last_row = 0;
 static MATRIX s_m;						/* transformation matrix */
 static int s_file_error = FILEERROR_NONE;
-static char s_targa_temp[] = "fractemp.tga";
-static struct point *s_last_row = NULL;	/* this array remembers the previous line */
+static char *s_targa_temp = "idtemp.tga";
+static struct point *s_last_row = 0;	/* this array remembers the previous line */
 static struct minmax *s_minmax_x;			/* array of min and max x values used in triangle fill */
 
 static int line3d_init(unsigned linelen, bool &triangle_was_output,
@@ -1607,30 +1607,23 @@ static void file_error(const std::string &filename, int code)
 }
 
 
-/************************************************************************/
-/*                                                                      */
-/*   This function opens a TARGA_24 file for reading and writing. If    */
-/*   its a new file, (overlay == 0) it writes a header. If it is to     */
-/*   overlay an existing file (overlay == 1) it copies the original     */
-/*   header whose lenght and validity was determined in                 */
-/*   Targa_validate.                                                    */
-/*                                                                      */
-/*   It Verifies there is enough disk space, and leaves the file        */
-/*   at the start of the display data area.                             */
-/*                                                                      */
-/*   If this is an overlay, closes source and copies to "s_targa_temp"    */
-/*   If there is an error close the file.                               */
-/*                                                                      */
-/* **********************************************************************/
-
-int start_disk1(const std::string &file_name2, FILE *Source, bool overlay_file)
+/* This function opens a TARGA_24 file for reading and writing. If
+ * its a new file, (overlay == 0) it writes a header. If it is to
+ * overlay an existing file (overlay == 1) it copies the original
+ * header whose lenght and validity was determined in
+ * Targa_validate.
+ *
+ * It Verifies there is enough disk space, and leaves the file
+ * at the start of the display data area.
+ */
+int start_disk_targa(const std::string &file_name2, FILE *Source, bool overlay_file)
 {
 	int inc;
 	FILE *fps;
 
 	/* Open File for both reading and writing */
 	fps = dir_fopen(g_work_dir, file_name2, "w+b");
-	if (fps == NULL)
+	if (fps == 0)
 	{
 		file_error(file_name2, FILEERROR_OPEN);
 		return -1;              /* Oops, somethings wrong! */
@@ -1730,11 +1723,9 @@ int start_disk1(const std::string &file_name2, FILE *Source, bool overlay_file)
 
 static int targa_validate(const std::string &file_name)
 {
-	FILE *fp;
-
 	/* Attempt to open source file for reading */
-	fp = dir_fopen(g_work_dir, file_name, "rb");
-	if (fp == NULL)
+	FILE *fp = dir_fopen(g_work_dir, file_name, "rb");
+	if (fp == 0)
 	{
 		file_error(file_name, FILEERROR_OPEN);
 		return -1;              /* Oops, file does not exist */
@@ -1784,15 +1775,15 @@ static int targa_validate(const std::string &file_name)
 	rewind(fp);
 
 	/* Now that we know its a good file, create a working copy */
-	if (start_disk1(s_targa_temp, fp, true))
+	if (start_disk_targa(s_targa_temp, fp, true))
 	{
 		return -1;
 	}
 
 	fclose(fp);                  /* Close the source */
 
-	s_targa_safe = true;                  /* Original file successfully copied to
-									* s_targa_temp */
+	/* Original file successfully copied to s_targa_temp */
+	s_targa_safe = true;
 	return 0;
 }
 
@@ -1964,7 +1955,7 @@ static int raytrace_header()
 	/* Open the ray tracing output file */
 	g_3d_state.next_ray_name();
 	s_raytrace_file = fopen(g_3d_state.ray_name(), "w");
-	if (s_raytrace_file == NULL)
+	if (s_raytrace_file == 0)
 	{
 		return -1;              /* Oops, somethings wrong! */
 	}
@@ -2442,7 +2433,7 @@ static void line3d_cleanup()
 			fprintf(s_raytrace_file, "  0\nENDSEC\n  0\nEOF\n");
 		}
 		fclose(s_raytrace_file);
-		s_raytrace_file = NULL;
+		s_raytrace_file = 0;
 	}
 	if (g_targa_output)
 	{                            /* Finish up targa files */
@@ -2595,7 +2586,7 @@ static int first_time(int linelen, VECTOR v)
 		else
 		{
 			check_write_file(g_light_name, ".tga");
-			if (start_disk1(g_light_name, NULL, false))   /* Open new file */
+			if (start_disk_targa(g_light_name, 0, false))   /* Open new file */
 			{
 				return -1;
 			}
@@ -2945,7 +2936,7 @@ static bool line_3d_mem()
 			return true;
 		}
 	}
-	s_minmax_x = NULL;
+	s_minmax_x = 0;
 
 	/* these fill types call put_a_triangle which uses s_minmax_x */
 	if (g_3d_state.fill_type() == FillType::Gouraud
@@ -2970,31 +2961,31 @@ void line_3d_free()
 	if (s_last_row)
 	{
 		delete[] s_last_row;
-		s_last_row = NULL;
+		s_last_row = 0;
 	}
 	if (s_f_last_row)
 	{
 		delete[] s_f_last_row;
-		s_f_last_row = NULL;
+		s_f_last_row = 0;
 	}
 	if (s_sin_theta_array)
 	{
 		delete[] s_sin_theta_array;
-		s_sin_theta_array = NULL;
+		s_sin_theta_array = 0;
 	}
 	if (s_cos_theta_array)
 	{
 		delete[] s_cos_theta_array;
-		s_cos_theta_array = NULL;
+		s_cos_theta_array = 0;
 	}
 	if (s_fraction)
 	{
 		delete[] s_fraction;
-		s_fraction = NULL;
+		s_fraction = 0;
 	}
 	if (s_minmax_x)
 	{
 		delete[] s_minmax_x;
-		s_minmax_x = NULL;
+		s_minmax_x = 0;
 	}
 }

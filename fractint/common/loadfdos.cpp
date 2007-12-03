@@ -290,8 +290,8 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 
 		i = full_screen_choice_help(HELPLOADFILE, 0, (char *) g_stack,
 			"key...name......................err...xdot..ydot.clr.comment..................",
-			temp1, g_video_table_len, NULL, attributes,
-			1, 13, 78, 0, format_item, NULL, NULL, check_mode_key);
+			temp1, g_video_table_len, 0, attributes,
+			1, 13, 78, 0, format_item, 0, 0, check_mode_key);
 		delete[] attributes;
 		if (i == -1)
 		{

@@ -17,7 +17,7 @@ class UIChoices
 {
 public:
 	UIChoices(const char *heading, int key_mask);
-	UIChoices(int help_mode, const char *heading, int key_mask, char *extra_info = NULL);
+	UIChoices(int help_mode, const char *heading, int key_mask, char *extra_info = 0);
 	~UIChoices();
 
 	void push(const char *label, const char *values[], int num_values, int existing);

@@ -61,7 +61,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 	int change_color = -1;					/* no color (rgb) to change     */
 	int change_direction = 0;				/* no color direction to change */
 	int incr = 999;							/* ready to randomize           */
-	srand((unsigned) time(NULL));			/* randomize things             */
+	srand((unsigned) time(0));			/* randomize things             */
 
 	if (direction == 0)  /* firing up in paused mode?    */
 	{
@@ -495,17 +495,17 @@ void save_palette()
 	strcpy(palname, g_map_name.c_str());
 	driver_stack_screen();
 	char temp1[256] = { 0 };
-	int i = field_prompt_help(HELPCOLORMAP, "Name of map file to write", NULL, temp1, 60, NULL);
+	int i = field_prompt_help(HELPCOLORMAP, "Name of map file to write", 0, temp1, 60, 0);
 	driver_unstack_screen();
 	if (i != -1 && temp1[0])
 	{
-		if (strchr(temp1, '.') == NULL)
+		if (strchr(temp1, '.') == 0)
 		{
 			strcat(temp1, ".map");
 		}
 		merge_path_names(palname, temp1, false);
 		FILE *dacfile = fopen(palname, "w");
-		if (dacfile == NULL)
+		if (dacfile == 0)
 		{
 			driver_buzzer(BUZZER_ERROR);
 		}

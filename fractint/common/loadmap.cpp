@@ -33,14 +33,14 @@ int validate_luts(const char *fn)
 #else
 	merge_path_names(temp, temp_fn, true);
 #endif
-	if (has_extension(temp) == NULL) /* Did name have an extension? */
+	if (has_extension(temp) == 0) /* Did name have an extension? */
 	{
 		strcat(temp, ".map");  /* No? Then add .map */
 	}
 	char line[160];
 	find_path(temp, line);        /* search the dos path */
 	FILE *f = fopen(line, "r");
-	if (f == NULL)
+	if (f == 0)
 	{
 		sprintf(line, "Could not load color map %s", fn);
 		stop_message(0, line);
@@ -49,7 +49,7 @@ int validate_luts(const char *fn)
 	unsigned index;
 	for (index = 0; index < 256; index++)
 	{
-		if (fgets(line, 100, f) == NULL)
+		if (fgets(line, 100, f) == 0)
 		{
 			break;
 		}
@@ -84,10 +84,10 @@ void set_color_palette_name(const std::string &filename)
 	{
 		return;
 	}
-	if (g_map_dac_box == NULL)
+	if (g_map_dac_box == 0)
 	{
 		g_map_dac_box = new BYTE[256*3];
-		if (g_map_dac_box == NULL)
+		if (g_map_dac_box == 0)
 		{
 			stop_message(0, "Insufficient memory for color map.");
 			return;

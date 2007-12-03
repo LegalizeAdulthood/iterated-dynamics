@@ -20,7 +20,7 @@
 
 #define PLOT_TIMER_ID 1
 
-Plot *Plot::s_plot = NULL;
+Plot *Plot::s_plot = 0;
 LPCSTR Plot::s_window_class = "FractIntPlot";
 
 void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
@@ -68,15 +68,15 @@ void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
  */
 void Plot::init_pixels()
 {
-	if (m_pixels != NULL)
+	if (m_pixels != 0)
 	{
 		delete[] m_pixels;
-		m_pixels = NULL;
+		m_pixels = 0;
 	}
-	if (m_saved_pixels != NULL)
+	if (m_saved_pixels != 0)
 	{
 		delete[] m_saved_pixels;
-		m_saved_pixels = NULL;
+		m_saved_pixels = 0;
 	}
 	m_width = g_screen_width;
 	m_height = g_screen_height;
@@ -170,7 +170,7 @@ void Plot::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 
 LRESULT CALLBACK Plot::proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 {
-	_ASSERTE(s_plot != NULL);
+	_ASSERTE(s_plot != 0);
 	switch (message)
 	{
 	case WM_PAINT:			HANDLE_WM_PAINT(window, wp, lp, Plot::OnPaint);					break;
@@ -248,8 +248,8 @@ int Plot::initialize(HINSTANCE instance, LPCSTR title)
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
 		wc.hInstance = m_instance;
-		wc.hIcon = NULL;
-		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+		wc.hIcon = 0;
+		wc.hCursor = ::LoadCursor(0, IDC_ARROW);
 		wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
 		wc.lpszMenuName =  m_title;
 		wc.lpszClassName = s_window_class;
@@ -265,12 +265,12 @@ void Plot::terminate()
 	if (m_pixels)
 	{
 		delete[] m_pixels;
-		m_pixels = NULL;
+		m_pixels = 0;
 	}
 	if (m_saved_pixels)
 	{
 		delete[] m_saved_pixels;
-		m_saved_pixels = NULL;
+		m_saved_pixels = 0;
 	}
 
 	{
@@ -305,7 +305,7 @@ void Plot::create_backing_store()
 
 void Plot::create(HWND parent)
 {
-	if (NULL == m_window)
+	if (0 == m_window)
 	{
 		init_pixels();
 		s_plot = this;
@@ -317,8 +317,8 @@ void Plot::create(HWND parent)
 			CW_USEDEFAULT,               /* default vertical position */
 			m_width,
 			m_height,
-			parent, NULL, m_instance,
-			NULL);
+			parent, 0, m_instance,
+			0);
 
 		create_backing_store();
 	}
@@ -368,7 +368,7 @@ void Plot::flush()
 			0, 0, m_width, m_height,
 			m_pixels, &m_bmi, DIB_RGB_COLORS, SRCCOPY);
 #else
-		::InvalidateRect(m_window, NULL, FALSE);
+		::InvalidateRect(m_window, 0, FALSE);
 #endif
 #endif
 		m_dirty = false;
@@ -407,7 +407,7 @@ int Plot::resize()
 	}
 
 	init_pixels();
-	status = ::SetWindowPos(m_window, NULL, 0, 0, m_width, m_height, SWP_NOZORDER | SWP_NOMOVE);
+	status = ::SetWindowPos(m_window, 0, 0, 0, m_width, m_height, SWP_NOZORDER | SWP_NOMOVE);
 	_ASSERTE(status);
 
 	return !0;
@@ -453,7 +453,7 @@ int Plot::write_palette()
 
 static VOID CALLBACK redraw_window(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
-	::InvalidateRect(window, NULL, FALSE);
+	::InvalidateRect(window, 0, FALSE);
 	::KillTimer(window, PLOT_TIMER_ID);
 }
 
@@ -477,7 +477,7 @@ void Plot::clear()
 
 void Plot::redraw()
 {
-	::InvalidateRect(m_window, NULL, FALSE);
+	::InvalidateRect(m_window, 0, FALSE);
 }
 
 void Plot::display_string(int start_x, int start_y, int fg, int bg, const char *text)
@@ -504,7 +504,7 @@ void Plot::display_string(int start_x, int start_y, int fg, int bg, const char *
 
 void Plot::save_graphics()
 {
-	if (NULL == m_saved_pixels)
+	if (0 == m_saved_pixels)
 	{
 		m_saved_pixels = new BYTE[m_pixels_len];
 		::memset(m_saved_pixels, 0, m_pixels_len);

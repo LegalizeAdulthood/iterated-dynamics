@@ -108,7 +108,7 @@ long FAR PASCAL WinText::proc(HANDLE, UINT, WPARAM, LPARAM);
 
 LPCTSTR WinText::s_window_class = "FractIntText";
 bool WinText::s_showing_cursor = false;
-WinText *WinText::s_me = NULL;
+WinText *WinText::s_me = 0;
 
 WinText::WinText() :
 	m_text_mode(0),
@@ -237,8 +237,8 @@ BOOL WinText::initialize(HINSTANCE hInstance, HWND hWndParent, LPCSTR titletext)
 		wc.cbClsExtra = 0;
 		wc.cbWndExtra = 0;
 		wc.hInstance = hInstance;
-		wc.hIcon = NULL;
-		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+		wc.hIcon = 0;
+		wc.hCursor = ::LoadCursor(0, IDC_ARROW);
 		wc.hbrBackground = static_cast<HBRUSH>(::GetStockObject(BLACK_BRUSH));
 		wc.lpszMenuName =  m_title_text;
 		wc.lpszClassName = s_window_class;
@@ -347,15 +347,15 @@ void WinText::create(HWND parent)
 	s_me = this;
 	HWND hWnd = ::CreateWindow(s_window_class,
 		m_title_text,
-		(NULL == m_parent_window) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
+		(0 == m_parent_window) ? WS_OVERLAPPEDWINDOW : WS_CHILD,
 		CW_USEDEFAULT,               /* default horizontal position */
 		CW_USEDEFAULT,               /* default vertical position */
 		m_max_width,
 		m_max_height,
 		m_parent_window,
-		NULL,
+		0,
 		m_instance,
-		NULL);
+		0);
 	_ASSERTE(hWnd);
 
 	/* squirrel away a global copy of 'hWnd' for later */
@@ -366,7 +366,7 @@ void WinText::create(HWND parent)
 
 	::ShowWindow(m_window, SW_SHOWNORMAL);
 	::UpdateWindow(m_window);
-	::InvalidateRect(m_window, NULL, FALSE);
+	::InvalidateRect(m_window, 0, FALSE);
 }
 
 /*
@@ -421,12 +421,12 @@ void WinText::OnKillFocus(HWND window, HWND old_focus)
 
 void WinText::set_focus()
 {
-	OnSetFocus(NULL, NULL);
+	OnSetFocus(0, 0);
 }
 
 void WinText::kill_focus()
 {
-	OnKillFocus(NULL, NULL);
+	OnKillFocus(0, 0);
 }
 
 void WinText::OnPaint(HWND window)
@@ -470,7 +470,7 @@ void WinText::OnGetMinMaxInfo(HWND hwnd, LPMINMAXINFO lpMinMaxInfo)
 */
 LRESULT CALLBACK WinText::proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (s_me->m_window == NULL)
+	if (s_me->m_window == 0)
 	{
 		s_me->m_window = hWnd;
 	}
@@ -762,7 +762,7 @@ void WinText::clear()
 		::memset(&m_chars[y][0], ' ', (size_t) WINTEXT_MAX_COL);
 		::memset(&m_attrs[y][0], ' ', (size_t) WINTEXT_MAX_COL);
 	}
-	::InvalidateRect(m_window, NULL, FALSE);
+	::InvalidateRect(m_window, 0, FALSE);
 }
 
 BYTE *WinText::screen_get()
@@ -780,7 +780,7 @@ void WinText::screen_set(const BYTE *copy)
 	size_t count = sizeof(BYTE)*WINTEXT_MAX_ROW*WINTEXT_MAX_COL;
 	::memcpy(m_chars, copy, count);
 	::memcpy(m_attrs, copy + count, count);
-	::InvalidateRect(m_window, NULL, FALSE);
+	::InvalidateRect(m_window, 0, FALSE);
 }
 
 void WinText::hide_cursor()
@@ -794,7 +794,7 @@ void WinText::hide_cursor()
 
 VOID CALLBACK WinText::timer_redraw(HWND window, UINT msg, UINT_PTR idEvent, DWORD dwTime)
 {
-	::InvalidateRect(window, NULL, FALSE);
+	::InvalidateRect(window, 0, FALSE);
 	::KillTimer(window, TIMER_ID);
 }
 
@@ -825,7 +825,7 @@ void WinText::put_char_attr(int row, int col, int char_attr)
 void WinText::pause()
 {
 	::ShowWindow(m_window, SW_HIDE);
-	s_me = NULL;
+	s_me = 0;
 }
 
 void WinText::resume()

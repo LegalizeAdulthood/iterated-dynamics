@@ -85,7 +85,7 @@ void print_document(char *outfname, int (*msg_func)(int, int), int save_extraseg
 static int print_doc_msg_func(int pnum, int num_pages);
 
 static int s_help_mode = 0;
-static FILE *s_help_file = NULL;			/* help file handle */
+static FILE *s_help_file = 0;			/* help file handle */
 static long s_base_off;					/* offset to help info in help file */
 static int s_max_links;					/* max # of links in any page */
 static int s_max_pages;					/* max # of pages in any topic */
@@ -209,7 +209,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 					if (tok == TOK_LINK)
 					{
 						display_text(row, col, C_HELP_LINK, curr + 1 + 3*sizeof(int), width);
-						if (num_link != NULL)
+						if (num_link != 0)
 						{
 							link[*num_link].r         = (BYTE)row;
 							link[*num_link].c         = (BYTE)col;
@@ -251,7 +251,7 @@ static void display_parse_text(char *text, unsigned len, int start_margin, int *
 
 		case TOK_LINK:
 				display_text(row, col, C_HELP_LINK, curr + 1 + 3*sizeof(int), width);
-				if (num_link != NULL)
+				if (num_link != 0)
 				{
 					link[*num_link].r         = (BYTE)row;
 					link[*num_link].c         = (BYTE)col;
@@ -376,7 +376,7 @@ static void display_page(char *title, char *text, unsigned text_len,
 	/* Some systems (Ultrix) mess up if you write to column 80 */
 	driver_put_string(1, 78 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR, temp);
 
-	if (text != NULL)
+	if (text != 0)
 	{
 		display_parse_text(text, text_len, start_margin, num_link, link);
 	}
@@ -451,7 +451,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 	int temp_dist;
 
 	curr    = &link[curr_link];
-	best    = NULL;
+	best    = 0;
 	curr_c2 = curr->c + curr->width - 1;
 
 	for (ctr = 0, temp = link; ctr < num_link; ctr++, temp++)
@@ -467,25 +467,25 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 				temp_overlap -= temp_dist*100;
 			}
 
-			if (best != NULL)
+			if (best != 0)
 			{
 				if (best_overlap >= 0 && temp_overlap >= 0)
 				{     /* if they're both under curr set to closest in y dir */
 					if (dist1(best->r, curr->r) > temp_dist)
 					{
-						best = NULL;
+						best = 0;
 					}
 				}
 				else
 				{
 					if (best_overlap < temp_overlap)
 					{
-						best = NULL;
+						best = 0;
 					}
 				}
 			}
 
-			if (best == NULL)
+			if (best == 0)
 			{
 				best = temp;
 				best_overlap = temp_overlap;
@@ -493,7 +493,7 @@ static int find_link_updown(LINK *link, int num_link, int curr_link, int up)
 		}
 	}
 
-	return (best == NULL) ? -1 : int(best-link);
+	return (best == 0) ? -1 : int(best-link);
 }
 
 static int find_link_leftright(LINK *link, int num_link, int curr_link, int left)
@@ -509,7 +509,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 	LINK *best;
 
 	curr    = &link[curr_link];
-	best    = NULL;
+	best    = 0;
 	curr_c2 = curr->c + curr->width - 1;
 
 	for (ctr = 0, temp = link; ctr < num_link; ctr++, temp++)
@@ -521,19 +521,19 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 		{
 			temp_dist = dist1(curr->r, temp->r);
 
-			if (best != NULL)
+			if (best != 0)
 			{
 				if (best_dist == 0 && temp_dist == 0)  /* if both on curr's line... */
 				{
 					if ((left && dist1(curr->c, best_c2) > dist1(curr->c, temp_c2)) ||
 						(!left && dist1(curr_c2, best->c) > dist1(curr_c2, temp->c)))
 					{
-						best = NULL;
+						best = 0;
 					}
 				}
 				else if (best_dist >= temp_dist)   /* if temp is closer... */
 				{
-					best = NULL;
+					best = 0;
 				}
 			}
 			else
@@ -545,7 +545,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 		}
 	} /* for */
 
-	return (best == NULL) ? -1 : int(best-link);
+	return (best == 0) ? -1 : int(best-link);
 }
 
 #ifdef __CLINT__
@@ -554,7 +554,7 @@ static int find_link_leftright(LINK *link, int num_link, int curr_link, int left
 
 static int find_link_key(LINK *link, int num_link, int curr_link, int key)
 {
-	link = NULL;   /* just for warning */
+	link = 0;   /* just for warning */
 	switch (key)
 	{
 	case FIK_TAB:      return (curr_link >= num_link-1) ? -1 : curr_link + 1;
@@ -569,7 +569,7 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
 
 	if (num_link > 1)
 	{
-		t = (f == NULL) ? val : (*f)(link, num_link, *curr, val);
+		t = (f == 0) ? val : (*f)(link, num_link, *curr, val);
 		if (t >= 0 && t != *curr)
 		{
 			color_link(&link[*curr], C_HELP_LINK);
@@ -687,7 +687,7 @@ static HelpAction help_topic(HIST *curr, HIST *next, int flags)
 			}
 			else
 			{
-				do_move_link(s_link_table, num_link, &curr_link, NULL, 0);
+				do_move_link(s_link_table, num_link, &curr_link, 0, 0);
 			}
 			break;
 
@@ -699,7 +699,7 @@ static HelpAction help_topic(HIST *curr, HIST *next, int flags)
 			}
 			else
 			{
-				do_move_link(s_link_table, num_link, &curr_link, NULL, num_link-1);
+				do_move_link(s_link_table, num_link, &curr_link, 0, num_link-1);
 			}
 			break;
 
@@ -797,7 +797,7 @@ void help(HelpAction action)
 		return;
 	}
 
-	if (s_help_file == NULL)
+	if (s_help_file == 0)
 	{
 		driver_buzzer(BUZZER_ERROR);
 		return;
@@ -807,7 +807,7 @@ void help(HelpAction action)
 	s_link_table = new LINK[s_max_links];
 	s_page_table = new PAGE[s_max_pages];
 
-	if ((s_buffer == NULL) || (NULL == s_link_table) || (NULL == s_page_table))
+	if ((s_buffer == 0) || (0 == s_link_table) || (0 == s_page_table))
 	{
 		driver_buzzer(BUZZER_ERROR);
 		return;
@@ -895,7 +895,7 @@ void help(HelpAction action)
 			}
 			else
 			{
-				display_page("Unknown Help Topic", NULL, 0, 0, 1, 0, NULL, NULL);
+				display_page("Unknown Help Topic", 0, 0, 0, 1, 0, 0, 0);
 				action = HelpAction(-1);
 				while (action == HelpAction(-1))
 				{
@@ -1205,7 +1205,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			int  width = PAGE_WIDTH + PAGE_INDENT;
 			int  keep_going;
 
-			keep_going = (info->msg_func != NULL) ? (*info->msg_func)(pd->pnum, info->num_page) : 1;
+			keep_going = (info->msg_func != 0) ? (*info->msg_func)(pd->pnum, info->num_page) : 1;
 
 			info->margin = 0;
 
@@ -1332,8 +1332,8 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 {
 	PRINT_DOC_INFO info;
 	int            success   = 0;
-	FILE *temp_file = NULL;
-	char      *msg = NULL;
+	FILE *temp_file = 0;
+	char      *msg = 0;
 
 	help_seek(16L);
 	fread(&info.num_contents, sizeof(int), 1, s_help_file);
@@ -1344,7 +1344,7 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 	info.content_pos = 6*sizeof(int) + s_num_topic*sizeof(long) + s_num_label*2*sizeof(int);
 	info.msg_func = msg_func;
 
-	if (msg_func != NULL)
+	if (msg_func != 0)
 	{
 		msg_func(0, info.num_page);   /* initialize */
 	}
@@ -1352,7 +1352,7 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 	if (save_extraseg)
 	{
 		temp_file = fopen(TEMP_FILE_NAME, "wb");
-		if (temp_file == NULL)
+		if (temp_file == 0)
 		{
 			msg = "Unable to create temporary file.\n";
 			goto ErrorAbort;
@@ -1366,7 +1366,7 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 	}
 
 	info.file = fopen(outfname, "wt");
-	if (info.file == NULL)
+	if (info.file == 0)
 	{
 		msg = "Unable to create output file.\n";
 		goto ErrorAbort;
@@ -1400,19 +1400,19 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 	}
 
 ErrorAbort:
-	if (temp_file != NULL)
+	if (temp_file != 0)
 	{
 		fclose(temp_file);
 		remove(TEMP_FILE_NAME);
-		temp_file = NULL;
+		temp_file = 0;
 	}
 
-	if (msg != NULL)
+	if (msg != 0)
 	{
 		help_title();
 		stop_message(STOPMSG_NO_STACK, msg);
 	}
-	else if (msg_func != NULL)
+	else if (msg_func != 0)
 	{
 		msg_func((success) ? -1 : -2, info.num_page);
 	}
@@ -1423,16 +1423,16 @@ int init_help()
 	struct help_sig_info hs = { 0 };
 	char path[FILE_MAX_PATH + 1];
 
-	s_help_file = NULL;
+	s_help_file = 0;
 
 #ifndef WINFRACT
 #if !defined(XFRACT) && !defined(_WIN32)
-	if (s_help_file == NULL)         /* now look for help files in FRACTINT.EXE */
+	if (s_help_file == 0)         /* now look for help files in FRACTINT.EXE */
 	{
 		if (find_file("id.exe", path))
 		{
 			s_help_file = fopen(path, "rb");
-			if (s_help_file != NULL)
+			if (s_help_file != 0)
 			{
 				long help_offset;
 
@@ -1449,14 +1449,14 @@ int init_help()
 				if (hs.sig != HELP_SIG)
 				{
 					fclose(s_help_file);
-					s_help_file = NULL;
+					s_help_file = 0;
 				}
 				else
 				{
 					if (hs.version != FIHELP_VERSION)
 					{
 						fclose(s_help_file);
-						s_help_file = NULL;
+						s_help_file = 0;
 						stop_message(STOPMSG_NO_STACK, "Wrong help version in id.exe!\n");
 					}
 					else
@@ -1478,12 +1478,12 @@ int init_help()
 #endif
 #endif
 
-	if (s_help_file == NULL)            /* look for id.hlp */
+	if (s_help_file == 0)            /* look for id.hlp */
 	{
 		if (find_file("id.hlp", path))
 		{
 			s_help_file = fopen(path, "rb");
-			if (s_help_file != NULL)
+			if (s_help_file != 0)
 			{
 				fread(&hs, sizeof(long) + sizeof(int), 1, s_help_file);
 
@@ -1505,7 +1505,7 @@ int init_help()
 		}
 	}
 
-	if (s_help_file == NULL)         /* Can't find the help files anywhere! */
+	if (s_help_file == 0)         /* Can't find the help files anywhere! */
 	{
 		static char msg[] =
 #if !defined(XFRACT) && !defined(_WIN32)
@@ -1533,10 +1533,10 @@ int init_help()
 	s_topic_offset = new long[s_num_topic];
 	s_label = new LABEL[s_num_label];
 
-	if ((s_topic_offset == NULL) || (NULL == s_label) || (NULL == s_hist))
+	if ((s_topic_offset == 0) || (0 == s_label) || (0 == s_hist))
 	{
 		fclose(s_help_file);
-		s_help_file = NULL;
+		s_help_file = 0;
 		stop_message(STOPMSG_NO_STACK, "Not enough memory for help system!\n");
 
 		return -2;
@@ -1553,12 +1553,12 @@ int init_help()
 
 void end_help()
 {
-	if (s_help_file != NULL)
+	if (s_help_file != 0)
 	{
 		fclose(s_help_file);
 		delete[] s_topic_offset;
 		delete[] s_label;
-		s_help_file = NULL;
+		s_help_file = 0;
 	}
 }
 

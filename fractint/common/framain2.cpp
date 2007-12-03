@@ -51,7 +51,7 @@
 class LineCompare
 {
 public:
-	LineCompare() : m_file(NULL), m_error_count(0)
+	LineCompare() : m_file(0), m_error_count(0)
 	{
 	}
 	~LineCompare()
@@ -84,7 +84,7 @@ private:
 };
 
 bool g_from_text_flag = false;         /* = 1 if we're in graphics mode */
-evolution_info *g_evolve_handle = NULL;
+evolution_info *g_evolve_handle = 0;
 CalculationMode g_standard_calculation_mode_old;
 void (*g_out_line_cleanup)();
 
@@ -170,7 +170,7 @@ void ZoomSaver::save()
 	if (g_zoomBox.count() > 0)  /* save zoombox stuff in mem before encode (mem reused) */
 	{
 		m_save_zoom = new int[3*g_zoomBox.count()];
-		if (m_save_zoom == NULL)
+		if (m_save_zoom == 0)
 		{
 			clear_zoom_box(); /* not enuf mem so clear the box */
 		}
@@ -350,7 +350,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 		if (g_show_file == SHOWFILE_PENDING)
 		{               /* loading an image */
-			g_out_line_cleanup = NULL;          /* g_out_line routine can set this */
+			g_out_line_cleanup = 0;          /* g_out_line routine can set this */
 			if (g_display_3d)                 /* set up 3D decoding */
 			{
 				g_out_line = out_line_3d;
@@ -478,7 +478,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				int gridsqr;
 				struct evolution_info resume_e_info;
 
-				if ((g_evolve_handle != NULL) && (g_calculation_status == CALCSTAT_RESUMABLE))
+				if ((g_evolve_handle != 0) && (g_calculation_status == CALCSTAT_RESUMABLE))
 				{
 					memcpy(&resume_e_info, g_evolve_handle, sizeof(resume_e_info));
 					g_parameter_range_x  = resume_e_info.parameter_range_x;
@@ -507,7 +507,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					}
 					ecount       = resume_e_info.ecount;
 					delete g_evolve_handle;  /* We're done with it, release it. */
-					g_evolve_handle = NULL;
+					g_evolve_handle = 0;
 				}
 				else
 				{ /* not resuming, start from the beginning */
@@ -558,7 +558,7 @@ done:
 				}
 				else
 				{	/* interrupted screen generation, save info */
-					if (g_evolve_handle == NULL)
+					if (g_evolve_handle == 0)
 					{
 						g_evolve_handle = new evolution_info;
 					}

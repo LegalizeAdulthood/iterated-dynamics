@@ -30,75 +30,75 @@ int g_bf_decimals = 0;
 
 /* used internally by bignum.c routines */
 static char s_storage[4096];
-static bn_t bnroot = NULL;
-static bn_t stack_ptr = NULL;			/* memory allocator base after global variables */
-bn_t bntmp1 = NULL;
-bn_t bntmp2 = NULL;
-bn_t bntmp3 = NULL;
-bn_t bntmp4 = NULL;
-bn_t bntmp5 = NULL;
-bn_t bntmp6 = NULL;						/* g_r_length  */
-bn_t bntmpcpy1 = NULL;
-bn_t bntmpcpy2 = NULL;					/* g_bn_length */
+static bn_t bnroot = 0;
+static bn_t stack_ptr = 0;			/* memory allocator base after global variables */
+bn_t bntmp1 = 0;
+bn_t bntmp2 = 0;
+bn_t bntmp3 = 0;
+bn_t bntmp4 = 0;
+bn_t bntmp5 = 0;
+bn_t bntmp6 = 0;						/* g_r_length  */
+bn_t bntmpcpy1 = 0;
+bn_t bntmpcpy2 = 0;					/* g_bn_length */
 
 /* used by other routines */
-bn_t bnxmin = NULL;
-bn_t bnxmax = NULL;
-bn_t bnymin = NULL;
-bn_t bnymax = NULL;
-bn_t bnx3rd = NULL;
-bn_t bny3rd = NULL;						/* g_bn_length */
-bn_t bnxdel = NULL;
-bn_t bnydel = NULL;
-bn_t bnxdel2 = NULL;
-bn_t bnydel2 = NULL;
-bn_t bnclosenuff = NULL;				/* g_bn_length */
-bn_t bntmpsqrx = NULL;
-bn_t bntmpsqry = NULL;
-bn_t bntmp = NULL;						/* g_r_length  */
-ComplexBigNum g_old_z_bn = { NULL, NULL };
-ComplexBigNum bnparm = { NULL, NULL };
-ComplexBigNum bnsaved = { NULL, NULL };		/* g_bn_length */
-ComplexBigNum g_new_z_bn = { NULL, NULL };		/* g_r_length */
-bn_t bn_pi = NULL;						/* TAKES NO SPACE */
+bn_t bnxmin = 0;
+bn_t bnxmax = 0;
+bn_t bnymin = 0;
+bn_t bnymax = 0;
+bn_t bnx3rd = 0;
+bn_t bny3rd = 0;						/* g_bn_length */
+bn_t bnxdel = 0;
+bn_t bnydel = 0;
+bn_t bnxdel2 = 0;
+bn_t bnydel2 = 0;
+bn_t bnclosenuff = 0;				/* g_bn_length */
+bn_t bntmpsqrx = 0;
+bn_t bntmpsqry = 0;
+bn_t bntmp = 0;						/* g_r_length  */
+ComplexBigNum g_old_z_bn = { 0, 0 };
+ComplexBigNum bnparm = { 0, 0 };
+ComplexBigNum bnsaved = { 0, 0 };		/* g_bn_length */
+ComplexBigNum g_new_z_bn = { 0, 0 };		/* g_r_length */
+bn_t bn_pi = 0;						/* TAKES NO SPACE */
 
-bf_t bftmp1 = NULL;
-bf_t bftmp2 = NULL;
-bf_t bftmp3 = NULL;
-bf_t bftmp4 = NULL;
-bf_t bftmp5 = NULL;
-bf_t bftmp6 = NULL;						/* g_rbf_length + 2 */
-bf_t bftmpcpy1 = NULL;
-bf_t bftmpcpy2 = NULL;					/* g_rbf_length + 2 */
-bf_t bfxdel = NULL;
-bf_t bfydel = NULL;
-bf_t bfxdel2 = NULL;
-bf_t bfydel2 = NULL;
-bf_t bfclosenuff = NULL;				/* g_rbf_length + 2 */
-bf_t bftmpsqrx = NULL;
-bf_t bftmpsqry = NULL;					/* g_rbf_length + 2 */
-ComplexBigFloat bfparm = {NULL, NULL};			/* g_bf_length + 2 */
+bf_t bftmp1 = 0;
+bf_t bftmp2 = 0;
+bf_t bftmp3 = 0;
+bf_t bftmp4 = 0;
+bf_t bftmp5 = 0;
+bf_t bftmp6 = 0;						/* g_rbf_length + 2 */
+bf_t bftmpcpy1 = 0;
+bf_t bftmpcpy2 = 0;					/* g_rbf_length + 2 */
+bf_t bfxdel = 0;
+bf_t bfydel = 0;
+bf_t bfxdel2 = 0;
+bf_t bfydel2 = 0;
+bf_t bfclosenuff = 0;				/* g_rbf_length + 2 */
+bf_t bftmpsqrx = 0;
+bf_t bftmpsqry = 0;					/* g_rbf_length + 2 */
+ComplexBigFloat bfparm = {0, 0};			/* g_bf_length + 2 */
 										/* g_bf_length + 2 */
-ComplexBigFloat bfsaved = {NULL, NULL};		/* g_old_z_bf,  g_new_z_bf, */
+ComplexBigFloat bfsaved = {0, 0};		/* g_old_z_bf,  g_new_z_bf, */
 										/* g_bf_length + 2 */
-ComplexBigFloat g_old_z_bf = {NULL, NULL};
-ComplexBigFloat g_new_z_bf = {NULL, NULL};			/* g_rbf_length + 2 */
-bf_t bf_pi = NULL;						/* TAKES NO SPACE */
-bf_t big_pi = NULL;						/* g_bf_length + 2 */
+ComplexBigFloat g_old_z_bf = {0, 0};
+ComplexBigFloat g_new_z_bf = {0, 0};			/* g_rbf_length + 2 */
+bf_t bf_pi = 0;						/* TAKES NO SPACE */
+bf_t big_pi = 0;						/* g_bf_length + 2 */
 
 /* for testing only */
 
 /* used by other routines */
-bf_t g_sx_min_bf = NULL;
-bf_t g_sx_max_bf = NULL;
-bf_t g_sy_min_bf = NULL;
-bf_t g_sy_max_bf = NULL;
-bf_t g_sx_3rd_bf = NULL;
-bf_t g_sy_3rd_bf = NULL;					/* g_bf_length + 2 */
+bf_t g_sx_min_bf = 0;
+bf_t g_sx_max_bf = 0;
+bf_t g_sy_min_bf = 0;
+bf_t g_sy_max_bf = 0;
+bf_t g_sx_3rd_bf = 0;
+bf_t g_sy_3rd_bf = 0;					/* g_bf_length + 2 */
 bf_t bfparms[10];						/* (g_bf_length + 2)*10 */
-bf_t bftmp = NULL;
+bf_t bftmp = 0;
 
-bf_t bf10tmp = NULL;					/* dec + 4 */
+bf_t bf10tmp = 0;					/* dec + 4 */
 
 #define LOG10_256 2.4082399653118
 #define LOG_256   5.5451774444795
@@ -175,7 +175,7 @@ static void init_bf_2()
 	/* at present time one call would suffice, but this logic allows
 		multiple kinds of alternate math eg long double */
 	alternate_math *alt = find_alternate_math(BIGNUM);
-	if (alt != NULL)
+	if (alt != 0)
 	{
 		g_bf_math = alt->math;
 	}
@@ -329,7 +329,7 @@ static int save_bf_vars()
 {
 	int ret;
 	unsigned int mem;
-	if (bnroot != NULL)
+	if (bnroot != 0)
 	{
 		mem = (g_bf_length + 2)*22;  /* 6 corners + 6 save corners + 10 params */
 		g_bf_save_len = g_bf_length;

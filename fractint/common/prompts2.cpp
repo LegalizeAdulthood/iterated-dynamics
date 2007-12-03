@@ -806,7 +806,7 @@ int get_command_string()
 	int i;
 	static char cmdbuf[61];
 
-	i = field_prompt_help(HELPCOMMANDS, "Enter command string to use.", NULL, cmdbuf, 60, NULL);
+	i = field_prompt_help(HELPCOMMANDS, "Enter command string to use.", 0, cmdbuf, 60, 0);
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
@@ -984,7 +984,7 @@ int get_random_dot_stereogram_parameters()
 				rds6[i] = ' ';
 			}
 			p = strrchr(g_stereo_map_name, SLASHC);
-			if (p == NULL ||
+			if (p == 0 ||
 				int(strlen(g_stereo_map_name)) < sizeof(rds6)-2)
 			{
 				p = strlwr(g_stereo_map_name);
@@ -1003,7 +1003,7 @@ int get_random_dot_stereogram_parameters()
 		{
 			*g_stereo_map_name = 0;
 		}
-		i = full_screen_prompt_help(HELPRDS, "Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, NULL);
+		i = full_screen_prompt_help(HELPRDS, "Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, 0);
 		if (i < 0)
 		{
 			ret = -1;
@@ -1074,7 +1074,7 @@ int get_commands()              /* execute commands from file */
 	if (point >= 0)
 	{
 		parmfile = fopen(g_command_file.c_str(), "rb");
-		if (parmfile != NULL)
+		if (parmfile != 0)
 		{
 			fseek(parmfile, point, SEEK_SET);
 			ret = load_commands(parmfile);
@@ -1094,22 +1094,22 @@ void goodbye()
 	if (g_map_dac_box)
 	{
 		delete[] g_map_dac_box;
-		g_map_dac_box = NULL;
+		g_map_dac_box = 0;
 	}
-	if (g_resume_info != NULL)
+	if (g_resume_info != 0)
 	{
 		end_resume();
 	}
-	if (g_evolve_handle != NULL)
+	if (g_evolve_handle != 0)
 	{
 		delete g_evolve_handle;
 	}
 	release_parameter_box();
 	history_free();
-	if (g_ifs_definition != NULL)
+	if (g_ifs_definition != 0)
 	{
 		delete[] g_ifs_definition;
-		g_ifs_definition = NULL;
+		g_ifs_definition = 0;
 	}
 	disk_end();
 	ExitCheck();
@@ -1301,7 +1301,7 @@ retry_dir:
 	if (file_template[0])
 	{
 		numtemplates = 1;
-		split_path(file_template, NULL, NULL, fname, ext);
+		split_path(file_template, 0, 0, fname, ext);
 	}
 	else
 	{
@@ -1354,7 +1354,7 @@ retry_dir:
 				{
 					put_string_center(2, 0, 80, C_GENERAL_INPUT, g_dta.filename);
 
-					split_path(g_dta.filename, NULL, NULL, fname, ext);
+					split_path(g_dta.filename, 0, 0, fname, ext);
 					/* just using speedstr as a handy buffer */
 					make_path(speedstr, drive, dir, fname, ext);
 					strncpy(choices[++filecount]->name, g_dta.filename, 13);
@@ -1418,8 +1418,8 @@ retry_dir:
 
 
 	i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-		temp1, NULL, instr, filecount, (char **) choices,
-		attributes, 5, 99, 12, i, NULL, speedstr, filename_speedstr, check_f6_key);
+		temp1, 0, instr, filecount, (char **) choices,
+		attributes, 5, 99, 12, i, 0, speedstr, filename_speedstr, check_f6_key);
 	if (i == -FIK_F4)
 	{
 		dosort = 1 - dosort;
@@ -1460,11 +1460,11 @@ retry_dir:
 				else
 				{
 					char *s = strrchr(dir, SLASHC);
-					if (s != NULL) /* trailing slash */
+					if (s != 0) /* trailing slash */
 					{
 						*s = 0;
 						s = strrchr(dir, SLASHC);
-						if (s != NULL)
+						if (s != 0)
 						{
 							*(s + 1) = 0;
 						}
@@ -1479,7 +1479,7 @@ retry_dir:
 			make_path(flname, drive, dir, "", "");
 			goto restart;
 		}
-		split_path(choices[i]->full_name, NULL, NULL, fname, ext);
+		split_path(choices[i]->full_name, 0, 0, fname, ext);
 		make_path(flname, drive, dir, fname, ext);
 	}
 	else
@@ -1535,9 +1535,9 @@ retry_dir:
 			else
 			{  /* failed, make diagnostic useful: */
 				strcpy(flname, speedstr);
-				if (strchr(speedstr, SLASHC) == NULL)
+				if (strchr(speedstr, SLASHC) == 0)
 				{
-					split_path(speedstr, NULL, NULL, fname, ext);
+					split_path(speedstr, 0, 0, fname, ext);
 					make_path(flname, drive, dir, fname, ext);
 				}
 			}

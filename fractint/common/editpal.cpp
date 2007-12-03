@@ -442,11 +442,11 @@ static void cursor_draw();
 static void cursor_save();
 static void cursor_restore();
 
-static cursor *s_the_cursor = NULL;
+static cursor *s_the_cursor = 0;
 
 bool cursor_new()
 {
-	if (s_the_cursor != NULL)
+	if (s_the_cursor != 0)
 	{
 		return false;
 	}
@@ -464,12 +464,12 @@ bool cursor_new()
 
 void cursor_destroy()
 {
-	if (s_the_cursor != NULL)
+	if (s_the_cursor != 0)
 	{
 		delete s_the_cursor;
 	}
 
-	s_the_cursor = NULL;
+	s_the_cursor = 0;
 }
 
 static void cursor_draw()
@@ -1342,7 +1342,7 @@ static void rgb_editor_change(color_editor *ceditor, VOIDPTR info) /* private */
 {
 	rgb_editor *me = (rgb_editor *)info;
 
-	ceditor = NULL; /* just for warning */
+	ceditor = 0; /* just for warning */
 	if (me->pal < g_colors && !is_reserved(me->pal))
 	{
 		set_pal(me->pal, color_editor_get_value(me->color[0]),
@@ -1596,7 +1596,7 @@ static void pal_table_save_undo_data(pal_table *me, int first, int last)
 {
 	int num;
 
-	if (me->undo_file == NULL)
+	if (me->undo_file == 0)
 	{
 		return;
 	}
@@ -1629,7 +1629,7 @@ static void pal_table_save_undo_data(pal_table *me, int first, int last)
 
 static void pal_table_save_undo_rotate(pal_table *me, int dir, int first, int last)
 {
-	if (me->undo_file == NULL)
+	if (me->undo_file == 0)
 	{
 		return;
 	}
@@ -1964,7 +1964,7 @@ static bool pal_table_memory_alloc(pal_table *me, long size)
 	}
 
 	char *temp = new char[FAR_RESERVE];   /* minimum free space */
-	if (temp == NULL)
+	if (temp == 0)
 	{
 		me->stored_at = NOWHERE;
 		return false;   /* can't do it */
@@ -1972,7 +1972,7 @@ static bool pal_table_memory_alloc(pal_table *me, long size)
 	delete[] temp;
 
 	me->memory = new char[size];
-	if (me->memory == NULL)
+	if (me->memory == 0)
 	{
 		me->stored_at = NOWHERE;
 		return false;
@@ -2004,11 +2004,11 @@ static void pal_table_save_rect(pal_table *me)
 		break;
 
 	case MEMORY:
-		if (me->memory != NULL)
+		if (me->memory != 0)
 		{
 			delete[] me->memory;
 		}
-		me->memory = NULL;
+		me->memory = 0;
 		break;
 	}
 
@@ -2033,10 +2033,10 @@ static void pal_table_save_rect(pal_table *me)
 	{
 		me->stored_at = DISK;
 
-		if (me->file == NULL)
+		if (me->file == 0)
 		{
 			me->file = dir_fopen(g_temp_dir, g_screen_file, "wb");
-			if (me->file == NULL)
+			if (me->file == 0)
 			{
 				me->stored_at = NOWHERE;
 				driver_buzzer(BUZZER_ERROR);
@@ -2592,7 +2592,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			char buf[20];
 			sprintf(buf, "%.3f", 1./s_gamma_val);
 			driver_stack_screen();
-			i = field_prompt("Enter gamma value", NULL, buf, 20, NULL);
+			i = field_prompt("Enter gamma value", 0, buf, 20, 0);
 			driver_unstack_screen();
 			if (i != -1)
 			{
@@ -2742,7 +2742,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			int which = key - FIK_F2;
 
-			if (me->save_pal[which] != NULL)
+			if (me->save_pal[which] != 0)
 			{
 				cursor_hide();
 
@@ -2772,7 +2772,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			int which = key - FIK_SF2;
 
-			if (me->save_pal[which] != NULL)
+			if (me->save_pal[which] != 0)
 			{
 				memcpy(me->save_pal[which], me->pal, 256*3);
 			}
@@ -2966,7 +2966,7 @@ static void pal_table_make_default_palettes(pal_table *me)  /* creates default F
 	int i;
 	for (i = 0; i < 8; i++) /* copy original palette to save areas */
 	{
-		if (me->save_pal[i] != NULL)
+		if (me->save_pal[i] != 0)
 		{
 			memcpy(me->save_pal[i], me->pal, 256*3);
 		}
@@ -2999,8 +2999,8 @@ static pal_table *pal_table_new()
 	me->exclude     = EXCLUDE_NONE;
 	me->hidden      = false;
 	me->stored_at   = NOWHERE;
-	me->file        = NULL;
-	me->memory      = NULL;
+	me->file        = 0;
+	me->memory      = 0;
 
 	me->fs_color.red   = 42;
 	me->fs_color.green = 42;
@@ -3073,19 +3073,19 @@ static void pal_table_hide(pal_table *me, rgb_editor *rgb, bool hidden)
 static void pal_table_destroy(pal_table *me)
 {
 
-	if (me->file != NULL)
+	if (me->file != 0)
 	{
 		fclose(me->file);
 		dir_remove(g_temp_dir, g_screen_file);
 	}
 
-	if (me->undo_file != NULL)
+	if (me->undo_file != 0)
 	{
 		fclose(me->undo_file);
 		dir_remove(g_temp_dir, s_undo_file);
 	}
 
-	if (me->memory != NULL)
+	if (me->memory != 0)
 	{
 		delete[] me->memory;
 	}

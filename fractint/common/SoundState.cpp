@@ -130,7 +130,7 @@ static unsigned char fmtemp[9];/*temporary vars used to store value used
  */
 
 SoundState::SoundState()
-	: m_fp(NULL),
+	: m_fp(0),
 	m_fm_channel(0)
 {
 	initialize();
@@ -161,10 +161,10 @@ void SoundState::initialize()
 int SoundState::open()
 {
 	static char soundname[] = {"sound001.txt"};
-	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && m_fp == NULL)
+	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && m_fp == 0)
 	{
 		m_fp = fopen(soundname, "w");
-		if (m_fp == NULL)
+		if (m_fp == 0)
 		{
 			stop_message(0, "Can't open SOUND*.TXT");
 		}
@@ -173,7 +173,7 @@ int SoundState::open()
 			update_save_name(soundname);
 		}
 	}
-	return m_fp != NULL;
+	return m_fp != 0;
 }
 
 void SoundState::close()
@@ -184,7 +184,7 @@ void SoundState::close()
 		{
 			fclose(m_fp);
 		}
-		m_fp = NULL;
+		m_fp = 0;
 	}
 }
 

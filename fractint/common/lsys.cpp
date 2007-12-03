@@ -145,7 +145,7 @@ static int read_l_system_file(std::string &item)
 	g_max_angle = 0;
 	for (linenum = 0; linenum < MAXRULES; ++linenum)
 	{
-		ruleptrs[linenum] = NULL;
+		ruleptrs[linenum] = 0;
 	}
 	rulind = &ruleptrs[1];
 	linenum = 0;
@@ -155,7 +155,7 @@ static int read_l_system_file(std::string &item)
 	{
 		linenum++;
 		word = strchr(inline1, ';');
-		if (word != NULL) /* strip comment */
+		if (word != 0) /* strip comment */
 		{
 			*word = 0;
 		}
@@ -166,7 +166,7 @@ static int read_l_system_file(std::string &item)
 			word = strtok(inline1, " =\t\n");
 			if (!strcmp(word, "axiom"))
 			{
-				if (save_rule(strtok(NULL, " \t\n"), &ruleptrs[0]))
+				if (save_rule(strtok(0, " \t\n"), &ruleptrs[0]))
 				{
 					strcat(msgbuf, "Error:  out of memory\n");
 					++err;
@@ -176,7 +176,7 @@ static int read_l_system_file(std::string &item)
 			}
 			else if (!strcmp(word, "angle"))
 			{
-				g_max_angle = char(atoi(strtok(NULL, " \t\n")));
+				g_max_angle = char(atoi(strtok(0, " \t\n")));
 				check = true;
 			}
 			else if (!strcmp(word, "}"))
@@ -196,7 +196,7 @@ static int read_l_system_file(std::string &item)
 					++err;
 					break;
 				}
-				temp = strtok(NULL, " =\t\n");
+				temp = strtok(0, " =\t\n");
 				index = rule_present(*word);
 
 				if (!index)
@@ -233,8 +233,8 @@ static int read_l_system_file(std::string &item)
 			if (check)
 			{
 				check = false;
-				word = strtok(NULL, " \t\n");
-				if (word != NULL)
+				word = strtok(0, " \t\n");
+				if (word != 0)
 				{
 					if (err < 6)
 					{
@@ -263,7 +263,7 @@ static int read_l_system_file(std::string &item)
 		stop_message(0, msgbuf);
 		return -1;
 	}
-	*rulind = NULL;
+	*rulind = 0;
 	return 0;
 }
 
@@ -303,7 +303,7 @@ int l_system()
 		{
 			*sc++ = lsysi_size_transform(*rulesc, &ts);
 		}
-		*sc = NULL;
+		*sc = 0;
 
 		lsysi_sin_cos();
 		if (lsysi_find_scale(rules2[0], &ts, &rules2[1], order))
@@ -318,7 +318,7 @@ int l_system()
 			{
 				*sc++ = lsysi_draw_transform(*rulesc, &ts);
 			}
-			*sc = NULL;
+			*sc = 0;
 
 			/* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
 			ts.curcolor = 15;
@@ -350,7 +350,7 @@ int l_system()
 		{
 			*sc++ = lsysf_size_transform(*rulesc, &ts);
 		}
-		*sc = NULL;
+		*sc = 0;
 
 		lsysf_sin_cos();
 		if (lsysf_find_scale(rules2[0], &ts, &rules2[1], order))
@@ -365,7 +365,7 @@ int l_system()
 			{
 				*sc++ = lsysf_draw_transform(*rulesc, &ts);
 			}
-			*sc = NULL;
+			*sc = 0;
 
 			/* !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR */
 			ts.curcolor = 15;
@@ -421,7 +421,7 @@ static int save_rule(char *rule, char **saveptr)
 	int i;
 	i = int(strlen(rule)) + 1;
 	char *tmpfar = new char[i];
-	if (tmpfar == NULL)
+	if (tmpfar == 0)
 	{
 		return -1;
 	}
@@ -445,7 +445,7 @@ static int append_rule(char *rule, int index)
 	}
 	int j = int(strlen(rule)) + 1;
 	char *dst = new char[i + j];
-	if (dst == NULL)
+	if (dst == 0)
 	{
 		return -1;
 	}
@@ -731,7 +731,7 @@ static lsys_cmd *find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd 
 
 	if (g_overflow)     /* integer math routines overflowed */
 	{
-		return NULL;
+		return 0;
 	}
 
 	while (command->ch && command->ch != ']')
@@ -742,7 +742,7 @@ static lsys_cmd *find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd 
 			if (thinking(1, "L-System thinking (higher orders take longer)"))
 			{
 				ts->counter--;
-				return NULL;
+				return 0;
 			}
 		}
 		tran = false;
@@ -753,9 +753,9 @@ static lsys_cmd *find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd 
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = true;
-					if (find_size((*rulind) + 1, ts, rules, depth-1) == NULL)
+					if (find_size((*rulind) + 1, ts, rules, depth-1) == 0)
 					{
-						return NULL;
+						return 0;
 					}
 				}
 			}
@@ -783,9 +783,9 @@ static lsys_cmd *find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd 
 				savex = ts->xpos;
 				savey = ts->ypos;
 				command = find_size(command + 1, ts, rules, depth);
-				if (command == NULL)
+				if (command == 0)
 				{
-					return NULL;
+					return 0;
 				}
 				ts->angle = saveang;
 				ts->reverse = saverev;
@@ -827,12 +827,12 @@ lsysi_find_scale(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, i
 	ts->counter = 0;
 	ts->size = FIXEDPT(1L);
 	fsret = find_size(command, ts, rules, depth);
-	thinking(0, NULL); /* erase thinking message if any */
+	thinking(0, 0); /* erase thinking message if any */
 	x_min = double(ts->x_min)/FIXEDMUL;
 	x_max = double(ts->x_max)/FIXEDMUL;
 	y_min = double(ts->y_min)/FIXEDMUL;
 	y_max = double(ts->y_max)/FIXEDMUL;
-	if (fsret == NULL)
+	if (fsret == 0)
 	{
 		return 0;
 	}
@@ -857,7 +857,7 @@ draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int dep
 
 	if (g_overflow)     /* integer math routines overflowed */
 	{
-		return NULL;
+		return 0;
 	}
 
 	while (command->ch && command->ch != ']')
@@ -867,7 +867,7 @@ draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int dep
 			if (driver_key_pressed())
 			{
 				ts->counter--;
-				return NULL;
+				return 0;
 			}
 		}
 		tran = false;
@@ -878,9 +878,9 @@ draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int dep
 				if ((*rulind)->ch == command->ch)
 				{
 					tran = true;
-					if (draw_lsysi((*rulind) + 1, ts, rules, depth-1) == NULL)
+					if (draw_lsysi((*rulind) + 1, ts, rules, depth-1) == 0)
 					{
-						return NULL;
+						return 0;
 					}
 				}
 			}
@@ -910,9 +910,9 @@ draw_lsysi(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int dep
 				savey = ts->ypos;
 				savecolor = ts->curcolor;
 				command = draw_lsysi(command + 1, ts, rules, depth);
-				if (command == NULL)
+				if (command == 0)
 				{
-					return NULL;
+					return 0;
 				}
 				ts->angle = saveang;
 				ts->reverse = saverev;
@@ -948,14 +948,14 @@ lsysi_size_transform(char *s, lsys_turtle_state_l *ts)
 	void (*dogf)(lsys_turtle_state_l *) =   lsysi_size_gf;
 
 	ret = new lsys_cmd[maxval];
-	if (ret == NULL)
+	if (ret == 0)
 	{
 		ts->stackoflow = true;
-		return NULL;
+		return 0;
 	}
 	while (*s)
 	{
-		function = NULL;
+		function = 0;
 		num = 0;
 		ret[n].ch = *s;
 		switch (*s)
@@ -982,11 +982,11 @@ lsysi_size_transform(char *s, lsys_turtle_state_l *ts)
 		if (++n == maxval)
 		{
 			doub = new lsys_cmd[maxval*2];
-			if (doub == NULL)
+			if (doub == 0)
 			{
 				delete[] ret;
 				ts->stackoflow = true;
-				return NULL;
+				return 0;
 			}
 			memcpy(doub, ret, maxval*sizeof(lsys_cmd));
 			delete[] ret;
@@ -996,16 +996,16 @@ lsysi_size_transform(char *s, lsys_turtle_state_l *ts)
 		s++;
 	}
 	ret[n].ch = 0;
-	ret[n].function = NULL;
+	ret[n].function = 0;
 	ret[n].n = 0;
 	n++;
 
 	doub = new lsys_cmd[n];
-	if (doub == NULL)
+	if (doub == 0)
 	{
 		delete[] ret;
 		ts->stackoflow = true;
-		return NULL;
+		return 0;
 	}
 	memcpy(doub, ret, n*sizeof(lsys_cmd));
 	delete[] ret;
@@ -1032,14 +1032,14 @@ lsysi_draw_transform(char *s, lsys_turtle_state_l *ts)
 	void (*drawg)(lsys_turtle_state_l *) =  lsysi_draw_g;
 
 	ret = new lsys_cmd[maxval];
-	if (ret == NULL)
+	if (ret == 0)
 	{
 		ts->stackoflow = true;
-		return NULL;
+		return 0;
 	}
 	while (*s)
 	{
-		function = NULL;
+		function = 0;
 		num = 0;
 		ret[n].ch = *s;
 		switch (*s)
@@ -1069,11 +1069,11 @@ lsysi_draw_transform(char *s, lsys_turtle_state_l *ts)
 		if (++n == maxval)
 		{
 			doub = new lsys_cmd[maxval*2];
-			if (doub == NULL)
+			if (doub == 0)
 			{
 				delete[] ret;
 				ts->stackoflow = true;
-				return NULL;
+				return 0;
 			}
 			memcpy(doub, ret, maxval*sizeof(lsys_cmd));
 			delete[] ret;
@@ -1083,16 +1083,16 @@ lsysi_draw_transform(char *s, lsys_turtle_state_l *ts)
 		s++;
 	}
 	ret[n].ch = 0;
-	ret[n].function = NULL;
+	ret[n].function = 0;
 	ret[n].n = 0;
 	n++;
 
 	doub = new lsys_cmd[n];
-	if (doub == NULL)
+	if (doub == 0)
 	{
 		delete[] ret;
 		ts->stackoflow = true;
-		return NULL;
+		return 0;
 	}
 	memcpy(doub, ret, n*sizeof(lsys_cmd));
 	delete[] ret;

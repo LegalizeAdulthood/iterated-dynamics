@@ -25,7 +25,7 @@
 /* For disk memory: */
 #define DISKWRITELEN 2048L /* max # bytes transferred to/from disk mem at once */
 
-BYTE *charbuf = NULL;
+BYTE *charbuf = 0;
 
 #define MAXHANDLES 256   /* arbitrary #, suitably big */
 char memfile[] = "handle.$$$";
@@ -157,7 +157,7 @@ static int check_for_mem(int stored_at, long howmuch)
 		if (maxmem > howmuch)
 		{
 			temp = new BYTE[howmuch];
-			if (temp != NULL) /* minimum free space + requested amount */
+			if (temp != 0) /* minimum free space + requested amount */
 			{
 				delete[] temp;
 				use_this_type = MEMORY;
@@ -287,7 +287,7 @@ void ExitCheck()
 
 U16 MemoryAlloc(U16 size, long count, int stored_at)
 {
-/* Returns handle number if successful, 0 or NULL if failure */
+/* Returns handle number if successful, 0 or 0 if failure */
 	U16 handle = 0;
 	bool success;
 	int use_this_type;
@@ -356,9 +356,9 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 		rewind(handletable[handle].Disk.file);
 		if (fseek(handletable[handle].Disk.file, toallocate, SEEK_SET) != 0)
 		{
-			handletable[handle].Disk.file = NULL;
+			handletable[handle].Disk.file = 0;
 		}
-		if (handletable[handle].Disk.file == NULL)
+		if (handletable[handle].Disk.file == 0)
 		{
 			handletable[handle].Disk.stored_at = NOWHERE;
 			use_this_type = NOWHERE;
@@ -413,7 +413,7 @@ void MemoryRelease(U16 handle)
 
 	case MEMORY: /* MemoryRelease */
 		delete[] handletable[handle].Linearmem.memory;
-		handletable[handle].Linearmem.memory = NULL;
+		handletable[handle].Linearmem.memory = 0;
 		handletable[handle].Linearmem.size = 0;
 		handletable[handle].Linearmem.stored_at = NOWHERE;
 		numTOTALhandles--;
@@ -425,7 +425,7 @@ void MemoryRelease(U16 handle)
 		memfile[7] = (char)((handle % 1000)/100 + int('0'));
 		fclose(handletable[handle].Disk.file);
 		dir_remove(g_temp_dir, memfile);
-		handletable[handle].Disk.file = NULL;
+		handletable[handle].Disk.file = 0;
 		handletable[handle].Disk.size = 0;
 		handletable[handle].Disk.stored_at = NOWHERE;
 		numTOTALhandles--;

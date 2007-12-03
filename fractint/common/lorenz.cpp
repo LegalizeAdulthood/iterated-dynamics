@@ -1460,7 +1460,7 @@ int orbit_2d_fp()
 	affine cvt;
 	int ret;
 
-	p0 = p1 = p2 = NULL;
+	p0 = p1 = p2 = 0;
 
 	fp = open_orbit_save();
 	/* setup affine screen coord conversion */
@@ -1582,9 +1582,9 @@ int orbit_2d()
 	l_setup_convert_to_screen(&cvt);
 
 	/* set up projection scheme */
-	long *p0 = NULL;
-	long *p1 = NULL;
-	long *p2 = NULL;
+	long *p0 = 0;
+	long *p1 = 0;
+	long *p2 = 0;
 	long x;
 	long y;
 	long z;
@@ -2125,7 +2125,7 @@ int dynamic_2d_fp()
 				oldrow = oldcol = -1;
 			}
 
-			if (FORBIT(p0, p1, NULL))
+			if (FORBIT(p0, p1, 0))
 			{
 				break;
 			}
@@ -2490,7 +2490,7 @@ static int ifs_3d_float()
 
 int ifs()                       /* front-end for ifs_2d and ifs_3d */
 {
-	if (g_ifs_definition == NULL && ifs_load() < 0)
+	if (g_ifs_definition == 0 && ifs_load() < 0)
 	{
 		return -1;
 	}
@@ -2529,7 +2529,7 @@ static int ifs_2d()
 	srand(1);
 	bool color_method = (g_parameters[0] != 0);
 	long *localifs = new long[g_num_affine*IFSPARM];
-	if (localifs == NULL)
+	if (localifs == 0)
 	{
 		stop_message(0, g_insufficient_ifs_memory);
 		return -1;
@@ -2637,7 +2637,7 @@ static int ifs_3d_long()
 	srand(1);
 	bool color_method = (g_parameters[0] != 0);
 	long *localifs = new long[g_num_affine*IFS3DPARM];
-	if (localifs == NULL)
+	if (localifs == 0)
 	{
 		stop_message(0, g_insufficient_ifs_memory);
 		return -1;
@@ -3096,7 +3096,7 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 
 static FILE *open_orbit_save()
 {
-	FILE *fp = NULL;
+	FILE *fp = 0;
 	if (g_orbit_save & ORBITSAVE_RAW)
 	{
 		fp = fopen("orbits.raw.txt", "wt");

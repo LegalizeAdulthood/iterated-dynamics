@@ -242,9 +242,9 @@ Formula::Formula()
 	m_parenthesis_count(0),
 	m_expecting_arg(false),
 	m_set_random(0),
-	m_variable_list(NULL),
-	m_complex_list(NULL),
-	m_real_list(NULL),
+	m_variable_list(0),
+	m_complex_list(0),
+	m_real_list(0),
 	m_last_op(0),
 	m_parser_vsp(0),
 	m_formula_max_ops(MAX_OPS),
@@ -265,14 +265,14 @@ Formula::Formula()
 	m_uses_p4(false),
 	m_uses_p5(false),
 	m_max_function_number(0),
-	m_function_load_store_pointers(NULL),
-	m_variables(NULL),
-	m_store(NULL),
-	m_load(NULL),
-	m_functions(NULL),
+	m_function_load_store_pointers(0),
+	m_variables(0),
+	m_store(0),
+	m_load(0),
+	m_functions(0),
 	m_arg1(),
 	m_arg2(),
-	m_formula_text(NULL),
+	m_formula_text(0),
 	m_file_pos(0),
 	m_statement_pos(0),
 	m_errors_found(0),
@@ -2558,7 +2558,7 @@ bool Formula::parse_string(const char *text, int pass)
 			if (!m_expecting_arg)
 			{
 				m_expecting_arg = true;
-				store_function(NULL, 15);
+				store_function(0, 15);
 				store_function(StkClr, -30000);
 				store_count = 0;
 				m_parenthesis_count = 0;
@@ -2566,7 +2566,7 @@ bool Formula::parse_string(const char *text, int pass)
 			break;
 		case ':':
 			m_expecting_arg = true;
-			store_function(NULL, 15);
+			store_function(0, 15);
 			store_function(EndInit, -30000);
 			store_count = 0;
 			m_parenthesis_count = 0;
@@ -2600,7 +2600,7 @@ bool Formula::parse_string(const char *text, int pass)
 		case '<':
 			m_expecting_arg = true;
 			{
-				void (*function)() = NULL;
+				void (*function)() = 0;
 				if (text[n + 1] == '=')
 				{
 					n++;
@@ -2616,7 +2616,7 @@ bool Formula::parse_string(const char *text, int pass)
 		case '>':
 			m_expecting_arg = true;
 			{
-				void (*function)() = NULL;
+				void (*function)() = 0;
 				if (text[n + 1] == '=')
 				{
 					n++;
@@ -2679,7 +2679,7 @@ bool Formula::parse_string(const char *text, int pass)
 					m_jump_control[m_jump_index++].type = JUMPTYPE_ELSEIF;
 					m_jump_control[m_jump_index++].type = JUMPTYPE_ELSEIF;
 					store_function(StkJump, 1);
-					store_function(NULL, 15);
+					store_function(0, 15);
 					store_function(StkClr, -30000);
 					store_function(StkJumpOnFalse, 1);
 					break;
@@ -2715,7 +2715,7 @@ bool Formula::parse_string(const char *text, int pass)
 			break;
 		}
 	}
-	store_function(NULL, 16);
+	store_function(0, 16);
 	m_next_operation = 0;
 	m_last_op = m_posp;
 	while (m_next_operation < m_posp)
@@ -2947,7 +2947,7 @@ bool Formula::fill_jump_struct()
 	int load_count = 0;
 	int store_count = 0;
 	bool check_for_else = false;
-	void (*JumpFunc)() = NULL;
+	void (*JumpFunc)() = 0;
 	bool find_new_func = true;
 
 	JUMP_PTRS jump_data[MAX_JUMPS];
@@ -3214,7 +3214,7 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 	token->text[1] = 0;  /* so we can concatenate later */
 
 	long filepos = ftell(openfile);
-	FILE *debug_token = NULL;
+	FILE *debug_token = 0;
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
 		debug_token = fopen("frmconst.txt", "at");
@@ -3231,14 +3231,14 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 		{
 		CASE_NUM:
 		case '.':
-			if (debug_token != NULL)
+			if (debug_token != 0)
 			{
 				fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 			}
 			temp_tok.text[0] = char(c);
 			break;
 		case '-':
-			if (debug_token != NULL)
+			if (debug_token != 0)
 			{
 				fprintf(debug_token,  "First char is a minus\n");
 			}
@@ -3246,7 +3246,7 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 			c = formula_get_char(openfile);
 			if (c == '.' || isdigit(c))
 			{
-				if (debug_token != NULL)
+				if (debug_token != 0)
 				{
 					fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
 				}
@@ -3254,7 +3254,7 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 			}
 			else
 			{
-				if (debug_token != NULL)
+				if (debug_token != 0)
 				{
 					fprintf(debug_token,  "First char not a . or NUM\n");
 				}
@@ -3262,21 +3262,21 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 			}
 			break;
 		default:
-			if (debug_token != NULL)
+			if (debug_token != 0)
 			{
 				fprintf(debug_token,  "First char not a . or NUM\n");
 			}
 			done = true;
 			break;
 		}
-		if (debug_token != NULL)
+		if (debug_token != 0)
 		{
 			fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", int(done));
 		}
 		if (!done && formula_get_constant(openfile, &temp_tok))
 		{
 			c = formula_get_char(openfile);
-			if (debug_token != NULL)
+			if (debug_token != 0)
 			{
 				fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
 			}
@@ -3293,7 +3293,7 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 				token->value.y = temp_tok.value.x*sign_value;
 				token->type = token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT;
 				token->id   = 0;
-				if (debug_token != NULL)
+				if (debug_token != 0)
 				{
 					fprintf(debug_token,  "Exiting with type set to %d\n", token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT);
 					fclose(debug_token);
@@ -3316,7 +3316,7 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 	token->value.x = 0.0;
 	token->type = TOKENTYPE_PARENTHESIS;
 	token->id = TOKENID_OPEN_PARENS;
-	if (debug_token != NULL)
+	if (debug_token != 0)
 	{
 		fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
 		fclose(debug_token);
@@ -3584,7 +3584,7 @@ void Formula::get_parameter(const char *name)
 		return;  /*  and don't reset the pointers  */
 	}
 
-	FILE *entry_file = NULL;
+	FILE *entry_file = 0;
 	if (find_file_item(m_filename, name, &entry_file, ITEMTYPE_FORMULA))
 	{
 		stop_message(0, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
@@ -3606,11 +3606,11 @@ void Formula::get_parameter(const char *name)
 		}
 	}
 
-	FILE *debug_token = NULL;
+	FILE *debug_token = 0;
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
 		debug_token = fopen("frmtokens.txt", "at");
-		if (debug_token != NULL)
+		if (debug_token != 0)
 		{
 			fprintf(debug_token, "%s\n", name);
 		}
@@ -3618,7 +3618,7 @@ void Formula::get_parameter(const char *name)
 	FormulaToken current_token;
 	while (formula_get_token(entry_file, &current_token))
 	{
-		if (debug_token != NULL)
+		if (debug_token != 0)
 		{
 			fprintf(debug_token, "%s\n", current_token.text);
 			fprintf(debug_token, "token_type is %d\n", current_token.type);
@@ -3849,29 +3849,29 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 	is called from run_formula() below.
 	*/
 
-	FILE *debug_fp = NULL;
+	FILE *debug_fp = 0;
 	FormulaToken temp_tok;
 	FilePositionTransaction transaction(file);
 
 	/*Test for a repeat*/
 	if (!check_name_and_symmetry(file, report_bad_symmetry))
 	{
-		return NULL;
+		return 0;
 	}
 	if (!prescan(file))
 	{
-		return NULL;
+		return 0;
 	}
 
 	if (m_chars_in_formula > 8190)
 	{
-		return NULL;
+		return 0;
 	}
 
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
 		debug_fp = fopen("debugfrm.txt", "at");
-		if (debug_fp != NULL)
+		if (debug_fp != 0)
 		{
 			fprintf(debug_fp, "%s\n", g_formula_state.get_formula());
 			if (g_symmetry != SYMMETRY_NONE)
@@ -3890,12 +3890,12 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		if (temp_tok.type == TOKENTYPE_ERROR)
 		{
 			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-			return NULL;
+			return 0;
 		}
 		else if (temp_tok.type == TOKENTYPE_END_OF_FORMULA)
 		{
 			stop_message(STOPMSG_FIXED_FONT, "Formula has no executable instructions\n");
-			return NULL;
+			return 0;
 		}
 		if (temp_tok.text[0] != ',')
 		{
@@ -3912,7 +3912,7 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		{
 		case TOKENTYPE_ERROR:
 			stop_message(STOPMSG_FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-			return NULL;
+			return 0;
 		case TOKENTYPE_END_OF_FORMULA:
 			done = true;
 			break;
@@ -3922,11 +3922,11 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		}
 	}
 
-	if (debug_fp != NULL && m_prepare_formula_text != NULL)
+	if (debug_fp != 0 && m_prepare_formula_text != 0)
 	{
 		fprintf(debug_fp, "   %s\n", m_prepare_formula_text);
 	}
-	if (debug_fp != NULL)
+	if (debug_fp != 0)
 	{
 		fclose(debug_fp);
 	}
@@ -3944,7 +3944,7 @@ int bad_formula()
 
 bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 {
-	FILE *entry_file = NULL;
+	FILE *entry_file = 0;
 
 	/*  first set the pointers so they point to a fn which always returns 1  */
 	// TODO: eliminate writing to g_current_fractal_specific
@@ -4110,7 +4110,7 @@ template <typename T>
 static void delete_array_and_null(T &pointer)
 {
 	delete[] pointer;
-	pointer = NULL;
+	pointer = 0;
 }
 
 void Formula::free_work_area()
@@ -4284,7 +4284,7 @@ void Formula::init_var_list()
 		temp = p->next_item;
 		delete p;
 	}
-	m_variable_list = NULL;
+	m_variable_list = 0;
 }
 
 
@@ -4296,26 +4296,26 @@ void Formula::init_const_lists()
 		temp = p->next_item;
 		delete p;
 	}
-	m_complex_list = NULL;
+	m_complex_list = 0;
 	for (p = m_real_list; p; p = temp)
 	{
 		temp = p->next_item;
 		delete p;
 	}
-	m_real_list = NULL;
+	m_real_list = 0;
 }
 
 var_list_st *var_list_st::add(var_list_st *p, FormulaToken token)
 {
-	if (p == NULL)
+	if (p == 0)
 	{
 		p = new var_list_st;
-		if (p == NULL)
+		if (p == 0)
 		{
-			return NULL;
+			return 0;
 		}
 		strcpy(p->name, token.text);
-		p->next_item = NULL;
+		p->next_item = 0;
 	}
 	else if (strcmp(p->name, token.text) == 0)
 	{
@@ -4323,9 +4323,9 @@ var_list_st *var_list_st::add(var_list_st *p, FormulaToken token)
 	else
 	{
 		p->next_item = add(p->next_item, token);
-		if (p->next_item == NULL)
+		if (p->next_item == 0)
 		{
-			return NULL;
+			return 0;
 		}
 	}
 	return p;
@@ -4333,24 +4333,24 @@ var_list_st *var_list_st::add(var_list_st *p, FormulaToken token)
 
 const_list_st *const_list_st::add(const_list_st *p, FormulaToken token)
 {
-	if (p == NULL)
+	if (p == 0)
 	{
 		p = new const_list_st;
-		if (p == NULL)
+		if (p == 0)
 		{
-			return NULL;
+			return 0;
 		}
 		p->complex_const.x = token.value.x;
 		p->complex_const.y = token.value.y;
-		p->next_item = NULL;
+		p->next_item = 0;
 	}
 	else if (p->complex_const.x != token.value.x
 			 || p->complex_const.y != token.value.y)
 	{
 		p->next_item = add(p->next_item, token);
-		if (p->next_item == NULL)
+		if (p->next_item == 0)
 		{
-			return NULL;
+			return 0;
 		}
 	}
 	return p;
@@ -4545,7 +4545,7 @@ bool Formula::prescan(FILE *open_file)
 			}
 			expecting_argument = false;
 			m_variable_list = var_list_st::add(m_variable_list, this_token);
-			if (m_variable_list == NULL)
+			if (m_variable_list == 0)
 			{
 				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
@@ -4575,7 +4575,7 @@ bool Formula::prescan(FILE *open_file)
 			}
 			expecting_argument = false;
 			m_real_list = const_list_st::add(m_real_list, this_token);
-			if (m_real_list == NULL)
+			if (m_real_list == 0)
 			{
 				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
@@ -4595,7 +4595,7 @@ bool Formula::prescan(FILE *open_file)
 			}
 			expecting_argument = false;
 			m_complex_list = const_list_st::add(m_complex_list, this_token);
-			if (m_complex_list == NULL)
+			if (m_complex_list == 0)
 			{
 				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
