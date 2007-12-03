@@ -4,7 +4,6 @@
 #include <assert.h>
 #include <string.h>
 #ifndef XFRACT
-#include <io.h>
 #include <process.h>
 #endif
 #include <sys/types.h>

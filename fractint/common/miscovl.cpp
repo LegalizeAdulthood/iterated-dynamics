@@ -13,7 +13,6 @@
 #include <malloc.h>
 #endif
 #include <process.h>
-#include <io.h>
 #endif
 #include <stdarg.h>
 
@@ -524,10 +523,10 @@ skip_UI:
 		strcpy(m_out_name, g_command_file.c_str());
 		bool got_input_file = false;
 		FILE *input_file = 0;
-		if (access(g_command_file.c_str(), 0) == 0)
+		if (exists(g_command_file))
 		{                         /* file exists */
 			got_input_file = true;
-			if (access(g_command_file.c_str(), 6))
+			if (read_write_access(g_command_file.c_str()))
 			{
 				char buf[256];
 				sprintf(buf, "Can't write %s", g_command_file);

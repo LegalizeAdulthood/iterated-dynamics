@@ -588,17 +588,37 @@ bool is_a_directory(const char *s)
 	return fs::is_directory(fs::path(s));
 }
 
-bool write_access(const char *path)
+bool check_access(char const *path, int mode)
 {
 	struct _stat buffer;
 	if (!_stat(path, &buffer))
 	{
-		return (buffer.st_mode & _S_IWRITE) != 0;
+		return (buffer.st_mode & mode) != 0;
 	}
 	return false;
 }
 
-bool exists(const char *path)
+bool read_access(const char *path)
+{
+	return check_access(path, _S_IREAD);
+}
+
+bool write_access(const char *path)
+{
+	return check_access(path, _S_IWRITE);
+}
+
+bool read_write_access(const char *path)
+{
+	return check_access(path, _S_IREAD | _S_IWRITE);
+}
+
+bool exists(const std::string &path)
 {
 	return fs::exists(fs::path(path));
+}
+
+bool exists(const char *path)
+{
+	return exists(std::string(path));
 }
