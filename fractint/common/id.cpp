@@ -13,9 +13,6 @@
 #if defined(_WIN32)
 #include <direct.h>
 #endif
-#ifndef XFRACT
-#include <io.h>
-#endif
 #include <stdarg.h>
 #include <ctype.h>
 #include <string>
@@ -222,7 +219,7 @@ void check_same_name()
 	if (strcmp(fname, "fract001"))
 	{
 		make_path(path, drive, dir, fname, "gif");
-		if (access(path, 0) == 0)
+		if (!exists(path))
 		{
 			exit(0);
 		}

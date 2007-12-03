@@ -4,25 +4,8 @@
 
 #include <string.h>
 #include <ctype.h>
-#ifndef XFRACT
 #include <direct.h>
-#endif
-#ifndef XFRACT
-#include <io.h>
-#elif !defined(__386BSD__) && !defined(_WIN32)
-#include <sys/types.h>
 #include <sys/stat.h>
-#ifdef DIRENT
-#include <dirent.h>
-#elif !defined(__SVR4)
-#include <sys/dir.h>
-#else
-#include <dirent.h>
-#ifndef DIRENT
-#define DIRENT
-#endif
-#endif
-#endif
 
 #include "port.h"
 #include "id.h"
@@ -36,9 +19,9 @@ struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
 int merge_path_names(char *old_full_path, char *new_filename, bool copy_directory)
 {
 	/* no dot or slash so assume a file */
-	bool isafile = (strchr(new_filename, '.') == 0 && strchr(new_filename, SLASHC) == 0);
-	int isadir = is_a_directory(new_filename);
-	if (isadir != 0)
+	bool is_file = (strchr(new_filename, '.') == 0 && strchr(new_filename, SLASHC) == 0);
+	int is_directory = is_a_directory(new_filename);
+	if (is_directory != 0)
 	{
 		ensure_slash_on_directory(new_filename);
 	}
@@ -48,14 +31,14 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 			new_filename[1] == ':' &&
 			new_filename[2] == SLASHC)
 	{
-		isadir = 1;
+		is_directory = 1;
 	}
 	/* if drive, colon, with no slash, is a directory */
 	if (int(strlen(new_filename)) == 2 && new_filename[1] == ':')
 	{
 		new_filename[2] = SLASHC;
 		new_filename[3] = 0;
-		isadir = 1;
+		is_directory = 1;
 	}
 	/* if dot, slash, '0', its the current directory, set up full path */
 	if (new_filename[0] == '.' && new_filename[1] == SLASHC && new_filename[2] == 0)
@@ -67,7 +50,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 		expand_dirname(new_filename, temp_path);
 		strcat(temp_path, new_filename);
 		strcpy(new_filename, temp_path);
-		isadir = 1;
+		is_directory = 1;
 	}
 	/* if dot, slash, its relative to the current directory, set up full path */
 	if (new_filename[0] == '.' && new_filename[1] == SLASHC)
@@ -93,19 +76,19 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 	}
 
 	/* check existence */
-	if (isadir == 0 || isafile)
+	if (is_directory == 0 || is_file)
 	{
 		if (fr_find_first(new_filename) == 0)
 		{
 			if (g_dta.attribute & SUBDIR) /* exists and is dir */
 			{
 				ensure_slash_on_directory(new_filename);  /* add trailing slash */
-				isadir = 1;
-				isafile = false;
+				is_directory = 1;
+				is_file = false;
 			}
 			else
 			{
-				isafile = true;
+				is_file = true;
 			}
 		}
 	}
@@ -138,7 +121,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 	{
 		strcpy(ext1, ext);
 	}
-	if (isadir == 0 && !isafile && copy_directory)
+	if (is_directory == 0 && !is_file && copy_directory)
 	{
 		make_path(old_full_path, drive1, dir1, 0, 0);
 		int len = int(strlen(old_full_path));
@@ -151,15 +134,15 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 			{
 				old_full_path[len-1] = 0;
 			}
-			if (access(old_full_path, 0))
+			if (!exists(old_full_path))
 			{
-				isadir = -1;
+				is_directory = -1;
 			}
 			old_full_path[len-1] = save;
 		}
 	}
 	make_path(old_full_path, drive1, dir1, fname1, ext1);
-	return isadir;
+	return is_directory;
 }
 
 /* copies the proposed new filename to the fullpath variable */
@@ -463,7 +446,7 @@ void find_path(const char *filename, char *fullpathname)
 	split_path(filename , 0, 0, fname, ext);
 	make_path(temp_path, "", "", fname, ext);
 
-	if (g_check_current_dir && access(temp_path, 0) == 0)   /* file exists */
+	if (g_check_current_dir && exists(temp_path))
 	{
 		strcpy(fullpathname, temp_path);
 		return;
@@ -473,7 +456,7 @@ void find_path(const char *filename, char *fullpathname)
 
 	if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
 	{
-		if (access(temp_path, 0) == 0)   /* file exists */
+		if (exists(temp_path))
 		{
 			strcpy(fullpathname, temp_path);
 			return;
@@ -516,7 +499,7 @@ nextname:
 	strcpy(openfile, name);
 
 	ensure_extension(openfile, ext);
-	if (access(openfile, 0) != 0) /* file doesn't exist */
+	if (!exists(openfile))
 	{
 		strcpy(name, openfile);
 		return;
@@ -605,3 +588,17 @@ bool is_a_directory(const char *s)
 	return fs::is_directory(fs::path(s));
 }
 
+bool write_access(const char *path)
+{
+	struct _stat buffer;
+	if (!_stat(path, &buffer))
+	{
+		return (buffer.st_mode & _S_IWRITE) != 0;
+	}
+	return false;
+}
+
+bool exists(const char *path)
+{
+	return fs::exists(fs::path(path));
+}
