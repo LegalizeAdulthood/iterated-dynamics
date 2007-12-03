@@ -33,10 +33,7 @@ int validate_luts(const char *fn)
 #else
 	merge_path_names(temp, temp_fn, true);
 #endif
-	if (has_extension(temp) == 0) /* Did name have an extension? */
-	{
-		strcat(temp, ".map");  /* No? Then add .map */
-	}
+	ensure_extension(temp, ".map");
 	char line[160];
 	find_path(temp, line);        /* search the dos path */
 	FILE *f = fopen(line, "r");

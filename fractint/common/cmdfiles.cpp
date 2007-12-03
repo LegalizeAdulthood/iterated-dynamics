@@ -284,10 +284,7 @@ void command_files(int argc, char **argv)
 			if (strchr(curarg, '=') == 0)  /* not xxx = yyy, so check for gif */
 			{
 				strcpy(tempstring, curarg);
-				if (has_extension(curarg) == 0)
-				{
-					strcat(tempstring, ".gif");
-				}
+				ensure_extension(tempstring, ".gif");
 				if (is_gif_file(tempstring))
 				{
 					g_read_name = curarg;

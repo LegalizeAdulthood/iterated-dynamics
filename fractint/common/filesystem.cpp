@@ -1,4 +1,5 @@
 #include <string>
+#include <sstream>
 #include <string.h>
 #include <ctype.h>
 #ifndef XFRACT
@@ -9,7 +10,6 @@
 #elif !defined(__386BSD__) && !defined(_WIN32)
 #include <sys/types.h>
 #include <sys/stat.h>
-
 #ifdef DIRENT
 #include <dirent.h>
 #elif !defined(__SVR4)
@@ -20,8 +20,9 @@
 #define DIRENT
 #endif
 #endif
-
 #endif
+
+#include <boost/filesystem.hpp>
 
 #include "port.h"
 #include "id.h"
@@ -29,6 +30,8 @@
 
 #include "filesystem.h"
 #include "miscres.h"
+
+using namespace boost::filesystem;
 
 int merge_path_names(char *old_full_path, char *new_filename, bool copy_directory)
 {
@@ -39,7 +42,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 	{
 		ensure_slash_on_directory(new_filename);
 	}
-#ifndef XFRACT
+
 	/* if drive, colon, slash, is a directory */
 	if (int(strlen(new_filename)) == 3 &&
 			new_filename[1] == ':' &&
@@ -88,13 +91,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 			new_filename[len-1] = 0; /* get rid of slash added by expand_dirname */
 		}
 	}
-#else
-	{
-		char temp_path[FILE_MAX_PATH];
-		find_path(new_filename, temp_path);
-		strcpy(new_filename, temp_path);
-	}
-#endif
+
 	/* check existence */
 	if (isadir == 0 || isafile)
 	{
@@ -520,7 +517,7 @@ void find_path(const char *filename, char *fullpathname)
 	char temp_path[FILE_MAX_PATH];
 
 	split_path(filename , 0, 0, fname, ext);
-	make_path(temp_path, ""   , "" , fname, ext);
+	make_path(temp_path, "", "", fname, ext);
 
 	if (g_check_current_dir && access(temp_path, 0) == 0)   /* file exists */
 	{
@@ -540,7 +537,7 @@ void find_path(const char *filename, char *fullpathname)
 		else
 		{
 			split_path(temp_path , 0, 0, fname, ext);
-			make_path(temp_path, ""   , "" , fname, ext);
+			make_path(temp_path, "", "", fname, ext);
 		}
 	}
 	fullpathname[0] = 0;                         /* indicate none found */
@@ -574,10 +571,7 @@ nextname:
 	char openfile[FILE_MAX_DIR];
 	strcpy(openfile, name);
 
-	if (has_extension(openfile) == 0)
-	{
-		strcat(openfile, ext);
-	}
+	ensure_extension(openfile, ext);
 	if (access(openfile, 0) != 0) /* file doesn't exist */
 	{
 		strcpy(name, openfile);
@@ -638,4 +632,19 @@ void update_save_name(char *filename) /* go to the next file name */
 	}
 	sprintf(save, "%ld", atol(hold) + 1); /* increment the number */
 	make_path(filename, drive, dir, fname, ext);
+}
+
+boost::filesystem::path make_path(const char *dir, const char *fname, const char *ext)
+{
+	std::ostringstream filename;
+	filename << fname << ext << std::ends;
+	return path(dir) / path(filename.str());
+}
+
+void ensure_extension(char *filename, const char *extension)
+{
+	if (has_extension(filename) == 0)
+	{
+		strcat(filename, extension);
+	}
 }
