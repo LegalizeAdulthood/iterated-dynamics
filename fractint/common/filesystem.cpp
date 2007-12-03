@@ -31,6 +31,8 @@
 #include "filesystem.h"
 #include "miscres.h"
 
+struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
+
 int merge_path_names(char *old_full_path, char *new_filename, bool copy_directory)
 {
 	/* no dot or slash so assume a file */
@@ -376,6 +378,11 @@ void empty_string(char *text)
 	}
 }
 
+void split_path(const std::string &file_template, char *drive, char *dir, char *filename, char *extension)
+{
+	split_path(file_template.c_str(), drive, dir, filename, extension);
+}
+
 void split_path(const char *file_template, char *drive, char *dir, char *filename, char *extension)
 {
 	empty_string(drive);
@@ -580,17 +587,16 @@ fs::path make_path(const char *drive, const char *dir, const char *fname, const 
 
 void ensure_extension(char *filename, const char *extension)
 {
-	if (has_extension(filename) == 0)
-	{
-		strcat(filename, extension);
-	}
+	fs::path path = filename;
+	ensure_extension(path, extension);
+	strcpy(filename, path.string().c_str());
 }
 
 void ensure_extension(fs::path &path, const char *extension)
 {
 	if (fs::extension(path).length() == 0)
 	{
-		path /= extension;
+		path.remove_leaf() /= (path.leaf() + extension);
 	}
 }
 

@@ -22,16 +22,16 @@ public:
 	bool browsing() const				{ return m_browsing; }
 	bool check_parameters() const		{ return m_check_parameters; }
 	bool check_type() const				{ return m_check_type; }
-	const char *mask() const			{ return m_mask; }
-	const char *name() const			{ return m_name; }
+	const std::string &mask() const		{ return m_mask; }
+	const std::string &name() const		{ return m_name; }
 	bool sub_images() const				{ return m_sub_images; }
 
 	void set_auto_browse(bool value)	{ m_auto_browse = value; }
 	void set_browsing(bool value)		{ m_browsing = value; }
 	void set_check_parameters(bool value) { m_check_parameters = value; }
 	void set_check_type(bool value)		{ m_check_type = value; }
-	void set_mask(const char *value)	{ ::strcpy(m_mask, value); }
-	void set_name(const char *value)	{ ::strcpy(m_name, value); }
+	void set_mask(const char *value)	{ m_mask = value; }
+	void set_name(const char *value)	{ m_name = value; }
 	void set_sub_images(bool value)		{ m_sub_images = value; }
 
 	void extract_read_name();
@@ -40,8 +40,8 @@ public:
 	void merge_path_names(std::string &read_name);
 
 private:
-	char m_mask[FILE_MAX_FNAME];
-	char m_name[FILE_MAX_FNAME];
+	std::string m_mask;
+	std::string m_name;
 	bool m_browsing;
 	bool m_check_parameters;
 	bool m_check_type;

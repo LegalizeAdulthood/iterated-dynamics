@@ -342,6 +342,11 @@ void footer_msg(int *i, int options, char *speedstring)
 		: "Press ENTER for highlighted choice, or ESCAPE to back out"));
 }
 
+int put_string_center(int row, int col, int width, int attr, const std::string &msg)
+{
+	return put_string_center(row, col, width, attr, msg.c_str());
+}
+
 int put_string_center(int row, int col, int width, int attr, const char *msg)
 {
 	char buf[81];

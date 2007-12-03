@@ -22,6 +22,7 @@ extern int show_temp_message(char *);
 extern void clear_temp_message();
 extern void help_title();
 extern int put_string_center(int, int, int, int, const char *);
+extern int put_string_center(int row, int col, int width, int attr, const std::string &msg);
 #ifndef XFRACT /* Unix should have this in string.h */
 extern int strncasecmp(char *, char *, int);
 #endif

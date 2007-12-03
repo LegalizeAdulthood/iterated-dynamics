@@ -75,8 +75,6 @@ static  int get_screen_corners();
 
 static int s_speed_state;
 
-struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
-
 static int calculation_mode()
 {
 	switch (g_user_standard_calculation_mode)
@@ -1316,18 +1314,18 @@ retry_dir:
 	out = fr_find_first(tmpmask);
 	while (out == 0 && filecount < MAXNUMFILES)
 	{
-		if ((g_dta.attribute & SUBDIR) && strcmp(g_dta.filename, "."))
+		if ((g_dta.attribute & SUBDIR) && strcmp(g_dta.filename.c_str(), "."))
 		{
-			if (strcmp(g_dta.filename, ".."))
+			if (strcmp(g_dta.filename.c_str(), ".."))
 			{
-				strcat(g_dta.filename, SLASH);
+				ensure_slash_on_directory(g_dta.filename);
 			}
-			strncpy(choices[++filecount]->name, g_dta.filename, 13);
+			strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
 			choices[filecount]->name[12] = 0;
 			choices[filecount]->type = 1;
-			strcpy(choices[filecount]->full_name, g_dta.filename);
+			strcpy(choices[filecount]->full_name, g_dta.filename.c_str());
 			dircount++;
-			if (strcmp(g_dta.filename, "..") == 0)
+			if (strcmp(g_dta.filename.c_str(), "..") == 0)
 			{
 				notroot = 1;
 			}
@@ -1352,19 +1350,19 @@ retry_dir:
 			{
 				if (rds)
 				{
-					put_string_center(2, 0, 80, C_GENERAL_INPUT, g_dta.filename);
+					put_string_center(2, 0, 80, C_GENERAL_INPUT, g_dta.filename.c_str());
 
 					split_path(g_dta.filename, 0, 0, fname, ext);
 					/* just using speedstr as a handy buffer */
 					make_path(speedstr, drive, dir, fname, ext);
-					strncpy(choices[++filecount]->name, g_dta.filename, 13);
+					strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
 					choices[filecount]->type = 0;
 				}
 				else
 				{
-					strncpy(choices[++filecount]->name, g_dta.filename, 13);
+					strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
 					choices[filecount]->type = 0;
-					strcpy(choices[filecount]->full_name, g_dta.filename);
+					strcpy(choices[filecount]->full_name, g_dta.filename.c_str());
 				}
 			}
 			out = fr_find_next();
@@ -2026,7 +2024,7 @@ int get_browse_parameters()
 	int old_cross_hair_box_size = g_cross_hair_box_size;
 	double old_too_small = g_too_small;
 	char old_browse_mask[FILE_MAX_FNAME];
-	strcpy(old_browse_mask, g_browse_state.mask());
+	strcpy(old_browse_mask, g_browse_state.mask().c_str());
 
 get_brws_restart:
 	{
@@ -2091,7 +2089,7 @@ get_brws_restart:
 			g_ui_state.double_caution != old_double_caution ||
 			g_too_small != old_too_small ||
 			g_cross_hair_box_size != old_cross_hair_box_size ||
-			!stricmp(g_browse_state.mask(), old_browse_mask))
+			!stricmp(g_browse_state.mask().c_str(), old_browse_mask))
 		{
 			i = -3;
 		}

@@ -1577,8 +1577,8 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 			sprintf(msg, "Searching %13s for %s      ", g_dta.filename, itemname);
 			show_temp_message(msg);
 			if (!(g_dta.attribute & SUBDIR) &&
-				strcmp(g_dta.filename, ".")&&
-				strcmp(g_dta.filename, ".."))
+				strcmp(g_dta.filename.c_str(), ".") &&
+				strcmp(g_dta.filename.c_str(), ".."))
 			{
 				split_path(g_dta.filename, 0, 0, fname, ext);
 				make_path(fullpath, drive, dir, fname, ext);
