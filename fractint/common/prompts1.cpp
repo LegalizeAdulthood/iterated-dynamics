@@ -1,22 +1,9 @@
 /*
 		Various routines that prompt for things.
 */
-#include <assert.h>
-#include <string.h>
-#include <ctype.h>
-#ifdef   XFRACT
-#ifndef  __386BSD__
-#include <sys/types.h>
-#include <sys/stat.h>
-#endif
-#endif
-#if !defined(__386BSD__)
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#endif
-
 #include <string>
+
+#include <string.h>
 
 #include "port.h"
 #include "prototyp.h"

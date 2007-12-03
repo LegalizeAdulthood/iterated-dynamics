@@ -5,16 +5,10 @@
 #include <string>
 
 #include <assert.h>
-#include <string.h>
 #include <ctype.h>
-#include <time.h>
-#ifndef XFRACT
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#include <process.h>
-#endif
 #include <stdarg.h>
+#include <string.h>
+#include <time.h>
 
 #include "port.h"
 #include "prototyp.h"

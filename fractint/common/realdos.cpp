@@ -1,15 +1,7 @@
 /*
 		Miscellaneous C routines used only in DOS Fractint.
 */
-#include <assert.h>
 #include <string.h>
-#ifndef XFRACT
-#include <process.h>
-#endif
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <ctype.h>
 #include <string>
 
 #include "port.h"
