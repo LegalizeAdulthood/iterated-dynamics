@@ -2666,28 +2666,22 @@ static void decomposition()
 	}
 }
 
-/******************************************************************/
-/* Continuous potential calculation for Mandelbrot and Julia      */
-/* Reference: Science of Fractal Images p. 190.                   */
-/* Special thanks to Mark Peterson for his "MtMand" program that  */
-/* beautifully approximates plate 25 (same reference) and spurred */
-/* on the inclusion of similar capabilities in FRACTINT.          */
-/*                                                                */
-/* The purpose of this function is to calculate a color value     */
-/* for a fractal that varies continuously with the screen pixels  */
-/* locations for better rendering in 3D.                          */
-/*                                                                */
-/* Here "magnitude" is the modulus of the orbit value at          */
-/* "iterations". The potparms[] are user-entered paramters        */
-/* controlling the level and slope of the continuous potential    */
-/* surface. Returns color.  - Tim Wegner 6/25/89                  */
-/*                                                                */
-/*                     -- Change history --                       */
-/*                                                                */
-/* 09/12/89   - added g_float_flag support and fixed float underflow */
-/*                                                                */
-/******************************************************************/
-
+/*
+ * Continuous potential calculation for Mandelbrot and Julia
+ * Reference: Science of Fractal Images p. 190.
+ * Special thanks to Mark Peterson for his "MtMand" program that
+ * beautifully approximates plate 25 (same reference) and spurred
+ * on the inclusion of similar capabilities in Iterated Dynamics.
+ *
+ * The purpose of this function is to calculate a color value
+ * for a fractal that varies continuously with the screen pixels
+ * locations for better rendering in 3D.
+ *
+ * Here "magnitude" is the modulus of the orbit value at
+ * "iterations". The potparms[] are user-entered paramters
+ * controlling the level and slope of the continuous potential
+ * surface. Returns color.  - Tim Wegner 6/25/89
+ */
 static int potential(double mag, long iterations)
 {
 	float f_mag;

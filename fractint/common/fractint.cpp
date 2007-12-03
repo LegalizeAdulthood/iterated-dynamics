@@ -184,11 +184,11 @@ std::string g_exe_path;
 
 #define CONTINUE          4
 
-class FractInt
+class IteratedDynamics
 {
 public:
-	FractInt();
-	~FractInt();
+	IteratedDynamics();
+	~IteratedDynamics();
 	void Main(int argc, char **argv);
 
 private:
@@ -200,14 +200,14 @@ private:
 	ApplicationStateType m_state;
 };
 
-static FractInt s_fractint;
+static IteratedDynamics s_id;
 
-FractInt::FractInt()
+IteratedDynamics::IteratedDynamics()
 	: m_state(APPSTATE_RESTART)
 {
 }
 
-FractInt::~FractInt()
+IteratedDynamics::~IteratedDynamics()
 {
 }
 
@@ -264,7 +264,7 @@ static void set_exe_path(char *path)
 	}
 }
 
-void FractInt::Restart(int argc, char *argv[], bool &screen_stacked)
+void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 {
 	g_browse_state.set_auto_browse(false);
 	g_browse_state.set_check_type(true);
@@ -336,7 +336,7 @@ void FractInt::Restart(int argc, char *argv[], bool &screen_stacked)
 	m_state = APPSTATE_RESTORE_START;
 }
 
-void FractInt::RestoreStart(bool &screen_stacked, bool &resume_flag)
+void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 {
 	if (g_color_preloaded)
 	{
@@ -418,7 +418,7 @@ void FractInt::RestoreStart(bool &screen_stacked, bool &resume_flag)
 	m_state = APPSTATE_IMAGE_START;
 }
 
-void FractInt::ImageStart(bool &screen_stacked, bool &resume_flag)
+void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 {
 	if (screen_stacked)
 	{
@@ -584,11 +584,23 @@ void FractInt::ImageStart(bool &screen_stacked, bool &resume_flag)
 	m_state = APPSTATE_RESUME_LOOP;
 }
 
-void FractInt::Initialize(int argc, char **argv)
+void str_assign(std::string &str, const char *ptr)
+{
+	if (!ptr)
+	{
+		str = "";
+	}
+	else
+	{
+		str = ptr;
+	}
+}
+
+void IteratedDynamics::Initialize(int argc, char **argv)
 {
 	set_exe_path(argv[0]);
 
-	g_fract_dir1 = getenv("FRACTDIR");
+	str_assign(g_fract_dir1, getenv("FRACTDIR"));
 	if (g_fract_dir1.length() == 0)
 	{
 		g_fract_dir1 = ".";
@@ -616,11 +628,11 @@ void FractInt::Initialize(int argc, char **argv)
 
 int application_main(int argc, char **argv)
 {
-	s_fractint.Main(argc, argv);
+	s_id.Main(argc, argv);
 	return 0;
 }
 
-void FractInt::Main(int argc, char **argv)
+void IteratedDynamics::Main(int argc, char **argv)
 {
 	Initialize(argc, argv);
 

@@ -950,14 +950,6 @@ is not in the data structure */
 #define FK_F9  "Shift-9"
 #endif
 
-#ifndef XFRACT
-#define Fractint  "Fractint"
-#define FRACTINT  "FRACTINT"
-#else
-#define Fractint  "Xfractint"
-#define FRACTINT  "XFRACTINT"
-#endif
-
 template <typename T>
 struct CoordinateT
 {

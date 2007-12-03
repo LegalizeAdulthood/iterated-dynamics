@@ -200,7 +200,7 @@ static int is_a_big_float(char *str);
 /*
 		command_files(argc, argv) process the command-line arguments
 				it also processes the 'sstools.ini' file and any
-				indirect files ('fractint @myfile')
+				indirect files ('id @myfile')
 */
 
 /* This probably ought to go somewhere else, but it's used here.        */
@@ -413,17 +413,17 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_orbit_interval = 1;							/* plot all orbits */
 	g_debug_mode = DEBUGMODE_NONE;					/* debugging flag(s) are off */
 	g_timer_flag = false;							/* timer flags are off       */
-	g_formula_state.set_filename("fractint.frm");	/* default formula file      */
+	g_formula_state.set_filename("id.frm");			/* default formula file      */
 	g_formula_state.set_formula(NULL);
-	g_l_system_filename = "fractint.l";
+	g_l_system_filename = "id.l";
 	g_l_system_name = "";
-	g_command_file = "fractint.par";
+	g_command_file = "id.par";
 	g_command_name[0] = 0;
 	for (i = 0; i < 4; i++)
 	{
 		g_command_comment[i] = "";
 	}
-	g_ifs_filename = "fractint.ifs";
+	g_ifs_filename = "id.ifs";
 	g_ifs_name = "";
 	reset_ifs_definition();
 	g_use_fixed_random_seed = false;				/* not a fixed srand() seed */
@@ -726,12 +726,12 @@ static int next_line(FILE *handle, char *linebuf, int mode)
 	toolssection = 0;
 	while (file_gets(linebuf, 512, handle) >= 0)
 	{
-		if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')  /* check for [fractint] */
+		if (mode == CMDFILE_SSTOOLS_INI && linebuf[0] == '[')  /* check for [id] */
 		{
 			strncpy(tmpbuf, &linebuf[1], 9);
 			tmpbuf[9] = 0;
 			strlwr(tmpbuf);
-			toolssection = strncmp(tmpbuf, "fractint]", 9);
+			toolssection = strncmp(tmpbuf, "id]", 9);
 			continue;                              /* skip tools section heading */
 		}
 		if (toolssection == 0)
@@ -862,7 +862,7 @@ static int fpu_arg(const cmd_context &context)
 
 static int make_doc_arg(const cmd_context &context)
 {
-	print_document(context.value ? context.value : "fractint.doc", makedoc_msg_func, 0);
+	print_document(context.value ? context.value : "id.doc", makedoc_msg_func, 0);
 #ifndef WINFRACT
 	goodbye();
 #endif
@@ -3564,7 +3564,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 		if (row == 1 && bad_filename)
 		{
 			driver_set_for_text();
-			driver_put_string(0, 0, 15, "Fractint found the following problems when parsing commands: ");
+			driver_put_string(0, 0, 15, "Id found the following problems when parsing commands: ");
 		}
 		if (bad_filename)
 		{

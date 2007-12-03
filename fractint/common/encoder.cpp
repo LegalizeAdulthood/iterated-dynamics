@@ -168,7 +168,7 @@ restart:
 		{
 			tmpfile[i] = 0;
 		}
-		strcat(tmpfile, "fractint.tmp");
+		strcat(tmpfile, "id.tmp");
 	}
 
 	g_started_resaves = (g_resave_mode == RESAVE_YES);

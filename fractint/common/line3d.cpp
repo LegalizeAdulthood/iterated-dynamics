@@ -1954,14 +1954,11 @@ static int HSVtoRGB(BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsig
 /*                                                                         */
 /***************************************************************************/
 
-/********************************************************************/
-/*                                                                  */
-/*  This routine writes a header to a ray tracer data file. It      */
-/*  Identifies the version of FRACTINT which created it an the      */
-/*  key 3D parameters in effect at the time.                        */
-/*                                                                  */
-/********************************************************************/
-
+/*
+ * This routine writes a header to a ray tracer data file. It
+ * identifies the version of Iterated Dynamics which created it and the
+ * key 3D parameters in effect at the time.
+ */
 static int raytrace_header()
 {
 	/* Open the ray tracing output file */
@@ -2033,7 +2030,7 @@ static int raytrace_header()
 
 	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
-		fprintf(s_raytrace_file, "{ Created by FRACTINT Ver. %#4.2f }\n\n", g_release/100.);
+		fprintf(s_raytrace_file, "{ Created by Iterated Dynamics Ver. %#4.2f }\n\n", g_release/100.);
 	}
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)

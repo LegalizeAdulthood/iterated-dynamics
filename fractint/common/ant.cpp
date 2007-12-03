@@ -1,5 +1,5 @@
 /* The Ant Automaton is based on an article in Scientific American, July 1994.
- * The original Fractint implementation was by Tim Wegner in Fractint 19.0.
+ * The original implementation was by Tim Wegner in Fractint 19.0.
  * This routine is a major rewrite by Luciano Genero & Fulvio Cappelli using
  * tables for speed, and adds a second ant type, multiple ants, and random
  * rules.

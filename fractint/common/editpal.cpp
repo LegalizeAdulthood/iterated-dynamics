@@ -34,17 +34,17 @@
 #endif
 #define FAR_RESERVE     8192L     /* amount of mem we will leave avail. */
 #define MAX_WIDTH        1024     /* palette editor cannot be wider than this */
-#define TITLE   "FRACTINT"
+#define TITLE   "Id"
 #define TITLE_LEN (8)
 
 #ifdef XFRACT
 int g_edit_pal_cursor = 0;
 #endif
-std::string g_screen_file = "FRACTINT.$$1";  /* file where screen portion is stored */
+std::string g_screen_file = "Id.$$1";  /* file where screen portion is stored */
 BYTE     *g_line_buffer;   /* must be alloced!!! */
 bool g_using_jiim = false;
 
-static char s_undo_file[] = "FRACTINT.$$2";  /* file where undo list is stored */
+static char s_undo_file[] = "Id.$$2";  /* file where undo list is stored */
 static BYTE		s_fg_color,
 				s_bg_color;
 static bool s_reserve_colors;

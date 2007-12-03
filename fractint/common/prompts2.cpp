@@ -1085,9 +1085,9 @@ int get_commands()              /* execute commands from file */
 
 /* --------------------------------------------------------------------- */
 
-void goodbye()                  /* we done.  Bail out */
+void goodbye()
 {
-	char goodbyemessage[40] = "   Thank You for using "FRACTINT;
+	char *goodbyemessage = "   Thank You for using Iterated Dynamics";
 	int ret;
 
 	line_3d_free();
