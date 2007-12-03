@@ -5,7 +5,7 @@
 
 #include "mpmath.h"
 #include "big.h"
-#include "fractint.h"
+#include "id.h"
 #include "helpcom.h"
 #include "externs.h"
 

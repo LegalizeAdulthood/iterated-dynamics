@@ -5,7 +5,7 @@
 #include "prototyp.h"
 #include "externs.h"
 #include "cmplx.h"
-#include "fractint.h"
+#include "id.h"
 #include "drivers.h"
 
 /* list of drivers that are supported by source code in fractint */

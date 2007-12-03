@@ -1,7 +1,7 @@
 #include <cstring>
 
 #include "port.h"
-#include "fractint.h"
+#include "id.h"
 #include "cmplx.h"
 #include "externs.h"
 #include "prototyp.h"

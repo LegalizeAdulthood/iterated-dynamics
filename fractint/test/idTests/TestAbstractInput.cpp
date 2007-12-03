@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-#include "fractint.h"
+#include "id.h"
 #include "drivers.h"
 #include "AbstractInput.h"
 

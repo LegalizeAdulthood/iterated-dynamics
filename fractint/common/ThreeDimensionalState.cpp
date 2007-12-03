@@ -5,7 +5,7 @@
 
 #include "port.h"
 #include "prototyp.h"
-#include "fractint.h"
+#include "id.h"
 
 #include "cmdfiles.h"
 #include "filesystem.h"

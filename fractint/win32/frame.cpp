@@ -7,7 +7,7 @@
 
 #include "port.h"
 #include "prototyp.h"
-#include "fractint.h"
+#include "id.h"
 #include "drivers.h"
 #include "prompts2.h"
 
