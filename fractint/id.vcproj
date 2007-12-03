@@ -265,10 +265,6 @@
 			Name="Main"
 			>
 			<File
-				RelativePath=".\fractint.cfg"
-				>
-			</File>
-			<File
 				RelativePath=".\Makefile"
 				>
 			</File>

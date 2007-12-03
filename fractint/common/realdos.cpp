@@ -1390,12 +1390,12 @@ top:
 	nextright += 2;
 	choicekey[nextright] = FIK_ESC;
 	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "quit "FRACTINT"           <esc> ";
+	choices[nextright] = "quit Iterated Dynamics  <esc> ";
 
 	nextright += 2;
 	choicekey[nextright] = FIK_INSERT;
 	attributes[nextright] = MENU_ITEM;
-	choices[nextright] = "restart "FRACTINT"        <ins> ";
+	choices[nextright] = "restart Iterated Dynamics<ins>";
 
 #ifdef XFRACT
 	if (full_menu && (g_got_real_dac || g_fake_lut))

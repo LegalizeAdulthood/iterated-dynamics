@@ -886,7 +886,7 @@ void help(HelpAction action)
 		{
 			if (curr.topic_num == -100)
 			{
-				print_document("FRACTINT.DOC", print_doc_msg_func, 1);
+				print_document("id.doc", print_doc_msg_func, 1);
 				action = ACTION_PREV2;
 			}
 			else if (curr.topic_num == -101)
@@ -1210,7 +1210,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			info->margin = 0;
 
 			memset(line, ' ', 81);
-			sprintf(buff, "Fractint Version %d.%01d%c", g_release/100, (g_release % 100)/10,
+			sprintf(buff, "Iterated Dynamics Version %d.%01d%c", g_release/100, (g_release % 100)/10,
 				((g_release % 10) ? '0'+(g_release % 10) : ' '));
 			memmove(line + ((width - int(strlen(buff)))/2) - 4, buff, strlen(buff));
 
@@ -1288,7 +1288,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 		help_title();
 		printinstr();
 		driver_set_attr(2, 0, C_HELP_BODY, 80*22);
-		put_string_center(1, 0, 80, C_HELP_HDG, "Generating FRACTINT.DOC");
+		put_string_center(1, 0, 80, C_HELP_HDG, "Generating id.doc");
 
 		driver_put_string(7, 30, C_HELP_BODY, "Completed:");
 
@@ -1384,13 +1384,17 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 	{
 		if (fseek(temp_file, 0L, SEEK_SET) != 0L)
 		{
-			msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
+			msg = "Error reading temporary file.\n"
+				"System may be corrupt!\n"
+				"Save your image and re-start Iterated Dynamics!\n";
 			goto ErrorAbort;
 		}
 
 		if (fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
 		{
-			msg = "Error reading temporary file.\nSystem may be corrupt!\nSave your image and re-start FRACTINT!\n";
+			msg = "Error reading temporary file.\n"
+				"System may be corrupt!\n"
+				"Save your image and re-start Iterated Dynamics!\n";
 			goto ErrorAbort;
 		}
 	}
@@ -1425,7 +1429,7 @@ int init_help()
 #if !defined(XFRACT) && !defined(_WIN32)
 	if (s_help_file == NULL)         /* now look for help files in FRACTINT.EXE */
 	{
-		if (find_file("FRACTINT.EXE", path))
+		if (find_file("id.exe", path))
 		{
 			s_help_file = fopen(path, "rb");
 			if (s_help_file != NULL)
@@ -1453,7 +1457,7 @@ int init_help()
 					{
 						fclose(s_help_file);
 						s_help_file = NULL;
-						stop_message(STOPMSG_NO_STACK, "Wrong help version in FRACTINT.EXE!\n");
+						stop_message(STOPMSG_NO_STACK, "Wrong help version in id.exe!\n");
 					}
 					else
 					{
@@ -1463,12 +1467,12 @@ int init_help()
 			}
 			else
 			{
-				stop_message(STOPMSG_NO_STACK, "Help system was unable to open FRACTINT.EXE!\n");
+				stop_message(STOPMSG_NO_STACK, "Help system was unable to open id.exe!\n");
 			}
 		}
 		else
 		{
-			stop_message(STOPMSG_NO_STACK, "Help system couldn't find FRACTINT.EXE!\n");
+			stop_message(STOPMSG_NO_STACK, "Help system couldn't find id.exe!\n");
 		}
 	}
 #endif
@@ -1505,7 +1509,7 @@ int init_help()
 	{
 		static char msg[] =
 #if !defined(XFRACT) && !defined(_WIN32)
-			{"Help Files aren't in FRACTINT.EXE, and couldn't find id.hlp!\n"};
+			{"Help Files aren't in id.exe, and couldn't find id.hlp!\n"};
 #else
 			{"Couldn't find id.hlp; set FRACTDIR to proper directory with setenv.\n"};
 #endif

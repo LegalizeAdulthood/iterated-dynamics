@@ -389,7 +389,7 @@ void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
 			g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
 			g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 		}
-		fprintf(fpbat, "Fractint batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
+		fprintf(fpbat, "id batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
 		fprintf(fpbat, "If Errorlevel 2 goto oops\n");
 	}
 	else
@@ -438,8 +438,8 @@ void MakeBatchFile::execute_step3(int i, int j)
 		}
 		if (g_patch_level != 0 && !m_colors_only)
 		{
-			fprintf(parmfile, "%s %s Version %d Patchlevel %d\n", buf,
-				Fractint, g_release, g_patch_level);
+			fprintf(parmfile, "Iterated Dynamics %s Version %d Patchlevel %d\n", buf,
+				g_release, g_patch_level);
 		}
 	}
 	write_batch_parms(m_color_spec, m_colors_only, m_max_color, i, j);

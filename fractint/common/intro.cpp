@@ -1,7 +1,7 @@
 /*
  * intro.c
  *
- * FRACTINT intro screen (authors & credits)
+ * Iterated Dynamics intro screen (authors & credits)
  *
  *
  */

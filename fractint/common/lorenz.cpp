@@ -32,12 +32,14 @@
 	(*(int(*)(double*, double*, double*))g_current_fractal_specific->orbitcalc)(x, y, z)
 
 #define RANDOM(x)  (rand() % (x))
-/* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
-to test the actual floating point orbit values, but this seems safe for now.
-A higher value cannot be used - to test, turn off math coprocessor and
-use +2.24 for type ICONS. If BAD_PIXEL is set to 20000, this will abort
-Fractint with a math error. Note that this approach precludes zooming in very
-far to an orbit type. */
+/*
+ * BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
+ * to test the actual floating point orbit values, but this seems safe for now.
+ * A higher value cannot be used - to test, turn off math coprocessor and
+ * use +2.24 for type ICONS. If BAD_PIXEL is set to 20000, this will abort
+ * Fractint with a math error. Note that this approach precludes zooming in very
+ * far to an orbit type.
+ */
 
 #define BAD_PIXEL  10000L    /* pixels can't get this big */
 
