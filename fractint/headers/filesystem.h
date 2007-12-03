@@ -3,6 +3,23 @@
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
 
+#define   FILEATTR       0x37      /* File attributes; select all but volume labels */
+#define   HIDDEN         2
+#define   SYSTEM         4
+#define   SUBDIR         16
+
+struct DIR_SEARCH				/* Allocate	DTA	and	define structure */
+{
+	std::string path;			/* DOS path	and	filespec */
+	char attribute;				/* File	attributes wanted */
+	int	 ftime;					/* File	creation time */
+	int	 fdate;					/* File	creation date */
+	long size;					/* File	size in bytes */
+	std::string filename;		/* Filename	and	extension */
+};
+
+extern DIR_SEARCH g_dta;
+
 extern int merge_path_names(char *old_full_path, char *new_filename, int mode);
 extern int merge_path_names(std::string &old_full_path, char *new_filename, int mode);
 extern int merge_path_names(char *old_full_path, std::string &new_filename, int mode);
@@ -12,6 +29,7 @@ extern void ensure_slash_on_directory(std::string &dirname);
 extern int fr_find_first(char *path);
 extern int fr_find_next();
 extern void make_path(char *file_template, const char *drive, const char *dir, const char *fname, const char *ext);
+extern void split_path(const std::string &file_template, char *drive, char *dir, char *filename, char *extension);
 extern void split_path(const char *file_template, char *drive, char *dir, char *filename, char *extension);
 extern void split_path(const char *file_template, char *drive, std::string &dir, char *filename, char *extension);
 extern bool is_a_directory(const char *s);

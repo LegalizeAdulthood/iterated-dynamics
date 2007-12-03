@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
+				AdditionalDependencies="filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
+				AdditionalDependencies="filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -218,7 +218,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
+				AdditionalDependencies="filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"

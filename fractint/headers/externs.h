@@ -72,7 +72,6 @@ extern bool					g_dither_flag;
 extern bool					g_dont_read_color;
 extern double				g_delta_parameter_image_x;
 extern double				g_delta_parameter_image_y;
-extern struct DIR_SEARCH	g_dta;   /* Disk Transfer Area */
 extern BYTE					g_stack[];
 extern double				(*g_dx_pixel)(); /* set in FRACTALS.C */
 extern double				g_dx_size;

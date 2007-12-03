@@ -76,7 +76,10 @@ void BrowseState::extract_read_name()
 
 void BrowseState::make_path(const char *fname, const char *ext)
 {
-	::make_path(m_name, "", "", fname, ext);
+	char buffer[FILE_MAX_PATH];
+	strcpy(buffer, m_name.c_str());
+	::make_path(buffer, "", "", fname, ext);
+	m_name = buffer;
 }
 
 void BrowseState::merge_path_names(char *read_name)
@@ -650,11 +653,11 @@ rescan:  /* entry for changed browse parms */
 			&ranges_info, &mp_info, &evolver_info, &orbits_info)
 			&& (fractal_types_match(read_info, formula_info) || !g_browse_state.check_type())
 			&& (parameters_match(read_info) || !g_browse_state.check_parameters())
-			&& stricmp(g_browse_state.name(), g_dta.filename)
+			&& stricmp(g_browse_state.name().c_str(), g_dta.filename.c_str())
 			&& evolver_info.got_data != 1
 			&& is_visible_window(&winlist, &read_info, &mp_info))
 		{
-			strcpy(winlist.name, g_dta.filename);
+			strcpy(winlist.name, g_dta.filename.c_str());
 			drawindow(box_color, &winlist);
 			g_zoomBox.set_count(g_zoomBox.count()*2); /* double for byte count */
 			winlist.box_count = g_zoomBox.count();
