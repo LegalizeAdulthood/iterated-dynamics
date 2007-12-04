@@ -802,7 +802,7 @@ void write_batch_parms_formula()
 	put_parm(" formulaname=%s", g_formula_state.get_formula());
 	if (g_formula_state.uses_is_mand())
 	{
-		put_parm(" ismand=%c", g_is_mand ? 'y' : 'n');
+		put_parm(" ismand=%c", g_is_mandelbrot ? 'y' : 'n');
 	}
 }
 

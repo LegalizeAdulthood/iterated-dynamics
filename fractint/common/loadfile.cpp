@@ -491,7 +491,7 @@ static void got_formula_info(const fractal_info &read_info, struct ext_blk_formu
 		g_formula_state.set_uses_p4(formula_info.uses_p4 != 0);
 		g_formula_state.set_uses_p5(formula_info.uses_p5 != 0);
 		g_formula_state.set_uses_is_mand(formula_info.uses_is_mand != 0);
-		g_is_mand = formula_info.ismand != 0;
+		g_is_mandelbrot = formula_info.ismand != 0;
 		g_formula_state.set_formula(formula_info.form_name);
 		break;
 	}

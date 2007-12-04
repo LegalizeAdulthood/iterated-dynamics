@@ -1085,7 +1085,7 @@ static void set_fractal_specific_to_julia_mandelbrot(int to_julia_type, int to_m
 	FractalTypeSpecificData &target = g_fractal_specific[g_fractal_type];
 	target.tojulia = to_julia_type;
 	target.tomandel = to_mandelbrot_type;
-	g_is_mand = (to_mandelbrot_type == FRACTYPE_NO_FRACTAL);
+	g_is_mandelbrot = (to_mandelbrot_type == FRACTYPE_NO_FRACTAL);
 }
 
 static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
@@ -1107,7 +1107,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 
 	if (fractal_type_formula(g_fractal_type))
 	{
-		if (g_is_mand)
+		if (g_is_mandelbrot)
 		{
 			set_fractal_specific_to_julia_mandelbrot(g_fractal_type, FRACTYPE_NO_FRACTAL);
 		}

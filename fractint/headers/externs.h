@@ -132,7 +132,7 @@ extern int					g_integer_fractal;
 extern double				g_inversion[];
 extern int					g_invert;
 extern int					g_is_true_color;
-extern bool					g_is_mand;
+extern bool					g_is_mandelbrot;
 extern int					g_x_stop;
 extern int					g_y_stop;
 extern double				g_julia_c_x;

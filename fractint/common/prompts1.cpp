@@ -2055,7 +2055,7 @@ get_fractal_parameters_top:
 		{
 			choices[prompt] = "ismand";
 			parameter_values[prompt].type = 'y';
-			parameter_values[prompt++].uval.ch.val = g_is_mand ? 1 : 0;
+			parameter_values[prompt++].uval.ch.val = g_is_mandelbrot ? 1 : 0;
 		}
 
 		if (type_specific                           /* <z> command ? */
@@ -2214,9 +2214,9 @@ get_fractal_parameters_top:
 	}
 	if (fractal_type_formula(current_fractal_type) && g_formula_state.uses_is_mand())
 	{
-		if (g_is_mand != (parameter_values[prompt].uval.ch.val != 0))
+		if (g_is_mandelbrot != (parameter_values[prompt].uval.ch.val != 0))
 		{
-			g_is_mand = (parameter_values[prompt].uval.ch.val != 0);
+			g_is_mandelbrot = (parameter_values[prompt].uval.ch.val != 0);
 			command_result = COMMANDRESULT_FRACTAL_PARAMETER;
 		}
 		++prompt;
