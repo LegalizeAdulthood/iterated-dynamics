@@ -503,7 +503,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 						g_view_window = true;
 					}
 					ecount       = resume_e_info.ecount;
-					delete g_evolve_handle;  /* We're done with it, release it. */
+					delete g_evolve_handle;
 					g_evolve_handle = 0;
 				}
 				else

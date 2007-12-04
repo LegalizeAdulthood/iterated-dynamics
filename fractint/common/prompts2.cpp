@@ -1071,10 +1071,8 @@ void goodbye()
 	{
 		end_resume();
 	}
-	if (g_evolve_handle != 0)
-	{
-		delete g_evolve_handle;
-	}
+	delete g_evolve_handle;
+	g_evolve_handle = 0;
 	release_parameter_box();
 	history_free();
 	delete[] g_ifs_definition;

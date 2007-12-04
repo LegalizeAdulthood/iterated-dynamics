@@ -466,11 +466,7 @@ bool cursor_new()
 
 void cursor_destroy()
 {
-	if (s_the_cursor != 0)
-	{
-		delete s_the_cursor;
-	}
-
+	delete s_the_cursor;
 	s_the_cursor = 0;
 }
 

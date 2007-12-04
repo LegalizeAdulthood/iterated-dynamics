@@ -29,6 +29,7 @@ public:
 		for (size_t i = 0; i < m_transforms.size(); i++)
 		{
 			delete m_transforms[i];
+			m_transforms[i] = 0;
 		}
 	}
 
