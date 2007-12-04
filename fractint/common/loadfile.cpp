@@ -568,11 +568,8 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	}
 	else
 	{
-		if (g_evolve_handle != 0)  /* Image completed, release it. */
-		{
-			delete g_evolve_handle;
-			g_evolve_handle = 0;
-		}
+		delete g_evolve_handle;
+		g_evolve_handle = 0;
 		g_calculation_status = CALCSTAT_COMPLETED;
 	}
 	g_parameter_range_x = evolver_info.parameter_range_x;
