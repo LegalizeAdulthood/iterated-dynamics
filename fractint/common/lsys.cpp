@@ -399,10 +399,7 @@ static void free_rules_mem()
 {
 	for (int i = 0; i < MAXRULES; ++i)
 	{
-		if (ruleptrs[i])
-		{
-			delete[] ruleptrs[i];
-		}
+		delete[] ruleptrs[i];
 	}
 }
 

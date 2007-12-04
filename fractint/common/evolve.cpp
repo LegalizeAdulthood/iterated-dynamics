@@ -826,24 +826,18 @@ void setup_parameter_box()
 
 void release_parameter_box()
 {
-	if (s_parameter_box.box_x)
-	{
-		delete[] s_parameter_box.box_x;
-		s_parameter_box.box_x = 0;
-		delete[] s_parameter_box.box_y;
-		s_parameter_box.box_y = 0;
-		delete[] s_parameter_box.box_values;
-		s_parameter_box.box_values = 0;
-	}
-	if (s_image_box.box_x)
-	{
-		delete[] s_image_box.box_x;
-		s_image_box.box_x = 0;
-		delete[] s_image_box.box_y;
-		s_image_box.box_y = 0;
-		delete[] s_image_box.box_values;
-		s_image_box.box_values = 0;
-	}
+	delete[] s_parameter_box.box_x;
+	s_parameter_box.box_x = 0;
+	delete[] s_parameter_box.box_y;
+	s_parameter_box.box_y = 0;
+	delete[] s_parameter_box.box_values;
+	s_parameter_box.box_values = 0;
+	delete[] s_image_box.box_x;
+	s_image_box.box_x = 0;
+	delete[] s_image_box.box_y;
+	s_image_box.box_y = 0;
+	delete[] s_image_box.box_values;
+	s_image_box.box_values = 0;
 }
 
 void set_current_parameters()

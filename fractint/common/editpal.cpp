@@ -2006,10 +2006,7 @@ static void pal_table_save_rect(pal_table *me)
 		break;
 
 	case MEMORY:
-		if (me->memory != 0)
-		{
-			delete[] me->memory;
-		}
+		delete[] me->memory;
 		me->memory = 0;
 		break;
 	}
@@ -3087,18 +3084,12 @@ static void pal_table_destroy(pal_table *me)
 		dir_remove(g_temp_dir, s_undo_file);
 	}
 
-	if (me->memory != 0)
-	{
-		delete[] me->memory;
-	}
+	delete[] me->memory;
 
 	for (int i = 0; i < 8; i++)
 	{
-		if (me->save_pal[i])
-		{
-			delete[] me->save_pal[i];
-			me->save_pal[i] = 0;
-		}
+		delete[] me->save_pal[i];
+		me->save_pal[i] = 0;
 	}
 
 	rgb_editor_destroy(me->rgb[0]);

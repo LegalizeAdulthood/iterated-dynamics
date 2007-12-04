@@ -68,16 +68,10 @@ void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
  */
 void Plot::init_pixels()
 {
-	if (m_pixels != 0)
-	{
-		delete[] m_pixels;
-		m_pixels = 0;
-	}
-	if (m_saved_pixels != 0)
-	{
-		delete[] m_saved_pixels;
-		m_saved_pixels = 0;
-	}
+	delete[] m_pixels;
+	m_pixels = 0;
+	delete[] m_saved_pixels;
+	m_saved_pixels = 0;
 	m_width = g_screen_width;
 	m_height = g_screen_height;
 	m_row_len = m_width*sizeof(m_pixels[0]);
@@ -262,16 +256,10 @@ int Plot::initialize(HINSTANCE instance, LPCSTR title)
 
 void Plot::terminate()
 {
-	if (m_pixels)
-	{
-		delete[] m_pixels;
-		m_pixels = 0;
-	}
-	if (m_saved_pixels)
-	{
-		delete[] m_saved_pixels;
-		m_saved_pixels = 0;
-	}
+	delete[] m_pixels;
+	m_pixels = 0;
+	delete[] m_saved_pixels;
+	m_saved_pixels = 0;
 
 	{
 		HBITMAP rendering = static_cast<HBITMAP>(::SelectObject(m_memory_dc, static_cast<HGDIOBJ>(m_backup)));

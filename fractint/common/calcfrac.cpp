@@ -182,7 +182,7 @@ static ComplexD s_saved_z;
 static double s_rq_limit_save;
 static int s_pi_in_pixels; /* value of pi in pixels */
 static BYTE *s_save_dots = 0;
-static BYTE *s_fill_buffer;
+static BYTE *s_fill_buffer = 0;
 static int s_save_dots_len;
 static int s_show_dot_color;
 static int s_show_dot_width = 0;
@@ -778,7 +778,7 @@ int calculate_fractal()
 	}
 	g_calculation_time += g_timer_interval;
 
-	if (g_log_table && !g_log_calculation)
+	if (!g_log_calculation)
 	{
 		delete[] g_log_table;
 		g_log_table = 0;
@@ -3747,12 +3747,9 @@ void PerformWorkList::show_dot_start()
 
 void PerformWorkList::show_dot_finish()
 {
-	if (s_save_dots != 0)
-	{
-		delete[] s_save_dots;
-		s_save_dots = 0;
-		s_fill_buffer = 0;
-	}
+	delete[] s_save_dots;
+	s_save_dots = 0;
+	s_fill_buffer = 0;
 }
 
 void PerformWorkList::common_escape_time_initialization()

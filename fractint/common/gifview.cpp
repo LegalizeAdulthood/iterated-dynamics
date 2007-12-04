@@ -354,11 +354,8 @@ int gifview()
 		disk_video_status(1, "");
 	}
 
-	if (s_dither_buffer != 0)  /* we're done, free dither memory */
-	{
-		delete[] s_dither_buffer;
-		s_dither_buffer = 0;
-	}
+	delete[] s_dither_buffer;
+	s_dither_buffer = 0;
 
 	return status;
 }

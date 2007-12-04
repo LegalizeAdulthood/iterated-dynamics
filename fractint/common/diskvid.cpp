@@ -329,16 +329,10 @@ void disk_end()
 		MemoryRelease(s_disk_video_handle);
 		s_disk_video_handle = 0;
 	}
-	if (s_cache_start != 0)
-	{
-		delete[] reinterpret_cast<BYTE *>(s_cache_start);
-		s_cache_start = 0;
-	}
-	if (s_memory_buffer != 0)
-	{
-		delete[] s_memory_buffer;
-		s_memory_buffer = 0;
-	}
+	delete[] reinterpret_cast<BYTE *>(s_cache_start);
+	s_cache_start = 0;
+	delete[] s_memory_buffer;
+	s_memory_buffer = 0;
 	g_disk_flag = false;
 	s_row_size = 0;
 	g_disk_16bit = false;

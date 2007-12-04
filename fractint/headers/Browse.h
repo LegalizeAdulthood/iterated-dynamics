@@ -31,7 +31,7 @@ public:
 	void set_check_parameters(bool value) { m_check_parameters = value; }
 	void set_check_type(bool value)		{ m_check_type = value; }
 	void set_mask(const char *value)	{ m_mask = value; }
-	void set_name(const char *value)	{ m_name = value; }
+	void set_name(const std::string &value) { m_name = value; }
 	void set_sub_images(bool value)		{ m_sub_images = value; }
 
 	void extract_read_name();
