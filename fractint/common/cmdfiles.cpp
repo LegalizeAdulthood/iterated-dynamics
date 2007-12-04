@@ -457,7 +457,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
 	g_quick_calculate = false;
 	g_proximity = 0.01;
-	g_is_mand = true;                          /* default formula mand/jul toggle */
+	g_is_mandelbrot = true;                          /* default formula mand/jul toggle */
 	g_user_float_flag = false;
 	g_finite_attractor = FINITE_ATTRACTOR_NO;
 	g_fractal_type = 0;                        /* initial type Set flag  */
@@ -2813,7 +2813,7 @@ static int no_bof_arg(const cmd_context &context)
 
 static int is_mand_arg(const cmd_context &context)
 {
-	return FlagParser<bool>(g_is_mand, COMMANDRESULT_FRACTAL_PARAMETER).parse(context);
+	return FlagParser<bool>(g_is_mandelbrot, COMMANDRESULT_FRACTAL_PARAMETER).parse(context);
 }
 
 static int preview_arg(const cmd_context &context)

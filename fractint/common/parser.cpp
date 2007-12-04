@@ -219,7 +219,7 @@ private:
 
 Formula g_formula_state;
 double g_fudge_limit = 0.0;
-bool g_is_mand = true;
+bool g_is_mandelbrot = true;
 
 static Random s_random;
 static double s_fudge = 0.0;
@@ -2421,7 +2421,7 @@ void Formula::parse_string_set_center_magnification_variables()
 	m_variables[VARIABLE_SCRN_MAX].argument.d.y = double(g_y_dots);
 	m_variables[VARIABLE_MAX_IT].argument.d.x = double(g_max_iteration);
 	m_variables[VARIABLE_MAX_IT].argument.d.y = 0;
-	m_variables[VARIABLE_IS_MAND].argument.d.x = g_is_mand ? 1.0 : 0.0;
+	m_variables[VARIABLE_IS_MAND].argument.d.x = g_is_mandelbrot ? 1.0 : 0.0;
 	m_variables[VARIABLE_IS_MAND].argument.d.y = 0;
 	m_variables[VARIABLE_CENTER].argument.d.x = center_real;
 	m_variables[VARIABLE_CENTER].argument.d.y = center_imag;
@@ -2464,7 +2464,7 @@ void Formula::parse_string_set_parameters_int()
 	m_variables[VARIABLE_SCRN_MAX].argument.l.y = g_y_dots << g_bit_shift;
 	m_variables[VARIABLE_MAX_IT].argument.l.x = g_max_iteration << g_bit_shift;
 	m_variables[VARIABLE_MAX_IT].argument.l.y = 0L;
-	m_variables[VARIABLE_IS_MAND].argument.l.x = (g_is_mand ? 1 : 0) << g_bit_shift;
+	m_variables[VARIABLE_IS_MAND].argument.l.x = (g_is_mandelbrot ? 1 : 0) << g_bit_shift;
 	m_variables[VARIABLE_IS_MAND].argument.l.y = 0L;
 	m_variables[VARIABLE_CENTER].argument.l.x = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.x);
 	m_variables[VARIABLE_CENTER].argument.l.y = fixpoint_from_double(m_variables[VARIABLE_CENTER].argument.d.y);

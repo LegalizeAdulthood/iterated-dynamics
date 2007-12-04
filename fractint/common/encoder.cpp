@@ -767,7 +767,7 @@ static int store_item_name(const char *nameptr)
 		fsave_info.uses_p2 = short(g_formula_state.uses_p2());
 		fsave_info.uses_p3 = short(g_formula_state.uses_p3());
 		fsave_info.uses_is_mand = g_formula_state.uses_is_mand() ? 1 : 0;
-		fsave_info.ismand = g_is_mand ? 1 : 0;
+		fsave_info.ismand = g_is_mandelbrot ? 1 : 0;
 		fsave_info.uses_p4 = short(g_formula_state.uses_p4());
 		fsave_info.uses_p5 = short(g_formula_state.uses_p5());
 	}
