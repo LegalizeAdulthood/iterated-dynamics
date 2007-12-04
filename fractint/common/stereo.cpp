@@ -21,7 +21,7 @@
 
 #include <malloc.h>
 
-char g_stereo_map_name[FILE_MAX_DIR + 1] = {""};
+std::string g_stereo_map_name = "";
 int g_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 bool g_grayscale_depth = false; /* flag to use gray value rather than color number */
