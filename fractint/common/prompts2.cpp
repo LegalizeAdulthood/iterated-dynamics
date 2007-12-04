@@ -1,26 +1,11 @@
 /*
 		Various routines that prompt for things.
 */
+#include <sstream>
+#include <string>
+
 #include <string.h>
 #include <ctype.h>
-#if !defined(__386BSD__)
-#if !defined(_WIN32)
-#include <malloc.h>
-#endif
-#endif
-#ifdef XFRACT
-#include <fcntl.h>
-#endif
-#ifdef __hpux
-#include <sys/param.h>
-#endif
-#ifdef __SVR4
-#include <sys/param.h>
-#endif
-#if defined(_WIN32)
-#include <direct.h>
-#endif
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"
@@ -47,6 +32,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "slideshw.h"
+#include "stereo.h"
 #include "zoom.h"
 
 #include "busy.h"
@@ -925,13 +911,12 @@ static char *masks[] = {"*.pot", "*.gif"};
 
 int get_random_dot_stereogram_parameters()
 {
-	char rds6[60];
 	const char *stereobars[] =
 	{
 		"none", "middle", "top"
 	};
 	struct full_screen_values uvalues[7];
-	const char *rds_prompts[] =
+	const char *rds_prompts[7] =
 	{
 		"Depth Effect (negative reverses front and back)",
 		"Image width in inches",
@@ -939,7 +924,7 @@ int get_random_dot_stereogram_parameters()
 		"Calibration bars",
 		"Use image map? (if \"no\" uses random dots)",
 		"  If yes, use current image map name? (see below)",
-		rds6
+		0
 	};
 	int i;
 	int k;
@@ -970,37 +955,28 @@ int get_random_dot_stereogram_parameters()
 		uvalues[k++].type = 'y';
 
 
-		if (*g_stereo_map_name != 0 && g_image_map)
+		std::ostringstream buffer;
+		if (g_stereo_map_name.length() != 0 && g_image_map)
 		{
-			char *p;
 			uvalues[k].uval.ch.val = reuse;
 			uvalues[k++].type = 'y';
 
 			uvalues[k++].type = '*';
-			for (i = 0; i < sizeof(rds6); i++)
+
+			std::string basename = fs::basename(fs::path(g_stereo_map_name));
+			const int LINE_LENGTH = 60;
+			for (unsigned p = 0; p < (LINE_LENGTH - basename.length())/2 + 1; p++)
 			{
-				rds6[i] = ' ';
+				buffer << ' ';
 			}
-			p = strrchr(g_stereo_map_name, SLASHC);
-			if (p == 0 ||
-				int(strlen(g_stereo_map_name)) < sizeof(rds6)-2)
-			{
-				p = strlwr(g_stereo_map_name);
-			}
-			else
-			{
-				p++;
-			}
-			/* center file name */
-			rds6[(sizeof(rds6)-int(strlen(p)) + 2)/2] = 0;
-			strcat(rds6, "[");
-			strcat(rds6, p);
-			strcat(rds6, "]");
+			buffer << '[' << basename << ']';
 		}
 		else
 		{
-			*g_stereo_map_name = 0;
+			g_stereo_map_name = "";
 		}
+		buffer << std::ends;
+		rds_prompts[6] = buffer.str().c_str();
 		i = full_screen_prompt_help(HELPRDS, "Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, 0);
 		if (i < 0)
 		{
@@ -1013,11 +989,11 @@ int get_random_dot_stereogram_parameters()
 			g_auto_stereo_depth = uvalues[k++].uval.ival;
 			g_auto_stereo_width = uvalues[k++].uval.dval;
 			g_grayscale_depth = (uvalues[k++].uval.ch.val != 0);
-			g_stereogram_calibrate = (StereogramCalibrateType) uvalues[k++].uval.ch.val;
+			g_stereogram_calibrate = StereogramCalibrateType(uvalues[k++].uval.ch.val);
 			g_image_map = (uvalues[k++].uval.ch.val != 0);
-			if (*g_stereo_map_name && g_image_map)
+			if (g_stereo_map_name.length() > 0 && g_image_map)
 			{
-				reuse         = (char)uvalues[k++].uval.ch.val;
+				reuse = (char) uvalues[k++].uval.ch.val;
 			}
 			else
 			{

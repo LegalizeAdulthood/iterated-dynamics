@@ -322,7 +322,6 @@ extern void					(*g_plot_color_standard)(int x, int y, int color);
 extern bool					g_start_show_orbit;
 extern bool					g_started_resaves;
 extern ComplexD				g_static_roots[];
-extern char					g_stereo_map_name[];
 extern int					g_stop_pass;
 extern unsigned int			g_string_location[];
 extern BYTE					g_suffix[];

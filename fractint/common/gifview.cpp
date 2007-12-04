@@ -101,7 +101,7 @@ int gifview()
 	g_row_count = 0;
 
 	/* Open the file */
-	strcpy(temp1, (g_out_line == out_line_stereo) ? g_stereo_map_name : g_read_name.c_str());
+	strcpy(temp1, (g_out_line == out_line_stereo) ? g_stereo_map_name.c_str() : g_read_name.c_str());
 	if (has_extension(temp1) == 0)
 	{
 		strcat(temp1, DEFAULTFRACTALTYPE);
@@ -112,7 +112,7 @@ int gifview()
 		}
 		else
 		{
-			strcpy(temp1, (g_out_line == out_line_stereo) ? g_stereo_map_name : g_read_name.c_str());
+			strcpy(temp1, (g_out_line == out_line_stereo) ? g_stereo_map_name.c_str() : g_read_name.c_str());
 			strcat(temp1, ALTERNATEFRACTALTYPE);
 		}
 	}
