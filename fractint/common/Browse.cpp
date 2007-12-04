@@ -30,14 +30,14 @@
 
 BrowseState g_browse_state;
 
-struct window  /* for look_get_window on screen browser */
+struct CoordinateWindow  /* for look_get_window on screen browser */
 {
 	Coordinate itl; /* screen coordinates */
 	Coordinate ibl;
 	Coordinate itr;
 	Coordinate ibr;
 	double win_size;   /* box size for drawindow() */
-	char name[FILE_MAX_FNAME];     /* for filename */
+	std::string name;     /* for filename */
 	int box_count;      /* bytes of saved screen info */
 };
 
@@ -56,14 +56,14 @@ static bf_t n_d;
 static bf_t n_e;
 static bf_t n_f;
 static struct affine *cvt;
-static struct window browse_windows[MAX_WINDOWS_OPEN] = { 0 };
+static CoordinateWindow browse_windows[MAX_WINDOWS_OPEN];
 
 /* prototypes */
 static void check_history(const char *, const char *);
 static void transform(CoordinateD *);
 static void transform_bf(bf_t, bf_t, CoordinateD *);
-static void drawindow(int color, struct window *info);
-static bool is_visible_window(struct window *, fractal_info *, struct ext_blk_mp_info *);
+static void drawindow(int color, CoordinateWindow *info);
+static bool is_visible_window(CoordinateWindow *, fractal_info *, struct ext_blk_mp_info *);
 static void bfsetup_convert_to_screen();
 static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_info &formula_info);
 static bool functions_match(const fractal_info &info, int num_functions);
@@ -158,7 +158,7 @@ static void is_visible_window_corner(const fractal_info &info,
 	}
 }
 
-static bool is_visible_window(struct window *list, fractal_info *info,
+static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	struct ext_blk_mp_info *mp_info)
 {
 	double toobig = sqrt(sqr(double(g_screen_width)) + sqr(double(g_screen_height)))*1.5;
@@ -297,7 +297,7 @@ static bool is_visible_window(struct window *list, fractal_info *info,
 	return (cornercount >= 1);
 }
 
-static void drawindow(int color, struct window *info)
+static void drawindow(int color, CoordinateWindow *info)
 {
 #ifndef XFRACT
 	int cross_size;
@@ -555,13 +555,13 @@ int look_get_window()
 	time_t lastime;
 	char mesg[40];
 	char newname[60];
-	char oldname[60];
+	std::string oldname;
 	int index;
 	int done;
 	int wincount;
 	int toggle;
 	int box_color;
-	window winlist;
+	CoordinateWindow winlist;
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
 	char fname[FILE_MAX_FNAME];
@@ -657,7 +657,7 @@ rescan:  /* entry for changed browse parms */
 			&& evolver_info.got_data != 1
 			&& is_visible_window(&winlist, &read_info, &mp_info))
 		{
-			strcpy(winlist.name, g_dta.filename.c_str());
+			winlist.name = g_dta.filename;
 			drawindow(box_color, &winlist);
 			g_zoomBox.set_count(g_zoomBox.count()*2); /* double for byte count */
 			winlist.box_count = g_zoomBox.count();
@@ -832,9 +832,9 @@ rescan:  /* entry for changed browse parms */
 					{
 						/* do a rescan */
 						done = 3;
-						strcpy(oldname, winlist.name);
+						oldname = winlist.name;
 						tmpmask[0] = '\0';
-						check_history(oldname, tmpmask);
+						check_history(oldname.c_str(), tmpmask);
 						break;
 					}
 					else if (errno == EACCES)
@@ -873,9 +873,9 @@ rescan:  /* entry for changed browse parms */
 							{
 								split_path(newname, 0, 0, fname, ext);
 								make_path(tmpmask, 0, 0, fname, ext);
-								strcpy(oldname, winlist.name);
-								check_history(oldname, tmpmask);
-								strcpy(winlist.name, tmpmask);
+								oldname = winlist.name;
+								check_history(oldname.c_str(), tmpmask);
+								winlist.name = tmpmask;
 							}
 						}
 					}

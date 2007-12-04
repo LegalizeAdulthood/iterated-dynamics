@@ -146,12 +146,13 @@ int stop_message(int flags, const char *msg)
 }
 
 
-/* text_temp_message(msg) displays a text message of up to 40 characters, waits
-		for a key press, restores the prior display, and returns (without
-		eating the key).
-		It works in almost any video mode - does nothing in some very odd cases
-		(HCGA hi-res with old bios), or when there isn't 10k of temp mem free. */
-int text_temp_message(char *msgparm)
+/*	text_temp_message(msg)
+
+	displays a text message of up to 40 characters, waits
+	for a key press, restores the prior display, and returns (without
+	eating the key).
+*/
+int text_temp_message(const char *msgparm)
 {
 	if (show_temp_message(msgparm))
 	{
@@ -165,14 +166,16 @@ int text_temp_message(char *msgparm)
 
 void free_temp_message()
 {
-	if (s_temp_text_save != 0)
-	{
-		delete[] s_temp_text_save;
-		s_temp_text_save = 0;
-	}
+	delete[] s_temp_text_save;
+	s_temp_text_save = 0;
 }
 
-int show_temp_message(char *msgparm)
+int show_temp_message(const std::string &message)
+{
+	return show_temp_message(message.c_str());
+}
+
+int show_temp_message(const char *msgparm)
 {
 	static long size = 0;
 	char msg[41];

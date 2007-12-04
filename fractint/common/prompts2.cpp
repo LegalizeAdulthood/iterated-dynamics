@@ -1065,11 +1065,8 @@ void goodbye()
 	int ret;
 
 	line_3d_free();
-	if (g_map_dac_box)
-	{
-		delete[] g_map_dac_box;
-		g_map_dac_box = 0;
-	}
+	delete[] g_map_dac_box;
+	g_map_dac_box = 0;
 	if (g_resume_info != 0)
 	{
 		end_resume();
@@ -1080,11 +1077,8 @@ void goodbye()
 	}
 	release_parameter_box();
 	history_free();
-	if (g_ifs_definition != 0)
-	{
-		delete[] g_ifs_definition;
-		g_ifs_definition = 0;
-	}
+	delete[] g_ifs_definition;
+	g_ifs_definition = 0;
 	disk_end();
 	ExitCheck();
 #ifdef WINFRACT

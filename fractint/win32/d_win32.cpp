@@ -225,11 +225,8 @@ void Win32BaseDriver::terminate()
 	m_wintext.destroy();
 	for (int i = 0; i < NUM_OF(m_saved_screens); i++)
 	{
-		if (0 != m_saved_screens[i])
-		{
-			delete[] m_saved_screens[i];
-			m_saved_screens[i] = 0;
-		}
+		delete[] m_saved_screens[i];
+		m_saved_screens[i] = 0;
 	}
 }
 
@@ -515,11 +512,8 @@ void Win32BaseDriver::discard_screen()
 	if (--m_screen_count >= 0)
 	{
 		/* unstack */
-		if (m_saved_screens[m_screen_count])
-		{
-			delete[] m_saved_screens[m_screen_count];
-			m_saved_screens[m_screen_count] = 0;
-		}
+		delete[] m_saved_screens[m_screen_count];
+		m_saved_screens[m_screen_count] = 0;
 		set_clear();
 	}
 	else

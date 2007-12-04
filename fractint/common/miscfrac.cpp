@@ -1716,14 +1716,8 @@ static void abort_cellular(int err, int t)
 	case CELLULAR_DONE:
 		break;
 	}
-	if (s_cell_array[0] != 0)
-	{
-		delete[] s_cell_array[0];
-	}
-	if (s_cell_array[1] != 0)
-	{
-		delete[] s_cell_array[1];
-	}
+	delete[] s_cell_array[0];
+	delete[] s_cell_array[1];
 }
 
 int cellular()

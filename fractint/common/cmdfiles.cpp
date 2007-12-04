@@ -97,9 +97,9 @@ enum bailouts g_bail_out_test;					/* test used for determining bailout */
 double  g_inversion[3];							/* radius, xcenter, ycenter */
 int g_rotate_lo;
 int g_rotate_hi;								/* cycling color range      */
-int		*g_ranges;								/* iter->color ranges mapping */
+int	*g_ranges = 0;								/* iter->color ranges mapping */
 int     g_ranges_length = 0;					/* size of ranges array     */
-BYTE	*g_map_dac_box = 0;					/* map= (default colors)    */
+BYTE	*g_map_dac_box = 0;						/* map= (default colors)    */
 int     g_color_state;							/* 0, g_dac_box matches default (bios or map=) */
 												/* 1, g_dac_box matches no known defined map   */
 												/* 2, g_dac_box matches the g_color_file map      */
@@ -431,11 +431,8 @@ static void initialize_variables_restart()          /* <ins> key init */
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	g_initial_cycle_limit = 55;						/* spin-DAC default speed limit */
 	g_map_set = false;								/* no map= name active */
-	if (g_map_dac_box)
-	{
-		delete[] g_map_dac_box;
-		g_map_dac_box = 0;
-	}
+	delete[] g_map_dac_box;
+	g_map_dac_box = 0;
 
 	g_major_method = MAJORMETHOD_BREADTH_FIRST;		/* default inverse julia methods */
 	g_minor_method = MINORMETHOD_LEFT_FIRST;		/* default inverse julia methods */
@@ -498,11 +495,9 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	set_function_array(1, "sqr");
 	set_function_array(2, "sinh");
 	set_function_array(3, "cosh");
-	if (g_ranges_length)
-	{
-		delete[] g_ranges;
-		g_ranges_length = 0;
-	}
+	delete[] g_ranges;
+	g_ranges = 0;
+	g_ranges_length = 0;
 	g_use_center_mag = true;                          /* use center-mag, not corners */
 
 	g_color_state = COLORSTATE_DEFAULT;
@@ -576,11 +571,8 @@ static void initialize_variables_3d()               /* init vars affecting 3d */
 
 static void reset_ifs_definition()
 {
-	if (g_ifs_definition)
-	{
-		delete[] g_ifs_definition;
-		g_ifs_definition = 0;
-	}
+	delete[] g_ifs_definition;
+	g_ifs_definition = 0;
 }
 
 

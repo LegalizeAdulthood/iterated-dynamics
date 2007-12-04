@@ -2960,34 +2960,16 @@ static bool line_3d_mem()
 
 void line_3d_free()
 {
-	if (s_last_row)
-	{
-		delete[] s_last_row;
-		s_last_row = 0;
-	}
-	if (s_f_last_row)
-	{
-		delete[] s_f_last_row;
-		s_f_last_row = 0;
-	}
-	if (s_sin_theta_array)
-	{
-		delete[] s_sin_theta_array;
-		s_sin_theta_array = 0;
-	}
-	if (s_cos_theta_array)
-	{
-		delete[] s_cos_theta_array;
-		s_cos_theta_array = 0;
-	}
-	if (s_fraction)
-	{
-		delete[] s_fraction;
-		s_fraction = 0;
-	}
-	if (s_minmax_x)
-	{
-		delete[] s_minmax_x;
-		s_minmax_x = 0;
-	}
+	delete[] s_last_row;
+	s_last_row = 0;
+	delete[] s_f_last_row;
+	s_f_last_row = 0;
+	delete[] s_sin_theta_array;
+	s_sin_theta_array = 0;
+	delete[] s_cos_theta_array;
+	s_cos_theta_array = 0;
+	delete[] s_fraction;
+	s_fraction = 0;
+	delete[] s_minmax_x;
+	s_minmax_x = 0;
 }

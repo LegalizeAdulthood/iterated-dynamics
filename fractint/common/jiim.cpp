@@ -1356,17 +1356,10 @@ finish:
 #ifdef XFRACT
 	cursor_end_mouse_tracking();
 #endif
-	if (g_line_buffer)
-	{
-		delete[] g_line_buffer;
-		g_line_buffer = 0;
-	}
-
-	if (s_rect_buff)
-	{
-		delete[] s_rect_buff;
-		s_rect_buff = 0;
-	}
+	delete[] g_line_buffer;
+	g_line_buffer = 0;
+	delete[] s_rect_buff;
+	s_rect_buff = 0;
 
 	g_using_jiim = false;
 	g_calculate_type = old_calculate_type;

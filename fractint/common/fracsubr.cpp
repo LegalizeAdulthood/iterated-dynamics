@@ -1368,12 +1368,9 @@ int start_resume()
 
 void end_resume()
 {
-	if (g_resume_info != 0) /* free the prior area if there is one */
-	{
-		delete[] g_resume_info;
-		g_resume_info = 0;
-		s_resume_info_length = 0;
-	}
+	delete[] g_resume_info;
+	g_resume_info = 0;
+	s_resume_info_length = 0;
 }
 
 

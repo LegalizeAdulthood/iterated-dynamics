@@ -1339,11 +1339,8 @@ int ifs_load()                   /* read in IFS parameters */
 	int ret;
 	int rowsize;
 
-	if (g_ifs_definition)  /* release prior parms */
-	{
-		delete[] g_ifs_definition;
-		g_ifs_definition = 0;
-	}
+	delete[] g_ifs_definition;
+	g_ifs_definition = 0;
 
 	g_ifs_type = IFSTYPE_2D;
 	rowsize = IFSPARM;

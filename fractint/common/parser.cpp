@@ -3776,13 +3776,9 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		}
 		if (s_symmetry_list[i].symmetry[0] == 0 && report_bad_symmetry)
 		{
-			char *msgbuf = new char[int_strlen(error_messages(PE_INVALID_SYM_USING_NOSYM))
-							+ int_strlen(symmetry_buffer) + 6];
-			strcpy(msgbuf, error_messages(PE_INVALID_SYM_USING_NOSYM));
-			strcat(msgbuf, ":\n   ");
-			strcat(msgbuf, symmetry_buffer);
-			stop_message(STOPMSG_FIXED_FONT, msgbuf);
-			delete[] msgbuf;
+			std::ostringstream msgbuf;
+			msgbuf << error_messages(PE_INVALID_SYM_USING_NOSYM) << ":\n   " << symmetry_buffer << std::ends;
+			stop_message(STOPMSG_FIXED_FONT, msgbuf.str());
 		}
 	}
 	if (c != '{')

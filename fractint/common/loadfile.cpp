@@ -446,12 +446,9 @@ static void read_info_version_16(const fractal_info &read_info)
 
 void free_ranges()
 {
-	if (g_ranges_length) /* free prior ranges */
-	{
-		delete[] g_ranges;
-		g_ranges = 0;
-		g_ranges_length = 0;
-	}
+	delete[] g_ranges;
+	g_ranges = 0;
+	g_ranges_length = 0;
 }
 
 static void got_resume_info(struct ext_blk_resume_info resume_info)
