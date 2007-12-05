@@ -36,7 +36,7 @@ struct CoordinateWindow  /* for look_get_window on screen browser */
 	Coordinate ibl;
 	Coordinate itr;
 	Coordinate ibr;
-	double win_size;   /* box size for drawindow() */
+	double win_size;   /* box size for draw_window() */
 	std::string name;     /* for filename */
 	int box_count;      /* bytes of saved screen info */
 };
@@ -62,7 +62,7 @@ static CoordinateWindow browse_windows[MAX_WINDOWS_OPEN];
 static void check_history(const char *, const char *);
 static void transform(CoordinateD *);
 static void transform_bf(bf_t, bf_t, CoordinateD *);
-static void drawindow(int color, CoordinateWindow *info);
+static void draw_window(int color, CoordinateWindow *info);
 static bool is_visible_window(CoordinateWindow *, fractal_info *, struct ext_blk_mp_info *);
 static void bfsetup_convert_to_screen();
 static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_info &formula_info);
@@ -247,7 +247,7 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	list->ibr.y = int(br.y + 0.5);
 
 	double tmp_sqrt = sqrt(sqr(tr.x-bl.x) + sqr(tr.y-bl.y));
-	list->win_size = tmp_sqrt; /* used for box vs crosshair in drawindow() */
+	list->win_size = tmp_sqrt; /* used for box vs crosshair in draw_window() */
 	/* arbitrary value... stops browser zooming out too far */
 	bool cant_see = false;
 	if (tmp_sqrt < g_too_small)
@@ -297,7 +297,7 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	return (cornercount >= 1);
 }
 
-static void drawindow(int color, CoordinateWindow *info)
+static void draw_window(int color, CoordinateWindow *info)
 {
 #ifndef XFRACT
 	int cross_size;
@@ -543,18 +543,18 @@ static void check_history(const char *oldname, const char *newname)
 /* look_get_window reads all .GIF files and draws window outlines on the screen */
 int look_get_window()
 {
-	struct affine stack_cvt;
+	affine stack_cvt;
 	fractal_info read_info;
-	struct ext_blk_resume_info resume_info_blk;
-	struct ext_blk_formula_info formula_info;
-	struct ext_blk_ranges_info ranges_info;
-	struct ext_blk_mp_info mp_info;
-	struct ext_blk_evolver_info evolver_info;
-	struct ext_blk_orbits_info orbits_info;
+	ext_blk_resume_info resume_info_blk;
+	ext_blk_formula_info formula_info;
+	ext_blk_ranges_info ranges_info;
+	ext_blk_mp_info mp_info;
+	ext_blk_evolver_info evolver_info;
+	ext_blk_orbits_info orbits_info;
 	time_t thistime;
 	time_t lastime;
-	char mesg[40];
-	char newname[60];
+	char message[40];
+	char new_name[60];
 	std::string oldname;
 	int index;
 	int done;
@@ -658,7 +658,7 @@ rescan:  /* entry for changed browse parms */
 			&& is_visible_window(&winlist, &read_info, &mp_info))
 		{
 			winlist.name = g_dta.filename;
-			drawindow(box_color, &winlist);
+			draw_window(box_color, &winlist);
 			g_zoomBox.set_count(g_zoomBox.count()*2); /* double for byte count */
 			winlist.box_count = g_zoomBox.count();
 			browse_windows[wincount] = winlist;
@@ -725,7 +725,7 @@ rescan:  /* entry for changed browse parms */
 					lastime = thistime;
 					toggle = 1- toggle;
 				}
-				drawindow(toggle ? g_color_bright : g_color_dark, &winlist);   /* flash current window */
+				draw_window(toggle ? g_color_bright : g_color_dark, &winlist);   /* flash current window */
 #ifdef XFRACT
 				blinks++;
 #endif
@@ -733,7 +733,7 @@ rescan:  /* entry for changed browse parms */
 #ifdef XFRACT
 			if ((blinks & 1) == 1)   /* Need an odd # of blinks, so next one leaves box turned off */
 			{
-				drawindow(g_color_bright, &winlist);
+				draw_window(g_color_bright, &winlist);
 			}
 #endif
 
@@ -745,7 +745,7 @@ rescan:  /* entry for changed browse parms */
 			case FIK_DOWN_ARROW:
 			case FIK_UP_ARROW:
 				clear_temp_message();
-				drawindow(box_color, &winlist); /* dim last window */
+				draw_window(box_color, &winlist); /* dim last window */
 				if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
 				{
 					index++;                     /* shift attention to next window */
@@ -774,10 +774,10 @@ rescan:  /* entry for changed browse parms */
 				for (int i = 0; i < wincount; i++)
 				{
 					winlist = browse_windows[i];
-					drawindow(box_color, &winlist);
+					draw_window(box_color, &winlist);
 				}
 				winlist = browse_windows[index];
-				drawindow(box_color, &winlist);
+				draw_window(box_color, &winlist);
 				break;
 
 			case FIK_CTL_DEL:
@@ -785,10 +785,10 @@ rescan:  /* entry for changed browse parms */
 				for (int i = 0; i < wincount; i++)
 				{
 					winlist = browse_windows[i];
-					drawindow(box_color, &winlist);
+					draw_window(box_color, &winlist);
 				}
 				winlist = browse_windows[index];
-				drawindow(box_color, &winlist);
+				draw_window(box_color, &winlist);
 				break;
 #endif
 			case FIK_ENTER:
@@ -802,7 +802,7 @@ rescan:  /* entry for changed browse parms */
 			case 'L':
 #ifdef XFRACT
 				/* Need all boxes turned on, turn last one back on. */
-				drawindow(g_color_bright, &winlist);
+				draw_window(g_color_bright, &winlist);
 #endif
 				g_browse_state.set_auto_browse(false);
 				done = 2;
@@ -810,8 +810,8 @@ rescan:  /* entry for changed browse parms */
 
 			case 'D': /* delete file */
 				clear_temp_message();
-				_snprintf(mesg, NUM_OF(mesg), "Delete %s? (Y/N)", winlist.name);
-				show_temp_message(mesg);
+				_snprintf(message, NUM_OF(message), "Delete %s? (Y/N)", winlist.name);
+				show_temp_message(message);
 				driver_wait_key_pressed(0);
 				clear_temp_message();
 				c = driver_get_key();
@@ -851,19 +851,19 @@ rescan:  /* entry for changed browse parms */
 			case 'R':
 				clear_temp_message();
 				driver_stack_screen();
-				newname[0] = 0;
-				strcpy(mesg, "Enter the new filename for ");
+				new_name[0] = 0;
+				strcpy(message, "Enter the new filename for ");
 				split_path(g_read_name.c_str(), drive, dir, 0, 0);
 				split_path(winlist.name, 0, 0, fname, ext);
 				make_path(tmpmask, drive, dir, fname, ext);
-				strcpy(newname, tmpmask);
-				strcat(mesg, tmpmask);
+				strcpy(new_name, tmpmask);
+				strcat(message, tmpmask);
 				{
-					int i = field_prompt(mesg, 0, newname, 60, 0);
+					int i = field_prompt(message, 0, new_name, 60, 0);
 					driver_unstack_screen();
 					if (i != -1)
 					{
-						if (!rename(tmpmask, newname))
+						if (!rename(tmpmask, new_name))
 						{
 							if (errno == EACCES)
 							{
@@ -871,7 +871,7 @@ rescan:  /* entry for changed browse parms */
 							}
 							else
 							{
-								split_path(newname, 0, 0, fname, ext);
+								split_path(new_name, 0, 0, fname, ext);
 								make_path(tmpmask, 0, 0, fname, ext);
 								oldname = winlist.name;
 								check_history(oldname.c_str(), tmpmask);
@@ -894,7 +894,7 @@ rescan:  /* entry for changed browse parms */
 
 			case 's': /* save image with boxes */
 				g_browse_state.set_auto_browse(false);
-				drawindow(box_color, &winlist); /* current window white */
+				draw_window(box_color, &winlist); /* current window white */
 				done = 4;
 				break;
 
@@ -923,7 +923,7 @@ rescan:  /* entry for changed browse parms */
 				{
 #ifdef XFRACT
 					/* Turn all boxes off */
-					drawindow(g_color_bright, &winlist);
+					draw_window(g_color_bright, &winlist);
 #else
 					g_zoomBox.clear();
 #endif
