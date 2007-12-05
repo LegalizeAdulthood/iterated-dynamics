@@ -406,18 +406,12 @@ void split_path(const char *file_template, char *drive, std::string &dir, char *
 /* extract just the filename/extension portion of a path */
 void extract_filename(char *target, const char *source)
 {
-	char fname[FILE_MAX_FNAME];
-	char ext[FILE_MAX_EXT];
-	split_path(source, 0, 0, fname, ext);
-	make_path(target, "", "", fname, ext);
+	strcpy(target, fs::path(source).leaf().c_str());
 }
 
 void extract_filename(std::string &target, const std::string &source)
 {
-	char buffer[FILE_MAX_PATH];
-	strcpy(buffer, target.c_str());
-	extract_filename(buffer, source.c_str());
-	target = buffer;
+	target = fs::path(source).leaf();
 }
 
 /* tells if filename has extension */

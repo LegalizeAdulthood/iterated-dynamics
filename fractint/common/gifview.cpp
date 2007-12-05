@@ -10,6 +10,7 @@
  * Tim Wegner
  */
 #include <algorithm>
+#include <sstream>
 #include <string>
 
 #include <string.h>
@@ -192,14 +193,9 @@ int gifview()
 	}
 	if (driver_diskp()) /* disk-video */
 	{
-		char fname[FILE_MAX_FNAME];
-		char ext[FILE_MAX_EXT];
-		char tmpname[15];
-		char msg[40];
-		split_path(temp1, 0, 0, fname, ext);
-		make_path(tmpname, 0, 0, fname, ext);
-		sprintf(msg, "restoring %s", tmpname);
-		disk_video_status(1, msg);
+		std::ostringstream message;
+		message << "restoring " << fs::path(temp1).leaf() << std::ends;
+		disk_video_status(1, message.str());
 	}
 	g_dont_read_color = false;
 
