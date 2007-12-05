@@ -2,10 +2,13 @@
 	Miscellaneous fractal-specific code
 */
 #include <algorithm>
+#include <sstream>
 #include <string>
 
 #include <string.h>
 #include <limits.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -1666,9 +1669,9 @@ static void abort_cellular(int err, int t)
 	{
 	case BAD_T:
 		{
-			char msg[30];
-			sprintf(msg, "Bad t=%d, aborting\n", t);
-			stop_message(0, msg);
+			std::ostringstream msg;
+			msg << boost::format("Bad t=%d, aborting\n") % t << std::ends;
+			stop_message(0, msg.str());
 		}
 		break;
 	case BAD_MEM:

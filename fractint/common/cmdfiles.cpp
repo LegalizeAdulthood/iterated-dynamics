@@ -1,13 +1,16 @@
 /*
 		Command-line/Command-File Parser Routines
 */
+#include <sstream>
 #include <string>
 
 #include <assert.h>
-#include <string.h>
 #include <ctype.h>
-#include <time.h>
 #include <math.h>
+#include <string.h>
+#include <time.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -3438,7 +3441,6 @@ badcolor:
 
 static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 {
-	char msg[300];
 	char spillover[71];
 	if (int(strlen(bad_arg)) > NUM_OF(spillover) - 1)
 	{
@@ -3446,16 +3448,18 @@ static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 		spillover[NUM_OF(spillover) - 1] = 0;
 		bad_arg = spillover;
 	}
-	sprintf(msg, "Oops. I couldn't understand the argument:\n  %s", bad_arg);
+	std::ostringstream msg;
+	msg << boost::format("Oops. I couldn't understand the argument:\n  %s") % bad_arg;
 
 	if (g_command_initialize)       /* this is 1st call to command_files */
 	{
-		strcat(msg, "\n"
+		msg << "\n"
 			"\n"
 			"(see the Startup Help screens or documentation for a complete\n"
-			" argument list with descriptions)");
+			" argument list with descriptions)";
 	}
-	stop_message(0, msg);
+	msg << std::ends;
+	stop_message(0, msg.str());
 	if (g_initialize_batch)
 	{
 		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED;
@@ -3527,7 +3531,6 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	{
 		"command line", "sstools.ini", "PAR file", "PAR file"
 	};
-	char msg[256];
 	char cmd[80];
 	static int row = 1;
 
@@ -3545,20 +3548,22 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	{
 		strcat(cmd, "=");
 	}
+	std::ostringstream bad_filename_message;
 	if (bad_filename)
 	{
-		sprintf(msg, "Can't find %s%s, please check %s", cmd, bad_filename, modestr[mode]);
+		bad_filename_message << boost::format("Can't find %s%s, please check %s")
+			% cmd % bad_filename % modestr[mode] << std::ends;
 	}
 	if (g_command_initialize)  /* & command_files hasn't finished 1st try */
 	{
 		if (row == 1 && bad_filename)
 		{
 			driver_set_for_text();
-			driver_put_string(0, 0, 15, "Id found the following problems when parsing commands: ");
+			driver_put_string(0, 0, 15, "Iterated Dynamics found the following problems when parsing commands: ");
 		}
 		if (bad_filename)
 		{
-			driver_put_string(row++, 0, 7, msg);
+			driver_put_string(row++, 0, 7, bad_filename_message.str().c_str());
 		}
 		else if (row > 1)
 		{
@@ -3569,7 +3574,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	}
 	else if (bad_filename)
 	{
-		stop_message(0, msg);
+		stop_message(0, bad_filename_message.str());
 	}
 	return 0;
 }
