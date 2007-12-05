@@ -834,9 +834,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	}
 	if (driver_diskp())
 	{
-		std::ostringstream message;
-		message << "mapping to 3d, reading line " << g_current_row << std::ends;
-		disk_video_status(1, message.str());
+		disk_video_status(1, (boost::format("mapping to 3d, reading line %d") % g_current_row).str());
 	}
 
 	if (!col && g_3d_state.raytrace_output() && g_current_row != 0)

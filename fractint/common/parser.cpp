@@ -22,6 +22,8 @@
 
 #include <time.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -3776,9 +3778,9 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		}
 		if (s_symmetry_list[i].symmetry[0] == 0 && report_bad_symmetry)
 		{
-			std::ostringstream msgbuf;
-			msgbuf << error_messages(PE_INVALID_SYM_USING_NOSYM) << ":\n   " << symmetry_buffer << std::ends;
-			stop_message(STOPMSG_FIXED_FONT, msgbuf.str());
+			stop_message(STOPMSG_FIXED_FONT, (boost::format("%s:\n   %s")
+				% error_messages(PE_INVALID_SYM_USING_NOSYM)
+				% symmetry_buffer).str());
 		}
 	}
 	if (c != '{')

@@ -80,9 +80,7 @@ void Ant::set_wait(long *wait)
 {
 	while (true)
 	{
-		std::ostringstream msg;
-		msg << boost::format("Delay %4ld ") % *wait << std::ends;
-		show_temp_message(msg.str());
+		show_temp_message((boost::format("Delay %4ld ") % *wait).str());
 
 		int kbdchar = driver_get_key();
 		switch (kbdchar)

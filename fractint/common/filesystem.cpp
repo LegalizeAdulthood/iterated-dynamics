@@ -557,9 +557,7 @@ void update_save_name(char *filename) /* go to the next file name */
 
 fs::path make_path(const char *drive, const char *dir, const char *fname, const char *ext)
 {
-	std::ostringstream filename;
-	filename << fname << ext << std::ends;
-	return fs::path(drive) / dir / filename.str();
+	return fs::path(drive) / dir / (std::string(fname) + ext);
 }
 
 void ensure_extension(char *filename, const char *extension)

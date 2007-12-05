@@ -136,8 +136,8 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 			driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);  /* init box */
 		}
 		driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "'Disk-Video' mode");
-		sprintf(buf, "Screen resolution: %d x %d", g_screen_width, g_screen_height);
-		driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, buf);
+		driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO,
+			(boost::format("Screen resolution: %d x %d") % g_screen_width % g_screen_height).str().c_str());
 		if (s_disk_targa)
 		{
 			driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
@@ -344,12 +344,10 @@ void disk_end()
 
 static void disk_line_status(bool reading, int row)
 {
-	std::ostringstream message;
-	message << boost::format(" %s line %4d")
+	/* adjust when potfile */
+	disk_video_status(0, (boost::format(" %s line %4d")
 			% (reading ? "reading" : "writing")
-			% ((row >= g_screen_height) ? row-g_screen_height : row)
-		<< std::ends; /* adjust when potfile */
-	disk_video_status(0, message.str().c_str());
+			% ((row >= g_screen_height) ? row-g_screen_height : row)).str().c_str());
 }
 
 int disk_read(int col, int row)

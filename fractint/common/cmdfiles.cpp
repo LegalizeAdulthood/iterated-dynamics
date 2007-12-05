@@ -3548,11 +3548,11 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	{
 		strcat(cmd, "=");
 	}
-	std::ostringstream bad_filename_message;
+	std::string bad_filename_message;
 	if (bad_filename)
 	{
-		bad_filename_message << boost::format("Can't find %s%s, please check %s")
-			% cmd % bad_filename % modestr[mode] << std::ends;
+		bad_filename_message = (boost::format("Can't find %s%s, please check %s")
+			% cmd % bad_filename % modestr[mode]).str();
 	}
 	if (g_command_initialize)  /* & command_files hasn't finished 1st try */
 	{
@@ -3563,7 +3563,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 		}
 		if (bad_filename)
 		{
-			driver_put_string(row++, 0, 7, bad_filename_message.str().c_str());
+			driver_put_string(row++, 0, 7, bad_filename_message.c_str());
 		}
 		else if (row > 1)
 		{
@@ -3574,7 +3574,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	}
 	else if (bad_filename)
 	{
-		stop_message(0, bad_filename_message.str());
+		stop_message(0, bad_filename_message);
 	}
 	return 0;
 }
