@@ -1561,8 +1561,6 @@ int input_field(
 {
 	char savefld[81];
 	char buf[81];
-	int insert;
-	int started;
 	int offset;
 	int curkey;
 	int display;
@@ -1573,8 +1571,8 @@ int input_field(
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
 	ret = -1;
 	strcpy(savefld, fld);
-	insert = 0;
-	started = 0;
+	int insert = 0;
+	bool started = false;
 	offset = 0;
 	display = 1;
 	while (true)
@@ -1609,22 +1607,22 @@ int input_field(
 			{
 				++offset;
 			}
-			started = 1;
+			started = true;
 			break;
 		case FIK_LEFT_ARROW:
 			if (offset > 0)
 			{
 				--offset;
 			}
-			started = 1;
+			started = true;
 			break;
 		case FIK_HOME:
-				offset = 0;
-			started = 1;
+			offset = 0;
+			started = true;
 			break;
 		case FIK_END:
 			offset = int(strlen(fld));
-			started = 1;
+			started = true;
 			break;
 		case FIK_BACKSPACE:
 		case 127:                              /* backspace */
@@ -1640,7 +1638,7 @@ int input_field(
 				}
 				--offset;
 			}
-			started = 1;
+			started = true;
 			display = 1;
 			break;
 		case FIK_DELETE:                           /* delete */
@@ -1649,17 +1647,17 @@ int input_field(
 			{
 				fld[i] = fld[i + 1];
 			}
-			started = 1;
+			started = true;
 			display = 1;
 			break;
 		case FIK_INSERT:                           /* insert */
 			insert ^= 0x8000;
-			started = 1;
+			started = true;
 			break;
 		case FIK_F5:
 			strcpy(fld, savefld);
 			insert = 0;
-			started = 0;
+			started = false;
 			offset = 0;
 			display = 1;
 			break;
@@ -1700,7 +1698,7 @@ int input_field(
 					break;
 				}
 			}
-			if (started == 0) /* first char is data, zap field */
+			if (!started) /* first char is data, zap field */
 			{
 				fld[0] = 0;
 			}
@@ -1722,18 +1720,16 @@ int input_field(
 			if ((options & (INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER)) == INPUTFIELD_NUMERIC)  /* floating point */
 			{
 				double tmpd;
-				int specialv;
-				char tmpfld[30];
-				specialv = 0;
-				if (*fld == 'e' || *fld == 'E')
+				bool specialv = false;
+				if (fld[0] == 'e' || fld[0] == 'E')
 				{
 					tmpd = exp(1.0);
-					specialv = 1;
+					specialv = true;
 				}
-				if (*fld == 'p' || *fld == 'P')
+				if (fld[0] == 'p' || fld[0] == 'P')
 				{
 					tmpd = atan(1.0)*4;
-					specialv = 1;
+					specialv = true;
 				}
 				if (specialv)
 				{
@@ -1741,13 +1737,11 @@ int input_field(
 					{
 						round_float_d(&tmpd);
 					}
-					sprintf(tmpfld, "%.15g", tmpd);
-					tmpfld[len-1] = 0; /* safety, field should be long enough */
-					strcpy(fld, tmpfld);
+					strcpy(fld, (boost::format("%.15g") % tmpd).str().c_str());
 					offset = 0;
 				}
 			}
-			started = 1;
+			started = true;
 			display = 1;
 		}
 	}
