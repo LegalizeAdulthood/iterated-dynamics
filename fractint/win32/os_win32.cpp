@@ -2,10 +2,12 @@
 
 #include <assert.h>
 #include <direct.h>
-#include <string.h>
 #include <signal.h>
+#include <string.h>
 #include <sys/timeb.h>
 #include <time.h>
+
+#include <boost/format.hpp>
 
 #define WIN32_LEAN_AND_MEAN
 #define STRICT
@@ -553,7 +555,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 {
 	MiniDumpWriteDumpProc *dumper = 0;
 	HMODULE debughlp = LoadLibrary("dbghelp.dll");
-	char minidump[MAX_PATH] = "fractint.dmp";
+	std::string minidump = "fractint.dmp";
 	MINIDUMP_EXCEPTION_INFORMATION mdei =
 	{
 		GetCurrentThreadId(),
@@ -572,11 +574,11 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 	}
 	dumper = (MiniDumpWriteDumpProc *) GetProcAddress(debughlp, "MiniDumpWriteDump");
 
-	while (PathFileExists(minidump))
+	while (PathFileExists(minidump.c_str()))
 	{
-		sprintf(minidump, "fractint-%d.dmp", i++);
+		minidump = (boost::format("fractint-%d.dmp") % i++).str();
 	}
-	dump_file = CreateFile(minidump, GENERIC_READ | GENERIC_WRITE,
+	dump_file = CreateFile(minidump.c_str(), GENERIC_READ | GENERIC_WRITE,
 		0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
 	_ASSERTE(dump_file != INVALID_HANDLE_VALUE);
 
@@ -585,9 +587,9 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 	_ASSERTE(status);
 	if (!status)
 	{
-		char msg[100];
-		sprintf(msg, "MiniDumpWriteDump failed with %08x", GetLastError());
-		MessageBox(0, msg, "Ugh", MB_OK);
+		MessageBox(0,
+			(boost::format("MiniDumpWriteDump failed with %08x") % GetLastError()).str().c_str(),
+			"Ugh", MB_OK);
 	}
 	else
 	{
@@ -599,10 +601,9 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 	_ASSERTE(status);
 
 	{
-		char msg[MAX_PATH*2];
-		sprintf(msg, "Unexpected error, crash dump saved to '%s'.\n"
-			"Please include this file with your bug report.", minidump);
-		MessageBox(0, msg, "FractInt: Unexpected Error", MB_OK);
+		MessageBox(0, ("Unexpected error, crash dump saved to '" + minidump + "'.\n"
+			"Please include this file with your bug report.").c_str(),
+			"FractInt: Unexpected Error", MB_OK);
 	}
 }
 
@@ -674,11 +675,9 @@ int expand_dirname(char *dirname, char *drive)
 	return 0;
 }
 
-int abort_message(char *file, unsigned int line, int flags, char *msg)
+int abort_message(const char *file, unsigned int line, int flags, const char *msg)
 {
-	char buffer[3*80];
-	sprintf(buffer, "%s(%d):\n%s", file, line, msg);
-	return stop_message(flags, buffer);
+	return stop_message(flags, (boost::format("%s(%d):\n%s") % file % line % msg).str());
 }
 
 /* ods

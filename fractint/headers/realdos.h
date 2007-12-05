@@ -1,5 +1,4 @@
-#if !defined(REAL_DOS_H)
-#define REAL_DOS_H
+#pragma once
 
 extern int show_vid_length();
 extern int stop_message(int flags, const char *message);
@@ -33,8 +32,7 @@ extern int field_prompt(char *, char *, char *, int, int (*)(int));
 extern int thinking(int, char *);
 extern int check_video_mode_key(int, int);
 extern int check_vidmode_keyname(char *);
-extern void video_mode_key_name(int, char *);
+extern void video_mode_key_name(int key, char *name);
+extern std::string video_mode_key_name(int key);
 extern void free_temp_message();
 extern void load_video_table(int);
-
-#endif
