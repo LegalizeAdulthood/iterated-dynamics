@@ -5,9 +5,12 @@
  * rules.
  */
 #include <algorithm>
+#include <sstream>
 #include <string>
 
 #include <string.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -77,14 +80,9 @@ void Ant::set_wait(long *wait)
 {
 	while (true)
 	{
-		char msg[30];
-		sprintf(msg, "Delay %4ld", *wait);
-		while (int(strlen(msg)) < 15)
-		{
-			strcat(msg, " ");
-		}
-		msg[15] = '\0';
-		show_temp_message(msg);
+		std::ostringstream msg;
+		msg << boost::format("Delay %4ld ") % *wait << std::ends;
+		show_temp_message(msg.str());
 
 		int kbdchar = driver_get_key();
 		switch (kbdchar)
