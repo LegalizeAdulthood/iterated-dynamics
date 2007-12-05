@@ -4,6 +4,8 @@
 #include <string.h>
 #include <string>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -2001,31 +2003,34 @@ int check_vidmode_keyname(char *kname)
 	return i;
 }
 
+static std::string video_mode_key_name(int key, int base, const char *prefix)
+{
+	return (boost::format("%s%d") % prefix % (key - base + 1)).str();
+}
+
+std::string video_mode_key_name(int k)
+{
+	if (k >= FIK_ALT_F1 && k <= FIK_ALT_F10)
+	{
+		return video_mode_key_name(k, FIK_ALT_F1, "AF");
+	}
+	if (k >= FIK_CTL_F1 && k <= FIK_CTL_F10)
+	{
+		return video_mode_key_name(k, FIK_CTL_F1, "CF");
+	}
+	if (k >= FIK_SF1 && k <= FIK_SF10)
+	{
+		return video_mode_key_name(k, FIK_SF1, "SF");
+	}
+	if (k >= FIK_F1 && k <= FIK_F10)
+	{
+		return video_mode_key_name(k, FIK_F1, "F");
+	}
+	return "";
+}
+
+/* set buffer to name of passed key number */
 void video_mode_key_name(int k, char *buf)
 {
-	/* set buffer to name of passed key number */
-	*buf = 0;
-	if (k > 0)
-	{
-		if (k > 1103)
-		{
-			*(buf++) = 'A';
-			k -= 1103;
-		}
-		else if (k > 1093)
-		{
-			*(buf++) = 'C';
-			k -= 1093;
-		}
-		else if (k > 1083)
-		{
-			*(buf++) = 'S';
-			k -= 1083;
-		}
-		else
-		{
-			k -= 1058;
-		}
-		sprintf(buf, "F%d", k);
-	}
+	strcpy(buf, video_mode_key_name(k).c_str());
 }
