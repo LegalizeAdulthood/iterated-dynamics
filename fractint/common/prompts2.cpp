@@ -7,6 +7,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -187,10 +189,10 @@ int get_toggles()
 	}
 	dialog.push("Biomorph Color (-1 means OFF)", g_user_biomorph);
 	dialog.push("Decomp Option (2,4,8,..,256, 0=OFF)", g_decomposition[0]);
-	char fill_buffer[80] = "normal";
+	std::string fill_buffer = "normal";
 	if (g_fill_color >= 0)
 	{
-		sprintf(fill_buffer, "%d", g_fill_color);
+		fill_buffer = (boost::format("%d") % g_fill_color).str();
 	}
 	dialog.push("Fill Color (normal,#) (works with passes=t, b and d)", fill_buffer);
 	dialog.push("Proximity value for inside=epscross and fmod", float(g_proximity));

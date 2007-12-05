@@ -2571,8 +2571,6 @@ static long gfe_choose_entry(int type, const char *title, const char *filename, 
 	int boxdepth;
 	int colwidth;
 	char instr[80];
-	char temp1[256];
-
 	static int dosort = 1;
 
 	gfe_choices = &choices[0];
@@ -2607,7 +2605,8 @@ retry:
 	}
 
 	strcpy(buf, entryname); /* preset to last choice made */
-	sprintf(temp1, "%s Selection\nFile: %s", title, filename);
+	char heading[256];
+	sprintf(heading, "%s Selection\nFile: %s", title, filename);
 	formatitem = 0;
 	boxwidth = 0;
 	colwidth = 0;
@@ -2621,7 +2620,7 @@ retry:
 	}
 
 	i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-		temp1, 0, instr, numentries, (char **) choices,
+		heading, 0, instr, numentries, (char **) choices,
 		attributes, boxwidth, boxdepth, colwidth, 0,
 		formatitem, buf, 0, check_gfe_key);
 	if (i == -FIK_F4)
