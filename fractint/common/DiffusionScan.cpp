@@ -1,6 +1,9 @@
 #include <algorithm>
 #include <cstring>
+#include <sstream>
 #include <string>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "id.h"
@@ -386,9 +389,13 @@ void diffusion_get_calculation_time(char *msg)
 	get_calculation_time(msg, long(g_calculation_time*((s_diffusion_limit*1.0)/s_diffusion_counter)));
 }
 
-void diffusion_get_status(char *msg)
+std::string diffusion_get_status()
 {
-	sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
-			(100.0*s_diffusion_counter)/s_diffusion_limit,
-			s_diffusion_counter, s_diffusion_limit, s_bits);
+	std::ostringstream buffer;
+	buffer << boost::format("%2.2f%% done, counter at %lu of %lu (%u bits)")
+		% ((100.0*s_diffusion_counter)/s_diffusion_limit)
+		% s_diffusion_counter
+		% s_diffusion_limit
+		% s_bits;
+	return buffer.str();
 }

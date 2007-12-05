@@ -16,6 +16,8 @@
 
 #include <limits.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 
@@ -1587,26 +1589,25 @@ and other files
 
 static void file_error(const std::string &filename, int code)
 {
-	char msgbuf[200];
-
+	std::ostringstream msgbuf;
 	s_file_error = code;
 	switch (code)
 	{
 	case FILEERROR_OPEN:                      /* Can't Open */
-		sprintf(msgbuf, "OOPS, couldn't open  < %s >", filename.c_str());
+		msgbuf << boost::format("OOPS, couldn't open  < %s >") % filename.c_str();
 		break;
 	case FILEERROR_NO_SPACE:                      /* Not enough room */
-		sprintf(msgbuf, "OOPS, ran out of disk space. < %s >", filename.c_str());
+		msgbuf << boost::format("OOPS, ran out of disk space. < %s >") % filename.c_str();
 		break;
 	case FILEERROR_BAD_IMAGE_SIZE:                      /* Image wrong size */
-		sprintf(msgbuf, "OOPS, image wrong size\n");
+		msgbuf << "OOPS, image wrong size\n";
 		break;
 	case FILEERROR_BAD_FILE_TYPE:                      /* Wrong file type */
-		sprintf(msgbuf, "OOPS, can't handle this type of file.\n");
+		msgbuf << "OOPS, can't handle this type of file.\n";
 		break;
 	}
-	stop_message(0, msgbuf);
-	return;
+	msgbuf << std::ends;
+	stop_message(0, msgbuf.str());
 }
 
 

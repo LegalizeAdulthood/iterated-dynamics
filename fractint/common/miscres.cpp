@@ -996,8 +996,7 @@ top:
 		++s_row;
 		if (g_got_status == GOT_STATUS_DIFFUSION)
 		{
-			diffusion_get_status(msg);
-			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
+			driver_put_string(s_row, 2, C_GENERAL_MED, diffusion_get_status().c_str());
 			++s_row;
 		}
 		else
