@@ -6,9 +6,10 @@
 
 #include <assert.h>
 #include <ctype.h>
-#include <stdarg.h>
 #include <string.h>
 #include <time.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -38,11 +39,13 @@
 #include "Formula.h"
 
 /* routines in this module      */
+using boost::format;
 
 void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int i, int j);
 void expand_comments(char *target, const char *source);
 void expand_comments(std::string &target, const char *source);
-static void put_parm(const char *parm, ...);
+static void put_parm(const char *parm);
+static void put_parm(const format &message);
 static void put_parm_line();
 static int getprec(double, double, double);
 int get_precision_bf(int rezflag);
@@ -661,22 +664,24 @@ static void write_universal_3d_parameters()
 		/***** common (fractal & transform) 3d parameters in this section *****/
 		if (!g_3d_state.sphere() || g_display_3d == DISPLAY3D_GENERATED)
 		{
-			put_parm(" rotation=%d/%d/%d", g_3d_state.x_rotation(), g_3d_state.y_rotation(), g_3d_state.z_rotation());
+			put_parm(format(" rotation=%d/%d/%d")
+				% g_3d_state.x_rotation() % g_3d_state.y_rotation() % g_3d_state.z_rotation());
 		}
-		put_parm(" perspective=%d", g_3d_state.z_viewer());
-		put_parm(" xyshift=%d/%d", g_3d_state.x_shift(), g_3d_state.y_shift());
+		put_parm(format(" perspective=%d") % g_3d_state.z_viewer());
+		put_parm(format(" xyshift=%d/%d") % g_3d_state.x_shift() % g_3d_state.y_shift());
 		if (g_3d_state.x_trans() || g_3d_state.y_trans())
 		{
-			put_parm(" xyadjust=%d/%d", g_3d_state.x_trans(), g_3d_state.y_trans());
+			put_parm(format(" xyadjust=%d/%d") % g_3d_state.x_trans() % g_3d_state.y_trans());
 		}
 		if (g_3d_state.glasses_type())
 		{
-			put_parm(" stereo=%d", g_3d_state.glasses_type());
-			put_parm(" interocular=%d", g_3d_state.eye_separation());
-			put_parm(" converge=%d", g_3d_state.x_adjust());
-			put_parm(" crop=%d/%d/%d/%d",
-				g_3d_state.red().crop_left(), g_3d_state.red().crop_right(), g_3d_state.blue().crop_left(), g_3d_state.blue().crop_right());
-			put_parm(" bright=%d/%d", g_3d_state.red().bright(), g_3d_state.blue().bright());
+			put_parm(format(" stereo=%d") % g_3d_state.glasses_type());
+			put_parm(format(" interocular=%d") % g_3d_state.eye_separation());
+			put_parm(format(" converge=%d") % g_3d_state.x_adjust());
+			put_parm(format(" crop=%d/%d/%d/%d")
+				% g_3d_state.red().crop_left() % g_3d_state.red().crop_right()
+				% g_3d_state.blue().crop_left() % g_3d_state.blue().crop_right());
+			put_parm(format(" bright=%d/%d") % g_3d_state.red().bright() % g_3d_state.blue().bright());
 		}
 	}
 }
@@ -702,20 +707,20 @@ static void write_3d_parameters()
 		if (g_3d_state.sphere())
 		{
 			put_parm(" sphere=y");
-			put_parm(" latitude=%d/%d", g_3d_state.theta1(), g_3d_state.theta2());
-			put_parm(" longitude=%d/%d", g_3d_state.phi1(), g_3d_state.phi2());
-			put_parm(" radius=%d", g_3d_state.radius());
+			put_parm(format(" latitude=%d/%d") % g_3d_state.theta1() % g_3d_state.theta2());
+			put_parm(format(" longitude=%d/%d") % g_3d_state.phi1() % g_3d_state.phi2());
+			put_parm(format(" radius=%d") % g_3d_state.radius());
 		}
-		put_parm(" scalexyz=%d/%d", g_3d_state.x_scale(), g_3d_state.y_scale());
-		put_parm(" roughness=%d", g_3d_state.roughness());
-		put_parm(" waterline=%d", g_3d_state.water_line());
+		put_parm(format(" scalexyz=%d/%d") % g_3d_state.x_scale() % g_3d_state.y_scale());
+		put_parm(format(" roughness=%d") % g_3d_state.roughness());
+		put_parm(format(" waterline=%d") % g_3d_state.water_line());
 		if (g_3d_state.fill_type())
 		{
-			put_parm(" filltype=%d", g_3d_state.fill_type());
+			put_parm(format(" filltype=%d") % g_3d_state.fill_type());
 		}
 		if (g_3d_state.transparent0() || g_3d_state.transparent1())
 		{
-			put_parm(" transparent=%d/%d", g_3d_state.transparent0(), g_3d_state.transparent1());
+			put_parm(format(" transparent=%d/%d") % g_3d_state.transparent0() % g_3d_state.transparent1());
 		}
 		if (g_3d_state.preview())
 		{
@@ -724,11 +729,11 @@ static void write_3d_parameters()
 			{
 				put_parm(" showbox=yes");
 			}
-			put_parm(" coarse=%d", g_3d_state.preview_factor());
+			put_parm(format(" coarse=%d") % g_3d_state.preview_factor());
 		}
 		if (g_3d_state.raytrace_output())
 		{
-			put_parm(" ray=%d", g_3d_state.raytrace_output());
+			put_parm(format(" ray=%d") % g_3d_state.raytrace_output());
 			if (g_3d_state.raytrace_brief())
 			{
 				put_parm(" brief=y");
@@ -736,15 +741,16 @@ static void write_3d_parameters()
 		}
 		if (g_3d_state.fill_type() > FillType::Bars)
 		{
-			put_parm(" lightsource=%d/%d/%d", g_3d_state.x_light(), g_3d_state.y_light(), g_3d_state.z_light());
+			put_parm(format(" lightsource=%d/%d/%d")
+				% g_3d_state.x_light() % g_3d_state.y_light() % g_3d_state.z_light());
 			if (g_3d_state.light_avg())
 			{
-				put_parm(" smoothing=%d", g_3d_state.light_avg());
+				put_parm(format(" smoothing=%d") % g_3d_state.light_avg());
 			}
 		}
 		if (g_3d_state.randomize_colors())
 		{
-			put_parm(" randomize=%d", g_3d_state.randomize_colors());
+			put_parm(format(" randomize=%d") % g_3d_state.randomize_colors());
 		}
 		if (g_targa_output)
 		{
@@ -756,70 +762,72 @@ static void write_3d_parameters()
 		}
 		if (g_3d_state.ambient())
 		{
-			put_parm(" ambient=%d", g_3d_state.ambient());
+			put_parm(format(" ambient=%d") % g_3d_state.ambient());
 		}
 		if (g_3d_state.haze())
 		{
-			put_parm(" haze=%d", g_3d_state.haze());
+			put_parm(format(" haze=%d") % g_3d_state.haze());
 		}
 		if (g_3d_state.background_red() != 51
 			|| g_3d_state.background_green() != 153
 			|| g_3d_state.background_blue() != 200)
 		{
-			put_parm(" background=%d/%d/%d", g_3d_state.background_red(),
-				g_3d_state.background_green(), g_3d_state.background_blue());
+			put_parm(format(" background=%d/%d/%d")
+				% g_3d_state.background_red()
+				% g_3d_state.background_green()
+				% g_3d_state.background_blue());
 		}
 	}
 }
 
 void write_batch_parms_julibrot()
 {
-	put_parm(" julibrotfromto=%.15g/%.15g/%.15g/%.15g",
-		g_m_x_max_fp, g_m_x_min_fp, g_m_y_max_fp, g_m_y_min_fp);
+	put_parm(format(" julibrotfromto=%.15g/%.15g/%.15g/%.15g")
+		% g_m_x_max_fp % g_m_x_min_fp % g_m_y_max_fp % g_m_y_min_fp);
 	/* these rarely change */
 	if (g_origin_fp != 8 || g_height_fp != 7 || g_width_fp != 10 || g_screen_distance_fp != 24
 		|| g_depth_fp != 8 || g_z_dots != 128)
-		put_parm(" julibrot3d=%d/%g/%g/%g/%g/%g",
-		g_z_dots, g_origin_fp, g_depth_fp, g_height_fp, g_width_fp, g_screen_distance_fp);
+		put_parm(format(" julibrot3d=%d/%g/%g/%g/%g/%g")
+			% g_z_dots % g_origin_fp % g_depth_fp % g_height_fp % g_width_fp % g_screen_distance_fp);
 	if (g_eyes_fp != 0)
 	{
-		put_parm(" julibroteyes=%g", g_eyes_fp);
+		put_parm(format(" julibroteyes=%g") % g_eyes_fp);
 	}
 	if (g_new_orbit_type != FRACTYPE_JULIA)
 	{
-		put_parm(" orbitname=%s", g_fractal_specific[g_new_orbit_type].get_type());
+		put_parm(format(" orbitname=%s") % g_fractal_specific[g_new_orbit_type].get_type());
 	}
 	if (g_juli_3d_mode != JULI3DMODE_MONOCULAR)
 	{
-		put_parm(" 3dmode=%s", g_juli_3d_options[g_juli_3d_mode]);
+		put_parm(format(" 3dmode=%s") % g_juli_3d_options[g_juli_3d_mode]);
 	}
 }
 
 void write_batch_parms_formula()
 {
 	put_filename("formulafile", g_formula_state.get_filename());
-	put_parm(" formulaname=%s", g_formula_state.get_formula());
+	put_parm(format(" formulaname=%s") % g_formula_state.get_formula());
 	if (g_formula_state.uses_is_mand())
 	{
-		put_parm(" ismand=%c", g_is_mandelbrot ? 'y' : 'n');
+		put_parm(format(" ismand=%c") % (g_is_mandelbrot ? 'y' : 'n'));
 	}
 }
 
 void write_batch_parms_l_system()
 {
 	put_filename("lfile", g_l_system_filename);
-	put_parm(" lname=%s", g_l_system_name.c_str());
+	put_parm(format(" lname=%s") % g_l_system_name.c_str());
 }
 
 void write_batch_parms_ifs()
 {
 	put_filename("ifsfile", g_ifs_filename);
-	put_parm(" ifs=%s", g_ifs_name.c_str());
+	put_parm(format(" ifs=%s") % g_ifs_name.c_str());
 }
 
 void write_batch_parms_inverse_julia()
 {
-	put_parm(" miim=%s/%s", g_jiim_method[g_major_method], g_jiim_left_right[g_minor_method]);
+	put_parm(format(" miim=%s/%s") % g_jiim_method[g_major_method] % g_jiim_left_right[g_minor_method]);
 }
 
 void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
@@ -844,12 +852,12 @@ void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
 		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 		put_parm(" center-mag=");
 		/* convert 1000 fudged long to double, 1000/1<<24 = 6e-5 */
-		put_parm(g_delta_min_fp > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", Xctr, Yctr);
+		put_parm(format(g_delta_min_fp > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf") % Xctr % Yctr);
 	}
 #ifdef USE_LONG_DOUBLE
-	put_parm("/%.7Lg", Magnification); /* precision of magnification not critical, but magnitude is */
+	put_parm(format("/%.7Lg") % Magnification); /* precision of magnification not critical, but magnitude is */
 #else
-	put_parm("/%.7lg", Magnification); /* precision of magnification not critical, but magnitude is */
+	put_parm("/%.7lg") % Magnification); /* precision of magnification not critical, but magnitude is */
 #endif
 	/* Round to avoid ugly decimals, precision here is not critical */
 	/* Don't round Xmagfactor if it's small */
@@ -932,7 +940,7 @@ void write_batch_parms_parameters()
 	for (i = (MAX_PARAMETERS-1); i >= 0; --i)
 	{
 		if (type_has_parameter(fractal_type_julibrot(g_fractal_type) ?
-g_new_orbit_type : g_fractal_type, i))
+				g_new_orbit_type : g_fractal_type, i))
 		{
 			break;
 		}
@@ -942,38 +950,38 @@ g_new_orbit_type : g_fractal_type, i))
 	{
 		if (fractal_type_ant_or_cellular(g_fractal_type))
 		{
-			put_parm(" params=%.1f", g_parameters[0]);
+			put_parm(format(" params=%.1f") % g_parameters[0]);
 		}
 		else
 		{
 #ifdef USE_LONG_DOUBLE
 			if (DEBUGMODE_MORE_DIGITS == g_debug_mode)
 			{
-				put_parm(" params=%.17Lg", (long double)g_parameters[0]);
+				put_parm(format(" params=%.17Lg") % (long double)g_parameters[0]);
 			}
 			else
 #endif
 			{
-				put_parm(" params=%.17g", g_parameters[0]);
+				put_parm(format(" params=%.17g") % g_parameters[0]);
 			}
 		}
 		for (int j = 1; j <= i; ++j)
 		{
 			if (fractal_type_ant_or_cellular(g_fractal_type))
 			{
-				put_parm("/%.1f", g_parameters[j]);
+				put_parm(format("/%.1f") % g_parameters[j]);
 			}
 			else
 			{
 #ifdef USE_LONG_DOUBLE
 				if (DEBUGMODE_MORE_DIGITS == g_debug_mode)
 				{
-					put_parm("/%.17Lg", (long double)g_parameters[j]);
+					put_parm(format("/%.17Lg") % (long double)g_parameters[j]);
 				}
 				else
 #endif
 				{
-					put_parm("/%.17g", g_parameters[j]);
+					put_parm(format("/%.17g") % g_parameters[j]);
 				}
 			}
 		}
@@ -988,7 +996,7 @@ void write_batch_parms_initial_orbit()
 	}
 	else if (g_use_initial_orbit_z == INITIALZ_ORBIT)
 	{
-		put_parm(" initorbit=%.15g/%.15g", g_initial_orbit_z.x, g_initial_orbit_z.y);
+		put_parm(format(" initorbit=%.15g/%.15g") % g_initial_orbit_z.x % g_initial_orbit_z.y);
 	}
 }
 
@@ -996,23 +1004,23 @@ void write_batch_parms_passes()
 {
 	if (g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
 	{
-		put_parm(" passes=%c", char(g_user_standard_calculation_mode));
+		put_parm(format(" passes=%c") % char(g_user_standard_calculation_mode));
 	}
 	if (g_stop_pass != 0)
 	{
-		put_parm(" passes=%c%c", char(g_user_standard_calculation_mode), char(g_stop_pass + '0'));
+		put_parm(format(" passes=%c%c") % char(g_user_standard_calculation_mode) % char(g_stop_pass + '0'));
 	}
 }
 
 void write_batch_parms_reset()
 {
-	put_parm(" reset=%d", check_back() ?
-		std::min(g_save_release, g_release) : g_release);
+	put_parm(format(" reset=%d") % (check_back() ?
+		std::min(g_save_release, g_release) : g_release));
 }
 
 void write_batch_parms_type()
 {
-	put_parm(" type=%s", g_current_fractal_specific->get_type());
+	put_parm(format(" type=%s") % g_current_fractal_specific->get_type());
 
 	if (fractal_type_julibrot(g_fractal_type))
 	{
@@ -1058,7 +1066,7 @@ void write_batch_parms_max_iteration()
 {
 	if (g_max_iteration != 150)
 	{
-		put_parm(" maxiter=%ld", g_max_iteration);
+		put_parm(format(" maxiter=%ld") % g_max_iteration);
 	}
 }
 
@@ -1066,7 +1074,7 @@ void write_batch_parms_bail_out()
 {
 	if (g_bail_out && (!g_potential_flag || g_potential_parameter[2] == 0.0))
 	{
-		put_parm(" bailout=%ld", g_bail_out);
+		put_parm(format(" bailout=%ld") % g_bail_out);
 	}
 
 	if (g_bail_out_test != BAILOUT_MODULUS)
@@ -1107,7 +1115,7 @@ void write_batch_parms_fill_color()
 {
 	if (g_fill_color != -1)
 	{
-		put_parm(" fillcolor=%d", g_fill_color);
+		put_parm(format(" fillcolor=%d") % g_fill_color);
 	}
 }
 
@@ -1154,7 +1162,7 @@ void write_batch_parms_inside()
 		}
 		else
 		{
-			put_parm("%d", g_inside);
+			put_parm(format("%d") % g_inside);
 		}
 	}
 }
@@ -1166,7 +1174,7 @@ void write_batch_parms_proximity()
 		|| g_inside == COLORMODE_FLOAT_MODULUS_INTEGER
 		|| g_outside == COLORMODE_FLOAT_MODULUS))
 	{
-		put_parm(" proximity=%.15g", g_proximity);
+		put_parm(format(" proximity=%.15g") % g_proximity);
 	}
 }
 
@@ -1205,7 +1213,7 @@ void write_batch_parms_outside()
 		}
 		else
 		{
-			put_parm("%d", g_outside);
+			put_parm(format("%d") % g_outside);
 		}
 	}
 }
@@ -1225,7 +1233,7 @@ void write_batch_parms_log_map()
 		}
 		else
 		{
-			put_parm("%ld", g_log_palette_mode);
+			put_parm(format("%ld") % g_log_palette_mode);
 		}
 	}
 }
@@ -1250,8 +1258,8 @@ void write_batch_parms_potential()
 {
 	if (g_potential_flag)
 	{
-		put_parm(" potential=%d/%g/%d",
-			int(g_potential_parameter[0]), g_potential_parameter[1], int(g_potential_parameter[2]));
+		put_parm(format(" potential=%d/%g/%d")
+			% int(g_potential_parameter[0]) % g_potential_parameter[1] % int(g_potential_parameter[2]));
 		if (g_potential_16bit)
 		{
 			put_parm("/16bit");
@@ -1263,8 +1271,8 @@ void write_batch_parms_invert()
 {
 	if (g_invert)
 	{
-		put_parm(" invert=%-1.15lg/%-1.15lg/%-1.15lg",
-			g_inversion[0], g_inversion[1], g_inversion[2]);
+		put_parm(format(" invert=%-1.15lg/%-1.15lg/%-1.15lg")
+			% g_inversion[0] % g_inversion[1] % g_inversion[2]);
 	}
 }
 
@@ -1272,7 +1280,7 @@ void write_batch_parms_decomp()
 {
 	if (g_decomposition[0])
 	{
-		put_parm(" decomp=%d", g_decomposition[0]);
+		put_parm(format(" decomp=%d") % g_decomposition[0]);
 	}
 }
 
@@ -1292,8 +1300,8 @@ void write_batch_parms_distest()
 {
 	if (g_distance_test)
 	{
-		put_parm(" distest=%ld/%d/%d/%d", g_distance_test, g_distance_test_width,
-			g_pseudo_x ? g_pseudo_x : g_x_dots, g_pseudo_y ? g_pseudo_y : g_y_dots);
+		put_parm(format(" distest=%ld/%d/%d/%d") % g_distance_test % g_distance_test_width %
+			(g_pseudo_x ? g_pseudo_x : g_x_dots) % (g_pseudo_y ? g_pseudo_y : g_y_dots));
 	}
 }
 
@@ -1309,7 +1317,7 @@ void write_batch_parms_biomorph()
 {
 	if (g_user_biomorph != -1)
 	{
-		put_parm(" biomorph=%d", g_user_biomorph);
+		put_parm(format(" biomorph=%d") % g_user_biomorph);
 	}
 }
 
@@ -1362,7 +1370,7 @@ void write_batch_parms_periodicity()
 {
 	if (g_periodicity_check != 1)
 	{
-		put_parm(" periodicity=%d", g_periodicity_check);
+		put_parm(format(" periodicity=%d") % g_periodicity_check);
 	}
 }
 
@@ -1370,7 +1378,7 @@ void write_batch_parms_random_see()
 {
 	if (g_use_fixed_random_seed)
 	{
-		put_parm(" rseed=%d", g_random_seed);
+		put_parm(format(" rseed=%d") % g_random_seed);
 	}
 }
 
@@ -1388,10 +1396,10 @@ void write_batch_parms_ranges()
 			}
 			if (g_ranges[i] == -1)
 			{
-				put_parm("-%d/", g_ranges[++i]);
+				put_parm(format("-%d/") % g_ranges[++i]);
 				++i;
 			}
-			put_parm("%d", g_ranges[i++]);
+			put_parm(format("%d") % g_ranges[i++]);
 		}
 	}
 }
@@ -1400,9 +1408,9 @@ void write_batch_parms_view_windows()
 {
 	if (g_view_window)
 	{
-		put_parm(" viewwindows=%g/%g", g_view_reduction, g_final_aspect_ratio);
+		put_parm(format(" viewwindows=%g/%g") % g_view_reduction % g_final_aspect_ratio);
 		put_parm(g_view_crop ? "/yes" : "/no");
-		put_parm("/%d/%d", g_view_x_dots, g_view_y_dots);
+		put_parm(format("/%d/%d") % g_view_x_dots % g_view_y_dots);
 	}
 }
 
@@ -1410,7 +1418,7 @@ void write_batch_parms_math_tolerance()
 {
 	if (g_math_tolerance[0] != 0.05 || g_math_tolerance[1] != 0.05)
 	{
-		put_parm(" mathtolerance=%g/%g", g_math_tolerance[0], g_math_tolerance[1]);
+		put_parm(format(" mathtolerance=%g/%g") % g_math_tolerance[0] % g_math_tolerance[1]);
 	}
 }
 
@@ -1418,7 +1426,7 @@ void write_batch_parms_cycle_range()
 {
 	if (g_rotate_lo != 1 || g_rotate_hi != 255)
 	{
-		put_parm(" cyclerange=%d/%d", g_rotate_lo, g_rotate_hi);
+		put_parm(format(" cyclerange=%d/%d") % g_rotate_lo % g_rotate_hi);
 	}
 }
 
@@ -1434,7 +1442,7 @@ void write_batch_parms_orbit_delay()
 {
 	if (g_orbit_delay > 0)
 	{
-		put_parm(" orbitdelay=%d", g_orbit_delay);
+		put_parm(format(" orbitdelay=%d") % g_orbit_delay);
 	}
 }
 
@@ -1442,7 +1450,7 @@ void write_batch_parms_orbit_interval()
 {
 	if (g_orbit_interval != 1)
 	{
-		put_parm(" orbitinterval=%d", g_orbit_interval);
+		put_parm(format(" orbitinterval=%d") % g_orbit_interval);
 	}
 }
 
@@ -1487,7 +1495,7 @@ void write_batch_parms_orbit_draw_mode()
 	{
 		char args[3] = { 'r', 'l', 'f' };
 		assert(g_orbit_draw_mode >= 0 && g_orbit_draw_mode <= NUM_OF(args));
-		put_parm(" orbitdrawmode=%c", args[g_orbit_draw_mode]);
+		put_parm(format(" orbitdrawmode=%c") % args[g_orbit_draw_mode]);
 	}
 }
 
@@ -1611,7 +1619,7 @@ void write_batch_parms_colors_table(int maxcolor)
 			}
 			if (--scanc - curc > 1)
 			{
-				put_parm("<%d>", scanc-curc);
+				put_parm(format("<%d>") % (scanc-curc));
 				curc = scanc;
 			}
 			else                /* changed our mind */
@@ -1749,7 +1757,7 @@ static void put_filename(const char *keyword, const char *fname)
 				return;
 			}
 		}
-		put_parm(" %s=%s", keyword, fname);
+		put_parm(format(" %s=%s") % keyword % fname);
 	}
 }
 
@@ -1758,25 +1766,25 @@ static void put_filename(const char *keyword, const std::string &fname)
 	put_filename(keyword, fname.c_str());
 }
 
-static void put_parm(const char *parm, ...)
+static void put_parm(const char *parm)
 {
-	char *bufptr;
-	va_list args;
-	va_start(args, parm);
-
 	if (parm[0] == ' '             /* starting a new parm */
 			&& s_wbdata.len == 0)       /* skip leading space */
-		++parm;
-	bufptr = s_wbdata.buf + s_wbdata.len;
-	vsprintf(bufptr, parm, args);
-	while (*(bufptr++))
 	{
-		++s_wbdata.len;
+		++parm;
 	}
+	char *bufptr = s_wbdata.buf + s_wbdata.len;
+	strcpy(bufptr, parm);
+	s_wbdata.len += int(strlen(parm));
 	while (s_wbdata.len > 200)
 	{
 		put_parm_line();
 	}
+}
+
+static void put_parm(const format &message)
+{
+	put_parm(message.str().c_str());
 }
 
 int g_max_line_length = 72;

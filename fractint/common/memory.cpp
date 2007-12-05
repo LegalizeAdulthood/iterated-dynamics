@@ -3,7 +3,6 @@
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
-#include <stdarg.h>
 #include <ctype.h>
 #include <errno.h>
 #include <string>
