@@ -193,9 +193,7 @@ int gifview()
 	}
 	if (driver_diskp()) /* disk-video */
 	{
-		std::ostringstream message;
-		message << "restoring " << fs::path(temp1).leaf() << std::ends;
-		disk_video_status(1, message.str());
+		disk_video_status(1, "restoring " + fs::path(temp1).leaf());
 	}
 	g_dont_read_color = false;
 

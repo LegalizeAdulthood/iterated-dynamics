@@ -1669,9 +1669,7 @@ static void abort_cellular(int err, int t)
 	{
 	case BAD_T:
 		{
-			std::ostringstream msg;
-			msg << boost::format("Bad t=%d, aborting\n") % t << std::ends;
-			stop_message(0, msg.str());
+			stop_message(0, (boost::format("Bad t=%d, aborting\n") % t).str());
 		}
 		break;
 	case BAD_MEM:
