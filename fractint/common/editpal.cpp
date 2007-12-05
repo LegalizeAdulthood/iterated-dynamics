@@ -7,7 +7,8 @@
 #include <string>
 
 #include <string.h>
-#include <stdarg.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -240,16 +241,10 @@ static void rectangle(int x, int y, int width, int depth, int color)
 	vertical_line(x + width-1, y, depth, color);
 }
 
-static void displayf(int x, int y, int fg, int bg, char *format, ...)
+static void displayf(int x, int y, int fg, int bg, const boost::format &message)
 {
-	char buff[81];
-	va_list arg_list;
-	va_start(arg_list, format);
-	vsprintf(buff, format, arg_list);
-	va_end(arg_list);
-	driver_display_string(x, y, fg, bg, buff);
+	driver_display_string(x, y, fg, bg, message.str().c_str());
 }
-
 
 /*
  * create smooth shades between two colors
@@ -1025,7 +1020,7 @@ static void color_editor_draw(color_editor *me)
 	}
 
 	cursor_hide();
-	displayf(me->x + 2, me->y + 2, s_fg_color, s_bg_color, "%c%02d", me->letter, me->val);
+	displayf(me->x + 2, me->y + 2, s_fg_color, s_bg_color, boost::format("%c%02d") % me->letter % me->val);
 	cursor_show();
 }
 
@@ -1838,7 +1833,7 @@ static void pal_table_draw(pal_table *me)
 	{
 		int center = (width - TITLE_LEN*8)/2;
 
-		displayf(me->x + center, me->y + RGB_EDITOR_DEPTH/2-6, s_fg_color, s_bg_color, TITLE);
+		driver_display_string(me->x + center, me->y + RGB_EDITOR_DEPTH/2-6, s_fg_color, s_bg_color, TITLE);
 	}
 
 	rgb_editor_draw(me->rgb[0]);

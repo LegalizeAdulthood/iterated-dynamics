@@ -41,7 +41,6 @@
 #include <string>
 
 #include <string.h>
-#include <stdarg.h>
 
 #include "port.h"
 #include "prototyp.h"
