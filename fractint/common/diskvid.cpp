@@ -1,8 +1,12 @@
 /*
 	"Disk-Video" (and RAM-Video and Expanded-Memory Video) routines
 */
-#include <string.h>
+#include <sstream>
 #include <string>
+
+#include <string.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -338,18 +342,25 @@ void disk_end()
 	g_disk_16bit = false;
 }
 
+static void disk_line_status(bool reading, int row)
+{
+	std::ostringstream message;
+	message << boost::format(" %s line %4d")
+			% (reading ? "reading" : "writing")
+			% ((row >= g_screen_height) ? row-g_screen_height : row)
+		<< std::ends; /* adjust when potfile */
+	disk_video_status(0, message.str().c_str());
+}
+
 int disk_read(int col, int row)
 {
 	int col_subscr;
 	long offset;
-	char buf[41];
 	if (--s_time_to_display < 0)  /* time to display status? */
 	{
 		if (driver_diskp())
 		{
-			sprintf(buf, " reading line %4d",
-					(row >= g_screen_height) ? row-g_screen_height : row); /* adjust when potfile */
-			disk_video_status(0, buf);
+			disk_line_status(true, row);
 		}
 		s_time_to_display = g_bf_math ? 10 : 1000;  /* time-to-display-status counter */
 	}
@@ -405,14 +416,11 @@ void disk_write(int col, int row, int color)
 {
 	int col_subscr;
 	long offset;
-	char buf[41];
 	if (--s_time_to_display < 0)  /* time to display status? */
 	{
 		if (driver_diskp())
 		{
-			sprintf(buf, " writing line %4d",
-					(row >= g_screen_height) ? row-g_screen_height : row); /* adjust when potfile */
-			disk_video_status(0, buf);
+			disk_line_status(false, row);
 		}
 		s_time_to_display = 1000;
 	}
@@ -744,7 +752,7 @@ static void mem_putc(BYTE c)     /* memory get_char */
 }
 
 
-void disk_video_status(int line, char *msg)
+void disk_video_status(int line, const char *msg)
 {
 	char buf[41];
 	int attrib;
@@ -759,4 +767,9 @@ void disk_video_status(int line, char *msg)
 	}
 	driver_put_string(BOX_ROW + 10 + line, BOX_COL + 12, attrib, buf);
 	driver_hide_text_cursor();
+}
+
+void disk_video_status(int line, const std::string &str)
+{
+	disk_video_status(line, str.c_str());
 }

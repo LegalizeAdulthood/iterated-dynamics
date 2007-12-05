@@ -1,4 +1,6 @@
 #include <cassert>
+#include <string>
+
 #include <string.h>
 
 #include "port.h"

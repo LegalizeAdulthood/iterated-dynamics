@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <sstream>
 #include <string>
 
 #include <limits.h>
@@ -831,9 +832,9 @@ int out_line_3d(BYTE *pixels, int line_length)
 	}
 	if (driver_diskp())
 	{
-		char s[40];
-		sprintf(s, "mapping to 3d, reading line %d", g_current_row);
-		disk_video_status(1, s);
+		std::ostringstream message;
+		message << "mapping to 3d, reading line " << g_current_row << std::ends;
+		disk_video_status(1, message.str());
 	}
 
 	if (!col && g_3d_state.raytrace_output() && g_current_row != 0)
