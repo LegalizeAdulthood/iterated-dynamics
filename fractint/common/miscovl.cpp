@@ -561,10 +561,9 @@ skip_UI:
 					&& sscanf(buf, " %40[^ \t({]", buf2)
 					&& stricmp(buf2, g_command_name.c_str()) == 0)
 				{                   /* entry with same name */
-					_snprintf(buf2, NUM_OF(buf2), "File already has an entry named %s\n%s",
-						g_command_name, (!g_make_par_flag) ?
-						"... Replacing ..." : "Continue to replace it, Cancel to back out");
-					if (stop_message(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, buf2) < 0)
+					std::string prompt = "File already has an entry named " + g_command_name + "\n" +
+						(g_make_par_flag ? "Continue to replace it, Cancel to back out" : "... Replacing ...");
+					if (stop_message(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, prompt) < 0)
 					{                /* cancel */
 						fclose(input_file);
 						fclose(parmfile);
@@ -2996,9 +2995,7 @@ static char *expand_var(char *var, char *buf)
 	}
 	else
 	{
-		char buff[80];
-		_snprintf(buff, NUM_OF(buff), "Unknown comment variable %s", var);
-		stop_message(0, buff);
+		stop_message(0, std::string("Unknown comment variable ") + var);
 		out = "";
 	}
 	return out;

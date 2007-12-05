@@ -810,8 +810,7 @@ rescan:  /* entry for changed browse parms */
 
 			case 'D': /* delete file */
 				clear_temp_message();
-				_snprintf(message, NUM_OF(message), "Delete %s? (Y/N)", winlist.name);
-				show_temp_message(message);
+				show_temp_message("Delete " + winlist.name + "? (Y/N)");
 				driver_wait_key_pressed(0);
 				clear_temp_message();
 				c = driver_get_key();

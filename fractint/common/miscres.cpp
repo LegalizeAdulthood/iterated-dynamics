@@ -12,6 +12,8 @@
 #endif
 #include <stdarg.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -696,17 +698,13 @@ static void show_str_var(const char *name, const std::string &var, int &row, cha
 	show_str_var(name, var.c_str(), row, msg);
 }
 
-static void
-write_row(int row, const char *format, ...)
+static void write_row(int row, const char *text)
 {
-	char text[78] = { 0 };
-	va_list args;
-
-	va_start(args, format);
-	_vsnprintf(text, NUM_OF(text), format, args);
-	va_end(args);
-
 	driver_put_string(row, 2, C_GENERAL_HI, text);
+}
+static void write_row(int row, const boost::format &text)
+{
+	write_row(row, text.str().c_str());
 }
 
 int tab_display_2(char *msg)
@@ -720,14 +718,14 @@ int tab_display_2(char *msg)
 	row = 1;
 	put_string_center(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
-	write_row(++row, "Version %d patch %d", g_release, g_patch_level);
-	write_row(++row, "%ld of %ld bignum memory used", g_bn_max_stack, maxstack);
-	write_row(++row, "   %ld used for bignum globals", startstack);
-	write_row(++row, "   %ld stack used == %ld variables of length %d",
-			g_bn_max_stack-startstack, long((g_bn_max_stack-startstack)/(g_rbf_length + 2)), g_rbf_length + 2);
+	write_row(++row, boost::format("Version %d patch %d") % g_release % g_patch_level);
+	write_row(++row, boost::format("%ld of %ld bignum memory used") % g_bn_max_stack % maxstack);
+	write_row(++row, boost::format("   %ld used for bignum globals") % startstack);
+	write_row(++row, boost::format("   %ld stack used == %ld variables of length %d")
+		% (g_bn_max_stack-startstack) % long((g_bn_max_stack-startstack)/(g_rbf_length + 2)) % (g_rbf_length + 2));
 	if (g_bf_math)
 	{
-		write_row(++row, "intlength %-d bflength %-d ", g_int_length, g_bf_length);
+		write_row(++row, boost::format("intlength %-d bflength %-d ") % g_int_length % g_bf_length);
 	}
 	row++;
 	show_str_var("tempdir", g_temp_dir, row, msg);
@@ -740,24 +738,24 @@ int tab_display_2(char *msg)
 	show_str_var("autokeyname", g_autokey_name, row, msg);
 	show_str_var("lightname", g_light_name, row, msg);
 	show_str_var("map", g_map_name, row, msg);
-	write_row(row++, "Sizeof g_fractal_specific array %d",
-		g_num_fractal_types*int(sizeof(FractalTypeSpecificData)));
-	write_row(row++, "CalculationStatus %d pixel [%d, %d]", g_calculation_status, g_col, g_row);
+	write_row(row++, boost::format("Sizeof g_fractal_specific array %d")
+		% (g_num_fractal_types*int(sizeof(FractalTypeSpecificData))));
+	write_row(row++, boost::format("CalculationStatus %d pixel [%d, %d]") % g_calculation_status % g_col % g_row);
 	if (fractal_type_formula(g_fractal_type))
 	{
 		write_row(row++, g_formula_state.info_line1());
 		write_row(row++, g_formula_state.info_line2());
 	}
 
-	write_row(row++, "%dx%d %s (%s)", g_x_dots, g_y_dots, driver_name(), driver_description());
-	write_row(row++, "xx: start %d, stop %d; yy: start %d, stop %d %s UsesIsMand %d",
-		g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.yy_start(), g_WorkList.yy_stop(),
+	write_row(row++, boost::format("%dx%d %s (%s)") % g_x_dots % g_y_dots % driver_name() % driver_description());
+	write_row(row++, boost::format("xx: start %d, stop %d; yy: start %d, stop %d %s UsesIsMand %d")
+		% g_WorkList.xx_start() % g_WorkList.xx_stop() % g_WorkList.yy_start() % g_WorkList.yy_stop()
 #if !defined(XFRACT) && !defined(_WIN32)
 		g_current_fractal_specific->orbitcalc == fFormula ? "fast parser" :
 #endif
-		g_current_fractal_specific->orbitcalc ==  formula_orbit ? "slow parser" :
-		g_current_fractal_specific->orbitcalc ==  bad_formula ? "bad formula" :
-		"", g_formula_state.uses_is_mand() ? 1 : 0);
+		% (g_current_fractal_specific->orbitcalc ==  formula_orbit ? "slow parser" :
+			g_current_fractal_specific->orbitcalc ==  bad_formula ? "bad formula" : "")
+		% (g_formula_state.uses_is_mand() ? 1 : 0));
 	/*
 	char message[80] = { 0 };
 	extern void tile_message(char *message, int message_len);
@@ -766,8 +764,8 @@ int tab_display_2(char *msg)
 	write_row(row++, "ixstart %d g_x_stop %d iystart %d g_y_stop %d g_bit_shift %d",
 	ixstart, g_x_stop, iystart, g_y_stop, g_bit_shift);
 	*/
-	write_row(row++, "g_limit2_l %ld g_use_grid %s",
-		g_limit2_l, g_escape_time_state.m_use_grid ? "true" : "false");
+	write_row(row++, boost::format("g_limit2_l %ld g_use_grid %s")
+		% g_limit2_l % (g_escape_time_state.m_use_grid ? "true" : "false"));
 	put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 
@@ -1055,8 +1053,8 @@ top:
 	{
 		++s_row;
 	}
-	_snprintf(msg, NUM_OF(msg), "driver: %s, %s", driver_name(), driver_description());
-	driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
+	driver_put_string(s_row++, 2, C_GENERAL_MED,
+		(boost::format("driver: %s, %s") % driver_name() % driver_description()).str().c_str());
 	if (g_video_entry.x_dots && g_bf_math == 0)
 	{
 		sprintf(msg, "Video: %dx%dx%d %s %s",
