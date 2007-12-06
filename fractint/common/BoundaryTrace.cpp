@@ -67,7 +67,7 @@ int boundary_trace_main()
 	int length;
 	if (g_inside == 0 || g_outside == 0)
 	{
-		stop_message(0, "Boundary tracing cannot be used with inside=0 or outside=0");
+		stop_message(STOPMSG_NORMAL, "Boundary tracing cannot be used with inside=0 or outside=0");
 		return -1;
 	}
 

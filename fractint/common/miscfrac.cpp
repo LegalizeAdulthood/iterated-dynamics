@@ -1039,7 +1039,7 @@ int bifurcation()
 	s_verhulst_array = new int[array_size];
 	if (s_verhulst_array == 0)
 	{
-		stop_message(0, "Insufficient free memory for calculation.");
+		stop_message(STOPMSG_NORMAL, "Insufficient free memory for calculation.");
 		return -1;
 	}
 
@@ -1567,7 +1567,7 @@ bool lyapunov_setup()
 	s_lyapunov_r_xy[s_lyapunov_length++] = 0;
 	if (g_inside < 0)
 	{
-		stop_message(0, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
+		stop_message(STOPMSG_NORMAL, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
 		g_inside = 1;
 	}
 	if (g_user_standard_calculation_mode == CALCMODE_ORBITS)  /* Oops, lyapunov type */
@@ -1669,31 +1669,31 @@ static void abort_cellular(int err, int t)
 	{
 	case BAD_T:
 		{
-			stop_message(0, (boost::format("Bad t=%d, aborting\n") % t).str());
+			stop_message(STOPMSG_NORMAL, (boost::format("Bad t=%d, aborting\n") % t).str());
 		}
 		break;
 	case BAD_MEM:
-		stop_message(0, "Insufficient free memory for calculation");
+		stop_message(STOPMSG_NORMAL, "Insufficient free memory for calculation");
 		break;
 	case STRING1:
-		stop_message(0, "String can be a maximum of 16 digits");
+		stop_message(STOPMSG_NORMAL, "String can be a maximum of 16 digits");
 		break;
 	case STRING2:
 		{
 			static char msg[] = {"Make string of 0's through  's" };
 			msg[27] = (char)(s_k_1 + 48); /* turn into a character value */
-			stop_message(0, msg);
+			stop_message(STOPMSG_NORMAL, msg);
 		}
 		break;
 	case TABLEK:
 		{
 			static char msg[] = {"Make Rule with 0's through  's" };
 			msg[27] = (char)(s_k_1 + 48); /* turn into a character value */
-			stop_message(0, msg);
+			stop_message(STOPMSG_NORMAL, msg);
 		}
 		break;
 	case TYPEKR:
-		stop_message(0, "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
+		stop_message(STOPMSG_NORMAL, "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
 		break;
 	case RULELENGTH:
 		{
@@ -1708,11 +1708,11 @@ static void abort_cellular(int err, int t)
 				msg[13] = (char) (i + 48);
 				msg[14] = (char) ((s_rule_digits % 10) + 48);
 			}
-			stop_message(0, msg);
+			stop_message(STOPMSG_NORMAL, msg);
 		}
 		break;
 	case INTERUPT:
-		stop_message(0, "Interrupted, can't resume");
+		stop_message(STOPMSG_NORMAL, "Interrupted, can't resume");
 		break;
 	case CELLULAR_DONE:
 		break;

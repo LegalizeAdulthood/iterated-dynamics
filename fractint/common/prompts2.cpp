@@ -858,7 +858,7 @@ int starfield()
 
 	if (validate_luts(GREY_MAP.c_str()) != 0)
 	{
-		stop_message(0, "Unable to load ALTERN.MAP");
+		stop_message(STOPMSG_NORMAL, "Unable to load ALTERN.MAP");
 		return -1;
 	}
 	spindac(0, 1);                 /* load it, but don't spin */
@@ -2114,7 +2114,7 @@ int integer_unsupported()
 	if (g_fractal_type != last_fractype)
 	{
 		last_fractype = g_fractal_type;
-		stop_message(0, "This integer fractal type is unimplemented;\n"
+		stop_message(STOPMSG_NORMAL, "This integer fractal type is unimplemented;\n"
 			"Use float=yes or the <X> screen to get a real image.");
 	}
 

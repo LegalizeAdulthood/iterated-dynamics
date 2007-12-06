@@ -42,6 +42,8 @@
 
 #include <string.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -292,7 +294,7 @@ bool Init_Queue(unsigned long request)
 {
 	if (driver_diskp())
 	{
-		stop_message(0, "Don't try this in disk video mode, kids...\n");
+		stop_message(STOPMSG_NORMAL, "Don't try this in disk video mode, kids...\n");
 		s_list_size = 0;
 		return false;
 	}
@@ -976,17 +978,16 @@ void JIIM::execute()
 			actively_computing = true;
 			if (s_show_numbers) /* write coordinates on screen */
 			{
-				char str[41];
-				sprintf(str, "%16.14f %16.14f %3d", cr, ci, getcolor(g_col, g_row));
+				std::string str =
+					(boost::format("%16.14f %16.14f %3d") % cr % ci % getcolor(g_col, g_row)).str();
 				if (s_windows == 0)
 				{
 					/* show temp msg will clear self if new msg is a
 						different length - pad to length 40*/
-					while (int(strlen(str)) < 40)
+					if (str.length() < 40)
 					{
-						strcat(str, " ");
+						str.resize(40, ' ');
 					}
-					str[40] = 0;
 					cursor_hide();
 					actively_computing = true;
 					show_temp_message(str);
@@ -994,7 +995,7 @@ void JIIM::execute()
 				}
 				else
 				{
-					driver_display_string(5, g_screen_height-s_show_numbers, WHITE, BLACK, str);
+					driver_display_string(5, g_screen_height-s_show_numbers, WHITE, BLACK, str.c_str());
 				}
 			}
 			iter = 1;

@@ -2319,7 +2319,7 @@ long get_file_entry(int type, const char *title, char *fmask,
 			{
 				char message[256];
 				sprintf(message, "Can't find %s", filename);
-				stop_message(0, message);
+				stop_message(STOPMSG_NORMAL, message);
 			}
 			sprintf(buf, "Select %s File", title);
 			if (get_a_filename(buf, fmask, filename) < 0)
@@ -2537,7 +2537,7 @@ top:
 					if (++numentries >= MAXENTRIES)
 					{
 						sprintf(buf, "Too many entries in file, first %ld used", MAXENTRIES);
-						stop_message(0, buf);
+						stop_message(STOPMSG_NORMAL, buf);
 						break;
 					}
 				}
@@ -2589,7 +2589,7 @@ retry:
 	numentries = scan_entries(s_gfe_file, &storage[0], 0);
 	if (numentries == 0)
 	{
-		stop_message(0, "File doesn't contain any valid entries");
+		stop_message(STOPMSG_NORMAL, "File doesn't contain any valid entries");
 		fclose(s_gfe_file);
 		return -2; /* back to file list */
 	}
@@ -3160,7 +3160,7 @@ restart_1:
 	k++;
 	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
-		stop_message(0, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
+		stop_message(STOPMSG_NORMAL, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
 		"the online documentation.");
 	}
 	g_3d_state.set_raytrace_brief(uvalues[k++].uval.ch.val != 0);

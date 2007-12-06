@@ -166,7 +166,7 @@ int SoundState::open()
 		m_fp = fopen(soundname, "w");
 		if (m_fp == 0)
 		{
-			stop_message(0, "Can't open SOUND*.TXT");
+			stop_message(STOPMSG_NORMAL, "Can't open SOUND*.TXT");
 		}
 		else
 		{

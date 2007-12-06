@@ -154,8 +154,7 @@ restart:
 		}
 		if (write_access(openfile))
 		{
-			sprintf(tmpmsg, "Can't write %s", openfile);
-			stop_message(0, tmpmsg);
+			stop_message(STOPMSG_NORMAL, std::string("Can't write ") + openfile);
 			return -1;
 		}
 		new_file = false;
@@ -176,18 +175,14 @@ restart:
 	g_outfile = fopen(tmpfile, "wb");
 	if (g_outfile == 0)
 	{
-		sprintf(tmpmsg, "Can't create %s", tmpfile);
-		stop_message(0, tmpmsg);
+		stop_message(STOPMSG_NORMAL, std::string("Can't create ") + tmpfile);
 		return -1;
 	}
 
 	if (driver_diskp())
 	{                            /* disk-video */
-		char buf[61];
 		extract_filename(tmpmsg, openfile);
-
-		sprintf(buf, "Saving %s", tmpmsg);
-		disk_video_status(1, buf);
+		disk_video_status(1, std::string("Saving ") + tmpmsg);
 	}
 #ifdef XFRACT
 	else
@@ -209,16 +204,13 @@ restart:
 
 	if (interrupted)
 	{
-		char buf[200];
-		sprintf(buf, "Save of %s interrupted.\nCancel to ", openfile);
-		if (new_file)
-		{
-			strcat(buf, "delete the file,\ncontinue to keep the partial image.");
-		}
-		else
-		{
-			strcat(buf, "retain the original file,\ncontinue to replace original with new partial image.");
-		}
+		std::string buf = "Save of " + std::string(openfile) + " interrupted.\n"
+			"Cancel to " + (new_file ?
+				"delete the file,\n"
+				"continue to keep the partial image."
+				:
+				"retain the original file,\n"
+				"continue to replace original with new partial image.");
 		interrupted = 1;
 		if (stop_message(STOPMSG_CANCEL, buf) < 0)
 		{
@@ -278,8 +270,7 @@ restart:
 		if (g_initialize_batch == INITBATCH_NONE)
 		{
 			extract_filename(tmpfile, openfile);
-			sprintf(tmpmsg, " File saved as %s ", tmpfile);
-			text_temp_message(tmpmsg);
+			text_temp_message((std::string(" File saved as ") + tmpfile + " ").c_str());
 		}
 	}
 	if (g_save_time < 0)
@@ -683,7 +674,7 @@ int encoder()
 
 oops:
 	fflush(g_outfile);
-	stop_message(0, "Error Writing to disk (Disk full?)");
+	stop_message(STOPMSG_NORMAL, "Error Writing to disk (Disk full?)");
 	return 1;
 }
 

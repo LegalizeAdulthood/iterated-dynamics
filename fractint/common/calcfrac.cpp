@@ -339,12 +339,12 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 	{
 		if (s_save_dots == 0)
 		{
-			stop_message(0, "s_save_dots 0");
+			stop_message(STOPMSG_NORMAL, "s_save_dots 0");
 			exit(0);
 		}
 		if (s_fill_buffer == 0)
 		{
-			stop_message(0, "s_fill_buffer 0");
+			stop_message(STOPMSG_NORMAL, "s_fill_buffer 0");
 			exit(0);
 		}
 	}
@@ -566,11 +566,11 @@ int calculate_fractal()
 		{
 			if (g_ranges_length || g_log_dynamic_calculate == LOGDYNAMIC_TABLE)
 			{
-				stop_message(0, "Insufficient memory for logmap/ranges with this maxiter");
+				stop_message(STOPMSG_NORMAL, "Insufficient memory for logmap/ranges with this maxiter");
 			}
 			else
 			{
-				stop_message(0, "Insufficient memory for logTable, using on-the-fly routine");
+				stop_message(STOPMSG_NORMAL, "Insufficient memory for logTable, using on-the-fly routine");
 				g_log_dynamic_calculate = LOGDYNAMIC_DYNAMIC;
 				g_log_calculation = true; /* calculate on the fly */
 				SetupLogTable();

@@ -2507,7 +2507,7 @@ bool Formula::parse_string(const char *text, int pass)
 	m_jump_index = 0;
 	if (!m_store || !m_load || !m_functions)
 	{
-		stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+		stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 		return true;
 	}
 	parse_string_set_math();
@@ -3589,7 +3589,7 @@ void Formula::get_parameter(const char *name)
 	FILE *entry_file = 0;
 	if (find_file_item(m_filename, name, &entry_file, ITEMTYPE_FORMULA))
 	{
-		stop_message(0, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+		stop_message(STOPMSG_NORMAL, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return;
 	}
 
@@ -3602,7 +3602,7 @@ void Formula::get_parameter(const char *name)
 		while (c != '{' && c != EOF && c != CTRL_Z);
 		if (c != '{')
 		{
-			stop_message(0, error_messages(PE_UNEXPECTED_EOF));
+			stop_message(STOPMSG_NORMAL, error_messages(PE_UNEXPECTED_EOF));
 			fclose(entry_file);
 			return;
 		}
@@ -3691,11 +3691,11 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		{
 		case EOF:
 		case CTRL_Z:
-			stop_message(0, error_messages(PE_UNEXPECTED_EOF));
+			stop_message(STOPMSG_NORMAL, error_messages(PE_UNEXPECTED_EOF));
 			return false;
 		case '\r':
 		case '\n':
-			stop_message(0, error_messages(PE_NO_LEFT_BRACKET_FIRST_LINE));
+			stop_message(STOPMSG_NORMAL, error_messages(PE_NO_LEFT_BRACKET_FIRST_LINE));
 			return false;
 		case ' ':
 		case '\t':
@@ -3744,7 +3744,7 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 			{
 			case EOF:
 			case CTRL_Z:
-				stop_message(0, error_messages(PE_UNEXPECTED_EOF));
+				stop_message(STOPMSG_NORMAL, error_messages(PE_UNEXPECTED_EOF));
 				return false;
 			case '\r':
 			case '\n':
@@ -3957,7 +3957,7 @@ bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 	/* add search for FRM files in directory */
 	if (find_file_item(m_filename, name, &entry_file, ITEMTYPE_FORMULA))
 	{
-		stop_message(0, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
+		stop_message(STOPMSG_NORMAL, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return true;
 	}
 
@@ -3978,7 +3978,7 @@ bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 
 	if (m_uses_jump && fill_jump_struct())
 	{
-		stop_message(0, error_messages(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
+		stop_message(STOPMSG_NORMAL, error_messages(PE_ERROR_IN_PARSING_JUMP_STATEMENTS));
 		return true;
 	}
 
@@ -4123,8 +4123,8 @@ void Formula::free_work_area()
 
 void Formula::formula_error(FILE *open_file, long begin_frm)
 {
-	char msgbuf[900];
-	strcpy(msgbuf, "\n");
+	std::string message;
+	message = "\n";
 
 	FormulaToken token;
 	int token_count;
@@ -4145,15 +4145,15 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 			}
 			else if (i == EOF || i == '}')
 			{
-				stop_message(0, "Unexpected EOF or end-of-formula in error function.\n");
+				stop_message(STOPMSG_NORMAL, "Unexpected EOF or end-of-formula in error function.\n");
 				fseek(open_file, m_errors[j].error_pos, SEEK_SET);
 				formula_get_token(open_file, &token); /*reset file to end of error token */
 				return;
 			}
 		}
-		sprintf(&msgbuf[int_strlen(msgbuf)], "Error(%d) at line %d:  %s\n  ",
-			m_errors[j].error_number, line_number, error_messages(m_errors[j].error_number));
-		i = int_strlen(msgbuf);
+		message += (boost::format("Error(%d) at line %d:  %s\n  ")
+			%  m_errors[j].error_number % line_number % error_messages(m_errors[j].error_number)).str();
+		i = int(message.length());
 		fseek(open_file, m_errors[j].start_pos, SEEK_SET);
 		int statement_len = 0;
 		token_count = 0;
@@ -4203,34 +4203,34 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 			chars_to_error = 0;
 			token_count = 1;
 		}
-		while (int_strlen(&msgbuf[i]) <= 74 && token_count--)
+		while (message.length() - i <= 74 && token_count--)
 		{
 			formula_get_token(open_file, &token);
-			strcat(msgbuf, token.text);
+			message += token.text;
 		}
 		fseek(open_file, m_errors[j].error_pos, SEEK_SET);
 		formula_get_token(open_file, &token);
-		if (int_strlen(&msgbuf[i]) > 74)
+		if (message.length() - i > 74)
 		{
-			msgbuf[i + 74] = 0;
+			message = message.substr(0, message.length() - i + 74);
 		}
-		strcat(msgbuf, "\n");
-		i = int_strlen(msgbuf);
+		message += "\n";
+		i = int(message.length());
 		while (chars_to_error-- > -2)
 		{
-			strcat(msgbuf, " ");
+			message += " ";
 		}
 		if (m_errors[j].error_number == PE_TOKEN_TOO_LONG)
 		{
 			chars_in_error = 33;
 		}
-		while (chars_in_error-- && int_strlen(&msgbuf[i]) <= 74)
+		while (chars_in_error-- && message.length() - i <= 74)
 		{
-			strcat(msgbuf, "^");
+			message += "^";
 		}
-		strcat(msgbuf, "\n");
+		message += "\n";
 	}
-	stop_message(8, msgbuf);
+	stop_message(STOPMSG_FIXED_FONT, message);
 	return;
 }
 
@@ -4244,10 +4244,10 @@ void Formula::display_var_list()
 
 void var_list_st::display() const
 {
-	stop_message(0, "List of user defined variables:\n");
+	stop_message(STOPMSG_NORMAL, "List of user defined variables:\n");
 	for (const var_list_st *p = this; p; p = p->next_item)
 	{
-		stop_message(0, p->name);
+		stop_message(STOPMSG_NORMAL, p->name);
 	}
 }
 
@@ -4265,12 +4265,11 @@ void Formula::display_const_lists()
 
 void const_list_st::display(const char *title) const
 {
-	char msgbuf[800];
-	stop_message(0, title);
+	stop_message(STOPMSG_NORMAL, title);
 	for (const const_list_st *p = this; p; p = p->next_item)
 	{
-		sprintf(msgbuf, "%f, %f\n", p->complex_const.x, p->complex_const.y);
-		stop_message(0, msgbuf);
+		stop_message(STOPMSG_NORMAL,
+			(boost::format("%f, %f\n") % p->complex_const.x % p->complex_const.y).str());
 	}
 }
 
@@ -4444,7 +4443,7 @@ bool Formula::prescan(FILE *open_file)
 			switch (this_token.id)
 			{
 			case TOKENID_ERROR_END_OF_FILE:
-				stop_message(0, error_messages(PE_UNEXPECTED_EOF));
+				stop_message(STOPMSG_NORMAL, error_messages(PE_UNEXPECTED_EOF));
 				fseek(open_file, orig_pos, SEEK_SET);
 				return false;
 			case TOKENID_ERROR_ILLEGAL_CHARACTER:
@@ -4475,7 +4474,7 @@ bool Formula::prescan(FILE *open_file)
 				record_error(PE_INVALID_CONST);
 				break;
 			default:
-				stop_message(0, "Unexpected arrival at default case in prescan()");
+				stop_message(STOPMSG_NORMAL, "Unexpected arrival at default case in prescan()");
 				fseek(open_file, orig_pos, SEEK_SET);
 				return false;
 			}
@@ -4545,7 +4544,7 @@ bool Formula::prescan(FILE *open_file)
 			m_variable_list = var_list_st::add(m_variable_list, this_token);
 			if (m_variable_list == 0)
 			{
-				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();
@@ -4575,7 +4574,7 @@ bool Formula::prescan(FILE *open_file)
 			m_real_list = const_list_st::add(m_real_list, this_token);
 			if (m_real_list == 0)
 			{
-				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();
@@ -4595,7 +4594,7 @@ bool Formula::prescan(FILE *open_file)
 			m_complex_list = const_list_st::add(m_complex_list, this_token);
 			if (m_complex_list == 0)
 			{
-				stop_message(0, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+				stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
 				fseek(open_file, orig_pos, SEEK_SET);
 				init_var_list();
 				init_const_lists();

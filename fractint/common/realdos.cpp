@@ -156,6 +156,10 @@ int stop_message(int flags, const char *msg)
 	for a key press, restores the prior display, and returns (without
 	eating the key).
 */
+int text_temp_message(const std::string &message)
+{
+	return text_temp_message(message.c_str());
+}
 int text_temp_message(const char *msgparm)
 {
 	if (show_temp_message(msgparm))

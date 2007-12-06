@@ -1,7 +1,10 @@
+#include <string>
+
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
-#include <string>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "id.h"
@@ -241,7 +244,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				{
 					if (!driver_diskp())
 					{
-						stop_message(0, "That video mode is not available with your adapter.");
+						stop_message(STOPMSG_NORMAL, "That video mode is not available with your adapter.");
 					}
 					g_ui_state.ask_video = true;
 					g_initial_adapter = -1;
@@ -296,7 +299,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				}
 				if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
 				{
-					stop_message(0, "View window too large; using full screen.");
+					stop_message(STOPMSG_NORMAL, "View window too large; using full screen.");
 					g_view_window = false;
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
@@ -308,14 +311,14 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					&& !(g_evolving_flags & EVOLVE_FIELD_MAP))
 				{	/* so ssg works */
 					/* but no check if in evolve mode to allow lots of small views*/
-					stop_message(0, "View window too small; using full screen.");
+					stop_message(STOPMSG_NORMAL, "View window too small; using full screen.");
 					g_view_window = false;
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
 				}
 				if ((g_evolving_flags & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & FRACTALFLAG_INFINITE_CALCULATION))
 				{
-					stop_message(0, "Fractal doesn't terminate! switching off evolution.");
+					stop_message(STOPMSG_NORMAL, "Fractal doesn't terminate! switching off evolution.");
 					g_evolving_flags &= ~EVOLVE_FIELD_MAP;
 					g_view_window = false;
 					g_x_dots = g_screen_width;
@@ -381,9 +384,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			}
 			if (2224 == g_debug_mode)
 			{
-				char msg[MESSAGE_LEN];
-				sprintf(msg, "floatflag=%d", g_user_float_flag ? 1 : 0);
-				stop_message(STOPMSG_NO_BUZZER, (char *)msg);
+				stop_message(STOPMSG_NO_BUZZER,
+					(boost::format("floatflag=%d") % (g_user_float_flag ? 1 : 0)).str());
 			}
 			i = funny_glasses_call(gifview);
 			if (g_out_line_cleanup)              /* cleanup routine defined? */

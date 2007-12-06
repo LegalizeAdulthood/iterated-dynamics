@@ -32,7 +32,7 @@ static int s_last1 = 0;
 static void sleep_secs(int secs);
 static void showtempmsg_txt(int, int, int, int, char *);
 static void message(int secs, char *buf);
-static void slideshowerr(char *msg);
+static void slide_show_error(const std::string &message);
 static int  get_scancode(char *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
@@ -204,7 +204,7 @@ start:
 		if (fscanf(s_slide_file, "%d", &s_repeats) != 1
 			|| s_repeats <= 1 || s_repeats >= 256 || feof(s_slide_file))
 		{
-			slideshowerr("error in * argument");
+			slide_show_error("error in * argument");
 			s_last1 = 0;
 			s_repeats = 0;
 		}
@@ -242,7 +242,7 @@ start:
 		int secs;
 		if (fscanf(s_slide_file, "%d", &secs) != 1)
 		{
-			slideshowerr("MESSAGE needs argument");
+			slide_show_error("MESSAGE needs argument");
 		}
 		else
 		{
@@ -259,7 +259,7 @@ start:
 	{
 		if (fscanf(s_slide_file, "%s", buffer) != 1)
 		{
-			slideshowerr("GOTO needs target");
+			slide_show_error("GOTO needs target");
 			out = 0;
 		}
 		else
@@ -275,7 +275,7 @@ start:
 			while (err == 1 && strcmp(buffer1, buffer) != 0);
 			if (feof(s_slide_file))
 			{
-				slideshowerr("GOTO target not found");
+				slide_show_error("GOTO target not found");
 				return 0;
 			}
 			goto start;
@@ -298,7 +298,7 @@ start:
 		}
 		else
 		{
-			slideshowerr("WAIT needs argument");
+			slide_show_error("WAIT needs argument");
 		}
 		s_slow_count = 0;
 		out = 0;
@@ -319,9 +319,7 @@ start:
 	}
 	if (out == -12345)
 	{
-		char msg[MESSAGE_LEN];
-		sprintf(msg, "Can't understand %s", buffer);
-		slideshowerr(msg);
+		slide_show_error("Can't understand " + std::string(buffer));
 		out = 0;
 	}
 	s_last1 = out;
@@ -421,10 +419,8 @@ static void sleep_secs(int secs)
 	} /* bailout if key hit */
 }
 
-static void slideshowerr(char *msg)
+static void slide_show_error(const std::string &msg)
 {
-	char msgbuf[300] = { "Slideshow error:\n" };
 	stop_slide_show();
-	strcat(msgbuf, msg);
-	stop_message(0, msgbuf);
+	stop_message(STOPMSG_NORMAL, "Slideshow error:\n" + msg);
 }

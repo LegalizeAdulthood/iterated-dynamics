@@ -509,7 +509,7 @@ int Ant::compute()
 	maxpts = long(g_parameters[1]);
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
-	sprintf(m_rule, "%.17g", g_parameters[0]);
+	strcpy(m_rule, (boost::format("%.17g") % g_parameters[0]).str().c_str());
 	rule_len = int(strlen(m_rule));
 	if (rule_len > 1)
 	{                            /* if rule_len == 0 random rule */

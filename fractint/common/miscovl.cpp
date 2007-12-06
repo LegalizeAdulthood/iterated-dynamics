@@ -95,6 +95,7 @@ private:
 	void set_color_spec();
 	void set_max_color();
 	bool has_clut();
+	std::string out_name() { return m_out_name; }
 
 	enum
 	{
@@ -323,7 +324,7 @@ bool MakeBatchFile::check_video_mode()
 	if (m_pxdots == 0 && (m_xm > 1 || m_ym > 1))
 	{
 		/* no corresponding video mode! */
-		stop_message(0, "Invalid video mode entry!");
+		stop_message(STOPMSG_NORMAL, "Invalid video mode entry!");
 		return true;
 	}
 	return false;
@@ -333,7 +334,7 @@ bool MakeBatchFile::check_bounds_xm_ym()
 	/* bounds range on xm, ym */
 	if (m_xm < 1 || m_xm > 36 || m_ym < 1 || m_ym > 36)
 	{
-		stop_message(0, "X and Y components must be 1 to 36");
+		stop_message(STOPMSG_NORMAL, "X and Y components must be 1 to 36");
 		return true;
 	}
 	return false;
@@ -343,7 +344,7 @@ bool MakeBatchFile::check_resolution()
 	/* another sanity check: total resolution cannot exceed 65535 */
 	if (m_xm*m_pxdots > 65535L || m_ym*m_pydots > 65535L)
 	{
-		stop_message(0, "Total resolution (X or Y) cannot exceed 65535");
+		stop_message(STOPMSG_NORMAL, "Total resolution (X or Y) cannot exceed 65535");
 		return true;
 	}
 	return false;
@@ -368,9 +369,7 @@ void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
 		}
 		PCommandName[w] = 0;
 		{
-			char buf[20];
-			sprintf(buf, "_%c%c", par_key(i), par_key(j));
-			strcat(PCommandName, buf);
+			strcat(PCommandName, (boost::format("_%c%c") % par_key(i) % par_key(j)).str().c_str());
 		}
 		fprintf(parmfile, "%-19s{", PCommandName);
 		g_escape_time_state.m_grid_fp.x_min() = m_pxxmin + m_pdelx*(i*m_pxdots) + m_pdelx2*(j*m_pydots);
@@ -525,9 +524,7 @@ skip_UI:
 			got_input_file = true;
 			if (read_write_access(g_command_file.c_str()))
 			{
-				char buf[256];
-				sprintf(buf, "Can't write %s", g_command_file);
-				stop_message(0, buf);
+				stop_message(STOPMSG_NORMAL, "Can't write " + g_command_file);
 				continue;
 			}
 			int i = int(strlen(m_out_name));
@@ -544,9 +541,7 @@ skip_UI:
 		parmfile = fopen(m_out_name, "wt");
 		if (parmfile == 0)
 		{
-			char buf[256];
-			sprintf(buf, "Can't create %s", m_out_name);
-			stop_message(0, buf);
+			stop_message(STOPMSG_NORMAL, "Can't create " + out_name());
 			if (got_input_file)
 			{
 				fclose(input_file);
@@ -1336,7 +1331,7 @@ void write_batch_parms_symmetry(int ii, int jj)
 	{
 		if (g_force_symmetry == FORCESYMMETRY_SEARCH && ii == 1 && jj == 1)
 		{
-			stop_message(0, "Regenerate before <b> to get correct symmetry");
+			stop_message(STOPMSG_NORMAL, "Regenerate before <b> to get correct symmetry");
 		}
 		put_parm(" symmetry=");
 		if (g_force_symmetry == SYMMETRY_X_AXIS)
@@ -2060,7 +2055,7 @@ static void put_float(int slash, double fnum, int prec)
 		a difference.) But lets not do this at lower precision */
 	if (prec > 15)
 	{
-		sprintf(bptr, "%1.*Lg", prec, (long double)fnum);
+		sprintf(bptr, "%1.*Lg", prec, (long double) fnum);
 	}
 	else
 #endif
@@ -3003,7 +2998,7 @@ static char *expand_var(char *var, char *buf)
 	}
 	else
 	{
-		stop_message(0, std::string("Unknown comment variable ") + var);
+		stop_message(STOPMSG_NORMAL, std::string("Unknown comment variable ") + var);
 		out = "";
 	}
 	return out;

@@ -653,7 +653,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_b
 		g_initial_adapter = g_adapter;          /* use previous adapter mode for overlays */
 		if (g_file_x_dots > g_x_dots || g_file_y_dots > g_y_dots)
 		{
-			stop_message(0, "Can't overlay with a larger image");
+			stop_message(STOPMSG_NORMAL, "Can't overlay with a larger image");
 			g_initial_adapter = -1;
 			return -1;
 		}
@@ -712,7 +712,6 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		g_read_name += ".gif";
 	}
 
-	char msg[110];
 	fractal_info read_info;
 	struct ext_blk_resume_info resume_info_blk;
 	struct ext_blk_formula_info formula_info;
@@ -724,8 +723,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 		&ranges_info, &mp_info, &evolver_info, &orbits_info))
 	{
 		/* didn't find a useable file */
-		sprintf(msg, "Sorry, %s isn't a file I can decode.", g_read_name);
-		stop_message(0, msg);
+		stop_message(STOPMSG_NORMAL, "Sorry, " + g_read_name + " isn't a file I can decode.");
 		return -1;
 	}
 
@@ -733,7 +731,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	g_fractal_type = read_info.fractal_type;
 	if (g_fractal_type < 0 || g_fractal_type >= g_num_fractal_types)
 	{
-		sprintf(msg, "Warning: %s has a bad fractal type; using 0", g_read_name);
+		stop_message(STOPMSG_INFO_ONLY, "Warning: " + g_read_name + " has a bad fractal type; using 0");
 		g_fractal_type = 0;
 	}
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];

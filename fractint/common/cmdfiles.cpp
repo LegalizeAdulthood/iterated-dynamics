@@ -3459,7 +3459,7 @@ static void arg_error(const char *bad_arg)      /* oops. couldn't decode this */
 			" argument list with descriptions)";
 	}
 	msg << std::ends;
-	stop_message(0, msg.str());
+	stop_message(STOPMSG_NORMAL, msg.str());
 	if (g_initialize_batch)
 	{
 		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED;
@@ -3574,7 +3574,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	}
 	else if (bad_filename)
 	{
-		stop_message(0, bad_filename_message);
+		stop_message(STOPMSG_NORMAL, bad_filename_message);
 	}
 	return 0;
 }

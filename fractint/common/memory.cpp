@@ -1,3 +1,5 @@
+#include <string>
+
 #include <string.h>
 #include <limits.h>
 #if !defined(_WIN32)
@@ -5,7 +7,8 @@
 #endif
 #include <ctype.h>
 #include <errno.h>
-#include <string>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -69,7 +72,7 @@ static bool CheckDiskSpace(long howmuch);
 static int check_for_mem(int stored_at, long howmuch);
 static U16 next_handle();
 static int CheckBounds (long start, long length, U16 handle);
-static void WhichDiskError(int I_O);
+static void WhichDiskError(int error);
 static void DisplayError(int stored_at, long howmuch);
 static void DisplayHandle (U16 handle);
 static void DisplayMemory();
@@ -93,22 +96,23 @@ static bool CheckDiskSpace(long howmuch)
 	return true;
 }
 
-static void WhichDiskError(int I_O)
+static void WhichDiskError(int error)
 {
-	/* Set I_O == 1 after a file create, I_O == 2 after a file set value */
-	/* Set I_O == 3 after a file write, I_O == 4 after a file read */
-	char buf[MESSAGE_LEN];
-	char *pats[4] =
+	/* Set error == 1 after a file create, error == 2 after a file set value */
+	/* Set error == 3 after a file write, error == 4 after a file read */
+	const char *error_formats[4] =
 	{
 		"Create file error %d:  %s",
 		"Set file error %d:  %s",
 		"Write file error %d:  %s",
 		"Read file error %d:  %s"
 	};
-	sprintf(buf, pats[(1 <= I_O && I_O <= 4) ? (I_O-1) : 0], errno, strerror(errno));
+	int idx = (1 <= error && error <= 4) ? (error-1) : 0;
+	
 	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
-		if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
+		if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,
+			(boost::format(error_formats[idx]) % errno % strerror(errno)).str()) == -1)
 		{
 			goodbye(); /* bailout if ESC */
 		}
@@ -122,15 +126,13 @@ int MemoryType(U16 handle)
 
 static void DisplayError(int stored_at, long howmuch)
 {
-/* This routine is used to display an error message when the requested */
-/* memory type cannot be allocated due to insufficient memory, AND there */
-/* is also insufficient disk space to use as memory. */
-
-	char buf[MESSAGE_LEN*2];
-	sprintf(buf, "Allocating %ld Bytes of %s memory failed.\n"
-		"Alternate disk space is also insufficient. Goodbye",
-		howmuch, memstr[stored_at]);
-	stop_message(0, buf);
+	/* This routine is used to display an error message when the requested */
+	/* memory type cannot be allocated due to insufficient memory, AND there */
+	/* is also insufficient disk space to use as memory. */
+	stop_message(STOPMSG_NORMAL,
+		(boost::format("Allocating %ld Bytes of %s memory failed.\n"
+			"Alternate disk space is also insufficient. Goodbye")
+			%  howmuch % memstr[stored_at]).str());
 }
 
 static int check_for_mem(int stored_at, long howmuch)
@@ -230,20 +232,17 @@ static int CheckBounds (long start, long length, U16 handle)
 
 static void DisplayMemory()
 {
-	char buf[MESSAGE_LEN];
 	extern unsigned long get_disk_space();
-
-	sprintf(buf, "disk=%lu", get_disk_space());
-	stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, buf);
+	stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,
+		(boost::format("disk=%lu") % get_disk_space()).str());
 }
 
 static void DisplayHandle(U16 handle)
 {
-	char buf[MESSAGE_LEN];
-
-	sprintf(buf, "Handle %u, type %s, size %li", handle, memstr[handletable[handle].Nowhere.stored_at],
-			handletable[handle].Nowhere.size);
-	if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER, (char *)buf) == -1)
+	if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,
+		(boost::format("Handle %u, type %s, size %li")
+			% handle % memstr[handletable[handle].Nowhere.stored_at]
+			% handletable[handle].Nowhere.size).str()) == -1)
 	{
 		goodbye(); /* bailout if ESC, it's messy, but should work */
 	}
@@ -266,15 +265,14 @@ void ExitCheck()
 	U16 i;
 	if (numTOTALhandles != 0)
 	{
-		stop_message(0, "Error - not all memory released, I'll get it.");
+		stop_message(STOPMSG_NORMAL, "Error - not all memory released, I'll get it.");
 		for (i = 1; i < MAXHANDLES; i++)
 		{
 			if (handletable[i].Nowhere.stored_at != NOWHERE)
 			{
-				char buf[MESSAGE_LEN];
-				sprintf(buf, "Memory type %s still allocated.  Handle = %i.",
-				memstr[handletable[i].Nowhere.stored_at], i);
-				stop_message(0, (char *)buf);
+				stop_message(STOPMSG_NORMAL,
+					(boost::format("Memory type %s still allocated.  Handle = %i.")
+						% memstr[handletable[i].Nowhere.stored_at] % i).str());
 				MemoryRelease(i);
 			}
 		}
@@ -386,10 +384,9 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 
 	if (stored_at != use_this_type && DEBUGMODE_MEMORY == g_debug_mode)
 	{
-		char buf[MESSAGE_LEN];
-		sprintf(buf, "Asked for %s, allocated %lu bytes of %s, handle = %u.",
-			memstr[stored_at], toallocate, memstr[use_this_type], handle);
-		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, (char *)buf);
+		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,
+			(boost::format("Asked for %s, allocated %lu bytes of %s, handle = %u.")
+				% memstr[stored_at] % toallocate % memstr[use_this_type] % handle).str());
 		DisplayMemory();
 	}
 
