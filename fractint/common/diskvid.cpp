@@ -128,7 +128,6 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	}
 	if (driver_diskp()) /* otherwise, real screen also in use, don't hit it */
 	{
-		char buf[128];
 		help_title();
 		driver_set_attr(1, 0, C_DVID_BKGRD, 24*80);  /* init rest to background */
 		for (i = 0; i < BOX_DEPTH; ++i)
@@ -144,12 +143,9 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		}
 		else
 		{
-			driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
-			sprintf(buf, "%d", g_colors);
-			driver_put_string(-1, -1, C_DVID_LO, buf);
+			driver_put_string(-1, -1, C_DVID_LO, (boost::format("  Colors: %d") % g_colors).str().c_str());
 		}
-		sprintf(buf, "Save name: %s", g_save_name.c_str());
-		driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, buf);
+		driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, ("Save name: " + g_save_name).c_str());
 		driver_put_string(BOX_ROW + 10, BOX_COL + 4, C_DVID_LO, "Status:");
 		disk_video_status(0, "clearing the 'screen'");
 	}
@@ -207,14 +203,13 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	s_memory_buffer = new BYTE[BLOCK_LEN];
 	if (s_cache_start == 0 || s_memory_buffer == 0)
 	{
-		stop_message(0, "*** insufficient free memory for cache buffers ***");
+		stop_message(STOPMSG_NORMAL, "*** insufficient free memory for cache buffers ***");
 		return -1;
 	}
 	if (driver_diskp())
 	{
-		char buf[50];
-		sprintf(buf, "Cache size: %dK", cache_size);
-		driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, buf);
+		driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO,
+			(boost::format("Cache size: %dK") % cache_size).str().c_str());
 	}
 
 	/* preset cache to all invalid entries so we don't need free list logic */
@@ -265,7 +260,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	}
 	if (s_disk_video_handle == 0)
 	{
-		stop_message(0, "*** insufficient free memory/disk space ***");
+		stop_message(STOPMSG_NORMAL, "*** insufficient free memory/disk space ***");
 		g_good_mode = 0;
 		s_row_size = 0;
 		return -1;

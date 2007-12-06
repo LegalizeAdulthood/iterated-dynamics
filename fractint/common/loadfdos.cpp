@@ -14,8 +14,11 @@
 		to 1 for every 2nd pixel, 2 for every 3rd, etc
 
 */
-#include <string.h>
 #include <string>
+
+#include <string.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -28,10 +31,11 @@
 
 /* routines in this module      */
 
-static int    video_mode_compare(const void *, const void *);
-static void   format_item(int, char *);
-static int    check_mode_key(int, int);
-static void   format_video_info(int i, char *err, char *buf);
+static int video_mode_compare(const void *, const void *);
+static void format_item(int, char *);
+static int check_mode_key(int, int);
+static void format_video_info(int i, const char *err, char *buf);
+static std::string format_video_info(int i, const char *err);
 static double video_mode_aspect_ratio(int width, int height);
 
 struct video_mode_info
@@ -78,17 +82,22 @@ static int video_mode_compare(const void *p1, const void *p2)
 	return 1;
 }
 
-static void format_video_info(int i, char *err, char *buf)
+static std::string format_video_info(int i, const char *err)
 {
-	char kname[5];
-	memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
-				sizeof(g_video_entry));
-	video_mode_key_name(g_video_entry.keynum, kname);
-	sprintf(buf, "%-5s %-25s %-4s %5d %5d %3d %-25s",  /* 78 chars */
-			kname, g_video_entry.name, err,
-			g_video_entry.x_dots, g_video_entry.y_dots,
-			g_video_entry.colors, g_video_entry.comment);
-	g_video_entry.x_dots = 0; /* so tab_display knows to display nothing */
+	g_video_entry = g_video_table[i];
+	std::string key_name = video_mode_key_name(g_video_entry.keynum);
+	std::string result = (boost::format("%-5s %-25s %-4s %5d %5d %3d %-25s")  /* 78 chars */
+			% key_name.c_str() % g_video_entry.name % err
+			% g_video_entry.x_dots % g_video_entry.y_dots
+			% g_video_entry.colors % g_video_entry.comment).str();
+	g_video_entry.x_dots = 0;
+	return result;
+}
+
+static void format_video_info(int i, const char *err, char *buf)
+{
+	std::string result = format_video_info(i, err);
+	strcpy(buf, result.c_str());
 }
 
 static double video_mode_aspect_ratio(int width, int height)
@@ -210,7 +219,6 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	gotrealmode = 0;
 	if ((g_initial_adapter < 0 || (g_ui_state.ask_video && !g_initialize_batch)) && g_make_par_flag)
 	{
-		char temp1[256];
 		/* no exact match or (askvideo=yes and batch=no), and not
 			in makepar mode, talk to user */
 
@@ -224,9 +232,10 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		vidptr = &vid[0]; /* for format_item */
 
 		/* format heading */
+		std::string heading;
 		if (info->info_id[0] == 'G')
 		{
-			strcpy(temp1, "      Non-fractal GIF");
+			heading = "      Non-fractal GIF";
 		}
 		else
 		{
@@ -235,62 +244,55 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 			{
 				nameptr = "3D Transform";
 			}
+			heading = "Type: " + std::string(nameptr);
 			if ((!strcmp(nameptr, "formula")) ||
 				(!strcmp(nameptr, "lsystem")) ||
 				(!strncmp(nameptr, "ifs", 3))) /* for ifs and ifs3d */
 			{
-				sprintf(temp1, "Type: %s -> %s", nameptr, formula_info->form_name);
-			}
-			else
-			{
-				sprintf(temp1, "Type: %s", nameptr);
+				heading += std::string(" -> ") + formula_info->form_name;
 			}
 		}
-		sprintf((char *)g_stack, "File: %-44s  %d x %d x %d\n%-52s",
-				g_read_name, g_file_x_dots, g_file_y_dots, g_file_colors, temp1);
+		heading = (boost::format("File: %-44s  %d x %d x %d\n%-52s")
+					% g_read_name.c_str() % g_file_x_dots % g_file_y_dots % g_file_colors % heading.c_str()).str();
 		if (info->info_id[0] != 'G')
 		{
-			sprintf(temp1, "v%d.%01d", g_save_release/100, (g_save_release%100)/10);
+			std::string version = (boost::format("v%d.%01d") % (g_save_release/100) % ((g_save_release%100)/10)).str();
 			if (g_save_release % 100)
 			{
-				i = int(strlen(temp1));
-				temp1[i] = (char)((g_save_release % 10) + '0');
-				temp1[i + 1] = 0;
+				version += (char)((g_save_release % 10) + '0');
 			}
-			strcat((char *)g_stack, temp1);
+			heading += version;
 		}
-		strcat((char *)g_stack, "\n");
+		heading += "\n";
 		if (info->info_id[0] != 'G')
 		{
 			if (g_initial_adapter < 0)
 			{
-				strcat((char *) g_stack, "Saved in unknown video mode.");
+				heading += "Saved in unknown video mode.";
 			}
 			else
 			{
-				format_video_info(g_initial_adapter, "", temp1);
-				strcat((char *) g_stack, temp1);
+				heading += format_video_info(g_initial_adapter, "");
 			}
 		}
 		if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect_ratio)
 		{
-			strcat((char *) g_stack,
-				"\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
+			heading += "\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings";
 		}
-		strcat((char *)g_stack, "\n");
-		/* set up instructions */
-		strcpy(temp1, "Select a video mode.  Use the cursor keypad to move the pointer.\n"
-				"Press ENTER for selected mode, or use a video mode function key.\n"
-				"Press F1 for help, ");
+		heading += "\n";
+		std::string instructions =
+			"Select a video mode.  Use the cursor keypad to move the pointer.\n"
+			"Press ENTER for selected mode, or use a video mode function key.\n"
+			"Press F1 for help, ";
 		if (info->info_id[0] != 'G')
 		{
-			strcat(temp1, "TAB for fractal information, ");
+			instructions += "TAB for fractal information, ";
 		}
-		strcat(temp1, "ESCAPE to back out.");
+		instructions += "ESCAPE to back out.";
 
-		i = full_screen_choice_help(HELPLOADFILE, 0, (char *) g_stack,
+		i = full_screen_choice_help(HELPLOADFILE, 0, heading.c_str(),
 			"key...name......................err...xdot..ydot.clr.comment..................",
-			temp1, g_video_table_len, 0, attributes,
+			instructions.c_str(), g_video_table_len, 0, attributes,
 			1, 13, 78, 0, format_item, 0, 0, check_mode_key);
 		delete[] attributes;
 		if (i == -1)
@@ -333,17 +335,17 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 		if (j == 0) /* mode has no key, add to reserved slot at end */
 		{
-			memcpy((char *)&g_video_table[g_initial_adapter = MAXVIDEOMODES-1],
-						(char *)&g_video_table[i], sizeof(*g_video_table));
+			g_initial_adapter = MAXVIDEOMODES-1;
+			g_video_table[g_initial_adapter] = g_video_table[i];
 		}
 	}
 
 	/* ok, we're going to return with a video mode */
-	memcpy((char *)&g_video_entry, (char *)&g_video_table[g_initial_adapter],
-				sizeof(g_video_entry));
+	g_video_entry = g_video_table[g_initial_adapter];
 
-	if (g_view_window &&
-		g_file_x_dots == g_video_entry.x_dots && g_file_y_dots == g_video_entry.y_dots)
+	if (g_view_window
+		&& g_file_x_dots == g_video_entry.x_dots
+		&& g_file_y_dots == g_video_entry.y_dots)
 	{
 		/* pull image into a view window */
 		if (g_calculation_status != CALCSTAT_COMPLETED) /* if not complete */

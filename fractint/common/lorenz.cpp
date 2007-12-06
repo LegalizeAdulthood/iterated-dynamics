@@ -2531,7 +2531,7 @@ static int ifs_2d()
 	long *localifs = new long[g_num_affine*IFSPARM];
 	if (localifs == 0)
 	{
-		stop_message(0, g_insufficient_ifs_memory);
+		stop_message(STOPMSG_NORMAL, g_insufficient_ifs_memory);
 		return -1;
 	}
 
@@ -2639,7 +2639,7 @@ static int ifs_3d_long()
 	long *localifs = new long[g_num_affine*IFS3DPARM];
 	if (localifs == 0)
 	{
-		stop_message(0, g_insufficient_ifs_memory);
+		stop_message(STOPMSG_NORMAL, g_insufficient_ifs_memory);
 		return -1;
 	}
 

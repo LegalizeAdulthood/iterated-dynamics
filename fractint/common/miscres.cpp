@@ -48,7 +48,7 @@ static void area();
 
 void not_disk_message()
 {
-	stop_message(0,
+	stop_message(STOPMSG_NORMAL,
 		"This type may be slow using a real-disk based 'video' mode, but may not \n"
 		"be too bad if you have enough expanded or extended memory. Press <Esc> to \n"
 		"abort if it appears that your disk drive is working too hard.");
@@ -1265,7 +1265,7 @@ static void area()
 	long cnt = 0;
 	if (g_inside < 0)
 	{
-		stop_message(0, "Need solid inside to compute area");
+		stop_message(STOPMSG_NORMAL, "Need solid inside to compute area");
 		return;
 	}
 	for (y = 0; y < g_y_dots; y++)
@@ -1380,7 +1380,7 @@ int ifs_load()                   /* read in IFS parameters */
 		}
 		if (++i >= NUMIFS*rowsize)
 		{
-				stop_message(0, "IFS definition has too many lines");
+				stop_message(STOPMSG_NORMAL, "IFS definition has too many lines");
 				ret = -1;
 				break;
 		}
@@ -1406,12 +1406,12 @@ int ifs_load()                   /* read in IFS parameters */
 
 	if ((i % rowsize) != 0 || *bufptr != '}')
 	{
-		stop_message(0, "invalid IFS definition");
+		stop_message(STOPMSG_NORMAL, "invalid IFS definition");
 		ret = -1;
 	}
 	if (i == 0 && ret == 0)
 	{
-		stop_message(0, "Empty IFS definition");
+		stop_message(STOPMSG_NORMAL, "Empty IFS definition");
 		ret = -1;
 	}
 	fclose(ifsfile);
@@ -1422,7 +1422,7 @@ int ifs_load()                   /* read in IFS parameters */
 		g_ifs_definition = new float[(NUMIFS + 1)*IFS3DPARM];
 		if (g_ifs_definition == 0)
 		{
-			stop_message(0, g_insufficient_ifs_memory);
+			stop_message(STOPMSG_NORMAL, g_insufficient_ifs_memory);
 			ret = -1;
 		}
 		else
@@ -1645,7 +1645,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 	if (!found)
 	{
 		sprintf(fullpath, "'%s' file entry item not found", itemname);
-		stop_message(0, fullpath);
+		stop_message(STOPMSG_NORMAL, fullpath);
 		return -1;
 	}
 	/* found file */
@@ -1729,7 +1729,7 @@ int _cdecl _matherr(struct exception *except)
 		{
 			if (DEBUGMODE_SHOW_MATH_ERRORS == g_debug_mode || DEBUGMODE_NO_BIG_TO_FLOAT == g_debug_mode)
 			{
-				stop_message(0, "Math error, but we'll try to keep going");
+				stop_message(STOPMSG_NORMAL, "Math error, but we'll try to keep going");
 			}
 		}
 		if (fp == 0)

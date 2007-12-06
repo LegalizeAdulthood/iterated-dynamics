@@ -273,7 +273,7 @@ static void init_bf_2()
 	{
 		char msg[80];
 		sprintf(msg, "Requested precision of %d too high, aborting", g_decimals);
-		stop_message(0, msg);
+		stop_message(STOPMSG_NORMAL, msg);
 		goodbye();
 	}
 
@@ -407,14 +407,14 @@ bn_t alloc_stack(size_t size)
 	long stack_addr;
 	if (g_bf_math == 0)
 	{
-		stop_message(0, "alloc_stack called with g_bf_math == 0");
+		stop_message(STOPMSG_NORMAL, "alloc_stack called with g_bf_math == 0");
 		return 0;
 	}
 	stack_addr = long(stack_ptr - bnroot + size); /* part of bnroot */
 
 	if (stack_addr > maxstack)
 	{
-		stop_message(0, "Aborting, Out of Bignum Stack Space");
+		stop_message(STOPMSG_NORMAL, "Aborting, Out of Bignum Stack Space");
 		goodbye();
 	}
 	/* keep track of max ptr */

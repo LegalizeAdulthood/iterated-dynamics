@@ -1771,17 +1771,15 @@ static void pal_table_draw_status(pal_table *me, bool stripe_mode)
 		cursor_hide();
 
 		{
-			char buff[80];
-			sprintf(buff, "%c%c%c%c",
-				me->auto_select ? 'A' : ' ',
-				(me->exclude == EXCLUDE_CURRENT)  ? 'X' : (me->exclude == EXCLUDE_RANGE) ? 'Y' : ' ',
-				me->freestyle ? 'F' : ' ',
-				stripe_mode ? 'T' : ' ');
-			driver_display_string(x, y, s_fg_color, s_bg_color, buff);
-
+			driver_display_string(x, y, s_fg_color, s_bg_color,
+				(boost::format("%c%c%c%c")
+					% (me->auto_select ? 'A' : ' ')
+					% ((me->exclude == EXCLUDE_CURRENT) ? 'X' : (me->exclude == EXCLUDE_RANGE) ? 'Y' : ' ')
+					% (me->freestyle ? 'F' : ' ')
+					% (stripe_mode ? 'T' : ' ')).str().c_str());
 			y -= 10;
-			sprintf(buff, "%d", color);
-			driver_display_string(x, y, s_fg_color, s_bg_color, buff);
+			driver_display_string(x, y, s_fg_color, s_bg_color,
+				(boost::format("%d") % color).str().c_str());
 		}
 		cursor_show();
 	}
@@ -2580,7 +2578,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			int i;
 			char buf[20];
-			sprintf(buf, "%.3f", 1./s_gamma_val);
+			strcpy(buf, (boost::format("%.3f") % (1.0/s_gamma_val)).str().c_str());
 			driver_stack_screen();
 			i = field_prompt("Enter gamma value", 0, buf, 20, 0);
 			driver_unstack_screen();

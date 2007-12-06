@@ -320,6 +320,7 @@ enum BuzzerType
 /* stop_message() flags */
 enum StopMessageFlag
 {
+	STOPMSG_NORMAL		= 0,
 	STOPMSG_NO_STACK	= 1,
 	STOPMSG_CANCEL		= 2,
 	STOPMSG_NO_BUZZER	= 4,

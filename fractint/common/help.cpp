@@ -14,6 +14,8 @@
 #include <assert.h>
 #include <string.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
@@ -353,15 +355,14 @@ static void display_page(char *title, char *text, unsigned text_len,
 						int page, int num_pages, int start_margin,
 						int *num_link, LINK *link)
 {
-	char temp[9];
-
 	help_title();
 	helpinstr();
 	driver_set_attr(2, 0, C_HELP_BODY, 80*22);
 	put_string_center(1, 0, 80, C_HELP_HDG, title);
-	sprintf(temp, "%2d of %d", page + 1, num_pages);
+
 	/* Some systems (Ultrix) mess up if you write to column 80 */
-	driver_put_string(1, 78 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR, temp);
+	driver_put_string(1, 78 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR,
+		(boost::format("%2d of %d") % (page + 1) % num_pages).str().c_str());
 
 	if (text != 0)
 	{
@@ -1239,7 +1240,6 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 
 static int print_doc_msg_func(int pnum, int num_pages)
 {
-	char temp[10];
 	int  key;
 
 	if (pnum == -1)    /* successful completion */
@@ -1268,8 +1268,8 @@ static int print_doc_msg_func(int pnum, int num_pages)
 		driver_hide_text_cursor();
 	}
 
-	sprintf(temp, "%d%%", int((100.0/num_pages)*pnum));
-	driver_put_string(7, 41, C_HELP_LINK, temp);
+	driver_put_string(7, 41, C_HELP_LINK,
+		(boost::format("%d%%") % int((100.0/num_pages)*pnum)).str().c_str());
 
 	while (driver_key_pressed())
 	{
@@ -1285,19 +1285,19 @@ static int print_doc_msg_func(int pnum, int num_pages)
 
 int makedoc_msg_func(int pnum, int num_pages)
 {
-	char s_buffer[80] = "";
+	std::string message;
 	int result = 0;
 
 	if (pnum >= 0)
 	{
-		sprintf(s_buffer, "\rcompleted %d%%", int((100.0/num_pages)*pnum));
+		message = (boost::format("\rcompleted %d%%" ) % int((100.0/num_pages)*pnum)).str();
 		result = 1;
 	}
 	else if (pnum == -2)
 	{
-		sprintf(s_buffer, "\n*** aborted\n");
+		message = "\n*** aborted\n";
 	}
-	stop_message(0, s_buffer);
+	stop_message(STOPMSG_NORMAL, message);
 	return result;
 }
 

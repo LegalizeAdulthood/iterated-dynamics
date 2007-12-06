@@ -76,26 +76,34 @@ int pstopmsg(int x, char *msg)
 
 #define stop_message pstopmsg
 
-#define DBUGMSG(y) if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode) stop_message(0, (y))
+#define DBUGMSG(y)																					\
+	do																								\
+	{																								\
+		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode)	\
+		{																							\
+			stop_message(STOPMSG_NORMAL, (y));														\
+		}																							\
+	}																								\
+	while (0)
 #define DBUGMSG1(y, p) \
 		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
 			sprintf(cDbgMsg, (y), (p)); \
-			stop_message(0, cDbgMsg); \
+			stop_message(STOPMSG_NORMAL, cDbgMsg); \
 		}
 #define DBUGMSG2(y, p, q) \
 		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
 			sprintf(cDbgMsg, (y), (p), (q)); \
-			stop_message(0, cDbgMsg); \
+			stop_message(STOPMSG_NORMAL, cDbgMsg); \
 		}
 #define DBUGMSG3(y, p, q, r) \
 		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r)); \
-			stop_message(0, cDbgMsg); \
+			stop_message(STOPMSG_NORMAL, cDbgMsg); \
 		}
 #define DBUGMSG4(y, p, q, r, s) \
 		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
 			sprintf(cDbgMsg, (y), (p), (q), (r), (s)); \
-			stop_message(0, cDbgMsg); \
+			stop_message(STOPMSG_NORMAL, cDbgMsg); \
 		}
 #else
 

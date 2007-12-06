@@ -601,7 +601,7 @@ static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_in
 		{
 			if (g_debug_mode)
 			{
-				stop_message(0, "debug, cur->color=bad");
+				stop_message(STOPMSG_NORMAL, "debug, cur->color=bad");
 			}
 			f_cur->color = float(s_bad.color);
 			cur->color = s_bad.color;
@@ -634,7 +634,7 @@ static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_in
 					/* this shouldn't happen */
 					if (g_debug_mode)
 					{
-						stop_message(0, "debug, normal vector err2");
+						stop_message(STOPMSG_NORMAL, "debug, normal vector err2");
 					}
 					f_cur->color = float(g_colors);
 					cur->color = g_colors;
@@ -1605,7 +1605,7 @@ static void file_error(const std::string &filename, int code)
 		break;
 	}
 	msgbuf << std::ends;
-	stop_message(0, msgbuf.str());
+	stop_message(STOPMSG_NORMAL, msgbuf.str());
 }
 
 

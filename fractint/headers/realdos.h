@@ -5,6 +5,7 @@ extern int stop_message(int flags, const char *message);
 extern int stop_message(int flags, const std::string &message);
 extern void blank_rows(int, int, int);
 extern int text_temp_message(const char *message);
+extern int text_temp_message(const std::string &message);
 extern int full_screen_choice(int options,
 	const char *heading, const char *heading2, const char *instructions,
 	int num_choices, char **choices, const int *attributes,

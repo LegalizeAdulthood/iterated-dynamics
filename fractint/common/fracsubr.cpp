@@ -498,7 +498,7 @@ expand_retry:
 				{
 					if (tries > 1)
 					{
-						stop_message(0, "precision-detection error");
+						stop_message(STOPMSG_NORMAL, "precision-detection error");
 					}
 					/* Previously there were four tests of distortions in the
 					zoom box used to detect precision limitations. In some
@@ -607,13 +607,7 @@ static long fudge_to_long(double d)
 
 static double fudge_to_double(long value)
 {
-	// TODO: why is this doing a printf and then a scanf?  Should just return
-	// double(value)/g_fudge, but more investigation needed first.
-	char buf[30];
-	double d;
-	sprintf(buf, "%.9g", double(value)/g_fudge);
-	sscanf(buf, "%lg", &d);
-	return d;
+	return double(value)/double(g_fudge);
 }
 
 void adjust_corner_bf(float aspect_drift)
@@ -1318,7 +1312,7 @@ int alloc_resume(int alloclen, int version)
 	g_resume_info = new char[s_resume_info_length];
 	if (g_resume_info == 0)
 	{
-		stop_message(0, "Warning - insufficient free memory to save status.\n"
+		stop_message(STOPMSG_NORMAL, "Warning - insufficient free memory to save status.\n"
 			"You will not be able to resume calculating this image.");
 		g_calculation_status = CALCSTAT_NON_RESUMABLE;
 		s_resume_info_length = 0;

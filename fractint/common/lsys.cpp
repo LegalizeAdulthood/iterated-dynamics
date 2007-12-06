@@ -1,8 +1,11 @@
-#include <string.h>
 #include <vector>
+
+#include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -118,6 +121,16 @@ LDBL get_number(char **str)
 	return ret;
 }
 
+static std::string l_system_error(const char *message, int line, const char *symbol)
+{
+	return (boost::format(std::string("Error:  ") + message + "\n") % line % symbol).str();
+}
+
+static std::string l_system_error(const char *message)
+{
+	return std::string("Error: ") + message + "\n";
+}
+
 static int read_l_system_file(std::string &item)
 {
 	int c;
@@ -129,7 +142,7 @@ static int read_l_system_file(std::string &item)
 	char fixed[MAX_LSYS_LINE_LEN + 1];
 	char *word;
 	FILE *infile;
-	char msgbuf[481]; /* enough for 6 full lines */
+	std::string message;
 
 	if (find_file_item(g_l_system_filename, item, &infile, ITEMTYPE_L_SYSTEM) < 0)
 	{
@@ -149,7 +162,7 @@ static int read_l_system_file(std::string &item)
 	}
 	rulind = &ruleptrs[1];
 	linenum = 0;
-	msgbuf[0] = 0;
+	message = "";
 
 	while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  /* Max line length chars */
 	{
@@ -168,7 +181,7 @@ static int read_l_system_file(std::string &item)
 			{
 				if (save_rule(strtok(0, " \t\n"), &ruleptrs[0]))
 				{
-					strcat(msgbuf, "Error:  out of memory\n");
+					message += l_system_error("out of memory");
 					++err;
 					break;
 				}
@@ -191,8 +204,7 @@ static int read_l_system_file(std::string &item)
 
 				if (strchr("+-/\\@|!c<>][", *word))
 				{
-					sprintf(&msgbuf[strlen(msgbuf)],
-					"Syntax error line %d: Redefined reserved symbol %s\n", linenum, word);
+					message += l_system_error("Syntax error line %d: Redefined reserved symbol %s", linenum, word);
 					++err;
 					break;
 				}
@@ -215,7 +227,7 @@ static int read_l_system_file(std::string &item)
 				}
 				if (memerr)
 				{
-					strcat(msgbuf, "Error:  out of memory\n");
+					message += l_system_error("out of memory");
 					++err;
 					break;
 				}
@@ -225,8 +237,7 @@ static int read_l_system_file(std::string &item)
 			{
 				if (err < 6)
 				{
-					sprintf(&msgbuf[strlen(msgbuf)],
-						"Syntax error line %d: %s\n", linenum, word);
+					message += l_system_error("Syntax error line %d: %s", linenum, word);
 					++err;
 				}
 			}
@@ -238,8 +249,7 @@ static int read_l_system_file(std::string &item)
 				{
 					if (err < 6)
 					{
-						sprintf(&msgbuf[strlen(msgbuf)],
-							"Extra text after command line %d: %s\n", linenum, word);
+						message += l_system_error("Extra text after command line %d: %s", linenum, word);
 						++err;
 					}
 				}
@@ -249,18 +259,17 @@ static int read_l_system_file(std::string &item)
 	fclose(infile);
 	if (!ruleptrs[0] && err < 6)
 	{
-		strcat(msgbuf, "Error:  no axiom\n");
+		message += l_system_error("no axiom");
 		++err;
 	}
 	if ((g_max_angle < 3 || g_max_angle > 50) && err < 6)
 	{
-		strcat(msgbuf, "Error:  illegal or missing angle\n");
+		message += l_system_error("illegal or missing angle");
 		++err;
 	}
 	if (err)
 	{
-		msgbuf[strlen(msgbuf)-1] = 0; /* strip trailing \n */
-		stop_message(0, msgbuf);
+		stop_message(STOPMSG_NORMAL, message);
 		return -1;
 	}
 	*rulind = 0;
@@ -333,7 +342,7 @@ int l_system()
 
 	if (stackoflow)
 	{
-		stop_message(0, "insufficient memory, try a lower order");
+		stop_message(STOPMSG_NORMAL, "insufficient memory, try a lower order");
 	}
 	else if (g_overflow)
 	{

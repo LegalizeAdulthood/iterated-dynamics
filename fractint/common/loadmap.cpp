@@ -39,8 +39,7 @@ int validate_luts(const char *fn)
 	FILE *f = fopen(line, "r");
 	if (f == 0)
 	{
-		sprintf(line, "Could not load color map %s", fn);
-		stop_message(0, line);
+		stop_message(STOPMSG_NORMAL, "Could not load color map " + std::string(fn));
 		return 1;
 	}
 	unsigned index;
@@ -86,7 +85,7 @@ void set_color_palette_name(const std::string &filename)
 		g_map_dac_box = new BYTE[256*3];
 		if (g_map_dac_box == 0)
 		{
-			stop_message(0, "Insufficient memory for color map.");
+			stop_message(STOPMSG_NORMAL, "Insufficient memory for color map.");
 			return;
 		}
 	}
