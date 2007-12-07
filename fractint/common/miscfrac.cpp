@@ -223,9 +223,9 @@ int test()
 static U16 rand16()
 {
 	U16 value;
-	value = (U16)rand15();
+	value = U16(rand15());
 	value <<= 1;
-	value = (U16)(value + (rand15() & 1));
+	value = U16(value + (rand15() & 1));
 	if (value < 1)
 	{
 		value = 1;
@@ -254,7 +254,7 @@ static void put_potential_border(int x, int y, U16 color)
 {
 	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
 	{
-		color = (U16)g_outside;
+		color = U16(g_outside);
 	}
 	put_potential(x, y, color);
 }
@@ -275,10 +275,8 @@ static void put_color_border(int x, int y, int color)
 
 static U16 get_potential(int x, int y)
 {
-	U16 color;
-
-	color = (U16)disk_read(x + g_sx_offset, y + g_sy_offset);
-	color = (U16)((color << 8) + (U16) disk_read(x + g_sx_offset, y + g_screen_height + g_sy_offset));
+	U16 color = U16(disk_read(x + g_sx_offset, y + g_sy_offset));
+	color = U16((color << 8) + U16(disk_read(x + g_sx_offset, y + g_screen_height + g_sy_offset)));
 	return color;
 }
 
@@ -305,8 +303,8 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 	{
 		pseudorandom = 1;
 	}
-	g_plot_color(x, y, (U16)pseudorandom);
-	return (U16)pseudorandom;
+	g_plot_color(x, y, U16(pseudorandom));
+	return U16(pseudorandom);
 }
 
 
@@ -416,7 +414,7 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 					i = adjust(nx1, ny1, nx1, y , nx1, ny);
 				}
 				v += i;
-				g_plot_color(x, y, (U16)((v + 2)/4));
+				g_plot_color(x, y, U16((v + 2)/4));
 			}
 
 			if (subx.r[subx.t-1] == (BYTE)recur)
@@ -483,7 +481,7 @@ static void subdivide(int x1, int y1, int x2, int y2)
 
 	if (s_get_pixels(x, y) == 0)
 	{
-		g_plot_color(x, y, (U16)((i + 2)/4));
+		g_plot_color(x, y, U16((i + 2)/4));
 	}
 
 	subdivide(x1, y1, x , y);
@@ -549,7 +547,7 @@ int plasma()
 	{
 		g_random_seed = int(g_parameters[2]);
 	}
-	s_max_plasma = (U16)g_parameters[3];  /* s_max_plasma is used as a flag for potential */
+	s_max_plasma = U16(g_parameters[3]);  /* s_max_plasma is used as a flag for potential */
 
 	if (s_max_plasma != 0)
 	{
@@ -594,7 +592,7 @@ int plasma()
 		s_plasma_colors = std::min(g_colors, g_max_colors);
 		for (n = 0; n < 4; n++)
 		{
-			rnd[n] = (U16) (1 + (((rand15()/s_plasma_colors)*(s_plasma_colors-1)) >> (s_shift_value-11)));
+			rnd[n] = U16(1 + (((rand15()/s_plasma_colors)*(s_plasma_colors-1)) >> (s_shift_value-11)));
 		}
 	}
 	else
@@ -1681,14 +1679,14 @@ static void abort_cellular(int err, int t)
 	case STRING2:
 		{
 			static char msg[] = {"Make string of 0's through  's" };
-			msg[27] = (char)(s_k_1 + 48); /* turn into a character value */
+			msg[27] = (char)(s_k_1 + '0'); /* turn into a character value */
 			stop_message(STOPMSG_NORMAL, msg);
 		}
 		break;
 	case TABLEK:
 		{
 			static char msg[] = {"Make Rule with 0's through  's" };
-			msg[27] = (char)(s_k_1 + 48); /* turn into a character value */
+			msg[27] = (char)(s_k_1 + '0'); /* turn into a character value */
 			stop_message(STOPMSG_NORMAL, msg);
 		}
 		break;
@@ -1701,12 +1699,12 @@ static void abort_cellular(int err, int t)
 			i = s_rule_digits/10;
 			if (i == 0)
 			{
-				msg[14] = (char)(s_rule_digits + 48);
+				msg[14] = (char)(s_rule_digits + '0');
 			}
 			else
 			{
-				msg[13] = (char) (i + 48);
-				msg[14] = (char) ((s_rule_digits % 10) + 48);
+				msg[13] = (char) (i + '0');
+				msg[14] = (char) ((s_rule_digits % 10) + '0');
 			}
 			stop_message(STOPMSG_NORMAL, msg);
 		}
@@ -1739,7 +1737,7 @@ int cellular()
 
 	randparam = (S32)g_parameters[0];
 	lnnmbr = (U32)g_parameters[3];
-	kr = (U16)g_parameters[2];
+	kr = U16(g_parameters[2]);
 	switch (kr)
 	{
 	case 21:
@@ -1764,7 +1762,7 @@ int cellular()
 	}
 
 	s_r = (S16)(kr % 10); /* Number of nearest neighbors to sum */
-	k = (U16)(kr/10); /* Number of different states, k = 3 has states 0, 1, 2 */
+	k = U16(kr/10); /* Number of different states, k = 3 has states 0, 1, 2 */
 	s_k_1 = (S16)(k - 1); /* Highest state value, k = 3 has highest state value of 2 */
 	s_rule_digits = (S16)((s_r*2 + 1)*s_k_1 + 1); /* Number of digits in the rule */
 
@@ -1787,10 +1785,10 @@ int cellular()
 			init_string[i] = 0; /* zero the array */
 		}
 		t2 = (S16) ((16 - t)/2);
-		for (i = 0; i < (U16)t; i++)  /* center initial string in array */
+		for (i = 0; i < U16(t); i++)  /* center initial string in array */
 		{
-			init_string[i + t2] = (U16)(buf[i] - 48); /* change character to number */
-			if (init_string[i + t2] > (U16)s_k_1)
+			init_string[i + t2] = U16(buf[i] - '0'); /* change character to number */
+			if (init_string[i + t2] > U16(s_k_1))
 			{
 				abort_cellular(STRING2, 0);
 				return -1;
@@ -1822,7 +1820,7 @@ int cellular()
 	if (n == 0)  /* calculate a random rule */
 	{
 		n = rand() % int(k);
-		for (i = 1; i < (U16)s_rule_digits; i++)
+		for (i = 1; i < U16(s_rule_digits); i++)
 		{
 			n *= 10;
 			n += rand() % int(k);
@@ -1836,14 +1834,14 @@ int cellular()
 		abort_cellular(RULELENGTH, 0);
 		return -1;
 	}
-	for (i = 0; i < (U16)s_rule_digits; i++) /* zero the table */
+	for (i = 0; i < U16(s_rule_digits); i++) /* zero the table */
 	{
 		cell_table[i] = 0;
 	}
-	for (i = 0; i < (U16)t; i++)  /* reverse order */
+	for (i = 0; i < U16(t); i++)  /* reverse order */
 	{
-		cell_table[i] = (U16)(buf[t-i-1] - 48); /* change character to number */
-		if (cell_table[i] > (U16)s_k_1)
+		cell_table[i] = U16(buf[t-i-1] - '0'); /* change character to number */
+		if (cell_table[i] > U16(s_k_1))
 		{
 			abort_cellular(TABLEK, 0);
 			return -1;
@@ -1916,7 +1914,7 @@ int cellular()
 			if (g_use_fixed_random_seed || randparam == 0 || randparam == -1)
 			{
 				/* Use a random border */
-				for (i = 0; i <= (U16) s_r; i++)
+				for (i = 0; i <= U16(s_r); i++)
 				{
 						s_cell_array[notfilled][i] = BYTE(rand() % int(k));
 						s_cell_array[notfilled][g_x_stop-i] = BYTE(rand() % int(k));
@@ -1925,7 +1923,7 @@ int cellular()
 			else
 			{
 				/* Use a zero border */
-				for (i = 0; i <= (U16) s_r; i++)
+				for (i = 0; i <= U16(s_r); i++)
 				{
 					s_cell_array[notfilled][i] = 0;
 					s_cell_array[notfilled][g_x_stop-i] = 0;
@@ -1933,7 +1931,7 @@ int cellular()
 			}
 
 			t = 0; /* do first cell */
-			for (twor = (U16) (s_r + s_r), i = 0; i <= twor; i++)
+			for (twor = U16(s_r + s_r), i = 0; i <= twor; i++)
 			{
 				t = (S16)(t + (S16)s_cell_array[filled][i]);
 			}
@@ -1979,7 +1977,7 @@ contloop:
 		if (g_use_fixed_random_seed || randparam == 0 || randparam == -1)
 		{
 			/* Use a random border */
-			for (i = 0; i <= (U16) s_r; i++)
+			for (i = 0; i <= U16(s_r); i++)
 			{
 				s_cell_array[notfilled][i] = BYTE(rand() % int(k));
 				s_cell_array[notfilled][g_x_stop-i] = BYTE(rand() % int(k));
@@ -1988,7 +1986,7 @@ contloop:
 		else
 		{
 			/* Use a zero border */
-			for (i = 0; i <= (U16) s_r; i++)
+			for (i = 0; i <= U16(s_r); i++)
 			{
 				s_cell_array[notfilled][i] = 0;
 				s_cell_array[notfilled][g_x_stop-i] = 0;
@@ -1996,7 +1994,7 @@ contloop:
 		}
 
 		t = 0; /* do first cell */
-		for (twor = (U16) (s_r + s_r), i = 0; i <= twor; i++)
+		for (twor = U16(s_r + s_r), i = 0; i <= twor; i++)
 		{
 			t = (S16)(t + (S16)s_cell_array[filled][i]);
 		}
