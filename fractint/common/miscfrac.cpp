@@ -1719,6 +1719,11 @@ static void abort_cellular(int err, int t)
 	delete[] s_cell_array[1];
 }
 
+std::string precision_format(const char *specifier, int precision)
+{
+	return str(boost::format("%%.%d%s") % precision % specifier);
+}
+
 int cellular()
 {
 	S16 start_row;
@@ -1731,8 +1736,6 @@ int cellular()
 	S16 t, t2;
 	S32 randparam;
 	double n;
-	char buf[30];
-
 	set_cellular_palette();
 
 	randparam = (S32)g_parameters[0];
@@ -1773,8 +1776,8 @@ int cellular()
 	if (randparam != 0 && randparam != -1)
 	{
 		n = g_parameters[0];
-		sprintf(buf, "%.16g", n); /* # of digits in initial string */
-		t = S16(strlen(buf));
+		std::string buf = str(boost::format("%.16g") % n); /* # of digits in initial string */
+		t = S16(buf.length());
 		if (t > 16 || t <= 0)
 		{
 			abort_cellular(STRING1, 0);
@@ -1827,8 +1830,8 @@ int cellular()
 		}
 		g_parameters[1] = n;
 	}
-	sprintf(buf, "%.*g", s_rule_digits , n);
-	t = S16(strlen(buf));
+	std::string buf = str(boost::format(precision_format("g", s_rule_digits)) % n);
+	t = S16(buf.length());
 	if (s_rule_digits < t || t < 0)  /* leading 0s could make t smaller */
 	{
 		abort_cellular(RULELENGTH, 0);

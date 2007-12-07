@@ -1,5 +1,4 @@
-#if !defined(MISC_FRAC_H)
-#define MISC_FRAC_H
+#pragma once
 
 extern int diffusion();
 extern int test();
@@ -28,5 +27,4 @@ extern int froth_calc();
 extern int froth_per_pixel();
 extern int froth_per_orbit();
 extern bool froth_setup();
-
-#endif
+extern std::string precision_format(const char *specifier, int precision);
