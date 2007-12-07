@@ -576,7 +576,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 
 	while (PathFileExists(minidump.c_str()))
 	{
-		minidump = (boost::format("fractint-%d.dmp") % i++).str();
+		minidump = str(boost::format("fractint-%d.dmp") % i++);
 	}
 	dump_file = CreateFile(minidump.c_str(), GENERIC_READ | GENERIC_WRITE,
 		0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
@@ -588,7 +588,7 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 	if (!status)
 	{
 		MessageBox(0,
-			(boost::format("MiniDumpWriteDump failed with %08x") % GetLastError()).str().c_str(),
+			str(boost::format("MiniDumpWriteDump failed with %08x") % GetLastError()).c_str(),
 			"Ugh", MB_OK);
 	}
 	else
@@ -677,7 +677,7 @@ int expand_dirname(char *dirname, char *drive)
 
 int abort_message(const char *file, unsigned int line, int flags, const char *msg)
 {
-	return stop_message(flags, (boost::format("%s(%d):\n%s") % file % line % msg).str());
+	return stop_message(flags, str(boost::format("%s(%d):\n%s") % file % line % msg));
 }
 
 /* ods

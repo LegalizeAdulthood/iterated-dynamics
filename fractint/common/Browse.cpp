@@ -1,7 +1,8 @@
+#include <string>
+
 #include <string.h>
 #include <time.h>
 #include <errno.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"

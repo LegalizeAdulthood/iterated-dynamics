@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 
 #include <string.h>
@@ -123,7 +124,7 @@ LDBL get_number(char **str)
 
 static std::string l_system_error(const char *message, int line, const char *symbol)
 {
-	return (boost::format(std::string("Error:  ") + message + "\n") % line % symbol).str();
+	return str(boost::format(std::string("Error:  ") + message + "\n") % line % symbol);
 }
 
 static std::string l_system_error(const char *message)

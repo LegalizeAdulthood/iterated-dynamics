@@ -17,8 +17,8 @@
 	(203) 276-9721
 */
 #include <cassert>
-#include <string>
 #include <sstream>
+#include <string>
 
 #include <time.h>
 
@@ -3778,9 +3778,9 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		}
 		if (s_symmetry_list[i].symmetry[0] == 0 && report_bad_symmetry)
 		{
-			stop_message(STOPMSG_FIXED_FONT, (boost::format("%s:\n   %s")
+			stop_message(STOPMSG_FIXED_FONT, str(boost::format("%s:\n   %s")
 				% error_messages(PE_INVALID_SYM_USING_NOSYM)
-				% symmetry_buffer).str());
+				% symmetry_buffer));
 		}
 	}
 	if (c != '{')
@@ -4151,8 +4151,8 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 				return;
 			}
 		}
-		message += (boost::format("Error(%d) at line %d:  %s\n  ")
-			%  m_errors[j].error_number % line_number % error_messages(m_errors[j].error_number)).str();
+		message += str(boost::format("Error(%d) at line %d:  %s\n  ")
+			%  m_errors[j].error_number % line_number % error_messages(m_errors[j].error_number));
 		i = int(message.length());
 		fseek(open_file, m_errors[j].start_pos, SEEK_SET);
 		int statement_len = 0;
@@ -4269,7 +4269,7 @@ void const_list_st::display(const char *title) const
 	for (const const_list_st *p = this; p; p = p->next_item)
 	{
 		stop_message(STOPMSG_NORMAL,
-			(boost::format("%f, %f\n") % p->complex_const.x % p->complex_const.y).str());
+			str(boost::format("%f, %f\n") % p->complex_const.x % p->complex_const.y));
 	}
 }
 

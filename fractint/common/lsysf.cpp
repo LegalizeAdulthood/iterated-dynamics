@@ -1,4 +1,6 @@
+#include <string>
 #include <vector>
+
 #include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>

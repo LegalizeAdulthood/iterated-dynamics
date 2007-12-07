@@ -1,9 +1,10 @@
 /*
-	rotate.c - Routines that manipulate the Video DAC on VGA Adapters
+	rotate.cpp - Routines that manipulate the colormap
 */
+#include <string>
+
 #include <string.h>
 #include <time.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"

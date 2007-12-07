@@ -4,9 +4,9 @@
 #include <sstream>
 #include <string>
 
-#include <boost/format.hpp>
-
 #include <string.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -293,7 +293,7 @@ void help_title()
 {
 	driver_set_clear(); /* clear the screen */
 	std::ostringstream message;
-	message << (boost::format("Iterated Dynamics Version %d.%01d") % (g_release/100) % ((g_release % 100)/10));
+	message << boost::format("Iterated Dynamics Version %d.%01d") % (g_release/100) % ((g_release % 100)/10);
 	if (g_release % 10)
 	{
 		message << boost::format("%01d") % (g_release % 10);
@@ -1741,7 +1741,7 @@ int input_field(
 					{
 						round_float_d(&tmpd);
 					}
-					strcpy(fld, (boost::format("%.15g") % tmpd).str().c_str());
+					strcpy(fld, str(boost::format("%.15g") % tmpd).c_str());
 					offset = 0;
 				}
 			}
@@ -1982,7 +1982,7 @@ int check_vidmode_keyname(char *kname)
 
 static std::string video_mode_key_name(int key, int base, const char *prefix)
 {
-	return (boost::format("%s%d") % prefix % (key - base + 1)).str();
+	return str(boost::format("%s%d") % prefix % (key - base + 1));
 }
 
 std::string video_mode_key_name(int k)

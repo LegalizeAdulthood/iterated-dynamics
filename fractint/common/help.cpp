@@ -6,7 +6,6 @@
 #define NDEBUG
 #endif
 
-
 #define INCLUDE_COMMON  /* include common code in helpcom.h */
 
 #include <string>
@@ -362,7 +361,7 @@ static void display_page(char *title, char *text, unsigned text_len,
 
 	/* Some systems (Ultrix) mess up if you write to column 80 */
 	driver_put_string(1, 78 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR,
-		(boost::format("%2d of %d") % (page + 1) % num_pages).str().c_str());
+		str(boost::format("%2d of %d") % (page + 1) % num_pages));
 
 	if (text != 0)
 	{
@@ -1269,7 +1268,7 @@ static int print_doc_msg_func(int pnum, int num_pages)
 	}
 
 	driver_put_string(7, 41, C_HELP_LINK,
-		(boost::format("%d%%") % int((100.0/num_pages)*pnum)).str().c_str());
+		str(boost::format("%d%%") % int((100.0/num_pages)*pnum)));
 
 	while (driver_key_pressed())
 	{
@@ -1290,7 +1289,7 @@ int makedoc_msg_func(int pnum, int num_pages)
 
 	if (pnum >= 0)
 	{
-		message = (boost::format("\rcompleted %d%%" ) % int((100.0/num_pages)*pnum)).str();
+		message = str(boost::format("\rcompleted %d%%" ) % int((100.0/num_pages)*pnum));
 		result = 1;
 	}
 	else if (pnum == -2)

@@ -3551,8 +3551,8 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 	std::string bad_filename_message;
 	if (bad_filename)
 	{
-		bad_filename_message = (boost::format("Can't find %s%s, please check %s")
-			% cmd % bad_filename % modestr[mode]).str();
+		bad_filename_message = str(boost::format("Can't find %s%s, please check %s")
+			% cmd % bad_filename % modestr[mode]);
 	}
 	if (g_command_initialize)  /* & command_files hasn't finished 1st try */
 	{

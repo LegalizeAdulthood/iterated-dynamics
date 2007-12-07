@@ -1669,7 +1669,7 @@ static void abort_cellular(int err, int t)
 	{
 	case BAD_T:
 		{
-			stop_message(STOPMSG_NORMAL, (boost::format("Bad t=%d, aborting\n") % t).str());
+			stop_message(STOPMSG_NORMAL, str(boost::format("Bad t=%d, aborting\n") % t));
 		}
 		break;
 	case BAD_MEM:

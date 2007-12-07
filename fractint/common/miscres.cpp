@@ -1054,7 +1054,7 @@ top:
 		++s_row;
 	}
 	driver_put_string(s_row++, 2, C_GENERAL_MED,
-		(boost::format("driver: %s, %s") % driver_name() % driver_description()).str().c_str());
+		str(boost::format("driver: %s, %s") % driver_name() % driver_description()));
 	if (g_video_entry.x_dots && g_bf_math == 0)
 	{
 		sprintf(msg, "Video: %dx%dx%d %s %s",

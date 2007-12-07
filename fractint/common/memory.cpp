@@ -112,7 +112,7 @@ static void WhichDiskError(int error)
 	if (DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,
-			(boost::format(error_formats[idx]) % errno % strerror(errno)).str()) == -1)
+			str(boost::format(error_formats[idx]) % errno % strerror(errno))) == -1)
 		{
 			goodbye(); /* bailout if ESC */
 		}
@@ -130,9 +130,9 @@ static void DisplayError(int stored_at, long howmuch)
 	/* memory type cannot be allocated due to insufficient memory, AND there */
 	/* is also insufficient disk space to use as memory. */
 	stop_message(STOPMSG_NORMAL,
-		(boost::format("Allocating %ld Bytes of %s memory failed.\n"
+		str(boost::format("Allocating %ld Bytes of %s memory failed.\n"
 			"Alternate disk space is also insufficient. Goodbye")
-			%  howmuch % memstr[stored_at]).str());
+			%  howmuch % memstr[stored_at]));
 }
 
 static int check_for_mem(int stored_at, long howmuch)
@@ -234,15 +234,15 @@ static void DisplayMemory()
 {
 	extern unsigned long get_disk_space();
 	stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,
-		(boost::format("disk=%lu") % get_disk_space()).str());
+		str(boost::format("disk=%lu") % get_disk_space()));
 }
 
 static void DisplayHandle(U16 handle)
 {
 	if (stop_message(STOPMSG_CANCEL | STOPMSG_NO_BUZZER,
-		(boost::format("Handle %u, type %s, size %li")
+		str(boost::format("Handle %u, type %s, size %li")
 			% handle % memstr[handletable[handle].Nowhere.stored_at]
-			% handletable[handle].Nowhere.size).str()) == -1)
+			% handletable[handle].Nowhere.size)) == -1)
 	{
 		goodbye(); /* bailout if ESC, it's messy, but should work */
 	}
@@ -271,8 +271,8 @@ void ExitCheck()
 			if (handletable[i].Nowhere.stored_at != NOWHERE)
 			{
 				stop_message(STOPMSG_NORMAL,
-					(boost::format("Memory type %s still allocated.  Handle = %i.")
-						% memstr[handletable[i].Nowhere.stored_at] % i).str());
+					str(boost::format("Memory type %s still allocated.  Handle = %i.")
+						% memstr[handletable[i].Nowhere.stored_at] % i));
 				MemoryRelease(i);
 			}
 		}
@@ -385,8 +385,8 @@ U16 MemoryAlloc(U16 size, long count, int stored_at)
 	if (stored_at != use_this_type && DEBUGMODE_MEMORY == g_debug_mode)
 	{
 		stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER,
-			(boost::format("Asked for %s, allocated %lu bytes of %s, handle = %u.")
-				% memstr[stored_at] % toallocate % memstr[use_this_type] % handle).str());
+			str(boost::format("Asked for %s, allocated %lu bytes of %s, handle = %u.")
+				% memstr[stored_at] % toallocate % memstr[use_this_type] % handle));
 		DisplayMemory();
 	}
 

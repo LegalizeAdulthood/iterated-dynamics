@@ -2,6 +2,7 @@
 		FRACTINT - The Ultimate Fractal Generator
                         Main Routine
 */
+#include <string>
 
 #include <string.h>
 #include <time.h>
@@ -15,29 +16,7 @@
 #endif
 #include <stdarg.h>
 #include <ctype.h>
-#include <string>
 
-/* #include hierarchy for fractint is a follows:
-		Each module should include port.h as the first fractint specific
-				include. port.h includes <stdlib.h>, <stdio.h>, <math.h>,
-				<float.h>; and, ifndef XFRACT, <dos.h>.
-		Most modules should include prototyp.h, which incorporates by
-				direct or indirect reference the following header files:
-				mpmath.h
-				cmplx.h
-				fractint.h
-				big.h
-				biginit.h
-				helpcom.h
-				externs.h
-		Other modules may need the following, which must be included
-				separately:
-				fractype.h
-				helpdefs.h
-				lsys.y
-		If included separately from prototyp.h, big.h includes cmplx.h
-		and biginit.h; and mpmath.h includes cmplx.h
-	*/
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -65,6 +44,28 @@
 
 #include "SoundState.h"
 #include "CommandParser.h"
+
+/* #include hierarchy for fractint is a follows:
+		Each module should include port.h as the first fractint specific
+				include. port.h includes <stdlib.h>, <stdio.h>, <math.h>,
+				<float.h>; and, ifndef XFRACT, <dos.h>.
+		Most modules should include prototyp.h, which incorporates by
+				direct or indirect reference the following header files:
+				mpmath.h
+				cmplx.h
+				fractint.h
+				big.h
+				biginit.h
+				helpcom.h
+				externs.h
+		Other modules may need the following, which must be included
+				separately:
+				fractype.h
+				helpdefs.h
+				lsys.y
+		If included separately from prototyp.h, big.h includes cmplx.h
+		and biginit.h; and mpmath.h includes cmplx.h
+*/
 
 VIDEOINFO g_video_entry;
 long g_timer_start;

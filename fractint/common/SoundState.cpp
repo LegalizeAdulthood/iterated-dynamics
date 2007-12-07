@@ -1,8 +1,8 @@
+#include <sstream>
+#include <string>
+
 #include <string.h>
 #include <time.h>
-
-#include <string>
-#include <sstream>
 
 #include "port.h"
 #include "prototyp.h"

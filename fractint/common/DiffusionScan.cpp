@@ -391,9 +391,9 @@ void diffusion_get_calculation_time(char *msg)
 
 std::string diffusion_get_status()
 {
-	return (boost::format("%2.2f%% done, counter at %lu of %lu (%u bits)")
+	return str(boost::format("%2.2f%% done, counter at %lu of %lu (%u bits)")
 		% ((100.0*s_diffusion_counter)/s_diffusion_limit)
 		% s_diffusion_counter
 		% s_diffusion_limit
-		% s_bits).str();
+		% s_bits);
 }
