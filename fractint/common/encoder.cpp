@@ -7,9 +7,12 @@
 #include <string.h>
 #include <limits.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
+#include "strcpy.h"
 
 #include "calcfrac.h"
 #include "drivers.h"
@@ -713,7 +716,7 @@ static int put_extend_blk(int block_id, int block_len, char *block_data)
 	int j;
 	char header[15];
 	strcpy(header, "!\377\013fractint");
-	sprintf(&header[11], "%03u", block_id);
+	strcpy(&header[11], boost::format("%03u") % block_id);
 	if (fwrite(header, 14, 1, g_outfile) != 1)
 	{
 		return 0;

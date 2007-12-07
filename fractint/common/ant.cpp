@@ -15,6 +15,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+#include "strcpy.h"
 
 #include "ant.h"
 #include "drivers.h"
@@ -509,7 +510,7 @@ int Ant::compute()
 	maxpts = long(g_parameters[1]);
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
-	strcpy(m_rule, str(boost::format("%.17g") % g_parameters[0]).c_str());
+	strcpy(m_rule, boost::format("%.17g") % g_parameters[0]);
 	rule_len = int(strlen(m_rule));
 	if (rule_len > 1)
 	{                            /* if rule_len == 0 random rule */

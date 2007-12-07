@@ -18,6 +18,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+#include "strcpy.h"
 
 #include "drivers.h"
 #include "fihelp.h"
@@ -1183,11 +1184,12 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 			info->margin = 0;
 
 			memset(line, ' ', 81);
-			sprintf(buff, "Iterated Dynamics Version %d.%01d%c", g_release/100, (g_release % 100)/10,
-				((g_release % 10) ? '0'+(g_release % 10) : ' '));
+			strcpy(buff, boost::format("Iterated Dynamics Version %d.%01d%c")
+					% (g_release/100) % ((g_release % 100)/10)
+					% ((g_release % 10) ? '0'+(g_release % 10) : ' '));
 			memmove(line + ((width - int(strlen(buff)))/2) - 4, buff, strlen(buff));
 
-			sprintf(buff, "Page %d", pd->pnum);
+			strcpy(buff, boost::format("Page %d") % pd->pnum);
 			memmove(line + (width - int(strlen(buff))), buff, strlen(buff));
 
 			printerc(info, '\n', 1);

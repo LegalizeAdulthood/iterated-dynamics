@@ -16,6 +16,7 @@
 #include "externs.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "strcpy.h"
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
@@ -2313,17 +2314,12 @@ int select_video_mode(int curmode)
 
 void format_vid_table(int choice, char *buf)
 {
-	char local_buf[81];
-	char kname[5];
-	memcpy((char *)&g_video_entry, (char *)&g_video_table[s_entries[choice]],
-		sizeof(g_video_entry));
-	video_mode_key_name(g_video_entry.keynum, kname);
-	sprintf(buf, "%-5s %-25s %5d %5d ",  /* 44 chars */
-		kname, g_video_entry.name, g_video_entry.x_dots, g_video_entry.y_dots);
-	sprintf(local_buf, "%s%3d",  /* 47 chars */
-		buf, g_video_entry.colors);
-	sprintf(buf, "%s %.12s %.12s",  /* 74 chars */
-		local_buf, g_video_entry.driver->name(), g_video_entry.comment);
+	g_video_entry = g_video_table[s_entries[choice]];
+	std::string kname = video_mode_key_name(g_video_entry.keynum);
+	strcpy(buf, boost::format("%-5s %-25s %5d %5d %3d %.12s %.12s")
+		% kname % g_video_entry.name
+		% g_video_entry.x_dots % g_video_entry.y_dots % g_video_entry.colors
+		% g_video_entry.driver->name() % g_video_entry.comment);
 }
 
 #ifndef XFRACT
