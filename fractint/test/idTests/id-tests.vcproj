@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="realdos.obj filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
+				AdditionalDependencies="EscapeTime.obj MathUtil.obj miscfrac.obj realdos.obj filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"
@@ -138,7 +138,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="realdos.obj filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
+				AdditionalDependencies="EscapeTime.obj MathUtil.obj miscfrac.obj realdos.obj filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -218,7 +218,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="realdos.obj filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
+				AdditionalDependencies="EscapeTime.obj MathUtil.obj miscfrac.obj realdos.obj filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"
@@ -261,6 +261,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\globals.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\idTests.cpp"
 				>
 			</File>
@@ -282,6 +286,10 @@
 			</File>
 			<File
 				RelativePath=".\TestLSystemParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TestMiscFrac.cpp"
 				>
 			</File>
 			<File
