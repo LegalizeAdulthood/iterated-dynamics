@@ -7,9 +7,12 @@
 #include <direct.h>
 #include <sys/stat.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "id.h"
 #include "prototyp.h"
+#include "strcpy.h"
 
 #include "filesystem.h"
 #include "miscres.h"
@@ -551,7 +554,7 @@ void update_save_name(char *filename) /* go to the next file name */
 	{
 		save = hold;
 	}
-	sprintf(save, "%ld", atol(hold) + 1); /* increment the number */
+	strcpy(save, boost::format("%ld") % (atol(hold) + 1)); /* increment the number */
 	make_path(filename, drive, dir, fname, ext);
 }
 

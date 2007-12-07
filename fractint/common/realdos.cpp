@@ -12,6 +12,7 @@
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
+#include "strcpy.h"
 
 #include "cmdfiles.h"
 #include "diskvid.h"
@@ -1741,7 +1742,7 @@ int input_field(
 					{
 						round_float_d(&tmpd);
 					}
-					strcpy(fld, str(boost::format("%.15g") % tmpd).c_str());
+					strcpy(fld, boost::format("%.15g") % tmpd);
 					offset = 0;
 				}
 			}

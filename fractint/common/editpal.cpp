@@ -13,6 +13,7 @@
 #include "port.h"
 #include "prototyp.h"
 #include "helpdefs.h"
+#include "strcpy.h"
 
 #include "cmdfiles.h"
 #include "drivers.h"
@@ -2578,7 +2579,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			int i;
 			char buf[20];
-			strcpy(buf, str(boost::format("%.3f") % (1.0/s_gamma_val)).c_str());
+			strcpy(buf, boost::format("%.3f") % (1.0/s_gamma_val));
 			driver_stack_screen();
 			i = field_prompt("Enter gamma value", 0, buf, 20, 0);
 			driver_unstack_screen();

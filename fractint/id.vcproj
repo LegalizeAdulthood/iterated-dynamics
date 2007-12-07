@@ -1678,6 +1678,10 @@
 					RelativePath=".\headers\drivers.h"
 					>
 				</File>
+				<File
+					RelativePath=".\headers\strcpy.h"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="ui"

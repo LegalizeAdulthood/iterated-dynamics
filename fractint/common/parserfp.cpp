@@ -29,8 +29,11 @@
 
 /* Use startup parameter "debugflag = 324" to show debug messages after  */
 /*    compiling with above #define uncommented.  */
-#include <ctype.h>
 #include <string>
+
+#include <ctype.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -59,7 +62,7 @@
 #define MAX_STACK 8   /* max # of stack register avail  */
 
 #ifdef TESTFP
-int pstopmsg(int x, char *msg)
+int pstopmsg(int x, const char *msg)
 {
 	static FILE *fp = 0;
 	if (fp == 0)
@@ -73,45 +76,32 @@ int pstopmsg(int x, char *msg)
 	}
 	return x; /* just to quiet warnings */
 }
+int pstopmsg(int x, const std::string &message)
+{
+	return pstopmsg(x, message.c_str());
+}
 
 #define stop_message pstopmsg
 
-#define DBUGMSG(y)																					\
-	do																								\
-	{																								\
-		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode)	\
-		{																							\
-			stop_message(STOPMSG_NORMAL, (y));														\
-		}																							\
-	}																								\
-	while (0)
-#define DBUGMSG1(y, p) \
-		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
-			sprintf(cDbgMsg, (y), (p)); \
-			stop_message(STOPMSG_NORMAL, cDbgMsg); \
-		}
-#define DBUGMSG2(y, p, q) \
-		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
-			sprintf(cDbgMsg, (y), (p), (q)); \
-			stop_message(STOPMSG_NORMAL, cDbgMsg); \
-		}
-#define DBUGMSG3(y, p, q, r) \
-		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
-			sprintf(cDbgMsg, (y), (p), (q), (r)); \
-			stop_message(STOPMSG_NORMAL, cDbgMsg); \
-		}
-#define DBUGMSG4(y, p, q, r, s) \
-		if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode){ \
-			sprintf(cDbgMsg, (y), (p), (q), (r), (s)); \
-			stop_message(STOPMSG_NORMAL, cDbgMsg); \
-		}
-#else
+void debug_message(const std::string &message)
+{
+	if (DEBUGMODE_NO_HELP_F1_ESC == g_debug_mode || DEBUGMODE_SKIP_OPTIMIZER == g_debug_mode)
+	{
+		stop_message(STOPMSG_NORMAL, message);
+	}
+}
+void debug_message(const boost::format &message)
+{
+	debug_message(message.str());
+}
 
-#define DBUGMSG(y)
-#define DBUGMSG1(y, p)
-#define DBUGMSG2(y, p, q)
-#define DBUGMSG3(y, p, q, r)
-#define DBUGMSG4(y, p, q, r, s)
+#else
+void debug_message(const std::string &message)
+{
+}
+void debug_message(const boost::format &message)
+{
+}
 #endif /* TESTFP */
 
 enum FunctionEntryType
@@ -394,12 +384,12 @@ void Formula::peephole_optimize_load_load(t_function_pointer &function)
 		--s_convert_index;  /* found  *lod push (lod)  */
 		if (is_function(s_convert_index-1, fStkPush2)) /* always more ops here  */
 		{
-			DBUGMSG("push *lod push (lod) -> push4 (*loddup)");
+			debug_message("push *lod push (lod) -> push4 (*loddup)");
 			set_function(s_convert_index-1, fStkPush4);
 		}
 		else  /* prev op not push  */
 		{
-			DBUGMSG("op *lod push (lod) -> op pusha(p=0) (*loddup)");
+			debug_message("op *lod push (lod) -> op pusha(p=0) (*loddup)");
 			set_no_operand(s_convert_index);  /* use 'alternate' push fn.  */
 			set_function(s_convert_index++, fStkPush2a);  /* push w/2 free on stack  */
 			/* operand ptr will be set below  */
@@ -407,7 +397,7 @@ void Formula::peephole_optimize_load_load(t_function_pointer &function)
 	}
 	else  /* never  push *lod (lod)  so must be  */
 	{
-		DBUGMSG("op *lod (lod) -> op (*loddup)");
+		debug_message("op *lod (lod) -> op (*loddup)");
 	}
 	function = fStkLodDup;
 }
@@ -416,7 +406,7 @@ void Formula::peephole_optimize_load_store_same_value(t_function_pointer &functi
 {
 	/* store, load of same value  */
 	/* only one operand on stack here when prev oper is Sto2  */
-	DBUGMSG("*sto2 (lod) -> (*stodup)");
+	debug_message("*sto2 (lod) -> (*stodup)");
 	--s_convert_index;
 	function = fStkStoDup;
 }
@@ -425,7 +415,7 @@ void Formula::peephole_optimize_load_clear_load_same_value(t_function_pointer &f
 {
 	/* store, clear, load same value found  */
 	/* only one operand was on stack so this is safe  */
-	DBUGMSG("*StoClr2 (Lod) -> (*Sto2)");
+	debug_message("*StoClr2 (Lod) -> (*Sto2)");
 	--s_convert_index;
 	function = fStkSto2;  /* use different Sto fn  */
 }
@@ -433,13 +423,13 @@ void Formula::peephole_optimize_load_clear_load_same_value(t_function_pointer &f
 void Formula::peephole_optimize_load_lastsqr_real(t_function_pointer &function)
 {
 	/* -- LastSqr is a real. */
-	DBUGMSG("(*lod[lastsqr]) -> (*lodreal)");
+	debug_message("(*lod[lastsqr]) -> (*lodreal)");
 	function = fStkLodReal;
 }
 
 void Formula::peephole_optimize_load_real_constant(t_function_pointer &function)
 {
-	DBUGMSG("(*lod) -> (*lodrealc)");
+	debug_message("(*lod) -> (*lodrealc)");
 	function = fStkLodRealC;  /* a real const is being loaded  */
 }
 
@@ -481,26 +471,26 @@ void Formula::peephole_optimize_add_load_dup(t_function_pointer &function)
 	if (s_convert_index != 0 && is_function(s_convert_index-1, fStkPush2a))
 	{
 		/* because  push lod lod  is impossible so is  push loddup  */
-		DBUGMSG("pusha *loddup (add) -> (*loddbl),stk += 2");
+		debug_message("pusha *loddup (add) -> (*loddbl),stk += 2");
 		REMOVE_PUSH;
 		set_operand_next(s_convert_index);
 	}
 	else if (s_convert_index != 0 && is_function(s_convert_index-1, fStkPush4))
 	{
-		DBUGMSG("push4 *loddup (add) -> push2 (*loddbl),stk+=2");
+		debug_message("push4 *loddup (add) -> push2 (*loddbl),stk+=2");
 		set_function(s_convert_index-1, fStkPush2);
 		s_stack_count += 2;
 	}
 	else
 	{
-		DBUGMSG("op *loddup (add) -> op (*loddbl)");
+		debug_message("op *loddup (add) -> op (*loddbl)");
 	}
 	function = fStkLodDbl;
 }
 
 void Formula::peephole_optimize_add_store_dup(t_function_pointer &function)
 {
-	DBUGMSG("stodup (*add) -> (*stodbl)");
+	debug_message("stodup (*add) -> (*stodbl)");
 	/* there are always exactly 4 on stack here  */
 	--s_convert_index;
 	function = fStkStoDbl;
@@ -511,14 +501,14 @@ void Formula::peephole_optimize_add_load(t_function_pointer &function)
 	--s_convert_index;     /*  ? *lod (add)  */
 	if (is_function(s_convert_index-1, fStkPush2))
 	{
-		DBUGMSG("*push load (add) -> (*plodadd),stk+=2");
+		debug_message("*push load (add) -> (*plodadd),stk+=2");
 		REMOVE_PUSH;
 		set_operand_next(s_convert_index);
 		function = fStkPLodAdd;
 	}
 	else
 	{
-		DBUGMSG("op *lod (add) -> op (*lodadd)");
+		debug_message("op *lod (add) -> op (*lodadd)");
 		function = fStkLodAdd;
 	}
 }
@@ -528,13 +518,13 @@ void Formula::peephole_optimize_add_load_real(t_function_pointer &function)
 	--s_convert_index;  /* found  ? *lodreal (add)  */
 	if (is_function(s_convert_index-1, fStkPush2))
 	{
-		DBUGMSG("*push lodreal (add) -> (*lodrealadd),stk+=2");
+		debug_message("*push lodreal (add) -> (*lodrealadd),stk+=2");
 		REMOVE_PUSH;
 		set_operand_next(s_convert_index);
 	}
 	else
 	{
-		DBUGMSG("*lodreal (add) -> (*lodrealadd)");
+		debug_message("*lodreal (add) -> (*lodrealadd)");
 	}
 	function = fStkLodRealAdd;
 }
@@ -544,13 +534,13 @@ void Formula::peephole_optimize_add_load_imaginary(t_function_pointer &function)
 	--s_convert_index;  /* found  ? *lodimag (add)  */
 	if (is_function(s_convert_index-1, fStkPush2))
 	{
-		DBUGMSG("*push lodimag (add) -> (*lodimagadd),stk+=2");
+		debug_message("*push lodimag (add) -> (*lodimagadd),stk+=2");
 		REMOVE_PUSH;
 		set_operand_next(s_convert_index);
 	}
 	else
 	{
-		DBUGMSG("*lodimag (add) -> (*lodimagadd)");
+		debug_message("*lodimag (add) -> (*lodimagadd)");
 	}
 	function = fStkLodImagAdd;
 }
@@ -588,14 +578,14 @@ void Formula::peephole_optimize_sub(t_function_pointer &function)
 		/* there is never a sequence (lod push sub)  */
 		if (is_function(s_convert_index-1, fStkPush2))
 		{
-			DBUGMSG("*push lod (sub) -> (*plodsub),stk+=2");
+			debug_message("*push lod (sub) -> (*plodsub),stk+=2");
 			REMOVE_PUSH;
 			set_operand_next(s_convert_index);
 			function = fStkPLodSub;
 		}
 		else
 		{
-			DBUGMSG("*lod (sub) -> (*lodsub)");
+			debug_message("*lod (sub) -> (*lodsub)");
 			function = fStkLodSub;
 		}
 	}
@@ -604,13 +594,13 @@ void Formula::peephole_optimize_sub(t_function_pointer &function)
 		--s_convert_index;  /*  ? *lodreal (sub)  */
 		if (is_function(s_convert_index-1, fStkPush2))
 		{
-			DBUGMSG("*push lodreal (sub) -> (*lodrealsub),stk+=2");
+			debug_message("*push lodreal (sub) -> (*lodrealsub),stk+=2");
 			REMOVE_PUSH;
 			set_operand_next(s_convert_index);
 		}
 		else
 		{
-			DBUGMSG("*lodreal (sub) -> (*lodrealsub)");
+			debug_message("*lodreal (sub) -> (*lodrealsub)");
 		}
 		function = fStkLodRealSub;
 	}
@@ -619,13 +609,13 @@ void Formula::peephole_optimize_sub(t_function_pointer &function)
 		--s_convert_index;  /*  ? *lodimag (sub)  */
 		if (is_function(s_convert_index-1, fStkPush2))
 		{
-			DBUGMSG("*push lodimag (sub) -> (*lodimagsub),stk+=2");
+			debug_message("*push lodimag (sub) -> (*lodimagsub),stk+=2");
 			REMOVE_PUSH;
 			set_operand_next(s_convert_index);
 		}
 		else
 		{
-			DBUGMSG("*lodimag (sub) -> (*lodimagsub)");
+			debug_message("*lodimag (sub) -> (*lodimagsub)");
 		}
 		function = fStkLodImagSub;
 	}
@@ -636,19 +626,19 @@ void Formula::peephole_optimize_mul_load_dup(t_function_pointer &function)
 	/* found  loddup ? (*mul)  */
 	if (is_function(--s_convert_index, fStkPush2))
 	{
-		DBUGMSG("loddup *push (mul) -> (*lodsqr),stk+=2");
+		debug_message("loddup *push (mul) -> (*lodsqr),stk+=2");
 		REMOVE_PUSH;
 	}
 	else
 	{
-		DBUGMSG("*loddup (mul) -> (*lodsqr)");
+		debug_message("*loddup (mul) -> (*lodsqr)");
 	}
 	function = fStkLodSqr;
 }
 
 void Formula::peephole_optimize_mul_store_dup(t_function_pointer &function)
 {
-	DBUGMSG("stodup (mul) -> (*stosqr0)");
+	debug_message("stodup (mul) -> (*stosqr0)");
 	--s_convert_index;
 	function = fStkStoSqr0;  /* dont save lastsqr here ever  */
 }
@@ -661,12 +651,12 @@ void Formula::peephole_optimize_mul_load_push2(t_function_pointer &function)
 		--s_convert_index;  /* ? *lod push (mul)  */
 		if (is_function(s_convert_index-1, fStkPush2))
 		{
-			DBUGMSG("push *lod push (mul) -> push4 (*lodmul)");
+			debug_message("push *lod push (mul) -> push4 (*lodmul)");
 			set_function(s_convert_index-1, fStkPush4);
 		}
 		else
 		{
-			DBUGMSG("op *lod push (mul) -> op pusha (*lodmul)");
+			debug_message("op *lod push (mul) -> op pusha (*lodmul)");
 			set_operand(s_convert_index + 1, get_operand(s_convert_index));  /* fix operand ptr  */
 			set_function(s_convert_index, fStkPush2a);
 			set_no_operand(s_convert_index);
@@ -675,7 +665,7 @@ void Formula::peephole_optimize_mul_load_push2(t_function_pointer &function)
 	}
 	else
 	{
-		DBUGMSG("*lod (mul) -> (*lodmul)");
+		debug_message("*lod (mul) -> (*lodmul)");
 	}
 	function = fStkLodMul;
 }
@@ -704,21 +694,18 @@ void Formula::peephole_optimize_mul_load_2(t_function_pointer &function)
 	/* -- Convert '2*a' into 'a + a'. */
 	if (is_no_function(s_convert_index))
 	{
-		DBUGMSG("lodreal[2] (*lodmul[b])"
-			" -> (*loddbl[b])");
+		debug_message("lodreal[2] (*lodmul[b]) -> (*loddbl[b])");
 		set_operand(s_convert_index-1, get_operand(s_convert_index));
 	}
 	else if (is_function(s_convert_index, fStkPush2a))
 	{
-		DBUGMSG("lodreal[2] *pusha (lodmul[b])"
-			" -> loddbl[b],stk+=2");
+		debug_message("lodreal[2] *pusha (lodmul[b]) -> loddbl[b],stk+=2");
 		set_operand_prev_next(s_convert_index);
 		s_stack_count += 2;
 	}
 	else if (is_function(s_convert_index, fStkPush4))
 	{
-		DBUGMSG("lodreal[2] *push4 (lodmul[b])"
-			" -> loddbl[b],stk+=4");
+		debug_message("lodreal[2] *push4 (lodmul[b]) -> loddbl[b],stk+=4");
 		set_operand_prev_next(s_convert_index);
 		s_stack_count += 4;
 	}
@@ -736,14 +723,12 @@ void Formula::peephole_optimize_mul_load_real(t_function_pointer &function)
 	/* 3 lines marked 'prev lodptr = this' below replace this line  */
 	if (is_no_function(s_convert_index))
 	{
-		DBUGMSG("lodreal[a] (*lodmul[b])"
-			" -> lod[b] (*lodrealmul[a])");
+		debug_message("lodreal[a] (*lodmul[b]) -> lod[b] (*lodrealmul[a])");
 		set_operand(s_convert_index-1, get_operand(s_convert_index));  /* prev lodptr = this  */
 	}
 	else if (is_function(s_convert_index, fStkPush2a))
 	{
-		DBUGMSG("lodreal[a] *pusha (lodmul[b])"
-			" -> lod[b] (*lodrealmul[a]),stk+=2");
+		debug_message("lodreal[a] *pusha (lodmul[b]) -> lod[b] (*lodrealmul[a]),stk+=2");
 		/* set this fn ptr to null so cvtptrx won't be incr later  */
 		set_no_function(s_convert_index);
 		set_operand_prev_next(s_convert_index);  /* prev lodptr = this  */
@@ -751,8 +736,7 @@ void Formula::peephole_optimize_mul_load_real(t_function_pointer &function)
 	}
 	else if (is_function(s_convert_index, fStkPush4))
 	{
-		DBUGMSG("lodreal[a] *push4 (lodmul[b])"
-			" -> lod[b] push2 (*lodrealmul[a]),stk+=2");
+		debug_message("lodreal[a] *push4 (lodmul[b]) -> lod[b] push2 (*lodrealmul[a]),stk+=2");
 		set_function(s_convert_index++, fStkPush2);
 		set_operand(s_convert_index-2, get_operand(s_convert_index));  /* prev lodptr = this  */
 		/* we know cvtptrx points to a null function now  */
@@ -784,12 +768,12 @@ void Formula::peephole_optimize_mul_real(t_function_pointer &function)
 	--s_convert_index;  /* found  lodreal *? (mul)  */
 	if (is_function(s_convert_index, fStkPush2))
 	{
-		DBUGMSG("lodreal *push2 (mul) -> (*lodrealmul),stk+=2");
+		debug_message("lodreal *push2 (mul) -> (*lodrealmul),stk+=2");
 		REMOVE_PUSH;
 	}
 	else
 	{
-		DBUGMSG("*lodreal (mul) -> (*lodrealmul)");
+		debug_message("*lodreal (mul) -> (*lodrealmul)");
 	}
 	function = fStkLodRealMul;
 
@@ -798,25 +782,25 @@ void Formula::peephole_optimize_mul_real(t_function_pointer &function)
 	{
 		if (is_function(s_convert_index, fStkPush2))
 		{
-			DBUGMSG("push (*lodrealmul[2]) -> (*dbl),stk+=2");
+			debug_message("push (*lodrealmul[2]) -> (*dbl),stk+=2");
 			REMOVE_PUSH;
 		}
 		else
 		{
-			DBUGMSG("*lodrealmul[2] -> (*dbl)");
+			debug_message("*lodrealmul[2] -> (*dbl)");
 		}
 		set_no_operand(s_convert_index);
 		function = fStkDbl;
 
 		if (is_function(s_convert_index-1, fStkLod))
 		{
-			DBUGMSG("lod (*dbl) -> (*loddbl)");
+			debug_message("lod (*dbl) -> (*loddbl)");
 			--s_convert_index;
 			function = fStkLodDbl;
 		}
 		else if (is_function(s_convert_index-1, fStkSto2))
 		{
-			DBUGMSG("sto2 (*dbl) -> (*stodbl)");
+			debug_message("sto2 (*dbl) -> (*stodbl)");
 			--s_convert_index;
 			function = fStkStoDbl;
 		}
@@ -828,12 +812,12 @@ void Formula::peephole_optimize_mul_load_imaginary(t_function_pointer &function)
 	--s_convert_index;  /* found  lodimag *? (mul)  */
 	if (is_function(s_convert_index, fStkPush2))
 	{
-		DBUGMSG("lodimag *push2 (mul) -> (*lodimagmul),stk+=2");
+		debug_message("lodimag *push2 (mul) -> (*lodimagmul),stk+=2");
 		REMOVE_PUSH;
 	}
 	else
 	{
-		DBUGMSG("*lodimag (mul) -> (*lodimagmul)");
+		debug_message("*lodimag (mul) -> (*lodimagmul)");
 	}
 	function = fStkLodImagMul;
 }
@@ -841,14 +825,14 @@ void Formula::peephole_optimize_mul_load_imaginary(t_function_pointer &function)
 void Formula::peephole_optimize_mul_load_less(t_function_pointer &function)
 {
 	/* this shortcut fails if  Lod LT Pull Mul  found  */
-	DBUGMSG("LodLT (*Mul) -> (*LodLTMul)");
+	debug_message("LodLT (*Mul) -> (*LodLTMul)");
 	--s_convert_index;  /* never  lod LT Push Mul  here  */
 	function = fStkLodLTMul;
 }
 
 void Formula::peephole_optimize_mul_load_less_equal(t_function_pointer &function)
 {
-	DBUGMSG("LodLTE (*mul) -> (*LodLTEmul)");
+	debug_message("LodLTE (*mul) -> (*LodLTEmul)");
 	--s_convert_index;
 	function = fStkLodLTEMul;
 }
@@ -890,12 +874,12 @@ void Formula::peephole_optimize_store_clear(t_function_pointer &function)
 	--s_convert_index;
 	if (s_stack_count == 2)
 	{
-		DBUGMSG("sto (*clr1) -> (*stoclr2)");
+		debug_message("sto (*clr1) -> (*stoclr2)");
 		function = fStkStoClr2;
 	}
 	else
 	{
-		DBUGMSG("sto (*clr1) -> (*stoclr1)");
+		debug_message("sto (*clr1) -> (*stoclr1)");
 		function = fStkStoClr1;
 	}
 }
@@ -909,12 +893,12 @@ void Formula::peephole_optimize_divide(t_function_pointer &function)
 		/* lodrealc ? (*div)  */
 		if (is_function(--s_convert_index, fStkPush2))
 		{
-			DBUGMSG("lodrealc *push (div) -> (*lodrealmul),stk+=2");
+			debug_message("lodrealc *push (div) -> (*lodrealmul),stk+=2");
 			REMOVE_PUSH;
 		}
 		else
 		{
-			DBUGMSG("*lodrealc (div) -> (*lodrealmul)");
+			debug_message("*lodrealc (div) -> (*lodrealmul)");
 		}
 		m_variables[m_parser_vsp].name = 0;  /* this constant has no name  */
 		m_variables[m_parser_vsp].name_length = 0;
@@ -929,56 +913,56 @@ void Formula::peephole_optimize_real(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod)
 	{
-		DBUGMSG("lod (*real) -> (*lodreal)");
+		debug_message("lod (*real) -> (*lodreal)");
 		--s_convert_index;
 		function = fStkLodReal;
 	}
 	else if (s_stack_count < MAX_STACK)
 	{
-		DBUGMSG("(*real) -> (*real2)");
+		debug_message("(*real) -> (*real2)");
 		function = fStkReal2;
 	}
 }
 
 void Formula::peephole_optimize_load_imaginary(t_function_pointer &function)
 {
-	DBUGMSG("lod (*imag) -> lodimag");
+	debug_message("lod (*imag) -> lodimag");
 	--s_convert_index;
 	function = fStkLodImag;
 }
 
 void Formula::peephole_optimize_load_conjugate(t_function_pointer &function)
 {
-	DBUGMSG("lod (*conj) -> (*lodconj)");
+	debug_message("lod (*conj) -> (*lodconj)");
 	--s_convert_index;
 	function = fStkLodConj;
 }
 
 void Formula::peephole_optimize_modulus(t_function_pointer &function)
 {
-	DBUGMSG("(*mod) -> (*mod2)");
+	debug_message("(*mod) -> (*mod2)");
 	function = fStkMod2;  /* use faster version if room on stack  */
 	if (s_previous_function == fStkLod)
 	{
-		DBUGMSG("lod (*mod2) -> (*lodmod2)");
+		debug_message("lod (*mod2) -> (*lodmod2)");
 		--s_convert_index;
 		function = fStkLodMod2;
 	}
 	else if (s_previous_function == fStkSto || s_previous_function == fStkSto2)
 	{
-		DBUGMSG("sto (*mod2) -> (*stomod2)");
+		debug_message("sto (*mod2) -> (*stomod2)");
 		--s_convert_index;
 		function = fStkStoMod2;
 	}
 	else if (s_previous_function == fStkLodSub)
 	{
-		DBUGMSG("lodsub (*mod2) -> (*lodsubmod)");
+		debug_message("lodsub (*mod2) -> (*lodsubmod)");
 		--s_convert_index;
 		function = fStkLodSubMod;
 	}
 	else if (stack_top_is_real())
 	{
-		DBUGMSG("(*mod2[st real]) -> (*sqr3)");
+		debug_message("(*mod2[st real]) -> (*sqr3)");
 		function = fStkSqr3;
 	}
 }
@@ -987,25 +971,25 @@ void Formula::peephole_optimize_flip(t_function_pointer &function)
 {
 	if (s_previous_function == fStkReal || s_previous_function == fStkReal2)
 	{
-		DBUGMSG("real (*flip) -> (*realflip)");
+		debug_message("real (*flip) -> (*realflip)");
 		--s_convert_index;
 		function = fStkRealFlip;
 	}
 	else if (s_previous_function == fStkImag)
 	{
-		DBUGMSG("imag (*flip) -> (*imagflip)");
+		debug_message("imag (*flip) -> (*imagflip)");
 		--s_convert_index;
 		function = fStkImagFlip;
 	}
 	else if (s_previous_function == fStkLodReal)
 	{
-		DBUGMSG("lodreal (*flip) -> (*lodrealflip)");
+		debug_message("lodreal (*flip) -> (*lodrealflip)");
 		--s_convert_index;
 		function = fStkLodRealFlip;
 	}
 	else if (s_previous_function == fStkLodImag)
 	{
-		DBUGMSG("lodimag (*flip) -> (*lodimagflip)");
+		debug_message("lodimag (*flip) -> (*lodimagflip)");
 		--s_convert_index;
 		function = fStkLodImagFlip;
 	}
@@ -1015,13 +999,13 @@ void Formula::peephole_optimize_abs(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLodReal)
 	{
-		DBUGMSG("lodreal (*abs) -> (*lodrealabs)");
+		debug_message("lodreal (*abs) -> (*lodrealabs)");
 		--s_convert_index;
 		function = fStkLodRealAbs;
 	}
 	else if (s_previous_function == fStkLodImag)
 	{
-		DBUGMSG("lodimag (*abs) -> (*lodimagabs)");
+		debug_message("lodimag (*abs) -> (*lodimagabs)");
 		--s_convert_index;
 		function = fStkLodImagAbs;
 	}
@@ -1031,23 +1015,23 @@ void Formula::peephole_optimize_sqr(t_function_pointer &function)
 {
 	if (s_previous_function == fStkLod && !is_function(s_convert_index-1, fStkPush2))
 	{
-		DBUGMSG("lod (*sqr) -> (*lodsqr)");
+		debug_message("lod (*sqr) -> (*lodsqr)");
 		--s_convert_index;
 		function = fStkLodSqr;  /* assume no need to save lastsqr  */
 		if (s_last_sqr_used)
 		{
-			DBUGMSG("(*lodsqr) -> (*lodsqr2)");
+			debug_message("(*lodsqr) -> (*lodsqr2)");
 			function = fStkLodSqr2;  /* lastsqr is being used  */
 		}
 	}
 	else if (s_previous_function == fStkSto2)
 	{
-		DBUGMSG("sto2 (*sqr) -> (*stosqr0)");
+		debug_message("sto2 (*sqr) -> (*stosqr0)");
 		--s_convert_index;
 		function = fStkStoSqr0;  /* assume no need to save lastsqr  */
 		if (s_last_sqr_used)
 		{
-			DBUGMSG("(*stosqr0) -> (*stosqr)");
+			debug_message("(*stosqr0) -> (*stosqr)");
 			function = fStkStoSqr;  /* save lastsqr  */
 		}
 	}
@@ -1055,11 +1039,11 @@ void Formula::peephole_optimize_sqr(t_function_pointer &function)
 	{
 		if (!s_last_sqr_used)
 		{
-			DBUGMSG("(*sqr) -> (*sqr0)");
+			debug_message("(*sqr) -> (*sqr0)");
 			function = fStkSqr0;  /* don't save lastsqr  */
 			if (stack_top_is_real())
 			{
-				DBUGMSG("(*sqr0[st real]) -> (*sqr3)");
+				debug_message("(*sqr0[st real]) -> (*sqr3)");
 				function = fStkSqr3;
 			}
 		}
@@ -1071,47 +1055,45 @@ void Formula::peephole_optimize_power_load_real_constant_special(t_function_poin
 	/* change ^[-1, 0, 1, or 2] to recip, one, ident, sqr */
 	if (is_function(s_convert_index-1, fStkPush2))
 	{
-		DBUGMSG("LodRealC[-1,0,1,2] Push (*Pwr)"
-			" -> (*[recip,1,ident,Sqr0]), stk+=2");
+		debug_message("LodRealC[-1,0,1,2] Push (*Pwr) -> (*[recip,1,ident,Sqr0]), stk+=2");
 		REMOVE_PUSH;  /* lod[?] (push) *pwr */
 	}
 	else
 	{
-		DBUGMSG("LodRealC[-1,0,1,2] (*Pwr)"
-			" -> (*[recip,1,ident,sqr0])");
+		debug_message("LodRealC[-1,0,1,2] (*Pwr) -> (*[recip,1,ident,sqr0])");
 	}
 	--s_convert_index;
 	set_no_operand(s_convert_index);
 	if (constant == 2.0)
 	{
-		DBUGMSG("[]=Sqr0");
+		debug_message("[]=Sqr0");
 		function = fStkSqr0;  /* no need to compute lastsqr here  */
 		if (is_function(s_convert_index-1, fStkLod))
 		{
-			DBUGMSG("Lod (*Sqr0) -> (*LodSqr)");
+			debug_message("Lod (*Sqr0) -> (*LodSqr)");
 			--s_convert_index;
 			function = fStkLodSqr;  /* dont save lastsqr  */
 		}
 		else if (is_function(s_convert_index-1, fStkSto2))
 		{
-			DBUGMSG("Sto2 (*Sqr0) -> (*StoSqr0)");
+			debug_message("Sto2 (*Sqr0) -> (*StoSqr0)");
 			--s_convert_index;
 			function = fStkStoSqr0;  /* dont save lastsqr  */
 		}
 	}
 	else if (constant == 1.0)
 	{
-		DBUGMSG("[]=Ident");
+		debug_message("[]=Ident");
 		function = fStkIdent;
 	}
 	else if (constant == 0.0)
 	{
-		DBUGMSG("[]=One");
+		debug_message("[]=One");
 		function = fStkOne;
 	}
 	else if (constant == -1.0)
 	{
-		DBUGMSG("[]=Recip");
+		debug_message("[]=Recip");
 		function = fStkRecip;
 	}
 }
@@ -1138,7 +1120,7 @@ void Formula::peephole_optimize_power_load_real_constant(t_function_pointer &fun
 void Formula::peephole_optimize_power_load_real(t_function_pointer &function)
 {
 	/* don't handle pushes here, lodrealpwr needs 4 free  */
-	DBUGMSG("LodReal (*Pwr) -> (*LodRealPwr)");
+	debug_message("LodReal (*Pwr) -> (*LodRealPwr)");
 	--s_convert_index;
 	function = fStkLodRealPwr;
 }
@@ -1161,7 +1143,7 @@ void Formula::peephole_optimize_less_equal(t_function_pointer &function)
 		|| s_previous_function == fStkLodReal
 		|| s_previous_function == fStkLodRealC)
 	{
-		DBUGMSG("Lod (*LTE) -> (*LodLTE)");
+		debug_message("Lod (*LTE) -> (*LodLTE)");
 		--s_convert_index;
 		function = fStkLodLTE;
 	}
@@ -1173,7 +1155,7 @@ void Formula::peephole_optimize_less(t_function_pointer &function)
 		|| s_previous_function == fStkLodReal
 		|| s_previous_function == fStkLodRealC)
 	{
-		DBUGMSG("Lod (*LT) -> (*LodLT)");
+		debug_message("Lod (*LT) -> (*LodLT)");
 		--s_convert_index;
 		function = fStkLodLT;
 	}
@@ -1185,7 +1167,7 @@ void Formula::peephole_optimize_greater(t_function_pointer &function)
 		|| s_previous_function == fStkLodReal
 		|| s_previous_function == fStkLodRealC)
 	{
-		DBUGMSG("Lod (*GT) -> (*LodGT)");
+		debug_message("Lod (*GT) -> (*LodGT)");
 		--s_convert_index;
 		function = fStkLodGT;
 	}
@@ -1197,7 +1179,7 @@ void Formula::peephole_optimize_greater_equal(t_function_pointer &function)
 		|| s_previous_function == fStkLodReal
 		|| s_previous_function == fStkLodRealC)
 	{
-		DBUGMSG("Lod (*GTE) -> (*LodGTE)");
+		debug_message("Lod (*GTE) -> (*LodGTE)");
 		--s_convert_index;
 		function = fStkLodGTE;
 	}
@@ -1209,7 +1191,7 @@ void Formula::peephole_optimize_not_equal(t_function_pointer &function)
 		|| s_previous_function == fStkLodReal
 		|| s_previous_function == fStkLodRealC)
 	{
-		DBUGMSG("Lod (*NE) -> (*LodNE)");
+		debug_message("Lod (*NE) -> (*LodNE)");
 		--s_convert_index;
 		function = fStkLodNE;
 	}
@@ -1221,7 +1203,7 @@ void Formula::peephole_optimize_equal(t_function_pointer &function)
 		|| s_previous_function == fStkLodReal
 		|| s_previous_function == fStkLodRealC)
 	{
-		DBUGMSG("Lod (*EQ) -> (*LodEQ)");
+		debug_message("Lod (*EQ) -> (*LodEQ)");
 		--s_convert_index;
 		function = fStkLodEQ;
 	}
@@ -1250,7 +1232,8 @@ awful_error:
 	/*   it would be much better to do this *after* optimization  */
 	if (s_stack_count < minimum_stack)  /* not enough operands on fpu stack  */
 	{
-		DBUGMSG2("Inserted pull.  Stack: %2d --> %2d", s_stack_count, s_stack_count + 2);
+		debug_message(boost::format("Inserted pull.  Stack: %2d --> %2d")
+			% s_stack_count % (s_stack_count + 2));
 		set_no_operand(s_convert_index);
 		set_function(s_convert_index++, fStkPull2);  /* so adjust the stack, pull operand  */
 		s_stack_count += 2;
@@ -1275,7 +1258,8 @@ awful_error:
 			{
 				goto awful_error;
 			}
-			DBUGMSG2("Inserted push.  Stack: %2d --> %2d", s_stack_count, s_stack_count-2);
+			debug_message(boost::format("Inserted push.  Stack: %2d --> %2d")
+				% s_stack_count % (s_stack_count-2));
 			set_no_operand(s_convert_index++);
 			s_stack_count -= 2;
 		}
@@ -1283,7 +1267,8 @@ awful_error:
 		{
 			/* push down from max to max-4  */
 			set_function(s_convert_index, fStkPush4);
-			DBUGMSG2("Inserted push.  Stack: %2d --> %2d", s_stack_count, s_stack_count-4);
+			debug_message(boost::format("Inserted push.  Stack: %2d --> %2d")
+				% s_stack_count % (s_stack_count-4));
 			set_no_operand(s_convert_index++);
 			s_stack_count -= 4;
 		}
@@ -1329,8 +1314,8 @@ awful_error:
 		s_real_stack_count += delta_stack;
 	}
 
-	DBUGMSG3("Stack:  %2d --> %2d,  Real stack:  %2d",
-			previous_stack_count, s_stack_count, s_real_stack_count);
+	debug_message(boost::format("Stack:  %2d --> %2d,  Real stack:  %2d")
+			% previous_stack_count % s_stack_count % s_real_stack_count);
 
 	return true;
 }
@@ -1399,54 +1384,54 @@ void Formula::final_optimizations(t_function_pointer &out_function)
 
 	if (out_function == fStkLT)
 	{
-		DBUGMSG("LT Clr2 -> LT2");
+		debug_message("LT Clr2 -> LT2");
 		set_function(s_convert_index-1, fStkLT2);
 	}
 	else if (out_function == fStkLodLT)
 	{
-		DBUGMSG("LodLT Clr2 -> LodLT2");
+		debug_message("LodLT Clr2 -> LodLT2");
 		set_function(s_convert_index-1, fStkLodLT2);
 	}
 	else if (out_function == fStkLTE)
 	{
-		DBUGMSG("LTE Clr2 -> LTE2");
+		debug_message("LTE Clr2 -> LTE2");
 		set_function(s_convert_index-1, fStkLTE2);
 	}
 	else if (out_function == fStkLodLTE)
 	{
-		DBUGMSG("LodLTE Clr2 -> LodLTE2");
+		debug_message("LodLTE Clr2 -> LodLTE2");
 		set_function(s_convert_index-1, fStkLodLTE2);
 	}
 	else if (out_function == fStkGT)
 	{
-		DBUGMSG("GT Clr2 -> GT2");
+		debug_message("GT Clr2 -> GT2");
 		set_function(s_convert_index-1, fStkGT2);
 	}
 	else if (out_function == fStkLodGT)
 	{
-		DBUGMSG("LodGT Clr2 -> LodGT2");
+		debug_message("LodGT Clr2 -> LodGT2");
 		set_function(s_convert_index-1, fStkLodGT2);
 	}
 	else if (out_function == fStkLodGTE)
 	{
-		DBUGMSG("LodGTE Clr2 -> LodGTE2");
+		debug_message("LodGTE Clr2 -> LodGTE2");
 		set_function(s_convert_index-1, fStkLodGTE2);
 	}
 	else if (out_function == fStkAND)
 	{
-		DBUGMSG("AND Clr2 -> ANDClr2");
+		debug_message("AND Clr2 -> ANDClr2");
 		set_function(s_convert_index-1, fStkANDClr2);
 		out_function = get_function(s_convert_index-2);
 		if (out_function == fStkLodLTE)
 		{
-			DBUGMSG("LodLTE ANDClr2 -> LodLTEAnd2");
+			debug_message("LodLTE ANDClr2 -> LodLTEAnd2");
 			--s_convert_index;
 			set_function(s_convert_index-1, fStkLodLTEAnd2);
 		}
 	}
 	else if (out_function == fStkOR)
 	{
-		DBUGMSG("OR Clr2 -> ORClr2");
+		debug_message("OR Clr2 -> ORClr2");
 		set_function(s_convert_index-1, fStkORClr2);
 	}
 	else
@@ -1510,36 +1495,36 @@ void Formula::convert_stack()  /* convert the array of ptrs  */
 
 	if (!s_p1_constant)
 	{
-		DBUGMSG("p1 not constant");
+		debug_message("p1 not constant");
 	}
 	if (!s_p2_constant)
 	{
-		DBUGMSG("p2 not constant");
+		debug_message("p2 not constant");
 	}
 	if (!s_p3_constant)
 	{
-		DBUGMSG("p3 not constant");
+		debug_message("p3 not constant");
 	}
 	if (!s_p4_constant)
 	{
-		DBUGMSG("p4 not constant");
+		debug_message("p4 not constant");
 	}
 	if (!s_p5_constant)
 	{
-		DBUGMSG("p5 not constant");
+		debug_message("p5 not constant");
 	}
 	if (s_last_sqr_used)
 	{
-		DBUGMSG("LastSqr loaded");
+		debug_message("LastSqr loaded");
 		if (!s_last_sqr_stored)
 		{
-			DBUGMSG("LastSqr stored");
+			debug_message("LastSqr stored");
 		}
 	}
 
 	if (m_functions[m_last_op-1] != StkClr)
 	{
-		DBUGMSG("Missing clr added at end");
+		debug_message("Missing clr added at end");
 		/* should be safe to modify this  */
 		m_functions[m_last_op++] = StkClr;
 	}
@@ -1564,21 +1549,21 @@ void Formula::convert_stack()  /* convert the array of ptrs  */
 				if (out_function == fStkClr1 && m_op_index == m_last_op-1)
 				{
 					out_function = fStkClr2;  /* convert the last clear to a clr2  */
-					DBUGMSG("Last fn (CLR) --> (is really CLR2)");
+					debug_message("Last fn (CLR) --> (is really CLR2)");
 				}
 				if (out_function == fStkIdent && g_debug_mode != DEBUGMODE_SKIP_OPTIMIZER)
 				{
 					/* ident will be skipped here  */
 					/* this is really part of the optimizer  */
-					DBUGMSG("IDENT was skipped");
+					debug_message("IDENT was skipped");
 				}
 				else
 				{
-					DBUGMSG4("fn=%s, minstk=%1i, freestk=%1i, delta=%3i",
-							function.name,
-							int(function.minimum_registers),
-							int(function.free_registers),
-							int(function.stack_delta));
+					debug_message(boost::format("fn=%s, minstk=%1i, freestk=%1i, delta=%3i")
+							% function.name
+							% int(function.minimum_registers)
+							% int(function.free_registers)
+							% int(function.stack_delta));
 					if (!convert_functions(out_function, function.minimum_registers, function.free_registers, function.stack_delta))
 					{
 						return;
