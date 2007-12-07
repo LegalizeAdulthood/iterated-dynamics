@@ -1,4 +1,4 @@
-/* DECODE.C - An LZW decoder for GIF
+/* decode.cpp - An LZW decoder for GIF
  * Copyright (C) 1987, by Steven A. Bennett
  *
  * Permission is given by the author to freely redistribute and include
@@ -38,7 +38,7 @@
  *                altered logic to allow decoder to place characters
  *                directly into the output buffer if they fit
  */
-
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

@@ -80,7 +80,7 @@ void Ant::set_wait(long *wait)
 {
 	while (true)
 	{
-		show_temp_message((boost::format("Delay %4ld ") % *wait).str());
+		show_temp_message(str(boost::format("Delay %4ld ") % *wait));
 
 		int kbdchar = driver_get_key();
 		switch (kbdchar)
@@ -509,7 +509,7 @@ int Ant::compute()
 	maxpts = long(g_parameters[1]);
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);
-	strcpy(m_rule, (boost::format("%.17g") % g_parameters[0]).str().c_str());
+	strcpy(m_rule, str(boost::format("%.17g") % g_parameters[0]).c_str());
 	rule_len = int(strlen(m_rule));
 	if (rule_len > 1)
 	{                            /* if rule_len == 0 random rule */

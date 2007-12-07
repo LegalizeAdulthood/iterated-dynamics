@@ -86,10 +86,10 @@ static std::string format_video_info(int i, const char *err)
 {
 	g_video_entry = g_video_table[i];
 	std::string key_name = video_mode_key_name(g_video_entry.keynum);
-	std::string result = (boost::format("%-5s %-25s %-4s %5d %5d %3d %-25s")  /* 78 chars */
+	std::string result = str(boost::format("%-5s %-25s %-4s %5d %5d %3d %-25s")  /* 78 chars */
 			% key_name.c_str() % g_video_entry.name % err
 			% g_video_entry.x_dots % g_video_entry.y_dots
-			% g_video_entry.colors % g_video_entry.comment).str();
+			% g_video_entry.colors % g_video_entry.comment);
 	g_video_entry.x_dots = 0;
 	return result;
 }
@@ -252,14 +252,14 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 				heading += std::string(" -> ") + formula_info->form_name;
 			}
 		}
-		heading = (boost::format("File: %-44s  %d x %d x %d\n%-52s")
-					% g_read_name.c_str() % g_file_x_dots % g_file_y_dots % g_file_colors % heading.c_str()).str();
+		heading = str(boost::format("File: %-44s  %d x %d x %d\n%-52s")
+					% g_read_name % g_file_x_dots % g_file_y_dots % g_file_colors % heading);
 		if (info->info_id[0] != 'G')
 		{
-			std::string version = (boost::format("v%d.%01d") % (g_save_release/100) % ((g_save_release%100)/10)).str();
+			std::string version = str(boost::format("v%d.%01d") % (g_save_release/100) % ((g_save_release%100)/10));
 			if (g_save_release % 100)
 			{
-				version += (char)((g_save_release % 10) + '0');
+				version += char((g_save_release % 10) + '0');
 			}
 			heading += version;
 		}

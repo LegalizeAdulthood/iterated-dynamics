@@ -1,5 +1,5 @@
 /*
- * intro.c
+ * intro.cpp
  *
  * Iterated Dynamics intro screen (authors & credits)
  *
@@ -7,8 +7,10 @@
  */
 #include <cassert>
 #include <cstring>
-#include <time.h>
+#include <string>
 #include <vector>
+
+#include <time.h>
 
 #include "port.h"
 #include "prototyp.h"

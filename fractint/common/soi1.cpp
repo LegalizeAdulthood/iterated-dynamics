@@ -1,5 +1,5 @@
 /*
- * soi.c --  SOI
+ * soi1.cpp --  SOI
  *
  *	Simultaneous Orbit Iteration Image Generation Method. Computes
  *      rectangular regions by tracking the orbits of only a few key points.
@@ -11,6 +11,8 @@
  * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
  *
  */
+#include <string>
+
 #include <time.h>
 #include <string.h>
 #if !defined(_WIN32)

@@ -243,7 +243,7 @@ static void rectangle(int x, int y, int width, int depth, int color)
 
 static void displayf(int x, int y, int fg, int bg, const boost::format &message)
 {
-	driver_display_string(x, y, fg, bg, message.str().c_str());
+	driver_display_string(x, y, fg, bg, str(message));
 }
 
 /*
@@ -1772,14 +1772,14 @@ static void pal_table_draw_status(pal_table *me, bool stripe_mode)
 
 		{
 			driver_display_string(x, y, s_fg_color, s_bg_color,
-				(boost::format("%c%c%c%c")
+				str(boost::format("%c%c%c%c")
 					% (me->auto_select ? 'A' : ' ')
 					% ((me->exclude == EXCLUDE_CURRENT) ? 'X' : (me->exclude == EXCLUDE_RANGE) ? 'Y' : ' ')
 					% (me->freestyle ? 'F' : ' ')
-					% (stripe_mode ? 'T' : ' ')).str().c_str());
+					% (stripe_mode ? 'T' : ' ')));
 			y -= 10;
 			driver_display_string(x, y, s_fg_color, s_bg_color,
-				(boost::format("%d") % color).str().c_str());
+				str(boost::format("%d") % color));
 		}
 		cursor_show();
 	}
@@ -2578,7 +2578,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			int i;
 			char buf[20];
-			strcpy(buf, (boost::format("%.3f") % (1.0/s_gamma_val)).str().c_str());
+			strcpy(buf, str(boost::format("%.3f") % (1.0/s_gamma_val)).c_str());
 			driver_stack_screen();
 			i = field_prompt("Enter gamma value", 0, buf, 20, 0);
 			driver_unstack_screen();

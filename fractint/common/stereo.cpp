@@ -2,9 +2,10 @@
 	stereo.cpp a module to view 3D images.
 	From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
+#include <string>
+
 #include <string.h>
 #include <time.h>
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"

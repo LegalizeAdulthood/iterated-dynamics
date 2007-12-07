@@ -2,6 +2,7 @@
 /* These routines are called by driver_get_key to allow keystrokes to control */
 /* Fractint to be read from a file.                                    */
 /***********************************************************************/
+#include <string>
 
 #include <ctype.h>
 #include <time.h>
@@ -9,7 +10,6 @@
 #ifndef XFRACT
 #include <conio.h>
 #endif
-#include <string>
 
 #include "port.h"
 #include "prototyp.h"

@@ -1,9 +1,6 @@
 /* calcmand.cpp
  * This file contains routines to replace calcmand.asm.
  */
-#define WIN32_LEAN_AND_MEAN
-#define STRICT
-#include <windows.h>
 #include <string>
 
 #include "port.h"

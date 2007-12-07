@@ -1,3 +1,5 @@
+#include <string>
+
 #include <assert.h>
 #include <string.h>
 
@@ -231,6 +233,11 @@ void driver_shell()
 	s_current->shell();
 }
 
+void driver_put_string(int row, int col, int attr, const std::string &text)
+{
+	s_current->put_string(row, col, attr, text.c_str());
+}
+
 void driver_put_string(int row, int col, int attr, const char *msg)
 {
 	s_current->put_string(row, col, attr, msg);
@@ -361,6 +368,10 @@ void driver_put_truecolor(int x, int y, int r, int g, int b, int a)
 	s_current->put_truecolor(x, y, r, g, b, a);
 }
 
+void driver_display_string(int x, int y, int fg, int bg, const std::string &text)
+{
+	s_current->display_string(x, y, fg, bg, text.c_str());
+}
 void driver_display_string(int x, int y, int fg, int bg, const char *text)
 {
 	s_current->display_string(x, y, fg, bg, text);

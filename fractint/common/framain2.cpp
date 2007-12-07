@@ -385,7 +385,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			if (2224 == g_debug_mode)
 			{
 				stop_message(STOPMSG_NO_BUZZER,
-					(boost::format("floatflag=%d") % (g_user_float_flag ? 1 : 0)).str());
+					str(boost::format("floatflag=%d") % (g_user_float_flag ? 1 : 0)));
 			}
 			i = funny_glasses_call(gifview);
 			if (g_out_line_cleanup)              /* cleanup routine defined? */

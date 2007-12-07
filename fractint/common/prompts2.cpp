@@ -192,7 +192,7 @@ int get_toggles()
 	std::string fill_buffer = "normal";
 	if (g_fill_color >= 0)
 	{
-		fill_buffer = (boost::format("%d") % g_fill_color).str();
+		fill_buffer = str(boost::format("%d") % g_fill_color);
 	}
 	dialog.push("Fill Color (normal,#) (works with passes=t, b and d)", fill_buffer);
 	dialog.push("Proximity value for inside=epscross and fmod", float(g_proximity));

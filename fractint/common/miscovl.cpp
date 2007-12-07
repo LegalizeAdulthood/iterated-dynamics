@@ -369,7 +369,7 @@ void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
 		}
 		PCommandName[w] = 0;
 		{
-			strcat(PCommandName, (boost::format("_%c%c") % par_key(i) % par_key(j)).str().c_str());
+			strcat(PCommandName, str(boost::format("_%c%c") % par_key(i) % par_key(j)).c_str());
 		}
 		fprintf(parmfile, "%-19s{", PCommandName);
 		g_escape_time_state.m_grid_fp.x_min() = m_pxxmin + m_pdelx*(i*m_pxdots) + m_pdelx2*(j*m_pydots);

@@ -978,24 +978,24 @@ void JIIM::execute()
 			actively_computing = true;
 			if (s_show_numbers) /* write coordinates on screen */
 			{
-				std::string str =
-					(boost::format("%16.14f %16.14f %3d") % cr % ci % getcolor(g_col, g_row)).str();
+				std::string text =
+					str(boost::format("%16.14f %16.14f %3d") % cr % ci % getcolor(g_col, g_row));
 				if (s_windows == 0)
 				{
 					/* show temp msg will clear self if new msg is a
 						different length - pad to length 40*/
-					if (str.length() < 40)
+					if (text.length() < 40)
 					{
-						str.resize(40, ' ');
+						text.resize(40, ' ');
 					}
 					cursor_hide();
 					actively_computing = true;
-					show_temp_message(str);
+					show_temp_message(text);
 					cursor_show();
 				}
 				else
 				{
-					driver_display_string(5, g_screen_height-s_show_numbers, WHITE, BLACK, str.c_str());
+					driver_display_string(5, g_screen_height-s_show_numbers, WHITE, BLACK, text.c_str());
 				}
 			}
 			iter = 1;

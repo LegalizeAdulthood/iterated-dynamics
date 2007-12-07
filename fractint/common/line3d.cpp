@@ -834,7 +834,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	}
 	if (driver_diskp())
 	{
-		disk_video_status(1, (boost::format("mapping to 3d, reading line %d") % g_current_row).str());
+		disk_video_status(1, str(boost::format("mapping to 3d, reading line %d") % g_current_row));
 	}
 
 	if (!col && g_3d_state.raytrace_output() && g_current_row != 0)

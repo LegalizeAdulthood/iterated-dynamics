@@ -136,14 +136,14 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 		}
 		driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "'Disk-Video' mode");
 		driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO,
-			(boost::format("Screen resolution: %d x %d") % g_screen_width % g_screen_height).str().c_str());
+			str(boost::format("Screen resolution: %d x %d") % g_screen_width % g_screen_height));
 		if (s_disk_targa)
 		{
 			driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
 		}
 		else
 		{
-			driver_put_string(-1, -1, C_DVID_LO, (boost::format("  Colors: %d") % g_colors).str().c_str());
+			driver_put_string(-1, -1, C_DVID_LO, str(boost::format("  Colors: %d") % g_colors));
 		}
 		driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, ("Save name: " + g_save_name).c_str());
 		driver_put_string(BOX_ROW + 10, BOX_COL + 4, C_DVID_LO, "Status:");
@@ -209,7 +209,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	if (driver_diskp())
 	{
 		driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO,
-			(boost::format("Cache size: %dK") % cache_size).str().c_str());
+			str(boost::format("Cache size: %dK") % cache_size));
 	}
 
 	/* preset cache to all invalid entries so we don't need free list logic */
@@ -340,9 +340,9 @@ void disk_end()
 static void disk_line_status(bool reading, int row)
 {
 	/* adjust when potfile */
-	disk_video_status(0, (boost::format(" %s line %4d")
+	disk_video_status(0, str(boost::format(" %s line %4d")
 			% (reading ? "reading" : "writing")
-			% ((row >= g_screen_height) ? row-g_screen_height : row)).str().c_str());
+			% ((row >= g_screen_height) ? row-g_screen_height : row)));
 }
 
 int disk_read(int col, int row)
