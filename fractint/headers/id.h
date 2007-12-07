@@ -317,17 +317,6 @@ enum BuzzerType
 	BUZZER_ERROR = 2
 };
 
-/* stop_message() flags */
-enum StopMessageFlag
-{
-	STOPMSG_NORMAL		= 0,
-	STOPMSG_NO_STACK	= 1,
-	STOPMSG_CANCEL		= 2,
-	STOPMSG_NO_BUZZER	= 4,
-	STOPMSG_FIXED_FONT	= 8,
-	STOPMSG_INFO_ONLY	= 16
-};
-
 enum ApplicationStateType
 {
 	APPSTATE_NO_CHANGE = 0,

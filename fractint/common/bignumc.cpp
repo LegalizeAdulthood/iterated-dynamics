@@ -3,8 +3,8 @@
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
-
 #include <memory.h>
+#include <stdio.h>
 
 #include "port.h"
 #include "big.h"

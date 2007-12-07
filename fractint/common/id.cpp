@@ -47,8 +47,7 @@
 
 /* #include hierarchy for fractint is a follows:
 		Each module should include port.h as the first fractint specific
-				include. port.h includes <stdlib.h>, <stdio.h>, <math.h>,
-				<float.h>; and, ifndef XFRACT, <dos.h>.
+				include. port.h includes <stdlib.h>, <math.h>, <float.h>
 		Most modules should include prototyp.h, which incorporates by
 				direct or indirect reference the following header files:
 				mpmath.h
