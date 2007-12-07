@@ -1,9 +1,12 @@
 /* biginit.cpp - routines for bignumbers */
+#include <string>
+
 #include <string.h>
 #if !defined(_WIN32)
 #include <malloc.h>
 #endif
-#include <string>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -271,9 +274,7 @@ static void init_bf_2()
 	/* also leave room for the safe area at top of segment */
 	if (ptr + NUMVARS*(g_bf_length + 2) > maxstack)
 	{
-		char msg[80];
-		sprintf(msg, "Requested precision of %d too high, aborting", g_decimals);
-		stop_message(STOPMSG_NORMAL, msg);
+		stop_message(STOPMSG_NORMAL, str(boost::format("Requested precision of %d too high, aborting") % g_decimals));
 		goodbye();
 	}
 

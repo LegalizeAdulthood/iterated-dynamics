@@ -3,7 +3,7 @@
 /*
 Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 */
-
+#include <stdio.h>
 #include <string.h>
 
 #include "port.h"

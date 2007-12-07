@@ -2395,7 +2395,6 @@ static int entcompare(const void *p1, const void *p2)
 	invoked by the "batch=stitchmode/x/y" option, and is called
 	with the 'x' and 'y' parameters
 */
-// TODO: don't use printf
 class MakeMIG
 {
 public:
@@ -2416,6 +2415,8 @@ private:
 	void read_block_header();
 	void display_error_messages();
 	void delete_input_files();
+	void set_gif_input_filename(unsigned int y_step, unsigned int x_step);
+
 	void finish_output_file();
 	void write_image_header();
 	void read_header();
@@ -2431,8 +2432,8 @@ private:
 	FILE *m_out;
 	FILE *m_in;
 	unsigned char m_buffer[4096];
-	char m_gif_output_filename[FILE_MAX_PATH];
-	char m_gif_input_filename[FILE_MAX_PATH];
+	std::string m_gif_output_filename;
+	std::string m_gif_input_filename;
 	unsigned int m_x_res;
 	unsigned int m_y_res;
 	unsigned int m_input_color_table_size;
@@ -2513,6 +2514,12 @@ void MakeMIG::finish_output_file()
 	}
 	fclose(m_out);                    /* done with the output GIF */
 }
+
+void MakeMIG::set_gif_input_filename(unsigned int y_step, unsigned int x_step)
+{
+	m_gif_input_filename = str(boost::format("frmig_%c%c.gif") % par_key(x_step) % par_key(y_step));
+}
+
 void MakeMIG::delete_input_files()
 {
 	if (m_error_flag == 0 && m_input_error_flag == 0)
@@ -2521,23 +2528,25 @@ void MakeMIG::delete_input_files()
 		{
 			for (unsigned int x_step = 0; x_step < m_xmult; x_step++)
 			{
-				sprintf(m_gif_input_filename, "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
-				remove(m_gif_input_filename);
+				set_gif_input_filename(y_step, x_step);
+				remove(m_gif_input_filename.c_str());
 			}
 		}
-		printf("File %s has been created (and its component files deleted)\n", m_gif_output_filename);
+		stop_message(STOPMSG_NORMAL,
+			"File " + m_gif_output_filename + " has been created (and its component files deleted)");
 	}
 }
+
 void MakeMIG::display_error_messages()
 {
 	if (m_input_error_flag != 0)       /* uh-oh - something failed */
 	{
-		printf("\007 Process failed = early EOF on input file %s\n", m_gif_input_filename);
+		stop_message(STOPMSG_NORMAL, "Process failed = early EOF on input file " + m_gif_input_filename);
 	}
 
 	if (m_error_flag != 0)            /* uh-oh - something failed */
 	{
-		printf("\007 Process failed = out of disk space?\n");
+		stop_message(STOPMSG_NORMAL, "Process failed = out of disk space?");
 	}
 }
 void MakeMIG::read_block_header()
@@ -2706,7 +2715,7 @@ void MakeMIG::execute()
 	m_out = 0;
 	m_in = 0;
 
-	strcpy(m_gif_output_filename, "fractmig.gif");
+	m_gif_output_filename = "fractmig.gif";
 
 	g_gif87a_flag = true;                        /* for now, force this */
 
@@ -2717,23 +2726,25 @@ void MakeMIG::execute()
 		{
 			if (x_step == 0 && y_step == 0)          /* first time through? */
 			{
-				printf(" \n Generating multi-image GIF file %s using", m_gif_output_filename);
-				printf(" %d X and %d Y components\n\n", m_xmult, m_ymult);
+				stop_message(STOPMSG_NORMAL,
+					str(boost::format("Generating multi-image GIF file %s\n"
+						" using %d X and %d Y components") % m_gif_output_filename % m_xmult % m_ymult));
 				/* attempt to create the output file */
-				m_out = fopen(m_gif_output_filename, "wb");
+				m_out = fopen(m_gif_output_filename.c_str(), "wb");
 				if (m_out == 0)
 				{
-					printf("Cannot create output file %s!\n", m_gif_output_filename);
+					stop_message(STOPMSG_NORMAL,
+						"Cannot create output file " + m_gif_output_filename + "!\n");
 					return;
 				}
 			}
 
-			sprintf(m_gif_input_filename, "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
+			set_gif_input_filename(x_step, y_step);
 
-			m_in = fopen(m_gif_input_filename, "rb");
+			m_in = fopen(m_gif_input_filename.c_str(), "rb");
 			if (m_in == 0)
 			{
-				printf("Can't open file %s!\n", m_gif_input_filename);
+				stop_message(STOPMSG_NORMAL, "Can't open file " + m_gif_input_filename + "!");
 				return;
 			}
 
@@ -2746,8 +2757,8 @@ void MakeMIG::execute()
 			if (find_color_table_size(y_step, x_step))
 			{
 				/* Oops - our pieces don't match */
-				// TODO: don't use printf!
-				printf("File %s doesn't have the same resolution as its predecessors!\n", m_gif_input_filename);
+				stop_message(STOPMSG_NORMAL,
+					"File " + m_gif_input_filename + " doesn't have the same resolution as its predecessors!");
 				return;
 			}
 

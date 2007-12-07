@@ -1,5 +1,16 @@
 #pragma once
 
+/* stop_message() flags */
+enum StopMessageFlag
+{
+	STOPMSG_NORMAL		= 0,
+	STOPMSG_NO_STACK	= 1,
+	STOPMSG_CANCEL		= 2,
+	STOPMSG_NO_BUZZER	= 4,
+	STOPMSG_FIXED_FONT	= 8,
+	STOPMSG_INFO_ONLY	= 16
+};
+
 extern int show_vid_length();
 extern int stop_message(int flags, const char *message);
 extern int stop_message(int flags, const std::string &message);
