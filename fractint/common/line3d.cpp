@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <fstream>
 #include <sstream>
 #include <string>
 
@@ -135,7 +136,7 @@ static float s_min_xyz[3];
 static float s_max_xyz[3];	/* For Raytrace output */
 static int s_line_length;
 static int s_targa_header_len = 18;			/* Size of current Targa-24 header */
-static FILE *s_raytrace_file = 0;
+static std::ofstream s_raytrace_file;
 static unsigned int s_ambient;
 static int s_rand_factor;
 static int s_haze_mult;
@@ -451,8 +452,8 @@ static void line3d_raytrace(int col, int next,
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)       /* Output vertex info for Acrospin */
 	{
-		fprintf(s_raytrace_file, "% #4.4f % #4.4f % #4.4f R%dC%d\n",
-			f_cur->x, f_cur->y, f_cur->color, RO, CO);
+		s_raytrace_file << boost::format("% #4.4f % #4.4f % #4.4f R%dC%d\n")
+			% f_cur->x % f_cur->y % f_cur->color % RO % CO;
 		if (CO > CO_MAX)
 		{
 			CO_MAX = CO;
@@ -954,9 +955,9 @@ loopbottom:
 			{
 				end_object(triangle_was_output);
 				triangle_was_output = false;
-				if (ferror(s_raytrace_file))
+				if (s_raytrace_file.bad())
 				{
-					fclose(s_raytrace_file);
+					s_raytrace_file.close();
 					remove(g_light_name.c_str());
 					file_error(g_3d_state.ray_name(), FILEERROR_NO_SPACE);
 					return -1;
@@ -1584,7 +1585,10 @@ Common routine for printing error messages to the screen for Targa
 and other files
 
 **************************************************************************/
-
+static std::ostream &file_error_filename(std::ostream &msgbuf, const std::string &filename)
+{
+	return msgbuf << " < " << filename << " >";
+}
 static void file_error(const std::string &filename, int code)
 {
 	std::ostringstream msgbuf;
@@ -1592,10 +1596,10 @@ static void file_error(const std::string &filename, int code)
 	switch (code)
 	{
 	case FILEERROR_OPEN:                      /* Can't Open */
-		msgbuf << boost::format("OOPS, couldn't open  < %s >") % filename.c_str();
+		msgbuf << "OOPS, couldn't open " << file_error_filename(msgbuf, filename);
 		break;
 	case FILEERROR_NO_SPACE:                      /* Not enough room */
-		msgbuf << boost::format("OOPS, ran out of disk space. < %s >") % filename.c_str();
+		msgbuf << "OOPS, ran out of disk space." << file_error_filename(msgbuf, filename);
 		break;
 	case FILEERROR_BAD_IMAGE_SIZE:                      /* Image wrong size */
 		msgbuf << "OOPS, image wrong size\n";
@@ -1956,31 +1960,31 @@ static int raytrace_header()
 {
 	/* Open the ray tracing output file */
 	g_3d_state.next_ray_name();
-	s_raytrace_file = fopen(g_3d_state.ray_name(), "w");
-	if (s_raytrace_file == 0)
+	s_raytrace_file.open(g_3d_state.ray_name());
+	if (!s_raytrace_file)
 	{
 		return -1;              /* Oops, somethings wrong! */
 	}
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 	{
-		fprintf(s_raytrace_file, "//");
+		s_raytrace_file << "//";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
 	{
-		fprintf(s_raytrace_file, "#");
+		s_raytrace_file << "#";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 	{
-		fprintf(s_raytrace_file, "/*\n");
+		s_raytrace_file << "/*\n";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 	{
-		fprintf(s_raytrace_file, "--");
+		s_raytrace_file << "--";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 	{
-		fprintf(s_raytrace_file,
+		s_raytrace_file <<
 			"  0\n"
 			"SECTION\n"
 			"  2\n"
@@ -2018,57 +2022,57 @@ static int raytrace_header()
 			"  0\n"
 			"SECTION\n"
 			"  2\n"
-			"ENTITIES\n");
+			"ENTITIES\n";
 	}
 
 	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
-		fprintf(s_raytrace_file, "{ Created by Iterated Dynamics Ver. %#4.2f }\n\n", g_release/100.);
+		s_raytrace_file << boost::format("{ Created by Iterated Dynamics Ver. %#4.2f }\n\n") % (g_release/100.0);
 	}
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 	{
-		fprintf(s_raytrace_file, "*/\n");
+		s_raytrace_file << "*/\n";
 	}
 
 
 	/* Set the default color */
 	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
-		fprintf(s_raytrace_file, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
+		s_raytrace_file << "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n";
 	}
 	if (g_3d_state.raytrace_brief())
 	{
 		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 		{
-			fprintf(s_raytrace_file, "surf={diff=0.8 0.4 0.1;}\n");
+			s_raytrace_file << "surf={diff=0.8 0.4 0.1;}\n";
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
 		{
-			fprintf(s_raytrace_file, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
+			s_raytrace_file << "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n";
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 		{
-			fprintf(s_raytrace_file, "applysurf diffuse 0.8 0.4 0.1");
+			s_raytrace_file << "applysurf diffuse 0.8 0.4 0.1";
 		}
 	}
 	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
-		fprintf(s_raytrace_file, "\n");
+		s_raytrace_file << "\n";
 	}
 
 	/* EB & DG: open "grid" opject, a speedy way to do aggregates in rayshade */
 	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 	{
-		fprintf(s_raytrace_file,
+		s_raytrace_file <<
 			"/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
 			"/* make z grid = 1 always for landscapes. */\n\n"
-			"grid 33 25 1\n");
+			"grid 33 25 1\n";
 	}
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 	{
-		fprintf(s_raytrace_file, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
+		s_raytrace_file << "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n";
 	}
 
 	return 0;
@@ -2135,26 +2139,26 @@ static int out_triangle(const struct f_point pt1,
 	/* Describe the triangle */
 	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
-		fprintf(s_raytrace_file, " OBJECT\n  TRIANGLE ");
+		s_raytrace_file << " OBJECT\n  TRIANGLE ";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID && !g_3d_state.raytrace_brief())
 	{
-		fprintf(s_raytrace_file, "surf={diff=");
+		s_raytrace_file << "surf={diff=";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_MTV && !g_3d_state.raytrace_brief())
 	{
-		fprintf(s_raytrace_file, "f");
+		s_raytrace_file << "f";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE && !g_3d_state.raytrace_brief())
 	{
-		fprintf(s_raytrace_file, "applysurf diffuse ");
+		s_raytrace_file << "applysurf diffuse ";
 	}
 
 	if (!g_3d_state.raytrace_brief() && g_3d_state.raytrace_output() != RAYTRACE_POVRAY && g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
 		for (int i = 0; i <= 2; i++)
 		{
-			fprintf(s_raytrace_file, "% #4.4f ", c[i]);
+			s_raytrace_file << boost::format("% #4.4f ") % c[i];
 		}
 	}
 
@@ -2162,51 +2166,51 @@ static int out_triangle(const struct f_point pt1,
 	{
 		if (!g_3d_state.raytrace_brief())
 		{
-			fprintf(s_raytrace_file, ";}\n");
+			s_raytrace_file << ";}\n";
 		}
-		fprintf(s_raytrace_file, "polygon={points=3;");
+		s_raytrace_file << "polygon={points=3;";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
 	{
 		if (!g_3d_state.raytrace_brief())
 		{
-			fprintf(s_raytrace_file, "0.95 0.05 5 0 0\n");
+			s_raytrace_file << "0.95 0.05 5 0 0\n";
 		}
-		fprintf(s_raytrace_file, "p 3");
+		s_raytrace_file << "p 3";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 	{
 		if (!g_3d_state.raytrace_brief())
 		{
-			fprintf(s_raytrace_file, "\n");
+			s_raytrace_file << "\n";
 		}
 		/* EB & DG: removed "T" after "triangle" */
-		fprintf(s_raytrace_file, "triangle");
+		s_raytrace_file << "triangle";
 	}
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 	{
-		fprintf(s_raytrace_file, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
+		s_raytrace_file << boost::format("  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n") % std::min(255, std::max(1, c1));
 	}
 
 	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
 	{
 		if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
-			fprintf(s_raytrace_file, "\n");
+			s_raytrace_file << "\n";
 		}
 
 		if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 		{
-			fprintf(s_raytrace_file, "      <");
+			s_raytrace_file << "      <";
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 		{
-			fprintf(s_raytrace_file, " vertex =  ");
+			s_raytrace_file << " vertex =  ";
 		}
 		if (g_3d_state.raytrace_output() > RAYTRACE_RAW && g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
-			fprintf(s_raytrace_file, " ");
+			s_raytrace_file << " ";
 		}
 
 		for (int j = 0; j <= 2; j++)
@@ -2214,57 +2218,57 @@ static int out_triangle(const struct f_point pt1,
 			if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 			{
 				/* write 3dface entity to dxf file */
-				fprintf(s_raytrace_file, "%3d\n%g\n", 10*(j + 1) + i, pt_t[i][j]);
-				if (i == 2)         /* 3dface needs 4 vertecies */
-					fprintf(s_raytrace_file, "%3d\n%g\n", 10*(j + 1) + i + 1,
-						pt_t[i][j]);
+				s_raytrace_file << boost::format("%3d\n%g\n") % (10*(j + 1) + i) % pt_t[i][j];
+				if (i == 2)         /* 3dface needs 4 vertices */
+				{
+					s_raytrace_file << boost::format("%3d\n%g\n") % (10*(j + 1) + i + 1) % pt_t[i][j];
+				}
 			}
 			else if (!(g_3d_state.raytrace_output() == RAYTRACE_MTV || g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE))
 			{
-				fprintf(s_raytrace_file, "% #4.4f ", pt_t[i][j]); /* Right handed */
+				s_raytrace_file << boost::format("% #4.4f ") % pt_t[i][j]; /* Right handed */
 			}
 			else
 			{
-				fprintf(s_raytrace_file, "% #4.4f ", pt_t[2 - i][j]);     /* Left handed */
+				s_raytrace_file << boost::format("% #4.4f ") % pt_t[2 - i][j];     /* Left handed */
 			}
 		}
 
 		if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 		{
-			fprintf(s_raytrace_file, ">");
+			s_raytrace_file << ">";
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 		{
-			fprintf(s_raytrace_file, ";");
+			s_raytrace_file << ";";
 		}
 	}
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
-		fprintf(s_raytrace_file, " END_TRIANGLE \n");
+		s_raytrace_file << " END_TRIANGLE \n";
 		if (!g_3d_state.raytrace_brief())
 		{
-			fprintf(s_raytrace_file,
-				"  TEXTURE\n"
+			s_raytrace_file << boost::format("  TEXTURE\n"
 				"   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
-				"      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
-				c[0], c[1], c[2]);
+				"      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n")
+				% c[0] % c[1] % c[2];
 		}
-		fprintf(s_raytrace_file, "  COLOR  F_Dflt  END_OBJECT");
+		s_raytrace_file << "  COLOR  F_Dflt  END_OBJECT";
 		triangle_bounds(pt_t);    /* update bounding info */
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 	{
-		fprintf(s_raytrace_file, "}");
+		s_raytrace_file << "}";
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_RAW && !g_3d_state.raytrace_brief())
 	{
-		fprintf(s_raytrace_file, "\n");
+		s_raytrace_file << "\n";
 	}
 
 	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 	{
-		fprintf(s_raytrace_file, "\n");
+		s_raytrace_file << "\n";
 	}
 
 	return 0;
@@ -2319,7 +2323,7 @@ static int start_object()
 	s_max_xyz[1] = -999999.0f;
 	s_max_xyz[2] = -999999.0f;
 
-	fprintf(s_raytrace_file, "COMPOSITE\n");
+	s_raytrace_file << "COMPOSITE\n";
 	return 0;
 }
 
@@ -2358,23 +2362,23 @@ static int end_object(bool triangle_was_output)
 			}
 
 			/* Add the bounding box info */
-			fprintf(s_raytrace_file, " BOUNDED_BY\n  INTERSECTION\n");
-			fprintf(s_raytrace_file, "   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n", -s_min_xyz[0]);
-			fprintf(s_raytrace_file, "   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n",  s_max_xyz[0]);
-			fprintf(s_raytrace_file, "   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n", -s_min_xyz[1]);
-			fprintf(s_raytrace_file, "   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n",  s_max_xyz[1]);
-			fprintf(s_raytrace_file, "   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n", -s_min_xyz[2]);
-			fprintf(s_raytrace_file, "   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n",  s_max_xyz[2]);
-			fprintf(s_raytrace_file, "  END_INTERSECTION\n END_BOUND\n");
+			s_raytrace_file << " BOUNDED_BY\n  INTERSECTION\n"
+				<< boost::format("   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[0])
+				<< boost::format("   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n") % s_max_xyz[0]
+				<< boost::format("   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[1])
+				<< boost::format("   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n") %  s_max_xyz[1]
+				<< boost::format("   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[2])
+				<< boost::format("   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n") %  s_max_xyz[2]
+				<< "  END_INTERSECTION\n END_BOUND\n";
 		}
 
 		/* Complete the composite object statement */
-		fprintf(s_raytrace_file, "END_%s\n", "COMPOSITE");
+		s_raytrace_file << "END_COMPOSITE\n";
 	}
 
 	if (g_3d_state.raytrace_output() != RAYTRACE_ACROSPIN && g_3d_state.raytrace_output() != RAYTRACE_RAYSHADE)
 	{
-		fprintf(s_raytrace_file, "\n");    /* EB & DG: too many newlines */
+		s_raytrace_file << "\n";    /* EB & DG: too many newlines */
 	}
 
 	return 0;
@@ -2386,56 +2390,65 @@ static void line3d_cleanup()
 	{                            /* Finish up the ray tracing files */
 		if (g_3d_state.raytrace_output() != RAYTRACE_RAYSHADE && g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
-			fprintf(s_raytrace_file, "\n"); /* EB & DG: too many newlines */
+			s_raytrace_file << "\n"; /* EB & DG: too many newlines */
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
 		{
-			fprintf(s_raytrace_file, "\n\n//");
+			s_raytrace_file << "\n\n//";
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
 		{
-			fprintf(s_raytrace_file, "\n\n#");
+			s_raytrace_file << "\n\n#";
 		}
 
 		if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
 		{
 			/* EB & DG: end grid aggregate */
-			fprintf(s_raytrace_file, "end\n\n/*good landscape:*/\n%s%s\n/*",
-				"screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
+			s_raytrace_file <<
+				"end\n"
+				"\n"
+				"/*good landscape:*/\n"
+				"screen 640 480\n"
+				"eyep 0 2.1 0.8\n"
+				"lookp 0 0 -0.95\n"
+				"light 1 point -2 1 1.5\n"
+				"background .3 0 0\n"
+				"report verbose\n"
+				"\n"
+				"/*";
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 		{
-			fprintf(s_raytrace_file, "LineList From To\n");
+			s_raytrace_file << "LineList From To\n";
 			for (int i = 0; i < RO; i++)
 			{
 				for (int j = 0; j <= CO_MAX; j++)
 				{
 					if (j < CO_MAX)
 					{
-						fprintf(s_raytrace_file, "R%dC%d R%dC%d\n", i, j, i, j + 1);
+						s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % i % (j + 1);
 					}
 					if (i < RO - 1)
 					{
-						fprintf(s_raytrace_file, "R%dC%d R%dC%d\n", i, j, i + 1, j);
+						s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % (i + 1) % j;
 					}
 					if (i && i < RO && j < CO_MAX)
 					{
-						fprintf(s_raytrace_file, "R%dC%d R%dC%d\n", i, j, i - 1, j + 1);
+						s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % (i - 1) % (j + 1);
 					}
 				}
 			}
-			fprintf(s_raytrace_file, "\n\n--");
+			s_raytrace_file << "\n\n--";
 		}
 		if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
-			fprintf(s_raytrace_file, "{ No. Of Triangles = %ld }*/\n\n", s_num_tris);
+			s_raytrace_file << boost::format("{ No. Of Triangles = %ld }*/\n\n") % s_num_tris;
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 		{
-			fprintf(s_raytrace_file, "  0\nENDSEC\n  0\nEOF\n");
+			s_raytrace_file << "  0\nENDSEC\n  0\nEOF\n";
 		}
-		fclose(s_raytrace_file);
-		s_raytrace_file = 0;
+		s_raytrace_file.close();
 	}
 	if (g_targa_output)
 	{                            /* Finish up targa files */
