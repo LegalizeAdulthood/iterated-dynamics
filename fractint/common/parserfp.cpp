@@ -29,6 +29,7 @@
 
 /* Use startup parameter "debugflag = 324" to show debug messages after  */
 /*    compiling with above #define uncommented.  */
+#include <fstream>
 #include <string>
 
 #include <ctype.h>
@@ -62,26 +63,26 @@
 #define MAX_STACK 8   /* max # of stack register avail  */
 
 #ifdef TESTFP
-int pstopmsg(int x, const char *msg)
+int print_stop_message(int x, const char *msg)
 {
-	static FILE *fp = 0;
-	if (fp == 0)
+	static std::ofstream fp;
+	if (!fp)
 	{
-		fp = fopen("fpdebug.txt", "wt");
+		fp.open("fpdebug.txt", std::ios_base::out);
 	}
 	if (fp)
 	{
-		fprintf(fp, "%s\n", msg);
-		fflush(fp);
+		fp << msg;
+		fp.flush();
 	}
 	return x; /* just to quiet warnings */
 }
-int pstopmsg(int x, const std::string &message)
+int print_stop_message(int x, const std::string &message)
 {
-	return pstopmsg(x, message.c_str());
+	return print_stop_message(x, message.c_str());
 }
 
-#define stop_message pstopmsg
+#define stop_message print_stop_message
 
 void debug_message(const std::string &message)
 {
