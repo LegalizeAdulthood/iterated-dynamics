@@ -1,0 +1,326 @@
+FnSF              {
+                     ;  Version 2002 Patchlevel 4
+	reset=2002 type=formula formulafile=*.frm formulaname=multifractal
+	ismand=y function=exp/exp/exp passes=t
+	center-mag=-1.72529/-0.0175526/4.196079
+	params=-0.1738944669942329/-0.3000579851680044/\
+		384.00001/256.0076/\
+		2560384.00008/1536.0256/\
+		768.01536/5120.01024/\
+		38888/2
+	float=y maxiter=3072
+	inside=maxiter outside=tdis logmap=yes periodicity=0 rseed=-2436
+	colors=200U00<9>A00<4>000<23>eeegggiiijjjlllnnn<2>sss<25>BBB999777<2>222\
+	000012<24>0bo0cq0es<3>0kz<25>09C08A068<2>022000211<22>keOmgPoiQqjRslSunT\
+	<2>zsX<25>CB7A96875<3>000400<23>o00q00s00<3>z00<15>W00
+}
+
+FRM:Multifractal     { ; Albrecht Niekamp Apr, 03
+	;only integers as first input, second input 5 digits to the right
+	;real(p2) factor1,border1
+	;imag(p2) (-)maxiter1,input bas.frm1_2digits input bas.frm2_2digits
+	;real(p3) bailout,hyb.mandel: number of sides (Many_mods L.Allison)
+	;imag(p3) factor2,border2
+	;real(p4) maxiter2,factor3
+	;imag(p4) border3,maxiter3
+	;real(p5) 1digit_shape only  5digits: shape,out1,out2,in1,in2
+	; 1_mand 2_jul 3_hyb.mand 4_hyb.jul +5_reset (not shape) <0_no in/out1
+	;  optional basic frm2: out-nbr 1digit in-nbr 1digit 3_both +5_shape
+	;imag(p5) 1digit : 1_iter1reset 2_iter2reset 3_both +5_shape effect
+	; 2digits : many_mods multipl. shutoff +10_in/out1 +20_inout2 +30_both
+	;  optional input2: frequency_2digits level_2digits amplitude_2digits
+	;
+	d = real(p2)
+	factor1 = trunc(d)
+	border1 = (d - factor1)*100000
+	;
+	d = imag(p2)
+	da = (d < 0)
+	if (da)
+		d = -d
+	endif
+	maxiter1 = trunc(d)
+	d = round((d - maxiter1)*10000)
+	p6 = trunc(d/100)/10
+	d = d - 1000*p6
+	if (da)
+		p6 = -p6
+	endif
+	p7 = d/10
+	;
+	d = real(p3)
+	bailout_limit = trunc(d)
+	mm = round((d - bailout_limit)*100000)
+	;
+	d = imag(p3)
+	factor2 = trunc(d)
+	border2 = (d - factor2)*100000
+	;
+	d = real(p4)
+	maxiter2 = trunc(d)
+	factor3 = round((d - maxiter2)*100000)
+	;
+	d = imag(p4)
+	border3 = trunc(d)
+	maxiter3 = round((d - border3)*100000)
+	;
+	da = real(p5)
+	t = (da < 0)
+	if (t)
+		da = -da
+	endif
+	start = 2 - t
+	dd = trunc(da)
+	if (dd < 5)
+		start = 0
+	endif
+	vb = (dd == 3) + (dd == 4)
+	da = round((da - dd)*100)
+	d = trunc(dd/10000)
+	vb = (d == 3) + (d == 4) + vb
+	dd = dd - d*10000
+	d = trunc(dd/1000)
+	or1 = (d > 5)
+	d = d - 5*or1
+	vv1 = (d == 3)
+	vv2 = (d == 4)
+	dd1 = (d == 2) + (d == 4)
+	dd = dd - d*1000
+	d = trunc(dd/100)
+	or2 = (d > 5)
+	d = d - 5*or2
+	vv3 = (d == 3)
+	vv4 = (d == 4)
+	dd2 = (d == 2) + (d == 4)
+	dd = dd - d*100
+	d = trunc(dd/10)
+	inr1 = (d > 5)
+	d = d - 5*inr1
+	v1 = (d == 3)
+	v2 = (d == 4)
+	d1 = (d == 2) + (d == 4)
+	dd = dd - d*10
+	d = trunc(dd)
+	inr2 = (d > 5)
+	d = d - 5*inr2
+	v3 = (d == 3)
+	v4 = (d == 4)
+	d2 = (d == 2) + (d == 4)
+	d = trunc(da/10)
+	ab = (d >= 5)
+	d = d - 5*ab
+	da = da - 10*d
+	bb1 = (d == 1)
+	bb2 = (d == 2)
+	d = da
+	ab = (d >= 5)
+	d = d - 5*ab
+	ab1 = (d == 1)
+	ab2 = (d == 2)
+	;
+	d = imag(p5)
+	dd = trunc(d)
+	d = round((d - dd)*1000000)
+	lake_effect = (d > 10000)
+	da = trunc(dd/10)
+	so1 = ((da == 1) + (da == 3) == 0)
+	so2 = ((da == 2) + (da == 3) == 0)
+	dd = dd - 10*da
+	wo = (dd >= 5)
+	dd = dd - 5*wo
+	ir1 = (dd == 1) + (dd == 3)
+	ir2 = (dd == 2) + (dd == 3)
+	if (lake_effect)
+		freq = round((trunc(d/10000))*10)     ;frequency_lake effect by S.Gallet
+		d = d - freq*1000
+		level = (trunc(d/100))/100            ;water level
+		d = d - level*10000
+		ampl = d/100                          ;amplitude of the wave
+		angle = real(rotskew*pi/180)
+		t = exp(-flip(angle))
+		h = 1/real(magxmag)
+		q = h/0.75*imag(magxmag)
+		tanskew = tan(imag(rotskew*pi/180))
+		w = 2*q*t
+		v = 2*h*(tanskew + flip(1))*t
+		z3rd = center + (-q - h*tanskew - flip(h))*t
+		z = pixel - z3rd
+		s = imag(conj(w)*z)/imag(conj(w)*v)
+		if (s <= level)
+			da = level - s
+			z = z + 2*da*(1 + ampl*sin(freq*da^0.2))*v
+		endif
+		z = z + z3rd
+	endif
+	if (ismand)
+		if (vb)
+			c = 0.4*log(sqr(pixel^mm))
+			z = z*lake_effect
+		else
+			c = z*lake_effect + pixel*(lake_effect == 0)
+			z = 0
+		endif
+	else
+		c = p1
+		z = z*lake_effect + pixel*(lake_effect == 0)
+	endif
+	t = 0
+	d3 = (ismand == 0)
+	u = d3
+	:
+	if (vb)
+		if (d3)
+			z = (z*z - real(c))^(z*u + imag(c))       ;frm: Albrecht Niekamp
+		else
+			z2 = fn1(z) + c                         ;frm: Many_mods Linda Allison
+			sqz2 = cos(z2)
+			z = c*(1 - sqz2)/(1 + sqz2)
+		endif
+	else if (ab)
+		z = z*z + c + c*c - p7                     ;frm: Pusk s Istv n
+	else
+		z2 = z*z                             ;frm: Pusk s Istv n modified
+		z = z2*z2 + (p6 + u)*z2 + c - p1*(d3 == 0)
+	endif
+	bailout = |z|
+	If (wo)
+		t = t + 1
+		if ((t < maxiter1) + (bailout > border1))
+			u = 2*(fn1(t/factor1))
+			if (ismand)
+				z = z*u
+				if (vb)
+					c = 0.4*log(sqr(pixel^mm))
+				else
+					c = z*lake_effect + pixel*(lake_effect == 0)
+				endif
+			else
+				z = z*lake_effect + pixel*(lake_effect == 0)
+				c = p1*u
+			endif
+			wo = 0
+			if (ir1)
+				t = 0
+			endif
+		endif
+	elseif (start)
+		t = t + 1
+		if (start == 2)
+			if (bailout > border2)
+				u = 2*(fn2(t/factor2))
+				rs = or1
+				ab = bb1
+				if (dd1)
+					if (rs)
+						z = pixel
+					endif
+					c = p1*u
+					vb = vv2
+					d3 = vb
+				else
+					d3 = 0
+					z = z*u
+					c = z
+					if (rs)
+						z = 0
+					endif
+					vb = vv1
+					if (vb)
+						if (so1)
+							mm = mm + mm
+						endif
+						c = 0.4*log(sqr(pixel^mm))
+					endif
+					start = 1
+				endif
+			elseif (t > maxiter2)
+				u = 2*(fn2(t/factor2))
+				rs = inr1
+				ab = ab1
+				if (d1)
+					if (rs)
+						z = pixel
+					endif
+					c = p1*u
+					vb = v2
+					d3 = vb
+				else
+					d3 = 0
+					z = z*u
+					c = z
+					if (rs)
+						z = 0
+					endif
+					vb = v1
+					if (vb)
+						if (so1)
+							mm = mm + mm
+						endif
+						c = 0.4*log(sqr(pixel^mm))
+					endif
+				endif
+				start = 1
+				if (ir2)
+					t = 0
+				endif
+			endif
+		elseif (start == 1)
+			if (bailout > border3)
+				u = 2*(fn3(t/factor3))
+				ab = bb2
+				rs = or2
+				if (dd2)
+					if (rs)
+						z = pixel
+					endif
+					c = p1*u
+					vb = vv4
+					d3 = vb
+				else
+					d3 = 0
+					z = z*u
+					c = z
+					if (rs)
+						z = 0
+					endif
+					vb = vv3
+					if (vb)
+						if (so2)
+							mm = mm + mm
+						endif
+						c = 0.4*log(sqr(pixel^mm))
+					endif
+					start = 0
+				endif
+			elseif (t > maxiter3)
+				u = 2*(fn3(t/factor3))
+				ab = ab2
+				rs = inr2
+				if (d2)
+					if (rs)
+						z = pixel
+					endif
+					c = p1*u
+					vb = v4
+					d3 = vb
+				else
+					d3 = 0
+					z = z*u
+					c = z
+					if (rs)
+						z = 0
+					endif
+					vb = v3
+					if (vb)
+						if (so2)
+							mm = mm + mm
+						endif
+						c = 0.4*log(sqr(pixel^mm))
+					endif
+				endif
+				start = 0
+			endif
+		endif
+	endif
+	bailout <= bailout_limit
+}
