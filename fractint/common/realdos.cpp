@@ -1,11 +1,13 @@
 /*
 		Miscellaneous C routines used only in DOS Fractint.
 */
+#include <fstream>
 #include <sstream>
 #include <string>
 
 #include <string.h>
 
+#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
 #include "port.h"
@@ -72,11 +74,12 @@ int stop_message(int flags, const char *msg)
 	static unsigned char batchmode = 0;
 	if (g_debug_mode || g_initialize_batch >= INITBATCH_NORMAL)
 	{
-		FILE *fp = dir_fopen(g_work_dir, "stop_message.txt", (g_initialize_batch == INITBATCH_NONE) ? "w" : "a");
-		if (fp != 0)
+		std::ofstream stream((boost::filesystem::path(g_work_dir) / "stop_message.txt").string().c_str(), 
+			std::ios_base::out | ((g_initialize_batch == INITBATCH_NONE) ? 0 : std::ios_base::ate));
+		if (stream)
 		{
-			fprintf(fp, "%s\n", msg);
-			fclose(fp);
+			stream << msg << "\n";
+			stream.close();
 		}
 	}
 	if (g_command_initialize)  /* & command_files hasn't finished 1st try */

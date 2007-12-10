@@ -3191,16 +3191,30 @@ static void append_value(FormulaToken *token, const FormulaToken &temp_tok, int 
 	strcat(token->text, temp_tok.text);
 	strcat(token->text, suffix);
 }
+static void debug_dump(std::ofstream &stream, const char *message)
+{
+	if (stream)
+	{
+		stream << message;
+	}
+}
+static void debug_dump(std::ofstream &stream, const boost::format &message)
+{
+	if (stream)
+	{
+		stream << message;
+	}
+}
 static void is_complex_constant(FILE *openfile, FormulaToken *token)
 {
 	/* should test to make sure token->token_str[0] == '(' */
 	token->text[1] = 0;  /* so we can concatenate later */
 
 	long filepos = ftell(openfile);
-	FILE *debug_token = 0;
+	std::ofstream debug_token;
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
-		debug_token = fopen("frmconst.txt", "at");
+		debug_token.open("frmconst.txt", std::ios_base::out | std::ios_base::ate);
 	}
 
 	FormulaToken temp_tok;
@@ -3214,55 +3228,34 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 		{
 		CASE_NUM:
 		case '.':
-			if (debug_token != 0)
-			{
-				fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
-			}
+			debug_dump(debug_token, boost::format("Set temp_tok.token_str[0] to %c\n") % c);
 			temp_tok.text[0] = char(c);
 			break;
 		case '-':
-			if (debug_token != 0)
-			{
-				fprintf(debug_token,  "First char is a minus\n");
-			}
+			debug_dump(debug_token, "First char is a minus\n");
 			sign_value = -1;
 			c = formula_get_char(openfile);
 			if (c == '.' || isdigit(c))
 			{
-				if (debug_token != 0)
-				{
-					fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
-				}
+				debug_dump(debug_token, boost::format("Set temp_tok.token_str[0] to %c\n") % c);
 				temp_tok.text[0] = char(c);
 			}
 			else
 			{
-				if (debug_token != 0)
-				{
-					fprintf(debug_token,  "First char not a . or NUM\n");
-				}
+				debug_dump(debug_token, "First char not a . or NUM\n");
 				done = true;
 			}
 			break;
 		default:
-			if (debug_token != 0)
-			{
-				fprintf(debug_token,  "First char not a . or NUM\n");
-			}
+			debug_dump(debug_token, "First char not a . or NUM\n");
 			done = true;
 			break;
 		}
-		if (debug_token != 0)
-		{
-			fprintf(debug_token,  "Calling frmgetconstant unless done is 1; done is %d\n", int(done));
-		}
+		debug_dump(debug_token, boost::format("Calling frmgetconstant unless done is 1; done is %d\n") % int(done));
 		if (!done && formula_get_constant(openfile, &temp_tok))
 		{
 			c = formula_get_char(openfile);
-			if (debug_token != 0)
-			{
-				fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
-			}
+			debug_dump(debug_token, boost::format("frmgetconstant returned 1; next token is %c\n") % c);
 			if (getting_real && c == ',')  /*we have the real part now*/
 			{
 				append_value(token, temp_tok, sign_value, ",");
@@ -3276,11 +3269,8 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 				token->value.y = temp_tok.value.x*sign_value;
 				token->type = token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT;
 				token->id   = 0;
-				if (debug_token != 0)
-				{
-					fprintf(debug_token,  "Exiting with type set to %d\n", token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT);
-					fclose(debug_token);
-				}
+				debug_dump(debug_token, boost::format("Exiting with type set to %d\n")
+					% (token->value.y ? TOKENTYPE_COMPLEX_CONSTANT : TOKENTYPE_REAL_CONSTANT));
 				return;
 			}
 			else
@@ -3299,11 +3289,7 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 	token->value.x = 0.0;
 	token->type = TOKENTYPE_PARENTHESIS;
 	token->id = TOKENID_OPEN_PARENS;
-	if (debug_token != 0)
-	{
-		fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
-		fclose(debug_token);
-	}
+	debug_dump(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
 }
 
 static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
