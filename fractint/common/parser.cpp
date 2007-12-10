@@ -3575,29 +3575,26 @@ void Formula::get_parameter(const char *name)
 		}
 	}
 
-	FILE *debug_token = 0;
+	std::ofstream debug_token;
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
-		debug_token = fopen("frmtokens.txt", "at");
-		if (debug_token != 0)
-		{
-			fprintf(debug_token, "%s\n", name);
-		}
+		debug_token.open("frmtokens.txt", std::ios_base::out | std::ios_base::ate);
+		debug_dump(debug_token, name);
 	}
 	FormulaToken current_token;
 	while (formula_get_token(entry_file, &current_token))
 	{
-		if (debug_token != 0)
+		if (debug_token)
 		{
-			fprintf(debug_token, "%s\n", current_token.text);
-			fprintf(debug_token, "token_type is %d\n", current_token.type);
-			fprintf(debug_token, "token_id is %d\n", current_token.id);
+			debug_token << current_token.text << "\n"
+				<< boost::format("token_type is %d\n") % current_token.type
+				<< boost::format("token_id is %d\n") % current_token.id;
 			if (current_token.type == TOKENTYPE_REAL_CONSTANT || current_token.type == TOKENTYPE_COMPLEX_CONSTANT)
 			{
-				fprintf(debug_token, "Real value is %f\n", current_token.value.x);
-				fprintf(debug_token, "Imag value is %f\n", current_token.value.y);
+				debug_token << boost::format("Real value is %f\n") % current_token.value.x
+					<< boost::format("Imag value is %f\n") % current_token.value.y;
 			}
-			fprintf(debug_token, "\n");
+			debug_token << "\n";
 		}
 		switch (current_token.type)
 		{
@@ -3621,10 +3618,7 @@ void Formula::get_parameter(const char *name)
 		}
 	}
 	fclose(entry_file);
-	if (debug_token)
-	{
-		fclose(debug_token);
-	}
+	debug_token.close();
 	if (current_token.type != TOKENTYPE_END_OF_FORMULA)
 	{
 		m_uses_p1 = false;
@@ -3814,7 +3808,6 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 	is called from run_formula() below.
 	*/
 
-	FILE *debug_fp = 0;
 	FormulaToken temp_tok;
 	FilePositionTransaction transaction(file);
 
@@ -3833,15 +3826,16 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		return 0;
 	}
 
+	std::ofstream debug_fp;
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
-		debug_fp = fopen("debugfrm.txt", "at");
-		if (debug_fp != 0)
+		debug_fp.open("debugfrm.txt", std::ios_base::out | std::ios_base::ate);
+		if (debug_fp)
 		{
-			fprintf(debug_fp, "%s\n", g_formula_state.get_formula());
+			debug_fp << g_formula_state.get_formula() << "\n";
 			if (g_symmetry != SYMMETRY_NONE)
 			{
-				fprintf(debug_fp, "%s\n", s_symmetry_list[g_symmetry].symmetry);
+				debug_fp << s_symmetry_list[g_symmetry].symmetry << "\n";
 			}
 		}
 	}
@@ -3887,14 +3881,11 @@ const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
 		}
 	}
 
-	if (debug_fp != 0 && m_prepare_formula_text != 0)
+	if (debug_fp && m_prepare_formula_text != 0)
 	{
-		fprintf(debug_fp, "   %s\n", m_prepare_formula_text);
+		debug_fp << "   " << m_prepare_formula_text << "\n";
 	}
-	if (debug_fp != 0)
-	{
-		fclose(debug_fp);
-	}
+	debug_fp.close();
 
 	transaction.Commit();
 	return m_prepare_formula_text;
