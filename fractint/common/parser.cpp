@@ -16,6 +16,7 @@
 	Southington, CT 06489
 	(203) 276-9721
 */
+#include <algorithm>
 #include <cassert>
 #include <sstream>
 #include <string>
@@ -113,26 +114,6 @@ struct FormulaToken
 		value.y = imaginary;
 		type = TOKENTYPE_COMPLEX_CONSTANT;
 	}
-};
-
-struct var_list_st
-{
-	char name[34];
-	var_list_st *next_item;
-
-	void display() const;
-
-	static var_list_st *add(var_list_st *list, FormulaToken token);
-};
-
-struct const_list_st
-{
-	ComplexD complex_const;
-	const_list_st *next_item;
-
-	void display(const char *title) const;
-
-	static const_list_st *add(const_list_st *p, FormulaToken token);
 };
 
 // indices correspond to VariableNames enum
@@ -244,9 +225,9 @@ Formula::Formula()
 	m_parenthesis_count(0),
 	m_expecting_arg(false),
 	m_set_random(0),
-	m_variable_list(0),
-	m_complex_list(0),
-	m_real_list(0),
+	m_variable_list(),
+	m_complex_list(),
+	m_real_list(),
 	m_last_op(0),
 	m_parser_vsp(0),
 	m_formula_max_ops(MAX_OPS),
@@ -4234,146 +4215,78 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 	return;
 }
 
-void Formula::display_var_list()
+void Formula::display_var_list() const
 {
-	if (m_variable_list)
+	if (m_variable_list.size() > 0)
 	{
-		m_variable_list->display();
+		stop_message(STOPMSG_NORMAL, "List of user defined variables:\n");
+		for (std::vector<std::string>::size_type i = 0; i < m_variable_list.size(); i++)
+		{
+			if (stop_message(STOPMSG_NORMAL, m_variable_list[i]) < 0)
+			{
+				break;
+			}
+		}
 	}
 }
 
-void var_list_st::display() const
+void Formula::display_const_lists() const
 {
-	stop_message(STOPMSG_NORMAL, "List of user defined variables:\n");
-	for (const var_list_st *p = this; p; p = p->next_item)
+	if (m_complex_list.size() > 0)
 	{
-		stop_message(STOPMSG_NORMAL, p->name);
+		display_const_list("Complex constants are:", m_complex_list);
+	}
+	if (m_real_list.size() > 0)
+	{
+		display_const_list("Real constants are:", m_real_list);
 	}
 }
 
-void Formula::display_const_lists()
-{
-	if (m_complex_list)
-	{
-		m_complex_list->display("Complex constants are:");
-	}
-	if (m_real_list)
-	{
-		m_real_list->display("Real constants are:");
-	}
-}
-
-void const_list_st::display(const char *title) const
+void Formula::display_const_list(const char *title, const std::vector<ComplexD> &list) const
 {
 	stop_message(STOPMSG_NORMAL, title);
-	for (const const_list_st *p = this; p; p = p->next_item)
+	for (std::vector<ComplexD>::size_type i = 0; i < list.size(); i++)
 	{
-		stop_message(STOPMSG_NORMAL,
-			str(boost::format("%f, %f\n") % p->complex_const.x % p->complex_const.y));
+		if (stop_message(STOPMSG_NORMAL, str(boost::format("%f, %f\n") % list[i].x % list[i].y)) < 0)
+		{
+			break;
+		}
+	}
+}
+
+void Formula::display_const_list(const char *title, const std::vector<double> &list) const
+{
+	stop_message(STOPMSG_NORMAL, title);
+	for (std::vector<double>::size_type i = 0; i < list.size(); i++)
+	{
+		if (stop_message(STOPMSG_NORMAL, str(boost::format("%f\n") % list[i])) < 0)
+		{
+			break;
+		}
 	}
 }
 
 void Formula::init_var_list()
 {
-	var_list_st *temp, *p;
-	for (p = m_variable_list; p; p = temp)
-	{
-		temp = p->next_item;
-		delete p;
-	}
-	m_variable_list = 0;
+	m_variable_list.clear();
 }
 
 
 void Formula::init_const_lists()
 {
-	const_list_st *temp, *p;
-	for (p = m_complex_list; p; p = temp)
-	{
-		temp = p->next_item;
-		delete p;
-	}
-	m_complex_list = 0;
-	for (p = m_real_list; p; p = temp)
-	{
-		temp = p->next_item;
-		delete p;
-	}
-	m_real_list = 0;
-}
-
-var_list_st *var_list_st::add(var_list_st *p, FormulaToken token)
-{
-	if (p == 0)
-	{
-		p = new var_list_st;
-		if (p == 0)
-		{
-			return 0;
-		}
-		strcpy(p->name, token.text);
-		p->next_item = 0;
-	}
-	else if (strcmp(p->name, token.text) == 0)
-	{
-	}
-	else
-	{
-		p->next_item = add(p->next_item, token);
-		if (p->next_item == 0)
-		{
-			return 0;
-		}
-	}
-	return p;
-}
-
-const_list_st *const_list_st::add(const_list_st *p, FormulaToken token)
-{
-	if (p == 0)
-	{
-		p = new const_list_st;
-		if (p == 0)
-		{
-			return 0;
-		}
-		p->complex_const.x = token.value.x;
-		p->complex_const.y = token.value.y;
-		p->next_item = 0;
-	}
-	else if (p->complex_const.x != token.value.x
-			 || p->complex_const.y != token.value.y)
-	{
-		p->next_item = add(p->next_item, token);
-		if (p->next_item == 0)
-		{
-			return 0;
-		}
-	}
-	return p;
+	m_complex_list.clear();
+	m_real_list.clear();
 }
 
 void Formula::count_lists()
 {
-	var_list_st *p;
-	const_list_st *q;
-
-	m_variable_count = 0;
-	m_complex_count = 0;
-	m_real_count = 0;
-
-	for (p = m_variable_list; p; p = p->next_item)
-	{
-		m_variable_count++;
-	}
-	for (q = m_complex_list; q; q = q->next_item)
-	{
-		m_complex_count++;
-	}
-	for (q = m_real_list; q; q = q->next_item)
-	{
-		m_real_count++;
-	}
+	m_variable_count = int(m_variable_list.size());
+	m_complex_count = int(m_complex_list.size());
+	m_real_count = int(m_real_list.size());
+#if !defined(NDEBUG)
+	display_var_list();
+	display_const_lists();
+#endif
 }
 
 
@@ -4393,6 +4306,15 @@ void Formula::record_error(int error_code)
 		m_errors[m_errors_found].start_pos      = m_statement_pos;
 		m_errors[m_errors_found].error_pos      = m_file_pos;
 		m_errors[m_errors_found++].error_number = error_code;
+	}
+}
+
+template <typename T>
+void add_new(std::vector<T> &list, const T &value)
+{
+	if (list.end() == std::find(list.begin(), list.end(), value))
+	{
+		list.push_back(value);
 	}
 }
 
@@ -4541,15 +4463,16 @@ bool Formula::prescan(FILE *open_file)
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			expecting_argument = false;
-			m_variable_list = var_list_st::add(m_variable_list, this_token);
-			if (m_variable_list == 0)
-			{
-				stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-				fseek(open_file, orig_pos, SEEK_SET);
-				init_var_list();
-				init_const_lists();
-				return false;
-			}
+			add_new(m_variable_list, std::string(this_token.text));
+			// TODO: handle container out of memory
+			//if (m_variable_list == 0)
+			//{
+			//	stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+			//	fseek(open_file, orig_pos, SEEK_SET);
+			//	init_var_list();
+			//	init_const_lists();
+			//	return false;
+			//}
 			break;
 		case TOKENTYPE_PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
 			m_number_of_ops++;
@@ -4571,15 +4494,16 @@ bool Formula::prescan(FILE *open_file)
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			expecting_argument = false;
-			m_real_list = const_list_st::add(m_real_list, this_token);
-			if (m_real_list == 0)
-			{
-				stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-				fseek(open_file, orig_pos, SEEK_SET);
-				init_var_list();
-				init_const_lists();
-				return false;
-			}
+			add_new(m_real_list, this_token.value.x);
+			// TODO: handle out of memory with container
+			//if (m_real_list == 0)
+			//{
+			//	stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+			//	fseek(open_file, orig_pos, SEEK_SET);
+			//	init_var_list();
+			//	init_const_lists();
+			//	return false;
+			//}
 			break;
 		case TOKENTYPE_COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
 			assignment_ok = false;
@@ -4591,15 +4515,16 @@ bool Formula::prescan(FILE *open_file)
 				record_error(PE_SHOULD_BE_OPERATOR);
 			}
 			expecting_argument = false;
-			m_complex_list = const_list_st::add(m_complex_list, this_token);
-			if (m_complex_list == 0)
-			{
-				stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-				fseek(open_file, orig_pos, SEEK_SET);
-				init_var_list();
-				init_const_lists();
-				return false;
-			}
+			add_new(m_complex_list, this_token.value);
+			// TODO: handle out of memory with container
+			//if (m_complex_list == 0)
+			//{
+			//	stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
+			//	fseek(open_file, orig_pos, SEEK_SET);
+			//	init_var_list();
+			//	init_const_lists();
+			//	return false;
+			//}
 			break;
 		case TOKENTYPE_FUNCTION:
 			assignment_ok = false;

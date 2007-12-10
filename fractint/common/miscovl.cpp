@@ -2915,97 +2915,89 @@ void flip_image(int key)
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }
 
-static char *expand_var(char *var, char *buf)
+static std::string expand_var(const std::string &var)
 {
 	time_t ltime;
-	char *str;
-	char *out;
-
 	time(&ltime);
-	str = ctime(&ltime);
+	char *time_text = ctime(&ltime);
 
 	/* ctime format             */
 	/* Sat Aug 17 21:34:14 1996 */
 	/* 012345678901234567890123 */
 	/*           1         2    */
-	if (strcmp(var, "year") == 0)       /* 4 chars */
+	std::string out;
+	if (var == "year")       /* 4 chars */
 	{
-		str[24] = '\0';
-		out = &str[20];
+		time_text[24] = 0;
+		out = &time_text[20];
 	}
-	else if (strcmp(var, "month") == 0) /* 3 chars */
+	else if (var == "month") /* 3 chars */
 	{
-		str[7] = '\0';
-		out = &str[4];
+		time_text[7] = 0;
+		out = &time_text[4];
 	}
-	else if (strcmp(var, "day") == 0)   /* 2 chars */
+	else if (var == "day")   /* 2 chars */
 	{
-		str[10] = '\0';
-		out = &str[8];
+		time_text[10] = 0;
+		out = &time_text[8];
 	}
-	else if (strcmp(var, "hour") == 0)  /* 2 chars */
+	else if (var == "hour")  /* 2 chars */
 	{
-		str[13] = '\0';
-		out = &str[11];
+		time_text[13] = 0;
+		out = &time_text[11];
 	}
-	else if (strcmp(var, "min") == 0)   /* 2 chars */
+	else if (var == "min")   /* 2 chars */
 	{
-		str[16] = '\0';
-		out = &str[14];
+		time_text[16] = 0;
+		out = &time_text[14];
 	}
-	else if (strcmp(var, "sec") == 0)   /* 2 chars */
+	else if (var == "sec")   /* 2 chars */
 	{
-		str[19] = '\0';
-		out = &str[17];
+		time_text[19] = 0;
+		out = &time_text[17];
 	}
-	else if (strcmp(var, "time") == 0)  /* 8 chars */
+	else if (var == "time")  /* 8 chars */
 	{
-		str[19] = '\0';
-		out = &str[11];
+		time_text[19] = 0;
+		out = &time_text[11];
 	}
-	else if (strcmp(var, "date") == 0)
+	else if (var == "date")
 	{
-		str[10] = '\0';
-		str[24] = '\0';
-		out = &str[4];
-		strcat(out, ", ");
-		strcat(out, &str[20]);
+		time_text[10] = 0;
+		time_text[24] = 0;
+		out = &time_text[4];
+		out += ", ";
+		out += &time_text[20];
 	}
-	else if (strcmp(var, "calctime") == 0)
+	else if (var == "calctime")
 	{
+		char buf[100];
 		get_calculation_time(buf, g_calculation_time);
 		out = buf;
 	}
-	else if (strcmp(var, "version") == 0)  /* 4 chars */
+	else if (var == "version")  /* 4 chars */
 	{
-		sprintf(buf, "%d", g_release);
-		out = buf;
+		out = str(boost::format("%d") % g_release);
 	}
-	else if (strcmp(var, "patch") == 0)   /* 1 or 2 chars */
+	else if (var == "patch")   /* 1 or 2 chars */
 	{
-		sprintf(buf, "%d", g_patch_level);
-		out = buf;
+		out = str(boost::format("%d") % g_patch_level);
 	}
-	else if (strcmp(var, "xdots") == 0)   /* 2 to 4 chars */
+	else if (var == "xdots")   /* 2 to 4 chars */
 	{
-		sprintf(buf, "%d", g_x_dots);
-		out = buf;
+		out = str(boost::format("%d") % g_x_dots);
 	}
-	else if (strcmp(var, "ydots") == 0)   /* 2 to 4 chars */
+	else if (var == "ydots")   /* 2 to 4 chars */
 	{
-		sprintf(buf, "%d", g_y_dots);
-		out = buf;
+		out = str(boost::format("%d") % g_y_dots);
 	}
-	else if (strcmp(var, "vidkey") == 0)   /* 2 to 3 chars */
+	else if (var == "vidkey")   /* 2 to 3 chars */
 	{
-		char vidmde[5];
-		video_mode_key_name(g_video_entry.keynum, vidmde);
-		sprintf(buf, "%s", vidmde);
-		out = buf;
+		out = video_mode_key_name(g_video_entry.keynum);
 	}
 	else
 	{
-		stop_message(STOPMSG_NORMAL, std::string("Unknown comment variable ") + var);
+		stop_message(STOPMSG_NORMAL, "Unknown comment variable " + var);
 		out = "";
 	}
 	return out;
@@ -3030,7 +3022,7 @@ void expand_comments(char *target, const char *source)
 	c = 0;
 	oldc = 0;
 	bool escape = false;
-	while (i < MAX_COMMENT && j < MAX_COMMENT && (c = *(source + i++)) != '\0')
+	while (i < MAX_COMMENT && j < MAX_COMMENT && (c = *(source + i++)) != 0)
 	{
 		if (c == '\\' && oldc != '\\')
 		{
@@ -3057,11 +3049,10 @@ void expand_comments(char *target, const char *source)
 		/* got variable name */
 		else if (c == esc_char && !escape && oldc != '\\')
 		{
-			char buf[100];
 			varname[k] = 0;
-			char *varstr = expand_var(varname, buf);
-			strncpy(target + j, varstr, MAX_COMMENT-j-1);
-			j += int(strlen(varstr));
+			std::string varstr = expand_var(varname);
+			strncpy(target + j, varstr.c_str(), MAX_COMMENT-j-1);
+			j += int(varstr.length());
 		}
 		else if (c == esc_char && escape && oldc != '\\')
 		{
@@ -3073,9 +3064,9 @@ void expand_comments(char *target, const char *source)
 		}
 		oldc = c;
 	}
-	if (*source != '\0')
+	if (*source != 0)
 	{
-		*(target + std::min(j, MAX_COMMENT-1)) = '\0';
+		*(target + std::min(j, MAX_COMMENT-1)) = 0;
 	}
 }
 
@@ -3095,7 +3086,7 @@ void parse_comments(char *value)
 	char save;
 	for (i = 0; i < 4; i++)
 	{
-		save = '\0';
+		save = 0;
 		if (*value == 0)
 		{
 			break;
@@ -3106,7 +3097,7 @@ void parse_comments(char *value)
 			if (next != 0)
 			{
 				save = *next;
-				*next = '\0';
+				*next = 0;
 			}
 			strncpy(par_comment[i], value, MAX_COMMENT);
 		}
@@ -3114,7 +3105,7 @@ void parse_comments(char *value)
 		{
 			break;
 		}
-		if (save != '\0')
+		if (save != 0)
 		{
 			*next = save;
 		}
@@ -3127,6 +3118,6 @@ void init_comments()
 	int i;
 	for (i = 0; i < 4; i++)
 	{
-		par_comment[i][0] = '\0';
+		par_comment[i][0] = 0;
 	}
 }
