@@ -3,9 +3,13 @@
 	generators - IFS and LORENZ3D, along with code to generate
 	red/blue 3D images. Tim Wegner
 */
+#include <fstream>
+#include <string>
+
 #include <assert.h>
 #include <string.h>
-#include <string>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -139,7 +143,7 @@ static int  l_setup_convert_to_screen(l_affine *);
 static void setup_matrix(MATRIX);
 static int  threed_view_trans(threed_vt_inf *inf);
 static int  threed_view_trans_fp(threed_vt_inf_fp *inf);
-static FILE *open_orbit_save();
+static bool open_orbit_save(std::ofstream &stream);
 static void plot_color_histogram(int x, int y, int color);
 
 static bool fractal_type_kam_torus(int fractal_type)
@@ -1444,7 +1448,6 @@ int inverse_julia_per_image()
 
 int orbit_2d_fp()
 {
-	FILE *fp;
 	double x;
 	double y;
 	double z;
@@ -1462,7 +1465,8 @@ int orbit_2d_fp()
 
 	p0 = p1 = p2 = 0;
 
-	fp = open_orbit_save();
+	std::ofstream stream;
+	bool saving = open_orbit_save(stream);
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&cvt);
 
@@ -1563,14 +1567,14 @@ int orbit_2d_fp()
 		{
 			break;
 		}
-		if (fp)
+		if (saving)
 		{
-			fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
+			stream << boost::format("%g %g %g 15\n") % *p0 % *p1 % 0.0;
 		}
 	}
-	if (fp)
+	if (saving)
 	{
-		fclose(fp);
+		stream.close();
 	}
 	return ret;
 }
@@ -1623,7 +1627,8 @@ int orbit_2d()
 		end_resume();
 	}
 
-	FILE *fp = open_orbit_save();
+	std::ofstream stream;
+	bool saving = open_orbit_save(stream);
 	int ret = 0;
 	bool start = true;
 	while (g_color_iter++ <= g_max_count) /* loop until keypress or maxit */
@@ -1686,21 +1691,20 @@ int orbit_2d()
 		{
 			break;
 		}
-		if (fp)
+		if (saving)
 		{
-			fprintf(fp, "%g %g %g 15\n", double(*p0)/g_fudge, double(*p1)/g_fudge, 0.0);
+			stream << boost::format("%g %g %g 15\n") % (double(*p0)/g_fudge) % (double(*p1)/g_fudge) % 0.0;
 		}
 	}
-	if (fp)
+	if (saving)
 	{
-		fclose(fp);
+		stream.close();
 	}
 	return ret;
 }
 
 static int orbit_3d_calc()
 {
-	FILE *fp;
 	unsigned long count;
 	int oldcol;
 	int oldrow;
@@ -1732,7 +1736,8 @@ static int orbit_3d_calc()
 		not_disk_message();
 	}
 
-	fp = open_orbit_save();
+	std::ofstream stream;
+	bool saving = open_orbit_save(stream);
 
 	count = 0;
 	ret = 0;
@@ -1757,12 +1762,12 @@ static int orbit_3d_calc()
 		}
 
 		LORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
-		if (fp)
+		if (saving)
 		{
-			fprintf(fp, "%g %g %g 15\n",
-				double(inf.orbit[0])/g_fudge,
-				double(inf.orbit[1])/g_fudge,
-				double(inf.orbit[2])/g_fudge);
+			stream << boost::format("%g %g %g 15\n")
+				% (double(inf.orbit[0])/g_fudge)
+				% (double(inf.orbit[1])/g_fudge)
+				% (double(inf.orbit[2])/g_fudge);
 		}
 		if (threed_view_trans(&inf))
 		{
@@ -1819,9 +1824,9 @@ static int orbit_3d_calc()
 			}
 		}
 	}
-	if (fp)
+	if (saving)
 	{
-		fclose(fp);
+		stream.close();
 	}
 	return ret;
 }
@@ -1829,7 +1834,6 @@ static int orbit_3d_calc()
 
 static int orbit_3d_calc_fp()
 {
-	FILE *fp;
 	unsigned long count;
 	int oldcol;
 	int oldrow;
@@ -1860,7 +1864,8 @@ static int orbit_3d_calc_fp()
 		not_disk_message();
 	}
 
-	fp = open_orbit_save();
+	std::ofstream stream;
+	bool saving = open_orbit_save(stream);
 
 	ret = 0;
 	g_max_count = (g_max_iteration > 0x1fffffL || g_max_count) ? 0x7fffffffL : g_max_iteration*1024L;
@@ -1886,9 +1891,9 @@ static int orbit_3d_calc_fp()
 		}
 
 		FORBIT(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
-		if (fp)
+		if (saving)
 		{
-			fprintf(fp, "%g %g %g 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
+			stream << boost::format("%g %g %g 15\n") % inf.orbit[0] % inf.orbit[1] % inf.orbit[2];
 		}
 		if (threed_view_trans_fp(&inf))
 		{
@@ -1942,9 +1947,9 @@ static int orbit_3d_calc_fp()
 			}
 		}
 	}
-	if (fp)
+	if (saving)
 	{
-		fclose(fp);
+		stream.close();
 	}
 	return ret;
 }
@@ -1994,7 +1999,6 @@ bool dynamic_2d_setup_fp()
  */
 int dynamic_2d_fp()
 {
-	FILE *fp;
 	double x;
 	double y;
 	double z;
@@ -2013,7 +2017,8 @@ int dynamic_2d_fp()
 	double xpixel;
 	double ypixel; /* Our pixel position on the screen */
 
-	fp = open_orbit_save();
+	std::ofstream stream;
+	bool saving = open_orbit_save(stream);
 	/* setup affine screen coord conversion */
 	setup_convert_to_screen(&cvt);
 
@@ -2129,15 +2134,15 @@ int dynamic_2d_fp()
 			{
 				break;
 			}
-			if (fp)
+			if (saving)
 			{
-				fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
+				stream << boost::format("%g %g %g 15\n") % *p0 % *p1 % 0.0;
 			}
 		}
 	}
-	if (fp)
+	if (saving)
 	{
-		fclose(fp);
+		stream.close();
 	}
 	return ret;
 }
@@ -2353,7 +2358,6 @@ done:
 /* double version - mainly for testing */
 static int ifs_3d_float()
 {
-	FILE *fp;
 	int color;
 
 	double newx;
@@ -2382,7 +2386,8 @@ static int ifs_3d_float()
 	inf.orbit[1] = 0;
 	inf.orbit[2] = 0;
 
-	fp = open_orbit_save();
+	std::ofstream stream;
+	bool saving = open_orbit_save(stream);
 
 	ret = 0;
 	g_max_count = (g_max_iteration > 0x1fffffL) ? 0x7fffffffL : g_max_iteration*1024;
@@ -2425,9 +2430,9 @@ static int ifs_3d_float()
 		inf.orbit[0] = newx;
 		inf.orbit[1] = newy;
 		inf.orbit[2] = newz;
-		if (fp)
+		if (saving)
 		{
-			fprintf(fp, "%g %g %g 15\n", newx, newy, newz);
+			stream << boost::format("%g %g %g 15\n") % newx % newy % newz;
 		}
 		if (threed_view_trans_fp(&inf))
 		{
@@ -2481,9 +2486,9 @@ static int ifs_3d_float()
 			}
 		}
 	} /* end while */
-	if (fp)
+	if (saving)
 	{
-		fclose(fp);
+		stream.close();
 	}
 	return ret;
 }
@@ -2505,7 +2510,6 @@ int ifs()                       /* front-end for ifs_2d and ifs_3d */
 /* IFS logic shamelessly converted to integer math */
 static int ifs_2d()
 {
-	FILE *fp;
 	int col;
 	int row;
 	int color;
@@ -2545,7 +2549,8 @@ static int ifs_2d()
 
 	tempr = g_fudge/32767;        /* find the proper rand() g_fudge */
 
-	fp = open_orbit_save();
+	std::ofstream stream;
+	bool saving = open_orbit_save(stream);
 
 	x = 0;
 	y = 0;
@@ -2577,9 +2582,9 @@ static int ifs_2d()
 				multiply(lfptr[3], y, g_bit_shift) + lfptr[5];
 		x = newx;
 		y = newy;
-		if (fp)
+		if (saving)
 		{
-			fprintf(fp, "%g %g %g 15\n", double(newx)/g_fudge, double(newy)/g_fudge, 0.0);
+			stream << boost::format("%g %g %g 15\n") % (double(newx)/g_fudge) % (double(newy)/g_fudge) % 0.0;
 		}
 
 		/* plot if inside window */
@@ -2607,9 +2612,9 @@ static int ifs_2d()
 			return ret;
 		}
 	}
-	if (fp)
+	if (saving)
 	{
-		fclose(fp);
+		stream.close();
 	}
 	delete[] localifs;
 	return ret;
@@ -2617,7 +2622,6 @@ static int ifs_2d()
 
 static int ifs_3d_long()
 {
-	FILE *fp;
 	int color;
 	int ret;
 
@@ -2660,7 +2664,8 @@ static int ifs_3d_long()
 	inf.orbit[1] = 0;
 	inf.orbit[2] = 0;
 
-	fp = open_orbit_save();
+	std::ofstream stream;
+	bool saving = open_orbit_save(stream);
 
 	ret = 0;
 	g_max_count = (g_max_iteration > 0x1fffffL) ? 0x7fffffffL : g_max_iteration*1024L;
@@ -2704,9 +2709,10 @@ static int ifs_3d_long()
 		inf.orbit[0] = newx;
 		inf.orbit[1] = newy;
 		inf.orbit[2] = newz;
-		if (fp)
+		if (saving)
 		{
-			fprintf(fp, "%g %g %g 15\n", double(newx)/g_fudge, double(newy)/g_fudge, double(newz)/g_fudge);
+			stream << boost::format("%g %g %g 15\n")
+				% (double(newx)/g_fudge) % (double(newy)/g_fudge) % (double(newz)/g_fudge);
 		}
 
 		if (threed_view_trans(&inf))
@@ -2758,9 +2764,9 @@ static int ifs_3d_long()
 			}
 		}
 	}
-	if (fp)
+	if (saving)
 	{
-		fclose(fp);
+		stream.close();
 	}
 	delete[] localifs;
 	return ret;
@@ -3094,18 +3100,18 @@ static int threed_view_trans_fp(threed_vt_inf_fp *inf)
 	return 1;
 }
 
-static FILE *open_orbit_save()
+static bool open_orbit_save(std::ofstream &stream)
 {
-	FILE *fp = 0;
 	if (g_orbit_save & ORBITSAVE_RAW)
 	{
-		fp = fopen("orbits.raw.txt", "wt");
-		if (fp)
+		stream.open("orbits.raw.txt");
+		if (stream)
 		{
-			fprintf(fp, "pointlist x y z color\n");
+			stream << "pointlist x y z color\n";
+			return true;
 		}
 	}
-	return fp;
+	return false;
 }
 
 /* Plot a histogram by incrementing the pixel each time it it touched */

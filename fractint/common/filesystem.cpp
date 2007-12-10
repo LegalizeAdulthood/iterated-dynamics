@@ -233,7 +233,6 @@ FILE *dir_fopen(const std::string &dir, const std::string &filename, const std::
 	return dir_fopen(dir.c_str(), filename.c_str(), mode.c_str());
 }
 
-
 void make_path(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)
 {
 	if (!template_str)

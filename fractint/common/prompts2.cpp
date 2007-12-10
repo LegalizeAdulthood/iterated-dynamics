@@ -1219,8 +1219,6 @@ int get_a_filename(const char *hdg, char *file_template, char *flname)
 	char dir[FILE_MAX_DIR];
 	char fname[FILE_MAX_FNAME];
 	char ext[FILE_MAX_EXT];
-	char temp1[256];
-
 	static int numtemplates = 1;
 	static int dosort = 1;
 
@@ -1367,7 +1365,6 @@ retry_dir:
 		strcat(tmpmask, " ");
 		strcat(tmpmask, masks[0]);
 	}
-	sprintf(temp1, "%s\nTemplate: %s", hdg, tmpmask);
 	strcpy(speedstr, filename);
 	if (speedstr[0] == 0)
 	{
@@ -1384,9 +1381,9 @@ retry_dir:
 		}
 	}
 
-
+	std::string heading = str(boost::format("%s\nTemplate: %s") % hdg % tmpmask);
 	i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-		temp1, 0, instr, filecount, (char **) choices,
+		heading.c_str(), 0, instr, filecount, (char **) choices,
 		attributes, 5, 99, 12, i, 0, speedstr, filename_speedstr, check_f6_key);
 	if (i == -FIK_F4)
 	{

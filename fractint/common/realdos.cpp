@@ -72,15 +72,7 @@ int stop_message(int flags, const char *msg)
 	static unsigned char batchmode = 0;
 	if (g_debug_mode || g_initialize_batch >= INITBATCH_NORMAL)
 	{
-		FILE *fp = 0;
-		if (g_initialize_batch == INITBATCH_NONE)
-		{
-			fp = dir_fopen(g_work_dir, "stop_message.txt", "w");
-		}
-		else
-		{
-			fp = dir_fopen(g_work_dir, "stop_message.txt", "a");
-		}
+		FILE *fp = dir_fopen(g_work_dir, "stop_message.txt", (g_initialize_batch == INITBATCH_NONE) ? "w" : "a");
 		if (fp != 0)
 		{
 			fprintf(fp, "%s\n", msg);

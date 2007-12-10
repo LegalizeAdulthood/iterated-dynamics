@@ -1,5 +1,7 @@
-#if !defined(FORMULA_H)
-#define FORMULA_H
+#pragma once
+
+#include <string>
+#include <vector>
 
 #define MAX_JUMPS 200  /* size of JUMP_CONTROL array */
 
@@ -174,9 +176,9 @@ private:
 	int m_parenthesis_count;
 	bool m_expecting_arg;
 	int m_set_random;
-	var_list_st *m_variable_list;
-	const_list_st *m_complex_list;
-	const_list_st *m_real_list;
+	std::vector<std::string> m_variable_list;
+	std::vector<ComplexD> m_complex_list;
+	std::vector<double> m_real_list;
 	int m_last_op;
 	int m_parser_vsp;
 	int m_formula_max_ops;
@@ -280,8 +282,10 @@ private:
 	void count_lists();
 	bool prescan(FILE *open_file);
 	void sort_prec();
-	void display_var_list();
-	void display_const_lists();
+	void display_var_list() const;
+	void display_const_lists() const;
+	void display_const_list(const char *title, const std::vector<ComplexD> &list) const;
+	void display_const_list(const char *title, const std::vector<double> &list) const;
 	void init_var_list();
 	void init_const_lists();
 	const char *error_messages(int which);
@@ -455,5 +459,3 @@ extern int form_per_pixel();
 extern bool formula_setup_fp();
 extern bool formula_setup_int();
 extern void EndInit();
-
-#endif

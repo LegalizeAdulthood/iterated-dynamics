@@ -1,10 +1,13 @@
 /*
 	rotate.cpp - Routines that manipulate the colormap
 */
+#include <fstream>
 #include <string>
 
 #include <string.h>
 #include <time.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -505,30 +508,26 @@ void save_palette()
 			strcat(temp1, ".map");
 		}
 		merge_path_names(palname, temp1, false);
-		FILE *dacfile = fopen(palname, "w");
-		if (dacfile == 0)
+		std::ofstream dac_file(palname);
+		if (!dac_file)
 		{
 			driver_buzzer(BUZZER_ERROR);
 		}
 		else
 		{
-#ifndef XFRACT
 			for (i = 0; i < g_colors; i++)
-#else
-			for (i = 0; i < 256; i++)
-#endif
 			{
 				/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
-				fprintf(dacfile, "%3d %3d %3d\n",
-						g_dac_box[i][0] << 2,
-						g_dac_box[i][1] << 2,
-						g_dac_box[i][2] << 2);
+				dac_file << boost::format("%3d %3d %3d\n")
+						% (g_dac_box[i][0] << 2)
+						% (g_dac_box[i][1] << 2)
+						% (g_dac_box[i][2] << 2);
 			}
 			memcpy(g_old_dac_box, g_dac_box, 256*3);
 			g_color_state = COLORSTATE_MAP;
 			g_color_file = temp1;
 		}
-		fclose(dacfile);
+		dac_file.close();
 	}
 }
 
