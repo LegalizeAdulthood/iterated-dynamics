@@ -23,17 +23,6 @@ struct cmd_context
 	int     floatparms;                  /* # of / delimited floats   */
 };
 
-/* process_command(), AbstractCommandParser::parse() return values */
-enum CommandResultType
-{
-	COMMANDRESULT_ERROR = -1,
-	COMMANDRESULT_OK = 0,
-	COMMANDRESULT_FRACTAL_PARAMETER = 1,
-	COMMANDRESULT_3D_PARAMETER = 2,
-	COMMANDRESULT_3D_YES = 4,
-	COMMANDRESULT_RESET = 8
-};
-
 class AbstractCommandParser
 {
 public:

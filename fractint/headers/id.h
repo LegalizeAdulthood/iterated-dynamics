@@ -327,13 +327,6 @@ enum ApplicationStateType
 	APPSTATE_RESUME_LOOP = 5
 };
 
-enum SlideType
-{
-	SLIDES_OFF		= 0,
-	SLIDES_PLAY		= 1,
-	SLIDES_RECORD	= 2
-};
-
 /* full_screen_choice options */
 enum FullScreenChoiceFlag
 {

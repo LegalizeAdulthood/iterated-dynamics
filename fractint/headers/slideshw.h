@@ -2,6 +2,14 @@
 
 class SlideShowImpl;
 
+enum SlideType
+{
+	SLIDES_OFF		= 0,
+	SLIDES_PLAY		= 1,
+	SLIDES_RECORD	= 2
+};
+
+
 class SlideShow
 {
 public:
@@ -9,9 +17,11 @@ public:
 	~SlideShow();
 
 	int GetKeyStroke();
-	int Start();
+	SlideType Start();
 	void Stop();
 	void Record(int keyStroke);
+	SlideType Mode() const;
+	void Mode(SlideType value);
 
 	const std::string &AutoKeyFile() const;
 	void SetAutoKeyFile(const std::string &value);
@@ -21,20 +31,3 @@ private:
 };
 
 extern SlideShow g_slideShow;
-
-inline int slide_show()
-{
-	return g_slideShow.GetKeyStroke();
-}
-inline int start_slide_show()
-{
-	return g_slideShow.Start();
-}
-inline void stop_slide_show()
-{
-	g_slideShow.Stop();
-}
-inline void record_show(int keyStroke)
-{
-	g_slideShow.Record(keyStroke);
-}

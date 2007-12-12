@@ -17,6 +17,17 @@ enum RecordColorsKind
 	RECORDCOLORS_YES = 'y'
 };
 
+/* process_command(), AbstractCommandParser::parse() return values */
+enum CommandResultType
+{
+	COMMANDRESULT_ERROR = -1,
+	COMMANDRESULT_OK = 0,
+	COMMANDRESULT_FRACTAL_PARAMETER = 1,
+	COMMANDRESULT_3D_PARAMETER = 2,
+	COMMANDRESULT_3D_YES = 4,
+	COMMANDRESULT_RESET = 8
+};
+
 struct search_path
 {
 	std::string par;
@@ -56,6 +67,6 @@ extern int init_msg(const char *, const char *bad_filename, int mode);
 extern int process_command(char *curarg, int mode);
 extern int get_power_10(LDBL x);
 extern void pause_error(int);
-extern int bad_arg(const char *curarg);
+extern CommandResultType bad_arg(const char *curarg);
 
 #endif

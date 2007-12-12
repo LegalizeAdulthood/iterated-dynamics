@@ -132,21 +132,21 @@ static int handle_special_keys(int ch)
 {
 	static int inside_help = 0;
 
-	if (SLIDES_PLAY == g_slides)
+	if (SLIDES_PLAY == g_slideShow.Mode())
 	{
 		if (ch == FIK_ESC)
 		{
-			stop_slide_show();
+			g_slideShow.Stop();
 			ch = 0;
 		}
 		else if (!ch)
 		{
-			ch = slide_show();
+			ch = g_slideShow.GetKeyStroke();
 		}
 	}
-	else if ((SLIDES_RECORD == g_slides) && ch)
+	else if ((SLIDES_RECORD == g_slideShow.Mode()) && ch)
 	{
-		record_show(ch);
+		g_slideShow.Record(ch);
 	}
 
 	if (FIK_F1 == ch && get_help_mode() && !inside_help)
