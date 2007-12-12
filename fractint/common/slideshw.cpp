@@ -20,31 +20,76 @@
 #include "slideshw.h"
 
 bool g_busy = false;
-static FILE *s_slide_file = 0;
-static long s_start_tick = 0;
-static long s_ticks = 0;
-static int s_slow_count = 0;
-static unsigned int s_quotes = 0;
-static bool s_calc_wait = false;
-static int s_repeats = 0;
-static int s_last1 = 0;
 
-static void sleep_secs(int secs);
-static void showtempmsg_txt(int, int, int, int, char *);
-static void message(int secs, char *buf);
-static void slide_show_error(const std::string &message);
-static int  get_scancode(char *mn);
-static void get_mnemonic(int code, char *mnemonic);
+SlideShow g_slideShow;
 
-#define MAX_MNEMONIC    20   /* max size of any mnemonic string */
-
-struct scancodes
+class SlideShowImpl
 {
-	int code;
-	char *mnemonic;
+public:
+	SlideShowImpl(int &calculationStatus, bool &busy)
+		: _slide_file(0),
+		_start_tick(0),
+		_ticks(0),
+		_slow_count(0),
+		_quotes(0),
+		_calc_wait(false),
+		_repeats(0),
+		_last1(0),
+		_calculationStatus(calculationStatus),
+		_busy(busy),
+		_autoKeyFile("auto.key")
+	{
+	}
+
+	int GetKeyStroke();
+	int Start();
+	void Stop();
+	void Record(int keyStroke);
+	const std::string &AutoKeyFile() const
+	{
+		return _autoKeyFile;
+	}
+	void SetAutoKeyFile(const std::string &value)
+	{
+		_autoKeyFile = value;
+	}
+
+private:
+	FILE *_slide_file;
+	long _start_tick;
+	long _ticks;
+	int _slow_count;
+	unsigned int _quotes;
+	bool _calc_wait;
+	int _repeats;
+	int _last1;
+	const int &_calculationStatus;
+	const bool &_busy;
+	std::string _autoKeyFile;
+
+	void Error(const std::string &msg);
+	void SleepSeconds(int secs);
+	void ShowTempMessageText(int row, int col, int attr, int secs, char *txt);
+	void Message(int secs, char *buf);
 };
 
-static struct scancodes scancodes[] =
+class ScanCodes
+{
+public:
+	static int ScanCodeFromMnemonic(const char *mnemonic);
+	static const char *MnemonicFromScanCode(int scan_code);
+
+private:
+	struct ScanCodeMnemonicPair
+	{
+		int code;
+		const char *mnemonic;
+	};
+
+	static const ScanCodeMnemonicPair _scanCodes[];
+};
+
+const ScanCodes::ScanCodeMnemonicPair ScanCodes::_scanCodes[] =
 {
 	{ FIK_ENTER,			"ENTER"     },
 	{ FIK_INSERT,			"INSERT"    },
@@ -68,33 +113,33 @@ static struct scancodes scancodes[] =
 	{ FIK_CTL_HOME,			"CTRL_HOME" }
 };
 
-static int get_scancode(char *mn)
+int ScanCodes::ScanCodeFromMnemonic(const char *mn)
 {
-	for (int i = 0; i < NUM_OF(scancodes); i++)
+
+	for (int i = 0; i < NUM_OF(_scanCodes); i++)
 	{
-		if (strcmp((char *) mn, scancodes[i].mnemonic) == 0)
+		if (strcmp(mn, _scanCodes[i].mnemonic) == 0)
 		{
-			return scancodes[i].code;
+			return _scanCodes[i].code;
 		}
 	}
 	return -1;
 }
 
-static void get_mnemonic(int code, char *mnemonic)
+const char *ScanCodes::MnemonicFromScanCode(int code)
 {
-	*mnemonic = 0;
-	for (int i = 0; i < NUM_OF(scancodes); i++)
+	for (int i = 0; i < NUM_OF(_scanCodes); i++)
 	{
-		if (code == scancodes[i].code)
+		if (code == _scanCodes[i].code)
 		{
-			strcpy(mnemonic, scancodes[i].mnemonic);
-			return;
+			return _scanCodes[i].mnemonic;
 		}
 	}
+	return 0;
 }
 
 /* places a temporary message on the screen in text mode */
-static void showtempmsg_txt(int row, int col, int attr, int secs, char *txt)
+void SlideShowImpl::ShowTempMessageText(int row, int col, int attr, int secs, char *txt)
 {
 	int savescrn[80];
 
@@ -105,7 +150,7 @@ static void showtempmsg_txt(int row, int col, int attr, int secs, char *txt)
 	}
 	driver_put_string(row, col, attr, txt);
 	driver_hide_text_cursor();
-	sleep_secs(secs);
+	SleepSeconds(secs);
 	for (int i = 0; i < 80; i++)
 	{
 		driver_move_cursor(row, i);
@@ -113,30 +158,30 @@ static void showtempmsg_txt(int row, int col, int attr, int secs, char *txt)
 	}
 }
 
-static void message(int secs, char *buf)
+void SlideShowImpl::Message(int secs, char *buf)
 {
 	char nearbuf[41] = { 0 };
 	strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
-	showtempmsg_txt(0, 0, 7, secs, nearbuf);
+	ShowTempMessageText(0, 0, 7, secs, nearbuf);
 	if (show_temp_message(nearbuf) == 0)
 	{
-		sleep_secs(secs);
+		SleepSeconds(secs);
 		clear_temp_message();
 	}
 }
 
-/* this routine reads the file g_autokey_name and returns keystrokes */
-int slide_show()
+/* this routine reads the file _autoKeyFile and returns keystrokes */
+int SlideShowImpl::GetKeyStroke()
 {
-	if (s_calc_wait)
+	if (_calc_wait)
 	{
-		if (g_calculation_status == CALCSTAT_IN_PROGRESS || g_busy) /* restart timer - process not done */
+		if (_calculationStatus == CALCSTAT_IN_PROGRESS || _busy) /* restart timer - process not done */
 		{
 			return 0; /* wait for calc to finish before reading more keystrokes */
 		}
-		s_calc_wait = false;
+		_calc_wait = false;
 	}
-	if (s_slide_file == 0)   /* open files first time through */
+	if (_slide_file == 0)   /* open files first time through */
 	{
 		if (start_slide_show() == 0)
 		{
@@ -145,44 +190,44 @@ int slide_show()
 		}
 	}
 
-	if (s_ticks) /* if waiting, see if waited long enough */
+	if (_ticks) /* if waiting, see if waited long enough */
 	{
-		if (clock_ticks() - s_start_tick < s_ticks) /* haven't waited long enough */
+		if (clock_ticks() - _start_tick < _ticks) /* haven't waited long enough */
 		{
 			return 0;
 		}
-		s_ticks = 0;
+		_ticks = 0;
 	}
-	if (++s_slow_count <= 18)
+	if (++_slow_count <= 18)
 	{
-		s_start_tick = clock_ticks();
-		s_ticks = CLK_TCK/5; /* a slight delay so keystrokes are visible */
-		if (s_slow_count > 10)
+		_start_tick = clock_ticks();
+		_ticks = CLK_TCK/5; /* a slight delay so keystrokes are visible */
+		if (_slow_count > 10)
 		{
-			s_ticks /= 2;
+			_ticks /= 2;
 		}
 	}
-	if (s_repeats > 0)
+	if (_repeats > 0)
 	{
-		s_repeats--;
-		return s_last1;
+		_repeats--;
+		return _last1;
 	}
 
 start:
 	int out;
-	if (s_quotes) /* reading a quoted string */
+	if (_quotes) /* reading a quoted string */
 	{
-		out = fgetc(s_slide_file);
+		out = fgetc(_slide_file);
 		if (out != '\"' && out != EOF)
 		{
-			return s_last1 = out;
+			return _last1 = out;
 		}
-		s_quotes = 0;
+		_quotes = 0;
 	}
 	/* skip white space: */
 	do
 	{
-		out = fgetc(s_slide_file);
+		out = fgetc(_slide_file);
 	}
 	while (out == ' ' || out == '\t' || out == '\n');
 	switch (out)
@@ -191,25 +236,25 @@ start:
 		stop_slide_show();
 		return 0;
 	case '\"':        /* begin quoted string */
-		s_quotes = 1;
+		_quotes = 1;
 		goto start;
 	case ';':         /* comment from here to end of line, skip it */
 		do
 		{
-			out = fgetc(s_slide_file);
+			out = fgetc(_slide_file);
 		}
 		while (out != '\n' && out != EOF);
 		goto start;
 	case '*':
-		if (fscanf(s_slide_file, "%d", &s_repeats) != 1
-			|| s_repeats <= 1 || s_repeats >= 256 || feof(s_slide_file))
+		if (fscanf(_slide_file, "%d", &_repeats) != 1
+			|| _repeats <= 1 || _repeats >= 256 || feof(_slide_file))
 		{
-			slide_show_error("error in * argument");
-			s_last1 = 0;
-			s_repeats = 0;
+			Error("error in * argument");
+			_last1 = 0;
+			_repeats = 0;
 		}
-		s_repeats -= 2;
-		return out = s_last1;
+		_repeats -= 2;
+		return out = _last1;
 	}
 
 	char buffer[81];
@@ -220,7 +265,7 @@ start:
 		{
 			buffer[i++] = (char) out;
 		}
-		out = fgetc(s_slide_file);
+		out = fgetc(_slide_file);
 		if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
 		{
 			break;
@@ -240,73 +285,73 @@ start:
 	{
 		out = 0;
 		int secs;
-		if (fscanf(s_slide_file, "%d", &secs) != 1)
+		if (fscanf(_slide_file, "%d", &secs) != 1)
 		{
-			slide_show_error("MESSAGE needs argument");
+			Error("MESSAGE needs argument");
 		}
 		else
 		{
 			char buf[41];
 			buf[40] = 0;
-			fgets(buf, 40, s_slide_file);
+			fgets(buf, 40, _slide_file);
 			int len = int(strlen(buf));
 			buf[len - 1] = 0; /* zap newline */
-			message(secs, (char *) buf);
+			Message(secs, buf);
 		}
 		out = 0;
 	}
 	else if (strcmp((char *)buffer, "GOTO") == 0)
 	{
-		if (fscanf(s_slide_file, "%s", buffer) != 1)
+		if (fscanf(_slide_file, "%s", buffer) != 1)
 		{
-			slide_show_error("GOTO needs target");
+			Error("GOTO needs target");
 			out = 0;
 		}
 		else
 		{
-			rewind(s_slide_file);
+			rewind(_slide_file);
 			strcat(buffer, ":");
 			int err;
 			char buffer1[80];
 			do
 			{
-				err = fscanf(s_slide_file, "%s", buffer1);
+				err = fscanf(_slide_file, "%s", buffer1);
 			}
 			while (err == 1 && strcmp(buffer1, buffer) != 0);
-			if (feof(s_slide_file))
+			if (feof(_slide_file))
 			{
-				slide_show_error("GOTO target not found");
+				Error("GOTO target not found");
 				return 0;
 			}
 			goto start;
 		}
 	}
-	else if ((i = get_scancode(buffer)) > 0)
+	else if ((i = ScanCodes::ScanCodeFromMnemonic(buffer)) > 0)
 	{
 		out = i;
 	}
 	else if (strcmp("WAIT", (char *)buffer) == 0)
 	{
 		float fticks;
-		int err = fscanf(s_slide_file, "%f", &fticks); /* how many ticks to wait */
+		int err = fscanf(_slide_file, "%f", &fticks); /* how many ticks to wait */
 		driver_set_keyboard_timeout(int(fticks*1000.f));
 		fticks *= CLK_TCK;             /* convert from seconds to ticks */
 		if (err == 1)
 		{
-			s_ticks = long(fticks);
-			s_start_tick = clock_ticks();  /* start timing */
+			_ticks = long(fticks);
+			_start_tick = clock_ticks();  /* start timing */
 		}
 		else
 		{
-			slide_show_error("WAIT needs argument");
+			Error("WAIT needs argument");
 		}
-		s_slow_count = 0;
+		_slow_count = 0;
 		out = 0;
 	}
 	else if (strcmp("CALCWAIT", (char *)buffer) == 0) /* wait for calc to finish */
 	{
-		s_calc_wait = true;
-		s_slow_count = 0;
+		_calc_wait = true;
+		_slow_count = 0;
 		out = 0;
 	}
 	else
@@ -319,98 +364,97 @@ start:
 	}
 	if (out == -12345)
 	{
-		slide_show_error("Can't understand " + std::string(buffer));
+		Error("Can't understand " + std::string(buffer));
 		out = 0;
 	}
-	s_last1 = out;
+	_last1 = out;
 	return out;
 }
 
-int start_slide_show()
+int SlideShowImpl::Start()
 {
-	s_slide_file = fopen(g_autokey_name.c_str(), "r");
-	if (s_slide_file == 0)
+	_slide_file = fopen(_autoKeyFile.c_str(), "r");
+	if (_slide_file == 0)
 	{
 		g_slides = SLIDES_OFF;
 	}
-	s_ticks = 0;
-	s_quotes = 0;
-	s_calc_wait = false;
-	s_slow_count = 0;
+	_ticks = 0;
+	_quotes = 0;
+	_calc_wait = false;
+	_slow_count = 0;
 	return g_slides;
 }
 
-void stop_slide_show()
+void SlideShowImpl::Stop()
 {
-	if (s_slide_file)
+	if (_slide_file)
 	{
-		fclose(s_slide_file);
+		fclose(_slide_file);
 	}
-	s_slide_file = 0;
+	_slide_file = 0;
 	g_slides = SLIDES_OFF;
 }
 
-void record_show(int key)
+void SlideShowImpl::Record(int key)
 {
-	float dt = float(s_ticks);      /* save time of last call */
-	s_ticks = clock_ticks();  /* current time */
-	if (s_slide_file == 0)
+	float dt = float(_ticks);      /* save time of last call */
+	_ticks = clock_ticks();  /* current time */
+	if (_slide_file == 0)
 	{
-		s_slide_file = fopen(g_autokey_name.c_str(), "w");
-		if (s_slide_file == 0)
+		_slide_file = fopen(_autoKeyFile.c_str(), "w");
+		if (_slide_file == 0)
 		{
 			return;
 		}
 	}
-	dt = s_ticks-dt;
+	dt = _ticks-dt;
 	dt /= CLK_TCK;  /* dt now in seconds */
 	if (dt > 0.5) /* don't bother with less than half a second */
 	{
-		if (s_quotes) /* close quotes first */
+		if (_quotes) /* close quotes first */
 		{
-			s_quotes = 0;
-			fprintf(s_slide_file, "\"\n");
+			_quotes = 0;
+			fprintf(_slide_file, "\"\n");
 		}
-		fprintf(s_slide_file, "WAIT %4.1f\n", dt);
+		fprintf(_slide_file, "WAIT %4.1f\n", dt);
 	}
 	if (key >= 32 && key < 128)
 	{
-		if (!s_quotes)
+		if (!_quotes)
 		{
-			s_quotes = 1;
-			fputc('\"', s_slide_file);
+			_quotes = 1;
+			fputc('\"', _slide_file);
 		}
-		fputc(key, s_slide_file);
+		fputc(key, _slide_file);
 	}
 	else
 	{
-		if (s_quotes) /* not an ASCII character - turn off quotes */
+		if (_quotes) /* not an ASCII character - turn off quotes */
 		{
-			fprintf(s_slide_file, "\"\n");
-			s_quotes = 0;
+			fprintf(_slide_file, "\"\n");
+			_quotes = 0;
 		}
-		char mn[MAX_MNEMONIC];
-		get_mnemonic(key, mn);
-		if (*mn)
+		const char *mn = ScanCodes::MnemonicFromScanCode(key);
+		if (mn)
 		{
-			fprintf(s_slide_file, "%s", mn);
+			fprintf(_slide_file, "%s", mn);
 		}
 		else if (check_video_mode_key(0, key) >= 0)
 		{
 			char buf[10];
 			video_mode_key_name(key, buf);
-			fprintf(s_slide_file, buf);
+			fprintf(_slide_file, buf);
 		}
 		else /* not ASCII and not FN key */
 		{
-			fprintf(s_slide_file, "%4d", key);
+			fprintf(_slide_file, "%4d", key);
 		}
-		fputc('\n', s_slide_file);
+		fputc('\n', _slide_file);
 	}
 }
 
 /* suspend process # of seconds */
-static void sleep_secs(int secs)
+void SlideShowImpl::SleepSeconds(int secs)
 {
 	long stop;
 	stop = clock_ticks() + long(secs)*CLK_TCK;
@@ -419,8 +463,48 @@ static void sleep_secs(int secs)
 	} /* bailout if key hit */
 }
 
-static void slide_show_error(const std::string &msg)
+void SlideShowImpl::Error(const std::string &msg)
 {
 	stop_slide_show();
 	stop_message(STOPMSG_NORMAL, "Slideshow error:\n" + msg);
+}
+
+SlideShow::SlideShow()
+	: _impl(new SlideShowImpl(g_calculation_status, g_busy))
+{
+}
+
+SlideShow::~SlideShow()
+{
+	delete _impl;
+}
+
+int SlideShow::GetKeyStroke()
+{
+	return _impl->GetKeyStroke();
+}
+
+int SlideShow::Start()
+{
+	return _impl->Start();
+}
+
+void SlideShow::Stop()
+{
+	_impl->Stop();
+}
+
+void SlideShow::Record(int keyStroke)
+{
+	_impl->Record(keyStroke);
+}
+
+const std::string &SlideShow::AutoKeyFile() const
+{
+	return _impl->AutoKeyFile();
+}
+
+void SlideShow::SetAutoKeyFile(const std::string &value)
+{
+	_impl->SetAutoKeyFile(value);
 }
