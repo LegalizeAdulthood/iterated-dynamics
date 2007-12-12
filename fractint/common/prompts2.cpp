@@ -1095,7 +1095,7 @@ void goodbye()
 	{
 		driver_move_cursor(6, 0);
 	}
-	stop_slide_show();
+	g_slideShow.Stop();
 	end_help();
 	ret = 0;
 	if (g_initialize_batch == INITBATCH_BAILOUT_ERROR) /* exit with error code for batch file */

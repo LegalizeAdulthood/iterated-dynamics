@@ -2,6 +2,7 @@
 /* These routines are called by driver_get_key to allow keystrokes to control */
 /* Fractint to be read from a file.                                    */
 /***********************************************************************/
+#include <fstream>
 #include <string>
 
 #include <ctype.h>
@@ -10,6 +11,8 @@
 #ifndef XFRACT
 #include <conio.h>
 #endif
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -27,7 +30,7 @@ class SlideShowImpl
 {
 public:
 	SlideShowImpl(int &calculationStatus, bool &busy)
-		: _slide_file(0),
+		: _slideFile(),
 		_start_tick(0),
 		_ticks(0),
 		_slow_count(0),
@@ -37,12 +40,13 @@ public:
 		_last1(0),
 		_calculationStatus(calculationStatus),
 		_busy(busy),
-		_autoKeyFile("auto.key")
+		_autoKeyFile("auto.key"),
+		_mode(SLIDES_OFF)
 	{
 	}
 
 	int GetKeyStroke();
-	int Start();
+	SlideType Start();
 	void Stop();
 	void Record(int keyStroke);
 	const std::string &AutoKeyFile() const
@@ -53,9 +57,11 @@ public:
 	{
 		_autoKeyFile = value;
 	}
+	SlideType Mode() const { return _mode; }
+	void Mode(SlideType value) { _mode = value; }
 
 private:
-	FILE *_slide_file;
+	std::fstream _slideFile;
 	long _start_tick;
 	long _ticks;
 	int _slow_count;
@@ -66,11 +72,16 @@ private:
 	const int &_calculationStatus;
 	const bool &_busy;
 	std::string _autoKeyFile;
+	SlideType _mode;
 
 	void Error(const std::string &msg);
 	void SleepSeconds(int secs);
-	void ShowTempMessageText(int row, int col, int attr, int secs, char *txt);
-	void Message(int secs, char *buf);
+	void ShowTempMessageText(int row, int col, int attr, int secs, const char *txt);
+	void Message(int secs, const char *message);
+	void Message(int secs, const std::string &message)
+	{
+		Message(secs, message.c_str());
+	}
 };
 
 class ScanCodes
@@ -139,7 +150,7 @@ const char *ScanCodes::MnemonicFromScanCode(int code)
 }
 
 /* places a temporary message on the screen in text mode */
-void SlideShowImpl::ShowTempMessageText(int row, int col, int attr, int secs, char *txt)
+void SlideShowImpl::ShowTempMessageText(int row, int col, int attr, int secs, const char *txt)
 {
 	int savescrn[80];
 
@@ -158,12 +169,10 @@ void SlideShowImpl::ShowTempMessageText(int row, int col, int attr, int secs, ch
 	}
 }
 
-void SlideShowImpl::Message(int secs, char *buf)
+void SlideShowImpl::Message(int secs, const char *buf)
 {
-	char nearbuf[41] = { 0 };
-	strncpy(nearbuf, buf, NUM_OF(nearbuf)-1);
-	ShowTempMessageText(0, 0, 7, secs, nearbuf);
-	if (show_temp_message(nearbuf) == 0)
+	ShowTempMessageText(0, 0, 7, secs, buf);
+	if (show_temp_message(buf) == 0)
 	{
 		SleepSeconds(secs);
 		clear_temp_message();
@@ -181,11 +190,11 @@ int SlideShowImpl::GetKeyStroke()
 		}
 		_calc_wait = false;
 	}
-	if (_slide_file == 0)   /* open files first time through */
+	if (!_slideFile)   /* open files first time through */
 	{
-		if (start_slide_show() == 0)
+		if (Start() == SLIDES_OFF)
 		{
-			stop_slide_show();
+			Stop();
 			return 0;
 		}
 	}
@@ -217,7 +226,7 @@ start:
 	int out;
 	if (_quotes) /* reading a quoted string */
 	{
-		out = fgetc(_slide_file);
+		out = _slideFile.get();
 		if (out != '\"' && out != EOF)
 		{
 			return _last1 = out;
@@ -227,13 +236,13 @@ start:
 	/* skip white space: */
 	do
 	{
-		out = fgetc(_slide_file);
+		out = _slideFile.get();
 	}
 	while (out == ' ' || out == '\t' || out == '\n');
 	switch (out)
 	{
 	case EOF:
-		stop_slide_show();
+		g_slideShow.Stop();
 		return 0;
 	case '\"':        /* begin quoted string */
 		_quotes = 1;
@@ -241,13 +250,14 @@ start:
 	case ';':         /* comment from here to end of line, skip it */
 		do
 		{
-			out = fgetc(_slide_file);
+			out = _slideFile.get();
 		}
 		while (out != '\n' && out != EOF);
 		goto start;
 	case '*':
-		if (fscanf(_slide_file, "%d", &_repeats) != 1
-			|| _repeats <= 1 || _repeats >= 256 || feof(_slide_file))
+		_slideFile >> _repeats;
+		if (!_slideFile
+			|| _repeats <= 1 || _repeats >= 256 || _slideFile.eof())
 		{
 			Error("error in * argument");
 			_last1 = 0;
@@ -265,7 +275,7 @@ start:
 		{
 			buffer[i++] = (char) out;
 		}
-		out = fgetc(_slide_file);
+		out = _slideFile.get();
 		if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
 		{
 			break;
@@ -285,40 +295,39 @@ start:
 	{
 		out = 0;
 		int secs;
-		if (fscanf(_slide_file, "%d", &secs) != 1)
+		_slideFile >> secs;
+		if (!_slideFile)
 		{
 			Error("MESSAGE needs argument");
 		}
 		else
 		{
-			char buf[41];
-			buf[40] = 0;
-			fgets(buf, 40, _slide_file);
-			int len = int(strlen(buf));
-			buf[len - 1] = 0; /* zap newline */
+			std::string buf;
+			getline(_slideFile, buf);
 			Message(secs, buf);
 		}
 		out = 0;
 	}
 	else if (strcmp((char *)buffer, "GOTO") == 0)
 	{
-		if (fscanf(_slide_file, "%s", buffer) != 1)
+		std::string line;
+		if (!getline(_slideFile, line))
 		{
 			Error("GOTO needs target");
 			out = 0;
 		}
 		else
 		{
-			rewind(_slide_file);
-			strcat(buffer, ":");
-			int err;
-			char buffer1[80];
+			_slideFile.seekg(0);
+			line += ":";
+			bool err;
+			std::string buffer1;
 			do
 			{
-				err = fscanf(_slide_file, "%s", buffer1);
+				err = !getline(_slideFile, buffer1);
 			}
-			while (err == 1 && strcmp(buffer1, buffer) != 0);
-			if (feof(_slide_file))
+			while (!err && line != buffer);
+			if (!_slideFile)
 			{
 				Error("GOTO target not found");
 				return 0;
@@ -333,11 +342,11 @@ start:
 	else if (strcmp("WAIT", (char *)buffer) == 0)
 	{
 		float fticks;
-		int err = fscanf(_slide_file, "%f", &fticks); /* how many ticks to wait */
-		driver_set_keyboard_timeout(int(fticks*1000.f));
-		fticks *= CLK_TCK;             /* convert from seconds to ticks */
-		if (err == 1)
+		_slideFile >> fticks;
+		if (_slideFile)
 		{
+			driver_set_keyboard_timeout(int(fticks*1000.f));
+			fticks *= CLK_TCK;             /* convert from seconds to ticks */
 			_ticks = long(fticks);
 			_start_tick = clock_ticks();  /* start timing */
 		}
@@ -371,38 +380,34 @@ start:
 	return out;
 }
 
-int SlideShowImpl::Start()
+SlideType SlideShowImpl::Start()
 {
-	_slide_file = fopen(_autoKeyFile.c_str(), "r");
-	if (_slide_file == 0)
+	_slideFile.open(_autoKeyFile.c_str(), std::ios::in);
+	if (_slideFile == 0)
 	{
-		g_slides = SLIDES_OFF;
+		_mode = SLIDES_OFF;
 	}
 	_ticks = 0;
 	_quotes = 0;
 	_calc_wait = false;
 	_slow_count = 0;
-	return g_slides;
+	return _mode;
 }
 
 void SlideShowImpl::Stop()
 {
-	if (_slide_file)
-	{
-		fclose(_slide_file);
-	}
-	_slide_file = 0;
-	g_slides = SLIDES_OFF;
+	_slideFile.close();
+	_mode = SLIDES_OFF;
 }
 
 void SlideShowImpl::Record(int key)
 {
 	float dt = float(_ticks);      /* save time of last call */
 	_ticks = clock_ticks();  /* current time */
-	if (_slide_file == 0)
+	if (_slideFile == 0)
 	{
-		_slide_file = fopen(_autoKeyFile.c_str(), "w");
-		if (_slide_file == 0)
+		_slideFile.open(_autoKeyFile.c_str(), std::ios::out);
+		if (!_slideFile)
 		{
 			return;
 		}
@@ -414,42 +419,40 @@ void SlideShowImpl::Record(int key)
 		if (_quotes) /* close quotes first */
 		{
 			_quotes = 0;
-			fprintf(_slide_file, "\"\n");
+			_slideFile << "\"\n";
 		}
-		fprintf(_slide_file, "WAIT %4.1f\n", dt);
+		_slideFile << boost::format("WAIT %4.1f\n") % dt;
 	}
 	if (key >= 32 && key < 128)
 	{
 		if (!_quotes)
 		{
 			_quotes = 1;
-			fputc('\"', _slide_file);
+			_slideFile << '\"';
 		}
-		fputc(key, _slide_file);
+		_slideFile << char(key);
 	}
 	else
 	{
 		if (_quotes) /* not an ASCII character - turn off quotes */
 		{
-			fprintf(_slide_file, "\"\n");
+			_slideFile << "\"\n";
 			_quotes = 0;
 		}
 		const char *mn = ScanCodes::MnemonicFromScanCode(key);
 		if (mn)
 		{
-			fprintf(_slide_file, "%s", mn);
+			_slideFile << mn;
 		}
 		else if (check_video_mode_key(0, key) >= 0)
 		{
-			char buf[10];
-			video_mode_key_name(key, buf);
-			fprintf(_slide_file, buf);
+			_slideFile << video_mode_key_name(key);
 		}
 		else /* not ASCII and not FN key */
 		{
-			fprintf(_slide_file, "%4d", key);
+			_slideFile << boost::format("%4d") % key;
 		}
-		fputc('\n', _slide_file);
+		_slideFile << '\n';
 	}
 }
 
@@ -465,7 +468,7 @@ void SlideShowImpl::SleepSeconds(int secs)
 
 void SlideShowImpl::Error(const std::string &msg)
 {
-	stop_slide_show();
+	Stop();
 	stop_message(STOPMSG_NORMAL, "Slideshow error:\n" + msg);
 }
 
@@ -484,7 +487,7 @@ int SlideShow::GetKeyStroke()
 	return _impl->GetKeyStroke();
 }
 
-int SlideShow::Start()
+SlideType SlideShow::Start()
 {
 	return _impl->Start();
 }
@@ -507,4 +510,14 @@ const std::string &SlideShow::AutoKeyFile() const
 void SlideShow::SetAutoKeyFile(const std::string &value)
 {
 	_impl->SetAutoKeyFile(value);
+}
+
+SlideType SlideShow::Mode() const
+{
+	return _impl->Mode();
+}
+
+void SlideShow::Mode(SlideType value)
+{
+	_impl->Mode(value);
 }

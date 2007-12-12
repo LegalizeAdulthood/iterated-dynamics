@@ -316,7 +316,6 @@ extern int					g_size_dot;
 extern short				g_size_of_string[];
 extern short				g_skip_x_dots;
 extern short				g_skip_y_dots;
-extern int					g_slides;
 extern int					g_gaussian_slope;
 extern void					(*g_plot_color_standard)(int x, int y, int color);
 extern bool					g_start_show_orbit;

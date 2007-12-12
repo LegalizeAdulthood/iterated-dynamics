@@ -144,7 +144,6 @@ std::string g_ifs_name;							/* Name of the IFS def'n (if not null) */
 search_path g_search_for;
 float	*g_ifs_definition = 0;				/* ifs parameters */
 int		g_ifs_type;								/* 0 = 2d, 1 = 3d */
-int		g_slides = SLIDES_OFF;					/* 1 autokey=play, 2 autokey=record */
 BYTE	g_text_colors[]=
 {
 		BLUE*16 + L_WHITE,    /* C_TITLE           title background */
@@ -736,7 +735,7 @@ static int next_line(FILE *handle, char *linebuf, int mode)
 	return -1;
 }
 
-int bad_arg(const char *curarg)
+CommandResultType bad_arg(const char *curarg)
 {
 	arg_error(curarg);
 	return COMMANDRESULT_ERROR;
@@ -1140,8 +1139,14 @@ static int auto_key_arg(const cmd_context &context)
 		{ "record", SLIDES_RECORD },
 		{ "play", SLIDES_PLAY }
 	};
-	return named_value(args, NUM_OF(args), context.value, &g_slides)
+	int mode = int(g_slideShow.Mode());
+	CommandResultType result = named_value(args, NUM_OF(args), context.value, &mode)
 		? COMMANDRESULT_OK : bad_arg(context.curarg);
+	if (COMMANDRESULT_OK == result)
+	{
+		g_slideShow.Mode(SlideType(mode));
+	}
+	return result;
 }
 
 static int auto_key_name_arg(const cmd_context &context)

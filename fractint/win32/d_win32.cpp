@@ -125,21 +125,21 @@ int Win32BaseDriver::handle_special_keys(int ch)
 	ch = handle_timed_save(ch);
 	if (ch != FIK_SAVE_TIME)
 	{
-		if (SLIDES_PLAY == g_slides)
+		if (SLIDES_PLAY == g_slideShow.Mode())
 		{
 			if (ch == FIK_ESC)
 			{
-				stop_slide_show();
+				g_slideShow.Stop();
 				ch = 0;
 			}
 			else if (!ch)
 			{
-				ch = slide_show();
+				ch = g_slideShow.GetKeyStroke();
 			}
 		}
-		else if ((SLIDES_RECORD == g_slides) && ch)
+		else if ((SLIDES_RECORD == g_slideShow.Mode()) && ch)
 		{
-			record_show(ch);
+			g_slideShow.Record(ch);
 		}
 	}
 	if (DEBUGMODE_EDIT_TEXT_COLORS == g_debug_mode)
