@@ -35,6 +35,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "slideshw.h"
 
 #include "CommandParser.h"
 #include "EscapeTime.h"
@@ -1145,9 +1146,14 @@ static int auto_key_arg(const cmd_context &context)
 
 static int auto_key_name_arg(const cmd_context &context)
 {
-	if (merge_path_names(g_autokey_name, context.value, context.mode) < 0)
+	std::string autoKeyFile;
+	if (merge_path_names(autoKeyFile, context.value, context.mode) < 0)
 	{
 		init_msg(context.variable, context.value, context.mode);
+	}
+	else
+	{
+		g_slideShow.SetAutoKeyFile(autoKeyFile);
 	}
 	return COMMANDRESULT_OK;
 }

@@ -31,6 +31,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "slideshw.h"
 
 #include "EscapeTime.h"
 #include "MathUtil.h"
@@ -735,7 +736,7 @@ int tab_display_2(char *msg)
 	show_str_var("savename", g_save_name, row, msg);
 	show_str_var("parmfile", g_command_file, row, msg);
 	show_str_var("ifsfile", g_ifs_filename, row, msg);
-	show_str_var("autokeyname", g_autokey_name, row, msg);
+	show_str_var("autokeyname", g_slideShow.AutoKeyFile(), row, msg);
 	show_str_var("lightname", g_light_name, row, msg);
 	show_str_var("map", g_map_name, row, msg);
 	write_row(row++, boost::format("Sizeof g_fractal_specific array %d")
