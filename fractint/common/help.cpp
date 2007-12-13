@@ -928,12 +928,12 @@ void help(HelpAction action)
 static int exe_path(const char *filename, char *buffer)
 {
 	extern boost::filesystem::path g_exe_path;
-	std::string path = g_exe_path.string() + filename;
-	strcat(buffer, path.c_str());
+	std::string path = (g_exe_path / filename).string();
+	strcpy(buffer, path.c_str());
 	return 1;
 }
 
-static int find_file(char *filename, char *path)
+static int find_file(const char *filename, char *path)
 {
 	if (exe_path(filename, path))
 	{

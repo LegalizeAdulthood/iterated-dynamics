@@ -238,12 +238,7 @@ static void my_floating_point_err(int sig)
 
 static void set_exe_path(const char *path)
 {
-	g_exe_path = path;
-	if (g_exe_path.has_relative_path())
-	{
-		/* relative path */
-		g_exe_path = boost::filesystem::current_path() / g_exe_path;
-	}
+	g_exe_path = boost::filesystem::path(path).branch_path();
 }
 
 void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
