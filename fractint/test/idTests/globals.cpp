@@ -252,7 +252,7 @@ bool g_next_screen_flag = false;
 int g_color_state = 0;
 int g_orbit_color = 0;
 double g_rq_limit = 0.0;
-int validate_luts(char const *) { return 0; }
+bool validate_luts(char const *) { return 0; }
 long g_old_color_iter = 0;
 long g_real_color_iter = 0;
 void orbit_scrub() {}

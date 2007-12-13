@@ -187,14 +187,6 @@ restart:
 		extract_filename(tmpmsg, openfile);
 		disk_video_status(1, std::string("Saving ") + tmpmsg);
 	}
-#ifdef XFRACT
-	else
-	{
-		driver_put_string(3, 0, 0, "Saving to:");
-		driver_put_string(4, 0, 0, openfile);
-		driver_put_string(5, 0, 0, "               ");
-	}
-#endif
 
 	{
 		BusyMarker marker;

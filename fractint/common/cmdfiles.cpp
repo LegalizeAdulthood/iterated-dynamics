@@ -227,21 +227,16 @@ int get_power_10(LDBL x)
 
 bool is_gif_file(const char *path)
 {
-	FILE *file = fopen(path, "rb");
+	std::ifstream file(path, std::ios::in | std::ios::binary);
 	if (!file)
 	{
 		return false;
 	}
 
 	char buffer[6] = { 0 };
-	size_t count = fread(buffer, 1, NUM_OF(buffer), file);
-	fclose(file);
-	if (NUM_OF(buffer) != count)
-	{
-		return false;
-	}
-
-	return (buffer[0] == 'G' && buffer[1] == 'I' && buffer[2] == 'F'
+	file.read(&buffer[0], 6);
+	return (file != 0)
+		&& (buffer[0] == 'G' && buffer[1] == 'I' && buffer[2] == 'F'
 		&& buffer[3] >= '8' && buffer[3] <= '9'
 		&& buffer[4] >= '0' && buffer[4] <= '9');
 }
@@ -3334,7 +3329,7 @@ static int parse_colors(char *value)
 		{
 			init_msg("", &value[1], 3);
 		}
-		if (int(strlen(value)) > FILE_MAX_PATH || validate_luts(g_map_name) != 0)
+		if (int(strlen(value)) > FILE_MAX_PATH || validate_luts(g_map_name))
 		{
 			goto badcolor;
 		}

@@ -17,12 +17,12 @@
 
 #define dac ((Palettetype *)g_dac_box)
 
-int validate_luts(const std::string &filename)
+bool validate_luts(const std::string &filename)
 {
 	return validate_luts(filename.c_str());
 }
 
-int validate_luts(const char *fn)
+bool validate_luts(const char *fn)
 {
 	char temp[FILE_MAX_PATH + 1];
 	strcpy(temp, g_map_name.c_str());
@@ -34,32 +34,33 @@ int validate_luts(const char *fn)
 	merge_path_names(temp, temp_fn, true);
 #endif
 	ensure_extension(temp, ".map");
-	char line[160];
-	find_path(temp, line);        /* search the dos path */
-	FILE *f = fopen(line, "r");
-	if (f == 0)
+	char name[160];
+	find_path(temp, name);        /* search the dos path */
+	std::ifstream f(name);
+	if (!f)
 	{
 		stop_message(STOPMSG_NORMAL, "Could not load color map " + std::string(fn));
-		return 1;
+		return true;
 	}
 	unsigned index;
 	for (index = 0; index < 256; index++)
 	{
-		if (fgets(line, 100, f) == 0)
-		{
-			break;
-		}
 		unsigned r;
 		unsigned g;
 		unsigned b;
-		sscanf(line, "%u %u %u", &r, &g, &b);
+		f >> r >> g >> b;
+		if (!f)
+		{
+			break;
+		}
+
 		/** load global dac values **/
 		// TODO: review when COLOR_CHANNEL_MAX != 63
 		dac[index].red   = BYTE((r % 256) >> 2); /* maps default to 8 bits */
 		dac[index].green = BYTE((g % 256) >> 2); /* DAC wants 6 bits */
 		dac[index].blue  = BYTE((b % 256) >> 2);
 	}
-	fclose(f);
+	f.close();
 	while (index < 256)   /* zap unset entries */
 	{
 		dac[index].red = 40;
@@ -69,14 +70,14 @@ int validate_luts(const char *fn)
 	}
 	g_color_state = COLORSTATE_MAP;
 	g_color_file = fn;
-	return 0;
+	return false;
 }
 
 
 /***************************************************************************/
 void set_color_palette_name(const std::string &filename)
 {
-	if (validate_luts(filename) != 0)
+	if (validate_luts(filename))
 	{
 		return;
 	}
