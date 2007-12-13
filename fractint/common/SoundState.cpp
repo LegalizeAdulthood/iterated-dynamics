@@ -1,8 +1,11 @@
+#include <fstream>
 #include <sstream>
 #include <string>
 
 #include <string.h>
 #include <time.h>
+
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -129,62 +132,154 @@ static unsigned char fmtemp[9];/*temporary vars used to store value used
  *       m is the multiple number between 0 and 15 inclusive.
  */
 
-SoundState::SoundState()
-	: m_fp(0),
-	m_fm_channel(0)
+class SoundStateImpl
+{
+public:
+	SoundStateImpl();
+	~SoundStateImpl();
+	void initialize();
+	bool open();
+	void close();
+	void tone(int tone);
+	void write_time();
+	int get_parameters();
+	void orbit(int x, int y);
+	void orbit(double x, double y, double z);
+
+	std::string parameter_text() const;
+	int parse_sound(const cmd_context &context);
+	int parse_hertz(const cmd_context &context);
+	int parse_attack(const cmd_context &context);
+	int parse_decay(const cmd_context &context);
+	int parse_release(const cmd_context &context);
+	int parse_sustain(const cmd_context &context);
+	int parse_volume(const cmd_context &context);
+	int parse_wave_type(const cmd_context &context);
+	int parse_attenuation(const cmd_context &context);
+	int parse_polyphony(const cmd_context &context);
+	int parse_scale_map(const cmd_context &context);
+
+	int flags() const				{ return _flags; }
+	int base_hertz() const			{ return _base_hertz; }
+	int fm_volume() const			{ return _fm_volume; }
+
+	void set_flags(int flags)		{ _flags = flags; }
+	void silence_xyz()				{ _flags &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); }
+	void set_speaker_beep()			{ _flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; }
+
+private:
+	enum
+	{
+		NUM_OCTAVES = 12
+	};
+
+	int _flags;
+	int _base_hertz;				/* sound=x/y/z hertz value */
+	int _fm_attack;
+	int _fm_decay;
+	int _fm_release;
+	int _fm_sustain;
+	int _fm_volume;
+	int _fm_wave_type;
+	int _note_attenuation;
+	int _polyphony;
+	int _scale_map[NUM_OCTAVES];	/* array for mapping notes to a (user defined) scale */
+
+	enum
+	{
+		NUM_CHANNELS = 9,
+		DEFAULT_FM_RELEASE = 5,
+		DEFAULT_FM_SUSTAIN = 13,
+		DEFAULT_FM_DECAY = 10,
+		DEFAULT_FM_ATTACK = 5,
+		DEFAULT_FM_WAVE_TYPE = 0,
+		DEFAULT_POLYPHONY = 0,
+		DEFAULT_FM_VOLUME = 63,
+		DEFAULT_BASE_HERTZ = 440
+	};
+	void old_orbit(int x, int y);
+	void new_orbit(int x, int y);
+	int sound_on(int freq);
+	void sound_off();
+	int get_music_parameters();
+	int get_scale_map();
+	bool default_scale_map() const;
+
+	// TODO: these functions need to be migrated to the driver for sound support
+	void mute();
+	void buzzer(int tone);
+	void initfm() {}
+	int fm(int, int)			{ return 0; }
+	int buzzer_pc_speaker(int tone)	{ return 0; }
+	int sleep_ms(int delay)		{ return 0; }
+
+	std::ofstream _fp;
+	int _menu_count;
+	int _fm_offset[NUM_CHANNELS];
+	int _fm_channel;
+
+	std::string _sound_save_name;
+};
+
+SoundStateImpl::SoundStateImpl()
+	: _fp(),
+	_fm_channel(0),
+	_sound_save_name("sound001.txt")
 {
 	initialize();
 	for (int i = 0; i < NUM_CHANNELS; i++)
 	{
-		m_fm_offset[i] = 0;
+		_fm_offset[i] = 0;
 	}
 }
 
-void SoundState::initialize()
+SoundStateImpl::~SoundStateImpl()
 {
-	m_base_hertz = 440;						/* basic hertz rate          */
-	m_fm_volume = 63;						/* full volume on soundcard o/p */
-	m_note_attenuation = ATTENUATE_NONE;	/* no attenuation of hi notes */
-	m_fm_attack = 5;						/* fast attack     */
-	m_fm_decay = 10;						/* long decay      */
-	m_fm_sustain = 13;						/* fairly high sustain level   */
-	m_fm_release = 5;						/* short release   */
-	m_fm_wave_type = 0;						/* sin wave */
-	m_polyphony = 0;						/* no polyphony    */
+}
+
+void SoundStateImpl::initialize()
+{
+	_base_hertz = 440;						/* basic hertz rate          */
+	_fm_volume = 63;						/* full volume on soundcard o/p */
+	_note_attenuation = ATTENUATE_NONE;	/* no attenuation of hi notes */
+	_fm_attack = 5;						/* fast attack     */
+	_fm_decay = 10;						/* long decay      */
+	_fm_sustain = 13;						/* fairly high sustain level   */
+	_fm_release = 5;						/* short release   */
+	_fm_wave_type = 0;						/* sin wave */
+	_polyphony = 0;						/* no polyphony    */
 	for (int i = 0; i < NUM_OCTAVES; i++)
 	{
-		m_scale_map[i] = i + 1;				/* straight mapping of notes in octave */
+		_scale_map[i] = i + 1;				/* straight mapping of notes in octave */
 	}
 }
 
 /* open sound file */
-int SoundState::open()
+bool SoundStateImpl::open()
 {
-	static char soundname[] = {"sound001.txt"};
-	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && m_fp == 0)
+	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && !_fp)
 	{
-		m_fp = fopen(soundname, "w");
-		if (m_fp == 0)
+		_fp.open(_sound_save_name.c_str(), std::ios::out);
+		if (!_fp)
 		{
-			stop_message(STOPMSG_NORMAL, "Can't open SOUND*.TXT");
+			stop_message(STOPMSG_NORMAL, "Can't open " + _sound_save_name);
 		}
 		else
 		{
-			update_save_name(soundname);
+			update_save_name(_sound_save_name);
 		}
 	}
-	return m_fp != 0;
+	return _fp != 0;
 }
 
-void SoundState::close()
+void SoundStateImpl::close()
 {
-	if ((m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) /* close sound write file */
+	if ((_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP) /* close sound write file */
 	{
-		if (m_fp)
+		if (_fp)
 		{
-			fclose(m_fp);
+			_fp.close();
 		}
-		m_fp = 0;
 	}
 }
 
@@ -192,13 +287,13 @@ void SoundState::close()
 	This routine plays a tone in the speaker and optionally writes a file
 	if the g_orbit_save variable is turned on
 */
-void SoundState::tone(int tone)
+void SoundStateImpl::tone(int tone)
 {
 	if ((g_orbit_save & ORBITSAVE_SOUND) != 0)
 	{
 		if (open())
 		{
-			fprintf(m_fp, "%-d\n", tone);
+			_fp << boost::format("%-d\n") % tone;
 		}
 	}
 	static int s_tab_or_help = 0;			/* kludge for sound and tab or help key press */
@@ -217,15 +312,15 @@ void SoundState::tone(int tone)
 	}
 }
 
-void SoundState::write_time()
+void SoundStateImpl::write_time()
 {
 	if (open())
 	{
-		fprintf(m_fp, "time=%-ld\n", long(clock())*1000/CLK_TCK);
+		_fp << boost::format("time=%-ld\n") % (long(clock())*1000/CLK_TCK);
 	}
 }
 
-int SoundState::sound_on(int freq)
+int SoundStateImpl::sound_on(int freq)
 {
 	/* wrapper to previous fractint snd routine, uses fm synth or midi if
 	available and selected */
@@ -244,16 +339,16 @@ int SoundState::sound_on(int freq)
 
 	int oct = (note/12) * 12; /* round to nearest octave */
 	int chrome = note % 12; /* extract which note in octave it was */
-	note = oct + m_scale_map[chrome]; /* remap using scale mapping array */
+	note = oct + _scale_map[chrome]; /* remap using scale mapping array */
 
-	if (m_flags & 64)
+	if (_flags & SOUNDFLAG_QUANTIZED)
 	{
 		freq = int(exp((double(note)/12.0)*log(2.0))*8.176);
 	}
 	/* pitch quantize note for FM and speaker */
 
 	/* fm flag set */
-	if (m_flags & 16)
+	if (_flags & SOUNDFLAG_OPL3_FM)
 	{
 		double temp_freq = double(freq)*1048576.0;
 		unsigned int block = 0;
@@ -274,31 +369,31 @@ int SoundState::sound_on(int freq)
 		}
 
 		/* then send the right values to the fm registers */
-		fm(0x23 + m_fm_offset[m_fm_channel], 0x20 | (mult & 0xF));
+		fm(0x23 + _fm_offset[_fm_channel], 0x20 | (mult & 0xF));
 		/* 0x20 sets sustained envelope, low nibble is multiply number */
-		fm(0xA0 + m_fm_channel, (fn & 0xFF));
+		fm(0xA0 + _fm_channel, (fn & 0xFF));
 		/* save next to use as keyoff value */
-		fmtemp[m_fm_channel] = (unsigned char) (((fn >> 8) & 0x3) | (block << 2));
-		fm(0xB0 + m_fm_channel, fmtemp[m_fm_channel] | KEYON);
+		fmtemp[_fm_channel] = (unsigned char) (((fn >> 8) & 0x3) | (block << 2));
+		fm(0xB0 + _fm_channel, fmtemp[_fm_channel] | KEYON);
 		/* then increment the channel number ready for the next note */
-		if (++m_fm_channel >= 9)
+		if (++_fm_channel >= 9)
 		{
-			m_fm_channel = 0;
+			_fm_channel = 0;
 		}
 		/* May have changed some parameters, put them in the registers. */
 		initialize();
 	}
 
-	if (m_flags & 8)
+	if (_flags & SOUNDFLAG_SPEAKER)
 	{
-		tone(freq); /* pc spkr flag set */
+		tone(freq);
 	}
 	return 1;
 }
 
-void SoundState::sound_off()
+void SoundStateImpl::sound_off()
 {
-	if (m_flags & 16)/* switch off old note */
+	if (_flags & SOUNDFLAG_OPL3_FM)/* switch off old note */
 	{
 		if (offvoice >= 0)
 		{
@@ -314,77 +409,77 @@ void SoundState::sound_off()
 			offvoice = 0;
 		}
 	}
-	if (m_flags & 8)
+	if (_flags & SOUNDFLAG_SPEAKER)
 	{
 		driver_mute(); /* shut off pc speaker */
 	}
 }
 
-void SoundState::mute()
+void SoundStateImpl::mute()
 {
 	/* shut everything up routine */
 	int i;
-	if (m_flags & 16)
+	if (_flags & SOUNDFLAG_OPL3_FM)
 	{
 		for (i=0;i<=8;i++)
 		{
 			fm(0xB0 + i, fmtemp[i]);
-			fm(0x83 + m_fm_offset[i], 0xFF);
+			fm(0x83 + _fm_offset[i], 0xFF);
 		}
 	}
-	if (m_flags & 8)
+	if (_flags & SOUNDFLAG_SPEAKER)
 	{
 		driver_mute(); /* shut off pc speaker */
 	}
-	m_fm_channel = 0;
-	offvoice = (char) -m_polyphony;
+	_fm_channel = 0;
+	offvoice = (char) -_polyphony;
 }
 
-void SoundState::buzzer(int tone)
+void SoundStateImpl::buzzer(int tone)
 {
-	if ((m_flags & 7) == 1)
+	if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
 	{
-		if (m_flags & 8)
+		if (_flags & SOUNDFLAG_SPEAKER)
 		{
-			buzzerpcspkr(tone);
+			buzzer_pc_speaker(tone);
 		}
 
-		if (m_flags & 16)
+		if (_flags & SOUNDFLAG_OPL3_FM)
 		{
-			int oldsoundflag = m_flags;
-			sleepms(1); /* to allow quiet timer calibration first time */
-			m_flags &= 0xf7; /*switch off sound_on stuff for pc spkr */
+			int oldsoundflag = _flags;
+			sleep_ms(1); /* to allow quiet timer calibration first time */
+			_flags &= ~SOUNDFLAG_SPEAKER; /*switch off sound_on stuff for pc spkr */
 			switch(tone)
 			{
 			case 0:
 				sound_on(1047);
-				sleepms(1000);
+				sleep_ms(1000);
 				sound_off();
 				sound_on(1109);
-				sleepms(1000);
+				sleep_ms(1000);
 				sound_off();
 				sound_on(1175);
-				sleepms(1000);
+				sleep_ms(1000);
 				sound_off();
 				break;
 			case 1:
 				sound_on(2093);
-				sleepms(1000);
+				sleep_ms(1000);
 				sound_off();
 				sound_on(1976);
-				sleepms(1000);
+				sleep_ms(1000);
 				sound_off();
 				sound_on(1857);
-				sleepms(1000);
+				sleep_ms(1000);
 				sound_off();
 				break;
 			default:
 				sound_on(40);
-				sleepms(5000);
+				sleep_ms(5000);
 				sound_off();
 				break;
 			}
-			m_flags = oldsoundflag;
+			_flags = oldsoundflag;
 			mute(); /*switch off all currently sounding notes*/
 		}
 
@@ -393,24 +488,24 @@ void SoundState::buzzer(int tone)
 	}
 }
 
-int SoundState::get_parameters()
+int SoundStateImpl::get_parameters()
 {
 	/* routine to get sound settings  */
-	int old_soundflag = m_flags;
+	int old_soundflag = _flags;
 	int old_orbit_delay = g_orbit_delay;
 	bool old_start_show_orbit = g_start_show_orbit;
 
 get_sound_restart:
 	{
-		m_menu_count = 0;
+		_menu_count = 0;
 		UIChoices dialog(HELPSOUND, "Sound Control Screen", 255);
 		const char *soundmodes[] = { "off", "beep", "x", "y", "z" };
-		dialog.push("Sound (off, beep, x, y, z)", soundmodes, NUM_OF(soundmodes), m_flags & SOUNDFLAG_ORBITMASK);
-		dialog.push("Use PC internal speaker?", (m_flags & SOUNDFLAG_SPEAKER) != 0);
-		dialog.push("Use soundcard output?", (m_flags & SOUNDFLAG_OPL3_FM) != 0);
-		dialog.push("Quantize note pitch ?", (m_flags & SOUNDFLAG_QUANTIZED) != 0);
+		dialog.push("Sound (off, beep, x, y, z)", soundmodes, NUM_OF(soundmodes), _flags & SOUNDFLAG_ORBITMASK);
+		dialog.push("Use PC internal speaker?", (_flags & SOUNDFLAG_SPEAKER) != 0);
+		dialog.push("Use soundcard output?", (_flags & SOUNDFLAG_OPL3_FM) != 0);
+		dialog.push("Quantize note pitch ?", (_flags & SOUNDFLAG_QUANTIZED) != 0);
 		dialog.push("Orbit delay in ms (0 = none)", g_orbit_delay);
-		dialog.push("Base Hz Value", m_base_hertz);
+		dialog.push("Base Hz Value", _base_hertz);
 		dialog.push("Show orbits?", g_start_show_orbit);
 		dialog.push("");
 		dialog.push("Press F6 for FM synth parameters, F7 for scale mappings");
@@ -419,23 +514,23 @@ get_sound_restart:
 		int i = dialog.prompt();
 		if (i < 0)
 		{
-			m_flags = old_soundflag;
+			_flags = old_soundflag;
 			g_orbit_delay = old_orbit_delay;
 			g_start_show_orbit = old_start_show_orbit;
 			return -1; /*escaped */
 		}
 
 		int k = -1;
-		m_flags = dialog.values(++k).uval.ch.val;
-		m_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_SPEAKER);
-		m_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_OPL3_FM);
-		m_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_QUANTIZED);
+		_flags = dialog.values(++k).uval.ch.val;
+		_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_SPEAKER);
+		_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_OPL3_FM);
+		_flags += (dialog.values(++k).uval.ch.val * SOUNDFLAG_QUANTIZED);
 		g_orbit_delay = dialog.values(++k).uval.ival;
-		m_base_hertz = dialog.values(++k).uval.ival;
+		_base_hertz = dialog.values(++k).uval.ival;
 		g_start_show_orbit = (dialog.values(++k).uval.ch.val != 0);
 
 		/* now do any intialization needed and check for soundcard */
-		if ((m_flags & SOUNDFLAG_OPL3_FM) && !(old_soundflag & SOUNDFLAG_OPL3_FM))
+		if ((_flags & SOUNDFLAG_OPL3_FM) && !(old_soundflag & SOUNDFLAG_OPL3_FM))
 		{
 			initfm();
 		}
@@ -453,39 +548,39 @@ get_sound_restart:
 			break;
 
 		case FIK_F4:
-			m_flags = 9; /* reset to default */
+			_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* reset to default */
 			g_orbit_delay = 0;
-			m_base_hertz = 440;
+			_base_hertz = 440;
 			g_start_show_orbit = false;
 			goto get_sound_restart;
 			break;
 		}
 
-		return (m_flags != old_soundflag
-				&& ((m_flags & SOUNDFLAG_ORBITMASK) > 1
+		return (_flags != old_soundflag
+				&& ((_flags & SOUNDFLAG_ORBITMASK) > 1
 					|| (old_soundflag & SOUNDFLAG_ORBITMASK) > 1)) ? 1 : 0;
 	}
 }
 
-int SoundState::get_scale_map()
+int SoundStateImpl::get_scale_map()
 {
-	m_menu_count++;
+	_menu_count++;
 
 get_map_restart:
 	{
 		UIChoices dialog(HELPMUSIC, "Scale Mapping Screen", 255);
-		dialog.push("Scale map C (1)", m_scale_map[0]);
-		dialog.push("Scale map C#(2)", m_scale_map[1]);
-		dialog.push("Scale map D (3)", m_scale_map[2]);
-		dialog.push("Scale map D#(4)", m_scale_map[3]);
-		dialog.push("Scale map E (5)", m_scale_map[4]);
-		dialog.push("Scale map F (6)", m_scale_map[5]);
-		dialog.push("Scale map F#(7)", m_scale_map[6]);
-		dialog.push("Scale map G (8)", m_scale_map[7]);
-		dialog.push("Scale map G#(9)", m_scale_map[8]);
-		dialog.push("Scale map A (10)", m_scale_map[9]);
-		dialog.push("Scale map A#(11)", m_scale_map[10]);
-		dialog.push("Scale map B (12)", m_scale_map[11]);
+		dialog.push("Scale map C (1)", _scale_map[0]);
+		dialog.push("Scale map C#(2)", _scale_map[1]);
+		dialog.push("Scale map D (3)", _scale_map[2]);
+		dialog.push("Scale map D#(4)", _scale_map[3]);
+		dialog.push("Scale map E (5)", _scale_map[4]);
+		dialog.push("Scale map F (6)", _scale_map[5]);
+		dialog.push("Scale map F#(7)", _scale_map[6]);
+		dialog.push("Scale map G (8)", _scale_map[7]);
+		dialog.push("Scale map G#(9)", _scale_map[8]);
+		dialog.push("Scale map A (10)", _scale_map[9]);
+		dialog.push("Scale map A#(11)", _scale_map[10]);
+		dialog.push("Scale map B (12)", _scale_map[11]);
 		dialog.push("");
 		dialog.push("Press F6 for FM synth parameters");
 		dialog.push("Press F4 to reset to default values");
@@ -498,28 +593,28 @@ get_map_restart:
 
 		for (int j = 0; j < 12; j++)
 		{
-			m_scale_map[j] = abs(dialog.values(j).uval.ival);
-			if (m_scale_map[j] > 12)
+			_scale_map[j] = abs(dialog.values(j).uval.ival);
+			if (_scale_map[j] > 12)
 			{
-				m_scale_map[j] = 12;
+				_scale_map[j] = 12;
 			}
 		}
 
-		if (i == FIK_F6 && m_menu_count == 1)
+		if (i == FIK_F6 && _menu_count == 1)
 		{
 			get_music_parameters();/* see below, for controling fmsynth */
 			goto get_map_restart;
 		}
-		else if (i == FIK_F6 && m_menu_count == 2)
+		else if (i == FIK_F6 && _menu_count == 2)
 		{
-			m_menu_count--;
+			_menu_count--;
 		}
 
 		if (i == FIK_F4)
 		{
 			for (int j = 0; j <= 11; j++)
 			{
-				m_scale_map[j] = j + 1;
+				_scale_map[j] = j + 1;
 			}
 			goto get_map_restart;
 		}
@@ -528,22 +623,22 @@ get_map_restart:
 	return 0;
 }
 
-int SoundState::get_music_parameters()
+int SoundStateImpl::get_music_parameters()
 {
-	m_menu_count++;
+	_menu_count++;
 
 get_music_restart:
 	{
 		UIChoices dialog(HELPMUSIC, "FM Synth Card Control Screen", 255);
-		dialog.push("Polyphony 1..9", m_polyphony + 1);
-		dialog.push("Wave type 0..7", m_fm_wave_type);
-		dialog.push("Note attack time   0..15", m_fm_attack);
-		dialog.push("Note decay time    0..15", m_fm_decay);
-		dialog.push("Note sustain level 0..15", m_fm_sustain);
-		dialog.push("Note release time  0..15", m_fm_release);
-		dialog.push("Soundcard volume?  0..63", m_fm_volume);
+		dialog.push("Polyphony 1..9", _polyphony + 1);
+		dialog.push("Wave type 0..7", _fm_wave_type);
+		dialog.push("Note attack time   0..15", _fm_attack);
+		dialog.push("Note decay time    0..15", _fm_decay);
+		dialog.push("Note sustain level 0..15", _fm_sustain);
+		dialog.push("Note release time  0..15", _fm_release);
+		dialog.push("Soundcard volume?  0..63", _fm_volume);
 		const char *attenuation_modes[] = { "none", "low", "mid", "high" };
-		dialog.push("Hi pitch attenuation", attenuation_modes, NUM_OF(attenuation_modes), m_note_attenuation);
+		dialog.push("Hi pitch attenuation", attenuation_modes, NUM_OF(attenuation_modes), _note_attenuation);
 		dialog.push("");
 		dialog.push("Press F7 for scale mappings");
 		dialog.push("Press F4 to reset to default values");
@@ -555,44 +650,44 @@ get_music_restart:
 		}
 
 		int k = -1;
-		m_polyphony = abs(dialog.values(++k).uval.ival - 1);
-		if (m_polyphony > 8)
+		_polyphony = abs(dialog.values(++k).uval.ival - 1);
+		if (_polyphony > 8)
 		{
-			m_polyphony = 8;
+			_polyphony = 8;
 		}
-		m_fm_wave_type =  (dialog.values(++k).uval.ival) & 0x07;
-		m_fm_attack =  (dialog.values(++k).uval.ival) & 0x0F;
-		m_fm_decay =  (dialog.values(++k).uval.ival) & 0x0F;
-		m_fm_sustain = (dialog.values(++k).uval.ival) & 0x0F;
-		m_fm_release = (dialog.values(++k).uval.ival) & 0x0F;
-		m_fm_volume = (dialog.values(++k).uval.ival) & 0x3F;
-		m_note_attenuation = dialog.values(++k).uval.ch.val;
-		if (m_flags & SOUNDFLAG_OPL3_FM)
+		_fm_wave_type =  (dialog.values(++k).uval.ival) & 0x07;
+		_fm_attack =  (dialog.values(++k).uval.ival) & 0x0F;
+		_fm_decay =  (dialog.values(++k).uval.ival) & 0x0F;
+		_fm_sustain = (dialog.values(++k).uval.ival) & 0x0F;
+		_fm_release = (dialog.values(++k).uval.ival) & 0x0F;
+		_fm_volume = (dialog.values(++k).uval.ival) & 0x3F;
+		_note_attenuation = dialog.values(++k).uval.ch.val;
+		if (_flags & SOUNDFLAG_OPL3_FM)
 		{
 			initfm();
 		}
 
-		if (i == FIK_F7 && m_menu_count == 1)
+		if (i == FIK_F7 && _menu_count == 1)
 		{
 			get_scale_map();/* see above, for setting scale mapping */
 			goto get_music_restart;
 		}
-		else if (i == FIK_F7 && m_menu_count == 2)
+		else if (i == FIK_F7 && _menu_count == 2)
 		{
-			m_menu_count--;
+			_menu_count--;
 		}
 
 		if (i == FIK_F4)
 		{
-			m_polyphony = 0;
-			m_fm_wave_type = 0;
-			m_fm_attack = 5;
-			m_fm_decay = 10;
-			m_fm_sustain = 13;
-			m_fm_release = 5;
-			m_fm_volume = 63;
-			m_note_attenuation = 0;
-			if (m_flags & 16)
+			_polyphony = 0;
+			_fm_wave_type = 0;
+			_fm_attack = 5;
+			_fm_decay = 10;
+			_fm_sustain = 13;
+			_fm_release = 5;
+			_fm_volume = 63;
+			_note_attenuation = 0;
+			if (_flags & SOUNDFLAG_OPL3_FM)
 			{
 				initfm();
 			}
@@ -603,15 +698,15 @@ get_music_restart:
 	return 0;
 }
 
-void SoundState::old_orbit(int i, int j)
+void SoundStateImpl::old_orbit(int i, int j)
 {
-	if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
+	if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 	{
-		tone(int(i*1000/g_x_dots + m_base_hertz));
+		tone(int(i*1000/g_x_dots + _base_hertz));
 	}
-	else if ((m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
+	else if ((_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_X) /* sound = y or z */
 	{
-		tone(int(j*1000/g_y_dots + m_base_hertz));
+		tone(int(j*1000/g_y_dots + _base_hertz));
 	}
 	else if (g_orbit_delay > 0)
 	{
@@ -619,19 +714,19 @@ void SoundState::old_orbit(int i, int j)
 	}
 }
 
-void SoundState::new_orbit(int i, int j)
+void SoundStateImpl::new_orbit(int i, int j)
 {
-	if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
+	if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X) /* sound = x */
 	{
-		tone(int(i + m_base_hertz));
+		tone(int(i + _base_hertz));
 	}
-	else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
+	else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y) /* sound = y */
 	{
-		tone(int(j + m_base_hertz));
+		tone(int(j + _base_hertz));
 	}
-	else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
+	else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z) /* sound = z */
 	{
-		tone(int(i + j + m_base_hertz));
+		tone(int(i + j + _base_hertz));
 	}
 	else if (g_orbit_delay > 0)
 	{
@@ -639,7 +734,7 @@ void SoundState::new_orbit(int i, int j)
 	}
 }
 
-void SoundState::orbit(int i, int j)
+void SoundStateImpl::orbit(int i, int j)
 {
 	if (DEBUGMODE_OLD_ORBIT_SOUND == g_debug_mode)
 	{
@@ -651,79 +746,79 @@ void SoundState::orbit(int i, int j)
 	}
 }
 
-void SoundState::orbit(double x, double y, double z)
+void SoundStateImpl::orbit(double x, double y, double z)
 {
-	if ((m_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
+	if ((_flags & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 	{
 		double value;
-		switch (m_flags & SOUNDFLAG_ORBITMASK)
+		switch (_flags & SOUNDFLAG_ORBITMASK)
 		{
 		case SOUNDFLAG_X: value = x; break;
 		case SOUNDFLAG_Y: value = y; break;
 		case SOUNDFLAG_Z: value = z; break;
 		}
-		tone(int(value*100 + m_base_hertz));
+		tone(int(value*100 + _base_hertz));
 	}
 }
 
-const char *SoundState::parameter_text() const
+std::string SoundStateImpl::parameter_text() const
 {
 	std::ostringstream text;
 
-	if (m_base_hertz != DEFAULT_BASE_HERTZ)
+	if (_base_hertz != DEFAULT_BASE_HERTZ)
 	{
-		text << " hertz=" << m_base_hertz;
+		text << " hertz=" << _base_hertz;
 	}
 
-	if (m_flags != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
+	if (_flags != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
 	{
-		if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
+		if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_OFF)
 		{
 			text << " sound=off";
 		}
-		else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
+		else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_BEEP)
 		{
 			text << " sound=beep";
 		}
-		else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
+		else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_X)
 		{
 			text << " sound=x";
 		}
-		else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
+		else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Y)
 		{
 			text << " sound=y";
 		}
-		else if ((m_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
+		else if ((_flags & SOUNDFLAG_ORBITMASK) == SOUNDFLAG_Z)
 		{
 			text << " sound=z";
 		}
-		if ((m_flags & SOUNDFLAG_ORBITMASK) && (m_flags & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
+		if ((_flags & SOUNDFLAG_ORBITMASK) && (_flags & SOUNDFLAG_ORBITMASK) <= SOUNDFLAG_Z)
 		{
-			if (m_flags & SOUNDFLAG_SPEAKER)
+			if (_flags & SOUNDFLAG_SPEAKER)
 			{
 				text << "/pc";
 			}
-			if (m_flags & SOUNDFLAG_OPL3_FM)
+			if (_flags & SOUNDFLAG_OPL3_FM)
 			{
 				text << "/fm";
 			}
-			if (m_flags & SOUNDFLAG_MIDI)
+			if (_flags & SOUNDFLAG_MIDI)
 			{
 				text << "/midi";
 			}
-			if (m_flags & SOUNDFLAG_QUANTIZED)
+			if (_flags & SOUNDFLAG_QUANTIZED)
 			{
 				text << "/quant";
 			}
 		}
 	}
 
-	if (m_fm_volume != DEFAULT_FM_VOLUME)
+	if (_fm_volume != DEFAULT_FM_VOLUME)
 	{
-		text << " volume=" << m_fm_volume;
+		text << " volume=" << _fm_volume;
 	}
 
-	switch (m_note_attenuation)
+	switch (_note_attenuation)
 	{
 	case ATTENUATE_LOW:
 		text << " attenuate=low";
@@ -736,42 +831,42 @@ const char *SoundState::parameter_text() const
 		break;
 	}
 
-	if (m_polyphony != DEFAULT_POLYPHONY)
+	if (_polyphony != DEFAULT_POLYPHONY)
 	{
-		text << " polyphony=" << m_polyphony + 1;
+		text << " polyphony=" << _polyphony + 1;
 	}
 
-	if (m_fm_wave_type != DEFAULT_FM_WAVE_TYPE)
+	if (_fm_wave_type != DEFAULT_FM_WAVE_TYPE)
 	{
-		text << " wavetype=" << m_fm_wave_type;
+		text << " wavetype=" << _fm_wave_type;
 	}
 
-	if (m_fm_attack != DEFAULT_FM_ATTACK)
+	if (_fm_attack != DEFAULT_FM_ATTACK)
 	{
-		text << " attack=" << m_fm_attack;
+		text << " attack=" << _fm_attack;
 	}
 
-	if (m_fm_decay != DEFAULT_FM_DECAY)
+	if (_fm_decay != DEFAULT_FM_DECAY)
 	{
-		text << " decay=" << m_fm_decay;
+		text << " decay=" << _fm_decay;
 	}
 
-	if (m_fm_sustain != DEFAULT_FM_SUSTAIN)
+	if (_fm_sustain != DEFAULT_FM_SUSTAIN)
 	{
-		text << " sustain=" << m_fm_sustain;
+		text << " sustain=" << _fm_sustain;
 	}
 
-	if (m_fm_release != DEFAULT_FM_RELEASE)
+	if (_fm_release != DEFAULT_FM_RELEASE)
 	{
-		text << " srelease=" << m_fm_release;
+		text << " srelease=" << _fm_release;
 	}
 
-	if ((m_flags & SOUNDFLAG_QUANTIZED) && !default_scale_map())  /* quantize turned on */
+	if ((_flags & SOUNDFLAG_QUANTIZED) && !default_scale_map())  /* quantize turned on */
 	{
-		text << " scalemap=" << m_scale_map[0];
+		text << " scalemap=" << _scale_map[0];
 		for (int i = 1; i < NUM_OCTAVES; i++)
 		{
-			text << "/" << m_scale_map[i];
+			text << "/" << _scale_map[i];
 		}
 	}
 	text << std::ends;
@@ -779,11 +874,11 @@ const char *SoundState::parameter_text() const
 	return text.str().c_str();
 }
 
-bool SoundState::default_scale_map() const
+bool SoundStateImpl::default_scale_map() const
 {
 	for (int i = 0; i < NUM_OCTAVES; i++)
 	{
-		if (m_scale_map[i] != i + 1)
+		if (_scale_map[i] != i + 1)
 		{
 			return false;
 		}
@@ -791,16 +886,16 @@ bool SoundState::default_scale_map() const
 	return true;
 }
 
-int SoundState::parse_sound(const cmd_context &context)
+int SoundStateImpl::parse_sound(const cmd_context &context)
 {
 	if (context.totparms > 5)
 	{
 		return bad_arg(context.curarg);
 	}
-	m_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
+	_flags = SOUNDFLAG_OFF; /* start with a clean slate, add bits as we go */
 	if (context.totparms == 1)
 	{
-		m_flags = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
+		_flags = SOUNDFLAG_SPEAKER; /* old command, default to PC speaker */
 	}
 
 	/* g_sound_flags is used as a bitfield... bit 0, 1, 2 used for whether sound
@@ -814,23 +909,23 @@ int SoundState::parse_sound(const cmd_context &context)
 
 	if (context.charval[0] == 'n' || context.charval[0] == 'o')
 	{
-		m_flags &= ~SOUNDFLAG_ORBITMASK;
+		_flags &= ~SOUNDFLAG_ORBITMASK;
 	}
 	else if ((strncmp(context.value, "ye", 2) == 0) || (context.charval[0] == 'b'))
 	{
-		m_flags |= SOUNDFLAG_BEEP;
+		_flags |= SOUNDFLAG_BEEP;
 	}
 	else if (context.charval[0] == 'x')
 	{
-		m_flags |= SOUNDFLAG_X;
+		_flags |= SOUNDFLAG_X;
 	}
 	else if (context.charval[0] == 'y' && strncmp(context.value, "ye", 2) != 0)
 	{
-		m_flags |= SOUNDFLAG_Y;
+		_flags |= SOUNDFLAG_Y;
 	}
 	else if (context.charval[0] == 'z')
 	{
-		m_flags |= SOUNDFLAG_Z;
+		_flags |= SOUNDFLAG_Z;
 	}
 	else
 	{
@@ -838,7 +933,7 @@ int SoundState::parse_sound(const cmd_context &context)
 	}
 	if (context.totparms > 1)
 	{
-		m_flags &= SOUNDFLAG_ORBITMASK; /* reset options */
+		_flags &= SOUNDFLAG_ORBITMASK; /* reset options */
 		for (int i = 1; i < context.totparms; i++)
 		{
 			/* this is for 2 or more options at the same time */
@@ -846,24 +941,24 @@ int SoundState::parse_sound(const cmd_context &context)
 			{
 				if (driver_init_fm())
 				{
-					m_flags |= SOUNDFLAG_OPL3_FM;
+					_flags |= SOUNDFLAG_OPL3_FM;
 				}
 				else
 				{
-					m_flags &= ~SOUNDFLAG_OPL3_FM;
+					_flags &= ~SOUNDFLAG_OPL3_FM;
 				}
 			}
 			else if (context.charval[i] == 'p')
 			{
-				m_flags |= SOUNDFLAG_SPEAKER;
+				_flags |= SOUNDFLAG_SPEAKER;
 			}
 			else if (context.charval[i] == 'm')
 			{
-				m_flags |= SOUNDFLAG_MIDI;
+				_flags |= SOUNDFLAG_MIDI;
 			}
 			else if (context.charval[i] == 'q')
 			{
-				m_flags |= SOUNDFLAG_QUANTIZED;
+				_flags |= SOUNDFLAG_QUANTIZED;
 			}
 			else
 			{
@@ -874,35 +969,35 @@ int SoundState::parse_sound(const cmd_context &context)
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_hertz(const cmd_context &context)
+int SoundStateImpl::parse_hertz(const cmd_context &context)
 {
-	m_base_hertz = context.numval;
+	_base_hertz = context.numval;
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_volume(const cmd_context &context)
+int SoundStateImpl::parse_volume(const cmd_context &context)
 {
-	m_fm_volume = (context.numval > 63) ? 63 : context.numval;
+	_fm_volume = (context.numval > 63) ? 63 : context.numval;
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_attenuation(const cmd_context &context)
+int SoundStateImpl::parse_attenuation(const cmd_context &context)
 {
 	if (context.charval[0] == 'n')
 	{
-		m_note_attenuation = ATTENUATE_NONE;
+		_note_attenuation = ATTENUATE_NONE;
 	}
 	else if (context.charval[0] == 'l')
 	{
-		m_note_attenuation = ATTENUATE_LOW;
+		_note_attenuation = ATTENUATE_LOW;
 	}
 	else if (context.charval[0] == 'm')
 	{
-		m_note_attenuation = ATTENUATE_MIDDLE;
+		_note_attenuation = ATTENUATE_MIDDLE;
 	}
 	else if (context.charval[0] == 'h')
 	{
-		m_note_attenuation = ATTENUATE_HIGH;
+		_note_attenuation = ATTENUATE_HIGH;
 	}
 	else
 	{
@@ -911,47 +1006,47 @@ int SoundState::parse_attenuation(const cmd_context &context)
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_polyphony(const cmd_context &context)
+int SoundStateImpl::parse_polyphony(const cmd_context &context)
 {
 	if (context.numval > 9)
 	{
 		return bad_arg(context.curarg);
 	}
-	m_polyphony = abs(context.numval-1);
+	_polyphony = abs(context.numval-1);
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_wave_type(const cmd_context &context)
+int SoundStateImpl::parse_wave_type(const cmd_context &context)
 {
-	m_fm_wave_type = context.numval & 0x0F;
+	_fm_wave_type = context.numval & 0x0F;
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_attack(const cmd_context &context)
+int SoundStateImpl::parse_attack(const cmd_context &context)
 {
-	m_fm_attack = context.numval & 0x0F;
+	_fm_attack = context.numval & 0x0F;
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_decay(const cmd_context &context)
+int SoundStateImpl::parse_decay(const cmd_context &context)
 {
-	m_fm_decay = context.numval & 0x0F;
+	_fm_decay = context.numval & 0x0F;
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_sustain(const cmd_context &context)
+int SoundStateImpl::parse_sustain(const cmd_context &context)
 {
-	m_fm_sustain = context.numval & 0x0F;
+	_fm_sustain = context.numval & 0x0F;
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_release(const cmd_context &context)
+int SoundStateImpl::parse_release(const cmd_context &context)
 {
-	m_fm_release = context.numval & 0x0F;
+	_fm_release = context.numval & 0x0F;
 	return COMMANDRESULT_OK;
 }
 
-int SoundState::parse_scale_map(const cmd_context &context)
+int SoundStateImpl::parse_scale_map(const cmd_context &context)
 {
 	int counter;
 	if (context.totparms != context.intparms)
@@ -963,8 +1058,121 @@ int SoundState::parse_scale_map(const cmd_context &context)
 		if ((context.totparms > counter) && (context.intval[counter] > 0)
 			&& (context.intval[counter] < 13))
 		{
-			m_scale_map[counter] = context.intval[counter];
+			_scale_map[counter] = context.intval[counter];
 		}
 	}
 	return COMMANDRESULT_OK;
+}
+
+SoundState::SoundState() : _impl(new SoundStateImpl())
+{
+}
+SoundState::~SoundState()
+{
+	delete _impl;
+	_impl = 0;
+}
+void SoundState::initialize()
+{
+	_impl->initialize();
+}
+bool SoundState::open()
+{
+	return _impl->open();
+}
+void SoundState::close()
+{
+	_impl->close();
+}
+void SoundState::tone(int value)
+{
+	_impl->tone(value);
+}
+void SoundState::write_time()
+{
+	_impl->write_time();
+}
+int SoundState::get_parameters()
+{
+	return _impl->get_parameters();
+}
+void SoundState::orbit(int x, int y)
+{
+	_impl->orbit(x, y);
+}
+void SoundState::orbit(double x, double y, double z)
+{
+	_impl->orbit(x, y, z);
+}
+std::string SoundState::parameter_text() const
+{
+	return _impl->parameter_text();
+}
+int SoundState::parse_sound(const cmd_context &context)
+{
+	return _impl->parse_sound(context);
+}
+int SoundState::parse_hertz(const cmd_context &context)
+{
+	return _impl->parse_hertz(context);
+}
+int SoundState::parse_attack(const cmd_context &context)
+{
+	return _impl->parse_attack(context);
+}
+int SoundState::parse_decay(const cmd_context &context)
+{
+	return _impl->parse_decay(context);
+}
+int SoundState::parse_release(const cmd_context &context)
+{
+	return _impl->parse_release(context);
+}
+int SoundState::parse_sustain(const cmd_context &context)
+{
+	return _impl->parse_sustain(context);
+}
+int SoundState::parse_volume(const cmd_context &context)
+{
+	return _impl->parse_volume(context);
+}
+int SoundState::parse_wave_type(const cmd_context &context)
+{
+	return _impl->parse_wave_type(context);
+}
+int SoundState::parse_attenuation(const cmd_context &context)
+{
+	return _impl->parse_attenuation(context);
+}
+int SoundState::parse_polyphony(const cmd_context &context)
+{
+	return _impl->parse_polyphony(context);
+}
+int SoundState::parse_scale_map(const cmd_context &context)
+{
+	return _impl->parse_scale_map(context);
+}
+int SoundState::flags() const
+{
+	return _impl->flags();
+}
+int SoundState::base_hertz() const
+{
+	return _impl->base_hertz();
+}
+int SoundState::fm_volume() const
+{
+	return _impl->fm_volume();
+}
+void SoundState::set_flags(int flags)
+{
+	_impl->set_flags(flags);
+}
+void SoundState::silence_xyz()
+{
+	_impl->silence_xyz();
+}
+void SoundState::set_speaker_beep()
+{
+	_impl->set_speaker_beep();
 }

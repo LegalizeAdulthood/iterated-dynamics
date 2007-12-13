@@ -27,17 +27,15 @@ enum SoundFlagType
 	SOUNDFLAG_MASK		= 0x7F
 };
 
+class SoundStateImpl;
+
 class SoundState
 {
 public:
-	enum
-	{
-		NUM_OCTAVES = 12
-	};
-
 	SoundState();
+	~SoundState();
 	void initialize();
-	int open();
+	bool open();
 	void close();
 	void tone(int tone);
 	void write_time();
@@ -45,7 +43,7 @@ public:
 	void orbit(int x, int y);
 	void orbit(double x, double y, double z);
 
-	const char *parameter_text() const;
+	std::string parameter_text() const;
 	int parse_sound(const cmd_context &context);
 	int parse_hertz(const cmd_context &context);
 	int parse_attack(const cmd_context &context);
@@ -58,59 +56,16 @@ public:
 	int parse_polyphony(const cmd_context &context);
 	int parse_scale_map(const cmd_context &context);
 
-	int flags() const				{ return m_flags; }
-	int base_hertz() const			{ return m_base_hertz; }
-	int fm_volume() const			{ return m_fm_volume; }
+	int flags() const;
+	int base_hertz() const;
+	int fm_volume() const;
 
-	void set_flags(int flags)		{ m_flags = flags; }
-	void silence_xyz()				{ m_flags &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); }
-	void set_speaker_beep()			{ m_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; }
+	void set_flags(int flags);
+	void silence_xyz();
+	void set_speaker_beep();
 
 private:
-	int m_flags;
-	int m_base_hertz;				/* sound=x/y/z hertz value */
-	int m_fm_attack;
-	int m_fm_decay;
-	int m_fm_release;
-	int m_fm_sustain;
-	int m_fm_volume;
-	int m_fm_wave_type;
-	int m_note_attenuation;
-	int m_polyphony;
-	int m_scale_map[NUM_OCTAVES];	/* array for mapping notes to a (user defined) scale */
-
-	enum
-	{
-		NUM_CHANNELS = 9,
-		DEFAULT_FM_RELEASE = 5,
-		DEFAULT_FM_SUSTAIN = 13,
-		DEFAULT_FM_DECAY = 10,
-		DEFAULT_FM_ATTACK = 5,
-		DEFAULT_FM_WAVE_TYPE = 0,
-		DEFAULT_POLYPHONY = 0,
-		DEFAULT_FM_VOLUME = 63,
-		DEFAULT_BASE_HERTZ = 440
-	};
-	void old_orbit(int x, int y);
-	void new_orbit(int x, int y);
-	int sound_on(int freq);
-	void sound_off();
-	int get_music_parameters();
-	int get_scale_map();
-	bool default_scale_map() const;
-
-	// TODO: these functions need to be migrated to the driver for sound support
-	void mute();
-	void buzzer(int tone);
-	void initfm() {}
-	int fm(int, int)			{ return 0; }
-	int buzzerpcspkr(int tone)	{ return 0; }
-	int sleepms(int delay)		{ return 0; }
-
-	FILE *m_fp;
-	int m_menu_count;
-	int m_fm_offset[NUM_CHANNELS];
-	int m_fm_channel;
+	SoundStateImpl *_impl;
 };
 
 extern SoundState g_sound_state;
