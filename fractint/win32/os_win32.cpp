@@ -1,7 +1,6 @@
 #include <string>
 
 #include <assert.h>
-#include <direct.h>
 #include <signal.h>
 #include <string.h>
 #include <sys/timeb.h>

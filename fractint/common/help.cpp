@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
 #include "port.h"
@@ -924,10 +925,11 @@ void help(HelpAction action)
 	g_timer_start += clock_ticks();
 }
 
-static int exe_path(char *filename, char *path)
+static int exe_path(const char *filename, char *buffer)
 {
-	strcpy(path, g_exe_path.c_str());
-	strcat(path, filename);
+	extern boost::filesystem::path g_exe_path;
+	std::string path = g_exe_path.string() + filename;
+	strcat(buffer, path.c_str());
 	return 1;
 }
 
