@@ -2,6 +2,7 @@
 		FRACTINT - The Ultimate Fractal Generator
                         Main Routine
 */
+#include <fstream>
 #include <string>
 
 #include <string.h>
@@ -11,11 +12,11 @@
 #if defined(LINUX)
 #include <unistd.h>
 #endif
-#if defined(_WIN32)
-#include <direct.h>
-#endif
 #include <stdarg.h>
 #include <ctype.h>
+
+#include <boost/filesystem.hpp>
+#include <boost/format.hpp>
 
 #include "port.h"
 #include "prototyp.h"
@@ -177,7 +178,7 @@ int		g_cross_hair_box_size;
 
 UserInterfaceState g_ui_state;
 
-std::string g_exe_path;
+boost::filesystem::path g_exe_path;
 
 #define CONTINUE          4
 
@@ -235,29 +236,13 @@ static void my_floating_point_err(int sig)
 	}
 }
 
-static void set_exe_path(char *path)
+static void set_exe_path(const char *path)
 {
-	split_path(path, 0, g_exe_path, 0, 0);
-	if (g_exe_path[0] != SLASHC)
+	g_exe_path = path;
+	if (g_exe_path.has_relative_path())
 	{
 		/* relative path */
-		char cwd[FILE_MAX_PATH];
-		char *result = getcwd(cwd, NUM_OF(cwd));
-		if (result)
-		{
-			char *end = &cwd[strlen(cwd)];
-			if (end[-1] != SLASHC)
-			{
-				strcat(end, SLASH);
-			}
-			strcat(end, g_exe_path.c_str());
-			g_exe_path = end;
-		}
-		else
-		{
-			g_exe_path = DOTSLASH;
-			g_exe_path.append(path);
-		}
+		g_exe_path = boost::filesystem::current_path() / g_exe_path;
 	}
 }
 
@@ -708,14 +693,18 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 	va_start(arg_marker, engine);
 
 	bool do_bench = g_timer_flag; /* record time? */
-	if (timertype == 2)   /* encoder, record time only if debug = 200 */
+	if (timertype == TIMER_ENCODER)
 	{
 		do_bench = (DEBUGMODE_TIME_ENCODER == g_debug_mode);
 	}
-	FILE *fp = 0;
+	std::ofstream benchmark_file;
 	if (do_bench)
 	{
-		fp = dir_fopen(g_work_dir, "bench", "a");
+		benchmark_file.open((boost::filesystem::path(g_work_dir) / "bench.txt").string().c_str(), std::ios::ate);
+		if (!benchmark_file)
+		{
+			do_bench = false;
+		}
 	}
 	g_timer_start = clock_ticks();
 	int out = 0;
@@ -743,23 +732,20 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 		switch (timertype)
 		{
 		case TIMER_DECODER:
-			fprintf(fp, "decode ");
+			benchmark_file << "decode ";
 			break;
 		case TIMER_ENCODER:
-			fprintf(fp, "encode ");
+			benchmark_file << "encode ";
 			break;
 		}
-		fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld",
-			timestring,
-			g_current_fractal_specific->name,
-			g_x_dots,
-			g_y_dots,
-			g_max_iteration);
-		fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval/100, g_timer_interval%100);
-		if (fp != 0)
-		{
-			fclose(fp);
-		}
+		benchmark_file << boost::format("%s type=%s resolution = %dx%d maxiter=%ld")
+				% timestring
+				% g_current_fractal_specific->name
+				% g_x_dots
+				% g_y_dots
+				% g_max_iteration
+			<< boost::format(" time= %ld.%02ld secs\n") % (g_timer_interval/100) % (g_timer_interval % 100);
+		benchmark_file.close();
 	}
 	return out;
 }
