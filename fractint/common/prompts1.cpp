@@ -3511,9 +3511,9 @@ static int check_mapfile()
 			}
 		}
 		memcpy(g_old_dac_box, g_dac_box, 256*3); /* save the DAC */
-		i = validate_luts(temp1);
+		bool status = validate_luts(temp1);
 		memcpy(g_dac_box, g_old_dac_box, 256*3); /* restore the DAC */
-		if (i != 0)  /* Oops, somethings wrong */
+		if (status)  /* Oops, somethings wrong */
 		{
 			askflag = 1;
 			continue;

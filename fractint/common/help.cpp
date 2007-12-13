@@ -1025,7 +1025,7 @@ struct PRINT_DOC_INFO
 
 	int       topic_num[MAX_NUM_TOPIC_SEC]; /* topic_num[] for current CONTENT entry */
 
-	char buffer[PRINT_BUFFER_SIZE];        /* text s_buffer */
+	char buffer[PRINT_BUFFER_SIZE];        /* text buffer */
 
 	char      id[81];        /* s_buffer to store id in */
 	char      title[81];     /* s_buffer to store title in */
@@ -1176,19 +1176,17 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 	{
 	case PD_HEADING:
 		{
-			char line[81];
-			char buff[40];
-			int  width = PAGE_WIDTH + PAGE_INDENT;
-			int  keep_going;
-
-			keep_going = (info->msg_func != 0) ? (*info->msg_func)(pd->pnum, info->num_page) : 1;
+			int keep_going = (info->msg_func != 0) ? (*info->msg_func)(pd->pnum, info->num_page) : 1;
 
 			info->margin = 0;
 
+			char line[81];
 			memset(line, ' ', 81);
+			char buff[40];
 			strcpy(buff, boost::format("Iterated Dynamics Version %d.%01d%c")
-					% (g_release/100) % ((g_release % 100)/10)
-					% ((g_release % 10) ? '0'+(g_release % 10) : ' '));
+				% (g_release/100) % ((g_release % 100)/10)
+				% ((g_release % 10) ? '0' + (g_release % 10) : ' '));
+			int  width = PAGE_WIDTH + PAGE_INDENT;
 			memmove(line + ((width - int(strlen(buff)))/2) - 4, buff, strlen(buff));
 
 			strcpy(buff, boost::format("Page %d") % pd->pnum);
@@ -1241,25 +1239,32 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 	}
 }
 
+enum PrintDocumentStatus
+{
+	PRINTDOC_COMPLETE = -1,
+	PRINTDOC_ABORTED = -2,
+	PRINTDOC_INITIALIZATION = 0
+};
+
 static int print_doc_msg_func(int pnum, int num_pages)
 {
 	int  key;
 
-	if (pnum == -1)    /* successful completion */
+	if (pnum == PRINTDOC_COMPLETE)
 	{
 		driver_buzzer(BUZZER_COMPLETE);
 		put_string_center(7, 0, 80, C_HELP_LINK, "Done -- Press any key");
 		driver_get_key();
 		return 0;
 	}
-	else if (pnum == -2)   /* aborted */
+	else if (pnum == PRINTDOC_ABORTED)
 	{
 		driver_buzzer(BUZZER_INTERRUPT);
 		put_string_center(7, 0, 80, C_HELP_LINK, "Aborted -- Press any key");
 		driver_get_key();
 		return 0;
 	}
-	else if (pnum == 0)   /* initialization */
+	else if (pnum == PRINTDOC_INITIALIZATION)
 	{
 		help_title();
 		printinstr();
@@ -1291,12 +1296,12 @@ int makedoc_msg_func(int pnum, int num_pages)
 	std::string message;
 	int result = 0;
 
-	if (pnum >= 0)
+	if (pnum >= PRINTDOC_INITIALIZATION)
 	{
 		message = str(boost::format("\rcompleted %d%%" ) % int((100.0/num_pages)*pnum));
 		result = 1;
 	}
-	else if (pnum == -2)
+	else if (pnum == PRINTDOC_ABORTED)
 	{
 		message = "\n*** aborted\n";
 	}
@@ -1307,9 +1312,8 @@ int makedoc_msg_func(int pnum, int num_pages)
 void print_document(const char *outfname, int (*msg_func)(int, int), int save_extraseg)
 {
 	PRINT_DOC_INFO info;
-	int            success   = 0;
-	FILE *temp_file = 0;
-	char      *msg = 0;
+	int success = 0;
+	char *msg = 0;
 
 	help_seek(16L);
 	fread(&info.num_contents, sizeof(int), 1, s_help_file);
@@ -1322,23 +1326,7 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 
 	if (msg_func != 0)
 	{
-		msg_func(0, info.num_page);   /* initialize */
-	}
-
-	if (save_extraseg)
-	{
-		temp_file = fopen(TEMP_FILE_NAME, "wb");
-		if (temp_file == 0)
-		{
-			msg = "Unable to create temporary file.\n";
-			goto ErrorAbort;
-		}
-
-		if (fwrite(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
-		{
-			msg = "Error writing temporary file.\n";
-			goto ErrorAbort;
-		}
+		msg_func(PRINTDOC_INITIALIZATION, info.num_page);   /* initialize */
 	}
 
 	info.file = fopen(outfname, "wt");
@@ -1352,37 +1340,10 @@ void print_document(const char *outfname, int (*msg_func)(int, int), int save_ex
 	info.start_of_line = 1;
 	info.spaces = 0;
 
-	success = process_document((PD_FUNC)print_doc_get_info,
-										(PD_FUNC)print_doc_output,   &info);
+	success = process_document((PD_FUNC) print_doc_get_info, (PD_FUNC) print_doc_output, &info);
 	fclose(info.file);
 
-	if (save_extraseg)
-	{
-		if (fseek(temp_file, 0L, SEEK_SET) != 0L)
-		{
-			msg = "Error reading temporary file.\n"
-				"System may be corrupt!\n"
-				"Save your image and re-start Iterated Dynamics!\n";
-			goto ErrorAbort;
-		}
-
-		if (fread(info.buffer, sizeof(char), PRINT_BUFFER_SIZE, temp_file) != PRINT_BUFFER_SIZE)
-		{
-			msg = "Error reading temporary file.\n"
-				"System may be corrupt!\n"
-				"Save your image and re-start Iterated Dynamics!\n";
-			goto ErrorAbort;
-		}
-	}
-
 ErrorAbort:
-	if (temp_file != 0)
-	{
-		fclose(temp_file);
-		remove(TEMP_FILE_NAME);
-		temp_file = 0;
-	}
-
 	if (msg != 0)
 	{
 		help_title();
@@ -1390,7 +1351,7 @@ ErrorAbort:
 	}
 	else if (msg_func != 0)
 	{
-		msg_func((success) ? -1 : -2, info.num_page);
+		msg_func(success ? PRINTDOC_COMPLETE : PRINTDOC_ABORTED, info.num_page);
 	}
 }
 

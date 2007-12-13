@@ -46,6 +46,7 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 void expand_comments(char *target, const char *source);
 void expand_comments(std::string &target, const char *source);
 static void put_parm(const char *parm);
+static void put_parm(const std::string &message);
 static void put_parm(const format &message);
 static void put_parm_line();
 static int getprec(double, double, double);
@@ -812,13 +813,13 @@ void write_batch_parms_formula()
 void write_batch_parms_l_system()
 {
 	put_filename("lfile", g_l_system_filename);
-	put_parm(format(" lname=%s") % g_l_system_name.c_str());
+	put_parm(" lname=" + g_l_system_name);
 }
 
 void write_batch_parms_ifs()
 {
 	put_filename("ifsfile", g_ifs_filename);
-	put_parm(format(" ifs=%s") % g_ifs_name.c_str());
+	put_parm(" ifs=" + g_ifs_name);
 }
 
 void write_batch_parms_inverse_julia()
@@ -1778,9 +1779,14 @@ static void put_parm(const char *parm)
 	}
 }
 
+static void put_parm(const std::string &message)
+{
+	put_parm(message.c_str());
+}
+
 static void put_parm(const format &message)
 {
-	put_parm(message.str().c_str());
+	put_parm(message.str());
 }
 
 int g_max_line_length = 72;
