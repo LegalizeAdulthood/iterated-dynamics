@@ -2,6 +2,7 @@
 		Overlayed odds and ends that don't fit anywhere else.
 */
 #include <algorithm>
+#include <fstream>
 #include <string>
 
 #include <assert.h>
@@ -63,7 +64,7 @@ static void strip_zeros(char *buf);
 
 char par_comment[4][MAX_COMMENT];
 
-static FILE *parmfile;
+static std::ofstream s_parameter_file;
 
 static char par_key(int x)
 {
@@ -373,7 +374,7 @@ void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
 		{
 			strcat(PCommandName, str(boost::format("_%c%c") % par_key(i) % par_key(j)).c_str());
 		}
-		fprintf(parmfile, "%-19s{", PCommandName);
+		s_parameter_file << boost::format("%-19s{") % PCommandName;
 		g_escape_time_state.m_grid_fp.x_min() = m_pxxmin + m_pdelx*(i*m_pxdots) + m_pdelx2*(j*m_pydots);
 		g_escape_time_state.m_grid_fp.x_max() = m_pxxmin + m_pdelx*((i + 1)*m_pxdots - 1) + m_pdelx2*((j + 1)*m_pydots - 1);
 		g_escape_time_state.m_grid_fp.y_min() = m_pyymax - m_pdely*((j + 1)*m_pydots - 1) - m_pdely2*((i + 1)*m_pxdots - 1);
@@ -393,7 +394,7 @@ void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
 	}
 	else
 	{
-		fprintf(parmfile, "%-19s{", g_command_name);
+		s_parameter_file << boost::format("%-19s{") % g_command_name;
 	}
 }
 void MakeBatchFile::execute_step2()
@@ -420,9 +421,9 @@ void MakeBatchFile::execute_step3(int i, int j)
 {
 	if (g_command_comment[0].length() > 0)
 	{
-		fprintf(parmfile, " ; %s", g_command_comment[0].c_str());
+		s_parameter_file << " ; " << g_command_comment[0];
 	}
-	fputc('\n', parmfile);
+	s_parameter_file << '\n';
 	{
 		char buf[25];
 		memset(buf, ' ', 23);
@@ -432,22 +433,22 @@ void MakeBatchFile::execute_step3(int i, int j)
 		{
 			if (g_command_comment[k].length() > 0)
 			{
-				fprintf(parmfile, "%s%s\n", buf, g_command_comment[k].c_str());
+				s_parameter_file << buf << g_command_comment[k] << "\n";
 			}
 		}
 		if (g_patch_level != 0 && !m_colors_only)
 		{
-			fprintf(parmfile, "Iterated Dynamics %s Version %d Patchlevel %d\n", buf,
-				g_release, g_patch_level);
+			s_parameter_file << boost::format("Iterated Dynamics %s Version %d Patchlevel %d\n")
+				% buf % g_release % g_patch_level;
 		}
 	}
 	write_batch_parms(m_color_spec, m_colors_only, m_max_color, i, j);
 	if (m_xm > 1 || m_ym > 1)
 	{
-		fprintf(parmfile, "  video=%s", m_video_mode);
-		fprintf(parmfile, " savename=frmig_%c%c\n", par_key(i), par_key(j));
+		s_parameter_file << "  video=" << m_video_mode;
+		s_parameter_file << boost::format(" savename=frmig_%c%c\n") % par_key(i) % par_key(j);
 	}
-	fprintf(parmfile, "  }\n\n");
+	s_parameter_file << "  }\n\n";
 }
 void MakeBatchFile::execute()
 {
@@ -540,8 +541,8 @@ skip_UI:
 			setvbuf(input_file, g_text_stack, _IOFBF, 4096); /* improves speed */
 #endif
 		}
-		parmfile = fopen(m_out_name, "wt");
-		if (parmfile == 0)
+		s_parameter_file.open(m_out_name, std::ios::out);
+		if (!s_parameter_file)
 		{
 			stop_message(STOPMSG_NORMAL, "Can't create " + out_name());
 			if (got_input_file)
@@ -566,7 +567,7 @@ skip_UI:
 					if (stop_message(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, prompt) < 0)
 					{                /* cancel */
 						fclose(input_file);
-						fclose(parmfile);
+						s_parameter_file.close();
 						unlink(m_out_name);
 						goto prompt_user;
 					}
@@ -577,8 +578,7 @@ skip_UI:
 					}
 					break;
 				}
-				fputs(buf, parmfile);
-				fputc('\n', parmfile);
+				s_parameter_file << buf << '\n';
 			}
 		}
 /***** start here*/
@@ -631,13 +631,12 @@ skip_UI:
 			while (i == 0); /* skip blanks */
 			while (i >= 0)
 			{
-				fputs(buf, parmfile);
-				fputc('\n', parmfile);
+				s_parameter_file << buf << '\n';
 				i = file_gets(buf, NUM_OF(buf)-1, input_file);
 			}
 			fclose(input_file);
 		}
-		fclose(parmfile);
+		s_parameter_file.close();
 		if (got_input_file)
 		{                         /* replace the original file with the new */
 			_unlink(g_command_file.c_str());   /* success assumed on these lines       */
@@ -1814,13 +1813,12 @@ static void put_parm_line()
 	}
 	c = s_wbdata.buf[len];
 	s_wbdata.buf[len] = 0;
-	fputs("  ", parmfile);
-	fputs(s_wbdata.buf, parmfile);
+	s_parameter_file << "  " << s_wbdata.buf;
 	if (c && c != ' ')
 	{
-		fputc('\\', parmfile);
+		s_parameter_file << '\\';
 	}
-	fputc('\n', parmfile);
+	s_parameter_file << '\n';
 	s_wbdata.buf[len] = char(c);
 	if (c == ' ')
 	{
