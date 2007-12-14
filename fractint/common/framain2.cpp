@@ -1,9 +1,11 @@
+#include <fstream>
 #include <string>
 
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
 
+#include <boost/filesystem.hpp>
 #include <boost/format.hpp>
 
 #include "port.h"
@@ -50,7 +52,7 @@
 class LineCompare
 {
 public:
-	LineCompare() : m_file(0), m_error_count(0)
+	LineCompare() : _file(), _error_count(0)
 	{
 	}
 	~LineCompare()
@@ -61,8 +63,8 @@ public:
 	void cleanup();
 
 private:
-	FILE *m_file;
-	int m_error_count;
+	std::ofstream _file;
+	int _error_count;
 };
 
 class ZoomSaver
@@ -104,8 +106,9 @@ int LineCompare::compare(BYTE *pixels, int line_length)
 	int row = g_row_count++;
 	if (row == 0)
 	{
-		m_error_count = 0;
-		m_file = dir_fopen(g_work_dir, "cmperr", g_initialize_batch ? "a" : "w");
+		_error_count = 0;
+		_file.open((boost::filesystem::path(g_work_dir) / "cmperr").string().c_str(),
+			std::ios::out | (g_initialize_batch ? std::ios::ate : 0));
 		g_out_line_cleanup = out_line_cleanup_compare;
 	}
 	if (g_potential_16bit)  /* 16 bit info, ignore odd numbered rows */
@@ -129,11 +132,11 @@ int LineCompare::compare(BYTE *pixels, int line_length)
 			{
 				g_plot_color_put_color(col, row, 1);
 			}
-			++m_error_count;
+			++_error_count;
 			if (g_initialize_batch == INITBATCH_NONE)
 			{
-				fprintf(m_file, "#%5d col %3d row %3d old %3d new %3d\n",
-					m_error_count, col, row, old_color, pixels[col]);
+				_file << boost::format("#%5d col %3d row %3d old %3d new %3d\n")
+					% _error_count % col % row % old_color % pixels[col];
 			}
 		}
 	}
@@ -148,10 +151,10 @@ void LineCompare::cleanup()
 		time(&ltime);
 		char *timestring = ctime(&ltime);
 		timestring[24] = 0; /*clobber newline in time string */
-		fprintf(m_file, "%s compare to %s has %5d errs\n",
-							timestring, g_read_name, m_error_count);
+		_file << boost::format("%s compare to %s has %5d errs\n")
+			% timestring % g_read_name.c_str() % _error_count;
 	}
-	fclose(m_file);
+	_file.close();
 }
 
 static int out_line_compare(BYTE *pixels, int line_length)
