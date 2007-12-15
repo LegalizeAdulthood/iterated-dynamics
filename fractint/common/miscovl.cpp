@@ -87,7 +87,7 @@ public:
 	void execute();
 
 private:
-	void execute_step1(FILE *fpbat, int i, int j);
+	void execute_step1(std::ofstream &fpbat, int i, int j);
 	void execute_step2();
 	void execute_step3(int i, int j);
 	bool check_resolution();
@@ -352,7 +352,7 @@ bool MakeBatchFile::check_resolution()
 	}
 	return false;
 }
-void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
+void MakeBatchFile::execute_step1(std::ofstream &fpbat, int i, int j)
 {
 	if (m_xm > 1 || m_ym > 1)
 	{
@@ -389,8 +389,8 @@ void MakeBatchFile::execute_step1(FILE *fpbat, int i, int j)
 			g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
 			g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 		}
-		fprintf(fpbat, "id batch=yes overwrite=yes @%s/%s\n", g_command_file, PCommandName);
-		fprintf(fpbat, "If Errorlevel 2 goto oops\n");
+		fpbat << boost::format("id batch=yes overwrite=yes @%s/%s\n") % g_command_file % PCommandName;
+		fpbat << "If Errorlevel 2 goto oops\n";
 	}
 	else
 	{
@@ -579,13 +579,13 @@ skip_UI:
 			}
 		}
 /***** start here*/
-		FILE *fpbat = 0;
+		std::ofstream fpbat;
 		if (m_xm > 1 || m_ym > 1)
 		{
 			m_have_3rd = (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd()
 					|| g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd());
-			fpbat = dir_fopen(g_work_dir, "makemig.bat", "w");
-			if (fpbat == 0)
+			fpbat.open((g_work_dir / "makemig.bat").string().c_str());
+			if (!fpbat)
 			{
 				m_xm = 0;
 				m_ym = 0;
@@ -610,10 +610,10 @@ skip_UI:
 		}
 		if (m_xm > 1 || m_ym > 1)
 		{
-			fprintf(fpbat, "Fractint makemig=%d/%d\n", m_xm, m_ym);
-			fprintf(fpbat, "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n");
-			fprintf(fpbat, ":oops\n");
-			fclose(fpbat);
+			fpbat << boost::format("Fractint makemig=%d/%d\n") % m_xm % m_ym
+				<< "Rem Simplgif fractmig.gif simplgif.gif  in case you need it\n"
+					":oops\n";
+			fpbat.close();
 		}
 		/*******end here */
 
