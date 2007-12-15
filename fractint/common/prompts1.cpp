@@ -57,7 +57,7 @@ static int s_prompt_function_key_mask;
 static int s_scroll_row_status;
 /* will be set to first column of extra info to be displayed (0 = leftmost column)*/
 static int s_scroll_column_status;
-static FILE *s_gfe_file;
+static std::ifstream s_gfe_file;
 
 static std::string s_funny_glasses_map_name;
 static char ifsmask[13]     = {"*.ifs"};
@@ -73,7 +73,7 @@ static  int select_fracttype(int t);
 static  int sel_fractype_help(int curkey, int choice);
 static long gfe_choose_entry(int type, const char *title, const char *filename, char *entryname);
 static  int check_gfe_key(int curkey, int choice);
-static  void load_entry_text(FILE *entfile, char *buf, int maxlines, int startrow, int startcol);
+static  void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int, char *);
 static  int get_light_params();
 static  int check_mapfile();
@@ -114,8 +114,8 @@ private:
 	int m_function_key_mask;
 	char *m_footer;
 
-	FILE *m_scroll_file;			/* file with extrainfo entry to scroll   */
-	long m_scroll_file_start;		/* where entry starts in scroll_file     */
+	std::ifstream _scrollFile;	/* file with extrainfo entry to scroll   */
+	std::ifstream::pos_type _scrollFileStart;		/* where entry starts in scroll_file     */
 	bool m_in_scrolling_mode;		/* will be true if need to scroll footer */
 	int m_lines_in_entry;			/* total lines in entry to be scrolled   */
 	int m_title_lines;
@@ -149,8 +149,8 @@ FullScreenPrompter::FullScreenPrompter(const char *heading,
 	m_values(values),
 	m_function_key_mask(function_key_mask),
 	m_footer(footer),
-	m_scroll_file(0),
-	m_scroll_file_start(0),
+	_scrollFile(),
+	_scrollFileStart(0),
 	m_in_scrolling_mode(false),
 	m_lines_in_entry(0),
 	m_title_lines(0),
@@ -185,21 +185,21 @@ void FullScreenPrompter::PrepareFooterFile()
 	{
 		if (fractal_type_formula(g_fractal_type))
 		{
-			g_formula_state.find_item(&m_scroll_file);
+			g_formula_state.find_item(_scrollFile);
 			m_in_scrolling_mode = true;
-			m_scroll_file_start = ftell(m_scroll_file);
+			_scrollFileStart = _scrollFile.tellg();
 		}
 		else if (g_fractal_type == FRACTYPE_L_SYSTEM)
 		{
-			find_file_item(g_l_system_filename, g_l_system_name, &m_scroll_file, ITEMTYPE_L_SYSTEM);
+			find_file_item(g_l_system_filename, g_l_system_name, _scrollFile, ITEMTYPE_L_SYSTEM);
 			m_in_scrolling_mode = true;
-			m_scroll_file_start = ftell(m_scroll_file);
+			_scrollFileStart = _scrollFile.tellg();
 		}
 		else if (fractal_type_ifs(g_fractal_type))
 		{
-			find_file_item(g_ifs_filename, g_ifs_name.c_str(), &m_scroll_file, ITEMTYPE_IFS);
+			find_file_item(g_ifs_filename, g_ifs_name.c_str(), _scrollFile, ITEMTYPE_IFS);
 			m_in_scrolling_mode = true;
-			m_scroll_file_start = ftell(m_scroll_file);
+			_scrollFileStart = _scrollFile.tellg();
 		}
 	}
 }
@@ -207,11 +207,11 @@ void FullScreenPrompter::PrepareFooterFile()
 void FullScreenPrompter::PrepareFooterLinesInEntry()
 {
 	/* initialize m_lines_in_entry */
-	if (m_in_scrolling_mode && m_scroll_file != 0)
+	if (m_in_scrolling_mode && _scrollFile)
 	{
 		bool comment = false;
 		int c = 0;
-		while ((c = fgetc(m_scroll_file)) != EOF && c != '\032')
+		while ((c = _scrollFile.get()) != EOF && c != '\032')
 		{
 			if (c == ';')
 			{
@@ -234,7 +234,7 @@ void FullScreenPrompter::PrepareFooterLinesInEntry()
 		}
 		if (c == EOF || c == '\032')  /* should never happen */
 		{
-			fclose(m_scroll_file);
+			_scrollFile.close();
 			m_in_scrolling_mode = false;
 		}
 	}
@@ -253,8 +253,7 @@ void FullScreenPrompter::PrepareFooter()
 		&& strchr(m_footer, '\021') == 0)
 	{
 		m_in_scrolling_mode = false;
-		fclose(m_scroll_file);
-		m_scroll_file = 0;
+		_scrollFile.close();
 	}
 
 	/*initialize vertical scroll limit. When the top line of the text
@@ -613,8 +612,8 @@ int FullScreenPrompter::Prompt()
 			if (rewrite_footer)
 			{
 				rewrite_footer = false;
-				fseek(m_scroll_file, m_scroll_file_start, SEEK_SET);
-				load_entry_text(m_scroll_file, m_footer, m_footer_lines - 2,
+				_scrollFile.seekg(_scrollFileStart, SEEK_SET);
+				load_entry_text(_scrollFile, m_footer, m_footer_lines - 2,
 					s_scroll_row_status, s_scroll_column_status);
 				for (i = 1; i <= m_footer_lines - 2; i++)
 				{
@@ -739,8 +738,8 @@ int FullScreenPrompter::Prompt()
 		{
 			j = g_text_cbase;
 			g_text_cbase = 2;
-			fseek(m_scroll_file, m_scroll_file_start, SEEK_SET);
-			load_entry_text(m_scroll_file, m_footer, m_footer_lines - 2,
+			_scrollFile.seekg(_scrollFileStart, SEEK_SET);
+			load_entry_text(_scrollFile, m_footer, m_footer_lines - 2,
 				s_scroll_row_status, s_scroll_column_status);
 			for (i = 1; i <= m_footer_lines - 2; i++)
 			{
@@ -946,10 +945,9 @@ int FullScreenPrompter::Prompt()
 
 fullscreen_exit:
 	driver_hide_text_cursor();
-	if (m_scroll_file)
+	if (_scrollFile)
 	{
-		fclose(m_scroll_file);
-		m_scroll_file = 0;
+		_scrollFile.close();
 	}
 	return done;
 }
@@ -1648,7 +1646,7 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 	};
 	std::string filename;
 	std::string entryname;
-	FILE *entryfile;
+	std::ifstream entryFile;
 #ifdef XFRACT
 	static /* Can't initialize aggregates on the stack */
 #endif
@@ -1676,10 +1674,10 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 		int itemtype = ITEMTYPE_PARAMETER;
 		if (help_formula == SPECIALHF_FORMULA)
 		{
-			if (g_formula_state.find_item(&entryfile) == 0)
+			if (g_formula_state.find_item(entryFile) == 0)
 			{
-				load_entry_text(entryfile, g_text_stack, 17, 0, 0);
-				fclose(entryfile);
+				load_entry_text(entryFile, g_text_stack, 17, 0, 0);
+				entryFile.close();
 				if (fractal_type_formula(g_fractal_type))
 				{
 					g_formula_state.get_parameter(g_formula_state.get_formula()); /* no error check, should be okay, from above */
@@ -1708,10 +1706,10 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 				filename = "";
 				entryname = "";
 			}
-			if (find_file_item(filename, entryname, &entryfile, itemtype) == 0)
+			if (find_file_item(filename, entryname, entryFile, itemtype))
 			{
-				load_entry_text(entryfile, g_text_stack, 17, 0, 0);
-				fclose(entryfile);
+				load_entry_text(entryFile, g_text_stack, 17, 0, 0);
+				entryFile.close();
 				if (fractal_type_formula(g_fractal_type))
 				{
 					g_formula_state.get_parameter(entryname.c_str()); /* no error check, should be okay, from above */
@@ -2296,6 +2294,11 @@ int check_orbit_name(char *orbitname)
 }
 
 /* --------------------------------------------------------------------- */
+bool gfe_file_open(const char *filename)
+{
+	s_gfe_file.open(filename, std::ios::in | std::ios::binary);
+	return s_gfe_file != 0;
+}
 
 long get_file_entry(int type, const char *title, char *fmask,
 					char *filename, char *entryname)
@@ -2311,7 +2314,7 @@ long get_file_entry(int type, const char *title, char *fmask,
 		firsttry = 0;
 		/* pb: binary mode used here - it is more work, but much faster, */
 		/*     especially when ftell or fgetpos is used                  */
-		while (newfile || (s_gfe_file = fopen(filename, "rb")) == 0)
+		while (newfile || !gfe_file_open(filename))
 		{
 			char buf[60];
 			newfile = 0;
@@ -2329,7 +2332,6 @@ long get_file_entry(int type, const char *title, char *fmask,
 
 			firsttry = 1; /* if around open loop again it is an error */
 		}
-		setvbuf(s_gfe_file, g_text_stack, _IOFBF, 4096); /* improves speed when file is big */
 		newfile = 0;
 		entry_pointer = gfe_choose_entry(type, title, filename, entryname);
 		if (entry_pointer == -2)
@@ -2374,12 +2376,12 @@ static struct entryinfo **gfe_choices; /* for format_getparm_line */
 static const char *gfe_title;
 
 /* skip to next non-white space character and return it */
-static int skip_white_space(FILE *infile, long *file_offset)
+static int skip_white_space(std::ifstream &infile, long *file_offset)
 {
 	int c;
 	do
 	{
-		c = getc(infile);
+		c = infile.get();
 		(*file_offset)++;
 	}
 	while (c == ' ' || c == '\t' || c == '\n' || c == '\r');
@@ -2387,12 +2389,12 @@ static int skip_white_space(FILE *infile, long *file_offset)
 }
 
 /* skip to end of line */
-int skip_comment(FILE *infile, long *file_offset)
+int skip_comment(std::ifstream &infile, long *file_offset)
 {
 	int c;
 	do
 	{
-		c = getc(infile);
+		c = infile.get();
 		(*file_offset)++;
 	}
 	while (c != '\n' && c != '\r' && c != EOF && c != '\032');
@@ -2401,7 +2403,7 @@ int skip_comment(FILE *infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(FILE *infile, struct entryinfo *choices, const char *itemname)
+int scan_entries(std::ifstream &infile, struct entryinfo *choices, const char *itemname)
 {
 		/*
 		function returns the number of entries found; if a
@@ -2445,7 +2447,7 @@ top:
 			{
 				buf[len++] = (char) c;
 			}
-			c = getc(infile);
+			c = infile.get();
 			++file_offset;
 			if (c == '\n' || c == '\r')
 			{
@@ -2461,7 +2463,7 @@ top:
 			}
 			else
 			{
-				c = getc(infile);
+				c = infile.get();
 				++file_offset;
 				if (c == '\n' || c == '\r')
 				{
@@ -2483,7 +2485,7 @@ top:
 					{
 						temp_offset = file_offset;  /* beginning of new line */
 					}
-					c = getc(infile);
+					c = infile.get();
 					++file_offset;
 				}
 				if (c == '{') /*second '{' found*/
@@ -2495,7 +2497,7 @@ top:
 					}
 					else
 					{
-						fseek(infile, temp_offset, SEEK_SET); /*else, go back to */
+						infile.seekg(temp_offset, SEEK_SET); /*else, go back to */
 						file_offset = temp_offset - 1;        /*beginning of line*/
 						goto top;
 					}
@@ -2524,7 +2526,7 @@ top:
 			{
 				if (stricmp(buf, itemname) == 0)
 				{
-					fseek(infile, name_offset + long(exclude_entry), SEEK_SET);
+					infile.seekg(name_offset + long(exclude_entry), SEEK_SET);
 					return -1;
 				}
 			}
@@ -2590,7 +2592,7 @@ retry:
 	if (numentries == 0)
 	{
 		stop_message(STOPMSG_NORMAL, "File doesn't contain any valid entries");
-		fclose(s_gfe_file);
+		s_gfe_file.close();
 		return -2; /* back to file list */
 	}
 	strcpy(instr, o_instr);
@@ -2625,11 +2627,11 @@ retry:
 		formatitem, buf, 0, check_gfe_key);
 	if (i == -FIK_F4)
 	{
-		rewind(s_gfe_file);
+		s_gfe_file.seekg(0);
 		dosort = 1-dosort;
 		goto retry;
 	}
-	fclose(s_gfe_file);
+	s_gfe_file.close();
 	if (i < 0)
 	{
 		/* go back to file list or cancel */
@@ -2669,8 +2671,8 @@ static int check_gfe_key(int curkey, int choice)
 		int comment = 0;
 		int c = 0;
 		int widthct = 0;
-		fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
-		while ((c = fgetc(s_gfe_file)) != EOF && c != '\032')
+		s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
+		while ((c = s_gfe_file.get()) != EOF && c != '\032')
 		{
 			if (c == ';')
 			{
@@ -2702,10 +2704,10 @@ static int check_gfe_key(int curkey, int choice)
 		}
 		if (c == EOF || c == '\032')  /* should never happen */
 		{
-			fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
+			s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
 			in_scrolling_mode = false;
 		}
-		fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
+		s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
 		load_entry_text(s_gfe_file, infbuf, 17, 0, 0);
 		if (lines_in_entry > 17 || widest_entry_line > 74)
 		{
@@ -2733,7 +2735,7 @@ static int check_gfe_key(int curkey, int choice)
 			if (rewrite_infbuf)
 			{
 				rewrite_infbuf = 0;
-				fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
+				s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
 				load_entry_text(s_gfe_file, infbuf, 17, top_line, left_column);
 				for (i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
 				{
@@ -2835,12 +2837,7 @@ static int check_gfe_key(int curkey, int choice)
 	return 0;
 }
 
-static void load_entry_text(
-		FILE *entfile,
-		char *buf,
-		int maxlines,
-		int startrow,
-		int startcol)
+static void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int startrow, int startcol)
 {
     /* Revised 12/14/96 by George Martin. Up to maxlines of an entry
         is copied to *buf starting from row "startrow", and skipping
@@ -2863,7 +2860,7 @@ static void load_entry_text(
 		/*move down to starting row*/
 	for (i = 0; i < startrow; i++)
 	{
-		while ((c = fgetc(entfile)) != '\n' && c != EOF && c != '\032')
+		while ((c = entfile.get()) != '\n' && c != EOF && c != '\032')
 		{
 			if (c == ';')
 			{
@@ -2894,7 +2891,7 @@ static void load_entry_text(
 		c = 0;
 
 		/* skip line up to startcol */
-		while (i++ < startcol && (c = fgetc(entfile)) != EOF && c != '\032')
+		while (i++ < startcol && (c = entfile.get()) != EOF && c != '\032')
 		{
 			if (c == ';')
 			{
@@ -2940,7 +2937,7 @@ static void load_entry_text(
 		}
 
 		/*process rest of line into buf */
-		while ((c = fgetc(entfile)) != EOF && c != '\032')
+		while ((c = entfile.get()) != EOF && c != '\032')
 		{
 			if (c == ';')
 			{
@@ -3002,22 +2999,22 @@ static void format_parmfile_line(int choice, char *buf)
 	int c;
 	int i;
 	char line[80];
-	fseek(s_gfe_file, gfe_choices[choice]->point, SEEK_SET);
+	s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
 	do
 	{
-		c = getc(s_gfe_file);
+		c = s_gfe_file.get();
 	}
 	while (c != '{');
 	do
 	{
-		c = getc(s_gfe_file);
+		c = s_gfe_file.get();
 	}
 	while (c == ' ' || c == '\t' || c == ';');
 	i = 0;
 	while (i < 56 && c != '\n' && c != '\r' && c != EOF && c != '\032')
 	{
 		line[i++] = (char)((c == '\t') ? ' ' : c);
-		c = getc(s_gfe_file);
+		c = s_gfe_file.get();
 	}
 	line[i] = 0;
 #ifndef XFRACT

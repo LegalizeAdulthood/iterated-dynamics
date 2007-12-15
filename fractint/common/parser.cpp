@@ -309,7 +309,7 @@ bool Formula::merge_formula_filename(char *new_filename, int mode)
 	return ::merge_path_names(m_filename, new_filename, mode) < 0;
 }
 
-int Formula::find_item(FILE **file)
+bool Formula::find_item(std::ifstream &file)
 {
 	return ::find_file_item(m_filename, m_formula_name, file, ITEMTYPE_FORMULA);
 }
@@ -2991,14 +2991,14 @@ bool Formula::fill_jump_struct()
 	return (i < 0);
 }
 
-static int formula_get_char(FILE *openfile)
+static int formula_get_char(std::ifstream &openfile)
 {
 	int c;
 	bool done = false;
 	bool line_wrap = false;
 	while (!done)
 	{
-		c = getc(openfile);
+		c = openfile.get();
 		switch (c)
 		{
 		case '\r':
@@ -3011,7 +3011,7 @@ static int formula_get_char(FILE *openfile)
 		case ';' :
 			do
 			{
-				c = getc(openfile);
+				c = openfile.get();
 			}
 			while (c != '\n' && c != EOF && c != CTRL_Z);
 			if (c == EOF || c == CTRL_Z)
@@ -3088,11 +3088,11 @@ static void get_variable_information(FormulaToken *token)
 /* Note - this function will be called twice to fill in the components
 		of a complex constant. See is_complex_constant() below. */
 /* returns true on success, false on TOKENTYPE_NONE */
-static bool formula_get_constant(FILE *openfile, FormulaToken *token)
+static bool formula_get_constant(std::ifstream &openfile, FormulaToken *token)
 {
 	int i = 1;
 	bool getting_base = true;
-	long filepos = ftell(openfile);
+	std::ifstream::pos_type filepos = openfile.tellg();
 	token->value.x = 0.0;          /*initialize values to 0*/
 	token->value.y = 0.0;
 	bool got_decimal_already = (token->text[0] == '.');
@@ -3109,7 +3109,7 @@ static bool formula_get_constant(FILE *openfile, FormulaToken *token)
 			return false;
 		CASE_NUM:
 			token->text[i++] = char(c);
-			filepos = ftell(openfile);
+			filepos = openfile.tellg();
 			break;
 		case '.':
 			if (got_decimal_already || !getting_base)
@@ -3123,7 +3123,7 @@ static bool formula_get_constant(FILE *openfile, FormulaToken *token)
 			{
 				token->text[i++] = char(c);
 				got_decimal_already = true;
-				filepos = ftell(openfile);
+				filepos = openfile.tellg();
 			}
 			break;
 		default:
@@ -3135,16 +3135,16 @@ static bool formula_get_constant(FILE *openfile, FormulaToken *token)
 				token->text[i++] = char(c);
 				getting_base = false;
 				got_decimal_already = false;
-				filepos = ftell(openfile);
+				filepos = openfile.tellg();
 				c = formula_get_char(openfile);
 				if (c == '-' || c == '+')
 				{
 					token->text[i++] = char(c);
-					filepos = ftell(openfile);
+					filepos = openfile.tellg();
 				}
 				else
 				{
-					fseek(openfile, filepos, SEEK_SET);
+					openfile.seekg(filepos, SEEK_SET);
 				}
 			}
 			else if (isalpha(c) || c == '_')
@@ -3163,7 +3163,7 @@ static bool formula_get_constant(FILE *openfile, FormulaToken *token)
 			}
 			else
 			{
-				fseek(openfile, filepos, SEEK_SET);
+				openfile.seekg(filepos, SEEK_SET);
 				token->text[i++] = 0;
 				done = true;
 			}
@@ -3205,12 +3205,12 @@ static void debug_dump(std::ofstream &stream, const boost::format &message)
 		stream << message;
 	}
 }
-static void is_complex_constant(FILE *openfile, FormulaToken *token)
+static void is_complex_constant(std::ifstream &openfile, FormulaToken *token)
 {
 	/* should test to make sure token->token_str[0] == '(' */
 	token->text[1] = 0;  /* so we can concatenate later */
 
-	long filepos = ftell(openfile);
+	long filepos = openfile.tellg();
 	std::ofstream debug_token;
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
@@ -3283,7 +3283,7 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 			done = true;
 		}
 	}
-	fseek(openfile, filepos, SEEK_SET);
+	openfile.seekg(filepos, SEEK_SET);
 	token->text[1] = 0;
 	token->value.y = 0.0;
 	token->value.x = 0.0;
@@ -3292,15 +3292,15 @@ static void is_complex_constant(FILE *openfile, FormulaToken *token)
 	debug_dump(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
 }
 
-static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
+static bool formula_get_alpha(std::ifstream &openfile, FormulaToken *token)
 {
 	int i = 1;
 	bool variable_name_too_long = false;
-	long last_filepos = ftell(openfile);
+	std::ifstream::pos_type last_filepos = openfile.tellg();
 	int c = formula_get_char(openfile);
 	while (c != EOF && c != CTRL_Z)
 	{
-		long filepos = ftell(openfile);
+		long filepos = openfile.tellg();
 		switch (c)
 		{
 		CASE_ALPHA:
@@ -3325,11 +3325,11 @@ static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
 			{
 				token->SetError(TOKENID_ERROR_TOKEN_TOO_LONG);
 				token->text[i] = 0;
-				fseek(openfile, last_filepos, SEEK_SET);
+				openfile.seekg(last_filepos, SEEK_SET);
 				return false;
 			}
 			token->text[i] = 0;
-			fseek(openfile, last_filepos, SEEK_SET);
+			openfile.seekg(last_filepos, SEEK_SET);
 			get_function_or_flow_control_information(token);
 			if (c == '(')  /*getfuncinfo() correctly filled structure*/
 			{
@@ -3383,9 +3383,9 @@ static bool formula_get_alpha(FILE *openfile, FormulaToken *token)
 	return false;
 }
 
-static void formula_get_end_of_string(FILE *openfile, FormulaToken *this_token)
+static void formula_get_end_of_string(std::ifstream &openfile, FormulaToken *this_token)
 {
-	long last_filepos = ftell(openfile);
+	long last_filepos = openfile.tellg();
 
 	int c;
 	for (c = formula_get_char(openfile); (c == '\n' || c == ',' || c == ':'); c = formula_get_char(openfile))
@@ -3394,7 +3394,7 @@ static void formula_get_end_of_string(FILE *openfile, FormulaToken *this_token)
 		{
 			this_token->text[0] = ':';
 		}
-		last_filepos = ftell(openfile);
+		last_filepos = openfile.tellg();
 	}
 	if (c == '}')
 	{
@@ -3404,7 +3404,7 @@ static void formula_get_end_of_string(FILE *openfile, FormulaToken *this_token)
 	}
 	else
 	{
-		fseek(openfile, last_filepos, SEEK_SET);
+		openfile.seekg(last_filepos, SEEK_SET);
 		if (this_token->text[0] == '\n')
 		{
 			this_token->text[0] = ',';
@@ -3415,7 +3415,7 @@ static void formula_get_end_of_string(FILE *openfile, FormulaToken *this_token)
 /* fills token structure; returns true on success and false on
   TOKENTYPE_NONE and TOKENTYPE_END_OF_FORMULA
 */
-static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
+static bool formula_get_token(std::ifstream &openfile, FormulaToken *this_token)
 {
 	int c = formula_get_char(openfile);
 	int i = 1;
@@ -3433,7 +3433,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 		this_token->type = TOKENTYPE_OPERATOR; /* this may be changed below */
 		this_token->text[0] = char(c);
 		{
-			long filepos = ftell(openfile);
+			std::ifstream::pos_type filepos = openfile.tellg();
 			if (c == '<' || c == '>' || c == '=')
 			{
 				c = formula_get_char(openfile);
@@ -3443,7 +3443,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				}
 				else
 				{
-					fseek(openfile, filepos, SEEK_SET);
+					openfile.seekg(filepos, SEEK_SET);
 				}
 			}
 			else if (c == '!')
@@ -3455,7 +3455,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				}
 				else
 				{
-					fseek(openfile, filepos, SEEK_SET);
+					openfile.seekg(filepos, SEEK_SET);
 					this_token->text[1] = 0;
 					this_token->SetError(TOKENID_ERROR_ILLEGAL_OPERATOR);
 					return false;
@@ -3470,7 +3470,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				}
 				else
 				{
-					fseek(openfile, filepos, SEEK_SET);
+					openfile.seekg(filepos, SEEK_SET);
 				}
 			}
 			else if (c == '&')
@@ -3482,7 +3482,7 @@ static bool formula_get_token(FILE *openfile, FormulaToken *this_token)
 				}
 				else
 				{
-					fseek(openfile, filepos, SEEK_SET);
+					openfile.seekg(filepos, SEEK_SET);
 					this_token->text[1] = 0;
 					this_token->SetError(TOKENID_ERROR_ILLEGAL_OPERATOR);
 					return false;
@@ -3553,8 +3553,8 @@ void Formula::get_parameter(const char *name)
 		return;  /*  and don't reset the pointers  */
 	}
 
-	FILE *entry_file = 0;
-	if (find_file_item(m_filename, name, &entry_file, ITEMTYPE_FORMULA))
+	std::ifstream entry_file;
+	if (!find_file_item(m_filename, name, entry_file, ITEMTYPE_FORMULA))
 	{
 		stop_message(STOPMSG_NORMAL, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return;
@@ -3570,7 +3570,7 @@ void Formula::get_parameter(const char *name)
 		if (c != '{')
 		{
 			stop_message(STOPMSG_NORMAL, error_messages(PE_UNEXPECTED_EOF));
-			fclose(entry_file);
+			entry_file.close();
 			return;
 		}
 	}
@@ -3617,7 +3617,7 @@ void Formula::get_parameter(const char *name)
 			break;
 		}
 	}
-	fclose(entry_file);
+	entry_file.close();
 	debug_token.close();
 	if (current_token.type != TOKENTYPE_END_OF_FORMULA)
 	{
@@ -3637,9 +3637,9 @@ void Formula::get_parameter(const char *name)
 	return false if errors are found which should cause
 	the formula not to be executed
 */
-bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
+bool Formula::check_name_and_symmetry(std::ifstream &open_file, bool report_bad_symmetry)
 {
-	long filepos = ftell(open_file);
+	long filepos = open_file.tellg();
 	/* first, test name */
 	bool at_end_of_name = false;
 	int i = 0;
@@ -3647,7 +3647,7 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 	bool done = false;
 	while (!done)
 	{
-		c = getc(open_file);
+		c = open_file.get();
 		switch (c)
 		{
 		case EOF:
@@ -3680,12 +3680,12 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		char msgbuf[100];
 		strcpy(msgbuf, error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		strcat(msgbuf, ":\n   ");
-		fseek(open_file, filepos, SEEK_SET);
+		open_file.seekg(filepos, SEEK_SET);
 		int j;
 		int k = int_strlen(error_messages(PE_FORMULA_NAME_TOO_LARGE));
 		for (j = 0; j < i && j < 25; j++)
 		{
-			msgbuf[j + k + 2] = char(getc(open_file));
+			msgbuf[j + k + 2] = char(open_file.get());
 		}
 		msgbuf[j + k + 2] = 0;
 		stop_message(STOPMSG_FIXED_FONT, msgbuf);
@@ -3700,7 +3700,7 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		i = 0;
 		while (!done)
 		{
-			c = getc(open_file);
+			c = open_file.get();
 			switch (c)
 			{
 			case EOF:
@@ -3749,7 +3749,7 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 		done = false;
 		while (!done)
 		{
-			c = getc(open_file);
+			c = open_file.get();
 			switch (c)
 			{
 			case EOF:
@@ -3774,9 +3774,9 @@ bool Formula::check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry)
 class FilePositionTransaction
 {
 public:
-	FilePositionTransaction(FILE *file)
+	FilePositionTransaction(std::ifstream &file)
 		: m_file(file),
-		m_position(ftell(file)),
+		m_position(file.tellg()),
 		m_committed(false)
 	{
 	}
@@ -3784,7 +3784,7 @@ public:
 	{
 		if (!m_committed)
 		{
-			fseek(m_file, m_position, SEEK_SET);
+			m_file.seekg(m_position, SEEK_SET);
 		}
 	}
 	void Commit()
@@ -3792,12 +3792,12 @@ public:
 		m_committed = true;
 	}
 private:
-	FILE *m_file;
-	long m_position;
+	std::ifstream &m_file;
+	std::ifstream::pos_type m_position;
 	bool m_committed;
 };
 
-const char *Formula::PrepareFormula(FILE *file, bool report_bad_symmetry)
+const char *Formula::PrepareFormula(std::ifstream &file, bool report_bad_symmetry)
 {
 	/* This function sets the
 	symmetry and converts a formula into a string  with no spaces,
@@ -3900,8 +3900,6 @@ int bad_formula()
 
 bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 {
-	FILE *entry_file = 0;
-
 	/*  first set the pointers so they point to a fn which always returns 1  */
 	// TODO: eliminate writing to g_current_fractal_specific
 	g_current_fractal_specific->per_pixel = bad_formula;
@@ -3913,14 +3911,15 @@ bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 	}
 
 	/* add search for FRM files in directory */
-	if (find_file_item(m_filename, name, &entry_file, ITEMTYPE_FORMULA))
+	std::ifstream entry_file;
+	if (!find_file_item(m_filename, name, entry_file, ITEMTYPE_FORMULA))
 	{
 		stop_message(STOPMSG_NORMAL, error_messages(PE_COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
 		return true;
 	}
 
 	m_formula_text = PrepareFormula(entry_file, report_bad_symmetry);
-	fclose(entry_file);
+	entry_file.close();
 
 	if (!m_formula_text)
 	{
@@ -4079,7 +4078,7 @@ void Formula::free_work_area()
 	delete_array_and_null(m_function_load_store_pointers);
 }
 
-void Formula::formula_error(FILE *open_file, long begin_frm)
+void Formula::formula_error(std::ifstream &open_file, std::ifstream::pos_type begin_frm)
 {
 	std::string message;
 	message = "\n";
@@ -4091,12 +4090,12 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 	for (int j = 0; j < NUM_OF(m_errors) && m_errors[j].start_pos; j++)
 	{
 		int initialization_error = (m_errors[j].error_number == PE_SECOND_COLON) ? 1 : 0;
-		fseek(open_file, begin_frm, SEEK_SET);
+		open_file.seekg(begin_frm, SEEK_SET);
 		int i;
 		int line_number = 1;
-		while (ftell(open_file) != m_errors[j].error_pos)
+		while (open_file.tellg() != m_errors[j].error_pos)
 		{
-			i = fgetc(open_file);
+			i = open_file.get();
 			if (i == '\n')
 			{
 				line_number++;
@@ -4104,7 +4103,7 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 			else if (i == EOF || i == '}')
 			{
 				stop_message(STOPMSG_NORMAL, "Unexpected EOF or end-of-formula in error function.\n");
-				fseek(open_file, m_errors[j].error_pos, SEEK_SET);
+				open_file.seekg(m_errors[j].error_pos, SEEK_SET);
 				formula_get_token(open_file, &token); /*reset file to end of error token */
 				return;
 			}
@@ -4112,13 +4111,13 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 		message += str(boost::format("Error(%d) at line %d:  %s\n  ")
 			%  m_errors[j].error_number % line_number % error_messages(m_errors[j].error_number));
 		i = int(message.length());
-		fseek(open_file, m_errors[j].start_pos, SEEK_SET);
+		open_file.seekg(m_errors[j].start_pos, SEEK_SET);
 		int statement_len = 0;
 		token_count = 0;
 		bool done = false;
 		while (!done)
 		{
-			long filepos = ftell(open_file);
+			long filepos = open_file.tellg();
 			if (filepos == m_errors[j].error_pos)
 			{
 				chars_to_error = statement_len;
@@ -4145,7 +4144,7 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 				}
 			}
 		}
-		fseek(open_file, m_errors[j].start_pos, SEEK_SET);
+		open_file.seekg(m_errors[j].start_pos, SEEK_SET);
 		if (chars_in_error < 74)
 		{
 			while (chars_to_error + chars_in_error > 74)
@@ -4157,7 +4156,7 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 		}
 		else
 		{
-			fseek(open_file, m_errors[j].error_pos, SEEK_SET);
+			open_file.seekg(m_errors[j].error_pos, SEEK_SET);
 			chars_to_error = 0;
 			token_count = 1;
 		}
@@ -4166,7 +4165,7 @@ void Formula::formula_error(FILE *open_file, long begin_frm)
 			formula_get_token(open_file, &token);
 			message += token.text;
 		}
-		fseek(open_file, m_errors[j].error_pos, SEEK_SET);
+		open_file.seekg(m_errors[j].error_pos, SEEK_SET);
 		formula_get_token(open_file, &token);
 		if (message.length() - i > 74)
 		{
@@ -4295,7 +4294,7 @@ void add_new(std::vector<T> &list, const T &value)
 	}
 }
 
-bool Formula::prescan(FILE *open_file)
+bool Formula::prescan(std::ifstream &open_file)
 {
 	m_errors_found = 0;
 	bool expecting_argument = true;
@@ -4318,7 +4317,7 @@ bool Formula::prescan(FILE *open_file)
 	init_var_list();
 	init_const_lists();
 
-	long orig_pos = ftell(open_file);
+	std::ifstream::pos_type orig_pos = open_file.tellg();
 	m_statement_pos = orig_pos;
 	
 	for (int i = 0; i < NUM_OF(m_errors); i++)
@@ -4332,7 +4331,7 @@ bool Formula::prescan(FILE *open_file)
 	bool done = false;
 	while (!done)
 	{
-		m_file_pos = ftell(open_file);
+		m_file_pos = open_file.tellg();
 		formula_get_token(open_file, &this_token);
 		m_chars_in_formula += int_strlen(this_token.text);
 		switch (this_token.type)
@@ -4343,7 +4342,7 @@ bool Formula::prescan(FILE *open_file)
 			{
 			case TOKENID_ERROR_END_OF_FILE:
 				stop_message(STOPMSG_NORMAL, error_messages(PE_UNEXPECTED_EOF));
-				fseek(open_file, orig_pos, SEEK_SET);
+				open_file.seekg(orig_pos, SEEK_SET);
 				return false;
 			case TOKENID_ERROR_ILLEGAL_CHARACTER:
 				record_error(PE_ILLEGAL_CHAR);
@@ -4374,7 +4373,7 @@ bool Formula::prescan(FILE *open_file)
 				break;
 			default:
 				stop_message(STOPMSG_NORMAL, "Unexpected arrival at default case in prescan()");
-				fseek(open_file, orig_pos, SEEK_SET);
+				open_file.seekg(orig_pos, SEEK_SET);
 				return false;
 			}
 			break;
@@ -4445,7 +4444,7 @@ bool Formula::prescan(FILE *open_file)
 			//if (m_variable_list == 0)
 			//{
 			//	stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-			//	fseek(open_file, orig_pos, SEEK_SET);
+			//	open_file.seekg(orig_pos, SEEK_SET);
 			//	init_var_list();
 			//	init_const_lists();
 			//	return false;
@@ -4476,7 +4475,7 @@ bool Formula::prescan(FILE *open_file)
 			//if (m_real_list == 0)
 			//{
 			//	stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-			//	fseek(open_file, orig_pos, SEEK_SET);
+			//	open_file.seekg(orig_pos, SEEK_SET);
 			//	init_var_list();
 			//	init_const_lists();
 			//	return false;
@@ -4497,7 +4496,7 @@ bool Formula::prescan(FILE *open_file)
 			//if (m_complex_list == 0)
 			//{
 			//	stop_message(STOPMSG_NORMAL, error_messages(PE_INSUFFICIENT_MEM_FOR_TYPE_FORMULA));
-			//	fseek(open_file, orig_pos, SEEK_SET);
+			//	open_file.seekg(orig_pos, SEEK_SET);
 			//	init_var_list();
 			//	init_const_lists();
 			//	return false;
@@ -4624,7 +4623,7 @@ bool Formula::prescan(FILE *open_file)
 				new_statement = true;
 				assignment_ok = true;
 				expecting_argument = true;
-				m_statement_pos = ftell(open_file);
+				m_statement_pos = open_file.tellg();
 				break;
 			case OPERATOR_NOT_EQUAL:
 				assignment_ok = false;
@@ -4750,7 +4749,7 @@ bool Formula::prescan(FILE *open_file)
 				{
 					record_error(PE_SHOULD_BE_ARGUMENT);
 				}
-				m_file_pos = ftell(open_file);
+				m_file_pos = open_file.tellg();
 				formula_get_token (open_file, &this_token);
 				if (this_token.text[0] == '-')
 				{
@@ -4758,7 +4757,7 @@ bool Formula::prescan(FILE *open_file)
 				}
 				else
 				{
-					fseek(open_file, m_file_pos, SEEK_SET);
+					open_file.seekg(m_file_pos, SEEK_SET);
 				}
 				expecting_argument = true;
 				break;
@@ -4786,7 +4785,7 @@ bool Formula::prescan(FILE *open_file)
 			if (expecting_argument && !new_statement)
 			{
 				record_error(PE_SHOULD_BE_ARGUMENT);
-				m_statement_pos = ftell(open_file);
+				m_statement_pos = open_file.tellg();
 			}
 
 			if (m_number_of_jumps >= MAX_JUMPS)
@@ -4807,10 +4806,10 @@ bool Formula::prescan(FILE *open_file)
 	if (m_errors[0].start_pos)
 	{
 		formula_error(open_file, orig_pos);
-		fseek(open_file, orig_pos, SEEK_SET);
+		open_file.seekg(orig_pos, SEEK_SET);
 		return false;
 	}
-	fseek(open_file, orig_pos, SEEK_SET);
+	open_file.seekg(orig_pos, SEEK_SET);
 
 	count_lists();
 

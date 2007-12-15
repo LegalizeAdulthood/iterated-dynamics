@@ -1439,16 +1439,9 @@ int ifs_load()                   /* read in IFS parameters */
 }
 
 /* added search of current directory for entry files if entry item not found */
-bool find_file_item(std::string &filename, const std::string &item_name, std::ifstream &stream, int item_type)
+bool find_file_item(std::string &filename, const std::string &item_name, std::ifstream &infile, int item_type)
 {
-	return false;
-}
-
-int find_file_item(char *filename, const char *itemname, FILE **fileptr, int itemtype)
-{
-	FILE *infile = 0;
-	int found = 0;
-	char parsearchname[ITEMNAMELEN + 6];
+	bool found = false;
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
 	char fname[FILE_MAX_FNAME];
@@ -1458,68 +1451,60 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 
 	split_path(filename, drive, dir, fname, ext);
 	make_path(fullpath, "", "", fname, ext);
-	if (stricmp(filename, g_command_file.c_str()))
+	if (stricmp(filename.c_str(), g_command_file.c_str()))
 	{
-		infile = fopen(filename, "rb");
+		infile.open(filename.c_str(), std::ios::in | std::ios::binary);
 		if (infile != 0)
 		{
-			if (scan_entries(infile, 0, itemname) == -1)
+			if (scan_entries(infile, 0, item_name.c_str()) == -1)
 			{
-				found = 1;
+				found = true;
 			}
 			else
 			{
-				fclose(infile);
-				infile = 0;
+				infile.close();
 			}
 		}
 
 		if (!found && g_check_current_dir)
 		{
 			make_path(fullpath, "", DOTSLASH, fname, ext);
-			infile = fopen(fullpath, "rb");
-			if (infile != 0)
+			infile.open(fullpath, std::ios::in | std::ios::binary);
+			if (infile)
 			{
-				if (scan_entries(infile, 0, itemname) == -1)
+				if (scan_entries(infile, 0, item_name.c_str()) == -1)
 				{
-					strcpy(filename, fullpath);
-					found = 1;
+					filename = fullpath;
+					found = true;
 				}
 				else
 				{
-					fclose(infile);
-					infile = 0;
+					infile.close();
 				}
 			}
 		}
 	}
 
-	switch (itemtype)
+	std::string parsearchname;
+	switch (item_type)
 	{
 	case ITEMTYPE_FORMULA:
-		strcpy(parsearchname, "frm:");
-		strcat(parsearchname, itemname);
-		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+		parsearchname = "frm:" + item_name;
 		strcpy(defaultextension, ".frm");
 		split_path(g_search_for.frm.c_str(), drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_L_SYSTEM:
-		strcpy(parsearchname, "lsys:");
-		strcat(parsearchname, itemname);
-		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+		parsearchname = "lsys:" + item_name;
 		strcpy(defaultextension, ".l");
 		split_path(g_search_for.lsys.c_str(), drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_IFS:
-		strcpy(parsearchname, "ifs:");
-		strcat(parsearchname, itemname);
-		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+		parsearchname = "ifs:" + item_name;
 		strcpy(defaultextension, ".ifs");
 		split_path(g_search_for.ifs.c_str(), drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_PARAMETER:
-		strcpy(parsearchname, itemname);
-		parsearchname[ITEMNAMELEN + 5] = (char) 0; /*safety*/
+		parsearchname = item_name;
 		strcpy(defaultextension, ".par");
 		split_path(g_search_for.par.c_str(), drive, dir, 0, 0);
 		break;
@@ -1527,18 +1512,17 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 
 	if (!found)
 	{
-		infile = fopen(g_command_file.c_str(), "rb");
+		infile.open(g_command_file.c_str(), std::ios::in | std::ios::binary);
 		if (infile != 0)
 		{
-			if (scan_entries(infile, 0, parsearchname) == -1)
+			if (scan_entries(infile, 0, parsearchname.c_str()) == -1)
 			{
-				strcpy(filename, g_command_file.c_str());
-				found = 1;
+				filename = g_command_file;
+				found = true;
 			}
 			else
 			{
-				fclose(infile);
-				infile = 0;
+				infile.close();
 			}
 		}
 	}
@@ -1546,18 +1530,17 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 	if (!found)
 	{
 		make_path(fullpath, drive, dir, fname, ext);
-		infile = fopen(fullpath, "rb");
+		infile.open(fullpath, std::ios::in | std::ios::binary);
 		if (infile != 0)
 		{
-			if (scan_entries(infile, 0, itemname) == -1)
+			if (scan_entries(infile, 0, item_name.c_str()) == -1)
 			{
-				strcpy(filename, fullpath);
-				found = 1;
+				filename = fullpath;
+				found = true;
 			}
 			else
 			{
-				fclose(infile);
-				infile = 0;
+				infile.close();
 			}
 		}
 	}
@@ -1571,7 +1554,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 		{
 			char msg[200];
 			g_dta.filename[FILE_MAX_FNAME + FILE_MAX_EXT-2] = 0;
-			sprintf(msg, "Searching %13s for %s      ", g_dta.filename, itemname);
+			sprintf(msg, "Searching %13s for %s      ", g_dta.filename, item_name.c_str());
 			show_temp_message(msg);
 			if (!(g_dta.attribute & SUBDIR) &&
 				strcmp(g_dta.filename.c_str(), ".") &&
@@ -1579,19 +1562,18 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 			{
 				split_path(g_dta.filename, 0, 0, fname, ext);
 				make_path(fullpath, drive, dir, fname, ext);
-				infile = fopen(fullpath, "rb");
+				infile.open(fullpath, std::ios::in | std::ios::binary);
 				if (infile != 0)
 				{
-					if (scan_entries(infile, 0, itemname) == -1)
+					if (scan_entries(infile, 0, item_name.c_str()) == -1)
 					{
-						strcpy(filename, fullpath);
-						found = 1;
+						filename = fullpath;
+						found = true;
 						break;
 					}
 					else
 					{
-						fclose(infile);
-						infile = 0;
+						infile.close();
 					}
 				}
 			}
@@ -1600,22 +1582,22 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 		clear_temp_message();
 	}
 
-	if (!found && g_organize_formula_search && itemtype == 1)
+	if (!found && g_organize_formula_search && item_type == ITEMTYPE_FORMULA)
 	{
 		split_path(g_organize_formula_dir.string().c_str(), drive, dir, 0, 0);
 		fname[0] = '_';
 		fname[1] = (char) 0;
-		if (isalpha(itemname[0]))
+		if (isalpha(item_name[0]))
 		{
-			if (strnicmp(itemname, "carr", 4))
+			if (strnicmp(item_name.c_str(), "carr", 4))
 			{
-				fname[1] = itemname[0];
+				fname[1] = item_name[0];
 				fname[2] = (char) 0;
 			}
-			else if (isdigit(itemname[4]))
+			else if (isdigit(item_name[4]))
 			{
 				strcat(fname, "rc");
-				fname[3] = itemname[4];
+				fname[3] = item_name[4];
 				fname[4] = (char) 0;
 			}
 			else
@@ -1623,7 +1605,7 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 				strcat(fname, "rc");
 			}
 		}
-		else if (isdigit(itemname[0]))
+		else if (isdigit(item_name[0]))
 		{
 			strcat(fname, "num");
 		}
@@ -1632,56 +1614,29 @@ int find_file_item(char *filename, const char *itemname, FILE **fileptr, int ite
 			strcat(fname, "chr");
 		}
 		make_path(fullpath, drive, dir, fname, defaultextension);
-		infile = fopen(fullpath, "rb");
+		infile.open(fullpath, std::ios::in | std::ios::binary);
 		if (infile != 0)
 		{
-			if (scan_entries(infile, 0, itemname) == -1)
+			if (scan_entries(infile, 0, item_name.c_str()) == -1)
 			{
-				strcpy(filename, fullpath);
-				found = 1;
+				filename = fullpath;
+				found = true;
 			}
 			else
 			{
-				fclose(infile);
-				infile = 0;
+				infile.close();
 			}
 		}
 	}
 
 	if (!found)
 	{
-		sprintf(fullpath, "'%s' file entry item not found", itemname);
+		sprintf(fullpath, "'%s' file entry item not found", item_name.c_str());
 		stop_message(STOPMSG_NORMAL, fullpath);
-		return -1;
+		return false;
 	}
-	/* found file */
-	if (fileptr != 0)
-	{
-		*fileptr = infile;
-	}
-	else if (infile != 0)
-	{
-		fclose(infile);
-	}
-	return 0;
-}
 
-int find_file_item(std::string &filename, const char *itemname, FILE **fileptr, int itemtype)
-{
-	char buffer[FILE_MAX_PATH];
-	strcpy(buffer, filename.c_str());
-	int result = find_file_item(buffer, itemname, fileptr, itemtype);
-	filename = buffer;
-	return result;
-}
-
-int find_file_item(std::string &filename, std::string &itemname, FILE **fileptr, int itemtype)
-{
-	char buffer[FILE_MAX_PATH];
-	strcpy(buffer, itemname.c_str());
-	int result = find_file_item(filename, buffer, fileptr, itemtype);
-	itemname = buffer;
-	return result;
+	return true;
 }
 
 int file_gets(char *buf, int maxlen, std::ifstream &infile)

@@ -2,8 +2,10 @@
 		This module consists only of the g_fractal_specific structure
 		and a *slew* of defines needed to get it to compile
 */
-#include <string.h>
+#include <fstream>
 #include <string>
+
+#include <string.h>
 
 /* includes needed for g_fractal_specific */
 

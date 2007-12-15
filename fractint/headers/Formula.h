@@ -1,5 +1,6 @@
 #pragma once
 
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -7,8 +8,8 @@
 
 struct error_data
 {
-	long start_pos;
-	long error_pos;
+	std::ifstream::pos_type start_pos;
+	std::ifstream::pos_type error_pos;
 	int error_number;
 };
 
@@ -100,7 +101,7 @@ public:
 
 	void end_init();
 	bool run_formula(const char *name, bool report_bad_symmetry);
-	const char *PrepareFormula(FILE *file, bool report_bad_symmetry);
+	const char *PrepareFormula(std::ifstream &file, bool report_bad_symmetry);
 
 	bool setup_fp();
 	bool setup_int();
@@ -128,7 +129,7 @@ public:
 	void StackSqr_d();
 	void StackSqr_l();
 	void get_parameter(const char *name);
-	int find_item(FILE **file);
+	bool find_item(std::ifstream &file);
 	long get_file_entry(char *wildcard);
 	bool merge_formula_filename(char *new_filename, int mode);
 
@@ -209,8 +210,8 @@ private:
 	Arg m_arg2;
 	const char *m_formula_text;
 	error_data m_errors[50];
-	long m_file_pos;
-	long m_statement_pos;
+	std::ifstream::pos_type m_file_pos;
+	std::ifstream::pos_type m_statement_pos;
 	int m_errors_found;
 	char m_prepare_formula_text[16384];
 	int m_initial_load_pointer;
@@ -280,7 +281,7 @@ private:
 
 	void allocate();
 	void count_lists();
-	bool prescan(FILE *open_file);
+	bool prescan(std::ifstream &open_file);
 	void sort_prec();
 	void display_var_list() const;
 	void display_const_lists() const;
@@ -289,8 +290,8 @@ private:
 	void init_var_list();
 	void init_const_lists();
 	const char *error_messages(int which);
-	bool check_name_and_symmetry(FILE *open_file, bool report_bad_symmetry);
-	void formula_error(FILE *open_file, long begin_frm);
+	bool check_name_and_symmetry(std::ifstream &open_file, bool report_bad_symmetry);
+	void formula_error(std::ifstream &open_file, std::ifstream::pos_type begin_frm);
 	bool fill_jump_struct();
 	bool fill_jump_struct_fp();
 	void convert_stack();
