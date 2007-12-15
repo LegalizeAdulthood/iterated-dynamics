@@ -625,118 +625,90 @@ int cursor_wait_key()   /* blink cursor while waiting for a key */
  * Purpose:   Handles the rectangular move/resize box.
  */
 
-struct move_box
+class move_box
 {
-	int x;
-	int y;
-	int base_width;
-	int base_depth;
-	int      csize;
-	bool moved;
-	bool should_hide;
-	char *t;
-	char *b;
-	char *l;
-	char *r;
+public:
+	void move(int key);
+	move_box(int x, int y, int csize, int base_width, int base_depth);
+	~move_box();
+	/* returns false if ESCAPED */
+	bool process();
+	bool moved() const { return _moved; }
+	bool should_hide() const { return _should_hide; }
+	int x() const { return _x; }
+	int y() const { return _y; }
+	int csize() const { return _csize; }
+	void set_position(int x, int y);
+	void set_csize(int csize);
+
+private:
+	void draw();
+	void erase();
+
+	int _x;
+	int _y;
+	int _base_width;
+	int _base_depth;
+	int      _csize;
+	bool _moved;
+	bool _should_hide;
+	char *_top;
+	char *_bottom;
+	char *_left;
+	char *_right;
 };
 
-static void     move_box_draw     (move_box *me);
-static void     move_box_erase    (move_box *me);
-static void     move_box_move     (move_box *me, int key);
-static move_box *move_box_new  (int x, int y, int csize, int base_width,
-									int base_depth);
-static void     move_box_destroy    (move_box *me);
-static bool move_box_process    (move_box *me); /* returns false if ESCAPED */
-static bool move_box_moved      (move_box *me);
-static bool move_box_should_hide (move_box *me);
-static int      move_box_x          (move_box *me);
-static int      move_box_y          (move_box *me);
-static int      move_box_csize      (move_box *me);
-static void     move_box_set_position     (move_box *me, int x, int y);
-static void     move_box_set_csize   (move_box *me, int csize);
-
-static move_box *move_box_new(int x, int y, int csize, int base_width, int base_depth)
+move_box::move_box(int x, int y, int csize, int base_width, int base_depth)
+	: _x(x),
+	_y(y),
+	_csize(csize),
+	_base_width(base_width),
+	_base_depth(base_depth),
+	_moved(false),
+	_should_hide(false),
+	_top(new char[g_screen_width]),
+	_bottom(new char[g_screen_width]),
+	_left(new char[g_screen_height]),
+	_right(new char[g_screen_height])
 {
-	move_box *me = new move_box;
-
-	me->x           = x;
-	me->y           = y;
-	me->csize       = csize;
-	me->base_width  = base_width;
-	me->base_depth  = base_depth;
-	me->moved       = false;
-	me->should_hide = false;
-	me->t           = new char[g_screen_width];
-	me->b           = new char[g_screen_width];
-	me->l           = new char[g_screen_height];
-	me->r           = new char[g_screen_height];
-
-	return me;
 }
 
-static void move_box_destroy(move_box *me)
+move_box::~move_box()
 {
-	delete[] me->t;
-	me->t = 0;
-	delete[] me->b;
-	me->b = 0;
-	delete[] me->l;
-	me->l = 0;
-	delete[] me->r;
-	me->r = 0;
-	delete me;
-	me = 0;
+	delete[] _top;
+	_top = 0;
+	delete[] _bottom;
+	_bottom = 0;
+	delete[] _left;
+	_left = 0;
+	delete[] _right;
+	_right = 0;
 }
 
-static bool move_box_moved(move_box *me)
+void move_box::set_position(int x, int y)
 {
-	return me->moved;
+	_x = x;
+	_y = y;
 }
 
-static bool move_box_should_hide(move_box *me)
+void move_box::set_csize(int csize)
 {
-	return me->should_hide;
+	_csize = csize;
 }
 
-static int move_box_x(move_box *me)
+void move_box::draw()
 {
-	return me->x;
-}
-
-static int move_box_y(move_box *me)
-{
-	return me->y;
-}
-
-static int move_box_csize(move_box *me)
-{
-	return me->csize;
-}
-
-static void move_box_set_position(move_box *me, int x, int y)
-{
-	me->x = x;
-	me->y = y;
-}
-
-static void move_box_set_csize(move_box *me, int csize)
-{
-	me->csize = csize;
-}
-
-static void move_box_draw(move_box *me)  /* private */
-{
-	int width = me->base_width + me->csize * 16 + 1;
-	int depth = me->base_depth + me->csize * 16 + 1;
-	int x = me->x;
-	int y = me->y;
+	int width = _base_width + _csize * 16 + 1;
+	int depth = _base_depth + _csize * 16 + 1;
+	int x = _x;
+	int y = _y;
 
 
-	get_row (x, y,         width, me->t);
-	get_row (x, y + depth-1, width, me->b);
+	get_row (x, y,         width, _top);
+	get_row (x, y + depth-1, width, _bottom);
 
-	vertical_get_row(x,         y, depth, me->l);
-	vertical_get_row(x + width-1, y, depth, me->r);
+	vertical_get_row(x,         y, depth, _left);
+	vertical_get_row(x + width-1, y, depth, _right);
 
 	horizontal_dotted_line(x, y,         width);
 	horizontal_dotted_line(x, y + depth-1, width);
@@ -745,22 +717,22 @@ static void move_box_draw(move_box *me)  /* private */
 	vertical_dotted_line(x + width-1, y, depth);
 }
 
-static void move_box_erase(move_box *me)   /* private */
+void move_box::erase()
 {
-	int width = me->base_width + me->csize * 16 + 1;
-	int depth = me->base_depth + me->csize * 16 + 1;
+	int width = _base_width + _csize * 16 + 1;
+	int depth = _base_depth + _csize * 16 + 1;
 
-	vertical_put_row(me->x,         me->y, depth, me->l);
-	vertical_put_row(me->x + width-1, me->y, depth, me->r);
+	vertical_put_row(_x,         _y, depth, _left);
+	vertical_put_row(_x + width-1, _y, depth, _right);
 
-	put_row(me->x, me->y,         width, me->t);
-	put_row(me->x, me->y + depth-1, width, me->b);
+	put_row(_x, _y,         width, _top);
+	put_row(_x, _y + depth-1, width, _bottom);
 }
 
 #define BOX_INC     1
 #define CSIZE_INC   2
 
-static void move_box_move(move_box *me, int key)
+void move_box::move(int key)
 {
 	bool done  = false;
 	bool first = true;
@@ -799,8 +771,8 @@ static void move_box_move(move_box *me, int key)
 		}
 	}
 
-	xoff += me->x;
-	yoff += me->y;   /* (xoff, yoff) = new position */
+	xoff += _x;
+	yoff += _y;   /* (xoff, yoff) = new position */
 
 	if (xoff < 0)
 	{
@@ -811,33 +783,33 @@ static void move_box_move(move_box *me, int key)
 		yoff = 0;
 	}
 
-	if (xoff + me->base_width + me->csize*16 + 1 > g_screen_width)
+	if (xoff + _base_width + _csize*16 + 1 > g_screen_width)
 	{
-		xoff = g_screen_width - (me->base_width + me->csize*16 + 1);
+		xoff = g_screen_width - (_base_width + _csize*16 + 1);
 	}
 
-	if (yoff + me->base_depth + me->csize*16 + 1 > g_screen_height)
+	if (yoff + _base_depth + _csize*16 + 1 > g_screen_height)
 	{
-		yoff = g_screen_height - (me->base_depth + me->csize*16 + 1);
+		yoff = g_screen_height - (_base_depth + _csize*16 + 1);
 	}
 
-	if (xoff != me->x || yoff != me->y)
+	if (xoff != _x || yoff != _y)
 	{
-		move_box_erase(me);
-		me->y = yoff;
-		me->x = xoff;
-		move_box_draw(me);
+		erase();
+		_y = yoff;
+		_x = xoff;
+		draw();
 	}
 }
 
-static bool move_box_process(move_box *me)
+bool move_box::process()
 {
 	int     key;
-	int orig_x = me->x;
-	int orig_y = me->y;
-	int orig_csize = me->csize;
+	int orig_x = _x;
+	int orig_y = _y;
+	int orig_csize = _csize;
 
-	move_box_draw(me);
+	draw();
 
 #ifdef XFRACT
 	cursor_start_mouse_tracking();
@@ -849,7 +821,7 @@ static bool move_box_process(move_box *me)
 
 		if (key == FIK_ENTER || key == FIK_ENTER_2 || key == FIK_ESC || key == 'H' || key == 'h')
 		{
-			me->moved = (me->x != orig_x || me->y != orig_y || me->csize != orig_csize);
+			_moved = (_x != orig_x || _y != orig_y || _csize != orig_csize);
 			break;
 		}
 
@@ -863,13 +835,13 @@ static bool move_box_process(move_box *me)
 		case FIK_CTL_DOWN_ARROW:
 		case FIK_CTL_LEFT_ARROW:
 		case FIK_CTL_RIGHT_ARROW:
-			move_box_move(me, key);
+			move(key);
 			break;
 
 		case FIK_PAGE_UP:   /* shrink */
-			if (me->csize > CSIZE_MIN)
+			if (_csize > CSIZE_MIN)
 			{
-				int t = me->csize - CSIZE_INC;
+				int t = _csize - CSIZE_INC;
 				int change;
 
 				if (t < CSIZE_MIN)
@@ -877,13 +849,13 @@ static bool move_box_process(move_box *me)
 					t = CSIZE_MIN;
 				}
 
-				move_box_erase(me);
+				erase();
 
-				change = me->csize - t;
-				me->csize = t;
-				me->x += (change*16)/2;
-				me->y += (change*16)/2;
-				move_box_draw(me);
+				change = _csize - t;
+				_csize = t;
+				_x += (change*16)/2;
+				_y += (change*16)/2;
+				draw();
 			}
 			break;
 
@@ -891,30 +863,30 @@ static bool move_box_process(move_box *me)
 			{
 				int max_width = std::min(g_screen_width, MAX_WIDTH);
 
-				if (me->base_depth + (me->csize + CSIZE_INC)*16 + 1 < g_screen_height  &&
-					me->base_width + (me->csize + CSIZE_INC)*16 + 1 < max_width)
+				if (_base_depth + (_csize + CSIZE_INC)*16 + 1 < g_screen_height  &&
+					_base_width + (_csize + CSIZE_INC)*16 + 1 < max_width)
 				{
-					move_box_erase(me);
-					me->x -= (CSIZE_INC*16)/2;
-					me->y -= (CSIZE_INC*16)/2;
-					me->csize += CSIZE_INC;
-					if (me->y + me->base_depth + me->csize*16 + 1 > g_screen_height)
+					erase();
+					_x -= (CSIZE_INC*16)/2;
+					_y -= (CSIZE_INC*16)/2;
+					_csize += CSIZE_INC;
+					if (_y + _base_depth + _csize*16 + 1 > g_screen_height)
 					{
-						me->y = g_screen_height - (me->base_depth + me->csize*16 + 1);
+						_y = g_screen_height - (_base_depth + _csize*16 + 1);
 					}
-					if (me->x + me->base_width + me->csize*16 + 1 > max_width)
+					if (_x + _base_width + _csize*16 + 1 > max_width)
 					{
-						me->x = max_width - (me->base_width + me->csize*16 + 1);
+						_x = max_width - (_base_width + _csize*16 + 1);
 					}
-					if (me->y < 0)
+					if (_y < 0)
 					{
-						me->y = 0;
+						_y = 0;
 					}
-					if (me->x < 0)
+					if (_x < 0)
 					{
-						me->x = 0;
+						_x = 0;
 					}
-					move_box_draw(me);
+					draw();
 				}
 			}
 			break;
@@ -925,9 +897,9 @@ static bool move_box_process(move_box *me)
 	cursor_end_mouse_tracking();
 #endif
 
-	move_box_erase(me);
+	erase();
 
-	me->should_hide = (key == 'H' || key == 'h');
+	_should_hide = (key == 'H' || key == 'h');
 
 	return key != FIK_ESC;
 }
@@ -2338,18 +2310,18 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		}
 		cursor_hide();
 		pal_table_restore_rect(me);
-		move_box_set_position(me->movebox, me->x, me->y);
-		move_box_set_csize(me->movebox, me->csize);
-		if (move_box_process(me->movebox))
+		me->movebox->set_position(me->x, me->y);
+		me->movebox->set_csize(me->csize);
+		if (me->movebox->process())
 		{
-			if (move_box_should_hide(me->movebox))
+			if (me->movebox->should_hide())
 			{
 				pal_table_set_hidden(me, true);
 			}
-			else if (move_box_moved(me->movebox))
+			else if (me->movebox->moved())
 			{
-				pal_table_set_position(me, move_box_x(me->movebox), move_box_y(me->movebox));
-				pal_table_set_csize(me, move_box_csize(me->movebox));
+				pal_table_set_position(me, me->movebox->x(), me->movebox->y());
+				pal_table_set_csize(me, me->movebox->csize());
 				pal_table_save_rect(me);
 			}
 		}
@@ -2979,7 +2951,7 @@ static pal_table *pal_table_new()
 	me->rgb[1] = rgb_editor_new(0, 0, pal_table_other_key,
 						pal_table_change, me);
 
-	me->movebox = move_box_new(0, 0, 0, PALTABLE_PALX + 1, PALTABLE_PALY + 1);
+	me->movebox = new move_box(0, 0, 0, PALTABLE_PALX + 1, PALTABLE_PALY + 1);
 
 	me->active      = 0;
 	me->curr[0]     = 1;
@@ -3084,7 +3056,7 @@ static void pal_table_destroy(pal_table *me)
 
 	rgb_editor_destroy(me->rgb[0]);
 	rgb_editor_destroy(me->rgb[1]);
-	move_box_destroy(me->movebox);
+	delete me->movebox;
 	delete me;
 	me = 0;
 }
@@ -3109,18 +3081,18 @@ static void pal_table_process(pal_table *me)
 
 	if (!me->hidden)
 	{
-		move_box_set_position(me->movebox, me->x, me->y);
-		move_box_set_csize(me->movebox, me->csize);
-		if (!move_box_process(me->movebox))
+		me->movebox->set_position(me->x, me->y);
+		me->movebox->set_csize(me->csize);
+		if (!me->movebox->process())
 		{
 			set_pal_range(0, g_colors, me->pal);
 			return;
 		}
 
-		pal_table_set_position(me, move_box_x(me->movebox), move_box_y(me->movebox));
-		pal_table_set_csize(me, move_box_csize(me->movebox));
+		pal_table_set_position(me, me->movebox->x(), me->movebox->y());
+		pal_table_set_csize(me, me->movebox->csize());
 
-		if (move_box_should_hide(me->movebox))
+		if (me->movebox->should_hide())
 		{
 			pal_table_set_hidden(me, true);
 			s_reserve_colors = false;   /* <EAN> */
