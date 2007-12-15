@@ -107,7 +107,7 @@ int LineCompare::compare(BYTE *pixels, int line_length)
 	if (row == 0)
 	{
 		_error_count = 0;
-		_file.open((boost::filesystem::path(g_work_dir) / "cmperr").string().c_str(),
+		_file.open((g_work_dir / "cmperr.txt").string().c_str(),
 			std::ios::out | (g_initialize_batch ? std::ios::ate : 0));
 		g_out_line_cleanup = out_line_cleanup_compare;
 	}

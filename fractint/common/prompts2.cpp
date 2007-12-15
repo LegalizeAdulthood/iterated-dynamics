@@ -1039,24 +1039,21 @@ int get_a_number(double *x, double *y)
 
 int get_commands()              /* execute commands from file */
 {
-	int ret;
-	FILE *parmfile;
-	long point;
+	std::ifstream::pos_type point;
 	static char commandmask[13] = {"*.par"};
 
-	ret = 0;
-	point = get_file_entry_help(HELPPARMFILE, GETFILE_PARAMETER, "Parameter Set",
-		commandmask, g_command_file, g_command_name);
+	point = std::ifstream::pos_type(get_file_entry_help(HELPPARMFILE, GETFILE_PARAMETER, "Parameter Set",
+		commandmask, g_command_file, g_command_name));
 	if (point >= 0)
 	{
-		parmfile = fopen(g_command_file.c_str(), "rb");
-		if (parmfile != 0)
+		std::ifstream parmfile(g_command_file.c_str(), std::ios::in | std::ios::binary);
+		if (parmfile)
 		{
-			fseek(parmfile, point, SEEK_SET);
-			ret = load_commands(parmfile);
+			parmfile.seekg(point, SEEK_SET);
+			return load_commands(parmfile);
 		}
 	}
-	return ret;
+	return 0;
 }
 
 /* --------------------------------------------------------------------- */

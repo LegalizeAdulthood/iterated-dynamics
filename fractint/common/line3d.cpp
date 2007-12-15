@@ -1624,18 +1624,15 @@ static void file_error(const std::string &filename, int code)
  */
 int start_disk_targa(const std::string &file_name2, FILE *Source, bool overlay_file)
 {
-	int inc;
-	FILE *fps;
-
 	/* Open File for both reading and writing */
-	fps = dir_fopen(g_work_dir, file_name2, "w+b");
+	FILE *fps = dir_fopen(g_work_dir, file_name2, "wb");
 	if (fps == 0)
 	{
 		file_error(file_name2, FILEERROR_OPEN);
 		return -1;              /* Oops, somethings wrong! */
 	}
 
-	inc = 1;                     /* Assume we are overlaying a file */
+	int inc = 1;                     /* Assume we are overlaying a file */
 
 	/* Write the header */
 	if (overlay_file)

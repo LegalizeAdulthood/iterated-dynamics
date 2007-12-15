@@ -198,21 +198,6 @@ void ensure_slash_on_directory(std::string &dirname)
 	}
 }
 
-static void dir_name(std::string &target, const std::string &dir, const std::string &name)
-{
-	target = dir + name;
-}
-
-static void dir_name(char *target, const char *dir, const char *name)
-{
-	*target = 0;
-	if (*dir != 0)
-	{
-		strcpy(target, dir);
-	}
-	strcat(target, name);
-}
-
 /* removes file in dir directory */
 int dir_remove(const std::string &dir, const std::string &filename)
 {
@@ -220,17 +205,25 @@ int dir_remove(const std::string &dir, const std::string &filename)
 	return fs::remove(p);
 }
 
+int dir_remove(const fs::path &dir, const std::string &filename)
+{
+	return fs::remove(dir / filename);
+}
+
 /* fopens file in dir directory */
 FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 {
-	char tmp[FILE_MAX_PATH];
-	dir_name(tmp, dir, filename);
-	return fopen(tmp, mode);
+	return fopen((fs::path(dir) / filename).string().c_str(), mode);
 }
 
 FILE *dir_fopen(const std::string &dir, const std::string &filename, const std::string &mode)
 {
 	return dir_fopen(dir.c_str(), filename.c_str(), mode.c_str());
+}
+
+FILE *dir_fopen(const fs::path &dir, const std::string &filename, const std::string &mode)
+{
+	return fopen((dir / filename).string().c_str(), mode.c_str());
 }
 
 void make_path(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)

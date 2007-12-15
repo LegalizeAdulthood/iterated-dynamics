@@ -695,7 +695,7 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 	std::ofstream benchmark_file;
 	if (do_bench)
 	{
-		benchmark_file.open((boost::filesystem::path(g_work_dir) / "bench.txt").string().c_str(), std::ios::ate);
+		benchmark_file.open((g_work_dir / "bench.txt").string().c_str(), std::ios::ate);
 		if (!benchmark_file)
 		{
 			do_bench = false;

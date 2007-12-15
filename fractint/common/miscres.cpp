@@ -730,7 +730,7 @@ int tab_display_2(char *msg)
 	}
 	row++;
 	show_str_var("tempdir", g_temp_dir, row, msg);
-	show_str_var("workdir", g_work_dir, row, msg);
+	show_str_var("workdir", g_work_dir.string(), row, msg);
 	show_str_var("filename", g_read_name, row, msg);
 	show_str_var("formulafile", g_formula_state.get_filename(), row, msg);
 	show_str_var("savename", g_save_name, row, msg);
@@ -1301,7 +1301,7 @@ bool ends_with_slash(const char *text)
 
 /* --------------------------------------------------------------------- */
 static char seps[] = {" \t\n\r"};
-char *get_ifs_token(char *buf, FILE *ifsfile)
+char *get_ifs_token(char *buf, std::ifstream &ifsfile)
 {
 	char *bufptr;
 	while (true)
@@ -1331,7 +1331,7 @@ int g_num_affine;
 int ifs_load()                   /* read in IFS parameters */
 {
 	int i;
-	FILE *ifsfile;
+	std::ifstream ifsfile;
 	char buf[201];
 	char *bufptr;
 	int ret;
@@ -1342,7 +1342,7 @@ int ifs_load()                   /* read in IFS parameters */
 
 	g_ifs_type = IFSTYPE_2D;
 	rowsize = IFSPARM;
-	if (find_file_item(g_ifs_filename, g_ifs_name.c_str(), &ifsfile, ITEMTYPE_IFS) < 0)
+	if (!find_file_item(g_ifs_filename, g_ifs_name, ifsfile, ITEMTYPE_IFS))
 	{
 		return -1;
 	}
@@ -1415,7 +1415,7 @@ int ifs_load()                   /* read in IFS parameters */
 		stop_message(STOPMSG_NORMAL, "Empty IFS definition");
 		ret = -1;
 	}
-	fclose(ifsfile);
+	ifsfile.close();
 
 	if (ret == 0)
 	{
@@ -1439,6 +1439,11 @@ int ifs_load()                   /* read in IFS parameters */
 }
 
 /* added search of current directory for entry files if entry item not found */
+bool find_file_item(std::string &filename, const std::string &item_name, std::ifstream &stream, int item_type)
+{
+	return false;
+}
+
 int find_file_item(char *filename, const char *itemname, FILE **fileptr, int itemtype)
 {
 	FILE *infile = 0;
@@ -1679,18 +1684,18 @@ int find_file_item(std::string &filename, std::string &itemname, FILE **fileptr,
 	return result;
 }
 
-int file_gets(char *buf, int maxlen, FILE *infile)
+int file_gets(char *buf, int maxlen, std::ifstream &infile)
 {
 	/* similar to 'fgets', but file may be in either text or binary mode */
 	/* returns -1 at eof, length of string otherwise */
-	if (feof(infile))
+	if (!infile)
 	{
 		return -1;
 	}
 	int len = 0;
 	while (len < maxlen)
 	{
-		int c = getc(infile);
+		int c = infile.get();
 		if (c == EOF || c == '\032')
 		{
 			if (len)

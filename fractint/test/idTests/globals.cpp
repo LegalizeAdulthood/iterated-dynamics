@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include <boost/filesystem.hpp>
+
 #include "port.h"
 #include "id.h"
 #include "big.h"
@@ -29,7 +31,7 @@ int g_text_cbase = 0;
 bool g_command_initialize = false;
 int g_initialize_batch = 0;
 int g_debug_mode = 0;
-std::string g_work_dir = "";
+boost::filesystem::path g_work_dir("");
 
 int driver_key_cursor(int, int)
 {

@@ -521,7 +521,7 @@ skip_UI:
 		}
 		strcpy(m_out_name, g_command_file.c_str());
 		bool got_input_file = false;
-		FILE *input_file = 0;
+		std::ifstream input_file;
 		if (exists(g_command_file))
 		{                         /* file exists */
 			got_input_file = true;
@@ -536,10 +536,7 @@ skip_UI:
 				m_out_name[i] = 0;
 			}
 			strcat(m_out_name, "fractint.tmp");
-			input_file = fopen(g_command_file.c_str(), "rt");
-#ifndef XFRACT
-			setvbuf(input_file, g_text_stack, _IOFBF, 4096); /* improves speed */
-#endif
+			input_file.open(g_command_file.c_str(), std::ios::in);
 		}
 		s_parameter_file.open(m_out_name, std::ios::out);
 		if (!s_parameter_file)
@@ -547,7 +544,7 @@ skip_UI:
 			stop_message(STOPMSG_NORMAL, "Can't create " + out_name());
 			if (got_input_file)
 			{
-				fclose(input_file);
+				input_file.close();
 			}
 			continue;
 		}
@@ -566,7 +563,7 @@ skip_UI:
 						(g_make_par_flag ? "Continue to replace it, Cancel to back out" : "... Replacing ...");
 					if (stop_message(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, prompt) < 0)
 					{                /* cancel */
-						fclose(input_file);
+						input_file.close();
 						s_parameter_file.close();
 						unlink(m_out_name);
 						goto prompt_user;
@@ -634,7 +631,7 @@ skip_UI:
 				s_parameter_file << buf << '\n';
 				i = file_gets(buf, NUM_OF(buf)-1, input_file);
 			}
-			fclose(input_file);
+			input_file.close();
 		}
 		s_parameter_file.close();
 		if (got_input_file)
