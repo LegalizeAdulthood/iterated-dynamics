@@ -59,7 +59,7 @@ bool g_start_show_orbit = false;				/* show orbits on at start of fractal */
 std::string g_read_name;						/* name of fractal input file */
 boost::filesystem::path g_temp_dir("");			/* name of temporary directory */
 boost::filesystem::path g_work_dir("");			/* name of directory for misc files */
-std::string g_organize_formula_dir = "";		/*name of directory for orgfrm files*/
+boost::filesystem::path g_organize_formula_dir(""); /*name of directory for orgfrm files*/
 std::string g_gif_mask;
 std::string g_save_name = "id001";			/* save files using this name */
 std::string g_autokey_name = "auto.key";		/* record auto keystrokes here */
@@ -2114,7 +2114,6 @@ static int organize_formula_dir_arg(const cmd_context &context)
 	}
 	g_organize_formula_search = true;
 	g_organize_formula_dir = context.value;
-	ensure_slash_on_directory(g_organize_formula_dir);
 	return COMMANDRESULT_OK;
 }
 
