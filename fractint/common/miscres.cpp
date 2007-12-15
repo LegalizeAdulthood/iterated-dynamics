@@ -729,7 +729,7 @@ int tab_display_2(char *msg)
 		write_row(++row, boost::format("intlength %-d bflength %-d ") % g_int_length % g_bf_length);
 	}
 	row++;
-	show_str_var("tempdir", g_temp_dir, row, msg);
+	show_str_var("tempdir", g_temp_dir.string(), row, msg);
 	show_str_var("workdir", g_work_dir.string(), row, msg);
 	show_str_var("filename", g_read_name, row, msg);
 	show_str_var("formulafile", g_formula_state.get_filename(), row, msg);
