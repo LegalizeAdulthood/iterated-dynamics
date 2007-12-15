@@ -1,3 +1,4 @@
+#include <fstream>
 #include <string>
 #include <vector>
 
@@ -142,14 +143,14 @@ static int read_l_system_file(std::string &item)
 	char inline1[MAX_LSYS_LINE_LEN + 1];
 	char fixed[MAX_LSYS_LINE_LEN + 1];
 	char *word;
-	FILE *infile;
+	std::ifstream infile;
 	std::string message;
 
-	if (find_file_item(g_l_system_filename, item, &infile, ITEMTYPE_L_SYSTEM) < 0)
+	if (!find_file_item(g_l_system_filename, item, infile, ITEMTYPE_L_SYSTEM))
 	{
 		return -1;
 	}
-	while ((c = fgetc(infile)) != '{')
+	while ((c = infile.get()) != '{')
 	{
 		if (c == EOF)
 		{
@@ -257,7 +258,7 @@ static int read_l_system_file(std::string &item)
 			}
 		}
 	}
-	fclose(infile);
+	infile.close();
 	if (!ruleptrs[0] && err < 6)
 	{
 		message += l_system_error("no axiom");

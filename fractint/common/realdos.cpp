@@ -74,7 +74,7 @@ int stop_message(int flags, const char *msg)
 	static unsigned char batchmode = 0;
 	if (g_debug_mode || g_initialize_batch >= INITBATCH_NORMAL)
 	{
-		std::ofstream stream((boost::filesystem::path(g_work_dir) / "stop_message.txt").string().c_str(), 
+		std::ofstream stream((g_work_dir / "stop_message.txt").string().c_str(), 
 			std::ios_base::out | ((g_initialize_batch == INITBATCH_NONE) ? 0 : std::ios_base::ate));
 		if (stream)
 		{

@@ -1,5 +1,5 @@
 /*
- * editpal.c
+ * editpal.cpp
  *
  * Edits VGA 256-color palettes.
  */
@@ -1493,55 +1493,55 @@ struct pal_table
 {
 	int x;
 	int y;
-	int           csize;
-	int           active;   /* which rgb_editor is active (0, 1) */
-	int           curr[2];
-	rgb_editor    *rgb[2];
-	move_box      *movebox;
+	int csize;
+	int active;   /* which rgb_editor is active (0, 1) */
+	int curr[2];
+	rgb_editor *rgb[2];
+	move_box *movebox;
 	bool done;
 	int exclude;
 	bool auto_select;
-	PALENTRY      pal[256];
-	FILE         *undo_file;
+	PALENTRY pal[256];
+	FILE *undo_file;
 	bool curr_changed;
-	int           num_redo;
+	int num_redo;
 	bool hidden;
-	int           stored_at;
-	FILE         *file;
-	char     *memory;
+	int stored_at;
+	FILE *file;
+	char *memory;
 	PALENTRY *save_pal[8];
-	PALENTRY      fs_color;
+	PALENTRY fs_color;
 	int top;
 	int bottom; /* top and bottom colours of freestyle band */
-	int           bandwidth; /*size of freestyle colour band */
+	int bandwidth; /*size of freestyle colour band */
 	bool freestyle;
 };
 
-static void    pal_table_draw_status  (pal_table *me, bool stripe_mode);
-static void    pal_table_highlight_pal       (pal_table *me, int pnum, int color);
-static void    pal_table_draw        (pal_table *me);
-static bool pal_table_set_current     (pal_table *me, int which, int curr);
-static bool pal_table_memory_alloc (pal_table *me, long size);
-static void    pal_table_save_rect    (pal_table *me);
-static void    pal_table_restore_rect (pal_table *me);
-static void    pal_table_set_position      (pal_table *me, int x, int y);
-static void    pal_table_set_csize    (pal_table *me, int csize);
-static int     pal_table_get_cursor_color(pal_table *me);
-static void    pal_table_do_cursor      (pal_table *me, int key);
-static void    pal_table_rotate      (pal_table *me, int dir, int lo, int hi);
-static void    pal_table_update_dac   (pal_table *me);
-static void    pal_table_other_key   (int key, rgb_editor *rgb, VOIDPTR info);
-static void    pal_table_save_undo_data(pal_table *me, int first, int last);
-static void    pal_table_save_undo_rotate(pal_table *me, int dir, int first, int last);
-static void    pal_table_undo_process (pal_table *me, int delta);
-static void    pal_table_undo        (pal_table *me);
-static void    pal_table_redo        (pal_table *me);
-static void    pal_table_change      (rgb_editor *rgb, VOIDPTR info);
+static void pal_table_draw_status(pal_table *me, bool stripe_mode);
+static void pal_table_highlight_pal(pal_table *me, int pnum, int color);
+static void pal_table_draw(pal_table *me);
+static bool pal_table_set_current(pal_table *me, int which, int curr);
+static bool pal_table_memory_alloc(pal_table *me, long size);
+static void pal_table_save_rect(pal_table *me);
+static void pal_table_restore_rect(pal_table *me);
+static void pal_table_set_position(pal_table *me, int x, int y);
+static void pal_table_set_csize(pal_table *me, int csize);
+static int pal_table_get_cursor_color(pal_table *me);
+static void pal_table_do_cursor(pal_table *me, int key);
+static void pal_table_rotate(pal_table *me, int dir, int lo, int hi);
+static void pal_table_update_dac(pal_table *me);
+static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info);
+static void pal_table_save_undo_data(pal_table *me, int first, int last);
+static void pal_table_save_undo_rotate(pal_table *me, int dir, int first, int last);
+static void pal_table_undo_process(pal_table *me, int delta);
+static void pal_table_undo(pal_table *me);
+static void pal_table_redo(pal_table *me);
+static void pal_table_change(rgb_editor *rgb, VOIDPTR info);
 static pal_table *pal_table_new();
-static void      pal_table_destroy   (pal_table *me);
-static void      pal_table_process   (pal_table *me);
-static void      pal_table_set_hidden (pal_table *me, bool hidden);
-static void      pal_table_hide      (pal_table *me, rgb_editor *rgb, bool hidden);
+static void pal_table_destroy(pal_table *me);
+static void pal_table_process(pal_table *me);
+static void pal_table_set_hidden(pal_table *me, bool hidden);
+static void pal_table_hide(pal_table *me, rgb_editor *rgb, bool hidden);
 
 #define PALTABLE_PALX (1)
 #define PALTABLE_PALY (2 + RGB_EDITOR_DEPTH + 2)

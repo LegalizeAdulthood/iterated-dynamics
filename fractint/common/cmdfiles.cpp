@@ -58,7 +58,7 @@ AutoShowDotKind g_auto_show_dot = AUTOSHOWDOT_DEFAULT; /* dark, medium, bright *
 bool g_start_show_orbit = false;				/* show orbits on at start of fractal */
 std::string g_read_name;						/* name of fractal input file */
 std::string g_temp_dir = "";					/* name of temporary directory */
-std::string g_work_dir = "";					/* name of directory for misc files */
+boost::filesystem::path g_work_dir("");			/* name of directory for misc files */
 std::string g_organize_formula_dir = "";		/*name of directory for orgfrm files*/
 std::string g_gif_mask;
 std::string g_save_name = "id001";			/* save files using this name */
@@ -187,18 +187,18 @@ static int s_init_random_seed;
 static bool s_initial_corners = false;
 static bool s_initial_parameters = false;
 
-static int  command_file(FILE *, int);
-static int  next_command(char *, int, FILE *, char *, int *, int);
-static int  next_line(FILE *, char *, int);
-static void arg_error(const char *);
+static int command_file(std::ifstream &handle, int mode);
+static int next_command(char *cmdbuf, int maxlen, std::ifstream &handle, char *linebuf, int *lineoffset, int mode);
+static int next_line(std::ifstream &handle, char *linebuf, int mode);
+static void arg_error(const char *bad_arg);
 static void initialize_variables_once();
 static void initialize_variables_restart();
 static void initialize_variables_fractal();
 static void initialize_variables_3d();
 static void reset_ifs_definition();
-static void parse_text_colors(char *value);
-static int  parse_colors(char *value);
-static int  get_bf(bf_t, char *);
+static void parse_text_colors(const char *value);
+static int parse_colors(char *value);
+static int get_bf(bf_t bf, char *curarg);
 static int is_a_big_float(char *str);
 
 /*
@@ -254,11 +254,11 @@ void command_files(int argc, char **argv)
 	strcpy(curarg, "sstools.ini");
 	char    tempstring[101];
 	find_path(curarg, tempstring); /* look for SSTOOLS.INI */
-	FILE    *initfile;
+	std::ifstream initfile;
 	if (tempstring[0] != 0)              /* found it! */
 	{
-		initfile = fopen(tempstring, "r");
-		if (initfile != 0)
+		initfile.open(tempstring);
+		if (initfile)
 		{
 			command_file(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
 		}
@@ -308,7 +308,7 @@ void command_files(int argc, char **argv)
 					init_msg("", g_command_file.c_str(), 0);
 				}
 				g_command_name = &sptr[1];
-				if (find_file_item(g_command_file, g_command_name.c_str(), &initfile, ITEMTYPE_PARAMETER) < 0 || initfile == 0)
+				if (!find_file_item(g_command_file, g_command_name, initfile, ITEMTYPE_PARAMETER))
 				{
 					arg_error(curarg);
 				}
@@ -316,8 +316,8 @@ void command_files(int argc, char **argv)
 			}
 			else  /* @filename */
 			{
-				initfile = fopen(&curarg[1], "r");
-				if (initfile == 0)
+				initfile.open(&curarg[1]);
+				if (!initfile)
 				{
 					arg_error(curarg);
 				}
@@ -348,14 +348,13 @@ void command_files(int argc, char **argv)
 	g_search_for.ifs = g_ifs_filename;
 }
 
-int load_commands(FILE *infile)
+int load_commands(std::ifstream &infile)
 {
 	/* when called, file is open in binary mode, positioned at the */
 	/* '(' or '{' following the desired parameter set's name       */
-	int ret;
 	s_initial_corners = false;
 	s_initial_parameters = false; /* reset flags for type= */
-	ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
+	int ret = command_file(infile, CMDFILE_AT_AFTER_STARTUP);
 	/* PAR reads a file and sets color */
 	g_dont_read_color = (g_color_preloaded && (g_show_file == SHOWFILE_PENDING));
 	return ret;
@@ -574,7 +573,7 @@ static void reset_ifs_definition()
 }
 
 
-static int command_file(FILE *handle, int mode)
+static int command_file(std::ifstream &handle, int mode)
 	/* mode = 0 command line @filename         */
 	/*        1 sstools.ini                    */
 	/*        2 <@> command after startup      */
@@ -592,7 +591,7 @@ static int command_file(FILE *handle, int mode)
 	{
 		do
 		{
-			i = getc(handle);
+			i = handle.get();
 		}
 		while (i != '{' && i != EOF);
 		for (i = 0; i < 4; i++)
@@ -614,7 +613,7 @@ static int command_file(FILE *handle, int mode)
 		}
 		changeflag |= i;
 	}
-	fclose(handle);
+	handle.close();
 #ifdef XFRACT
 	g_initial_adapter = 0;                /* Skip credits if @file is used. */
 #endif
@@ -628,7 +627,7 @@ static int command_file(FILE *handle, int mode)
 }
 
 static int next_command(char *cmdbuf, int maxlen,
-	FILE *handle, char *linebuf, int *lineoffset, int mode)
+						std::ifstream &handle, char *linebuf, int *lineoffset, int mode)
 {
 	int i;
 	int cmdlen = 0;
@@ -707,7 +706,7 @@ static int next_command(char *cmdbuf, int maxlen,
 	}
 }
 
-static int next_line(FILE *handle, char *linebuf, int mode)
+static int next_line(std::ifstream &handle, char *linebuf, int mode)
 {
 	int toolssection;
 	char tmpbuf[11];
@@ -1523,7 +1522,6 @@ static int work_dir_arg(const cmd_context &context)
 		return bad_arg(context.curarg);
 	}
 	g_work_dir = context.value;
-	ensure_slash_on_directory(g_work_dir);
 	return COMMANDRESULT_OK;
 }
 
@@ -3246,7 +3244,7 @@ int process_command(char *curarg, int mode) /* process a single argument */
 	return bad_arg(context.curarg);
 }
 
-static void parse_text_colors(char *value)
+static void parse_text_colors(const char *value)
 {
 	if (strcmp(value, "mono") == 0)
 	{
