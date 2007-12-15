@@ -49,7 +49,7 @@ extern std::string g_l_system_name;
 extern std::string g_organize_formula_dir;
 extern std::string g_read_name;
 extern std::string g_save_name;
-extern std::string g_temp_dir;
+extern boost::filesystem::path g_temp_dir;
 extern boost::filesystem::path g_work_dir;
 
 extern AutoShowDotKind g_auto_show_dot;
