@@ -464,7 +464,6 @@ private:
 	char _right[CURSOR_SIZE];
 };
 
-/* private: */
 static cursor *s_the_cursor = 0;
 
 bool cursor::create()
@@ -1120,35 +1119,44 @@ int color_editor::edit()
  * Purpose:   Edits a complete color using three CEditors for R, G and B
  */
 
-struct rgb_editor
+class rgb_editor
 {
-	int x;
-	int y;            /* position */
-	int       curr;            /* 0 = r, 1 = g, 2 = b */
-	int       pal;             /* palette number */
-	bool done;
-	bool hidden;
-	color_editor  *color[3];        /* color editors 0 = r, 1 = g, 2 = b */
-	void    (*other_key)(int key, rgb_editor *e, VOIDPTR info);
-	void    (*change)(rgb_editor *e, VOIDPTR info);
-	void     *info;
-};
+public:
+	rgb_editor(int x, int y,
+		void (*other_key)(int, rgb_editor*, void*),
+		void (*change)(rgb_editor*, void*), VOIDPTR info);
+	~rgb_editor();
 
-static void      rgb_editor_other_key (int key, color_editor *ceditor, VOIDPTR info);
-static void      rgb_editor_change    (color_editor *ceditor, VOIDPTR info);
-static rgb_editor *rgb_editor_new(int x, int y,
-						void (*other_key)(int, rgb_editor*, void*),
-						void (*change)(rgb_editor*, void*), VOIDPTR info);
-static void     rgb_editor_destroy  (rgb_editor *me);
-static void     rgb_editor_set_position   (rgb_editor *me, int x, int y);
-static void     rgb_editor_set_done  (rgb_editor *me, bool done);
-static void     rgb_editor_set_hidden(rgb_editor *me, bool hidden);
-static void     rgb_editor_blank_sample_box(rgb_editor *me);
-static void     rgb_editor_update   (rgb_editor *me);
-static void     rgb_editor_draw     (rgb_editor *me);
-static int      rgb_editor_edit     (rgb_editor *me);
-static void     rgb_editor_set_rgb   (rgb_editor *me, int pal, PALENTRY *rgb);
-static PALENTRY rgb_editor_get_rgb   (rgb_editor *me);
+	void blank_sample_box();
+	void draw();
+	int edit();
+	void update();
+
+	PALENTRY get_rgb();
+
+	void set_done(bool value) { _done = value; }
+	void set_hidden(bool value);
+	void set_position(int x, int y);
+	void set_rgb(int pal, PALENTRY *rgb);
+
+private:
+	void other_key(int key, color_editor *ceditor, VOIDPTR info);
+	void change(color_editor *ceditor, VOIDPTR info);
+
+	int _x;
+	int _y;            /* position */
+	int _current_channel;            /* 0 = r, 1 = g, 2 = b */
+	int _palette_number;             /* palette number */
+	bool _done;
+	bool _hidden;
+	color_editor *_color_editor[3];        /* color editors 0 = r, 1 = g, 2 = b */
+	void (*_other_key)(int key, rgb_editor *e, VOIDPTR info);
+	void (*_change)(rgb_editor *e, VOIDPTR info);
+	void *_info;
+
+	static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info);
+	static void rgb_editor_change(color_editor *ceditor, VOIDPTR info);
+};
 
 #define RGB_EDITOR_WIDTH 62
 #define RGB_EDITOR_DEPTH (1 + 1 + COLOR_EDITOR_DEPTH*3-2 + 2)
@@ -1157,53 +1165,45 @@ static PALENTRY rgb_editor_get_rgb   (rgb_editor *me);
 
 
 
-static rgb_editor *rgb_editor_new(int x, int y, void (*other_key)(int, rgb_editor*, void*),
-									void (*change)(rgb_editor*, void*), VOIDPTR info)
+rgb_editor::rgb_editor(int x, int y, void (*other_key)(int, rgb_editor*, void*),
+	void (*change)(rgb_editor*, void*), VOIDPTR info)
+	: _x(x),
+	_y(y),
+	_other_key(other_key),
+	_change(change),
+	_info(info),
+	_current_channel(0),
+	_palette_number(1),
+	_hidden(false)
 {
-	rgb_editor *me = new rgb_editor;
-	static char letter[] = "RGB";
-	int             ctr;
-
-	for (ctr = 0; ctr < 3; ctr++)
+	char letter[] = "RGB";
+	for (int ctr = 0; ctr < 3; ctr++)
 	{
-		me->color[ctr] = new color_editor(0, 0, letter[ctr], rgb_editor_other_key,
-											rgb_editor_change, me);
+		_color_editor[ctr] = new color_editor(0, 0, letter[ctr], rgb_editor_other_key, rgb_editor_change, this);
 	}
 
-	rgb_editor_set_position(me, x, y);
-	me->curr      = 0;
-	me->pal       = 1;
-	me->hidden    = false;
-	me->other_key = other_key;
-	me->change    = change;
-	me->info      = info;
-
-	return me;
+	set_position(x, y);
 }
 
-static void rgb_editor_destroy(rgb_editor *me)
+rgb_editor::~rgb_editor()
 {
-	delete me->color[0];
-	delete me->color[1];
-	delete me->color[2];
-	delete me;
-	me = 0;
+	delete _color_editor[0];
+	_color_editor[0] = 0;
+	delete _color_editor[1];
+	_color_editor[1] = 0;
+	delete _color_editor[2];
+	_color_editor[2] = 0;
 }
 
-static void rgb_editor_set_done(rgb_editor *me, bool done)
+void rgb_editor::set_hidden(bool hidden)
 {
-	me->done = done;
+	_hidden = hidden;
+	_color_editor[0]->set_hidden(hidden);
+	_color_editor[1]->set_hidden(hidden);
+	_color_editor[2]->set_hidden(hidden);
 }
 
-static void rgb_editor_set_hidden(rgb_editor *me, bool hidden)
-{
-	me->hidden = hidden;
-	me->color[0]->set_hidden(hidden);
-	me->color[1]->set_hidden(hidden);
-	me->color[2]->set_hidden(hidden);
-}
-
-static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /* private */
+void rgb_editor::rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info)
 {
 	rgb_editor *me = (rgb_editor *)info;
 
@@ -1211,50 +1211,50 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 	{
 	case 'R':
 	case 'r':
-		if (me->curr != 0)
+		if (me->_current_channel != 0)
 		{
-			me->curr = 0;
+			me->_current_channel = 0;
 			ceditor->set_done(true);
 		}
 		break;
 	case 'G':
 	case 'g':
-		if (me->curr != 1)
+		if (me->_current_channel != 1)
 		{
-			me->curr = 1;
+			me->_current_channel = 1;
 			ceditor->set_done(true);
 		}
 		break;
 
 	case 'B':
 	case 'b':
-		if (me->curr != 2)
+		if (me->_current_channel != 2)
 		{
-			me->curr = 2;
+			me->_current_channel = 2;
 			ceditor->set_done(true);
 		}
 		break;
 
 	case FIK_DELETE:   /* move to next color_editor */
 	case FIK_CTL_ENTER_2:    /*double click rt mouse also! */
-		if (++me->curr > 2)
+		if (++me->_current_channel > 2)
 		{
-			me->curr = 0;
+			me->_current_channel = 0;
 		}
 		ceditor->set_done(true);
 		break;
 
 	case FIK_INSERT:   /* move to prev color_editor */
-		if (--me->curr < 0)
+		if (--me->_current_channel < 0)
 		{
-			me->curr = 2;
+			me->_current_channel = 2;
 		}
 		ceditor->set_done(true);
 		break;
 
 	default:
-		me->other_key(key, me, me->info);
-		if (me->done)
+		me->_other_key(key, me, me->_info);
+		if (me->_done)
 		{
 			ceditor->set_done(true);
 		}
@@ -1266,60 +1266,60 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 #   pragma argsused   /* kills "arg not used" warning */
 #endif
 
-static void rgb_editor_change(color_editor *ceditor, VOIDPTR info) /* private */
+void rgb_editor::rgb_editor_change(color_editor *ceditor, VOIDPTR info)
 {
 	rgb_editor *me = (rgb_editor *)info;
 
 	ceditor = 0; /* just for warning */
-	if (me->pal < g_colors && !is_reserved(me->pal))
+	if (me->_palette_number < g_colors && !is_reserved(me->_palette_number))
 	{
-		set_pal(me->pal, me->color[0]->get_value(),
-			me->color[1]->get_value(), me->color[2]->get_value());
+		set_pal(me->_palette_number, me->_color_editor[0]->get_value(),
+			me->_color_editor[1]->get_value(), me->_color_editor[2]->get_value());
 	}
-	me->change(me, me->info);
+	me->_change(me, me->_info);
 }
 
-static void rgb_editor_set_position(rgb_editor *me, int x, int y)
+void rgb_editor::set_position(int x, int y)
 {
-	me->x = x;
-	me->y = y;
+	_x = x;
+	_y = y;
 
-	me->color[0]->set_position(x + 2, y + 2);
-	me->color[1]->set_position(x + 2, y + 2 + COLOR_EDITOR_DEPTH-1);
-	me->color[2]->set_position(x + 2, y + 2 + COLOR_EDITOR_DEPTH-1 + COLOR_EDITOR_DEPTH-1);
+	_color_editor[0]->set_position(x + 2, y + 2);
+	_color_editor[1]->set_position(x + 2, y + 2 + COLOR_EDITOR_DEPTH-1);
+	_color_editor[2]->set_position(x + 2, y + 2 + COLOR_EDITOR_DEPTH-1 + COLOR_EDITOR_DEPTH-1);
 }
 
-static void rgb_editor_blank_sample_box(rgb_editor *me)
+void rgb_editor::blank_sample_box()
 {
-	if (me->hidden)
+	if (_hidden)
 	{
 		return;
 	}
 
 	s_the_cursor->hide();
-	fill_rectangle(me->x + 2 + COLOR_EDITOR_WIDTH + 1 + 1, me->y + 2 + 1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
+	fill_rectangle(_x + 2 + COLOR_EDITOR_WIDTH + 1 + 1, _y + 2 + 1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
 	s_the_cursor->show();
 }
 
-static void rgb_editor_update(rgb_editor *me)
+void rgb_editor::update()
 {
-	int x1 = me->x + 2 + COLOR_EDITOR_WIDTH + 1 + 1;
-	int y1 = me->y + 2 + 1;
+	int x1 = _x + 2 + COLOR_EDITOR_WIDTH + 1 + 1;
+	int y1 = _y + 2 + 1;
 
-	if (me->hidden)
+	if (_hidden)
 	{
 		return;
 	}
 
 	s_the_cursor->hide();
 
-	if (me->pal >= g_colors)
+	if (_palette_number >= g_colors)
 	{
 		fill_rectangle(x1, y1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
 		draw_diamond(x1 + (RGB_EDITOR_BOX_WIDTH-5)/2, y1 + (RGB_EDITOR_BOX_DEPTH-5)/2, s_fg_color);
 	}
 
-	else if (is_reserved(me->pal))
+	else if (is_reserved(_palette_number))
 	{
 		int x2 = x1 + RGB_EDITOR_BOX_WIDTH - 3;
 		int y2 = y1 + RGB_EDITOR_BOX_DEPTH - 3;
@@ -1330,73 +1330,73 @@ static void rgb_editor_update(rgb_editor *me)
 	}
 	else
 	{
-		fill_rectangle(x1, y1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, me->pal);
+		fill_rectangle(x1, y1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, _palette_number);
 	}
 
-	me->color[0]->draw();
-	me->color[1]->draw();
-	me->color[2]->draw();
+	_color_editor[0]->draw();
+	_color_editor[1]->draw();
+	_color_editor[2]->draw();
 	s_the_cursor->show();
 }
 
-static void rgb_editor_draw(rgb_editor *me)
+void rgb_editor::draw()
 {
-	if (me->hidden)
+	if (_hidden)
 	{
 		return;
 	}
 
 	s_the_cursor->hide();
-	dotted_rectangle(me->x, me->y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
-	fill_rectangle(me->x + 1, me->y + 1, RGB_EDITOR_WIDTH-2, RGB_EDITOR_DEPTH-2, s_bg_color);
-	rectangle(me->x + 1 + COLOR_EDITOR_WIDTH + 2, me->y + 2, RGB_EDITOR_BOX_WIDTH, RGB_EDITOR_BOX_DEPTH, s_fg_color);
-	rgb_editor_update(me);
+	dotted_rectangle(_x, _y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
+	fill_rectangle(_x + 1, _y + 1, RGB_EDITOR_WIDTH-2, RGB_EDITOR_DEPTH-2, s_bg_color);
+	rectangle(_x + 1 + COLOR_EDITOR_WIDTH + 2, _y + 2, RGB_EDITOR_BOX_WIDTH, RGB_EDITOR_BOX_DEPTH, s_fg_color);
+	update();
 	s_the_cursor->show();
 }
 
-static int rgb_editor_edit(rgb_editor *me)
+int rgb_editor::edit()
 {
 	int key = 0;
 
-	me->done = false;
+	_done = false;
 
-	if (!me->hidden)
+	if (!_hidden)
 	{
 		s_the_cursor->hide();
-		rectangle(me->x, me->y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH, s_fg_color);
+		rectangle(_x, _y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH, s_fg_color);
 		s_the_cursor->show();
 	}
 
-	while (!me->done)
+	while (!_done)
 	{
-		key = me->color[me->curr]->edit();
+		key = _color_editor[_current_channel]->edit();
 	}
 
-	if (!me->hidden)
+	if (!_hidden)
 	{
 		s_the_cursor->hide();
-		dotted_rectangle(me->x, me->y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
+		dotted_rectangle(_x, _y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
 		s_the_cursor->show();
 	}
 
 	return key;
 }
 
-static void rgb_editor_set_rgb(rgb_editor *me, int pal, PALENTRY *rgb)
+void rgb_editor::set_rgb(int pal, PALENTRY *rgb)
 {
-	me->pal = pal;
-	me->color[0]->set_value(rgb->red);
-	me->color[1]->set_value(rgb->green);
-	me->color[2]->set_value(rgb->blue);
+	_palette_number = pal;
+	_color_editor[0]->set_value(rgb->red);
+	_color_editor[1]->set_value(rgb->green);
+	_color_editor[2]->set_value(rgb->blue);
 }
 
-static PALENTRY rgb_editor_get_rgb(rgb_editor *me)
+PALENTRY rgb_editor::get_rgb()
 {
 	PALENTRY pal;
 
-	pal.red   = (BYTE)me->color[0]->get_value();
-	pal.green = (BYTE)me->color[1]->get_value();
-	pal.blue  = (BYTE)me->color[2]->get_value();
+	pal.red   = (BYTE)_color_editor[0]->get_value();
+	pal.green = (BYTE)_color_editor[1]->get_value();
+	pal.blue  = (BYTE)_color_editor[2]->get_value();
 
 	return pal;
 }
@@ -1615,10 +1615,10 @@ static void pal_table_undo_process(pal_table *me, int delta)   /* undo/redo comm
 
 			pal_table_update_dac(me);
 
-			rgb_editor_set_rgb(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-			rgb_editor_set_rgb(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-			rgb_editor_update(me->rgb[0]);
-			rgb_editor_update(me->rgb[1]);
+			me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+			me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+			me->rgb[0]->update();
+			me->rgb[1]->update();
 			break;
 		}
 
@@ -1769,8 +1769,8 @@ static void pal_table_draw(pal_table *me)
 		driver_display_string(me->x + center, me->y + RGB_EDITOR_DEPTH/2-6, s_fg_color, s_bg_color, TITLE);
 	}
 
-	rgb_editor_draw(me->rgb[0]);
-	rgb_editor_draw(me->rgb[1]);
+	me->rgb[0]->draw();
+	me->rgb[1]->draw();
 
 	for (pal = 0; pal < 256; pal++)
 	{
@@ -1841,8 +1841,8 @@ static bool pal_table_set_current(pal_table *me, int which, int curr)
 		pal_table_highlight_pal(me, me->top,    -1);
 		pal_table_highlight_pal(me, me->bottom, -1);
 		pal_table_highlight_pal(me, me->curr[me->active], s_fg_color);
-		rgb_editor_set_rgb(me->rgb[which], me->curr[which], &me->fs_color);
-		rgb_editor_update(me->rgb[which]);
+		me->rgb[which]->set_rgb(me->curr[which], &me->fs_color);
+		me->rgb[which]->update();
 		pal_table_update_dac(me);
 		s_the_cursor->show();
 		return true;
@@ -1856,18 +1856,18 @@ static bool pal_table_set_current(pal_table *me, int which, int curr)
 	}
 	pal_table_highlight_pal(me, me->curr[me->active], s_fg_color);
 
-	rgb_editor_set_rgb(me->rgb[which], me->curr[which], &(me->pal[me->curr[which]]));
+	me->rgb[which]->set_rgb(me->curr[which], &(me->pal[me->curr[which]]));
 
 	if (redraw)
 	{
 		int other = (which == 0) ? 1 : 0;
-		rgb_editor_set_rgb(me->rgb[other], me->curr[other], &(me->pal[me->curr[other]]));
-		rgb_editor_update(me->rgb[0]);
-		rgb_editor_update(me->rgb[1]);
+		me->rgb[other]->set_rgb(me->curr[other], &(me->pal[me->curr[other]]));
+		me->rgb[0]->update();
+		me->rgb[1]->update();
 	}
 	else
 	{
-		rgb_editor_update(me->rgb[which]);
+		me->rgb[which]->update();
 	}
 
 	if (me->exclude)
@@ -2042,8 +2042,8 @@ static void pal_table_set_position(pal_table *me, int x, int y)
 	me->x = x;
 	me->y = y;
 
-	rgb_editor_set_position(me->rgb[0], x + 2, y + 2);
-	rgb_editor_set_position(me->rgb[1], x + width-2-RGB_EDITOR_WIDTH, y + 2);
+	me->rgb[0]->set_position(x + 2, y + 2);
+	me->rgb[1]->set_position(x + width-2-RGB_EDITOR_WIDTH, y + 2);
 }
 
 
@@ -2156,7 +2156,7 @@ static void pal_table_change(rgb_editor *rgb, VOIDPTR info)
 
 	if (me->freestyle)
 	{
-		me->fs_color = rgb_editor_get_rgb(rgb);
+		me->fs_color = rgb->get_rgb();
 		pal_table_update_dac(me);
 		return;
 	}
@@ -2167,18 +2167,18 @@ static void pal_table_change(rgb_editor *rgb, VOIDPTR info)
 		me->curr_changed = true;
 	}
 
-	me->pal[pnum] = rgb_editor_get_rgb(rgb);
+	me->pal[pnum] = rgb->get_rgb();
 
 	if (me->curr[0] == me->curr[1])
 	{
 		int      other = me->active == 0 ? 1 : 0;
 		PALENTRY color;
 
-		color = rgb_editor_get_rgb(me->rgb[me->active]);
-		rgb_editor_set_rgb(me->rgb[other], me->curr[other], &color);
+		color = me->rgb[me->active]->get_rgb();
+		me->rgb[other]->set_rgb(me->curr[other], &color);
 
 		s_the_cursor->hide();
-		rgb_editor_update(me->rgb[other]);
+		me->rgb[other]->update();
 		s_the_cursor->show();
 	}
 }
@@ -2250,10 +2250,10 @@ static void pal_table_rotate(pal_table *me, int dir, int lo, int hi)
 
 	/* update the editors. */
 
-	rgb_editor_set_rgb(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-	rgb_editor_set_rgb(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-	rgb_editor_update(me->rgb[0]);
-	rgb_editor_update(me->rgb[1]);
+	me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+	me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+	me->rgb[0]->update();
+	me->rgb[1]->update();
 
 	s_the_cursor->show();
 }
@@ -2290,7 +2290,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		pal_table_draw(me);
 		s_the_cursor->show();
 
-		rgb_editor_set_done(me->rgb[me->active], true);
+		me->rgb[me->active]->set_done(true);
 
 		if (me->auto_select)
 		{
@@ -2323,7 +2323,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 	case FIK_ESC:
 		me->done = true;
-		rgb_editor_set_done(rgb, true);
+		rgb->set_done(true);
 		break;
 
 	case ' ':     /* select the other palette register */
@@ -2340,7 +2340,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			pal_table_update_dac(me);
 		}
-		rgb_editor_set_done(rgb, true);
+		rgb->set_done(true);
 		break;
 
 	case FIK_ENTER:    /* set register to color under cursor.  useful when not */
@@ -2358,7 +2358,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			pal_table_update_dac(me);
 		}
 
-		rgb_editor_set_done(rgb, true);
+		rgb->set_done(true);
 		break;
 
 	case 'D':    /* copy (Duplicate?) color in inactive to color in active */
@@ -2368,11 +2368,11 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			int b = (a == 0) ? 1 : 0;
 			PALENTRY t;
 
-			t = rgb_editor_get_rgb(me->rgb[b]);
+			t = me->rgb[b]->get_rgb();
 			s_the_cursor->hide();
 
-			rgb_editor_set_rgb(me->rgb[a], me->curr[a], &t);
-			rgb_editor_update(me->rgb[a]);
+			me->rgb[a]->set_rgb(me->curr[a], &t);
+			me->rgb[a]->update();
 			pal_table_change(me->rgb[a], me);
 			pal_table_update_dac(me);
 
@@ -2570,10 +2570,10 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 			if (!me->hidden)
 			{
-				rgb_editor_blank_sample_box(me->rgb[0]);
-				rgb_editor_blank_sample_box(me->rgb[1]);
-				rgb_editor_set_hidden(me->rgb[0], true);
-				rgb_editor_set_hidden(me->rgb[1], true);
+				me->rgb[0]->blank_sample_box();
+				me->rgb[1]->blank_sample_box();
+				me->rgb[0]->set_hidden(true);
+				me->rgb[1]->set_hidden(true);
 			}
 
 			do
@@ -2596,10 +2596,10 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 			if (!me->hidden)
 			{
-				rgb_editor_set_hidden(me->rgb[0], false);
-				rgb_editor_set_hidden(me->rgb[1], false);
-				rgb_editor_update(me->rgb[0]);
-				rgb_editor_update(me->rgb[1]);
+				me->rgb[0]->set_hidden(false);
+				me->rgb[1]->set_hidden(false);
+				me->rgb[0]->update();
+				me->rgb[1]->update();
 			}
 
 			if (diff != 0)
@@ -2637,7 +2637,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			s_the_cursor->show();
 		}
 
-		rgb_editor_set_done(me->rgb[me->active], true);
+		me->rgb[me->active]->set_done(true);
 		break;
 
 	case 'O':    /* set rotate_lo and rotate_hi to editors */
@@ -2675,7 +2675,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 				pal_table_set_current(me, -1, 0);
 				s_the_cursor->show();
-				rgb_editor_set_done(me->rgb[me->active], true);
+				me->rgb[me->active]->set_done(true);
 			}
 			else
 			{
@@ -2716,10 +2716,10 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		get_pal_range(0, 256, me->pal);
 #endif
 		pal_table_update_dac(me);
-		rgb_editor_set_rgb(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-		rgb_editor_update(me->rgb[0]);
-		rgb_editor_set_rgb(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-		rgb_editor_update(me->rgb[1]);
+		me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+		me->rgb[0]->update();
+		me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+		me->rgb[1]->update();
 		break;
 
 	case 'S':     /* save a .map palette */
@@ -2751,8 +2751,8 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			pal_table_update_dac(me);
 			if (!oldhidden)
 			{
-				rgb_editor_set_rgb(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-				rgb_editor_set_rgb(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
+				me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+				me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
 				pal_table_hide(me, rgb, false);
 			}
 			s_the_cursor->show();
@@ -2826,10 +2826,10 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		}
 
 		pal_table_update_dac(me);
-		rgb_editor_set_rgb(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-		rgb_editor_update(me->rgb[0]);
-		rgb_editor_set_rgb(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-		rgb_editor_update(me->rgb[1]);
+		me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+		me->rgb[0]->update();
+		me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+		me->rgb[1]->update();
 		break;
 
 	case 'N':   /* convert to negative color */
@@ -2865,10 +2865,10 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		}
 
 		pal_table_update_dac(me);
-		rgb_editor_set_rgb(me->rgb[0], me->curr[0], &(me->pal[me->curr[0]]));
-		rgb_editor_update(me->rgb[0]);
-		rgb_editor_set_rgb(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
-		rgb_editor_update(me->rgb[1]);
+		me->rgb[0]->set_rgb(me->curr[0], &(me->pal[me->curr[0]]));
+		me->rgb[0]->update();
+		me->rgb[1]->set_rgb(me->curr[1], &(me->pal[me->curr[1]]));
+		me->rgb[1]->update();
 		break;
 
 	case 'U':     /* Undo */
@@ -2908,9 +2908,9 @@ static pal_table *pal_table_new()
 		me->save_pal[ctr] = new PALENTRY[256];
 	}
 
-	me->rgb[0] = rgb_editor_new(0, 0, pal_table_other_key,
+	me->rgb[0] = new rgb_editor(0, 0, pal_table_other_key,
 						pal_table_change, me);
-	me->rgb[1] = rgb_editor_new(0, 0, pal_table_other_key,
+	me->rgb[1] = new rgb_editor(0, 0, pal_table_other_key,
 						pal_table_change, me);
 
 	me->movebox = new move_box(0, 0, 0, PALTABLE_PALX + 1, PALTABLE_PALY + 1);
@@ -2937,8 +2937,8 @@ static pal_table *pal_table_new()
 	me->curr_changed = false;
 	me->num_redo     = 0;
 
-	rgb_editor_set_rgb(me->rgb[0], me->curr[0], &me->pal[me->curr[0]]);
-	rgb_editor_set_rgb(me->rgb[1], me->curr[1], &me->pal[me->curr[0]]);
+	me->rgb[0]->set_rgb(me->curr[0], &me->pal[me->curr[0]]);
+	me->rgb[1]->set_rgb(me->curr[1], &me->pal[me->curr[0]]);
 
 	pal_table_set_position(me, 0, 0);
 	csize = ((g_screen_height-(PALTABLE_PALY + 1 + 1))/2)/16;
@@ -2956,8 +2956,8 @@ static pal_table *pal_table_new()
 static void pal_table_set_hidden(pal_table *me, bool hidden)
 {
 	me->hidden = hidden;
-	rgb_editor_set_hidden(me->rgb[0], hidden);
-	rgb_editor_set_hidden(me->rgb[1], hidden);
+	me->rgb[0]->set_hidden(hidden);
+	me->rgb[1]->set_hidden(hidden);
 	pal_table_update_dac(me);
 }
 
@@ -2988,7 +2988,7 @@ static void pal_table_hide(pal_table *me, rgb_editor *rgb, bool hidden)
 		{
 			pal_table_set_current(me, me->active, pal_table_get_cursor_color(me));
 		}
-		rgb_editor_set_done(rgb, true);
+		rgb->set_done(true);
 	}
 }
 
@@ -3016,8 +3016,8 @@ static void pal_table_destroy(pal_table *me)
 		me->save_pal[i] = 0;
 	}
 
-	rgb_editor_destroy(me->rgb[0]);
-	rgb_editor_destroy(me->rgb[1]);
+	delete me->rgb[0];
+	delete me->rgb[1];
 	delete me->movebox;
 	delete me;
 	me = 0;
@@ -3038,8 +3038,8 @@ static void pal_table_process(pal_table *me)
 
 	pal_table_update_dac(me);
 
-	rgb_editor_set_rgb(me->rgb[0], me->curr[0], &me->pal[me->curr[0]]);
-	rgb_editor_set_rgb(me->rgb[1], me->curr[1], &me->pal[me->curr[0]]);
+	me->rgb[0]->set_rgb(me->curr[0], &me->pal[me->curr[0]]);
+	me->rgb[1]->set_rgb(me->curr[1], &me->pal[me->curr[0]]);
 
 	if (!me->hidden)
 	{
@@ -3075,7 +3075,7 @@ static void pal_table_process(pal_table *me)
 
 	while (!me->done)
 	{
-		rgb_editor_edit(me->rgb[me->active]);
+		me->rgb[me->active]->edit();
 	}
 
 	s_the_cursor->hide();
