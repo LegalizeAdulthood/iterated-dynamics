@@ -33,9 +33,6 @@ extern void split_path(const std::string &file_template, char *drive, char *dir,
 extern void split_path(const char *file_template, char *drive, char *dir, char *filename, char *extension);
 extern void split_path(const char *file_template, char *drive, std::string &dir, char *filename, char *extension);
 extern bool is_a_directory(const char *s);
-extern int get_a_filename(const char *hdg, char *file_template, char *flname);
-extern int get_a_filename(const char *hdg, char *file_template, std::string &filename);
-extern int get_a_filename(const char *hdg, std::string &file_template, std::string &filename);
 extern int dir_remove(const std::string &dir, const std::string &filename);
 extern int dir_remove(const fs::path &dir, const std::string &filename);
 extern FILE *dir_fopen(const char *dir, const char *filename, const char *mode);

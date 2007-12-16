@@ -274,3 +274,7 @@ int g_show_dot = 0;
 long g_color_iter = 0;
 int g_orbit_index = 0;
 void set_pixel_calc_functions() {}
+int filename_speedstr(int row, int col, int vid, char *speedstring, int speed_match)
+{ return 0; }
+int check_f6_key(int curkey, int)
+{ return 0; }

@@ -42,26 +42,16 @@
 #include "SoundState.h"
 #include "UIChoices.h"
 #include "MathUtil.h"
-
-/* speed key state values */
-enum SpeedStateType
-{
-	SPEEDSTATE_MATCHING = 0,		/* string matches list - speed key mode */
-	SPEEDSTATE_TEMPLATE = -2,		/* wild cards present - buiding template */
-	SPEEDSTATE_SEARCH_PATH = -3		/* no match - building path search name */
-};
+#include "FileNameGetter.h"
 
 #define   FILEATTR       0x37      /* File attributes; select all but volume labels */
 #define   HIDDEN         2
 #define   SYSTEM         4
 #define   SUBDIR         16
-#define   MAXNUMFILES    2977L
 
-static  int check_f6_key(int curkey, int choice);
-static  int filename_speedstr(int, int, int, char *, int);
 static  int get_screen_corners();
 
-static int s_speed_state;
+int g_speed_state;
 
 static int calculation_mode()
 {
@@ -901,7 +891,7 @@ int get_starfield_params()
 	return 0;
 }
 
-static char *masks[] = {"*.pot", "*.gif"};
+char *g_masks[] = {"*.pot", "*.gif"};
 
 int get_random_dot_stereogram_parameters()
 {
@@ -995,7 +985,7 @@ int get_random_dot_stereogram_parameters()
 			}
 			if (g_image_map && !reuse)
 			{
-				if (get_a_filename("Select an Imagemap File", masks[1], g_stereo_map_name))
+				if (get_a_filename("Select an Imagemap File", std::string(g_masks[1]), g_stereo_map_name))
 				{
 					continue;
 				}
@@ -1152,13 +1142,6 @@ void heap_sort(void *ra1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, V
 }
 #endif
 
-struct CHOICE
-{
-	char name[13];
-	char full_name[FILE_MAX_PATH];
-	char type;
-};
-
 int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 {
 	char **choice1 = (char **) arg1;
@@ -1167,381 +1150,19 @@ int lccompare(VOIDPTR arg1, VOIDPTR arg2) /* for sort */
 	return stricmp(*choice1, *choice2);
 }
 
-int get_a_filename(const char *hdg, char *file_template, std::string &filename)
+int get_a_filename(const std::string &hdg, char *file_template, char *flname)
 {
-	char buffer[FILE_MAX_PATH];
-	strcpy(buffer, filename.c_str());
-	int result = get_a_filename(hdg, file_template, buffer);
-	filename = buffer;
+	std::string fileTemplate = file_template;
+	std::string fileName = flname;
+	int result = FileNameGetter(hdg, fileTemplate, fileName).Execute();
+	strcpy(file_template, fileTemplate.c_str());
+	strcpy(flname, fileName.c_str());
 	return result;
 }
 
-int get_a_filename(const char *hdg, std::string &file_template, std::string &filename)
+int get_a_filename(const std::string &heading, std::string &fileTemplate, std::string &filename)
 {
-	char buffer[FILE_MAX_PATH];
-	strcpy(buffer, file_template.c_str());
-	int result = get_a_filename(hdg, buffer, filename);
-	file_template = buffer;
-	return result;
-}
-
-int get_a_filename(const char *hdg, char *file_template, char *flname)
-{
-	/* if getting an RDS image map */
-	char instr[80];
-	int masklen;
-	char speedstr[81];
-	char tmpmask[FILE_MAX_PATH];   /* used to locate next file in list */
-	char old_flname[FILE_MAX_PATH];
-	int i;
-	int j;
-	int out;
-	int retried;
-	/* Only the first 13 characters of file names are displayed... */
-	CHOICE storage[MAXNUMFILES];
-	CHOICE *choices[MAXNUMFILES];
-	int attributes[MAXNUMFILES];
-	int filecount;   /* how many files */
-	int dircount;    /* how many directories */
-	int notroot;     /* not the root directory */
-	char drive[FILE_MAX_DRIVE];
-	char dir[FILE_MAX_DIR];
-	char fname[FILE_MAX_FNAME];
-	char ext[FILE_MAX_EXT];
-	static int numtemplates = 1;
-	static int dosort = 1;
-
-	bool rds = (g_stereo_map_name == flname);
-	for (i = 0; i < MAXNUMFILES; i++)
-	{
-		attributes[i] = 1;
-		choices[i] = &storage[i];
-	}
-	/* save filename */
-	strcpy(old_flname, flname);
-
-restart:  /* return here if template or directory changes */
-	tmpmask[0] = 0;
-	if (flname[0] == 0)
-	{
-		strcpy(flname, DOTSLASH);
-	}
-	split_path(flname, drive, dir, fname, ext);
-	char filename[FILE_MAX_PATH];
-	make_path(filename, ""   , "" , fname, ext);
-	retried = 0;
-
-retry_dir:
-	if (dir[0] == 0)
-	{
-		strcpy(dir, ".");
-	}
-	expand_dirname(dir, drive);
-	make_path(tmpmask, drive, dir, "", "");
-	ensure_slash_on_directory(tmpmask);
-	if (retried == 0 && strcmp(dir, SLASH) && strcmp(dir, DOTSLASH))
-	{
-		j = int(strlen(tmpmask)) - 1;
-		tmpmask[j] = 0; /* strip trailing \ */
-		if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
-			|| fr_find_first(tmpmask) != 0
-			|| (g_dta.attribute & SUBDIR) == 0)
-		{
-			strcpy(dir, DOTSLASH);
-			++retried;
-			goto retry_dir;
-		}
-		tmpmask[j] = SLASHC;
-	}
-	if (file_template[0])
-	{
-		numtemplates = 1;
-		split_path(file_template, 0, 0, fname, ext);
-	}
-	else
-	{
-		numtemplates = sizeof(masks)/sizeof(masks[0]);
-	}
-	filecount = -1;
-	dircount  = 0;
-	notroot   = 0;
-	j = 0;
-	masklen = int(strlen(tmpmask));
-	strcat(tmpmask, "*.*");
-	out = fr_find_first(tmpmask);
-	while (out == 0 && filecount < MAXNUMFILES)
-	{
-		if ((g_dta.attribute & SUBDIR) && strcmp(g_dta.filename.c_str(), "."))
-		{
-			if (strcmp(g_dta.filename.c_str(), ".."))
-			{
-				ensure_slash_on_directory(g_dta.filename);
-			}
-			strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
-			choices[filecount]->name[12] = 0;
-			choices[filecount]->type = 1;
-			strcpy(choices[filecount]->full_name, g_dta.filename.c_str());
-			dircount++;
-			if (strcmp(g_dta.filename.c_str(), "..") == 0)
-			{
-				notroot = 1;
-			}
-		}
-		out = fr_find_next();
-	}
-	tmpmask[masklen] = 0;
-	if (file_template[0])
-	{
-		make_path(tmpmask, drive, dir, fname, ext);
-	}
-	do
-	{
-		if (numtemplates > 1)
-		{
-			strcpy(&(tmpmask[masklen]), masks[j]);
-		}
-		out = fr_find_first(tmpmask);
-		while (out == 0 && filecount < MAXNUMFILES)
-		{
-			if (!(g_dta.attribute & SUBDIR))
-			{
-				if (rds)
-				{
-					put_string_center(2, 0, 80, C_GENERAL_INPUT, g_dta.filename.c_str());
-
-					split_path(g_dta.filename, 0, 0, fname, ext);
-					/* just using speedstr as a handy buffer */
-					make_path(speedstr, drive, dir, fname, ext);
-					strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
-					choices[filecount]->type = 0;
-				}
-				else
-				{
-					strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
-					choices[filecount]->type = 0;
-					strcpy(choices[filecount]->full_name, g_dta.filename.c_str());
-				}
-			}
-			out = fr_find_next();
-		}
-	}
-	while (++j < numtemplates);
-	if (++filecount == 0)
-	{
-		strcpy(choices[filecount]->name, "*nofiles*");
-		choices[filecount]->type = 0;
-		++filecount;
-	}
-
-	strcpy(instr, "Press " FK_F6 " for default directory, " FK_F4 " to toggle sort ");
-	if (dosort)
-	{
-		strcat(instr, "off");
-		shell_sort(&choices, filecount, sizeof(CHOICE *), lccompare); /* sort file list */
-	}
-	else
-	{
-		strcat(instr, "on");
-	}
-	if (notroot == 0 && dir[0] && dir[0] != SLASHC) /* must be in root directory */
-	{
-		split_path(tmpmask, drive, dir, fname, ext);
-		strcpy(dir, SLASH);
-		make_path(tmpmask, drive, dir, fname, ext);
-	}
-	if (numtemplates > 1)
-	{
-		strcat(tmpmask, " ");
-		strcat(tmpmask, masks[0]);
-	}
-	strcpy(speedstr, filename);
-	if (speedstr[0] == 0)
-	{
-		for (i = 0; i < filecount; i++) /* find first file */
-		{
-			if (choices[i]->type == 0)
-			{
-				break;
-			}
-		}
-		if (i >= filecount)
-		{
-			i = 0;
-		}
-	}
-
-	std::string heading = str(boost::format("%s\nTemplate: %s") % hdg % tmpmask);
-	i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-		heading.c_str(), 0, instr, filecount, (char **) choices,
-		attributes, 5, 99, 12, i, 0, speedstr, filename_speedstr, check_f6_key);
-	if (i == -FIK_F4)
-	{
-		dosort = 1 - dosort;
-		goto restart;
-	}
-	if (i == -FIK_F6)
-	{
-		static int lastdir = 0;
-		if (lastdir == 0)
-		{
-			strcpy(dir, g_fract_dir1.c_str());
-		}
-		else
-		{
-			strcpy(dir, g_fract_dir2.c_str());
-		}
-		ensure_slash_on_directory(dir);
-		make_path(flname, drive, dir, "", "");
-		lastdir = 1 - lastdir;
-		goto restart;
-	}
-	if (i < 0)
-	{
-		/* restore filename */
-		strcpy(flname, old_flname);
-		return -1;
-	}
-	if (speedstr[0] == 0 || s_speed_state == SPEEDSTATE_MATCHING)
-	{
-		if (choices[i]->type)
-		{
-			if (strcmp(choices[i]->name, "..") == 0) /* go up a directory */
-			{
-				if (strcmp(dir, DOTSLASH) == 0)
-				{
-					strcpy(dir, DOTDOTSLASH);
-				}
-				else
-				{
-					char *s = strrchr(dir, SLASHC);
-					if (s != 0) /* trailing slash */
-					{
-						*s = 0;
-						s = strrchr(dir, SLASHC);
-						if (s != 0)
-						{
-							*(s + 1) = 0;
-						}
-					}
-				}
-			}
-			else  /* go down a directory */
-			{
-				strcat(dir, choices[i]->full_name);
-			}
-			ensure_slash_on_directory(dir);
-			make_path(flname, drive, dir, "", "");
-			goto restart;
-		}
-		split_path(choices[i]->full_name, 0, 0, fname, ext);
-		make_path(flname, drive, dir, fname, ext);
-	}
-	else
-	{
-		if (s_speed_state == SPEEDSTATE_SEARCH_PATH
-			&& strchr(speedstr, '*') == 0 && strchr(speedstr, '?') == 0
-			&& ((fr_find_first(speedstr) == 0
-			&& (g_dta.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) /* it is a directory */
-		{
-			s_speed_state = SPEEDSTATE_TEMPLATE;
-		}
-
-		if (s_speed_state == SPEEDSTATE_TEMPLATE)
-		{
-			/* extract from tempstr the pathname and template information,
-				being careful not to overwrite drive and directory if not
-				newly specified */
-			char drive1[FILE_MAX_DRIVE];
-			char dir1[FILE_MAX_DIR];
-			char fname1[FILE_MAX_FNAME];
-			char ext1[FILE_MAX_EXT];
-			split_path(speedstr, drive1, dir1, fname1, ext1);
-			if (drive1[0])
-			{
-				strcpy(drive, drive1);
-			}
-			if (dir1[0])
-			{
-				strcpy(dir, dir1);
-			}
-			make_path(flname, drive, dir, fname1, ext1);
-			if (strchr(fname1, '*') || strchr(fname1, '?') ||
-				strchr(ext1,   '*') || strchr(ext1,   '?'))
-			{
-				// TODO: can't do this when file_template is constant string
-				// like "*.frm"!!!
-				make_path(file_template, "", "", fname1, ext1);
-			}
-			else if (is_a_directory(flname))
-			{
-				ensure_slash_on_directory(flname);
-			}
-			goto restart;
-		}
-		else /* speedstate == SPEEDSTATE_SEARCH_PATH */
-		{
-			char fullpath[FILE_MAX_DIR];
-			find_path(speedstr, fullpath);
-			if (fullpath[0])
-			{
-				strcpy(flname, fullpath);
-			}
-			else
-			{  /* failed, make diagnostic useful: */
-				strcpy(flname, speedstr);
-				if (strchr(speedstr, SLASHC) == 0)
-				{
-					split_path(speedstr, 0, 0, fname, ext);
-					make_path(flname, drive, dir, fname, ext);
-				}
-			}
-		}
-	}
-	g_browse_state.make_path(fname, ext);
-	return 0;
-}
-
-#ifdef __CLINT__
-#pragma argsused
-#endif
-
-static int check_f6_key(int curkey, int choice)
-{ /* choice is dummy used by other routines called by full_screen_choice() */
-	choice = 0; /* to suppress warning only */
-	if (curkey == FIK_F6)
-	{
-		return -FIK_F6;
-	}
-	else if (curkey == FIK_F4)
-	{
-		return -FIK_F4;
-	}
-	return 0;
-}
-
-static int filename_speedstr(int row, int col, int vid,
-							char *speedstring, int speed_match)
-{
-	char *prompt;
-	if (strchr(speedstring, ':')
-		|| strchr(speedstring, '*') || strchr(speedstring, '*')
-		|| strchr(speedstring, '?'))
-	{
-		s_speed_state = SPEEDSTATE_TEMPLATE;  /* template */
-		prompt = "File Template";
-	}
-	else if (speed_match)
-	{
-		s_speed_state = SPEEDSTATE_SEARCH_PATH; /* does not match list */
-		prompt = "Search Path for";
-	}
-	else
-	{
-		s_speed_state = SPEEDSTATE_MATCHING;
-		prompt = "Speed key string";
-	}
-	driver_put_string(row, col, vid, prompt);
-	return int(strlen(prompt));
+	return FileNameGetter(heading, fileTemplate, filename).Execute();
 }
 
 /*
