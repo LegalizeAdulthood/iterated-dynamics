@@ -539,7 +539,7 @@ skip_UI:
 			input_file.open(g_command_file.c_str(), std::ios::in);
 		}
 		s_parameter_file.open(m_out_name, std::ios::out);
-		if (!s_parameter_file)
+		if (!s_parameter_file.is_open())
 		{
 			stop_message(STOPMSG_NORMAL, "Can't create " + out_name());
 			if (got_input_file)
@@ -585,7 +585,7 @@ skip_UI:
 			m_have_3rd = (g_escape_time_state.m_grid_fp.x_min() != g_escape_time_state.m_grid_fp.x_3rd()
 					|| g_escape_time_state.m_grid_fp.y_min() != g_escape_time_state.m_grid_fp.y_3rd());
 			fpbat.open((g_work_dir / "makemig.bat").string().c_str());
-			if (!fpbat)
+			if (!fpbat.is_open())
 			{
 				m_xm = 0;
 				m_ym = 0;

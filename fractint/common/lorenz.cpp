@@ -3105,7 +3105,7 @@ static bool open_orbit_save(std::ofstream &stream)
 	if (g_orbit_save & ORBITSAVE_RAW)
 	{
 		stream.open("orbits.raw.txt");
-		if (stream)
+		if (stream.is_open())
 		{
 			stream << "pointlist x y z color\n";
 			return true;

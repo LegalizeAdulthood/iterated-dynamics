@@ -383,7 +383,7 @@ start:
 SlideType SlideShowImpl::Start()
 {
 	_slideFile.open(_autoKeyFile.c_str(), std::ios::in);
-	if (_slideFile == 0)
+	if (!_slideFile.is_open())
 	{
 		_mode = SLIDES_OFF;
 	}
@@ -407,7 +407,7 @@ void SlideShowImpl::Record(int key)
 	if (_slideFile == 0)
 	{
 		_slideFile.open(_autoKeyFile.c_str(), std::ios::out);
-		if (!_slideFile)
+		if (!_slideFile.is_open())
 		{
 			return;
 		}

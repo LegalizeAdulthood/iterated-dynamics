@@ -2299,7 +2299,7 @@ int check_orbit_name(char *orbitname)
 bool gfe_file_open(const char *filename)
 {
 	s_gfe_file.open(filename, std::ios::in | std::ios::binary);
-	return s_gfe_file != 0;
+	return s_gfe_file.is_open();
 }
 
 long get_file_entry(int type, const char *title, char *fmask,

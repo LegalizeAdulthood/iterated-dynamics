@@ -66,11 +66,11 @@
 int print_stop_message(int x, const char *msg)
 {
 	static std::ofstream fp;
-	if (!fp)
+	if (!fp.is_open())
 	{
 		fp.open("fpdebug.txt", std::ios_base::out);
 	}
-	if (fp)
+	if (fp.is_open())
 	{
 		fp << msg;
 		fp.flush();

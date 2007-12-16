@@ -3200,7 +3200,7 @@ static void debug_dump(std::ofstream &stream, const char *message)
 }
 static void debug_dump(std::ofstream &stream, const boost::format &message)
 {
-	if (stream)
+	if (stream.is_open())
 	{
 		stream << message;
 	}
@@ -3830,7 +3830,7 @@ const char *Formula::PrepareFormula(std::ifstream &file, bool report_bad_symmetr
 	if (DEBUGMODE_DISK_MESSAGES == g_debug_mode)
 	{
 		debug_fp.open("debugfrm.txt", std::ios_base::out | std::ios_base::ate);
-		if (debug_fp)
+		if (debug_fp.is_open())
 		{
 			debug_fp << g_formula_state.get_formula() << "\n";
 			if (g_symmetry != SYMMETRY_NONE)

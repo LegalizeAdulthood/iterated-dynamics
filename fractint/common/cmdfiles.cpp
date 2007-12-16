@@ -258,7 +258,7 @@ void command_files(int argc, char **argv)
 	if (tempstring[0] != 0)              /* found it! */
 	{
 		initfile.open(tempstring);
-		if (initfile)
+		if (initfile.is_open())
 		{
 			command_file(initfile, CMDFILE_SSTOOLS_INI);           /* process it */
 		}
@@ -317,7 +317,7 @@ void command_files(int argc, char **argv)
 			else  /* @filename */
 			{
 				initfile.open(&curarg[1]);
-				if (!initfile)
+				if (!initfile.is_open())
 				{
 					arg_error(curarg);
 				}
