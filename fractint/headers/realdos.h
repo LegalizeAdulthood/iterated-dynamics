@@ -18,6 +18,14 @@ extern void blank_rows(int, int, int);
 extern int text_temp_message(const char *message);
 extern int text_temp_message(const std::string &message);
 extern int full_screen_choice(int options,
+	const std::string &heading, const std::string &heading2,
+	const std::string &instructions,
+	int num_choices, char **choices, const int *attributes,
+	int box_width, int box_depth, int column_width, int current,
+	void (*format_item)(int item, char *text),
+	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
+	int (*check_key)(int, int));
+extern int full_screen_choice(int options,
 	const char *heading, const char *heading2, const char *instructions,
 	int num_choices, char **choices, const int *attributes,
 	int box_width, int box_depth, int column_width, int current,
