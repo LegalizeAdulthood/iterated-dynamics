@@ -1613,23 +1613,20 @@ void pal_table::undo_process(int delta)   /* undo/redo common code */
 
 void pal_table::undo()
 {
-	int  size;
-	long pos;
-
 	if (ftell(_undo_file) <= 0)   /* at beginning of file? */
 	{                                  /*   nothing to undo -- exit */
 		return;
 	}
 
 	fseek(_undo_file, -int(sizeof(int)), SEEK_CUR);  /* go back to get size */
-	size = getw(_undo_file);
+	int size = getw(_undo_file);
 	fseek(_undo_file, -size, SEEK_CUR);   /* go to start of undo */
 
 #ifdef DEBUG_UNDO
 	mprintf("%6ld Undo:", ftell(undo_file));
 #endif
 
-	pos = ftell(_undo_file);
+	long pos = ftell(_undo_file);
 	undo_process(-1);
 	fseek(_undo_file, pos, SEEK_SET);   /* go to start of me g_block */
 	++_num_redo;
@@ -1656,14 +1653,13 @@ void pal_table::redo()
 
 void pal_table::draw_status(bool stripe_mode)
 {
-	int color;
 	int width = 1 + (_csize*16) + 1 + 1;
 
 	if (!_hidden && (width - (RGB_EDITOR_WIDTH*2 + 4) >= STATUS_LEN*8))
 	{
 		int x = _x + 2 + RGB_EDITOR_WIDTH;
 		int y = _y + PALTABLE_PALY - 10;
-		color = get_cursor_color();
+		int color = get_cursor_color();
 		if (color < 0 || color >= g_colors) /* hmm, the border returns -1 */
 		{
 			color = 0;
@@ -1687,10 +1683,6 @@ void pal_table::draw_status(bool stripe_mode)
 
 void pal_table::highlight_pal(int pnum, int color)
 {
-	int x = _x + PALTABLE_PALX + (pnum % 16) * _csize;
-	int y = _y + PALTABLE_PALY + (pnum/16) * _csize;
-	int size = _csize;
-
 	if (_hidden)
 	{
 		return;
@@ -1698,13 +1690,15 @@ void pal_table::highlight_pal(int pnum, int color)
 
 	cursor::cursor_hide();
 
+	int x = _x + PALTABLE_PALX + (pnum % 16)*_csize;
+	int y = _y + PALTABLE_PALY + (pnum/16)*_csize;
 	if (color < 0)
 	{
-		dotted_rectangle(x, y, size + 1, size + 1);
+		dotted_rectangle(x, y, _csize + 1, _csize + 1);
 	}
 	else
 	{
-		rectangle(x, y, size + 1, size + 1, color);
+		rectangle(x, y, _csize + 1, _csize + 1, color);
 	}
 
 	cursor::cursor_show();
@@ -1712,18 +1706,13 @@ void pal_table::highlight_pal(int pnum, int color)
 
 void pal_table::draw()
 {
-	int pal;
-	int xoff;
-	int yoff;
-	int width;
-
 	if (_hidden)
 	{
 		return;
 	}
 
 	cursor::cursor_hide();
-	width = 1 + (_csize*16) + 1 + 1;
+	int width = 1 + (_csize*16) + 1 + 1;
 	rectangle(_x, _y, width, 2 + RGB_EDITOR_DEPTH + 2 + (_csize*16) + 1 + 1, s_fg_color);
 	fill_rectangle(_x + 1, _y + 1, width-2, 2 + RGB_EDITOR_DEPTH + 2 + (_csize*16) + 1 + 1-2, s_bg_color);
 	horizontal_line(_x, _y + PALTABLE_PALY-1, width, s_fg_color);
@@ -1737,10 +1726,10 @@ void pal_table::draw()
 	_rgb_editors[0]->draw();
 	_rgb_editors[1]->draw();
 
-	for (pal = 0; pal < 256; pal++)
+	for (int pal = 0; pal < 256; pal++)
 	{
-		xoff = PALTABLE_PALX + (pal % 16)*_csize;
-		yoff = PALTABLE_PALY + (pal/16)*_csize;
+		int xoff = PALTABLE_PALX + (pal % 16)*_csize;
+		int yoff = PALTABLE_PALY + (pal/16)*_csize;
 
 		if (pal >= g_colors)
 		{
@@ -1878,37 +1867,25 @@ bool pal_table::memory_alloc(long size)
 
 void pal_table::save_rect()
 {
-	char buff[MAX_WIDTH];
-	int width = PALTABLE_PALX + _csize * 16 + 1 + 1;
-	int depth = PALTABLE_PALY + _csize * 16 + 1 + 1;
-	int  yoff;
-
-
 	/* first, do any de-allocationg */
-
-	switch (_stored_at)
+	if (_stored_at == MEMORY)
 	{
-	case NOWHERE:
-		break;
-
-	case DISK:
-		break;
-
-	case MEMORY:
-		delete[] _memory;
+		delete [] _memory;
 		_memory = 0;
-		break;
 	}
 
 	/* allocate space and store the rectangle */
 
+	int width = PALTABLE_PALX + _csize * 16 + 1 + 1;
+	int depth = PALTABLE_PALY + _csize * 16 + 1 + 1;
+	char buff[MAX_WIDTH];
 	if (memory_alloc(long(width)*depth))
 	{
 		char  *ptr = _memory;
 		char  *bufptr = buff; /* MSC needs me indirection to get it right */
 
 		cursor::cursor_hide();
-		for (yoff = 0; yoff < depth; yoff++)
+		for (int yoff = 0; yoff < depth; yoff++)
 		{
 			get_row(_x, _y + yoff, width, buff);
 			horizontal_line (_x, _y + yoff, width, s_bg_color);
@@ -1934,7 +1911,7 @@ void pal_table::save_rect()
 
 		rewind(_file);
 		cursor::cursor_hide();
-		for (yoff = 0; yoff < depth; yoff++)
+		for (int yoff = 0; yoff < depth; yoff++)
 		{
 			get_row(_x, _y + yoff, width, buff);
 			horizontal_line (_x, _y + yoff, width, s_bg_color);
@@ -1951,22 +1928,20 @@ void pal_table::save_rect()
 
 void pal_table::restore_rect()
 {
-	char buff[MAX_WIDTH];
-	int width = PALTABLE_PALX + _csize * 16 + 1 + 1;
-	int depth = PALTABLE_PALY + _csize * 16 + 1 + 1;
-	int  yoff;
-
 	if (_hidden)
 	{
 		return;
 	}
 
+	char buff[MAX_WIDTH];
+	int width = PALTABLE_PALX + _csize * 16 + 1 + 1;
+	int depth = PALTABLE_PALY + _csize * 16 + 1 + 1;
 	switch (_stored_at)
 	{
 	case DISK:
 		rewind(_file);
 		cursor::cursor_hide();
-		for (yoff = 0; yoff < depth; yoff++)
+		for (int yoff = 0; yoff < depth; yoff++)
 		{
 			if (fread(buff, width, 1, _file) != 1)
 			{
@@ -1984,7 +1959,7 @@ void pal_table::restore_rect()
 			char  *bufptr = buff; /* MSC needs me indirection to get it right */
 
 			cursor::cursor_hide();
-			for (yoff = 0; yoff < depth; yoff++)
+			for (int yoff = 0; yoff < depth; yoff++)
 			{
 				memcpy(bufptr, ptr, width);
 				put_row(_x, _y + yoff, width, buff);
@@ -2002,12 +1977,11 @@ void pal_table::restore_rect()
 
 void pal_table::set_position(int x, int y)
 {
-	int width = PALTABLE_PALX + _csize*16 + 1 + 1;
-
 	_x = x;
 	_y = y;
 
 	_rgb_editors[0]->set_position(x + 2, y + 2);
+	int width = PALTABLE_PALX + _csize*16 + 1 + 1;
 	_rgb_editors[1]->set_position(x + width-2-RGB_EDITOR_WIDTH, y + 2);
 }
 
@@ -2074,14 +2048,14 @@ void pal_table::do_cursor(int key)
 	{
 		switch (key)
 		{
-		case FIK_CTL_RIGHT_ARROW:     xoff += CURS_INC*4;   break;
-		case FIK_RIGHT_ARROW:       xoff += CURS_INC;     break;
-		case FIK_CTL_LEFT_ARROW:      xoff -= CURS_INC*4;   break;
-		case FIK_LEFT_ARROW:        xoff -= CURS_INC;     break;
-		case FIK_CTL_DOWN_ARROW:      yoff += CURS_INC*4;   break;
-		case FIK_DOWN_ARROW:        yoff += CURS_INC;     break;
-		case FIK_CTL_UP_ARROW:        yoff -= CURS_INC*4;   break;
-		case FIK_UP_ARROW:          yoff -= CURS_INC;     break;
+		case FIK_CTL_RIGHT_ARROW:	xoff += CURS_INC*4;	break;
+		case FIK_RIGHT_ARROW:		xoff += CURS_INC;	break;
+		case FIK_CTL_LEFT_ARROW:	xoff -= CURS_INC*4;	break;
+		case FIK_LEFT_ARROW:		xoff -= CURS_INC;	break;
+		case FIK_CTL_DOWN_ARROW:	yoff += CURS_INC*4;	break;
+		case FIK_DOWN_ARROW:		yoff += CURS_INC;	break;
+		case FIK_CTL_UP_ARROW:		yoff -= CURS_INC*4;	break;
+		case FIK_UP_ARROW:			yoff -= CURS_INC;	break;
 
 		default:
 			done = true;
@@ -2109,10 +2083,6 @@ void pal_table::do_cursor(int key)
 	}
 }
 
-
-#ifdef __CLINT__
-#   pragma argsused
-#endif
 
 void pal_table::change(rgb_editor *rgb)
 {
@@ -2671,11 +2641,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 	case 'l':
 		save_undo_data(0, 255);
 		load_palette();
-#ifndef XFRACT
 		get_pal_range(0, g_colors, _palette);
-#else
-		get_pal_range(0, 256, pal);
-#endif
 		update_dac();
 		_rgb_editors[0]->set_rgb(_current[0], &(_palette[_current[0]]));
 		_rgb_editors[0]->update();
@@ -2685,11 +2651,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 
 	case 'S':     /* save a .map palette */
 	case 's':
-#ifndef XFRACT
 		set_pal_range(0, g_colors, _palette);
-#else
-		set_pal_range(0, 256, pal);
-#endif
 		save_palette();
 		update_dac();
 		break;
@@ -2847,8 +2809,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 
 void pal_table::make_default_palettes()  /* creates default Fkey palettes */
 {
-	int i;
-	for (i = 0; i < 8; i++) /* copy original palette to save areas */
+	for (int i = 0; i < 8; i++) /* copy original palette to save areas */
 	{
 		if (_save_palette[i] != 0)
 		{
@@ -2857,13 +2818,24 @@ void pal_table::make_default_palettes()  /* creates default Fkey palettes */
 	}
 }
 
-
-
 pal_table::pal_table()
+	: _move_box(new move_box(0, 0, 0, PALTABLE_PALX + 1, PALTABLE_PALY + 1)),
+	_active(0),
+	_auto_select(true),
+	_exclude(EXCLUDE_NONE),
+	_hidden(false),
+	_stored_at(NOWHERE),
+	_file(0),
+	_memory(0),
+	_freestyle(false),
+	_color_band_width(15),
+	_top(255),
+	_bottom(0),
+	_undo_file(dir_fopen(g_temp_dir, s_undo_file, "w+b")),
+	_current_changed(false),
+	_num_redo(0)
 {
-	int           csize;
-	int           ctr;
-	for (ctr = 0; ctr < 8; ctr++)
+	for (int ctr = 0; ctr < 8; ctr++)
 	{
 		_save_palette[ctr] = new PALENTRY[256];
 	}
@@ -2871,36 +2843,18 @@ pal_table::pal_table()
 	_rgb_editors[0] = new rgb_editor(0, 0, other_key, change, this);
 	_rgb_editors[1] = new rgb_editor(0, 0, other_key, change, this);
 
-	_move_box = new move_box(0, 0, 0, PALTABLE_PALX + 1, PALTABLE_PALY + 1);
-
-	_active      = 0;
 	_current[0]     = 1;
 	_current[1]     = 1;
-	_auto_select = true;
-	_exclude     = EXCLUDE_NONE;
-	_hidden      = false;
-	_stored_at   = NOWHERE;
-	_file        = 0;
-	_memory      = 0;
 
 	_fs_color.red   = 42;
 	_fs_color.green = 42;
 	_fs_color.blue  = 42;
-	_freestyle      = false;
-	_color_band_width      = 15;
-	_top            = 255;
-	_bottom         = 0;
-
-	_undo_file    = dir_fopen(g_temp_dir, s_undo_file, "w+b");
-	_current_changed = false;
-	_num_redo     = 0;
 
 	_rgb_editors[0]->set_rgb(_current[0], &_palette[_current[0]]);
 	_rgb_editors[1]->set_rgb(_current[1], &_palette[_current[0]]);
 
 	set_position(0, 0);
-	csize = ((g_screen_height-(PALTABLE_PALY + 1 + 1))/2)/16;
-
+	int csize = ((g_screen_height-(PALTABLE_PALY + 1 + 1))/2)/16;
 	if (csize < CSIZE_MIN)
 	{
 		csize = CSIZE_MIN;
@@ -2948,31 +2902,43 @@ void pal_table::hide(rgb_editor *rgb, bool hidden)
 	}
 }
 
+template <typename T>
+inline void destroy(T *&ptr)
+{
+	delete ptr;
+	ptr = 0;
+}
+template <typename T>
+inline void destroy_array(T *&ptr)
+{
+	delete[] ptr;
+	ptr = 0;
+}
+
 pal_table::~pal_table()
 {
-	if (_file != 0)
+	if (_file)
 	{
 		fclose(_file);
 		dir_remove(g_temp_dir, g_screen_file);
 	}
 
-	if (_undo_file != 0)
+	if (_undo_file)
 	{
 		fclose(_undo_file);
 		dir_remove(g_temp_dir, s_undo_file);
 	}
 
-	delete[] _memory;
+	destroy(_memory);
 
 	for (int i = 0; i < 8; i++)
 	{
-		delete[] _save_palette[i];
-		_save_palette[i] = 0;
+		destroy_array(_save_palette[i]);
 	}
 
-	delete _rgb_editors[0];
-	delete _rgb_editors[1];
-	delete _move_box;
+	destroy(_rgb_editors[0]);
+	destroy(_rgb_editors[1]);
+	destroy(_move_box);
 }
 
 
@@ -2981,9 +2947,7 @@ void pal_table::process()
 	get_pal_range(0, g_colors, _palette);
 
 	/* Make sure all palette entries are 0-COLOR_CHANNEL_MAX */
-
-	int ctr;
-	for (ctr = 0; ctr < 768; ctr++)
+	for (int ctr = 0; ctr < 768; ctr++)
 	{
 		((char *)_palette)[ctr] &= COLOR_CHANNEL_MAX;
 	}
@@ -3075,6 +3039,5 @@ void palette_edit()       /* called by fractint */
 
 	g_sx_offset = oldsxoffs;
 	g_sy_offset = oldsyoffs;
-	delete[] g_line_buffer;
-	g_line_buffer = 0;
+	destroy_array(g_line_buffer);
 }
