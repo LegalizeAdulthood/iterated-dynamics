@@ -44,7 +44,7 @@ extern long maxstack;
 extern long startstack;
 /* routines in this module      */
 
-static  void function_details(char *);
+static std::string function_details();
 static void area();
 
 void not_disk_message()
@@ -564,16 +564,15 @@ void (*g_trig3_d)() = dStkCosh;
 
 void show_function(char *message) /* return display form of active trig functions */
 {
-	char buffer[80];
 	*message = 0; /* null string if none */
-	function_details(buffer);
-	if (buffer[0])
+	std::string buffer = function_details();
+	if (buffer.length() > 0)
 	{
-		sprintf(message, " function=%s", buffer);
+		strcpy(message, (" function=" + buffer).c_str());
 	}
 }
 
-static void function_details(char *message)
+static std::string function_details()
 {
 	int num_functions = fractal_type_julibrot(g_fractal_type) ?
 		g_fractal_specific[g_new_orbit_type].num_functions() : g_current_fractal_specific->num_functions();
@@ -582,17 +581,18 @@ static void function_details(char *message)
 	{
 		num_functions = g_formula_state.max_fn();
 	}
-	*message = 0; /* null string if none */
+	std::string message = ""; /* null string if none */
 	if (num_functions > 0)
 	{
-		strcpy(message, g_function_list[g_function_index[0]].name);
+		message = g_function_list[g_function_index[0]].name;
 		for (int i = 1; i < num_functions; i++)
 		{
-			char buffer[20];
-			sprintf(buffer, "/%s", g_function_list[g_function_index[i]].name);
-			strcat(message, buffer);
+			message += "/";
+			message += g_function_list[g_function_index[i]].name;
 		}
 	}
+
+	return message;
 }
 
 /* set array of trig function indices according to "function=" command */
@@ -855,8 +855,7 @@ top:
 			}
 			driver_put_string(s_row + 2 + addrow, 16, C_GENERAL_HI, g_formula_state.get_filename());
 		}
-		function_details(msg);
-		driver_put_string(s_row + 1, 16 + i, C_GENERAL_HI, msg);
+		driver_put_string(s_row + 1, 16 + i, C_GENERAL_HI, function_details());
 		if (g_fractal_type == FRACTYPE_L_SYSTEM)
 		{
 			driver_put_string(s_row + 1, 3, C_GENERAL_MED, "Item name:");
