@@ -510,14 +510,14 @@ static void SaveRect(int x, int y, int width, int height)
 		char *buff = s_rect_buff;
 		int yoff;
 
-		cursor_hide();
+		cursor::cursor_hide();
 		for (yoff = 0; yoff < height; yoff++)
 		{
 			get_row(x, y + yoff, width, buff);
 			put_row(x, y + yoff, width, (char *) g_stack);
 			buff += width;
 		}
-		cursor_show();
+		cursor::cursor_show();
 	}
 }
 
@@ -532,13 +532,13 @@ static void RestoreRect(int x, int y, int width, int height)
 		return;
 	}
 
-	cursor_hide();
+	cursor::cursor_hide();
 	for (yoff = 0; yoff < height; yoff++)
 	{
 		put_row(x, y + yoff, width, buff);
 		buff += width;
 	}
-	cursor_show();
+	cursor::cursor_show();
 }
 
 /*
@@ -632,7 +632,7 @@ void JIIM::execute()
 		color = g_color_bright;
 	}
 
-	cursor_new();
+	cursor::create();
 
 	/* Grab memory for Queue/Stack before SaveRect gets it. */
 	s_ok_to_miim  = false;
@@ -740,8 +740,8 @@ void JIIM::execute()
 	// TODO: is this necessary anymore?  extraseg is dead!
 	g_integer_fractal ? g_escape_time_state.fill_grid_l() : g_escape_time_state.fill_grid_fp();
 
-	cursor_set_position(g_col, g_row);
-	cursor_show();
+	cursor::cursor_set_position(g_col, g_row);
+	cursor::cursor_show();
 	color = g_color_bright;
 
 	iter = 1;
@@ -759,18 +759,18 @@ void JIIM::execute()
 
 		if (actively_computing)
 		{
-			cursor_check_blink();
+			cursor::cursor_check_blink();
 		}
 		else
 		{
-			cursor_wait_key();
+			cursor::cursor_wait_key();
 		}
 		if (driver_key_pressed() || first_time) /* prevent burning up UNIX CPU */
 		{
 			first_time = false;
 			while (driver_key_pressed())
 			{
-				cursor_wait_key();
+				cursor::cursor_wait_key();
 				kbdchar = driver_get_key();
 
 				dcol = 0;
@@ -868,9 +868,9 @@ void JIIM::execute()
 					s_show_numbers = 8 - s_show_numbers;
 					if (s_windows == 0 && s_show_numbers == 0)
 					{
-						cursor_hide();
+						cursor::cursor_hide();
 						clear_temp_message();
-						cursor_show();
+						cursor::cursor_show();
 					}
 					break;
 				case 'p':
@@ -930,8 +930,8 @@ void JIIM::execute()
 				{
 					/* We want to use the position of the cursor */
 					exact = 0;
-					g_col = cursor_get_x();
-					g_row = cursor_get_y();
+					g_col = cursor::cursor_get_x();
+					g_row = cursor::cursor_get_y();
 				}
 #endif
 
@@ -957,7 +957,7 @@ void JIIM::execute()
 					exact = 0;
 				}
 
-				cursor_set_position(g_col, g_row);
+				cursor::cursor_set_position(g_col, g_row);
 			}  /* end while (driver_key_pressed) */
 
 			if (exact == 0)
@@ -988,10 +988,10 @@ void JIIM::execute()
 					{
 						text.resize(40, ' ');
 					}
-					cursor_hide();
+					cursor::cursor_hide();
 					actively_computing = true;
 					show_temp_message(text);
-					cursor_show();
+					cursor::cursor_show();
 				}
 				else
 				{
@@ -1321,7 +1321,7 @@ finish:
 
 	if (kbdchar != 's' && kbdchar != 'S')
 	{
-		cursor_hide();
+		cursor::cursor_hide();
 		if (s_windows == 0)
 		{
 			RestoreRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
@@ -1342,7 +1342,7 @@ finish:
 				RestoreRect(0, 0, g_x_dots, g_y_dots);
 				s_windows = 2;
 			}
-			cursor_hide();
+			cursor::cursor_hide();
 			save_has_inverse = g_has_inverse;
 			g_has_inverse = true;
 			SaveRect(0, 0, g_x_dots, g_y_dots);
@@ -1352,7 +1352,7 @@ finish:
 			g_has_inverse = save_has_inverse;
 		}
 	}
-	cursor_destroy();
+	cursor::destroy();
 #ifdef XFRACT
 	cursor_end_mouse_tracking();
 #endif
