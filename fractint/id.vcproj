@@ -1315,6 +1315,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\FileNameGetter.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\font8x8.cpp"
 					>
 				</File>
@@ -1692,6 +1696,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\fihelp.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\FileNameGetter.h"
 					>
 				</File>
 				<File

@@ -2540,8 +2540,8 @@ top:
 					choices[numentries].point = name_offset;
 					if (++numentries >= MAXENTRIES)
 					{
-						sprintf(buf, "Too many entries in file, first %ld used", MAXENTRIES);
-						stop_message(STOPMSG_NORMAL, buf);
+						stop_message(STOPMSG_NORMAL,
+							str(boost::format("Too many entries in file, first %ld used") % MAXENTRIES));
 						break;
 					}
 				}
