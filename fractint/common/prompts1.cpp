@@ -5,6 +5,8 @@
 
 #include <string.h>
 
+#include <boost/format.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -2607,8 +2609,6 @@ retry:
 	}
 
 	strcpy(buf, entryname); /* preset to last choice made */
-	char heading[256];
-	sprintf(heading, "%s Selection\nFile: %s", title, filename);
 	formatitem = 0;
 	boxwidth = 0;
 	colwidth = 0;
@@ -2622,8 +2622,9 @@ retry:
 	}
 
 	i = full_screen_choice(CHOICE_INSTRUCTIONS | (dosort ? 0 : CHOICE_NOT_SORTED),
-		heading, 0, instr, numentries, (char **) choices,
-		attributes, boxwidth, boxdepth, colwidth, 0,
+		str(boost::format("%s Selection\nFile: %s") % title % filename), 0, instr,
+		numentries, (char **) choices, attributes,
+		boxwidth, boxdepth, colwidth, 0,
 		formatitem, buf, 0, check_gfe_key);
 	if (i == -FIK_F4)
 	{
@@ -3017,11 +3018,7 @@ static void format_parmfile_line(int choice, char *buf)
 		c = s_gfe_file.get();
 	}
 	line[i] = 0;
-#ifndef XFRACT
-	sprintf(buf, "%-20Fs%-56s", gfe_choices[choice]->name, line);
-#else
-	sprintf(buf, "%-20s%-56s", gfe_choices[choice]->name, line);
-#endif
+	strcpy(buf, str(boost::format("%-20s%-56s") % gfe_choices[choice]->name % line).c_str());
 }
 
 /* --------------------------------------------------------------------- */

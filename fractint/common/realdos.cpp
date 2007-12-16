@@ -538,6 +538,22 @@ int initialize_current(int options, int num_choices, char **choices, const char 
 	return current;
 }
 
+int full_screen_choice(int options,
+	const std::string &heading, const std::string &heading2,
+	const std::string &instructions,
+	int num_choices, char **choices, const int *attributes,
+	int box_width, int box_depth, int column_width, int current,
+	void (*format_item)(int item, char *text),
+	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
+	int (*check_key)(int, int))
+{
+	return full_screen_choice(options, heading.c_str(),
+		heading2.length() ? heading2.c_str() : 0,
+		instructions.length() ? instructions.c_str() : 0,
+		num_choices, choices, attributes,
+		box_width, box_depth, column_width, current,
+		format_item, speed_string, speed_prompt, check_key);
+}
 
 /*
 return is:
