@@ -65,11 +65,6 @@ static int check_f6_key(int curkey, int)
 
 int FileNameGetter::Execute()
 {
-	char file_template[FILE_MAX_PATH];
-	strcpy(file_template, _fileTemplate.c_str());
-	char flname[FILE_MAX_PATH];
-	strcpy(flname, _fileName.c_str());
-
 	/* if getting an RDS image map */
 	char instr[80];
 	int masklen;
@@ -90,22 +85,22 @@ int FileNameGetter::Execute()
 	static int num_templates = 1;
 	static bool sort_entries = true;
 
-	bool rds = (g_stereo_map_name == flname);
+	bool rds = (g_stereo_map_name == _fileName);
 	for (i = 0; i < MAXNUMFILES; i++)
 	{
 		attributes[i] = 1;
 		choices[i] = &storage[i];
 	}
 	/* save filename */
-	std::string old_flname = flname;
+	std::string old_flname = _fileName;
 
 restart:  /* return here if template or directory changes */
 	tmpmask[0] = 0;
-	if (flname[0] == 0)
+	if (_fileName.length() == 0)
 	{
-		strcpy(flname, DOTSLASH);
+		_fileName = DOTSLASH;
 	}
-	split_path(flname, drive, dir, fname, ext);
+	split_path(_fileName, drive, dir, fname, ext);
 	char filename[FILE_MAX_PATH];
 	make_path(filename, ""   , "" , fname, ext);
 	bool retried = false;
@@ -132,10 +127,10 @@ retry_dir:
 		}
 		tmpmask[j] = SLASHC;
 	}
-	if (file_template[0])
+	if (_fileTemplate.length() > 0)
 	{
 		num_templates = 1;
-		split_path(file_template, 0, 0, fname, ext);
+		split_path(_fileTemplate, 0, 0, fname, ext);
 	}
 	else
 	{
@@ -167,7 +162,7 @@ retry_dir:
 		out = fr_find_next();
 	}
 	tmpmask[masklen] = 0;
-	if (file_template[0])
+	if (_fileTemplate.length())
 	{
 		make_path(tmpmask, drive, dir, fname, ext);
 	}
@@ -268,16 +263,14 @@ retry_dir:
 			strcpy(dir, g_fract_dir2.c_str());
 		}
 		ensure_slash_on_directory(dir);
-		make_path(flname, drive, dir, "", "");
+		_fileName = std::string(drive) +  dir;
 		lastdir = 1 - lastdir;
 		goto restart;
 	}
 	if (i < 0)
 	{
 		/* restore filename */
-		strcpy(flname, old_flname.c_str());
-		_fileTemplate = file_template;
-		_fileName = flname;
+		_fileName = old_flname;
 		return -1;
 	}
 	if (speedstr[0] == 0 || g_speed_state == SPEEDSTATE_MATCHING)
@@ -309,11 +302,11 @@ retry_dir:
 				strcat(dir, choices[i]->full_name);
 			}
 			ensure_slash_on_directory(dir);
-			make_path(flname, drive, dir, "", "");
+			_fileName = std::string(drive) + dir;
 			goto restart;
 		}
 		split_path(choices[i]->full_name, 0, 0, fname, ext);
-		make_path(flname, drive, dir, fname, ext);
+		_fileName = std::string(drive) + dir + fname + ext;
 	}
 	else
 	{
@@ -343,17 +336,17 @@ retry_dir:
 			{
 				strcpy(dir, dir1);
 			}
-			make_path(flname, drive, dir, fname1, ext1);
+			_fileName = std::string(drive) + dir + fname1 + ext1;
 			if (strchr(fname1, '*') || strchr(fname1, '?') ||
 				strchr(ext1,   '*') || strchr(ext1,   '?'))
 			{
 				// TODO: can't do this when file_template is constant string
 				// like "*.frm"!!!
-				make_path(file_template, "", "", fname1, ext1);
+				_fileTemplate = std::string(fname1) + ext1;
 			}
-			else if (is_a_directory(flname))
+			else if (is_a_directory(_fileName.c_str()))
 			{
-				ensure_slash_on_directory(flname);
+				ensure_slash_on_directory(_fileName);
 			}
 			goto restart;
 		}
@@ -363,22 +356,20 @@ retry_dir:
 			find_path(speedstr, fullpath);
 			if (fullpath[0])
 			{
-				strcpy(flname, fullpath);
+				_fileName = fullpath;
 			}
 			else
 			{  /* failed, make diagnostic useful: */
-				strcpy(flname, speedstr);
+				_fileName = speedstr;
 				if (strchr(speedstr, SLASHC) == 0)
 				{
 					split_path(speedstr, 0, 0, fname, ext);
-					make_path(flname, drive, dir, fname, ext);
+					_fileName = std::string(drive) + dir + fname + ext;
 				}
 			}
 		}
 	}
 	g_browse_state.make_path(fname, ext);
-	_fileTemplate = file_template;
-	_fileName = flname;
 	return 0;
 }
 
