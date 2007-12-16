@@ -422,157 +422,165 @@ static void draw_diamond(int x, int y, int color)
  *            deallocate memory.
  */
 
-struct cursor
+class cursor
 {
-	int x;
-	int y;
-	int     hidden;       /* >0 if mouse hidden */
-	long    last_blink;
-	bool blink;
-	char    t[CURSOR_SIZE];        /* save line segments here */
-	char    b[CURSOR_SIZE];
-	char    l[CURSOR_SIZE];
-	char    r[CURSOR_SIZE];
+public:
+	cursor() : _x(g_screen_width/2),
+		_y(g_screen_height/2),
+		_hidden(1),
+		_blink(false),
+		_last_blink(0)
+	{
+	}
+	~cursor()
+	{
+	}
+
+	int x() const { return _x; }
+	int y() const { return _y; }
+	int wait_key();
+	void hide();
+	void show();
+	void move(int xoff, int yoff);
+
+	static bool create();
+	static void destroy();
+
+private:
+	void draw();
+	void save();
+	void restore();
+	void set_position(int x, int y);
+	void check_blink();
+
+	int _x;
+	int _y;
+	int _hidden;       /* true if mouse hidden */
+	long _last_blink;
+	bool _blink;
+	char _top[CURSOR_SIZE];        /* save line segments here */
+	char _bottom[CURSOR_SIZE];
+	char _left[CURSOR_SIZE];
+	char _right[CURSOR_SIZE];
 };
 
 /* private: */
-static void cursor_draw();
-static void cursor_save();
-static void cursor_restore();
-
 static cursor *s_the_cursor = 0;
 
-bool cursor_new()
+bool cursor::create()
 {
 	if (s_the_cursor != 0)
 	{
 		return false;
 	}
 
-	s_the_cursor = new cursor;
-
-	s_the_cursor->x          = g_screen_width/2;
-	s_the_cursor->y          = g_screen_height/2;
-	s_the_cursor->hidden     = 1;
-	s_the_cursor->blink      = false;
-	s_the_cursor->last_blink = 0;
-
+	s_the_cursor = new cursor();
 	return true;
 }
 
-void cursor_destroy()
+void cursor::destroy()
 {
 	delete s_the_cursor;
 	s_the_cursor = 0;
 }
 
-static void cursor_draw()
+void cursor::draw()
 {
 	int color;
 
 	find_special_colors();
-	color = (s_the_cursor->blink) ? g_color_medium : g_color_dark;
+	color = (_blink) ? g_color_medium : g_color_dark;
 
-	vertical_line(s_the_cursor->x, s_the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, color);
-	vertical_line(s_the_cursor->x, s_the_cursor->y + 2,             CURSOR_SIZE, color);
+	vertical_line(_x, _y - CURSOR_SIZE - 1, CURSOR_SIZE, color);
+	vertical_line(_x, _y + 2, CURSOR_SIZE, color);
 
-	horizontal_line(s_the_cursor->x-CURSOR_SIZE-1, s_the_cursor->y, CURSOR_SIZE, color);
-	horizontal_line(s_the_cursor->x + 2,             s_the_cursor->y, CURSOR_SIZE, color);
+	horizontal_line(_x - CURSOR_SIZE - 1, _y, CURSOR_SIZE, color);
+	horizontal_line(_x + 2, _y, CURSOR_SIZE, color);
 }
 
-static void cursor_save()
+void cursor::save()
 {
-	vertical_get_row(s_the_cursor->x, s_the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, s_the_cursor->t);
-	vertical_get_row(s_the_cursor->x, s_the_cursor->y + 2,             CURSOR_SIZE, s_the_cursor->b);
+	vertical_get_row(_x, _y - CURSOR_SIZE - 1, CURSOR_SIZE, _top);
+	vertical_get_row(_x, _y + 2, CURSOR_SIZE, _bottom);
 
-	get_row(s_the_cursor->x-CURSOR_SIZE-1, s_the_cursor->y,  CURSOR_SIZE, s_the_cursor->l);
-	get_row(s_the_cursor->x + 2,             s_the_cursor->y,  CURSOR_SIZE, s_the_cursor->r);
+	get_row(_x - CURSOR_SIZE - 1, _y,  CURSOR_SIZE, _left);
+	get_row(_x + 2, _y,  CURSOR_SIZE, _right);
 }
 
-static void cursor_restore()
+void cursor::restore()
 {
-	vertical_put_row(s_the_cursor->x, s_the_cursor->y-CURSOR_SIZE-1, CURSOR_SIZE, s_the_cursor->t);
-	vertical_put_row(s_the_cursor->x, s_the_cursor->y + 2,             CURSOR_SIZE, s_the_cursor->b);
+	vertical_put_row(_x, _y - CURSOR_SIZE - 1, CURSOR_SIZE, _top);
+	vertical_put_row(_x, _y + 2, CURSOR_SIZE, _bottom);
 
-	put_row(s_the_cursor->x-CURSOR_SIZE-1, s_the_cursor->y,  CURSOR_SIZE, s_the_cursor->l);
-	put_row(s_the_cursor->x + 2,             s_the_cursor->y,  CURSOR_SIZE, s_the_cursor->r);
+	put_row(_x - CURSOR_SIZE - 1, _y,  CURSOR_SIZE, _left);
+	put_row(_x + 2, _y,  CURSOR_SIZE, _right);
 }
 
-void cursor_set_position(int x, int y)
+void cursor::set_position(int x, int y)
 {
-	if (!s_the_cursor->hidden)
+	if (!_hidden)
 	{
-		cursor_restore();
+		restore();
 	}
 
-	s_the_cursor->x = x;
-	s_the_cursor->y = y;
+	_x = x;
+	_y = y;
 
-	if (!s_the_cursor->hidden)
+	if (!_hidden)
 	{
-		cursor_save();
-		cursor_draw();
-	}
-}
-
-void cursor_move(int xoff, int yoff)
-{
-	if (!s_the_cursor->hidden)
-	{
-		cursor_restore();
-	}
-
-	s_the_cursor->x += xoff;
-	s_the_cursor->y += yoff;
-
-	if (s_the_cursor->x < 0)
-	{
-		s_the_cursor->x = 0;
-	}
-	if (s_the_cursor->y < 0)
-	{
-		s_the_cursor->y = 0;
-	}
-	if (s_the_cursor->x >= g_screen_width)
-	{
-		s_the_cursor->x = g_screen_width-1;
-	}
-	if (s_the_cursor->y >= g_screen_height)
-	{
-		s_the_cursor->y = g_screen_height-1;
-	}
-
-	if (!s_the_cursor->hidden)
-	{
-		cursor_save();
-		cursor_draw();
+		save();
+		draw();
 	}
 }
 
-int cursor_get_x()
+void cursor::move(int xoff, int yoff)
 {
-	return s_the_cursor->x;
-}
-
-int cursor_get_y()
-{
-	return s_the_cursor->y;
-}
-
-void cursor_hide()
-{
-	if (s_the_cursor->hidden++ == 0)
+	if (!_hidden)
 	{
-		cursor_restore();
+		restore();
+	}
+
+	_x += xoff;
+	_y += yoff;
+
+	if (_x < 0)
+	{
+		_x = 0;
+	}
+	if (_y < 0)
+	{
+		_y = 0;
+	}
+	if (_x >= g_screen_width)
+	{
+		_x = g_screen_width-1;
+	}
+	if (_y >= g_screen_height)
+	{
+		_y = g_screen_height-1;
+	}
+
+	if (!_hidden)
+	{
+		save();
+		draw();
 	}
 }
 
-void cursor_show()
+void cursor::hide()
 {
-	if (--s_the_cursor->hidden == 0)
+	if (_hidden++ == 0)
 	{
-		cursor_save();
-		cursor_draw();
+		restore();
+	}
+}
+
+void cursor::show()
+{
+	if (--_hidden == 0)
+	{
+		save();
+		draw();
 	}
 }
 
@@ -589,31 +597,31 @@ void cursor_end_mouse_tracking()
 #endif
 
 /* See if the cursor should blink yet, and blink it if so */
-void cursor_check_blink()
+void cursor::check_blink()
 {
 	long tick;
 	tick = read_ticker();
 
-	if ((tick - s_the_cursor->last_blink) > CURSOR_BLINK_RATE)
+	if ((tick - _last_blink) > CURSOR_BLINK_RATE)
 	{
-		s_the_cursor->blink = !s_the_cursor->blink;
-		s_the_cursor->last_blink = tick;
-		if (!s_the_cursor->hidden)
+		_blink = !_blink;
+		_last_blink = tick;
+		if (!_hidden)
 		{
-			cursor_draw();
+			draw();
 		}
 	}
-	else if (tick < s_the_cursor->last_blink)
+	else if (tick < _last_blink)
 	{
-		s_the_cursor->last_blink = tick;
+		_last_blink = tick;
 	}
 }
 
-int cursor_wait_key()   /* blink cursor while waiting for a key */
+int cursor::wait_key()   /* blink cursor while waiting for a key */
 {
 	while (!driver_wait_key_pressed(1))
 	{
-		cursor_check_blink();
+		check_blink();
 	}
 
 	return driver_key_pressed();
@@ -816,7 +824,7 @@ bool move_box::process()
 #endif
 	while (true)
 	{
-		cursor_wait_key();
+		s_the_cursor->wait_key();
 		key = driver_get_key();
 
 		if (key == FIK_ENTER || key == FIK_ENTER_2 || key == FIK_ESC || key == 'H' || key == 'h')
@@ -972,9 +980,9 @@ void color_editor::draw()
 		return;
 	}
 
-	cursor_hide();
+	s_the_cursor->hide();
 	displayf(_x + 2, _y + 2, s_fg_color, s_bg_color, boost::format("%c%02d") % _letter % _value);
-	cursor_show();
+	s_the_cursor->show();
 }
 
 int color_editor::edit()
@@ -986,9 +994,9 @@ int color_editor::edit()
 
 	if (!_hidden)
 	{
-		cursor_hide();
+		s_the_cursor->hide();
 		rectangle(_x, _y, COLOR_EDITOR_WIDTH, COLOR_EDITOR_DEPTH, s_fg_color);
-		cursor_show();
+		s_the_cursor->show();
 	}
 
 #ifdef XFRACT
@@ -997,7 +1005,7 @@ int color_editor::edit()
 	// TODO: refactor to IInputContext
 	while (!_done)
 	{
-		cursor_wait_key();
+		s_the_cursor->wait_key();
 		key = driver_get_key();
 
 		switch (key)
@@ -1098,9 +1106,9 @@ int color_editor::edit()
 
 	if (!_hidden)
 	{
-		cursor_hide();
+		s_the_cursor->hide();
 		rectangle(_x, _y, COLOR_EDITOR_WIDTH, COLOR_EDITOR_DEPTH, s_bg_color);
-		cursor_show();
+		s_the_cursor->show();
 	}
 
 	return key;
@@ -1288,9 +1296,9 @@ static void rgb_editor_blank_sample_box(rgb_editor *me)
 		return;
 	}
 
-	cursor_hide();
+	s_the_cursor->hide();
 	fill_rectangle(me->x + 2 + COLOR_EDITOR_WIDTH + 1 + 1, me->y + 2 + 1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, s_bg_color);
-	cursor_show();
+	s_the_cursor->show();
 }
 
 static void rgb_editor_update(rgb_editor *me)
@@ -1303,7 +1311,7 @@ static void rgb_editor_update(rgb_editor *me)
 		return;
 	}
 
-	cursor_hide();
+	s_the_cursor->hide();
 
 	if (me->pal >= g_colors)
 	{
@@ -1328,7 +1336,7 @@ static void rgb_editor_update(rgb_editor *me)
 	me->color[0]->draw();
 	me->color[1]->draw();
 	me->color[2]->draw();
-	cursor_show();
+	s_the_cursor->show();
 }
 
 static void rgb_editor_draw(rgb_editor *me)
@@ -1338,12 +1346,12 @@ static void rgb_editor_draw(rgb_editor *me)
 		return;
 	}
 
-	cursor_hide();
+	s_the_cursor->hide();
 	dotted_rectangle(me->x, me->y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
 	fill_rectangle(me->x + 1, me->y + 1, RGB_EDITOR_WIDTH-2, RGB_EDITOR_DEPTH-2, s_bg_color);
 	rectangle(me->x + 1 + COLOR_EDITOR_WIDTH + 2, me->y + 2, RGB_EDITOR_BOX_WIDTH, RGB_EDITOR_BOX_DEPTH, s_fg_color);
 	rgb_editor_update(me);
-	cursor_show();
+	s_the_cursor->show();
 }
 
 static int rgb_editor_edit(rgb_editor *me)
@@ -1354,9 +1362,9 @@ static int rgb_editor_edit(rgb_editor *me)
 
 	if (!me->hidden)
 	{
-		cursor_hide();
+		s_the_cursor->hide();
 		rectangle(me->x, me->y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH, s_fg_color);
-		cursor_show();
+		s_the_cursor->show();
 	}
 
 	while (!me->done)
@@ -1366,9 +1374,9 @@ static int rgb_editor_edit(rgb_editor *me)
 
 	if (!me->hidden)
 	{
-		cursor_hide();
+		s_the_cursor->hide();
 		dotted_rectangle(me->x, me->y, RGB_EDITOR_WIDTH, RGB_EDITOR_DEPTH);
-		cursor_show();
+		s_the_cursor->show();
 	}
 
 	return key;
@@ -1695,7 +1703,7 @@ static void pal_table_draw_status(pal_table *me, bool stripe_mode)
 		{
 			color = 0;
 		}
-		cursor_hide();
+		s_the_cursor->hide();
 
 		{
 			driver_display_string(x, y, s_fg_color, s_bg_color,
@@ -1708,7 +1716,7 @@ static void pal_table_draw_status(pal_table *me, bool stripe_mode)
 			driver_display_string(x, y, s_fg_color, s_bg_color,
 				str(boost::format("%d") % color));
 		}
-		cursor_show();
+		s_the_cursor->show();
 	}
 }
 
@@ -1723,7 +1731,7 @@ static void pal_table_highlight_pal(pal_table *me, int pnum, int color)
 		return;
 	}
 
-	cursor_hide();
+	s_the_cursor->hide();
 
 	if (color < 0)
 	{
@@ -1734,7 +1742,7 @@ static void pal_table_highlight_pal(pal_table *me, int pnum, int color)
 		rectangle(x, y, size + 1, size + 1, color);
 	}
 
-	cursor_show();
+	s_the_cursor->show();
 }
 
 static void pal_table_draw(pal_table *me)
@@ -1749,7 +1757,7 @@ static void pal_table_draw(pal_table *me)
 		return;
 	}
 
-	cursor_hide();
+	s_the_cursor->hide();
 	width = 1 + (me->csize*16) + 1 + 1;
 	rectangle(me->x, me->y, width, 2 + RGB_EDITOR_DEPTH + 2 + (me->csize*16) + 1 + 1, s_fg_color);
 	fill_rectangle(me->x + 1, me->y + 1, width-2, 2 + RGB_EDITOR_DEPTH + 2 + (me->csize*16) + 1 + 1-2, s_bg_color);
@@ -1802,7 +1810,7 @@ static void pal_table_draw(pal_table *me)
 	}
 
 	pal_table_draw_status(me, false);
-	cursor_show();
+	s_the_cursor->show();
 }
 
 static bool pal_table_set_current(pal_table *me, int which, int curr)
@@ -1819,7 +1827,7 @@ static bool pal_table_set_current(pal_table *me, int which, int curr)
 		return false;
 	}
 
-	cursor_hide();
+	s_the_cursor->hide();
 
 	pal_table_highlight_pal(me, me->curr[0], s_bg_color);
 	pal_table_highlight_pal(me, me->curr[1], s_bg_color);
@@ -1836,7 +1844,7 @@ static bool pal_table_set_current(pal_table *me, int which, int curr)
 		rgb_editor_set_rgb(me->rgb[which], me->curr[which], &me->fs_color);
 		rgb_editor_update(me->rgb[which]);
 		pal_table_update_dac(me);
-		cursor_show();
+		s_the_cursor->show();
 		return true;
 	}
 
@@ -1867,7 +1875,7 @@ static bool pal_table_set_current(pal_table *me, int which, int curr)
 		pal_table_update_dac(me);
 	}
 
-	cursor_show();
+	s_the_cursor->show();
 	me->curr_changed = false;
 	return true;
 }
@@ -1934,7 +1942,7 @@ static void pal_table_save_rect(pal_table *me)
 		char  *ptr = me->memory;
 		char  *bufptr = buff; /* MSC needs me indirection to get it right */
 
-		cursor_hide();
+		s_the_cursor->hide();
 		for (yoff = 0; yoff < depth; yoff++)
 		{
 			get_row(me->x, me->y + yoff, width, buff);
@@ -1942,7 +1950,7 @@ static void pal_table_save_rect(pal_table *me)
 			memcpy(ptr, bufptr, width);
 			ptr += width;
 		}
-		cursor_show();
+		s_the_cursor->show();
 	}
 	else /* to disk */
 	{
@@ -1960,7 +1968,7 @@ static void pal_table_save_rect(pal_table *me)
 		}
 
 		rewind(me->file);
-		cursor_hide();
+		s_the_cursor->hide();
 		for (yoff = 0; yoff < depth; yoff++)
 		{
 			get_row(me->x, me->y + yoff, width, buff);
@@ -1971,7 +1979,7 @@ static void pal_table_save_rect(pal_table *me)
 				break;
 			}
 		}
-		cursor_show();
+		s_the_cursor->show();
 	}
 }
 
@@ -1992,7 +2000,7 @@ static void pal_table_restore_rect(pal_table *me)
 	{
 	case DISK:
 		rewind(me->file);
-		cursor_hide();
+		s_the_cursor->hide();
 		for (yoff = 0; yoff < depth; yoff++)
 		{
 			if (fread(buff, width, 1, me->file) != 1)
@@ -2002,7 +2010,7 @@ static void pal_table_restore_rect(pal_table *me)
 			}
 			put_row(me->x, me->y + yoff, width, buff);
 		}
-		cursor_show();
+		s_the_cursor->show();
 		break;
 
 	case MEMORY:
@@ -2010,14 +2018,14 @@ static void pal_table_restore_rect(pal_table *me)
 			char  *ptr = me->memory;
 			char  *bufptr = buff; /* MSC needs me indirection to get it right */
 
-			cursor_hide();
+			s_the_cursor->hide();
 			for (yoff = 0; yoff < depth; yoff++)
 			{
 				memcpy(bufptr, ptr, width);
 				put_row(me->x, me->y + yoff, width, buff);
 				ptr += width;
 			}
-			cursor_show();
+			s_the_cursor->show();
 			break;
 		}
 
@@ -2048,8 +2056,8 @@ static void pal_table_set_csize(pal_table *me, int csize)
 
 static int pal_table_get_cursor_color(pal_table *me)
 {
-	int x = cursor_get_x();
-	int y = cursor_get_y();
+	int x = s_the_cursor->x();
+	int y = s_the_cursor->y();
 	int size;
 	int color = getcolor(x, y);
 
@@ -2128,7 +2136,7 @@ static void pal_table_do_cursor(pal_table *me, int key)
 		}
 	}
 
-	cursor_move(xoff, yoff);
+	s_the_cursor->move(xoff, yoff);
 
 	if (me->auto_select)
 	{
@@ -2169,9 +2177,9 @@ static void pal_table_change(rgb_editor *rgb, VOIDPTR info)
 		color = rgb_editor_get_rgb(me->rgb[me->active]);
 		rgb_editor_set_rgb(me->rgb[other], me->curr[other], &color);
 
-		cursor_hide();
+		s_the_cursor->hide();
 		rgb_editor_update(me->rgb[other]);
-		cursor_show();
+		s_the_cursor->show();
 	}
 }
 
@@ -2234,7 +2242,7 @@ static void pal_table_rotate(pal_table *me, int dir, int lo, int hi)
 
 	rotate_pal(me->pal, dir, lo, hi);
 
-	cursor_hide();
+	s_the_cursor->hide();
 
 	/* update the DAC.  */
 
@@ -2247,7 +2255,7 @@ static void pal_table_rotate(pal_table *me, int dir, int lo, int hi)
 	rgb_editor_update(me->rgb[0]);
 	rgb_editor_update(me->rgb[1]);
 
-	cursor_show();
+	s_the_cursor->show();
 }
 
 
@@ -2262,7 +2270,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			break;           /* cannot move a hidden pal */
 		}
-		cursor_hide();
+		s_the_cursor->hide();
 		pal_table_restore_rect(me);
 		me->movebox->set_position(me->x, me->y);
 		me->movebox->set_csize(me->csize);
@@ -2280,7 +2288,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			}
 		}
 		pal_table_draw(me);
-		cursor_show();
+		s_the_cursor->show();
 
 		rgb_editor_set_done(me->rgb[me->active], true);
 
@@ -2361,14 +2369,14 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			PALENTRY t;
 
 			t = rgb_editor_get_rgb(me->rgb[b]);
-			cursor_hide();
+			s_the_cursor->hide();
 
 			rgb_editor_set_rgb(me->rgb[a], me->curr[a], &t);
 			rgb_editor_update(me->rgb[a]);
 			pal_table_change(me->rgb[a], me);
 			pal_table_update_dac(me);
 
-			cursor_show();
+			s_the_cursor->show();
 			break;
 		}
 
@@ -2472,10 +2480,10 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 		{
 			int key;
 
-			cursor_hide();
+			s_the_cursor->hide();
 			pal_table_draw_status(me, true);
 			key = getakeynohelp();
-			cursor_show();
+			s_the_cursor->show();
 
 			if (key >= '1' && key <= '9')
 			{
@@ -2536,9 +2544,9 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 	case 'H':
 	case 'h': /* toggle hide/display of palette editor */
-		cursor_hide();
+		s_the_cursor->hide();
 		pal_table_hide(me, rgb, !me->hidden);
-		cursor_show();
+		s_the_cursor->show();
 		break;
 
 	case '.':   /* rotate once */
@@ -2558,7 +2566,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 			long tick;
 			int  diff = 0;
 
-			cursor_hide();
+			s_the_cursor->hide();
 
 			if (!me->hidden)
 			{
@@ -2599,7 +2607,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 				pal_table_save_undo_rotate(me, diff, g_rotate_lo, g_rotate_hi);
 			}
 
-			cursor_show();
+			s_the_cursor->show();
 			break;
 		}
 
@@ -2623,10 +2631,10 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 		if (!me->hidden)
 		{
-			cursor_hide();
+			s_the_cursor->hide();
 			pal_table_update_dac(me);
 			pal_table_draw(me);
-			cursor_show();
+			s_the_cursor->show();
 		}
 
 		rgb_editor_set_done(me->rgb[me->active], true);
@@ -2659,14 +2667,14 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 			if (me->save_pal[which] != 0)
 			{
-				cursor_hide();
+				s_the_cursor->hide();
 
 				pal_table_save_undo_data(me, 0, 255);
 				memcpy(me->pal, me->save_pal[which], 256*3);
 				pal_table_update_dac(me);
 
 				pal_table_set_current(me, -1, 0);
-				cursor_show();
+				s_the_cursor->show();
 				rgb_editor_set_done(me->rgb[me->active], true);
 			}
 			else
@@ -2732,7 +2740,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 
 			pal_table_save_undo_data(me, 0, 255);
 
-			cursor_hide();
+			s_the_cursor->hide();
 			if (!oldhidden)
 			{
 				pal_table_hide(me, rgb, true);
@@ -2747,7 +2755,7 @@ static void pal_table_other_key(int key, rgb_editor *rgb, VOIDPTR info)
 				rgb_editor_set_rgb(me->rgb[1], me->curr[1], &(me->pal[me->curr[1]]));
 				pal_table_hide(me, rgb, false);
 			}
-			cursor_show();
+			s_the_cursor->show();
 			break;
 		}
 
@@ -3061,7 +3069,7 @@ static void pal_table_process(pal_table *me)
 
 	pal_table_set_current(me, me->active,          pal_table_get_cursor_color(me));
 	pal_table_set_current(me, (me->active == 1) ? 0 : 1, pal_table_get_cursor_color(me));
-	cursor_show();
+	s_the_cursor->show();
 	pal_table_make_default_palettes(me);
 	me->done = false;
 
@@ -3070,7 +3078,7 @@ static void pal_table_process(pal_table *me)
 		rgb_editor_edit(me->rgb[me->active]);
 	}
 
-	cursor_hide();
+	s_the_cursor->hide();
 	pal_table_restore_rect(me);
 	set_pal_range(0, g_colors, me->pal);
 }
@@ -3108,11 +3116,11 @@ void palette_edit()       /* called by fractint */
 	s_fg_color = BYTE(255 % g_colors);
 	s_bg_color = BYTE(s_fg_color-1);
 
-	cursor_new();
+	cursor::create();
 	pt = pal_table_new();
 	pal_table_process(pt);
 	pal_table_destroy(pt);
-	cursor_destroy();
+	cursor::destroy();
 
 	g_sx_offset = oldsxoffs;
 	g_sy_offset = oldsyoffs;
