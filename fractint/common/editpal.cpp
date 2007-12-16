@@ -913,127 +913,81 @@ bool move_box::process()
  *            The "change" function is called whenever the value is changed
  *            by the color_editor.
  */
-struct color_editor
+class color_editor
 {
-	int       x, y;
-	char      letter;
-	int       val;
-	bool done;
-	bool hidden;
-	void    (*other_key)(int key, color_editor *ce, VOIDPTR info);
-	void    (*change)(color_editor *ce, VOIDPTR info);
-	void     *info;
+public:
+	color_editor(int x, int y, char letter, void (*other_key)(int, color_editor*, void *),
+				void (*change)(color_editor*, void*), void *info);
+	~color_editor()
+	{
+	}
 
+	void draw();
+	void set_position(int x, int y)
+	{
+		_x = x;
+		_y = y;
+	}
+	void set_value(int value) { _value = value; }
+	int get_value() const { return _value; }
+	void set_done(bool value) { _done = value; }
+	void set_hidden(bool value) { _hidden = value; }
+	int edit();
+
+private:
+	int _x;
+	int _y;
+	char _letter;
+	int _value;
+	bool _done;
+	bool _hidden;
+	void (*_other_key)(int key, color_editor *ce, VOIDPTR info);
+	void (*_change)(color_editor *editor, VOIDPTR info);
+	void *_info;
 };
-
-#ifndef XFRACT
-static color_editor *color_editor_new(int x, int y, char letter,
-									void (*other_key)(int, color_editor*, void*),
-									void (*change)(color_editor*, void*), VOIDPTR info);
-static void color_editor_destroy   (color_editor *me);
-static void color_editor_draw      (color_editor *me);
-static void color_editor_set_position    (color_editor *me, int x, int y);
-static void color_editor_set_value    (color_editor *me, int val);
-static int  color_editor_get_value    (color_editor *me);
-static void color_editor_set_done   (color_editor *me, bool done);
-static void color_editor_set_hidden (color_editor *me, bool hidden);
-static int  color_editor_edit      (color_editor *me);
-#else
-static color_editor *color_editor_new(int , int , char ,
-									void (*other_key)(),
-									void (*change)(), VOIDPTR);
-static void color_editor_destroy         (color_editor *);
-static void color_editor_draw    (color_editor *);
-static void color_editor_set_position  (color_editor *, int , int);
-static void color_editor_set_value  (color_editor *, int);
-static int  color_editor_get_value  (color_editor *);
-static void color_editor_set_done         (color_editor *, bool);
-static void color_editor_set_hidden (color_editor *, bool);
-static int  color_editor_edit    (color_editor *);
-#endif
 
 #define COLOR_EDITOR_WIDTH (8*3 + 4)
 #define COLOR_EDITOR_DEPTH (8 + 4)
 
 
 
-static color_editor *color_editor_new(int x, int y, char letter,
+color_editor::color_editor (int x, int y, char letter,
 					void (*other_key)(int, color_editor*, VOIDPTR),
 					void (*change)(color_editor*, VOIDPTR), VOIDPTR info)
+	: _x(x),
+	_y(y),
+	_letter(letter),
+	_value(0),
+	_other_key(other_key),
+	_hidden(false),
+	_change(change),
+	_info(info)
 {
-	color_editor *me = new color_editor;
-
-	me->x         = x;
-	me->y         = y;
-	me->letter    = letter;
-	me->val       = 0;
-	me->other_key = other_key;
-	me->hidden    = false;
-	me->change    = change;
-	me->info      = info;
-
-	return me;
 }
 
-#ifdef __CLINT__
-#   pragma argsused   /* kills "arg not used" warning */
-#endif
-
-static void color_editor_destroy(color_editor *me)
+void color_editor::draw()
 {
-	delete me;
-	me = 0;
-}
-
-static void color_editor_draw(color_editor *me)
-{
-	if (me->hidden)
+	if (_hidden)
 	{
 		return;
 	}
 
 	cursor_hide();
-	displayf(me->x + 2, me->y + 2, s_fg_color, s_bg_color, boost::format("%c%02d") % me->letter % me->val);
+	displayf(_x + 2, _y + 2, s_fg_color, s_bg_color, boost::format("%c%02d") % _letter % _value);
 	cursor_show();
 }
 
-static void color_editor_set_position(color_editor *me, int x, int y)
-{
-	me->x = x;
-	me->y = y;
-}
-
-static void color_editor_set_value(color_editor *me, int val)
-{
-	me->val = val;
-}
-
-static int color_editor_get_value(color_editor *me)
-{
-	return me->val;
-}
-
-static void color_editor_set_done(color_editor *me, bool done)
-{
-	me->done = done;
-}
-
-static void color_editor_set_hidden(color_editor *me, bool hidden)
-{
-	me->hidden = hidden;
-}
-
-static int color_editor_edit(color_editor *me)
+int color_editor::edit()
 {
 	int key = 0;
 	int diff;
 
-	me->done = false;
+	_done = false;
 
-	if (!me->hidden)
+	if (!_hidden)
 	{
 		cursor_hide();
-		rectangle(me->x, me->y, COLOR_EDITOR_WIDTH, COLOR_EDITOR_DEPTH, s_fg_color);
+		rectangle(_x, _y, COLOR_EDITOR_WIDTH, COLOR_EDITOR_DEPTH, s_fg_color);
 		cursor_show();
 	}
 
@@ -1041,7 +995,7 @@ static int color_editor_edit(color_editor *me)
 	cursor_start_mouse_tracking();
 #endif
 	// TODO: refactor to IInputContext
-	while (!me->done)
+	while (!_done)
 	{
 		cursor_wait_key();
 		key = driver_get_key();
@@ -1049,15 +1003,15 @@ static int color_editor_edit(color_editor *me)
 		switch (key)
 		{
 		case FIK_PAGE_UP:
-			if (me->val < COLOR_CHANNEL_MAX)
+			if (_value < COLOR_CHANNEL_MAX)
 			{
-				me->val += 5;
-				if (me->val > COLOR_CHANNEL_MAX)
+				_value += 5;
+				if (_value > COLOR_CHANNEL_MAX)
 				{
-					me->val = COLOR_CHANNEL_MAX;
+					_value = COLOR_CHANNEL_MAX;
 				}
-				color_editor_draw(me);
-				me->change(me, me->info);
+				draw();
+				_change(this, _info);
 			}
 			break;
 
@@ -1069,28 +1023,28 @@ static int color_editor_edit(color_editor *me)
 				driver_get_key();
 				++diff;
 			}
-			if (me->val < COLOR_CHANNEL_MAX)
+			if (_value < COLOR_CHANNEL_MAX)
 			{
-				me->val += diff;
-				if (me->val > COLOR_CHANNEL_MAX)
+				_value += diff;
+				if (_value > COLOR_CHANNEL_MAX)
 				{
-					me->val = COLOR_CHANNEL_MAX;
+					_value = COLOR_CHANNEL_MAX;
 				}
-				color_editor_draw(me);
-				me->change(me, me->info);
+				draw();
+				_change(this, _info);
 			}
 			break;
 
 		case FIK_PAGE_DOWN:
-			if (me->val > 0)
+			if (_value > 0)
 			{
-				me->val -= 5;
-				if (me->val < 0)
+				_value -= 5;
+				if (_value < 0)
 				{
-					me->val = 0;
+					_value = 0;
 				}
-				color_editor_draw(me);
-				me->change(me, me->info);
+				draw();
+				_change(this, _info);
 			}
 			break;
 
@@ -1102,15 +1056,15 @@ static int color_editor_edit(color_editor *me)
 				driver_get_key();
 				++diff;
 			}
-			if (me->val > 0)
+			if (_value > 0)
 			{
-				me->val -= diff;
-				if (me->val < 0)
+				_value -= diff;
+				if (_value < 0)
 				{
-					me->val = 0;
+					_value = 0;
 				}
-				color_editor_draw(me);
-				me->change(me, me->info);
+				draw();
+				_change(this, _info);
 			}
 			break;
 
@@ -1124,17 +1078,17 @@ static int color_editor_edit(color_editor *me)
 		case '7':
 		case '8':
 		case '9':
-			me->val = (key - '0')*10;
-			if (me->val > COLOR_CHANNEL_MAX)
+			_value = (key - '0')*10;
+			if (_value > COLOR_CHANNEL_MAX)
 			{
-				me->val = COLOR_CHANNEL_MAX;
+				_value = COLOR_CHANNEL_MAX;
 			}
-			color_editor_draw(me);
-			me->change(me, me->info);
+			draw();
+			_change(this, _info);
 			break;
 
 		default:
-			me->other_key(key, me, me->info);
+			_other_key(key, this, _info);
 			break;
 		} /* switch */
 	} /* while */
@@ -1142,10 +1096,10 @@ static int color_editor_edit(color_editor *me)
 	cursor_end_mouse_tracking();
 #endif
 
-	if (!me->hidden)
+	if (!_hidden)
 	{
 		cursor_hide();
-		rectangle(me->x, me->y, COLOR_EDITOR_WIDTH, COLOR_EDITOR_DEPTH, s_bg_color);
+		rectangle(_x, _y, COLOR_EDITOR_WIDTH, COLOR_EDITOR_DEPTH, s_bg_color);
 		cursor_show();
 	}
 
@@ -1204,7 +1158,7 @@ static rgb_editor *rgb_editor_new(int x, int y, void (*other_key)(int, rgb_edito
 
 	for (ctr = 0; ctr < 3; ctr++)
 	{
-		me->color[ctr] = color_editor_new(0, 0, letter[ctr], rgb_editor_other_key,
+		me->color[ctr] = new color_editor(0, 0, letter[ctr], rgb_editor_other_key,
 											rgb_editor_change, me);
 	}
 
@@ -1221,9 +1175,9 @@ static rgb_editor *rgb_editor_new(int x, int y, void (*other_key)(int, rgb_edito
 
 static void rgb_editor_destroy(rgb_editor *me)
 {
-	color_editor_destroy(me->color[0]);
-	color_editor_destroy(me->color[1]);
-	color_editor_destroy(me->color[2]);
+	delete me->color[0];
+	delete me->color[1];
+	delete me->color[2];
 	delete me;
 	me = 0;
 }
@@ -1236,9 +1190,9 @@ static void rgb_editor_set_done(rgb_editor *me, bool done)
 static void rgb_editor_set_hidden(rgb_editor *me, bool hidden)
 {
 	me->hidden = hidden;
-	color_editor_set_hidden(me->color[0], hidden);
-	color_editor_set_hidden(me->color[1], hidden);
-	color_editor_set_hidden(me->color[2], hidden);
+	me->color[0]->set_hidden(hidden);
+	me->color[1]->set_hidden(hidden);
+	me->color[2]->set_hidden(hidden);
 }
 
 static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /* private */
@@ -1252,7 +1206,7 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		if (me->curr != 0)
 		{
 			me->curr = 0;
-			color_editor_set_done(ceditor, true);
+			ceditor->set_done(true);
 		}
 		break;
 	case 'G':
@@ -1260,7 +1214,7 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		if (me->curr != 1)
 		{
 			me->curr = 1;
-			color_editor_set_done(ceditor, true);
+			ceditor->set_done(true);
 		}
 		break;
 
@@ -1269,7 +1223,7 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		if (me->curr != 2)
 		{
 			me->curr = 2;
-			color_editor_set_done(ceditor, true);
+			ceditor->set_done(true);
 		}
 		break;
 
@@ -1279,7 +1233,7 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		{
 			me->curr = 0;
 		}
-		color_editor_set_done(ceditor, true);
+		ceditor->set_done(true);
 		break;
 
 	case FIK_INSERT:   /* move to prev color_editor */
@@ -1287,14 +1241,14 @@ static void rgb_editor_other_key(int key, color_editor *ceditor, VOIDPTR info) /
 		{
 			me->curr = 2;
 		}
-		color_editor_set_done(ceditor, true);
+		ceditor->set_done(true);
 		break;
 
 	default:
 		me->other_key(key, me, me->info);
 		if (me->done)
 		{
-			color_editor_set_done(ceditor, true);
+			ceditor->set_done(true);
 		}
 		break;
 	}
@@ -1311,8 +1265,8 @@ static void rgb_editor_change(color_editor *ceditor, VOIDPTR info) /* private */
 	ceditor = 0; /* just for warning */
 	if (me->pal < g_colors && !is_reserved(me->pal))
 	{
-		set_pal(me->pal, color_editor_get_value(me->color[0]),
-			color_editor_get_value(me->color[1]), color_editor_get_value(me->color[2]));
+		set_pal(me->pal, me->color[0]->get_value(),
+			me->color[1]->get_value(), me->color[2]->get_value());
 	}
 	me->change(me, me->info);
 }
@@ -1322,9 +1276,9 @@ static void rgb_editor_set_position(rgb_editor *me, int x, int y)
 	me->x = x;
 	me->y = y;
 
-	color_editor_set_position(me->color[0], x + 2, y + 2);
-	color_editor_set_position(me->color[1], x + 2, y + 2 + COLOR_EDITOR_DEPTH-1);
-	color_editor_set_position(me->color[2], x + 2, y + 2 + COLOR_EDITOR_DEPTH-1 + COLOR_EDITOR_DEPTH-1);
+	me->color[0]->set_position(x + 2, y + 2);
+	me->color[1]->set_position(x + 2, y + 2 + COLOR_EDITOR_DEPTH-1);
+	me->color[2]->set_position(x + 2, y + 2 + COLOR_EDITOR_DEPTH-1 + COLOR_EDITOR_DEPTH-1);
 }
 
 static void rgb_editor_blank_sample_box(rgb_editor *me)
@@ -1371,9 +1325,9 @@ static void rgb_editor_update(rgb_editor *me)
 		fill_rectangle(x1, y1, RGB_EDITOR_BOX_WIDTH-2, RGB_EDITOR_BOX_DEPTH-2, me->pal);
 	}
 
-	color_editor_draw(me->color[0]);
-	color_editor_draw(me->color[1]);
-	color_editor_draw(me->color[2]);
+	me->color[0]->draw();
+	me->color[1]->draw();
+	me->color[2]->draw();
 	cursor_show();
 }
 
@@ -1407,7 +1361,7 @@ static int rgb_editor_edit(rgb_editor *me)
 
 	while (!me->done)
 	{
-		key = color_editor_edit(me->color[me->curr]);
+		key = me->color[me->curr]->edit();
 	}
 
 	if (!me->hidden)
@@ -1423,18 +1377,18 @@ static int rgb_editor_edit(rgb_editor *me)
 static void rgb_editor_set_rgb(rgb_editor *me, int pal, PALENTRY *rgb)
 {
 	me->pal = pal;
-	color_editor_set_value(me->color[0], rgb->red);
-	color_editor_set_value(me->color[1], rgb->green);
-	color_editor_set_value(me->color[2], rgb->blue);
+	me->color[0]->set_value(rgb->red);
+	me->color[1]->set_value(rgb->green);
+	me->color[2]->set_value(rgb->blue);
 }
 
 static PALENTRY rgb_editor_get_rgb(rgb_editor *me)
 {
 	PALENTRY pal;
 
-	pal.red   = (BYTE)color_editor_get_value(me->color[0]);
-	pal.green = (BYTE)color_editor_get_value(me->color[1]);
-	pal.blue  = (BYTE)color_editor_get_value(me->color[2]);
+	pal.red   = (BYTE)me->color[0]->get_value();
+	pal.green = (BYTE)me->color[1]->get_value();
+	pal.blue  = (BYTE)me->color[2]->get_value();
 
 	return pal;
 }
