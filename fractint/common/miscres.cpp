@@ -1453,7 +1453,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 	if (stricmp(filename.c_str(), g_command_file.c_str()))
 	{
 		infile.open(filename.c_str(), std::ios::in | std::ios::binary);
-		if (infile != 0)
+		if (infile.is_open())
 		{
 			if (scan_entries(infile, 0, item_name.c_str()) == -1)
 			{
@@ -1469,7 +1469,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 		{
 			make_path(fullpath, "", DOTSLASH, fname, ext);
 			infile.open(fullpath, std::ios::in | std::ios::binary);
-			if (infile)
+			if (infile.is_open())
 			{
 				if (scan_entries(infile, 0, item_name.c_str()) == -1)
 				{
@@ -1512,7 +1512,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 	if (!found)
 	{
 		infile.open(g_command_file.c_str(), std::ios::in | std::ios::binary);
-		if (infile != 0)
+		if (infile.is_open())
 		{
 			if (scan_entries(infile, 0, parsearchname.c_str()) == -1)
 			{
@@ -1530,7 +1530,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 	{
 		make_path(fullpath, drive, dir, fname, ext);
 		infile.open(fullpath, std::ios::in | std::ios::binary);
-		if (infile != 0)
+		if (infile.is_open())
 		{
 			if (scan_entries(infile, 0, item_name.c_str()) == -1)
 			{
@@ -1562,7 +1562,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 				split_path(g_dta.filename, 0, 0, fname, ext);
 				make_path(fullpath, drive, dir, fname, ext);
 				infile.open(fullpath, std::ios::in | std::ios::binary);
-				if (infile != 0)
+				if (infile.is_open())
 				{
 					if (scan_entries(infile, 0, item_name.c_str()) == -1)
 					{
@@ -1614,7 +1614,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 		}
 		make_path(fullpath, drive, dir, fname, defaultextension);
 		infile.open(fullpath, std::ios::in | std::ios::binary);
-		if (infile != 0)
+		if (infile.is_open())
 		{
 			if (scan_entries(infile, 0, item_name.c_str()) == -1)
 			{

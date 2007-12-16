@@ -696,7 +696,7 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 	if (do_bench)
 	{
 		benchmark_file.open((g_work_dir / "bench.txt").string().c_str(), std::ios::ate);
-		if (!benchmark_file)
+		if (!benchmark_file.is_open())
 		{
 			do_bench = false;
 		}

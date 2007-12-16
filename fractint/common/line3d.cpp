@@ -1958,7 +1958,7 @@ static int raytrace_header()
 	/* Open the ray tracing output file */
 	g_3d_state.next_ray_name();
 	s_raytrace_file.open(g_3d_state.ray_name());
-	if (!s_raytrace_file)
+	if (!s_raytrace_file.is_open())
 	{
 		return -1;              /* Oops, somethings wrong! */
 	}

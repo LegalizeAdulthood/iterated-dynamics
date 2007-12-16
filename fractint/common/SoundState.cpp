@@ -260,7 +260,7 @@ bool SoundStateImpl::open()
 	if ((g_orbit_save & ORBITSAVE_SOUND) != 0 && !_fp)
 	{
 		_fp.open(_sound_save_name.c_str(), std::ios::out);
-		if (!_fp)
+		if (!_fp.is_open())
 		{
 			stop_message(STOPMSG_NORMAL, "Can't open " + _sound_save_name);
 		}
