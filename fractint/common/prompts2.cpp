@@ -418,16 +418,8 @@ int get_toggles2()
 		};
 		for (int i = 0; i < 3; i++)
 		{
-			char buffer[80];
-			if (g_inversion[i] == AUTOINVERT)
-			{
-				::strcpy(buffer, "auto");
-			}
-			else
-			{
-				sprintf(buffer, "%-1.15lg", g_inversion[i]);
-			}
-			dialog.push(prompts[i], buffer);
+			dialog.push(prompts[i], g_inversion[i] == AUTOINVERT ?
+				"auto" : str(boost::format("%-1.15lg") % g_inversion[i]));
 		}
 	}
 	dialog.push("  (use fixed radius & center when zooming)");
