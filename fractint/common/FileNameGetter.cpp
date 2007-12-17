@@ -20,15 +20,15 @@ struct CHOICE
 {
 	char name[13];
 	char full_name[FILE_MAX_PATH];
-	char type;
+	bool is_directory;
 };
 
 #define   MAXNUMFILES    2977L
 
-static int filename_speedstr(int row, int col, int vid,
-					char *speedstring, int speed_match)
+int FileNameGetter::SpeedPrompt(int row, int col, int vid,
+	char *speedstring, int speed_match)
 {
-	char *prompt;
+	std::string prompt;
 	if (strchr(speedstring, ':')
 		|| strchr(speedstring, '*') || strchr(speedstring, '*')
 		|| strchr(speedstring, '?'))
@@ -47,18 +47,14 @@ static int filename_speedstr(int row, int col, int vid,
 		prompt = "Speed key string";
 	}
 	driver_put_string(row, col, vid, prompt);
-	return int(strlen(prompt));
+	return int(prompt.length());
 }
 
-static int check_f6_key(int curkey, int)
+int FileNameGetter::CheckSpecialKeys(int key, int)
 {
-	if (curkey == FIK_F6)
+	if ((key == FIK_F6) || (key == FIK_F4))
 	{
-		return -FIK_F6;
-	}
-	else if (curkey == FIK_F4)
-	{
-		return -FIK_F4;
+		return -key;
 	}
 	return 0;
 }
@@ -66,11 +62,7 @@ static int check_f6_key(int curkey, int)
 int FileNameGetter::Execute()
 {
 	/* if getting an RDS image map */
-	char instr[80];
-	int masklen;
-	char speedstr[81];
-	char tmpmask[FILE_MAX_PATH];   /* used to locate next file in list */
-	int i;
+	/* used to locate next file in list */
 	int j;
 	/* Only the first 13 characters of file names are displayed... */
 	CHOICE storage[MAXNUMFILES];
@@ -86,7 +78,7 @@ int FileNameGetter::Execute()
 	static bool sort_entries = true;
 
 	bool rds = (g_stereo_map_name == _fileName);
-	for (i = 0; i < MAXNUMFILES; i++)
+	for (int i = 0; i < MAXNUMFILES; i++)
 	{
 		attributes[i] = 1;
 		choices[i] = &storage[i];
@@ -95,6 +87,7 @@ int FileNameGetter::Execute()
 	std::string old_flname = _fileName;
 
 restart:  /* return here if template or directory changes */
+	char tmpmask[FILE_MAX_PATH];
 	tmpmask[0] = 0;
 	if (_fileName.length() == 0)
 	{
@@ -139,7 +132,7 @@ retry_dir:
 	int filecount = -1;
 	bool root_directory = true;
 	j = 0;
-	masklen = int(strlen(tmpmask));
+	int masklen = int(strlen(tmpmask));
 	strcat(tmpmask, "*.*");
 	int out = fr_find_first(tmpmask);
 	while (out == 0 && filecount < MAXNUMFILES)
@@ -152,7 +145,7 @@ retry_dir:
 			}
 			strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
 			choices[filecount]->name[12] = 0;
-			choices[filecount]->type = 1;
+			choices[filecount]->is_directory = true;
 			strcpy(choices[filecount]->full_name, g_dta.filename.c_str());
 			if (strcmp(g_dta.filename.c_str(), "..") == 0)
 			{
@@ -166,6 +159,7 @@ retry_dir:
 	{
 		make_path(tmpmask, drive, dir, fname, ext);
 	}
+	char speedstr[81];
 	do
 	{
 		if (num_templates > 1)
@@ -185,12 +179,12 @@ retry_dir:
 					/* just using speedstr as a handy buffer */
 					make_path(speedstr, drive, dir, fname, ext);
 					strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
-					choices[filecount]->type = 0;
+					choices[filecount]->is_directory = false;
 				}
 				else
 				{
 					strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
-					choices[filecount]->type = 0;
+					choices[filecount]->is_directory = false;
 					strcpy(choices[filecount]->full_name, g_dta.filename.c_str());
 				}
 			}
@@ -201,19 +195,19 @@ retry_dir:
 	if (++filecount == 0)
 	{
 		strcpy(choices[filecount]->name, "*nofiles*");
-		choices[filecount]->type = 0;
+		choices[filecount]->is_directory = false;
 		++filecount;
 	}
 
-	strcpy(instr, "Press " FK_F6 " for default directory, " FK_F4 " to toggle sort ");
+	std::string instructions = "Press F6 for default directory, F4 to toggle sort ";
 	if (sort_entries)
 	{
-		strcat(instr, "off");
+		instructions += "off";
 		shell_sort(&choices, filecount, sizeof(CHOICE *), lccompare); /* sort file list */
 	}
 	else
 	{
-		strcat(instr, "on");
+		instructions += "on";
 	}
 	if (root_directory && dir[0] && dir[0] != SLASHC) /* must be in root directory */
 	{
@@ -227,25 +221,27 @@ retry_dir:
 		strcat(tmpmask, g_masks[0]);
 	}
 	strcpy(speedstr, filename);
+	int current = 0;
 	if (speedstr[0] == 0)
 	{
-		for (i = 0; i < filecount; i++) /* find first file */
+		for (int i = 0; i < filecount; i++) /* find first file */
 		{
-			if (choices[i]->type == 0)
+			if (!choices[i]->is_directory)
 			{
+				current = i;
 				break;
 			}
-		}
-		if (i >= filecount)
-		{
-			i = 0;
 		}
 	}
 
 	std::string heading = str(boost::format("%s\nTemplate: %s") % _heading % tmpmask);
-	i = full_screen_choice(CHOICE_INSTRUCTIONS | (sort_entries ? 0 : CHOICE_NOT_SORTED),
-		heading.c_str(), 0, instr, filecount, (char **) choices,
-		attributes, 5, 99, 12, i, 0, speedstr, filename_speedstr, check_f6_key);
+	const int box_width = 5;
+	const int box_depth = 99;
+	const int column_width = 12;
+	int i = full_screen_choice(CHOICE_INSTRUCTIONS | (sort_entries ? 0 : CHOICE_NOT_SORTED),
+		heading, 0, instructions,
+		filecount, (char **) choices, attributes, 
+		box_width, box_depth, column_width, current, 0, speedstr, SpeedPrompt, CheckSpecialKeys);
 	if (i == -FIK_F4)
 	{
 		sort_entries = !sort_entries;
@@ -253,8 +249,8 @@ retry_dir:
 	}
 	if (i == -FIK_F6)
 	{
-		static int lastdir = 0;
-		if (lastdir == 0)
+		static bool lastdir = false;
+		if (!lastdir)
 		{
 			strcpy(dir, g_fract_dir1.c_str());
 		}
@@ -264,7 +260,7 @@ retry_dir:
 		}
 		ensure_slash_on_directory(dir);
 		_fileName = std::string(drive) +  dir;
-		lastdir = 1 - lastdir;
+		lastdir = !lastdir;
 		goto restart;
 	}
 	if (i < 0)
@@ -275,7 +271,7 @@ retry_dir:
 	}
 	if (speedstr[0] == 0 || g_speed_state == SPEEDSTATE_MATCHING)
 	{
-		if (choices[i]->type)
+		if (choices[i]->is_directory)
 		{
 			if (strcmp(choices[i]->name, "..") == 0) /* go up a directory */
 			{
