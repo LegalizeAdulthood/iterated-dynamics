@@ -3008,9 +3008,6 @@ void pal_table::process()
 
 void palette_edit()       /* called by fractint */
 {
-	int       oldsxoffs      = g_sx_offset;
-	int       oldsyoffs      = g_sy_offset;
-
 	if (g_screen_width < 133 || g_screen_height < 174)
 	{
 		return; /* prevents crash when physical screen is too small */
@@ -3023,6 +3020,8 @@ void palette_edit()       /* called by fractint */
 
 	g_line_buffer = new BYTE[std::max(g_screen_width, g_screen_height)];
 
+	int oldsxoffs = g_sx_offset;
+	int oldsyoffs = g_sy_offset;
 	g_sx_offset = 0;
 	g_sy_offset = 0;
 
