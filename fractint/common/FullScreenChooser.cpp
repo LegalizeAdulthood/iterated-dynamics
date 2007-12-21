@@ -78,166 +78,67 @@ AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
 
 int AbstractFullScreenChooser::Execute()
 {
-	/* speed key prompt */
-	/* boxwidth*boxdepth */
-	int scrunch = (_options & CHOICE_CRUNCH) ? 1 : 0;		/* scrunch up a line */
-
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
-	/* preset current to passed string */
-	if (_speedString && _speedString[0])
+
+	if (InitializeCurrent())
 	{
-		InitializeCurrent();
+		return -1;
 	}
 
-	while (true)
-	{
-		if (_current >= _numChoices)  /* no real choice in the list? */
-		{
-			return -1;
-		}
-		if ((_attributes[_current] & 256) == 0)
-		{
-			break;
-		}
-		++_current;                  /* scan for a real choice */
-	}
+	CountTitleLinesAndWidth();
+	FindWidestColumn();
 
-	int title_lines = 0;
-	int title_width = 0;
-	if (_heading)
-	{
-		const char *tmp = _heading;              /* count title lines, find widest */
-		int i = 0;
-		title_lines = 1;
-		while (*tmp)
-		{
-			if (*(tmp++) == '\n')
-			{
-				++title_lines;
-				i = -1;
-			}
-			if (++i > title_width)
-			{
-				title_width = i;
-			}
-		}
-	}
-
-	if (_columnWidth == 0)             /* find widest column */
-	{
-		for (int i = 0; i < _numChoices; ++i)
-		{
-			int len = int(strlen(_choices[i]));
-			if (len > _columnWidth)
-			{
-				_columnWidth = len;
-			}
-		}
-	}
 	/* title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?) */
-	int required_rows = 3 - scrunch;                /* calc rows available */
-	if (_heading)
-	{
-		required_rows += title_lines + 1;
-	}
-	if (_instructions)                   /* count instructions lines */
-	{
-		const char *tmp = _instructions;
-		++required_rows;
-		while (*tmp)
-		{
-			if (*(tmp++) == '\n')
-			{
-				++required_rows;
-			}
-		}
-		if ((_options & CHOICE_INSTRUCTIONS))          /* show std instr too */
-		{
-			required_rows += 2;
-		}
-	}
-	else
-	{
-		required_rows += 2;              /* standard instructions */
-	}
-	if (_speedString)
-	{
-		++required_rows;   /* a row for speedkey prompt */
-	}
-	int i = 25 - required_rows;
-	if (_boxDepth > i) /* limit the depth to max */
-	{
-		_boxDepth = i;
-	}
-	if (_boxWidth == 0)           /* pick box width and depth */
-	{
-		if (_numChoices <= i - 2)  /* single column is 1st choice if we can */
-		{
-			_boxDepth = _numChoices;
-			_boxWidth = 1;
-		}
-		else
-		{                      /* sort-of-wide is 2nd choice */
-			_boxWidth = 60/(_columnWidth + 1);
-			if (_boxWidth == 0
-				|| (_boxDepth = (_numChoices + _boxWidth - 1)/_boxWidth) > i - 2)
-			{
-				_boxWidth = 80/(_columnWidth + 1); /* last gasp, full width */
-				_boxDepth = (_numChoices + _boxWidth - 1)/_boxWidth;
-				if (_boxDepth > i)
-				{
-					_boxDepth = i;
-				}
-			}
-		}
-	}
-	int i2 = (80 / _boxWidth - _columnWidth) / 2 - 1;
+	int scrunch = (_options & CHOICE_CRUNCH) ? 1 : 0;
+	int requiredRows = GetRequiredRows(scrunch);
+	ComputeBoxDepthAndWidth(requiredRows);
+	int i2 = (80/_boxWidth - _columnWidth)/2 - 1;
 	if (i2 == 0) /* to allow wider prompts */
 	{
 		i2 = 1;
 	}
-	if (i2 < 0)
+	else if (i2 < 0)
 	{
 		i2 = 0;
 	}
-	if (i2 > 3)
+	else if (i2 > 3)
 	{
 		i2 = 3;
 	}
-	int j = _boxWidth*(_columnWidth += i2) + i2;     /* overall width of box */
-	if (j < title_width + 2)
+	_columnWidth += i2;
+	int overallWidth = _boxWidth*_columnWidth + i2;     /* overall width of box */
+	if (overallWidth < _titleWidth + 2)
 	{
-		j = title_width + 2;
+		overallWidth = _titleWidth + 2;
 	}
-	if (j > 80)
+	if (overallWidth > 80)
 	{
-		j = 80;
+		overallWidth = 80;
 	}
-	if (j <= 70 && _boxWidth == 2)         /* special case makes menus nicer */
+	if (overallWidth <= 70 && _boxWidth == 2)         /* special case makes menus nicer */
 	{
-		++j;
+		++overallWidth;
 		++_columnWidth;
 	}
-	int k = (80 - j)/2;                       /* center the box */
-	k -= (90 - j)/20;
+	int k = (80 - overallWidth)/2;                       /* center the box */
+	k -= (90 - overallWidth)/20;
 	int top_left_col = k + i2;                     /* column of topleft choice */
-	int i3 = (25 - required_rows - _boxDepth) / 2;
+	int i3 = (25 - requiredRows - _boxDepth) / 2;
 	i3 -= i3/4;                             /* higher is better if lots extra */
-	int top_left_row = 3 + title_lines + i3;        /* row of topleft choice */
+	int top_left_row = 3 + _titleLines + i3;        /* row of topleft choice */
 
 	/* now set up the overall display */
 	help_title();                            /* clear, display title line */
 	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      /* init rest to background */
-	int i4;
-	for (i4 = top_left_row - 1 - title_lines; i4 < top_left_row + _boxDepth + 1; ++i4)
+	for (int i = top_left_row - 1 - _titleLines; i < top_left_row + _boxDepth + 1; ++i)
 	{
-		driver_set_attr(i4, k, C_PROMPT_LO, j);          /* draw empty box */
+		driver_set_attr(i, k, C_PROMPT_LO, overallWidth);          /* draw empty box */
 	}
 	if (_heading)
 	{
-		g_text_cbase = (80 - title_width)/2;   /* set left margin for driver_put_string */
-		g_text_cbase -= (90 - title_width)/20; /* put heading into box */
-		driver_put_string(top_left_row - title_lines - 1, 0, C_PROMPT_HI, _heading);
+		g_text_cbase = (80 - _titleWidth)/2;   /* set left margin for driver_put_string */
+		g_text_cbase -= (90 - _titleWidth)/20; /* put heading into box */
+		driver_put_string(top_left_row - _titleLines - 1, 0, C_PROMPT_HI, _heading);
 		g_text_cbase = 0;
 	}
 	if (_heading2)                               /* display 2nd heading */
@@ -601,39 +502,162 @@ int AbstractFullScreenChooser::Execute()
 	return -1;
 }
 
-void AbstractFullScreenChooser::InitializeCurrent()
+void AbstractFullScreenChooser::ComputeBoxDepthAndWidth(int requiredRows)
 {
-	int speedLength = int(strlen(_speedString));
-	_current = 0;
-	int speedCompare = strncasecmp(_speedString, _choices[_current], speedLength);
-	if (_options & CHOICE_NOT_SORTED)
+	int i = 25 - requiredRows;
+	if (_boxDepth > i) /* limit the depth to max */
 	{
-		while (_current < _numChoices && speedCompare != 0)
+		_boxDepth = i;
+	}
+	if (_boxWidth == 0)           /* pick box width and depth */
+	{
+		if (_numChoices <= i - 2)  /* single column is 1st choice if we can */
 		{
-			++_current;
-			speedCompare = strncasecmp(_speedString, _choices[_current], speedLength);
+			_boxDepth = _numChoices;
+			_boxWidth = 1;
 		}
-		if (speedCompare != 0)
+		else
+		{                      /* sort-of-wide is 2nd choice */
+			_boxWidth = 60/(_columnWidth + 1);
+			if (_boxWidth == 0
+				|| (_boxDepth = (_numChoices + _boxWidth - 1)/_boxWidth) > i - 2)
+			{
+				_boxWidth = 80/(_columnWidth + 1); /* last gasp, full width */
+				_boxDepth = (_numChoices + _boxWidth - 1)/_boxWidth;
+				if (_boxDepth > i)
+				{
+					_boxDepth = i;
+				}
+			}
+		}
+	}
+}
+
+int AbstractFullScreenChooser::GetRequiredRows(int scrunch)
+{
+	int requiredRows = 3 - scrunch;                /* calc rows available */
+	if (_heading)
+	{
+		requiredRows += _titleLines + 1;
+	}
+	if (_instructions)                   /* count instructions lines */
+	{
+		const char *tmp = _instructions;
+		++requiredRows;
+		while (*tmp)
 		{
-			_current = 0;
+			if (*(tmp++) == '\n')
+			{
+				++requiredRows;
+			}
+		}
+		if ((_options & CHOICE_INSTRUCTIONS))          /* show std instr too */
+		{
+			requiredRows += 2;
 		}
 	}
 	else
 	{
-		while (_current < _numChoices && speedCompare > 0)
-		{
-			++_current;
-			speedCompare = strncasecmp(_speedString, _choices[_current], speedLength);
-		}
-		if (speedCompare < 0 && _current > 0)  /* oops - overshot */
-		{
-			--_current;
-		}
+		requiredRows += 2;              /* standard instructions */
 	}
-	if (_current >= _numChoices) /* bumped end of list */
+	if (_speedString)
 	{
-		_current = _numChoices - 1;
+		++requiredRows;   /* a row for speedkey prompt */
 	}
+	return requiredRows;
+}
+
+void AbstractFullScreenChooser::FindWidestColumn()
+{
+	if (_columnWidth == 0)             /* find widest column */
+	{
+		for (int i = 0; i < _numChoices; ++i)
+		{
+			int len = int(strlen(_choices[i]));
+			if (len > _columnWidth)
+			{
+				_columnWidth = len;
+			}
+		}
+	}
+}
+
+void AbstractFullScreenChooser::CountTitleLinesAndWidth()
+{
+	_titleLines = 0;
+	_titleWidth = 0;
+	if (_heading)
+	{
+		const char *tmp = _heading;              /* count title lines, find widest */
+		int i = 0;
+		_titleLines = 1;
+		while (*tmp)
+		{
+			if (*(tmp++) == '\n')
+			{
+				++_titleLines;
+				i = -1;
+			}
+			if (++i > _titleWidth)
+			{
+				_titleWidth = i;
+			}
+		}
+	}
+}
+
+bool AbstractFullScreenChooser::InitializeCurrent()
+{
+	/* preset current to passed string */
+	if (_speedString && _speedString[0])
+	{
+		int speedLength = int(strlen(_speedString));
+		_current = 0;
+		int speedCompare = strncasecmp(_speedString, _choices[_current], speedLength);
+		if (_options & CHOICE_NOT_SORTED)
+		{
+			while (_current < _numChoices && speedCompare != 0)
+			{
+				++_current;
+				speedCompare = strncasecmp(_speedString, _choices[_current], speedLength);
+			}
+			if (speedCompare != 0)
+			{
+				_current = 0;
+			}
+		}
+		else
+		{
+			while (_current < _numChoices && speedCompare > 0)
+			{
+				++_current;
+				speedCompare = strncasecmp(_speedString, _choices[_current], speedLength);
+			}
+			if (speedCompare < 0 && _current > 0)  /* oops - overshot */
+			{
+				--_current;
+			}
+		}
+		if (_current >= _numChoices) /* bumped end of list */
+		{
+			_current = _numChoices - 1;
+		}
+	}
+
+	while (true)
+	{
+		if (_current >= _numChoices)  /* no real choice in the list? */
+		{
+			return true;
+		}
+		if ((_attributes[_current] & 256) == 0)
+		{
+			break;
+		}
+		++_current;                  /* scan for a real choice */
+	}
+
+	return false;
 }
 
 void AbstractFullScreenChooser::Footer(int &i)

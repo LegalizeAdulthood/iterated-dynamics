@@ -4,6 +4,8 @@
 #include <iterator>
 #include <vector>
 
+#include <boost/format.hpp>
+
 extern BYTE g_text_colors[];
 #include "id.h"
 #include "FullScreenChooser.h"
@@ -22,7 +24,8 @@ public:
 			formatItem, speedString,
 			speedPrompt, checkKey),
 		_keyStrokes(),
-		_keyStrokeCount(0)
+		_keyStrokeCount(0),
+		_driver_put_string_args()
 	{
 	}
 	virtual ~TestFullScreenChooser()
@@ -34,6 +37,19 @@ public:
 		std::copy(&keys[0], &keys[numKeys], std::back_inserter<std::vector<int> >(_keyStrokes));
 	}
 
+	struct driver_put_string_arg
+	{
+		driver_put_string_arg(int row_, int col_, int attr_, const char *msg_)
+			: row(row_), col(col_), attr(attr_), msg(msg_)
+		{
+		}
+		int row;
+		int col;
+		int attr;
+		std::string msg;
+	};
+	const std::vector<driver_put_string_arg> &driver_put_string_args() const { return _driver_put_string_args; }
+
 protected:
 	virtual void help_title()
 	{
@@ -41,8 +57,10 @@ protected:
 	virtual void driver_set_attr(int row, int col, int attr, int count)
 	{
 	}
+	std::vector<driver_put_string_arg> _driver_put_string_args;
 	virtual void driver_put_string(int row, int col, int attr, const char *msg)
 	{
+		_driver_put_string_args.push_back(driver_put_string_arg(row, col, attr, msg));
 	}
 	virtual void driver_hide_text_cursor()
 	{
@@ -81,6 +99,11 @@ TEST(NoChoices, FullScreenChooser)
 	CHECK_EQUAL(-1, result);
 }
 
+std::ostream &operator<<(std::ostream &stream, const TestFullScreenChooser::driver_put_string_arg &arg)
+{
+	return stream << boost::format("{ %02d,%02d 0x%04X '%s' }\n") % arg.col % arg.row % arg.attr % arg.msg;
+}
+
 TEST(Escape, FullScreenChooser)
 {
 	char *choices[] = { "Choice" };
@@ -90,4 +113,6 @@ TEST(Escape, FullScreenChooser)
 	chooser.SetKeyStrokes(NUM_OF(keyStrokes), keyStrokes);
 	int result = chooser.Execute();
 	CHECK_EQUAL(-1, result);
+	std::copy(chooser.driver_put_string_args().begin(), chooser.driver_put_string_args().end(),
+		std::ostream_iterator<TestFullScreenChooser::driver_put_string_arg>(std::cout));
 }
