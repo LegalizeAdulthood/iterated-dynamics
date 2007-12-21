@@ -20,6 +20,7 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
+#include "FullScreenChooser.h"
 #include "line3d.h"
 #include "loadfile.h"
 #include "loadmap.h"

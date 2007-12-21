@@ -1327,6 +1327,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\FullScreenChooser.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\help.cpp"
 					>
 				</File>
@@ -1704,6 +1708,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\framain2.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\FullScreenChooser.h"
 					>
 				</File>
 				<File
