@@ -8,13 +8,13 @@
 
 #include "Browse.h"
 #include "drivers.h"
+#include "FileNameGetter.h"
 #include "filesystem.h"
 #include "fimain.h"
+#include "FullScreenChooser.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "stereo.h"
-
-#include "FileNameGetter.h"
 
 struct CHOICE
 {
@@ -94,8 +94,7 @@ restart:  /* return here if template or directory changes */
 		_fileName = DOTSLASH;
 	}
 	split_path(_fileName, drive, dir, fname, ext);
-	char filename[FILE_MAX_PATH];
-	make_path(filename, ""   , "" , fname, ext);
+	std::string filename = boost::filesystem::path(_fileName).leaf();
 	bool retried = false;
 
 retry_dir:
@@ -220,7 +219,7 @@ retry_dir:
 		strcat(tmpmask, " ");
 		strcat(tmpmask, g_masks[0]);
 	}
-	strcpy(speedstr, filename);
+	strcpy(speedstr, filename.c_str());
 	int current = 0;
 	if (speedstr[0] == 0)
 	{

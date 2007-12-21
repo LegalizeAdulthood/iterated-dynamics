@@ -26,6 +26,7 @@
 
 #include "cmdfiles.h"
 #include "fihelp.h"
+#include "FullScreenChooser.h"
 #include "loadfdos.h"
 #include "realdos.h"
 

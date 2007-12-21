@@ -27,6 +27,7 @@
 #include "FiniteAttractor.h"
 #include "fractalp.h"
 #include "framain2.h"
+#include "FullScreenChooser.h"
 #include "loadfile.h"
 #include "miscovl.h"
 #include "miscres.h"

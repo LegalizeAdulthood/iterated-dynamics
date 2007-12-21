@@ -278,3 +278,11 @@ int filename_speedstr(int row, int col, int vid, char *speedstring, int speed_ma
 { return 0; }
 int check_f6_key(int curkey, int)
 { return 0; }
+int full_screen_choice(int options,
+	const char *heading, const char *heading2, const char *instructions,
+	int num_choices, char **choices, const int *attributes,
+	int box_width, int box_depth, int column_width, int current,
+	void (*format_item)(int, char *),
+	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
+	int (*check_key)(int, int))
+{ return -1; }
