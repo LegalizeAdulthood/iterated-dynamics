@@ -31,6 +31,7 @@ private:
 
 SimpleString StringFrom(bool value);
 SimpleString StringFrom(const char *value);
+SimpleString StringFrom(int value);
 SimpleString StringFrom(long value);
 SimpleString StringFrom(double value);
 SimpleString StringFrom(const SimpleString &other);
