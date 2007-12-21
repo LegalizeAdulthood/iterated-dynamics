@@ -25,7 +25,6 @@ int g_sx_offset = 0;
 int g_sy_offset = 0;
 int g_color_medium = 0;
 int g_color_dark = 0;
-unsigned char *g_text_colors = 0;
 int g_text_row = 0;
 int g_text_cbase = 0;
 bool g_command_initialize = false;
@@ -278,11 +277,37 @@ int filename_speedstr(int row, int col, int vid, char *speedstring, int speed_ma
 { return 0; }
 int check_f6_key(int curkey, int)
 { return 0; }
-int full_screen_choice(int options,
-	const char *heading, const char *heading2, const char *instructions,
-	int num_choices, char **choices, const int *attributes,
-	int box_width, int box_depth, int column_width, int current,
-	void (*format_item)(int, char *),
-	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
-	int (*check_key)(int, int))
-{ return -1; }
+BYTE g_text_colors[]=
+{
+		BLUE*16 + L_WHITE,    /* C_TITLE           title background */
+		BLUE*16 + L_GREEN,    /* C_TITLE_DEV       development vsn foreground */
+		GREEN*16 + YELLOW,    /* C_HELP_HDG        help page title line */
+		WHITE*16 + BLACK,     /* C_HELP_BODY       help page body */
+		GREEN*16 + GRAY,      /* C_HELP_INSTR      help page instr at bottom */
+		WHITE*16 + BLUE,      /* C_HELP_LINK       help page links */
+		CYAN*16 + BLUE,       /* C_HELP_CURLINK    help page current link */
+		WHITE*16 + GRAY,      /* C_PROMPT_BKGRD    prompt/choice background */
+		WHITE*16 + BLACK,     /* C_PROMPT_TEXT     prompt/choice extra info */
+		BLUE*16 + WHITE,      /* C_PROMPT_LO       prompt/choice text */
+		BLUE*16 + L_WHITE,    /* C_PROMPT_MED      prompt/choice hdg2/... */
+		BLUE*16 + YELLOW,     /* C_PROMPT_HI       prompt/choice hdg/cur/... */
+		GREEN*16 + L_WHITE,   /* C_PROMPT_INPUT    full_screen_prompt input */
+		CYAN*16 + L_WHITE,    /* C_PROMPT_CHOOSE   full_screen_prompt choice */
+		MAGENTA*16 + L_WHITE, /* C_CHOICE_CURRENT  full_screen_choice input */
+		BLACK*16 + WHITE,     /* C_CHOICE_SP_INSTR speed key bar & instr */
+		BLACK*16 + L_MAGENTA, /* C_CHOICE_SP_KEYIN speed key value */
+		WHITE*16 + BLUE,      /* C_GENERAL_HI      tab, thinking, IFS */
+		WHITE*16 + BLACK,     /* C_GENERAL_MED */
+		WHITE*16 + GRAY,      /* C_GENERAL_LO */
+		BLACK*16 + L_WHITE,   /* C_GENERAL_INPUT */
+		WHITE*16 + BLACK,     /* C_DVID_BKGRD      disk video */
+		BLACK*16 + YELLOW,    /* C_DVID_HI */
+		BLACK*16 + L_WHITE,   /* C_DVID_LO */
+		RED*16 + L_WHITE,     /* C_STOP_ERR        stop message, error */
+		GREEN*16 + BLACK,     /* C_STOP_INFO       stop message, info */
+		BLUE*16 + WHITE,      /* C_TITLE_LOW       bottom lines of title screen */
+		GREEN*16 + BLACK,     /* C_AUTHDIV1        title screen dividers */
+		GREEN*16 + GRAY,      /* C_AUTHDIV2        title screen dividers */
+		BLACK*16 + L_WHITE,   /* C_PRIMARY         primary authors */
+		BLACK*16 + WHITE      /* C_CONTRIB         contributing authors */
+};

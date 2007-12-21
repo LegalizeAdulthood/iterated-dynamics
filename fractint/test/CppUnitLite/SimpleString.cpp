@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sstream>
 
 static const int DEFAULT_SIZE = 20;
 
@@ -79,4 +80,11 @@ SimpleString StringFrom(double value)
 SimpleString StringFrom(const SimpleString &value)
 {
 	return SimpleString(value);
+}
+
+SimpleString StringFrom(int value)
+{
+	std::ostringstream buffer;
+	buffer << value << std::ends;
+	return SimpleString(buffer.str().c_str());
 }
