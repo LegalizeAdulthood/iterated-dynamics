@@ -78,20 +78,8 @@ AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
 
 int AbstractFullScreenChooser::Execute()
 {
-	int title_lines;
-	int title_width;
-	int required_rows;
-	int top_left_row;
-	int top_left_col;
-	int top_left_choice;
-	int speed_row = 0;  /* speed key prompt */
-	int box_items;      /* boxwidth*boxdepth */
-	int current_key;
-	int increment;
-	int rev_increment = 0;
-	char buf[81];
-	char current_item[81];
-	char *item_ptr;
+	/* speed key prompt */
+	/* boxwidth*boxdepth */
 	int scrunch = (_options & CHOICE_CRUNCH) ? 1 : 0;		/* scrunch up a line */
 
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
@@ -114,8 +102,8 @@ int AbstractFullScreenChooser::Execute()
 		++_current;                  /* scan for a real choice */
 	}
 
-	title_lines = 0;
-	title_width = 0;
+	int title_lines = 0;
+	int title_width = 0;
 	if (_heading)
 	{
 		const char *tmp = _heading;              /* count title lines, find widest */
@@ -147,7 +135,7 @@ int AbstractFullScreenChooser::Execute()
 		}
 	}
 	/* title(1), blank(1), hdg(n), blank(1), body(n), blank(1), instr(?) */
-	required_rows = 3 - scrunch;                /* calc rows available */
+	int required_rows = 3 - scrunch;                /* calc rows available */
 	if (_heading)
 	{
 		required_rows += title_lines + 1;
@@ -232,10 +220,10 @@ int AbstractFullScreenChooser::Execute()
 	}
 	int k = (80 - j)/2;                       /* center the box */
 	k -= (90 - j)/20;
-	top_left_col = k + i2;                     /* column of topleft choice */
+	int top_left_col = k + i2;                     /* column of topleft choice */
 	int i3 = (25 - required_rows - _boxDepth) / 2;
 	i3 -= i3/4;                             /* higher is better if lots extra */
-	top_left_row = 3 + title_lines + i3;        /* row of topleft choice */
+	int top_left_row = 3 + title_lines + i3;        /* row of topleft choice */
 
 	/* now set up the overall display */
 	help_title();                            /* clear, display title line */
@@ -257,6 +245,7 @@ int AbstractFullScreenChooser::Execute()
 		driver_put_string(top_left_row - 1, top_left_col, C_PROMPT_MED, _heading2);
 	}
 	int i5 = top_left_row + _boxDepth + 1;
+	int speed_row = 0;
 	if (_instructions == 0 || (_options & CHOICE_INSTRUCTIONS))   /* display default instructions */
 	{
 		if (i5 < 20)
@@ -275,6 +264,7 @@ int AbstractFullScreenChooser::Execute()
 		i5 -= scrunch;
 		Footer(i5);
 	}
+	char buf[81];
 	if (_instructions)                            /* display caller's instructions */
 	{
 		const char *tmp = _instructions;
@@ -291,8 +281,8 @@ int AbstractFullScreenChooser::Execute()
 		put_string_center(i5, 0, 80, C_PROMPT_BKGRD, buf);
 	}
 
-	box_items = _boxWidth*_boxDepth;
-	top_left_choice = 0;                      /* pick topleft for init display */
+	int box_items = _boxWidth*_boxDepth;
+	int top_left_choice = 0;                      /* pick topleft for init display */
 	while (_current - top_left_choice >= box_items
 		|| (_current - top_left_choice > box_items/2
 		&& top_left_choice + box_items < _numChoices))
@@ -301,6 +291,8 @@ int AbstractFullScreenChooser::Execute()
 	}
 	bool redisplay = true;
 	top_left_row -= scrunch;
+	int rev_increment = 0;
+	char current_item[81];
 	while (true) /* main loop */
 	{
 		if (redisplay)                       /* display the current choices */
@@ -345,17 +337,18 @@ int AbstractFullScreenChooser::Execute()
 		}
 
 		int i = _current - top_left_choice;           /* highlight the current choice */
+		const char *itemText;
 		if (_formatItem)
 		{
 			(*_formatItem)(_current, current_item);
-			item_ptr = current_item;
+			itemText = current_item;
 		}
 		else
 		{
-			item_ptr = _choices[_current];
+			itemText = _choices[_current];
 		}
 		driver_put_string(top_left_row + i/_boxWidth, top_left_col + (i % _boxWidth)*_columnWidth,
-			C_CHOICE_CURRENT, item_ptr);
+			C_CHOICE_CURRENT, itemText);
 
 		if (_speedString)                     /* show speedstring if any */
 		{
@@ -367,12 +360,12 @@ int AbstractFullScreenChooser::Execute()
 		}
 
 		driver_wait_key_pressed(0);					/* enables help */
-		current_key = driver_get_key();
+		int current_key = driver_get_key();
 		i = _current - top_left_choice;				/* unhighlight current choice */
 		driver_put_string(top_left_row + i/_boxWidth, top_left_col + (i % _boxWidth)*_columnWidth,
-			prompt_color(_attributes[_current]), item_ptr);
+			prompt_color(_attributes[_current]), itemText);
 
-		increment = 0;
+		int increment = 0;
 		switch (current_key)
 		{                      /* deal with input key */
 		case FIK_ENTER:
