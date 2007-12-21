@@ -31,7 +31,11 @@ public:
 	int Execute();
 
 private:
-	void InitializeCurrent();
+	bool InitializeCurrent();
+	void ComputeBoxDepthAndWidth(int requiredRows);
+	int GetRequiredRows(int scrunch);
+	void FindWidestColumn();
+	void CountTitleLinesAndWidth();
 	void Footer(int &i);
 
 	int prompt_color(int attributes)
@@ -64,6 +68,8 @@ private:
 	char *_speedString;
 	int (*_speedPrompt)(int, int, int, char *, int);
 	int (*_checkKey)(int, int);
+	int _titleLines;
+	int _titleWidth;
 };
 
 extern int full_screen_choice(int options,
