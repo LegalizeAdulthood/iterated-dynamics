@@ -1487,14 +1487,12 @@ void pal_table::put_band(PALENTRY *pal)
 /* - Undo.Redo code - */
 void pal_table::save_undo_data(int first, int last)
 {
-	int num;
-
 	if (_undo_file == 0)
 	{
 		return;
 	}
 
-	num = (last - first) + 1;
+	int num = (last - first) + 1;
 
 #ifdef DEBUG_UNDO
 	mprintf("%6ld Writing Undo DATA from %d to %d (%d)", ftell(undo_file), first, last, num);
