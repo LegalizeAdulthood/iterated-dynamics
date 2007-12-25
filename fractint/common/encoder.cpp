@@ -31,7 +31,7 @@
 #include "ThreeDimensionalState.h"
 
 static int compress(int rowlimit);
-static int shftwrite(BYTE *color, int g_num_colors);
+static int shftwrite(BYTE *color, int num_colors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char *block_data);
 static int store_item_name(const char *name);
@@ -675,12 +675,12 @@ oops:
 
 /* TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. */
 /* shift IBM colors to GIF */
-static int shftwrite(BYTE *color, int g_num_colors)
+static int shftwrite(BYTE *color, int num_colors)
 {
 	BYTE thiscolor;
 	int i;
 	int j;
-	for (i = 0; i < g_num_colors; i++)
+	for (i = 0; i < num_colors; i++)
 	{
 		for (j = 0; j < 3; j++)
 		{
