@@ -46,19 +46,16 @@
 #define PERSPECTIVE_DISTANCE 250		/* Perspective dist used when viewing light vector */
 #define BAD_CHECK -3000					/* check values against this to determine if good */
 
-struct point
+template <typename T>
+struct point_t
 {
-	int x;
-	int y;
-	int color;
+	T x;
+	T y;
+	T color;
 };
 
-struct f_point
-{
-	float x;
-	float y;
-	float color;
-};
+typedef point_t<int> point;
+typedef point_t<float> point_fp;
 
 struct minmax
 {
@@ -66,10 +63,34 @@ struct minmax
 	int maxx;
 };
 
+class acrospin_data
+{
+public:
+	acrospin_data()
+		: _rows(0),
+		_columns(0),
+		_maxColumns(-1)
+	{
+	}
+
+	void cleanup();
+	void first_time();
+	void line3d_planar(point_fp *current);
+	void line3d_raytrace(point_fp const *current);
+	void next_row();
+	void reset_columns() { _columns = 0; }
+
+private:
+	int _rows;
+	int _columns;
+	int _maxColumns;
+};
+
 /* routines in this module */
 int out_line_3d(BYTE *pixels, int line_length);
 int targa_color(int, int, int);
 int start_disk_targa(const std::string &file_name2, FILE *Source, bool overlay_file);
+int start_disk_targa(const std::string &filename, std::ifstream &source, bool overlay_file);
 
 /* global variables defined here */
 void (*g_plot_color_standard)(int x, int y, int color) = 0;
@@ -92,8 +113,8 @@ static int RGBtoHSV(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned
 static int set_pixel_buff(BYTE *, BYTE *, unsigned);
 static void set_upr_lwr();
 static int end_object(bool triangle_was_output);
-static int off_screen(struct point);
-static int out_triangle(const struct f_point, const struct f_point, const struct f_point, int, int, int);
+static int off_screen(point);
+static int out_triangle(const point_fp, const point_fp, const point_fp, int, int, int);
 static int raytrace_header();
 static int start_object();
 static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax);
@@ -103,7 +124,7 @@ static void draw_rectangle_lines(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int
 static void line3d_cleanup();
 static void plot_color_clip(int, int, int);
 static void interp_color(int, int, int);
-static void put_a_triangle(struct point, struct point, struct point, int);
+static void put_a_triangle(point, point, point, int);
 static void plot_color_put_min_max(int, int, int);
 static void triangle_bounds(float pt_t[3][3]);
 static void plot_color_transparent_clip(int, int, int);
@@ -144,7 +165,7 @@ static BYTE s_targa_size[4];
 static bool s_targa_safe;						/* Original Targa Image successfully copied to s_targa_temp */
 static VECTOR s_light_direction;
 static BYTE s_real_color;					/* Actual color of cur pixel */
-static int RO;
+static acrospin_data s_acrospin;
 static int CO;
 static int CO_MAX;				/* For use in Acrospin support */
 static int s_local_preview_factor;
@@ -155,18 +176,69 @@ static float *s_sin_theta_array;			/* all sine thetas go here  */
 static float *s_cos_theta_array;			/* all cosine thetas go here */
 static double s_r_scale_r;					/* precalculation factor */
 static bool s_persp;						/* flag for indicating perspective transformations */
-static struct point s_p1;
-static struct point s_p2;
-static struct point s_p3;
-static struct f_point s_f_bad;			/* out of range value */
-static struct point s_bad;				/* out of range value */
+static point s_p1;
+static point s_p2;
+static point s_p3;
+static point_fp s_f_bad;			/* out of range value */
+static point s_bad;				/* out of range value */
 static long s_num_tris;					/* number of triangles output to ray trace file */
-static struct f_point *s_f_last_row = 0;
+static point_fp *s_f_last_row = 0;
 static MATRIX s_m;						/* transformation matrix */
 static int s_file_error = FILEERROR_NONE;
 static char *s_targa_temp = "idtemp.tga";
-static struct point *s_last_row = 0;	/* this array remembers the previous line */
+static point *s_last_row = 0;	/* this array remembers the previous line */
 static struct minmax *s_minmax_x;			/* array of min and max x values used in triangle fill */
+
+void acrospin_data::cleanup()
+{
+	s_raytrace_file << "LineList From To\n";
+	for (int i = 0; i < _rows; i++)
+	{
+		for (int j = 0; j <= _maxColumns; j++)
+		{
+			if (j < _maxColumns)
+			{
+				s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % i % (j + 1);
+			}
+			if (i < _rows - 1)
+			{
+				s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % (i + 1) % j;
+			}
+			if (i && i < _rows && j < _maxColumns)
+			{
+				s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % (i - 1) % (j + 1);
+			}
+		}
+	}
+	s_raytrace_file << "\n\n--";
+}
+
+void acrospin_data::line3d_raytrace(point_fp const *current)
+{
+	s_raytrace_file << boost::format("% #4.4f % #4.4f % #4.4f R%dC%d\n")
+		% current->x % current->y % current->color % _rows % _columns;
+	_maxColumns = std::max(_columns, _maxColumns);
+	_columns++;
+}
+
+void acrospin_data::first_time()
+{
+	_maxColumns = 0;
+	_columns = 0;
+	_rows = 0;
+}
+
+void acrospin_data::line3d_planar(point_fp *current)
+{
+	current->x = current->x*(2.0f/g_x_dots) - 1.0f;
+	current->y = current->y*(2.0f/g_y_dots) - 1.0f;
+	current->color = -current->color*(2.0f/g_num_colors) - 1.0f;
+}
+
+void acrospin_data::next_row()
+{
+	_rows++;
+}
 
 static int line3d_init(unsigned linelen, bool &triangle_was_output,
 					   int *xcenter0, int *ycenter0, VECTOR cross_avg, VECTOR v)
@@ -192,7 +264,7 @@ static int line3d_init(unsigned linelen, bool &triangle_was_output,
 }
 
 static int line3d_sphere(int col, int xcenter0, int ycenter0,
-						 struct point *cur, struct f_point *f_cur, double *r, VECTOR_L lv, VECTOR v)
+						 point *cur, point_fp *f_cur, double *r, VECTOR_L lv, VECTOR v)
 {
 	float cos_theta = s_sin_theta_array[col];
 	float sin_theta = s_cos_theta_array[col];    /* precalculated sin/cos of latitude */
@@ -296,7 +368,7 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 	return 0;
 }
 
-static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
+static int line3d_planar(int col, point_fp *f_cur, point *cur,
 						 VECTOR_L lv0, VECTOR_L lv, VECTOR v, float *f_water)
 {
 	if (!g_user_float_flag && !g_3d_state.raytrace_output())
@@ -351,9 +423,7 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 
 			if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 			{
-				f_cur->x = f_cur->x*(2.0f/g_x_dots) - 1.0f;
-				f_cur->y = f_cur->y*(2.0f/g_y_dots) - 1.0f;
-				f_cur->color = -f_cur->color*(2.0f/g_num_colors) - 1.0f;
+				s_acrospin.line3d_planar(f_cur);
 			}
 		}
 
@@ -375,8 +445,8 @@ static int line3d_planar(int col, struct f_point *f_cur, struct point *cur,
 }
 
 static void line3d_raytrace(int col, int next,
-							const struct point *old, const struct point *cur,
-							const struct f_point *f_old, const struct f_point *f_cur,
+							const point *old, const point *cur,
+							const point_fp *f_old, const point_fp *f_cur,
 							float f_water, int last_dot,
 							bool &triangle_was_output)
 {
@@ -452,17 +522,11 @@ static void line3d_raytrace(int col, int next,
 
 	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)       /* Output vertex info for Acrospin */
 	{
-		s_raytrace_file << boost::format("% #4.4f % #4.4f % #4.4f R%dC%d\n")
-			% f_cur->x % f_cur->y % f_cur->color % RO % CO;
-		if (CO > CO_MAX)
-		{
-			CO_MAX = CO;
-		}
-		CO++;
+		s_acrospin.line3d_raytrace(f_cur);
 	}
 }
 
-static void line3d_fill_surface_grid(int col, const struct point *old, const struct point *cur)
+static void line3d_fill_surface_grid(int col, const point *old, const point *cur)
 {
 	if (col &&
 		old->x > BAD_CHECK &&
@@ -481,13 +545,13 @@ static void line3d_fill_surface_grid(int col, const struct point *old, const str
 	}
 }
 
-static void line3d_fill_points(const struct point *cur)
+static void line3d_fill_points(const point *cur)
 {
 	(*g_plot_color)(cur->x, cur->y, cur->color);
 }
 
 /* connect-a-dot */
-static void line3d_fill_wire_frame(int col, const struct point *old, const struct point *cur)
+static void line3d_fill_wire_frame(int col, const point *old, const point *cur)
 {
 	if ((old->x < g_x_dots) && (col) &&
 		old->x > BAD_CHECK &&
@@ -497,7 +561,7 @@ static void line3d_fill_wire_frame(int col, const struct point *old, const struc
 	}
 }
 
-static void line3d_fill_gouraud_flat(int col, int next, int last_dot, const struct point *old, const struct point *cur, const struct point *old_last)
+static void line3d_fill_gouraud_flat(int col, int next, int last_dot, const point *old, const point *cur, const point *old_last)
 {
 	/*************************************************************/
 	/* "triangle fill" - consider four points: current point,    */
@@ -530,7 +594,7 @@ static void line3d_fill_gouraud_flat(int col, int next, int last_dot, const stru
 }
 
 static void line3d_fill_bars(int col,
-	struct point *old, struct point *cur, struct f_point *f_cur,
+	point *old, point *cur, point_fp *f_cur,
 	VECTOR_L lv, VECTOR_L lv0)
 {
 	if (g_3d_state.sphere())
@@ -574,8 +638,8 @@ static void line3d_fill_bars(int col,
 
 static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_init,
 							  VECTOR v1, VECTOR v2,
-							  const struct point *old, const struct f_point *f_old,
-							  struct point *cur, struct f_point *f_cur,
+							  const point *old, const point_fp *f_old,
+							  point *cur, point_fp *f_cur,
 							  VECTOR cross_avg)
 {
 	/* light-source modulated fill */
@@ -682,9 +746,9 @@ static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_in
 }
 
 static void line3d_fill(int col, int next, int last_dot, bool cross_not_init,
-						const struct point *old_last,
-						struct point *old, struct point *cur,
-						struct f_point *f_old, struct f_point *f_cur,
+						const point *old_last,
+						point *old, point *cur,
+						point_fp *f_old, point_fp *f_cur,
 						VECTOR_L lv, VECTOR_L lv0, VECTOR v1, VECTOR v2, VECTOR cross_avg)
 {
 	switch (g_3d_state.fill_type())
@@ -723,10 +787,10 @@ int out_line_3d(BYTE *pixels, int line_length)
 	double r;						/* sphere radius */
 	int next;						/* used by preview and grid */
 	int col;						/* current column (original GIF) */
-	struct point cur;				/* current pixels */
-	struct point old;				/* old pixels */
-	struct f_point f_cur;
-	struct f_point f_old;
+	point cur;				/* current pixels */
+	point old;				/* old pixels */
+	point_fp f_cur;
+	point_fp f_old;
 	VECTOR v;						/* double vector */
 	VECTOR v1, v2;
 	VECTOR cross_avg;
@@ -735,7 +799,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	VECTOR_L lv0;					/* long equivalent of v */
 	int last_dot;
 	long g_fudge;
-	static struct point old_last = { 0, 0, 0 }; /* old pixels */
+	static point old_last = { 0, 0, 0 }; /* old pixels */
 
 	g_fudge = 1L << 16;
 	g_plot_color = (g_3d_state.transparent0() || g_3d_state.transparent1()) ? plot_color_transparent_clip : plot_color_clip;
@@ -792,7 +856,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	cross_not_init = true;
 	col = 0;
 
-	CO = 0;
+	s_acrospin.reset_columns();
 
 	/*************************************************************************/
 	/* This section of code allows the operation of a preview mode when the  */
@@ -966,7 +1030,7 @@ loopbottom:
 		}
 		col++;
 	}                         /* End of while statement for plotting line  */
-	RO++;
+	s_acrospin.next_row();
 
 reallythebottom:
 	/* stuff that HAS to be done, even in preview mode, goes here */
@@ -1272,7 +1336,7 @@ static void plot_color_put_min_max(int x, int y, int color)
 */
 #define MAXOFFSCREEN  2    /* allow two of three points to be off screen */
 
-static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3, int color)
+static void put_a_triangle(point pt1, point pt2, point pt3, int color)
 {
 	/* Too many points off the screen? */
 	if ((off_screen(pt1) + off_screen(pt2) + off_screen(pt3)) > MAXOFFSCREEN)
@@ -1362,7 +1426,7 @@ static void put_a_triangle(struct point pt1, struct point pt2, struct point pt3,
 	g_plot_color = s_plot_color_normal;
 }
 
-static int off_screen(struct point pt)
+static int off_screen(point pt)
 {
 	if ((pt.x >= 0) && (pt.x < g_x_dots) && (pt.y >= 0) && (pt.y < g_y_dots))
 	{
@@ -1724,6 +1788,108 @@ int start_disk_targa(const std::string &file_name2, FILE *Source, bool overlay_f
 	return 0;
 }
 
+int start_disk_targa(const std::string &file_name2, std::ifstream &source, bool overlay_file)
+{
+	/* Open File for both reading and writing */
+	FILE *fps = dir_fopen(g_work_dir, file_name2, "wb");
+	if (fps == 0)
+	{
+		file_error(file_name2, FILEERROR_OPEN);
+		return -1;              /* Oops, somethings wrong! */
+	}
+
+	int inc = 1;                     /* Assume we are overlaying a file */
+
+	/* Write the header */
+	if (overlay_file)
+	{
+		for (int i = 0; i < s_targa_header_len; i++) /* Copy the header from the Source */
+		{
+			fputc(source.get(), fps);
+		}
+	}
+	else
+	{                            /* Write header for a new file */
+		/* ID field size = 0, No color map, Targa type 2 file */
+		for (int i = 0; i < 12; i++)
+		{
+			if (i == 0 && g_true_color)
+			{
+				set_upr_lwr();
+				fputc(4, fps); /* make room to write an extra number */
+				s_targa_header_len = 18 + 4;
+			}
+			else if (i == 2)
+			{
+				fputc(i, fps);
+			}
+			else
+			{
+				fputc(0, fps);
+			}
+		}
+		/* Write image size  */
+		for (int i = 0; i < 4; i++)
+		{
+			fputc(s_targa_size[i], fps);
+		}
+		fputc(TARGA_24, fps);          /* Targa 24 file */
+		fputc(TARGA_32, fps);          /* Image at upper left */
+		inc = 3;
+	}
+
+	if (g_true_color) /* write maxit */
+	{
+		fputc(BYTE(g_max_iteration       & 0xff), fps);
+		fputc(BYTE((g_max_iteration >> 8) & 0xff), fps);
+		fputc(BYTE((g_max_iteration >> 16) & 0xff), fps);
+		fputc(BYTE((g_max_iteration >> 24) & 0xff), fps);
+	}
+
+	/* Finished with the header, now lets work on the display area  */
+	for (int i = 0; i < g_y_dots; i++)  /* "clear the screen" (write to the disk) */
+	{
+		for (int j = 0; j < s_line_length; j += inc)
+		{
+			if (overlay_file)
+			{
+				fputc(source.get(), fps);
+			}
+			else
+			{
+				/* Targa order (B, G, R) */
+				fputc(g_3d_state.background_blue(), fps);
+				fputc(g_3d_state.background_green(), fps);
+				fputc(g_3d_state.background_red(), fps);
+			}
+		}
+		if (ferror(fps))
+		{
+			/* Almost certainly not enough disk space  */
+			fclose(fps);
+			if (overlay_file)
+			{
+				source.close();
+			}
+			dir_remove(g_work_dir, file_name2);
+			file_error(file_name2, FILEERROR_NO_SPACE);
+			return -2;
+		}
+		if (driver_key_pressed())
+		{
+			return -3;
+		}
+	}
+
+	if (disk_start_targa(fps, s_targa_header_len) != 0)
+	{
+		disk_end();
+		dir_remove(g_work_dir, file_name2);
+		return -4;
+	}
+	return 0;
+}
+
 static int targa_validate(const std::string &file_name)
 {
 	/* Attempt to open source file for reading */
@@ -1915,6 +2081,52 @@ static int HSVtoRGB(BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsig
 }
 
 
+static void acrospin_header()
+{
+	s_raytrace_file << "--";
+}
+static void dxf_header()
+{
+	s_raytrace_file <<
+		"  0\n"
+		"SECTION\n"
+		"  2\n"
+		"TABLES\n"
+		"  0\n"
+		"TABLE\n"
+		"  2\n"
+		"LAYER\n"
+		" 70\n"
+		"     2\n"
+		"  0\n"
+		"LAYER\n"
+		"  2\n"
+		"0\n"
+		" 70\n"
+		"     0\n"
+		" 62\n"
+		"     7\n"
+		"  6\n"
+		"CONTINUOUS\n"
+		"  0\n"
+		"LAYER\n"
+		"  2\n"
+		"FRACTAL\n"
+		" 70\n"
+		"    64\n"
+		" 62\n"
+		"     1\n"
+		"  6\n"
+		"CONTINUOUS\n"
+		"  0\n"
+		"ENDTAB\n"
+		"  0\n"
+		"ENDSEC\n"
+		"  0\n"
+		"SECTION\n"
+		"  2\n"
+		"ENTITIES\n";
+}
 /***************************************************************************/
 /*                                                                         */
 /* EB & DG fiddled with outputs for Rayshade so they work. with v4.x.      */
@@ -1977,52 +2189,13 @@ static int raytrace_header()
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 	{
-		s_raytrace_file << "--";
+		acrospin_header();
 	}
 	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
 	{
-		s_raytrace_file <<
-			"  0\n"
-			"SECTION\n"
-			"  2\n"
-			"TABLES\n"
-			"  0\n"
-			"TABLE\n"
-			"  2\n"
-			"LAYER\n"
-			" 70\n"
-			"     2\n"
-			"  0\n"
-			"LAYER\n"
-			"  2\n"
-			"0\n"
-			" 70\n"
-			"     0\n"
-			" 62\n"
-			"     7\n"
-			"  6\n"
-			"CONTINUOUS\n"
-			"  0\n"
-			"LAYER\n"
-			"  2\n"
-			"FRACTAL\n"
-			" 70\n"
-			"    64\n"
-			" 62\n"
-			"     1\n"
-			"  6\n"
-			"CONTINUOUS\n"
-			"  0\n"
-			"ENDTAB\n"
-			"  0\n"
-			"ENDSEC\n"
-			"  0\n"
-			"SECTION\n"
-			"  2\n"
-			"ENTITIES\n";
+		dxf_header();
 	}
-
-	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
+	else
 	{
 		s_raytrace_file << boost::format("{ Created by Iterated Dynamics Ver. %#4.2f }\n\n") % (g_release/100.0);
 	}
@@ -2090,9 +2263,9 @@ static int raytrace_header()
 /*                                                                  */
 /********************************************************************/
 
-static int out_triangle(const struct f_point pt1,
-								  const struct f_point pt2,
-								  const struct f_point pt3,
+static int out_triangle(const point_fp pt1,
+								  const point_fp pt2,
+								  const point_fp pt3,
 								  int c1, int c2, int c3)
 {
 	float c[3];
@@ -2416,26 +2589,7 @@ static void line3d_cleanup()
 		}
 		if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 		{
-			s_raytrace_file << "LineList From To\n";
-			for (int i = 0; i < RO; i++)
-			{
-				for (int j = 0; j <= CO_MAX; j++)
-				{
-					if (j < CO_MAX)
-					{
-						s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % i % (j + 1);
-					}
-					if (i < RO - 1)
-					{
-						s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % (i + 1) % j;
-					}
-					if (i && i < RO && j < CO_MAX)
-					{
-						s_raytrace_file << boost::format("R%dC%d R%dC%d\n") % i % j % (i - 1) % (j + 1);
-					}
-				}
-			}
-			s_raytrace_file << "\n\n--";
+			s_acrospin.cleanup();
 		}
 		if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
 		{
@@ -2571,9 +2725,7 @@ static int first_time(int linelen, VECTOR v)
 		g_y_shift = 0;
 	}
 
-	CO_MAX = 0;
-	CO = 0;
-	RO = 0;
+	s_acrospin.first_time();
 
 	set_upr_lwr();
 	s_file_error = FILEERROR_NONE;
@@ -2924,7 +3076,7 @@ static bool line_3d_mem()
 	/* s_last_row stores the previous row of the original GIF image for
 		the purpose of filling in gaps with triangle procedure */
 	s_last_row = new point[g_x_dots];
-	s_f_last_row = new f_point[g_y_dots];
+	s_f_last_row = new point_fp[g_y_dots];
 	if (!s_last_row || !s_f_last_row)
 	{
 		return true;
