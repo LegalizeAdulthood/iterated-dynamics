@@ -62,7 +62,7 @@ At the moment these arrays reuse extraseg and g_string_location, respectively.
 */
 
 static int numsaves = 0;        /* For adjusting 'save-to-disk' filenames */
-static FILE *g_outfile;
+static FILE *s_outfile;
 static int last_colorbar;
 static bool s_save_16bit;
 static int outcolor1s, outcolor2s;
@@ -175,8 +175,8 @@ restart:
 		g_resave_mode = RESAVE_NO;
 	}
 
-	g_outfile = fopen(tmpfile, "wb");
-	if (g_outfile == 0)
+	s_outfile = fopen(tmpfile, "wb");
+	if (s_outfile == 0)
 	{
 		stop_message(STOPMSG_NORMAL, std::string("Can't create ") + tmpfile);
 		return -1;
@@ -195,7 +195,7 @@ restart:
 			? timer_encoder() : encoder();
 	}
 
-	fclose(g_outfile);
+	fclose(s_outfile);
 
 	if (interrupted)
 	{
@@ -308,7 +308,7 @@ int save_to_disk(std::string &filename)
 
 static int write_byte(int value)
 {
-	return fputc(value & 0xFF, g_outfile);
+	return fputc(value & 0xFF, s_outfile);
 }
 
 static int write_short(int value)
@@ -352,12 +352,12 @@ int encoder()
 
 	if (g_gif87a_flag)
 	{
-		if (fwrite("GIF87a", 6, 1, g_outfile) != 1)
+		if (fwrite("GIF87a", 6, 1, s_outfile) != 1)
 		{
 			goto oops;             /* old GIF Signature */
 		}
 	}
-	else if (fwrite("GIF89a", 6, 1, g_outfile) != 1)
+	else if (fwrite("GIF89a", 6, 1, s_outfile) != 1)
 	{
 		goto oops;             /* new GIF Signature */
 	}
@@ -387,7 +387,7 @@ int encoder()
 	{
 		goto oops;
 	}
-	if (fputc(0, g_outfile) != 0)
+	if (fputc(0, s_outfile) != 0)
 	{
 		goto oops;                /* background color */
 	}
@@ -416,7 +416,7 @@ int encoder()
 		i = 0;                    /* for some decoders which can't handle aspect */
 	}
 									
-	if (fputc(i, g_outfile) != i)
+	if (fputc(i, s_outfile) != i)
 	{
 		goto oops;                /* pixel aspect ratio */
 	}
@@ -449,7 +449,7 @@ int encoder()
 		}
 	}
 
-	if (fwrite(",", 1, 1, g_outfile) != 1)
+	if (fwrite(",", 1, 1, s_outfile) != 1)
 	{
 		goto oops;                /* Image Descriptor */
 	}
@@ -484,12 +484,12 @@ int encoder()
 
 	interrupted = compress(rowlimit);
 
-	if (ferror(g_outfile))
+	if (ferror(s_outfile))
 	{
 		goto oops;
 	}
 
-	if (fputc(0, g_outfile) != 0)
+	if (fputc(0, s_outfile) != 0)
 	{
 		goto oops;
 	}
@@ -660,7 +660,7 @@ int encoder()
 		}
 	}
 
-	if (fwrite(";", 1, 1, g_outfile) != 1)
+	if (fwrite(";", 1, 1, s_outfile) != 1)
 	{
 		goto oops;                /* GIF Terminator */
 	}
@@ -668,7 +668,7 @@ int encoder()
 	return interrupted;
 
 oops:
-	fflush(g_outfile);
+	fflush(s_outfile);
 	stop_message(STOPMSG_NORMAL, "Error Writing to disk (Disk full?)");
 	return 1;
 }
@@ -687,7 +687,7 @@ static int shftwrite(BYTE *color, int g_num_colors)
 			thiscolor = color[3*i + j];
 			thiscolor = BYTE(thiscolor << 2);
 			thiscolor = BYTE(thiscolor + BYTE(thiscolor >> 6));
-			if (fputc(thiscolor, g_outfile) != int(thiscolor))
+			if (fputc(thiscolor, s_outfile) != int(thiscolor))
 			{
 				return 0;
 			}
@@ -709,7 +709,7 @@ static int put_extend_blk(int block_id, int block_len, char *block_data)
 	char header[15];
 	strcpy(header, "!\377\013fractint");
 	strcpy(&header[11], boost::format("%03u") % block_id);
-	if (fwrite(header, 14, 1, g_outfile) != 1)
+	if (fwrite(header, 14, 1, s_outfile) != 1)
 	{
 		return 0;
 	}
@@ -717,16 +717,16 @@ static int put_extend_blk(int block_id, int block_len, char *block_data)
 	while (--i >= 0)
 	{
 		block_len -= (j = std::min(block_len, 255));
-		if (fputc(j, g_outfile) != j)
+		if (fputc(j, s_outfile) != j)
 		{
 			return 0;
 		}
 		while (--j >= 0)
 		{
-			fputc(*(block_data++), g_outfile);
+			fputc(*(block_data++), s_outfile);
 		}
 	}
-	if (fputc(0, g_outfile) != 0)
+	if (fputc(0, s_outfile) != 0)
 	{
 		return 0;
 	}
@@ -1263,7 +1263,7 @@ static void output(int code)
 
 		flush_char();
 
-		fflush(g_outfile);
+		fflush(s_outfile);
 	}
 }
 
@@ -1298,8 +1298,8 @@ static void flush_char()
 {
 	if (a_count > 0)
 	{
-		fputc(a_count, g_outfile);
-		fwrite(accum, 1, a_count, g_outfile);
+		fputc(a_count, s_outfile);
+		fwrite(accum, 1, a_count, s_outfile);
 		a_count = 0;
 	}
 }
