@@ -4,6 +4,7 @@
  * Edits VGA 256-color palettes.
  */
 #include <algorithm>
+#include <fstream>
 #include <string>
 
 #include <string.h>
@@ -1428,7 +1429,7 @@ private:
 	int _exclude;
 	bool _auto_select;
 	PALENTRY _palette[256];
-	FILE *_undo_file;
+	std::fstream _undo_stream;
 	bool _current_changed;
 	int _num_redo;
 	bool _hidden;
@@ -1484,10 +1485,25 @@ void pal_table::put_band(PALENTRY *pal)
 	}
 }
 
+template <typename T>
+T get(std::istream &stream)
+{
+	T value;
+	stream.read(reinterpret_cast<char *>(&value), sizeof(T));
+	return value;
+}
+
+template <typename T>
+std::ostream &put(std::ostream &stream, const T value)
+{
+	stream.write(reinterpret_cast<const char *>(&value), sizeof(T));
+	return stream;
+}
+
 /* - Undo.Redo code - */
 void pal_table::save_undo_data(int first, int last)
 {
-	if (_undo_file == 0)
+	if (!_undo_stream.is_open())
 	{
 		return;
 	}
@@ -1498,21 +1514,21 @@ void pal_table::save_undo_data(int first, int last)
 	mprintf("%6ld Writing Undo DATA from %d to %d (%d)", ftell(undo_file), first, last, num);
 #endif
 
-	fseek(_undo_file, 0, SEEK_CUR);
+	_undo_stream.seekg(0, SEEK_CUR);
 	if (num == 1)
 	{
-		putc(UNDO_DATA_SINGLE, _undo_file);
-		putc(first, _undo_file);
-		fwrite(_palette + first, 3, 1, _undo_file);
-		putw(1 + 1 + 3 + sizeof(int), _undo_file);
+		_undo_stream.put(UNDO_DATA_SINGLE);
+		_undo_stream.put(first);
+		_undo_stream.write(reinterpret_cast<char *>(&_palette[first]), sizeof(PALENTRY));
+		put(_undo_stream, 1 + 1 + sizeof(PALENTRY) + sizeof(int));
 	}
 	else
 	{
-		putc(UNDO_DATA, _undo_file);
-		putc(first, _undo_file);
-		putc(last,  _undo_file);
-		fwrite(_palette + first, 3, num, _undo_file);
-		putw(1 + 2 + (num*3) + sizeof(int), _undo_file);
+		_undo_stream.put(UNDO_DATA);
+		_undo_stream.put(first);
+		_undo_stream.put(last);
+		_undo_stream.write(reinterpret_cast<char *>(&_palette[first]), num*sizeof(PALENTRY));
+		put(_undo_stream, 1 + 2 + (num*sizeof(PALENTRY)) + sizeof(int));
 	}
 
 	_num_redo = 0;
@@ -1520,28 +1536,24 @@ void pal_table::save_undo_data(int first, int last)
 
 void pal_table::save_undo_rotate(int dir, int first, int last)
 {
-	if (_undo_file == 0)
+	if (!_undo_stream.is_open())
 	{
 		return;
 	}
 
-#ifdef DEBUG_UNDO
-	mprintf("%6ld Writing Undo ROTATE of %d from %d to %d", ftell(undo_file), dir, first, last);
-#endif
-
-	fseek(_undo_file, 0, SEEK_CUR);
-	putc(UNDO_ROTATE, _undo_file);
-	putc(first, _undo_file);
-	putc(last,  _undo_file);
-	putw(dir, _undo_file);
-	putw(1 + 2 + sizeof(int), _undo_file);
+	_undo_stream.seekp(0, SEEK_CUR);
+	_undo_stream.put(UNDO_ROTATE);
+	_undo_stream.put(first);
+	_undo_stream.put(last);
+	put(_undo_stream, dir);
+	put(_undo_stream, 1 + 2 + sizeof(int));
 
 	_num_redo = 0;
 }
 
 void pal_table::undo_process(int delta)   /* undo/redo common code */
 {              /* delta = -1 for undo, +1 for redo */
-	int cmd = getc(_undo_file);
+	int cmd = _undo_stream.get();
 
 	switch (cmd)
 	{
@@ -1555,12 +1567,13 @@ void pal_table::undo_process(int delta)   /* undo/redo common code */
 
 			if (cmd == UNDO_DATA)
 			{
-				first = (unsigned char)getc(_undo_file);
-				last  = (unsigned char)getc(_undo_file);
+				first = static_cast<unsigned char>(_undo_stream.get());
+				last = static_cast<unsigned char>(_undo_stream.get());
 			}
 			else  /* UNDO_DATA_SINGLE */
 			{
-				first = last = (unsigned char)getc(_undo_file);
+				first = static_cast<unsigned char>(_undo_stream.get());
+				last = first;
 			}
 
 			num = (last - first) + 1;
@@ -1569,10 +1582,10 @@ void pal_table::undo_process(int delta)   /* undo/redo common code */
 			mprintf("          Reading DATA from %d to %d", first, last);
 #endif
 
-			fread(temp, 3, num, _undo_file);
+			_undo_stream.read(reinterpret_cast<char *>(&temp[0]), num*sizeof(PALENTRY));
 
-			fseek(_undo_file, -(num*3), SEEK_CUR);  /* go to start of undo/redo data */
-			fwrite(_palette + first, 3, num, _undo_file);  /* write redo/undo data */
+			_undo_stream.seekp(-(num*int(sizeof(PALENTRY))), SEEK_CUR);
+			_undo_stream.write(reinterpret_cast<char *>(&_palette[first]), num*sizeof(PALENTRY));
 
 			memmove(_palette + first, temp, num*3);
 
@@ -1587,9 +1600,9 @@ void pal_table::undo_process(int delta)   /* undo/redo common code */
 
 	case UNDO_ROTATE:
 		{
-			int first = (unsigned char)getc(_undo_file);
-			int last  = (unsigned char)getc(_undo_file);
-			int dir   = getw(_undo_file);
+			int first = static_cast<unsigned char>(_undo_stream.get());
+			int last  = static_cast<unsigned char>(_undo_stream.get());
+			int dir   = get<int>(_undo_stream);
 
 #ifdef DEBUG_UNDO
 			mprintf("          Reading ROTATE of %d from %d to %d", dir, first, last);
@@ -1605,28 +1618,28 @@ void pal_table::undo_process(int delta)   /* undo/redo common code */
 		break;
 	}
 
-	fseek(_undo_file, 0, SEEK_CUR);  /* to put us in read mode */
-	getw(_undo_file);  /* read size */
+	_undo_stream.seekg(0, SEEK_CUR);  /* to put us in read mode */
+	get<int>(_undo_stream);  /* read size */
 }
 
 void pal_table::undo()
 {
-	if (ftell(_undo_file) <= 0)   /* at beginning of file? */
+	if (_undo_stream.tellg() <= 0)   /* at beginning of file? */
 	{                                  /*   nothing to undo -- exit */
 		return;
 	}
 
-	fseek(_undo_file, -int(sizeof(int)), SEEK_CUR);  /* go back to get size */
-	int size = getw(_undo_file);
-	fseek(_undo_file, -size, SEEK_CUR);   /* go to start of undo */
+	_undo_stream.seekg(-int(sizeof(int)), SEEK_CUR);  /* go back to get size */
+	int size = get<int>(_undo_stream);
+	_undo_stream.seekg(-size, SEEK_CUR);   /* go to start of undo */
 
 #ifdef DEBUG_UNDO
 	mprintf("%6ld Undo:", ftell(undo_file));
 #endif
 
-	long pos = ftell(_undo_file);
+	std::istream::pos_type pos = _undo_stream.tellg();
 	undo_process(-1);
-	fseek(_undo_file, pos, SEEK_SET);   /* go to start of me g_block */
+	_undo_stream.seekg(pos, SEEK_SET);   /* go to start of me g_block */
 	++_num_redo;
 }
 
@@ -1641,7 +1654,7 @@ void pal_table::redo()
 	mprintf("%6ld Redo:", ftell(undo_file));
 #endif
 
-	fseek(_undo_file, 0, SEEK_CUR);  /* to make sure we are in "read" mode */
+	_undo_stream.seekg(0, SEEK_CUR);  /* to make sure we are in "read" mode */
 	undo_process(1);
 
 	--_num_redo;
@@ -2829,7 +2842,7 @@ pal_table::pal_table()
 	_color_band_width(15),
 	_top(255),
 	_bottom(0),
-	_undo_file(dir_fopen(g_temp_dir, s_undo_file, "w+b")),
+	_undo_stream((g_temp_dir / s_undo_file).string().c_str(), std::ios::in | std::ios::out | std::ios::binary),
 	_current_changed(false),
 	_num_redo(0)
 {
@@ -2921,9 +2934,9 @@ pal_table::~pal_table()
 		dir_remove(g_temp_dir, g_screen_file);
 	}
 
-	if (_undo_file)
+	if (_undo_stream.is_open())
 	{
-		fclose(_undo_file);
+		_undo_stream.close();
 		dir_remove(g_temp_dir, s_undo_file);
 	}
 
