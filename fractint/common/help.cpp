@@ -28,6 +28,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "TextColors.h"
 
 #define MAX_HIST           16        /* number of pages we'll remember */
 #define F_HIST              (1 << 0)   /* flags for help_topic() */

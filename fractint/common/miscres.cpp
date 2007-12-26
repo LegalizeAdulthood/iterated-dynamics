@@ -21,23 +21,24 @@
 
 #include "calcfrac.h"
 #include "cmdfiles.h"
+#include "DiffusionScan.h"
 #include "drivers.h"
+#include "EscapeTime.h"
 #include "fihelp.h"
 #include "filesystem.h"
+#include "Formula.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "line3d.h"
+#include "MathUtil.h"
 #include "miscres.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "slideshw.h"
-
-#include "EscapeTime.h"
-#include "MathUtil.h"
-#include "Formula.h"
+#include "TextColors.h"
 #include "WorkList.h"
-#include "DiffusionScan.h"
+
 
 extern long g_bn_max_stack;
 extern long maxstack;

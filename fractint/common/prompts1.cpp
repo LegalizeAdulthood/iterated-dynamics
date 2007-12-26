@@ -29,6 +29,7 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "TextColors.h"
 #include "zoom.h"
 
 #include "EscapeTime.h"

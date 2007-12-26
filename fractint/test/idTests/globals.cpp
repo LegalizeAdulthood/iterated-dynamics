@@ -7,6 +7,7 @@
 #include "big.h"
 #include "cmplx.h"
 #include "mpmath.h"
+
 #include "calcfrac.h"
 #include "EscapeTime.h"
 
@@ -277,37 +278,5 @@ int filename_speedstr(int row, int col, int vid, char *speedstring, int speed_ma
 { return 0; }
 int check_f6_key(int curkey, int)
 { return 0; }
-int g_text_colors[]=
-{
-		TEXTCOLOR_BLUE*16 + TEXTCOLOR_LIGHT_WHITE,    /* C_TITLE           title background */
-		TEXTCOLOR_BLUE*16 + TEXTCOLOR_LIGHT_GREEN,    /* C_TITLE_DEV       development vsn foreground */
-		TEXTCOLOR_GREEN*16 + TEXTCOLOR_YELLOW,    /* C_HELP_HDG        help page title line */
-		TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK,     /* C_HELP_BODY       help page body */
-		TEXTCOLOR_GREEN*16 + TEXTCOLOR_GRAY,      /* C_HELP_INSTR      help page instr at bottom */
-		TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLUE,      /* C_HELP_LINK       help page links */
-		TEXTCOLOR_CYAN*16 + TEXTCOLOR_BLUE,       /* C_HELP_CURLINK    help page current link */
-		TEXTCOLOR_WHITE*16 + TEXTCOLOR_GRAY,      /* C_PROMPT_BKGRD    prompt/choice background */
-		TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK,     /* C_PROMPT_TEXT     prompt/choice extra info */
-		TEXTCOLOR_BLUE*16 + TEXTCOLOR_WHITE,      /* C_PROMPT_LO       prompt/choice text */
-		TEXTCOLOR_BLUE*16 + TEXTCOLOR_LIGHT_WHITE,    /* C_PROMPT_MED      prompt/choice hdg2/... */
-		TEXTCOLOR_BLUE*16 + TEXTCOLOR_YELLOW,     /* C_PROMPT_HI       prompt/choice hdg/cur/... */
-		TEXTCOLOR_GREEN*16 + TEXTCOLOR_LIGHT_WHITE,   /* C_PROMPT_INPUT    full_screen_prompt input */
-		TEXTCOLOR_CYAN*16 + TEXTCOLOR_LIGHT_WHITE,    /* C_PROMPT_CHOOSE   full_screen_prompt choice */
-		TEXTCOLOR_MAGENTA*16 + TEXTCOLOR_LIGHT_WHITE, /* C_CHOICE_CURRENT  full_screen_choice input */
-		TEXTCOLOR_BLACK*16 + TEXTCOLOR_WHITE,     /* C_CHOICE_SP_INSTR speed key bar & instr */
-		TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_MAGENTA, /* C_CHOICE_SP_KEYIN speed key value */
-		TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLUE,      /* C_GENERAL_HI      tab, thinking, IFS */
-		TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK,     /* C_GENERAL_MED */
-		TEXTCOLOR_WHITE*16 + TEXTCOLOR_GRAY,      /* C_GENERAL_LO */
-		TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_WHITE,   /* C_GENERAL_INPUT */
-		TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK,     /* C_DVID_BKGRD      disk video */
-		TEXTCOLOR_BLACK*16 + TEXTCOLOR_YELLOW,    /* C_DVID_HI */
-		TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_WHITE,   /* C_DVID_LO */
-		TEXTCOLOR_RED*16 + TEXTCOLOR_LIGHT_WHITE,     /* C_STOP_ERR        stop message, error */
-		TEXTCOLOR_GREEN*16 + TEXTCOLOR_BLACK,     /* C_STOP_INFO       stop message, info */
-		TEXTCOLOR_BLUE*16 + TEXTCOLOR_WHITE,      /* C_TITLE_LOW       bottom lines of title screen */
-		TEXTCOLOR_GREEN*16 + TEXTCOLOR_BLACK,     /* C_AUTHDIV1        title screen dividers */
-		TEXTCOLOR_GREEN*16 + TEXTCOLOR_GRAY,      /* C_AUTHDIV2        title screen dividers */
-		TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_WHITE,   /* C_PRIMARY         primary authors */
-		TEXTCOLOR_BLACK*16 + TEXTCOLOR_WHITE      /* C_CONTRIB         contributing authors */
-};
+int get_text_color(int index) { return 0; }
+void set_text_color(int index, int value) {}

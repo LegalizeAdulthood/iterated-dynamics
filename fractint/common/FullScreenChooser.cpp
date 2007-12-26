@@ -9,6 +9,17 @@
 #include "FullScreenChooser.h"
 #include "miscres.h"
 #include "realdos.h"
+#include "TextColors.h"
+
+int AbstractFullScreenChooser::prompt_color(int attributes)
+{
+	switch (attributes & 3)
+	{
+	case 1:		return C_PROMPT_LO;
+	case 3:		return C_PROMPT_HI;
+	default:	return C_PROMPT_MED;
+	}
+}
 
 class ProductionFullScreenChooser : public AbstractFullScreenChooser
 {

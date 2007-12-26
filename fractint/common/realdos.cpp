@@ -25,6 +25,7 @@
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "TextColors.h"
 
 /* uncomment following for production version */
 /*

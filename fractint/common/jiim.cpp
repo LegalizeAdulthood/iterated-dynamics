@@ -53,6 +53,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "editpal.h"
+#include "EscapeTime.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "jiim.h"
@@ -60,8 +61,7 @@
 #include "miscfrac.h"
 #include "prompts2.h"
 #include "realdos.h"
-
-#include "EscapeTime.h"
+#include "TextColors.h"
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
