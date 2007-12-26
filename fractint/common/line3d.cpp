@@ -14,6 +14,7 @@
 #include <fstream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include <limits.h>
 
@@ -152,7 +153,7 @@ static float s_old_cos_phi1;
 static float s_old_sin_phi1;
 static float s_old_cos_phi2;
 static float s_old_sin_phi2;
-static BYTE *s_fraction = 0;			/* float version of pixels array */
+static std::vector<BYTE> s_fraction;			/* float version of pixels array */
 static float s_min_xyz[3];
 static float s_max_xyz[3];	/* For Raytrace output */
 static int s_line_length;
@@ -172,8 +173,8 @@ static int s_local_preview_factor;
 static int s_z_coord = 256;
 static double s_aspect;					/* aspect ratio */
 static int s_even_odd_row;
-static float *s_sin_theta_array;			/* all sine thetas go here  */
-static float *s_cos_theta_array;			/* all cosine thetas go here */
+static std::vector<float> s_sin_theta_array;			/* all sine thetas go here  */
+static std::vector<float> s_cos_theta_array;			/* all cosine thetas go here */
 static double s_r_scale_r;					/* precalculation factor */
 static bool s_persp;						/* flag for indicating perspective transformations */
 static point s_p1;
@@ -182,12 +183,12 @@ static point s_p3;
 static point_fp s_f_bad;			/* out of range value */
 static point s_bad;				/* out of range value */
 static long s_num_tris;					/* number of triangles output to ray trace file */
-static point_fp *s_f_last_row = 0;
+static std::vector<point_fp> s_f_last_row;
 static MATRIX s_m;						/* transformation matrix */
 static int s_file_error = FILEERROR_NONE;
 static char *s_targa_temp = "idtemp.tga";
-static point *s_last_row = 0;	/* this array remembers the previous line */
-static struct minmax *s_minmax_x;			/* array of min and max x values used in triangle fill */
+static std::vector<point> s_last_row;	/* this array remembers the previous line */
+static std::vector<minmax> s_minmax_x;			/* array of min and max x values used in triangle fill */
 
 void acrospin_data::line3d_cleanup()
 {
@@ -242,10 +243,10 @@ void acrospin_data::next_row()
 	_rows++;
 }
 
-static int line3d_init(unsigned linelen, bool &triangle_was_output,
+static int line3d_init(unsigned line_length, bool &triangle_was_output,
 					   int *xcenter0, int *ycenter0, VECTOR cross_avg, VECTOR v)
 {
-	int err = once_per_image(linelen, v);
+	int err = once_per_image(line_length, v);
 	if (err != 0)
 	{
 		return err;
@@ -446,24 +447,24 @@ static int line3d_planar(int col, point_fp *f_cur, point *cur,
 	return 0;
 }
 
-void draw_line(const point &first, const point &second, int color)
-{
-	driver_draw_line(first.x, first.y, second.x, second.y, color);
-}
-
-bool bad_point(const point &pt)
+static bool bad_point(const point &pt)
 {
 	return pt.x > BAD_CHECK && pt.y > BAD_CHECK;
 }
 
-bool bad_point_size(const point &pt, int width, int height)
+static bool bad_point_size(const point &pt, int width, int height)
 {
 	return pt.x < (width - BAD_CHECK) && pt.y < (height - BAD_CHECK);
 }
 
-bool bad_point_size(const point &pt)
+static bool bad_point_size(const point &pt)
 {
 	return bad_point_size(pt, g_x_dots, g_y_dots);
+}
+
+static void draw_line(const point &first, const point &second, int color)
+{
+	driver_draw_line(first.x, first.y, second.x, second.y, color);
 }
 
 static void line3d_raytrace(int col, int next,
@@ -526,12 +527,9 @@ static void line3d_raytrace(int col, int next,
 		}
 		triangle_was_output = true;
 
-		driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur->x, cur->y,
-			cur->color);
-		driver_draw_line(s_last_row[next].x, s_last_row[next].y, cur->x, cur->y,
-			cur->color);
-		driver_draw_line(s_last_row[next].x, s_last_row[next].y, s_last_row[col].x,
-			s_last_row[col].y, s_last_row[col].color);
+		draw_line(s_last_row[col], *cur, cur->color);
+		draw_line(s_last_row[next], *cur, cur->color);
+		draw_line(s_last_row[next], s_last_row[col], s_last_row[col].color);
 		s_num_tris++;
 	}
 
@@ -547,14 +545,13 @@ static void line3d_fill_surface_grid(int col, const point *old, const point *cur
 		&& old->x > BAD_CHECK
 		&& old->x < (g_x_dots - BAD_CHECK))
 	{
-		driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
+		draw_line(*old, *cur, cur->color);
 	}
 	if (g_current_row
 		&& bad_point(s_last_row[col])
 		&& bad_point_size(s_last_row[col]))
 	{
-		driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur->x,
-			cur->y, cur->color);
+		draw_line(s_last_row[col], *cur, cur->color);
 	}
 }
 
@@ -568,7 +565,7 @@ static void line3d_fill_wire_frame(int col, const point *old, const point *cur)
 {
 	if ((old->x < g_x_dots) && col && bad_point(*old))      /* Don't draw from old to cur on col 0 */
 	{
-		driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
+		draw_line(*old, *cur, cur->color);
 	}
 }
 
@@ -644,7 +641,7 @@ static void line3d_fill_bars(int col,
 	}
 	old->x = MathUtil::Clamp(old->x, 0, g_x_dots - 1);
 	old->y = MathUtil::Clamp(old->y, 0, g_y_dots - 1);
-	driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
+	draw_line(*old, *cur, cur->color);
 }
 
 static void line3d_fill_light(int col, int next, int last_dot, bool cross_not_init,
@@ -844,7 +841,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	/* copies pixels buffer to float type fraction buffer for fill purposes */
 	if (g_potential_16bit)
 	{
-		if (set_pixel_buff(pixels, s_fraction, line_length))
+		if (set_pixel_buff(pixels, &s_fraction[0], line_length))
 		{
 			return 0;
 		}
@@ -861,7 +858,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 					int(g_dac_box[color_num][2])*28);
 
 			pal >>= 6;
-			pixels[col] = (BYTE) pal;
+			pixels[col] = BYTE(pal);
 		}
 	}
 	cross_not_init = true;
@@ -1369,7 +1366,7 @@ static void put_a_triangle(point pt1, point pt2, point pt3, int color)
 		}
 		else
 		{
-			driver_draw_line(s_p1.x, s_p1.y, s_p3.x, s_p3.y, color);
+			draw_line(s_p1, s_p3, color);
 		}
 		g_plot_color = s_plot_color_normal;
 		return;
@@ -1377,7 +1374,7 @@ static void put_a_triangle(point pt1, point pt2, point pt3, int color)
 	else if ((s_p3.y == s_p1.y && s_p3.x == s_p1.x) || (s_p3.y == s_p2.y && s_p3.x == s_p2.x))
 	{
 		g_plot_color = s_plot_color_fill;
-		driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, color);
+		draw_line(s_p1, s_p2, color);
 		g_plot_color = s_plot_color_normal;
 		return;
 	}
@@ -1422,9 +1419,9 @@ static void put_a_triangle(point pt1, point pt2, point pt3, int color)
 	g_plot_color = plot_color_put_min_max;
 
 	/* build table of extreme x's of triangle */
-	driver_draw_line(s_p1.x, s_p1.y, s_p2.x, s_p2.y, 0);
-	driver_draw_line(s_p2.x, s_p2.y, s_p3.x, s_p3.y, 0);
-	driver_draw_line(s_p3.x, s_p3.y, s_p1.x, s_p1.y, 0);
+	draw_line(s_p1, s_p2, 0);
+	draw_line(s_p2, s_p3, 0);
+	draw_line(s_p3, s_p1, 0);
 
 	for (int y = miny; y <= maxy; y++)
 	{
@@ -2769,7 +2766,7 @@ static void initialize_trig_tables(int linelen)
 	}
 }
 
-static int once_per_image(int linelen, VECTOR v)
+static int once_per_image(int line_length, VECTOR v)
 {
 	g_out_line_cleanup = line3d_cleanup;
 
@@ -2973,7 +2970,7 @@ static int once_per_image(int linelen, VECTOR v)
 	}
 	else
 	{
-		initialize_trig_tables(linelen);
+		initialize_trig_tables(line_length);
 
 		/* affects how rough planet terrain is */
 		if (g_3d_state.roughness())
@@ -3127,7 +3124,7 @@ static int once_per_image(int linelen, VECTOR v)
 	s_f_bad.x = float(s_bad.x);
 	s_f_bad.y = float(s_bad.y);
 	s_f_bad.color = float(s_bad.color);
-	for (int i = 0; i < int(linelen); i++)
+	for (int i = 0; i < int(line_length); i++)
 	{
 		s_last_row[i] = s_bad;
 		s_f_last_row[i] = s_f_bad;
@@ -3146,32 +3143,20 @@ static bool line_3d_mem()
 {
 	/* s_last_row stores the previous row of the original GIF image for
 		the purpose of filling in gaps with triangle procedure */
-	s_last_row = new point[g_x_dots];
-	s_f_last_row = new point_fp[g_y_dots];
-	if (!s_last_row || !s_f_last_row)
-	{
-		return true;
-	}
+	s_last_row.resize(g_x_dots);
+	s_f_last_row.resize(g_y_dots);
 
 	if (g_3d_state.sphere())
 	{
-		s_sin_theta_array = new float[g_x_dots];
-		s_cos_theta_array = new float[g_x_dots];
-		if (!s_sin_theta_array || !s_cos_theta_array)
-		{
-			return true;
-		}
+		s_sin_theta_array.resize(g_x_dots);
+		s_cos_theta_array.resize(g_x_dots);
 	}
 
 	if (g_potential_16bit)
 	{
-		s_fraction = new BYTE[g_x_dots];
-		if (!s_fraction)
-		{
-			return true;
-		}
+		s_fraction.resize(g_x_dots);
 	}
-	s_minmax_x = 0;
+	s_minmax_x.clear();
 
 	/* these fill types call put_a_triangle which uses s_minmax_x */
 	if (g_3d_state.fill_type() == FillType::Gouraud
@@ -3180,29 +3165,9 @@ static bool line_3d_mem()
 		|| g_3d_state.fill_type() == FillType::LightAfter)
 	{
 		/* end of arrays if we use extra segement */
-		s_minmax_x = new minmax[g_y_dots];
-		if (!s_minmax_x)
-		{
-			return true;
-		}
+		s_minmax_x.resize(g_y_dots);
 	}
 
 	/* no errors, got all memroy */
 	return false;
-}
-
-void line_3d_free()
-{
-	delete[] s_last_row;
-	s_last_row = 0;
-	delete[] s_f_last_row;
-	s_f_last_row = 0;
-	delete[] s_sin_theta_array;
-	s_sin_theta_array = 0;
-	delete[] s_cos_theta_array;
-	s_cos_theta_array = 0;
-	delete[] s_fraction;
-	s_fraction = 0;
-	delete[] s_minmax_x;
-	s_minmax_x = 0;
 }
