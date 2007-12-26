@@ -4,14 +4,17 @@
 #include "CommandParser.h"
 
 /* ThreeDimensionalState::raytrace_output() values */
-#define RAYTRACE_NONE		0
-#define RAYTRACE_POVRAY		1
-#define RAYTRACE_VIVID		2
-#define RAYTRACE_RAW		3
-#define RAYTRACE_MTV		4
-#define RAYTRACE_RAYSHADE	5
-#define RAYTRACE_ACROSPIN	6
-#define RAYTRACE_DXF		7
+enum RayTraceType
+{
+	RAYTRACE_NONE = 0,
+	RAYTRACE_POVRAY = 1,
+	RAYTRACE_VIVID = 2,
+	RAYTRACE_RAW = 3,
+	RAYTRACE_MTV = 4,
+	RAYTRACE_RAYSHADE = 5,
+	RAYTRACE_ACROSPIN = 6,
+	RAYTRACE_DXF = 7
+};
 
 /* glasses_type values */
 enum GlassesType
