@@ -73,7 +73,7 @@ public:
 	{
 	}
 
-	void cleanup();
+	void line3d_cleanup();
 	void first_time();
 	void line3d_planar(point_fp *current);
 	void line3d_raytrace(point_fp const *current);
@@ -112,9 +112,9 @@ static bool line_3d_mem();
 static int RGBtoHSV(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
 static int set_pixel_buff(BYTE *, BYTE *, unsigned);
 static void set_upr_lwr();
-static int end_object(bool triangle_was_output);
+static void end_object(bool triangle_was_output);
 static int off_screen(point);
-static int out_triangle(const point_fp, const point_fp, const point_fp, int, int, int);
+static int out_triangle(const point_fp &, const point_fp &, const point_fp &, int, int, int);
 static int raytrace_header();
 static int start_object();
 static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax);
@@ -189,8 +189,9 @@ static char *s_targa_temp = "idtemp.tga";
 static point *s_last_row = 0;	/* this array remembers the previous line */
 static struct minmax *s_minmax_x;			/* array of min and max x values used in triangle fill */
 
-void acrospin_data::cleanup()
+void acrospin_data::line3d_cleanup()
 {
+	s_raytrace_file << "\n"; 
 	s_raytrace_file << "LineList From To\n";
 	for (int i = 0; i < _rows; i++)
 	{
@@ -211,6 +212,7 @@ void acrospin_data::cleanup()
 		}
 	}
 	s_raytrace_file << "\n\n--";
+	s_raytrace_file << boost::format("{ No. Of Triangles = %ld }*/\n\n") % s_num_tris;
 }
 
 void acrospin_data::line3d_raytrace(point_fp const *current)
@@ -444,55 +446,64 @@ static int line3d_planar(int col, point_fp *f_cur, point *cur,
 	return 0;
 }
 
+void draw_line(const point &first, const point &second, int color)
+{
+	driver_draw_line(first.x, first.y, second.x, second.y, color);
+}
+
+bool bad_point(const point &pt)
+{
+	return pt.x > BAD_CHECK && pt.y > BAD_CHECK;
+}
+
+bool bad_point_size(const point &pt, int width, int height)
+{
+	return pt.x < (width - BAD_CHECK) && pt.y < (height - BAD_CHECK);
+}
+
+bool bad_point_size(const point &pt)
+{
+	return bad_point_size(pt, g_x_dots, g_y_dots);
+}
+
 static void line3d_raytrace(int col, int next,
 							const point *old, const point *cur,
 							const point_fp *f_old, const point_fp *f_cur,
 							float f_water, int last_dot,
 							bool &triangle_was_output)
 {
-	if (col && g_current_row &&
-		old->x > BAD_CHECK &&
-		old->x < (g_x_dots - BAD_CHECK) &&
-		s_last_row[col].x > BAD_CHECK &&
-		s_last_row[col].y > BAD_CHECK &&
-		s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
-		s_last_row[col].y < (g_y_dots - BAD_CHECK))
+	if (col && g_current_row
+		&& old->x > BAD_CHECK && old->x < (g_x_dots - BAD_CHECK)
+		&& bad_point(s_last_row[col]) && bad_point_size(s_last_row[col]))
 	{
 		/* Get rid of all the triangles in the plane at the base of
 		* the object */
 
-		if (f_cur->color == f_water &&
-			s_f_last_row[col].color == f_water &&
-			s_f_last_row[next].color == f_water)
+		if (f_cur->color == f_water
+			&& s_f_last_row[col].color == f_water
+			&& s_f_last_row[next].color == f_water)
 		{
 			return;
 		}
 
-		if (g_3d_state.raytrace_output() != RAYTRACE_ACROSPIN)    /* Output the vertex info */
+		if (! (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN))
 		{
+			/* Output the vertex info */
 			out_triangle(*f_cur, *f_old, s_f_last_row[col],
 				cur->color, old->color, s_last_row[col].color);
 		}
 
 		triangle_was_output = true;
 
-		driver_draw_line(old->x, old->y, cur->x, cur->y, old->color);
-		driver_draw_line(old->x, old->y, s_last_row[col].x,
-			s_last_row[col].y, old->color);
-		driver_draw_line(s_last_row[col].x, s_last_row[col].y,
-			cur->x, cur->y, cur->color);
+		draw_line(*old, *cur, old->color);
+		draw_line(*old, s_last_row[col], old->color);
+		draw_line(s_last_row[col], *cur, cur->color);
 		s_num_tris++;
 	}
 
-	if (col < last_dot && g_current_row &&
-		s_last_row[col].x > BAD_CHECK &&
-		s_last_row[col].y > BAD_CHECK &&
-		s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
-		s_last_row[col].y < (g_y_dots - BAD_CHECK) &&
-		s_last_row[next].x > BAD_CHECK &&
-		s_last_row[next].y > BAD_CHECK &&
-		s_last_row[next].x < (g_x_dots - BAD_CHECK) &&
-		s_last_row[next].y < (g_y_dots - BAD_CHECK))
+	if (col < last_dot && g_current_row
+		&& bad_point(s_last_row[col]) && bad_point_size(s_last_row[col])
+		&& bad_point(s_last_row[next]) && bad_point_size(s_last_row[next]))
 	{
 		/* Get rid of all the triangles in the plane at the base of
 		* the object */
@@ -528,17 +539,15 @@ static void line3d_raytrace(int col, int next,
 
 static void line3d_fill_surface_grid(int col, const point *old, const point *cur)
 {
-	if (col &&
-		old->x > BAD_CHECK &&
-		old->x < (g_x_dots - BAD_CHECK))
+	if (col
+		&& old->x > BAD_CHECK
+		&& old->x < (g_x_dots - BAD_CHECK))
 	{
 		driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
 	}
-	if (g_current_row &&
-		s_last_row[col].x > BAD_CHECK &&
-		s_last_row[col].y > BAD_CHECK &&
-		s_last_row[col].x < (g_x_dots - BAD_CHECK) &&
-		s_last_row[col].y < (g_y_dots - BAD_CHECK))
+	if (g_current_row
+		&& bad_point(s_last_row[col])
+		&& bad_point_size(s_last_row[col]))
 	{
 		driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur->x,
 			cur->y, cur->color);
@@ -553,9 +562,7 @@ static void line3d_fill_points(const point *cur)
 /* connect-a-dot */
 static void line3d_fill_wire_frame(int col, const point *old, const point *cur)
 {
-	if ((old->x < g_x_dots) && (col) &&
-		old->x > BAD_CHECK &&
-		old->y > BAD_CHECK)      /* Don't draw from old to cur on col 0 */
+	if ((old->x < g_x_dots) && col && bad_point(*old))      /* Don't draw from old to cur on col 0 */
 	{
 		driver_draw_line(old->x, old->y, cur->x, cur->y, cur->color);
 	}
@@ -2080,11 +2087,6 @@ static int HSVtoRGB(BYTE *red, BYTE *green, BYTE *blue, unsigned long hue, unsig
 	return 0;
 }
 
-
-static void acrospin_header()
-{
-	s_raytrace_file << "--";
-}
 static void dxf_header()
 {
 	s_raytrace_file <<
@@ -2175,80 +2177,235 @@ static int raytrace_header()
 		return -1;              /* Oops, somethings wrong! */
 	}
 
-	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
+	switch (g_3d_state.raytrace_output())
 	{
-		s_raytrace_file << "//";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
-	{
-		s_raytrace_file << "#";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
-	{
-		s_raytrace_file << "/*\n";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
-	{
-		acrospin_header();
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
-	{
-		dxf_header();
-	}
-	else
-	{
-		s_raytrace_file << boost::format("{ Created by Iterated Dynamics Ver. %#4.2f }\n\n") % (g_release/100.0);
-	}
-
-	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
-	{
-		s_raytrace_file << "*/\n";
-	}
-
-
-	/* Set the default color */
-	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
-	{
-		s_raytrace_file << "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n";
-	}
-	if (g_3d_state.raytrace_brief())
-	{
-		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
+	case RAYTRACE_VIVID:
+		s_raytrace_file << "//"
+			<< boost::format("{ Created by Iterated Dynamics Ver. %#4.2f }\n\n") % (g_release/100.0);
+		if (g_3d_state.raytrace_brief())
 		{
 			s_raytrace_file << "surf={diff=0.8 0.4 0.1;}\n";
 		}
-		if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
+		s_raytrace_file << "\n";
+		break;
+
+	case RAYTRACE_MTV:
+		s_raytrace_file << "#"
+			<< boost::format("{ Created by Iterated Dynamics Ver. %#4.2f }\n\n") % (g_release/100.0);
+		if (g_3d_state.raytrace_brief())
 		{
 			s_raytrace_file << "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n";
 		}
-		if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
-		{
-			s_raytrace_file << "applysurf diffuse 0.8 0.4 0.1";
-		}
-	}
-	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
-	{
 		s_raytrace_file << "\n";
-	}
+		break;
 
-	/* EB & DG: open "grid" opject, a speedy way to do aggregates in rayshade */
-	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
-	{
+	case RAYTRACE_RAYSHADE:
+		s_raytrace_file << "/*\n"
+			<< boost::format("{ Created by Iterated Dynamics Ver. %#4.2f }\n\n") % (g_release/100.0)
+			<< "*/\n";
+		if (g_3d_state.raytrace_brief())
+		{
+			s_raytrace_file << "applysurf diffuse 0.8 0.4 0.1\n";
+		}
+		/* open "grid" opject, a speedy way to do aggregates in rayshade */
 		s_raytrace_file <<
+			"\n"
 			"/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
 			"/* make z grid = 1 always for landscapes. */\n\n"
 			"grid 33 25 1\n";
-	}
+		break;
 
-	if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
-	{
-		s_raytrace_file << "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n";
+	case RAYTRACE_ACROSPIN:
+		s_raytrace_file
+			<< "--"
+			<< boost::format("{ Created by Iterated Dynamics Ver. %#4.2f }\n\n") % (g_release/100.0)
+			<< "\n"
+			"Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n";
+		break;
+
+	case RAYTRACE_DXF:
+		dxf_header();
+		break;
+
+	case RAYTRACE_POVRAY:
+		/* Set the default color */
+		s_raytrace_file << "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n"
+			"\n";
+		break;
 	}
 
 	return 0;
 }
 
 
+static void out_triangle_povray(float c[3], float pt_t[3][3])
+{
+	s_raytrace_file << " OBJECT\n"
+		"  TRIANGLE ";
+	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
+	{
+		s_raytrace_file << "\n"
+			"      <";
+
+		for (int j = 0; j <= 2; j++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % pt_t[2 - i][j];     /* Left handed */
+		}
+
+		s_raytrace_file << ">";
+	}
+	s_raytrace_file << " END_TRIANGLE \n";
+	if (!g_3d_state.raytrace_brief())
+	{
+		s_raytrace_file << boost::format("  TEXTURE\n"
+			"   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
+			"      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n")
+			% c[0] % c[1] % c[2];
+	}
+	s_raytrace_file << "  COLOR  F_Dflt  END_OBJECT";
+	triangle_bounds(pt_t);    /* update bounding info */
+	s_raytrace_file << "\n";
+}
+static void out_triangle_vivid(float c[3], float pt_t[3][3])
+{
+	if (!g_3d_state.raytrace_brief())
+	{
+		s_raytrace_file << "surf={diff=";
+		for (int i = 0; i <= 2; i++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % c[i];
+		}
+		s_raytrace_file << ";}\n";
+	}
+	s_raytrace_file << "polygon={points=3;";
+	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
+	{
+		s_raytrace_file << "\n"
+			" vertex =  ";
+
+		for (int j = 0; j <= 2; j++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % pt_t[i][j]; /* Right handed */
+		}
+		s_raytrace_file << ";";
+	}
+	s_raytrace_file << "}";
+	s_raytrace_file << "\n";
+}
+static void out_triangle_mtv(float c[3], float pt_t[3][3])
+{
+	if (!g_3d_state.raytrace_brief())
+	{
+		s_raytrace_file << "f";
+		for (int i = 0; i <= 2; i++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % c[i];
+		}
+		s_raytrace_file << "0.95 0.05 5 0 0\n";
+	}
+	s_raytrace_file << "p 3";
+	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
+	{
+		s_raytrace_file << "\n";
+		s_raytrace_file << " ";
+
+		for (int j = 0; j <= 2; j++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % pt_t[2 - i][j];     /* Left handed */
+		}
+	}
+	s_raytrace_file << "\n";
+}
+static void out_triangle_rayshade(float c[3], float pt_t[3][3])
+{
+	if (!g_3d_state.raytrace_brief())
+	{
+		s_raytrace_file << "applysurf diffuse ";
+		for (int i = 0; i <= 2; i++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % c[i];
+		}
+		s_raytrace_file << "\n";
+	}
+	s_raytrace_file << "triangle";
+	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
+	{
+		s_raytrace_file << "\n"
+			" ";
+
+		for (int j = 0; j <= 2; j++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % pt_t[2 - i][j];     /* Left handed */
+		}
+	}
+	s_raytrace_file << "\n";
+}
+static void out_triangle_raw(float c[3], float pt_t[3][3])
+{
+	if (!g_3d_state.raytrace_brief())
+	{
+		for (int i = 0; i <= 2; i++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % c[i];
+		}
+	}
+	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
+	{
+		s_raytrace_file << "\n";
+
+		for (int j = 0; j <= 2; j++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % pt_t[i][j]; /* Right handed */
+		}
+	}
+	if (!g_3d_state.raytrace_brief())
+	{
+		s_raytrace_file << "\n";
+	}
+	s_raytrace_file << "\n";
+}
+static void out_triangle_acrospin(float c[3], float pt_t[3][3])
+{
+	if (!g_3d_state.raytrace_brief())
+	{
+		for (int i = 0; i <= 2; i++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % c[i];
+		}
+	}
+	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
+	{
+		s_raytrace_file << "\n"
+			" ";
+
+		for (int j = 0; j <= 2; j++)
+		{
+			s_raytrace_file << boost::format("% #4.4f ") % pt_t[i][j]; /* Right handed */
+		}
+	}
+	s_raytrace_file << "\n";
+}
+static void out_triangle_dxf(int c1, float pt_t[3][3])
+{
+	s_raytrace_file << boost::format("  0\n"
+		"3DFACE\n"
+		"  8\n"
+		"FRACTAL\n"
+		" 62\n"
+		"%3d\n") % std::min(255, std::max(1, c1));
+	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
+	{
+		for (int j = 0; j <= 2; j++)
+		{
+			/* write 3dface entity to dxf file */
+			s_raytrace_file << boost::format("%3d\n%g\n") % (10*(j + 1) + i) % pt_t[i][j];
+			if (i == 2)         /* 3dface needs 4 vertices */
+			{
+				s_raytrace_file << boost::format("%3d\n%g\n") % (10*(j + 1) + i + 1) % pt_t[i][j];
+			}
+		}
+	}
+}
 /********************************************************************/
 /*                                                                  */
 /*  This routine describes the triangle to the ray tracer, it       */
@@ -2263,10 +2420,8 @@ static int raytrace_header()
 /*                                                                  */
 /********************************************************************/
 
-static int out_triangle(const point_fp pt1,
-								  const point_fp pt2,
-								  const point_fp pt3,
-								  int c1, int c2, int c3)
+static int out_triangle(const point_fp &pt1, const point_fp &pt2, const point_fp &pt3,
+						int c1, int c2, int c3)
 {
 	float c[3];
 	float pt_t[3][3];
@@ -2307,138 +2462,35 @@ static int out_triangle(const point_fp pt1,
 	}
 
 	/* Describe the triangle */
-	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
+	switch (g_3d_state.raytrace_output())
 	{
-		s_raytrace_file << " OBJECT\n  TRIANGLE ";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID && !g_3d_state.raytrace_brief())
-	{
-		s_raytrace_file << "surf={diff=";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_MTV && !g_3d_state.raytrace_brief())
-	{
-		s_raytrace_file << "f";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE && !g_3d_state.raytrace_brief())
-	{
-		s_raytrace_file << "applysurf diffuse ";
-	}
+	case RAYTRACE_POVRAY:
+		out_triangle_povray(c, pt_t);
+		break;
 
-	if (!g_3d_state.raytrace_brief() && g_3d_state.raytrace_output() != RAYTRACE_POVRAY && g_3d_state.raytrace_output() != RAYTRACE_DXF)
-	{
-		for (int i = 0; i <= 2; i++)
-		{
-			s_raytrace_file << boost::format("% #4.4f ") % c[i];
-		}
-	}
+	case RAYTRACE_VIVID:
+		out_triangle_vivid(c, pt_t);
+		break;
 
-	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
-	{
-		if (!g_3d_state.raytrace_brief())
-		{
-			s_raytrace_file << ";}\n";
-		}
-		s_raytrace_file << "polygon={points=3;";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
-	{
-		if (!g_3d_state.raytrace_brief())
-		{
-			s_raytrace_file << "0.95 0.05 5 0 0\n";
-		}
-		s_raytrace_file << "p 3";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
-	{
-		if (!g_3d_state.raytrace_brief())
-		{
-			s_raytrace_file << "\n";
-		}
-		/* EB & DG: removed "T" after "triangle" */
-		s_raytrace_file << "triangle";
-	}
+	case RAYTRACE_MTV:
+		out_triangle_mtv(c, pt_t);
+		break;
 
-	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
-	{
-		s_raytrace_file << boost::format("  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n") % std::min(255, std::max(1, c1));
-	}
+	case RAYTRACE_RAYSHADE:
+		out_triangle_rayshade(c, pt_t);
+		break;
 
-	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
-	{
-		if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
-		{
-			s_raytrace_file << "\n";
-		}
+	case RAYTRACE_RAW:
+		out_triangle_raw(c, pt_t);
+		break;
 
-		if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
-		{
-			s_raytrace_file << "      <";
-		}
-		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
-		{
-			s_raytrace_file << " vertex =  ";
-		}
-		if (g_3d_state.raytrace_output() > RAYTRACE_RAW && g_3d_state.raytrace_output() != RAYTRACE_DXF)
-		{
-			s_raytrace_file << " ";
-		}
+	case RAYTRACE_ACROSPIN:
+		out_triangle_acrospin(c, pt_t);
+		break;
 
-		for (int j = 0; j <= 2; j++)
-		{
-			if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
-			{
-				/* write 3dface entity to dxf file */
-				s_raytrace_file << boost::format("%3d\n%g\n") % (10*(j + 1) + i) % pt_t[i][j];
-				if (i == 2)         /* 3dface needs 4 vertices */
-				{
-					s_raytrace_file << boost::format("%3d\n%g\n") % (10*(j + 1) + i + 1) % pt_t[i][j];
-				}
-			}
-			else if (!(g_3d_state.raytrace_output() == RAYTRACE_MTV || g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE))
-			{
-				s_raytrace_file << boost::format("% #4.4f ") % pt_t[i][j]; /* Right handed */
-			}
-			else
-			{
-				s_raytrace_file << boost::format("% #4.4f ") % pt_t[2 - i][j];     /* Left handed */
-			}
-		}
-
-		if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
-		{
-			s_raytrace_file << ">";
-		}
-		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
-		{
-			s_raytrace_file << ";";
-		}
-	}
-
-	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
-	{
-		s_raytrace_file << " END_TRIANGLE \n";
-		if (!g_3d_state.raytrace_brief())
-		{
-			s_raytrace_file << boost::format("  TEXTURE\n"
-				"   COLOR  RED% #4.4f GREEN% #4.4f BLUE% #4.4f\n"
-				"      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n")
-				% c[0] % c[1] % c[2];
-		}
-		s_raytrace_file << "  COLOR  F_Dflt  END_OBJECT";
-		triangle_bounds(pt_t);    /* update bounding info */
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
-	{
-		s_raytrace_file << "}";
-	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_RAW && !g_3d_state.raytrace_brief())
-	{
-		s_raytrace_file << "\n";
-	}
-
-	if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
-	{
-		s_raytrace_file << "\n";
+	case RAYTRACE_DXF:
+		out_triangle_dxf(c1, pt_t);
+		break;
 	}
 
 	return 0;
@@ -2497,6 +2549,40 @@ static int start_object()
 	return 0;
 }
 
+static void end_object_povray(bool triangle_was_output)
+{
+	if (triangle_was_output)
+	{
+		/* Make sure the bounding box is slightly larger than the object */
+		for (int i = 0; i <= 2; i++)
+		{
+			if (s_min_xyz[i] == s_max_xyz[i])
+			{
+				s_min_xyz[i] -= 0.01f;
+				s_max_xyz[i] += 0.01f;
+			}
+			else
+			{
+				s_min_xyz[i] -= (s_max_xyz[i] - s_min_xyz[i])*0.01f;
+				s_max_xyz[i] += (s_max_xyz[i] - s_min_xyz[i])*0.01f;
+			}
+		}
+
+		/* Add the bounding box info */
+		s_raytrace_file << " BOUNDED_BY\n  INTERSECTION\n"
+			<< boost::format("   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[0])
+			<< boost::format("   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n") % s_max_xyz[0]
+		<< boost::format("   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[1])
+			<< boost::format("   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n") %  s_max_xyz[1]
+		<< boost::format("   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[2])
+			<< boost::format("   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n") %  s_max_xyz[2]
+		<< "  END_INTERSECTION\n END_BOUND\n";
+	}
+
+	/* Complete the composite object statement */
+	s_raytrace_file << "END_COMPOSITE\n";
+	s_raytrace_file << "\n";
+}
 /********************************************************************/
 /*                                                                  */
 /*  This routine adds a bounding box for the triangles drawn        */
@@ -2506,75 +2592,56 @@ static int start_object()
 /*                                                                  */
 /********************************************************************/
 
-static int end_object(bool triangle_was_output)
+static void end_object(bool triangle_was_output)
 {
-	if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
+	switch (g_3d_state.raytrace_output())
 	{
-		return 0;
+	case RAYTRACE_POVRAY:
+		end_object_povray(triangle_was_output);
+		break;
+
+	case RAYTRACE_NONE:
+	case RAYTRACE_VIVID:
+	case RAYTRACE_RAW:
+	case RAYTRACE_MTV:
+		s_raytrace_file << "\n";
+		break;
 	}
-	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
-	{
-		if (triangle_was_output)
-		{
-			/* Make sure the bounding box is slightly larger than the object */
-			for (int i = 0; i <= 2; i++)
-			{
-				if (s_min_xyz[i] == s_max_xyz[i])
-				{
-					s_min_xyz[i] -= 0.01f;
-					s_max_xyz[i] += 0.01f;
-				}
-				else
-				{
-					s_min_xyz[i] -= (s_max_xyz[i] - s_min_xyz[i])*0.01f;
-					s_max_xyz[i] += (s_max_xyz[i] - s_min_xyz[i])*0.01f;
-				}
-			}
-
-			/* Add the bounding box info */
-			s_raytrace_file << " BOUNDED_BY\n  INTERSECTION\n"
-				<< boost::format("   PLANE <-1.0  0.0  0.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[0])
-				<< boost::format("   PLANE < 1.0  0.0  0.0 > % #4.3f END_PLANE\n") % s_max_xyz[0]
-				<< boost::format("   PLANE < 0.0 -1.0  0.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[1])
-				<< boost::format("   PLANE < 0.0  1.0  0.0 > % #4.3f END_PLANE\n") %  s_max_xyz[1]
-				<< boost::format("   PLANE < 0.0  0.0 -1.0 > % #4.3f END_PLANE\n") % (-s_min_xyz[2])
-				<< boost::format("   PLANE < 0.0  0.0  1.0 > % #4.3f END_PLANE\n") %  s_max_xyz[2]
-				<< "  END_INTERSECTION\n END_BOUND\n";
-		}
-
-		/* Complete the composite object statement */
-		s_raytrace_file << "END_COMPOSITE\n";
-	}
-
-	if (g_3d_state.raytrace_output() != RAYTRACE_ACROSPIN && g_3d_state.raytrace_output() != RAYTRACE_RAYSHADE)
-	{
-		s_raytrace_file << "\n";    /* EB & DG: too many newlines */
-	}
-
-	return 0;
 }
 
 static void line3d_cleanup()
 {
-	if (g_3d_state.raytrace_output() && s_raytrace_file)
-	{                            /* Finish up the ray tracing files */
-		if (g_3d_state.raytrace_output() != RAYTRACE_RAYSHADE && g_3d_state.raytrace_output() != RAYTRACE_DXF)
-		{
-			s_raytrace_file << "\n"; /* EB & DG: too many newlines */
-		}
-		if (g_3d_state.raytrace_output() == RAYTRACE_VIVID)
-		{
-			s_raytrace_file << "\n\n//";
-		}
-		if (g_3d_state.raytrace_output() == RAYTRACE_MTV)
-		{
-			s_raytrace_file << "\n\n#";
-		}
+	if (g_3d_state.raytrace_output() == RAYTRACE_NONE || !s_raytrace_file)
+	{
+		return;
+	}
 
-		if (g_3d_state.raytrace_output() == RAYTRACE_RAYSHADE)
-		{
-			/* EB & DG: end grid aggregate */
-			s_raytrace_file <<
+	switch (g_3d_state.raytrace_output())
+	{
+	case RAYTRACE_POVRAY:
+		s_raytrace_file << "\n"
+			<< boost::format("{ No. Of Triangles = %ld }*/\n\n") % s_num_tris;
+		break;
+
+	case RAYTRACE_VIVID:
+		s_raytrace_file << "\n"
+			<< "\n\n//"
+			<< boost::format("{ No. Of Triangles = %ld }*/\n\n") % s_num_tris;
+		break;
+
+	case RAYTRACE_RAW:
+		s_raytrace_file << "\n"
+			<< boost::format("{ No. Of Triangles = %ld }*/\n\n") % s_num_tris;
+		break;
+
+	case RAYTRACE_MTV:
+		s_raytrace_file << "\n"
+				"\n\n#"
+			<< boost::format("{ No. Of Triangles = %ld }*/\n\n") % s_num_tris;
+		break;
+	case RAYTRACE_RAYSHADE:
+		/* end grid aggregate */
+		s_raytrace_file <<
 				"end\n"
 				"\n"
 				"/*good landscape:*/\n"
@@ -2585,22 +2652,22 @@ static void line3d_cleanup()
 				"background .3 0 0\n"
 				"report verbose\n"
 				"\n"
-				"/*";
-		}
-		if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
-		{
-			s_acrospin.cleanup();
-		}
-		if (g_3d_state.raytrace_output() != RAYTRACE_DXF)
-		{
-			s_raytrace_file << boost::format("{ No. Of Triangles = %ld }*/\n\n") % s_num_tris;
-		}
-		if (g_3d_state.raytrace_output() == RAYTRACE_DXF)
-		{
-			s_raytrace_file << "  0\nENDSEC\n  0\nEOF\n";
-		}
-		s_raytrace_file.close();
+				"/*"
+			<< boost::format("{ No. Of Triangles = %ld }*/\n\n") % s_num_tris;
+		break;
+
+	case RAYTRACE_ACROSPIN:
+		s_acrospin.line3d_cleanup();
+		break;
+
+	case RAYTRACE_DXF:
+		s_raytrace_file << "  0\n"
+			"ENDSEC\n"
+			"  0\n"
+			"EOF\n";
+		break;
 	}
+
 	if (g_targa_output)
 	{                            /* Finish up targa files */
 		s_targa_header_len = 18;         /* Reset Targa header size */
