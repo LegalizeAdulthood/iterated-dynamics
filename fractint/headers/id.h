@@ -1062,61 +1062,61 @@ struct FunctionListItem
 #define FIK_SAVE_TIME		9999
 
 /* text colors */
-#define BLACK      0
-#define BLUE       1
-#define GREEN      2
-#define CYAN       3
-#define RED        4
-#define MAGENTA    5
-#define BROWN      6 /* dirty yellow on cga */
-#define WHITE      7
-/* use values below this for foreground only, they don't work background */
-#define GRAY       8 /* don't use this much - is black on cga */
-#define L_BLUE     9
-#define L_GREEN   10
-#define L_CYAN    11
-#define L_RED     12
-#define L_MAGENTA 13
-#define YELLOW    14
-#define L_WHITE   15
-#define INVERSE 0x8000 /* when 640x200x2 text or mode 7, inverse */
-#define BRIGHT  0x4000 /* when mode 7, bright */
-/* and their use: */
-#define C_TITLE           g_text_colors[0]+BRIGHT
-#define C_TITLE_DEV       g_text_colors[1]
-#define C_HELP_HDG        g_text_colors[2]+BRIGHT
-#define C_HELP_BODY       g_text_colors[3]
-#define C_HELP_INSTR      g_text_colors[4]
-#define C_HELP_LINK       g_text_colors[5]+BRIGHT
-#define C_HELP_CURLINK    g_text_colors[6]+INVERSE
-#define C_PROMPT_BKGRD    g_text_colors[7]
-#define C_PROMPT_TEXT     g_text_colors[8]
-#define C_PROMPT_LO       g_text_colors[9]
-#define C_PROMPT_MED      g_text_colors[10]
-#ifndef XFRACT
-#define C_PROMPT_HI       g_text_colors[11]+BRIGHT
-#else
-#define C_PROMPT_HI       g_text_colors[11]
-#endif
-#define C_PROMPT_INPUT    g_text_colors[12]+INVERSE
-#define C_PROMPT_CHOOSE   g_text_colors[13]+INVERSE
-#define C_CHOICE_CURRENT  g_text_colors[14]+INVERSE
-#define C_CHOICE_SP_INSTR g_text_colors[15]
-#define C_CHOICE_SP_KEYIN g_text_colors[16]+BRIGHT
-#define C_GENERAL_HI      g_text_colors[17]+BRIGHT
-#define C_GENERAL_MED     g_text_colors[18]
-#define C_GENERAL_LO      g_text_colors[19]
-#define C_GENERAL_INPUT   g_text_colors[20]+INVERSE
-#define C_DVID_BKGRD      g_text_colors[21]
-#define C_DVID_HI         g_text_colors[22]+BRIGHT
-#define C_DVID_LO         g_text_colors[23]
-#define C_STOP_ERR        g_text_colors[24]+BRIGHT
-#define C_STOP_INFO       g_text_colors[25]+BRIGHT
-#define C_TITLE_LOW       g_text_colors[26]
-#define C_AUTHDIV1        g_text_colors[27]+INVERSE
-#define C_AUTHDIV2        g_text_colors[28]+INVERSE
-#define C_PRIMARY         g_text_colors[29]
-#define C_CONTRIB         g_text_colors[30]
+enum TextColorType
+{
+	TEXTCOLOR_BLACK = 0,
+	TEXTCOLOR_BLUE = 1,
+	TEXTCOLOR_GREEN = 2,
+	TEXTCOLOR_CYAN = 3,
+	TEXTCOLOR_RED = 4,
+	TEXTCOLOR_MAGENTA = 5,
+	/* dirty yellow on cga */
+	TEXTCOLOR_BROWN = 6,
+	TEXTCOLOR_WHITE = 7,
+	/* use values below this for foreground only, they don't work background */
+	/* don't use this much - is black on cga */
+	TEXTCOLOR_GRAY = 8,
+	TEXTCOLOR_LIGHT_BLUE = 9,
+	TEXTCOLOR_LIGHT_GREEN = 10,
+	TEXTCOLOR_LIGHT_CYAN = 11,
+	TEXTCOLOR_LIGHT_RED = 12,
+	TEXTCOLOR_LIGHT_MAGENTA = 13,
+	TEXTCOLOR_YELLOW = 14,
+	TEXTCOLOR_LIGHT_WHITE = 15,
+	TEXTCOLOR_INVERSE = 0x8000,
+	TEXTCOLOR_BRIGHT = 0X4000
+};
+#define C_TITLE           (g_text_colors[0] | TEXTCOLOR_BRIGHT)
+#define C_TITLE_DEV       (g_text_colors[1])
+#define C_HELP_HDG        (g_text_colors[2] | TEXTCOLOR_BRIGHT)
+#define C_HELP_BODY       (g_text_colors[3])
+#define C_HELP_INSTR      (g_text_colors[4])
+#define C_HELP_LINK       (g_text_colors[5] | TEXTCOLOR_BRIGHT)
+#define C_HELP_CURLINK    (g_text_colors[6] | TEXTCOLOR_INVERSE)
+#define C_PROMPT_BKGRD    (g_text_colors[7])
+#define C_PROMPT_TEXT     (g_text_colors[8])
+#define C_PROMPT_LO       (g_text_colors[9])
+#define C_PROMPT_MED      (g_text_colors[10])
+#define C_PROMPT_HI       (g_text_colors[11] | TEXTCOLOR_BRIGHT)
+#define C_PROMPT_INPUT    (g_text_colors[12] | TEXTCOLOR_INVERSE)
+#define C_PROMPT_CHOOSE   (g_text_colors[13] | TEXTCOLOR_INVERSE)
+#define C_CHOICE_CURRENT  (g_text_colors[14] | TEXTCOLOR_INVERSE)
+#define C_CHOICE_SP_INSTR (g_text_colors[15])
+#define C_CHOICE_SP_KEYIN (g_text_colors[16] | TEXTCOLOR_BRIGHT)
+#define C_GENERAL_HI      (g_text_colors[17] | TEXTCOLOR_BRIGHT)
+#define C_GENERAL_MED     (g_text_colors[18])
+#define C_GENERAL_LO      (g_text_colors[19])
+#define C_GENERAL_INPUT   (g_text_colors[20] | TEXTCOLOR_INVERSE)
+#define C_DVID_BKGRD      (g_text_colors[21])
+#define C_DVID_HI         (g_text_colors[22] | TEXTCOLOR_BRIGHT)
+#define C_DVID_LO         (g_text_colors[23])
+#define C_STOP_ERR        (g_text_colors[24] | TEXTCOLOR_BRIGHT)
+#define C_STOP_INFO       (g_text_colors[25] | TEXTCOLOR_BRIGHT)
+#define C_TITLE_LOW       (g_text_colors[26])
+#define C_AUTHDIV1        (g_text_colors[27] | TEXTCOLOR_INVERSE)
+#define C_AUTHDIV2        (g_text_colors[28] | TEXTCOLOR_INVERSE)
+#define C_PRIMARY         (g_text_colors[29])
+#define C_CONTRIB         (g_text_colors[30])
 
 /* structure passed to fullscreen_prompts */
 struct full_screen_values

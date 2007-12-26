@@ -995,7 +995,7 @@ void JIIM::execute()
 				}
 				else
 				{
-					driver_display_string(5, g_screen_height-s_show_numbers, WHITE, BLACK, text.c_str());
+					driver_display_string(5, g_screen_height-s_show_numbers, TEXTCOLOR_WHITE, TEXTCOLOR_BLACK, text.c_str());
 				}
 			}
 			iter = 1;
