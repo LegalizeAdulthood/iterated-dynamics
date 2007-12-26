@@ -38,16 +38,7 @@ private:
 	void CountTitleLinesAndWidth();
 	void Footer(int &i);
 
-	int prompt_color(int attributes)
-	{
-		switch (attributes & 3)
-		{
-		case 1:		return C_PROMPT_LO;
-		case 3:		return C_PROMPT_HI;
-		default:	return C_PROMPT_MED;
-		}
-	}
-
+	int prompt_color(int attributes);
 	void show_speed_string(int speedrow, char *speedstring, int (*speed_prompt)(int, int, int, char *, int));
 	bool is_a_dir_name(const char *name);
 	void process_speed_string(char *speedstring, char **choices, int curkey, int *pcurrent,

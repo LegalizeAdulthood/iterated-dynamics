@@ -36,6 +36,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "slideshw.h"
+#include "TextColors.h"
 
 #include "CommandParser.h"
 #include "EscapeTime.h"
@@ -144,40 +145,6 @@ std::string g_ifs_name;							/* Name of the IFS def'n (if not null) */
 search_path g_search_for;
 float	*g_ifs_definition = 0;				/* ifs parameters */
 int		g_ifs_type;								/* 0 = 2d, 1 = 3d */
-int g_text_colors[] =
-{
-	TEXTCOLOR_BLUE*16 + TEXTCOLOR_LIGHT_WHITE,    /* C_TITLE           title background */
-	TEXTCOLOR_BLUE*16 + TEXTCOLOR_LIGHT_GREEN,    /* C_TITLE_DEV       development vsn foreground */
-	TEXTCOLOR_GREEN*16 + TEXTCOLOR_YELLOW,    /* C_HELP_HDG        help page title line */
-	TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK,     /* C_HELP_BODY       help page body */
-	TEXTCOLOR_GREEN*16 + TEXTCOLOR_GRAY,      /* C_HELP_INSTR      help page instr at bottom */
-	TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLUE,      /* C_HELP_LINK       help page links */
-	TEXTCOLOR_CYAN*16 + TEXTCOLOR_BLUE,       /* C_HELP_CURLINK    help page current link */
-	TEXTCOLOR_WHITE*16 + TEXTCOLOR_GRAY,      /* C_PROMPT_BKGRD    prompt/choice background */
-	TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK,     /* C_PROMPT_TEXT     prompt/choice extra info */
-	TEXTCOLOR_BLUE*16 + TEXTCOLOR_WHITE,      /* C_PROMPT_LO       prompt/choice text */
-	TEXTCOLOR_BLUE*16 + TEXTCOLOR_LIGHT_WHITE,    /* C_PROMPT_MED      prompt/choice hdg2/... */
-	TEXTCOLOR_BLUE*16 + TEXTCOLOR_YELLOW,     /* C_PROMPT_HI       prompt/choice hdg/cur/... */
-	TEXTCOLOR_GREEN*16 + TEXTCOLOR_LIGHT_WHITE,   /* C_PROMPT_INPUT    full_screen_prompt input */
-	TEXTCOLOR_CYAN*16 + TEXTCOLOR_LIGHT_WHITE,    /* C_PROMPT_CHOOSE   full_screen_prompt choice */
-	TEXTCOLOR_MAGENTA*16 + TEXTCOLOR_LIGHT_WHITE, /* C_CHOICE_CURRENT  full_screen_choice input */
-	TEXTCOLOR_BLACK*16 + TEXTCOLOR_WHITE,     /* C_CHOICE_SP_INSTR speed key bar & instr */
-	TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_MAGENTA, /* C_CHOICE_SP_KEYIN speed key value */
-	TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLUE,      /* C_GENERAL_HI      tab, thinking, IFS */
-	TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK,     /* C_GENERAL_MED */
-	TEXTCOLOR_WHITE*16 + TEXTCOLOR_GRAY,      /* C_GENERAL_LO */
-	TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_WHITE,   /* C_GENERAL_INPUT */
-	TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK,     /* C_DVID_BKGRD      disk video */
-	TEXTCOLOR_BLACK*16 + TEXTCOLOR_YELLOW,    /* C_DVID_HI */
-	TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_WHITE,   /* C_DVID_LO */
-	TEXTCOLOR_RED*16 + TEXTCOLOR_LIGHT_WHITE,     /* C_STOP_ERR        stop message, error */
-	TEXTCOLOR_GREEN*16 + TEXTCOLOR_BLACK,     /* C_STOP_INFO       stop message, info */
-	TEXTCOLOR_BLUE*16 + TEXTCOLOR_WHITE,      /* C_TITLE_LOW       bottom lines of title screen */
-	TEXTCOLOR_GREEN*16 + TEXTCOLOR_BLACK,     /* C_AUTHDIV1        title screen dividers */
-	TEXTCOLOR_GREEN*16 + TEXTCOLOR_GRAY,      /* C_AUTHDIV2        title screen dividers */
-	TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_WHITE,   /* C_PRIMARY         primary authors */
-	TEXTCOLOR_BLACK*16 + TEXTCOLOR_WHITE      /* C_CONTRIB         contributing authors */
-};
 bool g_make_par_flag = true;
 bool g_make_par_colors_only = true;
 
@@ -3245,71 +3212,11 @@ static void parse_text_colors(const char *value)
 {
 	if (strcmp(value, "mono") == 0)
 	{
-		for (int k = 0; k < sizeof(g_text_colors); ++k)
-		{
-			g_text_colors[k] = TEXTCOLOR_BLACK*16 + TEXTCOLOR_WHITE;
-		}
-		/* C_HELP_CURLINK =
-			C_PROMPT_INPUT =
-			C_CHOICE_CURRENT =
-			C_GENERAL_INPUT =
-			C_AUTHDIV1 =
-			C_AUTHDIV2 = TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK; */
-		g_text_colors[6] =
-			g_text_colors[12] =
-			g_text_colors[13] =
-			g_text_colors[14] =
-			g_text_colors[20] =
-			g_text_colors[27] =
-			g_text_colors[28] = TEXTCOLOR_WHITE*16 + TEXTCOLOR_BLACK;
-		/* C_TITLE =
-			C_HELP_HDG =
-			C_HELP_LINK =
-			C_PROMPT_HI =
-			C_CHOICE_SP_KEYIN =
-			C_GENERAL_HI =
-			C_DVID_HI =
-			C_STOP_ERR =
-			C_STOP_INFO = TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_WHITE; */
-		g_text_colors[0] =
-			g_text_colors[2] =
-			g_text_colors[5] =
-			g_text_colors[11] =
-			g_text_colors[16] =
-			g_text_colors[17] =
-			g_text_colors[22] =
-			g_text_colors[24] =
-			g_text_colors[25] = TEXTCOLOR_BLACK*16 + TEXTCOLOR_LIGHT_WHITE;
+		set_mono_text_colors();
 	}
 	else
 	{
-		int k = 0;
-		while (k < sizeof(g_text_colors))
-		{
-			if (*value == 0)
-			{
-				break;
-			}
-			if (*value != '/')
-			{
-				int hexval;
-				sscanf(value, "%x", &hexval);
-				int i = (hexval/16) & 7;
-				int j = hexval & 15;
-				if (i == j || (i == 0 && j == 8)) /* force contrast */
-				{
-					j = 15;
-				}
-				g_text_colors[k] = BYTE(i*16 + j);
-				value = strchr(value, '/');
-				if (value == 0)
-				{
-					break;
-				}
-			}
-			++value;
-			++k;
-		}
+		set_custom_text_colors(value);
 	}
 }
 

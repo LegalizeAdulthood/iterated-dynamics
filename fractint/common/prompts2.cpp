@@ -35,6 +35,7 @@
 #include "realdos.h"
 #include "slideshw.h"
 #include "stereo.h"
+#include "TextColors.h"
 #include "zoom.h"
 
 #include "busy.h"

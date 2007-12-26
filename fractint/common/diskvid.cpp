@@ -16,6 +16,7 @@
 #include "drivers.h"
 #include "diskvid.h"
 #include "realdos.h"
+#include "TextColors.h"
 
 #define BOX_ROW   6
 #define BOX_COL   11

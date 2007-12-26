@@ -15,6 +15,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "stereo.h"
+#include "TextColors.h"
 
 struct CHOICE
 {

@@ -16,12 +16,12 @@
 #include "prototyp.h"
 #include "helpdefs.h"
 
+#include "AbstractInput.h"
 #include "drivers.h"
 #include "fihelp.h"
 #include "intro.h"
 #include "realdos.h"
-
-#include "AbstractInput.h"
+#include "TextColors.h"
 
 #ifdef XFRACT
 extern int slowdisplay;
