@@ -7,8 +7,6 @@
 #include <fstream>
 #include <string>
 
-#include <string.h>
-
 #include <boost/format.hpp>
 
 #include "port.h"
@@ -1434,7 +1432,7 @@ private:
 	int _num_redo;
 	bool _hidden;
 	int _stored_at;
-	FILE *_file;
+	std::fstream _file;
 	char *_memory;
 	PALENTRY *_save_palette[8];
 	PALENTRY _fs_color;
@@ -1909,10 +1907,10 @@ void pal_table::save_rect()
 	{
 		_stored_at = DISK;
 
-		if (_file == 0)
+		if (!_file.is_open())
 		{
-			_file = dir_fopen(g_temp_dir, g_screen_file, "wb");
-			if (_file == 0)
+			_file.open((g_temp_dir / g_screen_file).string().c_str(), std::ios::in | std::ios::out | std::ios::binary);
+			if (!_file)
 			{
 				_stored_at = NOWHERE;
 				driver_buzzer(BUZZER_ERROR);
@@ -1920,13 +1918,15 @@ void pal_table::save_rect()
 			}
 		}
 
-		rewind(_file);
+		_file.seekg(0);
+		_file.seekp(0);
 		cursor::cursor_hide();
 		for (int yoff = 0; yoff < depth; yoff++)
 		{
 			get_row(_x, _y + yoff, width, buff);
-			horizontal_line (_x, _y + yoff, width, s_bg_color);
-			if (fwrite(buff, width, 1, _file) != 1)
+			horizontal_line(_x, _y + yoff, width, s_bg_color);
+			_file.write(&buff[0], width*sizeof(buff[0]));
+			if (_file.bad())
 			{
 				driver_buzzer(BUZZER_ERROR);
 				break;
@@ -1950,11 +1950,13 @@ void pal_table::restore_rect()
 	switch (_stored_at)
 	{
 	case DISK:
-		rewind(_file);
+		_file.seekg(0);
+		_file.seekp(0);
 		cursor::cursor_hide();
 		for (int yoff = 0; yoff < depth; yoff++)
 		{
-			if (fread(buff, width, 1, _file) != 1)
+			_file.read(&buff[0], width*sizeof(buff[0]));
+			if (_file.bad())
 			{
 				driver_buzzer(BUZZER_ERROR);
 				break;
@@ -2836,7 +2838,7 @@ pal_table::pal_table()
 	_exclude(EXCLUDE_NONE),
 	_hidden(false),
 	_stored_at(NOWHERE),
-	_file(0),
+	_file(),
 	_memory(0),
 	_freestyle(false),
 	_color_band_width(15),
@@ -2928,9 +2930,9 @@ inline void destroy_array(T *&ptr)
 
 pal_table::~pal_table()
 {
-	if (_file)
+	if (_file.is_open())
 	{
-		fclose(_file);
+		_file.close();
 		dir_remove(g_temp_dir, g_screen_file);
 	}
 
