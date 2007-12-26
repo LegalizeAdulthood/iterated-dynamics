@@ -340,7 +340,7 @@ extern double				g_temp_sqr_x;
 extern double				g_temp_sqr_y;
 extern int					g_text_cbase;						/* g_text_col is relative to this */
 extern int					g_text_col;						/* current column in text mode */
-extern BYTE					g_text_colors[];
+extern int					g_text_colors[];
 extern int					g_text_rbase;						/* g_text_row is relative to this */
 extern int					g_text_row;						/* current row in text mode */
 extern unsigned int			g_this_generation_random_seed;
