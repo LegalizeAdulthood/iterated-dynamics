@@ -74,7 +74,7 @@ public:
 	}
 
 	void line3d_cleanup();
-	void first_time();
+	void once_per_image();
 	void line3d_planar(point_fp *current);
 	void line3d_raytrace(point_fp const *current);
 	void next_row();
@@ -106,7 +106,7 @@ VECTOR g_cross;
 const int g_bad_value = -10000; /* set bad values to this */
 
 static int targa_validate(const std::string &filename);
-static int first_time(int, VECTOR);
+static int once_per_image(int, VECTOR);
 static int HSVtoRGB(BYTE *, BYTE *, BYTE *, unsigned long, unsigned long, unsigned long);
 static bool line_3d_mem();
 static int RGBtoHSV(BYTE, BYTE, BYTE, unsigned long *, unsigned long *, unsigned long *);
@@ -116,7 +116,7 @@ static void end_object(bool triangle_was_output);
 static int off_screen(point);
 static int out_triangle(const point_fp &, const point_fp &, const point_fp &, int, int, int);
 static int raytrace_header();
-static int start_object();
+static void start_object();
 static void corners(MATRIX m, bool show, double *pxmin, double *pymin, double *pzmin, double *pxmax, double *pymax, double *pzmax);
 static void draw_light_box(double *, double *, MATRIX);
 static void draw_rectangle(VECTOR V0, VECTOR V1, VECTOR V2, VECTOR V3, int color);
@@ -223,7 +223,7 @@ void acrospin_data::line3d_raytrace(point_fp const *current)
 	_columns++;
 }
 
-void acrospin_data::first_time()
+void acrospin_data::once_per_image()
 {
 	_maxColumns = 0;
 	_columns = 0;
@@ -245,7 +245,7 @@ void acrospin_data::next_row()
 static int line3d_init(unsigned linelen, bool &triangle_was_output,
 					   int *xcenter0, int *ycenter0, VECTOR cross_avg, VECTOR v)
 {
-	int err = first_time(linelen, v);
+	int err = once_per_image(linelen, v);
 	if (err != 0)
 	{
 		return err;
@@ -515,10 +515,14 @@ static void line3d_raytrace(int col, int next,
 			return;
 		}
 
-		if (g_3d_state.raytrace_output() != RAYTRACE_ACROSPIN)    /* Output the vertex info */
+		if (g_3d_state.raytrace_output() == RAYTRACE_ACROSPIN)
 		{
+		}
+		else
+		{
+			/* Output the vertex info */
 			out_triangle(*f_cur, s_f_last_row[col], s_f_last_row[next],
-					cur->color, s_last_row[col].color, s_last_row[next].color);
+				cur->color, s_last_row[col].color, s_last_row[next].color);
 		}
 		triangle_was_output = true;
 
@@ -2529,11 +2533,11 @@ static void triangle_bounds(float pt_t[3][3])
 /*                                                                  */
 /********************************************************************/
 
-static int start_object()
+static void start_object()
 {
 	if (g_3d_state.raytrace_output() != RAYTRACE_POVRAY)
 	{
-		return 0;
+		return;
 	}
 
 	/* Reset the min/max values, for bounding box  */
@@ -2546,7 +2550,6 @@ static int start_object()
 	s_max_xyz[2] = -999999.0f;
 
 	s_raytrace_file << "COMPOSITE\n";
-	return 0;
 }
 
 static void end_object_povray(bool triangle_was_output)
@@ -2765,7 +2768,8 @@ static void initialize_trig_tables(int linelen)
 		s_two_cos_delta_phi = float(2.0*cos(double(delta_phi)));
 	}
 }
-static int first_time(int linelen, VECTOR v)
+
+static int once_per_image(int linelen, VECTOR v)
 {
 	g_out_line_cleanup = line3d_cleanup;
 
@@ -2792,7 +2796,7 @@ static int first_time(int linelen, VECTOR v)
 		g_y_shift = 0;
 	}
 
-	s_acrospin.first_time();
+	s_acrospin.once_per_image();
 
 	set_upr_lwr();
 	s_file_error = FILEERROR_NONE;
