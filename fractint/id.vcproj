@@ -1719,6 +1719,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\helpcom.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\intro.h"
 					>
 				</File>

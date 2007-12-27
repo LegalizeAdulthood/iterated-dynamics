@@ -290,6 +290,10 @@
 					/>
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="..\common\helpcom.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

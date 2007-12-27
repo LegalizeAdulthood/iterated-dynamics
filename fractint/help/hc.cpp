@@ -1282,7 +1282,7 @@ int parse_link(void)   /* returns length of link or 0 on error */
 		CHK_BUFFER(1+3*sizeof(int)+len+1);
 		lnum = add_link(&l);
 		*curr++ = CMD_LINK;
-		setint(curr,lnum);
+		setint(curr, lnum);
 		curr += 3*sizeof(int);
 		memcpy(curr, ptr, len);
 		curr += len;
