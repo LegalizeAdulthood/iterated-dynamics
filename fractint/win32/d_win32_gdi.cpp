@@ -568,7 +568,7 @@ void GDIDriver::set_clear()
 
 /* set_video_mode
 */
-void GDIDriver::set_video_mode(const VIDEOINFO &mode)
+void GDIDriver::set_video_mode(const VIDEOINFO &)
 {
 	extern void set_normal_dot();
 	extern void set_normal_line();

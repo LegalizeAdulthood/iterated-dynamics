@@ -801,9 +801,9 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->deprecated_video_mode_cx = 0;
 	save_info->deprecated_video_mode_dx = 0;
 	save_info->deprecated_dotmode = 0;
-	save_info->x_dots = short(g_video_entry.x_dots);
-	save_info->y_dots = short(g_video_entry.y_dots);
-	save_info->colors = short(g_video_entry.colors);
+	save_info->x_dots = short(g_.VideoEntry().x_dots);
+	save_info->y_dots = short(g_.VideoEntry().y_dots);
+	save_info->colors = short(g_.VideoEntry().colors);
 	save_info->parm3 = 0;        /* pre version == 7 fields */
 	save_info->parm4 = 0;
 	save_info->dparm3 = g_parameters[2];

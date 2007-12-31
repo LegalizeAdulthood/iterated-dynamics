@@ -628,7 +628,7 @@ pass_option_restart:
 /* for diskmode changed "viewx/g_y_dots" to "virtual x/y" that do as above  */
 /* (since for diskmode they were updated by x/g_y_dots that should be the   */
 /* same as sx/g_y_dots for that mode)                                       */
-/* g_video_table and g_video_entry are now updated even for non-disk modes     */
+/* g_video_table and g_.VideoEntry() are now updated even for non-disk modes     */
 
 /* --------------------------------------------------------------------- */
 /*
@@ -746,10 +746,9 @@ get_view_restart:
 		}
 		else
 		{
-			g_video_entry.x_dots = g_screen_width;
-			g_video_entry.y_dots = g_screen_height;
+			g_.SetVideoEntrySize(g_screen_width, g_screen_height);
 			g_final_aspect_ratio = (float(g_screen_height))/(float(g_screen_width));
-			memcpy(&g_video_table[g_.Adapter()], &g_video_entry, sizeof(g_video_entry));
+			g_video_table[g_.Adapter()] = g_.VideoEntry();
 		}
 
 		return (g_view_window != old_viewwindow

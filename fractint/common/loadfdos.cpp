@@ -85,13 +85,13 @@ static int video_mode_compare(const void *p1, const void *p2)
 
 static std::string format_video_info(int i, const char *err)
 {
-	g_video_entry = g_video_table[i];
-	std::string key_name = video_mode_key_name(g_video_entry.keynum);
+	g_.SetVideoEntry(g_video_table[i]);
+	std::string key_name = video_mode_key_name(g_.VideoEntry().keynum);
 	std::string result = str(boost::format("%-5s %-25s %-4s %5d %5d %3d %-25s")  /* 78 chars */
-			% key_name.c_str() % g_video_entry.name % err
-			% g_video_entry.x_dots % g_video_entry.y_dots
-			% g_video_entry.colors % g_video_entry.comment);
-	g_video_entry.x_dots = 0;
+			% key_name.c_str() % g_.VideoEntry().name % err
+			% g_.VideoEntry().x_dots % g_.VideoEntry().y_dots
+			% g_.VideoEntry().colors % g_.VideoEntry().comment);
+	g_.SetVideoEntryXDots(0);
 	return result;
 }
 
@@ -104,7 +104,7 @@ static void format_video_info(int i, const char *err, char *buf)
 static double video_mode_aspect_ratio(int width, int height)
 {  /* calc resulting aspect ratio for specified dots in current mode */
 	return double(height)/double(width)
-		*double(g_video_entry.x_dots)/double(g_video_entry.y_dots)
+		*double(g_.VideoEntry().x_dots)/double(g_.VideoEntry().y_dots)
 		*g_screen_aspect_ratio;
 	}
 
@@ -162,34 +162,33 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	video_mode_info vid[MAXVIDEOMODES];
 	for (int i = 0; i < g_video_table_len; ++i)
 	{
-		memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
-					sizeof(g_video_entry));
+		g_.SetVideoEntry(g_video_table[i]);
 		tmpflags = VI_EXACT;
-		if (g_video_entry.keynum == 0)
+		if (g_.VideoEntry().keynum == 0)
 		{
 			tmpflags |= VI_NOKEY;
 		}
-		if (info->x_dots > g_video_entry.x_dots || info->y_dots > g_video_entry.y_dots)
+		if (info->x_dots > g_.VideoEntry().x_dots || info->y_dots > g_.VideoEntry().y_dots)
 		{
 			tmpflags |= VI_SSMALL;
 		}
-		else if (info->x_dots < g_video_entry.x_dots || info->y_dots < g_video_entry.y_dots)
+		else if (info->x_dots < g_.VideoEntry().x_dots || info->y_dots < g_.VideoEntry().y_dots)
 		{
 			tmpflags |= VI_SBIG;
 		}
-		if (g_file_x_dots > g_video_entry.x_dots || g_file_y_dots > g_video_entry.y_dots)
+		if (g_file_x_dots > g_.VideoEntry().x_dots || g_file_y_dots > g_.VideoEntry().y_dots)
 		{
 			tmpflags |= VI_VSMALL;
 		}
-		else if (g_file_x_dots < g_video_entry.x_dots || g_file_y_dots < g_video_entry.y_dots)
+		else if (g_file_x_dots < g_.VideoEntry().x_dots || g_file_y_dots < g_.VideoEntry().y_dots)
 		{
 			tmpflags |= VI_VBIG;
 		}
-		if (g_file_colors > g_video_entry.colors)
+		if (g_file_colors > g_.VideoEntry().colors)
 		{
 			tmpflags |= VI_CSMALL;
 		}
-		if (g_file_colors < g_video_entry.colors)
+		if (g_file_colors < g_.VideoEntry().colors)
 		{
 			tmpflags |= VI_CBIG;
 		}
@@ -343,11 +342,11 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	}
 
 	/* ok, we're going to return with a video mode */
-	g_video_entry = g_video_table[g_.InitialAdapter()];
+	g_.SetVideoEntry(g_video_table[g_.InitialAdapter()]);
 
 	if (g_view_window
-		&& g_file_x_dots == g_video_entry.x_dots
-		&& g_file_y_dots == g_video_entry.y_dots)
+		&& g_file_x_dots == g_.VideoEntry().x_dots
+		&& g_file_y_dots == g_.VideoEntry().y_dots)
 	{
 		/* pull image into a view window */
 		if (g_calculation_status != CALCSTAT_COMPLETED) /* if not complete */
@@ -356,7 +355,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 		if (g_view_x_dots)
 		{
-			g_view_reduction = float(g_video_entry.x_dots/g_view_x_dots);
+			g_view_reduction = float(g_.VideoEntry().x_dots/g_view_x_dots);
 			g_view_x_dots = g_view_y_dots = 0; /* easier to use auto reduction */
 		}
 		g_view_reduction = float(int(g_view_reduction + 0.5)); /* need integer value */
@@ -366,7 +365,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 
 	g_skip_x_dots = 0;
 	g_skip_y_dots = 0; /* set for no reduction */
-	if (g_video_entry.x_dots < g_file_x_dots || g_video_entry.y_dots < g_file_y_dots)
+	if (g_.VideoEntry().x_dots < g_file_x_dots || g_.VideoEntry().y_dots < g_file_y_dots)
 	{
 		/* set up to load only every nth pixel to make image fit */
 		if (g_calculation_status != CALCSTAT_COMPLETED) /* if not complete */
@@ -375,11 +374,11 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 		g_skip_x_dots = 1;
 		g_skip_y_dots = 1;
-		while (g_skip_x_dots*g_video_entry.x_dots < g_file_x_dots)
+		while (g_skip_x_dots*g_.VideoEntry().x_dots < g_file_x_dots)
 		{
 			++g_skip_x_dots;
 		}
-		while (g_skip_y_dots*g_video_entry.y_dots < g_file_y_dots)
+		while (g_skip_y_dots*g_.VideoEntry().y_dots < g_file_y_dots)
 		{
 			++g_skip_y_dots;
 		}
@@ -445,25 +444,25 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	g_view_window = false;
 	g_view_x_dots = 0;
 	g_view_y_dots = 0;
-	if (g_file_x_dots != g_video_entry.x_dots || g_file_y_dots != g_video_entry.y_dots)
+	if (g_file_x_dots != g_.VideoEntry().x_dots || g_file_y_dots != g_.VideoEntry().y_dots)
 	{
 		/* image not exactly same size as screen */
 		g_view_window = true;
 		ftemp = g_final_aspect_ratio*
-			double(g_video_entry.y_dots)/double(g_video_entry.x_dots)
+			double(g_.VideoEntry().y_dots)/double(g_.VideoEntry().x_dots)
 				/g_screen_aspect_ratio;
 		if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 		{
-			i = int(double(g_video_entry.x_dots)/double(g_file_x_dots)*20.0 + 0.5);
+			i = int(double(g_.VideoEntry().x_dots)/double(g_file_x_dots)*20.0 + 0.5);
 			tmpreduce = float(i/20.0); /* chop precision to nearest .05 */
-			i = int(double(g_video_entry.x_dots)/tmpreduce + 0.5);
+			i = int(double(g_.VideoEntry().x_dots)/tmpreduce + 0.5);
 			j = int(double(i)*ftemp + 0.5);
 		}
 		else
 		{
-			i = int(double(g_video_entry.y_dots)/double(g_file_y_dots)*20.0 + 0.5);
+			i = int(double(g_.VideoEntry().y_dots)/double(g_file_y_dots)*20.0 + 0.5);
 			tmpreduce = float(i/20.0); /* chop precision to nearest .05 */
-			j = int(double(g_video_entry.y_dots)/tmpreduce + 0.5);
+			j = int(double(g_.VideoEntry().y_dots)/tmpreduce + 0.5);
 			i = int(double(j)/ftemp + 0.5);
 		}
 		if (i != g_file_x_dots || j != g_file_y_dots)  /* too bad, must be explicit */

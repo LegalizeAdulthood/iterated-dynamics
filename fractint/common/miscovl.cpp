@@ -244,7 +244,7 @@ void MakeBatchFile::initialize()
 	m_pydots = g_y_dots;
 	m_xm = 1;
 	m_ym = 1;
-	video_mode_key_name(g_video_entry.keynum, m_video_mode);
+	video_mode_key_name(g_.VideoEntry().keynum, m_video_mode);
 	m_colors_only = (g_make_par_colors_only == false);
 	m_pdelx = 0.0;
 	m_pdely = 0.0;
@@ -2247,18 +2247,17 @@ int select_video_mode(int curmode)
 	/* pick default mode */
 	if (curmode < 0)
 	{
-		g_video_entry.colors = 256;
+		g_.SetVideoEntryColors(256);
 	}
 	else
 	{
-		memcpy((char *) &g_video_entry, (char *) &g_video_table[curmode], sizeof(g_video_entry));
+		g_.SetVideoEntry(g_video_table[curmode]);
 	}
 #ifndef XFRACT
 	for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
 	{
-		if (g_video_entry.colors      == g_video_table[entries[i]].colors &&
-			(curmode < 0 ||
-			memcmp((char *) &g_video_entry, (char *) &g_video_table[entries[i]], sizeof(g_video_entry)) == 0))
+		if (g_.VideoEntry().colors == g_video_table[entries[i]].colors &&
+			(curmode < 0 || g_.VideoEntry() == g_video_table[entries[i]]))
 		{
 			break;
 		}
@@ -2284,7 +2283,7 @@ int select_video_mode(int curmode)
 	i = (i < 0) ? (-1 - i) : entries[i];
 #endif
 	/* the selected entry now in g_video_entry */
-	memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
+	g_.SetVideoEntry(g_video_table[i]);
 
 #ifndef XFRACT
 	/* copy fractint.cfg table to resident table, note selected entry */
@@ -2293,8 +2292,7 @@ int select_video_mode(int curmode)
 	{
 		if (g_video_table[i].keynum > 0)
 		{
-			if (memcmp((char *)&g_video_entry, (char *)&g_video_table[i],
-							sizeof(g_video_entry)) == 0)
+			if (g_.VideoEntry() == g_video_table[i])
 			{
 				k = g_video_table[i].keynum;
 			}
@@ -2306,8 +2304,7 @@ int select_video_mode(int curmode)
 	ret = k;
 	if (k == 0)  /* selected entry not a copied (assigned to key) one */
 	{
-		memcpy((char *)&g_video_table[MAXVIDEOMODES-1],
-					(char *)&g_video_entry, sizeof(*g_video_table));
+		g_video_table[MAXVIDEOMODES-1] = g_.VideoEntry();
 		ret = 1400; /* special value for check_video_mode_key */
 	}
 
@@ -2316,12 +2313,12 @@ int select_video_mode(int curmode)
 
 void format_vid_table(int choice, char *buf)
 {
-	g_video_entry = g_video_table[s_entries[choice]];
-	std::string kname = video_mode_key_name(g_video_entry.keynum);
+	g_.SetVideoEntry(g_video_table[s_entries[choice]]);
+	std::string kname = video_mode_key_name(g_.VideoEntry().keynum);
 	strcpy(buf, boost::format("%-5s %-25s %5d %5d %3d %.12s %.12s")
-		% kname % g_video_entry.name
-		% g_video_entry.x_dots % g_video_entry.y_dots % g_video_entry.colors
-		% g_video_entry.driver->name() % g_video_entry.comment);
+		% kname % g_.VideoEntry().name
+		% g_.VideoEntry().x_dots % g_.VideoEntry().y_dots % g_.VideoEntry().colors
+		% g_.VideoEntry().driver->name() % g_.VideoEntry().comment);
 }
 
 #ifndef XFRACT
@@ -2995,7 +2992,7 @@ static std::string expand_var(const std::string &var)
 	}
 	else if (var == "vidkey")   /* 2 to 3 chars */
 	{
-		out = video_mode_key_name(g_video_entry.keynum);
+		out = video_mode_key_name(g_.VideoEntry().keynum);
 	}
 	else
 	{
