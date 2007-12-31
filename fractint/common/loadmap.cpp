@@ -15,11 +15,14 @@
 
 /***************************************************************************/
 
-#define dac ((Palettetype *)g_dac_box)
-
 bool validate_luts(const std::string &filename)
 {
 	return validate_luts(filename.c_str());
+}
+
+static BYTE map_to_dac(int value)
+{
+	return BYTE((value % 256) >> 2);
 }
 
 bool validate_luts(const char *fn)
@@ -56,16 +59,12 @@ bool validate_luts(const char *fn)
 
 		/** load global dac values **/
 		// TODO: review when COLOR_CHANNEL_MAX != 63
-		dac[index].red   = BYTE((r % 256) >> 2); /* maps default to 8 bits */
-		dac[index].green = BYTE((g % 256) >> 2); /* DAC wants 6 bits */
-		dac[index].blue  = BYTE((b % 256) >> 2);
+		g_dac_box.Set(index, map_to_dac(r), map_to_dac(g), map_to_dac(b));
 	}
 	f.close();
 	while (index < 256)   /* zap unset entries */
 	{
-		dac[index].red = 40;
-		dac[index].blue = 40;
-		dac[index].green = 40;
+		g_dac_box.Set(index, 40, 40, 40);
 		++index;
 	}
 	g_color_state = COLORSTATE_MAP;
@@ -83,13 +82,13 @@ void set_color_palette_name(const std::string &filename)
 	}
 	if (g_map_dac_box == 0)
 	{
-		g_map_dac_box = new BYTE[256*3];
+		g_map_dac_box = new ColormapTable;
 		if (g_map_dac_box == 0)
 		{
 			stop_message(STOPMSG_NORMAL, "Insufficient memory for color map.");
 			return;
 		}
 	}
-	memcpy((char *) g_map_dac_box, (char *) g_dac_box, 768);
+	*g_map_dac_box = g_dac_box;
 }
 

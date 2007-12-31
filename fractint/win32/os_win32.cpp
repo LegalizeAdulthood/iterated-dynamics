@@ -120,20 +120,12 @@ typedef enum
 /* Global variables (yuck!) */
 int g_overflow_mp = 0;
 BYTE g_block[4096] = { 0 };
-int g_color_dark = 0;		/* darkest color in palette */
-int g_color_bright = 0;		/* brightest color in palette */
-int g_color_medium = 0;		/* nearest to medbright grey in palette
-				   Zoom-Box values (2K x 2K screens max) */
-unsigned char g_dac_box[256][3] = { 0 };
-int g_dac_count = 0;
 bool g_disk_flag = false;
 bool g_disk_targa = false;
 int DivideOverflow = 0;
-bool g_got_real_dac = false;
 int g_is_true_color = 0;
 long g_initial_x_l = 0;
 long g_initial_y_l = 0;
-BYTE g_old_dac_box[256][3] = { 0 };
 bool g_overflow = false;
 int g_polyphony = 0;
 char g_rle_buffer[258] = { 0 };
@@ -282,7 +274,7 @@ void find_special_colors()
 
 	for (i = 0; i < g_colors; i++)
 	{
-		brt = int(g_dac_box[i][0]) + int(g_dac_box[i][1]) + int(g_dac_box[i][2]);
+		brt = int(g_dac_box.Red(i)) + int(g_dac_box.Green(i)) + int(g_dac_box.Blue(i));
 		if (brt > maxb)
 		{
 			maxb = brt;
@@ -295,23 +287,23 @@ void find_special_colors()
 		}
 		if (brt < 150 && brt > 80)
 		{
-			maxgun = int(g_dac_box[i][0]);
-			mingun = int(g_dac_box[i][0]);
-			if (int(g_dac_box[i][1]) > int(g_dac_box[i][0]))
+			maxgun = int(g_dac_box.Red(i));
+			mingun = int(g_dac_box.Red(i));
+			if (int(g_dac_box.Green(i)) > int(g_dac_box.Red(i)))
 			{
-				maxgun = int(g_dac_box[i][1]);
+				maxgun = int(g_dac_box.Green(i));
 			}
 			else
 			{
-				mingun = int(g_dac_box[i][1]);
+				mingun = int(g_dac_box.Green(i));
 			}
-			if (int(g_dac_box[i][2]) > maxgun)
+			if (int(g_dac_box.Blue(i)) > maxgun)
 			{
-				maxgun = int(g_dac_box[i][2]);
+				maxgun = int(g_dac_box.Blue(i));
 			}
-			if (int(g_dac_box[i][2]) < mingun)
+			if (int(g_dac_box.Blue(i)) < mingun)
 			{
-				mingun = int(g_dac_box[i][2]);
+				mingun = int(g_dac_box.Blue(i));
 			}
 			if (brt - (maxgun - mingun)/2 > med)
 			{
@@ -431,18 +423,14 @@ void spindac(int dir, int inc)
 				int j;
 				BYTE tmp[3];
 
-				tmp[0] = g_dac_box[g_rotate_lo][0];
-				tmp[1] = g_dac_box[g_rotate_lo][1];
-				tmp[2] = g_dac_box[g_rotate_lo][2];
+				tmp[0] = g_dac_box.Red(g_rotate_lo);
+				tmp[1] = g_dac_box.Green(g_rotate_lo);
+				tmp[2] = g_dac_box.Blue(g_rotate_lo);
 				for (j = g_rotate_lo; j < top; j++)
 				{
-					g_dac_box[j][0] = g_dac_box[j + 1][0];
-					g_dac_box[j][1] = g_dac_box[j + 1][1];
-					g_dac_box[j][2] = g_dac_box[j + 1][2];
+					g_dac_box.Set(j, g_dac_box.Red(j + 1), g_dac_box.Green(j + 1), g_dac_box.Blue(j + 1));
 				}
-				g_dac_box[top][0] = tmp[0];
-				g_dac_box[top][1] = tmp[1];
-				g_dac_box[top][2] = tmp[2];
+				g_dac_box.Set(top, tmp[0], tmp[1], tmp[2]);
 			}
 		}
 		else
@@ -453,18 +441,14 @@ void spindac(int dir, int inc)
 				int j;
 				BYTE tmp[3];
 
-				tmp[0] = g_dac_box[top][0];
-				tmp[1] = g_dac_box[top][1];
-				tmp[2] = g_dac_box[top][2];
+				tmp[0] = g_dac_box.Red(top);
+				tmp[1] = g_dac_box.Green(top);
+				tmp[2] = g_dac_box.Blue(top);
 				for (j = top; j > g_rotate_lo; j--)
 				{
-					g_dac_box[j][0] = g_dac_box[j-1][0];
-					g_dac_box[j][1] = g_dac_box[j-1][1];
-					g_dac_box[j][2] = g_dac_box[j-1][2];
+					g_dac_box.Set(j, g_dac_box.Red(j-1), g_dac_box.Green(j-1), g_dac_box.Blue(j-1));
 				}
-				g_dac_box[g_rotate_lo][0] = tmp[0];
-				g_dac_box[g_rotate_lo][1] = tmp[1];
-				g_dac_box[g_rotate_lo][2] = tmp[2];
+				g_dac_box.Set(g_rotate_lo, tmp[0], tmp[1], tmp[2]);
 			}
 		}
 	}

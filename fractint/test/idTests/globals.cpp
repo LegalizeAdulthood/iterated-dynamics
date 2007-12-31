@@ -18,14 +18,11 @@ int g_calculation_status = 0;
 int g_fractal_type = 0;
 FractalTypeSpecificData *g_current_fractal_specific = 0;
 double g_parameters[1] = { 0.0 };
-bool g_got_real_dac = false;
 bool g_using_jiim = false;
 int g_screen_width = 0;
 int g_screen_height = 0;
 int g_sx_offset = 0;
 int g_sy_offset = 0;
-int g_color_medium = 0;
-int g_color_dark = 0;
 int g_text_row = 0;
 int g_text_cbase = 0;
 bool g_command_initialize = false;
@@ -207,9 +204,6 @@ int disk_read(int, int)
 void spindac(int, int)
 {
 }
-unsigned char (*g_dac_box)[3] = 0;
-bool g_color_preloaded = false;
-unsigned char *g_map_dac_box = 0;
 int check_key()
 {
 	return 0;
@@ -251,7 +245,6 @@ int g_invert = 0;
 CalculationMode g_user_standard_calculation_mode;
 long g_log_palette_mode = 0;
 bool g_next_screen_flag = false;
-int g_color_state = 0;
 int g_orbit_color = 0;
 double g_rq_limit = 0.0;
 bool validate_luts(char const *) { return 0; }

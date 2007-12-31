@@ -542,22 +542,14 @@ void plot_setup()
 		{
 			if (g_3d_state.glasses_type() == STEREO_SUPERIMPOSE && g_colors < 256)
 			{
-				g_dac_box[PAL_RED  ][0] = COLOR_CHANNEL_MAX;
-				g_dac_box[PAL_RED  ][1] =  0;
-				g_dac_box[PAL_RED  ][2] =  0;
-
-				g_dac_box[PAL_BLUE ][0] =  0;
-				g_dac_box[PAL_BLUE ][1] =  0;
-				g_dac_box[PAL_BLUE ][2] = COLOR_CHANNEL_MAX;
-
-				g_dac_box[PAL_MAGENTA][0] = COLOR_CHANNEL_MAX;
-				g_dac_box[PAL_MAGENTA][1] =    0;
-				g_dac_box[PAL_MAGENTA][2] = COLOR_CHANNEL_MAX;
+				g_dac_box.Set(PAL_RED, COLOR_CHANNEL_MAX, 0, 0);
+				g_dac_box.Set(PAL_BLUE, 0, 0, COLOR_CHANNEL_MAX);
+				g_dac_box.Set(PAL_MAGENTA, COLOR_CHANNEL_MAX, 0, COLOR_CHANNEL_MAX);
 			}
 			for (int i = 0; i < 256; i++)
 			{
-				g_dac_box[i][0] = BYTE(g_dac_box[i][0]*d_red_bright);
-				g_dac_box[i][2] = BYTE(g_dac_box[i][2]*d_blue_bright);
+				g_dac_box.SetRed(i, BYTE(g_dac_box.Red(i)*d_red_bright));
+				g_dac_box.SetBlue(i, BYTE(g_dac_box.Blue(i)*d_blue_bright));
 			}
 		}
 		spindac(0, 1); /* load it, but don't spin */

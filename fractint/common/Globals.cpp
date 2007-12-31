@@ -13,6 +13,7 @@ public:
 	GlobalImpl();
 	~GlobalImpl();
 
+	// video mode/table stuff
 	int Adapter() const					{ return _adapter; }
 	void SetAdapter(int value)			{ _adapter = value; }
 	int InitialAdapter() const			{ return _initialAdapter; }
@@ -35,6 +36,8 @@ public:
 	bool GoodMode() const				{ return _goodMode; }
 	void SetGoodMode(bool value)		{ _goodMode = value; }
 
+	// DAC/colormap stuff
+
 private:
 	int _adapter;
 	int _initialAdapter;
@@ -42,6 +45,20 @@ private:
 	std::vector<VIDEOINFO> _videoTable;
 	bool _goodMode;
 };
+
+ColormapTable g_dac_box;
+ColormapTable *g_map_dac_box;					/* map= (default colors) */
+ColormapTable g_old_dac_box;
+int g_save_dac;
+int g_dac_count;
+bool g_got_real_dac;							/* loaddac worked, really got a dac */
+int g_color_state;								/* 0, g_dac_box matches default (bios or map=) */
+												/* 1, g_dac_box matches no known defined map   */
+												/* 2, g_dac_box matches the g_color_file map      */
+bool g_color_preloaded;							/* if g_dac_box preloaded for next mode select */
+int g_color_dark = 0;		/* darkest color in palette */
+int g_color_bright = 0;		/* brightest color in palette */
+int g_color_medium = 0;		/* nearest to medbright grey in palette Zoom-Box values (2K x 2K screens max) */
 
 GlobalImpl::GlobalImpl()
 	: _adapter(0),

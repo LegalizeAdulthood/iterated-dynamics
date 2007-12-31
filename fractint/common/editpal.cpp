@@ -66,21 +66,27 @@ struct PALENTRY
  */
 static void set_pal(int pal, int r, int g, int b)
 {
-	g_dac_box[pal][0] = (BYTE) r;
-	g_dac_box[pal][1] = (BYTE) g;
-	g_dac_box[pal][2] = (BYTE) b;
+	g_dac_box.Set(pal, BYTE(r), BYTE(g), BYTE(b));
 	spindac(0, 1);
 }
 
 static void set_pal_range(int first, int how_many, PALENTRY *pal)
 {
-	memmove(g_dac_box + first, pal, how_many*3);
+	for (int i = 0; i < how_many; i++)
+	{
+		g_dac_box.Set(first + i, pal[i].red, pal[i].green, pal[i].blue);
+	}
 	spindac(0, 1);
 }
 
 static void get_pal_range(int first, int how_many, PALENTRY *pal)
 {
-	memmove(pal, g_dac_box + first, how_many*3);
+	for (int i = 0; i < how_many; i++)
+	{
+		pal[i].red = g_dac_box.Red(first + i);
+		pal[i].green = g_dac_box.Green(first + i);
+		pal[i].blue = g_dac_box.Blue(first + i);
+	}
 }
 
 static void rotate_pal(PALENTRY *pal, int dir, int lo, int hi)
@@ -245,9 +251,19 @@ static void displayf(int x, int y, int fg, int bg, const boost::format &message)
 	driver_display_string(x, y, fg, bg, str(message));
 }
 
+static BYTE Expr1(BYTE value1, BYTE value2, int curr, double scale)
+{
+	return BYTE((value1 == value2) ? value1 : int(value1) + int(scale*curr));
+}
+
 /*
  * create smooth shades between two colors
  */
+static BYTE Expr2(BYTE value1, BYTE value2, int num, int curr, double rm)
+{
+	return BYTE((value1 == value2) ? value1 : int(value1 + pow(curr/double(num-1), double(s_gamma_val))*num*rm));
+}
+
 static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, int skip)
 {
 	int    curr;
@@ -259,25 +275,43 @@ static void make_pal_range(PALENTRY *p1, PALENTRY *p2, PALENTRY pal[], int num, 
 	{
 		if (s_gamma_val == 1)
 		{
-			pal[curr].red   = BYTE((p1->red   == p2->red) ? p1->red   :
-				int(p1->red)   + int(rm*curr));
-			pal[curr].green = BYTE((p1->green == p2->green) ? p1->green :
-				int(p1->green) + int(gm*curr));
-			pal[curr].blue  = BYTE((p1->blue  == p2->blue) ? p1->blue  :
-				int(p1->blue)  + int(bm*curr));
+			pal[curr].red   = Expr1(p1->red, p2->red, curr, rm);
+			pal[curr].green = Expr1(p1->green, p2->green, curr, gm);
+			pal[curr].blue  = Expr1(p1->blue, p2->blue, curr, bm);
 		}
 		else
 		{
-			pal[curr].red   = BYTE((p1->red   == p2->red) ? p1->red   :
-				int(p1->red   + pow(curr/double(num-1), double(s_gamma_val))*num*rm));
-			pal[curr].green = BYTE((p1->green == p2->green) ? p1->green :
-				int(p1->green + pow(curr/double(num-1), double(s_gamma_val))*num*gm));
-			pal[curr].blue  = BYTE((p1->blue  == p2->blue) ? p1->blue  :
-				int(p1->blue  + pow(curr/double(num-1), double(s_gamma_val))*num*bm));
+			pal[curr].red   = Expr2(p1->red, p2->red, num, curr, rm);
+			pal[curr].green = Expr2(p1->green, p2->green, num, curr, gm);
+			pal[curr].blue  = Expr2(p1->blue, p2->blue, num, curr, bm);
 		}
 	}
 }
 
+static void make_pal_range(ColormapTable &colormap, int p1, int p2, int pal, int num, int skip)
+{
+	double rm = double(int(colormap.Red(p2)) - int(colormap.Red(p1)))/num;
+	double gm = double(int(colormap.Green(p2)) - int(colormap.Green(p1)))/num;
+	double bm = double(int(colormap.Blue(p2)) - int(colormap.Blue(p1)))/num;
+
+	for (int curr = 0; curr < num; curr += skip)
+	{
+		if (s_gamma_val == 1)
+		{
+			colormap.Set(pal + curr, 
+				Expr1(colormap.Red(p1), colormap.Red(p2), curr, rm),
+				Expr1(colormap.Green(p1), colormap.Green(p2), curr, gm),
+				Expr1(colormap.Blue(p1), colormap.Blue(p2), curr, bm));
+		}
+		else
+		{
+			colormap.Set(pal + curr,
+				Expr2(colormap.Red(p1), colormap.Red(p2), num, curr, rm),
+				Expr2(colormap.Green(p1), colormap.Green(p2), num, curr, gm),
+				Expr2(colormap.Blue(p1), colormap.Blue(p2), num, curr, bm));
+		}
+	}
+}
 
 /*  Swap RG GB & RB columns */
 static void swap_columns_rg(PALENTRY pal[], int num)
@@ -1399,6 +1433,7 @@ private:
 	}
 	void other_key(int key, rgb_editor *rgb);
 	void put_band(PALENTRY *pal);
+	void put_band(ColormapTable &colormap);
 	void redo();
 	void restore_rect();
 	void rotate(int dir, int lo, int hi);
@@ -1460,19 +1495,13 @@ void pal_table::calc_top_bottom()
 
 void pal_table::put_band(PALENTRY *pal)
 {
-	int r;
-	int b;
-	int a;
-
 	/* clip top and bottom values to stop them running off the end of the DAC */
-
 	calc_top_bottom();
 
 	/* put bands either side of current colour */
-
-	a = _current[_active];
-	b = _bottom;
-	r = _top;
+	int a = _current[_active];
+	int b = _bottom;
+	int r = _top;
 
 	pal[a] = _fs_color;
 
@@ -1480,6 +1509,20 @@ void pal_table::put_band(PALENTRY *pal)
 	{
 		make_pal_range(&pal[a], &pal[r], &pal[a], r-a, 1);
 		make_pal_range(&pal[b], &pal[a], &pal[b], a-b, 1);
+	}
+}
+
+void pal_table::put_band(ColormapTable &colormap)
+{
+	calc_top_bottom();
+	int a = _current[_active];
+	int b = _bottom;
+	int r = _top;
+	colormap.Set(a, _fs_color.red, _fs_color.green, _fs_color.blue);
+	if (r != a && a != b)
+	{
+		make_pal_range(colormap, a, r, a, r-a, 1);
+		make_pal_range(colormap, b, a, b, a-b, 1);
 	}
 }
 
@@ -2135,11 +2178,11 @@ void pal_table::update_dac()
 {
 	if (_exclude)
 	{
-		memset(g_dac_box, 0, 256*3);
+		g_dac_box.Clear();
 		if (_exclude == EXCLUDE_CURRENT)
 		{
 			int a = _current[_active];
-			memmove(g_dac_box[a], &_palette[a], 3);
+			g_dac_box.Set(a, _palette[a].red, _palette[a].green, _palette[a].blue);
 		}
 		else
 		{
@@ -2153,16 +2196,22 @@ void pal_table::update_dac()
 				b = t;
 			}
 
-			memmove(g_dac_box[a], &_palette[a], 3*(1 + (b-a)));
+			for (int i = 0; i < 1 + b - a; i++)
+			{
+				g_dac_box.Set(a + i, _palette[a + i].red, _palette[a + i].green, _palette[a + i].blue);
+			}
 		}
 	}
 	else
 	{
-		memmove(g_dac_box[0], _palette, 3*g_colors);
+		for (int i = 0; i < g_colors; i++)
+		{
+			g_dac_box.Set(i, _palette[i].red, _palette[i].green, _palette[i].blue);
+		}
 
 		if (_freestyle)
 		{
-			put_band((PALENTRY *) g_dac_box);   /* apply band to g_dac_box */
+			put_band(g_dac_box);   /* apply band to g_dac_box */
 		}
 	}
 
@@ -2170,13 +2219,13 @@ void pal_table::update_dac()
 	{
 		if (s_inverse)
 		{
-			memset(g_dac_box[s_fg_color], 0, 3);         /* g_dac_box[fg] = (0, 0, 0) */
-			memset(g_dac_box[s_bg_color], 48, 3);        /* g_dac_box[bg] = (48, 48, 48) */
+			g_dac_box.Set(s_fg_color, 0, 0, 0);
+			g_dac_box.Set(s_bg_color, 48, 48, 48);
 		}
 		else
 		{
-			memset(g_dac_box[s_bg_color], 0, 3);         /* g_dac_box[bg] = (0, 0, 0) */
-			memset(g_dac_box[s_fg_color], 48, 3);        /* g_dac_box[fg] = (48, 48, 48) */
+			g_dac_box.Set(s_bg_color, 0, 0, 0);
+			g_dac_box.Set(s_fg_color, 48, 48, 48);
 		}
 	}
 

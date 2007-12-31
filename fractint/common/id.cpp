@@ -169,7 +169,6 @@ int		g_calculation_status = CALCSTAT_NO_FRACTAL;
 long	g_calculation_time;
 int		g_max_colors;                         /* maximum palette size */
 bool g_zoom_off;                     /* = 0 when zoom is disabled    */
-int		g_save_dac;                     /* save-the-Video DAC flag      */
 std::string g_file_name_stack[16];		/* array of file names used while browsing */
 int		g_name_stack_ptr;
 double	g_too_small;
@@ -282,7 +281,7 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 		check_same_name();
 	}
 	driver_window();
-	memcpy(g_old_dac_box, g_dac_box, 256*3);      /* save in case colors= present */
+	g_old_dac_box = g_dac_box;      /* save in case colors= present */
 
 	driver_set_for_text();                      /* switch to text mode */
 	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
@@ -316,7 +315,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 {
 	if (g_color_preloaded)
 	{
-		memcpy(g_dac_box, g_old_dac_box, 256*3);   /* restore in case colors= present */
+		g_dac_box = g_old_dac_box;   /* restore in case colors= present */
 	}
 
 	driver_set_mouse_mode(LOOK_MOUSE_NONE);			/* ignore mouse */
@@ -482,7 +481,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 			}
 			if (g_color_preloaded)
 			{
-				memcpy(g_old_dac_box, g_dac_box, 256*3);     /* save in case colors= present */
+				g_old_dac_box = g_dac_box;     /* save in case colors= present */
 			}
 			driver_set_for_text(); /* switch to text mode */
 			g_show_file = SHOWFILE_CANCELLED;
