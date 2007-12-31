@@ -21,6 +21,9 @@ public:
 	void SetVideoEntryColors(int value) { _videoEntry.colors = value; }
 	int VideoTableLength() const		{ return _videoTableLength; }
 	void IncrementVideoTableLength()	{ _videoTableLength++; }
+	const VIDEOINFO &VideoTable(int i) const { return _videoTable[i]; }
+	void SetVideoTableKey(int i, int key) { _videoTable[i].keynum = key; }
+	void SetVideoTable(int i, const VIDEOINFO &value) { _videoTable[i] = value; }
 
 private:
 	int _adapter;

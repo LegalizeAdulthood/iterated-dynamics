@@ -145,13 +145,6 @@ int g_text_col = 0;
 int g_text_rbase = 0;
 int g_text_row = 0;
 char g_text_stack[4096] = { 0 };
-/* g_video_table
- *
- *  |--Adapter/Mode-Name------|-------Comments-----------|
- *  |------INT 10H------|Dot-|--Resolution---|
- *  |key|--AX---BX---CX---DX|Mode|--X-|--Y-|Color|
- */
-VIDEOINFO g_video_table[MAXVIDEOMODES] = { 0 };
 int g_vx_dots = 0;
 
 /* Global functions

@@ -221,7 +221,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 		if (g_calculation_status != CALCSTAT_RESUMABLE || g_show_file == SHOWFILE_PENDING)
 		{
-			g_.SetVideoEntry(g_video_table[g_.Adapter()]);
+			g_.SetVideoEntry(g_.VideoTable(g_.Adapter()));
 			g_x_dots   = g_.VideoEntry().x_dots;       /* # dots across the screen */
 			g_y_dots   = g_.VideoEntry().y_dots;       /* # dots down the screen   */
 			g_colors  = g_.VideoEntry().colors;      /* # colors available */
@@ -1520,7 +1520,7 @@ static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
 	if (k >= 0)
 	{
 		g_.SetAdapter(k);
-		if (g_video_table[g_.Adapter()].colors != g_colors)
+		if (g_.VideoTable(g_.Adapter()).colors != g_colors)
 		{
 			g_save_dac = SAVEDAC_NO;
 		}

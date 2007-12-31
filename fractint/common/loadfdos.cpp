@@ -68,11 +68,11 @@ static int video_mode_compare(const void *p1, const void *p2)
 	{
 		return 1;
 	}
-	if (g_video_table[ptr1->index].keynum < g_video_table[ptr2->index].keynum)
+	if (g_.VideoTable(ptr1->index).keynum < g_.VideoTable(ptr2->index).keynum)
 	{
 		return -1;
 	}
-	if (g_video_table[ptr1->index].keynum > g_video_table[ptr2->index].keynum)
+	if (g_.VideoTable(ptr1->index).keynum > g_.VideoTable(ptr2->index).keynum)
 	{
 		return 1;
 	}
@@ -85,7 +85,7 @@ static int video_mode_compare(const void *p1, const void *p2)
 
 static std::string format_video_info(int i, const char *err)
 {
-	g_.SetVideoEntry(g_video_table[i]);
+	g_.SetVideoEntry(g_.VideoTable(i));
 	std::string key_name = video_mode_key_name(g_.VideoEntry().keynum);
 	std::string result = str(boost::format("%-5s %-25s %-4s %5d %5d %3d %-25s")  /* 78 chars */
 			% key_name.c_str() % g_.VideoEntry().name % err
@@ -122,16 +122,14 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	float tmpreduce;
 #if !defined(XFRACT)
 #endif
-	VIDEOINFO *vident;
-
 	g_.SetInitialAdapter(-1);
 
 	/* try to find exact match for vid mode */
 	for (int i = 0; i < g_.VideoTableLength(); ++i)
 	{
-		vident = &g_video_table[i];
-		if (info->x_dots == vident->x_dots && info->y_dots == vident->y_dots
-			&& g_file_colors == vident->colors)
+		const VIDEOINFO &vident = g_.VideoTable(i);
+		if (info->x_dots == vident.x_dots && info->y_dots == vident.y_dots
+			&& g_file_colors == vident.colors)
 		{
 			g_.SetInitialAdapter(i);
 			break;
@@ -148,9 +146,9 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	{
 		for (int i = 0; i < g_.VideoTableLength(); ++i)
 		{
-			vident = &g_video_table[i];
-			if (info->x_dots == vident->x_dots && info->y_dots == vident->y_dots
-				&& g_file_colors == vident->colors)
+			const VIDEOINFO &vident = g_.VideoTable(i);
+			if (info->x_dots == vident.x_dots && info->y_dots == vident.y_dots
+				&& g_file_colors == vident.colors)
 			{
 				g_.SetInitialAdapter(i);
 				break;
@@ -162,7 +160,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	video_mode_info vid[MAXVIDEOMODES];
 	for (int i = 0; i < g_.VideoTableLength(); ++i)
 	{
-		g_.SetVideoEntry(g_video_table[i]);
+		g_.SetVideoEntry(g_.VideoTable(i));
 		tmpflags = VI_EXACT;
 		if (g_.VideoEntry().keynum == 0)
 		{
@@ -310,20 +308,20 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	}
 #else
 	g_.SetInitialAdapter(0);
-	j = g_video_table[0].keynum;
+	j = g_.VideoTable(0).keynum;
 	gotrealmode = 0;
 #endif
 
 	if (gotrealmode == 0)  /* translate from temp table to permanent */
 	{
 		int i = g_.InitialAdapter();
-		int key = g_video_table[i].keynum;
+		int key = g_.VideoTable(i).keynum;
 		if (key != 0)
 		{
 			int k;
 			for (k = 0; k < MAXVIDEOMODES-1; k++)
 			{
-				if (g_video_table[k].keynum == key)
+				if (g_.VideoTable(k).keynum == key)
 				{
 					g_.SetInitialAdapter(k);
 					break;
@@ -337,12 +335,12 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		if (key == 0) /* mode has no key, add to reserved slot at end */
 		{
 			g_.SetInitialAdapter(MAXVIDEOMODES-1);
-			g_video_table[g_.InitialAdapter()] = g_video_table[i];
+			g_.SetVideoTable(g_.InitialAdapter(), g_.VideoTable(i));
 		}
 	}
 
 	/* ok, we're going to return with a video mode */
-	g_.SetVideoEntry(g_video_table[g_.InitialAdapter()]);
+	g_.SetVideoEntry(g_.VideoTable(g_.InitialAdapter()));
 
 	if (g_view_window
 		&& g_file_x_dots == g_.VideoEntry().x_dots

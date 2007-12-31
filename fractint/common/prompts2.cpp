@@ -748,7 +748,7 @@ get_view_restart:
 		{
 			g_.SetVideoEntrySize(g_screen_width, g_screen_height);
 			g_final_aspect_ratio = (float(g_screen_height))/(float(g_screen_width));
-			g_video_table[g_.Adapter()] = g_.VideoEntry();
+			g_.SetVideoTable(g_.Adapter(), g_.VideoEntry());
 		}
 
 		return (g_view_window != old_viewwindow

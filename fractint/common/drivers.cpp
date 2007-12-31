@@ -80,7 +80,7 @@ void add_video_mode(AbstractDriver *drv, VIDEOINFO &mode)
 #endif
 	/* stash away driver pointer so we can init driver for selected mode */
 	mode.driver = drv;
-	g_video_table[g_.VideoTableLength()] = mode;
+	g_.SetVideoTable(g_.VideoTableLength(), mode);
 	g_.IncrementVideoTableLength();
 }
 

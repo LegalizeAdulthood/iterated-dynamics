@@ -965,7 +965,7 @@ static int video_arg(const cmd_context &context)
 	g_.SetInitialAdapter(-1);
 	for (i = 0; i < MAXVIDEOMODES; ++i)
 	{
-		if (g_video_table[i].keynum == k)
+		if (g_.VideoTable(i).keynum == k)
 		{
 			g_.SetInitialAdapter(i);
 			break;
