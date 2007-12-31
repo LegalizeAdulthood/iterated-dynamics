@@ -321,8 +321,8 @@ bool MakeBatchFile::check_video_mode()
 		if (i >= 0)
 		{
 			/* get the resolution of this video mode */
-			m_pxdots = g_video_table[i].x_dots;
-			m_pydots = g_video_table[i].y_dots;
+			m_pxdots = g_.VideoTable(i).x_dots;
+			m_pydots = g_.VideoTable(i).y_dots;
 		}
 	}
 	if (m_pxdots == 0 && (m_xm > 1 || m_ym > 1))
@@ -2251,13 +2251,13 @@ int select_video_mode(int curmode)
 	}
 	else
 	{
-		g_.SetVideoEntry(g_video_table[curmode]);
+		g_.SetVideoEntry(g_.VideoTable(curmode));
 	}
 #ifndef XFRACT
 	for (i = 0; i < g_.VideoTableLength(); ++i)  /* find default mode */
 	{
-		if (g_.VideoEntry().colors == g_video_table[entries[i]].colors &&
-			(curmode < 0 || g_.VideoEntry() == g_video_table[entries[i]]))
+		if (g_.VideoEntry().colors == g_.VideoTable(entries[i]).colors &&
+			(curmode < 0 || g_.VideoEntry() == g_.VideoTable(entries[i])))
 		{
 			break;
 		}
@@ -2283,28 +2283,28 @@ int select_video_mode(int curmode)
 	i = (i < 0) ? (-1 - i) : entries[i];
 #endif
 	/* the selected entry now in g_video_entry */
-	g_.SetVideoEntry(g_video_table[i]);
+	g_.SetVideoEntry(g_.VideoTable(i));
 
 #ifndef XFRACT
 	/* copy fractint.cfg table to resident table, note selected entry */
 	k = 0;
 	for (i = 0; i < g_.VideoTableLength(); ++i)
 	{
-		if (g_video_table[i].keynum > 0)
+		if (g_.VideoTable(i).keynum > 0)
 		{
-			if (g_.VideoEntry() == g_video_table[i])
+			if (g_.VideoEntry() == g_.VideoTable(i))
 			{
-				k = g_video_table[i].keynum;
+				k = g_.VideoTable(i).keynum;
 			}
 		}
 	}
 #else
-	k = g_video_table[0].keynum;
+	k = g_.VideoTable(0).keynum;
 #endif
 	ret = k;
 	if (k == 0)  /* selected entry not a copied (assigned to key) one */
 	{
-		g_video_table[MAXVIDEOMODES-1] = g_.VideoEntry();
+		g_.SetVideoTable(MAXVIDEOMODES-1, g_.VideoEntry());
 		ret = 1400; /* special value for check_video_mode_key */
 	}
 
@@ -2313,7 +2313,7 @@ int select_video_mode(int curmode)
 
 void format_vid_table(int choice, char *buf)
 {
-	g_.SetVideoEntry(g_video_table[s_entries[choice]]);
+	g_.SetVideoEntry(g_.VideoTable(s_entries[choice]));
 	std::string kname = video_mode_key_name(g_.VideoEntry().keynum);
 	strcpy(buf, boost::format("%-5s %-25s %5d %5d %3d %.12s %.12s")
 		% kname % g_.VideoEntry().name
@@ -2336,13 +2336,13 @@ static int check_modekey(int curkey, int choice)
 	i = s_entries[choice];
 	ret = 0;
 	if ((curkey == '-' || curkey == '+')
-		&& (g_video_table[i].keynum == 0 || g_video_table[i].keynum >= FIK_SF1))
+		&& (g_.VideoTable(i).keynum == 0 || g_.VideoTable(i).keynum >= FIK_SF1))
 	{
 		if (curkey == '-')  /* deassign key? */
 		{
-			if (g_video_table[i].keynum >= FIK_SF1)
+			if (g_.VideoTable(i).keynum >= FIK_SF1)
 			{
-				g_video_table[i].keynum = 0;
+				g_.SetVideoTableKey(i, 0);
 			}
 		}
 		else  /* assign key? */
@@ -2352,13 +2352,13 @@ static int check_modekey(int curkey, int choice)
 			{
 				for (k = 0; k < g_.VideoTableLength(); ++k)
 				{
-					if (g_video_table[k].keynum == j)
+					if (g_.VideoTable(k).keynum == j)
 					{
-						g_video_table[k].keynum = 0;
+						g_.SetVideoTableKey(k, 0);
 						ret = -1; /* force redisplay */
 					}
 				}
-				g_video_table[i].keynum = j;
+				g_.SetVideoTableKey(i, j);
 			}
 		}
 	}
@@ -2370,12 +2370,12 @@ static int entcompare(const void *p1, const void *p2)
 {
 	int i;
 	int j;
-	i = g_video_table[*((int *)p1)].keynum;
+	i = g_.VideoTable(*((int *)p1)).keynum;
 	if (i == 0)
 	{
 		i = 9999;
 	}
-	j = g_video_table[*((int *)p2)].keynum;
+	j = g_.VideoTable(*((int *)p2)).keynum;
 	if (j == 0)
 	{
 		j = 9999;

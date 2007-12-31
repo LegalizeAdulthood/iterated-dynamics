@@ -1141,7 +1141,7 @@ int check_video_mode_key(int option, int k)
 		{
 			for (i = 0; i < MAXVIDEOMODES; ++i)
 			{
-				if (g_video_table[i].keynum == k)
+				if (g_.VideoTable(i).keynum == k)
 				{
 					return i;
 				}
@@ -1151,7 +1151,7 @@ int check_video_mode_key(int option, int k)
 		{
 			for (i = 0; i < g_.VideoTableLength(); ++i)
 			{
-				if (g_video_table[i].keynum == k)
+				if (g_.VideoTable(i).keynum == k)
 				{
 					return i;
 				}

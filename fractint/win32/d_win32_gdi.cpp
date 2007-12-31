@@ -188,14 +188,14 @@ void GDIDriver::show_hide_windows(HWND show, HWND hide)
 void GDIDriver::max_size(int &width, int &height, bool &center_x, bool &center_y)
 {
 	Win32BaseDriver::max_size(width, height, center_x, center_y);
-	if (g_video_table[g_.Adapter()].x_dots > width)
+	if (g_.VideoTable(g_.Adapter()).x_dots > width)
 	{
-		width = g_video_table[g_.Adapter()].x_dots;
+		width = g_.VideoTable(g_.Adapter()).x_dots;
 		center_x = false;
 	}
-	if (g_video_table[g_.Adapter()].y_dots > height)
+	if (g_.VideoTable(g_.Adapter()).y_dots > height)
 	{
-		height = g_video_table[g_.Adapter()].y_dots;
+		height = g_.VideoTable(g_.Adapter()).y_dots;
 		center_y = false;
 	}
 }
@@ -325,8 +325,8 @@ int GDIDriver::resize()
 	bool center_graphics_x, center_graphics_y;
 
 	max_size(width, height, center_graphics_x, center_graphics_y);
-	if ((g_video_table[g_.Adapter()].x_dots == m_plot.width())
-		&& (g_video_table[g_.Adapter()].y_dots == m_plot.height())
+	if ((g_.VideoTable(g_.Adapter()).x_dots == m_plot.width())
+		&& (g_.VideoTable(g_.Adapter()).y_dots == m_plot.height())
 		&& (width == m_frame.width())
 		&& (height == m_frame.height()))
 	{
