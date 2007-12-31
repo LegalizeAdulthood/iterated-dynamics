@@ -17,6 +17,7 @@ public:
 	void SetAdapter(int value)			{ _adapter = value; }
 	int InitialAdapter() const			{ return _initialAdapter; }
 	void SetInitialAdapter(int value)	{ _initialAdapter = value; }
+	void SetInitialAdapterNone()		{ _initialAdapter = -1; }
 	const VIDEOINFO &VideoEntry() const	{ return _videoEntry; }
 	void SetVideoEntry(const VIDEOINFO &value) { _videoEntry = value; }
 	void SetVideoEntrySize(int width, int height)
@@ -80,6 +81,10 @@ int Globals::InitialAdapter() const
 void Globals::SetInitialAdapter(int value)
 {
 	_impl->SetInitialAdapter(value);
+}
+void Globals::SetInitialAdapterNone()
+{
+	_impl->SetInitialAdapterNone();
 }
 const VIDEOINFO &Globals::VideoEntry() const
 {

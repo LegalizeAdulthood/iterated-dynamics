@@ -249,7 +249,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 						stop_message(STOPMSG_NORMAL, "That video mode is not available with your adapter.");
 					}
 					g_ui_state.ask_video = true;
-					g_.SetInitialAdapter(-1);
+					g_.SetInitialAdapterNone();
 					driver_set_for_text(); /* switch to text mode */
 					/* goto restorestart; */
 					return APPSTATE_RESTORE_START;
@@ -366,7 +366,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_show_file = SHOWFILE_DONE;
 					g_potential_flag  = false;
 					g_potential_16bit = false;
-					g_.SetInitialAdapter(-1);
+					g_.SetInitialAdapterNone();
 					g_calculation_status = CALCSTAT_RESUMABLE;         /* "resume" without 16-bit */
 					driver_set_for_text();
 					get_fractal_type();
@@ -948,7 +948,7 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	if (g_.InitialAdapter() != -1)
 	{                         /* video= was specified */
 		g_.SetAdapter(g_.InitialAdapter());
-		g_.SetInitialAdapter(-1);
+		g_.SetInitialAdapterNone();
 		i |= COMMANDRESULT_FRACTAL_PARAMETER;
 		g_save_dac = SAVEDAC_NO;
 	}

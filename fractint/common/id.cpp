@@ -346,7 +346,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 			if (g_show_file == SHOWFILE_CANCELLED && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
 			{
 				g_show_file = SHOWFILE_DONE;               /* cancelled */
-				g_.SetInitialAdapter(-1);
+				g_.SetInitialAdapterNone();
 				break;
 			}
 
@@ -418,7 +418,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 
 	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */
 	g_.SetAdapter(g_.InitialAdapter());                  /* set the video adapter up */
-	g_.SetInitialAdapter(-1);                       /* (once)                   */
+	g_.SetInitialAdapterNone();                       /* (once)                   */
 
 	while (g_.Adapter() < 0)                /* cycle through instructions */
 	{
