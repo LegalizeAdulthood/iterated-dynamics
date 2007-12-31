@@ -373,7 +373,7 @@ void Win32BaseDriver::set_video_mode(const VIDEOINFO &mode)
 	g_vx_dots = g_screen_width;
 	g_is_true_color = 0;				/* assume not truecolor */
 	g_ok_to_print = false;
-	g_good_mode = 1;
+	g_.SetGoodMode(true);
 	g_and_color = g_colors-1;
 	g_zoomBox.set_count(0);
 	g_dac_count = g_cycle_limit;

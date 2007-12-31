@@ -129,7 +129,6 @@ int g_dac_count = 0;
 bool g_disk_flag = false;
 bool g_disk_targa = false;
 int DivideOverflow = 0;
-int g_good_mode = 0;
 bool g_got_real_dac = false;
 int g_is_true_color = 0;
 long g_initial_x_l = 0;
