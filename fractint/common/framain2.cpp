@@ -250,7 +250,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 						stop_message(STOPMSG_NORMAL, "That video mode is not available with your adapter.");
 					}
 					g_ui_state.ask_video = true;
-					g_initial_adapter = -1;
+					g_.SetInitialAdapter(-1);
 					driver_set_for_text(); /* switch to text mode */
 					/* goto restorestart; */
 					return APPSTATE_RESTORE_START;
@@ -368,7 +368,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_show_file = SHOWFILE_DONE;
 					g_potential_flag  = false;
 					g_potential_16bit = false;
-					g_initial_adapter = -1;
+					g_.SetInitialAdapter(-1);
 					g_calculation_status = CALCSTAT_RESUMABLE;         /* "resume" without 16-bit */
 					driver_set_for_text();
 					get_fractal_type();
@@ -817,10 +817,10 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 		save_parameter_history();
 		if (i == 0)
 		{
-			g_initial_adapter = g_.Adapter();
+			g_.SetInitialAdapter(g_.Adapter());
 			frommandel = false;
 		}
-		else if (g_initial_adapter < 0) /* it is supposed to be... */
+		else if (g_.InitialAdapter() < 0) /* it is supposed to be... */
 		{
 			driver_set_for_text();     /* reset to text mode      */
 		}
@@ -947,10 +947,10 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	int i;
 	driver_stack_screen();
 	i = get_commands();
-	if (g_initial_adapter != -1)
+	if (g_.InitialAdapter() != -1)
 	{                         /* video= was specified */
-		g_.SetAdapter(g_initial_adapter);
-		g_initial_adapter = -1;
+		g_.SetAdapter(g_.InitialAdapter());
+		g_.SetInitialAdapter(-1);
 		i |= COMMANDRESULT_FRACTAL_PARAMETER;
 		g_save_dac = SAVEDAC_NO;
 	}
@@ -993,7 +993,7 @@ static ApplicationStateType handle_toggle_float()
 	{
 		g_user_float_flag = false;
 	}
-	g_initial_adapter = g_.Adapter();
+	g_.SetInitialAdapter(g_.Adapter());
 	return APPSTATE_IMAGE_START;
 }
 
@@ -1280,7 +1280,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		}
 		history_restore_info();
 		g_zoom_off = true;
-		g_initial_adapter = g_.Adapter();
+		g_.SetInitialAdapter(g_.Adapter());
 		if (g_current_fractal_specific->isinteger != 0
 			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
@@ -1829,7 +1829,7 @@ static ApplicationStateType handle_evolver_history(int kbdchar)
 		}
 		history_restore_info();
 		g_zoom_off = true;
-		g_initial_adapter = g_.Adapter();
+		g_.SetInitialAdapter(g_.Adapter());
 		if (g_current_fractal_specific->isinteger != 0
 			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
