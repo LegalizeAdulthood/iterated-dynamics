@@ -221,11 +221,10 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 		if (g_calculation_status != CALCSTAT_RESUMABLE || g_show_file == SHOWFILE_PENDING)
 		{
-			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_.Adapter()],
-					sizeof(g_video_entry));
-			g_x_dots   = g_video_entry.x_dots;       /* # dots across the screen */
-			g_y_dots   = g_video_entry.y_dots;       /* # dots down the screen   */
-			g_colors  = g_video_entry.colors;      /* # colors available */
+			g_.SetVideoEntry(g_video_table[g_.Adapter()]);
+			g_x_dots   = g_.VideoEntry().x_dots;       /* # dots across the screen */
+			g_y_dots   = g_.VideoEntry().y_dots;       /* # dots down the screen   */
+			g_colors  = g_.VideoEntry().colors;      /* # colors available */
 			g_screen_width  = g_x_dots;
 			g_screen_height  = g_y_dots;
 			g_sx_offset = 0;
@@ -241,7 +240,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			}
 			else
 			{
-				DriverManager::change_video_mode(g_video_entry); /* switch video modes */
+				DriverManager::change_video_mode(g_.VideoEntry()); /* switch video modes */
 				/* switching video modes may have changed drivers or disk flag... */
 				if (g_good_mode == 0)
 				{
@@ -258,8 +257,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 				g_x_dots = g_screen_width;
 				g_y_dots = g_screen_height;
-				g_video_entry.x_dots = g_x_dots;
-				g_video_entry.y_dots = g_y_dots;
+				g_.SetVideoEntrySize(g_x_dots, g_y_dots);
 			}
 
 			if (g_save_dac || g_color_preloaded)

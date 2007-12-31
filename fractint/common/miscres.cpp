@@ -1056,11 +1056,11 @@ top:
 	}
 	driver_put_string(s_row++, 2, C_GENERAL_MED,
 		str(boost::format("driver: %s, %s") % driver_name() % driver_description()));
-	if (g_video_entry.x_dots && g_bf_math == 0)
+	if (g_.VideoEntry().x_dots && g_bf_math == 0)
 	{
 		sprintf(msg, "Video: %dx%dx%d %s %s",
-				g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,
-				g_video_entry.name, g_video_entry.comment);
+				g_.VideoEntry().x_dots, g_.VideoEntry().y_dots, g_.VideoEntry().colors,
+				g_.VideoEntry().name, g_.VideoEntry().comment);
 		driver_put_string(s_row++, 2, C_GENERAL_MED, msg);
 	}
 	if (!(g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM))

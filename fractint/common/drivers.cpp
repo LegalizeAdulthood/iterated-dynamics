@@ -112,7 +112,7 @@ AbstractDriver *DriverManager::find_by_name(const char *name)
 	return 0;
 }
 
-void DriverManager::change_video_mode(VIDEOINFO &mode)
+void DriverManager::change_video_mode(const VIDEOINFO &mode)
 {
 	if (s_current != mode.driver)
 	{
@@ -123,12 +123,12 @@ void DriverManager::change_video_mode(VIDEOINFO &mode)
 	driver_set_video_mode(mode);
 }
 
-void driver_change_video_mode(VIDEOINFO &mode)
+void driver_change_video_mode(const VIDEOINFO &mode)
 {
 	DriverManager::change_video_mode(mode);
 }
 
-void driver_set_video_mode(VIDEOINFO &mode)
+void driver_set_video_mode(const VIDEOINFO &mode)
 {
 	s_current->set_video_mode(mode);
 }

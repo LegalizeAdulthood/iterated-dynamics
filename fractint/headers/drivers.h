@@ -100,7 +100,7 @@ public:
 	static int open_drivers(int &argc, char **argv);
 	static void close_drivers();
 	static AbstractDriver *find_by_name(const char *name);
-	static void change_video_mode(VIDEOINFO &mode);
+	static void change_video_mode(const VIDEOINFO &mode);
 
 private:
 	static int load(AbstractDriver *driver, int &argc, char **argv);
@@ -134,8 +134,8 @@ extern void close_drivers();
 
 extern const char *driver_name();
 extern const char *driver_description();
-extern void driver_set_video_mode(VIDEOINFO &mode);
-extern int driver_validate_mode(VIDEOINFO &mode);
+extern void driver_set_video_mode(const VIDEOINFO &mode);
+extern int driver_validate_mode(const VIDEOINFO &mode);
 extern void driver_get_max_screen(int &x_max, int &y_max);
 extern void driver_terminate();
 // pause and resume are only used internally in drivers.c

@@ -758,3 +758,14 @@ int timer_encoder()
 {
 	return timer(TIMER_ENCODER, 0);
 }
+
+bool operator==(const VIDEOINFO &lhs, const VIDEOINFO &rhs)
+{
+	return strcmp(lhs.name, rhs.name) == 0
+		&& strcmp(lhs.comment, rhs.comment) == 0
+		&& lhs.keynum == rhs.keynum
+		&& lhs.x_dots == rhs.x_dots
+		&& lhs.y_dots == rhs.y_dots
+		&& lhs.colors == rhs.colors
+		&& lhs.driver == rhs.driver;
+}

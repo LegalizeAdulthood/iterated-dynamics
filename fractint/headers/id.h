@@ -415,6 +415,8 @@ struct VIDEOINFO
 	AbstractDriver *driver;
 };
 
+extern bool operator==(const VIDEOINFO &lhs, const VIDEOINFO &rhs);
+
 #define INFO_ID         "Fractal"
 
 /*
