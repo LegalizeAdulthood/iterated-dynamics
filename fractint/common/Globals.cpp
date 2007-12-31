@@ -7,7 +7,9 @@ Globals g_;
 
 Globals::Globals()
 	: _adapter(0),
-	_initialAdapter(0)
+	_initialAdapter(0),
+	_videoEntry(),
+	_videoTableLength(0)
 {
 	VIDEOINFO zero = { 0 };
 	for (int i = 0; i < NUM_OF(_videoTable); i++)

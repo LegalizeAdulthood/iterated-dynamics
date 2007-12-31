@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="FullScreenChooser.obj EscapeTime.obj MathUtil.obj miscfrac.obj realdos.obj filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
+				AdditionalDependencies="Globals.obj FullScreenChooser.obj EscapeTime.obj MathUtil.obj miscfrac.obj realdos.obj filesystem.obj AbstractInput.obj IFSParser.obj LSystemParser.obj CppUnitLite.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(SolutionDir)$(ConfigurationName)"
 				GenerateDebugInformation="true"

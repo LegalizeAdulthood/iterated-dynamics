@@ -76,12 +76,12 @@ int DriverManager::open_drivers(int &argc, char **argv)
 void add_video_mode(AbstractDriver *drv, VIDEOINFO &mode)
 {
 #if defined(_WIN32)
-	_ASSERTE(g_video_table_len < MAXVIDEOMODES);
+	_ASSERTE(g_.VideoTableLength() < MAXVIDEOMODES);
 #endif
 	/* stash away driver pointer so we can init driver for selected mode */
 	mode.driver = drv;
-	memcpy(&g_video_table[g_video_table_len], &mode, sizeof(g_video_table[0]));
-	g_video_table_len++;
+	g_video_table[g_.VideoTableLength()] = mode;
+	g_.IncrementVideoTableLength();
 }
 
 void DriverManager::close_drivers()

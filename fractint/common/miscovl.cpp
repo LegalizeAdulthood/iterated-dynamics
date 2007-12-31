@@ -2235,14 +2235,14 @@ int select_video_mode(int curmode)
 	int k;
 	int ret;
 
-	for (i = 0; i < g_video_table_len; ++i)  /* init tables */
+	for (i = 0; i < g_.VideoTableLength(); ++i)  /* init tables */
 	{
 		entries[i] = i;
 		attributes[i] = 1;
 	}
 	s_entries = entries;           /* for indirectly called subroutines */
 
-	qsort(entries, g_video_table_len, sizeof(entries[0]), entcompare); /* sort modes */
+	qsort(entries, g_.VideoTableLength(), sizeof(entries[0]), entcompare); /* sort modes */
 
 	/* pick default mode */
 	if (curmode < 0)
@@ -2254,7 +2254,7 @@ int select_video_mode(int curmode)
 		g_.SetVideoEntry(g_video_table[curmode]);
 	}
 #ifndef XFRACT
-	for (i = 0; i < g_video_table_len; ++i)  /* find default mode */
+	for (i = 0; i < g_.VideoTableLength(); ++i)  /* find default mode */
 	{
 		if (g_.VideoEntry().colors == g_video_table[entries[i]].colors &&
 			(curmode < 0 || g_.VideoEntry() == g_video_table[entries[i]]))
@@ -2262,7 +2262,7 @@ int select_video_mode(int curmode)
 			break;
 		}
 	}
-	if (i >= g_video_table_len) /* no match, default to first entry */
+	if (i >= g_.VideoTableLength()) /* no match, default to first entry */
 	{
 		i = 0;
 	}
@@ -2272,7 +2272,7 @@ int select_video_mode(int curmode)
 	i = full_screen_choice_help(HELPVIDSEL, CHOICE_HELP,
 		"Select Video Mode",
 		"key...name.......................xdot..ydot.colr.driver......comment......",
-		0, g_video_table_len, 0, attributes,
+		0, g_.VideoTableLength(), 0, attributes,
 		1, 16, 74, i, format_vid_table, 0, 0, check_modekey);
 	g_tab_display_enabled = save_tab_display_enabled;
 	if (i == -1)
@@ -2288,7 +2288,7 @@ int select_video_mode(int curmode)
 #ifndef XFRACT
 	/* copy fractint.cfg table to resident table, note selected entry */
 	k = 0;
-	for (i = 0; i < g_video_table_len; ++i)
+	for (i = 0; i < g_.VideoTableLength(); ++i)
 	{
 		if (g_video_table[i].keynum > 0)
 		{
@@ -2350,7 +2350,7 @@ static int check_modekey(int curkey, int choice)
 			j = getakeynohelp();
 			if (j >= FIK_SF1 && j <= FIK_ALT_F10)
 			{
-				for (k = 0; k < g_video_table_len; ++k)
+				for (k = 0; k < g_.VideoTableLength(); ++k)
 				{
 					if (g_video_table[k].keynum == j)
 					{

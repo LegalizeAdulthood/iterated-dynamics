@@ -39,7 +39,7 @@
 BYTE g_suffix[10000];
 int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
 int g_patch_level = 9;	/* patchlevel for this version */
-int g_video_table_len;                 /* number of entries in above           */
+//int g_video_table_len;                 /* number of entries in above           */
 int g_cfg_line_nums[MAXVIDEOMODES] = { 0 };
 
 static BYTE *s_temp_text_save = 0;
@@ -1149,7 +1149,7 @@ int check_video_mode_key(int option, int k)
 		}
 		else  /* check full g_video_table */
 		{
-			for (i = 0; i < g_video_table_len; ++i)
+			for (i = 0; i < g_.VideoTableLength(); ++i)
 			{
 				if (g_video_table[i].keynum == k)
 				{

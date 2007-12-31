@@ -367,7 +367,6 @@ extern long					g_user_distance_test;
 extern bool					g_user_float_flag;
 extern int					g_user_periodicity_check;
 extern VIDEOINFO			g_video_table[];
-extern int					g_video_table_len;
 extern VECTOR				g_view;
 extern bool					g_view_crop;
 extern float				g_view_reduction;
