@@ -653,7 +653,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_b
 		if (g_file_x_dots > g_x_dots || g_file_y_dots > g_y_dots)
 		{
 			stop_message(STOPMSG_NORMAL, "Can't overlay with a larger image");
-			g_.SetInitialAdapter(-1);
+			g_.SetInitialAdapterNone();
 			return -1;
 		}
 	}
@@ -673,7 +673,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_b
 				delete[] resume_info_blk.resume_data;
 				resume_info_blk.length = 0;
 			}
-			g_.SetInitialAdapter(-1);
+			g_.SetInitialAdapterNone();
 			return -1;
 		}
 	}
@@ -688,7 +688,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_b
 		{
 			if (get_3d_parameters() < 0)
 			{
-				g_.SetInitialAdapter(-1);
+				g_.SetInitialAdapterNone();
 				return -1;
 			}
 		}
@@ -699,7 +699,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_b
 int read_overlay()      /* read overlay/3D files, if reqr'd */
 {
 	g_show_file = SHOWFILE_DONE;			/* for any abort exit, pretend done */
-	g_.SetInitialAdapter(-1);					/* no viewing mode set yet */
+	g_.SetInitialAdapterNone();					/* no viewing mode set yet */
 	bool oldfloatflag = g_user_float_flag;
 	g_loaded_3d = 0;
 	if (g_fast_restore)

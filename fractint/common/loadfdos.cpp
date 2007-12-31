@@ -122,7 +122,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	float tmpreduce;
 #if !defined(XFRACT)
 #endif
-	g_.SetInitialAdapter(-1);
+	g_.SetInitialAdapterNone();
 
 	/* try to find exact match for vid mode */
 	for (int i = 0; i < g_.VideoTableLength(); ++i)
