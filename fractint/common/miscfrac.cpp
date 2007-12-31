@@ -652,6 +652,19 @@ done:
 	return n;
 }
 
+static BYTE mix(int i, BYTE first, BYTE second)
+{
+	return BYTE((i*first + (86 - i)*second)/85);
+}
+
+static void set_mix(int idx, int i, const BYTE first[3], const BYTE second[3])
+{
+	g_dac_box.Set(idx,
+		mix(i, first[0], second[0]),
+		mix(i, first[1], second[1]),
+		mix(i, first[2], second[2]));
+}
+
 static void set_plasma_palette()
 {
 	if (!g_map_dac_box && !g_color_preloaded) /* map= not specified  */
@@ -659,22 +672,13 @@ static void set_plasma_palette()
 		BYTE red[3]		= { COLOR_CHANNEL_MAX, 0, 0 };
 		BYTE green[3]	= { 0, COLOR_CHANNEL_MAX, 0 };
 		BYTE blue[3]	= { 0,  0, COLOR_CHANNEL_MAX };
-		BYTE black[3]	= { 0, 0, 0 };
-		int i;
-		int j;
 
-		for (j = 0; j < 3; j++)
+		g_dac_box.Set(0, 0, 0, 0);
+		for (int i = 1; i <= 85; i++)
 		{
-			g_dac_box[0][j] = black[j];
-		}
-		for (i = 1; i <= 85; i++)
-		{
-			for (j = 0; j < 3; j++)
-			{
-				g_dac_box[i][j]			= BYTE((i*green[j] + (86 - i)*blue[j])/85);
-				g_dac_box[i + 85][j]	= BYTE((i*red[j]   + (86 - i)*green[j])/85);
-				g_dac_box[i + 170][j]	= BYTE((i*blue[j]  + (86 - i)*red[j])/85);
-			}
+			set_mix(i, i, green, blue);
+			set_mix(i + 85, i, red, green);
+			set_mix(i + 170, i, blue, red);
 		}
 		spindac(0, 1);
 	}
@@ -2058,23 +2062,20 @@ static void set_cellular_palette()
 	/* map= not specified  */
 	if (!g_map_dac_box || g_color_state == COLORSTATE_DEFAULT)
 	{
+		// TODO: revisit magic numbers for COLOR_CHANNEL_MAX
 		BYTE red[3]		= { 42, 0, 0 };
 		BYTE green[3]	= { 10, 35, 10 };
 		BYTE blue[3]	= { 13, 12, 29 };
 		BYTE yellow[3]	= { 60, 58, 18 };
 		BYTE brown[3]	= { 42, 21, 0 };
 		BYTE black[3]	= { 0, 0, 0 };
-		int j;
 
-		for (j = 0; j < 3; j++)
-		{
-			g_dac_box[0][j] = black[j];
-			g_dac_box[1][j] = red[j];
-			g_dac_box[2][j] = green[j];
-			g_dac_box[3][j] = blue[j];
-			g_dac_box[4][j] = yellow[j];
-			g_dac_box[5][j] = brown[j];
-		}
+		g_dac_box.Set(0, black[0], black[1], black[2]);
+		g_dac_box.Set(1, red[0], red[1], red[2]);
+		g_dac_box.Set(2, green[0], green[1], green[2]);
+		g_dac_box.Set(3, blue[0], blue[1], blue[2]);
+		g_dac_box.Set(4, yellow[0], yellow[1], yellow[2]);
+		g_dac_box.Set(5, brown[0], brown[1], brown[2]);
 
 		spindac(0, 1);
 	}

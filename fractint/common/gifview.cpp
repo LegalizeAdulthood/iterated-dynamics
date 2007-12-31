@@ -175,7 +175,8 @@ int gifview()
 			if ((!g_display_3d || (g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE))
 				&& !g_dont_read_color)
 			{
-				g_dac_box[i][j] = BYTE(k >> 2); /* TODO: don't right shift color table by 2 */
+				/* TODO: don't right shift color table by 2 */
+				g_dac_box.SetChannel(i, j, BYTE(k >> 2));
 			}
 		}
 	}
@@ -187,7 +188,7 @@ int gifview()
 		validate_luts(g_map_name);  /* read the palette file */
 		spindac(0, 1); /* load it, but don't spin */
 	}
-	if (g_dac_box[0][0] != 255)
+	if (g_dac_box.Red(0) != 255)
 	{
 		spindac(0, 1);       /* update the DAC */
 	}
@@ -393,9 +394,9 @@ static int out_line_dither(BYTE *pixels, int linelen)
 	for (i = 0; i < linelen; i++)
 	{
 		/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
-		brt = (g_dac_box[pixels[i]][0]*5 +
-			   g_dac_box[pixels[i]][1]*9 +
-			   g_dac_box[pixels[i]][2]*2) >> 4; /* brightness from 0 to COLOR_CHANNEL_MAX */
+		brt = (g_dac_box.Red(pixels[i])*5 +
+			   g_dac_box.Green(pixels[i])*9 +
+			   g_dac_box.Blue(pixels[i])*2) >> 4; /* brightness from 0 to COLOR_CHANNEL_MAX */
 		brt += nexterr;
 		if (brt > (COLOR_CHANNEL_MAX + 1)/2)
 		{

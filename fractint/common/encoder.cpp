@@ -31,7 +31,8 @@
 #include "ThreeDimensionalState.h"
 
 static int compress(int rowlimit);
-static int shftwrite(BYTE *color, int num_colors);
+static int shftwrite(const BYTE *color, int num_colors);
+static int shftwrite(const ColormapTable &colormap, int num_colors);
 static int extend_blk_len(int datalen);
 static int put_extend_blk(int block_id, int block_len, char *block_data);
 static int store_item_name(const char *name);
@@ -421,22 +422,13 @@ int encoder()
 		goto oops;                /* pixel aspect ratio */
 	}
 
-#ifndef XFRACT
 	/* write out the 256-color palette */
 	if (g_got_real_dac)
 	{                         /* got a DAC - must be a VGA */
-		if (!shftwrite((BYTE *) g_dac_box, g_colors))
+		if (!shftwrite(g_dac_box, g_colors))
 		{
 			goto oops;
 		}
-#else
-	if (g_got_real_dac || g_fake_lut)
-	{                         /* got a DAC - must be a VGA */
-		if (!shftwrite((BYTE *) g_dac_box, 256))
-		{
-			goto oops;
-		}
-#endif
 	}
 	else
 	{                         /* uh oh - better fake it */
@@ -673,9 +665,32 @@ oops:
 	return 1;
 }
 
+static int shftwrite(const ColormapTable &colormap, int num_colors)
+{
+	for (int i = 0; i < num_colors; i++)
+	{
+		char value = char(colormap.Red(i));
+		if (fputc(value, s_outfile) != value)
+		{
+			return 0;
+		}
+		value = char(colormap.Green(i));
+		if (fputc(value, s_outfile) != value)
+		{
+			return 0;
+		}
+		value = char(colormap.Blue(i));
+		if (fputc(value, s_outfile) != value)
+		{
+			return 0;
+		}
+	}
+	return 1;
+}
+
 /* TODO: should we be doing this?  We need to store full colors, not the VGA truncated business. */
 /* shift IBM colors to GIF */
-static int shftwrite(BYTE *color, int num_colors)
+static int shftwrite(const BYTE *color, int num_colors)
 {
 	BYTE thiscolor;
 	int i;

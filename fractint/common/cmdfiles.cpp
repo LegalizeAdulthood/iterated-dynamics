@@ -103,11 +103,6 @@ int g_rotate_lo;
 int g_rotate_hi;								/* cycling color range      */
 int	*g_ranges = 0;								/* iter->color ranges mapping */
 int     g_ranges_length = 0;					/* size of ranges array     */
-BYTE	*g_map_dac_box = 0;						/* map= (default colors)    */
-int     g_color_state;							/* 0, g_dac_box matches default (bios or map=) */
-												/* 1, g_dac_box matches no known defined map   */
-												/* 2, g_dac_box matches the g_color_file map      */
-bool g_color_preloaded;							/* if g_dac_box preloaded for next mode select */
 int     g_save_release;							/* release creating PAR file*/
 bool g_dont_read_color = false;					/* flag for reading color from GIF */
 double  g_math_tolerance[2] = {.05, .05};		/* For math transition */
@@ -3291,28 +3286,28 @@ static int parse_colors(char *value)
 					{
 						k -= ('_'-36);
 					}
-					g_dac_box[i][j] = (BYTE) k;
+					g_dac_box.SetChannel(i, j, BYTE(k));
 					if (smooth)
 					{
 						int spread = smooth + 1;
 						int start = i - spread;
 						int cnum = 0;
-						if ((k - int(g_dac_box[start][j])) == 0)
+						if ((k - int(g_dac_box.Channel(start, j))) == 0)
 						{
 							while (++cnum < spread)
 							{
-								g_dac_box[start + cnum][j] = (BYTE) k;
+								g_dac_box.SetChannel(start + cnum, j, BYTE(k));
 							}
 						}
 						else
 						{
 							while (++cnum < spread)
 							{
-								g_dac_box[start + cnum][j] =
-									BYTE((cnum*g_dac_box[i][j]
-												+ (i - (start + cnum))*g_dac_box[start][j]
+								g_dac_box.SetChannel(start + cnum, j,
+									BYTE((cnum*g_dac_box.Channel(i, j)
+												+ (i - (start + cnum))*g_dac_box.Channel(start, j)
 												+ spread/2)
-											/(BYTE) spread);
+											/(BYTE) spread));
 							}
 						}
 					}
@@ -3327,13 +3322,13 @@ static int parse_colors(char *value)
 		}
 		while (i < 256)   /* zap unset entries */
 		{
-			g_dac_box[i][0] = g_dac_box[i][1] = g_dac_box[i][2] = 63*COLOR_CHANNEL_MAX/100;
+			g_dac_box.Set(i, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100);
 			++i;
 		}
 		g_color_state = COLORSTATE_UNKNOWN;
 	}
 	g_color_preloaded = true;
-	memcpy(g_old_dac_box, g_dac_box, 256*3);
+	g_old_dac_box = g_dac_box;
 	return 0;
 
 badcolor:

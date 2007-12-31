@@ -98,7 +98,7 @@ struct HISTORY_ITEM
 	bool old_demm_colors;
 	std::string file_name;
 	std::string item_name;
-	unsigned char dac[256][3];
+	ColormapTable dac;
 	int max_fn;
 	CalculationMode standard_calculation_mode;
 	bool three_pass;
@@ -230,7 +230,7 @@ bool operator==(const HISTORY_ITEM &lhs, const HISTORY_ITEM &rhs)
 		&& (lhs.old_demm_colors == rhs.old_demm_colors)
 		&& (lhs.file_name == rhs.file_name)
 		&& (lhs.item_name == rhs.item_name)
-		&& equals<unsigned char, 256, 3>(lhs.dac, rhs.dac)
+		&& (lhs.dac == rhs.dac)
 		&& (lhs.max_fn == rhs.max_fn)
 		&& (lhs.standard_calculation_mode == rhs.standard_calculation_mode)
 		&& (lhs.three_pass == rhs.three_pass)
@@ -380,7 +380,7 @@ void history_save_info()
 	current.oy3rd = g_orbit_y_3rd;
 	current.keep_screen_coordinates = g_keep_screen_coords;
 	current.draw_mode = g_orbit_draw_mode;
-	memcpy(current.dac, g_dac_box, 256*3);
+	current.dac = g_dac_box;
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_FORMULA:
@@ -568,11 +568,11 @@ void history_restore_info()
 	}
 	g_orbit_draw_mode = int(last.draw_mode);
 	g_user_float_flag = (g_current_fractal_specific->isinteger != 0);
-	memcpy(g_dac_box, last.dac, 256*3);
-	memcpy(g_old_dac_box, last.dac, 256*3);
+	g_dac_box = last.dac;
+	g_old_dac_box = last.dac;
 	if (g_map_dac_box)
 	{
-		memcpy(g_map_dac_box, last.dac, 256*3);
+		g_map_dac_box = &last.dac;
 	}
 	spindac(0, 1);
 	g_save_dac = fractal_type_julibrot(g_fractal_type) ? SAVEDAC_NO : SAVEDAC_YES;

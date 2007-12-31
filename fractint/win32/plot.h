@@ -66,7 +66,7 @@ private:
 	size_t m_row_len;
 	int m_width;
 	int m_height;
-	unsigned char m_clut[256][3];
+	ColormapTable m_clut;
 };
 
 #endif

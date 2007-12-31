@@ -853,9 +853,9 @@ int out_line_3d(BYTE *pixels, int line_length)
 			int color_num = pixels[col];
 			/* TODO: the following does not work when COLOR_CHANNEL_MAX != 63 */
 			/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-			int pal = (int(g_dac_box[color_num][0])*77 +
-					int(g_dac_box[color_num][1])*151 +
-					int(g_dac_box[color_num][2])*28);
+			int pal = (int(g_dac_box.Red(color_num))*77 +
+					int(g_dac_box.Green(color_num))*151 +
+					int(g_dac_box.Blue(color_num))*28);
 
 			pal >>= 6;
 			pixels[col] = BYTE(pal);
@@ -1580,9 +1580,9 @@ int targa_color(int x, int y, int color)
 	else
 	{
 		/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
-		rgb[0] = BYTE(g_dac_box[s_real_color][0] << 2); /* Move color space to */
-		rgb[1] = BYTE(g_dac_box[s_real_color][1] << 2); /* 256 color primaries */
-		rgb[2] = BYTE(g_dac_box[s_real_color][2] << 2); /* from 64 colors */
+		rgb[0] = BYTE(g_dac_box.Red(s_real_color) << 2); /* Move color space to */
+		rgb[1] = BYTE(g_dac_box.Green(s_real_color) << 2); /* 256 color primaries */
+		rgb[2] = BYTE(g_dac_box.Blue(s_real_color) << 2); /* from 64 colors */
 	}
 
 	/* Now lets convert it to HSV */
@@ -2420,7 +2420,10 @@ static void out_triangle_dxf(int c1, float pt_t[3][3])
 /*  or monochrome display                                           */
 /*                                                                  */
 /********************************************************************/
-
+static float average_color(int c1, int c2, int c3)
+{
+	return float(c1 + c2 + c3)/(3.0f*COLOR_CHANNEL_MAX);
+}
 static int out_triangle(const point_fp &pt1, const point_fp &pt2, const point_fp &pt3,
 						int c1, int c2, int c3)
 {
@@ -2441,11 +2444,9 @@ static int out_triangle(const point_fp &pt1, const point_fp &pt2, const point_fp
 	/* Color of triangle is average of colors of its verticies */
 	if (!g_3d_state.raytrace_brief())
 	{
-		for (int i = 0; i <= 2; i++)
-		{
-			c[i] = float(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
-				/(3*COLOR_CHANNEL_MAX);
-		}
+		c[0] = average_color(g_dac_box.Red(c1), g_dac_box.Red(c2), g_dac_box.Red(c3));
+		c[1] = average_color(g_dac_box.Green(c1), g_dac_box.Green(c2), g_dac_box.Green(c3));
+		c[2] = average_color(g_dac_box.Blue(c1), g_dac_box.Blue(c2), g_dac_box.Blue(c3));
 	}
 
 	/* get rid of degenerate triangles: any two points equal */

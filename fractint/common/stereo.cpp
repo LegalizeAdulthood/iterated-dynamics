@@ -47,7 +47,7 @@ static int s_y;
 static int s_y1;
 static int s_y2;
 static int s_y_center;
-static BYTE s_save_dac[256][3];
+static ColormapTable s_save_dac;
 
 /*
 	The getdepth() function allows using the grayscale value of the color
@@ -63,9 +63,9 @@ static int getdepth(int xd, int yd)
 	if (g_grayscale_depth)
 	{
 		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
-		pal = (int(s_save_dac[pal][0])*77 +
-				int(s_save_dac[pal][1])*151 +
-				int(s_save_dac[pal][2])*28);
+		pal = (int(s_save_dac.Red(pal))*77 +
+				int(s_save_dac.Green(pal))*151 +
+				int(s_save_dac.Blue(pal))*28);
 		pal >>= 6;
 	}
 	return pal;
@@ -201,7 +201,7 @@ int auto_stereo()
 
 	HelpModeSaver saved_help(RDSKEYS);
 	driver_save_graphics();                      /* save graphics image */
-	memcpy(s_save_dac, g_dac_box, 256*3);  /* save colors */
+	s_save_dac = g_dac_box;  /* save colors */
 
 	int ret = 0;
 	if (g_x_dots > OLD_MAX_PIXELS)
@@ -323,7 +323,7 @@ int auto_stereo()
 
 exit_stereo:
 	driver_restore_graphics();
-	memcpy(g_dac_box, s_save_dac, 256*3);
+	g_dac_box = s_save_dac;
 	spindac(0, 1);
 	return ret;
 }

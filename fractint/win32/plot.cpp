@@ -403,19 +403,13 @@ int Plot::resize()
 
 int Plot::read_palette()
 {
-	int i;
-
 	if (g_got_real_dac == 0)
 	{
 		return -1;
 	}
 
-	for (i = 0; i < 256; i++)
-	{
-		g_dac_box[i][0] = m_clut[i][0];
-		g_dac_box[i][1] = m_clut[i][1];
-		g_dac_box[i][2] = m_clut[i][2];
-	}
+	g_dac_box = m_clut;
+
 	return 0;
 }
 
@@ -423,16 +417,13 @@ int Plot::write_palette()
 {
 	int i;
 
+	m_clut = g_dac_box;
 	for (i = 0; i < 256; i++)
 	{
-		m_clut[i][0] = g_dac_box[i][0];
-		m_clut[i][1] = g_dac_box[i][1];
-		m_clut[i][2] = g_dac_box[i][2];
-
 		/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
-		m_bmi.bmiColors[i].rgbRed = g_dac_box[i][0]*4;
-		m_bmi.bmiColors[i].rgbGreen = g_dac_box[i][1]*4;
-		m_bmi.bmiColors[i].rgbBlue = g_dac_box[i][2]*4;
+		m_bmi.bmiColors[i].rgbRed = m_clut.Red(i)*4;
+		m_bmi.bmiColors[i].rgbGreen = m_clut.Green(i)*4;
+		m_bmi.bmiColors[i].rgbBlue = m_clut.Blue(i)*4;
 	}
 	redraw();
 

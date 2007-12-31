@@ -231,7 +231,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			g_sy_offset = 0;
 			g_rotate_hi = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors - 1;
 
-			memcpy(g_old_dac_box, g_dac_box, 256*3); /* save the DAC */
+			g_old_dac_box = g_dac_box; /* save the DAC */
 
 			if (g_overlay_3d && !g_initialize_batch)
 			{
@@ -262,7 +262,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 			if (g_save_dac || g_color_preloaded)
 			{
-				memcpy(g_dac_box, g_old_dac_box, 256*3); /* restore the DAC */
+				g_dac_box = g_old_dac_box; /* restore the DAC */
 				spindac(0, 1);
 				g_color_preloaded = false;
 			}
@@ -270,7 +270,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			{	/* reset DAC to defaults, which setvideomode has done for us */
 				if (g_map_dac_box)
 				{	/* but there's a map=, so load that */
-					memcpy((char *)g_dac_box, g_map_dac_box, 768);
+					g_dac_box = *g_map_dac_box;
 					spindac(0, 1);
 				}
 				g_color_state = COLORSTATE_DEFAULT;
@@ -1298,9 +1298,9 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 static ApplicationStateType handle_color_cycling(int kbdchar)
 {
 	clear_zoom_box();
-	memcpy(g_old_dac_box, g_dac_box, 256*3);
+	g_old_dac_box = g_dac_box;
 	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
-	if (memcmp(g_old_dac_box, g_dac_box, 256*3))
+	if (g_old_dac_box != g_dac_box)
 	{
 		g_color_state = COLORSTATE_UNKNOWN;
 		history_save_info();
@@ -1324,12 +1324,12 @@ static ApplicationStateType handle_color_editing(bool &kbdmore)
 		}
 	}
 	clear_zoom_box();
-	if (g_dac_box[0][0] != 255
+	if (g_dac_box.Red(0) != 255
 		&& !driver_diskp())
 	{
-		memcpy(g_old_dac_box, g_dac_box, 256*3);
+		g_old_dac_box = g_dac_box;
 		palette_edit();
-		if (memcmp(g_old_dac_box, g_dac_box, 256*3))
+		if (g_old_dac_box != g_dac_box)
 		{
 			g_color_state = COLORSTATE_UNKNOWN;
 			history_save_info();
