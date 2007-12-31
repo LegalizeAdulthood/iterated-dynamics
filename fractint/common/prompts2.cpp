@@ -749,7 +749,7 @@ get_view_restart:
 			g_video_entry.x_dots = g_screen_width;
 			g_video_entry.y_dots = g_screen_height;
 			g_final_aspect_ratio = (float(g_screen_height))/(float(g_screen_width));
-			memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
+			memcpy(&g_video_table[g_.Adapter()], &g_video_entry, sizeof(g_video_entry));
 		}
 
 		return (g_view_window != old_viewwindow

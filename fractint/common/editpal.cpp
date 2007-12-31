@@ -1512,7 +1512,7 @@ void pal_table::save_undo_data(int first, int last)
 	mprintf("%6ld Writing Undo DATA from %d to %d (%d)", ftell(undo_file), first, last, num);
 #endif
 
-	_undo_stream.seekg(0, SEEK_CUR);
+	_undo_stream.seekg(0, std::ios_base::cur);
 	if (num == 1)
 	{
 		_undo_stream.put(UNDO_DATA_SINGLE);
@@ -1539,7 +1539,7 @@ void pal_table::save_undo_rotate(int dir, int first, int last)
 		return;
 	}
 
-	_undo_stream.seekp(0, SEEK_CUR);
+	_undo_stream.seekp(0, std::ios_base::cur);
 	_undo_stream.put(UNDO_ROTATE);
 	_undo_stream.put(first);
 	_undo_stream.put(last);
@@ -1582,7 +1582,7 @@ void pal_table::undo_process(int delta)   /* undo/redo common code */
 
 			_undo_stream.read(reinterpret_cast<char *>(&temp[0]), num*sizeof(PALENTRY));
 
-			_undo_stream.seekp(-(num*int(sizeof(PALENTRY))), SEEK_CUR);
+			_undo_stream.seekp(-(num*int(sizeof(PALENTRY))), std::ios_base::cur);
 			_undo_stream.write(reinterpret_cast<char *>(&_palette[first]), num*sizeof(PALENTRY));
 
 			memmove(_palette + first, temp, num*3);
@@ -1616,7 +1616,7 @@ void pal_table::undo_process(int delta)   /* undo/redo common code */
 		break;
 	}
 
-	_undo_stream.seekg(0, SEEK_CUR);  /* to put us in read mode */
+	_undo_stream.seekg(0, std::ios_base::cur);  /* to put us in read mode */
 	get<int>(_undo_stream);  /* read size */
 }
 
@@ -1627,9 +1627,9 @@ void pal_table::undo()
 		return;
 	}
 
-	_undo_stream.seekg(-int(sizeof(int)), SEEK_CUR);  /* go back to get size */
+	_undo_stream.seekg(-int(sizeof(int)), std::ios_base::cur);  /* go back to get size */
 	int size = get<int>(_undo_stream);
-	_undo_stream.seekg(-size, SEEK_CUR);   /* go to start of undo */
+	_undo_stream.seekg(-size, std::ios_base::cur);   /* go to start of undo */
 
 #ifdef DEBUG_UNDO
 	mprintf("%6ld Undo:", ftell(undo_file));
@@ -1652,7 +1652,7 @@ void pal_table::redo()
 	mprintf("%6ld Redo:", ftell(undo_file));
 #endif
 
-	_undo_stream.seekg(0, SEEK_CUR);  /* to make sure we are in "read" mode */
+	_undo_stream.seekg(0, std::ios_base::cur);  /* to make sure we are in "read" mode */
 	undo_process(1);
 
 	--_num_redo;

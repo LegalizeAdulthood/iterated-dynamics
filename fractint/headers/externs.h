@@ -1,8 +1,9 @@
 #ifndef EXTERNS_H
 #define EXTERNS_H
 
+#include "Globals.h"
+
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
-extern int					g_adapter;							/* index into g_video_table[] */
 extern float				g_aspect_drift;
 extern int					g_atan_colors;
 extern int					g_auto_stereo_depth;

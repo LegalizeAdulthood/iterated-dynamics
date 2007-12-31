@@ -1303,6 +1303,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\Globals.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\memory.cpp"
 					>
 				</File>
@@ -1688,6 +1692,10 @@
 				>
 				<File
 					RelativePath=".\headers\drivers.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\Globals.h"
 					>
 				</File>
 				<File
