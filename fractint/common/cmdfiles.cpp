@@ -94,7 +94,6 @@ int     g_initialize_batch = INITBATCH_NONE;	/* 1 if batch run (no kbd)  */
 int     g_save_time;							/* autosave minutes         */
 ComplexD  g_initial_orbit_z;					/* initial orbitvalue */
 InitialZType g_use_initial_orbit_z;				/* flag for g_initial_orbit_z */
-int     g_initial_adapter;							/* initial video mode       */
 int     g_initial_cycle_limit;					/* initial cycle limit      */
 bool g_use_center_mag;							/* use center-mag corners   */
 long    g_bail_out;								/* user input bailout value */
@@ -295,7 +294,7 @@ void command_files(int argc, char **argv)
 
 	if (!g_command_initialize)
 	{
-		g_initial_adapter = -1;			/* don't set video when <ins> key used */
+		g_.SetInitialAdapter(-1);			/* don't set video when <ins> key used */
 		g_show_file = SHOWFILE_DONE;	/* nor startup image file              */
 	}
 
@@ -363,7 +362,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_initialize_batch = INITBATCH_NONE;			/* not in batch mode         */
 	g_check_current_dir = false;					/* flag to check current dir for files */
 	g_save_time = 0;								/* no auto-save              */
-	g_initial_adapter = -1;							/* no initial video mode     */
+	g_.SetInitialAdapter(-1);						/* no initial video mode     */
 	g_view_window = false;
 	g_view_reduction = 4.2f;
 	g_view_crop = true;
@@ -580,9 +579,6 @@ static int command_file(std::ifstream &handle, int mode)
 		changeflag |= i;
 	}
 	handle.close();
-#ifdef XFRACT
-	g_initial_adapter = 0;                /* Skip credits if @file is used. */
-#endif
 	if (changeflag & COMMANDRESULT_FRACTAL_PARAMETER)
 	{
 		backwards_v18();
@@ -727,9 +723,6 @@ static int batch_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-#ifdef XFRACT
-	g_initial_adapter = context.yesnoval[0] ? 0 : -1; /* skip credits for batch mode */
-#endif
 	g_initialize_batch = context.yesnoval[0];
 	return COMMANDRESULT_FRACTAL_PARAMETER | COMMANDRESULT_3D_PARAMETER;
 }
@@ -969,16 +962,16 @@ static int video_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_initial_adapter = -1;
+	g_.SetInitialAdapter(-1);
 	for (i = 0; i < MAXVIDEOMODES; ++i)
 	{
 		if (g_video_table[i].keynum == k)
 		{
-			g_initial_adapter = i;
+			g_.SetInitialAdapter(i);
 			break;
 		}
 	}
-	if (g_initial_adapter == -1)
+	if (g_.InitialAdapter() == -1)
 	{
 		return bad_arg(context.curarg);
 	}
