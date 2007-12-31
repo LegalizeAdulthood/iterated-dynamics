@@ -24,6 +24,8 @@ public:
 	const VIDEOINFO &VideoTable(int i) const { return _videoTable[i]; }
 	void SetVideoTableKey(int i, int key) { _videoTable[i].keynum = key; }
 	void SetVideoTable(int i, const VIDEOINFO &value) { _videoTable[i] = value; }
+	bool GoodMode() const				{ return _goodMode; }
+	void SetGoodMode(bool value)		{ _goodMode = value; }
 
 private:
 	int _adapter;
@@ -31,6 +33,7 @@ private:
 	VIDEOINFO _videoEntry;
 	VIDEOINFO _videoTable[MAXVIDEOMODES];
 	int _videoTableLength;
+	bool _goodMode;
 };
 
 extern Globals g_;

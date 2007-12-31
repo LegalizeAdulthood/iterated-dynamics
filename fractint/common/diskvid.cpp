@@ -262,7 +262,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	if (s_disk_video_handle == 0)
 	{
 		stop_message(STOPMSG_NORMAL, "*** insufficient free memory/disk space ***");
-		g_good_mode = 0;
+		g_.SetGoodMode(false);
 		s_row_size = 0;
 		return -1;
 	}
@@ -292,7 +292,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 				if (stop_message(STOPMSG_CANCEL, "Disk Video initialization interrupted:\n"))
 				{
 					disk_end();
-					g_good_mode = 0;
+					g_.SetGoodMode(false);
 					return -2;            /* -1 == failed, -2 == cancel   */
 				}
 			}

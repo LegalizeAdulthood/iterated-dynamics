@@ -242,7 +242,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			{
 				DriverManager::change_video_mode(g_.VideoEntry()); /* switch video modes */
 				/* switching video modes may have changed drivers or disk flag... */
-				if (g_good_mode == 0)
+				if (!g_.GoodMode())
 				{
 					if (!driver_diskp())
 					{
