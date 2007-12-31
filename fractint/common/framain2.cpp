@@ -221,7 +221,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 		if (g_calculation_status != CALCSTAT_RESUMABLE || g_show_file == SHOWFILE_PENDING)
 		{
-			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
+			memcpy((char *)&g_video_entry, (char *)&g_video_table[g_.Adapter()],
 					sizeof(g_video_entry));
 			g_x_dots   = g_video_entry.x_dots;       /* # dots across the screen */
 			g_y_dots   = g_video_entry.y_dots;       /* # dots down the screen   */
@@ -817,7 +817,7 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 		save_parameter_history();
 		if (i == 0)
 		{
-			g_initial_adapter = g_adapter;
+			g_initial_adapter = g_.Adapter();
 			frommandel = false;
 		}
 		else if (g_initial_adapter < 0) /* it is supposed to be... */
@@ -949,7 +949,7 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	i = get_commands();
 	if (g_initial_adapter != -1)
 	{                         /* video= was specified */
-		g_adapter = g_initial_adapter;
+		g_.SetAdapter(g_initial_adapter);
 		g_initial_adapter = -1;
 		i |= COMMANDRESULT_FRACTAL_PARAMETER;
 		g_save_dac = SAVEDAC_NO;
@@ -993,7 +993,7 @@ static ApplicationStateType handle_toggle_float()
 	{
 		g_user_float_flag = false;
 	}
-	g_initial_adapter = g_adapter;
+	g_initial_adapter = g_.Adapter();
 	return APPSTATE_IMAGE_START;
 }
 
@@ -1280,7 +1280,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		}
 		history_restore_info();
 		g_zoom_off = true;
-		g_initial_adapter = g_adapter;
+		g_initial_adapter = g_.Adapter();
 		if (g_current_fractal_specific->isinteger != 0
 			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{
@@ -1488,7 +1488,7 @@ static void handle_zoom_skew(bool negative)
 static void handle_select_video(int &kbdchar)
 {
 	driver_stack_screen();
-	kbdchar = select_video_mode(g_adapter);
+	kbdchar = select_video_mode(g_.Adapter());
 	if (check_video_mode_key(0, kbdchar) >= 0)  /* picked a new mode? */
 	{
 		driver_discard_screen();
@@ -1521,8 +1521,8 @@ static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
 	int k = check_video_mode_key(0, kbdchar);
 	if (k >= 0)
 	{
-		g_adapter = k;
-		if (g_video_table[g_adapter].colors != g_colors)
+		g_.SetAdapter(k);
+		if (g_video_table[g_.Adapter()].colors != g_colors)
 		{
 			g_save_dac = SAVEDAC_NO;
 		}
@@ -1829,7 +1829,7 @@ static ApplicationStateType handle_evolver_history(int kbdchar)
 		}
 		history_restore_info();
 		g_zoom_off = true;
-		g_initial_adapter = g_adapter;
+		g_initial_adapter = g_.Adapter();
 		if (g_current_fractal_specific->isinteger != 0
 			&& !fractal_type_none(g_current_fractal_specific->tofloat))
 		{

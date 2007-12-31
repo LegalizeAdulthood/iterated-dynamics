@@ -70,7 +70,6 @@
 VIDEOINFO g_video_entry;
 long g_timer_start;
 long g_timer_interval;        /* timer(...) start & total */
-int     g_adapter;                /* Video Adapter chosen from list in ...h */
 std::string g_fract_dir1;
 std::string g_fract_dir2;
 /*
@@ -418,10 +417,10 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 	}
 
 	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */
-	g_adapter = g_initial_adapter;                  /* set the video adapter up */
+	g_.SetAdapter(g_initial_adapter);                  /* set the video adapter up */
 	g_initial_adapter = -1;                       /* (once)                   */
 
-	while (g_adapter < 0)                /* cycle through instructions */
+	while (g_.Adapter() < 0)                /* cycle through instructions */
 	{
 		if (g_initialize_batch)                          /* batch, nothing to do */
 		{
@@ -438,8 +437,8 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 		{
 			kbdchar = select_video_mode(-1);
 		}
-		g_adapter = check_video_mode_key(0, kbdchar);
-		if (g_adapter >= 0)
+		g_.SetAdapter(check_video_mode_key(0, kbdchar));
+		if (g_.Adapter() >= 0)
 		{
 			break;                                 /* got a video mode now */
 		}

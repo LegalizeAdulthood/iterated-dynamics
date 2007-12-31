@@ -213,7 +213,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 
 	if (g_fast_restore  && !g_ui_state.ask_video)
 	{
-		g_initial_adapter = g_adapter;
+		g_initial_adapter = g_.Adapter();
 	}
 
 #ifndef XFRACT

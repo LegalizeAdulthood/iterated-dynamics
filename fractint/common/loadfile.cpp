@@ -58,8 +58,6 @@ short g_skip_y_dots = 0;      /* for decoder, when reducing image */
 bool g_bad_outside = false;
 bool g_use_old_complex_power = false;
 
-static FILE *s_gif_file;
-
 static void read_info_version_0(const fractal_info &read_info)
 {
 	g_invert = 0;
@@ -651,7 +649,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_b
 
 	if (g_overlay_3d)
 	{
-		g_initial_adapter = g_adapter;          /* use previous adapter mode for overlays */
+		g_initial_adapter = g_.Adapter();          /* use previous adapter mode for overlays */
 		if (g_file_x_dots > g_x_dots || g_file_y_dots > g_y_dots)
 		{
 			stop_message(STOPMSG_NORMAL, "Can't overlay with a larger image");
@@ -786,45 +784,60 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	return 0;
 }
 
-int find_fractal_info(const char *gif_file, fractal_info *info,
-	ext_blk_resume_info *resume_info_blk,
-	ext_blk_formula_info *formula_info,
-	ext_blk_ranges_info *ranges_info,
-	ext_blk_mp_info *mp_info,
-	ext_blk_evolver_info *evolver_info,
-	ext_blk_orbits_info *orbits_info)
+class GifFile
 {
-	int scan_extend;
-	int block_type;
-	int block_len;
-	int data_len;
-	int fractinf_len;
-	int hdr_offset;
-	struct formula_info fload_info;
-	struct evolution_info eload_info;
-	struct orbits_info oload_info;
-	int k = 0;
-
-	resume_info_blk->got_data = 0; /* initialize to no data */
-	formula_info->got_data = 0; /* initialize to no data */
-	ranges_info->got_data = 0; /* initialize to no data */
-	mp_info->got_data = 0; /* initialize to no data */
-	evolver_info->got_data = 0; /* initialize to no data */
-	orbits_info->got_data = 0; /* initialize to no data */
-
-	s_gif_file = fopen(gif_file, "rb");
-	if (s_gif_file == 0)
+public:
+	GifFile(char const *gif_file) : _file(gif_file, std::ios::in | std::ios::binary)
 	{
-		return -1;
-	}
-	BYTE gifstart[18];
-	fread(gifstart, 13, 1, s_gif_file);
-	if (strncmp((char *)gifstart, "GIF", 3) != 0)  /* not GIF, maybe old .tga? */
-	{
-		fclose(s_gif_file);
-		return -1;
 	}
 
+	bool Open() const
+	{
+		return _file.is_open();
+	}
+
+	size_t Read(void *destination, int size, int count)
+	{
+		_file.read(static_cast<char *>(destination), size*count);
+		return _file ? size*count : 0;
+	}
+
+	int GetChar()
+	{
+		return _file.get();
+	}
+
+	void SeekFromEnd(long amount);
+	void SeekFromCurrent(long amount);
+
+private:
+	std::ifstream _file;
+};
+
+static FILE *s_gif_file;
+static GifFile *s_gif = 0;
+
+bool GifOpen(char const *gif_file)
+{
+	delete s_gif;
+	s_gif = new GifFile(gif_file);
+	return s_gif->Open();
+}
+void GifClose()
+{
+	delete s_gif;
+	s_gif = 0;
+}
+void GifFile::SeekFromEnd(long amount)
+{
+	_file.seekg(amount, std::ios_base::end);
+}
+void GifFile::SeekFromCurrent(long amount)
+{
+	_file.seekg(amount, std::ios_base::cur);
+}
+void GifStartSetSizeAspect(const BYTE gifstart[18])
+{
 	GET16(gifstart[6], g_file_x_dots);
 	GET16(gifstart[8], g_file_y_dots);
 	g_file_colors = 2 << (gifstart[10] & 7);
@@ -832,7 +845,7 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 	if (gifstart[12])  /* calc reasonably close value from gif header */
 	{
 		g_file_aspect_ratio = float((64.0/(double(gifstart[12]) + 15.0))
-						*double(g_file_y_dots)/double(g_file_x_dots));
+			*double(g_file_y_dots)/double(g_file_x_dots));
 		if (g_file_aspect_ratio > g_screen_aspect_ratio-0.03
 			&& g_file_aspect_ratio < g_screen_aspect_ratio + 0.03)
 		{
@@ -843,14 +856,17 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 	{
 		g_file_aspect_ratio = g_screen_aspect_ratio;
 	}
-
+}
+void GifFileReadColormap(const BYTE gifstart[18])
+{
 	if (!g_make_par_flag && (gifstart[10] & 0x80) != 0)
 	{
 		for (int i = 0; i < g_file_colors; i++)
 		{
+			int k = 0;
 			for (int j = 0; j < 3; j++)
 			{
-				k = getc(s_gif_file);
+				k = s_gif->GetChar();
 				if (k < 0)
 				{
 					break;
@@ -864,39 +880,242 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 			}
 		}
 	}
+}
+void FoundInfoId(fractal_info *info, ext_blk_resume_info *resume_info, ext_blk_formula_info *formula_info, ext_blk_ranges_info *ranges_info, ext_blk_mp_info *mp_info, ext_blk_evolver_info *evolver_info, ext_blk_orbits_info *orbits_info, int hdr_offset)
+{
+	// TODO: handle old crap or abort?
+	if (info->version >= 4)
+	{
+		/* first reload main extension g_block, reasons:
+		might be over 255 chars, and thus earlier load might be bad
+		find exact endpoint, so scan back to start of ext blks works
+		*/
+		s_gif->SeekFromEnd(hdr_offset-15);
+		int scan_extend = 1;
+		while (scan_extend)
+		{
+			char temp1[81];
+			if (s_gif->GetChar() != '!' /* if not what we expect just give up */
+				|| s_gif->Read(temp1, 1, 13) != 13
+				|| strncmp(&temp1[2], "fractint", 8))
+			{
+				break;
+			}
+			temp1[13] = 0;
+			int block_type = atoi(&temp1[10]); /* e.g. "fractint002" */
+			int block_len;
+			int data_len;
+			switch (block_type)
+			{
+			case BLOCKTYPE_MAIN_INFO: /* "fractint001", the main extension g_block */
+				if (scan_extend == 2)  /* we've been here before, done now */
+				{
+					scan_extend = 0;
+					break;
+				}
+				load_ext_blk((char *)info, FRACTAL_INFO_SIZE);
+#ifdef XFRACT
+				decode_fractal_info(info, 1);
+#endif
+				scan_extend = 2;
+				/* now we know total extension len, back up to first g_block */
+				s_gif->SeekFromCurrent(-info->tot_extend_len);
+				break;
+			case BLOCKTYPE_RESUME_INFO: /* resume info */
+				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+				resume_info->resume_data = new char[data_len];
+				if (resume_info->resume_data == 0)
+				{
+					info->calculation_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
+				}
+				else
+				{
+					s_gif->SeekFromCurrent(long(-block_len));
+					load_ext_blk(resume_info->resume_data, data_len);
+					resume_info->length = data_len;
+					resume_info->got_data = 1; /* got data */
+				}
+				break;
+			case BLOCKTYPE_FORMULA_INFO: /* formula info */
+				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+				/* check data_len for backward compatibility */
+				s_gif->SeekFromCurrent(long(-block_len));
+				struct formula_info formula_load_info;
+				load_ext_blk((char *)&formula_load_info, data_len);
+				strcpy(formula_info->form_name, formula_load_info.form_name);
+				formula_info->length = data_len;
+				formula_info->got_data = 1; /* got data */
+				if (data_len < sizeof(formula_load_info))  /* must be old GIF */
+				{
+					formula_info->uses_p1 = 1;
+					formula_info->uses_p2 = 1;
+					formula_info->uses_p3 = 1;
+					formula_info->uses_is_mand = 0;
+					formula_info->ismand = 1;
+					formula_info->uses_p4 = 0;
+					formula_info->uses_p5 = 0;
+				}
+				else
+				{
+					formula_info->uses_p1 = formula_load_info.uses_p1;
+					formula_info->uses_p2 = formula_load_info.uses_p2;
+					formula_info->uses_p3 = formula_load_info.uses_p3;
+					formula_info->uses_is_mand = formula_load_info.uses_is_mand;
+					formula_info->ismand = formula_load_info.ismand;
+					formula_info->uses_p4 = formula_load_info.uses_p4;
+					formula_info->uses_p5 = formula_load_info.uses_p5;
+				}
+				break;
+			case BLOCKTYPE_RANGES_INFO: /* ranges info */
+				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+				ranges_info->range_data = new short[data_len/sizeof(short)];
+				if (ranges_info->range_data != 0)
+				{
+					s_gif->SeekFromCurrent(long(-block_len));
+					load_ext_blk((char *)ranges_info->range_data, data_len);
+					ranges_info->length = data_len/sizeof(short);
+					ranges_info->got_data = 1; /* got data */
+				}
+				break;
+			case BLOCKTYPE_MP_INFO: /* extended precision parameters  */
+				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+				mp_info->apm_data = new char[data_len];
+				if (mp_info->apm_data != 0)
+				{
+					s_gif->SeekFromCurrent(long(-block_len));
+					load_ext_blk(mp_info->apm_data, data_len);
+					mp_info->length = data_len;
+					mp_info->got_data = 1; /* got data */
+				}
+				break;
+			case BLOCKTYPE_EVOLVER_INFO: /* evolver params */
+				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+				s_gif->SeekFromCurrent(long(-block_len));
+				evolution_info evolver_load_info;
+				load_ext_blk((char *)&evolver_load_info, data_len);
+				/* XFRACT processing of doubles here */
+#ifdef XFRACT
+				decode_evolver_info(&eload_info, 1);
+#endif
+				evolver_info->length = data_len;
+				evolver_info->got_data = 1; /* got data */
+
+				evolver_info->parameter_range_x = evolver_load_info.parameter_range_x;
+				evolver_info->parameter_range_y = evolver_load_info.parameter_range_y;
+				evolver_info->opx = evolver_load_info.opx;
+				evolver_info->opy = evolver_load_info.opy;
+				evolver_info->odpx = (char)evolver_load_info.odpx;
+				evolver_info->odpy = (char)evolver_load_info.odpy;
+				evolver_info->px = evolver_load_info.px;
+				evolver_info->py = evolver_load_info.py;
+				evolver_info->sxoffs = evolver_load_info.sxoffs;
+				evolver_info->syoffs = evolver_load_info.syoffs;
+				evolver_info->x_dots = evolver_load_info.x_dots;
+				evolver_info->y_dots = evolver_load_info.y_dots;
+				evolver_info->gridsz = evolver_load_info.gridsz;
+				evolver_info->evolving = evolver_load_info.evolving;
+				evolver_info->this_generation_random_seed = evolver_load_info.this_generation_random_seed;
+				evolver_info->fiddle_factor = evolver_load_info.fiddle_factor;
+				evolver_info->ecount = evolver_load_info.ecount;
+				for (int i = 0; i < NUMGENES; i++)
+				{
+					evolver_info->mutate[i] = evolver_load_info.mutate[i];
+				}
+				break;
+			case BLOCKTYPE_ORBITS_INFO: /* orbits parameters  */
+				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+				s_gif->SeekFromCurrent(long(-block_len));
+				struct orbits_info orbits_load_info;
+				load_ext_blk((char *)&orbits_load_info, data_len);
+				/* XFRACT processing of doubles here */
+#ifdef XFRACT
+				decode_orbits_info(&oload_info, 1);
+#endif
+				orbits_info->length = data_len;
+				orbits_info->got_data = 1; /* got data */
+				orbits_info->oxmin = orbits_load_info.oxmin;
+				orbits_info->oxmax = orbits_load_info.oxmax;
+				orbits_info->oymin = orbits_load_info.oymin;
+				orbits_info->oymax = orbits_load_info.oymax;
+				orbits_info->ox3rd = orbits_load_info.ox3rd;
+				orbits_info->oy3rd = orbits_load_info.oy3rd;
+				orbits_info->keep_scrn_coords = orbits_load_info.keep_scrn_coords;
+				orbits_info->drawmode = orbits_load_info.drawmode;
+				break;
+			default:
+				skip_ext_blk(&block_len, &data_len);
+			}
+		}
+	}
+
+	GifClose();
+	g_file_aspect_ratio = g_screen_aspect_ratio; /* if not >= v15, this is correct */
+}
+int find_fractal_info(const char *gif_file, fractal_info *info,
+					  ext_blk_resume_info *resume_info,
+					  ext_blk_formula_info *formula_info,
+					  ext_blk_ranges_info *ranges_info,
+					  ext_blk_mp_info *mp_info,
+					  ext_blk_evolver_info *evolver_info,
+					  ext_blk_orbits_info *orbits_info)
+{
+	/* initialize to no data */
+	resume_info->got_data = 0;
+	formula_info->got_data = 0;
+	ranges_info->got_data = 0;
+	mp_info->got_data = 0;
+	evolver_info->got_data = 0;
+	orbits_info->got_data = 0;
+
+	if (!GifOpen(gif_file))
+	{
+		return -1;
+	}
+
+	BYTE gifstart[18];
+	s_gif->Read(gifstart, 1, 13);
+	if (strncmp((char *)gifstart, "GIF", 3) != 0)  /* not GIF, maybe old .tga? */
+	{
+		GifClose();
+		return -1;
+	}
+
+	GifStartSetSizeAspect(gifstart);
+	GifFileReadColormap(gifstart);
 
 	/* Format of .gif extension blocks is:
-			1 byte    '!', extension g_block identifier
-			1 byte    extension g_block number, 255
-			1 byte    length of id, 11
-			11 bytes   alpha id, "fractintnnn" with fractint, nnn is secondary id
-		n * {
-			1 byte    length of g_block info in bytes
-			x bytes   g_block info
-			}
-			1 byte    0, extension terminator
-		To scan extension blocks, we first look in file at length of fractal_info
-		(the main extension g_block) from end of file, looking for a literal known
-		to be at start of our g_block info.  Then we scan forward a bit, in case
-		the file is from an earlier fractint vsn with shorter fractal_info.
-		If fractal_info is found and is from vsn >= 14, it includes the total length
-		of all extension blocks; we then scan them all first to last to load
-		any optional ones which are present.
-		Defined extension blocks:
-		fractint001     header, always present
-		fractint002     resume info for interrupted resumable image
-		fractint003     additional formula type info
-		fractint004     ranges info
-		fractint005     extended precision parameters
-		fractint006     evolver params
+	1 byte    '!', extension g_block identifier
+	1 byte    extension g_block number, 255
+	1 byte    length of id, 11
+	11 bytes   alpha id, "fractintnnn" with fractint, nnn is secondary id
+	n * {
+	1 byte    length of g_block info in bytes
+	x bytes   g_block info
+	}
+	1 byte    0, extension terminator
+	To scan extension blocks, we first look in file at length of fractal_info
+	(the main extension g_block) from end of file, looking for a literal known
+	to be at start of our g_block info.  Then we scan forward a bit, in case
+	the file is from an earlier fractint vsn with shorter fractal_info.
+	If fractal_info is found and is from vsn >= 14, it includes the total length
+	of all extension blocks; we then scan them all first to last to load
+	any optional ones which are present.
+	Defined extension blocks:
+	fractint001     header, always present
+	fractint002     resume info for interrupted resumable image
+	fractint003     additional formula type info
+	fractint004     ranges info
+	fractint005     extended precision parameters
+	fractint006     evolver params
 	*/
 
 	memset(info, 0, FRACTAL_INFO_SIZE);
-	fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE + 254)/255;
-	fseek(s_gif_file, long(-1-fractinf_len), SEEK_END);
+	int fractinf_len = FRACTAL_INFO_SIZE + (FRACTAL_INFO_SIZE + 254)/255;
+	s_gif->SeekFromEnd(-1-fractinf_len);
 	/* TODO: revise this to read members one at a time so we get natural alignment
-		of fields within the fractal_info structure for the platform */
-	fread(info, 1, FRACTAL_INFO_SIZE, s_gif_file);
+	of fields within the fractal_info structure for the platform */
+	s_gif->Read(info, 1, FRACTAL_INFO_SIZE);
+	int hdr_offset;
 	if (strcmp(INFO_ID, info->info_id) == 0)
 	{
 #ifdef XFRACT
@@ -914,17 +1133,18 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 		while (offset < fractinf_len + 513)  /* allow 512 garbage at eof */
 		{
 			offset += 100; /* go back 100 bytes at a time */
-			fseek(s_gif_file, long(-offset), SEEK_END);
-			fread(tmpbuf, 1, 110, s_gif_file); /* read 10 extra for string compare */
+			s_gif->SeekFromEnd(-offset);
+			s_gif->Read(tmpbuf, 1, 110); /* read 10 extra for string compare */
 			for (int i = 0; i < 100; ++i)
 			{
 				if (!strcmp(INFO_ID, &tmpbuf[i]))  /* found header? */
 				{
 					strcpy(info->info_id, INFO_ID);
-					fseek(s_gif_file, long(hdr_offset = i-offset), SEEK_END);
+					hdr_offset = i-offset;
+					s_gif->SeekFromEnd(hdr_offset);
 					/* TODO: revise this to read members one at a time so we get natural alignment
-						of fields within the fractal_info structure for the platform */
-					fread(info, 1, FRACTAL_INFO_SIZE, s_gif_file);
+					of fields within the fractal_info structure for the platform */
+					s_gif->Read(info, 1, FRACTAL_INFO_SIZE);
 #ifdef XFRACT
 					decode_fractal_info(info, 1);
 #endif
@@ -937,168 +1157,7 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 
 	if (hdr_offset)  /* we found INFO_ID */
 	{
-		// TODO: handle old crap or abort?
-		if (info->version >= 4)
-		{
-			/* first reload main extension g_block, reasons:
-			might be over 255 chars, and thus earlier load might be bad
-			find exact endpoint, so scan back to start of ext blks works
-			*/
-			fseek(s_gif_file, long(hdr_offset-15), SEEK_END);
-			scan_extend = 1;
-			while (scan_extend)
-			{
-				char temp1[81];
-				if (fgetc(s_gif_file) != '!' /* if not what we expect just give up */
-					|| fread(temp1, 1, 13, s_gif_file) != 13
-					|| strncmp(&temp1[2], "fractint", 8))
-				{
-					break;
-				}
-				temp1[13] = 0;
-				block_type = atoi(&temp1[10]); /* e.g. "fractint002" */
-				switch (block_type)
-				{
-				case BLOCKTYPE_MAIN_INFO: /* "fractint001", the main extension g_block */
-					if (scan_extend == 2)  /* we've been here before, done now */
-					{
-						scan_extend = 0;
-						break;
-					}
-					load_ext_blk((char *)info, FRACTAL_INFO_SIZE);
-#ifdef XFRACT
-					decode_fractal_info(info, 1);
-#endif
-					scan_extend = 2;
-					/* now we know total extension len, back up to first g_block */
-					fseek(s_gif_file, 0L-info->tot_extend_len, SEEK_CUR);
-					break;
-				case BLOCKTYPE_RESUME_INFO: /* resume info */
-					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					resume_info_blk->resume_data = new char[data_len];
-					if (resume_info_blk->resume_data == 0)
-					{
-						info->calculation_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
-					}
-					else
-					{
-						fseek(s_gif_file, long(-block_len), SEEK_CUR);
-						load_ext_blk(resume_info_blk->resume_data, data_len);
-						resume_info_blk->length = data_len;
-						resume_info_blk->got_data = 1; /* got data */
-					}
-					break;
-				case BLOCKTYPE_FORMULA_INFO: /* formula info */
-					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					/* check data_len for backward compatibility */
-					fseek(s_gif_file, long(-block_len), SEEK_CUR);
-					load_ext_blk((char *)&fload_info, data_len);
-					strcpy(formula_info->form_name, fload_info.form_name);
-					formula_info->length = data_len;
-					formula_info->got_data = 1; /* got data */
-					if (data_len < sizeof(fload_info))  /* must be old GIF */
-					{
-						formula_info->uses_p1 = 1;
-						formula_info->uses_p2 = 1;
-						formula_info->uses_p3 = 1;
-						formula_info->uses_is_mand = 0;
-						formula_info->ismand = 1;
-						formula_info->uses_p4 = 0;
-						formula_info->uses_p5 = 0;
-					}
-					else
-					{
-						formula_info->uses_p1 = fload_info.uses_p1;
-						formula_info->uses_p2 = fload_info.uses_p2;
-						formula_info->uses_p3 = fload_info.uses_p3;
-						formula_info->uses_is_mand = fload_info.uses_is_mand;
-						formula_info->ismand = fload_info.ismand;
-						formula_info->uses_p4 = fload_info.uses_p4;
-						formula_info->uses_p5 = fload_info.uses_p5;
-					}
-					break;
-				case BLOCKTYPE_RANGES_INFO: /* ranges info */
-					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					ranges_info->range_data = new short[data_len/sizeof(short)];
-					if (ranges_info->range_data != 0)
-					{
-						fseek(s_gif_file, long(-block_len), SEEK_CUR);
-						load_ext_blk((char *)ranges_info->range_data, data_len);
-						ranges_info->length = data_len/sizeof(short);
-						ranges_info->got_data = 1; /* got data */
-					}
-					break;
-				case BLOCKTYPE_MP_INFO: /* extended precision parameters  */
-					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					mp_info->apm_data = new char[data_len];
-					if (mp_info->apm_data != 0)
-					{
-						fseek(s_gif_file, long(-block_len), SEEK_CUR);
-						load_ext_blk(mp_info->apm_data, data_len);
-						mp_info->length = data_len;
-						mp_info->got_data = 1; /* got data */
-						}
-					break;
-				case BLOCKTYPE_EVOLVER_INFO: /* evolver params */
-					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					fseek(s_gif_file, long(-block_len), SEEK_CUR);
-					load_ext_blk((char *)&eload_info, data_len);
-					/* XFRACT processing of doubles here */
-#ifdef XFRACT
-					decode_evolver_info(&eload_info, 1);
-#endif
-					evolver_info->length = data_len;
-					evolver_info->got_data = 1; /* got data */
-
-					evolver_info->parameter_range_x = eload_info.parameter_range_x;
-					evolver_info->parameter_range_y = eload_info.parameter_range_y;
-					evolver_info->opx = eload_info.opx;
-					evolver_info->opy = eload_info.opy;
-					evolver_info->odpx = (char)eload_info.odpx;
-					evolver_info->odpy = (char)eload_info.odpy;
-					evolver_info->px = eload_info.px;
-					evolver_info->py = eload_info.py;
-					evolver_info->sxoffs = eload_info.sxoffs;
-					evolver_info->syoffs = eload_info.syoffs;
-					evolver_info->x_dots = eload_info.x_dots;
-					evolver_info->y_dots = eload_info.y_dots;
-					evolver_info->gridsz = eload_info.gridsz;
-					evolver_info->evolving = eload_info.evolving;
-					evolver_info->this_generation_random_seed = eload_info.this_generation_random_seed;
-					evolver_info->fiddle_factor = eload_info.fiddle_factor;
-					evolver_info->ecount = eload_info.ecount;
-					for (int i = 0; i < NUMGENES; i++)
-					{
-						evolver_info->mutate[i] = eload_info.mutate[i];
-					}
-					break;
-				case BLOCKTYPE_ORBITS_INFO: /* orbits parameters  */
-					skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-					fseek(s_gif_file, long(-block_len), SEEK_CUR);
-					load_ext_blk((char *)&oload_info, data_len);
-					/* XFRACT processing of doubles here */
-#ifdef XFRACT
-					decode_orbits_info(&oload_info, 1);
-#endif
-					orbits_info->length = data_len;
-					orbits_info->got_data = 1; /* got data */
-					orbits_info->oxmin = oload_info.oxmin;
-					orbits_info->oxmax = oload_info.oxmax;
-					orbits_info->oymin = oload_info.oymin;
-					orbits_info->oymax = oload_info.oymax;
-					orbits_info->ox3rd = oload_info.ox3rd;
-					orbits_info->oy3rd = oload_info.oy3rd;
-					orbits_info->keep_scrn_coords = oload_info.keep_scrn_coords;
-					orbits_info->drawmode = oload_info.drawmode;
-					break;
-				default:
-					skip_ext_blk(&block_len, &data_len);
-				}
-			}
-		}
-
-		fclose(s_gif_file);
-		g_file_aspect_ratio = g_screen_aspect_ratio; /* if not >= v15, this is correct */
+		FoundInfoId(info, resume_info, formula_info, ranges_info, mp_info, evolver_info, orbits_info, hdr_offset);
 		return 0;
 	}
 
@@ -1125,24 +1184,24 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 	info->version = 0; /* this forces lots more init at calling end too */
 
 	/* zero means we won */
-	fclose(s_gif_file);
+	GifClose();
 	return 0;
 }
 
 static void load_ext_blk(char *loadptr, int loadlen)
 {
 	int len;
-	while ((len = fgetc(s_gif_file)) > 0)
+	while ((len = s_gif->GetChar()) > 0)
 	{
 		while (--len >= 0)
 		{
 			if (--loadlen >= 0)
 			{
-				*(loadptr++) = (char)fgetc(s_gif_file);
+				*(loadptr++) = (char)s_gif->GetChar();
 			}
 			else
 			{
-				fgetc(s_gif_file); /* discard excess characters */
+				s_gif->GetChar(); /* discard excess characters */
 			}
 		}
 	}
@@ -1153,9 +1212,9 @@ static void skip_ext_blk(int *block_len, int *data_len)
 	int len;
 	*data_len = 0;
 	*block_len = 1;
-	while ((len = fgetc(s_gif_file)) > 0)
+	while ((len = s_gif->GetChar()) > 0)
 	{
-		fseek(s_gif_file, long(len), SEEK_CUR);
+		s_gif->SeekFromCurrent(long(len));
 		*data_len += len;
 		*block_len += len + 1;
 	}
