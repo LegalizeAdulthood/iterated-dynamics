@@ -127,7 +127,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	g_.SetInitialAdapter(-1);
 
 	/* try to find exact match for vid mode */
-	for (int i = 0; i < g_video_table_len; ++i)
+	for (int i = 0; i < g_.VideoTableLength(); ++i)
 	{
 		vident = &g_video_table[i];
 		if (info->x_dots == vident->x_dots && info->y_dots == vident->y_dots
@@ -146,7 +146,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 
 	if (g_.InitialAdapter() == -1) /* try to find very good match for vid mode */
 	{
-		for (int i = 0; i < g_video_table_len; ++i)
+		for (int i = 0; i < g_.VideoTableLength(); ++i)
 		{
 			vident = &g_video_table[i];
 			if (info->x_dots == vident->x_dots && info->y_dots == vident->y_dots
@@ -160,7 +160,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 
 	/* setup table entry for each vid mode, flagged for how well it matches */
 	video_mode_info vid[MAXVIDEOMODES];
-	for (int i = 0; i < g_video_table_len; ++i)
+	for (int i = 0; i < g_.VideoTableLength(); ++i)
 	{
 		g_.SetVideoEntry(g_video_table[i]);
 		tmpflags = VI_EXACT;
@@ -221,10 +221,10 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		/* no exact match or (askvideo=yes and batch=no), and not
 			in makepar mode, talk to user */
 
-		qsort(vid, g_video_table_len, sizeof(vid[0]), video_mode_compare); /* sort modes */
+		qsort(vid, g_.VideoTableLength(), sizeof(vid[0]), video_mode_compare); /* sort modes */
 
-		int *attributes = new int[g_video_table_len];
-		for (int i = 0; i < g_video_table_len; ++i)
+		int *attributes = new int[g_.VideoTableLength()];
+		for (int i = 0; i < g_.VideoTableLength(); ++i)
 		{
 			attributes[i] = 1;
 		}
@@ -291,7 +291,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 
 		int i = full_screen_choice_help(HELPLOADFILE, 0, heading.c_str(),
 			"key...name......................err...xdot..ydot.clr.comment..................",
-			instructions.c_str(), g_video_table_len, 0, attributes,
+			instructions.c_str(), g_.VideoTableLength(), 0, attributes,
 			1, 13, 78, 0, format_item, 0, 0, check_mode_key);
 		delete[] attributes;
 		if (i == -1)

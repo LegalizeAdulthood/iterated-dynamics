@@ -19,12 +19,15 @@ public:
 	}
 	void SetVideoEntryXDots(int value)	{ _videoEntry.x_dots = value; }
 	void SetVideoEntryColors(int value) { _videoEntry.colors = value; }
+	int VideoTableLength() const		{ return _videoTableLength; }
+	void IncrementVideoTableLength()	{ _videoTableLength++; }
 
 private:
 	int _adapter;
 	int _initialAdapter;
 	VIDEOINFO _videoEntry;
 	VIDEOINFO _videoTable[MAXVIDEOMODES];
+	int _videoTableLength;
 };
 
 extern Globals g_;
