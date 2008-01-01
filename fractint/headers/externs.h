@@ -174,7 +174,6 @@ extern void					(*g_trig3_d)();
 extern double				g_magnitude;
 extern unsigned long		g_magnitude_limit;
 extern MajorMethodType			g_major_method;
-extern bool					g_map_set;
 extern int					g_math_error_count;
 extern double				g_math_tolerance[2];
 extern long					g_max_count;

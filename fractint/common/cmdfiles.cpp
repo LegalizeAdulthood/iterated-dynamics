@@ -387,7 +387,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_show_file = SHOWFILE_DONE;
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	g_initial_cycle_limit = 55;						/* spin-DAC default speed limit */
-	g_map_set = false;								/* no map= name active */
+	g_.SetMapSet(false);								/* no map= name active */
 	delete g_.MapDAC();
 	g_.SetMapDAC(0);
 
@@ -3225,7 +3225,7 @@ static int parse_colors(char *value)
 		}
 		if (g_display_3d)
 		{
-			g_map_set = true;
+			g_.SetMapSet(true);
 		}
 		else
 		{

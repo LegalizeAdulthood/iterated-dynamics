@@ -52,7 +52,6 @@ const std::string GLASSES1_MAP = "glasses1.map";
 const std::string GLASSES2_MAP = "glasses2.map";
 
 std::string g_map_name = "";
-bool g_map_set = false;
 bool g_julibrot;   /* flag for julibrot */
 
 /* These need to be global because F6 exits full_screen_prompt() */
@@ -80,7 +79,7 @@ static  int check_gfe_key(int curkey, int choice);
 static  void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int startrow, int startcol);
 static  void format_parmfile_line(int, char *);
 static  int get_light_params();
-static  int check_mapfile();
+static bool check_mapfile();
 static  int get_funny_glasses_params();
 static int prompt_checkkey(int curkey);
 static int prompt_checkkey_scroll(int curkey);
@@ -3465,60 +3464,60 @@ static int get_light_params()
 /* --------------------------------------------------------------------- */
 
 
-static int check_mapfile()
+static bool check_mapfile()
 {
-	int askflag = 0;
-	int i;
-	char temp1[256];
-
 	if (g_dont_read_color)
 	{
-		return 0;
+		return false;
 	}
+	char temp1[256];
 	strcpy(temp1, "*");
-	if (g_map_set)
+	if (g_.MapSet())
 	{
 		strcpy(temp1, g_map_name.c_str());
 	}
-	if (!(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
+	bool askflag;
+	if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 	{
-		askflag = 1;
+		merge_path_names(temp1, s_funny_glasses_map_name, true);
+		askflag = false;
 	}
 	else
 	{
-		merge_path_names(temp1, s_funny_glasses_map_name, true);
+		askflag = true;
 	}
 
 	while (true)
 	{
 		if (askflag)
 		{
-			i = field_prompt_help(-1, "Enter name of .MAP file to use,\n"
-				"or '*' to use palette from the image to be loaded.",
-				0, temp1, 60, 0);
-			if (i < 0)
+			if (field_prompt_help(-1, "Enter name of .MAP file to use,\n"
+					"or '*' to use palette from the image to be loaded.",
+					0, temp1, 60, 0) < 0)
 			{
-				return -1;
+				return true;
 			}
 			if (temp1[0] == '*')
 			{
-				g_map_set = false;
+				g_.SetMapSet(false);
 				break;
 			}
 		}
+
+		// TODO: replace this with check for valid map file in temp1
 		g_.OldDAC() = g_.DAC(); /* save the DAC */
 		bool status = validate_luts(temp1);
 		g_.DAC() = g_.OldDAC(); /* restore the DAC */
 		if (status)  /* Oops, somethings wrong */
 		{
-			askflag = 1;
+			askflag = true;
 			continue;
 		}
-		g_map_set = true;
+		g_.SetMapSet(true);
 		merge_path_names(g_map_name, temp1, true);
 		break;
 	}
-	return 0;
+	return false;
 }
 
 static int get_funny_glasses_params()

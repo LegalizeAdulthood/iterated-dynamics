@@ -19,9 +19,12 @@
 #include "ThreeDimensionalState.h"
 
 /* Use these palette indices for red/blue - same on ega/vga */
-#define PAL_BLUE    1
-#define PAL_RED 2
-#define PAL_MAGENTA 3
+enum
+{
+	PAL_BLUE	= 1,
+	PAL_RED		= 2,
+	PAL_MAGENTA = 3
+};
 
 int g_which_image;
 int g_xx_adjust1;
@@ -535,7 +538,7 @@ void plot_setup()
 	}
 	g_yy_adjust = int(-(g_3d_state.y_trans()*double(g_y_dots))/100);
 
-	if (g_map_set)
+	if (g_.MapSet())
 	{
 		validate_luts(g_map_name); /* read the palette file */
 		if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)

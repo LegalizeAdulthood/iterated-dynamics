@@ -44,6 +44,8 @@ public:
 	void DecreaseDACSleepCount();
 	ColorStateType ColorState() const;
 	void SetColorState(ColorStateType value);
+	bool MapSet() const;
+	void SetMapSet(bool value);
 
 private:
 	GlobalImpl *_impl;
