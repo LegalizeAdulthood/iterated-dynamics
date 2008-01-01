@@ -28,12 +28,12 @@ public:
 			int numChoices, char **choices, const int *attributes,
 			int boxWidth, int boxDepth, int columnWidth, int current,
 			void (*formatItem)(int, char*), char *speedString,
-			int (*speedPrompt)(int, int, int, char *, int), int (*checkKey)(int, int))
+			int (*speedPrompt)(int, int, int, char *, int), int (*checkKeystroke)(int, int))
 		: AbstractFullScreenChooser(options, heading, heading2, instructions,
 			numChoices, choices, attributes,
 			boxWidth, boxDepth, columnWidth, current,
 			formatItem, speedString,
-			speedPrompt, checkKey)
+			speedPrompt, checkKeystroke)
 	{
 	}
 	virtual ~ProductionFullScreenChooser()
@@ -68,7 +68,7 @@ AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
 		int numChoices, char **choices, const int *attributes,
 		int boxWidth, int boxDepth, int columnWidth, int current,
 		void (*formatItem)(int, char*), char *speedString,
-		int (*speedPrompt)(int, int, int, char *, int), int (*checkKey)(int, int))
+		int (*speedPrompt)(int, int, int, char *, int), int (*checkKeystroke)(int, int))
 	: _options(options),
 	_heading(heading),
 	_heading2(heading2),
@@ -83,7 +83,7 @@ AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
 	_formatItem(formatItem),
 	_speedString(speedString),
 	_speedPrompt(speedPrompt),
-	_checkKey(checkKey)
+	_checkKeystroke(checkKeystroke)
 {
 }
 
@@ -451,9 +451,9 @@ int AbstractFullScreenChooser::Execute()
 			}
 			break;
 		default:
-			if (_checkKey)
+			if (_checkKeystroke)
 			{
-				int ret2 = (*_checkKey)(current_key, _current);
+				int ret2 = (*_checkKeystroke)(current_key, _current);
 				if (ret2 != -1 && ret2 != 0)
 				{
 					return ret2;
@@ -786,7 +786,7 @@ void AbstractFullScreenChooser::process_speed_string(char *speedstring, char **c
 return is:
 	n >= 0 for choice n selected,
 	-1 for escape
-	k for check_key routine return value k (if not 0 nor -1)
+	k for check_keystroke routine return value k (if not 0 nor -1)
 	speedstring[0] != 0 on return if string is present
 */
 int full_screen_choice(
@@ -805,13 +805,13 @@ int full_screen_choice(
 	void (*format_item)(int, char*),	/* routine to display an item or 0 */
 	char *speed_string,					/* returned speed key value, or 0 */
 	int (*speed_prompt)(int, int, int, char *, int), /* routine to display prompt or 0 */
-	int (*check_key)(int, int)			/* routine to check keystroke or 0 */
+	int (*check_keystroke)(int, int)			/* routine to check keystroke or 0 */
 	)
 {
 	return ProductionFullScreenChooser(options, heading, heading2, instructions,
 		num_choices, choices, attributes,
 		box_width, box_depth, column_width, current,
-		format_item, speed_string, speed_prompt, check_key).Execute();
+		format_item, speed_string, speed_prompt, check_keystroke).Execute();
 }
 
 int full_screen_choice(int options,
@@ -821,14 +821,14 @@ int full_screen_choice(int options,
 	int box_width, int box_depth, int column_width, int current,
 	void (*format_item)(int item, char *text),
 	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
-	int (*check_key)(int, int))
+	int (*check_keystroke)(int, int))
 {
 	return full_screen_choice(options, heading.c_str(),
 		heading2.length() ? heading2.c_str() : 0,
 		instructions.length() ? instructions.c_str() : 0,
 		num_choices, choices, attributes,
 		box_width, box_depth, column_width, current,
-		format_item, speed_string, speed_prompt, check_key);
+		format_item, speed_string, speed_prompt, check_keystroke);
 }
 
 int full_screen_choice_help(int help_mode, int options,
@@ -837,12 +837,12 @@ int full_screen_choice_help(int help_mode, int options,
 	int box_width, int box_depth, int column_width, int current,
 	void (*format_item)(int, char*),
 	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
-	int (*check_key)(int, int))
+	int (*check_keystroke)(int, int))
 {
 	int result;
 	HelpModeSaver saved_help(help_mode);
 	result = full_screen_choice(options, heading, heading2, instr,
 		num_choices, choices, attributes, box_width, box_depth, column_width,
-		current, format_item, speed_string, speed_prompt, check_key);
+		current, format_item, speed_string, speed_prompt, check_keystroke);
 	return result;
 }

@@ -58,7 +58,7 @@ private:
 	void (*_formatItem)(int, char*);
 	char *_speedString;
 	int (*_speedPrompt)(int, int, int, char *, int);
-	int (*_checkKey)(int, int);
+	int (*_checkKeystroke)(int, int);
 	int _titleLines;
 	int _titleWidth;
 };
@@ -70,18 +70,18 @@ extern int full_screen_choice(int options,
 	int box_width, int box_depth, int column_width, int current,
 	void (*format_item)(int item, char *text),
 	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
-	int (*check_key)(int, int));
+	int (*check_keystroke)(int, int));
 extern int full_screen_choice(int options,
 	const char *heading, const char *heading2, const char *instructions,
 	int num_choices, char **choices, const int *attributes,
 	int box_width, int box_depth, int column_width, int current,
 	void (*format_item)(int, char *),
 	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
-	int (*check_key)(int, int));
+	int (*check_keystroke)(int, int));
 extern int full_screen_choice_help(int help_mode, int options,
 	const char *heading, const char *heading2, const char *instructions,
 	int num_choices, char **choices, const int *attributes,
 	int box_width, int box_depth, int column_width, int current,
 	void (*format_item)(int, char *),
 	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
-	int (*check_key)(int, int));
+	int (*check_keystroke)(int, int));

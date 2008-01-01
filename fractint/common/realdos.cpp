@@ -795,7 +795,7 @@ int input_field(
 		int len,              /* field length (declare as 1 larger for \0) */
 		int row,              /* display row */
 		int col,              /* display column */
-		int (*check_key)(int key)  /* routine to check non data keys, or 0 */
+		int (*check_keystroke)(int key)  /* routine to check non data keys, or 0 */
 		)
 {
 	char savefld[81];
@@ -903,9 +903,9 @@ int input_field(
 		default:
 			if (nonalpha(curkey))
 			{
-				if (check_key)
+				if (check_keystroke)
 				{
-					ret = (*check_key)(curkey);
+					ret = (*check_keystroke)(curkey);
 					if (ret != 0)
 					{
 						goto inpfld_end;
@@ -994,7 +994,7 @@ int field_prompt(
 		char *instr,    /* additional instructions or 0 */
 		char *fld,          /* the field itself */
 		int len,            /* field length (declare as 1 larger for \0) */
-		int (*check_key)(int key)   /* routine to check non data keys, or 0 */
+		int (*check_keystroke)(int key)   /* routine to check non data keys, or 0 */
 		)
 {
 	char *charptr;
@@ -1070,7 +1070,7 @@ int field_prompt(
 		put_string_center(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
 	}
 	return input_field(0, C_PROMPT_INPUT, fld, len,
-				titlerow + titlelines + 1, promptcol, check_key);
+				titlerow + titlelines + 1, promptcol, check_keystroke);
 }
 
 

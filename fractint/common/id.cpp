@@ -654,14 +654,17 @@ int check_key()
 		{
 			orbit_scrub();
 		}
-		if (key != 'o' && key != 'O')
+		if (key == 'o' || key == 'O')
+		{
+			driver_get_key();
+			if (!driver_diskp())
+			{
+				g_show_orbit = !g_show_orbit;
+			}
+		}
+		else
 		{
 			return -1;
-		}
-		driver_get_key();
-		if (!driver_diskp())
-		{
-			g_show_orbit = !g_show_orbit;
 		}
 	}
 	return 0;

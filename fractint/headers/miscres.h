@@ -11,7 +11,6 @@ extern void convert_center_mag(double *, double *, LDBL *, double *, double *, d
 extern void convert_corners(double, double, LDBL, double, double, double);
 extern void convert_center_mag_bf(bf_t, bf_t, LDBL *, double *, double *, double *);
 extern void convert_corners_bf(bf_t, bf_t, LDBL, double, double, double);
-extern int check_key();
 extern void show_function(char *message);
 extern int set_function_array(int, const char *);
 extern void set_trig_pointers(int);

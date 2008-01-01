@@ -172,7 +172,9 @@ int gifview()
 				close_file();
 				return -1;
 			}
-			if ((!g_display_3d || (g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE))
+			if ((!g_display_3d
+					|| (g_3d_state.glasses_type() != STEREO_ALTERNATE
+						&& g_3d_state.glasses_type() != STEREO_SUPERIMPOSE))
 				&& !g_dont_read_color)
 			{
 				/* TODO: don't right shift color table by 2 */

@@ -19,6 +19,7 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "fracsubr.h"
+#include "framain2.h"
 #include "jiim.h"
 #include "lorenz.h"
 #include "miscres.h"

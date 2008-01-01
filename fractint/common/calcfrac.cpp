@@ -36,6 +36,7 @@
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
+#include "framain2.h"
 #include "line3d.h"
 #include "lorenz.h"
 #include "miscfrac.h"
@@ -2275,8 +2276,7 @@ void StandardFractal::set_final_color_and_plot()
 }
 int StandardFractal::check_if_interrupted()
 {
-	int result;
-	result = g_color;
+	int result = g_color;
 	g_input_counter -= abs(int(g_real_color_iter));
 	if (g_input_counter <= 0)
 	{

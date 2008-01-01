@@ -20,6 +20,7 @@
 #include "fpu.h"
 #include "fracsubr.h"
 #include "fractals.h"
+#include "framain2.h"
 #include "loadmap.h"
 #include "miscfrac.h"
 #include "miscres.h"
