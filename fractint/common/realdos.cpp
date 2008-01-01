@@ -1137,24 +1137,11 @@ int check_video_mode_key(int option, int k)
 	}
 	if (k != 0)
 	{
-		if (option == 0)  /* check resident video mode table */
+		for (i = 0; i < g_.VideoTableLength(); ++i)
 		{
-			for (i = 0; i < MAXVIDEOMODES; ++i)
+			if (g_.VideoTable(i).keynum == k)
 			{
-				if (g_.VideoTable(i).keynum == k)
-				{
-					return i;
-				}
-			}
-		}
-		else  /* check full g_video_table */
-		{
-			for (i = 0; i < g_.VideoTableLength(); ++i)
-			{
-				if (g_.VideoTable(i).keynum == k)
-				{
-					return i;
-				}
+				return i;
 			}
 		}
 	}
