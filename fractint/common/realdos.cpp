@@ -239,8 +239,8 @@ int show_temp_message(const char *msgparm)
 		}
 	}
 
-	find_special_colors(); /* get g_color_dark & g_color_medium set */
-	driver_display_string(0, 0, g_color_medium, g_color_dark, msg);
+	g_.DAC().FindSpecialColors(); /* get g_.DAC().Dark() & g_color_medium set */
+	driver_display_string(0, 0, g_.DAC().Medium(), g_.DAC().Dark(), msg);
 	g_sx_offset = save_sxoffs;
 	g_sy_offset = save_syoffs;
 

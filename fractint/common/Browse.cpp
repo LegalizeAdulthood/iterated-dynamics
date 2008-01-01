@@ -627,8 +627,8 @@ int look_get_window()
 		floattobf(bt_e, cvt->e);
 		floattobf(bt_f, cvt->f);
 	}
-	find_special_colors();
-	box_color = g_color_medium;
+	g_.DAC().FindSpecialColors();
+	box_color = g_.DAC().Medium();
 
 rescan:  /* entry for changed browse parms */
 	time(&lastime);
@@ -725,7 +725,7 @@ rescan:  /* entry for changed browse parms */
 					lastime = thistime;
 					toggle = 1- toggle;
 				}
-				draw_window(toggle ? g_color_bright : g_color_dark, &winlist);   /* flash current window */
+				draw_window(toggle ? g_.DAC().Bright() : g_.DAC().Dark(), &winlist);   /* flash current window */
 #ifdef XFRACT
 				blinks++;
 #endif
@@ -733,7 +733,7 @@ rescan:  /* entry for changed browse parms */
 #ifdef XFRACT
 			if ((blinks & 1) == 1)   /* Need an odd # of blinks, so next one leaves box turned off */
 			{
-				draw_window(g_color_bright, &winlist);
+				draw_window(g_.DAC().Bright(), &winlist);
 			}
 #endif
 
@@ -802,7 +802,7 @@ rescan:  /* entry for changed browse parms */
 			case 'L':
 #ifdef XFRACT
 				/* Need all boxes turned on, turn last one back on. */
-				draw_window(g_color_bright, &winlist);
+				draw_window(g_.DAC().Bright(), &winlist);
 #endif
 				g_browse_state.set_auto_browse(false);
 				done = 2;
@@ -922,7 +922,7 @@ rescan:  /* entry for changed browse parms */
 				{
 #ifdef XFRACT
 					/* Turn all boxes off */
-					draw_window(g_color_bright, &winlist);
+					draw_window(g_.DAC().Bright(), &winlist);
 #else
 					g_zoomBox.clear();
 #endif

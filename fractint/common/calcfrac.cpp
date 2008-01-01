@@ -3669,18 +3669,18 @@ void PerformWorkList::get_top_work_list_item()
 
 void PerformWorkList::show_dot_start()
 {
-	find_special_colors();
+	g_.DAC().FindSpecialColors();
 	switch (g_auto_show_dot)
 	{
 	case AUTOSHOWDOT_DARK:
-		s_show_dot_color = g_color_dark % g_colors;
+		s_show_dot_color = g_.DAC().Dark() % g_colors;
 		break;
 	case AUTOSHOWDOT_MEDIUM:
-		s_show_dot_color = g_color_medium % g_colors;
+		s_show_dot_color = g_.DAC().Medium() % g_colors;
 		break;
 	case AUTOSHOWDOT_BRIGHT:
 	case AUTOSHOWDOT_AUTO:
-		s_show_dot_color = g_color_bright % g_colors;
+		s_show_dot_color = g_.DAC().Bright() % g_colors;
 		break;
 	default:
 		s_show_dot_color = g_show_dot % g_colors;

@@ -247,4 +247,3 @@ ColormapTable &Globals::OldDAC()
 {
 	return _impl->OldDAC();
 }
-

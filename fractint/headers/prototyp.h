@@ -30,7 +30,6 @@ extern long cdecl divide(long, long, int);
 extern long cdecl multiply(long, long, int);
 extern void put_line(int, int, int, BYTE *);
 extern void get_line(int, int, int, BYTE *);
-extern void find_special_colors();
 extern long read_ticker();
 
 /*  fractint -- C file prototypes */

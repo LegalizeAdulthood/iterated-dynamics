@@ -4,10 +4,15 @@ class ColormapTable
 {
 public:
 	ColormapTable()
+		: _darkIndex(0),
+		_mediumIndex(0),
+		_brightIndex(0)
 	{
 		for (int i = 0; i < 256; i++)
 		{
-			_map[i][0] = _map[i][1] = _map[i][2] = 0;
+			_map[i][0] = 0;
+			_map[i][1] = 0;
+			_map[i][2] = 0;
 		}
 	}
 	ColormapTable(const ColormapTable &rhs)
@@ -50,11 +55,18 @@ public:
 			_map[i][0] = _map[i][1] = _map[i][2] = 0;
 		}
 	}
+	void FindSpecialColors();
+	int Dark() const					{ return _darkIndex; }
+	int Medium() const					{ return _mediumIndex; }
+	int Bright() const					{ return _brightIndex; }
 
 	friend bool operator==(const ColormapTable &lhs, const ColormapTable &rhs);
 
 private:
 	BYTE _map[256][3];
+	int _darkIndex;
+	int _mediumIndex;
+	int _brightIndex;
 };
 
 inline bool operator==(const ColormapTable &lhs, const ColormapTable &rhs)
