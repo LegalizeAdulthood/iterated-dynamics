@@ -3286,26 +3286,26 @@ static int parse_colors(char *value)
 					{
 						k -= ('_'-36);
 					}
-					g_dac_box.SetChannel(i, j, BYTE(k));
+					g_.DAC().SetChannel(i, j, BYTE(k));
 					if (smooth)
 					{
 						int spread = smooth + 1;
 						int start = i - spread;
 						int cnum = 0;
-						if ((k - int(g_dac_box.Channel(start, j))) == 0)
+						if ((k - int(g_.DAC().Channel(start, j))) == 0)
 						{
 							while (++cnum < spread)
 							{
-								g_dac_box.SetChannel(start + cnum, j, BYTE(k));
+								g_.DAC().SetChannel(start + cnum, j, BYTE(k));
 							}
 						}
 						else
 						{
 							while (++cnum < spread)
 							{
-								g_dac_box.SetChannel(start + cnum, j,
-									BYTE((cnum*g_dac_box.Channel(i, j)
-												+ (i - (start + cnum))*g_dac_box.Channel(start, j)
+								g_.DAC().SetChannel(start + cnum, j,
+									BYTE((cnum*g_.DAC().Channel(i, j)
+												+ (i - (start + cnum))*g_.DAC().Channel(start, j)
 												+ spread/2)
 											/(BYTE) spread));
 							}
@@ -3322,13 +3322,13 @@ static int parse_colors(char *value)
 		}
 		while (i < 256)   /* zap unset entries */
 		{
-			g_dac_box.Set(i, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100);
+			g_.DAC().Set(i, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100);
 			++i;
 		}
 		g_color_state = COLORSTATE_UNKNOWN;
 	}
 	g_color_preloaded = true;
-	g_old_dac_box = g_dac_box;
+	g_old_dac_box = g_.DAC();
 	return 0;
 
 badcolor:

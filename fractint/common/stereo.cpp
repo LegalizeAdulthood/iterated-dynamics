@@ -201,7 +201,7 @@ int auto_stereo()
 
 	HelpModeSaver saved_help(RDSKEYS);
 	driver_save_graphics();                      /* save graphics image */
-	s_save_dac = g_dac_box;  /* save colors */
+	s_save_dac = g_.DAC();  /* save colors */
 
 	int ret = 0;
 	if (g_x_dots > OLD_MAX_PIXELS)
@@ -323,7 +323,7 @@ int auto_stereo()
 
 exit_stereo:
 	driver_restore_graphics();
-	g_dac_box = s_save_dac;
+	g_.DAC() = s_save_dac;
 	spindac(0, 1);
 	return ret;
 }

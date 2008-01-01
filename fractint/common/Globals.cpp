@@ -35,6 +35,8 @@ public:
 	void SetVideoTable(int i, const VIDEOINFO &value) { _videoTable[i] = value; }
 	bool GoodMode() const				{ return _goodMode; }
 	void SetGoodMode(bool value)		{ _goodMode = value; }
+	ColormapTable &DAC()				{ return _dac; }
+	const ColormapTable &DAC() const	{ return _dac; }
 
 	// DAC/colormap stuff
 
@@ -44,9 +46,9 @@ private:
 	VIDEOINFO _videoEntry;
 	std::vector<VIDEOINFO> _videoTable;
 	bool _goodMode;
+	ColormapTable _dac;
 };
 
-ColormapTable g_dac_box;
 ColormapTable *g_map_dac_box;					/* map= (default colors) */
 ColormapTable g_old_dac_box;
 int g_save_dac;
@@ -65,7 +67,8 @@ GlobalImpl::GlobalImpl()
 	_initialAdapter(0),
 	_videoEntry(),
 	_videoTable(MAXVIDEOMODES),
-	_goodMode(false)
+	_goodMode(false),
+	_dac()
 {
 }
 
@@ -150,4 +153,12 @@ bool Globals::GoodMode() const
 void Globals::SetGoodMode(bool value)
 {
 	_impl->SetGoodMode(value);
+}
+ColormapTable &Globals::DAC()
+{
+	return _impl->DAC();
+}
+const ColormapTable &Globals::DAC() const
+{
+	return _impl->DAC();
 }

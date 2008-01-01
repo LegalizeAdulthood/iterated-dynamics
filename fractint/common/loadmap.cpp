@@ -59,12 +59,12 @@ bool validate_luts(const char *fn)
 
 		/** load global dac values **/
 		// TODO: review when COLOR_CHANNEL_MAX != 63
-		g_dac_box.Set(index, map_to_dac(r), map_to_dac(g), map_to_dac(b));
+		g_.DAC().Set(index, map_to_dac(r), map_to_dac(g), map_to_dac(b));
 	}
 	f.close();
 	while (index < 256)   /* zap unset entries */
 	{
-		g_dac_box.Set(index, 40, 40, 40);
+		g_.DAC().Set(index, 40, 40, 40);
 		++index;
 	}
 	g_color_state = COLORSTATE_MAP;
@@ -89,6 +89,6 @@ void set_color_palette_name(const std::string &filename)
 			return;
 		}
 	}
-	*g_map_dac_box = g_dac_box;
+	*g_map_dac_box = g_.DAC();
 }
 

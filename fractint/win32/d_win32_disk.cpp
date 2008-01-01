@@ -175,14 +175,14 @@ static void initdacbox()
 	int i;
 	for (i = 0; i < 256; i++)
 	{
-		g_dac_box.Set(i,
+		g_.DAC().Set(i,
 			BYTE((i >> 5)*8 + 7),
 			BYTE((((i + 16) & 28) >> 2)*8 + 7),
 			BYTE((((i + 2) & 3))*16 + 15));
 	}
-	g_dac_box.Set(0, 0, 0, 0);
-	g_dac_box.Set(1, 255, 255, 255);
-	g_dac_box.Set(2, 190, 255, 255);
+	g_.DAC().Set(0, 0, 0, 0);
+	g_.DAC().Set(1, 255, 255, 255);
+	g_.DAC().Set(2, 190, 255, 255);
 }
 
 /* handle_help_tab
@@ -317,7 +317,7 @@ int Win32DiskDriver::read_palette()
 	}
 	for (int i = 0; i < 256; i++)
 	{
-		g_dac_box.Set(i, m_clut[i][0], m_clut[i][1], m_clut[i][2]);
+		g_.DAC().Set(i, m_clut[i][0], m_clut[i][1], m_clut[i][2]);
 	}
 	return 0;
 }
@@ -344,9 +344,9 @@ int Win32DiskDriver::write_palette()
 	ODS("disk_write_palette");
 	for (i = 0; i < 256; i++)
 	{
-		m_clut[i][0] = g_dac_box.Red(i);
-		m_clut[i][1] = g_dac_box.Green(i);
-		m_clut[i][2] = g_dac_box.Blue(i);
+		m_clut[i][0] = g_.DAC().Red(i);
+		m_clut[i][1] = g_.DAC().Green(i);
+		m_clut[i][2] = g_.DAC().Blue(i);
 	}
 
 	return 0;

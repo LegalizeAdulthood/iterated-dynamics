@@ -872,7 +872,7 @@ void GifFileReadColormap(const BYTE gifstart[18])
 					break;
 				}
 				/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
-				g_dac_box.SetChannel(i, j, BYTE(k >> 2));
+				g_.DAC().SetChannel(i, j, BYTE(k >> 2));
 			}
 			if (k < 0)
 			{

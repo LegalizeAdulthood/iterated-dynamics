@@ -380,7 +380,7 @@ void history_save_info()
 	current.oy3rd = g_orbit_y_3rd;
 	current.keep_screen_coordinates = g_keep_screen_coords;
 	current.draw_mode = g_orbit_draw_mode;
-	current.dac = g_dac_box;
+	current.dac = g_.DAC();
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_FORMULA:
@@ -568,7 +568,7 @@ void history_restore_info()
 	}
 	g_orbit_draw_mode = int(last.draw_mode);
 	g_user_float_flag = (g_current_fractal_specific->isinteger != 0);
-	g_dac_box = last.dac;
+	g_.DAC() = last.dac;
 	g_old_dac_box = last.dac;
 	if (g_map_dac_box)
 	{
