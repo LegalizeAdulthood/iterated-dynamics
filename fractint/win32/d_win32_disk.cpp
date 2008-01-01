@@ -278,8 +278,8 @@ bool Win32DiskDriver::initialize(int &argc, char **argv)
 int Win32DiskDriver::resize()
 {
 	m_frame.resize(m_wintext.max_width(), m_wintext.max_height());
-	if ((g_.VideoTable(g_.Adapter()).x_dots == m_width)
-		&& (g_.VideoTable(g_.Adapter()).y_dots == m_height))
+	const VIDEOINFO &video = g_.VideoTable(g_.Adapter());
+	if ((video.x_dots == m_width) && (video.y_dots == m_height))
 	{
 		return 0;
 	}
