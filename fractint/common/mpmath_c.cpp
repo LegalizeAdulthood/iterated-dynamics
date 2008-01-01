@@ -17,6 +17,7 @@
      (203) 276-9721
 */
 #include <algorithm>
+#include <string>
 
 #include "port.h"
 #include "prototyp.h"

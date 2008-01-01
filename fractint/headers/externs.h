@@ -203,7 +203,6 @@ extern int					g_next_saved_incr;
 extern bool					g_no_magnitude_calculation;
 extern bool					g_no_bof;
 extern int					g_num_affine;
-extern unsigned				g_num_colors;
 extern const int			g_num_function_list;
 extern int					g_num_fractal_types;
 extern bool					g_next_screen_flag;

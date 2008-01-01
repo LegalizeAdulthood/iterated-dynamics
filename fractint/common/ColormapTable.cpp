@@ -1,3 +1,5 @@
+#include <string>
+
 #include "port.h"
 #include "id.h"
 #include "cmplx.h"

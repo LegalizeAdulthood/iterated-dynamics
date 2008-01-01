@@ -130,6 +130,7 @@ double wide number can then be ignored.
 /*                                                                      */
 /************************************************************************/
 #include <algorithm>
+#include <string>
 
 #include <string.h>
 
