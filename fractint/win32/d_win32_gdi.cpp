@@ -343,14 +343,14 @@ int GDIDriver::resize()
 /*----------------------------------------------------------------------
 * read_palette
 *
-*	Reads the current video palette into g_dac_box.
+*	Reads the current video palette into g_.DAC().
 *
 *
 * Results:
 *	None.
 *
 * Side effects:
-*	Fills in g_dac_box.
+*	Fills in g_.DAC().
 *
 *----------------------------------------------------------------------
 */
@@ -363,7 +363,7 @@ int GDIDriver::read_palette()
 *----------------------------------------------------------------------
 *
 * write_palette --
-*	Writes g_dac_box into the video palette.
+*	Writes g_.DAC() into the video palette.
 *
 *
 * Results:

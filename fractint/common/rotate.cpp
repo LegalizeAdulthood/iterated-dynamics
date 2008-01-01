@@ -119,15 +119,15 @@ void rotate(int direction)      /* rotate-the-palette routine */
 						/* TODO: revirew for case when COLOR_CHANNEL_MAX != 63 */
 						incr = 1;
 						fstep = ((fsteps[fkey-1]* (rand15() >> 8)) >> 6) + 1;
-						fromred   = g_dac_box.Red(last);
-						fromgreen = g_dac_box.Green(last);
-						fromblue  = g_dac_box.Blue(last);
+						fromred   = g_.DAC().Red(last);
+						fromgreen = g_.DAC().Green(last);
+						fromblue  = g_.DAC().Blue(last);
 						tored     = rand15() >> 9;
 						togreen   = rand15() >> 9;
 						toblue    = rand15() >> 9;
 					}
 					/* TODO: revirew for case when COLOR_CHANNEL_MAX != 63 */
-					g_dac_box.Set(jstep,
+					g_.DAC().Set(jstep,
 						BYTE(fromred   + (((tored    - fromred)*incr)/fstep)),
 						BYTE(fromgreen + (((togreen - fromgreen)*incr)/fstep)),
 						BYTE(fromblue  + (((toblue  - fromblue)*incr)/fstep)));
@@ -279,14 +279,14 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			}
 			for (int i = 1; i < 256; i++)
 			{
-				g_dac_box.SetChannel(i, change_color, BYTE(g_dac_box.Channel(i, change_color) + change_direction));
-				if (g_dac_box.Channel(i, change_color) == COLOR_CHANNEL_MAX+1)
+				g_.DAC().SetChannel(i, change_color, BYTE(g_.DAC().Channel(i, change_color) + change_direction));
+				if (g_.DAC().Channel(i, change_color) == COLOR_CHANNEL_MAX+1)
 				{
-					g_dac_box.SetChannel(i, change_color, COLOR_CHANNEL_MAX);
+					g_.DAC().SetChannel(i, change_color, COLOR_CHANNEL_MAX);
 				}
-				if (g_dac_box.Channel(i, change_color) == 255)
+				if (g_.DAC().Channel(i, change_color) == 255)
 				{
-					g_dac_box.SetChannel(i, change_color, 0);
+					g_.DAC().SetChannel(i, change_color, 0);
 				}
 			}
 			change_color = -1;				/* clear flags for next time */
@@ -364,7 +364,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			break;
 
 		case FIK_HOME:                     /* restore palette */
-			g_dac_box = g_old_dac_box;
+			g_.DAC() = g_old_dac_box;
 			pause_rotate();              /* pause */
 			break;
 
@@ -420,11 +420,11 @@ static void pause_rotate()               /* pause-the-rotate routine */
 
 	/* set border, wait for a key */
 	int olddaccount = g_dac_count;
-	BYTE olddac0 = g_dac_box.Red(0);
-	BYTE olddac1 = g_dac_box.Green(0);
-	BYTE olddac2 = g_dac_box.Blue(0);
+	BYTE olddac0 = g_.DAC().Red(0);
+	BYTE olddac1 = g_.DAC().Green(0);
+	BYTE olddac2 = g_.DAC().Blue(0);
 	g_dac_count = 256;
-	g_dac_box.Set(0, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4);
+	g_.DAC().Set(0, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4);
 	spindac(0, 1);                     /* show white border */
 	if (driver_diskp())
 	{
@@ -436,7 +436,7 @@ static void pause_rotate()               /* pause-the-rotate routine */
 	{
 		disk_video_status(0, "");
 	}
-	g_dac_box.Set(0, olddac0, olddac1, olddac2);
+	g_.DAC().Set(0, olddac0, olddac1, olddac2);
 	spindac(0, 1);                     /* show black border */
 	g_dac_count = olddaccount;
 	s_paused = true;
@@ -445,12 +445,12 @@ static void pause_rotate()               /* pause-the-rotate routine */
 /* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette(BYTE start[3], BYTE finish[3])
 {
-	g_dac_box.Set(0, 0, 0, 0);
+	g_.DAC().Set(0, 0, 0, 0);
 	for (int i = 1; i <= 255; i++)                  /* fill the palette     */
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			g_dac_box.SetChannel(i, j, BYTE((i*start[j] + (256-i)*finish[j])/255));
+			g_.DAC().SetChannel(i, j, BYTE((i*start[j] + (256-i)*finish[j])/255));
 		}
 	}
 }
@@ -458,13 +458,13 @@ static void set_palette(BYTE start[3], BYTE finish[3])
 /* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette2(BYTE start[3], BYTE finish[3])
 {
-	g_dac_box.Set(0, 0, 0, 0);
+	g_.DAC().Set(0, 0, 0, 0);
 	for (int i = 1; i <= 128; i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			g_dac_box.SetChannel(i, j, BYTE((i*finish[j] + (128 - i)*start[j])/128));
-			g_dac_box.SetChannel(i + 127, j, BYTE((i*start[j]  + (128 - i)*finish[j])/128));
+			g_.DAC().SetChannel(i, j, BYTE((i*finish[j] + (128 - i)*start[j])/128));
+			g_.DAC().SetChannel(i + 127, j, BYTE((i*start[j]  + (128 - i)*finish[j])/128));
 		}
 	}
 }
@@ -472,14 +472,14 @@ static void set_palette2(BYTE start[3], BYTE finish[3])
 /* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 {
-	g_dac_box.Set(0, 0, 0, 0);
+	g_.DAC().Set(0, 0, 0, 0);
 	for (int i = 1; i <= 85; i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			g_dac_box.SetChannel(i, j, BYTE((i*middle[j] + (86 - i)*start[j])/85));
-			g_dac_box.SetChannel(i + 85, j, BYTE((i*finish[j] + (86 - i)*middle[j])/85));
-			g_dac_box.SetChannel(i + 170, j, BYTE((i*start[j]  + (86 - i)*finish[j])/85));
+			g_.DAC().SetChannel(i, j, BYTE((i*middle[j] + (86 - i)*start[j])/85));
+			g_.DAC().SetChannel(i + 85, j, BYTE((i*finish[j] + (86 - i)*middle[j])/85));
+			g_.DAC().SetChannel(i + 170, j, BYTE((i*start[j]  + (86 - i)*finish[j])/85));
 		}
 	}
 }
@@ -510,11 +510,11 @@ void save_palette()
 			{
 				/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
 				dac_file << boost::format("%3d %3d %3d\n")
-						% (g_dac_box.Red(i) << 2)
-						% (g_dac_box.Green(i) << 2)
-						% (g_dac_box.Blue(i) << 2);
+						% (g_.DAC().Red(i) << 2)
+						% (g_.DAC().Green(i) << 2)
+						% (g_.DAC().Blue(i) << 2);
 			}
-			g_old_dac_box = g_dac_box;
+			g_old_dac_box = g_.DAC();
 			g_color_state = COLORSTATE_MAP;
 			g_color_file = temp1;
 		}
@@ -533,7 +533,7 @@ int load_palette()
 	{
 		if (!validate_luts(filename))
 		{
-			g_old_dac_box = g_dac_box;
+			g_old_dac_box = g_.DAC();
 		}
 		merge_path_names(g_map_name, filename, true);
 	}

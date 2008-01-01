@@ -408,7 +408,7 @@ int Plot::read_palette()
 		return -1;
 	}
 
-	g_dac_box = m_clut;
+	g_.DAC() = m_clut;
 
 	return 0;
 }
@@ -417,7 +417,7 @@ int Plot::write_palette()
 {
 	int i;
 
-	m_clut = g_dac_box;
+	m_clut = g_.DAC();
 	for (i = 0; i < 256; i++)
 	{
 		/* TODO: review case when COLOR_CHANNEL_MAX != 63 */

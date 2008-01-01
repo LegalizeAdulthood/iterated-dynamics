@@ -176,7 +176,7 @@ int gifview()
 				&& !g_dont_read_color)
 			{
 				/* TODO: don't right shift color table by 2 */
-				g_dac_box.SetChannel(i, j, BYTE(k >> 2));
+				g_.DAC().SetChannel(i, j, BYTE(k >> 2));
 			}
 		}
 	}
@@ -188,7 +188,7 @@ int gifview()
 		validate_luts(g_map_name);  /* read the palette file */
 		spindac(0, 1); /* load it, but don't spin */
 	}
-	if (g_dac_box.Red(0) != 255)
+	if (g_.DAC().Red(0) != 255)
 	{
 		spindac(0, 1);       /* update the DAC */
 	}
@@ -394,9 +394,9 @@ static int out_line_dither(BYTE *pixels, int linelen)
 	for (i = 0; i < linelen; i++)
 	{
 		/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
-		brt = (g_dac_box.Red(pixels[i])*5 +
-			   g_dac_box.Green(pixels[i])*9 +
-			   g_dac_box.Blue(pixels[i])*2) >> 4; /* brightness from 0 to COLOR_CHANNEL_MAX */
+		brt = (g_.DAC().Red(pixels[i])*5 +
+			   g_.DAC().Green(pixels[i])*9 +
+			   g_.DAC().Blue(pixels[i])*2) >> 4; /* brightness from 0 to COLOR_CHANNEL_MAX */
 		brt += nexterr;
 		if (brt > (COLOR_CHANNEL_MAX + 1)/2)
 		{

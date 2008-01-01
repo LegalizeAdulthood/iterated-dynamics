@@ -274,7 +274,7 @@ void find_special_colors()
 
 	for (i = 0; i < g_colors; i++)
 	{
-		brt = int(g_dac_box.Red(i)) + int(g_dac_box.Green(i)) + int(g_dac_box.Blue(i));
+		brt = int(g_.DAC().Red(i)) + int(g_.DAC().Green(i)) + int(g_.DAC().Blue(i));
 		if (brt > maxb)
 		{
 			maxb = brt;
@@ -287,23 +287,23 @@ void find_special_colors()
 		}
 		if (brt < 150 && brt > 80)
 		{
-			maxgun = int(g_dac_box.Red(i));
-			mingun = int(g_dac_box.Red(i));
-			if (int(g_dac_box.Green(i)) > int(g_dac_box.Red(i)))
+			maxgun = int(g_.DAC().Red(i));
+			mingun = int(g_.DAC().Red(i));
+			if (int(g_.DAC().Green(i)) > int(g_.DAC().Red(i)))
 			{
-				maxgun = int(g_dac_box.Green(i));
+				maxgun = int(g_.DAC().Green(i));
 			}
 			else
 			{
-				mingun = int(g_dac_box.Green(i));
+				mingun = int(g_.DAC().Green(i));
 			}
-			if (int(g_dac_box.Blue(i)) > maxgun)
+			if (int(g_.DAC().Blue(i)) > maxgun)
 			{
-				maxgun = int(g_dac_box.Blue(i));
+				maxgun = int(g_.DAC().Blue(i));
 			}
-			if (int(g_dac_box.Blue(i)) < mingun)
+			if (int(g_.DAC().Blue(i)) < mingun)
 			{
-				mingun = int(g_dac_box.Blue(i));
+				mingun = int(g_.DAC().Blue(i));
 			}
 			if (brt - (maxgun - mingun)/2 > med)
 			{
@@ -423,14 +423,14 @@ void spindac(int dir, int inc)
 				int j;
 				BYTE tmp[3];
 
-				tmp[0] = g_dac_box.Red(g_rotate_lo);
-				tmp[1] = g_dac_box.Green(g_rotate_lo);
-				tmp[2] = g_dac_box.Blue(g_rotate_lo);
+				tmp[0] = g_.DAC().Red(g_rotate_lo);
+				tmp[1] = g_.DAC().Green(g_rotate_lo);
+				tmp[2] = g_.DAC().Blue(g_rotate_lo);
 				for (j = g_rotate_lo; j < top; j++)
 				{
-					g_dac_box.Set(j, g_dac_box.Red(j + 1), g_dac_box.Green(j + 1), g_dac_box.Blue(j + 1));
+					g_.DAC().Set(j, g_.DAC().Red(j + 1), g_.DAC().Green(j + 1), g_.DAC().Blue(j + 1));
 				}
-				g_dac_box.Set(top, tmp[0], tmp[1], tmp[2]);
+				g_.DAC().Set(top, tmp[0], tmp[1], tmp[2]);
 			}
 		}
 		else
@@ -441,14 +441,14 @@ void spindac(int dir, int inc)
 				int j;
 				BYTE tmp[3];
 
-				tmp[0] = g_dac_box.Red(top);
-				tmp[1] = g_dac_box.Green(top);
-				tmp[2] = g_dac_box.Blue(top);
+				tmp[0] = g_.DAC().Red(top);
+				tmp[1] = g_.DAC().Green(top);
+				tmp[2] = g_.DAC().Blue(top);
 				for (j = top; j > g_rotate_lo; j--)
 				{
-					g_dac_box.Set(j, g_dac_box.Red(j-1), g_dac_box.Green(j-1), g_dac_box.Blue(j-1));
+					g_.DAC().Set(j, g_.DAC().Red(j-1), g_.DAC().Green(j-1), g_.DAC().Blue(j-1));
 				}
-				g_dac_box.Set(g_rotate_lo, tmp[0], tmp[1], tmp[2]);
+				g_.DAC().Set(g_rotate_lo, tmp[0], tmp[1], tmp[2]);
 			}
 		}
 	}

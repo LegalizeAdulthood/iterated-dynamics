@@ -1505,7 +1505,7 @@ void write_batch_parms_colors_table(int maxcolor)
 		put_parm(" colors=");
 		for (int j = 0; j < 3; ++j)
 		{
-			int k = g_dac_box.Channel(curc, j);
+			int k = g_.DAC().Channel(curc, j);
 			if (k < 10)
 			{
 				k += '0';
@@ -1562,13 +1562,13 @@ void write_batch_parms_colors_table(int maxcolor)
 				{
 					if (g_debug_mode != DEBUGMODE_NO_COLORS_FIX && scanc > (curc + 4) && scanc < maxcolor-5)
 					{
-						if (abs(2*g_dac_box.Channel(scanc, j) - g_dac_box.Channel(scanc-5, j)
-						- g_dac_box.Channel(scanc + 5, j)) >= 2)
+						if (abs(2*g_.DAC().Channel(scanc, j) - g_.DAC().Channel(scanc-5, j)
+						- g_.DAC().Channel(scanc + 5, j)) >= 2)
 						{
 							break;
 						}
 					}
-					int delta = int(g_dac_box.Channel(scanc, j)) - int(g_dac_box.Channel(scanc-k-1, j));
+					int delta = int(g_.DAC().Channel(scanc, j)) - int(g_.DAC().Channel(scanc-k-1, j));
 					if (k == scanc - curc)
 					{
 						diff1[k][j] = delta;

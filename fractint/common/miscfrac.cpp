@@ -659,7 +659,7 @@ static BYTE mix(int i, BYTE first, BYTE second)
 
 static void set_mix(int idx, int i, const BYTE first[3], const BYTE second[3])
 {
-	g_dac_box.Set(idx,
+	g_.DAC().Set(idx,
 		mix(i, first[0], second[0]),
 		mix(i, first[1], second[1]),
 		mix(i, first[2], second[2]));
@@ -673,7 +673,7 @@ static void set_plasma_palette()
 		BYTE green[3]	= { 0, COLOR_CHANNEL_MAX, 0 };
 		BYTE blue[3]	= { 0,  0, COLOR_CHANNEL_MAX };
 
-		g_dac_box.Set(0, 0, 0, 0);
+		g_.DAC().Set(0, 0, 0, 0);
 		for (int i = 1; i <= 85; i++)
 		{
 			set_mix(i, i, green, blue);
@@ -2070,12 +2070,12 @@ static void set_cellular_palette()
 		BYTE brown[3]	= { 42, 21, 0 };
 		BYTE black[3]	= { 0, 0, 0 };
 
-		g_dac_box.Set(0, black[0], black[1], black[2]);
-		g_dac_box.Set(1, red[0], red[1], red[2]);
-		g_dac_box.Set(2, green[0], green[1], green[2]);
-		g_dac_box.Set(3, blue[0], blue[1], blue[2]);
-		g_dac_box.Set(4, yellow[0], yellow[1], yellow[2]);
-		g_dac_box.Set(5, brown[0], brown[1], brown[2]);
+		g_.DAC().Set(0, black[0], black[1], black[2]);
+		g_.DAC().Set(1, red[0], red[1], red[2]);
+		g_.DAC().Set(2, green[0], green[1], green[2]);
+		g_.DAC().Set(3, blue[0], blue[1], blue[2]);
+		g_.DAC().Set(4, yellow[0], yellow[1], yellow[2]);
+		g_.DAC().Set(5, brown[0], brown[1], brown[2]);
 
 		spindac(0, 1);
 	}

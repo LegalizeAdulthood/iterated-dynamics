@@ -78,7 +78,6 @@ inline bool operator!=(const ColormapTable &lhs, const ColormapTable &rhs)
 	return !(lhs == rhs);
 }
 
-extern ColormapTable g_dac_box;
 extern ColormapTable *g_map_dac_box;
 extern ColormapTable g_old_dac_box;
 extern int g_save_dac;
@@ -108,6 +107,9 @@ public:
 	void SetVideoTable(int i, const VIDEOINFO &value);
 	bool GoodMode() const;
 	void SetGoodMode(bool value);
+
+	ColormapTable &DAC();
+	const ColormapTable &DAC() const;
 
 private:
 	GlobalImpl *_impl;

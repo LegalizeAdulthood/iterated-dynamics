@@ -24,8 +24,8 @@ public:
 	/* handles window resize.  */		virtual int resize() = 0;
 	/* redraws the screen */			virtual void redraw() = 0;
 
-	/* read palette into g_dac_box */	virtual int read_palette() = 0;
-	/* write g_dac_box into palette */	virtual int write_palette() = 0;
+	/* read palette into g_.DAC() */	virtual int read_palette() = 0;
+	/* write g_.DAC() into palette */	virtual int write_palette() = 0;
 
 	/* reads a single pixel */			virtual int read_pixel(int x, int y) = 0;
 	/* writes a single pixel */			virtual void write_pixel(int x, int y, int color) = 0;

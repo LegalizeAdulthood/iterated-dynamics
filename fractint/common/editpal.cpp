@@ -66,7 +66,7 @@ struct PALENTRY
  */
 static void set_pal(int pal, int r, int g, int b)
 {
-	g_dac_box.Set(pal, BYTE(r), BYTE(g), BYTE(b));
+	g_.DAC().Set(pal, BYTE(r), BYTE(g), BYTE(b));
 	spindac(0, 1);
 }
 
@@ -74,7 +74,7 @@ static void set_pal_range(int first, int how_many, PALENTRY *pal)
 {
 	for (int i = 0; i < how_many; i++)
 	{
-		g_dac_box.Set(first + i, pal[i].red, pal[i].green, pal[i].blue);
+		g_.DAC().Set(first + i, pal[i].red, pal[i].green, pal[i].blue);
 	}
 	spindac(0, 1);
 }
@@ -83,9 +83,9 @@ static void get_pal_range(int first, int how_many, PALENTRY *pal)
 {
 	for (int i = 0; i < how_many; i++)
 	{
-		pal[i].red = g_dac_box.Red(first + i);
-		pal[i].green = g_dac_box.Green(first + i);
-		pal[i].blue = g_dac_box.Blue(first + i);
+		pal[i].red = g_.DAC().Red(first + i);
+		pal[i].green = g_.DAC().Green(first + i);
+		pal[i].blue = g_.DAC().Blue(first + i);
 	}
 }
 
@@ -2178,11 +2178,11 @@ void pal_table::update_dac()
 {
 	if (_exclude)
 	{
-		g_dac_box.Clear();
+		g_.DAC().Clear();
 		if (_exclude == EXCLUDE_CURRENT)
 		{
 			int a = _current[_active];
-			g_dac_box.Set(a, _palette[a].red, _palette[a].green, _palette[a].blue);
+			g_.DAC().Set(a, _palette[a].red, _palette[a].green, _palette[a].blue);
 		}
 		else
 		{
@@ -2198,7 +2198,7 @@ void pal_table::update_dac()
 
 			for (int i = 0; i < 1 + b - a; i++)
 			{
-				g_dac_box.Set(a + i, _palette[a + i].red, _palette[a + i].green, _palette[a + i].blue);
+				g_.DAC().Set(a + i, _palette[a + i].red, _palette[a + i].green, _palette[a + i].blue);
 			}
 		}
 	}
@@ -2206,12 +2206,12 @@ void pal_table::update_dac()
 	{
 		for (int i = 0; i < g_colors; i++)
 		{
-			g_dac_box.Set(i, _palette[i].red, _palette[i].green, _palette[i].blue);
+			g_.DAC().Set(i, _palette[i].red, _palette[i].green, _palette[i].blue);
 		}
 
 		if (_freestyle)
 		{
-			put_band(g_dac_box);   /* apply band to g_dac_box */
+			put_band(g_.DAC());   /* apply band to g_dac_box */
 		}
 	}
 
@@ -2219,13 +2219,13 @@ void pal_table::update_dac()
 	{
 		if (s_inverse)
 		{
-			g_dac_box.Set(s_fg_color, 0, 0, 0);
-			g_dac_box.Set(s_bg_color, 48, 48, 48);
+			g_.DAC().Set(s_fg_color, 0, 0, 0);
+			g_.DAC().Set(s_bg_color, 48, 48, 48);
 		}
 		else
 		{
-			g_dac_box.Set(s_bg_color, 0, 0, 0);
-			g_dac_box.Set(s_fg_color, 48, 48, 48);
+			g_.DAC().Set(s_bg_color, 0, 0, 0);
+			g_.DAC().Set(s_fg_color, 48, 48, 48);
 		}
 	}
 
