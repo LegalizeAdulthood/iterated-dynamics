@@ -39,7 +39,7 @@ static void format_video_info(int i, const char *err, char *buf);
 static std::string format_video_info(int i, const char *err);
 static double video_mode_aspect_ratio(int width, int height);
 
-struct video_mode_info
+struct video_mode_sort_info
 {
 	int index;     /* g_video_entry subscript */
 	unsigned flags; /* flags for sort's compare, defined below */
@@ -58,8 +58,8 @@ struct video_mode_info
 
 static int video_mode_compare(const void *p1, const void *p2)
 {
-	const video_mode_info *ptr1 = (const video_mode_info *) p1;
-	const video_mode_info *ptr2 = (const video_mode_info *) p2;
+	const video_mode_sort_info *ptr1 = (const video_mode_sort_info *) p1;
+	const video_mode_sort_info *ptr2 = (const video_mode_sort_info *) p2;
 	if (ptr1->flags < ptr2->flags)
 	{
 		return -1;
@@ -108,15 +108,136 @@ static double video_mode_aspect_ratio(int width, int height)
 		*g_screen_aspect_ratio;
 	}
 
-static video_mode_info *vidptr;
+static video_mode_sort_info *vidptr;
 
-int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formula_info)
+void initialize_video_sort_table(fractal_info const *info, video_mode_sort_info sort_table[MAXVIDEOMODES])
 {
-	int j;
-	int gotrealmode;
-	double ftemp;
-	double ftemp2;
-	unsigned tmpflags;
+	for (int i = 0; i < g_.VideoTableLength(); ++i)
+	{
+		const VIDEOINFO &video = g_.VideoTable(i);
+		unsigned tmpflags = VI_EXACT;
+		if (video.keynum == 0)
+		{
+			tmpflags |= VI_NOKEY;
+		}
+
+		if (info->x_dots > video.x_dots || info->y_dots > video.y_dots)
+		{
+			tmpflags |= VI_SSMALL;
+		}
+		else if (info->x_dots < video.x_dots || info->y_dots < video.y_dots)
+		{
+			tmpflags |= VI_SBIG;
+		}
+
+		if (g_file_x_dots > video.x_dots || g_file_y_dots > video.y_dots)
+		{
+			tmpflags |= VI_VSMALL;
+		}
+		else if (g_file_x_dots < video.x_dots || g_file_y_dots < video.y_dots)
+		{
+			tmpflags |= VI_VBIG;
+		}
+
+		if (g_file_colors > video.colors)
+		{
+			tmpflags |= VI_CSMALL;
+		}
+
+		if (g_file_colors < video.colors)
+		{
+			tmpflags |= VI_CBIG;
+		}
+
+		if (i == g_.InitialAdapter())
+		{
+			tmpflags -= VI_EXACT;
+		}
+
+		if (g_file_aspect_ratio != 0 && (tmpflags & VI_VSMALL) == 0)
+		{
+			double ftemp = video_mode_aspect_ratio(g_file_x_dots, g_file_y_dots);
+			if (ftemp < g_file_aspect_ratio*0.98 ||
+				ftemp > g_file_aspect_ratio*1.02)
+			{
+				tmpflags |= VI_ASPECT;
+			}
+		}
+
+		sort_table[i].index = i;
+		sort_table[i].flags  = tmpflags;
+	}
+}
+
+static std::string GetInstructions(fractal_info const *info)
+{
+	std::string instructions =
+		"Select a video mode.  Use the cursor keypad to move the pointer.\n"
+		"Press ENTER for selected mode, or use a video mode function key.\n"
+		"Press F1 for help, ";
+	if (info->info_id[0] != 'G')
+	{
+		instructions += "TAB for fractal information, ";
+	}
+	instructions += "ESCAPE to back out.";
+	return instructions;
+}
+
+static std::string GetHeading(fractal_info const *info, struct ext_blk_formula_info const *formula_info)
+{
+	std::string heading;
+	if (info->info_id[0] == 'G')
+	{
+		heading = "      Non-fractal GIF";
+	}
+	else
+	{
+		const char *nameptr = g_current_fractal_specific->get_type();
+		if (g_display_3d)
+		{
+			nameptr = "3D Transform";
+		}
+		heading = "Type: " + std::string(nameptr);
+		if ((!strcmp(nameptr, "formula")) ||
+			(!strcmp(nameptr, "lsystem")) ||
+			(!strncmp(nameptr, "ifs", 3))) /* for ifs and ifs3d */
+		{
+			heading += std::string(" -> ") + formula_info->form_name;
+		}
+	}
+	heading = str(boost::format("File: %-44s  %d x %d x %d\n%-52s")
+		% g_read_name % g_file_x_dots % g_file_y_dots % g_file_colors % heading);
+	if (info->info_id[0] != 'G')
+	{
+		std::string version = str(boost::format("v%d.%01d") % (g_save_release/100) % ((g_save_release%100)/10));
+		if (g_save_release % 100)
+		{
+			version += char((g_save_release % 10) + '0');
+		}
+		heading += version;
+	}
+	heading += "\n";
+	if (info->info_id[0] != 'G')
+	{
+		if (g_.InitialAdapter() < 0)
+		{
+			heading += "Saved in unknown video mode.";
+		}
+		else
+		{
+			heading += format_video_info(g_.InitialAdapter(), "");
+		}
+	}
+	if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect_ratio)
+	{
+		heading += "\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings";
+	}
+	heading += "\n";
+	return heading;
+}
+
+int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula_info)
+{
 	int tmpxdots;
 	int tmpydots;
 	float tmpreduce;
@@ -157,139 +278,33 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	}
 
 	/* setup table entry for each vid mode, flagged for how well it matches */
-	video_mode_info vid[MAXVIDEOMODES];
-	for (int i = 0; i < g_.VideoTableLength(); ++i)
-	{
-		g_.SetVideoEntry(g_.VideoTable(i));
-		tmpflags = VI_EXACT;
-		if (g_.VideoEntry().keynum == 0)
-		{
-			tmpflags |= VI_NOKEY;
-		}
-		if (info->x_dots > g_.VideoEntry().x_dots || info->y_dots > g_.VideoEntry().y_dots)
-		{
-			tmpflags |= VI_SSMALL;
-		}
-		else if (info->x_dots < g_.VideoEntry().x_dots || info->y_dots < g_.VideoEntry().y_dots)
-		{
-			tmpflags |= VI_SBIG;
-		}
-		if (g_file_x_dots > g_.VideoEntry().x_dots || g_file_y_dots > g_.VideoEntry().y_dots)
-		{
-			tmpflags |= VI_VSMALL;
-		}
-		else if (g_file_x_dots < g_.VideoEntry().x_dots || g_file_y_dots < g_.VideoEntry().y_dots)
-		{
-			tmpflags |= VI_VBIG;
-		}
-		if (g_file_colors > g_.VideoEntry().colors)
-		{
-			tmpflags |= VI_CSMALL;
-		}
-		if (g_file_colors < g_.VideoEntry().colors)
-		{
-			tmpflags |= VI_CBIG;
-		}
-		if (i == g_.InitialAdapter())
-		{
-			tmpflags -= VI_EXACT;
-		}
-		if (g_file_aspect_ratio != 0 && (tmpflags & VI_VSMALL) == 0)
-		{
-			ftemp = video_mode_aspect_ratio(g_file_x_dots, g_file_y_dots);
-			if (ftemp < g_file_aspect_ratio*0.98 ||
-				ftemp > g_file_aspect_ratio*1.02)
-			{
-				tmpflags |= VI_ASPECT;
-			}
-		}
-		vid[i].index = i;
-		vid[i].flags  = tmpflags;
-	}
-
+	video_mode_sort_info sort_table[MAXVIDEOMODES];
+	initialize_video_sort_table(info, sort_table);
 	if (g_fast_restore  && !g_ui_state.ask_video)
 	{
 		g_.SetInitialAdapter(g_.Adapter());
 	}
 
 #ifndef XFRACT
-	gotrealmode = 0;
+	bool gotrealmode = false;
 	if ((g_.InitialAdapter() < 0 || (g_ui_state.ask_video && !g_initialize_batch)) && g_make_par_flag)
 	{
 		/* no exact match or (askvideo=yes and batch=no), and not
-			in makepar mode, talk to user */
+		in makepar mode, talk to user */
 
-		qsort(vid, g_.VideoTableLength(), sizeof(vid[0]), video_mode_compare); /* sort modes */
+		qsort(sort_table, g_.VideoTableLength(), sizeof(sort_table[0]), video_mode_compare); /* sort modes */
 
 		int *attributes = new int[g_.VideoTableLength()];
 		for (int i = 0; i < g_.VideoTableLength(); ++i)
 		{
 			attributes[i] = 1;
 		}
-		vidptr = &vid[0]; /* for format_item */
+		vidptr = &sort_table[0]; /* for format_item */
 
 		/* format heading */
-		std::string heading;
-		if (info->info_id[0] == 'G')
-		{
-			heading = "      Non-fractal GIF";
-		}
-		else
-		{
-			const char *nameptr = g_current_fractal_specific->get_type();
-			if (g_display_3d)
-			{
-				nameptr = "3D Transform";
-			}
-			heading = "Type: " + std::string(nameptr);
-			if ((!strcmp(nameptr, "formula")) ||
-				(!strcmp(nameptr, "lsystem")) ||
-				(!strncmp(nameptr, "ifs", 3))) /* for ifs and ifs3d */
-			{
-				heading += std::string(" -> ") + formula_info->form_name;
-			}
-		}
-		heading = str(boost::format("File: %-44s  %d x %d x %d\n%-52s")
-					% g_read_name % g_file_x_dots % g_file_y_dots % g_file_colors % heading);
-		if (info->info_id[0] != 'G')
-		{
-			std::string version = str(boost::format("v%d.%01d") % (g_save_release/100) % ((g_save_release%100)/10));
-			if (g_save_release % 100)
-			{
-				version += char((g_save_release % 10) + '0');
-			}
-			heading += version;
-		}
-		heading += "\n";
-		if (info->info_id[0] != 'G')
-		{
-			if (g_.InitialAdapter() < 0)
-			{
-				heading += "Saved in unknown video mode.";
-			}
-			else
-			{
-				heading += format_video_info(g_.InitialAdapter(), "");
-			}
-		}
-		if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect_ratio)
-		{
-			heading += "\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings";
-		}
-		heading += "\n";
-		std::string instructions =
-			"Select a video mode.  Use the cursor keypad to move the pointer.\n"
-			"Press ENTER for selected mode, or use a video mode function key.\n"
-			"Press F1 for help, ";
-		if (info->info_id[0] != 'G')
-		{
-			instructions += "TAB for fractal information, ";
-		}
-		instructions += "ESCAPE to back out.";
-
-		int i = full_screen_choice_help(HELPLOADFILE, 0, heading.c_str(),
+		int i = full_screen_choice_help(HELPLOADFILE, 0, GetHeading(info, formula_info).c_str(),
 			"key...name......................err...xdot..ydot.clr.comment..................",
-			instructions.c_str(), g_.VideoTableLength(), 0, attributes,
+			GetInstructions(info).c_str(), g_.VideoTableLength(), 0, attributes,
 			1, 13, 78, 0, format_item, 0, 0, check_mode_key);
 		delete[] attributes;
 		if (i == -1)
@@ -299,20 +314,20 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		if (i < 0)  /* returned -100 - g_video_table entry number */
 		{
 			g_.SetInitialAdapter(-100 - i);
-			gotrealmode = 1;
+			gotrealmode = true;
 		}
 		else
 		{
-			g_.SetInitialAdapter(vid[i].index);
+			g_.SetInitialAdapter(sort_table[i].index);
 		}
 	}
 #else
 	g_.SetInitialAdapter(0);
 	j = g_.VideoTable(0).keynum;
-	gotrealmode = 0;
+	gotrealmode = false;
 #endif
 
-	if (gotrealmode == 0)  /* translate from temp table to permanent */
+	if (!gotrealmode)  /* translate from temp table to permanent */
 	{
 		int i = g_.InitialAdapter();
 		int key = g_.VideoTable(i).keynum;
@@ -387,7 +402,8 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 			tmpxdots = (g_file_x_dots + g_skip_x_dots - 1)/g_skip_x_dots;
 			tmpydots = (g_file_y_dots + g_skip_y_dots - 1)/g_skip_y_dots;
 			/* reduce further if that improves aspect */
-			ftemp = video_mode_aspect_ratio(tmpxdots, tmpydots);
+			double ftemp = video_mode_aspect_ratio(tmpxdots, tmpydots);
+			double ftemp2;
 			if (ftemp > g_file_aspect_ratio)
 			{
 				if (reduced_x)
@@ -446,9 +462,10 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 	{
 		/* image not exactly same size as screen */
 		g_view_window = true;
-		ftemp = g_final_aspect_ratio*
+		double ftemp = g_final_aspect_ratio*
 			double(g_.VideoEntry().y_dots)/double(g_.VideoEntry().x_dots)
-				/g_screen_aspect_ratio;
+			/g_screen_aspect_ratio;
+		int j;
 		if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 		{
 			i = int(double(g_.VideoEntry().x_dots)/double(g_file_x_dots)*20.0 + 0.5);
@@ -474,7 +491,7 @@ int get_video_mode(const fractal_info *info, struct ext_blk_formula_info *formul
 		}
 	}
 	if (g_make_par_flag && !g_fast_restore && !g_initialize_batch &&
-			(fabs(g_final_aspect_ratio - g_screen_aspect_ratio) > .00001 || g_view_x_dots != 0))
+		(fabs(g_final_aspect_ratio - g_screen_aspect_ratio) > .00001 || g_view_x_dots != 0))
 	{
 		stop_message(STOPMSG_NO_BUZZER,
 			"Warning: <V>iew parameters are being set to non-standard values.\n"
