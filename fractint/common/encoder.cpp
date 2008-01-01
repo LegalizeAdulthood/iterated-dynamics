@@ -423,7 +423,7 @@ int encoder()
 	}
 
 	/* write out the 256-color palette */
-	if (g_got_real_dac)
+	if (g_.RealDAC())
 	{                         /* got a DAC - must be a VGA */
 		if (!shftwrite(g_.DAC(), g_colors))
 		{

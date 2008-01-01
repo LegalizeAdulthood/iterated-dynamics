@@ -35,10 +35,36 @@ public:
 	void SetVideoTable(int i, const VIDEOINFO &value) { _videoTable[i] = value; }
 	bool GoodMode() const				{ return _goodMode; }
 	void SetGoodMode(bool value)		{ _goodMode = value; }
-	ColormapTable &DAC()				{ return _dac; }
-	const ColormapTable &DAC() const	{ return _dac; }
 
 	// DAC/colormap stuff
+	ColormapTable &DAC()				{ return _dac; }
+	const ColormapTable &DAC() const	{ return _dac; }
+	ColormapTable &OldDAC()				{ return _oldDAC; }
+	const ColormapTable &OldDAC() const { return _oldDAC; }
+	ColormapTable *MapDAC()				{ return _mapDAC; }
+	const ColormapTable *MapDAC() const { return _mapDAC; }
+	void SetMapDAC(ColormapTable *value) { _mapDAC = value; }
+	bool RealDAC() const				{ return _realDAC; }
+	void SetRealDAC(bool value)			{ _realDAC = value; }
+	SaveDACType SaveDAC() const			{ return _saveDAC; }
+	void SetSaveDAC(SaveDACType value)	{ _saveDAC = value; }
+	int DACSleepCount() const			{ return _dacSleepCount; }
+	void SetDACSleepCount(int value)	{ _dacSleepCount = value; }
+	void IncreaseDACSleepCount()
+	{
+		extern int g_colors;
+		if (_dacSleepCount < g_colors)
+		{
+			++_dacSleepCount;
+		}
+	}
+	void DecreaseDACSleepCount()
+	{
+		if (_dacSleepCount > 1)
+		{
+			_dacSleepCount--;
+		}
+	}
 
 private:
 	int _adapter;
@@ -47,13 +73,14 @@ private:
 	std::vector<VIDEOINFO> _videoTable;
 	bool _goodMode;
 	ColormapTable _dac;
+	ColormapTable _oldDAC;
+	ColormapTable *_mapDAC;						/* map= (default colors) */
+	bool _realDAC;
+	SaveDACType _saveDAC;
+	int _dacSleepCount;
 };
 
-ColormapTable *g_map_dac_box;					/* map= (default colors) */
 ColormapTable g_old_dac_box;
-int g_save_dac;
-int g_dac_count;
-bool g_got_real_dac;							/* loaddac worked, really got a dac */
 int g_color_state;								/* 0, g_dac_box matches default (bios or map=) */
 												/* 1, g_dac_box matches no known defined map   */
 												/* 2, g_dac_box matches the g_color_file map      */
@@ -68,12 +95,18 @@ GlobalImpl::GlobalImpl()
 	_videoEntry(),
 	_videoTable(MAXVIDEOMODES),
 	_goodMode(false),
-	_dac()
+	_dac(),
+	_realDAC(false),
+	_saveDAC(SAVEDAC_NO),
+	_dacSleepCount(256),
+	_mapDAC(0)
 {
 }
 
 GlobalImpl::~GlobalImpl()
 {
+	delete _mapDAC;
+	_mapDAC = 0;
 }
 
 Globals::Globals()
@@ -162,3 +195,56 @@ const ColormapTable &Globals::DAC() const
 {
 	return _impl->DAC();
 }
+bool Globals::RealDAC() const
+{
+	return _impl->RealDAC();
+}
+void Globals::SetRealDAC(bool value)
+{
+	_impl->SetRealDAC(value);
+}
+SaveDACType Globals::SaveDAC() const
+{
+	return _impl->SaveDAC();
+}
+void Globals::SetSaveDAC(SaveDACType value)
+{
+	_impl->SetSaveDAC(value);
+}
+int Globals::DACSleepCount() const
+{
+	return _impl->DACSleepCount();
+}
+void Globals::SetDACSleepCount(int value)
+{
+	_impl->SetDACSleepCount(value);
+}
+void Globals::IncreaseDACSleepCount()
+{
+	_impl->IncreaseDACSleepCount();
+}
+void Globals::DecreaseDACSleepCount()
+{
+	_impl->DecreaseDACSleepCount();
+}
+void Globals::SetMapDAC(ColormapTable *value)
+{
+	_impl->SetMapDAC(value);
+}
+const ColormapTable *Globals::MapDAC() const
+{
+	return _impl->MapDAC();
+}
+ColormapTable *Globals::MapDAC()
+{
+	return _impl->MapDAC();
+}
+const ColormapTable &Globals::OldDAC() const
+{
+	return _impl->OldDAC();
+}
+ColormapTable &Globals::OldDAC()
+{
+	return _impl->OldDAC();
+}
+

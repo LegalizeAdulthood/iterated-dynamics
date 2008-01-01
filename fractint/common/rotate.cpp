@@ -46,9 +46,9 @@ void rotate(int direction)      /* rotate-the-palette routine */
 	static int fsteps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; /* (for Fkeys) */
 
 #ifndef XFRACT
-	if (g_got_real_dac == 0)					/* ??? no DAC to rotate! */
+	if (!g_.RealDAC())					/* ??? no DAC to rotate! */
 #else
-	if (!(g_got_real_dac || g_fake_lut))		/* ??? no DAC to rotate! */
+	if (!(g_.RealDAC() || g_fake_lut))		/* ??? no DAC to rotate! */
 #endif
 	{
 		driver_buzzer(BUZZER_ERROR);
@@ -171,16 +171,10 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			incr = 999;
 			break;
 		case FIK_UP_ARROW:                 /* UpArrow means speed up       */
-			if (++g_dac_count >= g_colors)
-			{
-				--g_dac_count;
-			}
+			g_.IncreaseDACSleepCount();
 			break;
 		case FIK_DOWN_ARROW:               /* DownArrow means slow down    */
-			if (g_dac_count > 1)
-			{
-				g_dac_count--;
-			}
+			g_.DecreaseDACSleepCount();
 			break;
 		case '1':
 		case '2':
@@ -364,7 +358,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			break;
 
 		case FIK_HOME:                     /* restore palette */
-			g_.DAC() = g_old_dac_box;
+			g_.DAC() = g_.OldDAC();
 			pause_rotate();              /* pause */
 			break;
 
@@ -419,11 +413,11 @@ static void pause_rotate()               /* pause-the-rotate routine */
 	}
 
 	/* set border, wait for a key */
-	int olddaccount = g_dac_count;
+	int olddaccount = g_.DACSleepCount();
 	BYTE olddac0 = g_.DAC().Red(0);
 	BYTE olddac1 = g_.DAC().Green(0);
 	BYTE olddac2 = g_.DAC().Blue(0);
-	g_dac_count = 256;
+	g_.SetDACSleepCount(256);
 	g_.DAC().Set(0, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4);
 	spindac(0, 1);                     /* show white border */
 	if (driver_diskp())
@@ -438,7 +432,7 @@ static void pause_rotate()               /* pause-the-rotate routine */
 	}
 	g_.DAC().Set(0, olddac0, olddac1, olddac2);
 	spindac(0, 1);                     /* show black border */
-	g_dac_count = olddaccount;
+	g_.SetDACSleepCount(olddaccount);
 	s_paused = true;
 }
 
@@ -514,7 +508,7 @@ void save_palette()
 						% (g_.DAC().Green(i) << 2)
 						% (g_.DAC().Blue(i) << 2);
 			}
-			g_old_dac_box = g_.DAC();
+			g_.OldDAC() = g_.DAC();
 			g_color_state = COLORSTATE_MAP;
 			g_color_file = temp1;
 		}
@@ -533,7 +527,7 @@ int load_palette()
 	{
 		if (!validate_luts(filename))
 		{
-			g_old_dac_box = g_.DAC();
+			g_.OldDAC() = g_.DAC();
 		}
 		merge_path_names(g_map_name, filename, true);
 	}

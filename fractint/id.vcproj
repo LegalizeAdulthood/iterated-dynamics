@@ -1691,6 +1691,10 @@
 				Name="plumbing"
 				>
 				<File
+					RelativePath=".\headers\ColormapTable.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\drivers.h"
 					>
 				</File>

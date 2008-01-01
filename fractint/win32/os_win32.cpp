@@ -267,7 +267,7 @@ void find_special_colors()
 	g_color_medium = 7;
 	g_color_bright = 15;
 
-	if (!g_got_real_dac)
+	if (!g_.RealDAC())
 	{
 		return;
 	}
@@ -453,7 +453,7 @@ void spindac(int dir, int inc)
 		}
 	}
 	driver_write_palette();
-	driver_delay(g_colors - g_dac_count - 1);
+	driver_delay(g_colors - g_.DACSleepCount() - 1);
 }
 
 /*

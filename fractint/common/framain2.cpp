@@ -231,7 +231,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			g_sy_offset = 0;
 			g_rotate_hi = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors - 1;
 
-			g_old_dac_box = g_.DAC(); /* save the DAC */
+			g_.OldDAC() = g_.DAC(); /* save the DAC */
 
 			if (g_overlay_3d && !g_initialize_batch)
 			{
@@ -260,17 +260,17 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				g_.SetVideoEntrySize(g_x_dots, g_y_dots);
 			}
 
-			if (g_save_dac || g_color_preloaded)
+			if (g_.SaveDAC() || g_color_preloaded)
 			{
-				g_.DAC() = g_old_dac_box; /* restore the DAC */
+				g_.DAC() = g_.OldDAC(); /* restore the DAC */
 				spindac(0, 1);
 				g_color_preloaded = false;
 			}
 			else
 			{	/* reset DAC to defaults, which setvideomode has done for us */
-				if (g_map_dac_box)
+				if (g_.MapDAC())
 				{	/* but there's a map=, so load that */
-					g_.DAC() = *g_map_dac_box;
+					g_.DAC() = *g_.MapDAC();
 					spindac(0, 1);
 				}
 				g_color_state = COLORSTATE_DEFAULT;
@@ -342,7 +342,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			g_dy_size = g_y_dots - 1;
 		}
 		/* assume we save next time (except jb) */
-		g_save_dac = (g_save_dac == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES;
+		g_.SetSaveDAC((g_.SaveDAC() == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES);
 		if (g_initialize_batch == INITBATCH_NONE)
 		{
 			driver_set_mouse_mode(-FIK_PAGE_UP);        /* mouse left button == pgup */
@@ -622,7 +622,7 @@ done:
 		if (g_fractal_type == FRACTYPE_PLASMA)
 		{
 			g_cycle_limit = 256;              /* plasma clouds need quick spins */
-			g_dac_count = 256;
+			g_.SetDACSleepCount(256);
 		}
 
 resumeloop:
@@ -799,7 +799,7 @@ static ApplicationStateType handle_fractal_type(bool &frommandel)
 	if (i >= 0)
 	{
 		driver_discard_screen();
-		g_save_dac = SAVEDAC_NO;
+		g_.SetSaveDAC(SAVEDAC_NO);
 		g_save_release = g_release;
 		g_no_magnitude_calculation = false;
 		g_use_old_periodicity = false;
@@ -950,7 +950,7 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 		g_.SetAdapter(g_.InitialAdapter());
 		g_.SetInitialAdapterNone();
 		i |= COMMANDRESULT_FRACTAL_PARAMETER;
-		g_save_dac = SAVEDAC_NO;
+		g_.SetSaveDAC(SAVEDAC_NO);
 	}
 	else if (g_color_preloaded)
 	{                         /* colors= was specified */
@@ -959,7 +959,7 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	}
 	else if (i & COMMANDRESULT_RESET)         /* reset was specified */
 	{
-		g_save_dac = SAVEDAC_NO;
+		g_.SetSaveDAC(SAVEDAC_NO);
 	}
 	if (i & COMMANDRESULT_3D_YES)
 	{                         /* 3d = was specified */
@@ -1298,9 +1298,9 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 static ApplicationStateType handle_color_cycling(int kbdchar)
 {
 	clear_zoom_box();
-	g_old_dac_box = g_.DAC();
+	g_.OldDAC() = g_.DAC();
 	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
-	if (g_old_dac_box != g_.DAC())
+	if (g_.OldDAC() != g_.DAC())
 	{
 		g_color_state = COLORSTATE_UNKNOWN;
 		history_save_info();
@@ -1327,9 +1327,9 @@ static ApplicationStateType handle_color_editing(bool &kbdmore)
 	if (g_.DAC().Red(0) != 255
 		&& !driver_diskp())
 	{
-		g_old_dac_box = g_.DAC();
+		g_.OldDAC() = g_.DAC();
 		palette_edit();
-		if (g_old_dac_box != g_.DAC())
+		if (g_.OldDAC() != g_.DAC())
 		{
 			g_color_state = COLORSTATE_UNKNOWN;
 			history_save_info();
@@ -1522,7 +1522,7 @@ static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
 		g_.SetAdapter(k);
 		if (g_.VideoTable(g_.Adapter()).colors != g_colors)
 		{
-			g_save_dac = SAVEDAC_NO;
+			g_.SetSaveDAC(SAVEDAC_NO);
 		}
 		g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		kbdmore = false;

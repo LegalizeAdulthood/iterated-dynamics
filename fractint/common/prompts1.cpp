@@ -3506,9 +3506,9 @@ static int check_mapfile()
 				break;
 			}
 		}
-		g_old_dac_box = g_.DAC(); /* save the DAC */
+		g_.OldDAC() = g_.DAC(); /* save the DAC */
 		bool status = validate_luts(temp1);
-		g_.DAC() = g_old_dac_box; /* restore the DAC */
+		g_.DAC() = g_.OldDAC(); /* restore the DAC */
 		if (status)  /* Oops, somethings wrong */
 		{
 			askflag = 1;

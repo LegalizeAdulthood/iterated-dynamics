@@ -80,15 +80,15 @@ void set_color_palette_name(const std::string &filename)
 	{
 		return;
 	}
-	if (g_map_dac_box == 0)
+	if (g_.MapDAC() == 0)
 	{
-		g_map_dac_box = new ColormapTable;
-		if (g_map_dac_box == 0)
+		g_.SetMapDAC(new ColormapTable);
+		if (g_.MapDAC() == 0)
 		{
 			stop_message(STOPMSG_NORMAL, "Insufficient memory for color map.");
 			return;
 		}
 	}
-	*g_map_dac_box = g_.DAC();
+	*g_.MapDAC() = g_.DAC();
 }
 

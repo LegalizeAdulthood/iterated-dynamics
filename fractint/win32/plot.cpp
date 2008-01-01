@@ -403,7 +403,7 @@ int Plot::resize()
 
 int Plot::read_palette()
 {
-	if (g_got_real_dac == 0)
+	if (!g_.RealDAC())
 	{
 		return -1;
 	}

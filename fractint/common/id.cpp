@@ -281,10 +281,10 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 		check_same_name();
 	}
 	driver_window();
-	g_old_dac_box = g_.DAC();      /* save in case colors= present */
+	g_.OldDAC() = g_.DAC();      /* save in case colors= present */
 
 	driver_set_for_text();                      /* switch to text mode */
-	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
+	g_.SetSaveDAC(SAVEDAC_NO);                         /* don't save the VGA DAC */
 
 	g_max_colors = 256;
 	g_max_input_counter = 80;				/* check the keyboard this often */
@@ -315,7 +315,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 {
 	if (g_color_preloaded)
 	{
-		g_.DAC() = g_old_dac_box;   /* restore in case colors= present */
+		g_.DAC() = g_.OldDAC();   /* restore in case colors= present */
 	}
 
 	driver_set_mouse_mode(LOOK_MOUSE_NONE);			/* ignore mouse */
@@ -389,7 +389,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 		m_state = APPSTATE_RESUME_LOOP;
 	}
 
-	g_save_dac = SAVEDAC_NO;                         /* don't save the VGA DAC */
+	g_.SetSaveDAC(SAVEDAC_NO);                         /* don't save the VGA DAC */
 	m_state = APPSTATE_IMAGE_START;
 }
 
@@ -481,7 +481,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 			}
 			if (g_color_preloaded)
 			{
-				g_old_dac_box = g_.DAC();     /* save in case colors= present */
+				g_.OldDAC() = g_.DAC();     /* save in case colors= present */
 			}
 			driver_set_for_text(); /* switch to text mode */
 			g_show_file = SHOWFILE_CANCELLED;
