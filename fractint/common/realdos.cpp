@@ -617,9 +617,9 @@ top:
 	choices[nextright] = "restart Iterated Dynamics<ins>";
 
 #ifdef XFRACT
-	if (full_menu && (g_got_real_dac || g_fake_lut))
+	if (full_menu && (g_.RealDAC() || g_fake_lut))
 #else
-	if (full_menu && g_got_real_dac)
+	if (full_menu && g_.RealDAC())
 #endif
 	{
 		nextright += 2;
@@ -764,7 +764,7 @@ static int menu_check_key(int curkey, int choice)
 				return -testkey;
 			}
 		}
-		if (g_got_real_dac)
+		if (g_.RealDAC())
 		{
 			if (strchr("c+-", testkey))
 			{

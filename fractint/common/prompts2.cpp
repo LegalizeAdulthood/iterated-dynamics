@@ -1045,8 +1045,8 @@ void goodbye()
 	char *goodbyemessage = "   Thank You for using Iterated Dynamics";
 	int ret;
 
-	delete[] g_map_dac_box;
-	g_map_dac_box = 0;
+	delete g_.MapDAC();
+	g_.SetMapDAC(0);
 	if (g_resume_info != 0)
 	{
 		end_resume();

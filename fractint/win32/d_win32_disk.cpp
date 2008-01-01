@@ -311,7 +311,7 @@ int Win32DiskDriver::resize()
 int Win32DiskDriver::read_palette()
 {
 	ODS("disk_read_palette");
-	if (g_got_real_dac == 0)
+	if (!g_.RealDAC())
 	{
 		return -1;
 	}
@@ -523,8 +523,8 @@ void Win32DiskDriver::set_video_mode(const VIDEOINFO &mode)
 	g_.SetGoodMode(true);
 	g_and_color = g_colors-1;
 	g_zoomBox.set_count(0);
-	g_dac_count = g_cycle_limit;
-	g_got_real_dac = true;
+	g_.SetDACSleepCount(g_cycle_limit);
+	g_.SetRealDAC(true);
 
 	read_palette();
 

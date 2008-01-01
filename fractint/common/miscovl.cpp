@@ -135,9 +135,9 @@ bool MakeBatchFile::has_clut()
 {
 	return
 #ifndef XFRACT
-		(g_got_real_dac) || (g_is_true_color && !g_true_mode_iterates);
+		(g_.RealDAC()) || (g_is_true_color && !g_true_mode_iterates);
 #else
-		(g_got_real_dac) || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut;
+		(g_.RealDAC()) || (g_is_true_color && !g_true_mode_iterates) || g_fake_lut;
 #endif
 }
 
@@ -182,7 +182,7 @@ void MakeBatchFile::set_color_spec()
 	std::string color_spec_name;
 	if (g_color_state == COLORSTATE_DEFAULT)
 	{                         /* default colors */
-		if (g_map_dac_box)
+		if (g_.MapDAC())
 		{
 			m_color_spec[0] = '@';
 			color_spec_name = g_map_name;

@@ -667,7 +667,7 @@ static void set_mix(int idx, int i, const BYTE first[3], const BYTE second[3])
 
 static void set_plasma_palette()
 {
-	if (!g_map_dac_box && !g_color_preloaded) /* map= not specified  */
+	if (!g_.MapDAC() && !g_color_preloaded) /* map= not specified  */
 	{
 		BYTE red[3]		= { COLOR_CHANNEL_MAX, 0, 0 };
 		BYTE green[3]	= { 0, COLOR_CHANNEL_MAX, 0 };
@@ -2060,7 +2060,7 @@ bool cellular_setup()
 static void set_cellular_palette()
 {
 	/* map= not specified  */
-	if (!g_map_dac_box || g_color_state == COLORSTATE_DEFAULT)
+	if (!g_.MapDAC() || g_color_state == COLORSTATE_DEFAULT)
 	{
 		// TODO: revisit magic numbers for COLOR_CHANNEL_MAX
 		BYTE red[3]		= { 42, 0, 0 };

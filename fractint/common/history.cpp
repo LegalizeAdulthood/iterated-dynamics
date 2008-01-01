@@ -569,13 +569,13 @@ void history_restore_info()
 	g_orbit_draw_mode = int(last.draw_mode);
 	g_user_float_flag = (g_current_fractal_specific->isinteger != 0);
 	g_.DAC() = last.dac;
-	g_old_dac_box = last.dac;
-	if (g_map_dac_box)
+	g_.OldDAC() = last.dac;
+	if (g_.MapDAC())
 	{
-		g_map_dac_box = &last.dac;
+		g_.SetMapDAC(&last.dac);
 	}
 	spindac(0, 1);
-	g_save_dac = fractal_type_julibrot(g_fractal_type) ? SAVEDAC_NO : SAVEDAC_YES;
+	g_.SetSaveDAC(fractal_type_julibrot(g_fractal_type) ? SAVEDAC_NO : SAVEDAC_YES);
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_FORMULA:

@@ -376,8 +376,8 @@ void Win32BaseDriver::set_video_mode(const VIDEOINFO &mode)
 	g_.SetGoodMode(true);
 	g_and_color = g_colors-1;
 	g_zoomBox.set_count(0);
-	g_dac_count = g_cycle_limit;
-	g_got_real_dac = true;			/* we are "VGA" */
+	g_.SetDACSleepCount(g_cycle_limit);
+	g_.SetRealDAC(true);			/* we are "VGA" */
 
 	read_palette();
 

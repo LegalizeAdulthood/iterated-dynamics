@@ -183,23 +183,23 @@ bool julibrot_setup()
 	std::string map_name;
 	if (g_juli_3d_mode == JULI3DMODE_RED_BLUE)
 	{
-		g_save_dac = SAVEDAC_NO;
+		g_.SetSaveDAC(SAVEDAC_NO);
 		map_name = GLASSES1_MAP;
 	}
 	else
 	{
 		map_name = GREY_MAP;
 	}
-	if (g_save_dac != SAVEDAC_YES)
+	if (g_.SaveDAC() != SAVEDAC_YES)
 	{
 		if (validate_luts(map_name.c_str()))
 		{
 			return 0;
 		}
 		spindac(0, 1);               /* load it, but don't spin */
-		if (g_save_dac == SAVEDAC_NEXT)
+		if (g_.SaveDAC() == SAVEDAC_NEXT)
 		{
-			g_save_dac = SAVEDAC_YES;
+			g_.SetSaveDAC(SAVEDAC_YES);
 		}
 	}
 	return r >= 0;

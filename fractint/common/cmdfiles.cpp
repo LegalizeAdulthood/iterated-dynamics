@@ -388,8 +388,8 @@ static void initialize_variables_restart()          /* <ins> key init */
 	/* next should perhaps be fractal re-init, not just <ins> ? */
 	g_initial_cycle_limit = 55;						/* spin-DAC default speed limit */
 	g_map_set = false;								/* no map= name active */
-	delete[] g_map_dac_box;
-	g_map_dac_box = 0;
+	delete g_.MapDAC();
+	g_.SetMapDAC(0);
 
 	g_major_method = MAJORMETHOD_BREADTH_FIRST;		/* default inverse julia methods */
 	g_minor_method = MINORMETHOD_LEFT_FIRST;		/* default inverse julia methods */
@@ -3328,7 +3328,7 @@ static int parse_colors(char *value)
 		g_color_state = COLORSTATE_UNKNOWN;
 	}
 	g_color_preloaded = true;
-	g_old_dac_box = g_.DAC();
+	g_.OldDAC() = g_.DAC();
 	return 0;
 
 badcolor:
