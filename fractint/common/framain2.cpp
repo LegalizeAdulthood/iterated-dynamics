@@ -1572,8 +1572,8 @@ static void handle_zoom_resize(bool zoom_in)
 				g_z_rotate = 0;
 				g_zbx = 0.0;
 				g_zby = 0.0;
-				find_special_colors();
-				g_zoomBox.set_color(g_color_bright);
+				g_.DAC().FindSpecialColors();
+				g_zoomBox.set_color(g_.DAC().Bright());
 				g_px = g_grid_size/2;
 				g_py = g_grid_size/2;
 				zoom_box_move(0.0, 0.0); /* force scrolling */
@@ -1943,8 +1943,8 @@ static void handle_evolver_zoom(int zoom_in)
 				g_z_rotate = 0;
 				g_zbx = 0;
 				g_zby = 0;
-				find_special_colors();
-				g_zoomBox.set_color(g_color_bright);
+				g_.DAC().FindSpecialColors();
+				g_zoomBox.set_color(g_.DAC().Bright());
 				if (g_evolving_flags & EVOLVE_FIELD_MAP) /*rb*/
 				{
 					/* set screen view params back (previously changed to allow

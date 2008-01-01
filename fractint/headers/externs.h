@@ -39,9 +39,6 @@ extern long					g_color_iter;
 extern bool					g_color_preloaded;
 extern int					g_colors;
 extern int					g_color_state;
-extern int					g_color_bright;					/* brightest color in palette */
-extern int					g_color_dark;					/* darkest color in palette */
-extern int					g_color_medium;					/* nearest to medbright grey in palette */
 extern bool					g_compare_gif;
 extern long					g_gaussian_constant;
 extern double				g_cos_x;

@@ -42,6 +42,9 @@ public:
 	void SetDACSleepCount(int value);
 	void IncreaseDACSleepCount();
 	void DecreaseDACSleepCount();
+	int ColorBright() const				{ return DAC().Bright(); }
+	int ColorDark() const				{ return DAC().Dark(); }
+	int ColorMedium() const				{ return DAC().Medium(); }
 
 private:
 	GlobalImpl *_impl;

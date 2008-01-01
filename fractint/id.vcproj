@@ -1299,6 +1299,10 @@
 				Name="plumbing"
 				>
 				<File
+					RelativePath=".\common\ColormapTable.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\drivers.cpp"
 					>
 				</File>

@@ -107,7 +107,7 @@ static int get_min_max()
 
 static void toggle_bars(bool &bars, int barwidth, int *colour)
 {
-	find_special_colors();
+	g_.DAC().FindSpecialColors();
 	int ct = 0;
 	for (int i = s_x_center; i < (s_x_center) + barwidth; i++)
 	{
@@ -115,8 +115,8 @@ static void toggle_bars(bool &bars, int barwidth, int *colour)
 		{
 			if (bars)
 			{
-				g_plot_color_put_color(i + int(s_average), j , g_color_bright);
-				g_plot_color_put_color(i - int(s_average), j , g_color_bright);
+				g_plot_color_put_color(i + int(s_average), j , g_.DAC().Bright());
+				g_plot_color_put_color(i - int(s_average), j , g_.DAC().Bright());
 			}
 			else
 			{
@@ -273,7 +273,7 @@ int auto_stereo()
 	}
 
 	{
-		find_special_colors();
+		g_.DAC().FindSpecialColors();
 		s_average /= 2*s_average_count;
 		int ct = 0;
 		int *colour = (int *) _alloca(sizeof(int)*g_x_dots);

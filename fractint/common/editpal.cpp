@@ -466,8 +466,8 @@ void cursor::draw()
 {
 	int color;
 
-	find_special_colors();
-	color = (_blink) ? g_color_medium : g_color_dark;
+	g_.DAC().FindSpecialColors();
+	color = (_blink) ? g_.DAC().Medium() : g_.DAC().Dark();
 
 	vertical_line(_x, _y - CURSOR_SIZE - 1, CURSOR_SIZE, color);
 	vertical_line(_x, _y + 2, CURSOR_SIZE, color);

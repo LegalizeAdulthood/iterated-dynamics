@@ -629,7 +629,7 @@ void JIIM::execute()
 	}
 	else
 	{
-		color = g_color_bright;
+		color = g_.DAC().Bright();
 	}
 
 	cursor::create();
@@ -705,12 +705,12 @@ void JIIM::execute()
 	}
 	else if (s_windows == 2)  /* leave the fractal */
 	{
-		fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y, g_color_dark);
-		fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots, g_color_dark);
+		fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y, g_.DAC().Dark());
+		fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots, g_.DAC().Dark());
 	}
 	else  /* blank whole window */
 	{
-		fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_color_dark);
+		fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_.DAC().Dark());
 	}
 
 	setup_convert_to_screen(&m_cvt);
@@ -742,7 +742,7 @@ void JIIM::execute()
 
 	cursor::cursor_set_position(g_col, g_row);
 	cursor::cursor_show();
-	color = g_color_bright;
+	color = g_.DAC().Bright();
 
 	iter = 1;
 	still = 1;
@@ -1044,12 +1044,12 @@ void JIIM::execute()
 			}
 			if (s_windows == 2)
 			{
-				fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y-s_show_numbers, g_color_dark);
-				fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots-s_show_numbers, g_color_dark);
+				fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y-s_show_numbers, g_.DAC().Dark());
+				fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots-s_show_numbers, g_.DAC().Dark());
 			}
 			else
 			{
-				fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_color_dark);
+				fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_.DAC().Dark());
 			}
 		} /* end if (driver_key_pressed) */
 
@@ -1330,12 +1330,12 @@ finish:
 		{
 			if (s_windows == 2)
 			{
-				fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y, g_color_dark);
-				fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots, g_color_dark);
+				fillrect(g_x_dots, s_window_corner_y, s_window_dots_x-g_x_dots, s_window_dots_y, g_.DAC().Dark());
+				fillrect(s_window_corner_x   , g_y_dots, g_x_dots, s_window_dots_y-g_y_dots, g_.DAC().Dark());
 			}
 			else
 			{
-				fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_color_dark);
+				fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_.DAC().Dark());
 			}
 			if (s_windows == 3 && s_window_dots_x == g_screen_width) /* unhide */
 			{
