@@ -67,7 +67,7 @@ bool validate_luts(const char *fn)
 		g_.DAC().Set(index, 40, 40, 40);
 		++index;
 	}
-	g_color_state = COLORSTATE_MAP;
+	g_.SetColorState(COLORSTATE_MAP);
 	g_color_file = fn;
 	return false;
 }

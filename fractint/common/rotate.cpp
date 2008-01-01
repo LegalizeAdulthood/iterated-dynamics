@@ -509,7 +509,7 @@ void save_palette()
 						% (g_.DAC().Blue(i) << 2);
 			}
 			g_.OldDAC() = g_.DAC();
-			g_color_state = COLORSTATE_MAP;
+			g_.SetColorState(COLORSTATE_MAP);
 			g_color_file = temp1;
 		}
 		dac_file.close();

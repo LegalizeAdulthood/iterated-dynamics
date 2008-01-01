@@ -273,7 +273,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_.DAC() = *g_.MapDAC();
 					spindac(0, 1);
 				}
-				g_color_state = COLORSTATE_DEFAULT;
+				g_.SetColorState(COLORSTATE_DEFAULT);
 			}
 			if (g_view_window)
 			{
@@ -1302,7 +1302,7 @@ static ApplicationStateType handle_color_cycling(int kbdchar)
 	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
 	if (g_.OldDAC() != g_.DAC())
 	{
-		g_color_state = COLORSTATE_UNKNOWN;
+		g_.SetColorState(COLORSTATE_UNKNOWN);
 		history_save_info();
 	}
 	return APPSTATE_CONTINUE;
@@ -1331,7 +1331,7 @@ static ApplicationStateType handle_color_editing(bool &kbdmore)
 		palette_edit();
 		if (g_.OldDAC() != g_.DAC())
 		{
-			g_color_state = COLORSTATE_UNKNOWN;
+			g_.SetColorState(COLORSTATE_UNKNOWN);
 			history_save_info();
 		}
 	}

@@ -65,6 +65,8 @@ public:
 			_dacSleepCount--;
 		}
 	}
+	ColorStateType ColorState() const	{ return _colorState; }
+	void SetColorState(ColorStateType value) { _colorState = value; }
 
 private:
 	int _adapter;
@@ -74,20 +76,17 @@ private:
 	bool _goodMode;
 	ColormapTable _dac;
 	ColormapTable _oldDAC;
-	ColormapTable *_mapDAC;						/* map= (default colors) */
+	ColormapTable *_mapDAC;				/* map= (default colors) */
 	bool _realDAC;
 	SaveDACType _saveDAC;
 	int _dacSleepCount;
+	ColorStateType _colorState;			/* 0, g_dac_box matches default (bios or map=) */
+										/* 1, g_dac_box matches no known defined map */
+										/* 2, g_dac_box matches the g_color_file map */
 };
 
-ColormapTable g_old_dac_box;
-int g_color_state;								/* 0, g_dac_box matches default (bios or map=) */
-												/* 1, g_dac_box matches no known defined map   */
-												/* 2, g_dac_box matches the g_color_file map      */
-bool g_color_preloaded;							/* if g_dac_box preloaded for next mode select */
-int g_color_dark = 0;		/* darkest color in palette */
-int g_color_bright = 0;		/* brightest color in palette */
-int g_color_medium = 0;		/* nearest to medbright grey in palette Zoom-Box values (2K x 2K screens max) */
+
+bool g_color_preloaded;					/* if g_dac_box preloaded for next mode select */
 
 GlobalImpl::GlobalImpl()
 	: _adapter(0),
@@ -96,10 +95,12 @@ GlobalImpl::GlobalImpl()
 	_videoTable(MAXVIDEOMODES),
 	_goodMode(false),
 	_dac(),
+	_oldDAC(),
+	_mapDAC(0),
 	_realDAC(false),
 	_saveDAC(SAVEDAC_NO),
 	_dacSleepCount(256),
-	_mapDAC(0)
+	_colorState(COLORSTATE_DEFAULT)
 {
 }
 
@@ -119,131 +120,37 @@ Globals::~Globals()
 	delete _impl;
 }
 
-int Globals::Adapter() const
-{
-	return _impl->Adapter();
-}
-void Globals::SetAdapter(int value)
-{
-	_impl->SetAdapter(value);
-}
-int Globals::InitialAdapter() const
-{
-	return _impl->InitialAdapter();
-}
-void Globals::SetInitialAdapter(int value)
-{
-	_impl->SetInitialAdapter(value);
-}
-void Globals::SetInitialAdapterNone()
-{
-	_impl->SetInitialAdapterNone();
-}
-const VIDEOINFO &Globals::VideoEntry() const
-{
-	return _impl->VideoEntry();
-}
-void Globals::SetVideoEntry(const VIDEOINFO &value)
-{
-	_impl->SetVideoEntry(value);
-}
-void Globals::SetVideoEntrySize(int width, int height)
-{
-	_impl->SetVideoEntrySize(width, height);
-}
-void Globals::SetVideoEntryXDots(int value)
-{
-	_impl->SetVideoEntryXDots(value);
-}
-void Globals::SetVideoEntryColors(int value)
-{
-	_impl->SetVideoEntryColors(value);
-}
-int Globals::VideoTableLength() const
-{
-	return _impl->VideoTableLength();
-}
-void Globals::AddVideoModeToTable(const VIDEOINFO &mode)
-{
-	_impl->AddVideoModeToTable(mode);
-}
-const VIDEOINFO &Globals::VideoTable(int i) const
-{
-	return _impl->VideoTable(i);
-}
-void Globals::SetVideoTableKey(int i, int key)
-{
-	_impl->SetVideoTableKey(i, key);
-}
-void Globals::SetVideoTable(int i, const VIDEOINFO &value)
-{
-	_impl->SetVideoTable(i, value);
-}
-bool Globals::GoodMode() const
-{
-	return _impl->GoodMode();
-}
-void Globals::SetGoodMode(bool value)
-{
-	_impl->SetGoodMode(value);
-}
-ColormapTable &Globals::DAC()
-{
-	return _impl->DAC();
-}
-const ColormapTable &Globals::DAC() const
-{
-	return _impl->DAC();
-}
-bool Globals::RealDAC() const
-{
-	return _impl->RealDAC();
-}
-void Globals::SetRealDAC(bool value)
-{
-	_impl->SetRealDAC(value);
-}
-SaveDACType Globals::SaveDAC() const
-{
-	return _impl->SaveDAC();
-}
-void Globals::SetSaveDAC(SaveDACType value)
-{
-	_impl->SetSaveDAC(value);
-}
-int Globals::DACSleepCount() const
-{
-	return _impl->DACSleepCount();
-}
-void Globals::SetDACSleepCount(int value)
-{
-	_impl->SetDACSleepCount(value);
-}
-void Globals::IncreaseDACSleepCount()
-{
-	_impl->IncreaseDACSleepCount();
-}
-void Globals::DecreaseDACSleepCount()
-{
-	_impl->DecreaseDACSleepCount();
-}
-void Globals::SetMapDAC(ColormapTable *value)
-{
-	_impl->SetMapDAC(value);
-}
-const ColormapTable *Globals::MapDAC() const
-{
-	return _impl->MapDAC();
-}
-ColormapTable *Globals::MapDAC()
-{
-	return _impl->MapDAC();
-}
-const ColormapTable &Globals::OldDAC() const
-{
-	return _impl->OldDAC();
-}
-ColormapTable &Globals::OldDAC()
-{
-	return _impl->OldDAC();
-}
+int Globals::Adapter() const								{ return _impl->Adapter(); }
+void Globals::SetAdapter(int value)							{ _impl->SetAdapter(value); }
+int Globals::InitialAdapter() const							{ return _impl->InitialAdapter(); }
+void Globals::SetInitialAdapter(int value)					{ _impl->SetInitialAdapter(value); }
+void Globals::SetInitialAdapterNone()						{ _impl->SetInitialAdapterNone(); }
+const VIDEOINFO &Globals::VideoEntry() const				{ return _impl->VideoEntry(); }
+void Globals::SetVideoEntry(const VIDEOINFO &value)			{ _impl->SetVideoEntry(value); }
+void Globals::SetVideoEntrySize(int width, int height)		{ _impl->SetVideoEntrySize(width, height); }
+void Globals::SetVideoEntryXDots(int value)					{ _impl->SetVideoEntryXDots(value); }
+void Globals::SetVideoEntryColors(int value)				{ _impl->SetVideoEntryColors(value); }
+int Globals::VideoTableLength() const						{ return _impl->VideoTableLength(); }
+void Globals::AddVideoModeToTable(const VIDEOINFO &mode)	{ _impl->AddVideoModeToTable(mode); }
+const VIDEOINFO &Globals::VideoTable(int i) const			{ return _impl->VideoTable(i); }
+void Globals::SetVideoTableKey(int i, int key)				{ _impl->SetVideoTableKey(i, key); }
+void Globals::SetVideoTable(int i, const VIDEOINFO &value)	{ _impl->SetVideoTable(i, value); }
+bool Globals::GoodMode() const								{ return _impl->GoodMode(); }
+void Globals::SetGoodMode(bool value)						{ _impl->SetGoodMode(value); }
+ColormapTable &Globals::DAC()								{ return _impl->DAC(); }
+const ColormapTable &Globals::DAC() const					{ return _impl->DAC(); }
+bool Globals::RealDAC() const								{ return _impl->RealDAC(); }
+void Globals::SetRealDAC(bool value)						{ _impl->SetRealDAC(value); }
+SaveDACType Globals::SaveDAC() const						{ return _impl->SaveDAC(); }
+void Globals::SetSaveDAC(SaveDACType value)					{ _impl->SetSaveDAC(value); }
+int Globals::DACSleepCount() const							{ return _impl->DACSleepCount(); }
+void Globals::SetDACSleepCount(int value)					{ _impl->SetDACSleepCount(value); }
+void Globals::IncreaseDACSleepCount()						{ _impl->IncreaseDACSleepCount(); }
+void Globals::DecreaseDACSleepCount()						{ _impl->DecreaseDACSleepCount(); }
+void Globals::SetMapDAC(ColormapTable *value)				{ _impl->SetMapDAC(value); }
+const ColormapTable *Globals::MapDAC() const				{ return _impl->MapDAC(); }
+ColormapTable *Globals::MapDAC()							{ return _impl->MapDAC(); }
+const ColormapTable &Globals::OldDAC() const				{ return _impl->OldDAC(); }
+ColormapTable &Globals::OldDAC()							{ return _impl->OldDAC(); }
+ColorStateType Globals::ColorState() const					{ return _impl->ColorState(); }
+void Globals::SetColorState(ColorStateType value)			{ _impl->SetColorState(value); }

@@ -457,7 +457,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_ranges_length = 0;
 	g_use_center_mag = true;                          /* use center-mag, not corners */
 
-	g_color_state = COLORSTATE_DEFAULT;
+	g_.SetColorState(COLORSTATE_DEFAULT);
 	g_color_preloaded = false;
 	g_rotate_lo = 1; g_rotate_hi = 255;      /* color cycling default range */
 	g_orbit_delay = 0;                     /* full speed orbits */
@@ -3233,7 +3233,7 @@ static int parse_colors(char *value)
 			{
 				init_msg("", &value[1], 3);
 			}
-			g_color_state = COLORSTATE_MAP;
+			g_.SetColorState(COLORSTATE_MAP);
 		}
 	}
 	else
@@ -3325,7 +3325,7 @@ static int parse_colors(char *value)
 			g_.DAC().Set(i, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100, 63*COLOR_CHANNEL_MAX/100);
 			++i;
 		}
-		g_color_state = COLORSTATE_UNKNOWN;
+		g_.SetColorState(COLORSTATE_UNKNOWN);
 	}
 	g_color_preloaded = true;
 	g_.OldDAC() = g_.DAC();

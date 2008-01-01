@@ -100,7 +100,7 @@ enum LogPaletteType
 	LOGPALETTE_OLD = -1
 };
 
-/* g_color_state values */
+/* g_.ColorState values */
 enum ColorStateType
 {
 	COLORSTATE_DEFAULT	= 0,

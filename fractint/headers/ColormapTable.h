@@ -64,9 +64,9 @@ public:
 
 private:
 	BYTE _map[256][3];
-	int _darkIndex;
-	int _mediumIndex;
-	int _brightIndex;
+	int _darkIndex;						// darkest color in palette
+	int _mediumIndex;					// nearest to medbright grey in palette Zoom-Box values (2K x 2K screens max)
+	int _brightIndex;					// brightest color in palette
 };
 
 inline bool operator==(const ColormapTable &lhs, const ColormapTable &rhs)
