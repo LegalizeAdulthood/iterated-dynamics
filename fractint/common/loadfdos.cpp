@@ -5,7 +5,7 @@
 	get_video_mode should return with:
 		return code 0 for ok, -1 for error or cancelled by user
 		video parameters setup for the mainline, in the dos case this means
-		setting g_.InitialAdapter to video mode, based on this fractint.c will set up
+		setting g_.InitialVideoMode to video mode, based on this fractint.c will set up
 		for and call setvideomode
 		set g_view_window on if file going to be loaded into a view smaller than
 		physical screen, in this case also set g_view_reduction, g_view_x_dots,
@@ -85,7 +85,7 @@ static int video_mode_compare(const void *p1, const void *p2)
 
 static std::string format_video_info(int i, const char *err)
 {
-	g_.SetVideoEntry(g_.VideoTable(i));
+	g_.SetVideoEntry(i);
 	std::string key_name = video_mode_key_name(g_.VideoEntry().keynum);
 	std::string result = str(boost::format("%-5s %-25s %-4s %5d %5d %3d %-25s")  /* 78 chars */
 			% key_name.c_str() % g_.VideoEntry().name % err
@@ -149,7 +149,7 @@ void initialize_video_sort_table(fractal_info const *info, video_mode_sort_info 
 			tmpflags |= VI_CBIG;
 		}
 
-		if (i == g_.InitialAdapter())
+		if (i == g_.InitialVideoMode())
 		{
 			tmpflags -= VI_EXACT;
 		}
@@ -219,13 +219,13 @@ static std::string GetHeading(fractal_info const *info, struct ext_blk_formula_i
 	heading += "\n";
 	if (info->info_id[0] != 'G')
 	{
-		if (g_.InitialAdapter() < 0)
+		if (g_.InitialVideoMode() < 0)
 		{
 			heading += "Saved in unknown video mode.";
 		}
 		else
 		{
-			heading += format_video_info(g_.InitialAdapter(), "");
+			heading += format_video_info(g_.InitialVideoMode(), "");
 		}
 	}
 	if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect_ratio)
@@ -243,7 +243,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 	float tmpreduce;
 #if !defined(XFRACT)
 #endif
-	g_.SetInitialAdapterNone();
+	g_.SetInitialVideoModeNone();
 
 	/* try to find exact match for vid mode */
 	for (int i = 0; i < g_.VideoTableLength(); ++i)
@@ -252,18 +252,18 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		if (info->x_dots == vident.x_dots && info->y_dots == vident.y_dots
 			&& g_file_colors == vident.colors)
 		{
-			g_.SetInitialAdapter(i);
+			g_.SetInitialVideoMode(i);
 			break;
 		}
 	}
 
 	/* exit in makepar mode if no exact match of video mode in file */
-	if (!g_make_par_flag && g_.InitialAdapter() == -1)
+	if (!g_make_par_flag && g_.InitialVideoMode() == -1)
 	{
 		return 0;
 	}
 
-	if (g_.InitialAdapter() == -1) /* try to find very good match for vid mode */
+	if (g_.InitialVideoMode() == -1) /* try to find very good match for vid mode */
 	{
 		for (int i = 0; i < g_.VideoTableLength(); ++i)
 		{
@@ -271,7 +271,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 			if (info->x_dots == vident.x_dots && info->y_dots == vident.y_dots
 				&& g_file_colors == vident.colors)
 			{
-				g_.SetInitialAdapter(i);
+				g_.SetInitialVideoMode(i);
 				break;
 			}
 		}
@@ -282,12 +282,12 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 	initialize_video_sort_table(info, sort_table);
 	if (g_fast_restore  && !g_ui_state.ask_video)
 	{
-		g_.SetInitialAdapter(g_.Adapter());
+		g_.SetInitialVideoMode(g_.Adapter());
 	}
 
 #ifndef XFRACT
 	bool gotrealmode = false;
-	if ((g_.InitialAdapter() < 0 || (g_ui_state.ask_video && !g_initialize_batch)) && g_make_par_flag)
+	if ((g_.InitialVideoMode() < 0 || (g_ui_state.ask_video && !g_initialize_batch)) && g_make_par_flag)
 	{
 		/* no exact match or (askvideo=yes and batch=no), and not
 		in makepar mode, talk to user */
@@ -313,23 +313,23 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		}
 		if (i < 0)  /* returned -100 - g_video_table entry number */
 		{
-			g_.SetInitialAdapter(-100 - i);
+			g_.SetInitialVideoMode(-100 - i);
 			gotrealmode = true;
 		}
 		else
 		{
-			g_.SetInitialAdapter(sort_table[i].index);
+			g_.SetInitialVideoMode(sort_table[i].index);
 		}
 	}
 #else
-	g_.SetInitialAdapter(0);
+	g_.SetInitialVideoMode(0);
 	j = g_.VideoTable(0).keynum;
 	gotrealmode = false;
 #endif
 
 	if (!gotrealmode)  /* translate from temp table to permanent */
 	{
-		int i = g_.InitialAdapter();
+		int i = g_.InitialVideoMode();
 		int key = g_.VideoTable(i).keynum;
 		if (key != 0)
 		{
@@ -338,7 +338,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 			{
 				if (g_.VideoTable(k).keynum == key)
 				{
-					g_.SetInitialAdapter(k);
+					g_.SetInitialVideoMode(k);
 					break;
 				}
 			}
@@ -349,13 +349,13 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		}
 		if (key == 0) /* mode has no key, add to reserved slot at end */
 		{
-			g_.SetInitialAdapter(MAXVIDEOMODES-1);
-			g_.SetVideoTable(g_.InitialAdapter(), g_.VideoTable(i));
+			g_.SetInitialVideoMode(MAXVIDEOMODES-1);
+			g_.SetVideoTable(g_.InitialVideoMode(), g_.VideoTable(i));
 		}
 	}
 
 	/* ok, we're going to return with a video mode */
-	g_.SetVideoEntry(g_.VideoTable(g_.InitialAdapter()));
+	g_.SetVideoEntry(g_.InitialVideoMode());
 
 	if (g_view_window
 		&& g_file_x_dots == g_.VideoEntry().x_dots
@@ -502,35 +502,33 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 
 static void format_item(int choice, char *buf)
 {
-	char errbuf[10];
-	unsigned tmpflags;
-	errbuf[0] = 0;
-	tmpflags = vidptr[choice].flags;
+	std::string errors = "";
+	unsigned tmpflags = vidptr[choice].flags;
 	if (tmpflags & (VI_VSMALL + VI_CSMALL + VI_ASPECT))
 	{
-		strcat(errbuf, "*");
+		errors.append(1, '*');
 	}
 	if (tmpflags & VI_VSMALL)
 	{
-		strcat(errbuf, "R");
+		errors.append(1, 'R');
 	}
 	if (tmpflags & VI_CSMALL)
 	{
-		strcat(errbuf, "C");
+		errors.append(1, 'C');
 	}
 	if (tmpflags & VI_ASPECT)
 	{
-		strcat(errbuf, "A");
+		errors.append(1, 'A');
 	}
 	if (tmpflags & VI_VBIG)
 	{
-		strcat(errbuf, "v");
+		errors.append(1, 'v');
 	}
 	if (tmpflags & VI_CBIG)
 	{
-		strcat(errbuf, "c");
+		errors.append(1, 'c');
 	}
-	format_video_info(vidptr[choice].index, errbuf, buf);
+	format_video_info(vidptr[choice].index, errors.c_str(), buf);
 }
 
 static int check_mode_key(int curkey, int choice)

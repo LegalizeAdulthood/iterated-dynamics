@@ -16,11 +16,11 @@ public:
 	// video mode/table stuff
 	int Adapter() const					{ return _adapter; }
 	void SetAdapter(int value)			{ _adapter = value; }
-	int InitialAdapter() const			{ return _initialAdapter; }
-	void SetInitialAdapter(int value)	{ _initialAdapter = value; }
-	void SetInitialAdapterNone()		{ _initialAdapter = -1; }
+	int InitialVideoMode() const		{ return _initialVideoMode; }
+	void SetInitialVideoMode(int value)	{ _initialVideoMode = value; }
+	void SetInitialVideoModeNone()		{ _initialVideoMode = -1; }
 	const VIDEOINFO &VideoEntry() const	{ return _videoEntry; }
-	void SetVideoEntry(const VIDEOINFO &value) { _videoEntry = value; }
+	void SetVideoEntry(int idx)			{ _videoEntry = _videoTable[idx]; }
 	void SetVideoEntrySize(int width, int height)
 	{
 		_videoEntry.x_dots = width;
@@ -74,7 +74,7 @@ public:
 
 private:
 	int _adapter;
-	int _initialAdapter;
+	int _initialVideoMode;
 	VIDEOINFO _videoEntry;
 	std::vector<VIDEOINFO> _videoTable;
 	bool _goodMode;
@@ -96,7 +96,7 @@ bool g_color_preloaded;					/* if g_dac_box preloaded for next mode select */
 
 GlobalImpl::GlobalImpl()
 	: _adapter(0),
-	_initialAdapter(0),
+	_initialVideoMode(0),
 	_videoEntry(),
 	_videoTable(),
 	_goodMode(false),
@@ -131,11 +131,11 @@ Globals::~Globals()
 
 int Globals::Adapter() const								{ return _impl->Adapter(); }
 void Globals::SetAdapter(int value)							{ _impl->SetAdapter(value); }
-int Globals::InitialAdapter() const							{ return _impl->InitialAdapter(); }
-void Globals::SetInitialAdapter(int value)					{ _impl->SetInitialAdapter(value); }
-void Globals::SetInitialAdapterNone()						{ _impl->SetInitialAdapterNone(); }
+int Globals::InitialVideoMode() const						{ return _impl->InitialVideoMode(); }
+void Globals::SetInitialVideoMode(int value)				{ _impl->SetInitialVideoMode(value); }
+void Globals::SetInitialVideoModeNone()						{ _impl->SetInitialVideoModeNone(); }
 const VIDEOINFO &Globals::VideoEntry() const				{ return _impl->VideoEntry(); }
-void Globals::SetVideoEntry(const VIDEOINFO &value)			{ _impl->SetVideoEntry(value); }
+void Globals::SetVideoEntry(int idx)						{ _impl->SetVideoEntry(idx); }
 void Globals::SetVideoEntrySize(int width, int height)		{ _impl->SetVideoEntrySize(width, height); }
 void Globals::SetVideoEntryXDots(int value)					{ _impl->SetVideoEntryXDots(value); }
 void Globals::SetVideoEntryColors(int value)				{ _impl->SetVideoEntryColors(value); }

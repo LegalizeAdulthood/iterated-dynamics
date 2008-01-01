@@ -289,7 +289,7 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 	g_max_colors = 256;
 	g_max_input_counter = 80;				/* check the keyboard this often */
 
-	if ((g_show_file != SHOWFILE_PENDING) && g_.InitialAdapter() < 0)
+	if ((g_show_file != SHOWFILE_PENDING) && g_.InitialVideoMode() < 0)
 	{
 		// TODO: refactor to IInputContext
 		intro();                          /* display the credits screen */
@@ -345,7 +345,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 			if (g_show_file == SHOWFILE_CANCELLED && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
 			{
 				g_show_file = SHOWFILE_DONE;               /* cancelled */
-				g_.SetInitialAdapterNone();
+				g_.SetInitialVideoModeNone();
 				break;
 			}
 
@@ -375,7 +375,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 	g_tab_display_enabled = true;
 	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
 
-	if (((g_overlay_3d && !g_initialize_batch) || screen_stacked) && g_.InitialAdapter() < 0)        /* overlay command failed */
+	if (((g_overlay_3d && !g_initialize_batch) || screen_stacked) && g_.InitialVideoMode() < 0)        /* overlay command failed */
 	{
 		driver_unstack_screen();                  /* restore the graphics screen */
 		screen_stacked = false;
@@ -416,8 +416,8 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 	}
 
 	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */
-	g_.SetAdapter(g_.InitialAdapter());                  /* set the video adapter up */
-	g_.SetInitialAdapterNone();                       /* (once)                   */
+	g_.SetAdapter(g_.InitialVideoMode());                  /* set the video adapter up */
+	g_.SetInitialVideoModeNone();                       /* (once)                   */
 
 	while (g_.Adapter() < 0)                /* cycle through instructions */
 	{
