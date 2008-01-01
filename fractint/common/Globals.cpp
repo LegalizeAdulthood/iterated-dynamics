@@ -98,7 +98,7 @@ GlobalImpl::GlobalImpl()
 	: _adapter(0),
 	_initialAdapter(0),
 	_videoEntry(),
-	_videoTable(MAXVIDEOMODES),
+	_videoTable(),
 	_goodMode(false),
 	_dac(),
 	_oldDAC(),
@@ -110,6 +110,7 @@ GlobalImpl::GlobalImpl()
 	_mapSet(false),
 	_mapName("")
 {
+	_videoTable.reserve(MAXVIDEOMODES);
 }
 
 GlobalImpl::~GlobalImpl()
