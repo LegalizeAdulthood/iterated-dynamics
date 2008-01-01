@@ -1491,22 +1491,22 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 	case ITEMTYPE_FORMULA:
 		parsearchname = "frm:" + item_name;
 		strcpy(defaultextension, ".frm");
-		split_path(g_search_for.frm.c_str(), drive, dir, 0, 0);
+		split_path(g_search_for.frm, drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_L_SYSTEM:
 		parsearchname = "lsys:" + item_name;
 		strcpy(defaultextension, ".l");
-		split_path(g_search_for.lsys.c_str(), drive, dir, 0, 0);
+		split_path(g_search_for.lsys, drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_IFS:
 		parsearchname = "ifs:" + item_name;
 		strcpy(defaultextension, ".ifs");
-		split_path(g_search_for.ifs.c_str(), drive, dir, 0, 0);
+		split_path(g_search_for.ifs, drive, dir, 0, 0);
 		break;
 	case ITEMTYPE_PARAMETER:
 		parsearchname = item_name;
 		strcpy(defaultextension, ".par");
-		split_path(g_search_for.par.c_str(), drive, dir, 0, 0);
+		split_path(g_search_for.par, drive, dir, 0, 0);
 		break;
 	}
 
@@ -1583,7 +1583,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 
 	if (!found && g_organize_formula_search && item_type == ITEMTYPE_FORMULA)
 	{
-		split_path(g_organize_formula_dir.string().c_str(), drive, dir, 0, 0);
+		split_path(g_organize_formula_dir.string(), drive, dir, 0, 0);
 		fname[0] = '_';
 		fname[1] = (char) 0;
 		if (isalpha(item_name[0]))

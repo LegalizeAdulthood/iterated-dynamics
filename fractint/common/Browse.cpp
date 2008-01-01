@@ -74,7 +74,7 @@ static bool parameters_match(const fractal_info &info);
 
 void BrowseState::extract_read_name()
 {
-	::extract_filename(m_name, g_read_name.c_str());
+	::extract_filename(m_name, g_read_name);
 }
 
 void BrowseState::make_path(const char *fname, const char *ext)
@@ -635,7 +635,7 @@ rescan:  /* entry for changed browse parms */
 	toggle = 0;
 	wincount = 0;
 	g_browse_state.set_sub_images(true);
-	split_path(g_read_name.c_str(), drive, dir, 0, 0);
+	split_path(g_read_name, drive, dir, 0, 0);
 	split_path(g_browse_state.mask(), 0, 0, fname, ext);
 	make_path(tmpmask, drive, dir, fname, ext);
 	done = (vid_too_big == 2) || no_memory || fr_find_first(tmpmask);
@@ -824,7 +824,7 @@ rescan:  /* entry for changed browse parms */
 				}
 				if (c == 'Y')
 				{
-					split_path(g_read_name.c_str(), drive, dir, 0, 0);
+					split_path(g_read_name, drive, dir, 0, 0);
 					split_path(winlist.name, 0, 0, fname, ext);
 					make_path(tmpmask, drive, dir, fname, ext);
 					if (!unlink(tmpmask))
@@ -852,7 +852,7 @@ rescan:  /* entry for changed browse parms */
 				driver_stack_screen();
 				new_name[0] = 0;
 				strcpy(message, "Enter the new filename for ");
-				split_path(g_read_name.c_str(), drive, dir, 0, 0);
+				split_path(g_read_name, drive, dir, 0, 0);
 				split_path(winlist.name, 0, 0, fname, ext);
 				make_path(tmpmask, drive, dir, fname, ext);
 				strcpy(new_name, tmpmask);
