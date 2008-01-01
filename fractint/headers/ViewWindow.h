@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CommandParser.h"
+
 class ViewWindow
 {
 public:
@@ -8,8 +10,11 @@ public:
 	}
 
 	bool Visible() const				{ return _visible; }
-	void Show()							{ _visible = true; }
+	std::string CommandParameters() const;
+
+	int CommandArgument(cmd_context const &context);
 	void Hide()							{ _visible = false; }
+	void Show()							{ _visible = true; }
 
 private:
 	bool _visible;

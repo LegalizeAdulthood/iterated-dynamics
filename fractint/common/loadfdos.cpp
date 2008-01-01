@@ -241,9 +241,6 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 {
 	int tmpxdots;
 	int tmpydots;
-	float tmpreduce;
-#if !defined(XFRACT)
-#endif
 	g_.SetInitialVideoModeNone();
 
 	/* try to find exact match for vid mode */
@@ -373,7 +370,8 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 			g_view_x_dots = g_view_y_dots = 0; /* easier to use auto reduction */
 		}
 		g_view_reduction = float(int(g_view_reduction + 0.5)); /* need integer value */
-		g_skip_x_dots = g_skip_y_dots = short(g_view_reduction - 1);
+		g_skip_x_dots = short(g_view_reduction - 1);
+		g_skip_y_dots = g_skip_x_dots;
 		return 0;
 	}
 
@@ -466,29 +464,30 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		double ftemp = g_final_aspect_ratio*
 			double(g_.VideoEntry().y_dots)/double(g_.VideoEntry().x_dots)
 			/g_screen_aspect_ratio;
-		int j;
+		int x_dots, y_dots;
+		float view_reduction;
 		if (g_final_aspect_ratio <= g_screen_aspect_ratio)
 		{
-			i = int(double(g_.VideoEntry().x_dots)/double(g_file_x_dots)*20.0 + 0.5);
-			tmpreduce = float(i/20.0); /* chop precision to nearest .05 */
-			i = int(double(g_.VideoEntry().x_dots)/tmpreduce + 0.5);
-			j = int(double(i)*ftemp + 0.5);
+			x_dots = int(double(g_.VideoEntry().x_dots)/double(g_file_x_dots)*20.0 + 0.5);
+			view_reduction = float(x_dots/20.0); /* chop precision to nearest .05 */
+			x_dots = int(double(g_.VideoEntry().x_dots)/view_reduction + 0.5);
+			y_dots = int(double(x_dots)*ftemp + 0.5);
 		}
 		else
 		{
-			i = int(double(g_.VideoEntry().y_dots)/double(g_file_y_dots)*20.0 + 0.5);
-			tmpreduce = float(i/20.0); /* chop precision to nearest .05 */
-			j = int(double(g_.VideoEntry().y_dots)/tmpreduce + 0.5);
-			i = int(double(j)/ftemp + 0.5);
+			x_dots = int(double(g_.VideoEntry().y_dots)/double(g_file_y_dots)*20.0 + 0.5);
+			view_reduction = float(x_dots/20.0); /* chop precision to nearest .05 */
+			y_dots = int(double(g_.VideoEntry().y_dots)/view_reduction + 0.5);
+			x_dots = int(double(y_dots)/ftemp + 0.5);
 		}
-		if (i != g_file_x_dots || j != g_file_y_dots)  /* too bad, must be explicit */
+		if (x_dots != g_file_x_dots || y_dots != g_file_y_dots)  /* too bad, must be explicit */
 		{
 			g_view_x_dots = g_file_x_dots;
 			g_view_y_dots = g_file_y_dots;
 		}
 		else
 		{
-			g_view_reduction = tmpreduce; /* ok, this works */
+			g_view_reduction = view_reduction; /* ok, this works */
 		}
 	}
 	if (g_make_par_flag && !g_fast_restore && !g_initialize_batch &&
