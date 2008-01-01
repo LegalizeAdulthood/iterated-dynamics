@@ -739,7 +739,7 @@ int tab_display_2(char *msg)
 	show_str_var("ifsfile", g_ifs_filename, row, msg);
 	show_str_var("autokeyname", g_slideShow.AutoKeyFile(), row, msg);
 	show_str_var("lightname", g_light_name, row, msg);
-	show_str_var("map", g_map_name, row, msg);
+	show_str_var("map", g_.MapName(), row, msg);
 	write_row(row++, boost::format("Sizeof g_fractal_specific array %d")
 		% (g_num_fractal_types*int(sizeof(FractalTypeSpecificData))));
 	write_row(row++, boost::format("CalculationStatus %d pixel [%d, %d]") % g_calculation_status % g_col % g_row);

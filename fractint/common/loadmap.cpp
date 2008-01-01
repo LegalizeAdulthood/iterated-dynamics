@@ -28,7 +28,7 @@ static BYTE map_to_dac(int value)
 bool validate_luts(const char *fn)
 {
 	char temp[FILE_MAX_PATH + 1];
-	strcpy(temp, g_map_name.c_str());
+	strcpy(temp, g_.MapName().c_str());
 	char temp_fn[FILE_MAX_PATH];
 	strcpy(temp_fn, fn);
 #ifdef XFRACT

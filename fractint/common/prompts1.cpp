@@ -51,7 +51,6 @@
 const std::string GLASSES1_MAP = "glasses1.map";
 const std::string GLASSES2_MAP = "glasses2.map";
 
-std::string g_map_name = "";
 bool g_julibrot;   /* flag for julibrot */
 
 /* These need to be global because F6 exits full_screen_prompt() */
@@ -3474,7 +3473,7 @@ static bool check_mapfile()
 	strcpy(temp1, "*");
 	if (g_.MapSet())
 	{
-		strcpy(temp1, g_map_name.c_str());
+		strcpy(temp1, g_.MapName().c_str());
 	}
 	bool askflag;
 	if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
@@ -3514,7 +3513,7 @@ static bool check_mapfile()
 			continue;
 		}
 		g_.SetMapSet(true);
-		merge_path_names(g_map_name, temp1, true);
+		merge_path_names(g_.MapName(), temp1, true);
 		break;
 	}
 	return false;
