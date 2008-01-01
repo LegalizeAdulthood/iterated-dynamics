@@ -104,7 +104,6 @@ bool Newton::setup()           /* Newton/NewtBasin Routines */
 	/* precalculated values */
 	m_root_over_degree = 1.0/double(g_degree);
 	m_degree_minus_1_over_degree = double(g_degree - 1)/double(g_degree);
-	g_max_color     = 0;
 	g_threshold    = .3*MathUtil::Pi/g_degree; /* less than half distance between roots */
 
 	g_basin = 0;
@@ -172,7 +171,7 @@ int Newton::orbit()
 					break;
 				}
 			}
-			g_color_iter = (tmpcolor == -1) ? g_max_color : tmpcolor;
+			g_color_iter = (tmpcolor == -1) ? 0 : tmpcolor;
 		}
 		return 1;
 	}
