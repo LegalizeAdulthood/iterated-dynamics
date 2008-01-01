@@ -236,7 +236,7 @@ void mult_vec(VECTOR s, MATRIX m)
 	memcpy(s, tmp, sizeof(tmp));
 }
 
-/* perspective projection of vector v with respect to viewpont vector view */
+/* perspective projection of vector v with respect to viewpont vector g_view */
 int perspective(VECTOR v)
 {
 	double denom;

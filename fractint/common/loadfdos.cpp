@@ -7,7 +7,7 @@
 		video parameters setup for the mainline, in the dos case this means
 		setting g_.InitialVideoMode to video mode, based on this fractint.c will set up
 		for and call setvideomode
-		set g_view_window on if file going to be loaded into a view smaller than
+		set view window on if file going to be loaded into a view smaller than
 		physical screen, in this case also set g_view_reduction, g_view_x_dots,
 		g_view_y_dots, and g_final_aspect_ratio
 		set g_skip_x_dots and g_skip_y_dots, to 0 if all pixels are to be loaded,
@@ -29,6 +29,7 @@
 #include "FullScreenChooser.h"
 #include "loadfdos.h"
 #include "realdos.h"
+#include "ViewWindow.h"
 
 /* routines in this module      */
 
@@ -357,7 +358,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 	/* ok, we're going to return with a video mode */
 	g_.SetVideoEntry(g_.InitialVideoMode());
 
-	if (g_view_window
+	if (g_viewWindow.Visible()
 		&& g_file_x_dots == g_.VideoEntry().x_dots
 		&& g_file_y_dots == g_.VideoEntry().y_dots)
 	{
@@ -455,13 +456,13 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 	g_final_aspect_ratio = float(i/1000.0); /* chop precision to 3 decimals */
 
 	/* setup view window stuff */
-	g_view_window = false;
+	g_viewWindow.Hide();
 	g_view_x_dots = 0;
 	g_view_y_dots = 0;
 	if (g_file_x_dots != g_.VideoEntry().x_dots || g_file_y_dots != g_.VideoEntry().y_dots)
 	{
 		/* image not exactly same size as screen */
-		g_view_window = true;
+		g_viewWindow.Show();
 		double ftemp = g_final_aspect_ratio*
 			double(g_.VideoEntry().y_dots)/double(g_.VideoEntry().x_dots)
 			/g_screen_aspect_ratio;

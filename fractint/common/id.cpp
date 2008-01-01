@@ -43,8 +43,10 @@
 #include "prompts2.h"
 #include "realdos.h"
 
-#include "SoundState.h"
 #include "CommandParser.h"
+#include "Formula.h"
+#include "SoundState.h"
+#include "ViewWindow.h"
 
 /* #include hierarchy for fractint is a follows:
 		Each module should include port.h as the first fractint specific
@@ -126,7 +128,6 @@ CalculationMode g_user_standard_calculation_mode;
 int     g_user_periodicity_check;
 long    g_user_distance_test;
 bool g_user_float_flag;
-bool g_view_window;             /* 0 for full screen, 1 for window */
 float   g_view_reduction;          /* window auto-sizing */
 bool g_view_crop;               /* nonzero to crop default coords */
 float   g_final_aspect_ratio;       /* for view shape and rotation */
@@ -354,7 +355,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 		}
 
 		g_evolving_flags = EVOLVE_NONE;
-		g_view_window = false;
+		g_viewWindow.Hide();
 		g_show_file = SHOWFILE_DONE;
 		set_help_mode(-1);
 		g_tab_display_enabled = true;

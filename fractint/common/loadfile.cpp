@@ -29,8 +29,9 @@
 #include "zoom.h"
 
 #include "EscapeTime.h"
-#include "ThreeDimensionalState.h"
 #include "Formula.h"
+#include "ThreeDimensionalState.h"
+#include "ViewWindow.h"
 
 #define BLOCKTYPE_MAIN_INFO		1
 #define BLOCKTYPE_RESUME_INFO	2
@@ -589,7 +590,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	g_this_generation_random_seed = evolver_info.this_generation_random_seed;
 	g_fiddle_factor = evolver_info.fiddle_factor;
 	g_evolving_flags = evolver_info.evolving;
-	g_view_window = (g_evolving_flags != 0);
+	g_evolving_flags ? g_viewWindow.Show() : g_viewWindow.Hide();
 	g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size - 1);
 	g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size - 1);
 	if (read_info.version > 14)
@@ -704,7 +705,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	g_loaded_3d = 0;
 	if (g_fast_restore)
 	{
-		g_view_window = false;
+		g_viewWindow.Hide();
 	}
 	if (has_extension(g_read_name) == 0)
 	{

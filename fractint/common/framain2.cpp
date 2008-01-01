@@ -45,8 +45,9 @@
 #include "ZoomBox.h"
 
 #include "EscapeTime.h"
-#include "SoundState.h"
 #include "CommandParser.h"
+#include "SoundState.h"
+#include "ViewWindow.h"
 
 /* displays differences between current image file and new image */
 class LineCompare
@@ -275,7 +276,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				}
 				g_.SetColorState(COLORSTATE_DEFAULT);
 			}
-			if (g_view_window)
+			if (g_viewWindow.Visible())
 			{
 				/* bypass for VESA virtual screen */
 				ftemp = g_final_aspect_ratio*((double(g_screen_height))/(double(g_screen_width))/g_screen_aspect_ratio);
@@ -301,7 +302,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
 				{
 					stop_message(STOPMSG_NORMAL, "View window too large; using full screen.");
-					g_view_window = false;
+					g_viewWindow.Hide();
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
 					g_view_x_dots = g_screen_width;
@@ -313,7 +314,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				{	/* so ssg works */
 					/* but no check if in evolve mode to allow lots of small views*/
 					stop_message(STOPMSG_NORMAL, "View window too small; using full screen.");
-					g_view_window = false;
+					g_viewWindow.Hide();
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
 				}
@@ -321,7 +322,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				{
 					stop_message(STOPMSG_NORMAL, "Fractal doesn't terminate! switching off evolution.");
 					g_evolving_flags &= ~EVOLVE_FIELD_MAP;
-					g_view_window = false;
+					g_viewWindow.Hide();
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
 				}
@@ -467,7 +468,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			/*rb*/
 			g_name_stack_ptr = -1;   /* reset pointer */
 			g_browse_state.set_name("");
-			if (g_view_window && (g_evolving_flags & EVOLVE_FIELD_MAP) && (g_calculation_status != CALCSTAT_COMPLETED))
+			if (g_viewWindow.Visible() && (g_evolving_flags & EVOLVE_FIELD_MAP) && (g_calculation_status != CALCSTAT_COMPLETED))
 			{
 				/* generate a set of images with varied parameters on each one */
 				int grout;
@@ -502,7 +503,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_evolving_flags     = resume_e_info.evolving;
 					if (g_evolving_flags)
 					{
-						g_view_window = true;
+						g_viewWindow.Show();
 					}
 					ecount       = resume_e_info.ecount;
 					delete g_evolve_handle;
@@ -1499,7 +1500,7 @@ static void handle_select_video(int &kbdchar)
 
 static void handle_mutation_level(bool forward, int amount, bool &kbdmore)
 {
-	g_view_window = true;
+	g_viewWindow.Show();
 	g_evolving_flags = EVOLVE_FIELD_MAP;
 	set_mutation_level(amount);
 	if (forward)
@@ -1807,7 +1808,7 @@ do_3d_transform:
 static void handle_evolver_exit(bool &kbdmore)
 {
 	g_evolving_flags = EVOLVE_NONE;
-	g_view_window = false;
+	g_viewWindow.Hide();
 	save_parameter_history();
 	kbdmore = false;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
@@ -1948,7 +1949,7 @@ static void handle_evolver_zoom(int zoom_in)
 				if (g_evolving_flags & EVOLVE_FIELD_MAP) /*rb*/
 				{
 					/* set screen view params back (previously changed to allow
-					   full screen saves in g_view_window mode) */
+					   full screen saves in view window mode) */
 					int grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 					g_sx_offset = g_px*int(g_dx_size + 1 + grout);
 					g_sy_offset = g_py*int(g_dy_size + 1 + grout);
@@ -2054,7 +2055,7 @@ static void handle_evolver_toggle(bool &kbdmore)
 static void handle_mutation_off(bool &kbdmore)
 {
 	g_evolving_flags = EVOLVE_NONE;
-	g_view_window = false;
+	g_viewWindow.Hide();
 	kbdmore = false;
 	g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 }

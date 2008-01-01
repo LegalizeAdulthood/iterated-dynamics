@@ -40,10 +40,11 @@
 
 #include "busy.h"
 #include "EscapeTime.h"
+#include "FileNameGetter.h"
+#include "MathUtil.h"
 #include "SoundState.h"
 #include "UIChoices.h"
-#include "MathUtil.h"
-#include "FileNameGetter.h"
+#include "ViewWindow.h"
 
 #define   FILEATTR       0x37      /* File attributes; select all but volume labels */
 #define   HIDDEN         2
@@ -644,7 +645,7 @@ int get_view_params()
 	int x_max;
 	int y_max;
 	driver_get_max_screen(x_max, y_max);
-	bool old_viewwindow = g_view_window;
+	bool old_viewwindow = g_viewWindow.Visible();
 	float old_viewreduction = g_view_reduction;
 	float old_aspectratio = g_final_aspect_ratio;
 	int old_viewxdots = g_view_x_dots;
@@ -658,7 +659,7 @@ get_view_restart:
 
 		if (!driver_diskp())
 		{
-			dialog.push("Preview display? (no for full screen)", g_view_window);
+			dialog.push("Preview display? (no for full screen)", g_viewWindow.Visible());
 			dialog.push("Auto window size reduction factor", g_view_reduction);
 			dialog.push("Final media overall aspect ratio, y/x", g_final_aspect_ratio);
 			dialog.push("Crop starting coordinates to new aspect ratio?", g_view_crop);
@@ -684,7 +685,7 @@ get_view_restart:
 
 		if (i == FIK_F4 && !driver_diskp())
 		{
-			g_view_window = false;
+			g_viewWindow.Hide();
 			g_view_x_dots = 0;
 			g_view_y_dots = 0;
 			g_view_reduction = 4.2f;
@@ -698,7 +699,7 @@ get_view_restart:
 		int k = -1;
 		if (!driver_diskp())
 		{
-			g_view_window = (dialog.values(++k).uval.ch.val != 0);
+			(dialog.values(++k).uval.ch.val != 0) ? g_viewWindow.Show() : g_viewWindow.Hide();
 			g_view_reduction = float(dialog.values(++k).uval.dval);
 			g_final_aspect_ratio = float(dialog.values(++k).uval.dval);
 			g_view_crop = (dialog.values(++k).uval.ch.val != 0);
@@ -730,7 +731,9 @@ get_view_restart:
 
 		if (!driver_diskp())
 		{
-			if (g_view_x_dots != 0 && g_view_y_dots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
+			if (g_view_x_dots != 0 && g_view_y_dots != 0
+				&& g_viewWindow.Visible()
+				&& g_final_aspect_ratio == 0.0)
 			{
 				g_final_aspect_ratio = (float(g_view_y_dots))/(float(g_view_x_dots));
 			}
@@ -751,9 +754,9 @@ get_view_restart:
 			g_.SetVideoTable(g_.Adapter(), g_.VideoEntry());
 		}
 
-		return (g_view_window != old_viewwindow
+		return (g_viewWindow.Visible() != old_viewwindow
 			|| g_screen_width != old_sxdots || g_screen_height != old_sydots
-			|| (g_view_window
+			|| (g_viewWindow.Visible()
 				&& (g_view_reduction != old_viewreduction
 					|| g_final_aspect_ratio != old_aspectratio
 					|| g_view_x_dots != old_viewxdots
