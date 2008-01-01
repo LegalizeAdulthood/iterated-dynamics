@@ -180,7 +180,7 @@ void MakeBatchFile::set_max_color()
 void MakeBatchFile::set_color_spec()
 {
 	std::string color_spec_name;
-	if (g_color_state == COLORSTATE_DEFAULT)
+	if (g_.ColorState() == COLORSTATE_DEFAULT)
 	{                         /* default colors */
 		if (g_.MapDAC())
 		{
@@ -188,7 +188,7 @@ void MakeBatchFile::set_color_spec()
 			color_spec_name = g_map_name;
 		}
 	}
-	else if (g_color_state == COLORSTATE_MAP)
+	else if (g_.ColorState() == COLORSTATE_MAP)
 	{                         /* colors match g_color_file */
 		m_color_spec[0] = '@';
 		color_spec_name = g_color_file;

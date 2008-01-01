@@ -38,7 +38,6 @@ extern int					g_color;
 extern long					g_color_iter;
 extern bool					g_color_preloaded;
 extern int					g_colors;
-extern int					g_color_state;
 extern bool					g_compare_gif;
 extern long					g_gaussian_constant;
 extern double				g_cos_x;

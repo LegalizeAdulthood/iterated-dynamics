@@ -2060,7 +2060,7 @@ bool cellular_setup()
 static void set_cellular_palette()
 {
 	/* map= not specified  */
-	if (!g_.MapDAC() || g_color_state == COLORSTATE_DEFAULT)
+	if (!g_.MapDAC() || g_.ColorState() == COLORSTATE_DEFAULT)
 	{
 		// TODO: revisit magic numbers for COLOR_CHANNEL_MAX
 		BYTE red[3]		= { 42, 0, 0 };
@@ -2086,7 +2086,7 @@ static void set_cellular_palette()
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_froth_palette()
 {
-	if ((g_color_state == COLORSTATE_DEFAULT) && (g_colors >= 16))
+	if ((g_.ColorState() == COLORSTATE_DEFAULT) && (g_colors >= 16))
 	{
 		const char *mapname;
 
@@ -2095,7 +2095,7 @@ static void set_froth_palette()
 		{
 			return;
 		}
-		g_color_state = COLORSTATE_DEFAULT; /* treat map as default */
+		g_.SetColorState(COLORSTATE_DEFAULT); /* treat map as default */
 		spindac(0, 1);
 	}
 }
