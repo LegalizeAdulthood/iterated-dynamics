@@ -178,7 +178,6 @@ extern MajorMethodType			g_major_method;
 extern bool					g_map_set;
 extern int					g_math_error_count;
 extern double				g_math_tolerance[2];
-extern int					g_max_color;
 extern long					g_max_count;
 extern long					g_max_iteration;
 extern int					g_max_line_length;
