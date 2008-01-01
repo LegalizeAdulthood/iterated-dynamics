@@ -1850,38 +1850,7 @@ static int orbit_draw_mode_arg(const cmd_context &context)
 
 static int view_windows_arg(const cmd_context &context)
 {
-	if (context.totparms > 5 || context.floatparms-context.intparms > 2 || context.intparms > 4)
-	{
-		return bad_arg(context.curarg);
-	}
-	g_viewWindow.Show();
-	g_view_reduction = 4.2f;  /* reset default values */
-	g_final_aspect_ratio = g_screen_aspect_ratio;
-	g_view_crop = true;
-	g_view_x_dots = 0;
-	g_view_y_dots = 0;
-
-	if ((context.totparms > 0) && (context.floatval[0] > 0.001))
-	{
-		g_view_reduction = float(context.floatval[0]);
-	}
-	if ((context.totparms > 1) && (context.floatval[1] > 0.001))
-	{
-		g_final_aspect_ratio = float(context.floatval[1]);
-	}
-	if ((context.totparms > 2) && (context.yesnoval[2] == 0))
-	{
-		g_view_crop = false;
-	}
-	if ((context.totparms > 3) && (context.intval[3] > 0))
-	{
-		g_view_x_dots = context.intval[3];
-	}
-	if ((context.totparms == 5) && (context.intval[4] > 0))
-	{
-		g_view_y_dots = context.intval[4];
-	}
-	return COMMANDRESULT_FRACTAL_PARAMETER;
+	return g_viewWindow.CommandArgument(context);
 }
 
 static int center_mag_arg(const cmd_context &context)
