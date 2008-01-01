@@ -1,5 +1,7 @@
 /* some hyper complex functions */
 
+#include <string>
+
 #include "port.h"
 #include "prototyp.h"
 #include "hcmplx.h"

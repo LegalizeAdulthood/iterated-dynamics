@@ -4,6 +4,8 @@
  * This file Copyright 1991 Ken Shirriff.  It may be used according to the
  * fractint license conditions, blah blah blah.
  */
+#include <string>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fpu.h"

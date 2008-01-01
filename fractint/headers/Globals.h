@@ -9,6 +9,7 @@ public:
 	Globals();
 	~Globals();
 
+	// video mode table stuff
 	int Adapter() const;
 	void SetAdapter(int value);
 	int InitialVideoMode() const;
@@ -27,6 +28,7 @@ public:
 	bool GoodMode() const;
 	void SetGoodMode(bool value);
 
+	// colormap stuff
 	ColormapTable &DAC();
 	const ColormapTable &DAC() const;
 	ColormapTable &OldDAC();
@@ -48,6 +50,8 @@ public:
 	void SetMapSet(bool value);
 	std::string &MapName();
 	void SetMapName(const std::string &value);
+	int NumColors() const;
+	void SetNumColors(int value);
 
 private:
 	GlobalImpl *_impl;

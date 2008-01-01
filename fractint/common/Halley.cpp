@@ -1,3 +1,5 @@
+#include <string>
+
 #include "port.h"
 #include "prototyp.h"
 #include "cmplx.h"

@@ -37,7 +37,6 @@
 #define MAXCOLORS       256
 
 unsigned int g_height;
-unsigned g_num_colors;
 
 static FILE *fpin = 0;       /* FILE pointer           */
 static int colcount; /* keeps track of current column for wide images */
@@ -155,14 +154,14 @@ int gifview()
 		close_file();
 		return -1;
 	}
-	g_num_colors = 1 << planes;
+	g_.SetNumColors(1 << planes);
 
-	if (g_dither_flag && g_num_colors > 2 && g_colors == 2 && g_out_line == out_line)
+	if (g_dither_flag && g_.NumColors() > 2 && g_colors == 2 && g_out_line == out_line)
 	{
 		g_out_line = out_line_dither;
 	}
 
-	for (i = 0; i < int(g_num_colors); i++)
+	for (i = 0; i < int(g_.NumColors()); i++)
 	{
 		for (j = 0; j < 3; j++)
 		{
@@ -281,11 +280,11 @@ int gifview()
 			/* Skip local color palette */
 			if ((buffer[8] & 0x80) == 0x80)  /* local map? */
 			{
-				int g_num_colors;    /* make this local */
+				int num_colors;    /* make this local */
 				planes = (buffer[8] & 0x0F) + 1;
-				g_num_colors = 1 << planes;
+				num_colors = 1 << planes;
 				/* skip local map */
-				for (i = 0; i < g_num_colors; i++)
+				for (i = 0; i < num_colors; i++)
 				{
 					for (j = 0; j < 3; j++)
 					{

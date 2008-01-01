@@ -71,6 +71,8 @@ public:
 	void SetMapSet(bool value)			{ _mapSet = value; }
 	std::string &MapName()				{ return _mapName; }
 	void SetMapName(const std::string &value) { _mapName = value; }
+	int NumColors() const				{ return _numColors; }
+	void SetNumColors(int value)		{ _numColors = value; }
 
 private:
 	int _adapter;
@@ -89,6 +91,7 @@ private:
 										/* 2, g_dac_box matches the g_color_file map */
 	bool _mapSet;
 	std::string _mapName;
+	int _numColors;
 };
 
 
@@ -108,7 +111,8 @@ GlobalImpl::GlobalImpl()
 	_dacSleepCount(256),
 	_colorState(COLORSTATE_DEFAULT),
 	_mapSet(false),
-	_mapName("")
+	_mapName(""),
+	_numColors(0)
 {
 	_videoTable.reserve(MAXVIDEOMODES);
 }
@@ -167,3 +171,5 @@ bool Globals::MapSet() const								{ return _impl->MapSet(); }
 void Globals::SetMapSet(bool value)							{ _impl->SetMapSet(value); }
 std::string &Globals::MapName()								{ return _impl->MapName(); }
 void Globals::SetMapName(const std::string &value)			{ _impl->SetMapName(value); }
+int Globals::NumColors() const								{ return _impl->NumColors(); }
+void Globals::SetNumColors(int value)						{ _impl->SetNumColors(value); }

@@ -235,7 +235,7 @@ void acrospin_data::line3d_planar(point_fp *current)
 {
 	current->x = current->x*(2.0f/g_x_dots) - 1.0f;
 	current->y = current->y*(2.0f/g_y_dots) - 1.0f;
-	current->color = -current->color*(2.0f/g_num_colors) - 1.0f;
+	current->color = -current->color*(2.0f/g_.NumColors()) - 1.0f;
 }
 
 void acrospin_data::next_row()
@@ -2414,7 +2414,7 @@ static void out_triangle_dxf(int c1, float pt_t[3][3])
 /*  of its verticies and sets the light parameters to arbitrary     */
 /*  values.                                                         */
 /*                                                                  */
-/*  Note: g_num_colors (number of colors in the source              */
+/*  Note: g_.NumColors() (number of colors in the source              */
 /*  file) is used instead of g_colors (number of colors avail. with */
 /*  display) so you can generate ray trace files with your LCD      */
 /*  or monochrome display                                           */
@@ -2433,13 +2433,13 @@ static int out_triangle(const point_fp &pt1, const point_fp &pt2, const point_fp
 	/* Normalize each vertex to screen size and adjust coordinate system */
 	pt_t[0][0] = 2*pt1.x/g_x_dots - 1;
 	pt_t[0][1] = (2*pt1.y/g_y_dots - 1);
-	pt_t[0][2] = -2*pt1.color/g_num_colors - 1;
+	pt_t[0][2] = -2*pt1.color/g_.NumColors() - 1;
 	pt_t[1][0] = 2*pt2.x/g_x_dots - 1;
 	pt_t[1][1] = (2*pt2.y/g_y_dots - 1);
-	pt_t[1][2] = -2*pt2.color/g_num_colors - 1;
+	pt_t[1][2] = -2*pt2.color/g_.NumColors() - 1;
 	pt_t[2][0] = 2*pt3.x/g_x_dots - 1;
 	pt_t[2][1] = (2*pt3.y/g_y_dots - 1);
-	pt_t[2][2] = -2*pt3.color/g_num_colors - 1;
+	pt_t[2][2] = -2*pt3.color/g_.NumColors() - 1;
 
 	/* Color of triangle is average of colors of its verticies */
 	if (!g_3d_state.raytrace_brief())
