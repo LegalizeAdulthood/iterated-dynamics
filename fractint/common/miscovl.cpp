@@ -185,7 +185,7 @@ void MakeBatchFile::set_color_spec()
 		if (g_.MapDAC())
 		{
 			m_color_spec[0] = '@';
-			color_spec_name = g_map_name;
+			color_spec_name = g_.MapName();
 		}
 	}
 	else if (g_.ColorState() == COLORSTATE_MAP)

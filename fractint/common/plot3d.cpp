@@ -540,7 +540,7 @@ void plot_setup()
 
 	if (g_.MapSet())
 	{
-		validate_luts(g_map_name); /* read the palette file */
+		validate_luts(g_.MapName()); /* read the palette file */
 		if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 		{
 			if (g_3d_state.glasses_type() == STEREO_SUPERIMPOSE && g_colors < 256)

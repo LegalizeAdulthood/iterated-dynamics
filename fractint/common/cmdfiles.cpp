@@ -840,9 +840,9 @@ static int make_par_arg(const cmd_context &context)
 		{
 			extract_filename(g_command_name, g_read_name);
 		}
-		else if (g_map_name.length() != 0)
+		else if (g_.MapName().length() != 0)
 		{
-			extract_filename(g_command_name, g_map_name);
+			extract_filename(g_command_name, g_.MapName());
 		}
 		else
 		{
@@ -861,7 +861,7 @@ static int make_par_arg(const cmd_context &context)
 			goodbye();
 		}
 	}
-	else if (g_map_name.length() != 0)
+	else if (g_.MapName().length() != 0)
 	{
 		g_make_par_colors_only = false;
 	}
@@ -882,10 +882,10 @@ static int make_par_arg(const cmd_context &context)
 		printf("copying fractal info in GIF %s to PAR %s/%s\n",
 			g_read_name, g_command_file, g_command_name);
 	}
-	else if (g_map_name.length() != 0)
+	else if (g_.MapName().length() != 0)
 	{
 		printf("copying color info in map %s to PAR %s/%s\n",
-			g_map_name.c_str(), g_command_file, g_command_name);
+			g_.MapName().c_str(), g_command_file, g_command_name);
 	}
 #endif
 #endif
@@ -980,7 +980,7 @@ static int map_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	existdir = merge_path_names(g_map_name, context.value, context.mode);
+	existdir = merge_path_names(g_.MapName(), context.value, context.mode);
 	if (existdir > 0)
 	{
 		return COMMANDRESULT_OK;    /* got a directory */
@@ -990,7 +990,7 @@ static int map_arg(const cmd_context &context)
 		init_msg(context.variable, context.value, context.mode);
 		return COMMANDRESULT_OK;
 	}
-	set_color_palette_name(g_map_name);
+	set_color_palette_name(g_.MapName());
 	return COMMANDRESULT_OK;
 }
 
@@ -3215,11 +3215,11 @@ static int parse_colors(char *value)
 	int k;
 	if (*value == '@')
 	{
-		if (merge_path_names(g_map_name, &value[1], false) < 0)
+		if (merge_path_names(g_.MapName(), &value[1], false) < 0)
 		{
 			init_msg("", &value[1], 3);
 		}
-		if (int(strlen(value)) > FILE_MAX_PATH || validate_luts(g_map_name))
+		if (int(strlen(value)) > FILE_MAX_PATH || validate_luts(g_.MapName()))
 		{
 			goto badcolor;
 		}

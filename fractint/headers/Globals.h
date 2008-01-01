@@ -46,6 +46,8 @@ public:
 	void SetColorState(ColorStateType value);
 	bool MapSet() const;
 	void SetMapSet(bool value);
+	std::string &MapName();
+	void SetMapName(const std::string &value);
 
 private:
 	GlobalImpl *_impl;

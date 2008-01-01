@@ -69,6 +69,8 @@ public:
 	void SetColorState(ColorStateType value) { _colorState = value; }
 	bool MapSet() const					{ return _mapSet; }
 	void SetMapSet(bool value)			{ _mapSet = value; }
+	std::string &MapName()				{ return _mapName; }
+	void SetMapName(const std::string &value) { _mapName = value; }
 
 private:
 	int _adapter;
@@ -86,6 +88,7 @@ private:
 										/* 1, g_dac_box matches no known defined map */
 										/* 2, g_dac_box matches the g_color_file map */
 	bool _mapSet;
+	std::string _mapName;
 };
 
 
@@ -104,7 +107,8 @@ GlobalImpl::GlobalImpl()
 	_saveDAC(SAVEDAC_NO),
 	_dacSleepCount(256),
 	_colorState(COLORSTATE_DEFAULT),
-	_mapSet(false)
+	_mapSet(false),
+	_mapName("")
 {
 }
 
@@ -160,3 +164,5 @@ ColorStateType Globals::ColorState() const					{ return _impl->ColorState(); }
 void Globals::SetColorState(ColorStateType value)			{ _impl->SetColorState(value); }
 bool Globals::MapSet() const								{ return _impl->MapSet(); }
 void Globals::SetMapSet(bool value)							{ _impl->SetMapSet(value); }
+std::string &Globals::MapName()								{ return _impl->MapName(); }
+void Globals::SetMapName(const std::string &value)			{ _impl->SetMapName(value); }

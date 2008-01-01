@@ -481,7 +481,7 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 void save_palette()
 {
 	char palname[FILE_MAX_PATH];
-	strcpy(palname, g_map_name.c_str());
+	strcpy(palname, g_.MapName().c_str());
 	driver_stack_screen();
 	char temp1[256] = { 0 };
 	int i = field_prompt_help(HELPCOLORMAP, "Name of map file to write", 0, temp1, 60, 0);
@@ -519,7 +519,7 @@ void save_palette()
 int load_palette()
 {
 	char filename[FILE_MAX_PATH];
-	strcpy(filename, g_map_name.c_str());
+	strcpy(filename, g_.MapName().c_str());
 	driver_stack_screen();
 	int i = get_a_filename_help(HELPCOLORMAP, "Select a MAP File", mapmask, filename);
 	driver_unstack_screen();
@@ -529,7 +529,7 @@ int load_palette()
 		{
 			g_.OldDAC() = g_.DAC();
 		}
-		merge_path_names(g_map_name, filename, true);
+		merge_path_names(g_.MapName(), filename, true);
 	}
 	return i;
 }
