@@ -1547,9 +1547,8 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 
 	if (!found)  /* search for file */
 	{
-		int out;
 		make_path(fullpath, drive, dir, "*", defaultextension);
-		out = fr_find_first(fullpath);
+		int out = fr_find_first(fullpath);
 		while (out == 0)
 		{
 			char msg[200];

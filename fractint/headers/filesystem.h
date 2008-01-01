@@ -29,6 +29,7 @@ extern void ensure_slash_on_directory(std::string &dirname);
 extern int fr_find_first(char *path);
 extern int fr_find_next();
 extern void make_path(char *file_template, const char *drive, const char *dir, const char *fname, const char *ext);
+extern fs::path make_path(const char *drive, const char *dir, const char *fname, const char *ext);
 extern void split_path(const std::string &file_template, char *drive, char *dir, char *filename, char *extension);
 extern void split_path(const char *file_template, char *drive, char *dir, char *filename, char *extension);
 extern void split_path(const char *file_template, char *drive, std::string &dir, char *filename, char *extension);

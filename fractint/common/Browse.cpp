@@ -4,6 +4,8 @@
 #include <time.h>
 #include <errno.h>
 
+#include <boost/filesystem/path.hpp>
+
 #include "port.h"
 #include "prototyp.h"
 #include "fractype.h"
@@ -77,10 +79,7 @@ void BrowseState::extract_read_name()
 
 void BrowseState::make_path(const char *fname, const char *ext)
 {
-	char buffer[FILE_MAX_PATH];
-	strcpy(buffer, m_name.c_str());
-	::make_path(buffer, "", "", fname, ext);
-	m_name = buffer;
+	m_name = ::make_path("", "", fname, ext).string();
 }
 
 void BrowseState::merge_path_names(char *read_name)
