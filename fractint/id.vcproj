@@ -1383,6 +1383,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\ViewWindow.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\zoom.cpp"
 					>
 				</File>
@@ -1772,6 +1776,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\UIChoices.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\ViewWindow.h"
 					>
 				</File>
 				<File

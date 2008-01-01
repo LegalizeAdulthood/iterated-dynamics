@@ -21,6 +21,7 @@
 #include "fracsubr.h"
 #include "framain2.h"
 #include "jiim.h"
+#include "line3d.h"
 #include "lorenz.h"
 #include "miscres.h"
 #include "plot3d.h"
@@ -29,6 +30,7 @@
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
+#include "ViewWindow.h"
 
 /* orbitcalc is declared with no arguments so jump through hoops here */
 #define LORBIT(x, y, z) \
@@ -2351,7 +2353,7 @@ done:
 		g_sy_offset = 0;
 		g_x_dots = g_screen_width;
 		g_y_dots = g_screen_height;
-		g_view_window = false;
+		g_viewWindow.Hide();
 	}
 	return status;
 }

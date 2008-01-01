@@ -62,6 +62,7 @@
 #include "prompts2.h"
 #include "realdos.h"
 #include "TextColors.h"
+#include "ViewWindow.h"
 
 #define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
 
@@ -1366,7 +1367,7 @@ finish:
 	g_debug_mode = old_debugflag; /* yo Chuck! */
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
-		g_view_window = false;
+		g_viewWindow.Hide();
 		g_view_x_dots = 0;
 		g_view_y_dots = 0;
 		g_view_reduction = 4.2f;

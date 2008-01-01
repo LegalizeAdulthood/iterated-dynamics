@@ -39,7 +39,7 @@
 #include "Formula.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
-#include "Formula.h"
+#include "ViewWindow.h"
 
 /* routines in this module      */
 using boost::format;
@@ -1400,7 +1400,7 @@ void write_batch_parms_ranges()
 
 void write_batch_parms_view_windows()
 {
-	if (g_view_window)
+	if (g_viewWindow.Visible())
 	{
 		put_parm(format(" viewwindows=%g/%g") % g_view_reduction % g_final_aspect_ratio);
 		put_parm(g_view_crop ? "/yes" : "/no");

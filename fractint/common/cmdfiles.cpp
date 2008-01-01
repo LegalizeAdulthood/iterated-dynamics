@@ -44,6 +44,7 @@
 #include "Formula.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
+#include "ViewWindow.h"
 
 #define INIT_GIF87      0						/* Turn on GIF 89a processing  */
 
@@ -358,7 +359,7 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_check_current_dir = false;					/* flag to check current dir for files */
 	g_save_time = 0;								/* no auto-save              */
 	g_.SetInitialVideoModeNone();						/* no initial video mode     */
-	g_view_window = false;
+	g_viewWindow.Hide();
 	g_view_reduction = 4.2f;
 	g_view_crop = true;
 	g_final_aspect_ratio = g_screen_aspect_ratio;
@@ -1853,7 +1854,7 @@ static int view_windows_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_view_window = true;
+	g_viewWindow.Show();
 	g_view_reduction = 4.2f;  /* reset default values */
 	g_final_aspect_ratio = g_screen_aspect_ratio;
 	g_view_crop = true;

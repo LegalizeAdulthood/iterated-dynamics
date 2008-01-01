@@ -29,6 +29,7 @@
 #include "FiniteAttractor.h"
 #include "Formula.h"
 #include "ThreeDimensionalState.h"
+#include "ViewWindow.h"
 
 static int compress(int rowlimit);
 static int shftwrite(const BYTE *color, int num_colors);
@@ -395,7 +396,7 @@ int encoder()
 	i = 0;
 
 	/* TODO: pixel aspect ratio should be 1:1? */
-	if (g_view_window                               /* less than full screen?  */
+	if (g_viewWindow.Visible()                               /* less than full screen?  */
 		&& (g_view_x_dots == 0 || g_view_y_dots == 0))   /* and we picked the dots? */
 	{
 		i = int((double(g_screen_height)/double(g_screen_width))*64.0/g_screen_aspect_ratio - 14.5);

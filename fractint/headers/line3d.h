@@ -2,6 +2,7 @@
 #define LINE_3D_H
 
 extern std::string g_light_name;
+extern VECTOR g_view;
 
 extern const int g_bad_value;
 extern int out_line_3d(BYTE *pixels, int line_length);

@@ -21,6 +21,7 @@
 #include "Formula.h"
 #include "UIChoices.h"
 #include "MathUtil.h"
+#include "ViewWindow.h"
 #include "ZoomBox.h"
 
 enum VaryIntType
@@ -714,7 +715,7 @@ get_evol_restart:
 		j = i;
 		int k = -1;
 		g_evolving_flags = dialog.values(++k).uval.ch.val;
-		g_view_window = (g_evolving_flags != 0);
+		g_evolving_flags ? g_viewWindow.Show() : g_viewWindow.Hide();
 
 		if (!g_evolving_flags && i != FIK_F6)  /* don't need any of the other parameters */
 		{
@@ -747,7 +748,7 @@ get_evol_restart:
 	}
 	g_view_x_dots = (g_screen_width/g_grid_size)-2;
 	g_view_y_dots = (g_screen_height/g_grid_size)-2;
-	if (!g_view_window)
+	if (!g_viewWindow.Visible())
 	{
 		g_view_x_dots = 0;
 		g_view_y_dots = 0;
@@ -779,7 +780,7 @@ get_evol_restart:
 		set_current_parameters();
 		if (old_variations > 0)
 		{
-			g_view_window = true;
+			g_viewWindow.Show();
 			g_evolving_flags |= EVOLVE_FIELD_MAP;   /* leave other settings alone */
 		}
 		g_fiddle_factor = 1;
