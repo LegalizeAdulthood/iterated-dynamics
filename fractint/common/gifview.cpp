@@ -183,7 +183,7 @@ int gifview()
 	g_.SetColorState(COLORSTATE_UNKNOWN); /* colors aren't default and not a known .map file */
 
 	/* don't read if glasses */
-	if (g_display_3d && g_map_set && g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE)
+	if (g_display_3d && g_.MapSet() && g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE)
 	{
 		validate_luts(g_map_name);  /* read the palette file */
 		spindac(0, 1); /* load it, but don't spin */
