@@ -2253,7 +2253,7 @@ int select_video_mode(int curmode)
 	{
 		g_.SetVideoEntry(g_.VideoTable(curmode));
 	}
-#ifndef XFRACT
+
 	for (i = 0; i < g_.VideoTableLength(); ++i)  /* find default mode */
 	{
 		if (g_.VideoEntry().colors == g_.VideoTable(entries[i]).colors &&
@@ -2281,11 +2281,10 @@ int select_video_mode(int curmode)
 	}
 	/* picked by function key or ENTER key */
 	i = (i < 0) ? (-1 - i) : entries[i];
-#endif
+
 	/* the selected entry now in g_video_entry */
 	g_.SetVideoEntry(g_.VideoTable(i));
 
-#ifndef XFRACT
 	/* copy fractint.cfg table to resident table, note selected entry */
 	k = 0;
 	for (i = 0; i < g_.VideoTableLength(); ++i)
@@ -2298,9 +2297,6 @@ int select_video_mode(int curmode)
 			}
 		}
 	}
-#else
-	k = g_.VideoTable(0).keynum;
-#endif
 	ret = k;
 	if (k == 0)  /* selected entry not a copied (assigned to key) one */
 	{
