@@ -8,6 +8,7 @@
 
 #include "calcfrac.h"
 #include "fracsubr.h"
+#include "framain2.h"
 #include "miscres.h"
 
 #include "Tesseral.h"
