@@ -11,11 +11,11 @@ public:
 
 	int Adapter() const;
 	void SetAdapter(int value);
-	int InitialAdapter() const;
-	void SetInitialAdapter(int value);
-	void SetInitialAdapterNone();
+	int InitialVideoMode() const;
+	void SetInitialVideoMode(int value);
+	void SetInitialVideoModeNone();
 	const VIDEOINFO &VideoEntry() const;
-	void SetVideoEntry(const VIDEOINFO &value);
+	void SetVideoEntry(int idx);
 	void SetVideoEntrySize(int width, int height);
 	void SetVideoEntryXDots(int value);
 	void SetVideoEntryColors(int value);

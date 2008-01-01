@@ -2251,7 +2251,7 @@ int select_video_mode(int curmode)
 	}
 	else
 	{
-		g_.SetVideoEntry(g_.VideoTable(curmode));
+		g_.SetVideoEntry(curmode);
 	}
 
 	for (i = 0; i < g_.VideoTableLength(); ++i)  /* find default mode */
@@ -2283,7 +2283,7 @@ int select_video_mode(int curmode)
 	i = (i < 0) ? (-1 - i) : entries[i];
 
 	/* the selected entry now in g_video_entry */
-	g_.SetVideoEntry(g_.VideoTable(i));
+	g_.SetVideoEntry(i);
 
 	/* copy fractint.cfg table to resident table, note selected entry */
 	k = 0;
@@ -2309,7 +2309,7 @@ int select_video_mode(int curmode)
 
 void format_vid_table(int choice, char *buf)
 {
-	g_.SetVideoEntry(g_.VideoTable(s_entries[choice]));
+	g_.SetVideoEntry(s_entries[choice]);
 	std::string kname = video_mode_key_name(g_.VideoEntry().keynum);
 	strcpy(buf, boost::format("%-5s %-25s %5d %5d %3d %.12s %.12s")
 		% kname % g_.VideoEntry().name
