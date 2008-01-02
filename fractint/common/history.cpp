@@ -107,7 +107,7 @@ struct HISTORY_ITEM
 	int stop_pass;
 	bool is_mandelbrot;
 	double proximity;
-	bool no_bof;
+	bool beauty_of_fractals;
 	double math_tolerance[2];
 	int orbit_delay;
 	long orbit_interval;
@@ -239,7 +239,7 @@ bool operator==(const HISTORY_ITEM &lhs, const HISTORY_ITEM &rhs)
 		&& (lhs.stop_pass == rhs.stop_pass)
 		&& (lhs.is_mandelbrot == rhs.is_mandelbrot)
 		&& (lhs.proximity == rhs.proximity)
-		&& (lhs.no_bof == rhs.no_bof)
+		&& (lhs.beauty_of_fractals == rhs.beauty_of_fractals)
 		&& equals<double, 2>(lhs.math_tolerance, rhs.math_tolerance)
 		&& (lhs.orbit_delay == rhs.orbit_delay)
 		&& (lhs.orbit_interval == rhs.orbit_interval)
@@ -369,7 +369,7 @@ void history_save_info()
 	current.log_dynamic_calculate = g_log_dynamic_calculate;
 	current.is_mandelbrot = g_is_mandelbrot;
 	current.proximity = g_proximity;
-	current.no_bof = g_no_bof;
+	current.beauty_of_fractals = g_beauty_of_fractals;
 	current.orbit_delay = g_orbit_delay;
 	current.orbit_interval = g_orbit_interval;
 	current.oxmin = g_orbit_x_min;
@@ -552,7 +552,7 @@ void history_restore_info()
 	g_log_dynamic_calculate = last.log_dynamic_calculate;
 	g_is_mandelbrot = last.is_mandelbrot;
 	g_proximity = last.proximity;
-	g_no_bof = last.no_bof;
+	g_beauty_of_fractals = last.beauty_of_fractals;
 	g_orbit_delay = last.orbit_delay;
 	g_orbit_interval = last.orbit_interval;
 	g_orbit_x_min = last.oxmin;

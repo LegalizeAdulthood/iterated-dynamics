@@ -126,7 +126,7 @@ int     g_transparent[2];						/* transparency min/max values */
 long    g_log_palette_mode;						/* Logarithmic palette flag: 0 = no */
 int     g_log_dynamic_calculate = LOGDYNAMIC_NONE;	/* calculate logmap on-the-fly */
 bool g_log_automatic_flag = false;				/* auto calculate logmap */
-bool g_no_bof = false;							/* Flag to make inside=bof options not duplicate bof images */
+bool g_beauty_of_fractals = true;				/* Flag to make inside=bof options not duplicate bof images */
 bool g_escape_exit_flag;						/* set to 1 to avoid the "are you sure?" screen */
 bool g_command_initialize = true;				/* first time into command_files? */
 FractalTypeSpecificData *g_current_fractal_specific = 0;
@@ -396,70 +396,70 @@ static void initialize_variables_restart()          /* <ins> key init */
 static void initialize_variables_fractal()          /* init vars affecting calculation */
 {
 	int i;
-	g_escape_exit_flag = false;                     /* don't disable the "are you sure?" screen */
-	g_user_periodicity_check = 1;            /* turn on periodicity    */
-	g_inside = 1;                          /* inside color = blue    */
-	g_fill_color = -1;                      /* no special fill color */
-	g_user_biomorph = -1;                   /* turn off g_biomorph flag */
-	g_outside = COLORMODE_ITERATION;				/* outside color = -1 (not used) */
-	g_max_iteration = 150;                         /* initial maxiter        */
+	g_escape_exit_flag = false;								/* don't disable the "are you sure?" screen */
+	g_user_periodicity_check = 1;							/* turn on periodicity    */
+	g_inside = 1;											/* inside color = blue    */
+	g_fill_color = -1;										/* no special fill color */
+	g_user_biomorph = -1;									/* turn off g_biomorph flag */
+	g_outside = COLORMODE_ITERATION;						/* outside color = -1 (not used) */
+	g_max_iteration = 150;									/* initial maxiter        */
 	g_user_standard_calculation_mode = CALCMODE_SOLID_GUESS;
-	g_stop_pass = 0;                        /* initial guessing g_stop_pass */
+	g_stop_pass = 0;										/* initial guessing g_stop_pass */
 	g_quick_calculate = false;
 	g_proximity = 0.01;
-	g_is_mandelbrot = true;                          /* default formula mand/jul toggle */
+	g_is_mandelbrot = true;									/* default formula mand/jul toggle */
 	g_user_float_flag = false;
 	g_finite_attractor = FINITE_ATTRACTOR_NO;
-	g_fractal_type = 0;                        /* initial type Set flag  */
+	g_fractal_type = 0;										/* initial type Set flag  */
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 	s_initial_corners = false;
 	s_initial_parameters = false;
-	g_bail_out = 0;                         /* no user-entered bailout */
-	g_no_bof = false;  /* use normal bof initialization to make bof images */
+	g_bail_out = 0;											/* no user-entered bailout */
+	g_beauty_of_fractals = true;							/* use normal bof initialization to make bof images */
 	g_use_initial_orbit_z = INITIALZ_NONE;
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
-		g_parameters[i] = 0.0;     /* initial parameter values */
+		g_parameters[i] = 0.0;								/* initial parameter values */
 	}
 	for (i = 0; i < 3; i++)
 	{
-		g_potential_parameter[i]  = 0.0; /* initial potential values */
-		g_inversion[i] = 0.0;  /* initial invert values */
+		g_potential_parameter[i]  = 0.0;					/* initial potential values */
+		g_inversion[i] = 0.0;								/* initial invert values */
 	}
-	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;     /* initial orbit values */
+	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;		/* initial orbit values */
 	g_invert = 0;
 	g_decomposition[0] = g_decomposition[1] = 0;
 	g_user_distance_test = 0;
 	g_pseudo_x = 0;
 	g_pseudo_y = 0;
 	g_distance_test_width = 71;
-	g_force_symmetry = FORCESYMMETRY_NONE;                 /* symmetry not forced */
+	g_force_symmetry = FORCESYMMETRY_NONE;					/* symmetry not forced */
 	g_escape_time_state.m_grid_fp.x_3rd() = -2.5;
 	g_escape_time_state.m_grid_fp.x_min() = -2.5;
-	g_escape_time_state.m_grid_fp.x_max() = 1.5;						/* initial corner values  */
+	g_escape_time_state.m_grid_fp.x_max() = 1.5;			/* initial corner values  */
 	g_escape_time_state.m_grid_fp.y_3rd() = -1.5;
 	g_escape_time_state.m_grid_fp.y_min() = -1.5;
-	g_escape_time_state.m_grid_fp.y_max() = 1.5;						/* initial corner values  */
+	g_escape_time_state.m_grid_fp.y_max() = 1.5;			/* initial corner values  */
 	g_bf_math = 0;
 	g_potential_16bit = false;
 	g_potential_flag = false;
-	g_log_palette_mode = LOGPALETTE_NONE;                         /* no logarithmic palette */
-	set_function_array(0, "sin");             /* trigfn defaults */
+	g_log_palette_mode = LOGPALETTE_NONE;					/* no logarithmic palette */
+	set_function_array(0, "sin");							/* trigfn defaults */
 	set_function_array(1, "sqr");
 	set_function_array(2, "sinh");
 	set_function_array(3, "cosh");
 	delete[] g_ranges;
 	g_ranges = 0;
 	g_ranges_length = 0;
-	g_use_center_mag = true;                          /* use center-mag, not corners */
+	g_use_center_mag = true;								/* use center-mag, not corners */
 
 	g_.SetColorState(COLORSTATE_DEFAULT);
 	g_color_preloaded = false;
-	g_rotate_lo = 1; g_rotate_hi = 255;      /* color cycling default range */
-	g_orbit_delay = 0;                     /* full speed orbits */
-	g_orbit_interval = 1;                  /* plot all orbits */
+	g_rotate_lo = 1; g_rotate_hi = 255;						/* color cycling default range */
+	g_orbit_delay = 0;										/* full speed orbits */
+	g_orbit_interval = 1;									/* plot all orbits */
 	g_keep_screen_coords = false;
-	g_orbit_draw_mode = ORBITDRAW_RECTANGLE; /* passes=orbits draw mode */
+	g_orbit_draw_mode = ORBITDRAW_RECTANGLE;				/* passes=orbits draw mode */
 	g_set_orbit_corners = false;
 	g_orbit_x_min = g_current_fractal_specific->x_min;
 	g_orbit_x_max = g_current_fractal_specific->x_max;
@@ -472,7 +472,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_math_tolerance[1] = 0.05;
 
 	g_display_3d = DISPLAY3D_NONE;
-	g_overlay_3d = 0;                       /* 3D overlay is off        */
+	g_overlay_3d = 0;										/* 3D overlay is off        */
 
 	g_old_demm_colors = false;
 	g_bail_out_test    = BAILOUT_MODULUS;
@@ -482,7 +482,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_bail_out_bf = bail_out_mod_bf;
 
 	
-	g_function_preloaded = false;			/* old bifurcation function support */
+	g_function_preloaded = false;							/* old bifurcation function support */
 	g_m_x_min_fp = -.83;
 	g_m_y_min_fp = -.25;
 	g_m_x_max_fp = -.83;
@@ -499,7 +499,7 @@ static void initialize_variables_fractal()          /* init vars affecting calcu
 	g_sound_state.initialize();
 }
 
-static void initialize_variables_3d()               /* init vars affecting 3d */
+static void initialize_variables_3d()						/* init vars affecting 3d */
 {
 	g_3d_state.set_raytrace_output(RAYTRACE_NONE);
 	g_3d_state.set_raytrace_brief(0);
@@ -518,7 +518,7 @@ static void initialize_variables_3d()               /* init vars affecting 3d */
 	g_3d_state.set_red().set_bright(80);
 	g_3d_state.set_blue().set_bright(100);
 	g_3d_state.set_transparent0(0);
-	g_3d_state.set_transparent1(0); /* no min/max transparency */
+	g_3d_state.set_transparent1(0);							/* no min/max transparency */
 	g_3d_state.set_defaults();
 }
 
@@ -2724,7 +2724,13 @@ static int finite_attractor_arg(const cmd_context &context)
 
 static int no_bof_arg(const cmd_context &context)
 {
-	return FlagParser<bool>(g_no_bof, COMMANDRESULT_FRACTAL_PARAMETER).parse(context);
+	bool tmp = !g_beauty_of_fractals;
+	int result = FlagParser<bool>(tmp, COMMANDRESULT_FRACTAL_PARAMETER).parse(context);
+	if (result == COMMANDRESULT_FRACTAL_PARAMETER)
+	{
+		g_beauty_of_fractals = !tmp;
+	}
+	return result;
 }
 
 static int is_mand_arg(const cmd_context &context)

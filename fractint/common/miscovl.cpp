@@ -1421,7 +1421,7 @@ void write_batch_parms_cycle_range()
 
 void write_batch_parms_no_beauty_of_fractals()
 {
-	if (g_no_bof)
+	if (!g_beauty_of_fractals)
 	{
 		put_parm(" nobof=yes");
 	}
