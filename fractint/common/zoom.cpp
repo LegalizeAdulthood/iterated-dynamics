@@ -559,12 +559,11 @@ void zoom_box_out() /* for ctl-enter, calc corners for zooming out */
 
 void aspect_ratio_crop(float oldaspect, float newaspect)
 {
-	double ftemp;
 	double xmargin;
 	double ymargin;
 	if (newaspect > oldaspect)  /* new ratio is taller, crop x */
 	{
-		ftemp = (1.0 - oldaspect/newaspect)/2;
+		double ftemp = (1.0 - oldaspect/newaspect)/2;
 		xmargin = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())*ftemp;
 		ymargin = (g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd())*ftemp;
 		g_escape_time_state.m_grid_fp.x_3rd() += xmargin;
@@ -572,7 +571,7 @@ void aspect_ratio_crop(float oldaspect, float newaspect)
 	}
 	else                        /* new ratio is wider, crop y */
 	{
-		ftemp = (1.0 - newaspect/oldaspect)/2;
+		double ftemp = (1.0 - newaspect/oldaspect)/2;
 		xmargin = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())*ftemp;
 		ymargin = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_max())*ftemp;
 		g_escape_time_state.m_grid_fp.x_3rd() -= xmargin;

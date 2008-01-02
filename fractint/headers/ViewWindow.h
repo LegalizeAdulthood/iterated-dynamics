@@ -6,9 +6,9 @@ class ViewWindow
 {
 public:
 	ViewWindow() : _visible(false),
-		_reduction(0.0f),
+		_reduction(DEFAULT_REDUCTION),
 		_aspectRatio(ASPECTRATIO_3x4),
-		_viewCrop(true),
+		_crop(true),
 		_width(0),
 		_height(0)
 	{
@@ -17,7 +17,7 @@ public:
 	float AspectRatio() const			{ return _aspectRatio; }
 	void SetAspectRatio(float value)	{ _aspectRatio = value; }
 	std::string CommandParameters() const;
-	bool Crop() const					{ return _viewCrop; }
+	bool Crop() const					{ return _crop; }
 	int Height() const					{ return _height; }
 	float Reduction() const				{ return _reduction; }
 	void SetReductionFromVideoEntry(const VIDEOINFO &entry);
@@ -43,7 +43,7 @@ private:
 	bool _visible;
 	float _reduction;
 	float _aspectRatio;					// for view shape and rotation
-	bool _viewCrop;						// true to crop default coords
+	bool _crop;						// true to crop default coords
 	int _width;
 	int _height;
 };
