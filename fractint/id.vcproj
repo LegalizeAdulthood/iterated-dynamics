@@ -761,6 +761,10 @@
 					RelativePath=".\common\Newton.cpp"
 					>
 				</File>
+				<File
+					RelativePath=".\common\Test.cpp"
+					>
+				</File>
 			</Filter>
 			<Filter
 				Name="i/o"
@@ -1588,6 +1592,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\newton.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\Test.h"
 					>
 				</File>
 			</Filter>
