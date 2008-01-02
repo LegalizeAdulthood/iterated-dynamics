@@ -27,10 +27,11 @@
 #include "miscfrac.h"
 #include "prompts1.h"
 
+#include "Formula.h"
 #include "FrothyBasin.h"
 #include "Halley.h"
 #include "Newton.h"
-#include "Formula.h"
+#include "Test.h"
 
 /* functions defined elswhere needed for g_fractal_specific */
 /* moved to prototyp.h */
