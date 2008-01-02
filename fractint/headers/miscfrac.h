@@ -1,6 +1,5 @@
 #pragma once
 
-extern int diffusion();
 extern int plasma();
 extern int bifurcation();
 extern int bifurcation_lambda();

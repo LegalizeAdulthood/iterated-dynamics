@@ -730,6 +730,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\Diffusion.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\FrothyBasin.cpp"
 					>
 				</File>
@@ -1563,6 +1567,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\headers\Diffusion.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\Formula.h"
 					>
 				</File>
@@ -1703,7 +1711,7 @@
 					>
 				</File>
 				<File
-					RelativePath=".\headers\fpu087.h"
+					RelativePath=".\headers\fpu.h"
 					>
 				</File>
 				<File
