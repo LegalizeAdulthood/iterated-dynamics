@@ -40,7 +40,7 @@ int ViewWindow::CommandArgument(cmd_context const &context)
 	}
 	if ((context.totparms > 2) && (context.yesnoval[2] == 0))
 	{
-		_viewCrop = false;
+		_crop = false;
 	}
 	if ((context.totparms > 3) && (context.intval[3] > 0))
 	{
@@ -58,7 +58,7 @@ std::string ViewWindow::CommandParameters() const
 	return _visible ?
 		str(format(" viewwindows=%g/%g/%s/%d/%d")
 			% _reduction % _aspectRatio
-			% (_viewCrop ? "/yes" : "/no")
+			% (_crop ? "/yes" : "/no")
 			% _width % _height)
 		: "";
 }
@@ -67,7 +67,7 @@ void ViewWindow::InitializeRestart()
 {
 	_visible = false;
 	_reduction = DEFAULT_REDUCTION;
-	_viewCrop = true;
+	_crop = true;
 	_aspectRatio = g_screen_aspect_ratio;
 	_width = 0;
 	_height = 0;
@@ -88,7 +88,7 @@ get_view_restart:
 		dialog.push("Preview display? (no for full screen)", _visible);
 		dialog.push("Auto window size reduction factor", _reduction);
 		dialog.push("Final media overall aspect ratio, y/x", _aspectRatio);
-		dialog.push("Crop starting coordinates to new aspect ratio?", _viewCrop);
+		dialog.push("Crop starting coordinates to new aspect ratio?", _crop);
 		dialog.push("Explicit size x pixels (0 for auto size)", _width);
 		dialog.push("              y pixels (0 to base on aspect ratio)", _height);
 		dialog.push("");
@@ -110,7 +110,7 @@ get_view_restart:
 		_visible = (dialog.values(++k).uval.ch.val != 0);
 		_reduction = float(dialog.values(++k).uval.dval);
 		_aspectRatio = float(dialog.values(++k).uval.dval);
-		_viewCrop = (dialog.values(++k).uval.ch.val != 0);
+		_crop = (dialog.values(++k).uval.ch.val != 0);
 		_width = dialog.values(++k).uval.ival;
 		_height = dialog.values(++k).uval.ival;
 	}
@@ -124,7 +124,7 @@ get_view_restart:
 		_aspectRatio = old_aspectratio;
 	}
 
-	if (_aspectRatio != old_aspectratio && _viewCrop)
+	if (_aspectRatio != old_aspectratio && _crop)
 	{
 		aspect_ratio_crop(old_aspectratio, _aspectRatio);
 	}
