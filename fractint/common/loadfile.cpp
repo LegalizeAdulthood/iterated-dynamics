@@ -183,7 +183,7 @@ static void read_info_version_4(const fractal_info &read_info)
 		{
 			g_file_x_dots >>= 1;
 		}
-		g_file_aspect_ratio = read_info.faspectratio;
+		g_file_aspect_ratio = read_info.aspect_ratio;
 		if (g_file_aspect_ratio < 0.01)       /* fix files produced in early v14.1 */
 		{
 			g_file_aspect_ratio = g_screen_aspect_ratio;
@@ -788,59 +788,55 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 class GifFile
 {
 public:
-	GifFile(char const *gif_file) : _file(gif_file, std::ios::in | std::ios::binary)
+	GifFile(char const *gif_file)
+		: _file(gif_file, std::ios::in | std::ios::binary)
 	{
 	}
-
 	bool Open() const
 	{
 		return _file.is_open();
 	}
-
 	size_t Read(void *destination, int size, int count)
 	{
 		_file.read(static_cast<char *>(destination), size*count);
 		return _file ? size*count : 0;
 	}
-
 	int GetChar()
 	{
 		return _file.get();
 	}
-
-	void SeekFromEnd(long amount);
-	void SeekFromCurrent(long amount);
+	void SeekFromEnd(long amount)
+	{
+		_file.seekg(amount, std::ios_base::end);
+	}
+	void SeekFromCurrent(long amount)
+	{
+		_file.seekg(amount, std::ios_base::cur);
+	}
 
 private:
 	std::ifstream _file;
 };
 
-static FILE *s_gif_file;
 static GifFile *s_gif = 0;
 
-bool GifOpen(char const *gif_file)
+static bool GifOpen(char const *gif_file)
 {
 	delete s_gif;
 	s_gif = new GifFile(gif_file);
 	return s_gif->Open();
 }
-void GifClose()
+
+static void GifClose()
 {
 	delete s_gif;
 	s_gif = 0;
 }
-void GifFile::SeekFromEnd(long amount)
+
+static void GifStartSetSizeAspect(const BYTE gifstart[18])
 {
-	_file.seekg(amount, std::ios_base::end);
-}
-void GifFile::SeekFromCurrent(long amount)
-{
-	_file.seekg(amount, std::ios_base::cur);
-}
-void GifStartSetSizeAspect(const BYTE gifstart[18])
-{
-	GET16(gifstart[6], g_file_x_dots);
-	GET16(gifstart[8], g_file_y_dots);
+	g_file_x_dots = Get16(&gifstart[6]);
+	g_file_y_dots = Get16(&gifstart[8]);
 	g_file_colors = 2 << (gifstart[10] & 7);
 	g_file_aspect_ratio = 0; /* unknown */
 	if (gifstart[12])  /* calc reasonably close value from gif header */
@@ -858,7 +854,8 @@ void GifStartSetSizeAspect(const BYTE gifstart[18])
 		g_file_aspect_ratio = g_screen_aspect_ratio;
 	}
 }
-void GifFileReadColormap(const BYTE gifstart[18])
+
+static void GifFileReadColormap(const BYTE gifstart[18])
 {
 	if (!g_make_par_flag && (gifstart[10] & 0x80) != 0)
 	{
@@ -882,7 +879,15 @@ void GifFileReadColormap(const BYTE gifstart[18])
 		}
 	}
 }
-void FoundInfoId(fractal_info *info, ext_blk_resume_info *resume_info, ext_blk_formula_info *formula_info, ext_blk_ranges_info *ranges_info, ext_blk_mp_info *mp_info, ext_blk_evolver_info *evolver_info, ext_blk_orbits_info *orbits_info, int hdr_offset)
+
+static void FoundInfoId(fractal_info *info,
+						ext_blk_resume_info *resume_info,
+						ext_blk_formula_info *formula_info,
+						ext_blk_ranges_info *ranges_info,
+						ext_blk_mp_info *mp_info,
+						ext_blk_evolver_info *evolver_info,
+						ext_blk_orbits_info *orbits_info,
+						int hdr_offset)
 {
 	// TODO: handle old crap or abort?
 	if (info->version >= 4)
@@ -914,7 +919,7 @@ void FoundInfoId(fractal_info *info, ext_blk_resume_info *resume_info, ext_blk_f
 					scan_extend = 0;
 					break;
 				}
-				load_ext_blk((char *)info, FRACTAL_INFO_SIZE);
+				load_ext_blk(reinterpret_cast<char *>(info), FRACTAL_INFO_SIZE);
 #ifdef XFRACT
 				decode_fractal_info(info, 1);
 #endif
@@ -942,7 +947,7 @@ void FoundInfoId(fractal_info *info, ext_blk_resume_info *resume_info, ext_blk_f
 				/* check data_len for backward compatibility */
 				s_gif->SeekFromCurrent(long(-block_len));
 				struct formula_info formula_load_info;
-				load_ext_blk((char *)&formula_load_info, data_len);
+				load_ext_blk(reinterpret_cast<char *>(&formula_load_info), data_len);
 				strcpy(formula_info->form_name, formula_load_info.form_name);
 				formula_info->length = data_len;
 				formula_info->got_data = 1; /* got data */
@@ -973,7 +978,7 @@ void FoundInfoId(fractal_info *info, ext_blk_resume_info *resume_info, ext_blk_f
 				if (ranges_info->range_data != 0)
 				{
 					s_gif->SeekFromCurrent(long(-block_len));
-					load_ext_blk((char *)ranges_info->range_data, data_len);
+					load_ext_blk(reinterpret_cast<char *>(ranges_info->range_data), data_len);
 					ranges_info->length = data_len/sizeof(short);
 					ranges_info->got_data = 1; /* got data */
 				}
@@ -993,7 +998,7 @@ void FoundInfoId(fractal_info *info, ext_blk_resume_info *resume_info, ext_blk_f
 				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 				s_gif->SeekFromCurrent(long(-block_len));
 				evolution_info evolver_load_info;
-				load_ext_blk((char *)&evolver_load_info, data_len);
+				load_ext_blk(reinterpret_cast<char *>(&evolver_load_info), data_len);
 				/* XFRACT processing of doubles here */
 #ifdef XFRACT
 				decode_evolver_info(&eload_info, 1);
@@ -1027,7 +1032,7 @@ void FoundInfoId(fractal_info *info, ext_blk_resume_info *resume_info, ext_blk_f
 				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
 				s_gif->SeekFromCurrent(long(-block_len));
 				struct orbits_info orbits_load_info;
-				load_ext_blk((char *)&orbits_load_info, data_len);
+				load_ext_blk(reinterpret_cast<char *>(&orbits_load_info), data_len);
 				/* XFRACT processing of doubles here */
 #ifdef XFRACT
 				decode_orbits_info(&oload_info, 1);
@@ -1052,6 +1057,7 @@ void FoundInfoId(fractal_info *info, ext_blk_resume_info *resume_info, ext_blk_f
 	GifClose();
 	g_file_aspect_ratio = g_screen_aspect_ratio; /* if not >= v15, this is correct */
 }
+
 int find_fractal_info(const char *gif_file, fractal_info *info,
 					  ext_blk_resume_info *resume_info,
 					  ext_blk_formula_info *formula_info,
@@ -1191,18 +1197,15 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 
 static void load_ext_blk(char *loadptr, int loadlen)
 {
-	int len;
-	while ((len = s_gif->GetChar()) > 0)
+	for (int len = s_gif->GetChar(); len > 0; len = s_gif->GetChar())
 	{
 		while (--len >= 0)
 		{
+			char data = char(s_gif->GetChar());
+			/* discard excess characters */
 			if (--loadlen >= 0)
 			{
-				*(loadptr++) = (char)s_gif->GetChar();
-			}
-			else
-			{
-				s_gif->GetChar(); /* discard excess characters */
+				*(loadptr++) = data;
 			}
 		}
 	}
@@ -1327,7 +1330,6 @@ void set_if_old_bif()
 {
 	/* set functions if not set already, may need to check 'g_function_preloaded'
 		before calling this routine.  */
-
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_BIFURCATION:
@@ -1477,6 +1479,7 @@ bool check_back()
 
 static bool fix_period_bof()
 {
+	// TODO: leftover from old save_release checking?
 	return false;
 }
 

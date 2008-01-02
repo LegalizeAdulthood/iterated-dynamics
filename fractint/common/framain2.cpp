@@ -279,7 +279,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			if (g_viewWindow.Visible())
 			{
 				/* bypass for VESA virtual screen */
-				ftemp = g_final_aspect_ratio*((double(g_screen_height))/(double(g_screen_width))/g_screen_aspect_ratio);
+				ftemp = g_viewWindow.AspectRatio()*((double(g_screen_height))/(double(g_screen_width))/g_screen_aspect_ratio);
 				g_x_dots = g_view_x_dots;
 				if (g_x_dots != 0)
 				{	/* g_x_dots specified */
@@ -289,7 +289,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 						g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
 					}
 				}
-				else if (g_final_aspect_ratio <= g_screen_aspect_ratio)
+				else if (g_viewWindow.AspectRatio() <= g_screen_aspect_ratio)
 				{
 					g_x_dots = int(double(g_screen_width)/g_viewWindow.Reduction() + 0.5);
 					g_y_dots = int(double(g_x_dots)*ftemp + 0.5);

@@ -88,7 +88,6 @@ extern int					g_file_colors;
 extern int					g_file_x_dots;
 extern int					g_file_y_dots;
 extern int					g_fill_color;
-extern float				g_final_aspect_ratio;
 extern int					g_finish_row;
 extern bool					g_command_initialize;
 extern int					g_first_saved_and;

@@ -12,6 +12,7 @@
 using namespace boost;
 
 float const ViewWindow::DEFAULT_REDUCTION = 4.2f;
+float const ViewWindow::ASPECTRATIO_3x4 = 3.0f/4.0f;
 
 int ViewWindow::CommandArgument(cmd_context const &context)
 {
@@ -30,7 +31,7 @@ int ViewWindow::CommandArgument(cmd_context const &context)
 	}
 	if ((context.totparms > 1) && (context.floatval[1] > 0.001))
 	{
-		g_final_aspect_ratio = float(context.floatval[1]);
+		SetAspectRatio(float(context.floatval[1]));
 	}
 	if ((context.totparms > 2) && (context.yesnoval[2] == 0))
 	{
@@ -51,7 +52,7 @@ std::string ViewWindow::CommandParameters() const
 {
 	return Visible() ?
 		str(format(" viewwindows=%g/%g/%s/%d/%d")
-			% _reduction % g_final_aspect_ratio
+			% _reduction % AspectRatio()
 			% (g_view_crop ? "/yes" : "/no")
 			% g_view_x_dots % g_view_y_dots)
 		: "";
@@ -62,7 +63,7 @@ void ViewWindow::InitializeRestart()
 	Hide();
 	_reduction = DEFAULT_REDUCTION;
 	g_view_crop = true;
-	g_final_aspect_ratio = g_screen_aspect_ratio;
+	SetAspectRatio(g_screen_aspect_ratio);
 	g_view_x_dots = 0;
 	g_view_y_dots = 0;
 }

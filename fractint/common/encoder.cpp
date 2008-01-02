@@ -403,7 +403,7 @@ int encoder()
 	}
 	else   /* must risk loss of precision if numbers low */
 	{
-		i = int(((double(g_y_dots)/double(g_x_dots))/g_final_aspect_ratio)*64 - 14.5);
+		i = int(((double(g_y_dots)/double(g_x_dots))/g_viewWindow.AspectRatio())*64 - 14.5);
 	}
 	if (i < 1)
 	{
@@ -879,7 +879,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->use_initial_orbit_z = char(g_use_initial_orbit_z);
 	save_info->periodicity = short(g_periodicity_check);
 	save_info->potential_16bit = short(g_disk_16bit) ? 1 : 0;
-	save_info->faspectratio = g_final_aspect_ratio;
+	save_info->aspect_ratio = g_viewWindow.AspectRatio();
 	save_info->system = 1;
 
 	save_info->release = check_back() ? short(std::min(g_save_release, g_release)) : short(g_release);
