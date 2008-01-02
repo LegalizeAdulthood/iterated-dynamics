@@ -1382,7 +1382,7 @@ public:
 	{
 	}
 
-	int execute();
+	int Execute();
 
 private:
 	int check_if_interrupted();
@@ -1460,7 +1460,7 @@ private:
 
 int standard_fractal()       /* per pixel 1/2/b/g, called with row & col set */
 {
-	return StandardFractal().execute();
+	return StandardFractal().Execute();
 }
 
 void StandardFractal::inside_colormode_star_trail_initialize()
@@ -2289,7 +2289,7 @@ int StandardFractal::check_if_interrupted()
 	}
 	return result;
 }
-int StandardFractal::execute()
+int StandardFractal::Execute()
 {
 	ValueSaver<long> saved_max_iterations(g_max_iteration);
 
