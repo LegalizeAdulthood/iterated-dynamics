@@ -38,7 +38,6 @@ static void format_item(int, char *);
 static int check_mode_key(int, int);
 static void format_video_info(int i, const char *err, char *buf);
 static std::string format_video_info(int i, const char *err);
-static double video_mode_aspect_ratio(int width, int height);
 
 struct video_mode_sort_info
 {
@@ -102,12 +101,12 @@ static void format_video_info(int i, const char *err, char *buf)
 	strcpy(buf, result.c_str());
 }
 
-static double video_mode_aspect_ratio(int width, int height)
+double video_mode_aspect_ratio(int width, int height)
 {  /* calc resulting aspect ratio for specified dots in current mode */
 	return double(height)/double(width)
 		*double(g_.VideoEntry().x_dots)/double(g_.VideoEntry().y_dots)
 		*g_screen_aspect_ratio;
-	}
+}
 
 static video_mode_sort_info *vidptr;
 
@@ -237,6 +236,16 @@ static std::string GetHeading(fractal_info const *info, struct ext_blk_formula_i
 	return heading;
 }
 
+int get_skip_factor(int video_size, int file_size)
+{
+	int skip_factor = 1;
+	while (skip_factor*video_size < file_size)
+	{
+		++skip_factor;
+	}
+	return skip_factor;
+}
+
 int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula_info)
 {
 	int tmpxdots;
@@ -364,13 +373,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
-		if (g_viewWindow.Width())
-		{
-			g_viewWindow.SetReduction(float(g_.VideoEntry().x_dots/g_viewWindow.Width()));
-			g_viewWindow.SetWidth(0);
-			g_viewWindow.SetHeight(0); /* easier to use auto reduction */
-		}
-		g_viewWindow.SetReduction(float(int(g_viewWindow.Reduction() + 0.5))); /* need integer value */
+		g_viewWindow.SetReductionFromVideoEntry(g_.VideoEntry());
 		g_skip_x_dots = short(g_viewWindow.Reduction() - 1);
 		g_skip_y_dots = g_skip_x_dots;
 		return 0;
@@ -385,16 +388,8 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
-		g_skip_x_dots = 1;
-		g_skip_y_dots = 1;
-		while (g_skip_x_dots*g_.VideoEntry().x_dots < g_file_x_dots)
-		{
-			++g_skip_x_dots;
-		}
-		while (g_skip_y_dots*g_.VideoEntry().y_dots < g_file_y_dots)
-		{
-			++g_skip_y_dots;
-		}
+		g_skip_x_dots = get_skip_factor(g_.VideoEntry().x_dots, g_file_x_dots);
+		g_skip_y_dots = get_skip_factor(g_.VideoEntry().y_dots, g_file_y_dots);
 		bool reduced_y = false;
 		bool reduced_x = false;
 		while (true)
@@ -441,56 +436,8 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		--g_skip_y_dots;
 	}
 
-	g_viewWindow.SetAspectRatio(g_file_aspect_ratio);
-	if (g_viewWindow.AspectRatio() == 0) /* assume display correct */
-	{
-		g_viewWindow.SetAspectRatio(float(video_mode_aspect_ratio(g_file_x_dots, g_file_y_dots)));
-	}
-	if (g_viewWindow.AspectRatio() >= g_screen_aspect_ratio-0.02
-		&& g_viewWindow.AspectRatio() <= g_screen_aspect_ratio + 0.02)
-	{
-		g_viewWindow.SetAspectRatio(g_screen_aspect_ratio);
-	}
-	int i = int(g_viewWindow.AspectRatio()*1000.0 + 0.5);
-	g_viewWindow.SetAspectRatio(float(i/1000.0)); /* chop precision to 3 decimals */
+	g_viewWindow.SetFromVideoEntry();
 
-	/* setup view window stuff */
-	g_viewWindow.Hide();
-	g_viewWindow.SetWidth(0);
-	g_viewWindow.SetHeight(0);
-	if (g_file_x_dots != g_.VideoEntry().x_dots || g_file_y_dots != g_.VideoEntry().y_dots)
-	{
-		/* image not exactly same size as screen */
-		g_viewWindow.Show();
-		double ftemp = g_viewWindow.AspectRatio()*
-			double(g_.VideoEntry().y_dots)/double(g_.VideoEntry().x_dots)
-			/g_screen_aspect_ratio;
-		int x_dots, y_dots;
-		float view_reduction;
-		if (g_viewWindow.AspectRatio() <= g_screen_aspect_ratio)
-		{
-			x_dots = int(double(g_.VideoEntry().x_dots)/double(g_file_x_dots)*20.0 + 0.5);
-			view_reduction = float(x_dots/20.0); /* chop precision to nearest .05 */
-			x_dots = int(double(g_.VideoEntry().x_dots)/view_reduction + 0.5);
-			y_dots = int(double(x_dots)*ftemp + 0.5);
-		}
-		else
-		{
-			x_dots = int(double(g_.VideoEntry().y_dots)/double(g_file_y_dots)*20.0 + 0.5);
-			view_reduction = float(x_dots/20.0); /* chop precision to nearest .05 */
-			y_dots = int(double(g_.VideoEntry().y_dots)/view_reduction + 0.5);
-			x_dots = int(double(y_dots)/ftemp + 0.5);
-		}
-		if (x_dots != g_file_x_dots || y_dots != g_file_y_dots)  /* too bad, must be explicit */
-		{
-			g_viewWindow.SetWidth(g_file_x_dots);
-			g_viewWindow.SetHeight(g_file_y_dots);
-		}
-		else
-		{
-			g_viewWindow.SetReduction(view_reduction); /* ok, this works */
-		}
-	}
 	if (g_make_par_flag && !g_fast_restore && !g_initialize_batch &&
 		(fabs(g_viewWindow.AspectRatio() - g_screen_aspect_ratio) > .00001 || g_viewWindow.Width() != 0))
 	{

@@ -746,13 +746,7 @@ get_evol_restart:
 			g_evolving_flags |= EVOLVE_NO_GROUT;
 		}
 	}
-	g_viewWindow.SetWidth((g_screen_width/g_grid_size)-2);
-	g_viewWindow.SetHeight((g_screen_height/g_grid_size)-2);
-	if (!g_viewWindow.Visible())
-	{
-		g_viewWindow.SetWidth(0);
-		g_viewWindow.SetHeight(0);
-	}
+	g_viewWindow.SetSizeFromGrid(g_screen_width, g_screen_height, g_grid_size);
 
 	int result = 0;
 	if (g_evolving_flags != old_evolving

@@ -54,8 +54,8 @@ int g_file_y_dots = 0;
 int g_file_x_dots = 0;
 int g_file_colors = 0;
 float g_file_aspect_ratio = 0.0;
-short g_skip_x_dots = 0;
-short g_skip_y_dots = 0;      /* for decoder, when reducing image */
+int g_skip_x_dots = 0;
+int g_skip_y_dots = 0;      /* for decoder, when reducing image */
 bool g_bad_outside = false;
 bool g_use_old_complex_power = false;
 

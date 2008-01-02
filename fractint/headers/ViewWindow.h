@@ -18,19 +18,22 @@ public:
 	void SetAspectRatio(float value)	{ _aspectRatio = value; }
 	std::string CommandParameters() const;
 	bool Crop() const					{ return _viewCrop; }
-	void SetCrop(bool value)			{ _viewCrop = value; }
 	int Height() const					{ return _height; }
-	void SetHeight(int value)			{ _height = value; }
 	float Reduction() const				{ return _reduction; }
-	void SetReduction(float value)		{ _reduction = value; }
+	void SetReductionFromVideoEntry(const VIDEOINFO &entry);
 	bool Visible() const				{ return _visible; }
 	int Width() const					{ return _width; }
-	void SetWidth(int value)			{ _width = value; }
 
 	int CommandArgument(cmd_context const &context);
+	void FullScreen(int width, int height);
 	int GetParameters();
 	void Hide()							{ _visible = false; }
 	void InitializeRestart();
+	void SetFromVideoEntry();
+	void SetFromVideoMode(int file_x_dots, int file_y_dots,
+		float file_aspect_ratio, float screen_aspect_ratio,
+		VIDEOINFO const &video);
+	void SetSizeFromGrid(int width, int height, int gridSize);
 	void Show()							{ _visible = true; }
 	void Show(bool value)				{ _visible = value; }
 
