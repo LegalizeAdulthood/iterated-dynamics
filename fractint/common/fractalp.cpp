@@ -27,6 +27,7 @@
 #include "miscfrac.h"
 #include "prompts1.h"
 
+#include "Diffusion.h"
 #include "Formula.h"
 #include "FrothyBasin.h"
 #include "Halley.h"
