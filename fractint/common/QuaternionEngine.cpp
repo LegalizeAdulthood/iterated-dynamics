@@ -32,6 +32,9 @@ int quaternion_per_pixel_fp()
 
 int quaternion_orbit_fp()
 {
+	QuaternionD a(g_old_z.x, g_old_z.y, g_float_parameter->x, g_float_parameter->y);
+	a *= a;
+	a += g_c_quaternion;
 	double a0 = g_old_z.x;
 	double a1 = g_old_z.y;
 	double a2 = g_float_parameter->x;
