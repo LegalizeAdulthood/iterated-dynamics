@@ -1497,7 +1497,7 @@ sel_type_restart:
 
 #define MAXFRACTALS 25
 
-int build_fractal_list(int fractals[], int *last_val, char *nameptr[])
+static int build_fractal_list(int fractals[], int *last_val, const char *nameptr[])
 {
 	int numfractals;
 	int i;
@@ -2278,7 +2278,7 @@ int check_orbit_name(char *orbitname)
 	int i;
 	int numtypes;
 	int bad;
-	char *nameptr[MAXFRACTALS];
+	const char *nameptr[MAXFRACTALS];
 	int fractals[MAXFRACTALS];
 	int last_val;
 

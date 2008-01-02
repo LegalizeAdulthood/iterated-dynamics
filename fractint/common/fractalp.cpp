@@ -307,7 +307,6 @@ FractalTypeSpecificData g_fractal_specific[] =
 		HT_NEWTBAS, HF_NEWTBAS, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
-		// TODO: FRACTYPE_..._MP
 		FRACTYPE_NEWTON_BASIN_MP, SYMMETRY_NONE,
 		newton2_orbit, other_julia_per_pixel_fp,
 		newton_setup, standard_fractal,
@@ -350,7 +349,6 @@ FractalTypeSpecificData g_fractal_specific[] =
 		HT_NEWT, HF_NEWT, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
-		// TODO: FRACTYPE_..._MP
 		FRACTYPE_NEWTON_MP, SYMMETRY_X_AXIS,
 		newton2_orbit, other_julia_per_pixel_fp,
 		newton_setup, standard_fractal,
@@ -1205,7 +1203,6 @@ FractalTypeSpecificData g_fractal_specific[] =
 	},
 
 	{
-		// TODO: FRACTYPE_..._MP
 	FRACTYPE_NEWTON_MP,
 	s_newton_name + 1,
 		{s_newton_degree, "", "", ""},
@@ -1220,7 +1217,6 @@ FractalTypeSpecificData g_fractal_specific[] =
 	},
 
 	{
-		// TODO: FRACTYPE_..._MP
 	FRACTYPE_NEWTON_BASIN_MP,
 	s_newtbasin_name + 1,
 		{s_newton_degree, "Enter non-zero value for stripes", "", ""},
@@ -2205,7 +2201,6 @@ FractalTypeSpecificData g_fractal_specific[] =
 	},
 
 	{
-		// TODO: FRACTYPE_..._MP
 	FRACTYPE_HALLEY_MP,
 	s_halley_name + 1,
 		{s_order, s_real_relaxation_coefficient, s_epsilon, s_imag_relaxation_coefficient},
@@ -2227,7 +2222,6 @@ FractalTypeSpecificData g_fractal_specific[] =
 		HT_HALLEY, HF_HALLEY, 0,
 		-2.0f, 2.0f, -1.5f, 1.5f,
 		0, FRACTYPE_NO_FRACTAL, FRACTYPE_NO_FRACTAL,
-		// TODO: FRACTYPE_..._MP
 		FRACTYPE_HALLEY_MP, SYMMETRY_XY_AXIS,
 		halley_orbit_fp, halley_per_pixel,
 		halley_setup, standard_fractal,

@@ -669,9 +669,9 @@ extern  double   g_attractor_radius_fp;      /* finite attractor radius  */
 
 struct more_parameters
 {
-	int      type;                       /* index in fractalname of the fractal */
-	char     *parameters[MAX_PARAMETERS-4];    /* name of the parameters */
-	double   paramvalue[MAX_PARAMETERS-4];    /* default parameter values */
+	int type;											/* index in fractalname of the fractal */
+	const char *parameters[MAX_PARAMETERS-4];			/* name of the parameters */
+	double paramvalue[MAX_PARAMETERS-4];				/* default parameter values */
 };
 
 /* bitmask defines for g_fractal_specific flags */
@@ -704,9 +704,9 @@ enum SpecialHelpFormulaType
 struct FractalTypeSpecificData
 {
 	int fractal_type;
-	char *name;							/* name of the fractal */
+	const char *name;					/* name of the fractal */
 										/* (leading "*" supresses name display) */
-	char  *parameters[4];				/* name of the parameters */
+	const char  *parameters[4];			/* name of the parameters */
 	double paramvalue[4];				/* default parameter values */
 	int   helptext;						/* helpdefs.h HT_xxxx, -1 for none */
 	int   helpformula;					/* helpdefs.h HF_xxxx, -1 for none */
@@ -765,25 +765,12 @@ struct FractalTypeSpecificData
 
 	const char *get_type() const
 	{
-		return is_hidden() ? &name[1] : name;
+		return &name[is_hidden() ? 1 : 0];
 	}
 	bool is_hidden() const
 	{
 		return (name[0] == '*');
 	}
-};
-
-class AbstractFractalType
-{
-public:
-	virtual ~AbstractFractalType()
-	{
-	}
-
-	virtual int Orbit() = 0;
-	virtual int PerPixel() = 0;
-	virtual int PerImage() = 0;
-	virtual int CalculateType() = 0;
 };
 
 /* defines for inside/outside */
