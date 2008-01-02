@@ -1367,12 +1367,7 @@ finish:
 	g_debug_mode = old_debugflag; /* yo Chuck! */
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
-		g_viewWindow.Hide();
-		g_view_x_dots = 0;
-		g_view_y_dots = 0;
-		g_view_reduction = 4.2f;
-		g_view_crop = true;
-		g_final_aspect_ratio = g_screen_aspect_ratio;
+		g_viewWindow.InitializeRestart();
 		g_x_dots = g_screen_width;
 		g_y_dots = g_screen_height;
 		g_dx_size = g_x_dots - 1;

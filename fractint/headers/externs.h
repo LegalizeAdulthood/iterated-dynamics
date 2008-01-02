@@ -353,7 +353,6 @@ extern long					g_user_distance_test;
 extern bool					g_user_float_flag;
 extern int					g_user_periodicity_check;
 extern bool					g_view_crop;
-extern float				g_view_reduction;
 extern int					g_view_x_dots;
 extern int					g_view_y_dots;
 extern int					g_vx_dots;

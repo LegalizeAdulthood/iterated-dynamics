@@ -646,7 +646,7 @@ int get_view_params()
 	int y_max;
 	driver_get_max_screen(x_max, y_max);
 	bool old_viewwindow = g_viewWindow.Visible();
-	float old_viewreduction = g_view_reduction;
+	float old_viewreduction = g_viewWindow.Reduction();
 	float old_aspectratio = g_final_aspect_ratio;
 	int old_viewxdots = g_view_x_dots;
 	int old_viewydots = g_view_y_dots;
@@ -660,7 +660,7 @@ get_view_restart:
 		if (!driver_diskp())
 		{
 			dialog.push("Preview display? (no for full screen)", g_viewWindow.Visible());
-			dialog.push("Auto window size reduction factor", g_view_reduction);
+			dialog.push("Auto window size reduction factor", g_viewWindow.Reduction());
 			dialog.push("Final media overall aspect ratio, y/x", g_final_aspect_ratio);
 			dialog.push("Crop starting coordinates to new aspect ratio?", g_view_crop);
 			dialog.push("Explicit size x pixels (0 for auto size)", g_view_x_dots);
@@ -685,12 +685,7 @@ get_view_restart:
 
 		if (i == FIK_F4 && !driver_diskp())
 		{
-			g_viewWindow.Hide();
-			g_view_x_dots = 0;
-			g_view_y_dots = 0;
-			g_view_reduction = 4.2f;
-			g_view_crop = true;
-			g_final_aspect_ratio = g_screen_aspect_ratio;
+			g_viewWindow.InitializeRestart();
 			g_screen_width = old_sxdots;
 			g_screen_height = old_sydots;
 			goto get_view_restart;
@@ -700,7 +695,7 @@ get_view_restart:
 		if (!driver_diskp())
 		{
 			(dialog.values(++k).uval.ch.val != 0) ? g_viewWindow.Show() : g_viewWindow.Hide();
-			g_view_reduction = float(dialog.values(++k).uval.dval);
+			g_viewWindow.SetReduction(float(dialog.values(++k).uval.dval));
 			g_final_aspect_ratio = float(dialog.values(++k).uval.dval);
 			g_view_crop = (dialog.values(++k).uval.ch.val != 0);
 			g_view_x_dots = dialog.values(++k).uval.ival;
@@ -757,7 +752,7 @@ get_view_restart:
 		return (g_viewWindow.Visible() != old_viewwindow
 			|| g_screen_width != old_sxdots || g_screen_height != old_sydots
 			|| (g_viewWindow.Visible()
-				&& (g_view_reduction != old_viewreduction
+				&& (g_viewWindow.Reduction() != old_viewreduction
 					|| g_final_aspect_ratio != old_aspectratio
 					|| g_view_x_dots != old_viewxdots
 					|| (g_view_y_dots != old_viewydots && g_view_x_dots)))) ? 1 : 0;

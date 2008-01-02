@@ -358,13 +358,8 @@ static void initialize_variables_restart()          /* <ins> key init */
 	g_initialize_batch = INITBATCH_NONE;			/* not in batch mode         */
 	g_check_current_dir = false;					/* flag to check current dir for files */
 	g_save_time = 0;								/* no auto-save              */
-	g_.SetInitialVideoModeNone();						/* no initial video mode     */
-	g_viewWindow.Hide();
-	g_view_reduction = 4.2f;
-	g_view_crop = true;
-	g_final_aspect_ratio = g_screen_aspect_ratio;
-	g_view_x_dots = 0;
-	g_view_y_dots = 0;
+	g_.SetInitialVideoModeNone();					/* no initial video mode     */
+	g_viewWindow.InitializeRestart();
 	g_orbit_delay = 0;								/* full speed orbits */
 	g_orbit_interval = 1;							/* plot all orbits */
 	g_debug_mode = DEBUGMODE_NONE;					/* debugging flag(s) are off */

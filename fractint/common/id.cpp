@@ -128,7 +128,6 @@ CalculationMode g_user_standard_calculation_mode;
 int     g_user_periodicity_check;
 long    g_user_distance_test;
 bool g_user_float_flag;
-float   g_view_reduction;          /* window auto-sizing */
 bool g_view_crop;               /* nonzero to crop default coords */
 float   g_final_aspect_ratio;       /* for view shape and rotation */
 int     g_view_x_dots;
