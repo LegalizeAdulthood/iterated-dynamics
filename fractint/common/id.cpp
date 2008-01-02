@@ -128,9 +128,6 @@ CalculationMode g_user_standard_calculation_mode;
 int     g_user_periodicity_check;
 long    g_user_distance_test;
 bool g_user_float_flag;
-bool g_view_crop;               /* nonzero to crop default coords */
-int     g_view_x_dots;
-int		g_view_y_dots;    /* explicit view sizing */
 int		g_max_history = 10;
 /* variables defined by the command line/files processor */
 bool g_compare_gif = false;					/* compare two gif files flag */

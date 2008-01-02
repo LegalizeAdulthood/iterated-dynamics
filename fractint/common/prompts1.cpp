@@ -1363,7 +1363,7 @@ void set_default_parms()
 	g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
 	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 
-	if (g_view_crop && g_viewWindow.AspectRatio() != g_screen_aspect_ratio)
+	if (g_viewWindow.Crop() && g_viewWindow.AspectRatio() != g_screen_aspect_ratio)
 	{
 		aspect_ratio_crop(g_screen_aspect_ratio, g_viewWindow.AspectRatio());
 	}

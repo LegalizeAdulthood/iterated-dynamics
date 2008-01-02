@@ -590,7 +590,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	g_this_generation_random_seed = evolver_info.this_generation_random_seed;
 	g_fiddle_factor = evolver_info.fiddle_factor;
 	g_evolving_flags = evolver_info.evolving;
-	g_evolving_flags ? g_viewWindow.Show() : g_viewWindow.Hide();
+	g_viewWindow.Show(g_evolving_flags != 0);
 	g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size - 1);
 	g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size - 1);
 	if (read_info.version > 14)

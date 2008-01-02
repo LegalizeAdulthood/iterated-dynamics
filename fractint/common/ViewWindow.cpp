@@ -23,49 +23,49 @@ int ViewWindow::CommandArgument(cmd_context const &context)
 		return bad_arg(context.curarg);
 	}
 	InitializeRestart();
-	Show();
 
+	_visible = true;
 	if ((context.totparms > 0) && (context.floatval[0] > 0.001))
 	{
 		_reduction = float(context.floatval[0]);
 	}
 	if ((context.totparms > 1) && (context.floatval[1] > 0.001))
 	{
-		SetAspectRatio(float(context.floatval[1]));
+		_aspectRatio = float(context.floatval[1]);
 	}
 	if ((context.totparms > 2) && (context.yesnoval[2] == 0))
 	{
-		g_view_crop = false;
+		_viewCrop = false;
 	}
 	if ((context.totparms > 3) && (context.intval[3] > 0))
 	{
-		g_view_x_dots = context.intval[3];
+		_width = context.intval[3];
 	}
 	if ((context.totparms == 5) && (context.intval[4] > 0))
 	{
-		g_view_y_dots = context.intval[4];
+		_height = context.intval[4];
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 
 std::string ViewWindow::CommandParameters() const
 {
-	return Visible() ?
+	return _visible ?
 		str(format(" viewwindows=%g/%g/%s/%d/%d")
-			% _reduction % AspectRatio()
-			% (g_view_crop ? "/yes" : "/no")
-			% g_view_x_dots % g_view_y_dots)
+			% _reduction % _aspectRatio
+			% (_viewCrop ? "/yes" : "/no")
+			% _width % _height)
 		: "";
 }
 
 void ViewWindow::InitializeRestart()
 {
-	Hide();
+	_visible = false;
 	_reduction = DEFAULT_REDUCTION;
-	g_view_crop = true;
-	SetAspectRatio(g_screen_aspect_ratio);
-	g_view_x_dots = 0;
-	g_view_y_dots = 0;
+	_viewCrop = true;
+	_aspectRatio = g_screen_aspect_ratio;
+	_width = 0;
+	_height = 0;
 }
 
 ViewWindow g_viewWindow;

@@ -648,8 +648,8 @@ int get_view_params()
 	bool old_viewwindow = g_viewWindow.Visible();
 	float old_viewreduction = g_viewWindow.Reduction();
 	float old_aspectratio = g_viewWindow.AspectRatio();
-	int old_viewxdots = g_view_x_dots;
-	int old_viewydots = g_view_y_dots;
+	int old_viewxdots = g_viewWindow.Width();
+	int old_viewydots = g_viewWindow.Height();
 	int old_sxdots = g_screen_width;
 	int old_sydots = g_screen_height;
 
@@ -662,9 +662,9 @@ get_view_restart:
 			dialog.push("Preview display? (no for full screen)", g_viewWindow.Visible());
 			dialog.push("Auto window size reduction factor", g_viewWindow.Reduction());
 			dialog.push("Final media overall aspect ratio, y/x", g_viewWindow.AspectRatio());
-			dialog.push("Crop starting coordinates to new aspect ratio?", g_view_crop);
-			dialog.push("Explicit size x pixels (0 for auto size)", g_view_x_dots);
-			dialog.push("              y pixels (0 to base on aspect ratio)", g_view_y_dots);
+			dialog.push("Crop starting coordinates to new aspect ratio?", g_viewWindow.Crop());
+			dialog.push("Explicit size x pixels (0 for auto size)", g_viewWindow.Width());
+			dialog.push("              y pixels (0 to base on aspect ratio)", g_viewWindow.Height());
 		}
 		else
 		{
@@ -694,12 +694,12 @@ get_view_restart:
 		int k = -1;
 		if (!driver_diskp())
 		{
-			(dialog.values(++k).uval.ch.val != 0) ? g_viewWindow.Show() : g_viewWindow.Hide();
+			g_viewWindow.Show(dialog.values(++k).uval.ch.val != 0);
 			g_viewWindow.SetReduction(float(dialog.values(++k).uval.dval));
 			g_viewWindow.SetAspectRatio(float(dialog.values(++k).uval.dval));
-			g_view_crop = (dialog.values(++k).uval.ch.val != 0);
-			g_view_x_dots = dialog.values(++k).uval.ival;
-			g_view_y_dots = dialog.values(++k).uval.ival;
+			g_viewWindow.SetCrop(dialog.values(++k).uval.ch.val != 0);
+			g_viewWindow.SetWidth(dialog.values(++k).uval.ival);
+			g_viewWindow.SetHeight(dialog.values(++k).uval.ival);
 		}
 		else
 		{
@@ -726,18 +726,18 @@ get_view_restart:
 
 		if (!driver_diskp())
 		{
-			if (g_view_x_dots != 0 && g_view_y_dots != 0
+			if (g_viewWindow.Width() != 0 && g_viewWindow.Height() != 0
 				&& g_viewWindow.Visible()
 				&& g_viewWindow.AspectRatio() == 0.0)
 			{
-				g_viewWindow.SetAspectRatio(float(g_view_y_dots)/float(g_view_x_dots));
+				g_viewWindow.SetAspectRatio(float(g_viewWindow.Height())/float(g_viewWindow.Width()));
 			}
-			else if (g_viewWindow.AspectRatio() == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
+			else if (g_viewWindow.AspectRatio() == 0.0 && (g_viewWindow.Width() == 0 || g_viewWindow.Height() == 0))
 			{
 				g_viewWindow.SetAspectRatio(old_aspectratio);
 			}
 
-			if (g_viewWindow.AspectRatio() != old_aspectratio && g_view_crop)
+			if (g_viewWindow.AspectRatio() != old_aspectratio && g_viewWindow.Crop())
 			{
 				aspect_ratio_crop(old_aspectratio, g_viewWindow.AspectRatio());
 			}
@@ -754,8 +754,8 @@ get_view_restart:
 			|| (g_viewWindow.Visible()
 				&& (g_viewWindow.Reduction() != old_viewreduction
 					|| g_viewWindow.AspectRatio() != old_aspectratio
-					|| g_view_x_dots != old_viewxdots
-					|| (g_view_y_dots != old_viewydots && g_view_x_dots)))) ? 1 : 0;
+					|| g_viewWindow.Width() != old_viewxdots
+					|| (g_viewWindow.Height() != old_viewydots && g_viewWindow.Width())))) ? 1 : 0;
 	}
 }
 
@@ -1272,7 +1272,7 @@ gc_loop:
 			g_escape_time_state.m_grid_fp.y_3rd() = g_current_fractal_specific->y_min;
 			g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
 			g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
-			if (g_view_crop && g_viewWindow.AspectRatio() != g_screen_aspect_ratio)
+			if (g_viewWindow.Crop() && g_viewWindow.AspectRatio() != g_screen_aspect_ratio)
 			{
 				aspect_ratio_crop(g_screen_aspect_ratio, g_viewWindow.AspectRatio());
 			}
@@ -1477,7 +1477,7 @@ gsc_loop:
 			g_escape_time_state.m_grid_fp.y_max() = g_orbit_y_max;
 			g_escape_time_state.m_grid_fp.x_3rd() = g_orbit_x_3rd;
 			g_escape_time_state.m_grid_fp.y_3rd() = g_orbit_y_3rd;
-			if (g_view_crop && g_viewWindow.AspectRatio() != g_screen_aspect_ratio)
+			if (g_viewWindow.Crop() && g_viewWindow.AspectRatio() != g_screen_aspect_ratio)
 			{
 				aspect_ratio_crop(g_screen_aspect_ratio, g_viewWindow.AspectRatio());
 			}

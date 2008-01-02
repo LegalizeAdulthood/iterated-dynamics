@@ -715,7 +715,7 @@ get_evol_restart:
 		j = i;
 		int k = -1;
 		g_evolving_flags = dialog.values(++k).uval.ch.val;
-		g_evolving_flags ? g_viewWindow.Show() : g_viewWindow.Hide();
+		g_viewWindow.Show(g_evolving_flags != 0);
 
 		if (!g_evolving_flags && i != FIK_F6)  /* don't need any of the other parameters */
 		{
@@ -746,12 +746,12 @@ get_evol_restart:
 			g_evolving_flags |= EVOLVE_NO_GROUT;
 		}
 	}
-	g_view_x_dots = (g_screen_width/g_grid_size)-2;
-	g_view_y_dots = (g_screen_height/g_grid_size)-2;
+	g_viewWindow.SetWidth((g_screen_width/g_grid_size)-2);
+	g_viewWindow.SetHeight((g_screen_height/g_grid_size)-2);
 	if (!g_viewWindow.Visible())
 	{
-		g_view_x_dots = 0;
-		g_view_y_dots = 0;
+		g_viewWindow.SetWidth(0);
+		g_viewWindow.SetHeight(0);
 	}
 
 	int result = 0;
