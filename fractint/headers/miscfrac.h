@@ -23,8 +23,4 @@ extern int lyapunov();
 extern bool lyapunov_setup();
 extern int cellular();
 extern bool cellular_setup();
-extern int froth_calc();
-extern int froth_per_pixel();
-extern int froth_per_orbit();
-extern bool froth_setup();
 extern std::string precision_format(const char *specifier, int precision);

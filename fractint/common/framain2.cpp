@@ -46,6 +46,7 @@
 
 #include "EscapeTime.h"
 #include "CommandParser.h"
+#include "FrothyBasin.h"
 #include "SoundState.h"
 #include "ViewWindow.h"
 

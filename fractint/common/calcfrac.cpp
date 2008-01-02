@@ -50,6 +50,7 @@
 #include "EscapeTime.h"
 #include "FiniteAttractor.h"
 #include "Formula.h"
+#include "FrothyBasin.h"
 #include "MathUtil.h"
 #include "SolidGuess.h"
 #include "SoundState.h"
