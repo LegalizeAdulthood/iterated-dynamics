@@ -11,6 +11,8 @@
 
 using namespace boost;
 
+float const ViewWindow::DEFAULT_REDUCTION = 4.2f;
+
 int ViewWindow::CommandArgument(cmd_context const &context)
 {
 	if (context.totparms > 5
@@ -19,16 +21,12 @@ int ViewWindow::CommandArgument(cmd_context const &context)
 	{
 		return bad_arg(context.curarg);
 	}
+	InitializeRestart();
 	Show();
-	g_view_reduction = 4.2f;  /* reset default values */
-	g_final_aspect_ratio = g_screen_aspect_ratio;
-	g_view_crop = true;
-	g_view_x_dots = 0;
-	g_view_y_dots = 0;
 
 	if ((context.totparms > 0) && (context.floatval[0] > 0.001))
 	{
-		g_view_reduction = float(context.floatval[0]);
+		_reduction = float(context.floatval[0]);
 	}
 	if ((context.totparms > 1) && (context.floatval[1] > 0.001))
 	{
@@ -51,12 +49,22 @@ int ViewWindow::CommandArgument(cmd_context const &context)
 
 std::string ViewWindow::CommandParameters() const
 {
-	return g_viewWindow.Visible() ?
+	return Visible() ?
 		str(format(" viewwindows=%g/%g/%s/%d/%d")
-			% g_view_reduction % g_final_aspect_ratio
+			% _reduction % g_final_aspect_ratio
 			% (g_view_crop ? "/yes" : "/no")
 			% g_view_x_dots % g_view_y_dots)
 		: "";
+}
+
+void ViewWindow::InitializeRestart()
+{
+	Hide();
+	_reduction = DEFAULT_REDUCTION;
+	g_view_crop = true;
+	g_final_aspect_ratio = g_screen_aspect_ratio;
+	g_view_x_dots = 0;
+	g_view_y_dots = 0;
 }
 
 ViewWindow g_viewWindow;

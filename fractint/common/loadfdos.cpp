@@ -8,7 +8,7 @@
 		setting g_.InitialVideoMode to video mode, based on this fractint.c will set up
 		for and call setvideomode
 		set view window on if file going to be loaded into a view smaller than
-		physical screen, in this case also set g_view_reduction, g_view_x_dots,
+		physical screen, in this case also set view reduction, g_view_x_dots,
 		g_view_y_dots, and g_final_aspect_ratio
 		set g_skip_x_dots and g_skip_y_dots, to 0 if all pixels are to be loaded,
 		to 1 for every 2nd pixel, 2 for every 3rd, etc
@@ -366,11 +366,11 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		}
 		if (g_view_x_dots)
 		{
-			g_view_reduction = float(g_.VideoEntry().x_dots/g_view_x_dots);
+			g_viewWindow.SetReduction(float(g_.VideoEntry().x_dots/g_view_x_dots));
 			g_view_x_dots = g_view_y_dots = 0; /* easier to use auto reduction */
 		}
-		g_view_reduction = float(int(g_view_reduction + 0.5)); /* need integer value */
-		g_skip_x_dots = short(g_view_reduction - 1);
+		g_viewWindow.SetReduction(float(int(g_viewWindow.Reduction() + 0.5))); /* need integer value */
+		g_skip_x_dots = short(g_viewWindow.Reduction() - 1);
 		g_skip_y_dots = g_skip_x_dots;
 		return 0;
 	}
@@ -487,7 +487,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		}
 		else
 		{
-			g_view_reduction = view_reduction; /* ok, this works */
+			g_viewWindow.SetReduction(view_reduction); /* ok, this works */
 		}
 	}
 	if (g_make_par_flag && !g_fast_restore && !g_initialize_batch &&
