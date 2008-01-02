@@ -1,3 +1,4 @@
+#include <cmath>
 #include <string>
 
 #include <boost/format.hpp>
@@ -8,6 +9,7 @@
 #include "externs.h"
 
 #include "helpdefs.h"
+#include "loadfdos.h"
 #include "UIChoices.h"
 #include "ViewWindow.h"
 #include "zoom.h"
@@ -135,5 +137,95 @@ get_view_restart:
 				|| (_height != old_viewydots && _width)))) ? 1 : 0;
 }
 
+void ViewWindow::SetReductionFromVideoEntry(const VIDEOINFO &entry)
+{
+	if (_width)
+	{
+		_reduction = float(entry.x_dots/_width);
+		_width = 0;
+		_height = 0; /* easier to use auto reduction */
+	}
+	_reduction = std::floor(_reduction + 0.5f); /* need integer value */
+}
+
+void ViewWindow::SetFromVideoEntry()
+{
+	SetFromVideoMode(g_file_x_dots, g_file_y_dots,
+		g_file_aspect_ratio, g_screen_aspect_ratio,
+		g_.VideoEntry());
+}
+
+void ViewWindow::SetFromVideoMode(int file_x_dots, int file_y_dots,
+								  float file_aspect_ratio, float screen_aspect_ratio,
+								  VIDEOINFO const &video)
+{
+	_aspectRatio = file_aspect_ratio;
+	if (_aspectRatio == 0) /* assume display correct */
+	{
+		_aspectRatio = float(video_mode_aspect_ratio(file_x_dots, file_y_dots));
+	}
+	if (_aspectRatio >= screen_aspect_ratio - 0.02f
+		&& _aspectRatio <= screen_aspect_ratio + 0.02f)
+	{
+		_aspectRatio = screen_aspect_ratio;
+	}
+	int i = int(_aspectRatio*1000.0 + 0.5);
+	_aspectRatio = float(i/1000.0); /* chop precision to 3 decimals */
+
+	/* setup view window stuff */
+	_visible = false;
+	_width = 0;
+	_height = 0;
+
+	if (file_x_dots != video.x_dots || file_y_dots != video.y_dots)
+	{
+		/* image not exactly same size as screen */
+		_visible = true;
+		double ftemp = _aspectRatio*double(video.y_dots)/double(video.x_dots)/screen_aspect_ratio;
+		int x_dots, y_dots;
+		float view_reduction;
+		if (_aspectRatio <= screen_aspect_ratio)
+		{
+			x_dots = int(double(video.x_dots)/double(file_x_dots)*20.0 + 0.5);
+			view_reduction = float(x_dots/20.0); /* chop precision to nearest .05 */
+			x_dots = int(double(video.x_dots)/view_reduction + 0.5);
+			y_dots = int(double(x_dots)*ftemp + 0.5);
+		}
+		else
+		{
+			x_dots = int(double(video.y_dots)/double(file_y_dots)*20.0 + 0.5);
+			view_reduction = float(x_dots/20.0); /* chop precision to nearest .05 */
+			y_dots = int(double(video.y_dots)/view_reduction + 0.5);
+			x_dots = int(double(y_dots)/ftemp + 0.5);
+		}
+		if (x_dots != file_x_dots || y_dots != file_y_dots)  /* too bad, must be explicit */
+		{
+			_width = file_x_dots;
+			_height = file_y_dots;
+		}
+		else
+		{
+			_reduction = view_reduction; /* ok, this works */
+		}
+	}
+}
+
+void ViewWindow::SetSizeFromGrid(int width, int height, int grid_size)
+{
+	_width = (width/grid_size) - 2;
+	_height = (height/grid_size) - 2;
+	if (!_visible)
+	{
+		_width = 0;
+		_height = 0;
+	}
+}
+
+void ViewWindow::FullScreen(int width, int height)
+{
+	_visible = false;
+	_width = width;
+	_height = height;
+}
 
 ViewWindow g_viewWindow;

@@ -302,11 +302,9 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
 				{
 					stop_message(STOPMSG_NORMAL, "View window too large; using full screen.");
-					g_viewWindow.Hide();
+					g_viewWindow.FullScreen(g_screen_width, g_screen_height);
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
-					g_viewWindow.SetWidth(g_screen_width);
-					g_viewWindow.SetHeight(g_screen_height);
 				}
 				else if (((g_x_dots <= 1) /* changed test to 1, so a 2x2 window will */
 					|| (g_y_dots <= 1)) /* work with the sound feature */
