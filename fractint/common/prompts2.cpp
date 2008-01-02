@@ -631,6 +631,46 @@ pass_option_restart:
 /* same as sx/g_y_dots for that mode)                                       */
 /* g_video_table and g_.VideoEntry() are now updated even for non-disk modes     */
 
+int get_disk_view_params()
+{
+	int x_max;
+	int y_max;
+	driver_get_max_screen(x_max, y_max);
+	float old_aspectratio = g_viewWindow.AspectRatio();
+	int old_sxdots = g_screen_width;
+	int old_sydots = g_screen_height;
+
+	UIChoices dialog(HELPVIEW, "View Window Options", 16);
+
+	dialog.push("Disk Video x pixels", g_screen_width);
+	dialog.push("           y pixels", g_screen_height);
+	dialog.push("");
+
+	if (dialog.prompt() < 0)
+	{
+		return -1;
+	}
+
+	g_screen_width = dialog.values(0).uval.ival;
+	g_screen_height = dialog.values(1).uval.ival;
+	if (x_max != -1)
+	{
+		g_screen_width = std::min(x_max, g_screen_width);
+	}
+	g_screen_width = std::max(2, g_screen_width);
+	if (y_max != -1)
+	{
+		g_screen_height = std::min(y_max, g_screen_height);
+	}
+	g_screen_height = std::max(2, g_screen_height);
+
+	g_.SetVideoEntrySize(g_screen_width, g_screen_height);
+	g_viewWindow.SetAspectRatio(float(g_screen_height)/float(g_screen_width));
+	g_.SetVideoTable(g_.Adapter(), g_.VideoEntry());
+
+	return (g_screen_width != old_sxdots || g_screen_height != old_sydots) ? 1 : 0;
+}
+
 /* --------------------------------------------------------------------- */
 /*
 	get_view_params() is called from FRACTINT.C whenever the 'v' key
@@ -642,121 +682,7 @@ pass_option_restart:
 
 int get_view_params()
 {
-	int x_max;
-	int y_max;
-	driver_get_max_screen(x_max, y_max);
-	bool old_viewwindow = g_viewWindow.Visible();
-	float old_viewreduction = g_viewWindow.Reduction();
-	float old_aspectratio = g_viewWindow.AspectRatio();
-	int old_viewxdots = g_viewWindow.Width();
-	int old_viewydots = g_viewWindow.Height();
-	int old_sxdots = g_screen_width;
-	int old_sydots = g_screen_height;
-
-get_view_restart:
-	{
-		UIChoices dialog(HELPVIEW, "View Window Options", 16);
-
-		if (!driver_diskp())
-		{
-			dialog.push("Preview display? (no for full screen)", g_viewWindow.Visible());
-			dialog.push("Auto window size reduction factor", g_viewWindow.Reduction());
-			dialog.push("Final media overall aspect ratio, y/x", g_viewWindow.AspectRatio());
-			dialog.push("Crop starting coordinates to new aspect ratio?", g_viewWindow.Crop());
-			dialog.push("Explicit size x pixels (0 for auto size)", g_viewWindow.Width());
-			dialog.push("              y pixels (0 to base on aspect ratio)", g_viewWindow.Height());
-		}
-		else
-		{
-			dialog.push("Disk Video x pixels", g_screen_width);
-			dialog.push("           y pixels", g_screen_height);
-		}
-		dialog.push("");
-		if (!driver_diskp())
-		{
-			dialog.push("Press F4 to reset view parameters to defaults.");
-		}
-
-		int i = dialog.prompt();
-		if (i < 0)
-		{
-			return -1;
-		}
-
-		if (i == FIK_F4 && !driver_diskp())
-		{
-			g_viewWindow.InitializeRestart();
-			g_screen_width = old_sxdots;
-			g_screen_height = old_sydots;
-			goto get_view_restart;
-		}
-
-		int k = -1;
-		if (!driver_diskp())
-		{
-			g_viewWindow.Show(dialog.values(++k).uval.ch.val != 0);
-			g_viewWindow.SetReduction(float(dialog.values(++k).uval.dval));
-			g_viewWindow.SetAspectRatio(float(dialog.values(++k).uval.dval));
-			g_viewWindow.SetCrop(dialog.values(++k).uval.ch.val != 0);
-			g_viewWindow.SetWidth(dialog.values(++k).uval.ival);
-			g_viewWindow.SetHeight(dialog.values(++k).uval.ival);
-		}
-		else
-		{
-			g_screen_width = dialog.values(++k).uval.ival;
-			g_screen_height = dialog.values(++k).uval.ival;
-			if ((x_max != -1) && (g_screen_width > x_max))
-			{
-				g_screen_width = int(x_max);
-			}
-			if (g_screen_width < 2)
-			{
-				g_screen_width = 2;
-			}
-			if ((y_max != -1) && (g_screen_height > y_max))
-			{
-				g_screen_height = y_max;
-			}
-			if (g_screen_height < 2)
-			{
-				g_screen_height = 2;
-			}
-		}
-		++k;
-
-		if (!driver_diskp())
-		{
-			if (g_viewWindow.Width() != 0 && g_viewWindow.Height() != 0
-				&& g_viewWindow.Visible()
-				&& g_viewWindow.AspectRatio() == 0.0)
-			{
-				g_viewWindow.SetAspectRatio(float(g_viewWindow.Height())/float(g_viewWindow.Width()));
-			}
-			else if (g_viewWindow.AspectRatio() == 0.0 && (g_viewWindow.Width() == 0 || g_viewWindow.Height() == 0))
-			{
-				g_viewWindow.SetAspectRatio(old_aspectratio);
-			}
-
-			if (g_viewWindow.AspectRatio() != old_aspectratio && g_viewWindow.Crop())
-			{
-				aspect_ratio_crop(old_aspectratio, g_viewWindow.AspectRatio());
-			}
-		}
-		else
-		{
-			g_.SetVideoEntrySize(g_screen_width, g_screen_height);
-			g_viewWindow.SetAspectRatio(float(g_screen_height)/float(g_screen_width));
-			g_.SetVideoTable(g_.Adapter(), g_.VideoEntry());
-		}
-
-		return (g_viewWindow.Visible() != old_viewwindow
-			|| g_screen_width != old_sxdots || g_screen_height != old_sydots
-			|| (g_viewWindow.Visible()
-				&& (g_viewWindow.Reduction() != old_viewreduction
-					|| g_viewWindow.AspectRatio() != old_aspectratio
-					|| g_viewWindow.Width() != old_viewxdots
-					|| (g_viewWindow.Height() != old_viewydots && g_viewWindow.Width())))) ? 1 : 0;
-	}
+	return driver_diskp() ? get_disk_view_params() : g_viewWindow.GetParameters();
 }
 
 /*

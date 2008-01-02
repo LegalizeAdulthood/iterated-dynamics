@@ -28,6 +28,7 @@ public:
 	void SetWidth(int value)			{ _width = value; }
 
 	int CommandArgument(cmd_context const &context);
+	int GetParameters();
 	void Hide()							{ _visible = false; }
 	void InitializeRestart();
 	void Show()							{ _visible = true; }
