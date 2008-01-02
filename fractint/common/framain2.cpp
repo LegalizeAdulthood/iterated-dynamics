@@ -280,10 +280,10 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			{
 				/* bypass for VESA virtual screen */
 				ftemp = g_viewWindow.AspectRatio()*((double(g_screen_height))/(double(g_screen_width))/g_screen_aspect_ratio);
-				g_x_dots = g_view_x_dots;
+				g_x_dots = g_viewWindow.Width();
 				if (g_x_dots != 0)
 				{	/* g_x_dots specified */
-					g_y_dots = g_view_y_dots;
+					g_y_dots = g_viewWindow.Height();
 					if (g_y_dots == 0) /* calc g_y_dots? */
 					{
 						g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
@@ -305,8 +305,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_viewWindow.Hide();
 					g_x_dots = g_screen_width;
 					g_y_dots = g_screen_height;
-					g_view_x_dots = g_screen_width;
-					g_view_y_dots = g_screen_height;
+					g_viewWindow.SetWidth(g_screen_width);
+					g_viewWindow.SetHeight(g_screen_height);
 				}
 				else if (((g_x_dots <= 1) /* changed test to 1, so a 2x2 window will */
 					|| (g_y_dots <= 1)) /* work with the sound feature */

@@ -364,10 +364,11 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;  /* can't resume anyway */
 		}
-		if (g_view_x_dots)
+		if (g_viewWindow.Width())
 		{
-			g_viewWindow.SetReduction(float(g_.VideoEntry().x_dots/g_view_x_dots));
-			g_view_x_dots = g_view_y_dots = 0; /* easier to use auto reduction */
+			g_viewWindow.SetReduction(float(g_.VideoEntry().x_dots/g_viewWindow.Width()));
+			g_viewWindow.SetWidth(0);
+			g_viewWindow.SetHeight(0); /* easier to use auto reduction */
 		}
 		g_viewWindow.SetReduction(float(int(g_viewWindow.Reduction() + 0.5))); /* need integer value */
 		g_skip_x_dots = short(g_viewWindow.Reduction() - 1);
@@ -455,8 +456,8 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 
 	/* setup view window stuff */
 	g_viewWindow.Hide();
-	g_view_x_dots = 0;
-	g_view_y_dots = 0;
+	g_viewWindow.SetWidth(0);
+	g_viewWindow.SetHeight(0);
 	if (g_file_x_dots != g_.VideoEntry().x_dots || g_file_y_dots != g_.VideoEntry().y_dots)
 	{
 		/* image not exactly same size as screen */
@@ -482,8 +483,8 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		}
 		if (x_dots != g_file_x_dots || y_dots != g_file_y_dots)  /* too bad, must be explicit */
 		{
-			g_view_x_dots = g_file_x_dots;
-			g_view_y_dots = g_file_y_dots;
+			g_viewWindow.SetWidth(g_file_x_dots);
+			g_viewWindow.SetHeight(g_file_y_dots);
 		}
 		else
 		{
@@ -491,7 +492,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		}
 	}
 	if (g_make_par_flag && !g_fast_restore && !g_initialize_batch &&
-		(fabs(g_viewWindow.AspectRatio() - g_screen_aspect_ratio) > .00001 || g_view_x_dots != 0))
+		(fabs(g_viewWindow.AspectRatio() - g_screen_aspect_ratio) > .00001 || g_viewWindow.Width() != 0))
 	{
 		stop_message(STOPMSG_NO_BUZZER,
 			"Warning: <V>iew parameters are being set to non-standard values.\n"

@@ -397,7 +397,7 @@ int encoder()
 
 	/* TODO: pixel aspect ratio should be 1:1? */
 	if (g_viewWindow.Visible()                               /* less than full screen?  */
-		&& (g_view_x_dots == 0 || g_view_y_dots == 0))   /* and we picked the dots? */
+		&& (g_viewWindow.Width() == 0 || g_viewWindow.Height() == 0))   /* and we picked the dots? */
 	{
 		i = int((double(g_screen_height)/double(g_screen_width))*64.0/g_screen_aspect_ratio - 14.5);
 	}
