@@ -1,5 +1,4 @@
-#if !defined(FRACTALS_H)
-#define FRACTALS_H
+#pragma once
 
 extern void cdecl invert_z(ComplexD *);
 extern void magnet2_precalculate_fp();
@@ -113,9 +112,6 @@ extern int julia_trig_or_trig_orbit_fp();
 extern int dynamic_orbit_fp(double *, double *, double*);
 extern int mandel_cloud_orbit_fp(double *, double *, double*);
 extern int dynamic_2d_fp();
-extern int quaternion_orbit_fp();
-extern int quaternion_per_pixel_fp();
-extern int quaternion_julia_per_pixel_fp();
 extern int phoenix_orbit();
 extern int phoenix_orbit_fp();
 extern int phoenix_per_pixel();
@@ -166,5 +162,3 @@ extern void set_pixel_calc_functions();
 extern int mandelbrot_mix4_per_pixel_fp();
 extern int mandelbrot_mix4_orbit_fp();
 extern int mandelbrot_mix4_setup();
-
-#endif

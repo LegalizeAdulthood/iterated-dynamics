@@ -59,8 +59,9 @@
 #include "hcmplx.h"
 
 #include "EscapeTime.h"
-#include "MathUtil.h"
 #include "Formula.h"
+#include "MathUtil.h"
+#include "QuaternionEngine.h"
 
 #define modulus(z)			(sqr((z).x) + sqr((z).y))
 #define conjugate(pz)		((pz)->y = - (pz)->y)
@@ -98,11 +99,6 @@ double g_cos_x = 0.0;
 double g_sin_x = 0.0;
 double g_temp_sqr_x = 0.0;
 double g_temp_sqr_y = 0.0;
-/* These are for quaternions */
-double g_quaternion_c = 0.0;
-double g_quaternion_ci = 0.0;
-double g_quaternion_cj = 0.0;
-double g_quaternion_ck = 0.0;
 int (*g_bail_out_fp)();
 int (*g_bail_out_l)();
 int (*g_bail_out_bn)();
@@ -2750,32 +2746,6 @@ int other_julia_per_pixel_fp()
 	return 0;
 }
 
-int quaternion_julia_per_pixel_fp()
-{
-	g_old_z.x = g_dx_pixel();
-	g_old_z.y = g_dy_pixel();
-	g_float_parameter->x = g_parameters[4];
-	g_float_parameter->y = g_parameters[5];
-	g_quaternion_c  = g_parameters[0];
-	g_quaternion_ci = g_parameters[1];
-	g_quaternion_cj = g_parameters[2];
-	g_quaternion_ck = g_parameters[3];
-	return 0;
-}
-
-int quaternion_per_pixel_fp()
-{
-	g_old_z.x = 0;
-	g_old_z.y = 0;
-	g_float_parameter->x = 0;
-	g_float_parameter->y = 0;
-	g_quaternion_c  = g_dx_pixel();
-	g_quaternion_ci = g_dy_pixel();
-	g_quaternion_cj = g_parameters[2];
-	g_quaternion_ck = g_parameters[3];
-	return 0;
-}
-
 int marks_complex_mandelbrot_per_pixel()
 {
 	if (g_invert)
@@ -2907,32 +2877,6 @@ int mandelbrot_phoenix_per_pixel_fp()
 	return 1; /* 1st iteration has been done */
 }
 
-int quaternion_orbit_fp()
-{
-	double a0 = g_old_z.x;
-	double a1 = g_old_z.y;
-	double a2 = g_float_parameter->x;
-	double a3 = g_float_parameter->y;
-
-	double n0 = a0*a0-a1*a1-a2*a2-a3*a3 + g_quaternion_c;
-	double n1 = 2*a0*a1 + g_quaternion_ci;
-	double n2 = 2*a0*a2 + g_quaternion_cj;
-	double n3 = 2*a0*a3 + g_quaternion_ck;
-	/* Check bailout */
-	g_magnitude = a0*a0 + a1*a1 + a2*a2 + a3*a3;
-	if (g_magnitude > g_rq_limit)
-	{
-		return 1;
-	}
-	g_old_z.x = n0;
-	g_new_z.x = n0;
-	g_old_z.y = n1;
-	g_new_z.y = n1;
-	g_float_parameter->x = n2;
-	g_float_parameter->y = n3;
-	return 0;
-}
-
 int hyper_complex_orbit_fp()
 {
 	HyperComplexD hold;
@@ -2945,10 +2889,10 @@ int hyper_complex_orbit_fp()
 	HyperComplexD hnew;
 	HComplexTrig0(&hold, &hnew);
 
-	hnew.x += g_quaternion_c;
-	hnew.y += g_quaternion_ci;
-	hnew.z += g_quaternion_cj;
-	hnew.t += g_quaternion_ck;
+	hnew.x += g_c_quaternion.real();
+	hnew.y += g_c_quaternion.R_component_2();
+	hnew.z += g_c_quaternion.R_component_3();
+	hnew.t += g_c_quaternion.R_component_4();
 
 	g_old_z.x = hnew.x;
 	g_new_z.x = hnew.x;
