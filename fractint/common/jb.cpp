@@ -14,6 +14,7 @@
 #include "realdos.h"
 
 #include "EscapeTime.h"
+#include "QuaternionEngine.h"
 
 /* these need to be accessed elsewhere for saving data */
 double g_m_x_min_fp = -.83;
@@ -358,10 +359,7 @@ static int z_line_fp(double x, double y)
 			g_old_z.y = 0.0;
 			s_jbc_fp.x = 0.0;
 			s_jbc_fp.y = 0.0;
-			g_quaternion_c = s_jx_fp;
-			g_quaternion_ci = s_jy_fp;
-			g_quaternion_cj = s_mx_fp;
-			g_quaternion_ck = s_my_fp;
+			g_c_quaternion = QuaternionD(s_jx_fp, s_jy_fp, s_mx_fp, s_my_fp);
 		}
 #ifdef XFRACT
 		if (keychk++ > 500)

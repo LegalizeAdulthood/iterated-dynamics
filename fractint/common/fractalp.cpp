@@ -33,6 +33,7 @@
 #include "Halley.h"
 #include "Newton.h"
 #include "Plasma.h"
+#include "QuaternionEngine.h"
 #include "Test.h"
 
 /* functions defined elswhere needed for g_fractal_specific */

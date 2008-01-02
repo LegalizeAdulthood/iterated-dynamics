@@ -613,6 +613,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\common\QuaternionEngine.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\soi.cpp"
 					>
 					<FileConfiguration
@@ -1540,6 +1544,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\history.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\QuaternionEngine.h"
 					>
 				</File>
 				<File
