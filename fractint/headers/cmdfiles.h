@@ -60,6 +60,8 @@ extern search_path g_search_for;
 extern bool g_make_par_flag;
 extern bool g_make_par_colors_only;
 
+extern bool g_beauty_of_fractals;
+
 extern void command_files(int, char **);
 extern int load_commands(std::ifstream &stream);
 extern int get_curarg_len(char *curarg);

@@ -200,7 +200,6 @@ extern double				g_new_parameter_offset_y;
 extern int					g_new_orbit_type;
 extern int					g_next_saved_incr;
 extern bool					g_no_magnitude_calculation;
-extern bool					g_no_bof;
 extern int					g_num_affine;
 extern const int			g_num_function_list;
 extern int					g_num_fractal_types;

@@ -17,6 +17,7 @@
 #include "helpdefs.h"
 #include "fractype.h"
 
+#include "cmdfiles.h"
 #include "fractalb.h"
 #include "fractalp.h"
 
@@ -485,7 +486,7 @@ bool inside_coloring_beauty_of_fractals()
 
 bool inside_coloring_beauty_of_fractals_allowed()
 {
-	return inside_coloring_beauty_of_fractals() && !g_no_bof;
+	return inside_coloring_beauty_of_fractals() && g_beauty_of_fractals;
 }
 
 int mandelbrot_per_pixel_bn()

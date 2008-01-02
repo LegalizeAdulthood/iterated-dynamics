@@ -405,10 +405,10 @@ static void read_info_version_12(const fractal_info &read_info)
 static void read_info_version_13(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
-	g_no_bof = false;
+	g_beauty_of_fractals = true;
 	if (read_info.version > 13) /* post-version 20.1.2 */
 	{
-		g_no_bof = (read_info.no_bof != 0);
+		g_beauty_of_fractals = (read_info.no_bof == 0);
 	}
 }
 
