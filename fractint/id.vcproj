@@ -726,6 +726,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\Cellular.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\FrothyBasin.cpp"
 					>
 				</File>
@@ -1548,6 +1552,10 @@
 				>
 				<File
 					RelativePath=".\headers\ant.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\Cellular.h"
 					>
 				</File>
 				<File
