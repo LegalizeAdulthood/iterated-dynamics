@@ -766,6 +766,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\Plasma.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\Plasma.h"
+					>
+				</File>
+				<File
 					RelativePath=".\common\Test.cpp"
 					>
 				</File>

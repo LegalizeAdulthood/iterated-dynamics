@@ -1,6 +1,5 @@
 #pragma once
 
-extern int plasma();
 extern int bifurcation();
 extern int bifurcation_lambda();
 extern int bifurcation_set_trig_pi_fp();
