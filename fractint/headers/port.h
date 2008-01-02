@@ -173,10 +173,15 @@
 #endif
 
 #ifdef LOBYTEFIRST
-#define GET16(c,i)              (i) = *((U16*)(&(c)))
+inline int Get16(const BYTE *data)
+{
+	return *reinterpret_cast<const U16 *>(data);
+}
 #else
-#define GET16(c,i)              (i) = (*(unsigned char *)&(c))+\
-                                ((*((unsigned char*)&(c)+1))<<8)
+inline int Get16(const BYTE *data)
+{
+	return *data + (*(data + 1) << 8);
+}
 #endif
 
 /* Some compiler libraries don't correctly handle long double.*/

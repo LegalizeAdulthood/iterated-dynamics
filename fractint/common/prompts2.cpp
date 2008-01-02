@@ -647,7 +647,7 @@ int get_view_params()
 	driver_get_max_screen(x_max, y_max);
 	bool old_viewwindow = g_viewWindow.Visible();
 	float old_viewreduction = g_viewWindow.Reduction();
-	float old_aspectratio = g_final_aspect_ratio;
+	float old_aspectratio = g_viewWindow.AspectRatio();
 	int old_viewxdots = g_view_x_dots;
 	int old_viewydots = g_view_y_dots;
 	int old_sxdots = g_screen_width;
@@ -661,7 +661,7 @@ get_view_restart:
 		{
 			dialog.push("Preview display? (no for full screen)", g_viewWindow.Visible());
 			dialog.push("Auto window size reduction factor", g_viewWindow.Reduction());
-			dialog.push("Final media overall aspect ratio, y/x", g_final_aspect_ratio);
+			dialog.push("Final media overall aspect ratio, y/x", g_viewWindow.AspectRatio());
 			dialog.push("Crop starting coordinates to new aspect ratio?", g_view_crop);
 			dialog.push("Explicit size x pixels (0 for auto size)", g_view_x_dots);
 			dialog.push("              y pixels (0 to base on aspect ratio)", g_view_y_dots);
@@ -696,7 +696,7 @@ get_view_restart:
 		{
 			(dialog.values(++k).uval.ch.val != 0) ? g_viewWindow.Show() : g_viewWindow.Hide();
 			g_viewWindow.SetReduction(float(dialog.values(++k).uval.dval));
-			g_final_aspect_ratio = float(dialog.values(++k).uval.dval);
+			g_viewWindow.SetAspectRatio(float(dialog.values(++k).uval.dval));
 			g_view_crop = (dialog.values(++k).uval.ch.val != 0);
 			g_view_x_dots = dialog.values(++k).uval.ival;
 			g_view_y_dots = dialog.values(++k).uval.ival;
@@ -728,24 +728,24 @@ get_view_restart:
 		{
 			if (g_view_x_dots != 0 && g_view_y_dots != 0
 				&& g_viewWindow.Visible()
-				&& g_final_aspect_ratio == 0.0)
+				&& g_viewWindow.AspectRatio() == 0.0)
 			{
-				g_final_aspect_ratio = (float(g_view_y_dots))/(float(g_view_x_dots));
+				g_viewWindow.SetAspectRatio(float(g_view_y_dots)/float(g_view_x_dots));
 			}
-			else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
+			else if (g_viewWindow.AspectRatio() == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
 			{
-				g_final_aspect_ratio = old_aspectratio;
+				g_viewWindow.SetAspectRatio(old_aspectratio);
 			}
 
-			if (g_final_aspect_ratio != old_aspectratio && g_view_crop)
+			if (g_viewWindow.AspectRatio() != old_aspectratio && g_view_crop)
 			{
-				aspect_ratio_crop(old_aspectratio, g_final_aspect_ratio);
+				aspect_ratio_crop(old_aspectratio, g_viewWindow.AspectRatio());
 			}
 		}
 		else
 		{
 			g_.SetVideoEntrySize(g_screen_width, g_screen_height);
-			g_final_aspect_ratio = (float(g_screen_height))/(float(g_screen_width));
+			g_viewWindow.SetAspectRatio(float(g_screen_height)/float(g_screen_width));
 			g_.SetVideoTable(g_.Adapter(), g_.VideoEntry());
 		}
 
@@ -753,7 +753,7 @@ get_view_restart:
 			|| g_screen_width != old_sxdots || g_screen_height != old_sydots
 			|| (g_viewWindow.Visible()
 				&& (g_viewWindow.Reduction() != old_viewreduction
-					|| g_final_aspect_ratio != old_aspectratio
+					|| g_viewWindow.AspectRatio() != old_aspectratio
 					|| g_view_x_dots != old_viewxdots
 					|| (g_view_y_dots != old_viewydots && g_view_x_dots)))) ? 1 : 0;
 	}
@@ -1272,9 +1272,9 @@ gc_loop:
 			g_escape_time_state.m_grid_fp.y_3rd() = g_current_fractal_specific->y_min;
 			g_escape_time_state.m_grid_fp.y_min() = g_current_fractal_specific->y_min;
 			g_escape_time_state.m_grid_fp.y_max() = g_current_fractal_specific->y_max;
-			if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
+			if (g_view_crop && g_viewWindow.AspectRatio() != g_screen_aspect_ratio)
 			{
-				aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
+				aspect_ratio_crop(g_screen_aspect_ratio, g_viewWindow.AspectRatio());
 			}
 			if (g_bf_math != 0)
 			{
@@ -1477,9 +1477,9 @@ gsc_loop:
 			g_escape_time_state.m_grid_fp.y_max() = g_orbit_y_max;
 			g_escape_time_state.m_grid_fp.x_3rd() = g_orbit_x_3rd;
 			g_escape_time_state.m_grid_fp.y_3rd() = g_orbit_y_3rd;
-			if (g_view_crop && g_final_aspect_ratio != g_screen_aspect_ratio)
+			if (g_view_crop && g_viewWindow.AspectRatio() != g_screen_aspect_ratio)
 			{
-				aspect_ratio_crop(g_screen_aspect_ratio, g_final_aspect_ratio);
+				aspect_ratio_crop(g_screen_aspect_ratio, g_viewWindow.AspectRatio());
 			}
 			g_orbit_x_min = g_escape_time_state.m_grid_fp.x_min();
 			g_orbit_x_max = g_escape_time_state.m_grid_fp.x_max();

@@ -21,6 +21,7 @@
 
 #include "EscapeTime.h"
 #include "MathUtil.h"
+#include "ViewWindow.h"
 #include "WorkList.h"
 #include "ZoomBox.h"
 
@@ -116,13 +117,13 @@ void zoom_box_draw(bool drawit)
 
 	/* calc co-ords of topleft & botright corners of box */
 	tmpx = g_z_width/-2 + fxadj; /* from zoombox center as origin, on g_x_dots scale */
-	tmpy = g_z_depth*g_final_aspect_ratio/2;
+	tmpy = g_z_depth*g_viewWindow.AspectRatio()/2;
 	dx = (rotcos*tmpx - rotsin*tmpy) - tmpx; /* delta x to rotate topleft */
 	dy = tmpy - (rotsin*tmpx + rotcos*tmpy); /* delta y to rotate topleft */
 
 	/* calc co-ords of topleft */
 	ftemp1 = g_zbx + dx + fxadj;
-	ftemp2 = g_zby + dy/g_final_aspect_ratio;
+	ftemp2 = g_zby + dy/g_viewWindow.AspectRatio();
 
 	tl.x   = int(ftemp1*(g_dx_size + PIXELROUND)); /* screen co-ords */
 	tl.y   = int(ftemp2*(g_dy_size + PIXELROUND));
@@ -136,7 +137,7 @@ void zoom_box_draw(bool drawit)
 
 	/* calc co-ords of bottom right */
 	ftemp1 = g_zbx + g_z_width - dx - fxadj;
-	ftemp2 = g_zby - dy/g_final_aspect_ratio + g_z_depth;
+	ftemp2 = g_zby - dy/g_viewWindow.AspectRatio() + g_z_depth;
 	br.x   = int(ftemp1*(g_dx_size + PIXELROUND));
 	br.y   = int(ftemp2*(g_dy_size + PIXELROUND));
 	g_escape_time_state.m_grid_fp.x_max()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
@@ -152,7 +153,7 @@ void zoom_box_draw(bool drawit)
 	dx = (rotcos*tmpx - rotsin*tmpy) - tmpx;
 	dy = tmpy - (rotsin*tmpx + rotcos*tmpy);
 	ftemp1 = g_zbx + dx - fxadj;
-	ftemp2 = g_zby + dy/g_final_aspect_ratio + g_z_depth;
+	ftemp2 = g_zby + dy/g_viewWindow.AspectRatio() + g_z_depth;
 	bl.x   = int(ftemp1*(g_dx_size + PIXELROUND));
 	bl.y   = int(ftemp2*(g_dy_size + PIXELROUND));
 	g_escape_time_state.m_grid_fp.x_3rd()  = g_sx_min + ftemp1*fxwidth + ftemp2*fxskew;
@@ -164,7 +165,7 @@ void zoom_box_draw(bool drawit)
 		restore_stack(saved);
 	}
 	ftemp1 = g_zbx + g_z_width - dx + fxadj;
-	ftemp2 = g_zby - dy/g_final_aspect_ratio;
+	ftemp2 = g_zby - dy/g_viewWindow.AspectRatio();
 	tr.x   = int(ftemp1*(g_dx_size + PIXELROUND));
 	tr.y   = int(ftemp2*(g_dy_size + PIXELROUND));
 

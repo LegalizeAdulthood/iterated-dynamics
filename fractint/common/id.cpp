@@ -129,7 +129,6 @@ int     g_user_periodicity_check;
 long    g_user_distance_test;
 bool g_user_float_flag;
 bool g_view_crop;               /* nonzero to crop default coords */
-float   g_final_aspect_ratio;       /* for view shape and rotation */
 int     g_view_x_dots;
 int		g_view_y_dots;    /* explicit view sizing */
 int		g_max_history = 10;

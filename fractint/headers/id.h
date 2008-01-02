@@ -503,7 +503,7 @@ struct fractal_info         /*  for saving data in GIF file     */
 	short periodicity;    /* periodicity checking */
 						/* version 5 stuff, release 15 */
 	short potential_16bit;       /* save 16 bit continuous potential info */
-	float faspectratio;   /* g_final_aspect_ratio, y/x */
+	float aspect_ratio;   /* g_viewWindow.AspectRatio(), y/x */
 	short system;         /* DEPRECATED: 0 for dos, 1 for windows */
 	short release;        /* release number, with 2 decimals implied */
 	short flag3d;         /* stored only for now, for future use */
