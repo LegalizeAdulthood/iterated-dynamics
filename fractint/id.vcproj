@@ -726,6 +726,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\FrothyBasin.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\Halley.cpp"
 					>
 				</File>
@@ -1548,6 +1552,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\Formula.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\FrothyBasin.h"
 					>
 				</File>
 				<File

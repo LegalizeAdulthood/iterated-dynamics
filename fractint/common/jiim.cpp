@@ -56,6 +56,7 @@
 #include "EscapeTime.h"
 #include "fihelp.h"
 #include "filesystem.h"
+#include "FrothyBasin.h"
 #include "jiim.h"
 #include "lorenz.h"
 #include "miscfrac.h"

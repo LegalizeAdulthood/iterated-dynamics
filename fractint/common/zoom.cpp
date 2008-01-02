@@ -20,6 +20,7 @@
 #include "zoom.h"
 
 #include "EscapeTime.h"
+#include "FrothyBasin.h"
 #include "MathUtil.h"
 #include "ViewWindow.h"
 #include "WorkList.h"
