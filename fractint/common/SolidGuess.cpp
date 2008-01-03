@@ -21,17 +21,17 @@ static bool s_right_guess;
 static bool s_bottom_guess;
 static unsigned int s_t_prefix[2][MAX_Y_BLOCK][MAX_X_BLOCK]; /* common temp */
 
-#define calcadot(c, x, y) \
-	do \
-	{ \
-		g_col = x; \
-		g_row = y; \
-		c = (*g_calculate_type)(); \
-		if (c == -1) \
-		{ \
-			return -1; \
-		} \
-	} \
+#define calcadot(c, x, y)			\
+	do								\
+	{								\
+		g_col = x;					\
+		g_row = y;					\
+		c = (*g_calculate_type)();	\
+		if (c == -1)				\
+		{							\
+			return -1;				\
+		}							\
+	}								\
 	while (0)
 
 enum BuildRowType
