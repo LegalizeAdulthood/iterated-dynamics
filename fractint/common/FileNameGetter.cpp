@@ -26,6 +26,8 @@ struct CHOICE
 
 #define   MAXNUMFILES    2977L
 
+char *g_masks[] = {"*.pot", "*.gif"};
+
 int FileNameGetter::SpeedPrompt(int row, int col, int vid,
 	char *speedstring, int speed_match)
 {
