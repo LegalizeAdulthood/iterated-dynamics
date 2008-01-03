@@ -815,61 +815,30 @@ int get_starfield_params()
 	return 0;
 }
 
-char *g_masks[] = {"*.pot", "*.gif"};
-
 int get_random_dot_stereogram_parameters()
 {
 	const char *stereobars[] =
 	{
 		"none", "middle", "top"
 	};
-	struct full_screen_values uvalues[7];
-	const char *rds_prompts[7] =
-	{
-		"Depth Effect (negative reverses front and back)",
-		"Image width in inches",
-		"Use grayscale value for depth? (if \"no\" uses color number)",
-		"Calibration bars",
-		"Use image map? (if \"no\" uses random dots)",
-		"  If yes, use current image map name? (see below)",
-		0
-	};
-	int i;
-	int k;
 	int ret;
-	static char reuse = 0;
+	static bool reuse = false;
 	driver_stack_screen();
 	while (true)
 	{
 		ret = 0;
 
-		k = 0;
-		uvalues[k].uval.ival = g_auto_stereo_depth;
-		uvalues[k++].type = 'i';
-
-		uvalues[k].uval.dval = g_auto_stereo_width;
-		uvalues[k++].type = 'f';
-
-		uvalues[k].uval.ch.val = g_grayscale_depth ? 1 : 0;
-		uvalues[k++].type = 'y';
-
-		uvalues[k].type = 'l';
-		uvalues[k].uval.ch.list = stereobars;
-		uvalues[k].uval.ch.vlen = 6;
-		uvalues[k].uval.ch.llen = 3;
-		uvalues[k++].uval.ch.val  = int(g_stereogram_calibrate);
-
-		uvalues[k].uval.ch.val = g_image_map ? 1 : 0;
-		uvalues[k++].type = 'y';
-
+		UIChoices dialog(HELPRDS, "Random Dot Stereogram Parameters", 0);
+		dialog.push("Depth Effect (negative reverses front and back)", g_auto_stereo_depth);
+		dialog.push("Image width in inches", g_auto_stereo_width);
+		dialog.push("Use grayscale value for depth? (if \"no\" uses color number)", g_grayscale_depth);
+		dialog.push("Calibration bars", stereobars, NUM_OF(stereobars), g_stereogram_calibrate);
+		dialog.push("Use image map? (if \"no\" uses random dots)", g_image_map);
 
 		std::ostringstream buffer;
 		if (g_stereo_map_name.length() != 0 && g_image_map)
 		{
-			uvalues[k].uval.ch.val = reuse;
-			uvalues[k++].type = 'y';
-
-			uvalues[k++].type = '*';
+			dialog.push("  If yes, use current image map name? (see below)", reuse);
 
 			std::string basename = fs::basename(fs::path(g_stereo_map_name));
 			const int LINE_LENGTH = 60;
@@ -878,34 +847,32 @@ int get_random_dot_stereogram_parameters()
 				buffer << ' ';
 			}
 			buffer << '[' << basename << ']';
+			dialog.push(buffer.str().c_str());
 		}
 		else
 		{
 			g_stereo_map_name = "";
 		}
-		buffer << std::ends;
-		rds_prompts[6] = buffer.str().c_str();
-		i = full_screen_prompt_help(HELPRDS, "Random Dot Stereogram Parameters", k, rds_prompts, uvalues, 0, 0);
-		if (i < 0)
+		if (dialog.prompt() < 0)
 		{
 			ret = -1;
 			break;
 		}
 		else
 		{
-			k = 0;
-			g_auto_stereo_depth = uvalues[k++].uval.ival;
-			g_auto_stereo_width = uvalues[k++].uval.dval;
-			g_grayscale_depth = (uvalues[k++].uval.ch.val != 0);
-			g_stereogram_calibrate = StereogramCalibrateType(uvalues[k++].uval.ch.val);
-			g_image_map = (uvalues[k++].uval.ch.val != 0);
+			int k = 0;
+			g_auto_stereo_depth = dialog.values(k++).uval.ival;
+			g_auto_stereo_width = dialog.values(k++).uval.dval;
+			g_grayscale_depth = (dialog.values(k++).uval.ch.val != 0);
+			g_stereogram_calibrate = StereogramCalibrateType(dialog.values(k++).uval.ch.val);
+			g_image_map = (dialog.values(k++).uval.ch.val != 0);
 			if (g_stereo_map_name.length() > 0 && g_image_map)
 			{
-				reuse = (char) uvalues[k++].uval.ch.val;
+				reuse = (dialog.values(k++).uval.ch.val != 0);
 			}
 			else
 			{
-				reuse = 0;
+				reuse = false;
 			}
 			if (g_image_map && !reuse)
 			{
