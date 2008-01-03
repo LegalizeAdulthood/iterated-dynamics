@@ -90,12 +90,12 @@ static bool diffusion_point(int row, int col)
 	little function that plots a filled square of color c, size s with
 	top left cornet at (x, y) with optimization from sym_fill_line
 */
-static void diffusion_plot_block(int x, int y, int s, int c)
+static void diffusion_plot_block(int x, int y, int size, int color)
 {
-	memset(g_stack, c, s);
-	for (int ty = y; ty < y + s; ty++)
+	memset(g_stack, color, size);
+	for (int ty = y; ty < y + size; ty++)
 	{
-		sym_fill_line(ty, x, x + s - 1, g_stack);
+		sym_fill_line(ty, x, x + size - 1, g_stack);
 	}
 }
 
@@ -112,12 +112,12 @@ static bool diffusion_block(int row, int col, int sqsz)
 }
 
 /* function that does the same as above, but checks the limits in x and y */
-static void plot_block_lim(int x, int y, int s, int c)
+static void plot_block_lim(int x, int y, int size, int color)
 {
-	memset(g_stack, c, s);
-	for (int ty = y; ty < std::min(y + s, g_y_stop + 1); ty++)
+	memset(g_stack, color, size);
+	for (int ty = y; ty < std::min(y + size, g_y_stop + 1); ty++)
 	{
-		sym_fill_line(ty, x, std::min(x + s - 1, g_x_stop), g_stack);
+		sym_fill_line(ty, x, std::min(x + size - 1, g_x_stop), g_stack);
 	}
 }
 
