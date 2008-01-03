@@ -1,14 +1,6 @@
 #if !defined(UICHOICES_H)
 #define UICHOICES_H
 
-#if defined(max)
-#undef max
-#endif
-
-#if defined(min)
-#undef min
-#endif
-
 #include <vector>
 
 struct full_screen_values;
@@ -26,9 +18,12 @@ public:
 	void push(const char *label, long value);
 	void push(const char *label);
 	void push(const char *label, const char *value);
+	void push(const char *label, char *value, int length);
 	void push(const char *label, const std::string &value);
 	void push(const char *label, float value);
 	void push(const char *label, double value);
+
+	int num_prompts() const;
 
 	int prompt();
 
