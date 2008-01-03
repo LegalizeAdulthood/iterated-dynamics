@@ -264,7 +264,7 @@ int AbstractFullScreenChooser::Execute()
 
 		if (_speedString)                     /* show speedstring if any */
 		{
-			show_speed_string(speed_row, _speedString, _speedPrompt);
+			show_speed_string(speed_row);
 		}
 		else
 		{
@@ -689,7 +689,7 @@ bool AbstractFullScreenChooser::is_a_dir_name(const char *name)
 	return name[0] == '.' || ends_with_slash(name) ? true : false;
 }
 
-void AbstractFullScreenChooser::show_speed_string(int speedrow, char *speedstring, int (*speed_prompt)(int, int, int, char *, int))
+void AbstractFullScreenChooser::show_speed_string(int speedrow)
 {
 	int speed_match = 0;
 	int i;
@@ -698,19 +698,19 @@ void AbstractFullScreenChooser::show_speed_string(int speedrow, char *speedstrin
 	memset(buf, ' ', 80);
 	buf[80] = 0;
 	driver_put_string(speedrow, 0, C_PROMPT_BKGRD, buf);
-	if (*speedstring)  /* got a speedstring on the go */
+	if (*_speedString)  /* got a speedstring on the go */
 	{
 		driver_put_string(speedrow, 15, C_CHOICE_SP_INSTR, " ");
-		if (speed_prompt)
+		if (_speedPrompt)
 		{
-			j = speed_prompt(speedrow, 16, C_CHOICE_SP_INSTR, speedstring, speed_match);
+			j = _speedPrompt(speedrow, 16, C_CHOICE_SP_INSTR, _speedString, speed_match);
 		}
 		else
 		{
 			driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, "Speed key string");
 			j = sizeof("Speed key string")-1;
 		}
-		strcpy(buf, speedstring);
+		strcpy(buf, _speedString);
 		i = int(strlen(buf));
 		while (i < 30)
 		{
@@ -719,7 +719,7 @@ void AbstractFullScreenChooser::show_speed_string(int speedrow, char *speedstrin
 		buf[i] = 0;
 		driver_put_string(speedrow, 16 + j, C_CHOICE_SP_INSTR, " ");
 		driver_put_string(speedrow, 17 + j, C_CHOICE_SP_KEYIN, buf);
-		driver_move_cursor(speedrow, 17 + j + int(strlen(speedstring)));
+		driver_move_cursor(speedrow, 17 + j + int(strlen(_speedString)));
 	}
 	else
 	{
