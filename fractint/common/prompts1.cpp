@@ -1642,7 +1642,6 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 	char message[120];
 	char bailoutmsg[50];
 	int command_result = COMMANDRESULT_OK;
-	char parmprompt[MAX_PARAMETERS][55];
 	static char *trg[] =
 	{
 		"First Function", "Second Function", "Third Function", "Fourth Function"
@@ -1771,7 +1770,6 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 	}
 
 get_fractal_parameters_top:
-	int prompt = 0;
 	FractalTypeSpecificData *julibrot_orbit = 0;
 	if (g_julibrot)
 	{
@@ -1855,6 +1853,8 @@ get_fractal_parameters_top:
 	}
 	num_parameters = 0;
 	j = 0;
+	int prompt = 0;
+	char parmprompt[MAX_PARAMETERS][55];
 	for (int i = firstparm; i < lastparm; i++)
 	{
 		char tmpbuf[30];
@@ -3211,141 +3211,86 @@ restart_1:
 			goto restart_1;
 		}
 	}
-restart_3:
 
-	const char *prompts3d[21];
-	if (g_3d_state.sphere())
+restart_3:
 	{
-		k = -1;
-		prompts3d[++k] = "Longitude start (degrees)";
-		prompts3d[++k] = "Longitude stop  (degrees)";
-		prompts3d[++k] = "Latitude start  (degrees)";
-		prompts3d[++k] = "Latitude stop   (degrees)";
-		prompts3d[++k] = "Radius scaling factor in pct";
-	}
-	else
-	{
-		k = -1;
+		const char *heading;
+		if (g_3d_state.sphere())
+		{
+			heading = "Sphere 3D Parameters\n"
+				"Sphere is on its side; North pole to right\n"
+				"Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right";
+		}
+		else
+		{
+			heading = "Planar 3D Parameters\n"
+				"Pre-rotation X axis is screen top; Y axis is left side\n"
+				"Pre-rotation Z axis is coming at you out of the screen!";
+		}
+
+		UIChoices dialog(HELP3DPARMS, heading, 0);
+		if (g_3d_state.sphere())
+		{
+			dialog.push("Longitude start (degrees)", g_3d_state.x_rotation());
+			dialog.push("Longitude stop  (degrees)", g_3d_state.y_rotation());
+			dialog.push("Latitude start  (degrees)", g_3d_state.z_rotation());
+			dialog.push("Latitude stop   (degrees)", g_3d_state.x_scale());
+			dialog.push("Radius scaling factor in pct", g_3d_state.y_scale());
+		}
+		else
+		{
+			if (!g_3d_state.raytrace_output())
+			{
+				dialog.push("X-axis rotation in degrees", g_3d_state.x_rotation());
+				dialog.push("Y-axis rotation in degrees", g_3d_state.y_rotation());
+				dialog.push("Z-axis rotation in degrees", g_3d_state.z_rotation());
+			}
+			dialog.push("X-axis scaling factor in pct", g_3d_state.x_scale());
+			dialog.push("Y-axis scaling factor in pct", g_3d_state.y_scale());
+		}
+		dialog.push("Surface Roughness scaling factor in pct", g_3d_state.roughness());
+		dialog.push("'Water Level' (minimum color value)", g_3d_state.water_line());
+
 		if (!g_3d_state.raytrace_output())
 		{
-			prompts3d[++k] = "X-axis rotation in degrees";
-			prompts3d[++k] = "Y-axis rotation in degrees";
-			prompts3d[++k] = "Z-axis rotation in degrees";
+			dialog.push("Perspective distance [1 - 999, 0 for no persp])", g_3d_state.z_viewer());
+			dialog.push("X shift with perspective (positive = right)", g_3d_state.x_shift());
+			dialog.push("Y shift with perspective (positive = up   )", g_3d_state.y_shift());
+			dialog.push("Image non-perspective X adjust (positive = right)", g_3d_state.x_trans());
+			dialog.push("Image non-perspective Y adjust (positive = up)", g_3d_state.y_trans());
+			dialog.push("First transparent color", g_3d_state.transparent0());
+			dialog.push("Last transparent color", g_3d_state.transparent1());
 		}
-		prompts3d[++k] = "X-axis scaling factor in pct";
-		prompts3d[++k] = "Y-axis scaling factor in pct";
+		dialog.push("Randomize Colors      (0 - 7, '0' disables)", g_3d_state.randomize_colors());
+
+		if (dialog.prompt() < 0)
+		{
+			goto restart_1;
+		}
+
+		k = 0;
+		if (!(g_3d_state.raytrace_output() && !g_3d_state.sphere()))
+		{
+			g_3d_state.set_x_rotation(dialog.values(k++).uval.ival);
+			g_3d_state.set_y_rotation(dialog.values(k++).uval.ival);
+			g_3d_state.set_z_rotation(dialog.values(k++).uval.ival);
+		}
+		g_3d_state.set_x_scale(dialog.values(k++).uval.ival);
+		g_3d_state.set_y_scale(dialog.values(k++).uval.ival);
+		g_3d_state.set_roughness(dialog.values(k++).uval.ival);
+		g_3d_state.set_water_line(dialog.values(k++).uval.ival);
+		if (!g_3d_state.raytrace_output())
+		{
+			g_3d_state.set_z_viewer(dialog.values(k++).uval.ival);
+			g_3d_state.set_x_shift(dialog.values(k++).uval.ival);
+			g_3d_state.set_y_shift(dialog.values(k++).uval.ival);
+			g_3d_state.set_x_trans(dialog.values(k++).uval.ival);
+			g_3d_state.set_y_trans(dialog.values(k++).uval.ival);
+			g_3d_state.set_transparent0(dialog.values(k++).uval.ival);
+			g_3d_state.set_transparent1(dialog.values(k++).uval.ival);
+		}
+		g_3d_state.set_randomize_colors(std::max(0, std::min(7, dialog.values(k++).uval.ival)));
 	}
-	k = -1;
-	struct full_screen_values uvalues[21];
-	if (!(g_3d_state.raytrace_output() && !g_3d_state.sphere()))
-	{
-		uvalues[++k].uval.ival   = g_3d_state.x_rotation();
-		uvalues[k].type = 'i';
-		uvalues[++k].uval.ival   = g_3d_state.y_rotation();
-		uvalues[k].type = 'i';
-		uvalues[++k].uval.ival   = g_3d_state.z_rotation();
-		uvalues[k].type = 'i';
-	}
-	uvalues[++k].uval.ival   = g_3d_state.x_scale();
-	uvalues[k].type = 'i';
-
-	uvalues[++k].uval.ival   = g_3d_state.y_scale();
-	uvalues[k].type = 'i';
-
-	prompts3d[++k] = "Surface Roughness scaling factor in pct";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.roughness();
-
-	prompts3d[++k] = "'Water Level' (minimum color value)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.water_line();
-
-	if (!g_3d_state.raytrace_output())
-	{
-		prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.z_viewer();
-
-		prompts3d[++k] = "X shift with perspective (positive = right)";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.x_shift();
-
-		prompts3d[++k] = "Y shift with perspective (positive = up   )";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.y_shift();
-
-		prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.x_trans();
-
-		prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.y_trans();
-
-		prompts3d[++k] = "First transparent color";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.transparent0();
-
-		prompts3d[++k] = "Last transparent color";
-		uvalues[k].type = 'i';
-		uvalues[k].uval.ival = g_3d_state.transparent1();
-	}
-
-	prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
-	uvalues[k].type = 'i';
-	uvalues[k++].uval.ival = g_3d_state.randomize_colors();
-
-	const char *heading;
-	if (g_3d_state.sphere())
-	{
-		heading = "Sphere 3D Parameters\n"
-			"Sphere is on its side; North pole to right\n"
-			"Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right";
-	}
-	else
-	{
-		heading = "Planar 3D Parameters\n"
-			"Pre-rotation X axis is screen top; Y axis is left side\n"
-			"Pre-rotation Z axis is coming at you out of the screen!";
-	}
-
-	k = full_screen_prompt_help(HELP3DPARMS, heading, k, prompts3d, uvalues, 0, 0);
-	if (k < 0)
-	{
-		goto restart_1;
-	}
-
-	k = 0;
-	if (!(g_3d_state.raytrace_output() && !g_3d_state.sphere()))
-	{
-		g_3d_state.set_x_rotation(uvalues[k++].uval.ival);
-		g_3d_state.set_y_rotation(uvalues[k++].uval.ival);
-		g_3d_state.set_z_rotation(uvalues[k++].uval.ival);
-	}
-	g_3d_state.set_x_scale(uvalues[k++].uval.ival);
-	g_3d_state.set_y_scale(uvalues[k++].uval.ival);
-	g_3d_state.set_roughness(uvalues[k++].uval.ival);
-	g_3d_state.set_water_line(uvalues[k++].uval.ival);
-	if (!g_3d_state.raytrace_output())
-	{
-		g_3d_state.set_z_viewer(uvalues[k++].uval.ival);
-		g_3d_state.set_x_shift(uvalues[k++].uval.ival);
-		g_3d_state.set_y_shift(uvalues[k++].uval.ival);
-		g_3d_state.set_x_trans(uvalues[k++].uval.ival);
-		g_3d_state.set_y_trans(uvalues[k++].uval.ival);
-		g_3d_state.set_transparent0(uvalues[k++].uval.ival);
-		g_3d_state.set_transparent1(uvalues[k++].uval.ival);
-	}
-	int randomize_colors  = uvalues[k++].uval.ival;
-	if (randomize_colors >= 7)
-	{
-		randomize_colors = 7;
-	}
-	if (randomize_colors <= 0)
-	{
-		randomize_colors = 0;
-	}
-	g_3d_state.set_randomize_colors(randomize_colors);
 
 	if ((g_targa_output || (g_3d_state.fill_type() > FillType::Bars) || g_3d_state.raytrace_output()))
 	{
