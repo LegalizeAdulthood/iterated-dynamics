@@ -3191,7 +3191,7 @@ restart_1:
 			attributes[i] = 1;
 		}
 		int i = full_screen_choice_help(HELP3DFILL, CHOICE_HELP,
-			"Select 3D Fill Type", 0, 0, k, (char **) choices, attributes,
+			"Select 3D Fill Type", 0, 0, k, const_cast<char **>(choices), attributes,
 			0, 0, 0, g_3d_state.fill_type() + 1, 0, 0, 0, 0);
 		if (i < 0)
 		{
@@ -3205,12 +3205,12 @@ restart_1:
 			{
 				goto restart_1;
 			}
-			}
-			if (check_mapfile())
-			{
-				goto restart_1;
-			}
 		}
+		if (check_mapfile())
+		{
+			goto restart_1;
+		}
+	}
 restart_3:
 
 	const char *prompts3d[21];
