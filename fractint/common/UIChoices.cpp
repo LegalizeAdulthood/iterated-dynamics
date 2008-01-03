@@ -95,6 +95,14 @@ void UIChoices::push(const char *label, const char *value)
 	push(label, fsv);
 }
 
+void UIChoices::push(const char *label, char *value, int length)
+{
+	full_screen_values fsv;
+	fsv.type = 0x100 + length;
+	fsv.uval.sbuf = value;
+	push(label, fsv);
+}
+
 void UIChoices::push(const char *label, const std::string &value)
 {
 	push(label, value.c_str());
@@ -135,4 +143,9 @@ int UIChoices::prompt()
 		return full_screen_prompt(m_heading, int(m_choices.size()),
 			&m_choices[0], &m_values[0], m_key_mask, m_extra_info);
 	}
+}
+
+int UIChoices::num_prompts() const
+{
+	return int(m_choices.size());
 }
