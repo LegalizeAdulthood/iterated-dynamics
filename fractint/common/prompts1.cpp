@@ -3075,95 +3075,54 @@ int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
 
 int get_3d_parameters()     /* prompt for 3D parameters */
 {
-	const char *choices[11];
-	int attributes[21];
-	const char *prompts3d[21];
-	struct full_screen_values uvalues[21];
-
 restart_1:
 	if (g_targa_output && g_overlay_3d)
 	{
 		g_targa_overlay = true;
 	}
 
-	int k = -1;
-
-	prompts3d[++k] = "Preview Mode?";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_3d_state.preview();
-
-	prompts3d[++k] = "    Show Box?";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_3d_state.show_box() ? 1 : 0;
-
-	prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.preview_factor();
-
-	prompts3d[++k] = "Spherical Projection?";
-	uvalues[k].type = 'y';
-	int sphere = g_3d_state.sphere();
-	uvalues[k].uval.ch.val = sphere;
-
-	prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.glasses_type();
-
-	prompts3d[++k] = "                  3=photo,4=stereo pair)";
-	uvalues[k].type = '*';
-
-	prompts3d[++k] = "Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
-	uvalues[k].type = 'i';
-	uvalues[k].uval.ival = g_3d_state.raytrace_output();
-
-	prompts3d[++k] = "                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)";
-	uvalues[k].type = '*';
-
-	prompts3d[++k] = "    Brief output?";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_3d_state.raytrace_brief();
-
+	UIChoices dialog(HELP3DMODE, "3D Mode Selection", 0);
+	dialog.push("Preview Mode?", g_3d_state.preview());
+	dialog.push("    Show Box?", g_3d_state.show_box());
+	dialog.push("Coarseness, preview/grid/ray (in y dir)", g_3d_state.preview_factor());
+	bool sphere = g_3d_state.sphere();
+	dialog.push("Spherical Projection?", g_3d_state.sphere());
+	dialog.push("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,", g_3d_state.glasses_type());
+	dialog.push("                  3=photo,4=stereo pair)");
+	dialog.push("Ray trace out? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,", g_3d_state.raytrace_output());
+	dialog.push("                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)");
+	dialog.push("    Brief output?", g_3d_state.raytrace_brief());
 	g_3d_state.next_ray_name();
-	prompts3d[++k] = "    Output File Name";
-	uvalues[k].type = 's';
-	strcpy(uvalues[k].uval.sval, g_3d_state.ray_name());
+	dialog.push("    Output File Name", g_3d_state.ray_name());
+	dialog.push("Targa output?", g_targa_output);
+	dialog.push("Use grayscale value for depth? (if \"no\" uses color number)", g_grayscale_depth);
 
-	prompts3d[++k] = "Targa output?";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_targa_output ? 1 : 0;
-
-	prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
-	uvalues[k].type = 'y';
-	uvalues[k].uval.ch.val = g_grayscale_depth ? 1 : 0;
-
-	k = full_screen_prompt_help(HELP3DMODE, "3D Mode Selection", k + 1, prompts3d, uvalues, 0, 0);
-	if (k < 0)
+	if (dialog.prompt() < 0)
 	{
 		return -1;
 	}
 
-	k = 0;
-
-	g_3d_state.set_preview(uvalues[k++].uval.ch.val != 0);
-	g_3d_state.set_show_box(uvalues[k++].uval.ch.val != 0);
-	g_3d_state.set_preview_factor(uvalues[k++].uval.ival);
-	g_3d_state.set_sphere(uvalues[k++].uval.ch.val != 0);
-	g_3d_state.set_glasses_type(GlassesType(uvalues[k++].uval.ival));
+	int k = 0;
+	g_3d_state.set_preview(dialog.values(k++).uval.ch.val != 0);
+	g_3d_state.set_show_box(dialog.values(k++).uval.ch.val != 0);
+	g_3d_state.set_preview_factor(dialog.values(k++).uval.ival);
+	g_3d_state.set_sphere(dialog.values(k++).uval.ch.val != 0);
+	g_3d_state.set_glasses_type(GlassesType(dialog.values(k++).uval.ival));
 	k++;
 
-	g_3d_state.set_raytrace_output(uvalues[k++].uval.ival);
+	g_3d_state.set_raytrace_output(dialog.values(k++).uval.ival);
 	k++;
 	if (g_3d_state.raytrace_output() == RAYTRACE_POVRAY)
 	{
 		stop_message(STOPMSG_NORMAL, "DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
 		"the online documentation.");
 	}
-	g_3d_state.set_raytrace_brief(uvalues[k++].uval.ch.val != 0);
+	g_3d_state.set_raytrace_brief(dialog.values(k++).uval.ch.val != 0);
 
-	g_3d_state.set_ray_name(uvalues[k++].uval.sval);
+	g_3d_state.set_ray_name(dialog.values(k++).uval.sval);
 
-	g_targa_output = (uvalues[k++].uval.ch.val != 0);
-	g_grayscale_depth  = (uvalues[k++].uval.ch.val != 0);
+	g_targa_output = (dialog.values(k++).uval.ch.val != 0);
+	g_grayscale_depth  = (dialog.values(k++).uval.ch.val != 0);
 
 	/* check ranges */
 	if (g_3d_state.preview_factor() < 2)
@@ -3210,6 +3169,7 @@ restart_1:
 	if (!g_3d_state.raytrace_output())
 	{
 		k = 0;
+		const char *choices[11];
 		choices[k++] = "make a surface grid";
 		choices[k++] = "just draw the points";
 		choices[k++] = "connect the dots (wire frame)";
@@ -3225,6 +3185,7 @@ restart_1:
 			choices[k++] = "light source before transformation";
 			choices[k++] = "light source after transformation";
 		}
+		int attributes[21];
 		for (int i = 0; i < k; ++i)
 		{
 			attributes[i] = 1;
@@ -3250,8 +3211,9 @@ restart_1:
 				goto restart_1;
 			}
 		}
-	restart_3:
+restart_3:
 
+	const char *prompts3d[21];
 	if (g_3d_state.sphere())
 	{
 		k = -1;
@@ -3274,6 +3236,7 @@ restart_1:
 		prompts3d[++k] = "Y-axis scaling factor in pct";
 	}
 	k = -1;
+	struct full_screen_values uvalues[21];
 	if (!(g_3d_state.raytrace_output() && !g_3d_state.sphere()))
 	{
 		uvalues[++k].uval.ival   = g_3d_state.x_rotation();
@@ -3332,21 +3295,21 @@ restart_1:
 	uvalues[k].type = 'i';
 	uvalues[k++].uval.ival = g_3d_state.randomize_colors();
 
-	const char *s;
+	const char *heading;
 	if (g_3d_state.sphere())
 	{
-		s = "Sphere 3D Parameters\n"
+		heading = "Sphere 3D Parameters\n"
 			"Sphere is on its side; North pole to right\n"
 			"Long. 180 is top, 0 is bottom; Lat. -90 is left, 90 is right";
 	}
 	else
 	{
-		s = "Planar 3D Parameters\n"
+		heading = "Planar 3D Parameters\n"
 			"Pre-rotation X axis is screen top; Y axis is left side\n"
 			"Pre-rotation Z axis is coming at you out of the screen!";
 	}
 
-	k = full_screen_prompt_help(HELP3DPARMS, s, k, prompts3d, uvalues, 0, 0);
+	k = full_screen_prompt_help(HELP3DPARMS, heading, k, prompts3d, uvalues, 0, 0);
 	if (k < 0)
 	{
 		goto restart_1;
@@ -3391,7 +3354,7 @@ restart_1:
 			goto restart_3;
 		}
 	}
-return 0;
+	return 0;
 }
 
 /* --------------------------------------------------------------------- */

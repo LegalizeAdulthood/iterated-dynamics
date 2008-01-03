@@ -437,7 +437,7 @@ prompt_user:
 			UIChoices dialog("Save Current Parameters", 0);
 			fill_prompts(dialog);
 
-			if (full_screen_prompt("Save Current Parameters", m_prompts, m_choices, m_param_values, 0, 0) < 0)
+			if (dialog.prompt() < 0)
 			{
 				break;
 			}
