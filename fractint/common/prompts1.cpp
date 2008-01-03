@@ -975,6 +975,13 @@ int full_screen_prompt(const char *heading, int num_prompts, const char **prompt
 	return prompter.Prompt();
 }
 
+int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, const char **prompts,
+	struct full_screen_values *values, int fkeymask, char *extrainfo)
+{
+	HelpModeSaver saved(help_mode);
+	return full_screen_prompt(hdg, numprompts, prompts, values, fkeymask, extrainfo);
+}
+
 int prompt_value_string(char *buf, struct full_screen_values *val)
 {  /* format value into buf, return field width */
 	int i;

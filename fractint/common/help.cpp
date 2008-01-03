@@ -1476,16 +1476,6 @@ int get_help_mode()
 	return s_help_mode;
 }
 
-int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, const char **prompts,
-	struct full_screen_values *values, int fkeymask, char *extrainfo)
-{
-	int result;
-	push_help_mode(help_mode);
-	result = full_screen_prompt(hdg, numprompts, prompts, values, fkeymask, extrainfo);
-	pop_help_mode();
-	return result;
-}
-
 int field_prompt_help(int help_mode,
 	char *hdg, char *instr, char *fld, int len, int (*checkkey)(int key))
 {
