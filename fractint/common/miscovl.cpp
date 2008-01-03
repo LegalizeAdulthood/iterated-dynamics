@@ -39,6 +39,7 @@
 #include "Formula.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
+#include "UIChoices.h"
 #include "ViewWindow.h"
 
 /* routines in this module      */
@@ -94,7 +95,7 @@ private:
 	bool check_resolution();
 	bool check_bounds_xm_ym();
 	bool check_video_mode();
-	void fill_prompts();
+	void fill_prompts(UIChoices &dialog);
 	void initialize();
 	void set_color_spec();
 	void set_max_color();
@@ -114,8 +115,8 @@ private:
 	char m_in_parameter_command_comment[4][MAX_COMMENT];
 	unsigned int m_pxdots;
 	unsigned int m_pydots;
-	unsigned int m_xm;
-	unsigned int m_ym;
+	int m_xm;
+	int m_ym;
 	char m_video_mode[5];
 	bool m_colors_only;
 	double m_pdelx;
@@ -254,60 +255,30 @@ void MakeBatchFile::initialize()
 	m_pyymax = 0.0;
 	m_have_3rd = false;
 }
-void MakeBatchFile::fill_prompts()
+
+void MakeBatchFile::fill_prompts(UIChoices &dialog)
 {
-	m_prompts = 0;
-	m_choices[m_prompts] = "Parameter file";
-	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
-	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_file;
-	m_choices[m_prompts] = "Name";
-	m_param_values[m_prompts].type = 0x100 + ITEMNAMELEN;
-	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_name;
-	m_choices[m_prompts] = "Main comment";
-	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
-	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_comment[0];
-	m_choices[m_prompts] = "Second comment";
-	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
-	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_comment[1];
-	m_choices[m_prompts] = "Third comment";
-	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
-	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_comment[2];
-	m_choices[m_prompts] = "Fourth comment";
-	m_param_values[m_prompts].type = 0x100 + MAX_COMMENT - 1;
-	m_param_values[m_prompts++].uval.sbuf = m_in_parameter_command_comment[3];
+	dialog.push("Parameter file", m_in_parameter_command_file, MAX_COMMENT - 1);
+	dialog.push("Name", m_in_parameter_command_name, ITEMNAMELEN);
+	dialog.push("Main comment", m_in_parameter_command_comment[0], MAX_COMMENT - 1);
+	dialog.push("Second comment", m_in_parameter_command_comment[1], MAX_COMMENT - 1);
+	dialog.push("Third comment", m_in_parameter_command_comment[2], MAX_COMMENT - 1);
+	dialog.push("Fourth comment", m_in_parameter_command_comment[3], MAX_COMMENT - 1);
 	if (has_clut())
 	{
-		m_choices[m_prompts] = "Record colors?";
-		m_param_values[m_prompts].type = 0x100 + 13;
-		m_param_values[m_prompts++].uval.sbuf = m_color_spec;
-		m_choices[m_prompts] = "    (no | yes | only for full info | @filename to point to a map file)";
-		m_param_values[m_prompts++].type = '*';
-		m_choices[m_prompts] = "# of colors";
-		m_max_color_index = m_prompts;
-		m_param_values[m_prompts].type = 'i';
-		m_param_values[m_prompts++].uval.ival = m_max_color;
-		m_choices[m_prompts] = "    (if recording full color info)";
-		m_param_values[m_prompts++].type = '*';
+		dialog.push("Record colors?", m_color_spec, 13);
+		dialog.push("    (no | yes | only for full info | @filename to point to a map file)");
+		dialog.push("# of colors", m_max_color);
+		m_max_color_index = dialog.num_prompts();
+		dialog.push("    (if recording full color info)");
 	}
-	m_choices[m_prompts] = "Maximum line length";
-	m_param_values[m_prompts].type = 'i';
-	m_param_values[m_prompts++].uval.ival = g_max_line_length;
-	m_choices[m_prompts] = "";
-	m_param_values[m_prompts++].type = '*';
-	m_choices[m_prompts] = "    **** The following is for generating images in pieces ****";
-	m_param_values[m_prompts++].type = '*';
-	m_choices[m_prompts] = "X Multiples";
-	m_pieces_prompts = m_prompts;
-	m_param_values[m_prompts].type = 'i';
-	m_param_values[m_prompts++].uval.ival = m_xm;
-	m_choices[m_prompts] = "Y Multiples";
-	m_param_values[m_prompts].type = 'i';
-	m_param_values[m_prompts++].uval.ival = m_ym;
-#ifndef XFRACT
-	m_choices[m_prompts] = "Video mode";
-	m_param_values[m_prompts].type = 0x100 + 4;
-	m_param_values[m_prompts++].uval.sbuf = m_video_mode;
-#endif
+	dialog.push("Maximum line length", g_max_line_length);
+	dialog.push("");
+	dialog.push("    **** The following is for generating images in pieces ****");
+	dialog.push("X Multiples", m_xm);
+	m_pieces_prompts = dialog.num_prompts();
+	dialog.push("Y Multiples", m_ym);
+	dialog.push("Video mode", m_video_mode, 4);
 }
 bool MakeBatchFile::check_video_mode()
 {
@@ -463,7 +434,8 @@ void MakeBatchFile::execute()
 	{
 prompt_user:
 		{
-			fill_prompts();
+			UIChoices dialog("Save Current Parameters", 0);
+			fill_prompts(dialog);
 
 			if (full_screen_prompt("Save Current Parameters", m_prompts, m_choices, m_param_values, 0, 0) < 0)
 			{
@@ -488,16 +460,15 @@ prompt_user:
 			}
 			if (has_clut())
 			{
-				if (m_param_values[m_max_color_index].uval.ival > 0 &&
-					m_param_values[m_max_color_index].uval.ival <= 256)
+				if (dialog.values(m_max_color_index).uval.ival > 0 &&
+					dialog.values(m_max_color_index).uval.ival <= 256)
 				{
-					m_max_color = m_param_values[m_max_color_index].uval.ival;
+					m_max_color = dialog.values(m_max_color_index).uval.ival;
 				}
 			}
 			m_prompts = m_pieces_prompts;
 			{
-				int newmaxlinelength;
-				newmaxlinelength = m_param_values[m_prompts-3].uval.ival;
+				int newmaxlinelength = dialog.values(m_prompts - 3).uval.ival;
 				if (g_max_line_length != newmaxlinelength &&
 					newmaxlinelength >= MIN_MAX_LINE_LENGTH &&
 					newmaxlinelength <= MAX_MAX_LINE_LENGTH)
@@ -505,8 +476,8 @@ prompt_user:
 					g_max_line_length = newmaxlinelength;
 				}
 			}
-			m_xm = m_param_values[m_prompts++].uval.ival;
-			m_ym = m_param_values[m_prompts++].uval.ival;
+			m_xm = dialog.values(m_prompts++).uval.ival;
+			m_ym = dialog.values(m_prompts++).uval.ival;
 
 			/* sanity checks */
 			if (check_video_mode() || check_bounds_xm_ym() || check_resolution())
