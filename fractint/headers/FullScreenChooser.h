@@ -41,8 +41,7 @@ private:
 	int prompt_color(int attributes);
 	void show_speed_string(int speedrow);
 	bool is_a_dir_name(const char *name);
-	void process_speed_string(char *speedstring, char **choices, int curkey, int *pcurrent,
-		int numchoices, int is_unsorted);
+	void process_speed_string(int curkey, bool is_unsorted);
 
 	int _options;
 	const char *_heading;

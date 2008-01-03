@@ -465,8 +465,7 @@ int AbstractFullScreenChooser::Execute()
 			}
 			if (_speedString)
 			{
-				process_speed_string(_speedString, _choices, current_key, &_current,
-					_numChoices, _options & CHOICE_NOT_SORTED);
+				process_speed_string(current_key, (_options & CHOICE_NOT_SORTED) != 0);
 			}
 			break;
 		}
@@ -727,54 +726,53 @@ void AbstractFullScreenChooser::show_speed_string(int speedrow)
 	}
 }
 
-void AbstractFullScreenChooser::process_speed_string(char *speedstring, char **choices, int curkey,
-											 int *pcurrent, int numchoices, int is_unsorted)
+void AbstractFullScreenChooser::process_speed_string(int curkey, bool is_unsorted)
 {
 	int i;
 	int comp_result;
 
-	i = int(strlen(speedstring));
+	i = int(strlen(_speedString));
 	if (curkey == 8 && i > 0) /* backspace */
 	{
-		speedstring[--i] = 0;
+		_speedString[--i] = 0;
 	}
 	if (33 <= curkey && curkey <= 126 && i < 30)
 	{
 		curkey = tolower(curkey);
-		speedstring[i] = (char)curkey;
-		speedstring[++i] = 0;
+		_speedString[i] = (char)curkey;
+		_speedString[++i] = 0;
 	}
 	if (i > 0)   /* locate matching type */
 	{
-		*pcurrent = 0;
-		while (*pcurrent < numchoices
-			&& (comp_result = strncasecmp(speedstring, choices[*pcurrent], i)) != 0)
+		_current = 0;
+		while (_current < _numChoices
+			&& (comp_result = strncasecmp(_speedString, _choices[_current], i)) != 0)
 		{
 			if (comp_result < 0 && !is_unsorted)
 			{
-				*pcurrent -= *pcurrent ? 1 : 0;
+				_current -= _current ? 1 : 0;
 				break;
 			}
 			else
 			{
-				++*pcurrent;
+				++_current;
 			}
 		}
-		if (*pcurrent >= numchoices) /* bumped end of list */
+		if (_current >= _numChoices) /* bumped end of list */
 		{
-			*pcurrent = numchoices - 1;
+			_current = _numChoices - 1;
 				/*if the list is unsorted, and the entry found is not the exact
 					entry, then go looking for the exact entry.
 				*/
 		}
-		else if (is_unsorted && choices[*pcurrent][i])
+		else if (is_unsorted && _choices[_current][i])
 		{
-			int temp = *pcurrent;
-			while (++temp < numchoices)
+			int temp = _current;
+			while (++temp < _numChoices)
 			{
-				if (!choices[temp][i] && !strncasecmp(speedstring, choices[temp], i))
+				if (!_choices[temp][i] && !strncasecmp(_speedString, _choices[temp], i))
 				{
-					*pcurrent = temp;
+					_current = temp;
 					break;
 				}
 			}
