@@ -811,42 +811,32 @@ static lsys_cmd *find_size(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd 
 static int
 lsysi_find_scale(lsys_cmd *command, lsys_turtle_state_l *ts, lsys_cmd **rules, int depth)
 {
-	float horiz;
-	float vert;
-	double x_min;
-	double x_max;
-	double y_min;
-	double y_max;
-	double locsize;
-	double locaspect;
-	lsys_cmd *fsret;
-
-	locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
+	double locaspect = g_screen_aspect_ratio*g_x_dots/g_y_dots;
 	ts->aspect = FIXEDPT(locaspect);
-	ts->xpos =
-	ts->ypos =
-	ts->x_min =
-	ts->x_max =
-	ts->y_max =
-	ts->y_min =
-	ts->realangle =
-	ts->angle =
-	ts->reverse =
+	ts->xpos = 0;
+	ts->ypos = 0;
+	ts->x_min = 0;
+	ts->x_max = 0;
+	ts->y_max = 0;
+	ts->y_min = 0;
+	ts->realangle = 0;
+	ts->angle = 0;
+	ts->reverse = 0;
 	ts->counter = 0;
 	ts->size = FIXEDPT(1L);
-	fsret = find_size(command, ts, rules, depth);
+	lsys_cmd *fsret = find_size(command, ts, rules, depth);
 	thinking(0, 0); /* erase thinking message if any */
-	x_min = double(ts->x_min)/FIXEDMUL;
-	x_max = double(ts->x_max)/FIXEDMUL;
-	y_min = double(ts->y_min)/FIXEDMUL;
-	y_max = double(ts->y_max)/FIXEDMUL;
+	double x_min = double(ts->x_min)/FIXEDMUL;
+	double x_max = double(ts->x_max)/FIXEDMUL;
+	double y_min = double(ts->y_min)/FIXEDMUL;
+	double y_max = double(ts->y_max)/FIXEDMUL;
 	if (fsret == 0)
 	{
 		return 0;
 	}
-	horiz = (x_max == x_min) ? 1.0e37f : float((g_x_dots-10)/(x_max-x_min));
-	vert  = (y_max == y_min) ? 1.0e37f : float((g_y_dots-6) /(y_max-y_min));
-	locsize = (vert < horiz) ? vert : horiz;
+	float horiz = (x_max == x_min) ? 1.0e37f : float((g_x_dots-10)/(x_max-x_min));
+	float vert = (y_max == y_min) ? 1.0e37f : float((g_y_dots-6) /(y_max-y_min));
+	double locsize = (vert < horiz) ? vert : horiz;
 
 	ts->xpos = (horiz == 1e37) ?
 		FIXEDPT(g_x_dots/2) : FIXEDPT((g_x_dots-locsize*(x_max + x_min))/2);
