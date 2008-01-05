@@ -2,6 +2,7 @@
 	stereo.cpp a module to view 3D images.
 	From an idea in "New Scientist" 9 October 1993 pages 26 - 29.
 */
+#include <sstream>
 #include <string>
 
 #include <string.h>
@@ -15,19 +16,22 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "fihelp.h"
+#include "filesystem.h"
 #include "gifview.h"
+#include "prompts2.h"
 #include "realdos.h"
 #include "rotate.h"
 #include "stereo.h"
+#include "UIChoices.h"
 
 #include <malloc.h>
 
 std::string g_stereo_map_name = "";
-int g_auto_stereo_depth = 100;
+static int s_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
 bool g_grayscale_depth = false; /* flag to use gray value rather than color number */
-StereogramCalibrateType g_stereogram_calibrate = CALIBRATE_MIDDLE;	/* add calibration bars to image */
-bool g_image_map = false;
+static StereogramCalibrateType s_stereogram_calibrate = CALIBRATE_MIDDLE;	/* add calibration bars to image */
+static bool s_image_map = false;
 
 static long s_average;
 static long s_average_count;
@@ -219,8 +223,8 @@ int auto_stereo()
 		s_width = 1;
 	}
 	s_ground = g_x_dots/8;
-	s_reverse = (g_auto_stereo_depth < 0) ? 1 : 0;
-	s_depth = (long(g_x_dots)*long(g_auto_stereo_depth))/4000L;
+	s_reverse = (s_auto_stereo_depth < 0) ? 1 : 0;
+	s_depth = (long(g_x_dots)*long(s_auto_stereo_depth))/4000L;
 	s_depth = labs(s_depth) + 1;
 	if (get_min_max())
 	{
@@ -233,7 +237,7 @@ int auto_stereo()
 	s_average_count = 0L;
 	s_bar_height = 1 + g_y_dots/20;
 	s_x_center = g_x_dots/2;
-	s_y_center = (g_stereogram_calibrate == CALIBRATE_TOP) ? s_bar_height/2 : g_y_dots/2;
+	s_y_center = (s_stereogram_calibrate == CALIBRATE_TOP) ? s_bar_height/2 : g_y_dots/2;
 
 	/* box to average for calibration bars */
 	s_x1 = s_x_center - g_x_dots/16;
@@ -242,7 +246,7 @@ int auto_stereo()
 	s_y2 = s_y_center + s_bar_height/2;
 
 	s_y = 0;
-	if (g_image_map)
+	if (s_image_map)
 	{
 		g_out_line = out_line_stereo;
 		while ((s_y) < g_y_dots)
@@ -286,7 +290,7 @@ int auto_stereo()
 				colour[ct++] = getcolor(i - int(s_average), j);
 			}
 		}
-		bool bars = (g_stereogram_calibrate != CALIBRATE_NONE);
+		bool bars = (s_stereogram_calibrate != CALIBRATE_NONE);
 		toggle_bars(bars, barwidth, colour);
 		int done = 0;
 		while (done == 0)
@@ -325,5 +329,78 @@ exit_stereo:
 	driver_restore_graphics();
 	g_.DAC() = s_save_dac;
 	spindac(0, 1);
+	return ret;
+}
+
+int get_random_dot_stereogram_parameters()
+{
+	const char *stereobars[] =
+	{
+		"none", "middle", "top"
+	};
+	int ret;
+	static bool reuse = false;
+	driver_stack_screen();
+	while (true)
+	{
+		ret = 0;
+
+		UIChoices dialog(HELPRDS, "Random Dot Stereogram Parameters", 0);
+		dialog.push("Depth Effect (negative reverses front and back)", s_auto_stereo_depth);
+		dialog.push("Image width in inches", g_auto_stereo_width);
+		dialog.push("Use grayscale value for depth? (if \"no\" uses color number)", g_grayscale_depth);
+		dialog.push("Calibration bars", stereobars, NUM_OF(stereobars), s_stereogram_calibrate);
+		dialog.push("Use image map? (if \"no\" uses random dots)", s_image_map);
+
+		std::ostringstream buffer;
+		if (g_stereo_map_name.length() != 0 && s_image_map)
+		{
+			dialog.push("  If yes, use current image map name? (see below)", reuse);
+
+			std::string basename = fs::basename(fs::path(g_stereo_map_name));
+			const int LINE_LENGTH = 60;
+			for (unsigned p = 0; p < (LINE_LENGTH - basename.length())/2 + 1; p++)
+			{
+				buffer << ' ';
+			}
+			buffer << '[' << basename << ']';
+			dialog.push(buffer.str().c_str());
+		}
+		else
+		{
+			g_stereo_map_name = "";
+		}
+		if (dialog.prompt() < 0)
+		{
+			ret = -1;
+			break;
+		}
+		else
+		{
+			int k = 0;
+			s_auto_stereo_depth = dialog.values(k++).uval.ival;
+			g_auto_stereo_width = dialog.values(k++).uval.dval;
+			g_grayscale_depth = (dialog.values(k++).uval.ch.val != 0);
+			s_stereogram_calibrate = StereogramCalibrateType(dialog.values(k++).uval.ch.val);
+			s_image_map = (dialog.values(k++).uval.ch.val != 0);
+			if (g_stereo_map_name.length() > 0 && s_image_map)
+			{
+				reuse = (dialog.values(k++).uval.ch.val != 0);
+			}
+			else
+			{
+				reuse = false;
+			}
+			if (s_image_map && !reuse)
+			{
+				if (get_a_filename("Select an Imagemap File", std::string(g_masks[1]), g_stereo_map_name))
+				{
+					continue;
+				}
+			}
+		}
+		break;
+	}
+	driver_unstack_screen();
 	return ret;
 }

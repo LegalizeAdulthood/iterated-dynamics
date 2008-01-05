@@ -23,7 +23,6 @@ extern void goodbye();
 extern void shell_sort(void *, int n, unsigned, int (__cdecl *fct)(VOIDPTR, VOIDPTR));
 extern int get_browse_parameters();
 extern int get_command_string();
-extern int get_random_dot_stereogram_parameters();
 extern int starfield();
 extern int get_a_number(double *, double *);
 extern int lccompare(VOIDPTR, VOIDPTR);
