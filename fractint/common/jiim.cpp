@@ -85,8 +85,7 @@ static int s_window_corner_y;                       /* corners of the window */
 static int s_window_dots_x;
 static int s_window_dots_y;                       /* dots in the window    */
 
-double g_julia_c_x = BIG;
-double g_julia_c_y = BIG;
+std::complex<double> g_julia_c(BIG, BIG);
 
 /* circle routines from Dr. Dobbs June 1990 */
 static int s_x_base;
@@ -777,8 +776,7 @@ void JIIM::execute()
 
 				dcol = 0;
 				drow = 0;
-				g_julia_c_x = BIG;
-				g_julia_c_y = BIG;
+				g_julia_c = std::complex<double>(BIG, BIG);
 				switch (kbdchar)
 				{
 				case 1143:    /* ctrl - keypad 5 */
@@ -853,8 +851,7 @@ void JIIM::execute()
 					zoom *= 1.15f;
 					break;
 				case FIK_SPACE:
-					g_julia_c_x = cr;
-					g_julia_c_y = ci;
+					g_julia_c = std::complex<double>(cr, ci);
 					goto finish;
 					/* break; */
 				case 'c':   /* circle toggle */

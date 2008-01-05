@@ -1135,17 +1135,16 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		}
 		g_fractal_type = g_current_fractal_specific->tojulia;
 		g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-		if (g_julia_c_x == BIG || g_julia_c_y == BIG)
+		if (g_julia_c.real() == BIG || g_julia_c.imag() == BIG)
 		{
 			g_parameters[0] = g_escape_time_state.m_grid_fp.x_center();
 			g_parameters[1] = g_escape_time_state.m_grid_fp.y_center();
 		}
 		else
 		{
-			g_parameters[0] = g_julia_c_x;
-			g_parameters[1] = g_julia_c_y;
-			g_julia_c_x = BIG;
-			g_julia_c_y = BIG;
+			g_parameters[0] = g_julia_c.real();
+			g_parameters[1] = g_julia_c.imag();
+			g_julia_c = std::complex<double>(BIG, BIG);
 		}
 		jxxmin = g_sx_min;
 		jxxmax = g_sx_max;
