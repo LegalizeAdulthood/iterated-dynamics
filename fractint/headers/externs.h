@@ -6,7 +6,6 @@
 /* keep var names in column 30 for sorting via sort /+30 <in >out */
 extern float				g_aspect_drift;
 extern int					g_atan_colors;
-extern int					g_auto_stereo_depth;
 extern double				g_auto_stereo_width;
 extern bool					g_bad_outside;
 extern long					g_bail_out;
@@ -26,7 +25,6 @@ extern long					g_calculation_time;
 extern long					(*g_calculate_mandelbrot_asm_fp)();
 extern int					(*g_calculate_type)();
 extern int					g_calculation_status;
-extern StereogramCalibrateType	g_stereogram_calibrate;
 extern int					g_cfg_line_nums[];
 extern bool					g_check_current_dir;
 extern long					g_c_imag;
@@ -112,7 +110,6 @@ extern unsigned int			g_height;
 extern float				g_height_fp;
 extern float				*g_ifs_definition;
 extern int					g_ifs_type;
-extern bool					g_image_map;
 extern ComplexD				g_initial_z;
 extern int					g_initialize_batch;
 extern int					g_initial_cycle_limit;
