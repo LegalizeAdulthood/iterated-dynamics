@@ -3076,7 +3076,7 @@ void palette_edit()       /* called by fractint */
 		return; /* prevents crash when physical screen is too small */
 	}
 
-	HelpModeSaver saved_help(HELPXHAIR);
+	HelpModeSaver saved_help(FIHELP_PALETTE_EDITING);
 	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
 	g_plot_color = g_plot_color_put_color;

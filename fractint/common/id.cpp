@@ -326,17 +326,17 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 			if (g_overlay_3d)
 			{
 				hdg = "Select File for 3D Overlay";
-				set_help_mode(HELP3DOVLY);
+				set_help_mode(FIHELP_3D_OVERLAY);
 			}
 			else if (g_display_3d)
 			{
 				hdg = "Select File for 3D Transform";
-				set_help_mode(HELP3D);
+				set_help_mode(FIHELP_3D_IMAGES);
 			}
 			else
 			{
 				hdg = "Select File to Restore";
-				set_help_mode(HELPSAVEREST);
+				set_help_mode(FIHELP_SAVE_RESTORE);
 			}
 			if (g_show_file == SHOWFILE_CANCELLED && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
 			{
@@ -367,7 +367,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 		g_show_file = g_browse_state.browsing() ? SHOWFILE_DONE : SHOWFILE_CANCELLED;
 	}
 
-	set_help_mode(HELPMENU);                 /* now use this help mode */
+	set_help_mode(FIHELP_MENU);                 /* now use this help mode */
 	g_tab_display_enabled = true;
 	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
 
@@ -549,7 +549,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 	}
 
 	g_zoom_off = true;                 /* zooming is enabled */
-	set_help_mode(HELPMAIN);         /* now use this help mode */
+	set_help_mode(FIHELP_MAIN);         /* now use this help mode */
 	resume_flag = false;  /* allows taking goto inside big_while_loop() */
 
 	m_state = APPSTATE_RESUME_LOOP;

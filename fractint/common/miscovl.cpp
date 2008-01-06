@@ -220,7 +220,7 @@ void MakeBatchFile::initialize()
 {
 	/* makepar map case */
 	driver_stack_screen();
-	HelpModeSaver saved_help(HELPPARMFILE);
+	HelpModeSaver saved_help(FIHELP_PARAMETER_FILES);
 
 	m_max_color = g_colors;
 	strcpy(m_color_spec, "y");
@@ -2210,7 +2210,7 @@ int select_video_mode(int curmode)
 
 	bool save_tab_display_enabled = g_tab_display_enabled;
 	g_tab_display_enabled = false;
-	i = full_screen_choice_help(HELPVIDSEL, CHOICE_HELP,
+	i = full_screen_choice_help(FIHELP_VIDEO_MODE, CHOICE_HELP,
 		"Select Video Mode",
 		"key...name.......................xdot..ydot.colr.driver......comment......",
 		0, g_.VideoTableLength(), 0, attributes,

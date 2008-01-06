@@ -608,7 +608,7 @@ void JIIM::execute()
 	{
 		return;
 	}
-	HelpModeSaver saved_help(!m_orbits ? HELP_JIIM : HELP_ORBITS);
+	HelpModeSaver saved_help(!m_orbits ? FIHELP_JIIM : FIHELP_ORBITS);
 	if (m_orbits)
 	{
 		g_has_inverse = true;

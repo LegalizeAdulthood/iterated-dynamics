@@ -316,7 +316,7 @@ bool Formula::find_item(std::ifstream &file)
 
 long Formula::get_file_entry(char *wildcard)
 {
-	return get_file_entry_help(HT_FORMULA, GETFILE_FORMULA,
+	return get_file_entry_help(FIHELP_FORMULA, GETFILE_FORMULA,
 		"Formula", wildcard, m_filename, m_formula_name);
 }
 

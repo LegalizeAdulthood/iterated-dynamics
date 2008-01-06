@@ -575,7 +575,7 @@ int look_get_window()
 	U32 blinks;
 #endif
 
-	HelpModeSaver saved_help(HELPBROWSE);
+	HelpModeSaver saved_help(FIHELP_BROWSE);
 	oldbf_math = g_bf_math;
 	g_bf_math = BIGFLT;
 	if (!oldbf_math)

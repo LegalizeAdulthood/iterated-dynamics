@@ -136,7 +136,7 @@ int get_toggles()
 	int old_fill_color = g_fill_color;
 	double old_proximity = g_proximity;
 
-	UIChoices dialog(HELPXOPTS, "Basic Options\n(not all combinations make sense)", 0);
+	UIChoices dialog(FIHELP_TOGGLES, "Basic Options\n(not all combinations make sense)", 0);
 	const char *calculation_modes[] =
 	{
 		"1", "2", "3",
@@ -194,7 +194,6 @@ int get_toggles()
 	}
 
 	int k = -1;
-	int j = 0;
 	g_user_standard_calculation_mode = CalculationMode(calculation_modes[dialog.values(++k).uval.ch.val][0]);
 	g_stop_pass = int(calculation_modes[dialog.values(k).uval.ch.val][1]) - int('0');
 	if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
@@ -207,6 +206,7 @@ int get_toggles()
 	{
 		g_user_standard_calculation_mode = old_user_standard_calculation_mode;
 	}
+	int j = 0;
 	if (old_user_standard_calculation_mode != g_user_standard_calculation_mode)
 	{
 		j++;
@@ -379,12 +379,12 @@ int get_toggles()
 
 int get_toggles2()
 {
-	double old_potparam[3];
-	old_potparam[0] = g_potential_parameter[0];
-	old_potparam[1] = g_potential_parameter[1];
-	old_potparam[2] = g_potential_parameter[2];
-	long old_usr_distest = g_user_distance_test;
-	int old_distestwidth = g_distance_test_width;
+	double old_potential_parameter[3];
+	old_potential_parameter[0] = g_potential_parameter[0];
+	old_potential_parameter[1] = g_potential_parameter[1];
+	old_potential_parameter[2] = g_potential_parameter[2];
+	long old_user_distance_test = g_user_distance_test;
+	int old_distance_test_width = g_distance_test_width;
 	int old_rotate_lo = g_rotate_lo;
 	int old_rotate_hi = g_rotate_hi;
 	double old_inversion[3];
@@ -393,11 +393,11 @@ int get_toggles2()
 		old_inversion[i] = g_inversion[i];
 	}
 
-	UIChoices dialog(HELPYOPTS, "Extended Options\n(not all combinations make sense)", 0);
+	UIChoices dialog(FIHELP_TOGGLES2, "Extended Options\n(not all combinations make sense)", 0);
 	dialog.push("Look for finite attractor (0=no,>0=yes,<0=phase)", g_finite_attractor);
-	dialog.push("Potential Max Color (0 means off)", int(old_potparam[0]));
-	dialog.push("          Slope", old_potparam[1]);
-	dialog.push("          Bailout", int(old_potparam[2]));
+	dialog.push("Potential Max Color (0 means off)", int(old_potential_parameter[0]));
+	dialog.push("          Slope", old_potential_parameter[1]);
+	dialog.push("          Bailout", int(old_potential_parameter[2]));
 	dialog.push("          16 bit values", g_potential_16bit);
 	dialog.push("Distance Estimator (0=off, <0=edge, >0=on):", g_user_distance_test);
 	dialog.push("          width factor:", g_distance_test_width);
@@ -439,19 +439,19 @@ int get_toggles2()
 	}
 
 	g_potential_parameter[0] = dialog.values(++k).uval.ival;
-	if (g_potential_parameter[0] != old_potparam[0])
+	if (g_potential_parameter[0] != old_potential_parameter[0])
 	{
 		j = 1;
 	}
 
 	g_potential_parameter[1] = dialog.values(++k).uval.dval;
-	if (g_potential_parameter[0] != 0.0 && g_potential_parameter[1] != old_potparam[1])
+	if (g_potential_parameter[0] != 0.0 && g_potential_parameter[1] != old_potential_parameter[1])
 	{
 		j = 1;
 	}
 
 	g_potential_parameter[2] = dialog.values(++k).uval.ival;
-	if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != old_potparam[2])
+	if (g_potential_parameter[0] != 0.0 && g_potential_parameter[2] != old_potential_parameter[2])
 	{
 		j = 1;
 	}
@@ -481,13 +481,13 @@ int get_toggles2()
 
 	++k;
 	g_user_distance_test = dialog.values(k).uval.Lval;
-	if (g_user_distance_test != old_usr_distest)
+	if (g_user_distance_test != old_user_distance_test)
 	{
 		j = 1;
 	}
 	++k;
 	g_distance_test_width = dialog.values(k).uval.ival;
-	if (g_user_distance_test && g_distance_test_width != old_distestwidth)
+	if (g_user_distance_test && g_distance_test_width != old_distance_test_width)
 	{
 		j = 1;
 	}
@@ -541,7 +541,7 @@ int passes_options()
 
 pass_option_restart:
 	{
-		UIChoices dialog(HELPPOPTS, "Passes Options\n"
+		UIChoices dialog(FIHELP_PASSES_OPTIONS, "Passes Options\n"
 			"(not all combinations make sense)\n"
 			"(Press "FK_F2" for corner parameters)\n"
 			"(Press "FK_F6" for calculation parameters)", 0x44);
@@ -640,7 +640,7 @@ int get_disk_view_params()
 	int old_sxdots = g_screen_width;
 	int old_sydots = g_screen_height;
 
-	UIChoices dialog(HELPVIEW, "View Window Options", 16);
+	UIChoices dialog(FIHELP_VIEW_WINDOW, "View Window Options", 16);
 
 	dialog.push("Disk Video x pixels", g_screen_width);
 	dialog.push("           y pixels", g_screen_height);
@@ -698,7 +698,7 @@ int get_command_string()
 	int i;
 	static char cmdbuf[61];
 
-	i = field_prompt_help(HELPCOMMANDS, "Enter command string to use.", 0, cmdbuf, 60, 0);
+	i = field_prompt_help(FIHELP_COMMANDS, "Enter command string to use.", 0, cmdbuf, 60, 0);
 	if (i >= 0 && cmdbuf[0] != 0)
 	{
 		i = process_command(cmdbuf, CMDFILE_AT_AFTER_STARTUP);
@@ -791,7 +791,7 @@ int starfield()
 
 int get_starfield_params()
 {
-	UIChoices dialog(HELPSTARFLD, "Starfield Parameters", 0);
+	UIChoices dialog(FIHELP_STARFIELDS, "Starfield Parameters", 0);
 	const char *starfield_prompts[3] =
 	{
 		"Star Density in Pixels per Star",
@@ -842,7 +842,7 @@ int get_commands()              /* execute commands from file */
 	std::ifstream::pos_type point;
 	static char commandmask[13] = {"*.par"};
 
-	point = std::ifstream::pos_type(get_file_entry_help(HELPPARMFILE, GETFILE_PARAMETER, "Parameter Set",
+	point = std::ifstream::pos_type(get_file_entry_help(FIHELP_PARAMETER_FILES, GETFILE_PARAMETER, "Parameter Set",
 		commandmask, g_command_file, g_command_name));
 	if (point >= 0)
 	{
@@ -1017,7 +1017,7 @@ int get_corners()
 
 gc_loop:
 	{
-		UIChoices dialog(HELPCOORDS, "Image Coordinates", 0x90);
+		UIChoices dialog(FIHELP_IMAGE_COORDINATES, "Image Coordinates", 0x90);
 		bool center_mag = (g_orbit_draw_mode == ORBITDRAW_LINE) ? false : g_use_center_mag;
 		double Yctr;
 		double Xctr;
@@ -1223,7 +1223,7 @@ static int get_screen_corners()
 
 gsc_loop:
 	{
-		UIChoices dialog(HELPSCRNCOORDS, "Screen Coordinates", 0x90);
+		UIChoices dialog(FIHELP_SCREEN_COORDINATES, "Screen Coordinates", 0x90);
 		double Skew;
 		double Rotation;
 		LDBL Magnification;
@@ -1422,7 +1422,7 @@ int get_browse_parameters()
 
 get_brws_restart:
 	{
-		UIChoices dialog(HELPBRWSPARMS, "Browse ('L'ook) Mode Options", 16);
+		UIChoices dialog(FIHELP_BROWSER_PARAMETERS, "Browse ('L'ook) Mode Options", 16);
 
 		dialog.push("Autobrowsing? (y/n)", g_browse_state.auto_browse());
 		dialog.push("Ask about GIF video mode? (y/n)", g_ui_state.ask_video);

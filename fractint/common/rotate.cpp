@@ -55,7 +55,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		return;
 	}
 
-	HelpModeSaver saved_help(HELPCYCLING);
+	HelpModeSaver saved_help(FIHELP_COLOR_CYCLING);
 
 	s_paused = false;						/* not paused                   */
 	int fkey = 0;							/* no random coloring           */
@@ -483,7 +483,7 @@ void save_palette()
 	char temp1[256] = { 0 };
 	{
 		ScreenStacker stacker;
-		if (field_prompt_help(HELPCOLORMAP, "Name of map file to write", 0, temp1, 60, 0) < 0)
+		if (field_prompt_help(FIHELP_COLORMAP, "Name of map file to write", 0, temp1, 60, 0) < 0)
 		{
 			return;
 		}
@@ -529,7 +529,7 @@ int load_palette()
 	int i;
 	{
 		ScreenStacker stacker;
-		i = get_a_filename_help(HELPCOLORMAP, "Select a MAP File", mapmask, filename);
+		i = get_a_filename_help(FIHELP_COLORMAP, "Select a MAP File", mapmask, filename);
 	}
 	if (i >= 0)
 	{

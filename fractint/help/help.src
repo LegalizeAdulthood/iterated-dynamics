@@ -9,7 +9,7 @@
 ;
 ;
 ;
-~Topic=Main Help Index, Label=HELPMENU
+~Topic=Main Help Index, Label=FIHELP_MENU
 ~Label=FIHELP_INDEX
 
 ~Format-
@@ -967,7 +967,7 @@ see "Command Line Parameters, Parameter Files, Batch Mode" for details.
 ;
 ;
 ;
-~Topic=Summary of Commands, Label=HELPMAIN
+~Topic=Summary of Commands, Label=FIHELP_MAIN
 ; This topic is online only
 ~Doc-
 
@@ -987,8 +987,8 @@ Commands marked with an '*' are also available at the credits screen.
  * y               Set extended options and doodads
  * z               Set fractal type-specific parameters
    p               Set passes options
-   c or + or -     Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
-   e               Enter Palette-Editing Mode (see {=HELPXHAIR Palette Editing Commands})
+   c or + or -     Enter Color-Cycling Mode (see {=FIHELP_COLOR_CYCLING Color Cycling Commands})
+   e               Enter Palette-Editing Mode (see {=FIHELP_PALETTE_EDITING Palette Editing Commands})
    Spacebar        Mandelbrot/Julia Set toggle.
    Enter           Continue an interrupted calculation (e.g. after a save)
  * f               toggle the floating-point algorithm option ON or OFF
@@ -1050,7 +1050,7 @@ Commands marked with an '*' are also available at the credits screen.
   L(ook)                   Enter Browsing Mode
 
 {Evolver Commands}
-  Ctrl-E                   Bring up {=HELPEVOL explorer/evolver} control screen
+  Ctrl-E                   Bring up {=FIHELP_EVOLVER explorer/evolver} control screen
   Alt-1 ... Alt-7          Enter evolver mode with selected level of
                            mutation: Alt-1 = low level, Alt-7 = maximum.
                            (dont use the keypad, just the 'top row' numbers)
@@ -1173,7 +1173,7 @@ From the fractal parameters screen, you can press <F6> to bring up a
 sub parameter screen for the coordinates of the image's corners.
 With selected fractal types, <Z> allows you to change the {Bailout Test}.
 ; With the IFS fractal type, <Z> brings up the IFS editor (see
-; {=HT_IFS Barnsley IFS Fractals}).
+; {=FIHELP_IFS Barnsley IFS Fractals}).
 
 <+> or <->\
 Switch to color-cycling mode and begin cycling the palette
@@ -1189,12 +1189,12 @@ Enter Palette-Editing Mode.  See {Palette Editing Commands}.
 
 <Spacebar>\
 Toggle between Mandelbrot set images and their corresponding Julia-set
-images. Read the notes in {=HT_JULIA Fractal Types, Julia Sets}
+images. Read the notes in {=FIHELP_JULIA Fractal Types, Julia Sets}
 before trying this option if you want to see anything interesting.
 
 <J>\
 Toggle between Julia escape time fractal and the Inverse Julia orbit
-fractal. See {=HT_INVERSE Inverse Julias}
+fractal. See {=FIHELP_INVERSE_JULIA Inverse Julias}
 
 <Enter>\
 Enter is used to resume calculation after a pause. It is only
@@ -1204,7 +1204,7 @@ acknowledged, such as the message shown after you save an image to disk.
 <I>\
 Modify 3D transformation parameters used with 3D fractal types such as
 "Lorenz3D" and 3D "IFS" definitions, including the selection of
-{=HELP3DGLASSES "funny glasses"} red/blue 3D.
+{=FIHELP_3D_GLASSES "funny glasses"} red/blue 3D.
 
 <A>\
 Convert the current image into a fractal 'starfield'.  See {Starfields}.
@@ -1239,7 +1239,7 @@ Enter Explorer/Evolver Mode.  See {Evolver Commands}.
 ;
 ;
 ;
-~Topic=Zoom Box Commands, Label=HELPZOOM
+~Topic=Zoom Box Commands, Label=FIHELP_ZOOM
 
 Zoom Box functions can be invoked while an image is being generated or when
 it has been completely drawn.  Zooming is supported for most fractal types,
@@ -1338,7 +1338,7 @@ do not support rotation and skewing - nothing happens when you try it.
 ;
 ;
 ;
-~Topic=Image Save/Restore Commands, Label=HELPSAVEREST
+~Topic=Image Save/Restore Commands, Label=FIHELP_SAVE_RESTORE
 
 <S> saves the current image to disk. All parameters required to recreate
 the image are saved with it. Progress is marked by colored lines moving
@@ -1403,7 +1403,7 @@ supports.
 ;
 ;
 ;
-~Topic=Parameter Save/Restore Commands, Label=HELPPARMFILE
+~Topic=Parameter Save/Restore Commands, Label=FIHELP_PARAMETER_FILES
 
 Parameter files can be used to save/restore all options and settings
 required to recreate particular images.  The parameters required to
@@ -1525,7 +1525,7 @@ The <G> command lets you give a startup parameter interactively.
 ;
 ;
 ;
-~Topic=<X> Options Screen, Label=HELPXOPTS
+~Topic=<X> Options Screen, Label=FIHELP_TOGGLES
 ; This topic is online context-sensitive only.
 
    Passes - see {Drawing Method}\
@@ -1547,7 +1547,7 @@ see the "FPU=" command in {Startup Parameters} to get the most out of your
 chip.
 ;
 ;
-~Topic=<Y> Options Screen, Label=HELPYOPTS
+~Topic=<Y> Options Screen, Label=FIHELP_TOGGLES2
 ; This topic is online context-sensitive only.
 
    Finite attractor - see{ Finite Attractors }\
@@ -1561,7 +1561,7 @@ chip.
    Color cycling range - see{ Color Cycling Commands }\
 ;
 ;
-~Topic=<P> Options Screen, Label=HELPPOPTS
+~Topic=<P> Options Screen, Label=FIHELP_PASSES_OPTIONS
 ; This topic is online context-sensitive only.
 
    Periodicity - see{ Passes Parameters }\
@@ -1575,7 +1575,7 @@ chip.
    Orbit Draw Mode - see{ Passes Parameters }\
 ;
 ;
-~Topic=Image Coordinates Screen, Label=HELPCOORDS
+~Topic=Image Coordinates Screen, Label=FIHELP_IMAGE_COORDINATES
 ; This topic is online context-sensitive only.
 
 You can directly enter corner coordinates on this screen instead of
@@ -1597,7 +1597,7 @@ only these three values are needed, but the user can also specify the amount
 that the image is stretched, rotated and skewed.
 ;
 ;
-~Topic=Screen Coordinates Screen, Label=HELPSCRNCOORDS
+~Topic=Screen Coordinates Screen, Label=FIHELP_SCREEN_COORDINATES
 ; This topic is online context-sensitive only.
 
 You can directly enter corner coordinates on this screen for use with the
@@ -1666,7 +1666,7 @@ To <R>estore and resume a "formula", "lsystem", or "ifs" type fractal your
 ;
 ;
 ;
-~Topic=Orbits Window, Label=HELP_ORBITS
+~Topic=Orbits Window, Label=FIHELP_ORBITS
 The <O> key turns on the Orbit mode.  In this mode a cursor appears
 over the fractal. A window appears showing the orbit used in the
 calculation of the color at the point where the cursor is. Move the
@@ -1692,7 +1692,7 @@ turned on. The following keys take effect in Orbits mode.\
 ;
 ;
 ;
-~Topic=View Window, Label=HELPVIEW
+~Topic=View Window, Label=FIHELP_VIEW_WINDOW
 
 The <V> command is used to set the view window parameters described below.
 These parameters can be used to:\
@@ -1798,7 +1798,7 @@ Restore in 3D and overlay the result on the current screen.
 ;
 ;
 ;
-~Topic=Video Mode Function Keys, Label=HELPVIDSEL
+~Topic=Video Mode Function Keys, Label=FIHELP_VIDEO_MODE
 
 Fractint supports *so* many video modes that we've given up trying to
 reserve a keyboard combination for each of them.
@@ -1843,7 +1843,7 @@ adding your own video modes.
 ;
 ;
 ;
-~Topic=Browse Commands, Label=HELPBROWSE
+~Topic=Browse Commands, Label=FIHELP_BROWSE
 
 The following keystrokes function while browsing an image:\
 
@@ -1945,7 +1945,7 @@ you can get rid of it.
 ;
 ;
 ;
-~Topic=Browser Parameters, Label=HELPBRWSPARMS
+~Topic=Browser Parameters, Label=FIHELP_BROWSER_PARAMETERS
 
 This Screen enables you to control Fractint's built in file browsing utility.
 If you don't know what that is see {Browse Commands}.  This screen is
@@ -1997,7 +1997,7 @@ setting smallest image to 0 (see above).
 ;
 ;
 ;
-~Topic=RDS Commands, Label=RDSKEYS
+~Topic=RDS Commands, Label=FIHELP_RANDOM_DOT_STEREOGRAM_COMMANDS
 The following keystrokes function while viewing an RDS image:\
 
 <Enter> or <Space>   -- Toggle calibration bars on and off.\
@@ -2143,7 +2143,7 @@ enter capitalized filenames.
 ~Topic=Color Cycling Commands, Label=@ColorCycling
 
 ~Doc-
-See {=HELPCYCLING Color Cycling Command Summary} for a summary of commands.
+See {=FIHELP_COLOR_CYCLING Color Cycling Command Summary} for a summary of commands.
 
 ~Doc+
 Color-cycling mode is entered with the 'c', '+', or '-' keys from an image,
@@ -2242,7 +2242,7 @@ file (.MAP assumed).  See {Palette Maps}.
 ;
 ;
 ;
-~Topic=Color Cycling Command Summary, Label=HELPCYCLING
+~Topic=Color Cycling Command Summary, Label=FIHELP_COLOR_CYCLING
 ; This topic is online only
 
 ~Format-
@@ -2276,7 +2276,7 @@ file (.MAP assumed).  See {Palette Maps}.
 ~Topic=Palette Editing Commands
 
 ~Doc-
-See {=HELPXHAIR Palette Editing Command Summary} for a summary of commands.
+See {=FIHELP_PALETTE_EDITING Palette Editing Command Summary} for a summary of commands.
 
 ~Doc+
 Palette-editing mode provides a number of tools for modifying the colors
@@ -2543,7 +2543,7 @@ I hope that you'll find this a useful tool in colouring an image. Remember that
 the 'h' key can be used to hide the palette box and expose the whole image.
 
 ;
-~Topic=Palette Editing Command Summary, Label=HELPXHAIR
+~Topic=Palette Editing Command Summary, Label=FIHELP_PALETTE_EDITING
 ; This topic is online only.
 
 ~Format-
@@ -2564,7 +2564,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
   Space            Select the other color register as the active one
   , or .           Rotate the palette one step
   < or >           Rotate the palette continuously (until next keystroke)
-  c                Enter Color-Cycling Mode (see {=HELPCYCLING Color Cycling Commands})
+  c                Enter Color-Cycling Mode (see {=FIHELP_COLOR_CYCLING Color Cycling Commands})
   =                Create a smoothly shaded range of colors
   m                Set the gamma value for '='.
 ~FF
@@ -2598,7 +2598,7 @@ the 'h' key can be used to hide the palette box and expose the whole image.
 
 ;
 ;
-~Topic=Parameter Explorer/Evolver, Label=HELPEVOL
+~Topic=Parameter Explorer/Evolver, Label=FIHELP_EVOLVER
 
  Since fractint is such a wonderfully complex program it has more than a few
  parameters to tweak and options to select. To the inexperienced 
