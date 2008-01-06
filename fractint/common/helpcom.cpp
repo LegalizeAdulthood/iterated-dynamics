@@ -554,12 +554,16 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 								if (tok == TOK_SPACE)
 								{
 									if (!DO_PRINTN(sp, width))
+									{
 										return 0;
+									}
 								}
 								else
 								{
 									if (!DO_PRINT(pd.curr, (size==0) ? width : size))
+									{
 										return 0;
+									}
 								}
 							}
 

@@ -522,14 +522,18 @@ void plot_setup()
 			g_x_shift1 -= int((g_3d_state.eye_separation() * double(g_x_dots)) / 200);
 			g_xx_adjust1 = int(((g_3d_state.x_trans() - g_3d_state.x_adjust()) * double(g_x_dots)) / 100);
 			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2 * g_x_dots)
+			{
 				g_sx_offset = g_screen_width / 2 - g_x_dots;
+			}
 		}
 		else if (g_which_image == WHICHIMAGE_BLUE)
 		{
-				g_x_shift -= int((g_3d_state.eye_separation() * double(g_x_dots)) / 200);
-				g_xx_adjust = int(((g_3d_state.x_trans() - g_3d_state.x_adjust()) * double(g_x_dots)) / 100);
-				if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2 * g_x_dots)
-					g_sx_offset = g_screen_width / 2;
+			g_x_shift -= int((g_3d_state.eye_separation() * double(g_x_dots)) / 200);
+			g_xx_adjust = int(((g_3d_state.x_trans() - g_3d_state.x_adjust()) * double(g_x_dots)) / 100);
+			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2 * g_x_dots)
+			{
+				g_sx_offset = g_screen_width / 2;
+			}
 		}
 	}
 	else

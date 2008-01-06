@@ -1386,7 +1386,9 @@ void set_default_parms()
 		if (!fractal_type_ant_or_cellular(g_fractal_type)
 			&& g_fractal_type != FRACTYPE_FROTHY_BASIN
 			&& g_fractal_type != FRACTYPE_FROTHY_BASIN_FP)
+		{
 			round_float_d(&g_parameters[i]); /* don't round cellular, frothybasin or ant */
+		}
 	}
 	extra = find_extra_parameter(g_fractal_type);
 	if (extra > -1)

@@ -432,7 +432,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 		{
 			kbdchar = select_video_mode(-1);
 		}
-		g_.SetAdapter(check_video_mode_key(0, kbdchar));
+		g_.SetAdapter(check_video_mode_key(kbdchar));
 		if (g_.Adapter() >= 0)
 		{
 			break;                                 /* got a video mode now */

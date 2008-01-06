@@ -693,7 +693,7 @@ resumeloop:
 #endif
 						if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH ||
 							kbdchar == 'h' || kbdchar == FIK_BACKSPACE ||
-							check_video_mode_key(0, kbdchar) >= 0)
+							check_video_mode_key(kbdchar) >= 0)
 						{
 							driver_discard_screen();
 						}
@@ -1486,7 +1486,7 @@ static void handle_select_video(int &kbdchar)
 {
 	driver_stack_screen();
 	kbdchar = select_video_mode(g_.Adapter());
-	if (check_video_mode_key(0, kbdchar) >= 0)  /* picked a new mode? */
+	if (check_video_mode_key(kbdchar) >= 0)  /* picked a new mode? */
 	{
 		driver_discard_screen();
 	}
@@ -1515,7 +1515,7 @@ static void handle_mutation_level(bool forward, int amount, bool &kbdmore)
 
 static ApplicationStateType handle_video_mode(int kbdchar, bool &kbdmore)
 {
-	int k = check_video_mode_key(0, kbdchar);
+	int k = check_video_mode_key(kbdchar);
 	if (k >= 0)
 	{
 		g_.SetAdapter(k);

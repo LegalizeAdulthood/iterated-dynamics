@@ -444,7 +444,7 @@ void SlideShowImpl::Record(int key)
 		{
 			_slideFile << mn;
 		}
-		else if (check_video_mode_key(0, key) >= 0)
+		else if (check_video_mode_key(key) >= 0)
 		{
 			_slideFile << video_mode_key_name(key);
 		}

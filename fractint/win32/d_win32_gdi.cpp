@@ -99,18 +99,18 @@ private:
 #define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_)
 VIDEOINFO GDIDriver::s_modes[] =
 {
-	MODE19("Win32 GDI Video          ", "                        ", 0,  320,  240),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  400,  300),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  480,  360),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  600,  450),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  640,  480),
-	MODE19("Win32 GDI Video          ", "                        ", 0,  800,  600),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1024,  768),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1200,  900),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1280,  960),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1400, 1050),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1500, 1125),
-	MODE19("Win32 GDI Video          ", "                        ", 0, 1600, 1200)
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F2,  320,  240),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F3,  400,  300),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F4,  480,  360),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F5,  600,  450),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F6,  640,  480),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F7,  800,  600),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F8, 1024,  768),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F9, 1200,  900),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_F10, 1280,  960),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_CTL_F1, 1400, 1050),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_CTL_F2, 1500, 1125),
+	MODE19("Win32 GDI Video          ", "                        ", FIK_CTL_F3, 1600, 1200)
 };
 #undef MODE19
 #undef DRIVER_MODE

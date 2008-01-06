@@ -946,17 +946,16 @@ static int filename_arg(const cmd_context &context)
 
 static int video_arg(const cmd_context &context)
 {
-	int k = check_vidmode_keyname(context.value);
-	int i;
+	int key = check_vidmode_keyname(context.value);
 
-	if (k == 0)
+	if (key == 0)
 	{
 		return bad_arg(context.curarg);
 	}
 	g_.SetInitialVideoModeNone();
-	for (i = 0; i < MAXVIDEOMODES; ++i)
+	for (int i = 0; i < g_.VideoTableLength(); ++i)
 	{
-		if (g_.VideoTable(i).keynum == k)
+		if (g_.VideoTable(i).keynum == key)
 		{
 			g_.SetInitialVideoMode(i);
 			break;

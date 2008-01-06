@@ -114,23 +114,21 @@ Win32DiskDriver::Win32DiskDriver(const char *name, const char *description)
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_) \
 	{ name_, comment_, key_, width_, height_, 256 }
-#define MODE19(n_, c_, k_, w_, h_) DRIVER_MODE(n_, c_, k_, w_, h_)
 VIDEOINFO Win32DiskDriver::s_modes[] =
 {
-	MODE19("Win32 Disk Video         ", "                        ", 0,  320,  240),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  400,  300),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  480,  360),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  600,  450),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  640,  480),
-	MODE19("Win32 Disk Video         ", "                        ", 0,  800,  600),
-	MODE19("Win32 Disk Video         ", "                        ", 0, 1024,  768),
-	MODE19("Win32 Disk Video         ", "                        ", 0, 1200,  900),
-	MODE19("Win32 Disk Video         ", "                        ", 0, 1280,  960),
-	MODE19("Win32 Disk Video         ", "                        ", 0, 1400, 1050),
-	MODE19("Win32 Disk Video         ", "                        ", 0, 1500, 1125),
-	MODE19("Win32 Disk Video         ", "                        ", 0, 1600, 1200)
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF2,  320,  240),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF3,  400,  300),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF4,  480,  360),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF5,  600,  450),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF6,  640,  480),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF7,  800,  600),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF8, 1024,  768),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF9, 1200,  900),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF10, 1280,  960),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_ALT_F1, 1400, 1050),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_ALT_F2, 1500, 1125),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_ALT_F3, 1600, 1200)
 };
-#undef MODE19
 #undef DRIVER_MODE
 
 /* check_arg

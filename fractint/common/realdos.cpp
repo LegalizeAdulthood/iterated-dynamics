@@ -456,7 +456,7 @@ top:
 	if (full_menu)
 	{
 		if ((!fractal_type_none(g_current_fractal_specific->tojulia)
-			&& g_parameters[0] == 0.0 && g_parameters[1] == 0.0)
+				&& g_parameters[0] == 0.0 && g_parameters[1] == 0.0)
 			|| !fractal_type_none(g_current_fractal_specific->tomandel))
 		{
 			nextleft += 2;
@@ -744,16 +744,18 @@ static int menu_check_key(int curkey, int choice)
 		testkey = '@';
 	}
 	if (strchr("#@2txyzgvir3dj", testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
-			|| testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F)
+		|| testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F)
 	{
 		return -testkey;
 	}
 	if (s_full_menu)
 	{
 		if (strchr("\\sobpkrh", testkey) || testkey == FIK_TAB
-		|| testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
-		|| testkey == FIK_CTL_S || testkey == FIK_CTL_U) /* ctrl-A, E, H, P, S, U */
+			|| testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
+			|| testkey == FIK_CTL_S || testkey == FIK_CTL_U) /* ctrl-A, E, H, P, S, U */
+		{
 			return -testkey;
+		}
 		if (testkey == ' ')
 		{
 			if ((!fractal_type_none(g_current_fractal_specific->tojulia)
@@ -781,7 +783,7 @@ static int menu_check_key(int curkey, int choice)
 			return -testkey;
 		}
 	}
-	if (check_video_mode_key(0, testkey) >= 0)
+	if (check_video_mode_key(testkey) >= 0)
 	{
 		return -testkey;
 	}
@@ -1121,12 +1123,7 @@ int thinking(int options, char *msg)
 	return driver_key_pressed();
 }
 
-int show_vid_length()
-{
-	return (sizeof(VIDEOINFO) + sizeof(int))*MAXVIDEOMODES;
-}
-
-int check_video_mode_key(int option, int k)
+int check_video_mode_key(int k)
 {
 	int i;
 	/* returns g_video_table entry number if the passed keystroke is a  */

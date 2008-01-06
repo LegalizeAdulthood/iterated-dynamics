@@ -24,6 +24,7 @@
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "fihelp.h"
 #include "filesystem.h"
 #include "mpmath.h"
 #include "prompts2.h"
@@ -543,12 +544,15 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
  */
 int getakeynohelp()
 {
+	int old_help_mode = get_help_mode();
+	set_help_mode(0);
 	int ch;
 	do
 	{
 		ch = driver_get_key();
 	}
 	while (FIK_F1 == ch);
+	set_help_mode(old_help_mode);
 	return ch;
 }
 
