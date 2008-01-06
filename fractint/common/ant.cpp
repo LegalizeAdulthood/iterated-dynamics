@@ -506,7 +506,7 @@ int Ant::compute()
 
 	initialize_increments();
 
-	HelpModeSaver saved_help(ANTCOMMANDS);
+	HelpModeSaver saved_help(FIHELP_ANT_COMMANDS);
 	maxpts = long(g_parameters[1]);
 	maxpts = labs(maxpts);
 	wait = abs(g_orbit_delay);

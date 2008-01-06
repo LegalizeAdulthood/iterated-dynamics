@@ -568,7 +568,7 @@ int SoundStateImpl::get_scale_map()
 
 get_map_restart:
 	{
-		UIChoices dialog(HELPMUSIC, "Scale Mapping Screen", 255);
+		UIChoices dialog(FIHELP_MUSIC, "Scale Mapping Screen", 255);
 		dialog.push("Scale map C (1)", _scale_map[0]);
 		dialog.push("Scale map C#(2)", _scale_map[1]);
 		dialog.push("Scale map D (3)", _scale_map[2]);
@@ -629,7 +629,7 @@ int SoundStateImpl::get_music_parameters()
 
 get_music_restart:
 	{
-		UIChoices dialog(HELPMUSIC, "FM Synth Card Control Screen", 255);
+		UIChoices dialog(FIHELP_MUSIC, "FM Synth Card Control Screen", 255);
 		dialog.push("Polyphony 1..9", _polyphony + 1);
 		dialog.push("Wave type 0..7", _fm_wave_type);
 		dialog.push("Note attack time   0..15", _fm_attack);

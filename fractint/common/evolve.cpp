@@ -650,7 +650,7 @@ get_evol_restart:
 	}
 
 	{
-		UIChoices dialog(HELPEVOL, "Evolution Mode Options", 255);
+		UIChoices dialog(FIHELP_EVOLVER, "Evolution Mode Options", 255);
 		dialog.push("Evolution mode? (no for full screen)", (g_evolving_flags & EVOLVE_FIELD_MAP) != 0);
 		dialog.push("Image grid size (odd numbers only)", g_grid_size);
 		if (explore_check())  /* test to see if any parms are set to linear */

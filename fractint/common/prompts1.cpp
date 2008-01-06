@@ -1275,7 +1275,7 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 	ft_choices = &choices[0];
 
 	/* setup context sensitive help */
-	HelpModeSaver saved_help(HELPFRACTALS);
+	HelpModeSaver saved_help(FIHELP_FRACTAL_TYPE);
 	if (t == FRACTYPE_IFS_3D)
 	{
 		t = FRACTYPE_IFS;
@@ -1419,7 +1419,7 @@ sel_type_restart:
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_L_SYSTEM:
-		if (get_file_entry_help(HT_LSYS, GETFILE_L_SYSTEM,
+		if (get_file_entry_help(FIHELP_L_SYSTEMS, GETFILE_L_SYSTEM,
 			"L-System", lsysmask, g_l_system_filename, g_l_system_name))
 		{
 			return true;
@@ -1436,7 +1436,7 @@ sel_type_restart:
 
 	case FRACTYPE_IFS:
 	case FRACTYPE_IFS_3D:
-		if (get_file_entry_help(HT_IFS, GETFILE_IFS,
+		if (get_file_entry_help(FIHELP_IFS, GETFILE_IFS,
 			"IFS", ifsmask, g_ifs_filename, g_ifs_name))
 		{
 			return true;
@@ -3051,7 +3051,7 @@ static void format_parmfile_line(int choice, char *buf)
 
 static int get_fractal_3d_parameters_aux()
 {
-	UIChoices dialog(HELP3DFRACT, "3D Parameters", 0);
+	UIChoices dialog(FIHELP_3D_FRACTAL_PARAMETERS, "3D Parameters", 0);
 	dialog.push("X-axis rotation in degrees", g_3d_state.x_rotation());
 	dialog.push("Y-axis rotation in degrees", g_3d_state.y_rotation());
 	dialog.push("Z-axis rotation in degrees", g_3d_state.z_rotation());
@@ -3106,7 +3106,7 @@ restart_1:
 		g_targa_overlay = true;
 	}
 
-	UIChoices dialog(HELP3DMODE, "3D Mode Selection", 0);
+	UIChoices dialog(FIHELP_3D_MODE, "3D Mode Selection", 0);
 	dialog.push("Preview Mode?", g_3d_state.preview());
 	dialog.push("    Show Box?", g_3d_state.show_box());
 	dialog.push("Coarseness, preview/grid/ray (in y dir)", g_3d_state.preview_factor());
@@ -3215,7 +3215,7 @@ restart_1:
 		{
 			attributes[i] = 1;
 		}
-		int i = full_screen_choice_help(HELP3DFILL, CHOICE_HELP,
+		int i = full_screen_choice_help(FIHELP_3D_FILL, CHOICE_HELP,
 			"Select 3D Fill Type", 0, 0, k, const_cast<char **>(choices), attributes,
 			0, 0, 0, g_3d_state.fill_type() + 1, 0, 0, 0, 0);
 		if (i < 0)
@@ -3253,7 +3253,7 @@ restart_3:
 				"Pre-rotation Z axis is coming at you out of the screen!";
 		}
 
-		UIChoices dialog(HELP3DPARMS, heading, 0);
+		UIChoices dialog(FIHELP_3D_PARAMETERS, heading, 0);
 		if (g_3d_state.sphere())
 		{
 			dialog.push("Longitude start (degrees)", g_3d_state.x_rotation());
@@ -3330,7 +3330,7 @@ restart_3:
 /* --------------------------------------------------------------------- */
 static int get_light_params()
 {
-	UIChoices dialog(HELP3DLIGHT, "Light Source Parameters", 0);
+	UIChoices dialog(FIHELP_3D_LIGHT_SOURCE_PARAMETERS, "Light Source Parameters", 0);
 	if ((g_3d_state.fill_type() > FillType::Bars) || g_3d_state.raytrace_output())
 	{
 		dialog.push("X value light vector", g_3d_state.x_light());
@@ -3492,7 +3492,7 @@ static int get_funny_glasses_params()
 		}
 	}
 
-	UIChoices dialog(HELP3DGLASSES, "Funny Glasses Parameters", 0);
+	UIChoices dialog(FIHELP_3D_GLASSES, "Funny Glasses Parameters", 0);
 	dialog.push("Interocular distance (as % of screen)", g_3d_state.eye_separation());
 	dialog.push("Convergence adjust (positive = spread greater)", g_3d_state.x_adjust());
 	dialog.push("Left  red image crop (% of screen)", g_3d_state.red().crop_left());
