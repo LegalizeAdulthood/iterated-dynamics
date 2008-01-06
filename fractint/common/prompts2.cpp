@@ -53,8 +53,6 @@
 
 static  int get_screen_corners();
 
-int g_speed_state;
-
 static int calculation_mode()
 {
 	switch (g_user_standard_calculation_mode)
