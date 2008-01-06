@@ -29,6 +29,7 @@
 #include "framain2.h"
 #include "FullScreenChooser.h"
 #include "loadfile.h"
+#include "MathUtil.h"
 #include "miscovl.h"
 #include "miscres.h"
 #include "prompts1.h"
@@ -2067,8 +2068,8 @@ void edit_text_colors()
 
 	while (true)
 	{
-		row = std::min(24, std::max(0, row));
-		col = std::min(79, std::max(0, col));
+		row = MathUtil::Clamp(row, 0, 24);
+		col = MathUtil::Clamp(col, 0, 79);
 		driver_move_cursor(row, col);
 
 		int key = toupper(driver_get_key());

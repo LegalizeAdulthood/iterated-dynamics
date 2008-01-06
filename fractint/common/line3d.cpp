@@ -2393,7 +2393,7 @@ static void out_triangle_dxf(int c1, float pt_t[3][3])
 		"  8\n"
 		"FRACTAL\n"
 		" 62\n"
-		"%3d\n") % std::min(255, std::max(1, c1));
+		"%3d\n") % MathUtil::Clamp(c1, 1, 255);
 	for (int i = 0; i <= 2; i++)     /* Describe each  Vertex  */
 	{
 		for (int j = 0; j <= 2; j++)
