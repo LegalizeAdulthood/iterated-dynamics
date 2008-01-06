@@ -338,13 +338,10 @@ int get_random_dot_stereogram_parameters()
 	{
 		"none", "middle", "top"
 	};
-	int ret;
 	static bool reuse = false;
-	driver_stack_screen();
+	ScreenStacker stacker;
 	while (true)
 	{
-		ret = 0;
-
 		UIChoices dialog(HELPRDS, "Random Dot Stereogram Parameters", 0);
 		dialog.push("Depth Effect (negative reverses front and back)", s_auto_stereo_depth);
 		dialog.push("Image width in inches", g_auto_stereo_width);
@@ -372,8 +369,7 @@ int get_random_dot_stereogram_parameters()
 		}
 		if (dialog.prompt() < 0)
 		{
-			ret = -1;
-			break;
+			return -1;
 		}
 		else
 		{
@@ -401,6 +397,5 @@ int get_random_dot_stereogram_parameters()
 		}
 		break;
 	}
-	driver_unstack_screen();
-	return ret;
+	return 0;
 }

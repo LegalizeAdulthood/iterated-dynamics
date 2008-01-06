@@ -480,49 +480,57 @@ static void set_palette3(BYTE start[3], BYTE middle[3], BYTE finish[3])
 
 void save_palette()
 {
+	char temp1[256] = { 0 };
+	{
+		ScreenStacker stacker;
+		if (field_prompt_help(HELPCOLORMAP, "Name of map file to write", 0, temp1, 60, 0) < 0)
+		{
+			return;
+		}
+	}
+	if (!temp1[0])
+	{
+		return;
+	}
+
+	if (strchr(temp1, '.') == 0)
+	{
+		strcat(temp1, ".map");
+	}
 	char palname[FILE_MAX_PATH];
 	strcpy(palname, g_.MapName().c_str());
-	driver_stack_screen();
-	char temp1[256] = { 0 };
-	int i = field_prompt_help(HELPCOLORMAP, "Name of map file to write", 0, temp1, 60, 0);
-	driver_unstack_screen();
-	if (i != -1 && temp1[0])
+	merge_path_names(palname, temp1, false);
+	std::ofstream dac_file(palname);
+	if (!dac_file)
 	{
-		if (strchr(temp1, '.') == 0)
-		{
-			strcat(temp1, ".map");
-		}
-		merge_path_names(palname, temp1, false);
-		std::ofstream dac_file(palname);
-		if (!dac_file)
-		{
-			driver_buzzer(BUZZER_ERROR);
-		}
-		else
-		{
-			for (i = 0; i < g_colors; i++)
-			{
-				/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
-				dac_file << boost::format("%3d %3d %3d\n")
-						% (g_.DAC().Red(i) << 2)
-						% (g_.DAC().Green(i) << 2)
-						% (g_.DAC().Blue(i) << 2);
-			}
-			g_.OldDAC() = g_.DAC();
-			g_.SetColorState(COLORSTATE_MAP);
-			g_color_file = temp1;
-		}
-		dac_file.close();
+		driver_buzzer(BUZZER_ERROR);
 	}
+	else
+	{
+		for (int i = 0; i < g_colors; i++)
+		{
+			/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
+			dac_file << boost::format("%3d %3d %3d\n")
+				% (g_.DAC().Red(i) << 2)
+				% (g_.DAC().Green(i) << 2)
+				% (g_.DAC().Blue(i) << 2);
+		}
+		g_.OldDAC() = g_.DAC();
+		g_.SetColorState(COLORSTATE_MAP);
+		g_color_file = temp1;
+	}
+	dac_file.close();
 }
 
 int load_palette()
 {
 	char filename[FILE_MAX_PATH];
 	strcpy(filename, g_.MapName().c_str());
-	driver_stack_screen();
-	int i = get_a_filename_help(HELPCOLORMAP, "Select a MAP File", mapmask, filename);
-	driver_unstack_screen();
+	int i;
+	{
+		ScreenStacker stacker;
+		i = get_a_filename_help(HELPCOLORMAP, "Select a MAP File", mapmask, filename);
+	}
 	if (i >= 0)
 	{
 		if (!validate_luts(filename))

@@ -1695,9 +1695,10 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 		return handle_history(screen_stacked, kbdchar);
 
 	case 'd':
-		driver_stack_screen();
-		driver_shell();
-		driver_unstack_screen();
+		{
+			ScreenStacker stacker;
+			driver_shell();
+		}
 		break;
 
 	case 'c':

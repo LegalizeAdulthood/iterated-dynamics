@@ -820,7 +820,7 @@ void help(HelpAction action)
 
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
 	g_timer_start -= clock_ticks();
-	driver_stack_screen();
+	ScreenStacker stacker;
 
 	if (s_help_mode >= 0)
 	{
@@ -936,7 +936,6 @@ void help(HelpAction action)
 	s_link_table.clear();
 	s_page_table.clear();
 
-	driver_unstack_screen();
 	s_help_mode = oldhelpmode;
 	g_timer_start += clock_ticks();
 }

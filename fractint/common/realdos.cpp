@@ -967,7 +967,7 @@ int input_field(
 				}
 				if (fld[0] == 'p' || fld[0] == 'P')
 				{
-					tmpd = atan(1.0)*4;
+					tmpd = atan(1.0)*4.0;
 					specialv = true;
 				}
 				if (specialv)

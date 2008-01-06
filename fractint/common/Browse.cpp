@@ -885,9 +885,10 @@ rescan:  /* entry for changed browse parms */
 
 			case FIK_CTL_B:
 				clear_temp_message();
-				driver_stack_screen();
-				done = abs(get_browse_parameters());
-				driver_unstack_screen();
+				{
+					ScreenStacker stacker;
+					done = abs(get_browse_parameters());
+				}
 				show_temp_message(winlist.name);
 				break;
 
