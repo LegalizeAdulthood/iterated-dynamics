@@ -1,4 +1,5 @@
 @echo off
+cd c:\data\id
 set dest=Bugs\%1
 mkdir "%dest%\common"
 mkdir "%dest%\headers"
