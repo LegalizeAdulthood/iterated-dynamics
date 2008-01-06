@@ -161,4 +161,4 @@ extern int mandelbrot_phoenix_per_pixel_fp();
 extern void set_pixel_calc_functions();
 extern int mandelbrot_mix4_per_pixel_fp();
 extern int mandelbrot_mix4_orbit_fp();
-extern int mandelbrot_mix4_setup();
+extern bool mandelbrot_mix4_setup();
