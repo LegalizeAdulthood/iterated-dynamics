@@ -250,7 +250,7 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	list->win_size = tmp_sqrt; /* used for box vs crosshair in draw_window() */
 	/* arbitrary value... stops browser zooming out too far */
 	bool cant_see = false;
-	if (tmp_sqrt < g_too_small)
+	if (tmp_sqrt < g_browse_state.too_small())
 	{
 		cant_see = true;
 	}
@@ -814,7 +814,7 @@ rescan:  /* entry for changed browse parms */
 				driver_wait_key_pressed(0);
 				clear_temp_message();
 				c = driver_get_key();
-				if (c == 'Y' && g_ui_state.double_caution)
+				if (c == 'Y' && g_browse_state.double_caution())
 				{
 					text_temp_message("ARE YOU SURE???? (Y/N)");
 					if (driver_get_key() != 'Y')

@@ -167,7 +167,6 @@ int		g_max_colors;                         /* maximum palette size */
 bool g_zoom_off;                     /* = 0 when zoom is disabled    */
 std::string g_file_name_stack[16];		/* array of file names used while browsing */
 int		g_name_stack_ptr;
-double	g_too_small;
 
 UserInterfaceState g_ui_state;
 
@@ -239,9 +238,9 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 	g_browse_state.set_auto_browse(false);
 	g_browse_state.set_check_type(true);
 	g_browse_state.set_check_parameters(true);
-	g_ui_state.double_caution = true;
+	g_browse_state.set_double_caution(true);
 	g_browse_state.set_sub_images(true);
-	g_too_small = 6;
+	g_browse_state.set_too_small(6.0f);
 	g_browse_state.set_cross_hair_box_size(3);
 	g_browse_state.set_mask("*.gif");
 	g_browse_state.set_name("");

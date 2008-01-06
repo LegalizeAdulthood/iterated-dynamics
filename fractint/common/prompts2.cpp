@@ -1412,13 +1412,12 @@ int get_browse_parameters()
 	bool old_auto_browse = g_browse_state.auto_browse();
 	bool old_browse_check_type = g_browse_state.check_type();
 	bool old_browse_check_parameters = g_browse_state.check_parameters();
-	bool old_double_caution = g_ui_state.double_caution;
+	bool old_double_caution = g_browse_state.double_caution();
 	int old_cross_hair_box_size = g_browse_state.cross_hair_box_size();
-	double old_too_small = g_too_small;
-	char old_browse_mask[FILE_MAX_FNAME];
-	strcpy(old_browse_mask, g_browse_state.mask().c_str());
+	double old_too_small = g_browse_state.too_small();
+	std::string old_browse_mask = g_browse_state.mask();
 
-get_brws_restart:
+restart:
 	{
 		UIChoices dialog(FIHELP_BROWSER_PARAMETERS, "Browse ('L'ook) Mode Options", 16);
 
@@ -1426,8 +1425,8 @@ get_brws_restart:
 		dialog.push("Ask about GIF video mode? (y/n)", g_ui_state.ask_video);
 		dialog.push("Check fractal type? (y/n)", g_browse_state.check_type());
 		dialog.push("Check fractal parameters (y/n)", g_browse_state.check_parameters());
-		dialog.push("Confirm file deletes (y/n)", g_ui_state.double_caution);
-		dialog.push("Smallest window to display (size in pixels)", float(g_too_small));
+		dialog.push("Confirm file deletes (y/n)", g_browse_state.double_caution());
+		dialog.push("Smallest window to display (size in pixels)", float(g_browse_state.too_small()));
 		dialog.push("Smallest box size shown before crosshairs used (pix)", g_browse_state.cross_hair_box_size());
 		dialog.push("Browse search filename mask ", g_browse_state.mask());
 		dialog.push("");
@@ -1441,15 +1440,15 @@ get_brws_restart:
 
 		if (result == FIK_F4)
 		{
-			g_too_small = 6;
+			g_browse_state.set_too_small(6.0f);
 			g_browse_state.set_auto_browse(false);
 			g_ui_state.ask_video = true;
 			g_browse_state.set_check_parameters(true);
 			g_browse_state.set_check_type(true);
-			g_ui_state.double_caution  = true;
+			g_browse_state.set_double_caution(true);
 			g_browse_state.set_cross_hair_box_size(3);
 			g_browse_state.set_mask("*.gif");
-			goto get_brws_restart;
+			goto restart;
 		}
 
 		int k = -1;
@@ -1457,11 +1456,11 @@ get_brws_restart:
 		g_ui_state.ask_video = (dialog.values(++k).uval.ch.val != 0);
 		g_browse_state.set_check_type((dialog.values(++k).uval.ch.val != 0));
 		g_browse_state.set_check_parameters((dialog.values(++k).uval.ch.val != 0));
-		g_ui_state.double_caution = (dialog.values(++k).uval.ch.val != 0);
-		g_too_small  = dialog.values(++k).uval.dval;
-		if (g_too_small < 0)
+		g_browse_state.set_double_caution((dialog.values(++k).uval.ch.val != 0));
+		g_browse_state.set_too_small(float(dialog.values(++k).uval.dval));
+		if (g_browse_state.too_small() < 0.0f)
 		{
-			g_too_small = 0;
+			g_browse_state.set_too_small(0.0f);
 		}
 		g_browse_state.set_cross_hair_box_size(MathUtil::Clamp(dialog.values(++k).uval.ival, 1, 10));
 		g_browse_state.set_mask(dialog.values(++k).uval.sval);
@@ -1470,10 +1469,10 @@ get_brws_restart:
 		if (g_browse_state.auto_browse() != old_auto_browse ||
 			g_browse_state.check_type() != old_browse_check_type ||
 			g_browse_state.check_parameters() != old_browse_check_parameters ||
-			g_ui_state.double_caution != old_double_caution ||
-			g_too_small != old_too_small ||
+			g_browse_state.double_caution() != old_double_caution ||
+			g_browse_state.too_small() != old_too_small ||
 			g_browse_state.cross_hair_box_size() != old_cross_hair_box_size ||
-			!stricmp(g_browse_state.mask().c_str(), old_browse_mask))
+			g_browse_state.mask() != old_browse_mask)
 		{
 			i = -3;
 		}
