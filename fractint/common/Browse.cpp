@@ -307,7 +307,7 @@ static void draw_window(int color, CoordinateWindow *info)
 
 	g_zoomBox.set_color(color);
 	g_zoomBox.set_count(0);
-	if (info->win_size >= g_cross_hair_box_size)
+	if (info->win_size >= g_browse_state.cross_hair_box_size())
 	{
 		/* big enough on screen to show up as a box so draw it */
 		/* corner pixels */

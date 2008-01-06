@@ -1413,7 +1413,7 @@ int get_browse_parameters()
 	bool old_browse_check_type = g_browse_state.check_type();
 	bool old_browse_check_parameters = g_browse_state.check_parameters();
 	bool old_double_caution = g_ui_state.double_caution;
-	int old_cross_hair_box_size = g_cross_hair_box_size;
+	int old_cross_hair_box_size = g_browse_state.cross_hair_box_size();
 	double old_too_small = g_too_small;
 	char old_browse_mask[FILE_MAX_FNAME];
 	strcpy(old_browse_mask, g_browse_state.mask().c_str());
@@ -1428,7 +1428,7 @@ get_brws_restart:
 		dialog.push("Check fractal parameters (y/n)", g_browse_state.check_parameters());
 		dialog.push("Confirm file deletes (y/n)", g_ui_state.double_caution);
 		dialog.push("Smallest window to display (size in pixels)", float(g_too_small));
-		dialog.push("Smallest box size shown before crosshairs used (pix)", g_cross_hair_box_size);
+		dialog.push("Smallest box size shown before crosshairs used (pix)", g_browse_state.cross_hair_box_size());
 		dialog.push("Browse search filename mask ", g_browse_state.mask());
 		dialog.push("");
 		dialog.push("Press "FK_F4" to reset browse parameters to defaults.");
@@ -1447,7 +1447,7 @@ get_brws_restart:
 			g_browse_state.set_check_parameters(true);
 			g_browse_state.set_check_type(true);
 			g_ui_state.double_caution  = true;
-			g_cross_hair_box_size = 3;
+			g_browse_state.set_cross_hair_box_size(3);
 			g_browse_state.set_mask("*.gif");
 			goto get_brws_restart;
 		}
@@ -1463,7 +1463,7 @@ get_brws_restart:
 		{
 			g_too_small = 0;
 		}
-		g_cross_hair_box_size = MathUtil::Clamp(dialog.values(++k).uval.ival, 1, 10);
+		g_browse_state.set_cross_hair_box_size(MathUtil::Clamp(dialog.values(++k).uval.ival, 1, 10));
 		g_browse_state.set_mask(dialog.values(++k).uval.sval);
 
 		int i = 0;
@@ -1472,7 +1472,7 @@ get_brws_restart:
 			g_browse_state.check_parameters() != old_browse_check_parameters ||
 			g_ui_state.double_caution != old_double_caution ||
 			g_too_small != old_too_small ||
-			g_cross_hair_box_size != old_cross_hair_box_size ||
+			g_browse_state.cross_hair_box_size() != old_cross_hair_box_size ||
 			!stricmp(g_browse_state.mask().c_str(), old_browse_mask))
 		{
 			i = -3;
