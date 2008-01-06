@@ -1244,10 +1244,6 @@ int parse_link(void)   /* returns length of link or 0 on error */
 		else
 		{
 			l.type = 1;           /* type 1 = to a label */
-			if ((int)strlen(cmd) > 32)
-			{
-				warn(err_off, "Label is long.");
-			}
 			if (cmd[1] == '\0')
 			{
 				error(err_off, "Explicit hot-link has no Label.");
@@ -1853,11 +1849,6 @@ void read_src(char *fname)
 					start_topic(&t, "", 0);
 					t.flags |= TF_DATA;
 
-					if ((int)strlen(cmd+5) > 32)
-					{
-						warn(eoff,"Label name is long.");
-					}
-
 					lbl.name      = dupstr(cmd+5, 0);
 					lbl.topic_num = num_topic;
 					lbl.topic_off = 0;
@@ -2137,10 +2128,6 @@ void read_src(char *fname)
 						}
 						else
 						{
-							if ((int)strlen(cmd+6) > 32)
-							{
-								warn(eoff,"Label name is long.");
-							}
 							if ((t.flags & TF_DATA) && cmd[6] == '@')
 							{
 								warn(eoff, "Data topic has a local label.");
