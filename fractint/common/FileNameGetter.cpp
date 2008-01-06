@@ -28,6 +28,8 @@ struct CHOICE
 
 char *g_masks[] = {"*.pot", "*.gif"};
 
+FileNameGetter::SpeedStateType FileNameGetter::_speedState = SPEEDSTATE_MATCHING;
+
 int FileNameGetter::SpeedPrompt(int row, int col, int vid,
 	char *speedstring, int speed_match)
 {
@@ -36,17 +38,17 @@ int FileNameGetter::SpeedPrompt(int row, int col, int vid,
 		|| strchr(speedstring, '*') || strchr(speedstring, '*')
 		|| strchr(speedstring, '?'))
 	{
-		g_speed_state = SPEEDSTATE_TEMPLATE;  /* template */
+		_speedState = SPEEDSTATE_TEMPLATE;  /* template */
 		prompt = "File Template";
 	}
 	else if (speed_match)
 	{
-		g_speed_state = SPEEDSTATE_SEARCH_PATH; /* does not match list */
+		_speedState = SPEEDSTATE_SEARCH_PATH; /* does not match list */
 		prompt = "Search Path for";
 	}
 	else
 	{
-		g_speed_state = SPEEDSTATE_MATCHING;
+		_speedState = SPEEDSTATE_MATCHING;
 		prompt = "Speed key string";
 	}
 	driver_put_string(row, col, vid, prompt);
@@ -271,7 +273,7 @@ retry_dir:
 		_fileName = old_flname;
 		return -1;
 	}
-	if (speedstr[0] == 0 || g_speed_state == SPEEDSTATE_MATCHING)
+	if (speedstr[0] == 0 || _speedState == SPEEDSTATE_MATCHING)
 	{
 		if (choices[i]->is_directory)
 		{
@@ -308,15 +310,15 @@ retry_dir:
 	}
 	else
 	{
-		if (g_speed_state == SPEEDSTATE_SEARCH_PATH
+		if (_speedState == SPEEDSTATE_SEARCH_PATH
 			&& strchr(speedstr, '*') == 0 && strchr(speedstr, '?') == 0
 			&& ((fr_find_first(speedstr) == 0
 			&& (g_dta.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) /* it is a directory */
 		{
-			g_speed_state = SPEEDSTATE_TEMPLATE;
+			_speedState = SPEEDSTATE_TEMPLATE;
 		}
 
-		if (g_speed_state == SPEEDSTATE_TEMPLATE)
+		if (_speedState == SPEEDSTATE_TEMPLATE)
 		{
 			/* extract from tempstr the pathname and template information,
 				being careful not to overwrite drive and directory if not

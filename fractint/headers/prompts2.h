@@ -1,17 +1,8 @@
 #if !defined(PROMPTS_2_H)
 #define PROMPTS_2_H
 
-/* speed key state values */
-enum SpeedStateType
-{
-	SPEEDSTATE_MATCHING = 0,		/* string matches list - speed key mode */
-	SPEEDSTATE_TEMPLATE = -2,		/* wild cards present - buiding template */
-	SPEEDSTATE_SEARCH_PATH = -3		/* no match - building path search name */
-};
-
 extern const std::string GREY_MAP;
 extern char *g_masks[2];
-extern int g_speed_state;
 
 extern int get_toggles();
 extern int get_toggles2();
