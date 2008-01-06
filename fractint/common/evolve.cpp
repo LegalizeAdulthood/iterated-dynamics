@@ -124,7 +124,7 @@ void set_mutation_level(int strength);
 void setup_parameter_box();
 void release_parameter_box();
 
-GENEBASE g_genes[NUMGENES] =
+GENEBASE g_genes[NUM_GENES] =
 {
 	{ &g_parameters[0],		vary_double,		5, "Param 1 real", 1 },
 	{ &g_parameters[1],		vary_double,		5, "Param 1 imag", 1 },
@@ -392,18 +392,18 @@ restart:
 			"no", "x", "y", "x+y", "x-y", "random", "spread"
 		};
 		UIChoices dialog("Variable tweak central 2 of 2", 28);
-		for (int num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
+		for (int num = MAX_PARAMETERS; num < (NUM_GENES - 5); num++)
 		{
 			dialog.push(g_genes[num].name, evolvmodes, NUM_OF(evolvmodes), g_genes[num].mutate);
 		}
-		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + num_functions); num++)
+		for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + num_functions); num++)
 		{
 			dialog.push(g_genes[num].name, evolvmodes, NUM_OF(evolvmodes), g_genes[num].mutate);
 		}
 		if (g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 		{
-			dialog.push(g_genes[NUMGENES - 1].name, evolvmodes, NUM_OF(evolvmodes), g_genes[NUMGENES - 1].mutate);
+			dialog.push(g_genes[NUM_GENES - 1].name, evolvmodes, NUM_OF(evolvmodes), g_genes[NUM_GENES - 1].mutate);
 		}
 		dialog.push("");
 		dialog.push("Press F2 to set all to off");
@@ -414,21 +414,21 @@ restart:
 		switch (i)
 		{
 		case FIK_F2: /* set all off */
-			for (int num = MAX_PARAMETERS; num < NUMGENES; num++)
+			for (int num = MAX_PARAMETERS; num < NUM_GENES; num++)
 			{
 				g_genes[num].mutate = VARYINT_NONE;
 			}
 			goto restart;
 
 		case FIK_F3: /* set all on..alternate x and y for field map */
-			for (int num = MAX_PARAMETERS; num < NUMGENES; num ++)
+			for (int num = MAX_PARAMETERS; num < NUM_GENES; num ++)
 			{
 				g_genes[num].mutate = (char)((num % 2) + 1);
 			}
 			goto restart;
 
 		case FIK_F4: /* Randomize all */
-			for (int num = MAX_PARAMETERS; num < NUMGENES; num ++)
+			for (int num = MAX_PARAMETERS; num < NUM_GENES; num ++)
 			{
 				g_genes[num].mutate = (char)(rand() % 6);
 			}
@@ -442,12 +442,12 @@ restart:
 		}
 
 		int k = -1;
-		for (int num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
+		for (int num = MAX_PARAMETERS; num < (NUM_GENES - 5); num++)
 		{
 			g_genes[num].mutate = dialog.values(++k).uval.ch.val;
 		}
 
-		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + num_functions); num++)
+		for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + num_functions); num++)
 		{
 			g_genes[num].mutate = dialog.values(++k).uval.ch.val;
 		}
@@ -455,7 +455,7 @@ restart:
 		if (g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 		{
-			g_genes[NUMGENES - 1].mutate = dialog.values(++k).uval.ch.val;
+			g_genes[NUM_GENES - 1].mutate = dialog.values(++k).uval.ch.val;
 		}
 
 		return 1; /* if you were here, you want to regenerate */
@@ -581,13 +581,13 @@ restart:
 			goto restart;
 		case FIK_F6: /* go to second screen, put array away first */
 			{
-				GENEBASE save[NUMGENES];
-				for (int g = 0; g < NUMGENES; g++)
+				GENEBASE save[NUM_GENES];
+				for (int g = 0; g < NUM_GENES; g++)
 				{
 					save[g] = g_genes[g];
 				}
 				chngd = get_the_rest();
-				for (int g = 0; g < NUMGENES; g++)
+				for (int g = 0; g < NUM_GENES; g++)
 				{
 					g_genes[g] = save[g];
 				}
@@ -620,7 +620,7 @@ void set_mutation_level(int strength)
 {
 	/* scan through the gene array turning on random variation for all parms that */
 	/* are suitable for this level of mutation */
-	for (int i = 0; i < NUMGENES; i++)
+	for (int i = 0; i < NUM_GENES; i++)
 	{
 		g_genes[i].mutate = (g_genes[i].level <= strength) ? VARYINT_RANDOM : VARYINT_NONE; /* 5 = random mutation mode */
 	}
@@ -875,7 +875,7 @@ void fiddle_parameters(GENEBASE gene[], int ecount)
 
 	set_random(ecount);   /* generate the right number of pseudo randoms */
 
-	for (int i = 0; i < NUMGENES; i++)
+	for (int i = 0; i < NUM_GENES; i++)
 	{
 		(*(gene[i].varyfunc))(gene, rand(), i);
 	}
@@ -890,7 +890,7 @@ static void set_random(int ecount)
 	srand(g_this_generation_random_seed);
 	for (int index = 0; index < ecount; index++)
 	{
-		for (int i = 0; i < NUMGENES; i++)
+		for (int i = 0; i < NUM_GENES; i++)
 		{
 			rand();
 		}
@@ -904,7 +904,7 @@ static bool explore_check()
 	/* needed */
 	bool nonrandom = false;
 
-	for (int i = 0; i < NUMGENES && !(nonrandom); i++)
+	for (int i = 0; i < NUM_GENES && !(nonrandom); i++)
 	{
 		if ((g_genes[i].mutate > VARYINT_NONE) && (g_genes[i].mutate < VARYINT_RANDOM))
 		{

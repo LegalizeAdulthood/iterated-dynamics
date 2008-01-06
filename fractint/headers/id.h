@@ -589,7 +589,7 @@ enum stored_at_values
 	DISK
 };
 
-#define NUMGENES 21
+#define NUM_GENES 21
 
 /*
  * Note: because non-MSDOS machines store structures differently, we have
@@ -622,9 +622,9 @@ struct evolution_info      /* for saving evolution data in a GIF file */
 	short syoffs;
 	short x_dots;
 	short y_dots;
-	short mutate[NUMGENES];
+	short mutate[NUM_GENES];
 	short ecount; /* count of how many images have been calc'ed so far */
-	short future[68 - NUMGENES];      /* total of 200 bytes */
+	short future[68 - NUM_GENES];      /* total of 200 bytes */
 };
 
 /*
@@ -1142,7 +1142,7 @@ struct ext_blk_evolver_info
 	short  x_dots;
 	short  y_dots;
 	short  ecount;
-	short  mutate[NUMGENES];
+	short  mutate[NUM_GENES];
 };
 
 struct ext_blk_orbits_info

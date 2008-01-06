@@ -590,7 +590,7 @@ int encoder()
 				esave_info.fiddle_factor    = resume_e_info.fiddle_factor;
 				esave_info.ecount          = resume_e_info.ecount;
 			}
-			for (i = 0; i < NUMGENES; i++)
+			for (i = 0; i < NUM_GENES; i++)
 			{
 				esave_info.mutate[i] = short(g_genes[i].mutate);
 			}
