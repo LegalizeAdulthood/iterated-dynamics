@@ -2972,7 +2972,7 @@ static ComplexD s_mandelmix4_k;
 static ComplexD s_mandelmix4_l;
 static ComplexD s_mandelmix4_z;
 
-int mandelbrot_mix4_setup()
+bool mandelbrot_mix4_setup()
 {
 	int sign_array = 0;
 	s_mandelmix4_a.x = g_parameters[0];
@@ -3061,7 +3061,7 @@ int mandelbrot_mix4_setup()
 		g_rq_limit = s_mandelmix4_l.x;
 		g_rq_limit2 = g_rq_limit*g_rq_limit;
 	}
-	return 1;
+	return true;
 }
 
 int mandelbrot_mix4_per_pixel_fp()
