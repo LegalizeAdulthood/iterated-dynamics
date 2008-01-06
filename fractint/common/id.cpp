@@ -168,7 +168,6 @@ bool g_zoom_off;                     /* = 0 when zoom is disabled    */
 std::string g_file_name_stack[16];		/* array of file names used while browsing */
 int		g_name_stack_ptr;
 double	g_too_small;
-int		g_cross_hair_box_size;
 
 UserInterfaceState g_ui_state;
 
@@ -243,7 +242,7 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 	g_ui_state.double_caution = true;
 	g_browse_state.set_sub_images(true);
 	g_too_small = 6;
-	g_cross_hair_box_size   = 3;
+	g_browse_state.set_cross_hair_box_size(3);
 	g_browse_state.set_mask("*.gif");
 	g_browse_state.set_name("");
 	g_name_stack_ptr = -1; /* init loaded files stack */

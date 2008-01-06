@@ -9,7 +9,8 @@ public:
 		m_browsing(false),
 		m_check_parameters(false),
 		m_check_type(false),
-		m_sub_images(false)
+		m_sub_images(false),
+		_crossHairBoxSize(3)
 	{
 		m_mask[0] = 0;
 		m_name[0] = 0;
@@ -25,6 +26,7 @@ public:
 	const std::string &mask() const		{ return m_mask; }
 	const std::string &name() const		{ return m_name; }
 	bool sub_images() const				{ return m_sub_images; }
+	int cross_hair_box_size() const		{ return _crossHairBoxSize; }
 
 	void set_auto_browse(bool value)	{ m_auto_browse = value; }
 	void set_browsing(bool value)		{ m_browsing = value; }
@@ -33,6 +35,7 @@ public:
 	void set_mask(const char *value)	{ m_mask = value; }
 	void set_name(const std::string &value) { m_name = value; }
 	void set_sub_images(bool value)		{ m_sub_images = value; }
+	void set_cross_hair_box_size(int value) { _crossHairBoxSize = value; }
 
 	void extract_read_name();
 	void make_path(const char *fname, const char *ext);
@@ -47,6 +50,7 @@ private:
 	bool m_check_type;
 	bool m_auto_browse;
 	bool m_sub_images;
+	int _crossHairBoxSize;
 };
 
 extern BrowseState g_browse_state;

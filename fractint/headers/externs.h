@@ -180,7 +180,6 @@ extern long					g_bn_max_stack;
 extern int					g_max_colors;
 extern int					g_max_input_counter;
 extern int					g_max_history;
-extern int					g_cross_hair_box_size;
 extern MinorMethodType			g_minor_method;
 extern more_parameters		g_more_parameters[];
 extern int					g_overflow_mp;
