@@ -385,7 +385,7 @@ static int get_the_rest()
 	int num_functions = fractal_type_formula(g_fractal_type) ?
 		g_formula_state.max_fn() : g_current_fractal_specific->num_functions();
 
-choose_vars_restart:
+restart:
 	{
 		const char *evolvmodes[] =
 		{
@@ -418,21 +418,25 @@ choose_vars_restart:
 			{
 				g_genes[num].mutate = VARYINT_NONE;
 			}
-			goto choose_vars_restart;
+			goto restart;
+
 		case FIK_F3: /* set all on..alternate x and y for field map */
 			for (int num = MAX_PARAMETERS; num < NUMGENES; num ++)
 			{
 				g_genes[num].mutate = (char)((num % 2) + 1);
 			}
-			goto choose_vars_restart;
+			goto restart;
+
 		case FIK_F4: /* Randomize all */
 			for (int num = MAX_PARAMETERS; num < NUMGENES; num ++)
 			{
 				g_genes[num].mutate = (char)(rand() % 6);
 			}
-			goto choose_vars_restart;
+			goto restart;
+
 		case -1:
 			return -1;
+
 		default:
 			break;
 		}
@@ -440,18 +444,18 @@ choose_vars_restart:
 		int k = -1;
 		for (int num = MAX_PARAMETERS; num < (NUMGENES - 5); num++)
 		{
-			g_genes[num].mutate = (char)(dialog.values(++k).uval.ch.val);
+			g_genes[num].mutate = dialog.values(++k).uval.ch.val;
 		}
 
 		for (int num = (NUMGENES - 5); num < (NUMGENES - 5 + num_functions); num++)
 		{
-			g_genes[num].mutate = (char)(dialog.values(++k).uval.ch.val);
+			g_genes[num].mutate = dialog.values(++k).uval.ch.val;
 		}
 
 		if (g_current_fractal_specific->calculate_type == standard_fractal &&
 			(g_current_fractal_specific->flags & FRACTALFLAG_BAIL_OUT_TESTS))
 		{
-			g_genes[NUMGENES - 1].mutate = (char)(dialog.values(++k).uval.ch.val);
+			g_genes[NUMGENES - 1].mutate = dialog.values(++k).uval.ch.val;
 		}
 
 		return 1; /* if you were here, you want to regenerate */
@@ -529,7 +533,7 @@ static int get_variations()
 		lastparm = numparams;
 	}
 
-choose_vars_restart:
+restart:
 	{
 		UIChoices dialog("Variable tweak central 1 of 2", 92);
 		const char *evolvmodes[] = 
@@ -562,19 +566,19 @@ choose_vars_restart:
 			{
 				g_genes[num].mutate = VARYINT_NONE;
 			}
-			goto choose_vars_restart;
+			goto restart;
 		case FIK_F3: /* set all on..alternate x and y for field map */
 			for (int num = 0; num < MAX_PARAMETERS; num ++)
 			{
 				g_genes[num].mutate = (char) ((num % 2) + 1);
 			}
-			goto choose_vars_restart;
+			goto restart;
 		case FIK_F4: /* Randomize all */
 			for (int num = 0; num < MAX_PARAMETERS; num ++)
 			{
 				g_genes[num].mutate = (char) (rand() % 6);
 			}
-			goto choose_vars_restart;
+			goto restart;
 		case FIK_F6: /* go to second screen, put array away first */
 			{
 				GENEBASE save[NUMGENES];
@@ -588,7 +592,7 @@ choose_vars_restart:
 					g_genes[g] = save[g];
 				}
 			}
-			goto choose_vars_restart;
+			goto restart;
 		case -1:
 			return chngd;
 		default:
@@ -616,13 +620,10 @@ void set_mutation_level(int strength)
 {
 	/* scan through the gene array turning on random variation for all parms that */
 	/* are suitable for this level of mutation */
-	int i;
-
-	for (i = 0; i < NUMGENES; i++)
+	for (int i = 0; i < NUMGENES; i++)
 	{
 		g_genes[i].mutate = (g_genes[i].level <= strength) ? VARYINT_RANDOM : VARYINT_NONE; /* 5 = random mutation mode */
 	}
-	return;
 }
 
 int get_evolve_parameters()
@@ -857,8 +858,6 @@ void fiddle_parameters(GENEBASE gene[], int ecount)
 			instead */
 	/* 4/1/97  picking it up again after the last step broke it all horribly! */
 
-	int i;
-
 	/* when writing routines to vary param types make sure that rand() gets called
 	the same number of times whether gene[].mutate is set or not to allow
 	user to change it between generations without screwing up the duplicability
@@ -876,7 +875,7 @@ void fiddle_parameters(GENEBASE gene[], int ecount)
 
 	set_random(ecount);   /* generate the right number of pseudo randoms */
 
-	for (i = 0; i < NUMGENES; i++)
+	for (int i = 0; i < NUMGENES; i++)
 	{
 		(*(gene[i].varyfunc))(gene, rand(), i);
 	}
@@ -888,13 +887,10 @@ static void set_random(int ecount)
 	/* Call this routine to set the random # to the proper value */
 	/* if it may have changed, before fiddle_parameters() is called. */
 	/* Now called by fiddle_parameters(). */
-	int index;
-	int i;
-
 	srand(g_this_generation_random_seed);
-	for (index = 0; index < ecount; index++)
+	for (int index = 0; index < ecount; index++)
 	{
-		for (i = 0; i < NUMGENES; i++)
+		for (int i = 0; i < NUMGENES; i++)
 		{
 			rand();
 		}
@@ -1017,18 +1013,15 @@ void spiral_map(int count)
 	/* more intuitively useful order of drawing the sub images.  */
 	/* All the malarky with count is to allow resuming */
 
-	int i;
-	int mid;
-	int offset;
-	i = 0;
-	mid = g_grid_size/2;
+	int mid = g_grid_size/2;
 	if (count == 0)  /* start in the middle */
 	{
 		g_px = mid;
 		g_py = mid;
 		return;
 	}
-	for (offset = 1; offset <= mid; offset ++)
+	int i = 0;
+	for (int offset = 1; offset <= mid; offset ++)
 	{
 		/* first do the top row */
 		g_py = (mid - offset);
@@ -1075,18 +1068,14 @@ int unspiral_map()
 	/* unmaps the clockwise spiral */
 	/* All this malarky is to allow selecting different subimages */
 	/* Returns the count from the center subimage to the current g_px & g_py */
-	int mid;
 	static int last_grid_size = 0;
 
-	mid = g_grid_size/2;
+	int mid = g_grid_size/2;
 	if ((g_px == mid && g_py == mid) || (last_grid_size != g_grid_size))
 	{
-		int i;
-		int gridsqr;
 		/* set up array and return */
-		gridsqr = g_grid_size*g_grid_size;
 		ecountbox[g_px][g_py] = 0;  /* we know the first one, do the rest */
-		for (i = 1; i < gridsqr; i++)
+		for (int i = 1; i < (g_grid_size*g_grid_size); i++)
 		{
 			spiral_map(i);
 			ecountbox[g_px][g_py] = i;
