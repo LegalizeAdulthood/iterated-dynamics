@@ -811,7 +811,7 @@ int tab_display()       /* display the status of the current image */
 	{
 		g_calculation_time += (clock_ticks() - g_timer_start)/(CLK_TCK/100);
 	}
-	driver_stack_screen();
+	ScreenStacker stacker;
 	if (g_bf_math)
 	{
 		saved = save_stack();
@@ -1235,9 +1235,8 @@ top:
 	key = getakeynohelp();
 	if (key == FIK_F6)
 	{
-		driver_stack_screen();
+		ScreenStacker areaStacker;
 		area();
-		driver_unstack_screen();
 		goto top;
 	}
 	else if (key == FIK_CTL_TAB || key == FIK_SHF_TAB || key == FIK_F7)
@@ -1247,7 +1246,6 @@ top:
 			goto top;
 		}
 	}
-	driver_unstack_screen();
 	g_timer_start = clock_ticks(); /* tab display was "time out" */
 	if (g_bf_math)
 	{

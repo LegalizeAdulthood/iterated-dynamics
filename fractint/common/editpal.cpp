@@ -2507,9 +2507,10 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			int i;
 			char buf[20];
 			strcpy(buf, boost::format("%.3f") % (1.0/s_gamma_val));
-			driver_stack_screen();
-			i = field_prompt("Enter gamma value", 0, buf, 20, 0);
-			driver_unstack_screen();
+			{
+				ScreenStacker stacker;
+				i = field_prompt("Enter gamma value", 0, buf, 20, 0);
+			}
 			if (i != -1)
 			{
 				sscanf(buf, "%f", &s_gamma_val);

@@ -69,20 +69,20 @@ static char lsysmask[13]    = {"*.l"};
 
 /* Routines in this module      */
 
-static bool select_type_params(int newfractype, int oldfractype);
-static  int input_field_list(int attr, char *fld, int vlen, const char **list, int llen,
+static bool select_type_params(int new_fractal_type, int previous_fractal_type);
+static int input_field_list(int attr, char *fld, int vlen, const char **list, int llen,
 							int row, int col, int (*checkkey)(int key));
-static  int select_fracttype(int t);
-static  int sel_fractype_help(int curkey, int choice);
+static int select_fractal_type(int t);
+static int sel_fractal_type_help(int curkey, int choice);
 static long gfe_choose_entry(int type, const char *title, const char *filename, char *entryname);
-static  int check_gfe_key(int curkey, int choice);
-static  void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int startrow, int startcol);
-static  void format_parmfile_line(int, char *);
-static  int get_light_params();
+static int check_gfe_key(int curkey, int choice);
+static void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int startrow, int startcol);
+static void format_parmfile_line(int, char *);
+static int get_light_params();
 static bool check_mapfile();
-static  int get_funny_glasses_params();
-static int prompt_checkkey(int curkey);
-static int prompt_checkkey_scroll(int curkey);
+static int get_funny_glasses_params();
+static int prompt_check_key(int curkey);
+static int prompt_check_key_scroll(int curkey);
 
 
 /* --------------------------------------------------------------------- */
@@ -110,71 +110,71 @@ private:
 	void DisplayInitialValues();
 	void DisplayEmptyBox();
 
-	const char *m_heading;
-	int m_num_prompts;
-	const char **m_prompts;
-	full_screen_values *m_values;
-	int m_function_key_mask;
-	char *m_footer;
+	const char *_heading;
+	int _numPrompts;
+	const char **_prompts;
+	full_screen_values *_values;
+	int _functionKeyMask;
+	char *_footer;
 
 	std::ifstream _scrollFile;	/* file with extrainfo entry to scroll   */
 	std::ifstream::pos_type _scrollFileStart;		/* where entry starts in scroll_file     */
-	bool m_in_scrolling_mode;		/* will be true if need to scroll footer */
-	int m_lines_in_entry;			/* total lines in entry to be scrolled   */
-	int m_title_lines;
-	int m_title_width;
-	int m_vertical_scroll_limit;	/* don't scroll down if this is top line */
-	int m_footer_lines;
-	int m_footer_width;
-	int m_title_row;
-	int m_box_row;
-	int m_box_lines;
-	int m_footer_row;
-	int m_instructions_row;
-	int m_prompt_row;
-	int m_max_prompt_width;
-	int m_max_field_width;
-	int m_max_comment;
-	int m_box_column;
-	int m_box_width;
-	int m_prompt_column;
-	int m_value_column;
-	bool m_any_input;
+	bool _scrollingMode;		/* will be true if need to scroll footer */
+	int _linesInEntry;			/* total lines in entry to be scrolled   */
+	int _titleLines;
+	int _titleWidth;
+	int _verticalScrollLimit;	/* don't scroll down if this is top line */
+	int _footerLines;
+	int _footerWidth;
+	int _titleRow;
+	int _boxRow;
+	int _boxLines;
+	int _footerRow;
+	int _instructionsRow;
+	int _promptRow;
+	int _maxPromptWidth;
+	int _maxFieldWidth;
+	int _maxComment;
+	int _boxColumn;
+	int _boxWidth;
+	int _promptColumn;
+	int _valueColumn;
+	bool _anyInput;
 };
 
 FullScreenPrompter::FullScreenPrompter(const char *heading,
 		int num_prompts, const char **prompts,
 		full_screen_values *values,
 		int function_key_mask, char *footer)
-	: m_heading(heading),
-	m_num_prompts(num_prompts),
-	m_prompts(prompts),
-	m_values(values),
-	m_function_key_mask(function_key_mask),
-	m_footer(footer),
+	: _heading(heading),
+	_numPrompts(num_prompts),
+	_prompts(prompts),
+	_values(values),
+	_functionKeyMask(function_key_mask),
+	_footer(footer),
 	_scrollFile(),
 	_scrollFileStart(0),
-	m_in_scrolling_mode(false),
-	m_lines_in_entry(0),
-	m_title_lines(0),
-	m_title_width(0),
-	m_vertical_scroll_limit(0),
-	m_footer_lines(0),
-	m_footer_width(0),
-	m_title_row(0),
-	m_box_row(0),
-	m_box_lines(0),
-	m_footer_row(0),
-	m_instructions_row(0),
-	m_prompt_row(0),
-	m_max_prompt_width(0),
-	m_max_field_width(0),
-	m_max_comment(0),
-	m_box_column(0),
-	m_box_width(0),
-	m_prompt_column(0),
-	m_value_column(0),
-	m_any_input(false)
+	_scrollingMode(false),
+	_linesInEntry(0),
+	_titleLines(0),
+	_titleWidth(0),
+	_verticalScrollLimit(0),
+	_footerLines(0),
+	_footerWidth(0),
+	_titleRow(0),
+	_boxRow(0),
+	_boxLines(0),
+	_footerRow(0),
+	_instructionsRow(0),
+	_promptRow(0),
+	_maxPromptWidth(0),
+	_maxFieldWidth(0),
+	_maxComment(0),
+	_boxColumn(0),
+	_boxWidth(0),
+	_promptColumn(0),
+	_valueColumn(0),
+	_anyInput(false)
 {
 }
 
@@ -184,24 +184,24 @@ void FullScreenPrompter::PrepareFooterFile()
 	find_file_item() opens the file and sets the file pointer to the
 	beginning of the entry.
 	*/
-	if (m_footer && *m_footer)
+	if (_footer && *_footer)
 	{
 		if (fractal_type_formula(g_fractal_type))
 		{
 			g_formula_state.find_item(_scrollFile);
-			m_in_scrolling_mode = true;
+			_scrollingMode = true;
 			_scrollFileStart = _scrollFile.tellg();
 		}
 		else if (g_fractal_type == FRACTYPE_L_SYSTEM)
 		{
 			find_file_item(g_l_system_filename, g_l_system_name, _scrollFile, ITEMTYPE_L_SYSTEM);
-			m_in_scrolling_mode = true;
+			_scrollingMode = true;
 			_scrollFileStart = _scrollFile.tellg();
 		}
 		else if (fractal_type_ifs(g_fractal_type))
 		{
 			find_file_item(g_ifs_filename, g_ifs_name.c_str(), _scrollFile, ITEMTYPE_IFS);
-			m_in_scrolling_mode = true;
+			_scrollingMode = true;
 			_scrollFileStart = _scrollFile.tellg();
 		}
 	}
@@ -210,11 +210,11 @@ void FullScreenPrompter::PrepareFooterFile()
 void FullScreenPrompter::PrepareFooterLinesInEntry()
 {
 	/* initialize m_lines_in_entry */
-	if (m_in_scrolling_mode && _scrollFile)
+	if (_scrollingMode && _scrollFile)
 	{
 		bool comment = false;
 		int c = 0;
-		while ((c = _scrollFile.get()) != EOF && c != '\032')
+		while ((c = _scrollFile.get()) != EOF)
 		{
 			if (c == ';')
 			{
@@ -223,7 +223,7 @@ void FullScreenPrompter::PrepareFooterLinesInEntry()
 			else if (c == '\n')
 			{
 				comment = false;
-				m_lines_in_entry++;
+				_linesInEntry++;
 			}
 			else if (c == '\r')
 			{
@@ -231,14 +231,14 @@ void FullScreenPrompter::PrepareFooterLinesInEntry()
 			}
 			if (c == '}' && !comment)
 			{
-				m_lines_in_entry++;
+				_linesInEntry++;
 				break;
 			}
 		}
-		if (c == EOF || c == '\032')  /* should never happen */
+		if (c == EOF)  /* should never happen */
 		{
 			_scrollFile.close();
-			m_in_scrolling_mode = false;
+			_scrollingMode = false;
 		}
 	}
 }
@@ -250,12 +250,12 @@ void FullScreenPrompter::PrepareFooter()
 	PrepareFooterSize();
 
 	/* if entry fits in available space, shut off scrolling */
-	if (m_in_scrolling_mode && s_scroll_row_status == 0
-		&& m_lines_in_entry == m_footer_lines - 2
+	if (_scrollingMode && s_scroll_row_status == 0
+		&& _linesInEntry == _footerLines - 2
 		&& s_scroll_column_status == 0
-		&& strchr(m_footer, '\021') == 0)
+		&& strchr(_footer, '\021') == 0)
 	{
-		m_in_scrolling_mode = false;
+		_scrollingMode = false;
 		_scrollFile.close();
 	}
 
@@ -263,44 +263,44 @@ void FullScreenPrompter::PrepareFooter()
 	box is the vertical scroll limit, the bottom line is the end of the
 	entry, and no further down scrolling is necessary.
 	*/
-	if (m_in_scrolling_mode)
+	if (_scrollingMode)
 	{
-		m_vertical_scroll_limit = m_lines_in_entry - (m_footer_lines - 2);
+		_verticalScrollLimit = _linesInEntry - (_footerLines - 2);
 	}
 }
 
 void FullScreenPrompter::PrepareFooterSize()
 {
-	m_footer_lines = 0;
-	m_footer_width = 0;
-	if (!m_footer)
+	_footerLines = 0;
+	_footerWidth = 0;
+	if (!_footer)
 	{
 		return;
 	}
-	if (!*m_footer)
+	if (!*_footer)
 	{
-		m_footer = 0;
+		_footer = 0;
 		return;
 	}
 
 	/* count footer lines, find widest */
-	m_footer_lines = 3;
+	_footerLines = 3;
 	int i = 0;
-	for (char *scan = m_footer; *scan; scan++)
+	for (char *scan = _footer; *scan; scan++)
 	{
 		if (*scan == '\n')
 		{
-			if (m_footer_lines + m_num_prompts + m_title_lines >= 20)
+			if (_footerLines + _numPrompts + _titleLines >= 20)
 			{
 				*scan = 0; /* full screen, cut off here */
 				break;
 			}
-			++m_footer_lines;
+			++_footerLines;
 			i = -1;
 		}
-		if (++i > m_footer_width)
+		if (++i > _footerWidth)
 		{
-			m_footer_width = i;
+			_footerWidth = i;
 		}
 	}
 }
@@ -308,99 +308,99 @@ void FullScreenPrompter::PrepareFooterSize()
 void FullScreenPrompter::PrepareHeader()
 {
 	/* count title lines, find widest */
-	m_title_lines = 1;
-	m_title_width = 0;
+	_titleLines = 1;
+	_titleWidth = 0;
 	int i = 0;
-	for (const char *heading_scan = m_heading; *heading_scan; heading_scan++)
+	for (const char *heading_scan = _heading; *heading_scan; heading_scan++)
 	{
 		if (*heading_scan == '\n')
 		{
-			++m_title_lines;
+			++_titleLines;
 			i = -1;
 		}
-		if (++i > m_title_width)
+		if (++i > _titleWidth)
 		{
-			m_title_width = i;
+			_titleWidth = i;
 		}
 	}
 }
 
 void FullScreenPrompter::WorkOutVerticalPositioning()
 {
-	int total_rows = m_num_prompts + m_title_lines + m_footer_lines + 3;
+	int total_rows = _numPrompts + _titleLines + _footerLines + 3;
 	int j = (25 - total_rows)/2;                   /* top row of it all when centered */
 	j -= j/4;                         /* higher is better if lots extra */
-	m_box_lines = m_num_prompts;
-	m_title_row = 1 + j;
-	m_box_row = m_title_row + m_title_lines;
-	m_prompt_row = m_box_row;
+	_boxLines = _numPrompts;
+	_titleRow = 1 + j;
+	_boxRow = _titleRow + _titleLines;
+	_promptRow = _boxRow;
 		
-	if (m_title_row > 2)  /* room for blank between title & box? */
+	if (_titleRow > 2)  /* room for blank between title & box? */
 	{
-		--m_title_row;
-		--m_box_row;
-		++m_box_lines;
+		--_titleRow;
+		--_boxRow;
+		++_boxLines;
 	}
-	m_instructions_row = m_box_row + m_box_lines;
-	if (m_instructions_row + 3 + m_footer_lines < 25)
+	_instructionsRow = _boxRow + _boxLines;
+	if (_instructionsRow + 3 + _footerLines < 25)
 	{
-		++m_box_lines;    /* blank at bottom of box */
-		++m_instructions_row;
-		if (m_instructions_row + 3 + m_footer_lines < 25)
+		++_boxLines;    /* blank at bottom of box */
+		++_instructionsRow;
+		if (_instructionsRow + 3 + _footerLines < 25)
 		{
-			++m_instructions_row; /* blank before instructions */
+			++_instructionsRow; /* blank before instructions */
 		}
 	}
-	m_footer_row = m_instructions_row + 2;
-	if (m_num_prompts > 1) /* 3 instructions lines */
+	_footerRow = _instructionsRow + 2;
+	if (_numPrompts > 1) /* 3 instructions lines */
 	{
-		++m_footer_row;
+		++_footerRow;
 	}
-	if (m_footer_row + m_footer_lines < 25)
+	if (_footerRow + _footerLines < 25)
 	{
-		++m_footer_row;
+		++_footerRow;
 	}
 }
 
 void FullScreenPrompter::ComputeMaxWidths()
 {
-	m_max_field_width = 0;
-	m_max_prompt_width = 0;
-	m_max_comment = 0;
-	m_any_input = false;
-	for (int i = 0; i < m_num_prompts; i++)
+	_maxFieldWidth = 0;
+	_maxPromptWidth = 0;
+	_maxComment = 0;
+	_anyInput = false;
+	for (int i = 0; i < _numPrompts; i++)
 	{
-		if (m_values[i].type == 'y')
+		if (_values[i].type == 'y')
 		{
 			static const char *noyes[2] =
 			{
 				"no", "yes"
 			};
-			m_values[i].type = 'l';
-			m_values[i].uval.ch.vlen = 3;
-			m_values[i].uval.ch.list = noyes;
-			m_values[i].uval.ch.llen = 2;
+			_values[i].type = 'l';
+			_values[i].uval.ch.vlen = 3;
+			_values[i].uval.ch.list = noyes;
+			_values[i].uval.ch.llen = 2;
 		}
-		int promptLength = int(strlen(m_prompts[i]));
-		if (m_values[i].type == '*')
+		int promptLength = int(strlen(_prompts[i]));
+		if (_values[i].type == '*')
 		{
-			if (promptLength > m_max_comment)
+			if (promptLength > _maxComment)
 			{
-				m_max_comment = promptLength;
+				_maxComment = promptLength;
 			}
 		}
 		else
 		{
-			m_any_input = true;
-			if (promptLength > m_max_prompt_width)
+			_anyInput = true;
+			if (promptLength > _maxPromptWidth)
 			{
-				m_max_prompt_width = promptLength;
+				_maxPromptWidth = promptLength;
 			}
 			char buffer[81];
-			promptLength = prompt_value_string(buffer, &m_values[i]);
-			if (promptLength > m_max_field_width)
+			promptLength = prompt_value_string(buffer, &_values[i]);
+			if (promptLength > _maxFieldWidth)
 			{
-				m_max_field_width = promptLength;
+				_maxFieldWidth = promptLength;
 			}
 		}
 	}
@@ -408,65 +408,65 @@ void FullScreenPrompter::ComputeMaxWidths()
 
 void FullScreenPrompter::WorkOutHorizontalPositioning()
 {
-	if (m_in_scrolling_mode)  /* set box to max width if in scrolling mode */
+	if (_scrollingMode)  /* set box to max width if in scrolling mode */
 	{
-		m_footer_width = 76;
+		_footerWidth = 76;
 	}
 
 	/* work out horizontal positioning */
 	ComputeMaxWidths();
-	m_box_width = m_max_prompt_width + m_max_field_width + 2;
-	if (m_max_comment > m_box_width)
+	_boxWidth = _maxPromptWidth + _maxFieldWidth + 2;
+	if (_maxComment > _boxWidth)
 	{
-		m_box_width = m_max_comment;
+		_boxWidth = _maxComment;
 	}
-	m_box_width += 4;
-	if (m_box_width > 80)
+	_boxWidth += 4;
+	if (_boxWidth > 80)
 	{
-		m_box_width = 80;
+		_boxWidth = 80;
 	}
-	m_box_column = (80 - m_box_width)/2;       /* center the box */
-	m_prompt_column = m_box_column + 2;
-	m_value_column = m_box_column + m_box_width - m_max_field_width - 2;
-	if (m_box_width <= 76)  /* make margin a bit wider if we can */
+	_boxColumn = (80 - _boxWidth)/2;       /* center the box */
+	_promptColumn = _boxColumn + 2;
+	_valueColumn = _boxColumn + _boxWidth - _maxFieldWidth - 2;
+	if (_boxWidth <= 76)  /* make margin a bit wider if we can */
 	{
-		m_box_width += 2;
-		--m_box_column;
+		_boxWidth += 2;
+		--_boxColumn;
 	}
-	int j = m_title_width;
-	if (j < m_footer_width)
+	int j = _titleWidth;
+	if (j < _footerWidth)
 	{
-		j = m_footer_width;
+		j = _footerWidth;
 	}
-	int i = j + 4 - m_box_width;
+	int i = j + 4 - _boxWidth;
 	if (i > 0)  /* expand box for title/extra */
 	{
-		if (m_box_width + i > 80)
+		if (_boxWidth + i > 80)
 		{
-			i = 80 - m_box_width;
+			i = 80 - _boxWidth;
 		}
-		m_box_width += i;
-		m_box_column -= i/2;
+		_boxWidth += i;
+		_boxColumn -= i/2;
 	}
-	i = (90 - m_box_width)/20;
-	m_box_column    -= i;
-	m_prompt_column -= i;
-	m_value_column  -= i;
+	i = (90 - _boxWidth)/20;
+	_boxColumn    -= i;
+	_promptColumn -= i;
+	_valueColumn  -= i;
 }
 
 void FullScreenPrompter::DisplayHeader()
 {
-	for (int i = m_title_row; i < m_box_row; ++i)
+	for (int i = _titleRow; i < _boxRow; ++i)
 	{
-		driver_set_attr(i, m_box_column, C_PROMPT_HI, m_box_width);
+		driver_set_attr(i, _boxColumn, C_PROMPT_HI, _boxWidth);
 	}
 
 	char buffer[256];
 	char *heading_line = buffer;
 	/* center each line of heading independently */
 	int i;
-	::strcpy(heading_line, m_heading);
-	for (i = 0; i < m_title_lines-1; i++)
+	::strcpy(heading_line, _heading);
+	for (i = 0; i < _titleLines-1; i++)
 	{
 		char *next = ::strchr(heading_line, '\n');
 		if (next == 0)
@@ -474,27 +474,27 @@ void FullScreenPrompter::DisplayHeader()
 			break; /* shouldn't happen */
 		}
 		*next = '\0';
-		m_title_width = int(::strlen(heading_line));
-		g_text_cbase = m_box_column + (m_box_width - m_title_width)/2;
-		driver_put_string(m_title_row + i, 0, C_PROMPT_HI, heading_line);
+		_titleWidth = int(::strlen(heading_line));
+		g_text_cbase = _boxColumn + (_boxWidth - _titleWidth)/2;
+		driver_put_string(_titleRow + i, 0, C_PROMPT_HI, heading_line);
 		*next = '\n';
 		heading_line = next + 1;
 	}
 	/* add scrolling key message, if applicable */
-	if (m_in_scrolling_mode)
+	if (_scrollingMode)
 	{
 		*(heading_line + 31) = (char) 0;   /* replace the ')' */
 		::strcat(heading_line, ". CTRL+(direction key) to scroll text.)");
 	}
 
-	m_title_width = int(::strlen(heading_line));
-	g_text_cbase = m_box_column + (m_box_width - m_title_width)/2;
-	driver_put_string(m_title_row + i, 0, C_PROMPT_HI, heading_line);
+	_titleWidth = int(::strlen(heading_line));
+	g_text_cbase = _boxColumn + (_boxWidth - _titleWidth)/2;
+	driver_put_string(_titleRow + i, 0, C_PROMPT_HI, heading_line);
 }
 
 void FullScreenPrompter::DisplayFooter()
 {
-	if (!m_footer)
+	if (!_footer)
 	{
 		return;
 	}
@@ -516,26 +516,26 @@ void FullScreenPrompter::DisplayFooter()
 #endif
 	char buffer[81];
 	memset(buffer, S1, 80);
-	buffer[m_box_width-2] = 0;
-	g_text_cbase = m_box_column + 1;
-	driver_put_string(m_footer_row, 0, C_PROMPT_BKGRD, buffer);
-	driver_put_string(m_footer_row + m_footer_lines-1, 0, C_PROMPT_BKGRD, buffer);
+	buffer[_boxWidth-2] = 0;
+	g_text_cbase = _boxColumn + 1;
+	driver_put_string(_footerRow, 0, C_PROMPT_BKGRD, buffer);
+	driver_put_string(_footerRow + _footerLines-1, 0, C_PROMPT_BKGRD, buffer);
 	--g_text_cbase;
-	driver_put_string(m_footer_row, 0, C_PROMPT_BKGRD, S5);
-	driver_put_string(m_footer_row + m_footer_lines-1, 0, C_PROMPT_BKGRD, S2);
-	g_text_cbase += m_box_width - 1;
-	driver_put_string(m_footer_row, 0, C_PROMPT_BKGRD, S6);
-	driver_put_string(m_footer_row + m_footer_lines-1, 0, C_PROMPT_BKGRD, S3);
+	driver_put_string(_footerRow, 0, C_PROMPT_BKGRD, S5);
+	driver_put_string(_footerRow + _footerLines-1, 0, C_PROMPT_BKGRD, S2);
+	g_text_cbase += _boxWidth - 1;
+	driver_put_string(_footerRow, 0, C_PROMPT_BKGRD, S6);
+	driver_put_string(_footerRow + _footerLines-1, 0, C_PROMPT_BKGRD, S3);
 
-	g_text_cbase = m_box_column;
+	g_text_cbase = _boxColumn;
 
-	for (int i = 1; i < m_footer_lines-1; ++i)
+	for (int i = 1; i < _footerLines-1; ++i)
 	{
-		driver_put_string(m_footer_row + i, 0, C_PROMPT_BKGRD, S4);
-		driver_put_string(m_footer_row + i, m_box_width-1, C_PROMPT_BKGRD, S4);
+		driver_put_string(_footerRow + i, 0, C_PROMPT_BKGRD, S4);
+		driver_put_string(_footerRow + i, _boxWidth-1, C_PROMPT_BKGRD, S4);
 	}
-	g_text_cbase += (m_box_width - m_footer_width)/2;
-	driver_put_string(m_footer_row + 1, 0, C_PROMPT_TEXT, m_footer);
+	g_text_cbase += (_boxWidth - _footerWidth)/2;
+	driver_put_string(_footerRow + 1, 0, C_PROMPT_TEXT, _footer);
 }
 
 void FullScreenPrompter::DisplayEmptyBox()
@@ -543,21 +543,21 @@ void FullScreenPrompter::DisplayEmptyBox()
 	g_text_cbase = 0;
 
 	/* display empty box */
-	for (int i = 0; i < m_box_lines; ++i)
+	for (int i = 0; i < _boxLines; ++i)
 	{
-		driver_set_attr(m_box_row + i, m_box_column, C_PROMPT_LO, m_box_width);
+		driver_set_attr(_boxRow + i, _boxColumn, C_PROMPT_LO, _boxWidth);
 	}
 }
 
 void FullScreenPrompter::DisplayInitialValues()
 {
 	/* display initial values */
-	for (int i = 0; i < m_num_prompts; i++)
+	for (int i = 0; i < _numPrompts; i++)
 	{
-		driver_put_string(m_prompt_row + i, m_prompt_column, C_PROMPT_LO, m_prompts[i]);
+		driver_put_string(_promptRow + i, _promptColumn, C_PROMPT_LO, _prompts[i]);
 		char buffer[81];
-		prompt_value_string(buffer, &m_values[i]);
-		driver_put_string(m_prompt_row + i, m_value_column, C_PROMPT_LO, buffer);
+		prompt_value_string(buffer, &_values[i]);
+		driver_put_string(_promptRow + i, _valueColumn, C_PROMPT_LO, buffer);
 	}
 }
 
@@ -573,24 +573,42 @@ void FullScreenPrompter::DisplayInitialScreen()
 	DisplayInitialValues();
 }
 
+int input_field_flag_from_type(int current_type)
+{
+	int j = 0;
+	switch (current_type)
+	{
+	case 'i':
+		j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+		break;
+	case 'L':
+		j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
+		break;
+	case 'd':
+		j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
+		break;
+	case 'D':
+		j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
+		break;
+	case 'f':
+		j = INPUTFIELD_NUMERIC;
+		break;
+	}
+	return j;
+}
+
 int FullScreenPrompter::Prompt()
 {
 	int current_choice = 0;
-	int done;
-	int i;
-	int j;
 	int current_type;
-	int current_length;
-
 	/* scrolling related variables */
 	bool rewrite_footer = false;	/* if true: rewrite footer to text box   */
 
-	char blanks[78];				/* used to clear text box                */
-	memset(blanks, ' ', NUM_OF(blanks) - 1);   /* initialize string of blanks */
-	blanks[NUM_OF(blanks) - 1] = 0;
+	std::string blanks;					// used to clear text box
+	blanks.append(78, ' ');
 
 	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
-	s_prompt_function_key_mask = m_function_key_mask;
+	s_prompt_function_key_mask = _functionKeyMask;
 
 	PrepareHeader();
 	PrepareFooter();
@@ -600,11 +618,13 @@ int FullScreenPrompter::Prompt()
 
 	DisplayInitialScreen();
 
-	if (!m_any_input)
+	int done;
+	int i;
+	if (!_anyInput)
 	{
-		put_string_center(m_instructions_row++, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(_instructionsRow++, 0, 80, C_PROMPT_BKGRD,
 			"No changeable parameters;");
-		put_string_center(m_instructions_row, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(_instructionsRow, 0, 80, C_PROMPT_BKGRD,
 			(get_help_mode() > 0)
 			? "Press ENTER to exit, ESC to back out, "FK_F1" for help"
 			: "Press ENTER to exit");
@@ -616,13 +636,13 @@ int FullScreenPrompter::Prompt()
 			{
 				rewrite_footer = false;
 				_scrollFile.seekg(_scrollFileStart, SEEK_SET);
-				load_entry_text(_scrollFile, m_footer, m_footer_lines - 2,
+				load_entry_text(_scrollFile, _footer, _footerLines - 2,
 					s_scroll_row_status, s_scroll_column_status);
-				for (i = 1; i <= m_footer_lines - 2; i++)
+				for (i = 1; i <= _footerLines - 2; i++)
 				{
-					driver_put_string(m_footer_row + i, 0, C_PROMPT_TEXT, blanks);
+					driver_put_string(_footerRow + i, 0, C_PROMPT_TEXT, blanks);
 				}
-				driver_put_string(m_footer_row + 1, 0, C_PROMPT_TEXT, m_footer);
+				driver_put_string(_footerRow + 1, 0, C_PROMPT_TEXT, _footer);
 			}
 			/* TODO: rework key interaction to blocking wait */
 			while (!driver_key_pressed())
@@ -637,48 +657,48 @@ int FullScreenPrompter::Prompt()
 			case FIK_ENTER_2:
 				goto fullscreen_exit;
 			case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
-				if (m_in_scrolling_mode && s_scroll_row_status < m_vertical_scroll_limit)
+				if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 				{
 					s_scroll_row_status++;
 					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
-				if (m_in_scrolling_mode && s_scroll_row_status > 0)
+				if (_scrollingMode && s_scroll_row_status > 0)
 				{
 					s_scroll_row_status--;
 					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
-				if (m_in_scrolling_mode && s_scroll_column_status > 0)
+				if (_scrollingMode && s_scroll_column_status > 0)
 				{
 					s_scroll_column_status--;
 					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
-				if (m_in_scrolling_mode && strchr(m_footer, '\021') != 0)
+				if (_scrollingMode && strchr(_footer, '\021') != 0)
 				{
 					s_scroll_column_status++;
 					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
-				if (m_in_scrolling_mode && s_scroll_row_status < m_vertical_scroll_limit)
+				if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 				{
-					s_scroll_row_status += m_footer_lines - 2;
-					if (s_scroll_row_status > m_vertical_scroll_limit)
+					s_scroll_row_status += _footerLines - 2;
+					if (s_scroll_row_status > _verticalScrollLimit)
 					{
-						s_scroll_row_status = m_vertical_scroll_limit;
+						s_scroll_row_status = _verticalScrollLimit;
 					}
 					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_PAGE_UP:     /* scrolling key - up one screen */
-				if (m_in_scrolling_mode && s_scroll_row_status > 0)
+				if (_scrollingMode && s_scroll_row_status > 0)
 				{
-					s_scroll_row_status -= m_footer_lines - 2;
+					s_scroll_row_status -= _footerLines - 2;
 					if (s_scroll_row_status < 0)
 					{
 						s_scroll_row_status = 0;
@@ -687,15 +707,15 @@ int FullScreenPrompter::Prompt()
 				}
 				break;
 			case FIK_CTL_END:         /* scrolling key - to end of entry */
-				if (m_in_scrolling_mode)
+				if (_scrollingMode)
 				{
-					s_scroll_row_status = m_vertical_scroll_limit;
+					s_scroll_row_status = _verticalScrollLimit;
 					s_scroll_column_status = 0;
 					rewrite_footer = true;
 				}
 				break;
 			case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
-				if (m_in_scrolling_mode)
+				if (_scrollingMode)
 				{
 					s_scroll_row_status = 0;
 					s_scroll_column_status = 0;
@@ -721,16 +741,16 @@ int FullScreenPrompter::Prompt()
 
 
 	/* display footing */
-	if (m_num_prompts > 1)
+	if (_numPrompts > 1)
 	{
-		put_string_center(m_instructions_row++, 0, 80, C_PROMPT_BKGRD,
+		put_string_center(_instructionsRow++, 0, 80, C_PROMPT_BKGRD,
 			"Use " UPARR1 " and " DNARR1 " to select values to change");
 	}
-	put_string_center(m_instructions_row + 1, 0, 80, C_PROMPT_BKGRD,
+	put_string_center(_instructionsRow + 1, 0, 80, C_PROMPT_BKGRD,
 		(get_help_mode() > 0) ? "Press ENTER when finished, ESCAPE to back out, or "FK_F1" for help" : "Press ENTER when finished (or ESCAPE to back out)");
 
 	done = 0;
-	while (m_values[current_choice].type == '*')
+	while (_values[current_choice].type == '*')
 	{
 		++current_choice;
 	}
@@ -739,102 +759,88 @@ int FullScreenPrompter::Prompt()
 	{
 		if (rewrite_footer)
 		{
-			j = g_text_cbase;
+			int old_cbase = g_text_cbase;
 			g_text_cbase = 2;
 			_scrollFile.seekg(_scrollFileStart, SEEK_SET);
-			load_entry_text(_scrollFile, m_footer, m_footer_lines - 2,
+			load_entry_text(_scrollFile, _footer, _footerLines - 2,
 				s_scroll_row_status, s_scroll_column_status);
-			for (i = 1; i <= m_footer_lines - 2; i++)
+			for (int i = 1; i <= _footerLines - 2; i++)
 			{
-				driver_put_string(m_footer_row + i, 0, C_PROMPT_TEXT, blanks);
+				driver_put_string(_footerRow + i, 0, C_PROMPT_TEXT, blanks);
 			}
-			driver_put_string(m_footer_row + 1, 0, C_PROMPT_TEXT, m_footer);
-			g_text_cbase = j;
+			driver_put_string(_footerRow + 1, 0, C_PROMPT_TEXT, _footer);
+			g_text_cbase = old_cbase;
 		}
 
-		current_type = m_values[current_choice].type;
+		current_type = _values[current_choice].type;
 		char buffer[81];
-		current_length = prompt_value_string(buffer, &m_values[current_choice]);
+		int current_length = prompt_value_string(buffer, &_values[current_choice]);
 		if (!rewrite_footer)
 		{
-			put_string_center(m_instructions_row, 0, 80, C_PROMPT_BKGRD,
-				(current_type == 'l') ? "Use " LTARR1 " or " RTARR1 " to change value of selected field" : "Type in replacement value for selected field");
+			put_string_center(_instructionsRow, 0, 80, C_PROMPT_BKGRD,
+				(current_type == 'l') ?
+					"Use " LTARR1 " or " RTARR1 " to change value of selected field" :
+					"Type in replacement value for selected field");
 		}
 		else
 		{
 			rewrite_footer = false;
 		}
-		driver_put_string(m_prompt_row + current_choice, m_prompt_column, C_PROMPT_HI, m_prompts[current_choice]);
+		driver_put_string(_promptRow + current_choice, _promptColumn, C_PROMPT_HI, _prompts[current_choice]);
 
 		if (current_type == 'l')
 		{
 			i = input_field_list(
 				C_PROMPT_CHOOSE, buffer, current_length,
-				m_values[current_choice].uval.ch.list, m_values[current_choice].uval.ch.llen,
-				m_prompt_row + current_choice, m_value_column, m_in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
-			for (j = 0; j < m_values[current_choice].uval.ch.llen; ++j)
+				_values[current_choice].uval.ch.list, _values[current_choice].uval.ch.llen,
+				_promptRow + current_choice, _valueColumn, _scrollingMode ? prompt_check_key_scroll : prompt_check_key);
+			int j;
+			for (j = 0; j < _values[current_choice].uval.ch.llen; ++j)
 			{
-				if (strcmp(buffer, m_values[current_choice].uval.ch.list[j]) == 0)
+				if (strcmp(buffer, _values[current_choice].uval.ch.list[j]) == 0)
 				{
 					break;
 				}
 			}
-			m_values[current_choice].uval.ch.val = j;
+			_values[current_choice].uval.ch.val = j;
 		}
 		else
 		{
-			j = 0;
-			if (current_type == 'i')
-			{
-				j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
-			}
-			if (current_type == 'L')
-			{
-				j = INPUTFIELD_NUMERIC | INPUTFIELD_INTEGER;
-			}
-			if (current_type == 'd')
-			{
-				j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE;
-			}
-			if (current_type == 'D')
-			{
-				j = INPUTFIELD_NUMERIC | INPUTFIELD_DOUBLE | INPUTFIELD_INTEGER;
-			}
-			if (current_type == 'f')
-			{
-				j = INPUTFIELD_NUMERIC;
-			}
-			i = input_field(j, C_PROMPT_INPUT, buffer, current_length,
-				m_prompt_row + current_choice, m_value_column, m_in_scrolling_mode ? prompt_checkkey_scroll : prompt_checkkey);
-			switch (m_values[current_choice].type)
+			i = input_field(input_field_flag_from_type(current_type),
+				C_PROMPT_INPUT, buffer, current_length,
+				_promptRow + current_choice, _valueColumn,
+				_scrollingMode ? prompt_check_key_scroll : prompt_check_key);
+			switch (_values[current_choice].type)
 			{
 			case 'd':
 			case 'D':
-				m_values[current_choice].uval.dval = atof(buffer);
+				_values[current_choice].uval.dval = atof(buffer);
 				break;
 			case 'f':
-				m_values[current_choice].uval.dval = atof(buffer);
-				round_float_d(&m_values[current_choice].uval.dval);
+				_values[current_choice].uval.dval = atof(buffer);
+				round_float_d(&_values[current_choice].uval.dval);
 				break;
 			case 'i':
-				m_values[current_choice].uval.ival = atoi(buffer);
+				_values[current_choice].uval.ival = atoi(buffer);
 				break;
 			case 'L':
-				m_values[current_choice].uval.Lval = atol(buffer);
+				_values[current_choice].uval.Lval = atol(buffer);
 				break;
 			case 's':
-				strncpy(m_values[current_choice].uval.sval, buffer, 16);
+				strncpy(_values[current_choice].uval.sval, buffer, 16);
 				break;
 			default: /* assume 0x100 + n */
-				strcpy(m_values[current_choice].uval.sbuf, buffer);
+				strcpy(_values[current_choice].uval.sbuf, buffer);
 			}
 		}
 
-		driver_put_string(m_prompt_row + current_choice, m_prompt_column, C_PROMPT_LO, m_prompts[current_choice]);
-		j = int(strlen(buffer));
-		memset(&buffer[j], ' ', 80-j);
-		buffer[current_length] = 0;
-		driver_put_string(m_prompt_row + current_choice, m_value_column, C_PROMPT_LO,  buffer);
+		driver_put_string(_promptRow + current_choice, _promptColumn, C_PROMPT_LO, _prompts[current_choice]);
+		{
+			int j = int(strlen(buffer));
+			memset(&buffer[j], ' ', 80-j);
+			buffer[current_length] = 0;
+		}
+		driver_put_string(_promptRow + current_choice, _valueColumn, C_PROMPT_LO,  buffer);
 
 		switch (i)
 		{
@@ -858,68 +864,68 @@ int FullScreenPrompter::Prompt()
 		case FIK_DOWN_ARROW:
 			do
 			{
-				if (++current_choice >= m_num_prompts)
+				if (++current_choice >= _numPrompts)
 				{
 					current_choice = 0;
 				}
 			}
-			while (m_values[current_choice].type == '*');
+			while (_values[current_choice].type == '*');
 			break;
 		case FIK_PAGE_DOWN:
-			current_choice = m_num_prompts;
+			current_choice = _numPrompts;
 		case FIK_UP_ARROW:
 			do
 			{
 				if (--current_choice < 0)
 				{
-					current_choice = m_num_prompts - 1;
+					current_choice = _numPrompts - 1;
 				}
 			}
-			while (m_values[current_choice].type == '*');
+			while (_values[current_choice].type == '*');
 			break;
 		case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
-			if (m_in_scrolling_mode && s_scroll_row_status < m_vertical_scroll_limit)
+			if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 			{
 				s_scroll_row_status++;
 				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
-			if (m_in_scrolling_mode && s_scroll_row_status > 0)
+			if (_scrollingMode && s_scroll_row_status > 0)
 			{
 				s_scroll_row_status--;
 				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
-			if (m_in_scrolling_mode && s_scroll_column_status > 0)
+			if (_scrollingMode && s_scroll_column_status > 0)
 			{
 				s_scroll_column_status--;
 				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
-			if (m_in_scrolling_mode && strchr(m_footer, '\021') != 0)
+			if (_scrollingMode && strchr(_footer, '\021') != 0)
 			{
 				s_scroll_column_status++;
 				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
-			if (m_in_scrolling_mode && s_scroll_row_status < m_vertical_scroll_limit)
+			if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 			{
-				s_scroll_row_status += m_footer_lines - 2;
-				if (s_scroll_row_status > m_vertical_scroll_limit)
+				s_scroll_row_status += _footerLines - 2;
+				if (s_scroll_row_status > _verticalScrollLimit)
 				{
-					s_scroll_row_status = m_vertical_scroll_limit;
+					s_scroll_row_status = _verticalScrollLimit;
 				}
 				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_PAGE_UP:      /* scrolling key - up one screen */
-			if (m_in_scrolling_mode && s_scroll_row_status > 0)
+			if (_scrollingMode && s_scroll_row_status > 0)
 			{
-				s_scroll_row_status -= m_footer_lines - 2;
+				s_scroll_row_status -= _footerLines - 2;
 				if (s_scroll_row_status < 0)
 				{
 					s_scroll_row_status = 0;
@@ -928,15 +934,15 @@ int FullScreenPrompter::Prompt()
 			}
 			break;
 		case FIK_CTL_END:          /* scrolling key - go to end of entry */
-			if (m_in_scrolling_mode)
+			if (_scrollingMode)
 			{
-				s_scroll_row_status = m_vertical_scroll_limit;
+				s_scroll_row_status = _verticalScrollLimit;
 				s_scroll_column_status = 0;
 				rewrite_footer = true;
 			}
 			break;
 		case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
-			if (m_in_scrolling_mode)
+			if (_scrollingMode)
 			{
 				s_scroll_row_status = 0;
 				s_scroll_column_status = 0;
@@ -1044,7 +1050,7 @@ int prompt_value_string(char *buf, struct full_screen_values *val)
 	return ret;
 }
 
-int prompt_checkkey(int curkey)
+static int prompt_check_key(int curkey)
 {
 	switch (curkey)
 	{
@@ -1070,7 +1076,7 @@ int prompt_checkkey(int curkey)
 	return 0;
 }
 
-int prompt_checkkey_scroll(int curkey)
+static int prompt_check_key_scroll(int curkey)
 {
 	switch (curkey)
 	{
@@ -1214,7 +1220,7 @@ int get_fractal_type()             /* prompt for and select fractal type */
 	oldfractype = g_fractal_type;
 	while (true)
 	{
-		t = select_fracttype(g_fractal_type);
+		t = select_fractal_type(g_fractal_type);
 		if (t < 0)
 		{
 			break;
@@ -1240,12 +1246,12 @@ int get_fractal_type()             /* prompt for and select fractal type */
 
 struct FT_CHOICE
 {
-		char name[15];
-		int  num;
+	char name[15];
+	int  num;
 };
 static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
 
-static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
+static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated */
                                    /* so that storage gets freed up      */
 {
 	int numtypes;
@@ -1309,7 +1315,7 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 		(g_julibrot ?
 			"Select Orbit Algorithm for Julibrot" : "Select a Fractal Type"),
 		0, "Press "FK_F2" for a description of the highlighted type", numtypes,
-		(char **)choices, attributes, 0, 0, 0, j, 0, tname, 0, sel_fractype_help);
+		(char **)choices, attributes, 0, 0, 0, j, 0, tname, 0, sel_fractal_type_help);
 	if (done >= 0)
 	{
 		done = choices[done]->num;
@@ -1330,7 +1336,7 @@ static int select_fracttype(int t) /* subrtn of get_fractal_type, separated */
 	return done;
 }
 
-static int sel_fractype_help(int curkey, int choice)
+static int sel_fractal_type_help(int curkey, int choice)
 {
 	if (curkey == FIK_F2)
 	{
@@ -1404,11 +1410,10 @@ void set_default_parms()
 	prompt for new fractal type parameters
 
 */
-static bool select_type_params(int newfractype,		/* new fractal type */
-		int oldfractype)					/* previous fractal type */
+static bool select_type_params(int new_fractal_type, int previous_fractal_type)
 {
 sel_type_restart:
-	g_fractal_type = newfractype;
+	g_fractal_type = new_fractal_type;
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 
 	switch (g_fractal_type)
@@ -1439,15 +1444,29 @@ sel_type_restart:
 		break;
 
 	case FRACTYPE_BIFURCATION:
-	case FRACTYPE_BIFURCATION_L:		set_trig_array_ident(oldfractype, FRACTYPE_BIFURCATION, FRACTYPE_BIFURCATION_L); break;
+	case FRACTYPE_BIFURCATION_L:
+		set_trig_array_ident(previous_fractal_type, FRACTYPE_BIFURCATION, FRACTYPE_BIFURCATION_L);
+		break;
+
 	case FRACTYPE_BIFURCATION_STEWART:
-	case FRACTYPE_BIFURCATION_STEWART_L:		set_trig_array_ident(oldfractype, FRACTYPE_BIFURCATION_STEWART, FRACTYPE_BIFURCATION_STEWART_L); break;
+	case FRACTYPE_BIFURCATION_STEWART_L:
+		set_trig_array_ident(previous_fractal_type, FRACTYPE_BIFURCATION_STEWART, FRACTYPE_BIFURCATION_STEWART_L);
+		break;
+
 	case FRACTYPE_BIFURCATION_LAMBDA:
-	case FRACTYPE_BIFURCATION_LAMBDA_L:		set_trig_array_ident(oldfractype, FRACTYPE_BIFURCATION_LAMBDA, FRACTYPE_BIFURCATION_LAMBDA_L); break;
+	case FRACTYPE_BIFURCATION_LAMBDA_L:
+		set_trig_array_ident(previous_fractal_type, FRACTYPE_BIFURCATION_LAMBDA, FRACTYPE_BIFURCATION_LAMBDA_L);
+		break;
+
 	case FRACTYPE_BIFURCATION_EQUAL_FUNC_PI:
-	case FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L:		set_trig_array_sin(oldfractype, FRACTYPE_BIFURCATION_EQUAL_FUNC_PI, FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L); break;
+	case FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L:
+		set_trig_array_sin(previous_fractal_type, FRACTYPE_BIFURCATION_EQUAL_FUNC_PI, FRACTYPE_BIFURCATION_EQUAL_FUNC_PI_L);
+		break;
+
 	case FRACTYPE_BIFURCATION_PLUS_FUNC_PI:
-	case FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L:		set_trig_array_sin(oldfractype, FRACTYPE_BIFURCATION_PLUS_FUNC_PI, FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L); break;
+	case FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L:
+		set_trig_array_sin(previous_fractal_type, FRACTYPE_BIFURCATION_PLUS_FUNC_PI, FRACTYPE_BIFURCATION_PLUS_FUNC_PI_L);
+		break;
 
 	/*
 	* Next assumes that user going between popcorn and popcornjul
@@ -1457,8 +1476,8 @@ sel_type_restart:
 	case FRACTYPE_POPCORN_L:
 	case FRACTYPE_POPCORN_JULIA_FP:
 	case FRACTYPE_POPCORN_JULIA_L:
-		if (!((oldfractype == FRACTYPE_POPCORN_FP) || (oldfractype == FRACTYPE_POPCORN_L) ||
-			(oldfractype == FRACTYPE_POPCORN_JULIA_FP) || (oldfractype == FRACTYPE_POPCORN_JULIA_L)))
+		if (!((previous_fractal_type == FRACTYPE_POPCORN_FP) || (previous_fractal_type == FRACTYPE_POPCORN_L) ||
+			(previous_fractal_type == FRACTYPE_POPCORN_JULIA_FP) || (previous_fractal_type == FRACTYPE_POPCORN_JULIA_L)))
 		{
 			set_function_parm_defaults();
 		}
@@ -1466,7 +1485,7 @@ sel_type_restart:
 
 	/* set LATOO function defaults */
 	case FRACTYPE_LATOOCARFIAN:
-		if (oldfractype != FRACTYPE_LATOOCARFIAN)
+		if (previous_fractal_type != FRACTYPE_LATOOCARFIAN)
 		{
 			set_function_parm_defaults();
 		}
@@ -1490,7 +1509,7 @@ sel_type_restart:
 	}
 	else
 	{
-		if (newfractype != oldfractype)
+		if (new_fractal_type != previous_fractal_type)
 		{
 			g_invert = 0;
 			g_inversion[0] = 0;
@@ -1780,7 +1799,7 @@ get_fractal_parameters_top:
 	FractalTypeSpecificData *julibrot_orbit = 0;
 	if (g_julibrot)
 	{
-		int new_type = select_fracttype(g_new_orbit_type);
+		int new_type = select_fractal_type(g_new_orbit_type);
 		if (new_type < 0)
 		{
 			if (command_result == COMMANDRESULT_OK)
@@ -2725,7 +2744,7 @@ static int check_gfe_key(int curkey, int choice)
 		strcpy(infhdg, gfe_title);
 		strcat(infhdg, " file entry:\n\n");
 		/* ... instead, call help with buffer?  heading added */
-		driver_stack_screen();
+		ScreenStacker stacker;
 		help_title();
 		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
 
@@ -2841,7 +2860,6 @@ static int check_gfe_key(int curkey, int choice)
 		}
 		g_text_cbase = 0;
 		driver_hide_text_cursor();
-		driver_unstack_screen();
 	}
 	return 0;
 }

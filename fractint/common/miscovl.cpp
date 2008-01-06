@@ -2052,75 +2052,51 @@ static void put_bf(int slash, bf_t r, int prec)
 
 void edit_text_colors()
 {
-	int save_debugflag;
-	int row;
-	int col;
-	int bkgrd;
-	int rowf;
-	int colf;
-	int rowt;
-	int colt;
-	int i;
-	int j;
-	int k;
-
-	save_debugflag = g_debug_mode;
+	int save_debugflag = g_debug_mode;
 	g_debug_mode = 0;	 /*	don't get called recursively */
 	MouseModeSaver saved_mouse(LOOK_MOUSE_TEXT); /* text mouse sensitivity */
-	row = 0;
-	col = 0;
-	bkgrd = 0;
-	rowt = 0;
-	rowf = 0;
-	colt = 0;
-	colf = 0;
+	int row = 0;
+	int col = 0;
+	int background = 0;
+	int rowt = 0;
+	int rowf = 0;
+	int colt = 0;
+	int colf = 0;
 
 	while (true)
 	{
-		if (row < 0)
-		{
-			row = 0;
-		}
-		else if (row > 24)
-		{
-			row = 24;
-		}
-		if (col < 0)
-		{
-			col = 0;
-		}
-		else if (col > 79)
-		{
-			col = 79;
-		}
+		row = std::min(24, std::max(0, row));
+		col = std::min(79, std::max(0, col));
 		driver_move_cursor(row, col);
-		i = toupper(driver_get_key());
 
-		switch (i)
+		int key = toupper(driver_get_key());
+		switch (key)
 		{
 		case FIK_ESC:
 			g_debug_mode = save_debugflag;
 			driver_hide_text_cursor();
 			return;
+
 		case '/':
 			driver_hide_text_cursor();
-			driver_stack_screen();
-			for (i = 0; i < 8; ++i)		  /* 8 bkgrd attrs */
 			{
-				for (j = 0; j < 16; ++j) /*	16 fgrd	attrs */
+				ScreenStacker stacker;
+				for (int i = 0; i < 8; ++i)		  /* 8 bkgrd attrs */
 				{
+					for (int j = 0; j < 16; ++j) /*	16 fgrd	attrs */
+					{
 #if defined(_WIN32)
-					_ASSERTE(_CrtCheckMemory());
+						_ASSERTE(_CrtCheckMemory());
 #endif
-					k = (i*16 + j);
-					driver_put_char_attr_rowcol(i*2, j*5, (' ' << 8) | k);
-					driver_put_char_attr_rowcol(i*2, j*5 + 1, ((i + '0') << 8)| k);
-					driver_put_char_attr_rowcol(i*2, j*5 + 2, (((j < 10) ? j + '0' : j + 'A'-10) << 8) | k);
-					driver_put_char_attr_rowcol(i*2, j*5 + 3, (' ' << 8) | k);
+						int k = (i*16 + j);
+						driver_put_char_attr_rowcol(i*2, j*5, (' ' << 8) | k);
+						driver_put_char_attr_rowcol(i*2, j*5 + 1, ((i + '0') << 8)| k);
+						driver_put_char_attr_rowcol(i*2, j*5 + 2, (((j < 10) ? j + '0' : j + 'A'-10) << 8) | k);
+						driver_put_char_attr_rowcol(i*2, j*5 + 3, (' ' << 8) | k);
+					}
 				}
+				driver_get_key();
 			}
-			driver_get_key();
-			driver_unstack_screen();
 			driver_move_cursor(row, col);
 			break;
 		case ',':
@@ -2132,7 +2108,7 @@ void edit_text_colors()
 			colt = col;
 			break;
 		case ' ': /* next color is background */
-			bkgrd = 1;
+			background = 1;
 			break;
 		case FIK_LEFT_ARROW: /* cursor left  */
 			--col;
@@ -2155,38 +2131,37 @@ void edit_text_colors()
 			}
 			break;
 		default:
-			if (i >= '0' && i <= '9')
+			if (key >= '0' && key <= '9')
 			{
-				i -= '0';
+				key -= '0';
 			}
-			else if (i >= 'A' && i <= 'F')
+			else if (key >= 'A' && key <= 'F')
 			{
-				i -= 'A' - 10;
+				key -= 'A' - 10;
 			}
 			else
 			{
 				break;
 			}
-			for (j = rowf; j <= rowt; ++j)
+			for (int j = rowf; j <= rowt; ++j)
 			{
-				for (k = colf; k <= colt; ++k)
+				for (int k = colf; k <= colt; ++k)
 				{
-					int char_attr;
-					char_attr = driver_get_char_attr_rowcol(j, k);
-					if (bkgrd)
+					int char_attr = driver_get_char_attr_rowcol(j, k);
+					if (background)
 					{
-						char_attr &= 0xFF0F;
-						char_attr |= (i & 0xF) << 4;
+						char_attr &= ~0xF0;
+						char_attr |= (key & 0xF) << 4;
 					}
 					else
 					{
-						char_attr &= 0xFFF0;
-						char_attr |= i & 0xF;
+						char_attr &= ~0xF;
+						char_attr |= key & 0xF;
 					}
 					driver_put_char_attr_rowcol(j, k, char_attr);
 				}
 			}
-			bkgrd = 0;
+			background = 0;
 		}
 	}
 }
