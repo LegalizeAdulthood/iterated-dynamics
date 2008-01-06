@@ -292,8 +292,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		g_.SetInitialVideoMode(g_.Adapter());
 	}
 
-#ifndef XFRACT
-	bool gotrealmode = false;
+	bool got_real_mode = false;
 	if ((g_.InitialVideoMode() < 0 || (g_ui_state.ask_video && !g_initialize_batch)) && g_make_par_flag)
 	{
 		/* no exact match or (askvideo=yes and batch=no), and not
@@ -301,7 +300,7 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 
 		qsort(sort_table, g_.VideoTableLength(), sizeof(sort_table[0]), video_mode_compare); /* sort modes */
 
-		int *attributes = new int[g_.VideoTableLength()];
+		std::vector<int> attributes(g_.VideoTableLength());
 		for (int i = 0; i < g_.VideoTableLength(); ++i)
 		{
 			attributes[i] = 1;
@@ -311,9 +310,8 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		/* format heading */
 		int i = full_screen_choice_help(FIHELP_LOAD_FILE, 0, GetHeading(info, formula_info).c_str(),
 			"key...name......................err...xdot..ydot.clr.comment..................",
-			GetInstructions(info).c_str(), g_.VideoTableLength(), 0, attributes,
+			GetInstructions(info).c_str(), g_.VideoTableLength(), 0, &attributes[0],
 			1, 13, 78, 0, format_item, 0, 0, check_mode_key);
-		delete[] attributes;
 		if (i == -1)
 		{
 			return -1;
@@ -321,35 +319,31 @@ int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula
 		if (i < 0)  /* returned -100 - g_video_table entry number */
 		{
 			g_.SetInitialVideoMode(-100 - i);
-			gotrealmode = true;
+			got_real_mode = true;
 		}
 		else
 		{
 			g_.SetInitialVideoMode(sort_table[i].index);
 		}
 	}
-#else
-	g_.SetInitialVideoMode(0);
-	j = g_.VideoTable(0).keynum;
-	gotrealmode = false;
-#endif
 
-	if (!gotrealmode)  /* translate from temp table to permanent */
+	if (!got_real_mode)  /* translate from temp table to permanent */
 	{
 		int i = g_.InitialVideoMode();
 		int key = g_.VideoTable(i).keynum;
 		if (key != 0)
 		{
-			int k;
-			for (k = 0; k < MAXVIDEOMODES-1; k++)
+			bool found = false;
+			for (int k = 0; k < g_.VideoTableLength(); k++)
 			{
 				if (g_.VideoTable(k).keynum == key)
 				{
 					g_.SetInitialVideoMode(k);
+					found = true;
 					break;
 				}
 			}
-			if (k >= MAXVIDEOMODES-1)
+			if (!found)
 			{
 				key = 0;
 			}
@@ -479,10 +473,8 @@ static void format_item(int choice, char *buf)
 	format_video_info(vidptr[choice].index, errors.c_str(), buf);
 }
 
-static int check_mode_key(int curkey, int choice)
+static int check_mode_key(int curkey, int)
 {
-	int i;
-	i = choice; /* avoid warning */
-	i = check_video_mode_key(0, curkey);
+	int i = check_video_mode_key(curkey);
 	return (i >= 0) ? -100-i : 0;
 }

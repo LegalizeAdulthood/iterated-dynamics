@@ -233,7 +233,9 @@ void WorkList::fix()
 		if (wk->xx_start < 0)  /* partly off left edge */
 		{
 			if ((wk->sym&2) == 0) /* no sym, easy */
+			{
 				wk->xx_start = 0;
+			}
 			else  /* yaxis symmetry */
 			{
 				j = wk->xx_stop + wk->xx_start;

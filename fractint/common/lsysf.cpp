@@ -486,7 +486,9 @@ draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int de
 				savecolor = ts->curcolor;
 				command = draw_lsysf(command + 1, ts, rules, depth);
 				if (command == 0)
+				{
 					return 0;
+				}
 				ts->angle = saveang;
 				ts->reverse = saverev;
 				ts->size = savesize;

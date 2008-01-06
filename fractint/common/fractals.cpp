@@ -1249,10 +1249,13 @@ int popcorn_orbit()
 	g_temp_sqr_x_l = lsqr(g_new_z_l.x);
 	g_temp_sqr_y_l = lsqr(g_new_z_l.y);
 	g_magnitude_l = g_temp_sqr_x_l + g_temp_sqr_y_l;
-	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0
+	if (g_magnitude_l >= g_limit_l
+		|| g_magnitude_l < 0
 		|| labs(g_new_z_l.x) > g_limit2_l
-			|| labs(g_new_z_l.y) > g_limit2_l)
-					return 1;
+		|| labs(g_new_z_l.y) > g_limit2_l)
+	{
+		return 1;
+	}
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else
@@ -1354,7 +1357,9 @@ int popcorn_fn_orbit()
 	if (g_magnitude_l >= g_limit_l || g_magnitude_l < 0
 		|| labs(g_new_z_l.x) > g_limit2_l
 		|| labs(g_new_z_l.y) > g_limit2_l)
+	{
 		return 1;
+	}
 	g_old_z_l = g_new_z_l;
 	return 0;
 #else

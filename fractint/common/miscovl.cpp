@@ -288,7 +288,7 @@ bool MakeBatchFile::check_video_mode()
 	int i = check_vidmode_keyname(m_video_mode);
 	if (i > 0)
 	{
-		i = check_video_mode_key(0, i);
+		i = check_video_mode_key(i);
 		if (i >= 0)
 		{
 			/* get the resolution of this video mode */
@@ -752,8 +752,10 @@ void write_batch_parms_julibrot()
 	/* these rarely change */
 	if (g_origin_fp != 8 || g_height_fp != 7 || g_width_fp != 10 || g_screen_distance_fp != 24
 		|| g_depth_fp != 8 || g_z_dots != 128)
+	{
 		put_parm(format(" julibrot3d=%d/%g/%g/%g/%g/%g")
 			% g_z_dots % g_origin_fp % g_depth_fp % g_height_fp % g_width_fp % g_screen_distance_fp);
+	}
 	if (g_eyes_fp != 0)
 	{
 		put_parm(format(" julibroteyes=%g") % g_eyes_fp);
@@ -2258,50 +2260,44 @@ void format_vid_table(int choice, char *buf)
 		% g_.VideoEntry().driver->name() % g_.VideoEntry().comment);
 }
 
-#ifndef XFRACT
 static int check_modekey(int curkey, int choice)
 {
-	int i;
-	int j;
-	int k;
-	int ret;
-	i = check_video_mode_key(1, curkey);
+	int i = check_video_mode_key(curkey);
 	if (i >= 0)
 	{
 		return -1-i;
 	}
-	i = s_entries[choice];
-	ret = 0;
-	if ((curkey == '-' || curkey == '+')
-		&& (g_.VideoTable(i).keynum == 0 || g_.VideoTable(i).keynum >= FIK_SF1))
+	int entry = s_entries[choice];
+	int ret = 0;
+	if (g_.VideoTable(entry).keynum == 0 || g_.VideoTable(entry).keynum >= FIK_SF1)
 	{
-		if (curkey == '-')  /* deassign key? */
+		if (curkey == '-') /* deassign key? */ 
 		{
-			if (g_.VideoTable(i).keynum >= FIK_SF1)
+			if (g_.VideoTable(entry).keynum >= FIK_SF1)
 			{
-				g_.SetVideoTableKey(i, 0);
+				g_.SetVideoTableKey(entry, 0);
 			}
 		}
-		else  /* assign key? */
+		else if (curkey == '+') /* assign key? */
 		{
-			j = getakeynohelp();
-			if (j >= FIK_SF1 && j <= FIK_ALT_F10)
+			int key = getakeynohelp();
+			if (key >= FIK_SF1 && key <= FIK_ALT_F10)
 			{
-				for (k = 0; k < g_.VideoTableLength(); ++k)
+				for (int k = 0; k < g_.VideoTableLength(); ++k)
 				{
-					if (g_.VideoTable(k).keynum == j)
+					if (g_.VideoTable(k).keynum == key)
 					{
 						g_.SetVideoTableKey(k, 0);
-						ret = -1; /* force redisplay */
+						ret = -1;
+						/* force redisplay */
 					}
 				}
-				g_.SetVideoTableKey(i, j);
+				g_.SetVideoTableKey(entry, key);
 			}
 		}
 	}
 	return ret;
 }
-#endif
 
 static int entcompare(const void *p1, const void *p2)
 {

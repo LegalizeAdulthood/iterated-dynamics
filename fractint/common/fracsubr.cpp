@@ -649,8 +649,10 @@ void adjust_corner_bf(float aspect_drift)
 		/* if (ftemp*10000 < ftemp2 && y3rd != ymax) */
 		if (cmp_bf(mult_bf_int(btmp1, bftemp, 10000), bftemp2) < 0
 			&& cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_max()) != 0)
+		{
 			/* x3rd = xmin; */
 			copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
+		}
 	}
 
 	/* else if (ftemp2*10000 < ftemp && y3rd != ymin) */
