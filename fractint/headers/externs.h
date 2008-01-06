@@ -102,7 +102,7 @@ extern bool					g_function_preloaded;
 extern double				g_f_radius;
 extern double				g_f_x_center;
 extern double				g_f_y_center;
-extern GENEBASE				g_genes[NUMGENES];
+extern GENEBASE				g_genes[NUM_GENES];
 extern bool					g_gif87a_flag;
 extern int					g_got_status;
 extern bool					g_grayscale_depth;

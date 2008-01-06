@@ -534,9 +534,9 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	// TODO: handle old crap or abort?
 	if (read_info.version < 15)
 	{
-		/* Increasing NUMGENES moves ecount in the data structure */
-		/* We added 4 to NUMGENES, so ecount is at NUMGENES-4 */
-		evolver_info.ecount = evolver_info.mutate[NUMGENES - 4];
+		/* Increasing NUM_GENES moves ecount in the data structure */
+		/* We added 4 to NUM_GENES, so ecount is at NUM_GENES-4 */
+		evolver_info.ecount = evolver_info.mutate[NUM_GENES - 4];
 	}
 	if (evolver_info.ecount != evolver_info.gridsz*evolver_info.gridsz
 		&& g_calculation_status != CALCSTAT_COMPLETED)
@@ -595,7 +595,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size - 1);
 	if (read_info.version > 14)
 	{
-		for (int i = 0; i < NUMGENES; i++)
+		for (int i = 0; i < NUM_GENES; i++)
 		{
 			g_genes[i].mutate = int(evolver_info.mutate[i]);
 		}
@@ -610,7 +610,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 		{
 			g_genes[i].mutate = 0;
 		}
-		for (int i = 10; i < NUMGENES; i++)
+		for (int i = 10; i < NUM_GENES; i++)
 		{
 			g_genes[i].mutate = int(evolver_info.mutate[i-4]);
 		}
@@ -1023,7 +1023,7 @@ static void FoundInfoId(fractal_info *info,
 				evolver_info->this_generation_random_seed = evolver_load_info.this_generation_random_seed;
 				evolver_info->fiddle_factor = evolver_load_info.fiddle_factor;
 				evolver_info->ecount = evolver_load_info.ecount;
-				for (int i = 0; i < NUMGENES; i++)
+				for (int i = 0; i < NUM_GENES; i++)
 				{
 					evolver_info->mutate[i] = evolver_load_info.mutate[i];
 				}

@@ -2035,7 +2035,7 @@ static void handle_evolver_grid_size(int decrement, bool &kbdmore)
 static void handle_evolver_toggle(bool &kbdmore)
 {
 	int i;
-	for (i = 0; i < NUMGENES; i++)
+	for (i = 0; i < NUM_GENES; i++)
 	{
 		if (g_genes[i].mutate == 5)
 		{
