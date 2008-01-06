@@ -1463,15 +1463,7 @@ get_brws_restart:
 		{
 			g_too_small = 0;
 		}
-		g_cross_hair_box_size = dialog.values(++k).uval.ival;
-		if (g_cross_hair_box_size < 1)
-		{
-			g_cross_hair_box_size = 1;
-		}
-		if (g_cross_hair_box_size > 10)
-		{
-			g_cross_hair_box_size = 10;
-		}
+		g_cross_hair_box_size = MathUtil::Clamp(dialog.values(++k).uval.ival, 1, 10);
 		g_browse_state.set_mask(dialog.values(++k).uval.sval);
 
 		int i = 0;
