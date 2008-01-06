@@ -14,8 +14,10 @@
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "EscapeTime.h"
 #include "fihelp.h"
 #include "filesystem.h"
+#include "Formula.h"
 #include "fracsuba.h"
 #include "fracsubr.h"
 #include "fractalp.h"
@@ -25,19 +27,17 @@
 #include "loadfile.h"
 #include "loadmap.h"
 #include "lsys.h"
+#include "MathUtil.h"
 #include "miscres.h"
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
 #include "TextColors.h"
-#include "zoom.h"
-
-#include "EscapeTime.h"
-#include "Formula.h"
-#include "MathUtil.h"
 #include "ThreeDimensionalState.h"
 #include "UIChoices.h"
 #include "ViewWindow.h"
+#include "zoom.h"
+
 
 #ifdef __hpux
 #include <sys/param.h>
@@ -3316,7 +3316,7 @@ restart_3:
 			g_3d_state.set_transparent0(dialog.values(k++).uval.ival);
 			g_3d_state.set_transparent1(dialog.values(k++).uval.ival);
 		}
-		g_3d_state.set_randomize_colors(std::max(0, std::min(7, dialog.values(k++).uval.ival)));
+		g_3d_state.set_randomize_colors(MathUtil::Clamp(dialog.values(k++).uval.ival, 0, 7));
 	}
 
 	if ((g_targa_output || (g_3d_state.fill_type() > FillType::Bars) || g_3d_state.raytrace_output()))
