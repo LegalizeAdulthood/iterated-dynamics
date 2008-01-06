@@ -326,7 +326,6 @@ extern bool					g_timer_flag;
 extern long					g_timer_interval;
 extern long					g_timer_start;
 extern ComplexD				g_temp_z;
-extern double				g_too_small;
 extern int					g_total_passes;
 extern int					g_function_index[];
 extern bool					g_true_color;

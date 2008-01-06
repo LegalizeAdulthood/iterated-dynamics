@@ -1200,7 +1200,6 @@ struct entryinfo
 
 struct UserInterfaceState
 {
-	bool double_caution;			/* confirm for deleting */
 	bool ask_video;					/* flag for video prompting */
 };
 
