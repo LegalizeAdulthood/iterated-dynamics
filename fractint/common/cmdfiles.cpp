@@ -249,7 +249,7 @@ void command_files(int argc, char **argv)
 				if (is_gif_file(tempstring))
 				{
 					g_read_name = curarg;
-					g_browse_state.extract_read_name();
+					g_browse_state.ExtractReadName();
 					g_show_file = SHOWFILE_PENDING;
 					curarg[0] = 0;
 				}
@@ -939,7 +939,7 @@ static int filename_arg(const cmd_context &context)
 	}
 	else
 	{
-		g_browse_state.extract_read_name();
+		g_browse_state.ExtractReadName();
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER | COMMANDRESULT_3D_PARAMETER;
 }

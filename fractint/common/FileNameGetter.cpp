@@ -369,7 +369,7 @@ retry_dir:
 			}
 		}
 	}
-	g_browse_state.make_path(fname, ext);
+	g_browse_state.MakePath(fname, ext);
 	return 0;
 }
 
