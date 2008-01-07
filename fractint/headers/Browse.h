@@ -44,11 +44,11 @@ public:
 	void SetTooSmall(float value)		{ _tooSmall = value; }
 
 	void ExtractReadName();
+	int GetParameters();
 	void MakePath(const char *fname, const char *ext);
 	void MergePathNames(char *read_name);
 	void MergePathNames(std::string &read_name);
-
-	int GetParameters();
+	void Restart();
 
 private:
 	std::string _mask;

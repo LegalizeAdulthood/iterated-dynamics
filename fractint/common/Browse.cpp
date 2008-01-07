@@ -97,31 +97,42 @@ void BrowseState::MergePathNames(std::string &read_name)
 	read_name = buffer;
 }
 
+void BrowseState::Restart()
+{
+	_tooSmall = 6.0f;
+	_autoBrowse = false;
+	_checkParameters = true;
+	_checkType = true;
+	_doubleCaution = true;
+	_crossHairBoxSize = 3;
+	_mask = "*.gif";
+}
+
 /* get browse parameters , called from fractint.c and loadfile.c
 	returns 3 if anything changes.  code pinched from get_view_params */
 
 int BrowseState::GetParameters()
 {
 	bool old_auto_browse = _autoBrowse;;
-	bool old_browse_check_type = g_browse_state.CheckType();
-	bool old_browse_check_parameters = g_browse_state.CheckParameters();
-	bool old_double_caution = g_browse_state.DoubleCaution();
-	int old_cross_hair_box_size = g_browse_state.CrossHairBoxSize();
-	double old_too_small = g_browse_state.TooSmall();
-	std::string old_browse_mask = g_browse_state.Mask();
+	bool old_browse_check_type = _checkType;
+	bool old_browse_check_parameters = _checkParameters;
+	bool old_double_caution = _doubleCaution;
+	int old_cross_hair_box_size = _crossHairBoxSize;
+	double old_too_small = _tooSmall;
+	std::string old_browse_mask = _mask;
 
 restart:
 	{
 		UIChoices dialog(FIHELP_BROWSER_PARAMETERS, "Browse ('L'ook) Mode Options", 16);
 
-		dialog.push("Autobrowsing? (y/n)", g_browse_state.AutoBrowse());
+		dialog.push("Autobrowsing? (y/n)", _autoBrowse);
 		dialog.push("Ask about GIF video mode? (y/n)", g_ui_state.ask_video);
-		dialog.push("Check fractal type? (y/n)", g_browse_state.CheckType());
-		dialog.push("Check fractal parameters (y/n)", g_browse_state.CheckParameters());
-		dialog.push("Confirm file deletes (y/n)", g_browse_state.DoubleCaution());
-		dialog.push("Smallest window to display (size in pixels)", float(g_browse_state.TooSmall()));
-		dialog.push("Smallest box size shown before crosshairs used (pix)", g_browse_state.CrossHairBoxSize());
-		dialog.push("Browse search filename mask ", g_browse_state.Mask());
+		dialog.push("Check fractal type? (y/n)", _checkType);
+		dialog.push("Check fractal parameters (y/n)", _checkParameters);
+		dialog.push("Confirm file deletes (y/n)", _doubleCaution);
+		dialog.push("Smallest window to display (size in pixels)", _tooSmall);
+		dialog.push("Smallest box size shown before crosshairs used (pix)", _crossHairBoxSize);
+		dialog.push("Browse search filename mask ", _mask);
 		dialog.push("");
 		dialog.push("Press "FK_F4" to reset browse parameters to defaults.");
 
@@ -133,45 +144,35 @@ restart:
 
 		if (result == FIK_F4)
 		{
-			g_browse_state.SetTooSmall(6.0f);
-			g_browse_state.SetAutoBrowse(false);
 			g_ui_state.ask_video = true;
-			g_browse_state.SetCheckParameters(true);
-			g_browse_state.SetCheckType(true);
-			g_browse_state.SetDoubleCaution(true);
-			g_browse_state.SetCrossHairBoxSize(3);
-			g_browse_state.SetMask("*.gif");
+			Restart();
 			goto restart;
 		}
 
 		int k = -1;
-		g_browse_state.SetAutoBrowse((dialog.values(++k).uval.ch.val != 0));
+		_autoBrowse = (dialog.values(++k).uval.ch.val != 0);
 		g_ui_state.ask_video = (dialog.values(++k).uval.ch.val != 0);
-		g_browse_state.SetCheckType((dialog.values(++k).uval.ch.val != 0));
-		g_browse_state.SetCheckParameters((dialog.values(++k).uval.ch.val != 0));
-		g_browse_state.SetDoubleCaution((dialog.values(++k).uval.ch.val != 0));
-		g_browse_state.SetTooSmall(float(dialog.values(++k).uval.dval));
-		if (g_browse_state.TooSmall() < 0.0f)
-		{
-			g_browse_state.SetTooSmall(0.0f);
-		}
-		g_browse_state.SetCrossHairBoxSize(MathUtil::Clamp(dialog.values(++k).uval.ival, 1, 10));
-		g_browse_state.SetMask(dialog.values(++k).uval.sval);
+		_checkType = (dialog.values(++k).uval.ch.val != 0);
+		_checkParameters = (dialog.values(++k).uval.ch.val != 0);
+		_doubleCaution = (dialog.values(++k).uval.ch.val != 0);
+		_tooSmall = std::max(0.0f, float(dialog.values(++k).uval.dval));
+		_crossHairBoxSize = MathUtil::Clamp(dialog.values(++k).uval.ival, 1, 10);
+		_mask = dialog.values(++k).uval.sval;
 
 		int i = 0;
-		if (g_browse_state.AutoBrowse() != old_auto_browse ||
-			g_browse_state.CheckType() != old_browse_check_type ||
-			g_browse_state.CheckParameters() != old_browse_check_parameters ||
-			g_browse_state.DoubleCaution() != old_double_caution ||
-			g_browse_state.TooSmall() != old_too_small ||
-			g_browse_state.CrossHairBoxSize() != old_cross_hair_box_size ||
-			g_browse_state.Mask() != old_browse_mask)
+		if (_autoBrowse != old_auto_browse
+			|| _checkType != old_browse_check_type
+			|| _checkParameters != old_browse_check_parameters
+			|| _doubleCaution != old_double_caution
+			|| _tooSmall != old_too_small
+			|| _crossHairBoxSize != old_cross_hair_box_size
+			|| _mask != old_browse_mask)
 		{
 			i = -3;
 		}
 		if (g_evolving_flags)  /* can't browse */
 		{
-			g_browse_state.SetAutoBrowse(false);
+			_autoBrowse = false;
 			i = 0;
 		}
 
