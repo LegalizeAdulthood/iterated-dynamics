@@ -760,7 +760,7 @@ int starfield()
 	g_gaussian_constant  = long(((starfield_values[1])/100.0)*(1L << 16));
 	g_gaussian_slope = int(starfield_values[2]);
 
-	if (validate_luts(GREY_MAP.c_str()))
+	if (validate_luts(GREY_MAP))
 	{
 		stop_message(STOPMSG_NORMAL, "Unable to load ALTERN.MAP");
 		return -1;

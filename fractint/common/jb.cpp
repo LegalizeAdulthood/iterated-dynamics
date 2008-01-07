@@ -193,7 +193,7 @@ bool julibrot_setup()
 	}
 	if (g_.SaveDAC() != SAVEDAC_YES)
 	{
-		if (validate_luts(map_name.c_str()))
+		if (validate_luts(map_name))
 		{
 			return 0;
 		}
