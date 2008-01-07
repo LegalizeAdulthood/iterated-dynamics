@@ -23,9 +23,11 @@
 #include "fracsubr.h"
 #include "loadfile.h"
 #include "lorenz.h"
+#include "MathUtil.h"
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "UIChoices.h"
 #include "zoom.h"
 #include "ZoomBox.h"
 
@@ -72,27 +74,109 @@ static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_
 static bool functions_match(const fractal_info &info, int num_functions);
 static bool parameters_match(const fractal_info &info);
 
-void BrowseState::extract_read_name()
+void BrowseState::ExtractReadName()
 {
-	::extract_filename(m_name, g_read_name);
+	::extract_filename(_name, g_read_name);
 }
 
-void BrowseState::make_path(const char *fname, const char *ext)
+void BrowseState::MakePath(const char *fname, const char *ext)
 {
-	m_name = ::make_path("", "", fname, ext).string();
+	_name = ::make_path("", "", fname, ext).string();
 }
 
-void BrowseState::merge_path_names(char *read_name)
+void BrowseState::MergePathNames(char *read_name)
 {
-	::merge_path_names(read_name, m_name, false);
+	::merge_path_names(read_name, _name, false);
 }
 
-void BrowseState::merge_path_names(std::string &read_name)
+void BrowseState::MergePathNames(std::string &read_name)
 {
 	char buffer[FILE_MAX_PATH];
 	strcpy(buffer, read_name.c_str());
-	merge_path_names(buffer);
+	MergePathNames(buffer);
 	read_name = buffer;
+}
+
+/* get browse parameters , called from fractint.c and loadfile.c
+	returns 3 if anything changes.  code pinched from get_view_params */
+
+int BrowseState::GetParameters()
+{
+	bool old_auto_browse = _autoBrowse;;
+	bool old_browse_check_type = g_browse_state.CheckType();
+	bool old_browse_check_parameters = g_browse_state.CheckParameters();
+	bool old_double_caution = g_browse_state.DoubleCaution();
+	int old_cross_hair_box_size = g_browse_state.CrossHairBoxSize();
+	double old_too_small = g_browse_state.TooSmall();
+	std::string old_browse_mask = g_browse_state.Mask();
+
+restart:
+	{
+		UIChoices dialog(FIHELP_BROWSER_PARAMETERS, "Browse ('L'ook) Mode Options", 16);
+
+		dialog.push("Autobrowsing? (y/n)", g_browse_state.AutoBrowse());
+		dialog.push("Ask about GIF video mode? (y/n)", g_ui_state.ask_video);
+		dialog.push("Check fractal type? (y/n)", g_browse_state.CheckType());
+		dialog.push("Check fractal parameters (y/n)", g_browse_state.CheckParameters());
+		dialog.push("Confirm file deletes (y/n)", g_browse_state.DoubleCaution());
+		dialog.push("Smallest window to display (size in pixels)", float(g_browse_state.TooSmall()));
+		dialog.push("Smallest box size shown before crosshairs used (pix)", g_browse_state.CrossHairBoxSize());
+		dialog.push("Browse search filename mask ", g_browse_state.Mask());
+		dialog.push("");
+		dialog.push("Press "FK_F4" to reset browse parameters to defaults.");
+
+		int result = dialog.prompt();
+		if (result < 0)
+		{
+			return 0;
+		}
+
+		if (result == FIK_F4)
+		{
+			g_browse_state.SetTooSmall(6.0f);
+			g_browse_state.SetAutoBrowse(false);
+			g_ui_state.ask_video = true;
+			g_browse_state.SetCheckParameters(true);
+			g_browse_state.SetCheckType(true);
+			g_browse_state.SetDoubleCaution(true);
+			g_browse_state.SetCrossHairBoxSize(3);
+			g_browse_state.SetMask("*.gif");
+			goto restart;
+		}
+
+		int k = -1;
+		g_browse_state.SetAutoBrowse((dialog.values(++k).uval.ch.val != 0));
+		g_ui_state.ask_video = (dialog.values(++k).uval.ch.val != 0);
+		g_browse_state.SetCheckType((dialog.values(++k).uval.ch.val != 0));
+		g_browse_state.SetCheckParameters((dialog.values(++k).uval.ch.val != 0));
+		g_browse_state.SetDoubleCaution((dialog.values(++k).uval.ch.val != 0));
+		g_browse_state.SetTooSmall(float(dialog.values(++k).uval.dval));
+		if (g_browse_state.TooSmall() < 0.0f)
+		{
+			g_browse_state.SetTooSmall(0.0f);
+		}
+		g_browse_state.SetCrossHairBoxSize(MathUtil::Clamp(dialog.values(++k).uval.ival, 1, 10));
+		g_browse_state.SetMask(dialog.values(++k).uval.sval);
+
+		int i = 0;
+		if (g_browse_state.AutoBrowse() != old_auto_browse ||
+			g_browse_state.CheckType() != old_browse_check_type ||
+			g_browse_state.CheckParameters() != old_browse_check_parameters ||
+			g_browse_state.DoubleCaution() != old_double_caution ||
+			g_browse_state.TooSmall() != old_too_small ||
+			g_browse_state.CrossHairBoxSize() != old_cross_hair_box_size ||
+			g_browse_state.Mask() != old_browse_mask)
+		{
+			i = -3;
+		}
+		if (g_evolving_flags)  /* can't browse */
+		{
+			g_browse_state.SetAutoBrowse(false);
+			i = 0;
+		}
+
+		return i;
+	}
 }
 
 /* maps points onto view screen*/
@@ -250,7 +334,7 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	list->win_size = tmp_sqrt; /* used for box vs crosshair in draw_window() */
 	/* arbitrary value... stops browser zooming out too far */
 	bool cant_see = false;
-	if (tmp_sqrt < g_browse_state.too_small())
+	if (tmp_sqrt < g_browse_state.TooSmall())
 	{
 		cant_see = true;
 	}
@@ -307,7 +391,7 @@ static void draw_window(int color, CoordinateWindow *info)
 
 	g_zoomBox.set_color(color);
 	g_zoomBox.set_count(0);
-	if (info->win_size >= g_browse_state.cross_hair_box_size())
+	if (info->win_size >= g_browse_state.CrossHairBoxSize())
 	{
 		/* big enough on screen to show up as a box so draw it */
 		/* corner pixels */
@@ -634,9 +718,9 @@ rescan:  /* entry for changed browse parms */
 	time(&lastime);
 	toggle = 0;
 	wincount = 0;
-	g_browse_state.set_sub_images(true);
+	g_browse_state.SetSubImages(true);
 	split_path(g_read_name, drive, dir, 0, 0);
-	split_path(g_browse_state.mask(), 0, 0, fname, ext);
+	split_path(g_browse_state.Mask(), 0, 0, fname, ext);
 	make_path(tmpmask, drive, dir, fname, ext);
 	done = (vid_too_big == 2) || no_memory || fr_find_first(tmpmask);
 	/* draw all visible windows */
@@ -651,9 +735,9 @@ rescan:  /* entry for changed browse parms */
 		make_path(tmpmask, drive, dir, fname, ext);
 		if (!find_fractal_info(tmpmask, &read_info, &resume_info_blk, &formula_info,
 			&ranges_info, &mp_info, &evolver_info, &orbits_info)
-			&& (fractal_types_match(read_info, formula_info) || !g_browse_state.check_type())
-			&& (parameters_match(read_info) || !g_browse_state.check_parameters())
-			&& stricmp(g_browse_state.name().c_str(), g_dta.filename.c_str())
+			&& (fractal_types_match(read_info, formula_info) || !g_browse_state.CheckType())
+			&& (parameters_match(read_info) || !g_browse_state.CheckParameters())
+			&& stricmp(g_browse_state.Name().c_str(), g_dta.filename.c_str())
 			&& evolver_info.got_data != 1
 			&& is_visible_window(&winlist, &read_info, &mp_info))
 		{
@@ -793,7 +877,7 @@ rescan:  /* entry for changed browse parms */
 #endif
 			case FIK_ENTER:
 			case FIK_ENTER_2:   /* this file please */
-				g_browse_state.set_name(winlist.name);
+				g_browse_state.SetName(winlist.name);
 				done = 1;
 				break;
 
@@ -804,7 +888,7 @@ rescan:  /* entry for changed browse parms */
 				/* Need all boxes turned on, turn last one back on. */
 				draw_window(g_.DAC().Bright(), &winlist);
 #endif
-				g_browse_state.set_auto_browse(false);
+				g_browse_state.SetAutoBrowse(false);
 				done = 2;
 				break;
 
@@ -814,7 +898,7 @@ rescan:  /* entry for changed browse parms */
 				driver_wait_key_pressed(0);
 				clear_temp_message();
 				c = driver_get_key();
-				if (c == 'Y' && g_browse_state.double_caution())
+				if (c == 'Y' && g_browse_state.DoubleCaution())
 				{
 					text_temp_message("ARE YOU SURE???? (Y/N)");
 					if (driver_get_key() != 'Y')
@@ -887,13 +971,13 @@ rescan:  /* entry for changed browse parms */
 				clear_temp_message();
 				{
 					ScreenStacker stacker;
-					done = abs(get_browse_parameters());
+					done = abs(g_browse_state.GetParameters());
 				}
 				show_temp_message(winlist.name);
 				break;
 
 			case 's': /* save image with boxes */
-				g_browse_state.set_auto_browse(false);
+				g_browse_state.SetAutoBrowse(false);
 				draw_window(box_color, &winlist); /* current window white */
 				done = 4;
 				break;
@@ -939,7 +1023,7 @@ rescan:  /* entry for changed browse parms */
 	{
 		driver_buzzer(BUZZER_INTERRUPT); /*no suitable files in directory! */
 		text_temp_message("Sorry.. I can't find anything");
-		g_browse_state.set_sub_images(false);
+		g_browse_state.SetSubImages(false);
 	}
 
 	delete[] boxx_storage;
@@ -963,7 +1047,7 @@ static bool look(bool &stacked)
 	case FIK_ENTER:
 	case FIK_ENTER_2:
 		g_show_file = SHOWFILE_PENDING;       /* trigger load */
-		g_browse_state.set_browsing(true);    /* but don't ask for the file name as it's just been selected */
+		g_browse_state.SetBrowsing(true);    /* but don't ask for the file name as it's just been selected */
 		if (g_name_stack_ptr == 15)
 		{					/* about to run off the end of the file
 							* history stack so shift it all back one to
@@ -975,8 +1059,8 @@ static bool look(bool &stacked)
 			g_name_stack_ptr = 14;
 		}
 		g_name_stack_ptr++;
-		g_file_name_stack[g_name_stack_ptr] = g_browse_state.name();
-		g_browse_state.merge_path_names(g_read_name);
+		g_file_name_stack[g_name_stack_ptr] = g_browse_state.Name();
+		g_browse_state.MergePathNames(g_read_name);
 		if (g_ui_state.ask_video)
 		{
 				driver_stack_screen();   /* save graphics image */
@@ -998,9 +1082,9 @@ static bool look(bool &stacked)
 			{
 				break;
 			}
-			g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr].c_str());
-			g_browse_state.merge_path_names(g_read_name);
-			g_browse_state.set_browsing(true);
+			g_browse_state.SetName(g_file_name_stack[g_name_stack_ptr].c_str());
+			g_browse_state.MergePathNames(g_read_name);
+			g_browse_state.SetBrowsing(true);
 			g_show_file = SHOWFILE_PENDING;
 			if (g_ui_state.ask_video)
 			{
@@ -1013,11 +1097,11 @@ static bool look(bool &stacked)
 	case FIK_ESC:
 	case 'l':              /* turn it off */
 	case 'L':
-		g_browse_state.set_browsing(false);
+		g_browse_state.SetBrowsing(false);
 		break;
 
 	case 's':
-		g_browse_state.set_browsing(false);
+		g_browse_state.SetBrowsing(false);
 		save_to_disk(g_save_name);
 		break;
 
@@ -1032,7 +1116,7 @@ ApplicationStateType handle_look_for_files(bool &stacked)
 {
 	if ((g_z_width != 0) || driver_diskp())
 	{
-		g_browse_state.set_browsing(false);
+		g_browse_state.SetBrowsing(false);
 		driver_buzzer(BUZZER_ERROR);             /* can't browse if zooming or disk video */
 	}
 	else if (look(stacked))

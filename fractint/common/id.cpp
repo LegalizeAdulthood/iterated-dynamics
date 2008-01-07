@@ -235,15 +235,15 @@ static void set_exe_path(const char *path)
 
 void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 {
-	g_browse_state.set_auto_browse(false);
-	g_browse_state.set_check_type(true);
-	g_browse_state.set_check_parameters(true);
-	g_browse_state.set_double_caution(true);
-	g_browse_state.set_sub_images(true);
-	g_browse_state.set_too_small(6.0f);
-	g_browse_state.set_cross_hair_box_size(3);
-	g_browse_state.set_mask("*.gif");
-	g_browse_state.set_name("");
+	g_browse_state.SetAutoBrowse(false);
+	g_browse_state.SetCheckType(true);
+	g_browse_state.SetCheckParameters(true);
+	g_browse_state.SetDoubleCaution(true);
+	g_browse_state.SetSubImages(true);
+	g_browse_state.SetTooSmall(6.0f);
+	g_browse_state.SetCrossHairBoxSize(3);
+	g_browse_state.SetMask("*.gif");
+	g_browse_state.SetName("");
 	g_name_stack_ptr = -1; /* init loaded files stack */
 
 	g_evolving_flags = EVOLVE_NONE;
@@ -294,7 +294,7 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 		}
 	}
 
-	g_browse_state.set_browsing(false);
+	g_browse_state.SetBrowsing(false);
 
 	if (!g_function_preloaded)
 	{
@@ -319,7 +319,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 	{
 		char *hdg;
 		g_tab_display_enabled = false;
-		if (!g_browse_state.browsing())     /*RB*/
+		if (!g_browse_state.Browsing())     /*RB*/
 		{
 			if (g_overlay_3d)
 			{
@@ -344,7 +344,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 			}
 
 			g_name_stack_ptr = 0; /* 'r' reads first filename for browsing */
-			g_file_name_stack[g_name_stack_ptr] = g_browse_state.name();
+			g_file_name_stack[g_name_stack_ptr] = g_browse_state.Name();
 		}
 
 		g_evolving_flags = EVOLVE_NONE;
@@ -362,7 +362,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 		{
 			break;                      /* got it, exit */
 		}
-		g_show_file = g_browse_state.browsing() ? SHOWFILE_DONE : SHOWFILE_CANCELLED;
+		g_show_file = g_browse_state.Browsing() ? SHOWFILE_DONE : SHOWFILE_CANCELLED;
 	}
 
 	set_help_mode(FIHELP_MENU);                 /* now use this help mode */
@@ -435,12 +435,10 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 		{
 			break;                                 /* got a video mode now */
 		}
-#ifndef XFRACT
 		if ('A' <= kbdchar && kbdchar <= 'Z')
 		{
 			kbdchar = tolower(kbdchar);
 		}
-#endif
 		if (kbdchar == 'd')  /* shell to DOS */
 		{
 			driver_set_clear();
@@ -515,7 +513,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 		}
 		if (kbdchar == FIK_CTL_B)  /* ctrl B = browse parms*/
 		{
-			get_browse_parameters();
+			g_browse_state.GetParameters();
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}

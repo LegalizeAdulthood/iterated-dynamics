@@ -463,10 +463,10 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				g_save_ticks = g_save_time*60*1000; /* in milliseconds */
 				g_finish_row = -1;
 			}
-			g_browse_state.set_browsing(false);      /* regenerate image, turn off browsing */
+			g_browse_state.SetBrowsing(false);      /* regenerate image, turn off browsing */
 			/*rb*/
 			g_name_stack_ptr = -1;   /* reset pointer */
-			g_browse_state.set_name("");
+			g_browse_state.SetName("");
 			if (g_viewWindow.Visible() && (g_evolving_flags & EVOLVE_FIELD_MAP) && (g_calculation_status != CALCSTAT_COMPLETED))
 			{
 				/* generate a set of images with varied parameters on each one */
@@ -658,7 +658,7 @@ resumeloop:
 				}
 				else      /* wait for a real keystroke */
 				{
-					if (g_browse_state.auto_browse() && g_browse_state.sub_images())
+					if (g_browse_state.AutoBrowse() && g_browse_state.SubImages())
 					{
 						kbdchar = 'l';
 					}
@@ -843,12 +843,12 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 	int i;
 	switch (kbdchar)
 	{
-	case 'x':		i = get_toggles();			break;
-	case 'y':		i = get_toggles2();			break;
-	case 'p':		i = passes_options();		break;
-	case 'z':		i = get_fractal_parameters(true);	break;
-	case 'v':		i = get_view_params();		break;
-	case FIK_CTL_B:	i = get_browse_parameters();	break;
+	case 'x':		i = get_toggles();						break;
+	case 'y':		i = get_toggles2();						break;
+	case 'p':		i = passes_options();					break;
+	case 'z':		i = get_fractal_parameters(true);		break;
+	case 'v':		i = get_view_params();					break;
+	case FIK_CTL_B:	i = g_browse_state.GetParameters();		break;
 
 	case FIK_CTL_E:
 		i = get_evolve_parameters();
@@ -1253,10 +1253,10 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		{
 			return APPSTATE_NO_CHANGE;
 		}
-		g_browse_state.set_name(g_file_name_stack[g_name_stack_ptr].c_str());
-		g_browse_state.merge_path_names(g_read_name);
-		g_browse_state.set_browsing(true);
-		g_browse_state.set_sub_images(true);
+		g_browse_state.SetName(g_file_name_stack[g_name_stack_ptr].c_str());
+		g_browse_state.MergePathNames(g_read_name);
+		g_browse_state.SetBrowsing(true);
+		g_browse_state.SetSubImages(true);
 		g_show_file = SHOWFILE_PENDING;
 		if (g_ui_state.ask_video)
 		{
@@ -1394,7 +1394,7 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 {
 	g_compare_gif = false;
 	frommandel = false;
-	g_browse_state.set_browsing(false);
+	g_browse_state.SetBrowsing(false);
 	if (kbdchar == 'r')
 	{
 		if (DEBUGMODE_COMPARE_RESTORED == g_debug_mode)
