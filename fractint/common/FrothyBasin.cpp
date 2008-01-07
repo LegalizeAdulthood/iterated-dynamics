@@ -78,9 +78,7 @@ static void set_froth_palette()
 {
 	if ((g_.ColorState() == COLORSTATE_DEFAULT) && (g_colors >= 16))
 	{
-		const char *mapname;
-
-		mapname = (s_frothy_data.attractors == 6) ? "froth6.map" : "froth3.map";
+		const std::string mapname = (s_frothy_data.attractors == 6) ? "froth6.map" : "froth3.map";
 		if (validate_luts(mapname))
 		{
 			return;
