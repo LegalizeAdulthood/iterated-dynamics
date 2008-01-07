@@ -36,7 +36,6 @@ public:
 	void SetBrowsing(bool value)		{ _browsing = value; }
 	void SetCheckParameters(bool value) { _checkParameters = value; }
 	void SetCheckType(bool value)		{ _checkType = value; }
-	void SetMask(const char *value)	{ _mask = value; }
 	void SetName(const std::string &value) { _name = value; }
 	void SetSubImages(bool value)		{ _subImages = value; }
 	void SetCrossHairBoxSize(int value) { _crossHairBoxSize = value; }

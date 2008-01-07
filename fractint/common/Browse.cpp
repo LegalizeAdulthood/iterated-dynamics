@@ -1083,7 +1083,7 @@ static bool look(bool &stacked)
 			{
 				break;
 			}
-			g_browse_state.SetName(g_file_name_stack[g_name_stack_ptr].c_str());
+			g_browse_state.SetName(g_file_name_stack[g_name_stack_ptr]);
 			g_browse_state.MergePathNames(g_read_name);
 			g_browse_state.SetBrowsing(true);
 			g_show_file = SHOWFILE_PENDING;
