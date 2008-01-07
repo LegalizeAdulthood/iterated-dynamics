@@ -235,14 +235,8 @@ static void set_exe_path(const char *path)
 
 void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 {
-	g_browse_state.SetAutoBrowse(false);
-	g_browse_state.SetCheckType(true);
-	g_browse_state.SetCheckParameters(true);
-	g_browse_state.SetDoubleCaution(true);
+	g_browse_state.Restart();
 	g_browse_state.SetSubImages(true);
-	g_browse_state.SetTooSmall(6.0f);
-	g_browse_state.SetCrossHairBoxSize(3);
-	g_browse_state.SetMask("*.gif");
 	g_browse_state.SetName("");
 	g_name_stack_ptr = -1; /* init loaded files stack */
 
