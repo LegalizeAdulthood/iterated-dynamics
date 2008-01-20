@@ -131,7 +131,7 @@ int stop_message(int flags, const char *msg)
 	}
 	if (g_debug_mode != DEBUGMODE_NO_HELP_F1_ESC)
 	{
-		if (getakeynohelp() == FIK_ESC)
+		if (get_key_no_help() == FIK_ESC)
 		{
 			ret = -1;
 		}

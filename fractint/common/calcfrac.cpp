@@ -1079,7 +1079,7 @@ static int standard_calculate(int passnum)
 			/* on 2nd pass of two, skip even pts */
 			if (g_quick_calculate && !g_resuming)
 			{
-				g_color = getcolor(g_col, g_row);
+				g_color = get_color(g_col, g_row);
 				if (g_color != g_inside)
 				{
 					++g_col;

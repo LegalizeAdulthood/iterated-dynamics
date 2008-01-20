@@ -79,7 +79,7 @@ int boundary_trace_main()
 		g_color = bkcolor;
 		for (g_current_col = g_ix_start; g_current_col <= g_x_stop; g_current_col++)
 		{
-			if (getcolor(g_current_col, g_current_row) != bkcolor)
+			if (get_color(g_current_col, g_current_row) != bkcolor)
 			{
 				continue;
 			}
@@ -128,7 +128,7 @@ int boundary_trace_main()
 					&& g_row <= g_y_stop)
 				{
 					/* the order of operations in this next line is critical */
-					g_color = getcolor(g_col, g_row);
+					g_color = get_color(g_col, g_row);
 					if (g_color == bkcolor && (*g_calculate_type)() == -1)
 								/* color, row, col are global for (*g_calculate_type)() */
 					{
@@ -193,8 +193,8 @@ int boundary_trace_main()
 						&& g_col >= g_ix_start
 						&& g_col <= g_x_stop
 						&& g_row <= g_y_stop
-						&& getcolor(g_col, g_row) == trail_color)
-						/* getcolor() must be last */
+						&& get_color(g_col, g_row) == trail_color)
+						/* get_color() must be last */
 					{
 						if (s_going_to == South
 							|| (s_going_to == West && coming_from != East))
@@ -202,7 +202,7 @@ int boundary_trace_main()
 							right = g_col;
 							while (--right >= g_ix_start)
 							{
-								g_color = getcolor(right, g_row);
+								g_color = get_color(right, g_row);
 								if (g_color != trail_color)
 								{
 									break;
@@ -211,7 +211,7 @@ int boundary_trace_main()
 							if (g_color == bkcolor) /* check last color */
 							{
 								left = right;
-								while (getcolor(--left, g_row) == bkcolor)
+								while (get_color(--left, g_row) == bkcolor)
 									/* Should NOT be possible for left < g_ix_start */
 								{
 									/* do nothing */

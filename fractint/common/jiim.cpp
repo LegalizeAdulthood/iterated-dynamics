@@ -151,7 +151,7 @@ int  c_getcolor(int x, int y)
 			return 1000;
 		}
 	}
-	return getcolor(x, y);
+	return get_color(x, y);
 }
 
 void circleplot(int x, int y, int color)
@@ -978,7 +978,7 @@ void JIIM::execute()
 			if (s_show_numbers) /* write coordinates on screen */
 			{
 				std::string text =
-					str(boost::format("%16.14f %16.14f %3d") % cr % ci % getcolor(g_col, g_row));
+					str(boost::format("%16.14f %16.14f %3d") % cr % ci % get_color(g_col, g_row));
 				if (s_windows == 0)
 				{
 					/* show temp msg will clear self if new msg is a

@@ -775,7 +775,7 @@ int tab_display_2(char *msg)
 	while ((key != FIK_ESC) && (key != FIK_BACKSPACE) && (key != FIK_TAB))
 	{
 		driver_put_string(row, 2, C_GENERAL_HI, msg);
-		key = getakeynohelp();
+		key = get_key_no_help();
 		sprintf(msg, "%d (0x%04x)      ", key, key);
 	}
 	return (key != FIK_ESC);
@@ -1232,7 +1232,7 @@ top:
 		driver_get_key();
 	}
 #endif
-	key = getakeynohelp();
+	key = get_key_no_help();
 	if (key == FIK_F6)
 	{
 		ScreenStacker areaStacker;
@@ -1271,7 +1271,7 @@ static void area()
 	{
 		for (x = 0; x < g_x_dots; x++)
 		{
-			if (getcolor(x, y) == g_inside)
+			if (get_color(x, y) == g_inside)
 			{
 				cnt++;
 			}

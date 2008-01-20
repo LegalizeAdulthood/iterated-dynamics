@@ -84,7 +84,7 @@ static void set_froth_palette()
 			return;
 		}
 		g_.SetColorState(COLORSTATE_DEFAULT); /* treat map as default */
-		spindac(0, 1);
+		load_dac();
 	}
 }
 

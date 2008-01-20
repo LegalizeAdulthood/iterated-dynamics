@@ -1755,6 +1755,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\headers\Endian.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\Globals.h"
 					>
 				</File>

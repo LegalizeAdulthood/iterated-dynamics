@@ -123,7 +123,7 @@ int LineCompare::compare(BYTE *pixels, int line_length)
 	}
 	for (int col = 0; col < line_length; col++)
 	{
-		int old_color = getcolor(col, row);
+		int old_color = get_color(col, row);
 		if (old_color == int(pixels[col]))
 		{
 			g_plot_color_put_color(col, row, 0);
@@ -265,7 +265,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			if (g_.SaveDAC() || g_color_preloaded)
 			{
 				g_.DAC() = g_.OldDAC(); /* restore the DAC */
-				spindac(0, 1);
+				load_dac();
 				g_color_preloaded = false;
 			}
 			else
@@ -273,7 +273,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				if (g_.MapDAC())
 				{	/* but there's a map=, so load that */
 					g_.DAC() = *g_.MapDAC();
-					spindac(0, 1);
+					load_dac();
 				}
 				g_.SetColorState(COLORSTATE_DEFAULT);
 			}
@@ -954,7 +954,7 @@ static bool handle_execute_commands(int &kbdchar, bool &kbdmore)
 	}
 	else if (g_color_preloaded)
 	{                         /* colors= was specified */
-		spindac(0, 1);
+		load_dac();
 		g_color_preloaded = false;
 	}
 	else if (i & COMMANDRESULT_RESET)         /* reset was specified */

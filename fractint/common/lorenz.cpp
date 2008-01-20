@@ -753,7 +753,7 @@ int Minverse_julia_orbit()
 	* For MIIM, if color >= s_max_hits, discard the point
 	*           else put the point's children onto the queue
 	*/
-	color  = getcolor(newcol, newrow);
+	color  = get_color(newcol, newrow);
 	switch (g_major_method)
 	{
 	case MAJORMETHOD_BREADTH_FIRST:
@@ -934,7 +934,7 @@ int Linverse_julia_orbit()
 	* For MIIM, if color >= s_max_hits, discard the point
 	*           else put the point's children onto the queue
 	*/
-	color  = getcolor(newcol, newrow);
+	color  = get_color(newcol, newrow);
 	switch (g_major_method)
 	{
 	case MAJORMETHOD_BREADTH_FIRST:
@@ -1546,7 +1546,7 @@ int orbit_2d_fp()
 			else
 			{
 				/* should this be using plot_hist()? */
-				color = getcolor(col, row) + 1;
+				color = get_color(col, row) + 1;
 				if (color < g_colors) /* color sticks on last value */
 				{
 					(*g_plot_color)(col, row, color);
@@ -2452,7 +2452,7 @@ static int ifs_3d_float()
 				}
 				else
 				{
-					color = getcolor(inf.col, inf.row) + 1;
+					color = get_color(inf.col, inf.row) + 1;
 				}
 				if (color < g_colors) /* color sticks on last value */
 				{
@@ -2475,7 +2475,7 @@ static int ifs_3d_float()
 					}
 					else
 					{
-						color = getcolor(inf.col1, inf.row1) + 1;
+						color = get_color(inf.col1, inf.row1) + 1;
 					}
 					if (color < g_colors) /* color sticks on last value */
 					{
@@ -2602,7 +2602,7 @@ static int ifs_2d()
 			}
 			else
 			{
-				color = getcolor(col, row) + 1;
+				color = get_color(col, row) + 1;
 			}
 			if (color < g_colors) /* color sticks on last value */
 			{
@@ -2738,7 +2738,7 @@ static int ifs_3d_long()
 				}
 				else
 				{
-					color = getcolor(inf.col, inf.row) + 1;
+					color = get_color(inf.col, inf.row) + 1;
 				}
 				if (color < g_colors) /* color sticks on last value */
 				{
@@ -2757,7 +2757,7 @@ static int ifs_3d_long()
 					}
 					else
 					{
-						color = getcolor(inf.col1, inf.row1) + 1;
+						color = get_color(inf.col1, inf.row1) + 1;
 					}
 					if (color < g_colors) /* color sticks on last value */
 					{
@@ -3120,7 +3120,7 @@ static bool open_orbit_save(std::ofstream &stream)
 /* Plot a histogram by incrementing the pixel each time it it touched */
 static void plot_color_histogram(int x, int y, int color)
 {
-	color = getcolor(x, y) + 1;
+	color = get_color(x, y) + 1;
 	if (color >= g_colors)
 	{
 		color = 1;

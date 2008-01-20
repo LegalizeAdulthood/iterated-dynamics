@@ -63,7 +63,7 @@ public:
 	};
 	const std::vector<PutStringArg> &PutStringArgs() const { return _putStringArgs; }
 
-	virtual int getakeynohelp()
+	virtual int get_key_no_help()
 	{
 		return (_keyStrokeCount < _keyStrokes.size()) ? _keyStrokes[_keyStrokeCount++] : 0;
 	}

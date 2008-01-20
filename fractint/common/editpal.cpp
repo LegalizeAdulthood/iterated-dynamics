@@ -67,7 +67,7 @@ struct PALENTRY
 static void set_pal(int pal, int r, int g, int b)
 {
 	g_.DAC().Set(pal, BYTE(r), BYTE(g), BYTE(b));
-	spindac(0, 1);
+	load_dac();
 }
 
 static void set_pal_range(int first, int how_many, PALENTRY *pal)
@@ -76,7 +76,7 @@ static void set_pal_range(int first, int how_many, PALENTRY *pal)
 	{
 		g_.DAC().Set(first + i, pal[i].red, pal[i].green, pal[i].blue);
 	}
-	spindac(0, 1);
+	load_dac();
 }
 
 static void get_pal_range(int first, int how_many, PALENTRY *pal)
@@ -186,7 +186,7 @@ static int clip_get_color(int x, int y)
 		return 0;
 	}
 
-	return getcolor(x, y);
+	return get_color(x, y);
 }
 
 static void horizontal_line(int x, int y, int width, int color)
@@ -2054,7 +2054,7 @@ int pal_table::get_cursor_color()
 	int x = cursor::cursor_get_x();
 	int y = cursor::cursor_get_y();
 	int size;
-	int color = getcolor(x, y);
+	int color = get_color(x, y);
 
 	if (is_reserved(color))
 	{
@@ -2229,7 +2229,7 @@ void pal_table::update_dac()
 		}
 	}
 
-	spindac(0, 1);
+	load_dac();
 }
 
 
@@ -2475,7 +2475,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 
 			cursor::cursor_hide();
 			draw_status(true);
-			key = getakeynohelp();
+			key = get_key_no_help();
 			cursor::cursor_show();
 
 			if (key >= '1' && key <= '9')

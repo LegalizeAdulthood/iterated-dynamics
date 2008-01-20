@@ -3435,7 +3435,7 @@ int init_msg(const char *cmdstr, const char *bad_filename, int mode)
 		{
 			driver_put_string(++row, 0, 15, "Press Escape to abort, any other key to continue");
 			driver_move_cursor(row + 1, 0);
-			pause_error(PAUSE_ERROR_GOODBYE);  /* defer getakeynohelp until after parsing */
+			pause_error(PAUSE_ERROR_GOODBYE);  /* defer get_key_no_help until after parsing */
 		}
 	}
 	else if (bad_filename)
@@ -3460,7 +3460,7 @@ void pause_error(int action)
 			}
 			else if (needpause == PAUSE_ERROR_GOODBYE)
 			{
-				if (getakeynohelp() == FIK_ESC)
+				if (get_key_no_help() == FIK_ESC)
 				{
 					goodbye();
 				}

@@ -185,10 +185,10 @@ int diffusion()
 		/* Loop as long as the point (x, y) is surrounded by color 0 */
 		/* on all eight sides                                       */
 
-		while ((getcolor(x + 1, y + 1) == 0) && (getcolor(x + 1, y) == 0) &&
-			(getcolor(x + 1, y-1) == 0) && (getcolor(x  , y + 1) == 0) &&
-			(getcolor(x  , y-1) == 0) && (getcolor(x-1, y + 1) == 0) &&
-			(getcolor(x-1, y) == 0) && (getcolor(x-1, y-1) == 0))
+		while ((get_color(x + 1, y + 1) == 0) && (get_color(x + 1, y) == 0) &&
+			(get_color(x + 1, y-1) == 0) && (get_color(x  , y + 1) == 0) &&
+			(get_color(x  , y-1) == 0) && (get_color(x-1, y + 1) == 0) &&
+			(get_color(x-1, y) == 0) && (get_color(x-1, y-1) == 0))
 		{
 			/* Erase moving point */
 			if (g_show_orbit)

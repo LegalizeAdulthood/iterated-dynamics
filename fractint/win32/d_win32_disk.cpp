@@ -407,7 +407,7 @@ void Win32DiskDriver::write_pixel(int x, int y, int color)
 */
 int Win32DiskDriver::read_pixel(int x, int y)
 {
-	return getcolor(x, y);
+	return get_color(x, y);
 }
 
 /*
