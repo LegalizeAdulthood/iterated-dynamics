@@ -47,7 +47,7 @@ struct TestGrammar : public grammar<TestGrammar>
 int TestGrammar::line = 1;
 std::string TestGrammar::statement = "";
 
-TEST(Comment, Spirit)
+TEST(Spirit, Comment)
 {
 	TestGrammar grammar;
 	std::string text = "Entry { ; 1 This is a comment\n"

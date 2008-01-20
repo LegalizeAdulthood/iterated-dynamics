@@ -4,10 +4,6 @@
 #include "drivers.h"
 #include "AbstractInput.h"
 
-int driver_key_pressed()
-{
-	return 0;
-}
 class AbstractDialogTester : public AbstractDialog
 {
 public:
@@ -56,7 +52,7 @@ private:
 	bool m_processIdleValue;
 };
 
-TEST(ProcessInput, AbstractDialog)
+TEST(AbstractDialog, ProcessInput)
 {
 	AbstractDialogTester dialog;
 	dialog.SetFakeDriverKeyPressed(FIK_ESC);
@@ -68,7 +64,7 @@ TEST(ProcessInput, AbstractDialog)
 	LONGS_EQUAL(FIK_ESC, dialog.GetLastKey());
 }
 
-TEST(ProcessIdle, AbstractDialog)
+TEST(AbstractDialog, ProcessIdle)
 {
 	AbstractDialogTester dialog;
 	dialog.SetFakeDriverKeyPressed(0);
