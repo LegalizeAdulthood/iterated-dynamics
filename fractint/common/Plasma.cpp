@@ -24,7 +24,7 @@ static int s_recur1 = 1;
 static int s_plasma_colors;
 static int s_recur_level = 0;
 static int s_plasma_check;                        /* to limit kbd checking */
-static U16 (*s_get_pixels)(int, int)  = (U16(*)(int, int))getcolor;
+static U16 (*s_get_pixels)(int, int)  = (U16(*)(int, int))get_color;
 static U16 s_max_plasma;
 
 /***************** standalone engine for "plasma" ********************/
@@ -375,13 +375,13 @@ int plasma()
 			s_max_plasma = 0;        /* can't do potential (disk_start failed) */
 			g_parameters[3]   = 0;
 			g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
-			s_get_pixels  = (U16(*)(int, int))getcolor;
+			s_get_pixels  = (U16(*)(int, int))get_color;
 		}
 	}
 	else
 	{
 		g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
-		s_get_pixels  = (U16(*)(int, int))getcolor;
+		s_get_pixels  = (U16(*)(int, int))get_color;
 	}
 	srand(g_random_seed);
 	if (!g_use_fixed_random_seed)
@@ -458,7 +458,7 @@ done:
 		g_potential_16bit = OldPot16bit;
 	}
 	g_plot_color    = g_plot_color_put_color;
-	s_get_pixels  = (U16(*)(int, int))getcolor;
+	s_get_pixels  = (U16(*)(int, int))get_color;
 	return n;
 }
 
@@ -490,7 +490,7 @@ static void set_plasma_palette()
 			set_mix(i + 85, i, red, green);
 			set_mix(i + 170, i, blue, red);
 		}
-		spindac(0, 1);
+		load_dac();
 	}
 }
 

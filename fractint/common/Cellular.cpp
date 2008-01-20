@@ -453,6 +453,6 @@ static void set_cellular_palette()
 		g_.DAC().Set(4, yellow[0], yellow[1], yellow[2]);
 		g_.DAC().Set(5, brown[0], brown[1], brown[2]);
 
-		spindac(0, 1);
+		load_dac();
 	}
 }

@@ -187,13 +187,13 @@ int gifview()
 	if (g_display_3d && g_.MapSet() && g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE)
 	{
 		validate_luts(g_.MapName());  /* read the palette file */
-		spindac(0, 1); /* load it, but don't spin */
+		load_dac();
 	}
 	if (g_.DAC().Red(0) != 255)
 	{
-		spindac(0, 1);       /* update the DAC */
+		load_dac();
 	}
-	if (driver_diskp()) /* disk-video */
+	if (driver_diskp())
 	{
 		disk_video_status(1, "restoring " + fs::path(temp1).leaf());
 	}

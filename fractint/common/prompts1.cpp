@@ -2773,7 +2773,7 @@ static int check_gfe_key(int curkey, int choice)
 				}
 				driver_put_string(4, 0, C_GENERAL_MED, infbuf);
 			}
-			i = getakeynohelp();
+			i = get_key_no_help();
 			if (i == FIK_DOWN_ARROW			|| i == FIK_CTL_DOWN_ARROW
 					|| i == FIK_UP_ARROW	|| i == FIK_CTL_UP_ARROW
 					|| i == FIK_LEFT_ARROW	|| i == FIK_CTL_LEFT_ARROW

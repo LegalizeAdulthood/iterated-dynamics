@@ -1569,7 +1569,7 @@ static void plot_orbit_d(double dx, double dy, int color)
 		{
 			*(s_save_orbit + g_orbit_index++) = i;
 			*(s_save_orbit + g_orbit_index++) = j;
-			int c = getcolor(i, j);
+			int c = get_color(i, j);
 			*(s_save_orbit + g_orbit_index++) = c;
 			g_plot_color_put_color(i, j, c ^ g_orbit_color);
 		}

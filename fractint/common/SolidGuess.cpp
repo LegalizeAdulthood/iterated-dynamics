@@ -138,15 +138,15 @@ static int guess_row(bool first_pass, int y, int blocksize)
 	yplushalf = y + s_half_block;
 	yplusblock = y + blocksize;
 	prev11 = -1;
-	c22 = getcolor(g_ix_start, y);
+	c22 = get_color(g_ix_start, y);
 	c24 = c22;
 	c12 = c22;
 	c13 = c22;
-	c21 = getcolor(g_ix_start, (y > 0) ? ylesshalf : 0);
+	c21 = get_color(g_ix_start, (y > 0) ? ylesshalf : 0);
 	c31 = c21;
 	if (yplusblock <= g_y_stop)
 	{
-		c24 = getcolor(g_ix_start, yplusblock);
+		c24 = get_color(g_ix_start, yplusblock);
 	}
 	else if (!s_bottom_guess)
 	{
@@ -200,16 +200,16 @@ static int guess_row(bool first_pass, int y, int blocksize)
 		}
 		else if (y > 0)
 		{
-			c31 = getcolor(xplushalf, ylesshalf);
+			c31 = get_color(xplushalf, ylesshalf);
 		}
 		if (xplusblock <= g_x_stop)
 		{
 			if (yplusblock <= g_y_stop)
 			{
-				c44 = getcolor(xplusblock, yplusblock);
+				c44 = get_color(xplusblock, yplusblock);
 			}
-			c41 = getcolor(xplusblock, (y > 0) ? ylesshalf : 0);
-			c42 = getcolor(xplusblock, y);
+			c41 = get_color(xplusblock, (y > 0) ? ylesshalf : 0);
+			c42 = get_color(xplusblock, y);
 		}
 		else if (!s_right_guess)
 		{
@@ -328,15 +328,15 @@ static int guess_row(bool first_pass, int y, int blocksize)
 		bool fix21 = ((c22 != c12 || c22 != c32)
 			&& c21 == c22 && c21 == c31 && c21 == prev11
 			&& y > 0
-			&& (x == g_ix_start || c21 == getcolor(x-s_half_block, ylessblock))
-			&& (xplushalf > g_x_stop || c21 == getcolor(xplushalf, ylessblock))
-			&& c21 == getcolor(x, ylessblock));
+			&& (x == g_ix_start || c21 == get_color(x-s_half_block, ylessblock))
+			&& (xplushalf > g_x_stop || c21 == get_color(xplushalf, ylessblock))
+			&& c21 == get_color(x, ylessblock));
 		bool fix31 = (c22 != c32
 			&& c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
 			&& y > 0 && xplushalf <= g_x_stop
-			&& c31 == getcolor(xplushalf, ylessblock)
-			&& (xplusblock > g_x_stop || c31 == getcolor(xplusblock, ylessblock))
-			&& c31 == getcolor(x, ylessblock));
+			&& c31 == get_color(xplushalf, ylessblock)
+			&& (xplusblock > g_x_stop || c31 == get_color(xplusblock, ylessblock))
+			&& c31 == get_color(x, ylessblock));
 		prev11 = c31; /* for next time around */
 		if (fix21)
 		{

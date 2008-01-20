@@ -197,7 +197,7 @@ bool julibrot_setup()
 		{
 			return 0;
 		}
-		spindac(0, 1);               /* load it, but don't spin */
+		load_dac();
 		if (g_.SaveDAC() == SAVEDAC_NEXT)
 		{
 			g_.SetSaveDAC(SAVEDAC_YES);

@@ -241,9 +241,9 @@ restart:
 			}
 			for (i = 0; 250*i < g_x_dots; i++)
 			{  /* clear vert status bars */
-				g_plot_color_put_color(i, j, getcolor(i, j) ^ outcolor1);
+				g_plot_color_put_color(i, j, get_color(i, j) ^ outcolor1);
 				g_plot_color_put_color(g_x_dots - 1 - i, j,
-					getcolor(g_x_dots - 1 - i, j) ^ outcolor2);
+					get_color(g_x_dots - 1 - i, j) ^ outcolor2);
 			}
 		}
 	}
@@ -1098,7 +1098,7 @@ static int compress(int rowlimit)
 			for (xdot = 0; xdot < g_x_dots; xdot++)
 			{
 				color = (!s_save_16bit || ydot < g_y_dots)
-					? getcolor(xdot, ydot) : disk_read(xdot + g_sx_offset, ydot + g_sy_offset);
+					? get_color(xdot, ydot) : disk_read(xdot + g_sx_offset, ydot + g_sy_offset);
 				if (in_count == 0)
 				{
 					in_count = 1;
@@ -1169,9 +1169,9 @@ nomatch:
 				for (i = 0; 250*i < g_x_dots; i++)
 				{  /* display vert status bars */
 					/* (this is NOT GIF-related)  */
-					g_plot_color_put_color(i, ydot, getcolor(i, ydot) ^ outcolor1);
+					g_plot_color_put_color(i, ydot, get_color(i, ydot) ^ outcolor1);
 					g_plot_color_put_color(g_x_dots - 1 - i, ydot,
-						getcolor(g_x_dots - 1 - i, ydot) ^ outcolor2);
+						get_color(g_x_dots - 1 - i, ydot) ^ outcolor2);
 				}
 				last_colorbar = ydot;
 			} /* end if !driver_diskp() */

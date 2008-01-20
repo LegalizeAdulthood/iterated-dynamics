@@ -574,7 +574,7 @@ void history_restore_info()
 	{
 		g_.SetMapDAC(&last.dac);
 	}
-	spindac(0, 1);
+	load_dac();
 	g_.SetSaveDAC(fractal_type_julibrot(g_fractal_type) ? SAVEDAC_NO : SAVEDAC_YES);
 	switch (g_fractal_type)
 	{

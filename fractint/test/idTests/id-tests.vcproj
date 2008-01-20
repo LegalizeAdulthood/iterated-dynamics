@@ -277,6 +277,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TestEndian.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\TestFileSystem.cpp"
 				>
 			</File>

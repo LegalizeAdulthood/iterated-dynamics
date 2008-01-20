@@ -10,9 +10,10 @@
 #include "externs.h"
 
 extern int get_corners();
-extern int getakeynohelp();
+extern int get_key_no_help();
 extern void set_null_video();
-extern void spindac(int, int);
+extern void spin_dac(int direction, int increment);
+extern void load_dac();
 
 /* maintain the common prototypes in this file
  * split the dos/win/unix prototypes into separate files.

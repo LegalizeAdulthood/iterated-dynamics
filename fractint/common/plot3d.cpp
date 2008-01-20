@@ -180,7 +180,7 @@ void plot3dsuperimpose16b(int x, int y, int color)
 		}
 	}
 	color = 3;
-	tmp = getcolor(x, y);
+	tmp = get_color(x, y);
 
 	/* map to 4 colors */
 	if (g_which_image == WHICHIMAGE_RED)
@@ -214,7 +214,7 @@ void plot_3d_superimpose_16(int x, int y, int color)
 {
 	int tmp;
 
-	tmp = getcolor(x, y);
+	tmp = get_color(x, y);
 
 	if (g_which_image == WHICHIMAGE_RED)
 	{
@@ -267,7 +267,7 @@ void plot_3d_superimpose_256(int x, int y, int color)
 			(1 + color/18); /*  Maps colors 1-255 to 15 even ranges */
 	}
 
-	tmp = getcolor(x, y);
+	tmp = get_color(x, y);
 	/* map to 16 colors */
 	if (g_which_image == WHICHIMAGE_RED)
 	{
@@ -329,7 +329,7 @@ void plot_ifs_3d_superimpose_256(int x, int y, int color)
 								relatively even ranges */
 	}
 
-	tmp = getcolor(x, y);
+	tmp = get_color(x, y);
 	/* map to 16 colors */
 	if (g_which_image == WHICHIMAGE_RED)
 	{
@@ -430,7 +430,7 @@ void plot_3d_cross_eyed_A(int x, int y, int color)
 	if (g_row_count >= g_y_dots/2)
 	{
 		/* hidden surface kludge */
-		if (getcolor(x, y) != 0)
+		if (get_color(x, y) != 0)
 		{
 			return;
 		}
@@ -454,7 +454,7 @@ void plot_3d_cross_eyed_C(int x, int y, int color)
 	if (g_row_count >= g_y_dots/2)
 	{
 		/* hidden surface kludge */
-		if (getcolor(x, y) != 0)
+		if (get_color(x, y) != 0)
 		{
 			return;
 		}
@@ -559,6 +559,6 @@ void plot_setup()
 				g_.DAC().SetBlue(i, BYTE(g_.DAC().Blue(i)*d_blue_bright));
 			}
 		}
-		spindac(0, 1); /* load it, but don't spin */
+		load_dac();
 	}
 }

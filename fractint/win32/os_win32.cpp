@@ -335,12 +335,12 @@ long read_ticker()
 }
 
 /*
-; *************** Function spindac(direction, rstep) ********************
+; *************** Function spin_dac(direction, rstep) ********************
 
 ;       Rotate the MCGA/VGA DAC in the (plus or minus) "direction"
 ;       in "rstep" increments - or, if "direction" is 0, just replace it.
 */
-void spindac(int dir, int inc)
+void spin_dac(int dir, int inc)
 {
 	if (g_is_true_color && g_true_mode_iterates)
 	{
@@ -352,16 +352,14 @@ void spindac(int dir, int inc)
 		int top = (g_rotate_hi > g_colors) ? g_colors - 1 : g_rotate_hi;
 		if (dir > 0)
 		{
-			int i;
-			for (i = 0; i < inc; i++)
+			for (int i = 0; i < inc; i++)
 			{
-				int j;
 				BYTE tmp[3];
 
 				tmp[0] = g_.DAC().Red(g_rotate_lo);
 				tmp[1] = g_.DAC().Green(g_rotate_lo);
 				tmp[2] = g_.DAC().Blue(g_rotate_lo);
-				for (j = g_rotate_lo; j < top; j++)
+				for (int j = g_rotate_lo; j < top; j++)
 				{
 					g_.DAC().Set(j, g_.DAC().Red(j + 1), g_.DAC().Green(j + 1), g_.DAC().Blue(j + 1));
 				}
@@ -370,16 +368,14 @@ void spindac(int dir, int inc)
 		}
 		else
 		{
-			int i;
-			for (i = 0; i < inc; i++)
+			for (int i = 0; i < inc; i++)
 			{
-				int j;
 				BYTE tmp[3];
 
 				tmp[0] = g_.DAC().Red(top);
 				tmp[1] = g_.DAC().Green(top);
 				tmp[2] = g_.DAC().Blue(top);
-				for (j = top; j > g_rotate_lo; j--)
+				for (int j = top; j > g_rotate_lo; j--)
 				{
 					g_.DAC().Set(j, g_.DAC().Red(j-1), g_.DAC().Green(j-1), g_.DAC().Blue(j-1));
 				}
@@ -389,6 +385,11 @@ void spindac(int dir, int inc)
 	}
 	driver_write_palette();
 	driver_delay(g_colors - g_.DACSleepCount() - 1);
+}
+
+void load_dac()
+{
+	spin_dac(0, 1);
 }
 
 /*
@@ -542,7 +543,7 @@ int __stdcall WinMain(HINSTANCE instance, HINSTANCE prev_instance, LPSTR cmdLine
 /*
  * This routine returns a key, ignoring F1
  */
-int getakeynohelp()
+int get_key_no_help()
 {
 	int old_help_mode = get_help_mode();
 	set_help_mode(0);
@@ -614,7 +615,7 @@ void ods(const char *file, unsigned int line, const char *format, ...)
 /*
 ; ***Function get_line(int row, int startcol, int stopcol, unsigned char *pixels)
 
-;       This routine is a 'line' analog of 'getcolor()', and gets a segment
+;       This routine is a 'line' analog of 'get_color()', and gets a segment
 ;       of a line from the screen and stores it in pixels[] at one byte per
 ;       pixel
 ;       Called by the GIF decoder
@@ -732,11 +733,11 @@ void set_null_video()
 }
 
 /*
-; **************** Function getcolor(xdot, ydot) *******************
+; **************** Function get_color(xdot, ydot) *******************
 
 ;       Return the color on the screen at the (xdot, ydot) point
 */
-int getcolor(int xdot, int ydot)
+int get_color(int xdot, int ydot)
 {
 	int x1, y1;
 	x1 = xdot + g_sx_offset;

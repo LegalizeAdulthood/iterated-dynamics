@@ -63,7 +63,7 @@ static ColormapTable s_save_dac;
 
 static int getdepth(int xd, int yd)
 {
-	int pal = getcolor(xd, yd);
+	int pal = get_color(xd, yd);
 	if (g_grayscale_depth)
 	{
 		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
@@ -286,8 +286,8 @@ int auto_stereo()
 		{
 			for (int j = s_y_center; j < s_y_center + s_bar_height; j++)
 			{
-				colour[ct++] = getcolor(i + int(s_average), j);
-				colour[ct++] = getcolor(i - int(s_average), j);
+				colour[ct++] = get_color(i + int(s_average), j);
+				colour[ct++] = get_color(i - int(s_average), j);
 			}
 		}
 		bool bars = (s_stereogram_calibrate != CALIBRATE_NONE);
@@ -328,7 +328,7 @@ int auto_stereo()
 exit_stereo:
 	driver_restore_graphics();
 	g_.DAC() = s_save_dac;
-	spindac(0, 1);
+	load_dac();
 	return ret;
 }
 

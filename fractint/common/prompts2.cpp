@@ -765,7 +765,7 @@ int starfield()
 		stop_message(STOPMSG_NORMAL, "Unable to load ALTERN.MAP");
 		return -1;
 	}
-	spindac(0, 1);                 /* load it, but don't spin */
+	load_dac();
 	for (g_row = 0; g_row < g_y_dots; g_row++)
 	{
 		for (g_col = 0; g_col < g_x_dots; g_col++)
@@ -775,7 +775,7 @@ int starfield()
 				driver_buzzer(BUZZER_INTERRUPT);
 				return 1;
 			}
-			c = getcolor(g_col, g_row);
+			c = get_color(g_col, g_row);
 			if (c == g_inside)
 			{
 				c = g_colors-1;

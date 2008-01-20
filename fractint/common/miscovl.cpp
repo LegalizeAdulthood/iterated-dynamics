@@ -2281,7 +2281,7 @@ static int check_modekey(int curkey, int choice)
 		}
 		else if (curkey == '+') /* assign key? */
 		{
-			int key = getakeynohelp();
+			int key = get_key_no_help();
 			if (key >= FIK_SF1 && key <= FIK_ALT_F10)
 			{
 				for (int k = 0; k < g_.VideoTableLength(); ++k)
@@ -2723,8 +2723,8 @@ static void reverse_x_axis()
 		}
 		for (int j = 0; j < g_y_dots; j++)
 		{
-			int temp = getcolor(i, j);
-			g_plot_color_put_color(i, j, getcolor(g_x_dots-1-i, j));
+			int temp = get_color(i, j);
+			g_plot_color_put_color(i, j, get_color(g_x_dots-1-i, j));
 			g_plot_color_put_color(g_x_dots-1-i, j, temp);
 		}
 	}
@@ -2757,8 +2757,8 @@ static void reverse_y_axis()
 		}
 		for (int i = 0; i < g_x_dots; i++)
 		{
-			int temp = getcolor(i, j);
-			g_plot_color_put_color(i, j, getcolor(i, g_y_dots-1-j));
+			int temp = get_color(i, j);
+			g_plot_color_put_color(i, j, get_color(i, g_y_dots-1-j));
 			g_plot_color_put_color(i, g_y_dots-1-j, temp);
 		}
 	}
@@ -2791,8 +2791,8 @@ static void reverse_x_y_axes()
 		}
 		for (int j = 0; j < g_y_dots; j++)
 		{
-			int temp = getcolor(i, j);
-			g_plot_color_put_color(i, j, getcolor(g_x_dots-1-i, g_y_dots-1-j));
+			int temp = get_color(i, j);
+			g_plot_color_put_color(i, j, get_color(g_x_dots-1-i, g_y_dots-1-j));
 			g_plot_color_put_color(g_x_dots-1-i, g_y_dots-1-j, temp);
 		}
 	}

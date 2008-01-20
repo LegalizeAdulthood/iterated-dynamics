@@ -116,8 +116,8 @@ void find_special_colors()						{ }
 void FPUsincos(double *, double *, double *)	{ }
 bool fractal_type_julia_or_inverse(int)			{ return false; }
 bool fractal_type_none(int)						{ return false; }
-int getakeynohelp()								{ return 0; }
-int getcolor(int, int)							{ return 0; }
+int get_key_no_help()							{ return 0; }
+int get_color(int, int)							{ return 0; }
 int get_help_mode()								{ return 0; }
 void get_line(int,int,int,unsigned char *)		{ }
 int get_resume(int, ...)						{ return 0; }
@@ -137,7 +137,7 @@ void round_float_d(double *)					{ }
 void set_help_mode(int)							{ }
 void set_pixel_calc_functions()					{ }
 void set_text_color(int index, int value)		{ }
-void spindac(int, int)							{ }
+void spin_dac(int, int)							{ }
 int start_resume()								{ return 0; }
 int tab_display()								{ return 0; }
 void test_end()									{ }

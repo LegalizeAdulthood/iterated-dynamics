@@ -137,7 +137,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			{
 				step = oldstep;
 			}
-			spindac(direction, step);
+			spin_dac(direction, step);
 		}
 		if (step >= rotate_size)
 		{
@@ -310,7 +310,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 				incr = 999;
 			}
 			fkey = 0;
-			spindac(direction, 1);
+			spin_dac(direction, 1);
 			if (! s_paused)
 			{
 				pause_rotate();				/* pause */
@@ -419,7 +419,7 @@ static void pause_rotate()               /* pause-the-rotate routine */
 	BYTE olddac2 = g_.DAC().Blue(0);
 	g_.SetDACSleepCount(256);
 	g_.DAC().Set(0, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4, 3*COLOR_CHANNEL_MAX/4);
-	spindac(0, 1);                     /* show white border */
+	load_dac();                     /* show white border */
 	if (driver_diskp())
 	{
 		disk_video_status(100, " Paused in \"color cycling\" mode ");
@@ -431,7 +431,7 @@ static void pause_rotate()               /* pause-the-rotate routine */
 		disk_video_status(0, "");
 	}
 	g_.DAC().Set(0, olddac0, olddac1, olddac2);
-	spindac(0, 1);                     /* show black border */
+	load_dac();                     /* show black border */
 	g_.SetDACSleepCount(olddaccount);
 	s_paused = true;
 }
