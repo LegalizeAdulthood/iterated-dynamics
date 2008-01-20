@@ -1,5 +1,7 @@
 #pragma once
 
+#include "drivers.h"
+
 class ChooserAPI
 {
 public:
@@ -7,15 +9,8 @@ public:
 
 protected:
 	virtual void help_title() = 0;
-	virtual void driver_set_attr(int row, int col, int attr, int count) = 0;
-	virtual void driver_put_string(int row, int col, int attr, const char *msg) = 0;
-	virtual void driver_hide_text_cursor() = 0;
-	virtual void driver_buzzer(int kind) = 0;
-	virtual int driver_key_pressed() = 0;
-	virtual int driver_get_key() = 0;
 	virtual int getakeynohelp() = 0;
 	virtual void blank_rows(int row, int rows, int attr) = 0;
-	virtual void driver_unstack_screen() = 0;
 };
 
 class AbstractFullScreenChooser : public ChooserAPI
@@ -25,10 +20,27 @@ public:
 		int numChoices, char **choices, const int *attributes,
 		int boxWidth, int boxDepth, int columnWidth, int current,
 		void (*formatItem)(int, char*), char *speedString,
-		int (*speedPrompt)(int, int, int, char *, int), int (*checkKey)(int, int));
+		int (*speedPrompt)(int, int, int, char *, int), int (*checkKey)(int, int),
+		AbstractDriver *driver);
 	virtual ~AbstractFullScreenChooser() {}
 
 	int Execute();
+
+protected:
+	void driver_set_attr(int row, int col, int attr, int count)
+	{ _driver->set_attr(row, col, attr, count); }
+	virtual void driver_put_string(int row, int col, int attr, const char *msg)
+	{ _driver->put_string(row, col, attr, msg); }
+	virtual void driver_hide_text_cursor()
+	{ _driver->hide_text_cursor(); }
+	virtual void driver_buzzer(int kind)
+	{ _driver->buzzer(kind); }
+	virtual int driver_key_pressed()
+	{ return _driver->key_pressed(); }
+	virtual int driver_get_key()
+	{ return _driver->get_key(); }
+	virtual void driver_unstack_screen()
+	{ _driver->unstack_screen(); }
 
 private:
 	bool InitializeCurrent();
@@ -60,6 +72,7 @@ private:
 	int (*_checkKeystroke)(int, int);
 	int _titleLines;
 	int _titleWidth;
+	AbstractDriver *_driver;
 };
 
 extern int full_screen_choice(int options,

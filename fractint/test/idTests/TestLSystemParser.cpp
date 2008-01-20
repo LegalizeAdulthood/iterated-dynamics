@@ -7,7 +7,7 @@ class TestData
 	static const std::string s_l_system_file;
 };
 
-TEST(Empty, LSystemParser)
+TEST(LSystemParser, Empty)
 {
 	const std::string empty = "Empty {\n }\n";
 	LSystemParser parser = LSystemParser::StackInstance();
@@ -16,7 +16,7 @@ TEST(Empty, LSystemParser)
 	CHECK_EQUAL("Empty", parser.Entry(0)->Id());
 }
 
-TEST(Comments1, LSystemParser)
+TEST(LSystemParser, Comments1)
 {
 	const std::string comments = "Comments1 { ; Comment on head\n"
 		"}\n";
@@ -28,7 +28,7 @@ TEST(Comments1, LSystemParser)
 }
 
 #if 0
-TEST(Angle, LSystemParser)
+TEST(LSystemParser, Angle)
 {
 	const std::string angle = "Angle {\n"
 		"  angle 15\n"
@@ -42,7 +42,7 @@ TEST(Angle, LSystemParser)
 	LONGS_EQUAL(15, entry->Angle());
 }
 
-TEST(Axiom, LSystemParser)
+TEST(LSystemParser, Axiom)
 {
 	const std::string axiom = "Axiom {\naxiom F-F\n;\n}\n";
 	LSystemParser parser = LSystemParser::StackInstance();
@@ -53,7 +53,7 @@ TEST(Axiom, LSystemParser)
 	CHECK_EQUAL("F-F", entry->Axiom());
 }
 
-TEST(Production, LSystemParser)
+TEST(LSystemParser, Production)
 {
 	const std::string production = "Production {\nF=FF\n}\n";
 	LSystemParser parser = LSystemParser::StackInstance();
@@ -67,7 +67,7 @@ TEST(Production, LSystemParser)
 	CHECK_EQUAL("FF", rule.Production());
 }
 
-TEST(Production2, LSystemParser)
+TEST(LSystemParser, Production2)
 {
 	const std::string production2 = "Production2 {\n"
 		"A = BC\n"
@@ -97,7 +97,7 @@ TEST(Production2, LSystemParser)
 	}
 }
 
-TEST(Koch1, LSystemParser)
+TEST(LSystemParser, Koch1)
 {
 	const std::string koch1 =
 		"Koch1 { ; Adrian Mariano\n"
@@ -121,7 +121,7 @@ TEST(Koch1, LSystemParser)
 	CHECK_EQUAL("F+F--F+F", rule.Production());
 }
 
-TEST(Snowflake2, LSystemParser)
+TEST(LSystemParser, Snowflake2)
 {
 	const std::string snowflake2 =
 		"Snowflake2 { ; Adrian Mariano\n"

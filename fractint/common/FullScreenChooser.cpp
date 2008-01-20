@@ -28,12 +28,13 @@ public:
 			int numChoices, char **choices, const int *attributes,
 			int boxWidth, int boxDepth, int columnWidth, int current,
 			void (*formatItem)(int, char*), char *speedString,
-			int (*speedPrompt)(int, int, int, char *, int), int (*checkKeystroke)(int, int))
+			int (*speedPrompt)(int, int, int, char *, int), int (*checkKeystroke)(int, int),
+			AbstractDriver *driver = DriverManager::current())
 		: AbstractFullScreenChooser(options, heading, heading2, instructions,
 			numChoices, choices, attributes,
 			boxWidth, boxDepth, columnWidth, current,
 			formatItem, speedString,
-			speedPrompt, checkKeystroke)
+			speedPrompt, checkKeystroke, driver)
 	{
 	}
 	virtual ~ProductionFullScreenChooser()
@@ -43,24 +44,10 @@ public:
 protected:
 	virtual void help_title()
 	{ ::help_title(); }
-	virtual void driver_set_attr(int row, int col, int attr, int count)
-	{ ::driver_set_attr(row, col, attr, count); }
-	virtual void driver_put_string(int row, int col, int attr, const char *msg)
-	{ ::driver_put_string(row, col, attr, msg); }
-	virtual void driver_hide_text_cursor()
-	{ ::driver_hide_text_cursor(); }
-	virtual void driver_buzzer(int kind)
-	{ ::driver_buzzer(kind); }
-	virtual int driver_key_pressed()
-	{ return ::driver_key_pressed(); }
-	virtual int driver_get_key()
-	{ return ::driver_get_key(); }
 	virtual int getakeynohelp()
 	{ return ::getakeynohelp(); }
 	virtual void blank_rows(int row, int rows, int attr)
 	{ ::blank_rows(row, rows, attr); }
-	virtual void driver_unstack_screen()
-	{ ::driver_unstack_screen(); }
 };
 
 AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
@@ -68,7 +55,8 @@ AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
 		int numChoices, char **choices, const int *attributes,
 		int boxWidth, int boxDepth, int columnWidth, int current,
 		void (*formatItem)(int, char*), char *speedString,
-		int (*speedPrompt)(int, int, int, char *, int), int (*checkKeystroke)(int, int))
+		int (*speedPrompt)(int, int, int, char *, int), int (*checkKeystroke)(int, int),
+		AbstractDriver *driver)
 	: _options(options),
 	_heading(heading),
 	_heading2(heading2),
@@ -83,7 +71,8 @@ AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
 	_formatItem(formatItem),
 	_speedString(speedString),
 	_speedPrompt(speedPrompt),
-	_checkKeystroke(checkKeystroke)
+	_checkKeystroke(checkKeystroke),
+	_driver(driver)
 {
 }
 

@@ -32,7 +32,7 @@ protected:
 	Test *next_;
 };
 
-#define TEST(testName, testGroup)								\
+#define TEST(testGroup, testName)								\
 	class testGroup##testName##Test : public Test				\
 	{															\
 	public:														\

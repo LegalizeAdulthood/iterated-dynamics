@@ -22,7 +22,7 @@ extern AbstractDriver *gdi_driver;
 extern AbstractDriver *disk_driver;
 #endif
 
-static AbstractDriver *s_current = 0;
+AbstractDriver *DriverManager::s_current = 0;
 
 int DriverManager::s_num_drivers = 0;
 AbstractDriver *DriverManager::s_drivers[DriverManager::MAX_DRIVERS] = { 0 };
@@ -31,8 +31,7 @@ int DriverManager::load(AbstractDriver *drv, int &argc, char **argv)
 {
 	if (drv)
 	{
-		const int num = drv->initialize(argc, argv);
-		if (num > 0)
+		if (drv->initialize(argc, argv))
 		{
 			if (! s_current)
 			{
@@ -44,6 +43,26 @@ int DriverManager::load(AbstractDriver *drv, int &argc, char **argv)
 	}
 
 	return 0;
+}
+
+void DriverManager::unload(AbstractDriver *drv)
+{
+	for (int i = 0; i < s_num_drivers; i++)
+	{
+		if (drv == s_drivers[i])
+		{
+			for (int j = i; j < s_num_drivers-1; j++)
+			{
+				s_drivers[j] = s_drivers[j+1];
+			}
+			s_drivers[s_num_drivers-1] = 0;
+			s_num_drivers--;
+			if (s_current == drv)
+			{
+				s_current = 0;
+			}
+		}
+	}
 }
 
 /*------------------------------------------------------------
@@ -126,284 +145,284 @@ void driver_change_video_mode(const VIDEOINFO &mode)
 
 void driver_set_video_mode(const VIDEOINFO &mode)
 {
-	s_current->set_video_mode(mode);
+	DriverManager::current()->set_video_mode(mode);
 }
 
 const char *driver_name()
 {
-	return s_current->name();
+	return DriverManager::current()->name();
 }
 
 const char *driver_description()
 {
-	return s_current->description();
+	return DriverManager::current()->description();
 }
 
 void driver_terminate()
 {
-	s_current->terminate();
+	DriverManager::current()->terminate();
 }
 
 void driver_schedule_alarm(int soon)
 {
-	s_current->schedule_alarm(soon);
+	DriverManager::current()->schedule_alarm(soon);
 }
 
 void driver_window()
 {
-	s_current->window();
+	DriverManager::current()->window();
 }
 
 int driver_resize()
 {
-	return s_current->resize();
+	return DriverManager::current()->resize();
 }
 
 void driver_redraw()
 {
-	s_current->redraw();
+	DriverManager::current()->redraw();
 }
 
 int driver_read_palette()
 {
-	return s_current->read_palette();
+	return DriverManager::current()->read_palette();
 }
 
 int driver_write_palette()
 {
-	return s_current->write_palette();
+	return DriverManager::current()->write_palette();
 }
 
 int driver_read_pixel(int x, int y)
 {
-	return s_current->read_pixel(x, y);
+	return DriverManager::current()->read_pixel(x, y);
 }
 
 void driver_write_pixel(int x, int y, int color)
 {
-	s_current->write_pixel(x, y, color);
+	DriverManager::current()->write_pixel(x, y, color);
 }
 
 void driver_read_span(int y, int x, int lastx, BYTE *pixels)
 {
-	s_current->read_span(y, x, lastx, pixels);
+	DriverManager::current()->read_span(y, x, lastx, pixels);
 }
 
 void driver_write_span(int y, int x, int lastx, const BYTE *pixels)
 {
-	s_current->write_span(y, x, lastx, pixels);
+	DriverManager::current()->write_span(y, x, lastx, pixels);
 }
 
 void driver_set_line_mode(int mode)
 {
-	s_current->set_line_mode(mode);
+	DriverManager::current()->set_line_mode(mode);
 }
 
 void driver_draw_line(int x1, int y1, int x2, int y2, int color)
 {
-	s_current->draw_line(x1, y1, x2, y2, color);
+	DriverManager::current()->draw_line(x1, y1, x2, y2, color);
 }
 
 int driver_get_key()
 {
-	return s_current->get_key();
+	return DriverManager::current()->get_key();
 }
 
 int driver_key_cursor(int row, int col)
 {
-	return s_current->key_cursor(row, col);
+	return DriverManager::current()->key_cursor(row, col);
 }
 
 int driver_key_pressed()
 {
-	return s_current->key_pressed();
+	return DriverManager::current()->key_pressed();
 }
 
 int driver_wait_key_pressed(int timeout)
 {
-	return s_current->wait_key_pressed(timeout);
+	return DriverManager::current()->wait_key_pressed(timeout);
 }
 
 void driver_shell()
 {
-	s_current->shell();
+	DriverManager::current()->shell();
 }
 
 void driver_put_string(int row, int col, int attr, const std::string &text)
 {
-	s_current->put_string(row, col, attr, text.c_str());
+	DriverManager::current()->put_string(row, col, attr, text.c_str());
 }
 
 void driver_put_string(int row, int col, int attr, const char *msg)
 {
-	s_current->put_string(row, col, attr, msg);
+	DriverManager::current()->put_string(row, col, attr, msg);
 }
 
 void driver_set_for_text()
 {
-	s_current->set_for_text();
+	DriverManager::current()->set_for_text();
 }
 
 void driver_set_for_graphics()
 {
-	s_current->set_for_graphics();
+	DriverManager::current()->set_for_graphics();
 }
 
 void driver_set_clear()
 {
-	s_current->set_clear();
+	DriverManager::current()->set_clear();
 }
 
 void driver_move_cursor(int row, int col)
 {
-	s_current->move_cursor(row, col);
+	DriverManager::current()->move_cursor(row, col);
 }
 
 void driver_hide_text_cursor()
 {
-	s_current->hide_text_cursor();
+	DriverManager::current()->hide_text_cursor();
 }
 
 void driver_set_attr(int row, int col, int attr, int count)
 {
-	s_current->set_attr(row, col, attr, count);
+	DriverManager::current()->set_attr(row, col, attr, count);
 }
 
 void driver_scroll_up(int top, int bot)
 {
-	s_current->scroll_up(top, bot);
+	DriverManager::current()->scroll_up(top, bot);
 }
 
 void driver_stack_screen()
 {
-	s_current->stack_screen();
+	DriverManager::current()->stack_screen();
 }
 
 void driver_unstack_screen()
 {
-	s_current->unstack_screen();
+	DriverManager::current()->unstack_screen();
 }
 
 void driver_discard_screen()
 {
-	s_current->discard_screen();
+	DriverManager::current()->discard_screen();
 }
 
 int driver_init_fm()
 {
-	return s_current->init_fm();
+	return DriverManager::current()->init_fm();
 }
 
 void driver_buzzer(int kind)
 {
-	s_current->buzzer(kind);
+	DriverManager::current()->buzzer(kind);
 }
 
 int driver_sound_on(int freq)
 {
-	return s_current->sound_on(freq);
+	return DriverManager::current()->sound_on(freq);
 }
 
 void driver_sound_off()
 {
-	s_current->sound_off();
+	DriverManager::current()->sound_off();
 }
 
 void driver_mute()
 {
-	s_current->mute();
+	DriverManager::current()->mute();
 }
 
 int driver_diskp()
 {
-	return s_current->diskp();
+	return DriverManager::current()->diskp();
 }
 
 int driver_get_char_attr()
 {
-	return s_current->get_char_attr();
+	return DriverManager::current()->get_char_attr();
 }
 
 void driver_put_char_attr(int char_attr)
 {
-	s_current->put_char_attr(char_attr);
+	DriverManager::current()->put_char_attr(char_attr);
 }
 
 int driver_get_char_attr_rowcol(int row, int col)
 {
-	return s_current->get_char_attr_rowcol(row, col);
+	return DriverManager::current()->get_char_attr_rowcol(row, col);
 }
 
 void driver_put_char_attr_rowcol(int row, int col, int char_attr)
 {
-	s_current->put_char_attr_rowcol(row, col, char_attr);
+	DriverManager::current()->put_char_attr_rowcol(row, col, char_attr);
 }
 
 int driver_validate_mode(const VIDEOINFO &mode)
 {
-	return s_current->validate_mode(mode);
+	return DriverManager::current()->validate_mode(mode);
 }
 
 void driver_unget_key(int key)
 {
-	s_current->unget_key(key);
+	DriverManager::current()->unget_key(key);
 }
 
 void driver_delay(int ms)
 {
-	s_current->delay(ms);
+	DriverManager::current()->delay(ms);
 }
 
 void driver_get_truecolor(int x, int y, int &r, int &g, int &b, int &a)
 {
-	s_current->get_truecolor(x, y, r, g, b, a);
+	DriverManager::current()->get_truecolor(x, y, r, g, b, a);
 }
 
 void driver_put_truecolor(int x, int y, int r, int g, int b, int a)
 {
-	s_current->put_truecolor(x, y, r, g, b, a);
+	DriverManager::current()->put_truecolor(x, y, r, g, b, a);
 }
 
 void driver_display_string(int x, int y, int fg, int bg, const std::string &text)
 {
-	s_current->display_string(x, y, fg, bg, text.c_str());
+	DriverManager::current()->display_string(x, y, fg, bg, text.c_str());
 }
 void driver_display_string(int x, int y, int fg, int bg, const char *text)
 {
-	s_current->display_string(x, y, fg, bg, text);
+	DriverManager::current()->display_string(x, y, fg, bg, text);
 }
 
 void driver_save_graphics()
 {
-	s_current->save_graphics();
+	DriverManager::current()->save_graphics();
 }
 
 void driver_restore_graphics()
 {
-	s_current->restore_graphics();
+	DriverManager::current()->restore_graphics();
 }
 
 void driver_get_max_screen(int &x_max, int &y_max)
 {
-	s_current->get_max_screen(x_max, y_max);
+	DriverManager::current()->get_max_screen(x_max, y_max);
 }
 
 void driver_set_keyboard_timeout(int ms)
 {
-	s_current->set_keyboard_timeout(ms);
+	DriverManager::current()->set_keyboard_timeout(ms);
 }
 
 void driver_flush()
 {
-	s_current->flush();
+	DriverManager::current()->flush();
 }
 
 void driver_set_mouse_mode(int new_mode)
 {
-	s_current->set_mouse_mode(new_mode);
+	DriverManager::current()->set_mouse_mode(new_mode);
 }
 
 int driver_get_mouse_mode()
 {
-	return s_current->get_mouse_mode();
+	return DriverManager::current()->get_mouse_mode();
 }

@@ -101,13 +101,15 @@ public:
 	static void close_drivers();
 	static AbstractDriver *find_by_name(const char *name);
 	static void change_video_mode(const VIDEOINFO &mode);
+	static AbstractDriver *current()		{ return s_current; }
+	static int load(AbstractDriver *driver, int &argc, char **argv);
+	static void unload(AbstractDriver *driver);
 
 private:
-	static int load(AbstractDriver *driver, int &argc, char **argv);
-
 	static const int MAX_DRIVERS = 10;
 	static int s_num_drivers;
 	static AbstractDriver *s_drivers[MAX_DRIVERS];
+	static AbstractDriver *s_current;
 };
 
 /* Define the drivers to be included in the compilation:

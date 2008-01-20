@@ -187,7 +187,7 @@ static const std::string s_ifs_file =
 	"\n";
 
 //void foo()
-TEST(ParseBinary, IFSParser)
+TEST(IFSParser, ParseBinary)
 {
 	IFSParser parser = IFSParser::StackInstance();
 
@@ -216,7 +216,7 @@ TEST(ParseBinary, IFSParser)
 	}
 }
 
-TEST(ParseBad, IFSParser)
+TEST(IFSParser, ParseBad)
 {
 	IFSParser parser = IFSParser::StackInstance();
 
@@ -224,7 +224,7 @@ TEST(ParseBad, IFSParser)
 	LONGS_EQUAL(0, parser.Count());
 }
 
-TEST(ParseFile, IFSParser)
+TEST(IFSParser, ParseFile)
 {
 	IFSParser parser = IFSParser::StackInstance();
 
@@ -234,7 +234,7 @@ TEST(ParseFile, IFSParser)
 	CHECK_EQUAL("fractint", parser.Entry(parser.Count()-1)->Id());
 }
 
-TEST(Parse3D, IFSParser)
+TEST(IFSParser, Parse3D)
 {
 	IFSParser parser = IFSParser::StackInstance();
 
