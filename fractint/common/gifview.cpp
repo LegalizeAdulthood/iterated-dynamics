@@ -82,7 +82,6 @@ int gifview()
 	unsigned top;
 	unsigned left;
 	unsigned width;
-	unsigned finished;
 	char temp1[FILE_MAX_DIR];
 	BYTE byte_buf[257]; /* for decoder */
 	int status;
@@ -184,7 +183,8 @@ int gifview()
 	g_.SetColorState(COLORSTATE_UNKNOWN); /* colors aren't default and not a known .map file */
 
 	/* don't read if glasses */
-	if (g_display_3d && g_.MapSet() && g_3d_state.glasses_type() != STEREO_ALTERNATE && g_3d_state.glasses_type() != STEREO_SUPERIMPOSE)
+	if (g_display_3d && g_.MapSet()
+		&& !(g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE))
 	{
 		validate_luts(g_.MapName());  /* read the palette file */
 		load_dac();
@@ -200,7 +200,7 @@ int gifview()
 	g_dont_read_color = false;
 
 	/* Now display one or more GIF objects */
-	finished = 0;
+	bool finished = false;
 	while (!finished)
 	{
 		switch (get_byte())
@@ -208,7 +208,7 @@ int gifview()
 		case ';':
 			/* End of the GIF dataset */
 
-			finished = 1;
+			finished = true;
 			status = 0;
 			break;
 
@@ -239,7 +239,7 @@ int gifview()
 			}
 			if (status < 0)
 			{
-				finished = 1;
+				finished = true;
 				break;
 			}
 
@@ -323,7 +323,7 @@ int gifview()
 				if (driver_key_pressed() != 0)
 				{
 					g_calculation_status = CALCSTAT_NON_RESUMABLE; /* interrupted, not resumable */
-					finished = 1;
+					finished = true;
 				}
 				else
 				{
@@ -334,12 +334,12 @@ int gifview()
 			if (get_byte() != 0)
 			{
 				status = -1;
-				finished = 1;
+				finished = true;
 			}
 			break;
 		default:
 			status = -1;
-			finished = 1;
+			finished = true;
 			break;
 		}
 	}

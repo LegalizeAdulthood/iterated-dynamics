@@ -617,6 +617,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\resume.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\soi.cpp"
 					>
 					<FileConfiguration
@@ -1548,6 +1552,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\QuaternionEngine.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\resume.h"
 					>
 				</File>
 				<File

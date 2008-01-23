@@ -3,11 +3,6 @@
 
 extern void calculate_fractal_initialize();
 extern void adjust_corner();
-extern int put_resume(int, ...);
-extern int get_resume(int, ...);
-extern int alloc_resume(int, int);
-extern int start_resume();
-extern void end_resume();
 extern void sleep_ms(long);
 extern void reset_clock();
 extern void plot_orbit_i(long, long, int);

@@ -17,6 +17,7 @@
 #include "framain2.h"
 #include "miscfrac.h"
 #include "realdos.h"
+#include "resume.h"
 #include "zoom.h"
 
 #include "EscapeTime.h"

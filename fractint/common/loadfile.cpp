@@ -13,10 +13,12 @@
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "EscapeTime.h"
 #include "evolve.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "FiniteAttractor.h"
+#include "Formula.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "loadfdos.h"
@@ -26,12 +28,10 @@
 #include "prompts1.h"
 #include "prompts2.h"
 #include "realdos.h"
-#include "zoom.h"
-
-#include "EscapeTime.h"
-#include "Formula.h"
+#include "resume.h"
 #include "ThreeDimensionalState.h"
 #include "ViewWindow.h"
+#include "zoom.h"
 
 #define BLOCKTYPE_MAIN_INFO		1
 #define BLOCKTYPE_RESUME_INFO	2

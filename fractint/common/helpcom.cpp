@@ -206,11 +206,11 @@ int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
 
 int find_line_width(int mode, char *curr, unsigned len)
 {
-	int size   = 0,
-		width  = 0,
-		lwidth = 0,
-		done   = 0,
-		tok;
+	int size = 0;
+	int width = 0;
+	int lwidth = 0;
+	bool done = false;
+	int tok;
 
 	do
 	{
@@ -222,7 +222,7 @@ int find_line_width(int mode, char *curr, unsigned len)
 		case TOK_PARA:
 		case TOK_NL:
 		case TOK_FF:
-			done = 1;
+			done = true;
 			break;
 
 		case TOK_XONLINE:

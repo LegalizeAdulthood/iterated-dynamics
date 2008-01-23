@@ -5,14 +5,15 @@
 #include "id.h"
 #include "externs.h"
 #include "prototyp.h"
-#include "drivers.h"
 
 #include "Diffusion.h"
+#include "drivers.h"
 #include "fpu.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "MathUtil.h"
 #include "miscres.h"
+#include "resume.h"
 
 /* for diffusion type */
 #define DIFFUSION_CENTRAL	0
@@ -109,13 +110,17 @@ int diffusion()
 		start_resume();
 		if (mode != DIFFUSION_SQUARE)
 		{
-			get_resume(sizeof(x_max), &x_max, sizeof(x_min), &x_min,
-				sizeof(y_max), &y_max, sizeof(y_min), &y_min, 0);
+			get_resume(sizeof(x_max), &x_max);
+			get_resume(sizeof(x_min), &x_min);
+			get_resume(sizeof(y_max), &y_max);
+			get_resume(sizeof(y_min), &y_min);
 		}
 		else
 		{
-			get_resume(sizeof(x_max), &x_max, sizeof(x_min), &x_min,
-				sizeof(y_max), &y_max, sizeof(radius), &radius, 0);
+			get_resume(sizeof(x_max), &x_max);
+			get_resume(sizeof(x_min), &x_min);
+			get_resume(sizeof(y_max), &y_max);
+			get_resume(sizeof(radius), &radius);
 		}
 		end_resume();
 	}
@@ -245,13 +250,17 @@ int diffusion()
 					alloc_resume(20, 1);
 					if (mode != DIFFUSION_SQUARE)
 					{
-						put_resume(sizeof(x_max), &x_max, sizeof(x_min), &x_min,
-							sizeof(y_max), &y_max, sizeof(y_min), &y_min, 0);
+						put_resume(sizeof(x_max), &x_max);
+						put_resume(sizeof(x_min), &x_min);
+						put_resume(sizeof(y_max), &y_max);
+						put_resume(sizeof(y_min), &y_min);
 					}
 					else
 					{
-						put_resume(sizeof(x_max), &x_max, sizeof(x_min), &x_min,
-							sizeof(y_max), &y_max, sizeof(radius), &radius, 0);
+						put_resume(sizeof(x_max), &x_max);
+						put_resume(sizeof(x_min), &x_min);
+						put_resume(sizeof(y_max), &y_max);
+						put_resume(sizeof(radius), &radius);
 					}
 					s_keyboard_check--;
 					return 1;
