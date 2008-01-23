@@ -13,10 +13,10 @@
 #include "big.h"
 #include "calcfrac.h"
 #include "diskvid.h"
-#include "fracsubr.h"
-
 #include "EscapeTime.h"
+#include "fracsubr.h"
 #include "MathUtil.h"
+#include "resume.h"
 #include "WorkList.h"
 
 WorkList g_WorkList;
@@ -98,14 +98,16 @@ void WorkList::get_top_item()
 
 void WorkList::get_resume()
 {
-	::get_resume(sizeof(m_num_items), &m_num_items, sizeof(m_items), m_items, 0);
+	::get_resume(sizeof(m_num_items), &m_num_items);
+	::get_resume(sizeof(m_items), m_items);
 }
 
 void WorkList::put_resume()
 {
 	/* interrupted, resumable */
 	alloc_resume(sizeof(m_items) + 20, 2);
-	::put_resume(sizeof(m_num_items), &m_num_items, sizeof(m_items), m_items, 0);
+	::put_resume(sizeof(m_num_items), &m_num_items);
+	::put_resume(sizeof(m_items), m_items);
 }
 
 int WorkList::get_lowest_pass() const

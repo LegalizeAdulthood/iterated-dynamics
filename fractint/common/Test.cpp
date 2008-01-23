@@ -5,10 +5,11 @@
 #include "id.h"
 #include "externs.h"
 #include "prototyp.h"
-#include "drivers.h"
 
 #include "calcfrac.h"
+#include "drivers.h"
 #include "fracsubr.h"
+#include "resume.h"
 #include "Test.h"
 #include "testpt.h"
 
@@ -24,7 +25,8 @@ int test()
 	if (g_resuming)
 	{
 		start_resume();
-		get_resume(sizeof(startrow), &startrow, sizeof(startpass), &startpass, 0);
+		get_resume(sizeof(startrow), &startrow);
+		get_resume(sizeof(startpass), &startpass);
 		end_resume();
 	}
 	if (test_start()) /* assume it was stand-alone, doesn't want passes logic */
@@ -45,7 +47,8 @@ int test()
 				{
 					test_end();
 					alloc_resume(20, 1);
-					put_resume(sizeof(g_row), &g_row, sizeof(g_passes), &g_passes, 0);
+					put_resume(sizeof(g_row), &g_row);
+					put_resume(sizeof(g_passes), &g_passes);
 					return -1;
 				}
 				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, g_max_iteration, g_inside);

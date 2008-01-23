@@ -120,7 +120,7 @@ int get_key_no_help()							{ return 0; }
 int get_color(int, int)							{ return 0; }
 int get_help_mode()								{ return 0; }
 void get_line(int,int,int,unsigned char *)		{ }
-int get_resume(int, ...)						{ return 0; }
+int get_resume(int, void *)						{ return 0; }
 int get_text_color(int index)					{ return 0; }
 void goodbye()									{ }
 void help(enum HelpAction)						{ }
@@ -132,7 +132,7 @@ void plot_color_none(int, int, int)				{ }
 void plot_orbit(double, double, int)			{ }
 void plot_orbit_i(long, long, int)				{ }
 void put_line(int,int,int,unsigned char *)		{ }
-int put_resume(int, ...)						{ return 0; }
+int put_resume(int, void const *)				{ return 0; }
 void round_float_d(double *)					{ }
 void set_help_mode(int)							{ }
 void set_pixel_calc_functions()					{ }

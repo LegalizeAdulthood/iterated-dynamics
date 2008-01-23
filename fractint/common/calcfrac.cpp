@@ -43,6 +43,7 @@
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "resume.h"
 #include "soi.h"
 
 #include "BoundaryTrace.h"
@@ -120,8 +121,6 @@ SymmetryType g_symmetry;
 bool g_reset_periodicity; /* nonzero if escape time pixel rtn to reset */
 int g_input_counter;
 int g_max_input_counter;    /* avoids checking keyboard too often */
-char *g_resume_info = 0;                    /* resume info if allocated */
-bool g_resuming;                           /* true if resuming after interrupt */
 /* variables which must be visible for tab_display */
 int g_got_status; /* -1 if not, 0 for 1or2pass, 1 for ssg, */
 			  /* 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan */

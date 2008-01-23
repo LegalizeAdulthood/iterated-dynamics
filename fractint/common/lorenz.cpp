@@ -18,6 +18,7 @@
 #include "3d.h"
 #include "drivers.h"
 #include "encoder.h"
+#include "EscapeTime.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "jiim.h"
@@ -26,8 +27,7 @@
 #include "miscres.h"
 #include "plot3d.h"
 #include "realdos.h"
-
-#include "EscapeTime.h"
+#include "resume.h"
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
 #include "ViewWindow.h"
@@ -1496,11 +1496,16 @@ int orbit_2d_fp()
 	if (g_resuming)
 	{
 		start_resume();
-		get_resume(sizeof(count), &count, sizeof(color), &color,
-			sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
-			sizeof(s_orbit), &s_orbit, sizeof(g_color_iter), &g_color_iter,
-			0);
+		get_resume(sizeof(count), &count);
+		get_resume(sizeof(color), &color);
+		get_resume(sizeof(oldrow), &oldrow);
+		get_resume(sizeof(oldcol), &oldcol);
+		get_resume(sizeof(x), &x);
+		get_resume(sizeof(y), &y);
+		get_resume(sizeof(z), &z);
+		get_resume(sizeof(s_t), &s_t);
+		get_resume(sizeof(s_orbit), &s_orbit);
+		get_resume(sizeof(g_color_iter), &g_color_iter);
 		end_resume();
 	}
 
@@ -1510,11 +1515,16 @@ int orbit_2d_fp()
 		{
 			driver_mute();
 			alloc_resume(100, 1);
-			put_resume(sizeof(count), &count, sizeof(color), &color,
-				sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
-				sizeof(s_orbit), &s_orbit, sizeof(g_color_iter), &g_color_iter,
-				0);
+			put_resume(sizeof(count), &count);
+			put_resume(sizeof(color), &color);
+			put_resume(sizeof(oldrow), &oldrow);
+			put_resume(sizeof(oldcol), &oldcol);
+			put_resume(sizeof(x), &x);
+			put_resume(sizeof(y), &y);
+			put_resume(sizeof(z), &z);
+			put_resume(sizeof(s_t), &s_t);
+			put_resume(sizeof(s_orbit), &s_orbit);
+			put_resume(sizeof(g_color_iter), &g_color_iter);
 			ret = -1;
 			break;
 		}
@@ -1622,11 +1632,16 @@ int orbit_2d()
 	if (g_resuming)
 	{
 		start_resume();
-		get_resume(sizeof(count), &count, sizeof(color), &color,
-			sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-			sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
-			sizeof(s_l_orbit), &s_l_orbit, sizeof(g_color_iter), &g_color_iter,
-			0);
+		get_resume(sizeof(count), &count);
+		get_resume(sizeof(color), &color);
+		get_resume(sizeof(oldrow), &oldrow);
+		get_resume(sizeof(oldcol), &oldcol);
+		get_resume(sizeof(x), &x);
+		get_resume(sizeof(y), &y);
+		get_resume(sizeof(z), &z);
+		get_resume(sizeof(s_t), &s_t);
+		get_resume(sizeof(s_l_orbit), &s_l_orbit);
+		get_resume(sizeof(g_color_iter), &g_color_iter);
 		end_resume();
 	}
 
@@ -1640,11 +1655,16 @@ int orbit_2d()
 		{
 			driver_mute();
 			alloc_resume(100, 1);
-			put_resume(sizeof(count), &count, sizeof(color), &color,
-				sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-				sizeof(x), &x, sizeof(y), &y, sizeof(z), &z, sizeof(s_t), &s_t,
-				sizeof(s_l_orbit), &s_l_orbit, sizeof(g_color_iter), &g_color_iter,
-				0);
+			put_resume(sizeof(count), &count);
+			put_resume(sizeof(color), &color);
+			put_resume(sizeof(oldrow), &oldrow);
+			put_resume(sizeof(oldcol), &oldcol);
+			put_resume(sizeof(x), &x);
+			put_resume(sizeof(y), &y);
+			put_resume(sizeof(z), &z);
+			put_resume(sizeof(s_t), &s_t);
+			put_resume(sizeof(s_l_orbit), &s_l_orbit);
+			put_resume(sizeof(g_color_iter), &g_color_iter);
 			ret = -1;
 			break;
 		}
@@ -2042,10 +2062,14 @@ int dynamic_2d_fp()
 	if (g_resuming)
 	{
 		start_resume();
-		get_resume(sizeof(count), &count, sizeof(color), &color,
-					sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-					sizeof(x), &x, sizeof(y), &y, sizeof(xstep), &xstep,
-					sizeof(ystep), &ystep, 0);
+		get_resume(sizeof(count), &count);
+		get_resume(sizeof(color), &color);
+		get_resume(sizeof(oldrow), &oldrow);
+		get_resume(sizeof(oldcol), &oldcol);
+		get_resume(sizeof(x), &x);
+		get_resume(sizeof(y), &y);
+		get_resume(sizeof(xstep), &xstep);
+		get_resume(sizeof(ystep), &ystep);
 		end_resume();
 	}
 
@@ -2056,10 +2080,14 @@ int dynamic_2d_fp()
 		{
 			driver_mute();
 			alloc_resume(100, 1);
-			put_resume(sizeof(count), &count, sizeof(color), &color,
-							sizeof(oldrow), &oldrow, sizeof(oldcol), &oldcol,
-							sizeof(x), &x, sizeof(y), &y, sizeof(xstep), &xstep,
-							sizeof(ystep), &ystep, 0);
+			put_resume(sizeof(count), &count);
+			put_resume(sizeof(color), &color);
+			put_resume(sizeof(oldrow), &oldrow);
+			put_resume(sizeof(oldcol), &oldcol);
+			put_resume(sizeof(x), &x);
+			put_resume(sizeof(y), &y);
+			put_resume(sizeof(xstep), &xstep);
+			put_resume(sizeof(ystep), &ystep);
 			ret = -1;
 			break;
 		}
@@ -2239,14 +2267,14 @@ int plotorbits2dfloat()
 	{
 		driver_mute();
 		alloc_resume(100, 1);
-		put_resume(sizeof(s_o_color), &s_o_color, 0);
+		put_resume(sizeof(s_o_color), &s_o_color);
 		return -1;
 	}
 
 	if (g_resuming)
 	{
 		start_resume();
-		get_resume(sizeof(s_o_color), &s_o_color, 0);
+		get_resume(sizeof(s_o_color), &s_o_color);
 		end_resume();
 	}
 

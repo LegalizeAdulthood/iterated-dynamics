@@ -7,12 +7,13 @@
 #include "id.h"
 #include "externs.h"
 #include "prototyp.h"
-#include "drivers.h"
 
 #include "Cellular.h"
+#include "drivers.h"
 #include "fracsubr.h"
 #include "miscfrac.h"
 #include "realdos.h"
+#include "resume.h"
 
 /* cellular type */
 #define BAD_T         1
@@ -247,7 +248,7 @@ int cellular()
 	if (g_resuming && !g_next_screen_flag && !s_last_screen_flag)
 	{
 		start_resume();
-		get_resume(sizeof(start_row), &start_row, 0);
+		get_resume(sizeof(start_row), &start_row);
 		end_resume();
 		get_line(start_row, 0, g_x_stop, s_cell_array[filled]);
 	}
@@ -409,7 +410,7 @@ contloop:
 		{
 			abort_cellular(CELLULAR_DONE, 0);
 			alloc_resume(10, 1);
-			put_resume(sizeof(g_row), &g_row, 0);
+			put_resume(sizeof(g_row), &g_row);
 			return -1;
 		}
 	}

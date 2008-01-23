@@ -17,19 +17,19 @@
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "EscapeTime.h"
+#include "Formula.h"
 #include "fpu.h"
 #include "fracsubr.h"
 #include "fractals.h"
 #include "framain2.h"
 #include "loadmap.h"
+#include "MathUtil.h"
 #include "miscfrac.h"
 #include "miscres.h"
 #include "realdos.h"
+#include "resume.h"
 #include "testpt.h"
-
-#include "EscapeTime.h"
-#include "MathUtil.h"
-#include "Formula.h"
 
 /* for bifurcation type: */
 #define DEFAULT_FILTER 1000     /* "Beauty of Fractals" recommends using 5000
@@ -109,7 +109,7 @@ int bifurcation()
 	if (g_resuming)
 	{
 		start_resume();
-		get_resume(sizeof(column), &column, 0);
+		get_resume(sizeof(column), &column);
 		end_resume();
 	}
 	array_size =  (g_y_stop + 1)*sizeof(int); /* should be g_y_stop + 1 */
@@ -164,7 +164,7 @@ int bifurcation()
 		{
 			delete[] s_verhulst_array;
 			alloc_resume(10, 1);
-			put_resume(sizeof(column), &column, 0);
+			put_resume(sizeof(column), &column);
 			return -1;
 		}
 
@@ -506,7 +506,7 @@ int popcorn()   /* subset of std engine */
 	if (g_resuming)
 	{
 		start_resume();
-		get_resume(sizeof(start_row), &start_row, 0);
+		get_resume(sizeof(start_row), &start_row);
 		end_resume();
 	}
 	g_input_counter = g_max_input_counter;
@@ -520,7 +520,7 @@ int popcorn()   /* subset of std engine */
 			if (standard_fractal() == -1) /* interrupted */
 			{
 				alloc_resume(10, 1);
-				put_resume(sizeof(g_row), &g_row, 0);
+				put_resume(sizeof(g_row), &g_row);
 				return -1;
 			}
 			g_reset_periodicity = false;
