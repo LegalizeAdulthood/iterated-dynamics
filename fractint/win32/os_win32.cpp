@@ -623,12 +623,12 @@ void ods(const char *file, unsigned int line, const char *format, ...)
 
 void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
-	if (startcol + g_sx_offset >= g_screen_width || row + g_sy_offset >= g_screen_height)
+	if (startcol + g_screen_x_offset >= g_screen_width || row + g_screen_y_offset >= g_screen_height)
 	{
 		return;
 	}
 	_ASSERTE(s_line_read);
-	(*s_line_read)(row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
+	s_line_read(row + g_screen_y_offset, startcol + g_screen_x_offset, stopcol + g_screen_x_offset, pixels);
 }
 
 /*
@@ -642,12 +642,12 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 
 void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 {
-	if (startcol + g_sx_offset >= g_screen_width || row + g_sy_offset > g_screen_height)
+	if (startcol + g_screen_x_offset >= g_screen_width || row + g_screen_y_offset > g_screen_height)
 	{
 		return;
 	}
 	_ASSERTE(s_line_write);
-	(*s_line_write)(row + g_sy_offset, startcol + g_sx_offset, stopcol + g_sx_offset, pixels);
+	s_line_write(row + g_screen_y_offset, startcol + g_screen_x_offset, stopcol + g_screen_x_offset, pixels);
 }
 
 /*
@@ -662,7 +662,7 @@ static void normal_line_write(int y, int x, int lastx, BYTE *pixels)
 	_ASSERTE(s_dot_write);
 	for (i = 0; i < width; i++)
 	{
-		(*s_dot_write)(x + i, y, pixels[i]);
+		s_dot_write(x + i, y, pixels[i]);
 	}
 }
 
@@ -673,7 +673,7 @@ static void normal_line_read(int y, int x, int lastx, BYTE *pixels)
 	_ASSERTE(s_dot_read);
 	for (i = 0; i < width; i++)
 	{
-		pixels[i] = (*s_dot_read)(x + i, y);
+		pixels[i] = s_dot_read(x + i, y);
 	}
 }
 
@@ -740,8 +740,8 @@ void set_null_video()
 int get_color(int xdot, int ydot)
 {
 	int x1, y1;
-	x1 = xdot + g_sx_offset;
-	y1 = ydot + g_sy_offset;
+	x1 = xdot + g_screen_x_offset;
+	y1 = ydot + g_screen_y_offset;
 	_ASSERTE(x1 >= 0 && x1 <= g_screen_width);
 	_ASSERTE(y1 >= 0 && y1 <= g_screen_height);
 	if (x1 < 0 || y1 < 0 || x1 >= g_screen_width || y1 >= g_screen_height)
@@ -749,7 +749,7 @@ int get_color(int xdot, int ydot)
 		return 0;
 	}
 	_ASSERTE(s_dot_read);
-	return (*s_dot_read)(x1, y1);
+	return s_dot_read(x1, y1);
 }
 
 /*
@@ -759,12 +759,12 @@ int get_color(int xdot, int ydot)
 */
 void putcolor_a(int xdot, int ydot, int color)
 {
-	int x1 = xdot + g_sx_offset;
-	int y1 = ydot + g_sy_offset;
+	int x1 = xdot + g_screen_x_offset;
+	int y1 = ydot + g_screen_y_offset;
 	_ASSERTE(x1 >= 0 && x1 <= g_screen_width);
 	_ASSERTE(y1 >= 0 && y1 <= g_screen_height);
 	_ASSERTE(s_dot_write);
-	(*s_dot_write)(x1, y1, color & g_and_color);
+	s_dot_write(x1, y1, color & g_and_color);
 }
 
 /*
@@ -777,12 +777,12 @@ void putcolor_a(int xdot, int ydot, int color)
 int out_line(BYTE *pixels, int linelen)
 {
 	_ASSERTE(_CrtCheckMemory());
-	if (g_row_count + g_sy_offset >= g_screen_height)
+	if (g_row_count + g_screen_y_offset >= g_screen_height)
 	{
 		return 0;
 	}
 	_ASSERTE(s_line_write);
-	(*s_line_write)(g_row_count + g_sy_offset, g_sx_offset, linelen + g_sx_offset - 1, pixels);
+	s_line_write(g_row_count + g_screen_y_offset, g_screen_x_offset, linelen + g_screen_x_offset - 1, pixels);
 	g_row_count++;
 	return 0;
 }

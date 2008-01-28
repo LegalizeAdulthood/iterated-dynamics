@@ -423,14 +423,13 @@ void complex_power(ComplexD *base, int exp, ComplexD *result)
 #if !defined(XFRACT)
 /* long version */
 static long lxt, lyt, lt2;
-int complex_power_l(ComplexL *base, int exp, ComplexL *result, int g_bit_shift)
+int complex_power_l(ComplexL *base, int exp, ComplexL *result, int bit_shift)
 {
-	static long maxarg;
-	maxarg = 64L << g_bit_shift;
+	long maxarg = 64L << bit_shift;
 
 	if (exp < 0)
 	{
-		g_overflow = (complex_power_l(base, -exp, result, g_bit_shift) != 0);
+		g_overflow = (complex_power_l(base, -exp, result, bit_shift) != 0);
 		LCMPLXrecip(*result, *result);
 		return g_overflow;
 	}
@@ -446,7 +445,7 @@ int complex_power_l(ComplexL *base, int exp, ComplexL *result, int g_bit_shift)
 	}
 	else
 	{
-		result->x = 1L << g_bit_shift;
+		result->x = 1L << bit_shift;
 		result->y = 0L;
 	}
 
@@ -457,7 +456,7 @@ int complex_power_l(ComplexL *base, int exp, ComplexL *result, int g_bit_shift)
 		if (labs(lxt) >= maxarg || labs(lyt) >= maxarg)
 			return -1;
 		*/
-		lt2 = multiply(lxt, lxt, g_bit_shift) - multiply(lyt, lyt, g_bit_shift);
+		lt2 = multiply(lxt, lxt, bit_shift) - multiply(lyt, lyt, bit_shift);
 		lyt = multiply(lxt, lyt, g_bit_shift_minus_1);
 		if (g_overflow)
 		{
@@ -467,8 +466,8 @@ int complex_power_l(ComplexL *base, int exp, ComplexL *result, int g_bit_shift)
 
 		if (exp & 1)
 		{
-				lt2 = multiply(lxt, result->x, g_bit_shift) - multiply(lyt, result->y, g_bit_shift);
-				result->y = multiply(result->y, lxt, g_bit_shift) + multiply(lyt, result->x, g_bit_shift);
+				lt2 = multiply(lxt, result->x, bit_shift) - multiply(lyt, result->y, bit_shift);
+				result->y = multiply(result->y, lxt, bit_shift) + multiply(lyt, result->x, bit_shift);
 				result->x = lt2;
 		}
 		exp >>= 1;

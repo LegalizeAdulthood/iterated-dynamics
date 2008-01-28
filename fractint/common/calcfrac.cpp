@@ -296,7 +296,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 	{
 		for (int i = left; i <= right; i++)  /* DG */
 		{
-			(*g_plot_color)(i, row, str[i-left]);
+			g_plot_color(i, row, str[i-left]);
 		}
 		g_input_counter -= length >> 1;
 	}
@@ -328,7 +328,7 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	{
 		for (int i = left; i <= right; i++)  /* DG */
 		{
-			(*g_plot_color)(i, row, str[i-left]);
+			g_plot_color(i, row, str[i-left]);
 		}
 		g_input_counter -= length >> 1;
 	}
@@ -415,7 +415,7 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 	}
 	if (action == SHOWDOT_SAVE)
 	{
-		(*g_plot_color)(g_col, g_row, s_show_dot_color);
+		g_plot_color(g_col, g_row, s_show_dot_color);
 	}
 }
 
@@ -469,7 +469,7 @@ static int calculate_type_show_dot()
 	{
 		sleep_ms(g_orbit_delay);
 	}
-	int out = (*g_calculate_type_temp)();
+	int out = g_calculate_type_temp();
 	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_RESTORE);
 	return out;
 }
@@ -1087,7 +1087,7 @@ static int standard_calculate(int passnum)
 			}
 			if (passnum == 1 || g_standard_calculation_mode == CALCMODE_SINGLE_PASS || (g_row&1) != 0 || (g_col&1) != 0)
 			{
-				if ((*g_calculate_type)() == -1) /* standard_fractal(), calculate_mandelbrot_l() or calculate_mandelbrot_fp() */
+				if (g_calculate_type() == -1) /* standard_fractal(), calculate_mandelbrot_l() or calculate_mandelbrot_fp() */
 				{
 					return -1; /* interrupted */
 				}
@@ -1097,15 +1097,15 @@ static int standard_calculate(int passnum)
 				{
 					if ((g_row&1) == 0 && g_row < g_y_stop)
 					{
-						(*g_plot_color)(g_col, g_row + 1, g_color);
-						if ((g_col&1) == 0 && g_col < g_x_stop)
+						g_plot_color(g_col, g_row + 1, g_color);
+						if ((g_col & 1) == 0 && g_col < g_x_stop)
 						{
-							(*g_plot_color)(g_col + 1, g_row + 1, g_color);
+							g_plot_color(g_col + 1, g_row + 1, g_color);
 						}
 					}
 					if ((g_col&1) == 0 && g_col < g_x_stop)
 					{
-						(*g_plot_color)(++g_col, g_row, g_color);
+						g_plot_color(++g_col, g_row, g_color);
 					}
 				}
 			}
@@ -1147,7 +1147,7 @@ int calculate_mandelbrot_l()              /* fast per pixel 1/2/b/g, called with
 				g_color = 1;
 			}
 		}
-		(*g_plot_color)(g_col, g_row, g_color);
+		g_plot_color(g_col, g_row, g_color);
 	}
 	else
 	{
@@ -1266,7 +1266,7 @@ int calculate_mandelbrot_fp()
 				g_color = 1;
 			}
 		}
-		(*g_plot_color)(g_col, g_row, g_color);
+		g_plot_color(g_col, g_row, g_color);
 	}
 	else
 	{
@@ -2272,7 +2272,7 @@ void StandardFractal::set_final_color_and_plot()
 			g_color = 1;
 		}
 	}
-	(*g_plot_color)(g_col, g_row, g_color);
+	g_plot_color(g_col, g_row, g_color);
 }
 int StandardFractal::check_if_interrupted()
 {
@@ -2766,9 +2766,9 @@ static int potential(double mag, long iterations)
 	{
 		if (!driver_diskp()) /* if g_plot_color_put_color won't be doing it for us */
 		{
-			disk_write(g_col + g_sx_offset, g_row + g_sy_offset, i_pot);
+			disk_write(g_col + g_screen_x_offset, g_row + g_screen_y_offset, i_pot);
 		}
-		disk_write(g_col + g_sx_offset, g_row + g_screen_height + g_sy_offset, int(l_pot));
+		disk_write(g_col + g_screen_x_offset, g_row + g_screen_height + g_screen_y_offset, int(l_pot));
 	}
 
 	return i_pot;
@@ -3212,7 +3212,7 @@ static long automatic_log_map()   /*RB*/
 	long mincolour = LONG_MAX;
 	for (g_col = 0; g_col < xstop; g_col++) /* top row */
 	{
-		g_color = (*g_calculate_type)();
+		g_color = g_calculate_type();
 		if (g_color == -1)
 		{
 			goto ack; /* key pressed, bailout */
@@ -3224,12 +3224,12 @@ static long automatic_log_map()   /*RB*/
 		}
 		if (g_col >= 32)
 		{
-			(*g_plot_color)(g_col-32, g_row, 0);
+			g_plot_color(g_col-32, g_row, 0);
 		}
 	}                                    /* these lines tidy up for BTM etc */
 	for (int lag = 32; lag > 0; lag--)
 	{
-		(*g_plot_color)(g_col-lag, g_row, 0);
+		g_plot_color(g_col-lag, g_row, 0);
 	}
 
 	g_col = xstop;
@@ -3237,7 +3237,7 @@ static long automatic_log_map()   /*RB*/
 		int ystop = g_y_dots - 1;
 		for (g_row = 0; g_row < ystop; g_row++) /* right  side */
 		{
-			g_color = (*g_calculate_type)();
+			g_color = g_calculate_type();
 			if (g_color == -1)
 			{
 				goto ack; /* key pressed, bailout */
@@ -3249,18 +3249,18 @@ static long automatic_log_map()   /*RB*/
 			}
 			if (g_row >= 32)
 			{
-				(*g_plot_color)(g_col, g_row-32, 0);
+				g_plot_color(g_col, g_row-32, 0);
 			}
 		}
 		for (int lag = 32; lag > 0; lag--)
 		{
-			(*g_plot_color)(g_col, g_row-lag, 0);
+			g_plot_color(g_col, g_row-lag, 0);
 		}
 
 		g_col = 0;
 		for (g_row = 0; g_row < ystop; g_row++) /* left  side */
 		{
-			g_color = (*g_calculate_type)();
+			g_color = g_calculate_type();
 			if (g_color == -1)
 			{
 				goto ack; /* key pressed, bailout */
@@ -3272,18 +3272,18 @@ static long automatic_log_map()   /*RB*/
 			}
 			if (g_row >= 32)
 			{
-				(*g_plot_color)(g_col, g_row-32, 0);
+				g_plot_color(g_col, g_row-32, 0);
 			}
 		}
 		for (int lag = 32; lag > 0; lag--)
 		{
-			(*g_plot_color)(g_col, g_row-lag, 0);
+			g_plot_color(g_col, g_row-lag, 0);
 		}
 
 		g_row = ystop;
 		for (g_col = 0; g_col < xstop; g_col++) /* bottom row */
 		{
-			g_color = (*g_calculate_type)();
+			g_color = g_calculate_type();
 			if (g_color == -1)
 			{
 				goto ack; /* key pressed, bailout */
@@ -3295,12 +3295,12 @@ static long automatic_log_map()   /*RB*/
 			}
 			if (g_col >= 32)
 			{
-				(*g_plot_color)(g_col-32, g_row, 0);
+				g_plot_color(g_col-32, g_row, 0);
 			}
 		}
 		for (int lag = 32; lag > 0; lag--)
 		{
-			(*g_plot_color)(g_col-lag, g_row, 0);
+			g_plot_color(g_col-lag, g_row, 0);
 		}
 	}
 

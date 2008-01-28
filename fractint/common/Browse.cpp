@@ -243,6 +243,14 @@ static void is_visible_window_corner(const fractal_info &info,
 	}
 }
 
+inline bool is_visible(CoordinateD const &pt)
+{
+	return pt.x >= -g_screen_x_offset
+		&& pt.x <= (g_screen_width-g_screen_x_offset)
+		&& pt.y >= (0-g_screen_y_offset)
+		&& pt.y <= (g_screen_height-g_screen_y_offset);
+}
+
 static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	struct ext_blk_mp_info *mp_info)
 {
@@ -361,25 +369,7 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 	}
 
 	/* now see how many corners are on the screen, accept if one or more */
-	int cornercount = 0;
-	if (tl.x >= -g_sx_offset && tl.x <= (g_screen_width-g_sx_offset) && tl.y >= (0-g_sy_offset) && tl.y <= (g_screen_height-g_sy_offset))
-	{
-		cornercount++;
-	}
-	if (bl.x >= -g_sx_offset && bl.x <= (g_screen_width-g_sx_offset) && bl.y >= (0-g_sy_offset) && bl.y <= (g_screen_height-g_sy_offset))
-	{
-		cornercount++;
-	}
-	if (tr.x >= -g_sx_offset && tr.x <= (g_screen_width-g_sx_offset) && tr.y >= (0-g_sy_offset) && tr.y <= (g_screen_height-g_sy_offset))
-	{
-		cornercount++;
-	}
-	if (br.x >= -g_sx_offset && br.x <= (g_screen_width-g_sx_offset) && br.y >= (0-g_sy_offset) && br.y <= (g_screen_height-g_sy_offset))
-	{
-		cornercount++;
-	}
-
-	return (cornercount >= 1);
+	return is_visible(tl) || is_visible(bl) || is_visible(tr) || is_visible(br);
 }
 
 static void draw_window(int color, CoordinateWindow *info)
@@ -404,14 +394,14 @@ static void draw_window(int color, CoordinateWindow *info)
 		draw_lines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); /* top & bottom lines */
 		draw_lines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); /* left & right lines */
 #else
-		g_box_x[0] = info->itl.x + g_sx_offset;
-		g_box_y[0] = info->itl.y + g_sy_offset;
-		g_box_x[1] = info->itr.x + g_sx_offset;
-		g_box_y[1] = info->itr.y + g_sy_offset;
-		g_box_x[2] = info->ibr.x + g_sx_offset;
-		g_box_y[2] = info->ibr.y + g_sy_offset;
-		g_box_x[3] = info->ibl.x + g_sx_offset;
-		g_box_y[3] = info->ibl.y + g_sy_offset;
+		g_box_x[0] = info->itl.x + g_screen_x_offset;
+		g_box_y[0] = info->itl.y + g_screen_y_offset;
+		g_box_x[1] = info->itr.x + g_screen_x_offset;
+		g_box_y[1] = info->itr.y + g_screen_y_offset;
+		g_box_x[2] = info->ibr.x + g_screen_x_offset;
+		g_box_y[2] = info->ibr.y + g_screen_y_offset;
+		g_box_x[3] = info->ibl.x + g_screen_x_offset;
+		g_box_y[3] = info->ibl.y + g_screen_y_offset;
 		g_zoomBox.set_count(4);
 #endif
 		g_zoomBox.display();

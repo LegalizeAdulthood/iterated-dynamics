@@ -229,8 +229,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			g_colors  = g_.VideoEntry().colors;      /* # colors available */
 			g_screen_width  = g_x_dots;
 			g_screen_height  = g_y_dots;
-			g_sx_offset = 0;
-			g_sy_offset = 0;
+			g_screen_x_offset = 0;
+			g_screen_y_offset = 0;
 			g_rotate_hi = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors - 1;
 
 			g_.OldDAC() = g_.DAC(); /* save the DAC */
@@ -334,8 +334,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				}
 				else
 				{
-					g_sx_offset = (g_screen_width - g_x_dots)/2;
-					g_sy_offset = (g_screen_height - g_y_dots)/3;
+					g_screen_x_offset = (g_screen_width - g_x_dots)/2;
+					g_screen_y_offset = (g_screen_height - g_y_dots)/3;
 				}
 			}
 			g_dx_size = g_x_dots - 1;            /* convert just once now */
@@ -391,7 +391,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 			i = funny_glasses_call(gifview);
 			if (g_out_line_cleanup)              /* cleanup routine defined? */
 			{
-				(*g_out_line_cleanup)();
+				g_out_line_cleanup();
 			}
 			if (i == 0)
 			{
@@ -492,8 +492,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y;
 					g_px           = resume_e_info.px;
 					g_py           = resume_e_info.py;
-					g_sx_offset       = resume_e_info.sxoffs;
-					g_sy_offset       = resume_e_info.syoffs;
+					g_screen_x_offset       = resume_e_info.sxoffs;
+					g_screen_y_offset       = resume_e_info.syoffs;
 					g_x_dots        = resume_e_info.x_dots;
 					g_y_dots        = resume_e_info.y_dots;
 					g_grid_size       = resume_e_info.gridsz;
@@ -534,8 +534,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				while (ecount < gridsqr)
 				{
 					spiral_map(ecount); /* sets px & py */
-					g_sx_offset = tmpxdots*g_px;
-					g_sy_offset = tmpydots*g_py;
+					g_screen_x_offset = tmpxdots*g_px;
+					g_screen_y_offset = tmpydots*g_py;
 					restore_parameter_history();
 					fiddle_parameters(g_genes, ecount);
 					calculate_fractal_initialize();
@@ -569,8 +569,8 @@ done:
 					resume_e_info.odpy            = short(g_discrete_parameter_offset_y);
 					resume_e_info.px              = short(g_px);
 					resume_e_info.py              = short(g_py);
-					resume_e_info.sxoffs          = short(g_sx_offset);
-					resume_e_info.syoffs          = short(g_sy_offset);
+					resume_e_info.sxoffs          = short(g_screen_x_offset);
+					resume_e_info.syoffs          = short(g_screen_y_offset);
 					resume_e_info.x_dots           = short(g_x_dots);
 					resume_e_info.y_dots           = short(g_y_dots);
 					resume_e_info.gridsz          = short(g_grid_size);
@@ -580,8 +580,8 @@ done:
 					resume_e_info.ecount          = short(ecount);
 					memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
 				}
-				g_sx_offset = 0;
-				g_sy_offset = 0;
+				g_screen_x_offset = 0;
+				g_screen_y_offset = 0;
 				g_x_dots = g_screen_width;
 				g_y_dots = g_screen_height; /* otherwise save only saves a sub image and boxes get clipped */
 
@@ -1046,9 +1046,9 @@ static ApplicationStateType handle_recalc(int (*continue_check)(), int (*recalc_
 	_ASSERTE(continue_check && recalc_check);
 #endif
 	clear_zoom_box();
-	if ((*continue_check)() >= 0)
+	if (continue_check() >= 0)
 	{
-		if ((*recalc_check)() >= 0)
+		if (recalc_check() >= 0)
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
@@ -1363,14 +1363,14 @@ static ApplicationStateType handle_evolver_save_to_disk()
 		return APPSTATE_CONTINUE;  /* disk video and targa, nothing to save */
 	}
 
-	oldsxoffs = g_sx_offset;
-	oldsyoffs = g_sy_offset;
+	oldsxoffs = g_screen_x_offset;
+	oldsyoffs = g_screen_y_offset;
 	oldxdots = g_x_dots;
 	oldydots = g_y_dots;
 	oldpx = g_px;
 	oldpy = g_py;
-	g_sx_offset = 0;
-	g_sy_offset = 0;
+	g_screen_x_offset = 0;
+	g_screen_y_offset = 0;
 	g_x_dots = g_screen_width;
 	g_y_dots = g_screen_height; /* for full screen save and pointer move stuff */
 	g_px = g_grid_size/2;
@@ -1383,8 +1383,8 @@ static ApplicationStateType handle_evolver_save_to_disk()
 	g_py = oldpy;
 	restore_parameter_history();
 	fiddle_parameters(g_genes, unspiral_map());
-	g_sx_offset = oldsxoffs;
-	g_sy_offset = oldsyoffs;
+	g_screen_x_offset = oldsxoffs;
+	g_screen_y_offset = oldsyoffs;
 	g_x_dots = oldxdots;
 	g_y_dots = oldydots;
 	return APPSTATE_CONTINUE;
@@ -1885,8 +1885,8 @@ static void handle_evolver_move_selection(int kbdchar)
 				g_py = 0;
 			}
 			grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-			g_sx_offset = g_px*int(g_dx_size + 1 + grout);
-			g_sy_offset = g_py*int(g_dy_size + 1 + grout);
+			g_screen_x_offset = g_px*int(g_dx_size + 1 + grout);
+			g_screen_y_offset = g_py*int(g_dy_size + 1 + grout);
 
 			restore_parameter_history();
 			fiddle_parameters(g_genes, unspiral_map()); /* change all parameters */
@@ -1950,8 +1950,8 @@ static void handle_evolver_zoom(int zoom_in)
 					/* set screen view params back (previously changed to allow
 					   full screen saves in view window mode) */
 					int grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-					g_sx_offset = g_px*int(g_dx_size + 1 + grout);
-					g_sy_offset = g_py*int(g_dy_size + 1 + grout);
+					g_screen_x_offset = g_px*int(g_dx_size + 1 + grout);
+					g_screen_y_offset = g_py*int(g_dy_size + 1 + grout);
 					setup_parameter_box();
 					draw_parameter_box(false);
 				}

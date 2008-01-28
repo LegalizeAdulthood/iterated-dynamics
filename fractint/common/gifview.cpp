@@ -533,7 +533,7 @@ int out_line_potential(BYTE *pixels, int line_length)
 	}
 	for (col = 0; col < g_x_dots; ++col)
 	{
-		disk_write(col + g_sx_offset, row + g_sy_offset, *(pixels + col));
+		disk_write(col + g_screen_x_offset, row + g_screen_y_offset, *(pixels + col));
 	}
 	g_row_count = saverowcount + 1;
 	return 0;

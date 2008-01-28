@@ -559,8 +559,8 @@ int encoder()
 				esave_info.odpy            = short(g_discrete_parameter_offset_y);
 				esave_info.px              = short(g_px);
 				esave_info.py              = short(g_py);
-				esave_info.sxoffs          = short(g_sx_offset);
-				esave_info.syoffs          = short(g_sy_offset);
+				esave_info.sxoffs          = short(g_screen_x_offset);
+				esave_info.syoffs          = short(g_screen_y_offset);
 				esave_info.x_dots           = short(g_x_dots);
 				esave_info.y_dots           = short(g_y_dots);
 				esave_info.gridsz          = short(g_grid_size);
@@ -1098,7 +1098,7 @@ static int compress(int rowlimit)
 			for (xdot = 0; xdot < g_x_dots; xdot++)
 			{
 				color = (!s_save_16bit || ydot < g_y_dots)
-					? get_color(xdot, ydot) : disk_read(xdot + g_sx_offset, ydot + g_sy_offset);
+					? get_color(xdot, ydot) : disk_read(xdot + g_screen_x_offset, ydot + g_screen_y_offset);
 				if (in_count == 0)
 				{
 					in_count = 1;

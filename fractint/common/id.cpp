@@ -82,8 +82,8 @@ int     textsafe2;              /* textsafe override from g_video_table */
 bool g_ok_to_print;              /* 0 if printf() won't work */
 int     g_screen_width;
 int		g_screen_height;          /* # of dots on the physical screen    */
-int     g_sx_offset;
-int		g_sy_offset;          /* physical top left of logical screen */
+int     g_screen_x_offset;
+int		g_screen_y_offset;          /* physical top left of logical screen */
 int     g_x_dots;
 int		g_y_dots;           /* # of dots on the logical screen     */
 double  g_dx_size;
@@ -665,7 +665,7 @@ enum TimerType
 };
 
 /* timer function:
-	timer(TIMER_ENGINE, (*fractal)())		fractal engine
+	timer(TIMER_ENGINE, fractal())		fractal engine
 	timer(TIMER_DECODER, 0, int width)	decoder
 	timer(TIMER_ENCODER)					encoder
 */
@@ -693,7 +693,7 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 	switch (timertype)
 	{
 	case TIMER_ENGINE:
-		out = (*(int (*)()) engine)();
+		out = engine();
 		break;
 	case TIMER_DECODER:
 		out = int(decoder(short(va_arg(arg_marker, int)))); /* not indirect, safer with overlays */

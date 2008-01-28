@@ -557,7 +557,7 @@ static void line3d_fill_surface_grid(int col, const point *old, const point *cur
 
 static void line3d_fill_points(const point *cur)
 {
-	(*g_plot_color)(cur->x, cur->y, cur->color);
+	g_plot_color(cur->x, cur->y, cur->color);
 }
 
 /* connect-a-dot */
@@ -1362,7 +1362,7 @@ static void put_a_triangle(point pt1, point pt2, point pt3, int color)
 		g_plot_color = s_plot_color_fill;
 		if (s_p1.y == s_p3.y && s_p1.x == s_p3.x)
 		{
-			(*g_plot_color)(s_p1.x, s_p1.y, color);
+			g_plot_color(s_p1.x, s_p1.y, color);
 		}
 		else
 		{
@@ -1428,7 +1428,7 @@ static void put_a_triangle(point pt1, point pt2, point pt3, int color)
 		int xlim = s_minmax_x[y].maxx;
 		for (int x = s_minmax_x[y].minx; x <= xlim; x++)
 		{
-			(*s_plot_color_fill)(x, y, color);
+			s_plot_color_fill(x, y, color);
 		}
 	}
 	g_plot_color = s_plot_color_normal;
@@ -1455,7 +1455,7 @@ static void plot_color_clip(int x, int y, int color)
 		0 <= color && color < g_file_colors)
 	{
 		assert(g_plot_color_standard);
-		(*g_plot_color_standard)(x, y, color);
+		g_plot_color_standard(x, y, color);
 
 		if (g_targa_output)
 		{
@@ -1483,7 +1483,7 @@ static void plot_color_transparent_clip(int x, int y, int color)
 		(g_3d_state.transparent0() > color || color > g_3d_state.transparent1()))
 	{
 		assert(g_plot_color_standard);
-		(*g_plot_color_standard)(x, y, color); /* I guess we can plot then  */
+		g_plot_color_standard(x, y, color); /* I guess we can plot then  */
 		if (g_targa_output)
 		{
 			/* g_plot_color_standard modifies color in these types */
@@ -1547,7 +1547,7 @@ static void interp_color(int x, int y, int color)
 			}
 		}
 		assert(g_plot_color_standard);
-		(*g_plot_color_standard)(x, y, color);
+		g_plot_color_standard(x, y, color);
 	}
 }
 
@@ -1622,7 +1622,7 @@ int targa_color(int x, int y, int color)
 
 	/* Now write the color triple to its transformed location */
 	/* on the disk. */
-	disk_write_targa(x + g_sx_offset, y + g_sy_offset, rgb[0], rgb[1], rgb[2]);
+	disk_write_targa(x + g_screen_x_offset, y + g_screen_y_offset, rgb[0], rgb[1], rgb[2]);
 
 	return int(255 - value);
 }

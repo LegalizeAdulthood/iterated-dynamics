@@ -613,8 +613,8 @@ void JIIM::execute()
 	{
 		g_has_inverse = true;
 	}
-	old_sx_offset = g_sx_offset;
-	old_sy_offset = g_sy_offset;
+	old_sx_offset = g_screen_x_offset;
+	old_sy_offset = g_screen_y_offset;
 	old_calculate_type = g_calculate_type;
 	s_show_numbers = 0;
 	g_using_jiim = true;
@@ -626,7 +626,7 @@ void JIIM::execute()
 
 	if (m_orbits)
 	{
-		(*g_fractal_specific[g_fractal_type].per_image)();
+		g_fractal_specific[g_fractal_type].per_image();
 	}
 	else
 	{
@@ -648,13 +648,13 @@ void JIIM::execute()
 		g_plot_color = plot_color_clip;                /* for line with clipping */
 	}
 
-	if (g_sx_offset != 0 || g_sy_offset != 0) /* we're in view windows */
+	if (g_screen_x_offset != 0 || g_screen_y_offset != 0) /* we're in view windows */
 	{
 		save_has_inverse = g_has_inverse;
 		g_has_inverse = true;
 		SaveRect(0, 0, g_x_dots, g_y_dots);
-		g_sx_offset = 0;
-		g_sy_offset = 0;
+		g_screen_x_offset = 0;
+		g_screen_y_offset = 0;
 		RestoreRect(0, 0, g_x_dots, g_y_dots);
 		g_has_inverse = save_has_inverse;
 	}
@@ -1276,7 +1276,7 @@ void JIIM::execute()
 				}
 				x = int((g_old_z.x - g_initial_z.x)*x_factor*3*zoom + x_offset);
 				y = int((g_old_z.y - g_initial_z.y)*y_factor*3*zoom + y_offset);
-				if ((*g_fractal_specific[g_fractal_type].orbitcalc)())
+				if (g_fractal_specific[g_fractal_type].orbitcalc())
 				{
 					iter = g_max_iteration;
 				}
@@ -1345,8 +1345,8 @@ finish:
 			save_has_inverse = g_has_inverse;
 			g_has_inverse = true;
 			SaveRect(0, 0, g_x_dots, g_y_dots);
-			g_sx_offset = old_sx_offset;
-			g_sy_offset = old_sy_offset;
+			g_screen_x_offset = old_sx_offset;
+			g_screen_y_offset = old_sy_offset;
 			RestoreRect(0, 0, g_x_dots, g_y_dots);
 			g_has_inverse = save_has_inverse;
 		}
@@ -1370,8 +1370,8 @@ finish:
 		g_y_dots = g_screen_height;
 		g_dx_size = g_x_dots - 1;
 		g_dy_size = g_y_dots - 1;
-		g_sx_offset = 0;
-		g_sy_offset = 0;
+		g_screen_x_offset = 0;
+		g_screen_y_offset = 0;
 		free_temp_message();
 	}
 	else

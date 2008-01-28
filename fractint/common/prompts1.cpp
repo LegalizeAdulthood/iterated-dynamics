@@ -1182,7 +1182,7 @@ static int input_field_list(
 			{
 				if (checkkey)
 				{
-					ret = (*checkkey)(curkey);
+					ret = checkkey(curkey);
 					if (ret != 0)
 					{
 						goto inpfldl_end;

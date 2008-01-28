@@ -1550,7 +1550,7 @@ int orbit_2d_fp()
 				}
 				else
 				{
-					(*g_plot_color)(col, row, color % g_colors);
+					g_plot_color(col, row, color % g_colors);
 				}
 			}
 			else
@@ -1559,7 +1559,7 @@ int orbit_2d_fp()
 				color = get_color(col, row) + 1;
 				if (color < g_colors) /* color sticks on last value */
 				{
-					(*g_plot_color)(col, row, color);
+					g_plot_color(col, row, color);
 				}
 			}
 
@@ -1693,7 +1693,7 @@ int orbit_2d()
 			}
 			else if (!start)
 			{
-				(*g_plot_color)(col, row, color % g_colors);
+				g_plot_color(col, row, color % g_colors);
 			}
 			oldcol = col;
 			oldrow = row;
@@ -1814,7 +1814,7 @@ static int orbit_3d_calc()
 				}
 				else
 				{
-					(*g_plot_color)(inf.col, inf.row, color % g_colors);
+					g_plot_color(inf.col, inf.row, color % g_colors);
 				}
 			}
 			else if (inf.col == -2)
@@ -1835,7 +1835,7 @@ static int orbit_3d_calc()
 					}
 					else
 					{
-						(*g_plot_color)(inf.col1, inf.row1, color % g_colors);
+						g_plot_color(inf.col1, inf.row1, color % g_colors);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -1937,7 +1937,7 @@ static int orbit_3d_calc_fp()
 				}
 				else
 				{
-					(*g_plot_color)(inf.col, inf.row, color % g_colors);
+					g_plot_color(inf.col, inf.row, color % g_colors);
 				}
 			}
 			else if (inf.col == -2)
@@ -1958,7 +1958,7 @@ static int orbit_3d_calc_fp()
 					}
 					else
 					{
-						(*g_plot_color)(inf.col1, inf.row1, color % g_colors);
+						g_plot_color(inf.col1, inf.row1, color % g_colors);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -2146,7 +2146,7 @@ int dynamic_2d_fp()
 					}
 					else if (count > 0 || g_fractal_type != FRACTYPE_MANDELBROT_CLOUD)
 					{
-						(*g_plot_color)(col, row, color % g_colors);
+						g_plot_color(col, row, color % g_colors);
 					}
 				}
 				oldcol = col;
@@ -2310,7 +2310,7 @@ int plotorbits2dfloat()
 		row = int(s_o_cvt.c*g_new_z.x + s_o_cvt.d*g_new_z.y + s_o_cvt.f);
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{             /* plot if on the screen */
-			(*g_plot_color)(col, row, s_o_color % g_colors);
+			g_plot_color(col, row, s_o_color % g_colors);
 		}
 		else
 		{             /* off screen, don't continue unless periodicity=0 */
@@ -2377,8 +2377,8 @@ done:
 	if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2*g_x_dots)
 	{
 		/* turn off view windows so will save properly */
-		g_sx_offset = 0;
-		g_sy_offset = 0;
+		g_screen_x_offset = 0;
+		g_screen_y_offset = 0;
 		g_x_dots = g_screen_width;
 		g_y_dots = g_screen_height;
 		g_viewWindow.Hide();
@@ -2484,7 +2484,7 @@ static int ifs_3d_float()
 				}
 				if (color < g_colors) /* color sticks on last value */
 				{
-					(*g_plot_color)(inf.col, inf.row, color);
+					g_plot_color(inf.col, inf.row, color);
 				}
 			}
 			else if (inf.col == -2)
@@ -2507,7 +2507,7 @@ static int ifs_3d_float()
 					}
 					if (color < g_colors) /* color sticks on last value */
 					{
-						(*g_plot_color)(inf.col1, inf.row1, color);
+						g_plot_color(inf.col1, inf.row1, color);
 					}
 				}
 				else if (inf.col1 == -2)
@@ -2634,7 +2634,7 @@ static int ifs_2d()
 			}
 			if (color < g_colors) /* color sticks on last value */
 			{
-				(*g_plot_color)(col, row, color);
+				g_plot_color(col, row, color);
 			}
 		}
 		else if (long(abs(row)) + long(abs(col)) > BAD_PIXEL) /* sanity check */
@@ -2770,7 +2770,7 @@ static int ifs_3d_long()
 				}
 				if (color < g_colors) /* color sticks on last value */
 				{
-					(*g_plot_color)(inf.col, inf.row, color);
+					g_plot_color(inf.col, inf.row, color);
 				}
 			}
 			if (s_real_time)
@@ -2789,7 +2789,7 @@ static int ifs_3d_long()
 					}
 					if (color < g_colors) /* color sticks on last value */
 					{
-						(*g_plot_color)(inf.col1, inf.row1, color);
+						g_plot_color(inf.col1, inf.row1, color);
 					}
 				}
 			}

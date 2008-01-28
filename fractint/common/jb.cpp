@@ -88,14 +88,13 @@ static Perspective_fp s_right_eye_fp;
 static Perspective_fp *s_per_fp;
 static ComplexL s_jbc;
 static ComplexD s_jbc_fp;
-#ifndef XFRACT
-static double s_fg, s_fg16;
-#endif
 static long s_width;
 static long s_dist;
 static long s_depth;
 static long s_br_ratio;
 #ifndef XFRACT
+static double s_fg;
+static double s_fg16;
 static long s_eyes;
 #endif
 
@@ -293,7 +292,7 @@ static int z_line(long x, long y)
 				if ((g_row + g_col) & 1)
 				{
 
-					(*g_plot_color)(g_col, g_row, 127 - g_color);
+					g_plot_color(g_col, g_row, 127 - g_color);
 				}
 				else
 				{
@@ -306,13 +305,13 @@ static int z_line(long x, long y)
 					{
 						g_color = 127;
 					}
-					(*g_plot_color)(g_col, g_row, 127 + s_b_base - g_color);
+					g_plot_color(g_col, g_row, 127 + s_b_base - g_color);
 				}
 			}
 			else
 			{
 				g_color = int(254l*z_pixel/g_z_dots);
-				(*g_plot_color)(g_col, g_row, g_color + 1);
+				g_plot_color(g_col, g_row, g_color + 1);
 			}
 			s_plotted = true;
 			break;
@@ -393,7 +392,7 @@ static int z_line_fp(double x, double y)
 				g_color = int(128l*z_pixel/g_z_dots);
 				if ((g_row + g_col) & 1)
 				{
-					(*g_plot_color)(g_col, g_row, 127 - g_color);
+					g_plot_color(g_col, g_row, 127 - g_color);
 				}
 				else
 				{
@@ -405,13 +404,13 @@ static int z_line_fp(double x, double y)
 					{
 						g_color = 127;
 					}
-					(*g_plot_color)(g_col, g_row, 127 + s_b_base - g_color);
+					g_plot_color(g_col, g_row, 127 + s_b_base - g_color);
 				}
 			}
 			else
 			{
 				g_color = int(254l*z_pixel/g_z_dots);
-				(*g_plot_color)(g_col, g_row, g_color + 1);
+				g_plot_color(g_col, g_row, g_color + 1);
 			}
 			s_plotted = true;
 			break;

@@ -195,7 +195,7 @@ int bifurcation()
 				color = g_colors-1;
 			}
 			s_verhulst_array[row] = 0;
-			(*g_plot_color)(column, row, color); /* was row-1, but that's not right? */
+			g_plot_color(column, row, color); /* was row-1, but that's not right? */
 		}
 		column++;
 	}
@@ -563,7 +563,7 @@ int lyapunov()
 	{
 		s_population = g_parameters[1];
 	}
-	(*g_plot_color)(g_col, g_row, 1);
+	g_plot_color(g_col, g_row, 1);
 	if (g_invert)
 	{
 		invert_z(&g_initial_z);
@@ -584,7 +584,7 @@ int lyapunov()
 	{
 		g_color = g_colors-1;
 	}
-	(*g_plot_color)(g_col, g_row, g_color);
+	g_plot_color(g_col, g_row, g_color);
 	return g_color;
 }
 
