@@ -117,34 +117,11 @@ Platform Support
   windowed environment, the video "mode" is used to guide window size,
   palette emulation, etc.
 
-Platform Support: DOS
----------------------
-- Eliminate overlays / move to 32-bit flat address space DOS protected
-  mode app (gives up 286 support)
-- Option for displaying dialogs and text screens in graphics video
-  mode with image save/restore; eliminates switching back and forth
-  from text mode to graphics mode, saving wear and tear on monitors
-- port code to DOS version of "fractint GUI API"
-- Improve performance of native DOS 3D driver
-- Compute an image larger than the screen resolution and allow panning
-  through the larger image by the screen.
-
-Platform Support: Win95/NT
---------------------------
-- Win32 port
-- long filename problems?
-- DirectX support?
-- 3D drivers: Direct3D / OpenGL
-- animation support? (AVI, MPEG, etc.)
-
 Platform Support: unix/X
 ------------------------
 - Visual selection assumed root is 8-bit psuedocolor; improve to
   select appropriate visual for requested video mode (could be 24-bit
   with deep color support)
-- Eliminate use of curses and xterm in favor of native X-based text
-  windows
-- Fix function key support (probably a free side-effect of previous item)
 - Use Xt for interface components of "fractint GUI API"
 - 3D drivers: OpenGL, PEX, native X
 - Generate /bin/sh scripts instead of MS-DOS bat files for "b" command

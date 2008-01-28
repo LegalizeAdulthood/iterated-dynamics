@@ -222,10 +222,10 @@ int show_temp_message(const char *msgparm)
 		}
 	}
 	size = long(s_text_x_dots)*s_text_y_dots;
-	save_sxoffs = g_sx_offset;
-	save_syoffs = g_sy_offset;
-	g_sx_offset = 0;
-	g_sy_offset = 0;
+	save_sxoffs = g_screen_x_offset;
+	save_syoffs = g_screen_y_offset;
+	g_screen_x_offset = 0;
+	g_screen_y_offset = 0;
 	if (s_temp_text_save == 0) /* only save screen first time called */
 	{
 		s_temp_text_save = new BYTE[s_text_x_dots*s_text_y_dots];
@@ -241,8 +241,8 @@ int show_temp_message(const char *msgparm)
 
 	g_.DAC().FindSpecialColors(); /* get g_.DAC().Dark() & g_color_medium set */
 	driver_display_string(0, 0, g_.DAC().Medium(), g_.DAC().Dark(), msg);
-	g_sx_offset = save_sxoffs;
-	g_sy_offset = save_syoffs;
+	g_screen_x_offset = save_sxoffs;
+	g_screen_y_offset = save_syoffs;
 
 	return 0;
 }
@@ -258,10 +258,10 @@ void clear_temp_message()
 	}
 	else if (s_temp_text_save != 0)
 	{
-		save_sxoffs = g_sx_offset;
-		save_syoffs = g_sy_offset;
-		g_sx_offset = 0;
-		g_sy_offset = 0;
+		save_sxoffs = g_screen_x_offset;
+		save_syoffs = g_screen_y_offset;
+		g_screen_x_offset = 0;
+		g_screen_y_offset = 0;
 		for (i = 0; i < s_text_y_dots; ++i)
 		{
 			put_line(i, 0, s_text_x_dots-1, &s_temp_text_save[i*s_text_x_dots]);
@@ -271,8 +271,8 @@ void clear_temp_message()
 			delete[] s_temp_text_save;
 			s_temp_text_save = 0;
 		}
-		g_sx_offset = save_sxoffs;
-		g_sy_offset = save_syoffs;
+		g_screen_x_offset = save_sxoffs;
+		g_screen_y_offset = save_syoffs;
 	}
 }
 
@@ -907,7 +907,7 @@ int input_field(
 			{
 				if (check_keystroke)
 				{
-					ret = (*check_keystroke)(curkey);
+					ret = check_keystroke(curkey);
 					if (ret != 0)
 					{
 						goto inpfld_end;

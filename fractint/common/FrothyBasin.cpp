@@ -192,7 +192,7 @@ int froth_calc()   /* per pixel 1/2/g, called with row & col set */
 	g_color_iter = 0;
 	if (g_show_dot > 0)
 	{
-		(*g_plot_color) (g_col, g_row, g_show_dot % g_colors);
+		g_plot_color(g_col, g_row, g_show_dot % g_colors);
 	}
 	if (!g_integer_fractal) /* fp mode */
 	{
@@ -455,7 +455,7 @@ int froth_calc()   /* per pixel 1/2/g, called with row & col set */
 
 	g_color = abs(int(g_color_iter));
 
-	(*g_plot_color)(g_col, g_row, g_color);
+	g_plot_color(g_col, g_row, g_color);
 
 	return g_color;
 }

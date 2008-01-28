@@ -26,7 +26,7 @@ static unsigned int s_t_prefix[2][MAX_Y_BLOCK][MAX_X_BLOCK]; /* common temp */
 	{								\
 		g_col = x;					\
 		g_row = y;					\
-		c = (*g_calculate_type)();	\
+		c = g_calculate_type();	\
 		if (c == -1)				\
 		{							\
 			return -1;				\
@@ -81,13 +81,13 @@ static void plot_block(BuildRowType buildrow, int x, int y, int color)
 	}
 	for (int i = x; ++i < xlim; )
 	{
-		(*g_plot_color)(i, y, color); /* skip 1st dot on 1st row */
+		g_plot_color(i, y, color); /* skip 1st dot on 1st row */
 	}
 	while (++y < ylim)
 	{
 		for (int i = x; i < xlim; ++i)
 		{
-			(*g_plot_color)(i, y, color);
+			g_plot_color(i, y, color);
 		}
 	}
 }
@@ -166,9 +166,9 @@ static int guess_row(bool first_pass, int y, int blocksize)
 				/*
 				if (s_half_block == 1)
 				{
-					(*g_plot_color)(x + 1, y, 0);
-					(*g_plot_color)(x, y + 1, 0);
-					(*g_plot_color)(x + 1, y + 1, 0);
+					g_plot_color(x + 1, y, 0);
+					g_plot_color(x, y + 1, 0);
+					g_plot_color(x + 1, y + 1, 0);
 				}
 				*/
 				x += s_max_block;
@@ -292,15 +292,15 @@ static int guess_row(bool first_pass, int y, int blocksize)
 				{
 					if (guessed23 > 0)
 					{
-						(*g_plot_color)(x, yplushalf, c23);
+						g_plot_color(x, yplushalf, c23);
 					}
 					if (guessed32 > 0)
 					{
-						(*g_plot_color)(xplushalf, y, c32);
+						g_plot_color(xplushalf, y, c32);
 					}
 					if (guessed33 > 0)
 					{
-						(*g_plot_color)(xplushalf, yplushalf, c33);
+						g_plot_color(xplushalf, yplushalf, c33);
 					}
 				}
 				plot_block(BUILDROW_OLD, x, yplushalf, c23);
@@ -490,7 +490,7 @@ int solid_guess()
 			g_row = g_iy_start;
 			for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
 			{ /* calc top row */
-				if ((*g_calculate_type)() == -1)
+				if (g_calculate_type() == -1)
 				{
 					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_begin(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_begin(), 0, g_work_sym);
 					return 0;
@@ -512,7 +512,7 @@ int solid_guess()
 				g_reset_periodicity = true;
 				for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
 				{
-					i = (*g_calculate_type)();
+					i = g_calculate_type();
 					if (i == -1)
 					{
 						break;

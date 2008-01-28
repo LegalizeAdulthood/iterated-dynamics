@@ -186,14 +186,14 @@ void zoom_box_draw(bool drawit)
 		draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y); /* top & bottom lines */
 		draw_lines(tl, bl, tr.x-tl.x, tr.y-tl.y); /* left & right lines */
 #else
-		g_box_x[0] = tl.x + g_sx_offset;
-		g_box_y[0] = tl.y + g_sy_offset;
-		g_box_x[1] = tr.x + g_sx_offset;
-		g_box_y[1] = tr.y + g_sy_offset;
-		g_box_x[2] = br.x + g_sx_offset;
-		g_box_y[2] = br.y + g_sy_offset;
-		g_box_x[3] = bl.x + g_sx_offset;
-		g_box_y[3] = bl.y + g_sy_offset;
+		g_box_x[0] = tl.x + g_screen_x_offset;
+		g_box_y[0] = tl.y + g_screen_y_offset;
+		g_box_x[1] = tr.x + g_screen_x_offset;
+		g_box_y[1] = tr.y + g_screen_y_offset;
+		g_box_x[2] = br.x + g_screen_x_offset;
+		g_box_y[2] = br.y + g_screen_y_offset;
+		g_box_x[3] = bl.x + g_screen_x_offset;
+		g_box_y[3] = bl.y + g_screen_y_offset;
 		g_zoomBox.set_count(1);
 #endif
 		g_zoomBox.display();
@@ -287,8 +287,8 @@ void add_box(Coordinate point)
 #if defined(_WIN32)
 	_ASSERTE(g_zoomBox.count() < NUM_BOXES);
 #endif
-	point.x += g_sx_offset;
-	point.y += g_sy_offset;
+	point.x += g_screen_x_offset;
+	point.y += g_screen_y_offset;
 	if (point.x >= 0 && point.x < g_screen_width &&
 		point.y >= 0 && point.y < g_screen_height)
 	{

@@ -3083,10 +3083,10 @@ void palette_edit()       /* called by fractint */
 
 	g_line_buffer = new BYTE[std::max(g_screen_width, g_screen_height)];
 
-	int oldsxoffs = g_sx_offset;
-	int oldsyoffs = g_sy_offset;
-	g_sx_offset = 0;
-	g_sy_offset = 0;
+	int old_screen_x_offset = g_screen_x_offset;
+	int old_screen_y_offset = g_screen_y_offset;
+	g_screen_x_offset = 0;
+	g_screen_y_offset = 0;
 
 	s_reserve_colors = true;
 	s_inverse = false;
@@ -3099,7 +3099,7 @@ void palette_edit()       /* called by fractint */
 	}
 	cursor::destroy();
 
-	g_sx_offset = oldsxoffs;
-	g_sy_offset = oldsyoffs;
+	g_screen_x_offset = old_screen_x_offset;
+	g_screen_y_offset = old_screen_y_offset;
 	destroy_array(g_line_buffer);
 }

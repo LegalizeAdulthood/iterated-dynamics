@@ -39,7 +39,7 @@ static int s_blue_local_right;
 static BYTE s_targa_red;
 
 /* Bresenham's algorithm for drawing line */
-void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
+void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
 
 {               /* uses Bresenham algorithm to draw a line */
 	int dX;
@@ -80,7 +80,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (col <= final)    /* step through columns checking for new row */
 			{
-				(*g_plot_color)(col, row, color);
+				g_plot_color(col, row, color);
 				col++;
 				if (G >= 0)             /* it's time to change rows */
 				{
@@ -97,7 +97,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (col <= final)    /* step through columns checking for new row */
 			{
-				(*g_plot_color)(col, row, color);
+				g_plot_color(col, row, color);
 				col++;
 				if (G > 0)              /* it's time to change rows */
 				{
@@ -132,7 +132,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (row <= final)    /* step through rows checking for new column */
 			{
-				(*g_plot_color)(col, row, color);
+				g_plot_color(col, row, color);
 				row++;
 				if (G >= 0)                 /* it's time to change columns */
 				{
@@ -149,7 +149,7 @@ void cdecl draw_line (int X1, int Y1, int X2, int Y2, int color)
 		{
 			while (row <= final)    /* step through rows checking for new column */
 			{
-				(*g_plot_color)(col, row, color);
+				g_plot_color(col, row, color);
 				row++;
 				if (G > 0)                  /* it's time to change columns */
 				{
@@ -283,7 +283,7 @@ void plot_3d_superimpose_256(int x, int y, int color)
 				}
 				else
 				{
-					disk_write_targa (x + g_sx_offset, y + g_sy_offset, t_c, 0, 0);
+					disk_write_targa(x + g_screen_x_offset, y + g_screen_y_offset, t_c, 0, 0);
 				}
 			}
 		}
@@ -303,8 +303,8 @@ void plot_3d_superimpose_256(int x, int y, int color)
 				}
 				else
 				{
-					disk_read_targa (x + g_sx_offset, y + g_sy_offset, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
-					disk_write_targa (x + g_sx_offset, y + g_sy_offset, s_targa_red, 0, t_c);
+					disk_read_targa(x + g_screen_x_offset, y + g_screen_y_offset, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
+					disk_write_targa(x + g_screen_x_offset, y + g_screen_y_offset, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -344,7 +344,7 @@ void plot_ifs_3d_superimpose_256(int x, int y, int color)
 				}
 				else
 				{
-					disk_write_targa (x + g_sx_offset, y + g_sy_offset, t_c, 0, 0);
+					disk_write_targa(x + g_screen_x_offset, y + g_screen_y_offset, t_c, 0, 0);
 				}
 			}
 		}
@@ -363,8 +363,8 @@ void plot_ifs_3d_superimpose_256(int x, int y, int color)
 				}
 				else
 				{
-					disk_read_targa (x + g_sx_offset, y + g_sy_offset, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
-					disk_write_targa (x + g_sx_offset, y + g_sy_offset, s_targa_red, 0, t_c);
+					disk_read_targa(x + g_screen_x_offset, y + g_screen_y_offset, &s_targa_red, (BYTE *)&tmp, (BYTE *)&tmp);
+					disk_write_targa(x + g_screen_x_offset, y + g_screen_y_offset, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -394,7 +394,7 @@ void plot_3d_alternate(int x, int y, int color)
 				}
 				else
 				{
-					disk_write_targa (x + g_sx_offset, y + g_sy_offset, t_c, 0, 0);
+					disk_write_targa(x + g_screen_x_offset, y + g_screen_y_offset, t_c, 0, 0);
 				}
 			}
 		}
@@ -412,7 +412,7 @@ void plot_3d_alternate(int x, int y, int color)
 				}
 				else
 				{
-					disk_write_targa (x + g_sx_offset, y + g_sy_offset, s_targa_red, 0, t_c);
+					disk_write_targa(x + g_screen_x_offset, y + g_screen_y_offset, s_targa_red, 0, t_c);
 				}
 			}
 		}
@@ -523,7 +523,7 @@ void plot_setup()
 			g_xx_adjust1 = int(((g_3d_state.x_trans() - g_3d_state.x_adjust()) * double(g_x_dots)) / 100);
 			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2 * g_x_dots)
 			{
-				g_sx_offset = g_screen_width / 2 - g_x_dots;
+				g_screen_x_offset = g_screen_width / 2 - g_x_dots;
 			}
 		}
 		else if (g_which_image == WHICHIMAGE_BLUE)
@@ -532,7 +532,7 @@ void plot_setup()
 			g_xx_adjust = int(((g_3d_state.x_trans() - g_3d_state.x_adjust()) * double(g_x_dots)) / 100);
 			if (g_3d_state.glasses_type() == STEREO_PAIR && g_screen_width >= 2 * g_x_dots)
 			{
-				g_sx_offset = g_screen_width / 2;
+				g_screen_x_offset = g_screen_width / 2;
 			}
 		}
 	}

@@ -22,14 +22,14 @@ void ZoomBox::display()
 		if (g_is_true_color && g_true_mode_iterates)
 		{
 			int alpha = 0;
-			driver_get_truecolor(_box_x[i] - g_sx_offset, _box_y[i] - g_sy_offset,
+			driver_get_truecolor(_box_x[i] - g_screen_x_offset, _box_y[i] - g_screen_y_offset,
 				rgb[0], rgb[1], rgb[2], alpha);
-			driver_put_truecolor(_box_x[i] - g_sx_offset, _box_y[i] - g_sy_offset,
+			driver_put_truecolor(_box_x[i] - g_screen_x_offset, _box_y[i] - g_screen_y_offset,
 				rgb[0]^255, rgb[1]^255, rgb[2]^255, 255);
 		}
 		else
 		{
-			s_values[i] = (unsigned char) get_color(_box_x[i] - g_sx_offset, _box_y[i] - g_sy_offset);
+			s_values[i] = (unsigned char) get_color(_box_x[i] - g_screen_x_offset, _box_y[i] - g_screen_y_offset);
 		}
 	}
 	/* There is an interaction between get_color and g_plot_color_put_color, so separate them */
@@ -37,7 +37,7 @@ void ZoomBox::display()
 	{
 		for (i = 0; i < count(); i++)
 		{
-			g_plot_color_put_color(_box_x[i] - g_sx_offset, _box_y[i] - g_sy_offset, boxColor);
+			g_plot_color_put_color(_box_x[i] - g_screen_x_offset, _box_y[i] - g_screen_y_offset, boxColor);
 		}
 	}
 }
@@ -53,7 +53,7 @@ void ZoomBox::clear()
 	{
 		for (i = 0; i < g_zoomBox.count(); i++)
 		{
-			g_plot_color_put_color(_box_x[i]-g_sx_offset, _box_y[i]-g_sy_offset, s_values[i]);
+			g_plot_color_put_color(_box_x[i]-g_screen_x_offset, _box_y[i]-g_screen_y_offset, s_values[i]);
 		}
 	}
 }

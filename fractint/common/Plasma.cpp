@@ -54,9 +54,9 @@ static void put_potential(int x, int y, U16 color)
 			was already a "disk_write" in that case */
 	if (!driver_diskp())
 	{
-		disk_write(x + g_sx_offset, y + g_sy_offset, color >> 8);    /* upper 8 bits */
+		disk_write(x + g_screen_x_offset, y + g_screen_y_offset, color >> 8);    /* upper 8 bits */
 	}
-	disk_write(x + g_sx_offset, y + g_screen_height + g_sy_offset, color&255); /* lower 8 bits */
+	disk_write(x + g_screen_x_offset, y + g_screen_height + g_screen_y_offset, color&255); /* lower 8 bits */
 }
 
 /* fixes border */
@@ -85,8 +85,8 @@ static void put_color_border(int x, int y, int color)
 
 static U16 get_potential(int x, int y)
 {
-	U16 color = U16(disk_read(x + g_sx_offset, y + g_sy_offset));
-	color = U16((color << 8) + U16(disk_read(x + g_sx_offset, y + g_screen_height + g_sy_offset)));
+	U16 color = U16(disk_read(x + g_screen_x_offset, y + g_screen_y_offset));
+	color = U16((color << 8) + U16(disk_read(x + g_screen_x_offset, y + g_screen_height + g_screen_y_offset)));
 	return color;
 }
 

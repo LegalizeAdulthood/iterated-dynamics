@@ -211,7 +211,7 @@ int AbstractFullScreenChooser::Execute()
 				const char *tmp;
 				if (_formatItem)
 				{
-					(*_formatItem)(j, buf);
+					_formatItem(j, buf);
 					tmp = buf;
 				}
 				else
@@ -241,7 +241,7 @@ int AbstractFullScreenChooser::Execute()
 		const char *itemText;
 		if (_formatItem)
 		{
-			(*_formatItem)(_current, current_item);
+			_formatItem(_current, current_item);
 			itemText = current_item;
 		}
 		else
@@ -442,7 +442,7 @@ int AbstractFullScreenChooser::Execute()
 		default:
 			if (_checkKeystroke)
 			{
-				int ret2 = (*_checkKeystroke)(current_key, _current);
+				int ret2 = _checkKeystroke(current_key, _current);
 				if (ret2 != -1 && ret2 != 0)
 				{
 					return ret2;

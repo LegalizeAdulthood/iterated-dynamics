@@ -562,7 +562,7 @@ static int do_move_link(LINK *link, int num_link, int *curr, int (*f)(LINK *, in
 
 	if (num_link > 1)
 	{
-		t = (f == 0) ? val : (*f)(link, num_link, *curr, val);
+		t = (f == 0) ? val : f(link, num_link, *curr, val);
 		if (t >= 0 && t != *curr)
 		{
 			color_link(&link[*curr], C_HELP_LINK);
@@ -1184,7 +1184,7 @@ static int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 	{
 	case PD_HEADING:
 		{
-			int keep_going = (info->msg_func != 0) ? (*info->msg_func)(pd->pnum, info->num_page) : 1;
+			int keep_going = (info->msg_func != 0) ? info->msg_func(pd->pnum, info->num_page) : 1;
 
 			info->margin = 0;
 

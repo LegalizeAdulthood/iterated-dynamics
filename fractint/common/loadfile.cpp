@@ -582,8 +582,8 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y;
 	g_px = evolver_info.px;
 	g_py = evolver_info.py;
-	g_sx_offset = evolver_info.sxoffs;
-	g_sy_offset = evolver_info.syoffs;
+	g_screen_x_offset = evolver_info.sxoffs;
+	g_screen_y_offset = evolver_info.syoffs;
 	g_x_dots = evolver_info.x_dots;
 	g_y_dots = evolver_info.y_dots;
 	g_grid_size = evolver_info.gridsz;

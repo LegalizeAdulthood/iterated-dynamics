@@ -187,20 +187,7 @@ int cellular()
 	}
 
 /* generate rule table from parameter 1 */
-#if !defined(XFRACT)
 	n = g_parameters[1];
-#else
-	/* gcc can't manage to convert a big double to an unsigned long properly. */
-	if (g_parameters[1] > 0x7fffffff)
-	{
-		n = (g_parameters[1]-0x7fffffff);
-		n += 0x7fffffff;
-	}
-	else
-	{
-		n = g_parameters[1];
-	}
-#endif
 	if (n == 0)  /* calculate a random rule */
 	{
 		n = rand() % int(k);

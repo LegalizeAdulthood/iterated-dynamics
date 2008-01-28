@@ -1399,20 +1399,20 @@ static void plot_orbit_d(double dx, double dy, int color)
 	{
 		return;
 	}
-	int i = int(dy*g_plot_mx1 - dx*g_plot_mx2) + g_sx_offset;
+	int i = int(dy*g_plot_mx1 - dx*g_plot_mx2) + g_screen_x_offset;
 	if (i < 0 || i >= g_screen_width)
 	{
 		return;
 	}
-	int j = int(dx*g_plot_my1 - dy*g_plot_my2) + g_sy_offset;
+	int j = int(dx*g_plot_my1 - dy*g_plot_my2) + g_screen_y_offset;
 	if (j < 0 || j >= g_screen_height)
 	{
 		return;
 	}
 
 	{
-		ValueSaver<int> save_sx_offset(g_sx_offset, 0);
-		ValueSaver<int> save_sy_offset(g_sy_offset, 0);
+		ValueSaver<int> save_sx_offset(g_screen_x_offset, 0);
+		ValueSaver<int> save_sy_offset(g_screen_y_offset, 0);
 		/* save orbit value */
 		if (color == -1)
 		{
@@ -1448,8 +1448,8 @@ void plot_orbit(double real, double imag, int color)
 void orbit_scrub()
 {
 	driver_mute();
-	ValueSaver<int> save_sx_offset(g_sx_offset, 0);
-	ValueSaver<int> save_sy_offset(g_sy_offset, 0);
+	ValueSaver<int> save_sx_offset(g_screen_x_offset, 0);
+	ValueSaver<int> save_sy_offset(g_screen_y_offset, 0);
 	while (g_orbit_index >= 3)
 	{
 		int c = *(s_save_orbit + --g_orbit_index);

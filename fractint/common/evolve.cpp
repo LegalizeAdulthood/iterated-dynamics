@@ -950,12 +950,12 @@ void draw_parameter_box(bool clear_not_redraw)
 	/*draw larger box to show parm zooming range */
 	Coordinate tl;
 	Coordinate bl;
-	tl.x = bl.x = ((g_px -int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_sx_offset-1;
+	tl.x = bl.x = ((g_px -int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_screen_x_offset-1;
 	Coordinate tr;
-	tl.y = tr.y = ((g_py -int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_sy_offset-1;
+	tl.y = tr.y = ((g_py -int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_screen_y_offset-1;
 	Coordinate br;
-	br.x = tr.x = ((g_px +1 + int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_sx_offset;
-	br.y = bl.y = ((g_py +1 + int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_sy_offset;
+	br.x = tr.x = ((g_px +1 + int(g_parameter_zoom))*int(g_dx_size + 1 + grout))-g_screen_x_offset;
+	br.y = bl.y = ((g_py +1 + int(g_parameter_zoom))*int(g_dy_size + 1 + grout))-g_screen_y_offset;
 #ifndef XFRACT
 	add_box(br);
 	add_box(tr);
@@ -964,14 +964,14 @@ void draw_parameter_box(bool clear_not_redraw)
 	draw_lines(tl, tr, bl.x-tl.x, bl.y-tl.y);
 	draw_lines(tl, bl, tr.x-tl.x, tr.y-tl.y);
 #else
-	g_box_x[0] = tl.x + g_sx_offset;
-	g_box_y[0] = tl.y + g_sy_offset;
-	g_box_x[1] = tr.x + g_sx_offset;
-	g_box_y[1] = tr.y + g_sy_offset;
-	g_box_x[2] = br.x + g_sx_offset;
-	g_box_y[2] = br.y + g_sy_offset;
-	g_box_x[3] = bl.x + g_sx_offset;
-	g_box_y[3] = bl.y + g_sy_offset;
+	g_box_x[0] = tl.x + g_screen_x_offset;
+	g_box_y[0] = tl.y + g_screen_y_offset;
+	g_box_x[1] = tr.x + g_screen_x_offset;
+	g_box_y[1] = tr.y + g_screen_y_offset;
+	g_box_x[2] = br.x + g_screen_x_offset;
+	g_box_y[2] = br.y + g_screen_y_offset;
+	g_box_x[3] = bl.x + g_screen_x_offset;
+	g_box_y[3] = bl.y + g_screen_y_offset;
 	g_zoomBox.set_count(8);
 #endif
 	if (g_zoomBox.count())

@@ -328,7 +328,7 @@ static void put_horizontal_line(int x1, int y1, int x2, int color)
 {
 	for (int x = x1; x <= x2; x++)
 	{
-		(*g_plot_color)(x, y1, color);
+		g_plot_color(x, y1, color);
 	}
 }
 
@@ -702,7 +702,7 @@ scan:
 					{
 						break;
 					}
-					(*g_plot_color)(z, y, int(helpcolor&255));
+					g_plot_color(z, y, int(helpcolor&255));
 				}
 
 				if (savex < z)
@@ -711,7 +711,7 @@ scan:
 				}
 				else
 				{
-					(*g_plot_color)(savex, y, int(savecolor&255));
+					g_plot_color(savex, y, int(savecolor&255));
 				}
 
 				savex = x;
@@ -733,7 +733,7 @@ scan:
 					break;
 				}
 
-				(*g_plot_color)(z, y, int(helpcolor&255));
+				g_plot_color(z, y, int(helpcolor&255));
 			}
 
 			if (savex < z)
@@ -742,7 +742,7 @@ scan:
 			}
 			else
 			{
-				(*g_plot_color)(savex, y, int(savecolor&255));
+				g_plot_color(savex, y, int(savecolor&255));
 			}
 		}
 		status = 0;

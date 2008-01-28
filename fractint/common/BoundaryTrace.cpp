@@ -86,11 +86,11 @@ int boundary_trace_main()
 			trail_color = g_color;
 			g_row = g_current_row;
 			g_col = g_current_col;
-			if ((*g_calculate_type)() == -1) /* color, row, col are global */
+			if (g_calculate_type() == -1) /* color, row, col are global */
 			{
 				if (g_show_dot != bkcolor) /* remove g_show_dot pixel */
 				{
-					(*g_plot_color)(g_col, g_row, bkcolor);
+					g_plot_color(g_col, g_row, bkcolor);
 				}
 				if (g_y_stop != g_WorkList.yy_stop())  /* DG */
 				{
@@ -129,12 +129,12 @@ int boundary_trace_main()
 				{
 					/* the order of operations in this next line is critical */
 					g_color = get_color(g_col, g_row);
-					if (g_color == bkcolor && (*g_calculate_type)() == -1)
-								/* color, row, col are global for (*g_calculate_type)() */
+					if (g_color == bkcolor && g_calculate_type() == -1)
+								/* color, row, col are global for g_calculate_type() */
 					{
 						if (g_show_dot != bkcolor) /* remove g_show_dot pixel */
 						{
-							(*g_plot_color)(g_col, g_row, bkcolor);
+							g_plot_color(g_col, g_row, bkcolor);
 						}
 						if (g_y_stop != g_WorkList.yy_stop())  /* DG */
 						{
@@ -219,7 +219,7 @@ int boundary_trace_main()
 								left++; /* one pixel too far */
 								if (right == left) /* only one hole */
 								{
-									(*g_plot_color)(left, g_row, fillcolor_used);
+									g_plot_color(left, g_row, fillcolor_used);
 								}
 								else
 								{ /* fill the line to the left */

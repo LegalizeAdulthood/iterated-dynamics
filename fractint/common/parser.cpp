@@ -4071,7 +4071,6 @@ static void delete_array_and_null(T &pointer)
 void Formula::free_work_area()
 {
 	delete_array_and_null(m_functions);
-	delete_array_and_null(m_functions);
 	delete_array_and_null(m_store);
 	delete_array_and_null(m_load);
 	delete_array_and_null(m_variables);
@@ -4080,8 +4079,7 @@ void Formula::free_work_area()
 
 void Formula::formula_error(std::ifstream &open_file, std::ifstream::pos_type begin_frm)
 {
-	std::string message;
-	message = "\n";
+	std::string message = "\n";
 
 	FormulaToken token;
 	int token_count;
