@@ -68,9 +68,9 @@ static void check_history(const char *, const char *);
 static void transform(CoordinateD *);
 static void transform_bf(bf_t, bf_t, CoordinateD *);
 static void draw_window(int color, CoordinateWindow *info);
-static bool is_visible_window(CoordinateWindow *, fractal_info *, ext_blk_mp_info *);
+static bool is_visible_window(CoordinateWindow *, fractal_info *, multiple_precision_info_extension_block *);
 static void bfsetup_convert_to_screen();
-static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_info &formula_info);
+static bool fractal_types_match(const fractal_info &info, const formula_info_extension_block &formula_info);
 static bool functions_match(const fractal_info &info, int num_functions);
 static bool parameters_match(const fractal_info &info);
 
@@ -252,7 +252,7 @@ inline bool is_visible(CoordinateD const &pt)
 }
 
 static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
-	ext_blk_mp_info *mp_info)
+	multiple_precision_info_extension_block *mp_info)
 {
 	double toobig = sqrt(sqr(double(g_screen_width)) + sqr(double(g_screen_height)))*1.5;
 	int saved = save_stack();
@@ -509,7 +509,7 @@ static void bfsetup_convert_to_screen()
 	restore_stack(saved);
 }
 
-static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_info &formula_info)
+static bool fractal_types_match(const fractal_info &info, const formula_info_extension_block &formula_info)
 {
 	if (fractal_type_formula(g_fractal_type) && fractal_type_formula(info.fractal_type))
 	{
@@ -620,12 +620,12 @@ int look_get_window()
 {
 	affine stack_cvt;
 	fractal_info read_info;
-	ext_blk_resume_info resume_info_blk;
-	ext_blk_formula_info formula_info;
-	ext_blk_ranges_info ranges_info;
-	ext_blk_mp_info mp_info;
-	ext_blk_evolver_info evolver_info;
-	ext_blk_orbits_info orbits_info;
+	resume_info_extension_block resume_info_blk;
+	formula_info_extension_block formula_info;
+	ranges_info_extension_block ranges_info;
+	multiple_precision_info_extension_block mp_info;
+	evolver_info_extension_block evolver_info;
+	orbits_info_extension_block orbits_info;
 	time_t thistime;
 	time_t lastime;
 	char message[40];

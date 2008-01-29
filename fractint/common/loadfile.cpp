@@ -451,7 +451,7 @@ void free_ranges()
 	g_ranges_length = 0;
 }
 
-static void got_resume_info(ext_blk_resume_info const &resume_info)
+static void got_resume_info(resume_info_extension_block const &resume_info)
 {
 	end_resume();
 
@@ -462,7 +462,7 @@ static void got_resume_info(ext_blk_resume_info const &resume_info)
 	}
 }
 
-static void got_formula_info(fractal_info const &read_info, ext_blk_formula_info formula_info)
+static void got_formula_info(fractal_info const &read_info, formula_info_extension_block formula_info)
 {
 	if (formula_info.got_data != 1)
 	{
@@ -495,7 +495,7 @@ static void got_formula_info(fractal_info const &read_info, ext_blk_formula_info
 	/* perhaps in future add more here, check block_len for backward compatibility */
 }
 
-static void got_ranges_info(ext_blk_ranges_info const &ranges_info)
+static void got_ranges_info(ranges_info_extension_block const &ranges_info)
 {
 	free_ranges();
 	if (ranges_info.got_data == 1)
@@ -508,7 +508,7 @@ static void got_ranges_info(ext_blk_ranges_info const &ranges_info)
 	}
 }
 
-static void got_multiple_precision_info(const fractal_info &read_info, ext_blk_mp_info const &mp_info)
+static void got_multiple_precision_info(const fractal_info &read_info, multiple_precision_info_extension_block const &mp_info)
 {
 	if (mp_info.got_data == 1)
 	{
@@ -523,7 +523,7 @@ static void got_multiple_precision_info(const fractal_info &read_info, ext_blk_m
 	}
 }
 
-static void got_evolver_info(const fractal_info &read_info, ext_blk_evolver_info evolver_info)
+static void got_evolver_info(const fractal_info &read_info, evolver_info_extension_block evolver_info)
 {
 	if (evolver_info.got_data != 1)
 	{
@@ -618,7 +618,7 @@ static void got_evolver_info(const fractal_info &read_info, ext_blk_evolver_info
 	save_parameter_history();
 }
 
-static void got_orbits_info(ext_blk_orbits_info const &orbits_info)
+static void got_orbits_info(orbits_info_extension_block const &orbits_info)
 {
 	if (orbits_info.got_data != 1)
 	{
@@ -639,8 +639,8 @@ static void got_orbits_info(ext_blk_orbits_info const &orbits_info)
 	}
 }
 
-static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, ext_blk_formula_info formula_info,
-						 ext_blk_resume_info resume_info_blk)
+static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, formula_info_extension_block formula_info,
+						 resume_info_extension_block resume_info_blk)
 {
 	/* TODO: a klooge till the meaning of g_float_flag in line3d is clarified */
 	if (g_display_3d)                   
@@ -713,12 +713,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 
 	fractal_info read_info;
-	ext_blk_resume_info resume_info_blk;
-	ext_blk_formula_info formula_info;
-	ext_blk_ranges_info ranges_info;
-	ext_blk_mp_info mp_info;
-	ext_blk_evolver_info evolver_info;
-	ext_blk_orbits_info orbits_info;
+	resume_info_extension_block resume_info_blk;
+	formula_info_extension_block formula_info;
+	ranges_info_extension_block ranges_info;
+	multiple_precision_info_extension_block mp_info;
+	evolver_info_extension_block evolver_info;
+	orbits_info_extension_block orbits_info;
 	if (find_fractal_info(g_read_name.c_str(), &read_info, &resume_info_blk, &formula_info,
 		&ranges_info, &mp_info, &evolver_info, &orbits_info))
 	{
@@ -881,12 +881,12 @@ static void GifFileReadColormap(const BYTE gifstart[18])
 }
 
 static void FoundInfoId(fractal_info *info,
-						ext_blk_resume_info *resume_info,
-						ext_blk_formula_info *formula_info,
-						ext_blk_ranges_info *ranges_info,
-						ext_blk_mp_info *mp_info,
-						ext_blk_evolver_info *evolver_info,
-						ext_blk_orbits_info *orbits_info,
+						resume_info_extension_block *resume_info,
+						formula_info_extension_block *formula_info,
+						ranges_info_extension_block *ranges_info,
+						multiple_precision_info_extension_block *mp_info,
+						evolver_info_extension_block *evolver_info,
+						orbits_info_extension_block *orbits_info,
 						int hdr_offset)
 {
 	// TODO: handle old crap or abort?
@@ -1059,12 +1059,12 @@ static void FoundInfoId(fractal_info *info,
 }
 
 int find_fractal_info(const char *gif_file, fractal_info *info,
-					  ext_blk_resume_info *resume_info,
-					  ext_blk_formula_info *formula_info,
-					  ext_blk_ranges_info *ranges_info,
-					  ext_blk_mp_info *mp_info,
-					  ext_blk_evolver_info *evolver_info,
-					  ext_blk_orbits_info *orbits_info)
+					  resume_info_extension_block *resume_info,
+					  formula_info_extension_block *formula_info,
+					  ranges_info_extension_block *ranges_info,
+					  multiple_precision_info_extension_block *mp_info,
+					  evolver_info_extension_block *evolver_info,
+					  orbits_info_extension_block *orbits_info)
 {
 	/* initialize to no data */
 	resume_info->got_data = 0;
