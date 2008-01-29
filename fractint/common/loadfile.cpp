@@ -451,7 +451,7 @@ void free_ranges()
 	g_ranges_length = 0;
 }
 
-static void got_resume_info(struct ext_blk_resume_info resume_info)
+static void got_resume_info(ext_blk_resume_info const &resume_info)
 {
 	end_resume();
 
@@ -462,7 +462,7 @@ static void got_resume_info(struct ext_blk_resume_info resume_info)
 	}
 }
 
-static void got_formula_info(const fractal_info &read_info, struct ext_blk_formula_info formula_info)
+static void got_formula_info(fractal_info const &read_info, ext_blk_formula_info formula_info)
 {
 	if (formula_info.got_data != 1)
 	{
@@ -495,7 +495,7 @@ static void got_formula_info(const fractal_info &read_info, struct ext_blk_formu
 	/* perhaps in future add more here, check block_len for backward compatibility */
 }
 
-static void got_ranges_info(struct ext_blk_ranges_info ranges_info)
+static void got_ranges_info(ext_blk_ranges_info const &ranges_info)
 {
 	free_ranges();
 	if (ranges_info.got_data == 1)
@@ -508,7 +508,7 @@ static void got_ranges_info(struct ext_blk_ranges_info ranges_info)
 	}
 }
 
-static void got_multiple_precision_info(const fractal_info &read_info, struct ext_blk_mp_info mp_info)
+static void got_multiple_precision_info(const fractal_info &read_info, ext_blk_mp_info const &mp_info)
 {
 	if (mp_info.got_data == 1)
 	{
@@ -523,7 +523,7 @@ static void got_multiple_precision_info(const fractal_info &read_info, struct ex
 	}
 }
 
-static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolver_info evolver_info)
+static void got_evolver_info(const fractal_info &read_info, ext_blk_evolver_info evolver_info)
 {
 	if (evolver_info.got_data != 1)
 	{
@@ -538,11 +538,11 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 		/* We added 4 to NUM_GENES, so ecount is at NUM_GENES-4 */
 		evolver_info.ecount = evolver_info.mutate[NUM_GENES - 4];
 	}
-	if (evolver_info.ecount != evolver_info.gridsz*evolver_info.gridsz
+	if (evolver_info.ecount != evolver_info.grid_size*evolver_info.grid_size
 		&& g_calculation_status != CALCSTAT_COMPLETED)
 	{
 		g_calculation_status = CALCSTAT_RESUMABLE;
-		struct evolution_info resume_e_info;
+		evolution_info resume_e_info;
 		if (g_evolve_handle == 0)
 		{
 			g_evolve_handle = new evolution_info;
@@ -559,7 +559,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 		resume_e_info.syoffs = evolver_info.syoffs;
 		resume_e_info.x_dots = evolver_info.x_dots;
 		resume_e_info.y_dots = evolver_info.y_dots;
-		resume_e_info.gridsz = evolver_info.gridsz;
+		resume_e_info.grid_size = evolver_info.grid_size;
 		resume_e_info.evolving = evolver_info.evolving;
 		resume_e_info.this_generation_random_seed = evolver_info.this_generation_random_seed;
 		resume_e_info.fiddle_factor = evolver_info.fiddle_factor;
@@ -586,7 +586,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	g_screen_y_offset = evolver_info.syoffs;
 	g_x_dots = evolver_info.x_dots;
 	g_y_dots = evolver_info.y_dots;
-	g_grid_size = evolver_info.gridsz;
+	g_grid_size = evolver_info.grid_size;
 	g_this_generation_random_seed = evolver_info.this_generation_random_seed;
 	g_fiddle_factor = evolver_info.fiddle_factor;
 	g_evolving_flags = evolver_info.evolving;
@@ -618,7 +618,7 @@ static void got_evolver_info(const fractal_info &read_info, struct ext_blk_evolv
 	save_parameter_history();
 }
 
-static void got_orbits_info(struct ext_blk_orbits_info orbits_info)
+static void got_orbits_info(ext_blk_orbits_info const &orbits_info)
 {
 	if (orbits_info.got_data != 1)
 	{
@@ -713,12 +713,12 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	}
 
 	fractal_info read_info;
-	struct ext_blk_resume_info resume_info_blk;
-	struct ext_blk_formula_info formula_info;
-	struct ext_blk_ranges_info ranges_info;
-	struct ext_blk_mp_info mp_info;
-	struct ext_blk_evolver_info evolver_info;
-	struct ext_blk_orbits_info orbits_info;
+	ext_blk_resume_info resume_info_blk;
+	ext_blk_formula_info formula_info;
+	ext_blk_ranges_info ranges_info;
+	ext_blk_mp_info mp_info;
+	ext_blk_evolver_info evolver_info;
+	ext_blk_orbits_info orbits_info;
 	if (find_fractal_info(g_read_name.c_str(), &read_info, &resume_info_blk, &formula_info,
 		&ranges_info, &mp_info, &evolver_info, &orbits_info))
 	{
@@ -1018,7 +1018,7 @@ static void FoundInfoId(fractal_info *info,
 				evolver_info->syoffs = evolver_load_info.syoffs;
 				evolver_info->x_dots = evolver_load_info.x_dots;
 				evolver_info->y_dots = evolver_load_info.y_dots;
-				evolver_info->gridsz = evolver_load_info.gridsz;
+				evolver_info->grid_size = evolver_load_info.grid_size;
 				evolver_info->evolving = evolver_load_info.evolving;
 				evolver_info->this_generation_random_seed = evolver_load_info.this_generation_random_seed;
 				evolver_info->fiddle_factor = evolver_load_info.fiddle_factor;

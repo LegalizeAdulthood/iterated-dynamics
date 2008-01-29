@@ -42,7 +42,7 @@ static struct cache		/* structure of each cache entry */
 	bool dirty;					/* changed since read? */
 	bool lru;					/* recently used? */
 } *s_cache_end, *s_cache_lru, *s_cur_cache;
-static struct cache *s_cache_start = 0;
+static cache *s_cache_start = 0;
 static long s_high_offset;           /* highwater mark of writes */
 static long s_seek_offset;           /* what we'll get next if we don't seek */
 static long s_cur_offset;            /* offset of last g_block referenced */
@@ -60,7 +60,7 @@ static long s_old_memory_offset = 0;
 static BYTE *s_memory_buffer_ptr;
 
 static void find_load_cache(long offset);
-static struct cache *find_cache(long offset);
+static cache *find_cache(long offset);
 static void  write_cache_lru();
 static void mem_putc(BYTE);
 static BYTE  mem_getc();
@@ -120,7 +120,7 @@ int disk_start_common(long newrowsize, long newcolsize, int g_colors)
 	long memorysize;
 	long offset;
 	unsigned int *fwd_link = 0;
-	struct cache *ptr1 = 0;
+	cache *ptr1 = 0;
 	long longtmp;
 	unsigned int cache_size;
 	if (g_disk_flag)
@@ -485,7 +485,7 @@ static void find_load_cache(long offset) /* used by read/write */
 	tbloffset = s_hash_ptr[ ((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1) ];
 	while (tbloffset != 0xffff)  /* follow the hash chain */
 	{
-		s_cur_cache = (struct cache *)((char *)s_cache_start + tbloffset);
+		s_cur_cache = (cache *)((char *)s_cache_start + tbloffset);
 		if (s_cur_cache->offset == offset)  /* great, it is in the cache */
 		{
 			s_cur_cache->lru = true;
@@ -511,11 +511,11 @@ static void find_load_cache(long offset) /* used by read/write */
 		write_cache_lru();
 	}
 	/* remove g_block at s_cache_lru from its hash chain */
-	fwd_link = &s_hash_ptr[(((unsigned short)s_cache_lru->offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
-	tbloffset = int((char *)s_cache_lru - (char *)s_cache_start);
+	fwd_link = &s_hash_ptr[(((unsigned short) s_cache_lru->offset >> BLOCK_SHIFT) & (HASH_SIZE-1))];
+	tbloffset = int((char *) s_cache_lru - (char *) s_cache_start);
 	while (*fwd_link != tbloffset)
 	{
-		fwd_link = &((struct cache *)((char *)s_cache_start + *fwd_link))->hashlink;
+		fwd_link = &((cache *) ((char *) s_cache_start + *fwd_link))->hashlink;
 	}
 	*fwd_link = s_cache_lru->hashlink;
 	/* load g_block */
@@ -584,15 +584,15 @@ static void find_load_cache(long offset) /* used by read/write */
 }
 
 /* lookup for write_cache_lru */
-static struct cache *find_cache(long offset)
+static cache *find_cache(long offset)
 {
 #ifndef XFRACT
 	unsigned int tbloffset;
-	struct cache *ptr1;
+	cache *ptr1;
 	tbloffset = s_hash_ptr[((unsigned short)offset >> BLOCK_SHIFT) & (HASH_SIZE-1)];
 	while (tbloffset != 0xffff)
 	{
-		ptr1 = (struct cache *)((char *)s_cache_start + tbloffset);
+		ptr1 = (cache *)((char *)s_cache_start + tbloffset);
 		if (ptr1->offset == offset)
 		{
 			return ptr1;
@@ -610,7 +610,7 @@ static void  write_cache_lru()
 	BYTE *pixelptr;
 	long offset;
 	BYTE tmpchar = 0;
-	struct cache *ptr1, *ptr2;
+	cache *ptr1, *ptr2;
 #define WRITEGAP 4 /* 1 for no gaps */
 	/* scan back to also write any preceding dirty blocks, skipping small gaps */
 	ptr1 = s_cache_lru;

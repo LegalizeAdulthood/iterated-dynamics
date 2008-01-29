@@ -49,6 +49,12 @@
 #define getwd(a) getcwd(a, MAXPATHLEN)
 #endif
 
+struct FT_CHOICE
+{
+	char name[15];
+	int  num;
+};
+
 const std::string GLASSES1_MAP = "glasses1.map";
 const std::string GLASSES2_MAP = "glasses2.map";
 
@@ -66,6 +72,10 @@ static std::string s_funny_glasses_map_name;
 static char ifsmask[13]     = {"*.ifs"};
 static char formmask[13]    = {"*.frm"};
 static char lsysmask[13]    = {"*.l"};
+
+static FT_CHOICE **s_fractal_type_choices; /* for sel_fractype_help subrtn */
+static entry_info **s_get_file_entry_choices = 0; /* for format_getparm_line */
+static const char *s_get_file_entry_title = 0;
 
 /* Routines in this module      */
 
@@ -975,20 +985,20 @@ fullscreen_exit:
 */
 // TODO: extrainfo should be const, but it is modified here!
 int full_screen_prompt(const char *heading, int num_prompts, const char **prompts,
-	struct full_screen_values *values, int function_key_mask, char *footer)
+	full_screen_values *values, int function_key_mask, char *footer)
 {
 	FullScreenPrompter prompter(heading, num_prompts, prompts, values, function_key_mask, footer);
 	return prompter.Prompt();
 }
 
 int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, const char **prompts,
-	struct full_screen_values *values, int fkeymask, char *extrainfo)
+	full_screen_values *values, int fkeymask, char *extrainfo)
 {
 	HelpModeSaver saved(help_mode);
 	return full_screen_prompt(hdg, numprompts, prompts, values, fkeymask, extrainfo);
 }
 
-int prompt_value_string(char *buf, struct full_screen_values *val)
+int prompt_value_string(char *buf, full_screen_values *val)
 {  /* format value into buf, return field width */
 	int i;
 	int ret;
@@ -1244,13 +1254,6 @@ int get_fractal_type()             /* prompt for and select fractal type */
 	return done;
 }
 
-struct FT_CHOICE
-{
-	char name[15];
-	int  num;
-};
-static struct FT_CHOICE **ft_choices; /* for sel_fractype_help subrtn */
-
 static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated */
                                    /* so that storage gets freed up      */
 {
@@ -1260,8 +1263,8 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 	int j;
 #define MAXFTYPES 200
 	char tname[40];
-	struct FT_CHOICE storage[MAXFTYPES] = { 0 };
-	struct FT_CHOICE *choices[MAXFTYPES];
+	FT_CHOICE storage[MAXFTYPES] = { 0 };
+	FT_CHOICE *choices[MAXFTYPES];
 	int attributes[MAXFTYPES];
 
 	/* steal existing array for "choices" */
@@ -1272,7 +1275,7 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 		choices[i] = &storage[i];
 		attributes[i] = 1;
 	}
-	ft_choices = &choices[0];
+	s_fractal_type_choices = &choices[0];
 
 	/* setup context sensitive help */
 	HelpModeSaver saved_help(FIHELP_FRACTAL_TYPE);
@@ -1300,7 +1303,7 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 		choices[j]->num = i;      /* remember where the real item is */
 	}
 	numtypes = j + 1;
-	shell_sort(&choices, numtypes, sizeof(struct FT_CHOICE *), lccompare); /* sort list */
+	shell_sort(&choices, numtypes, sizeof(FT_CHOICE *), lccompare); /* sort list */
 	j = 0;
 	for (i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
 	{
@@ -1340,7 +1343,7 @@ static int sel_fractal_type_help(int curkey, int choice)
 {
 	if (curkey == FIK_F2)
 	{
-		HelpModeSaver saved_help(g_fractal_specific[(*(ft_choices + choice))->num].helptext);
+		HelpModeSaver saved_help(g_fractal_specific[(*(s_fractal_type_choices + choice))->num].helptext);
 		help(ACTION_CALL);
 	}
 	return 0;
@@ -1572,7 +1575,7 @@ const char *g_jiim_left_right[] =
 	"left", "right"
 };
 
-struct FunctionListItem g_function_list[] =
+FunctionListItem g_function_list[] =
 /* changing the order of these alters meaning of *.fra file */
 /* maximum 6 characters in function names or recheck all related code */
 {
@@ -1664,7 +1667,7 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 	int current_fractal_type;
 	int num_parameters;
 	int num_functions;
-	struct full_screen_values parameter_values[30];
+	full_screen_values parameter_values[30];
 	const char *choices[30];
 	long old_bail_out = 0L;
 	char message[120];
@@ -2403,9 +2406,6 @@ long get_file_entry(int type, const char *title, char *fmask,
 	}
 }
 
-static struct entryinfo **gfe_choices; /* for format_getparm_line */
-static const char *gfe_title;
-
 /* skip to next non-white space character and return it */
 static int skip_white_space(std::ifstream &infile, long *file_offset)
 {
@@ -2434,7 +2434,7 @@ int skip_comment(std::ifstream &infile, long *file_offset)
 
 #define MAXENTRIES 2000L
 
-int scan_entries(std::ifstream &infile, struct entryinfo *choices, const char *itemname)
+int scan_entries(std::ifstream &infile, entry_info *choices, const char *itemname)
 {
 		/*
 		function returns the number of entries found; if a
@@ -2596,8 +2596,8 @@ static long gfe_choose_entry(int type, const char *title, const char *filename, 
 	int numentries;
 	int i;
 	char buf[101];
-	struct entryinfo storage[MAXENTRIES + 1];
-	struct entryinfo *choices[MAXENTRIES + 1] = { 0 };
+	entry_info storage[MAXENTRIES + 1];
+	entry_info *choices[MAXENTRIES + 1] = { 0 };
 	int attributes[MAXENTRIES + 1] = { 0 };
 	void (*formatitem)(int, char *);
 	int boxwidth;
@@ -2606,8 +2606,8 @@ static long gfe_choose_entry(int type, const char *title, const char *filename, 
 	char instr[80];
 	static int dosort = 1;
 
-	gfe_choices = &choices[0];
-	gfe_title = title;
+	s_get_file_entry_choices = &choices[0];
+	s_get_file_entry_title = title;
 
 retry:
 	for (i = 0; i < MAXENTRIES + 1; i++)
@@ -2630,7 +2630,7 @@ retry:
 	if (dosort)
 	{
 		strcat(instr, "off");
-		shell_sort((char *) &choices, numentries, sizeof(struct entryinfo *), lccompare);
+		shell_sort((char *) &choices, numentries, sizeof(entry_info *), lccompare);
 	}
 	else
 	{
@@ -2701,7 +2701,7 @@ static int check_gfe_key(int curkey, int choice)
 		int comment = 0;
 		int c = 0;
 		int widthct = 0;
-		s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
+		s_gfe_file.seekg(s_get_file_entry_choices[choice]->point, SEEK_SET);
 		while ((c = s_gfe_file.get()) != EOF && c != '\032')
 		{
 			if (c == ';')
@@ -2734,16 +2734,16 @@ static int check_gfe_key(int curkey, int choice)
 		}
 		if (c == EOF || c == '\032')  /* should never happen */
 		{
-			s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
+			s_gfe_file.seekg(s_get_file_entry_choices[choice]->point, SEEK_SET);
 			in_scrolling_mode = false;
 		}
-		s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
+		s_gfe_file.seekg(s_get_file_entry_choices[choice]->point, SEEK_SET);
 		load_entry_text(s_gfe_file, infbuf, 17, 0, 0);
 		if (lines_in_entry > 17 || widest_entry_line > 74)
 		{
 			in_scrolling_mode = true;
 		}
-		strcpy(infhdg, gfe_title);
+		strcpy(infhdg, s_get_file_entry_title);
 		strcat(infhdg, " file entry:\n\n");
 		/* ... instead, call help with buffer?  heading added */
 		ScreenStacker stacker;
@@ -2765,7 +2765,7 @@ static int check_gfe_key(int curkey, int choice)
 			if (rewrite_infbuf)
 			{
 				rewrite_infbuf = 0;
-				s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
+				s_gfe_file.seekg(s_get_file_entry_choices[choice]->point, SEEK_SET);
 				load_entry_text(s_gfe_file, infbuf, 17, top_line, left_column);
 				for (i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
 				{
@@ -3028,7 +3028,7 @@ static void format_parmfile_line(int choice, char *buf)
 	int c;
 	int i;
 	char line[80];
-	s_gfe_file.seekg(gfe_choices[choice]->point, SEEK_SET);
+	s_gfe_file.seekg(s_get_file_entry_choices[choice]->point, SEEK_SET);
 	do
 	{
 		c = s_gfe_file.get();
@@ -3046,7 +3046,7 @@ static void format_parmfile_line(int choice, char *buf)
 		c = s_gfe_file.get();
 	}
 	line[i] = 0;
-	strcpy(buf, str(boost::format("%-20s%-56s") % gfe_choices[choice]->name % line).c_str());
+	strcpy(buf, str(boost::format("%-20s%-56s") % s_get_file_entry_choices[choice]->name % line).c_str());
 }
 
 /* --------------------------------------------------------------------- */

@@ -607,7 +607,7 @@ enum stored_at_values
 struct evolution_info      /* for saving evolution data in a GIF file */
 {
 	short evolving;
-	short gridsz;
+	short grid_size;
 	unsigned short this_generation_random_seed;
 	double fiddle_factor;
 	double parameter_range_x;
@@ -1126,7 +1126,7 @@ struct ext_blk_evolver_info
 	char got_data;
 	int length;
 	short evolving;
-	short gridsz;
+	short grid_size;
 	unsigned short this_generation_random_seed;
 	double fiddle_factor;
 	double parameter_range_x;
@@ -1192,7 +1192,7 @@ struct GENEBASE  /* smallest part of a fractint 'gene' */
 #define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
 
 
-struct entryinfo
+struct entry_info
 {
 	char name[ITEMNAMELEN + 2];
 	long point; /* points to the (or the { following the name */

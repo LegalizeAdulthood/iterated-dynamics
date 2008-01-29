@@ -546,9 +546,9 @@ int encoder()
 		/* Extended parameters g_block 006 */
 		if (g_evolving_flags & EVOLVE_FIELD_MAP)
 		{
-			struct evolution_info esave_info;
+			evolution_info esave_info;
 			int i;
-			struct evolution_info resume_e_info;
+			evolution_info resume_e_info;
 			if (g_evolve_handle == 0 || g_calculation_status == CALCSTAT_COMPLETED)
 			{
 				esave_info.parameter_range_x     = g_parameter_range_x;
@@ -563,7 +563,7 @@ int encoder()
 				esave_info.syoffs          = short(g_screen_y_offset);
 				esave_info.x_dots           = short(g_x_dots);
 				esave_info.y_dots           = short(g_y_dots);
-				esave_info.gridsz          = short(g_grid_size);
+				esave_info.grid_size          = short(g_grid_size);
 				esave_info.evolving = short(g_evolving_flags);
 				esave_info.this_generation_random_seed  = (unsigned short)g_this_generation_random_seed;
 				esave_info.fiddle_factor    = g_fiddle_factor;
@@ -584,7 +584,7 @@ int encoder()
 				esave_info.syoffs          = short(resume_e_info.syoffs);
 				esave_info.x_dots           = short(resume_e_info.x_dots);
 				esave_info.y_dots           = short(resume_e_info.y_dots);
-				esave_info.gridsz          = short(resume_e_info.gridsz);
+				esave_info.grid_size          = short(resume_e_info.grid_size);
 				esave_info.evolving        = short(resume_e_info.evolving);
 				esave_info.this_generation_random_seed  = (unsigned short)resume_e_info.this_generation_random_seed;
 				esave_info.fiddle_factor    = resume_e_info.fiddle_factor;
@@ -615,7 +615,7 @@ int encoder()
 		/* Extended parameters g_block 007 */
 		if (g_standard_calculation_mode == CALCMODE_ORBITS)
 		{
-			struct orbits_info osave_info;
+			orbits_info osave_info;
 			int i;
 			osave_info.oxmin     = g_orbit_x_min;
 			osave_info.oxmax     = g_orbit_x_max;
@@ -756,7 +756,7 @@ static int store_item_name(const std::string &name)
 
 static int store_item_name(const char *nameptr)
 {
-	struct formula_info fsave_info;
+	formula_info fsave_info;
 	int i;
 	for (i = 0; i < 40; i++)
 	{

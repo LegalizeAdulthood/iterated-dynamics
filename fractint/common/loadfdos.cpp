@@ -183,7 +183,7 @@ static std::string GetInstructions(fractal_info const *info)
 	return instructions;
 }
 
-static std::string GetHeading(fractal_info const *info, struct ext_blk_formula_info const *formula_info)
+static std::string GetHeading(fractal_info const *info, ext_blk_formula_info const *formula_info)
 {
 	std::string heading;
 	if (info->info_id[0] == 'G')

@@ -1365,7 +1365,7 @@ ErrorAbort:
 
 int init_help()
 {
-	struct help_sig_info hs = { 0 };
+	help_sig_info hs = { 0 };
 	char path[FILE_MAX_PATH + 1];
 
 	if (!s_help_stream.is_open())            /* look for id.hlp */
