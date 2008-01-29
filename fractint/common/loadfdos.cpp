@@ -183,7 +183,7 @@ static std::string GetInstructions(fractal_info const *info)
 	return instructions;
 }
 
-static std::string GetHeading(fractal_info const *info, ext_blk_formula_info const *formula_info)
+static std::string GetHeading(fractal_info const *info, formula_info_extension_block const *formula_info)
 {
 	std::string heading;
 	if (info->info_id[0] == 'G')
@@ -246,7 +246,7 @@ int get_skip_factor(int video_size, int file_size)
 	return skip_factor;
 }
 
-int get_video_mode(fractal_info const *info, ext_blk_formula_info const *formula_info)
+int get_video_mode(fractal_info const *info, formula_info_extension_block const *formula_info)
 {
 	int tmpxdots;
 	int tmpydots;

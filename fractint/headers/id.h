@@ -1086,14 +1086,14 @@ struct Palettetype
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif
-struct ext_blk_resume_info
+struct resume_info_extension_block
 {
 	char got_data;
 	int length;
 	char *resume_data;
 };
 
-struct ext_blk_formula_info
+struct formula_info_extension_block
 {
 	char got_data;
 	int length;
@@ -1107,21 +1107,22 @@ struct ext_blk_formula_info
 	short uses_p5;
 };
 
-struct ext_blk_ranges_info
+struct ranges_info_extension_block
 {
 	char got_data;
 	int length;
 	short *range_data;
 };
 
-struct ext_blk_mp_info {
+struct multiple_precision_info_extension_block
+{
 	char got_data;
 	int length;
 	char *apm_data;
 };
 
 /* parameter evolution stuff */
-struct ext_blk_evolver_info
+struct evolver_info_extension_block
 {
 	char got_data;
 	int length;
@@ -1145,7 +1146,7 @@ struct ext_blk_evolver_info
 	short  mutate[NUM_GENES];
 };
 
-struct ext_blk_orbits_info
+struct orbits_info_extension_block
 {
 	char got_data;
 	int length;
