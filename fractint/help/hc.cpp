@@ -2597,7 +2597,9 @@ void read_src(char *fname)
 
 					case S_StartLine:   /* for all lines after the second */
 						if (ch == ' ')
+						{
 							++num_spaces;
+						}
 						else if ((ch&0xFF) == '\n') /* a blank line means end of a para */
 						{
 							*curr++ = '\n';   /* end the para */
@@ -2632,14 +2634,18 @@ void read_src(char *fname)
 						else
 						{
 							if ((ch&0xFF) == '\n')
+							{
 								state = S_Start;
+							}
 							put_a_char(ch, &t);
 						}
 						break;
 
 					case S_FormatDisabledSpaces:
 						if (ch == ' ')
+						{
 							++num_spaces;
+						}
 						else
 						{
 							put_spaces(num_spaces);
@@ -2653,7 +2659,6 @@ void read_src(char *fname)
 			}
 			while (again);
 		}
-
 		else
 		{
 			do
@@ -2669,12 +2674,16 @@ void read_src(char *fname)
 							num_spaces = 1;
 						}
 						else
+						{
 							put_a_char(ch, &t);
+						}
 						break;
 
 					case S_Spaces:
 						if (ch == ' ')
+						{
 							++num_spaces;
+						}
 						else
 						{
 							put_spaces(num_spaces);
@@ -2687,7 +2696,6 @@ void read_src(char *fname)
 			}
 			while (again);
 		}
-
 		CHK_BUFFER(0);
 	} /* while (1) */
 
@@ -2748,13 +2756,16 @@ void make_hot_links(void)
 					{
 						c->topic_num[ctr] = lbl->topic_num;
 						if (topic[lbl->topic_num].flags & TF_IN_DOC)
+						{
 							warn(0,"Topic \"%s\" appears in document more than once.",
 								topic[lbl->topic_num].title);
+						}
 						else
+						{
 							topic[lbl->topic_num].flags |= TF_IN_DOC;
+						}
 					}
 				}
-
 			}
 			else
 			{
@@ -2771,10 +2782,14 @@ void make_hot_links(void)
 				{
 					c->topic_num[ctr] = t;
 					if (topic[t].flags & TF_IN_DOC)
+					{
 						warn(0,"Topic \"%s\" appears in document more than once.",
 							topic[t].title);
+					}
 					else
+					{
 						topic[t].flags |= TF_IN_DOC;
+					}
 				}
 			}
 		}
@@ -2856,7 +2871,9 @@ void add_page_break(TOPIC *t, int margin, char *text, char *start, char *curr, i
 	add_page(t, &p);
 
 	if (max_links < num_links)
+	{
 		max_links = num_links;
+	}
 }
 
 
@@ -2882,7 +2899,9 @@ void paginate_online(void)    /* paginate the text for on-line help */
 	for (t=topic, tctr=0; tctr<num_topic; t++, tctr++)
 	{
 		if (t->flags & TF_DATA)
+		{
 			continue;    /* don't paginate data topics */
+		}
 
 		text = get_topic_text(t);
 		curr = text;
@@ -2920,7 +2939,9 @@ void paginate_online(void)    /* paginate the text for on-line help */
 						tok = find_token_length(ONLINE, curr, len, &size, &width);
 
 						if (tok == TOK_DONE || tok == TOK_NL || tok == TOK_FF)
+						{
 							break;
+						}
 
 						if (tok == TOK_PARA)
 						{
@@ -2949,7 +2970,9 @@ void paginate_online(void)    /* paginate the text for on-line help */
 								num_links = 0;
 							}
 							if (tok == TOK_SPACE)
+							{
 								width = 0;   /* skip spaces at start of a line */
+							}
 
 							col = margin;
 						}
@@ -3021,10 +3044,14 @@ void paginate_online(void)    /* paginate the text for on-line help */
 		} /* while */
 
 		if (!skip_blanks)
+		{
 			add_page_break(t, start_margin, text, start, curr, num_links);
+		}
 
 		if (max_pages < t->num_page)
+		{
 			max_pages = t->num_page;
+		}
 
 		release_topic_text(t, 0);
 	} /* for */
@@ -3063,31 +3090,43 @@ LABEL *find_next_label_by_topic(int t)
 	p = NULL;
 
 	for (temp=label, ctr=0; ctr<num_label; ctr++, temp++)
+	{
 		if (temp->topic_num == t && temp->doc_page == -1)
 		{
 			g = temp;
 			break;
 		}
 		else if (temp->topic_num > t)
+		{
 			break;
+		}
+	}
 
 	for (temp=plabel, ctr=0; ctr<num_plabel; ctr++, temp++)
+	{
 		if (temp->topic_num == t && temp->doc_page == -1)
 		{
 			p = temp;
 			break;
 		}
 		else if (temp->topic_num > t)
+		{
 			break;
+		}
+	}
 
 	if (p == NULL)
+	{
 		return g;
-
+	}
 	else if (g == NULL)
+	{
 		return p;
-
+	}
 	else
+	{
 		return (g->topic_off < p->topic_off) ? g : p;
+	}
 }
 
 
@@ -3115,7 +3154,9 @@ void set_hot_link_doc_page(void)
 					srcline = -1;  /* back to reality */
 				}
 				else
+				{
 					l->doc_page = topic[t].doc_page;
+				}
 				break;
 
 			case 1:  /* name is the name of a label */
@@ -3128,7 +3169,9 @@ void set_hot_link_doc_page(void)
 					srcline = -1;
 				}
 				else
+				{
 					l->doc_page = lbl->doc_page;
+				}
 				break;
 
 			case 2:   /* special topics don't appear in the document */
@@ -3178,7 +3221,9 @@ int pd_get_info(int cmd, PD_INFO *pd, int *info)
 	{
 		case PD_GET_CONTENT:
 			if (++info[CNUM] >= num_contents)
+			{
 				return 0;
+			}
 			c = &contents[info[CNUM]];
 			info[TNUM] = -1;
 			pd->id       = c->id;
@@ -3189,7 +3234,9 @@ int pd_get_info(int cmd, PD_INFO *pd, int *info)
 		case PD_GET_TOPIC:
 			c = &contents[info[CNUM]];
 			if (++info[TNUM] >= c->num_topic)
+			{
 				return 0;
+			}
 			pd->curr = get_topic_text(&topic[c->topic_num[info[TNUM]]]);
 			pd->len = topic[c->topic_num[info[TNUM]]].text_len;
 			return 1;
@@ -3270,7 +3317,9 @@ void paginate_document(void)
 	PAGINATE_DOC_INFO info;
 
 	if (num_contents == 0)
-		return ;
+	{
+		return;
+	}
 
 	msg("Paginating document.");
 
@@ -3298,13 +3347,19 @@ int fcmp_LABEL(const void *a, const void *b)
 	/* compare the names, making sure that the index goes first */
 
 	if ((diff=strcmp(an,bn)) == 0)
+	{
 		return 0;
+	}
 
 	if (strcmp(an, INDEX_LABEL) == 0)
+	{
 		return -1;
+	}
 
 	if (strcmp(bn, INDEX_LABEL) == 0)
+	{
 		return 1;
+	}
 
 	return diff;
 }
@@ -3325,11 +3380,17 @@ void sort_labels(void)
 int compare_files(FILE *f1, FILE *f2) /* returns TRUE if different */
 {
 	if (filelength(fileno(f1)) != filelength(fileno(f2)))
+	{
 		return 1;   /* different if sizes are not the same */
+	}
 
 	while (!feof(f1) && !feof(f2))
+	{
 		if (getc(f1) != getc(f2))
+		{
 			return 1;
+		}
+	}
 
 	return (feof(f1) && feof(f2)) ? 0 : 1;
 }
@@ -3355,13 +3416,17 @@ void _write_hdr(char *fname, FILE *file)
 	fprintf(file, "/* labels */\n\n");
 
 	for (ctr=0; ctr<num_label; ctr++)
+	{
 		if (label[ctr].name[0] != '@')  /* if it's not a local label... */
 		{
 			fprintf(file, "#define %-32s %3d", label[ctr].name, ctr);
 			if (strcmp(label[ctr].name, INDEX_LABEL) == 0)
+			{
 				fprintf(file, "        /* index */");
+			}
 			fprintf(file, "\n");
 		}
+	}
 
 	fprintf(file, "\n\n");
 }
@@ -3378,7 +3443,9 @@ void write_hdr(char *fname)
 	{         /* if no prev. hdr file generate a new one */
 		hdr = fopen(fname, "wt");
 		if (hdr == NULL)
+		{
 			fatal(0,"Cannot create \"%s\".", fname);
+		}
 		msg("Writing: %s", fname);
 		_write_hdr(fname, hdr);
 		fclose(hdr);
@@ -3391,7 +3458,9 @@ void write_hdr(char *fname)
 	temp = fopen(TEMP_FNAME, "wt");
 
 	if (temp == NULL)
+	{
 		fatal(0,"Cannot create temporary file: \"%s\".", TEMP_FNAME);
+	}
 
 	_write_hdr(fname, temp);
 
@@ -3399,7 +3468,9 @@ void write_hdr(char *fname)
 	temp = fopen(TEMP_FNAME, "rt");
 
 	if (temp == NULL)
+	{
 		fatal(0,"Cannot open temporary file: \"%s\".", TEMP_FNAME);
+	}
 
 	if (compare_files(temp, hdr))   /* if they are different... */
 	{
@@ -3439,13 +3510,15 @@ void calc_offsets(void)    /* calc file offset to each topic */
 				num_label*2*sizeof(int);/* topic_num/topic_off for all public labels */
 
 	for (c=0, cp=contents; c<num_contents; c++, cp++)
+	{
 		offset += sizeof(int) +       /* flags */
-				1 +                 /* id length */
-				(int) strlen(cp->id) +    /* id text */
-				1 +                 /* name length */
-				(int) strlen(cp->name) +  /* name text */
-				1 +                 /* number of topics */
-				cp->num_topic*sizeof(int);    /* topic numbers */
+			1 +                 /* id length */
+			(int) strlen(cp->id) +    /* id text */
+			1 +                 /* name length */
+			(int) strlen(cp->name) +  /* name text */
+			1 +                 /* number of topics */
+			cp->num_topic*sizeof(int);    /* topic numbers */
+	}
 
 	for (t=0, tp=topic; t<num_topic; t++, tp++)
 	{
@@ -3458,7 +3531,6 @@ void calc_offsets(void)    /* calc file offset to each topic */
 				sizeof(int) +       /* length of text */
 				tp->text_len;       /* text */
 	}
-
 }
 
 
@@ -3496,7 +3568,7 @@ void _write_help(FILE *file)
 	char                 *text;
 	TOPIC                *tp;
 	CONTENT              *cp;
-	struct help_sig_info  hs;
+	help_sig_info  hs;
 
 	/* write the signature and version */
 
@@ -3523,7 +3595,9 @@ void _write_help(FILE *file)
 	/* write the offsets to each topic */
 
 	for (t=0; t<num_topic; t++)
+	{
 		fwrite(&topic[t].offset, sizeof(long), 1, file);
+	}
 
 	/* write all public labels */
 
@@ -3579,7 +3653,9 @@ void _write_help(FILE *file)
 		text = get_topic_text(tp);
 
 		if (!(tp->flags & TF_DATA))   /* don't process data topics... */
+		{
 			insert_real_link_info(text, tp->text_len);
+		}
 
 		putw(tp->text_len, file);
 		fwrite(text, 1, tp->text_len, file);
@@ -3599,7 +3675,9 @@ void write_help(char *fname)
 	hlp = fopen(fname, "wb");
 
 	if (hlp == NULL)
+	{
 		fatal(0,"Cannot create .HLP file: \"%s\".", fname);
+	}
 
 	msg("Writing: %s", fname);
 
@@ -3638,15 +3716,15 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
 	while (n-- > 0)
 	{
 		if (c==' ')
+		{
 			++info->spaces;
-
+		}
 		else if (c=='\n' || c=='\f')
 		{
 			info->start_of_line = 1;
 			info->spaces = 0;   /* strip spaces before a new-line */
 			putc(c, info->file);
 		}
-
 		else
 		{
 			if (info->start_of_line)
@@ -3672,12 +3750,16 @@ void printers(PRINT_DOC_INFO *info, char *s, int n)
 	if (n > 0)
 	{
 		while (n-- > 0)
+		{
 			printerc(info, *s++, 1);
+		}
 	}
 	else
 	{
 		while (*s != '\0')
+		{
 			printerc(info, *s++, 1);
+		}
 	}
 }
 
@@ -3742,7 +3824,9 @@ void print_document(const char *fname)
 	PRINT_DOC_INFO info;
 
 	if (num_contents == 0)
+	{
 		fatal(0,".SRC has no DocContents.");
+	}
 
 	msg("Printing to: %s", fname);
 
@@ -3751,7 +3835,9 @@ void print_document(const char *fname)
 	info.link_dest_warn = 0;
 
 	if ((info.file = fopen(fname, "wt")) == NULL)
+	{
 		fatal(0,"Couldn't create \"%s\"", fname);
+	}
 
 	info.margin = PAGE_INDENT;
 	info.start_of_line = 1;
@@ -3793,7 +3879,9 @@ void report_memory(void)
 	}
 
 	if (num_link > 0)
+	{
 		dead += (LINK_ALLOC_SIZE-(num_link%LINK_ALLOC_SIZE)) * sizeof(LINK);
+	}
 
 	for (ctr=0; ctr<num_label; ctr++)
 	{
@@ -3802,7 +3890,9 @@ void report_memory(void)
 	}
 
 	if (num_label > 0)
+	{
 		dead += (LABEL_ALLOC_SIZE-(num_label%LABEL_ALLOC_SIZE)) * sizeof(LABEL);
+	}
 
 	for (ctr=0; ctr<num_plabel; ctr++)
 	{
@@ -3811,7 +3901,9 @@ void report_memory(void)
 	}
 
 	if (num_plabel > 0)
+	{
 		dead += (LABEL_ALLOC_SIZE-(num_plabel%LABEL_ALLOC_SIZE)) * sizeof(LABEL);
+	}
 
 	for (ctr=0; ctr<num_contents; ctr++)
 	{
@@ -3826,7 +3918,9 @@ void report_memory(void)
 		string += (long) strlen(contents[ctr].id) + 1;
 		string += (long) strlen(contents[ctr].name) + 1;
 		for (ctr2=0; ctr2<contents[ctr].num_topic; ctr2++)
+		{
 			string += (long) strlen(contents[ctr].topic_name[ctr2]) + 1;
+		}
 	}
 
 	dead += (CONTENTS_ALLOC_SIZE-(num_contents%CONTENTS_ALLOC_SIZE)) * sizeof(CONTENT);
@@ -3851,7 +3945,9 @@ void report_stats(void)
 	int      t;
 
 	for (t=0; t<num_topic; t++)
+	{
 		pages += topic[t].num_page;
+	}
 
 	printf("\n");
 	printf("Statistics:\n");
@@ -3877,33 +3973,43 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 	long                 len,
 								count;
 	int                  size;
-	struct help_sig_info hs;
+	help_sig_info hs;
 
 	if ((exe=open(exe_fname, O_RDWR|O_BINARY)) == -1)
+	{
 		fatal(0,"Unable to open \"%s\"", exe_fname);
+	}
 
 	if ((hlp=open(hlp_fname, O_RDONLY|O_BINARY)) == -1)
+	{
 		fatal(0,"Unable to open \"%s\"", hlp_fname);
+	}
 
 	msg("Appending %s to %s", hlp_fname, exe_fname);
 
 	/* first, check and see if any help is currently installed */
 
-	lseek(exe, filelength(exe) - sizeof(struct help_sig_info), SEEK_SET);
+	lseek(exe, filelength(exe) - sizeof(help_sig_info), SEEK_SET);
 
 	read(exe, (char *)&hs, 10);
 
 	if (hs.sig == HELP_SIG)
+	{
 		warn(0,"Overwriting previous help. (Version=%d)", hs.version);
+	}
 	else
+	{
 		hs.base = filelength(exe);
+	}
 
 	/* now, let's see if their help file is for real (and get the version) */
 
 	read(hlp, (char *)&hs, sizeof(long)+sizeof(int));
 
 	if (hs.sig != HELP_SIG)
+	{
 		fatal(0,"Help signature not found in %s", hlp_fname);
+	}
 
 	msg("Help file %s Version=%d", hlp_fname, hs.version);
 
@@ -3938,7 +4044,9 @@ void delete_hlp_from_exe(const char *exe_fname)
 	struct help_sig_info hs;
 
 	if ((exe=open(exe_fname, O_RDWR|O_BINARY)) == -1)
+	{
 		fatal(0,"Unable to open \"%s\"", exe_fname);
+	}
 
 	msg("Deleting help from %s", exe_fname);
 
@@ -3996,7 +4104,9 @@ int main(int argc, char *argv[])
 	buffer = (char *) malloc(BUFFER_SIZE);
 
 	if (buffer == NULL)
+	{
 		fatal(0,"Not enough memory to allocate buffer.");
+	}
 
 	for (arg= &argv[1]; argc>1; argc--, arg++)
 	{
@@ -4008,51 +4118,79 @@ int main(int argc, char *argv[])
 				{
 					case 'c':
 						if (mode == 0)
+						{
 							mode = MODE_COMPILE;
+						}
 						else
+						{
 							fatal(0,"Cannot have /c with /a, /d or /p");
+						}
 						break;
 
 					case 'a':
 						if (mode == 0)
+						{
 							mode = MODE_APPEND;
+						}
 						else
+						{
 							fatal(0,"Cannot have /a with /c, /d or /p");
+						}
 						break;
 
 					case 'd':
 						if (mode == 0)
+						{
 							mode = MODE_DELETE;
+						}
 						else
+						{
 							fatal(0,"Cannot have /d with /c, /a or /p");
+						}
 						break;
 
 					case 'p':
 						if (mode == 0)
+						{
 							mode = MODE_PRINT;
+						}
 						else
+						{
 							fatal(0,"Cannot have /p with /c, /a or /d");
+						}
 						break;
 
 					case 'm':
 						if (mode == MODE_COMPILE)
+						{
 							show_mem = 1;
+						}
 						else
+						{
 							fatal(0,"/m switch allowed only when compiling (/c)");
+						}
 						break;
 
 					case 's':
 						if (mode == MODE_COMPILE)
+						{
 							show_stats = 1;
+						}
 						else
+						{
 							fatal(0,"/s switch allowed only when compiling (/c)");
+						}
 						break;
 
 					case 'r':
 						if (mode == MODE_COMPILE || mode == MODE_PRINT)
+						{
 							strcpy(swappath, (*arg)+2);
+						}
 						else
+						{
 							fatal(0,"/r switch allowed when compiling (/c) or printing (/p)");
+						}
 						break;
 
 					case 'q':
@@ -4067,11 +4205,17 @@ int main(int argc, char *argv[])
 
 			default:   /* assume it is a fname */
 				if (fname1[0] == '\0')
+				{
 					strcpy(fname1, *arg);
+				}
 				else if (fname2[0] == '\0')
+				{
 					strcpy(fname2, *arg);
+				}
 				else
+				{
 					fatal(0,"Unexpected command-line argument \"%s\"", *arg);
+				}
 				break;
 		} /* switch */
 	} /* for */
@@ -4108,45 +4252,79 @@ int main(int argc, char *argv[])
 
 		case MODE_COMPILE:
 			if (fname2[0] != '\0')
+			{
 				fatal(0,"Unexpected command-line argument \"%s\"", fname2);
+			}
 
 			strcpy(src_fname, (fname1[0]=='\0') ? DEFAULT_SRC_FNAME : fname1);
 
 			strcat(swappath, SWAP_FNAME);
 
 			if ((swapfile=fopen(swappath, "w+b")) == NULL)
+			{
 				fatal(0,"Cannot create swap file \"%s\"", swappath);
+			}
 			swappos = 0;
 
 			read_src(src_fname);
 
 			if (hdr_fname[0] == '\0')
+			{
 				error(0,"No .H file defined.  (Use \"~HdrFile=\")");
+			}
 			if (hlp_fname[0] == '\0')
+			{
 				error(0,"No .HLP file defined.  (Use \"~HlpFile=\")");
+			}
 			if (version == -1)
+			{
 				warn(0,"No help version has been defined.  (Use \"~Version=\")");
+			}
 
 			/* order of these is very important... */
 
 			make_hot_links();	/* do even if errors since it may report */
 								/* more... */
 
-			if (!errors)     paginate_online();
-			if (!errors)     paginate_document();
-			if (!errors)     calc_offsets();
-			if (!errors)     sort_labels();
-			if (!errors)     write_hdr(hdr_fname);
-			if (!errors)     write_help(hlp_fname);
+			if (!errors)
+			{
+				paginate_online();
+			}
+			if (!errors)
+			{
+				paginate_document();
+			}
+			if (!errors)
+			{
+				calc_offsets();
+			}
+			if (!errors)
+			{
+				sort_labels();
+			}
+			if (!errors)
+			{
+				write_hdr(hdr_fname);
+			}
+			if (!errors)
+			{
+				write_help(hlp_fname);
+			}
 
 			if (show_stats)
+			{
 				report_stats();
+			}
 
 			if (show_mem)
+			{
 				report_memory();
+			}
 
 			if (errors || warnings)
+			{
 				report_errors();
+			}
 
 			fclose(swapfile);
 			remove(swappath);
@@ -4159,18 +4337,28 @@ int main(int argc, char *argv[])
 			strcat(swappath, SWAP_FNAME);
 
 			if ((swapfile=fopen(swappath, "w+b")) == NULL)
+			{
 				fatal(0,"Cannot create swap file \"%s\"", swappath);
+			}
 			swappos = 0;
 
 			read_src(src_fname);
 
 			make_hot_links();
 
-			if (!errors)     paginate_document();
-			if (!errors)     print_document((fname2[0]=='\0') ? DEFAULT_DOC_FNAME : fname2);
+			if (!errors)
+			{
+				paginate_document();
+			}
+			if (!errors)
+			{
+				print_document((fname2[0]=='\0') ? DEFAULT_DOC_FNAME : fname2);
+			}
 
 			if (errors || warnings)
+			{
 				report_errors();
+			}
 
 			fclose(swapfile);
 			remove(swappath);
@@ -4184,7 +4372,9 @@ int main(int argc, char *argv[])
 
 		case MODE_DELETE:
 			if (fname2[0] != '\0')
+			{
 				fatal(0,"Unexpected argument \"%s\"", fname2);
+			}
 			delete_hlp_from_exe((fname1[0]=='\0') ? DEFAULT_EXE_FNAME : fname1);
 			break;
 	}
@@ -4201,9 +4391,9 @@ int main(int argc, char *argv[])
 void check_buffer(char *current, unsigned off, char *buffer)
 {
 	if ((unsigned) curr + off - (unsigned) buffer >= (BUFFER_SIZE-1024))
-{
+	{
 		fatal(0, "Buffer overflowerd -- Help topic too large.");
-}
+	}
 }
 #if defined(_WIN32)
 #pragma warning(pop)

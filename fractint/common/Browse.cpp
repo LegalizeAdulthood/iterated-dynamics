@@ -60,7 +60,7 @@ static bf_t n_c;
 static bf_t n_d;
 static bf_t n_e;
 static bf_t n_f;
-static struct affine *cvt;
+static affine *cvt;
 static CoordinateWindow browse_windows[MAX_WINDOWS_OPEN];
 
 /* prototypes */
@@ -68,7 +68,7 @@ static void check_history(const char *, const char *);
 static void transform(CoordinateD *);
 static void transform_bf(bf_t, bf_t, CoordinateD *);
 static void draw_window(int color, CoordinateWindow *info);
-static bool is_visible_window(CoordinateWindow *, fractal_info *, struct ext_blk_mp_info *);
+static bool is_visible_window(CoordinateWindow *, fractal_info *, ext_blk_mp_info *);
 static void bfsetup_convert_to_screen();
 static bool fractal_types_match(const fractal_info &info, const ext_blk_formula_info &formula_info);
 static bool functions_match(const fractal_info &info, int num_functions);
@@ -252,7 +252,7 @@ inline bool is_visible(CoordinateD const &pt)
 }
 
 static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
-	struct ext_blk_mp_info *mp_info)
+	ext_blk_mp_info *mp_info)
 {
 	double toobig = sqrt(sqr(double(g_screen_width)) + sqr(double(g_screen_height)))*1.5;
 	int saved = save_stack();

@@ -108,7 +108,7 @@ private:
 		MAX_PROMPTS = 18
 	};
 	const char *m_choices[MAX_PROMPTS];
-	struct full_screen_values m_param_values[18];
+	full_screen_values m_param_values[18];
 	int m_max_color;
 	char m_color_spec[14];
 	char m_in_parameter_command_file[80];

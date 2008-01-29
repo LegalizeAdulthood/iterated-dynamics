@@ -135,7 +135,7 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 		BYTE r[16];  /* recursion level */
 	};
 
-	static struct sub subx, suby;
+	static sub subx, suby;
 
 	s_recur1 = int(320L >> recur);
 	suby.t = 2;

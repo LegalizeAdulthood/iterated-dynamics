@@ -67,11 +67,11 @@ struct froth_struct
 	int altcolor;
 	int attractors;
 	int shades;
-	struct froth_double_struct f;
-	struct froth_long_struct l;
+	froth_double_struct f;
+	froth_long_struct l;
 };
 
-static struct froth_struct s_frothy_data = { 0 };
+static froth_struct s_frothy_data = { 0 };
 
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_froth_palette()
@@ -153,7 +153,7 @@ bool froth_setup()
 
 	if (g_integer_fractal)
 	{
-		struct froth_long_struct tmp_l;
+		froth_long_struct tmp_l;
 
 		tmp_l.a        = FROTH_D_TO_L(s_frothy_data.f.a);
 		tmp_l.halfa    = FROTH_D_TO_L(s_frothy_data.f.halfa);

@@ -158,21 +158,22 @@ long ExpFloat14(long x);
 	}						\
 	while (0)
 
-struct fComplex {
+struct fComplex
+{
    float x, y, mod;
 };
 
 void
-   fSqrZ(struct fComplex *x, struct fComplex *z),
-   fMod(struct fComplex *x),
-   fInvZ(struct fComplex *x, struct fComplex *z),
-   fMulZ(struct fComplex *x, struct fComplex *y, struct fComplex *z),
-   fDivZ(struct fComplex *x, struct fComplex *y, struct fComplex *z),
-   fSinZ(struct fComplex *x, struct fComplex *z),
-   fCosZ(struct fComplex *x, struct fComplex *z),
-   fTanZ(struct fComplex *x, struct fComplex *z),
-   fSinhZ(struct fComplex *x, struct fComplex *z),
-   fCoshZ(struct fComplex *x, struct fComplex *z),
-   fTanhZ(struct fComplex *x, struct fComplex *z);
+   fSqrZ(fComplex *x, fComplex *z),
+   fMod(fComplex *x),
+   fInvZ(fComplex *x, fComplex *z),
+   fMulZ(fComplex *x, fComplex *y, fComplex *z),
+   fDivZ(fComplex *x, fComplex *y, fComplex *z),
+   fSinZ(fComplex *x, fComplex *z),
+   fCosZ(fComplex *x, fComplex *z),
+   fTanZ(fComplex *x, fComplex *z),
+   fSinhZ(fComplex *x, fComplex *z),
+   fCoshZ(fComplex *x, fComplex *z),
+   fTanhZ(fComplex *x, fComplex *z);
 
 #endif

@@ -108,10 +108,10 @@ static int tesseral_row(int x1, int x2, int y)
 
 int tesseral()
 {
-	struct tess *tp;
+	tess *tp;
 
 	bool guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis);
-	tp = (struct tess *)&g_stack[0];
+	tp = (tess *)&g_stack[0];
 	tp->x1 = g_ix_start;                              /* set up initial box */
 	tp->x2 = g_x_stop;
 	tp->y1 = g_iy_start;
@@ -137,7 +137,7 @@ int tesseral()
 		int cury;
 		int xsize;
 		int ysize;
-		struct tess *tp2;
+		tess *tp2;
 		tp->top = -2;
 		tp->bottom = -2;
 		tp->left = -2;
@@ -192,7 +192,7 @@ int tesseral()
 
 	g_got_status = GOT_STATUS_TESSERAL; /* for tab_display */
 
-	while (tp >= (struct tess *)&g_stack[0])  /* do next box */
+	while (tp >= (tess *) &g_stack[0])  /* do next box */
 	{
 		g_current_col = tp->x1; /* for tab_display */
 		g_current_row = tp->y1;
@@ -320,7 +320,7 @@ tess_split:
 		{  /* box not surrounded by same color, sub-divide */
 			int mid;
 			int midcolor;
-			struct tess *tp2;
+			tess *tp2;
 			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
 			{
 				mid = (tp->x1 + tp->x2) >> 1;                /* Find mid point */
@@ -391,7 +391,7 @@ tess_split:
 	}
 
 tess_end:
-	if (tp >= (struct tess *)&g_stack[0])  /* didn't complete */
+	if (tp >= (tess *) &g_stack[0])  /* didn't complete */
 	{
 		int i;
 		int xsize;

@@ -33,7 +33,7 @@ extern int orbit_3d_fp();
 extern int orbit_3d();
 extern int icon_orbit_fp(double *, double *, double *);  /* dmf */
 extern int latoo_orbit_fp(double *, double *, double *);  /* hb */
-extern int setup_convert_to_screen(struct affine *);
+extern int setup_convert_to_screen(affine *);
 extern int plot_orbits_2d_setup();
 extern int plotorbits2dfloat();
 

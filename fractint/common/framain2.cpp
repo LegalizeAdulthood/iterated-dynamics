@@ -475,7 +475,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				int tmpxdots;
 				int tmpydots;
 				int gridsqr;
-				struct evolution_info resume_e_info;
+				evolution_info resume_e_info;
 
 				if ((g_evolve_handle != 0) && (g_calculation_status == CALCSTAT_RESUMABLE))
 				{
@@ -496,7 +496,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_screen_y_offset       = resume_e_info.syoffs;
 					g_x_dots        = resume_e_info.x_dots;
 					g_y_dots        = resume_e_info.y_dots;
-					g_grid_size       = resume_e_info.gridsz;
+					g_grid_size       = resume_e_info.grid_size;
 					g_this_generation_random_seed = resume_e_info.this_generation_random_seed;
 					g_fiddle_factor   = resume_e_info.fiddle_factor;
 					g_evolving_flags     = resume_e_info.evolving;
@@ -573,7 +573,7 @@ done:
 					resume_e_info.syoffs          = short(g_screen_y_offset);
 					resume_e_info.x_dots           = short(g_x_dots);
 					resume_e_info.y_dots           = short(g_y_dots);
-					resume_e_info.gridsz          = short(g_grid_size);
+					resume_e_info.grid_size          = short(g_grid_size);
 					resume_e_info.this_generation_random_seed  = short(g_this_generation_random_seed);
 					resume_e_info.fiddle_factor = g_fiddle_factor;
 					resume_e_info.evolving        = short(g_evolving_flags);
