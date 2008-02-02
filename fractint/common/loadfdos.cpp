@@ -46,15 +46,18 @@ struct video_mode_sort_info
 };
 /* defines for flags; done this way instead of bit union to ensure ordering;
 	these bits represent the sort sequence for video mode list */
-#define VI_EXACT 0x8000 /* unless the one and only exact match */
-#define VI_NOKEY   512  /* if no function key assigned */
-#define VI_SSMALL  128  /* screen smaller than file's screen */
-#define VI_SBIG     64  /* screen bigger than file's screen */
-#define VI_VSMALL   32  /* screen smaller than file's view */
-#define VI_VBIG     16  /* screen bigger than file's view */
-#define VI_CSMALL    8  /* mode has too few colors */
-#define VI_CBIG      4  /* mode has excess colors */
-#define VI_ASPECT    1  /* aspect ratio bad */
+enum
+{
+	VI_EXACT   = 0x8000, /* unless the one and only exact match */
+	VI_NOKEY   = 512,  /* if no function key assigned */
+	VI_SSMALL  = 128,  /* screen smaller than file's screen */
+	VI_SBIG    =  64,  /* screen bigger than file's screen */
+	VI_VSMALL  =  32,  /* screen smaller than file's view */
+	VI_VBIG    =  16,  /* screen bigger than file's view */
+	VI_CSMALL  =   8,  /* mode has too few colors */
+	VI_CBIG    =   4,  /* mode has excess colors */
+	VI_ASPECT  =   1  /* aspect ratio bad */
+};
 
 static int video_mode_compare(const void *p1, const void *p2)
 {

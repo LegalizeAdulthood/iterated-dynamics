@@ -1,7 +1,7 @@
-/* FRACTINT.H - common structures and values for the FRACTINT routines */
-
 #ifndef FRACTINT_H
 #define FRACTINT_H
+
+// FRACTINT.H - common structures and values for the FRACTINT routines
 
 /* Returns the number of items in an array declared of fixed size, i.e:
 	int stuff[100];
@@ -10,16 +10,13 @@
 #define NUM_OF(ary_) (sizeof(ary_)/sizeof(ary_[0]))
 
 #ifndef XFRACT
-#define clock_ticks() clock()
+#include <time.h>
+
+inline int clock_ticks()
+{
+	return clock();
+}
 #endif
-
-#ifdef XFRACT
-#define difftime(now,then) ((now)-(then))
-#endif
-
-#define TRIG_LIMIT_16 (8L << 16)		/* domain limit of fast trig functions */
-
-#define COLOR_CHANNEL_MAX 63
 
 enum StereogramCalibrateType
 {
@@ -42,7 +39,7 @@ enum InitialZType
 	INITIALZ_PIXEL = 2
 };
 
-/* symmetry values */
+// symmetry values
 enum SymmetryType
 {
 	SYMMETRY_X_AXIS_NO_IMAGINARY = -6,
@@ -62,13 +59,13 @@ enum SymmetryType
 	SYMMETRY_SETUP = 100
 };
 
-/* g_file_type values */
+// g_file_type values
 enum FileType
 {
 	FILETYPE_GIF = 0
 };
 
-/* g_display_3d values */
+// g_display_3d values
 enum Display3DType
 {
 	DISPLAY3D_GENERATED	= -1,
@@ -77,14 +74,14 @@ enum Display3DType
 	DISPLAY3D_OVERLAY	= 2
 };
 
-/* g_ifs_type values */
+// g_ifs_type values
 enum IFSType
 {
 	IFSTYPE_2D = 0,
 	IFSTYPE_3D = 1
 };
 
-/* g_log_dynamic_calculate values */
+// g_log_dynamic_calculate values
 enum LogDynamicType
 {
 	LOGDYNAMIC_NONE = 0,
@@ -92,7 +89,7 @@ enum LogDynamicType
 	LOGDYNAMIC_TABLE = 2
 };
 
-/* g_log_palette_mode special values */
+// g_log_palette_mode special values
 enum LogPaletteType
 {
 	LOGPALETTE_NONE = 0,
@@ -100,7 +97,7 @@ enum LogPaletteType
 	LOGPALETTE_OLD = -1
 };
 
-/* g_.ColorState values */
+// g_.ColorState values
 enum ColorStateType
 {
 	COLORSTATE_DEFAULT	= 0,
@@ -108,14 +105,14 @@ enum ColorStateType
 	COLORSTATE_MAP		= 2
 };
 
-/* g_force_symmetry values */
+// g_force_symmetry values
 enum ForceSymmetryType
 {
 	FORCESYMMETRY_NONE		= 999,
 	FORCESYMMETRY_SEARCH	= 1000
 };
 
-/* g_save_dac values */
+// g_save_dac values
 enum SaveDACType
 {
 	SAVEDAC_NO		= 0,
@@ -123,7 +120,7 @@ enum SaveDACType
 	SAVEDAC_NEXT	= 2
 };
 
-/* g_orbit_draw_mode values */
+// g_orbit_draw_mode values
 enum OrbitDrawType
 {
 	ORBITDRAW_RECTANGLE	= 0,
@@ -131,21 +128,21 @@ enum OrbitDrawType
 	ORBITDRAW_FUNCTION	= 2
 };
 
-/* ant types */
+// ant types
 enum AntType
 {
 	ANTTYPE_MOVE_COLOR	= 0,
 	ANTTYPE_MOVE_RULE	= 1
 };
 
-/* g_true_mode values */
+// g_true_mode values
 enum TrueModeType
 {
 	TRUEMODE_DEFAULT	= 0,
 	TRUEMODE_ITERATES	= 1
 };
 
-/* g_debug_mode values */
+// g_debug_mode values
 enum DebugFlagType
 {
 	DEBUGMODE_NONE				= 0,
@@ -194,7 +191,7 @@ enum DebugFlagType
 	DEBUGMODE_MEMORY			= 10000
 };
 
-/* projection values */
+// projection values
 enum ProjectionType
 {
 	PROJECTION_ZX	= 0,
@@ -202,7 +199,7 @@ enum ProjectionType
 	PROJECTION_XY	= 2
 };
 
-/* random_dir values */
+// random_dir values
 enum DirectionType
 {
 	DIRECTION_LEFT		= 0,
@@ -210,7 +207,7 @@ enum DirectionType
 	DIRECTION_RANDOM	= 2
 };
 
-/* g_juli_3d_mode values */
+// g_juli_3d_mode values
 enum Juli3DModeType
 {
 	JULI3DMODE_MONOCULAR	= 0,
@@ -219,7 +216,7 @@ enum Juli3DModeType
 	JULI3DMODE_RED_BLUE		= 3
 };
 
-/* g_which_image values */
+// g_which_image values
 enum WhichImageType
 {
 	WHICHIMAGE_NONE = 0,
@@ -227,7 +224,7 @@ enum WhichImageType
 	WHICHIMAGE_BLUE	= 2
 };
 
-/* g_orbit_save values */
+// g_orbit_save values
 enum OrbitSaveType
 {
 	ORBITSAVE_NONE	= 0,
@@ -235,7 +232,7 @@ enum OrbitSaveType
 	ORBITSAVE_SOUND = 2
 };
 
-/* find_file_item itemtypes */
+// find_file_item itemtypes
 enum FindFileItemType
 {
 	ITEMTYPE_PARAMETER	= 0,
@@ -244,7 +241,7 @@ enum FindFileItemType
 	ITEMTYPE_IFS		= 3
 };
 
-/* getfileentry and find_file_item itemtype values */
+// getfileentry and find_file_item itemtype values
 enum GetFileEntryType
 {
 	GETFILE_FORMULA		= 0,
@@ -253,7 +250,7 @@ enum GetFileEntryType
 	GETFILE_PARAMETER	= 3
 };
 
-/* g_got_status values */
+// g_got_status values
 enum GotStatusType
 {
 	GOT_STATUS_NONE = -1,
@@ -266,7 +263,7 @@ enum GotStatusType
 	GOT_STATUS_ORBITS = 6
 };
 
-/* g_resave_mode values */
+// g_resave_mode values
 enum ResaveType
 {
 	RESAVE_NO = 0,
@@ -274,7 +271,7 @@ enum ResaveType
 	RESAVE_DONE = 2
 };
 
-/* g_look_at_mouse values */
+// g_look_at_mouse values
 enum LookMouseType
 {
 	LOOK_MOUSE_NONE		= 0,
@@ -282,7 +279,7 @@ enum LookMouseType
 	LOOK_MOUSE_ZOOM_BOX	= 3
 };
 
-/* pause_error() values */
+// pause_error() values
 enum PauseErrorType
 {
 	PAUSE_ERROR_NO_BATCH = 0,
@@ -297,7 +294,7 @@ enum TimedSaveType
 	TIMEDSAVE_PENDING = 2
 };
 
-/* g_initialize_batch values */
+// g_initialize_batch values
 enum InitBatchType
 {
 	INITBATCH_FINISH_CALC = -1,
@@ -309,7 +306,7 @@ enum InitBatchType
 	INITBATCH_BAILOUT_SAVE = 5
 };
 
-/* driver_buzzer() codes */
+// driver_buzzer() codes
 enum BuzzerType
 {
 	BUZZER_COMPLETE = 0,
@@ -327,7 +324,7 @@ enum ApplicationStateType
 	APPSTATE_RESUME_LOOP = 5
 };
 
-/* full_screen_choice options */
+// full_screen_choice options
 enum FullScreenChoiceFlag
 {
 	CHOICE_RETURN_KEY	= 1,
@@ -338,7 +335,7 @@ enum FullScreenChoiceFlag
 	CHOICE_NOT_SORTED	= 32
 };
 
-/* g_calculation_status values */
+// g_calculation_status values
 enum CalculationStatusType
 {
 	CALCSTAT_NO_FRACTAL		= -1,
@@ -364,86 +361,84 @@ enum InputFieldType
 	INPUTFIELD_DOUBLE = 4
 };
 
-/* these are used to declare arrays for file names */
+enum MiscellaneousConstants
+{
+	COLOR_CHANNEL_MAX = 63,
+
+	// these are used to declare arrays for file names
 #if defined(_WIN32)
-#define FILE_MAX_PATH _MAX_PATH
-#define FILE_MAX_DIR _MAX_DIR
+	FILE_MAX_PATH = _MAX_PATH,
+	FILE_MAX_DIR = _MAX_DIR,
 #else
 #ifdef XFRACT
-#define FILE_MAX_PATH  256       /* max length of path+filename  */
-#define FILE_MAX_DIR   256       /* max length of directory name */
+	FILE_MAX_PATH = 256,		// max length of path+filename
+	FILE_MAX_DIR = 256,			// max length of directory name
 #else
-#define FILE_MAX_PATH  80       /* max length of path+filename  */
-#define FILE_MAX_DIR   80       /* max length of directory name */
+	FILE_MAX_PATH = 80,			// max length of path+filename
+	FILE_MAX_DIR = 80,			// max length of directory name
 #endif
 #endif
-#define FILE_MAX_DRIVE  3       /* max length of drive letter   */
+	FILE_MAX_DRIVE = 3,			// max length of drive letter
 
-/*
-The filename limits were increased in Xfract 3.02. But alas,
-in this poor program that was originally developed on the
-nearly-brain-dead DOS operating system, quite a few things
-in the UI would break if file names were bigger than DOS 8-3
-names. So for now humor us and let's keep the names short.
-*/
-#define FILE_MAX_FNAME  64       /* max length of filename       */
-#define FILE_MAX_EXT    64       /* max length of extension      */
+	/*
+	The filename limits were increased in Xfract 3.02. But alas,
+	in this poor program that was originally developed on the
+	nearly-brain-dead DOS operating system, quite a few things
+	in the UI would break if file names were bigger than DOS 8-3
+	names. So for now humor us and let's keep the names short.
+	*/
+	FILE_MAX_FNAME = 64,		// max length of filename
+	FILE_MAX_EXT = 64,			// max length of extension
 
-#define MAX_MAX_LINE_LENGTH  128   /* upper limit for g_max_line_length for PARs */
-#define MIN_MAX_LINE_LENGTH  40    /* lower limit for g_max_line_length for PARs */
+	MAX_MAX_LINE_LENGTH = 128,	// upper limit for g_max_line_length for PARs
+	MIN_MAX_LINE_LENGTH = 40,	// lower limit for g_max_line_length for PARs
 
-#define MESSAGE_LEN 80               /* handy buffer size for messages */
-#define MAX_COMMENT 57               /* length of par comments       */
-#define MAX_PARAMETERS 10            /* maximum number of parameters */
-#define MAX_PIXELS   32767       /* Maximum pixel count across/down the screen */
-#define OLD_MAX_PIXELS 2048       /* Limit of some old fixed arrays */
-#define MIN_PIXELS 10            /* Minimum pixel count across/down the screen */
-#define DEFAULT_ASPECT_RATIO 0.75f		/* Assumed overall screen dimensions, y/x  */
-#define DEFAULT_ASPECT_DRIFT 0.02f /* drift of < 2% is forced to 0% */
+	MESSAGE_LEN = 80,			// handy buffer size for messages
+	MAX_COMMENT = 57,			// length of par comments
+	MAX_PARAMETERS = 10,		// maximum number of parameters
+	MAX_PIXELS = 32767,			// Maximum pixel count across/down the screen
+	OLD_MAX_PIXELS = 2048,		// Limit of some old fixed arrays
+	MIN_PIXELS = 10				// Minimum pixel count across/down the screen
+};
+
+extern const float DEFAULT_ASPECT_RATIO;
+extern const float DEFAULT_ASPECT_DRIFT;
 
 class AbstractDriver;
 
 struct VIDEOINFO
-{              /* All we need to know about a Video Adapter */
-	char    name[26];       /* Adapter name (IBM EGA, etc)          */
-	char    comment[26];    /* Comments (UNTESTED, etc)             */
-	int     keynum;         /* key number used to invoked this mode */
-							/* 2-10 = F2-10, 11-40 = S,C,A{F1-F10}  */
-	int     x_dots;          /* number of dots across the screen     */
-	int     y_dots;          /* number of dots down the screen       */
-	int     colors;         /* number of colors available           */
+{              // All we need to know about a Video Adapter
+	char    name[26];       // Adapter name (IBM EGA, etc)
+	char    comment[26];    // Comments (UNTESTED, etc)
+	int     keynum;         // key number used to invoked this mode
+							// 2-10 = F2-10, 11-40 = S,C,A{F1-F10}
+	int     x_dots;          // number of dots across the screen
+	int     y_dots;          // number of dots down the screen
+	int     colors;         // number of colors available
 	AbstractDriver *driver;
 };
 
 extern bool operator==(const VIDEOINFO &lhs, const VIDEOINFO &rhs);
 
-#define INFO_ID         "Fractal"
+extern char const *INFO_ID;
 
-/*
- * Note: because non-MSDOS machines store structures differently, we have
- * to do special processing of the fractal_info structure in loadfile.c.
- * Make sure changes to the structure here get reflected there.
- */
-#ifndef XFRACT
-#define FRACTAL_INFO_SIZE sizeof(fractal_info)
-#else
-/* This value should be the MSDOS size, not the Unix size. */
-#define FRACTAL_INFO_SIZE 504
-#endif
-
-#define FRACTAL_INFO_VERSION 17  /* file version, independent of system */
-   /* increment this EVERY time the fractal_info structure changes */
+enum
+{
+	FRACTAL_INFO_VERSION  = 17
+	// file version, independent of system
+	// increment this EVERY time the fractal_info structure changes
+};
 
 /* TODO: instead of hacking the padding here, adjust the code that reads
    this structure */
 #if defined(_WIN32)
 #pragma pack(push, 1)
 #endif
-struct fractal_info         /*  for saving data in GIF file     */
+struct fractal_info         // for saving data in GIF file
 {
-	char  info_id[8];       /* Unique identifier for info g_block */
-	short iterationsold;    /* Pre version 18.24 */
-	short fractal_type;     /* 0=Mandelbrot 1=Julia 2= ... */
+	char  info_id[8];       // Unique identifier for info g_block
+	short iterationsold;    // Pre version 18.24
+	short fractal_type;     // 0=Mandelbrot 1=Julia 2= ...
 	double x_min;
 	double x_max;
 	double y_min;
@@ -458,7 +453,7 @@ struct fractal_info         /*  for saving data in GIF file     */
 	short x_dots;
 	short y_dots;
 	short colors;
-	short version;          /* used to be 'future[0]' */
+	short version;          // used to be 'future[0]'
 	float parm3;
 	float parm4;
 	float potential[3];
@@ -470,7 +465,7 @@ struct fractal_info         /*  for saving data in GIF file     */
 	float invert[3];
 	short decomposition[2];
 	short symmetry;
-						/* version 2 stuff */
+						// version 2 stuff
 	short init_3d[16];
 	short previewfactor;
 	short xtrans;
@@ -484,43 +479,43 @@ struct fractal_info         /*  for saving data in GIF file     */
 	short xadjust;
 	short eyeseparation;
 	short glassestype;
-						/* version 3 stuff, release 13 */
+						// version 3 stuff, release 13
 	short outside;
-						/* version 4 stuff, release 14 */
-	double x_3rd;          /* 3rd corner */
+						// version 4 stuff, release 14
+	double x_3rd;          // 3rd corner
 	double y_3rd;
-	char stdcalcmode;     /* 1/2/g/b */
-	char use_initial_orbit_z;    /* init Mandelbrot orbit flag */
-	short calculation_status;    /* resumable, finished, etc */
-	long tot_extend_len;  /* total length of extension blocks in .gif file */
+	char stdcalcmode;     // 1/2/g/b
+	char use_initial_orbit_z;    // init Mandelbrot orbit flag
+	short calculation_status;    // resumable, finished, etc
+	long tot_extend_len;  // total length of extension blocks in .gif file
 	short distestold;
 	short float_flag;
 	short bailoutold;
 	long calculation_time;
-	BYTE function_index[4];      /* which trig functions selected */
+	BYTE function_index[4];      // which trig functions selected
 	short finattract;
-	double initial_orbit_z[2];  /* init Mandelbrot orbit values */
-	short periodicity;    /* periodicity checking */
-						/* version 5 stuff, release 15 */
-	short potential_16bit;       /* save 16 bit continuous potential info */
-	float aspect_ratio;   /* g_viewWindow.AspectRatio(), y/x */
-	short system;         /* DEPRECATED: 0 for dos, 1 for windows */
-	short release;        /* release number, with 2 decimals implied */
-	short flag3d;         /* stored only for now, for future use */
+	double initial_orbit_z[2];  // init Mandelbrot orbit values
+	short periodicity;    // periodicity checking
+						// version 5 stuff, release 15
+	short potential_16bit;       // save 16 bit continuous potential info
+	float aspect_ratio;   // g_viewWindow.AspectRatio(), y/x
+	short system;         // DEPRECATED: 0 for dos, 1 for windows
+	short release;        // release number, with 2 decimals implied
+	short flag3d;         // stored only for now, for future use
 	short transparent[2];
 	short ambient;
 	short haze;
 	short randomize;
-						/* version 6 stuff, release 15.x */
+						// version 6 stuff, release 15.x
 	short rotate_lo;
 	short rotate_hi;
 	short distance_test_width;
-						/* version 7 stuff, release 16 */
+						// version 7 stuff, release 16
 	double dparm3;
 	double dparm4;
-						/* version 8 stuff, release 17 */
+						// version 8 stuff, release 17
 	short fill_color;
-						/* version 9 stuff, release 18 */
+						// version 9 stuff, release 18
 	double mxmaxfp;
 	double mxminfp;
 	double mymaxfp;
@@ -542,13 +537,13 @@ struct fractal_info         /*  for saving data in GIF file     */
 	double dparm8;
 	double dparm9;
 	double dparm10;
-						/* version 10 stuff, release 19 */
+						// version 10 stuff, release 19
 	long bail_out;
 	short bailoutest;
 	long iterations;
 	short bf_math;
 	short bflength;
-	short yadjust;        /* yikes! we left this out ages ago! */
+	short yadjust;        // yikes! we left this out ages ago!
 	short old_demm_colors;
 	long logmap;
 	long distance_test;
@@ -561,15 +556,41 @@ struct fractal_info         /*  for saving data in GIF file     */
 	long orbit_interval;
 	short orbit_delay;
 	double math_tolerance[2];
-	short future[7];     /* for stuff we haven't thought of yet */
+	short future[7];     // for stuff we haven't thought of yet
 };
 #if defined(_WIN32)
 #pragma pack(pop)
 #endif
 
-#define ITEMNAMELEN 18   /* max length of names in .frm/.l/.ifs/.fc */
+/*
+ * Note: because non-MSDOS machines store structures differently, we have
+ * to do special processing of the fractal_info structure in loadfile.c.
+ * Make sure changes to the structure here get reflected there.
+ */
+#ifndef XFRACT
+enum
+{
+	FRACTAL_INFO_SIZE = sizeof(fractal_info)
+};
+#else
+/* This value should be the MSDOS size, not the Unix size. */
+enum
+{
+	FRACTAL_INFO_SIZE = 504
+};
+#endif
 
-struct formula_info         /*  for saving formula data in GIF file     */
+extern char CheckFractalInfoSize[sizeof(fractal_info) == 504];
+
+enum
+{
+	ITEMNAMELEN = 18   // max length of names in .frm/.l/.ifs/.fc
+};
+
+#if defined(_WIN32)
+#pragma pack(push, 1)
+#endif
+struct formula_info         // for saving formula data in GIF file
 {
 	char  form_name[40];
 	short uses_p1;
@@ -579,8 +600,11 @@ struct formula_info         /*  for saving formula data in GIF file     */
 	short ismand;
 	short uses_p4;
 	short uses_p5;
-	short future[6];       /* for stuff we haven't thought of, yet */
+	short future[6];       // for stuff we haven't thought of, yet
 };
+#if defined(_WIN32)
+#pragma pack(pop)
+#endif
 
 enum stored_at_values
 {
@@ -589,22 +613,15 @@ enum stored_at_values
 	DISK
 };
 
-#define NUM_GENES 21
+enum
+{
+	NUM_GENES = 21
+};
 
-/*
- * Note: because non-MSDOS machines store structures differently, we have
- * to do special processing of the evolution_info structure in loadfile.c and
- * encoder.c.  See decode_evolver_info() in general.c.
- * Make sure changes to the structure here get reflected there.
- */
-#ifndef XFRACT
-#define EVOLVER_INFO_SIZE sizeof(evolution_info)
-#else
-/* This value should be the MSDOS size, not the Unix size. */
-#define EVOLVER_INFO_SIZE 200
+#if defined(_WIN32)
+#pragma pack(push, 1)
 #endif
-
-struct evolution_info      /* for saving evolution data in a GIF file */
+struct evolution_info      // for saving evolution data in a GIF file
 {
 	short evolving;
 	short grid_size;
@@ -623,9 +640,52 @@ struct evolution_info      /* for saving evolution data in a GIF file */
 	short x_dots;
 	short y_dots;
 	short mutate[NUM_GENES];
-	short ecount; /* count of how many images have been calc'ed so far */
-	short future[68 - NUM_GENES];      /* total of 200 bytes */
+	short ecount; // count of how many images have been calc'ed so far
+	short future[68 - NUM_GENES];      // total of 200 bytes
 };
+#if defined(_WIN32)
+#pragma pack(pop)
+#endif
+
+/*
+ * Note: because non-MSDOS machines store structures differently, we have
+ * to do special processing of the evolution_info structure in loadfile.c and
+ * encoder.c.  See decode_evolver_info() in general.c.
+ * Make sure changes to the structure here get reflected there.
+ */
+#ifndef XFRACT
+enum
+{
+	EVOLVER_INFO_SIZE = sizeof(evolution_info)
+};
+#else
+// This value should be the MSDOS size, not the Unix size.
+enum
+{
+	EVOLVER_INFO_SIZE = 200
+};
+#endif
+extern char CheckEvolverInfoSize[200 == sizeof(evolution_info)];
+
+#if defined(_WIN32)
+#pragma pack(push, 1)
+#endif
+struct orbits_info      // for saving orbits data in a GIF file
+{
+	double oxmin;
+	double oxmax;
+	double oymin;
+	double oymax;
+	double ox3rd;
+	double oy3rd;
+	short keep_scrn_coords;
+	char drawmode;
+	char dummy; // need an even number of bytes
+	short future[74];      // total of 200 bytes
+};
+#if defined(_WIN32)
+#pragma pack(pop)
+#endif
 
 /*
  * Note: because non-MSDOS machines store structures differently, we have
@@ -636,62 +696,62 @@ struct evolution_info      /* for saving evolution data in a GIF file */
 #ifndef XFRACT
 #define ORBITS_INFO_SIZE sizeof(orbits_info)
 #else
-/* This value should be the MSDOS size, not the Unix size. */
+// This value should be the MSDOS size, not the Unix size.
 #define ORBITS_INFO_SIZE 200
 #endif
 
-struct orbits_info      /* for saving orbits data in a GIF file */
+extern char CheckOrbitsInfoSize[sizeof(orbits_info) == 200];
+
+enum
 {
-	double oxmin;
-	double oxmax;
-	double oymin;
-	double oymax;
-	double ox3rd;
-	double oy3rd;
-	short keep_scrn_coords;
-	char drawmode;
-	char dummy; /* need an even number of bytes */
-	short future[74];      /* total of 200 bytes */
+	MAXVIDEOMODES  = 300       // maximum entries in fractint.cfg
 };
 
-#define MAXVIDEOMODES 300       /* maximum entries in fractint.cfg        */
+extern double const AUTO_INVERT;
 
-#define AUTOINVERT -123456.789
+enum
+{
+	MAX_NUM_ATTRACTORS = 8                        // max number of attractors
+};
 
-#define N_ATTR 8                        /* max number of attractors     */
+extern  long     g_attractor_radius_l;      // finite attractor radius
+extern  double   g_attractor_radius_fp;      // finite attractor radius
 
-extern  long     g_attractor_radius_l;      /* finite attractor radius  */
-extern  double   g_attractor_radius_fp;      /* finite attractor radius  */
-
-#define NUMIFS    64     /* number of ifs functions in ifs array */
-#define IFSPARM    7     /* number of ifs parameters */
-#define IFS3DPARM 13     /* number of ifs 3D parameters */
+enum
+{
+	NUMIFS = 64,			// number of ifs functions in ifs array
+	IFSPARM = 7,		// number of ifs parameters
+	IFS3DPARM = 13		// number of ifs 3D parameters
+};
 
 struct more_parameters
 {
-	int type;											/* index in fractalname of the fractal */
-	const char *parameters[MAX_PARAMETERS-4];			/* name of the parameters */
-	double paramvalue[MAX_PARAMETERS-4];				/* default parameter values */
+	int type;											// index in fractalname of the fractal
+	const char *parameters[MAX_PARAMETERS-4];			// name of the parameters
+	double paramvalue[MAX_PARAMETERS-4];				// default parameter values
 };
 
-/* bitmask defines for g_fractal_specific flags */
-#define FRACTALFLAG_NO_ZOOM					1			/* zoombox not allowed at all          */
-#define FRACTALFLAG_NO_SOLID_GUESSING		2			/* solid guessing not allowed          */
-#define FRACTALFLAG_NO_BOUNDARY_TRACING		4			/* boundary tracing not allowed        */
-#define FRACTALFLAG_NO_ZOOM_BOX_ROTATE		8			/* zoombox rotate/stretch not allowed  */
-#define FRACTALFLAG_NOT_RESUMABLE			0x10		/* can't interrupt and resume          */
-#define FRACTALFLAG_INFINITE_CALCULATION	0x20		/* this type calculates forever        */
-#define FRACTALFLAG_FUNCTION_SHIFT			6			/* number of trig functions in formula */
-#define FRACTALFLAG_FUNCTION_MASK			0x7
-#define FRACTALFLAG_1_FUNCTION				(1 << FRACTALFLAG_FUNCTION_SHIFT)	
-#define FRACTALFLAG_2_FUNCTIONS				(2 << FRACTALFLAG_FUNCTION_SHIFT)
-#define FRACTALFLAG_4_FUNCTIONS				(4 << FRACTALFLAG_FUNCTION_SHIFT)
-#define FRACTALFLAG_3D_PARAMETERS			0x400		/* uses 3d parameters                  */
-#define FRACTALFLAG_JULIBROT				0x800		/* works with Julibrot                 */
-#define FRACTALFLAG_MORE_PARAMETERS			0x1000		/* more than 4 parms                   */
-#define FRACTALFLAG_BAIL_OUT_TESTS			0x2000		/* can use different bailout tests     */
-#define FRACTALFLAG_ARBITRARY_PRECISION		0x4000		/* supports arbitrary precision        */
-#define FRACTALFLAG_DONT_DISPLAY			0x10000		/* don't display in fractal type list */
+enum FractalFlags
+{
+	// bitmask defines for g_fractal_specific flags
+	FRACTALFLAG_NO_ZOOM					= 1,			// zoombox not allowed at all
+	FRACTALFLAG_NO_SOLID_GUESSING		= 2,			// solid guessing not allowed
+	FRACTALFLAG_NO_BOUNDARY_TRACING		= 4,			// boundary tracing not allowed
+	FRACTALFLAG_NO_ZOOM_BOX_ROTATE		= 8,			// zoombox rotate/stretch not allowed
+	FRACTALFLAG_NOT_RESUMABLE			= 0x10,			// can't interrupt and resume
+	FRACTALFLAG_INFINITE_CALCULATION	= 0x20,			// this type calculates forever
+	FRACTALFLAG_FUNCTION_SHIFT			= 6,			// number of trig functions in formula
+	FRACTALFLAG_FUNCTION_MASK			= 0x7,
+	FRACTALFLAG_1_FUNCTION				= (1 << FRACTALFLAG_FUNCTION_SHIFT),	
+	FRACTALFLAG_2_FUNCTIONS				= (2 << FRACTALFLAG_FUNCTION_SHIFT),
+	FRACTALFLAG_4_FUNCTIONS				= (4 << FRACTALFLAG_FUNCTION_SHIFT),
+	FRACTALFLAG_3D_PARAMETERS			= 0x400,		// uses 3d parameters
+	FRACTALFLAG_JULIBROT				= 0x800,		// works with Julibrot
+	FRACTALFLAG_MORE_PARAMETERS			= 0x1000,		// more than 4 parms
+	FRACTALFLAG_BAIL_OUT_TESTS			= 0x2000,		// can use different bailout tests
+	FRACTALFLAG_ARBITRARY_PRECISION		= 0x4000,		// supports arbitrary precision
+	FRACTALFLAG_DONT_DISPLAY			= 0x10000		// don't display in fractal type list
+};
 
 enum SpecialHelpFormulaType
 {
@@ -704,21 +764,21 @@ enum SpecialHelpFormulaType
 struct FractalTypeSpecificData
 {
 	int fractal_type;
-	const char *name;					/* name of the fractal */
-										/* (leading "*" supresses name display) */
-	const char  *parameters[4];			/* name of the parameters */
-	double paramvalue[4];				/* default parameter values */
-	int   helptext;						/* helpdefs.h HT_xxxx, -1 for none */
-	int   helpformula;					/* helpdefs.h HF_xxxx, -1 for none */
-	int flags;							/* constraints, bits defined below */
-	float x_min;						/* default XMIN corner */
-	float x_max;						/* default XMAX corner */
-	float y_min;						/* default YMIN corner */
-	float y_max;						/* default YMAX corner */
-	int   isinteger;					/* >= 1 if integer fractal, 0 otherwise */
-	int   tojulia;						/* index of corresponding julia type */
-	int   tomandel;						/* index of corresponding mandelbrot type */
-	int   tofloat;						/* index of corresponding floating-point type */
+	const char *name;					// name of the fractal
+										// (leading "*" supresses name display)
+	const char  *parameters[4];			// name of the parameters
+	double paramvalue[4];				// default parameter values
+	int   helptext;						// helpdefs.h HT_xxxx, -1 for none
+	int   helpformula;					// helpdefs.h HF_xxxx, -1 for none
+	int flags;							// constraints, bits defined below
+	float x_min;						// default XMIN corner
+	float x_max;						// default XMAX corner
+	float y_min;						// default YMIN corner
+	float y_max;						// default YMAX corner
+	int   isinteger;					// >= 1 if integer fractal, 0 otherwise
+	int   tojulia;						// index of corresponding julia type
+	int   tomandel;						// index of corresponding mandelbrot type
+	int   tofloat;						// index of corresponding floating-point type
 	SymmetryType symmetry;				/* applicable symmetry logic
 										   0 = no symmetry
 										  -1 = y-axis symmetry (If No Params)
@@ -732,11 +792,11 @@ struct FractalTypeSpecificData
 										   5 = PI (sin/cos) symmetry
 										   6 = NEWTON (power) symmetry
 																*/
-	int (*orbitcalc)();					/* function that calculates one orbit */
-	int (*per_pixel)();					/* once-per-pixel init */
-	bool (*per_image)();				/* once-per-image setup */
-	int (*calculate_type)();			/* name of main fractal function */
-	int orbit_bailout;					/* usual bailout value for orbit calc */
+	int (*orbitcalc)();					// function that calculates one orbit
+	int (*per_pixel)();					// once-per-pixel init
+	bool (*per_image)();				// once-per-image setup
+	int (*calculate_type)();			// name of main fractal function
+	int orbit_bailout;					// usual bailout value for orbit calc
 
 	int num_functions() const
 	{
@@ -773,7 +833,7 @@ struct FractalTypeSpecificData
 	}
 };
 
-/* defines for inside/outside */
+// defines for inside/outside
 enum ColoringModeType
 {
 	COLORMODE_ITERATION = -1,
@@ -794,7 +854,7 @@ enum ColoringModeType
 	COLORMODE_INVERSE_TANGENT_INTEGER = -104
 };
 
-/* defines for bailoutest */
+// defines for bailoutest
 enum bailouts
 {
 	BAILOUT_MODULUS,
@@ -820,60 +880,68 @@ enum MinorMethodType
 	MINORMETHOD_RIGHT_FIRST
 };
 
-/* more bitmasks for evolution mode flag */
-#define EVOLVE_NONE				0	/* no evolution */
-#define EVOLVE_FIELD_MAP		1	/*steady field varyiations across screen */
-#define EVOLVE_RANDOM_WALK		2	/* newparm = lastparm +- rand()                   */
-#define EVOLVE_RANDOM_PARAMETER	4	/* newparm = constant +- rand()                   */
-#define EVOLVE_NO_GROUT			8	/* no gaps between images                                   */
-#define EVOLVE_PARAMETER_BOX			128
-
+// more bitmasks for evolution mode flag
+enum EvolveFlags
+{
+	EVOLVE_NONE				= 0,	// no evolution
+	EVOLVE_FIELD_MAP		= 1,	// steady field varyiations across screen
+	EVOLVE_RANDOM_WALK		= 2,	// newparm = lastparm +- rand()
+	EVOLVE_RANDOM_PARAMETER	= 4,	// newparm = constant +- rand()
+	EVOLVE_NO_GROUT			= 8,	// no gaps between images
+	EVOLVE_PARAMETER_BOX	= 128
+};
 
 extern FractalTypeSpecificData g_fractal_specific[];
 extern FractalTypeSpecificData *g_current_fractal_specific;
 
-#define DEFAULTFRACTALTYPE      ".gif"
-#define ALTERNATEFRACTALTYPE    ".fra"
+extern char const *DEFAULTFRACTALTYPE;
+extern char const *ALTERNATEFRACTALTYPE;
 
-
-#ifndef sqr
-#define sqr(x) ((x)*(x))
+#ifdef sqr
+#undef sqr
 #endif
+template <typename T>
+T sqr(T x)
+{
+	return x*x;
+}
 
-#ifndef lsqr
-#define lsqr(x) (multiply((x), (x), g_bit_shift))
-#endif
+inline long lsqr(long x)
+{
+	extern int g_bit_shift;
+	extern long multiply(long, long, int);
+	return multiply(x, x, g_bit_shift);
+}
 
-#define CMPLXconj(z)    ((z).y =  -((z).y))
-#define LCMPLXmod(z)    (lsqr((z).x)+lsqr((z).y))
-#define LCMPLXconj(z)   ((z).y =  -((z).y))
-
-/* 3D stuff - formerly in 3d.h */
-#ifndef DOT_PRODUCT
-#define DOT_PRODUCT(v1,v2)  ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2])
-#endif
-
-#define    CMAX    4   /* maximum column (4 x 4 matrix) */
-#define    RMAX    4   /* maximum row    (4 x 4 matrix) */
-#define    DIM     3   /* number of dimensions */
+enum
+{
+	CMAX = 4,				// maximum column (4 x 4 matrix)
+	RMAX = 4,				// maximum row    (4 x 4 matrix)
+	DIM = 3					// number of dimensions
+};
 
 // TODO: use a template type for different kinds of matrices
-typedef double MATRIX[RMAX][CMAX];  /* matrix of doubles */
-typedef long  MATRIX_L[RMAX][CMAX];  /* matrix of longs   */
+typedef double MATRIX[RMAX][CMAX];  // matrix of doubles
+typedef long  MATRIX_L[RMAX][CMAX];  // matrix of longs
 
 /* A MATRIX is used to describe a transformation from one coordinate
 system to another.  Multiple transformations may be concatenated by
 multiplying their transformation matrices. */
 
 // TODO: use a template type for different kinds of vectors
-typedef double VECTOR[DIM];  /* vector of doubles */
-typedef long  VECTOR_L[DIM];  /* vector of longs   */
+typedef double VECTOR[DIM];  // vector of doubles
+typedef long  VECTOR_L[DIM];  // vector of longs
 
 /* A VECTOR is an array of three coordinates [x,y,z] representing magnitude
 and direction. A fourth dimension is assumed to always have the value 1, but
 is not in the data structure */
 
-/* Math definitions (normally in float.h) that are missing on some systems. */
+inline double DOT_PRODUCT(VECTOR const v1,VECTOR const v2)
+{
+	return ((v1)[0]*(v2)[0]+(v1)[1]*(v2)[1]+(v1)[2]*(v2)[2]);
+}
+
+// Math definitions (normally in float.h) that are missing on some systems.
 #ifndef FLT_MIN
 #define FLT_MIN 1.17549435e-38
 #endif
@@ -941,137 +1009,141 @@ struct FunctionListItem
 
 #define BIG 100000.0
 
-#define CTL(x) ((x)&0x1f)
+// nonalpha tests if we have a control character
+inline bool nonalpha(int c)
+{
+	return (c < 32) || (c > 127);
+}
 
-/* nonalpha tests if we have a control character */
-#define nonalpha(c) ((c)<32 || (c)>127)
-
-/* keys; FIK = "FractInt Key"
+/* keys; IDK = "Iterated Dynamics Key"
  * Use this prefix to disambiguate key name symbols used in the fractint source
  * from symbols defined by the external environment, i.e. "DELETE" on Win32
  */
-#define FIK_ALT_A			1030
-#define FIK_ALT_S			1031
-#define FIK_ALT_F1			1104
-#define FIK_ALT_F2			1105
-#define FIK_ALT_F3			1106
-#define FIK_ALT_F4			1107
-#define FIK_ALT_F5			1108
-#define FIK_ALT_F6			1109
-#define FIK_ALT_F7			1110
-#define FIK_ALT_F8			1111
-#define FIK_ALT_F9			1112
-#define FIK_ALT_F10			1113
-#define FIK_ALT_1			1120
-#define FIK_ALT_2			1121
-#define FIK_ALT_3			1122
-#define FIK_ALT_4			1123
-#define FIK_ALT_5			1124
-#define FIK_ALT_6			1125
-#define FIK_ALT_7			1126
+enum IdKey
+{
+	IDK_ALT_A = 1030,
+	IDK_ALT_S = 1031,
+	IDK_ALT_F1 = 1104,
+	IDK_ALT_F2 = 1105,
+	IDK_ALT_F3 = 1106,
+	IDK_ALT_F4 = 1107,
+	IDK_ALT_F5 = 1108,
+	IDK_ALT_F6 = 1109,
+	IDK_ALT_F7 = 1110,
+	IDK_ALT_F8 = 1111,
+	IDK_ALT_F9 = 1112,
+	IDK_ALT_F10 = 1113,
+	IDK_ALT_1 = 1120,
+	IDK_ALT_2 = 1121,
+	IDK_ALT_3 = 1122,
+	IDK_ALT_4 = 1123,
+	IDK_ALT_5 = 1124,
+	IDK_ALT_6 = 1125,
+	IDK_ALT_7 = 1126,
 
-#define FIK_CTL_A			1
-#define FIK_CTL_B			2
-#define FIK_CTL_E			5
-#define FIK_CTL_F			6
-#define FIK_CTL_G			7
-#define FIK_CTL_O			15
-#define FIK_CTL_S			19
-#define FIK_CTL_U			21
-#define FIK_CTL_X			24
-#define FIK_CTL_Y			25
-#define FIK_CTL_Z			26
-#define FIK_CTL_BACKSLASH	28
-#define FIK_CTL_DEL			1147
-#define FIK_CTL_DOWN_ARROW	1145
-#define FIK_CTL_END			1117
-#define FIK_CTL_ENTER		10
-#define FIK_CTL_ENTER_2		1010
-#define FIK_CTL_F1			1094
-#define FIK_CTL_F2			1095
-#define FIK_CTL_F3			1096
-#define FIK_CTL_F4			1097
-#define FIK_CTL_F5			1098
-#define FIK_CTL_F6			1099
-#define FIK_CTL_F7			1100
-#define FIK_CTL_F8			1101
-#define FIK_CTL_F9			1102
-#define FIK_CTL_F10			1103
-#define FIK_CTL_HOME		1119
-#define FIK_CTL_INSERT		1146
-#define FIK_CTL_LEFT_ARROW	1115
-#define FIK_CTL_MINUS		1142
-#define FIK_CTL_PAGE_DOWN	1118
-#define FIK_CTL_PAGE_UP		1132
-#define FIK_CTL_PLUS		1144
-#define FIK_CTL_RIGHT_ARROW	1116
-#define FIK_CTL_TAB			1148
-#define FIK_CTL_UP_ARROW	1141
+	IDK_CTL_A = 1,
+	IDK_CTL_B = 2,
+	IDK_CTL_E = 5,
+	IDK_CTL_F = 6,
+	IDK_CTL_G = 7,
+	IDK_CTL_O = 15,
+	IDK_CTL_S = 19,
+	IDK_CTL_U = 21,
+	IDK_CTL_X = 24,
+	IDK_CTL_Y = 25,
+	IDK_CTL_Z = 26,
+	IDK_CTL_BACKSLASH = 28,
+	IDK_CTL_DEL = 1147,
+	IDK_CTL_DOWN_ARROW = 1145,
+	IDK_CTL_END = 1117,
+	IDK_CTL_ENTER = 10,
+	IDK_CTL_ENTER_2 = 1010,
+	IDK_CTL_F1 = 1094,
+	IDK_CTL_F2 = 1095,
+	IDK_CTL_F3 = 1096,
+	IDK_CTL_F4 = 1097,
+	IDK_CTL_F5 = 1098,
+	IDK_CTL_F6 = 1099,
+	IDK_CTL_F7 = 1100,
+	IDK_CTL_F8 = 1101,
+	IDK_CTL_F9 = 1102,
+	IDK_CTL_F10 = 1103,
+	IDK_CTL_HOME = 1119,
+	IDK_CTL_INSERT = 1146,
+	IDK_CTL_LEFT_ARROW = 1115,
+	IDK_CTL_MINUS = 1142,
+	IDK_CTL_PAGE_DOWN = 1118,
+	IDK_CTL_PAGE_UP = 1132,
+	IDK_CTL_PLUS = 1144,
+	IDK_CTL_RIGHT_ARROW = 1116,
+	IDK_CTL_TAB = 1148,
+	IDK_CTL_UP_ARROW = 1141,
 
-#define FIK_SHF_TAB			1015  /* shift tab aka BACKTAB */
+	IDK_SHF_TAB = 1015,  // shift tab aka BACKTAB
 
-#define FIK_BACKSPACE		8
-#define FIK_DELETE			1083
-#define FIK_DOWN_ARROW		1080
-#define FIK_END				1079
-#define FIK_ENTER			13
-#define FIK_ENTER_2			1013
-#define FIK_ESC				27
-#define FIK_F1				1059
-#define FIK_F2				1060
-#define FIK_F3				1061
-#define FIK_F4				1062
-#define FIK_F5				1063
-#define FIK_F6				1064
-#define FIK_F7				1065
-#define FIK_F8				1066
-#define FIK_F9				1067
-#define FIK_F10				1068
-#define FIK_HOME			1071
-#define FIK_INSERT			1082
-#define FIK_LEFT_ARROW		1075
-#define FIK_PAGE_DOWN		1081
-#define FIK_PAGE_UP			1073
-#define FIK_RIGHT_ARROW		1077
-#define FIK_SPACE			32
-#define FIK_SF1				1084
-#define FIK_SF2				1085
-#define FIK_SF3				1086
-#define FIK_SF4				1087
-#define FIK_SF5				1088
-#define FIK_SF6				1089
-#define FIK_SF7				1090
-#define FIK_SF8				1091
-#define FIK_SF9				1092
-#define FIK_SF10			1093
-#define FIK_TAB				9
-#define FIK_UP_ARROW		1072
+	IDK_BACKSPACE = 8,
+	IDK_DELETE = 1083,
+	IDK_DOWN_ARROW = 1080,
+	IDK_END = 1079,
+	IDK_ENTER = 13,
+	IDK_ENTER_2 = 1013,
+	IDK_ESC = 27,
+	IDK_F1 = 1059,
+	IDK_F2 = 1060,
+	IDK_F3 = 1061,
+	IDK_F4 = 1062,
+	IDK_F5 = 1063,
+	IDK_F6 = 1064,
+	IDK_F7 = 1065,
+	IDK_F8 = 1066,
+	IDK_F9 = 1067,
+	IDK_F10 = 1068,
+	IDK_HOME = 1071,
+	IDK_INSERT = 1082,
+	IDK_LEFT_ARROW = 1075,
+	IDK_PAGE_DOWN = 1081,
+	IDK_PAGE_UP = 1073,
+	IDK_RIGHT_ARROW = 1077,
+	IDK_SPACE = 32,
+	IDK_SF1 = 1084,
+	IDK_SF2 = 1085,
+	IDK_SF3 = 1086,
+	IDK_SF4 = 1087,
+	IDK_SF5 = 1088,
+	IDK_SF6 = 1089,
+	IDK_SF7 = 1090,
+	IDK_SF8 = 1091,
+	IDK_SF9 = 1092,
+	IDK_SF10 = 1093,
+	IDK_TAB = 9,
+	IDK_UP_ARROW = 1072,
 
-/* not really a key, but a special trigger */
-#define FIK_SAVE_TIME		9999
+	// not really a key, but a special trigger
+	IDK_SAVE_TIME = 9999
+};
 
-/* structure passed to fullscreen_prompts */
+// structure passed to fullscreen_prompts
 struct full_screen_values
 {
-	int type;   /* 'd' for double, 'f' for float, 's' for string,   */
-			   /* 'D' for integer in double, '*' for comment */
-			   /* 'i' for integer, 'y' for yes=1 no=0              */
-			   /* 0x100+n for string of length n                   */
-			   /* 'l' for one of a list of strings                 */
-			   /* 'L' for long */
+	int type;   // 'd' for double, 'f' for float, 's' for string,
+			   // 'D' for integer in double, '*' for comment
+			   // 'i' for integer, 'y' for yes=1 no=0
+			   // 0x100+n for string of length n
+			   // 'l' for one of a list of strings
+			   // 'L' for long
 	union
 	{
-		double dval;      /* when type 'd' or 'f'  */
-		int    ival;      /* when type is 'i'      */
-		long   Lval;      /* when type is 'L'      */
-		char   sval[FILE_MAX_PATH];  /* when type is 's'      */
-		char  *sbuf;  /* when type is 0x100+n  */
+		double dval;      // when type 'd' or 'f'
+		int    ival;      // when type is 'i'
+		long   Lval;      // when type is 'L'
+		char   sval[FILE_MAX_PATH];  // when type is 's'
+		char  *sbuf;  // when type is 0x100+n
 		struct
-		{          /* when type is 'l'      */
-			 int  val;      /*   selected choice     */
-			 int  vlen;     /*   char len per choice */
-			 const char **list;   /*   list of values      */
-			 int  llen;     /*   number of values    */
+		{          // when type is 'l'
+			 int  val;      // selected choice
+			 int  vlen;     // char len per choice
+			 const char **list;   // list of values
+			 int  llen;     // number of values
 		} ch;
 	} uval;
 };
@@ -1121,7 +1193,7 @@ struct multiple_precision_info_extension_block
 	char *apm_data;
 };
 
-/* parameter evolution stuff */
+// parameter evolution stuff
 struct evolver_info_extension_block
 {
 	char got_data;
@@ -1169,7 +1241,7 @@ struct affine
 		x' = [ a b ]*x + [ e ]
 			 [ c d ]     [ f ]
 	*/
-	/* weird order so a,b,e and c,d,f are vectors */
+	// weird order so a,b,e and c,d,f are vectors
 	double a;
 	double b;
 	double e;
@@ -1178,30 +1250,34 @@ struct affine
 	double f;
 };
 
-struct GENEBASE  /* smallest part of a fractint 'gene' */
+struct GENEBASE  // smallest part of a fractint 'gene'
 {
-	void *addr; /* address of variable to be referenced */
-	void (*varyfunc)(GENEBASE *,int,int); /* pointer to func used to vary it */
-							  /* takes random number and pointer to var*/
-	int mutate;  /* flag to switch on variation of this variable */
-				  /* 0 for no mutation, 1 for x axis, 2 for y axis */
-				  /* in steady field maps, either x or y=yes in random modes*/ 
-	char name[16]; /* name of variable (for menu ) */
-	char level;    /* mutation level at which this should become active */
+	void *addr; // address of variable to be referenced
+	void (*varyfunc)(GENEBASE *,int,int); // pointer to func used to vary it
+							  // takes random number and pointer to var
+	int mutate;  // flag to switch on variation of this variable
+				  // 0 for no mutation, 1 for x axis, 2 for y axis
+				  // in steady field maps, either x or y=yes in random modes
+	char name[16]; // name of variable (for menu )
+	char level;    // mutation level at which this should become active
 };
 
-#define sign(x) (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0)
+template <typename T>
+inline int sign(T x)
+{
+	return (((x) < 0) ? -1 : ((x) != 0)  ? 1 : 0);
+}
 
 
 struct entry_info
 {
 	char name[ITEMNAMELEN + 2];
-	long point; /* points to the (or the { following the name */
+	long point; // points to the (or the { following the name
 };
 
 struct UserInterfaceState
 {
-	bool ask_video;					/* flag for video prompting */
+	bool ask_video;					// flag for video prompting
 };
 
 template <typename T>

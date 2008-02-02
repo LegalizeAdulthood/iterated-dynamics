@@ -16,15 +16,18 @@
 #include "resume.h"
 
 /* cellular type */
-#define BAD_T         1
-#define BAD_MEM       2
-#define STRING1       3
-#define STRING2       4
-#define TABLEK        5
-#define TYPEKR        6
-#define RULELENGTH    7
-#define INTERUPT      8
-#define CELLULAR_DONE 10
+enum
+{
+	BAD_T         = 1,
+	BAD_MEM       = 2,
+	STRING1       = 3,
+	STRING2       = 4,
+	TABLEK        = 5,
+	TYPEKR        = 6,
+	RULELENGTH    = 7,
+	INTERUPT      = 8,
+	CELLULAR_DONE = 10
+};
 
 static S16 s_r;
 static S16 s_k_1;

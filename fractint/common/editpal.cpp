@@ -26,18 +26,20 @@
 /*
  * misc. #defines
  */
-
-#define FONT_DEPTH          8     /* font size */
-#define CSIZE_MIN           8     /* csize cannot be smaller than this */
+enum
+{
+	FONT_DEPTH          = 8,		/* font size */
+	CSIZE_MIN           = 8,		/* csize cannot be smaller than this */
 #ifndef XFRACT
-#define CURSOR_BLINK_RATE   3     /* timer ticks between cursor blinks */
+	CURSOR_BLINK_RATE   = 3,		/* timer ticks between cursor blinks */
 #else
-#define CURSOR_BLINK_RATE   300   /* timer ticks between cursor blinks */
+	CURSOR_BLINK_RATE   = 300,		/* timer ticks between cursor blinks */
 #endif
-#define FAR_RESERVE     8192L     /* amount of mem we will leave avail. */
-#define MAX_WIDTH        1024     /* palette editor cannot be wider than this */
-#define TITLE   "Id"
-#define TITLE_LEN (8)
+	FAR_RESERVE			= 8192L,	/* amount of mem we will leave avail. */
+	MAX_WIDTH			= 1024,		/* palette editor cannot be wider than this */
+	TITLE_LEN			= 8
+};
+static char const *TITLE = "Id";
 
 #ifdef XFRACT
 int g_edit_pal_cursor = 0;
@@ -715,8 +717,11 @@ void move_box::erase()
 	put_row(_x, _y + depth-1, width, _bottom);
 }
 
-#define BOX_INC     1
-#define CSIZE_INC   2
+enum
+{
+	BOX_INC = 1,
+	CSIZE_INC = 2
+};
 
 void move_box::move(int key)
 {
@@ -730,14 +735,14 @@ void move_box::move(int key)
 	{
 		switch (key)
 		{
-		case FIK_CTL_RIGHT_ARROW:     xoff += BOX_INC*4;   break;
-		case FIK_RIGHT_ARROW:       xoff += BOX_INC;     break;
-		case FIK_CTL_LEFT_ARROW:      xoff -= BOX_INC*4;   break;
-		case FIK_LEFT_ARROW:        xoff -= BOX_INC;     break;
-		case FIK_CTL_DOWN_ARROW:      yoff += BOX_INC*4;   break;
-		case FIK_DOWN_ARROW:        yoff += BOX_INC;     break;
-		case FIK_CTL_UP_ARROW:        yoff -= BOX_INC*4;   break;
-		case FIK_UP_ARROW:          yoff -= BOX_INC;     break;
+		case IDK_CTL_RIGHT_ARROW:     xoff += BOX_INC*4;   break;
+		case IDK_RIGHT_ARROW:       xoff += BOX_INC;     break;
+		case IDK_CTL_LEFT_ARROW:      xoff -= BOX_INC*4;   break;
+		case IDK_LEFT_ARROW:        xoff -= BOX_INC;     break;
+		case IDK_CTL_DOWN_ARROW:      yoff += BOX_INC*4;   break;
+		case IDK_DOWN_ARROW:        yoff += BOX_INC;     break;
+		case IDK_CTL_UP_ARROW:        yoff -= BOX_INC*4;   break;
+		case IDK_UP_ARROW:          yoff -= BOX_INC;     break;
 
 		default:
 			done = true;
@@ -805,7 +810,7 @@ bool move_box::process()
 		cursor::cursor_wait_key();
 		key = driver_get_key();
 
-		if (key == FIK_ENTER || key == FIK_ENTER_2 || key == FIK_ESC || key == 'H' || key == 'h')
+		if (key == IDK_ENTER || key == IDK_ENTER_2 || key == IDK_ESC || key == 'H' || key == 'h')
 		{
 			_moved = (_x != orig_x || _y != orig_y || _csize != orig_csize);
 			break;
@@ -813,18 +818,18 @@ bool move_box::process()
 
 		switch (key)
 		{
-		case FIK_UP_ARROW:
-		case FIK_DOWN_ARROW:
-		case FIK_LEFT_ARROW:
-		case FIK_RIGHT_ARROW:
-		case FIK_CTL_UP_ARROW:
-		case FIK_CTL_DOWN_ARROW:
-		case FIK_CTL_LEFT_ARROW:
-		case FIK_CTL_RIGHT_ARROW:
+		case IDK_UP_ARROW:
+		case IDK_DOWN_ARROW:
+		case IDK_LEFT_ARROW:
+		case IDK_RIGHT_ARROW:
+		case IDK_CTL_UP_ARROW:
+		case IDK_CTL_DOWN_ARROW:
+		case IDK_CTL_LEFT_ARROW:
+		case IDK_CTL_RIGHT_ARROW:
 			move(key);
 			break;
 
-		case FIK_PAGE_UP:   /* shrink */
+		case IDK_PAGE_UP:   /* shrink */
 			if (_csize > CSIZE_MIN)
 			{
 				int t = _csize - CSIZE_INC;
@@ -845,9 +850,9 @@ bool move_box::process()
 			}
 			break;
 
-		case FIK_PAGE_DOWN:   /* grow */
+		case IDK_PAGE_DOWN:   /* grow */
 			{
-				int max_width = std::min(g_screen_width, MAX_WIDTH);
+				int max_width = std::min(g_screen_width, int(MAX_WIDTH));
 
 				if (_base_depth + (_csize + CSIZE_INC)*16 + 1 < g_screen_height  &&
 					_base_width + (_csize + CSIZE_INC)*16 + 1 < max_width)
@@ -887,7 +892,7 @@ bool move_box::process()
 
 	_should_hide = (key == 'H' || key == 'h');
 
-	return key != FIK_ESC;
+	return key != IDK_ESC;
 }
 
 /*
@@ -932,10 +937,11 @@ private:
 	void *_info;
 };
 
-#define COLOR_EDITOR_WIDTH (8*3 + 4)
-#define COLOR_EDITOR_DEPTH (8 + 4)
-
-
+enum
+{
+	COLOR_EDITOR_WIDTH = (8*3 + 4),
+	COLOR_EDITOR_DEPTH = (8 + 4)
+};
 
 color_editor::color_editor (int x, int y, char letter,
 					void (*other_key)(int, color_editor*, VOIDPTR),
@@ -988,7 +994,7 @@ int color_editor::edit()
 
 		switch (key)
 		{
-		case FIK_PAGE_UP:
+		case IDK_PAGE_UP:
 			if (_value < COLOR_CHANNEL_MAX)
 			{
 				_value += 5;
@@ -1002,7 +1008,7 @@ int color_editor::edit()
 			break;
 
 		case '+':
-		case FIK_CTL_PLUS:        /*RB*/
+		case IDK_CTL_PLUS:        /*RB*/
 			diff = 1;
 			while (driver_key_pressed() == key)
 			{
@@ -1021,7 +1027,7 @@ int color_editor::edit()
 			}
 			break;
 
-		case FIK_PAGE_DOWN:
+		case IDK_PAGE_DOWN:
 			if (_value > 0)
 			{
 				_value -= 5;
@@ -1035,7 +1041,7 @@ int color_editor::edit()
 			break;
 
 		case '-':
-		case FIK_CTL_MINUS:     /*RB*/
+		case IDK_CTL_MINUS:     /*RB*/
 			diff = 1;
 			while (driver_key_pressed() == key)
 			{
@@ -1145,10 +1151,13 @@ private:
 	void rgb_editor_change();
 };
 
-#define RGB_EDITOR_WIDTH 62
-#define RGB_EDITOR_DEPTH (1 + 1 + COLOR_EDITOR_DEPTH*3-2 + 2)
-#define RGB_EDITOR_BOX_WIDTH (RGB_EDITOR_WIDTH - (2 + COLOR_EDITOR_WIDTH + 1 + 2))
-#define RGB_EDITOR_BOX_DEPTH (RGB_EDITOR_DEPTH - 4)
+enum
+{
+	RGB_EDITOR_WIDTH = 62,
+	RGB_EDITOR_DEPTH = (1 + 1 + COLOR_EDITOR_DEPTH*3-2 + 2),
+	RGB_EDITOR_BOX_WIDTH = (RGB_EDITOR_WIDTH - (2 + COLOR_EDITOR_WIDTH + 1 + 2)),
+	RGB_EDITOR_BOX_DEPTH = (RGB_EDITOR_DEPTH - 4)
+};
 
 
 
@@ -1220,8 +1229,8 @@ void rgb_editor::rgb_editor_other_key(int key, color_editor *ceditor)
 		}
 		break;
 
-	case FIK_DELETE:   /* move to next color_editor */
-	case FIK_CTL_ENTER_2:    /*double click rt mouse also! */
+	case IDK_DELETE:   /* move to next color_editor */
+	case IDK_CTL_ENTER_2:    /*double click rt mouse also! */
 		if (++_current_channel > 2)
 		{
 			_current_channel = 0;
@@ -1229,7 +1238,7 @@ void rgb_editor::rgb_editor_other_key(int key, color_editor *ceditor)
 		ceditor->set_done(true);
 		break;
 
-	case FIK_INSERT:   /* move to prev color_editor */
+	case IDK_INSERT:   /* move to prev color_editor */
 		if (--_current_channel < 0)
 		{
 			_current_channel = 2;
@@ -1401,9 +1410,12 @@ Modes:
 	S(t)ripe mode: "T", " "
 
 */
-#define EXCLUDE_NONE	0
-#define EXCLUDE_CURRENT	1
-#define EXCLUDE_RANGE	2
+enum
+{
+	EXCLUDE_NONE	= 0,
+	EXCLUDE_CURRENT	= 1,
+	EXCLUDE_RANGE	= 2
+};
 
 class pal_table
 {
@@ -1477,11 +1489,14 @@ private:
 	bool _freestyle;
 };
 
-#define PALTABLE_PALX (1)
-#define PALTABLE_PALY (2 + RGB_EDITOR_DEPTH + 2)
-#define UNDO_DATA        (1)
-#define UNDO_DATA_SINGLE (2)
-#define UNDO_ROTATE      (3)
+enum
+{
+	PALTABLE_PALX = 1,
+	PALTABLE_PALY = (2 + RGB_EDITOR_DEPTH + 2),
+	UNDO_DATA = 1,
+	UNDO_DATA_SINGLE = 2,
+	UNDO_ROTATE = 3
+};
 
 /*  - Freestyle code - */
 
@@ -1701,7 +1716,10 @@ void pal_table::redo()
 	--_num_redo;
 }
 
-#define STATUS_LEN (4)
+enum
+{
+	STATUS_LEN = 4
+};
 
 void pal_table::draw_status(bool stripe_mode)
 {
@@ -2089,9 +2107,10 @@ int pal_table::get_cursor_color()
 	return color;
 }
 
-
-
-#define CURS_INC 1
+enum
+{
+	CURS_INC = 1
+};
 
 void pal_table::do_cursor(int key)
 {
@@ -2104,14 +2123,14 @@ void pal_table::do_cursor(int key)
 	{
 		switch (key)
 		{
-		case FIK_CTL_RIGHT_ARROW:	xoff += CURS_INC*4;	break;
-		case FIK_RIGHT_ARROW:		xoff += CURS_INC;	break;
-		case FIK_CTL_LEFT_ARROW:	xoff -= CURS_INC*4;	break;
-		case FIK_LEFT_ARROW:		xoff -= CURS_INC;	break;
-		case FIK_CTL_DOWN_ARROW:	yoff += CURS_INC*4;	break;
-		case FIK_DOWN_ARROW:		yoff += CURS_INC;	break;
-		case FIK_CTL_UP_ARROW:		yoff -= CURS_INC*4;	break;
-		case FIK_UP_ARROW:			yoff -= CURS_INC;	break;
+		case IDK_CTL_RIGHT_ARROW:	xoff += CURS_INC*4;	break;
+		case IDK_RIGHT_ARROW:		xoff += CURS_INC;	break;
+		case IDK_CTL_LEFT_ARROW:	xoff -= CURS_INC*4;	break;
+		case IDK_LEFT_ARROW:		xoff -= CURS_INC;	break;
+		case IDK_CTL_DOWN_ARROW:	yoff += CURS_INC*4;	break;
+		case IDK_DOWN_ARROW:		yoff += CURS_INC;	break;
+		case IDK_CTL_UP_ARROW:		yoff -= CURS_INC*4;	break;
+		case IDK_UP_ARROW:			yoff -= CURS_INC;	break;
 
 		default:
 			done = true;
@@ -2303,18 +2322,18 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		update_dac();
 		break;
 
-	case FIK_RIGHT_ARROW:
-	case FIK_LEFT_ARROW:
-	case FIK_UP_ARROW:
-	case FIK_DOWN_ARROW:
-	case FIK_CTL_RIGHT_ARROW:
-	case FIK_CTL_LEFT_ARROW:
-	case FIK_CTL_UP_ARROW:
-	case FIK_CTL_DOWN_ARROW:
+	case IDK_RIGHT_ARROW:
+	case IDK_LEFT_ARROW:
+	case IDK_UP_ARROW:
+	case IDK_DOWN_ARROW:
+	case IDK_CTL_RIGHT_ARROW:
+	case IDK_CTL_LEFT_ARROW:
+	case IDK_CTL_UP_ARROW:
+	case IDK_CTL_DOWN_ARROW:
 		do_cursor(key);
 		break;
 
-	case FIK_ESC:
+	case IDK_ESC:
 		_done = true;
 		rgb->set_done(true);
 		break;
@@ -2336,8 +2355,8 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		rgb->set_done(true);
 		break;
 
-	case FIK_ENTER:    /* set register to color under cursor.  useful when not */
-	case FIK_ENTER_2:  /* in auto_select mode */
+	case IDK_ENTER:    /* set register to color under cursor.  useful when not */
+	case IDK_ENTER_2:  /* in auto_select mode */
 		if (_freestyle)
 		{
 			save_undo_data(_bottom, _top);
@@ -2648,16 +2667,16 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		}
 		break;
 
-	case FIK_F2:    /* restore a palette */
-	case FIK_F3:
-	case FIK_F4:
-	case FIK_F5:
-	case FIK_F6:
-	case FIK_F7:
-	case FIK_F8:
-	case FIK_F9:
+	case IDK_F2:    /* restore a palette */
+	case IDK_F3:
+	case IDK_F4:
+	case IDK_F5:
+	case IDK_F6:
+	case IDK_F7:
+	case IDK_F8:
+	case IDK_F9:
 		{
-			int which = key - FIK_F2;
+			int which = key - IDK_F2;
 
 			if (_save_palette[which] != 0)
 			{
@@ -2678,16 +2697,16 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 			break;
 		}
 
-	case FIK_SF2:   /* save a palette */
-	case FIK_SF3:
-	case FIK_SF4:
-	case FIK_SF5:
-	case FIK_SF6:
-	case FIK_SF7:
-	case FIK_SF8:
-	case FIK_SF9:
+	case IDK_SF2:   /* save a palette */
+	case IDK_SF3:
+	case IDK_SF4:
+	case IDK_SF5:
+	case IDK_SF6:
+	case IDK_SF7:
+	case IDK_SF8:
+	case IDK_SF9:
 		{
-			int which = key - FIK_SF2;
+			int which = key - IDK_SF2;
 
 			if (_save_palette[which] != 0)
 			{
@@ -2755,7 +2774,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		}
 		break;
 
-	case FIK_CTL_DEL:  /* rt plus down */
+	case IDK_CTL_DEL:  /* rt plus down */
 		if (_color_band_width >0)
 		{
 			_color_band_width--;
@@ -2767,7 +2786,7 @@ void pal_table::other_key(int key, rgb_editor *rgb)
 		set_current(-1, 0);
 		break;
 
-	case FIK_CTL_INSERT: /* rt plus up */
+	case IDK_CTL_INSERT: /* rt plus up */
 		if (_color_band_width <255)
 		{
 			_color_band_width ++;

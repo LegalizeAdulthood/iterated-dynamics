@@ -345,7 +345,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 		g_.SetSaveDAC((g_.SaveDAC() == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES);
 		if (g_initialize_batch == INITBATCH_NONE)
 		{
-			driver_set_mouse_mode(-FIK_PAGE_UP);        /* mouse left button == pgup */
+			driver_set_mouse_mode(-IDK_PAGE_UP);        /* mouse left button == pgup */
 		}
 
 		if (g_show_file == SHOWFILE_PENDING)
@@ -646,15 +646,15 @@ resumeloop:
 				{                      /* save done, resume */
 					g_timed_save = TIMEDSAVE_DONE;
 					g_resave_mode = RESAVE_DONE;
-					kbdchar = FIK_ENTER;
+					kbdchar = IDK_ENTER;
 				}
 			}
 			else if (g_initialize_batch == INITBATCH_NONE)      /* not batch mode */
 			{
-				driver_set_mouse_mode((g_z_width == 0) ? -FIK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX);
+				driver_set_mouse_mode((g_z_width == 0) ? -IDK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX);
 				if (g_calculation_status == CALCSTAT_RESUMABLE && g_z_width == 0 && !driver_key_pressed())
 				{
-					kbdchar = FIK_ENTER;  /* no visible reason to stop, continue */
+					kbdchar = IDK_ENTER;  /* no visible reason to stop, continue */
 				}
 				else      /* wait for a real keystroke */
 				{
@@ -667,9 +667,9 @@ resumeloop:
 						driver_wait_key_pressed(0);
 						kbdchar = driver_get_key();
 					}
-					if (kbdchar == FIK_ESC || kbdchar == 'm' || kbdchar == 'M')
+					if (kbdchar == IDK_ESC || kbdchar == 'm' || kbdchar == 'M')
 					{
-						if (kbdchar == FIK_ESC && g_escape_exit_flag)
+						if (kbdchar == IDK_ESC && g_escape_exit_flag)
 						{
 							/* don't ask, just get out */
 							goodbye();
@@ -680,27 +680,27 @@ resumeloop:
 #else
 						if (XZoomWaiting)
 						{
-							kbdchar = FIK_ENTER;
+							kbdchar = IDK_ENTER;
 						}
 						else
 						{
 							kbdchar = main_menu(true);
 							if (XZoomWaiting)
 							{
-								kbdchar = FIK_ENTER;
+								kbdchar = IDK_ENTER;
 							}
 						}
 #endif
-						if (kbdchar == '\\' || kbdchar == FIK_CTL_BACKSLASH ||
-							kbdchar == 'h' || kbdchar == FIK_BACKSPACE ||
+						if (kbdchar == '\\' || kbdchar == IDK_CTL_BACKSLASH ||
+							kbdchar == 'h' || kbdchar == IDK_BACKSPACE ||
 							check_video_mode_key(kbdchar) >= 0)
 						{
 							driver_discard_screen();
 						}
 						else if (kbdchar == 'x' || kbdchar == 'y' ||
 								kbdchar == 'z' || kbdchar == 'g' ||
-								kbdchar == 'v' || kbdchar == FIK_CTL_B ||
-								kbdchar == FIK_CTL_E || kbdchar == FIK_CTL_F)
+								kbdchar == 'v' || kbdchar == IDK_CTL_B ||
+								kbdchar == IDK_CTL_E || kbdchar == IDK_CTL_F)
 						{
 							g_from_text_flag = true;
 						}
@@ -723,7 +723,7 @@ resumeloop:
 
 				if (g_initialize_batch == INITBATCH_FINISH_CALC)       /* finish calc */
 				{
-					kbdchar = FIK_ENTER;
+					kbdchar = IDK_ENTER;
 					g_initialize_batch = INITBATCH_NORMAL;
 				}
 				else if (g_initialize_batch == INITBATCH_NORMAL || g_initialize_batch == INITBATCH_BAILOUT_INTERRUPTED) /* save-to-disk */
@@ -848,9 +848,9 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 	case 'p':		i = passes_options();					break;
 	case 'z':		i = get_fractal_parameters(true);		break;
 	case 'v':		i = get_view_params();					break;
-	case FIK_CTL_B:	i = g_browse_state.GetParameters();		break;
+	case IDK_CTL_B:	i = g_browse_state.GetParameters();		break;
 
-	case FIK_CTL_E:
+	case IDK_CTL_E:
 		i = get_evolve_parameters();
 		if (i > 0)
 		{
@@ -860,7 +860,7 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		}
 		break;
 
-	case FIK_CTL_F:
+	case IDK_CTL_F:
 		i = g_sound_state.get_parameters();
 		break;
 
@@ -918,8 +918,8 @@ static void handle_evolver_options(int kbdchar, bool &kbdmore)
 	case 'p': i = passes_options(); break;
 	case 'z': i = get_fractal_parameters(true); break;
 
-	case FIK_CTL_E:
-	case FIK_SPACE:
+	case IDK_CTL_E:
+	case IDK_SPACE:
 		i = get_evolve_parameters();
 		break;
 
@@ -1128,7 +1128,7 @@ static void handle_mandelbrot_julia_toggle(bool &kbdmore, bool &frommandel)
 		clear_zoom_box();
 		Jiim(false);
 		int key = driver_get_key();    /* flush keyboard buffer */
-		if (key != FIK_SPACE)
+		if (key != IDK_SPACE)
 		{
 			driver_unget_key(key);
 			return;
@@ -1271,7 +1271,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 		{
 			history_back();
 		}
-		else if (kbdchar == FIK_CTL_BACKSLASH || kbdchar == FIK_BACKSPACE)
+		else if (kbdchar == IDK_CTL_BACKSLASH || kbdchar == IDK_BACKSPACE)
 		{
 			history_forward();
 		}
@@ -1460,7 +1460,7 @@ static void handle_zoom_skew(bool negative)
 	{
 		if (g_zoomBox.count() && !g_current_fractal_specific->no_zoom_box_rotate())
 		{
-			int i = key_count(FIK_CTL_HOME);
+			int i = key_count(IDK_CTL_HOME);
 			g_z_skew -= 0.02*i;
 			if (g_z_skew < -0.48)
 			{
@@ -1472,7 +1472,7 @@ static void handle_zoom_skew(bool negative)
 	{
 		if (g_zoomBox.count() && !g_current_fractal_specific->no_zoom_box_rotate())
 		{
-			int i = key_count(FIK_CTL_END);
+			int i = key_count(IDK_CTL_END);
 			g_z_skew += 0.02*i;
 			if (g_z_skew > 0.48)
 			{
@@ -1536,11 +1536,11 @@ static void handle_z_rotate(bool increase)
 	{
 		if (increase)
 		{
-			g_z_rotate += key_count(FIK_CTL_MINUS);
+			g_z_rotate += key_count(IDK_CTL_MINUS);
 		}
 		else
 		{
-			g_z_rotate -= key_count(FIK_CTL_PLUS);
+			g_z_rotate -= key_count(IDK_CTL_PLUS);
 		}
 	}
 }
@@ -1549,11 +1549,11 @@ static void handle_box_color(bool increase)
 {
 	if (increase)
 	{
-		g_zoomBox.set_color(g_zoomBox.color() + key_count(FIK_CTL_INSERT));
+		g_zoomBox.set_color(g_zoomBox.color() + key_count(IDK_CTL_INSERT));
 	}
 	else
 	{
-		g_zoomBox.set_color(g_zoomBox.color() - key_count(FIK_CTL_DEL));
+		g_zoomBox.set_color(g_zoomBox.color() - key_count(IDK_CTL_DEL));
 	}
 }
 
@@ -1579,7 +1579,7 @@ static void handle_zoom_resize(bool zoom_in)
 			}
 			else
 			{
-				zoom_box_resize(-key_count(FIK_PAGE_UP));
+				zoom_box_resize(-key_count(IDK_PAGE_UP));
 			}
 		}
 	}
@@ -1594,7 +1594,7 @@ static void handle_zoom_resize(bool zoom_in)
 			}
 			else
 			{
-				zoom_box_resize(key_count(FIK_PAGE_DOWN));
+				zoom_box_resize(key_count(IDK_PAGE_DOWN));
 			}
 		}
 	}
@@ -1605,7 +1605,7 @@ static void handle_zoom_stretch(bool narrower)
 	if (g_zoomBox.count())
 	{
 		zoom_box_change_i(0, narrower ?
-			-2*key_count(FIK_CTL_PAGE_UP) : 2*key_count(FIK_CTL_PAGE_DOWN));
+			-2*key_count(IDK_CTL_PAGE_UP) : 2*key_count(IDK_CTL_PAGE_DOWN));
 	}
 }
 
@@ -1632,9 +1632,9 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 	case 't':
 		return handle_fractal_type(frommandel);
 
-	case FIK_CTL_X:
-	case FIK_CTL_Y:
-	case FIK_CTL_Z:
+	case IDK_CTL_X:
+	case IDK_CTL_Y:
+	case IDK_CTL_Z:
 		flip_image(kbdchar);
 		break;
 
@@ -1644,9 +1644,9 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 	case 'z':                    /* type specific parms */
 	case 'g':
 	case 'v':
-	case FIK_CTL_B:
-	case FIK_CTL_E:
-	case FIK_CTL_F:
+	case IDK_CTL_B:
+	case IDK_CTL_E:
+	case IDK_CTL_F:
 		handle_options(kbdchar, kbdmore, &old_maxit);
 		break;
 
@@ -1665,22 +1665,22 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 		handle_3d_params(kbdmore);
 		break;
 
-	case FIK_CTL_A:
+	case IDK_CTL_A:
 		return handle_ant();
 
 	case 'k':
-	case FIK_CTL_S:
+	case IDK_CTL_S:
 		return handle_recalc(get_random_dot_stereogram_parameters, auto_stereo);
 
 	case 'a':
 		return handle_recalc(get_starfield_params, starfield);
 
-	case FIK_CTL_O:
+	case IDK_CTL_O:
 	case 'o':
 		handle_orbits();
 		break;
 
-	case FIK_SPACE:
+	case IDK_SPACE:
 		handle_mandelbrot_julia_toggle(kbdmore, frommandel);
 		break;
 
@@ -1689,9 +1689,9 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 		break;
 
 	case '\\':
-	case FIK_CTL_BACKSLASH:
+	case IDK_CTL_BACKSLASH:
 	case 'h':
-	case FIK_BACKSPACE:
+	case IDK_BACKSPACE:
 		return handle_history(screen_stacked, kbdchar);
 
 	case 'd':
@@ -1734,66 +1734,66 @@ do_3d_transform:
 		make_batch_file();
 		break;
 
-	case FIK_ENTER:
-	case FIK_ENTER_2:
+	case IDK_ENTER:
+	case IDK_ENTER_2:
 		handle_zoom_in(kbdmore);
 		break;
 
-	case FIK_CTL_ENTER:
-	case FIK_CTL_ENTER_2:
+	case IDK_CTL_ENTER:
+	case IDK_CTL_ENTER_2:
 		handle_zoom_out(kbdmore);
 		break;
 
-	case FIK_INSERT:
+	case IDK_INSERT:
 		return handle_restart();
 
-	case FIK_LEFT_ARROW:
-	case FIK_RIGHT_ARROW:
-	case FIK_UP_ARROW:
-	case FIK_DOWN_ARROW:
-	case FIK_CTL_LEFT_ARROW:
-	case FIK_CTL_RIGHT_ARROW:
-	case FIK_CTL_UP_ARROW:
-	case FIK_CTL_DOWN_ARROW:
+	case IDK_LEFT_ARROW:
+	case IDK_RIGHT_ARROW:
+	case IDK_UP_ARROW:
+	case IDK_DOWN_ARROW:
+	case IDK_CTL_LEFT_ARROW:
+	case IDK_CTL_RIGHT_ARROW:
+	case IDK_CTL_UP_ARROW:
+	case IDK_CTL_DOWN_ARROW:
 		move_zoombox(kbdchar);
 		break;
 
-	case FIK_CTL_HOME:
-	case FIK_CTL_END:
-		handle_zoom_skew(kbdchar == FIK_CTL_HOME);
+	case IDK_CTL_HOME:
+	case IDK_CTL_END:
+		handle_zoom_skew(kbdchar == IDK_CTL_HOME);
 		break;
 
-	case FIK_CTL_PAGE_UP:
-	case FIK_CTL_PAGE_DOWN:
-		handle_zoom_stretch(FIK_CTL_PAGE_UP == kbdchar);
+	case IDK_CTL_PAGE_UP:
+	case IDK_CTL_PAGE_DOWN:
+		handle_zoom_stretch(IDK_CTL_PAGE_UP == kbdchar);
 		break;
 
-	case FIK_PAGE_UP:
-	case FIK_PAGE_DOWN:
-		handle_zoom_resize(FIK_PAGE_UP == kbdchar);
+	case IDK_PAGE_UP:
+	case IDK_PAGE_DOWN:
+		handle_zoom_resize(IDK_PAGE_UP == kbdchar);
 		break;
 
-	case FIK_CTL_MINUS:
-	case FIK_CTL_PLUS:
-		handle_z_rotate(FIK_CTL_MINUS == kbdchar);
+	case IDK_CTL_MINUS:
+	case IDK_CTL_PLUS:
+		handle_z_rotate(IDK_CTL_MINUS == kbdchar);
 		break;
 
-	case FIK_CTL_INSERT:
-	case FIK_CTL_DEL:
-		handle_box_color(FIK_CTL_INSERT == kbdchar);
+	case IDK_CTL_INSERT:
+	case IDK_CTL_DEL:
+		handle_box_color(IDK_CTL_INSERT == kbdchar);
 		break;
 
-	case FIK_ALT_1: /* alt + number keys set mutation level and start evolution engine */
-	case FIK_ALT_2:
-	case FIK_ALT_3:
-	case FIK_ALT_4:
-	case FIK_ALT_5:
-	case FIK_ALT_6:
-	case FIK_ALT_7:
-		handle_mutation_level(false, kbdchar - FIK_ALT_1 + 1, kbdmore);
+	case IDK_ALT_1: /* alt + number keys set mutation level and start evolution engine */
+	case IDK_ALT_2:
+	case IDK_ALT_3:
+	case IDK_ALT_4:
+	case IDK_ALT_5:
+	case IDK_ALT_6:
+	case IDK_ALT_7:
+		handle_mutation_level(false, kbdchar - IDK_ALT_1 + 1, kbdmore);
 		break;
 
-	case FIK_DELETE:
+	case IDK_DELETE:
 		handle_select_video(kbdchar);
 		/* fall through */
 
@@ -1821,7 +1821,7 @@ static ApplicationStateType handle_evolver_history(int kbdchar)
 		{
 			history_back();
 		}
-		else if (kbdchar == FIK_CTL_BACKSLASH || kbdchar == FIK_BACKSPACE)
+		else if (kbdchar == IDK_CTL_BACKSLASH || kbdchar == IDK_BACKSPACE)
 		{
 			history_forward();
 		}
@@ -1852,19 +1852,19 @@ static void handle_evolver_move_selection(int kbdchar)
 		int grout;
 		if (g_evolving_flags & EVOLVE_FIELD_MAP)
 		{
-			if (kbdchar == FIK_CTL_LEFT_ARROW)
+			if (kbdchar == IDK_CTL_LEFT_ARROW)
 			{
 				g_px--;
 			}
-			if (kbdchar == FIK_CTL_RIGHT_ARROW)
+			if (kbdchar == IDK_CTL_RIGHT_ARROW)
 			{
 				g_px++;
 			}
-			if (kbdchar == FIK_CTL_UP_ARROW)
+			if (kbdchar == IDK_CTL_UP_ARROW)
 			{
 				g_py--;
 			}
-			if (kbdchar == FIK_CTL_DOWN_ARROW)
+			if (kbdchar == IDK_CTL_DOWN_ARROW)
 			{
 				g_py++;
 			}
@@ -1959,7 +1959,7 @@ static void handle_evolver_zoom(int zoom_in)
 			}
 			else
 			{
-				zoom_box_resize(-key_count(FIK_PAGE_UP));
+				zoom_box_resize(-key_count(IDK_PAGE_UP));
 			}
 		}
 	}
@@ -1978,7 +1978,7 @@ static void handle_evolver_zoom(int zoom_in)
 			}
 			else
 			{
-				zoom_box_resize(key_count(FIK_PAGE_DOWN));
+				zoom_box_resize(key_count(IDK_PAGE_DOWN));
 			}
 		}
 	}
@@ -2075,8 +2075,8 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 	case 'p':                    /* passes options      */
 	case 'z':                    /* type specific parms */
 	case 'g':
-	case FIK_CTL_E:
-	case FIK_SPACE:
+	case IDK_CTL_E:
+	case IDK_SPACE:
 		handle_evolver_options(kbdchar, kbdmore);
 		break;
 
@@ -2088,9 +2088,9 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 		return handle_toggle_float();
 
 	case '\\':
-	case FIK_CTL_BACKSLASH:
+	case IDK_CTL_BACKSLASH:
 	case 'h':
-	case FIK_BACKSPACE:
+	case IDK_BACKSPACE:
 		return handle_evolver_history(kbdchar);
 
 	case 'c':
@@ -2107,84 +2107,84 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 	case 'r':
 		return handle_restore_from(julia_entered_from_manelbrot, kbdchar, stacked);
 
-	case FIK_ENTER:
-	case FIK_ENTER_2:
+	case IDK_ENTER:
+	case IDK_ENTER_2:
 		handle_zoom_in(kbdmore);
 		break;
 
-	case FIK_CTL_ENTER:
-	case FIK_CTL_ENTER_2:
+	case IDK_CTL_ENTER:
+	case IDK_CTL_ENTER_2:
 		handle_zoom_out(kbdmore);
 		break;
 
-	case FIK_INSERT:
+	case IDK_INSERT:
 		return handle_restart();
 
-	case FIK_LEFT_ARROW:
-	case FIK_RIGHT_ARROW:
-	case FIK_UP_ARROW:
-	case FIK_DOWN_ARROW:
+	case IDK_LEFT_ARROW:
+	case IDK_RIGHT_ARROW:
+	case IDK_UP_ARROW:
+	case IDK_DOWN_ARROW:
 		move_zoombox(kbdchar);
 		break;
 
-	case FIK_CTL_LEFT_ARROW:
-	case FIK_CTL_RIGHT_ARROW:
-	case FIK_CTL_UP_ARROW:
-	case FIK_CTL_DOWN_ARROW:
+	case IDK_CTL_LEFT_ARROW:
+	case IDK_CTL_RIGHT_ARROW:
+	case IDK_CTL_UP_ARROW:
+	case IDK_CTL_DOWN_ARROW:
 		handle_evolver_move_selection(kbdchar);
 		break;
 
-	case FIK_CTL_HOME:
-	case FIK_CTL_END:
-		handle_zoom_skew(kbdchar == FIK_CTL_HOME);
+	case IDK_CTL_HOME:
+	case IDK_CTL_END:
+		handle_zoom_skew(kbdchar == IDK_CTL_HOME);
 		break;
 
-	case FIK_CTL_PAGE_UP:
-	case FIK_CTL_PAGE_DOWN:
-		handle_evolver_param_zoom(FIK_CTL_PAGE_UP == kbdchar);
+	case IDK_CTL_PAGE_UP:
+	case IDK_CTL_PAGE_DOWN:
+		handle_evolver_param_zoom(IDK_CTL_PAGE_UP == kbdchar);
 		break;
 
-	case FIK_PAGE_UP:
-	case FIK_PAGE_DOWN:
-		handle_evolver_zoom(FIK_PAGE_UP == kbdchar);
+	case IDK_PAGE_UP:
+	case IDK_PAGE_DOWN:
+		handle_evolver_zoom(IDK_PAGE_UP == kbdchar);
 		break;
 
-	case FIK_CTL_MINUS:
-	case FIK_CTL_PLUS:
-		handle_z_rotate(FIK_CTL_MINUS == kbdchar);
+	case IDK_CTL_MINUS:
+	case IDK_CTL_PLUS:
+		handle_z_rotate(IDK_CTL_MINUS == kbdchar);
 		break;
 
-	case FIK_CTL_INSERT:
-	case FIK_CTL_DEL:
-		handle_box_color(FIK_CTL_INSERT == kbdchar);
+	case IDK_CTL_INSERT:
+	case IDK_CTL_DEL:
+		handle_box_color(IDK_CTL_INSERT == kbdchar);
 		break;
 
 	/* grabbed a couple of video mode keys, user can change to these using
 		delete and the menu if necessary */
 
-	case FIK_F2: /* halve mutation params and regen */
-	case FIK_F3: /*double mutation parameters and regenerate */
-		handle_evolver_mutation(FIK_F2 == kbdchar, kbdmore);
+	case IDK_F2: /* halve mutation params and regen */
+	case IDK_F3: /*double mutation parameters and regenerate */
+		handle_evolver_mutation(IDK_F2 == kbdchar, kbdmore);
 		break;
 
-	case FIK_F4: /*decrement  gridsize and regen */
-	case FIK_F5: /* increment gridsize and regen */
-		handle_evolver_grid_size(FIK_F4 == kbdchar, kbdmore);
+	case IDK_F4: /*decrement  gridsize and regen */
+	case IDK_F5: /* increment gridsize and regen */
+		handle_evolver_grid_size(IDK_F4 == kbdchar, kbdmore);
 		break;
 
-	case FIK_F6: /* toggle all variables selected for random variation to
+	case IDK_F6: /* toggle all variables selected for random variation to
 				center weighted variation and vice versa */
 		handle_evolver_toggle(kbdmore);
 		break;
 
-	case FIK_ALT_1: /* alt + number keys set mutation level */
-	case FIK_ALT_2:
-	case FIK_ALT_3:
-	case FIK_ALT_4:
-	case FIK_ALT_5:
-	case FIK_ALT_6:
-	case FIK_ALT_7:
-		handle_mutation_level(true, kbdchar - FIK_ALT_1 + 1, kbdmore);
+	case IDK_ALT_1: /* alt + number keys set mutation level */
+	case IDK_ALT_2:
+	case IDK_ALT_3:
+	case IDK_ALT_4:
+	case IDK_ALT_5:
+	case IDK_ALT_6:
+	case IDK_ALT_7:
+		handle_mutation_level(true, kbdchar - IDK_ALT_1 + 1, kbdmore);
 		break;
 
 	case '1':
@@ -2201,7 +2201,7 @@ ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_
 		handle_mutation_off(kbdmore);
 		break;
 
-	case FIK_DELETE:
+	case IDK_DELETE:
 		handle_select_video(kbdchar);
 		/* fall through */
 
@@ -2223,28 +2223,28 @@ static void move_zoombox(int keynum)
 	{
 		switch (keynum)
 		{
-		case FIK_LEFT_ARROW:
+		case IDK_LEFT_ARROW:
 			--horizontal;
 			break;
-		case FIK_RIGHT_ARROW:
+		case IDK_RIGHT_ARROW:
 			++horizontal;
 			break;
-		case FIK_UP_ARROW:
+		case IDK_UP_ARROW:
 			--vertical;
 			break;
-		case FIK_DOWN_ARROW:
+		case IDK_DOWN_ARROW:
 			++vertical;
 			break;
-		case FIK_CTL_LEFT_ARROW:
+		case IDK_CTL_LEFT_ARROW:
 			horizontal -= 8;
 			break;
-		case FIK_CTL_RIGHT_ARROW:
+		case IDK_CTL_RIGHT_ARROW:
 			horizontal += 8;
 			break;
-		case FIK_CTL_UP_ARROW:
+		case IDK_CTL_UP_ARROW:
 			vertical -= 8;
 			break;
-		case FIK_CTL_DOWN_ARROW:
+		case IDK_CTL_DOWN_ARROW:
 			vertical += 8;
 			break;                      /* += 8 needed by VESA scrolling */
 		default:

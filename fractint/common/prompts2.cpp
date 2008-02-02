@@ -409,7 +409,7 @@ int get_toggles2()
 		};
 		for (int i = 0; i < 3; i++)
 		{
-			dialog.push(prompts[i], g_inversion[i] == AUTOINVERT ?
+			dialog.push(prompts[i], g_inversion[i] == AUTO_INVERT ?
 				"auto" : str(boost::format("%-1.15lg") % g_inversion[i]));
 		}
 	}
@@ -495,7 +495,7 @@ int get_toggles2()
 	{
 		if (dialog.values(++k).uval.sval[0] == 'a' || dialog.values(k).uval.sval[0] == 'A')
 		{
-			g_inversion[i] = AUTOINVERT;
+			g_inversion[i] = AUTO_INVERT;
 		}
 		else
 		{
@@ -594,7 +594,7 @@ pass_option_restart:
 			j = 1;
 		}
 
-		if (i == FIK_F2)
+		if (i == IDK_F2)
 		{
 			if (get_screen_corners() > 0)
 			{
@@ -606,7 +606,7 @@ pass_option_restart:
 			}
 			goto pass_option_restart;
 		}
-		if (i == FIK_F6)
+		if (i == IDK_F6)
 		{
 			if (get_corners() > 0)
 			{
@@ -1083,7 +1083,7 @@ gc_loop:
 			return -1;
 		}
 
-		if (result == FIK_F4)  /* reset to type defaults */
+		if (result == IDK_F4)  /* reset to type defaults */
 		{
 			g_escape_time_state.m_grid_fp.x_3rd() = g_current_fractal_specific->x_min;
 			g_escape_time_state.m_grid_fp.x_min() = g_current_fractal_specific->x_min;
@@ -1153,7 +1153,7 @@ gc_loop:
 			}
 		}
 
-		if (result == FIK_F7 && g_orbit_draw_mode != ORBITDRAW_LINE)  /* toggle corners/center-mag mode */
+		if (result == IDK_F7 && g_orbit_draw_mode != ORBITDRAW_LINE)  /* toggle corners/center-mag mode */
 		{
 			if (!g_use_center_mag)
 			{
@@ -1282,7 +1282,7 @@ gsc_loop:
 			return -1;
 		}
 
-		if (prompt_ret == FIK_F4)  /* reset to type defaults */
+		if (prompt_ret == IDK_F4)  /* reset to type defaults */
 		{
 			g_orbit_x_min = g_current_fractal_specific->x_min;
 			g_orbit_x_max = g_current_fractal_specific->x_max;
@@ -1356,7 +1356,7 @@ gsc_loop:
 			}
 		}
 
-		if (prompt_ret == FIK_F7)  /* toggle corners/center-mag mode */
+		if (prompt_ret == IDK_F7)  /* toggle corners/center-mag mode */
 		{
 			if (!g_use_center_mag)
 			{

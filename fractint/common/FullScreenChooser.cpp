@@ -269,16 +269,16 @@ int AbstractFullScreenChooser::Execute()
 		int increment = 0;
 		switch (current_key)
 		{                      /* deal with input key */
-		case FIK_ENTER:
-		case FIK_ENTER_2:
+		case IDK_ENTER:
+		case IDK_ENTER_2:
 			return _current;
-		case FIK_ESC:
+		case IDK_ESC:
 			return -1;
-		case FIK_DOWN_ARROW:
+		case IDK_DOWN_ARROW:
 			increment = _boxWidth;
 			rev_increment = -increment;
 			break;
-		case FIK_CTL_DOWN_ARROW:
+		case IDK_CTL_DOWN_ARROW:
 			increment = _boxWidth;
 			rev_increment = -increment;
 			{
@@ -300,11 +300,11 @@ int AbstractFullScreenChooser::Execute()
 				}
 			}
 			break;
-		case FIK_UP_ARROW:
+		case IDK_UP_ARROW:
 			rev_increment = _boxWidth;
 			increment = -rev_increment;
 			break;
-		case FIK_CTL_UP_ARROW:
+		case IDK_CTL_UP_ARROW:
 			rev_increment = _boxWidth;
 			increment = -rev_increment;
 			{
@@ -327,11 +327,11 @@ int AbstractFullScreenChooser::Execute()
 				}
 			}
 			break;
-		case FIK_RIGHT_ARROW:
+		case IDK_RIGHT_ARROW:
 			increment = 1;
 			rev_increment = -1;
 			break;
-		case FIK_CTL_RIGHT_ARROW:  /* move to next file; if at last file, go to first file */
+		case IDK_CTL_RIGHT_ARROW:  /* move to next file; if at last file, go to first file */
 			increment = 1;
 			rev_increment = -1;
 			{
@@ -353,11 +353,11 @@ int AbstractFullScreenChooser::Execute()
 				}
 			}
 			break;
-		case FIK_LEFT_ARROW:
+		case IDK_LEFT_ARROW:
 			increment = -1;
 			rev_increment = 1;
 			break;
-		case FIK_CTL_LEFT_ARROW: /* move to previous file; if at first file, go to last file */
+		case IDK_CTL_LEFT_ARROW: /* move to previous file; if at first file, go to last file */
 			increment = -1;
 			rev_increment = 1;
 			{
@@ -379,7 +379,7 @@ int AbstractFullScreenChooser::Execute()
 				}
 			}
 			break;
-		case FIK_PAGE_UP:
+		case IDK_PAGE_UP:
 			if (_numChoices > box_items)
 			{
 				top_left_choice -= box_items;
@@ -388,7 +388,7 @@ int AbstractFullScreenChooser::Execute()
 				redisplay = true;
 			}
 			break;
-		case FIK_PAGE_DOWN:
+		case IDK_PAGE_DOWN:
 			if (_numChoices > box_items)
 			{
 				top_left_choice += box_items;
@@ -397,12 +397,12 @@ int AbstractFullScreenChooser::Execute()
 				redisplay = true;
 			}
 			break;
-		case FIK_HOME:
+		case IDK_HOME:
 			_current = -1;
 			increment = 1;
 			rev_increment = 1;
 			break;
-		case FIK_CTL_HOME:
+		case IDK_CTL_HOME:
 			_current = -1;
 			increment = 1;
 			rev_increment = 1;
@@ -418,12 +418,12 @@ int AbstractFullScreenChooser::Execute()
 				}
 			}
 			break;
-		case FIK_END:
+		case IDK_END:
 			_current = _numChoices;
 			increment = -1;
 			rev_increment = -1;
 			break;
-		case FIK_CTL_END:
+		case IDK_CTL_END:
 			_current = _numChoices;
 			increment = -1;
 			rev_increment = -1;

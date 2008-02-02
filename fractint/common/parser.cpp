@@ -55,9 +55,12 @@ double x2;
 double y2;
 #endif
 
-#define MAX_OPS 250
-#define MAX_ARGS 100
-#define MAX_BOXX 8192  /* max size of g_box_x array */
+enum
+{
+	MAX_OPS = 250,
+	MAX_ARGS = 100,
+	MAX_BOXX = 8192  /* max size of g_box_x array */
+};
 
 static const int MAX_TOKEN_LENGTH = 32;
 static const int CTRL_Z = 26;

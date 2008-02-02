@@ -120,10 +120,13 @@ static char s_epsilon[] = {"Epsilon"};
 static char s_imag_relaxation_coefficient[] = {"Imag Relaxation coefficient"};
 
 /* bailout defines */
-#define ORBIT_BAILOUT_TRIG_L			64
-#define ORBIT_BAILOUT_FROTHY_BASIN	7
-#define ORBIT_BAILOUT_STANDARD		4
-#define ORBIT_BAILOUT_NONE			0
+enum
+{
+	ORBIT_BAILOUT_TRIG_L		= 64,
+	ORBIT_BAILOUT_FROTHY_BASIN	= 7,
+	ORBIT_BAILOUT_STANDARD		= 4,
+	ORBIT_BAILOUT_NONE			= 0
+};
 
 more_parameters g_more_parameters[] =
 {
@@ -252,7 +255,7 @@ static char s_frothybasin_name[] = "*frothybasin";
 static char s_halley_name[] = "*halley";
 
 /* use next to cast orbitcalcs() that have arguments */
-#define VF int(*)()
+typedef int (*VF)();
 
 FractalTypeSpecificData g_fractal_specific[] =
 {

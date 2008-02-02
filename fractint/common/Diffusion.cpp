@@ -16,9 +16,12 @@
 #include "resume.h"
 
 /* for diffusion type */
-#define DIFFUSION_CENTRAL	0
-#define DIFFUSION_LINE		1
-#define DIFFUSION_SQUARE	2
+enum
+{
+	DIFFUSION_CENTRAL	= 0,
+	DIFFUSION_LINE		= 1,
+	DIFFUSION_SQUARE	= 2
+};
 
 static int s_keyboard_check;                        /* to limit kbd checking */
 

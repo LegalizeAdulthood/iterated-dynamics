@@ -15,15 +15,19 @@
 #include "loadmap.h"
 
 /* frothy basin type */
-#define FROTH_BITSHIFT      28
-#define FROTH_D_TO_L(x)     (long((x)*(1L << FROTH_BITSHIFT)))
-#define FROTH_CLOSE         1e-6      /* seems like a good value */
-#define FROTH_LCLOSE        FROTH_D_TO_L(FROTH_CLOSE)
-#define SQRT3               1.732050807568877193
-#define FROTH_SLOPE         SQRT3
-#define FROTH_LSLOPE        FROTH_D_TO_L(FROTH_SLOPE)
-#define FROTH_CRITICAL_A    1.028713768218725  /* 1.0287137682187249127 */
-#define froth_top_x_mapping(x)  ((x)*(x)-(x)-3*s_frothy_data.f.a*s_frothy_data.f.a/4)
+static int const FROTH_BITSHIFT      = 28;
+
+inline long FROTH_D_TO_L(double x)
+{
+	return (long((x)*(1L << FROTH_BITSHIFT)));
+}
+
+static double const FROTH_CLOSE = 1e-6;      /* seems like a good value */
+static long const FROTH_LCLOSE = FROTH_D_TO_L(FROTH_CLOSE);
+static double const SQRT3 = 1.732050807568877193;
+static double const FROTH_SLOPE = SQRT3;
+static long const FROTH_LSLOPE = FROTH_D_TO_L(FROTH_SLOPE);
+static double const FROTH_CRITICAL_A = 1.028713768218725;  /* 1.0287137682187249127 */
 
 struct froth_double_struct
 {
@@ -72,6 +76,11 @@ struct froth_struct
 };
 
 static froth_struct s_frothy_data = { 0 };
+
+inline double froth_top_x_mapping(double x)
+{
+	return ((x)*(x) - (x) - 3.0*s_frothy_data.f.a*s_frothy_data.f.a/4.0);
+}
 
 /* color maps which attempt to replicate the images of James Alexander. */
 static void set_froth_palette()

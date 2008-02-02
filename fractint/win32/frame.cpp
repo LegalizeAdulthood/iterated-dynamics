@@ -134,10 +134,10 @@ mousefkey dw   1077, 1075, 1080, 1072  ; right, left, down, up     just movement
 static int s_mouse_keys[16] =
 {
 	/* right			left			down				up */
-	FIK_RIGHT_ARROW,	FIK_LEFT_ARROW,	FIK_DOWN_ARROW,		FIK_UP_ARROW,	/* no buttons */
-	0,					0,				FIK_PAGE_DOWN,		FIK_PAGE_UP,	/* left button */
-	FIK_CTL_PLUS,		FIK_CTL_MINUS,	FIK_CTL_DEL,		FIK_CTL_INSERT,	/* right button */
-	FIK_CTL_END,		FIK_CTL_HOME,	FIK_CTL_PAGE_DOWN,	FIK_CTL_PAGE_UP	/* middle button */
+	IDK_RIGHT_ARROW,	IDK_LEFT_ARROW,	IDK_DOWN_ARROW,		IDK_UP_ARROW,	/* no buttons */
+	0,					0,				IDK_PAGE_DOWN,		IDK_PAGE_UP,	/* left button */
+	IDK_CTL_PLUS,		IDK_CTL_MINUS,	IDK_CTL_DEL,		IDK_CTL_INSERT,	/* right button */
+	IDK_CTL_END,		IDK_CTL_HOME,	IDK_CTL_PAGE_DOWN,	IDK_CTL_PAGE_UP	/* middle button */
 };
 
 void FrameImpl::OnClose(HWND window)
@@ -217,41 +217,41 @@ void FrameImpl::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flag
 
 		if (shift)
 		{
-			i = SHF_KEY(FIK_SF1 + (vk - VK_F1));
+			i = SHF_KEY(IDK_SF1 + (vk - VK_F1));
 		}
 		else if (ctl)
 		{
-			i = CTL_KEY(FIK_CTL_F1 + (vk - VK_F1));
+			i = CTL_KEY(IDK_CTL_F1 + (vk - VK_F1));
 		}
 		else if (alt)
 		{
-			i = ALT_KEY(FIK_ALT_F1 + (vk - VK_F1));
+			i = ALT_KEY(IDK_ALT_F1 + (vk - VK_F1));
 		}
 		else
 		{
-			i = FIK_F1 + vk - VK_F1;
+			i = IDK_F1 + vk - VK_F1;
 		}
 	}
 	else
 	{
 		switch (vk)
 		{
-		/* sorted in FIK_xxx order */
-		case VK_DELETE:		i = CTL_KEY(FIK_CTL_DEL);			break;
-		case VK_DOWN:		i = CTL_KEY(FIK_CTL_DOWN_ARROW);	break;
-		case VK_END:		i = CTL_KEY(FIK_CTL_END);			break;
-		case VK_RETURN:		i = CTL_KEY(FIK_CTL_ENTER);			break;
-		case VK_HOME:		i = CTL_KEY(FIK_CTL_HOME);			break;
-		case VK_INSERT:		i = CTL_KEY(FIK_CTL_INSERT);		break;
-		case VK_LEFT:		i = CTL_KEY(FIK_CTL_LEFT_ARROW);	break;
-		case VK_PRIOR:		i = CTL_KEY(FIK_CTL_PAGE_UP);		break;
-		case VK_NEXT:		i = CTL_KEY(FIK_CTL_PAGE_DOWN);		break;
-		case VK_RIGHT:		i = CTL_KEY(FIK_CTL_RIGHT_ARROW);	break;
-		case VK_UP:			i = CTL_KEY(FIK_CTL_UP_ARROW);		break;
+		/* sorted in IDK_xxx order */
+		case VK_DELETE:		i = CTL_KEY(IDK_CTL_DEL);			break;
+		case VK_DOWN:		i = CTL_KEY(IDK_CTL_DOWN_ARROW);	break;
+		case VK_END:		i = CTL_KEY(IDK_CTL_END);			break;
+		case VK_RETURN:		i = CTL_KEY(IDK_CTL_ENTER);			break;
+		case VK_HOME:		i = CTL_KEY(IDK_CTL_HOME);			break;
+		case VK_INSERT:		i = CTL_KEY(IDK_CTL_INSERT);		break;
+		case VK_LEFT:		i = CTL_KEY(IDK_CTL_LEFT_ARROW);	break;
+		case VK_PRIOR:		i = CTL_KEY(IDK_CTL_PAGE_UP);		break;
+		case VK_NEXT:		i = CTL_KEY(IDK_CTL_PAGE_DOWN);		break;
+		case VK_RIGHT:		i = CTL_KEY(IDK_CTL_RIGHT_ARROW);	break;
+		case VK_UP:			i = CTL_KEY(IDK_CTL_UP_ARROW);		break;
 
-		case VK_TAB:		i = CTL_KEY2(FIK_CTL_TAB, &j);		break;
-		case VK_ADD:		i = CTL_KEY2(FIK_CTL_PLUS, &j);		break;
-		case VK_SUBTRACT:	i = CTL_KEY2(FIK_CTL_MINUS, &j);	break;
+		case VK_TAB:		i = CTL_KEY2(IDK_CTL_TAB, &j);		break;
+		case VK_ADD:		i = CTL_KEY2(IDK_CTL_PLUS, &j);		break;
+		case VK_SUBTRACT:	i = CTL_KEY2(IDK_CTL_MINUS, &j);	break;
 
 		default:
 			if (0 == j)
@@ -360,7 +360,7 @@ void FrameImpl::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UINT
 	s_frame->m_button_down[BUTTON_LEFT] = true;
 	if (doubleClick && (LOOK_MOUSE_NONE != s_frame->m_look_mouse))
 	{
-		s_frame->add_key_press(FIK_ENTER);
+		s_frame->add_key_press(IDK_ENTER);
 	}
 	if (s_frame->m_look_mouse < 0)
 	{
@@ -378,7 +378,7 @@ void FrameImpl::OnRightButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, UIN
 	s_frame->m_button_down[BUTTON_RIGHT] = true;
 	if (doubleClick && (LOOK_MOUSE_NONE != s_frame->m_look_mouse))
 	{
-		s_frame->add_key_press(FIK_CTL_ENTER);
+		s_frame->add_key_press(IDK_CTL_ENTER);
 	}
 }
 

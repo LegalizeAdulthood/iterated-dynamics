@@ -31,7 +31,14 @@
 #include "zoom.h"
 #include "ZoomBox.h"
 
-#define MAX_WINDOWS_OPEN 450
+#ifdef XFRACT
+#define difftime(now,then) ((now)-(then))
+#endif
+
+enum BrowseConstants
+{
+	MAX_WINDOWS_OPEN = 450
+};
 
 BrowseState g_browse_state;
 
@@ -142,7 +149,7 @@ restart:
 			return 0;
 		}
 
-		if (result == FIK_F4)
+		if (result == IDK_F4)
 		{
 			g_ui_state.ask_video = true;
 			Restart();
@@ -634,7 +641,6 @@ int look_get_window()
 	int index;
 	int done;
 	int wincount;
-	int toggle;
 	int box_color;
 	CoordinateWindow winlist;
 	char drive[FILE_MAX_DRIVE];
@@ -707,7 +713,7 @@ int look_get_window()
 
 rescan:  /* entry for changed browse parms */
 	time(&lastime);
-	toggle = 0;
+	bool toggle = false;
 	wincount = 0;
 	g_browse_state.SetSubImages(true);
 	split_path(g_read_name, drive, dir, 0, 0);
@@ -798,7 +804,7 @@ rescan:  /* entry for changed browse parms */
 				if (difftime(thistime, lastime) > .2)
 				{
 					lastime = thistime;
-					toggle = 1- toggle;
+					toggle = !toggle;
 				}
 				draw_window(toggle ? g_.DAC().Bright() : g_.DAC().Dark(), &winlist);   /* flash current window */
 #ifdef XFRACT
@@ -815,13 +821,13 @@ rescan:  /* entry for changed browse parms */
 			c = driver_get_key();
 			switch (c)
 			{
-			case FIK_RIGHT_ARROW:
-			case FIK_LEFT_ARROW:
-			case FIK_DOWN_ARROW:
-			case FIK_UP_ARROW:
+			case IDK_RIGHT_ARROW:
+			case IDK_LEFT_ARROW:
+			case IDK_DOWN_ARROW:
+			case IDK_UP_ARROW:
 				clear_temp_message();
 				draw_window(box_color, &winlist); /* dim last window */
-				if (c == FIK_RIGHT_ARROW || c == FIK_UP_ARROW)
+				if (c == IDK_RIGHT_ARROW || c == IDK_UP_ARROW)
 				{
 					index++;                     /* shift attention to next window */
 					if (index >= wincount)
@@ -844,8 +850,8 @@ rescan:  /* entry for changed browse parms */
 				show_temp_message(winlist.name);
 				break;
 #ifndef XFRACT
-			case FIK_CTL_INSERT:
-				box_color += key_count(FIK_CTL_INSERT);
+			case IDK_CTL_INSERT:
+				box_color += key_count(IDK_CTL_INSERT);
 				for (int i = 0; i < wincount; i++)
 				{
 					winlist = browse_windows[i];
@@ -855,8 +861,8 @@ rescan:  /* entry for changed browse parms */
 				draw_window(box_color, &winlist);
 				break;
 
-			case FIK_CTL_DEL:
-				box_color -= key_count(FIK_CTL_DEL);
+			case IDK_CTL_DEL:
+				box_color -= key_count(IDK_CTL_DEL);
 				for (int i = 0; i < wincount; i++)
 				{
 					winlist = browse_windows[i];
@@ -866,13 +872,13 @@ rescan:  /* entry for changed browse parms */
 				draw_window(box_color, &winlist);
 				break;
 #endif
-			case FIK_ENTER:
-			case FIK_ENTER_2:   /* this file please */
+			case IDK_ENTER:
+			case IDK_ENTER_2:   /* this file please */
 				g_browse_state.SetName(winlist.name);
 				done = 1;
 				break;
 
-			case FIK_ESC:
+			case IDK_ESC:
 			case 'l':
 			case 'L':
 #ifdef XFRACT
@@ -958,7 +964,7 @@ rescan:  /* entry for changed browse parms */
 				show_temp_message(winlist.name);
 				break;
 
-			case FIK_CTL_B:
+			case IDK_CTL_B:
 				clear_temp_message();
 				{
 					ScreenStacker stacker;
@@ -1035,8 +1041,8 @@ static bool look(bool &stacked)
 {
 	switch (look_get_window())
 	{
-	case FIK_ENTER:
-	case FIK_ENTER_2:
+	case IDK_ENTER:
+	case IDK_ENTER_2:
 		g_show_file = SHOWFILE_PENDING;       /* trigger load */
 		g_browse_state.SetBrowsing(true);    /* but don't ask for the file name as it's just been selected */
 		if (g_name_stack_ptr == 15)
@@ -1085,7 +1091,7 @@ static bool look(bool &stacked)
 			return true;
 		}                   /* otherwise fall through and turn off
 							* browsing */
-	case FIK_ESC:
+	case IDK_ESC:
 	case 'l':              /* turn it off */
 	case 'L':
 		g_browse_state.SetBrowsing(false);

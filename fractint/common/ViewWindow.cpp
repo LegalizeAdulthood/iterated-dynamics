@@ -100,7 +100,7 @@ get_view_restart:
 			return -1;
 		}
 
-		if (i == FIK_F4)
+		if (i == IDK_F4)
 		{
 			InitializeRestart();
 			goto get_view_restart;

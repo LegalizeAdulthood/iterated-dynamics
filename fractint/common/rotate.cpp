@@ -147,7 +147,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		if (s_paused
 			&& (kbdchar != ' '
 				&& kbdchar != 'c'
-				&& kbdchar != FIK_HOME
+				&& kbdchar != IDK_HOME
 				&& kbdchar != 'C'))
 		{
 			s_paused = false;                    /* clear paused condition       */
@@ -155,7 +155,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 		switch (kbdchar)
 		{
 		case '+':                      /* '+' means rotate forward     */
-		case FIK_RIGHT_ARROW:              /* RightArrow = rotate fwd      */
+		case IDK_RIGHT_ARROW:              /* RightArrow = rotate fwd      */
 			fkey = 0;
 			direction = 1;
 			last = rotate_max;
@@ -163,17 +163,17 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			incr = 999;
 			break;
 		case '-':                      /* '-' means rotate backward    */
-		case FIK_LEFT_ARROW:               /* LeftArrow = rotate bkwd      */
+		case IDK_LEFT_ARROW:               /* LeftArrow = rotate bkwd      */
 			fkey = 0;
 			direction = -1;
 			last = g_rotate_lo;
 			next = rotate_max;
 			incr = 999;
 			break;
-		case FIK_UP_ARROW:                 /* UpArrow means speed up       */
+		case IDK_UP_ARROW:                 /* UpArrow means speed up       */
 			g_.IncreaseDACSleepCount();
 			break;
-		case FIK_DOWN_ARROW:               /* DownArrow means slow down    */
+		case IDK_DOWN_ARROW:               /* DownArrow means slow down    */
 			g_.DecreaseDACSleepCount();
 			break;
 		case '1':
@@ -191,38 +191,38 @@ void rotate(int direction)      /* rotate-the-palette routine */
 				step = rotate_size;
 			}
 			break;
-		case FIK_F1:                       /* FIK_F1 - FIK_F10:                    */
-		case FIK_F2:                       /* select a shading factor      */
-		case FIK_F3:
-		case FIK_F4:
-		case FIK_F5:
-		case FIK_F6:
-		case FIK_F7:
-		case FIK_F8:
-		case FIK_F9:
-		case FIK_F10:
+		case IDK_F1:                       /* IDK_F1 - IDK_F10:                    */
+		case IDK_F2:                       /* select a shading factor      */
+		case IDK_F3:
+		case IDK_F4:
+		case IDK_F5:
+		case IDK_F6:
+		case IDK_F7:
+		case IDK_F8:
+		case IDK_F9:
+		case IDK_F10:
 #ifndef XFRACT
 			fkey = kbdchar-1058;
 #else
 			switch (kbdchar)
 			{
-			case FIK_F1: fkey = 1; break;
-			case FIK_F2: fkey = 2; break;
-			case FIK_F3: fkey = 3; break;
-			case FIK_F4: fkey = 4; break;
-			case FIK_F5: fkey = 5; break;
-			case FIK_F6: fkey = 6; break;
-			case FIK_F7: fkey = 7; break;
-			case FIK_F8: fkey = 8; break;
-			case FIK_F9: fkey = 9; break;
-			case FIK_F10: fkey = 10; break;
+			case IDK_F1: fkey = 1; break;
+			case IDK_F2: fkey = 2; break;
+			case IDK_F3: fkey = 3; break;
+			case IDK_F4: fkey = 4; break;
+			case IDK_F5: fkey = 5; break;
+			case IDK_F6: fkey = 6; break;
+			case IDK_F7: fkey = 7; break;
+			case IDK_F8: fkey = 8; break;
+			case IDK_F9: fkey = 9; break;
+			case IDK_F10: fkey = 10; break;
 			}
 #endif
 			fstep = 1;
 			incr = 999;
 			break;
-		case FIK_ENTER:                    /* enter key: randomize all colors */
-		case FIK_ENTER_2:                  /* also the Numeric-Keypad Enter */
+		case IDK_ENTER:                    /* enter key: randomize all colors */
+		case IDK_ENTER_2:                  /* also the Numeric-Keypad Enter */
 			fkey = rand15()/3277 + 1;
 			fstep = 1;
 			incr = 999;
@@ -338,7 +338,7 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			break;
 
 		case 'l':                      /* load colors from a specified map */
-#ifndef XFRACT /* L is used for FIK_RIGHT_ARROW in Unix keyboard mapping */
+#ifndef XFRACT /* L is used for IDK_RIGHT_ARROW in Unix keyboard mapping */
 		case 'L':
 #endif
 			load_palette();
@@ -353,11 +353,11 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			pause_rotate();              /* update palette and pause */
 			break;
 
-		case FIK_ESC:                      /* escape */
+		case IDK_ESC:                      /* escape */
 			more = false;                   /* time to bail out */
 			break;
 
-		case FIK_HOME:                     /* restore palette */
+		case IDK_HOME:                     /* restore palette */
 			g_.DAC() = g_.OldDAC();
 			pause_rotate();              /* pause */
 			break;
@@ -366,36 +366,36 @@ void rotate(int direction)      /* rotate-the-palette routine */
 			fkey = 0;                   /* disable random generation */
 			switch (kbdchar)
 			{
-			case FIK_SF1:		set_palette(Black, White);			break;
-			case FIK_SF2:		set_palette(Red, Yellow);			break;
-			case FIK_SF3:		set_palette(Blue, Green);			break;
-			case FIK_SF4:		set_palette(Black, Yellow);			break;
-			case FIK_SF5:		set_palette(Black, Red);			break;
-			case FIK_SF6:		set_palette(Black, Blue);			break;
-			case FIK_SF7:		set_palette(Black, Green);			break;
-			case FIK_SF8:		set_palette(Blue, Yellow);			break;
-			case FIK_SF9:		set_palette(Red, Green);			break;
-			case FIK_SF10:		set_palette(Green, White);			break;
-			case FIK_CTL_F1:	set_palette2(Black, White);			break;
-			case FIK_CTL_F2:	set_palette2(Red, Yellow);			break;
-			case FIK_CTL_F3:	set_palette2(Blue, Green);			break;
-			case FIK_CTL_F4:	set_palette2(Black, Yellow);		break;
-			case FIK_CTL_F5:	set_palette2(Black, Red);			break;
-			case FIK_CTL_F6:	set_palette2(Black, Blue);			break;
-			case FIK_CTL_F7:	set_palette2(Black, Green);			break;
-			case FIK_CTL_F8:	set_palette2(Blue, Yellow);			break;
-			case FIK_CTL_F9:	set_palette2(Red, Green);			break;
-			case FIK_CTL_F10:	set_palette2(Green, White);			break;
-			case FIK_ALT_F1:	set_palette3(Blue, Green, Red);		break;
-			case FIK_ALT_F2:	set_palette3(Blue, Yellow, Red);	break;
-			case FIK_ALT_F3:	set_palette3(Red, White, Blue);		break;
-			case FIK_ALT_F4:	set_palette3(Red, Yellow, White);	break;
-			case FIK_ALT_F5:	set_palette3(Black, Brown, Yellow);	break;
-			case FIK_ALT_F6:	set_palette3(Blue, Brown, Green);	break;
-			case FIK_ALT_F7:	set_palette3(Blue, Green, Green);	break;
-			case FIK_ALT_F8:	set_palette3(Blue, Green, White);	break;
-			case FIK_ALT_F9:	set_palette3(Green, Green, White);	break;
-			case FIK_ALT_F10:	set_palette3(Red, Blue, White);		break;
+			case IDK_SF1:		set_palette(Black, White);			break;
+			case IDK_SF2:		set_palette(Red, Yellow);			break;
+			case IDK_SF3:		set_palette(Blue, Green);			break;
+			case IDK_SF4:		set_palette(Black, Yellow);			break;
+			case IDK_SF5:		set_palette(Black, Red);			break;
+			case IDK_SF6:		set_palette(Black, Blue);			break;
+			case IDK_SF7:		set_palette(Black, Green);			break;
+			case IDK_SF8:		set_palette(Blue, Yellow);			break;
+			case IDK_SF9:		set_palette(Red, Green);			break;
+			case IDK_SF10:		set_palette(Green, White);			break;
+			case IDK_CTL_F1:	set_palette2(Black, White);			break;
+			case IDK_CTL_F2:	set_palette2(Red, Yellow);			break;
+			case IDK_CTL_F3:	set_palette2(Blue, Green);			break;
+			case IDK_CTL_F4:	set_palette2(Black, Yellow);		break;
+			case IDK_CTL_F5:	set_palette2(Black, Red);			break;
+			case IDK_CTL_F6:	set_palette2(Black, Blue);			break;
+			case IDK_CTL_F7:	set_palette2(Black, Green);			break;
+			case IDK_CTL_F8:	set_palette2(Blue, Yellow);			break;
+			case IDK_CTL_F9:	set_palette2(Red, Green);			break;
+			case IDK_CTL_F10:	set_palette2(Green, White);			break;
+			case IDK_ALT_F1:	set_palette3(Blue, Green, Red);		break;
+			case IDK_ALT_F2:	set_palette3(Blue, Yellow, Red);	break;
+			case IDK_ALT_F3:	set_palette3(Red, White, Blue);		break;
+			case IDK_ALT_F4:	set_palette3(Red, Yellow, White);	break;
+			case IDK_ALT_F5:	set_palette3(Black, Brown, Yellow);	break;
+			case IDK_ALT_F6:	set_palette3(Blue, Brown, Green);	break;
+			case IDK_ALT_F7:	set_palette3(Blue, Green, Green);	break;
+			case IDK_ALT_F8:	set_palette3(Blue, Green, White);	break;
+			case IDK_ALT_F9:	set_palette3(Green, Green, White);	break;
+			case IDK_ALT_F10:	set_palette3(Red, Blue, White);		break;
 			}
 			pause_rotate();  /* update palette and pause */
 			break;

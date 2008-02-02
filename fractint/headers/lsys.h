@@ -7,7 +7,7 @@
 #define LSYS_H
 
 
-#define size    ssize
+//#define size    ssize
 /* Needed for use of asm -- helps decide which pointer to function
  * to put into the struct lsys_cmds.
  */
@@ -16,7 +16,11 @@
  * 16/16-bit fixed-point number.
  */
 #define FIXEDMUL        524288L
-#define FIXEDPT(x)      ((long) (FIXEDMUL * (x)))
+
+inline long FIXEDPT(long x)
+{
+	return long(FIXEDMUL*x);
+}
 
 /* The number by which to multiply sines, cosines and other
  * values with magnitudes less than or equal to 1.

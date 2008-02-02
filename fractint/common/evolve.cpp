@@ -35,7 +35,10 @@ enum VaryIntType
 	VARYINT_RANDOM_WEIGHTED	= 6
 };
 
-#define MAX_GRID_SIZE 51  /* This is arbitrary, = 1024/20 */
+enum
+{
+	MAX_GRID_SIZE = 51  /* This is arbitrary, = 1024/20 */
+};
 
 /* g_px and g_py are coordinates in the parameter grid (small images on screen) */
 /* g_evolving_flags = flag, g_grid_size = dimensions of image grid (g_grid_size x g_grid_size) */
@@ -413,21 +416,21 @@ restart:
 		int i = dialog.prompt();
 		switch (i)
 		{
-		case FIK_F2: /* set all off */
+		case IDK_F2: /* set all off */
 			for (int num = MAX_PARAMETERS; num < NUM_GENES; num++)
 			{
 				g_genes[num].mutate = VARYINT_NONE;
 			}
 			goto restart;
 
-		case FIK_F3: /* set all on..alternate x and y for field map */
+		case IDK_F3: /* set all on..alternate x and y for field map */
 			for (int num = MAX_PARAMETERS; num < NUM_GENES; num ++)
 			{
 				g_genes[num].mutate = (char)((num % 2) + 1);
 			}
 			goto restart;
 
-		case FIK_F4: /* Randomize all */
+		case IDK_F4: /* Randomize all */
 			for (int num = MAX_PARAMETERS; num < NUM_GENES; num ++)
 			{
 				g_genes[num].mutate = (char)(rand() % 6);
@@ -561,25 +564,25 @@ restart:
 		int chngd = -1;
 		switch (i)
 		{
-		case FIK_F2: /* set all off */
+		case IDK_F2: /* set all off */
 			for (int num = 0; num < MAX_PARAMETERS; num++)
 			{
 				g_genes[num].mutate = VARYINT_NONE;
 			}
 			goto restart;
-		case FIK_F3: /* set all on..alternate x and y for field map */
+		case IDK_F3: /* set all on..alternate x and y for field map */
 			for (int num = 0; num < MAX_PARAMETERS; num ++)
 			{
 				g_genes[num].mutate = (char) ((num % 2) + 1);
 			}
 			goto restart;
-		case FIK_F4: /* Randomize all */
+		case IDK_F4: /* Randomize all */
 			for (int num = 0; num < MAX_PARAMETERS; num ++)
 			{
 				g_genes[num].mutate = (char) (rand() % 6);
 			}
 			goto restart;
-		case FIK_F6: /* go to second screen, put array away first */
+		case IDK_F6: /* go to second screen, put array away first */
 			{
 				GENEBASE save[NUM_GENES];
 				for (int g = 0; g < NUM_GENES; g++)
@@ -687,12 +690,12 @@ get_evol_restart:
 		}
 		switch (i)
 		{
-		case FIK_F4:
+		case IDK_F4:
 			set_current_parameters();
 			g_fiddle_factor = 1;
 			g_fiddle_reduction = 1.0;
 			goto get_evol_restart;
-		case FIK_F2:
+		case IDK_F2:
 			g_parameter_range_x /= 2;
 			g_parameter_offset_x = g_parameter_offset_x + g_parameter_range_x/2;
 			g_new_parameter_offset_y = g_parameter_offset_x;
@@ -701,7 +704,7 @@ get_evol_restart:
 			g_new_parameter_offset_y = g_parameter_offset_y;
 			g_fiddle_factor /= 2;
 			goto get_evol_restart;
-		case FIK_F3:
+		case IDK_F3:
 			{
 				double centerx = g_parameter_offset_x + g_parameter_range_x/2;
 				g_parameter_range_x *= 2;
@@ -718,7 +721,7 @@ get_evol_restart:
 		g_evolving_flags = dialog.values(++k).uval.ch.val;
 		g_viewWindow.Show(g_evolving_flags != 0);
 
-		if (!g_evolving_flags && i != FIK_F6)  /* don't need any of the other parameters */
+		if (!g_evolving_flags && i != IDK_F6)  /* don't need any of the other parameters */
 		{
 			return 1;              /* the following code can set g_evolving_flags even if it's off */
 		}
@@ -726,7 +729,7 @@ get_evol_restart:
 		g_grid_size = dialog.values(++k).uval.ival;
 		/* (g_screen_width/20), max # of subimages @ 20 pixels per subimage */
 		/* MAX_GRID_SIZE == 1024/20 == 51 */
-		g_grid_size = MathUtil::Clamp(g_grid_size, 3, std::min(MAX_GRID_SIZE, g_screen_width/(MIN_PIXELS << 1)));
+		g_grid_size = MathUtil::Clamp(g_grid_size, 3, std::min(int(MAX_GRID_SIZE), g_screen_width/(int(MIN_PIXELS) << 1)));
 		g_grid_size |= 1; /* make sure g_grid_size is odd */
 		if (explore_check())
 		{
@@ -769,7 +772,7 @@ get_evol_restart:
 		result = 0;
 	}
 
-	if (j == FIK_F6)
+	if (j == IDK_F6)
 	{
 		old_variations = get_variations();
 		set_current_parameters();

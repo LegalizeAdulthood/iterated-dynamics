@@ -27,7 +27,6 @@
 
 #include "EscapeTime.h"
 
-#define FABS(x)  fabsl(x)
 /* the following needs to be changed back to frexpl once the portability
 	issue has been addressed JCO */
 #ifndef XFRACT
@@ -36,8 +35,11 @@
 #define FREXP(x, y) frexp(x, y)
 #endif
 
-#define EVERY 15
-#define BASIN_COLOR 0
+enum
+{
+	EVERY = 15,
+	BASIN_COLOR = 0
+};
 
 int rhombus_depth;
 
@@ -152,11 +154,11 @@ long iteration(LDBL cr, LDBL ci,
 			re += cr;
 
 #ifdef INTEL
-			mag = FABS(sre-re);
+			mag = fabsl(sre-re);
 			magi = *(unsigned long *)&mag;
 			if (magi < eq)
 			{
-				mag = FABS(sim-im);
+				mag = fabsl(sim-im);
 				magi = *(unsigned long *)&mag;
 				if (magi < eq)
 				{
@@ -164,7 +166,7 @@ long iteration(LDBL cr, LDBL ci,
 				}
 			}
 #else /* INTEL */
-			if (FABS(sre-re) < equal && FABS(sim-im) < equal)
+			if (fabsl(sre-re) < equal && fabsl(sim-im) < equal)
 			{
 				return BASIN_COLOR;
 			}
@@ -340,12 +342,15 @@ static void put_box(int x1, int y1, int x2, int y2, int color)
 	}
 }
 
-/* maximum side length beyond which we start regular scanning instead of
+enum
+{
+	/* maximum side length beyond which we start regular scanning instead of
 	subdividing */
-#define SCAN 16
+	SCAN = 16,
 
-/* pixel interleave used in scanning */
-#define INTERLEAVE 4
+	/* pixel interleave used in scanning */
+	INTERLEAVE = 4
+};
 
 /* compute the value of the interpolation polynomial at (x, y) */
 #define GET_REAL(x, y) \
@@ -919,7 +924,7 @@ scan:
 			allowed tolerance. if so, subdivide */
 		l1 = GET_REAL(cr1, ci1);
 		l1 = (tzr1 == 0.0) ? (l1 == 0.0) ? 1.0 : 1000.0 : l1/tzr1;
-		if (FABS(1.0-l1) > twidth)
+		if (fabsl(1.0-l1) > twidth)
 		{
 			break;
 		}
@@ -927,7 +932,7 @@ scan:
 		l2 = GET_IMAG(cr1, ci1);
 		l2 = (tzi1 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi1;
-		if (FABS(1.0-l2) > twidth)
+		if (fabsl(1.0-l2) > twidth)
 		{
 			break;
 		}
@@ -935,7 +940,7 @@ scan:
 		l1 = GET_REAL(cr2, ci1);
 		l1 = (tzr2 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr2;
-		if (FABS(1.0-l1) > twidth)
+		if (fabsl(1.0-l1) > twidth)
 		{
 			break;
 		}
@@ -943,7 +948,7 @@ scan:
 		l2 = GET_IMAG(cr2, ci1);
 		l2 = (tzi2 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi2;
-		if (FABS(1.0-l2) > twidth)
+		if (fabsl(1.0-l2) > twidth)
 		{
 			break;
 		}
@@ -951,7 +956,7 @@ scan:
 		l1 = GET_REAL(cr1, ci2);
 		l1 = (tzr3 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr3;
-		if (FABS(1.0-l1) > twidth)
+		if (fabsl(1.0-l1) > twidth)
 		{
 			break;
 		}
@@ -959,7 +964,7 @@ scan:
 		l2 = GET_IMAG(cr1, ci2);
 		l2 = (tzi3 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi3;
-		if (FABS(1.0-l2) > twidth)
+		if (fabsl(1.0-l2) > twidth)
 		{
 			break;
 		}
@@ -967,7 +972,7 @@ scan:
 		l1 = GET_REAL(cr2, ci2);
 		l1 = (tzr4 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr4;
-		if (FABS(1.0-l1) > twidth)
+		if (fabsl(1.0-l1) > twidth)
 		{
 			break;
 		}
@@ -975,7 +980,7 @@ scan:
 		l2 = GET_IMAG(cr2, ci2);
 		l2 = (tzi4 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi4;
-		if (FABS(1.0-l2) > twidth)
+		if (fabsl(1.0-l2) > twidth)
 		{
 			break;
 		}

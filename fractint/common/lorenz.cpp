@@ -33,12 +33,20 @@
 #include "ViewWindow.h"
 
 /* orbitcalc is declared with no arguments so jump through hoops here */
-#define LORBIT(x, y, z) \
-	(*(int(*)(long *, long *, long *))g_current_fractal_specific->orbitcalc)(x, y, z)
-#define FORBIT(x, y, z) \
-	(*(int(*)(double*, double*, double*))g_current_fractal_specific->orbitcalc)(x, y, z)
+inline int LORBIT(long *x, long *y, long *z)
+{
+	return (*(int(*)(long *, long *, long *))g_current_fractal_specific->orbitcalc)(x, y, z);
+}
+inline double FORBIT(double *x, double *y, double *z)
+{
+	return (*(int(*)(double*, double*, double*))g_current_fractal_specific->orbitcalc)(x, y, z);
+}
 
-#define RANDOM(x)  (rand() % (x))
+inline int RANDOM(int x)
+{
+	return rand() % x;
+}
+
 /*
  * BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
  * to test the actual floating point orbit values, but this seems safe for now.
@@ -48,7 +56,7 @@
  * far to an orbit type.
  */
 
-#define BAD_PIXEL  10000L    /* pixels can't get this big */
+static long const BAD_PIXEL = 10000L;    /* pixels can't get this big */
 
 struct l_affine
 {
@@ -440,9 +448,6 @@ lrwalk:
 	return true;
 }
 
-#define COSB   s_dx
-#define SINABC s_dy
-
 bool orbit_3d_setup_fp()
 {
 	g_max_count = 0L;
@@ -550,8 +555,8 @@ bool orbit_3d_setup_fp()
 		s_d =  g_parameters[3];
 		if (g_fractal_type == FRACTYPE_THREE_PLY)
 		{
-			COSB   = cos(s_b);
-			SINABC = sin(s_a + s_b + s_c);
+			s_dx   = cos(s_b);
+			s_dy = sin(s_a + s_b + s_c);
 		}
 	}
 	else if (g_fractal_type == FRACTYPE_INVERSE_JULIA_FP)
@@ -1271,7 +1276,7 @@ int three_ply_2d_orbit_fp(double *x, double *y, double *z)
 {
 	double tmp;
 	*z = *x; /* for warning only */
-	tmp = *y - sign(*x)*(fabs(sin(*x)*COSB + s_c-(*x)*SINABC));
+	tmp = *y - sign(*x)*(fabs(sin(*x)*s_dx + s_c-(*x)*s_dy));
 	*y = s_a - *x;
 	*x = tmp;
 	return 0;
@@ -1378,10 +1383,6 @@ int icon_orbit_fp(double *x, double *y, double *z)
 }
 
 /* hb */
-#define PAR_A   g_parameters[0]
-#define PAR_B   g_parameters[1]
-#define PAR_C   g_parameters[2]
-#define PAR_D   g_parameters[3]
 
 int latoo_orbit_fp(double *x, double *y, double *z)
 {
@@ -1395,32 +1396,27 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	yold = *y;
 
 /*    *x = sin(yold*PAR_B) + PAR_C*sin(xold*PAR_B); */
-	g_old_z.x = yold*PAR_B;
+	g_old_z.x = yold*g_parameters[1];
 	g_old_z.y = 0;          /* old = (y*B) + 0i (in the complex)*/
 	CMPLXtrig0(g_old_z, g_new_z);
 	tmp = double(g_new_z.x);
-	g_old_z.x = xold*PAR_B;
+	g_old_z.x = xold*g_parameters[1];
 	g_old_z.y = 0;          /* old = (x*B) + 0i */
 	CMPLXtrig1(g_old_z, g_new_z);
-	*x  = PAR_C*g_new_z.x + tmp;
+	*x  = g_parameters[2]*g_new_z.x + tmp;
 
 /*    *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A); */
-	g_old_z.x = xold*PAR_A;
+	g_old_z.x = xold*g_parameters[0];
 	g_old_z.y = 0;          /* old = (y*A) + 0i (in the complex)*/
 	CMPLXtrig2(g_old_z, g_new_z);
 	tmp = double(g_new_z.x);
-	g_old_z.x = yold*PAR_A;
+	g_old_z.x = yold*g_parameters[0];
 	g_old_z.y = 0;          /* old = (x*B) + 0i */
 	CMPLXtrig3(g_old_z, g_new_z);
-	*y  = PAR_D*g_new_z.x + tmp;
+	*y  = g_parameters[3]*g_new_z.x + tmp;
 
 	return 0;
 }
-
-#undef PAR_A
-#undef PAR_B
-#undef PAR_C
-#undef PAR_D
 
 /**********************************************************************/
 /*   Main fractal engines - put in g_fractal_specific[g_fractal_type].calculate_type */

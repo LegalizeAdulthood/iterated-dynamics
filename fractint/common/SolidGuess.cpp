@@ -21,7 +21,7 @@ static bool s_right_guess;
 static bool s_bottom_guess;
 static unsigned int s_t_prefix[2][MAX_Y_BLOCK][MAX_X_BLOCK]; /* common temp */
 
-#define calcadot(c, x, y)			\
+#define CALCULATE_A_DOT(c, x, y)	\
 	do								\
 	{								\
 		g_col = x;					\
@@ -255,21 +255,21 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			if (guessed33 > 0
 				&& (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
 			{
-				calcadot(c33, xplushalf, yplushalf);
+				CALCULATE_A_DOT(c33, xplushalf, yplushalf);
 				guessed33 = 0;
 			}
 			if (guessed32 > 0
 				&& (c32 != c33 || c32 != c42 || c32 != c31 || c32 != c21
 					|| c32 != c41 || c32 != c23))
 			{
-				calcadot(c32, xplushalf, y);
+				CALCULATE_A_DOT(c32, xplushalf, y);
 				guessed32 = 0;
 				continue;
 			}
 			if (guessed23 > 0
 				&& (c23 != c33 || c23 != c24 || c23 != c13 || c23 != c12 || c23 != c32))
 			{
-				calcadot(c23, x, yplushalf);
+				CALCULATE_A_DOT(c23, x, yplushalf);
 				guessed23 = 0;
 				continue;
 			}
@@ -340,7 +340,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 		prev11 = c31; /* for next time around */
 		if (fix21)
 		{
-			calcadot(c21, x, ylesshalf);
+			CALCULATE_A_DOT(c21, x, ylesshalf);
 			if (s_half_block > 1 && c21 != c22)
 			{
 				plot_block(BUILDROW_NONE, x, ylesshalf, c21);
@@ -348,7 +348,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 		}
 		if (fix31)
 		{
-			calcadot(c31, xplushalf, ylesshalf);
+			CALCULATE_A_DOT(c31, xplushalf, ylesshalf);
 			if (s_half_block > 1 && c31 != c22)
 			{
 				plot_block(BUILDROW_NONE, xplushalf, ylesshalf, c31);
@@ -358,7 +358,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 		{
 			if (guessed12)
 			{
-				calcadot(c12, x-s_half_block, y);
+				CALCULATE_A_DOT(c12, x-s_half_block, y);
 				if (s_half_block > 1 && c12 != c22)
 				{
 					plot_block(BUILDROW_NONE, x-s_half_block, y, c12);
@@ -366,7 +366,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			}
 			if (guessed13)
 			{
-				calcadot(c13, x-s_half_block, yplushalf);
+				CALCULATE_A_DOT(c13, x-s_half_block, yplushalf);
 				if (s_half_block > 1 && c13 != c22)
 				{
 					plot_block(BUILDROW_NONE, x-s_half_block, yplushalf, c13);

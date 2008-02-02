@@ -4,6 +4,7 @@
 #include <string>
 
 #include "port.h"
+#include "id.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "externs.h"

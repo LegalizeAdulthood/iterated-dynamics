@@ -39,11 +39,11 @@
 #endif
 
 /* g_fudge all values up by 2 << FUDGE_FACTOR{,2} */
-#define FUDGE_FACTOR     29
-#define FUDGE_FACTOR2    24
-
-#define MAX_Y_BLOCK 7    /* must match calcfrac.c */
-#define MAX_X_BLOCK 202  /* must match calcfrac.c */
+enum
+{
+	FUDGE_FACTOR     = 29,
+	FUDGE_FACTOR2    = 24,
+};
 
 static int s_save_orbit[1500] = { 0 };	/* array to save orbit values */
 
@@ -1247,7 +1247,7 @@ static void sleep_ms_old(long ms)
 {
 	static long scalems = 0L;
 	struct timebx t1, t2;
-#define SLEEPINIT 250 /* milliseconds for calibration */
+	int const SLEEPINIT = 250; /* milliseconds for calibration */
 	bool save_tab_display_enabled = g_tab_display_enabled;
 	HelpModeSaver saved_help(-1);
 	g_tab_display_enabled  = false;
@@ -1358,7 +1358,10 @@ void sleep_ms(long ms)
 * wait until wait_time microseconds from the
 * last call has elapsed.
 */
-#define MAX_INDEX 2
+enum
+{
+	MAX_INDEX = 2
+};
 static uclock_t next_time[MAX_INDEX];
 void wait_until(int index, uclock_t wait_time)
 {
@@ -1390,8 +1393,8 @@ void reset_clock()
 	}
 }
 
-#define LOG2  0.693147180f
-#define LOG32 3.465735902f
+static float const LOG2 = 0.693147180f;
+static float const LOG32 = 3.465735902f;
 
 static void plot_orbit_d(double dx, double dy, int color)
 {
@@ -1466,7 +1469,7 @@ void get_julia_attractor(double real, double imag)
 		return;
 	}
 
-	if (g_num_attractors >= N_ATTR)     /* space for more attractors ?  */
+	if (g_num_attractors >= MAX_NUM_ATTRACTORS)     /* space for more attractors ?  */
 	{
 		return;                  /* Bad luck - no room left !    */
 	}

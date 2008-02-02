@@ -945,8 +945,11 @@ static void setup_save_info(fractal_info *save_info)
  *
  ***************************************************************************/
 
-#define BITSF   12
-#define HSIZE  5003            /* 80% occupancy */
+enum
+{
+	BITSF   = 12,
+	HSIZE  = 5003            /* 80% occupancy */
+};
 
 /*
  *
@@ -974,7 +977,10 @@ static int n_bits;                        /* number of bits/code */
 static int maxbits = BITSF;                /* user settable max # bits/code */
 static int maxcode;                  /* maximum code, given n_bits */
 static int maxmaxcode = 1 << BITSF; /* should NEVER generate this code */
-#define MAXCODE(n_bits)        ((1 << (n_bits)) - 1)
+inline int MAXCODE(int n_bits)
+{
+	return ((1 << (n_bits)) - 1);
+}
 
 #ifdef XFRACT
 unsigned int g_string_location[10240];
@@ -992,10 +998,6 @@ static unsigned short *codetab = (unsigned short *)g_string_location;
  * of htab, and contains characters.  There is plenty of room for any
  * possible stack (stack used to be 8000 characters).
  */
-
-#define tab_prefixof(i)   codetab[i]
-#define tab_suffixof(i)   ((char_type *)(htab))[i]
-#define de_stack          ((char_type *)&tab_suffixof(1 << BITSF))
 
 static int free_ent;                  /* first unused entry */
 

@@ -102,26 +102,26 @@ private:
 
 const ScanCodes::ScanCodeMnemonicPair ScanCodes::_scanCodes[] =
 {
-	{ FIK_ENTER,			"ENTER"     },
-	{ FIK_INSERT,			"INSERT"    },
-	{ FIK_DELETE,			"DELETE"    },
-	{ FIK_ESC,				"ESC"       },
-	{ FIK_TAB,				"TAB"       },
-	{ FIK_PAGE_UP,			"PAGEUP"    },
-	{ FIK_PAGE_DOWN,		"PAGEDOWN"  },
-	{ FIK_HOME,				"HOME"      },
-	{ FIK_END,				"END"       },
-	{ FIK_LEFT_ARROW,		"LEFT"      },
-	{ FIK_RIGHT_ARROW,		"RIGHT"     },
-	{ FIK_UP_ARROW,			"UP"        },
-	{ FIK_DOWN_ARROW,		"DOWN"      },
-	{ FIK_F1,				"F1"        },
-	{ FIK_CTL_RIGHT_ARROW,	"CTRL_RIGHT"},
-	{ FIK_CTL_LEFT_ARROW,	"CTRL_LEFT" },
-	{ FIK_CTL_DOWN_ARROW,	"CTRL_DOWN" },
-	{ FIK_CTL_UP_ARROW,		"CTRL_UP"   },
-	{ FIK_CTL_END,			"CTRL_END"  },
-	{ FIK_CTL_HOME,			"CTRL_HOME" }
+	{ IDK_ENTER,			"ENTER"     },
+	{ IDK_INSERT,			"INSERT"    },
+	{ IDK_DELETE,			"DELETE"    },
+	{ IDK_ESC,				"ESC"       },
+	{ IDK_TAB,				"TAB"       },
+	{ IDK_PAGE_UP,			"PAGEUP"    },
+	{ IDK_PAGE_DOWN,		"PAGEDOWN"  },
+	{ IDK_HOME,				"HOME"      },
+	{ IDK_END,				"END"       },
+	{ IDK_LEFT_ARROW,		"LEFT"      },
+	{ IDK_RIGHT_ARROW,		"RIGHT"     },
+	{ IDK_UP_ARROW,			"UP"        },
+	{ IDK_DOWN_ARROW,		"DOWN"      },
+	{ IDK_F1,				"F1"        },
+	{ IDK_CTL_RIGHT_ARROW,	"CTRL_RIGHT"},
+	{ IDK_CTL_LEFT_ARROW,	"CTRL_LEFT" },
+	{ IDK_CTL_DOWN_ARROW,	"CTRL_DOWN" },
+	{ IDK_CTL_UP_ARROW,		"CTRL_UP"   },
+	{ IDK_CTL_END,			"CTRL_END"  },
+	{ IDK_CTL_HOME,			"CTRL_HOME" }
 };
 
 int ScanCodes::ScanCodeFromMnemonic(const char *mn)

@@ -1,8 +1,6 @@
 #if !defined(CALC_FRAC_H)
 #define CALC_FRAC_H
 
-#define DEM_BAILOUT 535.5  /* (pb: not sure if this is special or arbitrary) */
-
 enum CalculationMode
 {
 	CALCMODE_SINGLE_PASS = '1',

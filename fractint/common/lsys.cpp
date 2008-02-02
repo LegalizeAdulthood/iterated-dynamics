@@ -10,6 +10,7 @@
 #include <boost/format.hpp>
 
 #include "port.h"
+#include "id.h"
 #include "prototyp.h"
 
 #include "cmdfiles.h"

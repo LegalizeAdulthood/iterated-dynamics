@@ -55,13 +55,13 @@ private:
 TEST(AbstractDialog, ProcessInput)
 {
 	AbstractDialogTester dialog;
-	dialog.SetFakeDriverKeyPressed(FIK_ESC);
+	dialog.SetFakeDriverKeyPressed(IDK_ESC);
 	dialog.SetProcessWaitingKeyValue(true);
 	dialog.SetProcessIdleValue(false);
 	dialog.ProcessInput();
 	CHECK(dialog.GetProcessWaitingKeyCalled());
 	CHECK(!dialog.GetProcessIdleCalled());
-	LONGS_EQUAL(FIK_ESC, dialog.GetLastKey());
+	LONGS_EQUAL(IDK_ESC, dialog.GetLastKey());
 }
 
 TEST(AbstractDialog, ProcessIdle)

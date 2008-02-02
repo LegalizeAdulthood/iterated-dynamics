@@ -24,9 +24,26 @@ static enum direction s_going_to;
 
 /******************* boundary trace method ***************************/
 
-#define bkcolor 0
-#define advance_match()     coming_from = (direction) (((s_going_to = (direction) ((s_going_to - 1) & 0x03)) - 1) & 0x03)
-#define advance_no_match()  s_going_to = (direction) ((s_going_to + 1) & 0x03)
+enum
+{
+	bkcolor = 0
+};
+
+inline direction advance(direction value)
+{
+	return direction((value - 1) & 0x03);
+}
+
+inline void advance_match(direction &coming_from)
+{
+	s_going_to = advance(s_going_to);
+	coming_from = advance(s_going_to);
+}
+
+inline void advance_no_match()
+{
+	s_going_to = (direction) ((s_going_to + 1) & 0x03);
+}
 
 /*******************************************************************/
 /* take one step in the direction of s_going_to */
@@ -151,7 +168,7 @@ int boundary_trace_main()
 						}
 						s_trail_row = g_row;
 						s_trail_col = g_col;
-						advance_match();
+						advance_match(coming_from);
 					}
 					else
 					{
@@ -252,7 +269,7 @@ int boundary_trace_main()
 						}
 						s_trail_row = g_row;
 						s_trail_col = g_col;
-						advance_match();
+						advance_match(coming_from);
 						matches_found = 1;
 					}
 					else
@@ -267,7 +284,7 @@ int boundary_trace_main()
 					step_col_row();
 					s_trail_row = g_row;
 					s_trail_col = g_col;
-					advance_match();
+					advance_match(coming_from);
 				}
 			}
 			while (s_trail_col != g_current_col || s_trail_row != g_current_row);

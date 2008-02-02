@@ -63,7 +63,7 @@ TEST(FullScreenChooser, Escape)
 	int attributes[] = { 0 };
 	FakeDriver fakeDriver;
 	TestFullScreenChooser chooser(0, 0, 0, 0, 1, choices, attributes, 0, 0, 0, 0, 0, 0, 0, 0, &fakeDriver);
-	int keyStrokes[] = { FIK_ESC };
+	int keyStrokes[] = { IDK_ESC };
 	fakeDriver.SetKeyStrokes(NUM_OF(keyStrokes), keyStrokes);
 	int result = chooser.Execute();
 	CHECK_EQUAL(-1, result);

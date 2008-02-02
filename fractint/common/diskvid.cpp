@@ -18,16 +18,19 @@
 #include "realdos.h"
 #include "TextColors.h"
 
-#define BOX_ROW   6
-#define BOX_COL   11
-#define BOX_WIDTH 57
-#define BOX_DEPTH 12
-#define BLOCK_LEN 2048   /* must be a power of 2, must match next */
-#define BLOCK_SHIFT 11   /* must match above */
-#define CACHE_MIN 4      /* minimum cache size in Kbytes */
-#define CACHE_MAX 64     /* maximum cache size in Kbytes */
-#define FREE_MEM  33     /* try to leave this much memory unallocated */
-#define HASH_SIZE 1024   /* power of 2, near CACHE_MAX/(BLOCK_LEN + 8) */
+enum
+{
+	BOX_ROW   = 6,
+	BOX_COL   = 11,
+	BOX_WIDTH = 57,
+	BOX_DEPTH = 12,
+	BLOCK_LEN = 2048,   /* must be a power of 2, must match next */
+	BLOCK_SHIFT = 11,   /* must match above */
+	CACHE_MIN = 4,      /* minimum cache size in Kbytes */
+	CACHE_MAX = 64,     /* maximum cache size in Kbytes */
+	FREE_MEM  = 33,     /* try to leave this much memory unallocated */
+	HASH_SIZE = 1024   /* power of 2, near CACHE_MAX/(BLOCK_LEN + 8) */
+};
 
 bool g_disk_16bit = false;	/* storing 16 bit values for continuous potential */
 
@@ -611,7 +614,7 @@ static void  write_cache_lru()
 	long offset;
 	BYTE tmpchar = 0;
 	cache *ptr1, *ptr2;
-#define WRITEGAP 4 /* 1 for no gaps */
+	int const WRITEGAP = 4; /* 1 for no gaps */
 	/* scan back to also write any preceding dirty blocks, skipping small gaps */
 	ptr1 = s_cache_lru;
 	offset = ptr1->offset;

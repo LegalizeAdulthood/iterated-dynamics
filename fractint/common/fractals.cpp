@@ -63,10 +63,6 @@
 #include "MathUtil.h"
 #include "QuaternionEngine.h"
 
-#define modulus(z)			(sqr((z).x) + sqr((z).y))
-#define conjugate(pz)		((pz)->y = - (pz)->y)
-#define pMPsqr(z)			(*MPmul((z), (z)))
-
 static double dx_pixel_calc();
 static double dy_pixel_calc();
 static long lx_pixel_calc();
@@ -248,105 +244,7 @@ int bail_out_manhattan_r_fp()
 	return 0;
 }
 
-#define BAIL_OUT_TRIG_FP()						\
-	do											\
-	{											\
-		if (fabs(g_old_z.y) >= g_rq_limit2)		\
-		{										\
-			return 1;							\
-		}										\
-	}											\
-	while (0)
-
-#define BAIL_OUT_TRIG_LONG()					\
-	do											\
-	{											\
-		if (labs(g_old_z_l.y) >= g_limit2_l)	\
-		{										\
-			return 1;							\
-		}										\
-	}											\
-	while (0)
-
-#define BAIL_OUT_TRIG_XY_LONG()					\
-	do											\
-	{											\
-		if (labs(g_old_z_l.x) >= g_limit2_l		\
-			|| labs(g_old_z_l.y) >= g_limit2_l)	\
-		{										\
-			return 1;							\
-		}										\
-	}											\
-	while (0)
-
-#define BAIL_OUT_TRIG_XY_FP()					\
-	do											\
-	{											\
-		if (fabs(g_old_z.x) >= g_rq_limit2		\
-			|| fabs(g_old_z.y) >= g_rq_limit2)	\
-		{										\
-			return 1;							\
-		}										\
-	}											\
-	while (0)
-
-#define BAIL_OUT_TRIG_H_FP()				\
-	do										\
-	{										\
-		if (fabs(g_old_z.x) >= g_rq_limit2)	\
-		{									\
-			return 1;						\
-		}									\
-	}										\
-	while (0)
-
-#define BAIL_OUT_TRIG_H_LONG()					\
-	do											\
-	{											\
-		if (labs(g_old_z_l.x) >= g_limit2_l)	\
-		{										\
-			return 1;							\
-		}										\
-	}											\
-	while (0)
-
-#define BAIL_OUT_TRIG16(_x)				\
-	do									\
-	{									\
-		if (labs(_x) > TRIG_LIMIT_16)	\
-		{								\
-			return 1;					\
-		}								\
-	}									\
-	while (0)
-
-#define BAIL_OUT_EXP_FP()				\
-	do									\
-	{									\
-		if (fabs(g_old_z.y) >= 1.0e3)	\
-		{								\
-			return 1;					\
-		}								\
-		if (fabs(g_old_z.x) >= 8)		\
-		{								\
-			return 1;					\
-		}								\
-	}									\
-	while (0)
-
-#define BAIL_OUT_EXP_LONG()									\
-	do														\
-	{														\
-		if (labs(g_old_z_l.y) >= (1000L << g_bit_shift))	\
-		{													\
-			return 1;										\
-		}													\
-		if (labs(g_old_z_l.x) >= (8L << g_bit_shift))		\
-		{													\
-			return 1;										\
-		}													\
-	}														\
-	while (0)
+static long const TRIG_LIMIT_16 = (8L << 16);		/* domain limit of fast trig functions */
 
 #if 0
 /* this define uses usual trig instead of fast trig */
@@ -359,19 +257,13 @@ int bail_out_manhattan_r_fp()
 	*(pcoshx) = cosh(*(px));
 #endif
 
-#define TRIG_ARG_L(_x)					\
-	do									\
-	{									\
-		if (labs(_x) > TRIG_LIMIT_16)	\
-		{								\
-			double tmp = (_x);			\
-			tmp /= g_fudge;				\
-			tmp = fmod(tmp, g_two_pi);	\
-			tmp *= g_fudge;				\
-			(_x) = long(tmp);			\
-		}								\
-	}									\
-	while (0)
+inline void TRIG_ARG_L(long &x)
+{
+	if (labs(x) > TRIG_LIMIT_16)
+	{
+		x = long(fmod(double(x)/g_fudge, g_two_pi)*g_fudge);
+	}
+}
 
 /* -------------------------------------------------------------------- */
 /*              Fractal (once per iteration) routines                   */
@@ -720,8 +612,12 @@ int sierpinski_orbit_fp()
 int lambda_exponent_orbit_fp()
 {
 	/* found this in  "Science of Fractal Images" */
-	BAIL_OUT_EXP_FP();
-	FPUsincos  (&g_old_z.y, &s_sin_y, &s_cos_y);
+	if ((fabs(g_old_z.y) >= 1.0e3)
+		|| (fabs(g_old_z.x) >= 8))
+	{
+		return 1;
+	}
+	FPUsincos(&g_old_z.y, &s_sin_y, &s_cos_y);
 
 	if (g_old_z.x >= g_rq_limit && s_cos_y >= 0.0)
 	{
@@ -743,9 +639,13 @@ int lambda_exponent_orbit()
 #if !defined(XFRACT)
 	long tmp;
 	/* found this in  "Science of Fractal Images" */
-	BAIL_OUT_EXP_LONG();
+	if ((labs(g_old_z_l.y) >= (1000L << g_bit_shift))
+		|| (labs(g_old_z_l.x) >= (8L << g_bit_shift)))
+	{
+		return 1;
+	}
 
-	SinCos086  (g_old_z_l.y, &s_sin_y_l,  &s_cos_y_l);
+	SinCos086(g_old_z_l.y, &s_sin_y_l,  &s_cos_y_l);
 
 	if (g_old_z_l.x >= g_limit_l && s_cos_y_l >= 0L)
 	{
@@ -793,8 +693,11 @@ int trig_plus_exponent_orbit()
 	long tmp;
 
 	/* domain check for fast transcendental functions */
-	BAIL_OUT_TRIG16(g_old_z_l.x);
-	BAIL_OUT_TRIG16(g_old_z_l.y);
+	if ((labs(g_old_z_l.x) > TRIG_LIMIT_16)
+		|| (labs(g_old_z_l.y) > TRIG_LIMIT_16))
+	{
+		return 1;
+	}
 
 	tmp = Exp086(g_old_z_l.x);
 	SinCos086  (g_old_z_l.y, &s_sin_y_l,  &s_cos_y_l);
@@ -1305,17 +1208,15 @@ int popcorn_fn_orbit_fp()
 	return 0;
 }
 
-#define FIX_OVERFLOW(arg_)		\
-	do							\
-	{							\
-		if (g_overflow)			\
-		{						\
-			(arg_).x = g_fudge; \
-			(arg_).y = 0;		\
-			g_overflow = false;	\
-		}						\
-	}							\
-	while (0)
+inline void fix_overflow(ComplexL &arg)
+{
+	if (g_overflow)
+	{
+		arg.x = g_fudge;
+		arg.y = 0;
+		g_overflow = false;
+	}
+}
 
 int popcorn_fn_orbit()
 {
@@ -1327,19 +1228,19 @@ int popcorn_fn_orbit()
 	/* ltmpx contains the generalized value of the old real "x" equation */
 	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.y, g_tmp_z_l); /* tmp = (C*old.y)         */
 	LCMPLXtrig1(g_tmp_z_l, ltmpx);             /* tmpx = trig1(tmp)         */
-	FIX_OVERFLOW(ltmpx);
+	fix_overflow(ltmpx);
 	ltmpx.x += g_old_z_l.y;                   /* tmpx = old.y + trig1(tmp) */
 	LCMPLXtrig0(ltmpx, g_tmp_z_l);             /* tmp = trig0(tmpx)         */
-	FIX_OVERFLOW(g_tmp_z_l);
+	fix_overflow(g_tmp_z_l);
 	LCMPLXmult(g_tmp_z_l, g_parameter_l, ltmpx);        /* tmpx = tmp*h            */
 
 	/* ltmpy contains the generalized value of the old real "y" equation */
 	LCMPLXtimesreal(g_parameter2_l, g_old_z_l.x, g_tmp_z_l); /* tmp = (C*old.x)         */
 	LCMPLXtrig3(g_tmp_z_l, ltmpy);             /* tmpy = trig3(tmp)         */
-	FIX_OVERFLOW(ltmpy);
+	fix_overflow(ltmpy);
 	ltmpy.x += g_old_z_l.x;                   /* tmpy = old.x + trig1(tmp) */
 	LCMPLXtrig2(ltmpy, g_tmp_z_l);             /* tmp = trig2(tmpy)         */
-	FIX_OVERFLOW(g_tmp_z_l);
+	fix_overflow(g_tmp_z_l);
 	LCMPLXmult(g_tmp_z_l, g_parameter_l, ltmpy);        /* tmpy = tmp*h            */
 
 	g_new_z_l.x = g_old_z_l.x - ltmpx.x - ltmpy.y;
@@ -2120,7 +2021,11 @@ int magnet2_orbit_fp()
 int lambda_trig_orbit()
 {
 #if !defined(XFRACT)
-	BAIL_OUT_TRIG_XY_LONG();
+	if (labs(g_old_z_l.x) >= g_limit2_l
+		|| labs(g_old_z_l.y) >= g_limit2_l)
+	{
+		return 1;
+	}
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
 	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
@@ -2132,7 +2037,11 @@ int lambda_trig_orbit()
 
 int lambda_trig_orbit_fp()
 {
-	BAIL_OUT_TRIG_XY_FP();
+	if (fabs(g_old_z.x) >= g_rq_limit2
+		|| fabs(g_old_z.y) >= g_rq_limit2)
+	{
+		return 1;
+	}
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
@@ -2143,7 +2052,10 @@ int lambda_trig_orbit_fp()
 int lambda_trig1_orbit()
 {
 #if !defined(XFRACT)
-	BAIL_OUT_TRIG_LONG(); /* sin, cos */
+	if (labs(g_old_z_l.y) >= g_limit2_l)
+	{
+		return 1;
+	}
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
 	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
@@ -2155,7 +2067,10 @@ int lambda_trig1_orbit()
 
 int lambda_trig1_orbit_fp()
 {
-	BAIL_OUT_TRIG_FP(); /* sin, cos */
+	if (fabs(g_old_z.y) >= g_rq_limit2)
+	{
+		return 1;
+	}
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
@@ -2165,7 +2080,10 @@ int lambda_trig1_orbit_fp()
 int lambda_trig2_orbit()
 {
 #if !defined(XFRACT)
-	BAIL_OUT_TRIG_H_LONG(); /* sinh, cosh */
+	if (labs(g_old_z_l.x) >= g_limit2_l)
+	{
+		return 1;
+	}
 	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);           /* g_tmp_z_l = trig(g_old_z_l)           */
 	LCMPLXmult(*g_long_parameter, g_tmp_z_l, g_new_z_l);   /* g_new_z_l = g_long_parameter*trig(g_old_z_l)  */
 	g_old_z_l = g_new_z_l;
@@ -2178,7 +2096,10 @@ int lambda_trig2_orbit()
 int lambda_trig2_orbit_fp()
 {
 #if !defined(XFRACT)
-	BAIL_OUT_TRIG_H_FP(); /* sinh, cosh */
+	if (fabs(g_old_z.x) >= g_rq_limit2)
+	{
+		return 1;
+	}
 	CMPLXtrig0(g_old_z, g_temp_z);              /* tmp = trig(old)           */
 	CMPLXmult(*g_float_parameter, g_temp_z, g_new_z);   /* new = g_long_parameter*trig(old)  */
 	g_old_z = g_new_z;
