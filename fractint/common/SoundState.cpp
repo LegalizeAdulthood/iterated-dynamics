@@ -537,17 +537,17 @@ get_sound_restart:
 
 		switch (i)
 		{
-		case FIK_F6:
+		case IDK_F6:
 			get_music_parameters();/* see below, for controlling fmsynth */
 			goto get_sound_restart;
 			break;
 
-		case FIK_F7:
+		case IDK_F7:
 			get_scale_map();/* see below, for setting scale mapping */
 			goto get_sound_restart;
 			break;
 
-		case FIK_F4:
+		case IDK_F4:
 			_flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* reset to default */
 			g_orbit_delay = 0;
 			_base_hertz = 440;
@@ -600,17 +600,17 @@ get_map_restart:
 			}
 		}
 
-		if (i == FIK_F6 && _menu_count == 1)
+		if (i == IDK_F6 && _menu_count == 1)
 		{
 			get_music_parameters();/* see below, for controling fmsynth */
 			goto get_map_restart;
 		}
-		else if (i == FIK_F6 && _menu_count == 2)
+		else if (i == IDK_F6 && _menu_count == 2)
 		{
 			_menu_count--;
 		}
 
-		if (i == FIK_F4)
+		if (i == IDK_F4)
 		{
 			for (int j = 0; j <= 11; j++)
 			{
@@ -667,17 +667,17 @@ get_music_restart:
 			initfm();
 		}
 
-		if (i == FIK_F7 && _menu_count == 1)
+		if (i == IDK_F7 && _menu_count == 1)
 		{
 			get_scale_map();/* see above, for setting scale mapping */
 			goto get_music_restart;
 		}
-		else if (i == FIK_F7 && _menu_count == 2)
+		else if (i == IDK_F7 && _menu_count == 2)
 		{
 			_menu_count--;
 		}
 
-		if (i == FIK_F4)
+		if (i == IDK_F4)
 		{
 			_polyphony = 0;
 			_fm_wave_type = 0;

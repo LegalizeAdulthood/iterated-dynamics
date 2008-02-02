@@ -1,6 +1,7 @@
 #include <string>
 
 #include "port.h"
+#include "id.h"
 #include "prototyp.h"
 
 long cdecl calculate_mandelbrot_fp_p5_asm()

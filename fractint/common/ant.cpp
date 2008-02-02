@@ -86,20 +86,20 @@ void Ant::set_wait(long *wait)
 		int kbdchar = driver_get_key();
 		switch (kbdchar)
 		{
-		case FIK_CTL_RIGHT_ARROW:
-		case FIK_CTL_UP_ARROW:
+		case IDK_CTL_RIGHT_ARROW:
+		case IDK_CTL_UP_ARROW:
 			*wait += 100;
 			break;
-		case FIK_RIGHT_ARROW:
-		case FIK_UP_ARROW:
+		case IDK_RIGHT_ARROW:
+		case IDK_UP_ARROW:
 			*wait += 10;
 			break;
-		case FIK_CTL_DOWN_ARROW:
-		case FIK_CTL_LEFT_ARROW:
+		case IDK_CTL_DOWN_ARROW:
+		case IDK_CTL_LEFT_ARROW:
 			*wait -= 100;
 			break;
-		case FIK_LEFT_ARROW:
-		case FIK_DOWN_ARROW:
+		case IDK_LEFT_ARROW:
+		case IDK_DOWN_ARROW:
 			*wait -= 10;
 			break;
 		default:
@@ -200,20 +200,20 @@ void Ant::turk_mite1(int rule_len, long maxpts, long wait)
 			}
 			switch (kbdchar)
 			{
-			case FIK_SPACE:
+			case IDK_SPACE:
 				step = 1 - step;
 				break;
-			case FIK_ESC:
+			case IDK_ESC:
 				done = true;
 				break;
-			case FIK_RIGHT_ARROW:
-			case FIK_UP_ARROW:
-			case FIK_DOWN_ARROW:
-			case FIK_LEFT_ARROW:
-			case FIK_CTL_RIGHT_ARROW:
-			case FIK_CTL_UP_ARROW:
-			case FIK_CTL_DOWN_ARROW:
-			case FIK_CTL_LEFT_ARROW:
+			case IDK_RIGHT_ARROW:
+			case IDK_UP_ARROW:
+			case IDK_DOWN_ARROW:
+			case IDK_LEFT_ARROW:
+			case IDK_CTL_RIGHT_ARROW:
+			case IDK_CTL_UP_ARROW:
+			case IDK_CTL_DOWN_ARROW:
+			case IDK_CTL_LEFT_ARROW:
 				set_wait(&wait);
 				break;
 			default:
@@ -360,20 +360,20 @@ void Ant::turk_mite2(int rule_len, long maxpts, long wait)
 			}
 			switch (kbdchar)
 			{
-			case FIK_SPACE:
+			case IDK_SPACE:
 				step = 1 - step;
 				break;
-			case FIK_ESC:
+			case IDK_ESC:
 				done = true;
 				break;
-			case FIK_RIGHT_ARROW:
-			case FIK_UP_ARROW:
-			case FIK_DOWN_ARROW:
-			case FIK_LEFT_ARROW:
-			case FIK_CTL_RIGHT_ARROW:
-			case FIK_CTL_UP_ARROW:
-			case FIK_CTL_DOWN_ARROW:
-			case FIK_CTL_LEFT_ARROW:
+			case IDK_RIGHT_ARROW:
+			case IDK_UP_ARROW:
+			case IDK_DOWN_ARROW:
+			case IDK_LEFT_ARROW:
+			case IDK_CTL_RIGHT_ARROW:
+			case IDK_CTL_UP_ARROW:
+			case IDK_CTL_DOWN_ARROW:
+			case IDK_CTL_LEFT_ARROW:
 				set_wait(&wait);
 				break;
 			default:

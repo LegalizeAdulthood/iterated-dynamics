@@ -52,7 +52,7 @@ typedef enum
 	FE_COMMAND_SHELL,				/* d */
 	FE_ORBITS_WINDOW,				/* o */
 	FE_SELECT_FRACTAL_TYPE,			/* t */
-	FE_TOGGLE_JULIA,				/* FIK_SPACE */
+	FE_TOGGLE_JULIA,				/* IDK_SPACE */
 	FE_TOGGLE_INVERSE,				/* j */
 	FE_PRIOR_IMAGE,					/* h */
 	FE_REVERSE_HISTORY,				/* ^H */
@@ -159,16 +159,16 @@ static fractint_event keyboard_event(int key)
 	}
 	mapping[] =
 	{
-		FIK_CTL_A,	FE_ANT_AUTOMATON,
-		FIK_CTL_B,	FE_BROWSE_PARAMS,
-		FIK_CTL_E,	FE_EVOLVER_PARAMS,
-		FIK_CTL_F,	FE_SOUND_PARAMS,
-		FIK_BACKSPACE,	FE_REVERSE_HISTORY,
-		FIK_TAB,		FE_IMAGE_INFO,
-		FIK_CTL_S,	FE_STEREOGRAM,
-		FIK_ESC,		FE_QUIT,
-		FIK_SPACE,	FE_TOGGLE_JULIA,
-		FIK_INSERT,		FE_RESTART,
+		IDK_CTL_A,	FE_ANT_AUTOMATON,
+		IDK_CTL_B,	FE_BROWSE_PARAMS,
+		IDK_CTL_E,	FE_EVOLVER_PARAMS,
+		IDK_CTL_F,	FE_SOUND_PARAMS,
+		IDK_BACKSPACE,	FE_REVERSE_HISTORY,
+		IDK_TAB,		FE_IMAGE_INFO,
+		IDK_CTL_S,	FE_STEREOGRAM,
+		IDK_ESC,		FE_QUIT,
+		IDK_SPACE,	FE_TOGGLE_JULIA,
+		IDK_INSERT,		FE_RESTART,
 		DELETE,		FE_SELECT_VIDEO_MODE,
 		'@',		FE_EXECUTE_COMMANDS,
 		'#',		FE_3D_OVERLAY,
@@ -552,7 +552,7 @@ int get_key_no_help()
 	{
 		ch = driver_get_key();
 	}
-	while (FIK_F1 == ch);
+	while (IDK_F1 == ch);
 	set_help_mode(old_help_mode);
 	return ch;
 }

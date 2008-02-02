@@ -180,13 +180,13 @@ void Introduction::Show()
 bool Introduction::ProcessWaitingKey(int key)
 {
 	/* spacebar pauses */
-	if (FIK_SPACE == key)
+	if (IDK_SPACE == key)
 	{
 		driver_get_key();
 		m_paused = !m_paused;
 	}
 	// any other key and we're done
-	return (FIK_SPACE != key);
+	return (IDK_SPACE != key);
 }
 
 bool Introduction::ProcessIdle()

@@ -772,13 +772,13 @@ int tab_display_2(char *msg)
 	*msg = 0;
 
 	/* display keycodes while waiting for ESC, BACKSPACE or TAB */
-	while ((key != FIK_ESC) && (key != FIK_BACKSPACE) && (key != FIK_TAB))
+	while ((key != IDK_ESC) && (key != IDK_BACKSPACE) && (key != IDK_TAB))
 	{
 		driver_put_string(row, 2, C_GENERAL_HI, msg);
 		key = get_key_no_help();
 		sprintf(msg, "%d (0x%04x)      ", key, key);
 	}
-	return (key != FIK_ESC);
+	return (key != IDK_ESC);
 }
 
 int tab_display()       /* display the status of the current image */
@@ -1233,13 +1233,13 @@ top:
 	}
 #endif
 	key = get_key_no_help();
-	if (key == FIK_F6)
+	if (key == IDK_F6)
 	{
 		ScreenStacker areaStacker;
 		area();
 		goto top;
 	}
-	else if (key == FIK_CTL_TAB || key == FIK_SHF_TAB || key == FIK_F7)
+	else if (key == IDK_CTL_TAB || key == IDK_SHF_TAB || key == IDK_F7)
 	{
 		if (tab_display_2(msg))
 		{

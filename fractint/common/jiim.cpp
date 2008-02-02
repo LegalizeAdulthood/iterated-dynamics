@@ -782,60 +782,60 @@ void JIIM::execute()
 				case 1143:    /* ctrl - keypad 5 */
 				case 1076:    /* keypad 5        */
 					break;     /* do nothing */
-				case FIK_CTL_PAGE_UP:
+				case IDK_CTL_PAGE_UP:
 					dcol = 4;
 					drow = -4;
 					break;
-				case FIK_CTL_PAGE_DOWN:
+				case IDK_CTL_PAGE_DOWN:
 					dcol = 4;
 					drow = 4;
 					break;
-				case FIK_CTL_HOME:
+				case IDK_CTL_HOME:
 					dcol = -4;
 					drow = -4;
 					break;
-				case FIK_CTL_END:
+				case IDK_CTL_END:
 					dcol = -4;
 					drow = 4;
 					break;
-				case FIK_PAGE_UP:
+				case IDK_PAGE_UP:
 					dcol = 1;
 					drow = -1;
 					break;
-				case FIK_PAGE_DOWN:
+				case IDK_PAGE_DOWN:
 					dcol = 1;
 					drow = 1;
 					break;
-				case FIK_HOME:
+				case IDK_HOME:
 					dcol = -1;
 					drow = -1;
 					break;
-				case FIK_END:
+				case IDK_END:
 					dcol = -1;
 					drow = 1;
 					break;
-				case FIK_UP_ARROW:
+				case IDK_UP_ARROW:
 					drow = -1;
 					break;
-				case FIK_DOWN_ARROW:
+				case IDK_DOWN_ARROW:
 					drow = 1;
 					break;
-				case FIK_LEFT_ARROW:
+				case IDK_LEFT_ARROW:
 					dcol = -1;
 					break;
-				case FIK_RIGHT_ARROW:
+				case IDK_RIGHT_ARROW:
 					dcol = 1;
 					break;
-				case FIK_CTL_UP_ARROW:
+				case IDK_CTL_UP_ARROW:
 					drow = -4;
 					break;
-				case FIK_CTL_DOWN_ARROW:
+				case IDK_CTL_DOWN_ARROW:
 					drow = 4;
 					break;
-				case FIK_CTL_LEFT_ARROW:
+				case IDK_CTL_LEFT_ARROW:
 					dcol = -4;
 					break;
-				case FIK_CTL_RIGHT_ARROW:
+				case IDK_CTL_RIGHT_ARROW:
 					dcol = 4;
 					break;
 				case 'z':
@@ -850,7 +850,7 @@ void JIIM::execute()
 				case '.':
 					zoom *= 1.15f;
 					break;
-				case FIK_SPACE:
+				case IDK_SPACE:
 					g_julia_c = std::complex<double>(cr, ci);
 					goto finish;
 					/* break; */
@@ -894,7 +894,7 @@ void JIIM::execute()
 					}
 					break;
 #ifdef XFRACT
-				case FIK_ENTER:
+				case IDK_ENTER:
 					break;
 #endif
 				case '0':
@@ -925,7 +925,7 @@ void JIIM::execute()
 				g_col += dcol;
 				g_row += drow;
 #ifdef XFRACT
-				if (kbdchar == FIK_ENTER)
+				if (kbdchar == IDK_ENTER)
 				{
 					/* We want to use the position of the cursor */
 					exact = 0;

@@ -35,17 +35,23 @@
 #include "ThreeDimensionalState.h"
 #include "MathUtil.h"
 
-#define FILEERROR_NONE				0
-#define FILEERROR_OPEN				1
-#define FILEERROR_NO_SPACE			2
-#define FILEERROR_BAD_IMAGE_SIZE	3
-#define FILEERROR_BAD_FILE_TYPE		4
+enum FileError
+{
+	FILEERROR_NONE				= 0,
+	FILEERROR_OPEN				= 1,
+	FILEERROR_NO_SPACE			= 2,
+	FILEERROR_BAD_IMAGE_SIZE	= 3,
+	FILEERROR_BAD_FILE_TYPE		= 4
+};
 
-#define TARGA_24 24
-#define TARGA_32 32
+enum
+{
+	TARGA_24 = 24,
+	TARGA_32 = 32,
 
-#define PERSPECTIVE_DISTANCE 250		/* Perspective dist used when viewing light vector */
-#define BAD_CHECK -3000					/* check values against this to determine if good */
+	PERSPECTIVE_DISTANCE = 250,		/* Perspective dist used when viewing light vector */
+	BAD_CHECK = -3000					/* check values against this to determine if good */
+};
 
 template <typename T>
 struct point_t
@@ -1342,7 +1348,10 @@ static void plot_color_put_min_max(int x, int y, int color)
 		each row are calculated by calling the line function for the sides.
 		Then rows are filled in with horizontal lines
 */
-#define MAXOFFSCREEN  2    /* allow two of three points to be off screen */
+enum
+{
+	MAXOFFSCREEN = 2    /* allow two of three points to be off screen */
+};
 
 static void put_a_triangle(point pt1, point pt2, point pt3, int color)
 {

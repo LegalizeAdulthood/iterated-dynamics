@@ -57,7 +57,7 @@ int FileNameGetter::SpeedPrompt(int row, int col, int vid,
 
 int FileNameGetter::CheckSpecialKeys(int key, int)
 {
-	if ((key == FIK_F6) || (key == FIK_F4))
+	if ((key == IDK_F6) || (key == IDK_F4))
 	{
 		return -key;
 	}
@@ -246,12 +246,12 @@ retry_dir:
 		heading, 0, instructions,
 		filecount, (char **) choices, attributes, 
 		box_width, box_depth, column_width, current, 0, speedstr, SpeedPrompt, CheckSpecialKeys);
-	if (i == -FIK_F4)
+	if (i == -IDK_F4)
 	{
 		sort_entries = !sort_entries;
 		goto restart;
 	}
-	if (i == -FIK_F6)
+	if (i == -IDK_F6)
 	{
 		static bool lastdir = false;
 		if (!lastdir)

@@ -299,8 +299,8 @@ int auto_stereo()
 			int kbdchar = driver_get_key();
 			switch (kbdchar)
 			{
-			case FIK_ENTER:   /* toggle bars */
-			case FIK_SPACE:
+			case IDK_ENTER:   /* toggle bars */
+			case IDK_SPACE:
 				toggle_bars(bars, barwidth, colour);
 				break;
 			case 'c':
@@ -313,7 +313,7 @@ int auto_stereo()
 				save_to_disk(g_save_name);
 				break;
 			default:
-				if (kbdchar == FIK_ESC)   /* if ESC avoid returning to menu */
+				if (kbdchar == IDK_ESC)   /* if ESC avoid returning to menu */
 				{
 					kbdchar = 255;
 				}

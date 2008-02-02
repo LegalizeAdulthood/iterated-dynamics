@@ -64,11 +64,14 @@ enum ShowDotType
 	SHOWDOT_RESTORE = 2
 };
 
-#define JUST_A_POINT 0
-#define LOWER_RIGHT  1
-#define UPPER_RIGHT  2
-#define LOWER_LEFT   3
-#define UPPER_LEFT   4
+enum DotDirection
+{
+	JUST_A_POINT = 0,
+	LOWER_RIGHT  = 1,
+	UPPER_RIGHT  = 2,
+	LOWER_LEFT   = 3,
+	UPPER_LEFT   = 4
+};
 
 /* variables exported from this file */
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
@@ -132,9 +135,9 @@ int g_current_col;
 bool g_three_pass;
 bool g_next_screen_flag; /* for cellular next screen generation */
 int     g_num_attractors;                 /* number of finite attractors  */
-ComplexD  g_attractors[N_ATTR];       /* finite attractor vals (f.p)  */
-ComplexL g_attractors_l[N_ATTR];      /* finite attractor vals (int)  */
-int    g_attractor_period[N_ATTR];          /* period of the finite attractor */
+ComplexD  g_attractors[MAX_NUM_ATTRACTORS];       /* finite attractor vals (f.p)  */
+ComplexL g_attractors_l[MAX_NUM_ATTRACTORS];      /* finite attractor vals (int)  */
+int    g_attractor_period[MAX_NUM_ATTRACTORS];          /* period of the finite attractor */
 int g_periodicity_check;
 /* next has a skip bit for each s_max_block unit;
 	1st pass sets bit  [1]... off only if g_block's contents guessed;
@@ -187,6 +190,9 @@ static BYTE *s_fill_buffer = 0;
 static int s_save_dots_len;
 static int s_show_dot_color;
 static int s_show_dot_width = 0;
+
+static double const DEM_BAILOUT = 535.5;  /* (pb: not sure if this is special or arbitrary) */
+
 
 /* FMODTEST routine. */
 /* Makes the test condition for the COLORMODE_FLOAT_MODULUS coloring type
@@ -334,7 +340,87 @@ static void sym_put_line(int row, int left, int right, BYTE *str)
 	}
 }
 
-static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, int direction, int action)
+static void show_dot_save_restore_upper_left(int startx, int &stopx, int starty, int stopy, int action)
+{
+	{
+		int ct = 0;
+		for (int j = starty; j >= stopy; stopx--, j--)
+		{
+			if (action == SHOWDOT_SAVE)
+			{
+				get_line(j, startx, stopx, s_save_dots + ct);
+				sym_fill_line(j, startx, stopx, s_fill_buffer);
+			}
+			else
+			{
+				sym_put_line(j, startx, stopx, s_save_dots + ct);
+			}
+			ct += stopx-startx + 1;
+		}
+	}
+}
+
+static void show_dot_save_restore_lower_left(int startx, int &stopx, int starty, int stopy, int action)
+{
+	{
+		int ct = 0;
+		for (int j = starty; j <= stopy; stopx--, j++)
+		{
+			if (action == SHOWDOT_SAVE)
+			{
+				get_line(j, startx, stopx, s_save_dots + ct);
+				sym_fill_line(j, startx, stopx, s_fill_buffer);
+			}
+			else
+			{
+				sym_put_line(j, startx, stopx, s_save_dots + ct);
+			}
+			ct += stopx-startx + 1;
+		}
+	}
+}
+
+static void show_dot_save_restore_upper_right(int &startx, int stopx, int starty, int stopy, int action)
+{
+	{
+		int ct = 0;
+		for (int j = starty; j >= stopy; startx++, j--)
+		{
+			if (action == SHOWDOT_SAVE)
+			{
+				get_line(j, startx, stopx, s_save_dots + ct);
+				sym_fill_line(j, startx, stopx, s_fill_buffer);
+			}
+			else
+			{
+				sym_put_line(j, startx, stopx, s_save_dots + ct);
+			}
+			ct += stopx-startx + 1;
+		}
+	}
+}
+
+static void show_dot_save_restore_lower_right(int &startx, int stopx, int starty, int stopy, int action)
+{
+	{
+		int ct = 0;
+		for (int j = starty; j <= stopy; startx++, j++)
+		{
+			if (action == SHOWDOT_SAVE)
+			{
+				get_line(j, startx, stopx, s_save_dots + ct);
+				sym_fill_line(j, startx, stopx, s_fill_buffer);
+			}
+			else
+			{
+				sym_put_line(j, startx, stopx, s_save_dots + ct);
+			}
+			ct += stopx-startx + 1;
+		}
+	}
+}
+
+static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, DotDirection direction, int action)
 {
 	if (direction != JUST_A_POINT)
 	{
@@ -349,68 +435,19 @@ static void show_dot_save_restore(int startx, int stopx, int starty, int stopy, 
 			exit(0);
 		}
 	}
-	int ct = 0;
 	switch (direction)
 	{
 	case LOWER_RIGHT:
-		for (int j = starty; j <= stopy; startx++, j++)
-		{
-			if (action == SHOWDOT_SAVE)
-			{
-				get_line(j, startx, stopx, s_save_dots + ct);
-				sym_fill_line(j, startx, stopx, s_fill_buffer);
-			}
-			else
-			{
-				sym_put_line(j, startx, stopx, s_save_dots + ct);
-			}
-			ct += stopx-startx + 1;
-		}
+		show_dot_save_restore_lower_right(startx, stopx, starty, stopy, action);
 		break;
 	case UPPER_RIGHT:
-		for (int j = starty; j >= stopy; startx++, j--)
-		{
-			if (action == SHOWDOT_SAVE)
-			{
-				get_line(j, startx, stopx, s_save_dots + ct);
-				sym_fill_line(j, startx, stopx, s_fill_buffer);
-			}
-			else
-			{
-				sym_put_line(j, startx, stopx, s_save_dots + ct);
-			}
-			ct += stopx-startx + 1;
-		}
+		show_dot_save_restore_upper_right(startx, stopx, starty, stopy, action);
 		break;
 	case LOWER_LEFT:
-		for (int j = starty; j <= stopy; stopx--, j++)
-		{
-			if (action == SHOWDOT_SAVE)
-			{
-				get_line(j, startx, stopx, s_save_dots + ct);
-				sym_fill_line(j, startx, stopx, s_fill_buffer);
-			}
-			else
-			{
-				sym_put_line(j, startx, stopx, s_save_dots + ct);
-			}
-			ct += stopx-startx + 1;
-		}
+		show_dot_save_restore_lower_left(startx, stopx, starty, stopy, action);
 		break;
 	case UPPER_LEFT:
-		for (int j = starty; j >= stopy; stopx--, j--)
-		{
-			if (action == SHOWDOT_SAVE)
-			{
-				get_line(j, startx, stopx, s_save_dots + ct);
-				sym_fill_line(j, startx, stopx, s_fill_buffer);
-			}
-			else
-			{
-				sym_put_line(j, startx, stopx, s_save_dots + ct);
-			}
-			ct += stopx-startx + 1;
-		}
+		show_dot_save_restore_upper_left(startx, stopx, starty, stopy, action);
 		break;
 	}
 	if (action == SHOWDOT_SAVE)
@@ -426,7 +463,7 @@ static int calculate_type_show_dot()
 	int stopx = g_col;
 	int starty = g_row;
 	int stopy = g_row;
-	int direction = JUST_A_POINT;
+	DotDirection direction = JUST_A_POINT;
 	if (width > 0)
 	{
 		if (g_col + width <= g_x_stop && g_row + width <= g_y_stop)
@@ -634,7 +671,7 @@ int calculate_fractal()
 		g_f_x_center   = g_inversion[1];
 		g_f_y_center   = g_inversion[2];
 
-		if (g_inversion[0] == AUTOINVERT)  /*  auto calc radius 1/6 screen */
+		if (g_inversion[0] == AUTO_INVERT)  /*  auto calc radius 1/6 screen */
 		{
 			g_inversion[0] = std::min(fabs(g_escape_time_state.m_grid_fp.width()),
 								fabs(g_escape_time_state.m_grid_fp.height()))/6.0;
@@ -642,7 +679,7 @@ int calculate_fractal()
 			g_f_radius = g_inversion[0];
 		}
 
-		if (g_invert < 2 || g_inversion[1] == AUTOINVERT)  /* xcenter not already set */
+		if (g_invert < 2 || g_inversion[1] == AUTO_INVERT)  /* xcenter not already set */
 		{
 			g_inversion[1] = g_escape_time_state.m_grid_fp.x_center();
 			fix_inversion(&g_inversion[1]);
@@ -654,7 +691,7 @@ int calculate_fractal()
 			}
 		}
 
-		if (g_invert < 3 || g_inversion[2] == AUTOINVERT)  /* ycenter not already set */
+		if (g_invert < 3 || g_inversion[2] == AUTO_INVERT)  /* ycenter not already set */
 		{
 			g_inversion[2] = g_escape_time_state.m_grid_fp.y_center();
 			fix_inversion(&g_inversion[2]);
@@ -1274,9 +1311,14 @@ int calculate_mandelbrot_fp()
 	}
 	return g_color;
 }
-#define STARTRAILMAX FLT_MAX   /* just a convenient large number */
-#define green 2
-#define yellow 6
+
+float const STARTRAILMAX  = FLT_MAX;   /* just a convenient large number */
+enum
+{
+	green = 2,
+	yellow = 6
+};
+
 #if 0
 #define MINSAVEDAND 3   /* if not defined, old method used */
 #endif
@@ -2394,42 +2436,38 @@ plot_pixel:
 
 	return check_if_interrupted();
 }
-#undef green
-#undef yellow
-
-#define cos45  sin45
-#define lcos45 lsin45
 
 /**************** standardfractal doodad subroutines *********************/
 static void decomposition()
-{
-	/* static double cos45     = 0.70710678118654750; */ /* cos 45  degrees */
-	static double sin45     = 0.70710678118654750; /* sin 45     degrees */
-	static double cos22_5   = 0.92387953251128670; /* cos 22.5   degrees */
-	static double sin22_5   = 0.38268343236508980; /* sin 22.5   degrees */
-	static double cos11_25  = 0.98078528040323040; /* cos 11.25  degrees */
-	static double sin11_25  = 0.19509032201612820; /* sin 11.25  degrees */
-	static double cos5_625  = 0.99518472667219690; /* cos 5.625  degrees */
-	static double sin5_625  = 0.09801714032956060; /* sin 5.625  degrees */
-	static double tan22_5   = 0.41421356237309500; /* tan 22.5   degrees */
-	static double tan11_25  = 0.19891236737965800; /* tan 11.25  degrees */
-	static double tan5_625  = 0.09849140335716425; /* tan 5.625  degrees */
-	static double tan2_8125 = 0.04912684976946725; /* tan 2.8125 degrees */
-	static double tan1_4063 = 0.02454862210892544; /* tan 1.4063 degrees */
-	/* static long lcos45     ;*/ /* cos 45   degrees */
-	static long lsin45; /* sin 45     degrees */
-	static long lcos22_5; /* cos 22.5   degrees */
-	static long lsin22_5; /* sin 22.5   degrees */
-	static long lcos11_25; /* cos 11.25  degrees */
-	static long lsin11_25; /* sin 11.25  degrees */
-	static long lcos5_625; /* cos 5.625  degrees */
-	static long lsin5_625; /* sin 5.625  degrees */
-	static long ltan22_5; /* tan 22.5   degrees */
-	static long ltan11_25; /* tan 11.25  degrees */
-	static long ltan5_625; /* tan 5.625  degrees */
-	static long ltan2_8125; /* tan 2.8125 degrees */
-	static long ltan1_4063; /* tan 1.4063 degrees */
+	{
+	static double cos45     = 0.70710678118654750;	/* cos 45     degrees */
+	static double sin45     = 0.70710678118654750;	/* sin 45     degrees */
+	static double cos22_5   = 0.92387953251128670;	/* cos 22.5   degrees */
+	static double sin22_5   = 0.38268343236508980;	/* sin 22.5   degrees */
+	static double cos11_25  = 0.98078528040323040;	/* cos 11.25  degrees */
+	static double sin11_25  = 0.19509032201612820;	/* sin 11.25  degrees */
+	static double cos5_625  = 0.99518472667219690;	/* cos 5.625  degrees */
+	static double sin5_625  = 0.09801714032956060;	/* sin 5.625  degrees */
+	static double tan22_5   = 0.41421356237309500;	/* tan 22.5   degrees */
+	static double tan11_25  = 0.19891236737965800;	/* tan 11.25  degrees */
+	static double tan5_625  = 0.09849140335716425;	/* tan 5.625  degrees */
+	static double tan2_8125 = 0.04912684976946725;	/* tan 2.8125 degrees */
+	static double tan1_4063 = 0.02454862210892544;	/* tan 1.4063 degrees */
+	static long lcos45;								/* cos 45     degrees */
+	static long lsin45;								/* sin 45     degrees */
+	static long lcos22_5;							/* cos 22.5   degrees */
+	static long lsin22_5;							/* sin 22.5   degrees */
+	static long lcos11_25;							/* cos 11.25  degrees */
+	static long lsin11_25;							/* sin 11.25  degrees */
+	static long lcos5_625;							/* cos 5.625  degrees */
+	static long lsin5_625;							/* sin 5.625  degrees */
+	static long ltan22_5;							/* tan 22.5   degrees */
+	static long ltan11_25;							/* tan 11.25  degrees */
+	static long ltan5_625;							/* tan 5.625  degrees */
+	static long ltan2_8125;							/* tan 2.8125 degrees */
+	static long ltan1_4063;							/* tan 1.4063 degrees */
 	static long reset_fudge = -1;
+
 	int temp = 0;
 	int save_temp = 0;
 	ComplexL lalt;

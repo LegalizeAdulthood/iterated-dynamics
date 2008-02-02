@@ -32,16 +32,17 @@
 #include "testpt.h"
 
 /* for bifurcation type: */
-#define DEFAULT_FILTER 1000     /* "Beauty of Fractals" recommends using 5000
-								(p.25), but that seems unnecessary. Can
-								override this value with a nonzero param1 */
-#define SEED 0.66               /* starting value for population */
+static long const DEFAULT_FILTER = 1000;
+// "Beauty of Fractals" recommends using 5000 (p.25), but that seems unnecessary.
+// Can override this value with a nonzero param1
+
+static double const SEED = 0.66;               /* starting value for population */
 
 /* global data */
 
 /* data local to this module */
 static int *s_verhulst_array = 0;
-static unsigned long s_filter_cycles;
+static long s_filter_cycles;
 static bool s_half_time_check;
 static long s_population_l;
 static long s_rate_l;

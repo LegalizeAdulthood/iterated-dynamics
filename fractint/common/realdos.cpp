@@ -96,7 +96,7 @@ int stop_message(int flags, const char *msg)
 		return -1;
 	}
 	ret = 0;
-	MouseModeSaver saved_mouse(-FIK_ENTER);
+	MouseModeSaver saved_mouse(-IDK_ENTER);
 	if ((flags & STOPMSG_NO_STACK))
 	{
 		blank_rows(toprow = 12, 10, 7);
@@ -131,7 +131,7 @@ int stop_message(int flags, const char *msg)
 	}
 	if (g_debug_mode != DEBUGMODE_NO_HELP_F1_ESC)
 	{
-		if (get_key_no_help() == FIK_ESC)
+		if (get_key_no_help() == IDK_ESC)
 		{
 			ret = -1;
 		}
@@ -440,7 +440,7 @@ top:
 	attributes[nextleft] = 256 + MENU_HDG;
 
 	nextleft += 2;
-	choicekey[nextleft] = FIK_DELETE;
+	choicekey[nextleft] = IDK_DELETE;
 	attributes[nextleft] = MENU_ITEM;
 #ifdef XFRACT
 	choices[nextleft] = "draw fractal           <D>  ";
@@ -460,7 +460,7 @@ top:
 			|| !fractal_type_none(g_current_fractal_specific->tomandel))
 		{
 			nextleft += 2;
-			choicekey[nextleft] = FIK_SPACE;
+			choicekey[nextleft] = IDK_SPACE;
 			attributes[nextleft] = MENU_ITEM;
 			choices[nextleft] = "toggle to/from julia <space>";
 			showjuliatoggle = 1;
@@ -480,7 +480,7 @@ top:
 		choices[nextleft] = "return to prior image  <h>   ";
 
 		nextleft += 2;
-		choicekey[nextleft] = FIK_BACKSPACE;
+		choicekey[nextleft] = IDK_BACKSPACE;
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = "reverse thru history <ctl-h> ";
 	}
@@ -527,21 +527,21 @@ top:
 	}
 
 	nextleft += 2;
-	choicekey[nextleft] = FIK_CTL_B;
+	choicekey[nextleft] = IDK_CTL_B;
 	attributes[nextleft] = MENU_ITEM;
 	choices[nextleft] = "browse parms...      <ctl-b>";
 
 	if (full_menu)
 	{
 		nextleft += 2;
-		choicekey[nextleft] = FIK_CTL_E;
+		choicekey[nextleft] = IDK_CTL_E;
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = "evolver parms...     <ctl-e>";
 
 		// TODO: sound support for unix/X11
 #if !defined(XFRACT)
 		nextleft += 2;
-		choicekey[nextleft] = FIK_CTL_F;
+		choicekey[nextleft] = IDK_CTL_F;
 		attributes[nextleft] = MENU_ITEM;
 		choices[nextleft] = "sound parms...       <ctl-f>";
 #endif
@@ -607,12 +607,12 @@ top:
 	choices[nextright] = "give command string      <g>  ";
 
 	nextright += 2;
-	choicekey[nextright] = FIK_ESC;
+	choicekey[nextright] = IDK_ESC;
 	attributes[nextright] = MENU_ITEM;
 	choices[nextright] = "quit Iterated Dynamics  <esc> ";
 
 	nextright += 2;
-	choicekey[nextright] = FIK_INSERT;
+	choicekey[nextright] = IDK_INSERT;
 	attributes[nextright] = MENU_ITEM;
 	choices[nextright] = "restart Iterated Dynamics<ins>";
 
@@ -648,12 +648,12 @@ top:
 	}
 
 	nextright += 2;
-	choicekey[nextright] = FIK_CTL_A;
+	choicekey[nextright] = IDK_CTL_A;
 	attributes[nextright] = MENU_ITEM;
 	choices[nextright] = "ant automaton          <ctl-a>";
 
 	nextright += 2;
-	choicekey[nextright] = FIK_CTL_S;
+	choicekey[nextright] = IDK_CTL_S;
 	attributes[nextright] = MENU_ITEM;
 	choices[nextright] = "stereogram             <ctl-s>";
 
@@ -672,7 +672,7 @@ top:
 			2, nextleft/2, 29, 0, 0, 0, 0, menu_check_key);
 		if (i == -1)     /* escape */
 		{
-			i = FIK_ESC;
+			i = IDK_ESC;
 		}
 		else if (i < 0)
 		{
@@ -689,7 +689,7 @@ top:
 			}
 		}
 	}
-	if (i == FIK_ESC)             /* escape from menu exits Fractint */
+	if (i == IDK_ESC)             /* escape from menu exits Fractint */
 	{
 		help_title();
 		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
@@ -714,12 +714,12 @@ top:
 		}
 		goodbye();
 	}
-	if (i == FIK_TAB)
+	if (i == IDK_TAB)
 	{
 		tab_display();
 		i = 0;
 	}
-	if (i == FIK_ENTER || i == FIK_ENTER_2)
+	if (i == IDK_ENTER || i == IDK_ENTER_2)
 	{
 		i = 0;                 /* don't trigger new calc */
 	}
@@ -734,7 +734,7 @@ static int menu_check_key(int curkey, int choice)
 	testkey = (curkey >= 'A' && curkey <= 'Z') ? curkey + ('a'-'A') : curkey;
 #ifdef XFRACT
 	/* We use F2 for shift-@, annoyingly enough */
-	if (testkey == FIK_F2)
+	if (testkey == IDK_F2)
 	{
 		return -testkey;
 	}
@@ -743,16 +743,16 @@ static int menu_check_key(int curkey, int choice)
 	{
 		testkey = '@';
 	}
-	if (strchr("#@2txyzgvir3dj", testkey) || testkey == FIK_INSERT || testkey == FIK_CTL_B
-		|| testkey == FIK_ESC || testkey == FIK_DELETE || testkey == FIK_CTL_F)
+	if (strchr("#@2txyzgvir3dj", testkey) || testkey == IDK_INSERT || testkey == IDK_CTL_B
+		|| testkey == IDK_ESC || testkey == IDK_DELETE || testkey == IDK_CTL_F)
 	{
 		return -testkey;
 	}
 	if (s_full_menu)
 	{
-		if (strchr("\\sobpkrh", testkey) || testkey == FIK_TAB
-			|| testkey == FIK_CTL_A || testkey == FIK_CTL_E || testkey == FIK_BACKSPACE
-			|| testkey == FIK_CTL_S || testkey == FIK_CTL_U) /* ctrl-A, E, H, P, S, U */
+		if (strchr("\\sobpkrh", testkey) || testkey == IDK_TAB
+			|| testkey == IDK_CTL_A || testkey == IDK_CTL_E || testkey == IDK_BACKSPACE
+			|| testkey == IDK_CTL_S || testkey == IDK_CTL_U) /* ctrl-A, E, H, P, S, U */
 		{
 			return -testkey;
 		}
@@ -778,7 +778,7 @@ static int menu_check_key(int curkey, int choice)
 			}
 		}
 		/* Alt-A and Alt-S */
-		if (testkey == FIK_ALT_A || testkey == FIK_ALT_S )
+		if (testkey == IDK_ALT_A || testkey == IDK_ALT_S )
 		{
 			return -testkey;
 		}
@@ -837,35 +837,35 @@ int input_field(
 		}
 		switch (curkey)
 		{
-		case FIK_ENTER:
-		case FIK_ENTER_2:
+		case IDK_ENTER:
+		case IDK_ENTER_2:
 			ret = 0;
 			goto inpfld_end;
-		case FIK_ESC:
+		case IDK_ESC:
 			goto inpfld_end;
-		case FIK_RIGHT_ARROW:
+		case IDK_RIGHT_ARROW:
 			if (offset < len-1)
 			{
 				++offset;
 			}
 			started = true;
 			break;
-		case FIK_LEFT_ARROW:
+		case IDK_LEFT_ARROW:
 			if (offset > 0)
 			{
 				--offset;
 			}
 			started = true;
 			break;
-		case FIK_HOME:
+		case IDK_HOME:
 			offset = 0;
 			started = true;
 			break;
-		case FIK_END:
+		case IDK_END:
 			offset = int(strlen(fld));
 			started = true;
 			break;
-		case FIK_BACKSPACE:
+		case IDK_BACKSPACE:
 		case 127:                              /* backspace */
 #if defined(_WIN32)
 			_ASSERTE(127 != curkey);
@@ -882,7 +882,7 @@ int input_field(
 			started = true;
 			display = 1;
 			break;
-		case FIK_DELETE:                           /* delete */
+		case IDK_DELETE:                           /* delete */
 			j = int(strlen(fld));
 			for (i = offset; i < j; ++i)
 			{
@@ -891,11 +891,11 @@ int input_field(
 			started = true;
 			display = 1;
 			break;
-		case FIK_INSERT:                           /* insert */
+		case IDK_INSERT:                           /* insert */
 			insert ^= 0x8000;
 			started = true;
 			break;
-		case FIK_F5:
+		case IDK_F5:
 			strcpy(fld, savefld);
 			insert = 0;
 			started = false;
@@ -1153,17 +1153,17 @@ int check_vidmode_keyname(char *kname)
 	keyset = 1058;
 	if (*kname == 'S' || *kname == 's')
 	{
-		keyset = FIK_SF1 - 1;
+		keyset = IDK_SF1 - 1;
 		++kname;
 	}
 	else if (*kname == 'C' || *kname == 'c')
 	{
-		keyset = FIK_CTL_F1 - 1;
+		keyset = IDK_CTL_F1 - 1;
 		++kname;
 	}
 	else if (*kname == 'A' || *kname == 'a')
 	{
-		keyset = FIK_ALT_F1 - 1;
+		keyset = IDK_ALT_F1 - 1;
 		++kname;
 	}
 	if (*kname != 'F' && *kname != 'f')
@@ -1206,21 +1206,21 @@ static std::string video_mode_key_name(int key, int base, const char *prefix)
 
 std::string video_mode_key_name(int k)
 {
-	if (k >= FIK_ALT_F1 && k <= FIK_ALT_F10)
+	if (k >= IDK_ALT_F1 && k <= IDK_ALT_F10)
 	{
-		return video_mode_key_name(k, FIK_ALT_F1, "AF");
+		return video_mode_key_name(k, IDK_ALT_F1, "AF");
 	}
-	if (k >= FIK_CTL_F1 && k <= FIK_CTL_F10)
+	if (k >= IDK_CTL_F1 && k <= IDK_CTL_F10)
 	{
-		return video_mode_key_name(k, FIK_CTL_F1, "CF");
+		return video_mode_key_name(k, IDK_CTL_F1, "CF");
 	}
-	if (k >= FIK_SF1 && k <= FIK_SF10)
+	if (k >= IDK_SF1 && k <= IDK_SF10)
 	{
-		return video_mode_key_name(k, FIK_SF1, "SF");
+		return video_mode_key_name(k, IDK_SF1, "SF");
 	}
-	if (k >= FIK_F1 && k <= FIK_F10)
+	if (k >= IDK_F1 && k <= IDK_F10)
 	{
-		return video_mode_key_name(k, FIK_F1, "F");
+		return video_mode_key_name(k, IDK_F1, "F");
 	}
 	return "";
 }

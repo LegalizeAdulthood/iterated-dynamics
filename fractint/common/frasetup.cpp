@@ -21,10 +21,6 @@
 #include "FiniteAttractor.h"
 #include "SoundState.h"
 
-#if !defined(XFRACT)
-#define MPCmod(m) (*MPadd(*MPmul((m).x, (m).x), *MPmul((m).y, (m).y)))
-#endif
-
 long calculate_mandelbrot_fp_asm();
 
 /* -------------------------------------------------------------------- */

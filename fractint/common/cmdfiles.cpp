@@ -46,8 +46,6 @@
 #include "ThreeDimensionalState.h"
 #include "ViewWindow.h"
 
-#define INIT_GIF87      0						/* Turn on GIF 89a processing  */
-
 /* variables defined by the command line/files processor */
 int     g_stop_pass = 0;						/* stop at this guessing pass early */
 int     g_pseudo_x = 0;							/* g_x_dots to use for video independence */
@@ -3460,7 +3458,7 @@ void pause_error(int action)
 			}
 			else if (needpause == PAUSE_ERROR_GOODBYE)
 			{
-				if (get_key_no_help() == FIK_ESC)
+				if (get_key_no_help() == IDK_ESC)
 				{
 					goodbye();
 				}

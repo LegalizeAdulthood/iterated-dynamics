@@ -24,10 +24,6 @@
 #include "fpu.h"
 #include "jiim.h"
 
-#ifndef sqr
-#define sqr(x) ((x)*(x))
-#endif
-
 ComplexD ComplexPower(ComplexD xx, ComplexD yy)
 {
 	ComplexD z;

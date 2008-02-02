@@ -11,6 +11,7 @@
 #include <windows.h>
 
 #include "port.h"
+#include "id.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
@@ -116,18 +117,18 @@ Win32DiskDriver::Win32DiskDriver(const char *name, const char *description)
 	{ name_, comment_, key_, width_, height_, 256 }
 VIDEOINFO Win32DiskDriver::s_modes[] =
 {
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF2,  320,  240),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF3,  400,  300),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF4,  480,  360),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF5,  600,  450),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF6,  640,  480),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF7,  800,  600),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF8, 1024,  768),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF9, 1200,  900),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_SF10, 1280,  960),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_ALT_F1, 1400, 1050),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_ALT_F2, 1500, 1125),
-	DRIVER_MODE("Win32 Disk Video         ", "                        ", FIK_ALT_F3, 1600, 1200)
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF2,  320,  240),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF3,  400,  300),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF4,  480,  360),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF5,  600,  450),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF6,  640,  480),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF7,  800,  600),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF8, 1024,  768),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF9, 1200,  900),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_SF10, 1280,  960),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_ALT_F1, 1400, 1050),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_ALT_F2, 1500, 1125),
+	DRIVER_MODE("Win32 Disk Video         ", "                        ", IDK_ALT_F3, 1600, 1200)
 };
 #undef DRIVER_MODE
 
@@ -198,14 +199,14 @@ static int handle_help_tab(int ch)
 {
 	static int inside_help = 0;
 
-	if (FIK_F1 == ch && get_help_mode() && !inside_help)
+	if (IDK_F1 == ch && get_help_mode() && !inside_help)
 	{
 		inside_help = 1;
 		help(ACTION_CALL);
 		inside_help = 0;
 		ch = 0;
 	}
-	else if (FIK_TAB == ch && g_tab_display_enabled)
+	else if (IDK_TAB == ch && g_tab_display_enabled)
 	{
 		bool save_tab_display_enabled = g_tab_display_enabled;
 		g_tab_display_enabled = false;

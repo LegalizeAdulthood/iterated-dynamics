@@ -53,17 +53,20 @@
  * returned intact up the various subroutine
  * levels...
  */
-#define OUT_OF_MEMORY -10
-#define BAD_CODE_SIZE -20
-#define READ_ERROR -1
-#define WRITE_ERROR -2
-#define OPEN_ERROR -3
-#define CREATE_ERROR -4
+enum
+{
+	OUT_OF_MEMORY = -10,
+	BAD_CODE_SIZE = -20,
+	READ_ERROR = -1,
+	WRITE_ERROR = -2,
+	OPEN_ERROR = -3,
+	CREATE_ERROR = -4,
 
-#define MAX_CODES   4095
+	MAX_CODES = 4095,
 
-#define NOPE 0
-#define YUP -1
+	NOPE = 0,
+	YUP = -1
+};
 
 /* extern short out_line(pixels, linelen)
  *     UBYTE pixels[];

@@ -661,40 +661,40 @@ int FullScreenPrompter::Prompt()
 			done = driver_get_key();
 			switch (done)
 			{
-			case FIK_ESC:
+			case IDK_ESC:
 				done = -1;
-			case FIK_ENTER:
-			case FIK_ENTER_2:
+			case IDK_ENTER:
+			case IDK_ENTER_2:
 				goto fullscreen_exit;
-			case FIK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
+			case IDK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
 				if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 				{
 					s_scroll_row_status++;
 					rewrite_footer = true;
 				}
 				break;
-			case FIK_CTL_UP_ARROW:      /* scrolling key - up one row */
+			case IDK_CTL_UP_ARROW:      /* scrolling key - up one row */
 				if (_scrollingMode && s_scroll_row_status > 0)
 				{
 					s_scroll_row_status--;
 					rewrite_footer = true;
 				}
 				break;
-			case FIK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
+			case IDK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
 				if (_scrollingMode && s_scroll_column_status > 0)
 				{
 					s_scroll_column_status--;
 					rewrite_footer = true;
 				}
 				break;
-			case FIK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
+			case IDK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
 				if (_scrollingMode && strchr(_footer, '\021') != 0)
 				{
 					s_scroll_column_status++;
 					rewrite_footer = true;
 				}
 				break;
-			case FIK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
+			case IDK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
 				if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 				{
 					s_scroll_row_status += _footerLines - 2;
@@ -705,7 +705,7 @@ int FullScreenPrompter::Prompt()
 					rewrite_footer = true;
 				}
 				break;
-			case FIK_CTL_PAGE_UP:     /* scrolling key - up one screen */
+			case IDK_CTL_PAGE_UP:     /* scrolling key - up one screen */
 				if (_scrollingMode && s_scroll_row_status > 0)
 				{
 					s_scroll_row_status -= _footerLines - 2;
@@ -716,7 +716,7 @@ int FullScreenPrompter::Prompt()
 					rewrite_footer = true;
 				}
 				break;
-			case FIK_CTL_END:         /* scrolling key - to end of entry */
+			case IDK_CTL_END:         /* scrolling key - to end of entry */
 				if (_scrollingMode)
 				{
 					s_scroll_row_status = _verticalScrollLimit;
@@ -724,7 +724,7 @@ int FullScreenPrompter::Prompt()
 					rewrite_footer = true;
 				}
 				break;
-			case FIK_CTL_HOME:        /* scrolling key - to beginning of entry */
+			case IDK_CTL_HOME:        /* scrolling key - to beginning of entry */
 				if (_scrollingMode)
 				{
 					s_scroll_row_status = 0;
@@ -732,16 +732,16 @@ int FullScreenPrompter::Prompt()
 					rewrite_footer = true;
 				}
 				break;
-			case FIK_F2:
-			case FIK_F3:
-			case FIK_F4:
-			case FIK_F5:
-			case FIK_F6:
-			case FIK_F7:
-			case FIK_F8:
-			case FIK_F9:
-			case FIK_F10:
-				if (s_prompt_function_key_mask & (1 << (done + 1-FIK_F1)))
+			case IDK_F2:
+			case IDK_F3:
+			case IDK_F4:
+			case IDK_F5:
+			case IDK_F6:
+			case IDK_F7:
+			case IDK_F8:
+			case IDK_F9:
+			case IDK_F10:
+				if (s_prompt_function_key_mask & (1 << (done + 1-IDK_F1)))
 				{
 					goto fullscreen_exit;
 				}
@@ -855,23 +855,23 @@ int FullScreenPrompter::Prompt()
 		switch (i)
 		{
 		case 0:  /* enter  */
-			done = FIK_ENTER;
+			done = IDK_ENTER;
 			break;
 		case -1: /* escape */
-		case FIK_F2:
-		case FIK_F3:
-		case FIK_F4:
-		case FIK_F5:
-		case FIK_F6:
-		case FIK_F7:
-		case FIK_F8:
-		case FIK_F9:
-		case FIK_F10:
+		case IDK_F2:
+		case IDK_F3:
+		case IDK_F4:
+		case IDK_F5:
+		case IDK_F6:
+		case IDK_F7:
+		case IDK_F8:
+		case IDK_F9:
+		case IDK_F10:
 			done = i;
 			break;
-		case FIK_PAGE_UP:
+		case IDK_PAGE_UP:
 			current_choice = -1;
-		case FIK_DOWN_ARROW:
+		case IDK_DOWN_ARROW:
 			do
 			{
 				if (++current_choice >= _numPrompts)
@@ -881,9 +881,9 @@ int FullScreenPrompter::Prompt()
 			}
 			while (_values[current_choice].type == '*');
 			break;
-		case FIK_PAGE_DOWN:
+		case IDK_PAGE_DOWN:
 			current_choice = _numPrompts;
-		case FIK_UP_ARROW:
+		case IDK_UP_ARROW:
 			do
 			{
 				if (--current_choice < 0)
@@ -893,35 +893,35 @@ int FullScreenPrompter::Prompt()
 			}
 			while (_values[current_choice].type == '*');
 			break;
-		case FIK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
+		case IDK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
 			if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 			{
 				s_scroll_row_status++;
 				rewrite_footer = true;
 			}
 			break;
-		case FIK_CTL_UP_ARROW:       /* scrolling key - up one row */
+		case IDK_CTL_UP_ARROW:       /* scrolling key - up one row */
 			if (_scrollingMode && s_scroll_row_status > 0)
 			{
 				s_scroll_row_status--;
 				rewrite_footer = true;
 			}
 			break;
-		case FIK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
+		case IDK_CTL_LEFT_ARROW:     /*scrolling key - left one column */
 			if (_scrollingMode && s_scroll_column_status > 0)
 			{
 				s_scroll_column_status--;
 				rewrite_footer = true;
 			}
 			break;
-		case FIK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
+		case IDK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
 			if (_scrollingMode && strchr(_footer, '\021') != 0)
 			{
 				s_scroll_column_status++;
 				rewrite_footer = true;
 			}
 			break;
-		case FIK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
+		case IDK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
 			if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 			{
 				s_scroll_row_status += _footerLines - 2;
@@ -932,7 +932,7 @@ int FullScreenPrompter::Prompt()
 				rewrite_footer = true;
 			}
 			break;
-		case FIK_CTL_PAGE_UP:      /* scrolling key - up one screen */
+		case IDK_CTL_PAGE_UP:      /* scrolling key - up one screen */
 			if (_scrollingMode && s_scroll_row_status > 0)
 			{
 				s_scroll_row_status -= _footerLines - 2;
@@ -943,7 +943,7 @@ int FullScreenPrompter::Prompt()
 				rewrite_footer = true;
 			}
 			break;
-		case FIK_CTL_END:          /* scrolling key - go to end of entry */
+		case IDK_CTL_END:          /* scrolling key - go to end of entry */
 			if (_scrollingMode)
 			{
 				s_scroll_row_status = _verticalScrollLimit;
@@ -951,7 +951,7 @@ int FullScreenPrompter::Prompt()
 				rewrite_footer = true;
 			}
 			break;
-		case FIK_CTL_HOME:         /* scrolling key - go to beginning of entry */
+		case IDK_CTL_HOME:         /* scrolling key - go to beginning of entry */
 			if (_scrollingMode)
 			{
 				s_scroll_row_status = 0;
@@ -1064,21 +1064,21 @@ static int prompt_check_key(int curkey)
 {
 	switch (curkey)
 	{
-	case FIK_PAGE_UP:
-	case FIK_DOWN_ARROW:
-	case FIK_PAGE_DOWN:
-	case FIK_UP_ARROW:
+	case IDK_PAGE_UP:
+	case IDK_DOWN_ARROW:
+	case IDK_PAGE_DOWN:
+	case IDK_UP_ARROW:
 		return curkey;
-	case FIK_F2:
-	case FIK_F3:
-	case FIK_F4:
-	case FIK_F5:
-	case FIK_F6:
-	case FIK_F7:
-	case FIK_F8:
-	case FIK_F9:
-	case FIK_F10:
-		if (s_prompt_function_key_mask & (1 << (curkey + 1-FIK_F1)))
+	case IDK_F2:
+	case IDK_F3:
+	case IDK_F4:
+	case IDK_F5:
+	case IDK_F6:
+	case IDK_F7:
+	case IDK_F8:
+	case IDK_F9:
+	case IDK_F10:
+		if (s_prompt_function_key_mask & (1 << (curkey + 1-IDK_F1)))
 		{
 			return curkey;
 		}
@@ -1090,29 +1090,29 @@ static int prompt_check_key_scroll(int curkey)
 {
 	switch (curkey)
 	{
-	case FIK_PAGE_UP:
-	case FIK_DOWN_ARROW:
-	case FIK_CTL_DOWN_ARROW:
-	case FIK_PAGE_DOWN:
-	case FIK_UP_ARROW:
-	case FIK_CTL_UP_ARROW:
-	case FIK_CTL_LEFT_ARROW:
-	case FIK_CTL_RIGHT_ARROW:
-	case FIK_CTL_PAGE_DOWN:
-	case FIK_CTL_PAGE_UP:
-	case FIK_CTL_END:
-	case FIK_CTL_HOME:
+	case IDK_PAGE_UP:
+	case IDK_DOWN_ARROW:
+	case IDK_CTL_DOWN_ARROW:
+	case IDK_PAGE_DOWN:
+	case IDK_UP_ARROW:
+	case IDK_CTL_UP_ARROW:
+	case IDK_CTL_LEFT_ARROW:
+	case IDK_CTL_RIGHT_ARROW:
+	case IDK_CTL_PAGE_DOWN:
+	case IDK_CTL_PAGE_UP:
+	case IDK_CTL_END:
+	case IDK_CTL_HOME:
 		return curkey;
-	case FIK_F2:
-	case FIK_F3:
-	case FIK_F4:
-	case FIK_F5:
-	case FIK_F6:
-	case FIK_F7:
-	case FIK_F8:
-	case FIK_F9:
-	case FIK_F10:
-		if (s_prompt_function_key_mask & (1 << (curkey + 1-FIK_F1)))
+	case IDK_F2:
+	case IDK_F3:
+	case IDK_F4:
+	case IDK_F5:
+	case IDK_F6:
+	case IDK_F7:
+	case IDK_F8:
+	case IDK_F9:
+	case IDK_F10:
+		if (s_prompt_function_key_mask & (1 << (curkey + 1-IDK_F1)))
 		{
 			return curkey;
 		}
@@ -1166,25 +1166,25 @@ static int input_field_list(
 		curkey = driver_key_cursor(row, col); /* get a keystroke */
 		switch (curkey)
 		{
-		case FIK_ENTER:
-		case FIK_ENTER_2:
+		case IDK_ENTER:
+		case IDK_ENTER_2:
 			ret = 0;
 			goto inpfldl_end;
-		case FIK_ESC:
+		case IDK_ESC:
 			goto inpfldl_end;
-		case FIK_RIGHT_ARROW:
+		case IDK_RIGHT_ARROW:
 			if (++curval >= llen)
 			{
 				curval = 0;
 			}
 			break;
-		case FIK_LEFT_ARROW:
+		case IDK_LEFT_ARROW:
 			if (--curval < 0)
 			{
 				curval = llen - 1;
 			}
 			break;
-		case FIK_F5:
+		case IDK_F5:
 			curval = initval;
 			break;
 		default:
@@ -1341,7 +1341,7 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 
 static int sel_fractal_type_help(int curkey, int choice)
 {
-	if (curkey == FIK_F2)
+	if (curkey == IDK_F2)
 	{
 		HelpModeSaver saved_help(g_fractal_specific[(*(s_fractal_type_choices + choice))->num].helptext);
 		help(ACTION_CALL);
@@ -2131,7 +2131,7 @@ get_fractal_parameters_top:
 			}
 			goto get_fractal_parameters_exit;
 		}
-		if (result != FIK_F6)
+		if (result != IDK_F6)
 		{
 			break;
 		}
@@ -2655,7 +2655,7 @@ retry:
 		numentries, (char **) choices, attributes,
 		boxwidth, boxdepth, colwidth, 0,
 		formatitem, buf, 0, check_gfe_key);
-	if (i == -FIK_F4)
+	if (i == -IDK_F4)
 	{
 		s_gfe_file.seekg(0);
 		dosort = 1-dosort;
@@ -2665,7 +2665,7 @@ retry:
 	if (i < 0)
 	{
 		/* go back to file list or cancel */
-		return (i == -FIK_F6) ? -2 : -1;
+		return (i == -IDK_F6) ? -2 : -1;
 	}
 	strcpy(entryname, choices[i]->name);
 	return choices[i]->point;
@@ -2686,15 +2686,15 @@ static int check_gfe_key(int curkey, int choice)
 	memset(blanks, ' ', 78);
 	blanks[78] = (char) 0;
 
-	if (curkey == FIK_F6)
+	if (curkey == IDK_F6)
 	{
-		return -FIK_F6;
+		return -IDK_F6;
 	}
-	if (curkey == FIK_F4)
+	if (curkey == IDK_F4)
 	{
-		return -FIK_F4;
+		return -IDK_F4;
 	}
-	if (curkey == FIK_F2)
+	if (curkey == IDK_F2)
 	{
 		int widest_entry_line = 0;
 		int lines_in_entry = 0;
@@ -2774,46 +2774,46 @@ static int check_gfe_key(int curkey, int choice)
 				driver_put_string(4, 0, C_GENERAL_MED, infbuf);
 			}
 			i = get_key_no_help();
-			if (i == FIK_DOWN_ARROW			|| i == FIK_CTL_DOWN_ARROW
-					|| i == FIK_UP_ARROW	|| i == FIK_CTL_UP_ARROW
-					|| i == FIK_LEFT_ARROW	|| i == FIK_CTL_LEFT_ARROW
-					|| i == FIK_RIGHT_ARROW || i == FIK_CTL_RIGHT_ARROW
-					|| i == FIK_HOME		|| i == FIK_CTL_HOME
-					|| i == FIK_END			|| i == FIK_CTL_END
-					|| i == FIK_PAGE_UP		|| i == FIK_CTL_PAGE_UP
-					|| i == FIK_PAGE_DOWN	|| i == FIK_CTL_PAGE_DOWN)
+			if (i == IDK_DOWN_ARROW			|| i == IDK_CTL_DOWN_ARROW
+					|| i == IDK_UP_ARROW	|| i == IDK_CTL_UP_ARROW
+					|| i == IDK_LEFT_ARROW	|| i == IDK_CTL_LEFT_ARROW
+					|| i == IDK_RIGHT_ARROW || i == IDK_CTL_RIGHT_ARROW
+					|| i == IDK_HOME		|| i == IDK_CTL_HOME
+					|| i == IDK_END			|| i == IDK_CTL_END
+					|| i == IDK_PAGE_UP		|| i == IDK_CTL_PAGE_UP
+					|| i == IDK_PAGE_DOWN	|| i == IDK_CTL_PAGE_DOWN)
 			{
 				switch (i)
 				{
-				case FIK_DOWN_ARROW: case FIK_CTL_DOWN_ARROW: /* down one line */
+				case IDK_DOWN_ARROW: case IDK_CTL_DOWN_ARROW: /* down one line */
 					if (in_scrolling_mode && top_line < lines_in_entry - 17)
 					{
 						top_line++;
 						rewrite_infbuf = 1;
 					}
 					break;
-				case FIK_UP_ARROW: case FIK_CTL_UP_ARROW:  /* up one line */
+				case IDK_UP_ARROW: case IDK_CTL_UP_ARROW:  /* up one line */
 					if (in_scrolling_mode && top_line > 0)
 					{
 						top_line--;
 						rewrite_infbuf = 1;
 					}
 					break;
-				case FIK_LEFT_ARROW: case FIK_CTL_LEFT_ARROW:  /* left one column */
+				case IDK_LEFT_ARROW: case IDK_CTL_LEFT_ARROW:  /* left one column */
 					if (in_scrolling_mode && left_column > 0)
 					{
 						left_column--;
 						rewrite_infbuf = 1;
 					}
 					break;
-				case FIK_RIGHT_ARROW: case FIK_CTL_RIGHT_ARROW: /* right one column */
+				case IDK_RIGHT_ARROW: case IDK_CTL_RIGHT_ARROW: /* right one column */
 					if (in_scrolling_mode && strchr(infbuf, '\021') != 0)
 					{
 						left_column++;
 						rewrite_infbuf = 1;
 					}
 					break;
-				case FIK_PAGE_DOWN: case FIK_CTL_PAGE_DOWN: /* down 17 lines */
+				case IDK_PAGE_DOWN: case IDK_CTL_PAGE_DOWN: /* down 17 lines */
 					if (in_scrolling_mode && top_line < lines_in_entry - 17)
 					{
 						top_line += 17;
@@ -2824,7 +2824,7 @@ static int check_gfe_key(int curkey, int choice)
 						rewrite_infbuf = 1;
 					}
 					break;
-				case FIK_PAGE_UP: case FIK_CTL_PAGE_UP: /* up 17 lines */
+				case IDK_PAGE_UP: case IDK_CTL_PAGE_UP: /* up 17 lines */
 					if (in_scrolling_mode && top_line > 0)
 					{
 						top_line -= 17;
@@ -2835,7 +2835,7 @@ static int check_gfe_key(int curkey, int choice)
 						rewrite_infbuf = 1;
 					}
 					break;
-				case FIK_END: case FIK_CTL_END:       /* to end of entry */
+				case IDK_END: case IDK_CTL_END:       /* to end of entry */
 					if (in_scrolling_mode)
 					{
 						top_line = lines_in_entry - 17;
@@ -2843,7 +2843,7 @@ static int check_gfe_key(int curkey, int choice)
 						rewrite_infbuf = 1;
 					}
 					break;
-				case FIK_HOME: case FIK_CTL_HOME:     /* to beginning of entry */
+				case IDK_HOME: case IDK_CTL_HOME:     /* to beginning of entry */
 					if (in_scrolling_mode)
 					{
 						top_line = 0;

@@ -12,6 +12,7 @@
 #include <windows.h>
 
 #include "port.h"
+#include "id.h"
 #include "prototyp.h"
 #include "fractype.h"
 #include "helpdefs.h"
@@ -99,7 +100,7 @@ int Win32BaseDriver::handle_timed_save(int ch)
 			else if (g_current_row != g_finish_row)
 			{
 				g_timed_save = TIMEDSAVE_START;
-				return FIK_SAVE_TIME;
+				return IDK_SAVE_TIME;
 			}
 		}
 	}
@@ -123,11 +124,11 @@ int Win32BaseDriver::handle_timed_save(int ch)
 int Win32BaseDriver::handle_special_keys(int ch)
 {
 	ch = handle_timed_save(ch);
-	if (ch != FIK_SAVE_TIME)
+	if (ch != IDK_SAVE_TIME)
 	{
 		if (SLIDES_PLAY == g_slideShow.Mode())
 		{
-			if (ch == FIK_ESC)
+			if (ch == IDK_ESC)
 			{
 				g_slideShow.Stop();
 				ch = 0;
@@ -151,14 +152,14 @@ int Win32BaseDriver::handle_special_keys(int ch)
 		}
 	}
 
-	if (FIK_F1 == ch && get_help_mode() && !m_inside_help)
+	if (IDK_F1 == ch && get_help_mode() && !m_inside_help)
 	{
 		m_inside_help = true;
 		help(ACTION_CALL);
 		m_inside_help = false;
 		ch = 0;
 	}
-	else if (FIK_TAB == ch && g_tab_display_enabled)
+	else if (IDK_TAB == ch && g_tab_display_enabled)
 	{
 		bool save_tab_display_enabled = g_tab_display_enabled;
 		g_tab_display_enabled = false;

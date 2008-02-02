@@ -2075,7 +2075,7 @@ void edit_text_colors()
 		int key = toupper(driver_get_key());
 		switch (key)
 		{
-		case FIK_ESC:
+		case IDK_ESC:
 			g_debug_mode = save_debugflag;
 			driver_hide_text_cursor();
 			return;
@@ -2113,19 +2113,19 @@ void edit_text_colors()
 		case ' ': /* next color is background */
 			background = 1;
 			break;
-		case FIK_LEFT_ARROW: /* cursor left  */
+		case IDK_LEFT_ARROW: /* cursor left  */
 			--col;
 			break;
-		case FIK_RIGHT_ARROW: /* cursor right */
+		case IDK_RIGHT_ARROW: /* cursor right */
 			++col;
 			break;
-		case FIK_UP_ARROW:	/* cursor up	*/
+		case IDK_UP_ARROW:	/* cursor up	*/
 			--row;
 			break;
-		case FIK_DOWN_ARROW: /* cursor down  */
+		case IDK_DOWN_ARROW: /* cursor down  */
 			++row;
 			break;
-		case FIK_ENTER:   /* enter */
+		case IDK_ENTER:   /* enter */
 			{
 				int char_attr = driver_get_char_attr_rowcol(row, col);
 				char_attr &= ~0xFF;
@@ -2270,11 +2270,11 @@ static int check_modekey(int curkey, int choice)
 	}
 	int entry = s_entries[choice];
 	int ret = 0;
-	if (g_.VideoTable(entry).keynum == 0 || g_.VideoTable(entry).keynum >= FIK_SF1)
+	if (g_.VideoTable(entry).keynum == 0 || g_.VideoTable(entry).keynum >= IDK_SF1)
 	{
 		if (curkey == '-') /* deassign key? */ 
 		{
-			if (g_.VideoTable(entry).keynum >= FIK_SF1)
+			if (g_.VideoTable(entry).keynum >= IDK_SF1)
 			{
 				g_.SetVideoTableKey(entry, 0);
 			}
@@ -2282,7 +2282,7 @@ static int check_modekey(int curkey, int choice)
 		else if (curkey == '+') /* assign key? */
 		{
 			int key = get_key_no_help();
-			if (key >= FIK_SF1 && key <= FIK_ALT_F10)
+			if (key >= IDK_SF1 && key <= IDK_ALT_F10)
 			{
 				for (int k = 0; k < g_.VideoTableLength(); ++k)
 				{
@@ -2834,13 +2834,13 @@ void flip_image(int key)
 	}
 	switch (key)
 	{
-	case FIK_CTL_X:            /* control-X - reverse X-axis */
+	case IDK_CTL_X:            /* control-X - reverse X-axis */
 		reverse_x_axis();
 		break;
-	case FIK_CTL_Y:            /* control-Y - reverse Y-axis */
+	case IDK_CTL_Y:            /* control-Y - reverse Y-axis */
 		reverse_y_axis();
 		break;
-	case FIK_CTL_Z:            /* control-Z - reverse X and Y axis */
+	case IDK_CTL_Z:            /* control-Z - reverse X and Y axis */
 		reverse_x_y_axes();
 		break;
 	}

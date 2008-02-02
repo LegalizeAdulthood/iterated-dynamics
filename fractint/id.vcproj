@@ -1331,6 +1331,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\Constants.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\drivers.cpp"
 					>
 				</File>

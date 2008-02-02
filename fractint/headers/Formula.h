@@ -4,7 +4,10 @@
 #include <string>
 #include <vector>
 
-#define MAX_JUMPS 200  /* size of JUMP_CONTROL array */
+enum
+{
+	MAX_JUMPS = 200  /* size of JUMP_CONTROL array */
+};
 
 struct error_data
 {

@@ -281,7 +281,7 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 	{
 		// TODO: refactor to IInputContext
 		intro();                          /* display the credits screen */
-		if (driver_key_pressed() == FIK_ESC)
+		if (driver_key_pressed() == IDK_ESC)
 		{
 			driver_get_key();
 			goodbye();
@@ -400,7 +400,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 
 	if (g_initialize_batch == INITBATCH_NONE)
 	{
-		driver_set_mouse_mode(-FIK_PAGE_UP);           /* just mouse left button, == pgup */
+		driver_set_mouse_mode(-IDK_PAGE_UP);           /* just mouse left button, == pgup */
 	}
 
 	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */
@@ -415,12 +415,12 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 			goodbye();
 		}
 		int kbdchar = main_menu(false);
-		if (kbdchar == FIK_INSERT) /* restart pgm on Insert Key  */
+		if (kbdchar == IDK_INSERT) /* restart pgm on Insert Key  */
 		{
 			m_state = APPSTATE_RESTART;
 			return;
 		}
-		if (kbdchar == FIK_DELETE)                    /* select video mode list */
+		if (kbdchar == IDK_DELETE)                    /* select video mode list */
 		{
 			kbdchar = select_video_mode(-1);
 		}
@@ -444,7 +444,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 #ifndef XFRACT
 		if (kbdchar == '@' || kbdchar == '2')  /* execute commands */
 #else
-		if (kbdchar == FIK_F2 || kbdchar == '@')  /* We mapped @ to F2 */
+		if (kbdchar == IDK_F2 || kbdchar == '@')  /* We mapped @ to F2 */
 #endif
 		{
 			if ((get_commands() & COMMANDRESULT_3D_YES) == 0)
@@ -457,11 +457,11 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 #ifndef XFRACT
 		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
 #else
-		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == FIK_F3)
+		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == IDK_F3)
 #endif
 		{
 			g_display_3d = DISPLAY3D_NONE;
-			if (kbdchar == '3' || kbdchar == '#' || kbdchar == FIK_F3)
+			if (kbdchar == '3' || kbdchar == '#' || kbdchar == IDK_F3)
 			{
 				g_display_3d = DISPLAY3D_YES;
 			}
@@ -505,13 +505,13 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == FIK_CTL_B)  /* ctrl B = browse parms*/
+		if (kbdchar == IDK_CTL_B)  /* ctrl B = browse parms*/
 		{
 			g_browse_state.GetParameters();
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == FIK_CTL_F)  /* ctrl f = sound parms*/
+		if (kbdchar == IDK_CTL_F)  /* ctrl f = sound parms*/
 		{
 			g_sound_state.get_parameters();
 			m_state = APPSTATE_IMAGE_START;

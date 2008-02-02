@@ -34,7 +34,10 @@
 #include "SoundState.h"
 #include "ThreeDimensionalState.h"
 
-#define MAXCOLORS       256
+enum
+{
+	MAXCOLORS       = 256
+};
 
 unsigned int g_height;
 
@@ -71,7 +74,10 @@ int get_bytes(BYTE *destination, int how_many)
  */
 
 BYTE g_decoder_line[MAX_PIXELS + 1]; /* write-line routines use this */
-#define DECODERLINE_WIDTH MAX_PIXELS
+enum
+{
+	DECODERLINE_WIDTH = MAX_PIXELS
+};
 
 static char *s_dither_buffer = 0;
 

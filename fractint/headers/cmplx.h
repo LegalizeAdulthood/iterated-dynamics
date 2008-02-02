@@ -2,6 +2,8 @@
 #ifndef _CMPLX_DEFINED
 #define _CMPLX_DEFINED
 
+#include "id.h"
+
 template <typename T>
 struct ComplexT
 {
@@ -36,5 +38,20 @@ struct HyperComplexT : public ComplexT<T>
 typedef struct ComplexT<double> ComplexD;
 typedef struct ComplexT<long> ComplexL;
 typedef struct HyperComplexT<double> HyperComplexD;
+
+inline void CMPLXconj(ComplexD &z)
+{
+	((z).y =  -((z).y));
+}
+
+inline long LCMPLXmod(ComplexL const &z)
+{
+	return lsqr(z.x) + lsqr(z.y);
+}
+
+inline void LCMPLXconj(ComplexL &z)
+{
+	z.y = -z.y;
+}
 
 #endif
