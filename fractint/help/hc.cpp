@@ -112,26 +112,28 @@ extern int _splitpath(char *,char *,char *,char *,char *);
 #endif
 
 
-#define DEFAULT_SRC_FNAME "help.src"
-#define DEFAULT_HLP_FNAME "id.hlp"
-#define DEFAULT_EXE_FNAME "id.exe"
-#define DEFAULT_DOC_FNAME "id.doc"
+static char const *DEFAULT_SRC_FNAME = "help.src";
+static char const *DEFAULT_HLP_FNAME = "id.hlp";
+static char const *DEFAULT_EXE_FNAME = "id.exe";
+static char const *DEFAULT_DOC_FNAME = "id.doc";
 
-#define TEMP_FNAME        "HC.$$$"
-#define SWAP_FNAME        "HCSWAP.$$$"
+static char const *TEMP_FNAME = "HC.$$$";
+static char const *SWAP_FNAME = "HCSWAP.$$$";
 
-#define MAX_ERRORS        (25)   /* stop after this many errors */
-#define MAX_WARNINGS      (25)   /* stop after this many warnings */
+enum
+{
+	MAX_ERRORS = 25,   /* stop after this many errors */
+	MAX_WARNINGS = 25   /* stop after this many warnings */
                                  /* 0 = never stop */
+};
 
-#define INDEX_LABEL       "FIHELP_INDEX"
-#define DOCCONTENTS_TITLE "DocContent"
+static char const *INDEX_LABEL = "FIHELP_INDEX";
+static char const *DOCCONTENTS_TITLE = "DocContent";
 
-
-
-/* #define BUFFER_SIZE   (24*1024) */
-#define BUFFER_SIZE   (30*1024)
-
+enum
+{
+	BUFFER_SIZE = 30*1024
+};
 
 typedef struct
 {
@@ -157,10 +159,11 @@ typedef struct
 
 
 /* values for TOPIC.flags */
-
-#define TF_IN_DOC  (1)       /* 1 if topic is part of the printed document */
-#define TF_DATA    (2)       /* 1 if it is a "data" topic */
-
+enum
+{
+	TF_IN_DOC = 1,       /* 1 if topic is part of the printed document */
+	TF_DATA = 2       /* 1 if it is a "data" topic */
+};
 
 typedef struct
 {
@@ -186,11 +189,11 @@ typedef struct
 
 
 /* values for CONTENT.flags */
-
-#define CF_NEW_PAGE  (1)     /* true if section starts on a new page */
-
-
-#define MAX_CONTENT_TOPIC (10)
+enum
+{
+	CF_NEW_PAGE = 1,     /* true if section starts on a new page */
+	MAX_CONTENT_TOPIC = 10
+};
 
 
 typedef struct
@@ -264,7 +267,10 @@ int      compress_spaces;
 int      xonline;
 int      xdoc;
 
-#define  MAX_INCLUDE_STACK (5)    /* allow 5 nested includes */
+enum
+{
+	MAX_INCLUDE_STACK = 5    /* allow 5 nested includes */
+};
 
 struct includes
 {
@@ -276,7 +282,7 @@ struct includes
 includes include_stack[MAX_INCLUDE_STACK];
 int include_stack_top = -1;
 
-void check_buffer(char *current, unsigned off, char *buffer);
+void check_buffer(char *current, unsigned offset, char *buffer);
 
 #define CHK_BUFFER(off) check_buffer(curr, off, buffer)
 
@@ -293,12 +299,12 @@ void check_buffer(char *current, unsigned off, char *buffer);
  */
 
 
-void report_errors(void)
+void report_errors()
 {
 	printf("\n");
 	printf("Compiler Status:\n");
-	printf("%8d Error%c\n",       errors,   (errors==1)   ? ' ' : 's');
-	printf("%8d Warning%c\n",     warnings, (warnings==1) ? ' ' : 's');
+	printf("%8d Error%c\n",       errors,   (errors == 1)   ? ' ' : 's');
+	printf("%8d Warning%c\n",     warnings, (warnings == 1) ? ' ' : 's');
 }
 
 
@@ -372,7 +378,7 @@ void error(va_alist)
 
 	if (++errors >= MAX_ERRORS && MAX_ERRORS > 0)
 	{
-		fatal(0,"Too many errors!");
+		fatal(0, "Too many errors!");
 	}
 }
 
@@ -399,7 +405,7 @@ void warn(va_alist)
 
 	if (++warnings >= MAX_WARNINGS && MAX_WARNINGS > 0)
 	{
-		fatal(0,"Too many warnings!");
+		fatal(0, "Too many warnings!");
 	}
 }
 
@@ -507,7 +513,7 @@ VOIDPTR newx(unsigned size)
 
 	if (ptr == NULL)
 	{
-		fatal(0,"Out of memory!");
+		fatal(0, "Out of memory!");
 	}
 
 	return ptr;
@@ -520,14 +526,14 @@ VOIDPTR renewx(VOIDPTR ptr, unsigned size)
 
 	if (ptr == NULL)
 	{
-		fatal(0,"Out of memory!");
+		fatal(0, "Out of memory!");
 	}
 
 	return ptr;
 }
 
 
-char *dupstr(char *s, unsigned len)
+char *dupstr(char const *s, unsigned len)
 {
 	char *ptr;
 
@@ -544,7 +550,10 @@ char *dupstr(char *s, unsigned len)
 }
 
 
-#define LINK_ALLOC_SIZE (16)
+enum
+{
+	LINK_ALLOC_SIZE = 16
+};
 
 
 int add_link(LINK *l)
@@ -563,7 +572,10 @@ int add_link(LINK *l)
 }
 
 
-#define PAGE_ALLOC_SIZE (4)
+enum
+{
+	PAGE_ALLOC_SIZE = 4
+};
 
 
 int add_page(TOPIC *t, PAGE *p)
@@ -582,7 +594,10 @@ int add_page(TOPIC *t, PAGE *p)
 }
 
 
-#define TOPIC_ALLOC_SIZE (16)
+enum
+{
+	TOPIC_ALLOC_SIZE = 16
+};
 
 
 int add_topic(TOPIC *t)
@@ -602,7 +617,10 @@ int add_topic(TOPIC *t)
 }
 
 
-#define LABEL_ALLOC_SIZE (16)
+enum
+{
+	LABEL_ALLOC_SIZE = 16
+};
 
 
 int add_label(LABEL *l)
@@ -639,7 +657,10 @@ int add_label(LABEL *l)
 }
 
 
-#define CONTENTS_ALLOC_SIZE (16)
+enum
+{
+	CONTENTS_ALLOC_SIZE = 16
+};
 
 
 int add_content(CONTENT *c)
@@ -663,7 +684,10 @@ int add_content(CONTENT *c)
  */
 
 
-#define READ_CHAR_BUFF_SIZE (32)
+enum
+{
+	READ_CHAR_BUFF_SIZE = 32
+};
 
 
 int  read_char_buff[READ_CHAR_BUFF_SIZE];
@@ -678,7 +702,7 @@ void unread_char(int ch)
 {
 	if (read_char_buff_pos+1 >= READ_CHAR_BUFF_SIZE)
 	{
-		fatal(0,"Compiler Error -- Read char buffer overflow!");
+		fatal(0, "Compiler Error -- Read char buffer overflow!");
 	}
 	read_char_buff[++read_char_buff_pos] = ch;
 
@@ -691,17 +715,19 @@ void unread_string(char *s)
 	int p = (int) strlen(s);
 
 	while (p-- > 0)
+	{
 		unread_char(s[p]);
+	}
 }
 
 
-int eos(void)    /* end-of-source ? */
+int eos()    /* end-of-source ? */
 {
-	return !((read_char_sp==0) && (read_char_buff_pos==0) && feof(srcfile));
+	return !((read_char_sp == 0) && (read_char_buff_pos == 0) && feof(srcfile));
 }
 
 
-int _read_char(void)
+int _read_char()
 {
 	int ch;
 
@@ -778,18 +804,20 @@ int _read_char(void)
 }
 
 
-int read_char(void)
+int read_char()
 {
 	int ch;
 
 	ch = _read_char();
 
-	while (ch == ';' && srccol==1)    /* skip over comments */
+	while (ch == ';' && srccol == 1)    /* skip over comments */
 	{
 		ch = _read_char();
 
-		while (ch!='\n' && ch!=-1)
+		while (ch != '\n' && ch != -1)
+		{
 			ch = _read_char();
+		}
 
 		ch = _read_char();
 	}
@@ -803,9 +831,9 @@ int read_char(void)
 			char buff[4];
 			int  ctr;
 
-			for (ctr=0; ; ctr++)
+			for (ctr = 0; ; ctr++)
 			{
-				if (ch<'0' || ch>'9' || ch==-1 || ctr>=3)
+				if (ch < '0' || ch > '9' || ch == -1 || ctr >= 3)
 				{
 					unread_char(ch);
 					break;
@@ -829,7 +857,7 @@ int read_char(void)
 
 	if ((ch & 0xFF) == 0)
 	{
-		error(0,"Null character (\'\\0\') not allowed!");
+		error(0, "Null character (\'\\0\') not allowed!");
 		ch = 0x1FF; /* since we've had an error the file will not be written; */
 						/*   the value we return doesn't really matter */
 	}
@@ -850,7 +878,7 @@ LABEL *find_label(char *name)
 
 	if (*name == '@')
 	{
-		for (l=0, lp=plabel; l<num_plabel; l++, lp++)
+		for (l = 0, lp = plabel; l < num_plabel; l++, lp++)
 		{
 			if (strcmp(name, lp->name) == 0)
 			{
@@ -860,7 +888,7 @@ LABEL *find_label(char *name)
 	}
 	else
 	{
-		for (l=0, lp=label; l<num_label; l++, lp++)
+		for (l = 0, lp = label; l < num_label; l++, lp++)
 		{
 			if (strcmp(name, lp->name) == 0)
 			{
@@ -873,17 +901,21 @@ LABEL *find_label(char *name)
 }
 
 
-int find_topic_title(char *title)
+int find_topic_title(char const *title)
 {
 	int t;
 	int len;
 
 	while (*title == ' ')
+	{
 		++title;
+	}
 
 	len = (int) strlen(title) - 1;
 	while (title[len] == ' ' && len > 0)
+	{
 		--len;
+	}
 
 	++len;
 
@@ -893,7 +925,7 @@ int find_topic_title(char *title)
 		len -= 2;
 	}
 
-	for (t=0; t<num_topic; t++)
+	for (t = 0; t < num_topic; t++)
 	{
 		if ((int) strlen(topic[t].title) == len &&
 				strnicmp(title, topic[t].title, len) == 0)
@@ -913,14 +945,14 @@ int find_topic_title(char *title)
 
 int validate_label_name(char *name)
 {
-	if (!isalpha(*name) && *name!='@' && *name!='_')
+	if (!isalpha(*name) && *name != '@' && *name != '_')
 	{
 		return 0;  /* invalid */
 	}
 
 	while (*(++name) != '\0')
 	{
-		if (!isalpha(*name) && !isdigit(*name) && *name!='_')
+		if (!isalpha(*name) && !isdigit(*name) && *name != '_')
 		{
 			return(0);  /* invalid */
 		}
@@ -951,7 +983,7 @@ char *read_until(char *buff, int len, char *stop_chars)
 
 		*buff++ = ch;
 
-		if ((ch&0x100)==0 && strchr(stop_chars, ch) != NULL)
+		if ((ch&0x100) == 0 && strchr(stop_chars, ch) != NULL)
 		{
 			break;
 		}
@@ -1005,7 +1037,7 @@ void put_spaces(int how_many)
 	{
 		if (how_many > 255)
 		{
-			error(0,"Too many spaces (over 255).");
+			error(0, "Too many spaces (over 255).");
 			how_many = 255;
 		}
 
@@ -1015,29 +1047,30 @@ void put_spaces(int how_many)
 	else
 	{
 		while (how_many-- > 0)
+		{
 			*curr++ = ' ';
+		}
 	}
 }
 
 
-int get_next_item(void)   /* used by parse_contents() */
+bool get_next_item()   /* used by parse_contents() */
 {
-	int   last;
-	char *ptr;
-
 	skip_over(" \t\n");
-	ptr = read_until(cmd, 128, ",}");
-	last = (*ptr == '}');
+	char *ptr = read_until(cmd, 128, ",}");
+	bool last = (*ptr == '}');
 	--ptr;
-	while (ptr >= cmd && strchr(" \t\n",*ptr))   /* strip trailing spaces */
+	while (ptr >= cmd && strchr(" \t\n", *ptr))   /* strip trailing spaces */
+	{
 		--ptr;
+	}
 	*(++ptr) = '\0';
 
 	return last;
 }
 
 
-void process_contents(void)
+void process_contents()
 {
 	CONTENT c;
 	char   *ptr;
@@ -1046,7 +1079,7 @@ void process_contents(void)
 	TOPIC   t;
 
 	t.flags     = 0;
-	t.title_len = (unsigned) strlen(DOCCONTENTS_TITLE)+1;
+	t.title_len = (unsigned) strlen(DOCCONTENTS_TITLE) + 1;
 	t.title     = dupstr(DOCCONTENTS_TITLE, t.title_len);
 	t.doc_page  = -1;
 	t.num_page  = 0;
@@ -1054,13 +1087,13 @@ void process_contents(void)
 	curr = buffer;
 
 	c.flags = 0;
-	c.id = dupstr("",1);
-	c.name = dupstr("",1);
+	c.id = dupstr("", 1);
+	c.name = dupstr("", 1);
 	c.doc_page = -1;
 	c.page_num_pos = 0;
 	c.num_topic = 1;
 	c.is_label[0] = 0;
-	c.topic_name[0] = dupstr(DOCCONTENTS_TITLE,0);
+	c.topic_name[0] = dupstr(DOCCONTENTS_TITLE, 0);
 	c.srcline = -1;
 	add_content(&c);
 
@@ -1070,8 +1103,6 @@ void process_contents(void)
 
 		if (ch == '{')   /* process a CONTENT entry */
 		{
-			int last;
-
 			c.flags = 0;
 			c.num_topic = 0;
 			c.doc_page = -1;
@@ -1080,19 +1111,19 @@ void process_contents(void)
 
 			if (get_next_item())
 			{
-				error(0,"Unexpected end of DocContent entry.");
+				error(0, "Unexpected end of DocContent entry.");
 				continue;
 			}
-			c.id = dupstr(cmd,0);
+			c.id = dupstr(cmd, 0);
 
 			if (get_next_item())
 			{
-				error(0,"Unexpected end of DocContent entry.");
+				error(0, "Unexpected end of DocContent entry.");
 				continue;
 			}
 			indent = atoi(cmd);
 
-			last = get_next_item();
+			bool last = get_next_item();
 
 			if (cmd[0] == '\"')
 			{
@@ -1103,23 +1134,27 @@ void process_contents(void)
 				}
 				else
 				{
-					warn(0,"Missing ending quote.");
+					warn(0, "Missing ending quote.");
 				}
 
 				c.is_label[c.num_topic] = 0;
-				c.topic_name[c.num_topic] = dupstr(ptr,0);
+				c.topic_name[c.num_topic] = dupstr(ptr, 0);
 				++c.num_topic;
-				c.name = dupstr(ptr,0);
+				c.name = dupstr(ptr, 0);
 			}
 			else
-				c.name = dupstr(cmd,0);
+			{
+				c.name = dupstr(cmd, 0);
+			}
 
 			/* now, make the entry in the buffer */
 
 			sprintf(curr, "%-5s %*.0s%s", c.id, indent*2, "", c.name);
 			ptr = curr + (int) strlen(curr);
 			while ((ptr-curr) < PAGE_WIDTH-10)
+			{
 				*ptr++ = '.';
+			}
 			c.page_num_pos = (unsigned) ((ptr-3) - buffer);
 			curr = ptr;
 
@@ -1131,7 +1166,7 @@ void process_contents(void)
 				{
 					if (c.flags & CF_NEW_PAGE)
 					{
-						warn(0,"FF already present in this entry.");
+						warn(0, "FF already present in this entry.");
 					}
 					c.flags |= CF_NEW_PAGE;
 					continue;
@@ -1146,36 +1181,36 @@ void process_contents(void)
 					}
 					else
 					{
-						warn(0,"Missing ending quote.");
+						warn(0, "Missing ending quote.");
 					}
 
 					c.is_label[c.num_topic] = 0;
-					c.topic_name[c.num_topic] = dupstr(ptr,0);
+					c.topic_name[c.num_topic] = dupstr(ptr, 0);
 				}
 				else
 				{
 					c.is_label[c.num_topic] = 1;
-					c.topic_name[c.num_topic] = dupstr(cmd,0);
+					c.topic_name[c.num_topic] = dupstr(cmd, 0);
 				}
 
 				if (++c.num_topic >= MAX_CONTENT_TOPIC)
 				{
-					error(0,"Too many topics in DocContent entry.");
+					error(0, "Too many topics in DocContent entry.");
 					break;
 				}
 			}
 
 			add_content(&c);
 		}
-
 		else if (ch == '~')   /* end at any command */
 		{
 			unread_char(ch);
 			break;
 		}
-
 		else
+		{
 			*curr++ = ch;
+		}
 
 		CHK_BUFFER(0);
 	}
@@ -1185,7 +1220,7 @@ void process_contents(void)
 }
 
 
-int parse_link(void)   /* returns length of link or 0 on error */
+int parse_link()   /* returns length of link or 0 on error */
 {
 	char *ptr;
 	char *end;
@@ -1203,14 +1238,14 @@ int parse_link(void)   /* returns length of link or 0 on error */
 
 	if (*end == '\0')
 	{
-		error(0,"Unexpected EOF in hot-link.");
+		error(0, "Unexpected EOF in hot-link.");
 		return 0;
 	}
 
 	if (*end == '\n')
 	{
 		err_off = 1;
-		warn(1,"Hot-link has no closing curly-brace (\'}\').");
+		warn(1, "Hot-link has no closing curly-brace (\'}\').");
 	}
 	else
 	{
@@ -1251,7 +1286,7 @@ int parse_link(void)   /* returns length of link or 0 on error */
 			}
 			else
 			{
-				l.name = dupstr(cmd+1,0);
+				l.name = dupstr(cmd+1, 0);
 			}
 		}
 		if (len == 0)
@@ -1275,7 +1310,7 @@ int parse_link(void)   /* returns length of link or 0 on error */
 
 	if (!bad)
 	{
-		CHK_BUFFER(1+3*sizeof(int)+len+1);
+		CHK_BUFFER(1 + 3*sizeof(int)+len+1);
 		lnum = add_link(&l);
 		*curr++ = CMD_LINK;
 		setint(curr, lnum);
@@ -1286,14 +1321,19 @@ int parse_link(void)   /* returns length of link or 0 on error */
 		return len;
 	}
 	else
+	{
 		return 0;
+	}
 }
 
 
-#define MAX_TABLE_SIZE (100)
+enum
+{
+	MAX_TABLE_SIZE = 100
+};
 
 
-int create_table(void)
+int create_table()
 {
 	char  *ptr;
 	int    width;
@@ -1303,7 +1343,6 @@ int create_table(void)
 	int    rows;
 	int    r, c;
 	int    ch;
-	int    done;
 	int    len;
 	int    lnum;
 	int    count;
@@ -1323,17 +1362,17 @@ int create_table(void)
 
 	if (len < 3)
 	{
-		error(1,"Too few arguments to Table.");
+		error(1, "Too few arguments to Table.");
 		return 0;
 	}
 
-	if (width<=0 || width > 78 || cols<=0 || start_off<0 || start_off > 78)
+	if (width <= 0 || width > 78 || cols <= 0 || start_off < 0 || start_off > 78)
 	{
-		error(1,"Argument out of range.");
+		error(1, "Argument out of range.");
 		return 0;
 	}
 
-	done = 0;
+	bool done = false;
 
 	first_link = num_link;
 	table_start = curr;
@@ -1347,7 +1386,7 @@ int create_table(void)
 		{
 			ch = read_char();
 		}
-		while (ch=='\n' || ch == ' ');
+		while (ch == '\n' || ch == ' ');
 
 		if (done)
 		{
@@ -1356,34 +1395,34 @@ int create_table(void)
 
 		switch (ch)
 		{
-			case -1:
-				error(0,"Unexpected EOF in a Table.");
-				return(0);
+		case -1:
+			error(0, "Unexpected EOF in a Table.");
+			return(0);
 
-			case '{':
-				if (count >= MAX_TABLE_SIZE)
-				{
-					fatal(0,"Table is too large.");
-				}
-				len = parse_link();
-				curr = table_start;   /* reset to the start... */
-				title[count] = dupstr(curr+3*sizeof(int)+1, len+1);
-				if (len >= width)
-				{
-					warn(1,"Link is too long; truncating.");
-					len = width-1;
-				}
-				title[count][len] = '\0';
-				++count;
-				break;
+		case '{':
+			if (count >= MAX_TABLE_SIZE)
+			{
+				fatal(0, "Table is too large.");
+			}
+			len = parse_link();
+			curr = table_start;   /* reset to the start... */
+			title[count] = dupstr(curr+3*sizeof(int) + 1, len+1);
+			if (len >= width)
+			{
+				warn(1, "Link is too long; truncating.");
+				len = width-1;
+			}
+			title[count][len] = '\0';
+			++count;
+			break;
 
-			case '~':
+		case '~':
 			{
 				int imbedded;
 
 				ch = read_char();
 
-				if (ch=='(')
+				if (ch == '(')
 				{
 					imbedded = 1;
 				}
@@ -1399,11 +1438,13 @@ int create_table(void)
 				*ptr = '\0';
 
 				if  (stricmp(cmd, "EndTable") == 0)
-					done = 1;
+				{
+					done = true;
+				}
 				else
 				{
-					error(1,"Unexpected command in table \"%s\"", cmd);
-					warn(1,"Command will be ignored.");
+					error(1, "Unexpected command in table \"%s\"", cmd);
+					warn(1, "Command will be ignored.");
 				}
 
 				if (ch == ',')
@@ -1415,11 +1456,11 @@ int create_table(void)
 					unread_char('~');
 				}
 			}
-				break;
+			break;
 
-			default:
-				error(0,"Unexpected character %s.", pchar(ch));
-				break;
+		default:
+			error(0, "Unexpected character %s.", pchar(ch));
+			break;
 		}
 	}
 	while (!done);
@@ -1428,10 +1469,10 @@ int create_table(void)
 
 	rows = 1 + (count / cols);
 
-	for (r=0; r<rows; r++)
+	for (r = 0; r < rows; r++)
 	{
 		put_spaces(start_off);
-		for (c=0; c<cols; c++)
+		for (c = 0; c < cols; c++)
 		{
 			lnum = c*rows + r;
 
@@ -1462,7 +1503,7 @@ int create_table(void)
 }
 
 
-void process_comment(void)
+void process_comment()
 {
 	int ch;
 
@@ -1477,7 +1518,7 @@ void process_comment(void)
 
 			ch = read_char();
 
-			if (ch=='(')
+			if (ch == '(')
 			{
 				imbedded = 1;
 			}
@@ -1505,17 +1546,16 @@ void process_comment(void)
 				break;
 			}
 		}
-
 		else if (ch == -1)
 		{
-			error(0,"Unexpected EOF in Comment");
+			error(0, "Unexpected EOF in Comment");
 			break;
 		}
 	}
 }
 
 
-void process_bininc(void)
+void process_bininc()
 {
 	int  handle;
 	long len;
@@ -1523,7 +1563,7 @@ void process_bininc(void)
 	handle = open(cmd+7, O_RDONLY|O_BINARY);
 	if (handle == -1)
 	{
-		error(0,"Unable to open \"%s\"", cmd+7);
+		error(0, "Unable to open \"%s\"", cmd+7);
 		return ;
 	}
 
@@ -1531,9 +1571,9 @@ void process_bininc(void)
 
 	if (len >= BUFFER_SIZE)
 	{
-		error(0,"File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len>>10));
+		error(0, "File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len>>10));
 		close(handle);
-		return ;
+		return;
 	}
 
 	/*
@@ -1581,11 +1621,11 @@ int end_of_sentence(char *ptr)  /* true if ptr is at the end of a sentence */
 		--ptr;
 	}
 
-	return *ptr=='.' || *ptr=='?' || *ptr=='!';
+	return *ptr == '.' || *ptr == '?' || *ptr == '!';
 }
 
 
-void add_blank_for_split(void)   /* add space at curr for merging two lines */
+void add_blank_for_split()   /* add space at curr for merging two lines */
 {
 	if (!is_hyphen(curr-1))   /* no spaces if it's a hyphen */
 	{
@@ -1647,16 +1687,14 @@ void read_src(char *fname)
 	TOPIC  t;
 	LABEL  lbl;
 	char  *margin_pos = NULL;
-	int    in_topic   = 0,
-		formatting = 1,
-		state      = S_Start,
-		num_spaces = 0,
-		margin     = 0,
-		in_para    = 0,
-		centering  = 0,
-		lformat_exclude = format_exclude,
-		again;
-
+	int in_topic = 0;
+	int formatting = 1;
+	int state = S_Start;
+	int num_spaces = 0;
+	int margin = 0;
+	int in_para = 0;
+	int centering = 0;
+	int lformat_exclude = format_exclude;
 	xonline = 0;
 	xdoc = 0;
 
@@ -1664,7 +1702,7 @@ void read_src(char *fname)
 
 	if ((srcfile = fopen(fname, "rt")) == NULL)
 	{
-		fatal(0,"Unable to open \"%s\"", fname);
+		fatal(0, "Unable to open \"%s\"", fname);
 	}
 
 	msg("Compiling: %s", fname);
@@ -1675,7 +1713,6 @@ void read_src(char *fname)
 
 	while (1)
 	{
-
 		ch = read_char();
 
 		if (ch == -1)   /* EOF? */
@@ -1698,7 +1735,7 @@ void read_src(char *fname)
 				}
 				if (num_topic == 0)
 				{
-					warn(0,".SRC file has no topics.");
+					warn(0, ".SRC file has no topics.");
 				}
 				break;
 			}
@@ -1708,8 +1745,6 @@ void read_src(char *fname)
 		{
 			int imbedded;
 			int eoff;
-			int done;
-
 			ch = read_char();
 			if (ch == '(')
 			{
@@ -1719,16 +1754,18 @@ void read_src(char *fname)
 			else
 			{
 				imbedded = 0;
-				eoff=0;
+				eoff = 0;
 				unread_char(ch);
 			}
 
-			done = 0;
+			bool done = false;
 
 			while (!done)
 			{
 				do
+				{
 					ch = read_char();
+				}
 				while (ch == ' ');
 				unread_char(ch);
 
@@ -1741,11 +1778,11 @@ void read_src(char *fname)
 					ptr = read_until(cmd, 128, "\n,");
 				}
 
-				done = 1;
+				done = true;
 
 				if (*ptr == '\0')
 				{
-					error(0,"Unexpected EOF in command.");
+					error(0, "Unexpected EOF in command.");
 					break;
 				}
 
@@ -1756,14 +1793,14 @@ void read_src(char *fname)
 
 				if (imbedded && *ptr == '\n')
 				{
-					error(eoff,"Imbedded command has no closing parend (\')\')");
+					error(eoff, "Imbedded command has no closing parend (\')\')");
 				}
 
 				done = (*ptr != ',');   /* we done if it's not a comma */
 
 				if (*ptr != '\n' && *ptr != ')' && *ptr != ',')
 				{
-					error(0,"Command line too long.");
+					error(0, "Command line too long.");
 					break;
 				}
 
@@ -1785,19 +1822,19 @@ void read_src(char *fname)
 
 					if (cmd[6] == '\0')
 					{
-						warn(eoff,"Topic has no title.");
+						warn(eoff, "Topic has no title.");
 					}
 					else if ((int)strlen(cmd+6) > 70)
 					{
-						error(eoff,"Topic title is too long.");
+						error(eoff, "Topic title is too long.");
 					}
 					else if ((int)strlen(cmd+6) > 60)
 					{
-						warn(eoff,"Topic title is long.");
+						warn(eoff, "Topic title is long.");
 					}
 					if (find_topic_title(cmd+6) != -1)
 					{
-						error(eoff,"Topic title already exists.");
+						error(eoff, "Topic title already exists.");
 					}
 
 					start_topic(&t, cmd+6, (unsigned)(ptr-(cmd+6)));
@@ -1812,7 +1849,6 @@ void read_src(char *fname)
 					compress_spaces = 1;
 					continue;
 				}
-
 				else if (strnicmp(cmd, "Data=", 5) == 0)
 				{
 					if (in_topic)  /* if we're in a topic, finish it */
@@ -1826,18 +1862,18 @@ void read_src(char *fname)
 
 					if (cmd[5] == '\0')
 					{
-						warn(eoff,"Data topic has no label.");
+						warn(eoff, "Data topic has no label.");
 					}
 
 					if (!validate_label_name(cmd+5))
 					{
-						error(eoff,"Label \"%s\" contains illegal characters.", cmd+5);
+						error(eoff, "Label \"%s\" contains illegal characters.", cmd+5);
 						continue;
 					}
 
 					if (find_label(cmd+5) != NULL)
 					{
-						error(eoff,"Label \"%s\" already exists", cmd+5);
+						error(eoff, "Label \"%s\" already exists", cmd+5);
 						continue;
 					}
 
@@ -1866,7 +1902,6 @@ void read_src(char *fname)
 					compress_spaces = 0;
 					continue;
 				}
-
 				else if (strnicmp(cmd, "DocContents", 11) == 0)
 				{
 					check_command_length(eoff, 11);
@@ -1881,20 +1916,18 @@ void read_src(char *fname)
 							unread_char('(');
 						}
 						unread_char('~');
-						done = 1;
+						done = true;
 					}
 					compress_spaces = 1;
 					process_contents();
 					in_topic = 0;
 					continue;
 				}
-
 				else if (stricmp(cmd, "Comment") == 0)
 				{
 					process_comment();
 					continue;
 				}
-
 				else if (strnicmp(cmd, "FormatExclude", 13) == 0)
 				{
 					if (cmd[13] == '-')
@@ -1908,7 +1941,7 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"FormatExclude-\" is already in effect.");
+								warn(eoff, "\"FormatExclude-\" is already in effect.");
 							}
 						}
 						else
@@ -1919,7 +1952,7 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"FormatExclude-\" is already in effect.");
+								warn(eoff, "\"FormatExclude-\" is already in effect.");
 							}
 						}
 					}
@@ -1934,7 +1967,7 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"FormatExclude+\" is already in effect.");
+								warn(eoff, "\"FormatExclude+\" is already in effect.");
 							}
 						}
 						else
@@ -1945,7 +1978,7 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"FormatExclude+\" is already in effect.");
+								warn(eoff, "\"FormatExclude+\" is already in effect.");
 							}
 						}
 					}
@@ -1975,7 +2008,7 @@ void read_src(char *fname)
 
 							if (lformat_exclude <= 0)
 							{
-								error(eoff,"Invalid argument to FormatExclude=");
+								error(eoff, "Invalid argument to FormatExclude=");
 								lformat_exclude = 0;
 							}
 
@@ -1988,11 +2021,11 @@ void read_src(char *fname)
 						}
 					}
 					else
-						error(eoff,"Invalid format for FormatExclude");
-
+					{
+						error(eoff, "Invalid format for FormatExclude");
+					}
 					continue;
 				}
-
 				else if (strnicmp(cmd, "Include ", 8) == 0)
 				{
 					if (include_stack_top >= MAX_INCLUDE_STACK-1)
@@ -2012,7 +2045,7 @@ void read_src(char *fname)
 							error(eoff, "Unable to open \"%s\"", cmd+8);
 							srcfile = include_stack[include_stack_top--].file;
 						}
-						src_cfname = dupstr(cmd+8,0);  /* never deallocate! */
+						src_cfname = dupstr(cmd+8, 0);  /* never deallocate! */
 						srcline = 1;
 						srccol = 0;
 					}
@@ -2029,7 +2062,7 @@ void read_src(char *fname)
 					{
 						if (hdr_fname[0] != '\0')
 						{
-							warn(eoff,"Header Filename has already been defined.");
+							warn(eoff, "Header Filename has already been defined.");
 						}
 						strcpy(hdr_fname, cmd+8);
 						strupr(hdr_fname);
@@ -2038,7 +2071,7 @@ void read_src(char *fname)
 					{
 						if (hlp_fname[0] != '\0')
 						{
-							warn(eoff,"Help Filename has already been defined.");
+							warn(eoff, "Help Filename has already been defined.");
 						}
 						strcpy(hlp_fname, cmd+8);
 						strupr(hlp_fname);
@@ -2047,13 +2080,13 @@ void read_src(char *fname)
 					{
 						if (version != -1)   /* an unlikely value */
 						{
-							warn(eoff,"Help version has already been defined");
+							warn(eoff, "Help version has already been defined");
 						}
 						version = atoi(cmd+8);
 					}
 					else
 					{
-						error(eoff,"Bad or unexpected command \"%s\"", cmd);
+						error(eoff, "Bad or unexpected command \"%s\"", cmd);
 					}
 					continue;
 				}
@@ -2062,7 +2095,7 @@ void read_src(char *fname)
 				{
 					if (strnicmp(cmd, "FF", 2) == 0)
 					{
-						check_command_length(eoff,2);
+						check_command_length(eoff, 2);
 						if (in_para)
 						{
 							*curr++ = '\n';  /* finish off current paragraph */
@@ -2074,7 +2107,7 @@ void read_src(char *fname)
 					}
 					else if (strnicmp(cmd, "DocFF", 5) == 0)
 					{
-						check_command_length(eoff,5);
+						check_command_length(eoff, 5);
 						if (in_para)
 						{
 							*curr++ = '\n';  /* finish off current paragraph */
@@ -2094,7 +2127,7 @@ void read_src(char *fname)
 					}
 					else if (strnicmp(cmd, "OnlineFF", 8) == 0)
 					{
-						check_command_length(eoff,8);
+						check_command_length(eoff, 8);
 						if (in_para)
 						{
 							*curr++ = '\n';  /* finish off current paragraph */
@@ -2116,15 +2149,15 @@ void read_src(char *fname)
 					{
 						if ((int)strlen(cmd+6) <= 0)
 						{
-							error(eoff,"Label has no name.");
+							error(eoff, "Label has no name.");
 						}
 						else if (!validate_label_name(cmd+6))
 						{
-							error(eoff,"Label \"%s\" contains illegal characters.", cmd+6);
+							error(eoff, "Label \"%s\" contains illegal characters.", cmd+6);
 						}
 						else if (find_label(cmd+6) != NULL)
 						{
-							error(eoff,"Label \"%s\" already exists", cmd+6);
+							error(eoff, "Label \"%s\" already exists", cmd+6);
 						}
 						else
 						{
@@ -2156,7 +2189,7 @@ void read_src(char *fname)
 								unread_char('(');
 							}
 							unread_char('~');
-							done = 1;
+							done = true;
 						}
 						create_table();
 					}
@@ -2171,7 +2204,7 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(0,"\"FormatExclude-\" is already in effect.");
+								warn(0, "\"FormatExclude-\" is already in effect.");
 							}
 						}
 						else if (cmd[13] == '+')
@@ -2183,19 +2216,19 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(0,"\"FormatExclude+\" is already in effect.");
+								warn(0, "\"FormatExclude+\" is already in effect.");
 							}
 						}
 						else
 						{
-							error(eoff,"Unexpected or invalid argument to FormatExclude.");
+							error(eoff, "Unexpected or invalid argument to FormatExclude.");
 						}
 					}
 					else if (strnicmp(cmd, "Format", 6) == 0)
 					{
 						if (cmd[6] == '+')
 						{
-							check_command_length(eoff,7);
+							check_command_length(eoff, 7);
 							if (!formatting)
 							{
 								formatting = 1;
@@ -2205,12 +2238,12 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"Format+\" is already in effect.");
+								warn(eoff, "\"Format+\" is already in effect.");
 							}
 						}
 						else if (cmd[6] == '-')
 						{
-							check_command_length(eoff,7);
+							check_command_length(eoff, 7);
 							if (formatting)
 							{
 								if (in_para)
@@ -2225,19 +2258,19 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"Format-\" is already in effect.");
+								warn(eoff, "\"Format-\" is already in effect.");
 							}
 						}
 						else
 						{
-							error(eoff,"Invalid argument to Format.");
+							error(eoff, "Invalid argument to Format.");
 						}
 					}
 					else if (strnicmp(cmd, "Online", 6) == 0)
 					{
 						if (cmd[6] == '+')
 						{
-							check_command_length(eoff,7);
+							check_command_length(eoff, 7);
 
 							if (xonline)
 							{
@@ -2246,12 +2279,12 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"Online+\" already in effect.");
+								warn(eoff, "\"Online+\" already in effect.");
 							}
 						}
 						else if (cmd[6] == '-')
 						{
-							check_command_length(eoff,7);
+							check_command_length(eoff, 7);
 							if (!xonline)
 							{
 								*curr++ = CMD_XONLINE;
@@ -2259,19 +2292,19 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"Online-\" already in effect.");
+								warn(eoff, "\"Online-\" already in effect.");
 							}
 						}
 						else
 						{
-							error(eoff,"Invalid argument to Online.");
+							error(eoff, "Invalid argument to Online.");
 						}
 					}
 					else if (strnicmp(cmd, "Doc", 3) == 0)
 					{
 						if (cmd[3] == '+')
 						{
-							check_command_length(eoff,4);
+							check_command_length(eoff, 4);
 							if (xdoc)
 							{
 								*curr++ = CMD_XDOC;
@@ -2279,12 +2312,12 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"Doc+\" already in effect.");
+								warn(eoff, "\"Doc+\" already in effect.");
 							}
 						}
 						else if (cmd[3] == '-')
 						{
-							check_command_length(eoff,4);
+							check_command_length(eoff, 4);
 							if (!xdoc)
 							{
 								*curr++ = CMD_XDOC;
@@ -2292,19 +2325,19 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"Doc-\" already in effect.");
+								warn(eoff, "\"Doc-\" already in effect.");
 							}
 						}
 						else
 						{
-							error(eoff,"Invalid argument to Doc.");
+							error(eoff, "Invalid argument to Doc.");
 						}
 					}
 					else if (strnicmp(cmd, "Center", 6) == 0)
 					{
 						if (cmd[6] == '+')
 						{
-							check_command_length(eoff,7);
+							check_command_length(eoff, 7);
 							if (!centering)
 							{
 								centering = 1;
@@ -2317,12 +2350,12 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"Center+\" already in effect.");
+								warn(eoff, "\"Center+\" already in effect.");
 							}
 						}
 						else if (cmd[6] == '-')
 						{
-							check_command_length(eoff,7);
+							check_command_length(eoff, 7);
 							if (centering)
 							{
 								centering = 0;
@@ -2330,12 +2363,12 @@ void read_src(char *fname)
 							}
 							else
 							{
-								warn(eoff,"\"Center-\" already in effect.");
+								warn(eoff, "\"Center-\" already in effect.");
 							}
 						}
 						else
 						{
-							error(eoff,"Invalid argument to Center.");
+							error(eoff, "Invalid argument to Center.");
 						}
 					}
 					else if (strnicmp(cmd, "CompressSpaces", 14) == 0)
@@ -2346,7 +2379,7 @@ void read_src(char *fname)
 						{
 							if (compress_spaces)
 							{
-								warn(eoff,"\"CompressSpaces+\" is already in effect.");
+								warn(eoff, "\"CompressSpaces+\" is already in effect.");
 							}
 							else
 							{
@@ -2357,7 +2390,7 @@ void read_src(char *fname)
 						{
 							if (!compress_spaces)
 							{
-								warn(eoff,"\"CompressSpaces-\" is already in effect.");
+								warn(eoff, "\"CompressSpaces-\" is already in effect.");
 							}
 							else
 							{
@@ -2366,14 +2399,14 @@ void read_src(char *fname)
 						}
 						else
 						{
-							error(eoff,"Invalid argument to CompressSpaces.");
+							error(eoff, "Invalid argument to CompressSpaces.");
 						}
 					}
 					else if (strnicmp("BinInc ", cmd, 7) == 0)
 					{
 						if (!(t.flags & TF_DATA))
 						{
-							error(eoff,"BinInc allowed only in Data topics.");
+							error(eoff, "BinInc allowed only in Data topics.");
 						}
 						else
 						{
@@ -2382,7 +2415,7 @@ void read_src(char *fname)
 					}
 					else
 					{
-						error(eoff,"Bad or unexpected command \"%s\".", cmd);
+						error(eoff, "Bad or unexpected command \"%s\".", cmd);
 					}
 				} /* else */
 			} /* while (!done) */
@@ -2398,300 +2431,299 @@ void read_src(char *fname)
 				unread_char('~');
 			}
 			*ptr = '\0';
-			error(0,"Text outside of any topic \"%s\".", cmd);
+			error(0, "Text outside of any topic \"%s\".", cmd);
 			continue;
 		}
 
 		if (centering)
 		{
+			bool again;
 			do
 			{
-				again = 0;   /* default */
+				again = false;   /* default */
 
 				switch (state)
 				{
-					case S_Start:
-						if (ch == ' ')
-						{
-							; /* do nothing */
-						}
-						else if ((ch&0xFF) == '\n')
-						{
-							*curr++ = ch;  /* no need to center blank lines. */
-						}
-						else
-						{
-							*curr++ = CMD_CENTER;
-							state = S_Line;
-							again = 1;
-						}
-						break;
+				case S_Start:
+					if (ch == ' ')
+					{
+						; /* do nothing */
+					}
+					else if ((ch&0xFF) == '\n')
+					{
+						*curr++ = ch;  /* no need to center blank lines. */
+					}
+					else
+					{
+						*curr++ = CMD_CENTER;
+						state = S_Line;
+						again = true;
+					}
+					break;
 
-					case S_Line:
-						put_a_char(ch, &t);
-						if ((ch&0xFF) == '\n')
-						{
-							state = S_Start;
-						}
-						break;
+				case S_Line:
+					put_a_char(ch, &t);
+					if ((ch&0xFF) == '\n')
+					{
+						state = S_Start;
+					}
+					break;
 				} /* switch */
 			}
 			while (again);
 		}
-
 		else if (formatting)
 		{
-			int again;
+			bool again;
 
 			do
 			{
-				again = 0;   /* default */
+				again = false;   /* default */
 
 				switch (state)
 				{
-					case S_Start:
+				case S_Start:
+					if ((ch&0xFF) == '\n')
+					{
+						*curr++ = ch;
+					}
+					else
+					{
+						state = S_StartFirstLine;
+						num_spaces = 0;
+						again = true;
+					}
+					break;
+
+				case S_StartFirstLine:
+					if (ch == ' ')
+					{
+						++num_spaces;
+					}
+					else
+					{
+						if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
+						{
+							put_spaces(num_spaces);
+							num_spaces = 0;
+							state = S_FormatDisabled;
+							again = true;
+						}
+						else
+						{
+							*curr++ = CMD_PARA;
+							*curr++ = (char)num_spaces;
+							*curr++ = (char)num_spaces;
+							margin_pos = curr - 1;
+							state = S_FirstLine;
+							again = true;
+							in_para = 1;
+						}
+					}
+					break;
+
+				case S_FirstLine:
+					if (ch == '\n')
+					{
+						state = S_StartSecondLine;
+						num_spaces = 0;
+					}
+					else if (ch == ('\n'|0x100))   /* force end of para ? */
+					{
+						*curr++ = '\n';
+						in_para = 0;
+						state = S_Start;
+					}
+					else if (ch == ' ')
+					{
+						state = S_FirstLineSpaces;
+						num_spaces = 1;
+					}
+					else
+					{
+						put_a_char(ch, &t);
+					}
+					break;
+
+				case S_FirstLineSpaces:
+					if (ch == ' ')
+					{
+						++num_spaces;
+					}
+					else
+					{
+						put_spaces(num_spaces);
+						state = S_FirstLine;
+						again = true;
+					}
+					break;
+
+				case S_StartSecondLine:
+					if (ch == ' ')
+					{
+						++num_spaces;
+					}
+					else if ((ch&0xFF) == '\n') /* a blank line means end of a para */
+					{
+						*curr++ = '\n';   /* end the para */
+						*curr++ = '\n';   /* for the blank line */
+						in_para = 0;
+						state = S_Start;
+					}
+					else
+					{
+						if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
+						{
+							*curr++ = '\n';
+							in_para = 0;
+							put_spaces(num_spaces);
+							num_spaces = 0;
+							state = S_FormatDisabled;
+							again = true;
+						}
+						else
+						{
+							add_blank_for_split();
+							margin = num_spaces;
+							*margin_pos = (char)num_spaces;
+							state = S_Line;
+							again = true;
+						}
+					}
+					break;
+
+				case S_Line:   /* all lines after the first */
+					if (ch == '\n')
+					{
+						state = S_StartLine;
+						num_spaces = 0;
+					}
+					else if (ch == ('\n' | 0x100))   /* force end of para ? */
+					{
+						*curr++ = '\n';
+						in_para = 0;
+						state = S_Start;
+					}
+					else if (ch == ' ')
+					{
+						state = S_LineSpaces;
+						num_spaces = 1;
+					}
+					else
+					{
+						put_a_char(ch, &t);
+					}
+					break;
+
+				case S_LineSpaces:
+					if (ch == ' ')
+					{
+						++num_spaces;
+					}
+					else
+					{
+						put_spaces(num_spaces);
+						state = S_Line;
+						again = true;
+					}
+					break;
+
+				case S_StartLine:   /* for all lines after the second */
+					if (ch == ' ')
+					{
+						++num_spaces;
+					}
+					else if ((ch&0xFF) == '\n') /* a blank line means end of a para */
+					{
+						*curr++ = '\n';   /* end the para */
+						*curr++ = '\n';   /* for the blank line */
+						in_para = 0;
+						state = S_Start;
+					}
+					else
+					{
+						if (num_spaces != margin)
+						{
+							*curr++ = '\n';
+							in_para = 0;
+							state = S_StartFirstLine;  /* with current num_spaces */
+						}
+						else
+						{
+							add_blank_for_split();
+							state = S_Line;
+						}
+						again = true;
+					}
+					break;
+
+				case S_FormatDisabled:
+					if (ch == ' ')
+					{
+						state = S_FormatDisabledSpaces;
+						num_spaces = 1;
+					}
+					else
+					{
 						if ((ch&0xFF) == '\n')
 						{
-							*curr++ = ch;
-						}
-						else
-						{
-							state = S_StartFirstLine;
-							num_spaces = 0;
-							again = 1;
-						}
-						break;
-
-					case S_StartFirstLine:
-						if (ch == ' ')
-						{
-							++num_spaces;
-						}
-						else
-						{
-							if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
-							{
-								put_spaces(num_spaces);
-								num_spaces = 0;
-								state = S_FormatDisabled;
-								again = 1;
-							}
-							else
-							{
-								*curr++ = CMD_PARA;
-								*curr++ = (char)num_spaces;
-								*curr++ = (char)num_spaces;
-								margin_pos = curr - 1;
-								state = S_FirstLine;
-								again = 1;
-								in_para = 1;
-							}
-						}
-						break;
-
-					case S_FirstLine:
-						if (ch == '\n')
-						{
-							state = S_StartSecondLine;
-							num_spaces = 0;
-						}
-						else if (ch == ('\n'|0x100))   /* force end of para ? */
-						{
-							*curr++ = '\n';
-							in_para = 0;
 							state = S_Start;
 						}
-						else if (ch == ' ')
-						{
-							state = S_FirstLineSpaces;
-							num_spaces = 1;
-						}
-						else
-						{
-							put_a_char(ch, &t);
-						}
-						break;
+						put_a_char(ch, &t);
+					}
+					break;
 
-					case S_FirstLineSpaces:
-						if (ch == ' ')
-						{
-							++num_spaces;
-						}
-						else
-						{
-							put_spaces(num_spaces);
-							state = S_FirstLine;
-							again = 1;
-						}
-						break;
-
-					case S_StartSecondLine:
-						if (ch == ' ')
-						{
-							++num_spaces;
-						}
-						else if ((ch&0xFF) == '\n') /* a blank line means end of a para */
-						{
-							*curr++ = '\n';   /* end the para */
-							*curr++ = '\n';   /* for the blank line */
-							in_para = 0;
-							state = S_Start;
-						}
-						else
-						{
-							if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
-							{
-								*curr++ = '\n';
-								in_para = 0;
-								put_spaces(num_spaces);
-								num_spaces = 0;
-								state = S_FormatDisabled;
-								again = 1;
-							}
-							else
-							{
-								add_blank_for_split();
-								margin = num_spaces;
-								*margin_pos = (char)num_spaces;
-								state = S_Line;
-								again = 1;
-							}
-						}
-						break;
-
-					case S_Line:   /* all lines after the first */
-						if (ch == '\n')
-						{
-							state = S_StartLine;
-							num_spaces = 0;
-						}
-						else if (ch == ('\n' | 0x100))   /* force end of para ? */
-						{
-							*curr++ = '\n';
-							in_para = 0;
-							state = S_Start;
-						}
-						else if (ch == ' ')
-						{
-							state = S_LineSpaces;
-							num_spaces = 1;
-						}
-						else
-						{
-							put_a_char(ch, &t);
-						}
-						break;
-
-					case S_LineSpaces:
-						if (ch == ' ')
-						{
-							++num_spaces;
-						}
-						else
-						{
-							put_spaces(num_spaces);
-							state = S_Line;
-							again = 1;
-						}
-						break;
-
-					case S_StartLine:   /* for all lines after the second */
-						if (ch == ' ')
-						{
-							++num_spaces;
-						}
-						else if ((ch&0xFF) == '\n') /* a blank line means end of a para */
-						{
-							*curr++ = '\n';   /* end the para */
-							*curr++ = '\n';   /* for the blank line */
-							in_para = 0;
-							state = S_Start;
-						}
-						else
-						{
-							if (num_spaces != margin)
-							{
-								*curr++ = '\n';
-								in_para = 0;
-								state = S_StartFirstLine;  /* with current num_spaces */
-								again = 1;
-							}
-							else
-							{
-								add_blank_for_split();
-								state = S_Line;
-								again = 1;
-							}
-						}
-						break;
-
-					case S_FormatDisabled:
-						if (ch == ' ')
-						{
-							state = S_FormatDisabledSpaces;
-							num_spaces = 1;
-						}
-						else
-						{
-							if ((ch&0xFF) == '\n')
-							{
-								state = S_Start;
-							}
-							put_a_char(ch, &t);
-						}
-						break;
-
-					case S_FormatDisabledSpaces:
-						if (ch == ' ')
-						{
-							++num_spaces;
-						}
-						else
-						{
-							put_spaces(num_spaces);
-							num_spaces = 0;    /* is this needed? */
-							state = S_FormatDisabled;
-							again = 1;
-						}
-						break;
-
+				case S_FormatDisabledSpaces:
+					if (ch == ' ')
+					{
+						++num_spaces;
+					}
+					else
+					{
+						put_spaces(num_spaces);
+						num_spaces = 0;    /* is this needed? */
+						state = S_FormatDisabled;
+						again = true;
+					}
+					break;
 				} /* switch (state) */
 			}
 			while (again);
 		}
 		else
 		{
+			bool again;
 			do
 			{
-				again = 0;   /* default */
+				again = false;   /* default */
 
 				switch (state)
 				{
-					case S_Start:
-						if (ch == ' ')
-						{
-							state = S_Spaces;
-							num_spaces = 1;
-						}
-						else
-						{
-							put_a_char(ch, &t);
-						}
-						break;
+				case S_Start:
+					if (ch == ' ')
+					{
+						state = S_Spaces;
+						num_spaces = 1;
+					}
+					else
+					{
+						put_a_char(ch, &t);
+					}
+					break;
 
-					case S_Spaces:
-						if (ch == ' ')
-						{
-							++num_spaces;
-						}
-						else
-						{
-							put_spaces(num_spaces);
-							num_spaces = 0;     /* is this needed? */
-							state = S_Start;
-							again = 1;
-						}
-						break;
+				case S_Spaces:
+					if (ch == ' ')
+					{
+						++num_spaces;
+					}
+					else
+					{
+						put_spaces(num_spaces);
+						num_spaces = 0;     /* is this needed? */
+						state = S_Start;
+						again = true;
+					}
+					break;
 				} /* switch */
 			}
 			while (again);
@@ -2713,7 +2745,7 @@ void read_src(char *fname)
 /*
 * calculate topic_num/topic_off for each link.
 */
-void make_hot_links(void)
+void make_hot_links()
 {
 	LINK    *l;
 	LABEL   *lbl;
@@ -2729,9 +2761,9 @@ void make_hot_links(void)
 	* "TF_IN_DOC" flag for all topics included in the document.
 	*/
 
-	for (lctr=0, c=contents; lctr<num_contents; lctr++, c++)
+	for (lctr = 0, c = contents; lctr < num_contents; lctr++, c++)
 	{
-		for (ctr=0; ctr<c->num_topic; ctr++)
+		for (ctr = 0; ctr < c->num_topic; ctr++)
 		{
 			if (c->is_label[ctr])
 			{
@@ -2740,7 +2772,7 @@ void make_hot_links(void)
 				{
 					src_cfname = c->srcfile;
 					srcline = c->srcline;
-					error(0,"Cannot find DocContent label \"%s\".", c->topic_name[ctr]);
+					error(0, "Cannot find DocContent label \"%s\".", c->topic_name[ctr]);
 					srcline = -1;
 				}
 				else
@@ -2749,7 +2781,7 @@ void make_hot_links(void)
 					{
 						src_cfname = c->srcfile;
 						srcline = c->srcline;
-						error(0,"Label \"%s\" is a data-only topic.", c->topic_name[ctr]);
+						error(0, "Label \"%s\" is a data-only topic.", c->topic_name[ctr]);
 						srcline = -1;
 					}
 					else
@@ -2757,7 +2789,7 @@ void make_hot_links(void)
 						c->topic_num[ctr] = lbl->topic_num;
 						if (topic[lbl->topic_num].flags & TF_IN_DOC)
 						{
-							warn(0,"Topic \"%s\" appears in document more than once.",
+							warn(0, "Topic \"%s\" appears in document more than once.",
 								topic[lbl->topic_num].title);
 						}
 						else
@@ -2775,7 +2807,7 @@ void make_hot_links(void)
 				{
 					src_cfname = c->srcfile;
 					srcline = c->srcline;
-					error(0,"Cannot find DocContent topic \"%s\".", c->topic_name[ctr]);
+					error(0, "Cannot find DocContent topic \"%s\".", c->topic_name[ctr]);
 					srcline = -1;  /* back to reality */
 				}
 				else
@@ -2783,7 +2815,7 @@ void make_hot_links(void)
 					c->topic_num[ctr] = t;
 					if (topic[t].flags & TF_IN_DOC)
 					{
-						warn(0,"Topic \"%s\" appears in document more than once.",
+						warn(0, "Topic \"%s\" appears in document more than once.",
 							topic[t].title);
 					}
 					else
@@ -2800,56 +2832,56 @@ void make_hot_links(void)
 	* links which will (probably) appear in the document.
 	*/
 
-	for (lctr=0, l=a_link; lctr<num_link; l++, lctr++)
+	for (lctr = 0, l = a_link; lctr < num_link; l++, lctr++)
 	{
 		switch (l->type)
 		{
-			case 0:      /* name is the title of the topic */
-				t = find_topic_title(l->name);
-				if (t == -1)
-				{
-					src_cfname = l->srcfile;
-					srcline = l->srcline; /* pretend we are still in the source... */
-					error(0,"Cannot find implicit hot-link \"%s\".", l->name);
-					srcline = -1;  /* back to reality */
-				}
-				else
-				{
-					l->topic_num = t;
-					l->topic_off = 0;
-					l->doc_page = (topic[t].flags & TF_IN_DOC) ? 0 : -1;
-				}
-				break;
+		case 0:      /* name is the title of the topic */
+			t = find_topic_title(l->name);
+			if (t == -1)
+			{
+				src_cfname = l->srcfile;
+				srcline = l->srcline; /* pretend we are still in the source... */
+				error(0, "Cannot find implicit hot-link \"%s\".", l->name);
+				srcline = -1;  /* back to reality */
+			}
+			else
+			{
+				l->topic_num = t;
+				l->topic_off = 0;
+				l->doc_page = (topic[t].flags & TF_IN_DOC) ? 0 : -1;
+			}
+			break;
 
-			case 1:  /* name is the name of a label */
-				lbl = find_label(l->name);
-				if (lbl == NULL)
+		case 1:  /* name is the name of a label */
+			lbl = find_label(l->name);
+			if (lbl == NULL)
+			{
+				src_cfname = l->srcfile;
+				srcline = l->srcline; /* pretend again */
+				error(0, "Cannot find explicit hot-link \"%s\".", l->name);
+				srcline = -1;
+			}
+			else
+			{
+				if (topic[lbl->topic_num].flags & TF_DATA)
 				{
 					src_cfname = l->srcfile;
-					srcline = l->srcline; /* pretend again */
-					error(0,"Cannot find explicit hot-link \"%s\".", l->name);
+					srcline = l->srcline;
+					error(0, "Label \"%s\" is a data-only topic.", l->name);
 					srcline = -1;
 				}
 				else
 				{
-					if (topic[lbl->topic_num].flags & TF_DATA)
-					{
-						src_cfname = l->srcfile;
-						srcline = l->srcline;
-						error(0,"Label \"%s\" is a data-only topic.", l->name);
-						srcline = -1;
-					}
-					else
-					{
-						l->topic_num = lbl->topic_num;
-						l->topic_off = lbl->topic_off;
-						l->doc_page  = (topic[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
-					}
+					l->topic_num = lbl->topic_num;
+					l->topic_off = lbl->topic_off;
+					l->doc_page  = (topic[lbl->topic_num].flags & TF_IN_DOC) ? 0 : -1;
 				}
-				break;
+			}
+			break;
 
-			case 2:   /* it's a "special" link; topic_off already has the value */
-				break;
+		case 2:   /* it's a "special" link; topic_off already has the value */
+			break;
 		}
 	}
 
@@ -2877,7 +2909,7 @@ void add_page_break(TOPIC *t, int margin, char *text, char *start, char *curr, i
 }
 
 
-void paginate_online(void)    /* paginate the text for on-line help */
+void paginate_online()    /* paginate the text for on-line help */
 {                   /* also calculates max_pages and max_links */
 	int       lnum;
 	char     *start;
@@ -2896,7 +2928,7 @@ void paginate_online(void)    /* paginate the text for on-line help */
 
 	msg("Paginating online help.");
 
-	for (t=topic, tctr=0; tctr<num_topic; t++, tctr++)
+	for (t = topic, tctr = 0; tctr < num_topic; t++, tctr++)
 	{
 		if (t->flags & TF_DATA)
 		{
@@ -2920,18 +2952,12 @@ void paginate_online(void)    /* paginate the text for on-line help */
 
 			switch (tok)
 			{
-				case TOK_PARA:
+			case TOK_PARA:
 				{
-					int indent,
-						margin;
-
 					++curr;
-
-					indent = *curr++;
-					margin = *curr++;
-
+					int indent = *curr++;
+					int margin = *curr++;
 					len -= 3;
-
 					col = indent;
 
 					while (1)
@@ -2988,53 +3014,53 @@ void paginate_online(void)    /* paginate the text for on-line help */
 					break;
 				}
 
-				case TOK_NL:
-					if (skip_blanks && col == 0)
-					{
-						start += size;
-						break;
-					}
-					++lnum;
-					if (lnum >= SCREEN_DEPTH || (col == 0 && lnum==SCREEN_DEPTH-1))
-					{
-						add_page_break(t, start_margin, text, start, curr, num_links);
-						start = curr + size;
-						start_margin = -1;
-						lnum = 0;
-						num_links = 0;
-						skip_blanks = 1;
-					}
-					col = 0;
+			case TOK_NL:
+				if (skip_blanks && col == 0)
+				{
+					start += size;
 					break;
-
-				case TOK_FF:
-					col = 0;
-					if (skip_blanks)
-					{
-						start += size;
-						break;
-					}
+				}
+				++lnum;
+				if (lnum >= SCREEN_DEPTH || (col == 0 && lnum==SCREEN_DEPTH-1))
+				{
 					add_page_break(t, start_margin, text, start, curr, num_links);
-					start_margin = -1;
 					start = curr + size;
+					start_margin = -1;
 					lnum = 0;
 					num_links = 0;
+					skip_blanks = 1;
+				}
+				col = 0;
+				break;
+
+			case TOK_FF:
+				col = 0;
+				if (skip_blanks)
+				{
+					start += size;
 					break;
+				}
+				add_page_break(t, start_margin, text, start, curr, num_links);
+				start_margin = -1;
+				start = curr + size;
+				lnum = 0;
+				num_links = 0;
+				break;
 
-				case TOK_DONE:
-				case TOK_XONLINE:   /* skip */
-				case TOK_XDOC:      /* ignore */
-				case TOK_CENTER:    /* ignore */
-					break;
+			case TOK_DONE:
+			case TOK_XONLINE:   /* skip */
+			case TOK_XDOC:      /* ignore */
+			case TOK_CENTER:    /* ignore */
+				break;
 
-				case TOK_LINK:
-					++num_links;
+			case TOK_LINK:
+				++num_links;
 
-					/* fall-through */
+				/* fall-through */
 
-				default:    /* TOK_SPACE, TOK_LINK, TOK_WORD */
-					skip_blanks = 0;
-					break;
+			default:    /* TOK_SPACE, TOK_LINK, TOK_WORD */
+				skip_blanks = 0;
+				break;
 
 			} /* switch */
 
@@ -3063,10 +3089,12 @@ void paginate_online(void)    /* paginate the text for on-line help */
  */
 
 
-#define CNUM           0
-#define TNUM           1
-#define LINK_DEST_WARN 2
-
+enum
+{
+	CNUM = 0,
+	TNUM = 1,
+	LINK_DEST_WARN = 2
+};
 
 typedef struct
 {
@@ -3089,7 +3117,7 @@ LABEL *find_next_label_by_topic(int t)
 	g = NULL;
 	p = NULL;
 
-	for (temp=label, ctr=0; ctr<num_label; ctr++, temp++)
+	for (temp = label, ctr = 0; ctr < num_label; ctr++, temp++)
 	{
 		if (temp->topic_num == t && temp->doc_page == -1)
 		{
@@ -3102,7 +3130,7 @@ LABEL *find_next_label_by_topic(int t)
 		}
 	}
 
-	for (temp=plabel, ctr=0; ctr<num_plabel; ctr++, temp++)
+	for (temp = plabel, ctr = 0; ctr < num_plabel; ctr++, temp++)
 	{
 		if (temp->topic_num == t && temp->doc_page == -1)
 		{
@@ -3133,49 +3161,49 @@ LABEL *find_next_label_by_topic(int t)
 /*
 * Find doc_page for all hot-links.
 */
-void set_hot_link_doc_page(void)
+void set_hot_link_doc_page()
 {
 	LINK  *l;
 	LABEL *lbl;
 	int    lctr;
 	int    t;
 
-	for (lctr=0, l=a_link; lctr<num_link; l++, lctr++)
+	for (lctr = 0, l = a_link; lctr < num_link; l++, lctr++)
 	{
 		switch (l->type)
 		{
-			case 0:      /* name is the title of the topic */
-				t = find_topic_title(l->name);
-				if (t == -1)
-				{
-					src_cfname = l->srcfile;
-					srcline = l->srcline; /* pretend we are still in the source... */
-					error(0,"Cannot find implicit hot-link \"%s\".", l->name);
-					srcline = -1;  /* back to reality */
-				}
-				else
-				{
-					l->doc_page = topic[t].doc_page;
-				}
-				break;
+		case 0:      /* name is the title of the topic */
+			t = find_topic_title(l->name);
+			if (t == -1)
+			{
+				src_cfname = l->srcfile;
+				srcline = l->srcline; /* pretend we are still in the source... */
+				error(0, "Cannot find implicit hot-link \"%s\".", l->name);
+				srcline = -1;  /* back to reality */
+			}
+			else
+			{
+				l->doc_page = topic[t].doc_page;
+			}
+			break;
 
-			case 1:  /* name is the name of a label */
-				lbl = find_label(l->name);
-				if (lbl == NULL)
-				{
-					src_cfname = l->srcfile;
-					srcline = l->srcline; /* pretend again */
-					error(0,"Cannot find explicit hot-link \"%s\".", l->name);
-					srcline = -1;
-				}
-				else
-				{
-					l->doc_page = lbl->doc_page;
-				}
-				break;
+		case 1:  /* name is the name of a label */
+			lbl = find_label(l->name);
+			if (lbl == NULL)
+			{
+				src_cfname = l->srcfile;
+				srcline = l->srcline; /* pretend again */
+				error(0, "Cannot find explicit hot-link \"%s\".", l->name);
+				srcline = -1;
+			}
+			else
+			{
+				l->doc_page = lbl->doc_page;
+			}
+			break;
 
-			case 2:   /* special topics don't appear in the document */
-				break;
+		case 2:   /* special topics don't appear in the document */
+			break;
 		}
 	}
 }
@@ -3184,7 +3212,7 @@ void set_hot_link_doc_page(void)
 /*
 * insert page #'s in the DocContents
 */
-void set_content_doc_page(void)
+void set_content_doc_page()
 {
 	CONTENT *c;
 	TOPIC   *t;
@@ -3195,17 +3223,17 @@ void set_content_doc_page(void)
 	int      len;
 
 	tnum = find_topic_title(DOCCONTENTS_TITLE);
-	assert(tnum>=0);
+	assert(tnum >= 0);
 	t = &topic[tnum];
 
 	base = get_topic_text(t);
 
-	for (ctr=1, c=contents+1; ctr<num_contents; ctr++, c++)
+	for (ctr = 1, c = contents + 1; ctr < num_contents; ctr++, c++)
 	{
-		assert(c->doc_page>=1);
+		assert(c->doc_page >= 1);
 		sprintf(buf, "%d", c->doc_page);
 		len = (int) strlen(buf);
-		assert(len<=3);
+		assert(len <= 3);
 		memcpy(base+c->page_num_pos+(3-len), buf, len);
 	}
 
@@ -3219,50 +3247,50 @@ int pd_get_info(int cmd, PD_INFO *pd, int *info)
 
 	switch (cmd)
 	{
-		case PD_GET_CONTENT:
-			if (++info[CNUM] >= num_contents)
-			{
-				return 0;
-			}
-			c = &contents[info[CNUM]];
-			info[TNUM] = -1;
-			pd->id       = c->id;
-			pd->title    = c->name;
-			pd->new_page = (c->flags & CF_NEW_PAGE) ? 1 : 0;
-			return 1;
-
-		case PD_GET_TOPIC:
-			c = &contents[info[CNUM]];
-			if (++info[TNUM] >= c->num_topic)
-			{
-				return 0;
-			}
-			pd->curr = get_topic_text(&topic[c->topic_num[info[TNUM]]]);
-			pd->len = topic[c->topic_num[info[TNUM]]].text_len;
-			return 1;
-
-		case PD_GET_LINK_PAGE:
-			if (a_link[getint(pd->s)].doc_page == -1)
-			{
-				if (info[LINK_DEST_WARN])
-				{
-					src_cfname = a_link[getint(pd->s)].srcfile;
-					srcline    = a_link[getint(pd->s)].srcline;
-					warn(0,"Hot-link destination is not in the document.");
-					srcline = -1;
-				}
-				return 0;
-			}
-			pd->i = a_link[getint(pd->s)].doc_page;
-			return 1;
-
-		case PD_RELEASE_TOPIC:
-			c = &contents[info[CNUM]];
-			release_topic_text(&topic[c->topic_num[info[TNUM]]], 0);
-			return 1;
-
-		default:
+	case PD_GET_CONTENT:
+		if (++info[CNUM] >= num_contents)
+		{
 			return 0;
+		}
+		c = &contents[info[CNUM]];
+		info[TNUM] = -1;
+		pd->id       = c->id;
+		pd->title    = c->name;
+		pd->new_page = (c->flags & CF_NEW_PAGE) ? 1 : 0;
+		return 1;
+
+	case PD_GET_TOPIC:
+		c = &contents[info[CNUM]];
+		if (++info[TNUM] >= c->num_topic)
+		{
+			return 0;
+		}
+		pd->curr = get_topic_text(&topic[c->topic_num[info[TNUM]]]);
+		pd->len = topic[c->topic_num[info[TNUM]]].text_len;
+		return 1;
+
+	case PD_GET_LINK_PAGE:
+		if (a_link[getint(pd->s)].doc_page == -1)
+		{
+			if (info[LINK_DEST_WARN])
+			{
+				src_cfname = a_link[getint(pd->s)].srcfile;
+				srcline    = a_link[getint(pd->s)].srcline;
+				warn(0, "Hot-link destination is not in the document.");
+				srcline = -1;
+			}
+			return 0;
+		}
+		pd->i = a_link[getint(pd->s)].doc_page;
+		return 1;
+
+	case PD_RELEASE_TOPIC:
+		c = &contents[info[CNUM]];
+		release_topic_text(&topic[c->topic_num[info[TNUM]]], 0);
+		return 1;
+
+	default:
+		return 0;
 	}
 }
 
@@ -3271,48 +3299,48 @@ int paginate_doc_output(int cmd, PD_INFO *pd, PAGINATE_DOC_INFO *info)
 {
 	switch (cmd)
 	{
-		case PD_FOOTING:
-		case PD_PRINT:
-		case PD_PRINTN:
-		case PD_PRINT_SEC:
-			return 1;
+	case PD_FOOTING:
+	case PD_PRINT:
+	case PD_PRINTN:
+	case PD_PRINT_SEC:
+		return 1;
 
-		case PD_HEADING:
-			++num_doc_pages;
-			return 1;
+	case PD_HEADING:
+		++num_doc_pages;
+		return 1;
 
-		case PD_START_SECTION:
-			info->c = &contents[info->cnum];
-			return 1;
+	case PD_START_SECTION:
+		info->c = &contents[info->cnum];
+		return 1;
 
-		case PD_START_TOPIC:
-			info->start = pd->curr;
+	case PD_START_TOPIC:
+		info->start = pd->curr;
+		info->lbl = find_next_label_by_topic(info->c->topic_num[info->tnum]);
+		return 1;
+
+	case PD_SET_SECTION_PAGE:
+		info->c->doc_page = pd->pnum;
+		return 1;
+
+	case PD_SET_TOPIC_PAGE:
+		topic[info->c->topic_num[info->tnum]].doc_page = pd->pnum;
+		return 1;
+
+	case PD_PERIODIC:
+		while (info->lbl != NULL && (unsigned)(pd->curr - info->start) >= info->lbl->topic_off)
+		{
+			info->lbl->doc_page = pd->pnum;
 			info->lbl = find_next_label_by_topic(info->c->topic_num[info->tnum]);
-			return 1;
+		}
+		return 1;
 
-		case PD_SET_SECTION_PAGE:
-			info->c->doc_page = pd->pnum;
-			return 1;
-
-		case PD_SET_TOPIC_PAGE:
-			topic[info->c->topic_num[info->tnum]].doc_page = pd->pnum;
-			return 1;
-
-		case PD_PERIODIC:
-			while (info->lbl != NULL && (unsigned)(pd->curr - info->start) >= info->lbl->topic_off)
-			{
-				info->lbl->doc_page = pd->pnum;
-				info->lbl = find_next_label_by_topic(info->c->topic_num[info->tnum]);
-			}
-			return 1;
-
-		default:
-			return 0;
+	default:
+		return 0;
 	}
 }
 
 
-void paginate_document(void)
+void paginate_document()
 {
 	PAGINATE_DOC_INFO info;
 
@@ -3346,7 +3374,7 @@ int fcmp_LABEL(const void *a, const void *b)
 
 	/* compare the names, making sure that the index goes first */
 
-	if ((diff=strcmp(an,bn)) == 0)
+	if ((diff = strcmp(an,bn)) == 0)
 	{
 		return 0;
 	}
@@ -3365,7 +3393,7 @@ int fcmp_LABEL(const void *a, const void *b)
 }
 
 
-void sort_labels(void)
+void sort_labels()
 {
 	qsort(label,  num_label,  sizeof(LABEL), fcmp_LABEL);
 	qsort(plabel, num_plabel, sizeof(LABEL), fcmp_LABEL);
@@ -3415,7 +3443,7 @@ void _write_hdr(char *fname, FILE *file)
 
 	fprintf(file, "/* labels */\n\n");
 
-	for (ctr=0; ctr<num_label; ctr++)
+	for (ctr = 0; ctr < num_label; ctr++)
 	{
 		if (label[ctr].name[0] != '@')  /* if it's not a local label... */
 		{
@@ -3444,7 +3472,7 @@ void write_hdr(char *fname)
 		hdr = fopen(fname, "wt");
 		if (hdr == NULL)
 		{
-			fatal(0,"Cannot create \"%s\".", fname);
+			fatal(0, "Cannot create \"%s\".", fname);
 		}
 		msg("Writing: %s", fname);
 		_write_hdr(fname, hdr);
@@ -3459,7 +3487,7 @@ void write_hdr(char *fname)
 
 	if (temp == NULL)
 	{
-		fatal(0,"Cannot create temporary file: \"%s\".", TEMP_FNAME);
+		fatal(0, "Cannot create temporary file: \"%s\".", TEMP_FNAME);
 	}
 
 	_write_hdr(fname, temp);
@@ -3469,7 +3497,7 @@ void write_hdr(char *fname)
 
 	if (temp == NULL)
 	{
-		fatal(0,"Cannot open temporary file: \"%s\".", TEMP_FNAME);
+		fatal(0, "Cannot open temporary file: \"%s\".", TEMP_FNAME);
 	}
 
 	if (compare_files(temp, hdr))   /* if they are different... */
@@ -3490,7 +3518,7 @@ void write_hdr(char *fname)
 }
 
 
-void calc_offsets(void)    /* calc file offset to each topic */
+void calc_offsets()    /* calc file offset to each topic */
 {
 	int      t;
 	TOPIC   *tp;
@@ -3509,7 +3537,7 @@ void calc_offsets(void)    /* calc file offset to each topic */
 				num_topic*sizeof(long) +/* offsets to each topic */
 				num_label*2*sizeof(int);/* topic_num/topic_off for all public labels */
 
-	for (c=0, cp=contents; c<num_contents; c++, cp++)
+	for (c = 0, cp = contents; c < num_contents; c++, cp++)
 	{
 		offset += sizeof(int) +       /* flags */
 			1 +                 /* id length */
@@ -3520,7 +3548,7 @@ void calc_offsets(void)    /* calc file offset to each topic */
 			cp->num_topic*sizeof(int);    /* topic numbers */
 	}
 
-	for (t=0, tp=topic; t<num_topic; t++, tp++)
+	for (t = 0, tp = topic; t < num_topic; t++, tp++)
 	{
 		tp->offset = offset;
 		offset += (long)sizeof(int) + /* topic flags */
@@ -3551,9 +3579,9 @@ void insert_real_link_info(char *curr, unsigned len)
 		if (tok == TOK_LINK)
 		{
 			l = &a_link[ getint(curr+1) ];
-			setint(curr+1,l->topic_num);
-			setint(curr+1+sizeof(int),l->topic_off);
-			setint(curr+1+2*sizeof(int),l->doc_page);
+			setint(curr+1, l->topic_num);
+			setint(curr+1+sizeof(int), l->topic_off);
+			setint(curr+1 + 2*sizeof(int), l->doc_page);
 		}
 
 		len -= size;
@@ -3594,14 +3622,14 @@ void _write_help(FILE *file)
 
 	/* write the offsets to each topic */
 
-	for (t=0; t<num_topic; t++)
+	for (t = 0; t < num_topic; t++)
 	{
 		fwrite(&topic[t].offset, sizeof(long), 1, file);
 	}
 
 	/* write all public labels */
 
-	for (l=0; l<num_label; l++)
+	for (l = 0; l < num_label; l++)
 	{
 		putw(label[l].topic_num, file);
 		putw(label[l].topic_off, file);
@@ -3609,7 +3637,7 @@ void _write_help(FILE *file)
 
 	/* write contents */
 
-	for (c=0, cp=contents; c<num_contents; c++, cp++)
+	for (c = 0, cp = contents; c < num_contents; c++, cp++)
 	{
 		putw(cp->flags, file);
 
@@ -3627,7 +3655,7 @@ void _write_help(FILE *file)
 
 	/* write topics */
 
-	for (t=0, tp=topic; t<num_topic; t++, tp++)
+	for (t = 0, tp = topic; t < num_topic; t++, tp++)
 	{
 		/* write the topics flags */
 
@@ -3636,7 +3664,7 @@ void _write_help(FILE *file)
 		/* write offset, length and starting margin for each page */
 
 		putw(tp->num_page, file);
-		for (p=0; p<tp->num_page; p++)
+		for (p = 0; p < tp->num_page; p++)
 		{
 			putw(tp->page[p].offset, file);
 			putw(tp->page[p].length, file);
@@ -3676,7 +3704,7 @@ void write_help(char *fname)
 
 	if (hlp == NULL)
 	{
-		fatal(0,"Cannot create .HLP file: \"%s\".", fname);
+		fatal(0, "Cannot create .HLP file: \"%s\".", fname);
 	}
 
 	msg("Writing: %s", fname);
@@ -3715,11 +3743,11 @@ void printerc(PRINT_DOC_INFO *info, int c, int n)
 {
 	while (n-- > 0)
 	{
-		if (c==' ')
+		if (c == ' ')
 		{
 			++info->spaces;
 		}
-		else if (c=='\n' || c=='\f')
+		else if (c == '\n' || c == '\f')
 		{
 			info->start_of_line = 1;
 			info->spaces = 0;   /* strip spaces before a new-line */
@@ -3768,53 +3796,52 @@ int print_doc_output(int cmd, PD_INFO *pd, PRINT_DOC_INFO *info)
 {
 	switch (cmd)
 	{
-		case PD_HEADING:
+	case PD_HEADING:
+	{
+		char buff[20];
+		info->margin = 0;
+		printers(info, "\n                     Fractint Version xx.xx                     Page ", 0);
+		sprintf(buff, "%d\n\n", pd->pnum);
+		printers(info, buff, 0);
+		info->margin = PAGE_INDENT;
+		return 1;
+	}
+
+	case PD_FOOTING:
+		info->margin = 0;
+		printerc(info, '\f', 1);
+		info->margin = PAGE_INDENT;
+		return 1;
+
+	case PD_PRINT:
+		printers(info, pd->s, pd->i);
+		return 1;
+
+	case PD_PRINTN:
+		printerc(info, *pd->s, pd->i);
+		return 1;
+
+	case PD_PRINT_SEC:
+		info->margin = TITLE_INDENT;
+		if (pd->id[0] != '\0')
 		{
-			char buff[20];
-
-			info->margin = 0;
-			printers(info, "\n                     Fractint Version xx.xx                     Page ", 0);
-			sprintf(buff, "%d\n\n", pd->pnum);
-			printers(info, buff, 0);
-			info->margin = PAGE_INDENT;
-			return 1;
+			printers(info, pd->id, 0);
+			printerc(info, ' ', 1);
 		}
+		printers(info, pd->title, 0);
+		printerc(info, '\n', 1);
+		info->margin = PAGE_INDENT;
+		return 1;
 
-		case PD_FOOTING:
-			info->margin = 0;
-			printerc(info, '\f', 1);
-			info->margin = PAGE_INDENT;
-			return 1;
+	case PD_START_SECTION:
+	case PD_START_TOPIC:
+	case PD_SET_SECTION_PAGE:
+	case PD_SET_TOPIC_PAGE:
+	case PD_PERIODIC:
+		return 1;
 
-		case PD_PRINT:
-			printers(info, pd->s, pd->i);
-			return 1;
-
-		case PD_PRINTN:
-			printerc(info, *pd->s, pd->i);
-			return 1;
-
-		case PD_PRINT_SEC:
-			info->margin = TITLE_INDENT;
-			if (pd->id[0] != '\0')
-			{
-				printers(info, pd->id, 0);
-				printerc(info, ' ', 1);
-			}
-			printers(info, pd->title, 0);
-			printerc(info, '\n', 1);
-			info->margin = PAGE_INDENT;
-			return 1;
-
-		case PD_START_SECTION:
-		case PD_START_TOPIC:
-		case PD_SET_SECTION_PAGE:
-		case PD_SET_TOPIC_PAGE:
-		case PD_PERIODIC:
-			return 1;
-
-		default:
-			return 0;
+	default:
+		return 0;
 	}
 }
 
@@ -3825,7 +3852,7 @@ void print_document(const char *fname)
 
 	if (num_contents == 0)
 	{
-		fatal(0,".SRC has no DocContents.");
+		fatal(0, ".SRC has no DocContents.");
 	}
 
 	msg("Printing to: %s", fname);
@@ -3836,7 +3863,7 @@ void print_document(const char *fname)
 
 	if ((info.file = fopen(fname, "wt")) == NULL)
 	{
-		fatal(0,"Couldn't create \"%s\"", fname);
+		fatal(0, "Couldn't create \"%s\"", fname);
 	}
 
 	info.margin = PAGE_INDENT;
@@ -3854,7 +3881,7 @@ void print_document(const char *fname)
  */
 
 
-void report_memory(void)
+void report_memory()
 {
 	long string = 0,   /* bytes in strings */
 		text   = 0,   /* bytes in topic text (stored on disk) */
@@ -3862,7 +3889,7 @@ void report_memory(void)
 		dead   = 0;   /* bytes in unused data structure */
 	int  ctr, ctr2;
 
-	for (ctr=0; ctr<num_topic; ctr++)
+	for (ctr = 0; ctr < num_topic; ctr++)
 	{
 		data   += sizeof(TOPIC);
 		string += topic[ctr].title_len;
@@ -3872,7 +3899,7 @@ void report_memory(void)
 		dead   += (PAGE_ALLOC_SIZE-(topic[ctr].num_page%PAGE_ALLOC_SIZE)) * sizeof(PAGE);
 	}
 
-	for (ctr=0; ctr<num_link; ctr++)
+	for (ctr = 0; ctr < num_link; ctr++)
 	{
 		data += sizeof(LINK);
 		string += (long) strlen(a_link[ctr].name);
@@ -3883,7 +3910,7 @@ void report_memory(void)
 		dead += (LINK_ALLOC_SIZE-(num_link%LINK_ALLOC_SIZE)) * sizeof(LINK);
 	}
 
-	for (ctr=0; ctr<num_label; ctr++)
+	for (ctr = 0; ctr < num_label; ctr++)
 	{
 		data   += sizeof(LABEL);
 		string += (long) strlen(label[ctr].name) + 1;
@@ -3894,7 +3921,7 @@ void report_memory(void)
 		dead += (LABEL_ALLOC_SIZE-(num_label%LABEL_ALLOC_SIZE)) * sizeof(LABEL);
 	}
 
-	for (ctr=0; ctr<num_plabel; ctr++)
+	for (ctr = 0; ctr < num_plabel; ctr++)
 	{
 		data   += sizeof(LABEL);
 		string += (long) strlen(plabel[ctr].name) + 1;
@@ -3905,7 +3932,7 @@ void report_memory(void)
 		dead += (LABEL_ALLOC_SIZE-(num_plabel%LABEL_ALLOC_SIZE)) * sizeof(LABEL);
 	}
 
-	for (ctr=0; ctr<num_contents; ctr++)
+	for (ctr = 0; ctr < num_contents; ctr++)
 	{
 		int t;
 
@@ -3917,7 +3944,7 @@ void report_memory(void)
 		dead += t;
 		string += (long) strlen(contents[ctr].id) + 1;
 		string += (long) strlen(contents[ctr].name) + 1;
-		for (ctr2=0; ctr2<contents[ctr].num_topic; ctr2++)
+		for (ctr2 = 0; ctr2 < contents[ctr].num_topic; ctr2++)
 		{
 			string += (long) strlen(contents[ctr].topic_name[ctr2]) + 1;
 		}
@@ -3939,12 +3966,11 @@ void report_memory(void)
 }
 
 
-void report_stats(void)
+void report_stats()
 {
 	int  pages = 0;
-	int      t;
 
-	for (t=0; t<num_topic; t++)
+	for (int t = 0; t < num_topic; t++)
 	{
 		pages += topic[t].num_page;
 	}
@@ -3975,14 +4001,14 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 	int                  size;
 	help_sig_info hs;
 
-	if ((exe=open(exe_fname, O_RDWR|O_BINARY)) == -1)
+	if ((exe = open(exe_fname, O_RDWR|O_BINARY)) == -1)
 	{
-		fatal(0,"Unable to open \"%s\"", exe_fname);
+		fatal(0, "Unable to open \"%s\"", exe_fname);
 	}
 
-	if ((hlp=open(hlp_fname, O_RDONLY|O_BINARY)) == -1)
+	if ((hlp = open(hlp_fname, O_RDONLY|O_BINARY)) == -1)
 	{
-		fatal(0,"Unable to open \"%s\"", hlp_fname);
+		fatal(0, "Unable to open \"%s\"", hlp_fname);
 	}
 
 	msg("Appending %s to %s", hlp_fname, exe_fname);
@@ -3995,7 +4021,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
 	if (hs.sig == HELP_SIG)
 	{
-		warn(0,"Overwriting previous help. (Version=%d)", hs.version);
+		warn(0, "Overwriting previous help. (Version=%d)", hs.version);
 	}
 	else
 	{
@@ -4008,7 +4034,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
 	if (hs.sig != HELP_SIG)
 	{
-		fatal(0,"Help signature not found in %s", hlp_fname);
+		fatal(0, "Help signature not found in %s", hlp_fname);
 	}
 
 	msg("Help file %s Version=%d", hlp_fname, hs.version);
@@ -4019,7 +4045,7 @@ void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 
 	len = filelength(hlp) - sizeof(long) - sizeof(int); /* adjust for the file signature & version */
 
-	for (count=0; count<len;)
+	for (count = 0; count < len; )
 	{
 		size = (int) std::min((long)BUFFER_SIZE, len-count);
 		read(hlp, buffer, size);
@@ -4043,9 +4069,9 @@ void delete_hlp_from_exe(const char *exe_fname)
 	int   exe;   /* file handle */
 	struct help_sig_info hs;
 
-	if ((exe=open(exe_fname, O_RDWR|O_BINARY)) == -1)
+	if ((exe = open(exe_fname, O_RDWR|O_BINARY)) == -1)
 	{
-		fatal(0,"Unable to open \"%s\"", exe_fname);
+		fatal(0, "Unable to open \"%s\"", exe_fname);
 	}
 
 	msg("Deleting help from %s", exe_fname);
@@ -4068,7 +4094,7 @@ void delete_hlp_from_exe(const char *exe_fname)
 	else
 	{
 		close(exe);
-		fatal(0,"No help found in %s", exe_fname);
+		fatal(0, "No help found in %s", exe_fname);
 	}
 }
 
@@ -4078,147 +4104,305 @@ void delete_hlp_from_exe(const char *exe_fname)
  */
 
 
-#define MODE_COMPILE 1
-#define MODE_PRINT   2
-#define MODE_APPEND  3
-#define MODE_DELETE  4
+enum HelpMode
+{
+	MODE_NONE    = 0,
+	MODE_COMPILE = 1,
+	MODE_PRINT   = 2,
+	MODE_APPEND  = 3,
+	MODE_DELETE  = 4
+};
 
+void parse_argument(int &show_stats, int &show_mem, HelpMode &mode, char **arg, char swappath[81])
+{
+	switch ((*arg)[1])
+	{
+	case 'c':
+		if (mode == 0)
+		{
+			mode = MODE_COMPILE;
+		}
+		else
+		{
+			fatal(0, "Cannot have /c with /a, /d or /p");
+		}
+		break;
+
+	case 'a':
+		if (mode == 0)
+		{
+			mode = MODE_APPEND;
+		}
+		else
+		{
+			fatal(0, "Cannot have /a with /c, /d or /p");
+		}
+		break;
+
+	case 'd':
+		if (mode == 0)
+		{
+			mode = MODE_DELETE;
+		}
+		else
+		{
+			fatal(0, "Cannot have /d with /c, /a or /p");
+		}
+		break;
+
+	case 'p':
+		if (mode == 0)
+		{
+			mode = MODE_PRINT;
+		}
+		else
+		{
+			fatal(0, "Cannot have /p with /c, /a or /d");
+		}
+		break;
+
+	case 'm':
+		if (mode == MODE_COMPILE)
+		{
+			show_mem = 1;
+		}
+		else
+		{
+			fatal(0, "/m switch allowed only when compiling (/c)");
+		}
+		break;
+
+	case 's':
+		if (mode == MODE_COMPILE)
+		{
+			show_stats = 1;
+		}
+		else
+		{
+			fatal(0, "/s switch allowed only when compiling (/c)");
+		}
+		break;
+
+	case 'r':
+		if (mode == MODE_COMPILE || mode == MODE_PRINT)
+		{
+			strcpy(swappath, (*arg) + 2);
+		}
+		else
+		{
+			fatal(0, "/r switch allowed when compiling (/c) or printing (/p)");
+		}
+		break;
+
+	case 'q':
+		quiet_mode = 1;
+		break;
+
+	default:
+		fatal(0, "Bad command-line switch /%c", (*arg)[1]);
+		break;
+	}
+}
+
+void usage()
+{
+	printf("To compile a .SRC file:\n");
+	printf("      HC /c [/s] [/m] [/r[path]] [src_file]\n");
+	printf("         /s       = report statistics.\n");
+	printf("         /m       = report memory usage.\n");
+	printf("         /r[path] = set swap file path.\n");
+	printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
+	printf("To print a .SRC file:\n");
+	printf("      HC /p [/r[path]] [src_file] [out_file]\n");
+	printf("         /r[path] = set swap file path.\n");
+	printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
+	printf("         out_file = Filename to print to. Default is \"%s\"\n", DEFAULT_DOC_FNAME);
+	printf("To append a .HLP file to an .EXE file:\n");
+	printf("      HC /a [hlp_file] [exe_file]\n");
+	printf("         hlp_file = .HLP file.  Default is \"%s\"\n", DEFAULT_HLP_FNAME);
+	printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
+	printf("To delete help info from an .EXE file:\n");
+	printf("      HC /d [exe_file]\n");
+	printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
+	printf("\n");
+	printf("Use \"/q\" for quiet mode. (No status messages.)\n");
+}
+
+void compile(int show_stats, int show_mem, char fname1[81], char fname2[81], char swappath[81])
+{
+	if (fname2[0] != '\0')
+	{
+		fatal(0, "Unexpected command-line argument \"%s\"", fname2);
+	}
+
+	strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
+
+	strcat(swappath, SWAP_FNAME);
+
+	if ((swapfile = fopen(swappath, "w+b")) == NULL)
+	{
+		fatal(0, "Cannot create swap file \"%s\"", swappath);
+	}
+	swappos = 0;
+
+	read_src(src_fname);
+
+	if (hdr_fname[0] == '\0')
+	{
+		error(0, "No .H file defined.  (Use \"~HdrFile=\")");
+	}
+	if (hlp_fname[0] == '\0')
+	{
+		error(0, "No .HLP file defined.  (Use \"~HlpFile=\")");
+	}
+	if (version == -1)
+	{
+		warn(0, "No help version has been defined.  (Use \"~Version=\")");
+	}
+
+	/* order of these is very important... */
+
+	make_hot_links();	/* do even if errors since it may report */
+	/* more... */
+
+	if (!errors)
+	{
+		paginate_online();
+	}
+	if (!errors)
+	{
+		paginate_document();
+	}
+	if (!errors)
+	{
+		calc_offsets();
+	}
+	if (!errors)
+	{
+		sort_labels();
+	}
+	if (!errors)
+	{
+		write_hdr(hdr_fname);
+	}
+	if (!errors)
+	{
+		write_help(hlp_fname);
+	}
+
+	if (show_stats)
+	{
+		report_stats();
+	}
+
+	if (show_mem)
+	{
+		report_memory();
+	}
+
+	if (errors || warnings)
+	{
+		report_errors();
+	}
+
+	fclose(swapfile);
+	remove(swappath);
+}
+
+void print(char fname1[81], char fname2[81], char swappath[81])
+{
+	strcpy(src_fname, (fname1[0] == '\0') ? DEFAULT_SRC_FNAME : fname1);
+
+	strcat(swappath, SWAP_FNAME);
+
+	if ((swapfile = fopen(swappath, "w+b")) == NULL)
+	{
+		fatal(0, "Cannot create swap file \"%s\"", swappath);
+	}
+	swappos = 0;
+
+	read_src(src_fname);
+
+	make_hot_links();
+
+	if (!errors)
+	{
+		paginate_document();
+	}
+	if (!errors)
+	{
+		print_document((fname2[0] == '\0') ? DEFAULT_DOC_FNAME : fname2);
+	}
+
+	if (errors || warnings)
+	{
+		report_errors();
+	}
+
+	fclose(swapfile);
+	remove(swappath);
+}
+
+void append_to_exe(char fname1[81], char fname2[81])
+{
+	add_hlp_to_exe((fname1[0] == '\0') ? DEFAULT_HLP_FNAME : fname1,
+		(fname2[0] == '\0') ? DEFAULT_EXE_FNAME : fname2);
+}
+
+void delete_from_exe(char fname1[81], char fname2[81])
+{
+	if (fname2[0] != '\0')
+	{
+		fatal(0, "Unexpected argument \"%s\"", fname2);
+	}
+	delete_hlp_from_exe((fname1[0] == '\0') ? DEFAULT_EXE_FNAME : fname1);
+}
 
 int main(int argc, char *argv[])
 {
-	int    show_stats = 0,
-		show_mem   = 0;
-	int    mode       = 0;
+	int show_stats = 0;
+	int show_mem = 0;
+	HelpMode mode = MODE_NONE;
 
 	char **arg;
-	char   fname1[81],
-		fname2[81];
-	char   swappath[81];
+	char fname1[81] = { 0 };
+	char fname2[81] = { 0 };
+	char swappath[81] = { 0 };
 
-	fname1[0] = 0;
-	fname2[0] = 0;
-	swappath[0] = 0;
-
-	printf("HC - FRACTINT Help Compiler.\n\n");
+	printf("HC - Iterated Dynamics Help Compiler.\n\n");
 
 	buffer = (char *) malloc(BUFFER_SIZE);
 
 	if (buffer == NULL)
 	{
-		fatal(0,"Not enough memory to allocate buffer.");
+		fatal(0, "Not enough memory to allocate buffer.");
 	}
 
-	for (arg= &argv[1]; argc>1; argc--, arg++)
+	for (arg = &argv[1]; argc > 1; argc--, arg++)
 	{
 		switch ((*arg)[0])
 		{
-			case '/':
-			case '-':
-				switch ((*arg)[1])
-				{
-					case 'c':
-						if (mode == 0)
-						{
-							mode = MODE_COMPILE;
-						}
-						else
-						{
-							fatal(0,"Cannot have /c with /a, /d or /p");
-						}
-						break;
+		case '/':
+		case '-':
+			parse_argument(show_stats, show_mem, mode, arg, swappath);
+			break;
 
-					case 'a':
-						if (mode == 0)
-						{
-							mode = MODE_APPEND;
-						}
-						else
-						{
-							fatal(0,"Cannot have /a with /c, /d or /p");
-						}
-						break;
-
-					case 'd':
-						if (mode == 0)
-						{
-							mode = MODE_DELETE;
-						}
-						else
-						{
-							fatal(0,"Cannot have /d with /c, /a or /p");
-						}
-						break;
-
-					case 'p':
-						if (mode == 0)
-						{
-							mode = MODE_PRINT;
-						}
-						else
-						{
-							fatal(0,"Cannot have /p with /c, /a or /d");
-						}
-						break;
-
-					case 'm':
-						if (mode == MODE_COMPILE)
-						{
-							show_mem = 1;
-						}
-						else
-						{
-							fatal(0,"/m switch allowed only when compiling (/c)");
-						}
-						break;
-
-					case 's':
-						if (mode == MODE_COMPILE)
-						{
-							show_stats = 1;
-						}
-						else
-						{
-							fatal(0,"/s switch allowed only when compiling (/c)");
-						}
-						break;
-
-					case 'r':
-						if (mode == MODE_COMPILE || mode == MODE_PRINT)
-						{
-							strcpy(swappath, (*arg)+2);
-						}
-						else
-						{
-							fatal(0,"/r switch allowed when compiling (/c) or printing (/p)");
-						}
-						break;
-
-					case 'q':
-						quiet_mode = 1;
-						break;
-
-					default:
-						fatal(0,"Bad command-line switch /%c", (*arg)[1]);
-						break;
-				}
-				break;
-
-			default:   /* assume it is a fname */
-				if (fname1[0] == '\0')
-				{
-					strcpy(fname1, *arg);
-				}
-				else if (fname2[0] == '\0')
-				{
-					strcpy(fname2, *arg);
-				}
-				else
-				{
-					fatal(0,"Unexpected command-line argument \"%s\"", *arg);
-				}
-				break;
-		} /* switch */
-	} /* for */
+		default:   /* assume it is a fname */
+			if (fname1[0] == '\0')
+			{
+				strcpy(fname1, *arg);
+			}
+			else if (fname2[0] == '\0')
+			{
+				strcpy(fname2, *arg);
+			}
+			else
+			{
+				fatal(0, "Unexpected command-line argument \"%s\"", *arg);
+			}
+			break;
+		}
+	}
 
 	strupr(fname1);
 	strupr(fname2);
@@ -4226,157 +4410,25 @@ int main(int argc, char *argv[])
 
 	switch (mode)
 	{
-		case 0:
-			printf("To compile a .SRC file:\n");
-			printf("      HC /c [/s] [/m] [/r[path]] [src_file]\n");
-			printf("         /s       = report statistics.\n");
-			printf("         /m       = report memory usage.\n");
-			printf("         /r[path] = set swap file path.\n");
-			printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
-			printf("To print a .SRC file:\n");
-			printf("      HC /p [/r[path]] [src_file] [out_file]\n");
-			printf("         /r[path] = set swap file path.\n");
-			printf("         src_file = .SRC file.  Default is \"%s\"\n", DEFAULT_SRC_FNAME);
-			printf("         out_file = Filename to print to. Default is \"%s\"\n",
-			DEFAULT_DOC_FNAME);
-			printf("To append a .HLP file to an .EXE file:\n");
-			printf("      HC /a [hlp_file] [exe_file]\n");
-			printf("         hlp_file = .HLP file.  Default is \"%s\"\n", DEFAULT_HLP_FNAME);
-			printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-			printf("To delete help info from an .EXE file:\n");
-			printf("      HC /d [exe_file]\n");
-			printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-			printf("\n");
-			printf("Use \"/q\" for quiet mode. (No status messages.)\n");
-			break;
+	case MODE_NONE:
+		usage();
+		break;
 
-		case MODE_COMPILE:
-			if (fname2[0] != '\0')
-			{
-				fatal(0,"Unexpected command-line argument \"%s\"", fname2);
-			}
+	case MODE_COMPILE:
+		compile(show_stats, show_mem, fname1, fname2, swappath);
+		break;
 
-			strcpy(src_fname, (fname1[0]=='\0') ? DEFAULT_SRC_FNAME : fname1);
+	case MODE_PRINT:
+		print(fname1, fname2, swappath);
+		break;
 
-			strcat(swappath, SWAP_FNAME);
+	case MODE_APPEND:
+		append_to_exe(fname1, fname2);
+		break;
 
-			if ((swapfile=fopen(swappath, "w+b")) == NULL)
-			{
-				fatal(0,"Cannot create swap file \"%s\"", swappath);
-			}
-			swappos = 0;
-
-			read_src(src_fname);
-
-			if (hdr_fname[0] == '\0')
-			{
-				error(0,"No .H file defined.  (Use \"~HdrFile=\")");
-			}
-			if (hlp_fname[0] == '\0')
-			{
-				error(0,"No .HLP file defined.  (Use \"~HlpFile=\")");
-			}
-			if (version == -1)
-			{
-				warn(0,"No help version has been defined.  (Use \"~Version=\")");
-			}
-
-			/* order of these is very important... */
-
-			make_hot_links();	/* do even if errors since it may report */
-								/* more... */
-
-			if (!errors)
-			{
-				paginate_online();
-			}
-			if (!errors)
-			{
-				paginate_document();
-			}
-			if (!errors)
-			{
-				calc_offsets();
-			}
-			if (!errors)
-			{
-				sort_labels();
-			}
-			if (!errors)
-			{
-				write_hdr(hdr_fname);
-			}
-			if (!errors)
-			{
-				write_help(hlp_fname);
-			}
-
-			if (show_stats)
-			{
-				report_stats();
-			}
-
-			if (show_mem)
-			{
-				report_memory();
-			}
-
-			if (errors || warnings)
-			{
-				report_errors();
-			}
-
-			fclose(swapfile);
-			remove(swappath);
-
-			break;
-
-		case MODE_PRINT:
-			strcpy(src_fname, (fname1[0]=='\0') ? DEFAULT_SRC_FNAME : fname1);
-
-			strcat(swappath, SWAP_FNAME);
-
-			if ((swapfile=fopen(swappath, "w+b")) == NULL)
-			{
-				fatal(0,"Cannot create swap file \"%s\"", swappath);
-			}
-			swappos = 0;
-
-			read_src(src_fname);
-
-			make_hot_links();
-
-			if (!errors)
-			{
-				paginate_document();
-			}
-			if (!errors)
-			{
-				print_document((fname2[0]=='\0') ? DEFAULT_DOC_FNAME : fname2);
-			}
-
-			if (errors || warnings)
-			{
-				report_errors();
-			}
-
-			fclose(swapfile);
-			remove(swappath);
-
-			break;
-
-		case MODE_APPEND:
-			add_hlp_to_exe((fname1[0]=='\0') ? DEFAULT_HLP_FNAME : fname1,
-							(fname2[0]=='\0') ? DEFAULT_EXE_FNAME : fname2);
-			break;
-
-		case MODE_DELETE:
-			if (fname2[0] != '\0')
-			{
-				fatal(0,"Unexpected argument \"%s\"", fname2);
-			}
-			delete_hlp_from_exe((fname1[0]=='\0') ? DEFAULT_EXE_FNAME : fname1);
-			break;
+	case MODE_DELETE:
+		delete_from_exe(fname1, fname2);
+		break;
 	}
 
 	free(buffer);
@@ -4384,17 +4436,10 @@ int main(int argc, char *argv[])
 	return errors;   /* return the number of errors */
 }
 
-#if defined(_WIN32)
-#pragma warning(push)
-#pragma warning(disable : 4311)
-#endif
-void check_buffer(char *current, unsigned off, char *buffer)
+void check_buffer(char *current, unsigned offset, char *buffer)
 {
-	if ((unsigned) curr + off - (unsigned) buffer >= (BUFFER_SIZE-1024))
+	if (current + offset - buffer >= (BUFFER_SIZE-1024))
 	{
 		fatal(0, "Buffer overflowerd -- Help topic too large.");
 	}
 }
-#if defined(_WIN32)
-#pragma warning(pop)
-#endif
