@@ -132,7 +132,7 @@ void Introduction::GetCredits()
 void Introduction::PaintScreen()
 {
 	help_title();
-#define END_MAIN_AUTHOR 4
+	int const END_MAIN_AUTHOR = 4;
 	m_top_row = END_MAIN_AUTHOR + 1;
 	m_bottom_row = 21;
 	put_string_center(1, 0, 80, C_TITLE, "Press ENTER for main menu, F1 for help.");

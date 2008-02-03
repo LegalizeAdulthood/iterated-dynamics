@@ -103,9 +103,6 @@ bf_t bftmp = 0;
 
 bf_t bf10tmp = 0;					/* dec + 4 */
 
-#define LOG10_256 2.4082399653118
-#define LOG_256   5.5451774444795
-
 static int save_bf_vars();
 static int restore_bf_vars();
 

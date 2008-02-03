@@ -23,7 +23,10 @@
 #include "CommandParser.h"
 #include "UIChoices.h"
 
-#define KEYON    0x20     /* 0010 0000 key-on bit in regs b0 - b8 */
+enum
+{
+	KEYON = 0x20     /* 0010 0000 key-on bit in regs b0 - b8 */
+};
 
 SoundState g_sound_state;
 

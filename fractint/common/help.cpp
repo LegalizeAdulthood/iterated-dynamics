@@ -31,11 +31,14 @@
 #include "realdos.h"
 #include "TextColors.h"
 
-#define MAX_HIST           16        /* number of pages we'll remember */
-#define F_HIST              (1 << 0)   /* flags for help_topic() */
-#define F_INDEX             (1 << 1)
-#define MAX_PAGE_SIZE       (80*25)  /* no page of text may be larger */
-#define TEXT_START_ROW      2        /* start print the help text here */
+enum
+{
+	MAX_HIST = 16,        /* number of pages we'll remember */
+	F_HIST = (1 << 0),   /* flags for help_topic() */
+	F_INDEX = (1 << 1),
+	MAX_PAGE_SIZE = (80*25),  /* no page of text may be larger */
+	TEXT_START_ROW = 2        /* start print the help text here */
+};
 
 struct LINK
 {
@@ -1019,11 +1022,14 @@ int read_help_topic(int label_num, int off, int len, VOIDPTR buf)
 				s_label[label_num].topic_off + off, len, buf);
 }
 
-#define PRINT_BUFFER_SIZE  (32767)       /* max. size of help topic in doc. */
-#define TEMP_FILE_NAME     "HELP.$$$"    /* temp file for storing extraseg  */
-										/*    while printing document      */
-#define MAX_NUM_TOPIC_SEC  (10)          /* max. number of topics under any */
-										/*    single section (CONTENT)     */
+enum
+{
+	PRINT_BUFFER_SIZE = 32767,       /* max. size of help topic in doc. */
+	MAX_NUM_TOPIC_SEC = 10          /* max. number of topics under any single section (CONTENT)     */
+};
+
+static char const *TEMP_FILE_NAME = "HELP.$$$";
+/* temp file for storing extraseg while printing document      */
 
 struct PRINT_DOC_INFO
 {

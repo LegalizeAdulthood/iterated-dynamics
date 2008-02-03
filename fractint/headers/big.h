@@ -13,8 +13,8 @@
  The rest is handled by the compiler
 ****************************************************************/
 
-#define LOG10_256 2.4082399653118
-#define LOG_256   5.5451774444795
+extern double const LOG10_256;
+extern double const LOG_256;
 
 /* values that g_bf_math can hold, */
 /* 0 = g_bf_math is not being used */

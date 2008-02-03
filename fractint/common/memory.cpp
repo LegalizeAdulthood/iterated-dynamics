@@ -22,14 +22,21 @@
 
 /* Memory allocation routines. */
 
-/* For far memory: */
-#define FAR_RESERVE   8192L    /* amount of far mem we will leave avail. */
-/* For disk memory: */
-#define DISKWRITELEN 2048L /* max # bytes transferred to/from disk mem at once */
+enum
+{
+	/* For far memory: */
+	FAR_RESERVE   = 8192,    /* amount of far mem we will leave avail. */
+
+	/* For disk memory: */
+	DISKWRITELEN = 2048 /* max # bytes transferred to/from disk mem at once */
+};
 
 BYTE *charbuf = 0;
 
-#define MAXHANDLES 256   /* arbitrary #, suitably big */
+enum
+{
+	MAXHANDLES = 256   /* arbitrary #, suitably big */
+};
 char memfile[] = "handle.$$$";
 int numTOTALhandles;
 

@@ -9,8 +9,8 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include "port.h"
 #include "big.h"
 
-#define LOG10_256 2.4082399653118
-#define LOG_256   5.5451774444795
+double const LOG10_256 = 2.4082399653118;
+double const LOG_256 = 5.5451774444795;
 
 /**********************************************************************/
 /* strtobf() - converts a string into a bigfloat                       */

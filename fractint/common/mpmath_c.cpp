@@ -48,7 +48,10 @@ ComplexD ComplexPower(ComplexD xx, ComplexD yy)
 	return z;
 }
 
-#define Sqrtz(z, rz) (*(rz) = ComplexSqrtFloat((z).x, (z).y))
+inline void Sqrtz(ComplexD z, ComplexD *rz)
+{
+	(*(rz) = ComplexSqrtFloat((z).x, (z).y));
+}
 
 /* rz=Arcsin(z)=-i*Log{i*z + sqrt(1-z*z)} */
 void Arcsinz(ComplexD z, ComplexD *rz)
@@ -193,7 +196,8 @@ void Arctanz(ComplexD z, ComplexD *rz)
 	}
 }   /* end. Arctanz */
 
-#define SinCosFudge 0x10000L
+static long const SinCosFudge = 0x10000L;
+
 #ifdef LONGSQRT
 long lsqrt(long f)
 {
