@@ -18,7 +18,10 @@
 #include "WinText.h"
 #include "ods.h"
 
-#define TIMER_ID 1
+enum
+{
+	TIMER_ID = 1
+};
 
 #if defined(RT_VERBOSE)
 static int carrot_count = 0;

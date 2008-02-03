@@ -47,11 +47,6 @@
 #include "UIChoices.h"
 #include "ViewWindow.h"
 
-#define   FILEATTR       0x37      /* File attributes; select all but volume labels */
-#define   HIDDEN         2
-#define   SYSTEM         4
-#define   SUBDIR         16
-
 static  int get_screen_corners();
 
 static int calculation_mode()
@@ -1407,11 +1402,6 @@ gsc_loop:
 
 /* merge existing full path with new one  */
 /* attempt to detect if file or directory */
-
-#define ATFILENAME 0
-#define SSTOOLSINI 1
-#define ATCOMMANDINTERACTIVE 2
-#define ATFILENAMESETNAME  3
 
 /* I tried heap sort also - this is faster! */
 void shell_sort(void *v1, int n, unsigned sz, int (__cdecl *fct)(VOIDPTR arg1, VOIDPTR arg2))

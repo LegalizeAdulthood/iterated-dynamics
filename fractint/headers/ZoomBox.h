@@ -1,7 +1,10 @@
 #if !defined(ZOOM_BOX_H)
 #define ZOOM_BOX_H
 
-#define NUM_BOXES 4096
+enum
+{
+	NUM_BOXES = 4096
+};
 
 class ZoomBox
 {

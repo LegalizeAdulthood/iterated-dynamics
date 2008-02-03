@@ -59,8 +59,11 @@
 	}						\
 	while (0)
 
-#define CLEAR_STK 127
-#define MAX_STACK 8   /* max # of stack register avail  */
+enum
+{
+	CLEAR_STK = 127,
+	MAX_STACK = 8   /* max # of stack register avail  */
+};
 
 #ifdef TESTFP
 int print_stop_message(int x, const char *msg)

@@ -20,7 +20,10 @@
 #include "ods.h"
 #include "frame.h"
 
-#define PLOT_TIMER_ID 1
+enum
+{
+	PLOT_TIMER_ID = 1
+};
 
 Plot *Plot::s_plot = 0;
 LPCSTR Plot::s_window_class = "FractIntPlot";

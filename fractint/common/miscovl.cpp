@@ -1756,23 +1756,22 @@ static void put_parm(const format &message)
 }
 
 int g_max_line_length = 72;
-#define MAXLINELEN  g_max_line_length
-#define NICELINELEN (MAXLINELEN-4)
 
 static void put_parm_line()
 {
 	int c;
 	int len = s_wbdata.len;
-	if (len > NICELINELEN)
+	const int nice_line_length = g_max_line_length - 4;
+	if (len > nice_line_length)
 	{
-		len = NICELINELEN + 1;
+		len = nice_line_length + 1;
 		while (--len != 0 && s_wbdata.buf[len] != ' ')
 		{
 		}
 		if (len == 0)
 		{
-			len = NICELINELEN-1;
-			while (++len < MAXLINELEN
+			len = nice_line_length-1;
+			while (++len < g_max_line_length
 				&& s_wbdata.buf[len] && s_wbdata.buf[len] != ' ')
 			{
 			}
@@ -2936,7 +2935,10 @@ static std::string expand_var(const std::string &var)
 	return out;
 }
 
-#define MAXVNAME  13
+enum
+{
+	MAXVNAME = 13
+};
 
 static const char esc_char = '$';
 

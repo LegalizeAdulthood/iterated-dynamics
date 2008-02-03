@@ -12,30 +12,6 @@
  * to put into the struct lsys_cmds.
  */
 
-/* Macro to take an FP number and turn it into a
- * 16/16-bit fixed-point number.
- */
-#define FIXEDMUL        524288L
-
-inline long FIXEDPT(double x)
-{
-	return long(FIXEDMUL*x);
-}
-
-/* The number by which to multiply sines, cosines and other
- * values with magnitudes less than or equal to 1.
- * sins and coss are a 3/29 bit fixed-point scheme (so the
- * range is +/- 2, with good accuracy.  The range is to
- * avoid overflowing when the aspect ratio is taken into
- * account.
- */
-#define FIXEDLT1        536870912.0
-
-#define ANGLE2DOUBLE    (2.0*MathUtil::Pi/4294967296.0)
-
-#define MAXRULES 27 /* this limits rules to 25 */
-#define MAX_LSYS_LINE_LEN 255 /* this limits line length to 255 */
-
 template <typename T>
 struct lsys_turtle_state_base
 {

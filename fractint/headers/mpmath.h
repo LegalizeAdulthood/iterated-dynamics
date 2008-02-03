@@ -10,11 +10,6 @@
 #include "cmplx.h"
 #endif
 
-#ifdef XFRACT
-#define far
-#endif
-
-
 extern int g_overflow_mp;
 extern int DivideOverflow;
 

@@ -3,7 +3,10 @@
 
 #include "cmdfiles.h"
 
-#define NON_NUMERIC -32767
+enum
+{
+	NON_NUMERIC = -32767
+};
 
 struct cmd_context
 {

@@ -6,11 +6,14 @@
 #ifndef BIGINIT_H
 #define BIGINIT_H
 
-#define MATHBITS      32
-#define MATHBYTES     (MATHBITS/8)
-#define NUMVARS       30            /* room for this many on stack */
-#define CURRENTREZ    1
-#define MAXREZ        0
+enum
+{
+	MATHBITS = 32,
+	MATHBYTES = (MATHBITS/8),
+	NUMVARS = 30,            /* room for this many on stack */
+	CURRENTREZ = 1,
+	MAXREZ = 0
+};
 
 
 /* globals */
