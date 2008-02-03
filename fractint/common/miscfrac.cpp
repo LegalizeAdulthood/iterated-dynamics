@@ -144,7 +144,7 @@ int bifurcation()
 
 	s_filter_cycles = (g_parameter.x <= 0) ? DEFAULT_FILTER : long(g_parameter.x);
 	s_half_time_check = false;
-	if (g_periodicity_check && (unsigned long)g_max_iteration < s_filter_cycles)
+	if (g_periodicity_check && g_max_iteration < s_filter_cycles)
 	{
 		s_filter_cycles = (s_filter_cycles - g_max_iteration + 1)/2;
 		s_half_time_check = true;
@@ -206,10 +206,6 @@ int bifurcation()
 
 static void verhulst()          /* P. F. Verhulst (1845) */
 {
-	unsigned int pixel_row;
-	bool errors;
-	unsigned long counter;
-
 	if (g_integer_fractal)
 	{
 		s_population_l = (g_parameter.y == 0) ? long(SEED*g_fudge) : long(g_parameter.y*g_fudge);
@@ -219,10 +215,10 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		s_population = (g_parameter.y == 0) ? SEED : g_parameter.y;
 	}
 
-	errors = false;
+	bool errors = false;
 	g_overflow = false;
 
-	for (counter = 0; counter < s_filter_cycles; counter++)
+	for (int counter = 0; counter < s_filter_cycles; counter++)
 	{
 		errors = (g_current_fractal_specific->orbitcalc() != 0);
 		if (errors)
@@ -233,7 +229,8 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	if (s_half_time_check) /* check for periodicity at half-time */
 	{
 		bifurcation_period_init();
-		for (counter = 0; counter < (unsigned long)g_max_iteration; counter++)
+		int counter;
+		for (counter = 0; counter < g_max_iteration; counter++)
 		{
 			errors = (g_current_fractal_specific->orbitcalc() != 0);
 			if (errors)
@@ -245,7 +242,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 				break;
 			}
 		}
-		if (counter >= (unsigned long)g_max_iteration)   /* if not periodic, go the distance */
+		if (counter >= g_max_iteration)   /* if not periodic, go the distance */
 		{
 			for (counter = 0; counter < s_filter_cycles; counter++)
 			{
@@ -262,7 +259,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 	{
 		bifurcation_period_init();
 	}
-	for (counter = 0; counter < (unsigned long)g_max_iteration; counter++)
+	for (int counter = 0; counter < g_max_iteration; counter++)
 	{
 		errors = (g_current_fractal_specific->orbitcalc() != 0);
 		if (errors)
@@ -271,18 +268,18 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 		}
 
 		/* assign population value to Y coordinate in pixels */
-		pixel_row = g_integer_fractal
+		int pixel_row = g_integer_fractal
 			? (g_y_stop - int((s_population_l - g_initial_z_l.y)/g_escape_time_state.m_grid_l.delta_y()))
 			: (g_y_stop - int((s_population - g_initial_z.y)/g_escape_time_state.m_grid_fp.delta_y()));
 
 		/* if it's visible on the screen, save it in the column array */
-		if (pixel_row <= (unsigned int)g_y_stop)
+		if (pixel_row <= g_y_stop)
 		{
 			s_verhulst_array[pixel_row] ++;
 		}
 		if (g_periodicity_check && bifurcation_periodic(counter))
 		{
-			if (pixel_row <= (unsigned int)g_y_stop)
+			if (pixel_row <= g_y_stop)
 			{
 				s_verhulst_array[pixel_row] --;
 			}

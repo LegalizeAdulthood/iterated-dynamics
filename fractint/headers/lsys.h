@@ -17,7 +17,7 @@
  */
 #define FIXEDMUL        524288L
 
-inline long FIXEDPT(long x)
+inline long FIXEDPT(double x)
 {
 	return long(FIXEDMUL*x);
 }

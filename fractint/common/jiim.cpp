@@ -65,16 +65,22 @@
 #include "TextColors.h"
 #include "ViewWindow.h"
 
-#define MAXRECT         1024      /* largest width of SaveRect/RestoreRect */
+enum
+{
+	MAXRECT = 1024      /* largest width of SaveRect/RestoreRect */
+};
 
-#define SECRETMODE_RANDOM_WALK			0
-#define SECRETMODE_ONE_DIRECTION		1
-#define SECRETMODE_ONE_DIR_DRAW_OTHER	2
-#define SECRETMODE_NEGATIVE_MAX_COLOR	4
-#define SECRETMODE_POSITIVE_MAX_COLOR	5
-#define SECRETMODE_7					7
-#define SECRETMODE_ZIGZAG				8
-#define SECRETMODE_RANDOM_RUN			9
+enum SecretMode
+{
+	SECRETMODE_RANDOM_WALK			= 0,
+	SECRETMODE_ONE_DIRECTION		= 1,
+	SECRETMODE_ONE_DIR_DRAW_OTHER	= 2,
+	SECRETMODE_NEGATIVE_MAX_COLOR	= 4,
+	SECRETMODE_POSITIVE_MAX_COLOR	= 5,
+	SECRETMODE_7					= 7,
+	SECRETMODE_ZIGZAG				= 8,
+	SECRETMODE_RANDOM_RUN			= 9
+};
 
 static int s_show_numbers = 0;              /* toggle for display of coords */
 static char *s_rect_buff = 0;

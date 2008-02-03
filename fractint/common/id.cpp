@@ -172,7 +172,10 @@ UserInterfaceState g_ui_state;
 
 boost::filesystem::path g_exe_path;
 
-#define CONTINUE          4
+enum
+{
+	CONTINUE = 4
+};
 
 class IteratedDynamics
 {

@@ -24,7 +24,10 @@ struct CHOICE
 	bool is_directory;
 };
 
-#define   MAXNUMFILES    2977L
+enum
+{
+	MAXNUMFILES = 2977
+};
 
 char *g_masks[] = {"*.pot", "*.gif"};
 

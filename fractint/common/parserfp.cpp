@@ -169,13 +169,15 @@ enum FunctionEntryType
 /* number of "old" functions in the table.  */
 /* these are the ones that the parser outputs  */
 
-#define LAST_OLD_FN   FN_ONE
-#define NUM_OLD_FNS   LAST_OLD_FN + 1
+enum
+{
+	LAST_OLD_FN = FN_ONE,
+	NUM_OLD_FNS = LAST_OLD_FN + 1,
 
-/* total number of functions in the table.  */
-
-#define LAST_FN          FN_ONE
-#define NUM_FNS          LAST_FN + 1
+	/* total number of functions in the table.  */
+	LAST_FN = FN_ONE,
+	NUM_FNS = LAST_FN + 1
+};
 
 static int s_real_stack_count;		/* how many scalars are really on stack */
 static int s_stack_count;			/* # scalars on FPU stack */
