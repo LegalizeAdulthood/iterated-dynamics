@@ -135,7 +135,7 @@ enum
 	BUFFER_SIZE = 30*1024
 };
 
-typedef struct
+struct LINK
 {
 	int      type;            /* 0 = name is topic title, 1 = name is label, */
 							 /*   2 = "special topic"; name is NULL and */
@@ -146,16 +146,16 @@ typedef struct
 	char    *name;            /* name of label or title of topic to link to */
 	char    *srcfile;         /* .SRC file link appears in */
 	int      srcline;         /* .SRC file line # link appears in */
-} LINK;
+};
 
 
-typedef struct
+struct PAGE
 {
 	unsigned offset;     /* offset from start of topic text */
 	unsigned length;     /* length of page (in chars) */
 	int      margin;     /* if > 0 then page starts in_para and text */
 						/* should be indented by this much */
-} PAGE;
+};
 
 
 /* values for TOPIC.flags */
@@ -165,7 +165,7 @@ enum
 	TF_DATA = 2       /* 1 if it is a "data" topic */
 };
 
-typedef struct
+struct TOPIC
 {
 	unsigned  flags;          /* see #defines for TF_??? */
 	int       doc_page;       /* page number in document where topic starts */
@@ -176,16 +176,16 @@ typedef struct
 	unsigned  text_len;       /* lenth of topic text */
 	long      text;           /* topic text (all pages) */
 	long      offset;         /* offset to topic from start of file */
-} TOPIC;
+};
 
 
-typedef struct
+struct LABEL
 {
 	char    *name;            /* its name */
 	int      topic_num;       /* topic number */
 	unsigned topic_off;       /* offset of label in the topic's text */
 	int      doc_page;
-} LABEL;
+};
 
 
 /* values for CONTENT.flags */
@@ -196,7 +196,7 @@ enum
 };
 
 
-typedef struct
+struct CONTENT
 {
 	unsigned  flags;
 	char     *id;
@@ -209,7 +209,7 @@ typedef struct
 	int       topic_num[MAX_CONTENT_TOPIC];
 	char     *srcfile;
 	int       srcline;
-} CONTENT;
+};
 
 
 struct help_sig_info
@@ -287,7 +287,7 @@ void check_buffer(char *current, unsigned offset, char *buffer);
 #define CHK_BUFFER(off) check_buffer(curr, off, buffer)
 
 #ifdef __WATCOMC__
-#define putw(x1, x2)  fprintf(x2, "%c%c", x1&0xFF, x1>>8);
+#define putw(x1, x2)  fprintf(x2, "%c%c", x1&0xFF, x1 >> 8);
 #endif
 
 #ifdef XFRACT
@@ -1571,7 +1571,7 @@ void process_bininc()
 
 	if (len >= BUFFER_SIZE)
 	{
-		error(0, "File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len>>10));
+		error(0, "File \"%s\" is too large to BinInc (%dK).", cmd+7, (int)(len >> 10));
 		close(handle);
 		return;
 	}
@@ -3096,17 +3096,15 @@ enum
 	LINK_DEST_WARN = 2
 };
 
-typedef struct
+struct PAGINATE_DOC_INFO
 {
-	int      cnum,  /* must match above #defines so pd_get_info() will work */
-				tnum,
-				link_dest_warn;
-
+	int cnum;  /* must match above #defines so pd_get_info() will work */
+	int tnum;
+	int link_dest_warn;
 	char *start;
 	CONTENT  *c;
 	LABEL    *lbl;
-
-} PAGINATE_DOC_INFO;
+};
 
 
 LABEL *find_next_label_by_topic(int t)
@@ -3720,9 +3718,8 @@ void write_help(char *fname)
  */
 
 
-typedef struct
+struct PRINT_DOC_INFO
 {
-
 	/*
 	* Note: Don't move these first three or pd_get_info will work not
 	*       correctly.
@@ -3736,7 +3733,7 @@ typedef struct
 	int      margin;
 	int      start_of_line;
 	int      spaces;
-} PRINT_DOC_INFO;
+};
 
 
 void printerc(PRINT_DOC_INFO *info, int c, int n)
