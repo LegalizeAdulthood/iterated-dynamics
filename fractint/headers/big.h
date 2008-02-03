@@ -7,7 +7,10 @@
 
 /* Number of bytes to use for integer part for fixed decimal math, */
 /* does not effect floating point math at all. */
-#define BN_INT_LENGTH 4
+enum
+{
+	BN_INT_LENGTH = 4
+};
 
 /****************************************************************
  The rest is handled by the compiler
@@ -19,8 +22,11 @@ extern double const LOG_256;
 /* values that g_bf_math can hold, */
 /* 0 = g_bf_math is not being used */
 /* 1 = g_bf_math is being used     */
-#define BIGNUM 1  /* g_bf_math is being used with bn_t numbers */
-#define BIGFLT 2  /* g_bf_math is being used with bf_t numbers */
+enum
+{
+	BIGNUM = 1,  /* g_bf_math is being used with bn_t numbers */
+	BIGFLT = 2  /* g_bf_math is being used with bf_t numbers */
+};
 
 typedef unsigned char *big_t;
 #define bn_t   big_t  /* for clarification purposes */

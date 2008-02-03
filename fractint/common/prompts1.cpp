@@ -1261,7 +1261,10 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 	int done;
 	int i;
 	int j;
-#define MAXFTYPES 200
+	enum
+	{
+		MAXFTYPES = 200
+	};
 	char tname[40];
 	FT_CHOICE storage[MAXFTYPES] = { 0 };
 	FT_CHOICE *choices[MAXFTYPES];
@@ -1526,7 +1529,10 @@ sel_type_restart:
 	return false;
 }
 
-#define MAXFRACTALS 25
+enum
+{
+	MAXFRACTALS = 25
+};
 
 static int build_fractal_list(int fractals[], int *last_val, const char *nameptr[])
 {
@@ -2432,7 +2438,10 @@ int skip_comment(std::ifstream &infile, long *file_offset)
 	return c;
 }
 
-#define MAXENTRIES 2000L
+enum
+{
+	MAXENTRIES = 2000
+};
 
 int scan_entries(std::ifstream &infile, entry_info *choices, const char *itemname)
 {

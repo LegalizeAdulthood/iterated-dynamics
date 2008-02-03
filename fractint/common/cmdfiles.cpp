@@ -320,19 +320,16 @@ int load_commands(std::ifstream &infile)
 	return ret;
 }
 
-static void initialize_variables_once()              /* once per run init */
+static void initialize_temp_directory()
 {
-	char *p;
-	s_init_random_seed = int(time(0));
-	init_comments();
-	p = getenv("TMP");
+	char const *p = getenv("TMP");
 	if (p == 0)
 	{
 		p = getenv("TEMP");
 	}
 	if (p != 0)
 	{
-		if (is_a_directory(p) != 0)
+		if (is_a_directory(p))
 		{
 			g_temp_dir = p;
 		}
@@ -341,6 +338,13 @@ static void initialize_variables_once()              /* once per run init */
 	{
 		g_temp_dir = "";
 	}
+}
+
+static void initialize_variables_once()              /* once per run init */
+{
+	s_init_random_seed = int(time(0));
+	init_comments();
+	initialize_temp_directory();
 }
 
 static void initialize_variables_restart()          /* <ins> key init */

@@ -21,74 +21,78 @@
 /*
  * commands imbedded in the help text
  */
-
-#define CMD_LITERAL       1   /* next char taken literally */
-#define CMD_PARA          2   /* paragraph start code */
-#define CMD_LINK          3   /* hot-link start/end code */
-#define CMD_FF            4   /* force a form-feed */
-#define CMD_XONLINE       5   /* exclude from online help on/off */
-#define CMD_XDOC          6   /* exclude from printed document on/off */
-#define CMD_CENTER        7   /* center this line */
-#define CMD_SPACE         8   /* next byte is count of spaces */
-
-#define MAX_CMD           8
-
+enum
+{
+	CMD_LITERAL       = 1,   /* next char taken literally */
+	CMD_PARA          = 2,   /* paragraph start code */
+	CMD_LINK          = 3,   /* hot-link start/end code */
+	CMD_FF            = 4,   /* force a form-feed */
+	CMD_XONLINE       = 5,   /* exclude from online help on/off */
+	CMD_XDOC          = 6,   /* exclude from printed document on/off */
+	CMD_CENTER        = 7,   /* center this line */
+	CMD_SPACE         = 8,   /* next byte is count of spaces */
+	MAX_CMD           = 8
+};
 
 /*
  * on-line help dimensions
  */
-
-#define SCREEN_WIDTH      (78)
-#define SCREEN_DEPTH      (22)
-#define SCREEN_INDENT     (1)
-
+enum
+{
+	SCREEN_WIDTH      = 78,
+	SCREEN_DEPTH      = 22,
+	SCREEN_INDENT     = 1
+};
 
 /*
  * printed document dimensions
  */
-
-#define PAGE_WIDTH         (72)  /* width of printed text */
-#define PAGE_INDENT        (2)   /* indent all text by this much */
-#define TITLE_INDENT       (1)   /* indent titles by this much */
-
-#define PAGE_RDEPTH        (59)  /* the total depth (inc. heading) */
-#define PAGE_HEADING_DEPTH (3)   /* depth of the heading */
-#define PAGE_DEPTH         (PAGE_RDEPTH-PAGE_HEADING_DEPTH) /* depth of text */
-
+enum
+{
+	PAGE_WIDTH         = 72,  /* width of printed text */
+	PAGE_INDENT        = 2,   /* indent all text by this much */
+	TITLE_INDENT       = 1,   /* indent titles by this much */
+	PAGE_RDEPTH        = 59,  /* the total depth (inc. heading) */
+	PAGE_HEADING_DEPTH = 3,   /* depth of the heading */
+	PAGE_DEPTH         = PAGE_RDEPTH-PAGE_HEADING_DEPTH, /* depth of text */
+};
 
 /*
  * Document page-break macros.  Goto to next page if this close (or closer)
  * to end of page when starting a CONTENT, TOPIC, or at a BLANK line.
  */
-
-#define CONTENT_BREAK (7)  /* start of a "DocContent" entry */
-#define TOPIC_BREAK   (4)  /* start of each topic under a DocContent entry */
-#define BLANK_BREAK   (2)  /* a blank line */
-
+enum
+{
+	CONTENT_BREAK = 7,  /* start of a "DocContent" entry */
+	TOPIC_BREAK   = 4,  /* start of each topic under a DocContent entry */
+	BLANK_BREAK   = 2  /* a blank line */
+};
 
 /*
  * tokens returned by find_token_length
  */
-
-#define TOK_DONE    (0)   /* len == 0             */
-#define TOK_SPACE   (1)   /* a run of spaces      */
-#define TOK_LINK    (2)   /* an entire link       */
-#define TOK_PARA    (3)   /* a CMD_PARA           */
-#define TOK_NL      (4)   /* a new-line ('\n')    */
-#define TOK_FF      (5)   /* a form-feed (CMD_FF) */
-#define TOK_WORD    (6)   /* a word               */
-#define TOK_XONLINE (7)   /* a CMD_XONLINE        */
-#define TOK_XDOC    (8)   /* a CMD_XDOC           */
-#define TOK_CENTER  (9)   /* a CMD_CENTER         */
-
+enum
+{
+	TOK_DONE    = 0,   /* len == 0             */
+	TOK_SPACE   = 1,   /* a run of spaces      */
+	TOK_LINK    = 2,   /* an entire link       */
+	TOK_PARA    = 3,   /* a CMD_PARA           */
+	TOK_NL      = 4,   /* a new-line ('\n',    */
+	TOK_FF      = 5,   /* a form-feed (CMD_FF) */
+	TOK_WORD    = 6,   /* a word               */
+	TOK_XONLINE = 7,   /* a CMD_XONLINE        */
+	TOK_XDOC    = 8,   /* a CMD_XDOC           */
+	TOK_CENTER  = 9    /* a CMD_CENTER         */
+};
 
 /*
  * modes for find_token_length() and find_line_width()
  */
-
-#define ONLINE 1
-#define DOC    2
-
+enum
+{
+	ONLINE = 1,
+	DOC    = 2
+};
 
 /*
  * struct PD_INFO used by process_document()

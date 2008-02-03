@@ -3,10 +3,13 @@
 #include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
 
-#define   FILEATTR       0x37      /* File attributes; select all but volume labels */
-#define   HIDDEN         2
-#define   SYSTEM         4
-#define   SUBDIR         16
+enum
+{
+	FILEATTR = 0x37,      /* File attributes; select all but volume labels */
+	HIDDEN = 2,
+	SYSTEM = 4,
+	SUBDIR = 16
+};
 
 struct DIR_SEARCH				/* Allocate	DTA	and	define structure */
 {

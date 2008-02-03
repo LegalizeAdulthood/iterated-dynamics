@@ -1,11 +1,14 @@
 #if !defined(FRAME_H)
 #define FRAME_H
 
-#define KEYBUFMAX 80
+enum
+{
+	KEYBUFMAX = 80,
 
-#define BUTTON_LEFT 0
-#define BUTTON_RIGHT 1
-#define BUTTON_MIDDLE 2
+	BUTTON_LEFT = 0,
+	BUTTON_RIGHT = 1,
+	BUTTON_MIDDLE = 2
+};
 
 class FrameImpl;
 

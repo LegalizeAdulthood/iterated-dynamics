@@ -14,16 +14,18 @@
 #include "wintext.h"
 #include "frame.h"
 
-#define FRAME_TIMER_ID 2
-
-#define TextHSens 22
-#define TextVSens 44
-#define GraphSens 5
-#define ZoomSens 20
-#define TextVHLimit 6
-#define GraphVHLimit 14
-#define ZoomVHLimit 1
-#define JitterMickeys 3
+enum
+{
+	FRAME_TIMER_ID = 2,
+	TextHSens = 22,
+	TextVSens = 44,
+	GraphSens = 5,
+	ZoomSens = 20,
+	TextVHLimit = 6,
+	GraphVHLimit = 14,
+	ZoomVHLimit = 1,
+	JitterMickeys = 3
+};
 
 class FrameImpl
 {

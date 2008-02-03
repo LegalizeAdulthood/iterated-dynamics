@@ -27,7 +27,7 @@
 #include "WorkList.h"
 #include "ZoomBox.h"
 
-#define PIXELROUND 0.00001
+static double const PIXELROUND = 0.00001;
 
 static void zmo_calc(double, double, double *, double *, double);
 static void zmo_calcbf(bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t, bf_t);

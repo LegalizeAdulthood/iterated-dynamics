@@ -1,9 +1,11 @@
 #if !defined(WINTEXT_H)
 #define WINTEXT_H
 
-#define KEYBUFMAX 80
-#define WINTEXT_MAX_COL 80
-#define WINTEXT_MAX_ROW 25
+enum
+{
+	WINTEXT_MAX_COL = 80,
+	WINTEXT_MAX_ROW = 25
+};
 
 class WinText
 {

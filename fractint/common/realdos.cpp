@@ -31,10 +31,12 @@
 /*
 #define PRODUCTION
 */
-#define MENU_HDG 3
-#define MENU_ITEM 1
-
-#define SWAPBLKLEN 4096 /* must be a power of 2 */
+enum
+{
+	MENU_HDG = 3,
+	MENU_ITEM = 1,
+	SWAPBLKLEN = 4096 /* must be a power of 2 */
+};
 
 BYTE g_suffix[10000];
 int g_release = 2099;	/* this has 2 implied decimals; increment it every synch */
