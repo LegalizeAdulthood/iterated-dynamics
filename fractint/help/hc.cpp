@@ -247,8 +247,8 @@ int      srccol           = 0;    /* .SRC column. */
 
 int      version          = -1;   /* help file version */
 
-int      errors           = 0,    /* number of errors reported */
-			warnings         = 0;    /* number of warnings reported */
+int errors = 0;
+int warnings = 0;    /* number of warnings reported */
 
 char     src_fname[81]    = "";   /* command-line .SRC filename */
 char     hdr_fname[81]    = "";   /* .H filename */
@@ -287,7 +287,7 @@ void check_buffer(char *current, unsigned offset, char *buffer);
 #define CHK_BUFFER(off) check_buffer(curr, off, buffer)
 
 #ifdef __WATCOMC__
-#define putw(x1, x2)  fprintf(x2, "%c%c", x1&0xFF, x1 >> 8);
+#define putw(x1, x2)  fprintf(x2, "%c%c", x1 & 0xFF, x1 >> 8);
 #endif
 
 #ifdef XFRACT
@@ -976,14 +976,14 @@ char *read_until(char *buff, int len, char *stop_chars)
 			break;
 		}
 
-		if ((ch&0xFF) <= MAX_CMD)
+		if ((ch & 0xFF) <= MAX_CMD)
 		{
 			*buff++ = CMD_LITERAL;
 		}
 
 		*buff++ = ch;
 
-		if ((ch&0x100) == 0 && strchr(stop_chars, ch) != NULL)
+		if ((ch & 0x100) == 0 && strchr(stop_chars, ch) != NULL)
 		{
 			break;
 		}
@@ -1005,7 +1005,7 @@ void skip_over(char *skip)
 		{
 			break;
 		}
-		else if ((ch&0x100) == 0 && strchr(skip, ch) == NULL)
+		else if ((ch & 0x100) == 0 && strchr(skip, ch) == NULL)
 		{
 			unread_char(ch);
 			break;
@@ -1024,7 +1024,7 @@ char *pchar(int ch)
 	}
 	else
 	{
-		sprintf(buff, "\'\\x%02X\'", ch&0xFF);
+		sprintf(buff, "\'\\x%02X\'", ch & 0xFF);
 	}
 
 	return buff;
@@ -1341,7 +1341,8 @@ int create_table()
 	int    start_off;
 	int    first_link;
 	int    rows;
-	int    r, c;
+	int r;
+	int c;
 	int    ch;
 	int    len;
 	int    lnum;
@@ -1646,7 +1647,7 @@ void put_a_char(int ch, TOPIC *t)
 	}
 	else
 	{
-		if ((ch&0xFF) <= MAX_CMD)
+		if ((ch & 0xFF) <= MAX_CMD)
 		{
 			*curr++ = CMD_LITERAL;
 		}
@@ -2449,7 +2450,7 @@ void read_src(char *fname)
 					{
 						; /* do nothing */
 					}
-					else if ((ch&0xFF) == '\n')
+					else if ((ch & 0xFF) == '\n')
 					{
 						*curr++ = ch;  /* no need to center blank lines. */
 					}
@@ -2463,7 +2464,7 @@ void read_src(char *fname)
 
 				case S_Line:
 					put_a_char(ch, &t);
-					if ((ch&0xFF) == '\n')
+					if ((ch & 0xFF) == '\n')
 					{
 						state = S_Start;
 					}
@@ -2483,7 +2484,7 @@ void read_src(char *fname)
 				switch (state)
 				{
 				case S_Start:
-					if ((ch&0xFF) == '\n')
+					if ((ch & 0xFF) == '\n')
 					{
 						*curr++ = ch;
 					}
@@ -2563,7 +2564,7 @@ void read_src(char *fname)
 					{
 						++num_spaces;
 					}
-					else if ((ch&0xFF) == '\n') /* a blank line means end of a para */
+					else if ((ch & 0xFF) == '\n') /* a blank line means end of a para */
 					{
 						*curr++ = '\n';   /* end the para */
 						*curr++ = '\n';   /* for the blank line */
@@ -2633,7 +2634,7 @@ void read_src(char *fname)
 					{
 						++num_spaces;
 					}
-					else if ((ch&0xFF) == '\n') /* a blank line means end of a para */
+					else if ((ch & 0xFF) == '\n') /* a blank line means end of a para */
 					{
 						*curr++ = '\n';   /* end the para */
 						*curr++ = '\n';   /* for the blank line */
@@ -2665,7 +2666,7 @@ void read_src(char *fname)
 					}
 					else
 					{
-						if ((ch&0xFF) == '\n')
+						if ((ch & 0xFF) == '\n')
 						{
 							state = S_Start;
 						}
@@ -2922,8 +2923,8 @@ void paginate_online()    /* paginate the text for on-line help */
 	int       num_links;
 	int       col;
 	int       tok;
-	int       size,
-			width;
+	int size;
+	int width;
 	int       start_margin;
 
 	msg("Paginating online help.");
@@ -3366,8 +3367,8 @@ void paginate_document()
 
 int fcmp_LABEL(const void *a, const void *b)
 {
-	char *an = ((LABEL *)a)->name,
-		*bn = ((LABEL *)b)->name;
+	char *an = ((LABEL*)a)->name;
+	char *bn = ((LABEL*)b)->name;
 	int   diff;
 
 	/* compare the names, making sure that the index goes first */
@@ -3590,7 +3591,10 @@ void insert_real_link_info(char *curr, unsigned len)
 
 void _write_help(FILE *file)
 {
-	int                   t, p, l, c;
+	int t;
+	int p;
+	int l;
+	int c;
 	char                 *text;
 	TOPIC                *tp;
 	CONTENT              *cp;
@@ -3880,11 +3884,12 @@ void print_document(const char *fname)
 
 void report_memory()
 {
-	long string = 0,   /* bytes in strings */
-		text   = 0,   /* bytes in topic text (stored on disk) */
-		data   = 0,   /* bytes in active data structure */
-		dead   = 0;   /* bytes in unused data structure */
-	int  ctr, ctr2;
+	long string = 0;   /* bytes in strings */
+	long text   = 0;   /* bytes in topic text (stored on disk) */
+	long data   = 0;   /* bytes in active data structure */
+	long dead   = 0;   /* bytes in unused data structure */
+	int ctr;
+	int ctr2;
 
 	for (ctr = 0; ctr < num_topic; ctr++)
 	{
@@ -3931,12 +3936,10 @@ void report_memory()
 
 	for (ctr = 0; ctr < num_contents; ctr++)
 	{
-		int t;
-
-		t = (MAX_CONTENT_TOPIC - contents[ctr].num_topic) *
-			(sizeof(contents[0].is_label[0])   +
-				sizeof(contents[0].topic_name[0]) +
-				sizeof(contents[0].topic_num[0])    );
+		int t = (MAX_CONTENT_TOPIC - contents[ctr].num_topic)*
+			(sizeof(contents[0].is_label[0])
+			+ sizeof(contents[0].topic_name[0])
+			+ sizeof(contents[0].topic_num[0]));
 		data += sizeof(CONTENT) - t;
 		dead += t;
 		string += (long) strlen(contents[ctr].id) + 1;
@@ -3991,11 +3994,11 @@ void report_stats()
 
 void add_hlp_to_exe(const char *hlp_fname, const char *exe_fname)
 {
-	int                  exe,   /* handles */
-								hlp;
-	long                 len,
-								count;
-	int                  size;
+	int exe;   /* handles */
+	int hlp;
+	long len;
+	long count;
+	int size;
 	help_sig_info hs;
 
 	if ((exe = open(exe_fname, O_RDWR|O_BINARY)) == -1)
