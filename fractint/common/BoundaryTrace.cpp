@@ -113,7 +113,9 @@ int boundary_trace_main()
 				{
 					g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
 				}
-				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col,
+					g_current_row, g_y_stop, g_current_row,
+					0, g_work_sym);
 				return -1;
 			}
 			g_reset_periodicity = false; /* normal periodicity checking */
@@ -157,7 +159,9 @@ int boundary_trace_main()
 						{
 							g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
 						}
-						g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
+						g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col,
+							g_current_row, g_y_stop, g_current_row,
+							0, g_work_sym);
 						return -1;
 					}
 					else if (g_color == trail_color)
@@ -260,7 +264,9 @@ int boundary_trace_main()
 									{
 										g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
 									}
-									g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col, g_current_row, g_y_stop, g_current_row, 0, g_work_sym);
+									g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col,
+										g_current_row, g_y_stop, g_current_row,
+										0, g_work_sym);
 									return -1;
 								}
 								g_input_counter = g_max_input_counter;

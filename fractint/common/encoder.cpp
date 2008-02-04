@@ -549,7 +549,7 @@ int encoder()
 			evolution_info esave_info;
 			int i;
 			evolution_info resume_e_info;
-			if (g_evolve_handle == 0 || g_calculation_status == CALCSTAT_COMPLETED)
+			if (g_evolve_info == 0 || g_calculation_status == CALCSTAT_COMPLETED)
 			{
 				esave_info.parameter_range_x     = g_parameter_range_x;
 				esave_info.parameter_range_y     = g_parameter_range_y;
@@ -571,7 +571,7 @@ int encoder()
 			}
 			else  /* we will need the resuming information */
 			{
-				memcpy(&resume_e_info, g_evolve_handle, sizeof(resume_e_info));
+				memcpy(&resume_e_info, g_evolve_info, sizeof(resume_e_info));
 				esave_info.parameter_range_x     = resume_e_info.parameter_range_x;
 				esave_info.parameter_range_y     = resume_e_info.parameter_range_y;
 				esave_info.opx             = resume_e_info.opx;

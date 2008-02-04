@@ -147,7 +147,7 @@ static int s_init_random_seed;
 static bool s_initial_corners = false;
 static bool s_initial_parameters = false;
 
-static int command_file(std::ifstream &handle, int mode);
+static int command_file(std::ifstream &handle, CommandFileType mode);
 static int next_command(char *cmdbuf, int maxlen, std::ifstream &handle, char *linebuf, int *lineoffset, int mode);
 static int next_line(std::ifstream &handle, char *linebuf, int mode);
 static void arg_error(const char *bad_arg);
@@ -531,7 +531,7 @@ static void reset_ifs_definition()
 }
 
 
-static int command_file(std::ifstream &handle, int mode)
+static int command_file(std::ifstream &handle, CommandFileType mode)
 	/* mode = 0 command line @filename         */
 	/*        1 sstools.ini                    */
 	/*        2 <@> command after startup      */

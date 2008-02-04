@@ -73,7 +73,7 @@ extern double				(*g_dy_pixel)(); /* set in FRACTALS.C */
 extern double				g_dy_size;
 extern bool					g_escape_exit_flag;
 extern int					g_evolving_flags;
-extern evolution_info		*g_evolve_handle;
+extern evolution_info		*g_evolve_info;
 extern float				g_eyes_fp;
 extern bool					g_fast_restore;
 extern double				g_fudge_limit;

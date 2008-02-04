@@ -546,9 +546,9 @@ static void got_evolver_info(const fractal_info &read_info, evolver_info_extensi
 	{
 		g_calculation_status = CALCSTAT_RESUMABLE;
 		evolution_info resume_e_info;
-		if (g_evolve_handle == 0)
+		if (g_evolve_info == 0)
 		{
-			g_evolve_handle = new evolution_info;
+			g_evolve_info = new evolution_info;
 		}
 		resume_e_info.parameter_range_x = evolver_info.parameter_range_x;
 		resume_e_info.parameter_range_y = evolver_info.parameter_range_y;
@@ -567,12 +567,12 @@ static void got_evolver_info(const fractal_info &read_info, evolver_info_extensi
 		resume_e_info.this_generation_random_seed = evolver_info.this_generation_random_seed;
 		resume_e_info.fiddle_factor = evolver_info.fiddle_factor;
 		resume_e_info.ecount = evolver_info.ecount;
-		memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
+		memcpy(g_evolve_info, &resume_e_info, sizeof(resume_e_info));
 	}
 	else
 	{
-		delete g_evolve_handle;
-		g_evolve_handle = 0;
+		delete g_evolve_info;
+		g_evolve_info = 0;
 		g_calculation_status = CALCSTAT_COMPLETED;
 	}
 	g_parameter_range_x = evolver_info.parameter_range_x;

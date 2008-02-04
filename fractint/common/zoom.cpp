@@ -731,21 +731,29 @@ void init_pan_or_recalc(bool do_zoomout) /* decide to recalc, or to chg g_work_l
 	j = g_y_dots-1;
 	if (row < 0)
 	{
-		listfull |= g_WorkList.add(0, g_x_dots-1, 0, 0, -row-1, 0, 0, 0);
+		listfull |= g_WorkList.add(0, g_x_dots-1, 0,
+			0, -row-1, 0,
+			0, 0);
 		i = -row;
 	}
 	if (row > 0)
 	{
-		listfull |= g_WorkList.add(0, g_x_dots-1, 0, g_y_dots-row, g_y_dots-1, g_y_dots-row, 0, 0);
+		listfull |= g_WorkList.add(0, g_x_dots-1, 0,
+			g_y_dots-row, g_y_dots-1, g_y_dots-row,
+			0, 0);
 		j = g_y_dots - row - 1;
 	}
 	if (col < 0)
 	{
-		listfull |= g_WorkList.add(0, -col-1, 0, i, j, i, 0, 0);
+		listfull |= g_WorkList.add(0, -col-1, 0,
+			i, j, i,
+			0, 0);
 	}
 	if (col > 0)
 	{
-		listfull |= g_WorkList.add(g_x_dots-col, g_x_dots-1, g_x_dots-col, i, j, i, 0, 0);
+		listfull |= g_WorkList.add(g_x_dots-col, g_x_dots-1, g_x_dots-col,
+			i, j, i,
+			0, 0);
 	}
 	if (listfull != 0)
 	{

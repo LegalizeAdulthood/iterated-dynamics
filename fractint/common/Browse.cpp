@@ -309,12 +309,12 @@ static bool is_visible_window(CoordinateWindow *list, fractal_info *info,
 		bf_t bt_t5 = alloc_stack(two_di_len);
 		bf_t bt_t6 = alloc_stack(two_di_len);
 
-		memcpy((char *)bt_t1, mp_info->apm_data, (two_di_len));
-		memcpy((char *)bt_t2, mp_info->apm_data + two_di_len, (two_di_len));
-		memcpy((char *)bt_t3, mp_info->apm_data + 2*two_di_len, (two_di_len));
-		memcpy((char *)bt_t4, mp_info->apm_data + 3*two_di_len, (two_di_len));
-		memcpy((char *)bt_t5, mp_info->apm_data + 4*two_di_len, (two_di_len));
-		memcpy((char *)bt_t6, mp_info->apm_data + 5*two_di_len, (two_di_len));
+		memcpy((char *) bt_t1, mp_info->apm_data, two_di_len);
+		memcpy((char *) bt_t2, mp_info->apm_data + two_di_len, two_di_len);
+		memcpy((char *) bt_t3, mp_info->apm_data + 2*two_di_len, two_di_len);
+		memcpy((char *) bt_t4, mp_info->apm_data + 3*two_di_len, two_di_len);
+		memcpy((char *) bt_t5, mp_info->apm_data + 4*two_di_len, two_di_len);
+		memcpy((char *) bt_t6, mp_info->apm_data + 5*two_di_len, two_di_len);
 
 		convert_bf(bt_xmin, bt_t1, two_len, two_di_len);
 		convert_bf(bt_xmax, bt_t2, two_len, two_di_len);
