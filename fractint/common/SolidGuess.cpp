@@ -492,7 +492,9 @@ int solid_guess()
 			{ /* calc top row */
 				if (g_calculate_type() == -1)
 				{
-					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_begin(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_begin(), 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_begin(),
+						g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_begin(),
+						0, g_work_sym);
 					return 0;
 				}
 				g_reset_periodicity = false;
@@ -527,14 +529,18 @@ int solid_guess()
 				{
 					y = g_WorkList.yy_start();
 				}
-				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), y, 0, g_work_sym);
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+					g_WorkList.yy_start(), g_WorkList.yy_stop(), y,
+					0, g_work_sym);
 				return 0;
 			}
 		}
 
 		if (g_WorkList.num_items()) /* work list not empty, just do 1st pass */
 		{
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), 1, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
+				1, g_work_sym);
 			return 0;
 		}
 		++g_work_pass;
@@ -614,7 +620,9 @@ int solid_guess()
 				{
 					y = g_WorkList.yy_start();
 				}
-				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), y, g_work_pass, g_work_sym);
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+					g_WorkList.yy_start(), g_WorkList.yy_stop(), y,
+					g_work_pass, g_work_sym);
 				return 0;
 			}
 		}
@@ -622,7 +630,9 @@ int solid_guess()
 		if (g_WorkList.num_items() /* work list not empty, do one pass at a time */
 			&& blocksize > 2) /* if 2, we just did last pass */
 		{
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), g_work_pass, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
+				g_work_pass, g_work_sym);
 			return 0;
 		}
 		g_iy_start = g_WorkList.yy_start() & (-1 - (s_max_block-1));

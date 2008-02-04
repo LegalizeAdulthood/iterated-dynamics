@@ -1,5 +1,6 @@
 #include <cstring>
 #include <string>
+#include <vector>
 
 #include "port.h"
 #include "id.h"
@@ -16,7 +17,6 @@
 
 /**************** tesseral method by CJLT begins here*********************/
 /*  reworked by PB for speed and resumeability */
-
 struct tess  /* one of these per box to be done gets stacked */
 {
 	int x1;
@@ -28,6 +28,8 @@ struct tess  /* one of these per box to be done gets stacked */
 	int left;
 	int right;  /* edge colors, -1 mixed, -2 unknown */
 };
+
+static std::vector<tess> s_stack;
 
 static int tesseral_check_column(int x, int y1, int y2)
 {
@@ -108,10 +110,8 @@ static int tesseral_row(int x1, int x2, int y)
 
 int tesseral()
 {
-	tess *tp;
-
 	bool guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis);
-	tp = (tess *)&g_stack[0];
+	tess *tp = (tess *) &g_stack[0];
 	tp->x1 = g_ix_start;                              /* set up initial box */
 	tp->x2 = g_x_stop;
 	tp->y1 = g_iy_start;
@@ -125,40 +125,36 @@ int tesseral()
 		tp->right = tesseral_column(g_x_stop, g_iy_start + 1, g_y_stop-1);  /* Do right column */
 		if (check_key())  /* interrupt before we got properly rolling */
 		{
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), 0, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
+				0, g_work_sym);
 			return -1;
 		}
 	}
 	else  /* resuming, rebuild work stack */
 	{
-		int i;
-		int mid;
-		int curx;
-		int cury;
-		int xsize;
-		int ysize;
-		tess *tp2;
 		tp->top = -2;
 		tp->bottom = -2;
 		tp->left = -2;
 		tp->right = -2;
-		cury = g_WorkList.yy_begin() & 0xfff;
-		ysize = 1;
-		i = (unsigned)g_WorkList.yy_begin() >> 12;
+		int cury = g_WorkList.yy_begin() & 0xFFF;
+		int ysize = 1;
+		int i = g_WorkList.yy_begin() >> 12;
 		while (--i >= 0)
 		{
 			ysize <<= 1;
 		}
-		curx = g_work_pass & 0xfff;
-		xsize = 1;
-		i = (unsigned)g_work_pass >> 12;
-		while (--i >= 0)
+		int curx = g_work_pass & 0xFFF;
+		int xsize = 1;
+		int i2 = g_work_pass >> 12;
+		while (--i2 >= 0)
 		{
 			xsize <<= 1;
 		}
 		while (true)
 		{
-			tp2 = tp;
+			tess *tp2 = tp;
+			int mid;
 			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* next divide down middle */
 			{
 				if (tp->x1 == curx && (tp->x2 - tp->x1 - 2) < xsize)
@@ -168,7 +164,8 @@ int tesseral()
 				mid = (tp->x1 + tp->x2) >> 1;                /* Find mid point */
 				if (mid > curx)  /* stack right part */
 				{
-					memcpy(++tp, tp2, sizeof(*tp));
+					++tp;
+					*tp = *tp2;
 					tp->x2 = mid;
 				}
 				tp2->x1 = mid;
@@ -182,7 +179,8 @@ int tesseral()
 				mid = (tp->y1 + tp->y2) >> 1;                /* Find mid point */
 				if (mid > cury)  /* stack bottom part */
 				{
-					memcpy(++tp, tp2, sizeof(*tp));
+					++tp;
+					*tp = *tp2;
 					tp->y2 = mid;
 				}
 				tp2->y1 = mid;
@@ -342,7 +340,8 @@ tess_split:
 					tp2 = tp;
 					if (mid - tp->x1 > 1)  /* left part >= 1 col, stack right */
 					{
-						memcpy(++tp, tp2, sizeof(*tp));
+						++tp;
+						*tp = *tp2;
 						tp->x2 = mid;
 						tp->right = midcolor;
 					}
@@ -375,7 +374,8 @@ tess_split:
 					tp2 = tp;
 					if (mid - tp->y1 > 1)  /* top also >= 1 col, stack bottom */
 					{
-						memcpy(++tp, tp2, sizeof(*tp));
+						++tp;
+						*tp = *tp2;
 						tp->y2 = mid;
 						tp->bottom = midcolor;
 					}
@@ -410,8 +410,9 @@ tess_end:
 			i <<= 1;
 			++ysize;
 		}
-		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(),
-			(ysize << 12) + tp->y1, (xsize << 12) + tp->x1, g_work_sym);
+		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+			g_WorkList.yy_start(), g_WorkList.yy_stop(), (ysize << 12) + tp->y1,
+			(xsize << 12) + tp->x1, g_work_sym);
 		return -1;
 	}
 	return 0;

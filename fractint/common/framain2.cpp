@@ -87,7 +87,7 @@ private:
 };
 
 bool g_from_text_flag = false;         /* = 1 if we're in graphics mode */
-evolution_info *g_evolve_handle = 0;
+evolution_info *g_evolve_info = 0;
 CalculationMode g_standard_calculation_mode_old;
 void (*g_out_line_cleanup)();
 
@@ -477,9 +477,9 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				int gridsqr;
 				evolution_info resume_e_info;
 
-				if ((g_evolve_handle != 0) && (g_calculation_status == CALCSTAT_RESUMABLE))
+				if ((g_evolve_info != 0) && (g_calculation_status == CALCSTAT_RESUMABLE))
 				{
-					memcpy(&resume_e_info, g_evolve_handle, sizeof(resume_e_info));
+					memcpy(&resume_e_info, g_evolve_info, sizeof(resume_e_info));
 					g_parameter_range_x  = resume_e_info.parameter_range_x;
 					g_parameter_range_y  = resume_e_info.parameter_range_y;
 					g_parameter_offset_x = resume_e_info.opx;
@@ -505,8 +505,8 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 						g_viewWindow.Show();
 					}
 					ecount       = resume_e_info.ecount;
-					delete g_evolve_handle;
-					g_evolve_handle = 0;
+					delete g_evolve_info;
+					g_evolve_info = 0;
 				}
 				else
 				{ /* not resuming, start from the beginning */
@@ -557,9 +557,9 @@ done:
 				}
 				else
 				{	/* interrupted screen generation, save info */
-					if (g_evolve_handle == 0)
+					if (g_evolve_info == 0)
 					{
-						g_evolve_handle = new evolution_info;
+						g_evolve_info = new evolution_info;
 					}
 					resume_e_info.parameter_range_x     = g_parameter_range_x;
 					resume_e_info.parameter_range_y     = g_parameter_range_y;
@@ -578,7 +578,7 @@ done:
 					resume_e_info.fiddle_factor = g_fiddle_factor;
 					resume_e_info.evolving        = short(g_evolving_flags);
 					resume_e_info.ecount          = short(ecount);
-					memcpy(g_evolve_handle, &resume_e_info, sizeof(resume_e_info));
+					memcpy(g_evolve_info, &resume_e_info, sizeof(resume_e_info));
 				}
 				g_screen_x_offset = 0;
 				g_screen_y_offset = 0;

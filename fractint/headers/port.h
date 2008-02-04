@@ -278,8 +278,4 @@ typedef long double LDBL;
 #define cosl            cos
 #endif
 
-#if !defined(_WIN32)
-#define _alloca alloca
-#endif
-
 #endif  /* PORT_H */

@@ -863,8 +863,8 @@ void goodbye()
 	{
 		end_resume();
 	}
-	delete g_evolve_handle;
-	g_evolve_handle = 0;
+	delete g_evolve_info;
+	g_evolve_info = 0;
 	release_parameter_box();
 	history_free();
 	delete[] g_ifs_definition;

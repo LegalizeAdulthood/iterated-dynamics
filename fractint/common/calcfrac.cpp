@@ -847,7 +847,9 @@ static int draw_rectangle_orbits()
 		{
 			if (plotorbits2dfloat() == -1)
 			{
-				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
+					g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row,
+					0, g_work_sym);
 				return -1; /* interrupted */
 			}
 			++g_col;
@@ -898,7 +900,9 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
+						g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row,
+						0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -919,7 +923,9 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
+						g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row,
+						0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_col++;
@@ -958,7 +964,9 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
+						g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row,
+						0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -979,7 +987,9 @@ static int draw_line_orbits()
 			{
 				if (plotorbits2dfloat() == -1)
 				{
-					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
+					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
+						g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row,
+						0, g_work_sym);
 					return -1; /* interrupted */
 				}
 				g_row++;
@@ -1027,7 +1037,9 @@ static int draw_function_orbits()
 		g_row = int(yfactor + (Yctr + Xmagfactor*sin(theta)));
 		if (plotorbits2dfloat() == -1)
 		{
-			g_WorkList.add(angle, 0, 0, 0, 0, 0, 0, g_work_sym);
+			g_WorkList.add(angle, 0, 0,
+				0, 0, 0,
+				0, g_work_sym);
 			return -1; /* interrupted */
 		}
 		angle++;
@@ -1072,12 +1084,16 @@ static int one_or_two_pass()
 	{
 		if (standard_calculate(1) == -1)
 		{
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row, 0, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
+				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row,
+				0, g_work_sym);
 			return -1;
 		}
 		if (g_WorkList.num_items() > 0) /* g_work_list not empty, defer 2nd pass */
 		{
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), 1, g_work_sym);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
+				1, g_work_sym);
 			return 0;
 		}
 		g_work_pass = 1;
@@ -1092,7 +1108,9 @@ static int one_or_two_pass()
 		{
 			i -= g_row - g_iy_start;
 		}
-		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col, g_row, i, g_row, g_work_pass, g_work_sym);
+		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
+			g_row, i, g_row,
+			g_work_pass, g_work_sym);
 		return -1;
 	}
 
@@ -2849,7 +2867,9 @@ static int x_symmetry_split(int xaxis_row, bool xaxis_between)
 			{
 				--g_y_stop;
 			}
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_y_stop + 1, g_WorkList.yy_stop(), g_y_stop + 1, g_work_pass, 0);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+				g_y_stop + 1, g_WorkList.yy_stop(), g_y_stop + 1,
+				g_work_pass, 0);
 			g_WorkList.set_yy_stop(g_y_stop);
 			return 1; /* tell set_symmetry no sym for current window */
 		}
@@ -2859,7 +2879,9 @@ static int x_symmetry_split(int xaxis_row, bool xaxis_between)
 			{
 				return 1;
 			}
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), i + 1, g_WorkList.yy_stop(), i + 1, g_work_pass, 0);
+			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+				i + 1, g_WorkList.yy_stop(), i + 1,
+				g_work_pass, 0);
 			g_WorkList.set_yy_stop(i);
 		}
 		g_y_stop = xaxis_row;
@@ -2903,7 +2925,9 @@ static int y_symmetry_split(int yaxis_col, bool yaxis_between)
 			{
 				--g_x_stop;
 			}
-			g_WorkList.add(g_x_stop + 1, g_WorkList.xx_stop(), g_x_stop + 1, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), g_work_pass, 0);
+			g_WorkList.add(g_x_stop + 1, g_WorkList.xx_stop(), g_x_stop + 1,
+				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
+				g_work_pass, 0);
 			g_WorkList.set_xx_stop(g_x_stop);
 			return 1; /* tell set_symmetry no sym for current window */
 		}
@@ -2913,7 +2937,9 @@ static int y_symmetry_split(int yaxis_col, bool yaxis_between)
 			{
 				return 1;
 			}
-			g_WorkList.add(i + 1, g_WorkList.xx_stop(), i + 1, g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(), g_work_pass, 0);
+			g_WorkList.add(i + 1, g_WorkList.xx_stop(), i + 1,
+				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
+				g_work_pass, 0);
 			g_WorkList.set_xx_stop(i);
 		}
 		g_x_stop = yaxis_col;

@@ -4,6 +4,7 @@
 */
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include <string.h>
 #include <time.h>
@@ -41,7 +42,7 @@ static int s_ground;
 static int s_max_cc;
 static int s_max_c;
 static int s_min_c;
-static int s_reverse;
+static bool s_reverse;
 static int s_separation;
 static double s_width;
 static int s_x1;
@@ -134,22 +135,23 @@ static void toggle_bars(bool &bars, int barwidth, int *colour)
 
 int out_line_stereo(BYTE *pixels, int linelen)
 {
-	int *colour = (int *) _alloca(sizeof(int)*g_x_dots);
-	if ((s_y) >= g_y_dots)
+	if (s_y >= g_y_dots)
 	{
 		return 1;
 	}
 
-	int *same = (int *) _alloca(sizeof(int)*g_x_dots);
+	std::vector<int> colour(g_x_dots);
+	std::vector<int> same(g_x_dots);
 	for (int x = 0; x < g_x_dots; ++x)
 	{
 		same[x] = x;
 	}
 	for (int x = 0; x < g_x_dots; ++x)
 	{
+		int depth = getdepth(x, s_y) - s_min_c;
 		s_separation = s_reverse
-			? (s_ground - int(s_depth*(getdepth(x, s_y) - s_min_c)/s_max_cc))
-			: (s_ground - int(s_depth*(s_max_cc - (getdepth(x, s_y) - s_min_c))/s_max_cc));
+			? (s_ground - int(s_depth*depth/s_max_cc))
+			: (s_ground - int(s_depth*(s_max_cc - depth)/s_max_cc));
 		s_separation =  int((s_separation*10.0)/s_width);        /* adjust for media s_width */
 
 		/* get average value under calibration bars */
@@ -223,7 +225,7 @@ int auto_stereo()
 		s_width = 1;
 	}
 	s_ground = g_x_dots/8;
-	s_reverse = (s_auto_stereo_depth < 0) ? 1 : 0;
+	s_reverse = (s_auto_stereo_depth < 0);
 	s_depth = (long(g_x_dots)*long(s_auto_stereo_depth))/4000L;
 	s_depth = labs(s_depth) + 1;
 	if (get_min_max())
@@ -379,20 +381,13 @@ int get_random_dot_stereogram_parameters()
 			g_grayscale_depth = (dialog.values(k++).uval.ch.val != 0);
 			s_stereogram_calibrate = StereogramCalibrateType(dialog.values(k++).uval.ch.val);
 			s_image_map = (dialog.values(k++).uval.ch.val != 0);
-			if (g_stereo_map_name.length() > 0 && s_image_map)
+			reuse = (g_stereo_map_name.length() > 0)
+				&& s_image_map
+				&& (dialog.values(k++).uval.ch.val != 0);
+			if (s_image_map && !reuse
+				&& get_a_filename("Select an Imagemap File", std::string(g_masks[1]), g_stereo_map_name))
 			{
-				reuse = (dialog.values(k++).uval.ch.val != 0);
-			}
-			else
-			{
-				reuse = false;
-			}
-			if (s_image_map && !reuse)
-			{
-				if (get_a_filename("Select an Imagemap File", std::string(g_masks[1]), g_stereo_map_name))
-				{
-					continue;
-				}
+				continue;
 			}
 		}
 		break;

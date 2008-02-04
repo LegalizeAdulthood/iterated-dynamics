@@ -374,7 +374,8 @@ int diffusion_scan()
 
 	if (diffusion_engine() == -1)
 	{
-		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(), g_WorkList.yy_start(), g_WorkList.yy_stop(),
+		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+			g_WorkList.yy_start(), g_WorkList.yy_stop(),
 			int(s_diffusion_counter >> 16),            /* high, */
 			int(s_diffusion_counter & 0xffff),         /* low order words */
 			g_work_sym);
