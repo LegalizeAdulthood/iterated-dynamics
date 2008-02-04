@@ -894,8 +894,8 @@ enum EvolveFlags
 extern FractalTypeSpecificData g_fractal_specific[];
 extern FractalTypeSpecificData *g_current_fractal_specific;
 
-extern char const *DEFAULTFRACTALTYPE;
-extern char const *ALTERNATEFRACTALTYPE;
+extern char const *GIF_EXTENSION;
+extern char const *FRA_EXTENSION;
 
 #ifdef sqr
 #undef sqr
