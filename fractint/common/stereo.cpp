@@ -140,8 +140,8 @@ int out_line_stereo(BYTE *pixels, int linelen)
 		return 1;
 	}
 
-	std::vector<int> colour(g_x_dots);
-	std::vector<int> same(g_x_dots);
+	static std::vector<int> same;
+	same.resize(g_x_dots);
 	for (int x = 0; x < g_x_dots; ++x)
 	{
 		same[x] = x;
@@ -158,7 +158,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 		if (s_x1 <= x && x <= s_x2 && s_y1 <= s_y && s_y <= s_y2)
 		{
 			s_average += s_separation;
-			(s_average_count)++;
+			s_average_count++;
 		}
 		int i = x - (s_separation + (s_separation & s_y & 1))/2;
 		int j = i + s_separation;
@@ -182,12 +182,14 @@ int out_line_stereo(BYTE *pixels, int linelen)
 			same[i] = j;
 		}
 	}
+	static std::vector<int> color;
+	color.resize(g_x_dots);
 	for (int x = g_x_dots - 1; x >= 0; x--)
 	{
-		colour[x] = (same[x] == x) ? int(pixels[x % linelen]) : colour[same[x]];
-		g_plot_color_put_color(x, s_y, colour[x]);
+		color[x] = (same[x] == x) ? int(pixels[x % linelen]) : color[same[x]];
+		g_plot_color_put_color(x, s_y, color[x]);
 	}
-	(s_y)++;
+	s_y++;
 	return 0;
 }
 
@@ -251,7 +253,7 @@ int auto_stereo()
 	if (s_image_map)
 	{
 		g_out_line = out_line_stereo;
-		while ((s_y) < g_y_dots)
+		while (s_y < g_y_dots)
 		{
 			if (gifview())
 			{
