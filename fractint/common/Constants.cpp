@@ -11,5 +11,5 @@ char const *INFO_ID = "Fractal";
 
 double const AUTO_INVERT  = -123456.789;
 
-char const *DEFAULTFRACTALTYPE = ".gif";
-char const *ALTERNATEFRACTALTYPE = ".fra";
+char const *GIF_EXTENSION = ".gif";
+char const *FRA_EXTENSION = ".fra";

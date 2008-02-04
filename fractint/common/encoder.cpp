@@ -125,7 +125,7 @@ restart:
 	}
 
 	strcpy(openfile, filename);  /* decode and open the filename */
-	strcpy(openfiletype, DEFAULTFRACTALTYPE);    /* determine the file extension */
+	strcpy(openfiletype, GIF_EXTENSION);    /* determine the file extension */
 	if (s_save_16bit)
 	{
 		strcpy(openfiletype, ".pot");
