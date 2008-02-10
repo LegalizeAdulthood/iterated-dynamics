@@ -1,6 +1,6 @@
-/*
-	Miscellaneous fractal-specific code
-*/
+//
+//	Miscellaneous fractal-specific code
+//
 #include <algorithm>
 #include <sstream>
 #include <string>
@@ -31,16 +31,16 @@
 #include "resume.h"
 #include "testpt.h"
 
-/* for bifurcation type: */
+// for bifurcation type: 
 static long const DEFAULT_FILTER = 1000;
 // "Beauty of Fractals" recommends using 5000 (p.25), but that seems unnecessary.
 // Can override this value with a nonzero param1
 
-static double const SEED = 0.66;               /* starting value for population */
+static double const SEED = 0.66;               // starting value for population 
 
-/* global data */
+// global data 
 
-/* data local to this module */
+// data local to this module 
 static int *s_verhulst_array = 0;
 static long s_filter_cycles;
 static bool s_half_time_check;
@@ -52,7 +52,7 @@ static bool s_mono = false;
 static int s_outside_x;
 static long s_pi_l;
 static long s_bifurcation_close_enough_l;
-static long s_bifurcation_saved_population_l; /* poss future use */
+static long s_bifurcation_saved_population_l; // poss future use 
 static double s_bifurcation_close_enough;
 static double s_bifurcation_saved_population;
 static int s_bifurcation_saved_increment;
@@ -61,45 +61,44 @@ static long s_beta;
 static int s_lyapunov_length;
 static int s_lyapunov_r_xy[34];
 
-/* routines local to this module */
+// routines local to this module 
 static void verhulst();
 static void bifurcation_period_init();
 static int bifurcation_periodic(long time);
 static int lyapunov_cycles(long, double, double);
 
 
-/************ standalone engine for "bifurcation" types ***************/
+// standalone engine for "bifurcation" types
 
-/***************************************************************/
-/* The following code now forms a generalised Fractal Engine   */
-/* for Bifurcation fractal typeS.  By rights it now belongs in */
-/* CALCFRACT.C, but it's easier for me to leave it here !      */
-
-/* Original code by Phil Wilson, hacked around by Kev Allen.   */
-
-/* Besides generalisation, enhancements include Periodicity    */
-/* Checking during the plotting phase (AND halfway through the */
-/* filter cycle, if possible, to halve calc times), quicker    */
-/* floating-point calculations for the standard Verhulst type, */
-/* and new bifurcation types (integer bifurcation, f.p & int   */
-/* biflambda - the real equivalent of complex Lambda sets -    */
-/* and f.p renditions of bifurcations of r*sin(Pi*p), which    */
-/* spurred Mitchel Feigenbaum on to discover his Number).      */
-
-/* To add further types, extend the g_fractal_specific[] array in */
-/* usual way, with Bifurcation as the engine, and the name of  */
-/* the routine that calculates the next bifurcation generation */
-/* as the "orbitcalc" routine in the g_fractal_specific[] entry.  */
-
-/* Bifurcation "orbitcalc" routines get called once per screen */
-/* pixel column.  They should calculate the next generation    */
-/* from the doubles s_rate & s_population (or the longs s_rate_l &    */
-/* s_population_l if they use integer math), placing the result   */
-/* back in s_population (or s_population_l).  They should return 0  */
-/* if all is ok, or any non-zero value if calculation bailout  */
-/* is desirable (eg in case of errors, or the series tending   */
-/* to infinity).                Have fun !                     */
-/***************************************************************/
+// The following code now forms a generalised Fractal Engine   
+// for Bifurcation fractal typeS.  By rights it now belongs in 
+// CALCFRACT.C, but it's easier for me to leave it here !      
+//
+// Original code by Phil Wilson, hacked around by Kev Allen.   
+//
+// Besides generalisation, enhancements include Periodicity    
+// Checking during the plotting phase (AND halfway through the 
+// filter cycle, if possible, to halve calc times), quicker    
+// floating-point calculations for the standard Verhulst type, 
+// and new bifurcation types (integer bifurcation, f.p & int   
+// biflambda - the real equivalent of complex Lambda sets -    
+// and f.p renditions of bifurcations of r*sin(Pi*p), which    
+// spurred Mitchel Feigenbaum on to discover his Number).      
+//
+// To add further types, extend the g_fractal_specific[] array in 
+// usual way, with Bifurcation as the engine, and the name of  
+// the routine that calculates the next bifurcation generation 
+// as the "orbitcalc" routine in the g_fractal_specific[] entry.  
+//
+// Bifurcation "orbitcalc" routines get called once per screen 
+// pixel column.  They should calculate the next generation    
+// from the doubles s_rate & s_population (or the longs s_rate_l &    
+// s_population_l if they use integer math), placing the result   
+// back in s_population (or s_population_l).  They should return 0  
+// if all is ok, or any non-zero value if calculation bailout  
+// is desirable (eg in case of errors, or the series tending   
+// to infinity).                Have fun !                     
+//
 
 int bifurcation()
 {
@@ -113,7 +112,7 @@ int bifurcation()
 		get_resume(sizeof(column), &column);
 		end_resume();
 	}
-	array_size =  (g_y_stop + 1)*sizeof(int); /* should be g_y_stop + 1 */
+	array_size =  (g_y_stop + 1)*sizeof(int); // should be g_y_stop + 1 
 	s_verhulst_array = new int[array_size];
 	if (s_verhulst_array == 0)
 	{
@@ -123,7 +122,7 @@ int bifurcation()
 
 	s_pi_l = long(MathUtil::Pi*g_fudge);
 
-	for (row = 0; row <= g_y_stop; row++) /* should be g_y_stop */
+	for (row = 0; row <= g_y_stop; row++) // should be g_y_stop 
 	{
 		s_verhulst_array[row] = 0;
 	}
@@ -152,11 +151,11 @@ int bifurcation()
 
 	if (g_integer_fractal)
 	{
-		g_initial_z_l.y = g_escape_time_state.m_grid_l.y_max() - g_y_stop*g_escape_time_state.m_grid_l.delta_y();            /* Y-value of    */
+		g_initial_z_l.y = g_escape_time_state.m_grid_l.y_max() - g_y_stop*g_escape_time_state.m_grid_l.delta_y();            // Y-value of    
 	}
 	else
 	{
-		g_initial_z.y = double(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_escape_time_state.m_grid_fp.delta_y()); /* bottom pixels */
+		g_initial_z.y = double(g_escape_time_state.m_grid_fp.y_max() - g_y_stop*g_escape_time_state.m_grid_fp.delta_y()); // bottom pixels 
 	}
 
 	while (column <= g_x_stop)
@@ -177,9 +176,9 @@ int bifurcation()
 		{
 			s_rate = double(g_escape_time_state.m_grid_fp.x_min() + column*g_escape_time_state.m_grid_fp.delta_x());
 		}
-		verhulst();        /* calculate array once per column */
+		verhulst();        // calculate array once per column 
 
-		for (row = g_y_stop; row >= 0; row--) /* should be g_y_stop & >= 0 */
+		for (row = g_y_stop; row >= 0; row--) // should be g_y_stop & >= 0 
 		{
 			int color;
 			color = s_verhulst_array[row];
@@ -196,7 +195,7 @@ int bifurcation()
 				color = g_colors-1;
 			}
 			s_verhulst_array[row] = 0;
-			g_plot_color(column, row, color); /* was row-1, but that's not right? */
+			g_plot_color(column, row, color); // was row-1, but that's not right? 
 		}
 		column++;
 	}
@@ -204,7 +203,7 @@ int bifurcation()
 	return 0;
 }
 
-static void verhulst()          /* P. F. Verhulst (1845) */
+static void verhulst()          // P. F. Verhulst (1845) 
 {
 	if (g_integer_fractal)
 	{
@@ -226,7 +225,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 			return;
 		}
 	}
-	if (s_half_time_check) /* check for periodicity at half-time */
+	if (s_half_time_check) // check for periodicity at half-time 
 	{
 		bifurcation_period_init();
 		int counter;
@@ -242,7 +241,7 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 				break;
 			}
 		}
-		if (counter >= g_max_iteration)   /* if not periodic, go the distance */
+		if (counter >= g_max_iteration)   // if not periodic, go the distance 
 		{
 			for (counter = 0; counter < s_filter_cycles; counter++)
 			{
@@ -267,12 +266,12 @@ static void verhulst()          /* P. F. Verhulst (1845) */
 			return;
 		}
 
-		/* assign population value to Y coordinate in pixels */
+		// assign population value to Y coordinate in pixels 
 		int pixel_row = g_integer_fractal
 			? (g_y_stop - int((s_population_l - g_initial_z_l.y)/g_escape_time_state.m_grid_l.delta_y()))
 			: (g_y_stop - int((s_population - g_initial_z.y)/g_escape_time_state.m_grid_fp.delta_y()));
 
-		/* if it's visible on the screen, save it in the column array */
+		// if it's visible on the screen, save it in the column array 
 		if (pixel_row <= g_y_stop)
 		{
 			s_verhulst_array[pixel_row] ++;
@@ -304,11 +303,11 @@ static void bifurcation_period_init()
 	}
 }
 
-/* Bifurcation s_population Periodicity Check */
-/* Returns : 1 if periodicity found, else 0 */
+// Bifurcation s_population Periodicity Check 
+// Returns : 1 if periodicity found, else 0 
 static int bifurcation_periodic(long time)
 {
-	if ((time & s_bifurcation_saved_mask) == 0)      /* time to save a new value */
+	if ((time & s_bifurcation_saved_mask) == 0)      // time to save a new value 
 	{
 		if (g_integer_fractal)
 		{
@@ -324,7 +323,7 @@ static int bifurcation_periodic(long time)
 			s_bifurcation_saved_increment = 4;
 		}
 	}
-	else                         /* check against an old save */
+	else                         // check against an old save 
 	{
 		if (g_integer_fractal)
 		{
@@ -344,12 +343,10 @@ static int bifurcation_periodic(long time)
 	return 0;
 }
 
-/**********************************************************************/
-/*                                                                                                    */
-/* The following are Bifurcation "orbitcalc" routines...              */
-/*                                                                                                    */
-/**********************************************************************/
-int bifurcation_lambda() /* Used by lyanupov */
+// 
+// The following are Bifurcation "orbitcalc" routines...              
+// 
+int bifurcation_lambda() // Used by lyanupov 
 {
 	s_population = s_rate*s_population*(1 - s_population);
 	return fabs(s_population) > BIG;
@@ -440,7 +437,7 @@ int bifurcation_add_trig_pi()
 
 int bifurcation_lambda_trig_fp()
 {
-	/* s_population = s_rate*fn(s_population)*(1 - fn(s_population)) */
+	// s_population = s_rate*fn(s_population)*(1 - fn(s_population)) 
 	g_temp_z.x = s_population;
 	g_temp_z.y = 0;
 	CMPLXtrig0(g_temp_z, g_temp_z);
@@ -462,10 +459,10 @@ int bifurcation_lambda_trig()
 
 int bifurcation_may_fp()
 {
-	/* X = (lambda * X)/(1 + X)^s_beta, from R.May as described in Pickover,
-				Computers, Pattern, Chaos, and Beauty, page 153 */
+	// X = (lambda * X)/(1 + X)^s_beta, from R.May as described in Pickover,
+	//			Computers, Pattern, Chaos, and Beauty, page 153
 	g_temp_z.x = 1.0 + s_population;
-	g_temp_z.x = pow(g_temp_z.x, -s_beta); /* pow in math.h included with mpmath.h */
+	g_temp_z.x = pow(g_temp_z.x, -s_beta); // pow in math.h included with mpmath.h 
 	s_population = (s_rate*s_population)*g_temp_z.x;
 	return fabs(s_population) > BIG;
 }
@@ -496,8 +493,8 @@ bool bifurcation_may_setup()
 	return false;
 }
 
-/******************* standalone engine for "popcorn" ********************/
-int popcorn()   /* subset of std engine */
+// standalone engine for "popcorn"
+int popcorn()   // subset of std engine 
 {
 	int start_row;
 	start_row = 0;
@@ -509,13 +506,13 @@ int popcorn()   /* subset of std engine */
 	}
 	g_input_counter = g_max_input_counter;
 	g_plot_color = plot_color_none;
-	g_temp_sqr_x = g_temp_sqr_x_l = 0; /* PB added this to cover weird BAILOUTs */
+	g_temp_sqr_x = g_temp_sqr_x_l = 0; // PB added this to cover weird BAILOUTs 
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		g_reset_periodicity = true;
 		for (g_col = 0; g_col <= g_x_stop; g_col++)
 		{
-			if (standard_fractal() == -1) /* interrupted */
+			if (standard_fractal() == -1) // interrupted 
 			{
 				alloc_resume(10, 1);
 				put_resume(sizeof(g_row), &g_row);
@@ -528,14 +525,14 @@ int popcorn()   /* subset of std engine */
 	return 0;
 }
 
-/******************* standalone engine for "lyapunov" *********************/
-/*** Roy Murphy [76376, 721]                                             ***/
-/*** revision history:                                                  ***/
-/*** initial version: Winter '91                                        ***/
-/***    Fall '92 integration of Nicholas Wilt's ASM speedups            ***/
-/***    Jan 93' integration with calcfrac() yielding boundary tracing,  ***/
-/***    tesseral, and solid guessing, and inversion, inside=nnn         ***/
-/**************************************************************************/
+// standalone engine for "lyapunov"
+// Roy Murphy [76376, 721]
+// revision history:
+// initial version: Winter '91
+//    Fall '92 integration of Nicholas Wilt's ASM speedups
+//    Jan 93' integration with calcfrac() yielding boundary tracing,
+//    tesseral, and solid guessing, and inversion, inside=nnn
+//
 int lyapunov()
 {
 	double a;
@@ -588,34 +585,34 @@ int lyapunov()
 
 bool lyapunov_setup()
 {
-	/*
-		This routine sets up the sequence for forcing the s_rate parameter
-		to vary between the two values.  It fills the array s_lyapunov_r_xy[] and
-		sets s_lyapunov_length to the length of the sequence.
-
-		The sequence is coded in the bit pattern in an integer.
-		Briefly, the sequence starts with an A the leading zero bits
-		are ignored and the remaining bit sequence is decoded.  The
-		sequence ends with a B.  Not all possible sequences can be
-		represented in this manner, but every possible sequence is
-		either represented as itself, as a rotation of one of the
-		representable sequences, or as the inverse of a representable
-		sequence (swapping 0s and 1s in the array.)  Sequences that
-		are the rotation and/or inverses of another sequence will generate
-		the same lyapunov exponents.
-
-		A few examples follow:
-				number    sequence
-					0       ab
-					1       aab
-					2       aabb
-					3       aaab
-					4       aabbb
-					5       aabab
-					6       aaabb (this is a duplicate of 4, a rotated inverse)
-					7       aaaab
-					8       aabbbb  etc.
-	*/
+	//
+	//	This routine sets up the sequence for forcing the s_rate parameter
+	//	to vary between the two values.  It fills the array s_lyapunov_r_xy[] and
+	//	sets s_lyapunov_length to the length of the sequence.
+	//
+	//	The sequence is coded in the bit pattern in an integer.
+	//	Briefly, the sequence starts with an A the leading zero bits
+	//	are ignored and the remaining bit sequence is decoded.  The
+	//	sequence ends with a B.  Not all possible sequences can be
+	//	represented in this manner, but every possible sequence is
+	//	either represented as itself, as a rotation of one of the
+	//	representable sequences, or as the inverse of a representable
+	//	sequence (swapping 0s and 1s in the array.)  Sequences that
+	//	are the rotation and/or inverses of another sequence will generate
+	//	the same lyapunov exponents.
+	//
+	//	A few examples follow:
+	//			number    sequence
+	//				0       ab
+	//				1       aab
+	//				2       aabb
+	//				3       aaab
+	//				4       aabbb
+	//				5       aabab
+	//				6       aaabb (this is a duplicate of 4, a rotated inverse)
+	//				7       aaaab
+	//				8       aabbbb  etc.
+	//
 	long i;
 	int t;
 
@@ -645,9 +642,9 @@ bool lyapunov_setup()
 		stop_message(STOPMSG_NORMAL, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
 		g_inside = 1;
 	}
-	if (g_user_standard_calculation_mode == CALCMODE_ORBITS)  /* Oops, lyapunov type */
+	if (g_user_standard_calculation_mode == CALCMODE_ORBITS)  // Oops, lyapunov type 
 	{
-		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;  /* doesn't use new & breaks orbits */
+		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;  // doesn't use new & breaks orbits 
 		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
 	}
 	return true;
@@ -662,7 +659,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
 	double lyap;
 	double total;
 	double temp;
-	/* e10 = 22026.4657948  e-10 = 0.0000453999297625 */
+	// e10 = 22026.4657948  e-10 = 0.0000453999297625 
 
 	total = 1.0;
 	lnadjust = 0;

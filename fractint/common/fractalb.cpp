@@ -1,7 +1,7 @@
-/*
-	This file contains the "big number" high precision versions of the
-	fractal routines.
-*/
+//
+//	This file contains the "big number" high precision versions of the
+//	fractal routines.
+//
 #include <string>
 
 #include <limits.h>
@@ -46,13 +46,13 @@ void corners_bf_to_float()
 	}
 }
 
-/* -------------------------------------------------------------------- */
-/*    Bignumber Bailout Routines                                        */
-/* -------------------------------------------------------------------- */
+// -------------------------------------------------------------------- 
+// Bignumber Bailout Routines                                        
+// -------------------------------------------------------------------- 
 
-/* Note:                                             */
-/* No need to set magnitude                          */
-/* as color schemes that need it calculate it later. */
+// Note:                                             
+// No need to set magnitude                          
+// as color schemes that need it calculate it later. 
 int bail_out_mod_bn()
 {
 	long longmagnitude;
@@ -61,7 +61,7 @@ int bail_out_mod_bn()
 	square_bn(bntmpsqry, g_new_z_bn.y);
 	add_bn(bntmp, bntmpsqrx + g_shift_factor, bntmpsqry + g_shift_factor);
 
-	longmagnitude = bntoint(bntmp);  /* works with any fractal type */
+	longmagnitude = bntoint(bntmp);  // works with any fractal type 
 	if (longmagnitude >= long(g_rq_limit))
 	{
 		return 1;
@@ -146,7 +146,7 @@ int bail_out_manhattan_bn()
 
 	square_bn(bntmpsqrx, g_new_z_bn.x);
 	square_bn(bntmpsqry, g_new_z_bn.y);
-	/* note: in next five lines, g_old_z_bn is just used as a temporary variable */
+	// note: in next five lines, g_old_z_bn is just used as a temporary variable 
 	abs_bn(g_old_z_bn.x, g_new_z_bn.x);
 	abs_bn(g_old_z_bn.y, g_new_z_bn.y);
 	add_bn(bntmp, g_old_z_bn.x, g_old_z_bn.y);
@@ -167,8 +167,8 @@ int bail_out_manhattan_r_bn()
 
 	square_bn(bntmpsqrx, g_new_z_bn.x);
 	square_bn(bntmpsqry, g_new_z_bn.y);
-	add_bn(bntmp, g_new_z_bn.x, g_new_z_bn.y); /* don't need abs since we square it next */
-	/* note: in next two lines, g_old_z_bn is just used as a temporary variable */
+	add_bn(bntmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next 
+	// note: in next two lines, g_old_z_bn is just used as a temporary variable 
 	square_bn(g_old_z_bn.x, bntmp);
 	longtempmag = bntoint(g_old_z_bn.x + g_shift_factor);
 	if (longtempmag >= long(g_rq_limit))
@@ -272,7 +272,7 @@ int bail_out_manhattan_bf()
 
 	square_bf(bftmpsqrx, g_new_z_bf.x);
 	square_bf(bftmpsqry, g_new_z_bf.y);
-	/* note: in next five lines, g_old_z_bf is just used as a temporary variable */
+	// note: in next five lines, g_old_z_bf is just used as a temporary variable 
 	abs_bf(g_old_z_bf.x, g_new_z_bf.x);
 	abs_bf(g_old_z_bf.y, g_new_z_bf.y);
 	add_bf(bftmp, g_old_z_bf.x, g_old_z_bf.y);
@@ -293,8 +293,8 @@ int bail_out_manhattan_r_bf()
 
 	square_bf(bftmpsqrx, g_new_z_bf.x);
 	square_bf(bftmpsqry, g_new_z_bf.y);
-	add_bf(bftmp, g_new_z_bf.x, g_new_z_bf.y); /* don't need abs since we square it next */
-	/* note: in next two lines, g_old_z_bf is just used as a temporary variable */
+	add_bf(bftmp, g_new_z_bf.x, g_new_z_bf.y); // don't need abs since we square it next 
+	// note: in next two lines, g_old_z_bf is just used as a temporary variable 
 	square_bf(g_old_z_bf.x, bftmp);
 	longtempmag = bftoint(g_old_z_bf.x);
 	if (longtempmag >= long(g_rq_limit))
@@ -308,7 +308,7 @@ int bail_out_manhattan_r_bf()
 
 bool mandelbrot_setup_bn()
 {
-	/* this should be set up dynamically based on corners */
+	// this should be set up dynamically based on corners 
 	bn_t bntemp1, bntemp2;
 	int saved = save_stack();
 	bntemp1 = alloc_stack(g_bn_length);
@@ -323,19 +323,19 @@ bool mandelbrot_setup_bn()
 
 	g_bf_math = BIGNUM;
 
-	/* bnxdel = (bnxmax - bnx3rd)/(g_x_dots-1) */
+	// bnxdel = (bnxmax - bnx3rd)/(g_x_dots-1) 
 	sub_bn(bnxdel, bnxmax, bnx3rd);
 	div_a_bn_int(bnxdel, (U16)(g_x_dots - 1));
 
-	/* bnydel = (bnymax - bny3rd)/(g_y_dots-1) */
+	// bnydel = (bnymax - bny3rd)/(g_y_dots-1) 
 	sub_bn(bnydel, bnymax, bny3rd);
 	div_a_bn_int(bnydel, (U16)(g_y_dots - 1));
 
-	/* bnxdel2 = (bnx3rd - bnxmin)/(g_y_dots-1) */
+	// bnxdel2 = (bnx3rd - bnxmin)/(g_y_dots-1) 
 	sub_bn(bnxdel2, bnx3rd, bnxmin);
 	div_a_bn_int(bnxdel2, (U16)(g_y_dots - 1));
 
-	/* bnydel2 = (bny3rd - bnymin)/(g_x_dots-1) */
+	// bnydel2 = (bny3rd - bnymin)/(g_x_dots-1) 
 	sub_bn(bnydel2, bny3rd, bnymin);
 	div_a_bn_int(bnydel2, (U16)(g_x_dots - 1));
 
@@ -372,7 +372,7 @@ bool mandelbrot_setup_bn()
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		init_big_pi();
-		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
+		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) // odd exponents 
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
@@ -398,7 +398,7 @@ bool mandelbrot_setup_bn()
 
 bool mandelbrot_setup_bf()
 {
-	/* this should be set up dynamically based on corners */
+	// this should be set up dynamically based on corners 
 	bf_t bftemp1, bftemp2;
 	int saved = save_stack();
 	bftemp1 = alloc_stack(g_bf_length + 2);
@@ -406,19 +406,19 @@ bool mandelbrot_setup_bf()
 
 	g_bf_math = BIGFLT;
 
-	/* bfxdel = (bfxmax - bfx3rd)/(g_x_dots-1) */
+	// bfxdel = (bfxmax - bfx3rd)/(g_x_dots-1) 
 	sub_bf(bfxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 	div_a_bf_int(bfxdel, (U16)(g_x_dots - 1));
 
-	/* bfydel = (bfymax - bfy3rd)/(g_y_dots-1) */
+	// bfydel = (bfymax - bfy3rd)/(g_y_dots-1) 
 	sub_bf(bfydel, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	div_a_bf_int(bfydel, (U16)(g_y_dots - 1));
 
-	/* bfxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1) */
+	// bfxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1) 
 	sub_bf(bfxdel2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	div_a_bf_int(bfxdel2, (U16)(g_y_dots - 1));
 
-	/* bfydel2 = (bfy3rd - bfymin)/(g_x_dots-1) */
+	// bfydel2 = (bfy3rd - bfymin)/(g_x_dots-1) 
 	sub_bf(bfydel2, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 	div_a_bf_int(bfydel2, (U16)(g_x_dots - 1));
 
@@ -455,7 +455,7 @@ bool mandelbrot_setup_bf()
 		break;
 	case FRACTYPE_MANDELBROT_Z_POWER_FP:
 		init_big_pi();
-		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) /* odd exponents */
+		if (double(g_c_exp) == g_parameters[2] && (g_c_exp & 1)) // odd exponents 
 		{
 			g_symmetry = SYMMETRY_XY_AXIS_NO_PARAMETER;
 		}
@@ -491,15 +491,15 @@ bool inside_coloring_beauty_of_fractals_allowed()
 
 int mandelbrot_per_pixel_bn()
 {
-	/* g_parameter.x = xmin + col*delx + row*g_delta_x2 */
+	// g_parameter.x = xmin + col*delx + row*g_delta_x2 
 	mult_bn_int(bnparm.x, bnxdel, (U16)g_col);
 	mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
 	add_a_bn(bnparm.x, bntmp);
 	add_a_bn(bnparm.x, bnxmin);
 
-	/* g_parameter.y = ymax - row*dely - col*g_delta_y2; */
-	/* note: in next four lines, g_old_z_bn is just used as a temporary variable */
+	// g_parameter.y = ymax - row*dely - col*g_delta_y2; 
+	// note: in next four lines, g_old_z_bn is just used as a temporary variable 
 	mult_bn_int(g_old_z_bn.x, bnydel,  (U16)g_row);
 	mult_bn_int(g_old_z_bn.y, bnydel2, (U16)g_col);
 	add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
@@ -510,9 +510,9 @@ int mandelbrot_per_pixel_bn()
 
 	if (inside_coloring_beauty_of_fractals_allowed())
 	{
-		/* kludge to match "Beauty of Fractals" picture since we start
-			Mandelbrot iteration with init rather than 0 */
-		floattobn(g_old_z_bn.x, g_parameters[0]); /* initial pertubation of parameters set */
+		// kludge to match "Beauty of Fractals" picture since we start
+		// Mandelbrot iteration with init rather than 0
+		floattobn(g_old_z_bn.x, g_parameters[0]); // initial pertubation of parameters set 
 		floattobn(g_old_z_bn.y, g_parameters[1]);
 		g_color_iter = -1;
 	}
@@ -524,28 +524,28 @@ int mandelbrot_per_pixel_bn()
 		add_a_bn(g_old_z_bn.y, g_new_z_bn.y);
 	}
 
-	/* square has side effect - must copy first */
+	// square has side effect - must copy first 
 	copy_bn(g_new_z_bn.x, g_old_z_bn.x);
 	copy_bn(g_new_z_bn.y, g_old_z_bn.y);
 
-	/* Square these to g_r_length bytes of precision */
+	// Square these to g_r_length bytes of precision 
 	square_bn(bntmpsqrx, g_new_z_bn.x);
 	square_bn(bntmpsqry, g_new_z_bn.y);
 
-	return 1;                  /* 1st iteration has been done */
+	return 1;                  // 1st iteration has been done 
 }
 
 int mandelbrot_per_pixel_bf()
 {
-	/* g_parameter.x = xmin + col*delx + row*g_delta_x2 */
+	// g_parameter.x = xmin + col*delx + row*g_delta_x2 
 	mult_bf_int(bfparm.x, bfxdel, (U16)g_col);
 	mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
 	add_a_bf(bfparm.x, bftmp);
 	add_a_bf(bfparm.x, g_escape_time_state.m_grid_bf.x_min());
 
-	/* g_parameter.y = ymax - row*dely - col*g_delta_y2; */
-	/* note: in next four lines, g_old_z_bf is just used as a temporary variable */
+	// g_parameter.y = ymax - row*dely - col*g_delta_y2; 
+	// note: in next four lines, g_old_z_bf is just used as a temporary variable 
 	mult_bf_int(g_old_z_bf.x, bfydel,  (U16)g_row);
 	mult_bf_int(g_old_z_bf.y, bfydel2, (U16)g_col);
 	add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
@@ -556,9 +556,9 @@ int mandelbrot_per_pixel_bf()
 
 	if (inside_coloring_beauty_of_fractals_allowed())
 	{
-		/* kludge to match "Beauty of Fractals" picture since we start
-			Mandelbrot iteration with g_initial_z rather than 0 */
-		floattobf(g_old_z_bf.x, g_parameters[0]); /* initial pertubation of parameters set */
+		// kludge to match "Beauty of Fractals" picture since we start
+		// Mandelbrot iteration with g_initial_z rather than 0
+		floattobf(g_old_z_bf.x, g_parameters[0]); // initial pertubation of parameters set 
 		floattobf(g_old_z_bf.y, g_parameters[1]);
 		g_color_iter = -1;
 	}
@@ -570,85 +570,85 @@ int mandelbrot_per_pixel_bf()
 		add_a_bf(g_old_z_bf.y, g_new_z_bf.y);
 	}
 
-	/* square has side effect - must copy first */
+	// square has side effect - must copy first 
 	copy_bf(g_new_z_bf.x, g_old_z_bf.x);
 	copy_bf(g_new_z_bf.y, g_old_z_bf.y);
 
-	/* Square these to g_rbf_length bytes of precision */
+	// Square these to g_rbf_length bytes of precision 
 	square_bf(bftmpsqrx, g_new_z_bf.x);
 	square_bf(bftmpsqry, g_new_z_bf.y);
 
-	return 1;                  /* 1st iteration has been done */
+	return 1;                  // 1st iteration has been done 
 }
 
 int julia_per_pixel_bn()
 {
-	/* old.x = xmin + col*delx + row*g_delta_x2 */
+	// old.x = xmin + col*delx + row*g_delta_x2 
 	mult_bn_int(g_old_z_bn.x, bnxdel, (U16)g_col);
 	mult_bn_int(bntmp, bnxdel2, (U16)g_row);
 
 	add_a_bn(g_old_z_bn.x, bntmp);
 	add_a_bn(g_old_z_bn.x, bnxmin);
 
-	/* old.y = ymax - row*dely - col*g_delta_y2; */
-	/* note: in next four lines, g_new_z_bn is just used as a temporary variable */
+	// old.y = ymax - row*dely - col*g_delta_y2; 
+	// note: in next four lines, g_new_z_bn is just used as a temporary variable 
 	mult_bn_int(g_new_z_bn.x, bnydel,  (U16)g_row);
 	mult_bn_int(g_new_z_bn.y, bnydel2, (U16)g_col);
 	add_a_bn(g_new_z_bn.x, g_new_z_bn.y);
 	sub_bn(g_old_z_bn.y, bnymax, g_new_z_bn.x);
 
-	/* square has side effect - must copy first */
+	// square has side effect - must copy first 
 	copy_bn(g_new_z_bn.x, g_old_z_bn.x);
 	copy_bn(g_new_z_bn.y, g_old_z_bn.y);
 
-	/* Square these to g_r_length bytes of precision */
+	// Square these to g_r_length bytes of precision 
 	square_bn(bntmpsqrx, g_new_z_bn.x);
 	square_bn(bntmpsqry, g_new_z_bn.y);
 
-	return 1;                  /* 1st iteration has been done */
+	return 1;                  // 1st iteration has been done 
 }
 
 int julia_per_pixel_bf()
 {
-	/* old.x = xmin + col*delx + row*g_delta_x2 */
+	// old.x = xmin + col*delx + row*g_delta_x2 
 	mult_bf_int(g_old_z_bf.x, bfxdel, (U16)g_col);
 	mult_bf_int(bftmp, bfxdel2, (U16)g_row);
 
 	add_a_bf(g_old_z_bf.x, bftmp);
 	add_a_bf(g_old_z_bf.x, g_escape_time_state.m_grid_bf.x_min());
 
-	/* old.y = ymax - row*dely - col*g_delta_y2; */
-	/* note: in next four lines, g_new_z_bf is just used as a temporary variable */
+	// old.y = ymax - row*dely - col*g_delta_y2; 
+	// note: in next four lines, g_new_z_bf is just used as a temporary variable 
 	mult_bf_int(g_new_z_bf.x, bfydel,  (U16)g_row);
 	mult_bf_int(g_new_z_bf.y, bfydel2, (U16)g_col);
 	add_a_bf(g_new_z_bf.x, g_new_z_bf.y);
 	sub_bf(g_old_z_bf.y, g_escape_time_state.m_grid_bf.y_max(), g_new_z_bf.x);
 
-	/* square has side effect - must copy first */
+	// square has side effect - must copy first 
 	copy_bf(g_new_z_bf.x, g_old_z_bf.x);
 	copy_bf(g_new_z_bf.y, g_old_z_bf.y);
 
-	/* Square these to g_rbf_length bytes of precision */
+	// Square these to g_rbf_length bytes of precision 
 	square_bf(bftmpsqrx, g_new_z_bf.x);
 	square_bf(bftmpsqry, g_new_z_bf.y);
 
-	return 1;                  /* 1st iteration has been done */
+	return 1;                  // 1st iteration has been done 
 }
 
 int julia_orbit_bn()
 {
-	/* Don't forget, with bn_t numbers, after multiplying or squaring */
-	/* you must shift over by g_shift_factor to get the bn number.          */
+	// Don't forget, with bn_t numbers, after multiplying or squaring 
+	// you must shift over by g_shift_factor to get the bn number.          
 
-	/* bntmpsqrx and bntmpsqry were previously squared before getting to */
-	/* this function, so they must be shifted.                           */
+	// bntmpsqrx and bntmpsqry were previously squared before getting to 
+	// this function, so they must be shifted.                           
 
-	/* new.x = tmpsqrx - tmpsqry + g_parameter.x;   */
+	// new.x = tmpsqrx - tmpsqry + g_parameter.x;   
 	sub_a_bn(bntmpsqrx + g_shift_factor, bntmpsqry + g_shift_factor);
 	add_bn(g_new_z_bn.x, bntmpsqrx + g_shift_factor, bnparm.x);
 
-	/* new.y = 2*g_old_z_bn.x*g_old_z_bn.y + g_parameter.y; */
-	mult_bn(bntmp, g_old_z_bn.x, g_old_z_bn.y); /* ok to use unsafe here */
+	// new.y = 2*g_old_z_bn.x*g_old_z_bn.y + g_parameter.y; 
+	mult_bn(bntmp, g_old_z_bn.x, g_old_z_bn.y); // ok to use unsafe here 
 	double_a_bn(bntmp + g_shift_factor);
 	add_bn(g_new_z_bn.y, bntmp + g_shift_factor, bnparm.y);
 
@@ -657,12 +657,12 @@ int julia_orbit_bn()
 
 int julia_orbit_bf()
 {
-	/* new.x = tmpsqrx - tmpsqry + g_parameter.x;   */
+	// new.x = tmpsqrx - tmpsqry + g_parameter.x;   
 	sub_a_bf(bftmpsqrx, bftmpsqry);
 	add_bf(g_new_z_bf.x, bftmpsqrx, bfparm.x);
 
-	/* new.y = 2*g_old_z_bf.x*g_old_z_bf.y + g_parameter.y; */
-	mult_bf(bftmp, g_old_z_bf.x, g_old_z_bf.y); /* ok to use unsafe here */
+	// new.y = 2*g_old_z_bf.x*g_old_z_bf.y + g_parameter.y; 
+	mult_bf(bftmp, g_old_z_bf.x, g_old_z_bf.y); // ok to use unsafe here 
 	double_a_bf(bftmp);
 	add_bf(g_new_z_bf.y, bftmp, bfparm.y);
 	return g_bail_out_bf();
@@ -704,67 +704,66 @@ int julia_z_power_orbit_bf()
 
 
 #if 0
-/*
-the following is an example of how you can take advantage of the bn_t
-format to squeeze a little more precision out of the calculations.
-*/
+//
+// the following is an example of how you can take advantage of the bn_t
+// format to squeeze a little more precision out of the calculations.
+//
 int
 julia_orbit_bn()
 {
 	int oldbnlength;
 	bn_t mod;
-	/* using partial precision multiplications */
+	// using partial precision multiplications 
 
-	/* g_new_z_bn.x = bntmpsqrx - bntmpsqry + bnparm.x;   */
-	/*
-	* Since tmpsqrx and tmpsqry where just calculated to g_r_length bytes of
-	* precision, we might as well keep that extra precision in this next
-	* subtraction.  Therefore, use g_r_length as the length.
-	*/
+	// g_new_z_bn.x = bntmpsqrx - bntmpsqry + bnparm.x;   
+	//
+	// Since tmpsqrx and tmpsqry where just calculated to g_r_length bytes of
+	// precision, we might as well keep that extra precision in this next
+	// subtraction.  Therefore, use g_r_length as the length.
+	//
 
 	oldbnlength = g_bn_length;
 	g_bn_length = g_r_length;
 	sub_a_bn(bntmpsqrx, bntmpsqry);
 	g_bn_length = oldbnlength;
 
-	/*
-	* Now that bntmpsqry has been sutracted from bntmpsqrx, we need to treat
-	* tmpsqrx as a single width bignumber, so shift to bntmpsqrx + g_shift_factor.
-	*/
+	//
+	// Now that bntmpsqry has been sutracted from bntmpsqrx, we need to treat
+	// tmpsqrx as a single width bignumber, so shift to bntmpsqrx + g_shift_factor.
+	//
 	add_bn(g_new_z_bn.x, bntmpsqrx + g_shift_factor, bnparm.x);
 
-	/* new.y = 2*g_old_z_bn.x*g_old_z_bn.y + old.y; */
-	/* Multiply g_old_z_bn.x*g_old_z_bn.y to g_r_length precision. */
+	// new.y = 2*g_old_z_bn.x*g_old_z_bn.y + old.y; 
+	// Multiply g_old_z_bn.x*g_old_z_bn.y to g_r_length precision. 
 	mult_bn(bntmp, g_old_z_bn.x, g_old_z_bn.y);
 
-	/*
-	* Double g_old_z_bn.x*g_old_z_bn.y by shifting bits, including one of those bits
-	* calculated in the previous mult_bn().  Therefore, use g_r_length.
-	*/
+	//
+	// Double g_old_z_bn.x*g_old_z_bn.y by shifting bits, including one of those bits
+	// calculated in the previous mult_bn().  Therefore, use g_r_length.
+	//
 	g_bn_length = g_r_length;
 	double_a_bn(bntmp);
 	g_bn_length = oldbnlength;
 
-	/* Convert back to a single width bignumber and add bnparm.y */
+	// Convert back to a single width bignumber and add bnparm.y 
 	add_bn(g_new_z_bn.y, bntmp + g_shift_factor, bnparm.y);
 
 	copy_bn(g_old_z_bn.x, g_new_z_bn.x);
 	copy_bn(g_old_z_bn.y, g_new_z_bn.y);
 
-	/* Square these to g_r_length bytes of precision */
+	// Square these to g_r_length bytes of precision 
 	square_bn(bntmpsqrx, g_old_z_bn.x);
 	square_bn(bntmpsqry, g_old_z_bn.y);
 
-	/* And add the full g_r_length precision to get those extra bytes */
+	// And add the full g_r_length precision to get those extra bytes 
 	g_bn_length = g_r_length;
 	add_bn(bntmp, bntmpsqrx, bntmpsqry);
 	g_bn_length = oldbnlength;
 
-	mod = bntmp + (g_r_length) - (g_int_length << 1);  /* where int part starts
-													* after mult */
-	/*
-	* equivalent to, but faster than, mod = bn_int(tmp + g_shift_factor);
-	*/
+	mod = bntmp + (g_r_length) - (g_int_length << 1);  // where int part starts after mult
+	//
+	// equivalent to, but faster than, mod = bn_int(tmp + g_shift_factor);
+	//
 
 	magnitude = *mod;
 	if (magnitude >= g_rq_limit)
@@ -829,7 +828,7 @@ ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, Comple
 	tmp.x = alloc_stack(g_rbf_length + 2);
 	tmp.y = alloc_stack(g_rbf_length + 2);
 
-	/* 0 raised to anything is 0 */
+	// 0 raised to anything is 0 
 	if (is_bf_zero(xx->x) && is_bf_zero(xx->y))
 	{
 		clear_bf(t->x);
@@ -874,7 +873,7 @@ ComplexBigNum *complex_multiply_bn(ComplexBigNum *t, ComplexBigNum *x, ComplexBi
 	return t;
 }
 
-/* note: complex_power_bn() returns need to be +g_shift_factor'ed */
+// note: complex_power_bn() returns need to be +g_shift_factor'ed 
 ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigNum *yy)
 {
 	ComplexBigNum tmp;
@@ -886,7 +885,7 @@ ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigN
 	tmp.x = alloc_stack(g_r_length);
 	tmp.y = alloc_stack(g_r_length);
 
-	/* 0 raised to anything is 0 */
+	// 0 raised to anything is 0 
 	if (is_bn_zero(xx->x) && is_bn_zero(xx->y))
 	{
 		clear_bn(t->x);

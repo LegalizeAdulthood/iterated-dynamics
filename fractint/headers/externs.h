@@ -4,7 +4,7 @@
 #include <complex>
 #include "Globals.h"
 
-/* keep var names in column 30 for sorting via sort /+30 <in >out */
+// keep var names in column 30 for sorting via sort /+30 <in >out 
 extern float				g_aspect_drift;
 extern int					g_atan_colors;
 extern double				g_auto_stereo_width;
@@ -55,7 +55,7 @@ extern int					g_degree;
 extern long					g_delta_min;
 extern float				g_depth_fp;
 extern bool					g_disk_16bit;
-extern bool					g_disk_flag;						/* disk video active flag */
+extern bool					g_disk_flag;						// disk video active flag 
 extern bool					g_disk_targa;
 extern int					g_display_3d;
 extern long					g_distance_test;
@@ -67,9 +67,9 @@ extern bool					g_dont_read_color;
 extern double				g_delta_parameter_image_x;
 extern double				g_delta_parameter_image_y;
 extern BYTE					g_stack[];
-extern double				(*g_dx_pixel)(); /* set in FRACTALS.C */
+extern double				(*g_dx_pixel)(); // set in FRACTALS.C 
 extern double				g_dx_size;
-extern double				(*g_dy_pixel)(); /* set in FRACTALS.C */
+extern double				(*g_dy_pixel)(); // set in FRACTALS.C 
 extern double				g_dy_size;
 extern bool					g_escape_exit_flag;
 extern int					g_evolving_flags;
@@ -157,8 +157,8 @@ extern ComplexL				g_parameter_l;
 extern long					g_temp_sqr_x_l;
 extern long					g_temp_sqr_y_l;
 extern ComplexL				g_tmp_z_l;
-extern long					(*g_lx_pixel)(); /* set in FRACTALS.C */
-extern long					(*g_ly_pixel)(); /* set in FRACTALS.C */
+extern long					(*g_lx_pixel)(); // set in FRACTALS.C 
+extern long					(*g_ly_pixel)(); // set in FRACTALS.C 
 extern void					(*g_trig0_l)();
 extern void					(*g_trig1_l)();
 extern void					(*g_trig2_l)();
@@ -272,7 +272,7 @@ extern ComplexD				*g_roots;
 extern int					g_rotate_hi;
 extern int					g_rotate_lo;
 extern int					g_row;
-extern int					g_row_count;						/* row-counter for decoder and out_line */
+extern int					g_row_count;						// row-counter for decoder and out_line 
 extern double				g_rq_limit2;
 extern double				g_rq_limit;
 extern int					g_random_seed;
@@ -314,10 +314,10 @@ extern bool					g_targa_output;
 extern bool					g_targa_overlay;
 extern double				g_temp_sqr_x;
 extern double				g_temp_sqr_y;
-extern int					g_text_cbase;						/* g_text_col is relative to this */
-extern int					g_text_col;						/* current column in text mode */
-extern int					g_text_rbase;						/* g_text_row is relative to this */
-extern int					g_text_row;						/* current row in text mode */
+extern int					g_text_cbase;						// g_text_col is relative to this 
+extern int					g_text_col;						// current column in text mode 
+extern int					g_text_rbase;						// g_text_row is relative to this 
+extern int					g_text_row;						// current row in text mode 
 extern unsigned int			g_this_generation_random_seed;
 extern bool					g_three_pass;
 extern double				g_threshold;

@@ -41,12 +41,12 @@ int FileNameGetter::SpeedPrompt(int row, int col, int vid,
 		|| strchr(speedstring, '*') || strchr(speedstring, '*')
 		|| strchr(speedstring, '?'))
 	{
-		_speedState = SPEEDSTATE_TEMPLATE;  /* template */
+		_speedState = SPEEDSTATE_TEMPLATE;  // template 
 		prompt = "File Template";
 	}
 	else if (speed_match)
 	{
-		_speedState = SPEEDSTATE_SEARCH_PATH; /* does not match list */
+		_speedState = SPEEDSTATE_SEARCH_PATH; // does not match list 
 		prompt = "Search Path for";
 	}
 	else
@@ -69,15 +69,15 @@ int FileNameGetter::CheckSpecialKeys(int key, int)
 
 int FileNameGetter::Execute()
 {
-	/* if getting an RDS image map */
-	/* used to locate next file in list */
+	// if getting an RDS image map 
+	// used to locate next file in list 
 	int j;
-	/* Only the first 13 characters of file names are displayed... */
+	// Only the first 13 characters of file names are displayed... 
 	CHOICE storage[MAXNUMFILES];
 	CHOICE *choices[MAXNUMFILES];
 	int attributes[MAXNUMFILES];
-	/* how many files */
-	/* not the root directory */
+	// how many files 
+	// not the root directory 
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
 	char fname[FILE_MAX_FNAME];
@@ -91,10 +91,10 @@ int FileNameGetter::Execute()
 		attributes[i] = 1;
 		choices[i] = &storage[i];
 	}
-	/* save filename */
+	// save filename 
 	std::string old_flname = _fileName;
 
-restart:  /* return here if template or directory changes */
+restart:  // return here if template or directory changes 
 	char tmpmask[FILE_MAX_PATH];
 	tmpmask[0] = 0;
 	if (_fileName.length() == 0)
@@ -116,7 +116,7 @@ retry_dir:
 	if (!retried && strcmp(dir, SLASH) && strcmp(dir, DOTSLASH))
 	{
 		j = int(strlen(tmpmask)) - 1;
-		tmpmask[j] = 0; /* strip trailing \ */
+		tmpmask[j] = 0; // strip trailing \ 
 		if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
 			|| fr_find_first(tmpmask) != 0
 			|| (g_dta.attribute & SUBDIR) == 0)
@@ -183,7 +183,7 @@ retry_dir:
 					put_string_center(2, 0, 80, C_GENERAL_INPUT, g_dta.filename.c_str());
 
 					split_path(g_dta.filename, 0, 0, fname, ext);
-					/* just using speedstr as a handy buffer */
+					// just using speedstr as a handy buffer 
 					make_path(speedstr, drive, dir, fname, ext);
 					strncpy(choices[++filecount]->name, g_dta.filename.c_str(), 13);
 					choices[filecount]->is_directory = false;
@@ -210,13 +210,13 @@ retry_dir:
 	if (sort_entries)
 	{
 		instructions += "off";
-		shell_sort(&choices, filecount, sizeof(CHOICE *), lccompare); /* sort file list */
+		shell_sort(&choices, filecount, sizeof(CHOICE *), lccompare); // sort file list 
 	}
 	else
 	{
 		instructions += "on";
 	}
-	if (root_directory && dir[0] && dir[0] != SLASHC) /* must be in root directory */
+	if (root_directory && dir[0] && dir[0] != SLASHC) // must be in root directory 
 	{
 		split_path(tmpmask, drive, dir, fname, ext);
 		strcpy(dir, SLASH);
@@ -231,7 +231,7 @@ retry_dir:
 	int current = 0;
 	if (speedstr[0] == 0)
 	{
-		for (int i = 0; i < filecount; i++) /* find first file */
+		for (int i = 0; i < filecount; i++) // find first file 
 		{
 			if (!choices[i]->is_directory)
 			{
@@ -272,7 +272,7 @@ retry_dir:
 	}
 	if (i < 0)
 	{
-		/* restore filename */
+		// restore filename 
 		_fileName = old_flname;
 		return -1;
 	}
@@ -280,7 +280,7 @@ retry_dir:
 	{
 		if (choices[i]->is_directory)
 		{
-			if (strcmp(choices[i]->name, "..") == 0) /* go up a directory */
+			if (strcmp(choices[i]->name, "..") == 0) // go up a directory 
 			{
 				if (strcmp(dir, DOTSLASH) == 0)
 				{
@@ -289,7 +289,7 @@ retry_dir:
 				else
 				{
 					char *s = strrchr(dir, SLASHC);
-					if (s != 0) /* trailing slash */
+					if (s != 0) // trailing slash 
 					{
 						*s = 0;
 						s = strrchr(dir, SLASHC);
@@ -300,7 +300,7 @@ retry_dir:
 					}
 				}
 			}
-			else  /* go down a directory */
+			else  // go down a directory 
 			{
 				strcat(dir, choices[i]->full_name);
 			}
@@ -316,7 +316,7 @@ retry_dir:
 		if (_speedState == SPEEDSTATE_SEARCH_PATH
 			&& strchr(speedstr, '*') == 0 && strchr(speedstr, '?') == 0
 			&& ((fr_find_first(speedstr) == 0
-			&& (g_dta.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) /* it is a directory */
+			&& (g_dta.attribute & SUBDIR))|| strcmp(speedstr, SLASH) == 0)) // it is a directory 
 		{
 			_speedState = SPEEDSTATE_TEMPLATE;
 		}
@@ -353,7 +353,7 @@ retry_dir:
 			}
 			goto restart;
 		}
-		else /* speedstate == SPEEDSTATE_SEARCH_PATH */
+		else // speedstate == SPEEDSTATE_SEARCH_PATH 
 		{
 			char fullpath[FILE_MAX_DIR];
 			find_path(speedstr, fullpath);
@@ -362,7 +362,7 @@ retry_dir:
 				_fileName = fullpath;
 			}
 			else
-			{  /* failed, make diagnostic useful: */
+			{  // failed, make diagnostic useful: 
 				_fileName = speedstr;
 				if (strchr(speedstr, SLASHC) == 0)
 				{

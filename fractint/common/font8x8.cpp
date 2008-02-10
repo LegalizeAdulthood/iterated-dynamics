@@ -3,7 +3,7 @@
 #include "port.h"
 #include "prototyp.h"
 
-/* 8x8 graphics font */
+// 8x8 graphics font 
 const BYTE g_font_8x8[8][1024/8] =
 {
 	{

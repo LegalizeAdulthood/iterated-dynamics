@@ -34,7 +34,7 @@ long calculate_mandelbrot_fp_asm()
 
 	if (g_periodicity_check == 0)
 	{
-		g_old_color_iter = 0;      /* don't check periodicity */
+		g_old_color_iter = 0;      // don't check periodicity 
 	}
 	else if (g_reset_periodicity)
 	{
@@ -43,19 +43,19 @@ long calculate_mandelbrot_fp_asm()
 
 	{
 		long tmpfsd = g_max_iteration - g_first_saved_and;
-		if (g_old_color_iter > tmpfsd) /* this defeats checking periodicity immediately */
+		if (g_old_color_iter > tmpfsd) // this defeats checking periodicity immediately 
 		{
-			g_old_color_iter = tmpfsd; /* but matches the code in standard_fractal() */
+			g_old_color_iter = tmpfsd; // but matches the code in standard_fractal() 
 		}
 	}
 
-	/* initparms */
+	// initparms 
 	savedx = 0;
 	savedy = 0;
 	g_orbit_index = 0;
 	long savedand = g_first_saved_and;
-	int savedincr = 1;             /* start checking the very first time */
-	g_input_counter--;                /* Only check the keyboard sometimes */
+	int savedincr = 1;             // start checking the very first time 
+	g_input_counter--;                // Only check the keyboard sometimes 
 	if (g_input_counter < 0)
 	{
 		g_input_counter = 1000;
@@ -85,7 +85,7 @@ long calculate_mandelbrot_fp_asm()
 	double Cy;
 	if (!fractal_type_julia(g_fractal_type))
 	{
-		/* Mandelbrot_87 */
+		// Mandelbrot_87 
 		Cx = g_initial_z.x;
 		Cy = g_initial_z.y;
 		x = g_parameter.x + Cx;
@@ -93,7 +93,7 @@ long calculate_mandelbrot_fp_asm()
 	}
 	else
 	{
-		/* dojulia_87 */
+		// dojulia_87 
 		Cx = g_parameter.x;
 		Cy = g_parameter.y;
 		x = g_initial_z.x;
@@ -108,7 +108,7 @@ long calculate_mandelbrot_fp_asm()
 	y2 = y*y;
 	xy = x*y;
 
-	/* top_of_cs_loop_87 */
+	// top_of_cs_loop_87 
 	while (--cx > 0)
 	{
 		x = x2-y2 + Cx;
@@ -123,8 +123,8 @@ long calculate_mandelbrot_fp_asm()
 			goto over_bailout_87;
 		}
 
-		/* no_save_new_xy_87 */
-		if (cx < g_old_color_iter)  /* check periodicity */
+		// no_save_new_xy_87 
+		if (cx < g_old_color_iter)  // check periodicity 
 		{
 			if (((g_max_iteration - cx) & savedand) == 0)
 			{
@@ -149,16 +149,16 @@ long calculate_mandelbrot_fp_asm()
 				}
 			}
 		}
-		/* no_periodicity_check_87 */
+		// no_periodicity_check_87 
 		if (g_show_orbit)
 		{
 			plot_orbit(x, y, -1);
 		}
-		/* no_show_orbit_87 */
-	} /* while (--cx > 0) */
+		// no_show_orbit_87 
+	} // while (--cx > 0) 
 
-	/* reached maxit */
-	/* check periodicity immediately next time, remember we count down from maxit */
+	// reached maxit 
+	// check periodicity immediately next time, remember we count down from maxit 
 	g_old_color_iter = g_max_iteration;
 	g_input_counter -= g_max_iteration;
 	g_real_color_iter = g_max_iteration;
@@ -201,7 +201,7 @@ over_bailout_87:
 	}
 	else
 	{
-		/* special_outside */
+		// special_outside 
 		if (g_outside == COLORMODE_REAL)
 		{
 			g_color_iter += long(g_new_z.x + 7);
@@ -222,7 +222,7 @@ over_bailout_87:
 		{
 			g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
 		}
-		/* check_color */
+		// check_color 
 		if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
 		{
 			g_color_iter = 1;

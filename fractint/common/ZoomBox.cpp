@@ -32,8 +32,8 @@ void ZoomBox::display()
 			s_values[i] = (unsigned char) get_color(_box_x[i] - g_screen_x_offset, _box_y[i] - g_screen_y_offset);
 		}
 	}
-	/* There is an interaction between get_color and g_plot_color_put_color, so separate them */
-	if (!(g_is_true_color && g_true_mode_iterates)) /* don't need this for truecolor with truemode set */
+	// There is an interaction between get_color and g_plot_color_put_color, so separate them 
+	if (!(g_is_true_color && g_true_mode_iterates)) // don't need this for truecolor with truemode set 
 	{
 		for (i = 0; i < count(); i++)
 		{

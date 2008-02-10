@@ -18,7 +18,7 @@ enum RecordColorsKind
 	RECORDCOLORS_YES = 'y'
 };
 
-/* process_command(), AbstractCommandParser::parse() return values */
+// process_command(), AbstractCommandParser::parse() return values 
 enum CommandResultType
 {
 	COMMANDRESULT_ERROR = -1,

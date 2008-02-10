@@ -32,7 +32,7 @@
 #define DRAW_INTERVAL 6
 #define TIMER_ID 1
 
-/* read/write-a-dot/line routines */
+// read/write-a-dot/line routines
 typedef void t_dotwriter(int, int, int);
 typedef int  t_dotreader(int, int);
 typedef void t_linewriter(int y, int x, int lastx, BYTE *pixels);
@@ -48,37 +48,52 @@ class Win32DiskDriver : public Win32BaseDriver
 public:
 	Win32DiskDriver(const char *name, const char *description);
 
-	/* initialize the driver */			virtual bool initialize(int &argc, char **argv);
-
-	/* validate a fractint.cfg mode */	virtual int validate_mode(const VIDEOINFO &mode);
+	// initialize the driver
+										virtual bool initialize(int &argc, char **argv);
+	// validate a fractint.cfg mode
+										virtual int validate_mode(const VIDEOINFO &mode);
 										virtual void set_video_mode(const VIDEOINFO &mode);
-	/* find max screen extents */		virtual void get_max_screen(int &x_max, int &y_max) const;
-
-	/* creates a window */				virtual void window();
-	/* handles window resize.  */		virtual int resize();
-	/* redraws the screen */			virtual void redraw();
-
-	/* read palette into g_dac_box */	virtual int read_palette();
-	/* write g_dac_box into palette */	virtual int write_palette();
-
-	/* reads a single pixel */			virtual int read_pixel(int x, int y);
-	/* writes a single pixel */			virtual void write_pixel(int x, int y, int color);
-	/* reads a span of pixel */			virtual void read_span(int y, int x, int lastx, BYTE *pixels);
-	/* writes a span of pixels */		virtual void write_span(int y, int x, int lastx, const BYTE *pixels);
+	// find max screen extents
+										virtual void get_max_screen(int &x_max, int &y_max) const;
+	// creates a window
+										virtual void window();
+	// handles window resize.
+										virtual int resize();
+	// redraws the screen
+										virtual void redraw();
+	// read palette into g_dac_box
+										virtual int read_palette();
+	// write g_dac_box into palette
+										virtual int write_palette();
+	// reads a single pixel
+										virtual int read_pixel(int x, int y);
+	// writes a single pixel
+										virtual void write_pixel(int x, int y, int color);
+	// reads a span of pixel
+										virtual void read_span(int y, int x, int lastx, BYTE *pixels);
+	// writes a span of pixels
+										virtual void write_span(int y, int x, int lastx, const BYTE *pixels);
 										virtual void get_truecolor(int x, int y, int &r, int &g, int &b, int &a);
 										virtual void put_truecolor(int x, int y, int r, int g, int b, int a);
-	/* set copy/xor line */				virtual void set_line_mode(int mode);
-	/* draw line */						virtual void draw_line(int x1, int y1, int x2, int y2, int color);
-	/* draw string in graphics mode */	virtual void display_string(int x, int y, int fg, int bg, const char *text);
-	/* save graphics */					virtual void save_graphics();
-	/* restore graphics */				virtual void restore_graphics();
-	/* set for text mode & save gfx */	virtual void set_for_text();
-	/* restores graphics and data */	virtual void set_for_graphics();
-
-	/* returns true if disk video */	virtual int diskp();
-
+	// set copy/xor line
+										virtual void set_line_mode(int mode);
+	// draw line
+										virtual void draw_line(int x1, int y1, int x2, int y2, int color);
+	// draw string in graphics mode
+										virtual void display_string(int x, int y, int fg, int bg, const char *text);
+	// save graphics
+										virtual void save_graphics();
+	// restore graphics
+										virtual void restore_graphics();
+	// set for text mode & save gfx
+										virtual void set_for_text();
+	// restores graphics and data
+										virtual void set_for_graphics();
+	// returns true if disk video
+										virtual int diskp();
 										virtual void flush();
-	/* refresh alarm */					virtual void schedule_alarm(int secs);
+	// refresh alarm
+										virtual void schedule_alarm(int secs);
 
 private:
 	int check_arg(char *argv);
@@ -102,16 +117,16 @@ Win32DiskDriver::Win32DiskDriver(const char *name, const char *description)
 		m_clut[i][2] = 0;
 	}
 }
-	
-/* VIDEOINFO:															*/
-/*         char    name[26];       Adapter name (IBM EGA, etc)          */
-/*         char    comment[26];    Comments (UNTESTED, etc)             */
-/*         int     keynum;         key number used to invoked this mode */
-/*                                 2-10 = F2-10, 11-40 = S, C, A{F1-F10}  */
-/*         int     dot_mode;        video access method used by asm code */
-/*         int     x_dots;          number of dots across the screen     */
-/*         int     y_dots;          number of dots down the screen       */
-/*         int     colors;         number of g_colors available           */
+
+// VIDEOINFO:
+// char    name[26];       Adapter name (IBM EGA, etc)
+// char    comment[26];    Comments (UNTESTED, etc)
+// int     keynum;         key number used to invoked this mode
+// 2-10 = F2-10, 11-40 = S, C, A{F1-F10}
+// int     dot_mode;        video access method used by asm code
+// int     x_dots;          number of dots across the screen
+// int     y_dots;          number of dots down the screen
+// int     colors;         number of g_colors available
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_) \
 	{ name_, comment_, key_, width_, height_, 256 }
@@ -168,7 +183,7 @@ int Win32DiskDriver::check_arg(char *arg)
 *
 *----------------------------------------------------------------------
 */
-/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
+// TODO: review case when COLOR_CHANNEL_MAX != 63
 static void initdacbox()
 {
 	int i;
@@ -220,10 +235,10 @@ static int handle_help_tab(int ch)
 
 static void parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 {
-	/* do something like XParseGeometry() */
+	// do something like XParseGeometry()
 	if (2 == sscanf(spec, "%dx%d", width, height))
 	{
-		/* all we care about is width and height for disk output */
+		// all we care about is width and height for disk output
 		*x = 0;
 		*y = 0;
 	}
@@ -260,7 +275,7 @@ bool Win32DiskDriver::initialize(int &argc, char **argv)
 
 	initdacbox();
 
-	/* add default list of video modes */
+	// add default list of video modes
 	for (int m = 0; m < NUM_OF(s_modes); m++)
 	{
 		add_video_mode(this, s_modes[m]);
@@ -515,9 +530,9 @@ void Win32DiskDriver::window()
 */
 void Win32DiskDriver::set_video_mode(const VIDEOINFO &mode)
 {
-	/* initially, set the virtual line to be the scan line length */
+	// initially, set the virtual line to be the scan line length
 	g_vx_dots = g_screen_width;
-	g_is_true_color = 0;				/* assume not truecolor */
+	g_is_true_color = 0;				// assume not truecolor
 	g_ok_to_print = false;
 	g_.SetGoodMode(true);
 	g_and_color = g_colors-1;
@@ -553,7 +568,7 @@ int Win32DiskDriver::diskp()
 
 int Win32DiskDriver::validate_mode(const VIDEOINFO &mode)
 {
-	/* allow modes of any size */
+	// allow modes of any size
 	return true;
 }
 

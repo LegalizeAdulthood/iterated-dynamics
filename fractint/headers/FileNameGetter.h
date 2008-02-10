@@ -18,12 +18,12 @@ public:
 	int Execute();
 
 private:
-	/* speed key state values */
+	// speed key state values 
 	enum SpeedStateType
 	{
-		SPEEDSTATE_MATCHING = 0,		/* string matches list - speed key mode */
-		SPEEDSTATE_TEMPLATE = -2,		/* wild cards present - buiding template */
-		SPEEDSTATE_SEARCH_PATH = -3		/* no match - building path search name */
+		SPEEDSTATE_MATCHING = 0,		// string matches list - speed key mode 
+		SPEEDSTATE_TEMPLATE = -2,		// wild cards present - buiding template 
+		SPEEDSTATE_SEARCH_PATH = -3		// no match - building path search name 
 	};
 
 	const std::string &_heading;

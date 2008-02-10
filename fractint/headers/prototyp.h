@@ -1,7 +1,7 @@
 #ifndef PROTOTYP_H
 #define PROTOTYP_H
 
-/* includes needed to define the prototypes */
+// includes needed to define the prototypes 
 
 #include "mpmath.h"
 #include "big.h"
@@ -33,12 +33,12 @@ extern void put_line(int, int, int, BYTE *);
 extern void get_line(int, int, int, BYTE *);
 extern long read_ticker();
 
-/*  fractint -- C file prototypes */
+// fractint -- C file prototypes 
 
 extern int application_main(int argc, char **argv);
 extern int elapsed_time(int);
 
-/*  memory -- C file prototypes */
+// memory -- C file prototypes 
 /* TODO: Get rid of this and use regular memory routines;
 ** see about creating standard disk memory routines for disk video
 */

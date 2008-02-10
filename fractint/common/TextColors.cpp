@@ -52,37 +52,37 @@ TextColorMap::TextColorMap()
 {
 	static TextColor initial_colors[NUM_TEXT_COLORS] =
 	{
-		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_LIGHT_WHITE),		/* C_TITLE           title background */
-		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_LIGHT_GREEN),		/* C_TITLE_DEV       development vsn foreground */
-		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_YELLOW),			/* C_HELP_HDG        help page title line */
-		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLACK),			/* C_HELP_BODY       help page body */
-		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_GRAY),				/* C_HELP_INSTR      help page instr at bottom */
-		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLUE),				/* C_HELP_LINK       help page links */
-		TextColor(TEXTCOLOR_CYAN, TEXTCOLOR_BLUE),				/* C_HELP_CURLINK    help page current link */
-		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_GRAY),				/* C_PROMPT_BKGRD    prompt/choice background */
-		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLACK),			/* C_PROMPT_TEXT     prompt/choice extra info */
-		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_WHITE),				/* C_PROMPT_LO       prompt/choice text */
-		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_LIGHT_WHITE),		/* C_PROMPT_MED      prompt/choice hdg2/... */
-		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_YELLOW),			/* C_PROMPT_HI       prompt/choice hdg/cur/... */
-		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_LIGHT_WHITE),		/* C_PROMPT_INPUT    full_screen_prompt input */
-		TextColor(TEXTCOLOR_CYAN, TEXTCOLOR_LIGHT_WHITE),		/* C_PROMPT_CHOOSE   full_screen_prompt choice */
-		TextColor(TEXTCOLOR_MAGENTA, TEXTCOLOR_LIGHT_WHITE),	/* C_CHOICE_CURRENT  full_screen_choice input */
-		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_WHITE),			/* C_CHOICE_SP_INSTR speed key bar & instr */
-		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_LIGHT_MAGENTA),	/* C_CHOICE_SP_KEYIN speed key value */
-		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLUE),				/* C_GENERAL_HI      tab, thinking, IFS */
-		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLACK),			/* C_GENERAL_MED */
-		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_GRAY),				/* C_GENERAL_LO */
-		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_LIGHT_WHITE),		/* C_GENERAL_INPUT */
-		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLACK),			/* C_DVID_BKGRD      disk video */
-		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_YELLOW),			/* C_DVID_HI */
-		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_LIGHT_WHITE),		/* C_DVID_LO */
-		TextColor(TEXTCOLOR_RED, TEXTCOLOR_LIGHT_WHITE),		/* C_STOP_ERR        stop message, error */
-		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_BLACK),			/* C_STOP_INFO       stop message, info */
-		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_WHITE),				/* C_TITLE_LOW       bottom lines of title screen */
-		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_BLACK),			/* C_AUTHDIV1        title screen dividers */
-		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_GRAY),				/* C_AUTHDIV2        title screen dividers */
-		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_LIGHT_WHITE),		/* C_PRIMARY         primary authors */
-		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_WHITE)				/* C_CONTRIB         contributing authors */
+		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_LIGHT_WHITE),		// C_TITLE           title background 
+		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_LIGHT_GREEN),		// C_TITLE_DEV       development vsn foreground 
+		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_YELLOW),			// C_HELP_HDG        help page title line 
+		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLACK),			// C_HELP_BODY       help page body 
+		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_GRAY),				// C_HELP_INSTR      help page instr at bottom 
+		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLUE),				// C_HELP_LINK       help page links 
+		TextColor(TEXTCOLOR_CYAN, TEXTCOLOR_BLUE),				// C_HELP_CURLINK    help page current link 
+		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_GRAY),				// C_PROMPT_BKGRD    prompt/choice background 
+		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLACK),			// C_PROMPT_TEXT     prompt/choice extra info 
+		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_WHITE),				// C_PROMPT_LO       prompt/choice text 
+		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_LIGHT_WHITE),		// C_PROMPT_MED      prompt/choice hdg2/... 
+		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_YELLOW),			// C_PROMPT_HI       prompt/choice hdg/cur/... 
+		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_LIGHT_WHITE),		// C_PROMPT_INPUT    full_screen_prompt input 
+		TextColor(TEXTCOLOR_CYAN, TEXTCOLOR_LIGHT_WHITE),		// C_PROMPT_CHOOSE   full_screen_prompt choice 
+		TextColor(TEXTCOLOR_MAGENTA, TEXTCOLOR_LIGHT_WHITE),	// C_CHOICE_CURRENT  full_screen_choice input 
+		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_WHITE),			// C_CHOICE_SP_INSTR speed key bar & instr 
+		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_LIGHT_MAGENTA),	// C_CHOICE_SP_KEYIN speed key value 
+		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLUE),				// C_GENERAL_HI      tab, thinking, IFS 
+		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLACK),			// C_GENERAL_MED 
+		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_GRAY),				// C_GENERAL_LO 
+		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_LIGHT_WHITE),		// C_GENERAL_INPUT 
+		TextColor(TEXTCOLOR_WHITE, TEXTCOLOR_BLACK),			// C_DVID_BKGRD      disk video 
+		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_YELLOW),			// C_DVID_HI 
+		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_LIGHT_WHITE),		// C_DVID_LO 
+		TextColor(TEXTCOLOR_RED, TEXTCOLOR_LIGHT_WHITE),		// C_STOP_ERR        stop message, error 
+		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_BLACK),			// C_STOP_INFO       stop message, info 
+		TextColor(TEXTCOLOR_BLUE, TEXTCOLOR_WHITE),				// C_TITLE_LOW       bottom lines of title screen 
+		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_BLACK),			// C_AUTHDIV1        title screen dividers 
+		TextColor(TEXTCOLOR_GREEN, TEXTCOLOR_GRAY),				// C_AUTHDIV2        title screen dividers 
+		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_LIGHT_WHITE),		// C_PRIMARY         primary authors 
+		TextColor(TEXTCOLOR_BLACK, TEXTCOLOR_WHITE)				// C_CONTRIB         contributing authors 
 	};
 
 	std::copy(&initial_colors[0], &initial_colors[NUM_TEXT_COLORS], &_colors[0]);
@@ -152,7 +152,7 @@ void TextColorMap::SetCustomColors(char const *text)
 			sscanf(text, "%x", &hexval);
 			int i = (hexval/16) & 7;
 			int j = hexval & 15;
-			if (i == j || (i == 0 && j == 8)) /* force contrast */
+			if (i == j || (i == 0 && j == 8)) // force contrast 
 			{
 				j = 15;
 			}

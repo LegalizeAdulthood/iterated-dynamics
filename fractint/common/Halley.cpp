@@ -60,11 +60,11 @@ bool Halley::setup()
 	}
 	g_parameters[0] = double(g_degree);
 
-	/*  precalculated values */
-	m_a_plus_1 = g_degree + 1; /* a + 1 */
+	// precalculated values 
+	m_a_plus_1 = g_degree + 1; // a + 1 
 	m_a_plus_1_degree = m_a_plus_1*g_degree;
 
-	g_symmetry = (g_degree % 2) ? SYMMETRY_X_AXIS : SYMMETRY_XY_AXIS;   /* odd, even */
+	g_symmetry = (g_degree % 2) ? SYMMETRY_X_AXIS : SYMMETRY_XY_AXIS;   // odd, even 
 	return true;
 }
 
@@ -80,13 +80,13 @@ int Halley::bail_out()
 
 int Halley::orbit()
 {
-	/*  X(X^a - 1) = 0, Halley Map */
-	/*  a = g_parameter.x = degree, relaxation coeff. = g_parameter.y, epsilon = g_parameter2.x  */
+	// X(X^a - 1) = 0, Halley Map 
+	// a = g_parameter.x = degree, relaxation coeff. = g_parameter.y, epsilon = g_parameter2.x  
 
 	int ihal;
 	ComplexD XtoAlessOne;
 	ComplexD XtoA;
-	ComplexD XtoAplusOne; /* a-1, a, a + 1 */
+	ComplexD XtoAplusOne; // a-1, a, a + 1 
 	ComplexD FX;
 	ComplexD F1prime;
 	ComplexD F2prime;
@@ -103,23 +103,23 @@ int Halley::orbit()
 	FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoA);
 	FPUcplxmul(&g_old_z, &XtoA, &XtoAplusOne);
 
-	CMPLXsub(XtoAplusOne, g_old_z, FX);        /* FX = X^(a + 1) - X  = F */
-	F2prime.x = m_a_plus_1_degree*XtoAlessOne.x; /* g_a_plus_1_degree in setup */
-	F2prime.y = m_a_plus_1_degree*XtoAlessOne.y;        /* F" */
+	CMPLXsub(XtoAplusOne, g_old_z, FX);        // FX = X^(a + 1) - X  = F 
+	F2prime.x = m_a_plus_1_degree*XtoAlessOne.x; // g_a_plus_1_degree in setup 
+	F2prime.y = m_a_plus_1_degree*XtoAlessOne.y;        // F" 
 
 	F1prime.x = m_a_plus_1*XtoA.x - 1.0;
-	F1prime.y = m_a_plus_1*XtoA.y;                             /*  F'  */
+	F1prime.y = m_a_plus_1*XtoA.y;                             // F'  
 
-	FPUcplxmul(&F2prime, &FX, &Halnumer1);                  /*  F*F"  */
+	FPUcplxmul(&F2prime, &FX, &Halnumer1);                  // F*F"  
 	Haldenom.x = F1prime.x + F1prime.x;
-	Haldenom.y = F1prime.y + F1prime.y;                     /*  2*F'  */
+	Haldenom.y = F1prime.y + F1prime.y;                     // 2*F'  
 
-	FPUcplxdiv(&Halnumer1, &Haldenom, &Halnumer1);         /*  F"F/2F'  */
-	CMPLXsub(F1prime, Halnumer1, Halnumer2);          /*  F' - F"F/2F'  */
+	FPUcplxdiv(&Halnumer1, &Haldenom, &Halnumer1);         // F"F/2F'  
+	CMPLXsub(F1prime, Halnumer1, Halnumer2);          // F' - F"F/2F'  
 	FPUcplxdiv(&FX, &Halnumer2, &Halnumer2);
-	/* g_parameter.y is relaxation coef. */
-	/* new.x = g_old_z.x - (g_parameter.y*Halnumer2.x);
-	new.y = g_old_z.y - (g_parameter.y*Halnumer2.y); */
+	// g_parameter.y is relaxation coef. 
+	// new.x = g_old_z.x - (g_parameter.y*Halnumer2.x);
+	// new.y = g_old_z.y - (g_parameter.y*Halnumer2.y);
 	relax.x = g_parameter.y;
 	relax.y = g_parameters[3];
 	FPUcplxmul(&relax, &Halnumer2, &Halnumer2);
@@ -142,5 +142,5 @@ int Halley::per_pixel()
 
 	g_old_z = g_initial_z;
 
-	return 0; /* 1st iteration is not done */
+	return 0; // 1st iteration is not done 
 }

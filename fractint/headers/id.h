@@ -573,7 +573,7 @@ enum
 	FRACTAL_INFO_SIZE = sizeof(fractal_info)
 };
 #else
-/* This value should be the MSDOS size, not the Unix size. */
+// This value should be the MSDOS size, not the Unix size. 
 enum
 {
 	FRACTAL_INFO_SIZE = 504

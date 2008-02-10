@@ -32,7 +32,7 @@
 
 #include "frame.h"
 
-/* External declarations */
+// External declarations 
 extern void check_samename();
 
 HINSTANCE g_instance = 0;
@@ -45,41 +45,41 @@ static void (*s_line_read)(int, int, int, BYTE *) = 0;
 typedef enum
 {
 	FE_UNKNOWN = -1,
-	FE_IMAGE_INFO,					/* TAB */
-	FE_RESTART,						/* INSERT */
-	FE_SELECT_VIDEO_MODE,			/* DELETE */
-	FE_EXECUTE_COMMANDS,			/* @ */
-	FE_COMMAND_SHELL,				/* d */
-	FE_ORBITS_WINDOW,				/* o */
-	FE_SELECT_FRACTAL_TYPE,			/* t */
-	FE_TOGGLE_JULIA,				/* IDK_SPACE */
-	FE_TOGGLE_INVERSE,				/* j */
-	FE_PRIOR_IMAGE,					/* h */
-	FE_REVERSE_HISTORY,				/* ^H */
-	FE_BASIC_OPTIONS,				/* x */
-	FE_EXTENDED_OPTIONS,			/* y */
-	FE_TYPE_SPECIFIC_PARAMS,		/* z */
-	FE_PASSES_OPTIONS,				/* p */
-	FE_VIEW_WINDOW_OPTIONS,			/* v */
-	FE_3D_PARAMS,					/* i */
-	FE_BROWSE_PARAMS,				/* ^B */
-	FE_EVOLVER_PARAMS,				/* ^E */
-	FE_SOUND_PARAMS,				/* ^F */
-	FE_SAVE_IMAGE,					/* s */
-	FE_LOAD_IMAGE,					/* r */
-	FE_3D_TRANSFORM,				/* 3 */
-	FE_3D_OVERLAY,					/* # */
-	FE_SAVE_CURRENT_PARAMS,			/* b */
-	FE_PRINT_IMAGE,					/* ^P */
-	FE_GIVE_COMMAND_STRING,			/* g */
-	FE_QUIT,						/* ESC */
-	FE_COLOR_CYCLING_MODE,			/* c */
-	FE_ROTATE_PALETTE_DOWN,			/* - */
-	FE_ROTATE_PALETTE_UP,			/* + */
-	FE_EDIT_PALETTE,				/* e */
-	FE_MAKE_STARFIELD,				/* a */
-	FE_ANT_AUTOMATON,				/* ^A */
-	FE_STEREOGRAM,					/* ^S */
+	FE_IMAGE_INFO,					// TAB 
+	FE_RESTART,						// INSERT 
+	FE_SELECT_VIDEO_MODE,			// DELETE 
+	FE_EXECUTE_COMMANDS,			// @ 
+	FE_COMMAND_SHELL,				// d 
+	FE_ORBITS_WINDOW,				// o 
+	FE_SELECT_FRACTAL_TYPE,			// t 
+	FE_TOGGLE_JULIA,				// IDK_SPACE 
+	FE_TOGGLE_INVERSE,				// j 
+	FE_PRIOR_IMAGE,					// h 
+	FE_REVERSE_HISTORY,				// ^H 
+	FE_BASIC_OPTIONS,				// x 
+	FE_EXTENDED_OPTIONS,			// y 
+	FE_TYPE_SPECIFIC_PARAMS,		// z 
+	FE_PASSES_OPTIONS,				// p 
+	FE_VIEW_WINDOW_OPTIONS,			// v 
+	FE_3D_PARAMS,					// i 
+	FE_BROWSE_PARAMS,				// ^B 
+	FE_EVOLVER_PARAMS,				// ^E 
+	FE_SOUND_PARAMS,				// ^F 
+	FE_SAVE_IMAGE,					// s 
+	FE_LOAD_IMAGE,					// r 
+	FE_3D_TRANSFORM,				// 3 
+	FE_3D_OVERLAY,					// # 
+	FE_SAVE_CURRENT_PARAMS,			// b 
+	FE_PRINT_IMAGE,					// ^P 
+	FE_GIVE_COMMAND_STRING,			// g 
+	FE_QUIT,						// ESC 
+	FE_COLOR_CYCLING_MODE,			// c 
+	FE_ROTATE_PALETTE_DOWN,			// - 
+	FE_ROTATE_PALETTE_UP,			// + 
+	FE_EDIT_PALETTE,				// e 
+	FE_MAKE_STARFIELD,				// a 
+	FE_ANT_AUTOMATON,				// ^A 
+	FE_STEREOGRAM,					// ^S 
 	FE_VIDEO_F1,
 	FE_VIDEO_F2,
 	FE_VIDEO_F3,
@@ -118,7 +118,7 @@ typedef enum
 	FE_VIDEO_CF12
 } fractint_event;
 
-/* Global variables (yuck!) */
+// Global variables (yuck!) 
 int g_overflow_mp = 0;
 BYTE g_block[4096] = { 0 };
 bool g_disk_flag = false;
@@ -276,7 +276,7 @@ static void fill_dta()
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
-int fr_find_first(char *path)       /* Find 1st file (or subdir) meeting path/filespec */
+int fr_find_first(char *path)       // Find 1st file (or subdir) meeting path/filespec 
 {
 	if (s_find_context != INVALID_HANDLE_VALUE)
 	{
@@ -405,12 +405,12 @@ void home()
 }
 
 
-/* tenths of millisecond timewr routine */
-/* static struct timeval tv_start; */
+// tenths of millisecond timewr routine 
+// static struct timeval tv_start; 
 
 void restart_uclock()
 {
-	/* TODO */
+	// TODO 
 }
 
 
@@ -427,7 +427,7 @@ typedef unsigned long uclock_t;
 uclock_t usec_clock()
 {
 	uclock_t result = 0;
-	/* TODO */
+	// TODO 
 	_ASSERTE(false);
 
 	return result;
@@ -435,7 +435,7 @@ uclock_t usec_clock()
 
 void showfreemem()
 {
-	/* TODO */
+	// TODO 
 	_ASSERTE(false);
 }
 
@@ -557,7 +557,7 @@ int get_key_no_help()
 	return ch;
 }
 
-/* converts relative path to absolute path */
+// converts relative path to absolute path 
 int expand_dirname(char *dirname, char *drive)
 {
 	char relative[MAX_PATH];
@@ -724,7 +724,7 @@ static int null_read(int a, int b)
 	return 0;
 }
 
-/* from video.asm */
+// from video.asm 
 void set_null_video()
 {
 	_ASSERTE(0 && "setnullvideo called");

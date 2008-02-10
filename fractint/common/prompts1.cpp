@@ -58,13 +58,13 @@ struct FT_CHOICE
 const std::string GLASSES1_MAP = "glasses1.map";
 const std::string GLASSES2_MAP = "glasses2.map";
 
-bool g_julibrot;   /* flag for julibrot */
+bool g_julibrot;   // flag for julibrot 
 
-/* These need to be global because F6 exits full_screen_prompt() */
+// These need to be global because F6 exits full_screen_prompt() 
 static int s_prompt_function_key_mask;
-/* will be set to first line of extra info to be displayed (0 = top line) */
+// will be set to first line of extra info to be displayed (0 = top line) 
 static int s_scroll_row_status;
-/* will be set to first column of extra info to be displayed (0 = leftmost column)*/
+// will be set to first column of extra info to be displayed (0 = leftmost column)
 static int s_scroll_column_status;
 static std::ifstream s_gfe_file;
 
@@ -73,11 +73,11 @@ static char ifsmask[13]     = {"*.ifs"};
 static char formmask[13]    = {"*.frm"};
 static char lsysmask[13]    = {"*.l"};
 
-static FT_CHOICE **s_fractal_type_choices; /* for sel_fractype_help subrtn */
-static entry_info **s_get_file_entry_choices = 0; /* for format_getparm_line */
+static FT_CHOICE **s_fractal_type_choices; // for sel_fractype_help subrtn 
+static entry_info **s_get_file_entry_choices = 0; // for format_getparm_line 
 static const char *s_get_file_entry_title = 0;
 
-/* Routines in this module      */
+// Routines in this module      
 
 static bool select_type_params(int new_fractal_type, int previous_fractal_type);
 static int input_field_list(int attr, char *fld, int vlen, const char **list, int llen,
@@ -95,7 +95,7 @@ static int prompt_check_key(int curkey);
 static int prompt_check_key_scroll(int curkey);
 
 
-/* --------------------------------------------------------------------- */
+// --------------------------------------------------------------------- 
 
 class FullScreenPrompter
 {
@@ -127,13 +127,13 @@ private:
 	int _functionKeyMask;
 	char *_footer;
 
-	std::ifstream _scrollFile;	/* file with extrainfo entry to scroll   */
-	std::ifstream::pos_type _scrollFileStart;		/* where entry starts in scroll_file     */
-	bool _scrollingMode;		/* will be true if need to scroll footer */
-	int _linesInEntry;			/* total lines in entry to be scrolled   */
+	std::ifstream _scrollFile;	// file with extrainfo entry to scroll   
+	std::ifstream::pos_type _scrollFileStart;		// where entry starts in scroll_file     
+	bool _scrollingMode;		// will be true if need to scroll footer 
+	int _linesInEntry;			// total lines in entry to be scrolled   
 	int _titleLines;
 	int _titleWidth;
-	int _verticalScrollLimit;	/* don't scroll down if this is top line */
+	int _verticalScrollLimit;	// don't scroll down if this is top line 
 	int _footerLines;
 	int _footerWidth;
 	int _titleRow;
@@ -219,7 +219,7 @@ void FullScreenPrompter::PrepareFooterFile()
 
 void FullScreenPrompter::PrepareFooterLinesInEntry()
 {
-	/* initialize m_lines_in_entry */
+	// initialize m_lines_in_entry 
 	if (_scrollingMode && _scrollFile)
 	{
 		bool comment = false;
@@ -245,7 +245,7 @@ void FullScreenPrompter::PrepareFooterLinesInEntry()
 				break;
 			}
 		}
-		if (c == EOF)  /* should never happen */
+		if (c == EOF)  // should never happen 
 		{
 			_scrollFile.close();
 			_scrollingMode = false;
@@ -259,7 +259,7 @@ void FullScreenPrompter::PrepareFooter()
 	PrepareFooterLinesInEntry();
 	PrepareFooterSize();
 
-	/* if entry fits in available space, shut off scrolling */
+	// if entry fits in available space, shut off scrolling 
 	if (_scrollingMode && s_scroll_row_status == 0
 		&& _linesInEntry == _footerLines - 2
 		&& s_scroll_column_status == 0
@@ -293,7 +293,7 @@ void FullScreenPrompter::PrepareFooterSize()
 		return;
 	}
 
-	/* count footer lines, find widest */
+	// count footer lines, find widest 
 	_footerLines = 3;
 	int i = 0;
 	for (char *scan = _footer; *scan; scan++)
@@ -302,7 +302,7 @@ void FullScreenPrompter::PrepareFooterSize()
 		{
 			if (_footerLines + _numPrompts + _titleLines >= 20)
 			{
-				*scan = 0; /* full screen, cut off here */
+				*scan = 0; // full screen, cut off here 
 				break;
 			}
 			++_footerLines;
@@ -317,7 +317,7 @@ void FullScreenPrompter::PrepareFooterSize()
 
 void FullScreenPrompter::PrepareHeader()
 {
-	/* count title lines, find widest */
+	// count title lines, find widest 
 	_titleLines = 1;
 	_titleWidth = 0;
 	int i = 0;
@@ -338,14 +338,14 @@ void FullScreenPrompter::PrepareHeader()
 void FullScreenPrompter::WorkOutVerticalPositioning()
 {
 	int total_rows = _numPrompts + _titleLines + _footerLines + 3;
-	int j = (25 - total_rows)/2;                   /* top row of it all when centered */
-	j -= j/4;                         /* higher is better if lots extra */
+	int j = (25 - total_rows)/2;                   // top row of it all when centered 
+	j -= j/4;                         // higher is better if lots extra 
 	_boxLines = _numPrompts;
 	_titleRow = 1 + j;
 	_boxRow = _titleRow + _titleLines;
 	_promptRow = _boxRow;
 		
-	if (_titleRow > 2)  /* room for blank between title & box? */
+	if (_titleRow > 2)  // room for blank between title & box? 
 	{
 		--_titleRow;
 		--_boxRow;
@@ -354,15 +354,15 @@ void FullScreenPrompter::WorkOutVerticalPositioning()
 	_instructionsRow = _boxRow + _boxLines;
 	if (_instructionsRow + 3 + _footerLines < 25)
 	{
-		++_boxLines;    /* blank at bottom of box */
+		++_boxLines;    // blank at bottom of box 
 		++_instructionsRow;
 		if (_instructionsRow + 3 + _footerLines < 25)
 		{
-			++_instructionsRow; /* blank before instructions */
+			++_instructionsRow; // blank before instructions 
 		}
 	}
 	_footerRow = _instructionsRow + 2;
-	if (_numPrompts > 1) /* 3 instructions lines */
+	if (_numPrompts > 1) // 3 instructions lines 
 	{
 		++_footerRow;
 	}
@@ -418,12 +418,12 @@ void FullScreenPrompter::ComputeMaxWidths()
 
 void FullScreenPrompter::WorkOutHorizontalPositioning()
 {
-	if (_scrollingMode)  /* set box to max width if in scrolling mode */
+	if (_scrollingMode)  // set box to max width if in scrolling mode 
 	{
 		_footerWidth = 76;
 	}
 
-	/* work out horizontal positioning */
+	// work out horizontal positioning 
 	ComputeMaxWidths();
 	_boxWidth = _maxPromptWidth + _maxFieldWidth + 2;
 	if (_maxComment > _boxWidth)
@@ -435,10 +435,10 @@ void FullScreenPrompter::WorkOutHorizontalPositioning()
 	{
 		_boxWidth = 80;
 	}
-	_boxColumn = (80 - _boxWidth)/2;       /* center the box */
+	_boxColumn = (80 - _boxWidth)/2;       // center the box 
 	_promptColumn = _boxColumn + 2;
 	_valueColumn = _boxColumn + _boxWidth - _maxFieldWidth - 2;
-	if (_boxWidth <= 76)  /* make margin a bit wider if we can */
+	if (_boxWidth <= 76)  // make margin a bit wider if we can 
 	{
 		_boxWidth += 2;
 		--_boxColumn;
@@ -449,7 +449,7 @@ void FullScreenPrompter::WorkOutHorizontalPositioning()
 		j = _footerWidth;
 	}
 	int i = j + 4 - _boxWidth;
-	if (i > 0)  /* expand box for title/extra */
+	if (i > 0)  // expand box for title/extra 
 	{
 		if (_boxWidth + i > 80)
 		{
@@ -473,7 +473,7 @@ void FullScreenPrompter::DisplayHeader()
 
 	char buffer[256];
 	char *heading_line = buffer;
-	/* center each line of heading independently */
+	// center each line of heading independently 
 	int i;
 	::strcpy(heading_line, _heading);
 	for (i = 0; i < _titleLines-1; i++)
@@ -481,7 +481,7 @@ void FullScreenPrompter::DisplayHeader()
 		char *next = ::strchr(heading_line, '\n');
 		if (next == 0)
 		{
-			break; /* shouldn't happen */
+			break; // shouldn't happen 
 		}
 		*next = '\0';
 		_titleWidth = int(::strlen(heading_line));
@@ -490,10 +490,10 @@ void FullScreenPrompter::DisplayHeader()
 		*next = '\n';
 		heading_line = next + 1;
 	}
-	/* add scrolling key message, if applicable */
+	// add scrolling key message, if applicable 
 	if (_scrollingMode)
 	{
-		*(heading_line + 31) = (char) 0;   /* replace the ')' */
+		*(heading_line + 31) = (char) 0;   // replace the ')' 
 		::strcat(heading_line, ". CTRL+(direction key) to scroll text.)");
 	}
 
@@ -518,11 +518,11 @@ void FullScreenPrompter::DisplayFooter()
 #define S6 "\xBF"
 #else
 #define S1 '-'
-#define S2 "+" /* ll corner */
-#define S3 "+" /* lr corner */
+#define S2 "+" // ll corner 
+#define S3 "+" // lr corner 
 #define S4 "|"
-#define S5 "+" /* ul corner */
-#define S6 "+" /* ur corner */
+#define S5 "+" // ul corner 
+#define S6 "+" // ur corner 
 #endif
 	char buffer[81];
 	memset(buffer, S1, 80);
@@ -552,7 +552,7 @@ void FullScreenPrompter::DisplayEmptyBox()
 {
 	g_text_cbase = 0;
 
-	/* display empty box */
+	// display empty box 
 	for (int i = 0; i < _boxLines; ++i)
 	{
 		driver_set_attr(_boxRow + i, _boxColumn, C_PROMPT_LO, _boxWidth);
@@ -561,7 +561,7 @@ void FullScreenPrompter::DisplayEmptyBox()
 
 void FullScreenPrompter::DisplayInitialValues()
 {
-	/* display initial values */
+	// display initial values 
 	for (int i = 0; i < _numPrompts; i++)
 	{
 		driver_put_string(_promptRow + i, _promptColumn, C_PROMPT_LO, _prompts[i]);
@@ -573,8 +573,8 @@ void FullScreenPrompter::DisplayInitialValues()
 
 void FullScreenPrompter::DisplayInitialScreen()
 {
-	help_title();                        /* clear screen, display title line  */
-	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  /* init rest of screen to background */
+	help_title();                        // clear screen, display title line  
+	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);  // init rest of screen to background 
 
 	DisplayHeader();
 	DisplayFooter();
@@ -611,8 +611,8 @@ int FullScreenPrompter::Prompt()
 {
 	int current_choice = 0;
 	int current_type;
-	/* scrolling related variables */
-	bool rewrite_footer = false;	/* if true: rewrite footer to text box   */
+	// scrolling related variables 
+	bool rewrite_footer = false;	// if true: rewrite footer to text box   
 
 	std::string blanks;					// used to clear text box
 	blanks.append(78, ' ');
@@ -654,7 +654,7 @@ int FullScreenPrompter::Prompt()
 				}
 				driver_put_string(_footerRow + 1, 0, C_PROMPT_TEXT, _footer);
 			}
-			/* TODO: rework key interaction to blocking wait */
+			// TODO: rework key interaction to blocking wait 
 			while (!driver_key_pressed())
 			{
 			}
@@ -666,35 +666,35 @@ int FullScreenPrompter::Prompt()
 			case IDK_ENTER:
 			case IDK_ENTER_2:
 				goto fullscreen_exit;
-			case IDK_CTL_DOWN_ARROW:    /* scrolling key - down one row */
+			case IDK_CTL_DOWN_ARROW:    // scrolling key - down one row 
 				if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 				{
 					s_scroll_row_status++;
 					rewrite_footer = true;
 				}
 				break;
-			case IDK_CTL_UP_ARROW:      /* scrolling key - up one row */
+			case IDK_CTL_UP_ARROW:      // scrolling key - up one row 
 				if (_scrollingMode && s_scroll_row_status > 0)
 				{
 					s_scroll_row_status--;
 					rewrite_footer = true;
 				}
 				break;
-			case IDK_CTL_LEFT_ARROW:    /* scrolling key - left one column */
+			case IDK_CTL_LEFT_ARROW:    // scrolling key - left one column 
 				if (_scrollingMode && s_scroll_column_status > 0)
 				{
 					s_scroll_column_status--;
 					rewrite_footer = true;
 				}
 				break;
-			case IDK_CTL_RIGHT_ARROW:   /* scrolling key - right one column */
+			case IDK_CTL_RIGHT_ARROW:   // scrolling key - right one column 
 				if (_scrollingMode && strchr(_footer, '\021') != 0)
 				{
 					s_scroll_column_status++;
 					rewrite_footer = true;
 				}
 				break;
-			case IDK_CTL_PAGE_DOWN:   /* scrolling key - down one screen */
+			case IDK_CTL_PAGE_DOWN:   // scrolling key - down one screen 
 				if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 				{
 					s_scroll_row_status += _footerLines - 2;
@@ -705,7 +705,7 @@ int FullScreenPrompter::Prompt()
 					rewrite_footer = true;
 				}
 				break;
-			case IDK_CTL_PAGE_UP:     /* scrolling key - up one screen */
+			case IDK_CTL_PAGE_UP:     // scrolling key - up one screen 
 				if (_scrollingMode && s_scroll_row_status > 0)
 				{
 					s_scroll_row_status -= _footerLines - 2;
@@ -716,7 +716,7 @@ int FullScreenPrompter::Prompt()
 					rewrite_footer = true;
 				}
 				break;
-			case IDK_CTL_END:         /* scrolling key - to end of entry */
+			case IDK_CTL_END:         // scrolling key - to end of entry 
 				if (_scrollingMode)
 				{
 					s_scroll_row_status = _verticalScrollLimit;
@@ -724,7 +724,7 @@ int FullScreenPrompter::Prompt()
 					rewrite_footer = true;
 				}
 				break;
-			case IDK_CTL_HOME:        /* scrolling key - to beginning of entry */
+			case IDK_CTL_HOME:        // scrolling key - to beginning of entry 
 				if (_scrollingMode)
 				{
 					s_scroll_row_status = 0;
@@ -750,7 +750,7 @@ int FullScreenPrompter::Prompt()
 	}
 
 
-	/* display footing */
+	// display footing 
 	if (_numPrompts > 1)
 	{
 		put_string_center(_instructionsRow++, 0, 80, C_PROMPT_BKGRD,
@@ -839,7 +839,7 @@ int FullScreenPrompter::Prompt()
 			case 's':
 				strncpy(_values[current_choice].uval.sval, buffer, 16);
 				break;
-			default: /* assume 0x100 + n */
+			default: // assume 0x100 + n 
 				strcpy(_values[current_choice].uval.sbuf, buffer);
 			}
 		}
@@ -854,10 +854,10 @@ int FullScreenPrompter::Prompt()
 
 		switch (i)
 		{
-		case 0:  /* enter  */
+		case 0:  // enter  
 			done = IDK_ENTER;
 			break;
-		case -1: /* escape */
+		case -1: // escape 
 		case IDK_F2:
 		case IDK_F3:
 		case IDK_F4:
@@ -893,14 +893,14 @@ int FullScreenPrompter::Prompt()
 			}
 			while (_values[current_choice].type == '*');
 			break;
-		case IDK_CTL_DOWN_ARROW:     /* scrolling key - down one row */
+		case IDK_CTL_DOWN_ARROW:     // scrolling key - down one row 
 			if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 			{
 				s_scroll_row_status++;
 				rewrite_footer = true;
 			}
 			break;
-		case IDK_CTL_UP_ARROW:       /* scrolling key - up one row */
+		case IDK_CTL_UP_ARROW:       // scrolling key - up one row 
 			if (_scrollingMode && s_scroll_row_status > 0)
 			{
 				s_scroll_row_status--;
@@ -914,14 +914,14 @@ int FullScreenPrompter::Prompt()
 				rewrite_footer = true;
 			}
 			break;
-		case IDK_CTL_RIGHT_ARROW:    /* scrolling key - right one column */
+		case IDK_CTL_RIGHT_ARROW:    // scrolling key - right one column 
 			if (_scrollingMode && strchr(_footer, '\021') != 0)
 			{
 				s_scroll_column_status++;
 				rewrite_footer = true;
 			}
 			break;
-		case IDK_CTL_PAGE_DOWN:    /* scrolling key - down on screen */
+		case IDK_CTL_PAGE_DOWN:    // scrolling key - down on screen 
 			if (_scrollingMode && s_scroll_row_status < _verticalScrollLimit)
 			{
 				s_scroll_row_status += _footerLines - 2;
@@ -932,7 +932,7 @@ int FullScreenPrompter::Prompt()
 				rewrite_footer = true;
 			}
 			break;
-		case IDK_CTL_PAGE_UP:      /* scrolling key - up one screen */
+		case IDK_CTL_PAGE_UP:      // scrolling key - up one screen 
 			if (_scrollingMode && s_scroll_row_status > 0)
 			{
 				s_scroll_row_status -= _footerLines - 2;
@@ -943,7 +943,7 @@ int FullScreenPrompter::Prompt()
 				rewrite_footer = true;
 			}
 			break;
-		case IDK_CTL_END:          /* scrolling key - go to end of entry */
+		case IDK_CTL_END:          // scrolling key - go to end of entry 
 			if (_scrollingMode)
 			{
 				s_scroll_row_status = _verticalScrollLimit;
@@ -951,7 +951,7 @@ int FullScreenPrompter::Prompt()
 				rewrite_footer = true;
 			}
 			break;
-		case IDK_CTL_HOME:         /* scrolling key - go to beginning of entry */
+		case IDK_CTL_HOME:         // scrolling key - go to beginning of entry 
 			if (_scrollingMode)
 			{
 				s_scroll_row_status = 0;
@@ -999,14 +999,14 @@ int full_screen_prompt_help(int help_mode, const char *hdg, int numprompts, cons
 }
 
 int prompt_value_string(char *buf, full_screen_values *val)
-{  /* format value into buf, return field width */
+{  // format value into buf, return field width 
 	int i;
 	int ret;
 	switch (val->type)
 	{
 	case 'd':
 		ret = 20;
-		i = 16;    /* cellular needs 16 (was 15)*/
+		i = 16;    // cellular needs 16 (was 15)
 		while (true)
 		{
 			sprintf(buf, "%.*g", i, val->uval.dval);
@@ -1018,7 +1018,7 @@ int prompt_value_string(char *buf, full_screen_values *val)
 		}
 		break;
 	case 'D':
-		if (val->uval.dval < 0)  /* We have to round the right way */
+		if (val->uval.dval < 0)  // We have to round the right way 
 		{
 			sprintf(buf, "%ld", long(val->uval.dval-.5));
 		}
@@ -1053,7 +1053,7 @@ int prompt_value_string(char *buf, full_screen_values *val)
 		strcpy(buf, val->uval.ch.list[val->uval.ch.val]);
 		ret = val->uval.ch.vlen;
 		break;
-	default: /* assume 0x100 + n */
+	default: // assume 0x100 + n 
 		strcpy(buf, val->uval.sbuf);
 		ret = val->type & 0xff;
 	}
@@ -1121,14 +1121,14 @@ static int prompt_check_key_scroll(int curkey)
 }
 
 static int input_field_list(
-		int attr,             /* display attribute */
-		char *fld,            /* display form field value */
-		int vlen,             /* field length */
-		const char **list,          /* list of values */
-		int llen,             /* number of entries in list */
-		int row,              /* display row */
-		int col,              /* display column */
-		int (*checkkey)(int key)  /* routine to check non data keys, or 0 */
+		int attr,             // display attribute 
+		char *fld,            // display form field value 
+		int vlen,             // field length 
+		const char **list,          // list of values 
+		int llen,             // number of entries in list 
+		int row,              // display row 
+		int col,              // display column 
+		int (*checkkey)(int key)  // routine to check non data keys, or 0 
 )
 {
 	int initval;
@@ -1163,7 +1163,7 @@ static int input_field_list(
 		}
 		buf[vlen] = 0;
 		driver_put_string(row, col, attr, buf);
-		curkey = driver_key_cursor(row, col); /* get a keystroke */
+		curkey = driver_key_cursor(row, col); // get a keystroke 
 		switch (curkey)
 		{
 		case IDK_ENTER:
@@ -1198,7 +1198,7 @@ static int input_field_list(
 						goto inpfldl_end;
 					}
 				}
-				break;                                /* non alphanum char */
+				break;                                // non alphanum char 
 			}
 			j = curval;
 			for (i = 0; i < llen; ++i)
@@ -1221,7 +1221,7 @@ inpfldl_end:
 	return ret;
 }
 
-int get_fractal_type()             /* prompt for and select fractal type */
+int get_fractal_type()             // prompt for and select fractal type 
 {
 	int done;
 	int oldfractype;
@@ -1236,12 +1236,12 @@ int get_fractal_type()             /* prompt for and select fractal type */
 			break;
 		}
 		bool i = select_type_params(t, g_fractal_type);
-		if (!i)  /* ok, all done */
+		if (!i)  // ok, all done 
 		{
 			done = 0;
 			break;
 		}
-		if (i) /* can't return to prior image anymore */
+		if (i) // can't return to prior image anymore 
 		{
 			done = 1;
 		}
@@ -1254,8 +1254,8 @@ int get_fractal_type()             /* prompt for and select fractal type */
 	return done;
 }
 
-static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated */
-                                   /* so that storage gets freed up      */
+static int select_fractal_type(int t) // subrtn of get_fractal_type, separated 
+                                   // so that storage gets freed up      
 {
 	int numtypes;
 	int done;
@@ -1270,7 +1270,7 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 	FT_CHOICE *choices[MAXFTYPES];
 	int attributes[MAXFTYPES];
 
-	/* steal existing array for "choices" */
+	// steal existing array for "choices" 
 	choices[0] = &storage[0];
 	attributes[0] = 1;
 	for (i = 1; i < MAXFTYPES; ++i)
@@ -1280,7 +1280,7 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 	}
 	s_fractal_type_choices = &choices[0];
 
-	/* setup context sensitive help */
+	// setup context sensitive help 
 	HelpModeSaver saved_help(FIHELP_FRACTAL_TYPE);
 	if (t == FRACTYPE_IFS_3D)
 	{
@@ -1302,13 +1302,13 @@ static int select_fractal_type(int t) /* subrtn of get_fractal_type, separated *
 			continue;
 		}
 		strcpy(choices[++j]->name, g_fractal_specific[i].name);
-		choices[j]->name[14] = 0; /* safety */
-		choices[j]->num = i;      /* remember where the real item is */
+		choices[j]->name[14] = 0; // safety 
+		choices[j]->num = i;      // remember where the real item is 
 	}
 	numtypes = j + 1;
-	shell_sort(&choices, numtypes, sizeof(FT_CHOICE *), lccompare); /* sort list */
+	shell_sort(&choices, numtypes, sizeof(FT_CHOICE *), lccompare); // sort list 
 	j = 0;
-	for (i = 0; i < numtypes; ++i) /* find starting choice in sorted list */
+	for (i = 0; i < numtypes; ++i) // find starting choice in sorted list 
 	{
 		if (choices[i]->num == t || choices[i]->num == g_fractal_specific[t].tofloat)
 		{
@@ -1354,7 +1354,7 @@ static int sel_fractal_type_help(int curkey, int choice)
 
 static void set_trig_array_bifurcation(int oldfractype, int old_float_type, int old_int_type, char *value)
 {
-	/* Added the following to accommodate fn bifurcations.  JCO 7/2/92 */
+	// Added the following to accommodate fn bifurcations.  JCO 7/2/92 
 	if (!((oldfractype == old_float_type) || (oldfractype == old_int_type)))
 	{
 		set_function_array(0, value);
@@ -1393,7 +1393,7 @@ void set_default_parms()
 			&& g_fractal_type != FRACTYPE_FROTHY_BASIN
 			&& g_fractal_type != FRACTYPE_FROTHY_BASIN_FP)
 		{
-			round_float_d(&g_parameters[i]); /* don't round cellular, frothybasin or ant */
+			round_float_d(&g_parameters[i]); // don't round cellular, frothybasin or ant 
 		}
 	}
 	extra = find_extra_parameter(g_fractal_type);
@@ -1491,7 +1491,7 @@ sel_type_restart:
 		}
 		break;
 
-	/* set LATOO function defaults */
+	// set LATOO function defaults 
 	case FRACTYPE_LATOOCARFIAN:
 		if (previous_fractal_type != FRACTYPE_LATOOCARFIAN)
 		{
@@ -1582,8 +1582,8 @@ const char *g_jiim_left_right[] =
 };
 
 FunctionListItem g_function_list[] =
-/* changing the order of these alters meaning of *.fra file */
-/* maximum 6 characters in function names or recheck all related code */
+// changing the order of these alters meaning of *.fra file 
+// maximum 6 characters in function names or recheck all related code 
 {
 #if !defined(XFRACT)
 	{"sin",   lStkSin,   dStkSin   },
@@ -1593,7 +1593,7 @@ FunctionListItem g_function_list[] =
 	{"exp",   lStkExp,   dStkExp   },
 	{"log",   lStkLog,   dStkLog   },
 	{"sqr",   lStkSqr,   dStkSqr   },
-	{"recip", lStkRecip, dStkRecip }, /* from recip on new in v16 */
+	{"recip", lStkRecip, dStkRecip }, // from recip on new in v16 
 	{"ident", StkIdent,  StkIdent  },
 	{"cos",   lStkCos,   dStkCos   },
 	{"tan",   lStkTan,   dStkTan   },
@@ -1625,7 +1625,7 @@ FunctionListItem g_function_list[] =
 	{"exp",   dStkExp,   dStkExp   },
 	{"log",   dStkLog,   dStkLog   },
 	{"sqr",   dStkSqr,   dStkSqr   },
-	{"recip", dStkRecip, dStkRecip }, /* from recip on new in v16 */
+	{"recip", dStkRecip, dStkRecip }, // from recip on new in v16 
 	{"ident", StkIdent,  StkIdent  },
 	{"cos",   dStkCos,   dStkCos   },
 	{"tan",   dStkTan,   dStkTan   },
@@ -1654,7 +1654,7 @@ FunctionListItem g_function_list[] =
 
 const int g_num_function_list = NUM_OF(g_function_list);
 
-/* --------------------------------------------------------------------- */
+// --------------------------------------------------------------------- 
 int get_fractal_parameters_current_fractal_type()
 {
 	int current_fractal_type = g_fractal_type;
@@ -1667,7 +1667,7 @@ int get_fractal_parameters_current_fractal_type()
 	}
 	return current_fractal_type;
 }
-int get_fractal_parameters(bool type_specific)        /* prompt for type-specific parms */
+int get_fractal_parameters(bool type_specific)        // prompt for type-specific parms 
 {
 	int j;
 	int current_fractal_type;
@@ -1687,7 +1687,7 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 	std::string entryname;
 	std::ifstream entryFile;
 #ifdef XFRACT
-	static /* Can't initialize aggregates on the stack */
+	static // Can't initialize aggregates on the stack 
 #endif
 	const char *bailnameptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
 	FractalTypeSpecificData *savespecific;
@@ -1719,7 +1719,7 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 				entryFile.close();
 				if (fractal_type_formula(g_fractal_type))
 				{
-					g_formula_state.get_parameter(g_formula_state.get_formula()); /* no error check, should be okay, from above */
+					g_formula_state.get_parameter(g_formula_state.get_formula()); // no error check, should be okay, from above 
 				}
 			}
 		}
@@ -1737,7 +1737,7 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 				entryname = g_ifs_name;
 				itemtype = ITEMTYPE_IFS;
 			}
-			else  /* this shouldn't happen */
+			else  // this shouldn't happen 
 			{
 #if defined(_WIN32)
 				_ASSERTE(false);
@@ -1751,14 +1751,14 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 				entryFile.close();
 				if (fractal_type_formula(g_fractal_type))
 				{
-					g_formula_state.get_parameter(entryname.c_str()); /* no error check, should be okay, from above */
+					g_formula_state.get_parameter(entryname.c_str()); // no error check, should be okay, from above 
 				}
 			}
 		}
 	}
 	else if (help_formula >= 0)
 	{
-		read_help_topic(help_formula, 0, 2000, g_text_stack); /* need error handling here ?? */
+		read_help_topic(help_formula, 0, 2000, g_text_stack); // need error handling here ?? 
 		g_text_stack[2000-help_formula] = 0;
 		int source = 0;
 		int destination = 0;
@@ -1767,15 +1767,15 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 		int c;
 		while ((c = g_text_stack[source++]) != 0)
 		{
-			/* stop at ctl, blank, or line with col 1 nonblank, max 16 lines */
+			// stop at ctl, blank, or line with col 1 nonblank, max 16 lines 
 			if (blank_line_count && c == ' ' && ++blank_line_count <= 5)
 			{
-			} /* skip 4 blanks at start of line */
+			} // skip 4 blanks at start of line 
 			else
 			{
 				if (c == '\n')
 				{
-					if (blank_line_count) /* blank line  */
+					if (blank_line_count) // blank line  
 					{
 						break;
 					}
@@ -1785,13 +1785,13 @@ int get_fractal_parameters(bool type_specific)        /* prompt for type-specifi
 					}
 					blank_line_count = 1;
 				}
-				else if (c < 16) /* a special help format control char */
+				else if (c < 16) // a special help format control char 
 				{
 					break;
 				}
 				else
 				{
-					if (blank_line_count == 1) /* line starts in column 1 */
+					if (blank_line_count == 1) // line starts in column 1 
 					{
 						break;
 					}
@@ -1828,7 +1828,7 @@ get_fractal_parameters_top:
 	}
 	if (fractal_type_formula(g_fractal_type))
 	{
-		if (g_formula_state.uses_p1())  /* set first parameter */
+		if (g_formula_state.uses_p1())  // set first parameter 
 		{
 			firstparm = 0;
 		}
@@ -1846,10 +1846,10 @@ get_fractal_parameters_top:
 		}
 		else
 		{
-			firstparm = 8; /* g_formula_state.uses_p5() or no parameter */
+			firstparm = 8; // g_formula_state.uses_p5() or no parameter 
 		}
 
-		if (g_formula_state.uses_p5())  /* set last parameter */
+		if (g_formula_state.uses_p5())  // set last parameter 
 		{
 			lastparm = 10;
 		}
@@ -1867,7 +1867,7 @@ get_fractal_parameters_top:
 		}
 		else
 		{
-			lastparm = 2; /* g_formula_state.uses_p1() or no parameter */
+			lastparm = 2; // g_formula_state.uses_p1() or no parameter 
 		}
 	}
 
@@ -1875,14 +1875,14 @@ get_fractal_parameters_top:
 	if (g_julibrot)
 	{
 		g_current_fractal_specific = julibrot_orbit;
-		firstparm = 2; /* in most case Julibrot does not need first two parms */
-		if (g_new_orbit_type == FRACTYPE_QUATERNION_JULIA_FP     ||   /* all parameters needed */
+		firstparm = 2; // in most case Julibrot does not need first two parms 
+		if (g_new_orbit_type == FRACTYPE_QUATERNION_JULIA_FP     ||   // all parameters needed 
 			g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_JULIA_FP)
 		{
 			firstparm = 0;
 			lastparm = 4;
 		}
-		if (g_new_orbit_type == FRACTYPE_QUATERNION_FP        ||   /* no parameters needed */
+		if (g_new_orbit_type == FRACTYPE_QUATERNION_FP        ||   // no parameters needed 
 			g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
 		{
 			firstparm = 4;
@@ -2077,7 +2077,7 @@ get_fractal_parameters_top:
 	#ifdef RANDOM_RUN
 			paramvalues[promptnum].uval.ch.llen = 4;
 	#else
-			parameter_values[prompt].uval.ch.llen = 3; /* disable random run */
+			parameter_values[prompt].uval.ch.llen = 3; // disable random run 
 	#endif
 			parameter_values[prompt++].uval.ch.val  = g_major_method;
 
@@ -2096,7 +2096,7 @@ get_fractal_parameters_top:
 			parameter_values[prompt++].uval.ch.val = g_is_mandelbrot ? 1 : 0;
 		}
 
-		if (type_specific                           /* <z> command ? */
+		if (type_specific                           // <z> command ? 
 			&& (g_display_3d > DISPLAY3D_NONE))
 		{
 			stop_message(STOPMSG_INFO_ONLY | STOPMSG_NO_BUZZER, "Current type has no type-specific parameters");
@@ -2119,7 +2119,7 @@ get_fractal_parameters_top:
 	{
 		f_key_mask = 0;
 	}
-	s_scroll_row_status = 0; /* make sure we start at beginning of entry */
+	s_scroll_row_status = 0; // make sure we start at beginning of entry 
 	s_scroll_column_status = 0;
 	while (true)
 	{
@@ -2238,7 +2238,7 @@ get_fractal_parameters_top:
 		g_height_fp   = float(parameter_values[prompt++].uval.dval);
 		g_width_fp    = float(parameter_values[prompt++].uval.dval);
 		g_screen_distance_fp     = float(parameter_values[prompt++].uval.dval);
-		command_result = COMMANDRESULT_FRACTAL_PARAMETER;  /* force new calc since not resumable anyway */
+		command_result = COMMANDRESULT_FRACTAL_PARAMETER;  // force new calc since not resumable anyway 
 	}
 	if (fractal_type_inverse_julia(current_fractal_type))
 	{
@@ -2297,7 +2297,7 @@ void load_parameters(int g_fractal_type)
 		g_parameters[i] = g_fractal_specific[g_fractal_type].paramvalue[i];
 		if (!fractal_type_ant_or_cellular(g_fractal_type))
 		{
-			round_float_d(&g_parameters[i]); /* don't round cellular or ant */
+			round_float_d(&g_parameters[i]); // don't round cellular or ant 
 		}
 	}
 	extra = find_extra_parameter(g_fractal_type);
@@ -2333,7 +2333,7 @@ int check_orbit_name(char *orbitname)
 	return bad;
 }
 
-/* --------------------------------------------------------------------- */
+// --------------------------------------------------------------------- 
 bool gfe_file_open(const char *filename)
 {
 	s_gfe_file.open(filename, std::ios::in | std::ios::binary);
@@ -2343,8 +2343,8 @@ bool gfe_file_open(const char *filename)
 long get_file_entry(int type, const char *title, char *fmask,
 					char *filename, char *entryname)
 {
-	/* Formula, LSystem, etc type structure, select from file */
-	/* containing definitions in the form    name { ... }     */
+	// Formula, LSystem, etc type structure, select from file 
+	// containing definitions in the form    name { ... }     
 	int newfile;
 	int firsttry;
 	long entry_pointer;
@@ -2352,8 +2352,8 @@ long get_file_entry(int type, const char *title, char *fmask,
 	while (true)
 	{
 		firsttry = 0;
-		/* pb: binary mode used here - it is more work, but much faster, */
-		/*     especially when ftell or fgetpos is used                  */
+		// pb: binary mode used here - it is more work, but much faster, 
+		// especially when ftell or fgetpos is used                  
 		while (newfile || !gfe_file_open(filename))
 		{
 			char buf[60];
@@ -2370,14 +2370,14 @@ long get_file_entry(int type, const char *title, char *fmask,
 				return -1;
 			}
 
-			firsttry = 1; /* if around open loop again it is an error */
+			firsttry = 1; // if around open loop again it is an error 
 		}
 		newfile = 0;
 		entry_pointer = gfe_choose_entry(type, title, filename, entryname);
 		if (entry_pointer == -2)
 		{
-			newfile = 1; /* go to file list, */
-			continue;    /* back to get_a_filename */
+			newfile = 1; // go to file list, 
+			continue;    // back to get_a_filename 
 		}
 		if (entry_pointer == -1)
 		{
@@ -2402,7 +2402,7 @@ long get_file_entry(int type, const char *title, char *fmask,
 			{
 				g_fractal_type = (g_ifs_type == IFSTYPE_2D) ? FRACTYPE_IFS : FRACTYPE_IFS_3D;
 				g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
-				set_default_parms(); /* to correct them if 3d */
+				set_default_parms(); // to correct them if 3d 
 				return 0;
 			}
 			break;
@@ -2412,7 +2412,7 @@ long get_file_entry(int type, const char *title, char *fmask,
 	}
 }
 
-/* skip to next non-white space character and return it */
+// skip to next non-white space character and return it 
 static int skip_white_space(std::ifstream &infile, long *file_offset)
 {
 	int c;
@@ -2425,7 +2425,7 @@ static int skip_white_space(std::ifstream &infile, long *file_offset)
 	return c;
 }
 
-/* skip to end of line */
+// skip to end of line 
 int skip_comment(std::ifstream &infile, long *file_offset)
 {
 	int c;
@@ -2461,7 +2461,7 @@ int scan_entries(std::ifstream &infile, entry_info *choices, const char *itemnam
 	int numentries = 0;
 
 	while (true)
-	{                            /* scan the file for entry names */
+	{                            // scan the file for entry names 
 		int c;
 		int len;
 top:
@@ -2477,9 +2477,9 @@ top:
 		}
 		name_offset = file_offset;
 		temp_offset = file_offset;
-		/* next equiv roughly to fscanf(.., "%40[^* \n\r\t({\032]", buf) */
+		// next equiv roughly to fscanf(.., "%40[^* \n\r\t({\032]", buf) 
 		len = 0;
-		/* allow spaces in entry names in next JCO 9/2/2003 */
+		// allow spaces in entry names in next JCO 9/2/2003 
 		while (c != ' ' && c != '\t' && c != '(' && c != ';'
 			&& c != '{' && c != '\n' && c != '\r' && c != EOF && c != '\032')
 		{
@@ -2521,9 +2521,9 @@ top:
 				}
 				else
 				{
-					if (c == '\n' || c == '\r')     /* reset temp_offset to  */
+					if (c == '\n' || c == '\r')     // reset temp_offset to  
 					{
-						temp_offset = file_offset;  /* beginning of new line */
+						temp_offset = file_offset;  // beginning of new line 
 					}
 					c = infile.get();
 					++file_offset;
@@ -2543,7 +2543,7 @@ top:
 					}
 				}
 			}
-			if (c != '}')   /* i.e. is EOF or '\032'*/
+			if (c != '}')   // i.e. is EOF or '\032'
 			{
 				break;
 			}
@@ -2562,7 +2562,7 @@ top:
 			}
 
 			buf[ITEMNAMELEN + exclude_entry] = 0;
-			if (itemname != 0)  /* looking for one entry */
+			if (itemname != 0)  // looking for one entry 
 			{
 				if (stricmp(buf, itemname) == 0)
 				{
@@ -2570,7 +2570,7 @@ top:
 					return -1;
 				}
 			}
-			else /* make a whole list of entries */
+			else // make a whole list of entries 
 			{
 				if (buf[0] != 0 && stricmp(buf, "comment") != 0 && !exclude_entry)
 				{
@@ -2593,12 +2593,12 @@ top:
 	return numentries;
 }
 
-/* subrtn of get_file_entry, separated so that storage gets freed up */
+// subrtn of get_file_entry, separated so that storage gets freed up 
 static long gfe_choose_entry(int type, const char *title, const char *filename, char *entryname)
 {
 #ifdef XFRACT
 	char *o_instr = "Press "FK_F6" to select file, "FK_F2" for details, "FK_F4" to toggle sort ";
-	/* keep the above line length < 80 characters */
+	// keep the above line length < 80 characters 
 #else
 	char *o_instr = "Press "FK_F6" to select different file, "FK_F2" for details, "FK_F4" to toggle sort ";
 #endif
@@ -2626,14 +2626,14 @@ retry:
 	}
 
 	numentries = 0;
-	help_title(); /* to display a clue when file big and next is slow */
+	help_title(); // to display a clue when file big and next is slow 
 
 	numentries = scan_entries(s_gfe_file, &storage[0], 0);
 	if (numentries == 0)
 	{
 		stop_message(STOPMSG_NORMAL, "File doesn't contain any valid entries");
 		s_gfe_file.close();
-		return -2; /* back to file list */
+		return -2; // back to file list 
 	}
 	strcpy(instr, o_instr);
 	if (dosort)
@@ -2646,7 +2646,7 @@ retry:
 		strcat(instr, "on");
 	}
 
-	strcpy(buf, entryname); /* preset to last choice made */
+	strcpy(buf, entryname); // preset to last choice made 
 	formatitem = 0;
 	boxwidth = 0;
 	colwidth = 0;
@@ -2673,7 +2673,7 @@ retry:
 	s_gfe_file.close();
 	if (i < 0)
 	{
-		/* go back to file list or cancel */
+		// go back to file list or cancel 
 		return (i == -IDK_F6) ? -2 : -1;
 	}
 	strcpy(entryname, choices[i]->name);
@@ -2685,13 +2685,13 @@ static int check_gfe_key(int curkey, int choice)
 {
 	char infhdg[60];
 	char infbuf[25*80];
-	bool in_scrolling_mode = false; /* true if entry doesn't fit available space */
+	bool in_scrolling_mode = false; // true if entry doesn't fit available space 
 	int top_line = 0;
 	int left_column = 0;
 	int i;
 	int done = 0;
-	int rewrite_infbuf = 0;  /* if 1: rewrite the entry portion of screen */
-	char blanks[79];         /* used to clear the entry portion of screen */
+	int rewrite_infbuf = 0;  // if 1: rewrite the entry portion of screen 
+	char blanks[79];         // used to clear the entry portion of screen 
 	memset(blanks, ' ', 78);
 	blanks[78] = (char) 0;
 
@@ -2741,7 +2741,7 @@ static int check_gfe_key(int curkey, int choice)
 				break;
 			}
 		}
-		if (c == EOF || c == '\032')  /* should never happen */
+		if (c == EOF || c == '\032')  // should never happen 
 		{
 			s_gfe_file.seekg(s_get_file_entry_choices[choice]->point, SEEK_SET);
 			in_scrolling_mode = false;
@@ -2754,14 +2754,14 @@ static int check_gfe_key(int curkey, int choice)
 		}
 		strcpy(infhdg, s_get_file_entry_title);
 		strcat(infhdg, " file entry:\n\n");
-		/* ... instead, call help with buffer?  heading added */
+		// ... instead, call help with buffer?  heading added 
 		ScreenStacker stacker;
 		help_title();
 		driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
 
 		g_text_cbase = 0;
 		driver_put_string(2, 1, C_GENERAL_HI, infhdg);
-		g_text_cbase = 2; /* left margin is 2 */
+		g_text_cbase = 2; // left margin is 2 
 		driver_put_string(4, 0, C_GENERAL_MED, infbuf);
 
 		{
@@ -2794,35 +2794,35 @@ static int check_gfe_key(int curkey, int choice)
 			{
 				switch (i)
 				{
-				case IDK_DOWN_ARROW: case IDK_CTL_DOWN_ARROW: /* down one line */
+				case IDK_DOWN_ARROW: case IDK_CTL_DOWN_ARROW: // down one line 
 					if (in_scrolling_mode && top_line < lines_in_entry - 17)
 					{
 						top_line++;
 						rewrite_infbuf = 1;
 					}
 					break;
-				case IDK_UP_ARROW: case IDK_CTL_UP_ARROW:  /* up one line */
+				case IDK_UP_ARROW: case IDK_CTL_UP_ARROW:  // up one line 
 					if (in_scrolling_mode && top_line > 0)
 					{
 						top_line--;
 						rewrite_infbuf = 1;
 					}
 					break;
-				case IDK_LEFT_ARROW: case IDK_CTL_LEFT_ARROW:  /* left one column */
+				case IDK_LEFT_ARROW: case IDK_CTL_LEFT_ARROW:  // left one column 
 					if (in_scrolling_mode && left_column > 0)
 					{
 						left_column--;
 						rewrite_infbuf = 1;
 					}
 					break;
-				case IDK_RIGHT_ARROW: case IDK_CTL_RIGHT_ARROW: /* right one column */
+				case IDK_RIGHT_ARROW: case IDK_CTL_RIGHT_ARROW: // right one column 
 					if (in_scrolling_mode && strchr(infbuf, '\021') != 0)
 					{
 						left_column++;
 						rewrite_infbuf = 1;
 					}
 					break;
-				case IDK_PAGE_DOWN: case IDK_CTL_PAGE_DOWN: /* down 17 lines */
+				case IDK_PAGE_DOWN: case IDK_CTL_PAGE_DOWN: // down 17 lines 
 					if (in_scrolling_mode && top_line < lines_in_entry - 17)
 					{
 						top_line += 17;
@@ -2833,7 +2833,7 @@ static int check_gfe_key(int curkey, int choice)
 						rewrite_infbuf = 1;
 					}
 					break;
-				case IDK_PAGE_UP: case IDK_CTL_PAGE_UP: /* up 17 lines */
+				case IDK_PAGE_UP: case IDK_CTL_PAGE_UP: // up 17 lines 
 					if (in_scrolling_mode && top_line > 0)
 					{
 						top_line -= 17;
@@ -2844,7 +2844,7 @@ static int check_gfe_key(int curkey, int choice)
 						rewrite_infbuf = 1;
 					}
 					break;
-				case IDK_END: case IDK_CTL_END:       /* to end of entry */
+				case IDK_END: case IDK_CTL_END:       // to end of entry 
 					if (in_scrolling_mode)
 					{
 						top_line = lines_in_entry - 17;
@@ -2852,7 +2852,7 @@ static int check_gfe_key(int curkey, int choice)
 						rewrite_infbuf = 1;
 					}
 					break;
-				case IDK_HOME: case IDK_CTL_HOME:     /* to beginning of entry */
+				case IDK_HOME: case IDK_CTL_HOME:     // to beginning of entry 
 					if (in_scrolling_mode)
 					{
 						top_line = 0;
@@ -2866,7 +2866,7 @@ static int check_gfe_key(int curkey, int choice)
 			}
 			else
 			{
-				done = 1;  /* a key other than scrolling key was pressed */
+				done = 1;  // a key other than scrolling key was pressed 
 			}
 		}
 		g_text_cbase = 0;
@@ -2889,7 +2889,7 @@ static void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int
 	int c = 0;
 	int tabpos = 7 - (startcol % 8);
 
-	if (maxlines <= 0)  /* no lines to get! */
+	if (maxlines <= 0)  // no lines to get! 
 	{
 		*buf = (char) 0;
 		return;
@@ -2904,23 +2904,23 @@ static void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int
 			{
 				comment = 1;
 			}
-			if (c == '}' && !comment)  /* end of entry before start line */
+			if (c == '}' && !comment)  // end of entry before start line 
 			{
-				break;                 /* this should never happen       */
+				break;                 // this should never happen       
 			}
 		}
 		if (c == '\n')
 		{
 			comment = 0;
 		}
-		else  /* reached end of file or end of entry */
+		else  // reached end of file or end of entry 
 		{
 			*buf = (char) 0;
 			return;
 		}
 	}
 
-		/* write maxlines of entry */
+		// write maxlines of entry 
 	while (maxlines-- > 0)
 	{
 		comment = 0;
@@ -2928,7 +2928,7 @@ static void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int
 		i = 0;
 		c = 0;
 
-		/* skip line up to startcol */
+		// skip line up to startcol 
 		while (i++ < startcol && (c = entfile.get()) != EOF && c != '\032')
 		{
 			if (c == ';')
@@ -2955,17 +2955,17 @@ static void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int
 				break;
 			}
 		}
-		if (c == EOF || c == '\032')  /* unexpected end of file */
+		if (c == EOF || c == '\032')  // unexpected end of file 
 		{
 			*buf = (char) 0;
 			return;
 		}
-		if (c == '\n')       /* line is already completed */
+		if (c == '\n')       // line is already completed 
 		{
 			continue;
 		}
 
-		if (i > startcol)  /* can happen because of <tab> character */
+		if (i > startcol)  // can happen because of <tab> character 
 		{
 			while (i-- > startcol)
 			{
@@ -2989,7 +2989,7 @@ static void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int
 			{
 				if (c == '\t')
 				{
-					while ((linelen % 8) != tabpos && linelen < 75)  /* 76 wide max */
+					while ((linelen % 8) != tabpos && linelen < 75)  // 76 wide max 
 					{
 						*(buf++) = ' ';
 						++linelen;
@@ -3019,13 +3019,13 @@ static void load_entry_text(std::ifstream &entfile, char *buf, int maxlines, int
 				}
 			}
 		}
-		if (c == EOF || c == '\032')  /* unexpected end of file */
+		if (c == EOF || c == '\032')  // unexpected end of file 
 		{
 			*buf = (char) 0;
 			return;
 		}
 	}
-	if (*(buf-1) == '\n') /* specified that buf will not end with a '\n' */
+	if (*(buf-1) == '\n') // specified that buf will not end with a '\n' 
 	{
 		buf--;
 	}
@@ -3058,7 +3058,7 @@ static void format_parmfile_line(int choice, char *buf)
 	strcpy(buf, str(boost::format("%-20s%-56s") % s_get_file_entry_choices[choice]->name % line).c_str());
 }
 
-/* --------------------------------------------------------------------- */
+// --------------------------------------------------------------------- 
 
 static int get_fractal_3d_parameters_aux()
 {
@@ -3103,13 +3103,13 @@ static int get_fractal_3d_parameters_aux()
 	return 0;
 }
 
-int get_fractal_3d_parameters() /* prompt for 3D fractal parameters */
+int get_fractal_3d_parameters() // prompt for 3D fractal parameters 
 {
 	ScreenStacker stacker;
 	return get_fractal_3d_parameters_aux();
 }
 
-int get_3d_parameters()     /* prompt for 3D parameters */
+int get_3d_parameters()     // prompt for 3D parameters 
 {
 restart_1:
 	if (g_targa_output && g_overlay_3d)
@@ -3160,7 +3160,7 @@ restart_1:
 	g_targa_output = (dialog.values(k++).uval.ch.val != 0);
 	g_grayscale_depth  = (dialog.values(k++).uval.ch.val != 0);
 
-	/* check ranges */
+	// check ranges 
 	if (g_3d_state.preview_factor() < 2)
 	{
 		g_3d_state.set_preview_factor(2);
@@ -3338,7 +3338,7 @@ restart_3:
 	return 0;
 }
 
-/* --------------------------------------------------------------------- */
+// --------------------------------------------------------------------- 
 static int get_light_params()
 {
 	UIChoices dialog(FIHELP_3D_LIGHT_SOURCE_PARAMETERS, "Light Source Parameters", 0);
@@ -3405,7 +3405,7 @@ static int get_light_params()
 	return 0;
 }
 
-/* --------------------------------------------------------------------- */
+// --------------------------------------------------------------------- 
 
 
 static bool check_mapfile()
@@ -3449,10 +3449,10 @@ static bool check_mapfile()
 		}
 
 		// TODO: replace this with check for valid map file in temp1
-		g_.OldDAC() = g_.DAC(); /* save the DAC */
+		g_.OldDAC() = g_.DAC(); // save the DAC 
 		bool status = validate_luts(temp1);
-		g_.DAC() = g_.OldDAC(); /* restore the DAC */
-		if (status)  /* Oops, somethings wrong */
+		g_.DAC() = g_.OldDAC(); // restore the DAC 
+		if (status)  // Oops, somethings wrong 
 		{
 			askflag = true;
 			continue;
@@ -3466,7 +3466,7 @@ static bool check_mapfile()
 
 static int get_funny_glasses_params()
 {
-	/* defaults */
+	// defaults 
 	if (g_3d_state.z_viewer() == 0)
 	{
 		g_3d_state.set_z_viewer(150);

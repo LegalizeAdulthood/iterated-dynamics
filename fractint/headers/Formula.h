@@ -6,7 +6,7 @@
 
 enum
 {
-	MAX_JUMPS = 200  /* size of JUMP_CONTROL array */
+	MAX_JUMPS = 200  // size of JUMP_CONTROL array 
 };
 
 struct error_data
@@ -62,14 +62,14 @@ enum VariableNames
 	VARIABLE_P5
 };
 
-/* function, load, store pointers */
+// function, load, store pointers 
 struct function_load_store 
 { 
 	void (*function)();
 	union Arg *operand;
 };
 
-/* token_type definitions */
+// token_type definitions 
 enum FormulaTokenType
 {
 	TOKENTYPE_ERROR = 0,
@@ -220,8 +220,8 @@ private:
 	int m_initial_load_pointer;
 	int m_initial_store_pointer;
 	int m_initial_op_pointer;
-	std::string m_filename;					/* file to find (type=)formulas in */
-	std::string m_formula_name;				/* Name of the Formula (if not null) */
+	std::string m_filename;					// file to find (type=)formulas in 
+	std::string m_formula_name;				// Name of the Formula (if not null) 
 
 	bool formula_defined() const
 	{

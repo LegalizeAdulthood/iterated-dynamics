@@ -59,14 +59,14 @@ enum
 {
 	MAX_OPS = 250,
 	MAX_ARGS = 100,
-	MAX_BOXX = 8192  /* max size of g_box_x array */
+	MAX_BOXX = 8192  // max size of g_box_x array 
 };
 
 static const int MAX_TOKEN_LENGTH = 32;
 static const int CTRL_Z = 26;
 static const int BITS_PER_BYTE = 8;
 
-/* token IDs */
+// token IDs 
 enum TokenIdType
 {
 	TOKENID_ERROR_END_OF_FILE = 1,
@@ -379,12 +379,12 @@ long Formula::get_file_entry(char *wildcard)
 						case '8':\
 						case '9'
 
-/* CAE fp added MAX_STORES and LOADS */
-/* MAX_STORES must be even to make Unix alignment work */
-/* TW made dependent on m_formula_max_ops */
+// CAE fp added MAX_STORES and LOADS 
+// MAX_STORES must be even to make Unix alignment work 
+// TW made dependent on m_formula_max_ops 
 
-#define MAX_STORES ((m_formula_max_ops/4)*2)  /* at most only half the ops can be stores */
-#define MAX_LOADS (unsigned(m_formula_max_ops*.8))  /* and 80% can be loads */
+#define MAX_STORES ((m_formula_max_ops/4)*2)  // at most only half the ops can be stores 
+#define MAX_LOADS (unsigned(m_formula_max_ops*.8))  // and 80% can be loads 
 
 static PEND_OP s_ops[2300];
 
@@ -530,7 +530,7 @@ static int int_strlen(const char *text)
 	get MP math and Integer math */
 
 #if !defined(XFRACT)
-static void lStkFunct(void (*function)())   /* call lStk via dStk */
+static void lStkFunct(void (*function)())   // call lStk via dStk 
 {
 	/*
 		intermediate variable needed for safety because of
@@ -608,7 +608,7 @@ void Random::set_random_function()
 	srand(Seed);
 	m_set_random = true;
 
-	/* Clear out the seed */
+	// Clear out the seed 
 	new_random_number();
 	new_random_number();
 	new_random_number();
@@ -618,7 +618,7 @@ void Random::seed()
 {
 	time_t ltime;
 
-	/* Use the current time to randomize the random number sequence. */
+	// Use the current time to randomize the random number sequence. 
 	time(&ltime);
 	srand(unsigned(ltime));
 
@@ -730,7 +730,7 @@ void dStkSqr0()
 
 void Formula::StackSqr0()
 {
-	m_variables[VARIABLE_LAST_SQR].argument.d.y = g_argument1->d.y*g_argument1->d.y; /* use LastSqr as temp storage */
+	m_variables[VARIABLE_LAST_SQR].argument.d.y = g_argument1->d.y*g_argument1->d.y; // use LastSqr as temp storage 
 	g_argument1->d.y = g_argument1->d.x*g_argument1->d.y*2.0;
 	g_argument1->d.x = g_argument1->d.x*g_argument1->d.x - m_variables[VARIABLE_LAST_SQR].argument.d.y;
 }
@@ -921,7 +921,7 @@ void dStkRound()
 #if !defined(XFRACT)
 void lStkRound()
 {
-	/* Add .5 then truncate */
+	// Add .5 then truncate 
 	g_argument1->l.x += (1L << g_bit_shift_minus_1);
 	g_argument1->l.y += (1L << g_bit_shift_minus_1);
 	lStkFloor();
@@ -1360,7 +1360,7 @@ void lStkRecip()
 }
 #endif
 
-void StkIdent()  /* do nothing - the function Z */
+void StkIdent()  // do nothing - the function Z 
 {
 }
 
@@ -1424,7 +1424,7 @@ void lStkCos()
 
 void (*StkCos)() = dStkCos;
 
-/* Bogus version of cos, to replicate bug which was in regular cos till v16: */
+// Bogus version of cos, to replicate bug which was in regular cos till v16: 
 
 void dStkCosXX()
 {
@@ -1922,10 +1922,10 @@ static int count_white_space(const char *text)
 	return n;
 }
 
-/* detect if constant is part of a (a, b) construct */
+// detect if constant is part of a (a, b) construct 
 static bool is_constant_pair(const char *text)
 {
-	/* skip past first number */
+	// skip past first number 
 	int n;
 	for (n = 0; isdigit(text[n]) || text[n] == '.'; n++)
 	{
@@ -1947,7 +1947,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 {
 	ComplexD z;
 	unsigned j;
-	/* next line enforces variable vs constant naming convention */
+	// next line enforces variable vs constant naming convention 
 	for (int n = 0; n < m_parser_vsp; n++)
 	{
 		if (m_variables[n].name_length == length)
@@ -1986,7 +1986,7 @@ ConstArg *Formula::is_constant(const char *text, int length)
 	m_variables[m_parser_vsp].argument.d.x = 0.0;
 	m_variables[m_parser_vsp].argument.d.y = 0.0;
 
-	/* m_variables[m_parser_vsp].a should already be zeroed out */
+	// m_variables[m_parser_vsp].a should already be zeroed out 
 	switch (m_math_type)
 	{
 #if !defined(XFRACT)
@@ -2166,23 +2166,23 @@ struct operator_list_item
 
 static const operator_list_item s_operator_list[] =
 {
-	{ ",",	OPERATOR_COMMA },	/*  0 */
-	{ "!=",	OPERATOR_NOT_EQUAL },	/*  1 */
-	{ "=",	OPERATOR_ASSIGNMENT },	/*  2 */
-	{ "==",	OPERATOR_EQUAL },	/*  3 */
-	{ "<",	OPERATOR_LESS },	/*  4 */
-	{ "<=",	OPERATOR_LESS_EQUAL },	/*  5 */
-	{ ">",	OPERATOR_GREATER },	/*  6 */
-	{ ">=",	OPERATOR_GREATER_EQUAL },	/*  7 */
-	{ "|",	OPERATOR_MODULUS },	/*  8 */
-	{ "||",	OPERATOR_OR },	/*  9 */
-	{ "&&",	OPERATOR_AND },	/* 10 */
-	{ ":",	OPERATOR_COLON },	/* 11 */
-	{ "+",	OPERATOR_PLUS },	/* 12 */
-	{ "-",	OPERATOR_MINUS },	/* 13 */
-	{ "*",	OPERATOR_MULTIPLY },	/* 14 */
-	{ "/",	OPERATOR_DIVIDE },	/* 15 */
-	{ "^",	OPERATOR_RAISE_POWER },	/* 16 */
+	{ ",",	OPERATOR_COMMA },	// 0 
+	{ "!=",	OPERATOR_NOT_EQUAL },	// 1 
+	{ "=",	OPERATOR_ASSIGNMENT },	// 2 
+	{ "==",	OPERATOR_EQUAL },	// 3 
+	{ "<",	OPERATOR_LESS },	// 4 
+	{ "<=",	OPERATOR_LESS_EQUAL },	// 5 
+	{ ">",	OPERATOR_GREATER },	// 6 
+	{ ">=",	OPERATOR_GREATER_EQUAL },	// 7 
+	{ "|",	OPERATOR_MODULUS },	// 8 
+	{ "||",	OPERATOR_OR },	// 9 
+	{ "&&",	OPERATOR_AND },	// 10 
+	{ ":",	OPERATOR_COLON },	// 11 
+	{ "+",	OPERATOR_PLUS },	// 12 
+	{ "-",	OPERATOR_MINUS },	// 13 
+	{ "*",	OPERATOR_MULTIPLY },	// 14 
+	{ "/",	OPERATOR_DIVIDE },	// 15 
+	{ "^",	OPERATOR_RAISE_POWER },	// 16 
 };
 
 static void not_a_function()
@@ -2193,7 +2193,7 @@ static void function_not_found()
 {
 }
 
-/* determine if text names a function and if so which one */
+// determine if text names a function and if so which one 
 static int which_function(const char *text, int length)
 {
 	if ((length != 3) || strnicmp(text, "fn", 2))
@@ -2221,7 +2221,7 @@ t_function *Formula::is_function(const char *text, int length)
 			{
 				if (!strnicmp(s_function_list[i].name, text, length))
 				{
-					/* count function variables */
+					// count function variables 
 					int function_number = which_function(text, length);
 					if (function_number != 0)
 					{
@@ -2730,7 +2730,7 @@ int Formula::orbit()
 	m_store_ptr = m_initial_store_pointer;
 	m_op_index = m_initial_op_pointer;
 	m_jump_index = m_initial_jump_index;
-	/* Set the random number */
+	// Set the random number 
 	if (s_random.random() || s_random.randomized())
 	{
 		switch (m_math_type)
@@ -2814,7 +2814,7 @@ int Formula::per_pixel()
 #endif
 	}
 
-	/* TW started additions for inversion support here 4/17/94 */
+	// TW started additions for inversion support here 4/17/94 
 	if (g_invert)
 	{
 		invert_z(&g_old_z);
@@ -2826,13 +2826,13 @@ int Formula::per_pixel()
 			break;
 #if !defined(XFRACT)
 		case FIXED_POINT_MATH:
-			/* watch out for overflow */
+			// watch out for overflow 
 			if (sqr(g_old_z.x) + sqr(g_old_z.y) >= 127)
 			{
-				g_old_z.x = 8;  /* value to bail out in one iteration */
+				g_old_z.x = 8;  // value to bail out in one iteration 
 				g_old_z.y = 8;
 			}
-			/* convert to fudged longs */
+			// convert to fudged longs 
 			m_variables[VARIABLE_PIXEL].argument.l.x = fixpoint_from_double(g_old_z.x);
 			m_variables[VARIABLE_PIXEL].argument.l.y = fixpoint_from_double(g_old_z.y);
 			break;
@@ -2841,7 +2841,7 @@ int Formula::per_pixel()
 	}
 	else
 	{
-		/* TW end of inversion support changes here 4/17/94 */
+		// TW end of inversion support changes here 4/17/94 
 		switch (m_math_type)
 		{
 		case FLOATING_POINT_MATH:
@@ -2869,7 +2869,7 @@ int Formula::per_pixel()
 	m_initial_load_pointer = m_load_ptr;
 	m_initial_store_pointer = m_store_ptr;
 	m_initial_op_pointer = m_op_index;
-	/* Set old variable for orbits */
+	// Set old variable for orbits 
 	switch (m_math_type)
 	{
 	case FLOATING_POINT_MATH:
@@ -2900,11 +2900,11 @@ int Formula::fill_if_group(int endif_index, JUMP_PTRS *jump_data)
 			return i;
 
 		case JUMPTYPE_ELSEIF:    /*elseif* (2 jumps, the else and the if*/
-			/* first, the "if" part */
+			// first, the "if" part 
 			m_jump_control[i].ptrs = jump_data[last_jump_processed];
 			m_jump_control[i].DestJumpIndex = last_jump_processed + 1;
 
-			/* then, the else part */
+			// then, the else part 
 			i--; /*fall through to "else" is intentional*/
 
 		case JUMPTYPE_ELSE:
@@ -2927,8 +2927,8 @@ int Formula::fill_if_group(int endif_index, JUMP_PTRS *jump_data)
 
 bool Formula::fill_jump_struct()
 {
-	/* Completes all entries in jump structure. Returns 1 on error) */
-	/* On entry, m_jump_index is the number of jump functions in the formula*/
+	// Completes all entries in jump structure. Returns 1 on error) 
+	// On entry, m_jump_index is the number of jump functions in the formula
 	int i = 0;
 	int load_count = 0;
 	int store_count = 0;
@@ -2980,7 +2980,7 @@ bool Formula::fill_jump_struct()
 		}
 	}
 
-	/* Following for safety only; all should always be false */
+	// Following for safety only; all should always be false 
 	if (i != m_jump_index || m_jump_control[i - 1].type != JUMPTYPE_ENDIF
 		|| m_jump_control[0].type != JUMPTYPE_IF)
 	{
@@ -3036,7 +3036,7 @@ static int formula_get_char(std::ifstream &openfile)
 	return tolower(c);
 }
 
-/* This function also gets flow control info */
+// This function also gets flow control info 
 
 static bool get_function_information(FormulaToken *token)
 {
@@ -3087,10 +3087,10 @@ static void get_variable_information(FormulaToken *token)
 	token->id = 0;
 }
 
-/* fills in token structure where numeric constant is indicated */
+// fills in token structure where numeric constant is indicated 
 /* Note - this function will be called twice to fill in the components
 		of a complex constant. See is_complex_constant() below. */
-/* returns true on success, false on TOKENTYPE_NONE */
+// returns true on success, false on TOKENTYPE_NONE 
 static bool formula_get_constant(std::ifstream &openfile, FormulaToken *token)
 {
 	int i = 1;
@@ -3178,7 +3178,7 @@ static bool formula_get_constant(std::ifstream &openfile, FormulaToken *token)
 			token->SetError(TOKENID_ERROR_TOKEN_TOO_LONG);
 			return false;
 		}
-	}    /* end of while loop. Now fill in the value */
+	}    // end of while loop. Now fill in the value 
 	token->SetValue(atof(token->text));
 	token->id = 0;
 	return true;
@@ -3210,8 +3210,8 @@ static void debug_dump(std::ofstream &stream, const boost::format &message)
 }
 static void is_complex_constant(std::ifstream &openfile, FormulaToken *token)
 {
-	/* should test to make sure token->token_str[0] == '(' */
-	token->text[1] = 0;  /* so we can concatenate later */
+	// should test to make sure token->token_str[0] == '(' 
+	token->text[1] = 0;  // so we can concatenate later 
 
 	long filepos = openfile.tellg();
 	std::ofstream debug_token;
@@ -3266,7 +3266,7 @@ static void is_complex_constant(std::ifstream &openfile, FormulaToken *token)
 				getting_real = false;
 				sign_value = 1;
 			}
-			else if (!getting_real && c == ')')  /* we have the complex part */
+			else if (!getting_real && c == ')')  // we have the complex part 
 			{
 				append_value(token, temp_tok, sign_value, ")");
 				token->value.y = temp_tok.value.x*sign_value;
@@ -3433,7 +3433,7 @@ static bool formula_get_token(std::ifstream &openfile, FormulaToken *this_token)
 		this_token->text[0] = char(c);
 		return formula_get_alpha(openfile, this_token);
 	CASE_TERMINATOR:
-		this_token->type = TOKENTYPE_OPERATOR; /* this may be changed below */
+		this_token->type = TOKENTYPE_OPERATOR; // this may be changed below 
 		this_token->text[0] = char(c);
 		{
 			std::ifstream::pos_type filepos = openfile.tellg();
@@ -3553,7 +3553,7 @@ void Formula::get_parameter(const char *name)
 
 	if (!formula_defined())
 	{
-		return;  /*  and don't reset the pointers  */
+		return;  // and don't reset the pointers  
 	}
 
 	std::ifstream entry_file;
@@ -3643,7 +3643,7 @@ void Formula::get_parameter(const char *name)
 bool Formula::check_name_and_symmetry(std::ifstream &open_file, bool report_bad_symmetry)
 {
 	long filepos = open_file.tellg();
-	/* first, test name */
+	// first, test name 
 	bool at_end_of_name = false;
 	int i = 0;
 	int c;
@@ -3694,7 +3694,7 @@ bool Formula::check_name_and_symmetry(std::ifstream &open_file, bool report_bad_
 		stop_message(STOPMSG_FIXED_FONT, msgbuf);
 		return false;
 	}
-	/* get symmetry */
+	// get symmetry 
 	g_symmetry = SYMMETRY_NONE;
 	if (c == '(')
 	{
@@ -3842,7 +3842,7 @@ const char *Formula::PrepareFormula(std::ifstream &file, bool report_bad_symmetr
 			}
 		}
 	}
-	m_prepare_formula_text[0] = 0; /* To permit concantenation later */
+	m_prepare_formula_text[0] = 0; // To permit concantenation later 
 
 	/*skip opening end-of-lines */
 	bool done = false;
@@ -3896,24 +3896,24 @@ const char *Formula::PrepareFormula(std::ifstream &file, bool report_bad_symmetr
 
 int bad_formula()
 {
-	/*  this is called when a formula is bad, instead of calling  */
-	/*     the normal functions which will produce undefined results  */
+	// this is called when a formula is bad, instead of calling  
+	// the normal functions which will produce undefined results  
 	return 1;
 }
 
 bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 {
-	/*  first set the pointers so they point to a fn which always returns 1  */
+	// first set the pointers so they point to a fn which always returns 1  
 	// TODO: eliminate writing to g_current_fractal_specific
 	g_current_fractal_specific->per_pixel = bad_formula;
 	g_current_fractal_specific->orbitcalc = bad_formula;
 
 	if (!formula_defined())
 	{
-		return true;  /*  and don't reset the pointers  */
+		return true;  // and don't reset the pointers  
 	}
 
-	/* add search for FRM files in directory */
+	// add search for FRM files in directory 
 	std::ifstream entry_file;
 	if (!find_file_item(m_filename, name, entry_file, ITEMTYPE_FORMULA))
 	{
@@ -3926,14 +3926,14 @@ bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 
 	if (!m_formula_text)
 	{
-		return true;   /* error in making string*/
+		return true;   // error in making string
 	}
 
-	/*  No errors while making string */
-	allocate();  /*  ParseStr() will test if this alloc worked  */
+	// No errors while making string 
+	allocate();  // ParseStr() will test if this alloc worked  
 	if (parse_string(m_formula_text, 1))
 	{
-		return true;   /*  parse failed, don't change fn pointers  */
+		return true;   // parse failed, don't change fn pointers  
 	}
 
 	if (m_uses_jump && fill_jump_struct())
@@ -3942,7 +3942,7 @@ bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 		return true;
 	}
 
-	/* all parses succeeded so set the pointers back to good functions*/
+	// all parses succeeded so set the pointers back to good functions
 	// TODO: eliminate writing to g_current_fractal_specific
 	FractalTypeSpecificData *target = g_current_fractal_specific;
 	target->per_pixel = form_per_pixel;
@@ -3954,26 +3954,26 @@ bool Formula::run_formula(const char *name, bool report_bad_symmetry)
 bool Formula::setup_fp()
 {
 	bool result;
-	/* TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) */
+	// TODO: when parsera.c contains assembly equivalents, remove !defined(_WIN32) 
 #if !defined(XFRACT) && !defined(_WIN32)
 	MathType = D_MATH;
-	/* CAE changed below for fp */
-	result = !run_formula(g_formula_state.get_formula(), false); /* run_formula() returns 1 for failure */
+	// CAE changed below for fp 
+	result = !run_formula(g_formula_state.get_formula(), false); // run_formula() returns 1 for failure 
 	if (result && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
-		convert_stack(); /* run fast assembler code in parsera.asm */
+		convert_stack(); // run fast assembler code in parsera.asm 
 		return true;
 	}
 	return result;
 #else
 	m_math_type = FLOATING_POINT_MATH;
-	result = !run_formula(g_formula_state.get_formula(), false); /* run_formula() returns true for failure */
+	result = !run_formula(g_formula_state.get_formula(), false); // run_formula() returns true for failure 
 #if 0
 	if (result && !(g_orbit_save & ORBITSAVE_SOUND) && !s_random.randomized()
 		&& (g_debug_mode != DEBUGMODE_NO_ASM_MANDEL))
 	{
-		convert_stack(); /* run fast assembler code in parsera.asm */
+		convert_stack(); // run fast assembler code in parsera.asm 
 		return true;
 	}
 #endif
@@ -3997,7 +3997,7 @@ bool Formula::setup_int()
 void Formula::init_misc()
 {
 	g_argument1 = &m_arg1;
-	g_argument2 = &m_arg2; /* needed by all the ?Stk* functions */
+	g_argument2 = &m_arg2; // needed by all the ?Stk* functions 
 	s_fudge = double(1L << g_bit_shift);
 	g_fudge_limit = double_from_fixpoint(0x7fffffffL);
 	s_shift_back = 32 - g_bit_shift;
@@ -4029,7 +4029,7 @@ void Formula::allocate()
 		free_work_area();
 		if (pass == 0)
 		{
-			m_formula_max_ops = 2300; /* this value uses up about 64K memory */
+			m_formula_max_ops = 2300; // this value uses up about 64K memory 
 			m_formula_max_args = (unsigned) (m_formula_max_ops/2.5);
 		}
 
@@ -4043,7 +4043,7 @@ void Formula::allocate()
 		{
 			if (!parse_string(m_formula_text, pass))
 			{
-				/* per Chuck Ebbert, fudge these up a little */
+				// per Chuck Ebbert, fudge these up a little 
 				m_formula_max_ops = m_posp + 4;
 				m_formula_max_args = m_parser_vsp + 4;
 			}
@@ -4431,7 +4431,7 @@ bool Formula::prescan(std::ifstream &open_file)
 			}
 			expecting_argument = false;
 			break;
-		case TOKENTYPE_USER_VARIABLE: /* i.e. c, iter, etc. */
+		case TOKENTYPE_USER_VARIABLE: // i.e. c, iter, etc. 
 			m_number_of_ops++;
 			m_number_of_loads++;
 			new_statement = false;
@@ -4451,7 +4451,7 @@ bool Formula::prescan(std::ifstream &open_file)
 			//	return false;
 			//}
 			break;
-		case TOKENTYPE_PREDEFINED_VARIABLE: /* i.e. z, pixel, whitesq, etc. */
+		case TOKENTYPE_PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc. 
 			m_number_of_ops++;
 			m_number_of_loads++;
 			new_statement = false;
@@ -4461,7 +4461,7 @@ bool Formula::prescan(std::ifstream &open_file)
 			}
 			expecting_argument = false;
 			break;
-		case TOKENTYPE_REAL_CONSTANT: /* i.e. 4, (4,0), etc.) */
+		case TOKENTYPE_REAL_CONSTANT: // i.e. 4, (4,0), etc.) 
 			assignment_ok = false;
 			m_number_of_ops++;
 			m_number_of_loads++;
@@ -4482,7 +4482,7 @@ bool Formula::prescan(std::ifstream &open_file)
 			//	return false;
 			//}
 			break;
-		case TOKENTYPE_COMPLEX_CONSTANT: /* i.e. (1,2) etc. */
+		case TOKENTYPE_COMPLEX_CONSTANT: // i.e. (1,2) etc. 
 			assignment_ok = false;
 			m_number_of_ops++;
 			m_number_of_loads++;
@@ -4541,7 +4541,7 @@ bool Formula::prescan(std::ifstream &open_file)
 					break;
 				case JUMPTYPE_ELSEIF:
 					m_number_of_ops += 3; /*else + two clear statements*/
-					m_number_of_jumps++;  /* this involves two jumps */
+					m_number_of_jumps++;  // this involves two jumps 
 					if (else_has_been_used & 1)
 					{
 						record_error(PE_ENDIF_REQUIRED_AFTER_ELSE);
@@ -4582,7 +4582,7 @@ bool Formula::prescan(std::ifstream &open_file)
 			{
 			case OPERATOR_COMMA:
 			case OPERATOR_COLON:
-				m_number_of_ops++; /* ParseStr inserts a dummy op*/
+				m_number_of_ops++; // ParseStr inserts a dummy op
 				if (m_parenthesis_count)
 				{
 					record_error(PE_NEED_MORE_CLOSE_PARENS);
@@ -4767,7 +4767,7 @@ bool Formula::prescan(std::ifstream &open_file)
 			}
 			break;
 		case TOKENTYPE_END_OF_FORMULA:
-			m_number_of_ops += 3; /* Just need one, but a couple of extra just for the heck of it */
+			m_number_of_ops += 3; // Just need one, but a couple of extra just for the heck of it 
 			if (m_parenthesis_count)
 			{
 				record_error(PE_NEED_MORE_CLOSE_PARENS);

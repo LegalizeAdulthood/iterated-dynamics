@@ -18,18 +18,18 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb);
 static void subdivide(int x1, int y1, int x2, int y2);
 static int new_subdivision(int x1, int y1, int x2, int y2, int recur);
 
-static int s_iparm_x;      /* s_iparm_x = g_parameter.x*8 */
-static int s_shift_value;  /* shift based on #colors */
+static int s_iparm_x;      // s_iparm_x = g_parameter.x*8 
+static int s_shift_value;  // shift based on #colors 
 static int s_recur1 = 1;
 static int s_plasma_colors;
 static int s_recur_level = 0;
-static int s_plasma_check;                        /* to limit kbd checking */
+static int s_plasma_check;                        // to limit kbd checking 
 static U16 (*s_get_pixels)(int, int)  = (U16(*)(int, int))get_color;
 static U16 s_max_plasma;
 
-/***************** standalone engine for "plasma" ********************/
+// standalone engine for "plasma"
 
-/* returns a random 16 bit value that is never 0 */
+// returns a random 16 bit value that is never 0 
 static U16 rand16()
 {
 	U16 value;
@@ -49,17 +49,17 @@ static void put_potential(int x, int y, U16 color)
 	{
 		color = 1;
 	}
-	g_plot_color_put_color(x, y, color >> 8 ? color >> 8 : 1);  /* don't write 0 */
-	/* we don't write this if driver_diskp() because the above g_plot_color_put_color
-			was already a "disk_write" in that case */
+	g_plot_color_put_color(x, y, color >> 8 ? color >> 8 : 1);  // don't write 0 
+	// we don't write this if driver_diskp() because the above g_plot_color_put_color
+	// was already a "disk_write" in that case
 	if (!driver_diskp())
 	{
-		disk_write(x + g_screen_x_offset, y + g_screen_y_offset, color >> 8);    /* upper 8 bits */
+		disk_write(x + g_screen_x_offset, y + g_screen_y_offset, color >> 8);    // upper 8 bits 
 	}
-	disk_write(x + g_screen_x_offset, y + g_screen_height + g_screen_y_offset, color&255); /* lower 8 bits */
+	disk_write(x + g_screen_x_offset, y + g_screen_height + g_screen_y_offset, color&255); // lower 8 bits 
 }
 
-/* fixes border */
+// fixes border 
 static void put_potential_border(int x, int y, U16 color)
 {
 	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
@@ -69,7 +69,7 @@ static void put_potential_border(int x, int y, U16 color)
 	put_potential(x, y, color);
 }
 
-/* fixes border */
+// fixes border 
 static void put_color_border(int x, int y, int color)
 {
 	if ((x == 0) || (y == 0) || (x == g_x_dots-1) || (y == g_y_dots-1))
@@ -94,7 +94,7 @@ static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
 	S32 pseudorandom;
 	pseudorandom = ((S32)s_iparm_x)*((rand15()-16383));
-	/* pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); */
+	// pseudorandom = pseudorandom*(abs(xa-xb) + abs(ya-yb)); 
 	pseudorandom *= s_recur1;
 	pseudorandom >>= s_shift_value;
 	pseudorandom = (((S32) s_get_pixels(xa, ya) + (S32) s_get_pixels(xb, yb) + 1)/2) + pseudorandom;
@@ -130,9 +130,9 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 
 	struct sub
 	{
-		BYTE t; /* top of stack */
-		int v[16]; /* subdivided value */
-		BYTE r[16];  /* recursion level */
+		BYTE t; // top of stack 
+		int v[16]; // subdivided value 
+		BYTE r[16];  // recursion level 
 	};
 
 	static sub subx, suby;
@@ -161,13 +161,13 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 		}
 		while (suby.r[suby.t-1] < (BYTE)recur)
 		{
-			/*     1.  Create new entry at top of the stack  */
-			/*     2.  Copy old top value to new top value.  */
-			/*            This is largest y value.           */
-			/*     3.  Smallest y is now old mid point       */
-			/*     4.  Set new mid point recursion level     */
-			/*     5.  New mid point value is average        */
-			/*            of largest and smallest            */
+			// 1.  Create new entry at top of the stack  
+			// 2.  Copy old top value to new top value.  
+			// This is largest y value.           
+			// 3.  Smallest y is now old mid point       
+			// 4.  Set new mid point recursion level     
+			// 5.  New mid point value is average        
+			// of largest and smallest            
 			suby.t++;
 			ny1  = suby.v[suby.t] = suby.v[suby.t-1];
 			ny   = suby.v[suby.t-2];
@@ -189,7 +189,7 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 		{
 			while (subx.r[subx.t-1] < (BYTE)recur)
 			{
-				subx.t++; /* move the top ofthe stack up 1 */
+				subx.t++; // move the top ofthe stack up 1 
 				nx1  = subx.v[subx.t] = subx.v[subx.t-1];
 				nx   = subx.v[subx.t-2];
 				subx.r[subx.t] = subx.r[subx.t-1];
@@ -323,8 +323,8 @@ int plasma()
 	{
 		s_iparm_x = 800;
 	}
-	g_parameters[0] = double(s_iparm_x)/8.0;  /* let user know what was used */
-	if (g_parameters[1] < 0) /* limit parameter values  */
+	g_parameters[0] = double(s_iparm_x)/8.0;  // let user know what was used 
+	if (g_parameters[1] < 0) // limit parameter values  
 	{
 		g_parameters[1] = 0;
 	}
@@ -332,7 +332,7 @@ int plasma()
 	{
 		g_parameters[1] = 1;
 	}
-	if (g_parameters[2] < 0) /* limit parameter values  */
+	if (g_parameters[2] < 0) // limit parameter values  
 	{
 		g_parameters[2] = 0;
 	}
@@ -340,7 +340,7 @@ int plasma()
 	{
 		g_parameters[2] = 1;
 	}
-	if (g_parameters[3] < 0) /* limit parameter values  */
+	if (g_parameters[3] < 0) // limit parameter values  
 	{
 		g_parameters[3] = 0;
 	}
@@ -357,13 +357,13 @@ int plasma()
 	{
 		g_random_seed = int(g_parameters[2]);
 	}
-	s_max_plasma = U16(g_parameters[3]);  /* s_max_plasma is used as a flag for potential */
+	s_max_plasma = U16(g_parameters[3]);  // s_max_plasma is used as a flag for potential 
 
 	if (s_max_plasma != 0)
 	{
 		if (disk_start_potential() >= 0)
 		{
-			/* s_max_plasma = (U16)(1L << 16) -1; */
+			// s_max_plasma = (U16)(1L << 16) -1; 
 			s_max_plasma = 0xFFFF;
 			g_plot_color = (g_outside >= 0) ? PLOT(put_potential_border) : PLOT(put_potential);
 			s_get_pixels =  get_potential;
@@ -372,7 +372,7 @@ int plasma()
 		}
 		else
 		{
-			s_max_plasma = 0;        /* can't do potential (disk_start failed) */
+			s_max_plasma = 0;        // can't do potential (disk_start failed) 
 			g_parameters[3]   = 0;
 			g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
 			s_get_pixels  = (U16(*)(int, int))get_color;
@@ -477,7 +477,7 @@ static void set_mix(int idx, int i, const BYTE first[3], const BYTE second[3])
 
 static void set_plasma_palette()
 {
-	if (!g_.MapDAC() && !g_color_preloaded) /* map= not specified  */
+	if (!g_.MapDAC() && !g_color_preloaded) // map= not specified  
 	{
 		BYTE red[3]		= { COLOR_CHANNEL_MAX, 0, 0 };
 		BYTE green[3]	= { 0, COLOR_CHANNEL_MAX, 0 };

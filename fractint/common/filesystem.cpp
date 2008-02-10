@@ -17,11 +17,11 @@
 #include "filesystem.h"
 #include "miscres.h"
 
-struct DIR_SEARCH g_dta;          /* Allocate DTA and define structure */
+struct DIR_SEARCH g_dta;          // Allocate DTA and define structure 
 
 int merge_path_names(char *old_full_path, char *new_filename, bool copy_directory)
 {
-	/* no dot or slash so assume a file */
+	// no dot or slash so assume a file 
 	bool is_file = (strchr(new_filename, '.') == 0 && strchr(new_filename, SLASHC) == 0);
 	int is_directory = is_a_directory(new_filename);
 	if (is_directory != 0)
@@ -29,21 +29,21 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 		ensure_slash_on_directory(new_filename);
 	}
 
-	/* if drive, colon, slash, is a directory */
+	// if drive, colon, slash, is a directory 
 	if (int(strlen(new_filename)) == 3 &&
 			new_filename[1] == ':' &&
 			new_filename[2] == SLASHC)
 	{
 		is_directory = 1;
 	}
-	/* if drive, colon, with no slash, is a directory */
+	// if drive, colon, with no slash, is a directory 
 	if (int(strlen(new_filename)) == 2 && new_filename[1] == ':')
 	{
 		new_filename[2] = SLASHC;
 		new_filename[3] = 0;
 		is_directory = 1;
 	}
-	/* if dot, slash, '0', its the current directory, set up full path */
+	// if dot, slash, '0', its the current directory, set up full path 
 	if (new_filename[0] == '.' && new_filename[1] == SLASHC && new_filename[2] == 0)
 	{
 		char temp_path[FILE_MAX_PATH];
@@ -55,7 +55,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 		strcpy(new_filename, temp_path);
 		is_directory = 1;
 	}
-	/* if dot, slash, its relative to the current directory, set up full path */
+	// if dot, slash, its relative to the current directory, set up full path 
 	if (new_filename[0] == '.' && new_filename[1] == SLASHC)
 	{
 		int len;
@@ -66,7 +66,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 		temp_path[2] = 0;
 		if (strrchr(new_filename, '.') == new_filename)
 		{
-			test_dir = 1;  /* only one '.' assume its a directory */
+			test_dir = 1;  // only one '.' assume its a directory 
 		}
 		expand_dirname(new_filename, temp_path);
 		strcat(temp_path, new_filename);
@@ -74,18 +74,18 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 		if (!test_dir)
 		{
 			len = int(strlen(new_filename));
-			new_filename[len-1] = 0; /* get rid of slash added by expand_dirname */
+			new_filename[len-1] = 0; // get rid of slash added by expand_dirname 
 		}
 	}
 
-	/* check existence */
+	// check existence 
 	if (is_directory == 0 || is_file)
 	{
 		if (fr_find_first(new_filename) == 0)
 		{
-			if (g_dta.attribute & SUBDIR) /* exists and is dir */
+			if (g_dta.attribute & SUBDIR) // exists and is dir 
 			{
-				ensure_slash_on_directory(new_filename);  /* add trailing slash */
+				ensure_slash_on_directory(new_filename);  // add trailing slash 
 				is_directory = 1;
 				is_file = false;
 			}
@@ -131,7 +131,7 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 		if (len > 0)
 		{
 			char save;
-			/* strip trailing slash */
+			// strip trailing slash 
 			save = old_full_path[len-1];
 			if (save == SLASHC)
 			{
@@ -148,9 +148,9 @@ int merge_path_names(char *old_full_path, char *new_filename, bool copy_director
 	return is_directory;
 }
 
-/* copies the proposed new filename to the fullpath variable */
-/* does not copy directories for PAR files (modes 2 and 3)   */
-/* attempts to extract directory and test for existence (modes 0 and 1) */
+// copies the proposed new filename to the fullpath variable 
+// does not copy directories for PAR files (modes 2 and 3)   
+// attempts to extract directory and test for existence (modes 0 and 1) 
 int merge_path_names(char *old_full_path, char *new_filename, int mode)
 {
 	return merge_path_names(old_full_path, new_filename, mode < 2);
@@ -174,12 +174,12 @@ int merge_path_names(char *old_full_path, std::string &new_filename, int mode)
 	return result;
 }
 
-/* ensure directory names end in a slash character */
+// ensure directory names end in a slash character 
 void ensure_slash_on_directory(char *dirname)
 {
-	int length = int(strlen(dirname)); /* index of last character */
+	int length = int(strlen(dirname)); // index of last character 
 
-	/* make sure dirname ends with a slash */
+	// make sure dirname ends with a slash 
 	if (length > 0)
 	{
 		if (dirname[length-1] == SLASHC)
@@ -198,7 +198,7 @@ void ensure_slash_on_directory(std::string &dirname)
 	}
 }
 
-/* removes file in dir directory */
+// removes file in dir directory 
 int dir_remove(const std::string &dir, const std::string &filename)
 {
 	fs::path p = fs::path(dir) / filename;
@@ -210,7 +210,7 @@ int dir_remove(const fs::path &dir, const std::string &filename)
 	return fs::remove(dir / filename);
 }
 
-/* fopens file in dir directory */
+// fopens file in dir directory 
 FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 {
 	return fopen((fs::path(dir) / filename).string().c_str(), mode);
@@ -254,11 +254,11 @@ void make_path(char *template_str, const char *drive, const char *dir, const cha
 	}
 }
 
-#ifndef XFRACT  /* This routine moved to unix.c so we can use it in hc.c */
+#ifndef XFRACT  // This routine moved to unix.c so we can use it in hc.c 
 
 static void get_drive(char const *file_template, char *drive, int length, int &offset)
 {
-	/* get drive */
+	// get drive 
 	if (drive)
 	{
 		drive[0] = 0;
@@ -289,7 +289,7 @@ static void get_dir(char const *file_template, char *dir, int &offset)
 	const char *tmp = strrchr(file_template, SLASHC);
 	if (tmp)
 	{
-		tmp++;  /* first character after slash */
+		tmp++;  // first character after slash 
 		int len = int(tmp - (char *) &file_template[offset]);
 		if (len >= 0 && len < FILE_MAX_DIR)
 		{
@@ -312,11 +312,11 @@ static void get_filename_ext(char const *file_template, char *fname, char *ext, 
 	const char *tmp = strrchr(file_template, '.');
 	if (tmp < strrchr(file_template, SLASHC) || tmp < strrchr(file_template, ':'))
 	{
-		tmp = 0; /* in this case the '.' must be a directory */
+		tmp = 0; // in this case the '.' must be a directory 
 	}
 	if (tmp)
 	{
-		/* first character past "." */
+		// first character past "." 
 		int len = int(tmp - (char *)&file_template[offset]);
 		if ((len > 0) && (offset + len < length) && fname)
 		{
@@ -398,7 +398,7 @@ void split_path(const char *file_template, char *drive, std::string &dir, char *
 }
 #endif
 
-/* extract just the filename/extension portion of a path */
+// extract just the filename/extension portion of a path 
 void extract_filename(char *target, const char *source)
 {
 	strcpy(target, fs::path(source).leaf().c_str());
@@ -409,8 +409,8 @@ void extract_filename(std::string &target, const std::string &source)
 	target = fs::path(source).leaf();
 }
 
-/* tells if filename has extension */
-/* returns pointer to period or 0 */
+// tells if filename has extension 
+// returns pointer to period or 0 
 const char *has_extension(const char *source)
 {
 	char fname[FILE_MAX_FNAME];
@@ -425,7 +425,7 @@ const char *has_extension(const std::string &source)
 }
 
 #ifndef XFRACT
-/* return full pathnames */
+// return full pathnames 
 void find_path(const char *filename, char *fullpathname)
 {
 	char fname[FILE_MAX_FNAME];
@@ -441,7 +441,7 @@ void find_path(const char *filename, char *fullpathname)
 		return;
 	}
 
-	strcpy(temp_path, filename);   /* avoid side effect changes to filename */
+	strcpy(temp_path, filename);   // avoid side effect changes to filename 
 
 	if (temp_path[0] == SLASHC || (temp_path[0] && temp_path[1] == ':'))
 	{
@@ -456,15 +456,15 @@ void find_path(const char *filename, char *fullpathname)
 			make_path(temp_path, "", "", fname, ext);
 		}
 	}
-	fullpathname[0] = 0;                         /* indicate none found */
+	fullpathname[0] = 0;                         // indicate none found 
 	_searchenv(temp_path, "PATH", fullpathname);
 	if (!fullpathname[0])
 	{
 		_searchenv(temp_path, "FRACTDIR", fullpathname);
 	}
-	if (fullpathname[0] != 0)                    /* found it! */
+	if (fullpathname[0] != 0)                    // found it! 
 	{
-		if (strncmp(&fullpathname[2], SLASHSLASH, 2) == 0) /* stupid klooge! */
+		if (strncmp(&fullpathname[2], SLASHSLASH, 2) == 0) // stupid klooge! 
 		{
 			strcpy(&fullpathname[3], temp_path);
 		}
@@ -482,7 +482,7 @@ void check_write_file(std::string &name, const char *ext)
 
 void check_write_file(char *name, const char *ext)
 {
-	/* TODO: change encoder.cpp to also use this routine */
+	// TODO: change encoder.cpp to also use this routine 
 nextname:
 	char openfile[FILE_MAX_DIR];
 	strcpy(openfile, name);
@@ -493,7 +493,7 @@ nextname:
 		strcpy(name, openfile);
 		return;
 	}
-	/* file already exists */
+	// file already exists 
 	if (!g_fractal_overwrite)
 	{
 		update_save_name(name);
@@ -509,7 +509,7 @@ void update_save_name(std::string &filename)
 	filename = buffer;
 }
 
-void update_save_name(char *filename) /* go to the next file name */
+void update_save_name(char *filename) // go to the next file name 
 {
 	char drive[FILE_MAX_DRIVE];
 	char dir[FILE_MAX_DIR];
@@ -518,18 +518,18 @@ void update_save_name(char *filename) /* go to the next file name */
 
 	split_path(filename, drive, dir, fname, ext);
 
-	char *hold = fname + strlen(fname) - 1; /* start at the end */
-	while (hold >= fname && (*hold == ' ' || isdigit(*hold))) /* skip backwards */
+	char *hold = fname + strlen(fname) - 1; // start at the end 
+	while (hold >= fname && (*hold == ' ' || isdigit(*hold))) // skip backwards 
 	{
 		hold--;
 	}
-	hold++;                      /* recover first digit */
-	while (*hold == '0')         /* skip leading zeros */
+	hold++;                      // recover first digit 
+	while (*hold == '0')         // skip leading zeros 
 	{
 		hold++;
 	}
 	char *save = hold;
-	while (*save)  /* check for all nines */
+	while (*save)  // check for all nines 
 	{
 		if (*save != '9')
 		{
@@ -537,16 +537,16 @@ void update_save_name(char *filename) /* go to the next file name */
 		}
 		save++;
 	}
-	if (!*save)                  /* if the whole thing is nines then back */
+	if (!*save)                  // if the whole thing is nines then back 
 	{
-		save = hold - 1;          /* up one place. Note that this will eat */
+		save = hold - 1;          // up one place. Note that this will eat 
 	}
-								/* your last letter if you go to far.    */
+								// your last letter if you go to far.    
 	else
 	{
 		save = hold;
 	}
-	strcpy(save, boost::format("%ld") % (atol(hold) + 1)); /* increment the number */
+	strcpy(save, boost::format("%ld") % (atol(hold) + 1)); // increment the number 
 	make_path(filename, drive, dir, fname, ext);
 }
 

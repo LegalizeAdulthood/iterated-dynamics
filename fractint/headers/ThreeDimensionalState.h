@@ -3,7 +3,7 @@
 
 #include "CommandParser.h"
 
-/* ThreeDimensionalState::raytrace_output() values */
+// ThreeDimensionalState::raytrace_output() values 
 enum RayTraceType
 {
 	RAYTRACE_NONE = 0,
@@ -16,7 +16,7 @@ enum RayTraceType
 	RAYTRACE_DXF = 7
 };
 
-/* glasses_type values */
+// glasses_type values 
 enum GlassesType
 {
 	STEREO_NONE			= 0,
@@ -26,7 +26,7 @@ enum GlassesType
 	STEREO_PAIR			= 4
 };
 
-/* FILLTYPE values */
+// FILLTYPE values 
 class FillType
 {
 public:

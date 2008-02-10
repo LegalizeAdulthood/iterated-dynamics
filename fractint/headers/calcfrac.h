@@ -33,6 +33,6 @@ extern int g_ix_start;
 extern int g_iy_start;
 extern int g_work_pass;
 extern int g_work_sym;
-extern int g_and_color;					/* AND mask for iteration to get color index */
+extern int g_and_color;					// AND mask for iteration to get color index 
 
 #endif

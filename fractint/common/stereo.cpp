@@ -30,8 +30,8 @@
 std::string g_stereo_map_name = "";
 static int s_auto_stereo_depth = 100;
 double g_auto_stereo_width = 10;
-bool g_grayscale_depth = false; /* flag to use gray value rather than color number */
-static StereogramCalibrateType s_stereogram_calibrate = CALIBRATE_MIDDLE;	/* add calibration bars to image */
+bool g_grayscale_depth = false; // flag to use gray value rather than color number 
+static StereogramCalibrateType s_stereogram_calibrate = CALIBRATE_MIDDLE;	// add calibration bars to image 
 static bool s_image_map = false;
 
 static long s_average;
@@ -67,7 +67,7 @@ static int getdepth(int xd, int yd)
 	int pal = get_color(xd, yd);
 	if (g_grayscale_depth)
 	{
-		/* effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 */
+		// effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 
 		pal = (int(s_save_dac.Red(pal))*77 +
 				int(s_save_dac.Green(pal))*151 +
 				int(s_save_dac.Blue(pal))*28);
@@ -152,9 +152,9 @@ int out_line_stereo(BYTE *pixels, int linelen)
 		s_separation = s_reverse
 			? (s_ground - int(s_depth*depth/s_max_cc))
 			: (s_ground - int(s_depth*(s_max_cc - depth)/s_max_cc));
-		s_separation =  int((s_separation*10.0)/s_width);        /* adjust for media s_width */
+		s_separation =  int((s_separation*10.0)/s_width);        // adjust for media s_width 
 
-		/* get average value under calibration bars */
+		// get average value under calibration bars 
 		if (s_x1 <= x && x <= s_x2 && s_y1 <= s_y && s_y <= s_y2)
 		{
 			s_average += s_separation;
@@ -164,7 +164,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 		int j = i + s_separation;
 		if (0 <= i && j < g_x_dots)
 		{
-			/* there are cases where next never terminates so we timeout */
+			// there are cases where next never terminates so we timeout 
 			int ct = 0;
 			for (int s = same[i]; s != i && s != j && ct++ < g_x_dots; s = same[i])
 			{
@@ -200,7 +200,7 @@ int out_line_stereo(BYTE *pixels, int linelen)
 
 int auto_stereo()
 {
-	/* Use the current time to randomize the random number sequence. */
+	// Use the current time to randomize the random number sequence. 
 	{
 		time_t ltime;
 		time(&ltime);
@@ -208,8 +208,8 @@ int auto_stereo()
 	}
 
 	HelpModeSaver saved_help(FIHELP_RANDOM_DOT_STEREOGRAM_COMMANDS);
-	driver_save_graphics();                      /* save graphics image */
-	s_save_dac = g_.DAC();  /* save colors */
+	driver_save_graphics();                      // save graphics image 
+	s_save_dac = g_.DAC();  // save colors 
 
 	int ret = 0;
 	if (g_x_dots > OLD_MAX_PIXELS)
@@ -220,7 +220,7 @@ int auto_stereo()
 		goto exit_stereo;
 	}
 
-	/* empircally determined adjustment to make s_width scale correctly */
+	// empircally determined adjustment to make s_width scale correctly 
 	s_width = g_auto_stereo_width*.67;
 	if (s_width < 1)
 	{
@@ -243,7 +243,7 @@ int auto_stereo()
 	s_x_center = g_x_dots/2;
 	s_y_center = (s_stereogram_calibrate == CALIBRATE_TOP) ? s_bar_height/2 : g_y_dots/2;
 
-	/* box to average for calibration bars */
+	// box to average for calibration bars 
 	s_x1 = s_x_center - g_x_dots/16;
 	s_x2 = s_x_center + g_x_dots/16;
 	s_y1 = s_y_center - s_bar_height/2;
@@ -303,7 +303,7 @@ int auto_stereo()
 			int kbdchar = driver_get_key();
 			switch (kbdchar)
 			{
-			case IDK_ENTER:   /* toggle bars */
+			case IDK_ENTER:   // toggle bars 
 			case IDK_SPACE:
 				toggle_bars(bars, barwidth, colour);
 				break;
@@ -317,7 +317,7 @@ int auto_stereo()
 				save_to_disk(g_save_name);
 				break;
 			default:
-				if (kbdchar == IDK_ESC)   /* if ESC avoid returning to menu */
+				if (kbdchar == IDK_ESC)   // if ESC avoid returning to menu 
 				{
 					kbdchar = 255;
 				}

@@ -57,8 +57,8 @@ private:
 
 	bool m_dirty;
 	RECT m_dirty_region;
-	BITMAPINFO m_bmi;						/* contains first clut entry too */
-	RGBQUAD m_bmiColors[255];				/* color look up table */
+	BITMAPINFO m_bmi;						// contains first clut entry too 
+	RGBQUAD m_bmiColors[255];				// color look up table 
 
 	BYTE *m_pixels;
 	BYTE *m_saved_pixels;

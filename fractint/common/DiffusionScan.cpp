@@ -18,12 +18,12 @@
 #include "DiffusionScan.h"
 #include "WorkList.h"
 
-/* vars for diffusion scan */
-static unsigned long s_diffusion_limit; 	/* the diffusion counter */
-static unsigned s_bits = 0; 		/* number of bits in the counter */
-static unsigned long s_diffusion_counter; 	/* the diffusion counter */
+// vars for diffusion scan 
+static unsigned long s_diffusion_limit; 	// the diffusion counter 
+static unsigned s_bits = 0; 		// number of bits in the counter 
+static unsigned long s_diffusion_counter; 	// the diffusion counter 
 
-/* lookup tables to avoid too much bit fiddling : */
+// lookup tables to avoid too much bit fiddling : 
 static char s_diffusion_la[] =
 {
 	0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
@@ -73,7 +73,7 @@ static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
 	*y >>= dif_offset;
 }
 
-/* Calculate the point */
+// Calculate the point 
 static bool diffusion_point(int row, int col)
 {
 	g_reset_periodicity = true;
@@ -86,10 +86,8 @@ static bool diffusion_point(int row, int col)
 	return false;
 }
 
-/*
-	little function that plots a filled square of color c, size s with
-	top left cornet at (x, y) with optimization from sym_fill_line
-*/
+// little function that plots a filled square of color c, size s with
+// top left cornet at (x, y) with optimization from sym_fill_line
 static void diffusion_plot_block(int x, int y, int size, int color)
 {
 	memset(g_stack, color, size);
@@ -111,7 +109,7 @@ static bool diffusion_block(int row, int col, int sqsz)
 	return false;
 }
 
-/* function that does the same as above, but checks the limits in x and y */
+// function that does the same as above, but checks the limits in x and y 
 static void plot_block_lim(int x, int y, int size, int color)
 {
 	memset(g_stack, color, size);
@@ -139,16 +137,16 @@ static int diffusion_engine()
 	int i;
 	int j;
 	int nx;
-	int ny; /* number of tiles to build in x and y dirs */
-	/* made this to complete the area that is not */
-	/* a square with sides like 2 ** n */
+	int ny; // number of tiles to build in x and y dirs 
+	// made this to complete the area that is not 
+	// a square with sides like 2 ** n 
 	int rem_x;
-	int rem_y; /* what is left on the last tile to draw */
-	int dif_offset; /* offset for adjusting looked-up values */
-	int sqsz;  /* size of the block being filled */
+	int rem_y; // what is left on the last tile to draw 
+	int dif_offset; // offset for adjusting looked-up values 
+	int sqsz;  // size of the block being filled 
 	int colo;
-	int rowo; /* original col and row */
-	int s = 1 << (s_bits/2); /* size of the square */
+	int rowo; // original col and row 
+	int s = 1 << (s_bits/2); // size of the square 
 
 	nx = int(floor(double(g_x_stop - g_ix_start + 1)/s));
 	ny = int(floor(double(g_y_stop - g_iy_start + 1)/s));
@@ -156,28 +154,27 @@ static int diffusion_engine()
 	rem_x = (g_x_stop - g_ix_start + 1) - nx*s;
 	rem_y = (g_y_stop - g_iy_start + 1) - ny*s;
 
-	if (g_WorkList.yy_begin() == g_iy_start && g_work_pass == 0)  /* if restarting on pan: */
+	if (g_WorkList.yy_begin() == g_iy_start && g_work_pass == 0)  // if restarting on pan: 
 	{
 		s_diffusion_counter = 0L;
 	}
 	else
 	{
-		/* g_WorkList.yy_begin() and passes contain data for resuming the type: */
+		// g_WorkList.yy_begin() and passes contain data for resuming the type: 
 		s_diffusion_counter = ((long((unsigned) g_WorkList.yy_begin())) << 16) | ((unsigned) g_work_pass);
 	}
 
-	dif_offset = 12-(s_bits/2); /* offset to adjust coordinates */
-				/* (*) for 4 bytes use 16 for 3 use 12 etc. */
+	dif_offset = 12-(s_bits/2); // offset to adjust coordinates 
+				// (*) for 4 bytes use 16 for 3 use 12 etc. 
 
-	/*************************************/
-	/* only the points (dithering only) :*/
+	// only the points (dithering only) :
 	if (g_fill_color == 0 )
 	{
 		while (s_diffusion_counter < (s_diffusion_limit >> 1))
 		{
 			count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
 			i = 0;
-			g_col = g_ix_start + colo; /* get the right tiles */
+			g_col = g_ix_start + colo; // get the right tiles 
 			do
 			{
 				j = 0;
@@ -189,10 +186,10 @@ static int diffusion_engine()
 						return -1;
 					}
 					j++;
-					g_row += s;                  /* next tile */
+					g_row += s;                  // next tile 
 				}
 				while (j < ny);
-				/* in the last y tile we may not need to plot the point */
+				// in the last y tile we may not need to plot the point 
 				if (rowo < rem_y)
 				{
 					if (diffusion_point(g_row, g_col))
@@ -204,7 +201,7 @@ static int diffusion_engine()
 				g_col += s;
 			}
 			while (i < nx);
-			/* in the last x tiles we may not need to plot the point */
+			// in the last x tiles we may not need to plot the point 
 			if (colo < rem_x)
 			{
 				g_row = g_iy_start + rowo;
@@ -216,7 +213,7 @@ static int diffusion_engine()
 						return -1;
 					}
 					j++;
-					g_row += s; /* next tile */
+					g_row += s; // next tile 
 				}
 				while (j < ny);
 				if (rowo < rem_y)
@@ -232,8 +229,7 @@ static int diffusion_engine()
 	}
 	else
 	{
-		/*********************************/
-		/* with progressive filling :    */
+		// with progressive filling :    
 		while (s_diffusion_counter < (s_diffusion_limit >> 1))
 		{
 			sqsz = 1 << (int(s_bits - int(log(s_diffusion_counter + 0.5)/log2 )-1)/2 );
@@ -245,7 +241,7 @@ static int diffusion_engine()
 				j = 0;
 				do
 				{
-					g_col = g_ix_start + colo + i*s; /* get the right tiles */
+					g_col = g_ix_start + colo + i*s; // get the right tiles 
 					g_row = g_iy_start + rowo + j*s;
 
 					if (diffusion_block(g_row, g_col, sqsz))
@@ -255,7 +251,7 @@ static int diffusion_engine()
 					j++;
 				}
 				while (j < ny);
-				/* in the last tile we may not need to plot the point */
+				// in the last tile we may not need to plot the point 
 				if (rowo < rem_y)
 				{
 					g_row = g_iy_start + rowo + ny*s;
@@ -267,14 +263,14 @@ static int diffusion_engine()
 				i++;
 			}
 			while (i < nx);
-			/* in the last tile we may not need to plot the point */
+			// in the last tile we may not need to plot the point 
 			if (colo < rem_x)
 			{
 				g_col = g_ix_start + colo + nx*s;
 				j = 0;
 				do
 				{
-					g_row = g_iy_start + rowo + j*s; /* get the right tiles */
+					g_row = g_iy_start + rowo + j*s; // get the right tiles 
 					if (diffusion_block_lim(g_row, g_col, sqsz))
 					{
 						return -1;
@@ -295,7 +291,7 @@ static int diffusion_engine()
 			s_diffusion_counter++;
 		}
 	}
-	/* from half g_diffusion_limit on we only plot 1x1 points :-) */
+	// from half g_diffusion_limit on we only plot 1x1 points :-) 
 	while (s_diffusion_counter < s_diffusion_limit)
 	{
 		count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
@@ -306,7 +302,7 @@ static int diffusion_engine()
 			j = 0;
 			do
 			{
-				g_col = g_ix_start + colo + i*s; /* get the right tiles */
+				g_col = g_ix_start + colo + i*s; // get the right tiles 
 				g_row = g_iy_start + rowo + j*s;
 				if (diffusion_point(g_row, g_col))
 				{
@@ -315,7 +311,7 @@ static int diffusion_engine()
 				j++;
 			}
 			while (j < ny);
-			/* in the last tile we may not need to plot the point */
+			// in the last tile we may not need to plot the point 
 			if (rowo < rem_y)
 			{
 				g_row = g_iy_start + rowo + ny*s;
@@ -327,14 +323,14 @@ static int diffusion_engine()
 			i++;
 		}
 		while (i < nx);
-		/* in the last tile we may nnt need to plot the point */
+		// in the last tile we may nnt need to plot the point 
 		if (colo < rem_x)
 		{
 			g_col = g_ix_start + colo + nx*s;
 			j = 0;
 			do
 			{
-				g_row = g_iy_start + rowo + j*s; /* get the right tiles */
+				g_row = g_iy_start + rowo + j*s; // get the right tiles 
 				if (diffusion_point(g_row, g_col))
 				{
 					return -1;
@@ -363,21 +359,21 @@ int diffusion_scan()
 
 	g_got_status = GOT_STATUS_DIFFUSION;
 
-	/* note: the max size of 2048x2048 gives us a 22 bit counter that will */
-	/* fit any 32 bit architecture, the maxinum limit for this case would  */
-	/* be 65536x65536 (HB) */
+	// note: the max size of 2048x2048 gives us a 22 bit counter that will 
+	// fit any 32 bit architecture, the maxinum limit for this case would  
+	// be 65536x65536 (HB) 
 
 	s_bits = (unsigned) (std::min(log(double(g_y_stop - g_iy_start + 1)),
 							 log(double(g_x_stop - g_ix_start + 1)))/log2);
-	s_bits <<= 1; /* double for two axes */
+	s_bits <<= 1; // double for two axes 
 	s_diffusion_limit = 1l << s_bits;
 
 	if (diffusion_engine() == -1)
 	{
 		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
 			g_WorkList.yy_start(), g_WorkList.yy_stop(),
-			int(s_diffusion_counter >> 16),            /* high, */
-			int(s_diffusion_counter & 0xffff),         /* low order words */
+			int(s_diffusion_counter >> 16),            // high, 
+			int(s_diffusion_counter & 0xffff),         // low order words 
 			g_work_sym);
 		return -1;
 	}

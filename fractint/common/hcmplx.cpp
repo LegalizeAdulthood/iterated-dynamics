@@ -1,4 +1,4 @@
-/* some hyper complex functions */
+// some hyper complex functions 
 
 #include <string>
 
@@ -73,7 +73,7 @@ void HComplexMinus(HyperComplexD *arg1, HyperComplexD *out)
 	out->t = -arg1->t;
 }
 
-/* extends the unary function f to *h1 */
+// extends the unary function f to *h1 
 void HComplexTrig0(HyperComplexD *h, HyperComplexD *out)
 {
 	/* This is the whole beauty of Hypercomplex numbers - *ANY* unary
@@ -85,17 +85,17 @@ void HComplexTrig0(HyperComplexD *h, HyperComplexD *out)
 	ComplexD resulta;
 	ComplexD resultb;
 
-	/* convert to duplex form */
+	// convert to duplex form 
 	a.x = h->x - h->t;
 	a.y = h->y + h->z;
 	b.x = h->x + h->t;
 	b.y = h->y - h->z;
 
-	/* apply function to each part */
+	// apply function to each part 
 	CMPLXtrig0(a, resulta);
 	CMPLXtrig0(b, resultb);
 
-	/* convert back */
+	// convert back 
 	out->x =  (resulta.x + resultb.x)/2;
 	out->y =  (resulta.y + resultb.y)/2;
 	out->z =  (resulta.y - resultb.y)/2;

@@ -9,46 +9,70 @@
 class AbstractDriver
 {
 public:
-	/* name of driver */				virtual const char *name() const = 0;
-	/* driver description */			virtual const char *description() const = 0;
-	/* initialize the driver */			virtual bool initialize(int &argc, char **argv) = 0;
-	/* shutdown the driver */			virtual void terminate() = 0;
-	/* pause this driver */				virtual void pause() = 0;
-	/* resume this driver */			virtual void resume() = 0;
-
-	/* validate a fractint.cfg mode */	virtual int validate_mode(const VIDEOINFO &mode) = 0;
+	// name of driver
+										virtual const char *name() const = 0;
+	// driver description
+										virtual const char *description() const = 0;
+	// initialize the driver
+										virtual bool initialize(int &argc, char **argv) = 0;
+	// shutdown the driver
+										virtual void terminate() = 0;
+	// pause this driver
+										virtual void pause() = 0;
+	// resume this driver
+										virtual void resume() = 0;
+	// validate a fractint.cfg mode
+										virtual int validate_mode(const VIDEOINFO &mode) = 0;
 										virtual void set_video_mode(const VIDEOINFO &mode) = 0;
-	/* find max screen extents */		virtual void get_max_screen(int &x_max, int &y_max) const = 0;
-
-	/* creates a window */				virtual void window() = 0;
-	/* handles window resize.  */		virtual int resize() = 0;
-	/* redraws the screen */			virtual void redraw() = 0;
-
-	/* read palette into g_.DAC() */	virtual int read_palette() = 0;
-	/* write g_.DAC() into palette */	virtual int write_palette() = 0;
-
-	/* reads a single pixel */			virtual int read_pixel(int x, int y) = 0;
-	/* writes a single pixel */			virtual void write_pixel(int x, int y, int color) = 0;
-	/* reads a span of pixel */			virtual void read_span(int y, int x, int lastx, BYTE *pixels) = 0;
-	/* writes a span of pixels */		virtual void write_span(int y, int x, int lastx, const BYTE *pixels) = 0;
+	// find max screen extents
+										virtual void get_max_screen(int &x_max, int &y_max) const = 0;
+	// creates a window
+										virtual void window() = 0;
+	// handles window resize.
+										virtual int resize() = 0;
+	// redraws the screen
+										virtual void redraw() = 0;
+	// read palette into g_.DAC()
+										virtual int read_palette() = 0;
+	// write g_.DAC() into palette
+										virtual int write_palette() = 0;
+	// reads a single pixel
+										virtual int read_pixel(int x, int y) = 0;
+	// writes a single pixel
+										virtual void write_pixel(int x, int y, int color) = 0;
+	// reads a span of pixel
+										virtual void read_span(int y, int x, int lastx, BYTE *pixels) = 0;
+	// writes a span of pixels
+										virtual void write_span(int y, int x, int lastx, const BYTE *pixels) = 0;
 										virtual void get_truecolor(int x, int y, int &r, int &g, int &b, int &a) = 0;
 										virtual void put_truecolor(int x, int y, int r, int g, int b, int a) = 0;
-	/* set copy/xor line */				virtual void set_line_mode(int mode) = 0;
-	/* draw line */						virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;
-	/* draw string in graphics mode */	virtual void display_string(int x, int y, int fg, int bg, const char *text) = 0;
-	/* save graphics */					virtual void save_graphics() = 0;
-	/* restore graphics */				virtual void restore_graphics() = 0;
-	/* poll or block for a key */		virtual int get_key() = 0;
+	// set copy/xor line
+										virtual void set_line_mode(int mode) = 0;
+	// draw line
+										virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;
+	// draw string in graphics mode
+										virtual void display_string(int x, int y, int fg, int bg, const char *text) = 0;
+	// save graphics
+										virtual void save_graphics() = 0;
+	// restore graphics
+										virtual void restore_graphics() = 0;
+	// poll or block for a key
+										virtual int get_key() = 0;
 										virtual void unget_key(int key) = 0;
 										virtual int key_cursor(int row, int col) = 0;
 										virtual int key_pressed() = 0;
 										virtual int wait_key_pressed(int timeout) = 0;
 										virtual void set_keyboard_timeout(int ms) = 0;
-	/* invoke a command shell */		virtual void shell() = 0;
-	/* set for text mode & save gfx */	virtual void set_for_text() = 0;
-	/* restores graphics and data */	virtual void set_for_graphics() = 0;
-	/* clears text screen */			virtual void set_clear() = 0;
-	/* text screen functions */			virtual void move_cursor(int row, int col) = 0;
+	// invoke a command shell
+										virtual void shell() = 0;
+	// set for text mode & save gfx
+										virtual void set_for_text() = 0;
+	// restores graphics and data
+										virtual void set_for_graphics() = 0;
+	// clears text screen
+										virtual void set_clear() = 0;
+	// text screen functions
+										virtual void move_cursor(int row, int col) = 0;
 										virtual void hide_text_cursor() = 0;
 										virtual void put_string(int row, int col, int attr, const char *text) = 0;
 										virtual void set_attr(int row, int col, int attr, int count) = 0;
@@ -60,19 +84,18 @@ public:
 										virtual void put_char_attr(int char_attr) = 0;
 										virtual int get_char_attr_rowcol(int row, int col) = 0;
 										virtual void put_char_attr_rowcol(int row, int col, int char_attr) = 0;
-
-	/* sound routines */				virtual int init_fm() = 0;
+	// sound routines
+										virtual int init_fm() = 0;
 										virtual void buzzer(int kind) = 0;
 										virtual int sound_on(int frequency) = 0;
 										virtual void sound_off() = 0;
 										virtual void mute() = 0;
-
-	/* returns true if disk video */	virtual int diskp() = 0;
-
+	// returns true if disk video
+										virtual int diskp() = 0;
 										virtual void delay(int ms) = 0;
 										virtual void flush() = 0;
-	/* refresh alarm */					virtual void schedule_alarm(int secs) = 0;
-
+	// refresh alarm
+										virtual void schedule_alarm(int secs) = 0;
 										virtual void set_mouse_mode(int mode) = 0;
 										virtual int get_mouse_mode() const = 0;
 };
@@ -223,4 +246,4 @@ public:
 	}
 };
 
-#endif /* DRIVERS_H */
+#endif // DRIVERS_H 

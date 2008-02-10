@@ -45,8 +45,8 @@ void EscapeTimeState::fill_grid_fp()
 
 void EscapeTimeState::fill_grid_l()
 {
-	/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
-	/* they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  */
+	// note that g_x1_l & g_y1_l values can overflow into sign bit; since     
+	// they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  
 	if (m_use_grid)
 	{
 		m_grid_l.fill();

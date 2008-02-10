@@ -227,7 +227,7 @@ int ThreeDimensionalState::parse_xyz_scale(const cmd_context &context)
 
 int ThreeDimensionalState::parse_roughness(const cmd_context &context)
 {
-	/* "rough" is really scale z, but we add it here for convenience */
+	// "rough" is really scale z, but we add it here for convenience 
 	m_roughness = context.numval;
 	return COMMANDRESULT_3D_PARAMETER;
 }

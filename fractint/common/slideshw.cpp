@@ -1,6 +1,6 @@
 /***********************************************************************/
-/* These routines are called by driver_get_key to allow keystrokes to control */
-/* Fractint to be read from a file.                                    */
+// These routines are called by driver_get_key to allow keystrokes to control 
+// Fractint to be read from a file.                                    
 /***********************************************************************/
 #include <fstream>
 #include <string>
@@ -149,7 +149,7 @@ const char *ScanCodes::MnemonicFromScanCode(int code)
 	return 0;
 }
 
-/* places a temporary message on the screen in text mode */
+// places a temporary message on the screen in text mode 
 void SlideShowImpl::ShowTempMessageText(int row, int col, int attr, int secs, const char *txt)
 {
 	int savescrn[80];
@@ -179,18 +179,18 @@ void SlideShowImpl::Message(int secs, const char *buf)
 	}
 }
 
-/* this routine reads the file _autoKeyFile and returns keystrokes */
+// this routine reads the file _autoKeyFile and returns keystrokes 
 int SlideShowImpl::GetKeyStroke()
 {
 	if (_calc_wait)
 	{
-		if (_calculationStatus == CALCSTAT_IN_PROGRESS || _busy) /* restart timer - process not done */
+		if (_calculationStatus == CALCSTAT_IN_PROGRESS || _busy) // restart timer - process not done 
 		{
-			return 0; /* wait for calc to finish before reading more keystrokes */
+			return 0; // wait for calc to finish before reading more keystrokes 
 		}
 		_calc_wait = false;
 	}
-	if (!_slideFile)   /* open files first time through */
+	if (!_slideFile)   // open files first time through 
 	{
 		if (Start() == SLIDES_OFF)
 		{
@@ -199,9 +199,9 @@ int SlideShowImpl::GetKeyStroke()
 		}
 	}
 
-	if (_ticks) /* if waiting, see if waited long enough */
+	if (_ticks) // if waiting, see if waited long enough 
 	{
-		if (clock_ticks() - _start_tick < _ticks) /* haven't waited long enough */
+		if (clock_ticks() - _start_tick < _ticks) // haven't waited long enough 
 		{
 			return 0;
 		}
@@ -210,7 +210,7 @@ int SlideShowImpl::GetKeyStroke()
 	if (++_slow_count <= 18)
 	{
 		_start_tick = clock_ticks();
-		_ticks = CLK_TCK/5; /* a slight delay so keystrokes are visible */
+		_ticks = CLK_TCK/5; // a slight delay so keystrokes are visible 
 		if (_slow_count > 10)
 		{
 			_ticks /= 2;
@@ -224,7 +224,7 @@ int SlideShowImpl::GetKeyStroke()
 
 start:
 	int out;
-	if (_quotes) /* reading a quoted string */
+	if (_quotes) // reading a quoted string 
 	{
 		out = _slideFile.get();
 		if (out != '\"' && out != EOF)
@@ -233,7 +233,7 @@ start:
 		}
 		_quotes = 0;
 	}
-	/* skip white space: */
+	// skip white space: 
 	do
 	{
 		out = _slideFile.get();
@@ -244,10 +244,10 @@ start:
 	case EOF:
 		g_slideShow.Stop();
 		return 0;
-	case '\"':        /* begin quoted string */
+	case '\"':        // begin quoted string 
 		_quotes = 1;
 		goto start;
-	case ';':         /* comment from here to end of line, skip it */
+	case ';':         // comment from here to end of line, skip it 
 		do
 		{
 			out = _slideFile.get();
@@ -269,7 +269,7 @@ start:
 
 	char buffer[81];
 	int i = 0;
-	while (true) /* get a token */
+	while (true) // get a token 
 	{
 		if (i < 80)
 		{
@@ -287,7 +287,7 @@ start:
 		goto start;
 	}
 	out = -12345;
-	if (isdigit(buffer[0]))       /* an arbitrary scan code number - use it */
+	if (isdigit(buffer[0]))       // an arbitrary scan code number - use it 
 	{
 		out = atoi(buffer);
 	}
@@ -346,9 +346,9 @@ start:
 		if (_slideFile)
 		{
 			driver_set_keyboard_timeout(int(fticks*1000.f));
-			fticks *= CLK_TCK;             /* convert from seconds to ticks */
+			fticks *= CLK_TCK;             // convert from seconds to ticks 
 			_ticks = long(fticks);
-			_start_tick = clock_ticks();  /* start timing */
+			_start_tick = clock_ticks();  // start timing 
 		}
 		else
 		{
@@ -357,7 +357,7 @@ start:
 		_slow_count = 0;
 		out = 0;
 	}
-	else if (strcmp("CALCWAIT", (char *)buffer) == 0) /* wait for calc to finish */
+	else if (strcmp("CALCWAIT", (char *)buffer) == 0) // wait for calc to finish 
 	{
 		_calc_wait = true;
 		_slow_count = 0;
@@ -402,8 +402,8 @@ void SlideShowImpl::Stop()
 
 void SlideShowImpl::Record(int key)
 {
-	float dt = float(_ticks);      /* save time of last call */
-	_ticks = clock_ticks();  /* current time */
+	float dt = float(_ticks);      // save time of last call 
+	_ticks = clock_ticks();  // current time 
 	if (_slideFile == 0)
 	{
 		_slideFile.open(_autoKeyFile.c_str(), std::ios::out);
@@ -413,10 +413,10 @@ void SlideShowImpl::Record(int key)
 		}
 	}
 	dt = _ticks-dt;
-	dt /= CLK_TCK;  /* dt now in seconds */
-	if (dt > 0.5) /* don't bother with less than half a second */
+	dt /= CLK_TCK;  // dt now in seconds 
+	if (dt > 0.5) // don't bother with less than half a second 
 	{
-		if (_quotes) /* close quotes first */
+		if (_quotes) // close quotes first 
 		{
 			_quotes = 0;
 			_slideFile << "\"\n";
@@ -434,7 +434,7 @@ void SlideShowImpl::Record(int key)
 	}
 	else
 	{
-		if (_quotes) /* not an ASCII character - turn off quotes */
+		if (_quotes) // not an ASCII character - turn off quotes 
 		{
 			_slideFile << "\"\n";
 			_quotes = 0;
@@ -448,7 +448,7 @@ void SlideShowImpl::Record(int key)
 		{
 			_slideFile << video_mode_key_name(key);
 		}
-		else /* not ASCII and not FN key */
+		else // not ASCII and not FN key 
 		{
 			_slideFile << boost::format("%4d") % key;
 		}
@@ -456,14 +456,14 @@ void SlideShowImpl::Record(int key)
 	}
 }
 
-/* suspend process # of seconds */
+// suspend process # of seconds 
 void SlideShowImpl::SleepSeconds(int secs)
 {
 	long stop;
 	stop = clock_ticks() + long(secs)*CLK_TCK;
 	while (clock_ticks() < stop && kbhit() == 0)
 	{
-	} /* bailout if key hit */
+	} // bailout if key hit 
 }
 
 void SlideShowImpl::Error(const std::string &msg)
