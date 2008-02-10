@@ -1,8 +1,8 @@
-/*
-	This file includes miscellaneous plot functions and logic
-	for 3D, used by lorenz.c and line3d.c
-	By Tim Wegner and Marc Reinig.
-*/
+//
+//	This file includes miscellaneous plot functions and logic
+//	for 3D, used by lorenz.c and line3d.c
+//	By Tim Wegner and Marc Reinig.
+//
 #include <assert.h>
 #include <string>
 
@@ -18,7 +18,7 @@
 
 #include "ThreeDimensionalState.h"
 
-/* Use these palette indices for red/blue - same on ega/vga */
+// Use these palette indices for red/blue - same on ega/vga 
 enum
 {
 	PAL_BLUE	= 1,
@@ -38,30 +38,30 @@ static int s_blue_local_left;
 static int s_blue_local_right;
 static BYTE s_targa_red;
 
-/* Bresenham's algorithm for drawing line */
+// Bresenham's algorithm for drawing line 
 void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
 
-{               /* uses Bresenham algorithm to draw a line */
+{               // uses Bresenham algorithm to draw a line 
 	int dX;
-	int dY;			/* vector components */
+	int dY;			// vector components 
 	int row;
 	int col;
-	int final;		/* final row or column number */
-	int G;			/* used to test for new row or column */
-	int inc1;		/* G increment when row or column doesn't change */
-	int inc2;		/* G increment when row or column changes */
+	int final;		// final row or column number 
+	int G;			// used to test for new row or column 
+	int inc1;		// G increment when row or column doesn't change 
+	int inc2;		// G increment when row or column changes 
 	
 
-	dX = X2 - X1;							/* find vector components */
+	dX = X2 - X1;							// find vector components 
 	dY = Y2 - Y1;
 	bool positive_slope = (dX > 0);
 	if (dY < 0)
 	{
 		positive_slope = !positive_slope;
 	}
-	if (abs(dX) > abs(dY))                /* shallow line case */
+	if (abs(dX) > abs(dY))                // shallow line case 
 	{
-		if (dX > 0)         /* determine start point and last column */
+		if (dX > 0)         // determine start point and last column 
 		{
 			col = X1;
 			row = Y1;
@@ -73,21 +73,21 @@ void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
 			row = Y2;
 			final = X1;
 		}
-		inc1 = 2*abs(dY);            /* determine increments and initial G */
+		inc1 = 2*abs(dY);            // determine increments and initial G 
 		G = inc1 - abs(dX);
 		inc2 = 2*(abs(dY) - abs(dX));
 		if (positive_slope)
 		{
-			while (col <= final)    /* step through columns checking for new row */
+			while (col <= final)    // step through columns checking for new row 
 			{
 				g_plot_color(col, row, color);
 				col++;
-				if (G >= 0)             /* it's time to change rows */
+				if (G >= 0)             // it's time to change rows 
 				{
-					row++;      /* positive slope so increment through the rows */
+					row++;      // positive slope so increment through the rows 
 					G += inc2;
 				}
-				else                        /* stay at the same row */
+				else                        // stay at the same row 
 				{
 					G += inc1;
 				}
@@ -95,25 +95,25 @@ void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
 		}
 		else
 		{
-			while (col <= final)    /* step through columns checking for new row */
+			while (col <= final)    // step through columns checking for new row 
 			{
 				g_plot_color(col, row, color);
 				col++;
-				if (G > 0)              /* it's time to change rows */
+				if (G > 0)              // it's time to change rows 
 				{
-					row--;      /* negative slope so decrement through the rows */
+					row--;      // negative slope so decrement through the rows 
 					G += inc2;
 				}
-				else                        /* stay at the same row */
+				else                        // stay at the same row 
 				{
 					G += inc1;
 				}
 			}
 		}
-	}   /* if |dX| > |dY| */
-	else                            /* steep line case */
+	}   // if |dX| > |dY| 
+	else                            // steep line case 
 	{
-		if (dY > 0)             /* determine start point and last row */
+		if (dY > 0)             // determine start point and last row 
 		{
 			col = X1;
 			row = Y1;
@@ -125,21 +125,21 @@ void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
 			row = Y2;
 			final = Y1;
 		}
-		inc1 = 2*abs(dX);            /* determine increments and initial G */
+		inc1 = 2*abs(dX);            // determine increments and initial G 
 		G = inc1 - abs(dY);
 		inc2 = 2*(abs(dX) - abs(dY));
 		if (positive_slope)
 		{
-			while (row <= final)    /* step through rows checking for new column */
+			while (row <= final)    // step through rows checking for new column 
 			{
 				g_plot_color(col, row, color);
 				row++;
-				if (G >= 0)                 /* it's time to change columns */
+				if (G >= 0)                 // it's time to change columns 
 				{
-					col++;  /* positive slope so increment through the columns */
+					col++;  // positive slope so increment through the columns 
 					G += inc2;
 				}
-				else                    /* stay at the same column */
+				else                    // stay at the same column 
 				{
 					G += inc1;
 				}
@@ -147,32 +147,32 @@ void cdecl draw_line(int X1, int Y1, int X2, int Y2, int color)
 		}
 		else
 		{
-			while (row <= final)    /* step through rows checking for new column */
+			while (row <= final)    // step through rows checking for new column 
 			{
 				g_plot_color(col, row, color);
 				row++;
-				if (G > 0)                  /* it's time to change columns */
+				if (G > 0)                  // it's time to change columns 
 				{
-					col--;  /* negative slope so decrement through the columns */
+					col--;  // negative slope so decrement through the columns 
 					G += inc2;
 				}
-				else                    /* stay at the same column */
+				else                    // stay at the same column 
 				{
 					G += inc1;
 				}
 			}
 		}
 	}
-}   /* draw_line */
+}   // draw_line 
 
 #if 0
-/* use this for continuous colors later */
+// use this for continuous colors later 
 void plot3dsuperimpose16b(int x, int y, int color)
 {
 	int tmp;
-	if (color != 0)         /* Keeps index 0 still 0 */
+	if (color != 0)         // Keeps index 0 still 0 
 	{
-		color = g_colors - color; /*  Reverses color order */
+		color = g_colors - color; // Reverses color order 
 		color /= 4;
 		if (color == 0)
 		{
@@ -182,7 +182,7 @@ void plot3dsuperimpose16b(int x, int y, int color)
 	color = 3;
 	tmp = get_color(x, y);
 
-	/* map to 4 colors */
+	// map to 4 colors 
 	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
@@ -232,7 +232,7 @@ void plot_3d_superimpose_16(int x, int y, int color)
 			}
 		}
 	}
-	else if (g_which_image == 2) /* BLUE */
+	else if (g_which_image == 2) // BLUE 
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
@@ -258,22 +258,22 @@ void plot_3d_superimpose_256(int x, int y, int color)
 
 	t_c = BYTE(255-color);
 
-	if (color != 0)         /* Keeps index 0 still 0 */
+	if (color != 0)         // Keeps index 0 still 0 
 	{
-		color = g_colors - color; /*  Reverses color order */
+		color = g_colors - color; // Reverses color order 
 		color = (g_max_colors == 236) ?
-			(1 + color/21) /*  Maps colors 1-255 to 13 even ranges */
+			(1 + color/21) // Maps colors 1-255 to 13 even ranges 
 			: 
-			(1 + color/18); /*  Maps colors 1-255 to 15 even ranges */
+			(1 + color/18); // Maps colors 1-255 to 15 even ranges 
 	}
 
 	tmp = get_color(x, y);
-	/* map to 16 colors */
+	// map to 16 colors 
 	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
-			/* Overwrite prev Red don't mess w/blue */
+			// Overwrite prev Red don't mess w/blue 
 			g_plot_color_put_color(x, y, color|(tmp&240));
 			if (g_targa_output)
 			{
@@ -292,7 +292,7 @@ void plot_3d_superimpose_256(int x, int y, int color)
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
-			/* Overwrite previous blue, don't mess with existing red */
+			// Overwrite previous blue, don't mess with existing red 
 			color <<= 4;
 			g_plot_color_put_color(x, y, color|(tmp&15));
 			if (g_targa_output)
@@ -318,19 +318,19 @@ void plot_ifs_3d_superimpose_256(int x, int y, int color)
 
 	t_c = BYTE(255-color);
 
-	if (color != 0)         /* Keeps index 0 still 0 */
+	if (color != 0)         // Keeps index 0 still 0 
 	{
-		/* my mind is fried - lower indices = darker colors is EASIER! */
-		color = g_colors - color; /*  Reverses color order */
+		// my mind is fried - lower indices = darker colors is EASIER! 
+		color = g_colors - color; // Reverses color order 
 		color = (g_max_colors == 236) ?
-			(1 + color/21) /*  Maps colors 1-255 to 13 even ranges */
+			(1 + color/21) // Maps colors 1-255 to 13 even ranges 
 			:
-			(1 + color/18); /*  Looks weird but maps colors 1-255 to 15
-								relatively even ranges */
+			(1 + color/18); // Looks weird but maps colors 1-255 to 15
+							// relatively even ranges
 	}
 
 	tmp = get_color(x, y);
-	/* map to 16 colors */
+	// map to 16 colors 
 	if (g_which_image == WHICHIMAGE_RED)
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
@@ -376,12 +376,12 @@ void plot_3d_alternate(int x, int y, int color)
 	BYTE t_c;
 
 	t_c = BYTE(255-color);
-	/* lorez high color red/blue 3D plot function */
-	/* if which image = 1, compresses color to lower 128 colors */
+	// lorez high color red/blue 3D plot function 
+	// if which image = 1, compresses color to lower 128 colors 
 
-	/* my mind is STILL fried - lower indices = darker colors is EASIER! */
+	// my mind is STILL fried - lower indices = darker colors is EASIER! 
 	color = g_colors - color;
-	if ((g_which_image == WHICHIMAGE_RED) && !((x + y) & 1)) /* - lower half palette */
+	if ((g_which_image == WHICHIMAGE_RED) && !((x + y) & 1)) // - lower half palette 
 	{
 		if (s_red_local_left < x && x < s_red_local_right)
 		{
@@ -399,7 +399,7 @@ void plot_3d_alternate(int x, int y, int color)
 			}
 		}
 	}
-	else if ((g_which_image == WHICHIMAGE_BLUE) && ((x + y) & 1)) /* - upper half palette */
+	else if ((g_which_image == WHICHIMAGE_BLUE) && ((x + y) & 1)) // - upper half palette 
 	{
 		if (s_blue_local_left < x && x < s_blue_local_right)
 		{
@@ -429,7 +429,7 @@ void plot_3d_cross_eyed_A(int x, int y, int color)
 	}
 	if (g_row_count >= g_y_dots/2)
 	{
-		/* hidden surface kludge */
+		// hidden surface kludge 
 		if (get_color(x, y) != 0)
 		{
 			return;
@@ -453,7 +453,7 @@ void plot_3d_cross_eyed_C(int x, int y, int color)
 {
 	if (g_row_count >= g_y_dots/2)
 	{
-		/* hidden surface kludge */
+		// hidden surface kludge 
 		if (get_color(x, y) != 0)
 		{
 			return;
@@ -467,7 +467,7 @@ void plot_setup()
 	double d_red_bright  = 0;
 	double d_blue_bright = 0;
 
-	/* set funny glasses plot function */
+	// set funny glasses plot function 
 	switch (g_3d_state.glasses_type())
 	{
 	case STEREO_ALTERNATE:
@@ -479,15 +479,15 @@ void plot_setup()
 			plot_3d_superimpose_256 : plot_ifs_3d_superimpose_256;
 		break;
 
-	case STEREO_PAIR: /* crosseyed mode */
+	case STEREO_PAIR: // crosseyed mode 
 		if (g_screen_width < 2*g_x_dots)
 		{
-			g_plot_color_standard = (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0) ? /* use hidden surface kludge */
+			g_plot_color_standard = (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0) ? // use hidden surface kludge 
 				plot_3d_cross_eyed_A : plot_3d_cross_eyed_B;
 		}
 		else if (g_3d_state.x_rotation() == 0 && g_3d_state.y_rotation() == 0)
 		{
-			g_plot_color_standard = plot_3d_cross_eyed_C; /* use hidden surface kludge */
+			g_plot_color_standard = plot_3d_cross_eyed_C; // use hidden surface kludge 
 		}
 		else
 		{
@@ -544,7 +544,7 @@ void plot_setup()
 
 	if (g_.MapSet())
 	{
-		validate_luts(g_.MapName()); /* read the palette file */
+		validate_luts(g_.MapName()); // read the palette file 
 		if (g_3d_state.glasses_type() == STEREO_ALTERNATE || g_3d_state.glasses_type() == STEREO_SUPERIMPOSE)
 		{
 			if (g_3d_state.glasses_type() == STEREO_SUPERIMPOSE && g_colors < 256)

@@ -7,22 +7,27 @@ class Win32BaseDriver : public NamedDriver
 public:
 	Win32BaseDriver(const char *name, const char *description);
 
-	/* initialize the driver */			virtual bool initialize(int &argc, char **argv);
-	/* shutdown the driver */			virtual void terminate();
+	// initialize the driver
+										virtual bool initialize(int &argc, char **argv);
+	// shutdown the driver
+										virtual void terminate();
 										virtual void pause();
 										virtual void resume();
 
 										virtual void set_video_mode(const VIDEOINFO &mode);
 										virtual void max_size(int &width, int &height, bool &center_x, bool &center_y);
 
-	/* poll or block for a key */		virtual int get_key();
+	// poll or block for a key
+										virtual int get_key();
 										virtual void unget_key(int key);
 										virtual int key_cursor(int row, int col);
 										virtual int key_pressed();
 										virtual int wait_key_pressed(int timeout);
 										virtual void set_keyboard_timeout(int ms);
-	/* invoke a command shell */		virtual void shell();
-	/* text screen functions */			virtual void move_cursor(int row, int col);
+	// invoke a command shell
+										virtual void shell();
+	// text screen functions
+										virtual void move_cursor(int row, int col);
 										virtual void hide_text_cursor();
 										virtual void put_string(int row, int col, int attr, const char *text);
 										virtual void set_attr(int row, int col, int attr, int count);
@@ -37,13 +42,15 @@ public:
 
 										virtual void set_clear();
 
-	/* sound routines */				virtual int init_fm();
+	// sound routines
+										virtual int init_fm();
 										virtual void buzzer(int kind);
 										virtual int sound_on(int frequency);
 										virtual void sound_off();
 										virtual void mute();
 
-	/* returns true if disk video */	virtual int diskp();
+	// returns true if disk video
+										virtual int diskp();
 
 										virtual void delay(int ms);
 
@@ -74,7 +81,7 @@ private:
 	int handle_special_keys(int ch);
 
 	bool m_inside_help;
-	int m_save_check_time;				/* time of last autosave check */
+	int m_save_check_time;				// time of last autosave check 
 
 	time_t m_start;
 	long m_ticks_per_second;

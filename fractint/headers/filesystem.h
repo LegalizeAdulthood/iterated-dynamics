@@ -5,20 +5,20 @@ namespace fs = boost::filesystem;
 
 enum
 {
-	FILEATTR = 0x37,      /* File attributes; select all but volume labels */
+	FILEATTR = 0x37,      // File attributes; select all but volume labels 
 	HIDDEN = 2,
 	SYSTEM = 4,
 	SUBDIR = 16
 };
 
-struct DIR_SEARCH				/* Allocate	DTA	and	define structure */
+struct DIR_SEARCH				// Allocate	DTA	and	define structure 
 {
-	std::string path;			/* DOS path	and	filespec */
-	char attribute;				/* File	attributes wanted */
-	int	 ftime;					/* File	creation time */
-	int	 fdate;					/* File	creation date */
-	long size;					/* File	size in bytes */
-	std::string filename;		/* Filename	and	extension */
+	std::string path;			// DOS path	and	filespec 
+	char attribute;				// File	attributes wanted 
+	int	 ftime;					// File	creation time 
+	int	 fdate;					// File	creation date 
+	long size;					// File	size in bytes 
+	std::string filename;		// Filename	and	extension 
 };
 
 extern DIR_SEARCH g_dta;

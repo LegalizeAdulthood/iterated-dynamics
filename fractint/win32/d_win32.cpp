@@ -35,9 +35,9 @@
 
 extern HINSTANCE g_instance;
 
-long g_save_base = 0;						/* base clock ticks */
-long g_save_ticks = 0;						/* save after this many ticks */
-int g_finish_row = 0;						/* save when this row is finished */
+long g_save_base = 0;						// base clock ticks 
+long g_save_ticks = 0;						// save after this many ticks 
+int g_finish_row = 0;						// save when this row is finished 
 
 Win32BaseDriver::Win32BaseDriver(const char *name, const char *description)
 	: NamedDriver(name, description),
@@ -79,7 +79,7 @@ int Win32BaseDriver::handle_timed_save(int ch)
 		return ch;
 	}
 
-	/* now check for automatic/periodic saving... */
+	// now check for automatic/periodic saving... 
 	int ticker = read_ticker();
 	if (g_save_ticks && (ticker != m_save_check_time))
 	{
@@ -370,15 +370,15 @@ void Win32BaseDriver::set_video_mode(const VIDEOINFO &mode)
 	extern void set_normal_dot();
 	extern void set_normal_line();
 
-	/* initially, set the virtual line to be the scan line length */
+	// initially, set the virtual line to be the scan line length 
 	g_vx_dots = g_screen_width;
-	g_is_true_color = 0;				/* assume not truecolor */
+	g_is_true_color = 0;				// assume not truecolor 
 	g_ok_to_print = false;
 	g_.SetGoodMode(true);
 	g_and_color = g_colors-1;
 	g_zoomBox.set_count(0);
 	g_.SetDACSleepCount(g_cycle_limit);
-	g_.SetRealDAC(true);			/* we are "VGA" */
+	g_.SetRealDAC(true);			// we are "VGA" 
 
 	read_palette();
 
@@ -470,13 +470,13 @@ void Win32BaseDriver::stack_screen()
 	m_saved_cursor[m_screen_count] = g_text_row*80 + g_text_col;
 	if (m_screen_count)
 	{
-		/* already have some stacked */
+		// already have some stacked 
 		int i = m_screen_count - 1;
 
 		_ASSERTE(i < WIN32_MAXSCREENS);
 		if (i >= WIN32_MAXSCREENS)
 		{
-			/* bug, missing unstack? */
+			// bug, missing unstack? 
 			stop_message(STOPMSG_NO_STACK, "stackscreen overflow");
 			exit(1);
 		}
@@ -496,7 +496,7 @@ void Win32BaseDriver::unstack_screen()
 	g_text_col = m_saved_cursor[m_screen_count] % 80;
 	if (--m_screen_count >= 0)
 	{
-		/* unstack */
+		// unstack 
 		m_wintext.screen_set(m_saved_screens[m_screen_count]);
 		delete[] m_saved_screens[m_screen_count];
 		m_saved_screens[m_screen_count] = 0;
@@ -512,7 +512,7 @@ void Win32BaseDriver::discard_screen()
 {
 	if (--m_screen_count >= 0)
 	{
-		/* unstack */
+		// unstack 
 		delete[] m_saved_screens[m_screen_count];
 		m_saved_screens[m_screen_count] = 0;
 		set_clear();

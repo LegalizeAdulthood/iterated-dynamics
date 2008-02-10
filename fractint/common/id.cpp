@@ -8,7 +8,7 @@
 #include <string.h>
 #include <time.h>
 #include <signal.h>
-/* for getcwd() */
+// for getcwd() 
 #if defined(LINUX)
 #include <unistd.h>
 #endif
@@ -71,101 +71,101 @@
 
 VIDEOINFO g_video_entry;
 long g_timer_start;
-long g_timer_interval;        /* timer(...) start & total */
+long g_timer_interval;        // timer(...) start & total 
 std::string g_fract_dir1;
 std::string g_fract_dir2;
 /*
 	the following variables are out here only so
 	that the calculate_fractal() and assembler routines can get at them easily
 */
-int     textsafe2;              /* textsafe override from g_video_table */
-bool g_ok_to_print;              /* 0 if printf() won't work */
+int     textsafe2;              // textsafe override from g_video_table 
+bool g_ok_to_print;              // 0 if printf() won't work 
 int     g_screen_width;
-int		g_screen_height;          /* # of dots on the physical screen    */
+int		g_screen_height;          // # of dots on the physical screen    
 int     g_screen_x_offset;
-int		g_screen_y_offset;          /* physical top left of logical screen */
+int		g_screen_y_offset;          // physical top left of logical screen 
 int     g_x_dots;
-int		g_y_dots;           /* # of dots on the logical screen     */
+int		g_y_dots;           // # of dots on the logical screen     
 double  g_dx_size;
-double	g_dy_size;         /* g_x_dots-1, g_y_dots-1         */
-int     g_colors = 256;           /* maximum colors available */
-long    g_max_iteration;                  /* try this many iterations */
-int     g_z_rotate;                /* zoombox rotation         */
+double	g_dy_size;         // g_x_dots-1, g_y_dots-1         
+int     g_colors = 256;           // maximum colors available 
+long    g_max_iteration;                  // try this many iterations 
+int     g_z_rotate;                // zoombox rotation         
 double  g_zbx;
-double	g_zby;                /* topleft of zoombox       */
+double	g_zby;                // topleft of zoombox       
 double  g_z_width;
 double	g_z_depth;
-double	g_z_skew;    /* zoombox size & shape     */
-int     g_fractal_type;               /* if == 0, use Mandelbrot  */
-CalculationMode g_standard_calculation_mode;            /* '1', '2', 'g', 'b'       */
+double	g_z_skew;    // zoombox size & shape     
+int     g_fractal_type;               // if == 0, use Mandelbrot  
+CalculationMode g_standard_calculation_mode;            // '1', '2', 'g', 'b'       
 long    g_c_real;
-long	g_c_imag;           /* real, imag'ry parts of C */
-long    g_delta_min;                 /* for calcfrac/calculate_mandelbrot_l */
-double  g_delta_min_fp;                /* same as a double         */
-double  g_parameters[MAX_PARAMETERS];       /* parameters               */
-double  g_potential_parameter[3];            /* three potential parameters*/
-long    g_fudge;                  /* 2**fudgefactor           */
-long    g_attractor_radius_l;               /* finite attractor radius  */
-double  g_attractor_radius_fp;               /* finite attractor radius  */
-int     g_bit_shift;               /* fudgefactor              */
+long	g_c_imag;           // real, imag'ry parts of C 
+long    g_delta_min;                 // for calcfrac/calculate_mandelbrot_l 
+double  g_delta_min_fp;                // same as a double         
+double  g_parameters[MAX_PARAMETERS];       // parameters               
+double  g_potential_parameter[3];            // three potential parameters
+long    g_fudge;                  // 2**fudgefactor           
+long    g_attractor_radius_l;               // finite attractor radius  
+double  g_attractor_radius_fp;               // finite attractor radius  
+int     g_bit_shift;               // fudgefactor              
 
 bool g_has_inverse = false;
-/* note that integer grid is set when g_integer_fractal && !invert;    */
-/* otherwise the floating point grid is set; never both at once     */
+// note that integer grid is set when g_integer_fractal && !invert;    
+// otherwise the floating point grid is set; never both at once     
 long    *g_x0_l;
-long	*g_y0_l;     /* x, y grid                */
+long	*g_y0_l;     // x, y grid                
 long    *g_x1_l;
-long	*g_y1_l;     /* adjustment for rotate    */
-/* note that g_x1_l & g_y1_l values can overflow into sign bit; since     */
-/* they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  */
+long	*g_y1_l;     // adjustment for rotate    
+// note that g_x1_l & g_y1_l values can overflow into sign bit; since     
+// they're used only to add to g_x0_l/g_y0_l, 2s comp straightens it out  
 double	*g_x0;
-double	*g_y0;      /* floating pt equivs */
+double	*g_y0;      // floating pt equivs 
 double	*g_x1;
 double	*g_y1;
-int     g_integer_fractal;         /* true if fractal uses integer math */
-/* usr_xxx is what the user wants, vs what we may be forced to do */
+int     g_integer_fractal;         // true if fractal uses integer math 
+// usr_xxx is what the user wants, vs what we may be forced to do 
 CalculationMode g_user_standard_calculation_mode;
 int     g_user_periodicity_check;
 long    g_user_distance_test;
 bool g_user_float_flag;
 int		g_max_history = 10;
-/* variables defined by the command line/files processor */
-bool g_compare_gif = false;					/* compare two gif files flag */
-TimedSaveType g_timed_save = TIMEDSAVE_DONE;/* when doing a timed save */
-int     g_resave_mode = RESAVE_NO;			/* tells encoder not to incr filename */
-bool g_started_resaves = false;				/* but incr on first resave */
-bool g_tab_display_enabled = true;			/* tab display enabled */
-/* for historical reasons (before rotation):         */
-/*    top    left  corner of screen is (g_xx_min, g_yy_max) */
-/*    bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) */
-/*    bottom right corner of screen is (g_xx_max, g_yy_min) */
+// variables defined by the command line/files processor 
+bool g_compare_gif = false;					// compare two gif files flag 
+TimedSaveType g_timed_save = TIMEDSAVE_DONE;// when doing a timed save 
+int     g_resave_mode = RESAVE_NO;			// tells encoder not to incr filename 
+bool g_started_resaves = false;				// but incr on first resave 
+bool g_tab_display_enabled = true;			// tab display enabled 
+// for historical reasons (before rotation):         
+// top    left  corner of screen is (g_xx_min, g_yy_max) 
+// bottom left  corner of screen is (g_xx_3rd, g_yy_3rd) 
+// bottom right corner of screen is (g_xx_max, g_yy_min) 
 long    g_x_min;
 long	g_x_max;
 long	g_y_min;
 long	g_y_max;
 long	g_x_3rd;
-long	g_y_3rd;  /* integer equivs           */
+long	g_y_3rd;  // integer equivs           
 double  g_sx_min;
 double	g_sx_max;
 double	g_sy_min;
 double	g_sy_max;
 double	g_sx_3rd;
-double	g_sy_3rd; /* displayed screen corners */
+double	g_sy_3rd; // displayed screen corners 
 double  g_plot_mx1;
 double	g_plot_mx2;
 double	g_plot_my1;
-double	g_plot_my2;     /* real->screen multipliers */
+double	g_plot_my2;     // real->screen multipliers 
 int		g_calculation_status = CALCSTAT_NO_FRACTAL;
-					  /* -1 no fractal                   */
-					  /*  0 parms changed, recalc reqd   */
-					  /*  1 actively calculating         */
-					  /*  2 interrupted, resumable       */
-					  /*  3 interrupted, not resumable   */
-					  /*  4 completed                    */
+					  // -1 no fractal                   
+					  // 0 parms changed, recalc reqd   
+					  // 1 actively calculating         
+					  // 2 interrupted, resumable       
+					  // 3 interrupted, not resumable   
+					  // 4 completed                    
 long	g_calculation_time;
-int		g_max_colors;                         /* maximum palette size */
-bool g_zoom_off;                     /* = 0 when zoom is disabled    */
-std::string g_file_name_stack[16];		/* array of file names used while browsing */
+int		g_max_colors;                         // maximum palette size 
+bool g_zoom_off;                     // = 0 when zoom is disabled    
+std::string g_file_name_stack[16];		// array of file names used while browsing 
 int		g_name_stack_ptr;
 
 UserInterfaceState g_ui_state;
@@ -222,7 +222,7 @@ void check_same_name()
 	}
 }
 
-/* Do nothing if math error */
+// Do nothing if math error 
 static void my_floating_point_err(int sig)
 {
 	if (sig != 0)
@@ -241,7 +241,7 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 	g_browse_state.Restart();
 	g_browse_state.SetSubImages(true);
 	g_browse_state.SetName("");
-	g_name_stack_ptr = -1; /* init loaded files stack */
+	g_name_stack_ptr = -1; // init loaded files stack 
 
 	g_evolving_flags = EVOLVE_NONE;
 	g_parameter_range_x = 4;
@@ -258,32 +258,32 @@ void IteratedDynamics::Restart(int argc, char *argv[], bool &screen_stacked)
 	g_this_generation_random_seed = (unsigned int)clock_ticks();
 	srand(g_this_generation_random_seed);
 	g_start_show_orbit = false;
-	g_show_dot = -1; /* turn off g_show_dot if entered with <g> command */
-	g_calculation_status = CALCSTAT_NO_FRACTAL;                    /* no active fractal image */
+	g_show_dot = -1; // turn off g_show_dot if entered with <g> command 
+	g_calculation_status = CALCSTAT_NO_FRACTAL;                    // no active fractal image 
 
-	command_files(argc, argv);         /* process the command-line */
-	pause_error(PAUSE_ERROR_NO_BATCH); /* pause for error msg if not batch */
-	init_msg("", 0, 0);  /* this causes driver_get_key if init_msg called on runup */
+	command_files(argc, argv);         // process the command-line 
+	pause_error(PAUSE_ERROR_NO_BATCH); // pause for error msg if not batch 
+	init_msg("", 0, 0);  // this causes driver_get_key if init_msg called on runup 
 
 	history_allocate();
 
-	if (DEBUGMODE_ABORT_SAVENAME == g_debug_mode && g_initialize_batch == INITBATCH_NORMAL)   /* abort if savename already exists */
+	if (DEBUGMODE_ABORT_SAVENAME == g_debug_mode && g_initialize_batch == INITBATCH_NORMAL)   // abort if savename already exists 
 	{
 		check_same_name();
 	}
 	driver_window();
-	g_.OldDAC() = g_.DAC();      /* save in case colors= present */
+	g_.OldDAC() = g_.DAC();      // save in case colors= present 
 
-	driver_set_for_text();                      /* switch to text mode */
-	g_.SetSaveDAC(SAVEDAC_NO);                         /* don't save the VGA DAC */
+	driver_set_for_text();                      // switch to text mode 
+	g_.SetSaveDAC(SAVEDAC_NO);                         // don't save the VGA DAC 
 
 	g_max_colors = 256;
-	g_max_input_counter = 80;				/* check the keyboard this often */
+	g_max_input_counter = 80;				// check the keyboard this often 
 
 	if ((g_show_file != SHOWFILE_PENDING) && g_.InitialVideoMode() < 0)
 	{
 		// TODO: refactor to IInputContext
-		intro();                          /* display the credits screen */
+		intro();                          // display the credits screen 
 		if (driver_key_pressed() == IDK_ESC)
 		{
 			driver_get_key();
@@ -306,12 +306,12 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 {
 	if (g_color_preloaded)
 	{
-		g_.DAC() = g_.OldDAC();   /* restore in case colors= present */
+		g_.DAC() = g_.OldDAC();   // restore in case colors= present 
 	}
 
-	driver_set_mouse_mode(LOOK_MOUSE_NONE);			/* ignore mouse */
+	driver_set_mouse_mode(LOOK_MOUSE_NONE);			// ignore mouse 
 
-	/* image is to be loaded */
+	// image is to be loaded 
 	while (g_show_file == SHOWFILE_PENDING || g_show_file == SHOWFILE_CANCELLED)
 	{
 		char *hdg;
@@ -335,12 +335,12 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 			}
 			if (g_show_file == SHOWFILE_CANCELLED && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
 			{
-				g_show_file = SHOWFILE_DONE;               /* cancelled */
+				g_show_file = SHOWFILE_DONE;               // cancelled 
 				g_.SetInitialVideoModeNone();
 				break;
 			}
 
-			g_name_stack_ptr = 0; /* 'r' reads first filename for browsing */
+			g_name_stack_ptr = 0; // 'r' reads first filename for browsing 
 			g_file_name_stack[g_name_stack_ptr] = g_browse_state.Name();
 		}
 
@@ -355,22 +355,22 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 			driver_set_for_text();
 			screen_stacked = false;
 		}
-		if (read_overlay() == 0)       /* read hdr, get video mode */
+		if (read_overlay() == 0)       // read hdr, get video mode 
 		{
-			break;                      /* got it, exit */
+			break;                      // got it, exit 
 		}
 		g_show_file = g_browse_state.Browsing() ? SHOWFILE_DONE : SHOWFILE_CANCELLED;
 	}
 
-	set_help_mode(FIHELP_MENU);                 /* now use this help mode */
+	set_help_mode(FIHELP_MENU);                 // now use this help mode 
 	g_tab_display_enabled = true;
-	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     /* ignore mouse */
+	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     // ignore mouse 
 
-	if (((g_overlay_3d && !g_initialize_batch) || screen_stacked) && g_.InitialVideoMode() < 0)        /* overlay command failed */
+	if (((g_overlay_3d && !g_initialize_batch) || screen_stacked) && g_.InitialVideoMode() < 0)        // overlay command failed 
 	{
-		driver_unstack_screen();                  /* restore the graphics screen */
+		driver_unstack_screen();                  // restore the graphics screen 
 		screen_stacked = false;
-		g_overlay_3d = 0;                    /* forget overlays */
+		g_overlay_3d = 0;                    // forget overlays 
 		g_display_3d = DISPLAY3D_NONE;
 		if (g_calculation_status == CALCSTAT_NON_RESUMABLE)
 		{
@@ -380,7 +380,7 @@ void IteratedDynamics::RestoreStart(bool &screen_stacked, bool &resume_flag)
 		m_state = APPSTATE_RESUME_LOOP;
 	}
 
-	g_.SetSaveDAC(SAVEDAC_NO);                         /* don't save the VGA DAC */
+	g_.SetSaveDAC(SAVEDAC_NO);                         // don't save the VGA DAC 
 	m_state = APPSTATE_IMAGE_START;
 }
 
@@ -391,11 +391,11 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 		driver_discard_screen();
 		screen_stacked = false;
 	}
-	g_got_status = GOT_STATUS_NONE;                     /* for tab_display */
+	g_got_status = GOT_STATUS_NONE;                     // for tab_display 
 
 	if (g_show_file != SHOWFILE_PENDING)
 	{
-		if (g_calculation_status > CALCSTAT_PARAMS_CHANGED)              /* goto imagestart implies re-calc */
+		if (g_calculation_status > CALCSTAT_PARAMS_CHANGED)              // goto imagestart implies re-calc 
 		{
 			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
 		}
@@ -403,40 +403,40 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 
 	if (g_initialize_batch == INITBATCH_NONE)
 	{
-		driver_set_mouse_mode(-IDK_PAGE_UP);           /* just mouse left button, == pgup */
+		driver_set_mouse_mode(-IDK_PAGE_UP);           // just mouse left button, == pgup 
 	}
 
-	g_cycle_limit = g_initial_cycle_limit;         /* default cycle limit   */
-	g_.SetAdapter(g_.InitialVideoMode());                  /* set the video adapter up */
-	g_.SetInitialVideoModeNone();                       /* (once)                   */
+	g_cycle_limit = g_initial_cycle_limit;         // default cycle limit   
+	g_.SetAdapter(g_.InitialVideoMode());                  // set the video adapter up 
+	g_.SetInitialVideoModeNone();                       // (once)                   
 
-	while (g_.Adapter() < 0)                /* cycle through instructions */
+	while (g_.Adapter() < 0)                // cycle through instructions 
 	{
-		if (g_initialize_batch)                          /* batch, nothing to do */
+		if (g_initialize_batch)                          // batch, nothing to do 
 		{
-			g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; /* exit with error condition set */
+			g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; // exit with error condition set 
 			goodbye();
 		}
 		int kbdchar = main_menu(false);
-		if (kbdchar == IDK_INSERT) /* restart pgm on Insert Key  */
+		if (kbdchar == IDK_INSERT) // restart pgm on Insert Key  
 		{
 			m_state = APPSTATE_RESTART;
 			return;
 		}
-		if (kbdchar == IDK_DELETE)                    /* select video mode list */
+		if (kbdchar == IDK_DELETE)                    // select video mode list 
 		{
 			kbdchar = select_video_mode(-1);
 		}
 		g_.SetAdapter(check_video_mode_key(kbdchar));
 		if (g_.Adapter() >= 0)
 		{
-			break;                                 /* got a video mode now */
+			break;                                 // got a video mode now 
 		}
 		if ('A' <= kbdchar && kbdchar <= 'Z')
 		{
 			kbdchar = tolower(kbdchar);
 		}
-		if (kbdchar == 'd')  /* shell to DOS */
+		if (kbdchar == 'd')  // shell to DOS 
 		{
 			driver_set_clear();
 			driver_shell();
@@ -445,9 +445,9 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 		}
 
 #ifndef XFRACT
-		if (kbdchar == '@' || kbdchar == '2')  /* execute commands */
+		if (kbdchar == '@' || kbdchar == '2')  // execute commands 
 #else
-		if (kbdchar == IDK_F2 || kbdchar == '@')  /* We mapped @ to F2 */
+		if (kbdchar == IDK_F2 || kbdchar == '@')  // We mapped @ to F2 
 #endif
 		{
 			if ((get_commands() & COMMANDRESULT_3D_YES) == 0)
@@ -455,7 +455,7 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 				m_state = APPSTATE_IMAGE_START;
 				return;
 			}
-			kbdchar = '3';                         /* 3d=y so fall thru '3' code */
+			kbdchar = '3';                         // 3d=y so fall thru '3' code 
 		}
 #ifndef XFRACT
 		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
@@ -470,80 +470,80 @@ void IteratedDynamics::ImageStart(bool &screen_stacked, bool &resume_flag)
 			}
 			if (g_color_preloaded)
 			{
-				g_.OldDAC() = g_.DAC();     /* save in case colors= present */
+				g_.OldDAC() = g_.DAC();     // save in case colors= present 
 			}
-			driver_set_for_text(); /* switch to text mode */
+			driver_set_for_text(); // switch to text mode 
 			g_show_file = SHOWFILE_CANCELLED;
 			m_state = APPSTATE_RESTORE_START;
 			return;
 		}
-		if (kbdchar == 't')  /* set fractal type */
+		if (kbdchar == 't')  // set fractal type 
 		{
 			g_julibrot = false;
 			get_fractal_type();
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'x')  /* generic toggle switch */
+		if (kbdchar == 'x')  // generic toggle switch 
 		{
 			get_toggles();
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'y')  /* generic toggle switch */
+		if (kbdchar == 'y')  // generic toggle switch 
 		{
 			get_toggles2();
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'z')  /* type specific parms */
+		if (kbdchar == 'z')  // type specific parms 
 		{
 			get_fractal_parameters(true);
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'v')  /* view parameters */
+		if (kbdchar == 'v')  // view parameters 
 		{
 			get_view_params();
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == IDK_CTL_B)  /* ctrl B = browse parms*/
+		if (kbdchar == IDK_CTL_B)  // ctrl B = browse parms
 		{
 			g_browse_state.GetParameters();
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == IDK_CTL_F)  /* ctrl f = sound parms*/
+		if (kbdchar == IDK_CTL_F)  // ctrl f = sound parms
 		{
 			g_sound_state.get_parameters();
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'f')  /* floating pt toggle */
+		if (kbdchar == 'f')  // floating pt toggle 
 		{
 			g_user_float_flag = !g_user_float_flag;
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		if (kbdchar == 'i')  /* set 3d fractal parms */
+		if (kbdchar == 'i')  // set 3d fractal parms 
 		{
-			get_fractal_3d_parameters(); /* get the parameters */
+			get_fractal_3d_parameters(); // get the parameters 
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
 		if (kbdchar == 'g')
 		{
-			get_command_string(); /* get command string */
+			get_command_string(); // get command string 
 			m_state = APPSTATE_IMAGE_START;
 			return;
 		}
-		/* buzzer(2); */                          /* unrecognized key */
+		// buzzer(2); */                          /* unrecognized key 
 	}
 
-	g_zoom_off = true;                 /* zooming is enabled */
-	set_help_mode(FIHELP_MAIN);         /* now use this help mode */
-	resume_flag = false;  /* allows taking goto inside big_while_loop() */
+	g_zoom_off = true;                 // zooming is enabled 
+	set_help_mode(FIHELP_MAIN);         // now use this help mode 
+	resume_flag = false;  // allows taking goto inside big_while_loop() 
 
 	m_state = APPSTATE_RESUME_LOOP;
 }
@@ -575,13 +575,13 @@ void IteratedDynamics::Initialize(int argc, char **argv)
 	g_fract_dir2 = ".";
 #endif
 
-	/* this traps non-math library floating point errors */
+	// this traps non-math library floating point errors 
 	signal(SIGFPE, my_floating_point_err);
 
 	g_overflow = false;
 	InitMemory();
 
-	/* let drivers add their video modes */
+	// let drivers add their video modes 
 	if (!DriverManager::open_drivers(argc, argv))
 	{
 		init_failure("Sorry, I couldn't find any working video drivers for your system\n");
@@ -602,7 +602,7 @@ void IteratedDynamics::Main(int argc, char **argv)
 
 	bool resume_flag = false;
 	bool screen_stacked = false;
-	bool kbdmore;						/* continuation variable  */
+	bool kbdmore;						// continuation variable  
 	m_state = APPSTATE_RESTART;
 
 	while (m_state != APPSTATE_NO_CHANGE)
@@ -659,7 +659,7 @@ int check_key()
 	return 0;
 }
 
-/* timer type values */
+// timer type values 
 enum TimerType
 {
 	TIMER_ENGINE	= 0,
@@ -674,10 +674,10 @@ enum TimerType
 */
 static int timer(TimerType timertype, int (*engine)(), ...)
 {
-	va_list arg_marker;  /* variable arg list */
+	va_list arg_marker;  // variable arg list 
 	va_start(arg_marker, engine);
 
-	bool do_bench = g_timer_flag; /* record time? */
+	bool do_bench = g_timer_flag; // record time? 
 	if (timertype == TIMER_ENCODER)
 	{
 		do_bench = (DEBUGMODE_TIME_ENCODER == g_debug_mode);
@@ -699,13 +699,13 @@ static int timer(TimerType timertype, int (*engine)(), ...)
 		out = engine();
 		break;
 	case TIMER_DECODER:
-		out = int(decoder(short(va_arg(arg_marker, int)))); /* not indirect, safer with overlays */
+		out = int(decoder(short(va_arg(arg_marker, int)))); // not indirect, safer with overlays 
 		break;
 	case TIMER_ENCODER:
-		out = encoder();            /* not indirect, safer with overlays */
+		out = encoder();            // not indirect, safer with overlays 
 		break;
 	}
-	/* next assumes CLK_TCK is 10^n, n >= 2 */
+	// next assumes CLK_TCK is 10^n, n >= 2 
 	g_timer_interval = (clock_ticks() - g_timer_start)/(CLK_TCK/100);
 
 	if (do_bench)

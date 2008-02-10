@@ -15,7 +15,7 @@
 #include "miscres.h"
 #include "resume.h"
 
-/* for diffusion type */
+// for diffusion type 
 enum
 {
 	DIFFUSION_CENTRAL	= 0,
@@ -23,27 +23,27 @@ enum
 	DIFFUSION_SQUARE	= 2
 };
 
-static int s_keyboard_check;                        /* to limit kbd checking */
+static int s_keyboard_check;                        // to limit kbd checking 
 
 inline int RANDOM(int x)
 {
 	return rand() % x;
 }
 
-/***************** standalone engine for "diffusion" ********************/
+// standalone engine for "diffusion"
 
 int diffusion()
 {
 	int x_max;
 	int y_max;
 	int x_min;
-	int y_min;     /* Current maximum coordinates */
-	int border;   /* Distance between release point and fractal */
-	int mode;     /* Determines diffusion type:  0 = central (classic) */
-					/*                             1 = falling particles */
-					/*                             2 = square cavity     */
-	int colorshift; /* If zero, select colors at random, otherwise shift */
-					/* the color every colorshift points */
+	int y_min;     // Current maximum coordinates 
+	int border;   // Distance between release point and fractal 
+	int mode;     // Determines diffusion type:  0 = central (classic) 
+					// 1 = falling particles 
+					// 2 = square cavity     
+	int colorshift; // If zero, select colors at random, otherwise shift 
+					// the color every colorshift points 
 	int colorcount;
 	int currentcolor;
 	int i;
@@ -69,8 +69,8 @@ int diffusion()
 	mode = int(g_parameters[1]);
 	colorshift = int(g_parameters[2]);
 
-	colorcount = colorshift; /* Counts down from colorshift */
-	currentcolor = 1;  /* Start at color 1 (color 0 is probably invisible)*/
+	colorcount = colorshift; // Counts down from colorshift 
+	currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
 
 	if ((mode > DIFFUSION_SQUARE) || (mode < DIFFUSION_CENTRAL))
 	{
@@ -91,14 +91,14 @@ int diffusion()
 	switch (mode)
 	{
 	case DIFFUSION_CENTRAL:
-		x_max = g_x_dots/2 + border;  /* Initial box */
+		x_max = g_x_dots/2 + border;  // Initial box 
 		x_min = g_x_dots/2 - border;
 		y_max = g_y_dots/2 + border;
 		y_min = g_y_dots/2 - border;
 		break;
 
 	case DIFFUSION_LINE:
-		x_max = g_x_dots/2 + border;  /* Initial box */
+		x_max = g_x_dots/2 + border;  // Initial box 
 		x_min = g_x_dots/2 - border;
 		y_min = g_y_dots - border;
 		break;
@@ -108,7 +108,7 @@ int diffusion()
 		break;
 	}
 
-	if (g_resuming) /* restore g_work_list, if we can't the above will stay in place */
+	if (g_resuming) // restore g_work_list, if we can't the above will stay in place 
 	{
 		start_resume();
 		if (mode != DIFFUSION_SQUARE)
@@ -130,16 +130,16 @@ int diffusion()
 
 	switch (mode)
 	{
-	case DIFFUSION_CENTRAL: /* Single seed point in the center */
+	case DIFFUSION_CENTRAL: // Single seed point in the center 
 		g_plot_color_put_color(g_x_dots/2, g_y_dots/2, currentcolor);
 		break;
-	case DIFFUSION_LINE: /* Line along the bottom */
+	case DIFFUSION_LINE: // Line along the bottom 
 		for (i = 0; i <= g_x_dots; i++)
 		{
 			g_plot_color_put_color(i, g_y_dots-1, currentcolor);
 		}
 		break;
-	case DIFFUSION_SQUARE: /* Large square that fills the screen */
+	case DIFFUSION_SQUARE: // Large square that fills the screen 
 		if (g_x_dots > g_y_dots)
 		{
 			for (i = 0; i < g_y_dots; i++)
@@ -167,7 +167,7 @@ int diffusion()
 	{
 		switch (mode)
 		{
-		case DIFFUSION_CENTRAL: /* Release new point on a circle inside the box */
+		case DIFFUSION_CENTRAL: // Release new point on a circle inside the box 
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
 			x = int(cosine*(x_max-x_min) + g_x_dots);
@@ -175,12 +175,13 @@ int diffusion()
 			x /= 2;
 			y /= 2;
 			break;
-		case DIFFUSION_LINE: /* Release new point on the line y_min somewhere between x_min and x_max */
+		case DIFFUSION_LINE: // Release new point on the line y_min somewhere between x_min and x_max 
 			y = y_min;
 			x = RANDOM(x_max-x_min) + (g_x_dots-x_max + x_min)/2;
 			break;
-		case DIFFUSION_SQUARE: /* Release new point on a circle inside the box with radius
-					given by the radius variable */
+		case DIFFUSION_SQUARE:
+			// Release new point on a circle inside the box with radius
+			// given by the radius variable
 			angle = 2*double(rand())/(RAND_MAX/MathUtil::Pi);
 			FPUsincos(&angle, &sine, &cosine);
 			x = int(cosine*radius + g_x_dots);
@@ -190,21 +191,21 @@ int diffusion()
 			break;
 		}
 
-		/* Loop as long as the point (x, y) is surrounded by color 0 */
-		/* on all eight sides                                       */
+		// Loop as long as the point (x, y) is surrounded by color 0 
+		// on all eight sides                                       
 
 		while ((get_color(x + 1, y + 1) == 0) && (get_color(x + 1, y) == 0) &&
 			(get_color(x + 1, y-1) == 0) && (get_color(x  , y + 1) == 0) &&
 			(get_color(x  , y-1) == 0) && (get_color(x-1, y + 1) == 0) &&
 			(get_color(x-1, y) == 0) && (get_color(x-1, y-1) == 0))
 		{
-			/* Erase moving point */
+			// Erase moving point 
 			if (g_show_orbit)
 			{
 				g_plot_color_put_color(x, y, 0);
 			}
 
-			if (mode == DIFFUSION_CENTRAL) /* Make sure point is inside the box */
+			if (mode == DIFFUSION_CENTRAL) // Make sure point is inside the box 
 			{
 				if (x == x_max)
 				{
@@ -224,8 +225,9 @@ int diffusion()
 				}
 			}
 
-			if (mode == DIFFUSION_LINE) /* Make sure point is on the screen below g_y_min, but
-							we need a 1 pixel margin because of the next random step.*/
+			// Make sure point is on the screen below g_y_min, but
+			// we need a 1 pixel margin because of the next random step.
+			if (mode == DIFFUSION_LINE)
 			{
 				if (x >= g_x_dots-1)
 				{
@@ -241,11 +243,11 @@ int diffusion()
 				}
 			}
 
-			/* Take one random step */
+			// Take one random step 
 			x += RANDOM(3) - 1;
 			y += RANDOM(3) - 1;
 
-			/* Check keyboard */
+			// Check keyboard 
 			if ((++s_keyboard_check & 0x7f) == 1)
 			{
 				if (check_key())
@@ -270,36 +272,36 @@ int diffusion()
 				}
 			}
 
-			/* Show the moving point */
+			// Show the moving point 
 			if (g_show_orbit)
 			{
 				g_plot_color_put_color(x, y, RANDOM(g_colors-1) + 1);
 			}
 
-		} /* End of loop, now fix the point */
+		} // End of loop, now fix the point 
 
-		/* If we're doing colorshifting then use currentcolor, otherwise
-			pick one at random */
+		// If we're doing colorshifting then use currentcolor, otherwise
+		// pick one at random
 		g_plot_color_put_color(x, y, colorshift ? currentcolor : RANDOM(g_colors-1) + 1);
 
-		/* If we're doing colorshifting then check to see if we need to shift*/
+		// If we're doing colorshifting then check to see if we need to shift
 		if (colorshift)
 		{
-			if (!--colorcount) /* If the counter reaches zero then shift*/
+			if (!--colorcount) // If the counter reaches zero then shift
 			{
-				currentcolor++;      /* Increase the current color and wrap */
-				currentcolor %= g_colors;  /* around skipping zero */
+				currentcolor++;      // Increase the current color and wrap 
+				currentcolor %= g_colors;  // around skipping zero 
 				if (!currentcolor)
 				{
 					currentcolor++;
 				}
-				colorcount = colorshift;  /* and reset the counter */
+				colorcount = colorshift;  // and reset the counter 
 			}
 		}
 
-		/* If the new point is close to an edge, we may need to increase
-			some limits so that the limits expand to match the growing
-			fractal. */
+		// If the new point is close to an edge, we may need to increase
+		//	some limits so that the limits expand to match the growing
+		//	fractal.
 
 		switch (mode)
 		{
@@ -307,7 +309,7 @@ int diffusion()
 			if (((x + border) > x_max) || ((x-border) < x_min)
 				|| ((y-border) < y_min) || ((y + border) > y_max))
 			{
-				/* Increase box size, but not past the edge of the screen */
+				// Increase box size, but not past the edge of the screen 
 				y_min--;
 				y_max++;
 				x_min--;
@@ -318,7 +320,7 @@ int diffusion()
 				}
 			}
 			break;
-		case DIFFUSION_LINE: /* Decrease g_y_min, but not past top of screen */
+		case DIFFUSION_LINE: // Decrease g_y_min, but not past top of screen 
 			if (y-border < y_min)
 			{
 				y_min--;
@@ -328,8 +330,9 @@ int diffusion()
 				return 0;
 			}
 			break;
-		case DIFFUSION_SQUARE: /* Decrease the radius where points are released to stay away
-					from the fractal.  It might be decreased by 1 or 2 */
+		case DIFFUSION_SQUARE:
+			// Decrease the radius where points are released to stay away
+			// from the fractal.  It might be decreased by 1 or 2
 			r = sqr(float(x)-g_x_dots/2) + sqr(float(y)-g_y_dots/2);
 			if (r <= border*border)
 			{

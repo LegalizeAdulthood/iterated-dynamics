@@ -22,7 +22,7 @@ extern ComplexD croot;
 
 static Newton s_newton;
 static NewtonComplex s_newton_complex;
-static ComplexD s_static_roots[16] = { { 0.0, 0.0 } }; /* roots array for degree 16 or less */
+static ComplexD s_static_roots[16] = { { 0.0, 0.0 } }; // roots array for degree 16 or less 
 static ComplexD *s_roots = s_static_roots;
 
 static double distance(const ComplexD &z1, const ComplexD &z2)
@@ -68,7 +68,7 @@ int complex_newton()
 	return s_newton_complex.orbit();
 }
 
-bool Newton::setup()           /* Newton/NewtBasin Routines */
+bool Newton::setup()           // Newton/NewtBasin Routines 
 {
 	int i;
 #if !defined(XFRACT)
@@ -96,17 +96,17 @@ bool Newton::setup()           /* Newton/NewtBasin Routines */
 
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 #endif
-	/* set up table of roots of 1 along unit circle */
+	// set up table of roots of 1 along unit circle 
 	g_degree = int(g_parameter.x);
 	if (g_degree < 2)
 	{
-		g_degree = 3;   /* defaults to 3, but 2 is possible */
+		g_degree = 3;   // defaults to 3, but 2 is possible 
 	}
 
-	/* precalculated values */
+	// precalculated values 
 	m_root_over_degree = 1.0/double(g_degree);
 	m_degree_minus_1_over_degree = double(g_degree - 1)/double(g_degree);
-	g_threshold    = .3*MathUtil::Pi/g_degree; /* less than half distance between roots */
+	g_threshold    = .3*MathUtil::Pi/g_degree; // less than half distance between roots 
 
 	g_basin = 0;
 	if (s_roots != s_static_roots)
@@ -117,7 +117,7 @@ bool Newton::setup()           /* Newton/NewtBasin Routines */
 
 	if (g_fractal_type == FRACTYPE_NEWTON_BASIN)
 	{
-		g_basin = g_parameter.y ? 2 : 1; /*stripes */
+		g_basin = g_parameter.y ? 2 : 1; // stripes
 		if (g_degree > 16)
 		{
 			s_roots = new ComplexD[g_degree];
@@ -132,7 +132,7 @@ bool Newton::setup()           /* Newton/NewtBasin Routines */
 			s_roots = s_static_roots;
 		}
 
-		/* list of roots to discover where we converged for newtbasin */
+		// list of roots to discover where we converged for newtbasin 
 		for (i = 0; i < g_degree; i++)
 		{
 			s_roots[i].x = cos(i*g_two_pi/double(g_degree));
@@ -159,13 +159,13 @@ int Newton::orbit()
 			long tmpcolor;
 			int i;
 			tmpcolor = -1;
-			/* this code determines which degree-th root of root the
-				Newton formula converges to. The roots of a 1 are
-				distributed on a circle of radius 1 about the origin. */
+			// this code determines which degree-th root of root the
+			// Newton formula converges to. The roots of a 1 are
+			// distributed on a circle of radius 1 about the origin.
 			for (i = 0; i < g_degree; i++)
 			{
-				/* color in alternating shades with iteration according to
-					which root of 1 it converged to */
+				// color in alternating shades with iteration according to
+				// which root of 1 it converged to
 				if (distance(s_roots[i], g_old_z) < g_threshold)
 				{
 					tmpcolor = (g_basin == 2) ?
@@ -180,7 +180,7 @@ int Newton::orbit()
 	g_new_z.x = m_degree_minus_1_over_degree*g_new_z.x + m_root_over_degree;
 	g_new_z.y *= m_degree_minus_1_over_degree;
 
-	/* Watch for divide underflow */
+	// Watch for divide underflow 
 	double s_t2 = g_temp_z.x*g_temp_z.x + g_temp_z.y*g_temp_z.y;
 	if (s_t2 < FLT_MIN)
 	{
@@ -216,9 +216,9 @@ int NewtonComplex::orbit()
 {
 	ComplexD cd1;
 
-	/* new = ((cdegree-1)*old**cdegree) + croot
-				----------------------------------
-                 cdegree*old**(cdegree-1)         */
+	// new = ((cdegree-1)*old**cdegree) + croot
+	//		 ----------------------------------
+	//       cdegree*old**(cdegree-1)
 
 	cd1.x = cdegree.x - 1.0;
 	cd1.y = cdegree.y;

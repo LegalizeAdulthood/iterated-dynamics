@@ -6,11 +6,11 @@
 #include "id.h"
 #include "helpcom.h"
 
-bool is_hyphen(const char *ptr)   /* true if ptr points to a real hyphen */
-{                           /* checkes for "--" and " -" */
+bool is_hyphen(const char *ptr)   // true if ptr points to a real hyphen 
+{                           // checkes for "--" and " -" 
 	if (*ptr != '-')
 	{
-		return 0; /* that was easy! */
+		return 0; // that was easy! 
 	}
 
 	--ptr;
@@ -33,7 +33,7 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 	{
 		switch (*curr)
 		{
-		case ' ':    /* it's a run of spaces */
+		case ' ':    // it's a run of spaces 
 			tok = TOK_SPACE;
 			while (*curr == ' ' && _size < (int) len)
 			{
@@ -54,7 +54,7 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 
 		case CMD_LINK:
 			tok = TOK_LINK;
-			_size += 1+3*sizeof(int); /* skip CMD_LINK + topic_num + topic_off + page_num */
+			_size += 1+3*sizeof(int); // skip CMD_LINK + topic_num + topic_off + page_num 
 			curr += 1+3*sizeof(int);
 
 			while (*curr != CMD_LINK)
@@ -69,12 +69,12 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 				++_width;
 				assert((unsigned) _size < len);
 			}
-			++_size;   /* skip ending CMD_LINK */
+			++_size;   // skip ending CMD_LINK 
 			break;
 
 		case CMD_PARA:
 			tok = TOK_PARA;
-			_size += 3;     /* skip CMD_PARA + indent + margin */
+			_size += 3;     // skip CMD_PARA + indent + margin 
 			break;
 
 		case CMD_XONLINE:
@@ -102,7 +102,7 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 			++_size;
 			break;
 
-		default:   /* it must be a word */
+		default:   // it must be a word 
 			tok = TOK_WORD;
 			while (true)
 			{
@@ -143,7 +143,7 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 				}
 			}
 			break;
-		} /* switch */
+		} // switch 
 	}
 
 	if (size  != 0)
@@ -232,7 +232,7 @@ int find_line_width(int mode, char *curr, unsigned len)
 			len -= size;
 			break;
 
-		default:   /* TOK_SPACE, TOK_LINK or TOK_WORD */
+		default:   // TOK_SPACE, TOK_LINK or TOK_WORD 
 			lwidth += width;
 			curr += size;
 			len -= size;
@@ -345,7 +345,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 			skip_blanks = 0;
 			col = 0;
 
-			if (!first_section)   /* do not skip blanks for DocContents */
+			if (!first_section)   // do not skip blanks for DocContents 
 			{
 				while (pd.len > 0)
 				{
@@ -480,7 +480,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
 							if (tok == TOK_PARA)
 							{
-								col = 0;   /* fake a nl */
+								col = 0;   // fake a nl 
 								++pd.lnum;
 								if (!DO_PRINTN(nl, 1))
 								{
@@ -515,10 +515,10 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 								continue;
 							}
 
-							/* now tok is TOK_SPACE or TOK_WORD */
+							// now tok is TOK_SPACE or TOK_WORD 
 
 							if (col+width > PAGE_WIDTH)
-							{          /* go to next line... */
+							{          // go to next line... 
 								if (!DO_PRINTN(nl, 1))
 								{
 									return 0;
@@ -539,7 +539,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
 								if (tok == TOK_SPACE)
 								{
-									width = 0;   /* skip spaces at start of a line */
+									width = 0;   // skip spaces at start of a line 
 								}
 
 								if (!DO_PRINTN(sp, margin))
@@ -588,7 +588,7 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 
 					if (pd.lnum >= PAGE_DEPTH || (col == 0 && pd.lnum >= PAGE_DEPTH-BLANK_BREAK))
 					{
-						if (col != 0)    /* if last wasn't a blank line... */
+						if (col != 0)    // if last wasn't a blank line... 
 						{
 							if (!DO_PRINTN(nl, 1))
 							{
@@ -680,11 +680,11 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 					break;
 
 				case TOK_DONE:
-				case TOK_XONLINE:   /* skip */
-				case TOK_XDOC:      /* ignore */
+				case TOK_XONLINE:   // skip 
+				case TOK_XDOC:      // ignore 
 					break;
 
-				} /* switch */
+				} // switch 
 
 				pd.curr += size;
 				pd.len  -= size;
@@ -695,10 +695,10 @@ int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info)
 			get_info(PD_RELEASE_TOPIC, &pd, info);
 
 			first_topic = 0;
-		} /* while */
+		} // while 
 
 		first_section = 0;
-	} /* while */
+	} // while 
 
 	if (!output(PD_FOOTING, &pd, info))
 	{

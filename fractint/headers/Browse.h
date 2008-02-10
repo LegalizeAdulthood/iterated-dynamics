@@ -58,7 +58,7 @@ private:
 	bool _autoBrowse;
 	bool _subImages;
 	int _crossHairBoxSize;
-	bool _doubleCaution;				/* confirm for deleting */
+	bool _doubleCaution;				// confirm for deleting 
 	float _tooSmall;
 };
 

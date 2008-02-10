@@ -65,8 +65,8 @@ static long cdecl calculate_mandelbrot_asm1()
 	long savedx = 0;
 	long savedy = 0;
 	g_orbit_index = 0;
-	long savedand = g_first_saved_and;             /* start checking the very first time */
-	g_input_counter--;                /* Only check the keyboard sometimes */
+	long savedand = g_first_saved_and;             // start checking the very first time 
+	g_input_counter--;                // Only check the keyboard sometimes 
 	if (g_input_counter < 0)
 	{
 		int key;
@@ -96,7 +96,7 @@ static long cdecl calculate_mandelbrot_asm1()
 	long Cy;
 	if (g_fractal_type != FRACTYPE_JULIA)
 	{
-		/* Mandelbrot_87 */
+		// Mandelbrot_87 
 		Cx = g_initial_x_l;
 		Cy = g_initial_y_l;
 		x = g_parameter_l.x + Cx;
@@ -104,7 +104,7 @@ static long cdecl calculate_mandelbrot_asm1()
 	}
 	else
 	{
-		/* dojulia_87 */
+		// dojulia_87 
 		Cx = g_parameter_l.x;
 		Cy = g_parameter_l.y;
 		x = g_initial_x_l;
@@ -119,7 +119,7 @@ static long cdecl calculate_mandelbrot_asm1()
 	y2 = FUDGE_MUL(y, y);
 	xy = FUDGE_MUL(x, y);
 
-	/* top_of_cs_loop_87 */
+	// top_of_cs_loop_87 
 	long cx = g_max_iteration;
 	int savedincr = 1;
 	while (--cx > 0)
@@ -156,7 +156,7 @@ static long cdecl calculate_mandelbrot_asm1()
 			}
 			else
 			{
-				/* special_outside */
+				// special_outside 
 				if (g_outside == COLORMODE_REAL)
 				{
 					g_color_iter += g_new_z_l.x + 7;
@@ -177,7 +177,7 @@ static long cdecl calculate_mandelbrot_asm1()
 				{
 					g_color_iter = (long) fabs(atan2(double(g_new_z_l.y), double(g_new_z_l.x))*g_atan_colors/MathUtil::Pi);
 				}
-				/* check_color */
+				// check_color 
 				if ((g_color_iter <= 0 || g_color_iter > g_max_iteration) && g_outside != COLORMODE_FLOAT_MODULUS)
 				{
 					g_color_iter = 1;
@@ -187,8 +187,8 @@ static long cdecl calculate_mandelbrot_asm1()
 			goto pop_stack;
 		}
 
-		/* no_save_new_xy_87 */
-		if (cx < g_old_color_iter)   /* check periodicity */
+		// no_save_new_xy_87 
+		if (cx < g_old_color_iter)   // check periodicity 
 		{
 			if (((g_max_iteration - cx) & savedand) == 0)
 			{
@@ -203,7 +203,7 @@ static long cdecl calculate_mandelbrot_asm1()
 			}
 			else if (ABS(savedx-x) < g_close_enough_l && ABS(savedy-y) < g_close_enough_l)
 			{
-				/* g_old_color_iter = 65535;  */
+				// g_old_color_iter = 65535;  
 				g_old_color_iter = g_max_iteration;
 				g_real_color_iter = g_max_iteration;
 				g_input_counter = g_input_counter - (g_max_iteration - cx);
@@ -211,17 +211,17 @@ static long cdecl calculate_mandelbrot_asm1()
 				goto pop_stack;
 			}
 		}
-		/* no_periodicity_check_87 */
+		// no_periodicity_check_87 
 		if (g_show_orbit)
 		{
 			plot_orbit(x, y, -1);
 		}
-		/* no_show_orbit_87 */
-	} /* while (--cx > 0) */
+		// no_show_orbit_87 
+	} // while (--cx > 0) 
 
-	/* reached maxit */
-	/* g_old_color_iter = 65535;  */
-	/* check periodicity immediately next time, remember we count down from maxit */
+	// reached maxit 
+	// g_old_color_iter = 65535;  
+	// check periodicity immediately next time, remember we count down from maxit 
 	g_old_color_iter = g_max_iteration;
 	g_input_counter -= g_max_iteration;
 	g_real_color_iter = g_max_iteration;

@@ -37,7 +37,7 @@ enum FunctionType
 	FUNCTION_ONE	= 30
 };
 
-/* These MUST match the corresponding g_fractal_specific record in fractals.c */
+// These MUST match the corresponding g_fractal_specific record in fractals.c 
 enum FractalType
 {
 	FRACTYPE_NO_FRACTAL = -1,

@@ -19,20 +19,20 @@ struct lsys_turtle_state_base
 	char angle;
 	char reverse;
 	bool stackoflow;
-    /* dmaxangle is max_angle - 1 */
+    // dmaxangle is max_angle - 1 
 	char max_angle;
 	char dmaxangle;
 	char curcolor;
-	char dummy;  /* dummy ensures longword alignment */
+	char dummy;  // dummy ensures longword alignment 
     T size;
     T realangle;
 	T xpos;
-	T ypos; /* xpos and ypos are T, not fixed point */
+	T ypos; // xpos and ypos are T, not fixed point 
 	T x_min;
 	T y_min;
 	T x_max;
-	T y_max; /* as are these */
-    T aspect; /* aspect ratio of each pixel, ysize/xsize */
+	T y_max; // as are these 
+    T aspect; // aspect ratio of each pixel, ysize/xsize 
 };
 
 struct lsys_turtle_state_l : lsys_turtle_state_base<long>
@@ -51,7 +51,7 @@ struct lsys_turtle_state_fp : lsys_turtle_state_base<LDBL>
 
 extern int g_max_angle;
 
-/* routines in lsysf.c */
+// routines in lsysf.c 
 
 struct lsys_cmd;
 extern lsys_cmd * draw_lsysf(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, int depth);

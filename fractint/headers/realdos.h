@@ -1,6 +1,6 @@
 #pragma once
 
-/* stop_message() flags */
+// stop_message() flags 
 enum StopMessageFlag
 {
 	STOPMSG_NORMAL		= 0,
@@ -22,7 +22,7 @@ extern void clear_temp_message();
 extern void help_title();
 extern int put_string_center(int, int, int, int, const char *);
 extern int put_string_center(int row, int col, int width, int attr, const std::string &msg);
-#ifndef XFRACT /* Unix should have this in string.h */
+#ifndef XFRACT // Unix should have this in string.h 
 extern int strncasecmp(const char *, const char *, int);
 #endif
 extern int main_menu(bool full_menu);

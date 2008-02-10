@@ -85,14 +85,14 @@ private:
 	static VIDEOINFO s_modes[];
 };
 
-/* VIDEOINFO:															*/
-/*         char    name[26];       Adapter name (IBM EGA, etc)          */
-/*         char    comment[26];    Comments (UNTESTED, etc)             */
-/*         int     keynum;         key number used to invoked this mode */
-/*                                 2-10 = F2-10, 11-40 = S, C, A{F1-F10}  */
-/*         int     x_dots;          number of dots across the screen     */
-/*         int     y_dots;          number of dots down the screen       */
-/*         int     colors;         number of g_colors available           */
+// VIDEOINFO:															
+// char    name[26];       Adapter name (IBM EGA, etc)          
+// char    comment[26];    Comments (UNTESTED, etc)             
+// int     keynum;         key number used to invoked this mode 
+// 2-10 = F2-10, 11-40 = S, C, A{F1-F10}  
+// int     x_dots;          number of dots across the screen     
+// int     y_dots;          number of dots down the screen       
+// int     colors;         number of g_colors available           
 
 #define DRIVER_MODE(name_, comment_, key_, width_, height_) \
 	{ name_, comment_, key_, width_, height_, 256 }
@@ -170,10 +170,10 @@ static int handle_special_keys(int ch)
 
 static void parse_geometry(const char *spec, int *x, int *y, int *width, int *height)
 {
-	/* do something like XParseGeometry() */
+	// do something like XParseGeometry() 
 	if (2 == ::sscanf(spec, "%dx%d", width, height))
 	{
-		/* all we care about is width and height for disk output */
+		// all we care about is width and height for disk output 
 		*x = 0;
 		*y = 0;
 	}
@@ -296,9 +296,9 @@ bool GDIDriver::initialize(int &argc, char **argv)
 
 	m_plot.initialize(g_instance, "Plot");
 
-	/* filter out driver arguments */
+	// filter out driver arguments 
 
-	/* add default list of video modes */
+	// add default list of video modes 
 	int width, height;
 	get_max_screen(width, height);
 
@@ -573,9 +573,9 @@ void GDIDriver::set_video_mode(const VIDEOINFO &)
 	extern void set_normal_dot();
 	extern void set_normal_line();
 
-	/* initially, set the virtual line to be the scan line length */
+	// initially, set the virtual line to be the scan line length 
 	g_vx_dots = g_screen_width;
-	g_is_true_color = 0;				/* assume not truecolor */
+	g_is_true_color = 0;				// assume not truecolor 
 	g_ok_to_print = false;
 	g_.SetGoodMode(true);
 	g_and_color = g_colors-1;

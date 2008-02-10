@@ -13,7 +13,7 @@
 #include "Test.h"
 #include "testpt.h"
 
-/***************** standalone engine for "test" ********************/
+// standalone engine for "test"
 
 int test()
 {
@@ -29,7 +29,7 @@ int test()
 		get_resume(sizeof(startpass), &startpass);
 		end_resume();
 	}
-	if (test_start()) /* assume it was stand-alone, doesn't want passes logic */
+	if (test_start()) // assume it was stand-alone, doesn't want passes logic 
 	{
 		return 0;
 	}
@@ -38,7 +38,7 @@ int test()
 	{
 		for (g_row = startrow; g_row <= g_y_stop; g_row = g_row + 1 + numpasses)
 		{
-			for (g_col = 0; g_col <= g_x_stop; g_col++)       /* look at each point on screen */
+			for (g_col = 0; g_col <= g_x_stop; g_col++)       // look at each point on screen 
 			{
 				register int color;
 				g_initial_z.x = g_dx_pixel();
@@ -52,9 +52,9 @@ int test()
 					return -1;
 				}
 				color = test_per_pixel(g_initial_z.x, g_initial_z.y, g_parameter.x, g_parameter.y, g_max_iteration, g_inside);
-				if (color >= g_colors)  /* avoid trouble if color is 0 */
+				if (color >= g_colors)  // avoid trouble if color is 0 
 				{
-					color = ((color-1) % g_and_color) + 1; /* skip color zero */
+					color = ((color-1) % g_and_color) + 1; // skip color zero 
 				}
 				g_plot_color(g_col, g_row, color);
 				if (numpasses && (g_passes == 0))

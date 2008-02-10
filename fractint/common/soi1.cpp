@@ -1,16 +1,16 @@
-/*
- * soi1.cpp --  SOI
- *
- *	Simultaneous Orbit Iteration Image Generation Method. Computes
- *      rectangular regions by tracking the orbits of only a few key points.
- *
- * Copyright (c) 1994-1997 Michael R. Ganss. All Rights Reserved.
- *
- * This file is distributed under the same conditions as
- * AlmondBread. For further information see
- * <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
- *
- */
+//
+// soi1.cpp --  SOI
+//
+//	Simultaneous Orbit Iteration Image Generation Method. Computes
+//      rectangular regions by tracking the orbits of only a few key points.
+//
+// Copyright (c) 1994-1997 Michael R. Ganss. All Rights Reserved.
+//
+// This file is distributed under the same conditions as
+// AlmondBread. For further information see
+// <URL:http://www.cs.tu-berlin.de/~rms/AlmondBread>.
+//
+//
 #include <string>
 
 #include <time.h>
@@ -78,15 +78,15 @@ static void put_box(int x1, int y1, int x2, int y2, int color)
 
 enum
 {
-	/* maximum side length beyond which we start regular scanning instead of
-	subdividing */
+	// maximum side length beyond which we start regular scanning instead of
+	// subdividing
 	SCAN = 16,
 
-	/* pixel interleave used in scanning */
+	// pixel interleave used in scanning 
 	INTERLEAVE = 4
 };
 
-/* compute the value of the interpolation polynomial at (x, y) */
+// compute the value of the interpolation polynomial at (x, y) 
 #define GET_REAL(x, y) \
 interpolate(cim1, midi, cim2, \
 	interpolate(cre1, midr, cre2, zre1, zre5, zre2, x), \
@@ -98,8 +98,8 @@ interpolate(cre1, midr, cre2, \
 	interpolate(cim1, midi, cim2, zim5, zim9, zim8, y), \
 	interpolate(cim1, midi, cim2, zim2, zim7, zim4, y), x)
 
-/* compute the value of the interpolation polynomial at (x, y)
-	from saved values before interpolation failed to stay within tolerance */
+// compute the value of the interpolation polynomial at (x, y)
+// from saved values before interpolation failed to stay within tolerance
 #define GET_SAVED_REAL(x, y) \
 interpolate(cim1, midi, cim2, \
 	interpolate(cre1, midr, cre2, sr1, sr5, sr2, x), \
@@ -111,10 +111,10 @@ interpolate(cre1, midr, cre2, \
 	interpolate(cim1, midi, cim2, si5, si9, si8, y), \
 	interpolate(cim1, midi, cim2, si2, si7, si4, y), x)
 
-/* compute the value of the interpolation polynomial at (x, y)
-	during scanning. Here, key values do not change, so we can precompute
-	coefficients in one direction and simply evaluate the polynomial
-	during scanning. */
+// compute the value of the interpolation polynomial at (x, y)
+//	during scanning. Here, key values do not change, so we can precompute
+//	coefficients in one direction and simply evaluate the polynomial
+//	during scanning.
 #define GET_SCAN_REAL(x, y) \
 interpolate(cim1, midi, cim2, \
 	EVALUATE(cre1, midr, br10, br11, br12, x), \
@@ -126,8 +126,8 @@ interpolate(cre1, midr, cre2, \
 	EVALUATE(cim1, midi, bi20, bi21, bi22, y), \
 	EVALUATE(cim1, midi, bi30, bi31, bi32, y), x)
 
-/* compute coefficients of Newton polynomial (b0, .., b2) from
-	(x0, w0), .., (x2, w2). */
+// compute coefficients of Newton polynomial (b0, .., b2) from
+//	(x0, w0), .., (x2, w2).
 #define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
 	do \
 	{ \
@@ -137,13 +137,13 @@ interpolate(cre1, midr, cre2, \
 	} \
 	while (0)
 
-/* evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t */
+// evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t 
 #define EVALUATE(x0, x1, b0, b1, b2, t) \
 	((b2*(t-x1) + b1)*(t-x0) + b0)
 
-/* Newton Interpolation.
-	It computes the value of the interpolation polynomial given by
-	(x0, w0)..(x2, w2) at x:=t */
+// Newton Interpolation.
+//	It computes the value of the interpolation polynomial given by
+//	(x0, w0)..(x2, w2) at x:=t
 static double interpolate(double x0, double x1, double x2,
 	double w0, double w1, double w2,
 	double t)
@@ -165,26 +165,26 @@ static double interpolate(double x0, double x1, double x2,
 		return w1 + ((t-x1)/(x2-x1))*(w2-w1); */
 }
 
-/* SOICompute - Perform simultaneous orbit iteration for a given rectangle
-
-	Input: cre1..cim2 : values defining the four corners of the rectangle
-		x1..y2     : corresponding pixel values
-	  zre1..zim9 : intermediate iterated values of the key points (key values)
-
-	  (cre1, cim1)               (cre2, cim1)
-	  (zre1, zim1)  (zre5, zim5)  (zre2, zim2)
-	       +------------+------------+
-	       |            |            |
-	       |            |            |
-	  (zre6, zim6)  (zre9, zim9)  (zre7, zim7)
-	       |            |            |
-	       |            |            |
-	       +------------+------------+
-	  (zre3, zim3)  (zre8, zim8)  (zre4, zim4)
-	  (cre1, cim2)               (cre2, cim2)
-
-	  iter       : current number of iterations
-	  */
+// SOICompute - Perform simultaneous orbit iteration for a given rectangle
+//
+//	Input: cre1..cim2 : values defining the four corners of the rectangle
+//		x1..y2     : corresponding pixel values
+//	  zre1..zim9 : intermediate iterated values of the key points (key values)
+//
+//	  (cre1, cim1)               (cre2, cim1)
+//	  (zre1, zim1)  (zre5, zim5)  (zre2, zim2)
+//	       +------------+------------+
+//	       |            |            |
+//	       |            |            |
+//	  (zre6, zim6)  (zre9, zim9)  (zre7, zim7)
+//	       |            |            |
+//	       |            |            |
+//	       +------------+------------+
+//	  (zre3, zim3)  (zre8, zim8)  (zre4, zim4)
+//	  (cre1, cim2)               (cre2, cim2)
+//
+//	  iter       : current number of iterations
+//
 static double zre1;
 static double zim1;
 static double zre2;
@@ -203,11 +203,11 @@ static double zre8;
 static double zim8;
 static double zre9;
 static double zim9;
-/*
-	The purpose of this macro is to reduce the number of parameters of the
-	function rhombus(), since this is a recursive function, and stack space
-	under DOS is extremely limited.
-*/
+//
+//	The purpose of this macro is to reduce the number of parameters of the
+//	function rhombus(), since this is a recursive function, and stack space
+//	under DOS is extremely limited.
+//
 
 #define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
 				ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
@@ -229,8 +229,8 @@ static double zim9;
 static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	int x1, int x2, int y1, int y2, long iter)
 {
-	/* The following variables do not need their values saved */
-	/* used in scanning */
+	// The following variables do not need their values saved 
+	// used in scanning 
 	static long savecolor;
 	static long color;
 	static long helpcolor;
@@ -246,7 +246,7 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	static double helpre;
 	static double zre;
 	static double zim;
-	/* interpolation coefficients */
+	// interpolation coefficients 
 	static double br10;
 	static double br11;
 	static double br12;
@@ -265,10 +265,10 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	static double bi30;
 	static double bi31;
 	static double bi32;
-	/* ratio of interpolated test point to iterated one */
+	// ratio of interpolated test point to iterated one 
 	static double l1;
 	static double l2;
-	/* squares of key values */
+	// squares of key values 
 	static double rq1;
 	static double iq1;
 	static double rq2;
@@ -288,7 +288,7 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	static double rq9;
 	static double iq9;
 
-	/* test points */
+	// test points 
 	static double cr1;
 	static double cr2;
 	static double ci1;
@@ -310,10 +310,10 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	static double trq4;
 	static double tiq4;
 
-	/* center of rectangle */
+	// center of rectangle 
 	double midr = (cre1 + cre2)/2, midi = (cim1 + cim2)/2;
 
-	/* saved values of key values */
+	// saved values of key values 
 	double sr1;
 	double si1;
 	double sr2;
@@ -332,7 +332,7 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	double si8;
 	double sr9;
 	double si9;
-	/* key values for subsequent rectangles */
+	// key values for subsequent rectangles 
 	double re10;
 	double re11;
 	double re12;
@@ -396,7 +396,7 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 
 	if (y2-y1 <= SCAN)
 	{
-		/* finish up the image by scanning the rectangle */
+		// finish up the image by scanning the rectangle 
 scan:
 		INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
 		INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
@@ -586,7 +586,7 @@ scan:
 	}											\
 	while (0)
 
-		/* iterate key values */
+		// iterate key values 
 		SOI_ORBIT(zre1, rq1, zim1, iq1, cre1, cim1, esc1);
 		/*
 		zim1 = (zim1 + zim1)*zre1 + cim1;
@@ -650,7 +650,7 @@ scan:
 		rq9 = zre9*zre9;
 		iq9 = zim9*zim9;
 		*/
-		/* iterate test point */
+		// iterate test point 
 		SOI_ORBIT(tzr1, trq1, tzi1, tiq1, cr1, ci1, tesc1);
 		/*
 		tzi1 = (tzi1 + tzi1)*tzr1 + ci1;
@@ -682,7 +682,7 @@ scan:
 		*/
 		iter++;
 
-		/* if one of the iterated values bails out, subdivide */
+		// if one of the iterated values bails out, subdivide 
 		/*
 		if ((rq1 + iq1) > 16.0||
 				(rq2 + iq2) > 16.0||
@@ -706,9 +706,9 @@ scan:
 			break;
 		}
 
-		/* if maximum number of iterations is reached, the whole rectangle
-		can be assumed part of M. This is of course best case behavior
-		of SOI, we seldomly get there */
+		// if maximum number of iterations is reached, the whole rectangle
+		// can be assumed part of M. This is of course best case behavior
+		// of SOI, we seldomly get there
 		if (iter > g_max_iteration)
 		{
 			put_box(x1, y1, x2, y2, 0);
@@ -716,8 +716,8 @@ scan:
 			goto rhombus_done;
 		}
 
-		/* now for all test points, check whether they exceed the
-		allowed tolerance. if so, subdivide */
+		// now for all test points, check whether they exceed the
+		// allowed tolerance. if so, subdivide
 		l1 = GET_REAL(cr1, ci1);
 		l1 = (tzr1 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr1;
@@ -785,7 +785,7 @@ scan:
 
 	iter--;
 
-	/* this is a little heuristic I tried to improve performance. */
+	// this is a little heuristic I tried to improve performance. 
 	if (iter-before < 10)
 	{
 		zre1 = sr1; zim1 = si1;
@@ -800,7 +800,7 @@ scan:
 		goto scan;
 	}
 
-	/* compute key values for subsequent rectangles */
+	// compute key values for subsequent rectangles 
 
 	re10 = interpolate(cre1, midr, cre2, sr1, sr5, sr2, cr1);
 	im10 = interpolate(cre1, midr, cre2, si1, si5, si2, cr1);

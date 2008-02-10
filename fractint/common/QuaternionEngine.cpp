@@ -7,7 +7,7 @@
 
 #include "QuaternionEngine.h"
 
-/* These are for quaternions */
+// These are for quaternions 
 QuaternionD g_c_quaternion(0.0, 0.0, 0.0, 0.0);
 
 int quaternion_julia_per_pixel_fp()
@@ -44,7 +44,7 @@ int quaternion_orbit_fp()
 	double n1 = 2*a0*a1 + g_c_quaternion.R_component_2();
 	double n2 = 2*a0*a2 + g_c_quaternion.R_component_3();
 	double n3 = 2*a0*a3 + g_c_quaternion.R_component_4();
-	/* Check bailout */
+	// Check bailout 
 	g_magnitude = a0*a0 + a1*a1 + a2*a2 + a3*a3;
 	if (g_magnitude > g_rq_limit)
 	{

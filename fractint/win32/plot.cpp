@@ -137,7 +137,7 @@ void Plot::OnPaint(HWND window)
 	::EndPaint(window, &ps);
 }
 
-/* forward all mouse events to the frame */
+// forward all mouse events to the frame 
 void Plot::OnLeftButtonDown(HWND hwnd, BOOL doubleClick, int x, int y, int keyFlags)
 {
 	FORWARD_WM_LBUTTONDOWN(hwnd, doubleClick, x, y, keyFlags, Frame::proc);
@@ -306,8 +306,8 @@ void Plot::create(HWND parent)
 		m_window = ::CreateWindow(s_window_class,
 			m_title,
 			parent ? WS_CHILD : WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,               /* default horizontal position */
-			CW_USEDEFAULT,               /* default vertical position */
+			CW_USEDEFAULT,               // default horizontal position 
+			CW_USEDEFAULT,               // default vertical position 
 			m_width,
 			m_height,
 			parent, 0, m_instance,
@@ -425,7 +425,7 @@ int Plot::write_palette()
 	m_clut = g_.DAC();
 	for (i = 0; i < 256; i++)
 	{
-		/* TODO: review case when COLOR_CHANNEL_MAX != 63 */
+		// TODO: review case when COLOR_CHANNEL_MAX != 63 
 		m_bmi.bmiColors[i].rgbRed = m_clut.Red(i)*4;
 		m_bmi.bmiColors[i].rgbGreen = m_clut.Green(i)*4;
 		m_bmi.bmiColors[i].rgbBlue = m_clut.Blue(i)*4;

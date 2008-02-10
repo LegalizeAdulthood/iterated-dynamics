@@ -22,7 +22,7 @@ static int s_trail_row;
 static int s_trail_col;
 static enum direction s_going_to;
 
-/******************* boundary trace method ***************************/
+// boundary trace method
 
 enum
 {
@@ -45,8 +45,7 @@ inline void advance_no_match()
 	s_going_to = (direction) ((s_going_to + 1) & 0x03);
 }
 
-/*******************************************************************/
-/* take one step in the direction of s_going_to */
+// take one step in the direction of s_going_to 
 static void step_col_row()
 {
 	switch (s_going_to)
@@ -89,10 +88,10 @@ int boundary_trace_main()
 	}
 
 	g_got_status = GOT_STATUS_BOUNDARY_TRACE;
-	max_putline_length = 0; /* reset max_putline_length */
+	max_putline_length = 0; // reset max_putline_length 
 	for (g_current_row = g_iy_start; g_current_row <= g_y_stop; g_current_row++)
 	{
-		g_reset_periodicity = true; /* reset for a new row */
+		g_reset_periodicity = true; // reset for a new row 
 		g_color = bkcolor;
 		for (g_current_col = g_ix_start; g_current_col <= g_x_stop; g_current_col++)
 		{
@@ -103,33 +102,31 @@ int boundary_trace_main()
 			trail_color = g_color;
 			g_row = g_current_row;
 			g_col = g_current_col;
-			if (g_calculate_type() == -1) /* color, row, col are global */
+			if (g_calculate_type() == -1) // color, row, col are global 
 			{
-				if (g_show_dot != bkcolor) /* remove g_show_dot pixel */
+				if (g_show_dot != bkcolor) // remove g_show_dot pixel 
 				{
 					g_plot_color(g_col, g_row, bkcolor);
 				}
-				if (g_y_stop != g_WorkList.yy_stop())  /* DG */
+				if (g_y_stop != g_WorkList.yy_stop())  // DG 
 				{
-					g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
+					g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); // allow for sym 
 				}
 				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col,
 					g_current_row, g_y_stop, g_current_row,
 					0, g_work_sym);
 				return -1;
 			}
-			g_reset_periodicity = false; /* normal periodicity checking */
+			g_reset_periodicity = false; // normal periodicity checking 
 
-			/*
-			This next line may cause a few more pixels to be calculated,
-			but at the savings of quite a bit of overhead
-			*/
-			if (g_color != trail_color)  /* DG */
+			// This next line may cause a few more pixels to be calculated,
+			// but at the savings of quite a bit of overhead
+			if (g_color != trail_color)  // DG 
 			{
 				continue;
 			}
 
-			/* sweep clockwise to trace outline */
+			// sweep clockwise to trace outline 
 			s_trail_row = g_current_row;
 			s_trail_col = g_current_col;
 			trail_color = g_color;
@@ -146,18 +143,18 @@ int boundary_trace_main()
 					&& g_col <= g_x_stop
 					&& g_row <= g_y_stop)
 				{
-					/* the order of operations in this next line is critical */
+					// the order of operations in this next line is critical 
 					g_color = get_color(g_col, g_row);
 					if (g_color == bkcolor && g_calculate_type() == -1)
-								/* color, row, col are global for g_calculate_type() */
+								// color, row, col are global for g_calculate_type() 
 					{
-						if (g_show_dot != bkcolor) /* remove g_show_dot pixel */
+						if (g_show_dot != bkcolor) // remove g_show_dot pixel 
 						{
 							g_plot_color(g_col, g_row, bkcolor);
 						}
-						if (g_y_stop != g_WorkList.yy_stop())  /* DG */
+						if (g_y_stop != g_WorkList.yy_stop())  // DG 
 						{
-							g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
+							g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); // allow for sym 
 						}
 						g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col,
 							g_current_row, g_y_stop, g_current_row,
@@ -166,7 +163,7 @@ int boundary_trace_main()
 					}
 					else if (g_color == trail_color)
 					{
-						if (matches_found < 4) /* to keep it from overflowing */
+						if (matches_found < 4) // to keep it from overflowing 
 						{
 							matches_found++;
 						}
@@ -188,18 +185,16 @@ int boundary_trace_main()
 			}
 			while (continue_loop && (g_col != g_current_col || g_row != g_current_row));
 
-			if (matches_found <= 3)  /* DG */
+			if (matches_found <= 3)  // DG 
 			{
-				/* no hole */
+				// no hole 
 				g_color = bkcolor;
 				g_reset_periodicity = true;
 				continue;
 			}
 
-			/*
-			Fill in region by looping around again, filling lines to the left
-			whenever s_going_to is South or West
-			*/
+			// Fill in region by looping around again, filling lines to the left
+			// whenever s_going_to is South or West
 			s_trail_row = g_current_row;
 			s_trail_col = g_current_col;
 			coming_from = West;
@@ -215,11 +210,11 @@ int boundary_trace_main()
 						&& g_col <= g_x_stop
 						&& g_row <= g_y_stop
 						&& get_color(g_col, g_row) == trail_color)
-						/* get_color() must be last */
+						// get_color() must be last 
 					{
 						if (s_going_to == South
 							|| (s_going_to == West && coming_from != East))
-						{ /* fill a row, but only once */
+						{ // fill a row, but only once 
 							right = g_col;
 							while (--right >= g_ix_start)
 							{
@@ -229,40 +224,40 @@ int boundary_trace_main()
 									break;
 								}
 							}
-							if (g_color == bkcolor) /* check last color */
+							if (g_color == bkcolor) // check last color 
 							{
 								left = right;
 								while (get_color(--left, g_row) == bkcolor)
-									/* Should NOT be possible for left < g_ix_start */
+									// Should NOT be possible for left < g_ix_start 
 								{
-									/* do nothing */
+									// do nothing 
 								}
-								left++; /* one pixel too far */
-								if (right == left) /* only one hole */
+								left++; // one pixel too far 
+								if (right == left) // only one hole 
 								{
 									g_plot_color(left, g_row, fillcolor_used);
 								}
 								else
-								{ /* fill the line to the left */
+								{ // fill the line to the left 
 									length = right-left + 1;
 									if (fillcolor_used != last_fillcolor_used || length > max_putline_length)
-									{ /* only reset g_stack if necessary */
+									{ // only reset g_stack if necessary 
 										memset(g_stack, fillcolor_used, length);
 										last_fillcolor_used = fillcolor_used;
 										max_putline_length = length;
 									}
 									sym_fill_line(g_row, left, right, g_stack);
 								}
-							} /* end of fill line */
+							} // end of fill line 
 
-#if 0 /* don't interupt with a check_key() during fill */
+#if 0 // don't interupt with a check_key() during fill 
 							if (--g_input_counter <= 0)
 							{
 								if (check_key())
 								{
 									if (g_y_stop != g_WorkList.yy_stop())
 									{
-										g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); /* allow for sym */
+										g_y_stop = g_WorkList.yy_stop() - (g_current_row - g_WorkList.yy_start()); // allow for sym 
 									}
 									g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_current_col,
 										g_current_row, g_y_stop, g_current_row,
@@ -286,7 +281,7 @@ int boundary_trace_main()
 				while ((matches_found == 0) && s_going_to != coming_from);
 
 				if (matches_found == 0)
-				{ /* next one has to be a match */
+				{ // next one has to be a match 
 					step_col_row();
 					s_trail_row = g_row;
 					s_trail_col = g_col;
@@ -294,7 +289,7 @@ int boundary_trace_main()
 				}
 			}
 			while (s_trail_col != g_current_col || s_trail_row != g_current_row);
-			g_reset_periodicity = true; /* reset after a trace/fill */
+			g_reset_periodicity = true; // reset after a trace/fill 
 			g_color = bkcolor;
 		}
 	}

@@ -43,7 +43,7 @@
 extern long g_bn_max_stack;
 extern long maxstack;
 extern long startstack;
-/* routines in this module      */
+// routines in this module      
 
 static std::string function_details();
 static void area();
@@ -56,13 +56,13 @@ void not_disk_message()
 		"abort if it appears that your disk drive is working too hard.");
 }
 
-/* Wrapping version of driver_put_string for long numbers                         */
-/* row     -- pointer to row variable, internally incremented if needed   */
-/* col1    -- starting column                                             */
-/* col2    -- last column                                                 */
-/* color   -- attribute (same as for driver_put_string)                           */
-/* maxrow -- max number of rows to write                                 */
-/* returns 0 if success, 1 if hit maxrow before done                      */
+// Wrapping version of driver_put_string for long numbers                         
+// row     -- pointer to row variable, internally incremented if needed   
+// col1    -- starting column                                             
+// col2    -- last column                                                 
+// color   -- attribute (same as for driver_put_string)                           
+// maxrow -- max number of rows to write                                 
+// returns 0 if success, 1 if hit maxrow before done                      
 int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow)
 {
 	char save1;
@@ -75,8 +75,8 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
 	done = 0;
 	startrow = *row;
 	length = int(strlen(str));
-	padding = 3; /* space between col1 and decimal. */
-	/* find decimal point */
+	padding = 3; // space between col1 and decimal. 
+	// find decimal point 
 	for (decpt = 0; decpt < length; decpt++)
 	{
 		if (str[decpt] == '.')
@@ -97,7 +97,7 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
 		padding = 0;
 	}
 	col1 += padding;
-	decpt += col1 + 1; /* column just past where decimal is */
+	decpt += col1 + 1; // column just past where decimal is 
 	while (length > 0)
 	{
 		if (col2-col1 < length)
@@ -136,7 +136,7 @@ int putstringwrap(int *row, int col1, int col2, int color, char *str, int maxrow
 			driver_put_string(*row, col1, color, str);
 		}
 		length -= col2-col1;
-		col1 = decpt; /* align with decimal */
+		col1 = decpt; // align with decimal 
 	}
 	return done;
 }
@@ -152,19 +152,19 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 	double Width;
 	double Height;
 	double a;
-	double b; /* bottom, left, diagonal */
+	double b; // bottom, left, diagonal 
 	double a2;
 	double b2;
-	double c2; /* squares of above */
+	double c2; // squares of above 
 	double tmpx1;
 	double tmpx2;
 	double tmpy1;
 	double tmpy2;
-	double tmpa; /* temporary x, y, angle */
+	double tmpa; // temporary x, y, angle 
 
-	/* simple normal case first */
+	// simple normal case first 
 	if (g_escape_time_state.m_grid_fp.x_3rd() == g_escape_time_state.m_grid_fp.x_min() && g_escape_time_state.m_grid_fp.y_3rd() == g_escape_time_state.m_grid_fp.y_min())
-	{ /* no rotation or skewing, but stretching is allowed */
+	{ // no rotation or skewing, but stretching is allowed 
 		Width  = g_escape_time_state.m_grid_fp.width();
 		Height = g_escape_time_state.m_grid_fp.height();
 		*Xctr = g_escape_time_state.m_grid_fp.x_center();
@@ -176,8 +176,8 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 	}
 	else
 	{
-		/* set up triangle ABC, having sides abc */
-		/* side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) */
+		// set up triangle ABC, having sides abc 
+		// side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) 
 		tmpx1 = g_escape_time_state.m_grid_fp.width();
 		tmpy1 = g_escape_time_state.m_grid_fp.height();
 		c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
@@ -186,14 +186,14 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 		tmpy1 = g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 		a = sqrt(a2);
-		*Rotation = -MathUtil::RadiansToDegrees(atan2(tmpy1, tmpx1)); /* negative for image rotation */
+		*Rotation = -MathUtil::RadiansToDegrees(atan2(tmpy1, tmpx1)); // negative for image rotation 
 
 		tmpx2 = g_escape_time_state.m_grid_fp.x_min() - g_escape_time_state.m_grid_fp.x_3rd();
 		tmpy2 = g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd();
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
 		b = sqrt(b2);
 
-		tmpa = acos((a2 + b2-c2)/(2*a*b)); /* save tmpa for later use */
+		tmpa = acos((a2 + b2-c2)/(2*a*b)); // save tmpa for later use 
 		*Skew = 90.0 - MathUtil::RadiansToDegrees(tmpa);
 
 		*Xctr = g_escape_time_state.m_grid_fp.x_center();
@@ -201,11 +201,11 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 
 		Height = b*sin(tmpa);
 
-		*Magnification  = 2.0/Height; /* 1/(h/2) */
+		*Magnification  = 2.0/Height; // 1/(h/2) 
 		*Xmagfactor = Height/(DEFAULT_ASPECT_RATIO*a);
 
-		/* if vector_a cross vector_b is negative */
-		/* then adjust for left-hand coordinate system */
+		// if vector_a cross vector_b is negative 
+		// then adjust for left-hand coordinate system 
 		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && g_debug_mode != DEBUGMODE_PRE193_CENTERMAG)
 		{
 			*Skew = -*Skew;
@@ -213,7 +213,7 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 			*Magnification = -*Magnification;
 		}
 	}
-	/* just to make par file look nicer */
+	// just to make par file look nicer 
 	if (*Magnification < 0)
 	{
 		*Magnification = -*Magnification;
@@ -252,13 +252,13 @@ void convert_center_mag(double *Xctr, double *Yctr, LDBL *Magnification, double 
 }
 
 
-/* convert center/mag to corners */
+// convert center/mag to corners 
 void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
 	double x;
 	double y;
 	double h;
-	double w; /* half height, width */
+	double w; // half height, width 
 	double tanskew;
 	double sinrot;
 	double cosrot;
@@ -272,7 +272,7 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	w = h/(DEFAULT_ASPECT_RATIO*Xmagfactor);
 
 	if (Rotation == 0.0 && Skew == 0.0)
-	{ /* simple, faster case */
+	{ // simple, faster case 
 		g_escape_time_state.m_grid_fp.x_min() = Xctr - w;
 		g_escape_time_state.m_grid_fp.x_max() = Xctr + w;
 		g_escape_time_state.m_grid_fp.y_min() = Yctr - h;
@@ -282,7 +282,7 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 		return;
 	}
 
-	/* in unrotated, untranslated coordinate system */
+	// in unrotated, untranslated coordinate system 
 	tanskew = tan(MathUtil::DegreesToRadians(Skew));
 	g_escape_time_state.m_grid_fp.x_min() = -w + h*tanskew;
 	g_escape_time_state.m_grid_fp.x_max() =  w - h*tanskew;
@@ -291,24 +291,24 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	g_escape_time_state.m_grid_fp.y_3rd() = -h;
 	g_escape_time_state.m_grid_fp.y_min() = -h;
 
-	/* rotate coord system and then translate it */
+	// rotate coord system and then translate it 
 	Rotation = MathUtil::DegreesToRadians(Rotation);
 	sinrot = sin(Rotation);
 	cosrot = cos(Rotation);
 
-	/* top left */
+	// top left 
 	x = g_escape_time_state.m_grid_fp.x_min()*cosrot + g_escape_time_state.m_grid_fp.y_max()*sinrot;
 	y = -g_escape_time_state.m_grid_fp.x_min()*sinrot + g_escape_time_state.m_grid_fp.y_max()*cosrot;
 	g_escape_time_state.m_grid_fp.x_min() = x + Xctr;
 	g_escape_time_state.m_grid_fp.y_max() = y + Yctr;
 
-	/* bottom right */
+	// bottom right 
 	x = g_escape_time_state.m_grid_fp.x_max()*cosrot + g_escape_time_state.m_grid_fp.y_min()*sinrot;
 	y = -g_escape_time_state.m_grid_fp.x_max()*sinrot + g_escape_time_state.m_grid_fp.y_min()*cosrot;
 	g_escape_time_state.m_grid_fp.x_max() = x + Xctr;
 	g_escape_time_state.m_grid_fp.y_min() = y + Yctr;
 
-	/* bottom left */
+	// bottom left 
 	x = g_escape_time_state.m_grid_fp.x_3rd()*cosrot + g_escape_time_state.m_grid_fp.y_3rd()*sinrot;
 	y = -g_escape_time_state.m_grid_fp.x_3rd()*sinrot + g_escape_time_state.m_grid_fp.y_3rd()*cosrot;
 	g_escape_time_state.m_grid_fp.x_3rd() = x + Xctr;
@@ -317,23 +317,23 @@ void convert_corners(double Xctr, double Yctr, LDBL Magnification, double Xmagfa
 	return;
 }
 
-/* convert corners to center/mag using bf */
+// convert corners to center/mag using bf 
 void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xmagfactor, double *Rotation, double *Skew)
 {
-	/* needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits */
+	// needs to be LDBL or won't work past 307 (-DBL_MIN_10_EXP) or so digits 
 	LDBL Width;
 	LDBL Height;
 	LDBL a;
-	LDBL b; /* bottom, left, diagonal */
+	LDBL b; // bottom, left, diagonal 
 	LDBL a2;
 	LDBL b2;
-	LDBL c2; /* squares of above */
+	LDBL c2; // squares of above 
 	LDBL tmpx1;
 	LDBL tmpx2;
 	LDBL tmpy = 0.0;
 	LDBL tmpy1;
 	LDBL tmpy2;
-	double tmpa; /* temporary x, y, angle */
+	double tmpa; // temporary x, y, angle 
 	big_t bfWidth;
 	big_t bfHeight;
 	big_t bftmpx;
@@ -343,22 +343,22 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 
 	saved = save_stack();
 
-	/* simple normal case first */
-	/* if (x3rd == xmin && y3rd == ymin) */
+	// simple normal case first 
+	// if (x3rd == xmin && y3rd == ymin) 
 	if (!cmp_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min()) && !cmp_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min()))
-	{ /* no rotation or skewing, but stretching is allowed */
+	{ // no rotation or skewing, but stretching is allowed 
 		bfWidth  = alloc_stack(g_bf_length + 2);
 		bfHeight = alloc_stack(g_bf_length + 2);
-		/* Width  = xmax - xmin; */
+		// Width  = xmax - xmin; 
 		sub_bf(bfWidth, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		Width  = bftofloat(bfWidth);
-		/* Height = ymax - ymin; */
+		// Height = ymax - ymin; 
 		sub_bf(bfHeight, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
 		Height = bftofloat(bfHeight);
-		/* *Xctr = (xmin + xmax)/2; */
+		// *Xctr = (xmin + xmax)/2; 
 		add_bf(Xctr, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_max());
 		half_a_bf(Xctr);
-		/* *Yctr = (ymin + ymax)/2; */
+		// *Yctr = (ymin + ymax)/2; 
 		add_bf(Yctr, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 		half_a_bf(Yctr);
 		*Magnification  = 2/Height;
@@ -371,63 +371,63 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 		bftmpx = alloc_stack(g_bf_length + 2);
 		bftmpy = alloc_stack(g_bf_length + 2);
 
-		/* set up triangle ABC, having sides abc */
-		/* side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) */
-		/* IMPORTANT: convert from bf AFTER subtracting */
+		// set up triangle ABC, having sides abc 
+		// side a = bottom, b = left, c = diagonal not containing (x3rd, y3rd) 
+		// IMPORTANT: convert from bf AFTER subtracting 
 
-		/* tmpx = xmax - xmin; */
+		// tmpx = xmax - xmin; 
 		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min());
 		tmpx1 = bftofloat(bftmpx);
-		/* tmpy = ymax - ymin; */
+		// tmpy = ymax - ymin; 
 		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min());
 		tmpy1 = bftofloat(bftmpy);
 		c2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 
-		/* tmpx = xmax - x3rd; */
+		// tmpx = xmax - x3rd; 
 		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 		tmpx1 = bftofloat(bftmpx);
 
-		/* tmpy = ymin - y3rd; */
+		// tmpy = ymin - y3rd; 
 		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_3rd());
 		tmpy1 = bftofloat(bftmpy);
 		a2 = tmpx1*tmpx1 + tmpy1*tmpy1;
 		a = sqrtl(a2);
 
-		/* divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used */
-		/* atan2() only depends on the ratio, this puts it in double's range */
+		// divide tmpx and tmpy by |tmpx| so that double version of atan2() can be used 
+		// atan2() only depends on the ratio, this puts it in double's range 
 		signx = sign(tmpx1);
 		if (signx)
 		{
-			tmpy = tmpy1/tmpx1*signx;    /* tmpy = tmpy/|tmpx| */
+			tmpy = tmpy1/tmpx1*signx;    // tmpy = tmpy/|tmpx| 
 		}
-		*Rotation = double(-MathUtil::RadiansToDegrees(atan2(double(tmpy), signx))); /* negative for image rotation */
+		*Rotation = double(-MathUtil::RadiansToDegrees(atan2(double(tmpy), signx))); // negative for image rotation 
 
-		/* tmpx = xmin - x3rd; */
+		// tmpx = xmin - x3rd; 
 		sub_bf(bftmpx, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_3rd());
 		tmpx2 = bftofloat(bftmpx);
-		/* tmpy = ymax - y3rd; */
+		// tmpy = ymax - y3rd; 
 		sub_bf(bftmpy, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 		tmpy2 = bftofloat(bftmpy);
 		b2 = tmpx2*tmpx2 + tmpy2*tmpy2;
 		b = sqrtl(b2);
 
-		tmpa = acos(double((a2 + b2-c2)/(2*a*b))); /* save tmpa for later use */
+		tmpa = acos(double((a2 + b2-c2)/(2*a*b))); // save tmpa for later use 
 		*Skew = 90 - MathUtil::RadiansToDegrees(tmpa);
 
-		/* these are the only two variables that must use big precision */
-		/* *Xctr = (xmin + xmax)/2; */
+		// these are the only two variables that must use big precision 
+		// *Xctr = (xmin + xmax)/2; 
 		add_bf(Xctr, g_escape_time_state.m_grid_bf.x_min(), g_escape_time_state.m_grid_bf.x_max());
 		half_a_bf(Xctr);
-		/* *Yctr = (ymin + ymax)/2; */
+		// *Yctr = (ymin + ymax)/2; 
 		add_bf(Yctr, g_escape_time_state.m_grid_bf.y_min(), g_escape_time_state.m_grid_bf.y_max());
 		half_a_bf(Yctr);
 
 		Height = b*sin(tmpa);
-		*Magnification  = 2/Height; /* 1/(h/2) */
+		*Magnification  = 2/Height; // 1/(h/2) 
 		*Xmagfactor = double(Height/(DEFAULT_ASPECT_RATIO*a));
 
-		/* if vector_a cross vector_b is negative */
-		/* then adjust for left-hand coordinate system */
+		// if vector_a cross vector_b is negative 
+		// then adjust for left-hand coordinate system 
 		if (tmpx1*tmpy2 - tmpx2*tmpy1 < 0 && g_debug_mode != DEBUGMODE_PRE193_CENTERMAG)
 		{
 			*Skew = -*Skew;
@@ -445,13 +445,13 @@ void convert_center_mag_bf(bf_t Xctr, bf_t Yctr, LDBL *Magnification, double *Xm
 }
 
 
-/* convert center/mag to corners using bf */
+// convert center/mag to corners using bf 
 void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfactor, double Rotation, double Skew)
 {
 	LDBL x;
 	LDBL y;
 	LDBL h;
-	LDBL w; /* half height, width */
+	LDBL w; // half height, width 
 	LDBL x_min;
 	LDBL y_min;
 	LDBL x_max;
@@ -481,23 +481,23 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	floattobf(bfw, w);
 
 	if (Rotation == 0.0 && Skew == 0.0)
-	{ /* simple, faster case */
-		/* x3rd = xmin = Xctr - w; */
+	{ // simple, faster case 
+		// x3rd = xmin = Xctr - w; 
 		sub_bf(g_escape_time_state.m_grid_bf.x_min(), Xctr, bfw);
 		copy_bf(g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
-		/* xmax = Xctr + w; */
+		// xmax = Xctr + w; 
 		add_bf(g_escape_time_state.m_grid_bf.x_max(), Xctr, bfw);
-		/* y3rd = ymin = Yctr - h; */
+		// y3rd = ymin = Yctr - h; 
 		sub_bf(g_escape_time_state.m_grid_bf.y_min(), Yctr, bfh);
 		copy_bf(g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
-		/* ymax = Yctr + h; */
+		// ymax = Yctr + h; 
 		add_bf(g_escape_time_state.m_grid_bf.y_max(), Yctr, bfh);
 		restore_stack(saved);
 		return;
 	}
 
 	bftmp = alloc_stack(g_bf_length + 2);
-	/* in unrotated, untranslated coordinate system */
+	// in unrotated, untranslated coordinate system 
 	tanskew = tan(MathUtil::DegreesToRadians(Skew));
 	x_min = -w + h*tanskew;
 	x_max =  w - h*tanskew;
@@ -506,38 +506,38 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	y_3rd = -h;
 	y_min = -h;
 
-	/* rotate coord system and then translate it */
+	// rotate coord system and then translate it 
 	Rotation = MathUtil::DegreesToRadians(Rotation);
 	sinrot = sin(Rotation);
 	cosrot = cos(Rotation);
 
-	/* top left */
+	// top left 
 	x =  x_min*cosrot + y_max*sinrot;
 	y = -x_min*sinrot + y_max*cosrot;
-	/* xmin = x + Xctr; */
+	// xmin = x + Xctr; 
 	floattobf(bftmp, x);
 	add_bf(g_escape_time_state.m_grid_bf.x_min(), bftmp, Xctr);
-	/* ymax = y + Yctr; */
+	// ymax = y + Yctr; 
 	floattobf(bftmp, y);
 	add_bf(g_escape_time_state.m_grid_bf.y_max(), bftmp, Yctr);
 
-	/* bottom right */
+	// bottom right 
 	x =  x_max*cosrot + y_min*sinrot;
 	y = -x_max*sinrot + y_min*cosrot;
-	/* xmax = x + Xctr; */
+	// xmax = x + Xctr; 
 	floattobf(bftmp, x);
 	add_bf(g_escape_time_state.m_grid_bf.x_max(), bftmp, Xctr);
-	/* ymin = y + Yctr; */
+	// ymin = y + Yctr; 
 	floattobf(bftmp, y);
 	add_bf(g_escape_time_state.m_grid_bf.y_min(), bftmp, Yctr);
 
-	/* bottom left */
+	// bottom left 
 	x =  x_3rd*cosrot + y_3rd*sinrot;
 	y = -x_3rd*sinrot + y_3rd*cosrot;
-	/* x3rd = x + Xctr; */
+	// x3rd = x + Xctr; 
 	floattobf(bftmp, x);
 	add_bf(g_escape_time_state.m_grid_bf.x_3rd(), bftmp, Xctr);
-	/* y3rd = y + Yctr; */
+	// y3rd = y + Yctr; 
 	floattobf(bftmp, y);
 	add_bf(g_escape_time_state.m_grid_bf.y_3rd(), bftmp, Yctr);
 
@@ -563,9 +563,9 @@ void (*g_trig1_d)() = dStkSqr;
 void (*g_trig2_d)() = dStkSinh;
 void (*g_trig3_d)() = dStkCosh;
 
-void show_function(char *message) /* return display form of active trig functions */
+void show_function(char *message) // return display form of active trig functions 
 {
-	*message = 0; /* null string if none */
+	*message = 0; // null string if none 
 	std::string buffer = function_details();
 	if (buffer.length() > 0)
 	{
@@ -582,7 +582,7 @@ static std::string function_details()
 	{
 		num_functions = g_formula_state.max_fn();
 	}
-	std::string message = ""; /* null string if none */
+	std::string message = ""; // null string if none 
 	if (num_functions > 0)
 	{
 		message = g_function_list[g_function_index[0]].name;
@@ -596,14 +596,14 @@ static std::string function_details()
 	return message;
 }
 
-/* set array of trig function indices according to "function=" command */
+// set array of trig function indices according to "function=" command 
 int set_function_array(int k, const char *name)
 {
 	char trigname[10];
 	int i;
 	char *slash;
 	strncpy(trigname, name, 6);
-	trigname[6] = 0; /* safety first */
+	trigname[6] = 0; // safety first 
 
 	slash = strchr(trigname, '/');
 	if (slash != 0)
@@ -626,7 +626,7 @@ int set_function_array(int k, const char *name)
 }
 void set_trig_pointers(int which)
 {
-	/* set trig variable functions to avoid array lookup time */
+	// set trig variable functions to avoid array lookup time 
 	int i;
 	switch (which)
 	{
@@ -654,7 +654,7 @@ void set_trig_pointers(int which)
 #endif
 		g_trig3_d = g_function_list[g_function_index[3]].dfunct;
 		break;
-	default: /* do 'em all */
+	default: // do 'em all 
 		for (i = 0; i < 4; i++)
 		{
 			set_trig_pointers(i);
@@ -715,7 +715,7 @@ int tab_display_2(char *msg)
 	int key = 0;
 
 	help_title();
-	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
+	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background 
 
 	row = 1;
 	put_string_center(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
@@ -771,7 +771,7 @@ int tab_display_2(char *msg)
 	put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
 	*msg = 0;
 
-	/* display keycodes while waiting for ESC, BACKSPACE or TAB */
+	// display keycodes while waiting for ESC, BACKSPACE or TAB 
 	while ((key != IDK_ESC) && (key != IDK_BACKSPACE) && (key != IDK_TAB))
 	{
 		driver_put_string(row, 2, C_GENERAL_HI, msg);
@@ -781,7 +781,7 @@ int tab_display_2(char *msg)
 	return (key != IDK_ESC);
 }
 
-int tab_display()       /* display the status of the current image */
+int tab_display()       // display the status of the current image 
 {
 	int s_row;
 	int i;
@@ -803,11 +803,11 @@ int tab_display()       /* display the status of the current image */
 	int k;
 	int hasformparam = 0;
 
-	if (g_calculation_status < CALCSTAT_PARAMS_CHANGED)        /* no active fractal image */
+	if (g_calculation_status < CALCSTAT_PARAMS_CHANGED)        // no active fractal image 
 	{
-		return 0;                /* (no TAB on the credits screen) */
+		return 0;                // (no TAB on the credits screen) 
 	}
-	if (g_calculation_status == CALCSTAT_IN_PROGRESS)        /* next assumes CLK_TCK is 10^n, n >= 2 */
+	if (g_calculation_status == CALCSTAT_IN_PROGRESS)        // next assumes CLK_TCK is 10^n, n >= 2 
 	{
 		g_calculation_time += (clock_ticks() - g_timer_start)/(CLK_TCK/100);
 	}
@@ -833,7 +833,7 @@ top:
 	k = 0; /* initialize here so parameter line displays correctly on return
 				from control-tab */
 	help_title();
-	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); /* init rest to background */
+	driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background 
 	s_row = 2;
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Fractal type:");
 	if (g_display_3d > DISPLAY3D_NONE)
@@ -901,7 +901,7 @@ top:
 		driver_put_string(s_row + 1, 45, C_GENERAL_HI, "You are in color-cycling mode");
 	}
 	++s_row;
-	/* if (g_bf_math == 0) */
+	// if (g_bf_math == 0) 
 	++s_row;
 
 	i = 0;
@@ -1004,7 +1004,7 @@ top:
 			sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
 					g_WorkList.yy_start(), g_WorkList.xx_start(), g_WorkList.yy_stop(), g_WorkList.xx_stop());
 			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
-			if (g_got_status == GOT_STATUS_BOUNDARY_TRACE || g_got_status == GOT_STATUS_TESSERAL)  /* btm or tesseral */
+			if (g_got_status == GOT_STATUS_BOUNDARY_TRACE || g_got_status == GOT_STATUS_TESSERAL)  // btm or tesseral 
 			{
 				driver_put_string(-1, -1, C_GENERAL_MED, "at ");
 				sprintf(msg, "[%d, %d]", g_current_row, g_current_col);
@@ -1035,7 +1035,7 @@ top:
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
 	get_calculation_time(msg, g_calculation_time);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
-	if ((g_got_status == GOT_STATUS_DIFFUSION) && (g_calculation_status == CALCSTAT_IN_PROGRESS))  /* estimate total time */
+	if ((g_got_status == GOT_STATUS_DIFFUSION) && (g_calculation_status == CALCSTAT_IN_PROGRESS))  // estimate total time 
 	{
 		driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
 		diffusion_get_calculation_time(msg);
@@ -1065,15 +1065,15 @@ top:
 	}
 	if (!(g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM))
 	{
-		adjust_corner(); /* make bottom left exact if very near exact */
+		adjust_corner(); // make bottom left exact if very near exact 
 		if (g_bf_math)
 		{
 			int truncate;
 			int truncaterow;
 			dec = std::min(320, g_decimals);
-			adjust_corner_bf(); /* make bottom left exact if very near exact */
+			adjust_corner_bf(); // make bottom left exact if very near exact 
 			convert_center_mag_bf(bfXctr, bfYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
-			/* find alignment information */
+			// find alignment information 
 			msg[0] = 0;
 			truncate = 0;
 			if (dec < g_decimals)
@@ -1111,7 +1111,7 @@ top:
 			sprintf(msg, "%9.3f", Skew);
 			driver_put_string(-1, -1, C_GENERAL_HI, msg);
 		}
-		else /* bf != 1 */
+		else // bf != 1 
 		{
 			driver_put_string(s_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
 			driver_put_string(++s_row, 3, C_GENERAL_MED, "Top-l");
@@ -1168,7 +1168,7 @@ top:
 				{
 					col = -1;
 				}
-				if (k == 0) /* only true with first displayed parameter */
+				if (k == 0) // only true with first displayed parameter 
 				{
 					driver_put_string(++s_row, 2, C_GENERAL_MED, "Params ");
 				}
@@ -1246,7 +1246,7 @@ top:
 			goto top;
 		}
 	}
-	g_timer_start = clock_ticks(); /* tab display was "time out" */
+	g_timer_start = clock_ticks(); // tab display was "time out" 
 	if (g_bf_math)
 	{
 		restore_stack(saved);
@@ -1256,7 +1256,7 @@ top:
 
 static void area()
 {
-	/* apologies to UNIX folks, we PC guys have to save near space */
+	// apologies to UNIX folks, we PC guys have to save near space 
 	char *msg;
 	int x;
 	int y;
@@ -1297,7 +1297,7 @@ bool ends_with_slash(const char *text)
 	return len && (text[--len] == SLASHC);
 }
 
-/* --------------------------------------------------------------------- */
+// --------------------------------------------------------------------- 
 static char seps[] = {" \t\n\r"};
 char *get_ifs_token(char *buf, std::ifstream &ifsfile)
 {
@@ -1311,7 +1311,7 @@ char *get_ifs_token(char *buf, std::ifstream &ifsfile)
 		else
 		{
 			bufptr = strchr(buf, ';');
-			if (bufptr != 0) /* use ';' as comment to eol */
+			if (bufptr != 0) // use ';' as comment to eol 
 			{
 				*bufptr = 0;
 			}
@@ -1326,7 +1326,7 @@ char *get_ifs_token(char *buf, std::ifstream &ifsfile)
 
 const std::string g_insufficient_ifs_memory = "Insufficient memory for IFS";
 int g_num_affine;
-int ifs_load()                   /* read in IFS parameters */
+int ifs_load()                   // read in IFS parameters 
 {
 	int i;
 	std::ifstream ifsfile;
@@ -1347,7 +1347,7 @@ int ifs_load()                   /* read in IFS parameters */
 
 	file_gets(buf, 200, ifsfile);
 	bufptr = strchr(buf, ';');
-	if (bufptr != 0) /* use ';' as comment to eol */
+	if (bufptr != 0) // use ';' as comment to eol 
 	{
 		*bufptr = 0;
 	}
@@ -1436,7 +1436,7 @@ int ifs_load()                   /* read in IFS parameters */
 	return ret;
 }
 
-/* added search of current directory for entry files if entry item not found */
+// added search of current directory for entry files if entry item not found 
 bool find_file_item(std::string &filename, const std::string &item_name, std::ifstream &infile, int item_type)
 {
 	bool found = false;
@@ -1543,7 +1543,7 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 		}
 	}
 
-	if (!found)  /* search for file */
+	if (!found)  // search for file 
 	{
 		make_path(fullpath, drive, dir, "*", defaultextension);
 		int out = fr_find_first(fullpath);
@@ -1638,8 +1638,8 @@ bool find_file_item(std::string &filename, const std::string &item_name, std::if
 
 int file_gets(char *buf, int maxlen, std::ifstream &infile)
 {
-	/* similar to 'fgets', but file may be in either text or binary mode */
-	/* returns -1 at eof, length of string otherwise */
+	// similar to 'fgets', but file may be in either text or binary mode 
+	// returns -1 at eof, length of string otherwise 
 	if (!infile)
 	{
 		return -1;
@@ -1656,11 +1656,11 @@ int file_gets(char *buf, int maxlen, std::ifstream &infile)
 			}
 			return -1;
 		}
-		if (c == '\n') /* linefeed is end of line  */
+		if (c == '\n') // linefeed is end of line  
 		{
 			break;
 		}
-		if (c != '\r') /* ignore c/r  */
+		if (c != '\r') // ignore c/r  
 		{
 			buf[len++] = (char)c;
 		}
@@ -1674,7 +1674,7 @@ int g_math_error_count = 0;
 #if !defined(_WIN32)
 #ifndef XFRACT
 #ifdef WINFRACT
-/* call this something else to dodge the QC4WIN bullet... */
+// call this something else to dodge the QC4WIN bullet... 
 int win_matherr(struct exception *except)
 #else
 int _cdecl _matherr(struct exception *except)
@@ -1711,8 +1711,8 @@ int _cdecl _matherr(struct exception *except)
 		sprintf(buf, "%e", except->arg1);
 		/* This test may be unnecessary - from my experiments if the
 			argument is too large or small the error is TLOSS not DOMAIN */
-		if (strstr(buf, "IN") || strstr(buf, "NAN"))  /* trashed arg? */
-									/* "IND" with MSC, "INF" with BC++ */
+		if (strstr(buf, "IN") || strstr(buf, "NAN"))  // trashed arg? 
+									// "IND" with MSC, "INF" with BC++ 
 		{
 			if (strcmp(except->name, "sin") == 0)
 			{
@@ -1733,7 +1733,7 @@ int _cdecl _matherr(struct exception *except)
 	}
 	if (except->type == TLOSS)
 	{
-		/* try valiantly to keep going */
+		// try valiantly to keep going 
 		if (strcmp(except->name, "sin") == 0)
 		{
 			except->retval = 0.5;
@@ -1745,21 +1745,21 @@ int _cdecl _matherr(struct exception *except)
 			return 1;
 		}
 	}
-	/* shucks, no idea what went wrong, but our motto is "keep going!" */
+	// shucks, no idea what went wrong, but our motto is "keep going!" 
 	except->retval = 1.0;
 	return 1;
 }
 #endif
 #endif
 
-void round_float_d(double *x) /* make double converted from float look ok */
+void round_float_d(double *x) // make double converted from float look ok 
 {
 	char buf[30];
 	sprintf(buf, "%-10.7g", *x);
 	*x = atof(buf);
 }
 
-void fix_inversion(double *x) /* make double converted from string look ok */
+void fix_inversion(double *x) // make double converted from string look ok 
 {
 	char buf[30];
 	sprintf(buf, "%-1.15lg", *x);

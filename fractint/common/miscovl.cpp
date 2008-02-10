@@ -43,7 +43,7 @@
 #include "UIChoices.h"
 #include "ViewWindow.h"
 
-/* routines in this module      */
+// routines in this module      
 using boost::format;
 
 void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int i, int j);
@@ -151,8 +151,8 @@ void make_batch_file()
 void MakeBatchFile::set_max_color()
 {
 	--m_max_color;
-	/* if (g_max_iteration < maxcolor)  remove 2 lines */
-	/* maxcolor = g_max_iteration;   so that whole palette is always saved */
+	// if (g_max_iteration < maxcolor)  remove 2 lines 
+	// maxcolor = g_max_iteration;   so that whole palette is always saved 
 	if (g_inside > 0 && g_inside > m_max_color)
 	{
 		m_max_color = g_inside;
@@ -183,7 +183,7 @@ void MakeBatchFile::set_color_spec()
 {
 	std::string color_spec_name;
 	if (g_.ColorState() == COLORSTATE_DEFAULT)
-	{                         /* default colors */
+	{                         // default colors 
 		if (g_.MapDAC())
 		{
 			m_color_spec[0] = '@';
@@ -191,11 +191,11 @@ void MakeBatchFile::set_color_spec()
 		}
 	}
 	else if (g_.ColorState() == COLORSTATE_MAP)
-	{                         /* colors match g_color_file */
+	{                         // colors match g_color_file 
 		m_color_spec[0] = '@';
 		color_spec_name = g_color_file;
 	}
-	else                      /* colors match no .map that we know of */
+	else                      // colors match no .map that we know of 
 	{
 		strcpy(m_color_spec, "y");
 	}
@@ -219,7 +219,7 @@ void MakeBatchFile::set_color_spec()
 
 void MakeBatchFile::initialize()
 {
-	/* makepar map case */
+	// makepar map case 
 	driver_stack_screen();
 	HelpModeSaver saved_help(FIHELP_PARAMETER_FILES);
 
@@ -283,7 +283,7 @@ void MakeBatchFile::fill_prompts(UIChoices &dialog)
 }
 bool MakeBatchFile::check_video_mode()
 {
-	/* get resolution from the video name (which must be valid) */
+	// get resolution from the video name (which must be valid) 
 	m_pxdots = 0;
 	m_pydots = 0;
 	int i = check_vidmode_keyname(m_video_mode);
@@ -292,14 +292,14 @@ bool MakeBatchFile::check_video_mode()
 		i = check_video_mode_key(i);
 		if (i >= 0)
 		{
-			/* get the resolution of this video mode */
+			// get the resolution of this video mode 
 			m_pxdots = g_.VideoTable(i).x_dots;
 			m_pydots = g_.VideoTable(i).y_dots;
 		}
 	}
 	if (m_pxdots == 0 && (m_xm > 1 || m_ym > 1))
 	{
-		/* no corresponding video mode! */
+		// no corresponding video mode! 
 		stop_message(STOPMSG_NORMAL, "Invalid video mode entry!");
 		return true;
 	}
@@ -307,7 +307,7 @@ bool MakeBatchFile::check_video_mode()
 }
 bool MakeBatchFile::check_bounds_xm_ym()
 {
-	/* bounds range on xm, ym */
+	// bounds range on xm, ym 
 	if (m_xm < 1 || m_xm > 36 || m_ym < 1 || m_ym > 36)
 	{
 		stop_message(STOPMSG_NORMAL, "X and Y components must be 1 to 36");
@@ -317,7 +317,7 @@ bool MakeBatchFile::check_bounds_xm_ym()
 }
 bool MakeBatchFile::check_resolution()
 {
-	/* another sanity check: total resolution cannot exceed 65535 */
+	// another sanity check: total resolution cannot exceed 65535 
 	if (m_xm*m_pxdots > 65535L || m_ym*m_pydots > 65535L)
 	{
 		stop_message(STOPMSG_NORMAL, "Total resolution (X or Y) cannot exceed 65535");
@@ -452,7 +452,7 @@ prompt_user:
 			g_command_file = m_in_parameter_command_file;
 			if (has_extension(g_command_file) == 0)
 			{
-				g_command_file.append(".par");   /* default extension .par */
+				g_command_file.append(".par");   // default extension .par 
 			}
 			g_command_name = m_in_parameter_command_name;
 			for (int i = 0; i < 4; i++)
@@ -480,7 +480,7 @@ prompt_user:
 			m_xm = dialog.values(m_prompts++).uval.ival;
 			m_ym = dialog.values(m_prompts++).uval.ival;
 
-			/* sanity checks */
+			// sanity checks 
 			if (check_video_mode() || check_bounds_xm_ym() || check_resolution())
 			{
 				goto prompt_user;
@@ -496,7 +496,7 @@ skip_UI:
 		bool got_input_file = false;
 		std::ifstream input_file;
 		if (exists(g_command_file))
-		{                         /* file exists */
+		{                         // file exists 
 			got_input_file = true;
 			if (read_write_access(g_command_file.c_str()))
 			{
@@ -528,14 +528,14 @@ skip_UI:
 			while (file_gets(buf, NUM_OF(buf)-1, input_file) >= 0)
 			{
 				char buf2[128];
-				if (strchr(buf, '{')/* entry heading? */
+				if (strchr(buf, '{')// entry heading? 
 					&& sscanf(buf, " %40[^ \t({]", buf2)
 					&& stricmp(buf2, g_command_name.c_str()) == 0)
-				{                   /* entry with same name */
+				{                   // entry with same name 
 					std::string prompt = "File already has an entry named " + g_command_name + "\n" +
 						(g_make_par_flag ? "Continue to replace it, Cancel to back out" : "... Replacing ...");
 					if (stop_message(STOPMSG_CANCEL | STOPMSG_INFO_ONLY, prompt) < 0)
-					{                /* cancel */
+					{                // cancel 
 						input_file.close();
 						s_parameter_file.close();
 						unlink(m_out_name);
@@ -544,7 +544,7 @@ skip_UI:
 					while (strchr(buf, '}') == 0
 							&& file_gets(buf, NUM_OF(buf)-1, input_file) > 0)
 					{
-						/* skip to end of set */
+						// skip to end of set 
 					}
 					break;
 				}
@@ -563,18 +563,18 @@ skip_UI:
 				m_xm = 0;
 				m_ym = 0;
 			}
-			m_pdelx  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/(m_xm*m_pxdots - 1);   /* calculate stepsizes */
+			m_pdelx  = (g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/(m_xm*m_pxdots - 1);   // calculate stepsizes 
 			m_pdely  = (g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/(m_ym*m_pydots - 1);
 			m_pdelx2 = (g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/(m_ym*m_pydots - 1);
 			m_pdely2 = (g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/(m_xm*m_pxdots - 1);
 
-			/* save corners */
+			// save corners 
 			m_pxxmin = g_escape_time_state.m_grid_fp.x_min();
 			m_pyymax = g_escape_time_state.m_grid_fp.y_max();
 		}
-		for (int i = 0; i < int(m_xm); i++)  /* columns */
+		for (int i = 0; i < int(m_xm); i++)  // columns 
 		{
-			for (int j = 0; j < int(m_ym); j++)  /* rows    */
+			for (int j = 0; j < int(m_ym); j++)  // rows    
 			{
 				execute_step1(fpbat, i, j);
 				execute_step2();
@@ -591,14 +591,14 @@ skip_UI:
 		/*******end here */
 
 		if (got_input_file)
-		{                         /* copy the rest of the file */
+		{                         // copy the rest of the file 
 			int i;
 			char buf[256];
 			do
 			{
 				i = file_gets(buf, NUM_OF(buf)-1, input_file);
 			}
-			while (i == 0); /* skip blanks */
+			while (i == 0); // skip blanks 
 			while (i >= 0)
 			{
 				s_parameter_file << buf << '\n';
@@ -608,16 +608,16 @@ skip_UI:
 		}
 		s_parameter_file.close();
 		if (got_input_file)
-		{                         /* replace the original file with the new */
-			_unlink(g_command_file.c_str());   /* success assumed on these lines       */
-			rename(m_out_name, g_command_file.c_str());  /* since we checked earlier with access */
+		{                         // replace the original file with the new 
+			_unlink(g_command_file.c_str());   // success assumed on these lines       
+			rename(m_out_name, g_command_file.c_str());  // since we checked earlier with access 
 		}
 		break;
 	}
 	driver_unstack_screen();
 }
 
-static struct write_batch_data /* buffer for parms to break lines nicely */
+static struct write_batch_data // buffer for parms to break lines nicely 
 {
 	int len;
 	char buf[10000];
@@ -625,7 +625,7 @@ static struct write_batch_data /* buffer for parms to break lines nicely */
 
 static void write_universal_3d_parameters()
 {
-	if (g_display_3d)  /* universal 3d */
+	if (g_display_3d)  // universal 3d 
 	{
 		/***** common (fractal & transform) 3d parameters in this section *****/
 		if (!g_3d_state.sphere() || g_display_3d == DISPLAY3D_GENERATED)
@@ -750,7 +750,7 @@ void write_batch_parms_julibrot()
 {
 	put_parm(format(" julibrotfromto=%.15g/%.15g/%.15g/%.15g")
 		% g_m_x_max_fp % g_m_x_min_fp % g_m_y_max_fp % g_m_y_min_fp);
-	/* these rarely change */
+	// these rarely change 
 	if (g_origin_fp != 8 || g_height_fp != 7 || g_width_fp != 10 || g_screen_distance_fp != 24
 		|| g_depth_fp != 8 || g_z_dots != 128)
 	{
@@ -813,53 +813,53 @@ void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
 		put_bf(0, bfXctr, digits);
 		put_bf(1, bfYctr, digits);
 	}
-	else /* !g_bf_math */
+	else // !g_bf_math 
 	{
 		double Xctr;
 		double Yctr;
 		convert_center_mag(&Xctr, &Yctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 		put_parm(" center-mag=");
-		/* convert 1000 fudged long to double, 1000/1<<24 = 6e-5 */
+		// convert 1000 fudged long to double, 1000/1<<24 = 6e-5 
 		put_parm(format(g_delta_min_fp > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf") % Xctr % Yctr);
 	}
 #ifdef USE_LONG_DOUBLE
-	put_parm(format("/%.7Lg") % Magnification); /* precision of magnification not critical, but magnitude is */
+	put_parm(format("/%.7Lg") % Magnification); // precision of magnification not critical, but magnitude is 
 #else
-	put_parm("/%.7lg") % Magnification); /* precision of magnification not critical, but magnitude is */
+	put_parm("/%.7lg") % Magnification); // precision of magnification not critical, but magnitude is 
 #endif
-	/* Round to avoid ugly decimals, precision here is not critical */
-	/* Don't round Xmagfactor if it's small */
-	if (fabs(Xmagfactor) > 0.5) /* or so, exact value isn't important */
+	// Round to avoid ugly decimals, precision here is not critical 
+	// Don't round Xmagfactor if it's small 
+	if (fabs(Xmagfactor) > 0.5) // or so, exact value isn't important 
 	{
 		Xmagfactor = (sign(Xmagfactor)*long(fabs(Xmagfactor)*1e4 + 0.5))/1e4;
 	}
-	/* Just truncate these angles.  Who cares about 1/1000 of a degree */
-	/* Somebody does.  Some rotated and/or skewed images are slightly */
-	/* off when recreated from a PAR using 1/1000. */
-	/* JCO 08052001 */
+	// Just truncate these angles.  Who cares about 1/1000 of a degree 
+	// Somebody does.  Some rotated and/or skewed images are slightly 
+	// off when recreated from a PAR using 1/1000. 
+	// JCO 08052001 
 #if 0
 	Rotation   = long(Rotation*1e3)/1e3;
 	Skew       = long(Skew*1e3)/1e3;
 #endif
 	if (Xmagfactor != 1 || Rotation != 0 || Skew != 0)
-	{	/* Only put what is necessary */
-		/* The difference with Xmagfactor is that it is normally */
-		/* near 1 while the others are normally near 0 */
+	{	// Only put what is necessary 
+		// The difference with Xmagfactor is that it is normally 
+		// near 1 while the others are normally near 0 
 		if (fabs(Xmagfactor) >= 1)
 		{
-			put_float(1, Xmagfactor, 5); /* put_float() uses %g */
+			put_float(1, Xmagfactor, 5); // put_float() uses %g 
 		}
-		else /* abs(Xmagfactor) is < 1 */
+		else // abs(Xmagfactor) is < 1 
 		{
-			put_float(1, Xmagfactor, 4); /* put_float() uses %g */
+			put_float(1, Xmagfactor, 4); // put_float() uses %g 
 		}
 		if (Rotation != 0 || Skew != 0)
 		{
-			/* Use precision = 6 here.  These angle have already been rounded        */
-			/* to 3 decimal places, but angles like 123.456 degrees need 6         */
-			/* sig figs to get 3 decimal places.  Trailing 0's are dropped anyway. */
-			/* Changed to 18 to address rotated and skewed problem w/ PARs */
-			/* JCO 08052001 */
+			// Use precision = 6 here.  These angle have already been rounded        
+			// to 3 decimal places, but angles like 123.456 degrees need 6         
+			// sig figs to get 3 decimal places.  Trailing 0's are dropped anyway. 
+			// Changed to 18 to address rotated and skewed problem w/ PARs 
+			// JCO 08052001 
 			put_float(1, Rotation, 18);
 			if (Skew != 0)
 			{
@@ -1015,7 +1015,7 @@ void write_batch_parms_type()
 void write_batch_parms_function()
 {
 	char buf[81];
-	show_function(buf); /* this function is in miscres.c */
+	show_function(buf); // this function is in miscres.c 
 	if (buf[0])
 	{
 		put_parm(buf);
@@ -1074,7 +1074,7 @@ void write_batch_parms_bail_out()
 		}
 		else
 		{
-			put_parm("mod"); /* default, just in case */
+			put_parm("mod"); // default, just in case 
 		}
 	}
 }
@@ -1469,7 +1469,7 @@ void write_batch_parms_colors_table(int maxcolor)
 	int diffmag = -1;
 	while (true)
 	{
-		/* emit color in rgb 3 char encoded form */
+		// emit color in rgb 3 char encoded form 
 		char buf[81];
 		put_parm(" colors=");
 		for (int j = 0; j < 3; ++j)
@@ -1491,11 +1491,11 @@ void write_batch_parms_colors_table(int maxcolor)
 		}
 		buf[3] = 0;
 		put_parm(buf);
-		if (++curc >= maxcolor)      /* quit if done last color */
+		if (++curc >= maxcolor)      // quit if done last color 
 		{
 			break;
 		}
-		if (DEBUGMODE_COLORS_LOSSLESS == g_debug_mode)  /* lossless compression */
+		if (DEBUGMODE_COLORS_LOSSLESS == g_debug_mode)  // lossless compression 
 		{
 			continue;
 		}
@@ -1515,10 +1515,10 @@ void write_batch_parms_colors_table(int maxcolor)
 		}
 		int scanc = curc;
 		int k;
-		while (scanc < maxcolor)  /* scan while same diff to next */
+		while (scanc < maxcolor)  // scan while same diff to next 
 		{
 			int i = scanc - curc;
-			if (i > 3) /* check spans up to 4 steps */
+			if (i > 3) // check spans up to 4 steps 
 			{
 				i = 3;
 			}
@@ -1527,7 +1527,7 @@ void write_batch_parms_colors_table(int maxcolor)
 				int j;
 				int diff1[4][3];
 				int diff2[4][3];
-				for (j = 0; j < 3; ++j)  /* check pattern of chg per color */
+				for (j = 0; j < 3; ++j)  // check pattern of chg per color 
 				{
 					if (g_debug_mode != DEBUGMODE_NO_COLORS_FIX && scanc > (curc + 4) && scanc < maxcolor-5)
 					{
@@ -1553,28 +1553,28 @@ void write_batch_parms_colors_table(int maxcolor)
 						diff2[k][j] = delta;
 					}
 				}
-				if (j < 3) /* must've exited from inner loop above  */
+				if (j < 3) // must've exited from inner loop above  
 				{
 					break;
 				}
 			}
-			if (k <= i) /* must've exited from inner loop above  */
+			if (k <= i) // must've exited from inner loop above  
 			{
 				break;
 			}
 			++scanc;
 		}
-		/* now scanc-1 is next color which must be written explicitly */
-		if (scanc - curc > 2)  /* good, we have a shaded range */
+		// now scanc-1 is next color which must be written explicitly 
+		if (scanc - curc > 2)  // good, we have a shaded range 
 		{
 			if (scanc != maxcolor)
 			{
-				if (diffmag < 3)  /* not a sharp slope change? */
+				if (diffmag < 3)  // not a sharp slope change? 
 				{
-					force = 2;       /* force more between ranges, to stop  */
-					--scanc;         /* "drift" when load/store/load/store/ */
+					force = 2;       // force more between ranges, to stop  
+					--scanc;         // "drift" when load/store/load/store/ 
 				}
-				if (k)  /* more of the same                    */
+				if (k)  // more of the same                    
 				{
 					force += k;
 					--scanc;
@@ -1585,7 +1585,7 @@ void write_batch_parms_colors_table(int maxcolor)
 				put_parm(format("<%d>") % (scanc-curc));
 				curc = scanc;
 			}
-			else                /* changed our mind */
+			else                // changed our mind 
 			{
 				force = 0;
 			}
@@ -1595,7 +1595,7 @@ void write_batch_parms_colors_table(int maxcolor)
 
 void write_batch_parms_flush()
 {
-	while (s_wbdata.len) /* flush the buffer */
+	while (s_wbdata.len) // flush the buffer 
 	{
 		put_parm_line();
 	}
@@ -1637,9 +1637,9 @@ void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int
 		bfYctr = alloc_stack(g_bf_length + 2);
 	}
 
-	s_wbdata.len = 0; /* force first parm to start on new line */
+	s_wbdata.len = 0; // force first parm to start on new line 
 
-	/* Using near string g_box_x for buffer after saving to extraseg */
+	// Using near string g_box_x for buffer after saving to extraseg 
 
 	if (colors_only)
 	{
@@ -1731,8 +1731,8 @@ static void put_filename(const char *keyword, const std::string &fname)
 
 static void put_parm(const char *parm)
 {
-	if (parm[0] == ' '             /* starting a new parm */
-			&& s_wbdata.len == 0)       /* skip leading space */
+	if (parm[0] == ' '             // starting a new parm 
+			&& s_wbdata.len == 0)       // skip leading space 
 	{
 		++parm;
 	}
@@ -1808,18 +1808,18 @@ int get_precision_mag_bf()
 	saved = save_stack();
 	bXctr            = alloc_stack(g_bf_length + 2);
 	bYctr            = alloc_stack(g_bf_length + 2);
-	/* this is just to find Magnification */
+	// this is just to find Magnification 
 	convert_center_mag_bf(bXctr, bYctr, &Magnification, &Xmagfactor, &Rotation, &Skew);
 	restore_stack(saved);
 
-	/* I don't know if this is portable, but something needs to */
-	/* be used in case compiler's LDBL_MAX is not big enough    */
+	// I don't know if this is portable, but something needs to 
+	// be used in case compiler's LDBL_MAX is not big enough    
 	if (Magnification > LDBL_MAX || Magnification < -LDBL_MAX)
 	{
 		return -1;
 	}
 
-	dec = get_power_10(Magnification) + 4; /* 4 digits of padding sounds good */
+	dec = get_power_10(Magnification) + 4; // 4 digits of padding sounds good 
 	return dec;
 }
 
@@ -1892,11 +1892,11 @@ int get_precision_bf(int rezflag)
 	floattobf(one, 1.0);
 	rez = (rezflag == MAXREZ) ? (OLD_MAX_PIXELS - 1) : (g_x_dots - 1);
 
-	/* bfxxdel = (bfxmax - bfx3rd)/(g_x_dots-1) */
+	// bfxxdel = (bfxmax - bfx3rd)/(g_x_dots-1) 
 	sub_bf(bfxxdel, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_3rd());
 	div_a_bf_int(bfxxdel, (U16)rez);
 
-	/* bfyydel2 = (bfy3rd - bfymin)/(g_x_dots-1) */
+	// bfyydel2 = (bfy3rd - bfymin)/(g_x_dots-1) 
 	sub_bf(bfyydel2, g_escape_time_state.m_grid_bf.y_3rd(), g_escape_time_state.m_grid_bf.y_min());
 	div_a_bf_int(bfyydel2, (U16)rez);
 
@@ -1905,11 +1905,11 @@ int get_precision_bf(int rezflag)
 		rez = g_y_dots-1;
 	}
 
-	/* bfyydel = (bfymax - bfy3rd)/(g_y_dots-1) */
+	// bfyydel = (bfymax - bfy3rd)/(g_y_dots-1) 
 	sub_bf(bfyydel, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_3rd());
 	div_a_bf_int(bfyydel, (U16)rez);
 
-	/* bfxxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1) */
+	// bfxxdel2 = (bfx3rd - bfxmin)/(g_y_dots-1) 
 	sub_bf(bfxxdel2, g_escape_time_state.m_grid_bf.x_3rd(), g_escape_time_state.m_grid_bf.x_min());
 	div_a_bf_int(bfxxdel2, (U16)rez);
 
@@ -1999,7 +1999,7 @@ static void strip_zeros(char *buf)
 	{
 		++dptr;
 		exptr = strchr(buf, 'e');
-		/* scientific notation with 'e'? */
+		// scientific notation with 'e'? 
 		bptr = (exptr != 0) ? exptr : (buf + strlen(buf));
 		while (--bptr > dptr && *bptr == '0')
 		{
@@ -2039,9 +2039,9 @@ static void put_float(int slash, double fnum, int prec)
 
 static void put_bf(int slash, bf_t r, int prec)
 {
-	char *buf; /* "/-1.xxxxxxE-1234" */
+	char *buf; // "/-1.xxxxxxE-1234" 
 	char *bptr;
-	buf = s_wbdata.buf + 5000;  /* end of use g_suffix buffer, 5000 bytes safe */
+	buf = s_wbdata.buf + 5000;  // end of use g_suffix buffer, 5000 bytes safe 
 	bptr = buf;
 	if (slash)
 	{
@@ -2055,8 +2055,8 @@ static void put_bf(int slash, bf_t r, int prec)
 void edit_text_colors()
 {
 	int save_debugflag = g_debug_mode;
-	g_debug_mode = 0;	 /*	don't get called recursively */
-	MouseModeSaver saved_mouse(LOOK_MOUSE_TEXT); /* text mouse sensitivity */
+	g_debug_mode = 0;	 // don't get called recursively 
+	MouseModeSaver saved_mouse(LOOK_MOUSE_TEXT); // text mouse sensitivity 
 	int row = 0;
 	int col = 0;
 	int background = 0;
@@ -2083,9 +2083,9 @@ void edit_text_colors()
 			driver_hide_text_cursor();
 			{
 				ScreenStacker stacker;
-				for (int i = 0; i < 8; ++i)		  /* 8 bkgrd attrs */
+				for (int i = 0; i < 8; ++i)		  // 8 bkgrd attrs 
 				{
-					for (int j = 0; j < 16; ++j) /*	16 fgrd	attrs */
+					for (int j = 0; j < 16; ++j) // 16 fgrd	attrs 
 					{
 #if defined(_WIN32)
 						_ASSERTE(_CrtCheckMemory());
@@ -2109,22 +2109,22 @@ void edit_text_colors()
 			rowt = row;
 			colt = col;
 			break;
-		case ' ': /* next color is background */
+		case ' ': // next color is background 
 			background = 1;
 			break;
-		case IDK_LEFT_ARROW: /* cursor left  */
+		case IDK_LEFT_ARROW: // cursor left  
 			--col;
 			break;
-		case IDK_RIGHT_ARROW: /* cursor right */
+		case IDK_RIGHT_ARROW: // cursor right 
 			++col;
 			break;
-		case IDK_UP_ARROW:	/* cursor up	*/
+		case IDK_UP_ARROW:	// cursor up	
 			--row;
 			break;
-		case IDK_DOWN_ARROW: /* cursor down  */
+		case IDK_DOWN_ARROW: // cursor down  
 			++row;
 			break;
-		case IDK_ENTER:   /* enter */
+		case IDK_ENTER:   // enter 
 			{
 				int char_attr = driver_get_char_attr_rowcol(row, col);
 				char_attr &= ~0xFF;
@@ -2178,16 +2178,16 @@ int select_video_mode(int curmode)
 	int k;
 	int ret;
 
-	for (i = 0; i < g_.VideoTableLength(); ++i)  /* init tables */
+	for (i = 0; i < g_.VideoTableLength(); ++i)  // init tables 
 	{
 		entries[i] = i;
 		attributes[i] = 1;
 	}
-	s_entries = entries;           /* for indirectly called subroutines */
+	s_entries = entries;           // for indirectly called subroutines 
 
-	qsort(entries, g_.VideoTableLength(), sizeof(entries[0]), entcompare); /* sort modes */
+	qsort(entries, g_.VideoTableLength(), sizeof(entries[0]), entcompare); // sort modes 
 
-	/* pick default mode */
+	// pick default mode 
 	if (curmode < 0)
 	{
 		g_.SetVideoEntryColors(256);
@@ -2197,7 +2197,7 @@ int select_video_mode(int curmode)
 		g_.SetVideoEntry(curmode);
 	}
 
-	for (i = 0; i < g_.VideoTableLength(); ++i)  /* find default mode */
+	for (i = 0; i < g_.VideoTableLength(); ++i)  // find default mode 
 	{
 		if (g_.VideoEntry().colors == g_.VideoTable(entries[i]).colors &&
 			(curmode < 0 || g_.VideoEntry() == g_.VideoTable(entries[i])))
@@ -2205,7 +2205,7 @@ int select_video_mode(int curmode)
 			break;
 		}
 	}
-	if (i >= g_.VideoTableLength()) /* no match, default to first entry */
+	if (i >= g_.VideoTableLength()) // no match, default to first entry 
 	{
 		i = 0;
 	}
@@ -2222,13 +2222,13 @@ int select_video_mode(int curmode)
 	{
 		return -1;
 	}
-	/* picked by function key or ENTER key */
+	// picked by function key or ENTER key 
 	i = (i < 0) ? (-1 - i) : entries[i];
 
-	/* the selected entry now in g_video_entry */
+	// the selected entry now in g_video_entry 
 	g_.SetVideoEntry(i);
 
-	/* copy fractint.cfg table to resident table, note selected entry */
+	// copy fractint.cfg table to resident table, note selected entry 
 	k = 0;
 	for (i = 0; i < g_.VideoTableLength(); ++i)
 	{
@@ -2241,10 +2241,10 @@ int select_video_mode(int curmode)
 		}
 	}
 	ret = k;
-	if (k == 0)  /* selected entry not a copied (assigned to key) one */
+	if (k == 0)  // selected entry not a copied (assigned to key) one 
 	{
 		g_.SetVideoTable(MAXVIDEOMODES-1, g_.VideoEntry());
-		ret = 1400; /* special value for check_video_mode_key */
+		ret = 1400; // special value for check_video_mode_key 
 	}
 
 	return ret;
@@ -2271,14 +2271,14 @@ static int check_modekey(int curkey, int choice)
 	int ret = 0;
 	if (g_.VideoTable(entry).keynum == 0 || g_.VideoTable(entry).keynum >= IDK_SF1)
 	{
-		if (curkey == '-') /* deassign key? */ 
+		if (curkey == '-') // deassign key?  
 		{
 			if (g_.VideoTable(entry).keynum >= IDK_SF1)
 			{
 				g_.SetVideoTableKey(entry, 0);
 			}
 		}
-		else if (curkey == '+') /* assign key? */
+		else if (curkey == '+') // assign key? 
 		{
 			int key = get_key_no_help();
 			if (key >= IDK_SF1 && key <= IDK_ALT_F10)
@@ -2289,7 +2289,7 @@ static int check_modekey(int curkey, int choice)
 					{
 						g_.SetVideoTableKey(k, 0);
 						ret = -1;
-						/* force redisplay */
+						// force redisplay 
 					}
 				}
 				g_.SetVideoTableKey(entry, key);
@@ -2380,23 +2380,23 @@ bool MakeMIG::find_color_table_size(unsigned int y_step, unsigned int x_step)
 {
 	unsigned char input_char = char(m_buffer[10] & 0x07);
 
-	/* find the color table size */
+	// find the color table size 
 	m_input_color_table_size = 1 << (++input_char);
-	input_char = char(m_buffer[10] & 0x80);        /* is there a global color table? */
-	if (x_step == 0 && y_step == 0)   /* first time through? */
+	input_char = char(m_buffer[10] & 0x80);        // is there a global color table? 
+	if (x_step == 0 && y_step == 0)   // first time through? 
 	{
-		m_all_i_table = m_input_color_table_size;             /* save the color table size */
+		m_all_i_table = m_input_color_table_size;             // save the color table size 
 	}
-	if (input_char != 0)                /* yup */
+	if (input_char != 0)                // yup 
 	{
-		/* (read, but only copy this if it's the first time through) */
-		if (fread(m_buffer, 3*m_input_color_table_size, 1, m_in) != 1)    /* read the global color table */
+		// (read, but only copy this if it's the first time through) 
+		if (fread(m_buffer, 3*m_input_color_table_size, 1, m_in) != 1)    // read the global color table 
 		{
 			m_input_error_flag = 2;
 		}
-		if (x_step == 0 && y_step == 0)       /* first time through? */
+		if (x_step == 0 && y_step == 0)       // first time through? 
 		{
-			if (fwrite(m_buffer, 3*m_input_color_table_size, 1, m_out) != 1)     /* write out the GCT */
+			if (fwrite(m_buffer, 3*m_input_color_table_size, 1, m_out) != 1)     // write out the GCT 
 			{
 				m_error_flag = 2;
 			}
@@ -2407,21 +2407,21 @@ bool MakeMIG::find_color_table_size(unsigned int y_step, unsigned int x_step)
 
 void MakeMIG::read_header()
 {
-	/* (read, but only copy this if it's the first time through) */
-	if (fread(m_buffer, 13, 1, m_in) != 1)   /* read the header and LDS */
+	// (read, but only copy this if it's the first time through) 
+	if (fread(m_buffer, 13, 1, m_in) != 1)   // read the header and LDS 
 	{
 		m_input_error_flag = 1;
 	}
 	// TODO: byte order dependent
-	memcpy(&m_x_res, &m_buffer[6], 2);     /* X-resolution */
-	memcpy(&m_y_res, &m_buffer[8], 2);     /* Y-resolution */
+	memcpy(&m_x_res, &m_buffer[6], 2);     // X-resolution 
+	memcpy(&m_y_res, &m_buffer[8], 2);     // Y-resolution 
 }
 void MakeMIG::write_image_header()
 {
-	m_all_x_res = m_x_res;             /* save the "master" resolution */
+	m_all_x_res = m_x_res;             // save the "master" resolution 
 	m_all_y_res = m_y_res;
 	unsigned int x_total = m_x_res*m_xmult;
-	unsigned int y_total = m_y_res*m_ymult;        /* adjust the image size */
+	unsigned int y_total = m_y_res*m_ymult;        // adjust the image size 
 	// TODO: byte ordering
 	memcpy(&m_buffer[6], &x_total, 2);
 	memcpy(&m_buffer[8], &y_total, 2);
@@ -2431,20 +2431,20 @@ void MakeMIG::write_image_header()
 		m_buffer[4] = '7';
 		m_buffer[5] = 'a';
 	}
-	m_buffer[12] = 0; /* reserved */
-	if (fwrite(m_buffer, 13, 1, m_out) != 1)     /* write out the header */
+	m_buffer[12] = 0; // reserved 
+	if (fwrite(m_buffer, 13, 1, m_out) != 1)     // write out the header 
 	{
 		m_error_flag = 1;
 	}
 }
 void MakeMIG::finish_output_file()
 {
-	m_buffer[0] = 0x3b;                 /* end-of-stream indicator */
+	m_buffer[0] = 0x3b;                 // end-of-stream indicator 
 	if (fwrite(m_buffer, 1, 1, m_out) != 1)
 	{
 		m_error_flag = 12;
 	}
-	fclose(m_out);                    /* done with the output GIF */
+	fclose(m_out);                    // done with the output GIF 
 }
 
 void MakeMIG::set_gif_input_filename(unsigned int y_step, unsigned int x_step)
@@ -2471,12 +2471,12 @@ void MakeMIG::delete_input_files()
 
 void MakeMIG::display_error_messages()
 {
-	if (m_input_error_flag != 0)       /* uh-oh - something failed */
+	if (m_input_error_flag != 0)       // uh-oh - something failed 
 	{
 		stop_message(STOPMSG_NORMAL, "Process failed = early EOF on input file " + m_gif_input_filename);
 	}
 
-	if (m_error_flag != 0)            /* uh-oh - something failed */
+	if (m_error_flag != 0)            // uh-oh - something failed 
 	{
 		stop_message(STOPMSG_NORMAL, "Process failed = out of disk space?");
 	}
@@ -2484,47 +2484,47 @@ void MakeMIG::display_error_messages()
 void MakeMIG::read_block_header()
 {
 	memset(m_buffer, 0, 10);
-	if (fread(m_buffer, 1, 1, m_in) != 1)    /* read the block identifier */
+	if (fread(m_buffer, 1, 1, m_in) != 1)    // read the block identifier 
 	{
 		m_input_error_flag = 3;
 	}
 }
 void MakeMIG::image_descriptor_block(unsigned int y_step, unsigned int x_step)
 {
-	if (fread(&m_buffer[1], 9, 1, m_in) != 1)    /* read the Image Descriptor */
+	if (fread(&m_buffer[1], 9, 1, m_in) != 1)    // read the Image Descriptor 
 	{
 		m_input_error_flag = 4;
 	}
 	unsigned int xloc;
 	// TODO: byte order dependent
-	memcpy(&xloc, &m_buffer[1], 2); /* X-location */
+	memcpy(&xloc, &m_buffer[1], 2); // X-location 
 	unsigned int yloc;
 	// TODO: byte order dependent
-	memcpy(&yloc, &m_buffer[3], 2); /* Y-location */
-	xloc += (x_step*m_x_res);     /* adjust the locations */
+	memcpy(&yloc, &m_buffer[3], 2); // Y-location 
+	xloc += (x_step*m_x_res);     // adjust the locations 
 	yloc += (y_step*m_y_res);
 	// TODO: byte order dependent
 	memcpy(&m_buffer[1], &xloc, 2);
 	memcpy(&m_buffer[3], &yloc, 2);
-	if (fwrite(m_buffer, 10, 1, m_out) != 1)     /* write out the Image Descriptor */
+	if (fwrite(m_buffer, 10, 1, m_out) != 1)     // write out the Image Descriptor 
 	{
 		m_error_flag = 4;
 	}
 
-	unsigned char input_char = char(m_buffer[9] & 0x80);     /* is there a local color table? */
-	if (input_char != 0)            /* yup */
+	unsigned char input_char = char(m_buffer[9] & 0x80);     // is there a local color table? 
+	if (input_char != 0)            // yup 
 	{
-		if (fread(m_buffer, 3*m_input_color_table_size, 1, m_in) != 1)       /* read the local color table */
+		if (fread(m_buffer, 3*m_input_color_table_size, 1, m_in) != 1)       // read the local color table 
 		{
 			m_input_error_flag = 5;
 		}
-		if (fwrite(m_buffer, 3*m_input_color_table_size, 1, m_out) != 1)     /* write out the LCT */
+		if (fwrite(m_buffer, 3*m_input_color_table_size, 1, m_out) != 1)     // write out the LCT 
 		{
 			m_error_flag = 5;
 		}
 	}
 
-	if (fread(m_buffer, 1, 1, m_in) != 1)        /* LZH table size */
+	if (fread(m_buffer, 1, 1, m_in) != 1)        // LZH table size 
 	{
 		m_input_error_flag = 6;
 	}
@@ -2534,11 +2534,11 @@ void MakeMIG::image_descriptor_block(unsigned int y_step, unsigned int x_step)
 	}
 	while (true)
 	{
-		if (m_error_flag != 0 || m_input_error_flag != 0)      /* oops - did something go wrong? */
+		if (m_error_flag != 0 || m_input_error_flag != 0)      // oops - did something go wrong? 
 		{
 			break;
 		}
-		if (fread(m_buffer, 1, 1, m_in) != 1)    /* block size */
+		if (fread(m_buffer, 1, 1, m_in) != 1)    // block size 
 		{
 			m_input_error_flag = 7;
 		}
@@ -2551,7 +2551,7 @@ void MakeMIG::image_descriptor_block(unsigned int y_step, unsigned int x_step)
 		{
 			break;
 		}
-		if (fread(m_buffer, input_char, 1, m_in) != 1)    /* LZH data block */
+		if (fread(m_buffer, input_char, 1, m_in) != 1)    // LZH data block 
 		{
 			m_input_error_flag = 8;
 		}
@@ -2563,8 +2563,8 @@ void MakeMIG::image_descriptor_block(unsigned int y_step, unsigned int x_step)
 }
 void MakeMIG::extension_block(unsigned int y_step, unsigned int x_step)
 {
-	/* (read, but only copy this if it's the last time through) */
-	if (fread(&m_buffer[2], 1, 1, m_in) != 1)    /* read the block type */
+	// (read, but only copy this if it's the last time through) 
+	if (fread(&m_buffer[2], 1, 1, m_in) != 1)    // read the block type 
 	{
 		m_input_error_flag = 9;
 	}
@@ -2577,11 +2577,11 @@ void MakeMIG::extension_block(unsigned int y_step, unsigned int x_step)
 	}
 	while (true)
 	{
-		if (m_error_flag != 0 || m_input_error_flag != 0)      /* oops - did something go wrong? */
+		if (m_error_flag != 0 || m_input_error_flag != 0)      // oops - did something go wrong? 
 		{
 			break;
 		}
-		if (fread(m_buffer, 1, 1, m_in) != 1)    /* block size */
+		if (fread(m_buffer, 1, 1, m_in) != 1)    // block size 
 		{
 			m_input_error_flag = 10;
 		}
@@ -2597,7 +2597,7 @@ void MakeMIG::extension_block(unsigned int y_step, unsigned int x_step)
 		{
 			break;
 		}
-		if (fread(m_buffer, input_char, 1, m_in) != 1)    /* data block */
+		if (fread(m_buffer, input_char, 1, m_in) != 1)    // data block 
 		{
 			m_input_error_flag = 11;
 		}
@@ -2612,30 +2612,30 @@ void MakeMIG::extension_block(unsigned int y_step, unsigned int x_step)
 }
 void MakeMIG::process_input_image(unsigned int y_step, unsigned int x_step)
 {
-	while (true)                       /* process each information block */
+	while (true)                       // process each information block 
 	{
 		read_block_header();
-		if (m_buffer[0] == 0x2c)           /* image descriptor block */
+		if (m_buffer[0] == 0x2c)           // image descriptor block 
 		{
 			image_descriptor_block(y_step, x_step);
 		}
 
-		if (m_buffer[0] == 0x21)           /* extension block */
+		if (m_buffer[0] == 0x21)           // extension block 
 		{
 			extension_block(y_step, x_step);
 		}
 
-		if (m_buffer[0] == 0x3b)           /* end-of-stream indicator */
+		if (m_buffer[0] == 0x3b)           // end-of-stream indicator 
 		{
-			break;                      /* done with this file */
+			break;                      // done with this file 
 		}
 
-		if (m_error_flag != 0 || m_input_error_flag != 0)      /* oops - did something go wrong? */
+		if (m_error_flag != 0 || m_input_error_flag != 0)      // oops - did something go wrong? 
 		{
 			break;
 		}
 	}
-	fclose(m_in);                     /* done with an input GIF */
+	fclose(m_in);                     // done with an input GIF 
 }
 void MakeMIG::execute()
 {
@@ -2649,19 +2649,19 @@ void MakeMIG::execute()
 
 	m_gif_output_filename = "fractmig.gif";
 
-	g_gif87a_flag = true;                        /* for now, force this */
+	g_gif87a_flag = true;                        // for now, force this 
 
-	/* process each input image, one at a time */
+	// process each input image, one at a time 
 	for (unsigned int y_step = 0; y_step < m_ymult; y_step++)
 	{
 		for (unsigned int x_step = 0; x_step < m_xmult; x_step++)
 		{
-			if (x_step == 0 && y_step == 0)          /* first time through? */
+			if (x_step == 0 && y_step == 0)          // first time through? 
 			{
 				stop_message(STOPMSG_NORMAL,
 					str(boost::format("Generating multi-image GIF file %s\n"
 						" using %d X and %d Y components") % m_gif_output_filename % m_xmult % m_ymult));
-				/* attempt to create the output file */
+				// attempt to create the output file 
 				m_out = fopen(m_gif_output_filename.c_str(), "wb");
 				if (m_out == 0)
 				{
@@ -2688,20 +2688,20 @@ void MakeMIG::execute()
 
 			if (find_color_table_size(y_step, x_step))
 			{
-				/* Oops - our pieces don't match */
+				// Oops - our pieces don't match 
 				stop_message(STOPMSG_NORMAL,
 					"File " + m_gif_input_filename + " doesn't have the same resolution as its predecessors!");
 				return;
 			}
 
 			process_input_image(y_step, x_step);
-			if (m_error_flag != 0 || m_input_error_flag != 0)      /* oops - did something go wrong? */
+			if (m_error_flag != 0 || m_input_error_flag != 0)      // oops - did something go wrong? 
 			{
 				break;
 			}
 		}
 
-		if (m_error_flag != 0 || m_input_error_flag != 0)  /* oops - did something go wrong? */
+		if (m_error_flag != 0 || m_input_error_flag != 0)  // oops - did something go wrong? 
 		{
 			break;
 		}
@@ -2735,14 +2735,14 @@ static void reverse_x_axis()
 	g_sy_3rd = g_escape_time_state.m_grid_fp.y_min();
 	if (g_bf_math)
 	{
-		add_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; */
+		add_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); // g_sx_min = g_xx_max + g_xx_min - g_xx_3rd; 
 		sub_a_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_3rd());
-		add_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; */
+		add_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); // g_sy_max = g_yy_max + g_yy_min - g_yy_3rd; 
 		sub_a_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_3rd());
-		copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_3rd());        /* g_sx_max = g_xx_3rd; */
-		copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_3rd());        /* g_sy_min = g_yy_3rd; */
-		copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_max());        /* g_sx_3rd = g_xx_max; */
-		copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_min());        /* g_sy_3rd = g_yy_min; */
+		copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_3rd());        // g_sx_max = g_xx_3rd; 
+		copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_3rd());        // g_sy_min = g_yy_3rd; 
+		copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_max());        // g_sx_3rd = g_xx_max; 
+		copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_min());        // g_sy_3rd = g_yy_min; 
 	}
 }
 
@@ -2769,14 +2769,14 @@ static void reverse_y_axis()
 	g_sy_3rd = g_escape_time_state.m_grid_fp.y_max();
 	if (g_bf_math)
 	{
-		copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_3rd());        /* g_sx_min = g_xx_3rd; */
-		copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_3rd());        /* g_sy_max = g_yy_3rd; */
-		add_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; */
+		copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_3rd());        // g_sx_min = g_xx_3rd; 
+		copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_3rd());        // g_sy_max = g_yy_3rd; 
+		add_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); // g_sx_max = g_xx_max + g_xx_min - g_xx_3rd; 
 		sub_a_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_3rd());
-		add_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; */
+		add_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); // g_sy_min = g_yy_max + g_yy_min - g_yy_3rd; 
 		sub_a_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_3rd());
-		copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_min());        /* g_sx_3rd = g_xx_min; */
-		copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_max());        /* g_sy_3rd = g_yy_max; */
+		copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_min());        // g_sx_3rd = g_xx_min; 
+		copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_max());        // g_sy_3rd = g_yy_max; 
 	}
 }
 
@@ -2803,13 +2803,13 @@ static void reverse_x_y_axes()
 	g_sy_3rd = g_escape_time_state.m_grid_fp.y_max() + g_escape_time_state.m_grid_fp.y_min() - g_escape_time_state.m_grid_fp.y_3rd();
 	if (g_bf_math)
 	{
-		copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_max());        /* g_sx_min = g_xx_max; */
-		copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_min());        /* g_sy_max = g_yy_min; */
-		copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_min());        /* g_sx_max = g_xx_min; */
-		copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_max());        /* g_sy_min = g_yy_max; */
-		add_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); /* g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; */
+		copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_max());        // g_sx_min = g_xx_max; 
+		copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_min());        // g_sy_max = g_yy_min; 
+		copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_min());        // g_sx_max = g_xx_min; 
+		copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_max());        // g_sy_min = g_yy_max; 
+		add_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_max(), g_escape_time_state.m_grid_bf.x_min()); // g_sx_3rd = g_xx_max + g_xx_min - g_xx_3rd; 
 		sub_a_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_3rd());
-		add_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); /* g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; */
+		add_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_max(), g_escape_time_state.m_grid_bf.y_min()); // g_sy_3rd = g_yy_max + g_yy_min - g_yy_3rd; 
 		sub_a_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_3rd());
 	}
 }
@@ -2819,7 +2819,7 @@ static void reverse_x_y_axes()
 	is still valid. */
 void flip_image(int key)
 {
-	/* fractal must be rotate-able and be finished */
+	// fractal must be rotate-able and be finished 
 	if (g_current_fractal_specific->no_zoom_box_rotate()
 		|| g_calculation_status == CALCSTAT_IN_PROGRESS
 		|| g_calculation_status == CALCSTAT_RESUMABLE)
@@ -2829,17 +2829,17 @@ void flip_image(int key)
 
 	if (g_bf_math)
 	{
-		clear_zoom_box(); /* clear, don't copy, the zoombox */
+		clear_zoom_box(); // clear, don't copy, the zoombox 
 	}
 	switch (key)
 	{
-	case IDK_CTL_X:            /* control-X - reverse X-axis */
+	case IDK_CTL_X:            // control-X - reverse X-axis 
 		reverse_x_axis();
 		break;
-	case IDK_CTL_Y:            /* control-Y - reverse Y-axis */
+	case IDK_CTL_Y:            // control-Y - reverse Y-axis 
 		reverse_y_axis();
 		break;
-	case IDK_CTL_Z:            /* control-Z - reverse X and Y axis */
+	case IDK_CTL_Z:            // control-Z - reverse X and Y axis 
 		reverse_x_y_axes();
 		break;
 	}
@@ -2853,42 +2853,42 @@ static std::string expand_var(const std::string &var)
 	time(&ltime);
 	char *time_text = ctime(&ltime);
 
-	/* ctime format             */
-	/* Sat Aug 17 21:34:14 1996 */
-	/* 012345678901234567890123 */
-	/*           1         2    */
+	// ctime format             
+	// Sat Aug 17 21:34:14 1996 
+	// 012345678901234567890123 
+	// 1         2    
 	std::string out;
-	if (var == "year")       /* 4 chars */
+	if (var == "year")       // 4 chars 
 	{
 		time_text[24] = 0;
 		out = &time_text[20];
 	}
-	else if (var == "month") /* 3 chars */
+	else if (var == "month") // 3 chars 
 	{
 		time_text[7] = 0;
 		out = &time_text[4];
 	}
-	else if (var == "day")   /* 2 chars */
+	else if (var == "day")   // 2 chars 
 	{
 		time_text[10] = 0;
 		out = &time_text[8];
 	}
-	else if (var == "hour")  /* 2 chars */
+	else if (var == "hour")  // 2 chars 
 	{
 		time_text[13] = 0;
 		out = &time_text[11];
 	}
-	else if (var == "min")   /* 2 chars */
+	else if (var == "min")   // 2 chars 
 	{
 		time_text[16] = 0;
 		out = &time_text[14];
 	}
-	else if (var == "sec")   /* 2 chars */
+	else if (var == "sec")   // 2 chars 
 	{
 		time_text[19] = 0;
 		out = &time_text[17];
 	}
-	else if (var == "time")  /* 8 chars */
+	else if (var == "time")  // 8 chars 
 	{
 		time_text[19] = 0;
 		out = &time_text[11];
@@ -2907,23 +2907,23 @@ static std::string expand_var(const std::string &var)
 		get_calculation_time(buf, g_calculation_time);
 		out = buf;
 	}
-	else if (var == "version")  /* 4 chars */
+	else if (var == "version")  // 4 chars 
 	{
 		out = str(boost::format("%d") % g_release);
 	}
-	else if (var == "patch")   /* 1 or 2 chars */
+	else if (var == "patch")   // 1 or 2 chars 
 	{
 		out = str(boost::format("%d") % g_patch_level);
 	}
-	else if (var == "xdots")   /* 2 to 4 chars */
+	else if (var == "xdots")   // 2 to 4 chars 
 	{
 		out = str(boost::format("%d") % g_x_dots);
 	}
-	else if (var == "ydots")   /* 2 to 4 chars */
+	else if (var == "ydots")   // 2 to 4 chars 
 	{
 		out = str(boost::format("%d") % g_y_dots);
 	}
-	else if (var == "vidkey")   /* 2 to 3 chars */
+	else if (var == "vidkey")   // 2 to 3 chars 
 	{
 		out = video_mode_key_name(g_.VideoEntry().keynum);
 	}
@@ -2942,7 +2942,7 @@ enum
 
 static const char esc_char = '$';
 
-/* extract comments from the comments= command */
+// extract comments from the comments= command 
 void expand_comments(char *target, const char *source)
 {
 	int i;
@@ -2964,24 +2964,24 @@ void expand_comments(char *target, const char *source)
 			oldc = c;
 			continue;
 		}
-		/* expand underscores to blanks */
+		// expand underscores to blanks 
 		if (c == '_' && oldc != '\\')
 		{
 			c = ' ';
 		}
-		/* esc_char marks start and end of variable names */
+		// esc_char marks start and end of variable names 
 		if (c == esc_char && oldc != '\\')
 		{
 			escape = !escape;
 		}
-		if (c != esc_char && escape) /* if true, building variable name */
+		if (c != esc_char && escape) // if true, building variable name 
 		{
 			if (k < MAXVNAME-1)
 			{
 				varname[k++] = c;
 			}
 		}
-		/* got variable name */
+		// got variable name 
 		else if (c == esc_char && !escape && oldc != '\\')
 		{
 			varname[k] = 0;
@@ -3013,7 +3013,7 @@ void expand_comments(std::string &dest, const char *source)
 	dest = buffer;
 }
 
-/* extract comments from the comments= command */
+// extract comments from the comments= command 
 void parse_comments(char *value)
 {
 	int i;

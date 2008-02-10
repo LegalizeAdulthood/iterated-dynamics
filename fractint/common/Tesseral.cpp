@@ -15,18 +15,18 @@
 #include "Tesseral.h"
 #include "WorkList.h"
 
-/**************** tesseral method by CJLT begins here*********************/
-/*  reworked by PB for speed and resumeability */
-struct tess  /* one of these per box to be done gets stacked */
+// tesseral method by CJLT begins here
+// reworked by PB for speed and resumeability 
+struct tess  // one of these per box to be done gets stacked 
 {
 	int x1;
 	int x2;
 	int y1;
-	int y2;      /* left/right top/bottom x/y coords  */
+	int y2;      // left/right top/bottom x/y coords  
 	int top;
 	int bottom;
 	int left;
-	int right;  /* edge colors, -1 mixed, -2 unknown */
+	int right;  // edge colors, -1 mixed, -2 unknown 
 };
 
 static std::vector<tess> s_stack;
@@ -69,7 +69,7 @@ static int tesseral_column(int x, int y1, int y2)
 	g_reset_periodicity = true;
 	colcolor = g_calculate_type();
 	g_reset_periodicity = false;
-	while (++g_row <= y2)  /* generate the column */
+	while (++g_row <= y2)  // generate the column 
 	{
 		i = g_calculate_type();
 		if (i < 0)
@@ -93,7 +93,7 @@ static int tesseral_row(int x1, int x2, int y)
 	g_reset_periodicity = true;
 	rowcolor = g_calculate_type();
 	g_reset_periodicity = false;
-	while (++g_col <= x2)  /* generate the row */
+	while (++g_col <= x2)  // generate the row 
 	{
 		i = g_calculate_type();
 		if (i < 0)
@@ -112,18 +112,18 @@ int tesseral()
 {
 	bool guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis);
 	tess *tp = (tess *) &g_stack[0];
-	tp->x1 = g_ix_start;                              /* set up initial box */
+	tp->x1 = g_ix_start;                              // set up initial box 
 	tp->x2 = g_x_stop;
 	tp->y1 = g_iy_start;
 	tp->y2 = g_y_stop;
 
-	if (g_work_pass == 0)  /* not resuming */
+	if (g_work_pass == 0)  // not resuming 
 	{
-		tp->top = tesseral_row(g_ix_start, g_x_stop, g_iy_start);     /* Do top row */
-		tp->bottom = tesseral_row(g_ix_start, g_x_stop, g_y_stop);      /* Do bottom row */
-		tp->left = tesseral_column(g_ix_start, g_iy_start + 1, g_y_stop-1); /* Do left column */
-		tp->right = tesseral_column(g_x_stop, g_iy_start + 1, g_y_stop-1);  /* Do right column */
-		if (check_key())  /* interrupt before we got properly rolling */
+		tp->top = tesseral_row(g_ix_start, g_x_stop, g_iy_start);     // Do top row 
+		tp->bottom = tesseral_row(g_ix_start, g_x_stop, g_y_stop);      // Do bottom row 
+		tp->left = tesseral_column(g_ix_start, g_iy_start + 1, g_y_stop-1); // Do left column 
+		tp->right = tesseral_column(g_x_stop, g_iy_start + 1, g_y_stop-1);  // Do right column 
+		if (check_key())  // interrupt before we got properly rolling 
 		{
 			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
 				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
@@ -131,7 +131,7 @@ int tesseral()
 			return -1;
 		}
 	}
-	else  /* resuming, rebuild work stack */
+	else  // resuming, rebuild work stack 
 	{
 		tp->top = -2;
 		tp->bottom = -2;
@@ -155,14 +155,14 @@ int tesseral()
 		{
 			tess *tp2 = tp;
 			int mid;
-			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* next divide down middle */
+			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  // next divide down middle 
 			{
 				if (tp->x1 == curx && (tp->x2 - tp->x1 - 2) < xsize)
 				{
 					break;
 				}
-				mid = (tp->x1 + tp->x2) >> 1;                /* Find mid point */
-				if (mid > curx)  /* stack right part */
+				mid = (tp->x1 + tp->x2) >> 1;                // Find mid point 
+				if (mid > curx)  // stack right part 
 				{
 					++tp;
 					*tp = *tp2;
@@ -170,14 +170,14 @@ int tesseral()
 				}
 				tp2->x1 = mid;
 			}
-			else  /* next divide across */
+			else  // next divide across 
 			{
 				if (tp->y1 == cury && (tp->y2 - tp->y1 - 2) < ysize)
 				{
 					break;
 				}
-				mid = (tp->y1 + tp->y2) >> 1;                /* Find mid point */
-				if (mid > cury)  /* stack bottom part */
+				mid = (tp->y1 + tp->y2) >> 1;                // Find mid point 
+				if (mid > cury)  // stack bottom part 
 				{
 					++tp;
 					*tp = *tp2;
@@ -188,18 +188,18 @@ int tesseral()
 		}
 	}
 
-	g_got_status = GOT_STATUS_TESSERAL; /* for tab_display */
+	g_got_status = GOT_STATUS_TESSERAL; // for tab_display 
 
-	while (tp >= (tess *) &g_stack[0])  /* do next box */
+	while (tp >= (tess *) &g_stack[0])  // do next box 
 	{
-		g_current_col = tp->x1; /* for tab_display */
+		g_current_col = tp->x1; // for tab_display 
 		g_current_row = tp->y1;
 
 		if (tp->top == -1 || tp->bottom == -1 || tp->left == -1 || tp->right == -1)
 		{
 			goto tess_split;
 		}
-		/* for any edge whose color is unknown, set it */
+		// for any edge whose color is unknown, set it 
 		if (tp->top == -2)
 		{
 			tp->top = tesseral_check_row(tp->x1, tp->x2, tp->y1);
@@ -236,19 +236,19 @@ int tesseral()
 		{
 			int mid;
 			int midcolor;
-			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
+			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  // divide down the middle 
 			{
-				mid = (tp->x1 + tp->x2) >> 1;           /* Find mid point */
-				midcolor = tesseral_column(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
+				mid = (tp->x1 + tp->x2) >> 1;           // Find mid point 
+				midcolor = tesseral_column(mid, tp->y1 + 1, tp->y2-1); // Do mid column 
 				if (midcolor != tp->top)
 				{
 					goto tess_split;
 				}
 			}
-			else  /* divide across the middle */
+			else  // divide across the middle 
 			{
-				mid = (tp->y1 + tp->y2) >> 1;           /* Find mid point */
-				midcolor = tesseral_row(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
+				mid = (tp->y1 + tp->y2) >> 1;           // Find mid point 
+				midcolor = tesseral_row(tp->x1 + 1, tp->x2-1, mid); // Do mid row 
 				if (midcolor != tp->top)
 				{
 					goto tess_split;
@@ -256,7 +256,7 @@ int tesseral()
 			}
 		}
 
-		{  /* all 4 edges are the same color, fill in */
+		{  // all 4 edges are the same color, fill in 
 			int i;
 			int j;
 			i = 0;
@@ -267,7 +267,7 @@ int tesseral()
 					tp->top = g_fill_color % g_colors;
 				}
 				j = tp->x2 - tp->x1 - 1;
-				if (guess_plot || j < 2)  /* paint dots */
+				if (guess_plot || j < 2)  // paint dots 
 				{
 					for (g_col = tp->x1 + 1; g_col < tp->x2; g_col++)
 					{
@@ -285,13 +285,13 @@ int tesseral()
 						}
 					}
 				}
-				else  /* use put_line for speed */
+				else  // use put_line for speed 
 				{
 					memset(&g_stack[OLD_MAX_PIXELS], tp->top, j);
 					for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
 					{
 						put_line(g_row, tp->x1 + 1, tp->x2-1, &g_stack[OLD_MAX_PIXELS]);
-						if (g_plot_color != g_plot_color_put_color) /* symmetry */
+						if (g_plot_color != g_plot_color_put_color) // symmetry 
 						{
 							j = g_WorkList.yy_stop()-(g_row-g_WorkList.yy_start());
 							if (j > g_y_stop && j < g_y_dots)
@@ -315,19 +315,19 @@ int tesseral()
 		continue;
 
 tess_split:
-		{  /* box not surrounded by same color, sub-divide */
+		{  // box not surrounded by same color, sub-divide 
 			int mid;
 			int midcolor;
 			tess *tp2;
-			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  /* divide down the middle */
+			if (tp->x2 - tp->x1 > tp->y2 - tp->y1)  // divide down the middle 
 			{
-				mid = (tp->x1 + tp->x2) >> 1;                /* Find mid point */
-				midcolor = tesseral_column(mid, tp->y1 + 1, tp->y2-1); /* Do mid column */
+				mid = (tp->x1 + tp->x2) >> 1;                // Find mid point 
+				midcolor = tesseral_column(mid, tp->y1 + 1, tp->y2-1); // Do mid column 
 				if (midcolor == -3)
 				{
 					goto tess_end;
 				}
-				if (tp->x2 - mid > 1)  /* right part >= 1 column */
+				if (tp->x2 - mid > 1)  // right part >= 1 column 
 				{
 					if (tp->top == -1)
 					{
@@ -338,7 +338,7 @@ tess_split:
 						tp->bottom = -2;
 					}
 					tp2 = tp;
-					if (mid - tp->x1 > 1)  /* left part >= 1 col, stack right */
+					if (mid - tp->x1 > 1)  // left part >= 1 col, stack right 
 					{
 						++tp;
 						*tp = *tp2;
@@ -353,15 +353,15 @@ tess_split:
 					--tp;
 				}
 			}
-			else  /* divide across the middle */
+			else  // divide across the middle 
 			{
-				mid = (tp->y1 + tp->y2) >> 1;                /* Find mid point */
-				midcolor = tesseral_row(tp->x1 + 1, tp->x2-1, mid); /* Do mid row */
+				mid = (tp->y1 + tp->y2) >> 1;                // Find mid point 
+				midcolor = tesseral_row(tp->x1 + 1, tp->x2-1, mid); // Do mid row 
 				if (midcolor == -3)
 				{
 					goto tess_end;
 				}
-				if (tp->y2 - mid > 1)  /* bottom part >= 1 column */
+				if (tp->y2 - mid > 1)  // bottom part >= 1 column 
 				{
 					if (tp->left == -1)
 					{
@@ -372,7 +372,7 @@ tess_split:
 						tp->right = -2;
 					}
 					tp2 = tp;
-					if (mid - tp->y1 > 1)  /* top also >= 1 col, stack bottom */
+					if (mid - tp->y1 > 1)  // top also >= 1 col, stack bottom 
 					{
 						++tp;
 						*tp = *tp2;
@@ -391,7 +391,7 @@ tess_split:
 	}
 
 tess_end:
-	if (tp >= (tess *) &g_stack[0])  /* didn't complete */
+	if (tp >= (tess *) &g_stack[0])  // didn't complete 
 	{
 		int i;
 		int xsize;
@@ -416,4 +416,4 @@ tess_end:
 		return -1;
 	}
 	return 0;
-} /* tesseral */
+} // tesseral 

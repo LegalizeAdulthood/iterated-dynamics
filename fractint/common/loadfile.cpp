@@ -44,7 +44,7 @@ enum
 	BLOCKTYPE_ORBITS_INFO	= 7
 };
 
-/* routines in this module      */
+// routines in this module      
 
 static void load_ext_blk(char *loadptr, int loadlen);
 static void skip_ext_blk(int *, int *);
@@ -58,7 +58,7 @@ int g_file_x_dots = 0;
 int g_file_colors = 0;
 float g_file_aspect_ratio = 0.0;
 int g_skip_x_dots = 0;
-int g_skip_y_dots = 0;      /* for decoder, when reducing image */
+int g_skip_y_dots = 0;      // for decoder, when reducing image 
 bool g_bad_outside = false;
 bool g_use_old_complex_power = false;
 
@@ -138,7 +138,7 @@ static void read_info_version_2(const fractal_info &read_info)
 
 static void read_info_version_3(const fractal_info &read_info)
 {
-	g_calculation_status = CALCSTAT_PARAMS_CHANGED;       /* defaults if version < 4 */
+	g_calculation_status = CALCSTAT_PARAMS_CHANGED;       // defaults if version < 4 
 	g_escape_time_state.m_grid_fp.x_3rd() = g_escape_time_state.m_grid_fp.x_min();
 	g_escape_time_state.m_grid_fp.y_3rd() = g_escape_time_state.m_grid_fp.y_min();
 	g_user_distance_test = 0;
@@ -187,12 +187,12 @@ static void read_info_version_4(const fractal_info &read_info)
 			g_file_x_dots >>= 1;
 		}
 		g_file_aspect_ratio = read_info.aspect_ratio;
-		if (g_file_aspect_ratio < 0.01)       /* fix files produced in early v14.1 */
+		if (g_file_aspect_ratio < 0.01)       // fix files produced in early v14.1 
 		{
 			g_file_aspect_ratio = g_screen_aspect_ratio;
 		}
-		g_save_release = read_info.release; /* from fmt 5 on we know real number */
-		if (read_info.version == 5        /* except a few early fmt 5 cases: */
+		g_save_release = read_info.release; // from fmt 5 on we know real number 
+		if (read_info.version == 5        // except a few early fmt 5 cases: 
 			&& (g_save_release <= 0 || g_save_release >= 4000))
 		{
 			// TODO: handle old crap or abort?
@@ -277,7 +277,7 @@ static void read_info_version_8(const fractal_info &read_info)
 static void read_info_pre_version_14(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
-	if (read_info.version < 4 && read_info.version != 0) /* pre-version 14.0? */
+	if (read_info.version < 4 && read_info.version != 0) // pre-version 14.0? 
 	{
 		translate_obsolete_fractal_types(&read_info);
 		if (g_log_palette_mode)
@@ -291,9 +291,9 @@ static void read_info_pre_version_14(const fractal_info &read_info)
 static void read_info_pre_version_15(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
-	if (read_info.version < 5 && read_info.version != 0) /* pre-version 15.0? */
+	if (read_info.version < 5 && read_info.version != 0) // pre-version 15.0? 
 	{
-		if (g_log_palette_mode == 2) /* logmap = old changed again in format 5! */
+		if (g_log_palette_mode == 2) // logmap = old changed again in format 5! 
 		{
 			g_log_palette_mode = LOGPALETTE_OLD;
 		}
@@ -303,7 +303,7 @@ static void read_info_pre_version_15(const fractal_info &read_info)
 		}
 	}
 
-	if (g_potential_flag) /* in version 15.x and 16.x logmap didn't work with pot */
+	if (g_potential_flag) // in version 15.x and 16.x logmap didn't work with pot 
 	{
 		if (read_info.version == 6 || read_info.version == 7)
 		{
@@ -316,7 +316,7 @@ static void read_info_pre_version_15(const fractal_info &read_info)
 static void read_info_pre_version_18(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
-	if (read_info.version < 9 && read_info.version != 0) /* pre-version 18.0? */
+	if (read_info.version < 9 && read_info.version != 0) // pre-version 18.0? 
 	{
 		/* g_force_symmetry==FORCESYMMETRY_SEARCH means we want to force symmetry but don't
 		know which symmetry yet, will find out in setsymmetry() */
@@ -337,9 +337,9 @@ static void read_info_pre_version_18(const fractal_info &read_info)
 static void read_info_pre_version_17_25(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
-	if (g_save_release < 1725 && read_info.version != 0) /* pre-version 17.25 */
+	if (g_save_release < 1725 && read_info.version != 0) // pre-version 17.25 
 	{
-		set_if_old_bif(); /* translate bifurcation types */
+		set_if_old_bif(); // translate bifurcation types 
 		g_function_preloaded = true;
 	}
 }
@@ -348,8 +348,8 @@ static void read_info_version_9(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
 	if (read_info.version > 9)
-	{ /* post-version 18.22 */
-		g_bail_out = read_info.bail_out; /* use long bailout */
+	{ // post-version 18.22 
+		g_bail_out = read_info.bail_out; // use long bailout 
 		g_bail_out_test = (enum bailouts) read_info.bailoutest;
 	}
 	else
@@ -359,9 +359,9 @@ static void read_info_version_9(const fractal_info &read_info)
 	set_bail_out_formula(g_bail_out_test);
 	if (read_info.version > 9)
 	{
-		/* post-version 18.23 */
-		g_max_iteration = read_info.iterations; /* use long maxit */
-		/* post-version 18.27 */
+		// post-version 18.23 
+		g_max_iteration = read_info.iterations; // use long maxit 
+		// post-version 18.27 
 		g_old_demm_colors = (read_info.old_demm_colors != 0);
 	}
 }
@@ -369,7 +369,7 @@ static void read_info_version_9(const fractal_info &read_info)
 static void read_info_version_10(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
-	if (read_info.version > 10) /* post-version 19.20 */
+	if (read_info.version > 10) // post-version 19.20 
 	{
 		g_log_palette_mode = read_info.logmap;
 		g_user_distance_test = read_info.distance_test;
@@ -379,7 +379,7 @@ static void read_info_version_10(const fractal_info &read_info)
 static void read_info_version_11(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
-	if (read_info.version > 11) /* post-version 19.20, inversion fix */
+	if (read_info.version > 11) // post-version 19.20, inversion fix 
 	{
 		g_inversion[0] = read_info.dinvert[0];
 		g_inversion[1] = read_info.dinvert[1];
@@ -392,7 +392,7 @@ static void read_info_version_11(const fractal_info &read_info)
 static void read_info_version_12(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
-	if (read_info.version > 12) /* post-version 19.60 */
+	if (read_info.version > 12) // post-version 19.60 
 	{
 		g_quick_calculate = (read_info.quick_calculate != 0);
 		g_proximity = read_info.proximity;
@@ -409,7 +409,7 @@ static void read_info_version_13(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
 	g_beauty_of_fractals = true;
-	if (read_info.version > 13) /* post-version 20.1.2 */
+	if (read_info.version > 13) // post-version 20.1.2 
 	{
 		g_beauty_of_fractals = (read_info.no_bof == 0);
 	}
@@ -418,16 +418,16 @@ static void read_info_version_13(const fractal_info &read_info)
 static void read_info_version_14()
 {
 	// TODO: handle old crap or abort?
-	/* if (read_info.version > 14)  post-version 20.1.12 */
-	/* modified saved evolver structure JCO 12JUL01 */
-	g_log_automatic_flag = false;  /* make sure it's turned off */
+	// if (read_info.version > 14)  post-version 20.1.12 
+	// modified saved evolver structure JCO 12JUL01 
+	g_log_automatic_flag = false;  // make sure it's turned off 
 }
 
 static void read_info_version_15(const fractal_info &read_info)
 {
 	// TODO: handle old crap or abort?
 	g_orbit_interval = 1;
-	if (read_info.version > 15) /* post-version 20.3.2 */
+	if (read_info.version > 15) // post-version 20.3.2 
 	{
 		g_orbit_interval = read_info.orbit_interval;
 	}
@@ -439,7 +439,7 @@ static void read_info_version_16(const fractal_info &read_info)
 	g_orbit_delay = 0;
 	g_math_tolerance[0] = 0.05;
 	g_math_tolerance[1] = 0.05;
-	if (read_info.version > 16) /* post-version 20.4.0 */
+	if (read_info.version > 16) // post-version 20.4.0 
 	{
 		g_orbit_delay = read_info.orbit_delay;
 		g_math_tolerance[0] = read_info.math_tolerance[0];
@@ -495,7 +495,7 @@ static void got_formula_info(fractal_info const &read_info, formula_info_extensi
 		g_formula_state.set_formula(formula_info.form_name);
 		break;
 	}
-	/* perhaps in future add more here, check block_len for backward compatibility */
+	// perhaps in future add more here, check block_len for backward compatibility 
 }
 
 static void got_ranges_info(ranges_info_extension_block const &ranges_info)
@@ -537,8 +537,8 @@ static void got_evolver_info(const fractal_info &read_info, evolver_info_extensi
 	// TODO: handle old crap or abort?
 	if (read_info.version < 15)
 	{
-		/* Increasing NUM_GENES moves ecount in the data structure */
-		/* We added 4 to NUM_GENES, so ecount is at NUM_GENES-4 */
+		// Increasing NUM_GENES moves ecount in the data structure 
+		// We added 4 to NUM_GENES, so ecount is at NUM_GENES-4 
 		evolver_info.ecount = evolver_info.mutate[NUM_GENES - 4];
 	}
 	if (evolver_info.ecount != evolver_info.grid_size*evolver_info.grid_size
@@ -645,7 +645,7 @@ static void got_orbits_info(orbits_info_extension_block const &orbits_info)
 static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, formula_info_extension_block formula_info,
 						 resume_info_extension_block resume_info_blk)
 {
-	/* TODO: a klooge till the meaning of g_float_flag in line3d is clarified */
+	// TODO: a klooge till the meaning of g_float_flag in line3d is clarified 
 	if (g_display_3d)                   
 	{
 		g_user_float_flag = oldfloatflag; 
@@ -653,7 +653,7 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, formu
 
 	if (g_overlay_3d)
 	{
-		g_.SetInitialVideoMode(g_.Adapter());          /* use previous adapter mode for overlays */
+		g_.SetInitialVideoMode(g_.Adapter());          // use previous adapter mode for overlays 
 		if (g_file_x_dots > g_x_dots || g_file_y_dots > g_y_dots)
 		{
 			stop_message(STOPMSG_NORMAL, "Can't overlay with a larger image");
@@ -665,8 +665,8 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, formu
 	{
 		int olddisplay3d = g_display_3d;
 		bool oldfloatflag = g_float_flag;
-		g_display_3d = g_loaded_3d;      /* for <tab> display during next */
-		g_float_flag = (g_user_float_flag != 0); /* ditto */
+		g_display_3d = g_loaded_3d;      // for <tab> display during next 
+		g_float_flag = (g_user_float_flag != 0); // ditto 
 		int i = get_video_mode(&read_info, &formula_info);
 		g_display_3d = olddisplay3d;
 		g_float_flag = oldfloatflag;
@@ -700,10 +700,10 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, formu
 	return 0;
 }
 
-int read_overlay()      /* read overlay/3D files, if reqr'd */
+int read_overlay()      // read overlay/3D files, if reqr'd 
 {
-	g_show_file = SHOWFILE_DONE;			/* for any abort exit, pretend done */
-	g_.SetInitialVideoModeNone();					/* no viewing mode set yet */
+	g_show_file = SHOWFILE_DONE;			// for any abort exit, pretend done 
+	g_.SetInitialVideoModeNone();					// no viewing mode set yet 
 	bool oldfloatflag = g_user_float_flag;
 	g_loaded_3d = 0;
 	if (g_fast_restore)
@@ -725,7 +725,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	if (find_fractal_info(g_read_name.c_str(), &read_info, &resume_info_blk, &formula_info,
 		&ranges_info, &mp_info, &evolver_info, &orbits_info))
 	{
-		/* didn't find a useable file */
+		// didn't find a useable file 
 		stop_message(STOPMSG_NORMAL, "Sorry, " + g_read_name + " isn't a file I can decode.");
 		return -1;
 	}
@@ -744,7 +744,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	g_escape_time_state.m_grid_fp.y_max() = read_info.y_max;
 	g_parameters[0] = read_info.c_real;
 	g_parameters[1] = read_info.c_imag;
-	g_save_release = 1100; /* unless we find out better later on */
+	g_save_release = 1100; // unless we find out better later on 
 
 	read_info_version_0(read_info);
 	read_info_version_1(read_info);
@@ -783,7 +783,7 @@ int read_overlay()      /* read overlay/3D files, if reqr'd */
 	got_evolver_info(read_info, evolver_info);
 	got_orbits_info(orbits_info);
 
-	g_show_file = SHOWFILE_PENDING;                   /* trigger the file load */
+	g_show_file = SHOWFILE_PENDING;                   // trigger the file load 
 
 	return 0;
 }
@@ -841,8 +841,8 @@ static void GifStartSetSizeAspect(const BYTE gifstart[18])
 	g_file_x_dots = Get16(&gifstart[6]);
 	g_file_y_dots = Get16(&gifstart[8]);
 	g_file_colors = 2 << (gifstart[10] & 7);
-	g_file_aspect_ratio = 0; /* unknown */
-	if (gifstart[12])  /* calc reasonably close value from gif header */
+	g_file_aspect_ratio = 0; // unknown 
+	if (gifstart[12])  // calc reasonably close value from gif header 
 	{
 		g_file_aspect_ratio = float((64.0/(double(gifstart[12]) + 15.0))
 			*double(g_file_y_dots)/double(g_file_x_dots));
@@ -852,7 +852,7 @@ static void GifStartSetSizeAspect(const BYTE gifstart[18])
 			g_file_aspect_ratio = g_screen_aspect_ratio;
 		}
 	}
-	else if (g_file_y_dots*4 == g_file_x_dots*3) /* assume the common square pixels */
+	else if (g_file_y_dots*4 == g_file_x_dots*3) // assume the common square pixels 
 	{
 		g_file_aspect_ratio = g_screen_aspect_ratio;
 	}
@@ -872,7 +872,7 @@ static void GifFileReadColormap(const BYTE gifstart[18])
 				{
 					break;
 				}
-				/* TODO: does not work when COLOR_CHANNEL_MAX != 63 */
+				// TODO: does not work when COLOR_CHANNEL_MAX != 63 
 				g_.DAC().SetChannel(i, j, BYTE(k >> 2));
 			}
 			if (k < 0)
@@ -904,20 +904,20 @@ static void FoundInfoId(fractal_info *info,
 		while (scan_extend)
 		{
 			char temp1[81];
-			if (s_gif->GetChar() != '!' /* if not what we expect just give up */
+			if (s_gif->GetChar() != '!' // if not what we expect just give up 
 				|| s_gif->Read(temp1, 1, 13) != 13
 				|| strncmp(&temp1[2], "fractint", 8))
 			{
 				break;
 			}
 			temp1[13] = 0;
-			int block_type = atoi(&temp1[10]); /* e.g. "fractint002" */
+			int block_type = atoi(&temp1[10]); // e.g. "fractint002" 
 			int block_len;
 			int data_len;
 			switch (block_type)
 			{
-			case BLOCKTYPE_MAIN_INFO: /* "fractint001", the main extension g_block */
-				if (scan_extend == 2)  /* we've been here before, done now */
+			case BLOCKTYPE_MAIN_INFO: // "fractint001", the main extension g_block 
+				if (scan_extend == 2)  // we've been here before, done now 
 				{
 					scan_extend = 0;
 					break;
@@ -927,34 +927,34 @@ static void FoundInfoId(fractal_info *info,
 				decode_fractal_info(info, 1);
 #endif
 				scan_extend = 2;
-				/* now we know total extension len, back up to first g_block */
+				// now we know total extension len, back up to first g_block 
 				s_gif->SeekFromCurrent(-info->tot_extend_len);
 				break;
-			case BLOCKTYPE_RESUME_INFO: /* resume info */
-				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+			case BLOCKTYPE_RESUME_INFO: // resume info 
+				skip_ext_blk(&block_len, &data_len); // once to get lengths 
 				resume_info->resume_data = new char[data_len];
 				if (resume_info->resume_data == 0)
 				{
-					info->calculation_status = CALCSTAT_NON_RESUMABLE; /* not resumable after all */
+					info->calculation_status = CALCSTAT_NON_RESUMABLE; // not resumable after all 
 				}
 				else
 				{
 					s_gif->SeekFromCurrent(long(-block_len));
 					load_ext_blk(resume_info->resume_data, data_len);
 					resume_info->length = data_len;
-					resume_info->got_data = 1; /* got data */
+					resume_info->got_data = 1; // got data 
 				}
 				break;
-			case BLOCKTYPE_FORMULA_INFO: /* formula info */
-				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
-				/* check data_len for backward compatibility */
+			case BLOCKTYPE_FORMULA_INFO: // formula info 
+				skip_ext_blk(&block_len, &data_len); // once to get lengths 
+				// check data_len for backward compatibility 
 				s_gif->SeekFromCurrent(long(-block_len));
 				struct formula_info formula_load_info;
 				load_ext_blk(reinterpret_cast<char *>(&formula_load_info), data_len);
 				strcpy(formula_info->form_name, formula_load_info.form_name);
 				formula_info->length = data_len;
-				formula_info->got_data = 1; /* got data */
-				if (data_len < sizeof(formula_load_info))  /* must be old GIF */
+				formula_info->got_data = 1; // got data 
+				if (data_len < sizeof(formula_load_info))  // must be old GIF 
 				{
 					formula_info->uses_p1 = 1;
 					formula_info->uses_p2 = 1;
@@ -975,39 +975,39 @@ static void FoundInfoId(fractal_info *info,
 					formula_info->uses_p5 = formula_load_info.uses_p5;
 				}
 				break;
-			case BLOCKTYPE_RANGES_INFO: /* ranges info */
-				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+			case BLOCKTYPE_RANGES_INFO: // ranges info 
+				skip_ext_blk(&block_len, &data_len); // once to get lengths 
 				ranges_info->range_data = new short[data_len/sizeof(short)];
 				if (ranges_info->range_data != 0)
 				{
 					s_gif->SeekFromCurrent(long(-block_len));
 					load_ext_blk(reinterpret_cast<char *>(ranges_info->range_data), data_len);
 					ranges_info->length = data_len/sizeof(short);
-					ranges_info->got_data = 1; /* got data */
+					ranges_info->got_data = 1; // got data 
 				}
 				break;
-			case BLOCKTYPE_MP_INFO: /* extended precision parameters  */
-				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+			case BLOCKTYPE_MP_INFO: // extended precision parameters  
+				skip_ext_blk(&block_len, &data_len); // once to get lengths 
 				mp_info->apm_data = new char[data_len];
 				if (mp_info->apm_data != 0)
 				{
 					s_gif->SeekFromCurrent(long(-block_len));
 					load_ext_blk(mp_info->apm_data, data_len);
 					mp_info->length = data_len;
-					mp_info->got_data = 1; /* got data */
+					mp_info->got_data = 1; // got data 
 				}
 				break;
-			case BLOCKTYPE_EVOLVER_INFO: /* evolver params */
-				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+			case BLOCKTYPE_EVOLVER_INFO: // evolver params 
+				skip_ext_blk(&block_len, &data_len); // once to get lengths 
 				s_gif->SeekFromCurrent(long(-block_len));
 				evolution_info evolver_load_info;
 				load_ext_blk(reinterpret_cast<char *>(&evolver_load_info), data_len);
-				/* XFRACT processing of doubles here */
+				// XFRACT processing of doubles here 
 #ifdef XFRACT
 				decode_evolver_info(&eload_info, 1);
 #endif
 				evolver_info->length = data_len;
-				evolver_info->got_data = 1; /* got data */
+				evolver_info->got_data = 1; // got data 
 
 				evolver_info->parameter_range_x = evolver_load_info.parameter_range_x;
 				evolver_info->parameter_range_y = evolver_load_info.parameter_range_y;
@@ -1031,17 +1031,17 @@ static void FoundInfoId(fractal_info *info,
 					evolver_info->mutate[i] = evolver_load_info.mutate[i];
 				}
 				break;
-			case BLOCKTYPE_ORBITS_INFO: /* orbits parameters  */
-				skip_ext_blk(&block_len, &data_len); /* once to get lengths */
+			case BLOCKTYPE_ORBITS_INFO: // orbits parameters  
+				skip_ext_blk(&block_len, &data_len); // once to get lengths 
 				s_gif->SeekFromCurrent(long(-block_len));
 				struct orbits_info orbits_load_info;
 				load_ext_blk(reinterpret_cast<char *>(&orbits_load_info), data_len);
-				/* XFRACT processing of doubles here */
+				// XFRACT processing of doubles here 
 #ifdef XFRACT
 				decode_orbits_info(&oload_info, 1);
 #endif
 				orbits_info->length = data_len;
-				orbits_info->got_data = 1; /* got data */
+				orbits_info->got_data = 1; // got data 
 				orbits_info->oxmin = orbits_load_info.oxmin;
 				orbits_info->oxmax = orbits_load_info.oxmax;
 				orbits_info->oymin = orbits_load_info.oymin;
@@ -1058,7 +1058,7 @@ static void FoundInfoId(fractal_info *info,
 	}
 
 	GifClose();
-	g_file_aspect_ratio = g_screen_aspect_ratio; /* if not >= v15, this is correct */
+	g_file_aspect_ratio = g_screen_aspect_ratio; // if not >= v15, this is correct 
 }
 
 int find_fractal_info(const char *gif_file, fractal_info *info,
@@ -1069,7 +1069,7 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 					  evolver_info_extension_block *evolver_info,
 					  orbits_info_extension_block *orbits_info)
 {
-	/* initialize to no data */
+	// initialize to no data 
 	resume_info->got_data = 0;
 	formula_info->got_data = 0;
 	ranges_info->got_data = 0;
@@ -1084,7 +1084,7 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 
 	BYTE gifstart[18];
 	s_gif->Read(gifstart, 1, 13);
-	if (strncmp((char *)gifstart, "GIF", 3) != 0)  /* not GIF, maybe old .tga? */
+	if (strncmp((char *)gifstart, "GIF", 3) != 0)  // not GIF, maybe old .tga? 
 	{
 		GifClose();
 		return -1;
@@ -1135,19 +1135,19 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 	}
 	else
 	{
-		/* didn't work 1st try, maybe an older vsn, maybe junk at eof, scan: */
+		// didn't work 1st try, maybe an older vsn, maybe junk at eof, scan: 
 		int offset;
 		char tmpbuf[110];
 		hdr_offset = 0;
-		offset = 80; /* don't even check last 80 bytes of file for id */
-		while (offset < fractinf_len + 513)  /* allow 512 garbage at eof */
+		offset = 80; // don't even check last 80 bytes of file for id 
+		while (offset < fractinf_len + 513)  // allow 512 garbage at eof 
 		{
-			offset += 100; /* go back 100 bytes at a time */
+			offset += 100; // go back 100 bytes at a time 
 			s_gif->SeekFromEnd(-offset);
-			s_gif->Read(tmpbuf, 1, 110); /* read 10 extra for string compare */
+			s_gif->Read(tmpbuf, 1, 110); // read 10 extra for string compare 
 			for (int i = 0; i < 100; ++i)
 			{
-				if (!strcmp(INFO_ID, &tmpbuf[i]))  /* found header? */
+				if (!strcmp(INFO_ID, &tmpbuf[i]))  // found header? 
 				{
 					strcpy(info->info_id, INFO_ID);
 					hdr_offset = i-offset;
@@ -1158,14 +1158,14 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 #ifdef XFRACT
 					decode_fractal_info(info, 1);
 #endif
-					offset = 10000; /* force exit from outer loop */
+					offset = 10000; // force exit from outer loop 
 					break;
 				}
 			}
 		}
 	}
 
-	if (hdr_offset)  /* we found INFO_ID */
+	if (hdr_offset)  // we found INFO_ID 
 	{
 		FoundInfoId(info, resume_info, formula_info, ranges_info, mp_info, evolver_info, orbits_info, hdr_offset);
 		return 0;
@@ -1191,9 +1191,9 @@ int find_fractal_info(const char *gif_file, fractal_info *info,
 	info->x_dots = short(g_file_x_dots);
 	info->y_dots = short(g_file_y_dots);
 	info->colors = short(g_file_colors);
-	info->version = 0; /* this forces lots more init at calling end too */
+	info->version = 0; // this forces lots more init at calling end too 
 
-	/* zero means we won */
+	// zero means we won 
 	GifClose();
 	return 0;
 }
@@ -1205,7 +1205,7 @@ static void load_ext_blk(char *loadptr, int loadlen)
 		while (--len >= 0)
 		{
 			char data = char(s_gif->GetChar());
-			/* discard excess characters */
+			// discard excess characters 
 			if (--loadlen >= 0)
 			{
 				*(loadptr++) = data;
@@ -1228,7 +1228,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 }
 
 
-/* switch obsolete fractal types to new generalizations */
+// switch obsolete fractal types to new generalizations 
 static void translate_obsolete_fractal_types(const fractal_info *info)
 {
 	switch (g_fractal_type)
@@ -1328,7 +1328,7 @@ static void translate_obsolete_fractal_types(const fractal_info *info)
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];
 }
 
-/* switch old bifurcation fractal types to new generalizations */
+// switch old bifurcation fractal types to new generalizations 
 void set_if_old_bif()
 {
 	/* set functions if not set already, may need to check 'g_function_preloaded'
@@ -1353,7 +1353,7 @@ void set_if_old_bif()
 	}
 }
 
-/* miscellaneous function variable defaults */
+// miscellaneous function variable defaults 
 void set_function_parm_defaults()
 {
 	switch (g_fractal_type)
@@ -1380,7 +1380,7 @@ void backwards_v18()
 {
 	if (!g_function_preloaded)
 	{
-		set_if_old_bif(); /* old bifurcations need function set */
+		set_if_old_bif(); // old bifurcations need function set 
 	}
 	if (g_fractal_type == FRACTYPE_MANDELBROT_FUNC && g_user_float_flag
 		&& g_save_release < 1800 && g_bail_out == 0)
@@ -1425,13 +1425,13 @@ void backwards_v19()
 		g_inversion[2] = 0;
 		g_invert = 0;
 	}
-	g_no_magnitude_calculation = fix_bof(); /* fractal has old bof60/61 problem with magnitude */
-	g_use_old_periodicity = fix_period_bof(); /* fractal uses old periodicity method */
+	g_no_magnitude_calculation = fix_bof(); // fractal has old bof60/61 problem with magnitude 
+	g_use_old_periodicity = fix_period_bof(); // fractal uses old periodicity method 
 }
 
 void backwards_v20()
 {
-	/* Fractype == FP type is not seen from PAR file ????? */
+	// Fractype == FP type is not seen from PAR file ????? 
 	// TODO: g_bad_outside is a compatability flag with buggy old code,
 	// but the current code doesn't emulate the buggy behavior.
 	// See calmanfp.asm and calmanfp5.asm in the DOS code.

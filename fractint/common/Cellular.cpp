@@ -15,7 +15,7 @@
 #include "realdos.h"
 #include "resume.h"
 
-/* cellular type */
+// cellular type 
 enum
 {
 	BAD_T         = 1,
@@ -37,18 +37,18 @@ static int s_last_screen_flag;
 
 static void set_cellular_palette();
 
-/******************* standalone engine for "cellular" ********************/
-/* Originally coded by Ken Shirriff.
-	Modified beyond recognition by Jonathan Osuch.
-	Original or'd the neighborhood, changed to sum the neighborhood
-	Changed prompts and error messages
-	Added CA types
-	Set the palette to some standard? CA g_colors
-	Changed *s_cell_array to near and used dstack so put_line and get_line
-		could be used all the time
-	Made space bar generate next screen
-	Increased string/rule size to 16 digits and added CA types 9/20/92
-*/
+// standalone engine for "cellular"
+// Originally coded by Ken Shirriff.
+//	Modified beyond recognition by Jonathan Osuch.
+//	Original or'd the neighborhood, changed to sum the neighborhood
+//	Changed prompts and error messages
+//	Added CA types
+//	Set the palette to some standard? CA g_colors
+//	Changed *s_cell_array to near and used dstack so put_line and get_line
+//		could be used all the time
+//	Made space bar generate next screen
+//	Increased string/rule size to 16 digits and added CA types 9/20/92
+//
 static void abort_cellular(int err, int t)
 {
 	int i;
@@ -68,14 +68,14 @@ static void abort_cellular(int err, int t)
 	case STRING2:
 		{
 			static char msg[] = {"Make string of 0's through  's" };
-			msg[27] = (char)(s_k_1 + '0'); /* turn into a character value */
+			msg[27] = (char)(s_k_1 + '0'); // turn into a character value 
 			stop_message(STOPMSG_NORMAL, msg);
 		}
 		break;
 	case TABLEK:
 		{
 			static char msg[] = {"Make Rule with 0's through  's" };
-			msg[27] = (char)(s_k_1 + '0'); /* turn into a character value */
+			msg[27] = (char)(s_k_1 + '0'); // turn into a character value 
 			stop_message(STOPMSG_NORMAL, msg);
 		}
 		break;
@@ -145,13 +145,13 @@ int cellular()
 	default:
 		abort_cellular(TYPEKR, 0);
 		return -1;
-		/* break; */
+		// break; 
 	}
 
-	s_r = (S16)(kr % 10); /* Number of nearest neighbors to sum */
-	k = U16(kr/10); /* Number of different states, k = 3 has states 0, 1, 2 */
-	s_k_1 = (S16)(k - 1); /* Highest state value, k = 3 has highest state value of 2 */
-	s_rule_digits = (S16)((s_r*2 + 1)*s_k_1 + 1); /* Number of digits in the rule */
+	s_r = (S16)(kr % 10); // Number of nearest neighbors to sum 
+	k = U16(kr/10); // Number of different states, k = 3 has states 0, 1, 2 
+	s_k_1 = (S16)(k - 1); // Highest state value, k = 3 has highest state value of 2 
+	s_rule_digits = (S16)((s_r*2 + 1)*s_k_1 + 1); // Number of digits in the rule 
 
 	if (!g_use_fixed_random_seed && (randparam == -1))
 	{
@@ -160,7 +160,7 @@ int cellular()
 	if (randparam != 0 && randparam != -1)
 	{
 		n = g_parameters[0];
-		std::string buf = str(boost::format("%.16g") % n); /* # of digits in initial string */
+		std::string buf = str(boost::format("%.16g") % n); // # of digits in initial string 
 		t = S16(buf.length());
 		if (t > 16 || t <= 0)
 		{
@@ -169,12 +169,12 @@ int cellular()
 		}
 		for (i = 0; i < 16; i++)
 		{
-			init_string[i] = 0; /* zero the array */
+			init_string[i] = 0; // zero the array 
 		}
 		t2 = (S16) ((16 - t)/2);
-		for (i = 0; i < U16(t); i++)  /* center initial string in array */
+		for (i = 0; i < U16(t); i++)  // center initial string in array 
 		{
-			init_string[i + t2] = U16(buf[i] - '0'); /* change character to number */
+			init_string[i + t2] = U16(buf[i] - '0'); // change character to number 
 			if (init_string[i + t2] > U16(s_k_1))
 			{
 				abort_cellular(STRING2, 0);
@@ -189,9 +189,9 @@ int cellular()
 		++g_random_seed;
 	}
 
-/* generate rule table from parameter 1 */
+// generate rule table from parameter 1 
 	n = g_parameters[1];
-	if (n == 0)  /* calculate a random rule */
+	if (n == 0)  // calculate a random rule 
 	{
 		n = rand() % int(k);
 		for (i = 1; i < U16(s_rule_digits); i++)
@@ -203,18 +203,18 @@ int cellular()
 	}
 	std::string buf = str(boost::format(precision_format("g", s_rule_digits)) % n);
 	t = S16(buf.length());
-	if (s_rule_digits < t || t < 0)  /* leading 0s could make t smaller */
+	if (s_rule_digits < t || t < 0)  // leading 0s could make t smaller 
 	{
 		abort_cellular(RULELENGTH, 0);
 		return -1;
 	}
-	for (i = 0; i < U16(s_rule_digits); i++) /* zero the table */
+	for (i = 0; i < U16(s_rule_digits); i++) // zero the table 
 	{
 		cell_table[i] = 0;
 	}
-	for (i = 0; i < U16(t); i++)  /* reverse order */
+	for (i = 0; i < U16(t); i++)  // reverse order 
 	{
-		cell_table[i] = U16(buf[t-i-1] - '0'); /* change character to number */
+		cell_table[i] = U16(buf[t-i-1] - '0'); // change character to number 
 		if (cell_table[i] > U16(s_k_1))
 		{
 			abort_cellular(TABLEK, 0);
@@ -231,8 +231,8 @@ int cellular()
 		return -1;
 	}
 
-	/* g_next_screen_flag toggled by space bar in fractint.cpp, 1 for continuous */
-	/* 0 to stop on next screen */
+	// g_next_screen_flag toggled by space bar in fractint.cpp, 1 for continuous 
+	// 0 to stop on next screen 
 	filled = 0;
 	notfilled = (S16)(1-filled);
 	if (g_resuming && !g_next_screen_flag && !s_last_screen_flag)
@@ -248,7 +248,7 @@ int cellular()
 		end_resume();
 		get_line(g_y_stop, 0, g_x_stop, s_cell_array[filled]);
 		g_parameters[3] += g_y_stop + 1;
-		start_row = -1; /* after 1st iteration its = 0 */
+		start_row = -1; // after 1st iteration its = 0 
 	}
 	else
 	{
@@ -261,25 +261,25 @@ int cellular()
 		}
 		else
 		{
-			for (g_col = 0; g_col <= g_x_stop; g_col++)  /* Clear from end to end */
+			for (g_col = 0; g_col <= g_x_stop; g_col++)  // Clear from end to end 
 			{
 				s_cell_array[filled][g_col] = 0;
 			}
 			i = 0;
-			for (g_col = (g_x_stop-16)/2; g_col < (g_x_stop + 16)/2; g_col++)  /* insert initial */
+			for (g_col = (g_x_stop-16)/2; g_col < (g_x_stop + 16)/2; g_col++)  // insert initial 
 			{
-				s_cell_array[filled][g_col] = (BYTE)init_string[i++];    /* string */
+				s_cell_array[filled][g_col] = (BYTE)init_string[i++];    // string 
 			}
-		} /* end of if not random */
+		} // end of if not random 
 		s_last_screen_flag = (lnnmbr != 0) ? 1 : 0;
 		put_line(start_row, 0, g_x_stop, s_cell_array[filled]);
 	}
 	start_row++;
 
-	/* This section calculates the starting line when it is not zero */
-	/* This section can't be resumed since no screen output is generated */
-	/* calculates the (lnnmbr - 1) generation */
-	if (s_last_screen_flag)  /* line number != 0 & not resuming & not continuing */
+	// This section calculates the starting line when it is not zero 
+	// This section can't be resumed since no screen output is generated 
+	// calculates the (lnnmbr - 1) generation 
+	if (s_last_screen_flag)  // line number != 0 & not resuming & not continuing 
 	{
 		U32 big_row;
 		for (big_row = (U32)start_row; big_row < lnnmbr; big_row++)
@@ -287,7 +287,7 @@ int cellular()
 			thinking(1, "Cellular thinking (higher start row takes longer)");
 			if (g_use_fixed_random_seed || randparam == 0 || randparam == -1)
 			{
-				/* Use a random border */
+				// Use a random border 
 				for (i = 0; i <= U16(s_r); i++)
 				{
 						s_cell_array[notfilled][i] = BYTE(rand() % int(k));
@@ -296,7 +296,7 @@ int cellular()
 			}
 			else
 			{
-				/* Use a zero border */
+				// Use a zero border 
 				for (i = 0; i <= U16(s_r); i++)
 				{
 					s_cell_array[notfilled][i] = 0;
@@ -304,7 +304,7 @@ int cellular()
 				}
 			}
 
-			t = 0; /* do first cell */
+			t = 0; // do first cell 
 			for (twor = U16(s_r + s_r), i = 0; i <= twor; i++)
 			{
 				t = (S16)(t + (S16)s_cell_array[filled][i]);
@@ -317,8 +317,8 @@ int cellular()
 			}
 			s_cell_array[notfilled][s_r] = (BYTE)cell_table[t];
 
-			/* use a rolling sum in t */
-			for (g_col = s_r + 1; g_col < g_x_stop - s_r; g_col++)  /* now do the rest */
+			// use a rolling sum in t 
+			for (g_col = s_r + 1; g_col < g_x_stop - s_r; g_col++)  // now do the rest 
 			{
 				t = (S16)(t + s_cell_array[filled][g_col + s_r] - s_cell_array[filled][g_col - s_r - 1]);
 				if (t > s_rule_digits || t < 0)
@@ -345,12 +345,12 @@ int cellular()
 	}
 
 contloop:
-	/* This section does all the work */
+	// This section does all the work 
 	for (g_row = start_row; g_row <= g_y_stop; g_row++)
 	{
 		if (g_use_fixed_random_seed || randparam == 0 || randparam == -1)
 		{
-			/* Use a random border */
+			// Use a random border 
 			for (i = 0; i <= U16(s_r); i++)
 			{
 				s_cell_array[notfilled][i] = BYTE(rand() % int(k));
@@ -359,7 +359,7 @@ contloop:
 		}
 		else
 		{
-			/* Use a zero border */
+			// Use a zero border 
 			for (i = 0; i <= U16(s_r); i++)
 			{
 				s_cell_array[notfilled][i] = 0;
@@ -367,7 +367,7 @@ contloop:
 			}
 		}
 
-		t = 0; /* do first cell */
+		t = 0; // do first cell 
 		for (twor = U16(s_r + s_r), i = 0; i <= twor; i++)
 		{
 			t = (S16)(t + (S16)s_cell_array[filled][i]);
@@ -380,8 +380,8 @@ contloop:
 		}
 		s_cell_array[notfilled][s_r] = (BYTE)cell_table[t];
 
-		/* use a rolling sum in t */
-		for (g_col = s_r + 1; g_col < g_x_stop - s_r; g_col++)  /* now do the rest */
+		// use a rolling sum in t 
+		for (g_col = s_r + 1; g_col < g_x_stop - s_r; g_col++)  // now do the rest 
 		{
 			t = (S16)(t + s_cell_array[filled][g_col + s_r] - s_cell_array[filled][g_col - s_r - 1]);
 			if (t > s_rule_digits || t < 0)
@@ -426,7 +426,7 @@ bool cellular_setup()
 
 static void set_cellular_palette()
 {
-	/* map= not specified  */
+	// map= not specified  
 	if (!g_.MapDAC() || g_.ColorState() == COLORSTATE_DEFAULT)
 	{
 		// TODO: revisit magic numbers for COLOR_CHANNEL_MAX

@@ -23,14 +23,14 @@
  */
 enum
 {
-	CMD_LITERAL       = 1,   /* next char taken literally */
-	CMD_PARA          = 2,   /* paragraph start code */
-	CMD_LINK          = 3,   /* hot-link start/end code */
-	CMD_FF            = 4,   /* force a form-feed */
-	CMD_XONLINE       = 5,   /* exclude from online help on/off */
-	CMD_XDOC          = 6,   /* exclude from printed document on/off */
-	CMD_CENTER        = 7,   /* center this line */
-	CMD_SPACE         = 8,   /* next byte is count of spaces */
+	CMD_LITERAL       = 1,   // next char taken literally 
+	CMD_PARA          = 2,   // paragraph start code 
+	CMD_LINK          = 3,   // hot-link start/end code 
+	CMD_FF            = 4,   // force a form-feed 
+	CMD_XONLINE       = 5,   // exclude from online help on/off 
+	CMD_XDOC          = 6,   // exclude from printed document on/off 
+	CMD_CENTER        = 7,   // center this line 
+	CMD_SPACE         = 8,   // next byte is count of spaces 
 	MAX_CMD           = 8
 };
 
@@ -49,12 +49,12 @@ enum
  */
 enum
 {
-	PAGE_WIDTH         = 72,  /* width of printed text */
-	PAGE_INDENT        = 2,   /* indent all text by this much */
-	TITLE_INDENT       = 1,   /* indent titles by this much */
-	PAGE_RDEPTH        = 59,  /* the total depth (inc. heading) */
-	PAGE_HEADING_DEPTH = 3,   /* depth of the heading */
-	PAGE_DEPTH         = PAGE_RDEPTH-PAGE_HEADING_DEPTH, /* depth of text */
+	PAGE_WIDTH         = 72,  // width of printed text 
+	PAGE_INDENT        = 2,   // indent all text by this much 
+	TITLE_INDENT       = 1,   // indent titles by this much 
+	PAGE_RDEPTH        = 59,  // the total depth (inc. heading) 
+	PAGE_HEADING_DEPTH = 3,   // depth of the heading 
+	PAGE_DEPTH         = PAGE_RDEPTH-PAGE_HEADING_DEPTH, // depth of text 
 };
 
 /*
@@ -63,9 +63,9 @@ enum
  */
 enum
 {
-	CONTENT_BREAK = 7,  /* start of a "DocContent" entry */
-	TOPIC_BREAK   = 4,  /* start of each topic under a DocContent entry */
-	BLANK_BREAK   = 2  /* a blank line */
+	CONTENT_BREAK = 7,  // start of a "DocContent" entry 
+	TOPIC_BREAK   = 4,  // start of each topic under a DocContent entry 
+	BLANK_BREAK   = 2  // a blank line 
 };
 
 /*
@@ -73,16 +73,16 @@ enum
  */
 enum
 {
-	TOK_DONE    = 0,   /* len == 0             */
-	TOK_SPACE   = 1,   /* a run of spaces      */
-	TOK_LINK    = 2,   /* an entire link       */
-	TOK_PARA    = 3,   /* a CMD_PARA           */
-	TOK_NL      = 4,   /* a new-line ('\n',    */
-	TOK_FF      = 5,   /* a form-feed (CMD_FF) */
-	TOK_WORD    = 6,   /* a word               */
-	TOK_XONLINE = 7,   /* a CMD_XONLINE        */
-	TOK_XDOC    = 8,   /* a CMD_XDOC           */
-	TOK_CENTER  = 9    /* a CMD_CENTER         */
+	TOK_DONE    = 0,   // len == 0             
+	TOK_SPACE   = 1,   // a run of spaces      
+	TOK_LINK    = 2,   // an entire link       
+	TOK_PARA    = 3,   // a CMD_PARA           
+	TOK_NL      = 4,   // a new-line ('\n',    
+	TOK_FF      = 5,   // a form-feed (CMD_FF) 
+	TOK_WORD    = 6,   // a word               
+	TOK_XONLINE = 7,   // a CMD_XONLINE        
+	TOK_XDOC    = 8,   // a CMD_XDOC           
+	TOK_CENTER  = 9    // a CMD_CENTER         
 };
 
 /*
@@ -99,19 +99,19 @@ enum
  */
 struct PD_INFO
 {
-	/* used by process_document -- look but don't touch! */
+	// used by process_document -- look but don't touch! 
 	int pnum, lnum;
 
-	/* PD_GET_TOPIC is allowed to change these */
+	// PD_GET_TOPIC is allowed to change these 
 	char *curr;
 	unsigned  len;
 
-	/* PD_GET_CONTENT is allowed to change these */
+	// PD_GET_CONTENT is allowed to change these 
 	char *id;
 	char *title;
 	int new_page;
 
-	/* general parameters */
+	// general parameters 
 	char *s;
 	int       i;
 };
@@ -123,19 +123,19 @@ struct PD_INFO
 
 enum  PD_COMMANDS
 {
-	/* commands sent to pd_output */
-	PD_HEADING,         /* call at the top of each page */
-	PD_FOOTING,          /* called at the end of each page */
-	PD_PRINT,            /* called to send text to the printer */
-	PD_PRINTN,           /* called to print a char n times */
-	PD_PRINT_SEC,        /* called to print the section title line */
-	PD_START_SECTION,    /* called at the start of each section */
-	PD_START_TOPIC,      /* called at the start of each topic */
-	PD_SET_SECTION_PAGE, /* set the current sections page number */
-	PD_SET_TOPIC_PAGE,   /* set the current topics page number */
-	PD_PERIODIC,         /* called just before curr is incremented to next token */
+	// commands sent to pd_output 
+	PD_HEADING,         // call at the top of each page 
+	PD_FOOTING,          // called at the end of each page 
+	PD_PRINT,            // called to send text to the printer 
+	PD_PRINTN,           // called to print a char n times 
+	PD_PRINT_SEC,        // called to print the section title line 
+	PD_START_SECTION,    // called at the start of each section 
+	PD_START_TOPIC,      // called at the start of each topic 
+	PD_SET_SECTION_PAGE, // set the current sections page number 
+	PD_SET_TOPIC_PAGE,   // set the current topics page number 
+	PD_PERIODIC,         // called just before curr is incremented to next token 
 
-	/* commands sent to pd_get_info */
+	// commands sent to pd_get_info 
 	PD_GET_CONTENT,
 	PD_GET_TOPIC,
 	PD_RELEASE_TOPIC,
@@ -172,7 +172,7 @@ inline int getint(const char *ptr)
 	return s;
 }
 
-/* Set an int to an unaligned pointer */
+// Set an int to an unaligned pointer 
 void setint(char *ptr, int n)
 {
 	memcpy(ptr, &n, sizeof(int));

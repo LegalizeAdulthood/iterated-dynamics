@@ -3,7 +3,7 @@
 
 #include "CommandParser.h"
 
-/* note attenuation values */
+// note attenuation values 
 enum AttenuateType
 {
 	ATTENUATE_NONE		= 0,

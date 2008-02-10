@@ -36,9 +36,9 @@ enum MathType
 	}						\
 	while (0)
 
-/* the following are declared 4 dimensional as an experiment */
-/* changeing declarations to ComplexD and ComplexL restores the code */
-/* to 2D */
+// the following are declared 4 dimensional as an experiment 
+// changeing declarations to ComplexD and ComplexL restores the code 
+// to 2D 
 union Arg
 {
    ComplexD d;
@@ -79,10 +79,10 @@ extern void (*g_trig1_d)();
 extern void (*g_trig2_d)();
 extern void (*g_trig3_d)();
 
-/* -------------------------------------------------------------------- */
-/*   The following #defines allow the complex transcendental functions  */
-/*   in parser.c to be used here thus avoiding duplicated code.         */
-/* -------------------------------------------------------------------- */
+// -------------------------------------------------------------------- 
+// The following #defines allow the complex transcendental functions  
+// in parser.c to be used here thus avoiding duplicated code.         
+// -------------------------------------------------------------------- 
 
 #define CMPLXmod(z)		(sqr((z).x) + sqr((z).y))
 #define CMPLXconj(z)	((z).y = -((z).y))

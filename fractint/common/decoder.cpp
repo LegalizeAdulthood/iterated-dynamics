@@ -1,43 +1,38 @@
-/* decode.cpp - An LZW decoder for GIF
- * Copyright (C) 1987, by Steven A. Bennett
- *
- * Permission is given by the author to freely redistribute and include
- * this code in any program as long as this credit is given where due.
- *
- * In accordance with the above, I want to credit Steve Wilhite who wrote
- * the code which this is heavily inspired by...
- *
- * GIF and 'Graphics Interchange Format' are trademarks (tm) of
- * Compuserve, Incorporated, an H&R Block Company.
- *
- * Release Notes: This file contains a decoder routine for GIF images
- * which is similar, structurally, to the original routine by Steve Wilhite.
- * It is, however, somewhat noticably faster in most cases.
- *
- == This routine was modified for use in FRACTINT in two ways.
- ==
- == 1) The original #includes were folded into the routine strictly to hold
- ==    down the number of files we were dealing with.
- ==
- == 2) The 'g_stack', 'g_suffix', 'prefix', and 'g_decoder_line' arrays were
- ==    changed from static and malloc'ed to external only so that
- ==    the assembler program could use the same array space for several
- ==    independent chunks of code.
- ==
- == 3) The 'out_line()' external function has been changed to reference
- ==    '*g_out_line()' for flexibility (in particular, 3D transformations)
- ==
- == 4) A call to 'driver_key_pressed()' has been added after the 'g_out_line()' calls
- ==    to check for the presence of a key-press as a bail-out signal
- ==
- == (Bert Tyler and Timothy Wegner)
- */
+// decode.cpp - An LZW decoder for GIF
+// Copyright (C) 1987, by Steven A. Bennett
+//
+// Permission is given by the author to freely redistribute and include
+// this code in any program as long as this credit is given where due.
+//
+// In accordance with the above, I want to credit Steve Wilhite who wrote
+// the code which this is heavily inspired by...
+//
+// GIF and 'Graphics Interchange Format' are trademarks (tm) of
+// Compuserve, Incorporated, an H&R Block Company.
+//
+// Release Notes: This file contains a decoder routine for GIF images
+// which is similar, structurally, to the original routine by Steve Wilhite.
+// It is, however, somewhat noticably faster in most cases.
+//
+// == This routine was modified for use in FRACTINT in two ways.
+// ==
+// == 1) The original #includes were folded into the routine strictly to hold
+// ==    down the number of files we were dealing with.
+// ==
+// == 2) The 'g_stack', 'g_suffix', 'prefix', and 'g_decoder_line' arrays were
+// ==    changed from static and malloc'ed to external only so that
+// ==    the assembler program could use the same array space for several
+// ==    independent chunks of code.
+// ==
+// == 3) The 'out_line()' external function has been changed to reference
+// ==    '*g_out_line()' for flexibility (in particular, 3D transformations)
+// ==
+// == 4) A call to 'driver_key_pressed()' has been added after the 'g_out_line()' calls
+// ==    to check for the presence of a key-press as a bail-out signal
+// ==
+// == (Bert Tyler and Timothy Wegner)
+//
 
-/* Rev 01/02/91 - Revised by Mike Gelvin
- *                altered logic to allow newcode to input a line at a time
- *                altered logic to allow decoder to place characters
- *                directly into the output buffer if they fit
- */
 #include <string>
 
 #include "port.h"
@@ -46,13 +41,13 @@
 #include "decoder.h"
 #include "gifview.h"
 
-/* Various error codes used by decoder
- * and my own routines...   It's okay
- * for you to define whatever you want,
- * as long as it's negative...  It will be
- * returned intact up the various subroutine
- * levels...
- */
+// Various error codes used by decoder
+// and my own routines...   It's okay
+// for you to define whatever you want,
+// as long as it's negative...  It will be
+// returned intact up the various subroutine
+// levels...
+//
 enum
 {
 	OUT_OF_MEMORY = -10,
@@ -68,33 +63,32 @@ enum
 	YUP = -1
 };
 
-/* extern short out_line(pixels, linelen)
- *     UBYTE pixels[];
- *     short linelen;
- *
- *   - This function takes a full line of pixels (one byte per pixel) and
- * displays them (or does whatever your program wants with them...).  It
- * should return zero, or negative if an error or some other event occurs
- * which would require aborting the decode process...  Note that the length
- * passed will almost always be equal to the line length passed to the
- * decoder function, with the sole exception occurring when an ending code
- * occurs in an odd place in the GIF file...  In any case, linelen will be
- * equal to the number of pixels passed...
- */
+// extern short out_line(pixels, linelen)
+//     UBYTE pixels[];
+//     short linelen;
+//
+//   - This function takes a full line of pixels (one byte per pixel) and
+// displays them (or does whatever your program wants with them...).  It
+// should return zero, or negative if an error or some other event occurs
+// which would require aborting the decode process...  Note that the length
+// passed will almost always be equal to the line length passed to the
+// decoder function, with the sole exception occurring when an ending code
+// occurs in an odd place in the GIF file...  In any case, linelen will be
+// equal to the number of pixels passed...
+//
 int (*g_out_line) (BYTE *, int) = out_line;
-short g_size_of_string[MAX_CODES + 1];  /* size of string list */
+short g_size_of_string[MAX_CODES + 1];  // size of string list 
 
 
-/***** Local Static Variables *******************************************/
-static short curr_size;         /* The current code size */
+static short curr_size;         // The current code size 
 
-/* The following static variables are used
- * for seperating out codes
- */
-static short navail_bytes;      /* # bytes left in g_block */
-static short nbits_left;        /* # bits left in current byte */
-static BYTE *byte_buff;         /* Current g_block, reuse shared mem */
-static BYTE *pbytes;            /* Pointer to next byte in g_block */
+// The following static variables are used
+// for seperating out codes
+//
+static short navail_bytes;      // # bytes left in g_block 
+static short nbits_left;        // # bits left in current byte 
+static BYTE *byte_buff;         // Current g_block, reuse shared mem 
+static BYTE *pbytes;            // Pointer to next byte in g_block 
 static short code_mask[13] =
 {
 	0,
@@ -146,7 +140,7 @@ static short get_next_code();
 
 short decoder(short linewidth)
 {
-	U16 prefix[MAX_CODES + 1];     /* Prefix linked list */
+	U16 prefix[MAX_CODES + 1];     // Prefix linked list 
 	BYTE *sp;
 	short code;
 	short old_code;
@@ -156,18 +150,18 @@ short decoder(short linewidth)
 	short i;
 	short j;
 	short fastloop;
-	short bufcnt;                /* how many empty spaces left in buffer */
+	short bufcnt;                // how many empty spaces left in buffer 
 	short xskip;
-	short slot;                  /* Last read code */
-	short newcodes;              /* First available code */
+	short slot;                  // Last read code 
+	short newcodes;              // First available code 
 	BYTE *bufptr;
 	short yskip;
-	short top_slot;              /* Highest code for current size */
-	short clear;                 /* Value for a clear code */
-	short ending;                /* Value for a ending code */
+	short top_slot;              // Highest code for current size 
+	short clear;                 // Value for a clear code 
+	short ending;                // Value for a ending code 
 	BYTE out_value;
 
-	/* Initialize for decoding a new image... */
+	// Initialize for decoding a new image... 
 
 	size = short(get_byte());
 	if (size < 0)
@@ -194,7 +188,7 @@ short decoder(short linewidth)
 	/* Initialize in case they forgot to put in a clear code. (This shouldn't
 	* happen, but we'll try and decode it anyway...) */
 
-	/* Set up the stack pointer and decode buffer pointer */
+	// Set up the stack pointer and decode buffer pointer 
 	sp = g_stack;
 	bufptr = g_decoder_line;
 	bufcnt = linewidth;
@@ -208,13 +202,13 @@ short decoder(short linewidth)
 	for (c = get_next_code(); c != ending; c = get_next_code())
 	{
 
-		/* If we had a file error, return without completing the decode */
+		// If we had a file error, return without completing the decode 
 		if (c < 0)
 		{
 			return 0;
 		}
 
-		/* If the code is a clear code, reinitialize all necessary items. */
+		// If the code is a clear code, reinitialize all necessary items. 
 		if (c == clear)
 		{
 			curr_size = short(size + 1);
@@ -249,7 +243,7 @@ short decoder(short linewidth)
 			old_code = c;
 			out_value = (BYTE) old_code;
 
-			/* And let us not forget to put the char into the buffer... */
+			// And let us not forget to put the char into the buffer... 
 			*sp++ = (BYTE) c;
 		}
 		else
@@ -296,7 +290,7 @@ short decoder(short linewidth)
 					*bufptr = (BYTE) code;
 					bufptr += ++i;
 					bufcnt -= i;
-					if (bufcnt == 0) /* finished an input row? */
+					if (bufcnt == 0) // finished an input row? 
 					{
 						if (--yskip < 0)
 						{
@@ -359,7 +353,7 @@ short decoder(short linewidth)
 				xskip = g_skip_x_dots;
 				*bufptr++ = *sp;
 			}
-			if (--bufcnt == 0)     /* finished an input row? */
+			if (--bufcnt == 0)     // finished an input row? 
 			{
 				if (--yskip < 0)
 				{
@@ -394,7 +388,7 @@ short decoder(short linewidth)
  */
 static short get_next_code()
 {
-	static BYTE b1;              /* Current byte */
+	static BYTE b1;              // Current byte 
 	static unsigned short ret_code;
 
 	if (nbits_left == 0)
@@ -402,7 +396,7 @@ static short get_next_code()
 		if (navail_bytes <= 0)
 		{
 
-			/* Out of bytes in current g_block, so read next g_block */
+			// Out of bytes in current g_block, so read next g_block 
 			pbytes = byte_buff;
 			navail_bytes = short(get_byte());
 			if (navail_bytes < 0)
@@ -425,7 +419,7 @@ static short get_next_code()
 		if (navail_bytes <= 0)
 		{
 
-			/* Out of bytes in current g_block, so read next g_block */
+			// Out of bytes in current g_block, so read next g_block 
 			pbytes = byte_buff;
 			navail_bytes = short(get_byte());
 			if (navail_bytes < 0)
@@ -446,7 +440,7 @@ static short get_next_code()
 	return short(ret_code & code_mask[curr_size]);
 }
 
-/* called in parent reoutine to set byte_buff */
+// called in parent reoutine to set byte_buff 
 void set_byte_buff(BYTE *ptr)
 {
 	byte_buff = ptr;

@@ -82,20 +82,20 @@ private:
 	bool _goodMode;
 	ColormapTable _dac;
 	ColormapTable _oldDAC;
-	ColormapTable *_mapDAC;				/* map= (default colors) */
+	ColormapTable *_mapDAC;				// map= (default colors) 
 	bool _realDAC;
 	SaveDACType _saveDAC;
 	int _dacSleepCount;
-	ColorStateType _colorState;			/* 0, g_dac_box matches default (bios or map=) */
-										/* 1, g_dac_box matches no known defined map */
-										/* 2, g_dac_box matches the g_color_file map */
+	ColorStateType _colorState;			// 0, g_dac_box matches default (bios or map=) 
+										// 1, g_dac_box matches no known defined map 
+										// 2, g_dac_box matches the g_color_file map 
 	bool _mapSet;
 	std::string _mapName;
 	int _numColors;
 };
 
 
-bool g_color_preloaded;					/* if g_dac_box preloaded for next mode select */
+bool g_color_preloaded;					// if g_dac_box preloaded for next mode select 
 
 GlobalImpl::GlobalImpl()
 	: _adapter(0),

@@ -143,9 +143,9 @@ void ViewWindow::SetReductionFromVideoEntry(const VIDEOINFO &entry)
 	{
 		_reduction = float(entry.x_dots/_width);
 		_width = 0;
-		_height = 0; /* easier to use auto reduction */
+		_height = 0; // easier to use auto reduction 
 	}
-	_reduction = std::floor(_reduction + 0.5f); /* need integer value */
+	_reduction = std::floor(_reduction + 0.5f); // need integer value 
 }
 
 void ViewWindow::SetFromVideoEntry()
@@ -160,7 +160,7 @@ void ViewWindow::SetFromVideoMode(int file_x_dots, int file_y_dots,
 								  VIDEOINFO const &video)
 {
 	_aspectRatio = file_aspect_ratio;
-	if (_aspectRatio == 0) /* assume display correct */
+	if (_aspectRatio == 0) // assume display correct 
 	{
 		_aspectRatio = float(video_mode_aspect_ratio(file_x_dots, file_y_dots));
 	}
@@ -170,16 +170,16 @@ void ViewWindow::SetFromVideoMode(int file_x_dots, int file_y_dots,
 		_aspectRatio = screen_aspect_ratio;
 	}
 	int i = int(_aspectRatio*1000.0 + 0.5);
-	_aspectRatio = float(i/1000.0); /* chop precision to 3 decimals */
+	_aspectRatio = float(i/1000.0); // chop precision to 3 decimals 
 
-	/* setup view window stuff */
+	// setup view window stuff 
 	_visible = false;
 	_width = 0;
 	_height = 0;
 
 	if (file_x_dots != video.x_dots || file_y_dots != video.y_dots)
 	{
-		/* image not exactly same size as screen */
+		// image not exactly same size as screen 
 		_visible = true;
 		double ftemp = _aspectRatio*double(video.y_dots)/double(video.x_dots)/screen_aspect_ratio;
 		int x_dots, y_dots;
@@ -187,25 +187,25 @@ void ViewWindow::SetFromVideoMode(int file_x_dots, int file_y_dots,
 		if (_aspectRatio <= screen_aspect_ratio)
 		{
 			x_dots = int(double(video.x_dots)/double(file_x_dots)*20.0 + 0.5);
-			view_reduction = float(x_dots/20.0); /* chop precision to nearest .05 */
+			view_reduction = float(x_dots/20.0); // chop precision to nearest .05 
 			x_dots = int(double(video.x_dots)/view_reduction + 0.5);
 			y_dots = int(double(x_dots)*ftemp + 0.5);
 		}
 		else
 		{
 			x_dots = int(double(video.y_dots)/double(file_y_dots)*20.0 + 0.5);
-			view_reduction = float(x_dots/20.0); /* chop precision to nearest .05 */
+			view_reduction = float(x_dots/20.0); // chop precision to nearest .05 
 			y_dots = int(double(video.y_dots)/view_reduction + 0.5);
 			x_dots = int(double(y_dots)/ftemp + 0.5);
 		}
-		if (x_dots != file_x_dots || y_dots != file_y_dots)  /* too bad, must be explicit */
+		if (x_dots != file_x_dots || y_dots != file_y_dots)  // too bad, must be explicit 
 		{
 			_width = file_x_dots;
 			_height = file_y_dots;
 		}
 		else
 		{
-			_reduction = view_reduction; /* ok, this works */
+			_reduction = view_reduction; // ok, this works 
 		}
 	}
 }

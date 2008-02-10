@@ -77,13 +77,13 @@ private:
 	bool m_has_focus;
 	bool m_timed_out;
 
-	/* the keypress buffer */
+	// the keypress buffer 
 	unsigned int m_keypress_count;
 	unsigned int m_keypress_head;
 	unsigned int m_keypress_tail;
 	unsigned int m_keypress_buffer[KEYBUFMAX];
 
-	/* mouse data */
+	// mouse data 
 	bool m_button_down[3];
 	int m_start_x, m_start_y;
 	int m_delta_x, m_delta_y;
@@ -135,11 +135,11 @@ mousefkey dw   1077, 1075, 1080, 1072  ; right, left, down, up     just movement
 */
 static int s_mouse_keys[16] =
 {
-	/* right			left			down				up */
-	IDK_RIGHT_ARROW,	IDK_LEFT_ARROW,	IDK_DOWN_ARROW,		IDK_UP_ARROW,	/* no buttons */
-	0,					0,				IDK_PAGE_DOWN,		IDK_PAGE_UP,	/* left button */
-	IDK_CTL_PLUS,		IDK_CTL_MINUS,	IDK_CTL_DEL,		IDK_CTL_INSERT,	/* right button */
-	IDK_CTL_END,		IDK_CTL_HOME,	IDK_CTL_PAGE_DOWN,	IDK_CTL_PAGE_UP	/* middle button */
+	// right			left			down				up 
+	IDK_RIGHT_ARROW,	IDK_LEFT_ARROW,	IDK_DOWN_ARROW,		IDK_UP_ARROW,	// no buttons 
+	0,					0,				IDK_PAGE_DOWN,		IDK_PAGE_UP,	// left button 
+	IDK_CTL_PLUS,		IDK_CTL_MINUS,	IDK_CTL_DEL,		IDK_CTL_INSERT,	// right button 
+	IDK_CTL_END,		IDK_CTL_HOME,	IDK_CTL_PAGE_DOWN,	IDK_CTL_PAGE_UP	// middle button 
 };
 
 void FrameImpl::OnClose(HWND window)
@@ -169,7 +169,7 @@ int FrameImpl::add_key_press(unsigned int key)
 	if (m_keypress_count >= KEYBUFMAX)
 	{
 		_ASSERTE(m_keypress_count < KEYBUFMAX);
-		/* no room */
+		// no room 
 		return 1;
 	}
 
@@ -203,14 +203,14 @@ int FrameImpl::mod_key(int modifier, int code, int fik, unsigned int *j)
 
 void FrameImpl::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags)
 {
-	/* KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code */
-	/* a key has been pressed - maybe ASCII, maybe not */
-	/* if it's an ASCII key, 'WM_CHAR' will handle it  */
+	// KEYUP, KEYDOWN, and CHAR msgs go to the 'keypressed' code 
+	// a key has been pressed - maybe ASCII, maybe not 
+	// if it's an ASCII key, 'WM_CHAR' will handle it  
 	unsigned int i = ::MapVirtualKey(vk, 0);
 	unsigned int j = ::MapVirtualKey(vk, 2);
 	unsigned int k = (i << 8) + j;
 
-	/* handle modifier keys on the non-WM_CHAR keys */
+	// handle modifier keys on the non-WM_CHAR keys 
 	if (VK_F1 <= vk && vk <= VK_F10)
 	{
 		BOOL ctl = ::GetKeyState(VK_CONTROL) & 0x8000;
@@ -238,7 +238,7 @@ void FrameImpl::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flag
 	{
 		switch (vk)
 		{
-		/* sorted in IDK_xxx order */
+		// sorted in IDK_xxx order 
 		case VK_DELETE:		i = CTL_KEY(IDK_CTL_DEL);			break;
 		case VK_DOWN:		i = CTL_KEY(IDK_CTL_DOWN_ARROW);	break;
 		case VK_END:		i = CTL_KEY(IDK_CTL_END);			break;
@@ -264,7 +264,7 @@ void FrameImpl::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flag
 		}
 	}
 
-	/* use this call only for non-ASCII keys */
+	// use this call only for non-ASCII keys 
 	if (!(vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU) && (j == 0))
 	{
 		s_frame->add_key_press(i);
@@ -273,8 +273,8 @@ void FrameImpl::OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flag
 
 void FrameImpl::OnChar(HWND hwnd, TCHAR ch, int cRepeat)
 {
-	/* KEYUP, KEYDOWN, and CHAR msgs go to the SG code */
-	/* an ASCII key has been pressed */
+	// KEYUP, KEYDOWN, and CHAR msgs go to the SG code 
+	// an ASCII key has been pressed 
 	unsigned int i = (unsigned int) ((cRepeat & 0x00ff0000) >> 16);
 	unsigned int j = ch;
 	unsigned int k = (i << 8) + j;
@@ -301,7 +301,7 @@ void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 {
 	int key_index;
 
-	/* if we're mouse snooping and there's a button down, then record delta movement */
+	// if we're mouse snooping and there's a button down, then record delta movement 
 	if ((LOOK_MOUSE_NONE == s_frame->m_look_mouse)
 		|| (s_frame->m_look_mouse < 0))
 	{
@@ -318,7 +318,7 @@ void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 	s_frame->m_delta_x = x - s_frame->m_start_x;
 	s_frame->m_delta_y = y - s_frame->m_start_y;
 
-	/* ignore small movements */
+	// ignore small movements 
 	if ((abs(s_frame->m_delta_x) > (GraphSens + JitterMickeys))
 			|| (abs(s_frame->m_delta_y) > (GraphSens + JitterMickeys)))
 	{
@@ -326,16 +326,16 @@ void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 		s_frame->m_start_y = y;
 		if (abs(s_frame->m_delta_x) > abs(s_frame->m_delta_y))
 		{
-			/* x-axis changes more */
+			// x-axis changes more 
 			key_index = (s_frame->m_delta_x > 0) ? 0 : 1;
 		}
 		else
 		{
-			/* y-axis changes more */
+			// y-axis changes more 
 			key_index = (s_frame->m_delta_y > 0) ? 2 : 3;
 		}
 
-		/* synthesize keystroke */
+		// synthesize keystroke 
 		if (s_frame->m_button_down[BUTTON_LEFT])
 		{
 			key_index += 4;
@@ -350,7 +350,7 @@ void FrameImpl::OnMouseMove(HWND hwnd, int x, int y, UINT keyFlags)
 		}
 		else
 		{
-			/* no buttons down */
+			// no buttons down 
 
 		}
 		s_frame->add_key_press(s_mouse_keys[key_index]);
@@ -467,7 +467,7 @@ int FrameImpl::pump_messages(bool wait_flag)
 	{
 		if (::PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE) == 0)
 		{
-			/* no messages waiting */
+			// no messages waiting 
 			if (!wait_flag
 				|| (m_keypress_count != 0)
 				|| (wait_flag && m_timed_out))
@@ -558,8 +558,8 @@ void FrameImpl::create(int width, int height)
 		m_window = ::CreateWindow("FractintFrame",
 			m_title,
 			WS_OVERLAPPEDWINDOW,
-			CW_USEDEFAULT,               /* default horizontal position */
-			CW_USEDEFAULT,               /* default vertical position */
+			CW_USEDEFAULT,               // default horizontal position 
+			CW_USEDEFAULT,               // default vertical position 
 			m_nc_width,
 			m_nc_height,
 			0, 0, m_instance,

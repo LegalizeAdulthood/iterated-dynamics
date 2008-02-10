@@ -16,10 +16,10 @@
 
 static int s_max_block;
 static int s_half_block;
-static int s_guess_plot;                   /* paint 1st pass row at a time?   */
+static int s_guess_plot;                   // paint 1st pass row at a time?   
 static bool s_right_guess;
 static bool s_bottom_guess;
-static unsigned int s_t_prefix[2][MAX_Y_BLOCK][MAX_X_BLOCK]; /* common temp */
+static unsigned int s_t_prefix[2][MAX_Y_BLOCK][MAX_X_BLOCK]; // common temp 
 
 #define CALCULATE_A_DOT(c, x, y)	\
 	do								\
@@ -48,7 +48,7 @@ static void plot_block(BuildRowType buildrow, int x, int y, int color)
 	{
 		xlim = g_x_stop + 1;
 	}
-	if (buildrow != BUILDROW_NONE && !s_guess_plot) /* save it for later put_line */
+	if (buildrow != BUILDROW_NONE && !s_guess_plot) // save it for later put_line 
 	{
 		if (buildrow == BUILDROW_NEW)
 		{
@@ -64,12 +64,12 @@ static void plot_block(BuildRowType buildrow, int x, int y, int color)
 				g_stack[i + OLD_MAX_PIXELS] = (BYTE)color;
 			}
 		}
-		if (x >= g_WorkList.xx_start()) /* when x reduced for alignment, paint those dots too */
+		if (x >= g_WorkList.xx_start()) // when x reduced for alignment, paint those dots too 
 		{
-			return; /* the usual case */
+			return; // the usual case 
 		}
 	}
-	/* paint it */
+	// paint it 
 	int ylim = y + s_half_block;
 	if (ylim > g_y_stop)
 	{
@@ -81,7 +81,7 @@ static void plot_block(BuildRowType buildrow, int x, int y, int color)
 	}
 	for (int i = x; ++i < xlim; )
 	{
-		g_plot_color(i, y, color); /* skip 1st dot on 1st row */
+		g_plot_color(i, y, color); // skip 1st dot on 1st row 
 	}
 	while (++y < ylim)
 	{
@@ -104,16 +104,16 @@ static int guess_row(bool first_pass, int y, int blocksize)
 	int yplusblock;
 	int c21;
 	int c31;
-	int c41;         /* cxy is the color of pixel at (x, y) */
+	int c41;         // cxy is the color of pixel at (x, y) 
 	int c12;
 	int c22;
 	int c32;
-	int c42;         /* where c22 is the topleft corner of */
+	int c42;         // where c22 is the topleft corner of 
 	int c13;
 	int c23;
-	int c33;             /* the g_block being handled in current */
+	int c33;             // the g_block being handled in current 
 	int c24;
-	int c44;         /* iteration                          */
+	int c44;         // iteration                          
 	int guessed23;
 	int guessed32;
 	int guessed33;
@@ -125,7 +125,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 
 	c44 = 0;
 	c41 = 0;
-	c42 = 0;  /* just for warning */
+	c42 = 0;  // just for warning 
 
 	s_half_block = blocksize/2;
 	{
@@ -134,7 +134,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 		pfxmask = 1 << (i & 15);
 	}
 	ylesshalf = y - s_half_block;
-	ylessblock = y - blocksize; /* constants, for speed */
+	ylessblock = y - blocksize; // constants, for speed 
 	yplushalf = y + s_half_block;
 	yplusblock = y + blocksize;
 	prev11 = -1;
@@ -155,14 +155,14 @@ static int guess_row(bool first_pass, int y, int blocksize)
 	guessed12 = 0;
 	guessed13 = 0;
 
-	for (int x = g_ix_start; x <= g_x_stop; )  /* increment at end, or when doing continue */
+	for (int x = g_ix_start; x <= g_x_stop; )  // increment at end, or when doing continue 
 	{
-		if ((x & (s_max_block-1)) == 0)  /* time for skip flag stuff */
+		if ((x & (s_max_block-1)) == 0)  // time for skip flag stuff 
 		{
 			++pfxptr;
-			if (!first_pass && (*pfxptr&pfxmask) == 0)  /* check for fast skip */
+			if (!first_pass && (*pfxptr&pfxmask) == 0)  // check for fast skip 
 			{
-				/* next useful in testing to make skips visible */
+				// next useful in testing to make skips visible 
 				/*
 				if (s_half_block == 1)
 				{
@@ -184,11 +184,11 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			}
 		}
 
-		if (first_pass)  /* 1st pass, paint topleft corner */
+		if (first_pass)  // 1st pass, paint topleft corner 
 		{
 			plot_block(BUILDROW_NEW, x, y, c22);
 		}
-		/* setup variables */
+		// setup variables 
 		xplushalf = x + s_half_block;
 		xplusblock = xplushalf + s_half_block;
 		if (xplushalf > g_x_stop)
@@ -222,7 +222,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			c44 = s_bottom_guess ? c42 : -1;
 		}
 
-		/* guess or calc the remaining 3 quarters of current g_block */
+		// guess or calc the remaining 3 quarters of current g_block 
 		guessed23 = 1;
 		guessed32 = 1;
 		guessed33 = 1;
@@ -238,7 +238,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			}
 			guessed23 = -1;
 			guessed33 = -1;
-			guessed13 = 0; /* fix for g_y_dots not divisible by four bug TW 2/16/97 */
+			guessed13 = 0; // fix for g_y_dots not divisible by four bug TW 2/16/97 
 		}
 		if (xplushalf > g_x_stop)
 		{
@@ -250,7 +250,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			guessed32 = -1;
 			guessed33 = -1;
 		}
-		while (true) /* go around till none of 23, 32, 33 change anymore */
+		while (true) // go around till none of 23, 32, 33 change anymore 
 		{
 			if (guessed33 > 0
 				&& (c33 != c44 || c33 != c42 || c33 != c24 || c33 != c32 || c33 != c23))
@@ -276,7 +276,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			break;
 		}
 
-		if (first_pass) /* note whether any of g_block's contents were calculated */
+		if (first_pass) // note whether any of g_block's contents were calculated 
 		{
 			if (guessed23 == 0 || guessed32 == 0 || guessed33 == 0)
 			{
@@ -284,9 +284,9 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			}
 		}
 
-		if (s_half_block > 1)  /* not last pass, check if something to display */
+		if (s_half_block > 1)  // not last pass, check if something to display 
 		{
-			if (first_pass)  /* display guessed corners, fill in g_block */
+			if (first_pass)  // display guessed corners, fill in g_block 
 			{
 				if (s_guess_plot)
 				{
@@ -307,7 +307,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 				plot_block(BUILDROW_NEW, xplushalf, y, c32);
 				plot_block(BUILDROW_OLD, xplushalf, yplushalf, c33);
 			}
-			else  /* repaint changed blocks */
+			else  // repaint changed blocks 
 			{
 				if (c23 != c22)
 				{
@@ -324,7 +324,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			}
 		}
 
-		/* check if some calcs in this g_block mean earlier guesses need fixing */
+		// check if some calcs in this g_block mean earlier guesses need fixing 
 		bool fix21 = ((c22 != c12 || c22 != c32)
 			&& c21 == c22 && c21 == c31 && c21 == prev11
 			&& y > 0
@@ -337,7 +337,7 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			&& c31 == get_color(xplushalf, ylessblock)
 			&& (xplusblock > g_x_stop || c31 == get_color(xplusblock, ylessblock))
 			&& c31 == get_color(x, ylessblock));
-		prev11 = c31; /* for next time around */
+		prev11 = c31; // for next time around 
 		if (fix21)
 		{
 			CALCULATE_A_DOT(c21, x, ylesshalf);
@@ -382,14 +382,14 @@ static int guess_row(bool first_pass, int y, int blocksize)
 		guessed12 = guessed32;
 		guessed13 = guessed33;
 		x += blocksize;
-	} /* end x loop */
+	} // end x loop 
 
 	if (!first_pass || s_guess_plot)
 	{
 		return 0;
 	}
 
-	/* paint rows the fast way */
+	// paint rows the fast way 
 	for (int i = 0; i < s_half_block; ++i)
 	{
 		j = y + i;
@@ -407,9 +407,9 @@ static int guess_row(bool first_pass, int y, int blocksize)
 			return -1;
 		}
 	}
-	if (g_plot_color != g_plot_color_put_color)  /* symmetry, just vertical & origin the fast way */
+	if (g_plot_color != g_plot_color_put_color)  // symmetry, just vertical & origin the fast way 
 	{
-		if (g_plot_color == plot_color_symmetry_origin) /* origin sym, reverse lines */
+		if (g_plot_color == plot_color_symmetry_origin) // origin sym, reverse lines 
 		{
 			for (int i = (g_x_stop + g_WorkList.xx_start() + 1)/2; --i >= g_WorkList.xx_start(); )
 			{
@@ -444,20 +444,20 @@ static int guess_row(bool first_pass, int y, int blocksize)
 	return 0;
 }
 
-/************************ super solid guessing *****************************/
+// super solid guessing
 int solid_guess()
 {
 	s_guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis && g_plot_color != plot_color_symmetry_origin);
-	/* check if guessing at bottom & right edges is ok */
+	// check if guessing at bottom & right edges is ok 
 	s_bottom_guess = (g_plot_color == plot_color_symmetry_x_axis || (g_plot_color == g_plot_color_put_color && g_y_stop + 1 == g_y_dots));
 	s_right_guess  = (g_plot_color == plot_color_symmetry_origin
 		|| ((g_plot_color == g_plot_color_put_color || g_plot_color == plot_color_symmetry_x_axis) && g_x_stop + 1 == g_x_dots));
 
-	/* there seems to be a bug in solid guessing at bottom and side */
+	// there seems to be a bug in solid guessing at bottom and side 
 	if (g_debug_mode != DEBUGMODE_SOLID_GUESS_BR)
 	{
 		s_bottom_guess = false;
-		s_right_guess = false;  /* TIW march 1995 */
+		s_right_guess = false;  // TIW march 1995 
 	}
 
 	int blocksize = solid_guess_block_size();
@@ -469,27 +469,27 @@ int solid_guess()
 		++g_total_passes;
 	}
 
-	/* ensure window top and left are on required boundary, treat window
-			as larger than it really is if necessary (this is the reason symplot
-			routines must check for > g_x_dots/g_y_dots before plotting sym points) */
+	// ensure window top and left are on required boundary, treat window
+	//		as larger than it really is if necessary (this is the reason symplot
+	//		routines must check for > g_x_dots/g_y_dots before plotting sym points)
 	g_ix_start &= -1 - (s_max_block - 1);
 	g_iy_start = g_WorkList.yy_begin();
 	g_iy_start &= -1 - (s_max_block - 1);
 
 	g_got_status = GOT_STATUS_GUESSING;
 
-	if (g_work_pass == 0) /* otherwise first pass already done */
+	if (g_work_pass == 0) // otherwise first pass already done 
 	{
-		/* first pass, calc every blocksize**2 pixel, quarter result & paint it */
+		// first pass, calc every blocksize**2 pixel, quarter result & paint it 
 		g_current_pass = 1;
-		if (g_iy_start <= g_WorkList.yy_start()) /* first time for this window, init it */
+		if (g_iy_start <= g_WorkList.yy_start()) // first time for this window, init it 
 		{
 			g_current_row = 0;
-			memset(&s_t_prefix[1][0][0], 0, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags off */
+			memset(&s_t_prefix[1][0][0], 0, MAX_X_BLOCK*MAX_Y_BLOCK*2); // noskip flags off 
 			g_reset_periodicity = true;
 			g_row = g_iy_start;
 			for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
-			{ /* calc top row */
+			{ // calc top row 
 				if (g_calculate_type() == -1)
 				{
 					g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_begin(),
@@ -502,14 +502,14 @@ int solid_guess()
 		}
 		else
 		{
-			memset(&s_t_prefix[1][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags on */
+			memset(&s_t_prefix[1][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); // noskip flags on 
 		}
 		for (int y = g_iy_start; y <= g_y_stop; y += blocksize)
 		{
 			g_current_row = y;
 			i = 0;
 			if (y + blocksize <= g_y_stop)
-			{ /* calc the row below */
+			{ // calc the row below 
 				g_row = y + blocksize;
 				g_reset_periodicity = true;
 				for (g_col = g_ix_start; g_col <= g_x_stop; g_col += s_max_block)
@@ -523,7 +523,7 @@ int solid_guess()
 				}
 			}
 			g_reset_periodicity = false;
-			if (i == -1 || guess_row(true, y, blocksize) != 0) /* interrupted? */
+			if (i == -1 || guess_row(true, y, blocksize) != 0) // interrupted? 
 			{
 				if (y < g_WorkList.yy_start())
 				{
@@ -536,7 +536,7 @@ int solid_guess()
 			}
 		}
 
-		if (g_WorkList.num_items()) /* work list not empty, just do 1st pass */
+		if (g_WorkList.num_items()) // work list not empty, just do 1st pass 
 		{
 			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
 				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
@@ -546,17 +546,17 @@ int solid_guess()
 		++g_work_pass;
 		g_iy_start = g_WorkList.yy_start() & (-1 - (s_max_block-1));
 
-		/* calculate skip flags for skippable blocks */
+		// calculate skip flags for skippable blocks 
 		int xlim = (g_x_stop + s_max_block)/s_max_block + 1;
 		int ylim = ((g_y_stop + s_max_block)/s_max_block + 15)/16 + 1;
-		if (!s_right_guess) /* no right edge guessing, zap border */
+		if (!s_right_guess) // no right edge guessing, zap border 
 		{
 			for (int y = 0; y <= ylim; ++y)
 			{
 				s_t_prefix[1][y][xlim] = 0xffff;
 			}
 		}
-		if (!s_bottom_guess) /* no bottom edge guessing, zap border */
+		if (!s_bottom_guess) // no bottom edge guessing, zap border 
 		{
 			i = (g_y_stop + s_max_block)/s_max_block + 1;
 			int y = i/16 + 1;
@@ -566,7 +566,7 @@ int solid_guess()
 				s_t_prefix[1][y][x] |= i;
 			}
 		}
-		/* set each bit in s_t_prefix[0] to OR of it & surrounding 8 in s_t_prefix[1] */
+		// set each bit in s_t_prefix[0] to OR of it & surrounding 8 in s_t_prefix[1] 
 		for (int y = 0; ++y < ylim; )
 		{
 			unsigned int *pfxp0 = (unsigned int *)&s_t_prefix[0][y][0];
@@ -585,18 +585,18 @@ int solid_guess()
 			}
 		}
 	}
-	else /* first pass already done */
+	else // first pass already done 
 	{
-		memset(&s_t_prefix[0][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); /* noskip flags on */
+		memset(&s_t_prefix[0][0][0], -1, MAX_X_BLOCK*MAX_Y_BLOCK*2); // noskip flags on 
 	}
 	if (g_three_pass)
 	{
 		return 0;
 	}
 
-	/* remaining pass(es), halve blocksize & quarter each blocksize**2 */
+	// remaining pass(es), halve blocksize & quarter each blocksize**2 
 	i = g_work_pass;
-	while (--i > 0) /* allow for already done passes */
+	while (--i > 0) // allow for already done passes 
 	{
 		blocksize >>= 1;
 	}
@@ -627,8 +627,8 @@ int solid_guess()
 			}
 		}
 		++g_work_pass;
-		if (g_WorkList.num_items() /* work list not empty, do one pass at a time */
-			&& blocksize > 2) /* if 2, we just did last pass */
+		if (g_WorkList.num_items() // work list not empty, do one pass at a time 
+			&& blocksize > 2) // if 2, we just did last pass 
 		{
 			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
 				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),

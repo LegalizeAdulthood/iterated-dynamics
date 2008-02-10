@@ -16,7 +16,7 @@
 #include "EscapeTime.h"
 #include "QuaternionEngine.h"
 
-/* these need to be accessed elsewhere for saving data */
+// these need to be accessed elsewhere for saving data 
 double g_m_x_min_fp = -.83;
 double g_m_y_min_fp = -.25;
 double g_m_x_max_fp = -.83;
@@ -104,8 +104,8 @@ bool julibrot_setup()
 	long origin;
 #endif
 	int r = 0;
-	s_x_offset_fp = g_escape_time_state.m_grid_fp.x_center();     /* Calculate average */
-	s_y_offset_fp = g_escape_time_state.m_grid_fp.y_center();     /* Calculate average */
+	s_x_offset_fp = g_escape_time_state.m_grid_fp.x_center();     // Calculate average 
+	s_y_offset_fp = g_escape_time_state.m_grid_fp.y_center();     // Calculate average 
 	s_dmx_fp = (g_m_x_max_fp - g_m_x_min_fp)/g_z_dots;
 	s_dmy_fp = (g_m_y_max_fp - g_m_y_min_fp)/g_z_dots;
 	g_float_parameter = &s_jbc_fp;
@@ -145,10 +145,10 @@ bool julibrot_setup()
 		s_fg16 = double(1L << 16);
 		jxmin = long(g_escape_time_state.m_grid_fp.x_min()*s_fg);
 		jxmax = long(g_escape_time_state.m_grid_fp.x_max()*s_fg);
-		s_x_offset = (jxmax + jxmin)/2;    /* Calculate average */
+		s_x_offset = (jxmax + jxmin)/2;    // Calculate average 
 		jymin = long(g_escape_time_state.m_grid_fp.y_min()*s_fg);
 		jymax = long(g_escape_time_state.m_grid_fp.y_max()*s_fg);
-		s_y_offset = (jymax + jymin)/2;    /* Calculate average */
+		s_y_offset = (jymax + jymin)/2;    // Calculate average 
 		s_m_x_min = long(g_m_x_min_fp*s_fg);
 		mxmax = long(g_m_x_max_fp*s_fg);
 		s_m_y_min = long(g_m_y_min_fp*s_fg);
@@ -351,7 +351,7 @@ static int z_line_fp(double x, double y)
 	julibrot_per_pixel_fp();
 	for (z_pixel = 0; z_pixel < g_z_dots; z_pixel++)
 	{
-		/* Special initialization for Mandelbrot types */
+		// Special initialization for Mandelbrot types 
 		if (g_new_orbit_type == FRACTYPE_QUATERNION_FP || g_new_orbit_type == FRACTYPE_HYPERCOMPLEX_FP)
 		{
 			g_old_z.x = 0.0;
@@ -470,7 +470,7 @@ int standard_4d_fractal()
 		{
 			if (y == 0)
 			{
-				s_plotted = true;  /* no points first pass; don't give up */
+				s_plotted = true;  // no points first pass; don't give up 
 			}
 			else
 			{
@@ -492,7 +492,7 @@ int standard_4d_fractal_fp()
 			g_c_exp = 1;
 		}
 		standard_4d_fractal_set_orbit_calc(z_power_orbit_fp, complex_z_power_orbit_fp);
-		get_julia_attractor (g_parameters[0], g_parameters[1]); /* another attractor? */
+		get_julia_attractor (g_parameters[0], g_parameters[1]); // another attractor? 
 	}
 
 	double y = 0;
@@ -519,7 +519,7 @@ int standard_4d_fractal_fp()
 		{
 			if (y == 0)
 			{
-				s_plotted = true;  /* no points first pass; don't give up */
+				s_plotted = true;  // no points first pass; don't give up 
 			}
 			else
 			{

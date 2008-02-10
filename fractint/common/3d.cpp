@@ -1,59 +1,59 @@
-/*
-A word about the 3D library. Even though this library supports
-three dimensions, the matrices are 4x4 for the following reason.
-With normal 3 dimensional vectors, translation is an ADDITION,
-and rotation is a MULTIPLICATION. A vector {x, y, z} is represented
-as a 4-tuple {x, y, z, 1}. It is then possible to define a 4x4
-matrix such that multiplying the vector by the matrix translates
-the vector. This allows combinations of translation and rotation
-to be obtained in a single matrix by multiplying a translation
-matrix and a rotation matrix together. Note that in the code,
-vectors have three components; since the fourth component is
-always 1, that value is not included in the vector variable to
-save space, but the routines make use of the fourth component
-(see vec_mult()). Similarly, the fourth column of EVERY matrix is
-always
-			0
-			0
-			0
-			1
-but currently the C version of a matrix includes this even though
-it could be left out of the data structure and assumed in the
-routines. Vectors are ROW vectors, and are always multiplied with
-matrices FROM THE LEFT (e.g. vector*matrix). Also note the order
-of indices of a matrix is matrix[row][column], and in usual C
-fashion, numbering starts with 0.
-
-TRANSLATION MATRIX =  1     0     0     0
-                      0     1     0     0
-                      0     0     1     0
-                      Tx    Ty    Tz    1
-
-SCALE MATRIX =        Sx    0     0     0
-                      0     Sy    0     0
-                      0     0     Sz    0
-                      0     0     0     1
-
-Rotation about x axis i degrees:
-ROTX(i) =             1     0     0     0
-                      0   cosi  sini    0
-                      0  -sini  cosi    0
-                      0     0     0     1
-
-Rotation about y axis i degrees:
-ROTY(i) =           cosi    0  -sini    0
-                      0     1     0     0
-                    sini    0   cosi    0
-                      0     0     0     1
-
-Rotation about z axis i degrees:
-ROTZ(i) =           cosi  sini    0     0
-                   -sini  cosi    0     0
-                      0     0     1     0
-                      0     0     0     1
-
-                      --  Tim Wegner  April 22, 1989
-*/
+//
+// A word about the 3D library. Even though this library supports
+// three dimensions, the matrices are 4x4 for the following reason.
+// With normal 3 dimensional vectors, translation is an ADDITION,
+// and rotation is a MULTIPLICATION. A vector {x, y, z} is represented
+// as a 4-tuple {x, y, z, 1}. It is then possible to define a 4x4
+// matrix such that multiplying the vector by the matrix translates
+// the vector. This allows combinations of translation and rotation
+// to be obtained in a single matrix by multiplying a translation
+// matrix and a rotation matrix together. Note that in the code,
+// vectors have three components; since the fourth component is
+// always 1, that value is not included in the vector variable to
+// save space, but the routines make use of the fourth component
+// (see vec_mult()). Similarly, the fourth column of EVERY matrix is
+// always
+// 			0
+// 			0
+// 			0
+// 			1
+// but currently the C version of a matrix includes this even though
+// it could be left out of the data structure and assumed in the
+// routines. Vectors are ROW vectors, and are always multiplied with
+// matrices FROM THE LEFT (e.g. vector*matrix). Also note the order
+// of indices of a matrix is matrix[row][column], and in usual C
+// fashion, numbering starts with 0.
+// 
+// TRANSLATION MATRIX =  1     0     0     0
+//                       0     1     0     0
+//                       0     0     1     0
+//                       Tx    Ty    Tz    1
+// 
+// SCALE MATRIX =        Sx    0     0     0
+//                       0     Sy    0     0
+//                       0     0     Sz    0
+//                       0     0     0     1
+// 
+// Rotation about x axis i degrees:
+// ROTX(i) =             1     0     0     0
+//                       0   cosi  sini    0
+//                       0  -sini  cosi    0
+//                       0     0     0     1
+// 
+// Rotation about y axis i degrees:
+// ROTY(i) =           cosi    0  -sini    0
+//                       0     1     0     0
+//                     sini    0   cosi    0
+//                       0     0     0     1
+// 
+// Rotation about z axis i degrees:
+// ROTZ(i) =           cosi  sini    0     0
+//                    -sini  cosi    0     0
+//                       0     0     1     0
+//                       0     0     0     1
+// 
+//                       --  Tim Wegner  April 22, 1989
+//
 #include <string.h>
 #include <string>
 
@@ -63,8 +63,8 @@ ROTZ(i) =           cosi  sini    0     0
 #include "3d.h"
 #include "line3d.h"
 
-/* initialize a matrix and set to identity matrix
-	(all 0's, 1's on diagonal) */
+// initialize a matrix and set to identity matrix
+//	(all 0's, 1's on diagonal)
 void identity(MATRIX m)
 {
 	for (int i = 0; i < CMAX; i++)
@@ -76,11 +76,11 @@ void identity(MATRIX m)
 	}
 }
 
-/* Multiply two matrices */
+// Multiply two matrices 
 static void mat_mul(MATRIX left, MATRIX right, MATRIX destination)
 {
-	/* result stored in MATRIX new to avoid problems
-		in case parameter mat3 == mat2 or mat 1 */
+	// result stored in MATRIX new to avoid problems
+	// in case parameter mat3 == mat2 or mat 1
 	MATRIX newmat;
 	for (int i = 0; i < 4; i++)
 	{
@@ -95,7 +95,7 @@ static void mat_mul(MATRIX left, MATRIX right, MATRIX destination)
 	memcpy(destination, newmat, sizeof(newmat));
 }
 
-/* multiply a matrix by a scalar */
+// multiply a matrix by a scalar 
 void scale(double sx, double sy, double sz, MATRIX m)
 {
 	MATRIX scale;
@@ -106,7 +106,7 @@ void scale(double sx, double sy, double sz, MATRIX m)
 	mat_mul(m, scale, m);
 }
 
-/* rotate about X axis  */
+// rotate about X axis  
 void xrot(double theta, MATRIX destination)
 {
 	MATRIX rot;
@@ -120,7 +120,7 @@ void xrot(double theta, MATRIX destination)
 	mat_mul(destination, rot, destination);
 }
 
-/* rotate about Y axis  */
+// rotate about Y axis  
 void yrot(double theta, MATRIX destination)
 {
 	MATRIX rot;
@@ -134,7 +134,7 @@ void yrot(double theta, MATRIX destination)
 	mat_mul(destination, rot, destination);
 }
 
-/* rotate about Z axis  */
+// rotate about Z axis  
 void zrot(double theta, MATRIX m)
 {
 	MATRIX rot;
@@ -148,7 +148,7 @@ void zrot(double theta, MATRIX m)
 	mat_mul(m, rot, m);
 }
 
-/* translate  */
+// translate  
 void trans(double tx, double ty, double tz, MATRIX m)
 {
 	MATRIX trans;
@@ -159,7 +159,7 @@ void trans(double tx, double ty, double tz, MATRIX m)
 	mat_mul(m, trans, m);
 }
 
-/* cross product  - useful because cross is perpendicular to v and w */
+// cross product  - useful because cross is perpendicular to v and w 
 int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 {
 	VECTOR tmp;
@@ -172,13 +172,13 @@ int cross_product(VECTOR v, VECTOR w, VECTOR cross)
 	return 0;
 }
 
-/* normalize a vector to length 1 */
+// normalize a vector to length 1 
 int normalize_vector(VECTOR v)
 {
 	double vlength;
 	vlength = DOT_PRODUCT(v, v);
 
-	/* bailout if zero vlength */
+	// bailout if zero vlength 
 	if (vlength < FLT_MIN || vlength > FLT_MAX)
 	{
 		return -1;
@@ -195,8 +195,8 @@ int normalize_vector(VECTOR v)
 	return 0;
 }
 
-/* multiply source vector s by matrix m, result in target t */
-/* used to apply transformations to a vector */
+// multiply source vector s by matrix m, result in target t 
+// used to apply transformations to a vector 
 int vmult(VECTOR s, MATRIX m, VECTOR t)
 {
 	VECTOR tmp;
@@ -207,18 +207,18 @@ int vmult(VECTOR s, MATRIX m, VECTOR t)
 		{
 			tmp[j] += s[i]*m[i][j];
 		}
-		/* vector is really four dimensional with last component always 1 */
+		// vector is really four dimensional with last component always 1 
 		tmp[j] += m[3][j];
 	}
-	/* set target = tmp. Necessary to use tmp in case source = target */
+	// set target = tmp. Necessary to use tmp in case source = target 
 	memcpy(t, tmp, sizeof(tmp));
 	return 0;
 }
 
-/* multiply vector s by matrix m, result in s */
-/* use with a function pointer in line3d.c */
-/* must coordinate calling conventions with */
-/* mult_vec in general.asm */
+// multiply vector s by matrix m, result in s 
+// use with a function pointer in line3d.c 
+// must coordinate calling conventions with 
+// mult_vec in general.asm 
 void mult_vec(VECTOR s, MATRIX m)
 {
 	VECTOR tmp;
@@ -229,14 +229,14 @@ void mult_vec(VECTOR s, MATRIX m)
 		{
 			tmp[j] += s[i]*m[i][j];
 		}
-		/* vector is really four dimensional with last component always 1 */
+		// vector is really four dimensional with last component always 1 
 		tmp[j] += m[3][j];
 	}
-	/* set target = tmp. Necessary to use tmp in case source = target */
+	// set target = tmp. Necessary to use tmp in case source = target 
 	memcpy(s, tmp, sizeof(tmp));
 }
 
-/* perspective projection of vector v with respect to viewpont vector g_view */
+// perspective projection of vector v with respect to viewpont vector g_view 
 int perspective(VECTOR v)
 {
 	double denom;
@@ -244,33 +244,33 @@ int perspective(VECTOR v)
 
 	if (denom >= 0.0)
 	{
-		v[0] = g_bad_value;   /* clipping will catch these values */
-		v[1] = g_bad_value;   /* so they won't plot values BEHIND viewer */
+		v[0] = g_bad_value;   // clipping will catch these values 
+		v[1] = g_bad_value;   // so they won't plot values BEHIND viewer 
 		v[2] = g_bad_value;
 		return -1;
 	}
 	v[0] = (v[0]*g_view[2] - g_view[0]*v[2])/denom;
 	v[1] = (v[1]*g_view[2] - g_view[1]*v[2])/denom;
 
-	/* calculation of z if needed later */
-	/* v[2] =  v[2]/denom; */
+	// calculation of z if needed later 
+	// v[2] =  v[2]/denom; 
 	return 0;
 }
 
-/* long version of vmult and perspective combined for speed */
+// long version of vmult and perspective combined for speed 
 int vmult_perspective_l(VECTOR_L s, MATRIX_L m, VECTOR_L t0,
 	VECTOR_L t, VECTOR_L view_l, int bit_shift)
 {
-	/* s: source vector */
-	/* m: transformation matrix */
-	/* t0: after transformation, before persp */
-	/* t: target vector */
-	/* lview: perspective viewer coordinates */
-	/* bit_shift: fixed point conversion bit_shift */
+	// s: source vector 
+	// m: transformation matrix 
+	// t0: after transformation, before persp 
+	// t: target vector 
+	// lview: perspective viewer coordinates 
+	// bit_shift: fixed point conversion bit_shift 
 	VECTOR_L tmp;
 	int k;
 	g_overflow = false;
-	k = CMAX-1;                  /* shorten the math if non-perspective and non-illum */
+	k = CMAX-1;                  // shorten the math if non-perspective and non-illum 
 	if (view_l[2] == 0 && t0[0] == 0)
 	{
 		k--;
@@ -283,20 +283,20 @@ int vmult_perspective_l(VECTOR_L s, MATRIX_L m, VECTOR_L t0,
 		{
 			tmp[j] += multiply(s[i], m[i][j], bit_shift);
 		}
-		/* vector is really four dimensional with last component always 1 */
+		// vector is really four dimensional with last component always 1 
 		tmp[j] += m[3][j];
 	}
-	if (t0[0]) /* first component of  t0 used as flag */
+	if (t0[0]) // first component of  t0 used as flag 
 	{
-		/* faster than for loop, if less general */
+		// faster than for loop, if less general 
 		t0[0] = tmp[0];
 		t0[1] = tmp[1];
 		t0[2] = tmp[2];
 	}
-	if (view_l[2] != 0)           /* perspective 3D */
+	if (view_l[2] != 0)           // perspective 3D 
 	{
 		long denom = view_l[2] - tmp[2];
-		if (denom >= 0)           /* bail out if point is "behind" us */
+		if (denom >= 0)           // bail out if point is "behind" us 
 		{
 			t[0] = g_bad_value << bit_shift;
 			t[1] = t[0];
@@ -304,7 +304,7 @@ int vmult_perspective_l(VECTOR_L s, MATRIX_L m, VECTOR_L t0,
 			return -1;
 		}
 
-		/* doing math in this order helps prevent overflow */
+		// doing math in this order helps prevent overflow 
 		VECTOR_L tmpview;
 		tmpview[0] = divide(view_l[0], denom, bit_shift);
 		tmpview[1] = divide(view_l[1], denom, bit_shift);
@@ -316,25 +316,25 @@ int vmult_perspective_l(VECTOR_L s, MATRIX_L m, VECTOR_L t0,
 		tmp[1] = multiply(tmp[1], tmpview[2], bit_shift) -
 				multiply(tmpview[1], tmp[2], bit_shift);
 
-		/* z coordinate if needed           */
-		/* tmp[2] = divide(lview[2], denom);  */
+		// z coordinate if needed           
+		// tmp[2] = divide(lview[2], denom);  
 	}
 
-	/* set target = tmp. Necessary to use tmp in case source = target */
-	/* faster than for loop, if less general */
+	// set target = tmp. Necessary to use tmp in case source = target 
+	// faster than for loop, if less general 
 	t[0] = tmp[0];
 	t[1] = tmp[1];
 	t[2] = tmp[2];
 	return g_overflow;
 }
 
-/* Long version of perspective. Because of use of fixed point math, there
-	is danger of overflow and underflow */
+// Long version of perspective. Because of use of fixed point math, there
+// is danger of overflow and underflow
 int longpersp(VECTOR_L lv, VECTOR_L lview, int bit_shift)
 {
 	g_overflow = false;
 	long denom = lview[2] - lv[2];
-	if (denom >= 0)              /* bail out if point is "behind" us */
+	if (denom >= 0)              // bail out if point is "behind" us 
 	{
 		lv[0] = g_bad_value;
 		lv[0] = lv[0] << bit_shift;
@@ -343,7 +343,7 @@ int longpersp(VECTOR_L lv, VECTOR_L lview, int bit_shift)
 		return -1;
 	}
 
-	/* doing math in this order helps prevent overflow */
+	// doing math in this order helps prevent overflow 
 	VECTOR_L tmpview;
 	tmpview[0] = divide(lview[0], denom, bit_shift);
 	tmpview[1] = divide(lview[1], denom, bit_shift);
@@ -355,8 +355,8 @@ int longpersp(VECTOR_L lv, VECTOR_L lview, int bit_shift)
 	lv[1] = multiply(lv[1], tmpview[2], bit_shift) -
 			multiply(tmpview[1], lv[2], bit_shift);
 
-	/* z coordinate if needed           */
-	/* lv[2] = divide(lview[2], denom);  */
+	// z coordinate if needed           
+	// lv[2] = divide(lview[2], denom);  
 	return g_overflow;
 }
 
@@ -373,12 +373,12 @@ int longvmult(VECTOR_L s, MATRIX_L m, VECTOR_L t, int bit_shift)
 		{
 			tmp[j] += multiply(s[i], m[i][j], bit_shift);
 		}
-		/* vector is really four dimensional with last component always 1 */
+		// vector is really four dimensional with last component always 1 
 		tmp[j] += m[3][j];
 	}
 
-	/* set target = tmp. Necessary to use tmp in case source = target */
-	/* faster than for loop, if less general */
+	// set target = tmp. Necessary to use tmp in case source = target 
+	// faster than for loop, if less general 
 	t[0] = tmp[0];
 	t[1] = tmp[1];
 	t[2] = tmp[2];

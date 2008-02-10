@@ -71,7 +71,7 @@ public:
 
 	void fill()
 	{
-		m_x0[0] = m_x_min;              /* fill up the x, y grids */
+		m_x0[0] = m_x_min;              // fill up the x, y grids 
 		m_y0[0] = m_y_max;
 		m_x1[0] = 0;
 		m_y1[0] = 0;
