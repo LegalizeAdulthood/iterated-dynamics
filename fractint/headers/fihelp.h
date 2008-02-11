@@ -10,15 +10,11 @@ enum HelpAction
 	ACTION_QUIT
 };
 
-extern int _find_token_length(char *, unsigned int, int *, int *);
-extern int find_token_length(int, char *, unsigned int, int *, int *);
-extern int find_line_width(int, char *, unsigned int);
-extern int process_document(PD_FUNC, PD_FUNC, VOIDPTR);
 extern void help(HelpAction action);
 extern int read_help_topic(int, int, int, VOIDPTR);
 extern int makedoc_msg_func(int, int);
 extern void print_document(const char *, int (*)(int, int), int);
-extern int init_help();
+extern void init_help();
 extern void end_help();
 
 extern void set_help_mode(int new_mode);

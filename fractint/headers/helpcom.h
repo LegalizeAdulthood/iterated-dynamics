@@ -146,19 +146,14 @@ enum  PD_COMMANDS
 typedef int (*PD_FUNC)(int cmd, PD_INFO *pd, VOIDPTR info);
 
 
-int _find_token_length(char *curr, unsigned len, int *size, int *width);
-int find_token_length(int mode, char *curr, unsigned len, int *size, int *width);
-int find_line_width(int mode, char *curr, unsigned len);
+int find_token_length(char const *curr, unsigned len, int *size, int *width);
+int find_token_length(int mode, char const *curr, unsigned len, int *size, int *width);
+int find_line_width(int mode, char const *curr, unsigned len);
 int process_document(PD_FUNC get_info, PD_FUNC output, VOIDPTR info);
 
 
-/*
- * Code common to both HC.C and HELP.C (in Fractint).
- * #include INCLUDE_COMMON once for each program
- */
-
 #ifndef XFRACT
-inline int getint(void *ptr) { return *static_cast<int *>(ptr); }
+inline int getint(void const *ptr) { return *static_cast<int const *>(ptr); }
 inline void setint(void *ptr, int n) { *static_cast<int *>(ptr) = n; }
 #else
 /* Get an int from an unaligned pointer
