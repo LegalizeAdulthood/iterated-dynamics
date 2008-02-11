@@ -1065,7 +1065,7 @@ static int draw_orbits()
 	case ORBITDRAW_FUNCTION:	return draw_function_orbits();	break;
 
 	default:
-		assert(false);
+		assert(!"bad orbit draw mode");
 	}
 
 	return 0;

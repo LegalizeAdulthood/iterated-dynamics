@@ -63,7 +63,7 @@ static int calculation_mode()
 	case CALCMODE_DIFFUSION:			return 13;
 	case CALCMODE_ORBITS:				return 14;
 	default:
-		assert(false && "Bad g_user_standard_calculation_mode");
+		assert(!"Bad g_user_standard_calculation_mode");
 	}
 	return -1;
 }
@@ -87,7 +87,7 @@ static int inside_mode()
 	case COLORMODE_INVERSE_TANGENT_INTEGER:		return 8;
 	case COLORMODE_FLOAT_MODULUS_INTEGER:		return 9;
 	default:
-		assert(false && "Bad g_inside");
+		assert(!"Bad g_inside");
 	}
 	return -1;
 }
