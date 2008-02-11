@@ -19,10 +19,10 @@ bool is_hyphen(const char *ptr)   // true if ptr points to a real hyphen
 }
 
 
-int _find_token_length(register char *curr, unsigned len, int *size, int *width)
+int find_token_length(char const *curr, unsigned len, int *size, int *width)
 {
-	register int _size  = 0;
-	register int _width = 0;
+	int _size  = 0;
+	int _width = 0;
 	int tok;
 
 	if (len == 0)
@@ -118,7 +118,7 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 				}
 				else if (*curr == '\0')
 				{
-					assert(0);
+					assert(!"current character is NUL");
 				}
 				else if ((unsigned)*curr <= MAX_CMD || *curr == ' ' ||
 							*curr == '\n')
@@ -159,13 +159,13 @@ int _find_token_length(register char *curr, unsigned len, int *size, int *width)
 }
 
 
-int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
+int find_token_length(int mode, char const *curr, unsigned len, int *size, int *width)
 {
 	int tok;
 	int t;
 	int _size;
 
-	tok = _find_token_length(curr, len, &t, width);
+	tok = find_token_length(curr, len, &t, width);
 
 	if ((tok == TOK_XONLINE && mode == ONLINE) ||
 		(tok == TOK_XDOC    && mode == DOC))
@@ -178,7 +178,7 @@ int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
 			len   -= t;
 			_size += t;
 
-			tok = _find_token_length(curr, len, &t, 0);
+			tok = find_token_length(curr, len, &t, 0);
 
 			if ((tok == TOK_XONLINE && mode == ONLINE) ||
 				(tok == TOK_XDOC    && mode == DOC)    ||
@@ -204,7 +204,7 @@ int find_token_length(int mode, char *curr, unsigned len, int *size, int *width)
 }
 
 
-int find_line_width(int mode, char *curr, unsigned len)
+int find_line_width(int mode, char const *curr, unsigned len)
 {
 	int size = 0;
 	int width = 0;

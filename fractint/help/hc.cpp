@@ -48,9 +48,6 @@
 
 #define HC_C
 
-#define INCLUDE_COMMON  // tell helpcom.h to include common code 
-
-
 #ifdef XFRACT
 #define strupr strlwr
 #else
