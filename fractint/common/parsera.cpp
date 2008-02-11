@@ -133,7 +133,7 @@ FN(StoSqr0)
 
 int formula_per_pixel_fp()
 {
-	assert(0 && "formula_per_pixel_fp called.");
+	assert(!"formula_per_pixel_fp called.");
 	return 0;
 }
 
@@ -182,7 +182,7 @@ _fFormula          endp
 */
 int formula_fp()
 {
-	assert(0 && "formula_fp called.");
+	assert(!"formula_fp called.");
 	return 0;
 }
 
@@ -217,5 +217,5 @@ _Img_Setup         endp
 */
 void image_setup()
 {
-	assert(0 && "Img_Setup called.");
+	assert(!"Img_Setup called.");
 }

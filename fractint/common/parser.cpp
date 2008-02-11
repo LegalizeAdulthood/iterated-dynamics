@@ -2921,7 +2921,7 @@ int Formula::fill_if_group(int endif_index, JUMP_PTRS *jump_data)
 			break;
 		}
 	}
-	assert(false && "should never get here");
+	assert(!"fill_if_group should never get here");
 	return -1;
 }
 
