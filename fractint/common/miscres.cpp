@@ -1223,15 +1223,8 @@ top:
 	{
 		++s_row;
 	}
-	/*waitforkey:*/
 	put_string_center(/*s_row*/24, 0, 80, C_GENERAL_LO, spressanykey);
 	driver_hide_text_cursor();
-#ifdef XFRACT
-	while (driver_key_pressed())
-	{
-		driver_get_key();
-	}
-#endif
 	key = get_key_no_help();
 	if (key == IDK_F6)
 	{
