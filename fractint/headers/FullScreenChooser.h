@@ -9,7 +9,6 @@ public:
 
 protected:
 	virtual void help_title() = 0;
-	virtual int get_key_no_help() = 0;
 	virtual void blank_rows(int row, int rows, int attr) = 0;
 };
 

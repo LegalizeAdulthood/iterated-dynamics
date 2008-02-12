@@ -44,8 +44,6 @@ public:
 protected:
 	virtual void help_title()
 	{ ::help_title(); }
-	virtual int get_key_no_help()
-	{ return ::get_key_no_help(); }
 	virtual void blank_rows(int row, int rows, int attr)
 	{ ::blank_rows(row, rows, attr); }
 };
