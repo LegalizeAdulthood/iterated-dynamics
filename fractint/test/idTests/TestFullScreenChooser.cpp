@@ -35,10 +35,6 @@ protected:
 	virtual void help_title()
 	{
 	}
-	virtual int get_key_no_help()
-	{
-		return driver_get_key();
-	}
 	virtual void blank_rows(int row, int rows, int attr)
 	{
 	}
