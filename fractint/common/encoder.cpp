@@ -551,44 +551,44 @@ int encoder()
 			evolution_info resume_e_info;
 			if (g_evolve_info == 0 || g_calculation_status == CALCSTAT_COMPLETED)
 			{
-				esave_info.parameter_range_x     = g_parameter_range_x;
-				esave_info.parameter_range_y     = g_parameter_range_y;
-				esave_info.opx             = g_parameter_offset_x;
-				esave_info.opy             = g_parameter_offset_y;
-				esave_info.odpx            = short(g_discrete_parameter_offset_x);
-				esave_info.odpy            = short(g_discrete_parameter_offset_y);
-				esave_info.px              = short(g_px);
-				esave_info.py              = short(g_py);
-				esave_info.sxoffs          = short(g_screen_x_offset);
-				esave_info.syoffs          = short(g_screen_y_offset);
-				esave_info.x_dots           = short(g_x_dots);
-				esave_info.y_dots           = short(g_y_dots);
-				esave_info.grid_size          = short(g_grid_size);
+				esave_info.parameter_range_x = g_parameter_range_x;
+				esave_info.parameter_range_y = g_parameter_range_y;
+				esave_info.opx = g_parameter_offset_x;
+				esave_info.opy = g_parameter_offset_y;
+				esave_info.odpx = short(g_discrete_parameter_offset_x);
+				esave_info.odpy = short(g_discrete_parameter_offset_y);
+				esave_info.px = short(g_px);
+				esave_info.py = short(g_py);
+				esave_info.sxoffs = short(g_screen_x_offset);
+				esave_info.syoffs = short(g_screen_y_offset);
+				esave_info.x_dots = short(g_x_dots);
+				esave_info.y_dots = short(g_y_dots);
+				esave_info.grid_size = short(g_grid_size);
 				esave_info.evolving = short(g_evolving_flags);
-				esave_info.this_generation_random_seed  = (unsigned short)g_this_generation_random_seed;
-				esave_info.fiddle_factor    = g_fiddle_factor;
-				esave_info.ecount          = short(g_grid_size*g_grid_size); // flag for done 
+				esave_info.this_generation_random_seed = (unsigned short)g_this_generation_random_seed;
+				esave_info.fiddle_factor = g_fiddle_factor;
+				esave_info.ecount = short(g_grid_size*g_grid_size); // flag for done 
 			}
 			else  // we will need the resuming information 
 			{
-				memcpy(&resume_e_info, g_evolve_info, sizeof(resume_e_info));
-				esave_info.parameter_range_x     = resume_e_info.parameter_range_x;
-				esave_info.parameter_range_y     = resume_e_info.parameter_range_y;
-				esave_info.opx             = resume_e_info.opx;
-				esave_info.opy             = resume_e_info.opy;
-				esave_info.odpx            = short(resume_e_info.odpx);
-				esave_info.odpy            = short(resume_e_info.odpy);
-				esave_info.px              = short(resume_e_info.px);
-				esave_info.py              = short(resume_e_info.py);
-				esave_info.sxoffs          = short(resume_e_info.sxoffs);
-				esave_info.syoffs          = short(resume_e_info.syoffs);
-				esave_info.x_dots           = short(resume_e_info.x_dots);
-				esave_info.y_dots           = short(resume_e_info.y_dots);
-				esave_info.grid_size          = short(resume_e_info.grid_size);
-				esave_info.evolving        = short(resume_e_info.evolving);
-				esave_info.this_generation_random_seed  = (unsigned short)resume_e_info.this_generation_random_seed;
-				esave_info.fiddle_factor    = resume_e_info.fiddle_factor;
-				esave_info.ecount          = resume_e_info.ecount;
+				resume_e_info = *g_evolve_info;
+				esave_info.parameter_range_x = resume_e_info.parameter_range_x;
+				esave_info.parameter_range_y = resume_e_info.parameter_range_y;
+				esave_info.opx = resume_e_info.opx;
+				esave_info.opy = resume_e_info.opy;
+				esave_info.odpx = short(resume_e_info.odpx);
+				esave_info.odpy = short(resume_e_info.odpy);
+				esave_info.px = short(resume_e_info.px);
+				esave_info.py = short(resume_e_info.py);
+				esave_info.sxoffs = short(resume_e_info.sxoffs);
+				esave_info.syoffs = short(resume_e_info.syoffs);
+				esave_info.x_dots = short(resume_e_info.x_dots);
+				esave_info.y_dots = short(resume_e_info.y_dots);
+				esave_info.grid_size = short(resume_e_info.grid_size);
+				esave_info.evolving = short(resume_e_info.evolving);
+				esave_info.this_generation_random_seed = (unsigned short)resume_e_info.this_generation_random_seed;
+				esave_info.fiddle_factor = resume_e_info.fiddle_factor;
+				esave_info.ecount = resume_e_info.ecount;
 			}
 			for (i = 0; i < NUM_GENES; i++)
 			{
@@ -617,14 +617,14 @@ int encoder()
 		{
 			orbits_info osave_info;
 			int i;
-			osave_info.oxmin     = g_orbit_x_min;
-			osave_info.oxmax     = g_orbit_x_max;
-			osave_info.oymin     = g_orbit_y_min;
-			osave_info.oymax     = g_orbit_y_max;
-			osave_info.ox3rd     = g_orbit_x_3rd;
-			osave_info.oy3rd     = g_orbit_y_3rd;
+			osave_info.oxmin = g_orbit_x_min;
+			osave_info.oxmax = g_orbit_x_max;
+			osave_info.oymin = g_orbit_y_min;
+			osave_info.oymax = g_orbit_y_max;
+			osave_info.ox3rd = g_orbit_x_3rd;
+			osave_info.oy3rd = g_orbit_y_3rd;
 			osave_info.keep_scrn_coords = short(g_keep_screen_coords) ? 1 : 0;
-			osave_info.drawmode  = (char) g_orbit_draw_mode;
+			osave_info.drawmode = (char) g_orbit_draw_mode;
 			for (i = 0; i < NUM_OF(osave_info.future); i++)
 			{
 				osave_info.future[i] = 0;
@@ -947,8 +947,8 @@ static void setup_save_info(fractal_info *save_info)
 
 enum
 {
-	BITSF   = 12,
-	HSIZE  = 5003            // 80% occupancy 
+	BITSF = 12,
+	HSIZE = 5003            // 80% occupancy 
 };
 
 /*

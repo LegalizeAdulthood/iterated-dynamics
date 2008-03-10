@@ -15,7 +15,7 @@
 #include "loadmap.h"
 
 // frothy basin type 
-static int const FROTH_BITSHIFT      = 28;
+static int const FROTH_BITSHIFT = 28;
 
 inline long FROTH_D_TO_L(double x)
 {
@@ -164,18 +164,18 @@ bool froth_setup()
 	{
 		froth_long_struct tmp_l;
 
-		tmp_l.a        = FROTH_D_TO_L(s_frothy_data.f.a);
-		tmp_l.halfa    = FROTH_D_TO_L(s_frothy_data.f.halfa);
+		tmp_l.a = FROTH_D_TO_L(s_frothy_data.f.a);
+		tmp_l.halfa = FROTH_D_TO_L(s_frothy_data.f.halfa);
 
-		tmp_l.top_x1   = FROTH_D_TO_L(s_frothy_data.f.top_x1);
-		tmp_l.top_x2   = FROTH_D_TO_L(s_frothy_data.f.top_x2);
-		tmp_l.top_x3   = FROTH_D_TO_L(s_frothy_data.f.top_x3);
-		tmp_l.top_x4   = FROTH_D_TO_L(s_frothy_data.f.top_x4);
+		tmp_l.top_x1 = FROTH_D_TO_L(s_frothy_data.f.top_x1);
+		tmp_l.top_x2 = FROTH_D_TO_L(s_frothy_data.f.top_x2);
+		tmp_l.top_x3 = FROTH_D_TO_L(s_frothy_data.f.top_x3);
+		tmp_l.top_x4 = FROTH_D_TO_L(s_frothy_data.f.top_x4);
 
-		tmp_l.left_x1  = FROTH_D_TO_L(s_frothy_data.f.left_x1);
-		tmp_l.left_x2  = FROTH_D_TO_L(s_frothy_data.f.left_x2);
-		tmp_l.left_x3  = FROTH_D_TO_L(s_frothy_data.f.left_x3);
-		tmp_l.left_x4  = FROTH_D_TO_L(s_frothy_data.f.left_x4);
+		tmp_l.left_x1 = FROTH_D_TO_L(s_frothy_data.f.left_x1);
+		tmp_l.left_x2 = FROTH_D_TO_L(s_frothy_data.f.left_x2);
+		tmp_l.left_x3 = FROTH_D_TO_L(s_frothy_data.f.left_x3);
+		tmp_l.left_x4 = FROTH_D_TO_L(s_frothy_data.f.left_x4);
 
 		tmp_l.right_x1 = FROTH_D_TO_L(s_frothy_data.f.right_x1);
 		tmp_l.right_x2 = FROTH_D_TO_L(s_frothy_data.f.right_x2);

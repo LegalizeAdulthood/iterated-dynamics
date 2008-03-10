@@ -65,21 +65,38 @@
 #include "TextColors.h"
 #include "ViewWindow.h"
 
-enum
+class JIIM
 {
-	MAXRECT = 1024      // largest width of SaveRect/RestoreRect 
-};
+public:
+	JIIM(bool which)
+		: m_orbits(which)
+	{
+	}
+	~JIIM()
+	{
+	}
+	void Execute();
 
-enum SecretMode
-{
-	SECRETMODE_RANDOM_WALK			= 0,
-	SECRETMODE_ONE_DIRECTION		= 1,
-	SECRETMODE_ONE_DIR_DRAW_OTHER	= 2,
-	SECRETMODE_NEGATIVE_MAX_COLOR	= 4,
-	SECRETMODE_POSITIVE_MAX_COLOR	= 5,
-	SECRETMODE_7					= 7,
-	SECRETMODE_ZIGZAG				= 8,
-	SECRETMODE_RANDOM_RUN			= 9
+private:
+	enum
+	{
+		MAXRECT = 1024      // largest width of SaveRect/RestoreRect 
+	};
+	enum SecretMode
+	{
+		SECRETMODE_RANDOM_WALK			= 0,
+		SECRETMODE_ONE_DIRECTION		= 1,
+		SECRETMODE_ONE_DIR_DRAW_OTHER	= 2,
+		SECRETMODE_NEGATIVE_MAX_COLOR	= 4,
+		SECRETMODE_POSITIVE_MAX_COLOR	= 5,
+		SECRETMODE_7					= 7,
+		SECRETMODE_ZIGZAG				= 8,
+		SECRETMODE_RANDOM_RUN			= 9
+	};
+
+	bool m_orbits;
+
+	bool UsesStandardFractalOrFrothCalc();
 };
 
 static int s_show_numbers = 0;              // toggle for display of coords 
@@ -99,7 +116,7 @@ static int s_y_base;
 static unsigned int s_x_aspect;
 static unsigned int s_y_aspect;
 
-void SetAspect(double aspect)
+static void SetAspect(double aspect)
 {
 	s_x_aspect = 0;
 	s_y_aspect = 0;
@@ -139,7 +156,7 @@ static void plot_color_clip(int x, int y, int color)
 }
 
 
-int  c_getcolor(int x, int y)
+static int c_getcolor(int x, int y)
 {
 	// avoid reading outside window 
 	if (x < s_window_corner_x || y < s_window_corner_y || x >= s_window_corner_x + s_window_dots_x || y >= s_window_corner_y + s_window_dots_y)
@@ -160,7 +177,7 @@ int  c_getcolor(int x, int y)
 	return get_color(x, y);
 }
 
-void circleplot(int x, int y, int color)
+static void circle_plot(int x, int y, int color)
 {
 	if (s_x_aspect == 0)
 	{
@@ -179,19 +196,19 @@ void circleplot(int x, int y, int color)
 	}
 }
 
-void plot8(int x, int y, int color)
+static void plot8(int x, int y, int color)
 {
-	circleplot(x, y, color);
-	circleplot(-x, y, color);
-	circleplot(x, -y, color);
-	circleplot(-x, -y, color);
-	circleplot(y, x, color);
-	circleplot(-y, x, color);
-	circleplot(y, -x, color);
-	circleplot(-y, -x, color);
+	circle_plot(x, y, color);
+	circle_plot(-x, y, color);
+	circle_plot(x, -y, color);
+	circle_plot(-x, -y, color);
+	circle_plot(y, x, color);
+	circle_plot(-y, x, color);
+	circle_plot(y, -x, color);
+	circle_plot(-y, -x, color);
 }
 
-void circle(int radius, int color)
+static void circle(int radius, int color)
 {
 	int x;
 	int y;
@@ -262,28 +279,17 @@ static void fillrect(int x, int y, int width, int height, int color)
  * Defines a buffer that can be used as a FIFO queue or LIFO stack.
  */
 
-int
-QueueEmpty()            // True if NO points remain in queue 
+int QueueEmpty()            // True if NO points remain in queue 
 {
 	return s_list_front == s_list_back;
 }
 
-#if 0 // not used 
-int
-QueueFull()             // True if room for NO more points in queue 
-{
-	return ((ListFront + 1) % ListSize) == ListBack;
-}
-#endif
-
-int
-QueueFullAlmost()       // True if room for ONE more point in queue 
+int QueueFullAlmost()       // True if room for ONE more point in queue 
 {
 	return ((s_list_front + 2) % s_list_size) == s_list_back;
 }
 
-void
-ClearQueue()
+static void ClearQueue()
 {
 	s_list_front = 0;
 	s_list_back = 0;
@@ -340,8 +346,7 @@ bool Init_Queue(unsigned long request)
 	return false;
 }
 
-void
-Free_Queue()
+void Free_Queue()
 {
 	disk_end();
 	s_list_front = 0;
@@ -351,8 +356,7 @@ Free_Queue()
 	s_l_max = 0;
 }
 
-int
-PushLong(long x, long y)
+int PushLong(long x, long y)
 {
 	if (((s_list_front + 1) % s_list_size) != s_list_back)
 	{
@@ -372,8 +376,7 @@ PushLong(long x, long y)
 	return 0;                    // fail 
 }
 
-int
-PushFloat(float x, float y)
+int PushFloat(float x, float y)
 {
 	if (((s_list_front + 1) % s_list_size) != s_list_back)
 	{
@@ -393,8 +396,7 @@ PushFloat(float x, float y)
 	return 0;                    // fail 
 }
 
-ComplexD
-PopFloat()
+ComplexD PopFloat()
 {
 	ComplexD pop;
 	float popx;
@@ -421,8 +423,7 @@ PopFloat()
 	return pop;
 }
 
-ComplexL
-PopLong()
+ComplexL PopLong()
 {
 	ComplexL pop;
 
@@ -445,20 +446,17 @@ PopLong()
 	return pop;
 }
 
-int
-EnQueueFloat(float x, float y)
+int EnQueueFloat(float x, float y)
 {
 	return PushFloat(x, y);
 }
 
-int
-EnQueueLong(long x, long y)
+int EnQueueLong(long x, long y)
 {
 	return PushLong(x, y);
 }
 
-ComplexD
-DeQueueFloat()
+ComplexD DeQueueFloat()
 {
 	ComplexD out;
 	float outx;
@@ -481,8 +479,7 @@ DeQueueFloat()
 	return out;
 }
 
-ComplexL
-DeQueueLong()
+ComplexL DeQueueLong()
 {
 	ComplexL out;
 	out.x = 0;
@@ -502,8 +499,6 @@ DeQueueLong()
 	out.y = 0;
 	return out;
 }
-
-
 
 static void SaveRect(int x, int y, int width, int height)
 {
@@ -527,7 +522,6 @@ static void SaveRect(int x, int y, int width, int height)
 		cursor::cursor_show();
 	}
 }
-
 
 static void RestoreRect(int x, int y, int width, int height)
 {
@@ -554,28 +548,17 @@ static void RestoreRect(int x, int y, int width, int height)
 
 ComplexD g_save_c = {-3000.0, -3000.0};
 
-class JIIM
-{
-public:
-	JIIM(bool which)
-		: m_orbits(which)
-	{
-	}
-	~JIIM()
-	{
-	}
-	void execute();
-
-private:
-	bool m_orbits;
-};
-
 void Jiim(bool which)
 {
-	JIIM(which).execute();
+	JIIM(which).Execute();
 }
 
-void JIIM::execute()
+bool JIIM::UsesStandardFractalOrFrothCalc()
+{
+	return (g_fractal_specific[g_fractal_type].calculate_type == standard_fractal || g_fractal_specific[g_fractal_type].calculate_type == froth_calc);
+}
+
+void JIIM::Execute()
 {
 	affine m_cvt;
 	int exact = 0;
@@ -609,8 +592,7 @@ void JIIM::execute()
 	int old_debugflag = g_debug_mode;
 
 	// must use standard fractal or be froth_calc 
-	if (g_fractal_specific[g_fractal_type].calculate_type != standard_fractal
-		&& g_fractal_specific[g_fractal_type].calculate_type != froth_calc)
+	if (!UsesStandardFractalOrFrothCalc())
 	{
 		return;
 	}

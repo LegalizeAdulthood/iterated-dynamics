@@ -3449,9 +3449,9 @@ static bool check_mapfile()
 		}
 
 		// TODO: replace this with check for valid map file in temp1
-		g_.OldDAC() = g_.DAC(); // save the DAC 
+		g_.PushDAC(); // save the DAC 
 		bool status = validate_luts(temp1);
-		g_.DAC() = g_.OldDAC(); // restore the DAC 
+		g_.PopDAC(); // restore the DAC 
 		if (status)  // Oops, somethings wrong 
 		{
 			askflag = true;

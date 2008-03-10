@@ -95,7 +95,7 @@ void (*g_out_line_cleanup)();
 
 ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdmore, bool &screen_stacked);
 ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, bool &kbdmore, bool &stacked);
-ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool resume_flag);
+ApplicationStateType big_while_loop(bool &keyboardMore, bool &screenStacked, bool resumeFlag);
 static void move_zoombox(int keynum);
 static int out_line_compare(BYTE *pixels, int line_length);
 static void out_line_cleanup_compare();
@@ -200,40 +200,149 @@ void ZoomSaver::restore()
 	}
 }
 
-ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool resume_flag)
+class BigWhileLoop
 {
-	double  ftemp;                       // fp temp                      
-	int     i = 0;                           // temporary loop counters      
-	int kbdchar;
+public:
+	BigWhileLoop(bool &kbdmore, bool &screen_stacked, bool resume_flag)
+		: _keyboardMore(kbdmore),
+		_screenStacked(screen_stacked),
+		_resumeFlag(resume_flag)
+	{
+	}
+	ApplicationStateType Execute();
 
+private:
+	ApplicationStateType GetMainMenuState(bool julia_entered_from_mandelbrot, int kbdchar);
+	bool StatusNotResumableOrShowFilePending();
+	void HandleVisibleViewWindow();
+
+	bool &_keyboardMore;
+	bool &_screenStacked;
+	bool _resumeFlag;
+};
+
+ApplicationStateType BigWhileLoop::GetMainMenuState(bool julia_entered_from_mandelbrot, int kbdchar)
+{
+	ApplicationStateType mainMenuState = g_evolving_flags ?
+		evolver_menu_switch(kbdchar, julia_entered_from_mandelbrot, _keyboardMore, _screenStacked)
+		: main_menu_switch(kbdchar, julia_entered_from_mandelbrot, _keyboardMore, _screenStacked);
+	if (g_quick_calculate
+		&& (mainMenuState == APPSTATE_IMAGE_START ||
+		mainMenuState == APPSTATE_RESTORE_START ||
+		mainMenuState == APPSTATE_RESTART))
+	{
+		g_quick_calculate = false;
+		g_user_standard_calculation_mode = g_standard_calculation_mode_old;
+	}
+	if (g_quick_calculate && g_calculation_status != CALCSTAT_COMPLETED)
+	{
+		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+	}
+	return mainMenuState;
+}
+
+bool BigWhileLoop::StatusNotResumableOrShowFilePending()
+{
+	return g_calculation_status != CALCSTAT_RESUMABLE || g_show_file == SHOWFILE_PENDING;
+}
+
+void BigWhileLoop::HandleVisibleViewWindow()
+{
+	double ftemp;
+	if (g_viewWindow.Visible())
+	{
+		// bypass for VESA virtual screen
+		ftemp = g_viewWindow.AspectRatio()*((double(g_screen_height))/(double(g_screen_width))/g_screen_aspect_ratio);
+		g_x_dots = g_viewWindow.Width();
+		if (g_x_dots != 0)
+		{	// g_x_dots specified
+			g_y_dots = g_viewWindow.Height();
+			if (g_y_dots == 0) // calc g_y_dots?
+			{
+				g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
+			}
+		}
+		else if (g_viewWindow.AspectRatio() <= g_screen_aspect_ratio)
+		{
+			g_x_dots = int(double(g_screen_width)/g_viewWindow.Reduction() + 0.5);
+			g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
+		}
+		else
+		{
+			g_y_dots = int(double(g_screen_height)/g_viewWindow.Reduction() + 0.5);
+			g_x_dots = int(double(g_y_dots)/ftemp + 0.5);
+		}
+		if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
+		{
+			stop_message(STOPMSG_NORMAL, "View window too large; using full screen.");
+			g_viewWindow.FullScreen(g_screen_width, g_screen_height);
+			g_x_dots = g_screen_width;
+			g_y_dots = g_screen_height;
+		}
+		else if (((g_x_dots <= 1) // changed test to 1, so a 2x2 window will
+			|| (g_y_dots <= 1)) // work with the sound feature
+			&& !(g_evolving_flags & EVOLVE_FIELD_MAP))
+		{	// so ssg works
+			// but no check if in evolve mode to allow lots of small views
+			stop_message(STOPMSG_NORMAL, "View window too small; using full screen.");
+			g_viewWindow.Hide();
+			g_x_dots = g_screen_width;
+			g_y_dots = g_screen_height;
+		}
+		if ((g_evolving_flags & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & FRACTALFLAG_INFINITE_CALCULATION))
+		{
+			stop_message(STOPMSG_NORMAL, "Fractal doesn't terminate! switching off evolution.");
+			g_evolving_flags &= ~EVOLVE_FIELD_MAP;
+			g_viewWindow.Hide();
+			g_x_dots = g_screen_width;
+			g_y_dots = g_screen_height;
+		}
+		if (g_evolving_flags & EVOLVE_FIELD_MAP)
+		{
+			g_x_dots = (g_screen_width/g_grid_size) - !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+			g_x_dots -= g_x_dots % 4; // trim to multiple of 4 for SSG
+			g_y_dots = (g_screen_height/g_grid_size) - !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+			g_y_dots -= g_y_dots % 4;
+		}
+		else
+		{
+			g_screen_x_offset = (g_screen_width - g_x_dots)/2;
+			g_screen_y_offset = (g_screen_height - g_y_dots)/3;
+		}
+	}
+}
+
+ApplicationStateType BigWhileLoop::Execute()
+{
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
 #endif
 	bool julia_entered_from_mandelbrot = false;
-	if (resume_flag)
+	if (_resumeFlag)
 	{
 		goto resumeloop;
 	}
 
-	while (true)                    // eternal loop 
+	int i = 0;
+	while (true)
 	{
 #if defined(_WIN32)
 		_ASSERTE(_CrtCheckMemory());
 #endif
 
-		if (g_calculation_status != CALCSTAT_RESUMABLE || g_show_file == SHOWFILE_PENDING)
+		if (StatusNotResumableOrShowFilePending())
 		{
 			g_.SetVideoEntry(g_.Adapter());
-			g_x_dots   = g_.VideoEntry().x_dots;       // # dots across the screen 
-			g_y_dots   = g_.VideoEntry().y_dots;       // # dots down the screen   
-			g_colors  = g_.VideoEntry().colors;      // # colors available 
-			g_screen_width  = g_x_dots;
-			g_screen_height  = g_y_dots;
+			g_x_dots = g_.VideoEntry().x_dots;       // # dots across the screen 
+			g_y_dots = g_.VideoEntry().y_dots;       // # dots down the screen   
+			g_colors = g_.VideoEntry().colors;      // # colors available 
+			g_screen_width = g_x_dots;
+			g_screen_height = g_y_dots;
 			g_screen_x_offset = 0;
 			g_screen_y_offset = 0;
 			g_rotate_hi = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors - 1;
 
-			g_.OldDAC() = g_.DAC(); // save the DAC 
+			g_.PushDAC();
 
 			if (g_overlay_3d && !g_initialize_batch)
 			{
@@ -264,7 +373,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 			if (g_.SaveDAC() || g_color_preloaded)
 			{
-				g_.DAC() = g_.OldDAC(); // restore the DAC 
+				g_.PopDAC(); // restore the DAC 
 				load_dac();
 				g_color_preloaded = false;
 			}
@@ -277,67 +386,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				}
 				g_.SetColorState(COLORSTATE_DEFAULT);
 			}
-			if (g_viewWindow.Visible())
-			{
-				// bypass for VESA virtual screen 
-				ftemp = g_viewWindow.AspectRatio()*((double(g_screen_height))/(double(g_screen_width))/g_screen_aspect_ratio);
-				g_x_dots = g_viewWindow.Width();
-				if (g_x_dots != 0)
-				{	// g_x_dots specified 
-					g_y_dots = g_viewWindow.Height();
-					if (g_y_dots == 0) // calc g_y_dots? 
-					{
-						g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
-					}
-				}
-				else if (g_viewWindow.AspectRatio() <= g_screen_aspect_ratio)
-				{
-					g_x_dots = int(double(g_screen_width)/g_viewWindow.Reduction() + 0.5);
-					g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
-				}
-				else
-				{
-					g_y_dots = int(double(g_screen_height)/g_viewWindow.Reduction() + 0.5);
-					g_x_dots = int(double(g_y_dots)/ftemp + 0.5);
-				}
-				if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
-				{
-					stop_message(STOPMSG_NORMAL, "View window too large; using full screen.");
-					g_viewWindow.FullScreen(g_screen_width, g_screen_height);
-					g_x_dots = g_screen_width;
-					g_y_dots = g_screen_height;
-				}
-				else if (((g_x_dots <= 1) // changed test to 1, so a 2x2 window will 
-					|| (g_y_dots <= 1)) // work with the sound feature 
-					&& !(g_evolving_flags & EVOLVE_FIELD_MAP))
-				{	// so ssg works 
-					// but no check if in evolve mode to allow lots of small views
-					stop_message(STOPMSG_NORMAL, "View window too small; using full screen.");
-					g_viewWindow.Hide();
-					g_x_dots = g_screen_width;
-					g_y_dots = g_screen_height;
-				}
-				if ((g_evolving_flags & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & FRACTALFLAG_INFINITE_CALCULATION))
-				{
-					stop_message(STOPMSG_NORMAL, "Fractal doesn't terminate! switching off evolution.");
-					g_evolving_flags &= ~EVOLVE_FIELD_MAP;
-					g_viewWindow.Hide();
-					g_x_dots = g_screen_width;
-					g_y_dots = g_screen_height;
-				}
-				if (g_evolving_flags & EVOLVE_FIELD_MAP)
-				{
-					g_x_dots = (g_screen_width/g_grid_size) - !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-					g_x_dots -= g_x_dots % 4; // trim to multiple of 4 for SSG 
-					g_y_dots = (g_screen_height/g_grid_size) - !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-					g_y_dots -= g_y_dots % 4;
-				}
-				else
-				{
-					g_screen_x_offset = (g_screen_width - g_x_dots)/2;
-					g_screen_y_offset = (g_screen_height - g_y_dots)/3;
-				}
-			}
+			HandleVisibleViewWindow();
 			g_dx_size = g_x_dots - 1;            // convert just once now 
 			g_dy_size = g_y_dots - 1;
 		}
@@ -364,7 +413,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				if (disk_start_potential() < 0)
 				{                           // pot file failed?  
 					g_show_file = SHOWFILE_DONE;
-					g_potential_flag  = false;
+					g_potential_flag = false;
 					g_potential_16bit = false;
 					g_.SetInitialVideoModeNone();
 					g_calculation_status = CALCSTAT_RESUMABLE;         // "resume" without 16-bit 
@@ -479,9 +528,9 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 
 				if ((g_evolve_info != 0) && (g_calculation_status == CALCSTAT_RESUMABLE))
 				{
-					memcpy(&resume_e_info, g_evolve_info, sizeof(resume_e_info));
-					g_parameter_range_x  = resume_e_info.parameter_range_x;
-					g_parameter_range_y  = resume_e_info.parameter_range_y;
+					resume_e_info = *g_evolve_info;
+					g_parameter_range_x = resume_e_info.parameter_range_x;
+					g_parameter_range_y = resume_e_info.parameter_range_y;
 					g_parameter_offset_x = resume_e_info.opx;
 					g_parameter_offset_y = resume_e_info.opy;
 					g_new_parameter_offset_x = resume_e_info.opx;
@@ -490,21 +539,21 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 					g_new_discrete_parameter_offset_y = resume_e_info.odpy;
 					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x;
 					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y;
-					g_px           = resume_e_info.px;
-					g_py           = resume_e_info.py;
-					g_screen_x_offset       = resume_e_info.sxoffs;
-					g_screen_y_offset       = resume_e_info.syoffs;
-					g_x_dots        = resume_e_info.x_dots;
-					g_y_dots        = resume_e_info.y_dots;
-					g_grid_size       = resume_e_info.grid_size;
+					g_px = resume_e_info.px;
+					g_py = resume_e_info.py;
+					g_screen_x_offset = resume_e_info.sxoffs;
+					g_screen_y_offset = resume_e_info.syoffs;
+					g_x_dots = resume_e_info.x_dots;
+					g_y_dots = resume_e_info.y_dots;
+					g_grid_size = resume_e_info.grid_size;
 					g_this_generation_random_seed = resume_e_info.this_generation_random_seed;
-					g_fiddle_factor   = resume_e_info.fiddle_factor;
-					g_evolving_flags     = resume_e_info.evolving;
+					g_fiddle_factor = resume_e_info.fiddle_factor;
+					g_evolving_flags = resume_e_info.evolving;
 					if (g_evolving_flags)
 					{
 						g_viewWindow.Show();
 					}
-					ecount       = resume_e_info.ecount;
+					ecount = resume_e_info.ecount;
 					delete g_evolve_info;
 					g_evolve_info = 0;
 				}
@@ -527,7 +576,7 @@ ApplicationStateType big_while_loop(bool &kbdmore, bool &screen_stacked, bool re
 				g_parameter_box_count = 0;
 				g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size-1);
 				g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size-1);
-				grout  = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+				grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
 				tmpxdots = g_x_dots + grout;
 				tmpydots = g_y_dots + grout;
 				gridsqr = g_grid_size*g_grid_size;
@@ -561,24 +610,24 @@ done:
 					{
 						g_evolve_info = new evolution_info;
 					}
-					resume_e_info.parameter_range_x     = g_parameter_range_x;
-					resume_e_info.parameter_range_y     = g_parameter_range_y;
-					resume_e_info.opx             = g_parameter_offset_x;
-					resume_e_info.opy             = g_parameter_offset_y;
-					resume_e_info.odpx            = short(g_discrete_parameter_offset_x);
-					resume_e_info.odpy            = short(g_discrete_parameter_offset_y);
-					resume_e_info.px              = short(g_px);
-					resume_e_info.py              = short(g_py);
-					resume_e_info.sxoffs          = short(g_screen_x_offset);
-					resume_e_info.syoffs          = short(g_screen_y_offset);
-					resume_e_info.x_dots           = short(g_x_dots);
-					resume_e_info.y_dots           = short(g_y_dots);
-					resume_e_info.grid_size          = short(g_grid_size);
-					resume_e_info.this_generation_random_seed  = short(g_this_generation_random_seed);
+					resume_e_info.parameter_range_x = g_parameter_range_x;
+					resume_e_info.parameter_range_y = g_parameter_range_y;
+					resume_e_info.opx = g_parameter_offset_x;
+					resume_e_info.opy = g_parameter_offset_y;
+					resume_e_info.odpx = short(g_discrete_parameter_offset_x);
+					resume_e_info.odpy = short(g_discrete_parameter_offset_y);
+					resume_e_info.px = short(g_px);
+					resume_e_info.py = short(g_py);
+					resume_e_info.sxoffs = short(g_screen_x_offset);
+					resume_e_info.syoffs = short(g_screen_y_offset);
+					resume_e_info.x_dots = short(g_x_dots);
+					resume_e_info.y_dots = short(g_y_dots);
+					resume_e_info.grid_size = short(g_grid_size);
+					resume_e_info.this_generation_random_seed = short(g_this_generation_random_seed);
 					resume_e_info.fiddle_factor = g_fiddle_factor;
-					resume_e_info.evolving        = short(g_evolving_flags);
-					resume_e_info.ecount          = short(ecount);
-					memcpy(g_evolve_info, &resume_e_info, sizeof(resume_e_info));
+					resume_e_info.evolving = short(g_evolving_flags);
+					resume_e_info.ecount = short(ecount);
+					*g_evolve_info = resume_e_info;
 				}
 				g_screen_x_offset = 0;
 				g_screen_y_offset = 0;
@@ -595,7 +644,7 @@ done:
 			// end of evolution loop 
 			else
 			{
-				i = calculate_fractal();       // draw the fractal using "C" 
+				i = calculate_fractal();       // draw the fractal
 				if (i == 0)
 				{
 					driver_buzzer(BUZZER_COMPLETE); // finished!! 
@@ -630,8 +679,9 @@ resumeloop:
 		_ASSERTE(_CrtCheckMemory());
 #endif
 
-		kbdmore = true;
-		while (kbdmore)
+		_keyboardMore = true;
+		int kbdchar;
+		while (_keyboardMore)
 		{           // loop through command keys 
 			if (g_timed_save != TIMEDSAVE_DONE)
 			{
@@ -753,22 +803,8 @@ resumeloop:
 				kbdchar = tolower(kbdchar);
 			}
 
-			ApplicationStateType mms_value = g_evolving_flags ?
-				evolver_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked)
-				: main_menu_switch(kbdchar, julia_entered_from_mandelbrot, kbdmore, screen_stacked);
-			if (g_quick_calculate
-				&& (mms_value == APPSTATE_IMAGE_START ||
-					mms_value == APPSTATE_RESTORE_START ||
-					mms_value == APPSTATE_RESTART))
-			{
-				g_quick_calculate = false;
-				g_user_standard_calculation_mode = g_standard_calculation_mode_old;
-			}
-			if (g_quick_calculate && g_calculation_status != CALCSTAT_COMPLETED)
-			{
-				g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
-			}
-			switch (mms_value)
+			ApplicationStateType mainMenuState = GetMainMenuState(julia_entered_from_mandelbrot, kbdchar);
+			switch (mainMenuState)
 			{
 			case APPSTATE_IMAGE_START:		return APPSTATE_IMAGE_START;
 			case APPSTATE_RESTORE_START:	return APPSTATE_RESTORE_START;
@@ -776,7 +812,7 @@ resumeloop:
 			case APPSTATE_CONTINUE:			continue;
 			default:						break;
 			}
-			if (g_zoom_off && kbdmore) // draw/clear a zoom box? 
+			if (g_zoom_off && _keyboardMore) // draw/clear a zoom box? 
 			{
 				zoom_box_draw(true);
 			}
@@ -786,6 +822,11 @@ resumeloop:
 			}
 		}
 	}
+}
+
+ApplicationStateType big_while_loop(bool &keyboardMore, bool &screenStacked, bool resumeFlag)
+{
+	return BigWhileLoop(keyboardMore, screenStacked, resumeFlag).Execute();
 }
 
 static ApplicationStateType handle_fractal_type(bool &frommandel)
@@ -1297,7 +1338,7 @@ static ApplicationStateType handle_history(bool &stacked, int kbdchar)
 static ApplicationStateType handle_color_cycling(int kbdchar)
 {
 	clear_zoom_box();
-	g_.OldDAC() = g_.DAC();
+	g_.PushDAC();
 	rotate((kbdchar == 'c') ? 0 : ((kbdchar == '+') ? 1 : -1));
 	if (g_.OldDAC() != g_.DAC())
 	{
@@ -1326,7 +1367,7 @@ static ApplicationStateType handle_color_editing(bool &kbdmore)
 	if (g_.DAC().Red(0) != 255
 		&& !driver_diskp())
 	{
-		g_.OldDAC() = g_.DAC();
+		g_.PushDAC();
 		palette_edit();
 		if (g_.OldDAC() != g_.DAC())
 		{

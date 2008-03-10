@@ -2,6 +2,11 @@
 
 #include <boost/filesystem.hpp>
 
+enum
+{
+	NUM_INVERSION = 3
+};
+
 enum AutoShowDotKind
 {
 	AUTOSHOWDOT_DEFAULT = 0,

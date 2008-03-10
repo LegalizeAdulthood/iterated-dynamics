@@ -24,7 +24,7 @@ static int s_recur1 = 1;
 static int s_plasma_colors;
 static int s_recur_level = 0;
 static int s_plasma_check;                        // to limit kbd checking 
-static U16 (*s_get_pixels)(int, int)  = (U16(*)(int, int))get_color;
+static U16 (*s_get_pixels)(int, int) = (U16(*)(int, int))get_color;
 static U16 s_max_plasma;
 
 // standalone engine for "plasma"
@@ -169,14 +169,14 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 			// 5.  New mid point value is average        
 			// of largest and smallest            
 			suby.t++;
-			ny1  = suby.v[suby.t] = suby.v[suby.t-1];
-			ny   = suby.v[suby.t-2];
+			ny1 = suby.v[suby.t] = suby.v[suby.t-1];
+			ny = suby.v[suby.t-2];
 			suby.r[suby.t] = suby.r[suby.t-1];
-			y    = suby.v[suby.t-1]   = (ny1 + ny)/2;
-			suby.r[suby.t-1]   = BYTE(std::max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
+			y = suby.v[suby.t-1] = (ny1 + ny)/2;
+			suby.r[suby.t-1] = BYTE(std::max(suby.r[suby.t], suby.r[suby.t-2]) + 1);
 		}
 		subx.t = 2;
-		nx  = x2;
+		nx = x2;
 		nx1 = x1;
 		subx.v[0] = x2;
 		subx.v[2] = x1;
@@ -190,11 +190,11 @@ static int new_subdivision(int x1, int y1, int x2, int y2, int recur)
 			while (subx.r[subx.t-1] < (BYTE)recur)
 			{
 				subx.t++; // move the top ofthe stack up 1 
-				nx1  = subx.v[subx.t] = subx.v[subx.t-1];
-				nx   = subx.v[subx.t-2];
+				nx1 = subx.v[subx.t] = subx.v[subx.t-1];
+				nx = subx.v[subx.t-2];
 				subx.r[subx.t] = subx.r[subx.t-1];
-				x    = subx.v[subx.t-1]   = (nx1 + nx)/2;
-				subx.r[subx.t-1]   = BYTE(std::max(subx.r[subx.t],
+				x = subx.v[subx.t-1] = (nx1 + nx)/2;
+				subx.r[subx.t-1] = BYTE(std::max(subx.r[subx.t],
 				subx.r[subx.t-2]) + 1);
 			}
 
@@ -373,15 +373,15 @@ int plasma()
 		else
 		{
 			s_max_plasma = 0;        // can't do potential (disk_start failed) 
-			g_parameters[3]   = 0;
+			g_parameters[3] = 0;
 			g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
-			s_get_pixels  = (U16(*)(int, int))get_color;
+			s_get_pixels = (U16(*)(int, int))get_color;
 		}
 	}
 	else
 	{
 		g_plot_color = (g_outside >= 0) ? put_color_border : g_plot_color_put_color;
-		s_get_pixels  = (U16(*)(int, int))get_color;
+		s_get_pixels = (U16(*)(int, int))get_color;
 	}
 	srand(g_random_seed);
 	if (!g_use_fixed_random_seed)
@@ -457,8 +457,8 @@ done:
 		g_potential_flag = OldPotFlag;
 		g_potential_16bit = OldPot16bit;
 	}
-	g_plot_color    = g_plot_color_put_color;
-	s_get_pixels  = (U16(*)(int, int))get_color;
+	g_plot_color = g_plot_color_put_color;
+	s_get_pixels = (U16(*)(int, int))get_color;
 	return n;
 }
 

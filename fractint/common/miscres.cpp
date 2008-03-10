@@ -545,7 +545,7 @@ void convert_corners_bf(bf_t Xctr, bf_t Yctr, LDBL Magnification, double Xmagfac
 	return;
 }
 
-int g_function_index[] =
+int g_function_index[NUM_FUNCTION_INDEX] =
 {
 	FUNCTION_SIN,
 	FUNCTION_SQR,

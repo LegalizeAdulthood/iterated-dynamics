@@ -52,6 +52,8 @@ public:
 	void SetMapName(const std::string &value);
 	int NumColors() const;
 	void SetNumColors(int value);
+	void PushDAC();
+	void PopDAC();
 
 private:
 	GlobalImpl *_impl;

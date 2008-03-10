@@ -80,15 +80,15 @@ void WorkList::get_top_item()
 	m_xx_start = m_items[0].xx_start;
 	m_xx_stop = m_items[0].xx_stop;
 	g_ix_start = m_xx_start;
-	g_x_stop  = m_xx_stop;
-	m_xx_begin  = m_items[0].xx_begin;
+	g_x_stop = m_xx_stop;
+	m_xx_begin = m_items[0].xx_begin;
 	m_yy_start = m_items[0].yy_start;
 	m_yy_stop = m_items[0].yy_stop;
 	g_iy_start = m_yy_start;
-	g_y_stop  = m_yy_stop;
-	m_yy_begin  = m_items[0].yy_begin;
+	g_y_stop = m_yy_stop;
+	m_yy_begin = m_items[0].yy_begin;
 	g_work_pass = m_items[0].pass;
-	g_work_sym  = m_items[0].sym;
+	g_work_sym = m_items[0].sym;
 	--m_num_items;
 	for (int i = 0; i < m_num_items; ++i)
 	{
@@ -348,7 +348,7 @@ int WorkList::combine()
 				{
 					if (m_items[i].xx_start == m_items[j].xx_start
 						&& m_items[i].xx_begin == m_items[j].xx_begin
-						&& m_items[i].xx_stop  == m_items[j].xx_stop)
+						&& m_items[i].xx_stop == m_items[j].xx_stop)
 					{
 						if (m_items[i].yy_stop + 1 == m_items[j].yy_start)
 						{
@@ -364,7 +364,7 @@ int WorkList::combine()
 					}
 					if (m_items[i].yy_start == m_items[j].yy_start
 						&& m_items[i].yy_begin == m_items[j].yy_begin
-						&& m_items[i].yy_stop  == m_items[j].yy_stop)
+						&& m_items[i].yy_stop == m_items[j].yy_stop)
 					{
 						if (m_items[i].xx_stop + 1 == m_items[j].xx_start)
 						{
@@ -394,13 +394,13 @@ int WorkList::add(int xfrom, int xto, int xbegin,
 		return -1;
 	}
 	m_items[m_num_items].xx_start = xfrom;
-	m_items[m_num_items].xx_stop  = xto;
+	m_items[m_num_items].xx_stop = xto;
 	m_items[m_num_items].xx_begin = xbegin;
 	m_items[m_num_items].yy_start = yfrom;
-	m_items[m_num_items].yy_stop  = yto;
+	m_items[m_num_items].yy_stop = yto;
 	m_items[m_num_items].yy_begin = ybegin;
-	m_items[m_num_items].pass    = pass;
-	m_items[m_num_items].sym     = sym;
+	m_items[m_num_items].pass = pass;
+	m_items[m_num_items].sym = sym;
 	++m_num_items;
 	tidy();
 	return 0;

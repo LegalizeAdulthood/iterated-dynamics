@@ -450,7 +450,7 @@ int solid_guess()
 	s_guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis && g_plot_color != plot_color_symmetry_origin);
 	// check if guessing at bottom & right edges is ok 
 	s_bottom_guess = (g_plot_color == plot_color_symmetry_x_axis || (g_plot_color == g_plot_color_put_color && g_y_stop + 1 == g_y_dots));
-	s_right_guess  = (g_plot_color == plot_color_symmetry_origin
+	s_right_guess = (g_plot_color == plot_color_symmetry_origin
 		|| ((g_plot_color == g_plot_color_put_color || g_plot_color == plot_color_symmetry_x_axis) && g_x_stop + 1 == g_x_dots));
 
 	// there seems to be a bug in solid guessing at bottom and side 

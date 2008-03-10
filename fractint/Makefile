@@ -1,8 +1,8 @@
 SHELL=/bin/sh
 
-# SRCDIR should be a path to the directory that will hold id.hlp
-# SRCDIR should also hold the .par, .frm, etc. files
-SRCDIR = /usr/share/xfractint
+# SOURCE_DIR should be a path to the directory that will hold id.hlp
+# SOURCE_DIR should also hold the .par, .frm, etc. files
+SOURCE_DIR = /usr/share/xfractint
 # BINDIR is where you put your X11 binaries
 BINDIR = /usr/X11R6/bin
 # MANDIR is where you put your chapter 1 man pages
@@ -253,9 +253,9 @@ HOBJS = hc.o unix.o
 .SUFFIXES: .o .cpp .s .h .asm
 
 id: id.hlp .WAIT
-	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
+	cd common ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SOURCE_DIR=${SOURCE_DIR}" \
 	          "HFD=.${HFD}"
-	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SRCDIR=${SRCDIR}" \
+	cd unix ; ${MAKE} all "CFLAGS= -I.${HFD} ${CFLAGS}" "SOURCE_DIR=${SOURCE_DIR}" \
 	          "AS=${AS}" "AFLAGS=${AFLAGS}" "HFD=.${HFD}"
 	$(CXX) -o id $(CFLAGS) $(OBJS) $(U_OBJS) $(LIBS)
 #	strip xfractint
@@ -286,42 +286,42 @@ install: xfractint id.hlp
 	cp $(UDIR)/xfractint.man $(MANDIR)/xfractint.1;
 	chmod a+r $(MANDIR)/xfractint.1
 # create directories if they don't exist
-	if [ ! -d $(SRCDIR) ] ; then mkdir $(SRCDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(PDIR) ] ; then mkdir $(SRCDIR)/$(PDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(FDIR) ] ; then mkdir $(SRCDIR)/$(FDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(IDIR) ] ; then mkdir $(SRCDIR)/$(IDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(LDIR) ] ; then mkdir $(SRCDIR)/$(LDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(MDIR) ] ; then mkdir $(SRCDIR)/$(MDIR) ; fi
-	if [ ! -d $(SRCDIR)/$(XDIR) ] ; then mkdir $(SRCDIR)/$(XDIR) ; fi
+	if [ ! -d $(SOURCE_DIR) ] ; then mkdir $(SOURCE_DIR) ; fi
+	if [ ! -d $(SOURCE_DIR)/$(PDIR) ] ; then mkdir $(SOURCE_DIR)/$(PDIR) ; fi
+	if [ ! -d $(SOURCE_DIR)/$(FDIR) ] ; then mkdir $(SOURCE_DIR)/$(FDIR) ; fi
+	if [ ! -d $(SOURCE_DIR)/$(IDIR) ] ; then mkdir $(SOURCE_DIR)/$(IDIR) ; fi
+	if [ ! -d $(SOURCE_DIR)/$(LDIR) ] ; then mkdir $(SOURCE_DIR)/$(LDIR) ; fi
+	if [ ! -d $(SOURCE_DIR)/$(MDIR) ] ; then mkdir $(SOURCE_DIR)/$(MDIR) ; fi
+	if [ ! -d $(SOURCE_DIR)/$(XDIR) ] ; then mkdir $(SOURCE_DIR)/$(XDIR) ; fi
 # copy all the files to the appropriate directories
-	cp id.hlp sstools.ini $(DOCS) $(SRCDIR)
-	cd ./$(PDIR); cp $(PARFILES) $(SRCDIR)/$(PDIR)
-	cd ./$(FDIR); cp $(FRMFILES) $(SRCDIR)/$(FDIR)
-	cd ./$(IDIR); cp $(IFSFILES) $(SRCDIR)/$(IDIR)
-	cd ./$(LDIR); cp $(LFILES) $(SRCDIR)/$(LDIR)
-	cd ./$(MDIR); cp $(MAPFILES) $(SRCDIR)/$(MDIR)
-	cd ./$(XDIR); cp $(XTRAFILES) $(SRCDIR)/$(XDIR)
+	cp id.hlp sstools.ini $(DOCS) $(SOURCE_DIR)
+	cd ./$(PDIR); cp $(PARFILES) $(SOURCE_DIR)/$(PDIR)
+	cd ./$(FDIR); cp $(FRMFILES) $(SOURCE_DIR)/$(FDIR)
+	cd ./$(IDIR); cp $(IFSFILES) $(SOURCE_DIR)/$(IDIR)
+	cd ./$(LDIR); cp $(LFILES) $(SOURCE_DIR)/$(LDIR)
+	cd ./$(MDIR); cp $(MAPFILES) $(SOURCE_DIR)/$(MDIR)
+	cd ./$(XDIR); cp $(XTRAFILES) $(SOURCE_DIR)/$(XDIR)
 # set permissions
-	cd $(SRCDIR); cd ..; chmod -R a+rw $(SRCDIR)
-	cd $(SRCDIR); chmod a+r id.hlp
-	cd $(SRCDIR); chmod a+rw sstools.ini
-	cd $(SRCDIR)/$(PDIR); chmod a+rw $(PARFILES)
-	cd $(SRCDIR)/$(FDIR); chmod a+rw $(FRMFILES)
-	cd $(SRCDIR)/$(IDIR); chmod a+rw $(IFSFILES)
-	cd $(SRCDIR)/$(LDIR); chmod a+rw $(LFILES)
-	cd $(SRCDIR)/$(MDIR); chmod a+rw $(MAPFILES)
-	cd $(SRCDIR)/$(XDIR); chmod a+rw $(XTRAFILES)
+	cd $(SOURCE_DIR); cd ..; chmod -R a+rw $(SOURCE_DIR)
+	cd $(SOURCE_DIR); chmod a+r id.hlp
+	cd $(SOURCE_DIR); chmod a+rw sstools.ini
+	cd $(SOURCE_DIR)/$(PDIR); chmod a+rw $(PARFILES)
+	cd $(SOURCE_DIR)/$(FDIR); chmod a+rw $(FRMFILES)
+	cd $(SOURCE_DIR)/$(IDIR); chmod a+rw $(IFSFILES)
+	cd $(SOURCE_DIR)/$(LDIR); chmod a+rw $(LFILES)
+	cd $(SOURCE_DIR)/$(MDIR); chmod a+rw $(MAPFILES)
+	cd $(SOURCE_DIR)/$(XDIR); chmod a+rw $(XTRAFILES)
 
 uninstall:
-	cd $(SRCDIR)/$(PDIR); rm -f $(PARFILES)
-	cd $(SRCDIR)/$(FDIR); rm -f $(FRMFILES)
-	cd $(SRCDIR)/$(IDIR); rm -f $(IFSFILES)
-	cd $(SRCDIR)/$(LDIR); rm -f $(LFILES)
-	cd $(SRCDIR)/$(MDIR); rm -f $(MAPFILES)
-	cd $(SRCDIR)/$(XDIR); rm -f $(XTRAFILES)
-	cd $(SRCDIR); rm -f id.hlp sstools.ini $(DOCS)
-	cd $(SRCDIR); rmdir $(PDIR) $(FDIR) $(IDIR) $(LDIR) $(MDIR) $(XDIR)
-	cd $(SRCDIR); cd ..; rmdir $(SRCDIR)
+	cd $(SOURCE_DIR)/$(PDIR); rm -f $(PARFILES)
+	cd $(SOURCE_DIR)/$(FDIR); rm -f $(FRMFILES)
+	cd $(SOURCE_DIR)/$(IDIR); rm -f $(IFSFILES)
+	cd $(SOURCE_DIR)/$(LDIR); rm -f $(LFILES)
+	cd $(SOURCE_DIR)/$(MDIR); rm -f $(MAPFILES)
+	cd $(SOURCE_DIR)/$(XDIR); rm -f $(XTRAFILES)
+	cd $(SOURCE_DIR); rm -f id.hlp sstools.ini $(DOCS)
+	cd $(SOURCE_DIR); rmdir $(PDIR) $(FDIR) $(IDIR) $(LDIR) $(MDIR) $(XDIR)
+	cd $(SOURCE_DIR); cd ..; rmdir $(SOURCE_DIR)
 # only next might need su
 	rm -f $(BINDIR)/xfractint $(MANDIR)/xfractint.1
 
@@ -346,7 +346,7 @@ hc.o: $(DOSHELPDIR)/hc.cpp
 	$(CXX) $(CFLAGS) -c $<
 
 unix.o: $(UDIR)/unix.cpp
-	$(CXX) $(CFLAGS) -DSRCDIR=\"$(SRCDIR)\" -c $<
+	$(CXX) $(CFLAGS) -DSRCDIR=\"$(SOURCE_DIR)\" -c $<
 
 copy: $(FILES)
 	mv $(FILES) backup

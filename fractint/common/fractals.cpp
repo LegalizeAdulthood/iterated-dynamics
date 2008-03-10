@@ -411,10 +411,10 @@ int barnsley1_orbit()
 	// Everywhere" by Michael Barnsley, p. 322
 
 	// calculate intermediate products 
-	s_old_x_init_x   = multiply(g_old_z_l.x, g_long_parameter->x, g_bit_shift);
-	s_old_y_init_y   = multiply(g_old_z_l.y, g_long_parameter->y, g_bit_shift);
-	s_old_x_init_y   = multiply(g_old_z_l.x, g_long_parameter->y, g_bit_shift);
-	s_old_y_init_x   = multiply(g_old_z_l.y, g_long_parameter->x, g_bit_shift);
+	s_old_x_init_x = multiply(g_old_z_l.x, g_long_parameter->x, g_bit_shift);
+	s_old_y_init_y = multiply(g_old_z_l.y, g_long_parameter->y, g_bit_shift);
+	s_old_x_init_y = multiply(g_old_z_l.x, g_long_parameter->y, g_bit_shift);
+	s_old_y_init_x = multiply(g_old_z_l.y, g_long_parameter->x, g_bit_shift);
 	// orbit calculation 
 	if (g_old_z_l.x >= 0)
 	{
@@ -465,10 +465,10 @@ int barnsley2_orbit()
 	// note that fast >= 287 equiv in fracsuba.asm must be kept in step 
 
 	// calculate intermediate products 
-	s_old_x_init_x   = multiply(g_old_z_l.x, g_long_parameter->x, g_bit_shift);
-	s_old_y_init_y   = multiply(g_old_z_l.y, g_long_parameter->y, g_bit_shift);
-	s_old_x_init_y   = multiply(g_old_z_l.x, g_long_parameter->y, g_bit_shift);
-	s_old_y_init_x   = multiply(g_old_z_l.y, g_long_parameter->x, g_bit_shift);
+	s_old_x_init_x = multiply(g_old_z_l.x, g_long_parameter->x, g_bit_shift);
+	s_old_y_init_y = multiply(g_old_z_l.y, g_long_parameter->y, g_bit_shift);
+	s_old_x_init_y = multiply(g_old_z_l.x, g_long_parameter->y, g_bit_shift);
+	s_old_y_init_x = multiply(g_old_z_l.y, g_long_parameter->x, g_bit_shift);
 
 	// orbit calculation 
 	if (s_old_x_init_y + s_old_y_init_x >= 0)
@@ -516,7 +516,7 @@ int julia_orbit()
 {
 	// used for C prototype of fast integer math routines for classic
 	// Mandelbrot and Julia
-	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
+	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
 	return g_bail_out_l();
 }
@@ -652,9 +652,9 @@ int lambda_exponent_orbit()
 	g_tmp_z_l.x = multiply(tmp,      s_cos_y_l,   g_bit_shift);
 	g_tmp_z_l.y = multiply(tmp,      s_sin_y_l,   g_bit_shift);
 
-	g_new_z_l.x  = multiply(g_long_parameter->x, g_tmp_z_l.x, g_bit_shift)
+	g_new_z_l.x = multiply(g_long_parameter->x, g_tmp_z_l.x, g_bit_shift)
 			- multiply(g_long_parameter->y, g_tmp_z_l.y, g_bit_shift);
-	g_new_z_l.y  = multiply(g_long_parameter->x, g_tmp_z_l.y, g_bit_shift)
+	g_new_z_l.y = multiply(g_long_parameter->x, g_tmp_z_l.y, g_bit_shift)
 			+ multiply(g_long_parameter->y, g_tmp_z_l.x, g_bit_shift);
 	g_old_z_l = g_new_z_l;
 	return 0;
@@ -785,7 +785,7 @@ int mandel4_orbit()
 
 	// first, compute (x + iy)**2 
 #if !defined(XFRACT)
-	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l;
+	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1);
 	if (g_bail_out_l())
 	{
@@ -793,7 +793,7 @@ int mandel4_orbit()
 	}
 
 	// then, compute ((x + iy)**2)**2 + lambda 
-	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
+	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l + g_long_parameter->x;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_long_parameter->y;
 	return g_bail_out_l();
 #else
@@ -804,7 +804,7 @@ int mandel4_orbit()
 int mandel4_orbit_fp()
 {
 	// first, compute (x + iy)**2 
-	g_new_z.x  = g_temp_sqr_x - g_temp_sqr_y;
+	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y;
 	g_new_z.y = g_old_z.x*g_old_z.y*2;
 	if (g_bail_out_fp())
 	{
@@ -812,7 +812,7 @@ int mandel4_orbit_fp()
 	}
 
 	// then, compute ((x + iy)**2)**2 + lambda 
-	g_new_z.x  = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x;
+	g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_parameter->x;
 	g_new_z.y =  g_old_z.x*g_old_z.y*2 + g_float_parameter->y;
 	return g_bail_out_fp();
 }
@@ -892,9 +892,9 @@ int barnsley3_orbit()
 
 	// calculate intermediate products 
 #if !defined(XFRACT)
-	s_old_x_init_x   = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
-	s_old_y_init_y   = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-	s_old_x_init_y   = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift);
+	s_old_x_init_x = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift);
+	s_old_y_init_y = multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	s_old_x_init_y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift);
 
 	// orbit calculation 
 	if (g_old_z_l.x > 0)
@@ -926,9 +926,9 @@ int barnsley3_orbit()
 int barnsley3_orbit_fp()
 {
 	// calculate intermediate products 
-	s_old_x_init_x_fp  = g_old_z.x*g_old_z.x;
-	s_old_y_init_y_fp  = g_old_z.y*g_old_z.y;
-	s_old_x_init_y_fp  = g_old_z.x*g_old_z.y;
+	s_old_x_init_x_fp = g_old_z.x*g_old_z.x;
+	s_old_y_init_y_fp = g_old_z.y*g_old_z.y;
+	s_old_x_init_y_fp = g_old_z.x*g_old_z.y;
 
 	// orbit calculation 
 	if (g_old_z.x > 0)
@@ -1287,7 +1287,7 @@ int spider_orbit()
 {
 #if !defined(XFRACT)
 	// Spider(XAXIS) { c = z=pixel: z = z*z + c; c = c/2 + z, |z| <= 4 } 
-	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x;
+	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y;
 	g_tmp_z_l.x = (g_tmp_z_l.x >> 1) + g_new_z_l.x;
 	g_tmp_z_l.y = (g_tmp_z_l.y >> 1) + g_new_z_l.y;
@@ -1308,7 +1308,7 @@ int z_trig_z_plus_z_orbit()
 {
 #if !defined(XFRACT)
 	// z = (p1*z*trig(z)) + p2*z 
-	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);          // g_tmp_z_l  = trig(old)             
+	LCMPLXtrig0(g_old_z_l, g_tmp_z_l);          // g_tmp_z_l = trig(old)             
 	LCMPLXmult(g_parameter_l, g_tmp_z_l, g_tmp_z_l);      // g_tmp_z_l  = p1*trig(old)          
 	LCMPLXmult(g_old_z_l, g_tmp_z_l, g_tmp_z2_l);      // g_tmp_z2_l = p1*old*trig(old)      
 	LCMPLXmult(g_parameter2_l, g_old_z_l, g_tmp_z_l);     // g_tmp_z_l  = p2*old                
@@ -2108,7 +2108,7 @@ int man_o_war_orbit()
 {
 #if !defined(XFRACT)
 	// From Art Matrix via Lee Skinner 
-	g_new_z_l.x  = g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x + g_long_parameter->x;
+	g_new_z_l.x = g_temp_sqr_x_l - g_temp_sqr_y_l + g_tmp_z_l.x + g_long_parameter->x;
 	g_new_z_l.y = multiply(g_old_z_l.x, g_old_z_l.y, g_bit_shift_minus_1) + g_tmp_z_l.y + g_long_parameter->y;
 	g_tmp_z_l = g_old_z_l;
 	return g_bail_out_l();

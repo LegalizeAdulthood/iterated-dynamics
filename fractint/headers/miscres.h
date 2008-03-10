@@ -3,7 +3,12 @@
 
 #include "big.h"
 
-extern const std::string g_insufficient_ifs_memory;
+enum
+{
+	NUM_FUNCTION_INDEX = 4
+};
+extern int g_function_index[NUM_FUNCTION_INDEX];
+extern std::string const g_insufficient_ifs_memory;
 
 extern void restore_active_ovly();
 extern void not_disk_message();

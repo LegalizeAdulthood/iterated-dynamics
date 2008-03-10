@@ -334,7 +334,7 @@ bool orbit_3d_setup()
 	else if (fractal_type_kam_torus(g_fractal_type))
 	{
 		g_max_count = 1L;
-		s_a   = g_parameters[0];           // angle 
+		s_a = g_parameters[0];           // angle 
 		if (g_parameters[1] <= 0.0)
 		{
 			g_parameters[1] = .01;
@@ -358,7 +358,7 @@ bool orbit_3d_setup()
 		s_x_long = long(g_parameters[0]*g_fudge);
 		s_y_long = long(g_parameters[1]*g_fudge);
 
-		s_max_hits    = int(g_parameters[2]);
+		s_max_hits = int(g_parameters[2]);
 		s_run_length = int(g_parameters[3]);
 		if (s_max_hits <= 0)
 		{
@@ -510,10 +510,10 @@ bool orbit_3d_setup_fp()
 		s_connect_points = false;
 		s_initial_orbit_skip_count = 2000;
 		// Initialize parameters 
-		s_a  =   g_parameters[0];
-		s_b  =   g_parameters[1];
-		s_c  =   g_parameters[2];
-		s_d  =   g_parameters[3];
+		s_a =   g_parameters[0];
+		s_b =   g_parameters[1];
+		s_c =   g_parameters[2];
+		s_d =   g_parameters[3];
 	}
 	else if (fractal_type_kam_torus_fp(g_fractal_type))
 	{
@@ -550,7 +550,7 @@ bool orbit_3d_setup_fp()
 		s_d =  g_parameters[3];
 		if (g_fractal_type == FRACTYPE_THREE_PLY)
 		{
-			s_dx   = cos(s_b);
+			s_dx = cos(s_b);
 			s_dy = sin(s_a + s_b + s_c);
 		}
 	}
@@ -561,7 +561,7 @@ bool orbit_3d_setup_fp()
 		s_cx = g_parameters[0];
 		s_cy = g_parameters[1];
 
-		s_max_hits    = int(g_parameters[2]);
+		s_max_hits = int(g_parameters[2]);
 		s_run_length = int(g_parameters[3]);
 		if (s_max_hits <= 0)
 		{
@@ -717,7 +717,7 @@ int Minverse_julia_orbit()
 
 	// Now find the next point(s), and flip a coin to choose one.
 
-	g_new_z       = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
+	g_new_z = ComplexSqrtFloat(g_new_z.x - s_cx, g_new_z.y - s_cy);
 	leftright = (RANDOM(2)) ? 1 : -1;
 
 	if (newcol < 1 || newcol >= g_x_dots || newrow < 1 || newrow >= g_y_dots)
@@ -741,7 +741,7 @@ int Minverse_julia_orbit()
 	// Read the pixel's color:
 	// For MIIM, if color >= s_max_hits, discard the point
 	//           else put the point's children onto the queue
-	color  = get_color(newcol, newrow);
+	color = get_color(newcol, newrow);
 	switch (g_major_method)
 	{
 	case MAJORMETHOD_BREADTH_FIRST:
@@ -917,7 +917,7 @@ int Linverse_julia_orbit()
 	// For MIIM, if color >= s_max_hits, discard the point
 	//           else put the point's children onto the queue
 	//
-	color  = get_color(newcol, newrow);
+	color = get_color(newcol, newrow);
 	switch (g_major_method)
 	{
 	case MAJORMETHOD_BREADTH_FIRST:
@@ -977,9 +977,9 @@ int lorenz_3d_orbit(long *l_x, long *l_y, long *l_z)
 {
 	s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
 	s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
-	s_l_dx  = -multiply(s_l_adt, *l_x, g_bit_shift) + multiply(s_l_adt, *l_y, g_bit_shift);
-	s_l_dy  =  multiply(s_l_bdt, *l_x, g_bit_shift) -s_l_ydt -multiply(*l_z, s_l_xdt, g_bit_shift);
-	s_l_dz  = -multiply(s_l_cdt, *l_z, g_bit_shift) + multiply(*l_x, s_l_ydt, g_bit_shift);
+	s_l_dx = -multiply(s_l_adt, *l_x, g_bit_shift) + multiply(s_l_adt, *l_y, g_bit_shift);
+	s_l_dy =  multiply(s_l_bdt, *l_x, g_bit_shift) -s_l_ydt -multiply(*l_z, s_l_xdt, g_bit_shift);
+	s_l_dz = -multiply(s_l_cdt, *l_z, g_bit_shift) + multiply(*l_x, s_l_ydt, g_bit_shift);
 
 	*l_x += s_l_dx;
 	*l_y += s_l_dy;
@@ -994,9 +994,9 @@ int lorenz_3d_orbit_fp(double *x, double *y, double *z)
 	s_zdt = (*z)*s_dt;
 
 	// 2-lobe Lorenz (the original) 
-	s_dx  = -s_adt*(*x) + s_adt*(*y);
-	s_dy  =  s_bdt*(*x) - s_ydt - (*z)*s_xdt;
-	s_dz  = -s_cdt*(*z) + (*x)*s_ydt;
+	s_dx = -s_adt*(*x) + s_adt*(*y);
+	s_dy =  s_bdt*(*x) - s_ydt - (*z)*s_xdt;
+	s_dz = -s_cdt*(*z) + (*x)*s_ydt;
 
 	*x += s_dx;
 	*y += s_dy;
@@ -1014,10 +1014,10 @@ int lorenz_3d1_orbit_fp(double *x, double *y, double *z)
 
 	// 1-lobe Lorenz 
 	norm = sqrt((*x)*(*x) + (*y)*(*y));
-	s_dx   = (-s_adt-s_dt)*(*x) + (s_adt-s_bdt)*(*y) + (s_dt-s_adt)*norm + s_ydt*(*z);
-	s_dy   = (s_bdt-s_adt)*(*x) - (s_adt + s_dt)*(*y) + (s_bdt + s_adt)*norm - s_xdt*(*z) -
+	s_dx = (-s_adt-s_dt)*(*x) + (s_adt-s_bdt)*(*y) + (s_dt-s_adt)*norm + s_ydt*(*z);
+	s_dy = (s_bdt-s_adt)*(*x) - (s_adt + s_dt)*(*y) + (s_bdt + s_adt)*norm - s_xdt*(*z) -
 			norm*s_zdt;
-	s_dz   = (s_ydt/2) - s_cdt*(*z);
+	s_dz = (s_ydt/2) - s_cdt*(*z);
 
 	*x += s_dx;
 	*y += s_dy;
@@ -1035,13 +1035,13 @@ int lorenz_3d3_orbit_fp(double *x, double *y, double *z)
 
 	// 3-lobe Lorenz 
 	norm = sqrt((*x)*(*x) + (*y)*(*y));
-	s_dx   = (-(s_adt + s_dt)*(*x) + (s_adt-s_bdt + s_zdt)*(*y))/3 +
+	s_dx = (-(s_adt + s_dt)*(*x) + (s_adt-s_bdt + s_zdt)*(*y))/3 +
 			((s_dt-s_adt)*((*x)*(*x)-(*y)*(*y)) +
 			2*(s_bdt + s_adt-s_zdt)*(*x)*(*y))/(3*norm);
-	s_dy   = ((s_bdt-s_adt-s_zdt)*(*x) - (s_adt + s_dt)*(*y))/3 +
+	s_dy = ((s_bdt-s_adt-s_zdt)*(*x) - (s_adt + s_dt)*(*y))/3 +
 			(2*(s_adt-s_dt)*(*x)*(*y) +
 			(s_bdt + s_adt-s_zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
-	s_dz   = (3*s_xdt*(*x)*(*y)-s_ydt*(*y)*(*y))/2 - s_cdt*(*z);
+	s_dz = (3*s_xdt*(*x)*(*y)-s_ydt*(*y)*(*y))/2 - s_cdt*(*z);
 
 	*x += s_dx;
 	*y += s_dy;
@@ -1056,13 +1056,13 @@ int lorenz_3d4_orbit_fp(double *x, double *y, double *z)
 	s_zdt = (*z)*s_dt;
 
 	// 4-lobe Lorenz 
-	s_dx   = (-s_adt*(*x)*(*x)*(*x) + (2*s_adt + s_bdt-s_zdt)*(*x)*(*x)*(*y) +
+	s_dx = (-s_adt*(*x)*(*x)*(*x) + (2*s_adt + s_bdt-s_zdt)*(*x)*(*x)*(*y) +
 			(s_adt-2*s_dt)*(*x)*(*y)*(*y) + (s_zdt-s_bdt)*(*y)*(*y)*(*y)) /
 			(2*((*x)*(*x) + (*y)*(*y)));
-	s_dy   = ((s_bdt-s_zdt)*(*x)*(*x)*(*x) + (s_adt-2*s_dt)*(*x)*(*x)*(*y) +
+	s_dy = ((s_bdt-s_zdt)*(*x)*(*x)*(*x) + (s_adt-2*s_dt)*(*x)*(*x)*(*y) +
 			(-2*s_adt-s_bdt + s_zdt)*(*x)*(*y)*(*y) - s_adt*(*y)*(*y)*(*y)) /
 			(2*((*x)*(*x) + (*y)*(*y)));
-	s_dz   = (2*s_xdt*(*x)*(*x)*(*y) - 2*s_xdt*(*y)*(*y)*(*y) - s_cdt*(*z));
+	s_dz = (2*s_xdt*(*x)*(*x)*(*y) - 2*s_xdt*(*y)*(*y)*(*y) - s_cdt*(*z));
 
 	*x += s_dx;
 	*y += s_dy;
@@ -1075,8 +1075,8 @@ int henon_orbit_fp(double *x, double *y, double *z)
 	double newx;
 	double newy;
 	*z = *x; // for warning only 
-	newx  = 1 + *y - s_a*(*x)*(*x);
-	newy  = s_b*(*x);
+	newx = 1 + *y - s_a*(*x)*(*x);
+	newy = s_b*(*x);
 	*x = newx;
 	*y = newy;
 	return 0;
@@ -1089,8 +1089,8 @@ int henon_orbit(long *l_x, long *l_y, long *l_z)
 	*l_z = *l_x; // for warning only 
 	newx = multiply(*l_x, *l_x, g_bit_shift);
 	newx = multiply(newx, s_l_a, g_bit_shift);
-	newx  = g_fudge + *l_y - newx;
-	newy  = multiply(s_l_b, *l_x, g_bit_shift);
+	newx = g_fudge + *l_y - newx;
+	newy = multiply(s_l_b, *l_x, g_bit_shift);
 	*l_x = newx;
 	*l_y = newy;
 	return 0;
@@ -1141,9 +1141,9 @@ int rossler_orbit(long *l_x, long *l_y, long *l_z)
 	s_l_xdt = multiply(*l_x, s_l_dt, g_bit_shift);
 	s_l_ydt = multiply(*l_y, s_l_dt, g_bit_shift);
 
-	s_l_dx  = -s_l_ydt - multiply(*l_z, s_l_dt, g_bit_shift);
-	s_l_dy  =  s_l_xdt + multiply(*l_y, s_l_adt, g_bit_shift);
-	s_l_dz  =  s_l_bdt + multiply(*l_z, s_l_xdt, g_bit_shift)
+	s_l_dx = -s_l_ydt - multiply(*l_z, s_l_dt, g_bit_shift);
+	s_l_dy =  s_l_xdt + multiply(*l_y, s_l_adt, g_bit_shift);
+	s_l_dz =  s_l_bdt + multiply(*l_z, s_l_xdt, g_bit_shift)
 						- multiply(*l_z, s_l_cdt, g_bit_shift);
 
 	*l_x += s_l_dx;
@@ -1153,10 +1153,10 @@ int rossler_orbit(long *l_x, long *l_y, long *l_z)
 	return 0;
 }
 
-// OSTEP  = Orbit Step (and inner orbit value) 
+// OSTEP = Orbit Step (and inner orbit value) 
 // NTURNS = Outside Orbit 
-// TURN2  = Points per orbit 
-// a      = Angle 
+// TURN2 = Points per orbit 
+// a = Angle 
 
 
 int kam_torus_orbit_fp(double *r, double *s, double *z)
@@ -1381,7 +1381,7 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	g_old_z.x = xold*g_parameters[1];
 	g_old_z.y = 0;          // old = (x*B) + 0i 
 	CMPLXtrig1(g_old_z, g_new_z);
-	*x  = g_parameters[2]*g_new_z.x + tmp;
+	*x = g_parameters[2]*g_new_z.x + tmp;
 
 // *y = sin(xold*PAR_A) + PAR_D*sin(yold*PAR_A); 
 	g_old_z.x = xold*g_parameters[0];
@@ -1391,7 +1391,7 @@ int latoo_orbit_fp(double *x, double *y, double *z)
 	g_old_z.x = yold*g_parameters[0];
 	g_old_z.y = 0;          // old = (x*B) + 0i 
 	CMPLXtrig3(g_old_z, g_new_z);
-	*y  = g_parameters[3]*g_new_z.x + tmp;
+	*y = g_parameters[3]*g_new_z.x + tmp;
 
 	return 0;
 }
