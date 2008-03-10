@@ -404,11 +404,11 @@ lsysf_find_scale(lsys_cmd *command, lsys_turtle_state_fp *ts, lsys_cmd **rules, 
 		return 0;
 	}
 	horiz = (x_max == x_min) ? 1.0e37f : float((g_x_dots-10)/(x_max-x_min));
-	vert  = (y_max == y_min) ? 1.0e37f : float((g_y_dots-6) /(y_max-y_min));
+	vert = (y_max == y_min) ? 1.0e37f : float((g_y_dots-6) /(y_max-y_min));
 	locsize = (vert < horiz) ? vert : horiz;
 
 	ts->xpos = (horiz == 1.0e37f) ? g_x_dots/2 : (g_x_dots-locsize*(x_max + x_min))/2;
-	ts->ypos = (vert  == 1.0e37f) ? g_y_dots/2 : (g_y_dots-locsize*(y_max + y_min))/2;
+	ts->ypos = (vert == 1.0e37f) ? g_y_dots/2 : (g_y_dots-locsize*(y_max + y_min))/2;
 	ts->size = locsize;
 
 	return 1;

@@ -567,7 +567,7 @@ static void got_evolver_info(const fractal_info &read_info, evolver_info_extensi
 		resume_e_info.this_generation_random_seed = evolver_info.this_generation_random_seed;
 		resume_e_info.fiddle_factor = evolver_info.fiddle_factor;
 		resume_e_info.ecount = evolver_info.ecount;
-		memcpy(g_evolve_info, &resume_e_info, sizeof(resume_e_info));
+		*g_evolve_info = resume_e_info;
 	}
 	else
 	{

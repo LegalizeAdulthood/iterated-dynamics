@@ -358,7 +358,7 @@ void rotate(int direction)      // rotate-the-palette routine
 			break;
 
 		case IDK_HOME:                     // restore palette 
-			g_.DAC() = g_.OldDAC();
+			g_.PopDAC();
 			pause_rotate();              // pause 
 			break;
 
@@ -515,7 +515,7 @@ void save_palette()
 				% (g_.DAC().Green(i) << 2)
 				% (g_.DAC().Blue(i) << 2);
 		}
-		g_.OldDAC() = g_.DAC();
+		g_.PushDAC();
 		g_.SetColorState(COLORSTATE_MAP);
 		g_color_file = temp1;
 	}
@@ -535,7 +535,7 @@ int load_palette()
 	{
 		if (!validate_luts(filename))
 		{
-			g_.OldDAC() = g_.DAC();
+			g_.PushDAC();
 		}
 		merge_path_names(g_.MapName(), filename, true);
 	}

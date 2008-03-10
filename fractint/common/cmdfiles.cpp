@@ -97,7 +97,7 @@ int     g_initial_cycle_limit;					// initial cycle limit
 bool g_use_center_mag;							// use center-mag corners   
 long    g_bail_out;								// user input bailout value 
 enum bailouts g_bail_out_test;					// test used for determining bailout 
-double  g_inversion[3];							// radius, xcenter, ycenter 
+double  g_inversion[NUM_INVERSION];				// radius, xcenter, ycenter 
 int g_rotate_lo;
 int g_rotate_hi;								// cycling color range      
 int	*g_ranges = 0;								// iter->color ranges mapping 
@@ -425,7 +425,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	}
 	for (i = 0; i < 3; i++)
 	{
-		g_potential_parameter[i]  = 0.0;					// initial potential values 
+		g_potential_parameter[i] = 0.0;					// initial potential values 
 		g_inversion[i] = 0.0;								// initial invert values 
 	}
 	g_initial_orbit_z.x = g_initial_orbit_z.y = 0.0;		// initial orbit values 
@@ -477,9 +477,9 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_overlay_3d = 0;										// 3D overlay is off        
 
 	g_old_demm_colors = false;
-	g_bail_out_test    = BAILOUT_MODULUS;
-	g_bail_out_fp  = bail_out_mod_fp;
-	g_bail_out_l   = bail_out_mod_l;
+	g_bail_out_test = BAILOUT_MODULUS;
+	g_bail_out_fp = bail_out_mod_fp;
+	g_bail_out_l = bail_out_mod_l;
 	g_bail_out_bn = bail_out_mod_bn;
 	g_bail_out_bf = bail_out_mod_bf;
 
@@ -1940,8 +1940,8 @@ static int center_mag_arg(const cmd_context &context)
 		}
 		g_use_center_mag = true;
 		saved = save_stack();
-		bXctr            = alloc_stack(g_bf_length + 2);
-		bYctr            = alloc_stack(g_bf_length + 2);
+		bXctr = alloc_stack(g_bf_length + 2);
+		bYctr = alloc_stack(g_bf_length + 2);
 		// Xctr = context.floatval[0]; 
 		get_bf(bXctr, context.floatvalstr[0]);
 		// Yctr = context.floatval[1]; 
@@ -2645,7 +2645,7 @@ static int monitor_width_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_auto_stereo_width  = context.floatval[0];
+	g_auto_stereo_width = context.floatval[0];
 	return COMMANDRESULT_3D_PARAMETER;
 }
 
@@ -3299,7 +3299,7 @@ static int parse_colors(char *value)
 		g_.SetColorState(COLORSTATE_UNKNOWN);
 	}
 	g_color_preloaded = true;
-	g_.OldDAC() = g_.DAC();
+	g_.PushDAC();
 	return 0;
 
 badcolor:

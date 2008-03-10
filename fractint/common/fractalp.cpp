@@ -55,11 +55,11 @@ static char s_parameter_imag[] = "Imaginary Part of Parameter";
 static char s_newton_degree[] = "+Polynomial Degree (>= 2)";
 
 // for MarksMandel/Julia 
-static char s_exponent[]   = "Real part of Exponent";
+static char s_exponent[] = "Real part of Exponent";
 static char s_exponent_imag[] = "Imag part of Exponent";
 
 // for Lorenz 
-static char s_time_step[]     = "Time Step";
+static char s_time_step[] = "Time Step";
 
 // for formula 
 static char s_p1_real[] = "Real portion of p1";

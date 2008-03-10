@@ -103,7 +103,7 @@ int Halley::orbit()
 	FPUcplxmul(&g_old_z, &XtoAlessOne, &XtoA);
 	FPUcplxmul(&g_old_z, &XtoA, &XtoAplusOne);
 
-	CMPLXsub(XtoAplusOne, g_old_z, FX);        // FX = X^(a + 1) - X  = F 
+	CMPLXsub(XtoAplusOne, g_old_z, FX);        // FX = X^(a + 1) - X = F 
 	F2prime.x = m_a_plus_1_degree*XtoAlessOne.x; // g_a_plus_1_degree in setup 
 	F2prime.y = m_a_plus_1_degree*XtoAlessOne.y;        // F" 
 

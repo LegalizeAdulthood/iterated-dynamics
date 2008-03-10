@@ -464,7 +464,7 @@ void plot_3d_cross_eyed_C(int x, int y, int color)
 
 void plot_setup()
 {
-	double d_red_bright  = 0;
+	double d_red_bright = 0;
 	double d_blue_bright = 0;
 
 	// set funny glasses plot function 
@@ -508,7 +508,7 @@ void plot_setup()
 
 	if (g_3d_state.glasses_type())
 	{
-		s_red_local_left  =   int((g_3d_state.red().crop_left()*double(g_x_dots))/100.0);
+		s_red_local_left =   int((g_3d_state.red().crop_left()*double(g_x_dots))/100.0);
 		s_red_local_right =   int(((100 - g_3d_state.red().crop_right())*double(g_x_dots))/100.0);
 		s_blue_local_left =   int((g_3d_state.blue().crop_left()*double(g_x_dots))/100.0);
 		s_blue_local_right =  int(((100 - g_3d_state.blue().crop_right())*double(g_x_dots))/100.0);

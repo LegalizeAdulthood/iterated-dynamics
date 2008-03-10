@@ -87,26 +87,12 @@ static int s_image_box_count;
 
 struct PARAMETER_HISTORY      // for saving evolution data of center image 
 {
-	double param0;
-	double param1;
-	double param2;
-	double param3;
-	double param4;
-	double param5;
-	double param6;
-	double param7;
-	double param8;
-	double param9;
+	double parameters[MAX_PARAMETERS];
 	int inside;
 	int outside;
-	int decomp0;
-	double invert0;
-	double invert1;
-	double invert2;
-	BYTE function_index0;
-	BYTE function_index1;
-	BYTE function_index2;
-	BYTE function_index3;
+	int decomposition0;
+	double inversion[NUM_INVERSION];
+	int function_index[NUM_FUNCTION_INDEX];
 	int bailoutest;
 };
 static PARAMETER_HISTORY s_old_history = { 0 };
@@ -154,52 +140,36 @@ GENEBASE g_genes[NUM_GENES] =
 
 void restore_parameter_history()
 {
-	g_parameters[0] = s_old_history.param0;
-	g_parameters[1] = s_old_history.param1;
-	g_parameters[2] = s_old_history.param2;
-	g_parameters[3] = s_old_history.param3;
-	g_parameters[4] = s_old_history.param4;
-	g_parameters[5] = s_old_history.param5;
-	g_parameters[6] = s_old_history.param6;
-	g_parameters[7] = s_old_history.param7;
-	g_parameters[8] = s_old_history.param8;
-	g_parameters[9] = s_old_history.param9;
+	std::copy(&s_old_history.parameters[0],
+		&s_old_history.parameters[MAX_PARAMETERS],
+		&g_parameters[0]);
 	g_inside = s_old_history.inside;
 	g_outside = s_old_history.outside;
-	g_decomposition[0] = s_old_history.decomp0;
-	g_inversion[0] = s_old_history.invert0;
-	g_inversion[1] = s_old_history.invert1;
-	g_inversion[2] = s_old_history.invert2;
+	g_decomposition[0] = s_old_history.decomposition0;
+	std::copy(&s_old_history.inversion[0],
+		&s_old_history.inversion[NUM_INVERSION],
+		&g_inversion[0]);
 	g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
-	g_function_index[0] = s_old_history.function_index0;
-	g_function_index[1] = s_old_history.function_index1;
-	g_function_index[2] = s_old_history.function_index2;
-	g_function_index[3] = s_old_history.function_index3;
+	std::copy(&s_old_history.function_index[0],
+		&s_old_history.function_index[NUM_FUNCTION_INDEX],
+		&g_function_index[0]);
 	g_bail_out_test = (bailouts) s_old_history.bailoutest;
 }
 
 void save_parameter_history()
 {
-	s_old_history.param0 = g_parameters[0];
-	s_old_history.param1 = g_parameters[1];
-	s_old_history.param2 = g_parameters[2];
-	s_old_history.param3 = g_parameters[3];
-	s_old_history.param4 = g_parameters[4];
-	s_old_history.param5 = g_parameters[5];
-	s_old_history.param6 = g_parameters[6];
-	s_old_history.param7 = g_parameters[7];
-	s_old_history.param8 = g_parameters[8];
-	s_old_history.param9 = g_parameters[9];
+	std::copy(&g_parameters[0],
+		&g_parameters[MAX_PARAMETERS],
+		&s_old_history.parameters[0]);
 	s_old_history.inside = g_inside;
 	s_old_history.outside = g_outside;
-	s_old_history.decomp0 = g_decomposition[0];
-	s_old_history.invert0 = g_inversion[0];
-	s_old_history.invert1 = g_inversion[1];
-	s_old_history.invert2 = g_inversion[2];
-	s_old_history.function_index0 = BYTE(g_function_index[0]);
-	s_old_history.function_index1 = BYTE(g_function_index[1]);
-	s_old_history.function_index2 = BYTE(g_function_index[2]);
-	s_old_history.function_index3 = BYTE(g_function_index[3]);
+	s_old_history.decomposition0 = g_decomposition[0];
+	std::copy(&g_inversion[0],
+		&g_inversion[NUM_INVERSION],
+		&s_old_history.inversion[0]);
+	std::copy(&g_function_index[0],
+		&g_function_index[NUM_FUNCTION_INDEX],
+		&s_old_history.function_index[0]);
 	s_old_history.bailoutest = g_bail_out_test;
 }
 

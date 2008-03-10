@@ -18,15 +18,15 @@
 // cellular type 
 enum
 {
-	BAD_T         = 1,
-	BAD_MEM       = 2,
-	STRING1       = 3,
-	STRING2       = 4,
-	TABLEK        = 5,
-	TYPEKR        = 6,
-	RULELENGTH    = 7,
-	INTERUPT      = 8,
-	CELLULAR_DONE = 10
+	BAD_T			= 1,
+	BAD_MEM			= 2,
+	STRING1			= 3,
+	STRING2			= 4,
+	TABLEK			= 5,
+	TYPEKR			= 6,
+	RULELENGTH		= 7,
+	INTERUPT		= 8,
+	CELLULAR_DONE	= 10
 };
 
 static S16 s_r;

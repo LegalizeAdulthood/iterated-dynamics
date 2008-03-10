@@ -10,7 +10,6 @@ extern ComplexL ComplexSqrtLong(long,  long);
 extern ComplexD ComplexSqrtFloat(double, double);
 extern bool Init_Queue(unsigned long request);
 extern void   Free_Queue();
-extern void   ClearQueue();
 extern int    QueueEmpty();
 extern int    QueueFull();
 extern int    QueueFullAlmost();

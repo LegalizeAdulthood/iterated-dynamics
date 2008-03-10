@@ -71,7 +71,6 @@ int FileNameGetter::Execute()
 {
 	// if getting an RDS image map 
 	// used to locate next file in list 
-	int j;
 	// Only the first 13 characters of file names are displayed... 
 	CHOICE storage[MAXNUMFILES];
 	CHOICE *choices[MAXNUMFILES];
@@ -115,7 +114,7 @@ retry_dir:
 	ensure_slash_on_directory(tmpmask);
 	if (!retried && strcmp(dir, SLASH) && strcmp(dir, DOTSLASH))
 	{
-		j = int(strlen(tmpmask)) - 1;
+		int j = int(strlen(tmpmask)) - 1;
 		tmpmask[j] = 0; // strip trailing \ 
 		if (strchr(tmpmask, '*') || strchr(tmpmask, '?')
 			|| fr_find_first(tmpmask) != 0
@@ -138,7 +137,6 @@ retry_dir:
 	}
 	int filecount = -1;
 	bool root_directory = true;
-	j = 0;
 	int masklen = int(strlen(tmpmask));
 	strcat(tmpmask, "*.*");
 	int out = fr_find_first(tmpmask);
@@ -167,6 +165,7 @@ retry_dir:
 		make_path(tmpmask, drive, dir, fname, ext);
 	}
 	char speedstr[81];
+	int j = 0;
 	do
 	{
 		if (num_templates > 1)

@@ -66,11 +66,11 @@ enum ShowDotType
 
 enum DotDirection
 {
-	JUST_A_POINT = 0,
-	LOWER_RIGHT  = 1,
-	UPPER_RIGHT  = 2,
-	LOWER_LEFT   = 3,
-	UPPER_LEFT   = 4
+	JUST_A_POINT	= 0,
+	LOWER_RIGHT		= 1,
+	UPPER_RIGHT		= 2,
+	LOWER_LEFT		= 3,
+	UPPER_LEFT		= 4
 };
 
 // variables exported from this file 
@@ -471,34 +471,34 @@ static int calculate_type_show_dot()
 			// preferred g_show_dot shape 
 			direction = UPPER_LEFT;
 			startx = g_col;
-			stopx  = g_col + width;
+			stopx = g_col + width;
 			starty = g_row + width;
-			stopy  = g_row + 1;
+			stopy = g_row + 1;
 		}
 		else if (g_col-width >= g_ix_start && g_row + width <= g_y_stop)
 		{
 			// second choice 
 			direction = UPPER_RIGHT;
 			startx = g_col-width;
-			stopx  = g_col;
+			stopx = g_col;
 			starty = g_row + width;
-			stopy  = g_row + 1;
+			stopy = g_row + 1;
 		}
 		else if (g_col-width >= g_ix_start && g_row-width >= g_iy_start)
 		{
 			direction = LOWER_RIGHT;
 			startx = g_col-width;
-			stopx  = g_col;
+			stopx = g_col;
 			starty = g_row-width;
-			stopy  = g_row-1;
+			stopy = g_row-1;
 		}
 		else if (g_col + width <= g_x_stop && g_row-width >= g_iy_start)
 		{
 			direction = LOWER_LEFT;
 			startx = g_col;
-			stopx  = g_col + width;
+			stopx = g_col + width;
 			starty = g_row-width;
-			stopy  = g_row-1;
+			stopy = g_row-1;
 		}
 	}
 	show_dot_save_restore(startx, stopx, starty, stopy, direction, SHOWDOT_SAVE);
@@ -559,10 +559,10 @@ int calculate_fractal()
 	{
 		g_distance_test = 0;
 	}
-	g_parameter.x   = g_parameters[0];
-	g_parameter.y   = g_parameters[1];
-	g_parameter2.x  = g_parameters[2];
-	g_parameter2.y  = g_parameters[3];
+	g_parameter.x = g_parameters[0];
+	g_parameter.y = g_parameters[1];
+	g_parameter2.x = g_parameters[2];
+	g_parameter2.y = g_parameters[3];
 
 	if (g_use_old_periodicity)
 	{
@@ -667,9 +667,9 @@ int calculate_fractal()
 
 	if (g_inversion[0] != 0.0)
 	{
-		g_f_radius    = g_inversion[0];
-		g_f_x_center   = g_inversion[1];
-		g_f_y_center   = g_inversion[2];
+		g_f_radius = g_inversion[0];
+		g_f_x_center = g_inversion[1];
+		g_f_y_center = g_inversion[2];
 
 		if (g_inversion[0] == AUTO_INVERT)  // auto calc radius 1/6 screen 
 		{
@@ -1329,7 +1329,7 @@ int calculate_mandelbrot_fp()
 	return g_color;
 }
 
-float const STARTRAILMAX  = FLT_MAX;   // just a convenient large number 
+float const STARTRAILMAX = FLT_MAX;   // just a convenient large number 
 enum
 {
 	green = 2,
@@ -2457,19 +2457,19 @@ plot_pixel:
 // standardfractal doodad subroutines
 static void decomposition()
 	{
-	static double cos45     = 0.70710678118654750;	// cos 45     degrees 
-	static double sin45     = 0.70710678118654750;	// sin 45     degrees 
-	static double cos22_5   = 0.92387953251128670;	// cos 22.5   degrees 
-	static double sin22_5   = 0.38268343236508980;	// sin 22.5   degrees 
-	static double cos11_25  = 0.98078528040323040;	// cos 11.25  degrees 
-	static double sin11_25  = 0.19509032201612820;	// sin 11.25  degrees 
-	static double cos5_625  = 0.99518472667219690;	// cos 5.625  degrees 
-	static double sin5_625  = 0.09801714032956060;	// sin 5.625  degrees 
-	static double tan22_5   = 0.41421356237309500;	// tan 22.5   degrees 
-	static double tan11_25  = 0.19891236737965800;	// tan 11.25  degrees 
-	static double tan5_625  = 0.09849140335716425;	// tan 5.625  degrees 
-	static double tan2_8125 = 0.04912684976946725;	// tan 2.8125 degrees 
-	static double tan1_4063 = 0.02454862210892544;	// tan 1.4063 degrees 
+	static double cos45		= 0.70710678118654750;	// cos 45     degrees 
+	static double sin45		= 0.70710678118654750;	// sin 45     degrees 
+	static double cos22_5	= 0.92387953251128670;	// cos 22.5   degrees 
+	static double sin22_5	= 0.38268343236508980;	// sin 22.5   degrees 
+	static double cos11_25	= 0.98078528040323040;	// cos 11.25  degrees 
+	static double sin11_25	= 0.19509032201612820;	// sin 11.25  degrees 
+	static double cos5_625	= 0.99518472667219690;	// cos 5.625  degrees 
+	static double sin5_625	= 0.09801714032956060;	// sin 5.625  degrees 
+	static double tan22_5	= 0.41421356237309500;	// tan 22.5   degrees 
+	static double tan11_25	= 0.19891236737965800;	// tan 11.25  degrees 
+	static double tan5_625	= 0.09849140335716425;	// tan 5.625  degrees 
+	static double tan2_8125	= 0.04912684976946725;	// tan 2.8125 degrees 
+	static double tan1_4063	= 0.02454862210892544;	// tan 1.4063 degrees 
 	static long lcos45;								// cos 45     degrees 
 	static long lsin45;								// sin 45     degrees 
 	static long lcos22_5;							// cos 22.5   degrees 
@@ -2495,19 +2495,19 @@ static void decomposition()
 		if (reset_fudge != g_fudge)
 		{
 			reset_fudge = g_fudge;
-			// lcos45     = long(cos45*g_fudge); 
-			lsin45     = long(sin45*g_fudge);
-			lcos22_5   = long(cos22_5*g_fudge);
-			lsin22_5   = long(sin22_5*g_fudge);
-			lcos11_25  = long(cos11_25*g_fudge);
-			lsin11_25  = long(sin11_25*g_fudge);
-			lcos5_625  = long(cos5_625*g_fudge);
-			lsin5_625  = long(sin5_625*g_fudge);
-			ltan22_5   = long(tan22_5*g_fudge);
-			ltan11_25  = long(tan11_25*g_fudge);
-			ltan5_625  = long(tan5_625*g_fudge);
-			ltan2_8125 = long(tan2_8125*g_fudge);
-			ltan1_4063 = long(tan1_4063*g_fudge);
+			// lcos45	= long(cos45*g_fudge); 
+			lsin45		= long(sin45*g_fudge);
+			lcos22_5	= long(cos22_5*g_fudge);
+			lsin22_5	= long(sin22_5*g_fudge);
+			lcos11_25	= long(cos11_25*g_fudge);
+			lsin11_25	= long(sin11_25*g_fudge);
+			lcos5_625	= long(cos5_625*g_fudge);
+			lsin5_625	= long(sin5_625*g_fudge);
+			ltan22_5	= long(tan22_5*g_fudge);
+			ltan11_25	= long(tan11_25*g_fudge);
+			ltan5_625	= long(tan5_625*g_fudge);
+			ltan2_8125	= long(tan2_8125*g_fudge);
+			ltan1_4063	= long(tan1_4063*g_fudge);
 		}
 		if (g_new_z_l.y < 0)
 		{
@@ -3043,7 +3043,7 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 	if (g_bf_math)
 	{
 		saved = save_stack();
-		bft1    = alloc_stack(g_rbf_length + 2);
+		bft1 = alloc_stack(g_rbf_length + 2);
 		xaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.y_min()) != sign_bf(g_escape_time_state.m_grid_bf.y_max()));
 		yaxis_on_screen = (sign_bf(g_escape_time_state.m_grid_bf.x_min()) != sign_bf(g_escape_time_state.m_grid_bf.x_max()));
 	}
@@ -3799,7 +3799,7 @@ void PerformWorkList::show_dot_start()
 		s_show_dot_width = -1;
 	}
 	g_calculate_type_temp = g_calculate_type;
-	g_calculate_type    = calculate_type_show_dot;
+	g_calculate_type = calculate_type_show_dot;
 }
 
 void PerformWorkList::show_dot_finish()

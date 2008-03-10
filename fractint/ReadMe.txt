@@ -128,7 +128,7 @@ should already be installed, but if it isn't and your distribution doesn't
 have it, then you need the XFree86-devel package.
 
 The Makefile is set up for my convenience, so if you want to put files in
-different directories, you will need to change the SRCDIR setting.  
+different directories, you will need to change the SOURCE_DIR setting.  
 Otherwise, just run make from the source directory and it should compile.  
 Run ./xfractint to start it up.
 

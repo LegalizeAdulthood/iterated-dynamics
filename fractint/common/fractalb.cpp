@@ -822,7 +822,7 @@ ComplexBigFloat *ComplexPower_bf(ComplexBigFloat *t, ComplexBigFloat *xx, Comple
 	ComplexBigFloat tmp;
 	bf_t e2x, siny, cosy;
 	int saved = save_stack();
-	e2x  = alloc_stack(g_rbf_length + 2);
+	e2x = alloc_stack(g_rbf_length + 2);
 	siny = alloc_stack(g_rbf_length + 2);
 	cosy = alloc_stack(g_rbf_length + 2);
 	tmp.x = alloc_stack(g_rbf_length + 2);
@@ -879,7 +879,7 @@ ComplexBigNum *complex_power_bn(ComplexBigNum *t, ComplexBigNum *xx, ComplexBigN
 	ComplexBigNum tmp;
 	bn_t e2x, siny, cosy;
 	int saved = save_stack();
-	e2x  = alloc_stack(g_bn_length);
+	e2x = alloc_stack(g_bn_length);
 	siny = alloc_stack(g_bn_length);
 	cosy = alloc_stack(g_bn_length);
 	tmp.x = alloc_stack(g_r_length);

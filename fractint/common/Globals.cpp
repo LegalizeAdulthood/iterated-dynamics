@@ -41,6 +41,8 @@ public:
 	const ColormapTable &DAC() const	{ return _dac; }
 	ColormapTable &OldDAC()				{ return _oldDAC; }
 	const ColormapTable &OldDAC() const { return _oldDAC; }
+	void PushDAC()						{ _oldDAC = _dac; }
+	void PopDAC()						{ _dac = _oldDAC; }
 	ColormapTable *MapDAC()				{ return _mapDAC; }
 	const ColormapTable *MapDAC() const { return _mapDAC; }
 	void SetMapDAC(ColormapTable *value) { _mapDAC = value; }
@@ -173,3 +175,5 @@ std::string &Globals::MapName()								{ return _impl->MapName(); }
 void Globals::SetMapName(const std::string &value)			{ _impl->SetMapName(value); }
 int Globals::NumColors() const								{ return _impl->NumColors(); }
 void Globals::SetNumColors(int value)						{ _impl->SetNumColors(value); }
+void Globals::PushDAC()										{ _impl->PushDAC(); }
+void Globals::PopDAC()										{ _impl->PopDAC(); }

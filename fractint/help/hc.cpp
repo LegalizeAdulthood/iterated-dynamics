@@ -141,7 +141,7 @@ struct LINK
 	unsigned topic_off;       // offset into topic to link to 
 	int      doc_page;        // document page # to link to 
 	char    *name;            // name of label or title of topic to link to 
-	char    *srcfile;         // .SRC file link appears in 
+	char const *srcfile;         // .SRC file link appears in 
 	int      srcline;         // .SRC file line # link appears in 
 };
 
@@ -204,7 +204,7 @@ struct CONTENT
 	char      is_label[MAX_CONTENT_TOPIC];
 	char     *topic_name[MAX_CONTENT_TOPIC];
 	int       topic_num[MAX_CONTENT_TOPIC];
-	char     *srcfile;
+	char const *srcfile;
 	int       srcline;
 };
 
@@ -250,7 +250,7 @@ int warnings = 0;    // number of warnings reported
 char     src_fname[81]    = "";   // command-line .SRC filename 
 char     hdr_fname[81]    = "";   // .H filename 
 char     hlp_fname[81]    = "";   // .HLP filename 
-char    *src_cfname       = NULL; // current .SRC filename 
+char const *src_cfname       = NULL; // current .SRC filename 
 
 int      format_exclude   = 0;    // disable formatting at this col, 0 to 
                                   // never disable formatting 
@@ -261,8 +261,8 @@ char    *buffer;                  // alloc'ed as BUFFER_SIZE bytes
 char    *curr;                    // current position in the buffer 
 char     cmd[128];                // holds the current command 
 int      compress_spaces;
-int      xonline;
-int      xdoc;
+bool xonline = false;
+bool xdoc = false;
 
 enum
 {
@@ -271,7 +271,7 @@ enum
 
 struct includes
 {
-	char *fname;
+	char const *fname;
 	FILE *file;
 	int   line;
 	int   col;
@@ -1677,41 +1677,97 @@ void check_command_length(int eoff, int len)
 	}
 }
 
-
-void read_src(char *fname)
+class ReadSource
 {
-	int    ch;
-	char  *ptr;
-	TOPIC  t;
-	LABEL  lbl;
-	char  *margin_pos = NULL;
-	int in_topic = 0;
-	int formatting = 1;
-	int state = S_Start;
-	int num_spaces = 0;
-	int margin = 0;
-	int in_para = 0;
-	int centering = 0;
-	int lformat_exclude = format_exclude;
-	xonline = 0;
-	xdoc = 0;
-
-	src_cfname = fname;
-
-	if ((srcfile = fopen(fname, "rt")) == NULL)
+public:
+	ReadSource(char const *filename_) : _filename(filename_),
+		_formatExclude(format_exclude),
+		_topic(),
+		_label(),
+		_inTopic(false),
+		_inParagraph(false),
+		_formatting(true),
+		_state(S_Start),
+		_ptr(0),
+		_marginPosition(0),
+		_numSpaces(0),
+		_margin(0),
+		_centering(false)
 	{
-		fatal(0, "Unable to open \"%s\"", fname);
+	}
+	void Execute();
+
+private:
+	void Preamble();
+	void TopicCommand();
+	void DataCommand();
+	int ProcessCommand();
+	void ProcessNormally(int ch);
+	void ProcessFormatting(int ch);
+	void ProcessCentering(int ch);
+	void CommandsOnlyInTopic(int imbedded, bool done);
+	void BinIncCommand();
+	void CompressSpacesCommand();
+	void CenterCommand();
+	void DocCommand();
+	void OnlineCommand();
+	void FormatCommand();
+	void FormatExcludeCommandInTopic();
+	void TableCommand(int imbedded, bool &done);
+	void LabelCommand();
+	void OnlineFFCommand();
+	void DocFFCommand();
+	void FFCommand();
+	bool CommandsAnytime(int imbedded, bool done);
+	void CommandsBeforeAllTopics();
+	void VersionCommand();
+	void HelpFileCommand();
+	void HeaderFileCommand();
+	void IncludeCommand();
+	void FormatExcludeCommand();
+	void DocContentsCommand(int imbedded, bool &done);
+
+	char const *_filename;
+	int _formatExclude;
+	TOPIC _topic;
+	LABEL _label;
+	bool _inTopic;
+	bool _inParagraph;
+	bool _formatting;
+	STATES _state;
+	char  *_ptr;
+	char *_marginPosition;
+	int _numSpaces;
+	int _margin;
+	bool _centering;
+	int _eoff;
+};
+
+void ReadSource::Preamble()
+{
+	xonline = false;
+	xdoc = false;
+
+	src_cfname = _filename;
+
+	if ((srcfile = fopen(_filename, "rt")) == NULL)
+	{
+		fatal(0, "Unable to open \"%s\"", _filename);
 	}
 
-	msg("Compiling: %s", fname);
+	msg("Compiling: %s", _filename);
 
-	in_topic = 0;
+	_inTopic = false;
 
 	curr = buffer;
+}
 
+void ReadSource::Execute()
+{
+	Preamble();
 	while (1)
 	{
-		ch = read_char();
+		int ch = read_char();
 
 		if (ch == -1)   // EOF? 
 		{
@@ -1727,9 +1783,9 @@ void read_src(char *fname)
 			}
 			else
 			{
-				if (in_topic)  // if we're in a topic, finish it 
+				if (_inTopic)  // if we're in a topic, finish it 
 				{
-					end_topic(&t);
+					end_topic(&_topic);
 				}
 				if (num_topic == 0)
 				{
@@ -1741,990 +1797,34 @@ void read_src(char *fname)
 
 		if (ch == '~')   // is is a command? 
 		{
-			int imbedded;
-			int eoff;
-			ch = read_char();
-			if (ch == '(')
-			{
-				imbedded = 1;
-				eoff = 0;
-			}
-			else
-			{
-				imbedded = 0;
-				eoff = 0;
-				unread_char(ch);
-			}
-
-			bool done = false;
-
-			while (!done)
-			{
-				do
-				{
-					ch = read_char();
-				}
-				while (ch == ' ');
-				unread_char(ch);
-
-				if (imbedded)
-				{
-					ptr = read_until(cmd, 128, ")\n,");
-				}
-				else
-				{
-					ptr = read_until(cmd, 128, "\n,");
-				}
-
-				done = true;
-
-				if (*ptr == '\0')
-				{
-					error(0, "Unexpected EOF in command.");
-					break;
-				}
-
-				if (*ptr == '\n')
-				{
-					++eoff;
-				}
-
-				if (imbedded && *ptr == '\n')
-				{
-					error(eoff, "Imbedded command has no closing parend (\')\')");
-				}
-
-				done = (*ptr != ',');   // we done if it's not a comma 
-
-				if (*ptr != '\n' && *ptr != ')' && *ptr != ',')
-				{
-					error(0, "Command line too long.");
-					break;
-				}
-
-				*ptr = '\0';
-
-
-				// commands allowed anytime... 
-
-				if (strnicmp(cmd, "Topic=", 6) == 0)
-				{
-					if (in_topic)  // if we're in a topic, finish it 
-					{
-						end_topic(&t);
-					}
-					else
-					{
-						in_topic = 1;
-					}
-
-					if (cmd[6] == '\0')
-					{
-						warn(eoff, "Topic has no title.");
-					}
-					else if ((int)strlen(cmd+6) > 70)
-					{
-						error(eoff, "Topic title is too long.");
-					}
-					else if ((int)strlen(cmd+6) > 60)
-					{
-						warn(eoff, "Topic title is long.");
-					}
-					if (find_topic_title(cmd+6) != -1)
-					{
-						error(eoff, "Topic title already exists.");
-					}
-
-					start_topic(&t, cmd+6, (unsigned)(ptr-(cmd+6)));
-					formatting = 1;
-					centering = 0;
-					state = S_Start;
-					in_para = 0;
-					num_spaces = 0;
-					xonline = 0;
-					xdoc = 0;
-					lformat_exclude = format_exclude;
-					compress_spaces = 1;
-					continue;
-				}
-				else if (strnicmp(cmd, "Data=", 5) == 0)
-				{
-					if (in_topic)  // if we're in a topic, finish it 
-					{
-						end_topic(&t);
-					}
-					else
-					{
-						in_topic = 1;
-					}
-
-					if (cmd[5] == '\0')
-					{
-						warn(eoff, "Data topic has no label.");
-					}
-
-					if (!validate_label_name(cmd+5))
-					{
-						error(eoff, "Label \"%s\" contains illegal characters.", cmd+5);
-						continue;
-					}
-
-					if (find_label(cmd+5) != NULL)
-					{
-						error(eoff, "Label \"%s\" already exists", cmd+5);
-						continue;
-					}
-
-					if (cmd[5] == '@')
-					{
-						warn(eoff, "Data topic has a local label.");
-					}
-
-					start_topic(&t, "", 0);
-					t.flags |= TF_DATA;
-
-					lbl.name      = dupstr(cmd+5, 0);
-					lbl.topic_num = num_topic;
-					lbl.topic_off = 0;
-					lbl.doc_page  = -1;
-					add_label(&lbl);
-
-					formatting = 0;
-					centering = 0;
-					state = S_Start;
-					in_para = 0;
-					num_spaces = 0;
-					xonline = 0;
-					xdoc = 0;
-					lformat_exclude = format_exclude;
-					compress_spaces = 0;
-					continue;
-				}
-				else if (strnicmp(cmd, "DocContents", 11) == 0)
-				{
-					check_command_length(eoff, 11);
-					if (in_topic)  // if we're in a topic, finish it 
-					{
-						end_topic(&t);
-					}
-					if (!done)
-					{
-						if (imbedded)
-						{
-							unread_char('(');
-						}
-						unread_char('~');
-						done = true;
-					}
-					compress_spaces = 1;
-					process_contents();
-					in_topic = 0;
-					continue;
-				}
-				else if (stricmp(cmd, "Comment") == 0)
-				{
-					process_comment();
-					continue;
-				}
-				else if (strnicmp(cmd, "FormatExclude", 13) == 0)
-				{
-					if (cmd[13] == '-')
-					{
-						check_command_length(eoff, 14);
-						if (in_topic)
-						{
-							if (lformat_exclude > 0)
-							{
-								lformat_exclude = -lformat_exclude;
-							}
-							else
-							{
-								warn(eoff, "\"FormatExclude-\" is already in effect.");
-							}
-						}
-						else
-						{
-							if (format_exclude > 0)
-							{
-								format_exclude = -format_exclude;
-							}
-							else
-							{
-								warn(eoff, "\"FormatExclude-\" is already in effect.");
-							}
-						}
-					}
-					else if (cmd[13] == '+')
-					{
-						check_command_length(eoff,14);
-						if (in_topic)
-						{
-							if (lformat_exclude < 0)
-							{
-								lformat_exclude = -lformat_exclude;
-							}
-							else
-							{
-								warn(eoff, "\"FormatExclude+\" is already in effect.");
-							}
-						}
-						else
-						{
-							if (format_exclude < 0)
-							{
-								format_exclude = -format_exclude;
-							}
-							else
-							{
-								warn(eoff, "\"FormatExclude+\" is already in effect.");
-							}
-						}
-					}
-					else if (cmd[13] == '=')
-					{
-						if (cmd[14] == 'n' || cmd[14] == 'N')
-						{
-							check_command_length(eoff,15);
-							if (in_topic)
-							{
-								lformat_exclude = 0;
-							}
-							else
-							{
-								format_exclude = 0;
-							}
-						}
-						else if (cmd[14] == '\0')
-						{
-							lformat_exclude = format_exclude;
-						}
-						else
-						{
-							int n = (((in_topic) ? lformat_exclude : format_exclude) < 0) ? -1 : 1;
-
-							lformat_exclude = atoi(cmd+14);
-
-							if (lformat_exclude <= 0)
-							{
-								error(eoff, "Invalid argument to FormatExclude=");
-								lformat_exclude = 0;
-							}
-
-							lformat_exclude *= n;
-
-							if (!in_topic)
-							{
-								format_exclude = lformat_exclude;
-							}
-						}
-					}
-					else
-					{
-						error(eoff, "Invalid format for FormatExclude");
-					}
-					continue;
-				}
-				else if (strnicmp(cmd, "Include ", 8) == 0)
-				{
-					if (include_stack_top >= MAX_INCLUDE_STACK-1)
-					{
-						error(eoff, "Too many nested Includes.");
-					}
-					else
-					{
-						++include_stack_top;
-						include_stack[include_stack_top].fname = src_cfname;
-						include_stack[include_stack_top].file = srcfile;
-						include_stack[include_stack_top].line = srcline;
-						include_stack[include_stack_top].col  = srccol;
-						strupr(cmd+8);
-						if ((srcfile = fopen(cmd+8, "rt")) == NULL)
-						{
-							error(eoff, "Unable to open \"%s\"", cmd+8);
-							srcfile = include_stack[include_stack_top--].file;
-						}
-						src_cfname = dupstr(cmd+8, 0);  // never deallocate! 
-						srcline = 1;
-						srccol = 0;
-					}
-
-					continue;
-				}
-
-
-				// commands allowed only before all topics... 
-
-				if (!in_topic)
-				{
-					if (strnicmp(cmd, "HdrFile=", 8) == 0)
-					{
-						if (hdr_fname[0] != '\0')
-						{
-							warn(eoff, "Header Filename has already been defined.");
-						}
-						strcpy(hdr_fname, cmd+8);
-						strupr(hdr_fname);
-					}
-					else if (strnicmp(cmd, "HlpFile=", 8) == 0)
-					{
-						if (hlp_fname[0] != '\0')
-						{
-							warn(eoff, "Help Filename has already been defined.");
-						}
-						strcpy(hlp_fname, cmd+8);
-						strupr(hlp_fname);
-					}
-					else if (strnicmp(cmd, "Version=", 8) == 0)
-					{
-						if (version != -1)   // an unlikely value 
-						{
-							warn(eoff, "Help version has already been defined");
-						}
-						version = atoi(cmd+8);
-					}
-					else
-					{
-						error(eoff, "Bad or unexpected command \"%s\"", cmd);
-					}
-					continue;
-				}
-				// commands allowed only in a topic... 
-				else
-				{
-					if (strnicmp(cmd, "FF", 2) == 0)
-					{
-						check_command_length(eoff, 2);
-						if (in_para)
-						{
-							*curr++ = '\n';  // finish off current paragraph 
-						}
-						*curr++ = CMD_FF;
-						state = S_Start;
-						in_para = 0;
-						num_spaces = 0;
-					}
-					else if (strnicmp(cmd, "DocFF", 5) == 0)
-					{
-						check_command_length(eoff, 5);
-						if (in_para)
-						{
-							*curr++ = '\n';  // finish off current paragraph 
-						}
-						if (!xonline)
-						{
-							*curr++ = CMD_XONLINE;
-						}
-						*curr++ = CMD_FF;
-						if (!xonline)
-						{
-							*curr++ = CMD_XONLINE;
-						}
-						state = S_Start;
-						in_para = 0;
-						num_spaces = 0;
-					}
-					else if (strnicmp(cmd, "OnlineFF", 8) == 0)
-					{
-						check_command_length(eoff, 8);
-						if (in_para)
-						{
-							*curr++ = '\n';  // finish off current paragraph 
-						}
-						if (!xdoc)
-						{
-							*curr++ = CMD_XDOC;
-						}
-						*curr++ = CMD_FF;
-						if (!xdoc)
-						{
-							*curr++ = CMD_XDOC;
-						}
-						state = S_Start;
-						in_para = 0;
-						num_spaces = 0;
-					}
-					else if (strnicmp(cmd, "Label=", 6) == 0)
-					{
-						if ((int)strlen(cmd+6) <= 0)
-						{
-							error(eoff, "Label has no name.");
-						}
-						else if (!validate_label_name(cmd+6))
-						{
-							error(eoff, "Label \"%s\" contains illegal characters.", cmd+6);
-						}
-						else if (find_label(cmd+6) != NULL)
-						{
-							error(eoff, "Label \"%s\" already exists", cmd+6);
-						}
-						else
-						{
-							if ((t.flags & TF_DATA) && cmd[6] == '@')
-							{
-								warn(eoff, "Data topic has a local label.");
-							}
-
-							lbl.name      = dupstr(cmd+6, 0);
-							lbl.topic_num = num_topic;
-							lbl.topic_off = (unsigned)(curr - buffer);
-							lbl.doc_page  = -1;
-							add_label(&lbl);
-						}
-					}
-					else if (strnicmp(cmd, "Table=", 6) == 0)
-					{
-						if (in_para)
-						{
-							*curr++ = '\n';  // finish off current paragraph 
-							in_para = 0;
-							num_spaces = 0;
-							state = S_Start;
-						}
-						if (!done)
-						{
-							if (imbedded)
-							{
-								unread_char('(');
-							}
-							unread_char('~');
-							done = true;
-						}
-						create_table();
-					}
-					else if (strnicmp(cmd, "FormatExclude", 12) == 0)
-					{
-						if (cmd[13] == '-')
-						{
-							check_command_length(eoff,14);
-							if (lformat_exclude > 0)
-							{
-								lformat_exclude = -lformat_exclude;
-							}
-							else
-							{
-								warn(0, "\"FormatExclude-\" is already in effect.");
-							}
-						}
-						else if (cmd[13] == '+')
-						{
-							check_command_length(eoff,14);
-							if (lformat_exclude < 0)
-							{
-								lformat_exclude = -lformat_exclude;
-							}
-							else
-							{
-								warn(0, "\"FormatExclude+\" is already in effect.");
-							}
-						}
-						else
-						{
-							error(eoff, "Unexpected or invalid argument to FormatExclude.");
-						}
-					}
-					else if (strnicmp(cmd, "Format", 6) == 0)
-					{
-						if (cmd[6] == '+')
-						{
-							check_command_length(eoff, 7);
-							if (!formatting)
-							{
-								formatting = 1;
-								in_para = 0;
-								num_spaces = 0;
-								state = S_Start;
-							}
-							else
-							{
-								warn(eoff, "\"Format+\" is already in effect.");
-							}
-						}
-						else if (cmd[6] == '-')
-						{
-							check_command_length(eoff, 7);
-							if (formatting)
-							{
-								if (in_para)
-								{
-									*curr++ = '\n';  // finish off current paragraph 
-								}
-								state = S_Start;
-								in_para = 0;
-								formatting = 0;
-								num_spaces = 0;
-								state = S_Start;
-							}
-							else
-							{
-								warn(eoff, "\"Format-\" is already in effect.");
-							}
-						}
-						else
-						{
-							error(eoff, "Invalid argument to Format.");
-						}
-					}
-					else if (strnicmp(cmd, "Online", 6) == 0)
-					{
-						if (cmd[6] == '+')
-						{
-							check_command_length(eoff, 7);
-
-							if (xonline)
-							{
-								*curr++ = CMD_XONLINE;
-								xonline = 0;
-							}
-							else
-							{
-								warn(eoff, "\"Online+\" already in effect.");
-							}
-						}
-						else if (cmd[6] == '-')
-						{
-							check_command_length(eoff, 7);
-							if (!xonline)
-							{
-								*curr++ = CMD_XONLINE;
-								xonline = 1;
-							}
-							else
-							{
-								warn(eoff, "\"Online-\" already in effect.");
-							}
-						}
-						else
-						{
-							error(eoff, "Invalid argument to Online.");
-						}
-					}
-					else if (strnicmp(cmd, "Doc", 3) == 0)
-					{
-						if (cmd[3] == '+')
-						{
-							check_command_length(eoff, 4);
-							if (xdoc)
-							{
-								*curr++ = CMD_XDOC;
-								xdoc = 0;
-							}
-							else
-							{
-								warn(eoff, "\"Doc+\" already in effect.");
-							}
-						}
-						else if (cmd[3] == '-')
-						{
-							check_command_length(eoff, 4);
-							if (!xdoc)
-							{
-								*curr++ = CMD_XDOC;
-								xdoc = 1;
-							}
-							else
-							{
-								warn(eoff, "\"Doc-\" already in effect.");
-							}
-						}
-						else
-						{
-							error(eoff, "Invalid argument to Doc.");
-						}
-					}
-					else if (strnicmp(cmd, "Center", 6) == 0)
-					{
-						if (cmd[6] == '+')
-						{
-							check_command_length(eoff, 7);
-							if (!centering)
-							{
-								centering = 1;
-								if (in_para)
-								{
-									*curr++ = '\n';
-									in_para = 0;
-								}
-								state = S_Start;  // for centering FSM 
-							}
-							else
-							{
-								warn(eoff, "\"Center+\" already in effect.");
-							}
-						}
-						else if (cmd[6] == '-')
-						{
-							check_command_length(eoff, 7);
-							if (centering)
-							{
-								centering = 0;
-								state = S_Start;  // for centering FSM 
-							}
-							else
-							{
-								warn(eoff, "\"Center-\" already in effect.");
-							}
-						}
-						else
-						{
-							error(eoff, "Invalid argument to Center.");
-						}
-					}
-					else if (strnicmp(cmd, "CompressSpaces", 14) == 0)
-					{
-						check_command_length(eoff,15);
-
-						if (cmd[14] == '+')
-						{
-							if (compress_spaces)
-							{
-								warn(eoff, "\"CompressSpaces+\" is already in effect.");
-							}
-							else
-							{
-								compress_spaces = 1;
-							}
-						}
-						else if (cmd[14] == '-')
-						{
-							if (!compress_spaces)
-							{
-								warn(eoff, "\"CompressSpaces-\" is already in effect.");
-							}
-							else
-							{
-								compress_spaces = 0;
-							}
-						}
-						else
-						{
-							error(eoff, "Invalid argument to CompressSpaces.");
-						}
-					}
-					else if (strnicmp("BinInc ", cmd, 7) == 0)
-					{
-						if (!(t.flags & TF_DATA))
-						{
-							error(eoff, "BinInc allowed only in Data topics.");
-						}
-						else
-						{
-							process_bininc();
-						}
-					}
-					else
-					{
-						error(eoff, "Bad or unexpected command \"%s\".", cmd);
-					}
-				} // else 
-			} // while (!done) 
+			ch = ProcessCommand();
 			continue;
 		}
 
-		if (!in_topic)
+		if (!_inTopic)
 		{
 			cmd[0] = ch;
-			ptr = read_until(cmd+1, 127, "\n~");
-			if (*ptr == '~')
+			_ptr = read_until(cmd+1, 127, "\n~");
+			if (*_ptr == '~')
 			{
 				unread_char('~');
 			}
-			*ptr = '\0';
+			*_ptr = '\0';
 			error(0, "Text outside of any topic \"%s\".", cmd);
 			continue;
 		}
 
-		if (centering)
+		if (_centering)
 		{
-			bool again;
-			do
-			{
-				again = false;   // default 
-
-				switch (state)
-				{
-				case S_Start:
-					if (ch == ' ')
-					{
-						; // do nothing 
-					}
-					else if ((ch & 0xFF) == '\n')
-					{
-						*curr++ = ch;  // no need to center blank lines. 
-					}
-					else
-					{
-						*curr++ = CMD_CENTER;
-						state = S_Line;
-						again = true;
-					}
-					break;
-
-				case S_Line:
-					put_a_char(ch, &t);
-					if ((ch & 0xFF) == '\n')
-					{
-						state = S_Start;
-					}
-					break;
-				} // switch 
-			}
-			while (again);
+			ProcessCentering(ch);
 		}
-		else if (formatting)
+		else if (_formatting)
 		{
-			bool again;
-
-			do
-			{
-				again = false;   // default 
-
-				switch (state)
-				{
-				case S_Start:
-					if ((ch & 0xFF) == '\n')
-					{
-						*curr++ = ch;
-					}
-					else
-					{
-						state = S_StartFirstLine;
-						num_spaces = 0;
-						again = true;
-					}
-					break;
-
-				case S_StartFirstLine:
-					if (ch == ' ')
-					{
-						++num_spaces;
-					}
-					else
-					{
-						if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
-						{
-							put_spaces(num_spaces);
-							num_spaces = 0;
-							state = S_FormatDisabled;
-							again = true;
-						}
-						else
-						{
-							*curr++ = CMD_PARA;
-							*curr++ = (char)num_spaces;
-							*curr++ = (char)num_spaces;
-							margin_pos = curr - 1;
-							state = S_FirstLine;
-							again = true;
-							in_para = 1;
-						}
-					}
-					break;
-
-				case S_FirstLine:
-					if (ch == '\n')
-					{
-						state = S_StartSecondLine;
-						num_spaces = 0;
-					}
-					else if (ch == ('\n'|0x100))   // force end of para ? 
-					{
-						*curr++ = '\n';
-						in_para = 0;
-						state = S_Start;
-					}
-					else if (ch == ' ')
-					{
-						state = S_FirstLineSpaces;
-						num_spaces = 1;
-					}
-					else
-					{
-						put_a_char(ch, &t);
-					}
-					break;
-
-				case S_FirstLineSpaces:
-					if (ch == ' ')
-					{
-						++num_spaces;
-					}
-					else
-					{
-						put_spaces(num_spaces);
-						state = S_FirstLine;
-						again = true;
-					}
-					break;
-
-				case S_StartSecondLine:
-					if (ch == ' ')
-					{
-						++num_spaces;
-					}
-					else if ((ch & 0xFF) == '\n') // a blank line means end of a para 
-					{
-						*curr++ = '\n';   // end the para 
-						*curr++ = '\n';   // for the blank line 
-						in_para = 0;
-						state = S_Start;
-					}
-					else
-					{
-						if (lformat_exclude > 0 && num_spaces >= lformat_exclude)
-						{
-							*curr++ = '\n';
-							in_para = 0;
-							put_spaces(num_spaces);
-							num_spaces = 0;
-							state = S_FormatDisabled;
-							again = true;
-						}
-						else
-						{
-							add_blank_for_split();
-							margin = num_spaces;
-							*margin_pos = (char)num_spaces;
-							state = S_Line;
-							again = true;
-						}
-					}
-					break;
-
-				case S_Line:   // all lines after the first 
-					if (ch == '\n')
-					{
-						state = S_StartLine;
-						num_spaces = 0;
-					}
-					else if (ch == ('\n' | 0x100))   // force end of para ? 
-					{
-						*curr++ = '\n';
-						in_para = 0;
-						state = S_Start;
-					}
-					else if (ch == ' ')
-					{
-						state = S_LineSpaces;
-						num_spaces = 1;
-					}
-					else
-					{
-						put_a_char(ch, &t);
-					}
-					break;
-
-				case S_LineSpaces:
-					if (ch == ' ')
-					{
-						++num_spaces;
-					}
-					else
-					{
-						put_spaces(num_spaces);
-						state = S_Line;
-						again = true;
-					}
-					break;
-
-				case S_StartLine:   // for all lines after the second 
-					if (ch == ' ')
-					{
-						++num_spaces;
-					}
-					else if ((ch & 0xFF) == '\n') // a blank line means end of a para 
-					{
-						*curr++ = '\n';   // end the para 
-						*curr++ = '\n';   // for the blank line 
-						in_para = 0;
-						state = S_Start;
-					}
-					else
-					{
-						if (num_spaces != margin)
-						{
-							*curr++ = '\n';
-							in_para = 0;
-							state = S_StartFirstLine;  // with current num_spaces 
-						}
-						else
-						{
-							add_blank_for_split();
-							state = S_Line;
-						}
-						again = true;
-					}
-					break;
-
-				case S_FormatDisabled:
-					if (ch == ' ')
-					{
-						state = S_FormatDisabledSpaces;
-						num_spaces = 1;
-					}
-					else
-					{
-						if ((ch & 0xFF) == '\n')
-						{
-							state = S_Start;
-						}
-						put_a_char(ch, &t);
-					}
-					break;
-
-				case S_FormatDisabledSpaces:
-					if (ch == ' ')
-					{
-						++num_spaces;
-					}
-					else
-					{
-						put_spaces(num_spaces);
-						num_spaces = 0;    // is this needed? 
-						state = S_FormatDisabled;
-						again = true;
-					}
-					break;
-				} // switch (state) 
-			}
-			while (again);
+			ProcessFormatting(ch);
 		}
 		else
 		{
-			bool again;
-			do
-			{
-				again = false;   // default 
-
-				switch (state)
-				{
-				case S_Start:
-					if (ch == ' ')
-					{
-						state = S_Spaces;
-						num_spaces = 1;
-					}
-					else
-					{
-						put_a_char(ch, &t);
-					}
-					break;
-
-				case S_Spaces:
-					if (ch == ' ')
-					{
-						++num_spaces;
-					}
-					else
-					{
-						put_spaces(num_spaces);
-						num_spaces = 0;     // is this needed? 
-						state = S_Start;
-						again = true;
-					}
-					break;
-				} // switch 
-			}
-			while (again);
+			ProcessNormally(ch);
 		}
 		CHK_BUFFER(0);
 	} // while (1) 
@@ -2734,6 +1834,1096 @@ void read_src(char *fname)
 	srcline = -1;
 }
 
+void ReadSource::TopicCommand()
+{
+	if (_inTopic)  // if we're in a topic, finish it
+	{
+		end_topic(&_topic);
+	}
+	else
+	{
+		_inTopic = true;
+	}
+
+	if (cmd[6] == '\0')
+	{
+		warn(_eoff, "Topic has no title.");
+	}
+	else if ((int)strlen(cmd+6) > 70)
+	{
+		error(_eoff, "Topic title is too long.");
+	}
+	else if ((int)strlen(cmd+6) > 60)
+	{
+		warn(_eoff, "Topic title is long.");
+	}
+	if (find_topic_title(cmd+6) != -1)
+	{
+		error(_eoff, "Topic title already exists.");
+	}
+
+	start_topic(&_topic, cmd+6, (unsigned)(_ptr-(cmd+6)));
+	_formatting = true;
+	_centering = false;
+	_state = S_Start;
+	_inParagraph = false;
+	_numSpaces = 0;
+	xonline = false;
+	xdoc = false;
+	_formatExclude = format_exclude;
+	compress_spaces = 1;
+}
+
+void ReadSource::DataCommand()
+{
+	if (_inTopic)  // if we're in a topic, finish it 
+	{
+		end_topic(&_topic);
+	}
+	else
+	{
+		_inTopic = true;
+	}
+
+	if (cmd[5] == '\0')
+	{
+		warn(_eoff, "Data topic has no label.");
+	}
+
+	if (!validate_label_name(cmd+5))
+	{
+		error(_eoff, "Label \"%s\" contains illegal characters.", cmd+5);
+		return;
+	}
+
+	if (find_label(cmd+5) != NULL)
+	{
+		error(_eoff, "Label \"%s\" already exists", cmd+5);
+		return;
+	}
+
+	if (cmd[5] == '@')
+	{
+		warn(_eoff, "Data topic has a local label.");
+	}
+
+	start_topic(&_topic, "", 0);
+	_topic.flags |= TF_DATA;
+
+	_label.name      = dupstr(cmd+5, 0);
+	_label.topic_num = num_topic;
+	_label.topic_off = 0;
+	_label.doc_page  = -1;
+	add_label(&_label);
+
+	_formatting = false;
+	_centering = false;
+	_state = S_Start;
+	_inParagraph = false;
+	_numSpaces = 0;
+	xonline = false;
+	xdoc = false;
+	_formatExclude = format_exclude;
+	compress_spaces = 0;
+}
+void ReadSource::DocContentsCommand(int imbedded, bool &done)
+{
+	check_command_length(_eoff, 11);
+	if (_inTopic)  // if we're in a topic, finish it
+	{
+		end_topic(&_topic);
+	}
+	if (!done)
+	{
+		if (imbedded)
+		{
+			unread_char('(');
+		}
+		unread_char('~');
+		done = true;
+	}
+	compress_spaces = 1;
+	process_contents();
+	_inTopic = false;
+}
+
+void ReadSource::FormatExcludeCommand()
+{
+	if (cmd[13] == '-')
+	{
+		check_command_length(_eoff, 14);
+		if (_inTopic)
+		{
+			if (_formatExclude > 0)
+			{
+				_formatExclude = -_formatExclude;
+			}
+			else
+			{
+				warn(_eoff, "\"FormatExclude-\" is already in effect.");
+			}
+		}
+		else
+		{
+			if (format_exclude > 0)
+			{
+				format_exclude = -format_exclude;
+			}
+			else
+			{
+				warn(_eoff, "\"FormatExclude-\" is already in effect.");
+			}
+		}
+	}
+	else if (cmd[13] == '+')
+	{
+		check_command_length(_eoff,14);
+		if (_inTopic)
+		{
+			if (_formatExclude < 0)
+			{
+				_formatExclude = -_formatExclude;
+			}
+			else
+			{
+				warn(_eoff, "\"FormatExclude+\" is already in effect.");
+			}
+		}
+		else
+		{
+			if (format_exclude < 0)
+			{
+				format_exclude = -format_exclude;
+			}
+			else
+			{
+				warn(_eoff, "\"FormatExclude+\" is already in effect.");
+			}
+		}
+	}
+	else if (cmd[13] == '=')
+	{
+		if (cmd[14] == 'n' || cmd[14] == 'N')
+		{
+			check_command_length(_eoff,15);
+			if (_inTopic)
+			{
+				_formatExclude = 0;
+			}
+			else
+			{
+				format_exclude = 0;
+			}
+		}
+		else if (cmd[14] == '\0')
+		{
+			_formatExclude = format_exclude;
+		}
+		else
+		{
+			int n = ((_inTopic ? _formatExclude : format_exclude) < 0) ? -1 : 1;
+
+			_formatExclude = atoi(cmd+14);
+
+			if (_formatExclude <= 0)
+			{
+				error(_eoff, "Invalid argument to FormatExclude=");
+				_formatExclude = 0;
+			}
+
+			_formatExclude *= n;
+
+			if (!_inTopic)
+			{
+				format_exclude = _formatExclude;
+			}
+		}
+	}
+	else
+	{
+		error(_eoff, "Invalid format for FormatExclude");
+	}
+}
+
+void ReadSource::IncludeCommand()
+{
+	if (include_stack_top >= MAX_INCLUDE_STACK-1)
+	{
+		error(_eoff, "Too many nested Includes.");
+	}
+	else
+	{
+		++include_stack_top;
+		include_stack[include_stack_top].fname = src_cfname;
+		include_stack[include_stack_top].file = srcfile;
+		include_stack[include_stack_top].line = srcline;
+		include_stack[include_stack_top].col  = srccol;
+		strupr(cmd+8);
+		if ((srcfile = fopen(cmd+8, "rt")) == NULL)
+		{
+			error(_eoff, "Unable to open \"%s\"", cmd+8);
+			srcfile = include_stack[include_stack_top--].file;
+		}
+		src_cfname = dupstr(cmd+8, 0);  // never deallocate!
+		srcline = 1;
+		srccol = 0;
+	}
+}
+
+void ReadSource::HeaderFileCommand()
+{
+	if (hdr_fname[0] != '\0')
+	{
+		warn(_eoff, "Header Filename has already been defined.");
+	}
+	strcpy(hdr_fname, cmd+8);
+	strupr(hdr_fname);
+}
+
+void ReadSource::HelpFileCommand()
+{
+	if (hlp_fname[0] != '\0')
+	{
+		warn(_eoff, "Help Filename has already been defined.");
+	}
+	strcpy(hlp_fname, cmd+8);
+	strupr(hlp_fname);
+}
+
+void ReadSource::VersionCommand()
+{
+	if (version != -1)   // an unlikely value
+	{
+		warn(_eoff, "Help version has already been defined");
+	}
+	version = atoi(cmd+8);
+}
+
+bool ReadSource::CommandsAnytime(int imbedded, bool done)
+{
+	if (strnicmp(cmd, "Topic=", 6) == 0)
+	{
+		TopicCommand();
+		return true;
+	}
+	else if (strnicmp(cmd, "Data=", 5) == 0)
+	{
+		DataCommand();
+		return true;
+	}
+	else if (strnicmp(cmd, "DocContents", 11) == 0)
+	{
+		DocContentsCommand(imbedded, done);
+		return true;
+	}
+	else if (stricmp(cmd, "Comment") == 0)
+	{
+		process_comment();
+		return true;
+	}
+	else if (strnicmp(cmd, "FormatExclude", 13) == 0)
+	{
+		FormatExcludeCommand();
+		return true;
+	}
+	else if (strnicmp(cmd, "Include ", 8) == 0)
+	{
+		IncludeCommand();
+		return true;
+	}
+	return false;
+}
+
+void ReadSource::CommandsBeforeAllTopics()
+{
+	if (strnicmp(cmd, "HdrFile=", 8) == 0)
+	{
+		HeaderFileCommand();
+	}
+	else if (strnicmp(cmd, "HlpFile=", 8) == 0)
+	{
+		HelpFileCommand();
+	}
+	else if (strnicmp(cmd, "Version=", 8) == 0)
+	{
+		VersionCommand();
+	}
+	else
+	{
+		error(_eoff, "Bad or unexpected command \"%s\"", cmd);
+	}
+}
+
+void ReadSource::FFCommand()
+{
+	check_command_length(_eoff, 2);
+	if (_inParagraph)
+	{
+		*curr++ = '\n';  // finish off current paragraph
+	}
+	*curr++ = CMD_FF;
+	_state = S_Start;
+	_inParagraph = false;
+	_numSpaces = 0;
+}
+
+void ReadSource::DocFFCommand()
+{
+	check_command_length(_eoff, 5);
+	if (_inParagraph)
+	{
+		*curr++ = '\n';  // finish off current paragraph
+	}
+	if (!xonline)
+	{
+		*curr++ = CMD_XONLINE;
+	}
+	*curr++ = CMD_FF;
+	if (!xonline)
+	{
+		*curr++ = CMD_XONLINE;
+	}
+	_state = S_Start;
+	_inParagraph = false;
+	_numSpaces = 0;
+}
+
+void ReadSource::OnlineFFCommand()
+{
+	check_command_length(_eoff, 8);
+	if (_inParagraph)
+	{
+		*curr++ = '\n';  // finish off current paragraph
+	}
+	if (!xdoc)
+	{
+		*curr++ = CMD_XDOC;
+	}
+	*curr++ = CMD_FF;
+	if (!xdoc)
+	{
+		*curr++ = CMD_XDOC;
+	}
+	_state = S_Start;
+	_inParagraph = false;
+	_numSpaces = 0;
+}
+
+void ReadSource::LabelCommand()
+{
+	if ((int)strlen(cmd+6) <= 0)
+	{
+		error(_eoff, "Label has no name.");
+	}
+	else if (!validate_label_name(cmd+6))
+	{
+		error(_eoff, "Label \"%s\" contains illegal characters.", cmd+6);
+	}
+	else if (find_label(cmd+6) != NULL)
+	{
+		error(_eoff, "Label \"%s\" already exists", cmd+6);
+	}
+	else
+	{
+		if ((_topic.flags & TF_DATA) && cmd[6] == '@')
+		{
+			warn(_eoff, "Data topic has a local label.");
+		}
+
+		_label.name      = dupstr(cmd+6, 0);
+		_label.topic_num = num_topic;
+		_label.topic_off = (unsigned)(curr - buffer);
+		_label.doc_page  = -1;
+		add_label(&_label);
+	}
+}
+
+void ReadSource::TableCommand(int imbedded, bool &done)
+{
+	if (_inParagraph)
+	{
+		*curr++ = '\n';  // finish off current paragraph
+		_inParagraph = false;
+		_numSpaces = 0;
+		_state = S_Start;
+	}
+	if (!done)
+	{
+		if (imbedded)
+		{
+			unread_char('(');
+		}
+		unread_char('~');
+		done = true;
+	}
+	create_table();
+}
+
+void ReadSource::FormatExcludeCommandInTopic()
+{
+	if (cmd[13] == '-')
+	{
+		check_command_length(_eoff,14);
+		if (_formatExclude > 0)
+		{
+			_formatExclude = -_formatExclude;
+		}
+		else
+		{
+			warn(0, "\"FormatExclude-\" is already in effect.");
+		}
+	}
+	else if (cmd[13] == '+')
+	{
+		check_command_length(_eoff,14);
+		if (_formatExclude < 0)
+		{
+			_formatExclude = -_formatExclude;
+		}
+		else
+		{
+			warn(0, "\"FormatExclude+\" is already in effect.");
+		}
+	}
+	else
+	{
+		error(_eoff, "Unexpected or invalid argument to FormatExclude.");
+	}
+}
+
+void ReadSource::FormatCommand()
+{
+	if (cmd[6] == '+')
+	{
+		check_command_length(_eoff, 7);
+		if (!_formatting)
+		{
+			_formatting = true;
+			_inParagraph = false;
+			_numSpaces = 0;
+			_state = S_Start;
+		}
+		else
+		{
+			warn(_eoff, "\"Format+\" is already in effect.");
+		}
+	}
+	else if (cmd[6] == '-')
+	{
+		check_command_length(_eoff, 7);
+		if (_formatting)
+		{
+			if (_inParagraph)
+			{
+				*curr++ = '\n';  // finish off current paragraph
+			}
+			_state = S_Start;
+			_inParagraph = false;
+			_formatting = false;
+			_numSpaces = 0;
+			_state = S_Start;
+		}
+		else
+		{
+			warn(_eoff, "\"Format-\" is already in effect.");
+		}
+	}
+	else
+	{
+		error(_eoff, "Invalid argument to Format.");
+	}
+}
+
+void ReadSource::OnlineCommand()
+{
+	if (cmd[6] == '+')
+	{
+		check_command_length(_eoff, 7);
+
+		if (xonline)
+		{
+			*curr++ = CMD_XONLINE;
+			xonline = false;
+		}
+		else
+		{
+			warn(_eoff, "\"Online+\" already in effect.");
+		}
+	}
+	else if (cmd[6] == '-')
+	{
+		check_command_length(_eoff, 7);
+		if (!xonline)
+		{
+			*curr++ = CMD_XONLINE;
+			xonline = true;
+		}
+		else
+		{
+			warn(_eoff, "\"Online-\" already in effect.");
+		}
+	}
+	else
+	{
+		error(_eoff, "Invalid argument to Online.");
+	}
+}
+
+void ReadSource::DocCommand()
+{
+	if (cmd[3] == '+')
+	{
+		check_command_length(_eoff, 4);
+		if (xdoc)
+		{
+			*curr++ = CMD_XDOC;
+			xdoc = false;
+		}
+		else
+		{
+			warn(_eoff, "\"Doc+\" already in effect.");
+		}
+	}
+	else if (cmd[3] == '-')
+	{
+		check_command_length(_eoff, 4);
+		if (!xdoc)
+		{
+			*curr++ = CMD_XDOC;
+			xdoc = true;
+		}
+		else
+		{
+			warn(_eoff, "\"Doc-\" already in effect.");
+		}
+	}
+	else
+	{
+		error(_eoff, "Invalid argument to Doc.");
+	}
+}
+
+void ReadSource::CenterCommand()
+{
+	if (cmd[6] == '+')
+	{
+		check_command_length(_eoff, 7);
+		if (!_centering)
+		{
+			_centering = true;
+			if (_inParagraph)
+			{
+				*curr++ = '\n';
+				_inParagraph = false;
+			}
+			_state = S_Start;  // for centering FSM
+		}
+		else
+		{
+			warn(_eoff, "\"Center+\" already in effect.");
+		}
+	}
+	else if (cmd[6] == '-')
+	{
+		check_command_length(_eoff, 7);
+		if (_centering)
+		{
+			_centering = false;
+			_state = S_Start;  // for centering FSM
+		}
+		else
+		{
+			warn(_eoff, "\"Center-\" already in effect.");
+		}
+	}
+	else
+	{
+		error(_eoff, "Invalid argument to Center.");
+	}
+}
+
+void ReadSource::CompressSpacesCommand()
+{
+	check_command_length(_eoff,15);
+
+	if (cmd[14] == '+')
+	{
+		if (compress_spaces)
+		{
+			warn(_eoff, "\"CompressSpaces+\" is already in effect.");
+		}
+		else
+		{
+			compress_spaces = 1;
+		}
+	}
+	else if (cmd[14] == '-')
+	{
+		if (!compress_spaces)
+		{
+			warn(_eoff, "\"CompressSpaces-\" is already in effect.");
+		}
+		else
+		{
+			compress_spaces = 0;
+		}
+	}
+	else
+	{
+		error(_eoff, "Invalid argument to CompressSpaces.");
+	}
+}
+
+void ReadSource::BinIncCommand()
+{
+	if (!(_topic.flags & TF_DATA))
+	{
+		error(_eoff, "BinInc allowed only in Data topics.");
+	}
+	else
+	{
+		process_bininc();
+	}
+}
+
+void ReadSource::CommandsOnlyInTopic(int imbedded, bool done)
+{
+	if (strnicmp(cmd, "FF", 2) == 0)
+	{
+		FFCommand();
+	}
+	else if (strnicmp(cmd, "DocFF", 5) == 0)
+	{
+		DocFFCommand();
+	}
+	else if (strnicmp(cmd, "OnlineFF", 8) == 0)
+	{
+		OnlineFFCommand();
+	}
+	else if (strnicmp(cmd, "Label=", 6) == 0)
+	{
+		LabelCommand();
+	}
+	else if (strnicmp(cmd, "Table=", 6) == 0)
+	{
+		TableCommand(imbedded, done);
+	}
+	else if (strnicmp(cmd, "FormatExclude", 12) == 0)
+	{
+		FormatExcludeCommandInTopic();
+	}
+	else if (strnicmp(cmd, "Format", 6) == 0)
+	{
+		FormatCommand();
+	}
+	else if (strnicmp(cmd, "Online", 6) == 0)
+	{
+		OnlineCommand();
+	}
+	else if (strnicmp(cmd, "Doc", 3) == 0)
+	{
+		DocCommand();
+	}
+	else if (strnicmp(cmd, "Center", 6) == 0)
+	{
+		CenterCommand();
+	}
+	else if (strnicmp(cmd, "CompressSpaces", 14) == 0)
+	{
+		CompressSpacesCommand();
+	}
+	else if (strnicmp("BinInc ", cmd, 7) == 0)
+	{
+		BinIncCommand();
+	}
+	else
+	{
+		error(_eoff, "Bad or unexpected command \"%s\".", cmd);
+	}
+}
+
+void ReadSource::ProcessCentering(int ch)
+{
+	bool again;
+	do
+	{
+		again = false;   // default
+
+		switch (_state)
+		{
+		case S_Start:
+			if (ch == ' ')
+			{
+				; // do nothing
+			}
+			else if ((ch & 0xFF) == '\n')
+			{
+				*curr++ = ch;  // no need to center blank lines.
+			}
+			else
+			{
+				*curr++ = CMD_CENTER;
+				_state = S_Line;
+				again = true;
+			}
+			break;
+
+		case S_Line:
+			put_a_char(ch, &_topic);
+			if ((ch & 0xFF) == '\n')
+			{
+				_state = S_Start;
+			}
+			break;
+		} // switch
+	}
+	while (again);
+}
+
+void ReadSource::ProcessFormatting(int ch)
+{
+	bool again;
+
+	do
+	{
+		again = false;   // default
+
+		switch (_state)
+		{
+		case S_Start:
+			if ((ch & 0xFF) == '\n')
+			{
+				*curr++ = ch;
+			}
+			else
+			{
+				_state = S_StartFirstLine;
+				_numSpaces = 0;
+				again = true;
+			}
+			break;
+
+		case S_StartFirstLine:
+			if (ch == ' ')
+			{
+				++_numSpaces;
+			}
+			else
+			{
+				if (_formatExclude > 0 && _numSpaces >= _formatExclude)
+				{
+					put_spaces(_numSpaces);
+					_numSpaces = 0;
+					_state = S_FormatDisabled;
+					again = true;
+				}
+				else
+				{
+					*curr++ = CMD_PARA;
+					*curr++ = (char)_numSpaces;
+					*curr++ = (char)_numSpaces;
+					_marginPosition = curr - 1;
+					_state = S_FirstLine;
+					again = true;
+					_inParagraph = true;
+				}
+			}
+			break;
+
+		case S_FirstLine:
+			if (ch == '\n')
+			{
+				_state = S_StartSecondLine;
+				_numSpaces = 0;
+			}
+			else if (ch == ('\n'|0x100))   // force end of para ?
+			{
+				*curr++ = '\n';
+				_inParagraph = false;
+				_state = S_Start;
+			}
+			else if (ch == ' ')
+			{
+				_state = S_FirstLineSpaces;
+				_numSpaces = 1;
+			}
+			else
+			{
+				put_a_char(ch, &_topic);
+			}
+			break;
+
+		case S_FirstLineSpaces:
+			if (ch == ' ')
+			{
+				++_numSpaces;
+			}
+			else
+			{
+				put_spaces(_numSpaces);
+				_state = S_FirstLine;
+				again = true;
+			}
+			break;
+
+		case S_StartSecondLine:
+			if (ch == ' ')
+			{
+				++_numSpaces;
+			}
+			else if ((ch & 0xFF) == '\n') // a blank line means end of a para
+			{
+				*curr++ = '\n';   // end the para
+				*curr++ = '\n';   // for the blank line
+				_inParagraph = false;
+				_state = S_Start;
+			}
+			else
+			{
+				if (_formatExclude > 0 && _numSpaces >= _formatExclude)
+				{
+					*curr++ = '\n';
+					_inParagraph = false;
+					put_spaces(_numSpaces);
+					_numSpaces = 0;
+					_state = S_FormatDisabled;
+					again = true;
+				}
+				else
+				{
+					add_blank_for_split();
+					_margin = _numSpaces;
+					*_marginPosition = (char)_numSpaces;
+					_state = S_Line;
+					again = true;
+				}
+			}
+			break;
+
+		case S_Line:   // all lines after the first
+			if (ch == '\n')
+			{
+				_state = S_StartLine;
+				_numSpaces = 0;
+			}
+			else if (ch == ('\n' | 0x100))   // force end of para ?
+			{
+				*curr++ = '\n';
+				_inParagraph = false;
+				_state = S_Start;
+			}
+			else if (ch == ' ')
+			{
+				_state = S_LineSpaces;
+				_numSpaces = 1;
+			}
+			else
+			{
+				put_a_char(ch, &_topic);
+			}
+			break;
+
+		case S_LineSpaces:
+			if (ch == ' ')
+			{
+				++_numSpaces;
+			}
+			else
+			{
+				put_spaces(_numSpaces);
+				_state = S_Line;
+				again = true;
+			}
+			break;
+
+		case S_StartLine:   // for all lines after the second
+			if (ch == ' ')
+			{
+				++_numSpaces;
+			}
+			else if ((ch & 0xFF) == '\n') // a blank line means end of a para
+			{
+				*curr++ = '\n';   // end the para
+				*curr++ = '\n';   // for the blank line
+				_inParagraph = false;
+				_state = S_Start;
+			}
+			else
+			{
+				if (_numSpaces != _margin)
+				{
+					*curr++ = '\n';
+					_inParagraph = false;
+					_state = S_StartFirstLine;  // with current num_spaces
+				}
+				else
+				{
+					add_blank_for_split();
+					_state = S_Line;
+				}
+				again = true;
+			}
+			break;
+
+		case S_FormatDisabled:
+			if (ch == ' ')
+			{
+				_state = S_FormatDisabledSpaces;
+				_numSpaces = 1;
+			}
+			else
+			{
+				if ((ch & 0xFF) == '\n')
+				{
+					_state = S_Start;
+				}
+				put_a_char(ch, &_topic);
+			}
+			break;
+
+		case S_FormatDisabledSpaces:
+			if (ch == ' ')
+			{
+				++_numSpaces;
+			}
+			else
+			{
+				put_spaces(_numSpaces);
+				_numSpaces = 0;    // is this needed?
+				_state = S_FormatDisabled;
+				again = true;
+			}
+			break;
+		} // switch (state)
+	}
+	while (again);
+}
+
+void ReadSource::ProcessNormally(int ch)
+{
+	bool again;
+	do
+	{
+		again = false;   // default
+
+		switch (_state)
+		{
+		case S_Start:
+			if (ch == ' ')
+			{
+				_state = S_Spaces;
+				_numSpaces = 1;
+			}
+			else
+			{
+				put_a_char(ch, &_topic);
+			}
+			break;
+
+		case S_Spaces:
+			if (ch == ' ')
+			{
+				++_numSpaces;
+			}
+			else
+			{
+				put_spaces(_numSpaces);
+				_numSpaces = 0;     // is this needed?
+				_state = S_Start;
+				again = true;
+			}
+			break;
+		} // switch
+	}
+	while (again);
+}
+
+int ReadSource::ProcessCommand()
+{
+	int imbedded;
+	int ch = read_char();
+	if (ch == '(')
+	{
+		imbedded = 1;
+		_eoff = 0;
+	}
+	else
+	{
+		imbedded = 0;
+		_eoff = 0;
+		unread_char(ch);
+	}
+
+	bool done = false;
+
+	while (!done)
+	{
+		do
+		{
+			ch = read_char();
+		}
+		while (ch == ' ');
+		unread_char(ch);
+
+		if (imbedded)
+		{
+			_ptr = read_until(cmd, 128, ")\n,");
+		}
+		else
+		{
+			_ptr = read_until(cmd, 128, "\n,");
+		}
+
+		done = true;
+
+		if (*_ptr == '\0')
+		{
+			error(0, "Unexpected EOF in command.");
+			break;
+		}
+
+		if (*_ptr == '\n')
+		{
+			++_eoff;
+		}
+
+		if (imbedded && *_ptr == '\n')
+		{
+			error(_eoff, "Imbedded command has no closing parend (\')\')");
+		}
+
+		done = (*_ptr != ',');   // we done if it's not a comma
+
+		if (*_ptr != '\n' && *_ptr != ')' && *_ptr != ',')
+		{
+			error(0, "Command line too long.");
+			break;
+		}
+
+		*_ptr = '\0';
+
+
+		if (CommandsAnytime(imbedded, done))
+		{
+			continue;
+		}
+		if (!_inTopic)
+		{
+			CommandsBeforeAllTopics();
+			continue;
+		}
+		else
+		{
+			CommandsOnlyInTopic(imbedded, done);
+		}
+	}
+	return ch;
+}
+
+void read_src(char const *filename)
+{
+	ReadSource(filename).Execute();
+}
 
 /*
  * stuff to resolve hot-link references.

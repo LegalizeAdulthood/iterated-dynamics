@@ -41,8 +41,8 @@
 // g_fudge all values up by 2 << FUDGE_FACTOR{,2} 
 enum
 {
-	FUDGE_FACTOR     = 29,
-	FUDGE_FACTOR2    = 24,
+	FUDGE_FACTOR	= 29,
+	FUDGE_FACTOR2	= 24,
 };
 
 static int s_save_orbit[1500] = { 0 };	// array to save orbit values 
@@ -383,8 +383,8 @@ init_restart:
 	else
 	{
 		adjust_to_limits(1.0); // make sure all corners in valid range 
-		g_escape_time_state.m_grid_fp.delta_x()  = (LDBL)(g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/(LDBL)g_dx_size; // calculate stepsizes 
-		g_escape_time_state.m_grid_fp.delta_y()  = (LDBL)(g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/(LDBL)g_dy_size;
+		g_escape_time_state.m_grid_fp.delta_x() = (LDBL)(g_escape_time_state.m_grid_fp.x_max() - g_escape_time_state.m_grid_fp.x_3rd())/(LDBL)g_dx_size; // calculate stepsizes 
+		g_escape_time_state.m_grid_fp.delta_y() = (LDBL)(g_escape_time_state.m_grid_fp.y_max() - g_escape_time_state.m_grid_fp.y_3rd())/(LDBL)g_dy_size;
 		g_escape_time_state.m_grid_fp.delta_x2() = (LDBL)(g_escape_time_state.m_grid_fp.x_3rd() - g_escape_time_state.m_grid_fp.x_min())/(LDBL)g_dy_size;
 		g_escape_time_state.m_grid_fp.delta_y2() = (LDBL)(g_escape_time_state.m_grid_fp.y_3rd() - g_escape_time_state.m_grid_fp.y_min())/(LDBL)g_dx_size;
 		g_escape_time_state.fill_grid_fp();
@@ -417,9 +417,9 @@ init_restart:
 	{
 		if (g_integer_fractal && !g_invert && g_escape_time_state.m_use_grid)
 		{
-			if ((g_escape_time_state.m_grid_l.delta_x()  == 0 && g_escape_time_state.m_grid_fp.delta_x()  != 0.0)
+			if ((g_escape_time_state.m_grid_l.delta_x() == 0 && g_escape_time_state.m_grid_fp.delta_x()  != 0.0)
 				|| (g_escape_time_state.m_grid_l.delta_x2() == 0 && g_escape_time_state.m_grid_fp.delta_x2() != 0.0)
-				|| (g_escape_time_state.m_grid_l.delta_y()  == 0 && g_escape_time_state.m_grid_fp.delta_y()  != 0.0)
+				|| (g_escape_time_state.m_grid_l.delta_y() == 0 && g_escape_time_state.m_grid_fp.delta_y()  != 0.0)
 				|| (g_escape_time_state.m_grid_l.delta_y2() == 0 && g_escape_time_state.m_grid_fp.delta_y2() != 0.0))
 			{
 				goto expand_retry;
@@ -507,25 +507,25 @@ expand_retry:
 					double testx_exact;
 					if (fabs(g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd()) > fabs(g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min()))
 					{
-						testx_exact  = g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd();
-						testx_try    = dx0-g_escape_time_state.m_grid_fp.x_min();
+						testx_exact = g_escape_time_state.m_grid_fp.x_max()-g_escape_time_state.m_grid_fp.x_3rd();
+						testx_try = dx0-g_escape_time_state.m_grid_fp.x_min();
 					}
 					else
 					{
-						testx_exact  = g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min();
-						testx_try    = dx1;
+						testx_exact = g_escape_time_state.m_grid_fp.x_3rd()-g_escape_time_state.m_grid_fp.x_min();
+						testx_try = dx1;
 					}
 					double testy_exact;
 					double testy_try;
 					if (fabs(g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max()) > fabs(g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd()))
 					{
 						testy_exact = g_escape_time_state.m_grid_fp.y_3rd()-g_escape_time_state.m_grid_fp.y_max();
-						testy_try   = dy0-g_escape_time_state.m_grid_fp.y_max();
+						testy_try = dy0-g_escape_time_state.m_grid_fp.y_max();
 					}
 					else
 					{
 						testy_exact = g_escape_time_state.m_grid_fp.y_min()-g_escape_time_state.m_grid_fp.y_3rd();
-						testy_try   = dy1;
+						testy_try = dy1;
 					}
 					if (ratio_bad(testx_try, testx_exact) ||
 						ratio_bad(testy_try, testy_exact))
@@ -619,9 +619,9 @@ void adjust_corner_bf(float aspect_drift)
 	bf_t bftemp, bftemp2;
 	bf_t btmp1;
 	int saved = save_stack();
-	bftemp  = alloc_stack(g_rbf_length + 2);
+	bftemp = alloc_stack(g_rbf_length + 2);
 	bftemp2 = alloc_stack(g_rbf_length + 2);
-	btmp1  =  alloc_stack(g_rbf_length + 2);
+	btmp1 =  alloc_stack(g_rbf_length + 2);
 
 	// While we're at it, let's adjust the Xmagfactor as well 
 	// use bftemp, bftemp2 as bfXctr, bfYctr 
@@ -1090,7 +1090,7 @@ static void adjust_to_limits(double expand)
 	{
 		if (cornerx[i] < lowx)
 		{
-			lowx  = cornerx[i];
+			lowx = cornerx[i];
 		}
 		if (cornerx[i] > highx)
 		{
@@ -1098,7 +1098,7 @@ static void adjust_to_limits(double expand)
 		}
 		if (cornery[i] < lowy)
 		{
-			lowy  = cornery[i];
+			lowy = cornery[i];
 		}
 		if (cornery[i] > highy)
 		{
@@ -1249,7 +1249,7 @@ static void sleep_ms_old(long ms)
 	int const SLEEPINIT = 250; // milliseconds for calibration 
 	bool save_tab_display_enabled = g_tab_display_enabled;
 	HelpModeSaver saved_help(-1);
-	g_tab_display_enabled  = false;
+	g_tab_display_enabled = false;
 	if (scalems == 0L) // calibrate 
 	{
 		// selects a value of scalems that makes the units
@@ -1324,7 +1324,7 @@ static void sleep_ms_old(long ms)
 		}
 	}
 sleepexit:
-	g_tab_display_enabled  = save_tab_display_enabled;
+	g_tab_display_enabled = save_tab_display_enabled;
 }
 
 static void sleep_ms_new(long ms)
