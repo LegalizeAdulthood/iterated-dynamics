@@ -69,13 +69,30 @@ class JIIM
 {
 public:
 	JIIM(bool which)
-		: m_orbits(which)
-	{
-	}
-	~JIIM()
+		: _orbits(which),
+		_exact(false),
+		_xCenter(0),
+		_yCenter(0),
+		_dColumn(0),
+		_dRow(0),
+		_convert(),
+		_zoom(1.0f),
+		_cReal(0.0),
+		_cImag(0.0),
+		_again(false)
 	{
 	}
 	void Execute();
+	void WriteCoordinatesOnScreen(bool &actively_computing);
+
+	void UpdateColumnRow();
+
+	bool ProcessKeyPress(int kbdchar);
+
+	void UpdateCursor(bool actively_computing);
+
+	void SizeWindow();
+
 
 private:
 	enum
@@ -93,11 +110,30 @@ private:
 		SECRETMODE_ZIGZAG				= 8,
 		SECRETMODE_RANDOM_RUN			= 9
 	};
+	enum JIIMMode
+	{
+		JIIM_PIXEL = 0,
+		JIIM_CIRCLE = 1,
+		JIIM_LINE = 2
+	};
 
-	bool m_orbits;
+	bool _orbits;
+	bool _exact;
+	static int s_mode;
+	int _xCenter;
+	int _yCenter; // center of window
+	int _dColumn;
+	int _dRow;
+	affine _convert;
+	float _zoom;
+	double _cReal;
+	double _cImag;
+	bool _again;
 
 	bool UsesStandardFractalOrFrothCalc();
 };
+
+int JIIM::s_mode = JIIM_PIXEL;
 
 static int s_show_numbers = 0;              // toggle for display of coords 
 static char *s_rect_buff = 0;
@@ -510,10 +546,9 @@ static void SaveRect(int x, int y, int width, int height)
 	if (s_rect_buff != 0)
 	{
 		char *buff = s_rect_buff;
-		int yoff;
 
 		cursor::cursor_hide();
-		for (yoff = 0; yoff < height; yoff++)
+		for (int yoff = 0; yoff < height; yoff++)
 		{
 			get_row(x, y + yoff, width, buff);
 			put_row(x, y + yoff, width, (char *) g_stack);
@@ -526,7 +561,6 @@ static void SaveRect(int x, int y, int width, int height)
 static void RestoreRect(int x, int y, int width, int height)
 {
 	char *buff = s_rect_buff;
-	int  yoff;
 
 	if (!g_has_inverse)
 	{
@@ -534,7 +568,7 @@ static void RestoreRect(int x, int y, int width, int height)
 	}
 
 	cursor::cursor_hide();
-	for (yoff = 0; yoff < height; yoff++)
+	for (int yoff = 0; yoff < height; yoff++)
 	{
 		put_row(x, y + yoff, width, buff);
 		buff += width;
@@ -560,24 +594,13 @@ bool JIIM::UsesStandardFractalOrFrothCalc()
 
 void JIIM::Execute()
 {
-	affine m_cvt;
-	int exact = 0;
 	int count = 0;            // coloring julia 
-	static int mode = 0;      // point, circle, ... 
-	double cr;
-	double ci;
-	double r;
-	int x_factor;
-	int y_factor;             // aspect ratio          
-	int x_offset;
-	int y_offset;                   // center of the window  
+	s_mode = JIIM_PIXEL;
 	int x;
 	int y;
-	int still;
 	int kbdchar = -1;
 	long iter;
 	int color;
-	float zoom;
 	int old_sx_offset;
 	int old_sy_offset;
 	bool save_has_inverse;
@@ -589,15 +612,15 @@ void JIIM::Execute()
 	static int random_count = 0;
 	bool actively_computing = true;
 	bool first_time = true;
-	int old_debugflag = g_debug_mode;
+	int old_debug_mode = g_debug_mode;
 
 	// must use standard fractal or be froth_calc 
 	if (!UsesStandardFractalOrFrothCalc())
 	{
 		return;
 	}
-	HelpModeSaver saved_help(!m_orbits ? FIHELP_JIIM : FIHELP_ORBITS);
-	if (m_orbits)
+	HelpModeSaver saved_help(!_orbits ? FIHELP_JIIM : FIHELP_ORBITS);
+	if (_orbits)
 	{
 		g_has_inverse = true;
 	}
@@ -612,7 +635,7 @@ void JIIM::Execute()
 	SetAspect(aspect);
 	MouseModeSaver saved_mouse(LOOK_MOUSE_ZOOM_BOX);
 
-	if (m_orbits)
+	if (_orbits)
 	{
 		g_fractal_specific[g_fractal_type].per_image();
 	}
@@ -625,13 +648,13 @@ void JIIM::Execute()
 
 	// Grab memory for Queue/Stack before SaveRect gets it. 
 	s_ok_to_miim  = false;
-	if (!m_orbits && !(g_debug_mode == DEBUGMODE_NO_MIIM_QUEUE))
+	if (!_orbits && !(g_debug_mode == DEBUGMODE_NO_MIIM_QUEUE))
 	{
 		s_ok_to_miim = Init_Queue(8*1024); // Queue Set-up Successful? 
 	}
 
 	s_max_hits = 1;
-	if (m_orbits)
+	if (_orbits)
 	{
 		g_plot_color = plot_color_clip;                // for line with clipping 
 	}
@@ -647,46 +670,9 @@ void JIIM::Execute()
 		g_has_inverse = save_has_inverse;
 	}
 
-	if (g_x_dots == g_screen_width || g_y_dots == g_screen_height ||
-		g_screen_width-g_x_dots < g_screen_width/3 ||
-		g_screen_height-g_y_dots < g_screen_height/3 ||
-		g_x_dots >= MAXRECT)
-	{
-		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
-			the physical screen */
-		s_windows = 0; // full screen or large view window 
-		s_window_dots_x = g_screen_width/3;
-		s_window_dots_y = g_screen_height/3;
-		s_window_corner_x = s_window_dots_x*2;
-		s_window_corner_y = s_window_dots_y*2;
-		x_offset = s_window_dots_x*5/2;
-		y_offset = s_window_dots_y*5/2;
-	}
-	else if (g_x_dots > g_screen_width/3 && g_y_dots > g_screen_height/3)
-	{
-		// Julia/orbit and fractal don't overlap 
-		s_windows = 1;
-		s_window_dots_x = g_screen_width-g_x_dots;
-		s_window_dots_y = g_screen_height-g_y_dots;
-		s_window_corner_x = g_x_dots;
-		s_window_corner_y = g_y_dots;
-		x_offset = s_window_corner_x + s_window_dots_x/2;
-		y_offset = s_window_corner_y + s_window_dots_y/2;
-	}
-	else
-	{
-		// Julia/orbit takes whole screen 
-		s_windows = 2;
-		s_window_dots_x = g_screen_width;
-		s_window_dots_y = g_screen_height;
-		s_window_corner_x = 0;
-		s_window_corner_y = 0;
-		x_offset = s_window_dots_x/2;
-		y_offset = s_window_dots_y/2;
-	}
-
-	x_factor = int(s_window_dots_x/5.33);
-	y_factor = int(-s_window_dots_y/4);
+	SizeWindow();
+	int x_factor = int(s_window_dots_x/5.33);
+	int y_factor = int(-s_window_dots_y/4);
 
 	if (s_windows == 0)
 	{
@@ -702,28 +688,28 @@ void JIIM::Execute()
 		fillrect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y, g_.DAC().Dark());
 	}
 
-	setup_convert_to_screen(&m_cvt);
+	setup_convert_to_screen(&_convert);
 
 	// reuse last location if inside window 
-	g_col = int(m_cvt.a*g_save_c.x + m_cvt.b*g_save_c.y + m_cvt.e + .5);
-	g_row = int(m_cvt.c*g_save_c.x + m_cvt.d*g_save_c.y + m_cvt.f + .5);
+	g_col = int(_convert.a*g_save_c.x + _convert.b*g_save_c.y + _convert.e + .5);
+	g_row = int(_convert.c*g_save_c.x + _convert.d*g_save_c.y + _convert.f + .5);
 	if (g_col < 0 || g_col >= g_x_dots ||
 		g_row < 0 || g_row >= g_y_dots)
 	{
-		cr = g_escape_time_state.m_grid_fp.x_center();
-		ci = g_escape_time_state.m_grid_fp.y_center();
+		_cReal = g_escape_time_state.m_grid_fp.x_center();
+		_cImag = g_escape_time_state.m_grid_fp.y_center();
 	}
 	else
 	{
-		cr = g_save_c.x;
-		ci = g_save_c.y;
+		_cReal = g_save_c.x;
+		_cImag = g_save_c.y;
 	}
 
 	old_x = -1;
 	old_y = -1;
 
-	g_col = int(m_cvt.a*cr + m_cvt.b*ci + m_cvt.e + .5);
-	g_row = int(m_cvt.c*cr + m_cvt.d*ci + m_cvt.f + .5);
+	g_col = int(_convert.a*_cReal + _convert.b*_cImag + _convert.e + .5);
+	g_row = int(_convert.c*_cReal + _convert.d*_cImag + _convert.f + .5);
 
 	// possible extraseg arrays have been trashed, so set up again 
 	// TODO: is this necessary anymore?  extraseg is dead!
@@ -734,26 +720,17 @@ void JIIM::Execute()
 	color = g_.DAC().Bright();
 
 	iter = 1;
-	still = 1;
-	zoom = 1;
+	_again = true;
+	_zoom = 1;
 
 #ifdef XFRACT
 	cursor_start_mouse_tracking();
 #endif
 
-	while (still)
+	double r;
+	while (_again)
 	{
-		int dcol;
-		int drow;
-
-		if (actively_computing)
-		{
-			cursor::cursor_check_blink();
-		}
-		else
-		{
-			cursor::cursor_wait_key();
-		}
+		UpdateCursor(actively_computing);
 		if (driver_key_pressed() || first_time) // prevent burning up UNIX CPU 
 		{
 			first_time = false;
@@ -762,251 +739,57 @@ void JIIM::Execute()
 				cursor::cursor_wait_key();
 				kbdchar = driver_get_key();
 
-				dcol = 0;
-				drow = 0;
+				_dColumn = 0;
+				_dRow = 0;
 				g_julia_c = std::complex<double>(BIG, BIG);
-				switch (kbdchar)
-				{
-				case 1143:    // ctrl - keypad 5 
-				case 1076:    // keypad 5        
-					break;     // do nothing 
-				case IDK_CTL_PAGE_UP:
-					dcol = 4;
-					drow = -4;
-					break;
-				case IDK_CTL_PAGE_DOWN:
-					dcol = 4;
-					drow = 4;
-					break;
-				case IDK_CTL_HOME:
-					dcol = -4;
-					drow = -4;
-					break;
-				case IDK_CTL_END:
-					dcol = -4;
-					drow = 4;
-					break;
-				case IDK_PAGE_UP:
-					dcol = 1;
-					drow = -1;
-					break;
-				case IDK_PAGE_DOWN:
-					dcol = 1;
-					drow = 1;
-					break;
-				case IDK_HOME:
-					dcol = -1;
-					drow = -1;
-					break;
-				case IDK_END:
-					dcol = -1;
-					drow = 1;
-					break;
-				case IDK_UP_ARROW:
-					drow = -1;
-					break;
-				case IDK_DOWN_ARROW:
-					drow = 1;
-					break;
-				case IDK_LEFT_ARROW:
-					dcol = -1;
-					break;
-				case IDK_RIGHT_ARROW:
-					dcol = 1;
-					break;
-				case IDK_CTL_UP_ARROW:
-					drow = -4;
-					break;
-				case IDK_CTL_DOWN_ARROW:
-					drow = 4;
-					break;
-				case IDK_CTL_LEFT_ARROW:
-					dcol = -4;
-					break;
-				case IDK_CTL_RIGHT_ARROW:
-					dcol = 4;
-					break;
-				case 'z':
-				case 'Z':
-					zoom = 1.0f;
-					break;
-				case '<':
-				case ',':
-					zoom /= 1.15f;
-					break;
-				case '>':
-				case '.':
-					zoom *= 1.15f;
-					break;
-				case IDK_SPACE:
-					g_julia_c = std::complex<double>(cr, ci);
-					goto finish;
-					// break; 
-				case 'c':   // circle toggle 
-				case 'C':   // circle toggle 
-					mode ^= 1;
-					break;
-				case 'l':
-				case 'L':
-					mode ^= 2;
-					break;
-				case 'n':
-				case 'N':
-					s_show_numbers = 8 - s_show_numbers;
-					if (s_windows == 0 && s_show_numbers == 0)
-					{
-						cursor::cursor_hide();
-						clear_temp_message();
-						cursor::cursor_show();
-					}
-					break;
-				case 'p':
-				case 'P':
-					get_a_number(&cr, &ci);
-					exact = 1;
-					g_col = int(m_cvt.a*cr + m_cvt.b*ci + m_cvt.e + .5);
-					g_row = int(m_cvt.c*cr + m_cvt.d*ci + m_cvt.f + .5);
-					dcol = 0;
-					drow = 0;
-					break;
-				case 'h':   // hide fractal toggle 
-				case 'H':   // hide fractal toggle 
-					if (s_windows == 2)
-					{
-						s_windows = 3;
-					}
-					else if (s_windows == 3 && s_window_dots_x == g_screen_width)
-					{
-						RestoreRect(0, 0, g_x_dots, g_y_dots);
-						s_windows = 2;
-					}
-					break;
-#ifdef XFRACT
-				case IDK_ENTER:
-					break;
-#endif
-				case '0':
-				case '1':
-				case '2':
-				case '4':
-				case '5':
-				case '6':
-				case '7':
-				case '8':
-				case '9':
-					if (!m_orbits)
-					{
-						s_secret_experimental_mode = kbdchar - '0';
-						break;
-					}
-				default:
-					still = 0;
-				}  // switch 
-				if (kbdchar == 's' || kbdchar == 'S')
+				if (ProcessKeyPress(kbdchar))
 				{
 					goto finish;
 				}
-				if (dcol > 0 || drow > 0)
-				{
-					exact = 0;
-				}
-				g_col += dcol;
-				g_row += drow;
-#ifdef XFRACT
-				if (kbdchar == IDK_ENTER)
-				{
-					// We want to use the position of the cursor 
-					exact = 0;
-					g_col = cursor::cursor_get_x();
-					g_row = cursor::cursor_get_y();
-				}
-#endif
 
-				// keep cursor in logical screen 
-				if (g_col >= g_x_dots)
-				{
-					g_col = g_x_dots -1;
-					exact = 0;
-				}
-				if (g_row >= g_y_dots)
-				{
-					g_row = g_y_dots -1;
-					exact = 0;
-				}
-				if (g_col < 0)
-				{
-					g_col = 0;
-					exact = 0;
-				}
-				if (g_row < 0)
-				{
-					g_row = 0;
-					exact = 0;
-				}
-
+				UpdateColumnRow();
 				cursor::cursor_set_position(g_col, g_row);
-			}  // end while (driver_key_pressed) 
+			}
 
-			if (exact == 0)
+			if (!_exact)
 			{
 				if (g_integer_fractal)
 				{
-					cr = g_lx_pixel();
-					ci = g_ly_pixel();
-					cr /= (1L << g_bit_shift);
-					ci /= (1L << g_bit_shift);
+					_cReal = g_lx_pixel();
+					_cImag = g_ly_pixel();
+					_cReal /= (1L << g_bit_shift);
+					_cImag /= (1L << g_bit_shift);
 				}
 				else
 				{
-					cr = g_dx_pixel();
-					ci = g_dy_pixel();
+					_cReal = g_dx_pixel();
+					_cImag = g_dy_pixel();
 				}
 			}
 			actively_computing = true;
-			if (s_show_numbers) // write coordinates on screen 
-			{
-				std::string text =
-					str(boost::format("%16.14f %16.14f %3d") % cr % ci % get_color(g_col, g_row));
-				if (s_windows == 0)
-				{
-					/* show temp msg will clear self if new msg is a
-						different length - pad to length 40*/
-					if (text.length() < 40)
-					{
-						text.resize(40, ' ');
-					}
-					cursor::cursor_hide();
-					actively_computing = true;
-					show_temp_message(text);
-					cursor::cursor_show();
-				}
-				else
-				{
-					driver_display_string(5, g_screen_height-s_show_numbers, TEXTCOLOR_WHITE, TEXTCOLOR_BLACK, text.c_str());
-				}
-			}
+			WriteCoordinatesOnScreen(actively_computing);
 			iter = 1;
 			g_old_z.x = 0;
 			g_old_z.y = 0;
 			g_old_z_l.x = 0;
 			g_old_z_l.y = 0;
-			g_save_c.x = cr;
-			g_save_c.y = ci;
-			g_initial_z.y =  ci;
-			g_initial_z.x =  cr;
+			g_save_c.x = _cReal;
+			g_save_c.y = _cImag;
+			g_initial_z.y =  _cImag;
+			g_initial_z.x =  _cReal;
 			g_initial_z_l.x = long(g_initial_z.x*g_fudge);
 			g_initial_z_l.y = long(g_initial_z.y*g_fudge);
 
 			old_x = -1;
 			old_y = -1;
 			// compute fixed points and use them as starting points of JIIM 
-			if (!m_orbits && s_ok_to_miim)
+			if (!_orbits && s_ok_to_miim)
 			{
 				ComplexD f1;
 				ComplexD f2;
 				ComplexD Sqrt;        // Fixed points of Julia 
 
-				Sqrt = ComplexSqrtFloat(1 - 4*cr, -4*ci);
+				Sqrt = ComplexSqrtFloat(1 - 4*_cReal, -4*_cImag);
 				f1.x = (1 + Sqrt.x)/2;
 				f2.x = (1 - Sqrt.x)/2;
 				f1.y =  Sqrt.y/2;
@@ -1017,16 +800,20 @@ void JIIM::Execute()
 				EnQueueFloat(float(f1.x), float(f1.y));
 				EnQueueFloat(float(f2.x), float(f2.y));
 			}
-			if (m_orbits)
+			if (_orbits)
 			{
 				g_fractal_specific[g_fractal_type].per_pixel();
 			}
 			// move window if bumped 
-			if (s_windows == 0 && g_col > s_window_corner_x && g_col < s_window_corner_x + s_window_dots_x && g_row > s_window_corner_y && g_row < s_window_corner_y + s_window_dots_y)
+			if (s_windows == 0
+				&& g_col > s_window_corner_x
+				&& g_col < s_window_corner_x + s_window_dots_x
+				&& g_row > s_window_corner_y
+				&& g_row < s_window_corner_y + s_window_dots_y)
 			{
 				RestoreRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 				s_window_corner_x = (s_window_corner_x == s_window_dots_x*2) ? 2 : s_window_dots_x*2;
-				x_offset = s_window_corner_x + s_window_dots_x/2;
+				_xCenter = s_window_corner_x + s_window_dots_x/2;
 				SaveRect(s_window_corner_x, s_window_corner_y, s_window_dots_x, s_window_dots_y);
 			}
 			if (s_windows == 2)
@@ -1040,7 +827,7 @@ void JIIM::Execute()
 			}
 		} // end if (driver_key_pressed) 
 
-		if (!m_orbits)
+		if (!_orbits)
 		{
 			if (!g_has_inverse)
 			{
@@ -1054,8 +841,6 @@ void JIIM::Execute()
 					if (s_max_hits < g_colors - 1 && s_max_hits < 5 &&
 						(s_lucky_x != 0.0 || s_lucky_y != 0.0))
 					{
-						int i;
-
 						s_l_size = 0;
 						s_l_max = 0;
 						g_old_z.x = s_lucky_x;
@@ -1064,10 +849,10 @@ void JIIM::Execute()
 						g_new_z.y = s_lucky_y;
 						s_lucky_x = 0.0f;
 						s_lucky_y = 0.0f;
-						for (i = 0; i < 199; i++)
+						for (int i = 0; i < 199; i++)
 						{
-							g_old_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
-							g_new_z = ComplexSqrtFloat(g_new_z.x - cr, g_new_z.y - ci);
+							g_old_z = ComplexSqrtFloat(g_old_z.x - _cReal, g_old_z.y - _cImag);
+							g_new_z = ComplexSqrtFloat(g_new_z.x - _cReal, g_new_z.y - _cImag);
 							EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
 							EnQueueFloat(float(-g_old_z.x), float(-g_old_z.y));
 						}
@@ -1080,13 +865,13 @@ void JIIM::Execute()
 				}
 
 				g_old_z = DeQueueFloat();
-				x = int(g_old_z.x*x_factor*zoom + x_offset);
-				y = int(g_old_z.y*y_factor*zoom + y_offset);
+				x = int(g_old_z.x*x_factor*_zoom + _xCenter);
+				y = int(g_old_z.y*y_factor*_zoom + _yCenter);
 				color = c_getcolor(x, y);
 				if (color < s_max_hits)
 				{
 					plot_color_clip(x, y, color + 1);
-					g_new_z = ComplexSqrtFloat(g_old_z.x - cr, g_old_z.y - ci);
+					g_new_z = ComplexSqrtFloat(g_old_z.x - _cReal, g_old_z.y - _cImag);
 					EnQueueFloat(float(g_new_z.x),  float(g_new_z.y));
 					EnQueueFloat(float(-g_new_z.x), float(-g_new_z.y));
 				}
@@ -1094,8 +879,8 @@ void JIIM::Execute()
 			else
 			{
 				// if not MIIM 
-				g_old_z.x -= cr;
-				g_old_z.y -= ci;
+				g_old_z.x -= _cReal;
+				g_old_z.y -= _cImag;
 				r = g_old_z.x*g_old_z.x + g_old_z.y*g_old_z.y;
 				if (r > 10.0)
 				{
@@ -1130,8 +915,8 @@ void JIIM::Execute()
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(g_new_z.x*x_factor*zoom + x_offset);
-					y = int(g_new_z.y*y_factor*zoom + y_offset);
+					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					break;
 
 				case SECRETMODE_ONE_DIRECTION:                     // always go one direction 
@@ -1140,8 +925,8 @@ void JIIM::Execute()
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(g_new_z.x*x_factor*zoom + x_offset);
-					y = int(g_new_z.y*y_factor*zoom + y_offset);
+					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_ONE_DIR_DRAW_OTHER:                     // go one dir, draw the other 
 					if (g_save_c.y < 0)
@@ -1149,29 +934,29 @@ void JIIM::Execute()
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(-g_new_z.x*x_factor*zoom + x_offset);
-					y = int(-g_new_z.y*y_factor*zoom + y_offset);
+					x = int(-g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(-g_new_z.y*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_NEGATIVE_MAX_COLOR:                     // go negative if max color 
-					x = int(g_new_z.x*x_factor*zoom + x_offset);
-					y = int(g_new_z.y*y_factor*zoom + y_offset);
+					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					if (c_getcolor(x, y) == g_colors - 1)
 					{
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
-						x = int(g_new_z.x*x_factor*zoom + x_offset);
-						y = int(g_new_z.y*y_factor*zoom + y_offset);
+						x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+						y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					}
 					break;
 				case SECRETMODE_POSITIVE_MAX_COLOR:                     // go positive if max color 
 					g_new_z.x = -g_new_z.x;
 					g_new_z.y = -g_new_z.y;
-					x = int(g_new_z.x*x_factor*zoom + x_offset);
-					y = int(g_new_z.y*y_factor*zoom + y_offset);
+					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					if (c_getcolor(x, y) == g_colors - 1)
 					{
-						x = int(g_new_z.x*x_factor*zoom + x_offset);
-						y = int(g_new_z.y*y_factor*zoom + y_offset);
+						x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+						y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					}
 					break;
 				case SECRETMODE_7:
@@ -1180,29 +965,29 @@ void JIIM::Execute()
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(-g_new_z.x*x_factor*zoom + x_offset);
-					y = int(-g_new_z.y*y_factor*zoom + y_offset);
+					x = int(-g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(-g_new_z.y*y_factor*_zoom + _yCenter);
 					if (iter > 10)
 					{
-						if (mode == 0)                        // pixels  
+						if (s_mode == JIIM_PIXEL)
 						{
 							plot_color_clip(x, y, color);
 						}
-						else if (mode & 1)            // circles 
+						else if (s_mode & JIIM_CIRCLE)
 						{
 							s_x_base = x;
 							s_y_base = y;
-							circle(int(zoom*(s_window_dots_x >> 1)/iter), color);
+							circle(int(_zoom*(s_window_dots_x >> 1)/iter), color);
 						}
-						if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+						if ((s_mode & JIIM_LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
 						{
 							driver_draw_line(x, y, old_x, old_y, color);
 						}
 						old_x = x;
 						old_y = y;
 					}
-					x = int(g_new_z.x*x_factor*zoom + x_offset);
-					y = int(g_new_z.y*y_factor*zoom + y_offset);
+					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_ZIGZAG:                     // go in long zig zags 
 					if (random_count >= 300)
@@ -1214,8 +999,8 @@ void JIIM::Execute()
 						g_new_z.x = -g_new_z.x;
 						g_new_z.y = -g_new_z.y;
 					}
-					x = int(g_new_z.x*x_factor*zoom + x_offset);
-					y = int(g_new_z.y*y_factor*zoom + y_offset);
+					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					break;
 				case SECRETMODE_RANDOM_RUN:                     // "random run" 
 					switch (random_direction)
@@ -1244,8 +1029,8 @@ void JIIM::Execute()
 						}
 						break;
 					}
-					x = int(g_new_z.x*x_factor*zoom + x_offset);
-					y = int(g_new_z.y*y_factor*zoom + y_offset);
+					x = int(g_new_z.x*x_factor*_zoom + _xCenter);
+					y = int(g_new_z.y*y_factor*_zoom + _yCenter);
 					break;
 				} // end switch SecretMode (sorry about the indentation) 
 			} // end if not MIIM 
@@ -1262,8 +1047,8 @@ void JIIM::Execute()
 					g_old_z.y = g_old_z_l.y;
 					g_old_z.y /= g_fudge;
 				}
-				x = int((g_old_z.x - g_initial_z.x)*x_factor*3*zoom + x_offset);
-				y = int((g_old_z.y - g_initial_z.y)*y_factor*3*zoom + y_offset);
+				x = int((g_old_z.x - g_initial_z.x)*x_factor*3*_zoom + _xCenter);
+				y = int((g_old_z.y - g_initial_z.y)*y_factor*3*_zoom + _yCenter);
 				if (g_fractal_specific[g_fractal_type].orbitcalc())
 				{
 					iter = g_max_iteration;
@@ -1280,19 +1065,19 @@ void JIIM::Execute()
 				actively_computing = false;
 			}
 		}
-		if (m_orbits || iter > 10)
+		if (_orbits || iter > 10)
 		{
-			if (mode == 0)                  // pixels  
+			if (s_mode == JIIM_PIXEL)
 			{
 				plot_color_clip(x, y, color);
 			}
-			else if (mode & 1)            // circles 
+			else if (s_mode & JIIM_CIRCLE)
 			{
 				s_x_base = x;
 				s_y_base = y;
-				circle(int(zoom*(s_window_dots_x >> 1)/iter), color);
+				circle(int(_zoom*(s_window_dots_x >> 1)/iter), color);
 			}
-			if ((mode & 2) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
+			if ((s_mode & JIIM_LINE) && x > 0 && y > 0 && old_x > 0 && old_y > 0)
 			{
 				driver_draw_line(x, y, old_x, old_y, color);
 			}
@@ -1350,7 +1135,7 @@ finish:
 
 	g_using_jiim = false;
 	g_calculate_type = old_calculate_type;
-	g_debug_mode = old_debugflag; // yo Chuck! 
+	g_debug_mode = old_debug_mode;
 	if (kbdchar == 's' || kbdchar == 'S')
 	{
 		g_viewWindow.InitializeRestart();
@@ -1369,3 +1154,253 @@ finish:
 	s_show_numbers = 0;
 	driver_unget_key(kbdchar);
 }
+
+void JIIM::WriteCoordinatesOnScreen(bool &actively_computing)
+{
+	if (s_show_numbers) // write coordinates on screen
+	{
+		std::string text =
+			str(boost::format("%16.14f %16.14f %3d") % _cReal % _cImag % get_color(g_col, g_row));
+		if (s_windows == 0)
+		{
+			/* show temp msg will clear self if new msg is a
+			different length - pad to length 40*/
+			if (text.length() < 40)
+			{
+				text.resize(40, ' ');
+			}
+			cursor::cursor_hide();
+			actively_computing = true;
+			show_temp_message(text);
+			cursor::cursor_show();
+		}
+		else
+		{
+			driver_display_string(5, g_screen_height-s_show_numbers, TEXTCOLOR_WHITE, TEXTCOLOR_BLACK, text.c_str());
+		}
+	}
+}
+
+void JIIM::UpdateColumnRow()
+{
+	if (_dColumn > 0 || _dRow > 0)
+	{
+		_exact = false;
+	}
+	g_col += _dColumn;
+	g_row += _dRow;
+
+	// keep cursor in logical screen
+	if (g_col >= g_x_dots)
+	{
+		g_col = g_x_dots -1;
+		_exact = false;
+	}
+	if (g_row >= g_y_dots)
+	{
+		g_row = g_y_dots -1;
+		_exact = false;
+	}
+	if (g_col < 0)
+	{
+		g_col = 0;
+		_exact = false;
+	}
+	if (g_row < 0)
+	{
+		g_row = 0;
+		_exact = false;
+	}
+}
+
+bool JIIM::ProcessKeyPress(int kbdchar)
+{
+	switch (kbdchar)
+	{
+	case 1143:    // ctrl - keypad 5
+	case 1076:    // keypad 5
+		break;     // do nothing
+	case IDK_CTL_PAGE_UP:
+		_dColumn = 4;
+		_dRow = -4;
+		break;
+	case IDK_CTL_PAGE_DOWN:
+		_dColumn = 4;
+		_dRow = 4;
+		break;
+	case IDK_CTL_HOME:
+		_dColumn = -4;
+		_dRow = -4;
+		break;
+	case IDK_CTL_END:
+		_dColumn = -4;
+		_dRow = 4;
+		break;
+	case IDK_PAGE_UP:
+		_dColumn = 1;
+		_dRow = -1;
+		break;
+	case IDK_PAGE_DOWN:
+		_dColumn = 1;
+		_dRow = 1;
+		break;
+	case IDK_HOME:
+		_dColumn = -1;
+		_dRow = -1;
+		break;
+	case IDK_END:
+		_dColumn = -1;
+		_dRow = 1;
+		break;
+	case IDK_UP_ARROW:
+		_dRow = -1;
+		break;
+	case IDK_DOWN_ARROW:
+		_dRow = 1;
+		break;
+	case IDK_LEFT_ARROW:
+		_dColumn = -1;
+		break;
+	case IDK_RIGHT_ARROW:
+		_dColumn = 1;
+		break;
+	case IDK_CTL_UP_ARROW:
+		_dRow = -4;
+		break;
+	case IDK_CTL_DOWN_ARROW:
+		_dRow = 4;
+		break;
+	case IDK_CTL_LEFT_ARROW:
+		_dColumn = -4;
+		break;
+	case IDK_CTL_RIGHT_ARROW:
+		_dColumn = 4;
+		break;
+	case 'z':
+	case 'Z':
+		_zoom = 1.0f;
+		break;
+	case '<':
+	case ',':
+		_zoom /= 1.15f;
+		break;
+	case '>':
+	case '.':
+		_zoom *= 1.15f;
+		break;
+	case IDK_SPACE:
+		g_julia_c = std::complex<double>(_cReal, _cImag);
+		return true;
+
+	case 'c':   // circle toggle
+	case 'C':   // circle toggle
+		s_mode ^= JIIM_CIRCLE;
+		break;
+	case 'l':
+	case 'L':
+		s_mode ^= JIIM_LINE;
+		break;
+	case 'n':
+	case 'N':
+		s_show_numbers = 8 - s_show_numbers;
+		if (s_windows == 0 && s_show_numbers == 0)
+		{
+			cursor::cursor_hide();
+			clear_temp_message();
+			cursor::cursor_show();
+		}
+		break;
+	case 'p':
+	case 'P':
+		get_a_number(&_cReal, &_cImag);
+		_exact = true;
+		g_col = int(_convert.a*_cReal + _convert.b*_cImag + _convert.e + .5);
+		g_row = int(_convert.c*_cReal + _convert.d*_cImag + _convert.f + .5);
+		_dColumn = 0;
+		_dRow = 0;
+		break;
+	case 'h':   // hide fractal toggle
+	case 'H':   // hide fractal toggle
+		if (s_windows == 2)
+		{
+			s_windows = 3;
+		}
+		else if (s_windows == 3 && s_window_dots_x == g_screen_width)
+		{
+			RestoreRect(0, 0, g_x_dots, g_y_dots);
+			s_windows = 2;
+		}
+		break;
+	case '0':
+	case '1':
+	case '2':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+		if (!_orbits)
+		{
+			s_secret_experimental_mode = kbdchar - '0';
+			break;
+		}
+	default:
+		_again = false;
+	}
+	return (kbdchar == 's' || kbdchar == 'S');
+}
+
+void JIIM::UpdateCursor(bool actively_computing)
+{
+	if (actively_computing)
+	{
+		cursor::cursor_check_blink();
+	}
+	else
+	{
+		cursor::cursor_wait_key();
+	}
+}
+
+void JIIM::SizeWindow()
+{
+	if (g_x_dots == g_screen_width || g_y_dots == g_screen_height ||
+		g_screen_width-g_x_dots < g_screen_width/3 ||
+		g_screen_height-g_y_dots < g_screen_height/3 ||
+		g_x_dots >= MAXRECT)
+	{
+		/* this mode puts orbit/julia in an overlapping window 1/3 the size of
+		the physical screen */
+		s_windows = 0; // full screen or large view window
+		s_window_dots_x = g_screen_width/3;
+		s_window_dots_y = g_screen_height/3;
+		s_window_corner_x = s_window_dots_x*2;
+		s_window_corner_y = s_window_dots_y*2;
+		_xCenter = s_window_dots_x*5/2;
+		_yCenter = s_window_dots_y*5/2;
+	}
+	else if (g_x_dots > g_screen_width/3 && g_y_dots > g_screen_height/3)
+	{
+		// Julia/orbit and fractal don't overlap
+		s_windows = 1;
+		s_window_dots_x = g_screen_width-g_x_dots;
+		s_window_dots_y = g_screen_height-g_y_dots;
+		s_window_corner_x = g_x_dots;
+		s_window_corner_y = g_y_dots;
+		_xCenter = s_window_corner_x + s_window_dots_x/2;
+		_yCenter = s_window_corner_y + s_window_dots_y/2;
+	}
+	else
+	{
+		// Julia/orbit takes whole screen
+		s_windows = 2;
+		s_window_dots_x = g_screen_width;
+		s_window_dots_y = g_screen_height;
+		s_window_corner_x = 0;
+		s_window_corner_y = 0;
+		_xCenter = s_window_dots_x/2;
+		_yCenter = s_window_dots_y/2;
+	}
+}
+
