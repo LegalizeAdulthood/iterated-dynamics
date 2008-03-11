@@ -451,8 +451,24 @@ static LDBL interpolate(LDBL x0, LDBL x1, LDBL x2,
 //
 //	  iter       : current number of iterations
 //
-static LDBL zre1, zim1, zre2, zim2, zre3, zim3, zre4, zim4, zre5, zim5,
-				zre6, zim6, zre7, zim7, zre8, zim8, zre9, zim9;
+static LDBL zre1;
+static LDBL zim1;
+static LDBL zre2;
+static LDBL zim2;
+static LDBL zre3;
+static LDBL zim3;
+static LDBL zre4;
+static LDBL zim4;
+static LDBL zre5;
+static LDBL zim5;
+static LDBL zre6;
+static LDBL zim6;
+static LDBL zre7;
+static LDBL zim7;
+static LDBL zre8;
+static LDBL zim8;
+static LDBL zre9;
+static LDBL zim9;
 //
 //	The purpose of this macro is to reduce the number of parameters of the
 //	function rhombus(), since this is a recursive function, and stack space
