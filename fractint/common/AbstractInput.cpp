@@ -11,13 +11,16 @@
 
 #include "AbstractInput.h"
 
+AbstractDialog::AbstractDialog(AbstractDriver *driver) : _driver(driver)
+{
+}
 
 void AbstractDialog::ProcessInput()
 {
 	bool done = false;
 	while (!done)
 	{
-		int key = driver_key_pressed();
+		int key = _driver->key_pressed();
 		if (key)
 		{
 			done = ProcessWaitingKey(key);
@@ -28,9 +31,3 @@ void AbstractDialog::ProcessInput()
 		}
 	}
 }
-
-int AbstractDialog::driver_key_pressed()
-{
-	return ::driver_key_pressed();
-}
-

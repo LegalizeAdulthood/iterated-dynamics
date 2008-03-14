@@ -52,7 +52,7 @@ static void translate_obsolete_fractal_types(const fractal_info *info);
 static bool fix_bof();
 static bool fix_period_bof();
 
-int g_loaded_3d = 0;
+bool g_loaded_3d = false;
 int g_file_y_dots = 0;
 int g_file_x_dots = 0;
 int g_file_colors = 0;
@@ -200,7 +200,7 @@ static void read_info_version_4(const fractal_info &read_info)
 		}
 		if (!g_display_3d && read_info.flag3d > 0)
 		{
-			g_loaded_3d = 1;
+			g_loaded_3d = true;
 			g_3d_state.set_ambient(read_info.ambient);
 			g_3d_state.set_randomize_colors(read_info.randomize);
 			g_3d_state.set_haze(read_info.haze);
@@ -558,8 +558,8 @@ static void got_evolver_info(const fractal_info &read_info, evolver_info_extensi
 		resume_e_info.odpy = evolver_info.odpy;
 		resume_e_info.px = evolver_info.px;
 		resume_e_info.py = evolver_info.py;
-		resume_e_info.sxoffs = evolver_info.sxoffs;
-		resume_e_info.syoffs = evolver_info.syoffs;
+		resume_e_info.screen_x_offset = evolver_info.sxoffs;
+		resume_e_info.screen_y_offset = evolver_info.syoffs;
 		resume_e_info.x_dots = evolver_info.x_dots;
 		resume_e_info.y_dots = evolver_info.y_dots;
 		resume_e_info.grid_size = evolver_info.grid_size;
@@ -663,12 +663,12 @@ static int fixup_3d_info(bool oldfloatflag, const fractal_info &read_info, formu
 	}
 	else
 	{
-		int olddisplay3d = g_display_3d;
+		Display3DType old_display_3d = g_display_3d;
 		bool oldfloatflag = g_float_flag;
-		g_display_3d = g_loaded_3d;      // for <tab> display during next 
+		g_display_3d = g_loaded_3d ? DISPLAY3D_YES : DISPLAY3D_NONE;      // for <tab> display during next 
 		g_float_flag = (g_user_float_flag != 0); // ditto 
 		int i = get_video_mode(&read_info, &formula_info);
-		g_display_3d = olddisplay3d;
+		g_display_3d = old_display_3d;
 		g_float_flag = oldfloatflag;
 		if (i)
 		{
@@ -705,7 +705,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
 	g_show_file = SHOWFILE_DONE;			// for any abort exit, pretend done 
 	g_.SetInitialVideoModeNone();					// no viewing mode set yet 
 	bool oldfloatflag = g_user_float_flag;
-	g_loaded_3d = 0;
+	g_loaded_3d = false;
 	if (g_fast_restore)
 	{
 		g_viewWindow.Hide();
@@ -1017,8 +1017,8 @@ static void FoundInfoId(fractal_info *info,
 				evolver_info->odpy = (char)evolver_load_info.odpy;
 				evolver_info->px = evolver_load_info.px;
 				evolver_info->py = evolver_load_info.py;
-				evolver_info->sxoffs = evolver_load_info.sxoffs;
-				evolver_info->syoffs = evolver_load_info.syoffs;
+				evolver_info->sxoffs = evolver_load_info.screen_x_offset;
+				evolver_info->syoffs = evolver_load_info.screen_y_offset;
 				evolver_info->x_dots = evolver_load_info.x_dots;
 				evolver_info->y_dots = evolver_load_info.y_dots;
 				evolver_info->grid_size = evolver_load_info.grid_size;

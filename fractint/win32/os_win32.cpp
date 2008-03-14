@@ -787,7 +787,7 @@ int out_line(BYTE *pixels, int linelen)
 	return 0;
 }
 
-void init_failure(const char *message)
+void init_failure(std::string const &message)
 {
-	MessageBox(0, message, "FractInt: Fatal Error", MB_OK);
+	MessageBox(0, message.c_str(), "FractInt: Fatal Error", MB_OK);
 }

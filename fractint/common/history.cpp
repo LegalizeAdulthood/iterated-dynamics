@@ -514,7 +514,7 @@ void history_restore_info()
 	g_disk_16bit = last.potential_16bit;
 	g_release = last.release;
 	g_save_release = last.save_release;
-	g_display_3d = last.display_3d;
+	g_display_3d = Display3DType(last.display_3d);
 	g_3d_state.set_ambient(last.ambient);
 	g_3d_state.set_randomize_colors(last.randomize);
 	g_3d_state.set_haze(last.haze);

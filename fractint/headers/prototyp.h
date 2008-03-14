@@ -62,7 +62,7 @@ extern uclock_t usec_clock();
 extern void restart_uclock();
 extern void wait_until(int index, uclock_t wait_time);
 
-extern void init_failure(const char *message);
+extern void init_failure(std::string const &message);
 extern int expand_dirname(char *dirname, char *drive);
 extern int abort_message(const char *file, unsigned int line, int flags, const char *msg);
 #define ABORT(flags_, msg_) abort_message(__FILE__, __LINE__, flags_, msg_)

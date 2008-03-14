@@ -17,35 +17,47 @@
 #include "helpdefs.h"
 #include "strcpy.h"
 
+#include "AbstractInput.h"
 #include "ant.h"
 #include "drivers.h"
 #include "fihelp.h"
 #include "fracsubr.h"
 #include "realdos.h"
 
-class Ant
+class Ant : public AbstractInputContext
 {
 public:
-	Ant()
-		: m_last_xdots(0),
+	Ant(AbstractDriver *driver) : AbstractInputContext(),
+		m_last_xdots(0),
 		m_last_ydots(0),
 		m_max_ants(0),
 		m_wrap(false),
 		m_wait(0),
-		m_rule_len(0)
+		m_rule_len(0),
+		_type(ANTTYPE_MOVE_COLOR),
+		_driver(driver)
 	{
 		std::fill(&m_incx[0], &m_incx[DIRS], static_cast<int *>(0));
 		std::fill(&m_incy[0], &m_incy[DIRS], static_cast<int *>(0));
 		std::fill(&m_rule[0], &m_rule[MAX_ANTS], 0);
-	};
+	}
 	~Ant()
 	{
 		free_storage();
 	}
 
-	int compute();
+	int Compute();
+	virtual bool ProcessWaitingKey(int key);
+	virtual bool ProcessIdle();
 
 private:
+	// ant types
+	enum AntType
+	{
+		ANTTYPE_MOVE_COLOR	= 0,
+		ANTTYPE_MOVE_RULE	= 1
+	};
+
 	enum
 	{
 		DIRS = 4,
@@ -65,12 +77,18 @@ private:
 	bool m_wrap;
 	long m_wait;
 	int m_rule_len;
+	AntType _type;
+	AbstractDriver *_driver;
 
 	void initialize_increments();
 	void free_storage();
 	void set_wait();
 	void turk_mite1(long maxpts);
 	void turk_mite2(long maxptr);
+
+	void SetAntType();
+	void SetMaxAnts();
+	void SetRandomSeedForReproducibility();
 
 	// Generate Random Number 0 <= r < n 
 	static int random_number(long n)
@@ -79,13 +97,23 @@ private:
 	}
 };
 
+bool Ant::ProcessIdle()
+{
+	return true;
+}
+
+bool Ant::ProcessWaitingKey(int key)
+{
+	return true;
+}
+
 void Ant::set_wait()
 {
 	while (true)
 	{
 		show_temp_message(str(boost::format("Delay %4ld ") % m_wait));
 
-		int kbdchar = driver_get_key();
+		int kbdchar = _driver->get_key();
 		switch (kbdchar)
 		{
 		case IDK_CTL_RIGHT_ARROW:
@@ -192,13 +220,13 @@ void Ant::turk_mite1(long maxpts)
 	{
 		// TODO: refactor to IInputContext
 		// check for a key only every inner_loop times 
-		int kbdchar = driver_key_pressed();
+		int kbdchar = _driver->key_pressed();
 		if (kbdchar || step)
 		{
 			bool done = false;
 			if (kbdchar == 0)
 			{
-				kbdchar = driver_get_key();
+				kbdchar = _driver->get_key();
 			}
 			switch (kbdchar)
 			{
@@ -226,9 +254,9 @@ void Ant::turk_mite1(long maxpts)
 			{
 				return;
 			}
-			if (driver_key_pressed())
+			if (_driver->key_pressed())
 			{
-				driver_get_key();
+				_driver->get_key();
 			}
 		}
 		for (int i = INNER_LOOP; i; i--)
@@ -352,13 +380,13 @@ void Ant::turk_mite2(long maxpts)
 	for (int count = 0; count < maxpts; count++)
 	{
 		// check for a key only every inner_loop times 
-		int kbdchar = driver_key_pressed();
+		int kbdchar = _driver->key_pressed();
 		if (kbdchar || step)
 		{
 			bool done = false;
 			if (kbdchar == 0)
 			{
-				kbdchar = driver_get_key();
+				kbdchar = _driver->get_key();
 			}
 			switch (kbdchar)
 			{
@@ -386,9 +414,9 @@ void Ant::turk_mite2(long maxpts)
 			{
 				return;
 			}
-			if (driver_key_pressed())
+			if (_driver->key_pressed())
 			{
-				driver_get_key();
+				_driver->get_key();
 			}
 		}
 		for (int i = INNER_LOOP; i; i--)
@@ -487,7 +515,7 @@ void Ant::initialize_increments()
 	m_incy[2][0] = g_y_dots - 1;      // wrap from the bottom of the screen to the top 
 }
 
-int Ant::compute()
+int Ant::Compute()
 {
 	if (g_x_dots != m_last_xdots || g_y_dots != m_last_ydots)
 	{
@@ -521,7 +549,26 @@ int Ant::compute()
 		m_rule_len = 0;
 	}
 
-	// set random seed for reproducibility 
+	SetRandomSeedForReproducibility();
+
+	SetMaxAnts();
+	SetAntType();
+	m_wrap = (g_parameters[4] != 0);
+
+	switch (_type)
+	{
+	case ANTTYPE_MOVE_COLOR:
+		turk_mite1(maxpts);
+		break;
+	case ANTTYPE_MOVE_RULE:
+		turk_mite2(maxpts);
+		break;
+	}
+	return 0;
+}
+
+void Ant::SetRandomSeedForReproducibility()
+{
 	if (!g_use_fixed_random_seed && (g_parameters[5] == 1))
 	{
 		--g_random_seed;
@@ -536,9 +583,12 @@ int Ant::compute()
 	{
 		++g_random_seed;
 	}
+}
 
+void Ant::SetMaxAnts()
+{
 	m_max_ants = int(g_parameters[2]);
-	if (m_max_ants < 1)             // if m_max_ants == 0 maxants random 
+	if (m_max_ants < 1)             // if m_max_ants == 0 maxants random
 	{
 		m_max_ants = 2 + random_number(MAX_ANTS - 2);
 	}
@@ -546,31 +596,21 @@ int Ant::compute()
 	{
 		m_max_ants = MAX_ANTS;
 		g_parameters[2] = m_max_ants;
-			
-	}
-	int type = int(g_parameters[3]) - 1;
-	if (type < ANTTYPE_MOVE_COLOR || type > ANTTYPE_MOVE_RULE)
-	{
-		type = random_number(2);         // if parma[3] == 0 choose a random type 
-	}
 
-	m_wrap = (g_parameters[4] != 0);
-
-	switch (type)
-	{
-	case ANTTYPE_MOVE_COLOR:
-		turk_mite1(maxpts);
-		break;
-	case ANTTYPE_MOVE_RULE:
-		turk_mite2(maxpts);
-		break;
 	}
-	return 0;
 }
 
-static Ant s_ant;
+void Ant::SetAntType()
+{
+	_type = AntType(int(g_parameters[3]) - 1);
+	if (_type < ANTTYPE_MOVE_COLOR || _type > ANTTYPE_MOVE_RULE)
+	{
+		// if param[3] == 0 choose a random type
+		_type = AntType(random_number(2));
+	}
+}
 
 int ant()
 {
-	return s_ant.compute();
+	return Ant(DriverManager::current()).Compute();
 }

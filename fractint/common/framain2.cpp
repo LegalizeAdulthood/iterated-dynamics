@@ -86,22 +86,27 @@ private:
 	int *m_save_zoom;
 };
 
-bool g_from_text_flag = false;         // = 1 if we're in graphics mode 
-evolution_info *g_evolve_info = 0;
-CalculationMode g_standard_calculation_mode_old;
-void (*g_out_line_cleanup)();
-
 // routines in this module      
 
 ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdmore, bool &screen_stacked);
 ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, bool &kbdmore, bool &stacked);
 ApplicationStateType big_while_loop(bool &keyboardMore, bool &screenStacked, bool resumeFlag);
+int out_line_compare(BYTE *pixels, int line_length);
+void out_line_cleanup_null();
 static void move_zoombox(int keynum);
-static int out_line_compare(BYTE *pixels, int line_length);
 static void out_line_cleanup_compare();
+
+bool g_from_text_flag = false;         // = 1 if we're in graphics mode 
+evolution_info *g_evolve_info = 0;
+CalculationMode g_standard_calculation_mode_old;
+void (*g_out_line_cleanup)() = out_line_cleanup_null;
 
 static LineCompare s_line_compare;
 static ZoomSaver s_zoom_saver;
+
+void out_line_cleanup_null()
+{
+}
 
 int LineCompare::compare(BYTE *pixels, int line_length)
 {
@@ -159,7 +164,7 @@ void LineCompare::cleanup()
 	_file.close();
 }
 
-static int out_line_compare(BYTE *pixels, int line_length)
+int out_line_compare(BYTE *pixels, int line_length)
 {
 	return s_line_compare.compare(pixels, line_length);
 }
@@ -198,635 +203,6 @@ void ZoomSaver::restore()
 		delete[] m_save_zoom;
 		zoom_box_draw(true); // get the g_xx_min etc variables recalc'd by redisplaying 
 	}
-}
-
-class BigWhileLoop
-{
-public:
-	BigWhileLoop(bool &kbdmore, bool &screen_stacked, bool resume_flag)
-		: _keyboardMore(kbdmore),
-		_screenStacked(screen_stacked),
-		_resumeFlag(resume_flag)
-	{
-	}
-	ApplicationStateType Execute();
-
-private:
-	ApplicationStateType GetMainMenuState(bool julia_entered_from_mandelbrot, int kbdchar);
-	bool StatusNotResumableOrShowFilePending();
-	void HandleVisibleViewWindow();
-
-	bool &_keyboardMore;
-	bool &_screenStacked;
-	bool _resumeFlag;
-};
-
-ApplicationStateType BigWhileLoop::GetMainMenuState(bool julia_entered_from_mandelbrot, int kbdchar)
-{
-	ApplicationStateType mainMenuState = g_evolving_flags ?
-		evolver_menu_switch(kbdchar, julia_entered_from_mandelbrot, _keyboardMore, _screenStacked)
-		: main_menu_switch(kbdchar, julia_entered_from_mandelbrot, _keyboardMore, _screenStacked);
-	if (g_quick_calculate
-		&& (mainMenuState == APPSTATE_IMAGE_START ||
-		mainMenuState == APPSTATE_RESTORE_START ||
-		mainMenuState == APPSTATE_RESTART))
-	{
-		g_quick_calculate = false;
-		g_user_standard_calculation_mode = g_standard_calculation_mode_old;
-	}
-	if (g_quick_calculate && g_calculation_status != CALCSTAT_COMPLETED)
-	{
-		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
-	}
-	return mainMenuState;
-}
-
-bool BigWhileLoop::StatusNotResumableOrShowFilePending()
-{
-	return g_calculation_status != CALCSTAT_RESUMABLE || g_show_file == SHOWFILE_PENDING;
-}
-
-void BigWhileLoop::HandleVisibleViewWindow()
-{
-	double ftemp;
-	if (g_viewWindow.Visible())
-	{
-		// bypass for VESA virtual screen
-		ftemp = g_viewWindow.AspectRatio()*((double(g_screen_height))/(double(g_screen_width))/g_screen_aspect_ratio);
-		g_x_dots = g_viewWindow.Width();
-		if (g_x_dots != 0)
-		{	// g_x_dots specified
-			g_y_dots = g_viewWindow.Height();
-			if (g_y_dots == 0) // calc g_y_dots?
-			{
-				g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
-			}
-		}
-		else if (g_viewWindow.AspectRatio() <= g_screen_aspect_ratio)
-		{
-			g_x_dots = int(double(g_screen_width)/g_viewWindow.Reduction() + 0.5);
-			g_y_dots = int(double(g_x_dots)*ftemp + 0.5);
-		}
-		else
-		{
-			g_y_dots = int(double(g_screen_height)/g_viewWindow.Reduction() + 0.5);
-			g_x_dots = int(double(g_y_dots)/ftemp + 0.5);
-		}
-		if (g_x_dots > g_screen_width || g_y_dots > g_screen_height)
-		{
-			stop_message(STOPMSG_NORMAL, "View window too large; using full screen.");
-			g_viewWindow.FullScreen(g_screen_width, g_screen_height);
-			g_x_dots = g_screen_width;
-			g_y_dots = g_screen_height;
-		}
-		else if (((g_x_dots <= 1) // changed test to 1, so a 2x2 window will
-			|| (g_y_dots <= 1)) // work with the sound feature
-			&& !(g_evolving_flags & EVOLVE_FIELD_MAP))
-		{	// so ssg works
-			// but no check if in evolve mode to allow lots of small views
-			stop_message(STOPMSG_NORMAL, "View window too small; using full screen.");
-			g_viewWindow.Hide();
-			g_x_dots = g_screen_width;
-			g_y_dots = g_screen_height;
-		}
-		if ((g_evolving_flags & EVOLVE_FIELD_MAP) && (g_current_fractal_specific->flags & FRACTALFLAG_INFINITE_CALCULATION))
-		{
-			stop_message(STOPMSG_NORMAL, "Fractal doesn't terminate! switching off evolution.");
-			g_evolving_flags &= ~EVOLVE_FIELD_MAP;
-			g_viewWindow.Hide();
-			g_x_dots = g_screen_width;
-			g_y_dots = g_screen_height;
-		}
-		if (g_evolving_flags & EVOLVE_FIELD_MAP)
-		{
-			g_x_dots = (g_screen_width/g_grid_size) - !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-			g_x_dots -= g_x_dots % 4; // trim to multiple of 4 for SSG
-			g_y_dots = (g_screen_height/g_grid_size) - !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-			g_y_dots -= g_y_dots % 4;
-		}
-		else
-		{
-			g_screen_x_offset = (g_screen_width - g_x_dots)/2;
-			g_screen_y_offset = (g_screen_height - g_y_dots)/3;
-		}
-	}
-}
-
-ApplicationStateType BigWhileLoop::Execute()
-{
-#if defined(_WIN32)
-	_ASSERTE(_CrtCheckMemory());
-#endif
-	bool julia_entered_from_mandelbrot = false;
-	if (_resumeFlag)
-	{
-		goto resumeloop;
-	}
-
-	int i = 0;
-	while (true)
-	{
-#if defined(_WIN32)
-		_ASSERTE(_CrtCheckMemory());
-#endif
-
-		if (StatusNotResumableOrShowFilePending())
-		{
-			g_.SetVideoEntry(g_.Adapter());
-			g_x_dots = g_.VideoEntry().x_dots;       // # dots across the screen 
-			g_y_dots = g_.VideoEntry().y_dots;       // # dots down the screen   
-			g_colors = g_.VideoEntry().colors;      // # colors available 
-			g_screen_width = g_x_dots;
-			g_screen_height = g_y_dots;
-			g_screen_x_offset = 0;
-			g_screen_y_offset = 0;
-			g_rotate_hi = (g_rotate_hi < g_colors) ? g_rotate_hi : g_colors - 1;
-
-			g_.PushDAC();
-
-			if (g_overlay_3d && !g_initialize_batch)
-			{
-				driver_unstack_screen();            // restore old graphics image 
-				g_overlay_3d = 0;
-			}
-			else
-			{
-				DriverManager::change_video_mode(g_.VideoEntry()); // switch video modes 
-				// switching video modes may have changed drivers or disk flag... 
-				if (!g_.GoodMode())
-				{
-					if (!driver_diskp())
-					{
-						stop_message(STOPMSG_NORMAL, "That video mode is not available with your adapter.");
-					}
-					g_ui_state.ask_video = true;
-					g_.SetInitialVideoModeNone();
-					driver_set_for_text(); // switch to text mode 
-					// goto restorestart; 
-					return APPSTATE_RESTORE_START;
-				}
-
-				g_x_dots = g_screen_width;
-				g_y_dots = g_screen_height;
-				g_.SetVideoEntrySize(g_x_dots, g_y_dots);
-			}
-
-			if (g_.SaveDAC() || g_color_preloaded)
-			{
-				g_.PopDAC(); // restore the DAC 
-				load_dac();
-				g_color_preloaded = false;
-			}
-			else
-			{	// reset DAC to defaults, which setvideomode has done for us 
-				if (g_.MapDAC())
-				{	// but there's a map=, so load that 
-					g_.DAC() = *g_.MapDAC();
-					load_dac();
-				}
-				g_.SetColorState(COLORSTATE_DEFAULT);
-			}
-			HandleVisibleViewWindow();
-			g_dx_size = g_x_dots - 1;            // convert just once now 
-			g_dy_size = g_y_dots - 1;
-		}
-		// assume we save next time (except jb) 
-		g_.SetSaveDAC((g_.SaveDAC() == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES);
-		if (g_initialize_batch == INITBATCH_NONE)
-		{
-			driver_set_mouse_mode(-IDK_PAGE_UP);        // mouse left button == pgup 
-		}
-
-		if (g_show_file == SHOWFILE_PENDING)
-		{               // loading an image 
-			g_out_line_cleanup = 0;          // g_out_line routine can set this 
-			if (g_display_3d)                 // set up 3D decoding 
-			{
-				g_out_line = out_line_3d;
-			}
-			else if (g_compare_gif)            // debug 50 
-			{
-				g_out_line = out_line_compare;
-			}
-			else if (g_potential_16bit)
-			{            // .pot format input file 
-				if (disk_start_potential() < 0)
-				{                           // pot file failed?  
-					g_show_file = SHOWFILE_DONE;
-					g_potential_flag = false;
-					g_potential_16bit = false;
-					g_.SetInitialVideoModeNone();
-					g_calculation_status = CALCSTAT_RESUMABLE;         // "resume" without 16-bit 
-					driver_set_for_text();
-					get_fractal_type();
-					// goto imagestart; 
-					return APPSTATE_IMAGE_START;
-				}
-				g_out_line = out_line_potential;
-			}
-			else if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !g_evolving_flags) // regular gif/fra input file 
-			{
-				g_out_line = out_line_sound;      // sound decoding 
-			}
-			else
-			{
-				g_out_line = out_line;        // regular decoding 
-			}
-			if (2224 == g_debug_mode)
-			{
-				stop_message(STOPMSG_NO_BUZZER,
-					str(boost::format("floatflag=%d") % (g_user_float_flag ? 1 : 0)));
-			}
-			i = funny_glasses_call(gifview);
-			if (g_out_line_cleanup)              // cleanup routine defined? 
-			{
-				g_out_line_cleanup();
-			}
-			if (i == 0)
-			{
-				driver_buzzer(BUZZER_COMPLETE);
-			}
-			else
-			{
-				g_calculation_status = CALCSTAT_NO_FRACTAL;
-				// TODO: don't support aborting of load
-				if (driver_key_pressed())
-				{
-					driver_buzzer(BUZZER_INTERRUPT);
-					while (driver_key_pressed())
-					{
-						driver_get_key();
-					}
-					text_temp_message("*** load incomplete ***");
-				}
-			}
-		}
-
-		g_zoom_off = true;                      // zooming is enabled 
-		if (driver_diskp() || (g_current_fractal_specific->flags & FRACTALFLAG_NO_ZOOM) != 0)
-		{
-			g_zoom_off = false;                   // for these cases disable zooming 
-		}
-		if (!g_evolving_flags)
-		{
-			calculate_fractal_initialize();
-		}
-		driver_schedule_alarm(1);
-
-		g_sx_min = g_escape_time_state.m_grid_fp.x_min(); // save 3 corners for zoom.c ref points 
-		g_sx_max = g_escape_time_state.m_grid_fp.x_max();
-		g_sx_3rd = g_escape_time_state.m_grid_fp.x_3rd();
-		g_sy_min = g_escape_time_state.m_grid_fp.y_min();
-		g_sy_max = g_escape_time_state.m_grid_fp.y_max();
-		g_sy_3rd = g_escape_time_state.m_grid_fp.y_3rd();
-
-		if (g_bf_math)
-		{
-			copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_min());
-			copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_max());
-			copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_min());
-			copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_max());
-			copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_3rd());
-			copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_3rd());
-		}
-		history_save_info();
-
-		if (g_show_file == SHOWFILE_PENDING)
-		{               // image has been loaded 
-			g_show_file = SHOWFILE_DONE;
-			if (g_initialize_batch == INITBATCH_NORMAL && g_calculation_status == CALCSTAT_RESUMABLE)
-			{
-				g_initialize_batch = INITBATCH_FINISH_CALC; // flag to finish calc before save 
-			}
-			if (g_loaded_3d)      // 'r' of image created with '3' 
-			{
-				g_display_3d = DISPLAY3D_YES;  // so set flag for 'b' command 
-			}
-		}
-		else
-		{                            // draw an image 
-			if (g_save_time != 0          // autosave and resumable? 
-				&& (g_current_fractal_specific->flags & FRACTALFLAG_NOT_RESUMABLE) == 0)
-			{
-				g_save_base = read_ticker(); // calc's start time 
-				g_save_ticks = g_save_time*60*1000; // in milliseconds 
-				g_finish_row = -1;
-			}
-			g_browse_state.SetBrowsing(false);      // regenerate image, turn off browsing 
-			/*rb*/
-			g_name_stack_ptr = -1;   // reset pointer 
-			g_browse_state.SetName("");
-			if (g_viewWindow.Visible() && (g_evolving_flags & EVOLVE_FIELD_MAP) && (g_calculation_status != CALCSTAT_COMPLETED))
-			{
-				// generate a set of images with varied parameters on each one 
-				int grout;
-				int ecount;
-				int tmpxdots;
-				int tmpydots;
-				int gridsqr;
-				evolution_info resume_e_info;
-
-				if ((g_evolve_info != 0) && (g_calculation_status == CALCSTAT_RESUMABLE))
-				{
-					resume_e_info = *g_evolve_info;
-					g_parameter_range_x = resume_e_info.parameter_range_x;
-					g_parameter_range_y = resume_e_info.parameter_range_y;
-					g_parameter_offset_x = resume_e_info.opx;
-					g_parameter_offset_y = resume_e_info.opy;
-					g_new_parameter_offset_x = resume_e_info.opx;
-					g_new_parameter_offset_y = resume_e_info.opy;
-					g_new_discrete_parameter_offset_x = resume_e_info.odpx;
-					g_new_discrete_parameter_offset_y = resume_e_info.odpy;
-					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x;
-					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y;
-					g_px = resume_e_info.px;
-					g_py = resume_e_info.py;
-					g_screen_x_offset = resume_e_info.sxoffs;
-					g_screen_y_offset = resume_e_info.syoffs;
-					g_x_dots = resume_e_info.x_dots;
-					g_y_dots = resume_e_info.y_dots;
-					g_grid_size = resume_e_info.grid_size;
-					g_this_generation_random_seed = resume_e_info.this_generation_random_seed;
-					g_fiddle_factor = resume_e_info.fiddle_factor;
-					g_evolving_flags = resume_e_info.evolving;
-					if (g_evolving_flags)
-					{
-						g_viewWindow.Show();
-					}
-					ecount = resume_e_info.ecount;
-					delete g_evolve_info;
-					g_evolve_info = 0;
-				}
-				else
-				{ // not resuming, start from the beginning 
-					int mid = g_grid_size/2;
-					if ((g_px != mid) || (g_py != mid))
-					{
-						g_this_generation_random_seed = (unsigned int)clock_ticks(); // time for new set 
-					}
-					save_parameter_history();
-					ecount = 0;
-					g_fiddle_factor *= g_fiddle_reduction;
-					g_parameter_offset_x = g_new_parameter_offset_x;
-					g_parameter_offset_y = g_new_parameter_offset_y;
-					// odpx used for discrete parms like inside, outside, trigfn etc 
-					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x;
-					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y; 
-				}
-				g_parameter_box_count = 0;
-				g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size-1);
-				g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size-1);
-				grout = !((g_evolving_flags & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-				tmpxdots = g_x_dots + grout;
-				tmpydots = g_y_dots + grout;
-				gridsqr = g_grid_size*g_grid_size;
-				while (ecount < gridsqr)
-				{
-					spiral_map(ecount); // sets px & py 
-					g_screen_x_offset = tmpxdots*g_px;
-					g_screen_y_offset = tmpydots*g_py;
-					restore_parameter_history();
-					fiddle_parameters(g_genes, ecount);
-					calculate_fractal_initialize();
-					if (calculate_fractal() == -1)
-					{
-						goto done;
-					}
-					ecount ++;
-				}
-done:
-#if defined(_WIN32)
-				_ASSERTE(_CrtCheckMemory());
-#endif
-
-				if (ecount == gridsqr)
-				{
-					i = 0;
-					driver_buzzer(BUZZER_COMPLETE); // finished!! 
-				}
-				else
-				{	// interrupted screen generation, save info 
-					if (g_evolve_info == 0)
-					{
-						g_evolve_info = new evolution_info;
-					}
-					resume_e_info.parameter_range_x = g_parameter_range_x;
-					resume_e_info.parameter_range_y = g_parameter_range_y;
-					resume_e_info.opx = g_parameter_offset_x;
-					resume_e_info.opy = g_parameter_offset_y;
-					resume_e_info.odpx = short(g_discrete_parameter_offset_x);
-					resume_e_info.odpy = short(g_discrete_parameter_offset_y);
-					resume_e_info.px = short(g_px);
-					resume_e_info.py = short(g_py);
-					resume_e_info.sxoffs = short(g_screen_x_offset);
-					resume_e_info.syoffs = short(g_screen_y_offset);
-					resume_e_info.x_dots = short(g_x_dots);
-					resume_e_info.y_dots = short(g_y_dots);
-					resume_e_info.grid_size = short(g_grid_size);
-					resume_e_info.this_generation_random_seed = short(g_this_generation_random_seed);
-					resume_e_info.fiddle_factor = g_fiddle_factor;
-					resume_e_info.evolving = short(g_evolving_flags);
-					resume_e_info.ecount = short(ecount);
-					*g_evolve_info = resume_e_info;
-				}
-				g_screen_x_offset = 0;
-				g_screen_y_offset = 0;
-				g_x_dots = g_screen_width;
-				g_y_dots = g_screen_height; // otherwise save only saves a sub image and boxes get clipped 
-
-				// set up for 1st selected image, this reuses px and py 
-				g_px = g_grid_size/2;
-				g_py = g_grid_size/2;
-				unspiral_map(); // first time called, w/above line sets up array 
-				restore_parameter_history();
-				fiddle_parameters(g_genes, 0);
-			}
-			// end of evolution loop 
-			else
-			{
-				i = calculate_fractal();       // draw the fractal
-				if (i == 0)
-				{
-					driver_buzzer(BUZZER_COMPLETE); // finished!! 
-				}
-			}
-
-			g_save_ticks = 0;                 // turn off autosave timer 
-			if (driver_diskp() && i == 0) // disk-video 
-			{
-				disk_video_status(0, "Image has been completed");
-			}
-		}
-#ifndef XFRACT
-		g_zoomBox.set_count(0);                     // no zoom box yet  
-		g_z_width = 0;
-#else
-		if (!XZoomWaiting)
-		{
-			g_zoomBox.set_count(0);                 // no zoom box yet  
-			g_z_width = 0;
-		}
-#endif
-
-		if (g_fractal_type == FRACTYPE_PLASMA)
-		{
-			g_cycle_limit = 256;              // plasma clouds need quick spins 
-			g_.SetDACSleepCount(256);
-		}
-
-resumeloop:
-#if defined(_WIN32)
-		_ASSERTE(_CrtCheckMemory());
-#endif
-
-		_keyboardMore = true;
-		int kbdchar;
-		while (_keyboardMore)
-		{           // loop through command keys 
-			if (g_timed_save != TIMEDSAVE_DONE)
-			{
-				if (g_timed_save == TIMEDSAVE_START)
-				{       // woke up for timed save 
-					driver_get_key();     // eat the dummy char 
-					kbdchar = 's'; // do the save 
-					g_resave_mode = RESAVE_YES;
-					g_timed_save = TIMEDSAVE_PENDING;
-				}
-				else
-				{                      // save done, resume 
-					g_timed_save = TIMEDSAVE_DONE;
-					g_resave_mode = RESAVE_DONE;
-					kbdchar = IDK_ENTER;
-				}
-			}
-			else if (g_initialize_batch == INITBATCH_NONE)      // not batch mode 
-			{
-				driver_set_mouse_mode((g_z_width == 0) ? -IDK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX);
-				if (g_calculation_status == CALCSTAT_RESUMABLE && g_z_width == 0 && !driver_key_pressed())
-				{
-					kbdchar = IDK_ENTER;  // no visible reason to stop, continue 
-				}
-				else      // wait for a real keystroke 
-				{
-					if (g_browse_state.AutoBrowse() && g_browse_state.SubImages())
-					{
-						kbdchar = 'l';
-					}
-					else
-					{
-						driver_wait_key_pressed(0);
-						kbdchar = driver_get_key();
-					}
-					if (kbdchar == IDK_ESC || kbdchar == 'm' || kbdchar == 'M')
-					{
-						if (kbdchar == IDK_ESC && g_escape_exit_flag)
-						{
-							// don't ask, just get out 
-							goodbye();
-						}
-						driver_stack_screen();
-#ifndef XFRACT
-						kbdchar = main_menu(true);
-#else
-						if (XZoomWaiting)
-						{
-							kbdchar = IDK_ENTER;
-						}
-						else
-						{
-							kbdchar = main_menu(true);
-							if (XZoomWaiting)
-							{
-								kbdchar = IDK_ENTER;
-							}
-						}
-#endif
-						if (kbdchar == '\\' || kbdchar == IDK_CTL_BACKSLASH ||
-							kbdchar == 'h' || kbdchar == IDK_BACKSPACE ||
-							check_video_mode_key(kbdchar) >= 0)
-						{
-							driver_discard_screen();
-						}
-						else if (kbdchar == 'x' || kbdchar == 'y' ||
-								kbdchar == 'z' || kbdchar == 'g' ||
-								kbdchar == 'v' || kbdchar == IDK_CTL_B ||
-								kbdchar == IDK_CTL_E || kbdchar == IDK_CTL_F)
-						{
-							g_from_text_flag = true;
-						}
-						else
-						{
-							driver_unstack_screen();
-						}
-					}
-				}
-			}
-			else          // batch mode, fake next keystroke 
-			{
-				// g_initialize_batch == -1  flag to finish calc before save 
-				// g_initialize_batch == 0   not in batch mode 
-				// g_initialize_batch == 1   normal batch mode 
-				// g_initialize_batch == 2   was 1, now do a save 
-				// g_initialize_batch == 3   bailout with errorlevel == 2, error occurred, no save 
-				// g_initialize_batch == 4   bailout with errorlevel == 1, interrupted, try to save 
-				// g_initialize_batch == 5   was 4, now do a save 
-
-				if (g_initialize_batch == INITBATCH_FINISH_CALC)       // finish calc 
-				{
-					kbdchar = IDK_ENTER;
-					g_initialize_batch = INITBATCH_NORMAL;
-				}
-				else if (g_initialize_batch == INITBATCH_NORMAL || g_initialize_batch == INITBATCH_BAILOUT_INTERRUPTED) // save-to-disk 
-				{
-					kbdchar = (DEBUGMODE_COMPARE_RESTORED == g_debug_mode) ? 'r' : 's';
-					if (g_initialize_batch == INITBATCH_NORMAL)
-					{
-						g_initialize_batch = INITBATCH_SAVE;
-					}
-					if (g_initialize_batch == INITBATCH_BAILOUT_INTERRUPTED)
-					{
-						g_initialize_batch = INITBATCH_BAILOUT_SAVE;
-					}
-				}
-				else
-				{
-					if (g_calculation_status != CALCSTAT_COMPLETED)
-					{
-						g_initialize_batch = INITBATCH_BAILOUT_ERROR; // bailout with error 
-					}
-					goodbye();               // done, exit 
-				}
-			}
-
-			if ('A' <= kbdchar && kbdchar <= 'Z')
-			{
-				kbdchar = tolower(kbdchar);
-			}
-
-			ApplicationStateType mainMenuState = GetMainMenuState(julia_entered_from_mandelbrot, kbdchar);
-			switch (mainMenuState)
-			{
-			case APPSTATE_IMAGE_START:		return APPSTATE_IMAGE_START;
-			case APPSTATE_RESTORE_START:	return APPSTATE_RESTORE_START;
-			case APPSTATE_RESTART:			return APPSTATE_RESTART;
-			case APPSTATE_CONTINUE:			continue;
-			default:						break;
-			}
-			if (g_zoom_off && _keyboardMore) // draw/clear a zoom box? 
-			{
-				zoom_box_draw(true);
-			}
-			if (driver_resize())
-			{
-				g_calculation_status = CALCSTAT_NO_FRACTAL;
-			}
-		}
-	}
-}
-
-ApplicationStateType big_while_loop(bool &keyboardMore, bool &screenStacked, bool resumeFlag)
-{
-	return BigWhileLoop(keyboardMore, screenStacked, resumeFlag).Execute();
 }
 
 static ApplicationStateType handle_fractal_type(bool &frommandel)
@@ -1441,7 +817,7 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 		if (DEBUGMODE_COMPARE_RESTORED == g_debug_mode)
 		{
 			g_compare_gif = true;
-			g_overlay_3d = 1;
+			g_overlay_3d = true;
 			if (g_initialize_batch == INITBATCH_SAVE)
 			{
 				driver_stack_screen();   // save graphics image 
@@ -1453,12 +829,12 @@ static ApplicationStateType handle_restore_from(bool &frommandel, int kbdchar, b
 		else
 		{
 			g_compare_gif = false;
-			g_overlay_3d = 0;
+			g_overlay_3d = false;
 		}
 		g_display_3d = DISPLAY3D_NONE;
 	}
 	driver_stack_screen();            // save graphics image 
-	stacked = (g_overlay_3d == 0);
+	stacked = !g_overlay_3d;
 	if (g_resave_mode)
 	{
 		update_save_name(g_save_name);      // do the pending increment 
@@ -1755,7 +1131,7 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 
 	case '#':
 		clear_zoom_box();
-		g_overlay_3d = 1;
+		g_overlay_3d = true;
 		// fall through 
 
 do_3d_transform:
