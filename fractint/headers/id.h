@@ -128,13 +128,6 @@ enum OrbitDrawType
 	ORBITDRAW_FUNCTION	= 2
 };
 
-// ant types
-enum AntType
-{
-	ANTTYPE_MOVE_COLOR	= 0,
-	ANTTYPE_MOVE_RULE	= 1
-};
-
 // g_true_mode values
 enum TrueModeType
 {
@@ -295,7 +288,7 @@ enum TimedSaveType
 };
 
 // g_initialize_batch values
-enum InitBatchType
+enum InitializeBatchType
 {
 	INITBATCH_FINISH_CALC = -1,
 	INITBATCH_NONE = 0,
@@ -635,8 +628,8 @@ struct evolution_info      // for saving evolution data in a GIF file
 	short odpy;
 	short px;
 	short py;
-	short sxoffs;
-	short syoffs;
+	short screen_x_offset;
+	short screen_y_offset;
 	short x_dots;
 	short y_dots;
 	short mutate[NUM_GENES];

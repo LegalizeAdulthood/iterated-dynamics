@@ -3,11 +3,12 @@
 #include "id.h"
 #include "drivers.h"
 #include "AbstractInput.h"
+#include "FakeDriver.h"
 
 class AbstractDialogTester : public AbstractDialog
 {
 public:
-	AbstractDialogTester() : AbstractDialog(),
+	AbstractDialogTester(AbstractDriver *driver) : AbstractDialog(driver),
 		m_fakeDriverKeyPressed(0),
 		m_lastKey(0),
 		m_processWaitingKeyCalled(false),
@@ -54,7 +55,8 @@ private:
 
 TEST(AbstractDialog, ProcessInput)
 {
-	AbstractDialogTester dialog;
+	FakeDriver fakeDriver;
+	AbstractDialogTester dialog(&fakeDriver);
 	dialog.SetFakeDriverKeyPressed(IDK_ESC);
 	dialog.SetProcessWaitingKeyValue(true);
 	dialog.SetProcessIdleValue(false);
@@ -66,7 +68,8 @@ TEST(AbstractDialog, ProcessInput)
 
 TEST(AbstractDialog, ProcessIdle)
 {
-	AbstractDialogTester dialog;
+	FakeDriver fakeDriver;
+	AbstractDialogTester dialog(&fakeDriver);
 	dialog.SetFakeDriverKeyPressed(0);
 	dialog.SetProcessWaitingKeyValue(false);
 	dialog.SetProcessIdleValue(true);

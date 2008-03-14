@@ -30,7 +30,7 @@ extern int slowdisplay;
 class FractIntDialog : public AbstractDialog
 {
 public:
-	FractIntDialog() : m_contexts()
+	FractIntDialog(AbstractDriver *driver) : AbstractDialog(driver), m_contexts()
 	{
 	}
 
@@ -62,7 +62,7 @@ bool FractIntDialog::ProcessIdle()
 class Introduction : public FractIntDialog
 {
 public:
-	Introduction();
+	Introduction(AbstractDriver *driver);
 	~Introduction();
 
 	void Show();
@@ -85,10 +85,9 @@ private:
 	int m_num_authors;
 };
 
-static Introduction s_introduction;
-
-Introduction::Introduction()
-	: m_paused(false),
+Introduction::Introduction(AbstractDriver *driver)
+	: FractIntDialog(driver),
+	m_paused(false),
 	m_top_row(0),
 	m_bottom_row(0),
 	m_idle_count(0),
@@ -223,5 +222,5 @@ bool Introduction::ProcessIdle()
 
 void intro()
 {
-	s_introduction.Show();
+	Introduction(DriverManager::current()).Show();
 }

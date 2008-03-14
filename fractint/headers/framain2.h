@@ -15,5 +15,6 @@ extern int key_count(int);
 extern void clear_zoom_box();
 extern void flip_image(int kbdchar);
 extern void reset_zoom_corners();
+extern void out_line_cleanup_null();
 
 #endif

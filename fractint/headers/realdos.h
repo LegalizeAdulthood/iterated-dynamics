@@ -11,7 +11,6 @@ enum StopMessageFlag
 	STOPMSG_INFO_ONLY	= 16
 };
 
-extern int stop_message(int flags, const char *message);
 extern int stop_message(int flags, const std::string &message);
 extern void blank_rows(int, int, int);
 extern int text_temp_message(const char *message);

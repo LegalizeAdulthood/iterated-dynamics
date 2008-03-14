@@ -559,8 +559,8 @@ int encoder()
 				esave_info.odpy = short(g_discrete_parameter_offset_y);
 				esave_info.px = short(g_px);
 				esave_info.py = short(g_py);
-				esave_info.sxoffs = short(g_screen_x_offset);
-				esave_info.syoffs = short(g_screen_y_offset);
+				esave_info.screen_x_offset = short(g_screen_x_offset);
+				esave_info.screen_y_offset = short(g_screen_y_offset);
 				esave_info.x_dots = short(g_x_dots);
 				esave_info.y_dots = short(g_y_dots);
 				esave_info.grid_size = short(g_grid_size);
@@ -580,8 +580,8 @@ int encoder()
 				esave_info.odpy = short(resume_e_info.odpy);
 				esave_info.px = short(resume_e_info.px);
 				esave_info.py = short(resume_e_info.py);
-				esave_info.sxoffs = short(resume_e_info.sxoffs);
-				esave_info.syoffs = short(resume_e_info.syoffs);
+				esave_info.screen_x_offset = short(resume_e_info.screen_x_offset);
+				esave_info.screen_y_offset = short(resume_e_info.screen_y_offset);
 				esave_info.x_dots = short(resume_e_info.x_dots);
 				esave_info.y_dots = short(resume_e_info.y_dots);
 				esave_info.grid_size = short(resume_e_info.grid_size);

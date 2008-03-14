@@ -1,8 +1,6 @@
 #if !defined(ABSTRACT_INPUT_H)
 #define ABSTRACT_INPUT_H
 
-extern int driver_key_pressed();
-
 class AbstractInputContext
 {
 public:
@@ -11,15 +9,18 @@ public:
 	virtual bool ProcessIdle() = 0;
 };
 
+class AbstractDriver;
+
 class AbstractDialog : public AbstractInputContext
 {
 public:
+	AbstractDialog(AbstractDriver *driver);
 	virtual ~AbstractDialog() {}
 
 	void ProcessInput();
 
 protected:
-	virtual int driver_key_pressed();
+	AbstractDriver *_driver;
 };
 
 #endif

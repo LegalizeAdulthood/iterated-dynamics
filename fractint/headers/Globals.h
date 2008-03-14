@@ -55,7 +55,7 @@ public:
 	void PushDAC();
 	void PopDAC();
 
-private:
+protected:
 	GlobalImpl *_impl;
 };
 

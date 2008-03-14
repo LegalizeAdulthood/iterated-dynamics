@@ -61,7 +61,7 @@ boost::filesystem::path g_temp_dir("");			// name of temporary directory
 boost::filesystem::path g_work_dir("");			// name of directory for misc files 
 boost::filesystem::path g_organize_formula_dir(""); // name of directory for orgfrm files
 std::string g_gif_mask;
-std::string g_save_name = "id001";			// save files using this name 
+std::string g_save_name = "id001";				// save files using this name 
 std::string g_autokey_name = "auto.key";		// record auto keystrokes here 
 bool g_potential_flag = false;					// continuous potential enabled? 
 bool g_potential_16bit;							// store 16 bit continuous potential values 
@@ -71,7 +71,7 @@ bool g_float_flag;
 int     g_biomorph;								// flag for g_biomorph 
 int     g_user_biomorph;
 int     g_force_symmetry;						// force symmetry 
-int     g_show_file;							// zero if file display pending 
+ShowFileType g_show_file;						// zero if file display pending 
 bool g_use_fixed_random_seed;
 int g_random_seed;								// Random number seeding flag and value 
 int     g_decomposition[2];						// Decomposition coloring 
@@ -85,11 +85,11 @@ int     g_inside;								// inside color: 1=blue
 int     g_fill_color;							// fillcolor: -1=normal     
 int     g_outside;								// outside color    
 int     g_finite_attractor;						// finite attractor logic 
-int     g_display_3d;							// 3D display flag: 0 = OFF 
-int     g_overlay_3d;							// 3D overlay flag: 0 = OFF 
+Display3DType g_display_3d;						// 3D display flag: 0 = OFF 
+bool g_overlay_3d;								// 3D overlay flag: 0 = OFF 
 int     g_init_3d[20];							// '3d=nn/nn/nn/...' values 
 bool g_check_current_dir;						// flag to check current dir for files 
-int     g_initialize_batch = INITBATCH_NONE;	// 1 if batch run (no kbd)  
+InitializeBatchType g_initialize_batch = INITBATCH_NONE; // !0 if batch run (no kbd)  
 int     g_save_time;							// autosave minutes         
 ComplexD  g_initial_orbit_z;					// initial orbitvalue 
 InitialZType g_use_initial_orbit_z;				// flag for g_initial_orbit_z 
@@ -474,7 +474,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_math_tolerance[1] = 0.05;
 
 	g_display_3d = DISPLAY3D_NONE;
-	g_overlay_3d = 0;										// 3D overlay is off        
+	g_overlay_3d = false;									// 3D overlay is off        
 
 	g_old_demm_colors = false;
 	g_bail_out_test = BAILOUT_MODULUS;
@@ -716,7 +716,7 @@ static int batch_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_initialize_batch = context.yesnoval[0];
+	g_initialize_batch = context.yesnoval[0] ? INITBATCH_NORMAL : INITBATCH_NONE;
 	return COMMANDRESULT_FRACTAL_PARAMETER | COMMANDRESULT_3D_PARAMETER;
 }
 
@@ -2532,7 +2532,7 @@ static int threed_arg(const cmd_context &context)
 		yesno = 1;
 		if (g_calculation_status > CALCSTAT_NO_FRACTAL) // if no image, treat same as 3D=yes 
 		{
-			g_overlay_3d = 1;
+			g_overlay_3d = true;
 		}
 	}
 	else if (yesno < 0)
@@ -3327,7 +3327,7 @@ static void arg_error(const char *bad_arg)      // oops. couldn't decode this
 	}
 	msg << std::ends;
 	stop_message(STOPMSG_NORMAL, msg.str());
-	if (g_initialize_batch)
+	if (g_initialize_batch != INITBATCH_NONE)
 	{
 		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED;
 		goodbye();

@@ -665,7 +665,7 @@ static void write_3d_parameters()
 		{
 			put_parm(" 3d=yes");
 		}
-		if (g_loaded_3d == 0)
+		if (!g_loaded_3d)
 		{
 			put_filename("filename", g_read_name);
 		}

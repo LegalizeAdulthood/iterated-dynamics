@@ -50,11 +50,6 @@ static int s_text_y_dots = 0;
 static bool s_full_menu = false;
 static int menu_check_key(int curkey, int choice);
 
-int stop_message(int flags, const std::string &msg)
-{
-	return stop_message(flags, msg.c_str());
-}
-
 /* int stop_message(flags, message) displays message and waits for a key:
 	message should be a max of 9 lines with \n's separating them;
 	no leading or trailing \n's in message;
@@ -70,8 +65,9 @@ int stop_message(int flags, const std::string &msg)
 		&8 for Fractint for Windows & parser - use a fixed pitch font
 		&16 for info only message (green box instead of red in DOS vsn)
 */
-int stop_message(int flags, const char *msg)
+int stop_message(int flags, const std::string &msg)
 {
+	//const char *msg = message.c_str();
 	int ret;
 	int toprow;
 	int color;

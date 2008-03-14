@@ -1355,6 +1355,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\BigWhileLoop.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\BigWhileLoopImpl.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\FileNameGetter.cpp"
 					>
 				</File>
@@ -1784,6 +1792,10 @@
 				>
 				<File
 					RelativePath=".\headers\AbstractInput.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\BigWhileLoop.h"
 					>
 				</File>
 				<File

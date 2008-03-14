@@ -409,7 +409,7 @@ void IteratedDynamics::ImageStart()
 		}
 	}
 
-	if (g_initialize_batch == INITBATCH_NONE)
+	if (!g_initialize_batch)
 	{
 		driver_set_mouse_mode(-IDK_PAGE_UP);           // just mouse left button, == pgup 
 	}
