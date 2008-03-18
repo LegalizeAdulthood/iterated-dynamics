@@ -2,6 +2,7 @@
 #define ESCAPE_TIME_H
 
 #include <cassert>
+#include "big.h"
 
 template <typename T>
 class SampleGrid
@@ -144,7 +145,7 @@ public:
 	EscapeTimeState();
 	~EscapeTimeState();
 	void free_grids();
-	void set_grids();
+	void set_grids(int width, int height);
 	void fill_grid_fp();
 	void fill_grid_l();
 

@@ -45,8 +45,14 @@
 
 #include "CommandParser.h"
 #include "Formula.h"
+#include "IteratedDynamics.h"
+#include "IteratedDynamicsImpl.h"
 #include "SoundState.h"
 #include "ViewWindow.h"
+#include "Externals.h"
+
+static void set_exe_path(const char *path);
+static void check_same_name();
 
 /* #include hierarchy for fractint is a follows:
 		Each module should include port.h as the first fractint specific
@@ -74,6 +80,8 @@ long g_timer_start;
 long g_timer_interval;        // timer(...) start & total 
 std::string g_fract_dir1;
 std::string g_fract_dir2;
+boost::filesystem::path g_exe_path;
+
 /*
 	the following variables are out here only so
 	that the calculate_fractal() and assembler routines can get at them easily
@@ -170,472 +178,10 @@ int		g_name_stack_ptr;
 
 UserInterfaceState g_ui_state;
 
-boost::filesystem::path g_exe_path;
-
 enum
 {
 	CONTINUE = 4
 };
-
-class IteratedDynamics
-{
-public:
-	IteratedDynamics(int argc, char **argv);
-	~IteratedDynamics();
-	int Main();
-
-private:
-	void Initialize();
-	void Restart();
-	void RestoreStart();
-	void ImageStart();
-
-	ApplicationStateType _state;
-	int _argc;
-	char **_argv;
-	bool _resumeFlag;
-	bool _screenStacked;
-	bool _keyboardMore;
-};
-
-IteratedDynamics::IteratedDynamics(int argc, char **argv)
-	: _state(APPSTATE_RESTART),
-	_argc(argc),
-	_argv(argv),
-	_resumeFlag(false),
-	_screenStacked(false),
-	_keyboardMore(false)
-{
-}
-
-IteratedDynamics::~IteratedDynamics()
-{
-}
-
-void check_same_name()
-{
-	char drive[FILE_MAX_DRIVE];
-	char dir[FILE_MAX_DIR];
-	char fname[FILE_MAX_FNAME];
-	char ext[FILE_MAX_EXT];
-	char path[FILE_MAX_PATH];
-	split_path(g_save_name, drive, dir, fname, ext);
-	if (strcmp(fname, "fract001"))
-	{
-		make_path(path, drive, dir, fname, "gif");
-		if (!exists(path))
-		{
-			exit(0);
-		}
-	}
-}
-
-// Do nothing if math error 
-static void my_floating_point_err(int sig)
-{
-	if (sig != 0)
-	{
-		g_overflow = true;
-	}
-}
-
-static void set_exe_path(const char *path)
-{
-	g_exe_path = boost::filesystem::path(path).branch_path();
-}
-
-void IteratedDynamics::Restart()
-{
-	g_browse_state.Restart();
-	g_browse_state.SetSubImages(true);
-	g_browse_state.SetName("");
-	g_name_stack_ptr = -1; // init loaded files stack 
-
-	g_evolving_flags = EVOLVE_NONE;
-	g_parameter_range_x = 4;
-	g_parameter_offset_x = -2.0;
-	g_new_parameter_offset_x = -2.0;
-	g_parameter_range_y = 3;
-	g_parameter_offset_y = -1.5;
-	g_new_parameter_offset_y = -1.5;
-	g_discrete_parameter_offset_x = 0;
-	g_discrete_parameter_offset_y = 0;
-	g_grid_size = 9;
-	g_fiddle_factor = 1;
-	g_fiddle_reduction = 1.0;
-	g_this_generation_random_seed = (unsigned int)clock_ticks();
-	srand(g_this_generation_random_seed);
-	g_start_show_orbit = false;
-	g_show_dot = -1; // turn off g_show_dot if entered with <g> command 
-	g_calculation_status = CALCSTAT_NO_FRACTAL;                    // no active fractal image 
-
-	command_files(_argc, _argv);         // process the command-line 
-	pause_error(PAUSE_ERROR_NO_BATCH); // pause for error msg if not batch 
-	init_msg("", 0, 0);  // this causes driver_get_key if init_msg called on runup 
-
-	history_allocate();
-
-	if (DEBUGMODE_ABORT_SAVENAME == g_debug_mode && g_initialize_batch == INITBATCH_NORMAL)   // abort if savename already exists 
-	{
-		check_same_name();
-	}
-	driver_window();
-	g_.PushDAC();      // save in case colors= present 
-
-	driver_set_for_text();                      // switch to text mode 
-	g_.SetSaveDAC(SAVEDAC_NO);                         // don't save the VGA DAC 
-
-	g_max_colors = 256;
-	g_max_input_counter = 80;				// check the keyboard this often 
-
-	if ((g_show_file != SHOWFILE_PENDING) && g_.InitialVideoMode() < 0)
-	{
-		// TODO: refactor to IInputContext
-		intro();                          // display the credits screen 
-		if (driver_key_pressed() == IDK_ESC)
-		{
-			driver_get_key();
-			goodbye();
-		}
-	}
-
-	g_browse_state.SetBrowsing(false);
-
-	if (!g_function_preloaded)
-	{
-		set_if_old_bif();
-	}
-	_screenStacked = false;
-
-	_state = APPSTATE_RESTORE_START;
-}
-
-void IteratedDynamics::RestoreStart()
-{
-	if (g_color_preloaded)
-	{
-		g_.PopDAC();   // restore in case colors= present 
-	}
-
-	driver_set_mouse_mode(LOOK_MOUSE_NONE);			// ignore mouse 
-
-	// image is to be loaded 
-	while (g_show_file == SHOWFILE_PENDING || g_show_file == SHOWFILE_CANCELLED)
-	{
-		char *hdg;
-		g_tab_display_enabled = false;
-		if (!g_browse_state.Browsing())     /*RB*/
-		{
-			if (g_overlay_3d)
-			{
-				hdg = "Select File for 3D Overlay";
-				set_help_mode(FIHELP_3D_OVERLAY);
-			}
-			else if (g_display_3d)
-			{
-				hdg = "Select File for 3D Transform";
-				set_help_mode(FIHELP_3D_IMAGES);
-			}
-			else
-			{
-				hdg = "Select File to Restore";
-				set_help_mode(FIHELP_SAVE_RESTORE);
-			}
-			if (g_show_file == SHOWFILE_CANCELLED && get_a_filename(hdg, g_gif_mask, g_read_name) < 0)
-			{
-				g_show_file = SHOWFILE_DONE;               // cancelled 
-				g_.SetInitialVideoModeNone();
-				break;
-			}
-
-			g_name_stack_ptr = 0; // 'r' reads first filename for browsing 
-			g_file_name_stack[g_name_stack_ptr] = g_browse_state.Name();
-		}
-
-		g_evolving_flags = EVOLVE_NONE;
-		g_viewWindow.Hide();
-		g_show_file = SHOWFILE_DONE;
-		set_help_mode(-1);
-		g_tab_display_enabled = true;
-		if (_screenStacked)
-		{
-			driver_discard_screen();
-			driver_set_for_text();
-			_screenStacked = false;
-		}
-		if (read_overlay() == 0)       // read hdr, get video mode 
-		{
-			break;                      // got it, exit 
-		}
-		g_show_file = g_browse_state.Browsing() ? SHOWFILE_DONE : SHOWFILE_CANCELLED;
-	}
-
-	set_help_mode(FIHELP_MENU);                 // now use this help mode 
-	g_tab_display_enabled = true;
-	driver_set_mouse_mode(LOOK_MOUSE_NONE);                     // ignore mouse 
-
-	if (((g_overlay_3d && !g_initialize_batch) || _screenStacked) && g_.InitialVideoMode() < 0)        // overlay command failed 
-	{
-		driver_unstack_screen();                  // restore the graphics screen 
-		_screenStacked = false;
-		g_overlay_3d = 0;                    // forget overlays 
-		g_display_3d = DISPLAY3D_NONE;
-		if (g_calculation_status == CALCSTAT_NON_RESUMABLE)
-		{
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		}
-		_resumeFlag = true;
-		_state = APPSTATE_RESUME_LOOP;
-	}
-
-	g_.SetSaveDAC(SAVEDAC_NO);                         // don't save the VGA DAC 
-	_state = APPSTATE_IMAGE_START;
-}
-
-void IteratedDynamics::ImageStart()
-{
-	if (_screenStacked)
-	{
-		driver_discard_screen();
-		_screenStacked = false;
-	}
-	g_got_status = GOT_STATUS_NONE;                     // for tab_display 
-
-	if (g_show_file != SHOWFILE_PENDING)
-	{
-		if (g_calculation_status > CALCSTAT_PARAMS_CHANGED)              // goto imagestart implies re-calc 
-		{
-			g_calculation_status = CALCSTAT_PARAMS_CHANGED;
-		}
-	}
-
-	if (!g_initialize_batch)
-	{
-		driver_set_mouse_mode(-IDK_PAGE_UP);           // just mouse left button, == pgup 
-	}
-
-	g_cycle_limit = g_initial_cycle_limit;         // default cycle limit   
-	g_.SetAdapter(g_.InitialVideoMode());                  // set the video adapter up 
-	g_.SetInitialVideoModeNone();                       // (once)                   
-
-	while (g_.Adapter() < 0)                // cycle through instructions 
-	{
-		if (g_initialize_batch)                          // batch, nothing to do 
-		{
-			g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; // exit with error condition set 
-			goodbye();
-		}
-		int kbdchar = main_menu(false);
-		if (kbdchar == IDK_INSERT) // restart pgm on Insert Key  
-		{
-			_state = APPSTATE_RESTART;
-			return;
-		}
-		if (kbdchar == IDK_DELETE)                    // select video mode list 
-		{
-			kbdchar = select_video_mode(-1);
-		}
-		g_.SetAdapter(check_video_mode_key(kbdchar));
-		if (g_.Adapter() >= 0)
-		{
-			break;                                 // got a video mode now 
-		}
-		if ('A' <= kbdchar && kbdchar <= 'Z')
-		{
-			kbdchar = tolower(kbdchar);
-		}
-		if (kbdchar == 'd')  // shell to DOS 
-		{
-			driver_set_clear();
-			driver_shell();
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-
-#ifndef XFRACT
-		if (kbdchar == '@' || kbdchar == '2')  // execute commands 
-#else
-		if (kbdchar == IDK_F2 || kbdchar == '@')  // We mapped @ to F2 
-#endif
-		{
-			if ((get_commands() & COMMANDRESULT_3D_YES) == 0)
-			{
-				_state = APPSTATE_IMAGE_START;
-				return;
-			}
-			kbdchar = '3';                         // 3d=y so fall thru '3' code 
-		}
-#ifndef XFRACT
-		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == '#')
-#else
-		if (kbdchar == 'r' || kbdchar == '3' || kbdchar == IDK_F3)
-#endif
-		{
-			g_display_3d = DISPLAY3D_NONE;
-			if (kbdchar == '3' || kbdchar == '#' || kbdchar == IDK_F3)
-			{
-				g_display_3d = DISPLAY3D_YES;
-			}
-			if (g_color_preloaded)
-			{
-				g_.PushDAC();     // save in case colors= present 
-			}
-			driver_set_for_text(); // switch to text mode 
-			g_show_file = SHOWFILE_CANCELLED;
-			_state = APPSTATE_RESTORE_START;
-			return;
-		}
-		if (kbdchar == 't')  // set fractal type 
-		{
-			g_julibrot = false;
-			get_fractal_type();
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == 'x')  // generic toggle switch 
-		{
-			get_toggles();
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == 'y')  // generic toggle switch 
-		{
-			get_toggles2();
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == 'z')  // type specific parms 
-		{
-			get_fractal_parameters(true);
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == 'v')  // view parameters 
-		{
-			get_view_params();
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == IDK_CTL_B)  // ctrl B = browse parms
-		{
-			g_browse_state.GetParameters();
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == IDK_CTL_F)  // ctrl f = sound parms
-		{
-			g_sound_state.get_parameters();
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == 'f')  // floating pt toggle 
-		{
-			g_user_float_flag = !g_user_float_flag;
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == 'i')  // set 3d fractal parms 
-		{
-			get_fractal_3d_parameters(); // get the parameters 
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		if (kbdchar == 'g')
-		{
-			get_command_string(); // get command string 
-			_state = APPSTATE_IMAGE_START;
-			return;
-		}
-		// buzzer(2); */                          /* unrecognized key 
-	}
-
-	g_zoom_off = true;                 // zooming is enabled 
-	set_help_mode(FIHELP_MAIN);         // now use this help mode 
-	_resumeFlag = false;  // allows taking goto inside big_while_loop() 
-
-	_state = APPSTATE_RESUME_LOOP;
-}
-
-void str_assign(std::string &str, const char *ptr)
-{
-	if (!ptr)
-	{
-		str = "";
-	}
-	else
-	{
-		str = ptr;
-	}
-}
-
-#if !defined(SOURCE_DIR)
-#define SOURCE_DIR "."
-#endif
-
-void IteratedDynamics::Initialize()
-{
-	set_exe_path(_argv[0]);
-
-	str_assign(g_fract_dir1, getenv("FRACTDIR"));
-	if (g_fract_dir1.length() == 0)
-	{
-		g_fract_dir1 = ".";
-	}
-	g_fract_dir2 = SOURCE_DIR;
-
-	// this traps non-math library floating point errors 
-	signal(SIGFPE, my_floating_point_err);
-
-	g_overflow = false;
-	InitMemory();
-
-	// let drivers add their video modes 
-	if (!DriverManager::open_drivers(_argc, _argv))
-	{
-		init_failure("Sorry, I couldn't find any working video drivers for your system\n");
-		exit(-1);
-	}
-	init_help();
-}
-
-int application_main(int argc, char **argv)
-{
-	return IteratedDynamics(argc, argv).Main();
-}
-
-int IteratedDynamics::Main()
-{
-	Initialize();
-
-	while (_state != APPSTATE_NO_CHANGE)
-	{
-#if defined(_WIN32)
-		_ASSERTE(_CrtCheckMemory());
-#endif
-
-		switch (_state)
-		{
-		case APPSTATE_RESTART:
-			Restart();
-			break;
-
-		case APPSTATE_RESTORE_START:
-			RestoreStart();
-			break;
-
-		case APPSTATE_IMAGE_START:
-			ImageStart();
-			break;
-
-		case APPSTATE_RESUME_LOOP:
-			save_parameter_history();
-			_state = big_while_loop(_keyboardMore, _screenStacked, _resumeFlag);
-			break;
-		}
-	}
-
-	return 0;
-}
 
 int check_key()
 {
@@ -763,4 +309,106 @@ bool operator==(const VIDEOINFO &lhs, const VIDEOINFO &rhs)
 		&& lhs.y_dots == rhs.y_dots
 		&& lhs.colors == rhs.colors
 		&& lhs.driver == rhs.driver;
+}
+
+static void set_exe_path(const char *path)
+{
+	g_exe_path = boost::filesystem::path(path).branch_path();
+}
+
+static void check_same_name()
+{
+	char drive[FILE_MAX_DRIVE];
+	char dir[FILE_MAX_DIR];
+	char fname[FILE_MAX_FNAME];
+	char ext[FILE_MAX_EXT];
+	char path[FILE_MAX_PATH];
+	split_path(g_save_name, drive, dir, fname, ext);
+	if (strcmp(fname, "fract001"))
+	{
+		make_path(path, drive, dir, fname, "gif");
+		if (!exists(path))
+		{
+			exit(0);
+		}
+	}
+}
+
+class ProductionIteratedDynamicsApp : public IteratedDynamicsApp
+{
+public:
+	virtual ~ProductionIteratedDynamicsApp() {}
+
+	virtual void set_exe_path(const char *path)
+	{ ::set_exe_path(path); }
+	virtual IteratedDynamicsApp::SignalHandler *signal(int number, SignalHandler *handler)
+	{ return ::signal(number, handler); }
+	virtual void InitMemory()
+	{ return ::InitMemory(); }
+	virtual void init_failure(std::string const &message)
+	{ ::init_failure(message); }
+	virtual void init_help()
+	{ ::init_help(); }
+	virtual void save_parameter_history()
+	{ ::save_parameter_history(); }
+	virtual ApplicationStateType big_while_loop(bool &keyboardMore, bool &screenStacked, bool resumeFlag)
+	{ return ::big_while_loop(keyboardMore, screenStacked, resumeFlag); }
+	virtual void srand(unsigned int seed)
+	{ ::srand(seed); }
+	virtual void command_files(int argc, char **argv)
+	{ ::command_files(argc, argv); }
+	virtual void pause_error(int action)
+	{ ::pause_error(action); }
+	virtual int init_msg(const char *cmdstr, const char *bad_filename, int mode)
+	{ return ::init_msg(cmdstr, bad_filename, mode); }
+	virtual void history_allocate()
+	{ ::history_allocate(); }
+	virtual void check_same_name()
+	{ ::check_same_name(); }
+	virtual void intro()
+	{ ::intro(); }
+	virtual void goodbye()
+	{ ::goodbye(); }
+	virtual void set_if_old_bif()
+	{ ::set_if_old_bif(); }
+	virtual void set_help_mode(int new_mode)
+	{ ::set_help_mode(new_mode); }
+	virtual int get_commands()
+	{ return ::get_commands(); }
+	virtual int get_fractal_type()
+	{ return ::get_fractal_type(); }
+	virtual int get_toggles()
+	{ return ::get_toggles(); }
+	virtual int get_toggles2()
+	{ return ::get_toggles2(); }
+	virtual int get_fractal_parameters(bool type_specific)
+	{ return ::get_fractal_parameters(type_specific); }
+	virtual int get_view_params()
+	{ return ::get_view_params(); }
+	virtual int get_fractal_3d_parameters()
+	{ return ::get_fractal_3d_parameters(); }
+	virtual int get_command_string()
+	{ return ::get_command_string(); }
+	virtual int open_drivers(int &argc, char **argv)
+	{ return DriverManager::open_drivers(argc, argv); }
+	virtual void exit(int code)
+	{ ::exit(code); }
+	virtual int main_menu(bool full_menu)
+	{ return ::main_menu(full_menu); }
+	virtual int select_video_mode(int curmode)
+	{ return ::select_video_mode(curmode); }
+	virtual int check_video_mode_key(int k)
+	{ return ::check_video_mode_key(k); }
+	virtual int read_overlay()
+	{ return ::read_overlay(); }
+	virtual int clock_ticks()
+	{ return ::clock_ticks(); }
+	virtual int get_a_filename(const std::string &heading, std::string &fileTemplate, std::string &filename)
+	{ return ::get_a_filename(heading, fileTemplate, filename); }
+};
+
+int application_main(int argc, char **argv)
+{
+	ProductionIteratedDynamicsApp app;
+	return IteratedDynamicsImpl(app, DriverManager::current(), g_externs, g_, argc, argv).Main();
 }

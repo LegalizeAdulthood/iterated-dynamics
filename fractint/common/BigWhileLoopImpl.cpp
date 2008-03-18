@@ -50,6 +50,7 @@
 #include "FrothyBasin.h"
 #include "SoundState.h"
 #include "ViewWindow.h"
+#include "BigWhileLoopImpl.h"
 
 extern ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdmore, bool &screen_stacked);
 extern ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, bool &kbdmore, bool &stacked);
@@ -88,7 +89,7 @@ public:
 	{ ::save_parameter_history(); }
 	virtual void restore_parameter_history()
 	{ ::restore_parameter_history(); }
-	virtual void fiddle_parameters(GENEBASE gene[], int ecount)
+	virtual void fiddle_parameters(GENEBASE *gene, int ecount)
 	{ ::fiddle_parameters(gene, ecount); }
 
 	virtual void calculate_fractal_initialize()
@@ -109,6 +110,10 @@ public:
 	{ ::zoom_box_draw(drawit); }
 	virtual long read_ticker()
 	{ return ::read_ticker(); }
+	virtual int check_video_mode_key(int k)
+	{ return ::check_video_mode_key(k); }
+	virtual int clock_ticks()
+	{ return ::clock_ticks(); }
 };
 
 class BigWhileLoopGlobals : public IBigWhileLoopGlobals
@@ -178,10 +183,9 @@ public:
 	virtual void SetNameStackPointer(int value)							{ g_name_stack_ptr = value; }
 };
 
-
 ApplicationStateType big_while_loop(bool &keyboardMore, bool &screenStacked, bool resumeFlag)
 {
 	BigWhileLoopApplication app;
 	BigWhileLoopGlobals data;
-	return BigWhileLoop(keyboardMore, screenStacked, resumeFlag, &app, data).Execute();
+	return BigWhileLoopImpl(keyboardMore, screenStacked, resumeFlag, &app, data).Execute();
 }

@@ -1,6 +1,8 @@
 #ifndef _BIG_H
 #define _BIG_H
 
+#include "port.h"
+
 // big.h 
 
 // Wesley Loewer's Big Numbers.        (C) 1994, Wesley B. Loewer 

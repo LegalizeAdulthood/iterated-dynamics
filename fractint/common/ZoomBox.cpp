@@ -7,11 +7,38 @@
 #include "drivers.h"
 #include "ZoomBox.h"
 
-ZoomBox g_zoomBox;
+class ZoomBoxImpl : public ZoomBox
+{
+public:
+	virtual ~ZoomBoxImpl() { }
+
+	virtual void display();
+	virtual void clear();
+	virtual void push(const Coordinate &point);
+
+	virtual void save(int *x, int *y, int *values, int count);
+	virtual void restore(const int *x, const int *y, const int *values, int count);
+
+	virtual int color() const { return _box_color; }
+	virtual int count() const { return _box_count; }
+
+	virtual void set_color(int val) { _box_color = val; }
+	virtual void set_count(int val) { _box_count = val; }
+
+private:
+	int _box_x[NUM_BOXES];
+	int _box_y[NUM_BOXES];
+	int _box_values[NUM_BOXES];
+	int _box_color;
+	int	_box_count;
+};
+
+static ZoomBoxImpl s_zoomBox;
+ZoomBox &g_zoomBox(s_zoomBox);
 
 static std::vector<unsigned char> s_values;
 
-void ZoomBox::display()
+void ZoomBoxImpl::display()
 {
 	int i;
 	int boxColor = (g_colors - 1) & color();
@@ -42,7 +69,7 @@ void ZoomBox::display()
 	}
 }
 
-void ZoomBox::clear()
+void ZoomBoxImpl::clear()
 {
 	int i;
 	if (g_is_true_color && g_true_mode_iterates)
@@ -58,14 +85,14 @@ void ZoomBox::clear()
 	}
 }
 
-void ZoomBox::push(const Coordinate &point)
+void ZoomBoxImpl::push(const Coordinate &point)
 {
 	_box_x[_box_count] = point.x;
 	_box_y[_box_count] = point.y;
 	_box_count++;
 }
 
-void ZoomBox::save(int *destx, int *desty, int *destvalues, int count)
+void ZoomBoxImpl::save(int *destx, int *desty, int *destvalues, int count)
 {
 	const int bytes = count*sizeof(int);
 	memcpy(destx, _box_x, bytes);
@@ -73,7 +100,7 @@ void ZoomBox::save(int *destx, int *desty, int *destvalues, int count)
 	memcpy(destvalues, _box_values, bytes);
 }
 
-void ZoomBox::restore(const int *x, const int *y, const int *values, int count)
+void ZoomBoxImpl::restore(const int *x, const int *y, const int *values, int count)
 {
 	const int bytes = count*sizeof(int);
 	memcpy(_box_x, x, bytes);

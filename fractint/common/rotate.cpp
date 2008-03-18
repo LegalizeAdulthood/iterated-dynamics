@@ -537,7 +537,9 @@ int load_palette()
 		{
 			g_.PushDAC();
 		}
-		merge_path_names(g_.MapName(), filename, true);
+		std::string mapName = g_.MapName();
+		merge_path_names(mapName, filename, true);
+		g_.SetMapName(mapName);
 	}
 	return i;
 }

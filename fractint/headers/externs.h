@@ -3,6 +3,7 @@
 
 #include <complex>
 #include "Globals.h"
+#include "UserInterfaceState.h"
 
 // keep var names in column 30 for sorting via sort /+30 <in >out 
 extern float				g_aspect_drift;
@@ -130,7 +131,6 @@ extern const char			*g_juli_3d_options[];
 extern bool					g_julibrot;
 extern int					g_input_counter;
 extern bool					g_keep_screen_coords;
-extern int					g_last_orbit_type;
 extern long					g_close_enough_l;
 extern ComplexL				g_coefficient_l;
 extern bool					g_use_old_complex_power;
@@ -268,7 +268,6 @@ extern int					g_resume_length;
 extern bool					g_resuming;
 extern bool					g_use_fixed_random_seed;
 extern char					g_rle_buffer[];
-extern ComplexD				*g_roots;
 extern int					g_rotate_hi;
 extern int					g_rotate_lo;
 extern int					g_row;
@@ -296,7 +295,6 @@ extern int					g_gaussian_slope;
 extern void					(*g_plot_color_standard)(int x, int y, int color);
 extern bool					g_start_show_orbit;
 extern bool					g_started_resaves;
-extern ComplexD				g_static_roots[];
 extern int					g_stop_pass;
 extern unsigned int			g_string_location[];
 extern BYTE					g_suffix[];
@@ -349,7 +347,6 @@ extern int					g_x_shift1;
 extern int					g_x_shift;
 extern int					g_xx_adjust1;
 extern int					g_xx_adjust;
-extern long					g_xx_one;
 extern int					g_y_dots;
 extern int					g_y_shift;
 extern int					g_y_shift1;

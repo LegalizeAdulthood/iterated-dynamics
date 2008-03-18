@@ -5,47 +5,30 @@
 class ViewWindow
 {
 public:
-	ViewWindow() : _visible(false),
-		_reduction(DEFAULT_REDUCTION),
-		_aspectRatio(ASPECTRATIO_3x4),
-		_crop(true),
-		_width(0),
-		_height(0)
-	{
-	}
+	virtual ~ViewWindow() { }
 
-	float AspectRatio() const			{ return _aspectRatio; }
-	void SetAspectRatio(float value)	{ _aspectRatio = value; }
-	std::string CommandParameters() const;
-	bool Crop() const					{ return _crop; }
-	int Height() const					{ return _height; }
-	float Reduction() const				{ return _reduction; }
-	void SetReductionFromVideoEntry(const VIDEOINFO &entry);
-	bool Visible() const				{ return _visible; }
-	int Width() const					{ return _width; }
+	virtual float AspectRatio() const = 0;
+	virtual void SetAspectRatio(float value) = 0;
+	virtual std::string CommandParameters() const = 0;
+	virtual bool Crop() const = 0;
+	virtual int Height() const = 0;
+	virtual float Reduction() const = 0;
+	virtual void SetReductionFromVideoEntry(const VIDEOINFO &entry) = 0;
+	virtual bool Visible() const = 0;
+	virtual int Width() const = 0;
 
-	int CommandArgument(cmd_context const &context);
-	void FullScreen(int width, int height);
-	int GetParameters();
-	void Hide()							{ _visible = false; }
-	void InitializeRestart();
-	void SetFromVideoEntry();
-	void SetFromVideoMode(int file_x_dots, int file_y_dots,
+	virtual int CommandArgument(cmd_context const &context) = 0;
+	virtual void FullScreen(int width, int height) = 0;
+	virtual int GetParameters() = 0;
+	virtual void Hide() = 0;
+	virtual void InitializeRestart() = 0;
+	virtual void SetFromVideoEntry() = 0;
+	virtual void SetFromVideoMode(int file_x_dots, int file_y_dots,
 		float file_aspect_ratio, float screen_aspect_ratio,
-		VIDEOINFO const &video);
-	void SetSizeFromGrid(int width, int height, int gridSize);
-	void Show()							{ _visible = true; }
-	void Show(bool value)				{ _visible = value; }
-
-private:
-	static float const ASPECTRATIO_3x4;
-	static float const DEFAULT_REDUCTION;
-	bool _visible;
-	float _reduction;
-	float _aspectRatio;					// for view shape and rotation
-	bool _crop;						// true to crop default coords
-	int _width;
-	int _height;
+		VIDEOINFO const &video) = 0;
+	virtual void SetSizeFromGrid(int width, int height, int gridSize) = 0;
+	virtual void Show() = 0;
+	virtual void Show(bool value) = 0;
 };
 
-extern ViewWindow g_viewWindow;
+extern ViewWindow &g_viewWindow;

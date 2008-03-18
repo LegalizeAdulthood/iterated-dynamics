@@ -27,7 +27,6 @@
 #include "fracsubr.h"
 #include "fractals.h"
 #include "framain2.h"
-#include "gifview.h"
 #include "history.h"
 #include "jiim.h"
 #include "line3d.h"
@@ -48,103 +47,102 @@
 #include "EscapeTime.h"
 #include "CommandParser.h"
 #include "FrothyBasin.h"
-#include "SoundState.h"
 #include "ViewWindow.h"
+#include "Externals.h"
+#include "BigWhileLoopImpl.h"
 
-extern int out_line_compare(BYTE *pixels, int line_length);
-
-ApplicationStateType BigWhileLoop::GetMainMenuState(bool julia_entered_from_mandelbrot, int kbdchar)
+ApplicationStateType BigWhileLoopImpl::GetMainMenuState(bool julia_entered_from_mandelbrot, int kbdchar)
 {
-	ApplicationStateType mainMenuState = _data.EvolvingFlags() ?
+	ApplicationStateType mainMenuState = _externs.EvolvingFlags() ?
 		_app->evolver_menu_switch(kbdchar, julia_entered_from_mandelbrot, _keyboardMore, _screenStacked)
 		: _app->main_menu_switch(kbdchar, julia_entered_from_mandelbrot, _keyboardMore, _screenStacked);
-	if (_data.QuickCalculate()
+	if (_externs.QuickCalculate()
 		&& (mainMenuState == APPSTATE_IMAGE_START ||
 		mainMenuState == APPSTATE_RESTORE_START ||
 		mainMenuState == APPSTATE_RESTART))
 	{
-		_data.SetQuickCalculate(false);
+		_externs.SetQuickCalculate(false);
 		_data.SetUserStandardCalculationMode(_data.StandardCalculationModeOld());
 	}
-	if (_data.QuickCalculate() && _data.CalculationStatus() != CALCSTAT_COMPLETED)
+	if (_externs.QuickCalculate() && _externs.CalculationStatus() != CALCSTAT_COMPLETED)
 	{
 		_data.SetUserStandardCalculationMode(CALCMODE_SINGLE_PASS);
 	}
 	return mainMenuState;
 }
 
-bool BigWhileLoop::StatusNotResumableOrShowFilePending()
+bool BigWhileLoopImpl::StatusNotResumableOrShowFilePending()
 {
-	return _data.CalculationStatus() != CALCSTAT_RESUMABLE || _data.ShowFile() == SHOWFILE_PENDING;
+	return _externs.CalculationStatus() != CALCSTAT_RESUMABLE || _externs.ShowFile() == SHOWFILE_PENDING;
 }
 
-void BigWhileLoop::HandleVisibleViewWindow()
+void BigWhileLoopImpl::HandleVisibleViewWindow()
 {
 	double ftemp;
 	if (_data.GetViewWindow().Visible())
 	{
 		// bypass for VESA virtual screen
-		ftemp = _data.GetViewWindow().AspectRatio()*((double(_data.ScreenHeight()))/(double(_data.ScreenWidth()))/_data.ScreenAspectRatio());
-		_data.SetXDots(_data.GetViewWindow().Width());
-		if (_data.XDots() != 0)
-		{	// g_x_dots specified
-			_data.SetYDots(_data.GetViewWindow().Height());
-			if (_data.YDots() == 0) // calc g_y_dots?
+		ftemp = _data.GetViewWindow().AspectRatio()*((double(_externs.ScreenHeight()))/(double(_externs.ScreenWidth()))/_externs.ScreenAspectRatio());
+		_externs.SetXDots(_data.GetViewWindow().Width());
+		if (_externs.XDots() != 0)
+		{	// _externs.XDots specified
+			_externs.SetYDots(_data.GetViewWindow().Height());
+			if (_externs.YDots() == 0) // calc _externs.YDots?
 			{
-				_data.SetYDots(int(double(_data.XDots())*ftemp + 0.5));
+				_externs.SetYDots(int(double(_externs.XDots())*ftemp + 0.5));
 			}
 		}
-		else if (_data.GetViewWindow().AspectRatio() <= _data.ScreenAspectRatio())
+		else if (_data.GetViewWindow().AspectRatio() <= _externs.ScreenAspectRatio())
 		{
-			_data.SetXDots(int(double(_data.ScreenWidth())/_data.GetViewWindow().Reduction() + 0.5));
-			_data.SetYDots(int(double(_data.XDots())*ftemp + 0.5));
+			_externs.SetXDots(int(double(_externs.ScreenWidth())/_data.GetViewWindow().Reduction() + 0.5));
+			_externs.SetYDots(int(double(_externs.XDots())*ftemp + 0.5));
 		}
 		else
 		{
-			_data.SetYDots(int(double(_data.ScreenHeight())/_data.GetViewWindow().Reduction() + 0.5));
-			_data.SetXDots(int(double(_data.YDots())/ftemp + 0.5));
+			_externs.SetYDots(int(double(_externs.ScreenHeight())/_data.GetViewWindow().Reduction() + 0.5));
+			_externs.SetXDots(int(double(_externs.YDots())/ftemp + 0.5));
 		}
-		if (_data.XDots() > _data.ScreenWidth() || _data.YDots() > _data.ScreenHeight())
+		if (_externs.XDots() > _externs.ScreenWidth() || _externs.YDots() > _externs.ScreenHeight())
 		{
 			_app->stop_message(STOPMSG_NORMAL, "View window too large; using full screen.");
-			_data.GetViewWindow().FullScreen(_data.ScreenWidth(), _data.ScreenHeight());
-			_data.SetXDots(_data.ScreenWidth());
-			_data.SetYDots(_data.ScreenHeight());
+			_data.GetViewWindow().FullScreen(_externs.ScreenWidth(), _externs.ScreenHeight());
+			_externs.SetXDots(_externs.ScreenWidth());
+			_externs.SetYDots(_externs.ScreenHeight());
 		}
-		else if (((_data.XDots() <= 1) // changed test to 1, so a 2x2 window will
-			|| (_data.YDots() <= 1)) // work with the sound feature
-			&& !(_data.EvolvingFlags() & EVOLVE_FIELD_MAP))
+		else if (((_externs.XDots() <= 1) // changed test to 1, so a 2x2 window will
+			|| (_externs.YDots() <= 1)) // work with the sound feature
+			&& !(_externs.EvolvingFlags() & EVOLVE_FIELD_MAP))
 		{	// so ssg works
 			// but no check if in evolve mode to allow lots of small views
 			_app->stop_message(STOPMSG_NORMAL, "View window too small; using full screen.");
 			_data.GetViewWindow().Hide();
-			_data.SetXDots(_data.ScreenWidth());
-			_data.SetYDots(_data.ScreenHeight());
+			_externs.SetXDots(_externs.ScreenWidth());
+			_externs.SetYDots(_externs.ScreenHeight());
 		}
-		if ((_data.EvolvingFlags() & EVOLVE_FIELD_MAP) && (_data.CurrentFractalSpecificFlags() & FRACTALFLAG_INFINITE_CALCULATION))
+		if ((_externs.EvolvingFlags() & EVOLVE_FIELD_MAP) && (_data.CurrentFractalSpecificFlags() & FRACTALFLAG_INFINITE_CALCULATION))
 		{
 			_app->stop_message(STOPMSG_NORMAL, "Fractal doesn't terminate! switching off evolution.");
-			_data.SetEvolvingFlags(_data.EvolvingFlags() & ~EVOLVE_FIELD_MAP);
+			_externs.SetEvolvingFlags(_externs.EvolvingFlags() & ~EVOLVE_FIELD_MAP);
 			_data.GetViewWindow().Hide();
-			_data.SetXDots(_data.ScreenWidth());
-			_data.SetYDots(_data.ScreenHeight());
+			_externs.SetXDots(_externs.ScreenWidth());
+			_externs.SetYDots(_externs.ScreenHeight());
 		}
-		if (_data.EvolvingFlags() & EVOLVE_FIELD_MAP)
+		if (_externs.EvolvingFlags() & EVOLVE_FIELD_MAP)
 		{
-			_data.SetXDots((_data.ScreenWidth()/g_grid_size) - !((_data.EvolvingFlags() & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT));
-			_data.SetXDots(_data.XDots() - _data.XDots() % 4); // trim to multiple of 4 for SSG
-			_data.SetYDots((_data.ScreenHeight()/g_grid_size) - !((_data.EvolvingFlags() & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT));
-			_data.SetYDots(_data.YDots() - _data.YDots() % 4);
+			_externs.SetXDots((_externs.ScreenWidth()/_externs.GridSize()) - !((_externs.EvolvingFlags() & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT));
+			_externs.SetXDots(_externs.XDots() - _externs.XDots() % 4); // trim to multiple of 4 for SSG
+			_externs.SetYDots((_externs.ScreenHeight()/_externs.GridSize()) - !((_externs.EvolvingFlags() & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT));
+			_externs.SetYDots(_externs.YDots() - _externs.YDots() % 4);
 		}
 		else
 		{
-			_data.SetScreenOffset((_data.ScreenWidth() - _data.XDots())/2,
-				(_data.ScreenHeight() - _data.YDots())/3);
+			_data.SetScreenOffset((_externs.ScreenWidth() - _externs.XDots())/2,
+				(_externs.ScreenHeight() - _externs.YDots())/3);
 		}
 	}
 }
 
-ApplicationStateType BigWhileLoop::Execute()
+ApplicationStateType BigWhileLoopImpl::Execute()
 {
 #if defined(_WIN32)
 	_ASSERTE(_CrtCheckMemory());
@@ -165,21 +163,21 @@ ApplicationStateType BigWhileLoop::Execute()
 		if (StatusNotResumableOrShowFilePending())
 		{
 			_g.SetVideoEntry(_g.Adapter());
-			_data.SetXDots(_g.VideoEntry().x_dots);       // # dots across the screen 
-			_data.SetYDots(_g.VideoEntry().y_dots);       // # dots down the screen   
-			_data.SetColors(_g.VideoEntry().colors);      // # colors available 
-			_data.SetScreenWidth(_data.XDots());
-			_data.SetScreenHeight(_data.YDots());
+			_externs.SetXDots(_g.VideoEntry().x_dots);       // # dots across the screen 
+			_externs.SetYDots(_g.VideoEntry().y_dots);       // # dots down the screen   
+			_externs.SetColors(_g.VideoEntry().colors);      // # colors available 
+			_externs.SetScreenWidth(_externs.XDots());
+			_externs.SetScreenHeight(_externs.YDots());
 			_data.SetScreenOffset(0, 0);
-			_data.SetRotateHigh((_data.RotateHigh() < _data.Colors())
-				? _data.RotateHigh() : _data.Colors() - 1);
+			_data.SetRotateHigh((_data.RotateHigh() < _externs.Colors())
+				? _data.RotateHigh() : _externs.Colors() - 1);
 
 			_g.PushDAC();
 
-			if (_data.Overlay3D() && !_data.InitializeBatch())
+			if (_externs.Overlay3D() && !_externs.InitializeBatch())
 			{
 				_driver->unstack_screen();            // restore old graphics image 
-				_data.SetOverlay3D(false);
+				_externs.SetOverlay3D(false);
 			}
 			else
 			{
@@ -191,23 +189,23 @@ ApplicationStateType BigWhileLoop::Execute()
 					{
 						_app->stop_message(STOPMSG_NORMAL, "That video mode is not available with your adapter.");
 					}
-					g_ui_state.ask_video = true;
+					_externs.UiState().ask_video = true;
 					_g.SetInitialVideoModeNone();
 					_driver->set_for_text(); // switch to text mode 
 					// goto restorestart; 
 					return APPSTATE_RESTORE_START;
 				}
 
-				_data.SetXDots(_data.ScreenWidth());
-				_data.SetYDots(_data.ScreenHeight());
-				_g.SetVideoEntrySize(_data.XDots(), _data.YDots());
+				_externs.SetXDots(_externs.ScreenWidth());
+				_externs.SetYDots(_externs.ScreenHeight());
+				_g.SetVideoEntrySize(_externs.XDots(), _externs.YDots());
 			}
 
-			if (_g.SaveDAC() || _data.ColorPreloaded())
+			if (_g.SaveDAC() || _externs.ColorPreloaded())
 			{
 				_g.PopDAC(); // restore the DAC 
 				_app->load_dac();
-				_data.SetColorPreloaded(false);
+				_externs.SetColorPreloaded(false);
 			}
 			else
 			{	// reset DAC to defaults, which setvideomode has done for us 
@@ -219,65 +217,65 @@ ApplicationStateType BigWhileLoop::Execute()
 				_g.SetColorState(COLORSTATE_DEFAULT);
 			}
 			HandleVisibleViewWindow();
-			_data.SetDXSize(_data.XDots() - 1);				// convert just once now 
-			_data.SetDYSize(_data.YDots() - 1);
+			_externs.SetDxSize(_externs.XDots() - 1);				// convert just once now 
+			_externs.SetDySize(_externs.YDots() - 1);
 		}
 		// assume we save next time (except jb) 
 		_g.SetSaveDAC((_g.SaveDAC() == SAVEDAC_NO) ? SAVEDAC_NEXT : SAVEDAC_YES);
-		if (_data.InitializeBatch() == INITBATCH_NONE)
+		if (_externs.InitializeBatch() == INITBATCH_NONE)
 		{
 			_driver->set_mouse_mode(-IDK_PAGE_UP);			// mouse left button == pgup 
 		}
 
-		if (_data.ShowFile() == SHOWFILE_PENDING)
+		if (_externs.ShowFile() == SHOWFILE_PENDING)
 		{               // loading an image 
-			_data.SetOutLineCleanup(out_line_cleanup_null);	// g_out_line routine can set this 
-			if (_data.Display3D())							// set up 3D decoding 
+			_externs.SetOutLineCleanup(_externs.OutLineCleanupNull());	// g_out_line routine can set this 
+			if (_externs.Display3D())							// set up 3D decoding 
 			{
-				_data.SetOutLine(out_line_3d);
+				_externs.SetOutLine(_externs.OutLine3D());
 			}
 			else if (_data.CompareGIF())
 			{
-				_data.SetOutLine(out_line_compare);
+				_externs.SetOutLine(_externs.OutLineCompare());
 			}
-			else if (_data.Potential16Bit())
+			else if (_externs.Potential16Bit())
 			{            // .pot format input file 
 				if (_app->disk_start_potential() < 0)
 				{                           // pot file failed?  
-					_data.SetShowFile(SHOWFILE_DONE);
-					_data.SetPotentialFlag(false);
-					_data.SetPotential16Bit(false);
+					_externs.SetShowFile(SHOWFILE_DONE);
+					_externs.SetPotentialFlag(false);
+					_externs.SetPotential16Bit(false);
 					_g.SetInitialVideoModeNone();
-					_data.SetCalculationStatus(CALCSTAT_RESUMABLE);         // "resume" without 16-bit 
+					_externs.SetCalculationStatus(CALCSTAT_RESUMABLE);         // "resume" without 16-bit 
 					_driver->set_for_text();
 					_app->get_fractal_type();
 					// goto imagestart; 
 					return APPSTATE_IMAGE_START;
 				}
-				_data.SetOutLine(out_line_potential);
+				_externs.SetOutLine(_externs.OutLinePotential());
 			}
-			else if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !_data.EvolvingFlags()) // regular gif/fra input file 
+			else if ((_externs.Sound().flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP && !_externs.EvolvingFlags()) // regular gif/fra input file 
 			{
-				_data.SetOutLine(out_line_sound);      // sound decoding 
+				_externs.SetOutLine(_externs.OutLineSound());
 			}
 			else
 			{
-				_data.SetOutLine(out_line);        // regular decoding 
+				_externs.SetOutLine(_externs.OutLineRegular());
 			}
-			if (DEBUGMODE_2224 == _data.DebugMode())
+			if (DEBUGMODE_2224 == _externs.DebugMode())
 			{
 				_app->stop_message(STOPMSG_NO_BUZZER,
-					str(boost::format("floatflag=%d") % (g_user_float_flag ? 1 : 0)));
+					str(boost::format("floatflag=%d") % (_externs.UserFloatFlag() ? 1 : 0)));
 			}
-			i = _app->funny_glasses_call(gifview);
-			_data.OutLineCleanup();
+			i = _app->funny_glasses_call(_externs.GIFView());
+			_externs.OutLineCleanup();
 			if (i == 0)
 			{
 				_driver->buzzer(BUZZER_COMPLETE);
 			}
 			else
 			{
-				_data.SetCalculationStatus(CALCSTAT_NO_FRACTAL);
+				_externs.SetCalculationStatus(CALCSTAT_NO_FRACTAL);
 				// TODO: don't support aborting of load
 				if (_driver->key_pressed())
 				{
@@ -291,60 +289,60 @@ ApplicationStateType BigWhileLoop::Execute()
 			}
 		}
 
-		_data.SetZoomOff(true);                      // zooming is enabled 
+		_externs.SetZoomOff(true);                      // zooming is enabled 
 		if (_driver->diskp() || (_data.CurrentFractalSpecificFlags() & FRACTALFLAG_NO_ZOOM) != 0)
 		{
-			_data.SetZoomOff(false);;                   // for these cases disable zooming 
+			_externs.SetZoomOff(false);;                   // for these cases disable zooming 
 		}
-		if (!_data.EvolvingFlags())
+		if (!_externs.EvolvingFlags())
 		{
 			_app->calculate_fractal_initialize();
 		}
 		_driver->schedule_alarm(1);
 
-		g_sx_min = g_escape_time_state.m_grid_fp.x_min(); // save 3 corners for zoom.c ref points 
-		g_sx_max = g_escape_time_state.m_grid_fp.x_max();
-		g_sx_3rd = g_escape_time_state.m_grid_fp.x_3rd();
-		g_sy_min = g_escape_time_state.m_grid_fp.y_min();
-		g_sy_max = g_escape_time_state.m_grid_fp.y_max();
-		g_sy_3rd = g_escape_time_state.m_grid_fp.y_3rd();
+		_externs.SetSxMin(_externs.EscapeTime().m_grid_fp.x_min()); // save 3 corners for zoom.c ref points 
+		_externs.SetSxMax(_externs.EscapeTime().m_grid_fp.x_max());
+		_externs.SetSx3rd(_externs.EscapeTime().m_grid_fp.x_3rd());
+		_externs.SetSyMin(_externs.EscapeTime().m_grid_fp.y_min());
+		_externs.SetSyMax(_externs.EscapeTime().m_grid_fp.y_max());
+		_externs.SetSy3rd(_externs.EscapeTime().m_grid_fp.y_3rd());
 
-		if (g_bf_math)
+		if (_externs.BfMath())
 		{
-			copy_bf(g_sx_min_bf, g_escape_time_state.m_grid_bf.x_min());
-			copy_bf(g_sx_max_bf, g_escape_time_state.m_grid_bf.x_max());
-			copy_bf(g_sy_min_bf, g_escape_time_state.m_grid_bf.y_min());
-			copy_bf(g_sy_max_bf, g_escape_time_state.m_grid_bf.y_max());
-			copy_bf(g_sx_3rd_bf, g_escape_time_state.m_grid_bf.x_3rd());
-			copy_bf(g_sy_3rd_bf, g_escape_time_state.m_grid_bf.y_3rd());
+			_app->copy_bf(_externs.SxMinBf(), _externs.EscapeTime().m_grid_bf.x_min());
+			_app->copy_bf(_externs.SxMaxBf(), _externs.EscapeTime().m_grid_bf.x_max());
+			_app->copy_bf(_externs.SyMinBf(), _externs.EscapeTime().m_grid_bf.y_min());
+			_app->copy_bf(_externs.SyMaxBf(), _externs.EscapeTime().m_grid_bf.y_max());
+			_app->copy_bf(_externs.Sx3rdBf(), _externs.EscapeTime().m_grid_bf.x_3rd());
+			_app->copy_bf(_externs.Sy3rdBf(), _externs.EscapeTime().m_grid_bf.y_3rd());
 		}
 		_app->history_save_info();
 
-		if (_data.ShowFile() == SHOWFILE_PENDING)
+		if (_externs.ShowFile() == SHOWFILE_PENDING)
 		{               // image has been loaded 
-			_data.SetShowFile(SHOWFILE_DONE);
-			if (_data.InitializeBatch() == INITBATCH_NORMAL && _data.CalculationStatus() == CALCSTAT_RESUMABLE)
+			_externs.SetShowFile(SHOWFILE_DONE);
+			if (_externs.InitializeBatch() == INITBATCH_NORMAL && _externs.CalculationStatus() == CALCSTAT_RESUMABLE)
 			{
-				_data.SetInitializeBatch(INITBATCH_FINISH_CALC); // flag to finish calc before save 
+				_externs.SetInitializeBatch(INITBATCH_FINISH_CALC); // flag to finish calc before save 
 			}
-			if (_data.Loaded3D())      // 'r' of image created with '3' 
+			if (_externs.Loaded3D())      // 'r' of image created with '3' 
 			{
-				_data.SetDisplay3D(DISPLAY3D_YES);  // so set flag for 'b' command 
+				_externs.SetDisplay3D(DISPLAY3D_YES);  // so set flag for 'b' command 
 			}
 		}
 		else
 		{                            // draw an image 
-			if (_data.SaveTime() != 0          // autosave and resumable? 
+			if (_externs.SaveTime() != 0          // autosave and resumable? 
 				&& (_data.CurrentFractalSpecificFlags() & FRACTALFLAG_NOT_RESUMABLE) == 0)
 			{
-				_data.SetSaveBase(_app->read_ticker()); // calc's start time 
-				_data.SetSaveTicks(_data.SaveTime()*60*1000); // in milliseconds 
-				_data.SetFinishRow(-1);
+				_externs.SetSaveBase(_app->read_ticker()); // calc's start time 
+				_externs.SetSaveTicks(_externs.SaveTime()*60*1000); // in milliseconds 
+				_externs.SetFinishRow(-1);
 			}
-			g_browse_state.SetBrowsing(false);      // regenerate image, turn off browsing 
+			_externs.Browse().SetBrowsing(false);      // regenerate image, turn off browsing 
 			_data.SetNameStackPointer(-1);
-			g_browse_state.SetName("");
-			if (_data.GetViewWindow().Visible() && (_data.EvolvingFlags() & EVOLVE_FIELD_MAP) && (_data.CalculationStatus() != CALCSTAT_COMPLETED))
+			_externs.Browse().SetName("");
+			if (_data.GetViewWindow().Visible() && (_externs.EvolvingFlags() & EVOLVE_FIELD_MAP) && (_externs.CalculationStatus() != CALCSTAT_COMPLETED))
 			{
 				// generate a set of images with varied parameters on each one 
 				int grout;
@@ -354,65 +352,65 @@ ApplicationStateType BigWhileLoop::Execute()
 				int gridsqr;
 				evolution_info resume_e_info;
 
-				if ((g_evolve_info != 0) && (_data.CalculationStatus() == CALCSTAT_RESUMABLE))
+				if ((_externs.Evolve() != 0) && (_externs.CalculationStatus() == CALCSTAT_RESUMABLE))
 				{
-					resume_e_info = *g_evolve_info;
-					g_parameter_range_x = resume_e_info.parameter_range_x;
-					g_parameter_range_y = resume_e_info.parameter_range_y;
-					g_parameter_offset_x = resume_e_info.opx;
-					g_parameter_offset_y = resume_e_info.opy;
-					g_new_parameter_offset_x = resume_e_info.opx;
-					g_new_parameter_offset_y = resume_e_info.opy;
-					g_new_discrete_parameter_offset_x = resume_e_info.odpx;
-					g_new_discrete_parameter_offset_y = resume_e_info.odpy;
-					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x;
-					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y;
-					g_px = resume_e_info.px;
-					g_py = resume_e_info.py;
+					resume_e_info = *_externs.Evolve();
+					_externs.SetParameterRangeX(resume_e_info.parameter_range_x);
+					_externs.SetParameterRangeY(resume_e_info.parameter_range_y);
+					_externs.SetParameterOffsetX(resume_e_info.opx);
+					_externs.SetParameterOffsetY(resume_e_info.opy);
+					_externs.SetNewParameterOffsetX(resume_e_info.opx);
+					_externs.SetNewParameterOffsetY(resume_e_info.opy);
+					_externs.SetNewDiscreteParameterOffsetX(resume_e_info.odpx);
+					_externs.SetNewDiscreteParameterOffsetY(resume_e_info.odpy);
+					_externs.SetDiscreteParameterOffsetX(_externs.NewDiscreteParameterOffsetX());
+					_externs.SetDiscreteParameterOffsetY(_externs.NewDiscreteParameterOffsetY());
+					_externs.SetPx(resume_e_info.px);
+					_externs.SetPy(resume_e_info.py);
 					_data.SetScreenOffset(resume_e_info.screen_x_offset, resume_e_info.screen_y_offset);
-					_data.SetXDots(resume_e_info.x_dots);
-					_data.SetYDots(resume_e_info.y_dots);
-					g_grid_size = resume_e_info.grid_size;
-					g_this_generation_random_seed = resume_e_info.this_generation_random_seed;
-					g_fiddle_factor = resume_e_info.fiddle_factor;
-					_data.SetEvolvingFlags(resume_e_info.evolving);
-					if (_data.EvolvingFlags())
+					_externs.SetXDots(resume_e_info.x_dots);
+					_externs.SetYDots(resume_e_info.y_dots);
+					_externs.SetGridSize(resume_e_info.grid_size);
+					_externs.SetThisGenerationRandomSeed(resume_e_info.this_generation_random_seed);
+					_externs.SetFiddleFactor(resume_e_info.fiddle_factor);
+					_externs.SetEvolvingFlags(resume_e_info.evolving);
+					if (_externs.EvolvingFlags())
 					{
 						_data.GetViewWindow().Show();
 					}
 					ecount = resume_e_info.ecount;
-					delete g_evolve_info;
-					g_evolve_info = 0;
+					delete _externs.Evolve();
+					_externs.SetEvolve(0);
 				}
 				else
 				{ // not resuming, start from the beginning 
-					int mid = g_grid_size/2;
-					if ((g_px != mid) || (g_py != mid))
+					int mid = _externs.GridSize()/2;
+					if ((_externs.Px() != mid) || (_externs.Py() != mid))
 					{
-						g_this_generation_random_seed = (unsigned int)clock_ticks(); // time for new set 
+						_externs.SetThisGenerationRandomSeed((unsigned int) _app->clock_ticks()); // time for new set 
 					}
 					_app->save_parameter_history();
 					ecount = 0;
-					g_fiddle_factor *= g_fiddle_reduction;
-					g_parameter_offset_x = g_new_parameter_offset_x;
-					g_parameter_offset_y = g_new_parameter_offset_y;
+					_externs.SetFiddleFactor(_externs.FiddleFactor()*_externs.FiddleReduction());
+					_externs.SetParameterOffsetX(_externs.NewParameterOffsetX());
+					_externs.SetParameterOffsetY(_externs.NewParameterOffsetY());
 					// odpx used for discrete parms like inside, outside, trigfn etc 
-					g_discrete_parameter_offset_x = g_new_discrete_parameter_offset_x;
-					g_discrete_parameter_offset_y = g_new_discrete_parameter_offset_y; 
+					_externs.SetDiscreteParameterOffsetX(_externs.NewDiscreteParameterOffsetX());
+					_externs.SetDiscreteParameterOffsetY(_externs.NewDiscreteParameterOffsetY()); 
 				}
-				g_parameter_box_count = 0;
-				g_delta_parameter_image_x = g_parameter_range_x/(g_grid_size-1);
-				g_delta_parameter_image_y = g_parameter_range_y/(g_grid_size-1);
-				grout = !((_data.EvolvingFlags() & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
-				tmpxdots = _data.XDots() + grout;
-				tmpydots = _data.YDots() + grout;
-				gridsqr = g_grid_size*g_grid_size;
+				_externs.SetParameterBoxCount(0);
+				_externs.SetDeltaParameterImageX(_externs.ParameterRangeX()/(_externs.GridSize() - 1));
+				_externs.SetDeltaParameterImageY(_externs.ParameterRangeY()/(_externs.GridSize() - 1));
+				grout = !((_externs.EvolvingFlags() & EVOLVE_NO_GROUT)/EVOLVE_NO_GROUT);
+				tmpxdots = _externs.XDots() + grout;
+				tmpydots = _externs.YDots() + grout;
+				gridsqr = _externs.GridSize()*_externs.GridSize();
 				while (ecount < gridsqr)
 				{
 					_app->spiral_map(ecount); // sets px & py 
-					_data.SetScreenOffset(tmpxdots*g_px, tmpydots*g_py);
+					_data.SetScreenOffset(tmpxdots*_externs.Px(), tmpydots*_externs.Py());
 					_app->restore_parameter_history();
-					_app->fiddle_parameters(g_genes, ecount);
+					_app->fiddle_parameters(_externs.Genes(), ecount);
 					_app->calculate_fractal_initialize();
 					if (_app->calculate_fractal() == -1)
 					{
@@ -432,39 +430,39 @@ done:
 				}
 				else
 				{	// interrupted screen generation, save info 
-					if (g_evolve_info == 0)
+					if (_externs.Evolve() == 0)
 					{
-						g_evolve_info = new evolution_info;
+						_externs.SetEvolve(new evolution_info);
 					}
-					resume_e_info.parameter_range_x = g_parameter_range_x;
-					resume_e_info.parameter_range_y = g_parameter_range_y;
-					resume_e_info.opx = g_parameter_offset_x;
-					resume_e_info.opy = g_parameter_offset_y;
-					resume_e_info.odpx = short(g_discrete_parameter_offset_x);
-					resume_e_info.odpy = short(g_discrete_parameter_offset_y);
-					resume_e_info.px = short(g_px);
-					resume_e_info.py = short(g_py);
-					resume_e_info.screen_x_offset = short(_data.ScreenXOffset());
-					resume_e_info.screen_y_offset = short(_data.ScreenYOffset());
-					resume_e_info.x_dots = short(_data.XDots());
-					resume_e_info.y_dots = short(_data.YDots());
-					resume_e_info.grid_size = short(g_grid_size);
-					resume_e_info.this_generation_random_seed = short(g_this_generation_random_seed);
-					resume_e_info.fiddle_factor = g_fiddle_factor;
-					resume_e_info.evolving = short(_data.EvolvingFlags());
+					resume_e_info.parameter_range_x = _externs.ParameterRangeX();
+					resume_e_info.parameter_range_y = _externs.ParameterRangeY();
+					resume_e_info.opx = _externs.ParameterOffsetX();
+					resume_e_info.opy = _externs.ParameterOffsetY();
+					resume_e_info.odpx = short(_externs.DiscreteParameterOffsetX());
+					resume_e_info.odpy = short(_externs.DiscreteParameterOffsetY());
+					resume_e_info.px = short(_externs.Px());
+					resume_e_info.py = short(_externs.Py());
+					resume_e_info.screen_x_offset = short(_externs.ScreenXOffset());
+					resume_e_info.screen_y_offset = short(_externs.ScreenYOffset());
+					resume_e_info.x_dots = short(_externs.XDots());
+					resume_e_info.y_dots = short(_externs.YDots());
+					resume_e_info.grid_size = short(_externs.GridSize());
+					resume_e_info.this_generation_random_seed = short(_externs.ThisGenerationRandomSeed());
+					resume_e_info.fiddle_factor = _externs.FiddleFactor();
+					resume_e_info.evolving = short(_externs.EvolvingFlags());
 					resume_e_info.ecount = short(ecount);
-					*g_evolve_info = resume_e_info;
+					*_externs.Evolve() = resume_e_info;
 				}
 				_data.SetScreenOffset(0, 0);
-				_data.SetXDots(_data.ScreenWidth());
-				_data.SetYDots(_data.ScreenHeight()); // otherwise save only saves a sub image and boxes get clipped 
+				_externs.SetXDots(_externs.ScreenWidth());
+				_externs.SetYDots(_externs.ScreenHeight()); // otherwise save only saves a sub image and boxes get clipped 
 
 				// set up for 1st selected image, this reuses px and py 
-				g_px = g_grid_size/2;
-				g_py = g_grid_size/2;
+				_externs.SetPx(_externs.GridSize()/2);
+				_externs.SetPy(_externs.GridSize()/2);
 				_app->unspiral_map(); // first time called, w/above line sets up array 
 				_app->restore_parameter_history();
-				_app->fiddle_parameters(g_genes, 0);
+				_app->fiddle_parameters(_externs.Genes(), 0);
 			}
 			// end of evolution loop 
 			else
@@ -476,26 +474,18 @@ done:
 				}
 			}
 
-			_data.SetSaveTicks(0);                 // turn off autosave timer 
+			_externs.SetSaveTicks(0);                 // turn off autosave timer 
 			if (_driver->diskp() && i == 0) // disk-video 
 			{
 				_app->disk_video_status(0, "Image has been completed");
 			}
 		}
-#ifndef XFRACT
-		g_zoomBox.set_count(0);                     // no zoom box yet  
-		g_z_width = 0;
-#else
-		if (!XZoomWaiting)
-		{
-			g_zoomBox.set_count(0);                 // no zoom box yet  
-			g_z_width = 0;
-		}
-#endif
+		_externs.Zoom().set_count(0);                     // no zoom box yet  
+		_externs.SetZWidth(0);
 
-		if (g_fractal_type == FRACTYPE_PLASMA)
+		if (_externs.FractalType() == FRACTYPE_PLASMA)
 		{
-			g_cycle_limit = 256;              // plasma clouds need quick spins 
+			_externs.SetCycleLimit(256);              // plasma clouds need quick spins 
 			_g.SetDACSleepCount(256);
 		}
 
@@ -508,32 +498,32 @@ resumeloop:
 		int kbdchar;
 		while (_keyboardMore)
 		{           // loop through command keys 
-			if (g_timed_save != TIMEDSAVE_DONE)
+			if (_externs.TimedSave() != TIMEDSAVE_DONE)
 			{
-				if (g_timed_save == TIMEDSAVE_START)
+				if (_externs.TimedSave() == TIMEDSAVE_START)
 				{       // woke up for timed save 
 					_driver->get_key();     // eat the dummy char 
 					kbdchar = 's'; // do the save 
-					g_resave_mode = RESAVE_YES;
-					g_timed_save = TIMEDSAVE_PENDING;
+					_externs.SetResaveMode(RESAVE_YES);
+					_externs.SetTimedSave(TIMEDSAVE_PENDING);
 				}
 				else
 				{                      // save done, resume 
-					g_timed_save = TIMEDSAVE_DONE;
-					g_resave_mode = RESAVE_DONE;
+					_externs.SetTimedSave(TIMEDSAVE_DONE);
+					_externs.SetResaveMode(RESAVE_DONE);
 					kbdchar = IDK_ENTER;
 				}
 			}
-			else if (_data.InitializeBatch() == INITBATCH_NONE)      // not batch mode 
+			else if (_externs.InitializeBatch() == INITBATCH_NONE)      // not batch mode 
 			{
-				_driver->set_mouse_mode((g_z_width == 0) ? -IDK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX);
-				if (_data.CalculationStatus() == CALCSTAT_RESUMABLE && g_z_width == 0 && !_driver->key_pressed())
+				_driver->set_mouse_mode((_externs.ZWidth() == 0) ? -IDK_PAGE_UP : LOOK_MOUSE_ZOOM_BOX);
+				if (_externs.CalculationStatus() == CALCSTAT_RESUMABLE && _externs.ZWidth() == 0 && !_driver->key_pressed())
 				{
 					kbdchar = IDK_ENTER;  // no visible reason to stop, continue 
 				}
 				else      // wait for a real keystroke 
 				{
-					if (g_browse_state.AutoBrowse() && g_browse_state.SubImages())
+					if (_externs.Browse().AutoBrowse() && _externs.Browse().SubImages())
 					{
 						kbdchar = 'l';
 					}
@@ -544,31 +534,16 @@ resumeloop:
 					}
 					if (kbdchar == IDK_ESC || kbdchar == 'm' || kbdchar == 'M')
 					{
-						if (kbdchar == IDK_ESC && g_escape_exit_flag)
+						if (kbdchar == IDK_ESC && _externs.EscapeExitFlag())
 						{
 							// don't ask, just get out 
 							_app->goodbye();
 						}
 						_driver->stack_screen();
-#ifndef XFRACT
 						kbdchar = _app->main_menu(true);
-#else
-						if (XZoomWaiting)
-						{
-							kbdchar = IDK_ENTER;
-						}
-						else
-						{
-							kbdchar = main_menu(true);
-							if (XZoomWaiting)
-							{
-								kbdchar = IDK_ENTER;
-							}
-						}
-#endif
 						if (kbdchar == '\\' || kbdchar == IDK_CTL_BACKSLASH ||
 							kbdchar == 'h' || kbdchar == IDK_BACKSPACE ||
-							check_video_mode_key(kbdchar) >= 0)
+							_app->check_video_mode_key(kbdchar) >= 0)
 						{
 							_driver->discard_screen();
 						}
@@ -577,7 +552,7 @@ resumeloop:
 								kbdchar == 'v' || kbdchar == IDK_CTL_B ||
 								kbdchar == IDK_CTL_E || kbdchar == IDK_CTL_F)
 						{
-							g_from_text_flag = true;
+							_externs.SetFromTextFlag(true);
 						}
 						else
 						{
@@ -588,36 +563,36 @@ resumeloop:
 			}
 			else          // batch mode, fake next keystroke 
 			{
-				// g_initialize_batch == -1  flag to finish calc before save 
-				// g_initialize_batch == 0   not in batch mode 
-				// g_initialize_batch == 1   normal batch mode 
-				// g_initialize_batch == 2   was 1, now do a save 
-				// g_initialize_batch == 3   bailout with errorlevel == 2, error occurred, no save 
-				// g_initialize_batch == 4   bailout with errorlevel == 1, interrupted, try to save 
-				// g_initialize_batch == 5   was 4, now do a save 
+				// _externs.InitializeBatch == -1  flag to finish calc before save 
+				// _externs.InitializeBatch == 0   not in batch mode 
+				// _externs.InitializeBatch == 1   normal batch mode 
+				// _externs.InitializeBatch == 2   was 1, now do a save 
+				// _externs.InitializeBatch == 3   bailout with errorlevel == 2, error occurred, no save 
+				// _externs.InitializeBatch == 4   bailout with errorlevel == 1, interrupted, try to save 
+				// _externs.InitializeBatch == 5   was 4, now do a save 
 
-				if (_data.InitializeBatch() == INITBATCH_FINISH_CALC)       // finish calc 
+				if (_externs.InitializeBatch() == INITBATCH_FINISH_CALC)       // finish calc 
 				{
 					kbdchar = IDK_ENTER;
-					_data.SetInitializeBatch(INITBATCH_NORMAL);
+					_externs.SetInitializeBatch(INITBATCH_NORMAL);
 				}
-				else if (_data.InitializeBatch() == INITBATCH_NORMAL || _data.InitializeBatch() == INITBATCH_BAILOUT_INTERRUPTED) // save-to-disk 
+				else if (_externs.InitializeBatch() == INITBATCH_NORMAL || _externs.InitializeBatch() == INITBATCH_BAILOUT_INTERRUPTED) // save-to-disk 
 				{
-					kbdchar = (DEBUGMODE_COMPARE_RESTORED == _data.DebugMode()) ? 'r' : 's';
-					if (_data.InitializeBatch() == INITBATCH_NORMAL)
+					kbdchar = (DEBUGMODE_COMPARE_RESTORED == _externs.DebugMode()) ? 'r' : 's';
+					if (_externs.InitializeBatch() == INITBATCH_NORMAL)
 					{
-						_data.SetInitializeBatch(INITBATCH_SAVE);
+						_externs.SetInitializeBatch(INITBATCH_SAVE);
 					}
-					if (_data.InitializeBatch() == INITBATCH_BAILOUT_INTERRUPTED)
+					if (_externs.InitializeBatch() == INITBATCH_BAILOUT_INTERRUPTED)
 					{
-						_data.SetInitializeBatch(INITBATCH_BAILOUT_SAVE);
+						_externs.SetInitializeBatch(INITBATCH_BAILOUT_SAVE);
 					}
 				}
 				else
 				{
-					if (_data.CalculationStatus() != CALCSTAT_COMPLETED)
+					if (_externs.CalculationStatus() != CALCSTAT_COMPLETED)
 					{
-						_data.SetInitializeBatch(INITBATCH_BAILOUT_ERROR); // bailout with error 
+						_externs.SetInitializeBatch(INITBATCH_BAILOUT_ERROR); // bailout with error 
 					}
 					_app->goodbye();               // done, exit 
 				}
@@ -637,13 +612,13 @@ resumeloop:
 			case APPSTATE_CONTINUE:			continue;
 			default:						break;
 			}
-			if (_data.ZoomOff() && _keyboardMore) // draw/clear a zoom box? 
+			if (_externs.ZoomOff() && _keyboardMore) // draw/clear a zoom box? 
 			{
 				_app->zoom_box_draw(true);
 			}
 			if (_driver->resize())
 			{
-				_data.SetCalculationStatus(CALCSTAT_NO_FRACTAL);
+				_externs.SetCalculationStatus(CALCSTAT_NO_FRACTAL);
 			}
 		}
 	}

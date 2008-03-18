@@ -1,5 +1,4 @@
-#if !defined(ZOOM_BOX_H)
-#define ZOOM_BOX_H
+#pragma once
 
 enum
 {
@@ -9,27 +8,20 @@ enum
 class ZoomBox
 {
 public:
-	void display();
-	void clear();
-	void push(const Coordinate &point);
+	virtual ~ZoomBox() {}
 
-	void save(int *x, int *y, int *values, int count);
-	void restore(const int *x, const int *y, const int *values, int count);
+	virtual void display() = 0;
+	virtual void clear() = 0;
+	virtual void push(const Coordinate &point) = 0;
 
-	int color() const { return _box_color; }
-	int count() const { return _box_count; }
+	virtual void save(int *x, int *y, int *values, int count) = 0;
+	virtual void restore(const int *x, const int *y, const int *values, int count) = 0;
 
-	void set_color(int val) { _box_color = val; }
-	void set_count(int val) { _box_count = val; }
+	virtual int color() const = 0;
+	virtual int count() const = 0;
 
-private:
-	int _box_x[NUM_BOXES];
-	int _box_y[NUM_BOXES];
-	int _box_values[NUM_BOXES];
-	int _box_color;
-	int	_box_count;
+	virtual void set_color(int val) = 0;
+	virtual void set_count(int val) = 0;
 };
 
-extern ZoomBox g_zoomBox;
-
-#endif
+extern ZoomBox &g_zoomBox;

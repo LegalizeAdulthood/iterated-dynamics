@@ -977,7 +977,11 @@ static int map_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	existdir = merge_path_names(g_.MapName(), context.value, context.mode);
+	{
+		std::string mapName = g_.MapName();
+		existdir = merge_path_names(mapName, context.value, context.mode);
+		g_.SetMapName(mapName);
+	}
 	if (existdir > 0)
 	{
 		return COMMANDRESULT_OK;    // got a directory 
@@ -3186,7 +3190,13 @@ static int parse_colors(char *value)
 	int k;
 	if (*value == '@')
 	{
-		if (merge_path_names(g_.MapName(), &value[1], false) < 0)
+		int result;
+		{
+			std::string mapName = g_.MapName();
+			result = merge_path_names(mapName, &value[1], false);
+			g_.SetMapName(mapName);
+		}
+		if (result < 0)
 		{
 			init_msg("", &value[1], 3);
 		}
