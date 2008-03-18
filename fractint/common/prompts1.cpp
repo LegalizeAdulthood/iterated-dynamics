@@ -3458,7 +3458,9 @@ static bool check_mapfile()
 			continue;
 		}
 		g_.SetMapSet(true);
-		merge_path_names(g_.MapName(), temp1, true);
+		std::string mapName = g_.MapName();
+		merge_path_names(mapName, temp1, true);
+		g_.SetMapName(mapName);
 		break;
 	}
 	return false;

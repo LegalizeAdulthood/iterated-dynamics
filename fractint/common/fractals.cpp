@@ -745,13 +745,13 @@ int unity_orbit()
 #if !defined(XFRACT)
 	// brought to you by Mark Peterson - you won't find this in any fractal
 	// books unless they saw it here first - Mark invented it!
-	long g_xx_one = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift) + multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
-	if ((g_xx_one > g_two_fudge) || (labs(g_xx_one - g_one_fudge) < g_delta_min))
+	long xx_one = multiply(g_old_z_l.x, g_old_z_l.x, g_bit_shift) + multiply(g_old_z_l.y, g_old_z_l.y, g_bit_shift);
+	if ((xx_one > g_two_fudge) || (labs(xx_one - g_one_fudge) < g_delta_min))
 	{
 		return 1;
 	}
-	g_old_z_l.y = multiply(g_two_fudge - g_xx_one, g_old_z_l.x, g_bit_shift);
-	g_old_z_l.x = multiply(g_two_fudge - g_xx_one, g_old_z_l.y, g_bit_shift);
+	g_old_z_l.y = multiply(g_two_fudge - xx_one, g_old_z_l.x, g_bit_shift);
+	g_old_z_l.x = multiply(g_two_fudge - xx_one, g_old_z_l.y, g_bit_shift);
 	g_new_z_l = g_old_z_l;  // TW added this line 
 	return 0;
 #else
@@ -763,13 +763,13 @@ int unity_orbit_fp()
 {
 	// brought to you by Mark Peterson - you won't find this in any fractal
 	// books unless they saw it here first - Mark invented it!
-	double g_xx_one = sqr(g_old_z.x) + sqr(g_old_z.y);
-	if ((g_xx_one > 2.0) || (fabs(g_xx_one - 1.0) < g_delta_min_fp))
+	double xx_one = sqr(g_old_z.x) + sqr(g_old_z.y);
+	if ((xx_one > 2.0) || (fabs(xx_one - 1.0) < g_delta_min_fp))
 	{
 		return 1;
 	}
-	g_old_z.y = (2.0 - g_xx_one)* g_old_z.x;
-	g_old_z.x = (2.0 - g_xx_one)* g_old_z.y;
+	g_old_z.y = (2.0 - xx_one)* g_old_z.x;
+	g_old_z.x = (2.0 - xx_one)* g_old_z.y;
 	g_new_z = g_old_z;  // TW added this line 
 	return 0;
 }

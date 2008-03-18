@@ -16,10 +16,57 @@
 
 using namespace boost;
 
-float const ViewWindow::DEFAULT_REDUCTION = 4.2f;
-float const ViewWindow::ASPECTRATIO_3x4 = 3.0f/4.0f;
+class ViewWindowImpl : public ViewWindow
+{
+public:
+	ViewWindowImpl() : _visible(false),
+		_reduction(DEFAULT_REDUCTION),
+		_aspectRatio(ASPECTRATIO_3x4),
+		_crop(true),
+		_width(0),
+		_height(0)
+	{
+	}
+	virtual ~ViewWindowImpl() { }
 
-int ViewWindow::CommandArgument(cmd_context const &context)
+	virtual float AspectRatio() const			{ return _aspectRatio; }
+	virtual void SetAspectRatio(float value)	{ _aspectRatio = value; }
+	virtual std::string CommandParameters() const;
+	virtual bool Crop() const					{ return _crop; }
+	virtual int Height() const					{ return _height; }
+	virtual float Reduction() const				{ return _reduction; }
+	virtual void SetReductionFromVideoEntry(const VIDEOINFO &entry);
+	virtual bool Visible() const				{ return _visible; }
+	virtual int Width() const					{ return _width; }
+
+	virtual int CommandArgument(cmd_context const &context);
+	virtual void FullScreen(int width, int height);
+	virtual int GetParameters();
+	virtual void Hide()							{ _visible = false; }
+	virtual void InitializeRestart();
+	virtual void SetFromVideoEntry();
+	virtual void SetFromVideoMode(int file_x_dots, int file_y_dots,
+		float file_aspect_ratio, float screen_aspect_ratio,
+		VIDEOINFO const &video);
+	virtual void SetSizeFromGrid(int width, int height, int gridSize);
+	virtual void Show()							{ _visible = true; }
+	virtual void Show(bool value)				{ _visible = value; }
+
+private:
+	static float const ASPECTRATIO_3x4;
+	static float const DEFAULT_REDUCTION;
+	bool _visible;
+	float _reduction;
+	float _aspectRatio;					// for view shape and rotation
+	bool _crop;						// true to crop default coords
+	int _width;
+	int _height;
+};
+
+float const ViewWindowImpl::DEFAULT_REDUCTION = 4.2f;
+float const ViewWindowImpl::ASPECTRATIO_3x4 = 3.0f/4.0f;
+
+int ViewWindowImpl::CommandArgument(cmd_context const &context)
 {
 	if (context.totparms > 5
 		|| (context.floatparms - context.intparms) > 2
@@ -53,7 +100,7 @@ int ViewWindow::CommandArgument(cmd_context const &context)
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 
-std::string ViewWindow::CommandParameters() const
+std::string ViewWindowImpl::CommandParameters() const
 {
 	return _visible ?
 		str(format(" viewwindows=%g/%g/%s/%d/%d")
@@ -63,7 +110,7 @@ std::string ViewWindow::CommandParameters() const
 		: "";
 }
 
-void ViewWindow::InitializeRestart()
+void ViewWindowImpl::InitializeRestart()
 {
 	_visible = false;
 	_reduction = DEFAULT_REDUCTION;
@@ -73,7 +120,7 @@ void ViewWindow::InitializeRestart()
 	_height = 0;
 }
 
-int ViewWindow::GetParameters()
+int ViewWindowImpl::GetParameters()
 {
 	bool old_viewwindow = _visible;
 	float old_viewreduction = _reduction;
@@ -137,7 +184,7 @@ get_view_restart:
 				|| (_height != old_viewydots && _width)))) ? 1 : 0;
 }
 
-void ViewWindow::SetReductionFromVideoEntry(const VIDEOINFO &entry)
+void ViewWindowImpl::SetReductionFromVideoEntry(const VIDEOINFO &entry)
 {
 	if (_width)
 	{
@@ -148,14 +195,14 @@ void ViewWindow::SetReductionFromVideoEntry(const VIDEOINFO &entry)
 	_reduction = std::floor(_reduction + 0.5f); // need integer value 
 }
 
-void ViewWindow::SetFromVideoEntry()
+void ViewWindowImpl::SetFromVideoEntry()
 {
 	SetFromVideoMode(g_file_x_dots, g_file_y_dots,
 		g_file_aspect_ratio, g_screen_aspect_ratio,
 		g_.VideoEntry());
 }
 
-void ViewWindow::SetFromVideoMode(int file_x_dots, int file_y_dots,
+void ViewWindowImpl::SetFromVideoMode(int file_x_dots, int file_y_dots,
 								  float file_aspect_ratio, float screen_aspect_ratio,
 								  VIDEOINFO const &video)
 {
@@ -210,7 +257,7 @@ void ViewWindow::SetFromVideoMode(int file_x_dots, int file_y_dots,
 	}
 }
 
-void ViewWindow::SetSizeFromGrid(int width, int height, int grid_size)
+void ViewWindowImpl::SetSizeFromGrid(int width, int height, int grid_size)
 {
 	_width = (width/grid_size) - 2;
 	_height = (height/grid_size) - 2;
@@ -221,11 +268,12 @@ void ViewWindow::SetSizeFromGrid(int width, int height, int grid_size)
 	}
 }
 
-void ViewWindow::FullScreen(int width, int height)
+void ViewWindowImpl::FullScreen(int width, int height)
 {
 	_visible = false;
 	_width = width;
 	_height = height;
 }
 
-ViewWindow g_viewWindow;
+static ViewWindowImpl s_viewWindow;
+ViewWindow &g_viewWindow(s_viewWindow);

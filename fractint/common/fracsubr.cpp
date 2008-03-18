@@ -132,7 +132,7 @@ void calculate_fractal_initialize()
 		}
 	}
 
-	g_escape_time_state.set_grids();
+	g_escape_time_state.set_grids(g_x_dots, g_y_dots);
 
 	if (!g_current_fractal_specific->arbitrary_precision())
 	{

@@ -1268,11 +1268,6 @@ struct entry_info
 	long point; // points to the (or the { following the name
 };
 
-struct UserInterfaceState
-{
-	bool ask_video;					// flag for video prompting
-};
-
 template <typename T>
 class ValueSaver
 {

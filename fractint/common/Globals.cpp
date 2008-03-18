@@ -5,13 +5,13 @@
 
 #include "globals.h"
 
-Globals g_;
+bool g_color_preloaded;					// if g_dac_box preloaded for next mode select 
 
-class GlobalImpl
+class Globals : public IGlobals
 {
 public:
-	GlobalImpl();
-	~GlobalImpl();
+	Globals();
+	virtual ~Globals();
 
 	// video mode/table stuff
 	int Adapter() const					{ return _adapter; }
@@ -71,7 +71,7 @@ public:
 	void SetColorState(ColorStateType value) { _colorState = value; }
 	bool MapSet() const					{ return _mapSet; }
 	void SetMapSet(bool value)			{ _mapSet = value; }
-	std::string &MapName()				{ return _mapName; }
+	std::string const &MapName() const	{ return _mapName; }
 	void SetMapName(const std::string &value) { _mapName = value; }
 	int NumColors() const				{ return _numColors; }
 	void SetNumColors(int value)		{ _numColors = value; }
@@ -96,10 +96,11 @@ private:
 	int _numColors;
 };
 
+static Globals s_globals;
+IGlobals &g_(s_globals);
 
-bool g_color_preloaded;					// if g_dac_box preloaded for next mode select 
 
-GlobalImpl::GlobalImpl()
+Globals::Globals()
 	: _adapter(0),
 	_initialVideoMode(0),
 	_videoEntry(),
@@ -119,61 +120,8 @@ GlobalImpl::GlobalImpl()
 	_videoTable.reserve(MAXVIDEOMODES);
 }
 
-GlobalImpl::~GlobalImpl()
+Globals::~Globals()
 {
 	delete _mapDAC;
 	_mapDAC = 0;
 }
-
-Globals::Globals()
-	: _impl(new GlobalImpl)
-{
-}
-
-Globals::~Globals()
-{
-	delete _impl;
-}
-
-int Globals::Adapter() const								{ return _impl->Adapter(); }
-void Globals::SetAdapter(int value)							{ _impl->SetAdapter(value); }
-int Globals::InitialVideoMode() const						{ return _impl->InitialVideoMode(); }
-void Globals::SetInitialVideoMode(int value)				{ _impl->SetInitialVideoMode(value); }
-void Globals::SetInitialVideoModeNone()						{ _impl->SetInitialVideoModeNone(); }
-const VIDEOINFO &Globals::VideoEntry() const				{ return _impl->VideoEntry(); }
-void Globals::SetVideoEntry(int idx)						{ _impl->SetVideoEntry(idx); }
-void Globals::SetVideoEntrySize(int width, int height)		{ _impl->SetVideoEntrySize(width, height); }
-void Globals::SetVideoEntryXDots(int value)					{ _impl->SetVideoEntryXDots(value); }
-void Globals::SetVideoEntryColors(int value)				{ _impl->SetVideoEntryColors(value); }
-int Globals::VideoTableLength() const						{ return _impl->VideoTableLength(); }
-void Globals::AddVideoModeToTable(const VIDEOINFO &mode)	{ _impl->AddVideoModeToTable(mode); }
-const VIDEOINFO &Globals::VideoTable(int i) const			{ return _impl->VideoTable(i); }
-void Globals::SetVideoTableKey(int i, int key)				{ _impl->SetVideoTableKey(i, key); }
-void Globals::SetVideoTable(int i, const VIDEOINFO &value)	{ _impl->SetVideoTable(i, value); }
-bool Globals::GoodMode() const								{ return _impl->GoodMode(); }
-void Globals::SetGoodMode(bool value)						{ _impl->SetGoodMode(value); }
-ColormapTable &Globals::DAC()								{ return _impl->DAC(); }
-const ColormapTable &Globals::DAC() const					{ return _impl->DAC(); }
-bool Globals::RealDAC() const								{ return _impl->RealDAC(); }
-void Globals::SetRealDAC(bool value)						{ _impl->SetRealDAC(value); }
-SaveDACType Globals::SaveDAC() const						{ return _impl->SaveDAC(); }
-void Globals::SetSaveDAC(SaveDACType value)					{ _impl->SetSaveDAC(value); }
-int Globals::DACSleepCount() const							{ return _impl->DACSleepCount(); }
-void Globals::SetDACSleepCount(int value)					{ _impl->SetDACSleepCount(value); }
-void Globals::IncreaseDACSleepCount()						{ _impl->IncreaseDACSleepCount(); }
-void Globals::DecreaseDACSleepCount()						{ _impl->DecreaseDACSleepCount(); }
-void Globals::SetMapDAC(ColormapTable *value)				{ _impl->SetMapDAC(value); }
-const ColormapTable *Globals::MapDAC() const				{ return _impl->MapDAC(); }
-ColormapTable *Globals::MapDAC()							{ return _impl->MapDAC(); }
-const ColormapTable &Globals::OldDAC() const				{ return _impl->OldDAC(); }
-ColormapTable &Globals::OldDAC()							{ return _impl->OldDAC(); }
-ColorStateType Globals::ColorState() const					{ return _impl->ColorState(); }
-void Globals::SetColorState(ColorStateType value)			{ _impl->SetColorState(value); }
-bool Globals::MapSet() const								{ return _impl->MapSet(); }
-void Globals::SetMapSet(bool value)							{ _impl->SetMapSet(value); }
-std::string &Globals::MapName()								{ return _impl->MapName(); }
-void Globals::SetMapName(const std::string &value)			{ _impl->SetMapName(value); }
-int Globals::NumColors() const								{ return _impl->NumColors(); }
-void Globals::SetNumColors(int value)						{ _impl->SetNumColors(value); }
-void Globals::PushDAC()										{ _impl->PushDAC(); }
-void Globals::PopDAC()										{ _impl->PopDAC(); }

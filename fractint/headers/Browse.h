@@ -1,68 +1,45 @@
 #if !defined(BROWSE_H)
 #define BROWSE_H
 
+#include "id.h"
+
 class BrowseState
 {
 public:
-	BrowseState()
-		: _mask(),
-		_name(),
-		_browsing(false),
-		_checkParameters(false),
-		_checkType(false),
-		_autoBrowse(false),
-		_subImages(false),
-		_crossHairBoxSize(3),
-		_doubleCaution(false),
-		_tooSmall(0.0f)
-	{
-	}
-	~BrowseState()
+	virtual ~BrowseState()
 	{
 	}
 
-	bool AutoBrowse() const				{ return _autoBrowse; }
-	bool Browsing() const				{ return _browsing; }
-	bool CheckParameters() const		{ return _checkParameters; }
-	bool CheckType() const				{ return _checkType; }
-	const std::string &Mask() const		{ return _mask; }
-	const std::string &Name() const		{ return _name; }
-	bool SubImages() const				{ return _subImages; }
-	int CrossHairBoxSize() const		{ return _crossHairBoxSize; }
-	bool DoubleCaution() const			{ return _doubleCaution; }
-	float TooSmall() const				{ return _tooSmall; }
+	virtual bool AutoBrowse() const = 0;
+	virtual bool Browsing() const = 0;
+	virtual bool CheckParameters() const = 0;
+	virtual bool CheckType() const = 0;
+	virtual const std::string &Mask() const = 0;
+	virtual const std::string &Name() const = 0;
+	virtual bool SubImages() const = 0;
+	virtual int CrossHairBoxSize() const = 0;
+	virtual bool DoubleCaution() const = 0;
+	virtual float TooSmall() const = 0;
 
-	void SetAutoBrowse(bool value)		{ _autoBrowse = value; }
-	void SetBrowsing(bool value)		{ _browsing = value; }
-	void SetCheckParameters(bool value) { _checkParameters = value; }
-	void SetCheckType(bool value)		{ _checkType = value; }
-	void SetName(const std::string &value) { _name = value; }
-	void SetSubImages(bool value)		{ _subImages = value; }
-	void SetCrossHairBoxSize(int value) { _crossHairBoxSize = value; }
-	void SetDoubleCaution(bool value)	{ _doubleCaution = value; }
-	void SetTooSmall(float value)		{ _tooSmall = value; }
+	virtual void SetAutoBrowse(bool value) = 0;
+	virtual void SetBrowsing(bool value) = 0;
+	virtual void SetCheckParameters(bool value) = 0;
+	virtual void SetCheckType(bool value) = 0;
+	virtual void SetName(const std::string &value) = 0;
+	virtual void SetSubImages(bool value) = 0;
+	virtual void SetCrossHairBoxSize(int value) = 0;
+	virtual void SetDoubleCaution(bool value) = 0;
+	virtual void SetTooSmall(float value) = 0;
 
-	void ExtractReadName();
-	int GetParameters();
-	void MakePath(const char *fname, const char *ext);
-	void MergePathNames(char *read_name);
-	void MergePathNames(std::string &read_name);
-	void Restart();
-
-private:
-	std::string _mask;
-	std::string _name;
-	bool _browsing;
-	bool _checkParameters;
-	bool _checkType;
-	bool _autoBrowse;
-	bool _subImages;
-	int _crossHairBoxSize;
-	bool _doubleCaution;				// confirm for deleting 
-	float _tooSmall;
+	virtual void ExtractReadName() = 0;
+	virtual int GetParameters() = 0;
+	virtual void MakePath(const char *fname, const char *ext) = 0;
+	virtual void MergePathNames(char *read_name) = 0;
+	virtual void MergePathNames(std::string &read_name) = 0;
+	virtual void Restart() = 0;
 };
 
-extern BrowseState g_browse_state;
+extern BrowseState &g_browse_state;
 extern std::string g_file_name_stack[16];
 
 extern ApplicationStateType handle_look_for_files(bool &stacked);

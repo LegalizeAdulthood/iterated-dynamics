@@ -28,7 +28,97 @@ enum
 	KEYON = 0x20     // 0010 0000 key-on bit in regs b0 - b8 
 };
 
-SoundState g_sound_state;
+class SoundStateImpl : public SoundState
+{
+public:
+	SoundStateImpl();
+	virtual ~SoundStateImpl();
+	virtual void initialize();
+	virtual bool open();
+	virtual void close();
+	virtual void tone(int tone);
+	virtual void write_time();
+	virtual int get_parameters();
+	virtual void orbit(int x, int y);
+	virtual void orbit(double x, double y, double z);
+
+	virtual std::string parameter_text() const;
+	virtual int parse_sound(const cmd_context &context);
+	virtual int parse_hertz(const cmd_context &context);
+	virtual int parse_attack(const cmd_context &context);
+	virtual int parse_decay(const cmd_context &context);
+	virtual int parse_release(const cmd_context &context);
+	virtual int parse_sustain(const cmd_context &context);
+	virtual int parse_volume(const cmd_context &context);
+	virtual int parse_wave_type(const cmd_context &context);
+	virtual int parse_attenuation(const cmd_context &context);
+	virtual int parse_polyphony(const cmd_context &context);
+	virtual int parse_scale_map(const cmd_context &context);
+
+	virtual int flags() const				{ return _flags; }
+	virtual int base_hertz() const			{ return _base_hertz; }
+	virtual int fm_volume() const			{ return _fm_volume; }
+
+	virtual void set_flags(int flags)		{ _flags = flags; }
+	virtual void silence_xyz()				{ _flags &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); }
+	virtual void set_speaker_beep()			{ _flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; }
+
+private:
+	enum
+	{
+		NUM_OCTAVES = 12
+	};
+
+	int _flags;
+	int _base_hertz;				// sound=x/y/z hertz value 
+	int _fm_attack;
+	int _fm_decay;
+	int _fm_release;
+	int _fm_sustain;
+	int _fm_volume;
+	int _fm_wave_type;
+	int _note_attenuation;
+	int _polyphony;
+	int _scale_map[NUM_OCTAVES];	// array for mapping notes to a (user defined) scale 
+
+	enum
+	{
+		NUM_CHANNELS = 9,
+		DEFAULT_FM_RELEASE = 5,
+		DEFAULT_FM_SUSTAIN = 13,
+		DEFAULT_FM_DECAY = 10,
+		DEFAULT_FM_ATTACK = 5,
+		DEFAULT_FM_WAVE_TYPE = 0,
+		DEFAULT_POLYPHONY = 0,
+		DEFAULT_FM_VOLUME = 63,
+		DEFAULT_BASE_HERTZ = 440
+	};
+	void old_orbit(int x, int y);
+	void new_orbit(int x, int y);
+	int sound_on(int freq);
+	void sound_off();
+	int get_music_parameters();
+	int get_scale_map();
+	bool default_scale_map() const;
+
+	// TODO: these functions need to be migrated to the driver for sound support
+	void mute();
+	void buzzer(int tone);
+	void initfm() {}
+	int fm(int, int)			{ return 0; }
+	int buzzer_pc_speaker(int tone)	{ return 0; }
+	int sleep_ms(int delay)		{ return 0; }
+
+	std::ofstream _fp;
+	int _menu_count;
+	int _fm_offset[NUM_CHANNELS];
+	int _fm_channel;
+
+	std::string _sound_save_name;
+};
+
+static SoundStateImpl s_sound_state;
+SoundState &g_sound_state(s_sound_state);
 
 static char offvoice = 0;
 static unsigned char fmtemp[9];/*temporary vars used to store value used
@@ -134,95 +224,6 @@ static unsigned char fmtemp[9];/*temporary vars used to store value used
  *       b is the block (octave) number between 0 and 7 inclusive, and
  *       m is the multiple number between 0 and 15 inclusive.
  */
-
-class SoundStateImpl
-{
-public:
-	SoundStateImpl();
-	~SoundStateImpl();
-	void initialize();
-	bool open();
-	void close();
-	void tone(int tone);
-	void write_time();
-	int get_parameters();
-	void orbit(int x, int y);
-	void orbit(double x, double y, double z);
-
-	std::string parameter_text() const;
-	int parse_sound(const cmd_context &context);
-	int parse_hertz(const cmd_context &context);
-	int parse_attack(const cmd_context &context);
-	int parse_decay(const cmd_context &context);
-	int parse_release(const cmd_context &context);
-	int parse_sustain(const cmd_context &context);
-	int parse_volume(const cmd_context &context);
-	int parse_wave_type(const cmd_context &context);
-	int parse_attenuation(const cmd_context &context);
-	int parse_polyphony(const cmd_context &context);
-	int parse_scale_map(const cmd_context &context);
-
-	int flags() const				{ return _flags; }
-	int base_hertz() const			{ return _base_hertz; }
-	int fm_volume() const			{ return _fm_volume; }
-
-	void set_flags(int flags)		{ _flags = flags; }
-	void silence_xyz()				{ _flags &= ~(SOUNDFLAG_X | SOUNDFLAG_Y | SOUNDFLAG_Z); }
-	void set_speaker_beep()			{ _flags = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; }
-
-private:
-	enum
-	{
-		NUM_OCTAVES = 12
-	};
-
-	int _flags;
-	int _base_hertz;				// sound=x/y/z hertz value 
-	int _fm_attack;
-	int _fm_decay;
-	int _fm_release;
-	int _fm_sustain;
-	int _fm_volume;
-	int _fm_wave_type;
-	int _note_attenuation;
-	int _polyphony;
-	int _scale_map[NUM_OCTAVES];	// array for mapping notes to a (user defined) scale 
-
-	enum
-	{
-		NUM_CHANNELS = 9,
-		DEFAULT_FM_RELEASE = 5,
-		DEFAULT_FM_SUSTAIN = 13,
-		DEFAULT_FM_DECAY = 10,
-		DEFAULT_FM_ATTACK = 5,
-		DEFAULT_FM_WAVE_TYPE = 0,
-		DEFAULT_POLYPHONY = 0,
-		DEFAULT_FM_VOLUME = 63,
-		DEFAULT_BASE_HERTZ = 440
-	};
-	void old_orbit(int x, int y);
-	void new_orbit(int x, int y);
-	int sound_on(int freq);
-	void sound_off();
-	int get_music_parameters();
-	int get_scale_map();
-	bool default_scale_map() const;
-
-	// TODO: these functions need to be migrated to the driver for sound support
-	void mute();
-	void buzzer(int tone);
-	void initfm() {}
-	int fm(int, int)			{ return 0; }
-	int buzzer_pc_speaker(int tone)	{ return 0; }
-	int sleep_ms(int delay)		{ return 0; }
-
-	std::ofstream _fp;
-	int _menu_count;
-	int _fm_offset[NUM_CHANNELS];
-	int _fm_channel;
-
-	std::string _sound_save_name;
-};
 
 SoundStateImpl::SoundStateImpl()
 	: _fp(),
@@ -1065,117 +1066,4 @@ int SoundStateImpl::parse_scale_map(const cmd_context &context)
 		}
 	}
 	return COMMANDRESULT_OK;
-}
-
-SoundState::SoundState() : _impl(new SoundStateImpl())
-{
-}
-SoundState::~SoundState()
-{
-	delete _impl;
-	_impl = 0;
-}
-void SoundState::initialize()
-{
-	_impl->initialize();
-}
-bool SoundState::open()
-{
-	return _impl->open();
-}
-void SoundState::close()
-{
-	_impl->close();
-}
-void SoundState::tone(int value)
-{
-	_impl->tone(value);
-}
-void SoundState::write_time()
-{
-	_impl->write_time();
-}
-int SoundState::get_parameters()
-{
-	return _impl->get_parameters();
-}
-void SoundState::orbit(int x, int y)
-{
-	_impl->orbit(x, y);
-}
-void SoundState::orbit(double x, double y, double z)
-{
-	_impl->orbit(x, y, z);
-}
-std::string SoundState::parameter_text() const
-{
-	return _impl->parameter_text();
-}
-int SoundState::parse_sound(const cmd_context &context)
-{
-	return _impl->parse_sound(context);
-}
-int SoundState::parse_hertz(const cmd_context &context)
-{
-	return _impl->parse_hertz(context);
-}
-int SoundState::parse_attack(const cmd_context &context)
-{
-	return _impl->parse_attack(context);
-}
-int SoundState::parse_decay(const cmd_context &context)
-{
-	return _impl->parse_decay(context);
-}
-int SoundState::parse_release(const cmd_context &context)
-{
-	return _impl->parse_release(context);
-}
-int SoundState::parse_sustain(const cmd_context &context)
-{
-	return _impl->parse_sustain(context);
-}
-int SoundState::parse_volume(const cmd_context &context)
-{
-	return _impl->parse_volume(context);
-}
-int SoundState::parse_wave_type(const cmd_context &context)
-{
-	return _impl->parse_wave_type(context);
-}
-int SoundState::parse_attenuation(const cmd_context &context)
-{
-	return _impl->parse_attenuation(context);
-}
-int SoundState::parse_polyphony(const cmd_context &context)
-{
-	return _impl->parse_polyphony(context);
-}
-int SoundState::parse_scale_map(const cmd_context &context)
-{
-	return _impl->parse_scale_map(context);
-}
-int SoundState::flags() const
-{
-	return _impl->flags();
-}
-int SoundState::base_hertz() const
-{
-	return _impl->base_hertz();
-}
-int SoundState::fm_volume() const
-{
-	return _impl->fm_volume();
-}
-void SoundState::set_flags(int flags)
-{
-	_impl->set_flags(flags);
-}
-void SoundState::silence_xyz()
-{
-	_impl->silence_xyz();
-}
-void SoundState::set_speaker_beep()
-{
-	_impl->set_speaker_beep();
 }

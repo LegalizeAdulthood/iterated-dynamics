@@ -1135,8 +1135,8 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							ObjectFile="$(IntDir)\"
+							XMLDocumentationFileName="$(IntDir)\"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -1144,8 +1144,8 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							ObjectFile="$(IntDir)\"
+							XMLDocumentationFileName="$(IntDir)\"
 						/>
 					</FileConfiguration>
 					<FileConfiguration
@@ -1153,8 +1153,8 @@
 						>
 						<Tool
 							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)\$(InputName)1.obj"
-							XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							ObjectFile="$(IntDir)\"
+							XMLDocumentationFileName="$(IntDir)\"
 						/>
 					</FileConfiguration>
 				</File>
@@ -1339,6 +1339,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\Externals.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\Globals.cpp"
 					>
 				</File>
@@ -1388,6 +1392,10 @@
 				</File>
 				<File
 					RelativePath=".\common\intro.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\IteratedDynamics.cpp"
 					>
 				</File>
 				<File
@@ -1453,6 +1461,10 @@
 			</File>
 			<File
 				RelativePath=".\headers\CommandParser.h"
+				>
+			</File>
+			<File
+				RelativePath=".\headers\Externals.h"
 				>
 			</File>
 			<File
@@ -1799,6 +1811,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\headers\BigWhileLoopImpl.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\fihelp.h"
 					>
 				</File>
@@ -1820,6 +1836,14 @@
 				</File>
 				<File
 					RelativePath=".\headers\intro.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\IteratedDynamics.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\IteratedDynamicsImpl.h"
 					>
 				</File>
 				<File
@@ -1852,6 +1876,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\UIChoices.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\UserInterfaceState.h"
 					>
 				</File>
 				<File

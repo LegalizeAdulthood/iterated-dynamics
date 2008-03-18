@@ -28,10 +28,10 @@ void EscapeTimeState::free_grids()
 	m_grid_l.free_grid_pointers();
 }
 
-void EscapeTimeState::set_grids()
+void EscapeTimeState::set_grids(int width, int height)
 {
-	m_grid_fp.set_grid_pointers(g_x_dots, g_y_dots);
-	m_grid_l.set_grid_pointers(g_x_dots, g_y_dots);
+	m_grid_fp.set_grid_pointers(width, height);
+	m_grid_l.set_grid_pointers(width, height);
 	set_pixel_calc_functions();
 }
 

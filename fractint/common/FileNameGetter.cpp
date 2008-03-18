@@ -16,6 +16,7 @@
 #include "realdos.h"
 #include "stereo.h"
 #include "TextColors.h"
+#include "Externals.h"
 
 struct CHOICE
 {
@@ -258,11 +259,11 @@ retry_dir:
 		static bool lastdir = false;
 		if (!lastdir)
 		{
-			strcpy(dir, g_fract_dir1.c_str());
+			strcpy(dir, g_externs.FractDir1().c_str());
 		}
 		else
 		{
-			strcpy(dir, g_fract_dir2.c_str());
+			strcpy(dir, g_externs.FractDir2().c_str());
 		}
 		ensure_slash_on_directory(dir);
 		_fileName = std::string(drive) +  dir;

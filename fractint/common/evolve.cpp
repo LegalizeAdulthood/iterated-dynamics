@@ -818,7 +818,7 @@ void set_current_parameters()
 	return;
 }
 
-void fiddle_parameters(GENEBASE gene[], int ecount)
+void fiddle_parameters(GENEBASE *gene, int ecount)
 {
 	// call with g_px, g_py ... parameter set co-ords
 	// set random seed then call rnd enough times to get to g_px, g_py 
