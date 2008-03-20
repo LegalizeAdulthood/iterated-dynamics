@@ -48,9 +48,9 @@ static unsigned int gifview_image_left;   // (for migs)
 static unsigned int gifview_image_twidth; // (for migs) 
 
 static void close_file();
-static int out_line_dither(BYTE *, int);
-static int out_line_migs(BYTE *, int);
-static int out_line_too_wide(BYTE *, int);
+static int out_line_dither(BYTE const *pixels, int length);
+static int out_line_migs(BYTE const *pixels, int length);
+static int out_line_too_wide(BYTE const *pixels, int length);
 
 int get_byte()
 {
@@ -79,7 +79,7 @@ enum
 	DECODERLINE_WIDTH = MAX_PIXELS
 };
 
-static char *s_dither_buffer = 0;
+static std::vector<char> s_dither_buffer;
 
 // Main entry decoder 
 int gifview()
@@ -356,9 +356,6 @@ int gifview()
 		disk_video_status(1, "");
 	}
 
-	delete[] s_dither_buffer;
-	s_dither_buffer = 0;
-
 	return status;
 }
 
@@ -370,7 +367,7 @@ static void close_file()
 
 // routine for MIGS that generates partial output lines 
 
-static int out_line_migs(BYTE *pixels, int linelen)
+static int out_line_migs(BYTE const *pixels, int linelen)
 {
 	int row;
 	int startcol;
@@ -385,19 +382,21 @@ static int out_line_migs(BYTE *pixels, int linelen)
 	return 0;
 }
 
-static int out_line_dither(BYTE *pixels, int linelen)
+static int out_line_dither(BYTE const *pixels, int linelen)
 {
 	int i;
 	int nexterr;
 	int brt;
 	int err;
-	if (s_dither_buffer == 0)
+	if (s_dither_buffer.size() < size_t(linelen))
 	{
-		s_dither_buffer = new char[linelen + 1];
+		s_dither_buffer.resize(linelen);
 	}
-	memset(s_dither_buffer, 0, linelen + 1);
+	std::fill(&s_dither_buffer[0], &s_dither_buffer[linelen], 0);
 
 	nexterr = (rand()&0x1f)-16;
+	std::vector<BYTE> output;
+	output.resize(linelen + 1);
 	for (i = 0; i < linelen; i++)
 	{
 		// TODO: does not work when COLOR_CHANNEL_MAX != 63 
@@ -407,24 +406,24 @@ static int out_line_dither(BYTE *pixels, int linelen)
 		brt += nexterr;
 		if (brt > (COLOR_CHANNEL_MAX + 1)/2)
 		{
-			pixels[i] = 1;
+			output[i] = 1;
 			err = brt - COLOR_CHANNEL_MAX;
 		}
 		else
 		{
-			pixels[i] = 0;
+			output[i] = 0;
 			err = brt;
 		}
 		nexterr = s_dither_buffer[i + 1] + err/3;
 		s_dither_buffer[i] = (char)(err/3);
 		s_dither_buffer[i + 1] = (char)(err/3);
 	}
-	return out_line(pixels, linelen);
+	return out_line(&output[0], linelen);
 }
 
 // routine for images wider than the row buffer 
 
-static int out_line_too_wide(BYTE *pixels, int linelen)
+static int out_line_too_wide(BYTE const *pixels, int linelen)
 {
 	// int twidth = gifview_image_twidth; 
 	int twidth = g_x_dots;
@@ -454,7 +453,7 @@ static int out_line_too_wide(BYTE *pixels, int linelen)
 	return 0;
 }
 
-static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
+static int put_sound_line(int row, int colstart, int colstop, BYTE const *pixels)
 {
 	for (int col = colstart; col <= colstop; col++)
 	{
@@ -473,7 +472,7 @@ static int put_sound_line(int row, int colstart, int colstop, BYTE *pixels)
 	return 0;
 }
 
-int out_line_sound(BYTE *pixels, int linelen)
+int out_line_sound(BYTE const *pixels, int linelen)
 {
 	// int twidth = gifview_image_twidth; 
 	int twidth = g_x_dots;
@@ -515,7 +514,7 @@ int out_line_sound(BYTE *pixels, int linelen)
 	return ret;
 }
 
-int out_line_potential(BYTE *pixels, int line_length)
+int out_line_potential(BYTE const *pixels, int line_length)
 {
 	int row;
 	int col;

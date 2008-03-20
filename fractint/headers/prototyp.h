@@ -29,7 +29,7 @@ extern void load_dac();
 
 extern long cdecl divide(long, long, int);
 extern long cdecl multiply(long, long, int);
-extern void put_line(int, int, int, BYTE *);
+extern void put_line(int, int, int, BYTE const *);
 extern void get_line(int, int, int, BYTE *);
 extern long read_ticker();
 

@@ -119,7 +119,7 @@ static void rotate_pal(PALENTRY *pal, int dir, int lo, int hi)
 	}
 }
 
-static void clip_put_line(int row, int start, int stop, BYTE *pixels)
+static void clip_put_line(int row, int start, int stop, BYTE const *pixels)
 	{
 	if (row < 0 || row >= g_screen_height || start > g_screen_width || stop < 0)
 	{

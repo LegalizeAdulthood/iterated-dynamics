@@ -157,7 +157,7 @@ void WorkList::restart_item(int wknum)
 	memset(g_stack, 0, g_x_dots); // use g_stack as a temp for the row; clear it 
 	while (yfrom <= yto)
 	{
-		put_line(yfrom++, xfrom, xto, (BYTE *) g_stack);
+		put_line(yfrom++, xfrom, xto, &g_stack[0]);
 	}
 
 	m_items[wknum].sym = 0;

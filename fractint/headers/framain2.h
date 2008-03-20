@@ -16,6 +16,6 @@ extern void clear_zoom_box();
 extern void flip_image(int kbdchar);
 extern void reset_zoom_corners();
 extern void out_line_cleanup_null();
-extern int out_line_compare(BYTE *pixels, int line_length);
+extern int out_line_compare(BYTE const *pixels, int line_length);
 
 #endif

@@ -219,18 +219,30 @@ extern int driver_get_mouse_mode();
 class MouseModeSaver
 {
 public:
-	MouseModeSaver(int new_mode) :
-		m_old_mode(driver_get_mouse_mode())
+	MouseModeSaver(int new_mode)
+		: m_old_mode(DriverManager::current()->get_mouse_mode()),
+		_driver(DriverManager::current())
 	{
-		driver_set_mouse_mode(new_mode);
+		set(new_mode);
+	}
+	MouseModeSaver(AbstractDriver *driver, int new_mode)
+		: m_old_mode(driver->get_mouse_mode()),
+		_driver(driver)		
+	{
+		set(new_mode);
 	}
 	~MouseModeSaver()
 	{
-		driver_set_mouse_mode(m_old_mode);
+		set(m_old_mode);
 	}
 
 private:
+	void set(int mode)
+	{
+		_driver->set_mouse_mode(mode);
+	}
 	int m_old_mode;
+	AbstractDriver *_driver;
 };
 
 class ScreenStacker

@@ -133,7 +133,7 @@ static void toggle_bars(bool &bars, int barwidth, int *colour)
 	bars = !bars;
 }
 
-int out_line_stereo(BYTE *pixels, int linelen)
+int out_line_stereo(BYTE const *pixels, int linelen)
 {
 	if (s_y >= g_y_dots)
 	{

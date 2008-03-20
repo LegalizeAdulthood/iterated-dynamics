@@ -94,7 +94,7 @@ private:
 };
 
 // routines in this module 
-int out_line_3d(BYTE *pixels, int line_length);
+int out_line_3d(BYTE const *pixels, int line_length);
 int targa_color(int, int, int);
 int start_disk_targa(const std::string &file_name2, FILE *Source, bool overlay_file);
 int start_disk_targa(const std::string &filename, std::ifstream &source, bool overlay_file);
@@ -789,7 +789,7 @@ static void line3d_fill(int col, int next, int last_dot, bool cross_not_init,
 	}
 }
 
-int out_line_3d(BYTE *pixels, int line_length)
+int out_line_3d(BYTE const *pixels, int line_length)
 {
 	bool triangle_was_output;		// triangle has been sent to ray trace file 
 	float f_water = 0.0f;			// transformed WATERLINE for ray trace files 
@@ -840,9 +840,12 @@ int out_line_3d(BYTE *pixels, int line_length)
 	f_old = s_f_bad;
 
 	// copies pixels buffer to float type fraction buffer for fill purposes 
+	std::vector<BYTE> output;
+	output.resize(line_length);
+	std::copy(&pixels[0], &pixels[line_length], &output[0]);
 	if (g_potential_16bit)
 	{
-		if (set_pixel_buff(pixels, &s_fraction[0], line_length))
+		if (set_pixel_buff(&output[0], &s_fraction[0], line_length))
 		{
 			return 0;
 		}
@@ -851,7 +854,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 	{
 		for (col = 0; col < int(line_length); col++)
 		{
-			int color_num = pixels[col];
+			int color_num = output[col];
 			// TODO: the following does not work when COLOR_CHANNEL_MAX != 63 
 			// effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255 
 			int pal = (int(g_.DAC().Red(color_num))*77 +
@@ -859,7 +862,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 					int(g_.DAC().Blue(color_num))*28);
 
 			pal >>= 6;
-			pixels[col] = BYTE(pal);
+			output[col] = BYTE(pal);
 		}
 	}
 	cross_not_init = true;
@@ -924,7 +927,7 @@ int out_line_3d(BYTE *pixels, int line_length)
 			goto loopbottom;
 		}
 
-		s_real_color = pixels[col];
+		s_real_color = output[col];
 		cur.color = s_real_color;
 		f_cur.color = float(cur.color);
 

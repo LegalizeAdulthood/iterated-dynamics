@@ -1,6 +1,6 @@
+#include <cassert>
 #include <string>
 
-#include <assert.h>
 #include <signal.h>
 #include <string.h>
 #include <sys/timeb.h>
@@ -39,7 +39,7 @@ HINSTANCE g_instance = 0;
 
 static void (*s_dot_write)(int, int, int) = 0;
 static int (*s_dot_read)(int, int) = 0;
-static void (*s_line_write)(int, int, int, BYTE *) = 0;
+static void (*s_line_write)(int, int, int, BYTE const *) = 0;
 static void (*s_line_read)(int, int, int, BYTE *) = 0;
 
 typedef enum
@@ -281,7 +281,7 @@ int fr_find_first(char *path)       // Find 1st file (or subdir) meeting path/fi
 	if (s_find_context != INVALID_HANDLE_VALUE)
 	{
 		BOOL result = FindClose(s_find_context);
-		_ASSERTE(result);
+		assert(result || !"::FindClose failed");
 	}
 	SetLastError(0);
 	s_find_context = FindFirstFile(path, &s_find_data);
@@ -290,7 +290,7 @@ int fr_find_first(char *path)       // Find 1st file (or subdir) meeting path/fi
 		return GetLastError() || -1;
 	}
 
-	_ASSERTE(strlen(path) < NUM_OF(s_find_base));
+	assert(strlen(path) < NUM_OF(s_find_base) || !"path exceeds available storage");
 	strcpy(s_find_base, path);
 	{
 		char *whack = strrchr(s_find_base, '\\');
@@ -312,12 +312,12 @@ int fr_find_first(char *path)       // Find 1st file (or subdir) meeting path/fi
  */
 int fr_find_next()
 {
-	_ASSERTE(INVALID_HANDLE_VALUE != s_find_context);
+	assert(INVALID_HANDLE_VALUE != s_find_context || !"find context corrupted");
 	BOOL result = FindNextFile(s_find_context, &s_find_data);
 	if (result == 0)
 	{
 		DWORD code = GetLastError();
-		_ASSERTE(ERROR_NO_MORE_FILES == code);
+		assert(ERROR_NO_MORE_FILES == code || !"unexpected error from FindNextFile");
 		return -1;
 	}
 
@@ -428,7 +428,7 @@ uclock_t usec_clock()
 {
 	uclock_t result = 0;
 	// TODO 
-	_ASSERTE(false);
+	assert(!"usec_clock unexpectedly called");
 
 	return result;
 }
@@ -436,7 +436,7 @@ uclock_t usec_clock()
 void showfreemem()
 {
 	// TODO 
-	_ASSERTE(false);
+	assert(!"showfreemem unexpectedly called");
 }
 
 unsigned long get_disk_space()
@@ -491,11 +491,11 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 	}
 	dump_file = CreateFile(minidump.c_str(), GENERIC_READ | GENERIC_WRITE,
 		0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, 0);
-	_ASSERTE(dump_file != INVALID_HANDLE_VALUE);
+	assert(dump_file != INVALID_HANDLE_VALUE || !"CreateFile failed");
 
 	status = (*dumper)(GetCurrentProcess(), GetCurrentProcessId(),
 		dump_file, MiniDumpNormal, &mdei, 0, 0);
-	_ASSERTE(status);
+	assert(status || !"dumper failed");
 	if (!status)
 	{
 		MessageBox(0,
@@ -505,11 +505,11 @@ static void CreateMiniDump(EXCEPTION_POINTERS *ep)
 	else
 	{
 		status = CloseHandle(dump_file);
-		_ASSERTE(status);
+		assert(status || !"CloseHandle failed");
 	}
 	dumper = 0;
 	status = FreeLibrary(debughlp);
-	_ASSERTE(status);
+	assert(status || !"FreeLibrary failed");
 
 	{
 		MessageBox(0, ("Unexpected error, crash dump saved to '" + minidump + "'.\n"
@@ -566,12 +566,12 @@ int expand_dirname(char *dirname, char *drive)
 
 	if (PathIsRelative(dirname))
 	{
-		_ASSERTE(strlen(drive) < NUM_OF(relative));
+		assert(strlen(drive) < NUM_OF(relative) || !"insufficient storage for filename");
 		strcpy(relative, drive);
-		_ASSERTE(strlen(relative) + strlen(dirname) < NUM_OF(relative));
+		assert(strlen(relative) + strlen(dirname) < NUM_OF(relative) || !"insufficient storage for filename");
 		strcat(relative, dirname);
 		status = PathSearchAndQualify(relative, absolute, NUM_OF(absolute));
-		_ASSERTE(status);
+		assert(status || !"PathSearchAndQualify failed");
 		if (':' == absolute[1])
 		{
 			drive[0] = absolute[0];
@@ -627,7 +627,7 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 	{
 		return;
 	}
-	_ASSERTE(s_line_read);
+	assert(s_line_read && "s_line_read function pointer not set");
 	s_line_read(row + g_screen_y_offset, startcol + g_screen_x_offset, stopcol + g_screen_x_offset, pixels);
 }
 
@@ -640,13 +640,13 @@ void get_line(int row, int startcol, int stopcol, BYTE *pixels)
 ;       Called by the GIF decoder
 */
 
-void put_line(int row, int startcol, int stopcol, BYTE *pixels)
+void put_line(int row, int startcol, int stopcol, BYTE const *pixels)
 {
 	if (startcol + g_screen_x_offset >= g_screen_width || row + g_screen_y_offset > g_screen_height)
 	{
 		return;
 	}
-	_ASSERTE(s_line_write);
+	assert(s_line_write && "s_line_write function pointer not set");
 	s_line_write(row + g_screen_y_offset, startcol + g_screen_x_offset, stopcol + g_screen_x_offset, pixels);
 }
 
@@ -655,11 +655,11 @@ void put_line(int row, int startcol, int stopcol, BYTE *pixels)
 ;
 ;       These routines are called by out_line(), put_line() and get_line().
 */
-static void normal_line_write(int y, int x, int lastx, BYTE *pixels)
+static void normal_line_write(int y, int x, int lastx, BYTE const *pixels)
 {
 	int i, width;
 	width = lastx - x + 1;
-	_ASSERTE(s_dot_write);
+	assert(s_dot_write || !"s_dot_write function pointer not set");
 	for (i = 0; i < width; i++)
 	{
 		s_dot_write(x + i, y, pixels[i]);
@@ -670,7 +670,7 @@ static void normal_line_read(int y, int x, int lastx, BYTE *pixels)
 {
 	int i, width;
 	width = lastx - x + 1;
-	_ASSERTE(s_dot_read);
+	assert(s_dot_read || !"s_dot_read function pointer not set");
 	for (i = 0; i < width; i++)
 	{
 		pixels[i] = s_dot_read(x + i, y);
@@ -715,19 +715,19 @@ void set_normal_line()
 
 static void null_write(int a, int b, int c)
 {
-	_ASSERTE(false);
+	assert(!"null_write unexpectedly called");
 }
 
 static int null_read(int a, int b)
 {
-	_ASSERTE(false);
+	assert(!"null_read unexpectedly called");
 	return 0;
 }
 
 // from video.asm 
 void set_null_video()
 {
-	_ASSERTE(0 && "setnullvideo called");
+	assert(!"setnullvideo unexpectedly called");
 	s_dot_write = null_write;
 	s_dot_read = null_read;
 }
@@ -742,13 +742,13 @@ int get_color(int xdot, int ydot)
 	int x1, y1;
 	x1 = xdot + g_screen_x_offset;
 	y1 = ydot + g_screen_y_offset;
-	_ASSERTE(x1 >= 0 && x1 <= g_screen_width);
-	_ASSERTE(y1 >= 0 && y1 <= g_screen_height);
+	assert(x1 >= 0 && x1 <= g_screen_width || !"x1 out of bounds");
+	assert(y1 >= 0 && y1 <= g_screen_height || "y1 out of bounds");
 	if (x1 < 0 || y1 < 0 || x1 >= g_screen_width || y1 >= g_screen_height)
 	{
 		return 0;
 	}
-	_ASSERTE(s_dot_read);
+	assert(s_dot_read || !"s_dot_read function pointer not set");
 	return s_dot_read(x1, y1);
 }
 
@@ -761,9 +761,9 @@ void putcolor_a(int xdot, int ydot, int color)
 {
 	int x1 = xdot + g_screen_x_offset;
 	int y1 = ydot + g_screen_y_offset;
-	_ASSERTE(x1 >= 0 && x1 <= g_screen_width);
-	_ASSERTE(y1 >= 0 && y1 <= g_screen_height);
-	_ASSERTE(s_dot_write);
+	assert(x1 >= 0 && x1 <= g_screen_width || !"x1 out of bounds");
+	assert(y1 >= 0 && y1 <= g_screen_height || !"y1 out of bounds");
+	assert(s_dot_write || !"s_dot_write function pointer not set");
 	s_dot_write(x1, y1, color & g_and_color);
 }
 
@@ -774,14 +774,14 @@ void putcolor_a(int xdot, int ydot, int color)
 ;       entire line of pixels to the screen (0 <= xdot < g_x_dots) at a clip
 ;       Called by the GIF decoder
 */
-int out_line(BYTE *pixels, int linelen)
+int out_line(BYTE const *pixels, int linelen)
 {
-	_ASSERTE(_CrtCheckMemory());
+	assert(_CrtCheckMemory());
 	if (g_row_count + g_screen_y_offset >= g_screen_height)
 	{
 		return 0;
 	}
-	_ASSERTE(s_line_write);
+	assert(s_line_write || !"s_line_write function pointer not set");
 	s_line_write(g_row_count + g_screen_y_offset, g_screen_x_offset, linelen + g_screen_x_offset - 1, pixels);
 	g_row_count++;
 	return 0;
