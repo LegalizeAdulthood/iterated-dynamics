@@ -27,7 +27,7 @@ extern void plot_color_symmetry_x_axis(int x, int y, int color);
 extern void plot_color_symmetry_origin(int x, int y, int color);
 
 extern void (*g_plot_color)(int x, int y, int color);
-extern void sym_fill_line(int row, int left, int right, BYTE *str);
+extern void sym_fill_line(int row, int left, int right, BYTE const *str);
 
 extern int g_ix_start;
 extern int g_iy_start;

@@ -39,8 +39,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "idTests", "test\idTests\id-
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45} = {63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}
 		{D4B2B878-CA39-4F29-BA61-8EC426C1DBA7} = {D4B2B878-CA39-4F29-BA61-8EC426C1DBA7}
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45} = {63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "id-boost-test", "test\id-boost-test\id-boost-test.vcproj", "{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
 Global
@@ -77,6 +83,12 @@ Global
 		{6B0CB181-0A2B-4009-9A17-D14C8D4D88C5}.Debug|Win32.Build.0 = Debug|Win32
 		{6B0CB181-0A2B-4009-9A17-D14C8D4D88C5}.Release|Win32.ActiveCfg = Release|Win32
 		{6B0CB181-0A2B-4009-9A17-D14C8D4D88C5}.Release|Win32.Build.0 = Release|Win32
+		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Debug Boost|Win32.ActiveCfg = Debug|Win32
+		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Debug Boost|Win32.Build.0 = Debug|Win32
+		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Debug|Win32.Build.0 = Debug|Win32
+		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Release|Win32.ActiveCfg = Release|Win32
+		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

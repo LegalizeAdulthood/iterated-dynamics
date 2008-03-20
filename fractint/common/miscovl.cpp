@@ -2,10 +2,10 @@
 		Overlayed odds and ends that don't fit anywhere else.
 */
 #include <algorithm>
+#include <cassert>
 #include <fstream>
 #include <string>
 
-#include <assert.h>
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
@@ -46,9 +46,9 @@
 // routines in this module      
 using boost::format;
 
-void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int i, int j);
 void expand_comments(char *target, const char *source);
 void expand_comments(std::string &target, const char *source);
+static void write_batch_parms(std::string const &colorinf, bool colors_only, int maxcolor, int i, int j);
 static void put_parm(const char *parm);
 static void put_parm(const std::string &message);
 static void put_parm(const format &message);
@@ -84,7 +84,30 @@ static const char *truecolor_bits_text(int truecolorbits)
 class MakeBatchFile
 {
 public:
-	MakeBatchFile()		{}
+	MakeBatchFile() : m_max_color(0),
+		m_color_spec(),
+		m_in_parameter_command_file(),
+		m_in_parameter_command_name(),
+		m_pxdots(0), m_pydots(0),
+		m_xm(0), m_ym(0),
+		m_video_mode(),
+		m_pdelx(0.0), m_pdely(0.0),
+		m_pdelx2(0.0), m_pdely2(0.0),
+		m_pxxmin(0.0), m_pyymax(0.0),
+		m_have_3rd(false),
+		m_out_name(),
+		m_max_color_index(0),
+		m_prompts(0),
+		m_pieces_prompts(0)
+	{
+		std::fill(&m_choices[0], &m_choices[NUM_OF(m_choices)], static_cast<char const *>(0));
+		std::fill(&m_param_values[0],
+			&m_param_values[NUM_OF(m_param_values)],
+			full_screen_values());
+		std::fill(&m_in_parameter_command_comment[0],
+			&m_in_parameter_command_comment[NUM_OF(m_in_parameter_command_comment)],
+			std::string());
+	}
 	~MakeBatchFile()	{}
 
 	void execute();
@@ -110,15 +133,25 @@ private:
 	const char *m_choices[MAX_PROMPTS];
 	full_screen_values m_param_values[18];
 	int m_max_color;
-	char m_color_spec[14];
-	char m_in_parameter_command_file[80];
-	char m_in_parameter_command_name[ITEMNAMELEN + 1];
-	char m_in_parameter_command_comment[4][MAX_COMMENT];
+	std::string m_color_spec;
+	std::string m_in_parameter_command_file;
+	std::string m_in_parameter_command_name;
+	std::string m_in_parameter_command_comment[4];
+	struct DialogBuffers
+	{
+		char parameterFile[MAX_COMMENT];
+		char name[ITEMNAMELEN];
+		char comments[4][MAX_COMMENT];
+		// TODO: 13 => hard file 8.3 limit
+		char colorSpec[13];
+		char videoMode[4];
+	};
+	DialogBuffers _buffer;
 	unsigned int m_pxdots;
 	unsigned int m_pydots;
 	int m_xm;
 	int m_ym;
-	char m_video_mode[5];
+	std::string m_video_mode;
 	bool m_colors_only;
 	double m_pdelx;
 	double m_pdely;
@@ -127,7 +160,7 @@ private:
 	double m_pxxmin;
 	double m_pyymax;
 	bool m_have_3rd;
-	char m_out_name[FILE_MAX_PATH + 1];
+	std::string m_out_name;
 	int m_max_color_index;
 	int m_prompts;
 	int m_pieces_prompts;
@@ -197,7 +230,7 @@ void MakeBatchFile::set_color_spec()
 	}
 	else                      // colors match no .map that we know of 
 	{
-		strcpy(m_color_spec, "y");
+		m_color_spec = "y";
 	}
 
 	if (m_color_spec[0] == '@')
@@ -224,29 +257,29 @@ void MakeBatchFile::initialize()
 	HelpModeSaver saved_help(FIHELP_PARAMETER_FILES);
 
 	m_max_color = g_colors;
-	strcpy(m_color_spec, "y");
+	m_color_spec = "y";
 	if (has_clut())
 	{
 		set_max_color();
 		set_color_spec();
 	}
-	strcpy(m_in_parameter_command_file, g_command_file.c_str());
-	strcpy(m_in_parameter_command_name, g_command_name.c_str());
+	m_in_parameter_command_file = g_command_file;
+	m_in_parameter_command_name = g_command_name;
 	for (int i = 0; i < 4; i++)
 	{
 		expand_comments(g_command_comment[i], par_comment[i]);
-		strcpy(m_in_parameter_command_comment[i], g_command_comment[i].c_str());
+		m_in_parameter_command_comment[i] = g_command_comment[i];
 	}
 
 	if (g_command_name[0] == 0)
 	{
-		strcpy(m_in_parameter_command_name, "test");
+		m_in_parameter_command_name = "test";
 	}
 	m_pxdots = g_x_dots;
 	m_pydots = g_y_dots;
 	m_xm = 1;
 	m_ym = 1;
-	video_mode_key_name(g_.VideoEntry().keynum, m_video_mode);
+	m_video_mode = video_mode_key_name(g_.VideoEntry().keynum);
 	m_colors_only = (g_make_par_colors_only == false);
 	m_pdelx = 0.0;
 	m_pdely = 0.0;
@@ -257,17 +290,30 @@ void MakeBatchFile::initialize()
 	m_have_3rd = false;
 }
 
+static void prepString(char *dest, int numDest, std::string &source)
+{
+	strncpy(dest, source.c_str(), numDest);
+	dest[numDest-1] = 0;
+}
+
 void MakeBatchFile::fill_prompts(UIChoices &dialog)
 {
-	dialog.push("Parameter file", m_in_parameter_command_file, MAX_COMMENT - 1);
-	dialog.push("Name", m_in_parameter_command_name, ITEMNAMELEN);
-	dialog.push("Main comment", m_in_parameter_command_comment[0], MAX_COMMENT - 1);
-	dialog.push("Second comment", m_in_parameter_command_comment[1], MAX_COMMENT - 1);
-	dialog.push("Third comment", m_in_parameter_command_comment[2], MAX_COMMENT - 1);
-	dialog.push("Fourth comment", m_in_parameter_command_comment[3], MAX_COMMENT - 1);
+	prepString(_buffer.parameterFile, NUM_OF(_buffer.parameterFile), m_in_parameter_command_file);
+	dialog.push("Parameter file", _buffer.parameterFile, NUM_OF(_buffer.parameterFile));
+	prepString(_buffer.name, NUM_OF(_buffer.name), m_in_parameter_command_name);
+	dialog.push("Name", _buffer.name, NUM_OF(_buffer.name));
+	prepString(_buffer.comments[0], NUM_OF(_buffer.comments[0]), m_in_parameter_command_comment[0]);
+	dialog.push("Main comment", _buffer.comments[0], NUM_OF(_buffer.comments[0]));
+	prepString(_buffer.comments[1], NUM_OF(_buffer.comments[1]), m_in_parameter_command_comment[1]);
+	dialog.push("Second comment", _buffer.comments[1], NUM_OF(_buffer.comments[1]));
+	prepString(_buffer.comments[2], NUM_OF(_buffer.comments[2]), m_in_parameter_command_comment[2]);
+	dialog.push("Third comment", _buffer.comments[2], NUM_OF(_buffer.comments[2]));
+	prepString(_buffer.comments[3], NUM_OF(_buffer.comments[3]), m_in_parameter_command_comment[3]);
+	dialog.push("Fourth comment", _buffer.comments[3], NUM_OF(_buffer.comments[3]));
 	if (has_clut())
 	{
-		dialog.push("Record colors?", m_color_spec, 13);
+		prepString(_buffer.colorSpec, NUM_OF(_buffer.colorSpec), m_color_spec);
+		dialog.push("Record colors?", _buffer.colorSpec, NUM_OF(_buffer.colorSpec));
 		dialog.push("    (no | yes | only for full info | @filename to point to a map file)");
 		dialog.push("# of colors", m_max_color);
 		m_max_color_index = dialog.num_prompts();
@@ -279,14 +325,16 @@ void MakeBatchFile::fill_prompts(UIChoices &dialog)
 	dialog.push("X Multiples", m_xm);
 	m_pieces_prompts = dialog.num_prompts();
 	dialog.push("Y Multiples", m_ym);
-	dialog.push("Video mode", m_video_mode, 4);
+	prepString(_buffer.videoMode, NUM_OF(_buffer.videoMode), m_video_mode);
+	dialog.push("Video mode", _buffer.videoMode, NUM_OF(_buffer.videoMode));
 }
+
 bool MakeBatchFile::check_video_mode()
 {
 	// get resolution from the video name (which must be valid) 
 	m_pxdots = 0;
 	m_pydots = 0;
-	int i = check_vidmode_keyname(m_video_mode);
+	int i = check_vidmode_keyname(m_video_mode.c_str());
 	if (i > 0)
 	{
 		i = check_video_mode_key(i);
@@ -445,7 +493,7 @@ prompt_user:
 
 			if (m_color_spec[0] == 'o' || !g_make_par_colors_only)
 			{
-				strcpy(m_color_spec, "y");
+				m_color_spec = "y";
 				m_colors_only = true;
 			}
 
@@ -489,10 +537,10 @@ prompt_user:
 skip_UI:
 		if (!g_make_par_flag)
 		{
-			strcpy(m_color_spec, (g_file_colors > 0) ? "y" : "n");
+			m_color_spec, (g_file_colors > 0) ? "y" : "n";
 			m_max_color = (!g_make_par_colors_only) ? 256 : g_file_colors;
 		}
-		strcpy(m_out_name, g_command_file.c_str());
+		m_out_name = g_command_file;
 		bool got_input_file = false;
 		std::ifstream input_file;
 		if (exists(g_command_file))
@@ -503,15 +551,10 @@ skip_UI:
 				stop_message(STOPMSG_NORMAL, "Can't write " + g_command_file);
 				continue;
 			}
-			int i = int(strlen(m_out_name));
-			while (--i >= 0 && m_out_name[i] != SLASHC)
-			{
-				m_out_name[i] = 0;
-			}
-			strcat(m_out_name, "fractint.tmp");
+			m_out_name = (boost::filesystem::path(m_out_name).branch_path() / "fractint.tmp").string();
 			input_file.open(g_command_file.c_str(), std::ios::in);
 		}
-		s_parameter_file.open(m_out_name, std::ios::out);
+		s_parameter_file.open(m_out_name.c_str(), std::ios::out);
 		if (!s_parameter_file.is_open())
 		{
 			stop_message(STOPMSG_NORMAL, "Can't create " + out_name());
@@ -538,7 +581,7 @@ skip_UI:
 					{                // cancel 
 						input_file.close();
 						s_parameter_file.close();
-						unlink(m_out_name);
+						unlink(m_out_name.c_str());
 						goto prompt_user;
 					}
 					while (strchr(buf, '}') == 0
@@ -610,7 +653,7 @@ skip_UI:
 		if (got_input_file)
 		{                         // replace the original file with the new 
 			_unlink(g_command_file.c_str());   // success assumed on these lines       
-			rename(m_out_name, g_command_file.c_str());  // since we checked earlier with access 
+			rename(m_out_name.c_str(), g_command_file.c_str());  // since we checked earlier with access 
 		}
 		break;
 	}
@@ -746,7 +789,7 @@ static void write_3d_parameters()
 	}
 }
 
-void write_batch_parms_julibrot()
+static void write_batch_parms_julibrot()
 {
 	put_parm(format(" julibrotfromto=%.15g/%.15g/%.15g/%.15g")
 		% g_m_x_max_fp % g_m_x_min_fp % g_m_y_max_fp % g_m_y_min_fp);
@@ -771,7 +814,7 @@ void write_batch_parms_julibrot()
 	}
 }
 
-void write_batch_parms_formula()
+static void write_batch_parms_formula()
 {
 	put_filename("formulafile", g_formula_state.get_filename());
 	put_parm(format(" formulaname=%s") % g_formula_state.get_formula());
@@ -781,24 +824,24 @@ void write_batch_parms_formula()
 	}
 }
 
-void write_batch_parms_l_system()
+static void write_batch_parms_l_system()
 {
 	put_filename("lfile", g_l_system_filename);
 	put_parm(" lname=" + g_l_system_name);
 }
 
-void write_batch_parms_ifs()
+static void write_batch_parms_ifs()
 {
 	put_filename("ifsfile", g_ifs_filename);
 	put_parm(" ifs=" + g_ifs_name);
 }
 
-void write_batch_parms_inverse_julia()
+static void write_batch_parms_inverse_julia()
 {
 	put_parm(format(" miim=%s/%s") % g_jiim_method[g_major_method] % g_jiim_left_right[g_minor_method]);
 }
 
-void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
+static void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
 {
 	LDBL Magnification;
 	double Xmagfactor;
@@ -869,7 +912,7 @@ void write_batch_parms_center_mag_yes(bf_t bfXctr, bf_t bfYctr)
 	}
 }
 
-void write_batch_parms_center_mag_no()
+static void write_batch_parms_center_mag_no()
 {
 	put_parm(" corners=");
 	if (g_bf_math)
@@ -902,7 +945,7 @@ void write_batch_parms_center_mag_no()
 	}
 }
 
-void write_batch_parms_parameters()
+static void write_batch_parms_parameters()
 {
 	int i;
 	for (i = (MAX_PARAMETERS-1); i >= 0; --i)
@@ -956,7 +999,7 @@ void write_batch_parms_parameters()
 	}
 }
 
-void write_batch_parms_initial_orbit()
+static void write_batch_parms_initial_orbit()
 {
 	if (g_use_initial_orbit_z == INITIALZ_PIXEL)
 	{
@@ -968,7 +1011,7 @@ void write_batch_parms_initial_orbit()
 	}
 }
 
-void write_batch_parms_passes()
+static void write_batch_parms_passes()
 {
 	if (g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
 	{
@@ -980,13 +1023,13 @@ void write_batch_parms_passes()
 	}
 }
 
-void write_batch_parms_reset()
+static void write_batch_parms_reset()
 {
 	put_parm(format(" reset=%d") % (check_back() ?
 		std::min(g_save_release, g_release) : g_release));
 }
 
-void write_batch_parms_type()
+static void write_batch_parms_type()
 {
 	put_parm(format(" type=%s") % g_current_fractal_specific->get_type());
 
@@ -1012,7 +1055,7 @@ void write_batch_parms_type()
 	}
 }
 
-void write_batch_parms_function()
+static void write_batch_parms_function()
 {
 	char buf[81];
 	show_function(buf); // this function is in miscres.c 
@@ -1022,7 +1065,7 @@ void write_batch_parms_function()
 	}
 }
 
-void write_batch_parms_float()
+static void write_batch_parms_float()
 {
 	if (g_float_flag)
 	{
@@ -1030,7 +1073,7 @@ void write_batch_parms_float()
 	}
 }
 
-void write_batch_parms_max_iteration()
+static void write_batch_parms_max_iteration()
 {
 	if (g_max_iteration != 150)
 	{
@@ -1038,7 +1081,7 @@ void write_batch_parms_max_iteration()
 	}
 }
 
-void write_batch_parms_bail_out()
+static void write_batch_parms_bail_out()
 {
 	if (g_bail_out && (!g_potential_flag || g_potential_parameter[2] == 0.0))
 	{
@@ -1079,7 +1122,7 @@ void write_batch_parms_bail_out()
 	}
 }
 
-void write_batch_parms_fill_color()
+static void write_batch_parms_fill_color()
 {
 	if (g_fill_color != -1)
 	{
@@ -1087,7 +1130,7 @@ void write_batch_parms_fill_color()
 	}
 }
 
-void write_batch_parms_inside()
+static void write_batch_parms_inside()
 {
 	if (g_inside != 1)
 	{
@@ -1135,7 +1178,7 @@ void write_batch_parms_inside()
 	}
 }
 
-void write_batch_parms_proximity()
+static void write_batch_parms_proximity()
 {
 	if (g_proximity != 0.01
 		&& (g_inside == COLORMODE_EPSILON_CROSS
@@ -1146,7 +1189,7 @@ void write_batch_parms_proximity()
 	}
 }
 
-void write_batch_parms_outside()
+static void write_batch_parms_outside()
 {
 	if (g_outside != COLORMODE_ITERATION)
 	{
@@ -1186,7 +1229,7 @@ void write_batch_parms_outside()
 	}
 }
 
-void write_batch_parms_log_map()
+static void write_batch_parms_log_map()
 {
 	if (g_log_palette_mode && !g_ranges_length)
 	{
@@ -1206,7 +1249,7 @@ void write_batch_parms_log_map()
 	}
 }
 
-void write_batch_parms_log_mode()
+static void write_batch_parms_log_mode()
 {
 	if (g_log_dynamic_calculate && g_log_palette_mode && !g_ranges_length)
 	{
@@ -1222,7 +1265,7 @@ void write_batch_parms_log_mode()
 	}
 }
 
-void write_batch_parms_potential()
+static void write_batch_parms_potential()
 {
 	if (g_potential_flag)
 	{
@@ -1235,7 +1278,7 @@ void write_batch_parms_potential()
 	}
 }
 
-void write_batch_parms_invert()
+static void write_batch_parms_invert()
 {
 	if (g_invert)
 	{
@@ -1244,7 +1287,7 @@ void write_batch_parms_invert()
 	}
 }
 
-void write_batch_parms_decomp()
+static void write_batch_parms_decomp()
 {
 	if (g_decomposition[0])
 	{
@@ -1252,7 +1295,7 @@ void write_batch_parms_decomp()
 	}
 }
 
-void write_batch_parms_center_mag(big_t bfXctr, big_t bfYctr)
+static void write_batch_parms_center_mag(big_t bfXctr, big_t bfYctr)
 {
 	if (g_use_center_mag)
 	{
@@ -1264,7 +1307,7 @@ void write_batch_parms_center_mag(big_t bfXctr, big_t bfYctr)
 	}
 }
 
-void write_batch_parms_distest()
+static void write_batch_parms_distest()
 {
 	if (g_distance_test)
 	{
@@ -1273,7 +1316,7 @@ void write_batch_parms_distest()
 	}
 }
 
-void write_batch_parms_old_dem_colors()
+static void write_batch_parms_old_dem_colors()
 {
 	if (g_old_demm_colors)
 	{
@@ -1281,7 +1324,7 @@ void write_batch_parms_old_dem_colors()
 	}
 }
 
-void write_batch_parms_biomorph()
+static void write_batch_parms_biomorph()
 {
 	if (g_user_biomorph != -1)
 	{
@@ -1289,7 +1332,7 @@ void write_batch_parms_biomorph()
 	}
 }
 
-void write_batch_parms_finite_attractor()
+static void write_batch_parms_finite_attractor()
 {
 	if (g_finite_attractor)
 	{
@@ -1298,7 +1341,7 @@ void write_batch_parms_finite_attractor()
 	}
 }
 
-void write_batch_parms_symmetry(int ii, int jj)
+static void write_batch_parms_symmetry(int ii, int jj)
 {
 	if (g_force_symmetry != FORCESYMMETRY_NONE)
 	{
@@ -1334,7 +1377,7 @@ void write_batch_parms_symmetry(int ii, int jj)
 	}
 }
 
-void write_batch_parms_periodicity()
+static void write_batch_parms_periodicity()
 {
 	if (g_periodicity_check != 1)
 	{
@@ -1342,7 +1385,7 @@ void write_batch_parms_periodicity()
 	}
 }
 
-void write_batch_parms_random_see()
+static void write_batch_parms_random_see()
 {
 	if (g_use_fixed_random_seed)
 	{
@@ -1350,7 +1393,7 @@ void write_batch_parms_random_see()
 	}
 }
 
-void write_batch_parms_ranges()
+static void write_batch_parms_ranges()
 {
 	if (g_ranges_length)
 	{
@@ -1372,12 +1415,12 @@ void write_batch_parms_ranges()
 	}
 }
 
-void write_batch_parms_view_windows()
+static void write_batch_parms_view_windows()
 {
 	put_parm(g_viewWindow.CommandParameters());
 }
 
-void write_batch_parms_math_tolerance()
+static void write_batch_parms_math_tolerance()
 {
 	if (g_math_tolerance[0] != 0.05 || g_math_tolerance[1] != 0.05)
 	{
@@ -1385,7 +1428,7 @@ void write_batch_parms_math_tolerance()
 	}
 }
 
-void write_batch_parms_cycle_range()
+static void write_batch_parms_cycle_range()
 {
 	if (g_rotate_lo != 1 || g_rotate_hi != 255)
 	{
@@ -1393,7 +1436,7 @@ void write_batch_parms_cycle_range()
 	}
 }
 
-void write_batch_parms_no_beauty_of_fractals()
+static void write_batch_parms_no_beauty_of_fractals()
 {
 	if (!g_beauty_of_fractals)
 	{
@@ -1401,7 +1444,7 @@ void write_batch_parms_no_beauty_of_fractals()
 	}
 }
 
-void write_batch_parms_orbit_delay()
+static void write_batch_parms_orbit_delay()
 {
 	if (g_orbit_delay > 0)
 	{
@@ -1409,7 +1452,7 @@ void write_batch_parms_orbit_delay()
 	}
 }
 
-void write_batch_parms_orbit_interval()
+static void write_batch_parms_orbit_interval()
 {
 	if (g_orbit_interval != 1)
 	{
@@ -1417,7 +1460,7 @@ void write_batch_parms_orbit_interval()
 	}
 }
 
-void write_batch_parms_show_orbit()
+static void write_batch_parms_show_orbit()
 {
 	if (g_start_show_orbit)
 	{
@@ -1425,7 +1468,7 @@ void write_batch_parms_show_orbit()
 	}
 }
 
-void write_batch_parms_screen_coords()
+static void write_batch_parms_screen_coords()
 {
 	if (g_keep_screen_coords)
 	{
@@ -1433,7 +1476,7 @@ void write_batch_parms_screen_coords()
 	}
 }
 
-void write_batch_parms_orbit_corners()
+static void write_batch_parms_orbit_corners()
 {
 	if (g_user_standard_calculation_mode == CALCMODE_ORBITS && g_set_orbit_corners && g_keep_screen_coords)
 	{
@@ -1452,7 +1495,7 @@ void write_batch_parms_orbit_corners()
 	}
 }
 
-void write_batch_parms_orbit_draw_mode()
+static void write_batch_parms_orbit_draw_mode()
 {
 	if (g_orbit_draw_mode != ORBITDRAW_RECTANGLE)
 	{
@@ -1462,7 +1505,7 @@ void write_batch_parms_orbit_draw_mode()
 	}
 }
 
-void write_batch_parms_colors_table(int maxcolor)
+static void write_batch_parms_colors_table(int maxcolor)
 {
 	int curc = 0;
 	int force = 0;
@@ -1593,7 +1636,7 @@ void write_batch_parms_colors_table(int maxcolor)
 	}
 }
 
-void write_batch_parms_flush()
+static void write_batch_parms_flush()
 {
 	while (s_wbdata.len) // flush the buffer 
 	{
@@ -1601,7 +1644,7 @@ void write_batch_parms_flush()
 	}
 }
 
-void write_batch_parms_colors_header(char const *colorinf)
+static void write_batch_parms_colors_header(std::string const &colorinf)
 {
 	if (g_record_colors == RECORDCOLORS_COMMENT && colorinf[0] == '@')
 	{
@@ -1612,7 +1655,7 @@ void write_batch_parms_colors_header(char const *colorinf)
 	}
 }
 
-void write_batch_parms_colors(const char *colorinf, int maxcolor)
+static void write_batch_parms_colors(std::string const &colorinf, int maxcolor)
 {
 	if (g_record_colors != RECORDCOLORS_COMMENT
 		&& g_record_colors != RECORDCOLORS_YES
@@ -1626,7 +1669,7 @@ void write_batch_parms_colors(const char *colorinf, int maxcolor)
 	}
 }
 
-void write_batch_parms(const char *colorinf, bool colors_only, int maxcolor, int ii, int jj)
+void write_batch_parms(std::string const &colorinf, bool colors_only, int maxcolor, int ii, int jj)
 {
 	bf_t bfXctr = 0;
 	bf_t bfYctr = 0;

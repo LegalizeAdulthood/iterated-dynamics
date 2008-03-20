@@ -61,7 +61,7 @@ public:
 	{
 	}
 
-	int compare(BYTE *pixels, int line_length);
+	int compare(BYTE const *pixels, int line_length);
 	void cleanup();
 
 private:
@@ -91,7 +91,7 @@ private:
 ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdmore, bool &screen_stacked);
 ApplicationStateType evolver_menu_switch(int &kbdchar, bool &julia_entered_from_manelbrot, bool &kbdmore, bool &stacked);
 ApplicationStateType big_while_loop(bool &keyboardMore, bool &screenStacked, bool resumeFlag);
-int out_line_compare(BYTE *pixels, int line_length);
+int out_line_compare(BYTE const *pixels, int line_length);
 void out_line_cleanup_null();
 static void move_zoombox(int keynum);
 static void out_line_cleanup_compare();
@@ -108,7 +108,7 @@ void out_line_cleanup_null()
 {
 }
 
-int LineCompare::compare(BYTE *pixels, int line_length)
+int LineCompare::compare(BYTE const *pixels, int line_length)
 {
 	int row = g_row_count++;
 	if (row == 0)
@@ -164,7 +164,7 @@ void LineCompare::cleanup()
 	_file.close();
 }
 
-int out_line_compare(BYTE *pixels, int line_length)
+int out_line_compare(BYTE const *pixels, int line_length)
 {
 	return s_line_compare.compare(pixels, line_length);
 }

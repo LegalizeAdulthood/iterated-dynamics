@@ -438,7 +438,7 @@ public:
 	virtual void SetOrganizeFormulaSearch(bool value) = 0;
 	virtual float OriginFp() const = 0;
 	virtual void SetOriginFp(float value) = 0;
-	typedef int OutLineFunction(BYTE *pixels, int length);
+	typedef int OutLineFunction(BYTE const *pixels, int length);
 	virtual OutLineFunction *OutLine() const = 0;
 	virtual void SetOutLine(OutLineFunction *value) = 0;
 	typedef void OutLineCleanupFunction();

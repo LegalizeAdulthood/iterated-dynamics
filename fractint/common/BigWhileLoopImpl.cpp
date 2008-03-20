@@ -122,25 +122,8 @@ public:
 	BigWhileLoopGlobals() { }
 	virtual ~BigWhileLoopGlobals() { }
 
-	virtual int EvolvingFlags()											{ return g_evolving_flags; }
-	virtual void SetEvolvingFlags(int value)							{ g_evolving_flags = value; }
-	virtual bool QuickCalculate()										{ return g_quick_calculate; }
-	virtual void SetQuickCalculate(bool value)							{ g_quick_calculate = value; }
 	virtual void SetUserStandardCalculationMode(CalculationMode value)	{ g_user_standard_calculation_mode = value; }
 	virtual CalculationMode StandardCalculationModeOld()				{ return g_standard_calculation_mode_old; }
-	virtual CalculationStatusType CalculationStatus()					{ return CalculationStatusType(g_calculation_status); }
-	virtual void SetCalculationStatus(CalculationStatusType value)		{ g_calculation_status = int(value); }
-	virtual ShowFileType ShowFile()										{ return g_show_file; }
-	virtual void SetShowFile(ShowFileType value)						{ g_show_file = value; }
-	virtual int ScreenWidth()											{ return g_screen_width; }
-	virtual void SetScreenWidth(int value)								{ g_screen_width = value; }
-	virtual int ScreenHeight()											{ return g_screen_height; }
-	virtual void SetScreenHeight(int value)								{ g_screen_height = value; }
-	virtual int XDots()													{ return g_x_dots; }
-	virtual void SetXDots(int value)									{ g_x_dots = value; }
-	virtual int YDots()													{ return g_y_dots; }
-	virtual void SetYDots(int value)									{ g_y_dots = value; }
-	virtual float ScreenAspectRatio()									{ return g_screen_aspect_ratio; }
 	virtual int ScreenXOffset()											{ return g_screen_x_offset; }
 	virtual int ScreenYOffset()											{ return g_screen_y_offset; }
 	virtual void SetScreenOffset(int x, int y)
@@ -148,38 +131,12 @@ public:
 		g_screen_x_offset = x;
 		g_screen_y_offset = y;
 	}
-	virtual int Colors()												{ return g_colors; }
-	virtual void SetColors(int value)									{ g_colors = value; }
 	virtual ViewWindow &GetViewWindow()									{ return g_viewWindow; }
 	virtual int RotateHigh()											{ return g_rotate_hi; }
 	virtual void SetRotateHigh(int value)								{ g_rotate_hi = value; }
-	virtual bool Overlay3D()											{ return g_overlay_3d; }
-	virtual void SetOverlay3D(bool value)								{ g_overlay_3d = value; }
-	virtual bool ColorPreloaded()										{ return g_color_preloaded; }
-	virtual void SetColorPreloaded(bool value)							{ g_color_preloaded = value; }
-	virtual void SetDXSize(double value)								{ g_dx_size = value; }
-	virtual void SetDYSize(double value)								{ g_dy_size = value; }
-	virtual InitializeBatchType InitializeBatch()						{ return g_initialize_batch; }
-	virtual void SetInitializeBatch(InitializeBatchType value)			{ g_initialize_batch = value; }
-	virtual Display3DType Display3D()									{ return g_display_3d; }
-	virtual void SetDisplay3D(Display3DType value)						{ g_display_3d = value; }
-	virtual void SetOutLine(int (*value)(BYTE *pixels, int length))		{ g_out_line = value; }
-	virtual void OutLineCleanup()										{ g_out_line_cleanup(); }
-	virtual void SetOutLineCleanup(void (*value)())						{ g_out_line_cleanup = value; }
 	virtual bool CompareGIF()											{ return g_compare_gif; }
-	virtual bool Potential16Bit()										{ return g_potential_16bit; }
-	virtual void SetPotential16Bit(bool value)							{ g_potential_16bit = value; }
-	virtual void SetPotentialFlag(bool value)							{ g_potential_flag = value; }
-	virtual int DebugMode()												{ return g_debug_mode; }
-	virtual bool ZoomOff()												{ return g_zoom_off; }
-	virtual void SetZoomOff(bool value)									{ g_zoom_off = value; }
-	virtual bool Loaded3D()												{ return g_loaded_3d; }
-	virtual int SaveTime()												{ return g_save_time; }
 	virtual int CurrentFractalSpecificFlags()
 	{ return g_current_fractal_specific->flags; }
-	virtual void SetSaveBase(long value)								{ g_save_base = value; }
-	virtual void SetSaveTicks(long value)								{ g_save_ticks = value; }
-	virtual void SetFinishRow(int value)								{ g_finish_row = value; }
 	virtual void SetNameStackPointer(int value)							{ g_name_stack_ptr = value; }
 };
 

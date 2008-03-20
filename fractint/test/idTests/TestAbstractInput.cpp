@@ -9,7 +9,6 @@ class AbstractDialogTester : public AbstractDialog
 {
 public:
 	AbstractDialogTester(AbstractDriver *driver) : AbstractDialog(driver),
-		m_fakeDriverKeyPressed(0),
 		m_lastKey(0),
 		m_processWaitingKeyCalled(false),
 		m_processWaitingKeyValue(false),
@@ -27,7 +26,6 @@ public:
 
 	void SetProcessWaitingKeyValue(bool value)	{ m_processWaitingKeyValue = value; }
 	void SetProcessIdleValue(bool value)		{ m_processIdleValue = value; }
-	void SetFakeDriverKeyPressed(int value)		{ m_fakeDriverKeyPressed = value; }
 
 	virtual bool ProcessWaitingKey(int key)
 	{

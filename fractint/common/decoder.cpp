@@ -76,7 +76,7 @@ enum
 // occurs in an odd place in the GIF file...  In any case, linelen will be
 // equal to the number of pixels passed...
 //
-int (*g_out_line) (BYTE *, int) = out_line;
+int (*g_out_line)(BYTE const *pixels, int length) = out_line;
 short g_size_of_string[MAX_CODES + 1];  // size of string list 
 
 

@@ -244,7 +244,7 @@ static double fmod_test()
 //	is one color; it is not general enough to handle a row of
 //	pixels of different colors.
 //
-void sym_fill_line(int row, int left, int right, BYTE *str)
+void sym_fill_line(int row, int left, int right, BYTE const *str)
 {
 	put_line(row, left, right, str);
 
@@ -265,7 +265,10 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 	}
 	else if (g_plot_color == plot_color_symmetry_y_axis) // Y-axis symmetry 
 	{
-		put_line(row, g_WorkList.xx_stop()-(right-g_WorkList.xx_start()), g_WorkList.xx_stop()-(left-g_WorkList.xx_start()), str);
+		put_line(row,
+			g_WorkList.xx_stop() - (right - g_WorkList.xx_start()),
+			g_WorkList.xx_stop() - (left - g_WorkList.xx_start()),
+			str);
 		g_input_counter -= length >> 3;
 	}
 	else if (g_plot_color == plot_color_symmetry_origin)  // Origin symmetry 
@@ -313,7 +316,7 @@ void sym_fill_line(int row, int left, int right, BYTE *str)
 // It only works efficiently in the no symmetry or SYMMETRY_X_AXIS symmetry case,
 // otherwise it just writes the pixels one-by-one.
 //
-static void sym_put_line(int row, int left, int right, BYTE *str)
+static void sym_put_line(int row, int left, int right, BYTE const *str)
 {
 	put_line(row, left, right, str);
 	int length = right-left + 1;
