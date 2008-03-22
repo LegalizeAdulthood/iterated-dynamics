@@ -438,7 +438,7 @@ int plasma()
 		while (new_subdivision(0, 0, g_x_dots-1, g_y_dots-1, i) == 0)
 		{
 			k *= 2;
-			if (k  >int(std::max(g_x_dots-1, g_y_dots-1)))
+			if (k > int(std::max(g_x_dots-1, g_y_dots-1)))
 			{
 				break;
 			}

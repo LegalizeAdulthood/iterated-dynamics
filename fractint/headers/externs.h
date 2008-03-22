@@ -198,7 +198,7 @@ extern int					g_next_saved_incr;
 extern bool					g_no_magnitude_calculation;
 extern int					g_num_affine;
 extern const int			g_num_function_list;
-extern int					g_num_fractal_types;
+extern int const			g_num_fractal_types;
 extern bool					g_next_screen_flag;
 extern int					g_gaussian_offset;
 extern bool					g_ok_to_print;

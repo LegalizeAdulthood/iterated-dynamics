@@ -401,7 +401,6 @@ public:
 	virtual void SetNumAffine(int value) = 0;
 	virtual const int NumFunctionList() const = 0;
 	virtual int NumFractalTypes() const = 0;
-	virtual void SetNumFractalTypes(int value) = 0;
 	virtual bool NextScreenFlag() const = 0;
 	virtual void SetNextScreenFlag(bool value) = 0;
 	virtual int GaussianOffset() const = 0;

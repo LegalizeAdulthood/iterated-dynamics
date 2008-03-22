@@ -1,3 +1,4 @@
+// Diffusion limited aggregation
 #include <string>
 
 #include "port.h"
@@ -16,7 +17,7 @@
 #include "resume.h"
 
 // for diffusion type 
-enum
+enum DiffusionType
 {
 	DIFFUSION_CENTRAL	= 0,
 	DIFFUSION_LINE		= 1,
@@ -39,9 +40,10 @@ int diffusion()
 	int x_min;
 	int y_min;     // Current maximum coordinates 
 	int border;   // Distance between release point and fractal 
-	int mode;     // Determines diffusion type:  0 = central (classic) 
-					// 1 = falling particles 
-					// 2 = square cavity     
+	// Determines diffusion type:  0 = central (classic) 
+	// 1 = falling particles 
+	// 2 = square cavity     
+	DiffusionType mode;
 	int colorshift; // If zero, select colors at random, otherwise shift 
 					// the color every colorshift points 
 	int colorcount;
@@ -66,21 +68,20 @@ int diffusion()
 	g_fudge = 1L << 16;
 
 	border = int(g_parameters[0]);
-	mode = int(g_parameters[1]);
-	colorshift = int(g_parameters[2]);
+	if (border <= 0)
+	{
+		border = 10;
+	}
 
-	colorcount = colorshift; // Counts down from colorshift 
-	currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
-
+	mode = DiffusionType(int(g_parameters[1]));
 	if ((mode > DIFFUSION_SQUARE) || (mode < DIFFUSION_CENTRAL))
 	{
 		mode = DIFFUSION_CENTRAL;
 	}
 
-	if (border <= 0)
-	{
-		border = 10;
-	}
+	colorshift = int(g_parameters[2]);
+	colorcount = colorshift; // Counts down from colorshift 
+	currentcolor = 1;  // Start at color 1 (color 0 is probably invisible)
 
 	srand(g_random_seed);
 	if (!g_use_fixed_random_seed)
