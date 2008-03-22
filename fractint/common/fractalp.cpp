@@ -2773,7 +2773,7 @@ FractalTypeSpecificData g_fractal_specific[] =
 	}
 };
 
-int g_num_fractal_types = NUM_OF(g_fractal_specific)-1;
+const int g_num_fractal_types = NUM_OF(g_fractal_specific)-1;
 
 //
 //  Returns true if the formula parameter is not used in the current
