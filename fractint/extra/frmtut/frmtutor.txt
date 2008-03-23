@@ -1,0 +1,2388 @@
+
+
+
+
+
+
+
+                      *******************************
+                      *                             *
+                      *         FRMTUTOR.TXT        *
+                      *                             *
+                      *      AN INTRODUCTION TO     *
+                      * THE FRACTINT FORMULA PARSER *
+                      *                             *
+                      *******************************
+
+
+
+
+                                 Written by
+                              Bradley Beacham
+                           CompuServe: 74223,2745
+                                Revision 1.0
+                              24 February 1995
+
+
+
+
+   =======
+   OUTLINE
+   =======
+
+      1.0   Legal Stuff
+
+      2.0   Acknowledgements
+
+      3.0   Limitations
+
+      4.0   Introduction
+            4.1   The Purpose Of This Document
+            4.2   My Assumptions
+            4.3   What Is The Formula Parser?
+            4.4   Formula Files
+
+      5.0   A Quote From Fractint.doc
+
+      6.0   Some Basics -- A Walk Through The Mandelbrot Set
+            6.1   Complex Numbers And The Complex Plane
+            6.2   The Mandelbrot Set
+
+      7.0   Anatomy Of A Formula
+            7.1   A Formula Is A Program
+            7.2   Elements Of A Formula
+                  7.2.1   Formula Name
+                  7.2.2   Symmetry Declaration
+                  7.2.3   Braces
+                  7.2.4   Variables
+                  7.2.5   Functions
+                  7.2.6   Calculation Expressions
+                  7.2.7   Assignment Expressions
+                  7.2.8   Comparison Expressions
+                  7.2.9   Precedence And Parentheses
+                  7.2.10  The Comma
+                  7.2.11  The Semicolon And Comments
+                  7.2.12  The Colon
+            7.3   Structure Of A Formula
+                  7.3.1   The Name
+                  7.3.2   Symmetry
+                  7.3.3   Initializing
+                  7.3.4   The Iterated Loop
+                  7.3.5   The Bailout Test
+
+      8.0   A Walk Through A Pair Of Examples
+
+      9.0   Approaches To Writing Formulas
+            9.1   Using Mathematical Insights
+            9.2   Adapting An Existing Algorithm
+            9.3   Mutating An Existing Formula
+            9.4   The Monkey-At-The-Typewriter Approach
+
+      10.0  Style
+
+      11.0  Techniques
+            11.1  Speed-ups
+                  11.1.1  Avoid Exponentiation And Function Calls
+                  11.1.2  Avoid Unnecessary Calculations
+                  11.1.3  Avoid Unnecessary Iterations
+            11.2  Simulating The If..Then Construct
+                  11.2.1  How It Works
+                  11.2.2  Pitfalls
+            11.3  Setting Defaults
+            11.4  Using Values From Previous Iterations
+            11.5  Dissecting A Formula With Algebra
+            11.6  Using A Counter
+
+      12.0  Problems
+            12.1  Potential Problems With Symmetry
+            12.2  Unparsable Expressions Ignored
+            12.3  Pathological Formulas
+            12.4  A Ghost Story
+
+      13.0  Where To Go From Here
+            13.1  Learn More About Complex Numbers
+            13.2  Learn More About Programming
+            13.3  Learn More About Fractals
+            13.4  Find Other Fractal Enthusiasts
+
+      14.0  Conclusion
+
+
+
+   ================
+   1.0  LEGAL STUFF
+   ================
+
+   This document is Copyright (c) 1995 by Bradley Beacham.  All rights
+   reserved.  I encourage you to copy and distribute it, so long as you
+   leave it unchanged.  It may NOT be used for commercial purposes without
+   my explicit prior permission.
+
+   I welcome any comments, questions, additional information and
+   corrections.  My addresses are:
+
+      CompuServe: 74223,2745
+
+      Internet  : 74223.2745@compuserve.com
+
+      Post      : Bradley Beacham
+                  1343 S. Tyler St.
+                  Salt Lake City, Utah  84105-2122
+                  U.S.A.
+
+
+   =====================
+   2.0  ACKNOWLEDGEMENTS
+   =====================
+
+   Most importantly, thanks to Bert Tyler, the original creator of
+   Fractint, and to Timothy Wegner and the rest of the Stone Soup Group for
+   doing so much to improve it.  Special thanks also to Mark Peterson for
+   creating the original formula parser, and to Chuck Ebbert for making it
+   go so much faster.  A big thank you to all of the formula authors who
+   have taught me so much through their examples, particularly Jonathan
+   Osuch.
+
+   A big thank-you to Ronald Black.  Ron's excellent questions and
+   thoughtful critiques have made this document much better than it would
+   have been otherwise.  Thanks also to Bob Carr, Jon Horner, Dan Parchman,
+   David Walter and Lee Skinner (and others already mentioned) for making
+   the effort to read preliminary versions of this document, and for
+   offering insights, suggestions and encouragement.
+
+   And finally, an unsolicited plug: If you don't already have a copy of
+   FRACTAL CREATIONS by Timothy Wegner and Bert Tyler, get one. It covers
+   much of the same material as this document, with the advantage of being
+   written by the people most responsible for the development of Fractint.
+   It also includes *lots* of stuff that isn't covered here.  Several weeks
+   after completing the first drafts of this document, I reread the book
+   and realized that some parts of this tutorial are simply paraphrases of
+   passages from FRACTAL CREATIONS; although I wasn't consciously imitating
+   the book, the debt is obvious.  In this case, imitation really *is* the
+   sincerest form of flattery.
+
+
+   ================
+   3.0  LIMITATIONS
+   ================
+
+   Except for quoted material, this document was not written by a Fractint
+   programmer.  I am a self-taught enthusiast, not a wizard.  Consequently,
+   you may find yourself disagreeing with my material, my conclusions, or
+   my approach to the subject.  If so, I look forward to hearing from you.
+   It may be that we will end up disagreeing, but I am certainly willing to
+   hear your critique.  If you think that something needs to be added or
+   corrected, please contact me and I'll attempt to fix the problems in a
+   future version.
+
+   Speaking of versions, bear in mind that I am using Fractint for DOS,
+   version 19.0.  Other versions of Fractint may render some of this
+   material obsolete or inapplicable.
+
+   Please don't be intimidated by the length of the document.  You don't
+   *need* to understand it all before you can get started and have a lot of
+   fun.  If you find it verbose, let me paraphrase Abraham Lincoln: "Sorry
+   it's so long.  If I had more time, it would have been much shorter."
+
+   A word of warning for readers in the USA: I have adopted the European
+   convention of placing trailing punctuation *outside* a quote.  This
+   seems especially appropriate when dealing with literal strings processed
+   by the computer, but it also just makes more sense to me.  I hope it
+   doesn't bother you.
+
+
+   =================
+   4.0  INTRODUCTION
+   =================
+
+   4.1  THE PURPOSE OF THIS DOCUMENT
+   ---------------------------------
+   I wrote this in an attempt to fill a perceived gap.  While much has been
+   written about the Fractint program, the formula parser is still
+   something of a mystery to some.  Many people use the parser to create
+   beautiful fractal images, but some (most?) have never even attempted to
+   write a formula of their own.
+
+   There are many possible reasons for this, but I believe one of the most
+   pertinent is that the documentation on this subject in the standard
+   Fractint package is rather terse.  (This documentation is reproduced in
+   section 5.0.)  It provides important information, but it didn't exactly
+   leave me with the feeling that I knew what to do next.
+
+   Luckily for me, I plunged in anyway, and discovered that I could create
+   my own formulas and have a wonderful time doing it.  Most of my time
+   spent with Fractint, by far, is devoted to fooling around with the
+   formula parser.  It's always exciting to create an interesting new
+   image, but it's at least twice as satisfying to me when I find a
+   beautiful image, full of wonderful complexity and chaos and order,
+   coming from a formula that I wrote.  And I do this despite the fact that
+   I am *not* a highly trained mathematician.
+
+   You really don't need to be a math wizard to write a Fractint formula!
+   (Although if you are, so much the better.)  All you really need is
+   patience, persistence, and the willingness to learn.
+
+   I learned a lot by reading FRACTAL CREATIONS.  I also learned by reading
+   files of formulas written by other people, trying to trace through the
+   logic of the formulas and understand what they were doing.  And some of
+   what I learned came from simple experimentation and trial-and-error.
+
+   Now I will try to summarize the most important things that I have
+   learned so far.  I hope this information will help potential formula
+   authors get started.  If I am successful, you will be spared much of the
+   head-scratching that I endured along the way.
+
+
+   4.2  MY ASSUMPTIONS
+   -------------------
+   I am assuming that you have a copy of the Fractint program, and that you
+   have used it enough to know how to choose a formula from the menu
+   system.  I also assume that you want to try writing your own formulas.
+
+
+   4.3  WHAT IS THE FORMULA PARSER?
+   --------------------------------
+   It is a part of the excellent fractal-generating program, Fractint.
+   While Fractint has many different types of fractal formulas built into
+   it, the formula parser allows you to add new fractals without having to
+   change the program.  These formulas are stored in simple text files, and
+   may be viewed and edited by the user.  
+
+
+   4.4  FORMULA FILES
+   ------------------
+   The standard Fractint package supplies a file of formulas, FRACTINT.FRM,
+   but other formula files may be used.  For example, this document
+   discusses many sample formulas which are found in the accompanying file,
+   FRMTUTOR.FRM, and many other formula files (identified by the extension
+   ".frm") may be downloaded from online services or BBSs.
+
+   If you have an additional formula file, you should put it in the same
+   directory that holds FRACTINT.FRM.  To access it, choose the FORMULA
+   type from the Fractint menu, and then hit the F6 key.  You'll be shown a
+   menu of available formula files; select the one you want and then you'll
+   be able to use its formulas.
+   
+   This document refers to a few other formula files: FRACT001.FRM,
+   BUILTN.FRM, FUBAR.FRM, OVERKILL.FRM and INANDOUT.FRM are available on
+   CompuServe and other online services and BBSs.  You won't need any of
+   those files to follow the discussion, however.
+
+   In addition to using formula files by other people, of course, there is
+   another way to add new ones:  WRITE YOUR OWN!
+
+   The "how" is simple:  All you need is a simple text-editor, such as the
+   Edit program that comes with MS-DOS or the Notepad program that comes
+   with Windows.  Just be sure that your editor saves the file as simple
+   unformatted ASCII text.  Then follow the basic rules outlined below.
+
+   The "why" is even simpler:  Because it's fun.
+
+
+   ==============================
+   5.0  A QUOTE FROM FRACTINT.DOC
+   ==============================
+
+   First, let's look at what Fractint.doc says about formulas:
+
+   [BEGIN EXCERPT]
+    (type=formula)
+
+    This is a "roll-your-own" fractal interpreter - you don't even need a
+    compiler!
+
+    To run a "type=formula" fractal, you first need a text file containing
+    formulas (there's a sample file - FRACTINT.FRM - included with this
+    distribution).  When you select the "formula" fractal type, Fractint
+    scans the current formula file (default is FRACTINT.FRM) for formulas,
+    then prompts you for the formula name you wish to run.  After prompting
+    for any parameters, the formula is parsed for syntax errors and then
+    the fractal is generated. If you want to use a different formula file,
+    press <F6> when you are prompted to select a formula name.
+
+    There are two command-line options that work with type=formula
+    ("formulafile=" and "formulaname="), useful when you are using this
+    fractal type in batch mode.
+
+    The following documentation is supplied by Mark Peterson, who wrote the
+    formula interpreter:
+
+    Formula fractals allow you to create your own fractal formulas.  The
+    general format is:
+
+       Mandelbrot(XAXIS) { z = Pixel:  z = sqr(z) + pixel, |z| <= 4 }
+          |         |          |                |              |
+         Name     Symmetry    Initial         Iteration       Bailout
+                              Condition                       Criteria
+
+    Initial conditions are set, then the iterations performed while the
+    bailout criteria remains true or until 'z' turns into a periodic loop.
+    All variables are created automatically by their usage and treated as
+    complex.  If you declare 'v = 2' then the variable 'v' is treated as a
+    complex with an imaginary value of zero.
+
+              Predefined Variables (x, y)
+              --------------------------------------------
+              z          used for periodicity checking
+              p1         parameters 1 and 2
+              p2         parameters 3 and 4
+              p3         parameters 5 and 6
+              pixel      screen coordinates
+              LastSqr    Modulus from the last sqr() function
+              rand       Complex random number
+
+              Precedence
+              --------------------------------------------
+              1          sin(), cos(), sinh(), cosh(), cosxx(), tan(),
+                         cotan(), tanh(), cotanh(), sqr(), log(), exp(),
+                         abs(), conj(), real(), imag(), flip(), fn1(),
+                         fn2(), fn3(), fn4(), srand(), asin(), asinh(),
+                         acos(), acosh(), atan(), atanh(), sqrt(), cabs()
+              2          - (negation), ^ (power)
+              3          * (multiplication), / (division)
+              4          + (addition), - (subtraction)
+              5          = (assignment)
+              6          < (less than), <= (less than or equal to)
+                         > (greater than), >= (greater than or equal to)
+                         == (equal to), != (not equal to)
+              7          && (logical AND), || (logical OR)
+
+    Precedence may be overridden by use of parenthesis.  Note the modulus
+    squared operator |z| is also parenthetic and always sets the imaginary
+    component to zero.  This means 'c * |z - 4|' first subtracts 4 from z,
+    calculates the modulus squared then multiplies times 'c'.  Nested
+    modulus squared operators require overriding parenthesis: c * |z +
+    (|pixel|)|
+
+    The functions fn1(...) to fn4(...) are variable functions - when used,
+    the user is prompted at run time (on the <Z> screen) to specify one of
+    sin, cos, sinh, cosh, exp, log, sqr, etc. for each required variable
+    function.
+
+    Most of the functions have their conventional meaning, here are a few
+    notes on others that are not conventional. The function cosxx()
+    duplicates a bug in the version 16 cos() function. Then abs(x+iy) =
+    abs(x)+i*abs(y), flip(x+iy) = y+i*x, and |x+iy| = x*x+y*y.
+
+    The formulas are performed using either integer or floating point
+    mathematics depending on the <F> floating point toggle.  If you do not
+    have an FPU then type MPC math is performed in lieu of traditional
+    floating point.
+
+    The 'rand' predefined variable is changed with each iteration to a new
+    random number with the real and imaginary components containing a value
+    between zero and 1. Use the srand() function to initialize the random
+    numbers to a consistent random number sequence.  If a formula does not
+    contain the srand() function, then the formula compiler will use the
+    system time to initialize the sequence.  This could cause a different
+    fractal to be generated each time the formula is used depending on how
+    the formula is written.
+
+    Remember that when using integer math there is a limited dynamic range,
+    so what you think may be a fractal could really be just a limitation of
+    the integer math range.  God may work with integers, but His dynamic
+    range is many orders of magnitude greater than our puny 32 bit
+    mathematics!  Always verify with the floating point <F> toggle.
+
+    The possible values for symmetry are:
+
+    XAXIS,  XAXIS_NOPARM
+    YAXIS,  YAXIS_NOPARM
+    XYAXIS, XYAXIS_NOPARM
+    ORIGIN, ORIGIN_NOPARM
+    PI_SYM, PI_SYM_NOPARM
+    XAXIS_NOREAL
+    XAXIS_NOIMAG
+
+    These will force the symmetry even if no symmetry is actually present,
+    so try your formulas without symmetry before you use these.
+   [END EXCERPT]
+
+
+   =====================================================
+   6.0  SOME BASICS -- A WALK THROUGH THE MANDELBROT SET
+   =====================================================
+
+   6.1  COMPLEX NUMBERS AND THE COMPLEX PLANE
+   ------------------------------------------
+   First, a disclaimer: This document is not intended to be a complete
+   course on complex math. If you want to learn more about complex numbers,
+   find a good algebra text.  FRACTAL CREATIONS also has a good summary of
+   the math involved here.  But even if you are unfamiliar with complex
+   numbers, read on.  Don't be intimidated by the word "complex"!
+
+   Let's go over some of the fundamental concepts that you'll need to get
+   started.  Since you already have a copy of Fractint, you have
+   undoubtedly spent some time exploring the Mandelbrot set (M-set), easily
+   the most famous fractal.  By reviewing some of the details about how
+   this fractal is generated, you'll be better equipped to imagine new
+   varieties of fractal formulas.
+
+   This fractal is called a "set" because it is a set of points on a
+   two-dimensional plane, somewhat like the graphs you probably had to draw
+   in your algebra classes.  The Mandelbrot set exists in the  "complex
+   plane", so-called because it is composed of complex numbers.
+
+   You should know that a complex number has two parts: the real and the
+   imaginary.  Just as the real number system is the union of the rational
+   and the irrational number sets, so the complex number system is a union
+   of the real and the imaginary numbers.  An imaginary number is any real
+   number multiplied by the square root of -1.  This square root of -1 has
+   a special name: i. So a complex number which had a real component 8.5
+   and an imaginary component 3.2 could be written as 8.5 + 3.2i, or in
+   parser notation as (8.5,3.2).  And because the reals are a subset of
+   the complex numbers, any real number is also a complex number; that is,
+   2 = 2 + 0i or (2,0).
+
+   You can perform arithmetic with complex numbers; addition, subtraction,
+   multiplication and division are all possible, and follow the rules of
+   basic algebra with 'i' being treated as a variable.  Fractint also
+   supports exponents (X^Y means X to the power of Y) and a variety of
+   functions that operate on complex numbers, such as sin(), tan(), etc.
+   I won't belabor this subject further for now, except to point out that
+   when a complex number is operated on mathematically, both the real and
+   the imaginary parts of the number may change; this concept is important
+   in the discussion that follows.  (A further discussion of complex
+   arithmetic can be found in section 11.5, "Dissecting A Formula With
+   Algebra", and functions are described in section 7.2.5, "Functions".)
+
+   In the complex plane, the horizontal axis corresponds to the real number
+   line while the vertical axis corresponds to the imaginary number line.
+   Any particular complex number, therefore, can be plotted as a point on
+   the plane, and any point on the plane has a complex number that
+   corresponds to it.  The real part of the number determines the
+   horizontal placement of the point, and the imaginary number determines
+   the vertical.  The origin of the graph (the place where the axes cross)
+   is 0 + 0i.
+
+
+   6.2  THE MANDELBROT SET
+   -----------------------
+   As a prelude to examining formulas, let's look at the processes involved
+   in deciding whether a particular point on the complex plane belongs to
+   the M-set.  Since the concepts involved are somewhat abstract, we'll try
+   to create an analogy that is easier to visualize, and talk in very
+   general terms at first.
+
+   Imagine a circle drawn on the ground, with a little ball sitting in the
+   center.  We'll pick a spot on the ground, somewhere within the circle,
+   and call that the "test point".  Now we will start moving the ball
+   in discrete steps according to a set of specific rules (which we won't
+   describe yet) and watch the path that the ball takes.
+
+   The first step always moves the ball over to our test point.  The second
+   step moves it to a different location, and the third step to yet another
+   location.  We'll keep applying the rules of movement, over and over,
+   calculating a new position for the ball each time, and counting the
+   number of moves we make.
+
+   If we try this process for several different test points, we will see
+   something very interesting.  For some test points, the ball seems to
+   settle into a fairly predictable path, something like the orbit of an
+   object in space -- it moves from spot to spot, but it never strays
+   outside of the circle drawn on the ground.  For other test points, the
+   ball may move around within the circle for a while and then exit.  And
+   for some test points, the ball leaves the circle after very few moves.
+
+   Now let's try to categorize the different test points, according to the
+   behavior of the moving ball.  If the ball never leaves the circle, we'll
+   color the test point blue, but if the ball *does* leave the circle then
+   we'll give the test point a different color, based on the number of
+   steps required make the ball cross the boundary.  If you did this for
+   enough test points, an image of the Mandelbrot set would appear!
+
+   Let's move beyond our analogy now and get more specific.  Instead of the
+   ground, visualize the complex plane, and instead of a ball, visualize a
+   moving point called 'Z'.  Now picture a circle on the plane, centered on
+   the origin, with a radius of 2.
+
+   First, we'll choose a point to test; let's say 0.2 + 0.5i.  Next we must
+   define two complex variables, Z and C, such that Z = 0 + 0i and C = the
+   value of the test point, ie C = 0.2 + 0.5i.
+
+   Then the following algorithm is iterated (repeated over and over):
+   Calculate the value of Z^2 + C, and then place the result in Z.  Since Z
+   has a new value, find the point on the complex plane that corresponds to
+   Z, and then check to see if the distance between Z and the origin
+   exceeds 2.  If the distance is greater than 2 (Z is outside of the
+   circle) then the test point is *not* in the Mandelbrot set, and you may
+   stop calculating values for Z. But if Z remains in the circle, we move
+   back to the top of the loop and calculate a new value for Z and check
+   it again.
+
+   In our example, if we start with Z = 0 + 0i and C = 0.2 + 0.5i, after the
+   first time through the loop we now see that Z = 0.2 + 0.5i.  Since this
+   falls within the "bailout" circle we will calculate again, with the
+   result that now Z = -0.01 + 0.7i.  The next iteration ends with Z
+   holding the value -0.2899 + 0.486i.
+
+   We could repeat this process over and over, noting that Z shifts its
+   position with each iteration and yet never exits the bailout circle.
+
+   But because our time and patience have limits, we couldn't (and wouldn't
+   want to) repeat the experiment an infinite number of times!  This is
+   where the value for maximum iterations, set on Fractint's <X> menu,
+   comes in.  The default value for maximum iterations is 150.  This means
+   that if the program goes through the iterated loop 150 times, and Z has
+   never strayed outside the bailout circle, Fractint *assumes* that the
+   test point (C) is indeed part of the set, colors it accordingly, and
+   moves on to another test point.
+
+   Now what if the test point had the value 1.5 - 1.2i?  After the first
+   iteration, Z = 1.5 - 1.2i, which is still barely within the bailout
+   circle.  After the second iteration, Z = 2.31 - 4.8i.  This time Z has
+   strayed out of the circle, so the test point is *not* part of the M-set.
+   Because the bailout condition has been met, Fractint stops iterating the
+   formula and colors the test point.  By default, Fractint chooses a color
+   based on the number of iterations required to make Z exit the bailout
+   circle, but this can be changed by various options on the Fractint
+   menus.
+
+   I have mentioned two conditions that cause Fractint to stop looping
+   through the formula: 1) the bailout condition is met, and 2) the maximum
+   number of iterations has been reached.  There is one other condition
+   that can cause Fractint to stop iterating: periodicity.  If Fractint
+   detects that Z has fallen into a periodic loop, repeating the same
+   values over and over without leaving the bailout circle, it reasonably
+   assumes that Z will *never* exit the circle and stops iterating even
+   though the maximum number of iterations may not have been performed yet.
+   This is one of the reasons that Fractint is so much faster than other
+   fractal programs you may have tried.
+
+   We're almost there, but before Fractint can create a picture of the
+   Mandelbrot set it must settle a couple of problems, both of which have
+   to do with infinity.
+
+   First, you should see that in the complex plane there is an infinite
+   number of points.  Obviously Fractint can't test them all.  So, it
+   chooses a subset of the points, defined by the corners of your zoom box,
+   and only considers points within that box.
+
+   But even within that box, there is an infinity of possible points to
+   test.  Here, the resolution of your computer display is used to resolve
+   the problem.  Remember that a picture on your screen is composed of
+   little dots called pixels.  Fractint chooses points on the plane that
+   correspond to the locations of the pixels, and only tests those points.
+   (It can create images at a higher resolution than your display via the
+   "disk-video" modes, but we won't go into that.)  One point per pixel is
+   enough.
+
+   So now we have a finite number of points to test.  Fractint moves from
+   pixel to pixel, finding the value on the complex plane that corresponds
+   to each pixel and performing the test loop.  Pixels are colored dark
+   blue (by default) if they are deemed part of the M-set, and a different
+   color (normally based on number of iterations needed to exit the bailout
+   circle) if they are not.
+
+   We can instruct Fractint to do all of this (and more) with the following
+   formula:
+
+     Mandelbrot (xaxis) { ;The classic Mandelbrot set
+       z = 0, c = pixel:
+         z = z*z + c
+         |z| < 4
+     }
+
+
+   =========================
+   7.0  ANATOMY OF A FORMULA
+   =========================
+
+   7.1  A FORMULA IS A PROGRAM
+   ---------------------------
+   Perhaps the most fundamental point I could make is that a Fractint
+   formula is actually a little computer program, not a set of mathematical
+   equations.  If you don't take this into account, you will end up very
+   confused!  For example, consider the following statement:
+
+     z = z + 1
+
+   Interpreted as an equation, that's nonsense.  Instead, it is a program
+   statement that means "Calculate the value of z + 1, and then set z to
+   equal that value."  Variables in a Fractint formula can, and often do,
+   change values from one iteration to the next.
+
+
+   7.2  ELEMENTS OF A FORMULA
+   --------------------------
+   Let's look at some formulas and see what parts they may have.  We'll
+   start with the following formulas:
+
+     frm-A (xaxis) { ;Another formula for the Mandelbrot set
+       z = const = pixel:
+         z = z^2 + const
+         |z| < 4
+     }
+
+     frm-B { ;A generalized Julia formula
+             ;For the traditional Julia algorithm, set FN1() to SQR,
+             ;and then try different values for P1
+       z = pixel:
+         z = fn1(z) + p1
+         |z| <= (4 + p2)
+     }
+
+   [7.2.1  FORMULA NAME]  Each formula begins with a name, so that you can
+   select it from the Fractint formula menu.
+
+   [7.2.2  SYMMETRY DECLARATION]  You should notice that frm-A contains a
+   declaration of symmetry: (xaxis).  This is an instruction to Fractint
+   that says, in effect, "The images created by this formula will be
+   symmetrical around the X axis, so use the appropriate symmetry-drawing
+   technique".  After being told this, Fractint will (when possible) use
+   the following shortcut:  It will only iterate the formula for pixels
+   that fall on one side of the X axis.  After testing a pixel and coloring
+   it, it will "mirror" the result by finding the corresponding pixel on
+   the opposite side of the X axis and giving it the same color.  So at the
+   default zoom, only *half* of the pixels need to be tested!  Judicious
+   use of this technique speeds up the program, but it can cause problems
+   if not used correctly.  I'll talk about this in more detail later.
+
+   [7.2.3  BRACES]  The braces define where the body of the formula begins
+   and ends.  There should be just one opening brace ({) and one closing
+   brace (}) per formula.
+
+   [7.2.4  VARIABLES]  Examples in these formulas include z, c, and pixel.
+   Variables in Fractint formulas are always of the complex number type.
+   You may give them any names you like, but there are a few predefined
+   variables:  pixel, p1, p2, p3, lastsqr, rand, and z.  Pixel, of course,
+   gets the complex value corresponding to the current pixel.  P1, p2 and
+   p3 (if used) can have their values set by the user at the <Z> menu.
+   Lastsqr was used in a speedup technique in the earlier days of the
+   parser, but is seldom used now.  Rand can be used if a random complex
+   number is desired.
+
+   It doesn't matter whether you use upper or lower case; "pixel", "PIXEL"
+   and "Pixel" all refer to the same variable.
+
+   Z is the name you should give to the primary variable; usually this is
+   the variable that is tested at the end of each iteration.  Naming it 'Z'
+   is not *required* but it is highly recommended, because Fractint's
+   periodicity testing is set up to look for patterns in the values of Z.
+
+   You may wonder about the difference between Z and |Z|.  Those '|'
+   characters change the meaning completely.  While Z is just the name of a
+   variable, |Z| tells Fractint to determine the distance (the modulus)
+   between Z and the origin; this is why it is used in the bailout test.
+   In actuality, Fractint calculates the *square* of the distance, so the
+   '|' characters are sometimes called the "modulus squared" operator;
+   more on that in a moment.
+
+   Let's use a concrete example.  Suppose Z has a value of (3,-4), or
+   3 - 4i.  We can use the Pythagorean theorem to determine the distance
+   between this point and (0,0).  If you were to find this point by first
+   drawing a horizontal line from (0,0) to (3,0), and then a vertical line
+   from (3,0) to (3,-4), you would have two legs of a right triangle, while
+   the line from (3,-4) to (0,0) would be the hypotenuse.  Draw this out on
+   a piece of graph paper if it isn't clear so far.  Now the Pythagorean
+   theorem states that the sum of the squares of the legs will equal the
+   square of the hypotenuse. This means the distance from the origin to Z
+   can be calculated as the square root of (3^2 + -4^2), which works out to
+   5.  Obviously, this Z has strayed outside the bailout circle!
+
+   Fractint uses a small modification of the system I just described.
+   Instead of checking to see if square_root(x^2 + y^2) < 2, Fractint
+   checks if x^2 + y^2 < 2^2.  These two expressions are mathematically
+   equivalent.  The advantage of the second way is that Fractint can avoid
+   calculating the square root, which is much harder to do than calculating
+   a square!  This is another way that Fractint speeds up the calculation
+   process.  It also explains why the bailout tests in the Mandelbrot and
+   frm-A formulas are written "|z| < 4" rather than "|z| < 2".
+
+   This "modulus squared" technique is a bit subtle, and can lead to some
+   confusion if not properly understood, but it has speed benefits that few
+   of us would want to give up!
+
+   Although P1, P2 and P3 have predefined names, the values of these
+   variables can be chosen by the user when the formula is first selected
+   or via the <Z> menu.  For example, in the frm-B formula, P1 is used as a
+   user-determined constant that is added to Z each iteration, while P2
+   varies the bailout condition: the radius of the bailout circle will be
+   the square root of (4 + p2).
+
+   You can add other variables with names of your choice.  If you'll
+   compare frm-A with the Mandelbrot formula, you'll see that (among other
+   differences) there is a variable called 'c' in Mandelbrot and a
+   corresponding variable called 'const' in frm-A.  These variables serve
+   exactly the same purpose -- they just have different names.  The
+   variable name 'c' is traditionally used in Mandelbrot formulas, but
+   Fractint does not require it.  All of this is just to illustrate that
+   you have the power to choose your own names for your variables.  It is
+   good practice to avoid confusion where possible; one way to help is by
+   using descriptive variable names.  But as I noted above, use the
+   variable name 'Z' for your "main" variable whenever possible.
+
+   [7.2.5  FUNCTIONS]  Fractint has several functions built into it,
+   including sin(), cos(), and so on.  A list of them appears at the end of
+   this section.  A function is something like a little machine -- you give
+   it a number, it performs some operations on it, and then it gives you
+   back a (usually) different number.  Each function has a name, and is
+   immediately followed by a pair of parentheses.  Within these parentheses
+   you should put the variable or expression that should be "fed" to the
+   function. For example, "SQR(Z)" means "calculate the square of Z".
+   Functions can be nested, and the results of the inner function will
+   become the input for the outer function.  For example, "COS(SQR(Z))"
+   means "calculate the square of Z, and then find the cosine of the
+   result".
+
+   You can explicitly write specific functions into your formulas.  For
+   example, a formula for the Mandelbrot set might include the expression
+   "z = sqr(z) + c".
+
+   Another option is to include user-selectable functions, as in frm-B.
+   You may include up to four different ones, and they are designated
+   FN1() ... FN4().  They are given specific values on the same screen as
+   P1, P2 and P3; that is, the <Z> menu.  So the example from the previous
+   paragraph could also be written "z = fn1(z) + c".  Of course, this would
+   require the user to set FN1 to SQR in order to make the M-set; other
+   functions would give different results.  With Fractint version 19.0,
+   there are 26 functions available via the user-selectable functions!
+
+   The user-selectable functions are a double-edged sword. On the one hand,
+   they allow for much more flexibility while exploring, because a formula
+   becomes capable of creating many different kinds of fractals.  Using
+   combinations of user-selectable functions multiplies the possibilities;
+   a formula that uses just two of them is the equivalent of 676 different
+   formulas with hard-coded (explicitly written) functions, while a formula
+   that uses all four is the equivalent of 456,976 hard-coded formulas!  In
+   this way, a formula really becomes a "formula template" and helps you
+   save space and time.
+
+   On the other hand, this sort of formula can be confusing to use,
+   especially for the new or casual user.  Someone who just wants to
+   explore the Mandelbrot set may not appreciate being asked to know and
+   remember that they must set FN1 to SQR in order to get what they are
+   looking for.  There may be incredible images buried within such a
+   formula, but they require the user to do some digging to get to them!
+
+   I must confess a tendency to go hog-wild with these user-selectable
+   functions, especially in my earlier efforts.  My more recent formulas
+   typically just use two of them.  In most cases two should be plenty, I
+   think, but of course that's entirely up to you.
+
+   Now here's a list of the user-selectable functions.  Remember that we
+   are using the complex number system here, so many functions are
+   different from (but related to) the standard trigonometric functions
+   that you might know about; more information about these functions can be
+   found in the Fractint documentation.  Also note that some of the
+   comments use the word "argument" -- this is the number that is "fed" to
+   the function.
+
+     abs() ---- Real and Imaginary Absolute Value.  Returns the argument
+                after making sure both the real and imaginary parts are
+                positive.  Abs(-3,-4) == (3,4).
+     acos() --- Arccosine.
+     acosh() -- Hyperbolic Arccosine.
+     asin() --- Arcsine.
+     asinh() -- Hyperbolic Arcsine.
+     atan() --- Arctangent.
+     atanh() -- Hyperbolic Arctangent.
+     cabs() --- Complex Absolute Value.  Returns the distance between
+                the complex number and the origin.
+                Cabs(-3,4) == 5.
+     conj() --- Complex Conjugate.  Returns the argument after reversing
+                the numeric sign of the imaginary part.
+                Conj(1,-3) == (1,3) and conj(1,3) == (1,-3).
+     cos() ---- Cosine.
+     cosh() --- Hyperbolic Cosine.
+     cosxx() -- When the cos() function was first added to Fractint, it had
+                a programming bug.  After the bug was discovered, the
+                corrected cos() was added, but the original function was
+                retained under the name cosxx(), so that formulas and
+                images made with the original function could be recreated.
+                Cosxx() returns the same value as cos(), except that the
+                sign of the imaginary part is reversed.
+                Cosxx(z) == conj(cos(z)).
+     cotan() -- Cotangent.
+     cotanh() - Hyperbolic Cotangent.
+     exp() ---- Exponential.
+     flip() --- Returns the argument after swapping the values of the real
+                and imaginary parts.  Flip(1,-3) == (-3,1).
+     ident() -- Identity.  Returns the argument unchanged.  Suppose a
+                formula contains the expression "fn1(z*z) + c", but you
+                just want to see the results of z*z + c.  You can do this
+                without rewriting the formula by setting fn1() to ident().
+                Ident(z) == z.
+     log() ---- Natural Log.
+     recip() -- Reciprocal.
+     sin() ---- Sine.
+     sinh() --- Hyperbolic Sine.
+     sqr() ---- Square.
+     sqrt() --- Square Root.
+     tan() ---- Tangent.
+     tanh() --- Hyperbolic Tangent.
+     zero() --- Returns 0.  This allows you to "turn off" an expression
+                without rewriting the formula.  If you were using a
+                Mandelbrot mutation with the iterated section
+                "z = z*z + c + fn1(z)", you could see the normal Mandelbrot
+                set by setting fn1() to zero().  Zero(1,-3) == (0,0).
+
+   A few other functions can be hard-coded, but aren't available through
+   the user-selectable functions.
+
+     imag() --- Returns the imaginary part of the argument as a real
+                number. The imaginary part of the returned value is zero.
+                Imag(1,3) == (3,0).
+     real() --- Returns the real part of the argument.  The imaginary part
+                of the returned value is zero.  Real(1,3) == (1,0).
+     srand() -- Uses the argument to "seed" the random-number generator.
+
+   [7.2.6  CALCULATION EXPRESSIONS]  It's hard to imagine a formula where
+   no calculations take place.  These calculations are defined in
+   expressions such as "z*z + c".  You can find a list of the allowed
+   mathematical operators in the Fractint documentation.
+
+   [7.2.7  ASSIGNMENT EXPRESSIONS]  After you calculate something, you'll
+   often want to store the answer somewhere.  To do this you should use the
+   assignment operator: '='.  For example, the expression "A = B + C" means
+   "Find the value of B + C, and set A equal to that value."
+
+   You can also "chain" assignments, as I did in frm-A.  The expression
+   "z = const = pixel" results in both 'z' and 'const' getting the value of
+   the variable 'pixel'.
+
+   [7.2.8  COMPARISON EXPRESSIONS]  Often you'll want to compare one value
+   to another, to determine what should happen next.  The most common
+   example is the bailout test.  Comparison expressions take such forms as:
+   A < B  (is A less than B?), A >= B  (is A greater than or equal to B?),
+   or A == B (is A equal to B?).
+
+   There are a couple of things you should know about the way Fractint
+   makes comparisons between complex numbers.
+
+   First, be aware that only the *real* parts of complex numbers are
+   compared.  To Fractint, if A = (1,1000) and B = (2,1), then A < B.
+   Please note that we are comparing the *values* of complex numbers here,
+   not the *distance* of those numbers to the origin.  So for this case
+   A < B, but |A| > |B|.
+
+   Second, you should know that comparisons will always evaluate to either
+   TRUE or FALSE.  This may seem like a simple-minded observation, but
+   we'll come back to it later.
+
+   [7.2.9  PRECEDENCE AND PARENTHESES]  Precedence means that Fractint has a
+   preferred order for performing mathematical operations.  Multiplication
+   has a higher precedence than addition, for instance.  This means that
+   the expression "5 + 2 * 3" would evaluate to 30, not 21, because the
+   multiplication will take place before the addition.  But suppose 21 is
+   the answer that you really intended; now what?  The answer is to use
+   parentheses to override the "natural" precedence order, as in
+   "(5 + 2) * 3".  You'll find a table of the precedence order in the quote
+   from the Fractint documentation.
+
+   Parentheses can also be used simply to make the meaning of a complicated
+   expression clearer to you and your readers.  Just remember that your
+   parentheses *must* come in matched sets.  For every '(' there must be
+   one ')'.
+
+   [7.2.10  THE COMMA]  The comma (,) lets you put more than one expression
+   on a single line without confusing the parser.  These two formulas are
+   logically and functionally the same:
+
+     frm-C1 {
+       z = 0
+       c = pixel:
+         z = sqr(z) + c
+         |z| < 4
+     }
+
+     frm-C2 { z = 0, c = pixel: z = sqr(z) + c, |z| < 4 }
+
+
+   Although functionally the same, you may prefer the "style" of one over
+   the other.  We'll return to style in section 10.0.
+
+   In some formula files, you may notice formulas in which almost every
+   line ends with a comma or semicolon.  (For examples, look at Cardioid
+   and CGNewtonSinExp.)  I have been told that an earlier version of the
+   parser required commas or semicolons to separate the lines, but this
+   requirement was subsequently removed.  The practice continues, though,
+   apparently spread by simple imitation.  (I say this with some confidence
+   because I did the same thing at first.)  While ending a line with a
+   comma or semicolon is not necessary, it shouldn't cause any harm either.
+   My preference is to use them only when needed.
+
+   [7.2.11  THE SEMICOLON AND COMMENTS]  The semicolon (;) tells the
+   parser, in essence, "From this point to the end of the line, ignore
+   everything. It is not to be calculated."  This allows you to add
+   comments to your formulas.  Do it!  It makes your formulas easier for
+   someone else to understand, and it may help you understand your own
+   formulas later on, after they are not so fresh in your mind.
+
+   [7.2.12  THE COLON]  The colon (:) has only one function in a Fractint
+   formula (so far as I know) and that is to mark the end of the
+   initialization section and the beginning of the iterated loop.  I'll
+   explain that in more detail in the section that follows.
+
+
+   7.3  STRUCTURE OF A FORMULA
+   ---------------------------
+   Now that we've looked at some of the parts we can use, let's talk about
+   how to put them together into a working formula.  In my opinion, any
+   formula can be divided into at least three sections and at most five, with
+   four being the most common arrangement.  The three required sections are
+   1) the name, 2) the initialization section, and 3) the body of the
+   iterated loop.  Also present in almost all formulas is 4) a bailout
+   test.  The section most often omitted is 5) the symmetry declaration.
+
+   Our Mandelbrot formula has all five:
+
+     Name       Symmetry
+       |          |
+       V          V
+     Mandelbrot (xaxis) {
+       z = 0, c = pixel:  <-- Initialization
+         z = z*z + c      <-- Body of loop
+         |z| < 4          <-- Bailout test
+     }
+
+   [7.3.1  THE NAME]  Any formula must have a name, or else Fractint will
+   not be able to find it.  You have a lot of latitude in choosing a name
+   for your formula, but there are a few limitations.  The characters in a
+   formula name must be contiguous; if you tried to name a formula "my new
+   formula", it would appear on the formula menu as "my".  (Working
+   alternatives include "my_new_formula" or "MyNewFormula".)  Also, be sure
+   that you don't put two formulas with the same name into a formula file;
+   they'll both appear on the menu but only one of them will be available.
+   Finally, avoid using formula names longer than eighteen characters.  At
+   best, Fractint ignores the extra characters, but in my experiments I
+   have locked-up Fractint with too-long formula names.
+
+   [7.3.2  SYMMETRY]  The parser reads this part of the formula, if present,
+   just *once per image*.  In it, you tell Fractint to assume that a
+   formula will produce fractals with a certain kind of symmetry and
+   Fractint will simply take your word for it, with the resulting images
+   being drawn more quickly.  There are dangers involved, though.  I'll
+   talk about them in section 12.1, "Potential Problems With Symmetry".
+
+   [7.3.3  INITIALIZING]  The initialization process takes place just *once
+   per pixel*.  This is the part of the formula where the parser sets up
+   variables and gives them initial values.  Any uninitialized variables
+   start out with the value (0,0).  The initialization section begins after
+   the opening brace and extends to the colon.
+
+   (Be careful to only use one colon per formula.  Depending on its
+   location, an extra colon may trigger error messages or cause the formula
+   to behave in unintended ways.  At best, the redundant colon is ignored.)
+
+   In our Mandelbrot example, the following happens once per pixel:  Z is
+   set to 0 (since the imaginary part is unspecified, it is also set to 0)
+   and C is set to the value of PIXEL.  Recall that PIXEL gets its value
+   automatically from Fractint.
+
+   [7.3.4  THE ITERATED LOOP]  This is where the real computational action
+   takes place.  The iterated loop begins immediately after the colon and
+   extends to the end of the formula.  The entire section is repeated over
+   and over until 1) the bailout condition is met, 2) the maximum number of
+   iterations have taken place, or 3) periodicity has been detected.
+
+   If you are familiar with the DO/WHILE loop construct found in Pascal, C,
+   and other languages, then you will understand how a parser loop works.
+   The entire body of the loop is performed at least once, and then the
+   parser decides whether it is appropriate to loop again (that is, move
+   back to the colon) or to quit iterating.
+
+   [7.3.5  THE BAILOUT TEST]  Although this is technically a part of the
+   iterated loop (because it is performed once per iteration) the bailout
+   test warrants further description.
+
+   Look at the bailout test for the Mandelbrot formula: |z| < 4.  From our
+   previous discussion of how the Mandelbrot algorithm works, we can see
+   that Fractint interprets this to mean "If the modulus squared of z
+   is less than 4, then perform the loop again."  In other words, if the
+   answer to the bailout test is *false*, then it is time to bail out of
+   the loop.
+
+   I should point out that it is possible to write a formula that has no
+   bailout test, but I don't recommend it.  I'll come back to this subject
+   in section 12.3, "Pathological Formulas".
+
+
+   ======================================
+   8.0  A WALK THROUGH A PAIR OF EXAMPLES
+   ======================================
+
+   Now let's try to tie all of the parts together by looking at some
+   examples in detail.  The next two formulas are taken from FRACT001.FRM,
+   with some comments added.
+
+     Cardioid { ;author not listed
+       z = 0, x = real(pixel), y=imag(pixel),
+       c=x*(cos(y)+x*sin(y)):
+       z=sqr(z)+c,
+       |z| < 4
+     }
+
+     CGNewtonSinExp (XAXIS) { ;by Chris Green
+       ; Use floating point, and set P1 to some positive value.
+       z=pixel:
+       z1=exp(z),
+       z2=sin(z)+z1-z,
+       z=z-p1*z2/(cos(z)+z1),
+       .0001 < |z2|
+     }
+
+   These two formulas have some similarities, but their differences are
+   especially interesting.  Let's look at some of the differences, section
+   by section.
+
+   First, notice that CGNewtonSinExp declares XAXIS symmetry, while
+   Cardioid has no symmetry declaration.  This part is always optional.
+
+   Next, compare the initialization sections.  In CGNewtonSinExp, this
+   section is very simple, but in Cardioid it is much more complicated.
+
+   Let's trace through Cardioid's "per-pixel" section.  First, z is set to
+   0.  Next, the "real" function is used.  This function takes a complex
+   number as its argument and returns the value of the real part of the
+   number.  So the real part of x is set to equal the real component of
+   pixel.  Similarly, the real part of y is set to equal the imaginary part
+   of pixel.  Finally, c gets a value based on a rather complicated looking
+   expression that involves x and y and a pair of functions.
+
+   Now think back to the discussion of the Mandelbrot set.  Remember that
+   to complete an image, Fractint performs a set of computations (including
+   the iterated loop) for each pixel of the image, moving from one
+   pixel to another as the test point.  This means that each time the
+   parser executes the initialization section of Cardioid, the variable
+   "pixel" will have a different value.  This in turn means that the value
+   of c will vary from one pixel to another.
+
+   By contrast, the initialization section of CGNewtonSinExp is utter
+   simplicity: z gets the value of pixel.
+
+   Now look at the iterated sections of each formula, and remember that
+   this section extends from the colon clear down to the end of the
+   formula.  Here the tables are turned.  Cardioid has a very simple iterated
+   section - just one line plus the bailout test.  CGNewtonSinExp requires
+   three lines to complete a comparatively complicated set of calculations
+   before performing the bailout test.  Four variables and three functions
+   are involved, plus addition, subtraction, multiplication and division.
+   
+   Finally, let's look at the bailout tests.  Cardioid has the familiar test,
+   "|z| < 4", which means "Stop iterating if the distance between z and the
+   origin exceeds 2".  (Re-read the passage in section 7.2.4 describing the
+   modulus-squared operator if this isn't clear.)  Broadly speaking, this
+   sort of test says "Count how many times the formula must be iterated
+   before z heads off in the direction of infinity."  And for points that
+   are not part of the set, z tends to do just that: the different
+   color-bands of the standard M-set image reflect how many iterations were
+   required before z crossed the line.  Fractals based on this general
+   algorithm are sometimes called "Escape-Time To Infinity" fractals,
+   because membership in the set is based on whether or not z "escapes"
+   from the bailout circle.
+
+   By contrast, look at the bailout test for CGNewtonSinExp,
+   ".0001 < |z2|".  Although the tests may look similar at first glance,
+   there is something fundamentally different here.  In this formula, the
+   parser is instructed to keep iterating as long as |z2| *exceeds* the
+   value .0001; that is, as long as it is *outside* the bailout circle.
+   This kind of formula is sometimes called "Escape-Time To A Finite
+   Attractor", and is used in the various "Newton" and "Halley" fractal
+   types found in Fractint.
+
+   Let's recap by tracing through both formulas once more, looking for
+   details that we may have missed the first time through.
+
+   First, when Cardioid begins, Fractint notes the location of the corners
+   of the zoom box, so the complex values that correspond to the pixels may
+   be found.  (This is not specified by the formula.  Fractint does it
+   automatically when the parser is used.)  Then for each pixel, the
+   initialization section is performed just once; remember that this
+   section extends from the opening brace down to the colon.  While this
+   section of Cardioid is comparatively complicated, the fact that it is
+   performed just once per pixel means it won't have a big impact on the
+   speed of the formula.  Then, the iterated section is repeated over and
+   over until 1) z escapes the bailout circle, 2) maximum number of
+   iterations is reached, or 3) periodicity in the orbit of z is detected.
+   In each iteration, a new value for z is found using the *current* value
+   of z as one of the terms of the calculation, and this new value is then
+   assigned to z.
+
+   At the beginning of CGNewtonSinExp, Fractint is told to use the "xaxis"
+   symmetry-drawing technique.  After the location of the zoom-box corners
+   has been noted, the parser then reads the initialization section one
+   time per pixel.  For this formula, that section is extremely simple.
+   Now the parser moves to the iterated section.  It performs all of the
+   specified calculations that follow the colon, and then performs the
+   bailout test.  If the test evaluates to TRUE, and the other bailout
+   conditions are not met, the parser loops back to the colon and starts
+   calculating again.
+
+   Since the bulk of the calculating takes place within the iterated loop,
+   an iteration of CGNewtonSinExp will take longer than an iteration of
+   Cardioid.  I don't see how that could be avoided in this case, but as
+   I'll show you later, you can often speed up a formula by putting as much
+   calculating as possible in the initialization section rather than in the
+   iterated loop.
+
+
+   ===================================
+   9.0  APPROACHES TO WRITING FORMULAS
+   ===================================
+
+   At this point, we've covered the essentials you'll need to begin writing
+   formulas.  You now know the elements most commonly used in formulas, and
+   you know some basic rules that govern how those elements are combined.
+
+   But even though you have been shown the parts, we haven't really
+   discussed how to go about actually writing a formula.  Just what is the
+   process?
+
+   As you would probably guess, there are many different approaches
+   available.  The approach you choose will depend on your temperament and
+   your mathematical abilities.  The following list is certainly not
+   exhaustive, but it may give you some ideas on how *you* might get
+   started.
+
+
+   9.1  USING MATHEMATICAL INSIGHTS
+   --------------------------------
+   Some people have so deep an understanding of the mathematics of fractals
+   that they can use their insights to discover new fractals.  Benoit
+   Mandelbrot, for instance, understood the mathematics of Julia sets well
+   enough to envision a new fractal that would serve as a "catalog" of all
+   Julias.  This new fractal is, of course, the Mandelbrot set.  Few of us
+   have this sort of deep insight, unfortunately.
+
+
+   9.2  ADAPTING AN EXISTING ALGORITHM
+   -----------------------------------
+   Some beautiful fractals were found by investigating mathematical
+   procedures developed for other purposes.  For instance, in Fractint
+   there are several built-in fractals and formulas for "Newton" fractals.
+   These are based on a mathematical algorithm invented by Sir Isaac Newton
+   for finding the roots of numbers. Surely he didn't have fractals in mind
+   when he invented his method, but there they are!  The "Halley" types are
+   based on adaptations of another method for finding roots.
+
+   If you know of an interesting algorithm, you might want to try adapting
+   it to the formula format to see if there are any fractals lurking
+   within.  Later, in the discussion of "Using Values From Other
+   Iterations", I'll give another example.
+
+
+   9.3  MUTATING AN EXISTING FORMULA
+   ---------------------------------
+   This is probably the easiest way to get started and get good results
+   quickly.  Look at the following formula:
+
+     Mutantbrot { ;A mutation of the classic Mandelbrot set
+       z = 0, c = pixel:      ;standard initialization section
+         z = z*z + c + sin(z) ;mutated iterated section
+         |z| < 4              ;standard bailout test
+     }
+
+   All I did was to take the classic Mandelbrot formula and add a new term
+   to the iterated section:  "+ sin(z)".  I didn't have any particular
+   insight that led me to do this, I just tried it to see what would
+   happen.  The result is certainly different from the M-set, but
+   interesting.
+
+   One very good way to mutate a formula is to replace hard-coded functions
+   with user-selectable functions.  This is called "generalizing" the
+   formula. For example, if a formula uses the expression "c = sqr(pixel)",
+   you could change it to read "c = fn1(pixel)", and then experiment with
+   different functions.  Remember that just one generalized function will
+   save you from the chore of typing dozens of hard-coded varients!
+
+   You can also try enclosing key terms within functions. In a Mandelbrot
+   formula, you could replace "z = z*z + c" with "z = fn1(z*z) + c".  Now
+   you can see the normal Mandelbrot by setting fn1() to IDENT, but you can
+   also get interesting results with other functions.
+
+   More examples of formulas created with the "mutation" approach can be
+   found in my file FUBAR.FRM.
+
+
+   9.4  THE MONKEY-AT-THE-TYPEWRITER APPROACH
+   ------------------------------------------
+   This is a reference to the old claim that if you put an infinite number
+   of monkeys in front of typewriters and let them pound on the keys for an
+   infinite length of time, eventually one would produce one of
+   Shakespeare's sonnets.  In this context, it means "just load your text
+   editor and start typing". You know basically what a formula should look
+   like, and you've seen lots of different "parts" used in other formulas,
+   so play mad scientist.  (Dr. Fractalstein?)  Graft together different
+   parts, add new ones of your own invention, and then see what happens.
+   This approach is suitable for those of us (myself included) who are
+   unencumbered by real math skills or insights but who want to play
+   anyway!  It often takes a lot of patience to find something interesting,
+   but when you do it can be very exciting.
+
+   It's hard to describe the experience of writing a more-or-less random
+   formula and seeing incredible order and complexity in the emerging
+   image.  I find it both exhilarating and spooky.
+
+
+   ===========
+   10.0  STYLE
+   ===========
+
+   If you have a collection of formula files, look them over with your text
+   editor.  You may notice that different authors can give their formulas
+   very different appearances.  Often, these visual differences are simply
+   differences in "style".  (The formulas in FRACTINT.FRM have been edited
+   to have a consistent style, but other formulas vary.)
+
+   Some authors like to put as much as possible on a single line, using
+   commas to separate the different expressions, while other authors prefer
+   to use a single expression per line.  Some formulas have explanatory
+   comments, while other formulas have none.  Some authors use spaces
+   between variables and operators, while other authors run them together.
+   And some authors use indentation to make the different sections of their
+   formulas more easily identifiable, while other authors do not.
+
+   These differences demonstrate the personal preferences of the individual
+   authors; the style that you use is entirely up to you.  However, I have
+   a few biases of my own that I'd like to inflict upon you.
+
+   First, pick a style that makes sense to you, and then try to be
+   consistent with it.  This makes life easier for someone who is reading
+   your formulas and trying to make sense of them.  If you don't care about
+   the comfort of others, remember that this unfortunate reader may be you,
+   later on!
+
+   Second, strive for clarity.  This can be achieved in different ways:
+   adding comments, using spaces wisely, indenting, choosing informative
+   variable names, etc.  Often the addition of parentheses can help make
+   the logical grouping of formula elements more visible, even when the
+   parentheses are not strictly necessary.
+
+
+   ================
+   11.0  TECHNIQUES
+   ================
+
+   Okay, you know the basics.  You've written some formulas of your own,
+   and the rules about formula structure are becoming second nature.  Now
+   let's talk about techniques you can use to improve the performance of
+   your formulas, or to make them do fancy new tricks.
+
+   Warning: If you haven't already written several working formulas of your
+   own, and aren't comfortable with the preceding information, you might
+   want to come back to the rest of this document later.  From this point
+   on, we are venturing into material that is more complicated and subtle.
+
+
+   11.1  SPEED-UPS
+   ---------------
+   Here are some ways to make your formulas run a little faster.
+
+   [11.1.1  AVOID EXPONENTIATION AND FUNCTION CALLS]  There is often more
+   than one way to accomplish a goal.  If you'll compare the Mandelbrot,
+   frm-A and frm-C1 formulas, you'll see that I used three different
+   techniques to find the square of z:  z*z, z^2, and sqr(z). All give the
+   same answer but the first method, multiplication, is the fastest.  As a
+   rule, functions are slower than arithmetic operators, and exponents are
+   typically slower than functions.  If you need a function *other* than
+   sqr(), though, you usually won't have a simple alternative. And
+   sometimes you simply can't avoid using an exponent, but you are smart to
+   look for situations where you can.
+
+   [11.1.2  AVOID UNNECESSARY CALCULATIONS]  Consider the following:
+   
+     speed-A { ;Demonstrates potential for speed-up
+       z = 0:
+         z = z*z + sin(pixel)
+         |z| < 4
+     }
+
+
+     speed-B { ;variation of speed-A showing one speed-up technique
+       z = 0, sinp = sin(pixel):
+         z = z*z + sinp
+         |z| < 4
+     }
+
+   Both formulas will result in exactly the same image being drawn, but
+   speed-B is much faster.  Why?  In speed-A, the value of sin(pixel) must
+   be calculated *once per iteration* while in speed-B it is only
+   calculated *once per pixel*.  We can do this because the value of pixel
+   doesn't change during the iterated section.  The value of z keeps
+   changing from one iteration to the next, however, so we can't use the
+   same trick with that variable.  On my home computer (and at my preferred
+   resolution) I can generate the speed-A fractal in about 82 seconds,
+   while speed-B takes only 38 seconds.  Speed-A may seem a little more
+   straightforward, but your speed-hungry users will usually prefer using
+   speed-B!
+
+   [11.1.3  AVOID UNNECESSARY ITERATIONS]  Compare the initialization
+   section of frm-A to those in Mandelbrot and frm-C1.  In the latter two,
+   z is initialized with the value 0 (the traditional approach), while in
+   frm-A it gets the value of pixel.  Why the difference?  Bert Tyler, the
+   original Fractint programmer, recognized that the first iteration of the
+   traditional Mandelbrot formula accomplishes nothing more than giving z
+   the value of pixel -- step through the logic to see for yourself.  So
+   when he wrote the code for type "Mandel", he decided to "save" that
+   iteration by initializing z to pixel.  I have used the same trick in
+   frm-A.  It is a small speed-up, to be sure, but you may find it
+   irresistible!  If you carefully think your formulas through, you may
+   find other speed-ups are possible.
+
+
+   11.2  SIMULATING THE IF..THEN CONSTRUCT
+   ---------------------------------------
+   Here's an summary of what I've learned about including conditional logic
+   in a formula, and some warnings about possible pitfalls.
+
+   [11.2.1  HOW IT WORKS]  As I have mentioned, a formula is a program; the
+   Fractint formula parser actually interprets a little programming
+   language.  Users who are familiar with programming languages like BASIC,
+   C, or Pascal may find themselves wishing for some of the features of
+   those languages.  One of the most useful of those features is
+   conditional logic, as used in the IF..THEN construct.  Luckily for us,
+   it is possible to simulate this construct with the parser language, even
+   though it isn't explicitly included.
+
+   Let's look at an example.  Suppose you want to include the following
+   logic in your formula:  if A is negative then it gets the value of X,
+   otherwise it gets the value of Y.  In the C language, you could write
+   this as:
+
+     if (a < 0)
+       a = x;
+     else
+       a = y;
+
+   You could simulate this in a Fractint formula like this:
+
+     neg = x * (a < 0)
+     pos = y * (a >= 0)
+     a = neg + pos
+
+
+   or:
+
+     a = (x * (a < 0)) + (y * (a >= 0))
+
+   Now both of those parser versions are quite a bit more obscure than
+   the C version, and C has a reputation as an obscure language!  But let's
+   examine the first parser version and see how it works.
+
+   It's time to return to the observation that a comparison will always
+   evaluate to either TRUE or FALSE.  That seems glaringly obvious on one
+   level, but it's the details under the surface that make this technique
+   work.  The key detail is that Fractint appears to represent TRUE with a
+   one, and FALSE with a zero.
+
+   So suppose that a = (1.5,2) and let's see what happens with an
+   expression like "neg = x * (a < 0)".  Since this is an assignment
+   statement, the parser will first have to evaluate what is on the right
+   side of the '=', so it will know what to put into neg.  When the parser
+   comes to the comparison expression, it will give the answer FALSE,
+   because the real part of a is 1.5.  Since the parser represents FALSE
+   with a zero, the expression simplifies to "x * 0", therefore neg = 0.
+
+   Using similar logic, you should be able to prove that pos will end up
+   equalling y.
+
+   Since any single comparison is either TRUE or FALSE but not both, and
+   because of the way I set up those comparisons, you should see that when
+   a is negative, a = x + 0, and that when it is zero or positive,
+   a = 0 + y.
+
+   The second parser version is simply a condensation of the above, without
+   the intermediate variables neg and pos.
+
+   Which parser version do you prefer?
+   
+   [11.2.2  PITFALLS]  For this technique to work properly there are some
+   pitfalls to avoid, so I'll describe a few that can cause problems.  As
+   you read this section, you'll learn how *not* to set up conditional
+   logic, and you'll also get good practice in analyzing formulas to see
+   how they work.
+
+   PITFALL 1: The order of the expressions can make a difference.
+   
+   The order in which expressions are evaluated can be important in *any*
+   part of a formula.  See section 7.2.10, for instance, for a discussion
+   of how the rules of precedence affect the results of computations.  But
+   in the context of conditional logic, this principle can take on extra
+   subtlety.
+
+   Chuck Ebbert is the fellow who wrote the fast new version of the parser
+   that was introduced with version 18, so we may regard him as a real
+   authority.  In his formula file BUILTN.FRM, Chuck suggested putting the
+   comparison *after* the multiply when using the IF..THEN trick.  He
+   advised doing it for speed gains, but it can also affect the images that
+   some formulas produce.
+
+   Here's one such situation.  Suppose you want to use the following
+   algorithm in your iterated section:  If 'z' (or more precisely, the
+   *real* part of 'z') is negative, then z = fn1(z) + c ; otherwise,
+   z = fn2(z) + c.
+
+   Don't be tempted to set things up like this:
+
+     IfThen-A1 { ;Demonstrates that the order of expressions can make a
+                 ;difference.  In this example, the assignment is performed
+                 ;BEFORE the comparison.
+       z = c = pixel:
+         (z < 0) * (z = fn1(z) + c)
+         (0 <= z) * (z = fn2(z) + c)
+         |z| < 4 }
+
+   The comparison expressions precede the assignment expressions as you
+   read from left to right, but it appears that the parser actually
+   evaluates the right-hand expression (the assignment) first.  You can
+   confirm this by looking at the images produced by this formula:
+
+     IfThen-A2 { ;Functional equivalent of IfThen-A1
+       z = c = pixel:
+         z = fn1(z) + c
+         z = fn2(z) + c
+         |z| < 4
+     }
+
+   Since both formulas produce the same images, I conclude that the
+   comparisons are, in effect, being ignored.
+
+   If you wish, you can further simplify the formula:
+
+     IfThen-A3 { ;Another equivalent of IfThen-A1
+       z = c = pixel:
+         z = fn2(fn1(z) + c) + c
+         |z| < 4
+     }
+
+   While the preceding three formulas were instructive, they didn't do what
+   we set out to do.  Let's try again:
+
+     IfThen-B1 { ;In this formula, the comparison is performed BEFORE the
+                 ;assignment, but there's still a subtle flaw.
+       z = c = pixel:
+         (z = fn1(z) + c) * (z < 0)
+         (z = fn2(z) + c) * (0 <= z)
+         |z| < 4
+     }
+
+   This formula reverses the order of the comparison and assignment
+   expressions.  If you'll compare its images to those of IfThen-A1, you'll
+   see that rearranging the expressions also changes the images.
+
+
+   PITFALL 2: Don't try to embed an assignment statement within a larger
+   expression.
+
+   Okay, we've reordered the expressions in IfThen-B1 so the comparison is
+   evaluated first.  Because the assignment statements are within
+   parentheses, it might seem reasonable to assume that an assignment will
+   only occur if the comparison is TRUE.  Certainly, that is our intent.
+   Unfortunately, it isn't so.  Look:
+
+     IfThen-B2 { ;Functional equivalent of IfThen-B1
+       z = c = pixel:
+         z = (fn1(z) + c) * (z < 0)  ;line A
+         z = (fn2(z) + c) * (0 <= z) ;line B
+         |z| < 4
+     }
+
+   Since IfThen-B2 produces the same images as IfThen-B1, we may assume
+   that they are functionally equivalent.  But in IfThen-B2 it is clear
+   that *some* assignment always takes place, whether the comparison is
+   TRUE or FALSE. This may well produce interesting results, but it isn't
+   what we wanted. Remember that we wanted 'z' to get 'c' plus EITHER
+   fn1(z) OR fn2(z). Putting the assignment within the parentheses didn't
+   help us achieve conditional execution.
+
+   In the Fractint parser language (as I understand it) there's no good
+   reason to put an assignment statement *within* a larger expression, as
+   we did in IfThen-A1 and IfThen-B1.  That sort of thing may be useful in
+   C and other languages, but in a Fractint formula it is likely to mislead
+   you and your readers as to what is really happening.
+
+
+   PITFALL 3: If you are trying to create an EITHER/OR choice, construct
+   your formula carefully to ensure that the choices are mutually
+   exclusive.
+
+   Let's walk through an example for IfThen-B2.  Suppose z < 0; then when
+   line A is performed 'z' will get fn1(z) + c.  Depending on the function
+   selected for fn1() and the value of 'c', this *new* value of 'z' could
+   be either negative, positive or zero, and it will determine whether the
+   comparison in line B is TRUE or FALSE.  In fact, for any particular
+   iteration, the comparisons in lines A and B could be TRUE and TRUE,
+   TRUE and FALSE, or FALSE and TRUE.  This is getting very complicated!
+
+     Comparisons
+     line A  line B     Equivalent Expression
+     ---------------------------------------
+     TRUE  / TRUE       z = fn2(fn1(z) + c) + c
+     TRUE  / FALSE      z = 0
+     FALSE / TRUE       z = fn2(0) + c
+
+   (Why no "FALSE / FALSE"?  If line A is FALSE, then 'z' gets zero.
+   Because of the way we wrote the comparison in line B, this would make
+   line B necessarily TRUE...)
+
+   Let's recap: In IfThen-A1 each comparison was ignored because the
+   assignment had already been made before the comparison occurred.  In
+   IfThen-B1 the comparisons are not ignored, but our flawed logic causes
+   the value of 'z' to change between the first comparison and the second.
+
+   Got a headache yet?  Try these on for size:
+
+     IfThen-C1 { ;What we REALLY had in mind.
+       z = c = pixel:
+         neg = fn1(z) * (z < 0)
+         pos = fn2(z) * (0 <= z)
+         z = neg + pos + c
+         |z| < 4
+     }
+
+
+     IfThen-C2 { ;An alternate version of IfThen-C1
+       z = c = pixel:
+         z = (fn1(z) * (z < 0)) + (fn2(z) * (0 <= z)) + c
+         |z| < 4
+     }
+
+   Here we finally have the algorithm we intended to implement.  We made
+   sure that the comparisons are evaluated before the assignments.  We also
+   took care to make the comparisons independent of each other.
+
+   The point of the whole ugly exercise is this: unless you are careful, you
+   can write a formula that operates in ways that you didn't intend.
+
+   Before I leave this subject, let me address a possible objection. It
+   may appear that if you successfully avoid pitfall #2 (embedding an
+   assignment within a larger expression) then pitfall #1 (order of
+   expressions) is a non-issue.  I agree that in *most* cases it will not
+   make a visible difference.  IfThen-C1 appears to give the same images
+   whether we write "neg = fn1(z) * (z < 0)" or "neg = (z < 0) * fn1(z)",
+   for example.  But putting the comparison after the multiply does seem to
+   speed up many formulas, and as you'll see when you read section 12.4,
+   "A Ghost Story", there *are* rare occasions when the order of the
+   sub-expressions appears to affect the image, even though this may seem
+   illogical.  You are free to do as you like, of course, but I plan to
+   follow Chuck's advice until I see a good reason to ignore it.
+
+
+   11.3  SETTING DEFAULTS
+   ----------------------
+   Suppose that you have written a formula, and now you need to provide a
+   bailout test.  Even if you are just creating a normal escape-time
+   formula, there are at least three different approaches to choose from.
+   These different approaches are illustrated by the following three
+   formulas.  Each of these techniques has advantages, and I have used them
+   all at various times.
+
+     bailout-A { ;Hard coded bailout value
+       ;p1 = parameter (default 0,0)
+       z = pixel, c = fn1(pixel):
+         z = fn2(z*z) + c + p1
+         |z| < 4
+     }
+
+     bailout-B { ;Variable default -- additive
+       ;p1 = parameter (default 0,0)
+       ;p2 = bailout adjustment value (default 0,0)
+       test = (4 + p2)
+       z = pixel, c = fn1(pixel):
+         z = fn2(z*z) + c + p1
+         |z| < test
+     }
+
+     bailout-C { ;Variable default -- conditional logic
+       ;This formula requires floating-point
+       ;p1 = parameter (default 0,0)
+       ;p2 = bailout   (default 4,0)
+       ;The following line sets test = 4 if real(p2) = 0, else test = p2
+       test = (4 * (p2 <= 0)) + (p2 * (0 < p2))
+       z = pixel, c = fn1(pixel):
+         z = fn2(z*z) + c + p1
+         |z| < test
+     }
+
+   Before we discuss the different approaches, examine the formula for a
+   moment.  It is a hybrid of a Mandelbrot and a Julia formula, with a
+   couple of user-selectable functions thrown in for fun.  P1 is used as a
+   constant to be added with each iteration, and in the second and third
+   formulas P2 is used to determine the bailout value.
+
+   Now let's look at the bailout test in "bailout-A".  Hard coding a value,
+   as in "|z| < 4", is easiest to code and easiest to understand.  It also
+   will run the fastest.  But it doesn't allow the user to change the value
+   without editing the formula.  Since I have added variable functions and
+   a user parameter (p1), this value might not be the best choice for all
+   situations.  (If the user wants to use the "biomorph" option, a variable
+   bailout test will also be desirable because this option generally works
+   best with a high bailout value.)
+
+   In "bailout-B", I have addressed this potential problem.  Here, the
+   value the user gives to P2 is added to 4 and stored in a variable called
+   test. This variable is then referred to in the bailout test.  If you
+   decide that 3 would be a better bailout value than 4, you can give the
+   real part of P2 the value -1, for example.  As I noted in the section on
+   speed-up techniques, putting the calculation of "4 + p2" in the
+   initialization section will make the formula go faster than if the
+   bailout test was written as "|z| < (4 + p2)".
+
+   I didn't just set the bailout equal to p2, however, because then if the
+   user left p2 at (0,0) the resulting image would be a blank screen.  It
+   is likely that a beginner or casual user of your formula would do just
+   that, and would probably decide that your formula is defective!  If you
+   need to allow the user to vary some value, it is best (in my opinion) to
+   be sure that the default values produce *some* image.
+
+   This technique is still quite easy to implement.  It has the drawback of
+   being more obscure than hard coding, however.  If you want the bailout
+   value to be 16, for instance, you must understand the formula well
+   enough to know that p2 must equal 12.
+
+   The third technique is illustrated by "bailout-C".  I first saw this
+   trick used in Chuck Ebbert's formula file that I referred to earlier. In
+   this approach, conditional logic is used.  If the real part of p2 is
+   left at zero (or is negative) then "test" is given the value 4.
+   Otherwise, "test" gets the value of p2.
+
+   In practice, this approach works more intuitively.  If you want the
+   bailout test to be 16, you set p2 to 16.  There is a price to be paid
+   for this intuitive operation, however: it's a little harder to write,
+   and since it makes the formula more complicated, the formula will be a
+   tiny bit slower.
+
+
+   11.4  USING VALUES FROM PREVIOUS ITERATIONS
+   -------------------------------------------
+   In section 9.2 I talked about adapting an existing algorithm to the
+   formula format.  Here's an example of what I meant.
+
+   Do you recognize the following series of numbers?  What should the
+   next number be?
+
+      1, 1, 2, 3, 5, 8, 13, 21 ...
+
+   This is called the Fibonacci series.  Each new number in the series is
+   the sum of the previous two, so the next number should be 13 + 21, or
+   34.  Let's see if we can make a formula out of this series.
+
+   We might begin with the observation that in the Mandelbrot formula each
+   new generation of 'z' is based on the previous generation.  Maybe we can
+   adapt the Mandelbrot formula for our purpose, but we want to involve the
+   previous *two* generations.  To do this, we'll need to be able to store
+   old values for 'z'.
+
+   Here's one way to do it:
+
+     fibo-A { ;Derived from the Fibonacci series
+       z = oldz = c = pixel:
+       temp = z
+       z = z * oldz + c
+       oldz = temp
+       |z| < 4
+     }
+
+   Let's step through it.  In the following discussion, I'm going to use
+   the notation z(n) to refer to the value of z at the *end* of iteration
+   number n, so z(3) would be the value of z at the end of the third
+   iteration.
+
+   First we initialize our variables including a new one, 'oldz', to the
+   value of 'pixel'.  Since we haven't completed an iteration yet, let's
+   say z is at generation zero.
+
+   Then the first line of our iterated section introduces another new
+   variable, 'temp', which gets the value of z(0).  Next we calculate a
+   value for z(1): z(0) * oldz + c.  Then oldz gets the value of temp,
+   which is z(0).
+
+   When we started into the iterated section, z, oldz and c all had the
+   same value. Now z almost certainly has a different value, while oldz and
+   c still have the value 'pixel'.
+
+   Let's assume that the bailout conditions have not been met, and loop
+   back for another iteration.  Temp gets the value of z(1).  Then we
+   calculate z(2), and oldz gets the value of z(1) from temp.
+
+   Now until we stop iterating:
+
+     z(n) = z(n-1) * z(n-2) + c
+
+   What have we got here?  It's not quite the same as the Mandelbrot
+   algorithm, and it's not quite the same as the Fibonacci algorithm
+   either.  Instead, we have a hybrid of the two.
+
+   The formula makes an interesting image, but doesn't allow the user any
+   room to play, so let's add a variable function:
+
+     fibo-B {
+       z = oldz = c = pixel:
+         temp = z
+         z = fn1(z * oldz) + c
+         oldz = temp
+         |z| < 4
+     }
+
+   Now you can reproduce the fractal created by fibo-A by setting FN1 to
+   IDENT, but you can also play with other functions.
+
+   Keeping track of old values can be useful in other ways too.  Look at
+   the following formula, an example of the "in-and-out" formulas found in
+   my file INANDOUT.FRM:
+
+     inandout01 { ;Bradley Beacham  [74223,2745]
+       ;p1 = Parameter (default 0), real(p2) = Bailout (default 4)
+       ;The next line sets test=4 if real(p2)<=0, else test=real(p2)
+       test = (4 * (real(p2)<=0) + real(p2) * (0<p2))
+       z = oldz = pixel, c1 = fn1(pixel), c2 = fn2(pixel):
+         a = (|z| <= |oldz|) * (c1) ;IN
+         b = (|oldz| < |z|)  * (c2) ;OUT
+         oldz = z
+         z = fn3(z*z) + a + b + p1
+         |z| <= test
+     }
+
+   Here's the basic idea behind the "in-and-out" algorithm: Did the last
+   iteration move z closer to the origin (0,0) or farther away from it?  If
+   closer, use one value.  If farther away, use a different value.  Picture
+   the complex plane with the bailout circle centered on the origin.  In my
+   imagination this resembled a radar screen, with z moving about within
+   the circle.  Is z getting closer to the center, or farther away?
+
+   To answer that question, I kept track of the value of z from the
+   previous iteration by storing it in a variable called oldz, and then
+   compared the values of |z| and |oldz|.
+
+   If you feel bewildered, hold on.  Let's look at the formula in detail,
+   step by step, to illustrate how it works.  To make it a little easier, I
+   annotated the formula with additional comments, and put spaces between
+   different functional parts to make them easier to see.
+
+     inandout01 { ;Bradley Beacham  [74223,2745]
+       ;p1 = Parameter (default 0), real(p2) = Bailout (default 4)
+
+       ;The next line sets test=4 if real(p2)<=0, else test=real(p2)
+       test = (4 * (real(p2)<=0) + real(p2) * (0<p2))
+
+       ;initialize other variables
+       z = oldz = pixel, c1 = fn1(pixel), c2 = fn2(pixel):
+
+         ;did previous iteration move z in or out?
+         a = (|z| <= |oldz|) * (c1) ;IN
+         b = (|oldz| < |z|)  * (c2) ;OUT
+
+         ;save value of z before changing it
+         oldz = z
+
+         ;calculate new z
+         z = fn3(z*z) + a + b + p1
+
+         ;bailout test
+         |z| <= test
+     }
+
+   First comes the formula name. Next is a comment that tells you how the
+   user variables P1 and P2 are used.  Then we give the variable 'test' a
+   value -- this will be used in the bailout test -- and we set up some
+   other variables.  I call my main variable 'z', and set it equal to
+   pixel. I also create a variable called 'oldz' and set it to the value of
+   pixel.  Then I create two other variables called 'c1' and 'c2'.  Recall
+   that the general algorithm is to use one value if z moves closer to the
+   origin, and another value if z moves away.  To accomplish this, I opted
+   to use two different versions of c: c1 gets fn1(pixel) and c2 gets
+   fn2(pixel).
+
+   Since we just found the colon, that's the end of the initialization
+   section.  Let's proceed to the iterated section.  Remember that the main
+   question is "did z move closer to the origin, or farther away?"  To
+   answer this question, we compare |z| to |oldz|.  We have to account for
+   the possibility that they are the same, so the first comparison is
+   stated as "|z| <= |oldz|".  On the first iteration 'oldz' was
+   initialized to equal 'z' so this will be the case, but on subsequent
+   iterations, who knows?  At any rate, if this comparison is TRUE, the
+   statement has the value of 1, so 'a' gets the value of 'c1'; if it is
+   FALSE, 'a' gets the value 0.
+
+   A similar comparison covers the opposite possibility.  If |oldz| is
+   less than |z|, then 'b' gets the value 'c2'; otherwise it gets 0.
+
+   Note that we made sure the possibilities are mutually exclusive.  In
+   every case, if one comparison is TRUE then the other is FALSE, but the
+   TRUE comparison may change from iteration to iteration.
+
+   Then, we save the value of 'z' into 'oldz', just before we calculate a
+   new value for 'z'.  After the first iteration it is likely that 'oldz'
+   and 'z' will have different values, but 'oldz' will always have the
+   value of 'z' from the previous iteration, as in the "fibo" formulas.
+
+   To calculate the new 'z', we use "z = fn3(z*z) + a + b + p1".
+   Because of the way we set up the comparisons, this will work out to mean
+   either "z = fn3(z*z) + c1 + 0 + p1" or "z = fn3(z*z) + 0 + c2 + p1".
+
+   (Speaking of the comparisons, you have probably noticed that I didn't
+   follow my own advice about writing the comparison after the multiply.
+   When I wrote that formula, I was unaware of the possible complications
+   involved.  I'm still learning...)
+
+   Finally, we come to the relatively simple bailout test.
+
+   Whew, that was a bit of a workout!  So what's the cosmic significance of
+   it all?  Beats me!  If it does nothing else, though, it should show you
+   that it is possible to invent fairly elaborate algorithms for your
+   formulas without any notions about their ultimate mathematical
+   significance.  And if you're smart enough to see the significance of
+   things like this, then you're in a great position to exploit that
+   knowledge.
+
+   It should also demonstrate that saving values from past iterations can
+   be a useful technique!
+
+
+   11.5  DISSECTING A FORMULA WITH ALGEBRA
+   ---------------------------------------
+   Fractint was designed to work with complex numbers.  It has all kinds of
+   mathematical operators and functions available that were written with
+   complex math in mind.
+
+   But the fact that complex arithmetic works like algebra can be exploited
+   for insight and for interesting results.  Let's take a closer look at
+   how complex multiplication is performed.
+
+   Remember that a complex number can be expressed as the combination of a
+   real and an imaginary part.  The complex number x + yi, for example,
+   has a real part of x and an imaginary part of y, while 'i' represents
+   the square root of -1.
+
+   To find the square of the number, we can treat the complex number as an
+   ordinary algebra expression, with 'i' being a variable.  This means that
+   (x + yi) * (x + yi) == (x^2 + 2xyi + yi^2).  Now if you remember that
+   i^2 == -1, this can be simplified to ((x^2 - y^2) + 2xyi).
+
+   We can write a formula that recreates this process, doing complex
+   arithmetic the hard way.  For want of a better term, I call this
+   "dissecting" the formula.
+
+     dissected-A { ;A dissected Mandelbrot
+       z = 0, c = pixel:
+         x = real(z), y = imag(z)   ;isolate real and imaginary parts
+         newx = x*x - y*y           ;calculate real part of z*z
+         newy = 2*x*y               ;calculate imag part of z*z
+         z =  newx + flip(newy) + c ;reassemble z
+         |z| < 4
+     }
+
+   In this formula, I isolate the real and imaginary parts of z, and then
+   perform the math described above.  Let's suppose for a moment that
+   z = 2 + 3i, and step through the iterated section of the formula.
+
+   First, the real part of z is extracted by using the "real" function.
+   This result is put in a complex variable called 'x'.  Then the imaginary
+   part of z is extracted using the "imag" function, and this is put into
+   'y'.  Thus, x = (2,0) and y = (3,0).
+
+   Now, values for the real and imaginary parts of z*z are calculated by
+   emulating the algebraic analysis above.  That is, we find the value of
+   x*x - y*y; that's the real part of z*z.  Then we find the value of
+   2*x*y, which is the imaginary part of z*z.
+
+   Now we "reassemble" z using these values.  Remember that when we used
+   the "imag" function and put the result in 'y', it went into the *real*
+   part of 'y'.  This means that we have to convert the value in 'newy'
+   into an imaginary number.  We do this with the "flip" function.  The
+   "flip" function, in effect, turns a complex number upside down by
+   swapping the real and the imaginary values.  Thus, flip(x + yi) returns
+   y + xi.  If x = (2,0) and y = (3,0), then newy = (12,0).  Therefore,
+   flip(newy) = (0,12).  Finally we add c and perform the bailout test.
+
+   If you'll run this formula, you'll see that it does indeed produce the
+   Mandelbrot set.  But that's a lot more work than the standard Mandelbrot
+   formula.  Why bother?
+
+   The answer is that by "laying the parts out", so to speak, you can
+   perform operations on them that would be difficult to do with a formula
+   written in the normal way.  Consider the next formula:
+
+     dissected-B { ;A mutation of "dissected-A"
+       z = 0, c = pixel, k = 2 + p1:
+         x = real(z), y = imag(z)
+         newx = fn1(x*x) - fn2(y*y)
+         newy = k*fn3(x*y)
+         z =  newx + flip(newy) + c
+         |z| < 4
+     }
+
+   By experimenting with various values for fn1(), fn2(), fn3() and p1, you
+   can produce all sorts of interesting variants on the Mandelbrot set.  I
+   suggest starting with all of the functions set at "ident" and p1 at 0,
+   and then changing one of them at a time. 
+
+   Practice your complex arithmetic so it becomes easier to do, and you'll
+   find that it is possible to dissect many different formulas.  See my
+   OVERKILL.FRM for some other examples.
+
+
+   11.6  USING A COUNTER
+   ---------------------
+   Fractint has built-in mechanisms to count the iterations of our
+   formulas.  Normally we just rely on the automatic counter, but sometimes
+   it's more fun to be abnormal.  Here's a simple example of how you can
+   manually track the iteration count, to produce fractals that are
+   definitely out of the ordinary.
+
+     shifter { ;Use a counter to shift algorithms
+       z = c = pixel, iter = 1, shift = p1, test = 4 + p2:
+         lo = (z*z) * (iter <= shift)
+         hi = (z*z*z) * (shift < iter)
+         iter = iter + 1
+         z = lo + hi + c
+         |z| < test
+     }
+
+   Let's first look at the mechanics of the formula.  Note that there is a
+   variable called 'iter', which is used to keep a running count of the
+   iterations.  For each pixel it is initialized with 1, and in each pass
+   through the loop the value is incremented; so at the beginning of the
+   first iteration 'iter' will equal 1, on the second iteration it will
+   equal 2, etc.
+
+   Also note that the formula uses conditional logic to select between two
+   algorithms: do we calculate z*z or z*z*z?  The question is settled by
+   comparing the iteration number to a variable called 'shift', which
+   equals p1.  (I could have just used p1 in the formula, but I think using
+   a variable called 'shift' makes the meaning a little clearer.)
+
+   Suppose you set p1 to 75, and left the value for maximum iterations at
+   150.  This means that for the first 75 iterations, the formula would
+   calculate z = z*z + c, but from iteration 76 to 150, it would calculate
+   z = z*z*z + c.  In other words, it is shifting mid-stream from the
+   normal Mandelbrot algorithm to the "Cubic Mandelbrot" algorithm.
+
+   Set p1 to equal 0, and you'll see a Cubic Mandelbrot.  Set it at 150 and
+   you'll see the normal Mandelbrot.  But when you use a value in-between,
+   you'll get something much stranger.  Usually it looks like a normal
+   Mandelbrot with strange growths inside its lake area.  Weird!  (Note:
+   this formula seems to work best with Fractint's periodicity logic turned
+   off.  To do this, just hit the <G> key, and then enter "periodicity=0".)
+
+   Now reflect that this is a very simple example.  Can you invent more
+   elaborate and interesting formulas that use the iteration counter idea?
+
+
+   ==============
+   12.0  PROBLEMS
+   ==============
+
+   We've already looked at some of the possible pitfalls when you use the
+   conditional logic (if..then) technique.  Now let's look at a few other
+   tricky areas.
+
+
+   12.1  POTENTIAL PROBLEMS WITH SYMMETRY
+   --------------------------------------
+   Fractint's symmetry-drawing techniques can be a big time saver if used
+   correctly.  If you *know* that the fractals produced by a formula will
+   always be symmetrical, then it is smart to declare the symmetry.  But
+   what if you are wrong?  For better or worse, Fractint will attempt to
+   follow your instructions anyway.  Let's look at an example.
+
+     sym-A { ;Non-symmetrical fractal
+       z = c = pixel, k = (2.5,0.5):
+         z = z^k + c
+         |z| < 4
+     }
+
+
+     sym-B (xaxis) { ;Sym-A with symmetry declared in error
+       z = c = pixel, k = (2.5,0.5):
+         z = z^k + c
+         |z| < 4
+     }
+
+
+   To see what I'm talking about, first load the sym-A formula and look at
+   the image it makes.  Clearly, the fractal is asymmetrical.  Now look at
+   the image produced by sym-B.
+
+   The only difference between the formulas is the symmetry declaration,
+   which doesn't really change the nature of the mathematical object
+   described by the formula.  We told Fractint to take a shortcut when
+   drawing the image, so it did.  You may even prefer the symmetrical
+   image, but the truth remains that it is just an illusion.  If you will
+   rotate the zoom box slightly on sym-B, Fractint will stop trying to use
+   the symmetry-drawing techniques, and the real fractal will come out.
+
+   I pointed out earlier that the formula CGNewtonSinExp specifies xaxis
+   symmetry.  This is unfortunate, in my opinion, because if the imaginary
+   part of p1 is anything other than zero, that fractal appears to lose its
+   symmetry.  Again, this can be demonstrated by rotating the zoom box.
+
+   My point is this: Please be *sure* that your formula produces only
+   symmetrical images before including a symmetry declaration.  Otherwise
+   you are likely to provoke confusion in your less experienced users, and
+   to trigger misguided complaints about "Fractint bugs".
+
+   Luckily, there are some ways to test for symmetry problems.  First, make
+   sure that the formula you are testing *does not* have a symmetry
+   declaration.  Now load the formula into Fractint and try this:
+
+   1) If you can enter values into the formula via the P1, P2 or P3
+      variables, try using a non-zero value for the imaginary parts.
+
+   2) If you can specify functions via FN1 ... FN4, try using FLIP as one
+      or more of those functions.  Use various combinations if possible.
+
+   If you do these things and *still* only get symmetrical images, you are
+   probably home free.  But be sure you try a lot of different parameters
+   before drawing your conclusions.
+
+
+   12.2  UNPARSABLE EXPRESSIONS IGNORED
+   ------------------------------------
+   The formula parser will tell you about some kinds of errors when it
+   finds them.  If you try to use the expression "z = (z*z + (c*z)", it
+   will recognize that there is a mismatch in the number of parentheses,
+   for example.
+
+   A different type of error goes unreported, though.  Look at the
+   following formulas:
+
+     frm-D1 { ;Unparsable expression ignored
+       z = c = pixel:
+         z = z*z + sin z + c
+         |z| < 4
+     }
+
+     frm-D2 { ;fixed version of frm-D1
+       z = c = pixel:
+         z = z*z + sin(z) + c
+         |z| < 4
+     }
+
+   In frm-D1 there is an incorrectly written expression, "sin z".  Although
+   the intent may be clear to you or me, the parser can't make proper sense
+   of it.  (Computers tend to take things *very* literally.)  Since the
+   formula produces a normal-looking Mandelbrot set, it appears to me that
+   the parser is simply skipping over this part of the formula. 
+
+   Frm-D2 is here to show you what the fractal would look like if frm-D1
+   had been written correctly.
+
+
+   12.3  PATHOLOGICAL FORMULAS
+   ---------------------------
+   Some formula writers ignore (or are unaware of) the conventions, and
+   produce formulas that "work" for the wrong reasons.
+
+   For instance, take another look at IfThen-A1.  This formula could be
+   written with the best of intentions, and it may even produce an
+   interesting fractal, but it is based on a misunderstanding.  If you were
+   the author of IfThen-A1, and if you understood the previous discussion
+   about this formula, then I believe you should either simplify it as in
+   IfThen-A2 or IfThen-A3, or correct it as in IfThen-C1 or IfThen-C2.
+
+   In general, I think we should try to write formulas that someone else
+   could comprehend.  Even well-written formulas can be hard to understand,
+   so let's not carelessly (or deliberately) make it worse!  IfThen-A1 is
+   obscure at best, and is likely to mislead the unwary reader.
+
+   Even worse, some formula authors leave out parts.  Consider:
+
+     weirdo { ;Mandelbrot with no bailout test
+       z = c = pixel:
+         z = z*z + c
+     }
+
+   This one has an initializing section and an iterated section, but
+   there's no bailout test.  So what stops it from iterating?  In my first
+   analysis, I assumed it would stop iterating only when 1) the maximum
+   number for iterations had been reached, or 2) 'z' fell into a periodic
+   loop.  Recall that in both of these situations, Fractint assumes that
+   the "test point" (the value of pixel) is part of the set; therefore I
+   expected that the whole screen would be colored blue.
+
+   If you run the formula, though, you will see that I was wrong.  I get
+   what looks like a normal Mandelbrot lake, but the color bands outside
+   the set are different.  (Warning: if you're using Fractint version 18.2
+   or earlier and don't have an FPU or math coprocessor, the program
+   might crash.)
+
+   Luckily for me, Tim Wegner was able to explain what was happening here.
+   In brief:
+
+   The parser uses a stack to store values.  (If you don't know what a
+   stack is, just think of it for now as a location in memory.)  After the
+   iterated section has been performed, the value remaining on the stack
+   determines whether the formula will be reiterated.  It is just *assumed*
+   that the last operation will be a comparison.
+
+   Now if the value left on the stack is zero (as it would be with a FALSE
+   comparison), then the iterations end.  Otherwise (assuming we haven't
+   reached the maximum iteration number or fallen into a periodic loop) the
+   parser loops back up to the colon.
+
+   In "weirdo", the value left on the stack would be the value assigned to
+   'z'.  So if by chance real(z) == 0, the iterations would stop and the
+   parser would choose the next test-point.  For most test-points outside
+   the M-set, however, the formula will keep iterating until 'z' becomes so
+   large that a math error occurs; after this happens (and assuming
+   Fractint didn't crash) the value left on the stack is zero.  Fortunately,
+   versions 19.0 and higher should be able to take these errors in stride
+   and move on to the next test point, even without an FPU or coprocessor.
+
+   As Tim put it, instead of using an escape-time algorithm, this formula
+   could be said to use a "crash-and-burn-time algorithm".
+
+   A formula that depends on math errors to produce an image!  And "weirdo"
+   is not unique; several formula files have been circulated containing
+   formulas that lack bailout tests.
+
+   I believe that this is undesirable, because even when it "works" the
+   *way* that it works is exceedingly obscure.  If this fails to persuade
+   you, consider that when you create images that depend on computational
+   quirks, math errors or bugs, you may find it impossible to reproduce
+   your images later on when the software has been revised.
+
+   On the other hand, Tim has pointed out that most real-life fractals are
+   poorly understood (if at all), and that many beautiful and mysterious
+   images have been produced that depend on computational quirks or
+   inaccuracies.  Why discount these images, just because we don't fully
+   understand how they came about?
+
+   What do you think?
+
+
+   12.4  A GHOST STORY
+   -------------------
+   When formulas get complicated, it can be very difficult to understand
+   what's happening.  That comment just proves my keen grasp of the
+   obvious, I suppose, but here's an interesting example I found recently.
+
+   (Warning -- murky water ahead!)
+
+     ghost { ;Demonstrates strange parser behavior
+             ;To see effect, use floating point and make sure
+             ;FN2() is not IDENT
+       z = oldz = c1 = pixel, c2 = fn1(pixel)
+       tgt = fn2(pixel), rt = real(tgt), it = imag(tgt):
+         oldx = real(oldz) - rt
+         oldy = imag(oldz) - it
+         olddist = (oldx * oldx) + (oldy * oldy)
+         x = real(z) - rt
+         y = imag(z) - it
+         dist = (x * x) + (y * y)
+         a = (dist <= olddist) * (c1)
+         b = (olddist < dist)  * (c2)
+         oldz = z
+         z = z*z + a + b
+         |z| <= 4
+     }
+
+     ghostless-A { ;One solution to the ghost problem -- reorder expressions
+       z = oldz = c1 = pixel, c2 = fn1(pixel)
+       tgt = fn2(pixel), rt = real(tgt), it = imag(tgt):
+         oldx = real(oldz) - rt
+         oldy = imag(oldz) - it
+         olddist = (oldx * oldx) + (oldy * oldy)
+         x = real(z) - rt
+         y = imag(z) - it
+         dist = (x * x) + (y * y)
+         a = (c1) * (dist <= olddist) ;Reverse order of value and comparison
+         b = (c2) * (olddist < dist)  ;Ditto
+         oldz = z
+         z = z*z + a + b
+         |z| <= 4
+     }
+
+     ghostless-B { ;Another solution to the ghost problem -- reinitialize
+       z = oldz = c1 = pixel, c2 = fn1(pixel)
+       tgt = fn2(pixel), rt = real(tgt), it = imag(tgt):
+         oldx = real(oldz) - rt
+         oldy = imag(oldz) - it
+         olddist = (oldx * oldx) + (oldy * oldy)
+         x = real(z) - rt
+         y = imag(z) - it
+         dist = (x * x) + (y * y)
+         a = b = 0                    ;Make sure a & b are set to zero
+         a = (dist <= olddist) * (c1)
+         b = (olddist < dist) * (c2)
+         oldz = z
+         z = z*z + a + b
+         |z| <= 4
+     }
+
+   First, look at the "ghost" formula.  I created this formula while
+   experimenting with new variations on the "in and out" theme.  You won't
+   need to try to follow all of its logic; just note that this is a fairly
+   complicated formula, with several variables and functions, an iterated
+   section with many steps, and a couple of lines that use the conditional
+   logic technique.
+
+   If you'll look at the images that the "ghost" formula makes (make sure
+   you're using floating-point math) you should notice a very strange
+   thing: it appears that there is more than one image, and that these
+   images are somehow superimposed over each other.
+
+   This is an interesting effect, but it is due to the parser behaving in a
+   way that I hadn't intended.  After quite a bit of experimenting, I found
+   a few ways to make the ghosting effect go away.
+
+   For example, set FN2() to IDENT.  No more ghosting; any other function
+   will make it reappear, however.
+
+   Now try the same formula with integer math.  Again, no ghosting problem,
+   regardless of the function selected for FN2().
+
+   Turn floating point back on and look at the images made by "ghostless-A"
+   and "ghostless-B".  Once again, the ghosting effect vanishes.  If you'll
+   compare these formulas to "ghost", you should see that the only
+   difference is in the way the conditional logic lines were written.
+   Instead of writing "a = (dist <= olddist) * (c1)", I wrote "a = (c1) *
+   (dist <= olddist)". Thus, the order of the expressions seems to make a
+   difference, even when care is taken to make the choices mutually
+   exclusive, and even when assignments are performed *after* the
+   comparisons are made.
+
+   A possible hint about what is happening is provided by "ghostless-B".
+   This formula is just like "ghost", except for the addition of the line
+   "a = b = 0" just before the lines with the conditional logic.  With this
+   line added, the formula makes the same images as "ghostless-A".
+
+   The meaning of this (it seems to me) is that in the "ghost" formula, if
+   "dist <= olddist" is FALSE, 'a' doesn't always get set to zero as I
+   would expect.  My guess is 'a' just keeps the old value from the
+   previous iteration.
+
+   It has been suggested that floating-point optimizations may be behind
+   this odd behavior.  If any reader knows more, please contact me.  But in
+   the meantime, this appears to reinforce Chuck Ebbert's suggestion that
+   when using conditional logic we should write the comparison expression
+   after the '*'.
+
+   Finally, I should point out that this "ghosting" effect is quite unusual
+   in my experience; it's *not* an everyday problem.  I believe it is
+   aggravated by the formula's complexity.  Let me illustrate:
+
+     ghostless-C { ;Yet another solution -- simplify!
+       z = c1 = pixel, c2 = fn1(pixel), olddist = 100
+       tgt = fn2(pixel), rt = real(tgt), it = imag(tgt):
+         x = real(z) - rt
+         y = imag(z) - it
+         dist = (x * x) + (y * y)
+         a = (dist <= olddist) * (c1)
+         b = (olddist < dist)  * (c2)
+         olddist = dist
+         z = z*z + a + b
+         |z| <= 4
+     }
+
+   I simplified the logic of "ghost" and by doing this, I was able to
+   eliminate three variables: oldx, oldy, and oldz.  This formula has no
+   ghosting problem, even though the conditional statements are the same as
+   in "ghost".  And because it is simpler, it is also faster!
+
+   So here we have a problem with five different solutions: setting FN2()
+   to IDENT, using integer math, changing the order of expressions,
+   re-initializing variables, and simplifying formula logic.  Very
+   peculiar...
+
+   Although I don't yet know the real cause of the problem, I have drawn
+   some lessons from the experience: If a formula gets too complicated,
+   things might go haywire.  When the parser starts behaving strangely, try
+   rewriting the formula in a different way.  And above all, look for ways
+   to simplify your formulas.
+
+
+   ===========================
+   13.0  WHERE TO GO FROM HERE
+   ===========================
+
+   One of the amazing things about exploring a fractal is that you can
+   continue to zoom deeper and deeper into the image, and yet you keep
+   seeing new details.  Similarly, the study of fractals and formulas
+   appears to offer an inexhaustible supply of new things to learn.  This
+   document has only scratched the surface.
+
+   Here are a few suggestions on how you can increase your knowledge.
+
+
+   13.1  LEARN MORE ABOUT COMPLEX NUMBERS
+   --------------------------------------
+   Complex math lies at the heart of the fractals produced by the parser.
+   If you have no understanding of the math, I don't see how you can
+   really understand a formula.  So find a good teacher and take a class.
+   Read a textbook or FRACTAL CREATIONS.  Practice complex arithmetic with
+   a paper and pencil.  But don't skip over the subject, and don't be
+   overwhelmed by the word "complex"; if you can learn algebra, you can
+   learn about complex numbers.
+
+
+   13.2  LEARN MORE ABOUT PROGRAMMING
+   ----------------------------------
+   It bears repeating that a formula is a program.  The parser language,
+   although comparatively small, is sometimes more obscure than most modern
+   programming languages; so if you have never learned another programming
+   language, doing so would probably be very helpful to you.  Although the
+   details vary from one language to another, there are common concepts
+   that will help you understand Fractint formulas.  If you become familiar
+   with the main concepts (variables, looping, assignment and comparison,
+   conditional execution, etc.) in a setting that makes these concepts
+   easier to understand, that experience will help you understand the
+   programming aspects of a formula.
+
+
+   13.3  LEARN MORE ABOUT FRACTALS
+   -------------------------------
+   You may not find this subject taught in your school yet, but there are
+   some excellent books that can help you learn more.
+
+   The best introductory book for a Fractint user (in my opinion) is still
+   FRACTAL CREATIONS by Timothy Wegner and Bert Tyler.  The second edition
+   of the book also includes a CD with some terrific images.
+
+   James Gleick's CHAOS: MAKING A NEW SCIENCE is a fascinating introduction
+   to the related notions of chaos, non-linear dynamics and fractals.  It
+   discusses how and why these concepts came into being, and gives glimpses
+   into the minds of some fascinating people.
+
+   CHAOS AND FRACTALS: NEW FRONTIERS OF SCIENCE by Peitgen, Jurgens and
+   Saupe is practically an encyclopedia of fractals; it's full of history,
+   good illustrations, illuminating discussions of the math, and sample
+   programs.
+
+   THE FRACTAL GEOMETRY OF NATURE by Benoit Mandelbrot is the book that
+   started it all, but be aware that it is *not* for the mathematical
+   dilettante; neither is FRACTALS EVERYWHERE by Michael Barnsley.  Both
+   books are very highly regarded as standard works in the fractal library,
+   however.
+
+   Clifford Pickover has written several books that discuss fractals,
+   including COMPUTERS, PATTERN, CHAOS AND BEAUTY and MAZES FOR THE MIND.
+   These books are jammed with great pictures, stimulating ideas, program
+   listings and pseudo-code, and much more.  Dr. Pickover also edits the
+   journal COMPUTERS AND GRAPHICS, which includes articles on fractal
+   graphics.
+
+   There are a few other periodicals that deal with fractals.  AMYGDALA is
+   published in the US, while the diskette-based FRAC'CETERA comes to us
+   from the UK.  Both of these publications are warmly endorsed by their
+   readers.
+
+
+   13.4  FIND OTHER FRACTAL ENTHUSIASTS
+   ------------------------------------
+   When you're struggling to learn new concepts, it's wonderful to have a
+   knowledgeable friend who'll help you.  If you don't know anyone who fits
+   that description, get a modem and go online.  You'll be able to meet
+   fellow fractal nuts on CompuServe, for example, in the GRAPHDEV area.
+   Look for fractal discussions on the Internet or on your favorite online
+   service or BBS, and if nobody is talking about the subject, bring it up
+   yourself.  We're a small minority, but our ranks are constantly growing.
+   For years I created fractal images by and for myself, and I'm here to
+   tell you that it's a *lot* more fun when you meet people with whom you
+   can share your questions and accomplishments.
+
+
+   ================
+   14.0  CONCLUSION
+   ================
+
+   That's all for this iteration of the file.  I hope you found it to be
+   interesting and instructive.  There's no doubt in my mind that it can be
+   improved.  If you have any insights or suggestions that will make it
+   better, please share them with me so I can share them with everyone
+   else.
+
+
+
