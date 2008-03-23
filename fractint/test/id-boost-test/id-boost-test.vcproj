@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="AbstractInput.obj BigWhileLoop.obj IteratedDynamics.obj EscapeTime.obj filesystem.obj realdos.obj miscfrac.obj LSystemParser.obj IFSParser.obj"
+				AdditionalDependencies="AbstractInput.obj BigWhileLoop.obj FullScreenChooser.obj IteratedDynamics.obj EscapeTime.obj filesystem.obj VideoModeKeyName.obj miscfrac.obj LSystemParser.obj IFSParser.obj TextColors.obj strncasecmp.obj"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="c:\data\id\Debug"
 				GenerateDebugInformation="true"
@@ -237,11 +237,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TestRealDOS.cpp"
+				RelativePath=".\TestSpirit.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\TestSpirit.cpp"
+				RelativePath=".\TestVideoModeKeyName.cpp"
 				>
 			</File>
 		</Filter>

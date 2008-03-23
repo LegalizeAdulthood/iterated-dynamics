@@ -1,6 +1,8 @@
 #if !defined(FRACTINT_HELP_H)
 #define FRACTINT_HELP_H
 
+#include <string>
+
 enum HelpAction
 {
 	ACTION_CALL = 0,
@@ -11,7 +13,7 @@ enum HelpAction
 };
 
 extern void help(HelpAction action);
-extern int read_help_topic(int, int, int, VOIDPTR);
+extern int read_help_topic(int, int, int, void *);
 extern int makedoc_msg_func(int, int);
 extern void print_document(const char *, int (*)(int, int), int);
 extern void init_help();

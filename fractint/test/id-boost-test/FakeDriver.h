@@ -65,6 +65,10 @@ public:
 	{
 		_putStringArgs.push_back(PutStringArg(row, col, attr, msg));
 	}
+	virtual void put_string(int row, int col, int attr, const std::string &text)
+	{
+		put_string(row, col, attr, text.c_str());
+	}
 	virtual void hide_text_cursor()
 	{
 	}

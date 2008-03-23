@@ -760,6 +760,7 @@ public:
 	virtual ViewWindow const &View() const						{ return g_viewWindow; }
 	virtual ViewWindow &View()									{ return g_viewWindow; }
 	virtual void SetFileNameStackTop(std::string const &value)	{ g_file_name_stack[g_name_stack_ptr] = value; }
+	virtual boost::filesystem::path const &WorkDirectory() const { return g_work_dir; }
 };
 
 static ExternalsImpl s_externs;

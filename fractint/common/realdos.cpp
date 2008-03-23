@@ -50,102 +50,6 @@ static int s_text_y_dots = 0;
 static bool s_full_menu = false;
 static int menu_check_key(int curkey, int choice);
 
-/* int stop_message(flags, message) displays message and waits for a key:
-	message should be a max of 9 lines with \n's separating them;
-	no leading or trailing \n's in message;
-	no line longer than 76 chars for best appearance;
-	flag options:
-		&1 if already in text display mode, stackscreen is not called
-			and message is displayed at (12, 0) instead of (4, 0)
-		&2 if continue/cancel indication is to be returned;
-			when not set, "Any key to continue..." is displayed
-			when set, "Escape to cancel, any other key to continue..."
-			-1 is returned for cancel, 0 for continue
-		&4 set to suppress buzzer
-		&8 for Fractint for Windows & parser - use a fixed pitch font
-		&16 for info only message (green box instead of red in DOS vsn)
-*/
-int stop_message(int flags, const std::string &msg)
-{
-	//const char *msg = message.c_str();
-	int ret;
-	int toprow;
-	int color;
-	static unsigned char batchmode = 0;
-	if (g_debug_mode || g_initialize_batch >= INITBATCH_NORMAL)
-	{
-		std::ofstream stream((g_work_dir / "stop_message.txt").string().c_str(), 
-			std::ios_base::out | ((g_initialize_batch == INITBATCH_NONE) ? 0 : std::ios_base::ate));
-		if (stream)
-		{
-			stream << msg << "\n";
-			stream.close();
-		}
-	}
-	if (g_command_initialize)  // & command_files hasn't finished 1st try 
-	{
-		init_failure(msg);
-		goodbye();
-	}
-	if (g_initialize_batch >= INITBATCH_NORMAL || batchmode)  // in batch mode 
-	{
-		g_initialize_batch = INITBATCH_BAILOUT_INTERRUPTED; // used to set errorlevel 
-		batchmode = 1; // fixes *second* stop_message in batch mode bug 
-		return -1;
-	}
-	ret = 0;
-	MouseModeSaver saved_mouse(-IDK_ENTER);
-	if ((flags & STOPMSG_NO_STACK))
-	{
-		blank_rows(toprow = 12, 10, 7);
-	}
-	else
-	{
-		driver_stack_screen();
-		toprow = 4;
-		driver_move_cursor(4, 0);
-	}
-	g_text_cbase = 2; // left margin is 2 
-	driver_put_string(toprow, 0, 7, msg);
-	if (flags & STOPMSG_CANCEL)
-	{
-		driver_put_string(g_text_row + 2, 0, 7, "Escape to cancel, any other key to continue...");
-	}
-	else
-	{
-		driver_put_string(g_text_row + 2, 0, 7, "Any key to continue...");
-	}
-	g_text_cbase = 0; // back to full line 
-	color = (flags & STOPMSG_INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
-	driver_set_attr(toprow, 0, color, (g_text_row + 1-toprow)*80);
-	driver_hide_text_cursor();   // cursor off 
-	if ((flags & STOPMSG_NO_BUZZER) == 0)
-	{
-		driver_buzzer((flags & STOPMSG_INFO_ONLY) ? 0 : 2);
-	}
-	while (driver_key_pressed()) // flush any keyahead 
-	{
-		driver_get_key();
-	}
-	if (g_debug_mode != DEBUGMODE_NO_HELP_F1_ESC)
-	{
-		if (get_key_no_help() == IDK_ESC)
-		{
-			ret = -1;
-		}
-	}
-	if (flags & STOPMSG_NO_STACK)
-	{
-		blank_rows(toprow, 10, 7);
-	}
-	else
-	{
-		driver_unstack_screen();
-	}
-	return ret;
-}
-
-
 /*	text_temp_message(msg)
 
 	displays a text message of up to 40 characters, waits
@@ -274,17 +178,6 @@ void clear_temp_message()
 	}
 }
 
-void blank_rows(int row, int rows, int attr)
-{
-	char buf[81];
-	memset(buf, ' ', 80);
-	buf[80] = 0;
-	while (--rows >= 0)
-	{
-		driver_put_string(row++, 0, attr, buf);
-	}
-}
-
 void help_title()
 {
 	driver_set_clear(); // clear the screen 
@@ -365,21 +258,6 @@ int put_string_center(int row, int col, int width, int attr, const char *msg)
 }
 
 // ------------------------------------------------------------------------ 
-
-#ifndef XFRACT
-// case independent version of strncmp 
-int strncasecmp(const char *s, const char *t, int ct)
-{
-	for (; (tolower(*s) == tolower(*t)) && --ct; s++, t++)
-	{
-		if (*s == '\0')
-		{
-			return 0;
-		}
-	}
-	return tolower(*s) - tolower(*t);
-}
-#endif
 
 int main_menu(bool full_menu)
 {
@@ -1195,36 +1073,4 @@ int check_vidmode_keyname(char const *kname)
 		i = 0;
 	}
 	return i;
-}
-
-static std::string video_mode_key_name(int key, int base, const char *prefix)
-{
-	return str(boost::format("%s%d") % prefix % (key - base + 1));
-}
-
-std::string video_mode_key_name(int k)
-{
-	if (k >= IDK_ALT_F1 && k <= IDK_ALT_F10)
-	{
-		return video_mode_key_name(k, IDK_ALT_F1, "AF");
-	}
-	if (k >= IDK_CTL_F1 && k <= IDK_CTL_F10)
-	{
-		return video_mode_key_name(k, IDK_CTL_F1, "CF");
-	}
-	if (k >= IDK_SF1 && k <= IDK_SF10)
-	{
-		return video_mode_key_name(k, IDK_SF1, "SF");
-	}
-	if (k >= IDK_F1 && k <= IDK_F10)
-	{
-		return video_mode_key_name(k, IDK_F1, "F");
-	}
-	return "";
-}
-
-// set buffer to name of passed key number 
-void video_mode_key_name(int k, char *buf)
-{
-	strcpy(buf, video_mode_key_name(k).c_str());
 }

@@ -29,6 +29,7 @@
 #include "realdos.h"
 #include "resume.h"
 #include "SoundState.h"
+#include "StopMessage.h"
 #include "ThreeDimensionalState.h"
 #include "ViewWindow.h"
 

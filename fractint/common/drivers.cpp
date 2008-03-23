@@ -250,7 +250,7 @@ void driver_shell()
 
 void driver_put_string(int row, int col, int attr, const std::string &text)
 {
-	DriverManager::current()->put_string(row, col, attr, text.c_str());
+	DriverManager::current()->put_string(row, col, attr, text);
 }
 
 void driver_put_string(int row, int col, int attr, const char *msg)

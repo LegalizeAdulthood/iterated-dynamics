@@ -1395,6 +1395,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\FullScreenChooserImpl.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\help.cpp"
 					>
 				</File>
@@ -1435,11 +1439,27 @@
 					>
 				</File>
 				<File
+					RelativePath=".\common\StopMessage.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\StopMessageImpl.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\strncasecmp.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\common\TextColors.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\common\UIChoices.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\common\VideoModeKeyName.cpp"
 					>
 				</File>
 				<File
@@ -1883,6 +1903,18 @@
 					>
 				</File>
 				<File
+					RelativePath=".\headers\StopMessage.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\StopMessageImpl.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\strncasecmp.h"
+					>
+				</File>
+				<File
 					RelativePath=".\headers\TextColors.h"
 					>
 				</File>
@@ -1892,6 +1924,10 @@
 				</File>
 				<File
 					RelativePath=".\headers\UserInterfaceState.h"
+					>
+				</File>
+				<File
+					RelativePath=".\headers\VideoModeKeyName.h"
 					>
 				</File>
 				<File
