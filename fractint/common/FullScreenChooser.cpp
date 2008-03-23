@@ -21,39 +21,14 @@ int AbstractFullScreenChooser::prompt_color(int attributes)
 	}
 }
 
-class ProductionFullScreenChooser : public AbstractFullScreenChooser
-{
-public:
-	ProductionFullScreenChooser(int options, const char *heading, const char *heading2, const char *instructions,
-			int numChoices, char **choices, const int *attributes,
-			int boxWidth, int boxDepth, int columnWidth, int current,
-			void (*formatItem)(int, char*), char *speedString,
-			int (*speedPrompt)(int, int, int, char *, int), int (*checkKeystroke)(int, int),
-			AbstractDriver *driver = DriverManager::current())
-		: AbstractFullScreenChooser(options, heading, heading2, instructions,
-			numChoices, choices, attributes,
-			boxWidth, boxDepth, columnWidth, current,
-			formatItem, speedString,
-			speedPrompt, checkKeystroke, driver)
-	{
-	}
-	virtual ~ProductionFullScreenChooser()
-	{
-	}
-
-protected:
-	virtual void help_title()
-	{ ::help_title(); }
-	virtual void blank_rows(int row, int rows, int attr)
-	{ ::blank_rows(row, rows, attr); }
-};
-
 AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
 		const char *heading, const char *heading2, const char *instructions,
 		int numChoices, char **choices, const int *attributes,
 		int boxWidth, int boxDepth, int columnWidth, int current,
 		void (*formatItem)(int, char*), char *speedString,
 		int (*speedPrompt)(int, int, int, char *, int), int (*checkKeystroke)(int, int),
+		IFullScreenChooserApp &app,
+		Externals &externs,
 		AbstractDriver *driver)
 	: _options(options),
 	_heading(heading),
@@ -70,13 +45,15 @@ AbstractFullScreenChooser::AbstractFullScreenChooser(int options,
 	_speedString(speedString),
 	_speedPrompt(speedPrompt),
 	_checkKeystroke(checkKeystroke),
+	_app(app),
+	_externs(externs),
 	_driver(driver)
 {
 }
 
 int AbstractFullScreenChooser::Execute()
 {
-	MouseModeSaver saved_mouse(LOOK_MOUSE_NONE);
+	MouseModeSaver saved_mouse(_driver, LOOK_MOUSE_NONE);
 
 	if (InitializeCurrent())
 	{
@@ -126,22 +103,23 @@ int AbstractFullScreenChooser::Execute()
 	int top_left_row = 3 + _titleLines + i3;        // row of topleft choice 
 
 	// now set up the overall display 
-	help_title();                            // clear, display title line 
-	driver_set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      // init rest to background 
+	_app.help_title();                            // clear, display title line 
+	_driver->set_attr(1, 0, C_PROMPT_BKGRD, 24*80);      // init rest to background 
 	for (int i = top_left_row - 1 - _titleLines; i < top_left_row + _boxDepth + 1; ++i)
 	{
-		driver_set_attr(i, k, C_PROMPT_LO, overallWidth);          // draw empty box 
+		_driver->set_attr(i, k, C_PROMPT_LO, overallWidth);          // draw empty box 
 	}
 	if (_heading)
 	{
-		g_text_cbase = (80 - _titleWidth)/2;   // set left margin for driver_put_string 
-		g_text_cbase -= (90 - _titleWidth)/20; // put heading into box 
-		driver_put_string(top_left_row - _titleLines - 1, 0, C_PROMPT_HI, _heading);
-		g_text_cbase = 0;
+		int base = (80 - _titleWidth)/2;   // set left margin for _driver->put_string 
+		base -= (90 - _titleWidth)/20; // put heading into box 
+		_externs.SetTextCbase(base);
+		_driver->put_string(top_left_row - _titleLines - 1, 0, C_PROMPT_HI, _heading);
+		_externs.SetTextCbase(0);
 	}
 	if (_heading2)                               // display 2nd heading 
 	{
-		driver_put_string(top_left_row - 1, top_left_col, C_PROMPT_MED, _heading2);
+		_driver->put_string(top_left_row - 1, top_left_col, C_PROMPT_MED, _heading2);
 	}
 	int i5 = top_left_row + _boxDepth + 1;
 	int speed_row = 0;
@@ -173,11 +151,11 @@ int AbstractFullScreenChooser::Execute()
 			if (buf[j2] == '\n')
 			{
 				buf[j2] = 0;
-				put_string_center(i5++, 0, 80, C_PROMPT_BKGRD, buf);
+				_app.put_string_center(i5++, 0, 80, C_PROMPT_BKGRD, buf);
 				j2 = -1;
 			}
 		}
-		put_string_center(i5, 0, 80, C_PROMPT_BKGRD, buf);
+		_app.put_string_center(i5, 0, 80, C_PROMPT_BKGRD, buf);
 	}
 
 	int box_items = _boxWidth*_boxDepth;
@@ -200,7 +178,7 @@ int AbstractFullScreenChooser::Execute()
 			buf[_boxWidth*_columnWidth] = 0;
 			for (int i = (_heading2) ? 0 : -1; i <= _boxDepth; ++i)  // blank the box 
 			{
-				driver_put_string(top_left_row + i, top_left_col, C_PROMPT_LO, buf);
+				_driver->put_string(top_left_row + i, top_left_col, C_PROMPT_LO, buf);
 			}
 			for (int i = 0; i + top_left_choice < _numChoices && i < box_items; ++i)
 			{
@@ -216,7 +194,7 @@ int AbstractFullScreenChooser::Execute()
 				{
 					tmp = _choices[j];
 				}
-				driver_put_string(top_left_row + i/_boxWidth, top_left_col + (i % _boxWidth)*_columnWidth,
+				_driver->put_string(top_left_row + i/_boxWidth, top_left_col + (i % _boxWidth)*_columnWidth,
 					prompt_color(_attributes[j]), tmp);
 			}
 			/***
@@ -226,11 +204,11 @@ int AbstractFullScreenChooser::Execute()
 			***/
 			if (top_left_choice > 0 && _heading2 == 0)
 			{
-				driver_put_string(top_left_row - 1, top_left_col, C_PROMPT_LO, "(more)");
+				_driver->put_string(top_left_row - 1, top_left_col, C_PROMPT_LO, "(more)");
 			}
 			if (top_left_choice + box_items < _numChoices)
 			{
-				driver_put_string(top_left_row + _boxDepth, top_left_col, C_PROMPT_LO, "(more)");
+				_driver->put_string(top_left_row + _boxDepth, top_left_col, C_PROMPT_LO, "(more)");
 			}
 			redisplay = false;
 		}
@@ -246,7 +224,7 @@ int AbstractFullScreenChooser::Execute()
 		{
 			itemText = _choices[_current];
 		}
-		driver_put_string(top_left_row + i/_boxWidth, top_left_col + (i % _boxWidth)*_columnWidth,
+		_driver->put_string(top_left_row + i/_boxWidth, top_left_col + (i % _boxWidth)*_columnWidth,
 			C_CHOICE_CURRENT, itemText);
 
 		if (_speedString)                     // show speedstring if any 
@@ -255,13 +233,13 @@ int AbstractFullScreenChooser::Execute()
 		}
 		else
 		{
-			driver_hide_text_cursor();
+			_driver->hide_text_cursor();
 		}
 
-		driver_wait_key_pressed(0);					// enables help 
-		int current_key = driver_get_key();
+		_driver->wait_key_pressed(0);					// enables help 
+		int current_key = _driver->get_key();
 		i = _current - top_left_choice;				// unhighlight current choice 
-		driver_put_string(top_left_row + i/_boxWidth, top_left_col + (i % _boxWidth)*_columnWidth,
+		_driver->put_string(top_left_row + i/_boxWidth, top_left_col + (i % _boxWidth)*_columnWidth,
 			prompt_color(_attributes[_current]), itemText);
 
 		int increment = 0;
@@ -659,10 +637,10 @@ bool AbstractFullScreenChooser::InitializeCurrent()
 
 void AbstractFullScreenChooser::Footer(int &i)
 {
-	put_string_center(i++, 0, 80, C_PROMPT_BKGRD,
+	_app.put_string_center(i++, 0, 80, C_PROMPT_BKGRD,
 		(_speedString) ? "Use the cursor keys or type a value to make a selection"
 		: "Use the cursor keys to highlight your selection");
-	put_string_center(i++, 0, 80, C_PROMPT_BKGRD,
+	_app.put_string_center(i++, 0, 80, C_PROMPT_BKGRD,
 			(_options & CHOICE_MENU) ? "Press ENTER for highlighted choice, or "FK_F1" for help"
 		: ((_options & CHOICE_HELP) ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
 		: "Press ENTER for highlighted choice, or ESCAPE to back out"));
@@ -672,7 +650,7 @@ void AbstractFullScreenChooser::Footer(int &i)
 	char is a dot or last char is a slash */
 bool AbstractFullScreenChooser::is_a_dir_name(const char *name)
 {
-	return name[0] == '.' || ends_with_slash(name) ? true : false;
+	return name[0] == '.' || _app.ends_with_slash(name) ? true : false;
 }
 
 void AbstractFullScreenChooser::show_speed_string(int speedrow)
@@ -683,17 +661,17 @@ void AbstractFullScreenChooser::show_speed_string(int speedrow)
 	char buf[81];
 	memset(buf, ' ', 80);
 	buf[80] = 0;
-	driver_put_string(speedrow, 0, C_PROMPT_BKGRD, buf);
+	_driver->put_string(speedrow, 0, C_PROMPT_BKGRD, buf);
 	if (*_speedString)  // got a speedstring on the go 
 	{
-		driver_put_string(speedrow, 15, C_CHOICE_SP_INSTR, " ");
+		_driver->put_string(speedrow, 15, C_CHOICE_SP_INSTR, " ");
 		if (_speedPrompt)
 		{
 			j = _speedPrompt(speedrow, 16, C_CHOICE_SP_INSTR, _speedString, speed_match);
 		}
 		else
 		{
-			driver_put_string(speedrow, 16, C_CHOICE_SP_INSTR, "Speed key string");
+			_driver->put_string(speedrow, 16, C_CHOICE_SP_INSTR, "Speed key string");
 			j = sizeof("Speed key string")-1;
 		}
 		strcpy(buf, _speedString);
@@ -703,13 +681,13 @@ void AbstractFullScreenChooser::show_speed_string(int speedrow)
 			buf[i++] = ' ';
 		}
 		buf[i] = 0;
-		driver_put_string(speedrow, 16 + j, C_CHOICE_SP_INSTR, " ");
-		driver_put_string(speedrow, 17 + j, C_CHOICE_SP_KEYIN, buf);
-		driver_move_cursor(speedrow, 17 + j + int(strlen(_speedString)));
+		_driver->put_string(speedrow, 16 + j, C_CHOICE_SP_INSTR, " ");
+		_driver->put_string(speedrow, 17 + j, C_CHOICE_SP_KEYIN, buf);
+		_driver->move_cursor(speedrow, 17 + j + int(strlen(_speedString)));
 	}
 	else
 	{
-		driver_hide_text_cursor();
+		_driver->hide_text_cursor();
 	}
 }
 
@@ -765,69 +743,4 @@ void AbstractFullScreenChooser::process_speed_string(int curkey, bool is_unsorte
 			}
 		}
 	}
-}
-
-/*
-return is:
-	n >= 0 for choice n selected,
-	-1 for escape
-	k for check_keystroke routine return value k (if not 0 nor -1)
-	speedstring[0] != 0 on return if string is present
-*/
-int full_screen_choice(
-	int options,
-	const char *heading,				// heading info, \n delimited 
-	const char *heading2,				// column heading or 0 
-	const char *instructions,			// instructions, \n delimited, or 0 
-	int num_choices,					// How many choices in list 
-	char **choices,						// array of choice strings 
-	const int *attributes,				// &3: 0 normal color, 1, 3 highlight 
-										// &256 marks a dummy entry 
-	int box_width,						// box width, 0 for calc (in items) 
-	int box_depth,						// box depth, 0 for calc, 99 for max 
-	int column_width,					// data width of a column, 0 for calc 
-	int current,						// start with this item 
-	void (*format_item)(int, char*),	// routine to display an item or 0 
-	char *speed_string,					// returned speed key value, or 0 
-	int (*speed_prompt)(int, int, int, char *, int), // routine to display prompt or 0 
-	int (*check_keystroke)(int, int)			// routine to check keystroke or 0 
-	)
-{
-	return ProductionFullScreenChooser(options, heading, heading2, instructions,
-		num_choices, choices, attributes,
-		box_width, box_depth, column_width, current,
-		format_item, speed_string, speed_prompt, check_keystroke).Execute();
-}
-
-int full_screen_choice(int options,
-	const std::string &heading, const std::string &heading2,
-	const std::string &instructions,
-	int num_choices, char **choices, const int *attributes,
-	int box_width, int box_depth, int column_width, int current,
-	void (*format_item)(int item, char *text),
-	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
-	int (*check_keystroke)(int, int))
-{
-	return full_screen_choice(options, heading.c_str(),
-		heading2.length() ? heading2.c_str() : 0,
-		instructions.length() ? instructions.c_str() : 0,
-		num_choices, choices, attributes,
-		box_width, box_depth, column_width, current,
-		format_item, speed_string, speed_prompt, check_keystroke);
-}
-
-int full_screen_choice_help(int help_mode, int options,
-	const char *heading, const char *heading2, const char *instr,
-	int num_choices, char **choices, const int *attributes,
-	int box_width, int box_depth, int column_width, int current,
-	void (*format_item)(int, char*),
-	char *speed_string, int (*speed_prompt)(int, int, int, char *, int),
-	int (*check_keystroke)(int, int))
-{
-	int result;
-	HelpModeSaver saved_help(help_mode);
-	result = full_screen_choice(options, heading, heading2, instr,
-		num_choices, choices, attributes, box_width, box_depth, column_width,
-		current, format_item, speed_string, speed_prompt, check_keystroke);
-	return result;
 }

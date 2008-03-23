@@ -257,6 +257,90 @@ static char s_halley_name[] = "*halley";
 // use next to cast orbitcalcs() that have arguments 
 typedef int (*VF)();
 
+class IFractal
+{
+public:
+	virtual ~IFractal() { };
+};
+
+class Fractal : public IFractal
+{
+public:
+	virtual ~Fractal() { }
+
+	int num_functions() const
+	{
+		return (flags >> FRACTALFLAG_FUNCTION_SHIFT) & FRACTALFLAG_FUNCTION_MASK;
+	}
+
+	bool no_boundary_tracing() const
+	{
+		return (flags & FRACTALFLAG_NO_BOUNDARY_TRACING) != 0;
+	}
+
+	bool no_solid_guessing() const
+	{
+		return (flags & FRACTALFLAG_NO_SOLID_GUESSING) != 0;
+	}
+
+	bool arbitrary_precision() const
+	{
+		return (flags & FRACTALFLAG_ARBITRARY_PRECISION) != 0;
+	}
+
+	bool no_zoom_box_rotate() const
+	{
+		return (flags & FRACTALFLAG_NO_ZOOM_BOX_ROTATE) != 0;
+	}
+
+	const char *get_type() const
+	{
+		return &name[is_hidden() ? 1 : 0];
+	}
+	bool is_hidden() const
+	{
+		return (name[0] == '*');
+	}
+
+private:
+	int fractal_type;
+	const char *name;					// name of the fractal
+										// (leading "*" supresses name display)
+	const char  *parameters[4];			// name of the parameters
+	double paramvalue[4];				// default parameter values
+	int   helptext;						// helpdefs.h HT_xxxx, -1 for none
+	int   helpformula;					// helpdefs.h HF_xxxx, -1 for none
+	int flags;							// constraints, bits defined below
+	float x_min;						// default XMIN corner
+	float x_max;						// default XMAX corner
+	float y_min;						// default YMIN corner
+	float y_max;						// default YMAX corner
+	int   isinteger;					// >= 1 if integer fractal, 0 otherwise
+	int   tojulia;						// index of corresponding julia type
+	int   tomandel;						// index of corresponding mandelbrot type
+	int   tofloat;						// index of corresponding floating-point type
+	SymmetryType symmetry;				/* applicable symmetry logic
+										   0 = no symmetry
+										  -1 = y-axis symmetry (If No Params)
+										   1 = y-axis symmetry
+										  -2 = x-axis symmetry (No Parms)
+										   2 = x-axis symmetry
+										  -3 = y-axis AND x-axis (No Parms)
+										   3 = y-axis AND x-axis symmetry
+										  -4 = polar symmetry (No Parms)
+										   4 = polar symmetry
+										   5 = PI (sin/cos) symmetry
+										   6 = NEWTON (power) symmetry
+																*/
+	int (*orbitcalc)();					// function that calculates one orbit
+	int (*per_pixel)();					// once-per-pixel init
+	bool (*per_image)();				// once-per-image setup
+	int (*calculate_type)();			// name of main fractal function
+	int orbit_bailout;					// usual bailout value for orbit calc
+};
+
+static Fractal s_fractal;
+
 FractalTypeSpecificData g_fractal_specific[] =
 {
 	//

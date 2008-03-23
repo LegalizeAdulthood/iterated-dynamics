@@ -1,6 +1,8 @@
 #ifndef FRACTINT_H
 #define FRACTINT_H
 
+#include "port.h"
+
 // FRACTINT.H - common structures and values for the FRACTINT routines
 
 /* Returns the number of items in an array declared of fixed size, i.e:

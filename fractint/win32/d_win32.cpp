@@ -25,6 +25,7 @@
 #include "miscres.h"
 #include "realdos.h"
 #include "slideshw.h"
+#include "StopMessage.h"
 #include "ZoomBox.h"
 
 #include "WinText.h"
@@ -394,6 +395,11 @@ void Win32BaseDriver::set_video_mode(const VIDEOINFO &mode)
 
 	set_for_graphics();
 	set_clear();
+}
+
+void Win32BaseDriver::put_string(int row, int col, int attr, const std::string &text)
+{
+	put_string(row, col, attr, text.c_str());
 }
 
 void Win32BaseDriver::put_string(int row, int col, int attr, const char *msg)

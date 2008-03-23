@@ -31,6 +31,7 @@
 #include "miscres.h"
 #include "prompts2.h"
 #include "realdos.h"
+#include "StopMessage.h"
 
 #include "ThreeDimensionalState.h"
 #include "MathUtil.h"

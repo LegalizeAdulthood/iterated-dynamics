@@ -19,6 +19,7 @@
 #include "lsys.h"
 #include "miscres.h"
 #include "realdos.h"
+#include "StopMessage.h"
 
 #include "MathUtil.h"
 

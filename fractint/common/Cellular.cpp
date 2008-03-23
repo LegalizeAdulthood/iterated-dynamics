@@ -14,6 +14,7 @@
 #include "miscfrac.h"
 #include "realdos.h"
 #include "resume.h"
+#include "StopMessage.h"
 
 // cellular type 
 enum

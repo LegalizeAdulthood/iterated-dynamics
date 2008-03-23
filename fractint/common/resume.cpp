@@ -6,6 +6,7 @@
 
 #include "realdos.h"
 #include "resume.h"
+#include "StopMessage.h"
 
 char *g_resume_info = 0;					// resume info if allocated 
 int g_resume_length = 0;					// length of resume info 

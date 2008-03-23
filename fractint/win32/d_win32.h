@@ -30,6 +30,7 @@ public:
 										virtual void move_cursor(int row, int col);
 										virtual void hide_text_cursor();
 										virtual void put_string(int row, int col, int attr, const char *text);
+										virtual void put_string(int row, int col, int attr, const std::string &text);
 										virtual void set_attr(int row, int col, int attr, int count);
 										virtual void scroll_up(int top, int bottom);
 										virtual void stack_screen();

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <complex>
+#include <boost/filesystem/path.hpp>
+
 #include "Browse.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
@@ -766,6 +768,7 @@ public:
 	virtual ViewWindow const &View() const = 0;
 	virtual ViewWindow &View() = 0;
 	virtual void SetFileNameStackTop(std::string const &value) = 0;
+	virtual boost::filesystem::path const &WorkDirectory() const = 0;
 };
 
 extern Externals &g_externs;

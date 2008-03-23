@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
 #include <boost/test/unit_test.hpp>
-#include "realdos.h"
+#include "VideoModeKeyName.h"
 #include "id.h"
 
 BOOST_AUTO_TEST_CASE(realdos_video_mode_key_name_f1)

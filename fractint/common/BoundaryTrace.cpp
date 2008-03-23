@@ -10,6 +10,7 @@
 #include "calcfrac.h"
 #include "fracsubr.h"
 #include "realdos.h"
+#include "StopMessage.h"
 
 #include "BoundaryTrace.h"
 #include "WorkList.h"

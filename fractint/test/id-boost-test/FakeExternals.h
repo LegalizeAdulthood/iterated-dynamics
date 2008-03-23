@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/filesystem/path.hpp>
+
 #include "Externals.h"
 #include "FakeBrowseState.h"
 #include "FakeZoomBox.h"
@@ -817,6 +819,7 @@ public:
 	virtual ViewWindow const &View() const 			{ throw not_implemented("View"); }
 	virtual ViewWindow &View() 						{ throw not_implemented("View"); }
 	virtual void SetFileNameStackTop(std::string const &value) { throw not_implemented("SetFileNameStackTop"); }
+	virtual boost::filesystem::path const &WorkDirectory() const { throw not_implemented("WorkingDirectory"); }
 
 private:
 	FakeExternals *mutate() const					{ return const_cast<FakeExternals *>(this); }

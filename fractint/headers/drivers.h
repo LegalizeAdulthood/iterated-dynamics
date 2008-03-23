@@ -1,6 +1,8 @@
 #if !defined(DRIVERS_H)
 #define DRIVERS_H
 
+#include "id.h"
+
 /* AbstractDriver
  *
  * Abstract interface for a user interface driver for FractInt.  The sound
@@ -75,6 +77,7 @@ public:
 										virtual void move_cursor(int row, int col) = 0;
 										virtual void hide_text_cursor() = 0;
 										virtual void put_string(int row, int col, int attr, const char *text) = 0;
+										virtual void put_string(int row, int col, int attr, const std::string &text) = 0;
 										virtual void set_attr(int row, int col, int attr, int count) = 0;
 										virtual void scroll_up(int top, int bottom) = 0;
 										virtual void stack_screen() = 0;

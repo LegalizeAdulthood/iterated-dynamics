@@ -6,44 +6,32 @@
 #include <boost/format.hpp>
 #include <boost/test/unit_test.hpp>
 
-extern BYTE g_text_colors[];
+//extern BYTE g_text_colors[];
 #include "id.h"
 #include "FullScreenChooser.h"
 #include "FakeDriver.h"
+#include "FakeExternals.h"
 
-class FullScreenChooserTester : public AbstractFullScreenChooser
+class FakeFullScreenChooserApp : public IFullScreenChooserApp
 {
 public:
-	FullScreenChooserTester(int options, const char *heading, const char *heading2, const char *instructions,
-		int numChoices, char **choices, const int *attributes,
-		int boxWidth, int boxDepth, int columnWidth, int current,
-		void (*formatItem)(int, char*), char *speedString,
-		int (*speedPrompt)(int, int, int, char *, int), int (*checkKey)(int, int),
-		AbstractDriver *driver)
-		: AbstractFullScreenChooser(options, heading, heading2, instructions,
-			numChoices, choices, attributes,
-			boxWidth, boxDepth, columnWidth, current,
-			formatItem, speedString,
-			speedPrompt, checkKey, driver)
-	{
-	}
-	virtual ~FullScreenChooserTester()
-	{
-	}
+	virtual ~FakeFullScreenChooserApp() { }
 
-protected:
+	virtual int put_string_center(int row, int col, int width, int attr, const char *msg)
+	{ throw not_implemented("put_string_center"); }
 	virtual void help_title()
-	{
-	}
-	virtual void blank_rows(int row, int rows, int attr)
-	{
-	}
+	{ throw not_implemented("help_title"); }
+	virtual bool ends_with_slash(const char *text)
+	{ throw not_implemented("ends_with_slash"); }
 };
 
 BOOST_AUTO_TEST_CASE(FullScreenChooser_NoChoices)
 {
+	FakeFullScreenChooserApp app;
+	FakeExternals externs;
 	FakeDriver fakeDriver;
-	FullScreenChooserTester chooser(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &fakeDriver);
+	AbstractFullScreenChooser chooser(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		app, externs, &fakeDriver);
 	int result = chooser.Execute();
 	BOOST_CHECK_EQUAL(-1, result);
 }
@@ -57,8 +45,11 @@ BOOST_AUTO_TEST_CASE(FullScreenChooser_Escape)
 {
 	char *choices[] = { "Choice" };
 	int attributes[] = { 0 };
+	FakeFullScreenChooserApp app;
+	FakeExternals externs;
 	FakeDriver fakeDriver;
-	FullScreenChooserTester chooser(0, 0, 0, 0, 1, choices, attributes, 0, 0, 0, 0, 0, 0, 0, 0, &fakeDriver);
+	AbstractFullScreenChooser chooser(0, 0, 0, 0, 1, choices, attributes, 0, 0, 0, 0, 0, 0, 0, 0,
+		app, externs, &fakeDriver);
 	int keyStrokes[] = { IDK_ESC };
 	fakeDriver.SetKeyStrokes(NUM_OF(keyStrokes), keyStrokes);
 	int result = chooser.Execute();
