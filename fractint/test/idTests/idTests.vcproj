@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="id-boost-test"
+	Name="idTests"
 	ProjectGUID="{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}"
 	RootNamespace="idboosttest"
 	Keyword="Win32Proj"
