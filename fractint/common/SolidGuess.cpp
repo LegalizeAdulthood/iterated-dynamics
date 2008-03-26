@@ -647,3 +647,16 @@ int solid_guess()
 
 	return 0;
 }
+
+class SolidGuessScannerImpl : public SolidGuessScanner
+{
+public:
+	virtual ~SolidGuessScannerImpl() { }
+	virtual void Execute()
+	{
+		solid_guess();
+	}
+};
+
+static SolidGuessScannerImpl s_solidGuessScannerImpl;
+SolidGuessScanner &g_solidGuessScanner(s_solidGuessScannerImpl);

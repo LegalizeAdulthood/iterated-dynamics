@@ -10,6 +10,8 @@ struct ComplexT
 	T x, y;
 	T real() const { return x; }
 	T imag() const { return y; }
+	T real(T right) { return (x = right); }
+	T imag(T right) { return (y = right); }
 };
 
 template <class Type>

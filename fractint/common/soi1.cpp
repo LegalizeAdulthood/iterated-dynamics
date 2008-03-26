@@ -24,6 +24,7 @@
 
 #include "drivers.h"
 #include "soi.h"
+#include "SynchronousOrbitScannerImpl.h"
 
 #include "EscapeTime.h"
 
@@ -33,10 +34,16 @@ enum
 	BASIN_COLOR = 0
 };
 
+template <typename T>
+struct SOData
+{
+	T twidth;
+	T equal;
+};
+
 extern int rhombus_depth;
 
-static double twidth;
-static double equal;
+static SOData<double> s_so_data;
 
 static long iteration(double cr, double ci,
 			double re, double im,
@@ -117,29 +124,31 @@ interpolate(cre1, midr, cre2, \
 //	during scanning.
 #define GET_SCAN_REAL(x, y) \
 interpolate(cim1, midi, cim2, \
-	EVALUATE(cre1, midr, br10, br11, br12, x), \
-	EVALUATE(cre1, midr, br20, br21, br22, x), \
-	EVALUATE(cre1, midr, br30, br31, br32, x), y)
+	Evaluate(cre1, midr, br10, br11, br12, x), \
+	Evaluate(cre1, midr, br20, br21, br22, x), \
+	Evaluate(cre1, midr, br30, br31, br32, x), y)
 #define GET_SCAN_IMAG(x, y) \
 interpolate(cre1, midr, cre2, \
-	EVALUATE(cim1, midi, bi10, bi11, bi12, y), \
-	EVALUATE(cim1, midi, bi20, bi21, bi22, y), \
-	EVALUATE(cim1, midi, bi30, bi31, bi32, y), x)
+	Evaluate(cim1, midi, bi10, bi11, bi12, y), \
+	Evaluate(cim1, midi, bi20, bi21, bi22, y), \
+	Evaluate(cim1, midi, bi30, bi31, bi32, y), x)
 
 // compute coefficients of Newton polynomial (b0, .., b2) from
 //	(x0, w0), .., (x2, w2).
-#define INTERPOLATE(x0, x1, x2, w0, w1, w2, b0, b1, b2) \
-	do \
-	{ \
-		b0 = w0; \
-		b1 = (w1-w0)/(x1-x0); \
-		b2 = ((w2-w1)/(x2-x1)-b1)/(x2-x0); \
-	} \
-	while (0)
+template <typename T>
+void Interpolate(T x0, T x1, T x2, T w0, T w1, T w2, T &b0, T &b1, T &b2)
+{
+	b0 = w0;
+	b1 = (w1 - w0)/(x1 - x0);
+	b2 = ((w2 - w1)/(x2 - x1) - b1)/(x2 - x0);
+}
 
 // evaluate Newton polynomial given by (x0, b0), (x1, b1) at x:=t 
-#define EVALUATE(x0, x1, b0, b1, b2, t) \
-	((b2*(t-x1) + b1)*(t-x0) + b0)
+template <typename T>
+T Evaluate(T x0, T x1, T b0, T b1, T b2, T t)
+{
+	return ((b2*(t - x1) + b1)*(t - x0) + b0);
+}
 
 // Newton Interpolation.
 //	It computes the value of the interpolation polynomial given by
@@ -151,18 +160,8 @@ static double interpolate(double x0, double x1, double x2,
 	double b0 = w0;
 	double b1 = w1;
 	double b2 = w2;
-	/*b0 = (r0*b1-r1*b0)/(x1-x0);
-	b1 = (r1*b2-r2*b1)/(x2-x1);
-	b0 = (r0*b1-r2*b0)/(x2-x0);
-
-	return double(b0); */
-	double b = (b1-b0)/(x1-x0);
-	return double((((b2-b1)/(x2-x1)-b)/(x2-x0))*(t-x1) + b)*(t-x0) + b0;
-	/*
-	if (t < x1)
-		return w0 + ((t-x0)/(x1-x0))*(w1-w0);
-	else
-		return w1 + ((t-x1)/(x2-x1))*(w2-w1); */
+	double b = (b1 - b0)/(x1 - x0);
+	return ((((b2 - b1)/(x2 - x1) - b)/(x2 - x0))*(t - x1) + b)*(t - x0) + b0;
 }
 
 // SOICompute - Perform simultaneous orbit iteration for a given rectangle
@@ -398,13 +397,13 @@ static bool rhombus(double cre1, double cre2, double cim1, double cim2,
 	{
 		// finish up the image by scanning the rectangle 
 scan:
-		INTERPOLATE(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
-		INTERPOLATE(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
-		INTERPOLATE(cre1, midr, cre2, zre3, zre8, zre4, br30, br31, br32);
+		Interpolate(cre1, midr, cre2, zre1, zre5, zre2, br10, br11, br12);
+		Interpolate(cre1, midr, cre2, zre6, zre9, zre7, br20, br21, br22);
+		Interpolate(cre1, midr, cre2, zre3, zre8, zre4, br30, br31, br32);
 
-		INTERPOLATE(cim1, midi, cim2, zim1, zim6, zim3, bi10, bi11, bi12);
-		INTERPOLATE(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
-		INTERPOLATE(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
+		Interpolate(cim1, midi, cim2, zim1, zim6, zim3, bi10, bi11, bi12);
+		Interpolate(cim1, midi, cim2, zim5, zim9, zim8, bi20, bi21, bi22);
+		Interpolate(cim1, midi, cim2, zim2, zim7, zim4, bi30, bi31, bi32);
 
 		restep = (cre2-cre1)/(x2-x1);
 		imstep = (cim2-cim1)/(y2-y1);
@@ -721,7 +720,7 @@ scan:
 		l1 = GET_REAL(cr1, ci1);
 		l1 = (tzr1 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr1;
-		if (fabs(1.0-l1) > twidth)
+		if (fabs(1.0-l1) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -729,7 +728,7 @@ scan:
 		l2 = GET_IMAG(cr1, ci1);
 		l2 = (tzi1 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi1;
-		if (fabs(1.0-l2) > twidth)
+		if (fabs(1.0-l2) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -737,7 +736,7 @@ scan:
 		l1 = GET_REAL(cr2, ci1);
 		l1 = (tzr2 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr2;
-		if (fabs(1.0-l1) > twidth)
+		if (fabs(1.0-l1) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -745,7 +744,7 @@ scan:
 		l2 = GET_IMAG(cr2, ci1);
 		l2 = (tzi2 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi2;
-		if (fabs(1.0-l2) > twidth)
+		if (fabs(1.0-l2) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -753,7 +752,7 @@ scan:
 		l1 = GET_REAL(cr1, ci2);
 		l1 = (tzr3 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr3;
-		if (fabs(1.0-l1) > twidth)
+		if (fabs(1.0-l1) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -761,7 +760,7 @@ scan:
 		l2 = GET_IMAG(cr1, ci2);
 		l2 = (tzi3 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi3;
-		if (fabs(1.0-l2) > twidth)
+		if (fabs(1.0-l2) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -769,7 +768,7 @@ scan:
 		l1 = GET_REAL(cr2, ci2);
 		l1 = (tzr4 == 0.0) ?
 			((l1 == 0.0) ? 1.0 : 1000.0) : l1/tzr4;
-		if (fabs(1.0-l1) > twidth)
+		if (fabs(1.0-l1) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -777,7 +776,7 @@ scan:
 		l2 = GET_IMAG(cr2, ci2);
 		l2 = (tzi4 == 0.0) ?
 			((l2 == 0.0) ? 1.0 : 1000.0) : l2/tzi4;
-		if (fabs(1.0-l2) > twidth)
+		if (fabs(1.0-l2) > s_so_data.twidth)
 		{
 			break;
 		}
@@ -898,7 +897,7 @@ rhombus_done:
 	return status;
 }
 
-static void soi_double()
+void SynchronousOrbitScannerImpl::soi_double()
 {
 	bool status;
 	double tolerance = 0.1;
@@ -923,10 +922,10 @@ static void soi_double()
 		xxmaxl = g_escape_time_state.m_grid_fp.x_max();
 		yymaxl = g_escape_time_state.m_grid_fp.y_max();
 	}
-	twidth = tolerance/(g_x_dots-1);
+	s_so_data.twidth = tolerance/(g_x_dots-1);
 	stepx = (xxmaxl - xxminl)/g_x_dots;
 	stepy = (yyminl - yymaxl)/g_y_dots;
-	equal = (stepx < stepy ? stepx : stepy);
+	s_so_data.equal = (stepx < stepy ? stepx : stepy);
 
 	RHOMBUS(xxminl, xxmaxl, yymaxl, yyminl,
 			0, g_x_dots, 0, g_y_dots,
@@ -942,7 +941,7 @@ static void soi_double()
 			1);
 }
 
-void soi()
+void SynchronousOrbitScannerImpl::Execute()
 {
 	if (DEBUGMODE_SOI_LONG_DOUBLE == g_debug_mode)
 	{
@@ -953,3 +952,6 @@ void soi()
 		soi_double();
 	}
 }
+
+static SynchronousOrbitScannerImpl s_synchronousOrbitScannerImpl;
+SynchronousOrbitScanner &g_synchronousOrbitScanner(s_synchronousOrbitScannerImpl);
