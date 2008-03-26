@@ -179,7 +179,6 @@ static double s_dem_delta;
 static double s_dem_width;     // distance estimator variables 
 static double s_dem_too_big;
 static bool s_dem_mandelbrot;
-// static vars for solid_guess & its subroutines 
 static ComplexD s_saved_z;
 static double s_rq_limit_save;
 static int s_pi_in_pixels; // value of pi in pixels 
@@ -3814,7 +3813,7 @@ void PerformWorkList::call_escape_time_engine()
 	switch (g_standard_calculation_mode)
 	{
 	case 's':
-		soi();
+		g_synchronousOrbitScanner.Execute();
 		break;
 	case 't':
 		g_tesseralScan.Execute();
@@ -3823,7 +3822,7 @@ void PerformWorkList::call_escape_time_engine()
 		boundary_trace_main();
 		break;
 	case 'g':
-		solid_guess();
+		g_solidGuessScanner.Execute();
 		break;
 	case 'd':
 		g_diffusionScan.Execute();

@@ -24,6 +24,7 @@
 
 #include "drivers.h"
 #include "soi.h"
+#include "SynchronousOrbitScannerImpl.h"
 
 #include "EscapeTime.h"
 
@@ -1117,7 +1118,7 @@ rhombus_done:
 	return status;
 }
 
-void soi_long_double()
+void SynchronousOrbitScannerImpl::soi_long_double()
 {
 	int status;
 	LDBL tolerance = 0.1;
