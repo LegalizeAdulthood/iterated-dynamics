@@ -996,7 +996,7 @@ top:
 		++s_row;
 		if (g_got_status == GOT_STATUS_DIFFUSION)
 		{
-			driver_put_string(s_row, 2, C_GENERAL_MED, diffusion_get_status().c_str());
+			driver_put_string(s_row, 2, C_GENERAL_MED, g_diffusionScan.Status());
 			++s_row;
 		}
 		else
@@ -1039,8 +1039,7 @@ top:
 	if ((g_got_status == GOT_STATUS_DIFFUSION) && (g_calculation_status == CALCSTAT_IN_PROGRESS))  // estimate total time 
 	{
 		driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
-		diffusion_get_calculation_time(msg);
-		driver_put_string(-1, -1, C_GENERAL_HI, msg);
+		driver_put_string(-1, -1, C_GENERAL_HI, g_diffusionScan.CalculationTime());
 	}
 
 	if ((g_current_fractal_specific->flags&FRACTALFLAG_INFINITE_CALCULATION) && (g_color_iter != 0))

@@ -216,9 +216,9 @@ long lsqrt(long f)
 
 	if (a == 0)                                   // one-time compute consts 
 	{
-		a = long(g_fudge*.41731);
-		b = long(g_fudge*.59016);
-		c = long(g_fudge*.7071067811);
+		a = long(g_externs.Fudge()*.41731);
+		b = long(g_externs.Fudge()*.59016);
+		c = long(g_externs.Fudge()*.7071067811);
 	}
 
 	N  = 0;

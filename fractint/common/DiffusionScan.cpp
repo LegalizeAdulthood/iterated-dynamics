@@ -18,13 +18,37 @@
 #include "DiffusionScan.h"
 #include "WorkList.h"
 
+static void diffusion_scan();
+
+class DiffusionScanImpl : public DiffusionScan
+{
+public:
+	virtual ~DiffusionScanImpl() { }
+
+	virtual void Execute();
+	virtual std::string CalculationTime() const;
+	virtual std::string Status() const;
+
+private:
+	int Engine();
+
+	static unsigned long s_diffusionLimit;
+	// number of bits in the counter
+	static unsigned int s_bits;
+	// the diffusion counter 
+	static unsigned long s_diffusionCounter;
+};
+
+static DiffusionScanImpl s_diffusionScanImpl;
+DiffusionScan &g_diffusionScan(s_diffusionScanImpl);
+
 // vars for diffusion scan 
-static unsigned long s_diffusion_limit; 	// the diffusion counter 
-static unsigned s_bits = 0; 		// number of bits in the counter 
-static unsigned long s_diffusion_counter; 	// the diffusion counter 
+unsigned long DiffusionScanImpl::s_diffusionLimit;
+unsigned int DiffusionScanImpl::s_bits = 0;
+unsigned long DiffusionScanImpl::s_diffusionCounter = 0;
 
 // lookup tables to avoid too much bit fiddling : 
-static char s_diffusion_la[] =
+static char const s_diffusion_la[] =
 {
 	0, 8, 0, 8,4,12,4,12,0, 8, 0, 8,4,12,4,12, 2,10, 2,10,6,14,6,14,2,10,
 	2,10, 6,14,6,14,0, 8,0, 8, 4,12,4,12,0, 8, 0, 8, 4,12,4,12,2,10,2,10,
@@ -38,20 +62,20 @@ static char s_diffusion_la[] =
 	1, 9, 5,13,5,13,3,11,3,11, 7,15,7,15,3,11, 3,11, 7,15,7,15
 };
 
-static char s_diffusion_lb[] =
+static char const s_diffusion_lb[] =
 {
-	0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
-	6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
-	2,10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 1, 9, 9, 1, 5,
+	 0, 8, 8, 0, 4,12,12, 4, 4,12,12, 4, 8, 0, 0, 8, 2,10,10, 2, 6,14,14,
+	 6, 6,14,14, 6,10, 2, 2,10, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2,
+	 2,10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 1, 9, 9, 1, 5,
 	13,13, 5, 5,13,13, 5, 9, 1, 1, 9, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,
 	11, 3, 3,11, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 5,13,13,
-	5, 9, 1, 1, 9, 9, 1, 1, 9,13, 5, 5,13, 1, 9, 9, 1, 5,13,13, 5, 5,13,
+	 5, 9, 1, 1, 9, 9, 1, 1, 9,13, 5, 5,13, 1, 9, 9, 1, 5,13,13, 5, 5,13,
 	13, 5, 9, 1, 1, 9, 3,11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 3,
 	11,11, 3, 7,15,15, 7, 7,15,15, 7,11, 3, 3,11, 5,13,13, 5, 9, 1, 1, 9,
-	9, 1, 1, 9,13, 5, 5,13, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2, 2,
+	 9, 1, 1, 9,13, 5, 5,13, 2,10,10, 2, 6,14,14, 6, 6,14,14, 6,10, 2, 2,
 	10, 4,12,12, 4, 8, 0, 0, 8, 8, 0, 0, 8,12, 4, 4,12, 4,12,12, 4, 8, 0,
-	0, 8, 8, 0, 0, 8,12, 4, 4,12, 6,14,14, 6,10, 2, 2,10,10, 2, 2,10,14,
-	6, 6,14
+	 0, 8, 8, 0, 0, 8,12, 4, 4,12, 6,14,14, 6,10, 2, 2,10,10, 2, 2,10,14,
+	 6, 6,14
 };
 
 static void count_to_int(int dif_offset, unsigned long C, int *x, int *y)
@@ -135,7 +159,7 @@ static bool diffusion_block_lim(int row, int col, int sqsz)
 	return false;
 }
 
-static int diffusion_engine()
+int DiffusionScanImpl::Engine()
 {
 	double log2 = double(log(2.0));
 	int i;
@@ -160,12 +184,12 @@ static int diffusion_engine()
 
 	if (g_WorkList.yy_begin() == g_iy_start && g_work_pass == 0)  // if restarting on pan: 
 	{
-		s_diffusion_counter = 0L;
+		s_diffusionCounter = 0L;
 	}
 	else
 	{
 		// g_WorkList.yy_begin() and passes contain data for resuming the type: 
-		s_diffusion_counter = ((long((unsigned) g_WorkList.yy_begin())) << 16) | ((unsigned) g_work_pass);
+		s_diffusionCounter = ((long((unsigned) g_WorkList.yy_begin())) << 16) | ((unsigned) g_work_pass);
 	}
 
 	dif_offset = 12-(s_bits/2); // offset to adjust coordinates 
@@ -174,9 +198,9 @@ static int diffusion_engine()
 	// only the points (dithering only) :
 	if (g_fill_color == 0 )
 	{
-		while (s_diffusion_counter < (s_diffusion_limit >> 1))
+		while (s_diffusionCounter < (s_diffusionLimit >> 1))
 		{
-			count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
+			count_to_int(dif_offset, s_diffusionCounter, &colo, &rowo);
 			i = 0;
 			g_col = g_ix_start + colo; // get the right tiles 
 			do
@@ -228,16 +252,16 @@ static int diffusion_engine()
 					}
 				}
 			}
-			s_diffusion_counter++;
+			s_diffusionCounter++;
 		}
 	}
 	else
 	{
 		// with progressive filling :    
-		while (s_diffusion_counter < (s_diffusion_limit >> 1))
+		while (s_diffusionCounter < (s_diffusionLimit >> 1))
 		{
-			sqsz = 1 << (int(s_bits - int(log(s_diffusion_counter + 0.5)/log2 )-1)/2 );
-			count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
+			sqsz = 1 << (int(s_bits - int(log(s_diffusionCounter + 0.5)/log2 )-1)/2 );
+			count_to_int(dif_offset, s_diffusionCounter, &colo, &rowo);
 
 			i = 0;
 			do
@@ -292,13 +316,13 @@ static int diffusion_engine()
 				}
 			}
 
-			s_diffusion_counter++;
+			s_diffusionCounter++;
 		}
 	}
 	// from half g_diffusion_limit on we only plot 1x1 points :-) 
-	while (s_diffusion_counter < s_diffusion_limit)
+	while (s_diffusionCounter < s_diffusionLimit)
 	{
-		count_to_int(dif_offset, s_diffusion_counter, &colo, &rowo);
+		count_to_int(dif_offset, s_diffusionCounter, &colo, &rowo);
 
 		i = 0;
 		do
@@ -351,7 +375,7 @@ static int diffusion_engine()
 				}
 			}
 		}
-		s_diffusion_counter++;
+		s_diffusionCounter++;
 	}
 
 	return 0;
@@ -362,7 +386,7 @@ inline double log_length(int start, int stop)
 	return log(double(stop - start + 1));
 }
 
-int diffusion_scan()
+void DiffusionScanImpl::Execute()
 {
 	double log2 = double(log(2.0));
 
@@ -375,31 +399,30 @@ int diffusion_scan()
 	s_bits = unsigned(std::min(log_length(g_iy_start, g_y_stop),
 								log_length(g_ix_start, g_x_stop))/log2);
 	s_bits <<= 1; // double for two axes 
-	s_diffusion_limit = 1l << s_bits;
+	s_diffusionLimit = 1l << s_bits;
 
-	if (diffusion_engine() == -1)
+	if (Engine() == -1)
 	{
 		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
 			g_WorkList.yy_start(), g_WorkList.yy_stop(),
-			int(s_diffusion_counter >> 16),            // high, 
-			int(s_diffusion_counter & 0xffff),         // low order words 
+			int(s_diffusionCounter >> 16),            // high, 
+			int(s_diffusionCounter & 0xffff),         // low order words 
 			g_work_sym);
-		return -1;
 	}
-
-	return 0;
 }
 
-void diffusion_get_calculation_time(char *msg)
+std::string DiffusionScanImpl::CalculationTime() const
 {
-	get_calculation_time(msg, long(g_calculation_time*((s_diffusion_limit*1.0)/s_diffusion_counter)));
+	char buffer[80];
+	get_calculation_time(buffer, long(g_calculation_time*((s_diffusionLimit*1.0)/s_diffusionCounter)));
+	return buffer;
 }
 
-std::string diffusion_get_status()
+std::string DiffusionScanImpl::Status() const
 {
 	return str(boost::format("%2.2f%% done, counter at %lu of %lu (%u bits)")
-		% ((100.0*s_diffusion_counter)/s_diffusion_limit)
-		% s_diffusion_counter
-		% s_diffusion_limit
+		% ((100.0*s_diffusionCounter)/s_diffusionLimit)
+		% s_diffusionCounter
+		% s_diffusionLimit
 		% s_bits);
 }

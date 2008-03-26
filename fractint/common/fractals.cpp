@@ -896,12 +896,12 @@ int barnsley3_orbit()
 	// orbit calculation 
 	if (g_old_z_l.x > 0)
 	{
-		g_new_z_l.x = s_old_x_init_x   - s_old_y_init_y - g_fudge;
+		g_new_z_l.x = s_old_x_init_x   - s_old_y_init_y - g_externs.Fudge();
 		g_new_z_l.y = s_old_x_init_y << 1;
 	}
 	else
 	{
-		g_new_z_l.x = s_old_x_init_x - s_old_y_init_y - g_fudge
+		g_new_z_l.x = s_old_x_init_x - s_old_y_init_y - g_externs.Fudge()
 			+ multiply(g_long_parameter->x, g_old_z_l.x, g_bit_shift);
 		g_new_z_l.y = s_old_x_init_y <<1;
 
@@ -1205,7 +1205,7 @@ inline void fix_overflow(ComplexL &arg)
 {
 	if (g_overflow)
 	{
-		arg.x = g_fudge;
+		arg.x = g_externs.Fudge();
 		arg.y = 0;
 		g_overflow = false;
 	}
@@ -2343,7 +2343,7 @@ int marks_mandelbrot_power_per_pixel()
 #if !defined(XFRACT)
 	mandelbrot_per_pixel();
 	g_tmp_z_l = g_old_z_l;
-	g_tmp_z_l.x -= g_fudge;
+	g_tmp_z_l.x -= g_externs.Fudge();
 	LCMPLXpwr(g_old_z_l, g_tmp_z_l, g_tmp_z_l);
 	return 1;
 #else
@@ -2383,7 +2383,7 @@ int mandelbrot_per_pixel()
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_MANDELBROT_LAMBDA:              // Critical Value 0.5 + 0.0i  
-		g_old_z_l.x = g_fudge >> 1;
+		g_old_z_l.x = g_externs.Fudge() >> 1;
 		g_old_z_l.y = 0;
 		break;
 	default:

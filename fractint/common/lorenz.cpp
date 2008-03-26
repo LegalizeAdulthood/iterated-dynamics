@@ -19,6 +19,7 @@
 #include "drivers.h"
 #include "encoder.h"
 #include "EscapeTime.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "jiim.h"
@@ -321,9 +322,9 @@ bool orbit_3d_setup()
 		s_projection = PROJECTION_XZ;
 	}
 
-	s_init_orbit_long[0] = g_fudge;  // initial conditions 
-	s_init_orbit_long[1] = g_fudge;
-	s_init_orbit_long[2] = g_fudge;
+	s_init_orbit_long[0] = g_externs.Fudge();  // initial conditions 
+	s_init_orbit_long[1] = g_externs.Fudge();
+	s_init_orbit_long[2] = g_externs.Fudge();
 
 	if (g_fractal_type == FRACTYPE_HENON_L)
 	{
@@ -381,7 +382,7 @@ bool orbit_3d_setup()
 		s_lcvt.e = long(s_cvt.e*(1L << 21));
 		s_lcvt.f = long(s_cvt.f*(1L << 21));
 
-		Sqrt = ComplexSqrtLong(g_fudge - 4*s_x_long, -4*s_y_long);
+		Sqrt = ComplexSqrtLong(g_externs.Fudge() - 4*s_x_long, -4*s_y_long);
 
 		switch (g_major_method)
 		{
@@ -392,8 +393,8 @@ bool orbit_3d_setup()
 				g_major_method = MAJORMETHOD_RANDOM_WALK;
 				goto lrwalk;
 			}
-			EnQueueLong((g_fudge + Sqrt.x)/2,  Sqrt.y/2);
-			EnQueueLong((g_fudge - Sqrt.x)/2, -Sqrt.y/2);
+			EnQueueLong((g_externs.Fudge() + Sqrt.x)/2,  Sqrt.y/2);
+			EnQueueLong((g_externs.Fudge() - Sqrt.x)/2, -Sqrt.y/2);
 			break;
 		case MAJORMETHOD_DEPTH_FIRST:
 			if (!Init_Queue(32*1024))
@@ -405,24 +406,24 @@ bool orbit_3d_setup()
 			switch (g_minor_method)
 			{
 				case MINORMETHOD_LEFT_FIRST:
-					PushLong((g_fudge + Sqrt.x)/2,  Sqrt.y/2);
-					PushLong((g_fudge - Sqrt.x)/2, -Sqrt.y/2);
+					PushLong((g_externs.Fudge() + Sqrt.x)/2,  Sqrt.y/2);
+					PushLong((g_externs.Fudge() - Sqrt.x)/2, -Sqrt.y/2);
 					break;
 				case MINORMETHOD_RIGHT_FIRST:
-					PushLong((g_fudge - Sqrt.x)/2, -Sqrt.y/2);
-					PushLong((g_fudge + Sqrt.x)/2,  Sqrt.y/2);
+					PushLong((g_externs.Fudge() - Sqrt.x)/2, -Sqrt.y/2);
+					PushLong((g_externs.Fudge() + Sqrt.x)/2,  Sqrt.y/2);
 					break;
 			}
 			break;
 		case MAJORMETHOD_RANDOM_WALK:
 lrwalk:
-			s_init_orbit_long[0] = g_fudge + Sqrt.x/2;
+			s_init_orbit_long[0] = g_externs.Fudge() + Sqrt.x/2;
 			s_init_orbit_long[1] =         Sqrt.y/2;
 			g_new_z_l.x = s_init_orbit_long[0];
 			g_new_z_l.y = s_init_orbit_long[1];
 			break;
 		case MAJORMETHOD_RANDOM_RUN:
-			s_init_orbit_long[0] = g_fudge + Sqrt.x/2;
+			s_init_orbit_long[0] = g_externs.Fudge() + Sqrt.x/2;
 			s_init_orbit_long[1] =         Sqrt.y/2;
 			g_new_z_l.x = s_init_orbit_long[0];
 			g_new_z_l.y = s_init_orbit_long[1];
@@ -1090,7 +1091,7 @@ int henon_orbit(long *l_x, long *l_y, long *l_z)
 	*l_z = *l_x; // for warning only 
 	newx = multiply(*l_x, *l_x, g_bit_shift);
 	newx = multiply(newx, s_l_a, g_bit_shift);
-	newx = g_fudge + *l_y - newx;
+	newx = g_externs.Fudge() + *l_y - newx;
 	newy = multiply(s_l_b, *l_x, g_bit_shift);
 	*l_x = newx;
 	*l_y = newy;
@@ -2548,7 +2549,7 @@ static int ifs_2d()
 		}
 	}
 
-	tempr = g_fudge/32767;        // find the proper rand() g_fudge 
+	tempr = g_externs.Fudge()/32767;        // find the proper rand() g_externs.Fudge() 
 
 	std::ofstream stream;
 	bool saving = open_orbit_save(stream);
@@ -2659,7 +2660,7 @@ static int ifs_3d_long()
 		}
 	}
 
-	tempr = g_fudge/32767;        // find the proper rand() g_fudge 
+	tempr = g_externs.Fudge()/32767;        // find the proper rand() g_fudge 
 
 	inf.orbit[0] = 0;
 	inf.orbit[1] = 0;
@@ -2874,8 +2875,8 @@ static int threed_view_trans(threed_vt_inf *inf)
 			inf->iview[2] = long((inf->minvals[2]-inf->maxvals[2])*double(g_3d_state.z_viewer())/100.0);
 
 			// center image on origin 
-			tmpx = (-inf->minvals[0] - inf->maxvals[0])/(2.0*g_fudge); // center x 
-			tmpy = (-inf->minvals[1] - inf->maxvals[1])/(2.0*g_fudge); // center y 
+			tmpx = (-inf->minvals[0] - inf->maxvals[0])/(2.0*g_externs.Fudge()); // center x 
+			tmpy = (-inf->minvals[1] - inf->maxvals[1])/(2.0*g_externs.Fudge()); // center y 
 
 			// apply perspective shift 
 			tmpx += (double(g_x_shift)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
@@ -2886,8 +2887,8 @@ static int threed_view_trans(threed_vt_inf *inf)
 			if (s_real_time)
 			{
 				// center image on origin 
-				tmpx = (-inf->minvals[0] - inf->maxvals[0])/(2.0*g_fudge); // center x 
-				tmpy = (-inf->minvals[1] - inf->maxvals[1])/(2.0*g_fudge); // center y 
+				tmpx = (-inf->minvals[0] - inf->maxvals[0])/(2.0*g_externs.Fudge()); // center x 
+				tmpy = (-inf->minvals[1] - inf->maxvals[1])/(2.0*g_externs.Fudge()); // center y 
 
 				tmpx += (double(g_x_shift1)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
 				tmpy += (double(g_y_shift1)*g_escape_time_state.m_grid_fp.height())/g_y_dots;

@@ -508,14 +508,14 @@ bool trig_plus_sqr_setup_l()
 {
 	int (*per_pixel)(void) = julia_per_pixel;
 	int (*orbit_calc)(void) = trig_plus_sqr_orbit;
-	if (g_parameter_l.x == g_fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
+	if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2_l.x == g_fudge)        // Scott variant 
+		if (g_parameter2_l.x == g_externs.Fudge())        // Scott variant 
 		{
 			orbit_calc =  scott_trig_plus_sqr_orbit;
 		}
-		else if (g_parameter2_l.x == -g_fudge)  // Skinner variant 
+		else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant 
 		{
 			orbit_calc =  skinner_trig_sub_sqr_orbit;
 		}
@@ -588,14 +588,14 @@ bool trig_plus_trig_setup_l()
 	}
 	int (*per_pixel)(void) = julia_per_pixel_l;
 	int (*orbit_calc)(void) =  trig_plus_trig_orbit;
-	if (g_parameter_l.x == g_fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
+	if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 		&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 	{
-		if (g_parameter2_l.x == g_fudge)        // Scott variant 
+		if (g_parameter2_l.x == g_externs.Fudge())        // Scott variant 
 		{
 			orbit_calc =  scott_trig_plus_trig_orbit;
 		}
-		else if (g_parameter2_l.x == -g_fudge)  // Skinner variant 
+		else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant 
 		{
 			orbit_calc =  skinner_trig_sub_trig_orbit;
 		}
@@ -747,14 +747,14 @@ bool z_trig_plus_z_setup()
 	if (g_current_fractal_specific->isinteger)
 	{
 		int (*orbit_calc)(void) =  z_trig_z_plus_z_orbit;
-		if (g_parameter_l.x == g_fudge && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
+		if (g_parameter_l.x == g_externs.Fudge() && g_parameter_l.y == 0L && g_parameter2_l.y == 0L
 			&& g_debug_mode != DEBUGMODE_NO_ASM_MANDEL)
 		{
-			if (g_parameter2_l.x == g_fudge)     // Scott variant 
+			if (g_parameter2_l.x == g_externs.Fudge())     // Scott variant 
 			{
 				orbit_calc =  scott_z_trig_z_plus_z_orbit;
 			}
-			else if (g_parameter2_l.x == -g_fudge)  // Skinner variant 
+			else if (g_parameter2_l.x == -g_externs.Fudge())  // Skinner variant 
 			{
 				orbit_calc =  skinner_z_trig_z_minus_z_orbit;
 			}

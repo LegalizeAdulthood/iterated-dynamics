@@ -1,5 +1,14 @@
 #pragma once
 
-extern int diffusion_scan();
-extern void diffusion_get_calculation_time(char *message);
-extern std::string diffusion_get_status();
+class DiffusionScan
+{
+public:
+	virtual void Execute() = 0;
+	virtual std::string CalculationTime() const = 0;
+	virtual std::string Status() const = 0;
+
+protected:
+	virtual ~DiffusionScan() { }
+};
+
+extern DiffusionScan &g_diffusionScan;
