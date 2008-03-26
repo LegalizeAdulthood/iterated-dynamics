@@ -9,6 +9,7 @@
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "fracsubr.h"
 
 #include "SolidGuess.h"
@@ -444,6 +445,16 @@ static int guess_row(bool first_pass, int y, int blocksize)
 	return 0;
 }
 
+static int PassesFromBlockSize(int i)
+{
+	int passes = 1;
+	while ((i >>= 1) > 1)
+	{
+		++passes;
+	}
+	return passes;
+}
+
 // super solid guessing
 int solid_guess()
 {
@@ -461,13 +472,9 @@ int solid_guess()
 	}
 
 	int blocksize = solid_guess_block_size();
-	int i = blocksize;
+	int i;
 	s_max_block = blocksize;
-	g_total_passes = 1;
-	while ((i >>= 1) > 1)
-	{
-		++g_total_passes;
-	}
+	g_externs.SetTotalPasses(PassesFromBlockSize(blocksize));
 
 	// ensure window top and left are on required boundary, treat window
 	//		as larger than it really is if necessary (this is the reason symplot
@@ -481,7 +488,7 @@ int solid_guess()
 	if (g_work_pass == 0) // otherwise first pass already done 
 	{
 		// first pass, calc every blocksize**2 pixel, quarter result & paint it 
-		g_current_pass = 1;
+		g_externs.SetCurrentPass(1);
 		if (g_iy_start <= g_WorkList.yy_start()) // first time for this window, init it 
 		{
 			g_current_row = 0;
@@ -603,14 +610,14 @@ int solid_guess()
 	g_reset_periodicity = false;
 	while ((blocksize >>= 1) >= 2)
 	{
-		if (g_stop_pass > 0)
+		if (g_externs.StopPass() > 0)
 		{
-			if (g_work_pass >= g_stop_pass)
+			if (g_work_pass >= g_externs.StopPass())
 			{
 				return 0;
 			}
 		}
-		g_current_pass = g_work_pass + 1;
+		g_externs.SetCurrentPass(g_work_pass + 1);
 		for (int y = g_iy_start; y <= g_y_stop; y += blocksize)
 		{
 			g_current_row = y;

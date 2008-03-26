@@ -37,7 +37,7 @@ enum MathType
 	while (0)
 
 // the following are declared 4 dimensional as an experiment 
-// changeing declarations to ComplexD and ComplexL restores the code 
+// changing declarations to ComplexD and ComplexL restores the code 
 // to 2D 
 union Arg
 {

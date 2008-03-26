@@ -205,29 +205,29 @@ static void vertical_line(int x, int y, int depth, int color)
 	}
 }
 
-void get_row(int x, int y, int width, char *buff)
+void get_row(int x, int y, int width, BYTE *buff)
 {
-	clip_get_line(y, x, x + width-1, (BYTE *)buff);
+	clip_get_line(y, x, x + width-1, buff);
 }
 
-void put_row(int x, int y, int width, char *buff)
+void put_row(int x, int y, int width, BYTE const *buff)
 {
-	clip_put_line(y, x, x + width-1, (BYTE *)buff);
+	clip_put_line(y, x, x + width-1, buff);
 }
 
-static void vertical_get_row(int x, int y, int depth, char *buff)
+static void vertical_get_row(int x, int y, int depth, BYTE *buff)
 {
 	while (depth-- > 0)
 	{
-		*buff++ = (char)clip_get_color(x, y++);
+		*buff++ = BYTE(clip_get_color(x, y++));
 	}
 }
 
-static void vertical_put_row(int x, int y, int depth, char *buff)
+static void vertical_put_row(int x, int y, int depth, BYTE const *buff)
 {
 	while (depth-- > 0)
 	{
-		clip_put_color(x, y++, BYTE(*buff++));
+		clip_put_color(x, y++, *buff++);
 	}
 }
 
@@ -399,7 +399,7 @@ static void horizontal_dotted_line(int x, int y, int width)
 		*ptr = BYTE((ctr&2) ? s_bg_color : s_fg_color);
 	}
 
-	put_row(x, y, width, (char *)g_line_buffer);
+	put_row(x, y, width, g_line_buffer);
 }
 
 static void vertical_dotted_line(int x, int y, int depth)
@@ -640,10 +640,10 @@ private:
 	int      _csize;
 	bool _moved;
 	bool _should_hide;
-	char *_top;
-	char *_bottom;
-	char *_left;
-	char *_right;
+	BYTE *_top;
+	BYTE *_bottom;
+	BYTE *_left;
+	BYTE *_right;
 };
 
 move_box::move_box(int x, int y, int csize, int base_width, int base_depth)
@@ -654,10 +654,10 @@ move_box::move_box(int x, int y, int csize, int base_width, int base_depth)
 	_base_depth(base_depth),
 	_moved(false),
 	_should_hide(false),
-	_top(new char[g_screen_width]),
-	_bottom(new char[g_screen_width]),
-	_left(new char[g_screen_height]),
-	_right(new char[g_screen_height])
+	_top(new BYTE[g_screen_width]),
+	_bottom(new BYTE[g_screen_width]),
+	_left(new BYTE[g_screen_height]),
+	_right(new BYTE[g_screen_height])
 {
 }
 
@@ -1948,11 +1948,11 @@ void pal_table::save_rect()
 
 	int width = PALTABLE_PALX + _csize * 16 + 1 + 1;
 	int depth = PALTABLE_PALY + _csize * 16 + 1 + 1;
-	char buff[MAX_WIDTH];
+	BYTE buff[MAX_WIDTH];
 	if (memory_alloc(long(width)*depth))
 	{
-		char  *ptr = _memory;
-		char  *bufptr = buff; // MSC needs me indirection to get it right 
+		BYTE *ptr = reinterpret_cast<BYTE *>(_memory);
+		BYTE *bufptr = buff; // MSC needs me indirection to get it right 
 
 		cursor::cursor_hide();
 		for (int yoff = 0; yoff < depth; yoff++)
@@ -1986,7 +1986,7 @@ void pal_table::save_rect()
 		{
 			get_row(_x, _y + yoff, width, buff);
 			horizontal_line(_x, _y + yoff, width, s_bg_color);
-			_file.write(&buff[0], width*sizeof(buff[0]));
+			_file.write(reinterpret_cast<char *>(&buff[0]), width*sizeof(buff[0]));
 			if (_file.bad())
 			{
 				driver_buzzer(BUZZER_ERROR);
@@ -2005,7 +2005,7 @@ void pal_table::restore_rect()
 		return;
 	}
 
-	char buff[MAX_WIDTH];
+	BYTE buff[MAX_WIDTH];
 	int width = PALTABLE_PALX + _csize * 16 + 1 + 1;
 	int depth = PALTABLE_PALY + _csize * 16 + 1 + 1;
 	switch (_stored_at)
@@ -2016,7 +2016,7 @@ void pal_table::restore_rect()
 		cursor::cursor_hide();
 		for (int yoff = 0; yoff < depth; yoff++)
 		{
-			_file.read(&buff[0], width*sizeof(buff[0]));
+			_file.read(reinterpret_cast<char *>(&buff[0]), width*sizeof(buff[0]));
 			if (_file.bad())
 			{
 				driver_buzzer(BUZZER_ERROR);
@@ -2029,8 +2029,8 @@ void pal_table::restore_rect()
 
 	case MEMORY:
 		{
-			char  *ptr = _memory;
-			char  *bufptr = buff; // MSC needs me indirection to get it right 
+			BYTE  *ptr = reinterpret_cast<BYTE *>(_memory);
+			BYTE *bufptr = buff; // MSC needs me indirection to get it right 
 
 			cursor::cursor_hide();
 			for (int yoff = 0; yoff < depth; yoff++)

@@ -16,6 +16,12 @@
 class ExternalsImpl : public Externals
 {
 public:
+	ExternalsImpl() : Externals(),
+		_currentPass(0),
+		_totalPasses(0),
+		_stopPass(0),
+		_useInitialOrbitZ(INITIALZ_NONE)
+	{ }
 	virtual ~ExternalsImpl() { }
 
 	virtual float AspectDrift() const							{ return g_aspect_drift; }
@@ -92,8 +98,6 @@ public:
 	virtual void SetCReal(long value)							{ g_c_real = value; }
 	virtual int CurrentCol() const								{ return g_current_col; }
 	virtual void SetCurrentCol(int value)						{ g_current_col = value; }
-	virtual int CurrentPass() const								{ return g_current_pass; }
-	virtual void SetCurrentPass(int value)						{ g_current_pass = value; }
 	virtual int CurrentRow() const								{ return g_current_row; }
 	virtual void SetCurrentRow(int value)						{ g_current_row = value; }
 	virtual int CycleLimit() const								{ return g_cycle_limit; }
@@ -235,8 +239,14 @@ public:
 	virtual void SetInitializeBatch(InitializeBatchType value)	{ g_initialize_batch = value; }
 	virtual int InitialCycleLimit() const						{ return g_initial_cycle_limit; }
 	virtual void SetInitialCycleLimit(int value)				{ g_initial_cycle_limit = value; }
+
+	virtual ComplexL InitialOrbitL() const						{ return g_initial_orbit_l; }
+	virtual void SetInitialOrbitL(ComplexL value)				{ g_initial_orbit_l = value; }
 	virtual ComplexD InitialOrbitZ() const						{ return g_initial_orbit_z; }
 	virtual void SetInitialOrbitZ(ComplexD value)				{ g_initial_orbit_z = value; }
+	virtual InitialZType UseInitialOrbitZ() const				{ return _useInitialOrbitZ; }
+	virtual void SetUseInitialOrbitZ(InitialZType value)		{ _useInitialOrbitZ = value; }
+
 	virtual int SaveTime() const								{ return g_save_time; }
 	virtual void SetSaveTime(int value)							{ g_save_time = value; }
 	virtual int Inside() const									{ return g_inside; }
@@ -276,8 +286,6 @@ public:
 	virtual void SetLineBuffer(BYTE const *value)				{ /*g_line_buffer = value;*/ }
 	virtual ComplexL InitialZL() const							{ return g_initial_z_l; }
 	virtual void SetInitialZL(ComplexL value)					{ g_initial_z_l = value; }
-	virtual ComplexL InitOrbitL() const							{ return g_init_orbit_l; }
-	virtual void SetInitOrbitL(ComplexL value)					{ g_init_orbit_l = value; }
 	virtual long InitialXL() const								{ return g_initial_x_l; }
 	virtual void SetInitialXL(long value)						{ g_initial_x_l = value; }
 	virtual long InitialYL() const								{ return g_initial_y_l; }
@@ -470,8 +478,6 @@ public:
 	virtual void SetParameter2(ComplexD value)					{ g_parameter2 = value; }
 	virtual ComplexD Parameter() const							{ return g_parameter; }
 	virtual void SetParameter(ComplexD value)					{ g_parameter = value; }
-	virtual int Passes() const									{ return g_passes; }
-	virtual void SetPasses(int value)							{ g_passes = value; }
 	virtual int PatchLevel() const								{ return g_patch_level; }
 	virtual void SetPatchLevel(int value)						{ g_patch_level = value; }
 	virtual int PeriodicityCheck() const						{ return g_periodicity_check; }
@@ -584,8 +590,6 @@ public:
 	virtual void SetStartShowOrbit(bool value)					{ g_start_show_orbit = value; }
 	virtual bool StartedResaves() const							{ return g_started_resaves; }
 	virtual void SetStartedResaves(bool value)					{ g_started_resaves = value; }
-	virtual int StopPass() const								{ return g_stop_pass; }
-	virtual void SetStopPass(int value)							{ g_stop_pass = value; }
 	virtual unsigned int const *StringLocation() const			{ return g_string_location; }
 	virtual void SetStringLocation(unsigned int const *value)	{ /*g_string_location = value;*/ }
 	virtual BYTE const *Suffix() const							{ return g_suffix; }
@@ -628,8 +632,6 @@ public:
 	virtual void SetTextRow(int value)							{ g_text_row = value; }
 	virtual unsigned int RhisGenerationRandomSeed() const		{ return g_this_generation_random_seed; }
 	virtual void SetThisGenerationRandomSeed(int value)			{ g_this_generation_random_seed = value; }
-	virtual bool ThreePass() const								{ return g_three_pass; }
-	virtual void SetThreePass(bool value)						{ g_three_pass = value; }
 	virtual double Threshold() const							{ return g_threshold; }
 	virtual void SetThreshold(double value)						{ g_threshold = value; }
 	virtual TimedSaveType TimedSave() const						{ return g_timed_save; }
@@ -642,8 +644,6 @@ public:
 	virtual void SetTimerStart(long value)						{ g_timer_start = value; }
 	virtual ComplexD TempZ() const								{ return g_temp_z; }
 	virtual void SetTempZ(ComplexD value)						{ g_temp_z = value; }
-	virtual int TotalPasses() const								{ return g_total_passes; }
-	virtual void SetTotalPasses(int value)						{ g_total_passes = value; }
 	virtual int const *FunctionIndex() const					{ return g_function_index; }
 	virtual void SetFunctionIndex(int const *value)				{ /*g_function_index = value;*/ }
 	virtual bool TrueColor() const								{ return g_true_color; }
@@ -656,8 +656,6 @@ public:
 	virtual void SetTwoPi(double value)							{ g_two_pi = value; }
 	virtual UserInterfaceState const &UiState() const			{ return g_ui_state; }
 	virtual UserInterfaceState &UiState()						{ return g_ui_state; }
-	virtual InitialZType UseInitialOrbitZ() const				{ return g_use_initial_orbit_z; }
-	virtual void SetUseInitialOrbitZ(InitialZType value)		{ g_use_initial_orbit_z = value; }
 	virtual bool UseCenterMag() const							{ return g_use_center_mag; }
 	virtual void SetUseCenterMag(bool value)					{ g_use_center_mag = value; }
 	virtual bool UseOldPeriodicity() const						{ return g_use_old_periodicity; }
@@ -761,6 +759,21 @@ public:
 	virtual ViewWindow &View()									{ return g_viewWindow; }
 	virtual void SetFileNameStackTop(std::string const &value)	{ g_file_name_stack[g_name_stack_ptr] = value; }
 	virtual boost::filesystem::path const &WorkDirectory() const { return g_work_dir; }
+	virtual bool ThreePass() const								{ return g_three_pass; }
+	virtual void SetThreePass(bool value)						{ g_three_pass = value; }
+
+	virtual int TotalPasses() const								{ return _totalPasses; }
+	virtual void SetTotalPasses(int value)						{ _totalPasses = value; }
+	virtual int StopPass() const								{ return _stopPass; }
+	virtual void SetStopPass(int value)							{ _stopPass = value; }
+	virtual int CurrentPass() const								{ return _currentPass; }
+	virtual void SetCurrentPass(int value)						{ _currentPass = value; }
+
+private:
+	int _currentPass;
+	int _totalPasses;
+	int _stopPass;												// stop at this guessing pass early
+	InitialZType _useInitialOrbitZ;
 };
 
 static ExternalsImpl s_externs;

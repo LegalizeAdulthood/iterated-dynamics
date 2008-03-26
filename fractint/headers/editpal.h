@@ -4,8 +4,8 @@
 extern std::string g_screen_file;
 
 extern void palette_edit();
-extern void put_row(int x, int y, int width, char *buff);
-extern void get_row(int x, int y, int width, char *buff);
+extern void put_row(int x, int y, int width, BYTE const *buff);
+extern void get_row(int x, int y, int width, BYTE *buff);
 extern void displayc(int, int, int, int, int);
 
 #ifdef XFRACT
@@ -97,10 +97,10 @@ private:
 	int _hidden;       // true if mouse hidden 
 	long _last_blink;
 	bool _blink;
-	char _top[CURSOR_SIZE];        // save line segments here 
-	char _bottom[CURSOR_SIZE];
-	char _left[CURSOR_SIZE];
-	char _right[CURSOR_SIZE];
+	BYTE _top[CURSOR_SIZE];        // save line segments here 
+	BYTE _bottom[CURSOR_SIZE];
+	BYTE _left[CURSOR_SIZE];
+	BYTE _right[CURSOR_SIZE];
 
 	static cursor *s_the_cursor;
 };

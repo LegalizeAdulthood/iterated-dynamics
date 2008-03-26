@@ -24,6 +24,7 @@
 #include "DiffusionScan.h"
 #include "drivers.h"
 #include "EscapeTime.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "Formula.h"
@@ -961,7 +962,7 @@ top:
 		switch (g_got_status)
 		{
 		case GOT_STATUS_12PASS:
-			sprintf(msg, "%d Pass Mode", g_total_passes);
+			sprintf(msg, "%d Pass Mode", g_externs.TotalPasses());
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
 			if (g_user_standard_calculation_mode == CALCMODE_TRIPLE_PASS)
 			{
@@ -1012,13 +1013,13 @@ top:
 			}
 			else
 			{
-				if (g_total_passes > 1)
+				if (g_externs.TotalPasses() > 1)
 				{
 					driver_put_string(-1, -1, C_GENERAL_MED, "pass ");
-					sprintf(msg, "%d", g_current_pass);
+					sprintf(msg, "%d", g_externs.CurrentPass());
 					driver_put_string(-1, -1, C_GENERAL_HI, msg);
 					driver_put_string(-1, -1, C_GENERAL_MED, " of ");
-					sprintf(msg, "%d", g_total_passes);
+					sprintf(msg, "%d", g_externs.TotalPasses());
 					driver_put_string(-1, -1, C_GENERAL_HI, msg);
 					driver_put_string(-1, -1, C_GENERAL_MED, ", ");
 				}

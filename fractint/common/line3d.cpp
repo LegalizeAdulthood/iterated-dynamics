@@ -347,12 +347,9 @@ static int line3d_sphere(int col, int xcenter0, int ycenter0,
 		}
 		if (g_user_float_flag || g_overflow || g_3d_state.raytrace_output())
 		{
-			v[0] = lv[0];
-			v[1] = lv[1];
-			v[2] = lv[2];
-			v[0] /= g_fudge;
-			v[1] /= g_fudge;
-			v[2] /= g_fudge;
+			v[0] = FudgeToDouble(lv[0]);
+			v[1] = FudgeToDouble(lv[1]);
+			v[2] = FudgeToDouble(lv[2]);
 			perspective(v);
 			cur->x = int(v[0] + .5 + g_xx_adjust);
 			cur->y = int(v[1] + .5 + g_yy_adjust);

@@ -1001,11 +1001,11 @@ static void write_batch_parms_parameters()
 
 static void write_batch_parms_initial_orbit()
 {
-	if (g_use_initial_orbit_z == INITIALZ_PIXEL)
+	if (g_externs.UseInitialOrbitZ() == INITIALZ_PIXEL)
 	{
 		put_parm(" initorbit=pixel");
 	}
-	else if (g_use_initial_orbit_z == INITIALZ_ORBIT)
+	else if (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT)
 	{
 		put_parm(format(" initorbit=%.15g/%.15g") % g_initial_orbit_z.x % g_initial_orbit_z.y);
 	}
@@ -1017,9 +1017,9 @@ static void write_batch_parms_passes()
 	{
 		put_parm(format(" passes=%c") % char(g_user_standard_calculation_mode));
 	}
-	if (g_stop_pass != 0)
+	if (g_externs.StopPass() != 0)
 	{
-		put_parm(format(" passes=%c%c") % char(g_user_standard_calculation_mode) % char(g_stop_pass + '0'));
+		put_parm(format(" passes=%c%c") % char(g_user_standard_calculation_mode) % char(g_externs.StopPass() + '0'));
 	}
 }
 

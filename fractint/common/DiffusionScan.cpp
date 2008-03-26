@@ -90,10 +90,12 @@ static bool diffusion_point(int row, int col)
 // top left cornet at (x, y) with optimization from sym_fill_line
 static void diffusion_plot_block(int x, int y, int size, int color)
 {
-	memset(g_stack, color, size);
+	static std::vector<BYTE> scanline;
+	scanline.resize(size);
+	std::fill(scanline.begin(), scanline.end(), BYTE(color));
 	for (int ty = y; ty < y + size; ty++)
 	{
-		sym_fill_line(ty, x, x + size - 1, g_stack);
+		sym_fill_line(ty, x, x + size - 1, &scanline[0]);
 	}
 }
 
@@ -112,10 +114,12 @@ static bool diffusion_block(int row, int col, int sqsz)
 // function that does the same as above, but checks the limits in x and y 
 static void plot_block_lim(int x, int y, int size, int color)
 {
-	memset(g_stack, color, size);
+	static std::vector<BYTE> scanline;
+	scanline.resize(size);
+	std::fill(scanline.begin(), scanline.end(), BYTE(color));
 	for (int ty = y; ty < std::min(y + size, g_y_stop + 1); ty++)
 	{
-		sym_fill_line(ty, x, std::min(x + size - 1, g_x_stop), g_stack);
+		sym_fill_line(ty, x, std::min(x + size - 1, g_x_stop), &scanline[0]);
 	}
 }
 
@@ -353,6 +357,11 @@ static int diffusion_engine()
 	return 0;
 }
 
+inline double log_length(int start, int stop)
+{
+	return log(double(stop - start + 1));
+}
+
 int diffusion_scan()
 {
 	double log2 = double(log(2.0));
@@ -363,8 +372,8 @@ int diffusion_scan()
 	// fit any 32 bit architecture, the maxinum limit for this case would  
 	// be 65536x65536 (HB) 
 
-	s_bits = (unsigned) (std::min(log(double(g_y_stop - g_iy_start + 1)),
-							 log(double(g_x_stop - g_ix_start + 1)))/log2);
+	s_bits = unsigned(std::min(log_length(g_iy_start, g_y_stop),
+								log_length(g_ix_start, g_x_stop))/log2);
 	s_bits <<= 1; // double for two axes 
 	s_diffusion_limit = 1l << s_bits;
 

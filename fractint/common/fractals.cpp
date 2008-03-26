@@ -51,6 +51,7 @@
 #include "externs.h"
 
 #include "calcfrac.h"
+#include "Externals.h"
 #include "fpu.h"
 #include "fracsubr.h"
 #include "fractals.h"
@@ -257,7 +258,7 @@ inline void TRIG_ARG_L(long &x)
 {
 	if (labs(x) > TRIG_LIMIT_16)
 	{
-		x = long(fmod(double(x)/g_fudge, g_two_pi)*g_fudge);
+		x = DoubleToFudge(fmod(FudgeToDouble(x), g_two_pi));
 	}
 }
 
@@ -635,6 +636,8 @@ int lambda_exponent_orbit()
 #if !defined(XFRACT)
 	long tmp;
 	// found this in  "Science of Fractal Images" 
+	assert((1000L << g_bit_shift) == DoubleToFudge(1000.0));
+	assert((8L << g_bit_shift) == DoubleToFudge(8.0));
 	if ((labs(g_old_z_l.y) >= (1000L << g_bit_shift))
 		|| (labs(g_old_z_l.x) >= (8L << g_bit_shift)))
 	{
@@ -844,18 +847,12 @@ int z_power_orbit()
 int complex_z_power_orbit()
 {
 #if !defined(XFRACT)
-	ComplexD x;
-	ComplexD y;
-
-	x.x = double(g_old_z_l.x)/g_fudge;
-	x.y = double(g_old_z_l.y)/g_fudge;
-	y.x = double(g_parameter2_l.x)/g_fudge;
-	y.y = double(g_parameter2_l.y)/g_fudge;
+	ComplexD x = ComplexFudgeToDouble(g_old_z_l);
+	ComplexD y = ComplexFudgeToDouble(g_parameter2_l);
 	x = ComplexPower(x, y);
 	if (fabs(x.x) < g_fudge_limit && fabs(x.y) < g_fudge_limit)
 	{
-		g_new_z_l.x = long(x.x*g_fudge);
-		g_new_z_l.y = long(x.y*g_fudge);
+		g_new_z_l = ComplexDoubleToFudge(x);
 	}
 	else
 	{
@@ -1789,15 +1786,11 @@ int try_float_fractal(int (*fpFractal)())
 {
 	g_overflow = false;
 	// g_old_z_l had better not be changed! 
-	g_old_z.x = g_old_z_l.x;
-	g_old_z.x /= g_fudge;
-	g_old_z.y = g_old_z_l.y;
-	g_old_z.y /= g_fudge;
+	g_old_z = ComplexFudgeToDouble(g_old_z_l);
 	g_temp_sqr_x = sqr(g_old_z.x);
 	g_temp_sqr_y = sqr(g_old_z.y);
 	fpFractal();
-	g_new_z_l.x = long(g_new_z.x*g_fudge);
-	g_new_z_l.y = long(g_new_z.y*g_fudge);
+	g_new_z_l = ComplexDoubleToFudge(g_new_z);
 	return 0;
 }
 #endif
@@ -2246,8 +2239,7 @@ int julia_per_pixel_l()
 		}
 
 		// convert to fudged longs 
-		g_old_z_l.x = long(g_old_z.x*g_fudge);
-		g_old_z_l.y = long(g_old_z.y*g_fudge);
+		g_old_z_l = ComplexDoubleToFudge(g_old_z);
 	}
 	else
 	{
@@ -2294,11 +2286,10 @@ int mandelbrot_per_pixel_l()
 		}
 
 		// convert to fudged longs 
-		g_initial_z_l.x = long(g_initial_z.x*g_fudge);
-		g_initial_z_l.y = long(g_initial_z.y*g_fudge);
+		g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
 	}
 
-	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    // initial pertubation of parameters set 
 	g_old_z_l.y += g_parameter_l.y;
@@ -2333,8 +2324,7 @@ int julia_per_pixel()
 		}
 
 		// convert to fudged longs 
-		g_old_z_l.x = long(g_old_z.x*g_fudge);
-		g_old_z_l.y = long(g_old_z.y*g_fudge);
+		g_old_z_l = ComplexDoubleToFudge(g_old_z);
 	}
 	else
 	{
@@ -2383,8 +2373,7 @@ int mandelbrot_per_pixel()
 		}
 
 		// convert to fudged longs 
-		g_initial_z_l.x = long(g_initial_z.x*g_fudge);
-		g_initial_z_l.y = long(g_initial_z.y*g_fudge);
+		g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
 	}
 	else
 	{
@@ -2403,11 +2392,11 @@ int mandelbrot_per_pixel()
 	}
 
 	// alter g_initial_z value 
-	if (g_use_initial_orbit_z == INITIALZ_ORBIT)
+	if (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT)
 	{
-		g_old_z_l = g_init_orbit_l;
+		g_old_z_l = g_initial_orbit_l;
 	}
-	else if (g_use_initial_orbit_z == INITIALZ_PIXEL)
+	else if (g_externs.UseInitialOrbitZ() == INITIALZ_PIXEL)
 	{
 		g_old_z_l = g_initial_z_l;
 	}
@@ -2447,8 +2436,7 @@ int marks_mandelbrot_per_pixel()
 		}
 
 		// convert to fudged longs 
-		g_initial_z_l.x = long(g_initial_z.x*g_fudge);
-		g_initial_z_l.y = long(g_initial_z.y*g_fudge);
+		g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
 	}
 	else
 	{
@@ -2456,7 +2444,7 @@ int marks_mandelbrot_per_pixel()
 		g_initial_z_l.y = g_ly_pixel();
 	}
 
-	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    // initial pertubation of parameters set 
 	g_old_z_l.y += g_parameter_l.y;
@@ -2501,7 +2489,7 @@ int marks_mandelbrot_per_pixel_fp()
 		g_initial_z.y = g_dy_pixel();
 	}
 
-	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      // initial pertubation of parameters set 
 	g_old_z.y += g_parameter.y;
@@ -2571,11 +2559,11 @@ int mandelbrot_per_pixel_fp()
 	}
 
 	// alter g_initial_z value 
-	if (g_use_initial_orbit_z == INITIALZ_ORBIT)
+	if (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT)
 	{
 		g_old_z = g_initial_orbit_z;
 	}
-	else if (g_use_initial_orbit_z == INITIALZ_PIXEL)
+	else if (g_externs.UseInitialOrbitZ() == INITIALZ_PIXEL)
 	{
 		g_old_z = g_initial_z;
 	}
@@ -2643,7 +2631,7 @@ int other_mandelbrot_per_pixel_fp()
 		g_initial_z.y = g_dy_pixel();
 	}
 
-	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      // initial pertubation of parameters set 
 	g_old_z.y += g_parameter.y;
@@ -2700,8 +2688,7 @@ int phoenix_per_pixel()
 		}
 
 		// convert to fudged longs 
-		g_old_z_l.x = long(g_old_z.x*g_fudge);
-		g_old_z_l.y = long(g_old_z.y*g_fudge);
+		g_old_z_l = ComplexDoubleToFudge(g_old_z);
 	}
 	else
 	{
@@ -2755,11 +2742,10 @@ int mandelbrot_phoenix_per_pixel()
 		}
 
 		// convert to fudged longs 
-		g_initial_z_l.x = long(g_initial_z.x*g_fudge);
-		g_initial_z_l.y = long(g_initial_z.y*g_fudge);
+		g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
 	}
 
-	g_old_z_l = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_init_orbit_l : g_initial_z_l;
+	g_old_z_l = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_l : g_initial_z_l;
 
 	g_old_z_l.x += g_parameter_l.x;    // initial pertubation of parameters set 
 	g_old_z_l.y += g_parameter_l.y;
@@ -2785,7 +2771,7 @@ int mandelbrot_phoenix_per_pixel_fp()
 		g_initial_z.y = g_dy_pixel();
 	}
 
-	g_old_z = (g_use_initial_orbit_z == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
+	g_old_z = (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT) ? g_initial_orbit_z : g_initial_z;
 
 	g_old_z.x += g_parameter.x;      // initial pertubation of parameters set 
 	g_old_z.y += g_parameter.y;

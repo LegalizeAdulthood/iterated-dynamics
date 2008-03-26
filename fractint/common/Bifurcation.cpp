@@ -49,13 +49,16 @@ static long		s_beta;
 
 static void verhulst()          // P. F. Verhulst (1845) 
 {
-	if (g_integer_fractal)
 	{
-		s_population_l = (g_parameter.y == 0) ? long(SEED*g_fudge) : long(g_parameter.y*g_fudge);
-	}
-	else
-	{
-		s_population = (g_parameter.y == 0) ? SEED : g_parameter.y;
+		double const population = (g_parameter.y == 0) ? SEED : g_parameter.y;
+		if (g_integer_fractal)
+		{
+			s_population_l = DoubleToFudge(population);
+		}
+		else
+		{
+			s_population = population;
+		}
 	}
 
 	bool errors = false;
@@ -316,7 +319,7 @@ int bifurcation_may()
 #if !defined(XFRACT)
 	g_tmp_z_l.x = s_population_l + g_fudge;
 	g_tmp_z_l.y = 0;
-	g_parameter2_l.x = s_beta*g_fudge;
+	g_parameter2_l.x = DoubleToFudge(s_beta);
 	LCMPLXpwr(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);
 	s_population_l = multiply(s_rate_l, s_population_l, g_bit_shift);
 	s_population_l = divide(s_population_l, g_tmp_z_l.x, g_bit_shift);
@@ -389,7 +392,7 @@ int bifurcation()
 		return -1;
 	}
 
-	s_pi_l = long(MathUtil::Pi*g_fudge);
+	s_pi_l = DoubleToFudge(MathUtil::Pi);
 
 	for (row = 0; row <= g_y_stop; row++) // should be g_y_stop 
 	{

@@ -288,12 +288,12 @@ static int l_setup_convert_to_screen(l_affine *l_cvt)
 	{
 		return -1;
 	}
-	l_cvt->a = long(cvt.a*g_fudge);
-	l_cvt->b = long(cvt.b*g_fudge);
-	l_cvt->c = long(cvt.c*g_fudge);
-	l_cvt->d = long(cvt.d*g_fudge);
-	l_cvt->e = long(cvt.e*g_fudge);
-	l_cvt->f = long(cvt.f*g_fudge);
+	l_cvt->a = DoubleToFudge(cvt.a);
+	l_cvt->b = DoubleToFudge(cvt.b);
+	l_cvt->c = DoubleToFudge(cvt.c);
+	l_cvt->d = DoubleToFudge(cvt.d);
+	l_cvt->e = DoubleToFudge(cvt.e);
+	l_cvt->f = DoubleToFudge(cvt.f);
 
 	return 0;
 }
@@ -327,10 +327,10 @@ bool orbit_3d_setup()
 
 	if (g_fractal_type == FRACTYPE_HENON_L)
 	{
-		s_l_a =  long(g_parameters[0]*g_fudge);
-		s_l_b =  long(g_parameters[1]*g_fudge);
-		s_l_c =  long(g_parameters[2]*g_fudge);
-		s_l_d =  long(g_parameters[3]*g_fudge);
+		s_l_a =  DoubleToFudge(g_parameters[0]);
+		s_l_b =  DoubleToFudge(g_parameters[1]);
+		s_l_c =  DoubleToFudge(g_parameters[2]);
+		s_l_d =  DoubleToFudge(g_parameters[3]);
 	}
 	else if (fractal_type_kam_torus(g_fractal_type))
 	{
@@ -340,13 +340,13 @@ bool orbit_3d_setup()
 		{
 			g_parameters[1] = .01;
 		}
-		s_l_b =  long(g_parameters[1]*g_fudge);    // stepsize 
-		s_l_c =  long(g_parameters[2]*g_fudge);    // stop 
+		s_l_b =  DoubleToFudge(g_parameters[1]);    // stepsize 
+		s_l_c =  DoubleToFudge(g_parameters[2]);    // stop 
 		s_l_d =  long(g_parameters[3]);
 		s_t = int(s_l_d);     // points per orbit 
 
-		s_l_sinx = long(sin(s_a)*g_fudge);
-		s_l_cosx = long(cos(s_a)*g_fudge);
+		s_l_sinx = DoubleToFudge(sin(s_a));
+		s_l_cosx = DoubleToFudge(cos(s_a));
 		s_l_orbit = 0;
 		s_init_orbit_long[0] = 0;
 		s_init_orbit_long[1] = 0;
@@ -356,8 +356,8 @@ bool orbit_3d_setup()
 	{
 		ComplexL Sqrt;
 
-		s_x_long = long(g_parameters[0]*g_fudge);
-		s_y_long = long(g_parameters[1]*g_fudge);
+		s_x_long = DoubleToFudge(g_parameters[0]);
+		s_y_long = DoubleToFudge(g_parameters[1]);
 
 		s_max_hits = int(g_parameters[2]);
 		s_run_length = int(g_parameters[3]);
@@ -431,10 +431,10 @@ lrwalk:
 	}
 	else
 	{
-		s_l_dt = long(g_parameters[0]*g_fudge);
-		s_l_a =  long(g_parameters[1]*g_fudge);
-		s_l_b =  long(g_parameters[2]*g_fudge);
-		s_l_c =  long(g_parameters[3]*g_fudge);
+		s_l_dt = DoubleToFudge(g_parameters[0]);
+		s_l_a =  DoubleToFudge(g_parameters[1]);
+		s_l_b =  DoubleToFudge(g_parameters[2]);
+		s_l_c =  DoubleToFudge(g_parameters[3]);
 	}
 
 	// precalculations for speed 
@@ -1659,7 +1659,7 @@ int orbit_2d()
 		}
 		if (col >= 0 && col < g_x_dots && row >= 0 && row < g_y_dots)
 		{
-			g_sound_state.orbit(x/g_fudge, y/g_fudge, z/g_fudge);
+			g_sound_state.orbit(FudgeToDouble(x), FudgeToDouble(y), FudgeToDouble(z));
 			if (oldcol != -1 && s_connect_points)
 			{
 				driver_draw_line(col, row, oldcol, oldrow, color % g_colors);
@@ -1689,7 +1689,7 @@ int orbit_2d()
 		}
 		if (saving)
 		{
-			stream << boost::format("%g %g %g 15\n") % (double(*p0)/g_fudge) % (double(*p1)/g_fudge) % 0.0;
+			stream << boost::format("%g %g %g 15\n") % FudgeToDouble(*p0) % FudgeToDouble(*p1) % 0.0;
 		}
 	}
 	if (saving)
@@ -1761,9 +1761,9 @@ static int orbit_3d_calc()
 		if (saving)
 		{
 			stream << boost::format("%g %g %g 15\n")
-				% (double(inf.orbit[0])/g_fudge)
-				% (double(inf.orbit[1])/g_fudge)
-				% (double(inf.orbit[2])/g_fudge);
+				% FudgeToDouble(inf.orbit[0])
+				% FudgeToDouble(inf.orbit[1])
+				% FudgeToDouble(inf.orbit[2]);
 		}
 		if (threed_view_trans(&inf))
 		{
@@ -1776,9 +1776,8 @@ static int orbit_3d_calc()
 				}
 				if ((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) > SOUNDFLAG_BEEP)
 				{
-					double yy;
-					yy = inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)];
-					yy /= g_fudge;
+					double yy = FudgeToDouble(
+						inf.viewvect[((g_sound_state.flags() & SOUNDFLAG_ORBITMASK) - SOUNDFLAG_X)]);
 					g_sound_state.tone(int(yy*100 + g_sound_state.base_hertz()));
 				}
 				if (oldcol != -1 && s_connect_points)
@@ -2545,7 +2544,7 @@ static int ifs_2d()
 	{
 		for (j = 0; j < IFSPARM; j++)
 		{
-			localifs[i*IFSPARM + j] = long(g_ifs_definition[i*IFSPARM + j]*g_fudge);
+			localifs[i*IFSPARM + j] = DoubleToFudge(g_ifs_definition[i*IFSPARM + j]);
 		}
 	}
 
@@ -2586,7 +2585,7 @@ static int ifs_2d()
 		y = newy;
 		if (saving)
 		{
-			stream << boost::format("%g %g %g 15\n") % (double(newx)/g_fudge) % (double(newy)/g_fudge) % 0.0;
+			stream << boost::format("%g %g %g 15\n") % FudgeToDouble(newx) % FudgeToDouble(newy) % 0.0;
 		}
 
 		// plot if inside window 
@@ -2656,7 +2655,7 @@ static int ifs_3d_long()
 	{
 		for (j = 0; j < IFS3DPARM; j++)
 		{
-			localifs[i*IFS3DPARM + j] = long(g_ifs_definition[i*IFS3DPARM + j]*g_fudge);
+			localifs[i*IFS3DPARM + j] = DoubleToFudge(g_ifs_definition[i*IFS3DPARM + j]);
 		}
 	}
 
@@ -2714,7 +2713,7 @@ static int ifs_3d_long()
 		if (saving)
 		{
 			stream << boost::format("%g %g %g 15\n")
-				% (double(newx)/g_fudge) % (double(newy)/g_fudge) % (double(newz)/g_fudge);
+				% FudgeToDouble(newx) % FudgeToDouble(newy) % FudgeToDouble(newz);
 		}
 
 		if (threed_view_trans(&inf))
@@ -2834,10 +2833,10 @@ static int threed_view_trans(threed_vt_inf *inf)
 		{
 			for (j = 0; j < 4; j++)
 			{
-				inf->longmat[i][j] = long(inf->doublemat[i][j]*g_fudge);
+				inf->longmat[i][j] = DoubleToFudge(inf->doublemat[i][j]);
 				if (s_real_time)
 				{
-					inf->longmat1[i][j] = long(inf->doublemat1[i][j]*g_fudge);
+					inf->longmat1[i][j] = DoubleToFudge(inf->doublemat1[i][j]);
 				}
 			}
 		}
@@ -2875,29 +2874,29 @@ static int threed_view_trans(threed_vt_inf *inf)
 			inf->iview[2] = long((inf->minvals[2]-inf->maxvals[2])*double(g_3d_state.z_viewer())/100.0);
 
 			// center image on origin 
-			tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); // center x 
-			tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); // center y 
+			tmpx = (-inf->minvals[0] - inf->maxvals[0])/(2.0*g_fudge); // center x 
+			tmpy = (-inf->minvals[1] - inf->maxvals[1])/(2.0*g_fudge); // center y 
 
 			// apply perspective shift 
 			tmpx += (double(g_x_shift)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
 			tmpy += (double(g_y_shift)*g_escape_time_state.m_grid_fp.height())/g_y_dots;
-			tmpz = -(double(inf->maxvals[2]))/g_fudge;
+			tmpz = -FudgeToDouble(inf->maxvals[2]);
 			trans(tmpx, tmpy, tmpz, inf->doublemat);
 
 			if (s_real_time)
 			{
 				// center image on origin 
-				tmpx = (-inf->minvals[0]-inf->maxvals[0])/(2.0*g_fudge); // center x 
-				tmpy = (-inf->minvals[1]-inf->maxvals[1])/(2.0*g_fudge); // center y 
+				tmpx = (-inf->minvals[0] - inf->maxvals[0])/(2.0*g_fudge); // center x 
+				tmpy = (-inf->minvals[1] - inf->maxvals[1])/(2.0*g_fudge); // center y 
 
 				tmpx += (double(g_x_shift1)*g_escape_time_state.m_grid_fp.width())/g_x_dots;
 				tmpy += (double(g_y_shift1)*g_escape_time_state.m_grid_fp.height())/g_y_dots;
-				tmpz = -(double(inf->maxvals[2]))/g_fudge;
+				tmpz = -FudgeToDouble(inf->maxvals[2]);
 				trans(tmpx, tmpy, tmpz, inf->doublemat1);
 			}
 			for (i = 0; i < 3; i++)
 			{
-				g_view[i] = double(inf->iview[i])/g_fudge;
+				g_view[i] = FudgeToDouble(inf->iview[i]);
 			}
 
 			// copy xform matrix to long for for fixed point math 
@@ -2905,10 +2904,10 @@ static int threed_view_trans(threed_vt_inf *inf)
 			{
 				for (j = 0; j < 4; j++)
 				{
-					inf->longmat[i][j] = long(inf->doublemat[i][j]*g_fudge);
+					inf->longmat[i][j] = DoubleToFudge(inf->doublemat[i][j]);
 					if (s_real_time)
 					{
-						inf->longmat1[i][j] = long(inf->doublemat1[i][j]*g_fudge);
+						inf->longmat1[i][j] = DoubleToFudge(inf->doublemat1[i][j]);
 					}
 				}
 			}
@@ -2925,23 +2924,23 @@ static int threed_view_trans(threed_vt_inf *inf)
 			VECTOR tmpv;
 			for (i = 0; i < 3; i++)
 			{
-				tmpv[i] = double(inf->viewvect[i])/g_fudge;
+				tmpv[i] = FudgeToDouble(inf->viewvect[i]);
 			}
 			perspective(tmpv);
 			for (i = 0; i < 3; i++)
 			{
-				inf->viewvect[i] = long(tmpv[i]*g_fudge);
+				inf->viewvect[i] = DoubleToFudge(tmpv[i]);
 			}
 			if (s_real_time)
 			{
 				for (i = 0; i < 3; i++)
 				{
-					tmpv[i] = double(inf->viewvect1[i])/g_fudge;
+					tmpv[i] = FudgeToDouble(inf->viewvect1[i]);
 				}
 				perspective(tmpv);
 				for (i = 0; i < 3; i++)
 				{
-					inf->viewvect1[i] = long(tmpv[i]*g_fudge);
+					inf->viewvect1[i] = DoubleToFudge(tmpv[i]);
 				}
 			}
 		}

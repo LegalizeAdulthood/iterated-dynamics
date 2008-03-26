@@ -20,6 +20,7 @@
 #include "diskvid.h"
 #include "drivers.h"
 #include "evolve.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "fimain.h"
@@ -56,7 +57,7 @@ static int calculation_mode()
 	case CALCMODE_SINGLE_PASS:			return 0;
 	case CALCMODE_DUAL_PASS:			return 1;
 	case CALCMODE_TRIPLE_PASS:			return 2;
-	case CALCMODE_SOLID_GUESS:			return 3 + g_stop_pass;
+	case CALCMODE_SOLID_GUESS:			return 3 + g_externs.StopPass();
 	case CALCMODE_BOUNDARY_TRACE:		return 10;
 	case CALCMODE_SYNCHRONOUS_ORBITS:	return 11;
 	case CALCMODE_TESSERAL:				return 12;
@@ -118,7 +119,7 @@ static std::string save_name()
 int get_toggles()
 {
 	CalculationMode old_user_standard_calculation_mode = g_user_standard_calculation_mode;
-	int old_stop_pass = g_stop_pass;
+	int old_stop_pass = g_externs.StopPass();
 	long old_max_iteration = g_max_iteration;
 	int old_inside = g_inside;
 	int old_outside = g_outside;
@@ -189,10 +190,10 @@ int get_toggles()
 
 	int k = -1;
 	g_user_standard_calculation_mode = CalculationMode(calculation_modes[dialog.values(++k).uval.ch.val][0]);
-	g_stop_pass = int(calculation_modes[dialog.values(k).uval.ch.val][1]) - int('0');
-	if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
+	g_externs.SetStopPass(int(calculation_modes[dialog.values(k).uval.ch.val][1]) - int('0'));
+	if (g_externs.StopPass() < 0 || g_externs.StopPass() > 6 || g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
 	{
-		g_stop_pass = 0;
+		g_externs.SetStopPass(0);
 	}
 	// Oops, lyapunov type doesn't use 'new' & breaks orbits 
 	if (g_user_standard_calculation_mode == CALCMODE_ORBITS
@@ -205,7 +206,7 @@ int get_toggles()
 	{
 		j++;
 	}
-	if (old_stop_pass != g_stop_pass)
+	if (old_stop_pass != g_externs.StopPass())
 	{
 		j++;
 	}

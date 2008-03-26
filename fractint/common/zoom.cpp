@@ -659,7 +659,8 @@ static void move_row(int fromrow, int torow, int col)
 	int startcol;
 	int endcol;
 	int tocol;
-	memset(g_stack, 0, g_x_dots); // use g_stack as a temp for the row; clear it 
+	std::vector<BYTE> scanline;
+	scanline.resize(g_x_dots, 0);
 	if (fromrow >= 0 && fromrow < g_y_dots)
 	{
 		tocol = 0;
@@ -674,9 +675,9 @@ static void move_row(int fromrow, int torow, int col)
 		{
 			startcol += col;
 		}
-		get_line(fromrow, startcol, endcol, (BYTE *)&g_stack[tocol]);
+		get_line(fromrow, startcol, endcol, &scanline[tocol]);
 	}
-	put_line(torow, 0, g_x_dots-1, (BYTE *)g_stack);
+	put_line(torow, 0, g_x_dots-1, &scanline[0]);
 }
 
 void init_pan_or_recalc(bool do_zoomout) // decide to recalc, or to chg g_work_list & pan 
