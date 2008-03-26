@@ -4,7 +4,7 @@
 #include <boost/test/floating_point_comparison.hpp>
 #include "IFSParser.h"
 
-static const std::string s_binary_definition =
+static char const s_binary_definition[] =
 	"\n"
 	" binary { ; comment allowed here\n"
 	"  ; and here\n"
@@ -13,12 +13,12 @@ static const std::string s_binary_definition =
 	"  .0 -.5 .5 .0	4.873085  7.563492 .333333\n"
 	"  }\n";
 
-static const std::string s_bad_definition =
+static char const s_bad_definition[] =
 	"\n"
 	" goopy\n"
 	"\n";
 
-static const std::string s_3d_definition =
+static char const s_3d_definition[] =
 	"3dfern (3D) {\n"
 	"   .00	.00 0 .0 .18 .0 0  0.0 0.00 0 0.0 0 .01\n"
 	"   .85	.00 0 .0 .85 .1 0 -0.1 0.85 0 1.6 0 .85\n"
@@ -26,7 +26,7 @@ static const std::string s_3d_definition =
 	"  -.20	.20 0 .2 .20 .0 0  0.0 0.30 0 0.8 0 .07\n"
 	"  }\n";
 
-static const std::string s_ifs_file =
+static char const s_ifs_file[] =
 	"\n"
 	" binary { ; comment allowed here\n"
 	"  ; and here\n"

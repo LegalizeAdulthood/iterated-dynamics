@@ -305,8 +305,8 @@ public:
 	virtual void SetLineBuffer(BYTE const *value)	{ throw not_implemented("SetLineBuffer"); }
 	virtual ComplexL InitialZL() const 				{ throw not_implemented("InitialZL"); }
 	virtual void SetInitialZL(ComplexL value) 		{ throw not_implemented("SetInitialZL"); }
-	virtual ComplexL InitOrbitL() const 			{ throw not_implemented("InitOrbitL"); }
-	virtual void SetInitOrbitL(ComplexL value)		{ throw not_implemented("SetInitOrbitL"); }
+	virtual ComplexL InitialOrbitL() const 			{ throw not_implemented("InitialOrbitL"); }
+	virtual void SetInitialOrbitL(ComplexL value)	{ throw not_implemented("SetInitialOrbitL"); }
 	virtual long InitialXL() const 					{ throw not_implemented("InitialXL"); }
 	virtual void SetInitialXL(long value) 			{ throw not_implemented("SetInitialXL"); }
 	virtual long InitialYL() const 					{ throw not_implemented("InitialYL"); }
