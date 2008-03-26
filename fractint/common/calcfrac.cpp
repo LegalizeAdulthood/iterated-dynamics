@@ -2475,9 +2475,9 @@ static void decomposition()
 	g_color_iter = 0;
 	if (g_integer_fractal) // the only case 
 	{
-		if (reset_fudge != g_fudge)
+		if (reset_fudge != g_externs.Fudge())
 		{
-			reset_fudge = g_fudge;
+			reset_fudge = g_externs.Fudge();
 			// lcos45	= DoubleToFudge(cos45); 
 			lsin45		= DoubleToFudge(sin45);
 			lcos22_5	= DoubleToFudge(cos22_5);
@@ -3817,7 +3817,7 @@ void PerformWorkList::call_escape_time_engine()
 		soi();
 		break;
 	case 't':
-		tesseral();
+		g_tesseralScan.Execute();
 		break;
 	case 'b':
 		boundary_trace_main();
@@ -3826,7 +3826,7 @@ void PerformWorkList::call_escape_time_engine()
 		solid_guess();
 		break;
 	case 'd':
-		diffusion_scan();
+		g_diffusionScan.Execute();
 		break;
 	case 'o':
 		draw_orbits();

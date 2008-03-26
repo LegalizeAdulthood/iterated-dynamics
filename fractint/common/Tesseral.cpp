@@ -15,6 +15,17 @@
 #include "Tesseral.h"
 #include "WorkList.h"
 
+class TesseralScanImpl : public TesseralScan
+{
+public:
+	virtual ~TesseralScanImpl() { }
+
+	virtual void Execute();
+};
+
+static TesseralScanImpl s_tesseralScanImpl;
+TesseralScan &g_tesseralScan(s_tesseralScanImpl);
+
 // tesseral method by CJLT begins here
 // reworked by PB for speed and resumeability 
 struct tess  // one of these per box to be done gets stacked 
@@ -28,8 +39,6 @@ struct tess  // one of these per box to be done gets stacked
 	int left;
 	int right;  // edge colors, -1 mixed, -2 unknown 
 };
-
-static std::vector<tess> s_stack;
 
 static int tesseral_check_column(int x, int y1, int y2)
 {
@@ -108,7 +117,7 @@ static int tesseral_row(int x1, int x2, int y)
 	return rowcolor;
 }
 
-int tesseral()
+void TesseralScanImpl::Execute()
 {
 	bool guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis);
 	// TODO: refactor this to use a std::vector<tess> instead of g_stack aliased to tess[]
@@ -129,7 +138,7 @@ int tesseral()
 			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
 				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
 				0, g_work_sym);
-			return -1;
+			return;
 		}
 	}
 	else  // resuming, rebuild work stack 
@@ -414,7 +423,5 @@ tess_end:
 		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
 			g_WorkList.yy_start(), g_WorkList.yy_stop(), (ysize << 12) + tp->y1,
 			(xsize << 12) + tp->x1, g_work_sym);
-		return -1;
 	}
-	return 0;
-} // tesseral 
+}

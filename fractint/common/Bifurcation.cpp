@@ -13,6 +13,7 @@
 
 #include "drivers.h"
 #include "EscapeTime.h"
+#include "Externals.h"
 #include "Formula.h"
 #include "MathUtil.h"
 #include "realdos.h"
@@ -237,7 +238,7 @@ int bifurcation_stewart_trig()
 	LCMPLXtrig0(g_tmp_z_l, g_tmp_z_l);
 	s_population_l = multiply(g_tmp_z_l.x, g_tmp_z_l.x, g_bit_shift);
 	s_population_l = multiply(s_population_l, s_rate_l,      g_bit_shift);
-	s_population_l -= g_fudge;
+	s_population_l -= g_externs.Fudge();
 #endif
 	return g_overflow;
 }
@@ -317,7 +318,7 @@ int bifurcation_may_fp()
 int bifurcation_may()
 {
 #if !defined(XFRACT)
-	g_tmp_z_l.x = s_population_l + g_fudge;
+	g_tmp_z_l.x = s_population_l + g_externs.Fudge();
 	g_tmp_z_l.y = 0;
 	g_parameter2_l.x = DoubleToFudge(s_beta);
 	LCMPLXpwr(g_tmp_z_l, g_parameter2_l, g_tmp_z_l);

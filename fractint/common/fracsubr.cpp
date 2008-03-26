@@ -20,6 +20,7 @@
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "fracsubr.h"
 #include "fractalb.h"
@@ -370,7 +371,7 @@ init_restart:
 
 	g_fudge = 1L << g_bit_shift;
 
-	g_attractor_radius_l = g_fudge/32768L;
+	g_attractor_radius_l = g_externs.Fudge()/32768L;
 	g_attractor_radius_fp = 1.0/32768L;
 
 	// now setup arrays of real coordinates corresponding to each pixel 
