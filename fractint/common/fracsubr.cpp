@@ -48,8 +48,6 @@ enum
 static int s_save_orbit[1500] = { 0 };	// array to save orbit values 
 
 // routines in this module      
-static long   fudge_to_long(double d);
-static double fudge_to_double(long value);
 static void   adjust_to_limits(double expand);
 static void   smallest_add(double *);
 static int    ratio_bad(double, double);
@@ -390,20 +388,20 @@ init_restart:
 		g_escape_time_state.fill_grid_fp();
 	}
 
-	if (!fractal_type_ant_or_cellular(g_fractal_type))  // fudge_to_long fails w >10 digits in double 
+	if (!fractal_type_ant_or_cellular(g_fractal_type))  // DoubleToFudge fails w >10 digits in double 
 	{
-		g_c_real = fudge_to_long(g_parameters[0]); // integer equivs for it all 
-		g_c_imag = fudge_to_long(g_parameters[1]);
-		g_escape_time_state.m_grid_l.x_min() = fudge_to_long(g_escape_time_state.m_grid_fp.x_min());
-		g_escape_time_state.m_grid_l.x_max() = fudge_to_long(g_escape_time_state.m_grid_fp.x_max());
-		g_escape_time_state.m_grid_l.x_3rd() = fudge_to_long(g_escape_time_state.m_grid_fp.x_3rd());
-		g_escape_time_state.m_grid_l.y_min() = fudge_to_long(g_escape_time_state.m_grid_fp.y_min());
-		g_escape_time_state.m_grid_l.y_max() = fudge_to_long(g_escape_time_state.m_grid_fp.y_max());
-		g_escape_time_state.m_grid_l.y_3rd() = fudge_to_long(g_escape_time_state.m_grid_fp.y_3rd());
-		g_escape_time_state.m_grid_l.delta_x() = fudge_to_long(g_escape_time_state.m_grid_fp.delta_x());
-		g_escape_time_state.m_grid_l.delta_y() = fudge_to_long(g_escape_time_state.m_grid_fp.delta_y());
-		g_escape_time_state.m_grid_l.delta_x2() = fudge_to_long(g_escape_time_state.m_grid_fp.delta_x2());
-		g_escape_time_state.m_grid_l.delta_y2() = fudge_to_long(g_escape_time_state.m_grid_fp.delta_y2());
+		g_c_real = DoubleToFudge(g_parameters[0]); // integer equivs for it all 
+		g_c_imag = DoubleToFudge(g_parameters[1]);
+		g_escape_time_state.m_grid_l.x_min() = DoubleToFudge(g_escape_time_state.m_grid_fp.x_min());
+		g_escape_time_state.m_grid_l.x_max() = DoubleToFudge(g_escape_time_state.m_grid_fp.x_max());
+		g_escape_time_state.m_grid_l.x_3rd() = DoubleToFudge(g_escape_time_state.m_grid_fp.x_3rd());
+		g_escape_time_state.m_grid_l.y_min() = DoubleToFudge(g_escape_time_state.m_grid_fp.y_min());
+		g_escape_time_state.m_grid_l.y_max() = DoubleToFudge(g_escape_time_state.m_grid_fp.y_max());
+		g_escape_time_state.m_grid_l.y_3rd() = DoubleToFudge(g_escape_time_state.m_grid_fp.y_3rd());
+		g_escape_time_state.m_grid_l.delta_x() = DoubleToFudge(g_escape_time_state.m_grid_fp.delta_x());
+		g_escape_time_state.m_grid_l.delta_y() = DoubleToFudge(g_escape_time_state.m_grid_fp.delta_y());
+		g_escape_time_state.m_grid_l.delta_x2() = DoubleToFudge(g_escape_time_state.m_grid_fp.delta_x2());
+		g_escape_time_state.m_grid_l.delta_y2() = DoubleToFudge(g_escape_time_state.m_grid_fp.delta_y2());
 	}
 
 	// skip this if plasma to avoid 3d problems 
@@ -454,12 +452,12 @@ expand_retry:
 			g_escape_time_state.m_grid_l.y_min() = g_escape_time_state.m_grid_l.y0(g_y_dots-1) + g_escape_time_state.m_grid_l.y1(g_x_dots-1);
 			g_escape_time_state.m_grid_l.x_3rd() = g_escape_time_state.m_grid_l.x_min() + g_escape_time_state.m_grid_l.x1(g_y_dots-1);
 			g_escape_time_state.m_grid_l.y_3rd() = g_escape_time_state.m_grid_l.y0(g_y_dots-1);
-			g_escape_time_state.m_grid_fp.x_min() = fudge_to_double(g_escape_time_state.m_grid_l.x_min());
-			g_escape_time_state.m_grid_fp.x_max() = fudge_to_double(g_escape_time_state.m_grid_l.x_max());
-			g_escape_time_state.m_grid_fp.x_3rd() = fudge_to_double(g_escape_time_state.m_grid_l.x_3rd());
-			g_escape_time_state.m_grid_fp.y_min() = fudge_to_double(g_escape_time_state.m_grid_l.y_min());
-			g_escape_time_state.m_grid_fp.y_max() = fudge_to_double(g_escape_time_state.m_grid_l.y_max());
-			g_escape_time_state.m_grid_fp.y_3rd() = fudge_to_double(g_escape_time_state.m_grid_l.y_3rd());
+			g_escape_time_state.m_grid_fp.x_min() = FudgeToDouble(g_escape_time_state.m_grid_l.x_min());
+			g_escape_time_state.m_grid_fp.x_max() = FudgeToDouble(g_escape_time_state.m_grid_l.x_max());
+			g_escape_time_state.m_grid_fp.x_3rd() = FudgeToDouble(g_escape_time_state.m_grid_l.x_3rd());
+			g_escape_time_state.m_grid_fp.y_min() = FudgeToDouble(g_escape_time_state.m_grid_l.y_min());
+			g_escape_time_state.m_grid_fp.y_max() = FudgeToDouble(g_escape_time_state.m_grid_l.y_max());
+			g_escape_time_state.m_grid_fp.y_3rd() = FudgeToDouble(g_escape_time_state.m_grid_l.y_3rd());
 		} // end if (g_integer_fractal && !g_invert && g_escape_time_state.m_use_grid) 
 		else
 		{
@@ -569,7 +567,7 @@ expand_retry:
 	{
 		g_delta_min_fp = fabs(double(g_escape_time_state.m_grid_fp.delta_y2()));
 	}
-	g_delta_min = fudge_to_long(g_delta_min_fp);
+	g_delta_min = DoubleToFudge(g_delta_min_fp);
 
 	// calculate factors which plot real values to screen co-ords 
 	// calcfrac.c plot_orbit routines have comments about this    
@@ -585,25 +583,6 @@ expand_retry:
 	{
 		free_bf_vars();
 	}
-}
-
-static long fudge_to_long(double d)
-{
-	d *= g_fudge;
-	if (d > 0)
-	{
-		d += 0.5;
-	}
-	else
-	{
-		d -= 0.5;
-	}
-	return long(d);
-}
-
-static double fudge_to_double(long value)
-{
-	return double(value)/double(g_fudge);
 }
 
 void adjust_corner_bf(float aspect_drift)
@@ -1433,8 +1412,8 @@ static void plot_orbit_d(double dx, double dy, int color)
 
 void plot_orbit_i(long ix, long iy, int color)
 {
-	plot_orbit_d(double(ix)/g_fudge - g_escape_time_state.m_grid_fp.x_min(),
-		double(iy)/g_fudge - g_escape_time_state.m_grid_fp.y_max(),
+	plot_orbit_d(FudgeToDouble(ix) - g_escape_time_state.m_grid_fp.x_min(),
+		FudgeToDouble(iy) - g_escape_time_state.m_grid_fp.y_max(),
 		color);
 }
 
@@ -1480,9 +1459,13 @@ void get_julia_attractor(double real, double imag)
 	g_temp_sqr_y = sqr(g_old_z.y);
 
 	g_old_z_l.x = (long(real)) << g_bit_shift;		// prepare for int orbit calc 
+	assert(g_old_z_l.x == DoubleToFudge(real));
 	g_old_z_l.y = (long(imag)) << g_bit_shift;
+	assert(g_old_z_l.y == DoubleToFudge(imag));
 	g_temp_sqr_x_l = (long(g_temp_sqr_x)) << g_bit_shift;
+	assert(g_temp_sqr_x_l == DoubleToFudge(g_temp_sqr_x));
 	g_temp_sqr_y_l = (long(g_temp_sqr_y)) << g_bit_shift;
+	assert(g_temp_sqr_y_l == DoubleToFudge(g_temp_sqr_y));
 
 	if (g_max_iteration < 500)         // we're going to try at least this hard 
 	{

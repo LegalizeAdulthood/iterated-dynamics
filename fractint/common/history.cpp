@@ -11,6 +11,7 @@
 #include "calcfrac.h"
 #include "history.h"
 #include "EscapeTime.h"
+#include "Externals.h"
 #include "FiniteAttractor.h"
 #include "Formula.h"
 #include "ThreeDimensionalState.h"
@@ -323,7 +324,7 @@ void history_save_info()
 	current.y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
 	current.standard_calculation_mode = g_user_standard_calculation_mode;
 	current.three_pass = g_three_pass;
-	current.stop_pass = g_stop_pass;
+	current.stop_pass = g_externs.StopPass();
 	current.distance_test = g_distance_test;
 	current.function_index[0] = g_function_index[0];
 	current.function_index[1] = g_function_index[1];
@@ -332,7 +333,7 @@ void history_save_info()
 	current.finite_attractor = g_finite_attractor;
 	current.initial_orbit_z[0] = g_initial_orbit_z.x;
 	current.initial_orbit_z[1] = g_initial_orbit_z.y;
-	current.use_initial_orbit_z = g_use_initial_orbit_z;
+	current.use_initial_orbit_z = g_externs.UseInitialOrbitZ();
 	current.periodicity = g_periodicity_check;
 	current.potential_16bit = g_disk_16bit;
 	current.release = g_release;
@@ -498,7 +499,7 @@ void history_restore_info()
 	g_user_standard_calculation_mode = CalculationMode(last.standard_calculation_mode);
 	g_standard_calculation_mode = CalculationMode(last.standard_calculation_mode);
 	g_three_pass = (last.three_pass != 0);
-	g_stop_pass = last.stop_pass;
+	g_externs.SetStopPass(last.stop_pass);
 	g_distance_test = last.distance_test;
 	g_user_distance_test = last.distance_test;
 	g_function_index[0] = last.function_index[0];
@@ -508,7 +509,7 @@ void history_restore_info()
 	g_finite_attractor = last.finite_attractor;
 	g_initial_orbit_z.x = last.initial_orbit_z[0];
 	g_initial_orbit_z.y = last.initial_orbit_z[1];
-	g_use_initial_orbit_z = InitialZType(last.use_initial_orbit_z);
+	g_externs.SetUseInitialOrbitZ(InitialZType(last.use_initial_orbit_z));
 	g_periodicity_check = last.periodicity;
 	g_user_periodicity_check = last.periodicity;
 	g_disk_16bit = last.potential_16bit;

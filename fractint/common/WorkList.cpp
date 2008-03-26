@@ -1,5 +1,6 @@
 #include <cassert>
 #include <string>
+#include <vector>
 
 #include <string.h>
 
@@ -154,10 +155,11 @@ void WorkList::restart_item(int wknum)
 	int xfrom = clamp_zero(m_items[wknum].xx_start);
 	int yto = clamp_greater(m_items[wknum].yy_stop, g_y_dots - 1);
 	int xto = clamp_greater(m_items[wknum].xx_stop, g_x_dots - 1);
-	memset(g_stack, 0, g_x_dots); // use g_stack as a temp for the row; clear it 
+	std::vector<BYTE> scanline;
+	scanline.resize(g_x_dots, 0);
 	while (yfrom <= yto)
 	{
-		put_line(yfrom++, xfrom, xto, &g_stack[0]);
+		put_line(yfrom++, xfrom, xto, &scanline[0]);
 	}
 
 	m_items[wknum].sym = 0;

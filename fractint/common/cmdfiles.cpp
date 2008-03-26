@@ -20,6 +20,7 @@
 #include "calcfrac.h"
 #include "cmdfiles.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "fracsuba.h"
@@ -47,7 +48,6 @@
 #include "ViewWindow.h"
 
 // variables defined by the command line/files processor 
-int     g_stop_pass = 0;						// stop at this guessing pass early 
 int     g_pseudo_x = 0;							// g_x_dots to use for video independence 
 int     g_pseudo_y = 0;							// g_y_dots to use for video independence 
 int     g_bf_digits = 0;						// digits to use (force) for g_bf_math 
@@ -92,7 +92,6 @@ bool g_check_current_dir;						// flag to check current dir for files
 InitializeBatchType g_initialize_batch = INITBATCH_NONE; // !0 if batch run (no kbd)  
 int     g_save_time;							// autosave minutes         
 ComplexD  g_initial_orbit_z;					// initial orbitvalue 
-InitialZType g_use_initial_orbit_z;				// flag for g_initial_orbit_z 
 int     g_initial_cycle_limit;					// initial cycle limit      
 bool g_use_center_mag;							// use center-mag corners   
 long    g_bail_out;								// user input bailout value 
@@ -406,7 +405,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_outside = COLORMODE_ITERATION;						// outside color = -1 (not used) 
 	g_max_iteration = 150;									// initial maxiter        
 	g_user_standard_calculation_mode = CALCMODE_SOLID_GUESS;
-	g_stop_pass = 0;										// initial guessing g_stop_pass 
+	g_externs.SetStopPass(0);										// initial guessing stop pass 
 	g_quick_calculate = false;
 	g_proximity = 0.01;
 	g_is_mandelbrot = true;									// default formula mand/jul toggle 
@@ -418,7 +417,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	s_initial_parameters = false;
 	g_bail_out = 0;											// no user-entered bailout 
 	g_beauty_of_fractals = true;							// use normal bof initialization to make bof images 
-	g_use_initial_orbit_z = INITIALZ_NONE;
+	g_externs.SetUseInitialOrbitZ(INITIALZ_NONE);
 	for (i = 0; i < MAX_PARAMETERS; i++)
 	{
 		g_parameters[i] = 0.0;								// initial parameter values 
@@ -1288,11 +1287,12 @@ static int passes_arg(const cmd_context &context)
 	g_user_standard_calculation_mode = CalculationMode(context.charval[0]);
 	if (context.charval[0] == 'g')
 	{
-		g_stop_pass = (int(context.value[1]) - int('0'));
-		if (g_stop_pass < 0 || g_stop_pass > 6)
+		int value = (int(context.value[1]) - int('0'));
+		if (value < 0 || value > 6)
 		{
-			g_stop_pass = 0;
+			 value = 0;
 		}
+		g_externs.SetStopPass(value);
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
@@ -1595,7 +1595,7 @@ static int init_orbit_arg(const cmd_context &context)
 {
 	if (strcmp(context.value, "pixel") == 0)
 	{
-		g_use_initial_orbit_z = INITIALZ_PIXEL;
+		g_externs.SetUseInitialOrbitZ(INITIALZ_PIXEL);
 	}
 	else
 	{
@@ -1605,7 +1605,7 @@ static int init_orbit_arg(const cmd_context &context)
 		}
 		g_initial_orbit_z.x = context.floatval[0];
 		g_initial_orbit_z.y = context.floatval[1];
-		g_use_initial_orbit_z = INITIALZ_ORBIT;
+		g_externs.SetUseInitialOrbitZ(INITIALZ_ORBIT);
 	}
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }

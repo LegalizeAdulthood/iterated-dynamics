@@ -13,6 +13,7 @@
 #include "fractype.h"
 
 #include "calcfrac.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "fractals.h"
 #include "frasetup.h"
@@ -33,7 +34,7 @@ bool mandelbrot_setup()           // Mandelbrot Routine
 		&& !g_invert && g_decomposition[0] == 0 && g_rq_limit == 4.0
 		&& g_bit_shift == 29 && !g_potential_flag
 		&& g_biomorph == -1 && g_inside > COLORMODE_Z_MAGNITUDE && g_outside >= COLORMODE_ITERATION
-		&& g_use_initial_orbit_z != INITIALZ_ORBIT && !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
+		&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT && !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
 		&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
 	{
 		g_calculate_type = calculate_mandelbrot_l; // the normal case - use CALCMAND 
@@ -122,7 +123,7 @@ bool mandelbrot_setup_fp()
 			&& (g_inside >= COLORMODE_ITERATION)
 			// uncomment this next line if more outside options are added 
 			&& g_outside >= COLORMODE_INVERSE_TANGENT
-			&& g_use_initial_orbit_z != INITIALZ_ORBIT
+			&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
 			&& (g_orbit_save & ORBITSAVE_SOUND) == 0)
@@ -252,7 +253,7 @@ bool julia_setup_fp()
 			&& (g_inside >= COLORMODE_ITERATION)
 			// uncomment this next line if more outside options are added 
 			&& g_outside >= COLORMODE_INVERSE_TANGENT
-			&& g_use_initial_orbit_z != INITIALZ_ORBIT
+			&& g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT
 			&& (g_sound_state.flags() & SOUNDFLAG_ORBITMASK) < SOUNDFLAG_X
 			&& (g_finite_attractor == FINITE_ATTRACTOR_NO)
 			&& !g_using_jiim && g_bail_out_test == BAILOUT_MODULUS
@@ -950,6 +951,7 @@ bool marks_julia_setup()
 	}
 	else if (g_c_exp < 2)
 	{
+		assert((1L << g_bit_shift) == DoubleToFudge(1.0));
 		g_coefficient_l.x = 1L << g_bit_shift;
 		g_coefficient_l.y = 0L;
 	}

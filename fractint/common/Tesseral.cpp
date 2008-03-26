@@ -111,6 +111,7 @@ static int tesseral_row(int x1, int x2, int y)
 int tesseral()
 {
 	bool guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis);
+	// TODO: refactor this to use a std::vector<tess> instead of g_stack aliased to tess[]
 	tess *tp = (tess *) &g_stack[0];
 	tp->x1 = g_ix_start;                              // set up initial box 
 	tp->x2 = g_x_stop;

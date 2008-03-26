@@ -18,6 +18,7 @@
 #include "drivers.h"
 #include "diskvid.h"
 #include "encoder.h"
+#include "Externals.h"
 #include "filesystem.h"
 #include "loadfile.h"
 #include "miscres.h"
@@ -876,7 +877,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->finattract = short(g_finite_attractor);
 	save_info->initial_orbit_z[0] = g_initial_orbit_z.x;
 	save_info->initial_orbit_z[1] = g_initial_orbit_z.y;
-	save_info->use_initial_orbit_z = char(g_use_initial_orbit_z);
+	save_info->use_initial_orbit_z = char(g_externs.UseInitialOrbitZ());
 	save_info->periodicity = short(g_periodicity_check);
 	save_info->potential_16bit = short(g_disk_16bit) ? 1 : 0;
 	save_info->aspect_ratio = g_viewWindow.AspectRatio();
@@ -920,7 +921,7 @@ static void setup_save_info(fractal_info *save_info)
 	save_info->dinvert[1] = g_inversion[1];
 	save_info->dinvert[2] = g_inversion[2];
 	save_info->logcalc = short(g_log_dynamic_calculate);
-	save_info->stop_pass = short(g_stop_pass);
+	save_info->stop_pass = short(g_externs.StopPass());
 	save_info->quick_calculate = g_quick_calculate ? 1 : 0;
 	save_info->proximity = g_proximity;
 	save_info->no_bof = !g_beauty_of_fractals ? 1 : 0;

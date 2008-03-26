@@ -32,14 +32,29 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxId", "test\wxId\wxId\wxId
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{1596131D-AF51-4205-B27E-36198898F6C4} = {1596131D-AF51-4205-B27E-36198898F6C4}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxIdTest", "test\wxId\wxIdTest\wxIdTest.vcproj", "{D9365C3F-9BFE-4156-9EE9-0B4363C0533E}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{1596131D-AF51-4205-B27E-36198898F6C4} = {1596131D-AF51-4205-B27E-36198898F6C4}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "idTests", "test\idTests\idTests.vcproj", "{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45} = {63F5EF21-5682-4FB3-B6F4-EFB7D46F8A45}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxCGAWindowControl", "test\wxId\wxCGAWindowControl\wxCGAWindowControl.vcproj", "{1596131D-AF51-4205-B27E-36198898F6C4}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -85,6 +100,12 @@ Global
 		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Debug|Win32.Build.0 = Debug|Win32
 		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Release|Win32.ActiveCfg = Release|Win32
 		{E6F1DE95-CA05-4C61-B6CA-2739F3845C42}.Release|Win32.Build.0 = Release|Win32
+		{1596131D-AF51-4205-B27E-36198898F6C4}.Debug Boost|Win32.ActiveCfg = Debug|Win32
+		{1596131D-AF51-4205-B27E-36198898F6C4}.Debug Boost|Win32.Build.0 = Debug|Win32
+		{1596131D-AF51-4205-B27E-36198898F6C4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1596131D-AF51-4205-B27E-36198898F6C4}.Debug|Win32.Build.0 = Debug|Win32
+		{1596131D-AF51-4205-B27E-36198898F6C4}.Release|Win32.ActiveCfg = Release|Win32
+		{1596131D-AF51-4205-B27E-36198898F6C4}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -238,8 +238,12 @@ public:
 	virtual void SetInitializeBatch(InitializeBatchType value) = 0;
 	virtual int InitialCycleLimit() const = 0;
 	virtual void SetInitialCycleLimit(int value) = 0;
+
+	virtual ComplexL InitialOrbitL() const = 0;
+	virtual void SetInitialOrbitL(ComplexL value) = 0;
 	virtual ComplexD InitialOrbitZ() const = 0;
 	virtual void SetInitialOrbitZ(ComplexD value) = 0;
+
 	virtual int SaveTime() const = 0;
 	virtual void SetSaveTime(int value) = 0;
 	virtual int Inside() const = 0;
@@ -279,8 +283,6 @@ public:
 	virtual void SetLineBuffer(BYTE const *value) = 0;
 	virtual ComplexL InitialZL() const = 0;
 	virtual void SetInitialZL(ComplexL value) = 0;
-	virtual ComplexL InitOrbitL() const = 0;
-	virtual void SetInitOrbitL(ComplexL value) = 0;
 	virtual long InitialXL() const = 0;
 	virtual void SetInitialXL(long value) = 0;
 	virtual long InitialYL() const = 0;
@@ -477,8 +479,6 @@ public:
 	virtual void SetParameter2(ComplexD value) = 0;
 	virtual ComplexD Parameter() const = 0;
 	virtual void SetParameter(ComplexD value) = 0;
-	virtual int Passes() const = 0;
-	virtual void SetPasses(int value) = 0;
 	virtual int PatchLevel() const = 0;
 	virtual void SetPatchLevel(int value) = 0;
 	virtual int PeriodicityCheck() const = 0;

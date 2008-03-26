@@ -15,6 +15,7 @@
 #include "drivers.h"
 #include "EscapeTime.h"
 #include "evolve.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "FiniteAttractor.h"
@@ -169,7 +170,7 @@ static void read_info_version_3(const fractal_info &read_info)
 		g_finite_attractor = read_info.finattract;
 		g_initial_orbit_z.x = read_info.initial_orbit_z[0];
 		g_initial_orbit_z.y = read_info.initial_orbit_z[1];
-		g_use_initial_orbit_z = InitialZType(read_info.use_initial_orbit_z);
+		g_externs.SetUseInitialOrbitZ(InitialZType(read_info.use_initial_orbit_z));
 		g_user_periodicity_check = read_info.periodicity;
 	}
 }
@@ -385,7 +386,7 @@ static void read_info_version_11(const fractal_info &read_info)
 		g_inversion[1] = read_info.dinvert[1];
 		g_inversion[2] = read_info.dinvert[2];
 		g_log_dynamic_calculate = read_info.logcalc;
-		g_stop_pass = read_info.stop_pass;
+		g_externs.SetStopPass(read_info.stop_pass);
 	}
 }
 
@@ -1322,7 +1323,7 @@ static void translate_obsolete_fractal_types(const fractal_info *info)
 		g_user_distance_test = (info->y_dots - 1)*2;
 		break;
 	case FRACTYPE_MANDELBROT_LAMBDA:
-		g_use_initial_orbit_z = INITIALZ_PIXEL;
+		g_externs.SetUseInitialOrbitZ(INITIALZ_PIXEL);
 		break;
 	}
 	g_current_fractal_specific = &g_fractal_specific[g_fractal_type];

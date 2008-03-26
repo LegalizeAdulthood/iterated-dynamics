@@ -33,6 +33,7 @@
 #include "fpu.h"
 #include "calcfrac.h"
 #include "diskvid.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "fractalp.h"
 #include "fractals.h"
@@ -75,7 +76,7 @@ enum DotDirection
 
 // variables exported from this file 
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
-ComplexL g_init_orbit_l = { 0, 0 };
+ComplexL g_initial_orbit_l = { 0, 0 };
 
 int g_and_color;
 
@@ -95,7 +96,6 @@ long g_old_color_iter;
 long g_real_color_iter;
 int g_row;
 int g_col;
-int g_passes;
 int g_invert;
 double g_f_radius;
 double g_f_x_center;
@@ -128,8 +128,6 @@ int g_max_input_counter;    // avoids checking keyboard too often
 int g_got_status; // -1 if not, 0 for 1or2pass, 1 for ssg, 
 			  // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan 
               // 6 for orbits 
-int g_current_pass;
-int g_total_passes;
 int g_current_row;
 int g_current_col;
 bool g_three_pass;
@@ -714,19 +712,16 @@ int calculate_fractal()
 	g_rq_limit2 = sqrt(g_rq_limit);
 	if (g_integer_fractal)          // for integer routines (lambda) 
 	{
-		g_parameter_l.x = long(g_parameter.x*g_fudge);    // real portion of Lambda 
-		g_parameter_l.y = long(g_parameter.y*g_fudge);    // imaginary portion of Lambda 
-		g_parameter2_l.x = long(g_parameter2.x*g_fudge);  // real portion of Lambda2 
-		g_parameter2_l.y = long(g_parameter2.y*g_fudge);  // imaginary portion of Lambda2 
-		g_limit_l = long(g_rq_limit*g_fudge);      // stop if magnitude exceeds this 
+		g_parameter_l = ComplexDoubleToFudge(g_parameter); // Lambda
+		g_parameter2_l = ComplexDoubleToFudge(g_parameter2); // Lambda2
+		g_limit_l = DoubleToFudge(g_rq_limit);      // stop if magnitude exceeds this 
 		if (g_limit_l <= 0)
 		{
 			g_limit_l = 0x7fffffffL; // klooge for integer math 
 		}
-		g_limit2_l = long(g_rq_limit2*g_fudge);    // stop if magnitude exceeds this 
-		g_close_enough_l = long(g_close_enough*g_fudge); // "close enough" value 
-		g_init_orbit_l.x = long(g_initial_orbit_z.x*g_fudge);
-		g_init_orbit_l.y = long(g_initial_orbit_z.y*g_fudge);
+		g_limit2_l = DoubleToFudge(g_rq_limit2);    // stop if magnitude exceeds this 
+		g_close_enough_l = DoubleToFudge(g_close_enough); // "close enough" value 
+		g_initial_orbit_l = ComplexDoubleToFudge(g_initial_orbit_z);
 	}
 	g_resuming = (g_calculation_status == CALCSTAT_RESUMABLE);
 	if (!g_resuming) // free resume_info memory if any is hanging around 
@@ -770,7 +765,7 @@ int calculate_fractal()
 			// not a stand-alone 
 			// next two lines in case periodicity changed 
 			g_close_enough = g_delta_min_fp*pow(2.0, -double(abs(g_periodicity_check)));
-			g_close_enough_l = long(g_close_enough*g_fudge); // "close enough" value 
+			g_close_enough_l = DoubleToFudge(g_close_enough); // "close enough" value 
 			set_symmetry(g_symmetry, false);
 			timer_engine(g_calculate_type); // non-standard fractal engine 
 		}
@@ -1053,7 +1048,7 @@ static int draw_function_orbits()
 static int draw_orbits()
 {
 	g_got_status = GOT_STATUS_ORBITS; // for <tab> screen 
-	g_total_passes = 1;
+	g_externs.SetTotalPasses(1);
 
 	if (plot_orbits_2d_setup() == -1)
 	{
@@ -1078,10 +1073,10 @@ static int one_or_two_pass()
 {
 	int i;
 
-	g_total_passes = 1;
+	g_externs.SetTotalPasses(1);
 	if (g_standard_calculation_mode == CALCMODE_DUAL_PASS)
 	{
-		g_total_passes = 2;
+		g_externs.SetTotalPasses(2);
 	}
 	if (g_standard_calculation_mode == CALCMODE_DUAL_PASS && g_work_pass == 0) // do 1st pass of two 
 	{
@@ -1123,7 +1118,7 @@ static int one_or_two_pass()
 static int standard_calculate(int passnum)
 {
 	g_got_status = GOT_STATUS_12PASS;
-	g_current_pass = passnum;
+	g_externs.SetCurrentPass(passnum);
 	g_row = g_WorkList.yy_begin();
 	g_col = g_WorkList.xx_begin();
 
@@ -1391,20 +1386,13 @@ void ColorModeStarTrail::initialize()
 	g_max_iteration = 16;
 }
 
-void new_z_integer_to_float()
-{
-	g_new_z.x = double(g_new_z_l.x)/g_fudge;
-	g_new_z.y = double(g_new_z_l.y)/g_fudge;
-}
-
 void ColorModeStarTrail::update()
 {
 	if (0 < g_color_iter && g_color_iter < 16)
 	{
 		if (g_integer_fractal)
 		{
-			g_new_z.x = double(g_new_z_l.x)/g_fudge;
-			g_new_z.y = double(g_new_z_l.y)/g_fudge;
+			g_new_z = ComplexFudgeToDouble(g_new_z_l);
 		}
 
 		clamp(g_new_z.x);
@@ -1552,7 +1540,7 @@ void StandardFractal::initialize_periodicity()
 }
 void StandardFractal::initialize_float()
 {
-	if (g_use_initial_orbit_z == INITIALZ_ORBIT)
+	if (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT)
 	{
 		s_saved_z = g_initial_orbit_z;
 	}
@@ -1588,9 +1576,9 @@ void StandardFractal::initialize_float()
 }
 void StandardFractal::initialize_integer()
 {
-	if (g_use_initial_orbit_z == INITIALZ_ORBIT)
+	if (g_externs.UseInitialOrbitZ() == INITIALZ_ORBIT)
 	{
-		m_saved_z_l = g_init_orbit_l;
+		m_saved_z_l = g_initial_orbit_l;
 	}
 	else
 	{
@@ -1630,8 +1618,7 @@ void StandardFractal::outside_colormode_total_distance_initialize()
 	{
 		if (g_integer_fractal)
 		{
-			g_old_z.x = (double(g_old_z_l.x))/g_fudge;
-			g_old_z.y = (double(g_old_z_l.y))/g_fudge;
+			g_old_z = ComplexFudgeToDouble(g_old_z_l);
 		}
 		else if (g_bf_math == BIGNUM)
 		{
@@ -1701,7 +1688,7 @@ void StandardFractal::initialize()
 	m_colormode_period_cycle_start_iteration = 0;
 	m_colormode_total_distance = 0.0;
 	m_colormode_epsilon_cross_hooper = HOOPER_NONE;
-	m_colormode_epsilon_cross_proximity_l = long(g_proximity*g_fudge);
+	m_colormode_epsilon_cross_proximity_l = DoubleToFudge(g_proximity);
 }
 bool StandardFractal::interrupted()
 {
@@ -1835,8 +1822,7 @@ void StandardFractal::colormode_star_trail_update()
 	{
 		if (g_integer_fractal)
 		{
-			g_new_z.x = double(g_new_z_l.x)/g_fudge;
-			g_new_z.y = double(g_new_z_l.y)/g_fudge;
+			g_new_z = ComplexFudgeToDouble(g_new_z_l);
 		}
 
 		colormode_star_trail_clamp(g_new_z.x);
@@ -1896,8 +1882,7 @@ void StandardFractal::colormode_float_modulus_integer_update()
 {
 	if (g_integer_fractal)
 	{
-		g_new_z.x = double(g_new_z_l.x)/g_fudge;
-		g_new_z.y = double(g_new_z_l.y)/g_fudge;
+		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
 	double mag = fmod_test();
 	if (mag < g_proximity)
@@ -1913,8 +1898,7 @@ void StandardFractal::colormode_beauty_of_fractals_update()
 		{
 			g_magnitude_l = lsqr(g_new_z_l.x) + lsqr(g_new_z_l.y);
 		}
-		g_magnitude = g_magnitude_l;
-		g_magnitude /= g_fudge;
+		g_magnitude = FudgeToDouble(g_magnitude_l);
 	}
 	else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
 	{
@@ -1955,8 +1939,7 @@ void StandardFractal::outside_colormode_set_new_z_update()
 {
 	if (g_integer_fractal)
 	{
-		g_new_z.x = double(g_new_z_l.x)/g_fudge;
-		g_new_z.y = double(g_new_z_l.y)/g_fudge;
+		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
 	else if (g_bf_math == BIGNUM)
 	{
@@ -2000,8 +1983,7 @@ void StandardFractal::potential_set_new_z()
 {
 	if (g_integer_fractal)       // adjust integer fractals 
 	{
-		g_new_z.x = double(g_new_z_l.x)/g_fudge;
-		g_new_z.y = double(g_new_z_l.y)/g_fudge;
+		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
 	else if (g_bf_math == BIGNUM)
 	{
@@ -2051,8 +2033,7 @@ void StandardFractal::outside_colormode_set_new_z_final()
 {
 	if (g_integer_fractal)
 	{
-		g_new_z.x = double(g_new_z_l.x)/g_fudge;
-		g_new_z.y = double(g_new_z_l.y)/g_fudge;
+		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
 	else if (g_bf_math == BIGNUM)
 	{
@@ -2239,8 +2220,7 @@ void StandardFractal::inside_colormode_inverse_tangent_final()
 {
 	if (g_integer_fractal)
 	{
-		g_new_z.x = double(g_new_z_l.x)/g_fudge;
-		g_new_z.y = double(g_new_z_l.y)/g_fudge;
+		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
 	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_atan_colors/MathUtil::Pi));
 }
@@ -2259,7 +2239,7 @@ void StandardFractal::inside_colormode_beauty_of_fractals_61_final()
 void StandardFractal::inside_colormode_z_magnitude_final()
 {
 	g_color_iter = long(g_integer_fractal ?
-		((double(g_magnitude_l)/g_fudge)*(g_max_iteration/2) + 1)
+		(FudgeToDouble(g_magnitude_l)*(g_max_iteration/2) + 1)
 		: ((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration/2) + 1));
 }
 void StandardFractal::adjust_color_log_map()
@@ -2498,19 +2478,19 @@ static void decomposition()
 		if (reset_fudge != g_fudge)
 		{
 			reset_fudge = g_fudge;
-			// lcos45	= long(cos45*g_fudge); 
-			lsin45		= long(sin45*g_fudge);
-			lcos22_5	= long(cos22_5*g_fudge);
-			lsin22_5	= long(sin22_5*g_fudge);
-			lcos11_25	= long(cos11_25*g_fudge);
-			lsin11_25	= long(sin11_25*g_fudge);
-			lcos5_625	= long(cos5_625*g_fudge);
-			lsin5_625	= long(sin5_625*g_fudge);
-			ltan22_5	= long(tan22_5*g_fudge);
-			ltan11_25	= long(tan11_25*g_fudge);
-			ltan5_625	= long(tan5_625*g_fudge);
-			ltan2_8125	= long(tan2_8125*g_fudge);
-			ltan1_4063	= long(tan1_4063*g_fudge);
+			// lcos45	= DoubleToFudge(cos45); 
+			lsin45		= DoubleToFudge(sin45);
+			lcos22_5	= DoubleToFudge(cos22_5);
+			lsin22_5	= DoubleToFudge(sin22_5);
+			lcos11_25	= DoubleToFudge(cos11_25);
+			lsin11_25	= DoubleToFudge(sin11_25);
+			lcos5_625	= DoubleToFudge(cos5_625);
+			lsin5_625	= DoubleToFudge(sin5_625);
+			ltan22_5	= DoubleToFudge(tan22_5);
+			ltan11_25	= DoubleToFudge(tan11_25);
+			ltan5_625	= DoubleToFudge(tan5_625);
+			ltan2_8125	= DoubleToFudge(tan2_8125);
+			ltan1_4063	= DoubleToFudge(tan1_4063);
 		}
 		if (g_new_z_l.y < 0)
 		{
@@ -3008,9 +2988,9 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 	{
 		return;
 	}
-	bool parameters_are_zero = (g_parameter.x == 0.0 && g_parameter.y == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
-	bool parameters_have_zero_real = (g_parameter.x == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
-	bool parameters_have_zero_imaginary = (g_parameter.y == 0.0 && g_use_initial_orbit_z != INITIALZ_ORBIT);
+	bool parameters_have_zero_real = (g_parameter.x == 0.0 && g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT);
+	bool parameters_have_zero_imaginary = (g_parameter.y == 0.0 && g_externs.UseInitialOrbitZ() != INITIALZ_ORBIT);
+	bool parameters_are_zero = parameters_have_zero_real && parameters_have_zero_imaginary;
 	switch (g_fractal_type)
 	{
 	case FRACTYPE_MANDELBROT_LAMBDA_FUNC_OR_FUNC_L:      // These need only P1 checked. 
@@ -3816,7 +3796,7 @@ void PerformWorkList::common_escape_time_initialization()
 {
 	// some common initialization for escape-time pixel level routines 
 	g_close_enough = g_delta_min_fp*pow(2.0, double(-abs(g_periodicity_check)));
-	g_close_enough_l = long(g_close_enough*g_fudge); // "close enough" value 
+	g_close_enough_l = DoubleToFudge(g_close_enough); // "close enough" value 
 	g_input_counter = g_max_input_counter;
 
 	set_symmetry(g_symmetry, true);

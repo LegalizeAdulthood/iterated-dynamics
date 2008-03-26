@@ -39,6 +39,7 @@
  */
 #include <algorithm>
 #include <string>
+#include <vector>
 
 #include <string.h>
 
@@ -136,7 +137,7 @@ private:
 int JIIM::s_mode = JIIM_PIXEL;
 
 static int s_show_numbers = 0;              // toggle for display of coords 
-static char *s_rect_buff = 0;
+static std::vector<BYTE> s_rect_buff;
 static int s_windows = 0;               // windows management system 
 
 static int s_window_corner_x;
@@ -298,14 +299,15 @@ static void fillrect(int x, int y, int width, int height, int color)
 	{
 		return;
 	}
-	memset(g_stack, color % g_colors, width);
+	std::vector<BYTE> scanline;
+	scanline.resize(width, BYTE(color % g_colors));
 	while (height-- > 0)
 	{
 		if (driver_key_pressed()) // we could do this less often when in fast modes 
 		{
 			return;
 		}
-		put_row(x, y++, width, (char *)g_stack);
+		put_row(x, y++, width, &scanline[0]);
 	}
 }
 
@@ -542,25 +544,22 @@ static void SaveRect(int x, int y, int width, int height)
 	{
 		return;
 	}
-	s_rect_buff = new char[width*height];
-	if (s_rect_buff != 0)
-	{
-		char *buff = s_rect_buff;
+	s_rect_buff.resize(width*height);
+	BYTE *buff = &s_rect_buff[0];
 
-		cursor::cursor_hide();
-		for (int yoff = 0; yoff < height; yoff++)
-		{
-			get_row(x, y + yoff, width, buff);
-			put_row(x, y + yoff, width, (char *) g_stack);
-			buff += width;
-		}
-		cursor::cursor_show();
+	cursor::cursor_hide();
+	for (int yoff = 0; yoff < height; yoff++)
+	{
+		get_row(x, y + yoff, width, buff);
+		put_row(x, y + yoff, width, g_stack);
+		buff += width;
 	}
+	cursor::cursor_show();
 }
 
 static void RestoreRect(int x, int y, int width, int height)
 {
-	char *buff = s_rect_buff;
+	BYTE *buff = &s_rect_buff[0];
 
 	if (!g_has_inverse)
 	{
@@ -755,10 +754,8 @@ void JIIM::Execute()
 			{
 				if (g_integer_fractal)
 				{
-					_cReal = g_lx_pixel();
-					_cImag = g_ly_pixel();
-					_cReal /= (1L << g_bit_shift);
-					_cImag /= (1L << g_bit_shift);
+					_cReal = FudgeToDouble(g_lx_pixel());
+					_cImag = FudgeToDouble(g_ly_pixel());
 				}
 				else
 				{
@@ -777,8 +774,7 @@ void JIIM::Execute()
 			g_save_c.y = _cImag;
 			g_initial_z.y =  _cImag;
 			g_initial_z.x =  _cReal;
-			g_initial_z_l.x = long(g_initial_z.x*g_fudge);
-			g_initial_z_l.y = long(g_initial_z.y*g_fudge);
+			g_initial_z_l = ComplexDoubleToFudge(g_initial_z);
 
 			old_x = -1;
 			old_y = -1;
@@ -1042,10 +1038,7 @@ void JIIM::Execute()
 				color = int(iter) % g_colors;
 				if (g_integer_fractal)
 				{
-					g_old_z.x = g_old_z_l.x;
-					g_old_z.x /= g_fudge;
-					g_old_z.y = g_old_z_l.y;
-					g_old_z.y /= g_fudge;
+					g_old_z = ComplexFudgeToDouble(g_old_z_l);
 				}
 				x = int((g_old_z.x - g_initial_z.x)*x_factor*3*_zoom + _xCenter);
 				y = int((g_old_z.y - g_initial_z.y)*y_factor*3*_zoom + _yCenter);
@@ -1130,8 +1123,10 @@ finish:
 #endif
 	delete[] g_line_buffer;
 	g_line_buffer = 0;
-	delete[] s_rect_buff;
-	s_rect_buff = 0;
+	{
+		std::vector<BYTE> local;
+		s_rect_buff.swap(local);
+	}
 
 	g_using_jiim = false;
 	g_calculate_type = old_calculate_type;

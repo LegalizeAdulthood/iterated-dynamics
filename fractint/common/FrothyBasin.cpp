@@ -312,8 +312,7 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 		if (g_invert)
 		{
 			invert_z(&g_temp_z);
-			g_old_z_l.x = long(g_temp_z.x*g_fudge);
-			g_old_z_l.y = long(g_temp_z.y*g_fudge);
+			g_old_z_l = ComplexDoubleToFudge(g_temp_z);
 		}
 		else
 		{
