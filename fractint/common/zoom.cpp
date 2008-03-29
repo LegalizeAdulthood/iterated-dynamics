@@ -606,15 +606,15 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 	{
 		return 0; // not a full size unrotated unskewed zoombox 
 	}
-	if (g_externs.StandardCalculationMode() == 't')
+	if (g_externs.StandardCalculationMode() == CALCMODE_TESSERAL)
 	{
 		return 0; // tesselate, can't do it 
 	}
-	if (g_externs.StandardCalculationMode() == 'd')
+	if (g_externs.StandardCalculationMode() == CALCMODE_DIFFUSION)
 	{
 		return 0; // diffusion scan: can't do it either 
 	}
-	if (g_externs.StandardCalculationMode() == 'o')
+	if (g_externs.StandardCalculationMode() == CALCMODE_ORBITS)
 	{
 		return 0; // orbits, can't do it 
 	}
@@ -629,13 +629,15 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 	{
 		return 1; // 1 pass forced so align on any pixel 
 	}
-	if (g_externs.StandardCalculationMode() == 'b')
+	if (g_externs.StandardCalculationMode() == CALCMODE_BOUNDARY_TRACE)
 	{
 		return 1; // btm, align on any pixel 
 	}
-	if (g_externs.StandardCalculationMode() != 'g' || (g_current_fractal_specific->no_solid_guessing()))
+	if (g_externs.StandardCalculationMode() != CALCMODE_SOLID_GUESS
+		|| (g_current_fractal_specific->no_solid_guessing()))
 	{
-		if (g_externs.StandardCalculationMode() == '2' || g_externs.StandardCalculationMode() == '3') // align on even pixel for 2pass 
+		if (g_externs.StandardCalculationMode() == CALCMODE_DUAL_PASS
+			|| g_externs.StandardCalculationMode() == CALCMODE_TRIPLE_PASS) // align on even pixel for 2pass 
 		{
 			return 2;
 		}
