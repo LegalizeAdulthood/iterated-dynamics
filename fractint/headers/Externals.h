@@ -4,6 +4,7 @@
 #include <boost/filesystem/path.hpp>
 
 #include "Browse.h"
+#include "calcfrac.h"
 #include "EscapeTime.h"
 #include "SoundState.h"
 #include "UserInterfaceState.h"
@@ -215,11 +216,12 @@ public:
 	virtual void SetFXCenter(double value) = 0;
 	virtual double FYCenter() const = 0;
 	virtual void SetFYCenter(double value) = 0;
-	virtual GENEBASE *Genes() const = 0;
+	virtual GENEBASE const *Genes() const = 0;
+	virtual GENEBASE *Genes() = 0;
 	virtual bool Gif87aFlag() const = 0;
 	virtual void SetGif87aFlag(bool value) = 0;
-	virtual int GotStatus() const = 0;
-	virtual void SetGotStatus(int value) = 0;
+	virtual TabStatusType TabStatus() const = 0;
+	virtual void SetTabStatus(TabStatusType value) = 0;
 	virtual bool GrayscaleDepth() const = 0;
 	virtual void SetGrayscaleDepth(bool value) = 0;
 	virtual bool HasInverse() const = 0;
@@ -769,6 +771,10 @@ public:
 	virtual ViewWindow &View() = 0;
 	virtual void SetFileNameStackTop(std::string const &value) = 0;
 	virtual boost::filesystem::path const &WorkDirectory() const = 0;
+	virtual CalculationMode StandardCalculationMode() const = 0;
+	virtual void SetStandardCalculationMode(CalculationMode value) = 0;
+	virtual CalculationMode UserStandardCalculationMode() const = 0;
+	virtual void SetUserStandardCalculationMode(CalculationMode value) = 0;
 };
 
 extern Externals &g_externs;

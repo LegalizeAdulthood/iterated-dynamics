@@ -237,11 +237,12 @@ public:
 	virtual void SetFXCenter(double value)			{ throw not_implemented("SetFXCenter"); }
 	virtual double FYCenter() const 				{ throw not_implemented("FYCenter"); }
 	virtual void SetFYCenter(double value) 			{ throw not_implemented("SetFYCenter"); }
-	virtual GENEBASE *Genes() const 				{ throw not_implemented("Genes"); }
+	virtual GENEBASE const *Genes() const 			{ throw not_implemented("Genes"); }
+	virtual GENEBASE *Genes()						{ throw not_implemented("Genes"); }
 	virtual bool Gif87aFlag() const 				{ throw not_implemented("Gif87aFlag"); }
 	virtual void SetGif87aFlag(bool value) 			{ throw not_implemented("SetGif87aFlag"); }
-	virtual int GotStatus() const 					{ throw not_implemented("GotStatus"); }
-	virtual void SetGotStatus(int value) 			{ throw not_implemented("SetGotStatus"); }
+	virtual TabStatusType TabStatus() const 		{ throw not_implemented("TabStatus"); }
+	virtual void SetTabStatus(TabStatusType value) 	{ throw not_implemented("SetTabStatus"); }
 	virtual bool GrayscaleDepth() const 			{ throw not_implemented("GrayscaleDepth"); }
 	virtual void SetGrayscaleDepth(bool value)		{ throw not_implemented("SetGrayscaleDepth"); }
 	virtual bool HasInverse() const 				{ throw not_implemented("HasInverse"); }
@@ -820,6 +821,10 @@ public:
 	virtual ViewWindow &View() 						{ throw not_implemented("View"); }
 	virtual void SetFileNameStackTop(std::string const &value) { throw not_implemented("SetFileNameStackTop"); }
 	virtual boost::filesystem::path const &WorkDirectory() const { throw not_implemented("WorkingDirectory"); }
+	virtual CalculationMode StandardCalculationMode() const { throw not_implemented("StandardCalculationMode"); }
+	virtual void SetStandardCalculationMode(CalculationMode value) { throw not_implemented("SetStandardCalculationMode"); }
+	virtual CalculationMode UserStandardCalculationMode() const { throw not_implemented("UserStandardCalculationMode"); }
+	virtual void SetUserStandardCalculationMode(CalculationMode value) { throw not_implemented("SetUserStandardCalculationMode"); }
 
 private:
 	FakeExternals *mutate() const					{ return const_cast<FakeExternals *>(this); }

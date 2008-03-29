@@ -53,7 +53,6 @@ class IBigWhileLoopGlobals
 public:
 	virtual ~IBigWhileLoopGlobals() {}
 
-	virtual void SetUserStandardCalculationMode(CalculationMode value) = 0;
 	virtual CalculationMode StandardCalculationModeOld() = 0;
 	virtual int ScreenXOffset() = 0;
 	virtual int ScreenYOffset() = 0;

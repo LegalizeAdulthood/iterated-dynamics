@@ -152,12 +152,12 @@ static void read_info_version_3(const fractal_info &read_info)
 		g_escape_time_state.m_grid_fp.x_3rd() = read_info.x_3rd;
 		g_escape_time_state.m_grid_fp.y_3rd() = read_info.y_3rd;
 		g_calculation_status = read_info.calculation_status;
-		g_user_standard_calculation_mode = CalculationMode(read_info.stdcalcmode);
+		g_externs.SetUserStandardCalculationMode(CalculationMode(read_info.stdcalcmode));
 		g_three_pass = false;
-		if (g_user_standard_calculation_mode == CalculationMode(127))
+		if (g_externs.UserStandardCalculationMode() == CalculationMode(127))
 		{
 			g_three_pass = true;
-			g_user_standard_calculation_mode = CALCMODE_TRIPLE_PASS;
+			g_externs.SetUserStandardCalculationMode(CALCMODE_TRIPLE_PASS);
 		}
 		g_user_distance_test = read_info.distestold;
 		g_user_float_flag = (read_info.float_flag != 0);

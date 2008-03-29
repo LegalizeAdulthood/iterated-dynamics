@@ -62,11 +62,11 @@ ApplicationStateType BigWhileLoopImpl::GetMainMenuState(bool julia_entered_from_
 		mainMenuState == APPSTATE_RESTART))
 	{
 		_externs.SetQuickCalculate(false);
-		_data.SetUserStandardCalculationMode(_data.StandardCalculationModeOld());
+		_externs.SetUserStandardCalculationMode(_data.StandardCalculationModeOld());
 	}
 	if (_externs.QuickCalculate() && _externs.CalculationStatus() != CALCSTAT_COMPLETED)
 	{
-		_data.SetUserStandardCalculationMode(CALCMODE_SINGLE_PASS);
+		_externs.SetUserStandardCalculationMode(CALCMODE_SINGLE_PASS);
 	}
 	return mainMenuState;
 }

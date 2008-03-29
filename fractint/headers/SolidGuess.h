@@ -1,15 +1,5 @@
-#if !defined(SOLID_GUESS_H)
-#define SOLID_GUESS_H
+#pragma once
 
-class SolidGuessScanner
-{
-public:
-	virtual void Execute() = 0;
+#include "calcfrac.h"
 
-protected:
-	virtual ~SolidGuessScanner() { }
-};
-
-extern SolidGuessScanner &g_solidGuessScanner;
-
-#endif
+extern WorkListScanner &g_solidGuessScanner;

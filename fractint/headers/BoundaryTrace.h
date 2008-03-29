@@ -1,6 +1,5 @@
-#if !defined(BOUNDARY_TRACE_H)
-#define BOUNDARY_TRACE_H
+#pragma once
 
-extern int boundary_trace_main();
+#include "calcfrac.h"
 
-#endif
+extern WorkListScanner &g_boundaryTraceScan;

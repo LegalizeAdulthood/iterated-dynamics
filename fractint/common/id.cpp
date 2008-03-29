@@ -105,7 +105,6 @@ double  g_z_width;
 double	g_z_depth;
 double	g_z_skew;    // zoombox size & shape     
 int     g_fractal_type;               // if == 0, use Mandelbrot  
-CalculationMode g_standard_calculation_mode;            // '1', '2', 'g', 'b'       
 long    g_c_real;
 long	g_c_imag;           // real, imag'ry parts of C 
 long    g_delta_min;                 // for calcfrac/calculate_mandelbrot_l 

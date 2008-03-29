@@ -956,56 +956,56 @@ top:
 
 	++s_row;
 
-	if ((g_got_status >= GOT_STATUS_12PASS) &&
+	if ((g_externs.TabStatus() >= TAB_STATUS_12PASS) &&
 		(g_calculation_status == CALCSTAT_IN_PROGRESS || g_calculation_status == CALCSTAT_RESUMABLE))
 	{
-		switch (g_got_status)
+		switch (g_externs.TabStatus())
 		{
-		case GOT_STATUS_12PASS:
+		case TAB_STATUS_12PASS:
 			sprintf(msg, "%d Pass Mode", g_externs.TotalPasses());
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
-			if (g_user_standard_calculation_mode == CALCMODE_TRIPLE_PASS)
+			if (g_externs.UserStandardCalculationMode() == CALCMODE_TRIPLE_PASS)
 			{
 				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
 			break;
-		case GOT_STATUS_GUESSING:
+		case TAB_STATUS_GUESSING:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Solid Guessing");
-			if (g_user_standard_calculation_mode == CALCMODE_TRIPLE_PASS)
+			if (g_externs.UserStandardCalculationMode() == CALCMODE_TRIPLE_PASS)
 			{
 				driver_put_string(s_row, -1, C_GENERAL_HI, " (threepass)");
 			}
 			break;
-		case GOT_STATUS_BOUNDARY_TRACE:
+		case TAB_STATUS_BOUNDARY_TRACE:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Boundary Tracing");
 			break;
-		case GOT_STATUS_3D:
+		case TAB_STATUS_3D:
 			sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, g_file_y_dots);
 			driver_put_string(s_row, 2, C_GENERAL_HI, msg);
 			break;
-		case GOT_STATUS_TESSERAL:
+		case TAB_STATUS_TESSERAL:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Tesseral");
 			break;
-		case GOT_STATUS_DIFFUSION:
+		case TAB_STATUS_DIFFUSION:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Diffusion");
 			break;
-		case GOT_STATUS_ORBITS:
+		case TAB_STATUS_ORBITS:
 			driver_put_string(s_row, 2, C_GENERAL_HI, "Orbits");
 			break;
 		}
 		++s_row;
-		if (g_got_status == GOT_STATUS_DIFFUSION)
+		if (g_externs.TabStatus() == TAB_STATUS_DIFFUSION)
 		{
 			driver_put_string(s_row, 2, C_GENERAL_MED, g_diffusionScan.Status());
 			++s_row;
 		}
 		else
-		if (g_got_status != GOT_STATUS_3D)
+		if (g_externs.TabStatus() != TAB_STATUS_3D)
 		{
 			sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
 					g_WorkList.yy_start(), g_WorkList.xx_start(), g_WorkList.yy_stop(), g_WorkList.xx_stop());
 			driver_put_string(s_row, 2, C_GENERAL_MED, msg);
-			if (g_got_status == GOT_STATUS_BOUNDARY_TRACE || g_got_status == GOT_STATUS_TESSERAL)  // btm or tesseral 
+			if (g_externs.TabStatus() == TAB_STATUS_BOUNDARY_TRACE || g_externs.TabStatus() == TAB_STATUS_TESSERAL)  // btm or tesseral 
 			{
 				driver_put_string(-1, -1, C_GENERAL_MED, "at ");
 				sprintf(msg, "[%d, %d]", g_current_row, g_current_col);
@@ -1036,7 +1036,7 @@ top:
 	driver_put_string(s_row, 2, C_GENERAL_MED, "Calculation time:");
 	get_calculation_time(msg, g_calculation_time);
 	driver_put_string(-1, -1, C_GENERAL_HI, msg);
-	if ((g_got_status == GOT_STATUS_DIFFUSION) && (g_calculation_status == CALCSTAT_IN_PROGRESS))  // estimate total time 
+	if ((g_externs.TabStatus() == TAB_STATUS_DIFFUSION) && (g_calculation_status == CALCSTAT_IN_PROGRESS))  // estimate total time 
 	{
 		driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
 		driver_put_string(-1, -1, C_GENERAL_HI, g_diffusionScan.CalculationTime());

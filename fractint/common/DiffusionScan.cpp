@@ -12,6 +12,7 @@
 #include "prototyp.h"
 
 #include "calcfrac.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "miscres.h"
 
@@ -25,7 +26,7 @@ class DiffusionScanImpl : public DiffusionScan
 public:
 	virtual ~DiffusionScanImpl() { }
 
-	virtual void Execute();
+	virtual void Scan();
 	virtual std::string CalculationTime() const;
 	virtual std::string Status() const;
 
@@ -386,11 +387,11 @@ inline double log_length(int start, int stop)
 	return log(double(stop - start + 1));
 }
 
-void DiffusionScanImpl::Execute()
+void DiffusionScanImpl::Scan()
 {
 	double log2 = double(log(2.0));
 
-	g_got_status = GOT_STATUS_DIFFUSION;
+	g_externs.SetTabStatus(TAB_STATUS_DIFFUSION);
 
 	// note: the max size of 2048x2048 gives us a 22 bit counter that will 
 	// fit any 32 bit architecture, the maxinum limit for this case would  

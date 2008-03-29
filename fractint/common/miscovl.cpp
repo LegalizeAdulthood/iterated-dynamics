@@ -1013,13 +1013,13 @@ static void write_batch_parms_initial_orbit()
 
 static void write_batch_parms_passes()
 {
-	if (g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
+	if (g_externs.UserStandardCalculationMode() != CALCMODE_SOLID_GUESS)
 	{
-		put_parm(format(" passes=%c") % char(g_user_standard_calculation_mode));
+		put_parm(format(" passes=%c") % char(g_externs.UserStandardCalculationMode()));
 	}
 	if (g_externs.StopPass() != 0)
 	{
-		put_parm(format(" passes=%c%c") % char(g_user_standard_calculation_mode) % char(g_externs.StopPass() + '0'));
+		put_parm(format(" passes=%c%c") % char(g_externs.UserStandardCalculationMode()) % char(g_externs.StopPass() + '0'));
 	}
 }
 
@@ -1478,7 +1478,7 @@ static void write_batch_parms_screen_coords()
 
 static void write_batch_parms_orbit_corners()
 {
-	if (g_user_standard_calculation_mode == CALCMODE_ORBITS && g_set_orbit_corners && g_keep_screen_coords)
+	if (g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS && g_set_orbit_corners && g_keep_screen_coords)
 	{
 		put_parm(" orbitcorners=");
 		int xdigits = getprec(g_orbit_x_min, g_orbit_x_max, g_orbit_x_3rd);

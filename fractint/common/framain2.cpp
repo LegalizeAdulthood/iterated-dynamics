@@ -22,6 +22,7 @@
 #include "editpal.h"
 #include "encoder.h"
 #include "evolve.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "filesystem.h"
 #include "fracsubr.h"
@@ -296,14 +297,14 @@ static void handle_options(int kbdchar, bool &kbdmore, long *old_maxit)
 		&& g_current_fractal_specific->calculate_type == standard_fractal
 		&& !g_log_palette_mode
 		&& !g_true_color // recalc not yet implemented with truecolor 
-		&& !(g_user_standard_calculation_mode == CALCMODE_TESSERAL && g_fill_color > -1) // tesseral with fill doesn't work 
-		&& !(g_user_standard_calculation_mode == CALCMODE_ORBITS)
+		&& !(g_externs.UserStandardCalculationMode() == CALCMODE_TESSERAL && g_fill_color > -1) // tesseral with fill doesn't work 
+		&& !(g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS)
 		&& i == COMMANDRESULT_FRACTAL_PARAMETER // nothing else changed 
 		&& g_outside != COLORMODE_INVERSE_TANGENT)
 	{
 		g_quick_calculate = true;
-		g_standard_calculation_mode_old = g_user_standard_calculation_mode;
-		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+		g_standard_calculation_mode_old = g_externs.UserStandardCalculationMode();
+		g_externs.SetUserStandardCalculationMode(CALCMODE_SINGLE_PASS);
 		kbdmore = false;
 		g_calculation_status = CALCSTAT_RESUMABLE;
 	}
@@ -404,7 +405,7 @@ static ApplicationStateType handle_toggle_float()
 	{
 		g_user_float_flag = true;
 	}
-	else if (g_standard_calculation_mode != 'o') // don't go there 
+	else if (g_externs.StandardCalculationMode() != 'o') // don't go there 
 	{
 		g_user_float_flag = false;
 	}
@@ -1042,7 +1043,7 @@ ApplicationStateType main_menu_switch(int &kbdchar, bool &frommandel, bool &kbdm
 		{
 			g_quick_calculate = false;
 		}
-		g_user_standard_calculation_mode = g_standard_calculation_mode_old;
+		g_externs.SetUserStandardCalculationMode(g_standard_calculation_mode_old);
 	}
 	switch (kbdchar)
 	{

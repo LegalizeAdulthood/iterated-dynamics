@@ -52,7 +52,7 @@ static  int get_screen_corners();
 
 static int calculation_mode()
 {
-	switch (g_user_standard_calculation_mode)
+	switch (g_externs.UserStandardCalculationMode())
 	{
 	case CALCMODE_SINGLE_PASS:			return 0;
 	case CALCMODE_DUAL_PASS:			return 1;
@@ -118,7 +118,7 @@ static std::string save_name()
 
 int get_toggles()
 {
-	CalculationMode old_user_standard_calculation_mode = g_user_standard_calculation_mode;
+	CalculationMode old_user_standard_calculation_mode = g_externs.UserStandardCalculationMode();
 	int old_stop_pass = g_externs.StopPass();
 	long old_max_iteration = g_max_iteration;
 	int old_inside = g_inside;
@@ -189,20 +189,20 @@ int get_toggles()
 	}
 
 	int k = -1;
-	g_user_standard_calculation_mode = CalculationMode(calculation_modes[dialog.values(++k).uval.ch.val][0]);
+	g_externs.SetUserStandardCalculationMode(CalculationMode(calculation_modes[dialog.values(++k).uval.ch.val][0]));
 	g_externs.SetStopPass(int(calculation_modes[dialog.values(k).uval.ch.val][1]) - int('0'));
-	if (g_externs.StopPass() < 0 || g_externs.StopPass() > 6 || g_user_standard_calculation_mode != CALCMODE_SOLID_GUESS)
+	if (g_externs.StopPass() < 0 || g_externs.StopPass() > 6 || g_externs.UserStandardCalculationMode() != CALCMODE_SOLID_GUESS)
 	{
 		g_externs.SetStopPass(0);
 	}
 	// Oops, lyapunov type doesn't use 'new' & breaks orbits 
-	if (g_user_standard_calculation_mode == CALCMODE_ORBITS
+	if (g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS
 		&& g_fractal_type == FRACTYPE_LYAPUNOV)
 	{
-		g_user_standard_calculation_mode = old_user_standard_calculation_mode;
+		g_externs.SetUserStandardCalculationMode(old_user_standard_calculation_mode);
 	}
 	int j = 0;
-	if (old_user_standard_calculation_mode != g_user_standard_calculation_mode)
+	if (old_user_standard_calculation_mode != g_externs.UserStandardCalculationMode())
 	{
 		j++;
 	}

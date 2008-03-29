@@ -26,6 +26,7 @@
 #include "3d.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "filesystem.h"
 #include "line3d.h"
 #include "miscres.h"
@@ -3098,7 +3099,7 @@ static int once_per_image(int line_length, VECTOR v)
 		s_last_row[i] = s_bad;
 		s_f_last_row[i] = s_f_bad;
 	}
-	g_got_status = GOT_STATUS_3D;
+	g_externs.SetTabStatus(TAB_STATUS_3D);
 	return 0;
 } // end of once-per-image intializations 
 

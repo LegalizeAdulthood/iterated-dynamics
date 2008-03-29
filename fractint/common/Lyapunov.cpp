@@ -9,6 +9,7 @@
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "fractals.h"
 #include "realdos.h"
 
@@ -139,10 +140,9 @@ bool lyapunov_setup()
 		stop_message(STOPMSG_NORMAL, "Sorry, inside options other than inside=nnn are not supported by the lyapunov");
 		g_inside = 1;
 	}
-	if (g_user_standard_calculation_mode == CALCMODE_ORBITS)  // Oops, lyapunov type 
+	if (g_externs.UserStandardCalculationMode() == CALCMODE_ORBITS)  // Oops, lyapunov type 
 	{
-		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;  // doesn't use new & breaks orbits 
-		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+		ForceOnePass();
 	}
 	return true;
 }

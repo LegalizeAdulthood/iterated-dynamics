@@ -5,7 +5,7 @@ extern void save_parameter_history();
 extern void restore_parameter_history();
 extern  int get_evolve_parameters();
 extern  void set_current_parameters();
-extern  void fiddle_parameters(GENEBASE gene[], int ecount);
+extern  void fiddle_parameters(GENEBASE *gene, int ecount);
 extern  void set_evolve_ranges();
 extern  void set_mutation_level(int);
 extern  void draw_parameter_box(bool clear_not_redraw);

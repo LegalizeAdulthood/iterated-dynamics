@@ -483,7 +483,7 @@ int solid_guess()
 	g_iy_start = g_WorkList.yy_begin();
 	g_iy_start &= -1 - (s_max_block - 1);
 
-	g_got_status = GOT_STATUS_GUESSING;
+	g_externs.SetTabStatus(TAB_STATUS_GUESSING);
 
 	if (g_work_pass == 0) // otherwise first pass already done 
 	{
@@ -648,15 +648,15 @@ int solid_guess()
 	return 0;
 }
 
-class SolidGuessScannerImpl : public SolidGuessScanner
+class SolidGuessScannerImpl : public WorkListScanner
 {
 public:
 	virtual ~SolidGuessScannerImpl() { }
-	virtual void Execute()
+	virtual void Scan()
 	{
 		solid_guess();
 	}
 };
 
 static SolidGuessScannerImpl s_solidGuessScannerImpl;
-SolidGuessScanner &g_solidGuessScanner(s_solidGuessScannerImpl);
+WorkListScanner &g_solidGuessScanner(s_solidGuessScannerImpl);

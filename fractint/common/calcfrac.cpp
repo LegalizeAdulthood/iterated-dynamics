@@ -74,6 +74,14 @@ enum DotDirection
 	UPPER_LEFT		= 4
 };
 
+class OrbitScanner : public WorkListScanner
+{
+public:
+	virtual ~OrbitScanner() { }
+
+	virtual void Scan();
+};
+
 // variables exported from this file 
 int g_orbit_draw_mode = ORBITDRAW_RECTANGLE;
 ComplexL g_initial_orbit_l = { 0, 0 };
@@ -124,10 +132,6 @@ SymmetryType g_symmetry;
 bool g_reset_periodicity; // nonzero if escape time pixel rtn to reset 
 int g_input_counter;
 int g_max_input_counter;    // avoids checking keyboard too often 
-// variables which must be visible for tab_display 
-int g_got_status; // -1 if not, 0 for 1or2pass, 1 for ssg, 
-			  // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan 
-              // 6 for orbits 
 int g_current_row;
 int g_current_col;
 bool g_three_pass;
@@ -150,6 +154,11 @@ int g_first_saved_and;
 int g_atan_colors = 180;
 long (*g_calculate_mandelbrot_asm_fp)();
 
+int g_ix_start;
+int g_iy_start;						// start here 
+int g_work_pass;
+int g_work_sym;                   // for the sake of calculate_mandelbrot_l 
+
 // routines in this module      
 static int one_or_two_pass();
 static int  standard_calculate(int passnum);
@@ -159,7 +168,6 @@ static void set_symmetry(int symmetry, bool use_list);
 static int  x_symmetry_split(int, int);
 static int  y_symmetry_split(int, int);
 static void put_truecolor_disk(int, int, int);
-static int draw_orbits();
 // added for testing automatic_log_map() 
 static long automatic_log_map();
 static void plot_color_symmetry_pi(int x, int y, int color);
@@ -169,11 +177,6 @@ static void plot_color_symmetry_y_axis(int x, int y, int color);
 static void plot_color_symmetry_xy_axis(int x, int y, int color);
 static void plot_color_symmetry_x_axis_basin(int x, int y, int color);
 static void plot_color_symmetry_xy_axis_basin(int x, int y, int color);
-
-int g_ix_start;
-int g_iy_start;						// start here 
-int g_work_pass;
-int g_work_sym;                   // for the sake of calculate_mandelbrot_l 
 
 static double s_dem_delta;
 static double s_dem_width;     // distance estimator variables 
@@ -189,6 +192,8 @@ static int s_show_dot_color;
 static int s_show_dot_width = 0;
 
 static double const DEM_BAILOUT = 535.5;  // (pb: not sure if this is special or arbitrary) 
+
+static OrbitScanner s_orbitScanner;
 
 
 // FMODTEST routine. 
@@ -511,6 +516,13 @@ static int calculate_type_show_dot()
 	return out;
 }
 
+void ForceOnePass()
+{
+	// Have to force passes = 1 
+	g_externs.SetUserStandardCalculationMode(CALCMODE_SINGLE_PASS);
+	g_externs.SetStandardCalculationMode(CALCMODE_SINGLE_PASS);
+}
+
 // calculate_fractal - the top level routine for generating an image
 int calculate_fractal()
 {
@@ -522,18 +534,14 @@ int calculate_fractal()
 	g_plot_color_put_color = putcolor_a;
 	if (g_is_true_color && g_true_mode_iterates)
 	{
-		// Have to force passes = 1 
-		g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
-		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+		ForceOnePass();
 	}
 	if (g_true_color)
 	{
 		check_write_file(g_light_name, ".tga");
 		if (start_disk_targa(g_light_name, 0, false) == 0)
 		{
-			// Have to force passes = 1 
-			g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
-			g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+			ForceOnePass();
 			g_plot_color_put_color = put_truecolor_disk;
 		}
 		else
@@ -543,10 +551,9 @@ int calculate_fractal()
 	}
 	if (!g_escape_time_state.m_use_grid)
 	{
-		if (g_user_standard_calculation_mode != CALCMODE_ORBITS)
+		if (g_externs.UserStandardCalculationMode() != CALCMODE_ORBITS)
 		{
-			g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
-			g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+			ForceOnePass();
 		}
 	}
 
@@ -782,28 +789,28 @@ int calculate_fractal()
 	}
 	else // standard escape-time engine 
 	{
-		if (g_standard_calculation_mode == CALCMODE_TRIPLE_PASS)  // convoluted 'g' + '2' hybrid 
+		if (g_externs.StandardCalculationMode() == CALCMODE_TRIPLE_PASS)  // convoluted 'g' + '2' hybrid 
 		{
-			CalculationMode oldcalcmode = g_standard_calculation_mode;
+			CalculationMode oldcalcmode = g_externs.StandardCalculationMode();
 			if (!g_resuming || g_three_pass)
 			{
-				g_standard_calculation_mode = CALCMODE_SOLID_GUESS;
+				g_externs.SetStandardCalculationMode(CALCMODE_SOLID_GUESS);
 				g_three_pass = true;
 				timer_engine((int (*)()) perform_work_list);
 				if (g_calculation_status == CALCSTAT_COMPLETED)
 				{
 					// '2' is silly after 'g' for low rez 
-					g_standard_calculation_mode = (g_x_dots >= 640) ? CALCMODE_DUAL_PASS : CALCMODE_SINGLE_PASS;
+					g_externs.SetStandardCalculationMode((g_x_dots >= 640) ? CALCMODE_DUAL_PASS : CALCMODE_SINGLE_PASS);
 					timer_engine((int (*)()) perform_work_list);
 					g_three_pass = false;
 				}
 			}
 			else // resuming '2' pass 
 			{
-				g_standard_calculation_mode = (g_x_dots >= 640) ? CALCMODE_DUAL_PASS : CALCMODE_SINGLE_PASS;
+				g_externs.SetStandardCalculationMode((g_x_dots >= 640) ? CALCMODE_DUAL_PASS : CALCMODE_SINGLE_PASS);
 				timer_engine((int (*)()) perform_work_list);
 			}
-			g_standard_calculation_mode = oldcalcmode;
+			g_externs.SetStandardCalculationMode(oldcalcmode);
 		}
 		else // main case, much nicer! 
 		{
@@ -1044,59 +1051,68 @@ static int draw_function_orbits()
 	return 0;
 }
 
-static int draw_orbits()
+void OrbitScanner::Scan()
 {
-	g_got_status = GOT_STATUS_ORBITS; // for <tab> screen 
+	g_externs.SetTabStatus(TAB_STATUS_ORBITS); // for <tab> screen 
 	g_externs.SetTotalPasses(1);
 
 	if (plot_orbits_2d_setup() == -1)
 	{
-		g_standard_calculation_mode = CALCMODE_SOLID_GUESS;
-		return -1;
+		g_externs.SetStandardCalculationMode(CALCMODE_SOLID_GUESS);
 	}
 
 	switch (g_orbit_draw_mode)
 	{
-	case ORBITDRAW_RECTANGLE:	return draw_rectangle_orbits();	break;
-	case ORBITDRAW_LINE:		return draw_line_orbits();		break;
-	case ORBITDRAW_FUNCTION:	return draw_function_orbits();	break;
+	case ORBITDRAW_RECTANGLE:	draw_rectangle_orbits();	break;
+	case ORBITDRAW_LINE:		draw_line_orbits();			break;
+	case ORBITDRAW_FUNCTION:	draw_function_orbits();		break;
 
 	default:
 		assert(!"bad orbit draw mode");
 	}
-
-	return 0;
 }
 
-static int one_or_two_pass()
+class MultiPassScanner : public WorkListScanner
+{
+public:
+	virtual ~MultiPassScanner() { }
+
+	virtual void Scan();
+};
+
+static MultiPassScanner s_multiPassScanner;
+
+void MultiPassScanner::Scan()
 {
 	int i;
 
 	g_externs.SetTotalPasses(1);
-	if (g_standard_calculation_mode == CALCMODE_DUAL_PASS)
+	if (g_externs.StandardCalculationMode() == CALCMODE_DUAL_PASS)
 	{
 		g_externs.SetTotalPasses(2);
-	}
-	if (g_standard_calculation_mode == CALCMODE_DUAL_PASS && g_work_pass == 0) // do 1st pass of two 
-	{
-		if (standard_calculate(1) == -1)
+
+		if (g_work_pass == 0) // do 1st pass of two 
 		{
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
-				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row,
-				0, g_work_sym);
-			return -1;
+			if (standard_calculate(1) == -1)
+			{
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
+					g_WorkList.yy_start(), g_WorkList.yy_stop(), g_row,
+					0, g_work_sym);
+				return;
+			}
+			if (g_WorkList.num_items() > 0) // g_work_list not empty, defer 2nd pass 
+			{
+				g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
+					g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
+					1, g_work_sym);
+				return;
+			}
+			g_work_pass = 1;
+			g_WorkList.set_xx_begin(g_WorkList.xx_start());
+			g_WorkList.set_yy_begin(g_WorkList.yy_start());
 		}
-		if (g_WorkList.num_items() > 0) // g_work_list not empty, defer 2nd pass 
-		{
-			g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_WorkList.xx_start(),
-				g_WorkList.yy_start(), g_WorkList.yy_stop(), g_WorkList.yy_start(),
-				1, g_work_sym);
-			return 0;
-		}
-		g_work_pass = 1;
-		g_WorkList.set_xx_begin(g_WorkList.xx_start());
-		g_WorkList.set_yy_begin(g_WorkList.yy_start());
 	}
+
 	// second or only pass 
 	if (standard_calculate(2) == -1)
 	{
@@ -1108,15 +1124,12 @@ static int one_or_two_pass()
 		g_WorkList.add(g_WorkList.xx_start(), g_WorkList.xx_stop(), g_col,
 			g_row, i, g_row,
 			g_work_pass, g_work_sym);
-		return -1;
 	}
-
-	return 0;
 }
 
 static int standard_calculate(int passnum)
 {
-	g_got_status = GOT_STATUS_12PASS;
+	g_externs.SetTabStatus(TAB_STATUS_12PASS);
 	g_externs.SetCurrentPass(passnum);
 	g_row = g_WorkList.yy_begin();
 	g_col = g_WorkList.xx_begin();
@@ -1137,7 +1150,7 @@ static int standard_calculate(int passnum)
 					continue;
 				}
 			}
-			if (passnum == 1 || g_standard_calculation_mode == CALCMODE_SINGLE_PASS || (g_row&1) != 0 || (g_col&1) != 0)
+			if (passnum == 1 || g_externs.StandardCalculationMode() == CALCMODE_SINGLE_PASS || (g_row&1) != 0 || (g_col&1) != 0)
 			{
 				if (g_calculate_type() == -1) // standard_fractal(), calculate_mandelbrot_l() or calculate_mandelbrot_fp() 
 				{
@@ -1173,6 +1186,16 @@ static int standard_calculate(int passnum)
 	return 0;
 }
 
+static void SetBoundaryTraceDebugColor()
+{
+	if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
+	{
+		if (g_color <= 0 && g_externs.StandardCalculationMode() == CALCMODE_BOUNDARY_TRACE)
+		{
+			g_color = 1;
+		}
+	}
+}
 
 int calculate_mandelbrot_l()              // fast per pixel 1/2/b/g, called with row & col set 
 {
@@ -1192,13 +1215,7 @@ int calculate_mandelbrot_l()              // fast per pixel 1/2/b/g, called with
 		{
 			g_color = int(((g_color_iter - 1) % g_and_color) + 1);
 		}
-		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
-		{
-			if (g_color <= 0 && g_standard_calculation_mode == CALCMODE_BOUNDARY_TRACE)
-			{
-				g_color = 1;
-			}
-		}
+		SetBoundaryTraceDebugColor();
 		g_plot_color(g_col, g_row, g_color);
 	}
 	else
@@ -1310,13 +1327,7 @@ int calculate_mandelbrot_fp()
 		{
 			g_color = int(((g_color_iter - 1) % g_and_color) + 1);
 		}
-		if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
-		{
-			if (g_color == 0 && g_standard_calculation_mode == CALCMODE_BOUNDARY_TRACE)
-			{
-				g_color = 1;
-			}
-		}
+		SetBoundaryTraceDebugColor();
 		g_plot_color(g_col, g_row, g_color);
 	}
 	else
@@ -2306,13 +2317,7 @@ void StandardFractal::set_final_color_and_plot()
 	{
 		g_color = int(((g_color_iter - 1) % g_and_color) + 1);
 	}
-	if (g_debug_mode != DEBUGMODE_BNDTRACE_NONZERO)
-	{
-		if (g_color <= 0 && g_standard_calculation_mode == CALCMODE_BOUNDARY_TRACE)
-		{
-			g_color = 1;
-		}
-	}
+	SetBoundaryTraceDebugColor();
 	g_plot_color(g_col, g_row, g_color);
 }
 int StandardFractal::check_if_interrupted()
@@ -2935,7 +2940,8 @@ static void set_symmetry(int symmetry, bool use_list) // set up proper symmetric
 	// pixel number for origin 
 	// if axis between 2 pixels, not on one 
 	g_symmetry = SYMMETRY_X_AXIS;
-	if (g_standard_calculation_mode == CALCMODE_SYNCHRONOUS_ORBITS || g_standard_calculation_mode == CALCMODE_ORBITS)
+	if (g_externs.StandardCalculationMode() == CALCMODE_SYNCHRONOUS_ORBITS
+		|| g_externs.StandardCalculationMode() == CALCMODE_ORBITS)
 	{
 		return;
 	}
@@ -3604,36 +3610,32 @@ void PerformWorkList::setup_potential()
 {
 	if (g_potential_flag && g_potential_16bit)
 	{
-		CalculationMode tmpcalcmode = g_standard_calculation_mode;
+		CalculationMode tmpcalcmode = g_externs.StandardCalculationMode();
 
-		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+		g_externs.SetStandardCalculationMode(CALCMODE_SINGLE_PASS);
 		if (!g_resuming)
 		{
 			if (disk_start_potential() < 0)
 			{
 				g_potential_16bit = false;       // disk_start failed or cancelled 
-				g_standard_calculation_mode = tmpcalcmode;    // maybe we can carry on??? 
+				g_externs.SetStandardCalculationMode(tmpcalcmode);    // maybe we can carry on??? 
 			}
 		}
 	}
 }
 
+bool CanPerformRequestedMode(FractalTypeSpecificData const *fractal, CalculationMode mode)
+{
+	return (mode == CALCMODE_BOUNDARY_TRACE && !fractal->no_boundary_tracing())
+		|| (mode == CALCMODE_SOLID_GUESS && !fractal->no_solid_guessing())
+		|| (mode == CALCMODE_ORBITS && (fractal->calculate_type == standard_fractal));
+}
+
 void PerformWorkList::setup_standard_calculation_mode()
 {
-	if (g_standard_calculation_mode == CALCMODE_BOUNDARY_TRACE
-		&& (g_current_fractal_specific->no_boundary_tracing()))
+	if (!CanPerformRequestedMode(g_current_fractal_specific, g_externs.StandardCalculationMode()))
 	{
-		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
-	}
-	if (g_standard_calculation_mode == CALCMODE_SOLID_GUESS
-		&& (g_current_fractal_specific->no_solid_guessing()))
-	{
-		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
-	}
-	if (g_standard_calculation_mode == CALCMODE_ORBITS
-		&& (g_current_fractal_specific->calculate_type != standard_fractal))
-	{
-		g_standard_calculation_mode = CALCMODE_SINGLE_PASS;
+		g_externs.SetStandardCalculationMode(CALCMODE_SINGLE_PASS);
 	}
 }
 
@@ -3807,31 +3809,38 @@ void PerformWorkList::common_escape_time_initialization()
 		SetupLogTable();
 	}
 }
+
 void PerformWorkList::call_escape_time_engine()
 {
 	// call the appropriate escape-time engine 
-	switch (g_standard_calculation_mode)
+	switch (g_externs.StandardCalculationMode())
 	{
-	case 's':
-		g_synchronousOrbitScanner.Execute();
+	case CALCMODE_SINGLE_PASS:
+	case CALCMODE_DUAL_PASS:
+	case CALCMODE_TRIPLE_PASS:
+		s_multiPassScanner.Scan();
 		break;
-	case 't':
-		g_tesseralScan.Execute();
+	case CALCMODE_SOLID_GUESS:
+		g_solidGuessScanner.Scan();
 		break;
-	case 'b':
-		boundary_trace_main();
+	case CALCMODE_BOUNDARY_TRACE:
+		g_boundaryTraceScan.Scan();
 		break;
-	case 'g':
-		g_solidGuessScanner.Execute();
+	case CALCMODE_DIFFUSION:
+		g_diffusionScan.Scan();
 		break;
-	case 'd':
-		g_diffusionScan.Execute();
+	case CALCMODE_TESSERAL:
+		g_tesseralScan.Scan();
 		break;
-	case 'o':
-		draw_orbits();
+	case CALCMODE_SYNCHRONOUS_ORBITS:
+		g_synchronousOrbitScanner.Scan();
 		break;
+	case CALCMODE_ORBITS:
+		s_orbitScanner.Scan();
+		break;
+
 	default:
-		one_or_two_pass();
+		assert(!"bad calculation mode");
 	}
 }
 

@@ -14,9 +14,16 @@ enum CalculationMode
 	CALCMODE_ORBITS = 'o'
 };
 
-extern CalculationMode g_user_standard_calculation_mode;
+class WorkListScanner
+{
+public:
+	virtual void Scan() = 0;
+
+protected:
+	virtual ~WorkListScanner() { }
+};
+
 extern CalculationMode g_standard_calculation_mode_old;
-extern CalculationMode g_standard_calculation_mode;
 
 extern int calculate_fractal();
 extern int calculate_mandelbrot_l();
@@ -25,6 +32,7 @@ extern int standard_fractal();
 extern void plot_color_none(int x, int y, int color);
 extern void plot_color_symmetry_x_axis(int x, int y, int color);
 extern void plot_color_symmetry_origin(int x, int y, int color);
+extern void ForceOnePass();
 
 extern void (*g_plot_color)(int x, int y, int color);
 extern void sym_fill_line(int row, int left, int right, BYTE const *str);

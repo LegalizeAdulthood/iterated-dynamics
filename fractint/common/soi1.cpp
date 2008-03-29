@@ -95,43 +95,43 @@ enum
 
 // compute the value of the interpolation polynomial at (x, y) 
 #define GET_REAL(x, y) \
-interpolate(cim1, midi, cim2, \
-	interpolate(cre1, midr, cre2, zre1, zre5, zre2, x), \
-	interpolate(cre1, midr, cre2, zre6, zre9, zre7, x), \
-	interpolate(cre1, midr, cre2, zre3, zre8, zre4, x), y)
+	interpolate(cim1, midi, cim2, \
+		interpolate(cre1, midr, cre2, zre1, zre5, zre2, x), \
+		interpolate(cre1, midr, cre2, zre6, zre9, zre7, x), \
+		interpolate(cre1, midr, cre2, zre3, zre8, zre4, x), y)
 #define GET_IMAG(x, y) \
-interpolate(cre1, midr, cre2, \
-	interpolate(cim1, midi, cim2, zim1, zim6, zim3, y), \
-	interpolate(cim1, midi, cim2, zim5, zim9, zim8, y), \
-	interpolate(cim1, midi, cim2, zim2, zim7, zim4, y), x)
+	interpolate(cre1, midr, cre2, \
+		interpolate(cim1, midi, cim2, zim1, zim6, zim3, y), \
+		interpolate(cim1, midi, cim2, zim5, zim9, zim8, y), \
+		interpolate(cim1, midi, cim2, zim2, zim7, zim4, y), x)
 
 // compute the value of the interpolation polynomial at (x, y)
 // from saved values before interpolation failed to stay within tolerance
 #define GET_SAVED_REAL(x, y) \
-interpolate(cim1, midi, cim2, \
-	interpolate(cre1, midr, cre2, sr1, sr5, sr2, x), \
-	interpolate(cre1, midr, cre2, sr6, sr9, sr7, x), \
-	interpolate(cre1, midr, cre2, sr3, sr8, sr4, x), y)
+	interpolate(cim1, midi, cim2, \
+		interpolate(cre1, midr, cre2, sr1, sr5, sr2, x), \
+		interpolate(cre1, midr, cre2, sr6, sr9, sr7, x), \
+		interpolate(cre1, midr, cre2, sr3, sr8, sr4, x), y)
 #define GET_SAVED_IMAG(x, y) \
-interpolate(cre1, midr, cre2, \
-	interpolate(cim1, midi, cim2, si1, si6, si3, y), \
-	interpolate(cim1, midi, cim2, si5, si9, si8, y), \
-	interpolate(cim1, midi, cim2, si2, si7, si4, y), x)
+	interpolate(cre1, midr, cre2, \
+		interpolate(cim1, midi, cim2, si1, si6, si3, y), \
+		interpolate(cim1, midi, cim2, si5, si9, si8, y), \
+		interpolate(cim1, midi, cim2, si2, si7, si4, y), x)
 
 // compute the value of the interpolation polynomial at (x, y)
 //	during scanning. Here, key values do not change, so we can precompute
 //	coefficients in one direction and simply evaluate the polynomial
 //	during scanning.
 #define GET_SCAN_REAL(x, y) \
-interpolate(cim1, midi, cim2, \
-	Evaluate(cre1, midr, br10, br11, br12, x), \
-	Evaluate(cre1, midr, br20, br21, br22, x), \
-	Evaluate(cre1, midr, br30, br31, br32, x), y)
+	interpolate(cim1, midi, cim2, \
+		Evaluate(cre1, midr, br10, br11, br12, x), \
+		Evaluate(cre1, midr, br20, br21, br22, x), \
+		Evaluate(cre1, midr, br30, br31, br32, x), y)
 #define GET_SCAN_IMAG(x, y) \
-interpolate(cre1, midr, cre2, \
-	Evaluate(cim1, midi, bi10, bi11, bi12, y), \
-	Evaluate(cim1, midi, bi20, bi21, bi22, y), \
-	Evaluate(cim1, midi, bi30, bi31, bi32, y), x)
+	interpolate(cre1, midr, cre2, \
+		Evaluate(cim1, midi, bi10, bi11, bi12, y), \
+		Evaluate(cim1, midi, bi20, bi21, bi22, y), \
+		Evaluate(cim1, midi, bi30, bi31, bi32, y), x)
 
 // compute coefficients of Newton polynomial (b0, .., b2) from
 //	(x0, w0), .., (x2, w2).
@@ -941,7 +941,7 @@ void SynchronousOrbitScannerImpl::soi_double()
 			1);
 }
 
-void SynchronousOrbitScannerImpl::Execute()
+void SynchronousOrbitScannerImpl::Scan()
 {
 	if (DEBUGMODE_SOI_LONG_DOUBLE == g_debug_mode)
 	{
@@ -954,4 +954,4 @@ void SynchronousOrbitScannerImpl::Execute()
 }
 
 static SynchronousOrbitScannerImpl s_synchronousOrbitScannerImpl;
-SynchronousOrbitScanner &g_synchronousOrbitScanner(s_synchronousOrbitScannerImpl);
+WorkListScanner &g_synchronousOrbitScanner(s_synchronousOrbitScannerImpl);
