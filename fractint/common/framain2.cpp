@@ -405,7 +405,7 @@ static ApplicationStateType handle_toggle_float()
 	{
 		g_user_float_flag = true;
 	}
-	else if (g_externs.StandardCalculationMode() != 'o') // don't go there 
+	else if (g_externs.StandardCalculationMode() != CALCMODE_ORBITS) // don't go there 
 	{
 		g_user_float_flag = false;
 	}

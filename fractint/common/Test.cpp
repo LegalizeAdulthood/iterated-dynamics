@@ -34,7 +34,7 @@ int test()
 	{
 		return 0;
 	}
-	numpasses = (g_externs.StandardCalculationMode() == '1') ? 0 : 1;
+	numpasses = (g_externs.StandardCalculationMode() == CALCMODE_SINGLE_PASS) ? 0 : 1;
 	for (int passes = startpass; passes <= numpasses; passes++)
 	{
 		for (g_row = startrow; g_row <= g_y_stop; g_row = g_row + 1 + numpasses)
