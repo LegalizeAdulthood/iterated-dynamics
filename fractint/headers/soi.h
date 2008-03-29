@@ -1,15 +1,8 @@
 #if !defined(SOI_H)
 #define SOI_H
 
-class SynchronousOrbitScanner
-{
-public:
-	virtual void Execute() = 0;
+#include "calcfrac.h"
 
-protected:
-	virtual ~SynchronousOrbitScanner() { }
-};
-
-extern SynchronousOrbitScanner &g_synchronousOrbitScanner;
+extern WorkListScanner &g_synchronousOrbitScanner;
 
 #endif

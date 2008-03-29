@@ -1,16 +1,4 @@
-#if !defined(TESSERAL_H)
-#define TESSERAL_H
+#pragma once
 
-class TesseralScan
-{
-public:
-	virtual void Execute() = 0;
-
-protected:
-	virtual ~TesseralScan() { }
-
-};
-
-extern TesseralScan &g_tesseralScan;
-
-#endif
+#include "calcfrac.h"
+extern WorkListScanner &g_tesseralScan;

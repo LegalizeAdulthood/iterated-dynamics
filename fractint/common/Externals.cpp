@@ -20,18 +20,22 @@ public:
 		_currentPass(0),
 		_totalPasses(0),
 		_stopPass(0),
-		_useInitialOrbitZ(INITIALZ_NONE)
+		_useInitialOrbitZ(INITIALZ_NONE),
+		_standardCalculationMode(CALCMODE_SOLID_GUESS),
+		_tabStatus(TAB_STATUS_NONE),
+		_aspectDrift(DEFAULT_ASPECT_DRIFT)
 	{ }
 	virtual ~ExternalsImpl() { }
 
-	virtual float AspectDrift() const							{ return g_aspect_drift; }
-	virtual void SetAspectDrift(float value)					{ g_aspect_drift = value; }
+	virtual float AspectDrift() const							{ return _aspectDrift; }
+	virtual void SetAspectDrift(float value)					{ _aspectDrift = value; }
 	virtual int AtanColors() const								{ return g_atan_colors; }
 	virtual void SetAtanColors(int value)						{ g_atan_colors = value; }
 	virtual double AutoStereoWidth() const						{ return g_auto_stereo_width; }
 	virtual void SetAutoStereoWidth(double value)				{ g_auto_stereo_width = value; }
 	virtual bool BadOutside() const								{ return g_bad_outside; }
 	virtual void SetBadOutside(bool value)						{ g_bad_outside = value; }
+
 	virtual long BailOut() const								{ return g_bail_out; }
 	virtual void SetBailOut(long value)							{ g_bail_out = value; }
 	virtual BailOutFunction *BailOutFp() const					{ return g_bail_out_fp; }
@@ -44,14 +48,13 @@ public:
 	virtual void SetBailOutBn(BailOutFunction *value)			{ g_bail_out_bn = value; }
 	virtual enum bailouts BailOutTest() const					{ return g_bail_out_test; }
 	virtual void SetBailOutTest(bailouts value)					{ g_bail_out_test = value; }
+
 	virtual int Basin() const									{ return g_basin; }
 	virtual void SetBasin(int value)							{ g_basin = value; }
 	virtual int BfSaveLen() const								{ return g_bf_save_len; }
 	virtual void SetBfSaveLen(int value)						{ g_bf_save_len = value; }
 	virtual int BfDigits() const								{ return g_bf_digits; }
 	virtual void SetBfDigits(int value)							{ g_bf_digits = value; }
-	virtual int Biomorph() const								{ return g_biomorph; }
-	virtual void SetBiomorph(int value)							{ g_biomorph = value; }
 	virtual int BitShift() const								{ return g_bit_shift; }
 	virtual void SetBitShift(int value)							{ g_bit_shift = value; }
 	virtual int BitShiftMinus1() const							{ return g_bit_shift_minus_1; }
@@ -62,7 +65,7 @@ public:
 	virtual void SetCalculationTime(long value)					{ g_calculation_time = value; }
 	virtual CalculateMandelbrotFunction *CalculateMandelbrotAsmFp() const { return g_calculate_mandelbrot_asm_fp; }
 	virtual void SetCalculateMandelbrotAsmFp(CalculateMandelbrotFunction *value) { g_calculate_mandelbrot_asm_fp = value; }
-	virtual Externals::CalculateTypeFunction *CalculateType() const	{ return g_calculate_type; }
+	virtual CalculateTypeFunction *CalculateType() const		{ return g_calculate_type; }
 	virtual void SetCalculateType(CalculateTypeFunction *value) { g_calculate_type = value; }
 	virtual int CalculationStatus() const						{ return g_calculation_status; }
 	virtual void SetCalculationStatus(int value)				{ g_calculation_status = value; }
@@ -146,14 +149,6 @@ public:
 	virtual void SetDeltaParameterImageY(double value)			{ g_delta_parameter_image_y = value; }
 	virtual BYTE const *Stack() const							{ return g_stack; }
 	virtual void SetStack(BYTE const *value)					{ /*g_stack = value;*/ }
-	virtual DxPixelFunction *DxPixel() const					{ return g_dx_pixel; }
-	virtual void SetDxPixel(DxPixelFunction *value)				{ g_dx_pixel = value; }
-	virtual double DxSize() const								{ return g_dx_size; }
-	virtual void SetDxSize(double value)						{ g_dx_size = value; }
-	virtual DyPixelFunction *DyPixel() const					{ return g_dy_pixel; }
-	virtual void SetDyPixel(DyPixelFunction *value)				{ g_dy_pixel = value; }
-	virtual double DySize() const								{ return g_dy_size; }
-	virtual void SetDySize(double value)						{ g_dy_size = value; }
 	virtual bool EscapeExitFlag() const							{ return g_escape_exit_flag; }
 	virtual void SetEscapeExitFlag(bool value)					{ g_escape_exit_flag = value; }
 	virtual int EvolvingFlags() const							{ return g_evolving_flags; }
@@ -216,11 +211,12 @@ public:
 	virtual void SetFXCenter(double value)						{ g_f_x_center = value; }
 	virtual double FYCenter() const								{ return g_f_y_center; }
 	virtual void SetFYCenter(double value)						{ g_f_y_center = value; }
-	virtual GENEBASE *Genes() const								{ return g_genes; }
+	virtual GENEBASE const *Genes() const						{ return g_genes; }
+	virtual GENEBASE *Genes()									{ return g_genes; }
 	virtual bool Gif87aFlag() const								{ return g_gif87a_flag; }
 	virtual void SetGif87aFlag(bool value)						{ g_gif87a_flag = value; }
-	virtual int GotStatus() const								{ return g_got_status; }
-	virtual void SetGotStatus(int value)						{ g_got_status = value; }
+	virtual TabStatusType TabStatus() const						{ return _tabStatus; }
+	virtual void SetTabStatus(TabStatusType value)				{ _tabStatus = value; }
 	virtual bool GrayscaleDepth() const							{ return g_grayscale_depth; }
 	virtual void SetGrayscaleDepth(bool value)					{ g_grayscale_depth = value; }
 	virtual bool HasInverse() const								{ return g_has_inverse; }
@@ -324,10 +320,20 @@ public:
 	virtual void SetTempSqrYL(long value)						{ g_temp_sqr_y_l = value; }
 	virtual ComplexL TmpZL() const								{ return g_tmp_z_l; }
 	virtual void SetTmpZL(ComplexL value)						{ g_tmp_z_l = value; }
+
+	virtual DxPixelFunction *DxPixel() const					{ return g_dx_pixel; }
+	virtual void SetDxPixel(DxPixelFunction *value)				{ g_dx_pixel = value; }
+	virtual double DxSize() const								{ return g_dx_size; }
+	virtual void SetDxSize(double value)						{ g_dx_size = value; }
+	virtual DyPixelFunction *DyPixel() const					{ return g_dy_pixel; }
+	virtual void SetDyPixel(DyPixelFunction *value)				{ g_dy_pixel = value; }
+	virtual double DySize() const								{ return g_dy_size; }
+	virtual void SetDySize(double value)						{ g_dy_size = value; }
 	virtual PixelFunction *LxPixel() const						{ return g_lx_pixel; }
 	virtual void SetLxPixel(PixelFunction *value)				{ g_lx_pixel = value; }
 	virtual PixelFunction *LyPixel() const						{ return g_ly_pixel; }
 	virtual void SetLyPixel(PixelFunction *value)				{ g_ly_pixel = value; }
+
 	virtual TrigFunction *Trig0L() const						{ return g_trig0_l; }
 	virtual void SetTrig0L(TrigFunction *value)					{ g_trig0_l = value; }
 	virtual TrigFunction *Trig1L() const						{ return g_trig1_l; }
@@ -344,6 +350,7 @@ public:
 	virtual void SetTrig2D(TrigFunction *value)					{ g_trig2_d = value; }
 	virtual TrigFunction *Trig3D() const						{ return g_trig3_d; }
 	virtual void SetTrig3D(TrigFunction *value)					{ g_trig3_d = value; }
+
 	virtual double Magnitude() const							{ return g_magnitude; }
 	virtual void SetMagnitude(double value)						{ g_magnitude = value; }
 	virtual unsigned long magnitudeLimit() const				{ return g_magnitude_limit; }
@@ -442,10 +449,7 @@ public:
 	virtual void SetOrganizeFormulaSearch(bool value)			{ g_organize_formula_search = value; }
 	virtual float OriginFp() const								{ return g_origin_fp; }
 	virtual void SetOriginFp(float value)						{ g_origin_fp = value; }
-	virtual OutLineFunction *OutLine() const					{ return g_out_line; }
-	virtual void SetOutLine(OutLineFunction *value)				{ g_out_line = value; }
-	virtual OutLineCleanupFunction *OutLineCleanup() const		{ return g_out_line_cleanup; }
-	virtual void SetOutLineCleanup(OutLineCleanupFunction *value) { g_out_line_cleanup = value; }
+
 	virtual int Outside() const									{ return g_outside; }
 	virtual void SetOutside(int value)							{ g_outside = value; }
 	virtual bool Overflow() const								{ return g_overflow; }
@@ -482,8 +486,6 @@ public:
 	virtual void SetPatchLevel(int value)						{ g_patch_level = value; }
 	virtual int PeriodicityCheck() const						{ return g_periodicity_check; }
 	virtual void SetPeriodicityCheck(int value)					{ g_periodicity_check = value; }
-	virtual PlotColorFunction *PlotColor() const				{ return g_plot_color; }
-	virtual void SetPlotColor(PlotColorFunction *value)			{ g_plot_color = value; }
 	virtual double PlotMx1() const								{ return g_plot_mx1; }
 	virtual void SetPlotMx1(double value)						{ g_plot_mx1 = value; }
 	virtual double PlotMx2() const								{ return g_plot_mx2; }
@@ -508,8 +510,6 @@ public:
 	virtual void SetPseudoX(int value)							{ g_pseudo_x = value; }
 	virtual int PseudoY() const									{ return g_pseudo_y; }
 	virtual void SetPseudoY(int value)							{ g_pseudo_y = value; }
-	virtual PlotColorPutColorFunction *PlotColorPutColor() const { return g_plot_color_put_color; }
-	virtual void SetPlotColorPutColor(PlotColorPutColorFunction *value) { g_plot_color_put_color = value; }
 	virtual ComplexD Power() const								{ return g_power; }
 	virtual void SetPower(ComplexD value)						{ g_power = value; }
 	virtual bool QuickCalculate() const							{ return g_quick_calculate; }
@@ -584,8 +584,6 @@ public:
 	virtual void SetSkipYDots(int value)						{ g_skip_y_dots = value; }
 	virtual int GaussianSlope() const							{ return g_gaussian_slope; }
 	virtual void SetGaussianSlope(int value)					{ g_gaussian_slope = value; }
-	virtual PlotColorStandardFunction *PlotColorStandard() const { return g_plot_color_standard; }
-	virtual void SetPlotColorStandard(PlotColorStandardFunction *value) { g_plot_color_standard = value; }
 	virtual bool StartShowOrbit() const							{ return g_start_show_orbit; }
 	virtual void SetStartShowOrbit(bool value)					{ g_start_show_orbit = value; }
 	virtual bool StartedResaves() const							{ return g_started_resaves; }
@@ -662,8 +660,6 @@ public:
 	virtual void SetUseOldPeriodicity(bool value)				{ g_use_old_periodicity = value; }
 	virtual bool UsingJiim() const								{ return g_using_jiim; }
 	virtual void SetUsingJiim(bool value)						{ g_using_jiim = value; }
-	virtual int UserBiomorph() const							{ return g_user_biomorph; }
-	virtual void SetUserBiomorph(int value)						{ g_user_biomorph = value; }
 	virtual long UserDistanceTest() const						{ return g_user_distance_test; }
 	virtual void SetUserDistanceTest(long value)				{ g_user_distance_test = value; }
 	virtual bool UserFloatFlag() const							{ return g_user_float_flag; }
@@ -741,12 +737,21 @@ public:
 	virtual unsigned int ThisGenerationRandomSeed() const		{ return g_this_generation_random_seed; }
 	virtual void SetThisGenerationRandomSeed(unsigned int value) { g_this_generation_random_seed = value; }
 	virtual GIFViewFunction *GIFView() const					{ return gifview; }
+	virtual std::string &GIFMask()								{ return g_gif_mask; }
+	virtual ViewWindow const &View() const						{ return g_viewWindow; }
+	virtual ViewWindow &View()									{ return g_viewWindow; }
+
+	virtual OutLineFunction *OutLine() const					{ return g_out_line; }
+	virtual void SetOutLine(OutLineFunction *value)				{ g_out_line = value; }
+	virtual OutLineCleanupFunction *OutLineCleanup() const		{ return g_out_line_cleanup; }
+	virtual void SetOutLineCleanup(OutLineCleanupFunction *value) { g_out_line_cleanup = value; }
 	virtual OutLineFunction *OutLinePotential() const			{ return out_line_potential; }
 	virtual OutLineFunction *OutLineSound() const				{ return out_line_sound; }
 	virtual OutLineFunction *OutLineRegular() const				{ return out_line; }
 	virtual OutLineCleanupFunction *OutLineCleanupNull() const	{ return out_line_cleanup_null; }
 	virtual OutLineFunction *OutLine3D() const					{ return out_line_3d; }
 	virtual OutLineFunction *OutLineCompare() const				{ return out_line_compare; }
+
 	virtual std::string const &FractDir1() const				{ return g_fract_dir1; }
 	virtual void SetFractDir1(std::string const &value)			{ g_fract_dir1 = value; }
 	virtual std::string const &FractDir2() const				{ return g_fract_dir2; }
@@ -754,14 +759,21 @@ public:
 	virtual std::string const &ReadName() const					{ return g_read_name; }
 	virtual std::string &ReadName()								{ return g_read_name; }
 	virtual void SetReadName(std::string const &value)			{ g_read_name = value; }
-	virtual std::string &GIFMask()								{ return g_gif_mask; }
-	virtual ViewWindow const &View() const						{ return g_viewWindow; }
-	virtual ViewWindow &View()									{ return g_viewWindow; }
 	virtual void SetFileNameStackTop(std::string const &value)	{ g_file_name_stack[g_name_stack_ptr] = value; }
 	virtual boost::filesystem::path const &WorkDirectory() const { return g_work_dir; }
+
+	virtual int Biomorph() const								{ return g_biomorph; }
+	virtual void SetBiomorph(int value)							{ g_biomorph = value; }
+	virtual int UserBiomorph() const							{ return g_user_biomorph; }
+	virtual void SetUserBiomorph(int value)						{ g_user_biomorph = value; }
+
 	virtual bool ThreePass() const								{ return g_three_pass; }
 	virtual void SetThreePass(bool value)						{ g_three_pass = value; }
 
+	virtual CalculationMode UserStandardCalculationMode() const	{ return _userStandardCalculationMode; }
+	virtual void SetUserStandardCalculationMode(CalculationMode value) { _userStandardCalculationMode = value; }
+	virtual CalculationMode StandardCalculationMode() const		{ return _standardCalculationMode; }
+	virtual void SetStandardCalculationMode(CalculationMode value) { _standardCalculationMode = value; }
 	virtual int TotalPasses() const								{ return _totalPasses; }
 	virtual void SetTotalPasses(int value)						{ _totalPasses = value; }
 	virtual int StopPass() const								{ return _stopPass; }
@@ -769,11 +781,24 @@ public:
 	virtual int CurrentPass() const								{ return _currentPass; }
 	virtual void SetCurrentPass(int value)						{ _currentPass = value; }
 
+	virtual PlotColorFunction *PlotColor() const				{ return g_plot_color; }
+	virtual void SetPlotColor(PlotColorFunction *value)			{ g_plot_color = value; }
+	virtual PlotColorPutColorFunction *PlotColorPutColor() const { return g_plot_color_put_color; }
+	virtual void SetPlotColorPutColor(PlotColorPutColorFunction *value) { g_plot_color_put_color = value; }
+	virtual PlotColorStandardFunction *PlotColorStandard() const { return g_plot_color_standard; }
+	virtual void SetPlotColorStandard(PlotColorStandardFunction *value) { g_plot_color_standard = value; }
+
 private:
 	int _currentPass;
 	int _totalPasses;
 	int _stopPass;												// stop at this guessing pass early
 	InitialZType _useInitialOrbitZ;
+	CalculationMode _standardCalculationMode;
+	CalculationMode _userStandardCalculationMode;
+	TabStatusType _tabStatus; // -1 if not, 0 for 1or2pass, 1 for ssg, 
+			  // 2 for btm, 3 for 3d, 4 for tesseral, 5 for diffusion_scan 
+              // 6 for orbits
+	float _aspectDrift; // how much drift is allowed and still forced to g_screen_aspect_ratio  
 };
 
 static ExternalsImpl s_externs;

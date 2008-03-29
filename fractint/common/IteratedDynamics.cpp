@@ -161,7 +161,7 @@ void IteratedDynamicsImpl::ImageStart()
 		_driver->discard_screen();
 		_screenStacked = false;
 	}
-	_externs.SetGotStatus(GOT_STATUS_NONE);                     // for tab_display 
+	_externs.SetTabStatus(TAB_STATUS_NONE);
 
 	if (_externs.ShowFile() != SHOWFILE_PENDING)
 	{

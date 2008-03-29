@@ -122,7 +122,6 @@ public:
 	BigWhileLoopGlobals() { }
 	virtual ~BigWhileLoopGlobals() { }
 
-	virtual void SetUserStandardCalculationMode(CalculationMode value)	{ g_user_standard_calculation_mode = value; }
 	virtual CalculationMode StandardCalculationModeOld()				{ return g_standard_calculation_mode_old; }
 	virtual int ScreenXOffset()											{ return g_screen_x_offset; }
 	virtual int ScreenYOffset()											{ return g_screen_y_offset; }

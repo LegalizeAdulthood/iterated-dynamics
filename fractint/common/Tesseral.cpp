@@ -8,6 +8,7 @@
 #include "externs.h"
 
 #include "calcfrac.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "miscres.h"
@@ -15,16 +16,16 @@
 #include "Tesseral.h"
 #include "WorkList.h"
 
-class TesseralScanImpl : public TesseralScan
+class TesseralScanImpl : public WorkListScanner
 {
 public:
 	virtual ~TesseralScanImpl() { }
 
-	virtual void Execute();
+	virtual void Scan();
 };
 
 static TesseralScanImpl s_tesseralScanImpl;
-TesseralScan &g_tesseralScan(s_tesseralScanImpl);
+WorkListScanner &g_tesseralScan(s_tesseralScanImpl);
 
 // tesseral method by CJLT begins here
 // reworked by PB for speed and resumeability 
@@ -117,7 +118,7 @@ static int tesseral_row(int x1, int x2, int y)
 	return rowcolor;
 }
 
-void TesseralScanImpl::Execute()
+void TesseralScanImpl::Scan()
 {
 	bool guess_plot = (g_plot_color != g_plot_color_put_color && g_plot_color != plot_color_symmetry_x_axis);
 	// TODO: refactor this to use a std::vector<tess> instead of g_stack aliased to tess[]
@@ -198,7 +199,7 @@ void TesseralScanImpl::Execute()
 		}
 	}
 
-	g_got_status = GOT_STATUS_TESSERAL; // for tab_display 
+	g_externs.SetTabStatus(TAB_STATUS_TESSERAL); // for tab_display 
 
 	while (tp >= (tess *) &g_stack[0])  // do next box 
 	{

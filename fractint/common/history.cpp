@@ -322,7 +322,7 @@ void history_save_info()
 	current.outside = g_outside;
 	current.x_3rd = g_escape_time_state.m_grid_fp.x_3rd();
 	current.y_3rd = g_escape_time_state.m_grid_fp.y_3rd();
-	current.standard_calculation_mode = g_user_standard_calculation_mode;
+	current.standard_calculation_mode = g_externs.UserStandardCalculationMode();
 	current.three_pass = g_three_pass;
 	current.stop_pass = g_externs.StopPass();
 	current.distance_test = g_distance_test;
@@ -496,8 +496,8 @@ void history_restore_info()
 	g_outside = last.outside;
 	g_escape_time_state.m_grid_fp.x_3rd() = last.x_3rd;
 	g_escape_time_state.m_grid_fp.y_3rd() = last.y_3rd;
-	g_user_standard_calculation_mode = CalculationMode(last.standard_calculation_mode);
-	g_standard_calculation_mode = CalculationMode(last.standard_calculation_mode);
+	g_externs.SetUserStandardCalculationMode(CalculationMode(last.standard_calculation_mode));
+	g_externs.SetStandardCalculationMode(CalculationMode(last.standard_calculation_mode));
 	g_three_pass = (last.three_pass != 0);
 	g_externs.SetStopPass(last.stop_pass);
 	g_distance_test = last.distance_test;

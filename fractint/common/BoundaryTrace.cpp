@@ -8,6 +8,7 @@
 #include "externs.h"
 
 #include "calcfrac.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "realdos.h"
 #include "StopMessage.h"
@@ -16,14 +17,6 @@
 #include "WorkList.h"
 
 // boundary trace method
-
-class IBoundaryTrace
-{
-public:
-	virtual ~IBoundaryTrace() { }
-
-	virtual int Execute() = 0;
-};
 
 class IBoundaryTraceApp
 {
@@ -48,7 +41,6 @@ public:
 	virtual void SetColumn(int value) = 0;
 	virtual int Inside() const = 0;
 	virtual int Outside() const = 0;
-	virtual void SetGotStatus(int value) = 0;
 	virtual int IXStart() const = 0;
 	virtual int IYStart() const = 0;
 	virtual int XStop() const = 0;
@@ -68,6 +60,7 @@ public:
 	virtual int CurrentColumn() const = 0;
 	virtual void SetCurrentColumn(int value) = 0;
 	virtual void NextCurrentColumn() = 0;
+	virtual void SetTabStatus(TabStatusType value) = 0;
 };
 
 class BoundaryTraceApp : public IBoundaryTraceApp
@@ -98,7 +91,6 @@ public:
 	virtual void SetColumn(int value)			{ g_col = value; }
 	virtual int Inside() const					{ return g_inside; }
 	virtual int Outside() const					{ return g_outside; }
-	virtual void SetGotStatus(int value)		{ g_got_status = value; }
 	virtual int IXStart() const					{ return g_ix_start; }
 	virtual int IYStart() const					{ return g_iy_start; }
 	virtual int XStop() const					{ return g_x_stop; }
@@ -118,9 +110,10 @@ public:
 	virtual void SetCurrentColumn(int value)	{ g_current_col = value; }
 	virtual void NextCurrentRow()				{ g_current_row++; }
 	virtual void NextCurrentColumn()			{ g_current_col++; }
+	virtual void SetTabStatus(TabStatusType value) { g_externs.SetTabStatus(value); }
 };
 
-class BoundaryTrace : public IBoundaryTrace
+class BoundaryTrace : public WorkListScanner
 {
 public:
 	BoundaryTrace(IBoundaryTraceApp &app, IBoundaryTraceExterns &externs)
@@ -142,7 +135,7 @@ public:
 	{
 	}
 	virtual ~BoundaryTrace() { }
-	virtual int Execute();
+	virtual void Scan();
 
 private:
 	enum
@@ -193,6 +186,7 @@ private:
 static BoundaryTraceApp s_boundaryTraceApp;
 static BoundaryTraceExterns s_boundaryTraceExterns;
 static BoundaryTrace s_boundaryTrace(s_boundaryTraceApp, s_boundaryTraceExterns);
+WorkListScanner &g_boundaryTraceScan(s_boundaryTrace);
 
 // take one step in the direction of _goingTo 
 void BoundaryTrace::step_col_row()
@@ -218,15 +212,15 @@ void BoundaryTrace::step_col_row()
 	}
 }
 
-int BoundaryTrace::Execute()
+void BoundaryTrace::Scan()
 {
 	if (_externs.Inside() == 0 || _externs.Outside() == 0)
 	{
 		_app.stop_message(STOPMSG_NORMAL, "Boundary tracing cannot be used with inside=0 or outside=0");
-		return -1;
+		return;
 	}
 
-	_externs.SetGotStatus(GOT_STATUS_BOUNDARY_TRACE);
+	g_externs.SetTabStatus(TAB_STATUS_BOUNDARY_TRACE);
 	for (_externs.SetCurrentRow(_externs.IYStart()); _externs.CurrentRow() <= _externs.YStop(); _externs.NextCurrentRow())
 	{
 		if (TraceRow(_externs.CurrentRow()))
@@ -234,8 +228,6 @@ int BoundaryTrace::Execute()
 			break;
 		}
 	}
-
-	return _result;
 }
 
 bool BoundaryTrace::TraceRow(int row)
@@ -465,9 +457,4 @@ bool BoundaryTrace::TraceStep(int row, int column)
 	}
 
 	return false;
-}
-
-int boundary_trace_main()
-{
-	return s_boundaryTrace.Execute();
 }

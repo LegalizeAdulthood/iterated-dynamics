@@ -105,6 +105,21 @@ void calculate_fractal_initialize_bail_out_limit()
 	}
 }
 
+static void ForceSinglePassForSynchronousOrbitNotMandelbrot()
+{
+	if (g_externs.UserStandardCalculationMode() == CALCMODE_SYNCHRONOUS_ORBITS)
+	{
+		if (fractal_type_mandelbrot(g_fractal_type))
+		{
+			g_float_flag = true;
+		}
+		else
+		{
+			g_externs.SetUserStandardCalculationMode(CALCMODE_SINGLE_PASS);
+		}
+	}
+}
+
 // initialize a *pile* of stuff for fractal calculation 
 void calculate_fractal_initialize()
 {
@@ -213,17 +228,7 @@ void calculate_fractal_initialize()
 	{
 		g_float_flag = true;
 	}
-	if (g_user_standard_calculation_mode == CALCMODE_SYNCHRONOUS_ORBITS)
-	{
-		if (fractal_type_mandelbrot(g_fractal_type))
-		{
-			g_float_flag = true;
-		}
-		else
-		{
-			g_user_standard_calculation_mode = CALCMODE_SINGLE_PASS;
-		}
-	}
+	ForceSinglePassForSynchronousOrbitNotMandelbrot();
 
 init_restart:
 #if defined(_WIN32)
@@ -233,7 +238,7 @@ init_restart:
 	// the following variables may be forced to a different setting due to
 	// calc routine constraints;  usr_xxx is what the user last said is wanted,
 	// xxx is what we actually do in the current situation
-	g_standard_calculation_mode = g_user_standard_calculation_mode;
+	g_externs.SetStandardCalculationMode(g_externs.UserStandardCalculationMode());
 	g_periodicity_check = g_user_periodicity_check;
 	g_distance_test = g_user_distance_test;
 	g_biomorph = g_user_biomorph;
@@ -671,10 +676,10 @@ void adjust_corner_bf(float aspect_drift)
 
 void adjust_corner_bf()
 {
-	adjust_corner_bf(g_aspect_drift);
+	adjust_corner_bf(g_externs.AspectDrift());
 }
 
-void adjust_corner(float aspect_drift)
+static void adjust_corner(float aspect_drift)
 {
 	// make edges very near vert/horiz exact, to ditch rounding errs and 
 	// to avoid problems when delta per axis makes too large a ratio     
@@ -733,7 +738,7 @@ void adjust_corner(float aspect_drift)
 
 void adjust_corner()
 {
-	adjust_corner(g_aspect_drift);
+	adjust_corner(g_externs.AspectDrift());
 }
 
 static void adjust_to_limits_bf(double expand)

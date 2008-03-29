@@ -6,7 +6,6 @@
 #include "UserInterfaceState.h"
 
 // keep var names in column 30 for sorting via sort /+30 <in >out 
-extern float				g_aspect_drift;
 extern int					g_atan_colors;
 extern double				g_auto_stereo_width;
 extern bool					g_bad_outside;
@@ -104,7 +103,6 @@ extern double				g_f_x_center;
 extern double				g_f_y_center;
 extern GENEBASE				g_genes[NUM_GENES];
 extern bool					g_gif87a_flag;
-extern int					g_got_status;
 extern bool					g_grayscale_depth;
 extern bool					g_has_inverse;
 extern unsigned int			g_height;

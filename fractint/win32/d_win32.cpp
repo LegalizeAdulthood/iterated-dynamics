@@ -20,6 +20,7 @@
 #include "calcfrac.h"
 #include "diskvid.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "fihelp.h"
 #include "miscovl.h"
 #include "miscres.h"
@@ -92,7 +93,7 @@ int Win32BaseDriver::handle_timed_save(int ch)
 			{
 				if (g_calculation_status != CALCSTAT_IN_PROGRESS)
 				{
-					if ((g_got_status != GOT_STATUS_12PASS) && (g_got_status != GOT_STATUS_GUESSING))
+					if ((g_externs.TabStatus() != TAB_STATUS_12PASS) && (g_externs.TabStatus() != TAB_STATUS_GUESSING))
 					{
 						g_finish_row = g_current_row;
 					}

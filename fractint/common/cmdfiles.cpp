@@ -110,8 +110,7 @@ bool g_true_mode_iterates = false;				// truecolor iterates coloring scheme
 std::string g_color_file;						// from last <l> <s> or colors=@filename 
 bool g_function_preloaded;						// if function loaded for new bifurcations 
 float   g_screen_aspect_ratio = DEFAULT_ASPECT_RATIO;	// aspect ratio of the screen 
-float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;	// how much drift is allowed and 
-												// still forced to g_screen_aspect_ratio  
+float   g_aspect_drift = DEFAULT_ASPECT_DRIFT;	
 bool g_fast_restore = false;					// true - reset viewwindows prior to a restore
 												//	and do not display warnings when video
 												//	mode changes during restore
@@ -404,7 +403,7 @@ static void initialize_variables_fractal()          // init vars affecting calcu
 	g_user_biomorph = -1;									// turn off g_biomorph flag 
 	g_outside = COLORMODE_ITERATION;						// outside color = -1 (not used) 
 	g_max_iteration = 150;									// initial maxiter        
-	g_user_standard_calculation_mode = CALCMODE_SOLID_GUESS;
+	g_externs.SetUserStandardCalculationMode(CALCMODE_SOLID_GUESS);
 	g_externs.SetStopPass(0);										// initial guessing stop pass 
 	g_quick_calculate = false;
 	g_proximity = 0.01;
@@ -1284,7 +1283,7 @@ static int passes_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_user_standard_calculation_mode = CalculationMode(context.charval[0]);
+	g_externs.SetUserStandardCalculationMode(CalculationMode(context.charval[0]));
 	if (context.charval[0] == 'g')
 	{
 		int value = (int(context.value[1]) - int('0'));
@@ -1984,7 +1983,7 @@ static int aspect_drift_arg(const cmd_context &context)
 	{
 		return bad_arg(context.curarg);
 	}
-	g_aspect_drift = float(context.floatval[0]);
+	g_externs.SetAspectDrift(float(context.floatval[0]));
 	return COMMANDRESULT_FRACTAL_PARAMETER;
 }
 

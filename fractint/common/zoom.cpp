@@ -13,6 +13,7 @@
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "framain2.h"
 #include "miscfrac.h"
@@ -605,15 +606,15 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 	{
 		return 0; // not a full size unrotated unskewed zoombox 
 	}
-	if (g_standard_calculation_mode == 't')
+	if (g_externs.StandardCalculationMode() == 't')
 	{
 		return 0; // tesselate, can't do it 
 	}
-	if (g_standard_calculation_mode == 'd')
+	if (g_externs.StandardCalculationMode() == 'd')
 	{
 		return 0; // diffusion scan: can't do it either 
 	}
-	if (g_standard_calculation_mode == 'o')
+	if (g_externs.StandardCalculationMode() == 'o')
 	{
 		return 0; // orbits, can't do it 
 	}
@@ -628,13 +629,13 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 	{
 		return 1; // 1 pass forced so align on any pixel 
 	}
-	if (g_standard_calculation_mode == 'b')
+	if (g_externs.StandardCalculationMode() == 'b')
 	{
 		return 1; // btm, align on any pixel 
 	}
-	if (g_standard_calculation_mode != 'g' || (g_current_fractal_specific->no_solid_guessing()))
+	if (g_externs.StandardCalculationMode() != 'g' || (g_current_fractal_specific->no_solid_guessing()))
 	{
-		if (g_standard_calculation_mode == '2' || g_standard_calculation_mode == '3') // align on even pixel for 2pass 
+		if (g_externs.StandardCalculationMode() == '2' || g_externs.StandardCalculationMode() == '3') // align on even pixel for 2pass 
 		{
 			return 2;
 		}

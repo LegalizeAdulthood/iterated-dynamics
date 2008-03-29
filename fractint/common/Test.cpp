@@ -8,6 +8,7 @@
 
 #include "calcfrac.h"
 #include "drivers.h"
+#include "Externals.h"
 #include "fracsubr.h"
 #include "resume.h"
 #include "Test.h"
@@ -33,7 +34,7 @@ int test()
 	{
 		return 0;
 	}
-	numpasses = (g_standard_calculation_mode == '1') ? 0 : 1;
+	numpasses = (g_externs.StandardCalculationMode() == '1') ? 0 : 1;
 	for (int passes = startpass; passes <= numpasses; passes++)
 	{
 		for (g_row = startrow; g_row <= g_y_stop; g_row = g_row + 1 + numpasses)
