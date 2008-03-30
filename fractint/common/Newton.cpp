@@ -178,7 +178,7 @@ int Newton::orbit()
 		}
 		return 1;
 	}
-	g_new_z.real(m_degree_minus_1_over_degree*g_new_z.x + m_root_over_degree);
+	g_new_z.real(m_degree_minus_1_over_degree*g_new_z.real() + m_root_over_degree);
 	g_new_z.y *= m_degree_minus_1_over_degree;
 
 	// Watch for divide underflow
@@ -190,8 +190,8 @@ int Newton::orbit()
 	else
 	{
 		s_t2 = 1.0/s_t2;
-		g_old_z.real(s_t2*(g_new_z.x*g_temp_z.x + g_new_z.y*g_temp_z.y));
-		g_old_z.imag(s_t2*(g_new_z.y*g_temp_z.x - g_new_z.x*g_temp_z.y));
+		g_old_z.real(s_t2*(g_new_z.real()*g_temp_z.x + g_new_z.imag()*g_temp_z.y));
+		g_old_z.imag(s_t2*(g_new_z.imag()*g_temp_z.x - g_new_z.real()*g_temp_z.y));
 	}
 	return 0;
 }
@@ -227,8 +227,8 @@ int NewtonComplex::orbit()
 	temp = ComplexPower(g_old_z, cd1);
 	FPUcplxmul(&temp, &g_old_z, &g_new_z);
 
-	g_temp_z.x = g_new_z.x - croot.x;
-	g_temp_z.y = g_new_z.y - croot.y;
+	g_temp_z.x = g_new_z.real() - croot.x;
+	g_temp_z.y = g_new_z.imag() - croot.y;
 	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < g_threshold)
 	{
 		return 1;

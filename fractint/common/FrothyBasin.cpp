@@ -228,12 +228,12 @@ int froth_calc()   // per pixel 1/2/g, called with row & col set
 			// but it's the attractor that makes this so interesting
 			g_new_z.real(g_temp_sqr_x - g_temp_sqr_y - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
 			g_old_z.y += (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real();
-			g_old_z.real(g_new_z.x);
+			g_old_z.real(g_new_z.real());
 			if (s_frothy_data.repeat_mapping)
 			{
 				g_new_z.real(sqr(g_old_z.real()) - sqr(g_old_z.imag()) - g_old_z.real() - s_frothy_data.f.a*g_old_z.imag());
 				g_old_z.y += (g_old_z.real() + g_old_z.real())*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real();
-				g_old_z.real(g_new_z.x);
+				g_old_z.real(g_new_z.real());
 			}
 
 			g_color_iter++;
@@ -502,8 +502,8 @@ int froth_per_orbit()
 			g_new_z.imag(2.0*g_old_z.real()*g_old_z.imag() - s_frothy_data.f.a*g_old_z.real() + g_old_z.imag());
 		}
 
-		g_temp_sqr_x = sqr(g_new_z.x);
-		g_temp_sqr_y = sqr(g_new_z.y);
+		g_temp_sqr_x = sqr(g_new_z.real());
+		g_temp_sqr_y = sqr(g_new_z.imag());
 		if (g_temp_sqr_x + g_temp_sqr_y >= g_rq_limit)
 		{
 			return 1;

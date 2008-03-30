@@ -432,8 +432,8 @@ int complex_basin()
 	temp = ComplexPower(g_old_z, cd1);
 	FPUcplxmul(&temp, &g_old_z, &g_new_z);
 
-	g_temp_z.x = g_new_z.x - croot.x;
-	g_temp_z.y = g_new_z.y - croot.y;
+	g_temp_z.x = g_new_z.real() - croot.x;
+	g_temp_z.y = g_new_z.imag() - croot.y;
 	if ((sqr(g_temp_z.x) + sqr(g_temp_z.y)) < g_threshold)
 	{
 		if (fabs(g_old_z.imag()) < .01)

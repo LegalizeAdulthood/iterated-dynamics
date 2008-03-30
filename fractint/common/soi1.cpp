@@ -569,8 +569,8 @@ scan:
 		esc = g_fractal_specific[g_fractal_type].orbitcalc();						\
 		rq = g_temp_sqr_x;						\
 		iq = g_temp_sqr_y;						\
-		zr = g_new_z.x;							\
-		zi = g_new_z.y;							\
+		zr = g_new_z.real();							\
+		zi = g_new_z.imag();							\
 	}											\
 	while (0)
 

@@ -208,29 +208,29 @@ static double fmod_test()
 	{
 	case BAILOUT_MODULUS:
 		result = (g_magnitude == 0.0 || !g_no_magnitude_calculation || g_integer_fractal) ?
-			sqr(g_new_z.x) + sqr(g_new_z.y) : g_magnitude;
+			sqr(g_new_z.real()) + sqr(g_new_z.imag()) : g_magnitude;
 		break;
 	case BAILOUT_REAL:
-		result = sqr(g_new_z.x);
+		result = sqr(g_new_z.real());
 		break;
 	case BAILOUT_IMAGINARY:
-		result = sqr(g_new_z.y);
+		result = sqr(g_new_z.imag());
 		break;
 	case BAILOUT_OR:
 		{
-			double tmpx = sqr(g_new_z.x);
-			double tmpy = sqr(g_new_z.y);
+			double tmpx = sqr(g_new_z.real());
+			double tmpy = sqr(g_new_z.imag());
 			result = (tmpx > tmpy) ? tmpx : tmpy;
 		}
 		break;
 	case BAILOUT_MANHATTAN:
-		result = sqr(fabs(g_new_z.x) + fabs(g_new_z.y));
+		result = sqr(fabs(g_new_z.real()) + fabs(g_new_z.imag()));
 		break;
 	case BAILOUT_MANHATTAN_R:
-		result = sqr(g_new_z.x + g_new_z.y);
+		result = sqr(g_new_z.real() + g_new_z.imag());
 		break;
 	default:
-		result = sqr(g_new_z.x) + sqr(g_new_z.y);
+		result = sqr(g_new_z.real()) + sqr(g_new_z.imag());
 		break;
 	}
 	return result;
@@ -1263,11 +1263,11 @@ bool detect_finite_attractor_fp()
 	ComplexD attractor;
 	for (int i = 0; i < g_num_attractors; i++)
 	{
-		attractor.x = g_new_z.x - g_attractors[i].x;
+		attractor.x = g_new_z.real() - g_attractors[i].x;
 		attractor.x = sqr(attractor.x);
 		if (attractor.x < g_attractor_radius_fp)
 		{
-			attractor.y = g_new_z.y - g_attractors[i].y;
+			attractor.y = g_new_z.imag() - g_attractors[i].y;
 			attractor.y = sqr(attractor.y);
 			if (attractor.y < g_attractor_radius_fp)
 			{
@@ -1406,13 +1406,13 @@ void ColorModeStarTrail::update()
 
 		clamp(g_new_z.x);
 		clamp(g_new_z.y);
-		g_temp_sqr_x = g_new_z.x*g_new_z.x;
-		g_temp_sqr_y = g_new_z.y*g_new_z.y;
+		g_temp_sqr_x = g_new_z.real()*g_new_z.real();
+		g_temp_sqr_y = g_new_z.imag()*g_new_z.imag();
 		g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
 		g_old_z = g_new_z;
 		{
 			int tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
-			m_tangent_table[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
+			m_tangent_table[tmpcolor-1] = g_new_z.imag()/(g_new_z.real() + .000001);
 		}
 	}
 }
@@ -1714,7 +1714,7 @@ void StandardFractal::show_orbit()
 		{
 			g_new_z = complex_bf_to_float(&g_new_z_bf);
 		}
-		plot_orbit(g_new_z.x, g_new_z.y, -1);
+		plot_orbit(g_new_z.real(), g_new_z.imag(), -1);
 	}
 	else
 	{
@@ -1797,9 +1797,9 @@ void StandardFractal::check_periodicity()
 			}
 			else
 			{
-				if (fabs(s_saved_z.x - g_new_z.x) < g_close_enough)
+				if (fabs(s_saved_z.x - g_new_z.real()) < g_close_enough)
 				{
-					if (fabs(s_saved_z.y - g_new_z.y) < g_close_enough)
+					if (fabs(s_saved_z.y - g_new_z.imag()) < g_close_enough)
 					{
 						m_caught_a_cycle = true;
 					}
@@ -1835,13 +1835,13 @@ void StandardFractal::colormode_star_trail_update()
 
 		colormode_star_trail_clamp(g_new_z.x);
 		colormode_star_trail_clamp(g_new_z.y);
-		g_temp_sqr_x = g_new_z.x*g_new_z.x;
-		g_temp_sqr_y = g_new_z.y*g_new_z.y;
+		g_temp_sqr_x = g_new_z.real()*g_new_z.real();
+		g_temp_sqr_y = g_new_z.imag()*g_new_z.imag();
 		g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
 		g_old_z = g_new_z;
 		{
 			int tmpcolor = int(((g_color_iter - 1) % g_and_color) + 1);
-			m_tangent_table[tmpcolor-1] = g_new_z.y/(g_new_z.x + .000001);
+			m_tangent_table[tmpcolor-1] = g_new_z.imag()/(g_new_z.real() + .000001);
 		}
 	}
 }
@@ -1869,14 +1869,14 @@ bool StandardFractal::colormode_epsilon_cross_update()
 	}
 	else
 	{
-		if (fabs(g_new_z.x) < fabs(g_proximity))
+		if (fabs(g_new_z.real()) < fabs(g_proximity))
 		{
 			// close to y axis
 			m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
 				HOOPER_POSITIVE_Y_AXIS : HOOPER_NEGATIVE_Y_AXIS;
 			go_plot_inside = true;
 		}
-		else if (fabs(g_new_z.y) < fabs(g_proximity))
+		else if (fabs(g_new_z.imag()) < fabs(g_proximity))
 		{
 			// close to x axis
 			m_colormode_epsilon_cross_hooper = (g_proximity > 0) ?
@@ -1910,7 +1910,7 @@ void StandardFractal::colormode_beauty_of_fractals_update()
 	}
 	else if (g_magnitude == 0.0 || !g_no_magnitude_calculation)
 	{
-		g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
+		g_magnitude = sqr(g_new_z.real()) + sqr(g_new_z.imag());
 	}
 	if (g_magnitude < m_colormode_bof60_min_magnitude)
 	{
@@ -1960,9 +1960,9 @@ void StandardFractal::outside_colormode_set_new_z_update()
 }
 void StandardFractal::outside_colormode_total_distance_update()
 {
-	m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.x-g_new_z.x) + sqr(m_colormode_total_distance_last_z.y-g_new_z.y));
-	m_colormode_total_distance_last_z.x = g_new_z.x;
-	m_colormode_total_distance_last_z.y = g_new_z.y;
+	m_colormode_total_distance += sqrt(sqr(m_colormode_total_distance_last_z.x-g_new_z.real()) + sqr(m_colormode_total_distance_last_z.y-g_new_z.imag()));
+	m_colormode_total_distance_last_z.x = g_new_z.real();
+	m_colormode_total_distance_last_z.y = g_new_z.imag();
 }
 void StandardFractal::outside_colormode_float_modulus_update()
 {
@@ -2007,7 +2007,7 @@ void StandardFractal::potential_set_new_z()
 void StandardFractal::potential_compute()
 {
 	potential_set_new_z();
-	g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
+	g_magnitude = sqr(g_new_z.real()) + sqr(g_new_z.imag());
 	g_color_iter = potential(g_magnitude, g_color_iter);
 	if (g_log_table || g_log_calculation)
 	{
@@ -2051,24 +2051,24 @@ void StandardFractal::outside_colormode_set_new_z_final()
 void StandardFractal::outside_colormode_real_final()
 {
 	// Add 7 to overcome negative values on the MANDEL
-	g_color_iter += long(g_new_z.x) + 7;
+	g_color_iter += long(g_new_z.real()) + 7;
 }
 void StandardFractal::outside_colormode_imaginary_final()
 {
 	// Add 7 to overcome negative values on the MANDEL
-	g_color_iter += long(g_new_z.y) + 7;
+	g_color_iter += long(g_new_z.imag()) + 7;
 }
 void StandardFractal::outside_colormode_multiply_final()
 {
-	g_color_iter = long(double(g_color_iter)*(g_new_z.x/g_new_z.y));
+	g_color_iter = long(double(g_color_iter)*(g_new_z.real()/g_new_z.imag()));
 }
 void StandardFractal::outside_colormode_sum_final()
 {
-	g_color_iter += long(g_new_z.x + g_new_z.y);
+	g_color_iter += long(g_new_z.real() + g_new_z.imag());
 }
 void StandardFractal::outside_colormode_inverse_tangent_final()
 {
-	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_externs.AtanColors()/MathUtil::Pi));
+	g_color_iter = long(fabs(atan2(g_new_z.imag(), g_new_z.real())*g_externs.AtanColors()/MathUtil::Pi));
 }
 void StandardFractal::outside_colormode_float_modulus_final()
 {
@@ -2097,7 +2097,7 @@ void StandardFractal::outside_colormode_final()
 	{
 		outside_colormode_imaginary_final();
 	}
-	else if (g_externs.Outside() == COLORMODE_MULTIPLY && g_new_z.y)
+	else if (g_externs.Outside() == COLORMODE_MULTIPLY && g_new_z.imag())
 	{
 		outside_colormode_multiply_final();
 	}
@@ -2123,7 +2123,7 @@ void StandardFractal::outside_colormode_final()
 double StandardFractal::distance_compute()
 {
 	double dist;
-	dist = (g_new_z.x) + sqr(g_new_z.y);
+	dist = (g_new_z.real()) + sqr(g_new_z.imag());
 	if (dist == 0 || g_overflow)
 	{
 		dist = 0;
@@ -2171,7 +2171,7 @@ void StandardFractal::compute_decomposition_and_biomorph()
 				g_color_iter = g_externs.Biomorph();
 			}
 		}
-		else if (fabs(g_new_z.x) < g_rq_limit2 || fabs(g_new_z.y) < g_rq_limit2)
+		else if (fabs(g_new_z.real()) < g_rq_limit2 || fabs(g_new_z.imag()) < g_rq_limit2)
 		{
 			g_color_iter = g_externs.Biomorph();
 		}
@@ -2229,7 +2229,7 @@ void StandardFractal::inside_colormode_inverse_tangent_final()
 	{
 		g_new_z = ComplexFudgeToDouble(g_new_z_l);
 	}
-	g_color_iter = long(fabs(atan2(g_new_z.y, g_new_z.x)*g_externs.AtanColors()/MathUtil::Pi));
+	g_color_iter = long(fabs(atan2(g_new_z.imag(), g_new_z.real())*g_externs.AtanColors()/MathUtil::Pi));
 }
 void StandardFractal::inside_colormode_float_modulus_final()
 {
@@ -2247,7 +2247,7 @@ void StandardFractal::inside_colormode_z_magnitude_final()
 {
 	g_color_iter = long(g_integer_fractal ?
 		(FudgeToDouble(g_magnitude_l)*(g_max_iteration/2) + 1)
-		: ((sqr(g_new_z.x) + sqr(g_new_z.y))*(g_max_iteration/2) + 1));
+		: ((sqr(g_new_z.real()) + sqr(g_new_z.imag()))*(g_max_iteration/2) + 1));
 }
 void StandardFractal::adjust_color_log_map()
 {
@@ -2599,15 +2599,15 @@ static void decomposition()
 	}
 	else // double case
 	{
-		if (g_new_z.y < 0)
+		if (g_new_z.imag() < 0)
 		{
 			temp = 2;
-			g_new_z.imag(-g_new_z.y);
+			g_new_z.imag(-g_new_z.imag());
 		}
-		if (g_new_z.x < 0)
+		if (g_new_z.real() < 0)
 		{
 			++temp;
-			g_new_z.real(-g_new_z.x);
+			g_new_z.real(-g_new_z.real());
 		}
 		if (g_decomposition[0] == 2)
 		{
@@ -2624,17 +2624,17 @@ static void decomposition()
 		if (g_decomposition[0] >= 8)
 		{
 			temp <<= 1;
-			if (g_new_z.x < g_new_z.y)
+			if (g_new_z.real() < g_new_z.imag())
 			{
 				++temp;
-				alt.x = g_new_z.x; // just
-				g_new_z.real(g_new_z.y); // swap
+				alt.x = g_new_z.real(); // just
+				g_new_z.real(g_new_z.imag()); // swap
 				g_new_z.imag(alt.x); // them
 			}
 			if (g_decomposition[0] >= 16)
 			{
 				temp <<= 1;
-				if (g_new_z.x*tan22_5 < g_new_z.y)
+				if (g_new_z.real()*tan22_5 < g_new_z.imag())
 				{
 					++temp;
 					alt = g_new_z;
@@ -2645,7 +2645,7 @@ static void decomposition()
 				if (g_decomposition[0] >= 32)
 				{
 					temp <<= 1;
-					if (g_new_z.x*tan11_25 < g_new_z.y)
+					if (g_new_z.real()*tan11_25 < g_new_z.imag())
 					{
 						++temp;
 						alt = g_new_z;
@@ -2656,7 +2656,7 @@ static void decomposition()
 					if (g_decomposition[0] >= 64)
 					{
 						temp <<= 1;
-						if (g_new_z.x*tan5_625 < g_new_z.y)
+						if (g_new_z.real()*tan5_625 < g_new_z.imag())
 						{
 							++temp;
 							alt = g_new_z;
@@ -2667,7 +2667,7 @@ static void decomposition()
 						if (g_decomposition[0] >= 128)
 						{
 							temp <<= 1;
-							if (g_new_z.x*tan2_8125 < g_new_z.y)
+							if (g_new_z.real()*tan2_8125 < g_new_z.imag())
 							{
 								++temp;
 								alt = g_new_z;
@@ -2678,7 +2678,7 @@ static void decomposition()
 							if (g_decomposition[0] == 256)
 							{
 								temp <<= 1;
-								if ((g_new_z.x*tan1_4063 < g_new_z.y))
+								if ((g_new_z.real()*tan1_4063 < g_new_z.imag()))
 								{
 									++temp;
 								}
